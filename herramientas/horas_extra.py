@@ -29,10 +29,8 @@ cut("// poder del líder: 100 = nivel 1 sin nada", "function idleRates(fac)")
 # sin turbo de anuncios
 rep("  // v0.9.16: con el turbo (anuncio) gana el doble mientras dura\n  const td = dh > 0 && I.turbo > from ? Math.min(dh, (Math.min(now, I.turbo) - from) / 3600000) : 0, x = dh + Math.max(0, td);\n", "  const x = dh;\n")
 rep("const dh = Math.min((now - I.last) / 3600000, IDLE.cap - I.h), from = I.last; I.last = now;", "const dh = Math.min((now - I.last) / 3600000, IDLE.cap - I.h); I.last = now;")
-rep("  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)));", "  const pool = Object.keys(DB).filter(id => DB[id].rar === rar);")
+rep("  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)));", "  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass);")
 rep("function idleCollect(x2) {   // v0.9.16: x2 = premio doble por anuncio", "function idleCollect(x2) {")
-rep("  stat('idle', 1, true); stat('idleh', h, true); stat('idleg', g, true); stat('idlem', gm, true); if (ni) stat('idlei', ni, true); if (full) stat('idlefull', 1, true);\n  achScan(); saveGame();", "  saveGame();")
-rep("I.fac = f; idleR = idleRates(f); stat('idleswap', 1); saveGame();", "I.fac = f; idleR = idleRates(f); saveGame();")
 rep("const nl = FACTION_ORDER.length - L.length;\n  $('#idle-more').textContent = nl ? `Libera más facciones en la campaña para tener más líderes (te ${nl > 1 ? 'faltan ' + nl : 'falta 1'}).` : '';",
     "$('#idle-more').textContent = '';")
 rep("  adIdleUI();   // v0.9.16\n", "")

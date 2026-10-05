@@ -4,6 +4,14 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.10.0', real: [
+      '<b>MISIONES</b>: cuatro diarias y cuatro semanales, con oro, gemas y puntos de pase. Colocar torres, superar oleadas, fusionar, ganar en el modo VS…',
+      '<b>LOGROS</b>: más de 1.300, por niveles, y cada uno da gemas una sola vez. Los hay de batallas, de cada facción y cada carta, de campaña, de enemigos, de gashapón, de constancia… y secretos.',
+      '<b>PASE DE BATALLA</b>: 30 niveles con pista gratis y pista Ejecutiva (de prueba: no se cobra nada). Jugar partidas y cobrar misiones da puntos.',
+      '<b>PREMIO DIARIO</b> por entrar cada día: el séptimo, 10 tiradas gratis.',
+      '<b>TU PERFIL</b>: Lola te pregunta cómo te llamas. Toca tu avatar arriba a la izquierda para ver tus números, cambiar el nombre o elegir avatar.',
+      'El botón de sonido de la portada pasa a Opciones para dejar sitio al perfil.'],
+    joke: ['Microblizz ha encontrado la forma de que vuelvas cada día: regalarte cosas. Le ha dolido.', 'El pase de batalla dura «hasta que Microblizz lo cierre». No han querido dar fecha.'] },
   { v: '0.9.6', real: [
       '<b>Los objetos, solo en el líder</b>, como en Fans of Rumble: arma, cabeza y accesorio son suyos, y las demás cartas llevan solo su habilidad. Lo que tuvieran puesto otras cartas ha vuelto a tu inventario.',
       'Las habilidades y los objetos ya no llevan la etiqueta de TORRE o UNIDAD: dicen lo que hacen y ya está. El <b>daño</b> vale para las dos cosas: la torre pega más y la unidad le quita más vida a la base rival.',

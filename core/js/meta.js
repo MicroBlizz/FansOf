@@ -15,6 +15,7 @@ const ECON = Object.assign({
   goldCost: [0, 50, 100, 200, 400, 750, 1500, 3000, 6000, 12000],                // oro para pasar del nivel i al i+1
   xpPerPlay: 10, winXpMult: 1.3,                                                 // XP por cada carta jugada; +30 % si ganas
   camp: { first: [100, 10], replay: 30, stars3: [50, 10], boss: [300, 50], lose: 10 },   // [oro, gemas]
+  mission: [50, 10],                                                             // [oro, gemas] de cada misión diaria
   pull: 50,                                                                      // gemas por tirada
   odds: { common: 55, rare: 30, epic: 12, legendary: 3 },                        // probabilidades del gashapón (%)
   pityEpic: 10, pityLeg: 50, pityQ: 10,                                          // garantías: épica cada 10, legendaria a las 50, calidad Director cada 10
@@ -97,6 +98,9 @@ const ITEMS = {
   raton_campeon:   { name: 'Ratón del campeón', slot: 'weapon', rar: 'legendary', fac: 'gamer' },
   cartucho_dorado: { name: 'Cartucho dorado', slot: 'acc', rar: 'legendary', fac: 'olvidados' },
   claqueta_oro:    { name: 'Claqueta de oro', slot: 'weapon', rar: 'legendary', fac: 'pop' },
+  // premios del pase de batalla: no salen en el gashapón ni se pueden despedir o volver a tirar
+  diploma:         { name: 'Diploma de Becario del Mes', slot: 'acc', rar: 'rare', pass: true },
+  corbata_ceo:     { name: 'Corbata del CEO', slot: 'acc', rar: 'legendary', pass: true },
 };
 // Los efectos vienen de los ajustes del juego. fx: [faceta, qué mejora, valor central]; un valor negativo es una pega y no cambia con la calidad.
 // De cada «fx» salen lo que el original guardaba a mano: st (los valores centrales que cambian con la calidad) y desc (el texto con {0}, {1}…)
@@ -110,7 +114,7 @@ for (const DB of [ABILITIES, ITEMS]) for (const id in DB) {
   });
   D.side = SIDES.filter(s => by[s]).join('');   // qué facetas mejora
   // el texto: todo seguido, como en el Rumble; o, si el juego quiere enseñar sus facetas (AJUSTES.verFacetas), cada una con su etiqueta
-  const todo = [].concat(...SIDES.filter(s => by[s]).map(s => by[s])).join(' y ');
+  const junta = l => (l.length > 2 ? l.slice(0, -1).join(', ') + ' y ' + l[l.length - 1] : l.join(' y ')), todo = junta([].concat(...SIDES.filter(s => by[s]).map(s => by[s])));
   D.desc = !D.side ? 'No hace nada en este juego.' : !AJUSTES.verFacetas ? todo.charAt(0).toUpperCase() + todo.slice(1) + '.'
     : SIDES.filter(s => by[s]).map(s => `<i class="${AJUSTES.facetas[s].cls}">${AJUSTES.facetas[s].nombre}</i> ${by[s].join(' y ')}.`).join(' ');
 }
@@ -146,7 +150,8 @@ const SHOP = {
 
 /* ---------- guardado (misma forma que el del original) ---------- */
 function metaDefaults(s) {
-  const d = { gold: ECON.start.gold, gems: ECON.start.gems, units: {}, inv: [], invSeq: 0, abEquip: {}, equip: {}, pity: {}, giftDay: '', idle: null, seenVer: '', tickets: 0 };
+  const d = { gold: ECON.start.gold, gems: ECON.start.gems, units: {}, inv: [], invSeq: 0, abEquip: {}, equip: {}, pity: {}, giftDay: '', idle: null, seenVer: '', tickets: 0,
+    stats: {}, achC: {}, achR: {}, pass: { xp: 0, prem: false, free: [], paid: [] }, login: { last: '', day: 0, best: 0 } };   // retos (core/js/retos.js)
   for (const k in d) if (s[k] == null) s[k] = d[k];
   // partidas guardadas con la primera versión del progreso: nivel por carta, un solo número de calidad y todo el equipo junto
   if (s.cards) { for (const k in s.cards) s.units[k] = { lvl: s.cards[k].lvl || 1, xp: 0 }; delete s.cards; }

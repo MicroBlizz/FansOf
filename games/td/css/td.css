@@ -129,7 +129,7 @@
 .card.send.off canvas, .card.send.off .nm, .card.send.off .cost { filter: grayscale(0.85) brightness(0.75); }
 
 /* ---------- ajustes propios sobre los menús copiados del original (van aquí porque menus.css se regenera) ---------- */
-#ui #scr-title .home-grid { grid-template-columns: repeat(4, 1fr); max-width: 470px; }
+#ui #scr-title .home-grid { grid-template-columns: repeat(6, 1fr); max-width: 500px; }   /* seis casillas en una fila, como en el Rumble */
 #ui #scr-title .camp-row .btn-big { flex: 1 1 auto; }
 #ui .passive-box svg { flex: none; width: 26px; height: 32px; }
 #ui #scr-prep { gap: 12px; }

@@ -8,10 +8,12 @@ TOKENS = ['.wallet', '.wal', '.home-feature', '.feat', '.home-grid', '.home-tile
           '.coll-', '.deck-desc', '.deck-stats', '.deck-sub', '.xpbar', '.boost', '.slots', '.slot', '.sl-', '.btn-eqall', '.pick-', '.inv-', '.chip-btn', '.qbadge', '.qstat', '.qbar', '.item-', '.modal-card',
           '.gacha', '#gacha', '.gr-', '.gt', '.btn-pull', '.pull-row', '.small-print', '.shop-note', '.gift-row', '.pack', '.pk-', '.btn-price', '.joke-flag', '.countdown', '.cf-body', '.news-', '.btn-link',
           '.tabs', '.tab', '#toast', '.btn-up', '.btn-ghost', '.btn-ok', '.screen.top', '.screen.modal', '.icon-btn.back', '.ad-row', '.btn-vip', '.pw',
+          # retos: misiones, logros, pase de batalla, premio diario y perfil
+          '.mission', '.ach-', '.btn-claimall', '.pass-', '.pr-', '.itm', '.lk', '.login', '.lg-', '.prof-chip', '.pc-', '.pf-', '.profile-card', '.name-', '#name-', '#scr-name', '#profile-', '.coach-who',
           # portada, campaña, pantalla previa, cómo se juega, pausa, final y opciones
           '.screen', '.logo', '.tagline', '#title-art', '#scr-title', '.camp-row', '.camp-head', '.btn-mode', '.links', '.fac-grid', '.fac-opt', '.diff', '.diff-label', '.prep-info', '.world', '.nodes', '.node',
           '.end-', '#scr-end', '.rewards', '.rw-', '.stats', '.stat', '.quote', '.steps', '#scr-howto', '#scr-prep', '#scr-camp', '.btn-big', '.opt-', '#scr-options', '.row']
-BLOCK = ['.pass-', '.login', '.deck-bar', '.deck-slot', '.deck-pool', '.spell', '#tut', '.tut', '.prof', '.ach', '.arena', '.share', '.sala', '.mission', '.m-row', '.camp-tabs', '.btn-ad', '.ad-', '.side-mode', '.bdiff', '.prep-deck', '.gear-', '.mod-', '.cd-', '.boss-pick', '#btn-camp', '.end-extra', '.end-pass', '.rl-', '.roulette']
+BLOCK = ['.pass-chip', '.deck-bar', '.deck-slot', '.deck-pool', '.spell', '#tut', '.tut', '.arena', '.share', '.sala', '.m-row', '.camp-tabs', '.btn-ad', '.ad-', '.side-mode', '.bdiff', '.prep-deck', '.gear-', '.mod-', '.cd-', '.boss-pick', '#btn-camp', '.end-extra', '.end-pass', '.rl-', '.roulette']
 
 def split_rules(text):
     """Trocea en reglas de primer nivel (cada @media o @keyframes entero cuenta como una)."""

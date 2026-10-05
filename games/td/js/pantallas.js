@@ -76,12 +76,12 @@ $('#btn-play').onclick = () => { play('select'); if (PREP.mode === 'vs') startVS
 $('#btn-prep-back').onclick = () => { play('select'); if (PREP.mode === 'camp') openCamp(); else showMenu(); };
 $('#btn-camp').onclick = () => { play('select'); openCamp(); };
 $('#btn-vs').onclick = () => { play('select'); openPrep('vs'); };
-$('#btn-howto').onclick = () => { play('select'); show('scr-howto'); };
+$('#btn-howto').onclick = () => { play('select'); stat('howto', 1); show('scr-howto'); };
 $('#btn-howto-ok').onclick = () => { play('select'); showMenu(); };
 
 /* ---------- pausa ---------- */
 const PAUSE_QUOTES = { microblizz: ['Microblizz ya está pensando qué juego cerrar ahora.', 'El CEO aprovecha la pausa para subir los precios.', 'Los becarios no tienen pausa. Tú sí.'], phony: ['Phony te cobra la pausa en la próxima suscripción.', 'La PayStation sigue descargando una actualización.', 'Pausa disponible solo con conexión.'] };
-function pauseGame() { if (G.screen !== 'play' || G.over || G.paused) return; G.paused = true; $('#banner').classList.remove('show'); $('#pause-quote').textContent = pick(PAUSE_QUOTES[G.vs ? 'microblizz' : ownerOf(G.level)]); $('#scr-pause').hidden = false; }
+function pauseGame() { if (G.screen !== 'play' || G.over || G.paused) return; G.paused = true; stat('pause', 1); $('#banner').classList.remove('show'); $('#pause-quote').textContent = pick(PAUSE_QUOTES[G.vs ? 'microblizz' : ownerOf(G.level)]); $('#scr-pause').hidden = false; }
 $('#btn-pause').onclick = () => { play('select'); pauseGame(); };
 $('#btn-resume').onclick = () => { G.paused = false; $('#scr-pause').hidden = true; play('select'); };
 $('#btn-restart').onclick = () => { $('#scr-pause').hidden = true; play('select'); if (G.vs) startVS(G.vs.diff); else startLevel(G.level); };
@@ -109,7 +109,8 @@ function showResult(win, st, first) {
 }
 function showVsResult(win) {
   const V = G.vs, m = Math.floor(V.t / 60), s = String(Math.floor(V.t % 60)).padStart(2, '0');
-  endScreen({ win, stars: null, rw: vsReward(win, V.diff), title: win ? '¡VICTORIA!' : 'DERROTA',
+  cierraRetos(win, { vs: true, vida: V.me.lives, camino: G.route.length });   // misiones y logros
+  endScreen({ win, stars: null, rw: vsReward(win, V.diff) + passMatch(win), title: win ? '¡VICTORIA!' : 'DERROTA',
     sub: win ? `Has tirado la base de ${FAC_NAME(V.ai.fac)} en ${m}:${s}.` : `${capFirst(FAC_NAME(V.ai.fac))} han tirado ${FACTIONS[V.me.fac].end} en ${m}:${s}.`,
     quote: pick(QUOTES[win ? 'p' : 'e']), stats: [[V.me.sent, 'unidades enviadas'], [V.me.kills || 0, 'enemigos despedidos'], [V.me.income, 'income final']],
     next: null, again: () => startVS(V.diff) });

@@ -36,7 +36,7 @@ const idleFull = () => idleState().h >= IDLE.cap - 1e-6;
 function idleItem() {   // un objeto o una habilidad al azar con las probabilidades del gashapón (sin tocar sus garantías)
   const kind = Math.random() < 0.5 ? 'ab' : 'eq', DB = kind === 'ab' ? ABILITIES : ITEMS;
   let x = Math.random() * 100, rar = 'common'; for (const k of ['legendary', 'epic', 'rare']) { if (x < ECON.odds[k]) { rar = k; break; } x -= ECON.odds[k]; }
-  const pool = Object.keys(DB).filter(id => DB[id].rar === rar);
+  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass);
   return newCopy(kind, pick(pool), 0);
 }
 function idleCollect(x2) {
@@ -44,14 +44,15 @@ function idleCollect(x2) {
   if (g < 1 && gm < 1 && ni < 1) { play('deny'); toast('Todavía no hay nada. ¡Dale un rato a tu líder!'); return; }
   I.gold -= g; I.gems -= gm; I.items -= ni; I.h = 0; SAVE.gold += g * m; SAVE.gems += gm * m;
   const got = []; for (let i = 0; i < ni * m; i++) got.push(idleItem());
-  saveGame(); updateWallets(); play('crown'); idleBurst(); idleUI(true);
+  stat('idle', 1, true); stat('idleh', h, true); stat('idleg', g, true); stat('idlem', gm, true); if (ni) stat('idlei', ni, true); if (full) stat('idlefull', 1, true);
+  achScan(); saveGame(); updateWallets(); play('crown'); idleBurst(); idleUI(true);
   toast(`Horas extra${x2 ? ' x2' : ''}: +${fmt(g * m)} de oro${gm ? ` y +${fmt(gm * m)} ${gm * m > 1 ? 'gemas' : 'gema'}` : ''}`, true);
   if (got.length) setTimeout(() => confirmBox(got.length > 1 ? `¡${got.length} OBJETOS!` : '¡HA ENCONTRADO ALGO!', got.map(it => { const D = defOf(it); return `<b>${D.name}</b> · ${RARITY[D.rar][0]}, calidad ${QTIERS[tierOf(avgQ(it))].name}`; }).join('<br>') + '<small>Tu líder lo ha encontrado haciendo horas extra. Ya lo tienes en el inventario.</small>', null, null, '¡GENIAL!'), 650);
 }
 function idleSetHero(f) {
   if (!idleFacOk(f)) return;
   const I = idleTick(); $('#scr-idle').hidden = true; if (I.fac === f) { play('select'); return; }
-  I.fac = f; idleR = idleRates(f); saveGame(); play('select'); idleSc.mobs.length = 0; idleSc.fx.length = 0; idleUI(true);
+  I.fac = f; idleR = idleRates(f); stat('idleswap', 1); saveGame(); play('select'); idleSc.mobs.length = 0; idleSc.fx.length = 0; idleUI(true);
   toast(`${CFG.cards[FACTIONS[f].leader].name} empieza su turno de horas extra`, true);
 }
 function openIdlePick() {

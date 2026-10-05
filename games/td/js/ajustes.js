@@ -83,5 +83,7 @@ const AJUSTES = {
     raton_campeon:   [['T', 'spd', 28], ['T', 'range', 15]],
     cartucho_dorado: [['T', 'dmg', 15], ['U', 'fog', 2]],
     claqueta_oro:    [['T', 'dmg', 18], ['T', 'splash', 35]],
+    diploma:         [['U', 'hp', 8], ['T', 'dmg', 8]],                      // premio del pase (pista gratis)
+    corbata_ceo:     [['U', 'hp', 15], ['T', 'dmg', 15], ['U', 'speed', 10]],   // premio del pase (pista Ejecutiva)
   },
 };

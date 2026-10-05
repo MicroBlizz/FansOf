@@ -14,12 +14,12 @@ var PRUEBA = {
       { u: 'i17', k: 'eq', id: 'boton_pausa', q: [1] }, { u: 'i18', k: 'eq', id: 'auriculares', q: [0.45] }, { u: 'i21', k: 'eq', id: 'taza', q: [0.2] }, { u: 'i22', k: 'eq', id: 'cuernos', q: [0.15] }],
     invSeq: 22, abEquip: { bunny: 'i1', squirrel: 'i3', necrolord: 'i4' },
     equip: { bunny: { weapon: 'i13', head: 'i11' }, necrolord: { head: 'i14', acc: 'i17' }, squirrel: { weapon: 'i10' } },
-    pity: { ab: 3, abL: 20, eq: 9, eqL: 49, qab: 2, qeq: 9 }, giftDay: '', idle: null, seenVer: '', vol: 0.8, mus: 0.6, menuMus: 'animales', tut: { done: true },
+    pity: { ab: 3, abL: 20, eq: 9, eqL: 49, qab: 2, qeq: 9 }, giftDay: '', idle: null, seenVer: '', vol: 0.8, mus: 0.6, menuMus: 'animales', tut: { done: true }, name: 'Probador', since: '2026-01-01',
   },
 
   async pasos(T, parte) {
     const $ = T.$, quiere = p => !parte || parte.split(',').includes(p);
-    const cierra = () => { for (const id of ['scr-news', 'scr-confirm', 'scr-item', 'scr-pick', 'scr-idle', 'scr-idlebox', 'scr-pause']) { const e = document.getElementById(id); if (e) e.hidden = true; } };
+    const cierra = () => { for (const id of ['scr-news', 'scr-confirm', 'scr-item', 'scr-pick', 'scr-idle', 'scr-idlebox', 'scr-pause', 'scr-login', 'scr-name', 'scr-profile']) { const e = document.getElementById(id); if (e) e.hidden = true; } };
     const casa = () => { cierra(); (typeof goHome === 'function' ? goHome : showMenu)(); T.avanza(3000); cierra(); };
     const orden = v => (Array.isArray(v) ? v.map(orden) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, orden(v[k])])) : typeof v === 'number' ? +v.toPrecision(10) : v);
     const guardado = () => T.apunta('guardado', orden(SAVE));
@@ -37,7 +37,7 @@ var PRUEBA = {
       T.paso('sonido: efectos de la partida'); G.screen = 'play'; for (const n of ['shot', 'hit', 'crit', 'lob', 'boom', 'stomp', 'pop', 'coin', 'place', 'up', 'leak', 'horn', 'jump', 'zap', 'womp', 'boss', 'win']) { T.avanza(2000); efecto(n); } T.sonido(); G.screen = 'title';
       T.paso('sonido: efectos de los menús'); for (const n of ['select', 'deny', 'levelup', 'win', 'crown', 'roll', 'despido', 'sad']) { T.avanza(2000); play(n); } T.sonido();
       T.paso('sonido: volumen'); T.clic('#btn-opts'); T.pon('#opt-vol', 30); T.pon('#opt-mus', 80); T.apunta('guardado', [SAVE.vol, SAVE.mus]); T.avanza(2000); efecto('coin'); T.sonido('más bajo');
-      T.clic('#scr-title .btn-sound'); T.apunta('silencio', [SAVE.muted, $('#scr-title .btn-sound').textContent]); T.avanza(2000); efecto('coin'); T.sonido('callado'); T.clic('#scr-title .btn-sound'); T.pon('#opt-vol', 80); T.pon('#opt-mus', 60);
+      T.clic('.btn-sound'); T.apunta('silencio', [SAVE.muted, $('.btn-sound').textContent]); T.avanza(2000); efecto('coin'); T.sonido('callado'); T.clic('.btn-sound'); T.pon('#opt-vol', 80); T.pon('#opt-mus', 60);
       const suena = () => { musicUpdate(); const o = [M.want, M.tmT, M.duck]; for (let i = 0; i < 30; i++) { T.altavoz().currentTime += 0.3; musicPump(); } return o; };
       casa(); T.paso('sonido: música del menú'); T.apunta('canción', suena()); T.sonido();
       T.paso('sonido: música de la partida'); startLevel(WORLDS_TD[1].levels[3]); T.apunta('canción', suena()); T.sonido(); G.paused = true; T.apunta('en pausa', suena()); T.sonido('pausa'); G.paused = false;

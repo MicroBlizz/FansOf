@@ -32,7 +32,7 @@ function levelUp(k) {
   if (!canLevel(k)) return false;
   const us = uSave(k), cost = lvlCost(us.lvl);
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return false; }
-  SAVE.gold -= cost; us.xp -= needXp(us.lvl); us.lvl++; saveGame(); play('levelup');
+  SAVE.gold -= cost; us.xp -= needXp(us.lvl); us.lvl++; missionEvent('lvlup', 1); saveGame(); play('levelup');
   toast(`¡${CFG.cards[k].name} sube a nivel ${us.lvl}!`, true); return true;
 }
 /* ---------- colección ---------- */
@@ -137,7 +137,7 @@ function rollRarity(kind, force) {
 // tiradas x1, x10 y x50. Primero se gastan las tiradas gratis; cada tirada cuenta para las garantías
 function onePull(kind, force) {
   const rar = rollRarity(kind, force), DB = kind === 'ab' ? ABILITIES : ITEMS;
-  const id = pick(Object.keys(DB).filter(k => DB[k].rar === rar)), prev = bestCopy(kind, id), nPrev = SAVE.inv.filter(x => x.k === kind && x.id === id).length;
+  const id = pick(Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass)), prev = bestCopy(kind, id), nPrev = SAVE.inv.filter(x => x.k === kind && x.id === id).length;
   const P = SAVE.pity, qk = 'q' + kind; P[qk] = (P[qk] || 0) + 1;
   const it = newCopy(kind, id, P[qk] >= ECON.pityQ ? 3 : 0), tq = tierOf(avgQ(it)); if (tq >= 3) P[qk] = 0;
   const pn = prev && QTIERS[tierOf(avgQ(prev))].name, better = !!prev && avgQ(it) > avgQ(prev);
@@ -158,6 +158,9 @@ function pull(n) {
     if (rr === 'epic' || rr === 'legendary') gotEpic = true;
     res.push(r);
   }
+  missionEvent('pull', n); if (n >= 50) stat('x50', 1); if (n === 10) stat('x10', 1);
+  for (const r of res) { const rr = defOf(r.it).rar; if (rr === 'legendary') stat('leg', 1); else if (rr === 'epic') stat('epic', 1); }
+  if (c.gems > 0 && SAVE.gems === 0) stat('broke', 1);
   saveGame(); updateWallets(); buildGachaText();
   const cv = $('#gacha-cv'); cv.classList.remove('shake'); void cv.offsetWidth; cv.classList.add('shake'); play('roll');
   const top = res.reduce((a, r) => (RAR_ORDER[defOf(r.it).rar] < RAR_ORDER[defOf(a.it).rar] ? r : a));
@@ -180,7 +183,7 @@ function showMulti(res) {
   play(res.some(x => tierOf(avgQ(x.it)) >= 3 || defOf(x.it).rar === 'legendary' || defOf(x.it).rar === 'epic') ? 'win' : 'levelup');
 }
 function addCopy(k, id, q) { const it = { u: 'i' + (++SAVE.invSeq), k, id, q }; SAVE.inv.push(it); return it; }
-function newCopy(k, id, minTier) { const D = (k === 'ab' ? ABILITIES : ITEMS)[id]; return addCopy(k, id, Array.from({ length: Math.max(1, D.st.length) }, () => rollQ(minTier))); }
+function newCopy(k, id, minTier) { const D = (k === 'ab' ? ABILITIES : ITEMS)[id], it = addCopy(k, id, Array.from({ length: Math.max(1, D.st.length) }, () => rollQ(minTier))); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); return it; }
 function bestCopy(k, id) { let b = null; for (const it of SAVE.inv) if (it.k === k && it.id === id && (!b || avgQ(it) > avgQ(b))) b = it; return b; }
 function showPull(it, tag) {
   const D = defOf(it), kind = it.k, R = RARITY[D.rar], T = QTIERS[tierOf(avgQ(it))], card = $('#gr-card');
@@ -231,7 +234,7 @@ let invTab = 'ab', invFilter = 'all', invSort = 'q', itemCur = null;
 const INV_FILTERS = { ab: [['all', 'Todas'], ['common', 'Comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
 const INV_SORTS = { q: 'calidad', rar: 'rareza', name: 'nombre' };
 const scrapValue = it => Math.round(ECON.scrap[defOf(it).rar] * [1, 1.5, 2, 3, 5][tierOf(avgQ(it))]);
-const canScrap = it => !it.lock && !wearer(it);
+const canScrap = it => !it.lock && !wearer(it) && !defOf(it).pass;
 // despido masivo: copias Becario y Junior que nadie lleva, sin bloquear, y nunca tu mejor copia de cada una
 const massList = () => SAVE.inv.filter(it => it.k === invTab && canScrap(it) && tierOf(avgQ(it)) <= 1 && bestCopy(it.k, it.id) !== it);
 function openInv(tab) { if (tab) invTab = tab; invFilter = 'all'; updateWallets(); show('scr-inv'); buildInv(); $('#inv-list').scrollTop = 0; }
@@ -269,7 +272,7 @@ function openItem(uid, slot) {
   const rc = ECON.reroll[D.rar], sv = scrapValue(it);
   $('#item-actions').innerHTML = `<button class="btn-ghost ol btn-ok" id="ia-equip">${w ? 'CAMBIAR' : 'EQUIPAR'}</button><button class="btn-ghost ol" id="ia-unequip" ${w ? '' : 'disabled'}>QUITAR</button>
     <button class="btn-ghost ol" id="ia-lock">${it.lock ? 'RESCINDIR CONTRATO<small>se puede despedir</small>' : 'CONTRATO INDEFINIDO<small>bloquear: no se despide</small>'}</button><button class="btn-ghost ol danger" id="ia-scrap" ${canScrap(it) ? '' : 'disabled'}>DESPEDIR · +${fmt(sv)} ORO<small>indemnización: desaparece</small></button>
-    <button class="btn-ghost ol wide" id="ia-reroll" ${S.length ? '' : 'disabled'}>EVALUACIÓN DE DESEMPEÑO · ${fmt(rc)} ORO<small>vuelve a sortear sus números</small></button>`;
+    <button class="btn-ghost ol wide" id="ia-reroll" ${S.length && !D.pass ? '' : 'disabled'}>EVALUACIÓN DE DESEMPEÑO · ${fmt(rc)} ORO<small>vuelve a sortear sus números</small></button>`;
   $('#ia-equip').onclick = () => { if (itemSlot && w) { $('#scr-item').hidden = true; openPick(itemSlot.kind, itemSlot.key, itemSlot.card); } else equipFromInv(it); };
   $('#ia-unequip').onclick = () => { unequip(it); saveGame(); play('select'); refreshInv(); };
   $('#ia-lock').onclick = () => { it.lock = !it.lock; saveGame(); play('select'); refreshInv(); toast(it.lock ? 'Contrato indefinido: ya no se puede despedir' : 'Contrato rescindido: ya se puede despedir'); };
@@ -292,7 +295,7 @@ function scrapOne(it) {
   if (!canScrap(it)) return;
   const D = defOf(it), sv = scrapValue(it);
   confirmBox('DESPEDIR', `¿Despedir esta copia de <b>${D.name}</b> (${QTIERS[tierOf(avgQ(it))].name})?<span class="big">+${fmt(sv)} ${COIN_SVG}</span><small>La copia desaparece y te da oro. Cuanto mejor es su calidad, más oro.</small>`, 'DESPEDIR', () => {
-    SAVE.inv = SAVE.inv.filter(x => x !== it); SAVE.gold += sv; saveGame(); play('despido'); updateWallets();
+    SAVE.inv = SAVE.inv.filter(x => x !== it); SAVE.gold += sv; stat('scrap', 1); if (tierOf(avgQ(it)) === 4) stat('scrapperf', 1); saveGame(); play('despido'); updateWallets();
     $('#scr-item').hidden = true; itemCur = null; refreshInv(); toast(`Despedida: +${fmt(sv)} de oro`);
   });
 }
@@ -300,7 +303,7 @@ function rerollOne(it) {
   const D = defOf(it), cost = ECON.reroll[D.rar];
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return; }
   confirmBox('EVALUACIÓN DE DESEMPEÑO', `Se vuelven a sortear todos los números de tu <b>${D.name}</b>.<span class="big">${fmt(cost)} ${COIN_SVG}</span><small>Puede salir mejor… o peor. Ahora es ${QTIERS[tierOf(avgQ(it))].name} (${Math.round(avgQ(it) * 100)} %). Mismas probabilidades que el gashapón, sin garantía.</small>`, 'TIRAR', () => {
-    const before = avgQ(it); SAVE.gold -= cost; it.q = it.q.map(() => rollQ(0)); saveGame(); updateWallets();
+    const before = avgQ(it); SAVE.gold -= cost; it.q = it.q.map(() => rollQ(0)); stat('reroll', 1); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); saveGame(); updateWallets();
     const after = avgQ(it), T = QTIERS[tierOf(after)];
     play(after > before ? 'levelup' : 'sad'); toast(after > before ? `¡Ha salido mejor! Ahora es ${T.name} (${Math.round(after * 100)} %)` : `Ha salido peor: ahora es ${T.name} (${Math.round(after * 100)} %). Mala suerte`, after > before);
     refreshInv();
@@ -310,7 +313,7 @@ function massScrap() {
   const L = massList(); if (!L.length) return;
   const gold = L.reduce((a, it) => a + scrapValue(it), 0);
   confirmBox('DESPIDO MASIVO', `Vas a despedir <b>${L.length} ${L.length === 1 ? 'copia' : 'copias'}</b> de ${invTab === 'ab' ? 'habilidades' : 'equipo'} de calidad Becario y Junior que nadie lleva puestas.<span class="big">+${fmt(gold)} ${COIN_SVG}</span><small>Se salvan las bloqueadas y tu mejor copia de cada una. Microblizz estaría orgullosa.</small>`, 'DESPEDIR A TODAS', () => {
-    const del = new Set(L); SAVE.inv = SAVE.inv.filter(x => !del.has(x)); SAVE.gold += gold; saveGame(); updateWallets(); play('despido'); buildInv(); toast(`${L.length} despedidas: +${fmt(gold)} de oro`);
+    const del = new Set(L); SAVE.inv = SAVE.inv.filter(x => !del.has(x)); SAVE.gold += gold; stat('scrap', L.length); saveGame(); updateWallets(); play('despido'); buildInv(); toast(`${L.length} despedidas: +${fmt(gold)} de oro`);
   });
 }
 
@@ -332,7 +335,7 @@ function buildShop() {
   $('#gift-row').innerHTML = `<div class="pack gift"><div class="pk-ic">${PILE(2)}</div><div><div class="pk-name ol">Regalo del becario</div><div class="pk-note">Gratis una vez al día: ${g.gold} de oro y ${g.gems} gemas. Se lo ha «encontrado» en la oficina de Microblizz.</div></div><button class="btn-price ol" id="btn-gift" ${ready ? '' : 'disabled'}>${ready ? 'GRATIS' : 'MAÑANA'}</button></div>`;
   $('#btn-gift').onclick = () => {
     if (!giftReady()) return;
-    SAVE.giftDay = todayStr(); SAVE.gold += g.gold; SAVE.gems += g.gems; saveGame(); play('crown'); updateWallets(); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`, true);
+    SAVE.giftDay = todayStr(); SAVE.gold += g.gold; SAVE.gems += g.gems; missionEvent('gift', 1); saveGame(); play('crown'); updateWallets(); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`, true);
   };
   const L = SHOP[shopTab], gem = shopTab === 'gems';
   let h = '';
@@ -367,6 +370,7 @@ function updateBadges() {
   $('#feat-gacha').textContent = t ? `¡${t} ${t > 1 ? 'tiradas gratis' : 'tirada gratis'}!` : 'Tira x1, x10 o x50';
   $('#feat-shop').textContent = giftReady() ? '¡Regalo diario gratis!' : 'Oro, gemas y ofertas';
   $('#news-badge').hidden = SAVE.seenVer === NEWS_VER;
+  retosBadges();   // misiones, logros, pase y el botón del perfil
 }
 let toastTimer = null;
 function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classList.toggle('good', !!good); t.classList.toggle('menu', G.screen !== 'play'); t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400); }
@@ -383,8 +387,8 @@ function openNews() {
     + rest.map(n => `<h4>VERSIÓN ${n.v}</h4><ul>${n.real.map(t => `<li>${t}</li>`).join('')}</ul><ul class="joke">${n.joke.map(t => `<li>${t}</li>`).join('')}</ul>`).join('');
   $('#scr-news').hidden = false; $('#news-body').scrollTop = 0;
 }
-// al volver al menú principal: las novedades, si hay versión nueva
-function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (SAVE.seenVer !== NEWS_VER) openNews(); }
+// al volver al menú principal, de una en una: cómo te llamas (la primera vez), las novedades si hay versión nueva y el premio diario
+function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (retosPopups()) return; if (SAVE.seenVer !== NEWS_VER) { openNews(); return; } retosLogin(); }
 
 /* ---------- menú principal ---------- */
 function showMenu() {
@@ -397,7 +401,7 @@ $('#btn-inv').onclick = () => { play('select'); openInv(); };
 $('#btn-gacha').onclick = () => { play('select'); openGacha(); };
 $('#btn-shop').onclick = () => { play('select'); openShop(); };
 $('#btn-news').onclick = () => { play('select'); openNews(); };
-$('#btn-news-ok').onclick = () => { $('#scr-news').hidden = true; play('select'); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); updateBadges(); } };
+$('#btn-news-ok').onclick = () => { $('#scr-news').hidden = true; play('select'); stat('news', 1); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); updateBadges(); } titlePopups(); };
 for (const b of document.querySelectorAll('[data-back]')) b.onclick = () => { play('select'); showMenu(); };
 for (const b of document.querySelectorAll('[data-gt]')) b.onclick = () => { gachaTab = b.dataset.gt; play('select'); buildGachaText(); };
 for (const b of document.querySelectorAll('[data-pull]')) b.onclick = () => pull(+b.dataset.pull);
@@ -439,6 +443,7 @@ $('#btn-test').onclick = () => confirmBox('MODO PRUEBAS', 'Abre todos los mundos
 // pasar el progreso a otro móvil o PC con un código
 const saveCode = () => btoa(unescape(encodeURIComponent(JSON.stringify(SAVE))));
 $('#btn-export').onclick = () => {
+  stat('export', 1);
   const code = saveCode(), ta = $('#save-code'); ta.value = code; ta.select(); play('select');
   const done = ok => toast(ok ? 'Código copiado. Pégalo en el otro dispositivo.' : 'Copia a mano el código de la caja', ok);
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(() => done(true), () => done(false)); else done(false);

@@ -90,10 +90,10 @@ function build(k, c, r) {
   t.M = G.vs && G.vsCur === 'ai' ? NOMODS : cardMods(k); t.gritoT = 4;   // lo que lleva equipado la carta (el rival no lleva nada)
   // RNG (Memes): cada torre sale con una mutación al azar
   if (G.fac === 'memes') { const M = pick(CFG.passives.memes.muts); t.mut = Object.assign({ id: M.id, txt: M.txt }, PASSIVES.memes.muts[M.id]); pop(x, y - 56, M.txt, M.color, 15); }
-  G.towers.push(t); xpPlay(k); sfx('place'); puff(x, y, '#d9b77e', 10);
+  G.towers.push(t); xpPlay(k); cuenta('torre'); cuenta('play_' + k); cuenta('caos', D.cost); if (D.leader) cuenta('leader'); sfx('place'); puff(x, y, '#d9b77e', 10);
   return true;
 }
-function upgrade(t) { const c = upCost(t); if (t.lvl >= TD.maxLevel || G.gold < c) return; G.gold -= c; t.spent += c; t.lvl++; sfx('up'); pop(t.x, t.y - 50, '¡NIVEL ' + t.lvl + '!', '#ffcb3d', 16); ring(t.x, t.y, 40, 'rgba(255,203,61,.9)'); }
+function upgrade(t) { const c = upCost(t); if (t.lvl >= TD.maxLevel || G.gold < c) return; G.gold -= c; t.spent += c; t.lvl++; cuenta('mejora'); cuenta('caos', c); sfx('up'); pop(t.x, t.y - 50, '¡NIVEL ' + t.lvl + '!', '#ffcb3d', 16); ring(t.x, t.y, 40, 'rgba(255,203,61,.9)'); }
 function sell(t) { G.gold += sellOf(t); G.towers = G.towers.filter(o => o !== t); BLOCK[t.cell] = 0; reflow(); if (G.sel === t) G.sel = null; sfx('coin'); puff(t.x, t.y, '#d9b77e', 12); }
 
 /* ---------- ataques, pasivas y habilidades ---------- */
@@ -263,7 +263,7 @@ function kill(f) {
   if (e === 'nomuertos' && !F.boss && !f.revived && !f.minion) { f.revived = true; f.hp = Math.round(f.maxHp * E.hpFrac); f.stunT = Math.max(f.stunT, E.delay); f.seen.clear(); pop(f.x, f.y - topOf(f) - 8, '¡RENACE!', '#b98cff', 14); burst(f.x, f.y - 10, ['#b98cff', '#e6dcff'], f.r); sfx('pop'); return; }
   if (f.U && f.U.revive && !f.revU) { f.revU = true; f.hp = Math.round(f.maxHp * f.U.revive); f.stunT = Math.max(f.stunT, 0.8); pop(f.x, f.y - topOf(f) - 8, '¡RENACE!', '#b98cff', 14); return; }
   const gold = G.vs ? Math.ceil(F.gold * VS.bounty) : F.gold;
-  f.dead = true; G.gold += gold; G.kills++;
+  f.dead = true; G.gold += gold; G.kills++; cuenta('kill'); cuenta('ekf_' + e);
   if (f.lastT && f.lastT.M.T.iman) G.gold += Math.round(f.lastT.M.T.iman);
   if (f.U && f.U.clon && !f.isClone) for (let i = 0; i < 2; i++) { const g = spawnFoe(f.k, f, 1); g.hp = g.maxHp = Math.max(1, Math.round(f.maxHp * f.U.clon)); g.sh = g.shMax = 0; g.sc *= 0.8; g.isClone = true; g.U = Object.assign({}, g.U, { clon: 0, revive: 0, pause: 0 }); }
   // SECUELA: algunos de Cultura Pop vuelven en versión «2»
@@ -299,7 +299,7 @@ function startWave() {
   banner('OLEADA ' + G.wave + (G.wave === G.waves ? ' · ¡LA ÚLTIMA!' : '')); sfx('horn');
 }
 function waveDone() {
-  G.inWave = false; const b = TD.waveBonus(G.wave); G.gold += b; num(270, 420, '+' + b + ' de CAOS', '#ffcb3d', 20);
+  G.inWave = false; cuenta('wave'); const b = TD.waveBonus(G.wave); G.gold += b; num(270, 420, '+' + b + ' de CAOS', '#ffcb3d', 20);
   if (G.wave >= G.waves) return finish(true);
   G.nextT = 12;
 }
@@ -420,7 +420,8 @@ function finish(win) {
   if (G.vs) { const w = G.vsCur === 'ai'; setTimeout(() => showVsResult(w), 800); return; }   // en VS gana quien tumba la base del otro
   const L = G.level, st = win ? (G.lives >= TD.baseHp * 0.9 ? 3 : G.lives >= TD.baseHp / 2 ? 2 : 1) : 0;
   const first = win && !starsOf(L.id), first3 = win && st === 3 && starsOf(L.id) < 3;
-  G.rw = campReward(L, win, st, first, first3);
+  cierraRetos(win, { jefe: !!L.boss, estrellas: Math.max(0, st - starsOf(L.id)), vida: G.lives, camino: G.route.length });   // misiones y logros
+  G.rw = campReward(L, win, st, first, first3) + passMatch(win);
   if (win && st > starsOf(L.id)) { SAVE.stars[L.id] = st; saveGame(); }
   setTimeout(() => showResult(win, st, first), win ? 900 : 600);
 }
@@ -439,6 +440,7 @@ const VS_LEVEL = { id: 'VS', name: 'Modo VS', hp: 1, growth: 0, bud: 1 };
 const sendCost = k => Math.max(10, Math.round(FOES[k].cost * VS.sendCost / 5) * 5);
 const sendIncome = k => Math.max(1, Math.round(sendCost(k) * VS.incomeRate));
 function startVS(diff) {
+  G.rt = {};
   const fac = facNow(), rival = pick(FACTION_ORDER.filter(f => f !== fac && TOWERS[f]));
   const me = newBoard(fac, rival), ai = newBoard(rival, fac);
   // el rival empieza con una línea vertical en el centro (los enemigos la recorren entera y todas las torres les pegan)
@@ -476,7 +478,7 @@ function vsSteal(to) { const V = G.vs; if (V.stolen > 0) { to.lives = Math.min(V
 function vsSend(k) {
   const V = G.vs, c = sendCost(k); if (G.over || G.gold < c) return false;
   if (V.ai.spawnQ.length >= VS.queue) { num(270, 720, 'COLA LLENA', '#ff4b5c', 14); return false; }
-  G.gold -= c; xpPlay(k); V.me.income += sendIncome(k); V.me.sent++; V.ai.spawnQ.push({ k, gap: VS.gap, lvl: V.me.ulvl[k] || 1 });
+  G.gold -= c; xpPlay(k); cuenta('envio'); cuenta('caos', c); V.me.income += sendIncome(k); V.me.sent++; V.ai.spawnQ.push({ k, gap: VS.gap, lvl: V.me.ulvl[k] || 1 });
   num(270, 720, '+' + sendIncome(k) + ' income', '#ffcb3d', 14); sfx('horn'); return true;
 }
 // mejorar una unidad dentro de la partida: las que envíes a partir de ahora salen más duras y pegan más a la base
@@ -534,7 +536,7 @@ function fuseMate(t) {
 function fuse(t) {
   const o = fuseMate(t); if (!o) return;
   G.towers = G.towers.filter(x => x !== o); BLOCK[o.cell] = 0; reflow();
-  t.lvl++; t.spent += o.spent; t.dropT = 0.2;
+  t.lvl++; t.spent += o.spent; t.dropT = 0.2; cuenta('fusion'); if (t.lvl >= TD.fuseMax) cuenta('nivel5');
   puff(o.x, o.y, '#d9b77e', 12); ring(t.x, t.y, 46, 'rgba(197,140,255,.95)'); burst(t.x, t.y - 20, ['#c58cff', '#ffcb3d', '#fff6ea'], 18); pop(t.x, t.y - 54, '¡FUSIÓN! NIVEL ' + t.lvl, '#c58cff', 16); sfx('up');
 }
 
@@ -885,7 +887,7 @@ cv.addEventListener('pointerdown', e => {
 addEventListener('keydown', e => { if (e.key === 'Escape') { G.place = null; G.ghost = null; G.sel = null; hidePanel(); refreshTray(); } if (e.key === ' ' && G.screen === 'play') { e.preventDefault(); startWave(); } });
 
 function startLevel(L) {
-  G.vs = null;
+  G.vs = null; G.rt = {};
   Object.assign(G, { screen: 'play', level: L, gold: L.gold, lives: TD.baseHp, route: [], wave: 0, waves: L.waves, inWave: false, nextT: 0, spawnQ: [], foes: [], towers: [], projs: [], parts: [], nums: [], place: null, ghost: null, sel: null, over: false, paused: false, boss: null, kills: 0, hpMul: L.hp, fac: facNow(), efac: L.efac, teamDmg: 1, teamSpd: 0, shieldT: 0, denHitT: 0, denT: 0 });
   G.shield = G.fac === 'ciber' ? PASSIVES.ciber.amt : 0; BG = bgOf(G.fac);
   BLOCK.fill(0); reflow();
@@ -899,9 +901,9 @@ const BGS = {}, bgOf = f => BGS[f] || (BGS[f] = buildTDBackground(f));
 /* ---------- botones ---------- */
 $('#btn-wave').onclick = () => { if (G.vs) vsView(G.vs.view === 'me' ? 'ai' : 'me'); else { startWave(); hud(); } };
 $('#btn-mode').onclick = () => { if (G.vs.view !== 'me') vsView('me'); G.trayMode = G.trayMode === 'send' ? 'build' : 'send'; G.place = null; G.ghost = null; buildTray(); hud(); };
-$('#btn-speed').onclick = () => { G.speed = G.speed === 1 ? 2 : 1; hud(); };
+$('#btn-speed').onclick = () => { G.speed = G.speed === 1 ? 2 : 1; if (G.speed === 2) stat('speed2', 1); hud(); };
 const soundBtns = () => { for (const b of document.querySelectorAll('.btn-sound')) { b.textContent = SAVE.muted ? '🔇' : '🔊'; b.setAttribute('aria-label', SAVE.muted ? 'Activar sonido' : 'Silenciar sonido'); } };
-for (const b of document.querySelectorAll('.btn-sound')) b.onclick = () => { SAVE.muted = !SAVE.muted; saveGame(); soundBtns(); };
+for (const b of document.querySelectorAll('.btn-sound')) b.onclick = () => { SAVE.muted = !SAVE.muted; if (SAVE.muted) stat('mute', 1); saveGame(); soundBtns(); };
 
 /* ---------- arranque ---------- */
 let last = performance.now(), hudT = 0;

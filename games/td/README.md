@@ -94,6 +94,18 @@ Estas pantallas usan el código y los estilos del juego original, así que se ve
 
 En el modo VS, el rival no lleva equipo ni niveles. Las habilidades, los objetos y todos los precios están en `core/js/meta.js`.
 
+## Misiones, logros, pase de batalla, premio diario y perfil
+
+Son los de Fans of Rumble, con su mismo aspecto, y con las misiones y los logros propios de este juego.
+
+- **Misiones**: cada día salen 4 diarias (50 de oro, 10 gemas y 60 puntos de pase cada una) y cada lunes 4 semanales (300 de oro, 40 gemas y 250 puntos). Piden cosas de este juego: colocar torres, superar oleadas, fusionar, mejorar, ganar sin que toquen tu base, jugar o ganar en el modo VS…
+- **Logros**: más de 1.300 niveles repartidos en familias (I, II, III…). Cada nivel da gemas una sola vez. Categorías: batallas, facciones, cartas, campaña, enemigos, gashapón, constancia y secretos (de estos solo se ve una pista).
+- **Pase de batalla**: 30 niveles de 400 puntos. Ganar una partida da 100 puntos y perderla 40; las misiones dan el resto. La pista Ejecutiva es «de pago» de prueba: no se cobra nada. Los dos premios finales (Diploma de Becario del Mes y Corbata del CEO) son accesorios para el líder.
+- **Premio diario**: una ventana al entrar cada día, con 7 premios seguidos. Si un día no entras, vuelve al día 1.
+- **Perfil**: tu nombre (lo pregunta Lola la primera vez), tu avatar y tus números. Se abre tocando tu avatar en la portada.
+
+El sistema está en `core/js/retos.js`. Las misiones, los logros y lo que enseña el perfil de este juego están en `js/retos.js`, que también dice cómo se avisa de lo que pasa en una partida (`cuenta` y `cierraRetos`). Para añadir una misión o un logro basta con escribirlo ahí.
+
 ## Novedades (informe de parches)
 
 Al abrir el juego después de una actualización sale una ventana con lo que ha cambiado, y se puede volver a ver en el botón NOVEDADES del menú. Con cada versión nueva hay que subir `VERSION` (en `core/js/meta.js`) y añadir su entrada al principio de `NEWS` (en `js/td-menus.js`).

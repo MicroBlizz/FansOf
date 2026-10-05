@@ -25,6 +25,7 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/audio.js           efectos de sonido
   js/music.js           música
   js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
+  js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)
   js/idle.js            horas extra; se genera con herramientas/horas_extra.py
 games/
   rumble/               FANS OF RUMBLE, el juego original y el principal (ver games/rumble/README.md). Carga de core/ el cargador,
@@ -37,6 +38,7 @@ games/
     js/ajustes.js         LOS NÚMEROS DE ESTE JUEGO sobre los sistemas de core: qué hace y cuánto da cada habilidad y objeto,
                           sus facetas (torre y unidad), su economía y el nombre de su partida guardada
     js/novedades.js       su informe de parches
+    js/retos.js           sus misiones, sus logros y lo que enseña su perfil
     js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
     js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
@@ -65,7 +67,7 @@ Las mejoras se hacen primero en el Rumble (`games/rumble/`) y los demás juegos 
 |---|---|
 | La serie: razas, cartas y números, arte, canciones, frases e iconos | Solos: están en `core/js/serie/` y todos los juegos, el Rumble incluido, cargan ese mismo archivo. |
 | Estilos de los menús y horas extra | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
-| Progreso, colección, inventario, gashapón, tienda, opciones, guardado y sonido | Todavía no se heredan: `core/js/meta.js`, `menus.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
+| Progreso, colección, inventario, gashapón, tienda, opciones, retos (misiones, logros, pase, premio diario y perfil), guardado y sonido | Todavía no se heredan: `core/js/meta.js`, `menus.js`, `retos.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
 
 El tercer caso es el pendiente: mientras el Rumble no use esos archivos de `core/` en vez de los suyos, sus cambios en esas partes no llegan solos.
 

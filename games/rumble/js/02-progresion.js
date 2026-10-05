@@ -247,47 +247,6 @@ const QUIPS = {
   corruptPh: ['¡Por fin libre!', 'Phony me prometió fama', 'Mi contrato tenía letra pequeña', 'Gracias, necesitaba vacaciones', 'Dile a Phony que me voy', 'Volveré… en el remake', '¡Que suban el precio a otro!'],
   player: ['¡Ha sido el lag!', 'Nerfeadme esto', 'GG', 'Me han reportado', 'Vuelvo en 5 minutos', 'Era un plan', 'Respawn, por favor'],
 };
-// chat falso en directo
-const CHAT_USERS = [['ConejoFan_88', '#ffb04f'], ['LagLord', '#63cfe0'], ['ExDeMicroblizz', '#7da8ff'], ['TioDelPase', '#ffe14d'], ['DespedidoUnLunes', '#ff6b7a'], ['NerfEsto', '#d08cff'], ['GemaPerdida', '#ff8fd8'], ['Ardilla_Rabiosa', '#ff9a3c'], ['ClipItPls', '#9ef07a'], ['MamaDelStreamer', '#fda4af'], ['Becario_42', '#a3e635'], ['ElCEO_Real', '#60a5fa'], ['ZorroSigiloso', '#fb923c'], ['ParcheDia1', '#c4b5fd'], ['CAOSenjoyer', '#e879f9'], ['ModCansado', '#5ef2c0']];
-const CHAT = {
-  start: ['¡vamos {yo}!', 'he venido solo por {yo}', '{yo} contra Microblizz, me lo pido', '¡Empieza! A ver si hoy gana alguien que no sea Microblizz', 'primer', 'hola desde el trabajo 👀', 'llego tarde, ¿qué me he perdido?', '¡vamos rebelión!'],
-  idle: ['mi abuela juega mejor (y tiene 90 años)', 'POV: eres un becario de Microblizz', 'el chat está más vivo que los servidores de Microblizz', 'yo solo vengo por la música', 'apuesto 100 gemas a que gana', '¿dónde se compra el CAOS?', 'el CEO de Microblizz no sabe jugar a su propio juego', 'esto es mejor que la tele', 'nunca había visto tanto caos junto', 'nerf conejo', '¿esto es pay to win?', '¿cuándo sale para móvil?', 'mi primo trabaja en Microblizz y dice que todo va bien', 'mod, banéalo', 'primera vez aquí, ¿de qué va esto?', 'LOL', '¿quién va ganando?', 'jajaja el becario', 'pon música', '¿se puede jugar con mando?', 'el CEO es mi tío, no digáis nada', 'hype hype hype', '¿alguien ha leído los términos y condiciones?', 'esto es mejor que lo de Microblizz', 'Microblizz ha vuelto a subir el precio de las gemas', '¿el pase de batalla merece la pena?', 'Kappa', 'ese carril está solo', 'más ardillas, menos anuncios', 'Microblizz ha cerrado otro juego hoy', 'Microblizz compró mi juego favorito y lo cerró 😭', '¿cuántos juegos ha cerrado ya Microblizz?'],
-  towerP: ['¡{yo} no perdona!', '{yo} está on fire 🔥', '¡a por la siguiente!', 'una torre menos, un despido más para Microblizz', '¡TORRE! 🔥', 'Microblizz: «esa torre nos sobraba»', 'F por la torre', 'clip it!!', 'eso le ha dolido al CEO en la cartera', 'otra torre cerrada, como sus juegos jajaja'],
-  towerE: ['eso ha dolido', 'bueno… quedan más torres', 'uff', 'skill issue', 'eso pasa por no comprar el pack', 'F', '¡defiende ese carril!', 'Microblizz lo celebra subiendo los precios'],
-  leader: ['¡que salga el jefe!', 'ya viene el bueno', '¡LÍDER EN PISTA!', 'ahora sí'],
-  boss: ['¿otra vez despidos?', 'el jefe despide a todo el mundo', 'eso es pay to win', 'el jefe está chetado', 'nerf jefe ya'],
-  phase2: ['FASE 2 😱', 'se viene lo gordo', 'se ha enfadado el jefe'],
-  x2: ['¡CAOS x2! ahora sí', 'último minuto, nervios', '🍿🍿🍿'],
-  win: ['GG {yo} 👑', '{yo} para CEO', 'Microblizz quiere fichar a {yo} (para despedirle)', 'Microblizz va a cerrar este juego por envidia', 'el CEO ha tirado el café al ver esto', 'GG EZ', '¡VAMOOOS!', 'Microblizz dirá que lo tenía planeado', 'clip para TikTok', 'GG WP', '¡fuera robots!'],
-  // v0.9.12: el chat comenta lo que pasa en la partida
-  deploy: ['¡{X} al campo!', '{X} entra con ganas', 'me encanta {X}', '¿{X}? buena elección', 'con {X} esto se pone interesante', 'allá va {X}'],
-  enemyBig: ['¡cuidado, que viene {X}!', 'ojo con ese {X}', 'Microblizz saca a {X}, se viene lo gordo', '{X} en camino, ¡defiende!'],
-  multikill: ['¡MULTIKILL! 🔥', '¡triple despido!', 'eso ha sido un recorte de plantilla, pero al revés', 'clip it, clip it', '¡qué limpieza!'],
-  leaderDown: ['F por {X} 😢', '{X} vuelve enseguida, tranquilos', 'nooo, {X}', 'se ha caído {X}, ¡aguantad!'],
-  eLeaderDown: ['¡adiós, {X}!', '{X}, a la calle', '¡{X} despedido!', 'jajaja {X} fuera'],
-  kamikaze: ['¡BOOM! 💥', 'el castor ha cobrado su finiquito', 'eso le ha dolido a la torre', 'boom boom boom'],
-  stun: ['¡los ha congelado a todos! 🥶', 'eso es un recorte de movimiento', 'Microblizz: «aquí no se mueve nadie»', 'congelados como el sueldo'],
-  full: ['¡gasta el CAOS!', '10 de CAOS y quieto 😴', 'tienes el CAOS a tope, ¡saca algo!', 'ese CAOS no se gasta solo'],
-  afk: ['¿AFK?', '¿se ha dormido?', 'hola?? ¿hay alguien jugando?', 'se ha ido a por un café'],
-  baseLowE: ['¡que se cae la sede! 🔥', '¡último empujón!', 'la sede está temblando', 'Microblizz ya prepara el comunicado'],
-  baseLowP: ['¡defiende la base!', 'esto se pone feo', 'pon algo delante, ¡rápido!', 'que no entren, que no entren'],
-  comeback: ['¡REMONTADA! 🔥', '¡empate! ¡qué partida!', 'nunca dudé (mentira)', 'esto no se acaba hasta que se acaba'],
-  close: ['esto se decide al final 😬', 'nervios', 'empate y casi sin tiempo', 'que alguien tire una torre ya'],
-  heal: ['¡la curandera está en todo!', 'curas gratis, no como en Microblizz', 'menos mal que hay enfermera', 'esa curación ha salvado la partida'],
-  stealth: ['¿de dónde ha salido ese?', '¡SORPRESA!', 'nadie lo ha visto venir', 'golpe por la espalda, clásico'],
-  revive: ['¡se levanta! 🧟', 'ni muerto se rinde', 'Renacer: el mejor seguro de vida', 'vuelve del más allá'],
-  ability: ['eso es una habilidad del gashapón 😮', '¿qué ha sido eso?', 'menuda suerte en las cápsulas', 'esa habilidad está rotísima'],
-  hard: ['en Difícil hasta los becarios pegan fuerte', '¿Difícil? a ver cuánto aguanta', 'su líder va equipado hasta los dientes', 'aquí sin subir cartas no se gana'],
-  mythic: ['¿Mítica? valiente 😱', 'modo mítico: aquí no gana nadie', 'la ruleta de esta semana es cruel', 'esto es para los que no duermen'],
-  lose: ['ánimo {yo}, mañana más', '{yo} ha sido despedido… solo de esta partida', 'mañana más', 'Microblizz: «esto lo arreglamos en el próximo parche»', 'GG', 'nerf Microblizz', 'la culpa es del lag', 'en la próxima sí', 'F en el chat', 'compra el pack (es broma)'],
-  // v0.9.13
-  sequel: ['¡SECUELA! 🎬', 'nadie la pidió, pero ahí está la 2', 'la secuela siempre vuelve', 'esto pide tercera parte'],
-  remaster: ['¿otra vez? ¿y a 70 €? 😤', 'remaster = mismo juego, nuevo precio', 'ese robot ya lo había comprado', 'Phony lo vuelve a vender, como siempre'],
-  shieldwall: ['¡MURO DE ESCUDOS! 🛡️', 'ese vikingo protege a todos', 'barrera dorada, qué bonito'],
-  action: ['¡ACCIÓN! 🎬', 'la Directora lo tiene todo controlado', 'ahora sí, a toda velocidad'],
-  expire: ['jajaja, le ha caducado la licencia', 'eso pasa por alquilar', 'ni la licencia les dura', 'contenido no disponible en tu región 😂'],
-  sub: ['¿otra vez me cobran? 😡', 'Phony cobrando la suscripción en plena partida', 'pago y pago y sigo sin disco', 'cancela la suscripción, ¡ya!'],
-};
 // v0.9.13: en la campaña 2 el chat se queja de Phony (estas frases sustituyen a las de Microblizz)
 const CHAT_PH = {
   start: ['¡Empieza! A ver si hoy alguien le gana a Phony', 'primer', 'hola desde el trabajo 👀', 'llego tarde, ¿qué me he perdido?', '¡vamos rebelión! #DevolvedLosDiscos'],
@@ -513,7 +472,6 @@ const GAME_URL = 'jdanielhl1984-commits.github.io/fans-of-rumble';
 
 /* ---------- guardado (en el navegador; se puede exportar e importar) ---------- */
 const SAVE_KEY = 'for-save-1';
-const VERSION = '0.9.28';
 function newSave() { return { v: 1, gold: ECON.start.gold, gems: ECON.start.gems, units: {}, unlocked: ['animales'], camp: {}, inv: [], invSeq: 0, abEquip: {}, equip: {}, pity: { ab: 0, abL: 0, eq: 0, eqL: 0, qab: 0, qeq: 0, cd: 0, cdL: 0 }, cards: {}, decks: {}, bossRec: {}, bossPay: {}, bossSel: { wi: 6, d: 'n' }, daily: null, weekly: null, tickets: 0, pass: { xp: 0, prem: false, free: [], paid: [] }, giftDay: '', chatOff: false, bestBoss: 0, lastFac: 'animales', tut: { done: false, step: 0 }, tutGift: {}, login: { last: '', day: 0, best: 0 }, stats: {}, achDone: [], achSeen: [], starter: false, speed2: false, seenVer: '', campH: {}, campM: {}, rlWeek: '', mythPrize: {}, facItem: {} }; }
 // v0.9.9: antes se guardaba «tengo esta habilidad (rango 1-3)» y «tengo este objeto»; ahora cada copia tiene su calidad.
 // Las partidas antiguas se convierten sin perder nada: la habilidad conserva su valor exacto y los objetos quedan como estaban.
@@ -564,23 +522,12 @@ let SAVE = loadSave();
 function saveGame() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* storage blocked: progress lives in memory */ } }
 const uSave = k => (SAVE.units[k] || (SAVE.units[k] = { lvl: 1, xp: 0 }));
 const isUnlocked = f => SAVE.unlocked.includes(f);
-function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
-const OL = '#20102c';
-const FONT_D = '"Luckiest Guy", "Arial Black", Impact, sans-serif';
-const REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* ---------- utils ---------- */
-const rand = (a, b) => a + Math.random() * (b - a);
-const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-const lerp = (a, b, t) => a + (b - a) * t;
+/* ---------- utilidades del combate (las generales están en core/js/sistema/utiles.js) ---------- */
 const other = t => (t === 'p' ? 'e' : 'p');
-const pick = a => a[(Math.random() * a.length) | 0];
-const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 // v0.9.14: los sanadores curan en un cono de 90° hacia delante y se quedan a esta distancia detrás de la unidad que siguen
 const HEAL_CONE = Math.PI / 2, HEAL_COS = Math.cos(HEAL_CONE / 2), HEAL_BACK = 58;
 const edgeDist = (a, b) => dist(a, b) - a.r - b.r;
 const nearestBridge = x => BRIDGES.reduce((b, c) => (Math.abs(x - c) < Math.abs(x - b) ? c : b), BRIDGES[0]);
 const laneBridge = i => (i === 0 ? BRIDGES[0] : BRIDGES[BRIDGES.length - 1]);   // v0.9.19: el puente del carril izquierdo (0) o derecho (1)
-function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-function rrPath(c, x, y, w, h, r) { c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
 

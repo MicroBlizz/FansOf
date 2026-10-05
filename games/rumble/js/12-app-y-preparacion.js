@@ -1,5 +1,6 @@
 // Fans of Rumble · Instalar como app y pantalla de preparación
 'use strict';
+document.querySelector('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION;   // la versión sale de index.html (core/js/nucleo.js)
 // ---- instalar en el móvil como una app
 let installEvt = null;
 window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });

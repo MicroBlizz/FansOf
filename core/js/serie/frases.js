@@ -1,5 +1,7 @@
-// Fans of Rumble · chat falso en directo: usuarios y frases, copiados sin cambios de js/02-progresion.js del original
+// Fans Of · La serie: frases de humor que valen para cualquier juego (el chat falso en directo y las del final de la partida).
+// Las que hablan de algo que solo existe en un juego (sus cartas, sus jefes, sus modos) van en ese juego.
 'use strict';
+/* ---------- chat falso en directo: quién escribe y qué dice según lo que pasa ({yo} = el jugador, {X} = una carta) ---------- */
 const CHAT_USERS = [['ConejoFan_88', '#ffb04f'], ['LagLord', '#63cfe0'], ['ExDeMicroblizz', '#7da8ff'], ['TioDelPase', '#ffe14d'], ['DespedidoUnLunes', '#ff6b7a'], ['NerfEsto', '#d08cff'], ['GemaPerdida', '#ff8fd8'], ['Ardilla_Rabiosa', '#ff9a3c'], ['ClipItPls', '#9ef07a'], ['MamaDelStreamer', '#fda4af'], ['Becario_42', '#a3e635'], ['ElCEO_Real', '#60a5fa'], ['ZorroSigiloso', '#fb923c'], ['ParcheDia1', '#c4b5fd'], ['CAOSenjoyer', '#e879f9'], ['ModCansado', '#5ef2c0']];
 const CHAT = {
   start: ['¡vamos {yo}!', 'he venido solo por {yo}', '{yo} contra Microblizz, me lo pido', '¡Empieza! A ver si hoy gana alguien que no sea Microblizz', 'primer', 'hola desde el trabajo 👀', 'llego tarde, ¿qué me he perdido?', '¡vamos rebelión!'],
@@ -39,4 +41,15 @@ const CHAT = {
   action: ['¡ACCIÓN! 🎬', 'la Directora lo tiene todo controlado', 'ahora sí, a toda velocidad'],
   expire: ['jajaja, le ha caducado la licencia', 'eso pasa por alquilar', 'ni la licencia les dura', 'contenido no disponible en tu región 😂'],
   sub: ['¿otra vez me cobran? 😡', 'Phony cobrando la suscripción en plena partida', 'pago y pago y sigo sin disco', 'cancela la suscripción, ¡ya!'],
+};
+/* ---------- la frase del final: si ganas (p), si pierdes (e) o si hay empate (d), contra Microblizz y contra Phony ---------- */
+const QUOTES = {
+  p: ['Microblizz anuncia que cerrará otro juego para recuperar el dinero.', 'SurvivalBot ha sido cancelado. Otra vez.', 'Microblizz promete arreglar su robot… dentro de diez años.'],
+  e: ['Microblizz ha cerrado tu facción. Tus cosas están en esa caja.', 'Microblizz te da las gracias por tu dinero.', 'Error 37: no se pudo conectar con la victoria.'],
+  d: ['Empate. Microblizz dirá que ha ganado.'],
+};
+const QUOTES_PH = {
+  p: ['Phony anuncia que subirá la suscripción para compensar la derrota.', 'La PayStation ha sido devuelta. Sin ticket.', 'Phony promete volver a poner lector de discos… en la PayStation 7.'],
+  e: ['Phony te ha quitado la licencia de la victoria.', 'Phony te da las gracias por tu suscripción.', 'Error de conexión: no se pudo cargar la victoria.'],
+  d: ['Empate. Phony te cobrará la revancha.'],
 };

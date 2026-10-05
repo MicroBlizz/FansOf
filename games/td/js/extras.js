@@ -83,3 +83,6 @@ finish = function (win) { if (!G.over) chatBurst((G.vs ? G.vsCur === 'ai' : win)
 spawnFoe = function (k, at, hpMul) { const f = base.spawnFoe(k, at, hpMul); if (FOES[k].boss) chatBurst('boss', 2); return f; };
 build = function (k, c, r) { const ok = base.build(k, c, r); if (ok && TOWERS[G.fac][k].leader && !(G.vs && G.vsCur === 'ai')) chatSay('leader'); return ok; };
 showScreen = function (id) { base.showScreen(id); if (id !== null) { $('#tut').hidden = true; $('#feed').hidden = true; $('#chat').innerHTML = ''; } };
+
+// todo cargado: arranca el juego
+boot();

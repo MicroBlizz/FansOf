@@ -13,9 +13,12 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   css/base.css          colores, letras, contornos, marco de la pantalla y capa de interfaz de 540 x 960
   css/menus.css         los menús del original; se genera con herramientas/estilos_menus.py
   img/                  iconos
-  js/utils.js           utilidades pequeñas que necesita el arte
-  js/vendor/            copiado sin cambios del original: razas, cartas y números (01-config), arte (03-arte),
-                        canciones (05-musica), frases del chat (02-chat), iconos y frases del final (08-textos)
+  js/nucleo.js          EL CARGADOR: cada juego lo pone en su index.html con su versión (?v=) y él carga, en orden, lo común y el juego.
+                        De esa versión salen VERSION, el ?v= de todos los archivos y la copia para jugar sin conexión
+  js/sw.js              jugar sin conexión, igual para todos los juegos (cada juego lo usa desde un sw.js de dos líneas)
+  js/sistema/utiles.js  utilidades pequeñas que usan todos los sistemas
+  js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
+                        canciones, frases de humor e iconos
   js/meta.js            el SISTEMA de progreso: oro y gemas, niveles y experiencia, catálogo de habilidades y objetos,
                         calidades, equipo, gashapón y tienda. Los números de cada juego no están aquí
   js/save.js            guardado en el navegador (el sistema; cada juego tiene su propia partida)
@@ -24,22 +27,23 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
   js/idle.js            horas extra; se genera con herramientas/horas_extra.py
 games/
-  rumble/               FANS OF RUMBLE, el juego original (ver games/rumble/README.md): sus archivos sin cambios,
-                        salvo que 01-config.js, 03-arte.js y los iconos los carga de core/
+  rumble/               FANS OF RUMBLE, el juego original y el principal (ver games/rumble/README.md). Carga de core/ el cargador,
+                        la serie y las utilidades; el resto (progreso, menús, sonido) todavía es suyo
   td/                   FANS OF TD (su documentación está en games/td/README.md)
     index.html            la página del juego: carga core/ y luego lo suyo
     manifest.webmanifest  para instalarlo como app
-    sw.js                 su modo sin conexión
+    sw.js                 su modo sin conexión (dos líneas: usa core/js/sw.js)
     css/td.css            marcador, bandeja de cartas, panel de la torre y ajustes sobre los menús comunes
     js/ajustes.js         LOS NÚMEROS DE ESTE JUEGO sobre los sistemas de core: qué hace y cuánto da cada habilidad y objeto,
                           sus facetas (torre y unidad), su economía y el nombre de su partida guardada
-    js/novedades.js       su versión y su informe de parches
+    js/novedades.js       su informe de parches
     js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
     js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
     js/extras.js          chat en directo, caja de avisos, tutorial y sus opciones
-herramientas/           sincronizar.py pasa a core/ las mejoras del Rumble (llama a los otros dos scripts)
+herramientas/           sincronizar.py pasa a core/ las mejoras del Rumble (llama a estilos_menus.py y horas_extra.py);
+                        servidor.py para probar en local; base.py y pruebas/ son el comparador «¿he roto algo?»
 ```
 
 ## Qué va en cada sitio
@@ -59,21 +63,23 @@ Las mejoras se hacen primero en el Rumble (`games/rumble/`) y los demás juegos 
 
 | Qué | Cómo llega a los demás juegos |
 |---|---|
-| Razas, cartas y números (`01-config.js`) y arte (`03-arte.js`) | Solos: el Rumble los carga de `core/js/vendor/`, así que es el mismo archivo para todos. |
-| Estilos de los menús, horas extra, canciones, chat y frases | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
+| La serie: razas, cartas y números, arte, canciones, frases e iconos | Solos: están en `core/js/serie/` y todos los juegos, el Rumble incluido, cargan ese mismo archivo. |
+| Estilos de los menús y horas extra | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
 | Progreso, colección, inventario, gashapón, tienda, opciones, guardado y sonido | Todavía no se heredan: `core/js/meta.js`, `menus.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
 
 El tercer caso es el pendiente: mientras el Rumble no use esos archivos de `core/` en vez de los suyos, sus cambios en esas partes no llegan solos.
 
 ## Añadir un juego
 
-1. Crea `games/<nombre>/` con su `index.html` (copia el orden de carga de `games/td/index.html`) y su `js/ajustes.js`, con sus números y el nombre de su partida guardada.
-2. Si se va a instalar como app, dale su `manifest.webmanifest` y su `sw.js` (copia los del TD y cambia la lista de archivos).
+1. Crea `games/<nombre>/` con su `index.html` (copia de `games/td/index.html` cómo llama a `core/js/nucleo.js`) y su `js/ajustes.js`, con sus números y el nombre de su partida guardada.
+2. Si se va a instalar como app, dale su `manifest.webmanifest` y su `sw.js` (copia los del TD tal cual: no hay lista de archivos que mantener).
 3. Añade su tarjeta al selector, el `index.html` de la raíz.
 
 ## Publicar
 
-GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. Con cada cambio que note el jugador en el TD hay que subir `VERSION` y añadir la entrada a `NEWS` (los dos en `games/td/js/novedades.js`) y cambiar el `?v=` de los enlaces de `games/td/index.html`. En el Rumble: `VERSION` en `js/02-progresion.js`, la línea de versión de su `index.html`, `CACHE` en su `sw.js` y `NEWS` en `js/11-logros.js`.
+GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. La versión de cada juego se escribe en un solo sitio: el `?v=` de `core/js/nucleo.js` en su `index.html`. Hay que cambiarla cada vez que se publica algo. Si el jugador lo va a notar, además se añade el informe al principio de `NEWS`, en el `js/novedades.js` del juego.
+
+Antes de publicar un cambio que no debería notarse, el comparador lo comprueba: `python herramientas/base.py`, `python herramientas/servidor.py` y abrir `http://localhost:8765/herramientas/pruebas/`.
 
 ## Licencia
 

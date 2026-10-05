@@ -47,12 +47,6 @@ function render() {
   if (G.flash > 0.01) { ctx.setTransform(VIEW.k, 0, 0, VIEW.k, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = `rgba(255,246,225,${Math.min(0.6, G.flash)})`; ctx.fillRect(0, 0, W, VIEW.LH); G.flash *= Math.pow(0.02, rdt); }
 }
 // v0.9.8: luz suave desde arriba a la izquierda y bordes algo más oscuros (se pinta una sola vez, dentro del fondo)
-function paintLight(x) {
-  const v = x.createRadialGradient(W / 2, H * 0.47, H * 0.3, W / 2, H * 0.47, H * 0.7); v.addColorStop(0, 'rgba(20,6,36,0)'); v.addColorStop(1, 'rgba(20,6,36,.32)');
-  x.fillStyle = v; x.fillRect(0, 0, W, H);
-  const sl = x.createRadialGradient(70, 120, 0, 70, 120, 440); sl.addColorStop(0, 'rgba(255,238,200,.13)'); sl.addColorStop(1, 'rgba(255,238,200,0)');
-  x.fillStyle = sl; x.fillRect(0, 0, W, H);
-}
 // v0.9.8: ambiente animado en cada mitad del campo según la facción
 const AMB = { list: [], key: '' };
 const AMB_KIND = { animales: 'butterfly', nomuertos: 'wisp', streamers: 'heart', heroes: 'mote', ciber: 'bit', memes: 'confetti', gamer: 'orb', olvidados: 'pixel', pop: 'flashbulb' };

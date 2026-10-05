@@ -1,8 +1,8 @@
-// Fans of TD · Versión y novedades: el informe de cada parche, que sale solo la primera vez que abres el juego tras actualizarse.
-// Con cada cambio que note el jugador: sube VERSION, cambia el ?v= de index.html y pon aquí arriba del todo lo nuevo
-// (lista «real» en lenguaje llano y «joke» con una o dos notas de humor de Microblizz o Phony).
+// Fans of TD · Novedades: el informe de cada versión, la más nueva primero.
+// real: lo nuevo de verdad, en lenguaje llano · joke: una o dos notas de humor de Microblizz o Phony.
+// La primera entrada es la que ve el jugador al abrir el juego después de actualizarse.
+// La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
-const VERSION = '0.9.5';
 const NEWS = [
   { v: '0.9.5', real: [
       'Cambio interno: los números propios de Fans of TD (qué hace cada objeto y cada habilidad, y sus recompensas) están ahora en un archivo de ajustes aparte. No cambia nada al jugar.'],

@@ -108,6 +108,6 @@ El ajuste: las 8 primeras vueltas de cada tema (32 compases) son idénticas al o
 
 En el menú principal, **Opciones** tiene las mismas filas que el original y en el mismo orden: volumen, música, música del menú (la de cualquier raza o jefe), números de daño, avisos de las unidades (encima o en una caja abajo a la derecha), chapas, sangre, temblor de pantalla, chat en directo, modo pruebas (todo abierto, 3.000.000 de oro y 5.000 gemas), pasar el progreso a otro dispositivo con un código, novedades, tutorial, instalar y empezar de cero.
 
-El **chat en directo** usa las frases del original (`core/js/vendor/02-chat.js`). El **tutorial** es una partida guiada en el nivel 1-1: sale sola la primera vez y se puede repetir desde Opciones. Todo esto vive en `games/td/js/extras.js`.
+El **chat en directo** usa las frases del original (`core/js/serie/frases.js`). El **tutorial** es una partida guiada en el nivel 1-1: sale sola la primera vez y se puede repetir desde Opciones. Todo esto vive en `games/td/js/extras.js`.
 
 **Instalar** abre el juego como una app, a pantalla completa (`manifest.webmanifest`). Instalado o no, cuando se abre desde la web guarda una copia para funcionar sin conexión (`sw.js`); siempre que hay conexión pide primero la última versión.

@@ -1,8 +1,6 @@
-// Fans Of · Las canciones del juego original: copiadas sin cambios de js/05-audio.js de Fans of Rumble (escalas, secuencias y los 25 temas).
+// Fans Of · La serie: las canciones. Están escritas como partituras (no hay archivos de sonido): el motor de música las toca nota a nota.
+// Una por facción, la del menú, una por jefe y las dos del final de la partida. Un juego puede añadir las suyas con Object.assign(TRACKS, {…}).
 'use strict';
-/* =========================================================
-   MUSIC (synthesised, no files): menu, one theme per faction, boss, last-minute rush, win / lose jingles
-   ========================================================= */
 const SCALES = { maj: [0, 2, 4, 5, 7, 9, 11], min: [0, 2, 3, 5, 7, 8, 10], phr: [0, 1, 3, 5, 7, 8, 10], hmin: [0, 2, 3, 5, 7, 8, 11], wt: [0, 2, 4, 6, 8, 10] };
 // "4 - . 2" -> [{ s: 0, v: 4, n: 2 }, { s: 3, v: 2, n: 1 }]   (s = step 0-15, n = length in steps; "-" holds, "." rests, "?" = random note)
 function mseq(str) {

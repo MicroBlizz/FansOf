@@ -336,5 +336,3 @@ $('#btn-ib-close').addEventListener('click', () => { $('#scr-idlebox').hidden = 
 let idleLast = performance.now();
 (function idleLoop(now) { const dt = Math.min(0.1, ((now || idleLast) - idleLast) / 1000); idleLast = now || idleLast; try { idleFrame(dt); } catch (e) { /* el menú nunca debe pararse por la escena */ } requestAnimationFrame(idleLoop); })();
 
-// todo cargado: arranca el juego
-boot();

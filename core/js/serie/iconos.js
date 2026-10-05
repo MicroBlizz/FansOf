@@ -1,5 +1,18 @@
-// Fans of Rumble · iconos de las pasivas, estrella y frases del final de partida: copiados sin cambios de js/08-controles.js y js/09-menus.js del original
+// Fans Of · La serie: los iconos que se repiten en todos los juegos (monedas, ranuras, pasivas, estrellas) y el color de cada facción.
+// Son dibujos escritos como texto (SVG), listos para meterlos en el HTML de un botón o de una lista.
 'use strict';
+/* ---------- monedas y premios ---------- */
+const COIN_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.8"/><circle cx="10" cy="10" r="5" fill="none" stroke="#c48a10" stroke-width="1.4"/><path d="M10 6.8v6.4" stroke="#c48a10" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const GEM_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10l4 5-9 10L1 8z" fill="#ff5fd2" style="stroke: var(--outline)" stroke-width="1.6" stroke-linejoin="round"/><path d="M1 8h18M7 3l3 15M13 3l-3 15" stroke="#b81e8f" stroke-width="1" fill="none"/></svg>';
+const TICKET_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 18 6v2a2 2 0 0 0 0 4v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 2 14v-2a2 2 0 0 0 0-4z" fill="#7df3ff" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 4.5v11" stroke="#20102c" stroke-width="1.2" stroke-dasharray="1.6 1.6"/></svg>';
+/* ---------- inventario: una ranura por tipo de objeto y el candado de las copias bloqueadas ---------- */
+const SLOT_SVG = {
+  weapon: '<svg viewBox="0 0 24 24"><path d="M5 19l3-3M7 21l-4-4M8 16L19 5l1-2-2 1L7 15z" stroke="#20102c" stroke-width="2" fill="#cdd5e0" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+  head: '<svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0v2H4z" fill="#cdd5e0" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/><path d="M8 18v-3h8v3" stroke="#20102c" stroke-width="2" fill="none"/></svg>',
+  acc: '<svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="3" fill="#cdd5e0" stroke="#20102c" stroke-width="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#20102c" stroke-width="2" fill="none"/></svg>',
+};
+const LOCK_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="#ffcb3d" stroke="#20102c" stroke-width="1.4"/><path d="M5.3 7V5.2a2.7 2.7 0 0 1 5.4 0V7" stroke="#20102c" stroke-width="1.6" fill="none"/></svg>';
+/* ---------- pasivas de las facciones ---------- */
 const FLAME_SVG = '<svg viewBox="0 0 16 20" aria-hidden="true"><path d="M8 1c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4 3-6 0 2 1 3 2 3 0-3-1-5 1-8z" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 10c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1.5-3 .5 1 1 1.5 1.5 1.5 0-1.5-.5-2.5 0-3.5z" fill="#ff5a2a"/></svg>';
 const SOUL_SVG = '<svg viewBox="0 0 16 20" aria-hidden="true"><path d="M2 18V8a6 6 0 0 1 12 0v10l-2.5-2-2 2-1.5-2-1.5 2-2-2z" fill="#c8ffe9" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><circle cx="6" cy="9" r="1.4" fill="#20102c"/><circle cx="10" cy="9" r="1.4" fill="#20102c"/></svg>';
 const ICONS = {
@@ -12,14 +25,8 @@ const ICONS = {
   clap: '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="8" width="16" height="10" rx="1.5" fill="#2b2d3a" style="stroke: var(--outline)" stroke-width="1.5"/><path d="M2 8l1-5 15 0-1 5z" fill="#fff" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><path d="M5 3l2 5M10 3l2 5M15 3l1.5 5" stroke="#20102c" stroke-width="1.6"/><path d="M5 12h10M5 15h7" stroke="#ff6b9a" stroke-width="1.4"/></svg>',
   pad: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5h10a4 4 0 0 1 4 4.5l-.5 4a2.5 2.5 0 0 1-4.3 1.4L12.5 13h-5l-1.7 1.9A2.5 2.5 0 0 1 1.5 13.5l-.5-4A4 4 0 0 1 5 5z" fill="#d1fae5" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/><path d="M5.5 7.6v3.2M3.9 9.2h3.2" stroke="#20102c" stroke-width="1.5" stroke-linecap="round"/><circle cx="13.6" cy="8.4" r="1.2" fill="#16a34a"/><circle cx="15.6" cy="10.4" r="1.2" fill="#ff3348"/></svg>',
 };
+/* ---------- resultado de una partida ---------- */
+const CROWN_SVG = '<svg viewBox="0 0 24 20"><path d="M2 17 L3 5 L8.5 10 L12 2 L15.5 10 L21 5 L22 17 Z" fill="currentColor" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 const STAR_SVG = '<svg viewBox="0 0 24 22"><path d="M12 1.5l3.1 6.4 7 1-5.1 4.9 1.2 7L12 17.5l-6.2 3.3 1.2-7L1.9 8.9l7-1z" fill="currentColor" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/></svg>';
-const QUOTES = {
-  p: ['Microblizz anuncia que cerrará otro juego para recuperar el dinero.', 'SurvivalBot ha sido cancelado. Otra vez.', 'Microblizz promete arreglar su robot… dentro de diez años.'],
-  e: ['Microblizz ha cerrado tu facción. Tus cosas están en esa caja.', 'Microblizz te da las gracias por tu dinero.', 'Error 37: no se pudo conectar con la victoria.'],
-  d: ['Empate. Microblizz dirá que ha ganado.'],
-};
-const QUOTES_PH = {
-  p: ['Phony anuncia que subirá la suscripción para compensar la derrota.', 'La PayStation ha sido devuelta. Sin ticket.', 'Phony promete volver a poner lector de discos… en la PayStation 7.'],
-  e: ['Phony te ha quitado la licencia de la victoria.', 'Phony te da las gracias por tu suscripción.', 'Error de conexión: no se pudo cargar la victoria.'],
-  d: ['Empate. Phony te cobrará la revancha.'],
-};
+/* ---------- el color de cada facción ---------- */
+const FAC_COLOR = { animales: '#ff9a3c', nomuertos: '#5ef2c0', streamers: '#c084fc', heroes: '#ffcb3d', ciber: '#22e3ff', memes: '#a3e635', gamer: '#4ade80', olvidados: '#d6a96a', pop: '#ff6b9a' };

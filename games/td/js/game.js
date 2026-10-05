@@ -756,7 +756,6 @@ function drawRoute(route, col) {
 /* =========================================================
    INTERFAZ
    ========================================================= */
-const $ = s => document.querySelector(s);
 function showScreen(id) { if (id !== null) { $('#btn-mode').hidden = true; $('#btn-wave').hidden = true; hidePanel(); } for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id; $('#hud').hidden = $('#tray').hidden = id !== null; }
 function portrait(cnv, key, h, flip = 1) {
   const k = 3; cnv.width = cnv.clientWidth * k || 180; cnv.height = cnv.clientHeight * k || 180;
@@ -923,4 +922,4 @@ async function boot() {
   window.__TD = { G, TOWERS, vsUpgrade, cardMods, startVS, vsUpdate, vsSend, vsView, fuse, fuseMate, startLevel, startWave, build, sell, upgrade, update, canPlace, whyNot, flow, BLOCK, ENTRY, WORLDS_TD, SAVE, get DIST() { return DIST; } };   // para las pruebas automáticas
   requestAnimationFrame(frame);
 }
-// boot() se llama al final de core/js/idle.js, cuando ya están cargados los menús
+// boot() se llama al final de js/extras.js, el último archivo del juego

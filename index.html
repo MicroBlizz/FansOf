@@ -73,13 +73,12 @@ function show(id, ver, entries) {
   box.querySelector('[data-news]').innerHTML = entries.length ? entries.map(e => `<h3>Versión ${e.v}</h3>` + list(e.real) + list(e.joke, 'joke')).join('') : 'No se han podido leer las novedades.';
 }
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
-// Fans of TD: su versión y toda su lista de parches están en games/td/js/novedades.js
-text('games/td/js/novedades.js').then(src => { const ver = (/const VERSION = '([^']+)'/.exec(src) || [])[1]; show('g-td', ver, grab(src, 'NEWS', '];') || []); }).catch(fail('g-td'));
-// Fans of Rumble: la versión está en 02-progresion.js y las novedades de esa versión, en 11-logros.js
-Promise.all([text('games/rumble/js/02-progresion.js'), text('games/rumble/js/11-logros.js')]).then(([a, b]) => {
-  const ver = (/const VERSION = '([^']+)'/.exec(a) || [])[1], n = grab(b, 'NEWS', '};');
-  show('g-rumble', ver, n ? [{ v: ver, real: n.real, joke: n.joke }] : []);
-}).catch(fail('g-rumble'));
+// Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
+for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/']]) {
+  Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')]).then(([page, news]) => {
+    show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1], grab(news, 'NEWS', '];') || []);
+  }).catch(fail(id));
+}
 </script>
 </body>
 </html>

@@ -253,26 +253,20 @@ function claimLogin() {
   stat('login', 1); saveGame(); updateWallets(); play('win'); toast(`Día ${st.day}: ${rewardTxt(r)}`, true);
 }
 $('#btn-login').addEventListener('click', claimLogin);
-// ---- novedades: lo nuevo de verdad y las «notas» de Microblizz
-const NEWS = {
-  real: ['<b>HORAS EXTRA</b> (0.9.28): cada líder hace ahora su propio especial. NecroLord invoca esqueletos, CyberMarine llama a sus drones, el Vikingo levanta su muro de escudos… Antes todos saltaban como CrazyBunny.',
-    '<b>¡YA HAY APP DE ANDROID!</b> (de prueba). En la app, el botón ATRÁS del móvil pausa la partida, cierra ventanas y vuelve al menú.',
-    '<b>TU PERFIL</b>: Lola te pregunta cómo te llamas. Tu nombre sale en la Arena, en el chat de las partidas y en los mensajes de Lola.',
-    'Toca tu avatar arriba a la izquierda del menú para ver tus números (Arena, copas, estrellas, logros…), cambiar el nombre o elegir avatar entre los líderes de tus facciones.',
-    '<b>Golpes con más jugo</b> (0.9.24) y opción de <b>Temblor de pantalla SÍ/NO</b> en Opciones (0.9.25).'],
-  joke: ['Microblizz quería cobrarte 9,99 € por cambiar de nombre. Lola dijo que no.', 'El chat ya sabe cómo te llamas. El CEO de Microblizz, también.', 'IAhorro ha intentado llamarse como tú. Le salió «Usuario_7714».'],
-};
+// ---- novedades: lo nuevo de verdad y las «notas» de Microblizz (la lista está en js/novedades.js)
+const NEWS_VER = NEWS[0].v;   // la última versión con novedades: solo se enseñan solas cuando cambia
 function openNews() {
-  $('#news-title').textContent = 'NOVEDADES · ' + VERSION;
-  $('#news-body').innerHTML = `<h4>LO NUEVO</h4><ul>${NEWS.real.map(t => `<li>${t}</li>`).join('')}</ul><h4>NOTAS DE MICROBLIZZ Y PHONY</h4><ul class="joke">${NEWS.joke.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  const N = NEWS[0];
+  $('#news-title').textContent = 'NOVEDADES · ' + N.v;
+  $('#news-body').innerHTML = `<h4>LO NUEVO</h4><ul>${N.real.map(t => `<li>${t}</li>`).join('')}</ul><h4>NOTAS DE MICROBLIZZ Y PHONY</h4><ul class="joke">${N.joke.map(t => `<li>${t}</li>`).join('')}</ul>`;
   $('#scr-news').hidden = false; $('#news-body').scrollTop = 0;
 }
-$('#btn-news-ok').addEventListener('click', () => { $('#scr-news').hidden = true; play('select'); stat('news', 1); if (SAVE.seenVer !== VERSION) { SAVE.seenVer = VERSION; saveGame(); } titlePopups(); });
+$('#btn-news-ok').addEventListener('click', () => { $('#scr-news').hidden = true; play('select'); stat('news', 1); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); } titlePopups(); });
 // al volver al menú principal: primero las novedades y luego el premio diario (nunca durante la partida guiada)
 function titlePopups() {
   if (!SAVE.tut.done || G.autoplay || $('#scr-title').hidden || !$('#scr-news').hidden || !$('#scr-login').hidden || !$('#scr-name').hidden) return;
   if (!SAVE.name) { if ($('#scr-name').hidden) openName(true); return; }   // v0.9.26: los que ya jugaban también eligen nombre
-  if (SAVE.seenVer !== VERSION) { openNews(); return; }
+  if (SAVE.seenVer !== NEWS_VER) { openNews(); return; }
   if (loginState().ready) openLogin();
 }
 // ---- velocidad x2 (se guarda; en la partida guiada siempre va a x1)
@@ -306,7 +300,7 @@ function tutStep(n) {
 }
 function tutFinish() {
   const T = SAVE.tut; if (T.done) return;
-  T.done = true; T.step = 3; delete T.sawG; if (SAVE.seenVer !== VERSION) SAVE.seenVer = VERSION;
+  T.done = true; T.step = 3; delete T.sawG; if (SAVE.seenVer !== NEWS_VER) SAVE.seenVer = NEWS_VER;
   G.tutMatch = false; saveGame(); tutTick(); setTimeout(titlePopups, 60);
 }
 function tutSkip() { play('select'); tutFinish(); $('#tut').hidden = true; $('#tut-tip').hidden = true; toast('Tutorial saltado. Puedes repetirlo en Opciones', true); }

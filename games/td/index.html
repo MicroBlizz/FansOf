@@ -7,7 +7,6 @@
 <meta name="description" content="Fans of TD: la defensa de torres de la serie Fans Of. Microblizz quiere cerrar tus juegos favoritos: monta tu laberinto y defiende tu base.">
 <meta name="theme-color" content="#150b21">
 <link rel="icon" type="image/png" href="../../core/img/icon-192.png">
-<link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../../core/img/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,9 +14,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="../../core/css/base.css?v=0.9.5">
-<link rel="stylesheet" href="css/td.css?v=0.9.5">
-<link rel="stylesheet" href="../../core/css/menus.css?v=0.9.5">
+<!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
+<script src="../../core/js/nucleo.js?v=0.9.5.1"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/td.css', '../../core/css/menus.css')</script>
 </head>
 <body>
 <div id="stage">
@@ -222,30 +221,15 @@
     </section>
   </div>
 </div>
-<!-- Arte y números del juego original (Fans of Rumble), sin cambios -->
-<script src="../../core/js/utils.js?v=0.9.5"></script>
-<script src="../../core/js/vendor/01-config.js?v=0.9.5"></script>
-<script src="../../core/js/vendor/03-arte.js?v=0.9.5"></script>
-<!-- La defensa de torres -->
-<script src="js/ajustes.js?v=0.9.5"></script>
-<script src="js/novedades.js?v=0.9.5"></script>
-<script src="js/data.js?v=0.9.5"></script>
-<script src="../../core/js/meta.js?v=0.9.5"></script>
-<script src="js/progreso.js?v=0.9.5"></script>
-<script src="../../core/js/save.js?v=0.9.5"></script>
-<script src="../../core/js/audio.js?v=0.9.5"></script>
-<script src="js/game.js?v=0.9.5"></script>
-<!-- Menús y horas extra: el código del original, adaptado a torre y unidad -->
-<script src="../../core/js/menus.js?v=0.9.5"></script>
-<script src="../../core/js/idle.js?v=0.9.5"></script>
-<!-- Portada, campaña, pantalla previa, pausa y final (con los textos e iconos del original) -->
-<script src="../../core/js/vendor/08-textos.js?v=0.9.5"></script>
-<script src="js/pantallas.js?v=0.9.5"></script>
-<!-- Música: las canciones del original y el motor con la paradoja de Shepard -->
-<script src="../../core/js/vendor/05-musica.js?v=0.9.5"></script>
-<script src="../../core/js/music.js?v=0.9.5"></script>
-<!-- Chat, avisos y tutorial -->
-<script src="../../core/js/vendor/02-chat.js?v=0.9.5"></script>
-<script src="js/extras.js?v=0.9.5"></script>
+<script>
+// antes de lo común van los ajustes de este juego y sus novedades; después, el juego, en este orden.
+// Los archivos de core que aparecen en esta lista son los sistemas que todavía no usan todos los juegos.
+NUCLEO.juego({
+  antes: ['js/ajustes.js', 'js/novedades.js'],
+  despues: [
+    'js/data.js', '../../core/js/meta.js', 'js/progreso.js', '../../core/js/save.js', '../../core/js/audio.js', 'js/game.js',
+    '../../core/js/menus.js', '../../core/js/idle.js', 'js/pantallas.js', '../../core/js/music.js', 'js/extras.js'],
+});
+</script>
 </body>
 </html>

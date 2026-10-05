@@ -4,9 +4,7 @@
 'use strict';
 /* ---------- lo que el original tenía repartido por otros archivos ---------- */
 const play = n => sfx({ select: 'place', deny: 'womp', levelup: 'up', win: 'win', crown: 'coin', roll: 'horn', despido: 'womp', sad: 'womp' }[n] || n);
-const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 function show(id) { showScreen(id); G.screen = id.slice(4); const h = document.querySelector('#' + id + ' .scr-head .h2'); if (h) fitText(h, 38, 20); }
-function fitText(el, max, min) { el.style.fontSize = max + 'px'; let sz = max; while (el.scrollWidth > el.clientWidth + 0.5 && sz > min) { sz -= 0.5; el.style.fontSize = sz + 'px'; } }
 function drawArt(cv, key, LW, LH) {
   const R2 = 3; cv.width = LW * R2; cv.height = LH * R2; const x = cv.getContext('2d'); x.setTransform(R2, 0, 0, R2, 0, 0); x.clearRect(0, 0, LW, LH);
   x.fillStyle = 'rgba(20,10,30,.25)'; x.beginPath(); x.ellipse(LW / 2, LH - 4, LW * 0.32, Math.max(2, LH * 0.08), 0, 0, Math.PI * 2); x.fill();
@@ -15,20 +13,10 @@ function drawArt(cv, key, LW, LH) {
   else if (n === 3) { const hs = key === 'skeleton' ? 0.82 : 0.66; drawVector(x, key, LW / 2 - LW * 0.24, LH - 5, h * hs, 1); drawVector(x, key, LW / 2 + LW * 0.24, LH - 5, h * hs, -1); drawVector(x, key, LW / 2, LH - 2, h * (hs + 0.1), 1); }
   else drawVector(x, key, LW / 2, LH - 3, h * 0.92, 1);
 }
-const FAC_COLOR = { animales: '#ff9a3c', nomuertos: '#5ef2c0', streamers: '#c084fc', heroes: '#ffcb3d', ciber: '#22e3ff', memes: '#a3e635', gamer: '#4ade80', olvidados: '#d6a96a', pop: '#ff6b9a' };
 
 /* =========================================================
    CARTERA, COLECCIÓN, GASHAPÓN Y TIENDA (del original)
    ========================================================= */
-const COIN_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.8"/><circle cx="10" cy="10" r="5" fill="none" stroke="#c48a10" stroke-width="1.4"/><path d="M10 6.8v6.4" stroke="#c48a10" stroke-width="1.6" stroke-linecap="round"/></svg>';
-const GEM_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10l4 5-9 10L1 8z" fill="#ff5fd2" style="stroke: var(--outline)" stroke-width="1.6" stroke-linejoin="round"/><path d="M1 8h18M7 3l3 15M13 3l-3 15" stroke="#b81e8f" stroke-width="1" fill="none"/></svg>';
-const SLOT_SVG = {
-  weapon: '<svg viewBox="0 0 24 24"><path d="M5 19l3-3M7 21l-4-4M8 16L19 5l1-2-2 1L7 15z" stroke="#20102c" stroke-width="2" fill="#cdd5e0" stroke-linejoin="round" stroke-linecap="round"/></svg>',
-  head: '<svg viewBox="0 0 24 24"><path d="M4 16a8 8 0 0 1 16 0v2H4z" fill="#cdd5e0" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/><path d="M8 18v-3h8v3" stroke="#20102c" stroke-width="2" fill="none"/></svg>',
-  acc: '<svg viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="12" rx="3" fill="#cdd5e0" stroke="#20102c" stroke-width="2"/><path d="M9 8V6a3 3 0 0 1 6 0v2" stroke="#20102c" stroke-width="2" fill="none"/></svg>',
-};
-const fmt = n => Math.floor(n).toLocaleString('es-ES');
-const fmtV = v => String(v).replace('.', ',');
 const RAR_ORDER = { legendary: 0, epic: 1, rare: 2, common: 3 };
 function updateWallets() {
   for (const w of document.querySelectorAll('[data-wallet]')) {
@@ -200,7 +188,6 @@ function showPull(it, tag) {
   card.innerHTML = `<div class="gr-rar ol">${R[0].toUpperCase()}${kind === 'eq' ? ' · ' + SLOTS[D.slot].toUpperCase() : ''}</div><div class="gr-ic">${kind === 'ab' ? D.ic : SLOT_SVG[D.slot]}</div><div class="gr-name ol">${D.name}</div><div class="gr-q ol" style="--qc:${T.col}">CALIDAD ${T.name.toUpperCase()} · ${Math.round(avgQ(it) * 100)} %</div><div class="gr-desc">${descOf(it)}<br><small class="rg">${rangeTxt(it)}</small>${kind === 'ab' && D.fac ? '<br><small>Viene de los ' + FACTIONS[D.fac].name + '</small>' : ''}</div><span class="gr-tag">${tag}</span>`;
   $('#gacha-result').hidden = false; play(tierOf(avgQ(it)) >= 3 || D.rar === 'legendary' || D.rar === 'epic' ? 'win' : 'levelup');
 }
-const TICKET_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 18 6v2a2 2 0 0 0 0 4v2a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 2 14v-2a2 2 0 0 0 0-4z" fill="#ffe06a" style="stroke: var(--outline)" stroke-width="1.5" stroke-linejoin="round"/></svg>';
 function buildGachaText() {
   for (const b of document.querySelectorAll('[data-gt]')) b.setAttribute('aria-pressed', String(b.dataset.gt === gachaTab));
   $('#gacha-sub').textContent = gachaTab === 'ab' ? 'Habilidades para tus cartas: unas mejoran la torre y otras la unidad. Cada copia sale con su propia calidad, de Becario (básica) a CEO (perfecta): búscale la mejor.' : 'Equipo freak para cualquier carta: arma, cabeza y accesorio. Cada objeto dice si mejora la torre, la unidad o las dos, y sale con su propia calidad.';
@@ -243,7 +230,6 @@ function openGacha() { updateWallets(); buildGachaText(); show('scr-gacha'); $('
 let invTab = 'ab', invFilter = 'all', invSort = 'q', itemCur = null;
 const INV_FILTERS = { ab: [['all', 'Todas'], ['common', 'Comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
 const INV_SORTS = { q: 'calidad', rar: 'rareza', name: 'nombre' };
-const LOCK_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7.5" rx="1.6" fill="#ffcb3d" stroke="#20102c" stroke-width="1.4"/><path d="M5.3 7V5.2a2.7 2.7 0 0 1 5.4 0V7" stroke="#20102c" stroke-width="1.6" fill="none"/></svg>';
 const scrapValue = it => Math.round(ECON.scrap[defOf(it).rar] * [1, 1.5, 2, 3, 5][tierOf(avgQ(it))]);
 const canScrap = it => !it.lock && !wearer(it);
 // despido masivo: copias Becario y Junior que nadie lleva, sin bloquear, y nunca tu mejor copia de cada una
@@ -380,24 +366,25 @@ function updateBadges() {
   const t = SAVE.tickets || 0; $('#gacha-badge').hidden = !t;
   $('#feat-gacha').textContent = t ? `¡${t} ${t > 1 ? 'tiradas gratis' : 'tirada gratis'}!` : 'Tira x1, x10 o x50';
   $('#feat-shop').textContent = giftReady() ? '¡Regalo diario gratis!' : 'Oro, gemas y ofertas';
-  $('#news-badge').hidden = SAVE.seenVer === VERSION;
+  $('#news-badge').hidden = SAVE.seenVer === NEWS_VER;
 }
 let toastTimer = null;
 function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classList.toggle('good', !!good); t.classList.toggle('menu', G.screen !== 'play'); t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400); }
 
 /* =========================================================
    NOVEDADES: el informe de cada parche. Sale solo la primera vez que abres el juego después de actualizarse.
-   La lista (NEWS) y la versión (VERSION) son de cada juego: están en games/<juego>/js/novedades.js.
+   La lista (NEWS) es de cada juego: está en games/<juego>/js/novedades.js.
    ========================================================= */
+const NEWS_VER = NEWS[0].v;   // la última versión con novedades: solo se enseñan solas cuando cambia
 function openNews() {
   const cur = NEWS[0], rest = NEWS.slice(1);
-  $('#news-title').textContent = 'NOVEDADES · ' + VERSION;
+  $('#news-title').textContent = 'NOVEDADES · ' + cur.v;
   $('#news-body').innerHTML = `<h4>LO NUEVO</h4><ul>${cur.real.map(t => `<li>${t}</li>`).join('')}</ul><h4>NOTAS DE MICROBLIZZ Y PHONY</h4><ul class="joke">${cur.joke.map(t => `<li>${t}</li>`).join('')}</ul>`
     + rest.map(n => `<h4>VERSIÓN ${n.v}</h4><ul>${n.real.map(t => `<li>${t}</li>`).join('')}</ul><ul class="joke">${n.joke.map(t => `<li>${t}</li>`).join('')}</ul>`).join('');
   $('#scr-news').hidden = false; $('#news-body').scrollTop = 0;
 }
 // al volver al menú principal: las novedades, si hay versión nueva
-function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (SAVE.seenVer !== VERSION) openNews(); }
+function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (SAVE.seenVer !== NEWS_VER) openNews(); }
 
 /* ---------- menú principal ---------- */
 function showMenu() {
@@ -410,7 +397,7 @@ $('#btn-inv').onclick = () => { play('select'); openInv(); };
 $('#btn-gacha').onclick = () => { play('select'); openGacha(); };
 $('#btn-shop').onclick = () => { play('select'); openShop(); };
 $('#btn-news').onclick = () => { play('select'); openNews(); };
-$('#btn-news-ok').onclick = () => { $('#scr-news').hidden = true; play('select'); if (SAVE.seenVer !== VERSION) { SAVE.seenVer = VERSION; saveGame(); updateBadges(); } };
+$('#btn-news-ok').onclick = () => { $('#scr-news').hidden = true; play('select'); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); updateBadges(); } };
 for (const b of document.querySelectorAll('[data-back]')) b.onclick = () => { play('select'); showMenu(); };
 for (const b of document.querySelectorAll('[data-gt]')) b.onclick = () => { gachaTab = b.dataset.gt; play('select'); buildGachaText(); };
 for (const b of document.querySelectorAll('[data-pull]')) b.onclick = () => pull(+b.dataset.pull);
@@ -480,8 +467,6 @@ function installApp() {
     + '<small>Se abre como una app: a pantalla completa, sin la barra del navegador, y también funciona sin conexión.</small>', null, null, 'ENTENDIDO');
 }
 $('#btn-install').onclick = installApp;
-// modo sin conexión: solo desde la web (en un archivo abierto a mano el navegador no lo permite)
-try { if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js?v=' + VERSION).catch(() => { /* sin modo sin conexión */ }); } catch (e) { /* el navegador no lo permite aquí */ }
 
 /* ---------- progreso traído desde la dirección antigua de la web ---------- */
 // La página antigua redirige aquí con el progreso que tenía guardado en la dirección (…#traer=código). Nunca se carga sin preguntar.

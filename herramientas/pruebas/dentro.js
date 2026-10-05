@@ -99,7 +99,7 @@
   }
 
   const T = W.T = {
-    pasos: [], errores: [], dic, vistos: {},
+    pasos: [], errores: [], dic, vistos: {}, tapados: [],
     semilla(n) { seed = n; },
     avanza,                                                      // pasa el tiempo y saltan los temporizadores que toquen
     salta(ms) { vnow += ms; },                                   // pasa el tiempo de golpe (horas), sin recorrerlo
@@ -110,13 +110,16 @@
     paso(nombre) { T.actual = nombre; seed = 1000 + T.pasos.length * 7919; audio.length = 0; },
     apunta(que, v) { let n = T.actual + ' · ' + que; const veces = T.vistos[n] = (T.vistos[n] || 0) + 1; if (veces > 1) n += ' (' + veces + ')'; T.pasos.push([n, typeof v === 'string' ? v : JSON.stringify(v, null, 1)]); },
     /* apunta todo lo que se ve: cada pantalla abierta (su HTML, sus estilos y sus dibujos), el aviso y la burbuja del tutorial */
+    tapa(...sel) { T.tapados.push(...sel); },                    // textos que cambian a propósito de una versión a otra (el número de versión): no se comparan
     foto(que) {
+      const tap = T.tapados.flatMap(s => [...D.querySelectorAll(s)]).map(e => [e, e.textContent]); for (const [e] of tap) e.textContent = '·';
       const vis = [...D.querySelectorAll('.screen')].filter(s => !s.hidden), extra = ['#toast', '#coach', '#banner', '#hud', '#tray', '#chat', '#tut', '#panel', '#info', '#feed', '#hud-mods', '#card-tip', '#tut-tip', '#ad-screen', '#btn-wave', '#btn-mode', '#count'].map(s => D.querySelector(s)).filter(e => e && !e.hidden);
       const els = vis.concat(extra), q = que ? que + ' · ' : '';
       T.apunta(q + 'abierto', els.map(sig).join(' | '));
       T.apunta(q + 'html', els.map(e => e.outerHTML).join('\n'));
       T.apunta(q + 'estilos', els.map(estilos).join('\n'));
       T.apunta(q + 'dibujos', els.map(e => (e.tagName === 'CANVAS' ? '' : lienzos(e))).join('\n'));
+      for (const [e, t] of tap) e.textContent = t;
     },
     sonido(que) { T.apunta(que || 'sonido', audio.join('\n')); audio.length = 0; },
     altavoz: () => FakeAC.ultimo,

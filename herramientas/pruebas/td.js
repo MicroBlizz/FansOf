@@ -29,7 +29,7 @@ var PRUEBA = {
 
     /* ---------- preparación: fechas del reloj de mentira y ninguna ventana de bienvenida ---------- */
     T.paso('preparación');
-    cierra(); SAVE.seenVer = VERSION; SAVE.idle = { fac: 'animales', h: 3.25, gold: 1234.5, gems: 7.2, items: 1.3, last: Date.now() };
+    cierra(); T.tapa('#opt-ver'); SAVE.seenVer = typeof NEWS_VER === 'string' ? NEWS_VER : VERSION; SAVE.idle = { fac: 'animales', h: 3.25, gold: 1234.5, gems: 7.2, items: 1.3, last: Date.now() };
     saveGame(); casa(); T.apunta('versión', VERSION); guardado();
 
     if (quiere('sonido')) {   // lo que el juego le pide al altavoz: cada efecto, el volumen y lo que suena en cada momento

@@ -4,8 +4,8 @@
    En la web este archivo no hace nada. Dentro de la app:
    · Botón ATRÁS del móvil: en partida, pausa (o sigue si ya está en pausa); en una ventana, la cierra;
      en otra pantalla, vuelve al menú; en el menú principal, deja el juego en segundo plano.
-   · No se usa el modo sin conexión de la web (la app ya lleva el juego dentro). */
-const NATIVE = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+   · No se usa el modo sin conexión de la web (la app ya lleva el juego dentro): lo decide core/js/nucleo.js. */
+const NATIVE = NUCLEO.nativa;
 function nativeBack(AppP) {
   if (G.state === 'play' || G.state === 'paused') { $('#btn-pause').click(); return; }   // el mismo botón pausa y sigue
   if (G.state === 'countdown' || G.state === 'ending') return;

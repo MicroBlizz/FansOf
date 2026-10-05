@@ -28,7 +28,7 @@ La versión se escribe **solo** en ese `?v=`. De ella salen `VERSION`, el `?v=` 
 | `js/retos.js` | Misiones, logros, pase de batalla, premio diario y perfil. Los datos los pone cada juego en su `js/retos.js`. |
 | `js/novedades.js` | El informe de parches. La lista (`NEWS`) la pone cada juego en su `js/novedades.js`. |
 | `js/sw.js` | Jugar sin conexión. Cada juego lo usa desde un `sw.js` de dos líneas en su carpeta. |
-| `css/` | `base.css` (colores, letras, marco) y `menus.css` (las pantallas comunes). |
+| `css/` | `base.css` (colores, letras, marco) y `menus.css` (las pantallas comunes). Cada juego carga `menus.css` y después su propia hoja, con lo suyo. |
 
 Cada archivo empieza con un comentario que dice qué hace y qué necesita del juego.
 
@@ -86,4 +86,4 @@ Ejecuta el mismo guion en la versión anterior y en la nueva, en cada juego, y e
 ## Lo que todavía no es común
 
 - **El resto de Opciones** (volumen, lo que se ve en la partida, pasar o borrar el progreso): cada juego tiene todavía las suyas.
-- **Estilos.** `css/menus.css` se genera desde los del Rumble con `python herramientas/sincronizar.py`.
+- **Los colores y el marco** (`css/base.css`): el Rumble lleva todavía los suyos, iguales, al principio de `css/estilos.css`.

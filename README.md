@@ -11,7 +11,7 @@ index.html            la librería: un acceso rápido para probar, con el enlace
 sw.js                 limpia el modo sin conexión que el TD tenía antes en la raíz (no cachea nada)
 core/                 LO COMÚN A TODOS LOS JUEGOS
   css/base.css          colores, letras, contornos, marco de la pantalla y capa de interfaz de 540 x 960
-  css/menus.css         los menús del original; se genera con herramientas/estilos_menus.py
+  css/menus.css         los estilos de las pantallas comunes, con una sola copia (el Rumble también la carga)
   img/                  iconos
   js/nucleo.js          EL CARGADOR: cada juego lo pone en su index.html con su versión (?v=) y él carga, en orden, lo común y el juego.
                         De esa versión salen VERSION, el ?v= de todos los archivos y la copia para jugar sin conexión
@@ -51,8 +51,7 @@ games/
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
     js/extras.js          chat en directo, caja de avisos, tutorial y sus opciones
-herramientas/           sincronizar.py pasa a core/css/menus.css los estilos de los menús del Rumble (llama a estilos_menus.py);
-                        servidor.py para probar en local; base.py y pruebas/ son el comparador «¿he roto algo?»
+herramientas/           servidor.py para probar en local; base.py y pruebas/ son el comparador «¿he roto algo?»
 ```
 
 ## Qué va en cada sitio
@@ -70,8 +69,7 @@ Las mejoras se hacen primero en el Rumble y los demás juegos las heredan a trav
 
 | Qué | Cómo llega a los demás juegos |
 |---|---|
-| La serie (razas, cartas y números, arte, canciones, frases, iconos) y los sistemas: sonido y música, pantallas comunes (cartera, colección, inventario, gashapón, tienda), horas extra, retos (misiones, logros, pase, premio diario, perfil), novedades y jugar sin conexión | Solos: hay un único archivo en `core/` y todos los juegos, el Rumble incluido, cargan ese mismo. Lo que solo tiene un juego lo engancha con `hook` (ver `core/js/sistema/utiles.js`) sin tocar el archivo común. |
-| Estilos de los menús | Con `python herramientas/sincronizar.py`, que regenera `core/css/menus.css` desde `games/rumble/css/estilos.css`. |
+| La serie (razas, cartas y números, arte, canciones, frases, iconos) y los sistemas: sonido y música, pantallas comunes (cartera, colección, inventario, gashapón, tienda), horas extra, retos (misiones, logros, pase, premio diario, perfil), novedades, jugar sin conexión y los estilos de las pantallas comunes | Solos: hay un único archivo en `core/` y todos los juegos, el Rumble incluido, cargan ese mismo. Lo que solo tiene un juego lo engancha con `hook` (ver `core/js/sistema/utiles.js`) sin tocar el archivo común. |
 | El resto de Opciones (volumen, pasar o borrar el progreso) | Todavía no: cada juego tiene las suyas (`games/rumble/js/12-app-y-preparacion.js` y `games/td/js/menus.js`). Un cambio ahí hay que pasarlo a mano. |
 
 Antes de publicar un cambio en `core/`, pásalo por el comparador (`herramientas/pruebas/`): ejecuta el mismo guion en la versión anterior y en la nueva y enseña en qué se diferencian.

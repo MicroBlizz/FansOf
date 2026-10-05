@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.11.1"></script>
+<script src="../../core/js/nucleo.js?v=0.11.2"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', 'css/td.css', '../../core/css/menus.css')</script>
 </head>
 <body>
@@ -262,7 +262,7 @@
 NUCLEO.juego({
   antes: ['js/ajustes.js', 'js/novedades.js'],
   despues: [
-    'js/data.js', '../../core/js/meta.js', 'js/progreso.js', '../../core/js/save.js', 'js/sonido.js', 'js/retos.js', 'js/game.js',
+    'js/data.js', 'js/catalogo.js', 'js/progreso.js', 'js/sonido.js', 'js/retos.js', 'js/game.js',
     'js/menus.js', '../../core/js/retos.js', 'js/pantallas.js', 'js/extras.js'],
 });
 </script>

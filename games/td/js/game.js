@@ -919,6 +919,7 @@ function frame(now) {
 async function boot() {
   try { await Promise.race([document.fonts.load('20px "Luckiest Guy"'), new Promise(r => setTimeout(r, 2500))]); } catch (e) { /* fuente por defecto */ }
   buildSprites(); BG = bgOf('animales');
+  for (const b of document.querySelectorAll('[data-fac]')) drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.fac].leader, 56, 44);   // los retratos, otra vez: ahora con las letras ya cargadas
   fit(); addEventListener('resize', fit); soundBtns();
   showMenu();
   window.__TD = { G, TOWERS, vsUpgrade, cardMods, startVS, vsUpdate, vsSend, vsView, fuse, fuseMate, startLevel, startWave, build, sell, upgrade, update, canPlace, whyNot, flow, BLOCK, ENTRY, WORLDS_TD, SAVE, get DIST() { return DIST; } };   // para las pruebas automáticas

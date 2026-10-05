@@ -71,7 +71,6 @@ function applySpawnMods(u) {
   if (f === 'ciber') u.shieldMax = u.shield = Math.round(u.maxHp * P.ciber.frac);
   if (u.abShield) u.shieldMax = u.shield = Math.max(u.shieldMax, Math.round(u.maxHp * u.abShield));
 }
-const invGet = uid => (uid ? SAVE.inv.find(it => it.u === uid) : null);
 function applyAbility(u) {
   const k = SUMMON_PARENT[u.type] || u.type, it = invGet(SAVE.abEquip[k]); if (!it || it.k !== 'ab' || !ABILITIES[it.id]) return;
   const id = it.id, v = valsOf(it)[0]; u.ab = id;

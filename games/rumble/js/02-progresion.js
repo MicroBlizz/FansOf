@@ -3,117 +3,76 @@
 /* =========================================================
    PROGRESIÓN Y ECONOMÍA (v0.9): niveles, oro, gemas, gashapón, campaña
    ========================================================= */
-const ECON = {
-  lvlStep: 0.06, maxLvl: 10,                                                     // +6 % de vida y daño por nivel
-  xpNeed:   [0, 50, 100, 175, 300, 500, 800, 1300, 2000, 3200],                  // XP para pasar del nivel i al i+1
-  goldCost: [0, 50, 100, 200, 400, 750, 1500, 3000, 6000, 12000],                // oro para pasar del nivel i al i+1
-  xpPerPlay: 10, winXpMult: 1.3,                                                 // XP por cada carta jugada; +30 % si ganas
-  quick: { easy: 40, normal: 60, lose: 10 },                                     // oro en partida rápida
-  camp: { first: [100, 10], replay: 30, stars3: [50, 10], boss: [300, 50], lose: 10 },  // [oro, gemas]
-  pull: 50, dupGems: 15,                                                         // gemas por tirada; repetida sin rango que subir = 15 gemas
-  odds: { common: 55, rare: 30, epic: 12, legendary: 3 },                        // probabilidades del gashapón (%)
-  pityEpic: 10, pityLeg: 50,                                                     // garantía: épica o mejor cada 10, legendaria a las 50
-  start: { gold: 150, gems: 100 },
-  mission: [50, 10],
-  scrap: { common: 25, rare: 60, epic: 150, legendary: 400 },      // oro al despedir una copia (x1 Básica, x1,5 Normal, x2 Buena, x3 Excelente, x5 Perfecta)
-  reroll: { common: 250, rare: 500, epic: 1000, legendary: 2000 }, // oro por volver a tirar los números de una copia
-  pityQ: 10,                                                       // garantía: calidad Director (excelente) o mejor como mucho cada 10 tiradas
-  cardOdds: { rare: 68, epic: 25, legendary: 7 },                  // v0.9.15: gashapón de cartas (hechizos y mata-sanadores)
-  starStep: 0.05, maxStars: 5,                                     // cada estrella: +5 % (vida y daño, o fuerza del hechizo)
-};
-const RARITY = { common: ['Común', '#63cfe0', '#2a7895'], rare: ['Rara', '#ffb04f', '#cf5a16'], epic: ['Épica', '#d08cff', '#6d28c9'], legendary: ['Legendaria', '#ffe06a', '#c47f10'] };
 const CARD_RAR = { rare: RARITY.rare, epic: RARITY.epic, legendary: ['Legendaria', '#ff9ef0', '#b0217f'] };   // v0.9.15: colores de las cartas del gashapón
-// gashapón de habilidades: una por carta, de cualquier facción; rango 1-3 con las repetidas
-const ABILITIES = {
-  cafeina:  { name: 'Cafeína', rar: 'common', ic: 'CF', desc: 'Se mueve un {v} % más rápido.', vals: [15, 22, 30] },
-  piel:     { name: 'Piel dura', rar: 'common', ic: 'PD', desc: '+{v} % de vida.', vals: [15, 22, 30] },
-  punos:    { name: 'Puños de hierro', rar: 'common', ic: 'PH', desc: '+{v} % de daño.', vals: [12, 18, 24] },
-  reflejos: { name: 'Reflejos', rar: 'common', ic: 'RF', desc: 'Ataca un {v} % más rápido.', vals: [12, 18, 24] },
-  plasma:   { name: 'Escudo de plasma', rar: 'rare', fac: 'ciber', ic: 'EP', desc: 'Escudo del {v} % de su vida que se recarga.', vals: [20, 25, 30] },
-  sigilo:   { name: 'Sigilo inicial', rar: 'rare', fac: 'animales', ic: 'SG', desc: 'Sale invisible {v} s y su primer golpe hace el doble.', vals: [5, 7, 9] },
-  escarcha: { name: 'Escarcha', rar: 'rare', fac: 'nomuertos', ic: 'ES', desc: 'Sus golpes frenan al enemigo {v} s.', vals: [1, 1.3, 1.6] },
-  vampiro:  { name: 'Vampirismo', rar: 'rare', ic: 'VP', desc: 'Se cura el {v} % del daño que hace.', vals: [15, 20, 25] },
-  cadena:   { name: 'Rayo en cadena', rar: 'epic', fac: 'heroes', ic: 'RC', desc: 'Cada golpe salta a otro enemigo con el {v} % del daño.', vals: [50, 60, 70] },
-  provoca:  { name: 'Provocación', rar: 'epic', fac: 'memes', ic: 'PV', desc: 'Los enemigos cercanos (a {v}) le atacan a él.', vals: [80, 95, 110] },
-  renacer:  { name: 'Renacer', rar: 'epic', fac: 'nomuertos', ic: 'RN', desc: 'Revive una vez con el {v} % de su vida.', vals: [40, 50, 60] },
-  grito:    { name: 'Grito', rar: 'epic', fac: 'nomuertos', ic: 'GR', desc: 'Cada 9 s aturde {v} s a los enemigos cercanos.', vals: [0.8, 1, 1.2] },
-  clon:     { name: 'Clon viral', rar: 'legendary', fac: 'memes', ic: 'CV', desc: 'Al morir se divide en 2 copias pequeñas con el {v} % de su vida. No funciona en los líderes.', vals: [30, 40, 50] },
-  furia:    { name: 'Furia legendaria', rar: 'legendary', ic: 'FL', desc: 'Con menos de la mitad de vida: +{v} % de daño y velocidad.', vals: [30, 40, 50] },
+// QUÉ HACE CADA HABILIDAD Y CADA OBJETO EN ESTE JUEGO (sus nombres, rarezas e iconos son de la serie: core/js/serie/catalogo.js).
+// Habilidades: una por carta, de cualquier facción. vals: [flojo, valor central, fuerte]; desc: el texto, con {v} donde va el número.
+const ABILITIES = catalogo('ab', {
+  cafeina:  { desc: 'Se mueve un {v} % más rápido.', vals: [15, 22, 30] },
+  piel:     { desc: '+{v} % de vida.', vals: [15, 22, 30] },
+  punos:    { desc: '+{v} % de daño.', vals: [12, 18, 24] },
+  reflejos: { desc: 'Ataca un {v} % más rápido.', vals: [12, 18, 24] },
+  plasma:   { desc: 'Escudo del {v} % de su vida que se recarga.', vals: [20, 25, 30] },
+  sigilo:   { desc: 'Sale invisible {v} s y su primer golpe hace el doble.', vals: [5, 7, 9] },
+  escarcha: { desc: 'Sus golpes frenan al enemigo {v} s.', vals: [1, 1.3, 1.6] },
+  vampiro:  { desc: 'Se cura el {v} % del daño que hace.', vals: [15, 20, 25] },
+  cadena:   { desc: 'Cada golpe salta a otro enemigo con el {v} % del daño.', vals: [50, 60, 70] },
+  provoca:  { desc: 'Los enemigos cercanos (a {v}) le atacan a él.', vals: [80, 95, 110], dec: 0 },
+  renacer:  { desc: 'Revive una vez con el {v} % de su vida.', vals: [40, 50, 60] },
+  grito:    { desc: 'Cada 9 s aturde {v} s a los enemigos cercanos.', vals: [0.8, 1, 1.2] },
+  clon:     { desc: 'Al morir se divide en 2 copias pequeñas con el {v} % de su vida. No funciona en los líderes.', vals: [30, 40, 50] },
+  furia:    { desc: 'Con menos de la mitad de vida: +{v} % de daño y velocidad.', vals: [30, 40, 50] },
   // v0.9.12: habilidades con efectos nuevos
-  speedrun:   { name: 'Speedrun', rar: 'common', ic: 'SR', desc: 'Los primeros {v} s va al triple de velocidad.', vals: [2, 3, 4] },
-  hitbox:     { name: 'Hitbox dudosa', rar: 'rare', ic: 'HB', desc: 'Esquiva el {v} % de los golpes. Nadie sabe cómo.', vals: [10, 15, 20] },
-  microtrans: { name: 'Microtransacción', rar: 'rare', ic: 'MT', desc: 'Al entrar en el campo le roba {v} de CAOS al rival.', vals: [0.5, 0.8, 1.1] },
-  ragequit:   { name: 'Rage quit', rar: 'rare', ic: 'RQ', desc: 'Al caer se enfada y explota: {v} de daño alrededor.', vals: [60, 90, 120] },
-  modofoto:   { name: 'Modo foto', rar: 'epic', ic: 'MF', desc: 'Al entrar congela {v} s a los enemigos de alrededor. ¡Sonreíd!', vals: [0.8, 1.2, 1.6] },
-  dlc:        { name: 'DLC gratis', rar: 'epic', ic: 'DL', desc: 'Al caer te devuelve {v} de CAOS.', vals: [1, 1.5, 2] },
-  gigante:    { name: 'Modo gigante', rar: 'legendary', ic: 'MG', desc: 'Se hace enorme: +{v} % de vida y de daño, pero va más lento.', vals: [30, 40, 50] },
-  iman:       { name: 'Imán de CAOS', rar: 'legendary', ic: 'IC', desc: 'Cada enemigo que derrota te da {v} de CAOS.', vals: [0.3, 0.45, 0.6] },
-};
+  speedrun:   { desc: 'Los primeros {v} s va al triple de velocidad.', vals: [2, 3, 4] },
+  hitbox:     { desc: 'Esquiva el {v} % de los golpes. Nadie sabe cómo.', vals: [10, 15, 20] },
+  microtrans: { desc: 'Al entrar en el campo le roba {v} de CAOS al rival.', vals: [0.5, 0.8, 1.1] },
+  ragequit:   { desc: 'Al caer se enfada y explota: {v} de daño alrededor.', vals: [60, 90, 120] },
+  modofoto:   { desc: 'Al entrar congela {v} s a los enemigos de alrededor. ¡Sonreíd!', vals: [0.8, 1.2, 1.6] },
+  dlc:        { desc: 'Al caer te devuelve {v} de CAOS.', vals: [1, 1.5, 2] },
+  gigante:    { desc: 'Se hace enorme: +{v} % de vida y de daño, pero va más lento.', vals: [30, 40, 50] },
+  iman:       { desc: 'Cada enemigo que derrota te da {v} de CAOS.', vals: [0.3, 0.45, 0.6] },
+});
 // gashapón de equipamiento: solo para el líder (arma, cabeza y accesorio)
-const SLOTS = { weapon: 'Arma', head: 'Cabeza', acc: 'Accesorio' };
 const FAC_ITEM = { animales: 'zanahoria_oro', nomuertos: 'corona_huesos', streamers: 'microfono_oro', heroes: 'yelmo_olimpo', ciber: 'nucleo_plasma', memes: 'gafas_pixel', gamer: 'raton_campeon', olvidados: 'cartucho_dorado', pop: 'claqueta_oro' };   // v0.9.15
-const fitsFac = (id, f) => !ITEMS[id] || !ITEMS[id].fac || ITEMS[id].fac === f;
 const worldFac = wi => (wi === 0 ? 'animales' : WORLDS[wi].unlock || null);   // de qué facción es el objeto que da el jefe de cada mundo en Difícil
-const ITEMS = {   // st: valor central de cada efecto; cada copia sale entre el 50 % y el 150 % de ese valor
-  espada_carton: { name: 'Espada de cartón piedra', slot: 'weapon', rar: 'common', st: [10], desc: '+{0} % de daño. Hecha a mano en una convención.' },
-  raton_dpi:     { name: 'Ratón de 16.000 DPI', slot: 'weapon', rar: 'rare', st: [20, 10], desc: '+{0} % de alcance y +{1} % de daño.' },
-  teclado_rgb:   { name: 'Teclado mecánico RGB', slot: 'weapon', rar: 'epic', st: [25], desc: 'Ataca un {0} % más rápido. Clic, clic, clic.' },
-  banhammer_oro: { name: 'BanHammer de oro', slot: 'weapon', rar: 'legendary', st: [25], desc: '+{0} % de daño y cada golpe aparta al enemigo.' },
-  cuernos:       { name: 'Casco con cuernos', slot: 'head', rar: 'common', st: [15], desc: '+{0} % de vida.' },
-  corona_carton: { name: 'Corona de hamburguesería', slot: 'head', rar: 'rare', st: [10, 10], desc: '+{0} % de vida y +{1} % de daño.' },
-  gorro_aluminio:{ name: 'Gorro de papel de aluminio', slot: 'head', rar: 'epic', st: [10], desc: 'Inmune a las habilidades del jefe y +{0} % de vida.' },
-  auriculares:   { name: 'Auriculares con cancelación de ruido', slot: 'head', rar: 'legendary', st: [15], desc: 'Inmune a aturdimientos y frenazos, y +{0} % de vida.' },
-  taza:          { name: 'Taza del becario', slot: 'acc', rar: 'common', st: [1], desc: 'Se cura un {0} % de su vida cada segundo.' },
-  pase_caducado: { name: 'Pase de batalla caducado', slot: 'acc', rar: 'common', st: [3], desc: '+{0} % a todo. Algo es algo.' },
-  almohada:      { name: 'Almohada de viaje', slot: 'acc', rar: 'rare', st: [40], desc: 'Si cae, vuelve un {0} % antes.' },
-  silla_gamer:   { name: 'Silla gamer portátil', slot: 'acc', rar: 'epic', st: [15], desc: 'Recibe un {0} % menos de daño.' },
-  cofre:         { name: 'Cofre de botín sin abrir', slot: 'acc', rar: 'legendary', st: [100], desc: 'Cada partida, un efecto sorpresa (o ninguno) con un {0} % de potencia.' },
-  diploma:       { name: 'Diploma de Becario del Mes', slot: 'acc', rar: 'rare', pass: true, st: [8, 8], desc: '+{0} % de vida y +{1} % de daño. Enmarcado en plástico. Exclusivo del pase.' },
-  corbata_ceo:   { name: 'Corbata del CEO', slot: 'acc', rar: 'legendary', pass: true, st: [15, 15, 10], desc: '+{0} % de vida, +{1} % de daño y +{2} % de velocidad. Viste como el que te despide. Exclusivo del Pase Ejecutivo.' },
+const ITEMS = catalogo('eq', {   // st: valor central de cada efecto; cada copia sale entre el 50 % y el 150 % de ese valor
+  espada_carton: { st: [10], desc: '+{0} % de daño. Hecha a mano en una convención.' },
+  raton_dpi:     { st: [20, 10], desc: '+{0} % de alcance y +{1} % de daño.' },
+  teclado_rgb:   { st: [25], desc: 'Ataca un {0} % más rápido. Clic, clic, clic.' },
+  banhammer_oro: { st: [25], desc: '+{0} % de daño y cada golpe aparta al enemigo.' },
+  cuernos:       { st: [15], desc: '+{0} % de vida.' },
+  corona_carton: { st: [10, 10], desc: '+{0} % de vida y +{1} % de daño.' },
+  gorro_aluminio:{ st: [10], desc: 'Inmune a las habilidades del jefe y +{0} % de vida.' },
+  auriculares:   { st: [15], desc: 'Inmune a aturdimientos y frenazos, y +{0} % de vida.' },
+  taza:          { st: [1], desc: 'Se cura un {0} % de su vida cada segundo.' },
+  pase_caducado: { st: [3], desc: '+{0} % a todo. Algo es algo.' },
+  almohada:      { st: [40], desc: 'Si cae, vuelve un {0} % antes.' },
+  silla_gamer:   { st: [15], desc: 'Recibe un {0} % menos de daño.' },
+  cofre:         { st: [100], desc: 'Cada partida, un efecto sorpresa (o ninguno) con un {0} % de potencia.' },
+  diploma:       { st: [8, 8], desc: '+{0} % de vida y +{1} % de daño. Enmarcado en plástico. Exclusivo del pase.' },
+  corbata_ceo:   { st: [15, 15, 10], desc: '+{0} % de vida, +{1} % de daño y +{2} % de velocidad. Viste como el que te despide. Exclusivo del Pase Ejecutivo.' },
   // v0.9.12: objetos con efectos nuevos
-  mando_cable:  { name: 'Mando con cable de 3 metros', slot: 'weapon', rar: 'common', st: [25], desc: '+{0} % de alcance. El cable llega a todas partes.' },
-  baguette:     { name: 'Baguette de ayer', slot: 'weapon', rar: 'rare', st: [20], desc: 'El {0} % de sus golpes son críticos y hacen el triple. Está durísima.' },
-  lanzaconfeti: { name: 'Lanzaconfeti', slot: 'weapon', rar: 'epic', st: [40], desc: 'Cada golpe salpica el {0} % del daño a los enemigos de alrededor.' },
-  gorra_reves:  { name: 'Gorra del revés', slot: 'head', rar: 'common', st: [12], desc: '+{0} % de velocidad. Más estilo, más rápido.' },
-  casco_vr:     { name: 'Casco de realidad virtual', slot: 'head', rar: 'rare', st: [25], desc: 'No ve el peligro: +{0} % de daño, pero un 10 % menos de vida.' },
-  orejas_gato:  { name: 'Diadema de orejas de gato', slot: 'head', rar: 'epic', st: [20], desc: 'Los enemigos de alrededor pegan un {0} % menos. Es que es muy mono.' },
-  bebida_xxl:   { name: 'Bebida energética XXL', slot: 'acc', rar: 'common', st: [30], desc: 'Los primeros 10 s: +{0} % de daño y de velocidad.' },
-  disco_fisico: { name: 'Disco físico de coleccionista', slot: 'acc', rar: 'rare', st: [18], desc: '+{0} % de vida. Es suyo para siempre: nadie se lo puede quitar.' },
-  alfombrilla:  { name: 'Alfombrilla XXL', slot: 'acc', rar: 'epic', st: [2], desc: 'Los aliados de alrededor se curan un {0} % de su vida cada segundo.' },
+  mando_cable:  { st: [25], desc: '+{0} % de alcance. El cable llega a todas partes.' },
+  baguette:     { st: [20], desc: 'El {0} % de sus golpes son críticos y hacen el triple. Está durísima.' },
+  lanzaconfeti: { st: [40], desc: 'Cada golpe salpica el {0} % del daño a los enemigos de alrededor.' },
+  gorra_reves:  { st: [12], desc: '+{0} % de velocidad. Más estilo, más rápido.' },
+  casco_vr:     { st: [25], desc: 'No ve el peligro: +{0} % de daño, pero un 10 % menos de vida.' },
+  orejas_gato:  { st: [20], desc: 'Los enemigos de alrededor pegan un {0} % menos. Es que es muy mono.' },
+  bebida_xxl:   { st: [30], desc: 'Los primeros 10 s: +{0} % de daño y de velocidad.' },
+  disco_fisico: { st: [18], desc: '+{0} % de vida. Es suyo para siempre: nadie se lo puede quitar.' },
+  alfombrilla:  { st: [2], desc: 'Los aliados de alrededor se curan un {0} % de su vida cada segundo.' },
   // v0.9.15: objetos de facción: más fuertes, pero solo los puede llevar el líder de su facción
-  zanahoria_oro:   { name: 'Zanahoria de oro', slot: 'weapon', rar: 'legendary', fac: 'animales', st: [22, 30], desc: '+{0} % de daño y su Chaos Jump vuelve un {1} % antes.' },
-  corona_huesos:   { name: 'Corona de huesos', slot: 'head', rar: 'legendary', fac: 'nomuertos', st: [22, 1.5], desc: '+{0} % de vida y se cura un {1} % de su vida cada segundo.' },
-  microfono_oro:   { name: 'Micrófono de oro', slot: 'acc', rar: 'legendary', fac: 'streamers', st: [18, 1.5], desc: '+{0} % de daño y los aliados de alrededor se curan un {1} % cada segundo.' },
-  yelmo_olimpo:    { name: 'Yelmo del Olimpo', slot: 'head', rar: 'legendary', fac: 'heroes', st: [20, 14], desc: '+{0} % de vida y recibe un {1} % menos de daño.' },
-  nucleo_plasma:   { name: 'Núcleo de plasma', slot: 'acc', rar: 'legendary', fac: 'ciber', st: [45, 15], desc: 'Escudo de plasma del {0} % de su vida y +{1} % de daño.' },
-  gafas_pixel:     { name: 'Gafas pixeladas', slot: 'head', rar: 'legendary', fac: 'memes', st: [22, 15], desc: 'El {0} % de sus golpes son críticos (triple) y +{1} % de velocidad. Deal with it.' },
-  raton_campeon:   { name: 'Ratón del campeón', slot: 'weapon', rar: 'legendary', fac: 'gamer', st: [28, 25], desc: 'Ataca un {0} % más rápido y +{1} % de alcance.' },
-  cartucho_dorado: { name: 'Cartucho dorado', slot: 'acc', rar: 'legendary', fac: 'olvidados', st: [15, 2], desc: '+{0} % de vida y de daño, y las torres tardan {1} s más en acordarse de él.' },
-  claqueta_oro:    { name: 'Claqueta de oro', slot: 'weapon', rar: 'legendary', fac: 'pop', st: [18, 35], desc: '+{0} % de daño y cada golpe salpica el {1} % a los de alrededor.' },
-  boton_pausa:  { name: 'Botón de pausa', slot: 'acc', rar: 'legendary', st: [3], desc: 'Una vez por vida, cuando va a caer, se pausa y es invulnerable {0} s.' },
-};
+  zanahoria_oro:   { st: [22, 30], desc: '+{0} % de daño y su Chaos Jump vuelve un {1} % antes.' },
+  corona_huesos:   { st: [22, 1.5], desc: '+{0} % de vida y se cura un {1} % de su vida cada segundo.' },
+  microfono_oro:   { st: [18, 1.5], desc: '+{0} % de daño y los aliados de alrededor se curan un {1} % cada segundo.' },
+  yelmo_olimpo:    { st: [20, 14], desc: '+{0} % de vida y recibe un {1} % menos de daño.' },
+  nucleo_plasma:   { st: [45, 15], desc: 'Escudo de plasma del {0} % de su vida y +{1} % de daño.' },
+  gafas_pixel:     { st: [22, 15], desc: 'El {0} % de sus golpes son críticos (triple) y +{1} % de velocidad. Deal with it.' },
+  raton_campeon:   { st: [28, 25], desc: 'Ataca un {0} % más rápido y +{1} % de alcance.' },
+  cartucho_dorado: { st: [15, 2], desc: '+{0} % de vida y de daño, y las torres tardan {1} s más en acordarse de él.' },
+  claqueta_oro:    { st: [18, 35], desc: '+{0} % de daño y cada golpe salpica el {1} % a los de alrededor.' },
+  boton_pausa:  { st: [3], desc: 'Una vez por vida, cuando va a caer, se pausa y es invulnerable {0} s.' },
+});
 const COFRE = [[p => `¡+${Math.round(30 * p)} % DE DAÑO!`, (u, p) => { u.mDmg *= 1 + 0.3 * p; }], [p => `¡+${Math.round(40 * p)} % DE VIDA!`, (u, p) => { u.mHp *= 1 + 0.4 * p; }], [() => '¡TURBO!', (u, p) => { u.mSpeed *= 1 + 0.3 * p; u.mCd *= 1 - 0.2 * p; }], [() => '¡REGENERACIÓN!', (u, p) => { u.regen = (u.regen || 0) + 0.02 * p; }], [() => '…estaba vacío', () => {}]];
-// v0.9.9: calidad de cada copia. Cada efecto sale entre el 50 % (calidad 0) y el 150 % (calidad 100) de su valor central.
-// Básica, Normal, Buena, Excelente o Perfecta; las probabilidades se enseñan en el gashapón.
-const QTIERS = [
-  { name: 'Becario (básica)', p: 30, lo: 0, hi: 0.4, col: '#b4bccb' },
-  { name: 'Junior (normal)', p: 40, lo: 0.4, hi: 0.7, col: '#63cfe0' },
-  { name: 'Senior (buena)', p: 20, lo: 0.7, hi: 0.88, col: '#8cf05a' },
-  { name: 'Director (excelente)', p: 9, lo: 0.88, hi: 0.99, col: '#e2a8ff' },
-  { name: 'CEO (perfecta)', p: 1, lo: 1, hi: 1, col: '#ffcb3d' },
-];
-function rollQ(minTier) {
-  const pool = QTIERS.slice(minTier || 0); let x = Math.random() * pool.reduce((a, t) => a + t.p, 0);
-  for (const t of pool) { if (x < t.p) return Math.floor((t.lo + Math.random() * (t.hi - t.lo)) * 1000) / 1000; x -= t.p; }
-  return 1;
-}
-const tierOf = q => (q >= 1 ? 4 : q >= 0.88 ? 3 : q >= 0.7 ? 2 : q >= 0.4 ? 1 : 0);
-const avgQ = it => it.q.reduce((a, b) => a + b, 0) / it.q.length;
-const defOf = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];
-const statDec = (id, c) => (id === 'provoca' ? 0 : c < 5 ? 2 : 1);
-const statsOf = it => (it.k === 'ab' ? [ABILITIES[it.id].vals[1]] : ITEMS[it.id].st).map(c => ({ c, dec: statDec(it.id, c) }));
-const rnd = (v, dec) => { const m = Math.pow(10, dec); return Math.round(v * m) / m; };
-const valsOf = it => statsOf(it).map((st, i) => rnd(st.c * (0.5 + (it.q[i] == null ? 0.5 : it.q[i])), st.dec));
 // campaña 1 "La Rebelión de los Fans" (mundos 1-8) y campaña 2 "La Era Digital" (9-12): 4 niveles por mundo (el 4.º es el jefe)
 const WORLDS = [
   { name: 'Oficinas de Microblizz', efac: 'microblizz', story: 'Microblizz, una empresa millonaria, ha comprado el estudio que hacía tus juegos favoritos. Lo primero: despedir a la gente y poner robots.', levels: [
@@ -168,26 +127,8 @@ const bossHp = (wi, d) => Math.round(BOSS_HP[wi] * BDIFF[d || 'n'].hp);
 const bossOpen = wi => wi === CEO_WI || !!SAVE.testAll || ['n', 'h', 'm'].some(d => starsD(WORLDS[wi].levels[3].id, d) > 0);
 
 /* ---------- v0.9.5: tienda, pase de batalla y sátira ---------- */
-// Tienda de prueba: nada se cobra. Precios orientativos para la 1.0 (decisión de Daniel: el oro se vende)
-const SHOP = {
-  gold: [
-    { id: 'g1', name: 'Puñado de oro', amt: 1000, eur: 0.99, note: 'Para ir tirando.' },
-    { id: 'g2', name: 'Saco de oro', amt: 6000, eur: 4.99, note: 'El CEO te lo agradece personalmente (no).' },
-    { id: 'g3', name: 'Cofre de oro', amt: 13000, eur: 9.99, note: 'Huele a los millones de Microblizz.' },
-    { id: 'g4', name: 'Cámara acorazada', amt: 28000, eur: 19.99, note: 'Incluye la llave. La puerta no.' },
-    { id: 'g5', name: 'Bóveda del CEO', amt: 75000, eur: 49.99, note: 'Para subir cartas al 10 sin mirar el precio.' },
-  ],
-  gems: [
-    { id: 'e1', name: 'Bolsita de gemas', amt: 100, eur: 0.99, note: 'Dos tiradas del gashapón.' },
-    { id: 'e2', name: 'Puñado de gemas', amt: 550, eur: 4.99, note: 'Brillan más que el futuro de Microblizz.' },
-    { id: 'e3', name: 'Saco de gemas', amt: 1200, eur: 9.99, note: '' },
-    { id: 'e4', name: 'Cofre de gemas', amt: 2600, eur: 19.99, note: '' },
-    { id: 'e5', name: 'Caja fuerte de gemas', amt: 7000, eur: 49.99, note: 'Ni el becario sabe la combinación.' },
-  ],
-  joke: { name: 'Paquete Millonario', amt: 1000000, was: 500, eur: 100 },
-  gift: { gold: 100, gems: 5 },
-  starter: { gems: 600, gold: 5000, eur: 4.99 },   // v0.9.11: solo una vez; vale casi el doble que por separado
-};
+// La tienda es común (core/js/sistema/progreso.js); este juego le añade el pack de bienvenida
+SHOP.starter = { gems: 600, gold: 5000, eur: 4.99 };   // v0.9.11: solo una vez; vale casi el doble que por separado
 // frases de despedida al caer (humor)
 const QUIPS = {
   microblizz: ['¿Me han despedido?', 'Me llevo la grapadora', '¿Y mi finiquito?', '¿Me puedo quedar la taza?', 'Me cambian por un robot más barato', 'Ocho años aquí y me echan por correo', 'Me faltaban 2 años para ser fijo', '¿Esto cuenta como vacaciones?', 'Error 404: trabajo no encontrado', 'Mi jefe dijo que éramos una familia', 'Dejo el juego a medias', 'El CEO se ha comprado otro yate'],
@@ -420,8 +361,7 @@ const HEADLINES_PH = {
 };
 const GAME_URL = 'jdanielhl1984-commits.github.io/fans-of-rumble';
 
-/* ---------- guardado (en el navegador; se puede exportar e importar) ---------- */
-const SAVE_KEY = 'for-save-1';
+/* ---------- la partida guardada de este juego: cómo es una nueva y cómo se ponen al día las antiguas ---------- */
 function newSave() { return { v: 1, gold: ECON.start.gold, gems: ECON.start.gems, units: {}, unlocked: ['animales'], camp: {}, inv: [], invSeq: 0, abEquip: {}, equip: {}, pity: { ab: 0, abL: 0, eq: 0, eqL: 0, qab: 0, qeq: 0, cd: 0, cdL: 0 }, cards: {}, decks: {}, bossRec: {}, bossPay: {}, bossSel: { wi: 6, d: 'n' }, daily: null, weekly: null, tickets: 0, pass: { xp: 0, prem: false, free: [], paid: [] }, giftDay: '', chatOff: false, bestBoss: 0, lastFac: 'animales', tut: { done: false, step: 0 }, tutGift: {}, login: { last: '', day: 0, best: 0 }, stats: {}, achDone: [], achSeen: [], starter: false, speed2: false, seenVer: '', campH: {}, campM: {}, rlWeek: '', mythPrize: {}, facItem: {} }; }
 // v0.9.9: antes se guardaba «tengo esta habilidad (rango 1-3)» y «tengo este objeto»; ahora cada copia tiene su calidad.
 // Las partidas antiguas se convierten sin perder nada: la habilidad conserva su valor exacto y los objetos quedan como estaban.
@@ -464,13 +404,7 @@ function migrateSave(s, raw) {
   s.campH = s.campH || {}; s.campM = s.campM || {}; s.mythPrize = s.mythPrize || {};   // v0.9.12: Difícil y Mítica
   return s;
 }
-function loadSave() {
-  try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.v === 1) return migrateSave(Object.assign(newSave(), o), o); } } catch (e) { /* storage blocked */ }
-  return newSave();
-}
-let SAVE = loadSave();
-function saveGame() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* storage blocked: progress lives in memory */ } }
-const uSave = k => (SAVE.units[k] || (SAVE.units[k] = { lvl: 1, xp: 0 }));
+SAVE = loadSave();   // lo carga y lo guarda core/js/sistema/progreso.js, con newSave y migrateSave de aquí
 const isUnlocked = f => SAVE.unlocked.includes(f);
 
 /* ---------- utilidades del combate (las generales están en core/js/sistema/utiles.js) ---------- */

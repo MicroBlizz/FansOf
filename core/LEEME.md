@@ -23,8 +23,8 @@ La versión se escribe **solo** en ese `?v=`. De ella salen `VERSION`, el `?v=` 
 
 | Carpeta | Qué es |
 |---|---|
-| `js/serie/` | La serie: facciones, cartas y sus números (`config`), dibujos (`arte`), canciones, frases de humor e iconos. |
-| `js/sistema/` | Los sistemas: utilidades y ganchos, sonido y música, pantallas comunes (cartera, niveles, avisos), colección, inventario, gashapón, tienda, horas extra y opciones comunes. |
+| `js/serie/` | La serie: facciones, cartas y sus números (`config`), dibujos (`arte`), canciones, frases de humor, iconos y el catálogo de habilidades y objetos (qué existen; lo que hacen lo dice cada juego). |
+| `js/sistema/` | Los sistemas: utilidades y ganchos, sonido y música, progreso (economía, calidades, tienda y partida guardada), pantallas comunes (cartera, niveles, avisos), colección, inventario, gashapón, tienda, horas extra y opciones comunes. |
 | `js/retos.js` | Misiones, logros, pase de batalla, premio diario y perfil. Los datos los pone cada juego en su `js/retos.js`. |
 | `js/novedades.js` | El informe de parches. La lista (`NEWS`) la pone cada juego en su `js/novedades.js`. |
 | `js/sw.js` | Jugar sin conexión. Cada juego lo usa desde un `sw.js` de dos líneas en su carpeta. |
@@ -50,7 +50,10 @@ Lo común nunca mira dentro del juego: le pregunta con estas funciones, que el j
 | `musicUpdate()` | Qué canción toca en cada momento: llama a `musicSet('nombre')`. |
 | `titlePopups()` | Qué ventanas salen solas al volver al menú (novedades, premio diario…). |
 
-Además usa lo que por ahora define cada juego: `SAVE` y `saveGame()`, `ECON`, `ABILITIES`, `ITEMS`, `SHOP`, `uSave`, `invGet`, `statsOf`, `valsOf` y el resto del catálogo.
+Y, para el progreso (ver `js/sistema/progreso.js`):
+
+- **Antes** de lo común, en su `js/ajustes.js`: `AJUSTES.guardado` (el nombre de su partida guardada; cada juego tiene la suya y nunca se comparten) y `AJUSTES.econ` (los números de economía que cambia o añade).
+- **Después**: `ABILITIES = catalogo('ab', {…})` e `ITEMS = catalogo('eq', {…})` con lo que hace cada habilidad y objeto en ese juego, `newSave()` y `migrateSave()` con la forma de su partida, y `SAVE = loadSave()`.
 
 ## Ganchos: lo que solo tiene un juego
 
@@ -82,6 +85,5 @@ Ejecuta el mismo guion en la versión anterior y en la nueva, en cada juego, y e
 
 ## Lo que todavía no es común
 
-- **Guardado y catálogo de habilidades y objetos.** El Rumble los tiene en `js/02-progresion.js`; el TD, en `core/js/meta.js` y `core/js/save.js` (que por ahora solo usa él).
-- **El resto de Opciones** (volumen, lo que se ve en la partida, pasar o borrar el progreso): depende del guardado.
+- **El resto de Opciones** (volumen, lo que se ve en la partida, pasar o borrar el progreso): cada juego tiene todavía las suyas.
 - **Estilos.** `css/menus.css` se genera desde los del Rumble con `python herramientas/sincronizar.py`.

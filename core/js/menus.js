@@ -1,6 +1,6 @@
 // Fans Of · Menús: cartera, colección, inventario, gashapón, tienda y novedades.
 // Es el código de js/09-menus.js y js/11-logros.js del original, adaptado: aquí todas las cartas llevan equipo (no solo el líder)
-// y cada objeto dice si mejora la TORRE o la UNIDAD. Los estilos son los del original (core/css/menus.css).
+// y cada objeto dice qué faceta de la carta mejora en este juego. Los estilos son los del original (core/css/menus.css).
 'use strict';
 /* ---------- lo que el original tenía repartido por otros archivos ---------- */
 const play = n => sfx({ select: 'place', deny: 'womp', levelup: 'up', win: 'win', crown: 'coin', roll: 'horn', despido: 'womp', sad: 'womp' }[n] || n);
@@ -68,7 +68,7 @@ function collRow(k) {
   const c = CFG.cards[k], us = uSave(k), max = us.lvl >= ECON.maxLvl, need = needXp(us.lvl), D = TOWERS[collFac][k];
   const ready = !max && us.xp >= need, cost = lvlCost(us.lvl), pct = max ? 100 : Math.min(100, (us.xp / need) * 100);
   const es = effStats(k), bst = es.boosts.length ? `<span class="boost">Con lo que lleva: ${es.boosts.join(', ')}</span>` : '';
-  const stats = `<i class="ft">TORRE</i> ${es.aura ? 'Apoyo' : 'Daño ' + Math.round(es.dmg)} · Alcance ${Math.round(es.range)} <i class="fu">UNIDAD</i> Vida ${Math.round(es.hp)}` + bst;
+  const stats = cardStats(es) + bst;   // la línea de números de la carta la escribe cada juego
   const worn = wornSet(), E = SAVE.equip[k] || {};
   let slots = slotTile('ab', k, invGet(SAVE.abEquip[k]), 'HABILIDAD', worn, k);
   for (const sl in SLOTS) slots += slotTile('eq', sl, invGet(E[sl]), SLOTS[sl].toUpperCase(), worn, k);
@@ -87,7 +87,6 @@ function slotTile(kind, key, it, label, worn, card) {
   const R = RARITY[D.rar], T = QTIERS[tierOf(avgQ(it))];
   return `<button class="slot full" ${attr} style="--qc:${T.col};--rc2:${R[2]}" aria-label="${label}: ${D.name}, calidad ${T.name}. Toca para cambiar"><span class="sl-ic" style="background:${R[1]}">${kind === 'ab' ? D.ic : SLOT_SVG[key]}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${D.name}</span><span class="sl-q ol">${T.name.split(" ")[0]} ${sideTag(D)}</span></span></button>`;
 }
-const sideTag = D => (D.side === 'T' ? '· TORRE' : D.side === 'U' ? '· UNIDAD' : '· LAS DOS');
 function descOf(it) {
   const D = defOf(it), V = valsOf(it); let t = D.desc + (it.k === 'eq' && D.fac ? ` <i class="wn">Solo para ${FAC_NAME(D.fac)}.</i>` : '');
   V.forEach((v, i) => { t = t.replace('{' + i + '}', `<b class="sv">${fmtV(v)}</b>`); });
@@ -277,7 +276,7 @@ function openItem(uid, slot) {
   const bars = S.map((st, i) => { const qi = it.q[i], Ti = QTIERS[tierOf(qi)]; return `<div class="qstat">${S.length > 1 ? `Efecto ${i + 1}: ` : 'Valor: '}<b>${fmtV(V[i])}</b> <small>(de ${fmtV(rnd(st.c * 0.5, st.dec))} a ${fmtV(rnd(st.c * 1.5, st.dec))}) · ${Ti.name}</small><div class="qbar" style="--qc:${Ti.col}"><i style="width:${Math.max(2, qi * 100)}%"></i></div></div>`; }).join('');
   const others = SAVE.inv.filter(x => x !== it && x.k === it.k && x.id === it.id).sort((a, b) => avgQ(b) - avgQ(a));
   const oth = others.length ? `Tus otras copias: ${others.slice(0, 5).map(x => `${QTIERS[tierOf(avgQ(x))].name} ${Math.round(avgQ(x) * 100)} %`).join(' · ')}${others.length > 5 ? ` y ${others.length - 5} más` : ''}.` : 'Es tu única copia.';
-  const facet = D.side === 'T' ? 'mejora la TORRE' : D.side === 'U' ? 'mejora la UNIDAD' : 'mejora las dos facetas';
+  const facet = sideText(D);
   $('#item-body').innerHTML = `<div class="item-head"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] : ' · Habilidad'} · ${facet}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
     <div>${qBadge(it, true)}</div><div class="inv-desc">${descOf(it)}</div>${bars}
     <div class="item-note">${w ? 'Lo lleva ' + w + '.' : 'No lo lleva nadie.'}${it.lock ? ' Contrato indefinido: no se puede despedir.' : ''}</div><div class="item-note">${oth}</div>`;
@@ -388,68 +387,8 @@ function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classL
 
 /* =========================================================
    NOVEDADES: el informe de cada parche. Sale solo la primera vez que abres el juego después de actualizarse.
-   Con cada versión nueva hay que subir VERSION (en meta.js) y poner aquí arriba del todo lo que cambia.
+   La lista (NEWS) y la versión (VERSION) son de cada juego: están en games/<juego>/js/novedades.js.
    ========================================================= */
-const NEWS = [
-  { v: '0.9.4', real: [
-      '<b>HORAS EXTRA</b>: cada líder hace ahora su propio especial. NecroLord invoca esqueletos, CyberMarine llama a sus drones, el Vikingo levanta su muro de escudos… Antes todos saltaban como CrazyBunny.',
-      'En la portada, los tres personajes de tu facción salen subidos a su <b>peana de torre</b>.'],
-    joke: ['Microblizz ha descubierto que sus empleados también tienen habilidades propias. Las ha puesto de pago.'] },
-  { v: '0.9.3', real: [
-      '<b>Dirección nueva</b>: el juego vive ahora en microblizz.github.io/FansOf. La dirección antigua te trae aquí sola.',
-      'Si vienes de la antigua con progreso guardado, al llegar te pregunta si quieres <b>traértelo</b>.'],
-    joke: ['Microblizz se ha mudado de oficina. Los despidos también se han mudado.'] },
-  { v: '0.9.2', real: [
-      '<b>El juego se llama Fans of TD</b>. La serie es «Fans Of»: el primero fue Fans of Rumble y este es su defensa de torres.',
-      'Si lo tienes instalado como app, el nombre nuevo sale al reinstalarlo.'],
-    joke: ['Microblizz ha registrado «Fans Of» en 40 países. Por si acaso.'] },
-  { v: '0.9.1', real: [
-      'Cambio interno: el juego se ha ordenado por dentro para compartir razas, cartas, objetos, menús y música con los próximos juegos de Fans of Rumble.',
-      'Tu progreso se conserva. Si lo tenías <b>instalado como app</b> y no abre bien, desinstálalo y vuelve a instalarlo desde Opciones.'],
-    joke: ['Microblizz llama a esto «sinergias». Normalmente después despide a alguien.'] },
-  { v: '0.9.0', real: [
-      '<b>Menús como los del original</b>: la portada, la campaña, la pantalla de antes de jugar, la pausa y el final de la partida tienen ahora su mismo aspecto.',
-      '<b>Antes de jugar</b> eliges tu facción en una pantalla propia, con su pasiva. En el modo VS eliges ahí también el rival.',
-      '<b>Cómo se juega</b>: un resumen en 8 pasos, en la portada.',
-      'Arreglados colores que faltaban en algunos menús (los fondos de la cartera y de varias cajas salían transparentes).'],
-    joke: ['Microblizz ha renovado los menús. Los precios, también.', 'Phony asegura que la pantalla de pausa es una función exclusiva.'] },
-  { v: '0.8.1', real: [
-      '<b>Poner varias torres seguidas</b>: al colocar una torre, su carta se queda elegida unos segundos. Toca otra casilla y pones otra igual, sin volver a la bandeja.',
-      'Se suelta sola a los 4 segundos, si no te llega el CAOS para otra, o si tocas la carta o una torre ya puesta.'],
-    joke: ['Microblizz estudia cobrar por cada toque que te ahorras.'] },
-  { v: '0.8.0', real: [
-      '<b>Opciones como las del original</b>: música del menú a elegir (la de cualquier raza o jefe), avisos encima o en una caja, chapas, sangre y chat.',
-      '<b>Chat en directo</b>: los comentarios falsos del original, durante la partida. Se quita en Opciones.',
-      '<b>Tutorial</b>: una partida guiada en el nivel 1-1 para quien empieza. Se puede repetir desde Opciones.'],
-    joke: ['El chat pregunta dónde se compra el CAOS. Microblizz está tomando nota.', 'La sangre es opcional. Los despidos, no.'] },
-  { v: '0.7.0', real: [
-      '<b>Opciones</b>: volumen, música, números de daño, temblor de pantalla y modo pruebas. Están en el menú principal.',
-      '<b>Instalar</b>: desde Opciones puedes instalar el juego como una app, a pantalla completa. Instalado también funciona sin conexión.',
-      '<b>Pasar el progreso</b> a otro móvil o PC con un código, y empezar de cero si quieres.'],
-    joke: ['Microblizz ha añadido un botón de opciones. La opción de no pagar sigue en desarrollo.', 'Phony recuerda que instalar el juego no te da la propiedad del juego.'] },
-  { v: '0.6.1', real: [
-      '<b>Arreglado el parpadeo de las cartas de torres</b>: durante la partida se apagaban y encendían solas varias veces por segundo. Ahora solo se apagan cuando no te llega el CAOS.'],
-    joke: ['Microblizz aclara que el parpadeo era una función prémium de discoteca. Se retira por falta de suscriptores.'] },
-  { v: '0.6.0', real: [
-      '<b>Menús como los del original</b>: colección, inventario, gashapón con su máquina de cápsulas, tienda y horas extra tienen ahora su mismo aspecto.',
-      '<b>Informe de parches</b>: esta ventana. Sale una vez con cada versión y puedes volver a verla en NOVEDADES.',
-      '<b>Experiencia</b>: cada torre que pones y cada unidad que envías da XP a su carta. Para subirla de nivel hace falta XP y oro, como en el original.',
-      '<b>Inventario</b>: todas tus copias con su calidad. Puedes bloquearlas, volver a sortear sus números o despedirlas (también en masa).',
-      'El gashapón tiene tiradas <b>x1, x10 y x50</b>, con una épica segura por cada 10.',
-      'Arreglado el parpadeo de los botones de la torre durante el combate.'],
-    joke: ['Microblizz quería cobrar 0,99 € por leer estas notas. Al becario se le olvidó poner el botón de pagar.', 'El CEO ha preguntado por qué las torres no tienen contrato temporal.', 'Phony anuncia que la música subirá de tono para siempre. También el precio.'] },
-  { v: '0.5.0', real: [
-      '<b>Música del original</b>: un tema por raza, el de cada jefe y los de victoria y derrota. Después de sonar entera sigue subiendo de tono sin fin (paradoja de Shepard) para que no canse.'],
-    joke: ['La música era gratis. Microblizz está investigando cómo ha podido pasar.'] },
-  { v: '0.4.0', real: [
-      '<b>Progreso</b>: oro y gemas, niveles de carta, habilidades, equipo, gashapón, tienda y horas extra.',
-      'Cada carta es una <b>torre</b> y una <b>unidad</b> que comparten nivel, habilidad y equipo: casi todo mejora solo una de las dos.',
-      '<b>Modo VS</b>: mejora tus unidades dentro de la partida, y el rival gasta más en mandarte las suyas. Lo de dentro de la partida ahora se llama <b>CAOS</b>.'],
-    joke: ['Las horas extra no se pagan. Se «acumulan».'] },
-  { v: '0.3.0', real: ['<b>Modo VS</b> contra un rival que lleva el juego: envía unidades, sube tu income y róbale vida a su base.', '<b>Fusiones</b>: dos torres iguales, del mismo nivel y pegadas se funden en una mejor.'], joke: ['El rival también es un becario. No se lo digas.'] },
-  { v: '0.2.0', real: ['Las <b>9 razas</b> con sus torres y su pasiva, y los <b>12 mundos</b> de la campaña con sus jefes.'], joke: ['Doce mundos y ni un solo día de vacaciones.'] },
-  { v: '0.1.0', real: ['Defensa de torres de <b>laberinto</b>: el campo es todo camino, lo cierras tú con torres y nunca del todo.'], joke: ['Microblizz ha patentado «andar en línea recta».'] },
-];
 function openNews() {
   const cur = NEWS[0], rest = NEWS.slice(1);
   $('#news-title').textContent = 'NOVEDADES · ' + VERSION;

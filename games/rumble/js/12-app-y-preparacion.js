@@ -15,7 +15,6 @@ function installApp() {
   confirmBox('INSTALAR EN EL MÓVIL', (web ? '' : '<b>Ábrelo desde la web del juego</b> (no desde un archivo) para poder instalarlo.<br><br>') + (ios ? 'En iPhone, con <b>Safari</b>: toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba) y luego <b>«Añadir a pantalla de inicio»</b>.' : 'En Android, con <b>Chrome</b>: toca el menú <b>⋮</b> (arriba a la derecha) y luego <b>«Instalar aplicación»</b> o <b>«Añadir a pantalla de inicio»</b>.') + '<small>Se abre como una app, a pantalla completa, y también funciona sin internet.</small>', null, null, 'ENTENDIDO');
 }
 $('#btn-install').addEventListener('click', installApp);
-$('#btn-news').addEventListener('click', () => { play('select'); openNews(); });
 $('#btn-tut').addEventListener('click', () => { play('select'); SAVE.tut = { done: false, step: 0 }; saveGame(); goHome(); toast('Tutorial reiniciado: sigue a Lola', true); });
 $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });

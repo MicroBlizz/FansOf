@@ -27,6 +27,7 @@ const NUCLEO = (() => {
     'js/serie/canciones.js',       //           las canciones
     'js/serie/frases.js',          //           frases de humor comunes
     'js/serie/iconos.js',          //           iconos y colores
+    'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.

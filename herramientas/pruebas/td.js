@@ -60,9 +60,9 @@ var PRUEBA = {
       T.paso('colección: quitar habilidad'); T.clic('#coll-list [data-ab="beaver"]'); T.clic('#ia-unequip'); T.foto(); T.clic('#btn-item-close'); guardado();
       T.paso('colección: quitar desde la lista'); T.clic('#coll-list [data-ab="bunny"]'); T.clic('#ia-equip'); T.clic('#pick-list [data-id=""]'); T.foto(); guardado();
       T.paso('colección: ranura de objeto vacía'); T.clic('#coll-list [data-eq="acc"][data-ek="bunny"]'); T.foto('lista'); T.clic('#pick-list .pick-opt[data-id]:not([data-id=""])'); T.foto(); guardado();
-      T.paso('colección: objeto que llevaba otra carta'); T.clic('#coll-list [data-eq="weapon"][data-ek="beaver"]'); T.foto('lista'); T.clic('#pick-list [data-id="i13"]'); T.foto(); guardado();
+      T.paso('colección: objeto que llevaba otro líder'); T.clic('#coll-list [data-eq="acc"][data-ek="bunny"]'); T.clic('#ia-equip'); T.foto('lista'); T.clic('#pick-list [data-id="i17"]'); T.foto(); guardado();
       T.paso('colección: ranura de objeto con algo'); T.clic('#coll-list [data-eq="head"][data-ek="bunny"]'); T.foto(); T.clic('#btn-item-close');
-      T.paso('colección: sin copias, ir al gashapón'); { const inv = SAVE.inv; SAVE.inv = inv.filter(x => x.k !== 'eq' || ITEMS[x.id].slot !== 'acc'); for (const k in SAVE.equip) delete SAVE.equip[k].acc; buildColl(); T.clic('#coll-list [data-eq="acc"][data-ek="fox"]'); T.foto('lista'); T.clic('#pick-list [data-goto]'); T.foto('gashapón'); SAVE.inv = inv; T.clic('#scr-gacha .back'); T.avanza(3000); cierra(); }
+      T.paso('colección: sin copias, ir al gashapón'); { const inv = SAVE.inv; SAVE.inv = inv.filter(x => x.k !== 'eq' || ITEMS[x.id].slot !== 'acc'); for (const k in SAVE.equip) delete SAVE.equip[k].acc; buildColl(); T.clic('#coll-list [data-eq="acc"][data-ek="bunny"]'); T.foto('lista'); T.clic('#pick-list [data-goto]'); T.foto('gashapón'); SAVE.inv = inv; T.clic('#scr-gacha .back'); T.avanza(3000); cierra(); }
 
       /* ---------- inventario ---------- */
       T.paso('inventario'); casa(); T.clic('#btn-inv'); T.clic('[data-it="ab"]'); T.foto();
@@ -72,7 +72,7 @@ var PRUEBA = {
       T.paso('ficha: objeto de facción'); ficha('i14'); T.foto(); T.clic('#btn-item-close');
       T.paso('ficha: habilidad con tres efectos'); ficha('i20'); T.foto(); T.clic('#btn-item-close');
       T.paso('ficha: bloquear'); ficha('i9'); T.clic('#ia-lock'); T.foto(); T.clic('#ia-lock'); T.foto('otra vez'); guardado();
-      T.paso('ficha: equipar un objeto'); T.clic('#ia-equip'); T.foto('lista'); T.clic('#pick-list [data-id="skeleton"]'); T.foto(); guardado();
+      T.paso('ficha: equipar un objeto'); T.clic('#ia-equip'); T.foto('lista'); T.clic('#pick-list [data-id="necrolord"]'); T.foto(); guardado();
       T.paso('ficha: quitar un objeto'); T.clic('#ia-unequip'); T.foto(); guardado(); T.clic('#btn-item-close');
       T.paso('ficha: equipar una habilidad'); T.clic('[data-it="ab"]'); ficha('i6'); T.clic('#ia-equip'); T.foto('lista'); T.clic('#pick-list [data-id="fox"]'); T.foto(); guardado(); T.clic('#btn-item-close');
       T.paso('ficha: despedir'); ficha('i7'); T.clic('#ia-scrap'); T.foto('pregunta'); ok(); T.foto(); guardado();

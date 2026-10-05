@@ -17,6 +17,8 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
                         De esa versión salen VERSION, el ?v= de todos los archivos y la copia para jugar sin conexión
   js/sw.js              jugar sin conexión, igual para todos los juegos (cada juego lo usa desde un sw.js de dos líneas)
   js/sistema/utiles.js  utilidades pequeñas que usan todos los sistemas
+  js/novedades.js       el informe de parches: la ventana NOVEDADES, que salga sola con cada versión y el texto que enseña la librería.
+                        Cada juego escribe solo su lista (NEWS) en su js/novedades.js
   js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
                         canciones, frases de humor e iconos
   js/meta.js            el SISTEMA de progreso: oro y gemas, niveles y experiencia, catálogo de habilidades y objetos,

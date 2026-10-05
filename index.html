@@ -30,7 +30,7 @@
   .game .ver { font-family: var(--font-display); font-size: 16px; color: var(--gold); }
   .game details { margin-top: 10px; background: var(--panel); border: 3px solid var(--outline); border-radius: 12px; padding: 8px 12px; }
   .game summary { cursor: pointer; font-weight: 800; font-size: 15px; }
-  .game h3 { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--gold); margin: 12px 0 2px; }
+  .game h3, .game h4 { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--gold); margin: 12px 0 2px; }
   .game ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; font-weight: 600; line-height: 1.35; }
   .game li { margin: 3px 0; }
   .game li b { color: var(--player-lite); }
@@ -56,8 +56,10 @@
   </section>
   <p class="note">Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
 </main>
+<script src="core/js/novedades.js"></script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
+// El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
 'use strict';
 const text = url => fetch(url, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
 // del código de un juego, el valor de «const NOMBRE = …;» (son solo textos: una lista u objeto de frases)
@@ -66,11 +68,10 @@ function grab(src, name, close) {
   const j = src.indexOf(String.fromCharCode(10) + close, i); if (j < 0) return null;
   return new Function('return ' + src.slice(i + name.length + 9, j + 1 + close.length - 1))();
 }
-const list = (items, cls) => (items && items.length ? `<ul${cls ? ' class="' + cls + '"' : ''}>${items.map(t => `<li>${t}</li>`).join('')}</ul>` : '');
 function show(id, ver, entries) {
   const box = document.getElementById(id);
   box.querySelector('[data-ver]').textContent = ver ? 'versión ' + ver : '';
-  box.querySelector('[data-news]').innerHTML = entries.length ? entries.map(e => `<h3>Versión ${e.v}</h3>` + list(e.real) + list(e.joke, 'joke')).join('') : 'No se han podido leer las novedades.';
+  box.querySelector('[data-news]').innerHTML = entries.length ? `<h3>Versión ${entries[0].v}</h3>` + newsHtml(entries) : 'No se han podido leer las novedades.';
 }
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js

@@ -369,26 +369,14 @@ function updateBadges() {
   const t = SAVE.tickets || 0; $('#gacha-badge').hidden = !t;
   $('#feat-gacha').textContent = t ? `¡${t} ${t > 1 ? 'tiradas gratis' : 'tirada gratis'}!` : 'Tira x1, x10 o x50';
   $('#feat-shop').textContent = giftReady() ? '¡Regalo diario gratis!' : 'Oro, gemas y ofertas';
-  $('#news-badge').hidden = SAVE.seenVer === NEWS_VER;
+  $('#news-badge').hidden = !novedadesPendientes();
   retosBadges();   // misiones, logros, pase y el botón del perfil
 }
 let toastTimer = null;
 function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classList.toggle('good', !!good); t.classList.toggle('menu', G.screen !== 'play'); t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400); }
 
-/* =========================================================
-   NOVEDADES: el informe de cada parche. Sale solo la primera vez que abres el juego después de actualizarse.
-   La lista (NEWS) es de cada juego: está en games/<juego>/js/novedades.js.
-   ========================================================= */
-const NEWS_VER = NEWS[0].v;   // la última versión con novedades: solo se enseñan solas cuando cambia
-function openNews() {
-  const cur = NEWS[0], rest = NEWS.slice(1);
-  $('#news-title').textContent = 'NOVEDADES · ' + cur.v;
-  $('#news-body').innerHTML = `<h4>LO NUEVO</h4><ul>${cur.real.map(t => `<li>${t}</li>`).join('')}</ul><h4>NOTAS DE MICROBLIZZ Y PHONY</h4><ul class="joke">${cur.joke.map(t => `<li>${t}</li>`).join('')}</ul>`
-    + rest.map(n => `<h4>VERSIÓN ${n.v}</h4><ul>${n.real.map(t => `<li>${t}</li>`).join('')}</ul><ul class="joke">${n.joke.map(t => `<li>${t}</li>`).join('')}</ul>`).join('');
-  $('#scr-news').hidden = false; $('#news-body').scrollTop = 0;
-}
 // al volver al menú principal, de una en una: cómo te llamas (la primera vez), las novedades si hay versión nueva y el premio diario
-function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (retosPopups()) return; if (SAVE.seenVer !== NEWS_VER) { openNews(); return; } retosLogin(); }
+function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (retosPopups()) return; if (novedadesPendientes()) { openNews(); return; } retosLogin(); }
 
 /* ---------- menú principal ---------- */
 function showMenu() {
@@ -400,8 +388,6 @@ $('#btn-coll').onclick = () => { play('select'); openColl(); };
 $('#btn-inv').onclick = () => { play('select'); openInv(); };
 $('#btn-gacha').onclick = () => { play('select'); openGacha(); };
 $('#btn-shop').onclick = () => { play('select'); openShop(); };
-$('#btn-news').onclick = () => { play('select'); openNews(); };
-$('#btn-news-ok').onclick = () => { $('#scr-news').hidden = true; play('select'); stat('news', 1); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); updateBadges(); } titlePopups(); };
 for (const b of document.querySelectorAll('[data-back]')) b.onclick = () => { play('select'); showMenu(); };
 for (const b of document.querySelectorAll('[data-gt]')) b.onclick = () => { gachaTab = b.dataset.gt; play('select'); buildGachaText(); };
 for (const b of document.querySelectorAll('[data-pull]')) b.onclick = () => pull(+b.dataset.pull);
@@ -453,7 +439,6 @@ $('#btn-import').onclick = () => {
   if (!o || o.v !== 1 || typeof o.stars !== 'object') { play('deny'); toast('Ese código no vale. Cópialo entero desde el otro dispositivo y pégalo en la caja.'); return; }
   confirmBox('¿CARGAR ESE PROGRESO?', 'Se cambia todo tu progreso de este navegador por el del código.<small>No se puede deshacer.</small>', 'CARGAR', () => { SAVE = metaDefaults(o); saveGame(); location.reload(); });
 };
-$('#btn-opt-news').onclick = () => { play('select'); openNews(); };
 $('#btn-reset').onclick = () => confirmBox('¿EMPEZAR DE CERO?', 'Se borra <b>todo</b>: estrellas, oro, gemas, niveles y objetos.<small>No se puede deshacer.</small>', 'BORRAR', () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sin almacenamiento */ } location.reload(); });
 
 /* ---------- instalar como app ---------- */

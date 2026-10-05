@@ -253,20 +253,12 @@ function claimLogin() {
   stat('login', 1); saveGame(); updateWallets(); play('win'); toast(`Día ${st.day}: ${rewardTxt(r)}`, true);
 }
 $('#btn-login').addEventListener('click', claimLogin);
-// ---- novedades: lo nuevo de verdad y las «notas» de Microblizz (la lista está en js/novedades.js)
-const NEWS_VER = NEWS[0].v;   // la última versión con novedades: solo se enseñan solas cuando cambia
-function openNews() {
-  const N = NEWS[0];
-  $('#news-title').textContent = 'NOVEDADES · ' + N.v;
-  $('#news-body').innerHTML = `<h4>LO NUEVO</h4><ul>${N.real.map(t => `<li>${t}</li>`).join('')}</ul><h4>NOTAS DE MICROBLIZZ Y PHONY</h4><ul class="joke">${N.joke.map(t => `<li>${t}</li>`).join('')}</ul>`;
-  $('#scr-news').hidden = false; $('#news-body').scrollTop = 0;
-}
-$('#btn-news-ok').addEventListener('click', () => { $('#scr-news').hidden = true; play('select'); stat('news', 1); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; saveGame(); } titlePopups(); });
+// ---- novedades: la ventana y el aviso de versión nueva son comunes (core/js/novedades.js); la lista de este juego está en js/novedades.js
 // al volver al menú principal: primero las novedades y luego el premio diario (nunca durante la partida guiada)
 function titlePopups() {
   if (!SAVE.tut.done || G.autoplay || $('#scr-title').hidden || !$('#scr-news').hidden || !$('#scr-login').hidden || !$('#scr-name').hidden) return;
   if (!SAVE.name) { if ($('#scr-name').hidden) openName(true); return; }   // v0.9.26: los que ya jugaban también eligen nombre
-  if (SAVE.seenVer !== NEWS_VER) { openNews(); return; }
+  if (novedadesPendientes()) { openNews(); return; }
   if (loginState().ready) openLogin();
 }
 // ---- velocidad x2 (se guarda; en la partida guiada siempre va a x1)

@@ -87,7 +87,39 @@ function idleUI(force) {
   adIdleUI();   // v0.9.16
 }
 // ---- la escena: scroll lateral con parallax; el líder pega a los bots de Microblizz y Phony que van llegando
-const idleSc = { t: 0, off: 0, walk: 0, mobs: [], fx: [], cw: 0, ch: 0, R: 0, L: null, lfac: '', tick: 0, atkT: 0.6, lunge: 0, jump: 0, jumpHit: true, hit: 0, hp: 1, spec: 5, spawn: 0.3, wave: 0, sayT: 6, eu: null, pend: null, pendT: 0 };
+const idleSc = { t: 0, off: 0, walk: 0, mobs: [], fx: [], cw: 0, ch: 0, R: 0, L: null, lfac: '', tick: 0, atkT: 0.6, lunge: 0, jump: 0, jumpHit: true, hit: 0, hp: 1, spec: 5, spawn: 0.3, wave: 0, sayT: 6, eu: null, pend: null, pendT: 0, cast: 0, buffT: 0, buffCol: '#ffe06a', wallT: 0, flur: 0, flurT: 0 };
+// v0.9.28: cada líder hace SU especial (antes todos saltaban como CrazyBunny). La etiqueta que sale es la de su carta.
+const IDLE_SPEC = {
+  bunny:        { kind: 'jump' },                                  // Chaos Jump: salta y cae en área
+  necrolord:    { kind: 'summon', unit: 'skeleton', n: 2 },        // Invoca: 2 esqueletos corren a pegar
+  twitchking:   { kind: 'buff', t: 4, col: '#c084fc' },            // En directo: 4 s atacando al doble de velocidad
+  epicchampion: { kind: 'flurry', n: 3 },                          // Team Fight: 3 golpes seguidos
+  cybermarine:  { kind: 'drop', unit: 'drone', n: 2 },             // Orbital Drop: caen 2 drones del cielo
+  memelord:     { kind: 'card' },                                  // Carta viral: una al azar
+  progamer:     { kind: 'flurry', n: 4 },                          // Combo: 4 golpes y el último, triple
+  vikingo:      { kind: 'wall', t: 5 },                            // Muro de escudos: aparta a los bots y no recibe daño
+  directora:    { kind: 'wave', t: 4, col: '#ff6b9a' },            // ¡Acción!: onda del megáfono que atraviesa a todos, y prisa
+};
+function idleSpecial(k, alive, dmg) {
+  const S2 = idleSc, K = S2.k, hx = S2.cw * 0.25, sp = IDLE_SPEC[k] || IDLE_SPEC.bunny;
+  if (sp.kind === 'jump') { S2.jump = 0.6; S2.jumpHit = false; return; }   // el salto pone su etiqueta y su daño al caer
+  let lab = CFG.cards[k].tag.toUpperCase(), col = '#ffe06a';
+  const ally = (unit, i, drop) => { const m = alive[i % alive.length]; S2.fx.push({ k: 'ally', unit, m, drop, dmg: dmg * 2, x: drop ? m.x + rand(-8, 8) * K : hx - (14 + i * 16) * K, y: drop ? -(20 + i * 46) * K : S2.gy, walk: i * 2, t: 4, max: 4 }); };
+  S2.cast = 0.45;
+  if (sp.kind === 'summon' || sp.kind === 'drop') for (let i = 0; i < sp.n; i++) ally(sp.unit, i, sp.kind === 'drop');
+  else if (sp.kind === 'buff') { S2.buffT = sp.t; S2.buffCol = sp.col; }
+  else if (sp.kind === 'flurry') { S2.flur = sp.n; S2.flurT = 0.1; }
+  else if (sp.kind === 'wall') { S2.wallT = sp.t; S2.fx.push({ k: 'ring', x: hx + 30 * K, y: S2.gy, r: 120 * K, t: 0.45, max: 0.45 }); for (const m of alive) if (m.x - hx < 150 * K) { m.x += 46 * K; idleHurt(m, dmg, true); } }
+  else if (sp.kind === 'wave') { S2.buffT = sp.t; S2.buffCol = sp.col; S2.fx.push({ k: 'wave', x: hx + 20 * K, y: S2.gy - S2.hh * 0.55, dmg: dmg * 2, seen: [], t: 1.4, max: 1.4 }); }
+  else if (sp.kind === 'card') {
+    const c = pick(['fuego', 'aturdir', 'perros', 'cura']), f = alive[0];
+    if (c === 'fuego') { lab = '¡BOLA DE FUEGO!'; col = '#ff9a3c'; S2.fx.push({ k: 'ring', x: f.x, y: S2.gy, r: 90 * K, t: 0.45, max: 0.45 }); for (const m of alive) if (Math.abs(m.x - f.x) < 70 * K) idleHurt(m, dmg * 3, true); }
+    else if (c === 'aturdir') { lab = '¡ATURDIDOS!'; for (const m of alive) m.stun = 2.5; }
+    else if (c === 'perros') { lab = '¡MUCH WOW!'; for (let i = 0; i < 2; i++) ally('suchdog', i, false); }
+    else { lab = '¡CURACIÓN!'; col = '#9ef07a'; S2.hp = 1; }
+  }
+  S2.fx.push({ k: 'num', x: hx + 10 * K, y: S2.gy - S2.hh * 1.25, txt: lab, col, sz: 17, t: 1.3, max: 1.3 });
+}
 function idleBuild(cw, ch, fac) {
   const TH = THEMES[fac] || THEMES.animales, R = idleSc.R, k = idleSc.k, gy = idleSc.gy, W2 = Math.ceil(cw * 2);
   const mk = w => { const c = document.createElement('canvas'); c.width = Math.ceil(w * R); c.height = Math.ceil(ch * R); const x = c.getContext('2d'); x.scale(R, R); x.lineJoin = 'round'; x.lineCap = 'round'; return [c, x]; };
@@ -144,6 +176,7 @@ function idleBurst() { const S2 = idleSc; for (let i = 0; i < 22; i++) S2.fx.pus
 function idleSim(dt) {
   const S2 = idleSc, I = idleState(), k = FACTIONS[I.fac].leader, d = CFG.units[k], pw = (idleR && idleR.pw) || 1, full = I.h >= IDLE.cap - 1e-6, K = S2.k, hx = S2.cw * 0.25;
   S2.t += dt; S2.hit = Math.max(0, S2.hit - dt); S2.lunge = Math.max(0, S2.lunge - dt); S2.hp = Math.min(1, S2.hp + dt * 0.05);
+  S2.cast = Math.max(0, S2.cast - dt); S2.buffT = Math.max(0, S2.buffT - dt); S2.wallT = Math.max(0, S2.wallT - dt);
   for (const p of S2.fx) {
     p.t -= dt;
     if (p.k === 'coin' || p.k === 'gem') { const age = p.max - p.t; if (age < 0.6) { p.vy += 420 * dt; p.x += p.vx * dt; p.y = Math.min(S2.gy - 3, p.y + p.vy * dt); } else { const tx = S2.cw - 26, ty = S2.ch + 10; p.x += (tx - p.x) * Math.min(1, dt * 5); p.y += (ty - p.y) * Math.min(1, dt * 5); } }
@@ -151,12 +184,18 @@ function idleSim(dt) {
     else if (p.k === 'num') p.y -= 26 * dt;
     else if (p.k === 'shot') { const m = p.m, tx = m.x, ty = S2.gy - m.h * 0.5, dx = tx - p.x, dy = ty - p.y, dd = Math.hypot(dx, dy), v = 420 * K * dt; if (dd <= v || m.dead) { p.t = 0; if (!m.dead) idleHurt(m, p.dmg); } else { p.x += dx / dd * v; p.y += dy / dd * v; } }
     else if (p.k === 'zz') { p.y -= 12 * dt; p.x += Math.sin(p.t * 4) * 8 * dt; }
+    else if (p.k === 'ally') {   // esqueleto, perro o dron del líder: va a por su bot (o al primero que quede) y le pega una vez
+      if (p.m.dead) p.m = S2.mobs.find(m => !m.dead) || p.m;
+      if (p.drop) { p.y += 520 * S2.k * dt; if (p.y >= S2.gy) { p.t = 0; S2.fx.push({ k: 'ring', x: p.x, y: S2.gy, r: 60 * S2.k, t: 0.4, max: 0.4 }); for (const m of S2.mobs) if (!m.dead && Math.abs(m.x - p.x) < 44 * S2.k) idleHurt(m, p.dmg, true); } }
+      else { p.x += 170 * S2.k * dt; p.walk += dt * 14; if (!p.m.dead && p.x >= p.m.x - 16 * S2.k) { p.t = 0; idleHurt(p.m, p.dmg, true); } else if (p.x > S2.cw + 30) p.t = 0; }
+    }
+    else if (p.k === 'wave') { p.x += 300 * S2.k * dt; for (const m of S2.mobs) if (!m.dead && !p.seen.includes(m) && Math.abs(m.x - p.x) < 16 * S2.k) { p.seen.push(m); idleHurt(m, p.dmg, true); } }
   }
   S2.fx = S2.fx.filter(p => p.t > 0);
   S2.mobs = S2.mobs.filter(m => !m.dead || m.die > 0);
   for (const m of S2.mobs) if (m.dead) m.die -= dt;
   if (full) {   // almacén lleno: se sienta a descansar y los bots se van
-    S2.walking = false; S2.jump = 0;
+    S2.walking = false; S2.jump = 0; S2.buffT = S2.wallT = S2.flur = 0;
     for (const m of S2.mobs) if (!m.dead) { m.x += 40 * K * dt; m.face = 1; m.walk += dt * 8; m.moving = true; }
     S2.mobs = S2.mobs.filter(m => m.x < S2.cw + 60);
     if (Math.random() < dt * 1.2) S2.fx.push({ k: 'zz', x: hx + 10 * K, y: S2.gy - S2.hh * 1.05, t: 1.6, max: 1.6 });
@@ -168,22 +207,24 @@ function idleSim(dt) {
   const v = S2.walking ? 46 * K : 0; S2.off += v * dt; if (S2.walking) S2.walk += dt * 9;
   alive.forEach((m, i) => {
     m.hitT = Math.max(0, m.hitT - dt); m.lunge = Math.max(0, m.lunge - dt);
+    if (m.stun > 0) { m.stun -= dt; m.moving = false; return; }
     const stop = i === 0 ? contact : alive[i - 1].x + 34 * K;
     if (m.x > stop + 0.5) { m.x = Math.max(stop, m.x - (v + 30 * K) * dt); m.walk += dt * 8; m.moving = true; } else m.moving = false;
-    if (i === 0 && !m.moving) { m.atk -= dt; if (m.atk <= 0) { m.atk = 1.5; m.lunge = 0.2; S2.hit = 0.12; S2.hp = Math.max(0.35, S2.hp - 0.06); } }
+    if (i === 0 && !m.moving) { m.atk -= dt; if (m.atk <= 0) { m.atk = 1.5; m.lunge = 0.2; if (S2.wallT <= 0) { S2.hit = 0.12; S2.hp = Math.max(0.35, S2.hp - 0.06); } } }
   });
   // ataque del líder (cuerpo a cuerpo con embestida o a distancia con su disparo) y su especial cada 8 s
   const dmg = 20 * pw;
   if (S2.pend && (S2.pendT -= dt) <= 0) { idleHurt(S2.pend, dmg); S2.pend = null; }
   if (engaged && S2.jump <= 0) {
+    if (S2.flur > 0 && (S2.flurT -= dt) <= 0) { S2.flurT = 0.15; S2.flur--; S2.lunge = 0.12; idleHurt(front, dmg * (S2.flur ? 1.2 : 3), !S2.flur); }
     S2.atkT -= dt;
     if (S2.atkT <= 0) {
-      S2.atkT = 0.85 / Math.min(1.8, Math.sqrt(pw));
+      S2.atkT = 0.85 / Math.min(1.8, Math.sqrt(pw)) / (S2.buffT > 0 ? 2 : 1);
       if (d.ranged) S2.fx.push({ k: 'shot', x: hx + 14 * K, y: S2.gy - S2.hh * 0.6, m: front, dmg, col: (PROJ[d.ranged] && PROJ[d.ranged].spark) || '#ffe14d', t: 3, max: 3 });
       else { S2.lunge = 0.2; S2.pend = front; S2.pendT = 0.08; }
     }
     S2.spec -= dt;
-    if (S2.spec <= 0) { S2.spec = 8; S2.jump = 0.6; S2.jumpHit = false; }
+    if (S2.spec <= 0) { S2.spec = 8; idleSpecial(k, alive, dmg); }
   }
   if (S2.jump > 0) {
     S2.jump -= dt;
@@ -237,6 +278,7 @@ function idleDraw() {
     c.globalAlpha = 0.3 * a; c.fillStyle = '#140a1e'; c.beginPath(); c.ellipse(x, gy + 1, m.h * 0.28, m.h * 0.07, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = a;
     idleSprite(c, m.k, x, gy - z, m.h, m.face, sx, sy, m.hitT > 0 ? (m.hitT / 0.12) * 0.85 : 0);
     c.globalAlpha = 1;
+    if (!m.dead && m.stun > 0) for (let i = 0; i < 3; i++) { const a2 = S2.t * 5 + i * 2.1; c.fillStyle = '#ffe06a'; c.beginPath(); c.arc(x + Math.cos(a2) * 9 * K, gy - m.h - 4 * K + Math.sin(a2) * 2.5 * K, 2 * K, 0, Math.PI * 2); c.fill(); }
     if (!m.dead && m.hp < m.max) { const bw = 30 * K, by = gy - m.h - 9 * K; c.fillStyle = OL; c.fillRect(x - bw / 2 - 1.5, by - 1.5, bw + 3, 6); c.fillStyle = '#3d9bff'; c.fillRect(x - bw / 2, by, bw * Math.max(0, m.hp / m.max), 3); }
   }
   // el líder
@@ -245,9 +287,12 @@ function idleDraw() {
   else if (S2.walking) { z = Math.abs(Math.sin(S2.walk)) * 2.4 * K; const w = Math.sin(S2.walk * 2); sy = 1 + w * 0.035; sx = 1 - w * 0.03; }
   else if (full) { sy = 0.9 + Math.sin(S2.t * 2) * 0.015; sx = 1.04; }
   else { const br = Math.sin(S2.t * 3) * 0.025; sy = 1 + br; sx = 1 - br * 0.6; }
+  if (S2.cast > 0) { const q = Math.sin((1 - S2.cast / 0.45) * Math.PI); z += q * 7 * K; sy *= 1 + q * 0.1; sx *= 1 - q * 0.06; }   // gesto de lanzar su especial
   if (S2.lunge > 0) x += Math.sin((1 - S2.lunge / 0.2) * Math.PI) * 10 * K;
+  if (S2.buffT > 0) { c.globalAlpha = 0.55 + 0.25 * Math.sin(S2.t * 10); c.strokeStyle = S2.buffCol; c.lineWidth = 3; c.beginPath(); c.ellipse(hx, gy + 1, S2.hh * 0.42, S2.hh * 0.11, 0, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1; }
   c.fillStyle = 'rgba(20,10,30,.35)'; c.beginPath(); c.ellipse(hx, gy + 1, S2.hh * 0.3 * (1 - z / (S2.hh * 2)), S2.hh * 0.07, 0, 0, Math.PI * 2); c.fill();
   idleSprite(c, key, x, gy - z, S2.hh, 1, sx, sy, S2.hit > 0 ? (S2.hit / 0.12) * 0.7 : 0, S2.eu);
+  if (S2.wallT > 0) { const a2 = Math.min(1, S2.wallT * 2), wx = hx + S2.hh * 0.5; c.globalAlpha = 0.75 * a2; c.fillStyle = '#ffd36a'; c.strokeStyle = OL; c.lineWidth = 2; c.beginPath(); c.ellipse(wx, gy - S2.hh * 0.5, S2.hh * 0.13, S2.hh * 0.56, 0, 0, Math.PI * 2); c.fill(); c.stroke(); c.globalAlpha = 0.5 * a2; c.fillStyle = '#fff6c2'; c.beginPath(); c.ellipse(wx - S2.hh * 0.03, gy - S2.hh * 0.62, S2.hh * 0.045, S2.hh * 0.3, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1; }
   if (!full) { const bw = 36 * K, by = gy - S2.hh - 10 * K - z; c.fillStyle = OL; c.fillRect(hx - bw / 2 - 1.5, by - 1.5, bw + 3, 6); c.fillStyle = '#7be04a'; c.fillRect(hx - bw / 2, by, bw * S2.hp, 3); }
   // efectos
   for (const p of S2.fx) {
@@ -259,6 +304,8 @@ function idleDraw() {
     else if (p.k === 'shot') { c.globalAlpha = 1; c.fillStyle = p.col; c.beginPath(); c.arc(p.x, p.y, 4 * K, 0, Math.PI * 2); c.fill(); c.lineWidth = 1.5; c.strokeStyle = OL; c.stroke(); c.globalAlpha = 0.45; c.beginPath(); c.arc(p.x - 7 * K, p.y, 2.6 * K, 0, Math.PI * 2); c.fill(); }
     else if (p.k === 'ring') { const rr2 = p.r * (1 - a) + 8; c.globalAlpha = a; c.strokeStyle = '#ffe06a'; c.lineWidth = 4 * a + 1; c.beginPath(); c.ellipse(p.x, p.y, rr2, rr2 * 0.22, 0, 0, Math.PI * 2); c.stroke(); }
     else if (p.k === 'zz') { c.globalAlpha = Math.min(1, a * 2); idleText(c, 'Z', p.x, p.y, 13 * K * (1.3 - a * 0.5), '#cdb9ea'); }
+    else if (p.k === 'ally') { c.globalAlpha = 1; idleSprite(c, p.unit, p.x, Math.min(gy, p.y) - (p.drop ? 0 : Math.abs(Math.sin(p.walk)) * 3 * K), S2.hh * 0.62, 1, 1, 1, 0); }
+    else if (p.k === 'wave') { c.globalAlpha = Math.min(1, a * 2); c.strokeStyle = '#fff6ea'; c.lineWidth = 3; for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(p.x - i * 9 * K, p.y, (10 + i * 5) * K, -0.9, 0.9); c.stroke(); } }
     else if (p.k === 'say') {
       c.globalAlpha = Math.min(1, a * 4); c.font = `bold ${Math.round(11 * Math.min(1.2, K))}px "Baloo 2", system-ui, sans-serif`; const tw = c.measureText(p.txt).width + 14, bx = clamp(p.x, tw / 2 + 4, cw - tw / 2 - 4), by = p.y;
       c.fillStyle = '#fff6ea'; c.strokeStyle = OL; c.lineWidth = 2; c.beginPath(); c.roundRect ? c.roundRect(bx - tw / 2, by - 10, tw, 19, 8) : c.rect(bx - tw / 2, by - 10, tw, 19); c.fill(); c.stroke();

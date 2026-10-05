@@ -34,7 +34,7 @@ games/
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
     js/extras.js          chat en directo, caja de avisos, tutorial y sus opciones
-herramientas/           scripts que regeneran archivos de core/ a partir del original (games/rumble/)
+herramientas/           sincronizar.py pasa a core/ las mejoras del Rumble (llama a los otros dos scripts)
 ```
 
 ## Qué va en cada sitio
@@ -46,6 +46,18 @@ herramientas/           scripts que regeneran archivos de core/ a partir del ori
 El original (`games/rumble/`) todavía no usa el progreso, el guardado, los menús ni el sonido de `core/`: tiene los suyos, de los que salieron los de core. Unificarlos es el siguiente paso.
 
 Dos cosas que hoy están en core y son todavía del TD: `js/meta.js` describe cada objeto con dos facetas (torre y unidad), y `js/menus.js` las enseña así. Cuando llegue el segundo juego habrá que decidir cómo las lee él.
+
+## El Rumble es el principal
+
+Las mejoras se hacen primero en el Rumble (`games/rumble/`) y los demás juegos las heredan a través de `core/`. Hay tres casos:
+
+| Qué | Cómo llega a los demás juegos |
+|---|---|
+| Razas, cartas y números (`01-config.js`) y arte (`03-arte.js`) | Solos: el Rumble los carga de `core/js/vendor/`, así que es el mismo archivo para todos. |
+| Estilos de los menús, horas extra, canciones, chat y frases | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
+| Progreso, colección, inventario, gashapón, tienda, opciones, guardado y sonido | No se heredan: `core/js/meta.js`, `menus.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
+
+El tercer caso es el pendiente: mientras el Rumble no use esos archivos de `core/` en vez de los suyos, sus cambios en esas partes no llegan solos.
 
 ## Añadir un juego
 

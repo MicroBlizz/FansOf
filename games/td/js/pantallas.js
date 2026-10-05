@@ -14,10 +14,18 @@ function drawTitleArt() {
   x.beginPath(); x.ellipse(210, 180, 178, 24, 0, 0, Math.PI * 2); x.fillStyle = TH.title[0]; x.fill(); x.lineWidth = 3; x.strokeStyle = OL; x.stroke();
   x.beginPath(); x.ellipse(210, 175, 152, 13, 0, 0, Math.PI * 2); x.fillStyle = TH.title[1]; x.fill();
   const [a, lead, b] = F.trio, [ha, hl, hb] = F.trioH;
-  drawVector(x, a, 86, 182, ha, 1); drawVector(x, b, 336, 182, hb, -1); drawVector(x, lead, 206, 188, hl, 1);
+  // aquí son torres: cada uno va subido a su peana de madera, como en el campo
+  const stump = (cx, cy, r) => {
+    x.fillStyle = 'rgba(20,10,30,.3)'; x.beginPath(); x.ellipse(cx, cy + 5, r + 5, r * 0.5, 0, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.ellipse(cx, cy + 3, r, r * 0.44, 0, 0, Math.PI); x.lineTo(cx - r, cy - 7); x.lineTo(cx + r, cy - 7); x.closePath(); x.fillStyle = '#7a4d1c'; x.fill(); x.lineWidth = 2.5; x.strokeStyle = OL; x.stroke();
+    x.beginPath(); x.ellipse(cx, cy - 7, r, r * 0.44, 0, 0, Math.PI * 2); x.fillStyle = '#d9a35e'; x.fill(); x.stroke();
+    x.beginPath(); x.ellipse(cx, cy - 7, r * 0.55, r * 0.24, 0, 0, Math.PI * 2); x.strokeStyle = 'rgba(122,77,28,.6)'; x.lineWidth = 1.4; x.stroke();
+  };
+  stump(86, 184, 30); stump(336, 184, 30); stump(206, 190, 38);
+  drawVector(x, a, 86, 176, ha * 0.92, 1); drawVector(x, b, 336, 176, hb * 0.92, -1); drawVector(x, lead, 206, 182, hl * 0.92, 1);
 }
 const baseShowMenu = showMenu;
-showMenu = function () { $('#scr-pause').hidden = true; G.paused = false; baseShowMenu(); G.screen = 'title'; setTagline(); drawTitleArt(); importFromHash(); };
+showMenu = function () { $('#scr-pause').hidden = true; G.paused = false; baseShowMenu(); G.screen = 'title'; setTagline(); try { drawTitleArt(); } catch (e) { /* la portada sale aunque falle el dibujo */ } importFromHash(); };
 
 /* ---------- campaña ---------- */
 function buildCamp() {
@@ -48,7 +56,7 @@ function syncPrep() {
   for (const b of document.querySelectorAll('[data-vd]')) b.setAttribute('aria-pressed', String(b.dataset.vd === d));
   const box = $('#prep-passive'); box.className = 'passive-box ' + F.kind; box.innerHTML = `${ICONS[F.icon]}<div><b class="ol">${F.passive}</b><span>${PASSIVES[fac].txt}</span></div>`;
 }
-for (const b of document.querySelectorAll('[data-fac]')) { drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.fac].leader, 56, 44); b.onclick = () => { SAVE.fac = b.dataset.fac; saveGame(); play('select'); syncPrep(); }; }
+for (const b of document.querySelectorAll('[data-fac]')) { drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.fac].leader, 56, 44); b.onclick = () => { SAVE.fac = b.dataset.fac; saveGame(); play('select'); syncPrep(); setTagline(); drawTitleArt(); }; }
 for (const b of document.querySelectorAll('[data-vd]')) b.onclick = () => { SAVE.vsDiff = b.dataset.vd; saveGame(); play('select'); syncPrep(); };
 function openPrep(mode, lvl) {
   PREP.mode = mode; PREP.lvl = lvl || null; const info = $('#prep-info');

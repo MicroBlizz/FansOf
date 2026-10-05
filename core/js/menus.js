@@ -391,6 +391,10 @@ function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classL
    Con cada versión nueva hay que subir VERSION (en meta.js) y poner aquí arriba del todo lo que cambia.
    ========================================================= */
 const NEWS = [
+  { v: '0.9.4', real: [
+      '<b>HORAS EXTRA</b>: cada líder hace ahora su propio especial. NecroLord invoca esqueletos, CyberMarine llama a sus drones, el Vikingo levanta su muro de escudos… Antes todos saltaban como CrazyBunny.',
+      'En la portada, los tres personajes de tu facción salen subidos a su <b>peana de torre</b>.'],
+    joke: ['Microblizz ha descubierto que sus empleados también tienen habilidades propias. Las ha puesto de pago.'] },
   { v: '0.9.3', real: [
       '<b>Dirección nueva</b>: el juego vive ahora en microblizz.github.io/FansOf. La dirección antigua te trae aquí sola.',
       'Si vienes de la antigua con progreso guardado, al llegar te pregunta si quieres <b>traértelo</b>.'],

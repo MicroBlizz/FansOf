@@ -28,6 +28,7 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/sistema/inventario.js  inventario: las copias de habilidades y objetos, con su calidad
   js/sistema/gachapon.js    gashapón (un juego puede añadir máquinas propias)
   js/sistema/tienda.js      tienda
+  js/sistema/opciones.js    opciones comunes (música del menú, versión) e instalar como app
   js/meta.js            (solo el TD, por ahora) catálogo de habilidades y objetos con sus efectos, calidades y precios de la tienda
   js/save.js            (solo el TD, por ahora) guardado en el navegador
   js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)

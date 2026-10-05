@@ -1,4 +1,4 @@
-// Fans of TD · Menús de este juego: el menú principal, las opciones, instalar y traer el progreso de la dirección antigua.
+// Fans of TD · Menús de este juego: el menú principal, sus opciones y traer el progreso de la dirección antigua.
 // La cartera, la colección, el inventario, el gashapón y la tienda son comunes: core/js/sistema/.
 'use strict';
 const enPartida = () => G.screen === 'play';
@@ -19,15 +19,16 @@ function showMenu() {
 }
 
 /* =========================================================
-   OPCIONES E INSTALAR (como en el original, con lo que tiene sentido en la defensa de torres)
+   OPCIONES de este juego (la música del menú, la versión e instalar son comunes: core/js/sistema/opciones.js)
    ========================================================= */
 const optOn = k => SAVE[k] !== false;   // números de daño y temblor vienen activados
 function openOptions() {
   show('scr-options'); updateWallets();
   $('#opt-vol').value = Math.round((SAVE.vol == null ? 1 : SAVE.vol) * 100); $('#opt-mus').value = Math.round((SAVE.mus == null ? 1 : SAVE.mus) * 100);
-  optButtons(); $('#save-code').value = ''; $('#opt-ver').textContent = document.title + ' · versión ' + VERSION;   // cada juego pone su nombre en el título de su página
+  optButtons(); $('#save-code').value = '';
 }
 function optButtons() {
+  optComunes();   // la canción del menú y la versión (core/js/sistema/opciones.js)
   $('#btn-nums').textContent = optOn('nums') ? 'SÍ' : 'NO'; $('#btn-shake').textContent = optOn('shake') ? 'SÍ' : 'NO';
   $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-test').disabled = !!SAVE.testAll;
 }
@@ -58,23 +59,6 @@ $('#btn-import').onclick = () => {
   confirmBox('¿CARGAR ESE PROGRESO?', 'Se cambia todo tu progreso de este navegador por el del código.<small>No se puede deshacer.</small>', 'CARGAR', () => { SAVE = metaDefaults(o); saveGame(); location.reload(); });
 };
 $('#btn-reset').onclick = () => confirmBox('¿EMPEZAR DE CERO?', 'Se borra <b>todo</b>: estrellas, oro, gemas, niveles y objetos.<small>No se puede deshacer.</small>', 'BORRAR', () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sin almacenamiento */ } location.reload(); });
-
-/* ---------- instalar como app ---------- */
-let installEvt = null;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
-window.addEventListener('appinstalled', () => { installEvt = null; toast('¡Instalado! Ya lo tienes en tu pantalla de inicio', true); });
-const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-function installApp() {
-  play('select');
-  if (isStandalone()) { toast('Ya lo estás usando como app', true); return; }
-  if (installEvt) { const e = installEvt; installEvt = null; e.prompt(); return; }
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), web = location.protocol === 'https:';
-  confirmBox('INSTALAR', (web ? '' : '<b>Ábrelo desde la web del juego</b> (no desde un archivo) para poder instalarlo.<br><br>')
-    + (ios ? 'En iPhone, con <b>Safari</b>: toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba) y luego <b>«Añadir a pantalla de inicio»</b>.'
-      : 'En Android, con <b>Chrome</b>: toca el menú <b>⋮</b> (arriba a la derecha) y luego <b>«Instalar aplicación»</b> o <b>«Añadir a pantalla de inicio»</b>.<br><br>En el PC, con Chrome o Edge: pulsa el icono de <b>instalar</b> que sale a la derecha de la barra de direcciones.')
-    + '<small>Se abre como una app: a pantalla completa, sin la barra del navegador, y también funciona sin conexión.</small>', null, null, 'ENTENDIDO');
-}
-$('#btn-install').onclick = installApp;
 
 /* ---------- progreso traído desde la dirección antigua de la web ---------- */
 // La página antigua redirige aquí con el progreso que tenía guardado en la dirección (…#traer=código). Nunca se carga sin preguntar.

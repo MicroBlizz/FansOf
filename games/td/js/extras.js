@@ -4,17 +4,13 @@
 if (SAVE.tut == null) SAVE.tut = { done: Object.keys(SAVE.stars || {}).length > 0 };   // quien ya ha ganado algún nivel no necesita la partida guiada
 
 /* ---------- opciones ---------- */
-const MENU_TRACKS = [['menu', 'Espera de Microblizz'], ['animales', 'Animales Locos'], ['nomuertos', 'No-Muertos'], ['streamers', 'Streamers'], ['heroes', 'Héroes'], ['ciber', 'Ciberpunks'], ['memes', 'Memes'], ['gamer', 'Comunidad Gamer'], ['olvidados', 'Olvidados'], ['pop', 'Cultura Pop'],
-  ['boss0', 'Jefe: SurvivalBot'], ['boss1', 'Jefe: NecroLord'], ['boss2', 'Jefe: StreamKing'], ['boss3', 'Jefe: EpicChampion'], ['boss4', 'Jefe: CyberMarine'], ['boss5', 'Jefe: MemeLord'], ['boss6', 'Jefe: el CEO'], ['boss7', 'Jefe: Vikingo'], ['boss8', 'Jefe: PayStation'], ['boss9', 'Jefe: ProGamer'], ['boss10', 'Jefe: LaDirectora'], ['boss11', 'Jefe: Presidente de Phony']].filter(t => TRACKS[t[0]]);
-const menuTrack = () => MENU_TRACKS.find(t => t[0] === SAVE.menuMus) || MENU_TRACKS[0];
 const baseOptButtons = optButtons;
 optButtons = function () {
   baseOptButtons();
-  $('#btn-menumus').textContent = menuTrack()[1].toUpperCase() + ' ▸'; $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA';
+  $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA';
   $('#btn-badges').textContent = SAVE.noBadges ? 'NO' : 'SÍ'; $('#btn-blood').textContent = SAVE.blood ? 'SÍ' : 'NO'; $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ';
 };
 const flip = (k, after) => () => { SAVE[k] = !SAVE[k]; saveGame(); play('select'); optButtons(); if (after) after(); };
-$('#btn-menumus').onclick = () => { const i = MENU_TRACKS.indexOf(menuTrack()); SAVE.menuMus = MENU_TRACKS[(i + 1) % MENU_TRACKS.length][0]; saveGame(); play('select'); optButtons(); };
 $('#btn-feed').onclick = flip('feed'); $('#btn-badges').onclick = flip('noBadges'); $('#btn-blood').onclick = flip('blood'); $('#btn-chat').onclick = flip('chatOff', () => chatClear());
 $('#btn-tut').onclick = () => { play('select'); SAVE.tut = { done: false }; saveGame(); showMenu(); toast('Tutorial reiniciado: entra en Campaña y juega el nivel 1-1', true); };
 

@@ -1,20 +1,5 @@
-// Fans of Rumble · Instalar como app y pantalla de preparación
+// Fans of Rumble · Botones del menú, opciones de este juego y pantalla de preparación
 'use strict';
-document.querySelector('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION;   // la versión sale de index.html (core/js/nucleo.js)
-// ---- instalar en el móvil como una app
-let installEvt = null;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
-window.addEventListener('appinstalled', () => { installEvt = null; toast('¡Instalado! Ya lo tienes en tu pantalla de inicio', true); });
-const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
-function installApp() {
-  play('select');
-  if (isStandalone()) { toast('Ya lo estás usando como app', true); return; }
-  if (installEvt) { const e = installEvt; installEvt = null; e.prompt(); return; }
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const web = location.protocol === 'https:';
-  confirmBox('INSTALAR EN EL MÓVIL', (web ? '' : '<b>Ábrelo desde la web del juego</b> (no desde un archivo) para poder instalarlo.<br><br>') + (ios ? 'En iPhone, con <b>Safari</b>: toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba) y luego <b>«Añadir a pantalla de inicio»</b>.' : 'En Android, con <b>Chrome</b>: toca el menú <b>⋮</b> (arriba a la derecha) y luego <b>«Instalar aplicación»</b> o <b>«Añadir a pantalla de inicio»</b>.') + '<small>Se abre como una app, a pantalla completa, y también funciona sin internet.</small>', null, null, 'ENTENDIDO');
-}
-$('#btn-install').addEventListener('click', installApp);
 $('#btn-tut').addEventListener('click', () => { play('select'); SAVE.tut = { done: false, step: 0 }; saveGame(); goHome(); toast('Tutorial reiniciado: sigue a Lola', true); });
 $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
@@ -27,12 +12,8 @@ $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden =
 function applyLook() { delete SAVE.theme; delete SAVE.pixel; document.documentElement.dataset.theme = 'dark'; document.body.classList.remove('pixel'); fit(); }
 // v0.9.19: números de daño y sangre
 // v0.9.22: música del menú (cualquier tema del juego) y chapas sobre las unidades
-const MENU_TRACKS = [['menu', 'Espera de Microblizz'], ['animales', 'Animales Locos'], ['nomuertos', 'No-Muertos'], ['streamers', 'Streamers'], ['heroes', 'Héroes'], ['ciber', 'Ciberpunks'], ['memes', 'Memes'], ['gamer', 'Comunidad Gamer'], ['olvidados', 'Olvidados'], ['pop', 'Cultura Pop'],
-  ['boss0', 'Jefe: SurvivalBot'], ['boss1', 'Jefe: NecroLord'], ['boss2', 'Jefe: StreamKing'], ['boss3', 'Jefe: EpicChampion'], ['boss4', 'Jefe: CyberMarine'], ['boss5', 'Jefe: MemeLord'], ['boss6', 'Jefe: el CEO'], ['boss7', 'Jefe: Vikingo'], ['boss8', 'Jefe: PayStation'], ['boss9', 'Jefe: ProGamer'], ['boss10', 'Jefe: LaDirectora'], ['boss11', 'Jefe: Presidente de Phony']].filter(t => TRACKS[t[0]]);
-const menuTrack = () => (MENU_TRACKS.find(t => t[0] === SAVE.menuMus) || MENU_TRACKS[0]);
-$('#btn-menumus').addEventListener('click', () => { const i = MENU_TRACKS.indexOf(menuTrack()); SAVE.menuMus = MENU_TRACKS[(i + 1) % MENU_TRACKS.length][0]; saveGame(); play('select'); optLabels(); });
 $('#btn-badges').addEventListener('click', () => { SAVE.noBadges = !SAVE.noBadges; saveGame(); play('select'); optLabels(); });
-function optLabels() { $('#btn-menumus').textContent = menuTrack()[1].toUpperCase() + ' ▸'; $('#btn-badges').textContent = SAVE.noBadges ? 'NO' : 'SÍ'; $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA'; $('#btn-nums').textContent = SAVE.noNums ? 'NO' : 'SÍ'; $('#btn-blood').textContent = SAVE.blood ? 'SÍ' : 'NO'; $('#btn-shake').textContent = SAVE.noShake ? 'NO' : 'SÍ'; }
+function optLabels() { optComunes(); $('#btn-badges').textContent = SAVE.noBadges ? 'NO' : 'SÍ'; $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA'; $('#btn-nums').textContent = SAVE.noNums ? 'NO' : 'SÍ'; $('#btn-blood').textContent = SAVE.blood ? 'SÍ' : 'NO'; $('#btn-shake').textContent = SAVE.noShake ? 'NO' : 'SÍ'; }
 $('#btn-nums').addEventListener('click', () => { SAVE.noNums = !SAVE.noNums; saveGame(); play('select'); optLabels(); });
 $('#btn-feed').addEventListener('click', () => { SAVE.feed = !SAVE.feed; saveGame(); play('select'); optLabels(); });
 $('#btn-blood').addEventListener('click', () => { SAVE.blood = !SAVE.blood; saveGame(); play('select'); optLabels(); });

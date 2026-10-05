@@ -28,12 +28,9 @@ $('#btn-inv-sort').addEventListener('click', () => { invSort = invSort === 'q' ?
 $('#btn-mass').addEventListener('click', massScrap);
 $('#btn-item-close').addEventListener('click', () => { $('#scr-item').hidden = true; itemCur = null; });
 $('#btn-gr-inv').addEventListener('click', () => { $('#gacha-result').hidden = true; play('select'); if (gachaTab === 'cd') { collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } else openInv(gachaTab); });
-$('#btn-missions').addEventListener('click', () => { play('select'); updateWallets(); buildMissions(); show('scr-missions'); });
 $('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 70 : SAVE.mus; $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
 $('#btn-shop').addEventListener('click', () => { play('select'); openShop(); });
-$('#btn-pass').addEventListener('click', () => { play('select'); updateWallets(); show('scr-pass'); buildPass(); });
 for (const b of document.querySelectorAll('[data-st]')) b.addEventListener('click', () => { shopTab = b.dataset.st; play('select'); buildShop(); });
-for (const b of document.querySelectorAll('[data-mt]')) b.addEventListener('click', () => { missionTab = b.dataset.mt; play('select'); buildMissions(); });
 $('#btn-share').addEventListener('click', () => { shareResult(); stat('share', 1); });
 $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden = true; });
 // v0.9.17 probó un modo claro y uno pixel art; Daniel los descartó en la v0.9.18: el juego va siempre oscuro y sin pixelar

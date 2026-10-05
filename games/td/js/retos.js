@@ -72,7 +72,7 @@ const RETOS = {
       ['CAMPAÑA', `${st} / ${max} ★`, 'estrellas'],
       ['MODO VS', `${vw} - ${Math.max(0, vl)}`, 'ganadas - perdidas'],
       ['TORRES', fmt(S.torre || 0), 'colocadas'],
-      ['ENEMIGOS', fmt(S.kill || 0), 'despedidos']] };
+      ['ENEMIGOS', fmt(S.kill || 0), 'despedidos'], celdaLogros(), celdaRacha()] };
   },
 
   /* ---------- logros: fam(id, categoría, de dónde sale, metas, gemas, nombre, texto, broma, pista si es secreto) ---------- */

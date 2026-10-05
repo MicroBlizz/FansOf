@@ -102,7 +102,6 @@ const QTIERS = [
   { name: 'Director (excelente)', p: 9, lo: 0.88, hi: 0.99, col: '#e2a8ff' },
   { name: 'CEO (perfecta)', p: 1, lo: 1, hi: 1, col: '#ffcb3d' },
 ];
-const PASS_Q = 0.9;   // los premios del pase salen siempre con calidad Excelente
 function rollQ(minTier) {
   const pool = QTIERS.slice(minTier || 0); let x = Math.random() * pool.reduce((a, t) => a + t.p, 0);
   for (const t of pool) { if (x < t.p) return Math.floor((t.lo + Math.random() * (t.hi - t.lo)) * 1000) / 1000; x -= t.p; }
@@ -152,41 +151,6 @@ const WORLDS = [
 ];
 const CEO_WI = 6;   // el mundo del CEO de Microblizz (final de la campaña 1)
 WORLDS.forEach((w, wi) => w.levels.forEach((l, li) => { l.id = `${wi + 1}-${li + 1}`; l.wi = wi; l.li = li; }));
-// misiones diarias: cada día salen 3 de esta lista
-const MISSIONS = [
-  { id: 'win2', txt: 'Gana 2 partidas', goal: 2, ev: 'win' },
-  { id: 'cards20', txt: 'Juega 20 cartas', goal: 20, ev: 'card' },
-  { id: 'kills40', txt: 'Derrota a 40 enemigos', goal: 40, ev: 'kill' },
-  { id: 'towers3', txt: 'Derriba 3 torres', goal: 3, ev: 'tower' },
-  { id: 'stars3', txt: 'Consigue 3 estrellas en la campaña', goal: 3, ev: 'star' },
-  { id: 'boss1', txt: 'Juega una partida del Modo Jefe', goal: 1, ev: 'boss' },
-  { id: 'pull1', txt: 'Gira una vez el gashapón', goal: 1, ev: 'pull' },
-  { id: 'lvl1', txt: 'Sube de nivel una unidad', goal: 1, ev: 'lvlup' },
-  { id: 'play3', txt: 'Juega 3 partidas', goal: 3, ev: 'play' },
-  { id: 'leader5', txt: 'Saca a tu líder 5 veces', goal: 5, ev: 'leader' },
-  { id: 'flawless', txt: 'Gana sin perder ninguna torre', goal: 1, ev: 'flawless' },
-  { id: 'camp2', txt: 'Juega 2 partidas de la campaña', goal: 2, ev: 'camp' },
-  { id: 'quick2', txt: 'Juega 2 partidas rápidas', goal: 2, ev: 'quick' },
-  { id: 'caos120', txt: 'Gasta 120 de CAOS', goal: 120, ev: 'caos' },
-  { id: 'base1', txt: 'Tira una base enemiga', goal: 1, ev: 'base' },
-  { id: 'facwin', txt: 'Gana una partida con {F}', goal: 1, ev: 'facwin' },
-  { id: 'gift', txt: 'Recoge el regalo diario de la tienda', goal: 1, ev: 'gift' },
-];
-const DAILY_N = 4;
-// misiones semanales: se renuevan cada lunes
-const WEEKLY = [
-  { id: 'wwin', txt: 'Gana 15 partidas', goal: 15, ev: 'win' },
-  { id: 'wkill', txt: 'Derrota a 400 enemigos', goal: 400, ev: 'kill' },
-  { id: 'wtower', txt: 'Derriba 20 torres', goal: 20, ev: 'tower' },
-  { id: 'wstar', txt: 'Consigue 12 estrellas en la campaña', goal: 12, ev: 'star' },
-  { id: 'wcard', txt: 'Juega 200 cartas', goal: 200, ev: 'card' },
-  { id: 'wboss', txt: 'Juega 3 partidas del Modo Jefe', goal: 3, ev: 'boss' },
-  { id: 'wlvl', txt: 'Sube 5 niveles de unidades', goal: 5, ev: 'lvlup' },
-  { id: 'wpull', txt: 'Gira 5 veces el gashapón', goal: 5, ev: 'pull' },
-  { id: 'wdaily', txt: 'Completa 12 misiones diarias', goal: 12, ev: 'dailydone' },
-  { id: 'wflaw', txt: 'Gana 5 partidas sin perder torres', goal: 5, ev: 'flawless' },
-];
-const WEEKLY_N = 4;
 // Modo Jefe: el CEO de Microblizz, sin torres, 3 minutos para hacerle todo el daño posible
 const BOSS_MODE = { name: 'El CEO de Microblizz', hp: 12000, time: 240, income: 0.95, tiers: [[1500, 10], [4000, 25], [8000, 50]] };
 // v0.9.15: los 12 jefes de la campaña (se abren al ganarles allí; el CEO, siempre), 3 dificultades y 4 minutos
@@ -224,20 +188,6 @@ const SHOP = {
   gift: { gold: 100, gems: 5 },
   starter: { gems: 600, gold: 5000, eur: 4.99 },   // v0.9.11: solo una vez; vale casi el doble que por separado
 };
-// Pase de batalla: 30 niveles, pista gratis y pista Ejecutiva (de pago simulado)
-const PASS = { name: 'Temporada 1: La Gran Compra', sub: 'Dura hasta que Microblizz la cierre', levels: 30, xpPer: 400, eur: 4.99, xpWin: 100, xpLose: 40, xpDaily: 60, xpWeekly: 250 };
-function passReward(track, i) {
-  if (track === 'free') {
-    if (i === PASS.levels) return { item: 'diploma' };
-    if (i % 10 === 0) return { tickets: 1 };
-    if (i % 3 === 0) return { gems: 15 };
-    return { gold: 150 };
-  }
-  if (i === PASS.levels) return { item: 'corbata_ceo' };
-  if (i % 5 === 0) return { tickets: 2 };
-  if (i % 2 === 0) return { gems: 30 };
-  return { gold: 400 };
-}
 // frases de despedida al caer (humor)
 const QUIPS = {
   microblizz: ['¿Me han despedido?', 'Me llevo la grapadora', '¿Y mi finiquito?', '¿Me puedo quedar la taza?', 'Me cambian por un robot más barato', 'Ocho años aquí y me echan por correo', 'Me faltaban 2 años para ser fijo', '¿Esto cuenta como vacaciones?', 'Error 404: trabajo no encontrado', 'Mi jefe dijo que éramos una familia', 'Dejo el juego a medias', 'El CEO se ha comprado otro yate'],

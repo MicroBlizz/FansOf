@@ -3,7 +3,15 @@
 // Los DATOS son de cada juego. Antes de este archivo, el juego define en su js/retos.js:
 //   RETOS.diarias y RETOS.semanales   las misiones que pueden salir: { id, txt, goal, ev }
 //   RETOS.logros(fam, veces)          sus logros, llamando a fam(…) por cada familia
-//   RETOS.perfil()                    lo que enseña el perfil: { sub: 'texto bajo el nombre', celdas: [[título, valor, nota], …] }
+//   RETOS.perfil()                    lo que enseña el perfil: { sub: 'texto bajo el nombre', chip: 'el del botón del menú (si es otro)',
+//                                     celdas: [[título, valor, nota], …] }  (celdaLogros() y celdaRacha() dan las dos casillas comunes)
+// Opcionales, para lo que solo tiene un juego:
+//   RETOS.categorias                  las pestañas de logros, si no son las de siempre
+//   RETOS.noCuenta()                  true mientras lo que pasa no debe contar (una sala de pruebas)
+//   RETOS.antesDeRevisar()            algo que hacer antes de repasar los logros (convertir una partida guardada antigua)
+//   RETOS.trasMisiones(lista)         algo que añadir bajo las misiones diarias
+//   RETOS.avatares()                  qué líderes se pueden elegir de avatar · RETOS.nombre = { primera, cambio }: los textos de «¿cómo te llamas?»
+//   RETOS.trasNombre()                qué hacer después de elegir nombre (por defecto, lo que toque enseñar en el menú)
 // y avisa de lo que pasa en la partida con missionEvent('ganar', 1) o stat('lo-que-sea', 1).
 'use strict';
 /* =========================================================
@@ -55,12 +63,13 @@ function buildMissions() {
     const M = mDef(m, W), done = m.prog >= M.goal;
     return `<div class="mission${m.claimed ? ' done' : ''}"><div><b>${mText(m, M)}</b><div class="xpbar"><i style="width:${(m.prog / M.goal) * 100}%"></i><span>${fmt(m.prog)} / ${fmt(M.goal)}</span></div></div><button class="btn-up" data-claim="${i}" ${done && !m.claimed ? '' : 'disabled'}>${m.claimed ? 'HECHA' : 'COBRAR'}<small>${COIN_SVG}${rw[0]} ${GEM_SVG}${rw[1]}</small><small>+${rw[2]} pase</small></button></div>`;
   }).join('');
+  if (!W && RETOS.trasMisiones) RETOS.trasMisiones(L);
   for (const b of document.querySelectorAll('[data-claim]')) b.onclick = () => {
     const m = L[+b.dataset.claim]; if (m.claimed || m.prog < mDef(m, W).goal) return;
     m.claimed = true; SAVE.gold += rw[0]; SAVE.gems += rw[1];
     const up = addPassXp(rw[2]); if (!W) missionEvent('dailydone', 1); else stat('weekdone', 1);
     saveGame(); play('crown'); updateWallets(); buildMissions();
-    toast(up ? `¡Pase de batalla: nivel ${passLevel()}!` : `+${rw[2]} puntos de pase`, true);
+    toast(up ? `¡Pase de batalla: nivel ${passLevel()}!` : `+${rw[2]} puntos de pase`);
   };
 }
 function openMissions(tab) { if (tab) missionTab = tab; updateWallets(); show('scr-missions'); buildMissions(); $('#mission-list').scrollTop = 0; }
@@ -123,19 +132,19 @@ function buildPass() {
   list.querySelectorAll('[data-pc]').forEach(b => { b.onclick = () => {
     const [tr, i] = b.dataset.pc.split(':'); const r = claimPass(tr, +i);
     if (!r) { if (tr === 'paid' && !SAVE.pass.prem) buyPass(); return; }
-    saveGame(); play('crown'); updateWallets(); buildPass(); toast('Has cobrado: ' + rewardTxt(r), true);
+    saveGame(); play('crown'); updateWallets(); buildPass(); toast('Has cobrado: ' + rewardTxt(r));
   }; });
   $('#btn-buy-pass').onclick = buyPass;
   $('#btn-claim-all').onclick = () => {
     let n = 0; for (let i = 1; i <= passLevel(); i++) { if (claimPass('free', i)) n++; if (claimPass('paid', i)) n++; }
-    if (n) { saveGame(); play('win'); updateWallets(); buildPass(); toast(`¡${n} recompensas cobradas!`, true); }
+    if (n) { saveGame(); play('win'); updateWallets(); buildPass(); toast(`¡${n} recompensas cobradas!`); }
   };
   const cur = list.querySelector(`[data-row="${Math.max(1, Math.min(PASS.levels, lv))}"]`); if (cur) list.scrollTop = Math.max(0, cur.offsetTop - list.offsetTop - 60);
 }
 function buyPass() {
   if (SAVE.pass.prem) return;
   confirmBox('PASE EJECUTIVO', `Desbloquea la pista Ejecutiva de la ${PASS.name}: más oro, gemas, tiradas gratis y la <b>Corbata del CEO</b>, exclusiva.<span class="big">${eur(PASS.eur)}</span><small>Versión de prueba: no se cobra nada.</small>`, 'COMPRAR', () => {
-    SAVE.pass.prem = true; saveGame(); play('win'); updateWallets(); buildPass(); toast('¡Ya eres Ejecutivo! (sin cobrar nada)', true);
+    SAVE.pass.prem = true; saveGame(); play('win'); updateWallets(); buildPass(); toast('¡Ya eres Ejecutivo! (sin cobrar nada)');
   });
 }
 function openPass() { updateWallets(); show('scr-pass'); buildPass(); }
@@ -167,9 +176,10 @@ const achProgF = f => (f.prog ? f.prog() : SAVE.stats[f.ev] || 0);
 const popc = b => { let n = 0; while (b) { n += b & 1; b >>>= 1; } return n; };
 let achNew = 0, achNewName = '', achT = 0, achScanT = 0;
 // apunta una estadística (lo que cuentan los logros). Los logros se revisan un momento después, todos de una vez
-function stat(ev, n) { if (!n) return; SAVE.stats[ev] = (SAVE.stats[ev] || 0) + n; achSoon(); }
+function stat(ev, n) { if (!n || (RETOS.noCuenta && RETOS.noCuenta())) return; SAVE.stats[ev] = (SAVE.stats[ev] || 0) + n; achSoon(); }
 function achSoon() { if (!achScanT) achScanT = setTimeout(() => { achScanT = 0; achScan(); }, 0); }
 function achScan() {   // marca los niveles conseguidos (se quedan aunque luego bajes) y avisa con un solo mensaje
+  if (RETOS.antesDeRevisar) RETOS.antesDeRevisar();
   for (const f of ACHF) {
     const p = achProgF(f), R0 = SAVE.achR[f.id] || 0; let R = R0;
     for (let i = 0; i < f.goals.length; i++) if (p >= f.goals[i]) R |= 1 << i;
@@ -186,7 +196,7 @@ function achToast() {
   toast(n > 1 ? `¡${fmt(n)} logros nuevos! Cóbralos en Misiones` : `¡Logro: ${achNewName}! Cóbralo en Misiones`, true); play('crown');
   if (!$('#scr-title').hidden) updateBadges();
 }
-const achReady = () => { let r = 0; for (const f of ACHF) r += popc((SAVE.achR[f.id] || 0) & ~(SAVE.achC[f.id] || 0)); return r; };
+const achReady = () => { let r = 0; if (!SAVE.achR) return 0; for (const f of ACHF) r += popc((SAVE.achR[f.id] || 0) & ~(SAVE.achC[f.id] || 0)); return r; };
 function achTotals() {
   const T = { n: 0, g: 0, N: 0, Gt: 0, ready: 0, rg: 0 };
   for (const f of ACHF) { const C = SAVE.achC[f.id] || 0, R = SAVE.achR[f.id] || 0; f.goals.forEach((x, i) => { T.N++; T.Gt += f.gems[i]; if (C & (1 << i)) { T.n++; T.g += f.gems[i]; } else if (R & (1 << i)) { T.ready++; T.rg += f.gems[i]; } }); }
@@ -222,8 +232,8 @@ function buildAchs() {
   const L = ACHF.filter(inCat).map(achRowData).sort((x, y) => (y.ready > 0) - (x.ready > 0) || (x.done - y.done) || (x.lk - y.lk) || y.fr - x.fr);
   $('#mission-list').innerHTML = L.map(d => {
     const f = d.f, goal = f.goals[d.i], name = d.hidden ? '???' : achName(f, d.i), txt = d.hidden ? f.hint : f.txt(goal), jk = d.hidden ? '' : achJoke(f, d.i);
-    const pr = d.done ? 1 : Math.min(1, d.p / goal), gm = d.ready ? d.gems : f.gems[d.i];
-    return `<div class="mission ach${d.done ? ' done' : ''}${d.ready ? ' ready' : ''}"><div><b>${name}</b>${d.n > 1 ? `<span class="ach-lv">${d.nc}/${d.n}</span>` : ''}<span class="ach-txt">${txt}${jk ? ` <i>${jk}</i>` : ''}</span><div class="xpbar"><i style="width:${pr * 100}%"></i><span>${d.done ? '¡COMPLETO!' : `${fmt(Math.min(d.p, goal))} / ${fmt(goal)}`}</span></div></div><button class="btn-up" data-af="${f.id}" ${d.ready ? '' : 'disabled'}>${d.done ? 'HECHO' : d.ready > 1 ? `COBRAR x${d.ready}` : 'COBRAR'}<small>${GEM_SVG}${fmt(gm)}</small></button></div>`;
+    const pr = d.done ? 1 : Math.min(1, d.p / goal), gm = d.ready ? d.gems : f.gems[d.i], lkTxt = d.lk && !d.ready ? ' <i>Primero libera a esta facción en la campaña.</i>' : '';
+    return `<div class="mission ach${d.done ? ' done' : ''}${d.ready ? ' ready' : ''}"><div><b>${name}</b>${d.n > 1 ? `<span class="ach-lv">${d.nc}/${d.n}</span>` : ''}<span class="ach-txt">${txt}${lkTxt || (jk ? ` <i>${jk}</i>` : '')}</span><div class="xpbar"><i style="width:${pr * 100}%"></i><span>${d.done ? '¡COMPLETO!' : `${fmt(Math.min(d.p, goal))} / ${fmt(goal)}`}</span></div></div><button class="btn-up" data-af="${f.id}" ${d.ready ? '' : 'disabled'}>${d.done ? 'HECHO' : d.ready > 1 ? `COBRAR x${d.ready}` : 'COBRAR'}<small>${GEM_SVG}${fmt(gm)}</small></button></div>`;
   }).join('');
   for (const b of document.querySelectorAll('[data-af]')) b.onclick = () => { const f = ACHF.find(x => x.id === b.dataset.af); if (f) achClaim([f]); };
 }
@@ -266,12 +276,13 @@ const pname = () => SAVE.name || 'Jugador';
 // deja letras (con acentos y ñ), números, espacios y _ - .  · quita espacios repetidos
 function cleanName(s) { return String(s || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, NAME_MAX); }
 function randomName() { let n; do n = pick(NAME_IDEAS) + (Math.random() < 0.6 ? Math.floor(rand(1, 99)) : ''); while (n.length > NAME_MAX || n === SAVE.name); return n; }
-function avatarList() { return FACTION_ORDER.filter(f => FACTIONS[f].leader && isUnlocked(f)).map(f => FACTIONS[f].leader); }
-function avatarOf() { const a = SAVE.avatar; if (a && avatarList().includes(a)) return a; return (FACTIONS[SAVE.fac] || FACTIONS.animales).leader || 'bunny'; }
+function avatarList() { return RETOS.avatares ? RETOS.avatares() : FACTION_ORDER.filter(f => FACTIONS[f].leader && isUnlocked(f)).map(f => FACTIONS[f].leader); }
+function avatarOf() { const a = SAVE.avatar; if (a && avatarList().includes(a)) return a; return (FACTIONS[SAVE.lastFac || SAVE.fac] || FACTIONS.animales).leader || 'bunny'; }
 /* ---------- ¿cómo te llamas? ---------- */
 function openName(first) {
   $('#name-title').textContent = first ? '¿CÓMO TE LLAMAS?' : 'CAMBIAR NOMBRE';
-  $('#name-text').innerHTML = first ? '<b>¡Hola! Soy Lola</b>, me despidió Microblizz. Antes de empezar, ¿cómo quieres que te llame? Será tu nombre en tu perfil y en el chat de las partidas.' : 'Así te verán en tu perfil y en el chat de las partidas.';
+  const N = RETOS.nombre || { primera: '<b>¡Hola! Soy Lola</b>, me despidió Microblizz. Antes de empezar, ¿cómo quieres que te llame? Será tu nombre en tu perfil y en el chat de las partidas.', cambio: 'Así te verán en tu perfil y en el chat de las partidas.' };
+  $('#name-text').innerHTML = first ? N.primera : N.cambio;
   $('#name-cancel').hidden = first;
   const inp = $('#name-in'); inp.value = SAVE.name || ''; $('#name-err').textContent = '';
   $('#scr-name').hidden = false;
@@ -285,25 +296,25 @@ function nameOk() {
   saveGame(); $('#scr-name').hidden = true; play('select');
   toast(first ? `¡Encantada, ${n}!` : `Ahora te llamas ${n}`, true);
   profileChip(); if (!$('#scr-profile').hidden) buildProfile();
-  titlePopups();
+  (RETOS.trasNombre || titlePopups)();
 }
 /* ---------- botón del menú ---------- */
 function profileChip() {
   const b = $('#btn-profile'); if (!b) return;
   b.querySelector('.pc-name').textContent = SAVE.name || 'TU PERFIL';
-  b.querySelector('.pc-sub').textContent = RETOS.perfil().sub;
+  const P = RETOS.perfil(); b.querySelector('.pc-sub').textContent = P.chip || P.sub;
   drawArt(b.querySelector('canvas'), avatarOf(), 34, 34);
 }
 /* ---------- pantalla de perfil ---------- */
+// las dos casillas que valen para cualquier juego
+const celdaLogros = () => { const T = achTotals(); return ['LOGROS', `${T.n} / ${T.N}`, 'niveles conseguidos']; };
+const celdaRacha = () => ['MEJOR RACHA', `${(SAVE.login && SAVE.login.best) || 0} días`, `jugando desde ${SAVE.since ? SAVE.since.split('-').reverse().join('/') : '—'}`];
 function buildProfile() {
-  const T = achTotals(), P = RETOS.perfil();
-  const since = SAVE.since ? SAVE.since.split('-').reverse().join('/') : '—';
+  const P = RETOS.perfil();
   const cell = (k, v, s) => `<div class="pf-cell"><small>${k}</small><b class="ol">${v}</b>${s ? `<i>${s}</i>` : ''}</div>`;
   $('#profile-who').textContent = pname();
   $('#profile-league').textContent = P.sub;
-  $('#profile-stats').innerHTML = P.celdas.map(c => cell(...c)).join('') +
-    cell('LOGROS', `${T.n} / ${T.N}`, 'niveles conseguidos') +
-    cell('MEJOR RACHA', `${(SAVE.login && SAVE.login.best) || 0} días`, `jugando desde ${since}`);
+  $('#profile-stats').innerHTML = P.celdas.map(c => cell(...c)).join('');
   const cur = avatarOf();
   $('#profile-avs').innerHTML = avatarList().map(k => `<button class="pf-av${k === cur ? ' on' : ''}" data-av="${k}" aria-label="Avatar: ${esc(CFG.cards[k] ? CFG.cards[k].name : k)}"><canvas></canvas></button>`).join('');
   for (const b of document.querySelectorAll('#profile-avs .pf-av')) {
@@ -331,9 +342,9 @@ function retosPopups() {
 function retosLogin() { if (loginState().ready) openLogin(); }
 
 /* ---------- botones ---------- */
-$('#btn-missions').onclick = () => { play('select'); openMissions(); };
-$('#btn-pass').onclick = () => { play('select'); openPass(); };
-for (const b of document.querySelectorAll('[data-mt]')) b.onclick = () => { missionTab = b.dataset.mt; play('select'); buildMissions(); $('#mission-list').scrollTop = 0; };
+$('#btn-missions').onclick = () => { play('select'); updateWallets(); buildMissions(); show('scr-missions'); };
+$('#btn-pass').onclick = () => { play('select'); updateWallets(); show('scr-pass'); buildPass(); };
+for (const b of document.querySelectorAll('[data-mt]')) b.onclick = () => { missionTab = b.dataset.mt; play('select'); buildMissions(); };
 $('#btn-ach-all').onclick = () => achClaim(ACHF);
 $('#btn-login').onclick = claimLogin;
 $('#name-ok').onclick = nameOk;
@@ -344,3 +355,4 @@ $('#name-cancel').onclick = () => { $('#scr-name').hidden = true; play('select')
 $('#btn-profile').onclick = () => { play('select'); if (!SAVE.name) { openName(true); return; } buildProfile(); $('#scr-profile').hidden = false; };
 $('#profile-close').onclick = () => { $('#scr-profile').hidden = true; play('select'); profileChip(); };
 $('#profile-name').onclick = () => { play('select'); openName(false); };
+try { profileChip(); } catch (e) { /* se pinta al volver al menú */ }

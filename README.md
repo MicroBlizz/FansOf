@@ -56,3 +56,7 @@ Dos cosas que hoy están en core y son todavía del TD: `js/meta.js` describe ca
 ## Publicar
 
 GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. Con cada cambio que note el jugador hay que subir `VERSION` (en `core/js/meta.js`), el `?v=` de los enlaces de `games/td/index.html` y añadir la entrada a `NEWS` (en `core/js/menus.js`).
+
+## Licencia
+
+Todos los derechos reservados. El repositorio es público para poder publicar los juegos en la web, pero no se puede copiar, modificar, redistribuir ni reutilizar su contenido sin permiso escrito de los autores. Los detalles están en [LICENSE](LICENSE).

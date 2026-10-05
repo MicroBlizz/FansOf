@@ -18,6 +18,7 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/sw.js              jugar sin conexión, igual para todos los juegos (cada juego lo usa desde un sw.js de dos líneas)
   js/sistema/utiles.js  utilidades pequeñas que usan todos los sistemas
   js/sistema/sonido.js  el altavoz, los efectos comunes y el motor de música (cada juego dice su volumen y qué canción toca)
+  js/sistema/horas-extra.js  horas extra: lo que gana el líder, sus ventanas y la escena (cada juego dice el poder de sus líderes)
   js/novedades.js       el informe de parches: la ventana NOVEDADES, que salga sola con cada versión y el texto que enseña la librería.
                         Cada juego escribe solo su lista (NEWS) en su js/novedades.js
   js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
@@ -27,7 +28,6 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/save.js            guardado en el navegador (el sistema; cada juego tiene su propia partida)
   js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
   js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)
-  js/idle.js            horas extra; se genera con herramientas/horas_extra.py
 games/
   rumble/               FANS OF RUMBLE, el juego original y el principal (ver games/rumble/README.md). Carga de core/ el cargador,
                         la serie y las utilidades; el resto (progreso, menús, sonido) todavía es suyo
@@ -46,7 +46,7 @@ games/
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
     js/extras.js          chat en directo, caja de avisos, tutorial y sus opciones
-herramientas/           sincronizar.py pasa a core/ las mejoras del Rumble (llama a estilos_menus.py y horas_extra.py);
+herramientas/           sincronizar.py pasa a core/css/menus.css los estilos de los menús del Rumble (llama a estilos_menus.py);
                         servidor.py para probar en local; base.py y pruebas/ son el comparador «¿he roto algo?»
 ```
 

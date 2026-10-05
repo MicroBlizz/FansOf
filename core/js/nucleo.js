@@ -28,6 +28,7 @@ const NUCLEO = (() => {
     'js/serie/canciones.js',       //           las canciones
     'js/serie/frases.js',          //           frases de humor comunes
     'js/serie/iconos.js',          //           iconos y colores
+    'js/sistema/horas-extra.js',   // horas extra: el minijuego del menú
     'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];
 

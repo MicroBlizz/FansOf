@@ -7,6 +7,7 @@ const G = { state: 'title', t: 0, time: CFG.matchTime, double: false, diff: 'eas
 try { const d = localStorage.getItem('for-diff'); if (d && CFG.diff[d]) { G.diff = d; G.diffCfg = CFG.diff[d]; } } catch (e) { /* storage blocked */ }
 if (FACTION_ORDER.includes(SAVE.lastFac) && isUnlocked(SAVE.lastFac)) G.faction = SAVE.lastFac;
 const facOf = team => (team === 'p' ? G.faction : G.efac);
+const facNow = () => G.faction;   // la facción con la que juegas (así la piden los sistemas comunes)
 // v0.9.13: la empresa que está detrás del rival (en la campaña 2 es Phony)
 const ownerOf = () => { const wi = G.mode === 'camp' && G.level ? G.level.wi : G.mode === 'boss' && G.bossWi != null ? G.bossWi : -1, c = wi >= 0 ? WORLDS[wi].camp : 0; return c === 3 ? 'iahorro' : c === 2 ? 'phony' : 'microblizz'; };   // v0.9.23: la campaña 3 es de IAhorro
 const ownerName = () => CORP[ownerOf()];

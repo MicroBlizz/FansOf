@@ -911,7 +911,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (G.screen === 'play' && !G.paused && !G.over) { const steps = G.speed; for (let i = 0; i < steps && !G.over; i++) (G.vs ? vsUpdate : update)(dt); }
   else if (G.screen === 'play' && G.over) { const d2 = dt; for (const q of G.parts) { q.t += d2; } G.parts = G.parts.filter(q => q.t < q.life); for (const n of G.nums) { n.t += d2; n.y -= d2 * 28; } G.nums = G.nums.filter(n => n.t < n.life); }
-  draw();
+  draw(); idleFrame(dt);   // horas extra: su escena solo se mueve mientras se ve el menú
   if (G.placeT > 0) { G.placeT -= dt; if (G.placeT <= 0 && G.place) { G.place = null; G.ghost = null; if (G.screen === 'play') refreshTray(); } }
   hudT -= dt; if (G.screen === 'play' && hudT <= 0) { hudT = 0.1; hud(); }
   requestAnimationFrame(frame);

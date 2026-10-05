@@ -1,22 +1,28 @@
-// Fans Of · HORAS EXTRA: el minijuego del menú.
-// Es js/13-horas-extra.js del original casi tal cual: la escena, los números y las ventanas son los suyos.
-// Cambia de dónde sale el poder del líder (aquí lo calcula cada juego: ver idlePower en games/td/js/progreso.js) y no hay anuncios.
+// Fans Of · HORAS EXTRA: el minijuego del menú. El líder que elijas sigue luchando aunque no juegues y gana oro, gemas y algún objeto.
+// Aquí está todo: lo que gana por hora, la ventana para elegir líder, la de cobrar y la escena animada (cada líder hace su especial).
+//
+// Cada juego dice:
+//   idlePower(fac)    el poder de ese líder (1 = nivel 1 sin nada): de él sale cuánto gana por hora
+//   idleFrame(dt)     hay que llamarla en cada fotograma mientras se ve el menú
+// y puede enganchar (ver hook en core/js/sistema/utiles.js):
+//   'idle.ui'         después de pintar el panel (para añadirle botones)
+//   'idle.box'        después de montar la ventana de cobrar (para añadirle otra forma de cobrar)
+//   'idle.equipo'     al dibujar al líder, por detrás y por delante, para pintarle lo que lleva puesto: (unidad, tipo, lienzo, capa)
+//   'idle.disparo'    el color del disparo de un líder que ataca a distancia: (tipo de disparo) -> color
 'use strict';
-/* ---------- lo que el original tenía en otros archivos ---------- */
-const VIEW = { get sc() { return SCALE; } }, PROJ = {};
 /* ---------- v0.9.14: HORAS EXTRA, el minijuego del menú: tu líder sigue luchando aunque no juegues ---------- */
 // Gana oro, gemas y a veces un objeto por hora según su poder de verdad (nivel, habilidad y equipo). Se llena a las 12 h.
+const IDLE = { cap: 12, gold: 60, gExp: 1.6, gems: 1, gemsK: 2.5, item: 0.02, itemK: 0.05 };
 const IDLE_MOBS = ['becario', 'starbot', 'cajabotin', 'soportebot', 'descargabot', 'licenciabot', 'plusbot'];
 const IDLE_SAY = {
   mob: ['¡Vuelve al trabajo!', 'Esto no cuenta como horas extra', '¡Firma el despido!', '¿Y tu productividad?', '¡Sin pausa para el café!', 'Reunión en 5 minutos', '¡Suscríbete!'],
   hero: ['¡Esto lo cobro yo!', '¡Por los fans!', 'Otra reunión más…', '¡El siguiente!', 'Mi jornada no acaba nunca', '¡Sin pausa!'],
 };
-const CHEST_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 9h14v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 16.5z" fill="#c2772d" style="stroke: var(--outline)" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 9V7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v2z" fill="#e0a050" style="stroke: var(--outline)" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 8h3v4h-3z" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.2"/></svg>';
-const idleFacOk = f => !!(f && TOWERS[f]);
+const idleFacOk = f => !!(f && FACTIONS[f] && FACTIONS[f].leader && !isCorp(f) && isUnlocked(f));
 let idleR = null;   // ritmo por hora del líder que trabaja
 function idleState() {
   const I = SAVE.idle || (SAVE.idle = { fac: '', h: 0, gold: 0, gems: 0, items: 0, last: Date.now() });
-  if (!idleFacOk(I.fac)) I.fac = idleFacOk(facNow()) ? facNow() : 'animales';
+  if (!idleFacOk(I.fac)) I.fac = idleFacOk(facNow()) ? facNow() : FACTION_ORDER.find(idleFacOk) || 'animales';
   if (!(I.last > 0)) I.last = Date.now();
   for (const k of ['h', 'gold', 'gems', 'items']) if (!(I[k] >= 0)) I[k] = 0;
   return I;
@@ -25,9 +31,10 @@ function idleRates(fac) { const pw = idlePower(fac); return { pw, gold: IDLE.gol
 // suma lo ganado desde la última vez, hasta el tope de 12 h (si el reloj va hacia atrás no se suma nada)
 function idleTick(now) {
   const I = idleState(); now = now || Date.now();
-  const dh = Math.min((now - I.last) / 3600000, IDLE.cap - I.h); I.last = now;
+  const dh = Math.min((now - I.last) / 3600000, IDLE.cap - I.h), from = I.last; I.last = now;
   idleR = idleRates(I.fac);
-  const x = dh;
+  // v0.9.16: con el turbo (anuncio) gana el doble mientras dura
+  const td = dh > 0 && I.turbo > from ? Math.min(dh, (Math.min(now, I.turbo) - from) / 3600000) : 0, x = dh + Math.max(0, td);
   if (dh > 0) { I.h = Math.min(IDLE.cap, I.h + dh); I.gold += idleR.gold * x; I.gems += idleR.gems * x; I.items += idleR.item * x; }
   return I;
 }
@@ -35,10 +42,10 @@ const idleFull = () => idleState().h >= IDLE.cap - 1e-6;
 function idleItem() {   // un objeto o una habilidad al azar con las probabilidades del gashapón (sin tocar sus garantías)
   const kind = Math.random() < 0.5 ? 'ab' : 'eq', DB = kind === 'ab' ? ABILITIES : ITEMS;
   let x = Math.random() * 100, rar = 'common'; for (const k of ['legendary', 'epic', 'rare']) { if (x < ECON.odds[k]) { rar = k; break; } x -= ECON.odds[k]; }
-  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass);
+  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)));
   return newCopy(kind, pick(pool), 0);
 }
-function idleCollect(x2) {
+function idleCollect(x2) {   // v0.9.16: x2 = premio doble por anuncio
   const I = idleTick(), m = x2 ? 2 : 1, g = Math.floor(I.gold), gm = Math.floor(I.gems), ni = Math.floor(I.items), h = I.h, full = h >= IDLE.cap - 1e-6;
   if (g < 1 && gm < 1 && ni < 1) { play('deny'); toast('Todavía no hay nada. ¡Dale un rato a tu líder!'); return; }
   I.gold -= g; I.gems -= gm; I.items -= ni; I.h = 0; SAVE.gold += g * m; SAVE.gems += gm * m;
@@ -61,7 +68,8 @@ function openIdlePick() {
     return `<button class="idle-opt" data-idf="${f}" aria-pressed="${on}"><canvas aria-hidden="true"></canvas><span><b>${CFG.cards[k].name}</b><small>${FACTIONS[f].name} · nivel ${uSave(k).lvl}${on ? ' · <em>TRABAJANDO</em>' : ''}</small><small>Cada hora: ${fmt(R.gold)} de oro · ${fmtV(rnd(R.gems, 1))} ${rnd(R.gems, 1) === 1 ? 'gema' : 'gemas'}</small></span><span class="pw">${Math.round(R.pw * 100)}<small>PODER</small></span></button>`;
   }).join('');
   for (const b of $('#idle-list').querySelectorAll('[data-idf]')) { drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.idf].leader, 44, 44); b.onclick = () => idleSetHero(b.dataset.idf); }
-  $('#idle-more').textContent = '';
+  const nl = FACTION_ORDER.length - L.length;
+  $('#idle-more').textContent = nl ? `Libera más facciones en la campaña para tener más líderes (te ${nl > 1 ? 'faltan ' + nl : 'falta 1'}).` : '';
   $('#scr-idle').hidden = false; play('select');
 }
 let idleUIKey = '', idleFaceKey = '';
@@ -79,7 +87,20 @@ function idleUI(force) {
   $('#idle-get').setAttribute('aria-label', `Recoger ${fmt(I.gold)} de oro y ${fmt(I.gems)} gemas`);
   if (idleFaceKey !== k) { idleFaceKey = k; drawArt($('#idle-face'), k, 38, 38); }
   fitText($('#idle-name'), 15, 11);
+  fire('idle.ui');
 }
+// al pulsar RECOGER sale una ventana con lo que vas a cobrar
+function idleCollectBox() {
+  const I = idleTick(), g = Math.floor(I.gold), gm = Math.floor(I.gems), ni = Math.floor(I.items);
+  if (g < 1 && gm < 1 && ni < 1) { play('deny'); toast('Todavía no hay nada. ¡Dale un rato a tu líder!'); return; }
+  $('#ib-sub').textContent = `${CFG.cards[FACTIONS[I.fac].leader].name} ha trabajado ${fmtV(Math.floor(I.h * 10) / 10)} h. Esto es lo que ha ganado:`;
+  $('#ib-loot').innerHTML = `<span class="rw-chip big ol">${COIN_SVG}${fmt(g)}</span>${gm ? `<span class="rw-chip big ol">${GEM_SVG}${fmt(gm)}</span>` : ''}${ni ? `<span class="rw-chip big ol">${CHEST_SVG}x${ni}</span>` : ''}`;
+  $('#ib-row').innerHTML = '<button class="btn-big ol" id="btn-ib-get">RECOGER</button>';
+  $('#scr-idlebox').hidden = false; play('select');
+  $('#btn-ib-get').onclick = () => { $('#scr-idlebox').hidden = true; idleCollect(); };
+  fire('idle.box');
+}
+$('#btn-ib-close').addEventListener('click', () => { $('#scr-idlebox').hidden = true; play('select'); });
 // ---- la escena: scroll lateral con parallax; el líder pega a los bots de Microblizz y Phony que van llegando
 const idleSc = { t: 0, off: 0, walk: 0, mobs: [], fx: [], cw: 0, ch: 0, R: 0, L: null, lfac: '', tick: 0, atkT: 0.6, lunge: 0, jump: 0, jumpHit: true, hit: 0, hp: 1, spec: 5, spawn: 0.3, wave: 0, sayT: 6, eu: null, pend: null, pendT: 0, cast: 0, buffT: 0, buffCol: '#ffe06a', wallT: 0, flur: 0, flurT: 0 };
 // v0.9.28: cada líder hace SU especial (antes todos saltaban como CrazyBunny). La etiqueta que sale es la de su carta.
@@ -150,7 +171,8 @@ function idleBuild(cw, ch, fac) {
 function idleSize() {
   const cv = $('#idle-cv'); if (!cv) return false;
   const cw = cv.clientWidth, ch = cv.clientHeight; if (!cw || !ch) return false;
-  const R = clamp(Math.round((VIEW.sc || 1) * (window.devicePixelRatio || 1) * 2) / 2, 1, 2), fac = idleState().fac;
+  const ui = $('#ui'), sc = ui.getBoundingClientRect().width / ui.offsetWidth || 1;   // a cuánto se está viendo la pantalla
+  const R = clamp(Math.round(sc * (window.devicePixelRatio || 1) * 2) / 2, 1, 2), fac = idleState().fac;
   if (cw === idleSc.cw && ch === idleSc.ch && R === idleSc.R && fac === idleSc.lfac && idleSc.L) return true;
   Object.assign(idleSc, { cw, ch, R, lfac: fac }); idleSc.hh = clamp(ch * 0.44, 54, 112); idleSc.k = idleSc.hh / 64; idleSc.gy = ch - Math.max(15, ch * 0.11);
   cv.width = Math.round(cw * R); cv.height = Math.round(ch * R); idleSc.L = idleBuild(cw, ch, fac); idleSc.mobs.length = 0;
@@ -214,7 +236,7 @@ function idleSim(dt) {
     S2.atkT -= dt;
     if (S2.atkT <= 0) {
       S2.atkT = 0.85 / Math.min(1.8, Math.sqrt(pw)) / (S2.buffT > 0 ? 2 : 1);
-      if (d.ranged) S2.fx.push({ k: 'shot', x: hx + 14 * K, y: S2.gy - S2.hh * 0.6, m: front, dmg, col: (PROJ[d.ranged] && PROJ[d.ranged].spark) || '#ffe14d', t: 3, max: 3 });
+      if (d.ranged) S2.fx.push({ k: 'shot', x: hx + 14 * K, y: S2.gy - S2.hh * 0.6, m: front, dmg, col: fire('idle.disparo', d.ranged) || '#ffe14d', t: 3, max: 3 });
       else { S2.lunge = 0.2; S2.pend = front; S2.pendT = 0.08; }
     }
     S2.spec -= dt;
@@ -239,9 +261,9 @@ function idleSim(dt) {
 function idleSprite(c, key, x, y, h, flip, sx, sy, white, eu) {
   const s = SPR[key], T = TYPES[key]; if (!s || !T) return;
   const sc = h / T.top; c.save(); c.translate(x, y); c.scale(sc * flip * sx, sc * sy);
-  if (eu && eu.equip) drawEquip(eu, T, c, 'back');
+  if (eu && eu.equip) fire('idle.equipo', eu, T, c, 'back');
   c.drawImage(s.c, -s.ax, -s.ay, s.wd, s.ht);
-  if (eu && eu.equip) drawEquip(eu, T, c);
+  if (eu && eu.equip) fire('idle.equipo', eu, T, c);
   if (T.foot) { const r = CFG.units[key].r; for (const fx of [-0.4, 0.4]) { c.beginPath(); c.ellipse(fx * r, -1, r * 0.3, r * 0.19, 0, 0, Math.PI * 2); c.fillStyle = T.foot; c.fill(); c.lineWidth = 1.6; c.strokeStyle = OL; c.stroke(); } }
   if (white > 0) { c.globalAlpha = Math.min(1, white); c.drawImage(s.w, -s.ax, -s.ay, s.wd, s.ht); c.globalAlpha = 1; }
   c.restore();
@@ -312,7 +334,7 @@ function idleFrame(dt) {
   if ($('#scr-title').hidden) return;
   const S2 = idleSc; S2.tick -= dt;
   if (S2.tick <= 0 || !S2.L) {
-    S2.tick = 1; idleTick(); const I = idleState(), k = FACTIONS[I.fac].leader; S2.eu = null; idleUI();
+    S2.tick = 1; idleTick(); const I = idleState(), k = FACTIONS[I.fac].leader; S2.eu = effStats(k, I.fac).u; idleUI();
     if (!idleSize()) return;
   }
   if (!S2.L) return;
@@ -321,18 +343,4 @@ function idleFrame(dt) {
 $('#idle-get').addEventListener('click', () => { audioInit(); idleCollectBox(); });   // primero enseña lo que vas a cobrar
 $('#idle-hero').addEventListener('click', () => { audioInit(); openIdlePick(); });
 $('#btn-idle-close').addEventListener('click', () => { $('#scr-idle').hidden = true; play('select'); });
-// la ventana que enseña lo que vas a cobrar (del original, js/15-anuncios.js, sin el botón del anuncio)
-function idleCollectBox() {
-  const I = idleTick(), g = Math.floor(I.gold), gm = Math.floor(I.gems), ni = Math.floor(I.items);
-  if (g < 1 && gm < 1 && ni < 1) { play('deny'); toast('Todavía no hay nada. ¡Dale un rato a tu líder!'); return; }
-  $('#ib-sub').textContent = `${CFG.cards[FACTIONS[I.fac].leader].name} ha trabajado ${fmtV(Math.floor(I.h * 10) / 10)} h. Esto es lo que ha ganado:`;
-  $('#ib-loot').innerHTML = `<span class="rw-chip big ol">${COIN_SVG}${fmt(g)}</span>${gm ? `<span class="rw-chip big ol">${GEM_SVG}${fmt(gm)}</span>` : ''}${ni ? `<span class="rw-chip big ol">${CHEST_SVG}x${ni}</span>` : ''}`;
-  $('#ib-row').innerHTML = '<button class="btn-big ol" id="btn-ib-get">RECOGER</button>';
-  $('#scr-idlebox').hidden = false; play('select');
-  $('#btn-ib-get').onclick = () => { $('#scr-idlebox').hidden = true; idleCollect(); };
-}
-$('#btn-ib-close').addEventListener('click', () => { $('#scr-idlebox').hidden = true; play('select'); });
-// la escena se mueve sola mientras estás en el menú
-let idleLast = performance.now();
-(function idleLoop(now) { const dt = Math.min(0.1, ((now || idleLast) - idleLast) / 1000); idleLast = now || idleLast; try { idleFrame(dt); } catch (e) { /* el menú nunca debe pararse por la escena */ } requestAnimationFrame(idleLoop); })();
 

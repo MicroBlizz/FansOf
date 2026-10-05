@@ -31,3 +31,10 @@ function paintLight(x) {
   const sl = x.createRadialGradient(70, 120, 0, 70, 120, 440); sl.addColorStop(0, 'rgba(255,238,200,.13)'); sl.addColorStop(1, 'rgba(255,238,200,0)');
   x.fillStyle = sl; x.fillRect(0, 0, W, H);
 }
+
+/* ---------- ganchos ----------
+   Los sistemas comunes dejan huecos con nombre (fire) y cada juego engancha ahí lo que solo tiene él (hook): un botón de más,
+   un dibujo, un dato. Si nadie engancha nada, no pasa nada. Lo que devuelvan los enganchados, si es texto, se junta. */
+const HOOKS = {};
+function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
+function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }

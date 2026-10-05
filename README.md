@@ -78,9 +78,11 @@ Antes de publicar un cambio en `core/`, pásalo por el comparador (`herramientas
 
 ## Añadir un juego
 
-1. Crea `games/<nombre>/` con su `index.html` (copia de `games/td/index.html` cómo llama a `core/js/nucleo.js`) y su `js/ajustes.js`, con sus números y el nombre de su partida guardada.
-2. Si se va a instalar como app, dale su `manifest.webmanifest` y su `sw.js` (copia los del TD tal cual: no hay lista de archivos que mantener).
-3. Añade su tarjeta al selector, el `index.html` de la raíz.
+1. Crea `games/<nombre>/` con su `index.html`, que llama a `core/js/nucleo.js` como el del TD.
+2. Define lo que lo común le pregunta al juego y engancha lo que solo tenga él: la lista está en [core/LEEME.md](core/LEEME.md).
+3. Dale su `js/novedades.js` y su `js/retos.js` (sus misiones y logros), y sus números en `js/ajustes.js`.
+4. Si se va a instalar como app, dale su `manifest.webmanifest` y su `sw.js` (copia los del TD tal cual: no hay lista de archivos que mantener).
+5. Añade su tarjeta a la librería, el `index.html` de la raíz.
 
 ## Publicar
 

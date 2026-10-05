@@ -2,7 +2,7 @@
 
 Un solo repositorio para la serie **Fans Of**: los juegos hechos con el mundo de [Fans of Rumble](https://github.com/jdanielhl1984-commits/fans-of-rumble): mismas razas, cartas, objetos, menús y música, y una carpeta por juego con sus propias reglas. Se publica entero, de una vez, en GitHub Pages.
 
-Se juega en https://arkioner.github.io/fans-of-rumble-td/
+Se juega en https://microblizz.github.io/FansOf/
 
 ## Estructura
 

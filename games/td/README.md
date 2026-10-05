@@ -4,7 +4,7 @@ La defensa de torres de la serie Fans Of, hecha a partir de [Fans of Rumble](htt
 
 ## Cómo jugar
 
-Se juega en https://arkioner.github.io/fans-of-rumble-td/. Para probarlo en tu equipo, sirve la raíz del repositorio con cualquier servidor estático (por ejemplo `python -m http.server`) y abre `games/td/`. Abrir el archivo a mano con doble clic ya no funciona, porque el juego carga archivos de `core/`.
+Se juega en https://microblizz.github.io/FansOf/games/td/. Para probarlo en tu equipo, sirve la raíz del repositorio con cualquier servidor estático (por ejemplo `python -m http.server`) y abre `games/td/`. Abrir el archivo a mano con doble clic ya no funciona, porque el juego carga archivos de `core/`.
 
 Es un tower defense clásico de laberinto:
 

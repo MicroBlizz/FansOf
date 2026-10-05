@@ -19,28 +19,67 @@
   h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
   h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
   p.sub { font-weight: 800; font-size: 18px; color: var(--ink-dim); margin: 0 0 6px; }
-  a.game { display: block; width: 100%; box-sizing: border-box; text-decoration: none; color: var(--ink); text-align: left; border: 4px solid var(--outline); border-radius: 20px; padding: 16px 18px 14px; background: linear-gradient(110deg, var(--wc) 0%, var(--tray) 72%); box-shadow: 0 6px 0 var(--outline); }
-  a.game:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--outline); }
-  a.game:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
-  a.game b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; }
-  a.game span { display: block; font-size: 15px; font-weight: 700; line-height: 1.3; margin-top: 6px; color: var(--ink-dim); }
-  a.game i { display: inline-block; font-style: normal; font-family: var(--font-display); font-size: 17px; margin-top: 10px; padding: 8px 16px 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); }
+  /* una tarjeta por juego: enlace, versión y novedades */
+  .game { width: 100%; box-sizing: border-box; color: var(--ink); text-align: left; border: 4px solid var(--outline); border-radius: 20px; padding: 16px 18px 14px; background: linear-gradient(110deg, var(--wc) 0%, var(--tray) 72%); box-shadow: 0 6px 0 var(--outline); }
+  .game h2 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; margin: 0; }
+  .game p { font-size: 15px; font-weight: 700; line-height: 1.3; margin: 6px 0 0; color: var(--ink-dim); }
+  .game .row { display: flex; align-items: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+  .game a.play { text-decoration: none; font-family: var(--font-display); font-size: 17px; padding: 8px 16px 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
+  .game a.play:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+  .game a.play:focus-visible, .game summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .game .ver { font-family: var(--font-display); font-size: 16px; color: var(--gold); }
+  .game details { margin-top: 10px; background: var(--panel); border: 3px solid var(--outline); border-radius: 12px; padding: 8px 12px; }
+  .game summary { cursor: pointer; font-weight: 800; font-size: 15px; }
+  .game h3 { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--gold); margin: 12px 0 2px; }
+  .game ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .game li { margin: 3px 0; }
+  .game li b { color: var(--player-lite); }
+  .game ul.joke { color: var(--ink-dim); font-style: italic; }
+  p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 6px 0 0; max-width: 460px; }
 </style>
 </head>
 <body>
 <main>
   <h1><span class="l2 ol-big">FANS OF</span></h1>
   <p class="sub">Elige juego</p>
-  <a class="game" href="games/rumble/" style="--wc: #8a3a12">
-    <b class="ol">FANS OF RUMBLE</b>
-    <span>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</span>
-    <i class="ol">JUGAR</i>
-  </a>
-  <a class="game" href="games/td/" style="--wc: #1d3f8a">
-    <b class="ol">FANS OF TD</b>
-    <span>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</span>
-    <i class="ol">JUGAR</i>
-  </a>
+  <section class="game" id="g-rumble" style="--wc: #8a3a12">
+    <h2 class="ol">FANS OF RUMBLE</h2>
+    <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
+    <div class="row"><a class="play ol" href="games/rumble/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-td" style="--wc: #1d3f8a">
+    <h2 class="ol">FANS OF TD</h2>
+    <p>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</p>
+    <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <p class="note">Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
 </main>
+<script>
+// La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
+'use strict';
+const text = url => fetch(url, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+// del código de un juego, el valor de «const NOMBRE = …;» (son solo textos: una lista u objeto de frases)
+function grab(src, name, close) {
+  const i = src.indexOf('const ' + name + ' = '); if (i < 0) return null;
+  const j = src.indexOf(String.fromCharCode(10) + close, i); if (j < 0) return null;
+  return new Function('return ' + src.slice(i + name.length + 9, j + 1 + close.length - 1))();
+}
+const list = (items, cls) => (items && items.length ? `<ul${cls ? ' class="' + cls + '"' : ''}>${items.map(t => `<li>${t}</li>`).join('')}</ul>` : '');
+function show(id, ver, entries) {
+  const box = document.getElementById(id);
+  box.querySelector('[data-ver]').textContent = ver ? 'versión ' + ver : '';
+  box.querySelector('[data-news]').innerHTML = entries.length ? entries.map(e => `<h3>Versión ${e.v}</h3>` + list(e.real) + list(e.joke, 'joke')).join('') : 'No se han podido leer las novedades.';
+}
+const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
+// Fans of TD: su versión y toda su lista de parches están en games/td/js/novedades.js
+text('games/td/js/novedades.js').then(src => { const ver = (/const VERSION = '([^']+)'/.exec(src) || [])[1]; show('g-td', ver, grab(src, 'NEWS', '];') || []); }).catch(fail('g-td'));
+// Fans of Rumble: la versión está en 02-progresion.js y las novedades de esa versión, en 11-logros.js
+Promise.all([text('games/rumble/js/02-progresion.js'), text('games/rumble/js/11-logros.js')]).then(([a, b]) => {
+  const ver = (/const VERSION = '([^']+)'/.exec(a) || [])[1], n = grab(b, 'NEWS', '};');
+  show('g-rumble', ver, n ? [{ v: ver, real: n.real, joke: n.joke }] : []);
+}).catch(fail('g-rumble'));
+</script>
 </body>
 </html>

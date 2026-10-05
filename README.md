@@ -7,7 +7,7 @@ Se juega en https://microblizz.github.io/FansOf/
 ## Estructura
 
 ```
-index.html            la entrada de la web: el selector de juegos
+index.html            la librería: un acceso rápido para probar, con el enlace, la versión y las novedades de cada juego
 sw.js                 limpia el modo sin conexión que el TD tenía antes en la raíz (no cachea nada)
 core/                 LO COMÚN A TODOS LOS JUEGOS
   css/base.css          colores, letras, contornos, marco de la pantalla y capa de interfaz de 540 x 960
@@ -16,8 +16,9 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/utils.js           utilidades pequeñas que necesita el arte
   js/vendor/            copiado sin cambios del original: razas, cartas y números (01-config), arte (03-arte),
                         canciones (05-musica), frases del chat (02-chat), iconos y frases del final (08-textos)
-  js/meta.js            progreso: oro y gemas, niveles y experiencia de las cartas, habilidades, objetos, equipo, gashapón y recompensas
-  js/save.js            guardado en el navegador, compartido por todos los juegos
+  js/meta.js            el SISTEMA de progreso: oro y gemas, niveles y experiencia, catálogo de habilidades y objetos,
+                        calidades, equipo, gashapón y tienda. Los números de cada juego no están aquí
+  js/save.js            guardado en el navegador (el sistema; cada juego tiene su propia partida)
   js/audio.js           efectos de sonido
   js/music.js           música
   js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
@@ -30,6 +31,10 @@ games/
     manifest.webmanifest  para instalarlo como app
     sw.js                 su modo sin conexión
     css/td.css            marcador, bandeja de cartas, panel de la torre y ajustes sobre los menús comunes
+    js/ajustes.js         LOS NÚMEROS DE ESTE JUEGO sobre los sistemas de core: qué hace y cuánto da cada habilidad y objeto,
+                          sus facetas (torre y unidad), su economía y el nombre de su partida guardada
+    js/novedades.js       su versión y su informe de parches
+    js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
     js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
@@ -39,13 +44,14 @@ herramientas/           sincronizar.py pasa a core/ las mejoras del Rumble (llam
 
 ## Qué va en cada sitio
 
-- **core/** tiene lo que debe ser igual en todos los juegos: quiénes son las razas y sus cartas, cómo se guardan y mejoran, qué objetos y habilidades hay y cómo se equipan, el aspecto de los menús y el sonido.
-- **games/<juego>/** tiene el bucle de juego y las reglas de ese modo: qué hace cada carta en ese juego, sus niveles, su marcador y sus pantallas de partida.
-- El progreso se guarda una sola vez por navegador: el oro, las gemas, los niveles y el inventario son los mismos en todos los juegos.
+La regla: **los sistemas se heredan, los datos son de cada juego.**
 
-El original (`games/rumble/`) todavía no usa el progreso, el guardado, los menús ni el sonido de `core/`: tiene los suyos, de los que salieron los de core. Unificarlos es el siguiente paso.
+- **core/** tiene los sistemas que deben funcionar igual en todos los juegos (inventario, equipo, gashapón, tienda, opciones, horas extra, sonido, menús) y lo que es de la serie: quiénes son las razas y sus cartas, su arte y el catálogo de habilidades y objetos.
+- **games/<juego>/js/ajustes.js** tiene los números de ese juego. El mismo objeto puede dar una cosa en un juego y otra en otro: la Espada de cartón existe en todos, pero cuánto daño da (o si da otra cosa) lo dice el `AJUSTES.fx` de cada uno. Ahí también va lo que cambie de la economía. Recalibrar un juego no toca core ni los demás juegos.
+- **games/<juego>/** tiene además el bucle de juego y sus reglas, sus niveles, su marcador y sus pantallas de partida.
+- **El jugador no comparte nada entre juegos.** Cada juego tiene su propia partida guardada, con su oro, sus gemas, sus niveles y su inventario, y su propia versión y novedades. La librería de la raíz es solo un acceso rápido para probar.
 
-Dos cosas que hoy están en core y son todavía del TD: `js/meta.js` describe cada objeto con dos facetas (torre y unidad), y `js/menus.js` las enseña así. Cuando llegue el segundo juego habrá que decidir cómo las lee él.
+`core/js/meta.js` ya no tiene números del TD: los lee de sus ajustes. Lo que queda por hacer es que el Rumble tenga su propio `ajustes.js` y use estos sistemas.
 
 ## El Rumble es el principal
 
@@ -55,19 +61,19 @@ Las mejoras se hacen primero en el Rumble (`games/rumble/`) y los demás juegos 
 |---|---|
 | Razas, cartas y números (`01-config.js`) y arte (`03-arte.js`) | Solos: el Rumble los carga de `core/js/vendor/`, así que es el mismo archivo para todos. |
 | Estilos de los menús, horas extra, canciones, chat y frases | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
-| Progreso, colección, inventario, gashapón, tienda, opciones, guardado y sonido | No se heredan: `core/js/meta.js`, `menus.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
+| Progreso, colección, inventario, gashapón, tienda, opciones, guardado y sonido | Todavía no se heredan: `core/js/meta.js`, `menus.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
 
 El tercer caso es el pendiente: mientras el Rumble no use esos archivos de `core/` en vez de los suyos, sus cambios en esas partes no llegan solos.
 
 ## Añadir un juego
 
-1. Crea `games/<nombre>/` con su `index.html`, que cargue primero lo de `core/` (copia el orden de `games/td/index.html`) y después sus propios `js/` y `css/`.
+1. Crea `games/<nombre>/` con su `index.html` (copia el orden de carga de `games/td/index.html`) y su `js/ajustes.js`, con sus números y el nombre de su partida guardada.
 2. Si se va a instalar como app, dale su `manifest.webmanifest` y su `sw.js` (copia los del TD y cambia la lista de archivos).
 3. Añade su tarjeta al selector, el `index.html` de la raíz.
 
 ## Publicar
 
-GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. Con cada cambio que note el jugador hay que subir `VERSION` (en `core/js/meta.js`), el `?v=` de los enlaces de `games/td/index.html` y añadir la entrada a `NEWS` (en `core/js/menus.js`).
+GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. Con cada cambio que note el jugador en el TD hay que subir `VERSION` y añadir la entrada a `NEWS` (los dos en `games/td/js/novedades.js`) y cambiar el `?v=` de los enlaces de `games/td/index.html`. En el Rumble: `VERSION` en `js/02-progresion.js`, la línea de versión de su `index.html`, `CACHE` en su `sw.js` y `NEWS` en `js/11-logros.js`.
 
 ## Licencia
 

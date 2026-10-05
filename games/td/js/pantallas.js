@@ -17,7 +17,7 @@ function drawTitleArt() {
   drawVector(x, a, 86, 182, ha, 1); drawVector(x, b, 336, 182, hb, -1); drawVector(x, lead, 206, 188, hl, 1);
 }
 const baseShowMenu = showMenu;
-showMenu = function () { $('#scr-pause').hidden = true; G.paused = false; baseShowMenu(); G.screen = 'title'; setTagline(); drawTitleArt(); };
+showMenu = function () { $('#scr-pause').hidden = true; G.paused = false; baseShowMenu(); G.screen = 'title'; setTagline(); drawTitleArt(); importFromHash(); };
 
 /* ---------- campaña ---------- */
 function buildCamp() {

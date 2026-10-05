@@ -391,6 +391,10 @@ function toast(msg, good) { const t = $('#toast'); t.textContent = msg; t.classL
    Con cada versión nueva hay que subir VERSION (en meta.js) y poner aquí arriba del todo lo que cambia.
    ========================================================= */
 const NEWS = [
+  { v: '0.9.3', real: [
+      '<b>Dirección nueva</b>: el juego vive ahora en microblizz.github.io/FansOf. La dirección antigua te trae aquí sola.',
+      'Si vienes de la antigua con progreso guardado, al llegar te pregunta si quieres <b>traértelo</b>.'],
+    joke: ['Microblizz se ha mudado de oficina. Los despidos también se han mudado.'] },
   { v: '0.9.2', real: [
       '<b>El juego se llama Fans of TD</b>. La serie es «Fans Of»: el primero fue Fans of Rumble y este es su defensa de torres.',
       'Si lo tienes instalado como app, el nombre nuevo sale al reinstalarlo.'],
@@ -535,3 +539,14 @@ function installApp() {
 $('#btn-install').onclick = installApp;
 // modo sin conexión: solo desde la web (en un archivo abierto a mano el navegador no lo permite)
 try { if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js?v=' + VERSION).catch(() => { /* sin modo sin conexión */ }); } catch (e) { /* el navegador no lo permite aquí */ }
+
+/* ---------- progreso traído desde la dirección antigua de la web ---------- */
+// La página antigua redirige aquí con el progreso que tenía guardado en la dirección (…#traer=código). Nunca se carga sin preguntar.
+function importFromHash() {
+  const m = /^#traer=(.+)$/.exec(location.hash); if (!m) return;
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* se queda en la dirección, sin más */ }
+  let o = null; try { o = JSON.parse(decodeURIComponent(escape(atob(m[1])))); } catch (e) { /* código roto */ }
+  if (!o || o.v !== 1 || typeof o.stars !== 'object' || JSON.stringify(o) === JSON.stringify(SAVE)) return;
+  const st = Object.keys(o.stars).length;
+  confirmBox('¿TRAER TU PROGRESO?', `Vienes de la dirección antigua del juego, donde tenías <b>${fmt(o.gold || 0)} de oro</b>, <b>${fmt(o.gems || 0)} gemas</b> y <b>${st} ${st === 1 ? 'nivel ganado' : 'niveles ganados'}</b>. ¿Quieres seguir aquí con ese progreso?<small>Sustituye al progreso guardado en esta dirección. No se puede deshacer.</small>`, 'TRAER', () => { SAVE = metaDefaults(o); saveGame(); location.reload(); });
+}

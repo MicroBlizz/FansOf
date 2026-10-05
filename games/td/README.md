@@ -82,14 +82,14 @@ Como en el original, fuera de la partida hay **oro** y **gemas**, y todo se guar
 
 Estas pantallas usan el código y los estilos del juego original, así que se ven y se manejan igual: la cartera de arriba, la colección con sus ranuras, el inventario, la máquina de cápsulas del gashapón, la tienda y la escena de las horas extra.
 
-- **Dos facetas por carta**: cada carta es una **torre** (cuando la pones en tu campo) y una **unidad** (cuando la envías en el modo VS o la pones a hacer horas extra). Las dos comparten nivel, habilidad y equipo.
-- **Colección**: una pestaña por raza. Cada carta tiene su nivel, su barra de experiencia y cuatro ranuras: habilidad, arma, cabeza y accesorio. En el original solo el líder llevaba objetos; aquí, todas las cartas.
+- **Torre y unidad**: cada carta es una torre (cuando la pones en tu campo) y una unidad (cuando la envías en el modo VS o la pones a hacer horas extra). Las dos comparten nivel, habilidad y objetos.
+- **Colección**: una pestaña por raza. Cada carta tiene su nivel, su barra de experiencia y su ranura de habilidad; el líder tiene además las de arma, cabeza y accesorio.
 - **Nivel**: hace falta **experiencia y oro**, hasta el nivel 10 (mismos precios que el original). Cada torre que pones y cada unidad que envías da 4 XP a su carta (hasta 60 por carta y partida, un 30 % más si ganas). Cada nivel da +6 % al daño de la torre y a la vida de la unidad.
-- **Habilidades y objetos**: casi todos mejoran **solo una faceta**, y lo dicen con una etiqueta de TORRE o de UNIDAD. Cada copia está en un solo sitio a la vez.
+- **Habilidades y objetos**: como en Fans of Rumble, cualquier carta lleva una habilidad y solo el líder lleva objetos (arma, cabeza y accesorio). Cada uno dice lo que hace, sin más: un escudo solo le sirve a la unidad y el alcance solo a la torre. El daño vale para las dos (la torre pega más y la unidad le quita más vida a la base rival). Cada copia está en un solo sitio a la vez.
 - **Inventario**: todas tus copias con su calidad. Puedes filtrarlas, ordenarlas, bloquearlas («contrato indefinido»), volver a sortear sus números («evaluación de desempeño») o despedirlas a cambio de oro, una a una o en masa.
 - **Gashapón**: 50 gemas la tirada, x1, x10 o x50, con las probabilidades del original (55 / 30 / 12 / 3 %), una épica segura por cada 10, legendaria a las 50 y calidad Director cada 10. La calidad de cada copia (de Becario a CEO) mueve sus números entre el 50 % y el 150 %.
 - **Tienda**: los mismos packs de oro y gemas del original. Es la versión de prueba: no se cobra nada y te lo llevas gratis. También está el regalo diario.
-- **Horas extra**: el líder que elijas sigue trabajando aunque no juegues, hasta 12 horas, y gana oro, gemas y a veces un objeto. Trabaja como **unidad**, así que lo que gana depende de su nivel y de lo que lleve para esa faceta.
+- **Horas extra**: el líder que elijas sigue trabajando aunque no juegues, hasta 12 horas, y gana oro, gemas y a veces un objeto. Lo que gana depende de su nivel y de lo que lleve.
 - **Recompensas**: ganar un nivel por primera vez da 100 de oro y 10 gemas (300 y 50 si es el del jefe), sacar 3 estrellas por primera vez da 50 y 10 más, repetirlo da 30 de oro y perder da 10. El modo VS da 40, 60 o 90 de oro según la dificultad.
 
 En el modo VS, el rival no lleva equipo ni niveles. Las habilidades, los objetos y todos los precios están en `core/js/meta.js`.

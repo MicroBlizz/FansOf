@@ -17,7 +17,7 @@ def cut(start, end):
 rep("// Fans of Rumble · HORAS EXTRA: el minijuego del menú\n'use strict';\n",
     "// Fans Of · HORAS EXTRA: el minijuego del menú.\n"
     "// Es js/13-horas-extra.js del original casi tal cual: la escena, los números y las ventanas son los suyos.\n"
-    "// Cambia de dónde sale el poder del líder (aquí, de su faceta de UNIDAD: ver idlePower en games/td/js/progreso.js) y no hay anuncios.\n"
+    "// Cambia de dónde sale el poder del líder (aquí lo calcula cada juego: ver idlePower en games/td/js/progreso.js) y no hay anuncios.\n"
     "'use strict';\n"
     "/* ---------- lo que el original tenía en otros archivos ---------- */\n"
     "const VIEW = { get sc() { return SCALE; } }, PROJ = {};\n"
@@ -34,7 +34,7 @@ rep("function idleCollect(x2) {   // v0.9.16: x2 = premio doble por anuncio", "f
 rep("  stat('idle', 1, true); stat('idleh', h, true); stat('idleg', g, true); stat('idlem', gm, true); if (ni) stat('idlei', ni, true); if (full) stat('idlefull', 1, true);\n  achScan(); saveGame();", "  saveGame();")
 rep("I.fac = f; idleR = idleRates(f); stat('idleswap', 1); saveGame();", "I.fac = f; idleR = idleRates(f); saveGame();")
 rep("const nl = FACTION_ORDER.length - L.length;\n  $('#idle-more').textContent = nl ? `Libera más facciones en la campaña para tener más líderes (te ${nl > 1 ? 'faltan ' + nl : 'falta 1'}).` : '';",
-    "$('#idle-more').textContent = 'Trabaja como unidad: súbele la vida, la velocidad o el escudo y ganará más.';")
+    "$('#idle-more').textContent = '';")
 rep("  adIdleUI();   // v0.9.16\n", "")
 rep("const A = invGet(SAVE.abEquip[k]), lab = (A && ABILITIES[A.id] ? ABILITIES[A.id].name : CFG.cards[k].tag).toUpperCase();", "const A = invGet(SAVE.abEquip[k]), lab = (A && ABILITIES[A.id] ? ABILITIES[A.id].name : CFG.cards[k].tag).toUpperCase();")
 rep("S2.eu = effStats(k, I.fac).u; idleUI();", "S2.eu = null; idleUI();")

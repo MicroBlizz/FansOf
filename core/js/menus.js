@@ -1,6 +1,6 @@
 // Fans Of · Menús: cartera, colección, inventario, gashapón, tienda y novedades.
 // Es el código de js/09-menus.js y js/11-logros.js del original, adaptado: aquí todas las cartas llevan equipo (no solo el líder)
-// y cada objeto dice qué faceta de la carta mejora en este juego. Los estilos son los del original (core/css/menus.css).
+// Las habilidades las lleva cualquier carta y los objetos, solo el líder, como en el original. Los estilos son los del original (core/css/menus.css).
 'use strict';
 /* ---------- lo que el original tenía repartido por otros archivos ---------- */
 const play = n => sfx({ select: 'place', deny: 'womp', levelup: 'up', win: 'win', crown: 'coin', roll: 'horn', despido: 'womp', sad: 'womp' }[n] || n);
@@ -45,7 +45,7 @@ function buildColl() {
   const box = $('#passive-box'); box.className = 'passive-box ' + F.kind;
   box.innerHTML = `<div><b class="ol">${F.name.toUpperCase()} · ${F.passive}</b><span>${PASSIVES[collFac].txt}</span></div>`;
   const list = $('#coll-list');
-  list.innerHTML = '<p class="coll-hint">Cada carta es una <b>torre</b> y una <b>unidad</b> que comparten nivel, <b>habilidad</b> y <b>objetos</b> (arma, cabeza y accesorio). Toca las <b>ranuras</b> para equipar. Salen en el <b>Gashapón</b>. El número rojo dice cuántas tienes sin usar.</p>' + [F.leader, ...F.units].map(k => collRow(k)).join('');
+  list.innerHTML = '<p class="coll-hint">Toca las <b>ranuras</b> de cada carta para equipar: <b>habilidades</b> en todas y <b>objetos</b> (arma, cabeza y accesorio) solo en el líder. Salen en el <b>Gashapón</b>. El número rojo dice cuántas tienes sin usar.</p>' + [F.leader, ...F.units].map(k => collRow(k)).join('');
   for (const cv of list.querySelectorAll('canvas[data-k]')) drawArt(cv, cv.dataset.k, 62, 54);
   list.querySelectorAll('[data-up]').forEach(b => { b.onclick = () => { if (levelUp(b.dataset.up)) { updateWallets(); buildColl(); } }; });
   // si la ranura ya lleva algo, se abre su ficha (volver a tirar, bloquear, cambiar…); si está vacía, la lista para elegir
@@ -59,9 +59,9 @@ function collRow(k) {
   const stats = cardStats(es) + bst;   // la línea de números de la carta la escribe cada juego
   const worn = wornSet(), E = SAVE.equip[k] || {};
   let slots = slotTile('ab', k, invGet(SAVE.abEquip[k]), 'HABILIDAD', worn, k);
-  for (const sl in SLOTS) slots += slotTile('eq', sl, invGet(E[sl]), SLOTS[sl].toUpperCase(), worn, k);
+  if (isLeader(k)) for (const sl in SLOTS) slots += slotTile('eq', sl, invGet(E[sl]), SLOTS[sl].toUpperCase(), worn, k);
   const btn = max ? '<button class="btn-up max" disabled>NV MÁX</button>' : `<button class="btn-up" data-up="${k}" ${ready ? '' : 'disabled'}>SUBIR<small>${COIN_SVG}${fmt(cost)}</small></button>`;
-  return `<div class="coll-row" data-rarity="${c.rarity}"><canvas data-k="${k}"></canvas><div><div class="coll-name ol">${c.name}<em>Nv ${us.lvl}</em></div><div class="deck-desc">${D.desc}</div><div class="xpbar"><i style="width:${pct}%"></i><span>${max ? 'NIVEL MÁXIMO' : `${fmt(us.xp)} / ${fmt(need)} XP`}</span></div><div class="deck-stats">${stats}</div></div>${btn}<div class="slots">${slots}</div></div>`;
+  return `<div class="coll-row" data-rarity="${c.rarity}"><canvas data-k="${k}"></canvas><div><div class="coll-name ol">${c.name}<em>Nv ${us.lvl}</em></div><div class="deck-desc">${D.desc}</div><div class="xpbar"><i style="width:${pct}%"></i><span>${max ? 'NIVEL MÁXIMO' : `${fmt(us.xp)} / ${fmt(need)} XP`}</span></div><div class="deck-stats">${stats}</div></div>${btn}<div class="slots${isLeader(k) ? '' : ' one'}">${slots}</div></div>`;
 }
 // ranuras grandes. Vacías con borde punteado y un número rojo si tienes copias sin usar para esa ranura
 function wornSet() { const w = new Set(Object.values(SAVE.abEquip)); for (const k in SAVE.equip) for (const sl in SAVE.equip[k]) w.add(SAVE.equip[k][sl]); return w; }
@@ -263,7 +263,7 @@ function openItem(uid, slot) {
   const others = SAVE.inv.filter(x => x !== it && x.k === it.k && x.id === it.id).sort((a, b) => avgQ(b) - avgQ(a));
   const oth = others.length ? `Tus otras copias: ${others.slice(0, 5).map(x => `${QTIERS[tierOf(avgQ(x))].name} ${Math.round(avgQ(x) * 100)} %`).join(' · ')}${others.length > 5 ? ` y ${others.length - 5} más` : ''}.` : 'Es tu única copia.';
   const facet = sideText(D);
-  $('#item-body').innerHTML = `<div class="item-head"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] : ' · Habilidad'} · ${facet}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
+  $('#item-body').innerHTML = `<div class="item-head"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] + ' (solo líderes)' : ' · Habilidad'}${facet ? ' · ' + facet : ''}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
     <div>${qBadge(it, true)}</div><div class="inv-desc">${descOf(it)}</div>${bars}
     <div class="item-note">${w ? 'Lo lleva ' + w + '.' : 'No lo lleva nadie.'}${it.lock ? ' Contrato indefinido: no se puede despedir.' : ''}</div><div class="item-note">${oth}</div>`;
   const rc = ECON.reroll[D.rar], sv = scrapValue(it);
@@ -282,11 +282,11 @@ function equipFromInv(it) {
   const D = defOf(it); let html = '';
   for (const f of FACTION_ORDER.filter(f => it.k === 'ab' || fitsFac(it.id, f))) {
     const F = FACTIONS[f];
-    html += `<p class="pick-head ol">${F.name}</p>` + [F.leader, ...F.units].map(k => {
+    html += `<p class="pick-head ol">${F.name}</p>` + (it.k === 'ab' ? [F.leader, ...F.units] : [F.leader]).map(k => {
       const cur = it.k === 'ab' ? invGet(SAVE.abEquip[k]) : invGet((SAVE.equip[k] || {})[D.slot]);
       return `<button class="pick-opt unit" data-id="${k}" aria-pressed="${cur === it}"><canvas data-art="${k}"></canvas><span><b class="ol">${CFG.cards[k].name}</b><span>${cur ? 'Lleva ' + defOf(cur).name + ' (' + QTIERS[tierOf(avgQ(cur))].name + ')' : it.k === 'ab' ? 'Sin habilidad' : SLOTS[D.slot] + ' libre'}</span></span></button>`; }).join('');
   }
-  openList(`¿Quién lleva ${D.name}?`, html, k => { unequip(it); if (it.k === 'ab') SAVE.abEquip[k] = it.u; else (SAVE.equip[k] = SAVE.equip[k] || {})[D.slot] = it.u; saveGame(); play('select'); toast(`${CFG.cards[k].name} lleva ahora ${D.name}`, true); refreshInv(); });
+  openList(it.k === 'ab' ? `¿Quién lleva ${D.name}?` : `¿Qué líder lleva ${D.name}?`, html, k => { unequip(it); if (it.k === 'ab') SAVE.abEquip[k] = it.u; else (SAVE.equip[k] = SAVE.equip[k] || {})[D.slot] = it.u; saveGame(); play('select'); toast(`${CFG.cards[k].name} lleva ahora ${D.name}`, true); refreshInv(); });
 }
 function scrapOne(it) {
   if (!canScrap(it)) return;

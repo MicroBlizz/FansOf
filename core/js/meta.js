@@ -3,7 +3,7 @@
 // Mismos nombres, rarezas, calidades, precios y forma de guardar que el Rumble (js/02-progresion.js). Las pantallas están en menus.js e idle.js.
 //
 // AQUÍ VA EL SISTEMA; LOS NÚMEROS DE CADA JUEGO, NO. Cada juego carga antes su archivo de ajustes (games/<juego>/js/ajustes.js), que dice:
-//   · qué puede mejorar una carta en ese juego (AJUSTES.stats) y cómo se llaman sus facetas (AJUSTES.facetas),
+//   · qué puede mejorar una carta en ese juego (AJUSTES.stats), agrupado por las partes que tenga una carta ahí (AJUSTES.facetas),
 //   · qué hace y cuánto da cada habilidad y cada objeto en ese juego (AJUSTES.fx),
 //   · y los números de economía que quiera cambiar respecto a los de aquí (AJUSTES.econ).
 // Un objeto que no salga en AJUSTES.fx existe en el inventario pero no hace nada en ese juego.
@@ -109,11 +109,14 @@ for (const DB of [ABILITIES, ITEMS]) for (const id in DB) {
     (by[side] = by[side] || []).push((signed ? (c < 0 ? '−' : '+') : '') + txt.replace('{v}', fixed ? String(Math.abs(c)) : '{' + (D.st.length - 1) + '}'));
   });
   D.side = SIDES.filter(s => by[s]).join('');   // qué facetas mejora
-  D.desc = D.side ? SIDES.filter(s => by[s]).map(s => `<i class="${AJUSTES.facetas[s].cls}">${AJUSTES.facetas[s].nombre}</i> ${by[s].join(' y ')}.`).join(' ') : 'No hace nada en este juego.';
+  // el texto: todo seguido, como en el Rumble; o, si el juego quiere enseñar sus facetas (AJUSTES.verFacetas), cada una con su etiqueta
+  const todo = [].concat(...SIDES.filter(s => by[s]).map(s => by[s])).join(' y ');
+  D.desc = !D.side ? 'No hace nada en este juego.' : !AJUSTES.verFacetas ? todo.charAt(0).toUpperCase() + todo.slice(1) + '.'
+    : SIDES.filter(s => by[s]).map(s => `<i class="${AJUSTES.facetas[s].cls}">${AJUSTES.facetas[s].nombre}</i> ${by[s].join(' y ')}.`).join(' ');
 }
 // para los textos de los menús: «· TORRE», «mejora la TORRE»…
-const sideTag = D => (D.side.length === 1 ? '· ' + AJUSTES.facetas[D.side].nombre : D.side ? '· LAS DOS' : '');
-const sideText = D => (D.side.length === 1 ? 'mejora ' + AJUSTES.facetas[D.side].con : D.side ? 'mejora las dos facetas' : 'no hace nada en este juego');
+const sideTag = D => (!AJUSTES.verFacetas ? '' : D.side.length === 1 ? '· ' + AJUSTES.facetas[D.side].nombre : D.side ? '· LAS DOS' : '');
+const sideText = D => (!AJUSTES.verFacetas ? '' : D.side.length === 1 ? 'mejora ' + AJUSTES.facetas[D.side].con : D.side ? 'mejora las dos facetas' : 'no hace nada en este juego');
 const fitsFac = (id, f) => !ITEMS[id] || !ITEMS[id].fac || ITEMS[id].fac === f;
 const defOf = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];
 const statDec = c => (c < 5 ? 2 : 1);
@@ -151,6 +154,8 @@ function metaDefaults(s) {
   if (s.gear) { for (const k in s.gear) for (const sl in s.gear[k]) { const u = 'i' + s.gear[k][sl]; if (sl === 'ab') s.abEquip[k] = u; else (s.equip[k] = s.equip[k] || {})[sl] = u; } delete s.gear; }
   if (s.seq) { s.invSeq = Math.max(s.invSeq, s.seq); delete s.seq; }
   s.inv = s.inv.filter(it => defOfSafe(it));
+  // los objetos (arma, cabeza y accesorio) solo los lleva el líder: lo que tuviera puesto otra carta vuelve al inventario
+  for (const k in s.equip) if (!isLeader(k)) delete s.equip[k];
   return s;
 }
 const defOfSafe = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];

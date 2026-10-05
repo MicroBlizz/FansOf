@@ -1,6 +1,6 @@
 // Fans Of · HORAS EXTRA: el minijuego del menú.
 // Es js/13-horas-extra.js del original casi tal cual: la escena, los números y las ventanas son los suyos.
-// Cambia de dónde sale el poder del líder (aquí, de su faceta de UNIDAD: ver idlePower en games/td/js/progreso.js) y no hay anuncios.
+// Cambia de dónde sale el poder del líder (aquí lo calcula cada juego: ver idlePower en games/td/js/progreso.js) y no hay anuncios.
 'use strict';
 /* ---------- lo que el original tenía en otros archivos ---------- */
 const VIEW = { get sc() { return SCALE; } }, PROJ = {};
@@ -61,7 +61,7 @@ function openIdlePick() {
     return `<button class="idle-opt" data-idf="${f}" aria-pressed="${on}"><canvas aria-hidden="true"></canvas><span><b>${CFG.cards[k].name}</b><small>${FACTIONS[f].name} · nivel ${uSave(k).lvl}${on ? ' · <em>TRABAJANDO</em>' : ''}</small><small>Cada hora: ${fmt(R.gold)} de oro · ${fmtV(rnd(R.gems, 1))} ${rnd(R.gems, 1) === 1 ? 'gema' : 'gemas'}</small></span><span class="pw">${Math.round(R.pw * 100)}<small>PODER</small></span></button>`;
   }).join('');
   for (const b of $('#idle-list').querySelectorAll('[data-idf]')) { drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.idf].leader, 44, 44); b.onclick = () => idleSetHero(b.dataset.idf); }
-  $('#idle-more').textContent = 'Trabaja como unidad: súbele la vida, la velocidad o el escudo y ganará más.';
+  $('#idle-more').textContent = '';
   $('#scr-idle').hidden = false; play('select');
 }
 let idleUIKey = '', idleFaceKey = '';

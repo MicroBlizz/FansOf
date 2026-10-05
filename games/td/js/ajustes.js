@@ -3,10 +3,12 @@
 // Aquí se decide qué hace y cuánto da cada uno EN ESTE JUEGO, y lo que cambia de la economía. Se puede recalibrar sin tocar core.
 'use strict';
 /* =========================================================
-   En Fans of TD cada carta tiene DOS FACETAS que comparten nivel, habilidad y equipo:
-     · TORRE  (T): cuando la pones en tu campo.
-     · UNIDAD (U): cuando la envías al rival en el modo VS o la pones a hacer horas extra.
-   Casi todo lo que te equipas mejora solo una faceta, así que hay que elegir cuál prefieres.
+   Como en el Rumble: cualquier carta lleva una habilidad y solo el líder lleva objetos (arma, cabeza y accesorio).
+   En Fans of TD una carta se usa de dos maneras, y por dentro cada mejora se apunta en una de las dos:
+     · T: cuando es una TORRE en tu campo (daño, alcance, velocidad de ataque…).
+     · U: cuando es una UNIDAD que envías al rival en el modo VS o que hace horas extra (vida, velocidad, escudo…).
+   El jugador no ve esa división: un escudo solo sirve a la unidad y el alcance solo a la torre, sin más.
+   El daño vale para las dos: la torre pega más y la unidad le quita más vida a la base rival.
    ========================================================= */
 const AJUSTES = {
   id: 'td',
@@ -18,12 +20,13 @@ const AJUSTES = {
     vs: { facil: 40, normal: 60, dificil: 90, lose: 10 },    // oro por partida en modo VS
   },
   facetas: { T: { nombre: 'TORRE', con: 'la TORRE', cls: 'ft' }, U: { nombre: 'UNIDAD', con: 'la UNIDAD', cls: 'fu' } },
+  verFacetas: false,        // no se enseñan en los menús: los textos salen seguidos, como en el Rumble
   // lo que puede mejorar cada faceta. [texto, es un porcentaje, se escribe con signo]
   stats: {
     T: { dmg: ['{v} % de daño', 1, 1], range: ['{v} % de alcance', 1, 1], spd: ['ataca un {v} % más rápido', 1], crit: ['el {v} % de sus golpes son críticos (triple)', 1], splash: ['cada golpe salpica el {v} % del daño alrededor', 1],
          slowT: ['sus golpes frenan al enemigo {v} s', 0], chain: ['cada golpe salta a otro enemigo con el {v} % del daño', 1], grito: ['cada 9 s aturde {v} s a los enemigos cercanos', 0],
-         furia: ['con tu base a menos de la mitad, +{v} % de daño', 1], iman: ['cada enemigo que derrota da {v} de CAOS extra', 0], desp: ['los jefes la dejan parada un {v} % menos de tiempo', 1] },
-    U: { hp: ['{v} % de vida', 1, 1], speed: ['{v} % de velocidad', 1, 1], armor: ['recibe un {v} % menos de daño', 1], shield: ['escudo del {v} % de su vida que se recarga', 1], fog: ['las torres rivales tardan {v} s en verla', 0],
+         furia: ['con tu base a menos de la mitad, +{v} % de daño', 1], iman: ['cada enemigo que derrota da {v} de CAOS extra', 0], desp: ['los jefes dejan parada su torre un {v} % menos de tiempo', 1] },
+    U: { hp: ['{v} % de vida', 1, 1], speed: ['{v} % de velocidad', 1, 1], armor: ['recibe un {v} % menos de daño', 1], shield: ['escudo del {v} % de su vida que se recarga', 1], fog: ['las torres rivales tardan {v} s en verle', 0],
          steal: ['roba un {v} % más de vida a la base rival', 1], revive: ['revive una vez con el {v} % de su vida', 1], clon: ['al caer se divide en 2 copias con el {v} % de su vida', 1], rush: ['los primeros {v} s va al triple de velocidad', 0],
          dodge: ['esquiva el {v} % de los golpes', 1], caos: ['al llegar a la base rival le roba {v} de CAOS', 0], regen: ['se cura un {v} % de su vida cada segundo', 1], cc: ['inmune a aturdimientos y frenazos', 0],
          pause: ['una vez, cuando va a caer, es invulnerable {v} s', 0], leak: ['{v} % de daño a la base rival', 1, 1] },
@@ -49,7 +52,7 @@ const AJUSTES = {
     iman:            [['T', 'iman', 2]],
     clon:            [['U', 'clon', 40]],
     furia:           [['T', 'furia', 40]],
-    gigante:         [['U', 'hp', 40], ['U', 'leak', 40], ['U', 'speed', -15]],
+    gigante:         [['U', 'hp', 40], ['T', 'dmg', 40], ['U', 'speed', -15]],
     espada_carton:   [['T', 'dmg', 10]],
     mando_cable:     [['T', 'range', 15]],
     raton_dpi:       [['T', 'range', 12], ['T', 'dmg', 10]],

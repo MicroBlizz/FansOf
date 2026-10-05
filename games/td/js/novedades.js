@@ -4,6 +4,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.6', real: [
+      '<b>Los objetos, solo en el líder</b>, como en Fans of Rumble: arma, cabeza y accesorio son suyos, y las demás cartas llevan solo su habilidad. Lo que tuvieran puesto otras cartas ha vuelto a tu inventario.',
+      'Las habilidades y los objetos ya no llevan la etiqueta de TORRE o UNIDAD: dicen lo que hacen y ya está. El <b>daño</b> vale para las dos cosas: la torre pega más y la unidad le quita más vida a la base rival.',
+      'El modo sin conexión guarda el juego entero desde la primera visita.'],
+    joke: ['Microblizz ha retirado el equipo a toda la plantilla menos al jefe. Dice que así «se simplifica».'] },
   { v: '0.9.5', real: [
       'Cambio interno: los números propios de Fans of TD (qué hace cada objeto y cada habilidad, y sus recompensas) están ahora en un archivo de ajustes aparte. No cambia nada al jugar.'],
     joke: ['Microblizz ha separado «sistemas» de «datos». A los becarios los ha dejado en «gastos».'] },

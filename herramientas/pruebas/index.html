@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fans Of · ¿He roto algo?</title>
+<style>
+  body { font: 15px/1.45 system-ui, sans-serif; margin: 0; padding: 20px; background: #150b21; color: #f3ecff; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  p { max-width: 70ch; color: #cdb9ea; margin: 6px 0; }
+  code { background: #2a1840; padding: 1px 5px; border-radius: 4px; }
+  button, select { font: inherit; padding: 8px 14px; border-radius: 8px; border: 2px solid #20102c; background: #ffcb3d; color: #20102c; font-weight: 700; cursor: pointer; margin: 10px 6px 10px 0; }
+  select { background: #cdb9ea; }
+  .bien { color: #9ef07a; } .mal { color: #ff8a8a; }
+  details { border-top: 1px solid #2a1840; padding: 3px 0; } summary { cursor: pointer; }
+  pre { background: #0d0616; padding: 10px; border-radius: 8px; overflow: auto; max-height: 340px; white-space: pre-wrap; word-break: break-word; color: #f3ecff; }
+  #marcos { position: absolute; left: -99999px; top: 0; }   /* el juego corre fuera de la vista */
+  #marcos iframe { border: 0; display: block; }
+</style>
+</head>
+<body>
+<h1>¿He roto algo?</h1>
+<p>Ejecuta el mismo guion en la copia de antes (<code>_base/</code>) y en la versión de ahora, y enseña en qué se diferencian: lo que se ve en cada pantalla, sus estilos, sus dibujos, la partida guardada y lo que sonaría.</p>
+<p>Antes de empezar: <code>python herramientas/base.py</code> (copia a <code>_base/</code> lo último guardado en git) y <code>python herramientas/servidor.py</code>. Si un cambio es a propósito, saldrá aquí igualmente: tú decides si es el que querías.</p>
+<select id="tam" aria-label="Tamaño de la pantalla"><option value="normal">Pantalla normal (540 × 960)</option><option value="movil">Móvil alto (390 × 844)</option><option value="pc">Ordenador (1280 × 800)</option></select>
+<button data-juego="rumble">Probar Fans of Rumble</button>
+<button data-juego="td">Probar Fans of TD</button>
+<div id="estado"></div>
+<div id="lista"></div>
+<div id="marcos" aria-hidden="true"></div>
+<script src="comparar.js"></script>
+</body>
+</html>

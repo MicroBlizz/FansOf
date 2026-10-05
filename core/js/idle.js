@@ -4,7 +4,6 @@
 'use strict';
 /* ---------- lo que el original tenía en otros archivos ---------- */
 const VIEW = { get sc() { return SCALE; } }, PROJ = {};
-const audioInit = () => { if (typeof musicWake === 'function') musicWake(); };
 /* ---------- v0.9.14: HORAS EXTRA, el minijuego del menú: tu líder sigue luchando aunque no juegues ---------- */
 // Gana oro, gemas y a veces un objeto por hora según su poder de verdad (nivel, habilidad y equipo). Se llena a las 12 h.
 const IDLE_MOBS = ['becario', 'starbot', 'cajabotin', 'soportebot', 'descargabot', 'licenciabot', 'plusbot'];

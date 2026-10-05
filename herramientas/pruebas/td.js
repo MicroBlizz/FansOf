@@ -33,7 +33,7 @@ var PRUEBA = {
     saveGame(); casa(); T.apunta('versión', VERSION); guardado();
 
     if (quiere('sonido')) {   // lo que el juego le pide al altavoz: cada efecto, el volumen y lo que suena en cada momento
-      const efecto = n => (typeof sfx === 'function' ? sfx(n) : play(n));
+      const efecto = n => (typeof sfx === 'function' ? sfx(n) : play(n)); if (typeof audioInit === 'function') audioInit();
       T.paso('sonido: efectos de la partida'); G.screen = 'play'; for (const n of ['shot', 'hit', 'crit', 'lob', 'boom', 'stomp', 'pop', 'coin', 'place', 'up', 'leak', 'horn', 'jump', 'zap', 'womp', 'boss', 'win']) { T.avanza(2000); efecto(n); } T.sonido(); G.screen = 'title';
       T.paso('sonido: efectos de los menús'); for (const n of ['select', 'deny', 'levelup', 'win', 'crown', 'roll', 'despido', 'sad']) { T.avanza(2000); play(n); } T.sonido();
       T.paso('sonido: volumen'); T.clic('#btn-opts'); T.pon('#opt-vol', 30); T.pon('#opt-mus', 80); T.apunta('guardado', [SAVE.vol, SAVE.mus]); T.avanza(2000); efecto('coin'); T.sonido('más bajo');

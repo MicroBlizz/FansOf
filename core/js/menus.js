@@ -3,7 +3,6 @@
 // Las habilidades las lleva cualquier carta y los objetos, solo el líder, como en el original. Los estilos son los del original (core/css/menus.css).
 'use strict';
 /* ---------- lo que el original tenía repartido por otros archivos ---------- */
-const play = n => sfx({ select: 'place', deny: 'womp', levelup: 'up', win: 'win', crown: 'coin', roll: 'horn', despido: 'womp', sad: 'womp' }[n] || n);
 function show(id) { showScreen(id); G.screen = id.slice(4); const h = document.querySelector('#' + id + ' .scr-head .h2'); if (h) fitText(h, 38, 20); }
 function drawArt(cv, key, LW, LH) {
   const R2 = 3; cv.width = LW * R2; cv.height = LH * R2; const x = cv.getContext('2d'); x.setTransform(R2, 0, 0, R2, 0, 0); x.clearRect(0, 0, LW, LH);
@@ -414,9 +413,9 @@ function optButtons() {
   $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-test').disabled = !!SAVE.testAll;
 }
 $('#btn-opts').onclick = () => { play('select'); openOptions(); };
-$('#opt-vol').oninput = e => { SAVE.vol = e.target.value / 100; if (SAVE.vol > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } saveGame(); };
+$('#opt-vol').oninput = e => { SAVE.vol = e.target.value / 100; if (SAVE.vol > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } applyVolume(); saveGame(); };
 $('#opt-vol').onchange = () => play('select');
-$('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; saveGame(); };
+$('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; applyVolume(); saveGame(); };
 $('#btn-nums').onclick = () => { SAVE.nums = !optOn('nums'); saveGame(); play('select'); optButtons(); };
 $('#btn-shake').onclick = () => { SAVE.shake = !optOn('shake'); saveGame(); play('select'); optButtons(); };
 // modo pruebas: todo abierto y dinero de sobra (subir de nivel lo haces tú en la Colección)

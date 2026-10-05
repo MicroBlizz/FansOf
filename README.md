@@ -17,6 +17,7 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
                         De esa versión salen VERSION, el ?v= de todos los archivos y la copia para jugar sin conexión
   js/sw.js              jugar sin conexión, igual para todos los juegos (cada juego lo usa desde un sw.js de dos líneas)
   js/sistema/utiles.js  utilidades pequeñas que usan todos los sistemas
+  js/sistema/sonido.js  el altavoz, los efectos comunes y el motor de música (cada juego dice su volumen y qué canción toca)
   js/novedades.js       el informe de parches: la ventana NOVEDADES, que salga sola con cada versión y el texto que enseña la librería.
                         Cada juego escribe solo su lista (NEWS) en su js/novedades.js
   js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
@@ -24,8 +25,6 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/meta.js            el SISTEMA de progreso: oro y gemas, niveles y experiencia, catálogo de habilidades y objetos,
                         calidades, equipo, gashapón y tienda. Los números de cada juego no están aquí
   js/save.js            guardado en el navegador (el sistema; cada juego tiene su propia partida)
-  js/audio.js           efectos de sonido
-  js/music.js           música
   js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
   js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)
   js/idle.js            horas extra; se genera con herramientas/horas_extra.py
@@ -41,6 +40,7 @@ games/
                           sus facetas (torre y unidad), su economía y el nombre de su partida guardada
     js/novedades.js       su informe de parches
     js/retos.js           sus misiones, sus logros y lo que enseña su perfil
+    js/sonido.js          sus efectos de partida, su volumen y qué canción toca en cada momento
     js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
     js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles

@@ -126,7 +126,6 @@ function setFaction(f) {
   chip.setAttribute('aria-label', `Pasiva de facción: ${F.passive}. Pulsa para ver qué hace`);
 }
 function setTagline() { const F = FACTIONS[G.faction]; $('#tagline').innerHTML = `<b>${F.name}</b> contra <i>Microblizz${starsD('7-4', 'n') > 0 ? ' y Phony' : ''}</i>`; }
-function applyVolume() { if (master) master.gain.value = muted ? 0 : 0.55 * ((SAVE.vol == null ? 100 : SAVE.vol) / 100); if (M.bus) M.bus.gain.value = 0.7 * musVol(); }
 function setSoundIcon() {
   $('#ico-sound').innerHTML = muted
     ? '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 9.5l5 5M21.5 9.5l-5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>'
@@ -142,8 +141,6 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) pauseGame();
   if (AC) { try { if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) { /* ignore */ } }
 });
-// el navegador solo deja sonar tras un toque: el primero arranca el audio (y con él la música del menú)
-for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, audioInit, { capture: true });
 window.addEventListener('resize', fit);
 
 function drawTitleArt() {

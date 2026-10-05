@@ -903,7 +903,7 @@ $('#btn-wave').onclick = () => { if (G.vs) vsView(G.vs.view === 'me' ? 'ai' : 'm
 $('#btn-mode').onclick = () => { if (G.vs.view !== 'me') vsView('me'); G.trayMode = G.trayMode === 'send' ? 'build' : 'send'; G.place = null; G.ghost = null; buildTray(); hud(); };
 $('#btn-speed').onclick = () => { G.speed = G.speed === 1 ? 2 : 1; if (G.speed === 2) stat('speed2', 1); hud(); };
 const soundBtns = () => { for (const b of document.querySelectorAll('.btn-sound')) { b.textContent = SAVE.muted ? '🔇' : '🔊'; b.setAttribute('aria-label', SAVE.muted ? 'Activar sonido' : 'Silenciar sonido'); } };
-for (const b of document.querySelectorAll('.btn-sound')) b.onclick = () => { SAVE.muted = !SAVE.muted; if (SAVE.muted) stat('mute', 1); saveGame(); soundBtns(); };
+for (const b of document.querySelectorAll('.btn-sound')) b.onclick = () => { SAVE.muted = !SAVE.muted; if (SAVE.muted) stat('mute', 1); audioInit(); applyVolume(); saveGame(); soundBtns(); };
 
 /* ---------- arranque ---------- */
 let last = performance.now(), hudT = 0;

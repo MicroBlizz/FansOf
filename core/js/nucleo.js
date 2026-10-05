@@ -22,6 +22,7 @@ const NUCLEO = (() => {
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
+    'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/serie/config.js',          // la serie: facciones, cartas y sus números
     'js/serie/arte.js',            //           los dibujos
     'js/serie/canciones.js',       //           las canciones

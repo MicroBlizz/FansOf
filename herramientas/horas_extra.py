@@ -20,8 +20,7 @@ rep("// Fans of Rumble · HORAS EXTRA: el minijuego del menú\n'use strict';\n",
     "// Cambia de dónde sale el poder del líder (aquí lo calcula cada juego: ver idlePower en games/td/js/progreso.js) y no hay anuncios.\n"
     "'use strict';\n"
     "/* ---------- lo que el original tenía en otros archivos ---------- */\n"
-    "const VIEW = { get sc() { return SCALE; } }, PROJ = {};\n"
-    "const audioInit = () => { if (typeof musicWake === 'function') musicWake(); };\n")
+    "const VIEW = { get sc() { return SCALE; } }, PROJ = {};\n")
 cut("const IDLE = {", "const IDLE_MOBS")
 rep("const idleFacOk = f => !!(f && FACTIONS[f] && FACTIONS[f].leader && !isCorp(f) && isUnlocked(f));", "const idleFacOk = f => !!(f && TOWERS[f]);")
 rep("I.fac = idleFacOk(G.faction) ? G.faction : FACTION_ORDER.find(idleFacOk) || 'animales';", "I.fac = idleFacOk(facNow()) ? facNow() : 'animales';")

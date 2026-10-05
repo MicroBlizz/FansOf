@@ -23,10 +23,13 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
                         Cada juego escribe solo su lista (NEWS) en su js/novedades.js
   js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
                         canciones, frases de humor e iconos
-  js/meta.js            el SISTEMA de progreso: oro y gemas, niveles y experiencia, catálogo de habilidades y objetos,
-                        calidades, equipo, gashapón y tienda. Los números de cada juego no están aquí
-  js/save.js            guardado en el navegador (el sistema; cada juego tiene su propia partida)
-  js/menus.js           pantallas comunes: colección, inventario, gashapón, tienda, opciones, novedades e instalar
+  js/sistema/pantallas.js   lo que usan todas las pantallas: cambiar de una a otra, cartera, subir de nivel, avisos y confirmaciones
+  js/sistema/coleccion.js   colección: las cartas de cada facción y lo que llevan puesto
+  js/sistema/inventario.js  inventario: las copias de habilidades y objetos, con su calidad
+  js/sistema/gachapon.js    gashapón (un juego puede añadir máquinas propias)
+  js/sistema/tienda.js      tienda
+  js/meta.js            (solo el TD, por ahora) catálogo de habilidades y objetos con sus efectos, calidades y precios de la tienda
+  js/save.js            (solo el TD, por ahora) guardado en el navegador
   js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)
 games/
   rumble/               FANS OF RUMBLE, el juego original y el principal (ver games/rumble/README.md). Carga de core/ el cargador,
@@ -41,6 +44,7 @@ games/
     js/novedades.js       su informe de parches
     js/retos.js           sus misiones, sus logros y lo que enseña su perfil
     js/sonido.js          sus efectos de partida, su volumen y qué canción toca en cada momento
+    js/menus.js           su menú principal, sus opciones e instalar
     js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
     js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
@@ -59,19 +63,17 @@ La regla: **los sistemas se heredan, los datos son de cada juego.**
 - **games/<juego>/** tiene además el bucle de juego y sus reglas, sus niveles, su marcador y sus pantallas de partida.
 - **El jugador no comparte nada entre juegos.** Cada juego tiene su propia partida guardada, con su oro, sus gemas, sus niveles y su inventario, y su propia versión y novedades. La librería de la raíz es solo un acceso rápido para probar.
 
-`core/js/meta.js` ya no tiene números del TD: los lee de sus ajustes. Lo que queda por hacer es que el Rumble tenga su propio `ajustes.js` y use estos sistemas.
-
 ## El Rumble es el principal
 
-Las mejoras se hacen primero en el Rumble (`games/rumble/`) y los demás juegos las heredan a través de `core/`. Hay tres casos:
+Las mejoras se hacen primero en el Rumble y los demás juegos las heredan a través de `core/`. Hay tres casos:
 
 | Qué | Cómo llega a los demás juegos |
 |---|---|
-| La serie: razas, cartas y números, arte, canciones, frases e iconos | Solos: están en `core/js/serie/` y todos los juegos, el Rumble incluido, cargan ese mismo archivo. |
-| Estilos de los menús y horas extra | Con `python herramientas/sincronizar.py`, que los regenera en `core/` desde los archivos del Rumble y dice qué ha cambiado. |
-| Progreso, colección, inventario, gashapón, tienda, opciones, retos (misiones, logros, pase, premio diario y perfil), guardado y sonido | Todavía no se heredan: `core/js/meta.js`, `menus.js`, `retos.js`, `save.js`, `audio.js` y `music.js` están reescritos a mano a partir del Rumble. Un cambio ahí hay que pasarlo a mano. |
+| La serie (razas, cartas y números, arte, canciones, frases, iconos) y los sistemas: sonido y música, pantallas comunes (cartera, colección, inventario, gashapón, tienda), horas extra, retos (misiones, logros, pase, premio diario, perfil), novedades y jugar sin conexión | Solos: hay un único archivo en `core/` y todos los juegos, el Rumble incluido, cargan ese mismo. Lo que solo tiene un juego lo engancha con `hook` (ver `core/js/sistema/utiles.js`) sin tocar el archivo común. |
+| Estilos de los menús | Con `python herramientas/sincronizar.py`, que regenera `core/css/menus.css` desde `games/rumble/css/estilos.css`. |
+| Catálogo de habilidades y objetos, guardado, opciones e instalar | Todavía no: el Rumble los tiene en sus archivos (`02-progresion.js`, `12-app-y-preparacion.js`) y el TD, en `core/js/meta.js`, `core/js/save.js` y `games/td/js/menus.js`. Un cambio ahí hay que pasarlo a mano. |
 
-El tercer caso es el pendiente: mientras el Rumble no use esos archivos de `core/` en vez de los suyos, sus cambios en esas partes no llegan solos.
+Antes de publicar un cambio en `core/`, pásalo por el comparador (`herramientas/pruebas/`): ejecuta el mismo guion en la versión anterior y en la nueva y enseña en qué se diferencian.
 
 ## Añadir un juego
 

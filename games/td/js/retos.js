@@ -78,7 +78,7 @@ const RETOS = {
   /* ---------- logros: fam(id, categoría, de dónde sale, metas, gemas, nombre, texto, broma, pista si es secreto) ---------- */
   logros(fam, veces) {
     const facLvl = f => [FACTIONS[f].leader, ...FACTIONS[f].units].reduce((a, k) => a + uSave(k).lvl, 0);
-    const gearN = f => { const k = FACTIONS[f].leader, E = SAVE.equip[k] || {}; let n = invGet(SAVE.abEquip[k]) ? 1 : 0; for (const sl in SLOTS) if (invGet(E[sl])) n++; return n; };
+    const gearN = f => { const k = FACTIONS[f].leader, E = SAVE.equip[f] || {}; let n = invGet(SAVE.abEquip[k]) ? 1 : 0; for (const sl in SLOTS) if (invGet(E[sl])) n++; return n; };
     const ownCount = k => new Set(SAVE.inv.filter(it => it.k === k).map(it => it.id)).size;
     // -- Batallas
     fam('win', 'b', 'win', [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500], [20, 10, 15, 25, 100, 60, 70, 90, 120, 200],

@@ -20,17 +20,7 @@ $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
 $('#btn-quick').addEventListener('click', () => { play('select'); openPrep('quick'); });
 $('#btn-bossmode').addEventListener('click', () => { play('select'); openPrep('boss'); });
-$('#btn-coll').addEventListener('click', () => { play('select'); collFac = G.faction; updateWallets(); show('scr-coll'); buildColl(); });
-$('#btn-gacha').addEventListener('click', () => { play('select'); updateWallets(); openGacha(); });
-$('#btn-inv').addEventListener('click', () => { play('select'); openInv(); });
-for (const b of document.querySelectorAll('[data-it]')) b.addEventListener('click', () => { invTab = b.dataset.it; invFilter = 'all'; play('select'); buildInv(); $('#inv-list').scrollTop = 0; });
-$('#btn-inv-sort').addEventListener('click', () => { invSort = invSort === 'q' ? 'rar' : invSort === 'rar' ? 'name' : 'q'; play('select'); buildInv(); });
-$('#btn-mass').addEventListener('click', massScrap);
-$('#btn-item-close').addEventListener('click', () => { $('#scr-item').hidden = true; itemCur = null; });
-$('#btn-gr-inv').addEventListener('click', () => { $('#gacha-result').hidden = true; play('select'); if (gachaTab === 'cd') { collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } else openInv(gachaTab); });
 $('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 70 : SAVE.mus; $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
-$('#btn-shop').addEventListener('click', () => { play('select'); openShop(); });
-for (const b of document.querySelectorAll('[data-st]')) b.addEventListener('click', () => { shopTab = b.dataset.st; play('select'); buildShop(); });
 $('#btn-share').addEventListener('click', () => { shareResult(); stat('share', 1); });
 $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden = true; });
 // v0.9.17 probó un modo claro y uno pixel art; Daniel los descartó en la v0.9.18: el juego va siempre oscuro y sin pixelar
@@ -49,13 +39,7 @@ $('#btn-blood').addEventListener('click', () => { SAVE.blood = !SAVE.blood; save
 $('#btn-shake').addEventListener('click', () => { SAVE.noShake = !SAVE.noShake; G.shake = 0; saveGame(); play('select'); optLabels(); });   // v0.9.25: Opciones → temblor de pantalla
 $('#btn-options').addEventListener('click', optLabels);
 $('#btn-chat').addEventListener('click', () => { SAVE.chatOff = !SAVE.chatOff; saveGame(); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; play('select'); });
-for (const b of document.querySelectorAll('[data-back]')) b.addEventListener('click', () => { play('select'); goHome(); });
 $('#btn-prep-back').addEventListener('click', () => { if (G.prep && G.prep.mode === 'camp') openCamp(); else goHome(); });
-$('#btn-pick-close').addEventListener('click', () => { $('#scr-pick').hidden = true; });
-for (const b of document.querySelectorAll('[data-gt]')) b.addEventListener('click', () => { gachaTab = b.dataset.gt; play('select'); buildGachaText(); });
-for (const b of document.querySelectorAll('[data-pull]')) b.addEventListener('click', () => pull(+b.dataset.pull));
-document.addEventListener('click', e => { const w = e.target.closest && e.target.closest('[data-wal]'); if (!w) return; play('select'); openShop(w.dataset.wal); });
-$('#btn-gr-ok').addEventListener('click', () => { $('#gacha-result').hidden = true; });
 $('#btn-howto').addEventListener('click', () => { show('scr-howto'); stat('howto', 1); });
 $('#btn-howto-ok').addEventListener('click', goHome);
 $('#btn-pause').addEventListener('click', () => { if (G.state === 'paused') { resumeGame(); return; } if (G.state === 'play') stat('pause', 1); pauseGame(); });

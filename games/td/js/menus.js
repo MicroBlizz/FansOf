@@ -1,0 +1,88 @@
+// Fans of TD · Menús de este juego: el menú principal, las opciones, instalar y traer el progreso de la dirección antigua.
+// La cartera, la colección, el inventario, el gashapón y la tienda son comunes: core/js/sistema/.
+'use strict';
+const enPartida = () => G.screen === 'play';
+function goHome() { showMenu(); }
+// al abrir una pantalla de menú se esconde todo lo de la partida
+hook('pantalla', id => { $('#btn-mode').hidden = true; $('#btn-wave').hidden = true; hidePanel(); $('#hud').hidden = $('#tray').hidden = true; $('#tut').hidden = true; $('#feed').hidden = true; $('#chat').innerHTML = ''; G.screen = id.slice(4); });
+hook('insignias', () => { $('#news-badge').hidden = !novedadesPendientes(); });
+// en este juego el equipo no se dibuja sobre el líder: el texto de la máquina de equipo no lo promete
+hook('gacha.textos', () => { if (gachaTab === 'eq') $('#gacha-sub').textContent = 'Equipo freak solo para los líderes: arma, cabeza y accesorio. Cada objeto sale con su propia calidad.'; });
+function openColl() { updateWallets(); show('scr-coll'); buildColl(); $('#coll-list').scrollTop = 0; }
+
+// al volver al menú principal, de una en una: cómo te llamas (la primera vez), las novedades si hay versión nueva y el premio diario
+function titlePopups() { if ($('#scr-title').hidden || !$('#scr-news').hidden) return; if (retosPopups()) return; if (novedadesPendientes()) { openNews(); return; } retosLogin(); }
+
+/* ---------- menú principal ---------- */
+function showMenu() {
+  G.vs = null; G.xpPlay = {}; show('scr-title'); updateWallets(); titlePopups();
+}
+
+/* =========================================================
+   OPCIONES E INSTALAR (como en el original, con lo que tiene sentido en la defensa de torres)
+   ========================================================= */
+const optOn = k => SAVE[k] !== false;   // números de daño y temblor vienen activados
+function openOptions() {
+  show('scr-options'); updateWallets();
+  $('#opt-vol').value = Math.round((SAVE.vol == null ? 1 : SAVE.vol) * 100); $('#opt-mus').value = Math.round((SAVE.mus == null ? 1 : SAVE.mus) * 100);
+  optButtons(); $('#save-code').value = ''; $('#opt-ver').textContent = document.title + ' · versión ' + VERSION;   // cada juego pone su nombre en el título de su página
+}
+function optButtons() {
+  $('#btn-nums').textContent = optOn('nums') ? 'SÍ' : 'NO'; $('#btn-shake').textContent = optOn('shake') ? 'SÍ' : 'NO';
+  $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-test').disabled = !!SAVE.testAll;
+}
+$('#btn-opts').onclick = () => { play('select'); openOptions(); };
+$('#opt-vol').oninput = e => { SAVE.vol = e.target.value / 100; if (SAVE.vol > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } applyVolume(); saveGame(); };
+$('#opt-vol').onchange = () => play('select');
+$('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; applyVolume(); saveGame(); };
+$('#btn-nums').onclick = () => { SAVE.nums = !optOn('nums'); saveGame(); play('select'); optButtons(); };
+$('#btn-shake').onclick = () => { SAVE.shake = !optOn('shake'); saveGame(); play('select'); optButtons(); };
+// modo pruebas: todo abierto y dinero de sobra (subir de nivel lo haces tú en la Colección)
+$('#btn-test').onclick = () => confirmBox('MODO PRUEBAS', 'Abre todos los mundos, da toda la experiencia hasta el nivel 10 a todas las cartas, <b>3.000.000 de oro</b> y <b>5.000 gemas</b>.<small>No se puede deshacer, salvo empezando de cero.</small>', 'ACTIVAR', () => {
+  SAVE.testAll = true; SAVE.gold += 3000000; SAVE.gems += 5000;
+  const xp = ECON.xpNeed.reduce((a, b) => a + b, 0);
+  for (const f of FACTION_ORDER) for (const k of [FACTIONS[f].leader, ...FACTIONS[f].units]) { const u = uSave(k); u.xp = Math.max(u.xp || 0, xp); }
+  saveGame(); play('win'); updateWallets(); optButtons(); toast('Modo pruebas activado', true);
+});
+// pasar el progreso a otro móvil o PC con un código
+const saveCode = () => btoa(unescape(encodeURIComponent(JSON.stringify(SAVE))));
+$('#btn-export').onclick = () => {
+  stat('export', 1);
+  const code = saveCode(), ta = $('#save-code'); ta.value = code; ta.select(); play('select');
+  const done = ok => toast(ok ? 'Código copiado. Pégalo en el otro dispositivo.' : 'Copia a mano el código de la caja', ok);
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(() => done(true), () => done(false)); else done(false);
+};
+$('#btn-import').onclick = () => {
+  let o = null; try { o = JSON.parse(decodeURIComponent(escape(atob($('#save-code').value.trim())))); } catch (e) { /* código mal copiado */ }
+  if (!o || o.v !== 1 || typeof o.stars !== 'object') { play('deny'); toast('Ese código no vale. Cópialo entero desde el otro dispositivo y pégalo en la caja.'); return; }
+  confirmBox('¿CARGAR ESE PROGRESO?', 'Se cambia todo tu progreso de este navegador por el del código.<small>No se puede deshacer.</small>', 'CARGAR', () => { SAVE = metaDefaults(o); saveGame(); location.reload(); });
+};
+$('#btn-reset').onclick = () => confirmBox('¿EMPEZAR DE CERO?', 'Se borra <b>todo</b>: estrellas, oro, gemas, niveles y objetos.<small>No se puede deshacer.</small>', 'BORRAR', () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* sin almacenamiento */ } location.reload(); });
+
+/* ---------- instalar como app ---------- */
+let installEvt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', () => { installEvt = null; toast('¡Instalado! Ya lo tienes en tu pantalla de inicio', true); });
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+function installApp() {
+  play('select');
+  if (isStandalone()) { toast('Ya lo estás usando como app', true); return; }
+  if (installEvt) { const e = installEvt; installEvt = null; e.prompt(); return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), web = location.protocol === 'https:';
+  confirmBox('INSTALAR', (web ? '' : '<b>Ábrelo desde la web del juego</b> (no desde un archivo) para poder instalarlo.<br><br>')
+    + (ios ? 'En iPhone, con <b>Safari</b>: toca el botón <b>Compartir</b> (el cuadrado con la flecha hacia arriba) y luego <b>«Añadir a pantalla de inicio»</b>.'
+      : 'En Android, con <b>Chrome</b>: toca el menú <b>⋮</b> (arriba a la derecha) y luego <b>«Instalar aplicación»</b> o <b>«Añadir a pantalla de inicio»</b>.<br><br>En el PC, con Chrome o Edge: pulsa el icono de <b>instalar</b> que sale a la derecha de la barra de direcciones.')
+    + '<small>Se abre como una app: a pantalla completa, sin la barra del navegador, y también funciona sin conexión.</small>', null, null, 'ENTENDIDO');
+}
+$('#btn-install').onclick = installApp;
+
+/* ---------- progreso traído desde la dirección antigua de la web ---------- */
+// La página antigua redirige aquí con el progreso que tenía guardado en la dirección (…#traer=código). Nunca se carga sin preguntar.
+function importFromHash() {
+  const m = /^#traer=(.+)$/.exec(location.hash); if (!m) return;
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* se queda en la dirección, sin más */ }
+  let o = null; try { o = JSON.parse(decodeURIComponent(escape(atob(m[1])))); } catch (e) { /* código roto */ }
+  if (!o || o.v !== 1 || typeof o.stars !== 'object' || JSON.stringify(o) === JSON.stringify(SAVE)) return;
+  const st = Object.keys(o.stars).length;
+  confirmBox('¿TRAER TU PROGRESO?', `Vienes de la dirección antigua del juego, donde tenías <b>${fmt(o.gold || 0)} de oro</b>, <b>${fmt(o.gems || 0)} gemas</b> y <b>${st} ${st === 1 ? 'nivel ganado' : 'niveles ganados'}</b>. ¿Quieres seguir aquí con ese progreso?<small>Sustituye al progreso guardado en esta dirección. No se puede deshacer.</small>`, 'TRAER', () => { SAVE = metaDefaults(o); saveGame(); location.reload(); });
+}

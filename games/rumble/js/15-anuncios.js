@@ -143,3 +143,5 @@ function adMissionOffer(L) {   // cambiar una misión diaria que no te guste
     buildMissions(); toast('Misión cambiada', true);
   });
 }
+hook('gacha.textos', adGachaOffer);   // tirada gratis con anuncio
+hook('tienda', adShopOffer);         // regalo x2 y «Sin anuncios»

@@ -4,6 +4,13 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.11.0', real: [
+      '<b>Los menús son ya los mismos que en Fans of Rumble</b>, con el mismo código: colección, inventario, gashapón, tienda, horas extra y sonido.',
+      '<b>El equipo se comparte entre líderes</b>: una misma copia la pueden llevar varios a la vez. En la colección, «PONER ESTE EQUIPO A TODOS LOS LÍDERES» lo hace de un toque.',
+      'En el gashapón de equipo, los <b>objetos de facción</b> salen más a menudo: la mitad de las veces que toca su rareza.',
+      'Los menús suenan como en el Rumble y, después de ganar, vuelve la canción de menú que tengas elegida en Opciones.',
+      'Despedir copias, volver a sortearlas y girar el gashapón cuentan ya para los logros.'],
+    joke: ['Microblizz ha fusionado dos departamentos de menús en uno. Sobran becarios.', 'Phony lo llama «sinergia». Tú, «por fin».'] },
   { v: '0.10.0', real: [
       '<b>MISIONES</b>: cuatro diarias y cuatro semanales, con oro, gemas y puntos de pase. Colocar torres, superar oleadas, fusionar, ganar en el modo VS…',
       '<b>LOGROS</b>: más de 1.300, por niveles, y cada uno da gemas una sola vez. Los hay de batallas, de cada facción y cada carta, de campaña, de enemigos, de gashapón, de constancia… y secretos.',

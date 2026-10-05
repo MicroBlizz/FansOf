@@ -120,3 +120,18 @@ function tutBattle(dt) {
   if (G.tutB === 1 && G.tutT > G.tutAt + 9) { G.tutB = 2; G.tutAt = G.tutT; if (!G.tutTipSeen) tipBattle('Truco: <b>mantén pulsada</b> una carta para ver qué hace.', 7); }
   else if (G.tutB === 2 && G.tutT > G.tutAt + (G.tutTipSeen ? 1 : 10)) { G.tutB = 3; tipBattle('Tu objetivo: tira sus <b>torres</b> y la <b>sede de Microblizz</b>. ¡Tú puedes!', 7); }
 }
+
+/* ---------- lo que este juego añade a las pantallas comunes (core/js/sistema/) ---------- */
+// la partida guiada sigue lo que haces en la colección y en el gashapón
+hook('equipar', kind => { if (kind === 'ab') tutStep(2); });
+hook('gacha.abierto', () => { if (!SAVE.tut.done && SAVE.tut.step === 2) SAVE.tut.sawG = true; });
+hook('gacha.tirada', () => { if (!SAVE.tut.done && SAVE.tut.step === 2) setTimeout(() => { tutFinish(); toast('¡Tutorial completado! Ya sabes lo básico. ¡A por Microblizz!', true); }, 1500); });
+// el pack de bienvenida, en la tienda y en el botón del menú
+hook('tienda', () => {
+    if (!SAVE.starter) {
+  const P = SHOP.starter;
+  $('#gift-row').insertAdjacentHTML('beforeend', `<div class="pack starter"><span class="joke-flag">1 VEZ</span><div class="pk-ic">${PILE(5, true)}</div><div><div class="pk-name ol">Pack de bienvenida</div><div class="pk-amt ol">${GEM_SVG}${fmt(P.gems)} <span class="pk-plus">+</span> ${COIN_SVG}${fmt(P.gold)}</div><div class="pk-note">Y un objeto épico de equipo con calidad Director (excelente) o mejor. Vale casi el doble que comprarlo por separado. Microblizz lo llama «regalo».</div></div><button class="btn-price ol" id="btn-starter">${eur(P.eur)}</button></div>`);
+  $('#btn-starter').onclick = () => { play('select'); confirmBox('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)} · ${COIN_SVG} ${fmt(P.gold)}</span>y un objeto épico de calidad Director (excelente) o mejor, por <b>${eur(P.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis. Solo se puede comprar una vez.</small>`, 'COMPRAR', buyStarter); };
+}
+});
+hook('insignias', () => { if (!giftReady() && !SAVE.starter) $('#feat-shop').textContent = '¡Pack de bienvenida!'; });

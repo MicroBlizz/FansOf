@@ -184,7 +184,6 @@ function drawSpellsAir() {
 /* ---------- v0.9.15: gashapón de cartas (hechizos y mata-sanadores), estrellas y mazo personalizado ---------- */
 const DECK_SPELLS = 2;   // como mucho 2 hechizos por mazo
 const ownsCard = k => !!(SAVE.cards && SAVE.cards[k]) || !!SAVE.testAll;
-const rarOfPull = r => (r.it ? defOf(r.it).rar : r.rar);
 const starsHtml = k => { const n = cardStars(k); return `<span class="stars" aria-label="${n} estrellas">${'★'.repeat(n)}<i>${'★'.repeat(ECON.maxStars - n)}</i></span>`; };
 function deckPool(f) { const F = FACTIONS[f]; return F.units.concat((F.gacha || []).filter(ownsCard)); }
 function deckOf(f) {   // líder aparte + 6 cartas: las elegidas (si siguen siendo válidas) y, si faltan, las básicas
@@ -203,7 +202,7 @@ function deckBarHtml(f) {
 function gachaRows(f, lock) {
   const G2 = FACTIONS[f].gacha || []; if (!G2.length) return '';
   const own = G2.filter(ownsCard).length;
-  return `<p class="gacha-sec ol">CARTAS DEL GASHAPÓN · ${own}/${G2.length}<small>Salen en la máquina de cartas. Las repetidas le dan estrellas: +5 % cada una, hasta 5.</small></p>` + G2.map(k => (ownsCard(k) ? collRow(k, lock) : lockedRow(k))).join('');
+  return `<p class="gacha-sec ol">CARTAS DEL GASHAPÓN · ${own}/${G2.length}<small>Salen en la máquina de cartas. Las repetidas le dan estrellas: +5 % cada una, hasta 5.</small></p>` + G2.map(k => (!ownsCard(k) ? lockedRow(k) : isSpell(k) ? spellRow(k, lock) : collRow(k, lock))).join('');
 }
 function lockedRow(k) {
   const c = CFG.cards[k];
@@ -217,7 +216,7 @@ function spellNums(k, team) {   // números del hechizo con su nivel y estrellas
   return t.join(' · ');
 }
 function spellRow(k, lock) {
-  const c = CFG.cards[k], us = uSave(k), max = us.lvl >= ECON.maxLvl, need = needXp(us.lvl), ready = !max && us.xp >= need, cost = upCost(us.lvl), pct = max ? 100 : Math.min(100, (us.xp / need) * 100);
+  const c = CFG.cards[k], us = uSave(k), max = us.lvl >= ECON.maxLvl, need = needXp(us.lvl), ready = !max && us.xp >= need, cost = lvlCost(us.lvl), pct = max ? 100 : Math.min(100, (us.xp / need) * 100);
   const btn = max ? '<button class="btn-up max" disabled>NV MÁX</button>' : `<button class="btn-up" data-up="${k}" ${ready && !lock ? '' : 'disabled'}>SUBIR<small>${COIN_SVG}${fmt(cost)}</small></button>`;
   return `<div class="coll-row" data-rarity="${c.rarity}"><canvas data-k="${k}"></canvas><div><div class="coll-name ol">${c.name}<em>Nv ${us.lvl}</em>${starsHtml(k)}</div><div class="deck-desc">${c.desc}</div><div class="xpbar"><i style="width:${pct}%"></i><span>${max ? 'NIVEL MÁXIMO' : `${fmt(us.xp)} / ${fmt(need)} XP`}</span></div><div class="deck-stats">${c.cost} de CAOS · ${spellNums(k)}</div></div>${btn}</div>`;
 }
@@ -371,15 +370,6 @@ function buildBossPrep() {
 for (const b of document.querySelectorAll('[data-bd]')) b.addEventListener('click', () => { SAVE.bossSel.d = b.dataset.bd; saveGame(); play('select'); buildBossPrep(); });
 
 /* ---------- v0.9.15: equipo compartido y objetos de facción ---------- */
-function equipAll(f) {
-  const E = SAVE.equip[f] || {}, facs = SAVE.unlocked.filter(g => g !== f && FACTIONS[g]);
-  const names = Object.keys(SLOTS).filter(sl => invGet(E[sl])).map(sl => ITEMS[invGet(E[sl]).id].name);
-  confirmBox('EQUIPO PARA TODOS', `¿Poner <b>${names.join(', ')}</b> a tus otros ${facs.length} líderes?<small>El equipo se comparte: una copia la pueden llevar todos a la vez. Los objetos de facción solo se los pone su líder.</small>`, 'PONER A TODOS', () => {
-    let n = 0;
-    for (const g of facs) for (const sl in SLOTS) { const it = invGet(E[sl]); if (it && fitsFac(it.id, g)) { SAVE.equip[g] = SAVE.equip[g] || {}; SAVE.equip[g][sl] = it.u; n++; } }
-    stat('eqall', 1); saveGame(); play('levelup'); buildColl(); toast(`Hecho: ${facs.length} líderes equipados`);
-  });
-}
 function facItemsRetro() {   // a quien ya ganó a un jefe en Difícil antes de esta versión, se le da su objeto de facción
   SAVE.facItem = SAVE.facItem || {}; const got = [];
   WORLDS.forEach((w, wi) => { const f = worldFac(wi), id = w.levels[3].id; if (f && !SAVE.facItem[f] && (starsD(id, 'h') > 0 || starsD(id, 'm') > 0)) { SAVE.facItem[f] = 1; got.push(ITEMS[newCopy('eq', FAC_ITEM[f], 2).id].name); } });
@@ -388,3 +378,16 @@ function facItemsRetro() {   // a quien ya ganó a un jefe en Difícil antes de 
 
 // v0.9.18: botón «Mazo» en el menú principal: edita el mazo de la facción que tienes elegida
 $('#btn-deck-menu').addEventListener('click', () => { play('select'); openDeck(isUnlocked(G.faction) ? G.faction : SAVE.unlocked[0]); });
+
+/* ---------- lo que este juego añade a la colección y al gashapón comunes (core/js/sistema/) ---------- */
+hook('coleccion.arriba', fac => deckBarHtml(fac));                       // el mazo de la facción
+hook('coleccion.abajo', (fac, lock) => gachaRows(fac, lock));            // sus cartas del gashapón
+hook('coleccion.nombre', k => (CFG.cards[k].gacha ? starsHtml(k) : ''));   // las estrellas de una carta del gashapón
+hook('coleccion.lista', list => {
+  for (const cv of list.querySelectorAll('canvas[data-dk]')) drawArt(cv, cv.dataset.dk, 40, 36);
+  const db = $('#btn-deck'); if (db) db.onclick = () => { play('select'); openDeck(collFac); };
+  list.querySelectorAll('[data-goc]').forEach(b => { b.onclick = () => { play('select'); gachaTab = 'cd'; updateWallets(); openGacha(); }; });
+});
+// la tercera máquina del gashapón: cartas (hechizos y mata-sanadores)
+MAQUINAS.cd = { nombre: 'CARTAS', maquina: ['#8b3dff', '#5b21b6', '#4c1d95'], colores: CARD_RAR, tirar: cardPull, ensenar: showCardPulls, textos: buildCardGachaText,
+  verEn() { collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } };

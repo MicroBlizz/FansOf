@@ -199,7 +199,8 @@ function achToast() {
 const achReady = () => { let r = 0; if (!SAVE.achR) return 0; for (const f of ACHF) r += popc((SAVE.achR[f.id] || 0) & ~(SAVE.achC[f.id] || 0)); return r; };
 function achTotals() {
   const T = { n: 0, g: 0, N: 0, Gt: 0, ready: 0, rg: 0 };
-  for (const f of ACHF) { const C = SAVE.achC[f.id] || 0, R = SAVE.achR[f.id] || 0; f.goals.forEach((x, i) => { T.N++; T.Gt += f.gems[i]; if (C & (1 << i)) { T.n++; T.g += f.gems[i]; } else if (R & (1 << i)) { T.ready++; T.rg += f.gems[i]; } }); }
+  const AC0 = SAVE.achC || {}, AR0 = SAVE.achR || {};   // una partida guardada antigua puede no tenerlos todavía
+  for (const f of ACHF) { const C = AC0[f.id] || 0, R = AR0[f.id] || 0; f.goals.forEach((x, i) => { T.N++; T.Gt += f.gems[i]; if (C & (1 << i)) { T.n++; T.g += f.gems[i]; } else if (R & (1 << i)) { T.ready++; T.rg += f.gems[i]; } }); }
   return T;
 }
 function achClaim(list) {   // cobra todos los niveles conseguidos de estas familias

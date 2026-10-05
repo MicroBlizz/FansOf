@@ -28,6 +28,11 @@ const NUCLEO = (() => {
     'js/serie/canciones.js',       //           las canciones
     'js/serie/frases.js',          //           frases de humor comunes
     'js/serie/iconos.js',          //           iconos y colores
+    'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
+    'js/sistema/coleccion.js',     // colección: las cartas y lo que llevan puesto
+    'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
+    'js/sistema/gachapon.js',      // gashapón
+    'js/sistema/tienda.js',        // tienda
     'js/sistema/horas-extra.js',   // horas extra: el minijuego del menú
     'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];

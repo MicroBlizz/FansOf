@@ -160,7 +160,8 @@ function metaDefaults(s) {
   if (s.seq) { s.invSeq = Math.max(s.invSeq, s.seq); delete s.seq; }
   s.inv = s.inv.filter(it => defOfSafe(it));
   // los objetos (arma, cabeza y accesorio) solo los lleva el líder: lo que tuviera puesto otra carta vuelve al inventario
-  for (const k in s.equip) if (!isLeader(k)) delete s.equip[k];
+  // y se guardan por facción, como en el Rumble (antes, por la carta del líder)
+  for (const k of Object.keys(s.equip)) { if (FACTIONS[k]) continue; const f = isLeader(k) && FACTION_ORDER.find(x => FACTIONS[x].leader === k); if (f && !s.equip[f]) s.equip[f] = s.equip[k]; delete s.equip[k]; }
   return s;
 }
 const defOfSafe = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];
@@ -172,7 +173,7 @@ const facOfCard = k => FACTION_ORDER.find(f => FACTIONS[f].leader === k || FACTI
 const noSides = () => Object.fromEntries(SIDES.map(s => [s, {}]));
 const NOMODS = Object.assign({ lvl: 1, lvlMul: 1, n: 0 }, noSides());
 function cardMods(k) {
-  const lvl = (SAVE.units[k] && SAVE.units[k].lvl) || 1, M = Object.assign({ lvl, lvlMul: 1 + ECON.lvlStep * (lvl - 1), n: 0 }, noSides()), E = SAVE.equip[k] || {};
+  const lvl = (SAVE.units[k] && SAVE.units[k].lvl) || 1, M = Object.assign({ lvl, lvlMul: 1 + ECON.lvlStep * (lvl - 1), n: 0 }, noSides()), E = (isLeader(k) && SAVE.equip[facOfCard(k)]) || {};
   for (const it of [invGet(SAVE.abEquip[k]), ...Object.keys(SLOTS).map(sl => invGet(E[sl]))]) {
     if (!it) continue; const D = defOf(it), V = valsOf(it); M.n++;
     D.fx.forEach(([side, st, c], i) => { const v = D.fi[i] < 0 ? c : V[D.fi[i]]; M[side][st] = (M[side][st] || 0) + (st === 'cc' ? 1 : STATS[side][st][1] ? v / 100 : v); });

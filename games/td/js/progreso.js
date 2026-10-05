@@ -19,7 +19,10 @@ function effStats(k) {
   return { M, hp: U.hp * M.lvlMul * Math.max(0.2, 1 + (M.U.hp || 0)), dmg: D.dmg * M.lvlMul * (1 + (M.T.dmg || 0)), range: D.range * (1 + (M.T.range || 0)), aura: D.kind === 'aura', boosts: b };
 }
 // la línea de números de una carta en la colección
-const cardStats = es => `Vida ${Math.round(es.hp)} · ${es.aura ? 'Apoyo' : 'Daño ' + Math.round(es.dmg)} · Alcance ${Math.round(es.range)}`;
+const cardStats = (k, es) => `Vida ${Math.round(es.hp)} · ${es.aura ? 'Apoyo' : 'Daño ' + Math.round(es.dmg)} · Alcance ${Math.round(es.range)}`;
+
+const cardDesc = k => TOWERS[facOfCard(k)][k].desc;
+const passiveText = fac => PASSIVES[fac].txt;
 
 /* ---------- experiencia y recompensas ---------- */
 // cada torre que pones y cada unidad que envías da experiencia a su carta; se cobra al acabar la partida

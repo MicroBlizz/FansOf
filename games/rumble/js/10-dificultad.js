@@ -98,6 +98,10 @@ function effStats(k, fac) {
   const st = 1 + cardStars(k) * ECON.starStep;   // v0.9.15: estrellas
   return { hp: d.hp * m * u.mHp * st, dmg: d.dmg * m * u.mDmg * st, boosts: b, u };
 }
+// lo que la colección común enseña de cada carta de este juego
+const cardStats = (k, es) => { const c = CFG.cards[k], u = CFG.units[k]; return u.healer ? `Vida ${Math.round(es.hp)} · Cura ${u.heal}` : `Vida ${Math.round(es.hp)}${c.count > 1 ? ' (x' + c.count + ')' : ''} · Daño ${Math.round(es.dmg)}`; };
+const cardDesc = k => CFG.cards[k].desc;
+const passiveText = fac => FACTIONS[fac].passiveText;
 // al entrar en el campo, tus cartas enseñan su habilidad y su equipo (así se ve que funcionan)
 const OWN_CALLOUT = ['speedrun', 'modofoto', 'microtrans', 'gigante', 'sigilo'];
 function showLoadout(u) {

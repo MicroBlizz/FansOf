@@ -60,12 +60,15 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, SIDES, sideTag, sideText, metaDefaults, defOfSafe, facOfCard, noSides, NOMODS, cardMods, xpGrant, give, newSave, migrateSave
 - `games/td/js/datos-enemigos.js` · 11 KB · FOES, foeHp, foeSpeed, foeName, ETRAITS, WORLDS_TD, LEVEL_RULE, GRID, TOWER_R
 - `games/td/js/datos-torres.js` · 19 KB · TD, VS, TOWERS, PASSIVES
+- `games/td/js/dibujo.js` · 20 KB · buildTDBackground, drawSpr, drawStump, TSCALE, tscale, drawUnits, SHOTS, drawTower, drawBunnyJump, drawFoe, drawProj, draw, drawBoard, drawDen, drawRoute, showScreen, portrait
 - `games/td/js/extras.js` · 7 KB · baseOptButtons, flip, chatSt, chatSay, chatBurst, chatClear, FEED, feedAdd, feedDraw, TUT, tutShow, tutEnd, base
-- `games/td/js/game.js` · 76 KB · sfxSilent, starsOf, levelOpen, worldDone, G, uid, COLS, HQ, idx, ccx, cellAt, cellOf, isGate, ENTRY, BLOCK, DIST, NB, eachNb, flow, nextCell, routeFrom, MID_ENTRY, reflow, whyNot, canPlace, remOf, tdef, rageOf, auraOf, rangeOf, dmgOf, upCost, sellOf, build, upgrade, sell, killLevel, teamDmg, teamSpeed, lvlMul … (+94)
+- `games/td/js/interfaz.js` · 14 KB · buildTray, showInfo, refreshTray, hud, passiveChip, placePanel, setText, setHtml, hidePanel, toField, GHOST_MSG, ghostAt, tryBuild, startLevel, FAC_NAME, facNow, BGS, soundBtns, last, frame, boot
 - `games/td/js/menus.js` · 6 KB · enPartida, goHome, openColl, titlePopups, showMenu, optOn, openOptions, optButtons, saveCode, importFromHash
 - `games/td/js/novedades.js` · 10 KB · NEWS
 - `games/td/js/pantallas.js` · 12 KB · enemyLabel, ownerOf, setTagline, drawTitleArt, baseShowMenu, buildCamp, openCamp, showMap, PREP, VS_DIFF, syncPrep, openPrep, PAUSE_QUOTES, pauseGame, endScreen, showResult, showVsResult
+- `games/td/js/partida.js` · 22 KB · buildWave, startWave, waveDone, update, walkFoe, tryJump, jumpStep, finish, BOARD_F, saveBoard, loadBoard, newBoard, VS_LEVEL, sendCost, sendIncome, startVS, vsUpdate, vsSteal, vsSend, unitUpCost, vsUpgrade, unitLevel, aiThink, vsView, fuseMate, fuse, num, pop, ring, spark, shake, puff, burst, slash, boom, banner, cv, SCALE, fit
 - `games/td/js/progreso.js` · 4 KB · isUnlocked, unitGear, effStats, cardStats, cardDesc, passiveText, xpPlay, campReward, vsReward, idlePower
+- `games/td/js/reglas.js` · 21 KB · sfxSilent, starsOf, levelOpen, worldDone, G, uid, COLS, HQ, idx, ccx, cellAt, cellOf, isGate, ENTRY, BLOCK, DIST, NB, eachNb, flow, nextCell, routeFrom, MID_ENTRY, reflow, whyNot, canPlace, remOf, tdef, rageOf, auraOf, rangeOf, dmgOf, upCost, sellOf, build, upgrade, sell, killLevel, teamDmg, teamSpeed, lvlMul … (+17)
 - `games/td/js/retos.js` · 22 KB · cuenta, cierraRetos, estrellasMundo, estrellasTotal, RETOS
 - `games/td/js/sonido.js` · 3 KB · sonidoApagado, volGeneral, volMusica, SFX_TD, sfx, musicUpdate
 - `herramientas/base.py` · 1 KB

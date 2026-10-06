@@ -80,7 +80,7 @@
 .wallet span { display: flex; align-items: center; gap: 4px; background: var(--panel-2); border: 3px solid var(--tray-hi); border-radius: 999px; padding: 4px 10px 1px 5px; font-variant-numeric: tabular-nums; }
 .wallet svg { width: 18px; height: 18px; margin-top: -3px; }
 #scr-title > .wallet { align-self: flex-end; margin-bottom: -6px; }
-.btn-mode { font-family: var(--font-display); font-size: 20px; line-height: 1; padding: 13px 16px 8px; border-radius: 16px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #c99bff, #6d28d9); cursor: pointer; box-shadow: 0 5px 0 var(--outline); min-width: 196px; }
+.btn-mode { font-family: var(--font-display); font-size: 20px; line-height: 1; padding: 13px 16px 8px; border-radius: 16px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #b98aff, #5b21b6); cursor: pointer; box-shadow: 0 5px 0 var(--outline); min-width: 196px; }
 .btn-mode:active, .home-tile:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
 .home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; max-width: 470px; }
 .home-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray); cursor: pointer; box-shadow: 0 4px 0 var(--outline); }

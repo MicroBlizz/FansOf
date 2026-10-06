@@ -90,4 +90,6 @@ IDIOMA.add({
   "s va al triple de velocidad.": "s it moves at triple speed.",
   "<b>INGLÉS</b>: las descripciones de habilidades y objetos ya salen enteras en inglés (antes se quedaban trozos en español).": "<b>ENGLISH</b>: ability and item descriptions are now fully in English (some bits used to stay in Spanish).",
   "Microblizz ha despedido al becario de traducción. Lo ha sustituido otro becario.": "Microblizz fired the translation intern. They replaced them with another intern.",
+  "<b>MENÚ</b>: colores más ordenados. Naranja para jugar, violeta para los modos de juego y dorado para conseguir cosas (gashapón y tienda). Los iconos de abajo, todos en dorado.": "<b>MENU</b>: tidier colours. Orange to play, violet for game modes and gold for getting stuff (gashapon and shop). The icons at the bottom are all gold now.",
+  "Microblizz ha contratado a un consultor de color. Cobró por decir «menos colores».": "Microblizz hired a colour consultant. They got paid to say «fewer colours».",
 });

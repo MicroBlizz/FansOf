@@ -4,6 +4,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.3', real: [
+      '<b>MENÚ</b>: colores más ordenados. Naranja para jugar, violeta para los modos de juego y dorado para conseguir cosas (gashapón y tienda). Los iconos de abajo, todos en dorado.'],
+    joke: ['Microblizz ha contratado a un consultor de color. Cobró por decir «menos colores».'] },
   { v: '0.13.2', real: [
       '<b>INGLÉS</b>: las descripciones de habilidades y objetos ya salen enteras en inglés (antes se quedaban trozos en español).'],
     joke: ['Microblizz ha despedido al becario de traducción. Lo ha sustituido otro becario.'] },

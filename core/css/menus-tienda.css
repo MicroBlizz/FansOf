@@ -81,12 +81,15 @@
 .feat svg { width: 52px; height: 52px; filter: drop-shadow(0 3px 0 rgba(20, 8, 34, 0.35)); }
 .feat b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 25px; line-height: 1; }
 .feat small { display: block; font-size: 12.5px; font-weight: 800; line-height: 1.15; margin-top: 4px; }
-#btn-gacha.feat { background: linear-gradient(to bottom, #ff8ad8, #b0249a); }
+#btn-gacha.feat { background: linear-gradient(to bottom, #ffd84a, #e07d00); }   /* v0.9.33: dorado, como la tienda (naranja = jugar · violeta = modos · dorado = conseguir cosas) */
 #btn-shop.feat { background: linear-gradient(to bottom, #ffd84a, #e07d00); }
 .feat .dotbadge { right: 8px; top: 8px; }
 .home-grid { grid-template-columns: repeat(6, 1fr); gap: 5px; max-width: 500px; }
 .home-tile { padding: 7px 2px 5px; }
 .home-tile span { font-size: 12.5px; }
+/* v0.9.33: los iconos de la fila del menú, todos en dorado con el contorno del juego (antes cada uno de un color) */
+.home-tile svg [fill]:not([fill="none"]):not([fill="#20102c"]) { fill: var(--gold); }
+.home-tile svg [stroke]:not([stroke="#20102c"]) { stroke: var(--outline); }
 @media (hover: hover) {
   .feat:hover { filter: brightness(1.07); }
 }

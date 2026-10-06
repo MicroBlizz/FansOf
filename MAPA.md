@@ -7,9 +7,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
 - `core/css/menus-extra.css` · 19 KB
-- `core/css/menus-tienda.css` · 18 KB
+- `core/css/menus-tienda.css` · 19 KB
 - `core/css/menus.css` · 20 KB
-- `core/idioma/en-extra.js` · 7 KB
+- `core/idioma/en-extra.js` · 8 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 8 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
@@ -76,7 +76,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/index.html` · 36 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/estilos-extra.css` · 24 KB
-- `games/rumble/css/estilos-partida.css` · 19 KB
+- `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/idioma/en-1.js` · 15 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
@@ -128,7 +128,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 4 KB · last, frame, boot
 - `games/rumble/js/ajustes.js` · 1 KB · AJUSTES
-- `games/rumble/js/novedades.js` · 3 KB · NEWS
+- `games/rumble/js/novedades.js` · 4 KB · NEWS
 - `games/rumble/js/retos-logros.js` · 24 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
 - `games/rumble/js/retos.js` · 4 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
@@ -148,7 +148,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/extras.js` · 7 KB · baseOptButtons, flip, chatSt, chatSay, chatBurst, chatClear, FEED, feedAdd, feedDraw, TUT, tutShow, tutEnd, base
 - `games/td/js/interfaz.js` · 14 KB · buildTray, showInfo, refreshTray, hud, passiveChip, placePanel, setText, setHtml, hidePanel, toField, GHOST_MSG, ghostAt, tryBuild, startLevel, FAC_NAME, facNow, BGS, soundBtns, last, frame, boot
 - `games/td/js/menus.js` · 6 KB · enPartida, goHome, openColl, titlePopups, showMenu, optOn, openOptions, optButtons, saveCode, importFromHash
-- `games/td/js/novedades.js` · 11 KB · NEWS
+- `games/td/js/novedades.js` · 12 KB · NEWS
 - `games/td/js/pantallas.js` · 12 KB · enemyLabel, ownerOf, setTagline, drawTitleArt, baseShowMenu, buildCamp, openCamp, showMap, PREP, VS_DIFF, syncPrep, openPrep, PAUSE_QUOTES, pauseGame, endScreen, showResult, showVsResult
 - `games/td/js/partida.js` · 22 KB · buildWave, startWave, waveDone, update, walkFoe, tryJump, jumpStep, finish, BOARD_F, saveBoard, loadBoard, newBoard, VS_LEVEL, sendCost, sendIncome, startVS, vsUpdate, vsSteal, vsSend, unitUpCost, vsUpgrade, unitLevel, aiThink, vsView, fuseMate, fuse, num, pop, ring, spark, shake, puff, burst, slash, boom, banner, cv, SCALE, fit
 - `games/td/js/progreso.js` · 4 KB · isUnlocked, unitGear, effStats, cardStats, cardDesc, passiveText, xpPlay, campReward, vsReward, idlePower

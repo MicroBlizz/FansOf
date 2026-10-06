@@ -86,10 +86,13 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/11-logros.js` · 11 KB · ACH_OLD, achInit, titlePopups, applySpeed, buyStarter, COACH_WHO, curScreen, tutStep, tutFinish, tutSkip, tutWant, coachKey, coachPlace, tutTick, tutBattleStart, tipBattle, tutBattle
 - `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, TEST_GOLD, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
 - `games/rumble/js/13-horas-extra.js` · <1 KB · idlePower
-- `games/rumble/js/14-cartas-y-jefes.js` · 34 KB · isSpell, cardStars, spells, spellPow, castSpell, RAIN, updateSpells, applySpell, spellAim, aiSpell, leapPrey, leapTick, drawSpellsGround, drawSpellBit, drawSpellsAir, DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckTile, buildDeck, deckHoldT, deckHeld … (+6)
+- `games/rumble/js/14a-hechizos.js` · 14 KB · isSpell, cardStars, spells, spellPow, castSpell, RAIN, updateSpells, applySpell, spellAim, aiSpell, leapPrey, leapTick, drawSpellsGround, drawSpellBit, drawSpellsAir
+- `games/rumble/js/14b-gachapon-y-mazo.js` · 15 KB · DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckTile, buildDeck, deckHoldT, deckHeld, deckHold, deckSave, deckPoolTap, deckSlotTap
+- `games/rumble/js/14c-modo-jefe.js` · 5 KB · buildBossPrep, facItemsRetro
 - `games/rumble/js/15-anuncios.js` · 11 KB · ADS, AD_JOKES, TV_SVG, adsState, adsFree, adLeft, adBtn, adRun, watchAd, adOverlay, adIdleUI, idleGrantHours, adEndOffer, adGachaOffer, adShopOffer, adMissionOffer
 - `games/rumble/js/16-camara.js` · 7 KB · CAM, camTouch, camPinch, camLive, camScreen, camClamp, camReset, camZoomAt, camApply, camBtn, camTouchEnd, FEED, feedAdd, feedDraw
-- `games/rumble/js/17-campos.js` · 34 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate, terrainGround, riverFloats, drawZone, terrainAir, drawFaller
+- `games/rumble/js/17a-campos.js` · 14 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate
+- `games/rumble/js/17b-campos-dibujo.js` · 21 KB · terrainGround, riverFloats, drawZone, terrainAir, drawFaller
 - `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
 - `games/rumble/js/19-arena.js` · 5 KB · ARENA, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, buildArenaPrep, arenaSetup, arenaReward
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate

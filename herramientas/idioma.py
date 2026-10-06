@@ -20,7 +20,7 @@ NAVEGADORES = [
 LETRA = re.compile('[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]')
 # lo que delata un texto en español: letras propias o palabras muy comunes (en inglés no existen)
 ESPANOL = re.compile('[áíóúñ¡¿]|\\b(el|la|los|las|del|que|con|para|por|tu|tus|una|más|solo|cada|todos|sin|nivel|oro|gemas|de|en|y)\\b', re.I)
-IGNORA = re.compile('^(AUTO|ESPAÑOL|ENGLISH|Idioma / Language|.*(Microblizz|Phony).*)$')
+IGNORA = re.compile('^(AUTO|Español|ESPAÑOL|ENGLISH|Idioma / Language|.*(Microblizz|Phony).*)$')
 
 
 class Textos(HTMLParser):

@@ -3,6 +3,7 @@
 IDIOMA.add({
   "COBRAR TODO%10": "CLAIM ALL%10",
   "Campero": "Camper",
+  "Automático (el idioma del navegador)": "Automatic (the browser's language)",
   "torre": "tower",
   "unidad": "unit",
   "laberinto": "maze",

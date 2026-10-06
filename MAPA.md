@@ -63,13 +63,13 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/horas-extra.js` · 10 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC
 - `core/js/sistema/idioma.js` · 11 KB · IDIOMA, tr
 - `core/js/sistema/inventario.js` · 12 KB · invTab, INV_FILTERS, INV_SORTS, scrapValue, canScrap, massList, openInv, buildInv, invRow, itemSlot, openItem, refreshInv, equipFromInv, scrapOne, rerollOne, massScrap
-- `core/js/sistema/opciones.js` · 4 KB · MENU_TRACKS, menuTrack, idiomaElegido, optComunes, installEvt, isStandalone, installApp
+- `core/js/sistema/opciones.js` · 5 KB · MENU_TRACKS, menuTrack, idiomaElegido, BANDERAS, cajaIdioma, optComunes, installEvt, isStandalone, installApp
 - `core/js/sistema/pantallas.js` · 6 KB · show, hideScreens, ART_FIT, drawArt, RAR_ORDER, updateWallets, needXp, canLevel, levelUp, confirmBox, toastTimer, toast, updateBadges
 - `core/js/sistema/progreso.js` · 6 KB · ECON, catalogo, fitsFac, defOf, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
-- `games/rumble/index.html` · 35 KB
+- `games/rumble/index.html` · 34 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/estilos-extra.css` · 24 KB
 - `games/rumble/css/estilos-partida.css` · 19 KB
@@ -81,7 +81,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-6.js` · 13 KB
 - `games/rumble/idioma/en-7.js` · 14 KB
 - `games/rumble/idioma/en-8.js` · 9 KB
-- `games/rumble/idioma/en-9.js` · 5 KB
+- `games/rumble/idioma/en-9.js` · 6 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL

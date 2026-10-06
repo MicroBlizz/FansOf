@@ -9,11 +9,22 @@ const menuTrack = () => (MENU_TRACKS.find(t => t[0] === SAVE.menuMus) || MENU_TR
 $('#btn-menumus').addEventListener('click', () => { const i = MENU_TRACKS.indexOf(menuTrack()); SAVE.menuMus = MENU_TRACKS[(i + 1) % MENU_TRACKS.length][0]; saveGame(); play('select'); optComunes(); });
 /* ---------- idioma: automático (el del navegador), español o inglés. Cambiarlo recarga la página (lo guarda NUCLEO en este navegador) ---------- */
 const idiomaElegido = () => { try { return localStorage.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
-$('#btn-idioma').addEventListener('click', () => { const o = ['', 'es', 'en']; play('select'); NUCLEO.elegirIdioma(o[(o.indexOf(idiomaElegido()) + 1) % o.length]); });
+// una bandera por idioma (y un globo para «el del navegador»): no pasa nada hasta que se toca una, y tocar la que ya está puesta no recarga
+const BANDERAS = [
+  ['', 'Automático (el idioma del navegador)', '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#2b6cb0"/><circle cx="15" cy="10" r="7" fill="none" stroke="#fff" stroke-width="1.4"/><ellipse cx="15" cy="10" rx="3" ry="7" fill="none" stroke="#fff" stroke-width="1.2"/><path d="M8 10h14M9.2 6.6h11.6M9.2 13.4h11.6" stroke="#fff" stroke-width="1.2" fill="none"/></svg>'],
+  ['es', 'Español', '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#ffc400"/></svg>'],
+  ['en', 'English', '<svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#012169"/><path d="M0 0l30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0l30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0v20M0 10h30" stroke="#fff" stroke-width="6"/><path d="M15 0v20M0 10h30" stroke="#c8102e" stroke-width="3.4"/></svg>'],
+];
+const cajaIdioma = $('#idioma-banderas');
+if (cajaIdioma) for (const [id, nombre, svg] of BANDERAS) {
+  const b = document.createElement('button'); b.type = 'button'; b.dataset.idioma = id; b.title = nombre; b.setAttribute('aria-label', nombre); b.innerHTML = svg;
+  b.addEventListener('click', () => { if (idiomaElegido() === id) return; play('select'); NUCLEO.elegirIdioma(id); });
+  cajaIdioma.appendChild(b);
+}
 // pone al día lo que esta parte pinta en la pantalla de Opciones: la canción elegida y la versión (que sale de index.html: core/js/nucleo.js)
 function optComunes() {
   $('#btn-menumus').textContent = menuTrack()[1].toUpperCase() + ' ▸';
-  const bi = $('#btn-idioma'); if (bi) { const el = idiomaElegido(); bi.textContent = el === 'es' ? 'ESPAÑOL' : el === 'en' ? 'ENGLISH' : 'AUTO (' + NUCLEO.idioma.toUpperCase() + ')'; }
+  if (cajaIdioma) for (const b of cajaIdioma.children) b.setAttribute('aria-pressed', String(b.dataset.idioma === idiomaElegido()));
   $('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION;
 }
 /* ---------- instalar en el móvil como una app ---------- */

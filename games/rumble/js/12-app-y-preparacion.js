@@ -73,6 +73,7 @@ function syncMenu() {
   }
   buildPrepDeck();
   if (G.prep && G.prep.mode === 'boss' && !$('#scr-prep').hidden) buildBossPrep();
+  if (G.prep && G.prep.mode === 'arena') { $('#scr-prep').classList.remove('fac-abierta'); buildArenaPrep(); }   // v0.9.35: al elegir facción se cierra la lista
 }
 function buildPrepDeck() {   // v0.9.15: el mazo que vas a llevar, con un botón para cambiarlo
   const el = $('#prep-deck'); if (!el) return;

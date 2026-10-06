@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.35', real: [
+      '<b>ARENA</b> renovada: tu liga en grande con su escudo, tus copas y una barra hasta la siguiente liga. Los rivales salen en tarjetas con su dificultad, ves lo que ganas o pierdes, y la facción se cambia con un botón.',
+      '<b>RACHA</b> de victorias y <b>REGALOS DEL CAMINO</b>: cada 100 copas de récord, una tirada gratis del gashapón.'],
+    joke: ['En Microblizz las ligas se deciden por antigüedad. En la arena, de momento, no.'] },
   { v: '0.9.34', real: [
       '<b>MENÚ</b>: los iconos de abajo vuelven a tener color, ahora con una paleta que combina: coral, naranja, dorado y violeta.'],
     joke: ['El consultor de color de Microblizz ha cambiado de opinión. Ha vuelto a cobrar.'] },

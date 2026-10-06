@@ -186,14 +186,7 @@
 .sb-b.add { background: linear-gradient(to bottom, #3fd0e8, #1c7fa6); }
 .sb-dmg { font-size: 12.5px; font-weight: 800; color: var(--ink-dim); padding: 0 2px; }
 .sb-dmg b { color: var(--gold); }
-.ar-head { margin-bottom: 4px; }
-.ar-sub { font-size: 13px; color: var(--ink-dim); margin-bottom: 6px; }
-.ar-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 6px; }
-.ar-r { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; border: 3px solid var(--outline); background: var(--tray-hi); color: var(--ink); text-align: left; cursor: pointer; font: inherit; }
-.ar-r.on { background: linear-gradient(to bottom, #2f7a3a, #1f4f28); box-shadow: 0 0 0 3px var(--gold); }
-.ar-r canvas { width: 40px; height: 36px; flex: none; }
-.ar-r b { display: block; font-size: 14.5px; }
-.ar-r small { display: block; font-size: 12px; color: var(--ink-dim); font-weight: 700; }
+/* la Arena tiene sus estilos en css/arena.css (v0.9.35) */
 /* v0.9.21: caja de avisos de las unidades (abajo a la derecha) */
 #feed { position: absolute; right: 6px; top: calc(var(--top) + 616px); width: 200px; height: 170px; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; gap: 3px; pointer-events: none; z-index: 4; overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 26px); mask-image: linear-gradient(to bottom, transparent 0, #000 26px); }
 #feed .fl { display: flex; align-items: center; gap: 5px; max-width: 100%; font-family: var(--font-display); font-size: 12.5px; line-height: 1.15; background: rgba(16, 8, 28, 0.6); border-radius: 9px; padding: 4px 8px 2px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9); animation: clin 0.2s ease-out; transition: opacity 0.6s; }

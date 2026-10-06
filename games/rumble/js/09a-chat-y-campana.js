@@ -148,7 +148,7 @@ function openPrep(mode, lvl) {
     $('#prep-title').textContent = 'SALA DE PRUEBAS';
     info.innerHTML = 'Aquí no se gana ni se pierde nada: <b>CAOS infinito</b>, el tiempo no corre y tú decides qué enemigos salen y en qué campo. Prueba tu mazo, tus hechizos y tu equipo.<br><span class="rw">Sin premios ni experiencia.</span>';
   } else if (mode === 'arena') {   // v0.9.20
-    $('#prep-title').textContent = 'ARENA'; buildArenaPrep();
+    $('#prep-title').textContent = 'ARENA';   // v0.9.35: la pantalla la pinta buildArenaPrep desde syncMenu, ya con la clase .arena puesta
   } else if (mode === 'boss') {
     $('#prep-title').textContent = 'MODO JEFE';
     buildBossPrep();   // v0.9.15
@@ -159,6 +159,8 @@ function openPrep(mode, lvl) {
   $('#diff-label').hidden = $('#diff-row').hidden = mode !== 'quick';
   $('#boss-pick').hidden = $('#bdiff-row').hidden = mode !== 'boss';
   if (!isUnlocked(G.faction)) setFaction(SAVE.unlocked[0]);
+  $('#scr-prep').classList.toggle('arena', mode === 'arena'); $('#scr-prep').classList.remove('fac-abierta');   // v0.9.35: la arena tiene su propia distribución
+  if (mode !== 'arena') $('#btn-play').textContent = 'JUGAR';
   syncMenu(); updateWallets(); show('scr-prep'); fitText($('#prep-title'), 52, 26);
   for (const nb of document.querySelectorAll('#fac-grid .fac-opt b')) fitText(nb, 16, 10);   // v0.9.13: «Comunidad Gamer» también cabe
 }

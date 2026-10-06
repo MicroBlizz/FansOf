@@ -90,7 +90,7 @@ if (AUTO.get('auto')) (async () => {
   const sal = [];
   for (const j of AUTO.get('auto').split(',')) {
     try {
-      const tam = AUTO.get('tam') || 'normal', R = await compara(j, { tam }), control = await compara(j, { tam, antes: '' });   // el control compara la versión de ahora consigo misma: lo que ya cambia solo (animaciones, relojes) es ruido
+      const tam = AUTO.get('tam') || 'normal', control = await compara(j, { tam, antes: '' }), R = await compara(j, { tam });   // el control (primero, también calienta la caché) compara la versión de ahora consigo misma: lo que ya cambia solo (animaciones, relojes) es ruido
       R.ruido = control.difs.map(d => d.paso); sal.push(R);
     } catch (e) { sal.push({ juego: j, fallo: String(e && e.stack || e) }); }
   }

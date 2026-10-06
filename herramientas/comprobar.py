@@ -98,11 +98,24 @@ def pasada():
     return bien
 
 
+def archivos_grandes(limite=30 * 1024):   # el plan de refactor quiere ninguno por encima de ~25 KB: aquí solo se avisa
+    out = []
+    for ext in ('js', 'css'):
+        for dir, dirs, files in os.walk(RAIZ):
+            dirs[:] = [d for d in dirs if d not in ('_base', '.git', 'node_modules', 'herramientas')]
+            out += [(os.path.getsize(os.path.join(dir, f)), os.path.relpath(os.path.join(dir, f), RAIZ).replace(os.sep, '/')) for f in files if f.endswith('.' + ext)]
+    return sorted((t, r) for t, r in out if t > limite)[::-1]
+
+
 print('Antes (_base/):', open(os.path.join(RAIZ, '_base', 'COMMIT.txt'), encoding='utf-8').read().strip())
 for intento in range(1, 4):   # algunas animaciones cambian solas y pueden colarse como diferencia: una diferencia real sale en todos los intentos
     print(f'Comparando {", ".join(JUEGOS)} ({TAM}), intento {intento} de 3…')
     if pasada():
-        print('TODO IGUAL')
-        sys.exit(0)
-print('FALLO')
-sys.exit(1)
+        resultado = 'TODO IGUAL'
+        break
+else:
+    resultado = 'FALLO'
+g = archivos_grandes()
+print(f'ARCHIVOS > 30 KB: {len(g)}' + (f'  (los 5 mayores: {", ".join(f"{r} {t // 1024}KB" for t, r in g[:5])})' if g else ''))
+print(resultado)
+sys.exit(0 if resultado == 'TODO IGUAL' else 1)

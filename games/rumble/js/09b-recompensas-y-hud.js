@@ -136,8 +136,8 @@ const hud = {
     const nk = S.p.queue[0];
     if (c.next !== nk) { drawArt($('#next-art canvas'), nk, 34, 34); $('#next-art').dataset.rarity = CFG.cards[nk].rarity; $('#next-art').title = 'Siguiente: ' + CFG.cards[nk].name; c.next = nk; }
     for (const el of elCards) {
-      const k = slotKey(el._slot);
-      if (el._key !== k) { renderCard(el, k); if (el._key && G.state === 'play') { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); } el._key = k; el._poor = undefined; el._h = undefined; }
+      const k = slotKey(el._slot), kk = k + '|' + uSave(k).lvl;   // el nivel va en la clave: si subes la carta en la colección, se repinta
+      if (el._key !== kk) { renderCard(el, k); if (el._key && G.state === 'play') { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); } el._key = kk; el._poor = undefined; el._h = undefined; }
       const cost = CFG.cards[k].cost, poor = ch < cost;
       const hgt = poor ? ((1 - ch / cost) * 100).toFixed(1) + '%' : '0%'; if (el._h !== hgt) { el._charge.style.height = hgt; el._h = hgt; }
       if (el._poor !== poor) { el.classList.toggle('poor', poor); el._poor = poor; }

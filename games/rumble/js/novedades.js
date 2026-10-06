@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.29.1',
+    real: ['<b>ARREGLADO</b>: al subir de nivel a tu líder (o a cualquier carta), en la partida seguía saliendo el nivel antiguo hasta que cerrabas el juego y volvías a entrar. Ahora se ve el nivel nuevo al momento.'],
+    joke: ['Microblizz jura que tu líder siempre fue nivel 2 «en espíritu».'], },
   { v: '0.9.29',
     real: ['<b>IDIOMAS</b>: el juego está ahora en español y en inglés. Se elige solo según el idioma de tu navegador y puedes cambiarlo en Opciones (Idioma / Language).',
       'El inglés cubre los menús, las cartas, el chat de las partidas, las misiones y los logros. Si ves algo que sigue en español, ya lo sabemos.'],

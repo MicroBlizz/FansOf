@@ -57,5 +57,8 @@ IDIOMA.add({
   "Tira %1 bases enemigas.": "Bring down %1 enemy bases.",
   "Juega a Fans of Rumble:": "Play Fans of Rumble:",
   "¡COMBO x%#1!": "COMBO x%1!",
-  "%1 DENTRO": "%1 INSIDE"
+  "%1 DENTRO": "%1 INSIDE",
+  "ARREGLADO": "FIXED",
+  ": al subir de nivel a tu líder (o a cualquier carta), en la partida seguía saliendo el nivel antiguo hasta que cerrabas el juego y volvías a entrar. Ahora se ve el nivel nuevo al momento.": ": after levelling up your leader (or any card), matches kept showing the old level until you closed the game and came back. The new level now shows right away.",
+  "Microblizz jura que tu líder siempre fue nivel 2 «en espíritu».": "Microblizz swears your leader was always level 2 «in spirit»."
 });

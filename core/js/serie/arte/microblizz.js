@@ -118,7 +118,7 @@ Object.assign(ART, {
     line(c, [6, -124, 15, -118], '#b89a6e', 1.2); line(c, [15, -124, 6, -118], '#b89a6e', 1.2);
     c.save(); c.translate(0, -93); c.rotate(-0.12);
     c.strokeStyle = '#ff3348'; c.lineWidth = 1.4; c.strokeRect(-21, -5, 42, 10);
-    c.fillStyle = '#ff3348'; c.font = '7.5px ' + FONT_D; c.fillText('CANCELADO', 0, 0.8);
+    c.fillStyle = '#ff3348'; c.font = '7.5px ' + FONT_D; c.fillText(tr('CANCELADO'), 0, 0.8);
     c.restore();
   },
   e_rubble(c) {

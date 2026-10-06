@@ -39,7 +39,7 @@ function idleBuild(cw, ch, fac) {
     f.fillStyle = '#3a2a6b'; f.fillRect(x - dx, base - h, w, 3 * k);
     for (let wy = base - h + 7 * k; wy < base - 4 * k; wy += 9 * k) for (let wx = x - dx + 4 * k; wx < x - dx + w - 6 * k; wx += 8 * k) if (((wx * 13 + wy * 7) | 0) % 5 < 3) { f.fillStyle = ((wx + wy) | 0) % 7 < 2 ? 'rgba(130,190,255,.55)' : 'rgba(255,214,120,.6)'; f.fillRect(wx, wy, 3.4 * k, 4.2 * k); }
   }
-  const sign = (x, y, w, h, bg, fg, txt, sz) => { for (const dx of [0, W2]) { f.fillStyle = OL; f.fillRect(x - dx + w * 0.22, y + h, 2.4 * k, base - y - h); f.fillRect(x - dx + w * 0.78 - 2.4 * k, y + h, 2.4 * k, base - y - h); f.fillStyle = OL; f.fillRect(x - dx - 2, y - 2, w + 4, h + 4); f.fillStyle = bg; f.fillRect(x - dx, y, w, h); f.fillStyle = fg; f.font = `${sz * k}px ${FONT_D}`; f.textAlign = 'center'; f.textBaseline = 'middle'; f.fillText(txt, x - dx + w / 2, y + h / 2 + 1); } };
+  const sign = (x, y, w, h, bg, fg, txt, sz) => { for (const dx of [0, W2]) { f.fillStyle = OL; f.fillRect(x - dx + w * 0.22, y + h, 2.4 * k, base - y - h); f.fillRect(x - dx + w * 0.78 - 2.4 * k, y + h, 2.4 * k, base - y - h); f.fillStyle = OL; f.fillRect(x - dx - 2, y - 2, w + 4, h + 4); f.fillStyle = bg; f.fillRect(x - dx, y, w, h); f.fillStyle = fg; f.font = `${sz * k}px ${FONT_D}`; f.textAlign = 'center'; f.textBaseline = 'middle'; f.fillText(tr(txt), x - dx + w / 2, y + h / 2 + 1); } };
   sign(W2 * 0.08, base - ch * 0.5, 104 * k, 22 * k, '#ffe06a', '#7a3d00', 'HORAS EXTRA = PASIÓN', 9);
   sign(W2 * 0.36, base - ch * 0.62, 84 * k, 20 * k, '#2e8bff', '#fff', 'MICROBLIZZ', 11);
   sign(W2 * 0.58, base - ch * 0.46, 96 * k, 22 * k, '#334155', '#ffcb3d', 'PAYSTATION · SIN DISCOS', 8);
@@ -158,7 +158,7 @@ function idleLayer(c, img, o, W2, cw, ch, R) {   // solo el trozo visible de una
   c.drawImage(img, x0 * R, 0, w1 * R, ch * R, 0, 0, w1, ch);
   if (w1 < cw) c.drawImage(img, 0, 0, (cw - w1) * R, ch * R, w1, 0, cw - w1, ch);
 }
-function idleText(c, txt, x, y, sz, col) { c.font = `${sz}px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = Math.max(3, sz * 0.28); c.strokeStyle = OL; c.strokeText(txt, x, y); c.fillStyle = col; c.fillText(txt, x, y); }
+function idleText(c, txt, x, y, sz, col) { c.font = `${sz}px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = Math.max(3, sz * 0.28); c.strokeStyle = OL; c.strokeText(tr(txt), x, y); c.fillStyle = col; c.fillText(tr(txt), x, y); }
 function idleDraw() {
   const S2 = idleSc, cv = $('#idle-cv'), c = cv.getContext('2d'), { cw, ch, R, L, k: K, gy } = S2, I = idleState(), key = FACTIONS[I.fac].leader, TH = THEMES[I.fac] || THEMES.animales;
   c.setTransform(R, 0, 0, R, 0, 0); c.globalAlpha = 1;
@@ -210,7 +210,7 @@ function idleDraw() {
     else if (p.k === 'say') {
       c.globalAlpha = Math.min(1, a * 4); c.font = `bold ${Math.round(11 * Math.min(1.2, K))}px "Baloo 2", system-ui, sans-serif`; const tw = c.measureText(p.txt).width + 14, bx = clamp(p.x, tw / 2 + 4, cw - tw / 2 - 4), by = p.y;
       c.fillStyle = '#fff6ea'; c.strokeStyle = OL; c.lineWidth = 2; c.beginPath(); c.roundRect ? c.roundRect(bx - tw / 2, by - 10, tw, 19, 8) : c.rect(bx - tw / 2, by - 10, tw, 19); c.fill(); c.stroke();
-      c.fillStyle = OL; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(p.txt, bx, by + 0.5);
+      c.fillStyle = OL; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(tr(p.txt), bx, by + 0.5);
     }
   }
   c.globalAlpha = 1;

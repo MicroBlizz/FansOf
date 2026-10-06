@@ -102,7 +102,7 @@ Object.assign(ART, {
     line(c, [-2, -28, -2.6, -21], '#e5e7eb', 1); line(c, [2, -28, 2.6, -21], '#e5e7eb', 1);
     c.save(); c.translate(15, -30); c.rotate(0.15);
     shape(c, rr(-8, -10, 16, 20, 1), '#f5f0e1', 1.4);
-    c.fillStyle = '#dc2626'; c.font = '5.2px ' + FONT_D; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('¡FINAL!', 0, -5.6);
+    c.fillStyle = '#dc2626'; c.font = '5.2px ' + FONT_D; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(tr('¡FINAL!'), 0, -5.6);
     c.fillStyle = '#9ca3af'; for (let y = -2; y < 8; y += 2.4) c.fillRect(-6, y, 12, 1);
     c.restore();
     shape(c, el(9, -22, 3.6, 6.6, -0.5), '#16a34a'); shape(c, el(9.6, -28, 2.8, 2.8), '#f1c27d', 1.2);

@@ -87,3 +87,17 @@ Ejecuta el mismo guion en la versión anterior y en la nueva, en cada juego, y e
 
 - **El resto de Opciones** (volumen, lo que se ve en la partida, pasar o borrar el progreso): cada juego tiene todavía las suyas.
 - **Los colores y el marco** (`css/base.css`): el Rumble lleva todavía los suyos, iguales, al principio de `css/estilos-partida.css`.
+
+## Idiomas
+
+El español es el idioma de origen: todo el código y los datos están en español. Si el jugador usa otro idioma, se cargan diccionarios que dicen cómo se traduce cada frase tal cual está escrita. Hoy hay español (`es`) e inglés (`en`).
+
+- **Cuál se usa**: el que se elija en Opciones (se guarda en este navegador, `fansof-idioma`) o, si no se ha elegido, el del navegador (`es` → español, cualquier otro → inglés). Lo decide `nucleo.js` (`NUCLEO.idioma`, `NUCLEO.elegirIdioma(i)`), y cambiarlo recarga la página.
+- **Qué hace `js/sistema/idioma.js`**: `IDIOMA.add({...})` registra frases. Una frase exacta es `'Volumen': 'Volume'`; una con huecos usa `%1`, `%2`… (`'Nivel %1': 'Level %1'`) o `%#1` si el hueco es solo un número. Todo lo que sale en pantalla (textos y `title`, `aria-label`, `placeholder`, `alt`) se traduce solo, aunque lo escriba el juego más tarde. En español no hace nada.
+- **Los textos armados por trozos** («HABILIDAD: Cafeína, calidad Senior. Toca para cambiar») se traducen frase a frase: se corta por ` · `, por frases y por comas. Por eso hay trozos sueltos en los diccionarios.
+- **Lo que se dibuja en un canvas** no es texto de la página: se traduce a mano con `tr('texto')` (en español devuelve lo mismo).
+- **Dónde están los diccionarios**: `core/idioma/en-*.js` (lo común) y `games/<juego>/idioma/en-*.js` (lo de cada juego, que los pide en `NUCLEO.juego({ idioma: { en: [...] } })`). Un archivo nuevo de lo común se apunta en `DICCIONARIOS` de `nucleo.js`.
+- **Un idioma nuevo**: crea `core/idioma/<id>-*.js` y los de cada juego, añade el id a `IDIOMAS` y sus archivos a `DICCIONARIOS`, y ponlo en el botón de Opciones.
+- **Cómo se comprueba**: `python herramientas/idioma.py` pasa el guion del comparador en inglés y lista lo que sigue en español (con `--todo` guarda esa lista en un archivo). `python herramientas/comprobar.py` sigue comparando el español.
+- **Una frase nueva en el juego**: escríbela en español, como siempre, y añade su inglés al diccionario del juego (o de core si la usan los dos).
+- **Para cazar lo que se ha quedado sin traducir mientras juegas**: en la consola del navegador, `localStorage.setItem('fansof-idioma-depura', '1')`, recarga, juega, y `IDIOMA.pendientes()` lista los textos que han salido en español.

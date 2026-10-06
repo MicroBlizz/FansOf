@@ -31,11 +31,11 @@ function drawPart(p) {
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(bx - tw / 2, by - 11, tw, 22, 9); else ctx.rect(bx - tw / 2, by - 11, tw, 22);
       ctx.moveTo(p.x - 4, by + 11); ctx.lineTo(p.x, by + 18); ctx.lineTo(p.x + 4, by + 11);
       ctx.fill(); ctx.stroke(); ctx.fillStyle = '#ffffff'; ctx.fillRect(p.x - 3, by + 9, 6, 3);
-      ctx.fillStyle = OL; ctx.fillText(p.txt, bx, by + 1); ctx.globalAlpha = 1; break;
+      ctx.fillStyle = OL; ctx.fillText(tr(p.txt), bx, by + 1); ctx.globalAlpha = 1; break;
     }
     case 'stamp': { const age = 1 - k; const sc = age < 0.15 ? lerp(2.2, 1, age / 0.15) : 1; ctx.globalAlpha = Math.min(1, k * 2.5); ctx.save(); ctx.translate(p.x, p.y - p.z); ctx.rotate(-0.15); ctx.scale(sc, sc);
       ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(-36, -9, 72, 18); ctx.strokeStyle = p.color; ctx.lineWidth = 2.2; ctx.strokeRect(-36, -9, 72, 18);
-      ctx.fillStyle = p.color; ctx.font = '13px ' + FONT_D; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.txt, 0, 1.5); ctx.restore(); break; }
+      ctx.fillStyle = p.color; ctx.font = '13px ' + FONT_D; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(tr(p.txt), 0, 1.5); ctx.restore(); break; }
     case 'grave': {
       const age = p.max - p.life, pop = Math.min(1, age / 0.18), fade = Math.min(1, p.life / 0.3);
       ctx.globalAlpha = fade; ctx.save(); ctx.translate(p.x, p.y); ctx.scale(pop, pop);

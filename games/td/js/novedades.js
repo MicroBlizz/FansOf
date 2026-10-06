@@ -4,6 +4,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.12.0', real: [
+      '<b>IDIOMAS</b>: el juego está ahora en español y en inglés. Se elige solo según el idioma de tu navegador y puedes cambiarlo en Opciones (Idioma / Language).',
+      'El inglés cubre los menús, las cartas, las torres, las misiones y los logros. Si ves algo que sigue en español, ya lo sabemos.'],
+    joke: ['Microblizz ha descubierto que existen más idiomas y quiere cobrarte la traducción.', 'Phony lo llama «localización premium». Tú, «por fin».'] },
   { v: '0.11.0', real: [
       '<b>Los menús son ya los mismos que en Fans of Rumble</b>, con el mismo código: colección, inventario, gashapón, tienda, horas extra y sonido.',
       '<b>El equipo se comparte entre líderes</b>: una misma copia la pueden llevar varios a la vez. En la colección, «PONER ESTE EQUIPO A TODOS LOS LÍDERES» lo hace de un toque.',

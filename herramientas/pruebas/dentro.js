@@ -121,6 +121,7 @@
       }
     },
     foto(que) {
+      if (typeof IDIOMA !== 'undefined') IDIOMA.vacia();   // con otro idioma, que se traduzca ya lo que se acaba de escribir (el aviso del navegador llegaría tarde)
       const tap = T.tapados.flatMap(s => [...D.querySelectorAll(s)]).map(e => [e, e.textContent]); for (const [e] of tap) e.textContent = '·';
       const vis = [...D.querySelectorAll('.screen')].filter(s => !s.hidden), extra = ['#toast', '#coach', '#banner', '#hud', '#tray', '#chat', '#tut', '#panel', '#info', '#feed', '#hud-mods', '#card-tip', '#tut-tip', '#ad-screen', '#btn-wave', '#btn-mode', '#count'].map(s => D.querySelector(s)).filter(e => e && !e.hidden);
       const els = vis.concat(extra), q = que ? que + ' · ' : '';

@@ -1,6 +1,6 @@
 """Pasa el comparador (herramientas/pruebas/) sin abrir el navegador a mano y dice TODO IGUAL o FALLO.
 
-Uso, desde la raíz del repositorio:   python herramientas/comprobar.py [rumble] [td] [--tam=normal|movil|pc]      (por defecto, los dos juegos)
+Uso, desde la raíz del repositorio:   python herramientas/comprobar.py [rumble] [td] [--tam=normal|movil|pc] [--todos]   (--todos: lista todas las diferencias, no solo 10)      (por defecto, los dos juegos)
 Antes hay que haber ejecutado  python herramientas/base.py  (deja en _base/ la versión de antes).
 
 Arranca un servidor temporal, abre el comparador en Chrome o Edge sin ventana y recibe el resultado cuando termina.
@@ -67,7 +67,7 @@ def pasada(juegos):
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
     url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(juegos)}&tam={TAM}'
     perfil = tempfile.mkdtemp(prefix='comprobar-')
-    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', f'--user-data-dir={perfil}',
+    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}',
                                '--autoplay-policy=no-user-gesture-required', url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         terminado = LISTO.wait(600)
@@ -91,7 +91,7 @@ def pasada(juegos):
         ok = not reales and not R['erroresAhora'] and R['pasos'] == R['pasosAhora']
         bien[R['juego']] = ok
         print(f'  {R["juego"]}: {R["pasos"]} comprobaciones, {len(reales)} distintas, {len(R["erroresAhora"])} errores ahora ({len(R["erroresAntes"])} antes), {len(ruido)} ignoradas por cambiar solas')
-        for d in reales[:10]:
+        for d in (reales if '--todos' in sys.argv else reales[:10]):
             print('    ✗', json.dumps(d, ensure_ascii=False)[:400])
         for e in R['erroresAhora'][:5]:
             print('    error:', e[:300])

@@ -24,7 +24,8 @@ async function pasada(variante, juego, guion, dentro, tam, parte) {
     w.eval(dentro); w.eval(guion);
     let fallo = '';
     try { await w.eval(`PRUEBA.pasos(T, ${JSON.stringify(parte || '')})`); } catch (e) { fallo = `se para en «${w.T.actual}»: ${e && e.stack || e}`; }
-    return { pasos: w.T.pasos.slice(), dic: w.T.dic.slice(), errores: w.T.errores.slice().concat(fallo ? [fallo] : []) };
+    let pendientes = []; try { pendientes = w.eval("typeof IDIOMA !== 'undefined' ? IDIOMA.pendientes() : []"); } catch (e) { /* sin idioma */ }
+    return { pasos: w.T.pasos.slice(), dic: w.T.dic.slice(), errores: w.T.errores.slice().concat(fallo ? [fallo] : []), pendientes };
   } finally { f.remove(); for (const k of P.claves) localStorage.removeItem(k); }
 }
 
@@ -86,7 +87,23 @@ for (const b of document.querySelectorAll('[data-juego]')) b.onclick = () => com
 
 // modo automático (lo usa herramientas/comprobar.py): ?auto=rumble,td[&tam=normal] manda el resultado como JSON a /__resultado
 const AUTO = new URLSearchParams(location.search);
-if (AUTO.get('auto')) (async () => {
+// ?auto=rumble,td&lang=en: pasa el guion solo por la versión de ahora, con ese idioma, y manda el HTML de cada pantalla que ha visto (para buscar lo que sigue en español)
+if (AUTO.get('auto') && AUTO.get('lang')) (async () => {
+  const sal = [];
+  try { localStorage.setItem('fansof-idioma', AUTO.get('lang')); } catch (e) { /* sin guardar */ }
+  try { localStorage.setItem('fansof-idioma-depura', '1'); } catch (e) { /* sin guardar */ }
+  for (const j of AUTO.get('auto').split(',')) {
+    try {
+      const [guion, dentro] = await Promise.all([texto(`${j}.js`), texto('dentro.js')]);
+      const B = await pasada('', j, guion, dentro, TAMS[AUTO.get('tam') || 'normal']);
+      sal.push({ juego: j, errores: B.errores, htmls: B.pasos.filter(p => / · html$/.test(p[0])).map(p => p[1]), pendientes: B.pendientes });
+    } catch (e) { sal.push({ juego: j, fallo: String(e && e.stack || e) }); }
+  }
+  try { localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ }
+  try { localStorage.removeItem('fansof-idioma-depura'); } catch (e) { /* sin guardar */ }
+  await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
+})();
+else if (AUTO.get('auto')) (async () => {
   const sal = [];
   for (const j of AUTO.get('auto').split(',')) {
     try {

@@ -7,9 +7,13 @@ const MENU_TRACKS = [['menu', 'Espera de Microblizz'], ['animales', 'Animales Lo
   ['boss0', 'Jefe: SurvivalBot'], ['boss1', 'Jefe: NecroLord'], ['boss2', 'Jefe: StreamKing'], ['boss3', 'Jefe: EpicChampion'], ['boss4', 'Jefe: CyberMarine'], ['boss5', 'Jefe: MemeLord'], ['boss6', 'Jefe: el CEO'], ['boss7', 'Jefe: Vikingo'], ['boss8', 'Jefe: PayStation'], ['boss9', 'Jefe: ProGamer'], ['boss10', 'Jefe: LaDirectora'], ['boss11', 'Jefe: Presidente de Phony']].filter(t => TRACKS[t[0]]);
 const menuTrack = () => (MENU_TRACKS.find(t => t[0] === SAVE.menuMus) || MENU_TRACKS[0]);
 $('#btn-menumus').addEventListener('click', () => { const i = MENU_TRACKS.indexOf(menuTrack()); SAVE.menuMus = MENU_TRACKS[(i + 1) % MENU_TRACKS.length][0]; saveGame(); play('select'); optComunes(); });
+/* ---------- idioma: automático (el del navegador), español o inglés. Cambiarlo recarga la página (lo guarda NUCLEO en este navegador) ---------- */
+const idiomaElegido = () => { try { return localStorage.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
+$('#btn-idioma').addEventListener('click', () => { const o = ['', 'es', 'en']; play('select'); NUCLEO.elegirIdioma(o[(o.indexOf(idiomaElegido()) + 1) % o.length]); });
 // pone al día lo que esta parte pinta en la pantalla de Opciones: la canción elegida y la versión (que sale de index.html: core/js/nucleo.js)
 function optComunes() {
   $('#btn-menumus').textContent = menuTrack()[1].toUpperCase() + ' ▸';
+  const bi = $('#btn-idioma'); if (bi) { const el = idiomaElegido(); bi.textContent = el === 'es' ? 'ESPAÑOL' : el === 'en' ? 'ENGLISH' : 'AUTO (' + NUCLEO.idioma.toUpperCase() + ')'; }
   $('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION;
 }
 /* ---------- instalar en el móvil como una app ---------- */

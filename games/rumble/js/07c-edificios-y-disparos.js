@@ -51,7 +51,7 @@ function bar(x, y, w, frac, team, h) {
 }
 function text(str, x, y, size, color) {
   ctx.font = `${size}px ${FONT_D}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
-  ctx.lineWidth = Math.max(2.5, size * 0.3); ctx.strokeStyle = OL; ctx.strokeText(str, x, y); ctx.fillStyle = color; ctx.fillText(str, x, y);
+  ctx.lineWidth = Math.max(2.5, size * 0.3); ctx.strokeStyle = OL; ctx.strokeText(tr(str), x, y); ctx.fillStyle = color; ctx.fillText(tr(str), x, y);
 }
 function drawBars(e) {
   if (e.kind === 'struct') {

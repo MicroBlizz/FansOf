@@ -107,10 +107,10 @@ function terrainAir() {
     c.fillStyle = '#5d5850'; c.strokeStyle = OL; c.lineWidth = 2.5; c.beginPath(); c.moveTo(x - w, y1); c.lineTo(x - w, y0 + 14); c.quadraticCurveTo(x - w, y0, x - w + 14, y0); c.lineTo(x + w - 14, y0); c.quadraticCurveTo(x + w, y0, x + w, y0 + 14); c.lineTo(x + w, y1); c.closePath(); c.fill(); c.stroke();
     c.fillStyle = '#7d7870'; for (let r2 = 0; r2 < 6; r2++) for (let k = 0; k < 4; k++) { const bx = x - w + 6 + k * 22 + (r2 % 2) * 10, by = y0 + 6 + r2 * 19; if (bx + 18 > x + w) continue; c.fillRect(bx, by, 18, 14); }
     for (const [yy, up] of [[y0 + 12, true], [y1 - 4, false]]) { c.fillStyle = '#140a1e'; c.beginPath(); c.ellipse(x, yy, 22, 12, 0, up ? Math.PI : 0, up ? Math.PI * 2 : Math.PI); c.fill(); }
-    c.font = '16px "Luckiest Guy", Impact, sans-serif'; c.textAlign = 'center'; c.lineWidth = 4; c.strokeStyle = OL; c.strokeText('TÚNEL', x, RIVER.y + 6); c.fillStyle = '#ffe06a'; c.fillText('TÚNEL', x, RIVER.y + 6);
+    c.font = '16px "Luckiest Guy", Impact, sans-serif'; c.textAlign = 'center'; c.lineWidth = 4; c.strokeStyle = OL; c.strokeText(tr('TÚNEL'), x, RIVER.y + 6); c.fillStyle = '#ffe06a'; c.fillText(tr('TÚNEL'), x, RIVER.y + 6);
     if (busy.length) {   // pelea dentro: polvo y «?» que se escapan
       for (let i = 0; i < 3; i++) { const k = (t * 1.3 + i * 0.33) % 1; c.globalAlpha = 1 - k; c.fillStyle = '#e8dcc8'; c.beginPath(); c.arc(x + (i - 1) * 18, y0 - k * 18, 4 + k * 6, 0, Math.PI * 2); c.fill(); }
-      c.globalAlpha = 0.6 + 0.4 * Math.sin(t * 6); c.strokeText(busy.length + ' DENTRO', x, y0 - 6); c.fillStyle = '#fff'; c.fillText(busy.length + ' DENTRO', x, y0 - 6);
+      c.globalAlpha = 0.6 + 0.4 * Math.sin(t * 6); c.strokeText(tr(busy.length + ' DENTRO'), x, y0 - 6); c.fillStyle = '#fff'; c.fillText(tr(busy.length + ' DENTRO'), x, y0 - 6);
     }
     c.globalAlpha = 1;
   }

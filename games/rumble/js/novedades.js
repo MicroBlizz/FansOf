@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.29',
+    real: ['<b>IDIOMAS</b>: el juego está ahora en español y en inglés. Se elige solo según el idioma de tu navegador y puedes cambiarlo en Opciones (Idioma / Language).',
+      'El inglés cubre los menús, las cartas, el chat de las partidas, las misiones y los logros. Si ves algo que sigue en español, ya lo sabemos.'],
+    joke: ['Microblizz ha descubierto que existen más idiomas y quiere cobrarte la traducción.', 'Phony lo llama «localización premium». Tú, «por fin».'], },
   { v: '0.9.28',
     real: ['<b>HORAS EXTRA</b> (0.9.28): cada líder hace ahora su propio especial. NecroLord invoca esqueletos, CyberMarine llama a sus drones, el Vikingo levanta su muro de escudos… Antes todos saltaban como CrazyBunny.',
       '<b>¡YA HAY APP DE ANDROID!</b> (de prueba). En la app, el botón ATRÁS del móvil pausa la partida, cierra ventanas y vuelve al menú.',

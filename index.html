@@ -55,8 +55,11 @@
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
   <p class="note">Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
+  <p class="note"><a href="#" data-idioma="es">Español</a> · <a href="#" data-idioma="en">English</a> · <a href="#" data-idioma="">Auto</a></p>
 </main>
+<script src="core/js/nucleo.js?v=0"></script>
 <script src="core/js/novedades.js"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -73,6 +76,7 @@ function show(id, ver, entries) {
   box.querySelector('[data-ver]').textContent = ver ? 'versión ' + ver : '';
   box.querySelector('[data-news]').innerHTML = entries.length ? `<h3>Versión ${entries[0].v}</h3>` + newsHtml(entries) : 'No se han podido leer las novedades.';
 }
+for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
 for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/']]) {

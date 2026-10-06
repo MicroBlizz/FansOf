@@ -22,6 +22,10 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 - El orden importa: un archivo solo ve lo que se cargó antes. Todos comparten ámbito global: no repitas un const/let/function.
 - Cada archivo empieza con un comentario de qué hace y 'use strict'. Ninguno por encima de ~25 KB: si crece, se parte.
 
+## Textos e idiomas
+- Los textos se escriben en español, en el código y los datos. El inglés está en diccionarios: core/idioma/en-*.js (común) y games/<juego>/idioma/en-*.js. Una frase nueva lleva su inglés en el diccionario.
+- python herramientas/idioma.py lista lo que sigue en español en inglés. Lo dibujado en canvas se traduce con tr('texto'). Detalles en core/LEEME.md (Idiomas).
+
 ## Probar y publicar
 - python herramientas/servidor.py y abre http://localhost:8765/games/<juego>/ (--con-sw para probar el modo sin conexión).
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.

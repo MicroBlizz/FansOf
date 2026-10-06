@@ -19,6 +19,16 @@ const NUCLEO = (() => {
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
 
+  // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es' y
+  // cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
+  const IDIOMAS = ['es', 'en'];
+  const idiomaElegido = () => { try { return localStorage.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
+  const idiomaDelNavegador = () => { for (const l of (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'])) { const c = String(l).slice(0, 2).toLowerCase(); if (IDIOMAS.includes(c)) return c; } return 'en'; };
+  const idioma = IDIOMAS.includes(idiomaElegido()) ? idiomaElegido() : idiomaDelNavegador();
+  document.documentElement.lang = idioma;
+  function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...] } })
+
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
@@ -56,9 +66,28 @@ const NUCLEO = (() => {
     pedido.push(s.src); document.body.appendChild(s);
   }
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
-  function juego({ antes = [], despues = [] }) {
+  // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
+  function juego({ antes = [], despues = [], idioma: dic = {} }) {
+    codigo(CORE + 'js/sistema/idioma.js');
+    if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); COMUN.forEach(f => codigo(CORE + f)); despues.forEach(codigo);
+    if (idioma !== 'es') {   // la página espera, tapada, a que se traduzca lo que ya hay; después se traduce también lo que el juego escriba
+      const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
+      const listo = () => { IDIOMA.pantalla(); velo.remove(); };
+      window.addEventListener('load', listo); setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
+    }
     sinConexion();
+  }
+
+  // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
+  function idiomaSolo(dic = {}) {
+    codigo(CORE + 'js/sistema/idioma.js');
+    if (idioma !== 'es') {
+      (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo);
+      const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
+      const listo = () => { IDIOMA.pantalla(); velo.remove(); };
+      window.addEventListener('load', listo); setTimeout(() => { if (velo.isConnected) listo(); }, 8000);
+    }
   }
 
   // Instalar como app y jugar sin conexión: solo en la web del juego. No en un archivo abierto a mano, ni dentro de otra página,
@@ -75,6 +104,6 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  return { version, nativa, estilos, juego };
+  return { version, nativa, idioma, elegirIdioma, estilos, juego, idiomaSolo };
 })();
 const VERSION = NUCLEO.version;

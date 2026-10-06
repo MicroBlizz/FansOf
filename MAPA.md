@@ -2,14 +2,26 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 6 KB
+- `index.html` · 7 KB
 - `sw.js` · <1 KB
 - `core/css/base.css` · 3 KB
 - `core/css/menus-extra.css` · 19 KB
 - `core/css/menus-tienda.css` · 18 KB
 - `core/css/menus.css` · 20 KB
+- `core/idioma/en-extra.js` · <1 KB
+- `core/idioma/en-pantallas-1.js` · 7 KB
+- `core/idioma/en-pantallas-2.js` · 8 KB
+- `core/idioma/en-pantallas-3.js` · 9 KB
+- `core/idioma/en-pantallas-4.js` · 11 KB
+- `core/idioma/en-pantallas-5.js` · 9 KB
+- `core/idioma/en-plantillas-2.js` · 8 KB
+- `core/idioma/en-plantillas.js` · 11 KB
+- `core/idioma/en-raiz.js` · 1 KB
+- `core/idioma/en-serie-1.js` · 9 KB
+- `core/idioma/en-serie-2.js` · 19 KB
+- `core/idioma/en-serie-3.js` · 11 KB
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
-- `core/js/nucleo.js` · 6 KB · NUCLEO, VERSION
+- `core/js/nucleo.js` · 9 KB · NUCLEO, VERSION
 - `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin
 - `core/js/retos.js` · 17 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon … (+7)
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
@@ -48,8 +60,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
 - `core/js/sistema/horas-extra.js` · 10 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC
+- `core/js/sistema/idioma.js` · 11 KB · IDIOMA, tr
 - `core/js/sistema/inventario.js` · 12 KB · invTab, INV_FILTERS, INV_SORTS, scrapValue, canScrap, massList, openInv, buildInv, invRow, itemSlot, openItem, refreshInv, equipFromInv, scrapOne, rerollOne, massScrap
-- `core/js/sistema/opciones.js` · 3 KB · MENU_TRACKS, menuTrack, optComunes, installEvt, isStandalone, installApp
+- `core/js/sistema/opciones.js` · 4 KB · MENU_TRACKS, menuTrack, idiomaElegido, optComunes, installEvt, isStandalone, installApp
 - `core/js/sistema/pantallas.js` · 6 KB · show, hideScreens, ART_FIT, drawArt, RAR_ORDER, updateWallets, needXp, canLevel, levelUp, confirmBox, toastTimer, toast, updateBadges
 - `core/js/sistema/progreso.js` · 6 KB · ECON, catalogo, fitsFac, defOf, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
@@ -59,6 +72,15 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/estilos-extra.css` · 24 KB
 - `games/rumble/css/estilos-partida.css` · 19 KB
+- `games/rumble/idioma/en-1.js` · 15 KB
+- `games/rumble/idioma/en-2.js` · 13 KB
+- `games/rumble/idioma/en-3.js` · 15 KB
+- `games/rumble/idioma/en-4.js` · 15 KB
+- `games/rumble/idioma/en-5.js` · 11 KB
+- `games/rumble/idioma/en-6.js` · 13 KB
+- `games/rumble/idioma/en-7.js` · 14 KB
+- `games/rumble/idioma/en-8.js` · 9 KB
+- `games/rumble/idioma/en-9.js` · 5 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL
@@ -101,13 +123,17 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 4 KB · last, frame, boot
 - `games/rumble/js/ajustes.js` · 1 KB · AJUSTES
-- `games/rumble/js/novedades.js` · 1 KB · NEWS
+- `games/rumble/js/novedades.js` · 2 KB · NEWS
 - `games/rumble/js/retos-logros.js` · 24 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
 - `games/rumble/js/retos.js` · 4 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
 - `games/td/index.html` · 27 KB
 - `games/td/sw.js` · <1 KB
 - `games/td/css/td.css` · 17 KB
+- `games/td/idioma/en-1.js` · 21 KB
+- `games/td/idioma/en-2.js` · 23 KB
+- `games/td/idioma/en-3.js` · 1 KB
+- `games/td/idioma/en-4.js` · 3 KB
 - `games/td/js/ajustes.js` · 6 KB · AJUSTES
 - `games/td/js/cartas.js` · 8 KB
 - `games/td/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, SIDES, sideTag, sideText, metaDefaults, defOfSafe, facOfCard, noSides, NOMODS, cardMods, xpGrant, give, newSave, migrateSave
@@ -127,9 +153,10 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/unidades.js` · 14 KB · FAC_BAL
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 5 KB
+- `herramientas/idioma.py` · 5 KB
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
-- `herramientas/pruebas/comparar.js` · 7 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
+- `herramientas/pruebas/comparar.js` · 8 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
 - `herramientas/pruebas/dentro.js` · 13 KB
 - `herramientas/pruebas/index.html` · 2 KB
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA

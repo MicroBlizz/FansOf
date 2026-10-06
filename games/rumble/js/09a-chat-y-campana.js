@@ -62,14 +62,14 @@ function makeShareImage() {
   const c = cv2.getContext('2d'), w = G.winner, R = G.rewards || {};
   const g = c.createLinearGradient(0, 0, 0, Hd); g.addColorStop(0, '#3b1d63'); g.addColorStop(1, '#140a20'); c.fillStyle = g; c.fillRect(0, 0, Wd, Hd);
   c.globalAlpha = 0.07; c.fillStyle = '#ffffff'; for (let i = 0; i < 40; i++) { c.beginPath(); c.arc((i * 137) % Wd, (i * 251) % Hd, 18 + (i % 5) * 9, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1;
-  const T = (str, x, y, size, col, font = FONT_D, align = 'center') => { c.font = `${size}px ${font}`; c.textAlign = align; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = Math.max(4, size * 0.22); c.strokeStyle = OL; c.strokeText(str, x, y); c.fillStyle = col; c.fillText(str, x, y); };
+  const T = (str, x, y, size, col, font = FONT_D, align = 'center') => { c.font = `${size}px ${font}`; c.textAlign = align; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = Math.max(4, size * 0.22); c.strokeStyle = OL; c.strokeText(tr(str), x, y); c.fillStyle = col; c.fillText(tr(str), x, y); };
   T('FANS OF', Wd / 2, 58, 34, '#ffffff'); T('RUMBLE', Wd / 2, 108, 70, '#ff8a1f');
   // periódico
   c.save(); c.translate(Wd / 2, 300); c.rotate(-0.025);
   c.fillStyle = '#f5efe1'; c.strokeStyle = OL; c.lineWidth = 6; c.beginPath(); if (c.roundRect) c.roundRect(-300, -130, 600, 260, 14); else c.rect(-300, -130, 600, 260); c.fill(); c.stroke();
-  c.fillStyle = '#20102c'; c.font = `26px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('EL DIARIO DEL GAMER · ÚLTIMA HORA', 0, -100);
+  c.fillStyle = '#20102c'; c.font = `26px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(tr('EL DIARIO DEL GAMER · ÚLTIMA HORA'), 0, -100);
   c.fillRect(-270, -80, 540, 3);
-  c.font = `bold 30px "Trebuchet MS", system-ui, sans-serif`; const lines = wrapLines(c, shareHeadline(), 520).slice(0, 4);
+  c.font = `bold 30px "Trebuchet MS", system-ui, sans-serif`; const lines = wrapLines(c, tr(shareHeadline()), 520).slice(0, 4);
   lines.forEach((ln, i) => c.fillText(ln, 0, -40 + i * 38 - (lines.length - 3) * 14));
   c.restore();
   // líder
@@ -84,12 +84,12 @@ function makeShareImage() {
   c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(0, Hd - 120, Wd, 120);
   T('¿Te atreves con Microblizz?', Wd / 2, Hd - 84, 30, '#ffffff');
   T(GAME_URL, Wd / 2, Hd - 46, 22, '#9ef07a', `"Trebuchet MS", system-ui, sans-serif`);
-  c.font = `14px system-ui, sans-serif`; c.fillStyle = 'rgba(255,255,255,.55)'; c.textAlign = 'center'; c.fillText('Juego de humor. Microblizz no existe (por suerte).', Wd / 2, Hd - 16);
+  c.font = `14px system-ui, sans-serif`; c.fillStyle = 'rgba(255,255,255,.55)'; c.textAlign = 'center'; c.fillText(tr('Juego de humor. Microblizz no existe (por suerte).'), Wd / 2, Hd - 16);
   return cv2;
 }
 async function shareResult() {
   play('select');
-  const cv2 = makeShareImage(), url = cv2.toDataURL('image/png'), text = `${shareHeadline()} · Juega a Fans of Rumble: https://${GAME_URL}/`;
+  const cv2 = makeShareImage(), url = cv2.toDataURL('image/png'), text = `${tr(shareHeadline())} · ${tr('Juega a Fans of Rumble:')} https://${GAME_URL}/`;
   try {
     const blob = await new Promise(r => cv2.toBlob(r, 'image/png'));
     const file = new File([blob], 'fans-of-rumble.png', { type: 'image/png' });

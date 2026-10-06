@@ -193,7 +193,7 @@ function drawRoulette() {
   }
   for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, on = RL.spin ? (Math.floor(performance.now() / 120) + i) % 2 === 0 : i % 2 === 0; c.beginPath(); c.arc(cx + Math.cos(a) * (r + 6), cy + Math.sin(a) * (r + 6), 3, 0, Math.PI * 2); c.fillStyle = on ? '#fff6ea' : '#7a5310'; c.fill(); }
   c.beginPath(); c.arc(cx, cy, 24, 0, Math.PI * 2); c.fillStyle = '#ffcb3d'; c.fill(); c.lineWidth = 4; c.strokeStyle = OL; c.stroke();
-  c.font = `11px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = OL; c.fillText(p ? 'TÚ' : 'CPU', cx, cy + 1);
+  c.font = `11px ${FONT_D}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = OL; c.fillText(p ? tr('TÚ') : 'CPU', cx, cy + 1);
   c.beginPath(); c.moveTo(cx - 15, cy - r - 20); c.lineTo(cx + 15, cy - r - 20); c.lineTo(cx, cy - r + 8); c.closePath(); c.fillStyle = '#fff6ea'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OL; c.stroke();
 }
 // ---- efectos nuevos (habilidades y objetos de la v0.9.12)

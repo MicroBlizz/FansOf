@@ -30,6 +30,15 @@ $('#btn-quit').addEventListener('click', toMenu);
 $('#btn-again').addEventListener('click', startGame);
 $('#btn-next').addEventListener('click', () => { const nx = nextLevel(G.level); if (nx) { G.prep = { mode: 'camp', lvl: nx, cd: G.cdiff || 'n' }; startGame(); } });
 $('#btn-menu').addEventListener('click', toMenu);
+// v0.9.30: botones del home para abrir pantallas
+$('#btn-coll').addEventListener('click', () => { play('select'); updateWallets(); show('scr-coll'); buildColl(); });
+$('#btn-inv').addEventListener('click', () => { play('select'); updateWallets(); show('scr-inv'); buildInv(); });
+$('#btn-bib').addEventListener('click', () => { play('select'); updateWallets(); show('scr-bib'); buildBib(); });
+$('#btn-pass').addEventListener('click', () => { play('select'); updateWallets(); show('scr-pass'); buildPass(); });
+$('#btn-missions').addEventListener('click', () => { play('select'); updateWallets(); show('scr-missions'); buildMissions(); });
+$('#btn-deck-menu').addEventListener('click', () => { play('select'); openDeck(G.faction); });
+$('#btn-gacha').addEventListener('click', () => { play('select'); show('scr-gacha'); buildGacha(); });
+$('#btn-shop').addEventListener('click', () => { play('select'); show('scr-shop'); buildShop(); });
 /* opciones */
 $('#opt-vol').addEventListener('input', e => { SAVE.vol = +e.target.value; applyVolume(); saveGame(); });
 $('#opt-mus').addEventListener('input', e => { SAVE.mus = +e.target.value; applyVolume(); saveGame(); });

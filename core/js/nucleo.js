@@ -58,6 +58,7 @@ const NUCLEO = (() => {
     'js/sistema/cuenta.js',        // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
     'js/sistema/coleccion.js',     // colección: las cartas y lo que llevan puesto
+    'js/sistema/biblioteca.js',    // biblioteca: galería de habilidades y objetos
     'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
     'js/sistema/gachapon.js',      // gashapón
     'js/sistema/tienda.js',        // tienda

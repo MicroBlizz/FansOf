@@ -55,6 +55,7 @@ const NUCLEO = (() => {
     'js/serie/iconos.js',          //           iconos y colores
     'js/serie/catalogo.js',        //           qué habilidades y objetos existen
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
+    'js/sistema/cuenta.js',        // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
     'js/sistema/coleccion.js',     // colección: las cartas y lo que llevan puesto
     'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
@@ -62,6 +63,7 @@ const NUCLEO = (() => {
     'js/sistema/tienda.js',        // tienda
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
+    'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];
 

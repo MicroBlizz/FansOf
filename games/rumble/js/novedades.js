@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.30', real: [
+      '<b>CUENTA</b>: tu progreso se guarda ahora también en la nube, sin que tengas que hacer nada. En Opciones → Cuenta puedes guardarlo con tu email (sin contraseña) para no perderlo y seguir jugando en otro móvil o PC.',
+      'Si juegas en dos aparatos y las dos partidas cambian, el juego te pregunta con cuál sigues.'],
+    joke: ['Microblizz guarda tu partida en «la nube». Por lo visto, la nube es el ordenador de otro.'] },
   { v: '0.9.29.1',
     real: ['<b>ARREGLADO</b>: al subir de nivel a tu líder (o a cualquier carta), en la partida seguía saliendo el nivel antiguo hasta que cerrabas el juego y volvías a entrar. Ahora se ve el nivel nuevo al momento.'],
     joke: ['Microblizz jura que tu líder siempre fue nivel 2 «en espíritu».'], },

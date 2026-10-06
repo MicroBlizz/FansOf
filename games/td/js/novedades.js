@@ -4,6 +4,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.0', real: [
+      '<b>CUENTA</b>: tu progreso se guarda ahora también en la nube, sin que tengas que hacer nada. En Opciones → Cuenta puedes guardarlo con tu email (sin contraseña) para no perderlo y seguir jugando en otro móvil o PC.',
+      'Si juegas en dos aparatos y las dos partidas cambian, el juego te pregunta con cuál sigues.'],
+    joke: ['Microblizz guarda tu partida en «la nube». Por lo visto, la nube es el ordenador de otro.'] },
   { v: '0.12.0', real: [
       '<b>IDIOMAS</b>: el juego está ahora en español y en inglés. Se elige solo según el idioma de tu navegador y puedes cambiarlo en Opciones (Idioma / Language).',
       'El inglés cubre los menús, las cartas, las torres, las misiones y los logros. Si ves algo que sigue en español, ya lo sabemos.'],

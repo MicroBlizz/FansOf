@@ -27,6 +27,7 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  if (url.hostname.endsWith('.supabase.co')) return;   // la partida en la nube (core/js/sistema/cuenta.js): nunca de una copia guardada
   const page = req.mode === 'navigate' || (url.origin === location.origin && (url.pathname.endsWith('/') || /\.(html|js|css)$/.test(url.pathname)));
   if (page) {
     // estilos y código llevan ?v=versión: sin conexión vale la copia guardada aunque el número no coincida

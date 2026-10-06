@@ -1,0 +1,18 @@
+# Pendiente
+
+Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
+
+## Cuentas (publicado el 6-10-2026: Rumble 0.9.30, TD 0.13.0)
+- [ ] Página de privacidad corta (ES/EN): qué se guarda (la partida y el email si lo das), para qué, dónde (Supabase, UE) y cómo borrarlo. Enlazarla desde Opciones y desde la biblioteca.
+- [ ] Botón «Continuar con Google»: crear la credencial OAuth en Google Cloud (lo hace el dueño), activar Google en Supabase y añadir el botón en core/js/sistema/cuenta-pantalla.js.
+- [ ] Textos de los correos de Supabase en español (Authentication → Emails → Templates): hoy salen en inglés.
+- [ ] Correo: Gmail vale para empezar (~500 al día). Con muchos jugadores, pasar a un dominio propio (por ejemplo con Resend).
+- [ ] Herramientas en el panel DEV: estado de la nube, forzar subida/bajada, simular sin conexión.
+- [ ] Limpieza: tarea mensual que borre invitados sin actividad en 60 días (y el usuario de prueba con la partida «prueba»).
+- [ ] App de Android (Capacitor): añadir su dirección a las Redirect URLs de Supabase para que funcione el enlace del email.
+- [ ] Probar el modo sin conexión con la cuenta (python herramientas/servidor.py --con-sw).
+
+## Después
+- [ ] PvP online (Rumble primero, luego TD): Rumble determinista (aleatorio con semilla y paso fijo), emparejamiento, modos Estándar y Salvaje.
+- [ ] Tienda con dinero real: recursos, gachapón e inventario en el servidor; cobro con Paddle o Lemon Squeezy; probabilidades visibles.
+- [ ] Antes de cobrar: darse de alta (autónomo o sociedad) y condiciones de venta.

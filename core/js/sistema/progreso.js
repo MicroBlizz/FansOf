@@ -70,6 +70,9 @@ function loadSave() {
   try { const t = localStorage.getItem(SAVE_KEY); if (t) { const o = JSON.parse(t); if (o && o.v === 1) return migrateSave(Object.assign(newSave(), o), o); } } catch (e) { /* sin almacenamiento */ }
   return newSave();
 }
-function saveGame() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: el progreso vive en memoria */ } }
+function saveGame() {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: el progreso vive en memoria */ }
+  if (typeof CUENTA !== 'undefined') CUENTA.cambio();   // y, un rato después, a la nube (core/js/sistema/cuenta.js)
+}
 const uSave = k => (SAVE.units[k] || (SAVE.units[k] = { lvl: 1, xp: 0 }));   // el nivel y la experiencia de una carta
 const invGet = uid => (uid ? SAVE.inv.find(it => it.u === uid) : null);      // una copia del inventario

@@ -8,7 +8,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/menus-extra.css` · 19 KB
 - `core/css/menus-tienda.css` · 18 KB
 - `core/css/menus.css` · 20 KB
-- `core/idioma/en-extra.js` · <1 KB
+- `core/idioma/en-extra.js` · 4 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 8 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
@@ -57,6 +57,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/facciones/pop.js` · 4 KB
 - `core/js/serie/facciones/streamers.js` · 4 KB
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
+- `core/js/sistema/cuenta-pantalla.js` · 4 KB
+- `core/js/sistema/cuenta.js` · 11 KB · CUENTA
 - `core/js/sistema/desarrollo.js` · 7 KB
 - `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame

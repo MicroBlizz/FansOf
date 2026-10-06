@@ -33,6 +33,7 @@ function optButtons() {
   $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-test').disabled = !!SAVE.testAll;
 }
 $('#btn-opts').onclick = () => { play('select'); openOptions(); };
+$('#btn-bib').onclick = () => { play('select'); updateWallets(); openBib(); };   // 0.13.1: la Biblioteca (core/js/sistema/biblioteca.js)
 $('#opt-vol').oninput = e => { SAVE.vol = e.target.value / 100; if (SAVE.vol > 0 && SAVE.muted) { SAVE.muted = false; soundBtns(); } applyVolume(); saveGame(); };
 $('#opt-vol').onchange = () => play('select');
 $('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; applyVolume(); saveGame(); };

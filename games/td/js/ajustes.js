@@ -18,6 +18,7 @@ const AJUSTES = {
   econ: {
     xpPerPlay: 4, xpCap: 60,                                 // XP por cada torre que pones o unidad que envías, hasta 60 por carta y partida
     vs: { facil: 40, normal: 60, dificil: 90, lose: 10 },    // oro por partida en modo VS
+    mission: [50, 10],                                       // 0.13.1: oro y gemas de cada misión diaria (como el Rumble; sin esto no se abrían las Misiones)
   },
   facetas: { T: { nombre: 'TORRE', con: 'la TORRE', cls: 'ft' }, U: { nombre: 'UNIDAD', con: 'la UNIDAD', cls: 'fu' } },
   verFacetas: false,        // no se enseñan en los menús: los textos salen seguidos, como en el Rumble

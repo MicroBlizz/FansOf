@@ -71,6 +71,7 @@ IDIOMA.add({
   "Te falta. Es un premio del pase: no sale en el gashapón.": "Missing. It's a battle pass reward: it doesn't come from the gashapon.",
   "Te falta. Sale en el gashapón.": "Missing. It comes from the gashapon.",
   "IR AL GASHAPÓN": "GO TO THE GASHAPON",
+  "<b>ARREGLADO</b>: el botón Misiones no abría las misiones diarias.": "<b>FIXED</b>: the Missions button didn't open the daily missions.",
   "<b>BIBLIOTECA</b>: un botón nuevo en el menú con todas las habilidades y objetos del juego. Ves de un vistazo cuáles tienes (y cuántas copias), cuáles te faltan y qué hace cada uno. Puedes filtrar por «Lo tengo» y «Me falta».": "<b>LIBRARY</b>: a new menu button with every ability and item in the game. See at a glance which ones you have (and how many copies), which ones you're missing and what each one does. You can filter by «I have it» and «Missing».",
   "Microblizz ha catalogado todo lo que no te va a tocar en el gashapón. Es una lista larga.": "Microblizz has catalogued everything you won't get from the gashapon. It's a long list.",
 });

@@ -35,7 +35,7 @@ const NUCLEO = (() => {
     'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
     'js/sistema/gachapon.js',      // gashapón
     'js/sistema/tienda.js',        // tienda
-    'js/sistema/horas-extra.js',   // horas extra: el minijuego del menú
+    'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
     'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];

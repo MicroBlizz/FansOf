@@ -19,7 +19,8 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/sistema/utiles.js  utilidades pequeñas que usan todos los sistemas
   js/sistema/progreso.js  economía, catálogo de cada juego, calidades, tienda y partida guardada (cada juego, la suya)
   js/sistema/sonido.js  el altavoz, los efectos comunes y el motor de música (cada juego dice su volumen y qué canción toca)
-  js/sistema/horas-extra.js  horas extra: lo que gana el líder, sus ventanas y la escena (cada juego dice el poder de sus líderes)
+  js/sistema/horas-extra.js  horas extra: lo que gana el líder y sus ventanas (cada juego dice el poder de sus líderes)
+  js/sistema/horas-extra-escena.js  horas extra: la escena del minijuego
   js/novedades.js       el informe de parches: la ventana NOVEDADES, que salga sola con cada versión y el texto que enseña la librería.
                         Cada juego escribe solo su lista (NEWS) en su js/novedades.js
   js/serie/             LA SERIE, con una sola copia para todos los juegos: facciones, cartas y sus números (config), arte,
@@ -30,7 +31,8 @@ core/                 LO COMÚN A TODOS LOS JUEGOS
   js/sistema/gachapon.js    gashapón (un juego puede añadir máquinas propias)
   js/sistema/tienda.js      tienda
   js/sistema/opciones.js    opciones comunes (música del menú, versión) e instalar como app
-  js/retos.js           misiones, logros, pase de batalla, premio diario y perfil (el sistema; cada juego pone sus misiones y logros)
+  js/retos.js           misiones, pase de batalla y premio diario (el sistema; cada juego pone sus misiones y logros)
+  js/retos-pantallas.js logros, nombre, perfil, avisos y botones del sistema de retos
 games/
   rumble/               FANS OF RUMBLE, el juego original y el principal (ver games/rumble/README.md). Carga de core/ el cargador,
                         la serie y las utilidades; el resto (progreso, menús, sonido) todavía es suyo

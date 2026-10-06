@@ -25,7 +25,7 @@ La versión se escribe **solo** en ese `?v=`. De ella salen `VERSION`, el `?v=` 
 |---|---|
 | `js/serie/` | La serie: facciones, cartas y sus números (`config`), dibujos (`arte`), canciones, frases de humor, iconos y el catálogo de habilidades y objetos (qué existen; lo que hacen lo dice cada juego). |
 | `js/sistema/` | Los sistemas: utilidades y ganchos, sonido y música, progreso (economía, calidades, tienda y partida guardada), pantallas comunes (cartera, niveles, avisos), colección, inventario, gashapón, tienda, horas extra y opciones comunes. |
-| `js/retos.js` | Misiones, logros, pase de batalla, premio diario y perfil. Los datos los pone cada juego en su `js/retos.js`. |
+| `js/retos.js`, `js/retos-pantallas.js` | Misiones, pase de batalla y premio diario (`retos.js`); logros, nombre, perfil, avisos y botones (`retos-pantallas.js`). Los datos los pone cada juego en su `js/retos.js`. |
 | `js/novedades.js` | El informe de parches. La lista (`NEWS`) la pone cada juego en su `js/novedades.js`. |
 | `js/sw.js` | Jugar sin conexión. Cada juego lo usa desde un `sw.js` de dos líneas en su carpeta. |
 | `css/` | `base.css` (colores, letras, marco) y `menus.css` (las pantallas comunes). Cada juego carga `menus.css` y después su propia hoja, con lo suyo. |

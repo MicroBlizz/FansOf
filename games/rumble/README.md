@@ -12,7 +12,7 @@ No se han traído las partes que solo sirven para empaquetarlo como app nativa (
 ## Lo que todavía no comparte con core
 
 - **Guardado**: usa su propia partida guardada (`for-save-1`), separada de la del TD. El oro, las gemas y el inventario no son comunes todavía.
-- **Progreso, menús, música y sonido**: usa sus propios archivos (`js/02a-objetos.js`…`02e-guardado.js`, `js/09-menus.js`, `js/05-audio.js`…). Los de `core/` salieron de estos, adaptados al TD.
+- **Progreso, menús, música y sonido**: usa sus propios archivos (`js/02a-objetos.js`…`02e-guardado.js`, `js/09a-chat-y-campana.js`…`09c-pantallas.js`, `js/05-audio.js`…). Los de `core/` salieron de estos, adaptados al TD.
 - **El enlace de compartir** sigue apuntando a la web del original.
 
 Para actualizar esta copia cuando cambie el original: vuelve a ejecutar la copia desde el clon y revisa que `01-config.js` y `03-arte.js` sigan siendo iguales a los de `core/`.

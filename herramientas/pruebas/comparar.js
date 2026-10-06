@@ -18,7 +18,7 @@ async function pasada(variante, juego, guion, dentro, tam, parte) {
   f.src = `${RAIZ}${variante}games/${juego}/`; $('#marcos').appendChild(f);
   try {
     await cargado; const w = f.contentWindow;
-    for (let i = 0; ; i++) { let ok = false; try { ok = w.eval(P.lista); } catch (e) { /* aún cargando */ } if (ok) break; if (i > 150) throw new Error(`${variante || 'ahora'}: el juego no arranca`); await duerme(100); }
+    for (let i = 0; ; i++) { let ok = false; try { ok = w.eval(P.lista); } catch (e) { /* aún cargando */ } if (ok) break; if (i > 400) throw new Error(`${variante || 'ahora'}: el juego no arranca`); await duerme(100); }
     await Promise.race([Promise.all(LETRAS.map(l => w.document.fonts.load(l))).then(() => w.document.fonts.ready), duerme(5000)]);
     await duerme(150);
     w.eval(dentro); w.eval(guion);

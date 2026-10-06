@@ -33,5 +33,16 @@ IDIOMA.add({
   "Gana %1 niveles de jefe.": "Win %1 boss levels.",
   "Gana %1 partidas del modo VS.": "Win %1 VS mode matches.",
   "Gana %1 partidas sin que toquen tu base.": "Win %1 matches without your base being touched.",
-  "Juega %1 partidas del modo VS.": "Play %1 VS mode matches."
+  "Juega %1 partidas del modo VS.": "Play %1 VS mode matches.",
+  // Descripciones de habilidades y objetos partidas por su número (solo el TD)
+  "% de daño y escudo del": "% damage and a shield worth",
+  "% de daño y las torres rivales tardan": "% damage and rival towers take",
+  "% de daño y sus golpes frenan al enemigo": "% damage and its hits slow the enemy for",
+  "% de los golpes.": "% of hits.",
+  "Al llegar a la base rival le roba": "When it reaches the rival base, it steals",
+  "Las torres rivales tardan": "Rival towers take",
+  "Roba un": "Steals",
+  // (más trozos del TD)
+  "s en verle.": "s to spot it.",
+  "% menos de daño.": "% less damage.",
 });

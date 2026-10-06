@@ -9,7 +9,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/menus-extra.css` · 19 KB
 - `core/css/menus-tienda.css` · 18 KB
 - `core/css/menus.css` · 20 KB
-- `core/idioma/en-extra.js` · 6 KB
+- `core/idioma/en-extra.js` · 7 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 8 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
@@ -85,7 +85,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-6.js` · 13 KB
 - `games/rumble/idioma/en-7.js` · 14 KB
 - `games/rumble/idioma/en-8.js` · 9 KB
-- `games/rumble/idioma/en-9.js` · 6 KB
+- `games/rumble/idioma/en-9.js` · 8 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL

@@ -206,3 +206,5 @@
 .side-mode.test { background: linear-gradient(to bottom, #7df3ff, #1c7fa6); }
 .side-mode svg { width: 34px; height: 34px; filter: drop-shadow(0 2px 0 rgba(20, 8, 34, 0.35)); }
 .side-mode:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+/* v0.9.31: el menú tiene 7 botones (Biblioteca va entre Inventario y Pase) */
+.home-grid { grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 508px; }

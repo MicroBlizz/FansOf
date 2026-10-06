@@ -1,0 +1,212 @@
+# Plan: cuentas de jugador y servidor gratuito
+
+Estado: propuesta, sin código todavía (6-10-2026). Precios y límites consultados ese día; revisar antes de empezar.
+
+## 1. Qué hay hoy
+- Todo es estático en GitHub Pages; no hay servidor.
+- La partida vive en localStorage, una por juego: `AJUSTES.guardado` (`for-save-1` en Rumble, `fortd-save` en TD).
+- Todo pasa por dos funciones de core: `loadSave()` y `saveGame()` en `core/js/sistema/progreso.js`. Ese es el único punto que hay que tocar para sincronizar.
+- TD ya tiene "exportar código" y `#traer=` (`games/td/js/menus.js`): se queda como plan de emergencia.
+- Todos los juegos están en el mismo origen (microblizz.github.io), así que una sesión iniciada en la biblioteca vale para todos.
+
+## 2. Objetivo
+1. Nadie tiene que registrarse para jugar. Cero pantallas de login al entrar.
+2. Una cuenta guarda las partidas de todos los juegos, cada una por separado (sin oro ni cartas compartidos).
+3. Se sigue jugando sin conexión; se sincroniza al volver.
+4. Lo siguiente es PvP online con emparejamiento simple: la cuenta y el servidor tienen que servir también para eso (punto 9).
+5. Habrá tienda con dinero real para monetizar (punto 14): recursos, gachapón e inventario pasan al servidor.
+6. Coste 0 € mientras el número de jugadores sea pequeño, y precio conocido si crece.
+
+## 3. Opciones comparadas
+
+| | Supabase (Free) | Firebase (Spark) | Cloudflare Workers + D1 | PocketBase en VPS gratis |
+|---|---|---|---|---|
+| Base de datos | Postgres 500 MB | Firestore 1 GiB | SQLite 5 GB | SQLite, lo que tenga la máquina |
+| Usuarios | 50.000 activos/mes | 50.000 activos/mes | sin login: hay que hacerlo | ilimitado |
+| Uso diario | sin tope de lecturas; 5 GB de salida/mes | 50.000 lecturas y 20.000 escrituras/día | 100.000 peticiones/día | lo que aguante |
+| Invitado (anónimo) y luego cuenta | Sí, nativo (`signInAnonymously` + `linkIdentity`) | Sí, nativo (`linkWithCredential`) | A mano | Parcial |
+| Google / enlace por email | Sí / Sí | Sí / Sí | A mano | Sí / Sí |
+| Funciona desde HTML sin compilar | Sí (script desde CDN) | Sí (módulos desde CDN) | Sí | Sí |
+| Tiempo real (PvP) | Realtime: 200 conexiones a la vez, 100 mensajes/s | Realtime Database: 100 conexiones a la vez | Durable Objects (de pago) | WebSocket propio |
+| Pega | Se pausa tras 7 días sin actividad; 2 proyectos gratis | Cupo de escrituras diario; sin funciones en el plan gratis | Hay que escribir el login y la seguridad | Mantener un servidor (copias, caídas) |
+| Si crece | Pro 25 $/mes: 100.000 usuarios, 8 GB | Blaze por uso (~0,18 $ por 100.000 escrituras) | 5 $/mes y por uso | Pagar máquina |
+
+Descartados: Cloudflare y PocketBase obligan a mantener el login y la seguridad nosotros; para dos personas es demasiado. PlayFab/Nakama son más de lo que hace falta y atan a su forma de trabajar.
+
+## 4. Recomendación: Supabase (región UE, Frankfurt)
+- Invitado silencioso y paso a cuenta real sin perder nada, igual que Firebase, pero con datos en Postgres normal: si un día nos vamos, se exporta con `pg_dump`.
+- Sin cupo diario de lecturas/escrituras: no hay que racionar los guardados como en Firestore.
+- Trae tiempo real (canales Broadcast y Presence) en el mismo proyecto y con la misma sesión: sirve para el PvP sin otro servicio.
+- Servidores en la UE: más sencillo con el RGPD (estamos en España).
+- La pausa por inactividad solo pasa si nadie juega una semana; con jugadores reales no ocurre. Si preocupa, una GitHub Action semanal que haga una consulta la mantiene despierta.
+- Plan B si Supabase da problemas: Firebase, con el mismo diseño (cambia solo `cuenta.js`).
+
+## 5. Cómo lo ve el jugador
+1. Entra y juega. Por detrás, si hay conexión, se crea una cuenta de invitado y la partida se sube sola. No ve nada.
+2. En Opciones (y en la biblioteca) aparece "Cuenta": "Tu progreso está en este dispositivo. Guárdalo para no perderlo y jugar en otros".
+3. Dos botones: **Continuar con Google** (un toque) y **Enviarme un enlace por email** (sin contraseña). Ninguna contraseña en ningún sitio.
+4. Al vincular, la cuenta de invitado pasa a ser la suya: mismas partidas, nada que copiar.
+5. En otro dispositivo: "Ya tengo cuenta" → Google o enlace → se bajan sus partidas.
+6. Recordatorio suave, no bloqueante, en momentos buenos (tras un logro, al pasar el mundo 2): "¿Guardas tu progreso?".
+7. "Cerrar sesión" y "Borrar mi cuenta y mis datos" en Opciones (obligatorio por RGPD y por las tiendas si un día se publica como app).
+
+Apple: "Iniciar sesión con Apple" exige cuenta de desarrollador (99 $/año). Se deja para cuando haya app de iOS; en el navegador de iPhone Google y el email ya funcionan.
+
+## 6. Datos en el servidor
+Una sola tabla:
+
+```sql
+create table partidas (
+  usuario  uuid references auth.users on delete cascade,
+  juego    text not null,            -- 'rumble', 'td', ...
+  datos    jsonb not null,           -- el SAVE tal cual
+  version  int  not null default 1,  -- sube en cada subida (control de choques)
+  aparato  text,                     -- quién subió la última
+  cambiado timestamptz default now(),
+  primary key (usuario, juego)
+);
+alter table partidas enable row level security;
+create policy "solo lo mío" on partidas for all
+  using (auth.uid() = usuario) with check (auth.uid() = usuario);
+```
+
+- La clave pública (anon key) va en el código sin problema: la seguridad la pone la política de filas.
+- Subida con una función `guardar_partida(juego, datos, version_esperada)` que solo escribe si `version` coincide; si no, devuelve la de la nube (ver 7).
+- Tamaño: medir el SAVE real con el panel DEV. Con ~20 KB por partida y 2 juegos, 500 MB dan para unos 12.000 jugadores.
+- Limpieza: tarea mensual (pg_cron) que borra invitados sin actividad en 60 días.
+
+## 7. Sin conexión y choques
+- `saveGame()` sigue guardando primero en localStorage, siempre. La nube es una copia.
+- Junto al SAVE se guarda `nube: { version, pendiente }`.
+- Subida: 10 s después del último cambio, al acabar un nivel y al ocultar la pestaña (`visibilitychange`). Sin conexión se marca `pendiente` y se sube con el evento `online`.
+- Al arrancar (o al iniciar sesión en otro aparato) se pide la de la nube:
+  - nube igual a la local → nada;
+  - nube más nueva y local sin cambios pendientes → se usa la de la nube;
+  - local con cambios y nube sin cambios → se sube la local;
+  - las dos cambiaron → se pregunta: "¿Qué partida quieres? Este dispositivo: ★ 120, oro 5.300 · Nube: ★ 98, oro 7.100". Sin mezclas automáticas (con oro y gacha, mezclar abre trampas).
+- El service worker de cada juego guarda en caché la librería de Supabase para que el juego arranque sin red.
+
+## 8. Trampas
+- El juego corre entero en el navegador: quien quiera puede editar su partida. Con partidas solo para uno, da igual; no vale la pena luchar contra eso.
+- Importa en cuanto haya PvP (lo siguiente) y en clasificaciones o compras reales. Lo del PvP está en el punto 9. Además:
+  - clasificaciones: el servidor valida con una Edge Function (límites razonables por nivel y tiempo) y no se acepta el número que manda el cliente sin más;
+  - compras reales: ver punto 14. Los recursos, el gachapón y el inventario pasan al servidor.
+- Ahora: límite de tamaño del `datos` (p. ej. 200 KB) y de subidas por minuto en la función, y CAPTCHA (Cloudflare Turnstile, gratis) en la creación de invitados si aparecen bots.
+
+## 9. PvP online con emparejamiento simple
+Es lo siguiente después de las cuentas, así que el diseño ya lo tiene en cuenta. Irá en los dos juegos: primero Rumble y después el modo VS de TD (decidido 6-10-2026).
+
+**Quién juega**: cualquiera, también los invitados (la cuenta silenciosa del punto 5 basta). Nombre automático cambiable ("Fan#4821").
+
+**Dos modos, cada uno con su cola y su clasificación**:
+- **Estándar**: cuentan el mazo y el nivel de las cartas. Los objetos no entran (se ignora el equipo al montar la partida).
+- **Salvaje**: cuentan además los objetos equipados, tal como los lleva cada uno.
+Son la misma partida con un ajuste distinto, así que el trabajo es el mismo: la `cola` y la `sala` llevan una columna `modo` y solo se empareja a gente del mismo modo; la tabla `pvp` guarda puntos por modo. Si en un modo hay poca gente, el mensaje de "no hay rivales" ofrece el otro.
+
+**Emparejamiento** (sin servidor propio, solo Postgres + Realtime):
+- Tabla `cola (usuario, juego, nivel, entra)`. Función `buscar_rival(juego, nivel)` que, en una sola transacción, coge al que más lleva esperando con nivel parecido (`for update skip locked`) y crea la `sala`; si no hay nadie, te mete en la cola.
+- Los dos se unen al canal Realtime `sala:<id>`. Presence dice si el otro sigue ahí.
+- Si en ~30 s no hay nadie: "No hay rivales ahora. ¿Juegas contra la IA?" (la IA ya existe). El rango de nivel se abre con la espera.
+
+**Cómo se sincroniza la partida: lockstep determinista** (lo que usan los Clash/RTS):
+- Solo viajan las jugadas ("carta X en la casilla Y en el tick 412"), no las posiciones. Las dos máquinas simulan lo mismo con la misma semilla.
+- Muy pocos mensajes (~1-2 por segundo y partida): el plan gratis (100 mensajes/s, 200 conexiones) da para unas 50 partidas a la vez.
+- Retardo de entrada de ~3 ticks para esconder la latencia; cada segundo se manda un resumen (hash) del estado para detectar desincronización o trampas.
+- **Trabajo previo en Rumble**: hoy la simulación usa `Math.random` (≈40 sitios en `06*`, `14a`, `17a`...) y el paso de tiempo del fotograma. Hace falta: (1) un `rnd` con semilla para la simulación (lo visual de `07*` puede seguir con `Math.random`), (2) paso fijo (p. ej. 20 ticks/s) separado del dibujo, (3) prueba que juegue la misma partida dos veces y compare hashes. Se puede ir haciendo antes que el PvP con el protocolo base.py/comprobar.py.
+
+**Trampas en PvP**:
+- Hasta que exista la tienda, el nivel y los objetos salen del SAVE y se pueden editar. Con la tienda (punto 14) el inventario pasa al servidor y Salvaje deja de fiarse del SAVE.
+- Lo que sí se hace, y con poco trabajo: al entrar en la cola se sube el mazo (cartas, niveles y objetos) y el servidor comprueba que exista todo, que el coste esté dentro de lo permitido y que los niveles no pasen del máximo del juego. Luego los dos clientes juegan con esa lista firmada por el servidor, no con lo que tenga cada uno en su SAVE.
+- La clasificación separada por modo limita el daño: quien se infle las cartas sube en su modo y se encuentra con rivales igual de inflados.
+- Al acabar, los dos mandan ganador y hash final a `cerrar_sala`; si coinciden, se suman puntos (ELO sencillo en una tabla `pvp`); si no, no cuenta. Si alguien se va, 15 s para volver y si no, gana el otro.
+- Más adelante, si hace falta, una Edge Function puede repetir la partida con las jugadas para validarla.
+
+**Si crece**: con más de ~50 partidas a la vez, Pro (25 $/mes) sube a 500 conexiones y más mensajes; con miles, se pasa el relevo a un servidor de juego (Colyseus/Nakama) sin cambiar cuentas ni datos.
+
+## 10. Coste si crece
+- 0 € hasta ~50.000 jugadores activos al mes y 500 MB.
+- Pro: 25 $/mes (100.000 activos, 8 GB); luego 0,00325 $ por activo extra y 0,125 $ por GB.
+- Emails del enlace mágico: el correo propio de Supabase solo envía unos pocos por hora. Para producción, SMTP propio gratis (Resend, 3.000/mes) con un dominio.
+
+## 11. Pasos (cada uno se puede subir solo)
+1. Crear el proyecto Supabase (UE), activar invitados, Google y email. Crear tabla, política y función. Lo hace el usuario en la web; Claude prepara el SQL.
+2. `core/js/sistema/cuenta.js`: iniciar Supabase, invitado silencioso, subir y bajar partida. Gancho en `loadSave`/`saveGame`; ningún `if` de juego (el nombre del juego sale de `NUCLEO`). Apuntar en COMUN.
+3. Choques: `nube.version`, la regla del punto 7 y la ventana "¿Qué partida quieres?".
+4. Pantalla "Cuenta" en Opciones y en la biblioteca (Google, enlace por email, cerrar sesión, borrar cuenta). Textos en español con su inglés en `core/idioma/`.
+5. Herramientas DEV: ver estado de la nube, forzar subida/bajada, simular sin conexión.
+6. Página de privacidad (ES/EN) enlazada desde Opciones y la biblioteca.
+7. Probar: dos navegadores con la misma cuenta, modo sin conexión (`servidor.py --con-sw`), cambiar partida en ambos y comprobar la pregunta.
+8. Publicar con entrada en novedades.
+9. (En paralelo, cuando se quiera) Rumble determinista: `rnd` con semilla, paso fijo y prueba de repetición.
+10. PvP en Rumble: tablas `cola`, `sala`, `pvp`, funciones `buscar_rival` y `cerrar_sala`, canal de sala, pantalla de búsqueda y resultado.
+11. PvP en TD (modo VS de `games/td/js/partida.js`): mismo emparejamiento y tablas (columna `juego`); solo hay que hacer determinista su simulación y cambiar la IA rival (`aiThink`) por las jugadas que llegan del canal. Lo que se pueda se sube a core al hacer Rumble, para que TD lo herede.
+
+## 12. Pendiente de decidir
+- Edad: resuelto en los puntos 13 y 14.
+- Antes de cobrar: darse de alta (autónomo o sociedad). Nombre MicroBlizz: se mantiene de momento asumiendo el riesgo de marca (decidido 6-10-2026); conviene tener pensado un nombre de recambio por si llega una queja.
+- Dominio propio para emails y, de paso, para no depender del nombre de la organización.
+
+## 13. Menores de edad
+En España, por debajo de 14 años hace falta permiso de los padres para tratar datos personales (RGPD más la ley española; en otros países de la UE el límite va de 13 a 16, y en EE. UU. COPPA lo pone en 13).
+
+Lo que se hace, que es lo más sencillo y deja el juego legal para todas las edades:
+1. **Jugar no pide datos.** La cuenta de invitado no guarda nombre, email ni nada personal: solo un identificador aleatorio y la partida. Eso no son datos de registro, así que un niño de 8 años puede jugar y guardar su progreso sin permiso de nadie.
+2. **Al vincular con Google o email**, una línea antes del botón: "Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo." Con una casilla o un botón de confirmación. Sin pedir fecha de nacimiento (eso ya sería recoger un dato más).
+3. **Nada de perfilado ni publicidad personalizada**, ni medición que siga al jugador entre webs. Las estadísticas, si las hay, anónimas y agregadas.
+4. **Sin chat libre ni nombres escritos a mano visibles para otros** en el PvP: nombre automático tipo "Fan#4821", y si se deja cambiar, una lista de palabras prohibidas. Así se evita lo que de verdad da problemas con menores.
+5. **Borrar la cuenta** desde Opciones, en dos toques, sin escribir a nadie.
+6. Página de privacidad corta y en lenguaje claro (ES/EN) que diga qué se guarda (la partida y el email si lo das), para qué, dónde (Supabase, UE) y cómo borrarlo.
+
+Para jugar y guardar, lo que no conviene: pedir fecha de nacimiento, pedir el email de un padre o montar una verificación de edad. Es más datos, más trabajo y más responsabilidad.
+
+Para comprar, en cambio, sí hay más cuidado: está en el punto 14.
+
+## 14. Tienda con dinero real
+Hoy no hay compras, pero la idea es tener una tienda que funcione para monetizar. Eso cambia tres cosas del plan.
+
+**Modelo (decidido 6-10-2026)**: todos los objetos salen del gachapón y todo se compra con recursos que se ganan jugando. Pagar solo da más recursos (acelera). Quien pague mucho tendrá ventaja al principio en PvP Salvaje, pero los que no pagan acaban teniendo los mismos objetos.
+
+**1. Recursos, gachapón e inventario en el servidor.**
+Como el dinero compra los mismos recursos que se ganan jugando, no se pueden separar "gemas pagadas" de "gemas ganadas". Si los recursos siguieran en el SAVE, editarlo equivaldría a pagar sin pagar, y en Salvaje se colarían objetos inventados. Por eso, en cada juego, pasan al servidor:
+- **Saldo de recursos** con los que se tira del gachapón (tabla `monedero`, por jugador y juego).
+- **Tiradas del gachapón**: las hace una función del servidor (`tirar(juego, gachapon)`) con las probabilidades guardadas allí. Así son las mismas para todos y se pueden publicar.
+- **Inventario de objetos y cartas** (tabla `inventario`): lo que usa el PvP Salvaje sale de aquí, no del SAVE.
+- **Recompensas por jugar**: el juego pide `recompensa(juego, motivo)` al acabar un nivel, una misión o el idle. El servidor aplica la tabla de recompensas con topes razonables (por nivel, por hora, por día). No es infalible, pero acota mucho lo que gana un tramposo.
+- **Compras**: tabla `compras` (cada pago con su id del cobro). El aviso del proveedor suma los recursos en `monedero`.
+- El progreso de niveles, estrellas, opciones y demás sigue en el SAVE (local primero, copia en la nube).
+
+Qué supone para el jugador:
+- Jugar niveles sigue funcionando sin conexión. Las recompensas se apuntan y se cobran al volver, con los mismos topes.
+- Tirar del gachapón, comprar y el PvP necesitan conexión.
+- Lo ganado y lo comprado se recupera en cualquier dispositivo.
+
+Qué supone en el código:
+- `core/js/sistema/gachapon.js`, `inventario.js` y `tienda.js` dejan de escribir el SAVE directamente para esas cosas y llaman al servidor. Es un cambio en core, así que Rumble y TD lo heredan.
+- Las cifras de cada juego (tablas de recompensa, probabilidades, precios) siguen siendo de cada juego, pero hay que subirlas al servidor. Una herramienta (`herramientas/subir_datos.py`) las lee de `games/<juego>/js/` y genera el SQL, para no tenerlas escritas dos veces.
+- Al pasar a esto, una migración única: lo que cada jugador tenga ya en su SAVE se sube una vez como saldo e inventario iniciales (con un tope, para que no sirva de puerta a trampas).
+
+**2. Cómo se cobra.**
+- Recomendado: un **comercio registrado** ("merchant of record") como Paddle o Lemon Squeezy. Ellos cobran, emiten la factura e ingresan el IVA de cada país de la UE por nosotros. Con Stripe directo eso nos toca a nosotros (alta en la ventanilla única de IVA, facturas). Comisión aprox. 5 % + 0,50 $ por venta (verificar al elegir): con esa parte fija, packs por debajo de ~2,99 € dejan poco.
+- Flujo: botón de compra → página de pago del proveedor → el proveedor avisa al servidor (webhook) → una Edge Function de Supabase comprueba la firma del aviso, apunta la compra y entrega. Nunca se entrega porque el navegador diga "he pagado".
+- Edge Functions entran en el plan gratis de Supabase (cientos de miles de llamadas al mes).
+- Si un día hay app en Android/iOS, allí es obligatorio el cobro de Google/Apple (15-30 %); las mismas tablas sirven, cambia solo quién avisa.
+
+**3. Menores y consumo.**
+- Para comprar hay que tener cuenta vinculada (Google o email), no de invitado, para que la compra no se pierda.
+- Antes de pagar: "Las compras las hace una persona adulta o con su permiso" con confirmación. En España y la UE un menor no puede contratar libremente, y los padres pueden reclamar compras no autorizadas: mejor dejarlo claro y devolver sin discusión si pasa.
+- Precio siempre también en euros, no solo en la moneda del juego (lo piden las autoridades de consumo de la UE desde 2024 para las monedas virtuales). Nada de prisas ni ofertas con cuenta atrás dirigidas a niños.
+- Como los recursos que se compran sirven para tirar del gachapón, a efectos legales es un gachapón con dinero real (caja de botín). Hace falta:
+  - mostrar las probabilidades de cada rareza en la pantalla del gachapón (lo exigen Apple y Google y es el camino de las normas de España y la UE);
+  - Bélgica prohíbe las cajas de botín de pago y los Países Bajos las han perseguido: en esos países, no vender recursos (el país sale del proveedor de pago);
+  - vigilar la ley española de cajas de botín, que lleva años en borrador; si sale, puede pedir límites de gasto o edad mínima.
+- Derecho de desistimiento: en contenido digital se pierde si el comprador lo acepta expresamente al pagar; casilla en la página de pago (el comercio registrado suele traerla).
+- Condiciones de venta y privacidad actualizadas, con datos de quien vende (hace falta estar dado de alta).
+
+**PvP Salvaje y compras**: se acepta que pagar dé ventaja temporal (decidido). Para que no queme a los que no pagan: el emparejamiento de Salvaje tiene en cuenta también la fuerza del equipo, no solo los puntos, y Estándar queda como el modo "justo".
+
+**Pasos extra** (después de las cuentas, antes o en paralelo al PvP):
+1. Tablas `monedero`, `inventario` y `compras`; funciones `tirar`, `recompensa` y Edge Function del webhook. Herramienta que sube las cifras de cada juego. Migración única desde el SAVE.
+2. Cuenta en el comercio registrado, en modo pruebas; catálogo de productos.
+3. Gachapón, inventario y tienda de core llaman al servidor. La tienda gana una pestaña de pago, con precios en euros y probabilidades visibles.
+4. Probar con pagos de prueba: compra, devolución, compra en un dispositivo y verla en otro.
+5. Alta legal, condiciones de venta y nombre definitivo antes de activar cobros reales.

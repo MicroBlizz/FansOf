@@ -87,9 +87,22 @@
 .home-grid { grid-template-columns: repeat(6, 1fr); gap: 5px; max-width: 500px; }
 .home-tile { padding: 7px 2px 5px; }
 .home-tile span { font-size: 12.5px; }
-/* v0.9.33: los iconos de la fila del menú, todos en dorado con el contorno del juego (antes cada uno de un color) */
-.home-tile svg [fill]:not([fill="none"]):not([fill="#20102c"]) { fill: var(--gold); }
-.home-tile svg [stroke]:not([stroke="#20102c"]) { stroke: var(--outline); }
+/* v0.9.34: los iconos de la fila del menú con la paleta «Atardecer»: coral, naranja, dorado y violeta, los colores del juego.
+   Cada icono sigue teniendo varios colores, pero de la misma familia (sin cian ni verde). Se cambia aquí, no en cada SVG. */
+.home-tile svg [fill="#63cfe0"] { fill: #ff7e8a; }
+.home-tile svg [fill="#d08cff"] { fill: #b98aff; }
+.home-tile svg [fill="#ffb04f"] { fill: #ffa24c; }
+.home-tile svg [fill="#ffe06a"] { fill: #ffd56b; }
+.home-tile svg [fill="#ffe07a"] { fill: #ffd56b; }
+.home-tile svg [fill="#ff9a3c"] { fill: #ffa24c; }
+.home-tile svg [fill="#ffcb3d"] { fill: #ffd56b; }
+.home-tile svg [fill="#7be04a"] { fill: #b98aff; }
+.home-tile svg [fill="#fff6ea"] { fill: #fff1dc; }
+.home-tile svg [fill="#cdb9ea"] { fill: #d9c6ff; }
+.home-tile svg [fill="#ff4b5c"] { fill: #ff7e8a; }
+.home-tile svg [fill="#b4bccb"] { fill: #d9c6ff; }
+.home-tile svg [stroke="#16a34a"] { stroke: #ff8a3c; }
+.home-tile svg [stroke="#a08ab8"] { stroke: #b98aff; }
 @media (hover: hover) {
   .feat:hover { filter: brightness(1.07); }
 }

@@ -92,4 +92,6 @@ IDIOMA.add({
   "Microblizz ha despedido al becario de traducción. Lo ha sustituido otro becario.": "Microblizz fired the translation intern. They replaced them with another intern.",
   "<b>MENÚ</b>: colores más ordenados. Naranja para jugar, violeta para los modos de juego y dorado para conseguir cosas (gashapón y tienda). Los iconos de abajo, todos en dorado.": "<b>MENU</b>: tidier colours. Orange to play, violet for game modes and gold for getting stuff (gashapon and shop). The icons at the bottom are all gold now.",
   "Microblizz ha contratado a un consultor de color. Cobró por decir «menos colores».": "Microblizz hired a colour consultant. They got paid to say «fewer colours».",
+  "<b>MENÚ</b>: los iconos de abajo vuelven a tener color, ahora con una paleta que combina: coral, naranja, dorado y violeta.": "<b>MENU</b>: the bottom icons have colour again, now with a palette that matches: coral, orange, gold and violet.",
+  "El consultor de color de Microblizz ha cambiado de opinión. Ha vuelto a cobrar.": "Microblizz's colour consultant changed their mind. They got paid again.",
 });

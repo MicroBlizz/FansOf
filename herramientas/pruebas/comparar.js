@@ -83,3 +83,16 @@ function pinta(R, A) {
   $('#lista').innerHTML = nombres.map(n => { const d = mal.get(n); return `<details class="${d ? 'mal' : 'bien'}"${d ? ' open' : ''}><summary>${d ? '✗' : '✓'} ${esc(n)}</summary>${d ? `<pre>${esc(JSON.stringify(d, null, 1))}</pre>` : ''}</details>`; }).join('');
 }
 for (const b of document.querySelectorAll('[data-juego]')) b.onclick = () => compara(b.dataset.juego, { tam: $('#tam').value }).catch(e => { $('#estado').innerHTML = `<pre class="mal">${esc(e && e.stack || e)}</pre>`; });
+
+// modo automático (lo usa herramientas/comprobar.py): ?auto=rumble,td[&tam=normal] manda el resultado como JSON a /__resultado
+const AUTO = new URLSearchParams(location.search);
+if (AUTO.get('auto')) (async () => {
+  const sal = [];
+  for (const j of AUTO.get('auto').split(',')) {
+    try {
+      const tam = AUTO.get('tam') || 'normal', R = await compara(j, { tam }), control = await compara(j, { tam, antes: '' });   // el control compara la versión de ahora consigo misma: lo que ya cambia solo (animaciones, relojes) es ruido
+      R.ruido = control.difs.map(d => d.paso); sal.push(R);
+    } catch (e) { sal.push({ juego: j, fallo: String(e && e.stack || e) }); }
+  }
+  await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
+})();

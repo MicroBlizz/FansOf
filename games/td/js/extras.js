@@ -14,7 +14,7 @@ const flip = (k, after) => () => { SAVE[k] = !SAVE[k]; saveGame(); play('select'
 $('#btn-feed').onclick = flip('feed'); $('#btn-badges').onclick = flip('noBadges'); $('#btn-blood').onclick = flip('blood'); $('#btn-chat').onclick = flip('chatOff', () => chatClear());
 $('#btn-tut').onclick = () => { play('select'); SAVE.tut = { done: false }; saveGame(); showMenu(); toast('Tutorial reiniciado: entra en Campaña y juega el nivel 1-1', true); };
 
-/* ---------- chat falso en directo (las frases son las del original: core/js/vendor/02-chat.js) ---------- */
+/* ---------- chat falso en directo (las frases son las del original: core/js/serie/frases.js) ---------- */
 const chatSt = { t: 6, recent: [], low: false };
 function chatSay(kind, extra) {
   if (SAVE.chatOff || G.screen !== 'play') return;

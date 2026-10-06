@@ -4,7 +4,7 @@ Copia de [Fans of Rumble](https://github.com/jdanielhl1984-commits/fans-of-rumbl
 
 Los archivos son los del original, sin cambios en el código. Lo único distinto son las rutas:
 
-- `js/01-config.js` y `js/03-arte.js` no están aquí: son idénticos a `core/js/vendor/01-config.js` y `core/js/vendor/03-arte.js`, así que `index.html` y `sw.js` los cargan de `core/`.
+- `js/01-config.js` y `js/03-arte.js` no están aquí: viven en `core/js/serie/config.js` y `core/js/serie/arte.js` (una sola copia para todos los juegos), así que `index.html` y `sw.js` los cargan de `core/`.
 - Los iconos se cargan de `core/img/`.
 
 No se han traído las partes que solo sirven para empaquetarlo como app nativa (`app/`, `capacitor.config.json`, `package.json`) ni sus herramientas de equilibrio.

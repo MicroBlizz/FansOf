@@ -1,5 +1,32 @@
-// Fans of Rumble · El campo: los caminos, los sitios de los edificios y el fondo pintado (sus colores por facción, THEMES, están en core/js/serie/arte/fondos.js)
+// Fans of Rumble · El campo: sus medidas (río, puentes, límites, zonas), el tiempo y el CAOS de la partida, las torres y la dificultad, los caminos y el fondo pintado (los colores de cada facción, THEMES, están en core/js/serie/arte/fondos.js)
 'use strict';
+// medidas del campo (540 × 960: W, H y RES siguen en core/js/serie/config.js)
+const TRAY_Y = 790;
+const FIELD_DY = 40;   // v0.9.11: el campo se dibuja 40 px más abajo para que la base enemiga no quede bajo el marcador
+const RIVER = { y: 420, top: 401, bottom: 439 };
+const BRIDGES = [110, 430];   // v0.9.19: los campos de jefe pueden cambiar cuántos puentes hay y dónde (ver 17-campos.js)
+const BASE_BRIDGES = [110, 430];
+let RIVER_OPEN = false;      // v0.9.19: río helado: se puede cruzar por cualquier sitio
+let BRIDGE_STYLE = null;     // v0.9.19: colores de los puentes (null = madera)
+const BRIDGE_HALF = 27;
+const BOUNDS = { x0: 18, x1: 522, y0: 66, y1: 782 };
+const ZONE = { p: { y0: 452, y1: 738 }, e: { y0: 72, y1: 388 } };
+// el tiempo y el CAOS de la partida, los edificios y la dificultad: se añaden a CFG
+Object.assign(CFG, {
+  matchTime: 240,          // 4:00
+  doubleAt: 60,            // último minuto: CAOS x2
+  chaosStart: 5,
+  chaosMax: 10,
+  chaosEvery: 2.8,         // segundos por punto de CAOS
+  structs: {
+    tower: { hp: 1000, dmg: 20, cd: 0.9, range: 130, r: 24 },
+    base:  { hp: 1800, dmg: 28, cd: 1.1, range: 100, r: 46 },
+  },
+  diff: {
+    easy:   { aiIncome: 0.8, think: [1.3, 2.3], bossCd: 20, stun: 2.0, despido: 28 },
+    normal: { aiIncome: 1.25, think: [0.5, 1.0], bossCd: 14, stun: 2.5, despido: 40 },
+  },
+});
 const PATHS = [[[270, 700], [110, 575], [110, 270], [270, 196]]];
 PATHS.push(PATHS[0].map(([a, b]) => [W - a, b]));
 function distToSeg(px, py, ax, ay, bx, by) { const dx = bx - ax, dy = by - ay; const t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy), 0, 1); return Math.hypot(px - (ax + dx * t), py - (ay + dy * t)); }

@@ -4,16 +4,6 @@
    CONFIG: every balance number lives here
    ========================================================= */
 const W = 540, H = 960, RES = 3, BG_RES = 2;
-const TRAY_Y = 790;
-const FIELD_DY = 40;   // v0.9.11: el campo se dibuja 40 px más abajo para que la base enemiga no quede bajo el marcador
-const RIVER = { y: 420, top: 401, bottom: 439 };
-const BRIDGES = [110, 430];   // v0.9.19: los campos de jefe pueden cambiar cuántos puentes hay y dónde (ver 17-campos.js)
-const BASE_BRIDGES = [110, 430];
-let RIVER_OPEN = false;      // v0.9.19: río helado: se puede cruzar por cualquier sitio
-let BRIDGE_STYLE = null;     // v0.9.19: colores de los puentes (null = madera)
-const BRIDGE_HALF = 27;
-const BOUNDS = { x0: 18, x1: 522, y0: 66, y1: 782 };
-const ZONE = { p: { y0: 452, y1: 738 }, e: { y0: 72, y1: 388 } };
 
 // v0.9.20: ajuste de equilibrio por facción, medido con miles de partidas automáticas (facción contra facción).
 // Multiplica la vida (hp) y el daño (dmg) de TODAS las unidades de esa facción, juegue quien juegue con ella. 1 = sin cambios.
@@ -29,11 +19,6 @@ const FAC_BAL = {
   pop:       { hp: 1.09, dmg: 1.08 },
 };
 const CFG = {
-  matchTime: 240,          // 4:00
-  doubleAt: 60,            // último minuto: CAOS x2
-  chaosStart: 5,
-  chaosMax: 10,
-  chaosEvery: 2.8,         // segundos por punto de CAOS
   // pasivas de facción
   passives: {
     animales:  { name: 'RABIA', radius: 85, perAlly: 0.10, maxStacks: 5 },   // +10 % de daño por aliado cerca, máx +50 %
@@ -88,14 +73,6 @@ const CFG = {
     spoiler: null, kaiju: null, descargabot: null, licenciabot: null, plusbot: null, cobradlc: null, servidorbot: null,
     remasterbot: null, huron: null, sombra: null, hater: null, arpia: null, dron: null, clickbait: null, campero: null, espia: null,
     paparazzi: null,
-  },
-  structs: {
-    tower: { hp: 1000, dmg: 20, cd: 0.9, range: 130, r: 24 },
-    base:  { hp: 1800, dmg: 28, cd: 1.1, range: 100, r: 46 },
-  },
-  diff: {
-    easy:   { aiIncome: 0.8, think: [1.3, 2.3], bossCd: 20, stun: 2.0, despido: 28 },
-    normal: { aiIncome: 1.25, think: [0.5, 1.0], bossCd: 14, stun: 2.5, despido: 40 },
   },
 };
 

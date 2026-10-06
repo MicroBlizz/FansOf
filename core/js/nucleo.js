@@ -23,7 +23,9 @@ const NUCLEO = (() => {
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
-    'js/serie/config.js',          // la serie: facciones, cartas y sus números
+    'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
+    'js/serie/facciones/animales.js', 'js/serie/facciones/nomuertos.js', 'js/serie/facciones/streamers.js', 'js/serie/facciones/heroes.js', 'js/serie/facciones/ciber.js', 'js/serie/facciones/memes.js', 'js/serie/facciones/gamer.js', 'js/serie/facciones/olvidados.js', 'js/serie/facciones/pop.js', 'js/serie/facciones/microblizz.js', 'js/serie/facciones/phony.js',
+    'js/serie/facciones/cierre.js', // lo que se calcula con todas las cartas ya puestas
     'js/serie/arte/base.js',        //           las ayudas de dibujo y ART y BOX vacíos
     'js/serie/arte/animales.js', 'js/serie/arte/nomuertos.js', 'js/serie/arte/streamers.js', 'js/serie/arte/heroes.js', 'js/serie/arte/ciber.js', 'js/serie/arte/memes.js', 'js/serie/arte/gamer.js', 'js/serie/arte/olvidados.js', 'js/serie/arte/pop.js', 'js/serie/arte/microblizz.js', 'js/serie/arte/phony.js',
     'js/serie/arte/sprites.js',     //           las cajas, buildSprites y drawVector (después de todos los dibujos)

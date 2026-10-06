@@ -7,13 +7,13 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/menus.css` · 57 KB
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
-- `core/js/nucleo.js` · 5 KB · NUCLEO, VERSION
+- `core/js/nucleo.js` · 6 KB · NUCLEO, VERSION
 - `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin
 - `core/js/retos.js` · 17 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon … (+7)
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 6 KB · RARITY, CATALOGO, SLOTS, QTIERS
-- `core/js/serie/config.js` · 59 KB · W, TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, FAC_BAL, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, GACHA_CARDS, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
+- `core/js/serie/config.js` · 15 KB · W, TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, FAC_BAL, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
 - `core/js/serie/arte/animales.js` · 22 KB
@@ -30,6 +30,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/arte/pop.js` · 15 KB
 - `core/js/serie/arte/sprites.js` · 6 KB · SPR, buildSprites, drawVector
 - `core/js/serie/arte/streamers.js` · 18 KB
+- `core/js/serie/facciones/animales.js` · 5 KB
+- `core/js/serie/facciones/ciber.js` · 5 KB
+- `core/js/serie/facciones/cierre.js` · 1 KB · GACHA_CARDS
+- `core/js/serie/facciones/gamer.js` · 6 KB
+- `core/js/serie/facciones/heroes.js` · 5 KB
+- `core/js/serie/facciones/memes.js` · 5 KB
+- `core/js/serie/facciones/microblizz.js` · 2 KB
+- `core/js/serie/facciones/nomuertos.js` · 6 KB
+- `core/js/serie/facciones/olvidados.js` · 5 KB
+- `core/js/serie/facciones/phony.js` · 2 KB
+- `core/js/serie/facciones/pop.js` · 6 KB
+- `core/js/serie/facciones/streamers.js` · 5 KB
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
 - `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
@@ -109,7 +121,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
 - `herramientas/pruebas/comparar.js` · 7 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
-- `herramientas/pruebas/dentro.js` · 12 KB
+- `herramientas/pruebas/dentro.js` · 13 KB
 - `herramientas/pruebas/index.html` · 2 KB
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA

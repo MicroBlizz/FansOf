@@ -1,18 +1,18 @@
 // Fans Of · Facción Animales Locos: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
-    bunny:     { name: 'CrazyBunny',  cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: 'Chaos Jump', desc: 'Salta sobre el grupo enemigo más grande y hace 50 de daño en área cada 8 s. Si cae, vuelve a los 12 s.' },
-    squirrel:  { name: 'MadSquirrel', cost: 2, count: 2, rarity: 'common', rar: 'Común', tag: 'Rápidas · x2', desc: 'Salen dos. Rápidas y frágiles: perfectas para distraer a las torres.' },
-    beaver:    { name: 'BoomBeaver',  cost: 2, count: 1, rarity: 'common', rar: 'Común', tag: 'Kamikaze', desc: 'Corre a la torre más cercana con dinamita y explota: 180 al edificio. Él no sobrevive, claro.' },
-    fox:       { name: 'SlyFox',      cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Invisible · x3', desc: 'Invisible hasta que ataca. Su primer golpe hace el triple y, si mata, vuelve a desaparecer.' },
-    meercat:   { name: 'MeerCat',     cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Cura aliados', desc: 'Enfermera con alas de ángel. Va detrás de tus tropas y cura a las que tiene delante. Casi no pega.' },
-    junkcoon:  { name: 'JunkCoon',    cost: 4, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Daño en área', desc: 'Lanza bolsas de basura explosivas desde lejos. Ideal contra grupos de becarios.' },
-    mechavaca: { name: 'MechaVaca',   cost: 5, count: 1, rarity: 'epic',   rar: 'Épica', tag: 'Tanque + vaca', desc: 'Una vaca en un mecha rosa. Aguanta muchísimo y, cuando el mecha revienta, la vaca sale y sigue peleando.' },
+    bunny: { name: 'CrazyBunny', rarity: 'leader', rar: 'Líder', tag: 'Chaos Jump', desc: 'Salta sobre el grupo enemigo más grande y hace 50 de daño en área cada 8 s. Si cae, vuelve a los 12 s.' },
+    squirrel: { name: 'MadSquirrel', rarity: 'common', rar: 'Común', tag: 'Rápidas · x2', desc: 'Salen dos. Rápidas y frágiles: perfectas para distraer a las torres.' },
+    beaver: { name: 'BoomBeaver', rarity: 'common', rar: 'Común', tag: 'Kamikaze', desc: 'Corre a la torre más cercana con dinamita y explota: 180 al edificio. Él no sobrevive, claro.' },
+    fox: { name: 'SlyFox', rarity: 'rare', rar: 'Rara', tag: 'Invisible · x3', desc: 'Invisible hasta que ataca. Su primer golpe hace el triple y, si mata, vuelve a desaparecer.' },
+    meercat: { name: 'MeerCat', rarity: 'rare', rar: 'Rara', tag: 'Cura aliados', desc: 'Enfermera con alas de ángel. Va detrás de tus tropas y cura a las que tiene delante. Casi no pega.' },
+    junkcoon: { name: 'JunkCoon', rarity: 'rare', rar: 'Rara', tag: 'Daño en área', desc: 'Lanza bolsas de basura explosivas desde lejos. Ideal contra grupos de becarios.' },
+    mechavaca: { name: 'MechaVaca', rarity: 'epic', rar: 'Épica', tag: 'Tanque + vaca', desc: 'Una vaca en un mecha rosa. Aguanta muchísimo y, cuando el mecha revienta, la vaca sale y sigue peleando.' },
     // v0.9.15: gashapón de cartas: un mata-sanadores y 3 hechizos por facción
-    huron: { name: "HurónNinja", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Ninja del bosque: salta por encima de la primera línea y cae junto al sanador o al tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'animales' },
-    sp_bellotas: { name: "Lluvia de bellotas", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Una tormenta de bellotas cae sobre la zona: 150 de daño a los enemigos (y un poco a los edificios).", gacha: true, fac: 'animales', spell: { side: "foe", kind: "dmg", r: 80, amt: 150, bld: 0.35, fx: "acorn", col: "#c0742e" } },
-    sp_botiquin: { name: "Botiquín del bosque", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Tiritas, hojas y mucho cariño: cura 170 a tus tropas de la zona.", gacha: true, fac: 'animales', spell: { side: "ally", kind: "heal", r: 90, amt: 170, fx: "leaf", col: "#7be04a" } },
-    sp_pulgas: { name: "Pulgas", cost: 3, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Una plaga de pulgas: los enemigos de la zona se rascan sin parar y no pueden atacar durante 4 s.", gacha: true, fac: 'animales', spell: { side: "foe", kind: "disarm", r: 85, t: 4, fx: "flea", col: "#8b5530", label: "¡QUÉ PICOR!" } },
+    huron: { name: "HurónNinja", rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Ninja del bosque: salta por encima de la primera línea y cae junto al sanador o al tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'animales' },
+    sp_bellotas: { name: "Lluvia de bellotas", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Una tormenta de bellotas cae sobre la zona: 150 de daño a los enemigos (y un poco a los edificios).", gacha: true, fac: 'animales' },
+    sp_botiquin: { name: "Botiquín del bosque", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Tiritas, hojas y mucho cariño: cura 170 a tus tropas de la zona.", gacha: true, fac: 'animales' },
+    sp_pulgas: { name: "Pulgas", rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Una plaga de pulgas: los enemigos de la zona se rascan sin parar y no pueden atacar durante 4 s.", gacha: true, fac: 'animales' },
 });
 Object.assign(TYPES, {
   squirrel: { top: 40, foot: '#7a3414' },

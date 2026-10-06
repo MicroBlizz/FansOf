@@ -2,17 +2,17 @@
 'use strict';
 Object.assign(CFG.cards, {
     // Streamers
-    twitchking:  { name: 'StreamKing',   cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: 'En directo', desc: 'El rey del directo. Mientras siga en pie, los aliados que tiene cerca pegan un 30 % más.' },
-    subswarm:    { name: 'SubSwarm',     cost: 2, count: 3, rarity: 'common', rar: 'Común', tag: 'Salen 3', desc: 'Tres suscriptores con dedo de espuma. Frágiles, rápidos y muy entregados.' },
-    hypebeast:   { name: 'HypeBeast',    cost: 3, count: 1, rarity: 'common', rar: 'Común', tag: 'Rápido', desc: 'Fan con ropa de marca y hasta arriba de bebida energética. Pega rapidísimo.' },
-    viralbot:    { name: 'ViralBot',     cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Aturde', desc: 'Cámara voladora que graba clips: cada disparo aturde un instante al objetivo.' },
-    snackmom:    { name: 'SnackMom',     cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Cura aliados', desc: 'La madre del streamer va detrás de tus tropas y reparte bocadillos a las que tiene delante.' },
-    hypetrain:   { name: 'HypeTrain',    cost: 4, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Rompe torres', desc: 'El tren del hype va directo a por los edificios. No hay quien lo pare.' },
-    banhammer:   { name: 'BanHammer',    cost: 5, count: 1, rarity: 'epic',   rar: 'Épica', tag: 'Área · empuja', desc: 'El moderador. Aguanta muchísimo y cada martillazo golpea en área y aparta a los enemigos.' },
-    hater: { name: "Hater", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Escribe «ESTO ES MALÍSIMO» y salta a por el sanador o el tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'streamers' },
-    sp_donaciones: { name: "Lluvia de donaciones", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Caen monedas de los fans: 130 de daño en la zona, y cada enemigo al que da te devuelve 0,3 de CAOS (hasta 1,5).", gacha: true, fac: 'streamers', spell: { side: "foe", kind: "dmg", r: 85, amt: 130, bld: 0.3, gain: 0.3, fx: "coin", col: "#ffcb3d" } },
-    sp_merienda: { name: "Pausa para merendar", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "La madre del streamer trae la merienda: cura 160 a tus tropas de la zona.", gacha: true, fac: 'streamers', spell: { side: "ally", kind: "heal", r: 90, amt: 160, fx: "sandwich", col: "#ffb04f" } },
-    sp_baneo: { name: "Ban temporal", cost: 4, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "El moderador banea a los enemigos de la zona: desaparecen 3 s y no pueden hacer nada.", gacha: true, fac: 'streamers', spell: { side: "foe", kind: "ban", r: 75, t: 3, fx: "hammer", col: "#a855f7", label: "BANEADO" } },
+    twitchking: { name: 'StreamKing', rarity: 'leader', rar: 'Líder', tag: 'En directo', desc: 'El rey del directo. Mientras siga en pie, los aliados que tiene cerca pegan un 30 % más.' },
+    subswarm: { name: 'SubSwarm', rarity: 'common', rar: 'Común', tag: 'Salen 3', desc: 'Tres suscriptores con dedo de espuma. Frágiles, rápidos y muy entregados.' },
+    hypebeast: { name: 'HypeBeast', rarity: 'common', rar: 'Común', tag: 'Rápido', desc: 'Fan con ropa de marca y hasta arriba de bebida energética. Pega rapidísimo.' },
+    viralbot: { name: 'ViralBot', rarity: 'rare', rar: 'Rara', tag: 'Aturde', desc: 'Cámara voladora que graba clips: cada disparo aturde un instante al objetivo.' },
+    snackmom: { name: 'SnackMom', rarity: 'rare', rar: 'Rara', tag: 'Cura aliados', desc: 'La madre del streamer va detrás de tus tropas y reparte bocadillos a las que tiene delante.' },
+    hypetrain: { name: 'HypeTrain', rarity: 'rare', rar: 'Rara', tag: 'Rompe torres', desc: 'El tren del hype va directo a por los edificios. No hay quien lo pare.' },
+    banhammer: { name: 'BanHammer', rarity: 'epic', rar: 'Épica', tag: 'Área · empuja', desc: 'El moderador. Aguanta muchísimo y cada martillazo golpea en área y aparta a los enemigos.' },
+    hater: { name: "Hater", rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Escribe «ESTO ES MALÍSIMO» y salta a por el sanador o el tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'streamers' },
+    sp_donaciones: { name: "Lluvia de donaciones", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Caen monedas de los fans: 130 de daño en la zona, y cada enemigo al que da te devuelve 0,3 de CAOS (hasta 1,5).", gacha: true, fac: 'streamers' },
+    sp_merienda: { name: "Pausa para merendar", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "La madre del streamer trae la merienda: cura 160 a tus tropas de la zona.", gacha: true, fac: 'streamers' },
+    sp_baneo: { name: "Ban temporal", rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "El moderador banea a los enemigos de la zona: desaparecen 3 s y no pueden hacer nada.", gacha: true, fac: 'streamers' },
 });
 Object.assign(TYPES, {
   twitchking:  { top: 63, foot: '#2b2d3a' },

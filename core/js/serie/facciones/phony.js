@@ -2,13 +2,13 @@
 'use strict';
 Object.assign(CFG.enemyCards, {
     // Phony (v0.9.13)
-    descargabot: { name: 'Descarga99', cost: 2, count: 3 },
-    licenciabot: { name: 'LicenciaBot', cost: 3, count: 1 },
-    plusbot:     { name: 'PayPlus', cost: 3, count: 1 },
-    cobradlc:    { name: 'CobraDLC', cost: 4, count: 1 },
-    servidorbot: { name: 'Servidor Caído', cost: 5, count: 1 },
-    remasterbot: { name: 'Remaster 70 €', cost: 5, count: 1 },
-    sp_cobro: { name: "Cobro automático", cost: 3, count: 1, spell: { side: "foe", kind: "dmg", r: 80, amt: 150, bld: 0.3, steal: 0.5, fx: "card9", col: "#ffcb3d", label: "-9,99 €" } },
+    descargabot: { name: 'Descarga99' },
+    licenciabot: { name: 'LicenciaBot' },
+    plusbot: { name: 'PayPlus' },
+    cobradlc: { name: 'CobraDLC' },
+    servidorbot: { name: 'Servidor Caído' },
+    remasterbot: { name: 'Remaster 70 €' },
+    sp_cobro: { name: "Cobro automático" },
 });
 Object.assign(TYPES, {
   descargabot: { top: 40, foot: '#94a3b8' }, licenciabot: { top: 45, foot: '#172554' }, plusbot: { top: 40, foot: null, hover: true, jet: true },

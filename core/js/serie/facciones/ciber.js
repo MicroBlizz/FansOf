@@ -2,17 +2,17 @@
 'use strict';
 Object.assign(CFG.cards, {
     // Ciberpunks
-    cybermarine: { name: 'CyberMarine',  cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: 'Orbital Drop', desc: 'Marine con armadura y fusil rápido. Cada 9 s le caen del cielo 2 drones de apoyo.' },
-    nanobot:     { name: 'NanoBots',     cost: 2, count: 4, rarity: 'common', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro robots diminutos y rápidos que rodean al enemigo.' },
-    cyberninja:  { name: 'CyberNinja',   cost: 3, count: 1, rarity: 'common', rar: 'Común', tag: 'Teletransporte', desc: 'Ninja con katana de neón: cada 5 s se teletransporta hacia su objetivo.' },
-    techdroid:   { name: 'TechDroid',    cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Repara', desc: 'Droide de soporte: va detrás de tus tropas y repara a las que tiene delante.' },
-    hackerkid:   { name: 'HackerKid',    cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Hackea torres', desc: 'Cada 8 s hackea la torre enemiga más cercana y la deja 3,5 s sin disparar.' },
-    neonsniper:  { name: 'NeonSniper',   cost: 4, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Francotiradora', desc: 'Dispara muy despacio, pero desde muy lejos y con muchísimo daño.' },
-    siegemech:   { name: 'SiegeMech',    cost: 5, count: 1, rarity: 'epic',   rar: 'Épica', tag: 'Artillería', desc: 'Mecha de asedio con cañón: daño en área desde lejos. Lento pero demoledor.' },
-    dron: { name: "DronCazador", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Dron de caza: vuela por encima de la pelea y se lanza a por el sanador o el tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'ciber' },
-    sp_orbital: { name: "Ataque orbital", cost: 4, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Un satélite marca la zona y, un segundo después, dispara: 240 de daño.", gacha: true, fac: 'ciber', spell: { side: "foe", kind: "dmg", r: 65, amt: 240, bld: 0.5, delay: 1.2, fx: "laser", col: "#22e3ff" } },
-    sp_nanobots: { name: "Parche de nanobots", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Nanobots que reparan: curan 130 a tus tropas de la zona y les dan un escudo de 60.", gacha: true, fac: 'ciber', spell: { side: "ally", kind: "heal", r: 85, amt: 130, shield: 60, fx: "chip", col: "#7df3ff" } },
-    sp_update: { name: "Actualización obligatoria", cost: 4, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Los enemigos de la zona se quedan «instalando la actualización 1 de 47»: no se mueven ni atacan durante 3 s.", gacha: true, fac: 'ciber', spell: { side: "foe", kind: "stun", r: 80, t: 3, sk: "update", fx: "bar", col: "#22e3ff", label: "INSTALANDO 1/47…" } },
+    cybermarine: { name: 'CyberMarine', rarity: 'leader', rar: 'Líder', tag: 'Orbital Drop', desc: 'Marine con armadura y fusil rápido. Cada 9 s le caen del cielo 2 drones de apoyo.' },
+    nanobot: { name: 'NanoBots', rarity: 'common', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro robots diminutos y rápidos que rodean al enemigo.' },
+    cyberninja: { name: 'CyberNinja', rarity: 'common', rar: 'Común', tag: 'Teletransporte', desc: 'Ninja con katana de neón: cada 5 s se teletransporta hacia su objetivo.' },
+    techdroid: { name: 'TechDroid', rarity: 'rare', rar: 'Rara', tag: 'Repara', desc: 'Droide de soporte: va detrás de tus tropas y repara a las que tiene delante.' },
+    hackerkid: { name: 'HackerKid', rarity: 'rare', rar: 'Rara', tag: 'Hackea torres', desc: 'Cada 8 s hackea la torre enemiga más cercana y la deja 3,5 s sin disparar.' },
+    neonsniper: { name: 'NeonSniper', rarity: 'rare', rar: 'Rara', tag: 'Francotiradora', desc: 'Dispara muy despacio, pero desde muy lejos y con muchísimo daño.' },
+    siegemech: { name: 'SiegeMech', rarity: 'epic', rar: 'Épica', tag: 'Artillería', desc: 'Mecha de asedio con cañón: daño en área desde lejos. Lento pero demoledor.' },
+    dron: { name: "DronCazador", rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Dron de caza: vuela por encima de la pelea y se lanza a por el sanador o el tirador enemigo. A esos les hace el doble de daño.", gacha: true, fac: 'ciber' },
+    sp_orbital: { name: "Ataque orbital", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Un satélite marca la zona y, un segundo después, dispara: 240 de daño.", gacha: true, fac: 'ciber' },
+    sp_nanobots: { name: "Parche de nanobots", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Nanobots que reparan: curan 130 a tus tropas de la zona y les dan un escudo de 60.", gacha: true, fac: 'ciber' },
+    sp_update: { name: "Actualización obligatoria", rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Los enemigos de la zona se quedan «instalando la actualización 1 de 47»: no se mueven ni atacan durante 3 s.", gacha: true, fac: 'ciber' },
 });
 Object.assign(TYPES, {
   cybermarine: { top: 62, foot: '#1f2937' },

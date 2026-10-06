@@ -1,14 +1,14 @@
 // Fans Of · Facción Microblizz (solo rival): sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.enemyCards, {
-    becario: { name: 'Becario',    cost: 2, count: 2 },
-    starbot: { name: 'StarBot',    cost: 3, count: 1 },
-    fallen:  { name: 'FallenHero', cost: 5, count: 1 },
-    cajabotin:  { name: 'CajaBotín', cost: 3, count: 1 },
-    soportebot: { name: 'SoporteBot', cost: 3, count: 1 },
-    parchebot:  { name: 'Parche Día 1', cost: 4, count: 1 },
+    becario: { name: 'Becario' },
+    starbot: { name: 'StarBot' },
+    fallen: { name: 'FallenHero' },
+    cajabotin: { name: 'CajaBotín' },
+    soportebot: { name: 'SoporteBot' },
+    parchebot: { name: 'Parche Día 1' },
     // v0.9.15: hechizos de las empresas (los usa la CPU)
-    sp_despido: { name: "Despido fulminante", cost: 3, count: 1, spell: { side: "foe", kind: "dmg", r: 70, amt: 170, bld: 0.3, fx: "letter", col: "#fff6ea", label: "¡DESPEDIDO!" } },
+    sp_despido: { name: "Despido fulminante" },
 });
 Object.assign(TYPES, {
   becario:  { top: 34, foot: '#5b6578' },

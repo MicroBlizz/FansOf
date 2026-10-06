@@ -15,7 +15,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 6 KB · RARITY, CATALOGO, SLOTS, QTIERS
-- `core/js/serie/config.js` · 11 KB · W, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
+- `core/js/serie/config.js` · 11 KB · W, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
 - `core/js/serie/arte/animales.js` · 22 KB
@@ -34,14 +34,14 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/arte/streamers.js` · 18 KB
 - `core/js/serie/facciones/animales.js` · 4 KB
 - `core/js/serie/facciones/ciber.js` · 4 KB
-- `core/js/serie/facciones/cierre.js` · 1 KB · GACHA_CARDS
-- `core/js/serie/facciones/gamer.js` · 5 KB
+- `core/js/serie/facciones/cierre.js` · <1 KB · GACHA_CARDS
+- `core/js/serie/facciones/gamer.js` · 4 KB
 - `core/js/serie/facciones/heroes.js` · 4 KB
-- `core/js/serie/facciones/memes.js` · 4 KB
-- `core/js/serie/facciones/microblizz.js` · 2 KB
-- `core/js/serie/facciones/nomuertos.js` · 5 KB
+- `core/js/serie/facciones/memes.js` · 3 KB
+- `core/js/serie/facciones/microblizz.js` · 1 KB
+- `core/js/serie/facciones/nomuertos.js` · 4 KB
 - `core/js/serie/facciones/olvidados.js` · 4 KB
-- `core/js/serie/facciones/phony.js` · 2 KB
+- `core/js/serie/facciones/phony.js` · 1 KB
 - `core/js/serie/facciones/pop.js` · 4 KB
 - `core/js/serie/facciones/streamers.js` · 4 KB
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
@@ -61,6 +61,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-partida.css` · 19 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
+- `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL
 - `games/rumble/js/02a-objetos.js` · 7 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
 - `games/rumble/js/02b-mundos.js` · 8 KB · WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen
 - `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC
@@ -108,6 +109,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/sw.js` · <1 KB
 - `games/td/css/td.css` · 17 KB
 - `games/td/js/ajustes.js` · 6 KB · AJUSTES
+- `games/td/js/cartas.js` · 8 KB
 - `games/td/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, SIDES, sideTag, sideText, metaDefaults, defOfSafe, facOfCard, noSides, NOMODS, cardMods, xpGrant, give, newSave, migrateSave
 - `games/td/js/datos-enemigos.js` · 11 KB · FOES, foeHp, foeSpeed, foeName, ETRAITS, WORLDS_TD, LEVEL_RULE, GRID, TOWER_R
 - `games/td/js/datos-torres.js` · 19 KB · TD, VS, TOWERS, PASSIVES

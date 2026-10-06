@@ -2,18 +2,18 @@
 'use strict';
 Object.assign(CFG.cards, {
     // Comunidad Gamer (v0.9.13)
-    progamer:    { name: 'ProGamer',     cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: 'Combo', desc: 'Campeón de torneos con un teclado como espada. Ataca rapidísimo y cada 4.º golpe es un ¡COMBO!: triple de daño y aturde. Si cae, vuelve a los 12 s.' },
-    noobs:       { name: 'Noobs',        cost: 2, count: 3, rarity: 'common', rar: 'Común', tag: 'Salen 3', desc: 'Tres novatos con gorro de hélice. No saben jugar, pero le ponen muchas ganas.' },
-    speedrunner: { name: 'Speedrunner',  cost: 3, count: 1, rarity: 'common', rar: 'Común', tag: 'Rompe torres', desc: 'Se salta a los enemigos (como en sus partidas) y corre directa a por las torres. Nadie corre más que ella.' },
-    modder:      { name: 'Modder',       cost: 3, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Repara', desc: 'Arregla el juego mejor que la empresa: va detrás de tus tropas y repara a las que tiene delante.' },
-    coleccionista:{ name: 'Coleccionista', cost: 4, count: 1, rarity: 'rare', rar: 'Rara',  tag: 'Disco que rebota', desc: 'Lanza sus juegos en disco (los físicos, los de verdad). Cada disco rebota a otro enemigo cercano.' },
-    ragequitter: { name: 'RageQuitter',  cost: 4, count: 1, rarity: 'rare',   rar: 'Rara',  tag: 'Explota al caer', desc: 'Pierde y se enfada. Al caer, tira el mando y explota: 100 de daño a los enemigos de alrededor.' },
-    recreativa:  { name: 'Recreativa',   cost: 5, count: 1, rarity: 'epic',   rar: 'Épica', tag: 'Tanque + noobs', desc: 'Una máquina arcade con piernas. Aguanta muchísimo y, cuando cae, salen 2 noobs a seguir jugando.' },
-    campero: { name: "Campero", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Sale escondido en un arbusto y, cuando ve a un sanador o a un tirador, salta a por él. A esos les hace el doble de daño.", gacha: true, fac: 'gamer' },
-    sp_critico: { name: "Golpe crítico", cost: 4, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "¡CRÍTICO! Un golpe enorme en una zona pequeña: 300 de daño.", gacha: true, fac: 'gamer', spell: { side: "foe", kind: "dmg", r: 45, amt: 300, bld: 0.45, fx: "sword", col: "#ff4b5c" } },
-    sp_review: { name: "Review bombing", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Hechizo · loco', desc: "La comunidad llena la tienda de reseñas de 1 estrella: las torres y la sede del rival en la zona reciben un 40 % más de daño durante 8 s.", gacha: true, fac: 'gamer', spell: { side: "foe", kind: "review", r: 80, t: 8, amp: 0.4, fx: "letter", col: "#ffcb3d", label: "★☆☆☆☆" } },
-    sp_energetica: { name: "Bebida energética", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Una lata para todos: cura 120 a tus tropas de la zona y atacan un 30 % más rápido durante 5 s.", gacha: true, fac: 'gamer', spell: { side: "ally", kind: "heal", r: 85, amt: 120, haste: 5, fx: "can", col: "#7be04a" } },
-    sp_ping: { name: "Ping de 999", cost: 3, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Lag horrible: los enemigos de la zona dan un salto hacia atrás y se quedan congelados 1 s.", gacha: true, fac: 'gamer', spell: { side: "foe", kind: "knock", r: 85, d: 80, t: 1, fx: "wifi", col: "#ff4b5c", label: "LAG" } },
+    progamer: { name: 'ProGamer', rarity: 'leader', rar: 'Líder', tag: 'Combo', desc: 'Campeón de torneos con un teclado como espada. Ataca rapidísimo y cada 4.º golpe es un ¡COMBO!: triple de daño y aturde. Si cae, vuelve a los 12 s.' },
+    noobs: { name: 'Noobs', rarity: 'common', rar: 'Común', tag: 'Salen 3', desc: 'Tres novatos con gorro de hélice. No saben jugar, pero le ponen muchas ganas.' },
+    speedrunner: { name: 'Speedrunner', rarity: 'common', rar: 'Común', tag: 'Rompe torres', desc: 'Se salta a los enemigos (como en sus partidas) y corre directa a por las torres. Nadie corre más que ella.' },
+    modder: { name: 'Modder', rarity: 'rare', rar: 'Rara', tag: 'Repara', desc: 'Arregla el juego mejor que la empresa: va detrás de tus tropas y repara a las que tiene delante.' },
+    coleccionista: { name: 'Coleccionista', rarity: 'rare', rar: 'Rara', tag: 'Disco que rebota', desc: 'Lanza sus juegos en disco (los físicos, los de verdad). Cada disco rebota a otro enemigo cercano.' },
+    ragequitter: { name: 'RageQuitter', rarity: 'rare', rar: 'Rara', tag: 'Explota al caer', desc: 'Pierde y se enfada. Al caer, tira el mando y explota: 100 de daño a los enemigos de alrededor.' },
+    recreativa: { name: 'Recreativa', rarity: 'epic', rar: 'Épica', tag: 'Tanque + noobs', desc: 'Una máquina arcade con piernas. Aguanta muchísimo y, cuando cae, salen 2 noobs a seguir jugando.' },
+    campero: { name: "Campero", rarity: 'epic', rar: 'Épica', tag: 'Mata-sanadores', desc: "Sale escondido en un arbusto y, cuando ve a un sanador o a un tirador, salta a por él. A esos les hace el doble de daño.", gacha: true, fac: 'gamer' },
+    sp_critico: { name: "Golpe crítico", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "¡CRÍTICO! Un golpe enorme en una zona pequeña: 300 de daño.", gacha: true, fac: 'gamer' },
+    sp_review: { name: "Review bombing", rarity: 'epic', rar: 'Épica', tag: 'Hechizo · loco', desc: "La comunidad llena la tienda de reseñas de 1 estrella: las torres y la sede del rival en la zona reciben un 40 % más de daño durante 8 s.", gacha: true, fac: 'gamer' },
+    sp_energetica: { name: "Bebida energética", rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Una lata para todos: cura 120 a tus tropas de la zona y atacan un 30 % más rápido durante 5 s.", gacha: true, fac: 'gamer' },
+    sp_ping: { name: "Ping de 999", rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Lag horrible: los enemigos de la zona dan un salto hacia atrás y se quedan congelados 1 s.", gacha: true, fac: 'gamer' },
 });
 Object.assign(TYPES, {
   progamer:    { top: 58, foot: '#1f2937' }, noobs: { top: 34, foot: '#1f2937' }, speedrunner: { top: 42, foot: '#f5f5f5' }, modder: { top: 46, foot: '#1f2937' },

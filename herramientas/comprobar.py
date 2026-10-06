@@ -61,11 +61,11 @@ exe = navegador()
 if not exe:
     fallo('no encuentro Chrome ni Edge')
 
-def pasada():
+def pasada(juegos):
     LISTO.clear()
     servidor = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Peticion, directory=RAIZ))
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
-    url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(JUEGOS)}&tam={TAM}'
+    url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(juegos)}&tam={TAM}'
     perfil = tempfile.mkdtemp(prefix='comprobar-')
     proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', f'--user-data-dir={perfil}',
                                '--autoplay-policy=no-user-gesture-required', url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -80,16 +80,16 @@ def pasada():
     resultados = json.loads(RESULTADO['json'])
 
 
-    bien = True
+    bien = {}
     for R in resultados:
         if 'fallo' in R:
-            bien = False
+            bien[R['juego']] = False
             print(f'  {R["juego"]}: el comparador falló\n{R["fallo"]}')
             continue
         ruido = set(R['ruido'])
         reales = [d for d in R['difs'] if d['paso'] not in ruido]
         ok = not reales and not R['erroresAhora'] and R['pasos'] == R['pasosAhora']
-        bien &= ok
+        bien[R['juego']] = ok
         print(f'  {R["juego"]}: {R["pasos"]} comprobaciones, {len(reales)} distintas, {len(R["erroresAhora"])} errores ahora ({len(R["erroresAntes"])} antes), {len(ruido)} ignoradas por cambiar solas')
         for d in reales[:10]:
             print('    ✗', json.dumps(d, ensure_ascii=False)[:400])
@@ -108,13 +108,14 @@ def archivos_grandes(limite=30 * 1024):   # el plan de refactor quiere ninguno p
 
 
 print('Antes (_base/):', open(os.path.join(RAIZ, '_base', 'COMMIT.txt'), encoding='utf-8').read().strip())
+pendientes = list(JUEGOS)
 for intento in range(1, 4):   # algunas animaciones cambian solas y pueden colarse como diferencia: una diferencia real sale en todos los intentos
-    print(f'Comparando {", ".join(JUEGOS)} ({TAM}), intento {intento} de 3…')
-    if pasada():
-        resultado = 'TODO IGUAL'
+    print(f'Comparando {", ".join(pendientes)} ({TAM}), intento {intento} de 3…')
+    ok = pasada(pendientes)
+    pendientes = [j for j in pendientes if not ok.get(j)]
+    if not pendientes:
         break
-else:
-    resultado = 'FALLO'
+resultado = 'TODO IGUAL' if not pendientes else 'FALLO'
 g = archivos_grandes()
 print(f'ARCHIVOS > 30 KB: {len(g)}' + (f'  (los 5 mayores: {", ".join(f"{r} {t // 1024}KB" for t, r in g[:5])})' if g else ''))
 print(resultado)

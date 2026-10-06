@@ -80,7 +80,6 @@ const FACTIONS = {   // las nueve jugables, en su orden; Microblizz y Phony se a
 };
 const FACTION_ORDER = ['animales', 'nomuertos', 'streamers', 'heroes', 'ciber', 'memes', 'gamer', 'olvidados', 'pop'];   // v0.9.13: la Comunidad Gamer es la facción 7
 // v0.9.15: cartas del gashapón de cada facción (mata-sanadores, hechizo de daño, de cura y uno loco)
-const HEALER_SPELL = 1.5;   // v0.9.15: los hechizos de daño hacen un 50 % más a los sanadores
 const CORP = { microblizz: 'Microblizz', phony: 'Phony' };   // las dos empresas malvadas (no son facciones corrompidas)
 const isCorp = f => !!CORP[f];
 const losOf = f => FACTIONS[f].los || 'los ' + FACTIONS[f].name;   // «los Olvidados», «los Gamers», «los de Cultura Pop»

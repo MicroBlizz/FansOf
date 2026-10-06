@@ -117,7 +117,7 @@
       for (const n of ['ART', 'BOX', 'SPR', 'CFG.cards', 'CFG.units', 'CFG.enemyCards', 'CFG.passives', 'FAC_BAL', 'FACTIONS', 'TYPES', 'ROLES', 'TOPS']) {
         const o = ev(n), k = o && typeof o === 'object' ? (Array.isArray(o) ? o.map(String) : (n === 'ART' || n === 'SPR') ? Object.keys(o).sort() : Object.keys(o)) : null;   // ART y SPR van por orden alfabético: su orden solo importa a buildSprites, y core/js/serie/arte/ lo rellena por facciones
         T.apunta('huella · ' + n, k ? k.length + ': ' + k.join(',') : String(o));
-        if (k && n !== 'ART' && n !== 'SPR') T.apunta('huella · ' + n + ' · valores', hash(JSON.stringify(o, (kk, v) => (typeof v === 'function' ? v.toString() : v))));   // y lo que vale cada clave
+        if (k && n !== 'ART' && n !== 'SPR') T.apunta('huella · ' + n + ' · valores', hash(JSON.stringify(o, (kk, v) => (typeof v === 'function' ? v.toString() : v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.keys(v).sort().map(x => [x, v[x]])) : v))));   // y lo que vale cada clave (dentro de cada objeto, por orden alfabético: el orden de las claves de fuera ya va en la línea de arriba)
       }
     },
     foto(que) {

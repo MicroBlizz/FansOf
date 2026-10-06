@@ -9,8 +9,8 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 
 ## Dónde va cada cosa
 - Dibujo de un personaje o edificio: core/js/serie/arte/<facción>.js
-- Números y textos de sus cartas: core/js/serie/facciones/<facción>.js
-- Vida, daño, alcance y velocidad de las unidades, FAC_BAL y pasivas: de cada juego (games/rumble/js/01b-unidades.js, games/td/js/unidades.js). Core solo dice qué unidades hay y en qué orden.
+- Nombre, rareza y texto de sus cartas: core/js/serie/facciones/<facción>.js
+- Vida, daño, alcance y velocidad de las unidades, FAC_BAL, pasivas y las cifras de las cartas (coste, cuántas salen, hechizos): de cada juego (games/rumble/js/01b-unidades.js y 01c-cartas.js; games/td/js/unidades.js y cartas.js). Core solo dice qué unidades hay y en qué orden.
 - Qué objetos y habilidades existen: core/js/serie/catalogo.js; qué hacen en un juego: games/<juego>/js/ajustes.js (AJUSTES.fx) y su catálogo
 - Economía y calibración de un juego: games/<juego>/js/ajustes.js. Sistemas comunes: core/js/sistema/
 - Misiones y logros: games/<juego>/js/retos.js (datos); core/js/retos.js (sistema)

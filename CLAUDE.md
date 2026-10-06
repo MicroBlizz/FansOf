@@ -24,6 +24,7 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 
 ## Textos e idiomas
 - Los textos se escriben en español, en el código y los datos. El inglés está en diccionarios: core/idioma/en-*.js (común) y games/<juego>/idioma/en-*.js. Una frase nueva lleva su inglés en el diccionario.
+- En localhost sale un botón DEV con utilidades (idioma, textos sin traducir, partida, caché); una nueva va en core/js/sistema/desarrollo.js.
 - python herramientas/idioma.py lista lo que sigue en español en inglés. Lo dibujado en canvas se traduce con tr('texto'). Detalles en core/LEEME.md (Idiomas).
 
 ## Probar y publicar

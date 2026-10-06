@@ -65,12 +65,14 @@ function diferencias(A, B, props) {
 
 // compara(juego, { tam, parte, antes, ahora }): `antes` y `ahora` son las carpetas ('_base/' y '' por defecto)
 async function compara(juego, o = {}) {
+  try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ }   // sin el botón de desarrollo en las pantallas
   const tam = TAMS[o.tam || 'normal'], antes = o.antes == null ? '_base/' : o.antes, ahora = o.ahora || '';
   $('#estado').textContent = `Probando ${juego}…`; $('#lista').innerHTML = '';
   if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister();   // que ninguna copia guardada se cuele
   const [guion, dentro] = await Promise.all([texto(`${juego}.js`), texto('dentro.js')]);
   const props = (/const PROPS = \[([\s\S]*?)\];/.exec(dentro) || ['', ''])[1].split(',').map(s => s.trim().replace(/'/g, '')).filter(Boolean);
   const A = await pasada(antes, juego, guion, dentro, tam, o.parte), B = await pasada(ahora, juego, guion, dentro, tam, o.parte);
+  try { localStorage.removeItem('fansof-dev'); } catch (e) { /* sin guardar */ }
   const difs = diferencias(A, B, props), R = { juego, tam: o.tam || 'normal', pasos: A.pasos.length, pasosAhora: B.pasos.length, distintos: difs.length, difs, erroresAntes: A.errores, erroresAhora: B.errores };
   window.ULTIMA = { A, B, R };
   pinta(R, A); return R;
@@ -91,6 +93,7 @@ const AUTO = new URLSearchParams(location.search);
 if (AUTO.get('auto') && AUTO.get('lang')) (async () => {
   const sal = [];
   try { localStorage.setItem('fansof-idioma', AUTO.get('lang')); } catch (e) { /* sin guardar */ }
+  try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ }
   try { localStorage.setItem('fansof-idioma-depura', '1'); } catch (e) { /* sin guardar */ }
   for (const j of AUTO.get('auto').split(',')) {
     try {
@@ -101,6 +104,7 @@ if (AUTO.get('auto') && AUTO.get('lang')) (async () => {
   }
   try { localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ }
   try { localStorage.removeItem('fansof-idioma-depura'); } catch (e) { /* sin guardar */ }
+  try { localStorage.removeItem('fansof-dev'); } catch (e) { /* sin guardar */ }
   await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
 })();
 else if (AUTO.get('auto')) (async () => {

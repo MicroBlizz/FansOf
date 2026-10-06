@@ -27,6 +27,16 @@ const NUCLEO = (() => {
   const idioma = IDIOMAS.includes(idiomaElegido()) ? idiomaElegido() : idiomaDelNavegador();
   document.documentElement.lang = idioma;
   function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
+  // EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se carga core/js/sistema/desarrollo.js,
+  // un botón «DEV» con utilidades para quien trabaja en el juego. En la web publicada no se carga ni se ve. El comparador lo apaga a propósito.
+  const desarrollo = (() => {
+    try {
+      const q = new URLSearchParams(location.search).get('dev');
+      if (q === '1' || q === '0') localStorage.setItem('fansof-dev', q);
+      const v = localStorage.getItem('fansof-dev'); if (v) return v === '1';
+    } catch (e) { /* sin guardar */ }
+    return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+  })();
   const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...] } })
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
@@ -71,6 +81,7 @@ const NUCLEO = (() => {
     codigo(CORE + 'js/sistema/idioma.js');
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); COMUN.forEach(f => codigo(CORE + f)); despues.forEach(codigo);
+    if (desarrollo) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado
     if (idioma !== 'es') {   // la página espera, tapada, a que se traduzca lo que ya hay; después se traduce también lo que el juego escriba
       const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
       const listo = () => { IDIOMA.pantalla(); velo.remove(); };
@@ -104,6 +115,6 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  return { version, nativa, idioma, elegirIdioma, estilos, juego, idiomaSolo };
+  return { version, nativa, idioma, elegirIdioma, desarrollo, estilos, juego, idiomaSolo };
 })();
 const VERSION = NUCLEO.version;

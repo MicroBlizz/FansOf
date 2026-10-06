@@ -101,3 +101,7 @@ El español es el idioma de origen: todo el código y los datos están en españ
 - **Cómo se comprueba**: `python herramientas/idioma.py` pasa el guion del comparador en inglés y lista lo que sigue en español (con `--todo` guarda esa lista en un archivo). `python herramientas/comprobar.py` sigue comparando el español.
 - **Una frase nueva en el juego**: escríbela en español, como siempre, y añade su inglés al diccionario del juego (o de core si la usan los dos).
 - **Para cazar lo que se ha quedado sin traducir mientras juegas**: en la consola del navegador, `localStorage.setItem('fansof-idioma-depura', '1')`, recarga, juega, y `IDIOMA.pendientes()` lista los textos que han salido en español.
+
+## Modo desarrollo
+
+`NUCLEO.desarrollo` es verdadero en `localhost`/`127.0.0.1`, o con `?dev=1` en la dirección (se recuerda en este navegador; `?dev=0` lo apaga). Entonces `nucleo.js` carga al final `js/sistema/desarrollo.js`, que añade un botón «DEV» abajo a la izquierda con un panel de utilidades: datos del juego y la versión, cambiar de idioma, apuntar y listar los textos sin traducir, ver / cargar / borrar la partida y borrar la caché del modo sin conexión. En la web publicada no se carga ni se ve. Con `?devabrir=1` el panel sale abierto. Para añadir una utilidad, apúntala en `UTILIDADES` de ese archivo. El comparador de `herramientas/pruebas/` lo apaga a propósito para que no salga en las pantallas.

@@ -143,6 +143,7 @@ const IDIOMA = (() => {
   function nodo(n) {
     if (n.nodeType === 3) { const r = traduce(n.nodeValue); if (r !== n.nodeValue) n.nodeValue = r; return; }
     if (n.nodeType !== 1) return;
+    if (n.getAttribute('translate') === 'no') return;   // lo que lleva translate="no" (el panel de desarrollo) se deja como está
     for (const a of ATRIBUTOS) if (n.hasAttribute(a)) { const v = n.getAttribute(a), r = traduce(v); if (r !== v) n.setAttribute(a, r); }
     if (SALTAR.test(n.tagName)) return;   // de los canvas y los campos de texto solo se traducen los atributos
     for (let c = n.firstChild; c; c = c.nextSibling) nodo(c);

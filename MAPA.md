@@ -19,7 +19,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/arte/animales.js` · 22 KB
 - `core/js/serie/arte/base.js` · 3 KB · shape, el, rr, poly, line, dot, heartPath, txt, starPath, otxt, spBg, ART, BOX
 - `core/js/serie/arte/ciber.js` · 13 KB
-- `core/js/serie/arte/fondos.js` · 20 KB · PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, THEMES, buildBG, decor, bigDecor, buildBridges
+- `core/js/serie/arte/fondos.js` · 2 KB · THEMES
 - `core/js/serie/arte/gamer.js` · 14 KB
 - `core/js/serie/arte/heroes.js` · 19 KB
 - `core/js/serie/arte/memes.js` · 16 KB
@@ -50,6 +50,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC
 - `games/rumble/js/02d-chat-rival.js` · 15 KB · CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL
 - `games/rumble/js/02e-guardado.js` · 5 KB · newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
+- `games/rumble/js/03-campo.js` · 18 KB · PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/04-estado.js` · 4 KB · G, facOf, facNow, enPartida, ownerOf, ownerName, revives, S, units, towers, AI, uid, BG, makeStruct, resetMatch
 - `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/rumble/js/05b-creadores-datos.js` · 21 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA

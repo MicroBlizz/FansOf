@@ -46,7 +46,8 @@ const NUCLEO = (() => {
   ];
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
-  function estilos(...hojas) { for (const h of hojas) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
+  const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css'];   // las pantallas comunes: un juego pide la primera y se cargan las tres, en este orden
+  function estilos(...hojas) { for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.
   function codigo(src) {

@@ -28,7 +28,7 @@ La versión se escribe **solo** en ese `?v=`. De ella salen `VERSION`, el `?v=` 
 | `js/retos.js`, `js/retos-pantallas.js` | Misiones, pase de batalla y premio diario (`retos.js`); logros, nombre, perfil, avisos y botones (`retos-pantallas.js`). Los datos los pone cada juego en su `js/retos.js`. |
 | `js/novedades.js` | El informe de parches. La lista (`NEWS`) la pone cada juego en su `js/novedades.js`. |
 | `js/sw.js` | Jugar sin conexión. Cada juego lo usa desde un `sw.js` de dos líneas en su carpeta. |
-| `css/` | `base.css` (colores, letras, marco) y `menus.css` (las pantallas comunes). Cada juego carga `menus.css` y después su propia hoja, con lo suyo. |
+| `css/` | `base.css` (colores, letras, marco) y `menus.css`, `menus-tienda.css` y `menus-extra.css` (las pantallas comunes). Cada juego pide `menus.css` y NUCLEO.estilos carga las tres, y después su propia hoja, con lo suyo. |
 
 Cada archivo empieza con un comentario que dice qué hace y qué necesita del juego.
 

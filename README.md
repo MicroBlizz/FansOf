@@ -11,7 +11,7 @@ index.html            la librería: un acceso rápido para probar, con el enlace
 sw.js                 limpia el modo sin conexión que el TD tenía antes en la raíz (no cachea nada)
 core/                 LO COMÚN A TODOS LOS JUEGOS
   css/base.css          colores, letras, contornos, marco de la pantalla y capa de interfaz de 540 x 960
-  css/menus.css         los estilos de las pantallas comunes, con una sola copia (el Rumble también la carga)
+  css/menus*.css        los estilos de las pantallas comunes en 3 piezas (menus, menus-tienda, menus-extra), con una sola copia (el Rumble también las carga)
   img/                  iconos
   js/nucleo.js          EL CARGADOR: cada juego lo pone en su index.html con su versión (?v=) y él carga, en orden, lo común y el juego.
                         De esa versión salen VERSION, el ?v= de todos los archivos y la copia para jugar sin conexión

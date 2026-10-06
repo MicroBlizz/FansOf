@@ -5,7 +5,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `index.html` · 6 KB
 - `sw.js` · <1 KB
 - `core/css/base.css` · 3 KB
-- `core/css/menus.css` · 57 KB
+- `core/css/menus-extra.css` · 19 KB
+- `core/css/menus-tienda.css` · 18 KB
+- `core/css/menus.css` · 20 KB
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
 - `core/js/nucleo.js` · 6 KB · NUCLEO, VERSION
 - `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin

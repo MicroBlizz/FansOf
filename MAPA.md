@@ -58,7 +58,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/css/td.css` · 17 KB
 - `games/td/js/ajustes.js` · 6 KB · AJUSTES
 - `games/td/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, SIDES, sideTag, sideText, metaDefaults, defOfSafe, facOfCard, noSides, NOMODS, cardMods, xpGrant, give, newSave, migrateSave
-- `games/td/js/data.js` · 31 KB · TD, VS, TOWERS, PASSIVES, FOES, foeHp, foeSpeed, foeName, ETRAITS, WORLDS_TD, LEVEL_RULE, GRID, TOWER_R
+- `games/td/js/datos-enemigos.js` · 11 KB · FOES, foeHp, foeSpeed, foeName, ETRAITS, WORLDS_TD, LEVEL_RULE, GRID, TOWER_R
+- `games/td/js/datos-torres.js` · 19 KB · TD, VS, TOWERS, PASSIVES
 - `games/td/js/extras.js` · 7 KB · baseOptButtons, flip, chatSt, chatSay, chatBurst, chatClear, FEED, feedAdd, feedDraw, TUT, tutShow, tutEnd, base
 - `games/td/js/game.js` · 76 KB · sfxSilent, starsOf, levelOpen, worldDone, G, uid, COLS, HQ, idx, ccx, cellAt, cellOf, isGate, ENTRY, BLOCK, DIST, NB, eachNb, flow, nextCell, routeFrom, MID_ENTRY, reflow, whyNot, canPlace, remOf, tdef, rageOf, auraOf, rangeOf, dmgOf, upCost, sellOf, build, upgrade, sell, killLevel, teamDmg, teamSpeed, lvlMul … (+94)
 - `games/td/js/menus.js` · 6 KB · enPartida, goHome, openColl, titlePopups, showMenu, optOn, openOptions, optButtons, saveCode, importFromHash

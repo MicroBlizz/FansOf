@@ -47,7 +47,8 @@ games/
     js/menus.js           su menú principal, sus opciones e instalar
     js/catalogo.js        qué habilidades y objetos de la serie reparte, lo que suma una carta con lo que lleva y su partida guardada
     js/progreso.js        cómo usa el progreso: efectos en torre y unidad, recompensas y poder en horas extra
-    js/data.js            torres, pasivas, enemigos, mundos y reglas del modo VS
+    js/datos-torres.js    ajustes, modo VS, torres y pasivas
+    js/datos-enemigos.js  enemigos, mundos y reglas de los niveles
     js/game.js            el motor: casillas y camino, oleadas, torres, modo VS, dibujo y controles
     js/pantallas.js       portada, campaña, antes de jugar, pausa y final
     js/extras.js          chat en directo, caja de avisos, tutorial y sus opciones

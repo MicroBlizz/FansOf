@@ -34,7 +34,7 @@ En la pantalla de campaña eliges con qué raza juegas. Las nueve del original e
 | Olvidados | VikingoPerdido | **NOSTALGIA**: el primer golpe de cada torre a cada enemigo hace el doble de daño. |
 | Cultura Pop | LaDirectora | **SECUELA**: 3 de cada 10 ataques se repiten enseguida con la mitad de daño. |
 
-Cada raza tiene la misma escalera de precios: una torre barata para levantar muros (45-50 de CAOS), torres medias (60-130), una torre grande (160) y su líder (150, solo uno en el campo). Lo que hace cada torre se lee al tocar su carta, y todos los números están en `games/td/js/data.js`.
+Cada raza tiene la misma escalera de precios: una torre barata para levantar muros (45-50 de CAOS), torres medias (60-130), una torre grande (160) y su líder (150, solo uno en el campo). Lo que hace cada torre se lee al tocar su carta, y todos los números están en `games/td/js/datos-enemigos.js`.
 
 ## Campaña
 
@@ -57,7 +57,7 @@ Los 12 mundos de la historia del original, con sus nombres de nivel y sus jefes.
 
 Los jefes dejan sin atacar a tu torre más cercana, sacan refuerzos, o las dos cosas. Tu base también se defiende sola: dispara a los enemigos que la están golpeando, así que un enemigo suelto no te hace perder.
 
-Los niveles salen de una regla (`LEVEL_RULE` en `games/td/js/data.js`): según avanzas hay más oleadas, más tipos de enemigo, más enemigos por oleada, y su vida crece más deprisa. También empiezas con un poco más de CAOS en cada mundo.
+Los niveles salen de una regla (`LEVEL_RULE` en `games/td/js/datos-enemigos.js`): según avanzas hay más oleadas, más tipos de enemigo, más enemigos por oleada, y su vida crece más deprisa. También empiezas con un poco más de CAOS en cada mundo.
 
 ## Modo VS
 

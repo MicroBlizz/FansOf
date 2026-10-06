@@ -1,4 +1,4 @@
-// Fans Of · Facción No-Muertos: sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción No-Muertos: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
     // No-Muertos
@@ -14,16 +14,6 @@ Object.assign(CFG.cards, {
     sp_formol: { name: "Poción de formol", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Conserva a tus tropas como nuevas: cura 150 a las de la zona.", gacha: true, fac: 'nomuertos', spell: { side: "ally", kind: "heal", r: 85, amt: 150, fx: "potion", col: "#7dffb8" } },
     sp_eternas: { name: "Horas extra eternas", cost: 3, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Los enemigos de la zona se arrastran como zombis: andan y atacan a la mitad de velocidad durante 6 s.", gacha: true, fac: 'nomuertos', spell: { side: "foe", kind: "slow", r: 90, t: 6, fx: "clock", col: "#7d5fff", label: "HORAS EXTRA" } },
     sp_crunch: { name: "Crunch", cost: 3, count: 1, rarity: 'epic', rar: 'Épica', tag: 'Hechizo · loco', desc: "Semana de crunch: tus tropas de la zona atacan el doble de rápido durante 6 s… pero se van quemando (pierden un 4 % de vida por segundo).", gacha: true, fac: 'nomuertos', spell: { side: "ally", kind: "crunch", r: 85, t: 6, drain: 0.04, fx: "clock", col: "#ff8a3d", label: "¡CRUNCH!" } },
-});
-Object.assign(CFG.units, {
-    necrolord:   { hp: 560, dmg: 26, cd: 1.4, range: 100, speed: 32, r: 18, sight: 150, ranged: 'shadow', summon: 'skeleton', summonN: 2, summonCd: 8 },
-    skeleton:    { hp: 75,  dmg: 12, cd: 0.8, range: 6,   speed: 52, r: 9,  sight: 110 },
-    zombie:      { hp: 140, dmg: 16, cd: 1.1, range: 8,   speed: 32, r: 12, sight: 110 },
-    ghostmage:   { hp: 170, dmg: 28, cd: 1.5, range: 110, speed: 36, r: 13, sight: 150, ranged: 'frost', slow: { f: 0.5, t: 1.2 } },
-    banshee:     { hp: 220, dmg: 18, cd: 1.2, range: 80,  speed: 38, r: 13, sight: 140, ranged: 'wave', splash: 34, pulse: { cd: 7, r: 80, stun: 1.2, kind: 'daze', text: '¡AAAAAH!', color: 'rgba(230,220,255,.9)', tc: '#e6dcff', sfx: 'wail' } },
-    skullknight: { hp: 520, dmg: 32, cd: 1.3, range: 10,  speed: 36, r: 18, sight: 140, slow: { f: 0.5, t: 1.6 } },
-    stitchbrute: { hp: 1050, dmg: 50, cd: 1.4, range: 10, speed: 27, r: 24, sight: 140, buildings: true, deathBlast: { r: 70, dmg: 90 } },
-    sombra: { hp: 220, dmg: 26, cd: 1.0, range: 8, speed: 46, r: 13, sight: 140, leap: { range: 250, cd: 9, mult: 2 } },
 });
 Object.assign(TYPES, {
   necrolord:   { top: 64, foot: '#2a1840' },

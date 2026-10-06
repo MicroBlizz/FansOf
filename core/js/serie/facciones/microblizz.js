@@ -1,4 +1,4 @@
-// Fans Of · Facción Microblizz (solo rival): sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción Microblizz (solo rival): sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.enemyCards, {
     becario: { name: 'Becario',    cost: 2, count: 2 },
@@ -9,14 +9,6 @@ Object.assign(CFG.enemyCards, {
     parchebot:  { name: 'Parche Día 1', cost: 4, count: 1 },
     // v0.9.15: hechizos de las empresas (los usa la CPU)
     sp_despido: { name: "Despido fulminante", cost: 3, count: 1, spell: { side: "foe", kind: "dmg", r: 70, amt: 170, bld: 0.3, fx: "letter", col: "#fff6ea", label: "¡DESPEDIDO!" } },
-});
-Object.assign(CFG.units, {
-    becario:  { hp: 130, dmg: 13, cd: 1.0, range: 8,   speed: 44, r: 12, sight: 120 },
-    starbot:  { hp: 170, dmg: 18, cd: 1.3, range: 105, speed: 36, r: 14, sight: 150, ranged: 'plasma' },
-    fallen:   { hp: 800, dmg: 34, cd: 1.6, range: 10,  speed: 26, r: 21, sight: 170, buildings: true },
-    cajabotin:  { hp: 320, dmg: 10, cd: 1.0, range: 8,  speed: 30, r: 15, sight: 120, eject: 'becario', ejectN: 3, ejectTxt: '¡BOTÍN!' },
-    soportebot: { hp: 200, dmg: 8,  cd: 1.0, range: 8,  speed: 30, r: 13, sight: 110, healer: true, heal: 14, healCd: 1.8, healR: 95 },
-    parchebot:  { hp: 760, dmg: 22, cd: 1.3, range: 10, speed: 28, r: 20, sight: 140, armor: 0.3 },
 });
 Object.assign(TYPES, {
   becario:  { top: 34, foot: '#5b6578' },

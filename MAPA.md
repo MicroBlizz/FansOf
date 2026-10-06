@@ -15,7 +15,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 6 KB · RARITY, CATALOGO, SLOTS, QTIERS
-- `core/js/serie/config.js` · 14 KB · W, FAC_BAL, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
+- `core/js/serie/config.js` · 11 KB · W, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
 - `core/js/serie/arte/animales.js` · 22 KB
@@ -32,18 +32,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/arte/pop.js` · 15 KB
 - `core/js/serie/arte/sprites.js` · 6 KB · SPR, buildSprites, drawVector
 - `core/js/serie/arte/streamers.js` · 18 KB
-- `core/js/serie/facciones/animales.js` · 5 KB
-- `core/js/serie/facciones/ciber.js` · 5 KB
+- `core/js/serie/facciones/animales.js` · 4 KB
+- `core/js/serie/facciones/ciber.js` · 4 KB
 - `core/js/serie/facciones/cierre.js` · 1 KB · GACHA_CARDS
-- `core/js/serie/facciones/gamer.js` · 6 KB
-- `core/js/serie/facciones/heroes.js` · 5 KB
-- `core/js/serie/facciones/memes.js` · 5 KB
+- `core/js/serie/facciones/gamer.js` · 5 KB
+- `core/js/serie/facciones/heroes.js` · 4 KB
+- `core/js/serie/facciones/memes.js` · 4 KB
 - `core/js/serie/facciones/microblizz.js` · 2 KB
-- `core/js/serie/facciones/nomuertos.js` · 6 KB
-- `core/js/serie/facciones/olvidados.js` · 5 KB
+- `core/js/serie/facciones/nomuertos.js` · 5 KB
+- `core/js/serie/facciones/olvidados.js` · 4 KB
 - `core/js/serie/facciones/phony.js` · 2 KB
-- `core/js/serie/facciones/pop.js` · 6 KB
-- `core/js/serie/facciones/streamers.js` · 5 KB
+- `core/js/serie/facciones/pop.js` · 4 KB
+- `core/js/serie/facciones/streamers.js` · 4 KB
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
 - `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
@@ -60,6 +60,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-extra.css` · 24 KB
 - `games/rumble/css/estilos-partida.css` · 19 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
+- `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/02a-objetos.js` · 7 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
 - `games/rumble/js/02b-mundos.js` · 8 KB · WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen
 - `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC
@@ -121,6 +122,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/reglas.js` · 21 KB · sfxSilent, starsOf, levelOpen, worldDone, G, uid, COLS, HQ, idx, ccx, cellAt, cellOf, isGate, ENTRY, BLOCK, DIST, NB, eachNb, flow, nextCell, routeFrom, MID_ENTRY, reflow, whyNot, canPlace, remOf, tdef, rageOf, auraOf, rangeOf, dmgOf, upCost, sellOf, build, upgrade, sell, killLevel, teamDmg, teamSpeed, lvlMul … (+17)
 - `games/td/js/retos.js` · 22 KB · cuenta, cierraRetos, estrellasMundo, estrellasTotal, RETOS
 - `games/td/js/sonido.js` · 3 KB · sonidoApagado, volGeneral, volMusica, SFX_TD, sfx, musicUpdate
+- `games/td/js/unidades.js` · 14 KB · FAC_BAL
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 5 KB
 - `herramientas/mapa.py` · 2 KB

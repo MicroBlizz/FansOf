@@ -1,4 +1,4 @@
-// Fans Of · Facción Ciberpunks: sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción Ciberpunks: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
     // Ciberpunks
@@ -13,18 +13,6 @@ Object.assign(CFG.cards, {
     sp_orbital: { name: "Ataque orbital", cost: 4, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Un satélite marca la zona y, un segundo después, dispara: 240 de daño.", gacha: true, fac: 'ciber', spell: { side: "foe", kind: "dmg", r: 65, amt: 240, bld: 0.5, delay: 1.2, fx: "laser", col: "#22e3ff" } },
     sp_nanobots: { name: "Parche de nanobots", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Nanobots que reparan: curan 130 a tus tropas de la zona y les dan un escudo de 60.", gacha: true, fac: 'ciber', spell: { side: "ally", kind: "heal", r: 85, amt: 130, shield: 60, fx: "chip", col: "#7df3ff" } },
     sp_update: { name: "Actualización obligatoria", cost: 4, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Los enemigos de la zona se quedan «instalando la actualización 1 de 47»: no se mueven ni atacan durante 3 s.", gacha: true, fac: 'ciber', spell: { side: "foe", kind: "stun", r: 80, t: 3, sk: "update", fx: "bar", col: "#22e3ff", label: "INSTALANDO 1/47…" } },
-});
-Object.assign(CFG.units, {
-    // Ciberpunks
-    cybermarine: { hp: 560, dmg: 13, cd: 0.45, range: 100, speed: 34, r: 19, sight: 150, ranged: 'bullet', summon: 'drone', summonN: 2, summonCd: 9, summonDrop: true },
-    drone:       { hp: 80,  dmg: 8,  cd: 0.6, range: 90,  speed: 50, r: 8,  sight: 140, ranged: 'bullet' },
-    nanobot:     { hp: 70,  dmg: 9,  cd: 0.7, range: 6,   speed: 56, r: 8,  sight: 110 },
-    cyberninja:  { hp: 280, dmg: 24, cd: 0.8, range: 8,   speed: 46, r: 12, sight: 150, blink: { cd: 5, dist: 80 } },
-    techdroid:   { hp: 200, dmg: 8,  cd: 1.0, range: 8,   speed: 30, r: 13, sight: 110, healer: true, heal: 14, healCd: 1.7, healR: 95 },
-    hackerkid:   { hp: 150, dmg: 12, cd: 1.0, range: 90,  speed: 40, r: 11, sight: 140, ranged: 'code', hack: { cd: 8, r: 170, t: 3.5 } },
-    neonsniper:  { hp: 150, dmg: 60, cd: 2.4, range: 170, speed: 34, r: 12, sight: 190, ranged: 'snipe' },
-    siegemech:   { hp: 820, dmg: 38, cd: 2.0, range: 120, speed: 24, r: 22, sight: 150, ranged: 'shell', splash: 45 },
-    dron: { hp: 190, dmg: 24, cd: 0.8, range: 8, speed: 54, r: 12, sight: 140, leap: { range: 250, cd: 9, mult: 2 } },
 });
 Object.assign(TYPES, {
   cybermarine: { top: 62, foot: '#1f2937' },

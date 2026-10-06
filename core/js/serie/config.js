@@ -5,40 +5,8 @@
    ========================================================= */
 const W = 540, H = 960, RES = 3, BG_RES = 2;
 
-// v0.9.20: ajuste de equilibrio por facción, medido con miles de partidas automáticas (facción contra facción).
-// Multiplica la vida (hp) y el daño (dmg) de TODAS las unidades de esa facción, juegue quien juegue con ella. 1 = sin cambios.
-const FAC_BAL = {
-  animales:  { hp: 1.32, dmg: 1.25 },
-  nomuertos: { hp: 0.80, dmg: 0.88 },
-  streamers: { hp: 1.00, dmg: 1.00 },
-  heroes:    { hp: 1.05, dmg: 1.04 },
-  ciber:     { hp: 0.95, dmg: 0.94 },
-  memes:     { hp: 0.92, dmg: 0.94 },
-  gamer:     { hp: 1.38, dmg: 1.33 },
-  olvidados: { hp: 1.07, dmg: 1.06 },
-  pop:       { hp: 1.09, dmg: 1.08 },
-};
 const CFG = {
   // pasivas de facción
-  passives: {
-    animales:  { name: 'RABIA', radius: 85, perAlly: 0.10, maxStacks: 5 },   // +10 % de daño por aliado cerca, máx +50 %
-    nomuertos: { name: 'RENACER', hpFrac: 0.6, delay: 1.1 },                 // cada unidad revive una vez con el 60 % de vida
-    streamers: { name: 'HYPE', per: 3, step: 0.05, max: 5 },                 // cada 5 bajas, +5 % de velocidad de ataque (máx +25 %)
-    heroes:    { name: 'EXPERIENCIA', per: 3, step: 0.05, max: 5 },           // cada 4 bajas, +5 % de vida y daño (máx nivel 5)
-    ciber:     { name: 'ESCUDOS', frac: 0.25, delay: 3, regen: 0.5 },         // escudo del 25 % de la vida; se recarga tras 3 s sin daño
-    memes:     { name: 'RNG', muts: [                                         // mutación al azar al salir
-      { id: 'giant', txt: '¡GIGANTE!', color: '#ffb347', hp: 1.5, dmg: 1.25, speed: 0.85, cd: 1, scale: 1.3 },
-      { id: 'turbo', txt: '¡TURBO!', color: '#ffe14d', hp: 1, dmg: 1, speed: 1.4, cd: 0.75, scale: 1 },
-      { id: 'glass', txt: '¡DE CRISTAL!', color: '#9ff0ff', hp: 0.6, dmg: 1.6, speed: 1, cd: 1, scale: 1 },
-      { id: 'normal', txt: 'normal…', color: '#d1d5db', hp: 1, dmg: 1, speed: 1, cd: 1, scale: 1 },
-    ] },
-    e: { name: 'DESPIDOS RENTABLES', refund: 0.4 },                          // cada bot despedido devuelve el 40 % de su coste
-    // v0.9.13
-    olvidados: { name: 'NOSTALGIA', t: 3 },                                  // las torres enemigas tardan 3 s en acordarse de cada unidad
-    pop: { name: 'SECUELA', chance: 0.3, hp: 0.5, scale: 0.82 },             // 3 de cada 10 vuelven en versión «2», más pequeña y con media vida
-    gamer: { name: 'COMUNIDAD', step: 0.05, max: 6 },                        // +5 % de daño por cada tipo distinto de unidad en el campo (hasta +30 %)
-    phony: { name: 'SUSCRIPCIÓN OBLIGATORIA', every: 20, take: 0.5, gain: 1 },   // cada 20 s te cobra 0,5 de CAOS
-  },
   // mazo: 1 líder + 6 unidades
   cards: {   // las claves, en su orden, van vacías; cada facción pone las suyas (serie/facciones/)
     bunny: null, squirrel: null, beaver: null, fox: null, meercat: null, junkcoon: null, mechavaca: null, necrolord: null,
@@ -60,7 +28,7 @@ const CFG = {
     becario: null, starbot: null, fallen: null, cajabotin: null, soportebot: null, parchebot: null, descargabot: null,
     licenciabot: null, plusbot: null, cobradlc: null, servidorbot: null, remasterbot: null, sp_despido: null, sp_cobro: null,
   },
-  units: {   // las claves, en su orden, van vacías; cada facción pone las suyas (serie/facciones/)
+  units: {   // las claves, en su orden, van vacías; cada juego pone las cifras de las suyas
     squirrel: null, fox: null, bunny: null, beaver: null, meercat: null, junkcoon: null, mechavaca: null, vaca: null, necrolord: null,
     skeleton: null, zombie: null, ghostmage: null, banshee: null, twitchking: null, subswarm: null, hypebeast: null, viralbot: null,
     snackmom: null, hypetrain: null, banhammer: null, epicchampion: null, cupidarcher: null, hoplite: null, shieldmaiden: null,

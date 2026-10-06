@@ -1,4 +1,4 @@
-// Fans Of · Facción Memes: sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción Memes: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
     // Memes
@@ -13,17 +13,6 @@ Object.assign(CFG.cards, {
     sp_gatos: { name: "Lluvia de gatos", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Llueven gatos (enfadados): 120 de daño en una zona grande y, a veces, cae uno gordo que hace el doble.", gacha: true, fac: 'memes', spell: { side: "foe", kind: "dmg", r: 95, amt: 120, bld: 0.3, crit: 0.25, fx: "cat", col: "#ffb04f" } },
     sp_likes: { name: "Like masivo", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Mil likes de golpe: curan 140 a tus tropas de una zona grande.", gacha: true, fac: 'memes', spell: { side: "ally", kind: "heal", r: 100, amt: 140, fx: "heart", col: "#ff5fa8" } },
     sp_confusion: { name: "Confusión", cost: 4, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Nadie entiende el meme: los enemigos de la zona se pelean entre ellos durante 3 s.", gacha: true, fac: 'memes', spell: { side: "foe", kind: "confuse", r: 80, t: 3, fx: "swirl", col: "#ff3df0", label: "¿EH?" } },
-});
-Object.assign(CFG.units, {
-    // Memes
-    memelord:    { hp: 540, dmg: 24, cd: 1.2, range: 90,  speed: 34, r: 18, sight: 150, ranged: 'card', viral: { cd: 7 } },
-    suchdog:     { hp: 150, dmg: 16, cd: 0.8, range: 8,   speed: 56, r: 11, sight: 120 },
-    gifblaster:  { hp: 200, dmg: 11, cd: 0.45, range: 100, speed: 44, r: 12, sight: 140, ranged: 'gif' },
-    synthcat:    { hp: 210, dmg: 24, cd: 1.4, range: 100, speed: 36, r: 13, sight: 140, ranged: 'note', splash: 36 },
-    trollbot:    { hp: 680, dmg: 16, cd: 1.0, range: 8,   speed: 34, r: 16, sight: 130, taunt: { r: 110 } },
-    stonks:      { hp: 460, dmg: 30, cd: 1.1, range: 8,   speed: 40, r: 14, sight: 140, buildings: true, stonks: { step: 0.15, max: 10 } },
-    chonkcat:    { hp: 1100, dmg: 26, cd: 1.4, range: 10, speed: 26, r: 23, sight: 140, pulse: { cd: 6, r: 55, stun: 0.6, dmg: 30, kind: 'daze', text: '¡SE SIENTA!', color: 'rgba(255,220,150,.95)', tc: '#ffd28a', sfx: 'slam' } },
-    clickbait: { hp: 220, dmg: 25, cd: 0.95, range: 8, speed: 48, r: 14, sight: 140, leap: { range: 250, cd: 9, mult: 2 } },
 });
 Object.assign(TYPES, {
   memelord:    { top: 60, foot: '#27272a' },

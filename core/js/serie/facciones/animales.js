@@ -1,4 +1,4 @@
-// Fans Of · Facción Animales Locos: sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción Animales Locos: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
     bunny:     { name: 'CrazyBunny',  cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: 'Chaos Jump', desc: 'Salta sobre el grupo enemigo más grande y hace 50 de daño en área cada 8 s. Si cae, vuelve a los 12 s.' },
@@ -13,18 +13,6 @@ Object.assign(CFG.cards, {
     sp_bellotas: { name: "Lluvia de bellotas", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Una tormenta de bellotas cae sobre la zona: 150 de daño a los enemigos (y un poco a los edificios).", gacha: true, fac: 'animales', spell: { side: "foe", kind: "dmg", r: 80, amt: 150, bld: 0.35, fx: "acorn", col: "#c0742e" } },
     sp_botiquin: { name: "Botiquín del bosque", cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "Tiritas, hojas y mucho cariño: cura 170 a tus tropas de la zona.", gacha: true, fac: 'animales', spell: { side: "ally", kind: "heal", r: 90, amt: 170, fx: "leaf", col: "#7be04a" } },
     sp_pulgas: { name: "Pulgas", cost: 3, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Una plaga de pulgas: los enemigos de la zona se rascan sin parar y no pueden atacar durante 4 s.", gacha: true, fac: 'animales', spell: { side: "foe", kind: "disarm", r: 85, t: 4, fx: "flea", col: "#8b5530", label: "¡QUÉ PICOR!" } },
-});
-Object.assign(CFG.units, {
-    squirrel: { hp: 150, dmg: 15, cd: 0.9, range: 8,   speed: 52, r: 12, sight: 120 },
-    fox:      { hp: 200, dmg: 18, cd: 1.2, range: 8,   speed: 42, r: 14, sight: 130, stealth: 8, surprise: 3, restealth: 3 },
-    bunny:    { hp: 500, dmg: 25, cd: 1.1, range: 10,  speed: 36, r: 20, sight: 150, jumpCd: 8, jumpDmg: 50, jumpR: 72, jumpRange: 210 },
-    beaver:   { hp: 100, dmg: 180, cd: 1, range: 6,  speed: 58, r: 12, sight: 140, buildings: true, kamikaze: true, splash: 50, splashDmg: 60 },
-    meercat:  { hp: 190, dmg: 8,  cd: 1.0, range: 8,   speed: 32, r: 12, sight: 110, healer: true, heal: 14, healCd: 1.7, healR: 95 },
-    junkcoon: { hp: 240, dmg: 26, cd: 1.7, range: 115, speed: 36, r: 14, sight: 150, ranged: 'trash', splash: 42 },
-    mechavaca:{ hp: 950, dmg: 24, cd: 1.3, range: 10,  speed: 26, r: 22, sight: 140, eject: 'vaca' },
-    vaca:     { hp: 160, dmg: 12, cd: 0.9, range: 8,   speed: 46, r: 12, sight: 120 },
-    // v0.9.15: mata-sanadores (saltan por encima de la primera línea a por el sanador o el tirador)
-    huron: { hp: 230, dmg: 24, cd: 0.9, range: 8, speed: 50, r: 13, sight: 140, leap: { range: 250, cd: 9, mult: 2 } },
 });
 Object.assign(TYPES, {
   squirrel: { top: 40, foot: '#7a3414' },

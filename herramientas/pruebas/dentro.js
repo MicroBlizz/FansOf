@@ -114,7 +114,7 @@
     /* la huella: qué claves, y en qué orden, tienen los objetos grandes de core (dibujos, cartas, facciones…). Si una pieza no se carga o cambia el orden, sale aquí */
     huella() {
       const ev = x => { try { return (0, W.eval)(x); } catch (e) { return undefined; } };
-      for (const n of ['ART', 'BOX', 'SPR', 'CFG.cards', 'CFG.units', 'CFG.enemyCards', 'FACTIONS', 'TYPES', 'ROLES', 'TOPS']) {
+      for (const n of ['ART', 'BOX', 'SPR', 'CFG.cards', 'CFG.units', 'CFG.enemyCards', 'CFG.passives', 'FAC_BAL', 'FACTIONS', 'TYPES', 'ROLES', 'TOPS']) {
         const o = ev(n), k = o && typeof o === 'object' ? (Array.isArray(o) ? o.map(String) : (n === 'ART' || n === 'SPR') ? Object.keys(o).sort() : Object.keys(o)) : null;   // ART y SPR van por orden alfabético: su orden solo importa a buildSprites, y core/js/serie/arte/ lo rellena por facciones
         T.apunta('huella · ' + n, k ? k.length + ': ' + k.join(',') : String(o));
         if (k && n !== 'ART' && n !== 'SPR') T.apunta('huella · ' + n + ' · valores', hash(JSON.stringify(o, (kk, v) => (typeof v === 'function' ? v.toString() : v))));   // y lo que vale cada clave

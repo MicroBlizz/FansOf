@@ -1,4 +1,4 @@
-// Fans Of · Facción Héroes: sus cartas, unidades, tamaños, roles y datos. Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
+// Fans Of · Facción Héroes: sus cartas, tamaños, roles y datos (las cifras de sus unidades las pone cada juego). Se añaden a los objetos de serie/config.js, que fija el orden de las claves.
 'use strict';
 Object.assign(CFG.cards, {
     // Héroes
@@ -13,17 +13,6 @@ Object.assign(CFG.cards, {
     sp_rayo: { name: "Rayo divino", cost: 4, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · daño', desc: "Un dios enfadado lanza un rayo: 260 de daño en una zona pequeña.", gacha: true, fac: 'heroes', spell: { side: "foe", kind: "dmg", r: 55, amt: 260, bld: 0.4, fx: "bolt", col: "#ffe14d" } },
     sp_ambrosia: { name: "Ambrosía", cost: 4, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Hechizo · cura', desc: "La bebida de los dioses: cura 200 a tus tropas de la zona.", gacha: true, fac: 'heroes', spell: { side: "ally", kind: "heal", r: 85, amt: 200, fx: "goblet", col: "#ffd166" } },
     sp_nerfeo: { name: "Nerfeo divino", cost: 3, count: 1, rarity: 'legendary', rar: 'Legendaria', tag: 'Hechizo · loco', desc: "Los dioses publican un parche: los enemigos de la zona encogen y pegan un 40 % menos durante 6 s.", gacha: true, fac: 'heroes', spell: { side: "foe", kind: "shrink", r: 85, t: 6, f: 0.6, fx: "arrow", col: "#63cfe0", label: "¡NERFEADO!" } },
-});
-Object.assign(CFG.units, {
-    // Héroes
-    epicchampion:{ hp: 640, dmg: 32, cd: 1.2, range: 10,  speed: 36, r: 20, sight: 150, teamFight: { cd: 8, r: 110 } },
-    cupidarcher: { hp: 125, dmg: 15, cd: 0.8, range: 115, speed: 44, r: 11, sight: 150, ranged: 'arrow' },
-    hoplite:     { hp: 160, dmg: 16, cd: 1.0, range: 14,  speed: 36, r: 11, sight: 120 },
-    shieldmaiden:{ hp: 420, dmg: 18, cd: 1.1, range: 10,  speed: 34, r: 15, sight: 130, armor: 0.35 },
-    thundergod:  { hp: 240, dmg: 28, cd: 1.6, range: 105, speed: 34, r: 15, sight: 150, chain: { n: 2, r: 75, f: 0.7 } },
-    medusa:      { hp: 240, dmg: 18, cd: 1.2, range: 90,  speed: 36, r: 13, sight: 140, ranged: 'venom', pulse: { cd: 8, r: 90, stun: 1.4, kind: 'stone', text: '¡MIRADA DE PIEDRA!', color: 'rgba(200,215,190,.95)', tc: '#d4f5c4', sfx: 'womp' } },
-    minotaur:    { hp: 950, dmg: 38, cd: 1.4, range: 10,  speed: 30, r: 21, sight: 140, charge: { dist: 70, mult: 2.2, stun: 0.8 } },
-    arpia: { hp: 210, dmg: 26, cd: 0.95, range: 8, speed: 50, r: 13, sight: 140, leap: { range: 250, cd: 9, mult: 2 } },
 });
 Object.assign(TYPES, {
   epicchampion:{ top: 68, foot: '#a16207' },

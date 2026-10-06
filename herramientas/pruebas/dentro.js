@@ -115,7 +115,7 @@
     huella() {
       const ev = x => { try { return (0, W.eval)(x); } catch (e) { return undefined; } };
       for (const n of ['ART', 'BOX', 'SPR', 'CFG.cards', 'CFG.units', 'CFG.enemyCards', 'FACTIONS', 'TYPES', 'ROLES', 'TOPS']) {
-        const o = ev(n), k = o && typeof o === 'object' ? (Array.isArray(o) ? o.map(String) : Object.keys(o)) : null;
+        const o = ev(n), k = o && typeof o === 'object' ? (Array.isArray(o) ? o.map(String) : (n === 'ART' || n === 'SPR') ? Object.keys(o).sort() : Object.keys(o)) : null;   // ART y SPR van por orden alfabético: su orden solo importa a buildSprites, y core/js/serie/arte/ lo rellena por facciones
         T.apunta('huella · ' + n, k ? k.length + ': ' + k.join(',') : String(o));
       }
     },

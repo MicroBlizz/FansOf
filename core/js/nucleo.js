@@ -24,7 +24,10 @@ const NUCLEO = (() => {
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/serie/config.js',          // la serie: facciones, cartas y sus números
-    'js/serie/arte.js',            //           los dibujos
+    'js/serie/arte/base.js',        //           las ayudas de dibujo y ART y BOX vacíos
+    'js/serie/arte/animales.js', 'js/serie/arte/nomuertos.js', 'js/serie/arte/streamers.js', 'js/serie/arte/heroes.js', 'js/serie/arte/ciber.js', 'js/serie/arte/memes.js', 'js/serie/arte/gamer.js', 'js/serie/arte/olvidados.js', 'js/serie/arte/pop.js', 'js/serie/arte/microblizz.js', 'js/serie/arte/phony.js',
+    'js/serie/arte/sprites.js',     //           las cajas, buildSprites y drawVector (después de todos los dibujos)
+    'js/serie/arte/fondos.js',      //           el campo y los colores de cada facción
     'js/serie/canciones.js',       //           las canciones
     'js/serie/frases.js',          //           frases de humor comunes
     'js/serie/iconos.js',          //           iconos y colores

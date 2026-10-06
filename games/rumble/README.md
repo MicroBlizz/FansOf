@@ -4,7 +4,7 @@ Copia de [Fans of Rumble](https://github.com/jdanielhl1984-commits/fans-of-rumbl
 
 Los archivos son los del original, sin cambios en el código. Lo único distinto son las rutas:
 
-- `js/01-config.js` y `js/03-arte.js` no están aquí: viven en `core/js/serie/config.js` y `core/js/serie/arte.js` (una sola copia para todos los juegos), así que `index.html` y `sw.js` los cargan de `core/`.
+- `js/01-config.js` y `js/03-arte.js` no están aquí: viven en `core/js/serie/config.js` y `core/js/serie/arte/` (una sola copia para todos los juegos), así que `index.html` y `sw.js` los cargan de `core/`.
 - Los iconos se cargan de `core/img/`.
 
 No se han traído las partes que solo sirven para empaquetarlo como app nativa (`app/`, `capacitor.config.json`, `package.json`) ni sus herramientas de equilibrio.
@@ -15,4 +15,4 @@ No se han traído las partes que solo sirven para empaquetarlo como app nativa (
 - **Progreso, menús, música y sonido**: usa sus propios archivos (`js/02a-objetos.js`…`02e-guardado.js`, `js/09a-chat-y-campana.js`…`09c-pantallas.js`, `js/05-audio.js`…). Los de `core/` salieron de estos, adaptados al TD.
 - **El enlace de compartir** sigue apuntando a la web del original.
 
-Para actualizar esta copia cuando cambie el original: vuelve a ejecutar la copia desde el clon y revisa que `01-config.js` y `03-arte.js` sigan siendo iguales a los de `core/`.
+Esta copia es ya la buena: los cambios se hacen aquí, no se vuelven a copiar desde el repositorio original.

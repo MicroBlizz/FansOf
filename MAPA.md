@@ -11,12 +11,25 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin
 - `core/js/retos.js` · 17 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon … (+7)
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
-- `core/js/serie/arte.js` · 197 KB · shape, el, rr, poly, line, dot, heartPath, txt, starPath, otxt, spBg, ART, BOX, SPR, buildSprites, drawVector, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, THEMES, buildBG, decor, bigDecor, buildBridges
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 6 KB · RARITY, CATALOGO, SLOTS, QTIERS
 - `core/js/serie/config.js` · 59 KB · W, TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, FAC_BAL, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, GACHA_CARDS, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
+- `core/js/serie/arte/animales.js` · 22 KB
+- `core/js/serie/arte/base.js` · 3 KB · shape, el, rr, poly, line, dot, heartPath, txt, starPath, otxt, spBg, ART, BOX
+- `core/js/serie/arte/ciber.js` · 13 KB
+- `core/js/serie/arte/fondos.js` · 20 KB · PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, THEMES, buildBG, decor, bigDecor, buildBridges
+- `core/js/serie/arte/gamer.js` · 14 KB
+- `core/js/serie/arte/heroes.js` · 19 KB
+- `core/js/serie/arte/memes.js` · 16 KB
+- `core/js/serie/arte/microblizz.js` · 14 KB
+- `core/js/serie/arte/nomuertos.js` · 16 KB
+- `core/js/serie/arte/olvidados.js` · 14 KB
+- `core/js/serie/arte/phony.js` · 10 KB
+- `core/js/serie/arte/pop.js` · 15 KB
+- `core/js/serie/arte/sprites.js` · 6 KB · SPR, buildSprites, drawVector
+- `core/js/serie/arte/streamers.js` · 18 KB
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
 - `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame

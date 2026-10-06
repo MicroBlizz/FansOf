@@ -30,7 +30,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `games/rumble/index.html` · 34 KB
 - `games/rumble/sw.js` · <1 KB
-- `games/rumble/css/estilos.css` · 43 KB
+- `games/rumble/css/estilos-extra.css` · 24 KB
+- `games/rumble/css/estilos-partida.css` · 19 KB
 - `games/rumble/js/02a-objetos.js` · 7 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
 - `games/rumble/js/02b-mundos.js` · 8 KB · WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen
 - `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC

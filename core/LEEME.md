@@ -86,4 +86,4 @@ Ejecuta el mismo guion en la versión anterior y en la nueva, en cada juego, y e
 ## Lo que todavía no es común
 
 - **El resto de Opciones** (volumen, lo que se ve en la partida, pasar o borrar el progreso): cada juego tiene todavía las suyas.
-- **Los colores y el marco** (`css/base.css`): el Rumble lleva todavía los suyos, iguales, al principio de `css/estilos.css`.
+- **Los colores y el marco** (`css/base.css`): el Rumble lleva todavía los suyos, iguales, al principio de `css/estilos-partida.css`.

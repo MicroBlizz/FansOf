@@ -28,7 +28,7 @@ var PRUEBA = {
     const ficha = u => { openItem(u); };
 
     /* ---------- preparación: fechas del reloj de mentira y ninguna ventana de bienvenida ---------- */
-    T.paso('preparación');
+    T.paso('preparación'); T.huella();
     cierra(); T.tapa('#opt-ver'); SAVE.seenVer = typeof NEWS_VER === 'string' ? NEWS_VER : VERSION; SAVE.idle = { fac: 'animales', h: 3.25, gold: 1234.5, gems: 7.2, items: 1.3, last: Date.now() };
     saveGame(); casa(); T.apunta('versión', VERSION); guardado();
 

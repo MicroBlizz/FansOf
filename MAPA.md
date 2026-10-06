@@ -1,0 +1,78 @@
+# MAPA · índice de archivos
+
+Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
+
+- `index.html` · 6 KB
+- `sw.js` · <1 KB
+- `core/css/base.css` · 3 KB
+- `core/css/menus.css` · 57 KB
+- `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
+- `core/js/nucleo.js` · 5 KB · NUCLEO, VERSION
+- `core/js/retos.js` · 27 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon … (+32)
+- `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
+- `core/js/serie/arte.js` · 197 KB · shape, el, rr, poly, line, dot, heartPath, txt, starPath, otxt, spBg, ART, BOX, SPR, buildSprites, drawVector, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, THEMES, buildBG, decor, bigDecor, buildBridges
+- `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
+- `core/js/serie/catalogo.js` · 6 KB · RARITY, CATALOGO, SLOTS, QTIERS
+- `core/js/serie/config.js` · 59 KB · W, TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, FAC_BAL, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, HEALER_SPELL, GACHA_CARDS, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
+- `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
+- `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
+- `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
+- `core/js/sistema/gachapon.js` · 13 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, pullCost, pull, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, buildGachaText, drawGacha, openGacha
+- `core/js/sistema/horas-extra.js` · 32 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC, idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
+- `core/js/sistema/inventario.js` · 12 KB · invTab, INV_FILTERS, INV_SORTS, scrapValue, canScrap, massList, openInv, buildInv, invRow, itemSlot, openItem, refreshInv, equipFromInv, scrapOne, rerollOne, massScrap
+- `core/js/sistema/opciones.js` · 3 KB · MENU_TRACKS, menuTrack, optComunes, installEvt, isStandalone, installApp
+- `core/js/sistema/pantallas.js` · 6 KB · show, hideScreens, ART_FIT, drawArt, RAR_ORDER, updateWallets, needXp, canLevel, levelUp, confirmBox, toastTimer, toast, updateBadges
+- `core/js/sistema/progreso.js` · 6 KB · ECON, catalogo, fitsFac, defOf, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
+- `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
+- `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
+- `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
+- `games/rumble/index.html` · 33 KB
+- `games/rumble/sw.js` · <1 KB
+- `games/rumble/css/estilos.css` · 43 KB
+- `games/rumble/js/02-progresion.js` · 46 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE, WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen, QUIPS, CHAT_PH, CHAT_FAC, CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL, newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
+- `games/rumble/js/04-estado.js` · 4 KB · G, facOf, facNow, enPartida, ownerOf, ownerName, revives, S, units, towers, AI, uid, BG, makeStruct, resetMatch
+- `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
+- `games/rumble/js/05b-iahorro.js` · 36 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA, SKIN_C, cdev, screenHead
+- `games/rumble/js/06-combate.js` · 83 KB · shake, puff, ring, sparks, chips, addNum, impact, flashAt, slashFx, hitStop, hitLines, screenFlash, canDeploy, validSpot, snapSpot, spawnUnit, unitLevel, applySpawnMods, applyAbility, applyEquip, applyItem, applyEnemyGear, doDeploy, playerPlay, tryPlayerDeploy, targetable, laneStruct, tauntR, rangeOf, acquire, moveToward, explodeBeaver, attack, chainOne, knockBack, zapChain, updatePassives, dmgMult, cdMult, topOf … (+41)
+- `games/rumble/js/07-dibujo.js` · 70 KB · cv, ctx, VIEW, CLOUDS, render, AMB, AMB_KIND, AMB_COL, ambNew, drawAmbient, drawWater, drawClouds, drawFog, drawZones, drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon, drawStruct, bar, text, drawBars, flame, drawProj, drawPart, drawNum, drawGhost
+- `games/rumble/js/08-controles.js` · 2 KB · stage, elCards, input, slotKey, renderCard
+- `games/rumble/js/09-menus.js` · 46 KB · RANK, avgLevel, chatSt, chatSay, chatBurst, chatTick, chatClear, chatCd, chatEv, chatWatch, shareHeadline, wrapLines, makeShareImage, shareResult, lvlStars, worldOpen, levelOpen, findLevel, nextLevel, enemyLabel, buildCamp, openCamp, openPrep, setupMatch, enemyExtras, startGame, grantRewards, fit, toLogical, bannerTimer, bannerQ, banner, nextBanner, bannerClear, showTut, hideTut, hud, roleOf, showCardTip, hideCardTip … (+12)
+- `games/rumble/js/10-dificultad.js` · 21 KB · CDIFF, CAMP_SUB, ENEMY_GEAR, MB_GEAR_ON, campDiff, campOf, starsD, worldOpenD, levelOpenD, gearRow, resetMods, setupHardMode, applyMatchMods, hardBanner, hudMods, effStats, cardStats, cardDesc, passiveText, OWN_CALLOUT, showLoadout, legendaryPrize, MYTH_DEB, MYTH_BUF, mythicWeek, modBoxHtml, RL, openRoulette, rlPhaseUi, rlClose, rlSpin, rlFrame, drawRoulette, onLand, tickExtras, deathExtras, confetti
+- `games/rumble/js/11-logros.js` · 11 KB · ACH_OLD, achInit, titlePopups, applySpeed, buyStarter, COACH_WHO, curScreen, tutStep, tutFinish, tutSkip, tutWant, coachKey, coachPlace, tutTick, tutBattleStart, tipBattle, tutBattle
+- `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, TEST_GOLD, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
+- `games/rumble/js/13-horas-extra.js` · <1 KB · idlePower
+- `games/rumble/js/14-cartas-y-jefes.js` · 34 KB · isSpell, cardStars, spells, spellPow, castSpell, RAIN, updateSpells, applySpell, spellAim, aiSpell, leapPrey, leapTick, drawSpellsGround, drawSpellBit, drawSpellsAir, DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckTile, buildDeck, deckHoldT, deckHeld … (+6)
+- `games/rumble/js/15-anuncios.js` · 11 KB · ADS, AD_JOKES, TV_SVG, adsState, adsFree, adLeft, adBtn, adRun, watchAd, adOverlay, adIdleUI, idleGrantHours, adEndOffer, adGachaOffer, adShopOffer, adMissionOffer
+- `games/rumble/js/16-camara.js` · 7 KB · CAM, camTouch, camPinch, camLive, camScreen, camClamp, camReset, camZoomAt, camApply, camBtn, camTouchEnd, FEED, feedAdd, feedDraw
+- `games/rumble/js/17-campos.js` · 34 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate, terrainGround, riverFloats, drawZone, terrainAir, drawFaller
+- `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
+- `games/rumble/js/19-arena.js` · 5 KB · ARENA, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, buildArenaPrep, arenaSetup, arenaReward
+- `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
+- `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
+- `games/rumble/js/21-arranque.js` · 4 KB · last, frame, boot
+- `games/rumble/js/ajustes.js` · 1 KB · AJUSTES
+- `games/rumble/js/novedades.js` · 1 KB · NEWS
+- `games/rumble/js/retos.js` · 29 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
+- `games/td/index.html` · 26 KB
+- `games/td/sw.js` · <1 KB
+- `games/td/css/td.css` · 17 KB
+- `games/td/js/ajustes.js` · 6 KB · AJUSTES
+- `games/td/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, SIDES, sideTag, sideText, metaDefaults, defOfSafe, facOfCard, noSides, NOMODS, cardMods, xpGrant, give, newSave, migrateSave
+- `games/td/js/data.js` · 31 KB · TD, VS, TOWERS, PASSIVES, FOES, foeHp, foeSpeed, foeName, ETRAITS, WORLDS_TD, LEVEL_RULE, GRID, TOWER_R
+- `games/td/js/extras.js` · 7 KB · baseOptButtons, flip, chatSt, chatSay, chatBurst, chatClear, FEED, feedAdd, feedDraw, TUT, tutShow, tutEnd, base
+- `games/td/js/game.js` · 76 KB · sfxSilent, starsOf, levelOpen, worldDone, G, uid, COLS, HQ, idx, ccx, cellAt, cellOf, isGate, ENTRY, BLOCK, DIST, NB, eachNb, flow, nextCell, routeFrom, MID_ENTRY, reflow, whyNot, canPlace, remOf, tdef, rageOf, auraOf, rangeOf, dmgOf, upCost, sellOf, build, upgrade, sell, killLevel, teamDmg, teamSpeed, lvlMul … (+94)
+- `games/td/js/menus.js` · 6 KB · enPartida, goHome, openColl, titlePopups, showMenu, optOn, openOptions, optButtons, saveCode, importFromHash
+- `games/td/js/novedades.js` · 10 KB · NEWS
+- `games/td/js/pantallas.js` · 12 KB · enemyLabel, ownerOf, setTagline, drawTitleArt, baseShowMenu, buildCamp, openCamp, showMap, PREP, VS_DIFF, syncPrep, openPrep, PAUSE_QUOTES, pauseGame, endScreen, showResult, showVsResult
+- `games/td/js/progreso.js` · 4 KB · isUnlocked, unitGear, effStats, cardStats, cardDesc, passiveText, xpPlay, campReward, vsReward, idlePower
+- `games/td/js/retos.js` · 22 KB · cuenta, cierraRetos, estrellasMundo, estrellasTotal, RETOS
+- `games/td/js/sonido.js` · 3 KB · sonidoApagado, volGeneral, volMusica, SFX_TD, sfx, musicUpdate
+- `herramientas/base.py` · 1 KB
+- `herramientas/comprobar.py` · 5 KB
+- `herramientas/mapa.py` · 2 KB
+- `herramientas/servidor.py` · 2 KB
+- `herramientas/pruebas/comparar.js` · 7 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
+- `herramientas/pruebas/dentro.js` · 12 KB
+- `herramientas/pruebas/index.html` · 2 KB
+- `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
+- `herramientas/pruebas/td.js` · 19 KB · PRUEBA

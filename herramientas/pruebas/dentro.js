@@ -111,6 +111,14 @@
     apunta(que, v) { let n = T.actual + ' · ' + que; const veces = T.vistos[n] = (T.vistos[n] || 0) + 1; if (veces > 1) n += ' (' + veces + ')'; T.pasos.push([n, typeof v === 'string' ? v : JSON.stringify(v, null, 1)]); },
     /* apunta todo lo que se ve: cada pantalla abierta (su HTML, sus estilos y sus dibujos), el aviso y la burbuja del tutorial */
     tapa(...sel) { T.tapados.push(...sel); },                    // textos que cambian a propósito de una versión a otra (el número de versión): no se comparan
+    /* la huella: qué claves, y en qué orden, tienen los objetos grandes de core (dibujos, cartas, facciones…). Si una pieza no se carga o cambia el orden, sale aquí */
+    huella() {
+      const ev = x => { try { return (0, W.eval)(x); } catch (e) { return undefined; } };
+      for (const n of ['ART', 'BOX', 'SPR', 'CFG.cards', 'CFG.units', 'CFG.enemyCards', 'FACTIONS', 'TYPES', 'ROLES', 'TOPS']) {
+        const o = ev(n), k = o && typeof o === 'object' ? (Array.isArray(o) ? o.map(String) : Object.keys(o)) : null;
+        T.apunta('huella · ' + n, k ? k.length + ': ' + k.join(',') : String(o));
+      }
+    },
     foto(que) {
       const tap = T.tapados.flatMap(s => [...D.querySelectorAll(s)]).map(e => [e, e.textContent]); for (const [e] of tap) e.textContent = '·';
       const vis = [...D.querySelectorAll('.screen')].filter(s => !s.hidden), extra = ['#toast', '#coach', '#banner', '#hud', '#tray', '#chat', '#tut', '#panel', '#info', '#feed', '#hud-mods', '#card-tip', '#tut-tip', '#ad-screen', '#btn-wave', '#btn-mode', '#count'].map(s => D.querySelector(s)).filter(e => e && !e.hidden);

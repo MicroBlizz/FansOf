@@ -1,5 +1,5 @@
 // Fans of Rumble · AJUSTES: lo que este juego le dice a los sistemas comunes de core/ antes de que se carguen.
-// Lo que hace cada habilidad y cada objeto está en js/02-progresion.js, junto al resto de sus datos.
+// Lo que hace cada habilidad y cada objeto está en js/02a-objetos.js, junto al resto de sus datos.
 'use strict';
 const AJUSTES = {
   id: 'rumble',

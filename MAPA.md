@@ -26,10 +26,14 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
-- `games/rumble/index.html` · 33 KB
+- `games/rumble/index.html` · 34 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/estilos.css` · 43 KB
-- `games/rumble/js/02-progresion.js` · 46 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE, WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen, QUIPS, CHAT_PH, CHAT_FAC, CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL, newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
+- `games/rumble/js/02a-objetos.js` · 7 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
+- `games/rumble/js/02b-mundos.js` · 8 KB · WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen
+- `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC
+- `games/rumble/js/02d-chat-rival.js` · 15 KB · CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL
+- `games/rumble/js/02e-guardado.js` · 5 KB · newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
 - `games/rumble/js/04-estado.js` · 4 KB · G, facOf, facNow, enPartida, ownerOf, ownerName, revives, S, units, towers, AI, uid, BG, makeStruct, resetMatch
 - `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/rumble/js/05b-iahorro.js` · 36 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA, SKIN_C, cdev, screenHead

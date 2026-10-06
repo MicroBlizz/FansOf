@@ -36,7 +36,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/02e-guardado.js` · 5 KB · newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
 - `games/rumble/js/04-estado.js` · 4 KB · G, facOf, facNow, enPartida, ownerOf, ownerName, revives, S, units, towers, AI, uid, BG, makeStruct, resetMatch
 - `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
-- `games/rumble/js/05b-iahorro.js` · 36 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA, SKIN_C, cdev, screenHead
+- `games/rumble/js/05b-creadores-datos.js` · 21 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA
+- `games/rumble/js/05c-creadores-arte.js` · 15 KB · SKIN_C, cdev, screenHead
 - `games/rumble/js/06-combate.js` · 83 KB · shake, puff, ring, sparks, chips, addNum, impact, flashAt, slashFx, hitStop, hitLines, screenFlash, canDeploy, validSpot, snapSpot, spawnUnit, unitLevel, applySpawnMods, applyAbility, applyEquip, applyItem, applyEnemyGear, doDeploy, playerPlay, tryPlayerDeploy, targetable, laneStruct, tauntR, rangeOf, acquire, moveToward, explodeBeaver, attack, chainOne, knockBack, zapChain, updatePassives, dmgMult, cdMult, topOf … (+41)
 - `games/rumble/js/07-dibujo.js` · 70 KB · cv, ctx, VIEW, CLOUDS, render, AMB, AMB_KIND, AMB_COL, ambNew, drawAmbient, drawWater, drawClouds, drawFog, drawZones, drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon, drawStruct, bar, text, drawBars, flame, drawProj, drawPart, drawNum, drawGhost
 - `games/rumble/js/08-controles.js` · 2 KB · stage, elCards, input, slotKey, renderCard
@@ -56,7 +57,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/21-arranque.js` · 4 KB · last, frame, boot
 - `games/rumble/js/ajustes.js` · 1 KB · AJUSTES
 - `games/rumble/js/novedades.js` · 1 KB · NEWS
-- `games/rumble/js/retos.js` · 29 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
+- `games/rumble/js/retos-logros.js` · 24 KB
+- `games/rumble/js/retos-perfil.js` · 1 KB
+- `games/rumble/js/retos.js` · 4 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
 - `games/td/index.html` · 26 KB
 - `games/td/sw.js` · <1 KB
 - `games/td/css/td.css` · 17 KB

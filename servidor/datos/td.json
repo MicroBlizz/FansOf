@@ -807,6 +807,30 @@
   "olvidados",
   "pop"
  ],
+ "premios": {
+  "camp": {
+   "boss": [
+    300,
+    50
+   ],
+   "first": [
+    100,
+    10
+   ],
+   "lose": 10,
+   "replay": 30,
+   "stars3": [
+    50,
+    10
+   ]
+  },
+  "gift": {
+   "gems": 5,
+   "gold": 100
+  },
+  "pay": {},
+  "starter": null
+ },
  "topes": {
   "compra": {
    "dia": {
@@ -895,6 +919,8 @@
     "gems": 40,
     "gold": 600
    },
+   "diario": true,
+   "fijo": "gift",
    "vez": {
     "gems": 20,
     "gold": 300
@@ -905,5 +931,5 @@
    "vez": {}
   }
  },
- "version": 5
+ "version": 6
 }

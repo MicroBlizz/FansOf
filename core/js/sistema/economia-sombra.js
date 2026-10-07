@@ -16,9 +16,9 @@ const ECO_SOMBRA = (() => {
   const activa = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
   const id = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
 
-  function anota(motivo, v, signo) {   // lo llama ECO
+  function anota(motivo, v, signo, evento) {   // lo llama ECO
     if (!activa()) return;
-    est.cola.push({ clave: id(), motivo, oro: signo * (v.gold || 0), gemas: signo * (v.gems || 0), entradas: signo * (v.tickets || 0) });
+    est.cola.push({ clave: id(), motivo, oro: signo * (v.gold || 0), gemas: signo * (v.gems || 0), entradas: signo * (v.tickets || 0), evento });
     if (est.cola.length > 2000) est.cola.splice(0, est.cola.length - 2000);
     guardar(); clearTimeout(temporizador); temporizador = setTimeout(enviar, ESPERA);
   }

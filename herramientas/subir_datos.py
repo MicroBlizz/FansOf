@@ -63,7 +63,7 @@ for juego in JUEGOS:
         malo = True
         continue
     datos = json.loads(RESULTADO['json'])
-    if 'fallo' in datos or not datos.get('econ') or not datos.get('habilidades'):
+    if 'fallo' in datos or not datos.get('econ') or not datos.get('habilidades') or not datos.get('premios', {}).get('gift'):
         print(f'FALLO: {juego}: datos incompletos', str(datos)[:300])
         malo = True
         continue

@@ -348,3 +348,13 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 - Objetos y copias que se regalan (pase, idle, tutorial) se crean aún en local; hay que crearlos en el servidor para poder despedirlos.
 - La experiencia de las cartas (`p_xp` en `mejorar_carta`) la sigue declarando el cliente.
 - Antes de abrir la tienda: quitar los motivos `compra` y `pruebas` de los topes.
+
+### 15.14 Fase 3, paso 2: el servidor pone la cantidad de los premios de un solo cobro (7-10-2026)
+`anotar` (`servidor/10-premios-del-servidor.sql`) ya no se fía de la cantidad que dice el cliente en estos casos; el cliente cuenta lo que ha pasado y el servidor decide:
+- **Campaña** (Rumble): el cliente manda el evento `{tipo: 'camp', nivel, dif, estrellas, victoria, jefe}` y el servidor calcula el premio con `datos.premios` (primer pase o jefe, repetición, tercera estrella, derrota, multiplicador de dificultad). Apunta las estrellas ya cobradas de cada nivel en `reclamos` (`camp:<dif>:<nivel>:<1|2|3>`), así que el primer pase y la tercera estrella solo se pagan una vez por nivel y dificultad.
+- **Regalo diario**: siempre `premios.gift`, una vez por día natural de Madrid (la clave lleva la fecha del servidor, no la del aparato).
+- **Pack de bienvenida** y **entradas del tutorial**: cantidad fija del servidor, una sola vez por cuenta.
+- Siguen aplicándose los topes `vez` y `dia`. El resto de motivos todavía dice el cliente cuánto, limitado por los topes.
+- Datos nuevos en `tablas_juego.datos.premios` (los saca `herramientas/subir_datos.py`): `camp`, `pay`, `gift`, `starter`.
+- **No se comprueba aún**: que el nivel esté desbloqueado (hace falta la lista de niveles y su orden en el servidor) ni que las estrellas sean verdad.
+- Siguiente (paso 3): misiones, racha de días y pase de batalla por el mismo camino; horas extra y anuncios con el reloj en el servidor.

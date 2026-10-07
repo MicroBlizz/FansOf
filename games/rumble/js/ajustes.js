@@ -6,12 +6,12 @@ const AJUSTES = {
   nombre: 'Fans of Rumble',
   // lo máximo que el servidor deja ganar por motivo (suma a los de core/js/sistema/economia.js); ver PLAN-CUENTAS.md, 15.13
   topes: {
-    partida: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 } },
+    partida: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 }, calcula: 'camp' },   // en campaña el servidor calcula el premio (primer pase, estrellas, repetir…)
     idle: { vez: { gold: 200000, gems: 5000 }, dia: { gold: 1000000, gems: 20000 } },
     anuncio: { vez: { gold: 5000, gems: 200, tickets: 2 }, dia: { gold: 30000, gems: 1000, tickets: 30 } },
     arena: { vez: { tickets: 10 }, dia: { tickets: 40 } },
-    bienvenida: { vez: { gold: 20000, gems: 2000 }, unica: true },
-    tutorial: { vez: { tickets: 5 }, unica: true },
+    bienvenida: { vez: { gold: 20000, gems: 2000 }, unica: true, fijo: 'starter' },
+    tutorial: { vez: { tickets: 5 }, unica: true, fijo: { tickets: 3 } },
     'carta-repetida': { vez: { gems: 50 }, dia: { gems: 2000 } },
   },
   servidor: { gachapon: true, economia: true },   // lo que ya hace el servidor cuando hay cuenta (PLAN-CUENTAS.md, fase 2): el gashapón de habilidades y equipo

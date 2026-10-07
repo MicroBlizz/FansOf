@@ -901,6 +901,37 @@
   "pop",
   "creadores"
  ],
+ "premios": {
+  "camp": {
+   "boss": [
+    300,
+    50
+   ],
+   "first": [
+    100,
+    10
+   ],
+   "lose": 10,
+   "replay": 30,
+   "stars3": [
+    50,
+    10
+   ]
+  },
+  "gift": {
+   "gems": 5,
+   "gold": 100
+  },
+  "pay": {
+   "h": 2,
+   "m": 3,
+   "n": 1
+  },
+  "starter": {
+   "gems": 600,
+   "gold": 5000
+  }
+ },
  "topes": {
   "anuncio": {
    "dia": {
@@ -923,6 +954,7 @@
    }
   },
   "bienvenida": {
+   "fijo": "starter",
    "unica": true,
    "vez": {
     "gems": 2000,
@@ -994,6 +1026,7 @@
    }
   },
   "partida": {
+   "calcula": "camp",
    "dia": {
     "gems": 5000,
     "gold": 300000
@@ -1034,6 +1067,8 @@
     "gems": 40,
     "gold": 600
    },
+   "diario": true,
+   "fijo": "gift",
    "vez": {
     "gems": 20,
     "gold": 300
@@ -1044,11 +1079,14 @@
    "vez": {}
   },
   "tutorial": {
+   "fijo": {
+    "tickets": 3
+   },
    "unica": true,
    "vez": {
     "tickets": 5
    }
   }
  },
- "version": 5
+ "version": 6
 }

@@ -10,6 +10,18 @@ const ECO = {
   // v: { gold, gems, tickets }, cada uno opcional
   ganar(motivo, v) { ECO.motor.mover(motivo, v, 1); },
   gastar(motivo, v) { ECO.motor.mover(motivo, v, -1); },
+  // ¿esta acción la hace el servidor? Solo si el juego lo pide (AJUSTES.servidor) y hay cuenta activa; si no, se calcula aquí como siempre
+  servidor(accion) { return typeof CUENTA !== 'undefined' && CUENTA.activa && typeof ECO_SOMBRA !== 'undefined' && !!(AJUSTES.servidor && AJUSTES.servidor[accion]); },
+  errorTexto(e) { const m = String((e && e.message) || e); return /faltan_gemas/.test(m) ? 'Te faltan gemas' : 'Necesitas conexión para esto'; },
+  // el servidor tira (n = 1, 10 o 50) y devuelve las copias nuevas; antes se manda lo pendiente, y después el saldo y las garantías del servidor mandan
+  async tirar(maquina, n) {
+    await ECO_SOMBRA.vaciar();
+    const desbloqueadas = typeof FACTION_ORDER !== 'undefined' && typeof isUnlocked === 'function' ? FACTION_ORDER.filter(f => isUnlocked(f)) : [];
+    const r = await CUENTA.rpc('tirar', { p_juego: AJUSTES.id, p_maquina: maquina, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas });
+    SAVE.gold = r.oro; SAVE.gems = r.gemas; SAVE.tickets = r.entradas; Object.assign(SAVE.pity, r.garantia);
+    ECO_SOMBRA.apuntaLocal(r);
+    return r.resultados;
+  },
   motor: {
     mover(motivo, v, signo) {
       if (v.gold) SAVE.gold += signo * v.gold;

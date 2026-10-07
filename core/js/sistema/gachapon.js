@@ -8,7 +8,7 @@
 'use strict';
 const MAQUINAS = {};
 const rarOfPull = r => (r.it ? defOf(r.it).rar : r.rar);   // la rareza de lo que ha salido, sea una copia o lo que dé otra máquina
-let gachaTab = 'ab', gachaAnim = null, gachaRAF = 0;
+let gachaTab = 'ab', gachaAnim = null, gachaRAF = 0, gachaEsperando = false;
 function rollRarity(kind, force) {
   const P = SAVE.pity, pk = kind, pl = kind + 'L'; P[pk] = (P[pk] || 0) + 1; P[pl] = (P[pl] || 0) + 1;
   let r = 'common';
@@ -26,25 +26,45 @@ function onePull(kind, force) {
   const id = pick(pool), prev = bestCopy(kind, id), nPrev = SAVE.inv.filter(x => x.k === kind && x.id === id).length;
   const P = SAVE.pity, qk = 'q' + kind; P[qk] = (P[qk] || 0) + 1;
   const it = newCopy(kind, id, P[qk] >= ECON.pityQ ? 3 : 0), tq = tierOf(avgQ(it)); if (tq >= 3) P[qk] = 0;
-  const pn = prev && QTIERS[tierOf(avgQ(prev))].name, better = !!prev && avgQ(it) > avgQ(prev);
+  return resultadoTirada(kind, it, prev, nPrev);
+}
+// lo que se enseña de una copia recién salida: si es nueva, si mejora a la que había y el texto de la etiqueta
+function resultadoTirada(kind, it, prev, nPrev) {
+  const tq = tierOf(avgQ(it)), pn = prev && QTIERS[tierOf(avgQ(prev))].name, better = !!prev && avgQ(it) > avgQ(prev);
   const tag = tq === 4 ? '¡CALIDAD PERFECTA!' : !prev ? (kind === 'ab' ? '¡NUEVA!' : '¡NUEVO!') : better ? `¡TU MEJOR COPIA! (la anterior era ${pn})` : `Copia n.º ${nPrev + 1} · tu mejor copia sigue siendo ${pn}`;
   return { it, tag, isNew: !prev, better };
 }
+// con cuenta, las habilidades y el equipo los tira el servidor (ECO.tirar); aquí se guardan las copias que devuelve
+function copiaDeServidor(r) {
+  const prev = bestCopy(r.k, r.id), nPrev = SAVE.inv.filter(x => x.k === r.k && x.id === r.id).length, it = { u: r.u, k: r.k, id: r.id, q: r.q };
+  SAVE.inv.push(it); if (tierOf(avgQ(it)) === 4) stat('perfect', 1);
+  return resultadoTirada(r.k, it, prev, nPrev);
+}
 function pullCost(n) { const free = Math.min(SAVE.tickets || 0, n); return { free, gems: (n - free) * ECON.pull }; }
 function pull(n) {
-  n = n || 1; if (gachaAnim) return;
+  n = n || 1; if (gachaAnim || gachaEsperando) return;
   const c = pullCost(n);
   if (SAVE.gems < c.gems) { play('deny'); confirmBox('FALTAN GEMAS', `Para girar x${n} te faltan <b>${fmt(c.gems - SAVE.gems)} gemas</b>.<small>Las consigues con misiones, la campaña, el pase de batalla o en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
+  const kind = gachaTab, X = MAQUINAS[kind];
+  if (!X && ECO.servidor('gachapon')) {   // con cuenta: lo tira el servidor y hace falta conexión
+    gachaEsperando = true;
+    ECO.tirar(kind, n).then(rs => { gachaEsperando = false; audioInit(); acabarTirada(n, c, kind, X, rs.map(copiaDeServidor)); })
+      .catch(e => { gachaEsperando = false; play('deny'); toast(ECO.errorTexto(e)); });
+    return;
+  }
   ECO.gastar('gachapon', { tickets: c.free, gems: c.gems });
   audioInit();
   // v0.9.11: cada bloque de 10 tiradas trae al menos una épica (o legendaria)
-  const kind = gachaTab, X = MAQUINAS[kind], res = []; let gotEpic = false;
+  const res = []; let gotEpic = false;
   for (let i = 0; i < n; i++) {
     if (i % 10 === 0) gotEpic = false;
     const seguro = n >= 10 && i % 10 === 9 && !gotEpic, r = X ? X.tirar(seguro) : onePull(kind, seguro), rr = rarOfPull(r);
     if (rr === 'epic' || rr === 'legendary') gotEpic = true;
     res.push(r);
   }
+  acabarTirada(n, c, kind, X, res);
+}
+function acabarTirada(n, c, kind, X, res) {
   missionEvent('pull', n); if (n >= 50) stat('x50', 1); if (n === 10) stat('x10', 1);
   for (const r of res) { const rr = rarOfPull(r); if (rr === 'legendary') stat('leg', 1); else if (rr === 'epic') stat('epic', 1); }
   if (c.gems > 0 && SAVE.gems === 0) stat('broke', 1);

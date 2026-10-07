@@ -12,7 +12,7 @@ const ECO_SOMBRA = (() => {
   let est = leer();   // { migrado: id de usuario, cola: [{ clave, motivo, oro, gemas, entradas }], servidor: {…}, local: {…}, cuando }
   est.cola = est.cola || [];
   const guardar = () => { try { localStorage.setItem(CLAVE, JSON.stringify(est)); } catch (e) { /* sin almacenamiento */ } };
-  let ocupado = false, temporizador = null;
+  let temporizador = null;
   const activa = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
   const id = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10));
 
@@ -24,8 +24,14 @@ const ECO_SOMBRA = (() => {
   }
   const apunta = r => { est.servidor = { oro: r.oro, gemas: r.gemas, entradas: r.entradas }; est.local = { oro: SAVE.gold, gemas: SAVE.gems, entradas: SAVE.tickets || 0 }; est.cuando = Date.now(); };
 
-  async function enviar() {
-    if (!activa() || ocupado) return; ocupado = true;
+  let vuelo = null;
+  function enviar() { return vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
+  async function vaciar() {   // antes de pedir algo al servidor: que sepa todo lo ganado y que la cuenta esté migrada; falla si no hay conexión
+    for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && !est.cola.length) return; }
+    throw new Error('sin_conexion');
+  }
+  async function enviarYa() {
+    if (!activa()) return;
     try {
       const usuario = CUENTA.usuario || (await CUENTA.rpc('estado', { p_juego: AJUSTES.id }).then(() => CUENTA.usuario));
       if (est.migrado !== usuario) {
@@ -39,7 +45,6 @@ const ECO_SOMBRA = (() => {
         est.cola = est.cola.slice(lote.length); apunta(r); guardar();
       }
     } catch (e) { /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
-    finally { ocupado = false; }
   }
   // texto para mirar en la consola o en el panel DEV
   const informe = () => {
@@ -53,5 +58,5 @@ const ECO_SOMBRA = (() => {
     window.addEventListener('online', enviar);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && est.cola.length) enviar(); });
   }
-  return { anota, enviar, informe, get estado() { return est; } };
+  return { anota, enviar, vaciar, id, apuntaLocal: apunta, informe, get estado() { return est; } };
 })();

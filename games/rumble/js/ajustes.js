@@ -4,6 +4,7 @@
 const AJUSTES = {
   id: 'rumble',
   nombre: 'Fans of Rumble',
+  servidor: { gachapon: true },   // lo que ya hace el servidor cuando hay cuenta (PLAN-CUENTAS.md, fase 2): el gashapón de habilidades y equipo
   guardado: 'for-save-1',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // economía propia (la común está en core/js/sistema/progreso.js: niveles, gashapón, despidos…)
   econ: {

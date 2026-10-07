@@ -318,7 +318,7 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 - `cardStartLevel` (la carta nueva llega cerca del nivel de su facción) se calcula en el servidor con los niveles que ya tiene allí.
 
 **Orden de trabajo de la fase 2** (cada paso se puede subir solo):
-1. `subir_datos.py` y la tabla `tablas_juego` con los datos de Rumble y TD.
+1. ✔ (7-10-2026) `herramientas/subir_datos.py` (abre `herramientas/datos.html` en Chrome sin ventana y escribe `servidor/datos/<juego>.json` y `.sql`) y la tabla `tablas_juego` (`servidor/04-tablas-juego.sql`). Subidos los datos de Rumble (versión 3); los de TD están generados y se suben al llegar su paso.
 2. `tirar` para las máquinas comunes (habilidades y equipo) y su motor en `ECO`; probar en una partida nueva y en una migrada.
 3. Máquina de cartas de Rumble.
 4. `despedir`, `retirar_numeros` y `mejorar_carta`.

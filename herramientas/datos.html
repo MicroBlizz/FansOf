@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Datos del juego</title>
+<!-- Lo abre herramientas/subir_datos.py (en Chrome sin ventana): carga el juego, saca de él las cifras que el servidor necesita
+     (probabilidades, costes, calidades, qué sale de cada rareza) y se las manda a la herramienta. No es una página para jugadores. -->
+<iframe id="j" style="width:800px;height:600px"></iframe>
+<script>
+'use strict';
+// cartas: solo las que salen del gashapón de cartas
+const juego = new URLSearchParams(location.search).get('juego');
+const f = document.getElementById('j');
+f.onload = () => setTimeout(() => {
+  let out;
+  try {
+    out = f.contentWindow.eval(`(() => {
+      const g = n => { try { return eval(n); } catch (e) { return undefined; } };
+      const E = g('ECON') || {}, R = {};
+      for (const k of ['pull', 'odds', 'cardOdds', 'pityEpic', 'pityLeg', 'pityQ', 'scrap', 'reroll', 'goldCost', 'xpNeed', 'maxLvl', 'maxStars', 'dupGems', 'lvlStep', 'start', 'winXpMult', 'xpPerPlay']) if (E[k] !== undefined) R[k] = E[k];
+      const cat = DB => { const o = {}; for (const id in DB || {}) { const d = DB[id]; o[id] = { rar: d.rar, slot: d.slot || null, fac: d.fac || null, pass: !!d.pass, n: (d.st || [(d.vals || [1])[1]]).length }; } return o; };
+      const F = {}; for (const f of g('FACTION_ORDER') || []) { const x = g('FACTIONS')[f]; F[f] = { leader: x.leader || null, units: x.units || [], gacha: x.gacha || [] }; }
+      const cartas = {}; const C = (g('CFG') || {}).cards || {}; for (const k in C) if (C[k].gacha) cartas[k] = { rarity: C[k].rarity, fac: C[k].fac || null, cost: C[k].cost == null ? null : C[k].cost };
+      return JSON.stringify({ juego: ${JSON.stringify(juego)}, econ: R, calidades: g('QTIERS'), habilidades: cat(g('ABILITIES')), objetos: cat(g('ITEMS')), facciones: F, cartas, orden: g('FACTION_ORDER') });
+    })()`);
+  } catch (e) { out = JSON.stringify({ fallo: String(e) }); }
+  fetch('/datos-resultado', { method: 'POST', body: out });
+}, 3000);
+f.src = '/games/' + juego + '/';
+</script>

@@ -123,6 +123,17 @@ const CUENTA = (() => {
   async function entrarConEmail(email) {
     await pedir('/auth/v1/otp?redirect_to=' + encodeURIComponent(volver()), { method: 'POST', body: JSON.stringify({ email, create_user: false }) });
   }
+  // Google: solo si el servidor lo tiene activado (así el botón no sale hasta que la credencial esté puesta)
+  async function googleListo() {
+    try { const a = await pedir('/auth/v1/settings'); return !!(a && a.external && a.external.google); } catch (e) { return false; }
+  }
+  // invitado → cuenta con Google: se enlaza a esta misma cuenta (conserva la partida); hace falta «manual linking» activado en Supabase
+  async function guardarConGoogle() {
+    const r = await pedir('/auth/v1/user/identities/authorize?provider=google&skip_http_redirect=true&redirect_to=' + encodeURIComponent(volver()), {}, await token());
+    location.href = r.url;
+  }
+  // en otro aparato: entrar con la cuenta de Google que ya tienes
+  function entrarConGoogle() { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); }
   async function cerrarSesion() {
     const s = leer(SESION, null);
     try { if (s) await pedir('/auth/v1/logout', { method: 'POST' }, s.access); } catch (e) { /* da igual: se olvida aquí */ }
@@ -151,7 +162,7 @@ const CUENTA = (() => {
   const sesion = () => leer(SESION, null) || {};
   // llamada a una función de la base de datos con la sesión de aquí; cuerpo puede ser una función que se evalúa justo después de tener la sesión
   const rpc = async (nombre, cuerpo) => { const t = await token(); return pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); };
-  return { activa, cambio, sincronizar, rpc, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, cerrarSesion, borrarCuenta,
+  return { activa, cambio, sincronizar, rpc, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; } };
 })();

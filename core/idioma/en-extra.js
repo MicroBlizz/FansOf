@@ -116,4 +116,12 @@ IDIOMA.add({
   "El servidor de Microblizz ya cuenta tu oro. Dice que le sobra tiempo desde que dejó de contar el suyo.": "Microblizz's server now counts your gold. It says it has spare time since it stopped counting its own.",
   "<b>JUEGO LIMPIO</b>: las recompensas, el gashapón y las compras se validan en nuestro servidor, y vigilamos las trampas. Quien las haga puede perder ventajas o su cuenta. Gracias por jugar limpio.": "<b>FAIR PLAY</b>: rewards, the gashapon and purchases are validated on our server, and we watch for cheating. Anyone who cheats may lose advantages or their account. Thanks for playing fair.",
   "Microblizz también vigila a su plantilla. De momento sin éxito.": "Microblizz also monitors its staff. No success so far.",
+  "GUARDAR CON GOOGLE": "SAVE WITH GOOGLE",
+  "ENTRAR CON GOOGLE": "SIGN IN WITH GOOGLE",
+  "CONTINUAR": "CONTINUE",
+  "Entrarás con tu cuenta de Google y tu progreso quedará guardado en ella.": "You will sign in with your Google account and your progress will be saved in it.",
+  "Privacidad": "Privacy",
+  "Condiciones de uso": "Terms of use",
+  "<b>PRIVACIDAD Y CONDICIONES</b>: ya puedes leer cómo guardamos tu progreso y las reglas del juego, en Opciones → Cuenta y en la página de inicio.": "<b>PRIVACY AND TERMS</b>: you can now read how we keep your progress and the rules of the game, in Options → Account and on the home page.",
+  "Microblizz asegura que sus condiciones de uso son cortas. El departamento legal dice que es lo único corto que tiene.": "Microblizz says its terms of use are short. Legal says it is the only short thing they have.",
 });

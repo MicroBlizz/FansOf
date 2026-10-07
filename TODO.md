@@ -15,12 +15,12 @@ Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENT
 - No hace falta para la primera versión: PvP online, tienda con dinero real ni el botón de Google.
 
 ## Cuentas (publicado el 6-10-2026: Rumble 0.9.30, TD 0.13.0)
-- [ ] Página de privacidad corta (ES/EN): qué se guarda (la partida y el email si lo das), para qué, dónde (Supabase, UE) y cómo borrarlo. Enlazarla desde Opciones y desde la biblioteca.
-- [ ] Botón «Continuar con Google»: crear la credencial OAuth en Google Cloud (lo hace el dueño), activar Google en Supabase y añadir el botón en core/js/sistema/cuenta-pantalla.js.
+- [x] Páginas de privacidad y condiciones (ES/EN) en /privacidad/ y /condiciones/, enlazadas desde Opciones y la biblioteca. Pendiente del dueño: poner un correo de contacto real (hoy es la página de incidencias de GitHub).
+- [ ] Botón de Google: el código ya está (sale solo cuando Supabase tiene Google activado). Falta que el dueño cree la credencial OAuth en Google Cloud, active Google y «Allow manual linking» en Supabase (pasos en el hilo «Cuenta del jugador»).
 - [ ] Textos de los correos de Supabase en español (Authentication → Emails → Templates): hoy salen en inglés.
 - [ ] Correo: Gmail vale para empezar (~500 al día). Con muchos jugadores, pasar a un dominio propio (por ejemplo con Resend).
 - [ ] Herramientas en el panel DEV: estado de la nube, forzar subida/bajada, simular sin conexión.
-- [ ] Limpieza: tarea mensual que borre invitados sin actividad en 60 días (y el usuario de prueba con la partida «prueba»).
+- [ ] Limpieza de invitados: servidor/16-limpiar-invitados.sql escrito (diaria, 60 días); falta que el dueño lo pegue en el SQL Editor. El usuario de prueba con la partida «prueba» se borra a mano.
 - [ ] App de Android (Capacitor): añadir su dirección a las Redirect URLs de Supabase para que funcione el enlace del email.
 - [ ] Probar el modo sin conexión con la cuenta (python herramientas/servidor.py --con-sw).
 

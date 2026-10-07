@@ -149,7 +149,9 @@ const CUENTA = (() => {
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && meta.pendiente) { clearTimeout(temporizador); sincronizar(false); } });
   }
   const sesion = () => leer(SESION, null) || {};
-  return { activa, cambio, sincronizar, guardarConEmail, entrarConEmail, cerrarSesion, borrarCuenta,
+  // llamada a una función de la base de datos con la sesión de aquí; cuerpo puede ser una función que se evalúa justo después de tener la sesión
+  const rpc = async (nombre, cuerpo) => { const t = await token(); return pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); };
+  return { activa, cambio, sincronizar, rpc, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; } };
 })();

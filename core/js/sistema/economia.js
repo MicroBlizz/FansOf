@@ -15,6 +15,7 @@ const ECO = {
       if (v.gold) SAVE.gold += signo * v.gold;
       if (v.gems) SAVE.gems += signo * v.gems;
       if (v.tickets) SAVE.tickets = (SAVE.tickets || 0) + signo * v.tickets;
+      if (typeof ECO_SOMBRA !== 'undefined') ECO_SOMBRA.anota(motivo, v, signo);   // modo sombra (economia-sombra.js): el servidor lo apunta, sin mandar
     },
   },
 };

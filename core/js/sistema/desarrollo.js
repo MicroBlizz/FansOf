@@ -39,6 +39,14 @@
         boton('Borrar la partida', () => { if (confirm('¿Borrar la partida de este juego?')) { try { localStorage.removeItem(AJUSTES.guardado); } catch (e) { /* sin guardar */ } location.reload(); } }, { className: 'peligro' })));
       c.append(caja);
     } },
+    { titulo: 'Recursos en la nube (sombra)', pinta(c) {
+      const caja = el('textarea', { rows: 3, readOnly: true });
+      const ver = () => { caja.value = typeof ECO_SOMBRA !== 'undefined' ? ECO_SOMBRA.informe() : 'Sin modo sombra'; };
+      c.append(el('div', { className: 'fila' },
+        boton('Mandar y comparar', async () => { if (typeof ECO_SOMBRA !== 'undefined') await ECO_SOMBRA.enviar(); ver(); }),
+        boton('Ver', ver)));
+      c.append(caja); ver();
+    } },
     { titulo: 'Caché y modo sin conexión', pinta(c) {
       c.append(el('div', { className: 'fila' },
         boton('Borrar la caché y recargar', async () => {

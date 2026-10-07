@@ -35,6 +35,7 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.
 - Publicar versión: sube el ?v= de nucleo.js en el index.html de cada juego afectado (si tocas core, en todos); si el jugador lo nota, entrada en NEWS.
 - Guardar el trabajo es libre: haz commit y `git push origin main` cuando quieras (los dos, Rafael y Dani, y sus sesiones). Eso NO despliega nada.
+- Antes de subir a main: `git pull --rebase origin main` (siempre) y prueba lo que has tocado (comparador de partidas si no debe notarse, o la prueba a mano en el juego); después `git push origin main`. Si el pull trae cambios en lo que tocas, vuelve a probar.
 - Al terminar cambios en los juegos (y cuando tengas un commit nuevo), OFRECE SIEMPRE desplegar: «¿Lo despliego?». Si te dicen que sí: `python herramientas/desplegar.py`. Copia main a gh-pages (que siempre es una copia de main) y comprueba en la web real que las versiones coinciden. No digas «desplegado» hasta que diga OK.
 - Nunca toques gh-pages a mano ni uses `git push` a secas (el script deja la configuración local para que un push normal suba solo main). `python herramientas/desplegar.py --estado` compara main, gh-pages y la web viva.
 - Volver atrás: `python herramientas/desplegar.py --lista` (versiones desplegables) y `--a <commit>`; main no se toca.

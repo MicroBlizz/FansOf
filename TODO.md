@@ -15,7 +15,7 @@ Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENT
 - No hace falta para la primera versión: PvP online, tienda con dinero real ni el botón de Google.
 
 ## Cuentas (publicado el 6-10-2026: Rumble 0.9.30, TD 0.13.0)
-- [x] Páginas de privacidad y condiciones (ES/EN) en /privacidad/ y /condiciones/, enlazadas desde Opciones y la biblioteca. Pendiente del dueño: poner un correo de contacto real (hoy es la página de incidencias de GitHub).
+- [x] Páginas de privacidad y condiciones (ES/EN) en /privacidad/ y /condiciones/, enlazadas desde Opciones y la biblioteca.  Contacto: fansofmicroblizz@gmail.com.
 - [ ] Botón de Google: el código ya está (sale solo cuando Supabase tiene Google activado). Falta que el dueño cree la credencial OAuth en Google Cloud, active Google y «Allow manual linking» en Supabase (pasos en el hilo «Cuenta del jugador»).
 - [ ] Textos de los correos de Supabase en español (Authentication → Emails → Templates): hoy salen en inglés.
 - [ ] Correo: Gmail vale para empezar (~500 al día). Con muchos jugadores, pasar a un dominio propio (por ejemplo con Resend).

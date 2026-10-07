@@ -4,6 +4,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.24', real: [
+      '<b>PROBABILIDADES A LA VISTA</b>: la tienda tiene una sección con las probabilidades reales del gashapón, objeto por objeto.'],
+    joke: ['Microblizz jura que los porcentajes siempre estuvieron a la vista. Debajo de la letra pequeña, eso sí.'] },
   { v: '0.13.23', real: [
       '<b>PRIVACIDAD Y CONDICIONES</b>: ya puedes leer cómo guardamos tu progreso y las reglas del juego, en Opciones → Cuenta y en la página de inicio.'],
     joke: ['Microblizz asegura que sus condiciones de uso son cortas. El departamento legal dice que es lo único corto que tiene.'] },

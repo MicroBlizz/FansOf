@@ -124,4 +124,17 @@ IDIOMA.add({
   "Condiciones de uso": "Terms of use",
   "<b>PRIVACIDAD Y CONDICIONES</b>: ya puedes leer cómo guardamos tu progreso y las reglas del juego, en Opciones → Cuenta y en la página de inicio.": "<b>PRIVACY AND TERMS</b>: you can now read how we keep your progress and the rules of the game, in Options → Account and on the home page.",
   "Microblizz asegura que sus condiciones de uso son cortas. El departamento legal dice que es lo único corto que tiene.": "Microblizz says its terms of use are short. Legal says it is the only short thing they have.",
+  "PROBABILIDADES DEL GASHAPÓN": "GACHA ODDS",
+  "Son las probabilidades reales de cada tirada, sin contar las garantías. Las calcula el servidor con las mismas cifras que se enseñan aquí. Comprar gemas o oro no cambia ninguna.": "These are the real odds of each pull, not counting the guarantees. The server uses the same figures shown here. Buying gems or gold doesn't change any of them.",
+  "<b>PROBABILIDADES A LA VISTA</b>: la tienda tiene una sección con las probabilidades reales del gashapón, objeto por objeto.": "<b>ODDS IN PLAIN SIGHT</b>: the shop has a section with the real gacha odds, item by item.",
+  "Microblizz jura que los porcentajes siempre estuvieron a la vista. Debajo de la letra pequeña, eso sí.": "Microblizz swears the percentages were always in plain sight. Under the fine print, admittedly.",
+  "OBJETOS DE EQUIPO": "EQUIPMENT ITEMS",
+  "Rareza": "Rarity",
+  "Probabilidad": "Chance",
+  "Objeto": "Item",
+  "Calidad": "Quality",
+  "%1: cada objeto": "%1: each item",
+  "CALIDAD DE CADA COPIA": "QUALITY OF EACH COPY",
+  "En el equipo, la mitad de las veces sale un objeto de una facción que ya tienes (si tienes alguna) y la otra mitad uno general.": "For equipment, half of the time you get an item from a faction you already have (if you have any) and the other half a general one.",
+  "Solo salen cartas de las facciones que ya tienes.": "Only cards from factions you already have can come up."
 });

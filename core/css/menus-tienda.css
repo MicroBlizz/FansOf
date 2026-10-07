@@ -179,3 +179,14 @@
 #scr-item .modal-card { max-height: 88%; }
 .item-body { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 7px; overflow-y: auto; min-height: 0; flex: 1 1 auto; touch-action: pan-y; }
 .item-head { display: grid; grid-template-columns: 42px 1fr; gap: 10px; align-items: center; }
+.probs { margin-top: 10px; width: 100%; max-width: 480px; }
+.probs > summary, .probs-sub > summary { cursor: pointer; font-family: var(--font-display); font-size: 15px; padding: 8px 4px; }
+.probs-sub > summary { font-size: 13px; font-family: inherit; font-weight: 800; padding: 4px 2px; }
+.probs-body h4 { margin: 10px 0 4px; font-size: 14px; font-weight: 400; }
+.probs-t { width: 100%; border-collapse: collapse; font-size: 12.5px; font-weight: 700; margin: 2px 0 6px; }
+.probs-t th { text-align: left; color: var(--ink-dim); font-size: 11px; }
+.probs-t td, .probs-t th { padding: 2px 4px; border-bottom: 1px solid rgba(255,255,255,.12); }
+.probs-t td:last-child, .probs-t th:last-child { text-align: right; white-space: nowrap; }
+.probs { background: rgba(24, 12, 44, .92); border: 3px solid var(--outline); border-radius: 14px; padding: 4px 10px; text-align: left; box-sizing: border-box; }
+.probs-t td, .probs-t th { text-align: left; }
+.probs-t td:last-child, .probs-t th:last-child { text-align: right; }

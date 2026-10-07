@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.54', real: [
+      '<b>JUEGO LIMPIO</b>: las recompensas, el gashapón y las compras se validan en nuestro servidor, y vigilamos las trampas. Quien las haga puede perder ventajas o su cuenta. Gracias por jugar limpio.'],
+    joke: ['Microblizz también vigila a su plantilla. De momento sin éxito.'] },
   { v: '0.9.45', real: [
       '<b>AVISO IMPORTANTE</b>: abre el juego con conexión antes del <b>21 de octubre</b> para subir tu progreso actual (oro, gemas, objetos y niveles) a tu cuenta. Pasada esa fecha, una partida antigua que no se haya subido ya no podrá subirse: seguirá en tu aparato, pero tu cuenta empezará desde cero.'],
     joke: ['Microblizz recuerda que las fechas límite son como sus promesas: se acercan solas.'] },

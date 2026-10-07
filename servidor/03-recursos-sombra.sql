@@ -84,7 +84,7 @@ language plpgsql security definer set search_path = '' as $$
 declare
   u uuid := auth.uid();
   v_oro numeric; v_gemas numeric; v_ent numeric;
-  tope_oro constant numeric := 5000000; tope_gemas constant numeric := 100000; tope_ent constant numeric := 1000;
+  tope_oro constant numeric := 20000000; tope_gemas constant numeric := 500000; tope_ent constant numeric := 10000;
 begin
   if u is null then raise exception 'sin_sesion'; end if;
   if p_juego !~ '^[a-z0-9_-]{1,32}$' then raise exception 'juego_no_valido'; end if;

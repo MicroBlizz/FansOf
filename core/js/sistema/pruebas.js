@@ -52,6 +52,9 @@ function activarPruebas() {
 // deja la partida de antes tal cual y recarga (así todas las pantallas salen bien). La nube se pone al día sola al abrir.
 function volverDePruebas() {
   const t = copiaPruebas(); if (!t) return;
+  try {   // el servidor también apunta la vuelta: lo que dio el modo pruebas se le quita (se manda al abrir otra vez)
+    const antes = JSON.parse(t); if (typeof ECO_SOMBRA !== 'undefined') ECO_SOMBRA.anota('quitar-pruebas', { gold: SAVE.gold - (antes.gold || 0), gems: SAVE.gems - (antes.gems || 0), tickets: (SAVE.tickets || 0) - (antes.tickets || 0) }, -1);
+  } catch (e) { /* sin copia legible: no se apunta */ }
   try { localStorage.setItem(SAVE_KEY, t); localStorage.removeItem(PRUEBAS_COPIA); } catch (e) { toast('No se ha podido volver a tu partida'); return; }
   if (typeof CUENTA !== 'undefined') CUENTA.cambio();
   location.reload();

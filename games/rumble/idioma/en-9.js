@@ -124,4 +124,8 @@ IDIOMA.add({
   "<b>MODO AHORRO</b> (en Opciones): para móviles sencillos. Dibuja con menos resolución, a 30 imágenes por segundo y con menos polvo y humo, así gasta menos batería y calienta menos.": "<b>SAVER MODE</b> (in Options): for simpler phones. Draws at lower resolution, at 30 frames per second and with less dust and smoke, so it uses less battery and runs cooler.",
   "<b>CONTADOR DE FPS</b> (en Opciones): enseña arriba a la izquierda cuántas imágenes por segundo dibuja el juego. Verde, va fluido; amarillo, justo; rojo, a tirones.": "<b>FPS COUNTER</b> (in Options): shows at the top left how many frames per second the game draws. Green is smooth; yellow is borderline; red is choppy.",
   "Microblizz también tiene un modo ahorro: lo aplica a los sueldos.": "Microblizz has a saver mode too: it applies it to salaries.",
+  "<b>GASHAPÓN EN LA NUBE</b>: con tu cuenta, las tiradas de habilidades y equipo las hace nuestro servidor, así tus objetos quedan a salvo. Para tirar hace falta conexión.": "<b>GASHAPON IN THE CLOUD</b>: with your account, ability and gear pulls are now done by our server, so your items are kept safe. You need a connection to pull.",
+  "Microblizz jura que el servidor no se queda con ninguna copia. Solo con las mejores.": "Microblizz swears the server doesn't keep any copies. Only the best ones.",
+  "Te faltan gemas": "You are short on gems",
+  "Necesitas conexión para esto": "You need a connection for this",
 });

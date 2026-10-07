@@ -3,7 +3,7 @@
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
 ## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
-Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).
+¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).
 - [ ] **Página de privacidad** (ES/EN): obligatoria ya (la partida va a la nube) y Google Play pide su enlace. La hace Claude de Daniel (es el punto de «Cuentas» de abajo).
 - [ ] **App de Android con Capacitor**: envolver el juego web en una app. La hace Claude de Daniel.
 - [ ] **Ficha de la tienda**: capturas, imagen de cabecera 1024×500, descripción ES/EN, repaso del icono. La hace Claude de Daniel.

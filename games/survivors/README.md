@@ -30,5 +30,5 @@ colección, inventario, biblioteca, gashapón, tienda, horas extra, misiones, lo
 | `idioma/en.js` | El inglés de este juego. |
 
 ## Todavía no tiene (prototipo)
-Otros líderes jugables (solo Animales Locos tiene sus armas), anuncios, tutorial guiado ni nada en el servidor (`AJUSTES.servidor` vacío:
-el gashapón y los premios se calculan en el aparato; la partida sí se guarda en la nube).
+Otros líderes jugables (solo Animales Locos tiene sus armas), anuncios y tutorial guiado.
+Desde 0.1.2 el servidor hace el gashapón y la economía (`AJUSTES.servidor`) y pone topes a los premios de cada partida; sus cifras se suben con `python herramientas/subir_datos.py survivors`.

@@ -1,0 +1,1722 @@
+{
+ "calidades": [
+  {
+   "col": "#b4bccb",
+   "hi": 0.4,
+   "lo": 0,
+   "name": "Becario (básica)",
+   "p": 30
+  },
+  {
+   "col": "#63cfe0",
+   "hi": 0.7,
+   "lo": 0.4,
+   "name": "Junior (normal)",
+   "p": 40
+  },
+  {
+   "col": "#8cf05a",
+   "hi": 0.88,
+   "lo": 0.7,
+   "name": "Senior (buena)",
+   "p": 20
+  },
+  {
+   "col": "#e2a8ff",
+   "hi": 0.99,
+   "lo": 0.88,
+   "name": "Director (excelente)",
+   "p": 9
+  },
+  {
+   "col": "#ffcb3d",
+   "hi": 1,
+   "lo": 1,
+   "name": "CEO (perfecta)",
+   "p": 1
+  }
+ ],
+ "cartas": {
+  "arpia": {
+   "cost": null,
+   "fac": "heroes",
+   "rarity": "epic"
+  },
+  "campero": {
+   "cost": null,
+   "fac": "gamer",
+   "rarity": "epic"
+  },
+  "clickbait": {
+   "cost": null,
+   "fac": "memes",
+   "rarity": "epic"
+  },
+  "dron": {
+   "cost": null,
+   "fac": "ciber",
+   "rarity": "epic"
+  },
+  "espia": {
+   "cost": null,
+   "fac": "olvidados",
+   "rarity": "epic"
+  },
+  "hater": {
+   "cost": null,
+   "fac": "streamers",
+   "rarity": "epic"
+  },
+  "huron": {
+   "cost": null,
+   "fac": "animales",
+   "rarity": "epic"
+  },
+  "paparazzi": {
+   "cost": null,
+   "fac": "pop",
+   "rarity": "epic"
+  },
+  "sombra": {
+   "cost": null,
+   "fac": "nomuertos",
+   "rarity": "epic"
+  },
+  "sp_ambrosia": {
+   "cost": null,
+   "fac": "heroes",
+   "rarity": "rare"
+  },
+  "sp_baneo": {
+   "cost": null,
+   "fac": "streamers",
+   "rarity": "legendary"
+  },
+  "sp_bellotas": {
+   "cost": null,
+   "fac": "animales",
+   "rarity": "rare"
+  },
+  "sp_botiquin": {
+   "cost": null,
+   "fac": "animales",
+   "rarity": "rare"
+  },
+  "sp_cancelado": {
+   "cost": null,
+   "fac": "olvidados",
+   "rarity": "legendary"
+  },
+  "sp_cartuchos": {
+   "cost": null,
+   "fac": "olvidados",
+   "rarity": "rare"
+  },
+  "sp_confusion": {
+   "cost": null,
+   "fac": "memes",
+   "rarity": "legendary"
+  },
+  "sp_critico": {
+   "cost": null,
+   "fac": "gamer",
+   "rarity": "rare"
+  },
+  "sp_crunch": {
+   "cost": null,
+   "fac": "nomuertos",
+   "rarity": "epic"
+  },
+  "sp_donaciones": {
+   "cost": null,
+   "fac": "streamers",
+   "rarity": "rare"
+  },
+  "sp_energetica": {
+   "cost": null,
+   "fac": "gamer",
+   "rarity": "rare"
+  },
+  "sp_eternas": {
+   "cost": null,
+   "fac": "nomuertos",
+   "rarity": "legendary"
+  },
+  "sp_formol": {
+   "cost": null,
+   "fac": "nomuertos",
+   "rarity": "rare"
+  },
+  "sp_gatos": {
+   "cost": null,
+   "fac": "memes",
+   "rarity": "rare"
+  },
+  "sp_lapidas": {
+   "cost": null,
+   "fac": "nomuertos",
+   "rarity": "rare"
+  },
+  "sp_likes": {
+   "cost": null,
+   "fac": "memes",
+   "rarity": "rare"
+  },
+  "sp_maquillaje": {
+   "cost": null,
+   "fac": "pop",
+   "rarity": "rare"
+  },
+  "sp_merienda": {
+   "cost": null,
+   "fac": "streamers",
+   "rarity": "rare"
+  },
+  "sp_nanobots": {
+   "cost": null,
+   "fac": "ciber",
+   "rarity": "rare"
+  },
+  "sp_nerfeo": {
+   "cost": null,
+   "fac": "heroes",
+   "rarity": "legendary"
+  },
+  "sp_orbital": {
+   "cost": null,
+   "fac": "ciber",
+   "rarity": "rare"
+  },
+  "sp_parchefan": {
+   "cost": null,
+   "fac": "olvidados",
+   "rarity": "rare"
+  },
+  "sp_ping": {
+   "cost": null,
+   "fac": "gamer",
+   "rarity": "legendary"
+  },
+  "sp_pulgas": {
+   "cost": null,
+   "fac": "animales",
+   "rarity": "legendary"
+  },
+  "sp_rayo": {
+   "cost": null,
+   "fac": "heroes",
+   "rarity": "rare"
+  },
+  "sp_remake": {
+   "cost": null,
+   "fac": "pop",
+   "rarity": "legendary"
+  },
+  "sp_review": {
+   "cost": null,
+   "fac": "gamer",
+   "rarity": "epic"
+  },
+  "sp_taquilla": {
+   "cost": null,
+   "fac": "pop",
+   "rarity": "rare"
+  },
+  "sp_update": {
+   "cost": null,
+   "fac": "ciber",
+   "rarity": "legendary"
+  }
+ },
+ "econ": {
+  "goldCost": [
+   0,
+   50,
+   100,
+   200,
+   400,
+   750,
+   1500,
+   3000,
+   6000,
+   12000
+  ],
+  "lvlStep": 0.06,
+  "maxLvl": 10,
+  "odds": {
+   "common": 55,
+   "epic": 12,
+   "legendary": 3,
+   "rare": 30
+  },
+  "pityEpic": 10,
+  "pityLeg": 50,
+  "pityQ": 10,
+  "pull": 50,
+  "reroll": {
+   "common": 250,
+   "epic": 1000,
+   "legendary": 2000,
+   "rare": 500
+  },
+  "scrap": {
+   "common": 25,
+   "epic": 150,
+   "legendary": 400,
+   "rare": 60
+  },
+  "start": {
+   "gems": 100,
+   "gold": 150
+  },
+  "winXpMult": 1.3,
+  "xpNeed": [
+   0,
+   50,
+   100,
+   175,
+   300,
+   500,
+   800,
+   1300,
+   2000,
+   3200
+  ],
+  "xpPerPlay": 0
+ },
+ "facciones": {
+  "animales": {
+   "gacha": [
+    "huron",
+    "sp_bellotas",
+    "sp_botiquin",
+    "sp_pulgas"
+   ],
+   "leader": "bunny",
+   "units": [
+    "squirrel",
+    "beaver",
+    "fox",
+    "meercat",
+    "junkcoon",
+    "mechavaca"
+   ]
+  },
+  "ciber": {
+   "gacha": [
+    "dron",
+    "sp_orbital",
+    "sp_nanobots",
+    "sp_update"
+   ],
+   "leader": "cybermarine",
+   "units": [
+    "nanobot",
+    "cyberninja",
+    "techdroid",
+    "hackerkid",
+    "neonsniper",
+    "siegemech"
+   ]
+  },
+  "gamer": {
+   "gacha": [
+    "campero",
+    "sp_critico",
+    "sp_energetica",
+    "sp_ping",
+    "sp_review"
+   ],
+   "leader": "progamer",
+   "units": [
+    "noobs",
+    "speedrunner",
+    "modder",
+    "coleccionista",
+    "ragequitter",
+    "recreativa"
+   ]
+  },
+  "heroes": {
+   "gacha": [
+    "arpia",
+    "sp_rayo",
+    "sp_ambrosia",
+    "sp_nerfeo"
+   ],
+   "leader": "epicchampion",
+   "units": [
+    "cupidarcher",
+    "hoplite",
+    "shieldmaiden",
+    "thundergod",
+    "medusa",
+    "minotaur"
+   ]
+  },
+  "memes": {
+   "gacha": [
+    "clickbait",
+    "sp_gatos",
+    "sp_likes",
+    "sp_confusion"
+   ],
+   "leader": "memelord",
+   "units": [
+    "suchdog",
+    "gifblaster",
+    "synthcat",
+    "trollbot",
+    "stonks",
+    "chonkcat"
+   ]
+  },
+  "nomuertos": {
+   "gacha": [
+    "sombra",
+    "sp_lapidas",
+    "sp_formol",
+    "sp_eternas",
+    "sp_crunch"
+   ],
+   "leader": "necrolord",
+   "units": [
+    "skeleton",
+    "zombie",
+    "ghostmage",
+    "banshee",
+    "skullknight",
+    "stitchbrute"
+   ]
+  },
+  "olvidados": {
+   "gacha": [
+    "espia",
+    "sp_cartuchos",
+    "sp_parchefan",
+    "sp_cancelado"
+   ],
+   "leader": "vikingo",
+   "units": [
+    "swarmbug",
+    "vikingsquad",
+    "retromarine",
+    "ghostagent",
+    "rockracer",
+    "titanbeta"
+   ]
+  },
+  "pop": {
+   "gacha": [
+    "paparazzi",
+    "sp_taquilla",
+    "sp_maquillaje",
+    "sp_remake"
+   ],
+   "leader": "directora",
+   "units": [
+    "extras",
+    "doble",
+    "detective",
+    "heroe",
+    "spoiler",
+    "kaiju"
+   ]
+  },
+  "streamers": {
+   "gacha": [
+    "hater",
+    "sp_donaciones",
+    "sp_merienda",
+    "sp_baneo"
+   ],
+   "leader": "twitchking",
+   "units": [
+    "subswarm",
+    "hypebeast",
+    "viralbot",
+    "snackmom",
+    "hypetrain",
+    "banhammer"
+   ]
+  }
+ },
+ "habilidades": {
+  "cadena": {
+   "fac": "heroes",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "cafeina": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
+  "clon": {
+   "fac": "memes",
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
+  "dlc": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "escarcha": {
+   "fac": "nomuertos",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "furia": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
+  "gigante": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
+  "grito": {
+   "fac": "nomuertos",
+   "n": 2,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "hitbox": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "iman": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
+  "microtrans": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "modofoto": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "piel": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
+  "plasma": {
+   "fac": "ciber",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "provoca": {
+   "fac": "memes",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "punos": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
+  "ragequit": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "reflejos": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
+  "renacer": {
+   "fac": "nomuertos",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
+  "sigilo": {
+   "fac": "animales",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "speedrun": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
+  "vampiro": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  }
+ },
+ "juego": "survivors",
+ "objetos": {
+  "alfombrilla": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "acc"
+  },
+  "almohada": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "acc"
+  },
+  "auriculares": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "head"
+  },
+  "baguette": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "weapon"
+  },
+  "banhammer_oro": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "weapon"
+  },
+  "bebida_xxl": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "common",
+   "slot": "acc"
+  },
+  "boton_pausa": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "cartucho_dorado": {
+   "fac": "olvidados",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "casco_vr": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "head"
+  },
+  "claqueta_oro": {
+   "fac": "pop",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "weapon"
+  },
+  "cofre": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "corbata_ceo": {
+   "fac": null,
+   "n": 3,
+   "pass": true,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "corona_carton": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "rare",
+   "slot": "head"
+  },
+  "corona_huesos": {
+   "fac": "nomuertos",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "head"
+  },
+  "cuernos": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "head"
+  },
+  "diploma": {
+   "fac": null,
+   "n": 2,
+   "pass": true,
+   "rar": "rare",
+   "slot": "acc"
+  },
+  "disco_fisico": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "acc"
+  },
+  "espada_carton": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "weapon"
+  },
+  "gafas_pixel": {
+   "fac": "memes",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "head"
+  },
+  "gorra_reves": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "head"
+  },
+  "gorro_aluminio": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "epic",
+   "slot": "head"
+  },
+  "lanzaconfeti": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "weapon"
+  },
+  "mando_cable": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "weapon"
+  },
+  "microfono_oro": {
+   "fac": "streamers",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "nucleo_plasma": {
+   "fac": "ciber",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "acc"
+  },
+  "orejas_gato": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "head"
+  },
+  "pase_caducado": {
+   "fac": null,
+   "n": 3,
+   "pass": false,
+   "rar": "common",
+   "slot": "acc"
+  },
+  "raton_campeon": {
+   "fac": "gamer",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "weapon"
+  },
+  "raton_dpi": {
+   "fac": null,
+   "n": 2,
+   "pass": false,
+   "rar": "rare",
+   "slot": "weapon"
+  },
+  "silla_gamer": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "acc"
+  },
+  "taza": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "acc"
+  },
+  "teclado_rgb": {
+   "fac": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "weapon"
+  },
+  "yelmo_olimpo": {
+   "fac": "heroes",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "head"
+  },
+  "zanahoria_oro": {
+   "fac": "animales",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "weapon"
+  }
+ },
+ "orden": [
+  "animales",
+  "nomuertos",
+  "streamers",
+  "heroes",
+  "ciber",
+  "memes",
+  "gamer",
+  "olvidados",
+  "pop"
+ ],
+ "premios": {
+  "anuncios": null,
+  "camp": {
+   "boss": [
+    300,
+    50
+   ],
+   "first": [
+    100,
+    10
+   ],
+   "lose": 10,
+   "replay": 30,
+   "stars3": [
+    50,
+    10
+   ]
+  },
+  "campRegla": "ultimo",
+  "facItems": null,
+  "gift": {
+   "gems": 5,
+   "gold": 100
+  },
+  "horas": {
+   "cap": 12,
+   "gExp": 1.6,
+   "gems": 1,
+   "gemsK": 2.5,
+   "gold": 60,
+   "idleH": 4,
+   "item": 0.02,
+   "itemK": 0.05,
+   "pwMax": 12,
+   "turboH": 2
+  },
+  "login": [
+   {
+    "gold": 150
+   },
+   {
+    "gems": 20
+   },
+   {
+    "gold": 300
+   },
+   {
+    "tickets": 1
+   },
+   {
+    "gold": 500
+   },
+   {
+    "gems": 40
+   },
+   {
+    "tickets": 10
+   }
+  ],
+  "logros": {
+   "ar_ardillas": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_castor": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_chaos": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_mapache": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_suricata": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_vacas": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_zanahoria": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "ar_zorro": [
+    5,
+    5,
+    10,
+    15,
+    25
+   ],
+   "besta": [
+    5,
+    10,
+    15,
+    20,
+    30
+   ],
+   "cl_beaver": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_bunny": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_fox": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_junkcoon": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_mechavaca": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_meercat": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cl_squirrel": [
+    5,
+    5,
+    5,
+    5,
+    10
+   ],
+   "cofre": [
+    10,
+    15,
+    25,
+    40,
+    60
+   ],
+   "daily": [
+    5,
+    10,
+    15,
+    20,
+    30
+   ],
+   "days": [
+    5,
+    10,
+    15,
+    20,
+    30,
+    40,
+    50
+   ],
+   "elite": [
+    10,
+    15,
+    25,
+    40,
+    60
+   ],
+   "goldb": [
+    5,
+    10,
+    20,
+    45
+   ],
+   "idle": [
+    10,
+    15,
+    25,
+    40
+   ],
+   "kill": [
+    5,
+    10,
+    15,
+    25,
+    35,
+    45,
+    60,
+    80,
+    120
+   ],
+   "leg": [
+    10,
+    15,
+    25,
+    40
+   ],
+   "lvl": [
+    5,
+    10,
+    25,
+    50
+   ],
+   "minuto": [
+    5,
+    10,
+    20,
+    30,
+    45,
+    70
+   ],
+   "nivel": [
+    5,
+    10,
+    15,
+    25,
+    40
+   ],
+   "ownab": [
+    10,
+    20,
+    30,
+    80
+   ],
+   "owneq": [
+    10,
+    20,
+    45,
+    80
+   ],
+   "passl": [
+    5,
+    10,
+    15,
+    25,
+    50
+   ],
+   "play": [
+    5,
+    5,
+    10,
+    15,
+    20,
+    30,
+    45,
+    60
+   ],
+   "pull": [
+    5,
+    5,
+    10,
+    30,
+    30,
+    50,
+    70
+   ],
+   "s_arsenal": [
+    30
+   ],
+   "s_close": [
+    40
+   ],
+   "s_howto": [
+    20
+   ],
+   "s_lose": [
+    30
+   ],
+   "s_massacre": [
+    40
+   ],
+   "s_mute": [
+    20
+   ],
+   "s_news": [
+    20
+   ],
+   "s_night": [
+    40
+   ],
+   "s_pause": [
+    20
+   ],
+   "win": [
+    30,
+    15,
+    20,
+    30,
+    50,
+    70,
+    100
+   ],
+   "wstreak": [
+    10,
+    15,
+    30,
+    60
+   ]
+  },
+  "mision": {
+   "d": [
+    50,
+    10
+   ],
+   "n": {
+    "d": 4,
+    "w": 4
+   },
+   "w": [
+    300,
+    40
+   ],
+   "xp": {
+    "d": 60,
+    "w": 250
+   }
+  },
+  "misiones": {
+   "d": [
+    "play3",
+    "kill500",
+    "kill1500",
+    "min10",
+    "min5",
+    "nivel30",
+    "cofre1",
+    "elite2",
+    "win1",
+    "pull1",
+    "lvl1",
+    "gift"
+   ],
+   "w": [
+    "wplay",
+    "wkill",
+    "wmin",
+    "wwin",
+    "wcofre",
+    "wnivel",
+    "wpull",
+    "wlvl"
+   ]
+  },
+  "mundos": [],
+  "pase": {
+   "free": [
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 1
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 1
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": "diploma",
+     "tickets": 0
+    }
+   ],
+   "levels": 30,
+   "paid": [
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": "corbata_ceo",
+     "tickets": 0
+    }
+   ],
+   "q": 0.9,
+   "xpLose": 40,
+   "xpPer": 400,
+   "xpWin": 100
+  },
+  "pay": {},
+  "starter": null
+ },
+ "topes": {
+  "compra": {
+   "dia": {
+    "gems": 100000,
+    "gold": 1000000
+   },
+   "vez": {
+    "gems": 10000,
+    "gold": 100000
+   }
+  },
+  "compra-pase": {
+   "calcula": "pase-premium",
+   "dia": {},
+   "vez": {}
+  },
+  "despedir": {
+   "dia": {
+    "gold": 5000000
+   },
+   "vez": {
+    "gold": 1000000
+   }
+  },
+  "gachapon": {
+   "dia": {},
+   "vez": {}
+  },
+  "horas-extra": {
+   "calcula": "horas",
+   "dia": {
+    "gems": 20000,
+    "gold": 600000
+   },
+   "vez": {
+    "gems": 5000,
+    "gold": 150000
+   }
+  },
+  "mejorar-carta": {
+   "dia": {},
+   "vez": {}
+  },
+  "mision": {
+   "calcula": "mision",
+   "dia": {
+    "gems": 1000,
+    "gold": 20000
+   },
+   "vez": {
+    "gems": 200,
+    "gold": 2000
+   }
+  },
+  "objeto": {
+   "calcula": "objeto",
+   "dia": {},
+   "vez": {}
+  },
+  "premio": {
+   "calcula": [
+    "logros",
+    "login",
+    "pase"
+   ],
+   "dia": {
+    "gems": 40000,
+    "gold": 100000,
+    "tickets": 60
+   },
+   "vez": {
+    "gems": 30000,
+    "gold": 20000,
+    "tickets": 30
+   }
+  },
+  "pruebas": {
+   "dia": {
+    "gems": 20000,
+    "gold": 12000000
+   },
+   "vez": {
+    "gems": 5000,
+    "gold": 3000000
+   }
+  },
+  "quitar-pruebas": {
+   "dia": {},
+   "vez": {}
+  },
+  "recompensa": {
+   "dia": {
+    "gems": 3000,
+    "gold": 200000
+   },
+   "vez": {
+    "gems": 100,
+    "gold": 3000
+   }
+  },
+  "regalo-diario": {
+   "dia": {
+    "gems": 40,
+    "gold": 600
+   },
+   "diario": true,
+   "fijo": "gift",
+   "vez": {
+    "gems": 20,
+    "gold": 300
+   }
+  },
+  "retirar-numeros": {
+   "dia": {},
+   "vez": {}
+  }
+ },
+ "version": 1
+}

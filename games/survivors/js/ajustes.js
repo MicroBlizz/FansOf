@@ -11,7 +11,7 @@ const AJUSTES = {
   id: 'survivors',
   nombre: 'Fans of Survivors',
   guardado: 'fosurv-save',   // la partida guardada de este juego: nunca se comparte con los otros
-  servidor: {},              // todavía no hay nada de este juego que haga el servidor: todo se calcula aquí (la partida sí se guarda en la nube)
+  servidor: { gachapon: true, economia: true },   // lo que hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel; los premios los valida con topes
   topes: { recompensa: { vez: { gold: 3000, gems: 100 }, dia: { gold: 200000, gems: 3000 } } },
   // lo que cambia respecto a la economía común (core/js/sistema/progreso.js: ECON)
   econ: {

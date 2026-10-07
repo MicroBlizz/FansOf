@@ -296,3 +296,32 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 2. **Mejorar y despedir con conexión obligatoria**: recomendado sí, igual que el gachapón.
 3. **Cuenta de invitado de Supabase para todos desde el primer arranque**: recomendado sí; así hay un solo camino (la nube) y el motor local queda como respaldo sin red.
 4. **Empezar por la fase 0** (la fachada `ECO`): recomendado sí.
+
+### 15.11 Estado y fase 2 preparada (7-10-2026)
+**Hecho**: fase 0 (fachada `ECO`, publicada en Rumble 0.9.40 y TD 0.13.7) y fase 1 (tablas, `estado`, `migrar`, `anotar` y modo sombra, Rumble 0.9.41 y TD 0.13.8; SQL en `servidor/03-recursos-sombra.sql`). Las decisiones 1 a 4 de 15.10 se aceptaron.
+
+**Fase 2: gachapón y mejoras en el servidor.** Lo que hay que mover, tal como está hoy en el código:
+- `core/js/sistema/gachapon.js`: `rollRarity`, `onePull`, `newCopy` y `pull` (habilidades y equipo, tiradas x1, x10 y x50, garantías `pityEpic`, `pityLeg`, `pityQ`, el «al menos una épica cada 10»). Rumble añade la máquina de cartas (`cardPull`, `rollCardRarity` y `cardStartLevel` en `14b-gachapon-y-mazo.js`).
+- `core/js/sistema/inventario.js`: despedir una o varias copias y volver a tirar los números (`ECO.ganar('despedir')` y `ECO.gastar('retirar-numeros')`).
+- `core/js/sistema/pantallas.js` `levelUp`: sube nivel gastando oro y xp.
+
+**Cómo se hace** (todo con las funciones y tablas del punto 15.4, y el motor nube de `ECO`):
+1. **Datos del juego en el servidor** (`tablas_juego`): probabilidades (`ECON.odds`, `cardOdds`), garantías, costes (`pull`, `goldCost`, `xpNeed`, `scrap`, `reroll`), `QTIERS` y los grupos de habilidades y objetos por rareza, facción y «pase». Los saca `herramientas/subir_datos.py` abriendo el juego en Chrome sin ventana (como `comprobar.py`), para no escribirlos dos veces ni leer el JS a mano. Cada subida lleva `version`.
+2. **`tirar(juego, maquina, n)`** devuelve las copias nuevas con su calidad y las garantías ya actualizadas; el cliente anima y enseña lo que llega. Descuenta entradas y gemas, crea las filas de `inventario` (o la `carta` y sus estrellas), y apunta en `movimientos`. Una sola transacción por llamada: o sale todo o nada.
+3. **`despedir(juego, uids)`**, **`retirar_numeros(juego, uid)`**, **`mejorar_carta(juego, carta)`**: valen con los datos del servidor (la calidad de la copia, el nivel y el oro vienen de sus tablas, no de lo que diga el cliente).
+4. **Cliente**: `gachapon.js`, `inventario.js` y `pantallas.js` dejan de calcular. Piden y pintan lo que devuelve el servidor. `SAVE.inv`, `SAVE.units`, `SAVE.cards` y `SAVE.pity` pasan a ser una copia que se rellena desde `estado`. Los juegos no cambian de forma: la fachada `ECO` gana `ECO.tirar`, `ECO.despedir`, `ECO.retirarNumeros` y `ECO.mejorar`.
+5. **Sin conexión**: estas acciones se bloquean con el aviso «Necesitas conexión» (decidido en 15.10). Con el servidor caído, el modo local de la fase 0 queda como respaldo solo para jugadores sin cuenta.
+
+**Lo que no se cierra todavía** (queda a la fase 3):
+- La xp de las cartas la sigue contando el cliente al jugar (`xpGrant`): un tramposo puede subir cartas gastando solo oro. Pasa a `recompensa` con tope.
+- Las facciones desbloqueadas (`SAVE.unlocked` en Rumble) las manda el cliente a `tirar` para saber qué hay en la máquina. Hasta la fase 3, quien las falsee solo accede antes a las cartas y objetos de otras facciones. En la fase 3 se desbloquean con un reclamo al ganar el mundo.
+- `cardStartLevel` (la carta nueva llega cerca del nivel de su facción) se calcula en el servidor con los niveles que ya tiene allí.
+
+**Orden de trabajo de la fase 2** (cada paso se puede subir solo):
+1. `subir_datos.py` y la tabla `tablas_juego` con los datos de Rumble y TD.
+2. `tirar` para las máquinas comunes (habilidades y equipo) y su motor en `ECO`; probar en una partida nueva y en una migrada.
+3. Máquina de cartas de Rumble.
+4. `despedir`, `retirar_numeros` y `mejorar_carta`.
+5. Cambio del cliente a leer de `estado` y quitar los cálculos locales; entrada en novedades solo cuando el jugador lo note (por ejemplo, «necesita conexión»).
+
+**Decisión pendiente antes de empezar**: ¿el servidor guarda también cada calidad de copia con sus decimales tal como hoy (`q` como lista de números del 0 al 1)? Recomendado sí, así el cliente no cambia sus cálculos de `valsOf`.

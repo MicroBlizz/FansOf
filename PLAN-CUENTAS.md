@@ -210,3 +210,89 @@ Qué supone en el código:
 3. Gachapón, inventario y tienda de core llaman al servidor. La tienda gana una pestaña de pago, con precios en euros y probabilidades visibles.
 4. Probar con pagos de prueba: compra, devolución, compra en un dispositivo y verla en otro.
 5. Alta legal, condiciones de venta y nombre definitivo antes de activar cobros reales.
+
+## 15. Recursos en la nube: enfoque por fases
+Propuesta (7-10-2026) para llevar al servidor el oro, las gemas, los objetos, las cartas y lo demás que cuesta dinero o da ventaja, pensando en la tienda. Desarrolla el punto 14; nada de esto está hecho.
+
+### 15.1 Qué guarda hoy cada juego
+Lo que hay en el SAVE de Rumble (`games/rumble/js/02e-guardado.js`) y de TD (`metaDefaults` en `games/td/js/catalogo.js`), con `core/js/sistema/progreso.js` como común. Hoy se sube entero como un solo JSON (`partidas.datos`), escrito por el cliente: cualquiera lo puede editar.
+
+| Tipo | Campos | Dónde debe vivir |
+|---|---|---|
+| Recursos | `gold`, `gems`, `tickets` | Servidor |
+| Suerte del gachapón | `pity` (contadores de garantía) | Servidor (si no, se editan para forzar legendarias) |
+| Objetos y habilidades | `inv` (cada copia: `u`, `k`, `id`, `q` calidades), `invSeq` | Servidor |
+| Cartas | `units` (nivel y xp), `cards` (copias y estrellas, Rumble), `unlocked` (facciones) | Servidor (ver decisión 1) |
+| Cosas que se cobran una vez | `giftDay`, `login`, `pass` (xp y premios cobrados), `tutGift`, `starter`, `mythPrize`, `bossPay`, `rlWeek`, `daily`, `weekly` | Servidor, como «reclamos» con clave única |
+| Progreso | `camp`, `campH`, `campM`, `stars` (TD), `bossRec`, `bestBoss`, `stats`, `achDone`, `achSeen`, `tut`, `seenVer` | Blob local con copia en la nube |
+| Equipado y mazos | `equip`, `abEquip`, `decks`, `facItem`, `lastFac`, `bossSel` | Blob; el servidor lo comprueba contra el inventario cuando importa (PvP) |
+| Opciones | `muted`, `vol`, `mus`, `nums`, `shake`, `blood`, `feed`, `chatOff`, `speed2`… | Blob |
+
+Hoy tocan `SAVE.gold`/`gems`/`tickets` unos 20 sitios repartidos en `core/js/retos.js`, `core/js/sistema/{gachapon,inventario,tienda,horas-extra,pantallas,pruebas}.js` y varios archivos de cada juego. Ese es el trabajo real: que todos pasen por un solo punto.
+
+### 15.2 Idea central
+1. **Una fachada común, `ECO`** (`core/js/sistema/economia.js`): `ECO.saldo()`, `ECO.cobrar(motivo, clave)`, `ECO.pagar(...)`, `ECO.tirar(...)`, `ECO.mejorar(...)`. El juego nunca escribe `SAVE.gold` directamente. Tiene dos motores con la misma interfaz: **local** (como hoy) y **nube**. Rumble y TD lo heredan; ningún `if` de juego.
+2. **El servidor es la verdad para los recursos.** El cliente solo pide operaciones; el servidor valida, aplica y devuelve el estado nuevo. El `SAVE.gold` local pasa a ser una copia para pintar.
+3. **Todo cambio de saldo queda apuntado** en un libro de movimientos (no se sobrescribe un número): se puede auditar, deshacer y detectar tramposos.
+4. **Las tablas no se pueden escribir directamente**: solo con funciones (`security definer`) que validan. Las políticas solo dejan leer lo propio.
+
+### 15.3 Tablas (por jugador y juego, como `partidas`)
+```sql
+monedero    (usuario, juego, oro bigint, gemas bigint, entradas int, garantia jsonb, rev int)  -- pk (usuario, juego)
+movimientos (id, usuario, juego, motivo text, clave text, d_oro, d_gemas, d_entradas, creado)  -- unique (usuario, juego, clave): idempotente
+inventario  (usuario, juego, uid text, tipo, objeto, calidades real[], creado)                 -- pk (usuario, juego, uid)
+cartas      (usuario, juego, carta text, nivel int, xp int, copias int, estrellas int)
+reclamos    (usuario, juego, clave text, creado)                                               -- premios de una sola vez
+compras     (id_pago, usuario, juego, producto, recursos, estado, creado)                       -- ya en el punto 14
+tablas_juego(juego, version, datos jsonb)  -- probabilidades, precios y recompensas, subidas por herramientas/subir_datos.py
+```
+`clave` la genera el cliente (por ejemplo `camp:1-3:primera` o un UUID por operación): si la misma petición llega dos veces (reintento sin red), el servidor ignora la segunda. Cada función bloquea la fila del monedero (`for update`) para que dos pestañas a la vez no gasten dos veces lo mismo.
+
+### 15.4 Funciones (RPC) y qué valida cada una
+- `estado(juego)`: devuelve saldo, inventario, cartas y reclamos. Se llama al arrancar y tras cada operación.
+- `tirar(juego, gachapon, n)`: comprueba saldo (entradas primero, luego gemas), saca las probabilidades de `tablas_juego`, tira con `random()` del servidor, aplica la garantía, crea las copias con su calidad y devuelve lo que ha salido. Mismo coste y probabilidades que hoy (`ECON.pull`, `odds`, `pityEpic`…). Aquí se publican también las probabilidades.
+- `mejorar_carta`, `despedir`, `retirar_numeros` (reroll): descuentan el oro de las tablas de coste, suben nivel o devuelven oro al despedir según la calidad que consta en el servidor.
+- `recompensa(juego, motivo, clave, datos)`: ver 15.6.
+- `reclamar(juego, clave)`: premio diario, pase, regalos, bienvenida; una vez por clave y periodo, con la fecha del servidor (no la del reloj del aparato).
+- `migrar(juego, save)`: una sola vez (15.8).
+- `guardar_partida` (ya existe): se le añade que **ignora** los campos de recursos del blob. Así un cliente viejo no puede pisar el saldo.
+- Las compras no son una función del cliente: solo las suma el webhook del proveedor de pago (Edge Function con la firma comprobada), con `id_pago` único.
+
+### 15.5 Qué se queda en el blob
+Progreso (niveles, estrellas, récords), opciones, tutorial, mazos y equipado. Se sigue subiendo como hoy, con el control de versión del punto 7. Si alguien edita sus estrellas solo se falsea a sí mismo, siempre que el premio por esos niveles lo valide el servidor (15.6) y que el PvP no se fíe de él.
+
+### 15.6 Recompensas por jugar: lo que se puede y no se puede evitar
+El servidor **no puede ver** una partida (el juego corre en el navegador), así que no sabe si de verdad se ganó. Lo que sí hace:
+- **Un solo cobro por logro**: el primer pase de un nivel de campaña, una misión o un jefe llevan clave única y se pagan una vez, con la cifra de la tabla del servidor (el cliente no manda cantidades, solo el motivo).
+- **Orden razonable**: el primer cobro de un nivel exige haber cobrado el anterior.
+- **Topes** por hora y por día para lo repetible (repetir niveles, idle `horas-extra`, derrotas), tomados de `tablas_juego`, con un margen de unas pocas veces lo que saca un jugador muy activo.
+- **Detección**: los movimientos permiten ver cuentas que chocan siempre con el tope y marcarlas o limitarlas. Sin castigos automáticos hasta tener datos.
+- Límite honesto: quien automatice o juegue a toda velocidad llegará al tope diario, y nada más. Impedirlo del todo exigiría simular la partida en el servidor; para el PvP se puede hacer más adelante (punto 9: Rumble determinista, repetición verificable), para el PvE no compensa.
+
+### 15.7 Sin conexión
+- **Jugar niveles, opciones y mazos**: siguen sin conexión.
+- **Ganar**: las recompensas van a una cola local (con su clave) y se cobran al volver la red. Se enseña «+120 oro pendiente» y el saldo local sube de forma provisional; si el servidor aplica un tope, se corrige.
+- **Gastar** (tirar, mejorar, despedir, comprar, PvP): necesita conexión. Es lo que decía el punto 14, ahora con las mejoras de carta incluidas.
+- El service worker deja arrancar el juego sin red; el saldo se enseña desde la última copia local.
+
+### 15.8 Migrar las partidas actuales
+1. El cliente nuevo detecta que la cuenta no tiene `monedero` y llama a `migrar(juego, save)` con su SAVE.
+2. El servidor **no se fía** de los números: calcula un tope a partir del progreso (niveles de campaña cobrados, cartas, estrellas) con margen generoso y crea monedero, inventario y cartas con el menor de lo declarado y el tope. Lo que lo pase se anota en `movimientos` para revisarlo si alguien se queja.
+3. Se marca como migrada (una vez por cuenta y juego), el SAVE antiguo queda en `partidas` por si hay que corregir, y desde ahí manda el servidor.
+4. Hasta la tienda real el riesgo es solo de juego limpio, por eso hay margen; el tope se aprieta si la migración se hace cerca del lanzamiento de cobros.
+
+### 15.9 Fases (cada una se sube sola; el orden importa)
+0. **Fachada `ECO` con motor local.** Sin servidor ni cambios visibles: los ~20 sitios pasan por `ECO`. Se comprueba con `herramientas/base.py` y el comparador en Rumble y TD. Es la parte que más cuesta y la que deja todo lo demás barato. Puede hacerse ya.
+1. **Tablas, `estado`, `migrar` y subida de cifras.** Modo sombra: el servidor guarda el saldo y el cliente lo compara, sin mandar todavía. Sirve para ver cuánto difieren y afinar los topes.
+2. **Gachapón y mejoras en el servidor** (`tirar`, `mejorar_carta`, `despedir`, `retirar_numeros`). El motor nube pasa a ser el de todas las cuentas.
+3. **Recompensas y reclamos** (`recompensa`, `reclamar`, cola sin conexión, topes).
+4. **Compras**: comercio registrado en pruebas, webhook, pestaña de pago (pasos extra del punto 14).
+5. **PvP Salvaje** usa `inventario` y `cartas`, no el SAVE.
+
+Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadores reales sin riesgo económico; la tienda no se abre antes de cerrar 2 y 3.
+
+### 15.10 Decisiones pendientes
+1. **Cartas al servidor** (nivel, xp, copias, estrellas): recomendado sí. Si el nivel se queda local, editarlo a 10 se salta el gasto de oro, que es justo lo que vende la tienda.
+2. **Mejorar y despedir con conexión obligatoria**: recomendado sí, igual que el gachapón.
+3. **Cuenta de invitado de Supabase para todos desde el primer arranque**: recomendado sí; así hay un solo camino (la nube) y el motor local queda como respaldo sin red.
+4. **Empezar por la fase 0** (la fachada `ECO`): recomendado sí.

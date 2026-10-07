@@ -70,7 +70,7 @@ function grantRewards() {
   if (rwin && G.endReason === 'base' && CFG.matchTime - G.time < 100) stat('fastwin', 1);
   if (rwin && G.endReason === 'hp') stat('hpwin', 1);
   if (rwin && G.mode === 'quick' && G.diff === 'easy') stat('easywin', 1);
-  ECO.ganar('partida', R, G.mode === 'camp' ? { tipo: 'camp', nivel: G.level.id, dif: G.cdiff || 'n', estrellas: R.stars, victoria: win, jefe: !!G.level.boss } : undefined); saveGame(); return R;
+  ECO.ganar('partida', R, G.mode === 'camp' ? { tipo: 'camp', nivel: G.level.id, dif: G.cdiff || 'n', estrellas: R.stars, victoria: win, jefe: !!G.level.boss } : { tipo: 'otro', victoria: win }); saveGame(); return R;
 }
 
 function fit() {

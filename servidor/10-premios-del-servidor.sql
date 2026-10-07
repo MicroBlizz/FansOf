@@ -14,7 +14,7 @@ declare
   u uuid := auth.uid(); d jsonb; T jsonb; tp jsonb; e jsonb; n int := 0; rech int := 0; filas int; mot text; v_clave text;
   p_o bigint; p_g bigint; p_e bigint; d_o bigint; d_g bigint; d_e bigint; u_o bigint; u_g bigint; u_e bigint;
   lim constant numeric := 10000000;
-  fj jsonb; ev jsonb; cm jsonb; cv jsonb; pay numeric; prev int; st int; i int; c_o numeric; c_g numeric;
+  fj jsonb; ev jsonb; cm jsonb; cv jsonb; rr jsonb; xp int; pay numeric; prev int; st int; i int; c_o numeric; c_g numeric;
 begin
   if u is null then raise exception 'sin_sesion'; end if;
   if jsonb_typeof(p_movs) <> 'array' then raise exception 'movimientos_no_validos'; end if;
@@ -37,7 +37,7 @@ begin
       if fj is null then rech := rech + 1; continue; end if;
       p_o := coalesce((fj->>'gold')::bigint, 0); p_g := coalesce((fj->>'gems')::bigint, 0); p_e := coalesce((fj->>'tickets')::bigint, 0);
       if coalesce((tp->>'diario')::boolean, false) then v_clave := mot || ':' || ((now() at time zone 'Europe/Madrid')::date)::text; end if;
-    elsif tp->>'calcula' = 'camp' and jsonb_typeof(ev) = 'object' and ev->>'tipo' = 'camp' then
+    elsif public._acepta(tp, 'camp') and jsonb_typeof(ev) = 'object' and ev->>'tipo' = 'camp' then
       cm := d->'premios'->'camp';
       if cm is null or coalesce(ev->>'dif', '') not in ('n', 'h', 'm') or coalesce(ev->>'nivel', '') !~ '^[A-Za-z0-9_-]{1,20}$' then rech := rech + 1; continue; end if;
       cv := public._camp_abierto(u, p_juego, d, ev->>'dif', ev->>'nivel');   -- ¿está abierto el nivel según lo que el servidor sabe? (11-progreso-de-campana.sql)
@@ -58,6 +58,12 @@ begin
         end loop;
       else c_o := (cm->>'lose')::numeric * pay; end if;
       p_o := floor(c_o); p_g := floor(c_g); p_e := 0;
+    elsif jsonb_typeof(ev) = 'object' and ev->>'tipo' not in ('camp', 'otro') and public._acepta(tp, ev->>'tipo') then
+      -- misiones, racha de días, pase y logros (12-misiones-pase-logros.sql)
+      rr := public._evento(u, p_juego, d, ev);
+      if not coalesce((rr->>'ok')::boolean, false) then rech := rech + 1; continue; end if;
+      p_o := (rr->>'oro')::bigint; p_g := (rr->>'gemas')::bigint; p_e := (rr->>'entradas')::bigint;
+      if rr->>'clave' is not null then v_clave := rr->>'clave'; end if;
     end if;
     select coalesce(sum(mv.d_oro) filter (where mv.d_oro > 0), 0), coalesce(sum(mv.d_gemas) filter (where mv.d_gemas > 0), 0), coalesce(sum(mv.d_entradas) filter (where mv.d_entradas > 0), 0)
       into u_o, u_g, u_e from public.movimientos mv
@@ -74,6 +80,13 @@ begin
       update public.monedero w set oro = greatest(w.oro + d_o, 0), gemas = greatest(w.gemas + d_g, 0), entradas = greatest(w.entradas + d_e::int, 0),
         rev = w.rev + 1, cambiado = now() where w.usuario = u and w.juego = p_juego;
       n := n + 1;
+      -- la xp del pase la cuenta el servidor: cada partida con evento suma xpWin o xpLose
+      if mot = 'partida' and jsonb_typeof(ev) = 'object' and ev->>'tipo' in ('camp', 'otro') and d->'premios'->'pase' is not null then
+        xp := case when coalesce((ev->>'victoria')::boolean, false) then (d->'premios'->'pase'->>'xpWin')::int else (d->'premios'->'pase'->>'xpLose')::int end;
+        update public.monedero w set extra = jsonb_set(coalesce(w.extra, '{}'::jsonb), '{pase_xp}',
+            to_jsonb(least((d->'premios'->'pase'->>'levels')::int * (d->'premios'->'pase'->>'xpPer')::int, coalesce((w.extra->>'pase_xp')::int, 0) + coalesce(xp, 0))))
+          where w.usuario = u and w.juego = p_juego;
+      end if;
     end if;
   end loop;
   return public.estado(p_juego) || jsonb_build_object('aplicados', n, 'rechazados', rech);

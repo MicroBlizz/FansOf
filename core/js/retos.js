@@ -66,7 +66,7 @@ function buildMissions() {
   if (!W && RETOS.trasMisiones) RETOS.trasMisiones(L);
   for (const b of document.querySelectorAll('[data-claim]')) b.onclick = () => {
     const m = L[+b.dataset.claim]; if (m.claimed || m.prog < mDef(m, W).goal) return;
-    m.claimed = true; ECO.ganar('mision', { gold: rw[0], gems: rw[1] });
+    m.claimed = true; ECO.ganar('mision', { gold: rw[0], gems: rw[1] }, { tipo: 'mision', periodo: W ? 'w' : 'd', id: m.id });
     const up = addPassXp(rw[2]); if (!W) missionEvent('dailydone', 1); else stat('weekdone', 1);
     saveGame(); play('crown'); updateWallets(); buildMissions();
     toast(up ? `¡Pase de batalla: nivel ${passLevel()}!` : `+${rw[2]} puntos de pase`);
@@ -101,15 +101,15 @@ function rewardHtml(r) {
   return '';
 }
 const rewardTxt = r => r.gold ? `${fmt(r.gold)} de oro` : r.gems ? `${fmt(r.gems)} gemas` : r.tickets ? `${r.tickets} ${r.tickets > 1 ? 'tiradas gratis' : 'tirada gratis'} del gashapón` : r.item ? ITEMS[r.item].name : '';
-function giveReward(r) {
-  ECO.ganar('premio', r);
+function giveReward(r, evento) {
+  ECO.ganar('premio', r, evento);
   if (r.item) addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q));
 }
 const passReady = (track, i) => i <= passLevel() && !SAVE.pass[track === 'free' ? 'free' : 'paid'].includes(i) && (track === 'free' || SAVE.pass.prem);
 function passClaimable() { let n = 0; for (let i = 1; i <= passLevel(); i++) { if (passReady('free', i)) n++; if (passReady('paid', i)) n++; } return n; }
 function claimPass(track, i) {
   if (!passReady(track, i)) return false;
-  const r = passReward(track, i); giveReward(r); SAVE.pass[track === 'free' ? 'free' : 'paid'].push(i); return r;
+  const r = passReward(track, i); giveReward(r, { tipo: 'pase', pista: track === 'free' ? 'free' : 'paid', nivel: i }); SAVE.pass[track === 'free' ? 'free' : 'paid'].push(i); return r;
 }
 function buildPass() {
   const lv = passLevel(), into = SAVE.pass.xp - lv * PASS.xpPer, maxed = lv >= PASS.levels, P = SAVE.pass, nClaim = passClaimable();
@@ -142,7 +142,7 @@ function buildPass() {
 function buyPass() {
   if (SAVE.pass.prem) return;
   confirmBox('PASE EJECUTIVO', `Desbloquea la pista Ejecutiva de la ${PASS.name}: más oro, gemas, tiradas gratis y la <b>Corbata del CEO</b>, exclusiva.<span class="big">${eur(PASS.eur)}</span><small>Versión de prueba: no se cobra nada.</small>`, 'COMPRAR', () => {
-    SAVE.pass.prem = true; saveGame(); play('win'); updateWallets(); buildPass(); toast('¡Ya eres Ejecutivo! (sin cobrar nada)');
+    SAVE.pass.prem = true; ECO.ganar('compra-pase', {}, { tipo: 'pase-premium' }); saveGame(); play('win'); updateWallets(); buildPass(); toast('¡Ya eres Ejecutivo! (sin cobrar nada)');
   });
 }
 function openPass() { updateWallets(); show('scr-pass'); buildPass(); }
@@ -202,13 +202,13 @@ function achTotals() {
   return T;
 }
 function achClaim(list) {   // cobra todos los niveles conseguidos de estas familias
-  let n = 0, g = 0, last = '';
+  let n = 0, g = 0, last = ''; const claves = [];
   for (const f of list) {
     const C = SAVE.achC[f.id] || 0, R = SAVE.achR[f.id] || 0, nw = R & ~C; if (!nw) continue;
-    f.goals.forEach((x, i) => { if (nw & (1 << i)) { n++; g += f.gems[i]; last = achName(f, i); } }); SAVE.achC[f.id] = C | R;
+    f.goals.forEach((x, i) => { if (nw & (1 << i)) { n++; g += f.gems[i]; last = achName(f, i); claves.push(f.id + ':' + i); } }); SAVE.achC[f.id] = C | R;
   }
   if (!n) return 0;
-  ECO.ganar('premio', { gems: g }); saveGame(); play('crown'); updateWallets(); updateBadges(); buildMissions();
+  ECO.ganar('premio', { gems: g }, { tipo: 'logros', claves }); saveGame(); play('crown'); updateWallets(); updateBadges(); buildMissions();
   toast(n > 1 ? `+${fmt(g)} gemas por ${fmt(n)} logros` : `+${fmt(g)} gemas por «${last}»`, true);
   return g;
 }

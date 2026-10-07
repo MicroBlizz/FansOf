@@ -39,7 +39,7 @@ function openLogin() {
 }
 function claimLogin() {
   const st = loginState(); $('#scr-login').hidden = true; if (!st.ready) return;
-  const r = LOGIN[st.day - 1]; giveReward(r);
+  const r = LOGIN[st.day - 1]; giveReward(r, { tipo: 'login' });
   SAVE.login = { last: todayStr(), day: st.day, best: Math.max(SAVE.login.best || 0, st.day) };
   stat('login', 1); saveGame(); updateWallets(); play('win'); toast(`Día ${st.day}: ${rewardTxt(r)}`, true);
 }

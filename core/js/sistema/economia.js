@@ -9,8 +9,9 @@
 // Son topes generosos para cortar las trampas gordas, no el cálculo del premio; se afinan con lo que apunte el servidor (movimientos.nota guarda lo recortado).
 // Cada juego añade los suyos en AJUSTES.topes. herramientas/subir_datos.py los sube a tablas_juego.datos.topes.
 const TOPES_COMUNES = {
-  mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 } },
-  premio: { vez: { gold: 20000, gems: 1000, tickets: 30 }, dia: { gold: 100000, gems: 3000, tickets: 60 } },   // logros, pase de batalla, racha de días
+  mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 }, calcula: 'mision' },   // el servidor da lo de premios.mision, una vez por misión y periodo
+  premio: { vez: { gold: 20000, gems: 30000, tickets: 30 }, dia: { gold: 100000, gems: 40000, tickets: 60 }, calcula: ['logros', 'login', 'pase'] },   // logros, racha de días y pase de batalla: el servidor pone la cantidad y comprueba que se pueda cobrar
+  'compra-pase': { vez: {}, dia: {}, calcula: 'pase-premium' },   // el pase Ejecutivo (compra de prueba)
   'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 } },
   'regalo-diario': { vez: { gold: 300, gems: 20 }, dia: { gold: 600, gems: 40 }, fijo: 'gift', diario: true },   // fijo: el servidor da SIEMPRE lo de premios.gift, una vez por día (hora de Madrid)
   compra: { vez: { gold: 100000, gems: 10000 }, dia: { gold: 1000000, gems: 100000 } },   // la tienda de prueba (no cobra); desaparece cuando haya pagos reales

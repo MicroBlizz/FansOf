@@ -365,3 +365,12 @@ Idea del usuario: para confirmar un evento de un solo cobro basta con tener los 
 - Que un nivel sea jefe lo dice el servidor, no el cliente.
 - **Progreso que ya existía**: `conciliar_progreso` sube una vez las estrellas de `SAVE.camp`, `campH` y `campM` (misma puerta que `conciliar`, hasta el 21-10-2026). Mientras una cuenta no lo haya subido y la puerta esté abierta, no se comprueba el orden (para no negar premios a quien ya jugaba); cuando la puerta se cierre se comprueba a todas, también a las que no lo subieron (con progreso vacío).
 - Idea para los siguientes pasos con el mismo patrón: logros y misiones se apoyan en contadores que el servidor lleva a partir de los eventos que ya valida; las horas extra, en la fecha del último cobro del servidor (nunca más de 12 h acumuladas).
+
+### 15.16 Fase 3, paso 4: misiones, racha de días, pase de batalla y logros (7-10-2026)
+Siguiendo la idea del usuario (eventos de un solo cobro validados con lo que el servidor ya sabe de la cuenta), `anotar` acepta ahora estos eventos (`servidor/12-misiones-pase-logros.sql`, `conciliar_progreso2`):
+- **Misiones** `{tipo:'mision', periodo:'d'|'w', id}`: la misión debe estar en el catálogo (`datos.premios.misiones`), se cobra una vez por periodo (día o semana de Madrid) y como mucho 4 por periodo; la cantidad sale de `premios.mision`.
+- **Racha de días** `{tipo:'login'}`: el servidor lleva la racha (`monedero.extra.login`), un cobro por día; el día de la racha y el premio los calcula él.
+- **Pase de batalla** `{tipo:'pase', pista, nivel}`: solo hasta el nivel que da la xp de pase que cuenta el servidor (cada partida suma xpWin o xpLose, cada misión, su xp), una vez por nivel y pista; la pista Ejecutiva pide `pase-premium` (compra de prueba, motivo `compra-pase`; hay que quitarlo con los pagos reales).
+- **Logros** `{tipo:'logros', claves:['familia:nivel',…]}`: cada logro se cobra una vez (`reclamos`) con las gemas de la tabla. El servidor no puede ver si se ha cumplido; el total de gemas que se puede sacar así es finito (unas 29.800 en Rumble).
+- **Progreso que ya existía**: `conciliar_progreso2` sube una vez, hasta el 21-10-2026, la xp del pase y sus niveles cobrados, el pase Ejecutivo, la racha, los logros ya cobrados y las misiones cobradas hoy. Después de esa fecha solo marca la cuenta (empieza vacía).
+- **Pendiente**: los objetos del pase (Diploma, Corbata del CEO) y los regalos de objetos se siguen creando en local; hay que crearlos en el servidor (paso siguiente).

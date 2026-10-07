@@ -27,7 +27,7 @@ const ECO_SOMBRA = (() => {
   let vuelo = null;
   function enviar() { return vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
   async function vaciar() {   // antes de pedir algo al servidor: que sepa todo lo ganado y que la cuenta esté migrada; falla si no hay conexión
-    for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && ((est.conciliado === CUENTA.usuario && est.progreso === CUENTA.usuario) || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
+    for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && ((est.conciliado === CUENTA.usuario && est.progreso === CUENTA.usuario && est.progreso2 === CUENTA.usuario) || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
     throw new Error('sin_conexion');
   }
   // si el juego ya deja el saldo al servidor, lo de aquí pasa a ser lo suyo más lo que aún no se ha mandado (así un tope recortado se nota)
@@ -60,6 +60,11 @@ const ECO_SOMBRA = (() => {
       if (est.progreso !== usuario && AJUSTES.servidor && AJUSTES.servidor.economia) {
         await CUENTA.rpc('conciliar_progreso', () => ({ p_juego: AJUSTES.id, p_save: SAVE }));
         est.progreso = usuario; guardar();
+      }
+      // y el pase de batalla, la racha de días, los logros cobrados y las misiones de hoy
+      if (est.progreso2 !== usuario && AJUSTES.servidor && AJUSTES.servidor.economia) {
+        await CUENTA.rpc('conciliar_progreso2', () => ({ p_juego: AJUSTES.id, p_save: SAVE }));
+        est.progreso2 = usuario; guardar();
       }
       while (est.cola.length) {
         const lote = est.cola.slice(0, 200);

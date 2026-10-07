@@ -130,4 +130,9 @@ IDIOMA.add({
   "Necesitas conexión para esto": "You need a connection for this",
   "<b>CARTAS EN LA NUBE</b>: con tu cuenta, la máquina de cartas también la hace nuestro servidor, y tus cartas y estrellas quedan guardadas en ella. Para tirar hace falta conexión.": "<b>CARDS IN THE CLOUD</b>: with your account, the card machine is now run by our server too, and your cards and stars are saved in it. You need a connection to pull.",
   "El servidor de Microblizz cuenta tus estrellas. Dice que las suyas ya las perdió.": "Microblizz's server counts your stars. It says it already lost its own.",
+  "<b>TU ECONOMÍA EN LA NUBE</b>: con tu cuenta, despedir copias, volver a tirar sus números y subir de nivel las cartas también lo hace nuestro servidor, y tu oro y tus gemas quedan guardados en ella. Para hacerlo hace falta conexión.": "<b>YOUR ECONOMY IN THE CLOUD</b>: with your account, scrapping copies, rerolling their numbers and levelling up cards are now done by our server too, and your gold and gems are saved in it. You need a connection to do it.",
+  "Microblizz afirma que cuida mejor de tus recursos que de los suyos. Tampoco era difícil.": "Microblizz claims it looks after your resources better than its own. That wasn't hard.",
+  "Te falta oro": "You are short on gold",
+  "Todavía te falta experiencia": "You still need more experience",
+  "Esa copia no está en tu cuenta (viene de antes de la nube o del modo pruebas)": "That copy isn't in your account (it predates the cloud or comes from test mode)",
 });

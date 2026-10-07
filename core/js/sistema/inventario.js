@@ -65,12 +65,17 @@ function equipFromInv(it) {
     openList(`¿Qué líder lleva ${D.name}?`, html, f => { for (const g of f === '*' ? fs : [f]) { SAVE.equip[g] = SAVE.equip[g] || {}; SAVE.equip[g][D.slot] = it.u; } saveGame(); play('select'); toast(f === '*' ? `Todos tus líderes llevan ahora ${D.name}` : `${CFG.cards[FACTIONS[f].leader].name} lleva ahora ${D.name}`); refreshInv(); });
   }
 }
+// despedir copias: con cuenta lo hace el servidor (y dice cuánto oro da); si no, aquí. alAcabar(oro) se llama cuando ya está hecho
+function despedirCopias(L, oroLocal, alAcabar) {
+  if (!ECO.servidor('economia')) { SAVE.inv = SAVE.inv.filter(x => !L.includes(x)); ECO.ganar('despedir', { gold: oroLocal }); alAcabar(oroLocal); return; }
+  ECO.despedir(L.map(x => x.u)).then(r => { const del = new Set(L); SAVE.inv = SAVE.inv.filter(x => !del.has(x)); alAcabar(r.oro_ganado); }).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
+}
 function scrapOne(it) {
   if (!canScrap(it)) return;
   const D = defOf(it), sv = scrapValue(it);
   confirmBox('DESPEDIR', `¿Despedir esta copia de <b>${D.name}</b> (${QTIERS[tierOf(avgQ(it))].name})?<span class="big">+${fmt(sv)} ${COIN_SVG}</span><small>La copia desaparece y te da oro. Cuanto mejor es su calidad, más oro.</small>`, 'DESPEDIR', () => {
-    SAVE.inv = SAVE.inv.filter(x => x !== it); ECO.ganar('despedir', { gold: sv }); stat('scrap', 1); if (tierOf(avgQ(it)) === 4) stat('scrapperf', 1); saveGame(); play('despido'); updateWallets();
-    $('#scr-item').hidden = true; itemCur = null; refreshInv(); toast(`Despedida: +${fmt(sv)} de oro`);
+    despedirCopias([it], sv, oro => { stat('scrap', 1); if (tierOf(avgQ(it)) === 4) stat('scrapperf', 1); saveGame(); play('despido'); updateWallets();
+      $('#scr-item').hidden = true; itemCur = null; refreshInv(); toast(`Despedida: +${fmt(oro)} de oro`); });
   });
 }
 function rerollOne(it) {
@@ -78,17 +83,22 @@ function rerollOne(it) {
   const cost = ECON.reroll[D.rar];
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return; }
   confirmBox('EVALUACIÓN DE DESEMPEÑO', `Se vuelven a sortear todos los números de tu <b>${D.name}</b>.<span class="big">${fmt(cost)} ${COIN_SVG}</span><small>Puede salir mejor… o peor. Ahora es ${QTIERS[tierOf(avgQ(it))].name} (${Math.round(avgQ(it) * 100)} %). Mismas probabilidades que el gashapón, sin garantía.</small>`, 'TIRAR', () => {
-    const before = avgQ(it); ECO.gastar('retirar-numeros', { gold: cost }); it.q = it.q.map(() => rollQ(0)); stat('reroll', 1); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); saveGame(); updateWallets();
-    const after = avgQ(it), T = QTIERS[tierOf(after)];
-    play(after > before ? 'levelup' : 'sad'); toast(after > before ? `¡Ha salido mejor! Ahora es ${T.name} (${Math.round(after * 100)} %)` : `Ha salido peor: ahora es ${T.name} (${Math.round(after * 100)} %). Mala suerte`);
-    refreshInv();
+    const before = avgQ(it), listo = () => {
+      stat('reroll', 1); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); saveGame(); updateWallets();
+      const after = avgQ(it), T = QTIERS[tierOf(after)];
+      play(after > before ? 'levelup' : 'sad'); toast(after > before ? `¡Ha salido mejor! Ahora es ${T.name} (${Math.round(after * 100)} %)` : `Ha salido peor: ahora es ${T.name} (${Math.round(after * 100)} %). Mala suerte`);
+      refreshInv();
+    };
+    if (!ECO.servidor('economia')) { ECO.gastar('retirar-numeros', { gold: cost }); it.q = it.q.map(() => rollQ(0)); listo(); return; }
+    ECO.retirarNumeros(it.u).then(r => { it.q = r.q; listo(); }).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
   });
 }
 function massScrap() {
   const L = massList(); if (!L.length) return;
   const gold = L.reduce((a, it) => a + scrapValue(it), 0);
   confirmBox('DESPIDO MASIVO', `Vas a despedir <b>${L.length} ${L.length === 1 ? 'copia' : 'copias'}</b> de ${invTab === 'ab' ? 'habilidades' : 'equipo'} de calidad Becario y Junior que nadie lleva puestas.<span class="big">+${fmt(gold)} ${COIN_SVG}</span><small>Se salvan las bloqueadas y tu mejor copia de cada una. Microblizz estaría orgullosa.</small>`, 'DESPEDIR A TODAS', () => {
-    const del = new Set(L); SAVE.inv = SAVE.inv.filter(x => !del.has(x)); ECO.ganar('despedir', { gold }); stat('scrap', L.length); stat('scrapperf', L.filter(x => tierOf(avgQ(x)) === 4).length); saveGame(); updateWallets(); play('despido'); buildInv(); toast(`${L.length} despedidas: +${fmt(gold)} de oro`);
+    const perfectas = L.filter(x => tierOf(avgQ(x)) === 4).length;
+    despedirCopias(L, gold, oro => { stat('scrap', L.length); stat('scrapperf', perfectas); saveGame(); updateWallets(); play('despido'); buildInv(); toast(`${L.length} despedidas: +${fmt(oro)} de oro`); });
   });
 }
 $('#btn-inv').addEventListener('click', () => { play('select'); openInv(); });

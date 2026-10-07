@@ -21,7 +21,7 @@ function buildColl() {
   const deckBar = lock ? '' : fire('coleccion.arriba', collFac);
   list.innerHTML = deckBar + (lock ? '' : '<p class="coll-hint">Toca las <b>ranuras</b> de cada carta para equipar: <b>habilidades</b> en todas y <b>objetos</b> (arma, cabeza y accesorio) solo en el líder. Salen en el <b>Gashapón</b>. El número rojo dice cuántas tienes sin usar.</p>') + [F.leader, ...F.units].map(k => collRow(k, lock)).join('') + fire('coleccion.abajo', collFac, lock);
   for (const cv of list.querySelectorAll('canvas[data-k]')) drawArt(cv, cv.dataset.k, 62, 54);
-  list.querySelectorAll('[data-up]').forEach(b => { b.onclick = () => { if (levelUp(b.dataset.up)) { updateWallets(); buildColl(); } }; });
+  list.querySelectorAll('[data-up]').forEach(b => { b.onclick = () => { levelUp(b.dataset.up, () => { updateWallets(); buildColl(); }); }; });
   // v0.9.19: si la ranura ya lleva algo, se abre su ficha (volver a tirar, bloquear, cambiar…); si está vacía, la lista para elegir
   list.querySelectorAll('[data-ab]').forEach(b => { b.onclick = () => { const k = b.dataset.ab, u = SAVE.abEquip[k]; if (invGet(u)) openItem(u, { kind: 'ab', key: k }); else openPick('ab', k); }; });
   list.querySelectorAll('[data-eq]').forEach(b => { b.onclick = () => { const k = b.dataset.eq, u = (SAVE.equip[collFac] || {})[k]; if (invGet(u)) openItem(u, { kind: 'eq', key: k }); else openPick('eq', k); }; });

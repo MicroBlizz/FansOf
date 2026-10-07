@@ -27,7 +27,7 @@ const ECO_SOMBRA = (() => {
   let vuelo = null;
   function enviar() { return vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
   async function vaciar() {   // antes de pedir algo al servidor: que sepa todo lo ganado y que la cuenta esté migrada; falla si no hay conexión
-    for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && !est.cola.length) return; }
+    for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && (est.conciliado === CUENTA.usuario || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
     throw new Error('sin_conexion');
   }
   async function enviarYa() {
@@ -37,7 +37,12 @@ const ECO_SOMBRA = (() => {
       if (est.migrado !== usuario) {
         // la partida de ahora ya incluye todo lo de la cola: se vacía en el mismo instante en que se serializa la partida
         const r = await CUENTA.rpc('migrar', () => { est.cola = []; return { p_juego: AJUSTES.id, p_save: SAVE }; });
-        est.migrado = usuario; if (r) apunta(r); guardar(); return;
+        est.migrado = usuario; if (r) apunta(r); guardar();
+      }
+      // una vez por cuenta: lo que había aquí y el servidor aún no sabía (copias y niveles anteriores a que el servidor las llevara) se añade; desde ahí manda el servidor
+      if (est.conciliado !== usuario && AJUSTES.servidor && AJUSTES.servidor.economia) {
+        await CUENTA.rpc('conciliar', () => ({ p_juego: AJUSTES.id, p_save: SAVE }));
+        est.conciliado = usuario; guardar();
       }
       while (est.cola.length) {
         const lote = est.cola.slice(0, 200);

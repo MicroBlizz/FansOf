@@ -40,12 +40,14 @@ document.addEventListener('click', e => { const w = e.target.closest && e.target
 /* ---------- niveles: cada carta sube con la experiencia que gana jugando y oro ---------- */
 const needXp = l => ECON.xpNeed[l] || 0, lvlCost = l => ECON.goldCost[l] || 0;
 const canLevel = k => { const us = uSave(k); return us.lvl < ECON.maxLvl && us.xp >= needXp(us.lvl); };
-function levelUp(k) {
+function levelUp(k, alAcabar) {   // alAcabar: se llama cuando ya ha subido (con servidor tarda un momento)
   if (!canLevel(k)) return false;
   const us = uSave(k), cost = lvlCost(us.lvl);
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return false; }
-  ECO.gastar('mejorar-carta', { gold: cost }); us.xp -= needXp(us.lvl); us.lvl++; missionEvent('lvlup', 1); saveGame(); play('levelup');
-  toast(`¡${CFG.cards[k].name} sube a nivel ${us.lvl}!`); return true;
+  const hecho = () => { missionEvent('lvlup', 1); saveGame(); play('levelup'); toast(`¡${CFG.cards[k].name} sube a nivel ${us.lvl}!`); if (alAcabar) alAcabar(); };
+  if (!ECO.servidor('economia')) { ECO.gastar('mejorar-carta', { gold: cost }); us.xp -= needXp(us.lvl); us.lvl++; hecho(); return true; }
+  ECO.mejorar(k, us.xp).then(r => { us.xp -= r.xp_gastada; us.lvl = r.nivel; hecho(); }).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
+  return true;
 }
 /* ---------- ventana de confirmación ---------- */
 function confirmBox(title, html, okTxt, onOk, noTxt) {

@@ -12,18 +12,29 @@ const ECO = {
   gastar(motivo, v) { ECO.motor.mover(motivo, v, -1); },
   // ¿esta acción la hace el servidor? Solo si el juego lo pide (AJUSTES.servidor) y hay cuenta activa; si no, se calcula aquí como siempre
   servidor(accion) { return typeof CUENTA !== 'undefined' && CUENTA.activa && typeof ECO_SOMBRA !== 'undefined' && !!(AJUSTES.servidor && AJUSTES.servidor[accion]); },
-  errorTexto(e) { const m = String((e && e.message) || e); return /faltan_gemas/.test(m) ? 'Te faltan gemas' : 'Necesitas conexión para esto'; },
-  // el servidor tira (n = 1, 10 o 50) y devuelve las copias nuevas; antes se manda lo pendiente, y después el saldo y las garantías del servidor mandan
-  async tirar(maquina, n) {
+  errorTexto(e) {
+    const m = String((e && e.message) || e);
+    return /faltan_gemas/.test(m) ? 'Te faltan gemas' : /falta_oro/.test(m) ? 'Te falta oro' : /falta_xp/.test(m) ? 'Todavía te falta experiencia'
+      : /copia_no_existe|nada_que_despedir|no_se_puede/.test(m) ? 'Esa copia no está en tu cuenta (viene de antes de la nube o del modo pruebas)' : 'Necesitas conexión para esto';
+  },
+  // llamar a una función del servidor: antes se manda lo pendiente (y la cuenta se migra y concilia); después el saldo y las garantías del servidor mandan
+  async pedir(rpc, params) {
     await ECO_SOMBRA.vaciar();
+    const r = await CUENTA.rpc(rpc, Object.assign({ p_juego: AJUSTES.id, p_clave: ECO_SOMBRA.id() }, params));
+    SAVE.gold = r.oro; SAVE.gems = r.gemas; SAVE.tickets = r.entradas; if (r.garantia) Object.assign(SAVE.pity, r.garantia);
+    ECO_SOMBRA.apuntaLocal(r);
+    return r;
+  },
+  // el servidor tira (n = 1, 10 o 50) y devuelve las copias nuevas
+  async tirar(maquina, n) {
     const desbloqueadas = typeof FACTION_ORDER !== 'undefined' && typeof isUnlocked === 'function' ? FACTION_ORDER.filter(f => isUnlocked(f)) : [];
     const X = typeof MAQUINAS !== 'undefined' && MAQUINAS[maquina];   // una máquina de un juego trae su propia función del servidor (X.rpc)
-    const r = X && X.rpc ? await CUENTA.rpc(X.rpc, { p_juego: AJUSTES.id, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas })
-      : await CUENTA.rpc('tirar', { p_juego: AJUSTES.id, p_maquina: maquina, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas });
-    SAVE.gold = r.oro; SAVE.gems = r.gemas; SAVE.tickets = r.entradas; Object.assign(SAVE.pity, r.garantia);
-    ECO_SOMBRA.apuntaLocal(r);
+    const r = X && X.rpc ? await ECO.pedir(X.rpc, { p_n: n, p_desbloqueadas: desbloqueadas }) : await ECO.pedir('tirar', { p_maquina: maquina, p_n: n, p_desbloqueadas: desbloqueadas });
     return r.resultados;
   },
+  despedir(uids) { return ECO.pedir('despedir', { p_uids: uids }); },            // -> { despedidas, oro_ganado }
+  retirarNumeros(uid) { return ECO.pedir('retirar_numeros', { p_uid: uid }); },   // -> { q: [calidades nuevas] }
+  mejorar(carta, xp) { return ECO.pedir('mejorar_carta', { p_carta: carta, p_xp: Math.floor(xp) }); },   // -> { nivel, xp_gastada }
   motor: {
     mover(motivo, v, signo) {
       if (v.gold) SAVE.gold += signo * v.gold;

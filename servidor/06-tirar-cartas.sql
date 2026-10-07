@@ -1,14 +1,14 @@
 -- Fase 2, paso 3 de PLAN-CUENTAS (punto 15): la máquina de cartas de Rumble la tira el servidor.
--- Aplicada en el proyecto awivkedbmumwnkqlfixm el 7-10-2026 (migración «tirar_cartas»).
+-- Aplicada en el proyecto awivkedbmumwnkqlfixm el 7-10-2026 (migraciones «tirar_cartas» y «tirar_cartas_nivel_inicial»).
 -- Rarezas, garantías y costes salen de public.tablas_juego (econ.cardOdds, pityEpic, pityLeg, pull, dupGems, maxStars; cartas; facciones[f].gacha).
--- El nivel de cada carta nueva lo sigue calculando el cliente (cardStartLevel) hasta el paso 4 (mejorar_carta).
+-- El nivel de la carta nueva lo calcula el servidor con los niveles de las unidades de su facción (paso 4).
 create or replace function public.tirar_cartas(p_juego text, p_n int, p_clave text, p_desbloqueadas text[] default '{}') returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
   u uuid := auth.uid(); m public.monedero; d jsonb; E jsonb; O jsonb; cd_ jsonb; pity jsonb;
   libres int; coste_gemas bigint; extra_gemas bigint := 0; i int; seguro boolean; got_epic boolean := false;
   rar text; x numeric; o_leg numeric; o_epic numeric; f text; k text; pool text[]; todas text[] := '{}';
-  ex jsonb; n_c int; st_c int; max_st int; dup int; resultados jsonb := '[]'::jsonb; r jsonb;
+  ex jsonb; n_c int; st_c int; max_st int; dup int; resultados jsonb := '[]'::jsonb; r jsonb; niv0 int;
 begin
   if u is null then raise exception 'sin_sesion'; end if;
   if p_n not in (1, 10, 50) then raise exception 'tirada_no_valida'; end if;
@@ -53,8 +53,13 @@ begin
     rar := cd_->k->>'rarity';
     select ct.extra into ex from public.cartas ct where ct.usuario = u and ct.juego = p_juego and ct.carta = k;
     if not found then
-      insert into public.cartas (usuario, juego, carta, nivel, xp, extra) values (u, p_juego, k, 1, 0, jsonb_build_object('n', 1, 'st', 0));
-      r := jsonb_build_object('k', k, 'rar', rar, 'isNew', true, 'n', 1, 'st', 0);
+      -- la carta nueva llega cerca del nivel de su facción (igual que cardStartLevel del cliente)
+      select greatest(1, floor(avg(coalesce(c2.nivel, 1)) + 0.5)::int - 1) into niv0
+        from jsonb_array_elements_text(coalesce(d->'facciones'->(cd_->k->>'fac')->'units', '[]'::jsonb)) uu
+        left join public.cartas c2 on c2.usuario = u and c2.juego = p_juego and c2.carta = uu;
+      niv0 := coalesce(niv0, 1);
+      insert into public.cartas (usuario, juego, carta, nivel, xp, extra) values (u, p_juego, k, niv0, 0, jsonb_build_object('n', 1, 'st', 0));
+      r := jsonb_build_object('k', k, 'rar', rar, 'isNew', true, 'n', 1, 'st', 0, 'nivel', niv0);
     else
       n_c := coalesce((ex->>'n')::int, 1) + 1; st_c := coalesce((ex->>'st')::int, 0);
       if st_c < max_st then

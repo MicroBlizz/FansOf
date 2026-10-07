@@ -6,6 +6,8 @@ La versión nueva y las novedades salen JUNTAS al publicar, y solo para los jueg
 Uso, desde la raíz del repositorio:
   python herramientas/publicar.py                  publica: sube la versión de los juegos que han cambiado, estrena sus novedades pendientes, etiqueta,
                                                    sube main y la etiqueta, mueve gh-pages y comprueba la web real
+  python herramientas/publicar.py --desplegar      despliega main tal como está, sin subir versiones (para terminar una publicación que se quedó a medias,
+                                                   por ejemplo si una sesión sin permiso de etiquetas ya subió el commit «Versión: …» a main)
   python herramientas/publicar.py --version rumble=0.10.0   fija la versión de un juego en vez de subir el último número (puede repetirse)
   python herramientas/publicar.py --ver            enseña qué se publicaría (juegos que cambian y su versión nueva) sin hacer nada
   python herramientas/publicar.py --lista          las últimas publicaciones (etiqueta, fecha, versiones) y cuál está en la web
@@ -205,6 +207,19 @@ def publicar(solo_ver, fijas):
             print('Aviso: sin entrada de novedades pendiente para ' + ', '.join(sin_nov) + ': se publica sin novedades.')
         git('add', '-A', 'games')
         git('commit', '-q', '-m', 'Versión: ' + ' · '.join(f'{j} {v}' for j, v in nuevas.items()))
+    desplegar()
+
+
+def desplegar():
+    preparar_git()
+    git('fetch', '-q', 'origin', '--tags', ok=True)
+    if git('branch', '--show-current') != 'main':
+        sys.exit('FALLO: hay que estar en la rama main.')
+    if git('status', '--porcelain', '--untracked-files=no'):
+        sys.exit('FALLO: hay cambios sin guardar. Haz commit antes de publicar.')
+    if git('rev-parse', 'origin/gh-pages', ok=True) == git('rev-parse', 'HEAD'):
+        print(f'Nada que desplegar: la web ya apunta a main ({texto(versiones_web())}).')
+        return
     v = versiones_de('HEAD')
     nombre = 'web-' + datetime.datetime.now().strftime('%Y%m%d-%H%M')
     print(f'Publicando {git("rev-parse", "--short", "HEAD")} como {nombre}: {texto(v)}')
@@ -222,6 +237,8 @@ if '--lista' in a:
     lista()
 elif '--estado' in a:
     estado()
+elif '--desplegar' in a:
+    desplegar()
 elif '--a' in a:
     if a.index('--a') + 1 >= len(a):
         sys.exit('Uso: --a <etiqueta>')

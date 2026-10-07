@@ -12,7 +12,6 @@ IDIOMA.add({
   "CAOS: lo que gastas en torres dentro de la partida": "CHAOS: what you spend on towers during the match",
   "Cada torre gasta": "Each tower costs",
   "Campo de batalla": "Battlefield",
-  "Desbloquea todos los mundos, da toda la experiencia hasta el nivel 10 (subir lo haces tú en la Colección), 3.000.000 de oro y 5.000 gemas.": "Unlocks all worlds, gives all the experience up to level 10 (you do the levelling in the Collection), 3,000,000 gold and 5,000 gems.",
   "ENVIAR UNIDADES": "SEND UNITS",
   "En el": "In the",
   "La Rebelión de los Fans: libera cada mundo corrompido por Microblizz montando tu laberinto de torres.": "The Fans' Rebellion: free every world corrupted by Microblizz by building your tower maze.",
@@ -174,7 +173,6 @@ IDIOMA.add({
   "TORRES": "TOWERS",
   "TU CAMPO": "YOUR FIELD",
   "VENDER": "SELL",
-  "VOLVER": "BACK",
   "YA HAY UNA TORRE": "THERE'S ALREADY A TOWER",
   "a tu campo": "to your field",
   "ver su campo": "view their field",
@@ -184,11 +182,9 @@ IDIOMA.add({
   "· income +%1 en %2 s": "· income +%1 in %2 s",
   ". ¿Quieres seguir aquí con ese progreso?": ". Do you want to continue here with that progress?",
   ": estrellas, oro, gemas, niveles y objetos.": ": stars, gold, gems, levels and items.",
-  "Abre todos los mundos, da toda la experiencia hasta el nivel 10 a todas las cartas,": "Opens all worlds, gives all the experience up to level 10 to all cards,",
   "CARGAR": "LOAD",
   "Copia a mano el código de la caja": "Copy the code from the box by hand",
   "Código copiado. Pégalo en el otro dispositivo.": "Code copied. Paste it on the other device.",
   "Equipo freak solo para los líderes: arma, cabeza y accesorio. Cada objeto sale con su propia calidad.": "Freak gear for leaders only: weapon, head and accessory. Each item comes with its own quality.",
   "Ese código no vale. Cópialo entero desde el otro dispositivo y pégalo en la caja.": "That code isn't valid. Copy it in full from the other device and paste it in the box.",
-  "MODO PRUEBAS": "TEST MODE"
 });

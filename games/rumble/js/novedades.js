@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.38', real: [
+      '<b>MODO PRUEBAS</b> (en Opciones): ahora lo da todo al máximo. Las cartas suben solas al nivel 10, tienes todas las habilidades y objetos con calidad perfecta y toda la campaña con 3 estrellas. Antes guarda una copia de tu partida: con QUITAR vuelves a ella tal como estaba.'],
+    joke: ['Microblizz llama a esto «edición coleccionista». Los demás lo llamamos trampas.'] },
   { v: '0.9.37', real: [
       '<b>ARENA</b>: tu facción y tu mazo van juntos en una fila pequeña. FACCIÓN abre una lista compacta y MAZO abre el editor de la Colección; al guardar vuelves a la arena.'],
     joke: ['Microblizz ha encogido la fila de la facción. Dice que es para ahorrar píxeles.'] },

@@ -22,7 +22,6 @@ IDIOMA.add({
   "Coste medio 3": "Average cost 3",
   "Cuidado: SurvivalBot": "Careful: SurvivalBot",
   "DESCARGAR": "DOWNLOAD",
-  "Desbloquea todas las facciones y mundos, da toda la experiencia hasta el nivel 10 (subir lo haces tú en la Colección), 3.000.000 de oro y 5.000 gemas.": "Unlocks all factions and worlds, gives all the experience up to level 10 (you do the levelling in the Collection), 3,000,000 gold and 5,000 gems.",
   "Dificultad del jefe": "Boss difficulty",
   "Difícil": "Hard",
   "En el menú,": "On the menu,",

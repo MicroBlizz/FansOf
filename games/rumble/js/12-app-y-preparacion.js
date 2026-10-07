@@ -5,7 +5,7 @@ $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
 $('#btn-quick').addEventListener('click', () => { play('select'); openPrep('quick'); });
 $('#btn-bossmode').addEventListener('click', () => { play('select'); openPrep('boss'); });
-$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 70 : SAVE.mus; $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
+$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 70 : SAVE.mus; botonPruebas($('#btn-test')); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
 $('#btn-share').addEventListener('click', () => { shareResult(); stat('share', 1); });
 $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden = true; });
 // v0.9.17 probó un modo claro y uno pixel art; Daniel los descartó en la v0.9.18: el juego va siempre oscuro y sin pixelar
@@ -34,14 +34,13 @@ $('#btn-bib').addEventListener('click', () => { play('select'); updateWallets();
 /* opciones */
 $('#opt-vol').addEventListener('input', e => { SAVE.vol = +e.target.value; applyVolume(); saveGame(); });
 $('#opt-mus').addEventListener('input', e => { SAVE.mus = +e.target.value; applyVolume(); saveGame(); });
-const TEST_GOLD = 3000000;   // v0.9.16: para poder subir todas las cartas al nivel 10
-$('#btn-test').addEventListener('click', () => {
-  SAVE.testAll = true; SAVE.unlocked = FACTION_ORDER.slice(); SAVE.gold += TEST_GOLD; SAVE.gems += 5000;
-  // v0.9.16: toda la experiencia hasta el nivel 10 (subir de nivel lo haces tú, pagando oro en la Colección)
-  for (const k of Object.keys(CFG.cards)) { const us = uSave(k); let need = 0; for (let l = us.lvl; l < ECON.maxLvl; l++) need += needXp(l); us.xp = Math.max(us.xp, need); }
-  saveGame(); updateWallets(); syncMenu();
-  $('#btn-test').textContent = 'ACTIVADO'; toast('Modo pruebas: todo desbloqueado y toda la experiencia hasta el nivel 10'); play('crown');
+// v0.9.38: el modo pruebas es común (core/js/sistema/pruebas.js); aquí, lo de este juego: todas las facciones y las 3 campañas (Normal, Difícil y Mítica) con 3 estrellas
+hook('pruebas', () => {
+  SAVE.unlocked = FACTION_ORDER.slice();
+  for (const d of ['n', 'h', 'm']) for (const w of WORLDS) for (const l of w.levels) campOf(d)[l.id] = 3;
+  SAVE.facItem = SAVE.facItem || {}; for (const f in FAC_ITEM) SAVE.facItem[f] = 1;   // su objeto de facción ya lo tienes perfecto: que no lo vuelva a dar al ganar al jefe
 });
+$('#btn-test').addEventListener('click', () => pruebasClic(() => { syncMenu(); botonPruebas($('#btn-test')); }));
 $('#btn-export').addEventListener('click', () => {
   stat('export', 1); const code = btoa(unescape(encodeURIComponent(JSON.stringify(SAVE)))); const ta = $('#save-code'); ta.value = code; ta.select();
   try { navigator.clipboard.writeText(code).then(() => toast('Código copiado'), () => toast('Copia el código del recuadro')); } catch (e) { toast('Copia el código del recuadro'); }
@@ -54,7 +53,7 @@ $('#btn-import').addEventListener('click', () => {
 let resetArm = 0;
 $('#btn-reset').addEventListener('click', () => {
   if (performance.now() - resetArm > 3000) { resetArm = performance.now(); $('#btn-reset').textContent = '¿SEGURO?'; setTimeout(() => { $('#btn-reset').textContent = 'BORRAR'; }, 3000); return; }
-  SAVE = newSave(); achInit(); saveGame(); setFaction('animales'); updateWallets(); $('#btn-reset').textContent = 'BORRAR'; $('#btn-test').textContent = 'ACTIVAR'; toast('Progreso borrado'); resetArm = 0;
+  SAVE = newSave(); achInit(); saveGame(); setFaction('animales'); updateWallets(); $('#btn-reset').textContent = 'BORRAR'; botonPruebas($('#btn-test')); toast('Progreso borrado'); resetArm = 0;
 });
 for (const b of document.querySelectorAll('[data-diff]')) b.addEventListener('click', () => {
   G.diff = b.dataset.diff; G.diffCfg = CFG.diff[G.diff];

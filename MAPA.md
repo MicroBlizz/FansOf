@@ -9,7 +9,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/menus-extra.css` · 19 KB
 - `core/css/menus-tienda.css` · 19 KB
 - `core/css/menus.css` · 20 KB
-- `core/idioma/en-extra.js` · 8 KB
+- `core/idioma/en-extra.js` · 11 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 8 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
@@ -70,6 +70,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/opciones.js` · 5 KB · MENU_TRACKS, menuTrack, idiomaElegido, BANDERAS, cajaIdioma, optComunes, installEvt, isStandalone, installApp
 - `core/js/sistema/pantallas.js` · 6 KB · show, hideScreens, ART_FIT, drawArt, RAR_ORDER, updateWallets, needXp, canLevel, levelUp, confirmBox, toastTimer, toast, updateBadges
 - `core/js/sistema/progreso.js` · 6 KB · ECON, catalogo, fitsFac, defOf, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
+- `core/js/sistema/pruebas.js` · 4 KB · PRUEBAS_COPIA, PRUEBAS_DINERO, copiaPruebas, botonPruebas, pruebasClic, activarPruebas, volverDePruebas
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
@@ -78,7 +79,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/arena.css` · 7 KB
 - `games/rumble/css/estilos-extra.css` · 23 KB
 - `games/rumble/css/estilos-partida.css` · 19 KB
-- `games/rumble/idioma/en-1.js` · 15 KB
+- `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -114,7 +115,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/09c-pantallas.js` · 8 KB · BG_KEY, ensureBG, startMatch, pauseGame, resumeGame, goHome, toMenu, BOSS_QUOTE, showEnd
 - `games/rumble/js/10-dificultad.js` · 21 KB · CDIFF, CAMP_SUB, ENEMY_GEAR, MB_GEAR_ON, campDiff, campOf, starsD, worldOpenD, levelOpenD, gearRow, resetMods, setupHardMode, applyMatchMods, hardBanner, hudMods, effStats, cardStats, cardDesc, passiveText, OWN_CALLOUT, showLoadout, legendaryPrize, MYTH_DEB, MYTH_BUF, mythicWeek, modBoxHtml, RL, openRoulette, rlPhaseUi, rlClose, rlSpin, rlFrame, drawRoulette, onLand, tickExtras, deathExtras, confetti
 - `games/rumble/js/11-logros.js` · 11 KB · ACH_OLD, achInit, titlePopups, applySpeed, buyStarter, COACH_WHO, curScreen, tutStep, tutFinish, tutSkip, tutWant, coachKey, coachPlace, tutTick, tutBattleStart, tipBattle, tutBattle
-- `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, TEST_GOLD, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
+- `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
 - `games/rumble/js/13-horas-extra.js` · <1 KB · idlePower
 - `games/rumble/js/14a-hechizos.js` · 14 KB · isSpell, cardStars, spells, spellPow, castSpell, RAIN, updateSpells, applySpell, spellAim, aiSpell, leapPrey, leapTick, drawSpellsGround, drawSpellBit, drawSpellsAir
 - `games/rumble/js/14b-gachapon-y-mazo.js` · 16 KB · DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckRefresh, deckTile, deckEditorHtml, deckBind, deckHoldT, deckHeld, deckHold, deckSave, deckPoolTap, deckSlotTap, deckDone
@@ -137,7 +138,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/sw.js` · <1 KB
 - `games/td/css/td.css` · 17 KB
 - `games/td/idioma/en-1.js` · 21 KB
-- `games/td/idioma/en-2.js` · 23 KB
+- `games/td/idioma/en-2.js` · 22 KB
 - `games/td/idioma/en-3.js` · 1 KB
 - `games/td/idioma/en-4.js` · 3 KB
 - `games/td/js/ajustes.js` · 6 KB · AJUSTES

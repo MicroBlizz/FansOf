@@ -94,4 +94,18 @@ IDIOMA.add({
   "Microblizz ha contratado a un consultor de color. Cobró por decir «menos colores».": "Microblizz hired a colour consultant. They got paid to say «fewer colours».",
   "<b>MENÚ</b>: los iconos de abajo vuelven a tener color, ahora con una paleta que combina: coral, naranja, dorado y violeta.": "<b>MENU</b>: the bottom icons have colour again, now with a palette that matches: coral, orange, gold and violet.",
   "El consultor de color de Microblizz ha cambiado de opinión. Ha vuelto a cobrar.": "Microblizz's colour consultant changed their mind. They got paid again.",
+  // v0.9.38: el modo pruebas común (core/js/sistema/pruebas.js)
+  "Las cartas al nivel 10, todas las habilidades y objetos perfectos, toda la campaña con 3 estrellas, 3.000.000 de oro y 5.000 gemas. Guarda una copia de tu partida para volver a ella.": "Cards at level 10, every ability and item perfect, the whole campaign with 3 stars, 3,000,000 gold and 5,000 gems. It keeps a copy of your save so you can go back to it.",
+  "QUITAR MODO PRUEBAS": "TURN OFF TEST MODE",
+  "MODO PRUEBAS": "TEST MODE",
+  "VOLVER": "BACK",
+  "Vuelves a la partida que tenías antes de activarlo, tal como estaba.": "You go back to the save you had before turning it on, exactly as it was.",
+  "Lo que hayas hecho en el modo pruebas se pierde.": "Whatever you did in test mode is lost.",
+  "Todo abierto y al máximo: las cartas al nivel 10, todas las habilidades y objetos con calidad perfecta y toda la campaña con 3 estrellas. Y 3.000.000 de oro y 5.000 gemas.": "Everything unlocked and maxed out: cards at level 10, every ability and item at perfect quality and the whole campaign with 3 stars. Plus 3,000,000 gold and 5,000 gems.",
+  "Antes se guarda una copia de tu partida. Para volver a ella, toca QUITAR en este mismo botón.": "A copy of your save is kept first. To go back to it, tap REMOVE on this same button.",
+  "Tienes la cuenta abierta: el modo pruebas también se guarda en la nube y lo verás en tus otros aparatos hasta que lo quites aquí.": "You're signed in: test mode is also saved to the cloud and you'll see it on your other devices until you turn it off here.",
+  "Modo pruebas activado: todo al máximo": "Test mode on: everything maxed out",
+  "No se ha podido volver a tu partida": "Couldn't go back to your save",
+  "<b>MODO PRUEBAS</b> (en Opciones): ahora lo da todo al máximo. Las cartas suben solas al nivel 10, tienes todas las habilidades y objetos con calidad perfecta y toda la campaña con 3 estrellas. Antes guarda una copia de tu partida: con QUITAR vuelves a ella tal como estaba.": "<b>TEST MODE</b> (in Options): now it maxes everything out. Cards go straight to level 10, you get every ability and item at perfect quality and the whole campaign with 3 stars. It keeps a copy of your save first: REMOVE takes you back to it exactly as it was.",
+  "Microblizz llama a esto «edición coleccionista». Los demás lo llamamos trampas.": "Microblizz calls this the «collector's edition». Everyone else calls it cheating.",
 });

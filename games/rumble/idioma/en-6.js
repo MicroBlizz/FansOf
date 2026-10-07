@@ -137,7 +137,6 @@ IDIOMA.add({
   "Código copiado": "Code copied",
   "EDITAR": "EDIT",
   "Ese código no es válido": "That code isn't valid",
-  "Modo pruebas: todo desbloqueado y toda la experiencia hasta el nivel 10": "Test mode: everything unlocked and all experience up to level 10",
   "Pasiva de facción: %1. Pulsa para ver qué hace": "Faction passive: %1. Press to see what it does",
   "Progreso borrado": "Progress deleted",
   "Progreso cargado": "Progress loaded",

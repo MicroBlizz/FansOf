@@ -6,8 +6,6 @@ IDIOMA.add({
   "El inglés cubre los menús, las cartas, las torres, las misiones y los logros. Si ves algo que sigue en español, ya lo sabemos.": "English covers the menus, the cards, the towers, the missions and the achievements. If you see something still in Spanish, we know.",
   "Microblizz ha descubierto que existen más idiomas y quiere cobrarte la traducción.": "Microblizz has discovered there are more languages and wants to charge you for the translation.",
   "Phony lo llama «localización premium». Tú, «por fin».": "Phony calls it «premium localisation». You call it «finally».",
-  "Modo pruebas activado": "Test mode on",
-  "No se puede deshacer, salvo empezando de cero.": "It can't be undone, except by starting from scratch.",
   "No se puede deshacer.": "It can't be undone.",
   "Se borra": "This deletes",
   "Se cambia todo tu progreso de este navegador por el del código.": "All your progress in this browser is replaced by the one in the code.",

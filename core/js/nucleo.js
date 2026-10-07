@@ -65,6 +65,7 @@ const NUCLEO = (() => {
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
+    'js/sistema/pruebas.js',       // el modo pruebas de Opciones: todo al máximo, con copia para volver a tu partida
     'js/novedades.js',             // el informe de parches (la lista es de cada juego: su js/novedades.js)
   ];
 

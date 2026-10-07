@@ -30,7 +30,7 @@ function openOptions() {
 function optButtons() {
   optComunes();   // la canción del menú y la versión (core/js/sistema/opciones.js)
   $('#btn-nums').textContent = optOn('nums') ? 'SÍ' : 'NO'; $('#btn-shake').textContent = optOn('shake') ? 'SÍ' : 'NO';
-  $('#btn-test').textContent = SAVE.testAll ? 'ACTIVADO' : 'ACTIVAR'; $('#btn-test').disabled = !!SAVE.testAll;
+  botonPruebas($('#btn-test'));
 }
 $('#btn-opts').onclick = () => { play('select'); openOptions(); };
 $('#btn-bib').onclick = () => { play('select'); updateWallets(); openBib(); };   // 0.13.1: la Biblioteca (core/js/sistema/biblioteca.js)
@@ -39,13 +39,9 @@ $('#opt-vol').onchange = () => play('select');
 $('#opt-mus').oninput = e => { SAVE.mus = e.target.value / 100; applyVolume(); saveGame(); };
 $('#btn-nums').onclick = () => { SAVE.nums = !optOn('nums'); saveGame(); play('select'); optButtons(); };
 $('#btn-shake').onclick = () => { SAVE.shake = !optOn('shake'); saveGame(); play('select'); optButtons(); };
-// modo pruebas: todo abierto y dinero de sobra (subir de nivel lo haces tú en la Colección)
-$('#btn-test').onclick = () => confirmBox('MODO PRUEBAS', 'Abre todos los mundos, da toda la experiencia hasta el nivel 10 a todas las cartas, <b>3.000.000 de oro</b> y <b>5.000 gemas</b>.<small>No se puede deshacer, salvo empezando de cero.</small>', 'ACTIVAR', () => {
-  SAVE.testAll = true; SAVE.gold += 3000000; SAVE.gems += 5000;
-  const xp = ECON.xpNeed.reduce((a, b) => a + b, 0);
-  for (const f of FACTION_ORDER) for (const k of [FACTIONS[f].leader, ...FACTIONS[f].units]) { const u = uSave(k); u.xp = Math.max(u.xp || 0, xp); }
-  saveGame(); play('win'); updateWallets(); optButtons(); toast('Modo pruebas activado', true);
-});
+// modo pruebas: es común (core/js/sistema/pruebas.js); aquí, lo de este juego: todos los niveles con 3 estrellas
+hook('pruebas', () => { for (const w of WORLDS_TD) for (const l of w.levels) SAVE.stars[l.id] = 3; });
+$('#btn-test').onclick = () => pruebasClic(optButtons);
 // pasar el progreso a otro móvil o PC con un código
 const saveCode = () => btoa(unescape(encodeURIComponent(JSON.stringify(SAVE))));
 $('#btn-export').onclick = () => {

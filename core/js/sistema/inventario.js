@@ -97,4 +97,4 @@ $('#btn-inv-sort').addEventListener('click', () => { invSort = invSort === 'q' ?
 $('#btn-mass').addEventListener('click', massScrap);
 $('#btn-item-close').addEventListener('click', () => { $('#scr-item').hidden = true; itemCur = null; });
 $('#btn-pick-close').addEventListener('click', () => { $('#scr-pick').hidden = true; });
-$('#btn-coll').addEventListener('click', () => { play('select'); collFac = facNow(); updateWallets(); show('scr-coll'); buildColl(); });
+$('#btn-coll').addEventListener('click', () => { play('select'); fire('coleccion.abrir'); collFac = facNow(); updateWallets(); show('scr-coll'); buildColl(); });

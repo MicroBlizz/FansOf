@@ -124,8 +124,6 @@
 .gt canvas { width: 40px; height: 34px; }
 .gt-st { font-size: 10px; color: #ffe06a; letter-spacing: 0.5px; }
 .gr-art { width: 120px; height: 104px; display: block; margin: 0 auto 6px; }
-#scr-deck .row { flex: none; justify-content: center; gap: 12px; }
-#scr-deck .btn-big { padding-left: 34px; padding-right: 34px; }
 .idle-ads { position: absolute; right: 7px; top: 44px; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
 .pack.noads { --pc: #1c7fa6; }
 .pack.noads .pk-ic svg { width: 48px; height: 48px; }

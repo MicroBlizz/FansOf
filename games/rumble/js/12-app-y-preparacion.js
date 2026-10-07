@@ -81,7 +81,7 @@ function buildPrepDeck() {   // v0.9.15: el mazo que vas a llevar, con un botón
   el.hidden = false; const d = deckOf(f), nsp = d.filter(isSpell).length;
   el.innerHTML = `<span class="pd-lbl ol">TU MAZO<small>${nsp ? nsp + (nsp > 1 ? ' hechizos' : ' hechizo') : 'básico'}</small></span><div class="deck-mini"><span class="ld"><canvas data-pk="${F.leader}"></canvas></span>${d.map(k => `<span class="${isSpell(k) ? 'sp' : ''}"><canvas data-pk="${k}"></canvas></span>`).join('')}</div><button class="btn-ghost ol pd-edit" id="btn-prep-deck">EDITAR</button>`;
   for (const cv of el.querySelectorAll('canvas[data-pk]')) drawArt(cv, cv.dataset.pk, 30, 27);
-  $('#btn-prep-deck').onclick = () => { play('select'); openDeck(f); };
+  $('#btn-prep-deck').onclick = () => { play('select'); openDeck(f, 'scr-prep'); };
 }
 // cambia de facción: campo, mazo, portada, base y textos
 function setFaction(f) {

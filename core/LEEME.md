@@ -70,6 +70,7 @@ hook('tienda', () => { /* añado mi oferta a #gift-row */ });
 | `coleccion.arriba` (fac), `coleccion.abajo` (fac, bloqueada) | Al pintar la colección: lo que devuelvan (HTML) va antes o después de las cartas. |
 | `coleccion.nombre` (k) | Junto al nombre de cada carta (HTML). |
 | `coleccion.lista` (lista) | Con la colección ya pintada. |
+| `coleccion.abrir` () | Al entrar en la colección desde el menú principal (antes de pintarla). |
 | `equipar` (tipo) | Al ponerle una habilidad o un objeto a una carta. |
 | `gacha.abierto`, `gacha.textos`, `gacha.tirada` (n) | Al entrar en el gashapón, al escribir sus textos y después de tirar. |
 | `tienda` | Con la tienda ya pintada. |

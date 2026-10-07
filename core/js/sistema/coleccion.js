@@ -6,7 +6,7 @@
 //   effStats(k, fac)   los números de la carta con lo que lleva: { boosts: ['+10 % de daño', …], … }
 //   cardStats(k, es)   la línea de números que se enseña · cardDesc(k) su descripción · passiveText(fac) qué hace la pasiva
 // y puede enganchar: 'coleccion.arriba' (fac) y 'coleccion.abajo' (fac, bloqueada) para añadir filas · 'coleccion.nombre' (k) junto al nombre
-//   'coleccion.lista' (lista) cuando ya está pintada · 'equipar' (tipo) al ponerle algo a una carta.
+//   'coleccion.lista' (lista) cuando ya está pintada · 'coleccion.abrir' al entrar desde el menú · 'equipar' (tipo) al ponerle algo a una carta.
 'use strict';
 const misFacciones = () => FACTION_ORDER.filter(isUnlocked);   // las facciones que ya tiene el jugador
 let collFac = null;

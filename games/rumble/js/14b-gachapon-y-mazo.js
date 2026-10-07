@@ -15,6 +15,8 @@ function deckOf(f) {   // líder aparte + 6 cartas: las elegidas (si siguen sien
 }
 const deckCost = d => d.reduce((a, k) => a + CFG.cards[k].cost, 0) / Math.max(1, d.length);
 function deckBarHtml(f) {
+  if (deckEdit && deckEdit.f !== f) deckEdit = null;   // al cambiar de facción se cierra el editor (el mazo ya está guardado)
+  if (deckEdit) return deckEditorHtml(f);
   const d = deckOf(f), L = FACTIONS[f].leader, nsp = d.filter(isSpell).length;
   return `<div class="deck-bar"><div><b class="ol">TU MAZO</b><small>Líder + 6 cartas · ${nsp} ${nsp === 1 ? 'hechizo' : 'hechizos'} · coste medio ${fmtV(rnd(deckCost(d), 1))}</small><div class="deck-mini"><span><canvas data-dk="${L}"></canvas></span>${d.map(k => `<span class="${isSpell(k) ? 'sp' : ''}"><canvas data-dk="${k}"></canvas></span>`).join('')}</div></div><button class="btn-up" id="btn-deck">EDITAR<small>MAZO</small></button></div>`;
 }
@@ -93,9 +95,10 @@ function buildCardGachaText() {
   $('#btn-gr-inv').textContent = 'Ver en la Colección';
   $('#gacha-odds').textContent = `Probabilidades: rara ${O.rare} %, épica ${O.epic} %, legendaria ${O.legendary} %. Garantías: épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${SAVE.pity.cd || 0}) y legendaria a las ${ECON.pityLeg} (llevas ${SAVE.pity.cdL || 0}). Con 5 estrellas, una repetida da ${ECON.dupGems} gemas.`;
 }
-// ---- editar el mazo (v0.9.16: expositor con el líder grande y las 6 cartas; tus tropas debajo)
-let deckEdit = null;
-function openDeck(f) { deckEdit = { f, sel: deckOf(f).slice(), pick: null }; buildDeck(); $('#scr-deck').hidden = false; $('#deck-grid').scrollTop = 0; }
+// ---- editar el mazo (v0.9.31: se despliega dentro de la Colección; cada cambio se guarda al momento y GUARDAR lo pliega)
+let deckEdit = null;   // { f, sel, pick, back } mientras el editor está desplegado
+function openDeck(f, back) { deckEdit = { f, sel: deckOf(f).slice(), pick: null, back: back || null }; collFac = f; updateWallets(); show('scr-coll'); buildColl(); const e = $('#deck-ed'); if (e) e.scrollIntoView({ block: 'start' }); }
+function deckRefresh() { const sc = $('#scr-coll'), y = sc.scrollTop; buildColl(); sc.scrollTop = y; }
 function deckTile(k, o) {   // o: { lead, slot, inDeck, pick, target }
   const c = CFG.cards[k], sp = isSpell(k), st = cardStars(k), lv = uSave(k).lvl;
   const cls = ['dk2c', sp ? 'sp' : '', o.inDeck ? 'in' : '', o.pick ? 'pick' : '', o.target ? 'target' : ''].filter(Boolean).join(' ');
@@ -109,30 +112,34 @@ function deckTile(k, o) {   // o: { lead, slot, inDeck, pick, target }
     + `<span class="dk2c-name">${c.name}</span><span class="dk2c-tag">${tag}</span>`
     + (o.inDeck ? '<span class="dk2c-in">EN EL MAZO</span>' : '') + '</button>';
 }
-function buildDeck() {
-  const D = deckEdit, { f, sel } = D, F = FACTIONS[f], pool = deckPool(f), nsp = sel.filter(isSpell).length, all = F.units.length + (F.gacha || []).length;
+function deckEditorHtml(f) {
+  const D = deckEdit, { sel } = D, F = FACTIONS[f], pool = deckPool(f), nsp = sel.filter(isSpell).length, all = F.units.length + (F.gacha || []).length;
   const pickSp = D.pick && isSpell(D.pick), spFull = pickSp && nsp >= DECK_SPELLS;
-  $('#deck-title').textContent = 'TU MAZO · ' + F.name.toUpperCase();
   let board = deckTile(F.leader, { lead: true });
   for (let i = 0; i < 6; i++) {
     const k = sel[i];
     if (!k) { board += `<button class="dk2c empty${D.pick ? ' target' : ''}" data-dks="${i}" aria-label="Hueco vacío"><b>+</b>VACÍO</button>`; continue; }
     board += deckTile(k, { slot: i, target: !!D.pick && (!spFull || isSpell(k)) });
   }
-  $('#deck-board').innerHTML = board;
-  $('#deck-grid').innerHTML = pool.map(k => deckTile(k, { inDeck: sel.includes(k), pick: D.pick === k })).join('');
-  for (const cv of document.querySelectorAll('#scr-deck canvas[data-dka]')) { const big = cv.dataset.big === '1'; drawArt(cv, cv.dataset.dka, big ? 104 : 96, big ? 150 : 88); }
   const used = [F.leader].concat(sel), avg = used.reduce((a, k) => a + uSave(k).lvl, 0) / used.length;
-  $('#deck-lvl').textContent = 'Nivel medio ' + fmtV(rnd(avg, 1));
-  $('#deck-sp').textContent = `Hechizos ${nsp}/${DECK_SPELLS}`; $('#deck-sp').classList.toggle('full', nsp >= DECK_SPELLS);
-  $('#deck-cost').textContent = 'Coste medio ' + fmtV(rnd(deckCost(sel), 1));
-  $('#deck-count').textContent = `Tienes ${pool.length} de ${all}`;
-  $('#deck-note').innerHTML = (D.pick ? '' : '<b>Mantén pulsada</b> una carta para ver qué hace. ') + (D.pick ? `Toca la carta de tu mazo que quieres cambiar por <b>${CFG.cards[D.pick].name}</b>${spFull ? ' (tiene que ser un hechizo: como mucho ' + DECK_SPELLS + ')' : ''}. Toca otra vez para cancelar.`
+  const note = (D.pick ? '' : '<b>Mantén pulsada</b> una carta para ver qué hace. ') + (D.pick ? `Toca la carta de tu mazo que quieres cambiar por <b>${CFG.cards[D.pick].name}</b>${spFull ? ' (tiene que ser un hechizo: como mucho ' + DECK_SPELLS + ')' : ''}. Toca otra vez para cancelar.`
     : sel.length < 6 ? `Te faltan <b>${6 - sel.length}</b> ${6 - sel.length === 1 ? 'carta' : 'cartas'}: toca una de tus tropas para ponerla.`
     : 'Toca una de tus tropas y luego la carta del mazo que quieres cambiar.');
-  for (const b of document.querySelectorAll('#deck-grid [data-dkp]')) { deckHold(b, b.dataset.dkp); b.onclick = () => { if (!deckHeld()) deckPoolTap(b.dataset.dkp); }; }
-  for (const b of document.querySelectorAll('#deck-board [data-dks]')) { const k = sel[+b.dataset.dks]; if (k) deckHold(b, k); b.onclick = () => { if (!deckHeld()) deckSlotTap(+b.dataset.dks); }; }
-  for (const b of document.querySelectorAll('#deck-board .dk2c[data-rarity="leader"]')) { b.disabled = false; deckHold(b, F.leader); }
+  return `<div class="deck-ed" id="deck-ed"><div class="deck-bar"><div><b class="ol">TU MAZO</b><small>Líder + 6 cartas</small></div><div class="deck-bb"><button class="btn-up" id="btn-deck-reset">POR DEFECTO</button><button class="btn-up save" id="btn-deck-ok">GUARDAR</button></div></div>`
+    + `<div class="dk2-frame"><div class="dk2-board" id="deck-board">${board}</div></div>`
+    + `<div class="dk2-stats"><span class="dk2-chip">Nivel medio ${fmtV(rnd(avg, 1))}</span><span class="dk2-chip${nsp >= DECK_SPELLS ? ' full' : ''}">Hechizos ${nsp}/${DECK_SPELLS}</span><span class="dk2-chip">Coste medio ${fmtV(rnd(deckCost(sel), 1))}</span></div>`
+    + `<p class="dk2-hint">${note}</p>`
+    + `<div class="dk2-pool"><div class="dk2-pool-h"><b class="ol">TUS TROPAS</b><small>Tienes ${pool.length} de ${all}</small></div><div class="dk2-grid" id="deck-grid">${pool.map(k => deckTile(k, { inDeck: sel.includes(k), pick: D.pick === k })).join('')}</div></div></div>`;
+}
+function deckBind(list) {   // con la colección pintada: dibuja las cartas del editor y le da vida
+  if (!deckEdit || !$('#deck-ed')) return;
+  const { sel, f } = deckEdit;
+  for (const cv of list.querySelectorAll('#deck-ed canvas[data-dka]')) { const big = cv.dataset.big === '1'; drawArt(cv, cv.dataset.dka, big ? 104 : 96, big ? 150 : 88); }
+  for (const b of list.querySelectorAll('#deck-grid [data-dkp]')) { deckHold(b, b.dataset.dkp); b.onclick = () => { if (!deckHeld()) deckPoolTap(b.dataset.dkp); }; }
+  for (const b of list.querySelectorAll('#deck-board [data-dks]')) { const k = sel[+b.dataset.dks]; if (k) deckHold(b, k); b.onclick = () => { if (!deckHeld()) deckSlotTap(+b.dataset.dks); }; }
+  for (const b of list.querySelectorAll('#deck-board .dk2c[data-rarity="leader"]')) { b.disabled = false; deckHold(b, FACTIONS[f].leader); }
+  $('#btn-deck-ok').onclick = deckDone;
+  $('#btn-deck-reset').onclick = () => { deckEdit.sel = FACTIONS[f].units.slice(); deckEdit.pick = null; play('select'); deckSave(); };
 }
 // v0.9.18: mantener pulsada una carta enseña su ficha (qué hace); al soltar se cierra y no se pone ni se quita
 let deckHoldT = null, deckHoldOn = false, deckHoldAt = 0;
@@ -147,14 +154,14 @@ function deckHold(b, k) {
     window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
   });
 }
-function deckSave() { SAVE.decks[deckEdit.f] = deckEdit.sel.slice(); saveGame(); buildDeck(); }
+function deckSave() { SAVE.decks[deckEdit.f] = deckEdit.sel.slice(); saveGame(); deckRefresh(); }
 function deckPoolTap(k) {
   const D = deckEdit, sel = D.sel, i = sel.indexOf(k);
   if (i >= 0) { sel.splice(i, 1); D.pick = null; play('select'); deckSave(); return; }   // ya estaba: se quita
-  if (D.pick === k) { D.pick = null; play('select'); buildDeck(); return; }
+  if (D.pick === k) { D.pick = null; play('select'); deckRefresh(); return; }
   const spOk = !isSpell(k) || sel.filter(isSpell).length < DECK_SPELLS;
   if (sel.length < 6 && spOk) { sel.push(k); D.pick = null; play('select'); deckSave(); return; }
-  D.pick = k; play('select'); buildDeck();   // mazo lleno (o ya hay 2 hechizos): elige qué carta cambiar
+  D.pick = k; play('select'); deckRefresh();   // mazo lleno (o ya hay 2 hechizos): elige qué carta cambiar
 }
 function deckSlotTap(i) {
   const D = deckEdit, sel = D.sel, k = sel[i];
@@ -167,6 +174,9 @@ function deckSlotTap(i) {
   if (!k) { toast('Toca una de tus tropas de abajo para ponerla aquí'); return; }
   sel.splice(i, 1); play('select'); deckSave();
 }
-$('#btn-deck-ok').addEventListener('click', () => { const { f, sel } = deckEdit; if (sel.length < 6) toast('Faltaban cartas: se completa con las básicas'); SAVE.decks[f] = deckOf(f); saveGame(); $('#scr-deck').hidden = true; play('select'); if (!$('#scr-coll').hidden) buildColl(); buildPrepDeck(); if (G.state !== 'play') resetMatch(); });
-$('#btn-deck-reset').addEventListener('click', () => { deckEdit.sel = FACTIONS[deckEdit.f].units.slice(); deckEdit.pick = null; play('select'); deckSave(); });
+function deckDone() {   // GUARDAR: completa con las básicas si faltan y pliega el editor
+  const { f, sel, back } = deckEdit; if (sel.length < 6) toast('Faltaban cartas: se completa con las básicas');
+  SAVE.decks[f] = deckOf(f); saveGame(); deckEdit = null; play('select'); buildPrepDeck(); if (G.state !== 'play') resetMatch();
+  if (back) show(back); else deckRefresh();
+}
 

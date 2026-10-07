@@ -40,6 +40,8 @@ IDIOMA.add({
   "Nivel medio 1": "Average level 1",
   "Normal": "Normal",
   "PARTIDA RÁPIDA": "QUICK MATCH",
+  "GUARDAR": "SAVE",
+  "Líder + 6 cartas": "Leader + 6 cards",
   "POR DEFECTO": "DEFAULT",
   "PRUEBAS": "TESTS",
   "Pasiva de facción: Rabia. Pulsa para ver qué hace": "Faction passive: Rage. Press to see what it does",

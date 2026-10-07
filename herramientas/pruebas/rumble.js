@@ -25,7 +25,7 @@ var PRUEBA = {
 
   async pasos(T, parte) {
     const $ = T.$, quiere = p => !parte || parte.split(',').includes(p);
-    const cierra = () => { for (const id of ['scr-login', 'scr-news', 'scr-name', 'scr-confirm', 'scr-item', 'scr-pick', 'scr-idle', 'scr-idlebox', 'scr-deck', 'scr-profile', 'scr-roulette', 'scr-share']) { const e = document.getElementById(id); if (e) e.hidden = true; } };
+    const cierra = () => { for (const id of ['scr-login', 'scr-news', 'scr-name', 'scr-confirm', 'scr-item', 'scr-pick', 'scr-idle', 'scr-idlebox', 'scr-profile', 'scr-roulette', 'scr-share']) { const e = document.getElementById(id); if (e) e.hidden = true; } };
     const casa = () => { cierra(); goHome(); T.avanza(3000); cierra(); };
     const guardado = () => T.apunta('guardado', orden(SAVE));
     const orden = v => (Array.isArray(v) ? v.map(orden) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k => [k, orden(v[k])])) : typeof v === 'number' ? +v.toPrecision(10) : v);
@@ -158,7 +158,6 @@ var PRUEBA = {
       T.paso('antes de jugar: sala de pruebas'); openPrep('sandbox'); T.foto();
       T.paso('cómo se juega'); casa(); T.clic('#btn-howto'); T.foto(); T.clic('#btn-howto-ok');
       T.paso('perfil'); casa(); T.clic('#btn-profile'); T.foto(); T.clic('#profile-avs [data-av="necrolord"]'); T.foto('otro avatar'); T.clic('#profile-name'); T.foto('nombre'); T.pon('#name-in', 'Otra Prueba 2'); T.clic('#name-ok'); T.avanza(100); T.foto('cambiado'); guardado(); cierra();
-      T.paso('mazo desde el menú'); casa(); T.clic('#btn-deck-menu'); T.foto(); T.clic('#btn-deck-reset'); T.clic('#btn-deck-ok'); guardado();
     }
 
     if (quiere('partida')) {   // una partida entera jugada por la máquina, paso a paso, y su pantalla final

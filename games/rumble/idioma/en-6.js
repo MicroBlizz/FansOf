@@ -167,7 +167,6 @@ IDIOMA.add({
   "Ponlas en tu mazo desde la Colección.": "Put them in your deck from the Collection.",
   "Probabilidades: rara %1 %, épica %2 %, legendaria %3 %. Garantías: épica o mejor como mucho cada %4 tiradas (llevas %5) y legendaria a las %6 (llevas %7). Con 5 estrellas, una repetida da %8 gemas.": "Odds: rare %1 %, epic %2 %, legendary %3 %. Guarantees: epic or better at least every %4 pulls (you're at %5) and legendary at %6 (you're at %7). With 5 stars, a duplicate gives %8 gems.",
   "Salen en la máquina de cartas. Las repetidas le dan estrellas: +5 % cada una, hasta 5.": "They come from the card machine. Duplicates give it stars: +5 % each, up to 5.",
-  "TU MAZO ·": "YOUR DECK ·",
   "Te faltan": "You need",
   "Tienes %1 de %2": "You have %1 of %2",
   "Toca la carta de tu mazo que quieres cambiar por": "Tap the card in your deck that you want to swap for",

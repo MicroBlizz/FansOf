@@ -27,18 +27,17 @@ function facItemsRetro() {   // a quien ya ganó a un jefe en Difícil antes de 
   if (got.length) setTimeout(() => toast(`¡Objetos de facción nuevos en tu inventario: ${got.join(', ')}!`, true), 2500);
 }
 
-// v0.9.18: botón «Mazo» en el menú principal: edita el mazo de la facción que tienes elegida
-$('#btn-deck-menu').addEventListener('click', () => { play('select'); openDeck(isUnlocked(G.faction) ? G.faction : SAVE.unlocked[0]); });
-
 /* ---------- lo que este juego añade a la colección y al gashapón comunes (core/js/sistema/) ---------- */
 hook('coleccion.arriba', fac => deckBarHtml(fac));                       // el mazo de la facción
 hook('coleccion.abajo', (fac, lock) => gachaRows(fac, lock));            // sus cartas del gashapón
+hook('coleccion.abrir', () => { deckEdit = null; });                  // al entrar en la colección desde el menú, el mazo vuelve plegado
 hook('coleccion.nombre', k => (CFG.cards[k].gacha ? starsHtml(k) : ''));   // las estrellas de una carta del gashapón
 hook('coleccion.lista', list => {
   for (const cv of list.querySelectorAll('canvas[data-dk]')) drawArt(cv, cv.dataset.dk, 40, 36);
   const db = $('#btn-deck'); if (db) db.onclick = () => { play('select'); openDeck(collFac); };
+  deckBind(list);
   list.querySelectorAll('[data-goc]').forEach(b => { b.onclick = () => { play('select'); gachaTab = 'cd'; updateWallets(); openGacha(); }; });
 });
 // la tercera máquina del gashapón: cartas (hechizos y mata-sanadores)
 MAQUINAS.cd = { nombre: 'CARTAS', maquina: ['#8b3dff', '#5b21b6', '#4c1d95'], colores: CARD_RAR, tirar: cardPull, ensenar: showCardPulls, textos: buildCardGachaText,
-  verEn() { collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } };
+  verEn() { deckEdit = null; collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } };

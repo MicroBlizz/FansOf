@@ -105,10 +105,7 @@
 .deck-mini canvas { width: 36px; height: 32px; display: block; margin: 0 auto; }
 .tip-spell { font-size: 13px; font-weight: 700; line-height: 1.3; }
 /* v0.9.16: pantalla de mazo al estilo de un expositor: líder grande + 6 cartas, y tus tropas debajo */
-#scr-deck.modal { padding: 14px 12px 16px; justify-content: flex-start; gap: 0; background: radial-gradient(120% 70% at 50% 0%, #3a1f5e, var(--bg) 70%); z-index: 34; }
 .dk2c[data-rarity="leader"] .dk2c-art { align-items: center; }
-.dk2 { width: 100%; max-width: 516px; height: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 8px; min-height: 0; }
-.dk2-title { font-family: var(--font-display); font-weight: 400; font-size: 30px; margin: 2px 0 0; text-align: center; color: var(--gold); }
 .dk2-frame { flex: none; padding: 9px; border-radius: 18px; border: 4px solid var(--outline); background: linear-gradient(to bottom, #4b4466, #2c2742); box-shadow: inset 0 0 0 3px #8a7a4a, 0 6px 0 var(--outline); }
 .dk2-board { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 158px); gap: 7px; }
 .dk2c { --card-hi: #63cfe0; --card-lo: #2a7895; position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); cursor: pointer; color: var(--ink); font: inherit; min-width: 0; box-shadow: 0 3px 0 var(--outline); }
@@ -138,11 +135,11 @@
 .dk2-chip.full { background: #6d28c9; }
 .dk2-hint { margin: 0; min-height: 34px; font-size: 13.5px; font-weight: 700; line-height: 1.3; color: var(--ink-dim); text-align: center; }
 .dk2-hint b { color: var(--gold); }
-.dk2-pool { flex: 1; min-height: 0; display: flex; flex-direction: column; border-radius: 16px; border: 4px solid var(--outline); background: var(--tray); overflow: hidden; }
+.dk2-pool { display: flex; flex-direction: column; border-radius: 16px; border: 4px solid var(--outline); background: var(--tray); overflow: hidden; }
 .dk2-pool-h { display: flex; align-items: baseline; justify-content: space-between; padding: 7px 12px 5px; background: var(--tray-hi); border-bottom: 3px solid var(--outline); }
 .dk2-pool-h b { font-family: var(--font-display); font-weight: 400; font-size: 18px; }
 .dk2-pool-h small { font-size: 13px; font-weight: 800; color: var(--ink-dim); }
-.dk2-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 138px; gap: 7px; padding: 8px; touch-action: pan-y; }
+.dk2-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 138px; gap: 7px; padding: 8px; }
 /* v0.9.16: anuncios con premio (de prueba) */
 .ad-btn { display: inline-grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 5px; align-items: center; justify-content: center; padding: 5px 10px 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #3fd0e8, #1c7fa6); box-shadow: 0 3px 0 var(--outline); color: #fff; cursor: pointer; font: inherit; }
 .ad-btn svg { grid-row: span 2; width: 22px; height: 22px; }
@@ -199,5 +196,9 @@
 .side-mode.test { background: linear-gradient(to bottom, #b98aff, #5b21b6); }   /* v0.9.33: Arena y Pruebas en violeta, como los demás modos */
 .side-mode svg { width: 34px; height: 34px; filter: drop-shadow(0 2px 0 rgba(20, 8, 34, 0.35)); }
 .side-mode:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
-/* v0.9.31: el menú tiene 7 botones (Biblioteca va entre Inventario y Pase) */
-.home-grid { grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 508px; }
+/* v0.9.31: el editor del mazo, desplegado dentro de la Colección */
+.deck-ed { display: flex; flex-direction: column; gap: 8px; }
+.deck-bb { display: flex; flex-direction: column; gap: 4px; }
+.deck-bb .btn-up { min-width: 104px; font-size: 13px; }
+.btn-up.save { background: linear-gradient(to bottom, #ffe06a, #e0a21c); color: #3b2503; }
+#scr-title .home-grid { grid-template-columns: repeat(6, 1fr); gap: 5px; max-width: 470px; }   /* seis casillas: Biblioteca entra y Mazo vive en la colección */

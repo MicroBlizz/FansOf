@@ -66,7 +66,7 @@ function buildMissions() {
   if (!W && RETOS.trasMisiones) RETOS.trasMisiones(L);
   for (const b of document.querySelectorAll('[data-claim]')) b.onclick = () => {
     const m = L[+b.dataset.claim]; if (m.claimed || m.prog < mDef(m, W).goal) return;
-    m.claimed = true; SAVE.gold += rw[0]; SAVE.gems += rw[1];
+    m.claimed = true; ECO.ganar('mision', { gold: rw[0], gems: rw[1] });
     const up = addPassXp(rw[2]); if (!W) missionEvent('dailydone', 1); else stat('weekdone', 1);
     saveGame(); play('crown'); updateWallets(); buildMissions();
     toast(up ? `¡Pase de batalla: nivel ${passLevel()}!` : `+${rw[2]} puntos de pase`);
@@ -102,9 +102,7 @@ function rewardHtml(r) {
 }
 const rewardTxt = r => r.gold ? `${fmt(r.gold)} de oro` : r.gems ? `${fmt(r.gems)} gemas` : r.tickets ? `${r.tickets} ${r.tickets > 1 ? 'tiradas gratis' : 'tirada gratis'} del gashapón` : r.item ? ITEMS[r.item].name : '';
 function giveReward(r) {
-  if (r.gold) SAVE.gold += r.gold;
-  if (r.gems) SAVE.gems += r.gems;
-  if (r.tickets) SAVE.tickets = (SAVE.tickets || 0) + r.tickets;
+  ECO.ganar('premio', r);
   if (r.item) addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q));
 }
 const passReady = (track, i) => i <= passLevel() && !SAVE.pass[track === 'free' ? 'free' : 'paid'].includes(i) && (track === 'free' || SAVE.pass.prem);
@@ -210,7 +208,7 @@ function achClaim(list) {   // cobra todos los niveles conseguidos de estas fami
     f.goals.forEach((x, i) => { if (nw & (1 << i)) { n++; g += f.gems[i]; last = achName(f, i); } }); SAVE.achC[f.id] = C | R;
   }
   if (!n) return 0;
-  SAVE.gems += g; saveGame(); play('crown'); updateWallets(); updateBadges(); buildMissions();
+  ECO.ganar('premio', { gems: g }); saveGame(); play('crown'); updateWallets(); updateBadges(); buildMissions();
   toast(n > 1 ? `+${fmt(g)} gemas por ${fmt(n)} logros` : `+${fmt(g)} gemas por «${last}»`, true);
   return g;
 }

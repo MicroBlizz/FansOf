@@ -55,7 +55,8 @@ const NUCLEO = (() => {
     'js/serie/iconos.js',          //           iconos y colores
     'js/serie/catalogo.js',        //           qué habilidades y objetos existen
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
-    'js/sistema/cuenta.js',        // la partida también en la nube: cuenta de invitado, subir y bajar
+    'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
+    'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
     'js/sistema/coleccion.js',     // colección: las cartas y lo que llevan puesto
     'js/sistema/biblioteca.js',    // biblioteca: galería de habilidades y objetos

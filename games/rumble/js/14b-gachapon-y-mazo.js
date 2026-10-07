@@ -69,7 +69,7 @@ function cardPull(force) {
   if (!C) { SAVE.cards[k] = { n: 1, st: 0 }; cardStartLevel(k); stat('cardnew', 1); return { k, rar, isNew: true, tag: '¡NUEVA!' }; }
   C.n++;
   if (C.st < ECON.maxStars) { C.st++; stat('cardstar', 1); return { k, rar, up: true, tag: `¡SUBE A ${C.st} ★!` }; }
-  SAVE.gems += ECON.dupGems; return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
+  ECO.ganar('carta-repetida', { gems: ECON.dupGems }); return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
 }
 let cardsGoFac = null;
 function showCardPulls(res) {

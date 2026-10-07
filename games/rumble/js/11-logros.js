@@ -31,7 +31,7 @@ $('#btn-speed').addEventListener('click', () => { if (G.tutMatch) return; SAVE.s
 function buyStarter() {
   if (SAVE.starter) return;
   const P = SHOP.starter, pool = Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass);
-  SAVE.starter = true; SAVE.gems += P.gems; SAVE.gold += P.gold;
+  SAVE.starter = true; ECO.ganar('bienvenida', P);
   const it = newCopy('eq', pick(pool), 3);
   saveGame(); play('win'); updateWallets(); buildShop(); toast('¡Pack de bienvenida! Microblizz te da las gracias', true);
   setTimeout(() => openItem(it.u), 450);
@@ -46,7 +46,7 @@ function tutStep(n) {
     if (!SAVE.tutGift.cafe) { SAVE.tutGift.cafe = 1; T.cafeU = addCopy('ab', 'cafeina', [0.75]).u; G.tutJust = true; }
     if (!SAVE.inv.some(x => x.k === 'ab')) { tutStep(2); return; }
   }
-  if (n === 2 && !SAVE.tutGift.tix) { SAVE.tutGift.tix = 1; SAVE.tickets = (SAVE.tickets || 0) + 3; G.tutJust2 = true; updateWallets(); }
+  if (n === 2 && !SAVE.tutGift.tix) { SAVE.tutGift.tix = 1; ECO.ganar('tutorial', { tickets: 3 }); G.tutJust2 = true; updateWallets(); }
   saveGame();
 }
 function tutFinish() {

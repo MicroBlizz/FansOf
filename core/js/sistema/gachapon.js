@@ -35,7 +35,7 @@ function pull(n) {
   n = n || 1; if (gachaAnim) return;
   const c = pullCost(n);
   if (SAVE.gems < c.gems) { play('deny'); confirmBox('FALTAN GEMAS', `Para girar x${n} te faltan <b>${fmt(c.gems - SAVE.gems)} gemas</b>.<small>Las consigues con misiones, la campaña, el pase de batalla o en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
-  SAVE.tickets = (SAVE.tickets || 0) - c.free; SAVE.gems -= c.gems;
+  ECO.gastar('gachapon', { tickets: c.free, gems: c.gems });
   audioInit();
   // v0.9.11: cada bloque de 10 tiradas trae al menos una épica (o legendaria)
   const kind = gachaTab, X = MAQUINAS[kind], res = []; let gotEpic = false;

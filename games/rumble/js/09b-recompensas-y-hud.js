@@ -70,7 +70,7 @@ function grantRewards() {
   if (rwin && G.endReason === 'base' && CFG.matchTime - G.time < 100) stat('fastwin', 1);
   if (rwin && G.endReason === 'hp') stat('hpwin', 1);
   if (rwin && G.mode === 'quick' && G.diff === 'easy') stat('easywin', 1);
-  SAVE.gold += R.gold; SAVE.gems += R.gems; saveGame(); return R;
+  ECO.ganar('partida', R); saveGame(); return R;
 }
 
 function fit() {

@@ -18,7 +18,7 @@ function buildShop() {
   $('#gift-row').innerHTML = `<div class="pack gift"><div class="pk-ic">${PILE(2)}</div><div><div class="pk-name ol">Regalo del becario</div><div class="pk-note">Gratis una vez al día: ${g.gold} de oro y ${g.gems} gemas. Se lo ha «encontrado» en la oficina de Microblizz.</div></div><button class="btn-price ol" id="btn-gift" ${ready ? '' : 'disabled'}>${ready ? 'GRATIS' : 'MAÑANA'}</button></div>`;
   $('#btn-gift').onclick = () => {
     if (!giftReady()) return;
-    SAVE.giftDay = todayStr(); SAVE.gold += g.gold; SAVE.gems += g.gems; missionEvent('gift', 1); saveGame(); play('crown'); updateWallets(); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`);
+    SAVE.giftDay = todayStr(); ECO.ganar('regalo-diario', g); missionEvent('gift', 1); saveGame(); play('crown'); updateWallets(); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`);
   };
   fire('tienda');
   const L = SHOP[shopTab], gem = shopTab === 'gems';
@@ -30,7 +30,7 @@ function buildShop() {
   list.querySelectorAll('[data-buy]').forEach(b => { b.onclick = () => {
     const p = L.find(x => x.id === b.dataset.buy); play('select');
     confirmBox('¿COMPRAR?', `${p.name}<span class="big">${gem ? GEM_SVG : COIN_SVG} ${fmt(p.amt)}</span>por <b>${eur(p.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', () => {
-      if (gem) SAVE.gems += p.amt; else SAVE.gold += p.amt;
+      ECO.ganar('compra', gem ? { gems: p.amt } : { gold: p.amt });
       saveGame(); play('win'); updateWallets(); toast(`+${fmt(p.amt)} ${gem ? 'gemas' : 'de oro'} · Microblizz te da las gracias`);
     });
   }; });

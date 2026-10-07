@@ -30,7 +30,7 @@ function pruebasClic(alAcabar) {
 function activarPruebas() {
   try { localStorage.setItem(PRUEBAS_COPIA, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: no habrá vuelta atrás */ }
   const logrosAntes = Object.assign({}, SAVE.achR || {});
-  SAVE.testAll = true; SAVE.gold += PRUEBAS_DINERO[0]; SAVE.gems += PRUEBAS_DINERO[1];
+  SAVE.testAll = true; ECO.ganar('pruebas', { gold: PRUEBAS_DINERO[0], gems: PRUEBAS_DINERO[1] });
   // las cartas, al nivel máximo
   for (const k of Object.keys(CFG.cards)) { const us = uSave(k); us.lvl = ECON.maxLvl; us.xp = 0; }
   // una copia perfecta de cada habilidad y objeto del juego (si ya tienes una perfecta, no se repite)

@@ -44,7 +44,7 @@ function levelUp(k) {
   if (!canLevel(k)) return false;
   const us = uSave(k), cost = lvlCost(us.lvl);
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return false; }
-  SAVE.gold -= cost; us.xp -= needXp(us.lvl); us.lvl++; missionEvent('lvlup', 1); saveGame(); play('levelup');
+  ECO.gastar('mejorar-carta', { gold: cost }); us.xp -= needXp(us.lvl); us.lvl++; missionEvent('lvlup', 1); saveGame(); play('levelup');
   toast(`¡${CFG.cards[k].name} sube a nivel ${us.lvl}!`); return true;
 }
 /* ---------- ventana de confirmación ---------- */

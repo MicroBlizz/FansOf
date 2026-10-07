@@ -58,7 +58,7 @@ function cardMods(k) {
 }
 /* ---------- experiencia y recompensas de las partidas (cuánto se da lo decide cada juego) ---------- */
 function xpGrant(win) { const X = G.xpPlay || {}; let n = 0; for (const k in X) { const g = Math.round(X[k] * (win ? ECON.winXpMult : 1)); uSave(k).xp += g; n += g; } G.xpPlay = {}; return n; }
-function give(gold, gems, xp) { SAVE.gold += gold; SAVE.gems += gems; saveGame(); return `<span class="rw-chip ol">${COIN_SVG}+${fmt(gold)}</span>${gems ? `<span class="rw-chip ol">${GEM_SVG}+${fmt(gems)}</span>` : ''}${xp ? `<div class="rw-xp">Experiencia: +${fmt(xp)} para las cartas que has usado</div>` : ''}`; }
+function give(gold, gems, xp) { ECO.ganar('recompensa', { gold, gems }); saveGame(); return `<span class="rw-chip ol">${COIN_SVG}+${fmt(gold)}</span>${gems ? `<span class="rw-chip ol">${GEM_SVG}+${fmt(gems)}</span>` : ''}${xp ? `<div class="rw-xp">Experiencia: +${fmt(xp)} para las cartas que has usado</div>` : ''}`; }
 
 /* ---------- la partida guardada de este juego ---------- */
 function newSave() { return metaDefaults({ v: 1, stars: {}, muted: false }); }

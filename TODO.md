@@ -13,6 +13,7 @@ Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENT
 - [ ] Probar el modo sin conexión con la cuenta (python herramientas/servidor.py --con-sw).
 
 ## Después
+- [ ] Modo ahorro y contador de FPS también en el TD (en el Rumble desde 0.9.39). Hacerlo común en core para que los dos juegos usen el mismo código. Ahora se prioriza el Rumble.
 - [ ] PvP online (Rumble primero, luego TD): Rumble determinista (aleatorio con semilla y paso fijo), emparejamiento, modos Estándar y Salvaje.
 - [ ] Tienda con dinero real: recursos, gachapón e inventario en el servidor; cobro con Paddle o Lemon Squeezy; probabilidades visibles.
 - [ ] Antes de cobrar: darse de alta (autónomo o sociedad) y condiciones de venta.

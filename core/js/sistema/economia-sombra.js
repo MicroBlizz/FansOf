@@ -46,7 +46,9 @@ const ECO_SOMBRA = (() => {
       const usuario = CUENTA.usuario || (await CUENTA.rpc('estado', { p_juego: AJUSTES.id }).then(() => CUENTA.usuario));
       if (est.migrado !== usuario) {
         // la partida de ahora ya incluye todo lo de la cola: se vacía en el mismo instante en que se serializa la partida
+        const previa = est.cola;   // si la puerta ya está cerrada, el servidor ignora la partida local: lo ganado sin conexión se vuelve a mandar como movimientos
         const r = await CUENTA.rpc('migrar', () => { est.cola = []; return { p_juego: AJUSTES.id, p_save: SAVE }; });
+        if (r && r.ignorada) est.cola = previa.concat(est.cola);
         est.migrado = usuario; if (r) apunta(r); guardar();
       }
       // una vez por cuenta: lo que había aquí y el servidor aún no sabía (copias y niveles anteriores a que el servidor las llevara) se añade; desde ahí manda el servidor

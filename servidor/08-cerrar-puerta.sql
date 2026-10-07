@@ -31,7 +31,8 @@ begin
   values (u, p_juego, coalesce((d->'econ'->'start'->>'gold')::bigint, 0), coalesce((d->'econ'->'start'->>'gems')::bigint, 0), true);
   insert into public.movimientos (usuario, juego, motivo, clave, d_oro, d_gemas)
   values (u, p_juego, 'inicio', 'inicio', coalesce((d->'econ'->'start'->>'gold')::bigint, 0), coalesce((d->'econ'->'start'->>'gems')::bigint, 0));
-  return public.estado(p_juego);
+  -- ignorada: la puerta está cerrada y no se ha mirado la partida local; el cliente vuelve a mandar lo que ganó sin conexión como movimientos
+  return public.estado(p_juego) || jsonb_build_object('ignorada', true);   -- (migración «migrar_avisa_si_ignora»)
 end $$;
 
 create or replace function public.conciliar(p_juego text, p_save jsonb) returns jsonb

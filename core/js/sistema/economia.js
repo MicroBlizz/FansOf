@@ -12,7 +12,7 @@ const TOPES_COMUNES = {
   mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 }, calcula: 'mision' },   // el servidor da lo de premios.mision, una vez por misión y periodo
   premio: { vez: { gold: 20000, gems: 30000, tickets: 30 }, dia: { gold: 100000, gems: 40000, tickets: 60 }, calcula: ['logros', 'login', 'pase'] },   // logros, racha de días y pase de batalla: el servidor pone la cantidad y comprueba que se pueda cobrar
   'compra-pase': { vez: {}, dia: {}, calcula: 'pase-premium' },   // el pase Ejecutivo (compra de prueba)
-  'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 } },
+  'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 }, calcula: 'horas' },   // el servidor limita lo cobrado al tiempo que ha pasado desde el cobro anterior
   'regalo-diario': { vez: { gold: 300, gems: 20 }, dia: { gold: 600, gems: 40 }, fijo: 'gift', diario: true },   // fijo: el servidor da SIEMPRE lo de premios.gift, una vez por día (hora de Madrid)
   compra: { vez: { gold: 100000, gems: 10000 }, dia: { gold: 1000000, gems: 100000 } },   // la tienda de prueba (no cobra); desaparece cuando haya pagos reales
   pruebas: { vez: { gold: 3000000, gems: 5000 }, dia: { gold: 12000000, gems: 20000 } },   // modo pruebas de quien desarrolla
@@ -24,7 +24,7 @@ const ECO = {
   topes: () => Object.assign({}, TOPES_COMUNES, AJUSTES.topes || {}),
   // motivo: para qué es (ahora solo documenta; el servidor lo apuntará en el libro de movimientos)
   // v: { gold, gems, tickets }, cada uno opcional
-  ganar(motivo, v, evento) { ECO.motor.mover(motivo, v, 1, evento); },   // evento: lo que ha pasado (el servidor calcula el premio con él si sabe), p. ej. { tipo: 'camp', nivel, dif, estrellas, victoria, jefe }
+  ganar(motivo, v, evento) { return ECO.motor.mover(motivo, v, 1, evento); },   // devuelve la clave con la que se manda al servidor (o nada si no se manda)   // evento: lo que ha pasado (el servidor calcula el premio con él si sabe), p. ej. { tipo: 'camp', nivel, dif, estrellas, victoria, jefe }
   gastar(motivo, v) { ECO.motor.mover(motivo, v, -1); },
   // ¿esta acción la hace el servidor? Solo si el juego lo pide (AJUSTES.servidor) y hay cuenta activa; si no, se calcula aquí como siempre
   servidor(accion) { return typeof CUENTA !== 'undefined' && CUENTA.activa && typeof ECO_SOMBRA !== 'undefined' && !!(AJUSTES.servidor && AJUSTES.servidor[accion]); },
@@ -56,7 +56,7 @@ const ECO = {
       if (v.gold) SAVE.gold += signo * v.gold;
       if (v.gems) SAVE.gems += signo * v.gems;
       if (v.tickets) SAVE.tickets = (SAVE.tickets || 0) + signo * v.tickets;
-      if (typeof ECO_SOMBRA !== 'undefined') ECO_SOMBRA.anota(motivo, v, signo, evento);   // modo sombra (economia-sombra.js): el servidor lo apunta, sin mandar
+      if (typeof ECO_SOMBRA !== 'undefined') return ECO_SOMBRA.anota(motivo, v, signo, evento);   // economia-sombra.js: el servidor lo apunta y lo valida
     },
   },
 };

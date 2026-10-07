@@ -902,6 +902,20 @@
   "creadores"
  ],
  "premios": {
+  "anuncios": {
+   "dayMax": 30,
+   "slots": {
+    "end2": 12,
+    "gift2": 1,
+    "idle2": 3,
+    "idle4": 2,
+    "pull_ab": 3,
+    "pull_cd": 3,
+    "pull_eq": 3,
+    "swap": 2,
+    "turbo": 2
+   }
+  },
   "camp": {
    "boss": [
     300,
@@ -922,6 +936,16 @@
   "gift": {
    "gems": 5,
    "gold": 100
+  },
+  "horas": {
+   "cap": 12,
+   "gExp": 1.6,
+   "gems": 1,
+   "gemsK": 2.5,
+   "gold": 60,
+   "idleH": 4,
+   "pwMax": 12,
+   "turboH": 2
   },
   "login": [
    {
@@ -3933,151 +3957,181 @@
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 1
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 1
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 15,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": "diploma",
      "tickets": 0
     }
    ],
@@ -4086,154 +4140,185 @@
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 2
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 2
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 2
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 2
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": null,
      "tickets": 2
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 30,
      "gold": 0,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
      "tickets": 0
     },
     {
      "gems": 0,
      "gold": 0,
+     "item": "corbata_ceo",
      "tickets": 0
     }
    ],
+   "q": 0.9,
    "xpLose": 40,
    "xpPer": 400,
    "xpWin": 100
@@ -4250,6 +4335,10 @@
  },
  "topes": {
   "anuncio": {
+   "calcula": [
+    "anuncio",
+    "turbo"
+   ],
    "dia": {
     "gems": 1000,
     "gold": 30000,
@@ -4313,6 +4402,7 @@
    "vez": {}
   },
   "horas-extra": {
+   "calcula": "horas",
    "dia": {
     "gems": 20000,
     "gold": 600000
@@ -4323,6 +4413,7 @@
    }
   },
   "idle": {
+   "calcula": "horas-anuncio",
    "dia": {
     "gems": 20000,
     "gold": 1000000
@@ -4418,5 +4509,5 @@
    }
   }
  },
- "version": 10
+ "version": 12
 }

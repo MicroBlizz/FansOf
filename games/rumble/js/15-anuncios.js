@@ -85,14 +85,14 @@ function adIdleUI() {   // HORAS EXTRA: turbo y ganancias de 4 h al momento (v0.
   box.innerHTML = (on ? `<span class="ad-turbo ol">TURBO x2 · ${Math.floor(mins / 60)}:${String(mins % 60).padStart(2, '0')}</span>` : adBtn('turbo', `TURBO ${ADS.turboH} h`))
     + adBtn('idle4', `GANANCIAS DE ${ADS.idleH} h`);
   for (const b of box.querySelectorAll('[data-ad]')) b.onclick = () => {
-    if (b.dataset.ad === 'turbo') watchAd('turbo', () => { const J = idleTick(); J.turbo = Math.max(Date.now(), J.turbo || 0) + ADS.turboH * 3600000; idleR = idleRates(J.fac); toast(`¡Turbo! ${ADS.turboH} horas ganando el doble`, true); box.dataset.k = ''; adIdleUI(); idleUI(true); });
+    if (b.dataset.ad === 'turbo') watchAd('turbo', () => { const J = idleTick(); J.turbo = Math.max(Date.now(), J.turbo || 0) + ADS.turboH * 3600000; ECO.ganar('anuncio', {}, { tipo: 'turbo' }); idleR = idleRates(J.fac); toast(`¡Turbo! ${ADS.turboH} horas ganando el doble`, true); box.dataset.k = ''; adIdleUI(); idleUI(true); });
     else watchAd('idle4', () => { idleGrantHours(ADS.idleH); box.dataset.k = ''; adIdleUI(); });
   };
 }
 // cobrar al momento lo que el líder gana en N horas (no toca lo que ya lleva acumulado)
 function idleGrantHours(h) {
   const I = idleTick(), R = idleRates(I.fac), g = Math.round(R.gold * h), gm = Math.floor(R.gems * h), it = R.item * h, ni = Math.floor(it) + (Math.random() < it % 1 ? 1 : 0);
-  ECO.ganar('idle', { gold: g, gems: gm }); const got = []; for (let i = 0; i < ni; i++) got.push(idleItem());
+  ECO.ganar('idle', { gold: g, gems: gm }, { tipo: 'horas-anuncio' }); const got = []; for (let i = 0; i < ni; i++) got.push(idleItem());
   stat('idleg', g, true); stat('idlem', gm, true); achScan(); saveGame(); updateWallets(); play('crown'); idleBurst();
   toast(`${h} horas de golpe: +${fmt(g)} de oro${gm ? ` y +${fmt(gm)} ${gm > 1 ? 'gemas' : 'gema'}` : ''}${got.length ? ` y ${got.length > 1 ? got.length + ' objetos' : 'un objeto'}` : ''}`, true);
 }
@@ -107,7 +107,7 @@ function adEndOffer(R) {   // pantalla final: premio x2 (oro y gemas; la experie
   const box = $('#end-rewards'); box.insertAdjacentHTML('beforeend', `<div class="ad-end">${adBtn('end2', 'PREMIO x2')}</div>`);
   const b = box.querySelector('[data-ad="end2"]');
   b.onclick = () => watchAd('end2', () => {
-    ECO.ganar('anuncio', R);
+    ECO.ganar('anuncio', R, { tipo: 'anuncio', slot: 'end2' });
     b.parentNode.innerHTML = `<span class="rw-chip big ol">¡PREMIO DOBLADO! ${R.gold ? `${COIN_SVG}+${fmt(R.gold)}` : ''} ${R.gems ? `${GEM_SVG}+${fmt(R.gems)}` : ''}</span>`;
     toast('Premio doblado', true);
   });
@@ -116,13 +116,13 @@ function adGachaOffer() {   // una tirada gratis al día
   const box = $('#gacha-ad'); if (!box) return;
   const slot = 'pull_' + (ADS.slots['pull_' + gachaTab] ? gachaTab : 'ab');   // v0.9.23: cada máquina tiene sus propias tiradas gratis
   box.innerHTML = adBtn(slot, 'TIRADA GRATIS EN ESTA MÁQUINA');
-  box.querySelector('[data-ad]').onclick = () => watchAd(slot, () => { ECO.ganar('anuncio', { tickets: 1 }); pull(1); });
+  box.querySelector('[data-ad]').onclick = () => watchAd(slot, () => { ECO.ganar('anuncio', { tickets: 1 }, { tipo: 'anuncio', slot }); pull(1); });
 }
 function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
   const gift = document.querySelector('#gift-row .pack.gift');
   if (gift && !giftReady() && adsState().gift2day !== todayStr()) {
     gift.insertAdjacentHTML('beforeend', `<div class="ad-gift">${adBtn('gift2', 'REGALO x2')}</div>`);
-    gift.querySelector('[data-ad="gift2"]').onclick = () => watchAd('gift2', () => { const g = SHOP.gift; adsState().gift2day = todayStr(); ECO.ganar('anuncio', g); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`, true); });
+    gift.querySelector('[data-ad="gift2"]').onclick = () => watchAd('gift2', () => { const g = SHOP.gift; adsState().gift2day = todayStr(); ECO.ganar('anuncio', g, { tipo: 'anuncio', slot: 'gift2' }); buildShop(); toast(`+${g.gold} de oro y +${g.gems} gemas`, true); });
   }
   const A = adsState();
   $('#gift-row').insertAdjacentHTML('beforeend', A.noAds
@@ -136,7 +136,7 @@ function adMissionOffer(L) {   // cambiar una misión diaria que no te guste
     if (m.claimed || m.prog >= mDef(m, false).goal || !rows[i]) return;
     rows[i].insertAdjacentHTML('beforeend', adBtn('swap', 'CAMBIAR', `data-mi="${i}"`));
   });
-  for (const b of document.querySelectorAll('#mission-list [data-ad="swap"]')) b.onclick = () => watchAd('swap', () => {
+  for (const b of document.querySelectorAll('#mission-list [data-ad="swap"]')) b.onclick = () => watchAd('swap', () => { ECO.ganar('anuncio', {}, { tipo: 'anuncio', slot: 'swap' });
     const i = +b.dataset.mi, used = SAVE.daily.list.map(x => x.id), pool = MISSIONS.filter(x => !used.includes(x.id) && x.id !== 'gift'), M = pick(pool);
     const facs = FACTION_ORDER.filter(isUnlocked);
     SAVE.daily.list[i] = { id: M.id, prog: 0, claimed: false, fac: M.ev === 'facwin' ? pick(facs) : undefined };

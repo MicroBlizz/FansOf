@@ -7,8 +7,8 @@ const AJUSTES = {
   // lo máximo que el servidor deja ganar por motivo (suma a los de core/js/sistema/economia.js); ver PLAN-CUENTAS.md, 15.13
   topes: {
     partida: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 }, calcula: ['camp', 'otro'] },   // en campaña el servidor calcula el premio (primer pase, estrellas, repetir…); en las demás partidas cuenta la xp del pase
-    idle: { vez: { gold: 200000, gems: 5000 }, dia: { gold: 1000000, gems: 20000 } },
-    anuncio: { vez: { gold: 5000, gems: 200, tickets: 2 }, dia: { gold: 30000, gems: 1000, tickets: 30 } },
+    idle: { vez: { gold: 200000, gems: 5000 }, dia: { gold: 1000000, gems: 20000 }, calcula: 'horas-anuncio' },
+    anuncio: { vez: { gold: 5000, gems: 200, tickets: 2 }, dia: { gold: 30000, gems: 1000, tickets: 30 }, calcula: ['anuncio', 'turbo'] },
     arena: { vez: { tickets: 10 }, dia: { tickets: 40 } },
     bienvenida: { vez: { gold: 20000, gems: 2000 }, unica: true, fijo: 'starter' },
     tutorial: { vez: { tickets: 5 }, unica: true, fijo: { tickets: 3 } },

@@ -18,9 +18,23 @@ const ECO_SOMBRA = (() => {
 
   function anota(motivo, v, signo, evento) {   // lo llama ECO
     if (!activa()) return;
-    est.cola.push({ clave: id(), motivo, oro: signo * (v.gold || 0), gemas: signo * (v.gems || 0), entradas: signo * (v.tickets || 0), evento });
+    est.cola.push({ clave: id(), motivo, oro: signo * (v.gold || 0), gemas: signo * (v.gems || 0), entradas: signo * (v.tickets || 0), evento, t: Date.now() });   // t: la hora del aparato (el servidor la usa para los cobros por tiempo)
     if (est.cola.length > 2000) est.cola.splice(0, est.cola.length - 2000);
     guardar(); clearTimeout(temporizador); temporizador = setTimeout(enviar, ESPERA);
+    return est.cola[est.cola.length - 1].clave;
+  }
+  // objetos que crea el servidor (premios del pase…): el aparato ya tenía una copia provisional marcada con la clave del movimiento; pasa a ser la del servidor
+  function copiasDelServidor(lista) {
+    if (!Array.isArray(lista) || !lista.length) return;
+    for (const n of lista) {
+      const it = SAVE.inv.find(x => x.pend === n.clave);
+      if (it) {
+        const viejo = it.u; it.u = n.u; it.q = n.q; delete it.pend;
+        for (const k in SAVE.abEquip) if (SAVE.abEquip[k] === viejo) SAVE.abEquip[k] = n.u;
+        for (const f in SAVE.equip) for (const sl in SAVE.equip[f]) if (SAVE.equip[f][sl] === viejo) SAVE.equip[f][sl] = n.u;
+      } else if (!SAVE.inv.some(x => x.u === n.u)) SAVE.inv.push({ u: n.u, k: n.k, id: n.id, q: n.q });
+    }
+    saveGame();
   }
   const apunta = r => { est.servidor = { oro: r.oro, gemas: r.gemas, entradas: r.entradas }; est.local = { oro: SAVE.gold, gemas: SAVE.gems, entradas: SAVE.tickets || 0 }; est.cuando = Date.now(); };
 
@@ -69,7 +83,7 @@ const ECO_SOMBRA = (() => {
       while (est.cola.length) {
         const lote = est.cola.slice(0, 200);
         const r = await CUENTA.rpc('anotar', { p_juego: AJUSTES.id, p_movs: lote });
-        est.cola = est.cola.slice(lote.length); adoptar(r); apunta(r); guardar();
+        est.cola = est.cola.slice(lote.length); copiasDelServidor(r.nuevos); adoptar(r); apunta(r); guardar();
       }
     } catch (e) { /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
   }

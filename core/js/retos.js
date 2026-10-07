@@ -102,8 +102,8 @@ function rewardHtml(r) {
 }
 const rewardTxt = r => r.gold ? `${fmt(r.gold)} de oro` : r.gems ? `${fmt(r.gems)} gemas` : r.tickets ? `${r.tickets} ${r.tickets > 1 ? 'tiradas gratis' : 'tirada gratis'} del gashapón` : r.item ? ITEMS[r.item].name : '';
 function giveReward(r, evento) {
-  ECO.ganar('premio', r, evento);
-  if (r.item) addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q));
+  const clave = ECO.ganar('premio', r, evento);
+  if (r.item) { const it = addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q)); if (clave && evento && evento.tipo === 'pase') it.pend = clave; }   // el servidor crea la de verdad (copiasDelServidor)
 }
 const passReady = (track, i) => i <= passLevel() && !SAVE.pass[track === 'free' ? 'free' : 'paid'].includes(i) && (track === 'free' || SAVE.pass.prem);
 function passClaimable() { let n = 0; for (let i = 1; i <= passLevel(); i++) { if (passReady('free', i)) n++; if (passReady('paid', i)) n++; } return n; }

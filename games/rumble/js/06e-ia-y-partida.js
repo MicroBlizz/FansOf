@@ -7,11 +7,11 @@ function chooseLane(team) {
   if (!t[0].alive && t[1].alive) return 0; if (!t[1].alive && t[0].alive) return 1;
   const a = t[0].alive ? t[0].hp / t[0].maxHp : 0, b = t[1].alive ? t[1].hp / t[1].maxHp : 0;
   if (Math.abs(a - b) > 0.15) return a < b ? 0 : 1;
-  return Math.random() < 0.5 ? 0 : 1;
+  return srnd() < 0.5 ? 0 : 1;
 }
 function aiUpdate(team, dt) {
   const A = AI[team]; A.think -= dt; if (A.think > 0) return;
-  const D = G.diffCfg; A.think = team === 'e' ? rand(D.think[0], D.think[1]) : rand(0.6, 1.2);
+  const D = G.diffCfg; A.think = team === 'e' ? srand(D.think[0], D.think[1]) : srand(0.6, 1.2);
   const me = S[team], foe = other(team); const cards = team === 'e' ? CFG.enemyCards : CFG.cards; const zone = ZONE[team];
   if (aiSpell(team, me.deck.filter(isSpell).map(k => ({ k, slot: -2 })), (c, x, y) => doDeploy(team, c.k, x, y))) return;   // v0.9.15
   const can = k => me.deck.includes(k) && me.chaos >= cards[k].cost && canDeploy(team, k);
@@ -24,14 +24,14 @@ function aiUpdate(team, dt) {
     if (mine < threats.length + 1) {
       const pref = team === 'e' ? (t.hp > 300 ? ['starbot', 'becario'] : ['becario', 'starbot']) : ['squirrel', 'fox', 'bunny'];
       const k = pref.find(can);
-      if (k) { const x = clamp(t.x + rand(-20, 20), 34, W - 34), y = clamp(t.y + (team === 'e' ? -70 : 70), zone.y0 + 8, zone.y1 - 8); doDeploy(team, k, x, y); }
+      if (k) { const x = clamp(t.x + srand(-20, 20), 34, W - 34), y = clamp(t.y + (team === 'e' ? -70 : 70), zone.y0 + 8, zone.y1 - 8); doDeploy(team, k, x, y); }
       return;
     }
   }
   if (!A.plan) {
     const plans = team === 'e' ? [['fallen', 'starbot'], ['becario', 'starbot'], ['fallen', 'becario'], ['starbot', 'becario', 'becario']] : [['bunny', 'squirrel'], ['fox', 'squirrel'], ['squirrel', 'fox', 'squirrel']];
     const ok = plans.map(pl => pl.filter(k => me.deck.includes(k))).filter(pl => pl.length);
-    A.plan = { seq: (ok.length ? pick(ok) : [me.deck[0]]).slice(), lane: chooseLane(team), wait: rand(6, 9.5), started: false };
+    A.plan = { seq: (ok.length ? spick(ok) : [me.deck[0]]).slice(), lane: chooseLane(team), wait: srand(6, 9.5), started: false };
   }
   const P = A.plan; const k = P.seq[0];
   if (!canDeploy(team, k)) { P.seq.shift(); if (!P.seq.length) A.plan = null; return; }
@@ -40,16 +40,16 @@ function aiUpdate(team, dt) {
   if (P.started || me.chaos >= Math.min(P.wait, total) || me.chaos >= CFG.chaosMax - 0.3) {
     const bx = laneBridge(P.lane); const tank = k === 'fallen' || k === 'bunny';
     const front = team === 'e' ? 330 : 495, back = team === 'e' ? 296 : 530;
-    doDeploy(team, k, clamp(bx + rand(-16, 16), 34, W - 34), P.started && !tank ? back : front);
+    doDeploy(team, k, clamp(bx + srand(-16, 16), 34, W - 34), P.started && !tank ? back : front);
     P.started = true; P.seq.shift(); if (!P.seq.length) A.plan = null;
   }
 }
 // IA por papeles (tanque, enjambre, distancia...): juega cualquier mazo. La usan los rivales de facción y el modo automático de pruebas
 function aiGeneric(team, dt) {
   const A = AI[team]; A.think -= dt; if (A.think > 0) return;
-  const D = G.diffCfg; A.think = team === 'e' ? rand(D.think[0], D.think[1]) : rand(0.6, 1.2);
+  const D = G.diffCfg; A.think = team === 'e' ? srand(D.think[0], D.think[1]) : srand(0.6, 1.2);
   const me = S[team], foe = other(team), F = FACTIONS[facOf(team)], zone = ZONE[team], dir = team === 'p' ? 1 : -1;
-  const avail = team === 'p' ? me.hand.map((k, i) => ({ k, slot: i })) : shuffle(me.deck.filter(k => !isLeader(k)).map(k => ({ k, slot: -2 })));
+  const avail = team === 'p' ? me.hand.map((k, i) => ({ k, slot: i })) : sshuffle(me.deck.filter(k => !isLeader(k)).map(k => ({ k, slot: -2 })));
   if (F.leader && canDeploy(team, F.leader)) avail.push({ k: F.leader, slot: -1 });
   const find = roles => { for (const role of roles) { const c = avail.find(a => ROLES[a.k] === role && me.chaos >= cardDef(a.k).cost); if (c) return c; } return null; };
   const go = (c, x, y) => (team === 'p' ? playerPlay(c.slot, c.k, x, y) : doDeploy(team, c.k, x, y));
@@ -64,14 +64,14 @@ function aiGeneric(team, dt) {
     const foeHp = threats.filter(o => dist(o, t) < 120).reduce((a, o) => a + o.hp, 0);
     const myHp = units.filter(u => u.alive && u.team === team && !u.d.buildings && !u.d.healer && dist(u, t) < 140).reduce((a, u) => a + u.hp, 0);
     const close = structs.some(s => s.alive && s.team === team && dist(s, t) < 170);
-    if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) { const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']); if (c) go(c, clamp(t.x + rand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); return; }
+    if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) { const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']); if (c) go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); return; }
   }
   if (!A.plan) A.plan = { lane: chooseLane(team), n: 0 };
   const P = A.plan; if (P.n === 0 && me.chaos < (hard ? 6.5 : 8)) return;
   const c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find(['support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
   if (!c) { if (P.n > 0 && me.chaos >= 9) A.plan = null; return; }
   const front = team === 'p' ? 495 : 330, back = team === 'p' ? 530 : 296;
-  go(c, clamp(laneBridge(P.lane) + rand(-16, 16), 34, W - 34), P.n === 0 ? front : back);
+  go(c, clamp(laneBridge(P.lane) + srand(-16, 16), 34, W - 34), P.n === 0 ? front : back);
   P.n++; if (P.n >= (myth ? 4 : 3)) A.plan = null;
 }
 /* ---------- match flow ---------- */

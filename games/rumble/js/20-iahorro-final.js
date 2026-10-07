@@ -59,7 +59,7 @@ function iaUpdate(dt) {
       S.e.copyT = PS.every;
       const mine = units.filter(u => u.team === 'p' && !u.summon && !u.isClone && !u.sequel && !isLeader(u.type) && CFG.cards[u.type]).sort((a, b) => b.id - a.id)[0];
       if (mine) {
-        const k = mine.type, x = clamp(270 + rand(-90, 90), 40, W - 40), y = rand(300, 360);
+        const k = mine.type, x = clamp(270 + srand(-90, 90), 40, W - 40), y = srand(300, 360);
         const n = Math.min(3, CFG.cards[k].count || 1);
         for (let i = 0; i < n; i++) {
           const v = spawnUnit('e', k, clamp(x + (i - (n - 1) / 2) * 22, 30, W - 30), y);

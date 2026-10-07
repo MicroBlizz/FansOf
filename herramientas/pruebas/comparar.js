@@ -107,6 +107,17 @@ if (AUTO.get('auto') && AUTO.get('lang')) (async () => {
   try { localStorage.removeItem('fansof-dev'); } catch (e) { /* sin guardar */ }
   await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
 })();
+// ?auto=rumble&det=1: la prueba de determinismo (herramientas/pruebas/determinismo.js): juega dos veces la misma partida y compara huellas
+else if (AUTO.get('auto') && AUTO.get('det')) (async () => {
+  const sal = [];
+  try {
+    try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ }
+    const [guion, dentro, det] = await Promise.all([texto('rumble.js'), texto('dentro.js'), texto('determinismo.js')]);
+    const R = await pasada('', 'rumble', guion + '\n' + det, dentro, TAMS[AUTO.get('tam') || 'normal']);
+    sal.push({ juego: 'rumble', det: R.pasos, errores: R.errores });
+  } catch (e) { sal.push({ juego: 'rumble', fallo: String(e && e.stack || e) }); }
+  await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
+})();
 else if (AUTO.get('auto')) (async () => {
   const sal = [];
   for (const j of AUTO.get('auto').split(',')) {

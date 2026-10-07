@@ -17,17 +17,17 @@ function fpsCount(now) {
 function frame(now) {
   if (SAVE.ahorro && now - last < 28) { requestAnimationFrame(frame); return; }   // v0.9.39: modo ahorro = máximo 30 imágenes por segundo
   const real = Math.min(0.05, (now - last) / 1000); last = now;
-  const steps = G.state === 'play' || G.state === 'ending' ? Math.max(1, Math.round(G.timeScale)) : 1;   // v0.9.11: el x2 solo acelera la partida
-  for (let i = 0; i < steps; i++) {
-    let stop = 1; if (G.hitstop > 0) { G.hitstop -= real / steps; stop = 0.07; }   // v0.9.24: parón del golpe
-    const dt = real * G.slowmo * stop;
-    if (G.state !== 'title') G.t += dt;   // v0.9.9: en los menús el fondo no se mueve
-    if (G.shake > 0) G.shake = Math.max(0, G.shake - dt * 32);
-    if (G.state === 'play' || G.state === 'ending') updateGame(dt);
-    if (G.state === 'play') tutBattle(dt);
-    updateParts(dt);
-    if (G.state === 'ending') { G.endT -= real; if (G.endT <= 0) { G.state = 'end'; G.slowmo = 1; showEnd(); } }
-  }
+  if (G.state === 'play' || G.state === 'ending') {   // la partida va a pasos fijos (simStep); el x2, el parón del golpe y la cámara lenta solo cambian cuántos pasos caben en cada fotograma
+    const steps = Math.max(1, Math.round(G.timeScale));   // v0.9.11: el x2 solo acelera la partida
+    let stop = 1; if (G.hitstop > 0) { G.hitstop -= real; stop = 0.07; }   // v0.9.24: parón del golpe
+    SIM.acc += real * steps * G.slowmo * stop;
+    for (let n = 0; SIM.acc >= SIM_DT; n++) {
+      if (n >= SIM_MAX) { SIM.acc = 0; break; }
+      SIM.acc -= SIM_DT; simStep(SIM_DT);
+      if (G.state !== 'play' && G.state !== 'ending') break;
+    }
+    if (G.state === 'ending') { G.endT -= real * steps; if (G.endT <= 0) { G.state = 'end'; G.slowmo = 1; showEnd(); } }
+  } else { SIM.acc = 0; simStep(real); }   // menús y cuenta atrás: un solo paso con el tiempo real
   if (G.state === 'play' || G.state === 'ending' || G.state === 'countdown') hud.update();
   musicUpdate();
   render(); fpsCount(now);

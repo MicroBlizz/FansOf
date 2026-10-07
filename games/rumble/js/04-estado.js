@@ -27,13 +27,13 @@ function makeStruct(team, role, x, y, lane = -1) {
   return { kind: 'struct', id: ++uid, skin, team, role, lane, x, y, r: d.r, hp: d.hp, maxHp: d.hp, dmg: d.dmg, cd: d.cd, range: d.range, atkT: 1, alive: true, hitT: 0, recoil: 0, castT: 0, smokeT: 0, hackedT: 0, cur: null, muzzleX: muzzle[0], muzzleZ: muzzle[1], corrupt: team === 'e' && !isCorp(G.efac) };
 }
 function resetMatch() {
-  units = []; projs = []; parts = []; nums = []; revives = []; spells = []; if (typeof bannerClear === 'function' && READY) bannerClear(); hideCardTip();
+  uid = 0; units = []; projs = []; parts = []; nums = []; revives = []; spells = []; if (typeof bannerClear === 'function' && READY) bannerClear(); hideCardTip();
   S = {
     p: { chaos: CFG.chaosStart, crowns: 0, leaderCd: 0, spent: 0, deployed: 0, kills: 0, hype: 0, hypeLvl: 0, xp: 0, xpLvl: 0, plays: {}, bossDmg: 0 },
     e: { chaos: CFG.chaosStart, crowns: 0, leaderCd: 0, spent: 0, deployed: 0, kills: 0, hype: 0, hypeLvl: 0, xp: 0, xpLvl: 0, bossT: G.diffCfg.bossCd * 0.8, phase2: false, nextDespido: true },
   };
   const EF = FACTIONS[G.efac]; S.e.deck = (G.edeck ? G.edeck.slice() : EF.units.slice()).concat(G.eextra || []); if (EF.leader) S.e.deck.push(EF.leader);
-  const deck = shuffle(deckOf(G.faction)); S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
+  const deck = (SIM.nueva ? sshuffle : shuffle)(deckOf(G.faction)); SIM.nueva = false; /* la mano de verdad sale del azar con semilla; la de los menús, del normal */ S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
   towers.p = [makeStruct('p', 'tower', 110, 575, 0), makeStruct('p', 'tower', 430, 575, 1)];
   towers.e = [makeStruct('e', 'tower', 110, 270, 0), makeStruct('e', 'tower', 430, 270, 1)];
   bases.p = makeStruct('p', 'base', 270, 700);

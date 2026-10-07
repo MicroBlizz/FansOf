@@ -53,7 +53,7 @@ function attack(u, t) {
   const surpriseM = u.stealthT > 0 ? u.d.surprise || u.abSurprise || 0 : 0, surprise = surpriseM > 0;
   u.stealthT = 0;
   let mult = dmgMult(u); const st = u.rage > 0 ? 'rage' : 'hit';
-  const critHit = !!u.abCrit && Math.random() < u.abCrit; if (critHit) { mult *= 3; addNum(t.x, t.y, topOf(t) + 30, '¡CRÍTICO!', '#ffd23f', 14); }
+  const critHit = !!u.abCrit && srnd() < u.abCrit; if (critHit) { mult *= 3; addNum(t.x, t.y, topOf(t) + 30, '¡CRÍTICO!', '#ffd23f', 14); }
   const tf = u.tfBoost; if (tf) { mult *= 1.5; u.tfBoost = false; }
   if (u.d.leap && t.kind === 'unit' && (t.d.healer || t.d.ranged || ROLES[t.type] === 'support')) mult *= u.d.leap.mult;   // v0.9.15: mata-sanadores
   if (surprise && u.d.ranged) { mult *= surpriseM; addNum(t.x, t.y, topOf(t) + 22, '¡SORPRESA!', '#e6a8ff', 15); if (u.team === 'p') chatEv('stealth', null, null, 0.5, 12); }   // v0.9.13: GhostAgent

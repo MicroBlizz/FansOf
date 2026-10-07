@@ -43,7 +43,7 @@ function applySpell(sp) {
     case 'dmg': {
       let hits = 0;
       for (const o of foes) {
-        let d = D.amt * P * (o.d.healer ? HEALER_SPELL : 1); if (D.crit && Math.random() < D.crit) { d *= 2; addNum(o.x, o.y, topOf(o) + 28, '¡UNO GORDO!', '#ffb04f', 13); }
+        let d = D.amt * P * (o.d.healer ? HEALER_SPELL : 1); if (D.crit && srnd() < D.crit) { d *= 2; addNum(o.x, o.y, topOf(o) + 28, '¡UNO GORDO!', '#ffb04f', 13); }
         hurt(o, d, null, 'aoe'); hits++;
         if (D.stun && o.alive && !o.immuneCC) { o.stunT = Math.max(o.stunT, D.stun); o.stunKind = 'daze'; }
       }
@@ -71,7 +71,7 @@ function applySpell(sp) {
     case 'stun': for (const o of cc) { o.stunT = Math.max(o.stunT, D.t); o.stunKind = D.sk || 'daze'; } play(D.sk === 'stone' ? 'womp' : 'blip'); break;
     case 'shrink': for (const o of cc) { o.shrinkT = D.t; o.shrinkF = D.f; } play('womp'); break;
     case 'confuse': for (const o of cc) { o.confT = D.t; o.target = null; o.retarget = 0; } play('laugh'); break;
-    case 'knock': for (const o of cc) { const dir = o.team === 'e' ? -1 : 1; o.y = clamp(o.y + dir * D.d, BOUNDS.y0, BOUNDS.y1); o.x = clamp(o.x + rand(-14, 14), BOUNDS.x0, BOUNDS.x1); o.stunT = Math.max(o.stunT, D.t); o.stunKind = 'lag'; o.target = null; puff(o.x, o.y, 6, '#ff9aa6', 40, 5, true); } play('blink'); break;
+    case 'knock': for (const o of cc) { const dir = o.team === 'e' ? -1 : 1; o.y = clamp(o.y + dir * D.d, BOUNDS.y0, BOUNDS.y1); o.x = clamp(o.x + srand(-14, 14), BOUNDS.x0, BOUNDS.x1); o.stunT = Math.max(o.stunT, D.t); o.stunKind = 'lag'; o.target = null; puff(o.x, o.y, 6, '#ff9aa6', 40, 5, true); } play('blink'); break;
     case 'ban': for (const o of cc) { o.banT = D.t; o.target = null; } play('slam'); break;
     case 'crunch': for (const o of allies) { o.crunchT = D.t; o.crunchDrain = D.drain; } play('go'); break;   // v0.9.20
     case 'review': {   // v0.9.20: las torres y la sede del rival en la zona reciben más daño un rato

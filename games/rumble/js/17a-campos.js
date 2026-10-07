@@ -119,7 +119,7 @@ function terrainFor(mode, lvl) {
 function terrainPlace(defs) {
   const out = [];
   for (const d of defs) for (const half of ['e', 'p']) for (let i = 0; i < d.n; i++) for (let tries = 0; tries < 60; tries++) {
-    const x = rand(64, W - 64), y = half === 'e' ? rand(292, 380) : rand(462, 556);
+    const x = srand(64, W - 64), y = half === 'e' ? srand(292, 380) : srand(462, 556);
     if (out.some(z => Math.hypot((z.x - x) / 1.4, z.y - y) < 46)) continue;
     if (structs.some(s => Math.hypot(s.x - x, (s.y - y) * 1.3) < s.r + (d.rx || 30) + 6)) continue;
     out.push(Object.assign({}, d, { x, y, rx: d.rx || 30, ry: d.ry || 16, id: out.length + 1, seed: Math.random() * 1000, life: Infinity })); break;
@@ -146,10 +146,10 @@ function terrainUpdate(dt) {
   if (T.fall) {
     const F = T.fall;
     if ((TR.fallT -= dt) <= 0) {
-      TR.fallT = F.every * rand(0.8, 1.2);
-      let x = rand(60, W - 60), y = rand(250, 610);
+      TR.fallT = F.every * srand(0.8, 1.2);
+      let x = srand(60, W - 60), y = srand(250, 610);
       const crowd = units.filter(u => u.alive && u.deployT <= 0);   // a veces apunta donde hay jaleo
-      if (crowd.length && Math.random() < 0.55) { const u = pick(crowd); x = clamp(u.x + rand(-40, 40), 40, W - 40); y = clamp(u.y + rand(-30, 30), 230, 640); }
+      if (crowd.length && srnd() < 0.55) { const u = spick(crowd); x = clamp(u.x + srand(-40, 40), 40, W - 40); y = clamp(u.y + srand(-30, 30), 230, 640); }
       TR.falls.push({ x, y, t: F.warn, max: F.warn, done: false }); play('deny');
     }
     for (const f of TR.falls) {
@@ -161,7 +161,7 @@ function terrainUpdate(dt) {
         if (F.stun && u.alive && !u.immuneCC) { u.stunT = Math.max(u.stunT || 0, F.stun); u.stunKind = 'daze'; }
         if (F.say && u.alive) tSay(u, F.say, '#ffffff');
       }
-      if (F.leave) TR.zones.push(Object.assign({}, F.leave, { x: f.x, y: f.y, id: 1000 + Math.floor(Math.random() * 1e6), seed: Math.random() * 1000, life: F.leave.life, max: F.leave.life }));
+      if (F.leave) TR.zones.push(Object.assign({}, F.leave, { x: f.x, y: f.y, id: 1000 + Math.floor(srnd() * 1e6), seed: Math.random() * 1000, life: F.leave.life, max: F.leave.life }));
     }
     TR.falls = TR.falls.filter(f => !f.done || (f.boom -= dt) > 0);
   }

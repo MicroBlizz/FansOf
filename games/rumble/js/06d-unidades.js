@@ -89,7 +89,7 @@ function viralTick(u, dt) {
   if (!foes.length && !fs) { u.viralT = 0.5; return; }
   const hurtAllies = units.some(a => a.alive && a.team === u.team && a.deployT <= 0 && a.hp < a.maxHp * 0.7 && dist(a, u) < 130);
   let opts = foes.length ? ['stun', 'fire', 'dogs'] : ['fire', 'dogs']; if (hurtAllies) opts.push('heal', 'heal');
-  const k = pick(opts);
+  const k = spick(opts);
   parts.push({ type: 'card', x: u.x, y: u.y, z: topOf(u) + 30, k, life: 1.1, max: 1.1 });
   if (k === 'heal') {
     for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && dist(a, u) < 130) { const amt = Math.min(60, a.maxHp - a.hp); a.hp += amt; if (amt >= 4) addNum(a.x + rand(-5, 5), a.y, topOf(a) * 0.75 + 4, '+' + Math.round(amt), '#8cf05a', 13); }
@@ -297,7 +297,7 @@ function updateBoss(dt) {
     else banner(G.efac === 'microblizz' ? '¡JUEGO CERRADO!' : 'ORDEN DE MICROBLIZZ', `${nm} ha congelado a tus unidades de su lado`, 'enemy');
     play('womp');
   } else {
-    for (const u of all) parts.push({ type: 'env', k: ph ? 'lic' : 'env', tgt: u, x: u.x, y: u.y, z: 170, t: rand(-0.25, 0), dur: 0.6, dmg: D.despido, life: 2, max: 2, rot: rand(-0.4, 0.4) });
+    for (const u of all) parts.push({ type: 'env', k: ph ? 'lic' : 'env', tgt: u, x: u.x, y: u.y, z: 170, t: srand(-0.25, 0), dur: 0.6, dmg: D.despido, life: 2, max: 2, rot: rand(-0.4, 0.4) });
     if (ia) banner('SUSTITUIDOS POR IA', G.efac === 'iahorro' ? 'IAhorro quiere cambiar a todas tus unidades por bots' : 'IAhorro le obliga a sustituir a todas tus unidades', 'enemy');
     else if (ph) banner('LICENCIAS REVOCADAS', G.efac === 'phony' ? 'Phony borra la licencia de todas tus unidades' : 'Phony le obliga a revocar la licencia de todas tus unidades', 'enemy');
     else banner('DESPIDOS MASIVOS', G.efac === 'microblizz' ? 'Carta de despido para todas tus unidades' : `${own} le obliga a despedir a todas tus unidades`, 'enemy');
@@ -315,7 +315,7 @@ function separate() {
       let dx = b.x - a.x, dy = b.y - a.y; const min = (a.r + b.r) * 0.9;
       if (dx > min || dx < -min || dy > min || dy < -min) continue;
       let d = Math.hypot(dx, dy); if (d >= min) continue;
-      if (d < 0.01) { dx = Math.random() - 0.5; dy = Math.random() - 0.5; d = Math.hypot(dx, dy); }
+      if (d < 0.01) { dx = srnd() - 0.5; dy = srnd() - 0.5; d = Math.hypot(dx, dy); }
       const push = (min - d) * 0.5; const ma = a.r * a.r, mb = b.r * b.r; const wa = mb / (ma + mb), wb = ma / (ma + mb);
       a.x -= (dx / d) * push * wa; a.y -= (dy / d) * push * wa; b.x += (dx / d) * push * wb; b.y += (dy / d) * push * wb;
     }

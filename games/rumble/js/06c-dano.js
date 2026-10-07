@@ -9,7 +9,7 @@ function hurt(t, amount, src, style = 'hit') {
   if (t.kind === 'unit') {
     if (t.jump) return;
     if (t.invulnT > 0) { if (Math.random() < 0.25) addNum(t.x, t.y, topOf(t) + 12, 'PAUSA', '#7df3ff', 12); return; }
-    if (t.abDodge && src && Math.random() < t.abDodge) { addNum(t.x + rand(-6, 6), t.y, topOf(t) + 12, '¡ESQUIVA!', '#7df3ff', 13); return; }
+    if (t.abDodge && src && srnd() < t.abDodge) { addNum(t.x + rand(-6, 6), t.y, topOf(t) + 12, '¡ESQUIVA!', '#7df3ff', 13); return; }
     if (t.markT > 0) amount *= 1 + (t.markF || 0);   // marcado por el Detective
     if (t.d.armor) amount *= 1 - t.d.armor;
     if (t.abArmor) amount *= 1 - t.abArmor;
@@ -64,7 +64,7 @@ function kill(t, src) {
       else parts.push({ type: 'grave', x: t.x, y: t.y, z: 0, life: CFG.passives.nomuertos.delay + 0.3, max: CFG.passives.nomuertos.delay + 0.3 });
     }
     // v0.9.13: Secuela (Cultura Pop): 3 de cada 10 vuelven en versión «2»
-    const PP = CFG.passives.pop, seq = !willRevive && facOf(t.team) === 'pop' && !t.sequel && !t.summon && !t.isClone && live && Math.random() < PP.chance;
+    const PP = CFG.passives.pop, seq = !willRevive && facOf(t.team) === 'pop' && !t.sequel && !t.summon && !t.isClone && live && srnd() < PP.chance;
     if (seq) {
       revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, t: 0.9, frac: 1, seq: true, txt: '¡SECUELA!', col: '#ff9ab8', rgb: '255,154,184' });
       parts.push({ type: 'clapper', x: t.x, y: t.y, z: topOf(t) * 0.6 + 14, life: 1.1, max: 1.1 });

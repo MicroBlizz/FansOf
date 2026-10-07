@@ -11,6 +11,7 @@ import functools, http.server, json, os, shutil, subprocess, sys, tempfile, thre
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JUEGOS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['rumble', 'td']
+SEG = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--seg=')), '90')
 TAM = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--tam=')), 'normal')
 NAVEGADORES = [
     r'C:\Program Files\Google\Chrome\Application\chrome.exe', r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe',
@@ -55,17 +56,17 @@ def fallo(msg):
     sys.exit(1)
 
 
-if not os.path.isfile(os.path.join(RAIZ, '_base', 'COMMIT.txt')):
+if '--determinismo' not in sys.argv and not os.path.isfile(os.path.join(RAIZ, '_base', 'COMMIT.txt')):
     fallo('no hay _base/. Ejecuta primero: python herramientas/base.py')
 exe = navegador()
 if not exe:
     fallo('no encuentro Chrome ni Edge')
 
-def pasada(juegos):
+def pasada(juegos, extra=''):
     LISTO.clear()
     servidor = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Peticion, directory=RAIZ))
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
-    url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(juegos)}&tam={TAM}'
+    url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(juegos)}&tam={TAM}{extra}'
     perfil = tempfile.mkdtemp(prefix='comprobar-')
     proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}',
                                '--autoplay-policy=no-user-gesture-required', url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -105,6 +106,31 @@ def archivos_grandes(limite=30 * 1024):   # el plan de refactor quiere ninguno p
             dirs[:] = [d for d in dirs if d not in ('_base', '.git', 'node_modules', 'herramientas')]
             out += [(os.path.getsize(os.path.join(dir, f)), os.path.relpath(os.path.join(dir, f), RAIZ).replace(os.sep, '/')) for f in files if f.endswith('.' + ext)]
     return sorted((t, r) for t, r in out if t > limite)[::-1]
+
+
+if '--determinismo' in sys.argv:   # no compara con _base/: juega dos veces la misma partida de Rumble y mira que el estado sea idéntico
+    LISTO.clear()
+    servidor = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Peticion, directory=RAIZ))
+    threading.Thread(target=servidor.serve_forever, daemon=True).start()
+    perfil = tempfile.mkdtemp(prefix='comprobar-')
+    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}', '--autoplay-policy=no-user-gesture-required',
+                                f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&det=1&tam={TAM}&seg={SEG}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        terminado = LISTO.wait(600)
+    finally:
+        proceso.kill(); servidor.shutdown(); shutil.rmtree(perfil, ignore_errors=True)
+    if not terminado:
+        fallo('la prueba de determinismo no terminó en 10 minutos')
+    R = json.loads(RESULTADO['json'])[0]
+    if 'fallo' in R:
+        fallo(R['fallo'])
+    for nombre, valor in R['det']:
+        print(f'  {nombre}: {valor[:150]}')
+    for e in R['errores'][:5]:
+        print('  error:', e[:300])
+    ok = not R['errores'] and any(n.endswith('resultado') and v == 'DETERMINISTA' for n, v in R['det'])
+    print('DETERMINISTA' if ok else 'FALLO')
+    sys.exit(0 if ok else 1)
 
 
 print('Antes (_base/):', open(os.path.join(RAIZ, '_base', 'COMMIT.txt'), encoding='utf-8').read().strip())

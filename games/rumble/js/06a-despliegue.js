@@ -57,7 +57,7 @@ function applySpawnMods(u) {
   u.lvl = unitLevel(team, u.type); u.mLvl = 1 + (u.lvl - 1) * ECON.lvlStep;
   u.corrupt = team === 'e' && !isCorp(G.efac);
   if (f === 'olvidados') u.olvT = P.olvidados.t;   // v0.9.13: Nostalgia
-  if (f === 'memes') { const m = pick(P.memes.muts); u.mut = m.id; u.mHp = m.hp; u.mDmg = m.dmg; u.mSpeed = m.speed; u.mCd = m.cd; u.mScale = m.scale; u.r = u.d.r * m.scale; u.mutTxt = m.txt; u.mutCol = m.color; }
+  if (f === 'memes') { const m = spick(P.memes.muts); u.mut = m.id; u.mHp = m.hp; u.mDmg = m.dmg; u.mSpeed = m.speed; u.mCd = m.cd; u.mScale = m.scale; u.r = u.d.r * m.scale; u.mutTxt = m.txt; u.mutCol = m.color; }
   if (team === 'p') { applyAbility(u); if (isLeader(u.type)) applyEquip(u); const st = cardStars(u.type); if (st) { u.mHp *= 1 + st * ECON.starStep; u.mDmg *= 1 + st * ECON.starStep; } }
   else if (G.egear && (isLeader(u.type) || G.egearOn.includes(u.type))) applyEnemyGear(u);
   const M = G.mod;   // v0.9.12: ruleta de la Mítica
@@ -120,7 +120,7 @@ function applyItem(u, it) {
       case 'pase_caducado': u.mHp *= pc(0); u.mDmg *= pc(0); u.mSpeed *= pc(0); break;
       case 'almohada': u.respawnM = 1 - v[0] / 100; break;
       case 'silla_gamer': u.abArmor = v[0] / 100; break;
-      case 'cofre': { const c = pick(COFRE), pw = v[0] / 100; c[1](u, pw); u.cofreTxt = c[0](pw); break; }
+      case 'cofre': { const c = spick(COFRE), pw = v[0] / 100; c[1](u, pw); u.cofreTxt = c[0](pw); break; }
       case 'diploma': u.mHp *= pc(0); u.mDmg *= pc(1); break;
       case 'corbata_ceo': u.mHp *= pc(0); u.mDmg *= pc(1); u.mSpeed *= pc(2); break;
       case 'mando_cable': u.mRange = (u.mRange || 1) * pc(0); break;

@@ -85,8 +85,12 @@ def desplegar():
         sys.exit('FALLO: no encuentro el ?v= de nucleo.js en algún index.html.')
     cabeza = git('rev-parse', 'HEAD')
     if git('rev-parse', 'origin/gh-pages', ok=True) == cabeza:
-        print(f'Nada que desplegar: la web ya apunta a main ({texto(versiones_web())}).')
-        return
+        web = versiones_web()
+        if all(web[j] == v[j] for j in JUEGOS):
+            print(f'Nada que desplegar: la web ya sirve main ({texto(web)}).')
+            return
+        print(f'gh-pages ya está al día pero la web sirve {texto(web)}: espero a que GitHub Pages la actualice.')
+        sys.exit(0 if esperar_web(v) else 1)
     print(f'Desplegando {git("rev-parse", "--short", "HEAD")}: {texto(v)}')
     print('  ' + (git('log', '--oneline', 'origin/gh-pages..HEAD', ok=True).replace('\n', '\n  ') or '(sin commits nuevos)'))
     git('push', 'origin', 'main')

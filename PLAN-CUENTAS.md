@@ -325,3 +325,11 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 5. Cambio del cliente a leer de `estado` y quitar los cálculos locales; entrada en novedades solo cuando el jugador lo note (por ejemplo, «necesita conexión»).
 
 **Decisión pendiente antes de empezar**: ¿el servidor guarda también cada calidad de copia con sus decimales tal como hoy (`q` como lista de números del 0 al 1)? Recomendado sí, así el cliente no cambia sus cálculos de `valsOf`.
+
+### 15.12 La puerta de las partidas locales se cierra (7-10-2026)
+`migrar` y `conciliar` aceptan lo que diga el cliente (oro, gemas, copias, niveles), con topes. Es la única puerta por la que se puede meter algo inventado, y solo hace falta para los jugadores que ya tenían partida. Por eso se cierra sola el **21-10-2026 a las 00:00 UTC** (`servidor/08-cerrar-puerta.sql`, tabla `ajustes_servidor`):
+- Antes de esa fecha, todo igual.
+- Después, `migrar` crea una cuenta nueva con lo de `econ.start` (150 de oro y 100 gemas en Rumble) y sin copias ni niveles; `conciliar` solo marca la cuenta como al día, sin añadir nada.
+- Para moverla: `update public.ajustes_servidor set valor = timestamptz '…' where clave = 'puerta_migracion';`.
+- Quien no abra el juego con cuenta antes de la fecha pierde la subida de su partida antigua: conviene una nota en novedades unos días antes. Su partida local sigue en su aparato.
+- Antes de abrir la tienda, la puerta tiene que estar cerrada y las funciones `migrar_abierta` y `conciliar_abierta` borradas.

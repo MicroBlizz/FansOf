@@ -374,3 +374,11 @@ Siguiendo la idea del usuario (eventos de un solo cobro validados con lo que el 
 - **Logros** `{tipo:'logros', claves:['familia:nivel',…]}`: cada logro se cobra una vez (`reclamos`) con las gemas de la tabla. El servidor no puede ver si se ha cumplido; el total de gemas que se puede sacar así es finito (unas 29.800 en Rumble).
 - **Progreso que ya existía**: `conciliar_progreso2` sube una vez, hasta el 21-10-2026, la xp del pase y sus niveles cobrados, el pase Ejecutivo, la racha, los logros ya cobrados y las misiones cobradas hoy. Después de esa fecha solo marca la cuenta (empieza vacía).
 - **Pendiente**: los objetos del pase (Diploma, Corbata del CEO) y los regalos de objetos se siguen creando en local; hay que crearlos en el servidor (paso siguiente).
+
+### 15.17 Fans of TD con todo lo del servidor (7-10-2026)
+TD usa ya lo mismo que Rumble (`AJUSTES.servidor = { gachapon, economia }` en `games/td/js/ajustes.js`):
+- Gashapón de habilidades y equipo, despedir, volver a tirar los números y subir de nivel las cartas en el servidor (con conexión).
+- Premios de campaña calculados por el servidor (`campReward` manda el evento `camp`; en VS, el evento `otro` para la xp del pase). TD solo tiene dificultad Normal. Su regla de apertura es `campRegla: 'todos'`: un mundo se abre al pasar todos los niveles del anterior (en Rumble, el último). El progreso previo sale de `SAVE.stars`.
+- Misiones, racha de días, pase y logros: ya iban por core; ahora el servidor tiene también las tablas de TD (`servidor/datos/td.json`, subidas el 7-10-2026).
+- Cambios en el servidor: `_camp_abierto` entiende `campRegla` y `conciliar_progreso` importa también `stars`.
+- Pendiente igual que en Rumble: horas extra y anuncios con reloj del servidor, y los objetos regalados (pase, tutorial) creados en el servidor.

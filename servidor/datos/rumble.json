@@ -918,6 +918,7 @@
     10
    ]
   },
+  "campRegla": "ultimo",
   "gift": {
    "gems": 5,
    "gold": 100
@@ -4417,5 +4418,5 @@
    }
   }
  },
- "version": 9
+ "version": 10
 }

@@ -4,6 +4,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.18', real: [
+      '<b>TU ECONOMÍA EN LA NUBE</b>: con tu cuenta, el gashapón, despedir copias, volver a tirar sus números y subir de nivel las cartas los hace nuestro servidor, y tu oro y tus gemas quedan guardados en ella. Para hacerlo hace falta conexión.'],
+    joke: ['El servidor de Microblizz ya cuenta tu oro. Dice que le sobra tiempo desde que dejó de contar el suyo.'] },
   { v: '0.13.12', real: [
       '<b>AVISO IMPORTANTE</b>: abre el juego con conexión antes del <b>21 de octubre</b> para subir tu progreso actual (oro, gemas, objetos y niveles) a tu cuenta. Pasada esa fecha, una partida antigua que no se haya subido ya no podrá subirse: seguirá en tu aparato, pero tu cuenta empezará desde cero.'],
     joke: ['Microblizz recuerda que las fechas límite son como sus promesas: se acercan solas.'] },

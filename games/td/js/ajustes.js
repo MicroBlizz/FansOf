@@ -13,7 +13,10 @@
 const AJUSTES = {
   id: 'td',
   nombre: 'Fans of TD',
-  topes: { recompensa: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 } } },   // lo máximo que el servidor deja ganar por partida (PLAN-CUENTAS.md, 15.13)
+  // lo máximo que el servidor deja ganar por motivo (suma a los de core/js/sistema/economia.js); ver PLAN-CUENTAS.md, 15.13
+  topes: { recompensa: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 }, calcula: ['camp', 'otro'] } },   // en campaña el servidor calcula el premio; en VS cuenta la xp del pase
+  servidor: { gachapon: true, economia: true },   // lo que ya hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel
+  campRegla: 'todos',   // un mundo se abre cuando se han pasado todos los niveles del anterior (en Rumble, el último)
   guardado: 'fortd-save',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // lo que cambia respecto a la economía común (core/js/meta.js: ECON). Lo que no salga aquí vale lo mismo que en el Rumble.
   econ: {

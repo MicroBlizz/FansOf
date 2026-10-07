@@ -27,13 +27,13 @@ const passiveText = fac => PASSIVES[fac].txt;
 /* ---------- experiencia y recompensas ---------- */
 // cada torre que pones y cada unidad que envías da experiencia a su carta; se cobra al acabar la partida
 function xpPlay(k) { if (G.vs && G.vsCur === 'ai') return; const X = G.xpPlay || (G.xpPlay = {}); X[k] = Math.min(ECON.xpCap, (X[k] || 0) + ECON.xpPerPlay); }
-function campReward(L, win, st, first, first3) {
+function campReward(L, win, st, first, first3) {   // el servidor vuelve a calcularlo con el evento (tipo 'camp')
   const C = ECON.camp; let gold = 0, gems = 0;
   if (!win) gold = C.lose; else if (first) { const r = L.boss ? C.boss : C.first; gold = r[0]; gems = r[1]; } else gold = C.replay;
   if (win && first3) { gold += C.stars3[0]; gems += C.stars3[1]; }
-  return give(gold, gems, xpGrant(win));
+  return give(gold, gems, xpGrant(win), { tipo: 'camp', nivel: L.id, dif: 'n', estrellas: st, victoria: win, jefe: !!L.boss });
 }
-const vsReward = (win, diff) => give(win ? ECON.vs[diff] : ECON.vs.lose, 0, xpGrant(win));
+const vsReward = (win, diff) => give(win ? ECON.vs[diff] : ECON.vs.lose, 0, xpGrant(win), { tipo: 'otro', victoria: win });
 
 /* ---------- horas extra ---------- */
 // poder del líder: 100 = nivel 1 sin nada. Sube con el nivel y con lo que lleve que le sirva como unidad (el daño cuenta).

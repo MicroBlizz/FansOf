@@ -824,6 +824,7 @@
     10
    ]
   },
+  "campRegla": "todos",
   "gift": {
    "gems": 5,
    "gold": 100
@@ -2726,7 +2727,68 @@
     "wflaw"
    ]
   },
-  "mundos": [],
+  "mundos": [
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   }
+  ],
   "pase": {
    "free": [
     {
@@ -3125,6 +3187,10 @@
    "vez": {}
   },
   "recompensa": {
+   "calcula": [
+    "camp",
+    "otro"
+   ],
    "dia": {
     "gems": 5000,
     "gold": 300000
@@ -3151,5 +3217,5 @@
    "vez": {}
   }
  },
- "version": 9
+ "version": 10
 }

@@ -32,7 +32,7 @@ function buyStarter() {
   if (SAVE.starter) return;
   const P = SHOP.starter, pool = Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass);
   SAVE.starter = true; ECO.ganar('bienvenida', P);
-  const it = newCopy('eq', pick(pool), 3);
+  const it = newCopy('eq', pick(pool), 3); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
   saveGame(); play('win'); updateWallets(); buildShop(); toast('¡Pack de bienvenida! Microblizz te da las gracias', true);
   setTimeout(() => openItem(it.u), 450);
 }
@@ -43,7 +43,7 @@ function tutStep(n) {
   const T = SAVE.tut; if (T.done || T.step >= n) return;
   T.step = n;
   if (n === 1) {
-    if (!SAVE.tutGift.cafe) { SAVE.tutGift.cafe = 1; T.cafeU = addCopy('ab', 'cafeina', [0.75]).u; G.tutJust = true; }
+    if (!SAVE.tutGift.cafe) { SAVE.tutGift.cafe = 1; { const c = addCopy('ab', 'cafeina', [0.75]), clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'cafe' }); if (clv) c.pend = clv; T.cafeU = c.u; } G.tutJust = true; }
     if (!SAVE.inv.some(x => x.k === 'ab')) { tutStep(2); return; }
   }
   if (n === 2 && !SAVE.tutGift.tix) { SAVE.tutGift.tix = 1; ECO.ganar('tutorial', { tickets: 3 }); G.tutJust2 = true; updateWallets(); }
@@ -135,3 +135,4 @@ hook('tienda', () => {
 }
 });
 hook('insignias', () => { if (!giftReady() && !SAVE.starter) $('#feat-shop').textContent = '¡Pack de bienvenida!'; });
+hook('copia.renombrada', (viejo, nuevo) => { if (SAVE.tut && SAVE.tut.cafeU === viejo) SAVE.tut.cafeU = nuevo; });   // la copia provisional pasa a ser la del servidor

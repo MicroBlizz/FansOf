@@ -26,15 +26,22 @@ const ECO_SOMBRA = (() => {
   // objetos que crea el servidor (premios del pase…): el aparato ya tenía una copia provisional marcada con la clave del movimiento; pasa a ser la del servidor
   function copiasDelServidor(lista) {
     if (!Array.isArray(lista) || !lista.length) return;
+    const hallados = [];   // los que llegan sin copia provisional (los encontrados en horas extra): hay que contárselo al jugador
     for (const n of lista) {
       const it = SAVE.inv.find(x => x.pend === n.clave);
       if (it) {
         const viejo = it.u; it.u = n.u; it.q = n.q; delete it.pend;
         for (const k in SAVE.abEquip) if (SAVE.abEquip[k] === viejo) SAVE.abEquip[k] = n.u;
         for (const f in SAVE.equip) for (const sl in SAVE.equip[f]) if (SAVE.equip[f][sl] === viejo) SAVE.equip[f][sl] = n.u;
-      } else if (!SAVE.inv.some(x => x.u === n.u)) SAVE.inv.push({ u: n.u, k: n.k, id: n.id, q: n.q });
+        if (typeof fire === 'function') fire('copia.renombrada', viejo, n.u);
+      } else if (!SAVE.inv.some(x => x.u === n.u)) { const c = { u: n.u, k: n.k, id: n.id, q: n.q }; SAVE.inv.push(c); hallados.push(c); }
     }
     saveGame();
+    if (hallados.length && typeof defOf === 'function' && typeof toast === 'function') {
+      const nom = c => { try { return defOf(c).name; } catch (e) { return c.id; } };
+      toast(hallados.length > 1 ? `Tu líder ha encontrado ${hallados.length} objetos: ${hallados.map(nom).join(', ')}` : `Tu líder ha encontrado: ${nom(hallados[0])}`, true);
+      if (typeof play === 'function') play('crown');
+    }
   }
   const apunta = r => { est.servidor = { oro: r.oro, gemas: r.gemas, entradas: r.entradas }; est.local = { oro: SAVE.gold, gemas: SAVE.gems, entradas: SAVE.tickets || 0 }; est.cuando = Date.now(); };
 

@@ -48,8 +48,8 @@ function idleItem() {   // un objeto o una habilidad al azar con las probabilida
 function idleCollect(x2) {   // v0.9.16: x2 = premio doble por anuncio
   const I = idleTick(), m = x2 ? 2 : 1, g = Math.floor(I.gold), gm = Math.floor(I.gems), ni = Math.floor(I.items), h = I.h, full = h >= IDLE.cap - 1e-6;
   if (g < 1 && gm < 1 && ni < 1) { play('deny'); toast('Todavía no hay nada. ¡Dale un rato a tu líder!'); return; }
-  I.gold -= g; I.gems -= gm; I.items -= ni; I.h = 0; ECO.ganar('horas-extra', { gold: g * m, gems: gm * m }, { tipo: 'horas', x2: !!x2 });
-  const got = []; for (let i = 0; i < ni * m; i++) got.push(idleItem());
+  I.gold -= g; I.gems -= gm; I.items -= ni; I.h = 0; ECO.ganar('horas-extra', { gold: g * m, gems: gm * m }, { tipo: 'horas', x2: !!x2, items: ECO.servidor('economia') ? ni * m : 0, facs: FACTION_ORDER.filter(isUnlocked) }); if (ni && ECO.servidor('economia')) ECO.ya();   // con servidor, los objetos los sortea él y llegan después
+  const got = []; if (!ECO.servidor('economia')) for (let i = 0; i < ni * m; i++) got.push(idleItem());
   stat('idle', 1, true); stat('idleh', h, true); stat('idleg', g, true); stat('idlem', gm, true); if (ni) stat('idlei', ni, true); if (full) stat('idlefull', 1, true);
   achScan(); saveGame(); updateWallets(); play('crown'); idleBurst(); idleUI(true);
   toast(`Horas extra${x2 ? ' x2' : ''}: +${fmt(g * m)} de oro${gm ? ` y +${fmt(gm * m)} ${gm * m > 1 ? 'gemas' : 'gema'}` : ''}`, true);

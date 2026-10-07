@@ -933,6 +933,18 @@
    ]
   },
   "campRegla": "ultimo",
+  "facItems": {
+   "animales": "zanahoria_oro",
+   "ciber": "nucleo_plasma",
+   "creadores": "taza_indie",
+   "gamer": "raton_campeon",
+   "heroes": "yelmo_olimpo",
+   "memes": "gafas_pixel",
+   "nomuertos": "corona_huesos",
+   "olvidados": "cartucho_dorado",
+   "pop": "claqueta_oro",
+   "streamers": "microfono_oro"
+  },
   "gift": {
    "gems": 5,
    "gold": 100
@@ -944,6 +956,8 @@
    "gemsK": 2.5,
    "gold": 60,
    "idleH": 4,
+   "item": 0.02,
+   "itemK": 0.05,
    "pwMax": 12,
    "turboH": 2
   },
@@ -4438,6 +4452,11 @@
     "gold": 2000
    }
   },
+  "objeto": {
+   "calcula": "objeto",
+   "dia": {},
+   "vez": {}
+  },
   "partida": {
    "calcula": [
     "camp",
@@ -4509,5 +4528,5 @@
    }
   }
  },
- "version": 12
+ "version": 13
 }

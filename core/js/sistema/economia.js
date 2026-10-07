@@ -11,7 +11,8 @@
 const TOPES_COMUNES = {
   mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 }, calcula: 'mision' },   // el servidor da lo de premios.mision, una vez por misión y periodo
   premio: { vez: { gold: 20000, gems: 30000, tickets: 30 }, dia: { gold: 100000, gems: 40000, tickets: 60 }, calcula: ['logros', 'login', 'pase'] },   // logros, racha de días y pase de batalla: el servidor pone la cantidad y comprueba que se pueda cobrar
-  'compra-pase': { vez: {}, dia: {}, calcula: 'pase-premium' },   // el pase Ejecutivo (compra de prueba)
+  'compra-pase': { vez: {}, dia: {}, calcula: 'pase-premium' },
+  objeto: { vez: {}, dia: {}, calcula: 'objeto' },   // regalos de un objeto (starter, mito, facitem, cafe): el servidor comprueba que sean posibles y los apunta una vez   // el pase Ejecutivo (compra de prueba)
   'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 }, calcula: 'horas' },   // el servidor limita lo cobrado al tiempo que ha pasado desde el cobro anterior
   'regalo-diario': { vez: { gold: 300, gems: 20 }, dia: { gold: 600, gems: 40 }, fijo: 'gift', diario: true },   // fijo: el servidor da SIEMPRE lo de premios.gift, una vez por día (hora de Madrid)
   compra: { vez: { gold: 100000, gems: 10000 }, dia: { gold: 1000000, gems: 100000 } },   // la tienda de prueba (no cobra); desaparece cuando haya pagos reales
@@ -28,6 +29,7 @@ const ECO = {
   gastar(motivo, v) { ECO.motor.mover(motivo, v, -1); },
   // ¿esta acción la hace el servidor? Solo si el juego lo pide (AJUSTES.servidor) y hay cuenta activa; si no, se calcula aquí como siempre
   servidor(accion) { return typeof CUENTA !== 'undefined' && CUENTA.activa && typeof ECO_SOMBRA !== 'undefined' && !!(AJUSTES.servidor && AJUSTES.servidor[accion]); },
+  ya() { if (typeof ECO_SOMBRA !== 'undefined') ECO_SOMBRA.enviar(); },   // mandar ahora lo pendiente (cuando se espera algo del servidor, como objetos)
   errorTexto(e) {
     const m = String((e && e.message) || e);
     return /faltan_gemas/.test(m) ? 'Te faltan gemas' : /falta_oro/.test(m) ? 'Te falta oro' : /falta_xp/.test(m) ? 'Todavía te falta experiencia'

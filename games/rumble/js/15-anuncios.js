@@ -92,7 +92,7 @@ function adIdleUI() {   // HORAS EXTRA: turbo y ganancias de 4 h al momento (v0.
 // cobrar al momento lo que el líder gana en N horas (no toca lo que ya lleva acumulado)
 function idleGrantHours(h) {
   const I = idleTick(), R = idleRates(I.fac), g = Math.round(R.gold * h), gm = Math.floor(R.gems * h), it = R.item * h, ni = Math.floor(it) + (Math.random() < it % 1 ? 1 : 0);
-  ECO.ganar('idle', { gold: g, gems: gm }, { tipo: 'horas-anuncio' }); const got = []; for (let i = 0; i < ni; i++) got.push(idleItem());
+  const srv = ECO.servidor('economia'); ECO.ganar('idle', { gold: g, gems: gm }, { tipo: 'horas-anuncio', items: srv ? ni : 0, facs: FACTION_ORDER.filter(isUnlocked) }); if (ni && srv) ECO.ya(); const got = []; if (!srv) for (let i = 0; i < ni; i++) got.push(idleItem());
   stat('idleg', g, true); stat('idlem', gm, true); achScan(); saveGame(); updateWallets(); play('crown'); idleBurst();
   toast(`${h} horas de golpe: +${fmt(g)} de oro${gm ? ` y +${fmt(gm)} ${gm > 1 ? 'gemas' : 'gema'}` : ''}${got.length ? ` y ${got.length > 1 ? got.length + ' objetos' : 'un objeto'}` : ''}`, true);
 }

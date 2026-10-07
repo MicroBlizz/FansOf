@@ -29,8 +29,8 @@ function grantRewards() {
       if (L.boss && L.wi === 11) stat('phonyboss', 1);
       if (L.boss && L.wi === IA_FINAL) stat('iaboss', 1);   // v0.9.23
       if (L.boss && cd !== 'n') stat(cd === 'h' ? 'hardboss' : 'mythboss', 1);
-      if (L.boss && cd === 'm' && !SAVE.mythPrize[L.wi]) { SAVE.mythPrize[L.wi] = 1; R.prize = legendaryPrize(); }
-      const ff = worldFac(L.wi); if (L.boss && cd !== 'n' && ff && !(SAVE.facItem || {})[ff]) { SAVE.facItem = SAVE.facItem || {}; SAVE.facItem[ff] = 1; R.facItem = newCopy('eq', FAC_ITEM[ff], 2); }
+      if (L.boss && cd === 'm' && !SAVE.mythPrize[L.wi]) { SAVE.mythPrize[L.wi] = 1; R.prize = legendaryPrize(); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'mito', mundo: L.wi + 1, id: R.prize.id, q: R.prize.q }); if (clv) R.prize.pend = clv; }
+      const ff = worldFac(L.wi); if (L.boss && cd !== 'n' && ff && !(SAVE.facItem || {})[ff]) { SAVE.facItem = SAVE.facItem || {}; SAVE.facItem[ff] = 1; R.facItem = newCopy('eq', FAC_ITEM[ff], 2); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'facitem', fac: ff, id: R.facItem.id, q: R.facItem.q }); if (clv) R.facItem.pend = clv; }
     } else R.gold += ECON.camp.lose * pay;
   } else if (G.mode === 'boss') {   // v0.9.15: premios por jefe y dificultad, y un extra si lo derrotas
     const wi = G.bossWi == null ? CEO_WI : G.bossWi, d = G.bossDiff || 'n', BD = BDIFF[d], key = wi + d, hp = bases.e.maxHp, sc = Math.round(S.p.bossDmg), kill = !bases.e.alive && w !== 'e';

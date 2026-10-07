@@ -826,6 +826,7 @@
    ]
   },
   "campRegla": "todos",
+  "facItems": null,
   "gift": {
    "gems": 5,
    "gold": 100
@@ -837,6 +838,8 @@
    "gemsK": 2.5,
    "gold": 60,
    "idleH": 4,
+   "item": 0.02,
+   "itemK": 0.05,
    "pwMax": 12,
    "turboH": 2
   },
@@ -3228,6 +3231,11 @@
     "gold": 2000
    }
   },
+  "objeto": {
+   "calcula": "objeto",
+   "dia": {},
+   "vez": {}
+  },
   "premio": {
    "calcula": [
     "logros",
@@ -3290,5 +3298,5 @@
    "vez": {}
   }
  },
- "version": 12
+ "version": 13
 }

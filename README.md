@@ -90,7 +90,7 @@ Antes de publicar un cambio en `core/`, pásalo por el comparador (`herramientas
 
 ## Publicar
 
-GitHub Pages sirve la rama `gh-pages`, que es una copia de `main`. Este repositorio está configurado para que `git push` suba las dos. La versión de cada juego se escribe en un solo sitio: el `?v=` de `core/js/nucleo.js` en su `index.html`. Hay que cambiarla cada vez que se publica algo. Si el jugador lo va a notar, además se añade el informe al principio de `NEWS`, en el `js/novedades.js` del juego.
+GitHub Pages sirve la rama `gh-pages`, que nunca se edita a mano: es un puntero a una etiqueta `web-AAAAMMDD-HHMM` de `main`. Se publica con `python herramientas/publicar.py` (etiqueta, sube `main` y la etiqueta, mueve `gh-pages` y comprueba en la web real que las versiones coinciden). `--lista` muestra las publicaciones recientes, `--estado` compara `main`, `gh-pages` y la web viva, y `--a <etiqueta>` vuelve la web a una publicación anterior sin revertir nada en `main`. No uses `git push` a secas: el script deja la configuración local para que solo suba `main`. Un commit y `git push origin main` guardan el trabajo sin publicarlo. La versión de cada juego se escribe en un solo sitio: el `?v=` de `core/js/nucleo.js` en su `index.html`. Hay que cambiarla cada vez que se publica algo. Si el jugador lo va a notar, además se añade el informe al principio de `NEWS`, en el `js/novedades.js` del juego.
 
 Antes de publicar un cambio que no debería notarse, el comparador lo comprueba: `python herramientas/base.py`, `python herramientas/servidor.py` y abrir `http://localhost:8765/herramientas/pruebas/`.
 

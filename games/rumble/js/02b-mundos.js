@@ -52,5 +52,5 @@ const BDIFF = {
 const BOSS_TIERS = [0.25, 0.5, 0.75], BOSS_TGEMS = [5, 10, 15], BOSS_KGEMS = 20, BOSS_KGOLD = 150;   // gemas por llegar al 25/50/75 % y por derrotarlo (x2 en Difícil, x3 en Mítica)
 const bossOf = wi => { const L = WORLDS[wi].levels[3]; return { wi, id: L.id, name: L.boss, efac: WORLDS[wi].efac, art: BOSS_ART[wi], short: BOSS_SHORT[wi], inc: Math.min(BOSS_MODE.income, L.income + 0.05) }; };
 const bossHp = (wi, d) => Math.round(BOSS_HP[wi] * BDIFF[d || 'n'].hp);
-const bossOpen = wi => wi === CEO_WI || !!SAVE.testAll || ['n', 'h', 'm'].some(d => starsD(WORLDS[wi].levels[3].id, d) > 0);
+const bossOpen = wi => wi === CEO_WI || !!SAVE.testAll || ['n', 'h', 'x', 'm'].some(d => starsD(WORLDS[wi].levels[3].id, d) > 0);
 

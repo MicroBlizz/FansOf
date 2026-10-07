@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: 'proxima', real: [
+      '<b>DOS DIFICULTADES NUEVAS EN LA CAMPAÑA</b>: ahora hay cinco, de la más fácil a la más dura: Fácil, Normal, Difícil, Heroica y Mítica.',
+      '<b>FÁCIL</b>: rivales más flojos, sin hechizos ni equipo. Para practicar o subir tus cartas con calma. Premios a la mitad, y aquí no se liberan facciones.',
+      '<b>HEROICA</b>: entre Difícil y Mítica. Rivales de nivel 8 a 11, buen equipo y la ruleta de la semana, pero solo gira la ventaja de la CPU: a ti no te castiga. Premios x2,5. Se abre al pasar cada mundo en Difícil, y ahora la Mítica se abre al pasarlo en Heroica (si ya tenías estrellas en Mítica, ese mundo sigue abierto).'],
+    joke: ['Microblizz ha añadido un modo Fácil para los accionistas. Siguen perdiendo.'] },
   { v: '0.9.54', real: [
       '<b>JUEGO LIMPIO</b>: las recompensas, el gashapón y las compras se validan en nuestro servidor, y vigilamos las trampas. Quien las haga puede perder ventajas o su cuenta. Gracias por jugar limpio.'],
     joke: ['Microblizz también vigila a su plantilla. De momento sin éxito.'] },

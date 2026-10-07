@@ -39,7 +39,7 @@ $('#opt-mus').addEventListener('input', e => { SAVE.mus = +e.target.value; apply
 // v0.9.38: el modo pruebas es común (core/js/sistema/pruebas.js); aquí, lo de este juego: todas las facciones y las 3 campañas (Normal, Difícil y Mítica) con 3 estrellas
 hook('pruebas', () => {
   SAVE.unlocked = FACTION_ORDER.slice();
-  for (const d of ['n', 'h', 'm']) for (const w of WORLDS) for (const l of w.levels) campOf(d)[l.id] = 3;
+  for (const d of CD_ORDEN) for (const w of WORLDS) for (const l of w.levels) campOf(d)[l.id] = 3;
   SAVE.facItem = SAVE.facItem || {}; for (const f in FAC_ITEM) SAVE.facItem[f] = 1;   // su objeto de facción ya lo tienes perfecto: que no lo vuelva a dar al ganar al jefe
 });
 $('#btn-test').addEventListener('click', () => pruebasClic(() => { syncMenu(); botonPruebas($('#btn-test')); }));

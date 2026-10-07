@@ -134,7 +134,7 @@
 
     <section id="scr-camp" class="screen top" hidden>
       <div class="scr-head"><button class="icon-btn back" data-back="scr-title" aria-label="Volver"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 class="h2 ol">CAMPAÑA</h2><div class="wallet" data-wallet></div></div>
-      <div class="tabs camp-tabs" role="group" aria-label="Dificultad"><button class="tab ol" data-cd="n" aria-pressed="true">Normal</button><button class="tab ol cd-h" data-cd="h" aria-pressed="false">Difícil</button><button class="tab ol cd-m" data-cd="m" aria-pressed="false">Mítica</button></div>
+      <div class="tabs camp-tabs" role="group" aria-label="Dificultad"><button class="tab ol cd-f" data-cd="f" aria-pressed="false">Fácil</button><button class="tab ol" data-cd="n" aria-pressed="true">Normal</button><button class="tab ol cd-h" data-cd="h" aria-pressed="false">Difícil</button><button class="tab ol cd-x" data-cd="x" aria-pressed="false">Heroica</button><button class="tab ol cd-m" data-cd="m" aria-pressed="false">Mítica</button></div>
       <p class="deck-sub" id="camp-sub">La Rebelión de los Fans: libera cada mundo corrompido por Microblizz y su facción se unirá a ti.</p>
       <div id="camp-mod"></div>
       <div class="scroll-list" id="world-list"></div>
@@ -335,10 +335,10 @@
 // antes de lo común van los archivos que no dependen de nada (por ahora, las novedades); después, el juego, en este orden
 NUCLEO.juego({
   antes: ['js/ajustes.js', 'js/novedades.js'],
-  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js', 'idioma/en-5.js', 'idioma/en-6.js', 'idioma/en-7.js', 'idioma/en-8.js', 'idioma/en-9.js'] },
+  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js', 'idioma/en-5.js', 'idioma/en-6.js', 'idioma/en-7.js', 'idioma/en-8.js', 'idioma/en-9.js', 'idioma/en-10.js'] },
   despues: [
     'js/01-campo.js', 'js/01b-unidades.js', 'js/01c-cartas.js', 'js/02a-objetos.js', 'js/02b-mundos.js', 'js/02c-chat.js', 'js/02d-chat-rival.js', 'js/02e-guardado.js', 'js/04-estado.js', 'js/05-audio.js', 'js/05b-creadores-datos.js', 'js/05c-creadores-arte.js', 'js/06a-despliegue.js', 'js/06b-movimiento.js', 'js/06c-dano.js', 'js/06d-unidades.js', 'js/06e-ia-y-partida.js', 'js/07a-escena.js', 'js/07b-unidades.js', 'js/07c-edificios-y-disparos.js', 'js/07d-particulas.js',
-    'js/08-controles.js', 'js/09a-chat-y-campana.js', 'js/09b-recompensas-y-hud.js', 'js/09c-pantallas.js', 'js/10-dificultad.js', 'js/retos.js', 'js/retos-perfil.js', 'js/retos-logros.js', '../../core/js/retos.js', '../../core/js/retos-pantallas.js', 'js/11-logros.js', 'js/12-app-y-preparacion.js', 'js/13-horas-extra.js',
+    'js/08-controles.js', 'js/09a-chat-y-campana.js', 'js/09b-recompensas-y-hud.js', 'js/09c-pantallas.js', 'js/10-dificultad.js', 'js/10b-ruleta.js', 'js/retos.js', 'js/retos-perfil.js', 'js/retos-logros.js', '../../core/js/retos.js', '../../core/js/retos-pantallas.js', 'js/11-logros.js', 'js/12-app-y-preparacion.js', 'js/13-horas-extra.js',
     'js/14a-hechizos.js', 'js/14b-gachapon-y-mazo.js', 'js/14c-modo-jefe.js', 'js/15-anuncios.js', 'js/16-camara.js', 'js/17a-campos.js', 'js/17b-campos-dibujo.js', 'js/18-sala.js', 'js/19-arena.js',
     'js/20-iahorro-final.js', 'js/20c-app-nativa.js', 'js/21-arranque.js'],
 });

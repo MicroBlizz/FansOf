@@ -41,7 +41,7 @@ function migrateSave(s, raw) {
     }
   }
   s.tut = Object.assign({ done: false, step: 0 }, s.tut || {});
-  s.campH = s.campH || {}; s.campM = s.campM || {}; s.mythPrize = s.mythPrize || {};   // v0.9.12: Difícil y Mítica
+  s.campH = s.campH || {}; s.campM = s.campM || {}; s.campF = s.campF || {}; s.campX = s.campX || {}; s.mythPrize = s.mythPrize || {};   // v0.9.12: Difícil y Mítica
   return s;
 }
 SAVE = loadSave();   // lo carga y lo guarda core/js/sistema/progreso.js, con newSave y migrateSave de aquí

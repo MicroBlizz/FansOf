@@ -53,8 +53,8 @@ Object.assign(RETOS, {
     }
     fam('lvl', 'c', 'lvlup', [1, 10, 25, 50, 100, 250, 500], [5, 10, 50, 50, 50, 65, 90], 'Subida de sueldo', g => veces(g, 'Sube de nivel una carta.', 'Sube {n} niveles a tus cartas.'), 'A ti sí te suben el sueldo.', { 25: 'lvl25' });
     // -- Campaña: estrellas de cada mundo en cada dificultad, estrellas totales y jefes
-    const DIF_ACH = { n: ['', '', [5, 5, 10, 15], [10, 20, 40, 60, 100], 'Cada estrella, un juego salvado.'], h: [' (Difícil)', ' en Difícil', [5, 10, 15, 20], [15, 30, 50, 80, 150], 'Microblizz pide refuerzos.'], m: [' (Mítica)', ' en Mítica', [10, 15, 20, 30], [20, 40, 70, 110, 200], 'Ni la ruleta de la semana pudo contigo.'] };
-    for (const d of ['n', 'h', 'm']) {
+    const DIF_ACH = { n: ['', '', [5, 5, 10, 15], [10, 20, 40, 60, 100], 'Cada estrella, un juego salvado.'], h: [' (Difícil)', ' en Difícil', [5, 10, 15, 20], [15, 30, 50, 80, 150], 'Microblizz pide refuerzos.'], x: [' (Heroica)', ' en Heroica', [8, 12, 18, 25], [18, 35, 60, 95, 175], 'La CPU tenía enchufe, y aun así.'], m: [' (Mítica)', ' en Mítica', [10, 15, 20, 30], [20, 40, 70, 110, 200], 'Ni la ruleta de la semana pudo contigo.'] };
+    for (const d of ['n', 'h', 'x', 'm']) {   // v0.9.55: Heroica (la Fácil no da logros de estrellas)
       const [tag, en, gw, gs, jk] = DIF_ACH[d];
       WORLDS.forEach((Wd, wi) => fam(`w${wi + 1}${d}`, 'k', () => worldStars(wi, d), [3, 6, 9, 12], gw, `${Wd.name}${tag}`, g => g === 12 ? `Consigue las 12 estrellas del mundo ${wi + 1}${en}.` : `Consigue ${g} estrellas en el mundo ${wi + 1}${en}.`, jk));
       const tot = WORLDS.length * 12;
@@ -65,8 +65,9 @@ Object.assign(RETOS, {
     fam('phony', 'k', 'phonyboss', [1], [150], 'Devolvednos los discos', () => 'Gana al Presidente de Phony.', 'Tu colección de discos está a salvo.', { 1: 'phony' });
     fam('iaboss', 'k', 'iaboss', [1], [200], 'Desconectada', () => 'Apaga a IAhorro (mundo 16).', 'Los juegos vuelven a tener alma.');   // v0.9.23
     fam('hard', 'k', 'hardboss', [1, 5, 12, 25, 50], [80, 50, 70, 90, 130], 'Esto ya es otra cosa', g => veces(g, 'Gana a un jefe en Difícil.', 'Gana a {n} jefes en Difícil.'), 'Microblizz pide refuerzos.', { 1: 'hard1' });
+    fam('hero', 'k', 'heroboss', [1, 5, 12, 25, 50], [110, 65, 85, 110, 165], 'Heroicidades', g => veces(g, 'Gana a un jefe en Heroica.', 'Gana a {n} jefes en Heroica.'), 'Microblizz le dio ventaja a la CPU y ni con esas.');
     fam('myth', 'k', 'mythboss', [1, 5, 12, 25, 50], [150, 80, 100, 130, 200], 'Leyenda mítica', g => veces(g, 'Gana a un jefe en Mítica.', 'Gana a {n} jefes en Mítica.'), 'Ni la ruleta de Microblizz ha podido contigo.', { 1: 'myth1' });
-    fam('rl', 'k', 'rlspin', [1, 5, 10, 25], [5, 10, 15, 25], 'La ruleta de la semana', g => veces(g, 'Gira la ruleta de la Mítica.', 'Gira {n} veces la ruleta de la Mítica.'), 'La casa siempre gana. O casi.');
+    fam('rl', 'k', 'rlspin', [1, 5, 10, 25], [5, 10, 15, 25], 'La ruleta de la semana', g => veces(g, 'Gira la ruleta de la semana.', 'Gira {n} veces la ruleta de la semana.'), 'La casa siempre gana. O casi.');
     // -- Enemigos: cada bot de las empresas, cada facción corrompida y los líderes rivales
     const ENEMY_ACH = { becario: ['Sin becarios', 'Becarios', 'Trabajan gratis… y se nota.'], starbot: ['Estrellas fugaces', 'StarBots', 'Su valoración media: una estrella.'], fallen: ['Héroes caídos', 'FallenHeroes', 'Antes era tu héroe favorito.'], cajabotin: ['Cajas abiertas', 'CajaBotines', 'Dentro solo había otra caja.'], soportebot: ['Incidencia cerrada', 'SoporteBots', 'Su respuesta: «reinicia el juego».'], parchebot: ['Parcheado', 'Parches Día 1', 'Pesa 80 GB y no arregla nada.'],
       descargabot: ['Descarga cancelada', 'Descarga99', 'Se quedó en el 99 %.'], licenciabot: ['Licencia revocada', 'LicenciaBots', 'Ahora el juego es tuyo. De verdad.'], plusbot: ['Suscripción cancelada', 'PayPlus', 'Sin permanencia.'], cobradlc: ['DLC gratis', 'CobraDLC', 'El final del juego ya no se vende aparte.'], servidorbot: ['Servidor reiniciado', 'Servidores Caídos', 'Ha vuelto a caer. Por tu culpa.'], remasterbot: ['Mejor el original', 'Remasters 70 €', 'El de 2005 se veía mejor.'] };

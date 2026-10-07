@@ -8,6 +8,7 @@
 --   · el resto: la cantidad la dice el cliente y la limitan los topes de siempre (vez y dia).
 --     (desde el paso 3 solo si el nivel está abierto y el jefe lo dice el servidor)
 -- En todos los casos siguen aplicándose los topes vez y dia.
+-- 0.9.55: la lista de dificultades admite también f (Fácil) y x (Heroica); en la base se cambia con 15-dificultades-facil-heroica.sql.
 create or replace function public.anotar(p_juego text, p_movs jsonb) returns jsonb
 language plpgsql security definer set search_path = '' as $$
 declare
@@ -39,7 +40,7 @@ begin
       if coalesce((tp->>'diario')::boolean, false) then v_clave := mot || ':' || ((now() at time zone 'Europe/Madrid')::date)::text; end if;
     elsif public._acepta(tp, 'camp') and jsonb_typeof(ev) = 'object' and ev->>'tipo' = 'camp' then
       cm := d->'premios'->'camp';
-      if cm is null or coalesce(ev->>'dif', '') not in ('n', 'h', 'm') or coalesce(ev->>'nivel', '') !~ '^[A-Za-z0-9_-]{1,20}$' then rech := rech + 1; continue; end if;
+      if cm is null or coalesce(ev->>'dif', '') not in ('f', 'n', 'h', 'x', 'm') or coalesce(ev->>'nivel', '') !~ '^[A-Za-z0-9_-]{1,20}$' then rech := rech + 1; continue; end if;
       cv := public._camp_abierto(u, p_juego, d, ev->>'dif', ev->>'nivel');   -- ¿está abierto el nivel según lo que el servidor sabe? (11-progreso-de-campana.sql)
       if not (cv->>'ok')::boolean then rech := rech + 1; continue; end if;
       pay := coalesce((d->'premios'->'pay'->>(ev->>'dif'))::numeric, 1);

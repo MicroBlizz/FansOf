@@ -63,7 +63,7 @@ function applySpawnMods(u) {
   const M = G.mod;   // v0.9.12: ruleta de la Mítica
   if (M && team === 'p') { if (M.deb.id === 'lag') u.mSpeed *= 0.8; if (M.deb.id === 'parche') u.mHp *= 0.8; if (M.deb.id === 'becarios') u.mDmg *= 0.8; }
   else if (M) { if (M.buf.id === 'horas') u.mCd *= 0.7; if (M.buf.id === 'robots') u.mHp *= 1.25; if (M.buf.id === 'bonus') u.mDmg *= 1.25; if (M.buf.id === 'turbo') u.mSpeed *= 1.25; }
-  if (team === 'e' && G.mode === 'camp' && G.cdiff && G.cdiff !== 'n') { const el = CDIFF[G.cdiff].elite; u.mHp *= el; u.mDmg *= el; }   // tropas de élite en Difícil y Mítica
+  if (team === 'e' && G.mode === 'camp' && G.cdiff && G.cdiff !== 'n') { const el = CDIFF[G.cdiff].elite; u.mHp *= el; u.mDmg *= el; }   // tropas de élite en Difícil, Heroica y Mítica (y más flojas en Fácil)
   if (team === 'e' && G.mode === 'boss' && G.bossDiff && G.bossDiff !== 'n') { const el = BDIFF[G.bossDiff].elite; u.mHp *= el; u.mDmg *= el; }   // v0.9.15: y en el Modo Jefe
   const FB = FAC_BAL[f]; if (FB) { u.mHp *= FB.hp; u.mDmg *= FB.dmg; }   // v0.9.20: ajuste de equilibrio por facción (01-config.js)
   u.hpBase = u.d.hp * u.mHp * u.mLvl;

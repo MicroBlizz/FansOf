@@ -19,18 +19,18 @@ function grantRewards() {
       if (R.stars === 3 && prev < 3) { R.gold += ECON.camp.stars3[0] * pay; R.gems += ECON.camp.stars3[1] * pay; }
       campOf(cd)[L.id] = Math.max(prev, R.stars);
       const Wd = WORLDS[L.wi];
-      if (L.boss && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada llega con algo de nivel para no empezar de cero
+      if (L.boss && cd !== 'f' && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada llega con algo de nivel para no empezar de cero (v0.9.55: en Fácil no se libera)
         SAVE.unlocked.push(Wd.unlock); R.unlock = Wd.unlock; stat('unlock', 1);
         const UF = FACTIONS[Wd.unlock]; for (const k of [UF.leader, ...UF.units]) { const us = uSave(k); us.lvl = Math.max(us.lvl, L.elvl - 1); }
       }
       missionEvent('star', R.stars);
-      if (L.boss && L.wi === CEO_WI) stat('ceo', 1);
-      if (L.boss && WORLDS[L.wi].unlock === 'olvidados') stat('olvido', 1);
-      if (L.boss && L.wi === 11) stat('phonyboss', 1);
-      if (L.boss && L.wi === IA_FINAL) stat('iaboss', 1);   // v0.9.23
-      if (L.boss && cd !== 'n') stat(cd === 'h' ? 'hardboss' : 'mythboss', 1);
+      if (L.boss && L.wi === CEO_WI && cd !== 'f') stat('ceo', 1);
+      if (L.boss && WORLDS[L.wi].unlock === 'olvidados' && cd !== 'f') stat('olvido', 1);
+      if (L.boss && L.wi === 11 && cd !== 'f') stat('phonyboss', 1);
+      if (L.boss && L.wi === IA_FINAL && cd !== 'f') stat('iaboss', 1);   // v0.9.23
+      if (L.boss && cdHard(cd)) stat(cd === 'h' ? 'hardboss' : cd === 'x' ? 'heroboss' : 'mythboss', 1);
       if (L.boss && cd === 'm' && !SAVE.mythPrize[L.wi]) { SAVE.mythPrize[L.wi] = 1; R.prize = legendaryPrize(); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'mito', mundo: L.wi + 1, id: R.prize.id, q: R.prize.q }); if (clv) R.prize.pend = clv; }
-      const ff = worldFac(L.wi); if (L.boss && cd !== 'n' && ff && !(SAVE.facItem || {})[ff]) { SAVE.facItem = SAVE.facItem || {}; SAVE.facItem[ff] = 1; R.facItem = newCopy('eq', FAC_ITEM[ff], 2); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'facitem', fac: ff, id: R.facItem.id, q: R.facItem.q }); if (clv) R.facItem.pend = clv; }
+      const ff = worldFac(L.wi); if (L.boss && cdHard(cd) && ff && !(SAVE.facItem || {})[ff]) { SAVE.facItem = SAVE.facItem || {}; SAVE.facItem[ff] = 1; R.facItem = newCopy('eq', FAC_ITEM[ff], 2); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'facitem', fac: ff, id: R.facItem.id, q: R.facItem.q }); if (clv) R.facItem.pend = clv; }
     } else R.gold += ECON.camp.lose * pay;
   } else if (G.mode === 'boss') {   // v0.9.15: premios por jefe y dificultad, y un extra si lo derrotas
     const wi = G.bossWi == null ? CEO_WI : G.bossWi, d = G.bossDiff || 'n', BD = BDIFF[d], key = wi + d, hp = bases.e.maxHp, sc = Math.round(S.p.bossDmg), kill = !bases.e.alive && w !== 'e';

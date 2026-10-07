@@ -23,7 +23,7 @@ for (const b of document.querySelectorAll('[data-bd]')) b.addEventListener('clic
 /* ---------- v0.9.15: equipo compartido y objetos de facción ---------- */
 function facItemsRetro() {   // a quien ya ganó a un jefe en Difícil antes de esta versión, se le da su objeto de facción
   SAVE.facItem = SAVE.facItem || {}; const got = [];
-  WORLDS.forEach((w, wi) => { const f = worldFac(wi), id = w.levels[3].id; if (f && !SAVE.facItem[f] && (starsD(id, 'h') > 0 || starsD(id, 'm') > 0)) { SAVE.facItem[f] = 1; { const c = newCopy('eq', FAC_ITEM[f], 2), clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'facitem', fac: f, id: c.id, q: c.q }); if (clv) c.pend = clv; got.push(ITEMS[c.id].name); } } });
+  WORLDS.forEach((w, wi) => { const f = worldFac(wi), id = w.levels[3].id; if (f && !SAVE.facItem[f] && (starsD(id, 'h') > 0 || starsD(id, 'x') > 0 || starsD(id, 'm') > 0)) { SAVE.facItem[f] = 1; { const c = newCopy('eq', FAC_ITEM[f], 2), clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'facitem', fac: f, id: c.id, q: c.q }); if (clv) c.pend = clv; got.push(ITEMS[c.id].name); } } });
   if (got.length) setTimeout(() => toast(`¡Objetos de facción nuevos en tu inventario: ${got.join(', ')}!`, true), 2500);
 }
 

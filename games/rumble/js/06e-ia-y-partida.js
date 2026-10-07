@@ -56,7 +56,7 @@ function aiGeneric(team, dt) {
   if (aiSpell(team, avail, go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const bh = team === 'e' && G.mode === 'boss' && !!G.bossDiff && G.bossDiff !== 'n';
-  const hard = bh || (team === 'e' && G.mode === 'camp' && !!G.cdiff && G.cdiff !== 'n'), myth = hard && (bh ? G.bossDiff === 'm' : G.cdiff === 'm');
+  const hard = bh || (team === 'e' && G.mode === 'camp' && cdHard(G.cdiff)), myth = hard && (bh ? G.bossDiff === 'm' : G.cdiff === 'm');
   const threats = units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && u.stealthT <= 0 && myHalf(u)).sort((a, b) => dist(a, bases[team]) - dist(b, bases[team]));
   if (threats.length) {
     // defiende si la amenaza está cerca de una torre (o le sobra CAOS); si no, ahorra para atacar

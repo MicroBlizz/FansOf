@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gestión · Fans Of</title>
+<style>
+/* Gestión de Fans Of: acceso con usuario y contraseña propios y una lista de trabajo para revisar cuentas. Todo lo que enseña lo manda el servidor. */
+:root {
+  --bg: #f3f4f6; --panel: #ffffff; --linea: #d9dce3; --texto: #1c2230; --suave: #5b6578;
+  --acento: #b45309; --acento-texto: #ffffff; --clara: #b91c1c; --clara-fondo: #fee2e2; --debil: #92400e; --debil-fondo: #fef3c7;
+  --ok: #166534; --ok-fondo: #dcfce7; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace; color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12151c; --panel: #1a1f29; --linea: #2c3342; --texto: #e6e9f0; --suave: #98a2b6;
+  --acento: #f5b14c; --acento-texto: #1c1204; --clara: #fca5a5; --clara-fondo: #4a1d1d; --debil: #fcd34d; --debil-fondo: #3a2c10;
+  --ok: #86efac; --ok-fondo: #12301d; color-scheme: dark; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--texto); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.pagina { max-width: 860px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 40px; display: grid; gap: 16px; }
+h1 { margin: 0; font-size: 20px; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--suave); margin: 2px 0 0; }
+.barra { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; }
+.caja { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 14px; }
+form.entrada { display: grid; gap: 10px; max-width: 360px; margin-inline: auto; }
+label { display: grid; gap: 3px; color: var(--suave); font-size: 13px; }
+input, select, button { font: inherit; }
+input[type=text], input[type=password], select { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; }
+button { color: var(--texto); background: var(--panel); border: 1px solid var(--linea); border-radius: 5px; padding: 6px 12px; cursor: pointer; }
+button.fuerte { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); font-weight: 600; }
+button.peligro { color: var(--clara); border-color: var(--clara); }
+button:disabled { opacity: .55; cursor: default; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+.aviso { color: var(--clara); min-height: 1.4em; font-size: 13px; }
+.enlace { background: none; border: 0; color: var(--suave); text-decoration: underline; padding: 0; justify-self: start; }
+.cifras { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.cifras div { display: grid; }
+.cifras b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.cifras span { color: var(--suave); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.ayuda { color: var(--suave); }
+.ayuda b { color: var(--texto); }
+.filtros { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.filtros select { width: auto; }
+.lista { display: grid; gap: 12px; }
+.cuenta { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 12px 14px; display: grid; gap: 10px; min-width: 0; }
+.cuenta.marcada { border-color: var(--clara); }
+.cab { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.codigo { font-family: var(--mono); font-size: 15px; font-weight: 600; }
+.meta { color: var(--suave); font-size: 13px; overflow-wrap: anywhere; }
+.puntos { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 700; padding: 1px 9px; border-radius: 99px; background: var(--debil-fondo); color: var(--debil); }
+.puntos.alta { background: var(--clara-fondo); color: var(--clara); }
+.estado { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 4px; background: var(--ok-fondo); color: var(--ok); }
+.estado.si { background: var(--clara-fondo); color: var(--clara); }
+.motivos { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.motivos li { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; }
+.etq { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; padding: 2px 7px; border-radius: 4px; align-self: start; white-space: nowrap; }
+.etq.clara { background: var(--clara-fondo); color: var(--clara); }
+.etq.debil { background: var(--debil-fondo); color: var(--debil); }
+.saldos { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.accion { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-top: 1px solid var(--linea); padding-top: 10px; }
+.accion input[type=text] { flex: 1 1 200px; width: auto; }
+details { min-width: 0; }
+summary { cursor: pointer; color: var(--suave); }
+pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; overflow-x: auto; font: 12px/1.45 var(--mono); }
+.vacio { background: var(--panel); border: 1px dashed var(--linea); border-radius: 6px; padding: 28px 16px; text-align: center; color: var(--suave); }
+.vacio b { display: block; color: var(--texto); font-size: 16px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<main class="pagina">
+  <header class="barra">
+    <div><h1>Gestión</h1><p class="sub" id="sub">Acceso restringido.</p></div>
+    <button id="salir" hidden>Salir</button>
+  </header>
+
+  <section id="vista-entrar" class="caja">
+    <form id="f-entrar" class="entrada" autocomplete="on">
+      <label for="e-usuario">Usuario<input id="e-usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+      <label for="e-clave">Contraseña<input id="e-clave" type="password" autocomplete="current-password" required></label>
+      <div class="aviso" id="e-aviso" role="alert"></div>
+      <button class="fuerte" type="submit" id="e-boton">Entrar</button>
+      <button class="enlace" type="button" id="ir-activar">Primera vez: tengo un código</button>
+    </form>
+    <form id="f-activar" class="entrada" hidden>
+      <label for="a-usuario">Usuario<input id="a-usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+      <label for="a-codigo">Código de invitación<input id="a-codigo" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
+      <label for="a-clave">Contraseña nueva (mínimo 12 caracteres)<input id="a-clave" type="password" autocomplete="new-password" minlength="12" required></label>
+      <label for="a-clave2">Repite la contraseña<input id="a-clave2" type="password" autocomplete="new-password" minlength="12" required></label>
+      <div class="aviso" id="a-aviso" role="alert"></div>
+      <button class="fuerte" type="submit" id="a-boton">Crear mi acceso</button>
+      <button class="enlace" type="button" id="ir-entrar">Ya tengo contraseña</button>
+    </form>
+  </section>
+
+  <section id="vista-panel" hidden>
+    <div class="caja cifras" id="cifras"></div>
+    <div class="caja ayuda" id="ayuda"></div>
+    <div class="filtros">
+      <label for="f-ver" style="display:block">Ver</label>
+      <select id="f-ver"><option value="todas">todas</option><option value="pendientes">sin marcar</option><option value="marcadas">marcadas</option></select>
+      <label for="f-min" style="display:block">Desde</label>
+      <select id="f-min"><option value="0">0 puntos</option><option value="1">1 punto</option><option value="10">10 puntos</option><option value="30">30 puntos</option></select>
+      <button id="recargar" type="button">Actualizar</button>
+    </div>
+    <div class="aviso" id="p-aviso" role="alert"></div>
+    <div class="lista" id="lista"></div>
+  </section>
+</main>
+<script>
+'use strict';
+const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
+const CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // pública: lo que protege es la contraseña, que se comprueba en el servidor
+const TOKEN = 'gestion-acceso';
+const $ = id => document.getElementById(id);
+let datos = null;
+
+const leerToken = () => { try { return sessionStorage.getItem(TOKEN) || ''; } catch (e) { return ''; } };
+const guardarToken = t => { try { if (t) sessionStorage.setItem(TOKEN, t); else sessionStorage.removeItem(TOKEN); } catch (e) { /* sin almacenamiento */ } };
+async function rpc(nombre, cuerpo) {
+  const r = await fetch(SERVIDOR + '/rest/v1/rpc/' + nombre, { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
+  const t = await r.text(); let j = null; try { j = t ? JSON.parse(t) : null; } catch (e) { /* no era JSON */ }
+  if (!r.ok) throw new Error((j && (j.message || j.hint)) || ('HTTP ' + r.status));
+  return j;
+}
+const textoError = e => {
+  const m = String((e && e.message) || e);
+  return /bloqueado/.test(m) ? 'Demasiados intentos. Espera unos minutos.' : /clave_corta/.test(m) ? 'La contraseña es demasiado corta (mínimo 12).' : /sin_acceso/.test(m) ? 'La sesión ha caducado. Vuelve a entrar.' : 'No se ha podido completar. Prueba otra vez.';
+};
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmt = n => Number(n || 0).toLocaleString('es-ES');
+const fecha = s => { try { return new Date(s).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' }); } catch (e) { return s || '—'; } };
+
+function vista(panel) {
+  $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
+  $('sub').textContent = panel ? '' : 'Acceso restringido.';
+}
+$('ir-activar').onclick = () => { $('f-entrar').hidden = true; $('f-activar').hidden = false; $('a-usuario').value = $('e-usuario').value; $('a-codigo').focus(); };
+$('ir-entrar').onclick = () => { $('f-activar').hidden = true; $('f-entrar').hidden = false; $('e-usuario').focus(); };
+
+$('f-entrar').onsubmit = async ev => {
+  ev.preventDefault(); $('e-aviso').textContent = ''; $('e-boton').disabled = true;
+  try {
+    const t = await rpc('gestion_entrar', { p_usuario: $('e-usuario').value, p_clave: $('e-clave').value });
+    if (!t) { $('e-aviso').textContent = 'Usuario o contraseña incorrectos.'; return; }
+    guardarToken(t); $('e-clave').value = ''; await abrir();
+  } catch (e) { $('e-aviso').textContent = textoError(e); } finally { $('e-boton').disabled = false; }
+};
+$('f-activar').onsubmit = async ev => {
+  ev.preventDefault(); $('a-aviso').textContent = '';
+  if ($('a-clave').value !== $('a-clave2').value) { $('a-aviso').textContent = 'Las dos contraseñas no coinciden.'; return; }
+  $('a-boton').disabled = true;
+  try {
+    const ok = await rpc('gestion_activar', { p_usuario: $('a-usuario').value, p_codigo: $('a-codigo').value.trim().toUpperCase(), p_clave: $('a-clave').value });
+    if (!ok) { $('a-aviso').textContent = 'El código no vale o ha caducado.'; return; }
+    $('e-usuario').value = $('a-usuario').value; $('e-clave').value = $('a-clave').value;
+    $('a-clave').value = $('a-clave2').value = $('a-codigo').value = '';
+    $('ir-entrar').click(); $('e-aviso').textContent = 'Acceso creado. Ya puedes entrar.'; $('e-aviso').style.color = 'var(--ok)'; $('e-clave').value = '';
+  } catch (e) { $('a-aviso').textContent = textoError(e); } finally { $('a-boton').disabled = false; }
+};
+$('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); datos = null; vista(false); };
+
+async function abrir() {
+  try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
+  catch (e) { guardarToken(''); vista(false); $('e-aviso').style.color = ''; $('e-aviso').textContent = textoError(e); return; }
+  vista(true); pinta();
+}
+$('recargar').onclick = abrir;
+$('f-ver').onchange = $('f-min').onchange = () => pinta();
+
+function pinta() {
+  if (!datos) return;
+  $('sub').textContent = `Conectado como ${datos.quien}. Datos a ${fecha(datos.generado)}.`;
+  const R = datos.resumen;
+  $('cifras').innerHTML = [[R.cuentas, 'cuentas con partida'], [R.vinculadas, 'vinculadas'], [R.senales, 'señales'], [R.marcadas, 'marcadas']].map(([n, t]) => `<div><b>${fmt(n)}</b><span>${t}</span></div>`).join('');
+  $('ayuda').innerHTML = '<b>Cómo se lee.</b> Cada cuenta suma puntos: una señal clara 10 y una débil 1. Las claras son cosas que un cliente normal nunca hace; las débiles también les pasan a veces a jugadores honestos. Mira los ejemplos antes de decidir.';
+  const ver = $('f-ver').value, min = +$('f-min').value;
+  const L = datos.cuentas.filter(c => c.puntos >= min && (ver === 'todas' || (ver === 'marcadas') === c.marcada));
+  $('lista').innerHTML = L.length ? L.map(tarjeta).join('') :
+    `<div class="vacio"><b>${datos.cuentas.length ? 'Nada con ese filtro' : 'Todavía no hay señales'}</b>${datos.cuentas.length ? 'Cambia el filtro para ver más cuentas.' : 'Cuando una cuenta haga algo raro, aparecerá aquí.'}</div>`;
+}
+function tarjeta(c) {
+  const G = datos.glosario || {};
+  const claras = Object.keys(c.tipos).filter(t => (G[t] || {}).grave === 'clara').length;
+  const motivos = Object.entries(c.tipos).sort((a, b) => ((G[a[0]] || {}).grave === 'clara' ? 0 : 1) - ((G[b[0]] || {}).grave === 'clara' ? 0 : 1)).map(([t, n]) => {
+    const g = G[t] || { grave: 'debil', texto: t };
+    return `<li><span class="etq ${g.grave}">${g.grave === 'clara' ? 'clara' : 'débil'} ×${fmt(n)}</span><span>${esc(g.texto)}</span></li>`;
+  }).join('');
+  const saldos = c.juegos.map(j => `<span><b>${esc(j.juego)}</b>: ${fmt(j.oro)} oro · ${fmt(j.gemas)} gemas · ${fmt(j.entradas)} entradas</span>`).join('');
+  const ej = c.ejemplos.map(e => `${fecha(e.cuando)} · ${e.juego} · ${e.tipo} (${e.grave})\n${JSON.stringify(e.detalle)}`).join('\n\n');
+  const mg = (c.migraciones || []).map(m => `Migración ${m.juego}: declaró ${fmt(m.declarado_oro)} oro y ${fmt(m.declarado_gemas)} gemas; se le concedió ${fmt(m.concedido_oro)} y ${fmt(m.concedido_gemas)}.`).join('\n');
+  return `<article class="cuenta${c.marcada ? ' marcada' : ''}">
+    <div class="cab"><span class="codigo">${esc(c.corto)}</span><span class="estado${c.marcada ? ' si' : ''}">${c.marcada ? 'marcada' : 'sin marcar'}</span><span class="puntos${claras ? ' alta' : ''}">${fmt(c.puntos)} pts</span></div>
+    <div class="meta">${c.anonima ? 'Cuenta de invitado' : esc(c.email || 'Cuenta vinculada')} · creada ${fecha(c.creada)}${c.ultima ? ' · última señal ' + fecha(c.ultima) : ''}${c.nota ? ' · nota: ' + esc(c.nota) : ''}</div>
+    <ul class="motivos">${motivos}</ul>
+    <div class="saldos">${saldos}</div>
+    <details><summary>Ejemplos (${c.ejemplos.length + (c.migraciones || []).length})</summary><pre>${esc([mg, ej].filter(Boolean).join('\n\n') || 'Sin ejemplos.')}</pre></details>
+    <div class="accion">
+      <input type="text" id="n-${esc(c.id)}" placeholder="Nota (opcional)" maxlength="300" value="${esc(c.nota || '')}" aria-label="Nota">
+      <button class="${c.marcada ? '' : 'peligro'}" data-id="${esc(c.id)}" data-marcar="${c.marcada ? 'no' : 'si'}">${c.marcada ? 'Quitar la marca' : 'Marcar'}</button>
+    </div>
+  </article>`;
+}
+$('lista').onclick = async ev => {
+  const b = ev.target.closest('button[data-marcar]'); if (!b) return;
+  b.disabled = true; $('p-aviso').textContent = '';
+  try {
+    await rpc('gestion_marcar', { p_token: leerToken(), p_cuenta: b.dataset.id, p_marcado: b.dataset.marcar === 'si', p_nota: ($('n-' + b.dataset.id) || {}).value || '' });
+    await abrir();
+  } catch (e) { $('p-aviso').textContent = textoError(e); b.disabled = false; }
+};
+
+if (leerToken()) abrir(); else vista(false);
+</script>
+</body>
+</html>

@@ -333,3 +333,18 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 - Para moverla: `update public.ajustes_servidor set valor = timestamptz '…' where clave = 'puerta_migracion';`.
 - Quien no abra el juego con cuenta antes de la fecha pierde la subida de su partida antigua: conviene una nota en novedades unos días antes. Su partida local sigue en su aparato.
 - Antes de abrir la tienda, la puerta tiene que estar cerrada y las funciones `migrar_abierta` y `conciliar_abierta` borradas.
+
+### 15.13 Fase 3, paso 1: topes a lo que se gana jugando (7-10-2026)
+**El problema que había**: `anotar` (el espejo de lo que el cliente gana, fase 1) aceptaba cualquier cantidad positiva con cualquier motivo. Como el servidor ya manda sobre las gemas (gashapón) y el oro (mejoras), eso era una puerta abierta: bastaba llamar a la función con `gemas: 10000000`. Cerrada en este paso (`servidor/09-anotar-con-topes.sql`).
+
+**Cómo queda**: cada motivo tiene sus topes en `tablas_juego.datos.topes`: `vez` (por cobro), `dia` (suma de las últimas 24 h) y `unica` (una sola vez por cuenta). Los fija el código del juego: los comunes en `TOPES_COMUNES` (`core/js/sistema/economia.js`) y los de cada juego en `AJUSTES.topes`; `herramientas/subir_datos.py` los sube. Un motivo que no esté en la lista se rechaza; una cantidad que pase de los topes se recorta, y lo pedido queda en `movimientos.nota` para revisarlo. Las restas pasan (solo perjudican al jugador).
+
+**Qué ve el jugador**: si el servidor recorta algo, el saldo de la pantalla se corrige a lo suyo después de sincronizar (en los juegos con `AJUSTES.servidor.economia`, hoy Rumble).
+
+**Los topes son generosos a propósito** (por ejemplo, 5.000 de oro y 200 gemas por partida, 300.000 de oro al día): cortan las trampas gordas sin molestar a nadie. Se afinan mirando `movimientos.nota` cuando haya jugadores reales.
+
+**Pendiente de la fase 3**:
+- Las recompensas de un solo cobro (primer pase de un nivel, misión del día, premio del pase) todavía no llevan clave propia: valen los topes por día, pero no el «una vez».
+- Objetos y copias que se regalan (pase, idle, tutorial) se crean aún en local; hay que crearlos en el servidor para poder despedirlos.
+- La experiencia de las cartas (`p_xp` en `mejorar_carta`) la sigue declarando el cliente.
+- Antes de abrir la tienda: quitar los motivos `compra` y `pruebas` de los topes.

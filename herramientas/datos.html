@@ -19,7 +19,7 @@ f.onload = () => setTimeout(() => {
       const cat = DB => { const o = {}; for (const id in DB || {}) { const d = DB[id]; o[id] = { rar: d.rar, slot: d.slot || null, fac: d.fac || null, pass: !!d.pass, n: (d.st || [(d.vals || [1])[1]]).length }; } return o; };
       const F = {}; for (const f of g('FACTION_ORDER') || []) { const x = g('FACTIONS')[f]; F[f] = { leader: x.leader || null, units: x.units || [], gacha: x.gacha || [] }; }
       const cartas = {}; const C = (g('CFG') || {}).cards || {}; for (const k in C) if (C[k].gacha) cartas[k] = { rarity: C[k].rarity, fac: C[k].fac || null, cost: C[k].cost == null ? null : C[k].cost };
-      return JSON.stringify({ juego: ${JSON.stringify(juego)}, econ: R, calidades: g('QTIERS'), habilidades: cat(g('ABILITIES')), objetos: cat(g('ITEMS')), facciones: F, cartas, orden: g('FACTION_ORDER') });
+      return JSON.stringify({ juego: ${JSON.stringify(juego)}, econ: R, calidades: g('QTIERS'), habilidades: cat(g('ABILITIES')), objetos: cat(g('ITEMS')), facciones: F, cartas, orden: g('FACTION_ORDER'), topes: g('ECO').topes() });
     })()`);
   } catch (e) { out = JSON.stringify({ fallo: String(e) }); }
   fetch('/datos-resultado', { method: 'POST', body: out });

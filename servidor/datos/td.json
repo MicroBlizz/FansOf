@@ -807,5 +807,103 @@
   "olvidados",
   "pop"
  ],
- "version": 3
+ "topes": {
+  "compra": {
+   "dia": {
+    "gems": 100000,
+    "gold": 1000000
+   },
+   "vez": {
+    "gems": 10000,
+    "gold": 100000
+   }
+  },
+  "despedir": {
+   "dia": {
+    "gold": 5000000
+   },
+   "vez": {
+    "gold": 1000000
+   }
+  },
+  "gachapon": {
+   "dia": {},
+   "vez": {}
+  },
+  "horas-extra": {
+   "dia": {
+    "gems": 20000,
+    "gold": 600000
+   },
+   "vez": {
+    "gems": 5000,
+    "gold": 150000
+   }
+  },
+  "mejorar-carta": {
+   "dia": {},
+   "vez": {}
+  },
+  "mision": {
+   "dia": {
+    "gems": 1000,
+    "gold": 20000
+   },
+   "vez": {
+    "gems": 200,
+    "gold": 2000
+   }
+  },
+  "premio": {
+   "dia": {
+    "gems": 3000,
+    "gold": 100000,
+    "tickets": 60
+   },
+   "vez": {
+    "gems": 1000,
+    "gold": 20000,
+    "tickets": 30
+   }
+  },
+  "pruebas": {
+   "dia": {
+    "gems": 20000,
+    "gold": 12000000
+   },
+   "vez": {
+    "gems": 5000,
+    "gold": 3000000
+   }
+  },
+  "quitar-pruebas": {
+   "dia": {},
+   "vez": {}
+  },
+  "recompensa": {
+   "dia": {
+    "gems": 5000,
+    "gold": 300000
+   },
+   "vez": {
+    "gems": 200,
+    "gold": 5000
+   }
+  },
+  "regalo-diario": {
+   "dia": {
+    "gems": 40,
+    "gold": 600
+   },
+   "vez": {
+    "gems": 20,
+    "gold": 300
+   }
+  },
+  "retirar-numeros": {
+   "dia": {},
+   "vez": {}
+  }
+ },
+ "version": 5
 }

@@ -30,6 +30,16 @@ const ECO_SOMBRA = (() => {
     for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && (est.conciliado === CUENTA.usuario || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
     throw new Error('sin_conexion');
   }
+  // si el juego ya deja el saldo al servidor, lo de aquí pasa a ser lo suyo más lo que aún no se ha mandado (así un tope recortado se nota)
+  function adoptar(r) {
+    if (!(AJUSTES.servidor && AJUSTES.servidor.economia)) return;
+    const p = est.cola.reduce((a, m) => ({ o: a.o + m.oro, g: a.g + m.gemas, e: a.e + m.entradas }), { o: 0, g: 0, e: 0 });
+    const o = r.oro + p.o, g = r.gemas + p.g, e = r.entradas + p.e;
+    if (o === SAVE.gold && g === SAVE.gems && e === (SAVE.tickets || 0)) return;
+    SAVE.gold = o; SAVE.gems = g; SAVE.tickets = e;
+    if (typeof updateWallets === 'function') { try { updateWallets(); } catch (x) { /* la pantalla no está lista */ } }
+    saveGame();
+  }
   async function enviarYa() {
     if (!activa()) return;
     try {
@@ -47,7 +57,7 @@ const ECO_SOMBRA = (() => {
       while (est.cola.length) {
         const lote = est.cola.slice(0, 200);
         const r = await CUENTA.rpc('anotar', { p_juego: AJUSTES.id, p_movs: lote });
-        est.cola = est.cola.slice(lote.length); apunta(r); guardar();
+        est.cola = est.cola.slice(lote.length); adoptar(r); apunta(r); guardar();
       }
     } catch (e) { /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
   }

@@ -5,7 +5,22 @@
 // (PLAN-CUENTAS.md, puntos 14 y 15) se cambia el motor aquí y los juegos no se enteran.
 // Ni ganar ni gastar guardan la partida ni repintan la cartera: eso lo sigue haciendo quien llama (saveGame, updateWallets).
 'use strict';
+// Lo máximo que el servidor deja ganar por cada motivo (PLAN-CUENTAS.md, 15.13): vez = por cobro, dia = en 24 h (todas las vezes juntas), unica = una sola vez por cuenta.
+// Son topes generosos para cortar las trampas gordas, no el cálculo del premio; se afinan con lo que apunte el servidor (movimientos.nota guarda lo recortado).
+// Cada juego añade los suyos en AJUSTES.topes. herramientas/subir_datos.py los sube a tablas_juego.datos.topes.
+const TOPES_COMUNES = {
+  mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 } },
+  premio: { vez: { gold: 20000, gems: 1000, tickets: 30 }, dia: { gold: 100000, gems: 3000, tickets: 60 } },   // logros, pase de batalla, racha de días
+  'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 } },
+  'regalo-diario': { vez: { gold: 300, gems: 20 }, dia: { gold: 600, gems: 40 } },
+  compra: { vez: { gold: 100000, gems: 10000 }, dia: { gold: 1000000, gems: 100000 } },   // la tienda de prueba (no cobra); desaparece cuando haya pagos reales
+  pruebas: { vez: { gold: 3000000, gems: 5000 }, dia: { gold: 12000000, gems: 20000 } },   // modo pruebas de quien desarrolla
+  'quitar-pruebas': { vez: {}, dia: {} },   // solo restas
+  gachapon: { vez: {}, dia: {} }, 'retirar-numeros': { vez: {}, dia: {} }, 'mejorar-carta': { vez: {}, dia: {} },   // gastos que cuenta un juego que aún los hace aquí: solo restas
+  despedir: { vez: { gold: 1000000 }, dia: { gold: 5000000 } },   // oro de despedir copias (el juego con servidor lo calcula allí)
+};
 const ECO = {
+  topes: () => Object.assign({}, TOPES_COMUNES, AJUSTES.topes || {}),
   // motivo: para qué es (ahora solo documenta; el servidor lo apuntará en el libro de movimientos)
   // v: { gold, gems, tickets }, cada uno opcional
   ganar(motivo, v) { ECO.motor.mover(motivo, v, 1); },

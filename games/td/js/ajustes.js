@@ -13,6 +13,7 @@
 const AJUSTES = {
   id: 'td',
   nombre: 'Fans of TD',
+  topes: { recompensa: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 } } },   // lo máximo que el servidor deja ganar por partida (PLAN-CUENTAS.md, 15.13)
   guardado: 'fortd-save',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // lo que cambia respecto a la economía común (core/js/meta.js: ECON). Lo que no salga aquí vale lo mismo que en el Rumble.
   econ: {

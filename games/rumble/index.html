@@ -16,13 +16,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.9.38"></script>
+<script src="../../core/js/nucleo.js?v=0.9.39"></script>
 <script>NUCLEO.estilos('../../core/css/menus.css', 'css/estilos-partida.css', 'css/estilos-extra.css', 'css/arena.css', '../../core/css/biblioteca.css')</script>
 
 </head>
 <body>
 <div id="stage">
   <canvas id="cv" aria-label="Arena de combate"></canvas>
+  <div id="fps-box" hidden></div>
   <div id="ui">
     <header id="hud">
       <div class="hud-l">
@@ -272,6 +273,8 @@
         <div class="opt-row"><span><b>Chapas sobre las unidades</b><br>Las siglas de la habilidad, la llama de Rabia y la estrella de los Héroes.</span><button class="btn-ghost ol" id="btn-badges">SÍ</button></div>
         <div class="opt-row"><span><b>Sangre</b><br>Al pegar sale una pequeña niebla roja (sin charcos).</span><button class="btn-ghost ol" id="btn-blood">NO</button></div>
         <div class="opt-row"><span><b>Temblor de pantalla</b><br>La pantalla tiembla con los golpes fuertes, las explosiones y el salto de CrazyBunny.</span><button class="btn-ghost ol" id="btn-shake">SÍ</button></div>
+        <div class="opt-row"><span><b>Modo ahorro</b><br>Para móviles sencillos: dibuja con menos resolución, a 30 imágenes por segundo y con menos polvo y humo. Gasta menos batería y calienta menos.</span><button class="btn-ghost ol" id="btn-ahorro">NO</button></div>
+        <div class="opt-row"><span><b>Contador de FPS</b><br>Enseña arriba a la izquierda cuántas imágenes por segundo dibuja el juego. Por encima de 50 va fluido; por debajo de 25 va a tirones.</span><button class="btn-ghost ol" id="btn-fps">NO</button></div>
         <div class="opt-row"><span><b>Chat en directo</b><br>Los comentarios falsos durante la partida.</span><button class="btn-ghost ol" id="btn-chat">SÍ</button></div>
         <div class="opt-row"><span><b>Modo pruebas</b><br>Las cartas al nivel 10, todas las habilidades y objetos perfectos, toda la campaña con 3 estrellas, 3.000.000 de oro y 5.000 gemas. Guarda una copia de tu partida para volver a ella.</span><button class="btn-ghost ol" id="btn-test">ACTIVAR</button></div>
         <div class="opt-row col"><span><b>Tu progreso</b> se guarda en este navegador. Para pasarlo a otro móvil o PC, copia el código y pégalo allí.</span><div class="row"><button class="btn-ghost ol" id="btn-export">COPIAR CÓDIGO</button><button class="btn-ghost ol" id="btn-import">CARGAR CÓDIGO</button></div><textarea id="save-code" rows="3" aria-label="Código de progreso" placeholder="Aquí aparece o se pega el código"></textarea></div>

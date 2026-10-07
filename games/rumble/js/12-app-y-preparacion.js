@@ -13,11 +13,13 @@ function applyLook() { delete SAVE.theme; delete SAVE.pixel; document.documentEl
 // v0.9.19: números de daño y sangre
 // v0.9.22: música del menú (cualquier tema del juego) y chapas sobre las unidades
 $('#btn-badges').addEventListener('click', () => { SAVE.noBadges = !SAVE.noBadges; saveGame(); play('select'); optLabels(); });
-function optLabels() { optComunes(); $('#btn-badges').textContent = SAVE.noBadges ? 'NO' : 'SÍ'; $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA'; $('#btn-nums').textContent = SAVE.noNums ? 'NO' : 'SÍ'; $('#btn-blood').textContent = SAVE.blood ? 'SÍ' : 'NO'; $('#btn-shake').textContent = SAVE.noShake ? 'NO' : 'SÍ'; }
+function optLabels() { optComunes(); $('#btn-badges').textContent = SAVE.noBadges ? 'NO' : 'SÍ'; $('#btn-feed').textContent = SAVE.feed ? 'EN LA CAJA' : 'ENCIMA'; $('#btn-nums').textContent = SAVE.noNums ? 'NO' : 'SÍ'; $('#btn-blood').textContent = SAVE.blood ? 'SÍ' : 'NO'; $('#btn-shake').textContent = SAVE.noShake ? 'NO' : 'SÍ'; $('#btn-ahorro').textContent = SAVE.ahorro ? 'SÍ' : 'NO'; $('#btn-fps').textContent = SAVE.fps ? 'SÍ' : 'NO'; }
 $('#btn-nums').addEventListener('click', () => { SAVE.noNums = !SAVE.noNums; saveGame(); play('select'); optLabels(); });
 $('#btn-feed').addEventListener('click', () => { SAVE.feed = !SAVE.feed; saveGame(); play('select'); optLabels(); });
 $('#btn-blood').addEventListener('click', () => { SAVE.blood = !SAVE.blood; saveGame(); play('select'); optLabels(); });
 $('#btn-shake').addEventListener('click', () => { SAVE.noShake = !SAVE.noShake; G.shake = 0; saveGame(); play('select'); optLabels(); });   // v0.9.25: Opciones → temblor de pantalla
+$('#btn-ahorro').addEventListener('click', () => { SAVE.ahorro = !SAVE.ahorro; saveGame(); play('select'); optLabels(); fit(); });   // v0.9.39: modo ahorro (móviles sencillos)
+$('#btn-fps').addEventListener('click', () => { SAVE.fps = !SAVE.fps; saveGame(); play('select'); optLabels(); fpsShow(); });   // v0.9.39: contador de FPS
 $('#btn-options').addEventListener('click', optLabels);
 $('#btn-chat').addEventListener('click', () => { SAVE.chatOff = !SAVE.chatOff; saveGame(); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; play('select'); });
 $('#btn-prep-back').addEventListener('click', () => { if (G.prep && G.prep.mode === 'camp') openCamp(); else goHome(); });

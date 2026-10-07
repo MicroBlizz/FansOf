@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.39', real: [
+      '<b>MODO AHORRO</b> (en Opciones): para móviles sencillos. Dibuja con menos resolución, a 30 imágenes por segundo y con menos polvo y humo, así gasta menos batería y calienta menos.',
+      '<b>CONTADOR DE FPS</b> (en Opciones): enseña arriba a la izquierda cuántas imágenes por segundo dibuja el juego. Verde, va fluido; amarillo, justo; rojo, a tirones.'],
+    joke: ['Microblizz también tiene un modo ahorro: lo aplica a los sueldos.'] },
   { v: '0.9.38', real: [
       '<b>MODO PRUEBAS</b> (en Opciones): ahora lo da todo al máximo. Las cartas suben solas al nivel 10, tienes todas las habilidades y objetos con calidad perfecta y toda la campaña con 3 estrellas. Antes guarda una copia de tu partida: con QUITAR vuelves a ella tal como estaba.'],
     joke: ['Microblizz llama a esto «edición coleccionista». Los demás lo llamamos trampas.'] },

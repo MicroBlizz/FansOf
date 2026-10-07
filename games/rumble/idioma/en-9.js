@@ -117,4 +117,11 @@ IDIOMA.add({
   "MAZO": "DECK",
   "<b>ARENA</b>: tu facción y tu mazo van juntos en una fila pequeña. FACCIÓN abre una lista compacta y MAZO abre el editor de la Colección; al guardar vuelves a la arena.": "<b>ARENA</b>: your faction and your deck share one small row. FACTION opens a compact list and DECK opens the Collection's editor; when you save, you're back in the arena.",
   "Microblizz ha encogido la fila de la facción. Dice que es para ahorrar píxeles.": "Microblizz shrank the faction row. They say it saves pixels.",
+  "Modo ahorro": "Saver mode",
+  "Para móviles sencillos: dibuja con menos resolución, a 30 imágenes por segundo y con menos polvo y humo. Gasta menos batería y calienta menos.": "For simpler phones: draws at lower resolution, at 30 frames per second and with less dust and smoke. Uses less battery and runs cooler.",
+  "Contador de FPS": "FPS counter",
+  "Enseña arriba a la izquierda cuántas imágenes por segundo dibuja el juego. Por encima de 50 va fluido; por debajo de 25 va a tirones.": "Shows at the top left how many frames per second the game draws. Above 50 is smooth; below 25 is choppy.",
+  "<b>MODO AHORRO</b> (en Opciones): para móviles sencillos. Dibuja con menos resolución, a 30 imágenes por segundo y con menos polvo y humo, así gasta menos batería y calienta menos.": "<b>SAVER MODE</b> (in Options): for simpler phones. Draws at lower resolution, at 30 frames per second and with less dust and smoke, so it uses less battery and runs cooler.",
+  "<b>CONTADOR DE FPS</b> (en Opciones): enseña arriba a la izquierda cuántas imágenes por segundo dibuja el juego. Verde, va fluido; amarillo, justo; rojo, a tirones.": "<b>FPS COUNTER</b> (in Options): shows at the top left how many frames per second the game draws. Green is smooth; yellow is borderline; red is choppy.",
+  "Microblizz también tiene un modo ahorro: lo aplica a los sueldos.": "Microblizz has a saver mode too: it applies it to salaries.",
 });

@@ -11,7 +11,7 @@ function render() {
   if (!READY) return;
   const rdt = Math.min(0.05, Math.max(0, G.t - (render.lt == null ? G.t : render.lt))); render.lt = G.t;
   ctx.setTransform(VIEW.k, 0, 0, VIEW.k, 0, 0);
-  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = SAVE.ahorro ? 'low' : 'high';   // v0.9.39
   ctx.fillStyle = '#24133a'; ctx.fillRect(0, 0, W, VIEW.LH);
   camApply();   // v0.9.18: zoom
   ctx.translate(0, VIEW.top + FIELD_DY);
@@ -29,10 +29,10 @@ function render() {
   ctx.globalAlpha = 1;
   for (const u of units) {
     drawUnitShadow(u);
-    if (G.state === 'play' && u.moving && u.deployT <= 0 && u.r >= 17 && !TYPES[u.type].hover && Math.random() < 0.1)   // polvo al andar (unidades grandes)
+    if (G.state === 'play' && !SAVE.ahorro && u.moving && u.deployT <= 0 && u.r >= 17 && !TYPES[u.type].hover && Math.random() < 0.1)   // polvo al andar (unidades grandes)
       parts.push({ type: 'dust', x: u.x - u.face * u.r * 0.6 + rand(-3, 3), y: u.y + rand(-2, 2), z: 1, vx: -u.face * 10, vy: 0, vz: 8, g: 0, life: 0.45, max: 0.45, size: 3.2, color: 'rgba(225,205,165,.8)', ground: true });
   }
-  if (G.state !== 'title') for (const st of structs) if (!st.alive && st.smokeUntil > G.t && Math.random() < 0.2)   // humo de las torres caídas
+  if (G.state !== 'title') for (const st of structs) if (!st.alive && st.smokeUntil > G.t && Math.random() < (SAVE.ahorro ? 0.07 : 0.2))   // humo de las torres caídas
     parts.push({ type: 'smoke', x: st.x + rand(-12, 12), y: st.y, z: rand(4, 14), vx: rand(-6, 6), vy: 0, vz: rand(18, 30), g: 0, life: rand(1.2, 1.9), max: 1.9, size: rand(6, 10) });
   const list = structs.concat(units).sort((a, b) => a.y - b.y);
   for (const e of list) (e.kind === 'struct' ? drawStruct(e) : drawUnit(e));

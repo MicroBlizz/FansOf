@@ -28,11 +28,12 @@ Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENT
 Oro, gemas, entradas, objetos, gashapón, mejoras, premios de campaña, misiones, racha, pase, logros, horas extra y anuncios ya los valida el servidor en Rumble y TD.
 - [ ] **21-10-2026**: se cierra sola la subida de partidas antiguas a la cuenta (15.12). Antes, comprobar que los jugadores activos han abierto el juego con conexión; si hace falta, mover la fecha (`ajustes_servidor`).
 - [ ] Antes de abrir la tienda: quitar de los topes los motivos de prueba (`compra`, `compra-pase`, `pruebas`), borrar las funciones `migrar_abierta` y `conciliar_abierta`, y cobrar solo por webhook del proveedor de pago.
-- [ ] Anuncios de verdad (AdMob): hoy el anuncio es de prueba; el servidor debería verificar que se vio antes de dar el premio.
-- [ ] Afinar los topes con lo que se vea con jugadores reales (los recortes quedan anotados en el servidor).
+- [ ] Anuncios de verdad: hoy el anuncio es de prueba. Ojo: AdMob no sirve en web (solo apps). Para web: Google Ad Manager/AdSense «H5 Games Ads» (anuncios con premio, requiere aprobación) y NO ofrece verificación en servidor; lo que sí se puede es pedir un permiso al servidor al empezar el anuncio y exigir un mínimo de segundos antes de cobrar. Decidir proveedor antes de construir.
+- [ ] Afinar los topes con lo que se vea con jugadores reales (los recortes quedan anotados en el servidor). Hoy solo hay ~4 cuentas de prueba (7-10-2026): sin datos que valgan. Revisar con la consulta privada `consulta-topes.sql` cuando haya unas decenas de jugadores activos.
 - [ ] Condiciones de uso: que podemos limitar, aislar o cerrar cuentas que hagan trampa, sin detallar cómo.
 - [ ] La experiencia de las cartas sigue contándola el aparato (decidido dejarlo: subir cartas gasta oro del servidor). Revisar si hiciera falta.
 - [ ] PvP: usar el inventario y las cartas del servidor (no el guardado local) y partidas repetibles para poder comprobarlas.
+- [x] Modo sin conexión (service worker): probado el 7-10-2026 en Chromium, Rumble 0.9.55 y TD 0.13.22 cargan sin red tras una primera visita, sin errores.
 - [ ] Probar con jugadores reales el aviso «Necesitas conexión» y la corrección del saldo cuando el servidor recorta algo.
 
 ## Después

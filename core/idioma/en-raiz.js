@@ -10,5 +10,18 @@ IDIOMA.add({
   "JUGAR": "PLAY",
   "Novedades": "News",
   "Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.": "This page is just a quick way in to try the games. Each game is independent: it has its own saved progress and its own version.",
+  "Inicio": "Home",
+  "Biblioteca": "Library",
+  "BIBLIOTECA": "LIBRARY",
+  "Privacidad y condiciones": "Privacy and terms",
+  "VER LOS JUEGOS": "SEE THE GAMES",
+  "Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.": "Microblizz has bought your favourite games to shut them down. Pick how to stop them.",
+  "Cada juego es independiente: tiene su propia partida guardada y su propia versión.": "Each game is independent: it has its own save and its own version.",
+  "LO COMÚN": "COMMON",
+  "Privacidad": "Privacy",
+  "Condiciones de uso": "Terms of use",
+  "Qué guardamos de ti, para qué y cómo borrarlo.": "What we keep about you, why, and how to delete it.",
+  "Las reglas del juego, juego limpio incluido.": "The rules of the game, fair play included.",
+  "© 2026 Arkioner y Daniel · MicroBlizz · Todos los derechos reservados": "© 2026 Arkioner and Daniel · MicroBlizz · All rights reserved",
   "Español": "Español"
 });

@@ -14,7 +14,23 @@
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; }
-  main { width: 100%; max-width: 540px; box-sizing: border-box; padding: 34px 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  html { scroll-behavior: smooth; }
+  main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  /* menú fijo arriba: secciones de la landing y las partes comunes (privacidad, condiciones) */
+  nav.menu { position: fixed; top: 0; left: 0; right: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+  nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+  nav.menu a:hover, nav.menu a:focus-visible { color: var(--gold); outline: none; }
+  nav.menu .idiomas { font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+  nav.menu .idiomas a { font-family: inherit; font-size: 13px; }
+  section.hero { padding: 96px 0 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  section.hero a.play { text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 26px 6px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); margin-top: 6px; }
+  section.hero a.play:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 18px 0 0; scroll-margin-top: 80px; }
+  section.sec { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; scroll-margin-top: 80px; }
+  .partes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+  .partes a { flex: 1 1 220px; box-sizing: border-box; color: var(--ink); text-decoration: none; text-align: left; border: 3px solid var(--outline); border-radius: 14px; padding: 12px 14px; background: var(--panel); }
+  .partes a b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--gold); }
+  .partes a span { font-size: 14px; font-weight: 600; color: var(--ink-dim); }
   h1 { font-family: var(--font-display); font-weight: 400; line-height: 0.9; margin: 0; }
   h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
   h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
@@ -39,9 +55,19 @@
 </style>
 </head>
 <body>
+<nav class="menu" aria-label="Menú">
+  <a href="#inicio">Inicio</a><a href="#biblioteca">Biblioteca</a><a href="#legal">Privacidad y condiciones</a>
+  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
+</nav>
 <main>
-  <h1><span class="l2 ol-big">FANS OF</span></h1>
-  <p class="sub">Elige juego</p>
+  <section class="hero" id="inicio">
+    <h1><span class="l2 ol-big">FANS OF</span></h1>
+    <p class="sub">Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.</p>
+    <a class="play ol" href="#biblioteca">VER LOS JUEGOS</a>
+  </section>
+  <section class="sec" id="biblioteca">
+    <h2 class="sec ol">BIBLIOTECA</h2>
+    <p class="note">Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
   <section class="game" id="g-rumble" style="--wc: #8a3a12">
     <h2 class="ol">FANS OF RUMBLE</h2>
     <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
@@ -60,9 +86,15 @@
     <div class="row"><a class="play ol" href="games/survivors/">JUGAR</a><span class="ver ol" data-ver></span></div>
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
-  <p class="note">Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
-  <p class="note"><a href="privacidad/">Privacidad / Privacy</a> · <a href="condiciones/">Condiciones / Terms</a></p>
-  <p class="note"><a href="#" data-idioma="es">Español</a> · <a href="#" data-idioma="en">English</a> · <a href="#" data-idioma="">Auto</a></p>
+  </section>
+  <section class="sec" id="legal">
+    <h2 class="sec ol">LO COMÚN</h2>
+    <div class="partes">
+      <a href="privacidad/"><b>Privacidad</b><span>Qué guardamos de ti, para qué y cómo borrarlo.</span></a>
+      <a href="condiciones/"><b>Condiciones de uso</b><span>Las reglas del juego, juego limpio incluido.</span></a>
+    </div>
+  </section>
+  <p class="note">© 2026 Arkioner y Daniel · MicroBlizz · Todos los derechos reservados</p>
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
 <script src="core/js/novedades.js"></script>

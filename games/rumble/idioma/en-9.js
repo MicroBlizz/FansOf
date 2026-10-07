@@ -128,4 +128,6 @@ IDIOMA.add({
   "Microblizz jura que el servidor no se queda con ninguna copia. Solo con las mejores.": "Microblizz swears the server doesn't keep any copies. Only the best ones.",
   "Te faltan gemas": "You are short on gems",
   "Necesitas conexión para esto": "You need a connection for this",
+  "<b>CARTAS EN LA NUBE</b>: con tu cuenta, la máquina de cartas también la hace nuestro servidor, y tus cartas y estrellas quedan guardadas en ella. Para tirar hace falta conexión.": "<b>CARDS IN THE CLOUD</b>: with your account, the card machine is now run by our server too, and your cards and stars are saved in it. You need a connection to pull.",
+  "El servidor de Microblizz cuenta tus estrellas. Dice que las suyas ya las perdió.": "Microblizz's server counts your stars. It says it already lost its own.",
 });

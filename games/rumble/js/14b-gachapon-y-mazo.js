@@ -71,6 +71,14 @@ function cardPull(force) {
   if (C.st < ECON.maxStars) { C.st++; stat('cardstar', 1); return { k, rar, up: true, tag: `¡SUBE A ${C.st} ★!` }; }
   ECO.ganar('carta-repetida', { gems: ECON.dupGems }); return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
 }
+// lo que sale de tirar_cartas (servidor): se guarda lo que dice, sin bajar nunca lo que ya había aquí
+function cardDeServidor(r) {
+  SAVE.cards = SAVE.cards || {}; const rar = r.rar, k = r.k; let C = SAVE.cards[k];
+  if (!C) { C = SAVE.cards[k] = { n: 0, st: 0 }; cardStartLevel(k); if (r.isNew) { C.n = r.n; C.st = r.st; stat('cardnew', 1); return { k, rar, isNew: true, tag: '¡NUEVA!' }; } }
+  C.n = Math.max(C.n, r.n); C.st = Math.max(C.st, r.st);
+  if (r.gems) return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
+  stat('cardstar', 1); return { k, rar, up: true, tag: `¡SUBE A ${C.st} ★!` };
+}
 let cardsGoFac = null;
 function showCardPulls(res) {
   const card = $('#gr-card'), top = res.reduce((a, r) => (RAR_ORDER[r.rar] < RAR_ORDER[a.rar] ? r : a)), R = CARD_RAR[top.rar];

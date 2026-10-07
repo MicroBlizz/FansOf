@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.43', real: [
+      '<b>CARTAS EN LA NUBE</b>: con tu cuenta, la máquina de cartas también la hace nuestro servidor, y tus cartas y estrellas quedan guardadas en ella. Para tirar hace falta conexión.'],
+    joke: ['El servidor de Microblizz cuenta tus estrellas. Dice que las suyas ya las perdió.'] },
   { v: '0.9.42', real: [
       '<b>GASHAPÓN EN LA NUBE</b>: con tu cuenta, las tiradas de habilidades y equipo las hace nuestro servidor, así tus objetos quedan a salvo. Para tirar hace falta conexión.'],
     joke: ['Microblizz jura que el servidor no se queda con ninguna copia. Solo con las mejores.'] },

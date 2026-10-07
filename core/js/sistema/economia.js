@@ -17,7 +17,9 @@ const ECO = {
   async tirar(maquina, n) {
     await ECO_SOMBRA.vaciar();
     const desbloqueadas = typeof FACTION_ORDER !== 'undefined' && typeof isUnlocked === 'function' ? FACTION_ORDER.filter(f => isUnlocked(f)) : [];
-    const r = await CUENTA.rpc('tirar', { p_juego: AJUSTES.id, p_maquina: maquina, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas });
+    const X = typeof MAQUINAS !== 'undefined' && MAQUINAS[maquina];   // una máquina de un juego trae su propia función del servidor (X.rpc)
+    const r = X && X.rpc ? await CUENTA.rpc(X.rpc, { p_juego: AJUSTES.id, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas })
+      : await CUENTA.rpc('tirar', { p_juego: AJUSTES.id, p_maquina: maquina, p_n: n, p_clave: ECO_SOMBRA.id(), p_desbloqueadas: desbloqueadas });
     SAVE.gold = r.oro; SAVE.gems = r.gemas; SAVE.tickets = r.entradas; Object.assign(SAVE.pity, r.garantia);
     ECO_SOMBRA.apuntaLocal(r);
     return r.resultados;

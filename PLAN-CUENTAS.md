@@ -320,7 +320,7 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 **Orden de trabajo de la fase 2** (cada paso se puede subir solo):
 1. ✔ (7-10-2026) `herramientas/subir_datos.py` (abre `herramientas/datos.html` en Chrome sin ventana y escribe `servidor/datos/<juego>.json` y `.sql`) y la tabla `tablas_juego` (`servidor/04-tablas-juego.sql`). Subidos los datos de Rumble (versión 3); los de TD están generados y se suben al llegar su paso.
 2. ✔ (7-10-2026, en la rama, sin publicar) `tirar(juego, maquina, n, clave, desbloqueadas)` para habilidades y equipo (`servidor/05-tirar.sql`) y `ECO.tirar` en el cliente. Solo se activa si el juego lo pide con `AJUSTES.servidor.gachapon` (Rumble sí; TD cuando se suban sus datos) y hay cuenta. Las copias nuevas llevan uid `n<número>` (las locales, `i<número>`). Con servidor, el saldo y las garantías que devuelve mandan sobre los locales.
-3. Máquina de cartas de Rumble.
+3. ✔ (7-10-2026) Máquina de cartas de Rumble: `tirar_cartas` (`servidor/06-tirar-cartas.sql`); las máquinas de un juego declaran `rpc` y `deServidor`. El cliente nunca baja las copias y estrellas que ya tiene (toma el máximo). El nivel de la carta nueva lo sigue calculando el cliente hasta el paso 4.
 4. `despedir`, `retirar_numeros` y `mejorar_carta`.
 5. Cambio del cliente a leer de `estado` y quitar los cálculos locales; entrada en novedades solo cuando el jugador lo note (por ejemplo, «necesita conexión»).
 

@@ -39,5 +39,5 @@ hook('coleccion.lista', list => {
   list.querySelectorAll('[data-goc]').forEach(b => { b.onclick = () => { play('select'); gachaTab = 'cd'; updateWallets(); openGacha(); }; });
 });
 // la tercera máquina del gashapón: cartas (hechizos y mata-sanadores)
-MAQUINAS.cd = { nombre: 'CARTAS', maquina: ['#8b3dff', '#5b21b6', '#4c1d95'], colores: CARD_RAR, tirar: cardPull, ensenar: showCardPulls, textos: buildCardGachaText,
+MAQUINAS.cd = { nombre: 'CARTAS', maquina: ['#8b3dff', '#5b21b6', '#4c1d95'], colores: CARD_RAR, tirar: cardPull, rpc: 'tirar_cartas', deServidor: cardDeServidor, ensenar: showCardPulls, textos: buildCardGachaText,
   verEn() { deckEdit = null; collFac = cardsGoFac || collFac; updateWallets(); show('scr-coll'); buildColl(); } };

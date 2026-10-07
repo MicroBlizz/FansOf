@@ -2,6 +2,7 @@
 // rarezas con garantía y una calidad distinta para cada copia. Los números están en ECON (odds, pity…).
 //
 // Un juego puede añadir máquinas propias en MAQUINAS (y su pestaña en el HTML, con data-gt="su-nombre"):
+//   (con cuenta, si el servidor la sabe tirar: rpc: 'nombre_de_la_funcion' y deServidor(resultado) -> lo mismo que devuelve tirar)
 //   MAQUINAS.cd = { nombre: 'CARTAS', maquina: [tres colores], colores: {rareza: [nombre, claro, oscuro]},
 //                   tirar(seguro) -> { rar, … }, ensenar(lista), textos(), verEn() }
 // y enganchar: 'gacha.abierto' al entrar · 'gacha.textos' al escribir los textos · 'gacha.tirada' (n) después de tirar.
@@ -46,9 +47,9 @@ function pull(n) {
   const c = pullCost(n);
   if (SAVE.gems < c.gems) { play('deny'); confirmBox('FALTAN GEMAS', `Para girar x${n} te faltan <b>${fmt(c.gems - SAVE.gems)} gemas</b>.<small>Las consigues con misiones, la campaña, el pase de batalla o en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
   const kind = gachaTab, X = MAQUINAS[kind];
-  if (!X && ECO.servidor('gachapon')) {   // con cuenta: lo tira el servidor y hace falta conexión
+  if (ECO.servidor('gachapon') && (!X || X.deServidor)) {   // con cuenta: lo tira el servidor y hace falta conexión
     gachaEsperando = true;
-    ECO.tirar(kind, n).then(rs => { gachaEsperando = false; audioInit(); acabarTirada(n, c, kind, X, rs.map(copiaDeServidor)); })
+    ECO.tirar(kind, n).then(rs => { gachaEsperando = false; audioInit(); acabarTirada(n, c, kind, X, rs.map(X ? X.deServidor : copiaDeServidor)); })
       .catch(e => { gachaEsperando = false; play('deny'); toast(ECO.errorTexto(e)); });
     return;
   }

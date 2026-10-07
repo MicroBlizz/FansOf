@@ -5,6 +5,15 @@
 #scr-prep.arena .prep-info { max-width: 500px; background: none; border: 0; padding: 0; overflow: visible; display: flex; flex-direction: column; gap: 10px; }
 #scr-prep.arena > p.diff-label:not(#diff-label), #scr-prep.arena #fac-grid { display: none; }
 #scr-prep.arena.fac-abierta #fac-grid { display: grid; }
+/* v0.9.37: en la arena el mazo va en la fila de la facción, así que la barra «TU MAZO» de la preparación no sale */
+#scr-prep.arena #prep-deck { display: none !important; }
+/* la lista de facciones de la arena, en pequeño: 5 por fila, solo el líder y el nombre */
+#scr-prep.arena #fac-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 500px; }
+#scr-prep.arena .diff-opt.fac-opt { padding: 3px 2px 4px; border-radius: 12px; }
+#scr-prep.arena .fac-opt canvas { width: 40px; height: 32px; margin: 0 auto; }
+#scr-prep.arena .fac-opt b { font-size: 10.5px !important; line-height: 1.1; white-space: normal; }
+#scr-prep.arena .fac-opt small { display: none; }
+#scr-prep.arena .fac-opt .lock { right: 2px; top: 2px; font-size: 8px; padding: 0 3px; }
 #scr-prep.arena .prep-info { flex-shrink: 0; }
 /* mientras eliges facción, los rivales y el premio se apartan para que quepa la lista */
 #scr-prep.arena.fac-abierta .ar-lbl, #scr-prep.arena.fac-abierta .ar-list, #scr-prep.arena.fac-abierta .ar-mid, #scr-prep.arena.fac-abierta .ar-prize { display: none; }
@@ -48,9 +57,14 @@
 .ar-prize { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; padding: 8px 10px; border-radius: 14px; border: 3px solid var(--outline); background: var(--panel); font-size: 14px; font-weight: 800; }
 .prep-info .ar-prize b { font-family: var(--font-ui); font-size: 14px; font-weight: 800; color: var(--gold); }
 .ar-prize .lose { color: #ff9aa5; }
-.ar-fac { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 14px; border: 3px solid var(--outline); background: var(--panel); }
-.ar-fac canvas { width: 44px; height: 38px; flex: none; }
-.ar-fac span { flex: 1; min-width: 0; }
-.prep-info .ar-fac b { display: block; font-size: 18px; line-height: 1.1; }
-.ar-fac small { display: block; font-size: 12px; font-weight: 800; color: var(--ink-dim); }
-.ar-fac .chip-btn { font-family: var(--font-display); font-size: 15px; padding: 6px 10px 3px; }
+.ar-fac { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 14px; border: 3px solid var(--outline); background: var(--panel); }
+.ar-fac > canvas { width: 44px; height: 38px; flex: none; }
+.ar-fn { flex: 0 1 auto; min-width: 0; }
+.prep-info .ar-fac b { display: block; font-size: 15px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ar-fac small { display: block; font-size: 11px; font-weight: 800; color: var(--ink-dim); }
+.ar-deck { flex: 1; display: flex; gap: 2px; justify-content: center; min-width: 0; }
+.ar-deck i { width: 26px; height: 26px; flex: none; border-radius: 7px; border: 2px solid var(--outline); background: rgba(0, 0, 0, 0.3); display: flex; align-items: center; justify-content: center; }
+.ar-deck i.sp { background: rgba(139, 61, 255, 0.45); }
+.ar-deck canvas { width: 24px; height: 22px; }
+.ar-btns { display: flex; flex-direction: column; gap: 4px; flex: none; }
+.ar-fac .chip-btn { font-family: var(--font-display); font-size: 13px; padding: 4px 8px 2px; text-align: center; }

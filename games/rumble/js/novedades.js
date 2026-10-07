@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.37', real: [
+      '<b>ARENA</b>: tu facción y tu mazo van juntos en una fila pequeña. FACCIÓN abre una lista compacta y MAZO abre el editor de la Colección; al guardar vuelves a la arena.'],
+    joke: ['Microblizz ha encogido la fila de la facción. Dice que es para ahorrar píxeles.'] },
   { v: '0.9.36', real: [
       '<b>MAZO</b>: ahora se edita dentro de la Colección. EDITAR MAZO se despliega ahí mismo y GUARDAR lo pliega. El botón «Mazo» del menú principal se quitó.'],
     joke: ['Microblizz ha escondido el mazo dentro de la colección. Dicen que así ya no se pierde.'] },

@@ -8,7 +8,9 @@
    v0.9.35: pantalla nueva (boceto A, elegido por Daniel). Lo principal arriba: la liga en grande, con su escudo, tus copas y
    la barra hasta la siguiente liga; debajo, los 3 rivales en tarjetas; luego lo que ganas o pierdes, y la facción en pequeño.
    · Racha: victorias seguidas (se ve a partir de 2).
-   · Regalos del camino: cada vez que tu récord pasa por primera vez un múltiplo de ARENA.regaloCada copas, una tirada gratis. */
+   · Regalos del camino: cada vez que tu récord pasa por primera vez un múltiplo de ARENA.regaloCada copas, una tirada gratis.
+   v0.9.37: facción y mazo en una sola fila pequeña. FACCIÓN abre la lista compacta; MAZO abre el editor de la Colección
+   (openDeck con vuelta a esta pantalla). La barra «TU MAZO» de la preparación no sale en la arena. */
 const ARENA = {
   leagues: [['Becario', 0], ['Junior', 200], ['Senior', 500], ['Director', 900], ['CEO', 1400]],
   colors: ['#c08a5a', '#cdd3e0', '#ffcb3d', '#b98aff', '#ff7e8a'],   // el escudo de cada liga: bronce, plata, oro, violeta y coral
@@ -65,11 +67,15 @@ function buildArenaPrep() {
     + `<div class="ar-lbl ol">ELIGE RIVAL</div><div class="ar-list">${A.rivals.map(card).join('')}</div>`
     + `<div class="ar-mid"><button class="btn-link" id="btn-ar-roll">Otros rivales</button><span class="ar-note">De momento son «jugadores» inventados: los maneja la CPU.</span></div>`
     + `<div class="ar-prize"><span>Si ganas: <b>+${ARENA.win} copas · ${arenaGold(L)} de oro · ${ARENA.gems} gemas</b></span><span class="lose">Si pierdes: −${ARENA.lose} copas</span></div>`
-    + `<div class="ar-fac"><canvas data-arl="${F.leader}" data-mini="1"></canvas><span><b class="ol">${F.name}</b><small>${F.passive} · tu facción para esta partida</small></span><button class="chip-btn ol" id="btn-ar-fac">${$('#scr-prep').classList.contains('fac-abierta') ? 'LISTO' : 'CAMBIAR'}</button></div>`;
+    + `<div class="ar-fac"><canvas data-arl="${F.leader}" data-mini="1"></canvas><span class="ar-fn"><b class="ol">${F.name}</b><small>${F.passive}</small></span>`
+    + `<span class="ar-deck">${deckOf(G.faction).map(k => `<i class="${isSpell(k) ? 'sp' : ''}"><canvas data-ard="${k}"></canvas></i>`).join('')}</span>`
+    + `<span class="ar-btns"><button class="chip-btn ol" id="btn-ar-fac">${$('#scr-prep').classList.contains('fac-abierta') ? 'LISTO' : 'FACCIÓN'}</button><button class="chip-btn ol" id="btn-ar-deck">MAZO</button></span></div>`;
   for (const cv of document.querySelectorAll('#prep-info canvas[data-arl]')) { if (cv.dataset.mini) drawArt(cv, cv.dataset.arl, 44, 38); else drawArt(cv, cv.dataset.arl, 74, 64); }
+  for (const cv of document.querySelectorAll('#prep-info canvas[data-ard]')) drawArt(cv, cv.dataset.ard, 24, 22);
   for (const b of document.querySelectorAll('[data-ar]')) b.onclick = () => { A.sel = +b.dataset.ar; saveGame(); play('select'); buildArenaPrep(); };
   $('#btn-ar-roll').onclick = () => { A.rivals = arenaRoll(A.cups); A.sel = 0; saveGame(); play('select'); buildArenaPrep(); };
   $('#btn-ar-fac').onclick = () => { play('select'); $('#scr-prep').classList.toggle('fac-abierta'); buildArenaPrep(); };
+  $('#btn-ar-deck').onclick = () => { play('select'); openDeck(G.faction, 'scr-prep'); };   // v0.9.37: el editor de mazo de la Colección; al GUARDAR vuelve aquí
   const r = A.rivals[A.sel] || A.rivals[0];
   $('#btn-play').innerHTML = `BATALLA<small>contra ${esc(r.name)}</small>`;
 }
@@ -92,3 +98,4 @@ function arenaReward(R, w) {
   A.rivals = arenaRoll(A.cups); A.sel = 0;
 }
 $('#btn-arena').addEventListener('click', () => { play('select'); openPrep('arena'); });
+hook('pantalla', id => { if (id === 'scr-prep' && G.prep && G.prep.mode === 'arena') buildArenaPrep(); });   // v0.9.37: al volver del mazo

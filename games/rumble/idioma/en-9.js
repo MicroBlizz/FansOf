@@ -112,4 +112,9 @@ IDIOMA.add({
   "<b>ARENA</b> renovada: tu liga en grande con su escudo, tus copas y una barra hasta la siguiente liga. Los rivales salen en tarjetas con su dificultad, ves lo que ganas o pierdes, y la facción se cambia con un botón.": "<b>ARENA</b> revamped: your league front and centre with its shield, your cups and a bar to the next league. Rivals come as cards with their difficulty, you can see what you win or lose, and you change faction with one button.",
   "<b>RACHA</b> de victorias y <b>REGALOS DEL CAMINO</b>: cada 100 copas de récord, una tirada gratis del gashapón.": "Win <b>STREAK</b> and <b>ROAD GIFTS</b>: every 100 record cups, a free gashapon pull.",
   "En Microblizz las ligas se deciden por antigüedad. En la arena, de momento, no.": "At Microblizz, leagues are decided by seniority. In the arena, for now, they aren't.",
+  // Arena 0.9.37
+  "FACCIÓN": "FACTION",
+  "MAZO": "DECK",
+  "<b>ARENA</b>: tu facción y tu mazo van juntos en una fila pequeña. FACCIÓN abre una lista compacta y MAZO abre el editor de la Colección; al guardar vuelves a la arena.": "<b>ARENA</b>: your faction and your deck share one small row. FACTION opens a compact list and DECK opens the Collection's editor; when you save, you're back in the arena.",
+  "Microblizz ha encogido la fila de la facción. Dice que es para ahorrar píxeles.": "Microblizz shrank the faction row. They say it saves pixels.",
 });

@@ -7,8 +7,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
 - `core/css/menus-extra.css` · 19 KB
-- `core/css/menus-tienda.css` · 20 KB
-- `core/css/menus.css` · 21 KB
+- `core/css/menus-tienda.css` · 19 KB
+- `core/css/menus.css` · 20 KB
 - `core/idioma/en-extra.js` · 8 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 8 KB
@@ -75,18 +75,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `games/rumble/index.html` · 34 KB
 - `games/rumble/sw.js` · <1 KB
-- `games/rumble/css/arena.css` · 6 KB
+- `games/rumble/css/arena.css` · 7 KB
 - `games/rumble/css/estilos-extra.css` · 23 KB
-- `games/rumble/css/estilos-partida.css` · 20 KB
+- `games/rumble/css/estilos-partida.css` · 19 KB
 - `games/rumble/idioma/en-1.js` · 15 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
 - `games/rumble/idioma/en-5.js` · 11 KB
-- `games/rumble/idioma/en-6.js` · 14 KB
+- `games/rumble/idioma/en-6.js` · 13 KB
 - `games/rumble/idioma/en-7.js` · 14 KB
 - `games/rumble/idioma/en-8.js` · 9 KB
-- `games/rumble/idioma/en-9.js` · 9 KB
+- `games/rumble/idioma/en-9.js` · 10 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL

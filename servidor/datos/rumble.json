@@ -922,6 +922,88 @@
    "gems": 5,
    "gold": 100
   },
+  "mundos": [
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": "7-4"
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": "12-4"
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   },
+   {
+    "jefe": 4,
+    "niveles": 4,
+    "openAfter": null
+   }
+  ],
   "pay": {
    "h": 2,
    "m": 3,
@@ -1088,5 +1170,5 @@
    }
   }
  },
- "version": 6
+ "version": 7
 }

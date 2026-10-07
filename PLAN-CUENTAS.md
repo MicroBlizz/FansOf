@@ -358,3 +358,10 @@ Hasta la fase 4 no hay dinero en juego, así que 1-3 pueden madurar con jugadore
 - Datos nuevos en `tablas_juego.datos.premios` (los saca `herramientas/subir_datos.py`): `camp`, `pay`, `gift`, `starter`.
 - **No se comprueba aún**: que el nivel esté desbloqueado (hace falta la lista de niveles y su orden en el servidor) ni que las estrellas sean verdad.
 - Siguiente (paso 3): misiones, racha de días y pase de batalla por el mismo camino; horas extra y anuncios con el reloj en el servidor.
+
+### 15.15 Fase 3, paso 3: el servidor lleva el progreso de la campaña y valida los niveles (7-10-2026)
+Idea del usuario: para confirmar un evento de un solo cobro basta con tener los eventos ya cobrados y comprobar que, con ellos, el nuevo es posible (por ejemplo, haber pasado antes el jefe o los niveles previos). Aplicado a la campaña (`servidor/11-progreso-de-campana.sql`):
+- El servidor guarda las estrellas ya cobradas de cada nivel y dificultad en `reclamos` (`camp:<dif>:<nivel>:<1|2|3>`) y no paga un nivel que no esté abierto con lo que sabe: el nivel anterior del mundo, el último nivel del mundo anterior (o el `openAfter` del mundo), Difícil tras pasar el mundo en Normal, Mítica tras Difícil. Los niveles y su orden salen de `datos.premios.mundos`, que sube `subir_datos.py` desde `WORLDS`.
+- Que un nivel sea jefe lo dice el servidor, no el cliente.
+- **Progreso que ya existía**: `conciliar_progreso` sube una vez las estrellas de `SAVE.camp`, `campH` y `campM` (misma puerta que `conciliar`, hasta el 21-10-2026). Mientras una cuenta no lo haya subido y la puerta esté abierta, no se comprueba el orden (para no negar premios a quien ya jugaba); cuando la puerta se cierre se comprueba a todas, también a las que no lo subieron (con progreso vacío).
+- Idea para los siguientes pasos con el mismo patrón: logros y misiones se apoyan en contadores que el servidor lleva a partir de los eventos que ya valida; las horas extra, en la fecha del último cobro del servidor (nunca más de 12 h acumuladas).

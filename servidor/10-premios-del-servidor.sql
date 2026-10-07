@@ -6,6 +6,7 @@
 --   · calcula: 'camp'  si el movimiento trae evento {tipo:'camp', nivel, dif, estrellas, victoria, jefe}, el servidor calcula el premio con datos.premios
 --     (primer pase, repeticiones, tercera estrella, derrota, multiplicador de dificultad) y apunta las estrellas ya cobradas en `reclamos`.
 --   · el resto: la cantidad la dice el cliente y la limitan los topes de siempre (vez y dia).
+--     (desde el paso 3 solo si el nivel está abierto y el jefe lo dice el servidor)
 -- En todos los casos siguen aplicándose los topes vez y dia.
 create or replace function public.anotar(p_juego text, p_movs jsonb) returns jsonb
 language plpgsql security definer set search_path = '' as $$
@@ -13,7 +14,7 @@ declare
   u uuid := auth.uid(); d jsonb; T jsonb; tp jsonb; e jsonb; n int := 0; rech int := 0; filas int; mot text; v_clave text;
   p_o bigint; p_g bigint; p_e bigint; d_o bigint; d_g bigint; d_e bigint; u_o bigint; u_g bigint; u_e bigint;
   lim constant numeric := 10000000;
-  fj jsonb; ev jsonb; cm jsonb; pay numeric; prev int; st int; i int; c_o numeric; c_g numeric;
+  fj jsonb; ev jsonb; cm jsonb; cv jsonb; pay numeric; prev int; st int; i int; c_o numeric; c_g numeric;
 begin
   if u is null then raise exception 'sin_sesion'; end if;
   if jsonb_typeof(p_movs) <> 'array' then raise exception 'movimientos_no_validos'; end if;
@@ -39,6 +40,8 @@ begin
     elsif tp->>'calcula' = 'camp' and jsonb_typeof(ev) = 'object' and ev->>'tipo' = 'camp' then
       cm := d->'premios'->'camp';
       if cm is null or coalesce(ev->>'dif', '') not in ('n', 'h', 'm') or coalesce(ev->>'nivel', '') !~ '^[A-Za-z0-9_-]{1,20}$' then rech := rech + 1; continue; end if;
+      cv := public._camp_abierto(u, p_juego, d, ev->>'dif', ev->>'nivel');   -- ¿está abierto el nivel según lo que el servidor sabe? (11-progreso-de-campana.sql)
+      if not (cv->>'ok')::boolean then rech := rech + 1; continue; end if;
       pay := coalesce((d->'premios'->'pay'->>(ev->>'dif'))::numeric, 1);
       select count(*) into prev from public.reclamos r
         where r.usuario = u and r.juego = p_juego and r.clave in ('camp:' || (ev->>'dif') || ':' || (ev->>'nivel') || ':1', 'camp:' || (ev->>'dif') || ':' || (ev->>'nivel') || ':2', 'camp:' || (ev->>'dif') || ':' || (ev->>'nivel') || ':3');
@@ -46,7 +49,7 @@ begin
       if coalesce((ev->>'victoria')::boolean, false) then
         st := least(greatest(coalesce((ev->>'estrellas')::int, 1), 1), 3);
         if prev = 0 then
-          if coalesce((ev->>'jefe')::boolean, false) then c_o := (cm->'boss'->>0)::numeric * pay; c_g := (cm->'boss'->>1)::numeric * pay;
+          if (cv->>'jefe')::boolean then c_o := (cm->'boss'->>0)::numeric * pay; c_g := (cm->'boss'->>1)::numeric * pay;
           else c_o := (cm->'first'->>0)::numeric * pay; c_g := (cm->'first'->>1)::numeric * pay; end if;
         else c_o := (cm->>'replay')::numeric * pay; end if;
         if st = 3 and prev < 3 then c_o := c_o + (cm->'stars3'->>0)::numeric * pay; c_g := c_g + (cm->'stars3'->>1)::numeric * pay; end if;

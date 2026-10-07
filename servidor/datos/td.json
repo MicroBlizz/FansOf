@@ -828,6 +828,7 @@
    "gems": 5,
    "gold": 100
   },
+  "mundos": [],
   "pay": {},
   "starter": null
  },
@@ -931,5 +932,5 @@
    "vez": {}
   }
  },
- "version": 6
+ "version": 7
 }

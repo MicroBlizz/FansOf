@@ -1,0 +1,15 @@
+<!-- Fans Of · plantilla de correo de Supabase. Se pega en el panel (ver LEEME.md). Mantén {{ .ConfirmationURL }}. -->
+<div style="background:#f3f0ea;padding:24px 12px;font-family:Arial,Helvetica,sans-serif;color:#2b2118">
+  <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:28px;border-top:6px solid #c9822b">
+    <h1 style="margin:0 0 14px;font-size:22px">Fans Of</h1>
+    <p style="font-size:16px;line-height:1.5">Para guardar tu partida con este correo, confírmalo pulsando el botón. Así podrás recuperarla en cualquier dispositivo.</p>
+    <p style="text-align:center;margin:26px 0">
+      <a href="{{ .ConfirmationURL }}" style="background:#c9822b;color:#fff;text-decoration:none;font-weight:bold;padding:13px 26px;border-radius:8px;display:inline-block">Confirmar mi correo</a>
+    </p>
+    <p style="font-size:13px;color:#6b5d4d;line-height:1.5">Si no has sido tú, ignora este correo: no pasará nada.<br>Si el botón no funciona, copia este enlace en el navegador:<br><span style="word-break:break-all">{{ .ConfirmationURL }}</span></p>
+    <hr style="border:0;border-top:1px solid #e5ddd0;margin:22px 0">
+    <p style="font-size:14px;line-height:1.5"><b>English:</b> To save your progress with this email, confirm it with the button above. You'll be able to recover it on any device.</p>
+    <p style="font-size:12px;color:#6b5d4d">If it wasn't you, just ignore this email. · fansofmicroblizz@gmail.com</p>
+    <p style="text-align:center;margin:14px 0 0"><a href="{{ .ConfirmationURL }}" style="color:#c9822b;font-weight:bold">Confirm my email</a></p>
+  </div>
+</div>

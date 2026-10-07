@@ -33,10 +33,10 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 ## Probar y publicar
 - python herramientas/servidor.py y abre http://localhost:8765/games/<juego>/ (--con-sw para probar el modo sin conexión).
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.
-- Versión y novedades: NO subas el ?v= de nucleo.js a mano. Si el jugador va a notar el cambio, escribe su entrada al principio de NEWS (games/<juego>/js/novedades.js) con `v: 'proxima'`. Al publicar, el script sube la versión de los juegos que han cambiado (si tocas core, de todos) y pone esa versión en su entrada.
-- Un commit y `git push origin main` guardan el trabajo sin generar versión ni publicar nada (TODO, planes, SQL, herramientas y trabajo a medias se pueden subir a main cuando quieras).
-- No hagas commit ni push sin que te lo pidan.
-- Publicar (que llegue a los jugadores) es solo `python herramientas/publicar.py` (con `--ver` ves antes qué cambiaría), y solo cuando te lo pidan. Sube la versión de los juegos que cambian, pone una etiqueta `web-AAAAMMDD-HHMM`, sube main y la etiqueta, mueve gh-pages y comprueba en la web real que las versiones coinciden. Hasta que no diga OK, no digas «publicado».
-- Si tu sesión no tiene permiso para subir etiquetas o gh-pages y el script ya hizo el commit «Versión: …», NO lo ejecutes otra vez (volvería a subir la versión): sube main y dile al dueño que ejecute `python herramientas/publicar.py --desplegar` en su ordenador (despliega main tal como está).
-- Nunca toques gh-pages a mano (ni `git push` a secas): gh-pages es solo un puntero a una etiqueta de main. Volver atrás: `python herramientas/publicar.py --lista` y `--a <etiqueta>`; sin revertir commits en main. `--estado` compara main, gh-pages y la web viva.
+- Publicar versión: sube el ?v= de nucleo.js en el index.html de cada juego afectado (si tocas core, en todos); si el jugador lo nota, entrada en NEWS.
+- Guardar el trabajo es libre: haz commit y `git push origin main` cuando quieras (los dos, Rafael y Dani, y sus sesiones). Eso NO despliega nada.
+- Al terminar cambios en los juegos (y cuando tengas un commit nuevo), OFRECE SIEMPRE desplegar: «¿Lo despliego?». Si te dicen que sí: `python herramientas/desplegar.py`. Copia main a gh-pages (que siempre es una copia de main) y comprueba en la web real que las versiones coinciden. No digas «desplegado» hasta que diga OK.
+- Nunca toques gh-pages a mano ni uses `git push` a secas (el script deja la configuración local para que un push normal suba solo main). `python herramientas/desplegar.py --estado` compara main, gh-pages y la web viva.
+- Volver atrás: `python herramientas/desplegar.py --lista` (versiones desplegables) y `--a <commit>`; main no se toca.
+- Si tu sesión no puede mover gh-pages (permisos), el script lo dice: sube main y pide al dueño que ejecute `python herramientas/desplegar.py` en su ordenador.
 - El servidor (Supabase) no vuelve atrás con la web: los cambios de base de datos deben seguir funcionando con versiones anteriores de los juegos.

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fans Of</title>
-<meta name="description" content="Fans Of: los juegos de Fans of Rumble y Fans of TD. Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.">
+<meta name="description" content="Fans Of: los juegos de Fans of Rumble, Fans of TD y Fans of Survivors. Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.">
 <meta name="theme-color" content="#150b21">
 <link rel="icon" type="image/png" href="core/img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,12 +54,18 @@
     <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
+  <section class="game" id="g-survivors" style="--wc: #2f7a2a">
+    <h2 class="ol">FANS OF SURVIVORS</h2>
+    <p>El nuevo (prototipo). CrazyBunny contra toda la plantilla de Microblizz: muévete, tus cartas disparan solas. Aguanta 10 minutos y despide a SurvivalBot.</p>
+    <div class="row"><a class="play ol" href="games/survivors/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
   <p class="note">Esta página es solo un acceso rápido para probar. Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
   <p class="note"><a href="#" data-idioma="es">Español</a> · <a href="#" data-idioma="en">English</a> · <a href="#" data-idioma="">Auto</a></p>
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
 <script src="core/js/novedades.js"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js'] })</script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -79,7 +85,7 @@ function show(id, ver, entries) {
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
-for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/']]) {
+for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/']]) {
   Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')]).then(([page, news]) => {
     show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1], grab(news, 'NEWS', '];') || []);
   }).catch(fail(id));

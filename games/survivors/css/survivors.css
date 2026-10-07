@@ -1,0 +1,47 @@
+/* Fans of Survivors · Estilos de este juego. Los colores y las letras son los de core/css/base.css y las pantallas comunes
+   (menú, colección, gashapón, tienda…) los de core/css/menus*.css. Aquí va lo que casa esas pantallas con esta página
+   (lo mismo que en games/td/css/td.css) y las pantallas de la partida: subir de nivel, pausa y marcador. */
+/* ---------- lo común, como en el TD ---------- */
+.btn-big { font-family: var(--font-display); font-size: 36px; line-height: 1; padding: 16px 56px 10px; border-radius: 20px; border: 4px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); cursor: pointer; box-shadow: 0 7px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.4); }
+.btn-big:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--outline); }
+.btn-ghost { font-family: var(--font-display); font-size: 22px; line-height: 1; padding: 13px 22px 8px; border-radius: 16px; border: 3px solid var(--outline); background: var(--tray-hi); cursor: pointer; box-shadow: 0 5px 0 var(--outline); }
+.btn-ghost:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 40px 26px; background: radial-gradient(110% 70% at 50% 20%, rgba(43, 20, 70, 0.55), rgba(21, 11, 33, 0.9)); }
+.screen.top, .screen.modal { gap: 10px; text-align: center; z-index: 20; }
+.screen.modal { display: flex; justify-content: center; z-index: 30; }
+.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+#toast:not(.menu) { top: 104px; }   /* en partida, por debajo del marcador */
+#ui #scr-title .home-grid { grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 508px; }   /* siete casillas en una fila, como en el Rumble (0.13.1: Biblioteca) */
+#ui #scr-title .camp-row .btn-big { flex: 1 1 auto; }
+#ui .passive-box svg { flex: none; width: 26px; height: 32px; }
+#ui #scr-pause .btn-sound { position: absolute; left: 14px; top: 14px; }
+#ui .opt-list { margin-top: 2px; touch-action: pan-y; }
+#ui .opt-row .btn-ghost:disabled { opacity: 0.6; cursor: default; }
+.rec-line { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: var(--ink-dim); text-align: center; }
+.rec-line b { color: var(--gold); }
+#ui #scr-title .logo .l2 { font-size: 64px; }
+/* ---------- en partida ---------- */
+#hud { position: absolute; right: 10px; top: 30px; pointer-events: auto; z-index: 5; }
+.icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 3px solid var(--outline); background: rgba(38, 20, 60, .85); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; font-size: 20px; }
+.icon-btn svg { width: 22px; height: 22px; }
+#scr-nivel, #scr-pause { background: var(--modal); justify-content: center; gap: 12px; z-index: 20; }
+#scr-end { justify-content: center; z-index: 20; }
+#niv-titulo { margin: 0; font-weight: 400; font-size: 46px; color: var(--gold); text-align: center; }
+#niv-titulo small { display: block; font-size: 26px; color: var(--ink); margin-top: 4px; }
+.niv-sub { margin: 0 0 6px; font-size: 16px; font-weight: 700; color: var(--ink-dim); text-align: center; }
+#niv-ops { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 470px; }
+.op { display: flex; align-items: center; gap: 14px; text-align: left; padding: 12px 14px; border-radius: 16px; border: 4px solid var(--outline); background: linear-gradient(110deg, var(--tray-hi), var(--tray)); box-shadow: 0 5px 0 var(--outline); cursor: pointer; color: var(--ink); animation: entra .28s ease-out both; }
+.op.nuevo { background: linear-gradient(110deg, #6a3a14, var(--tray)); }
+.op:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+.op:hover { filter: brightness(1.12); }
+.op-ic { flex: none; width: 64px; height: 64px; display: grid; place-items: center; font-size: 38px; border-radius: 12px; background: rgba(20, 10, 34, .55); }
+.op-ic canvas { width: 64px; height: 64px; }
+.op-nom { font-family: var(--font-display); font-size: 21px; line-height: 1.05; }
+.op-nv { font-size: 15px; color: var(--gold); margin-left: 4px; }
+.op.nuevo .op-nv { color: #7dff7a; }
+.op-desc { font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ink-dim); margin-top: 3px; }
+@keyframes entra { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: none; } }
+#pau-lista { list-style: none; margin: 0 0 6px; padding: 12px 18px; background: var(--panel); border: 3px solid var(--outline); border-radius: 14px; font-size: 16px; font-weight: 600; text-align: left; min-width: 260px; }
+#pau-lista:empty { display: none; }
+#pau-lista li { margin: 3px 0; }
+@media (prefers-reduced-motion: reduce) { .op { animation: none; } }

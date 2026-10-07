@@ -46,3 +46,6 @@ Reglas del webhook: solo estados pagados; reembolso/disputa = restar (puede deja
 2. Autónomo o sociedad, y cuándo darlo de alta.
 3. Catálogo y precios reales de los packs (hoy `SHOP` es de prueba).
 4. El visto bueno final para abrir la tienda (y desplegar).
+
+## 7. Bélgica y Países Bajos (decidido 7-10-2026)
+No se vende nada allí (ni oro ni gemas): las gemas van al gachapón y el oro también alimenta azar (niveles de habilidades), así que ninguna moneda queda libre de caja de botín. Para abrir esos países habría que separar antes ese azar del oro.

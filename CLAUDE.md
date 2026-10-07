@@ -33,8 +33,9 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 ## Probar y publicar
 - python herramientas/servidor.py y abre http://localhost:8765/games/<juego>/ (--con-sw para probar el modo sin conexión).
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.
-- Publicar: sube el ?v= de nucleo.js en el index.html de cada juego afectado (si tocas core, en todos); si el jugador lo nota, entrada en NEWS.
-- No hagas commit ni push sin que te lo pidan. Un commit y `git push origin main` guardan el trabajo pero NO lo publican.
-- Publicar (que llegue a los jugadores) es solo `python herramientas/publicar.py`, y solo cuando te lo pidan. Pone una etiqueta `web-AAAAMMDD-HHMM`, sube main y la etiqueta, mueve gh-pages y comprueba en la web real que las versiones coinciden. Hasta que no diga OK, no digas «publicado».
+- Versión y novedades: NO subas el ?v= de nucleo.js a mano. Si el jugador va a notar el cambio, escribe su entrada al principio de NEWS (games/<juego>/js/novedades.js) con `v: 'proxima'`. Al publicar, el script sube la versión de los juegos que han cambiado (si tocas core, de todos) y pone esa versión en su entrada.
+- Un commit y `git push origin main` guardan el trabajo sin generar versión ni publicar nada (TODO, planes, SQL, herramientas y trabajo a medias se pueden subir a main cuando quieras).
+- No hagas commit ni push sin que te lo pidan.
+- Publicar (que llegue a los jugadores) es solo `python herramientas/publicar.py` (con `--ver` ves antes qué cambiaría), y solo cuando te lo pidan. Sube la versión de los juegos que cambian, pone una etiqueta `web-AAAAMMDD-HHMM`, sube main y la etiqueta, mueve gh-pages y comprueba en la web real que las versiones coinciden. Hasta que no diga OK, no digas «publicado».
 - Nunca toques gh-pages a mano (ni `git push` a secas): gh-pages es solo un puntero a una etiqueta de main. Volver atrás: `python herramientas/publicar.py --lista` y `--a <etiqueta>`; sin revertir commits en main. `--estado` compara main, gh-pages y la web viva.
 - El servidor (Supabase) no vuelve atrás con la web: los cambios de base de datos deben seguir funcionando con versiones anteriores de los juegos.

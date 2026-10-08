@@ -66,7 +66,7 @@ function pvpRendirse() {
   if (G.state !== 'play') return;
   confirmBox('¿Rendirte?', 'Si te rindes, la partida cuenta como una derrota.', 'ME RINDO', () => {
     if (G.state !== 'play') return;
-    if (PVP.red) PVP.red.enviar({ t: 'rendir' });
+    try { if (PVP.red) PVP.red.enviar({ t: 'rendir' }); } catch (e) { /* aunque falle el aviso, te rindes igual */ }
     endMatch(PVP.peer, 'abandono');
   });
 }

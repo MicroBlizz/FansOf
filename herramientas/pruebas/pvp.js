@@ -108,7 +108,8 @@ async function pruebaPvp(raiz, duerme) {
     if (JSON.stringify(sv.fin[0]) !== JSON.stringify(sv.fin[1])) fallos.push('servidor: el final no coincide');
     if (!(sv.cierres.a && sv.cierres.a.puntos != null && sv.cierres.b && sv.cierres.b.puntos != null)) fallos.push('servidor: el cierre no da puntos a los dos');
     { const w = (await abre()).w, eq = w.pvpEquipoDeServidor([{ c: 'squirrel', n: 4, st: 1 }, { c: 'beaver', n: 2 }, { c: 'fox', n: 2 }, { c: 'meercat', n: 2 }, { c: 'junkcoon', n: 2 }, { c: 'mechavaca', n: 2 }, { c: 'bunny', n: 5 }], [{ s: 'ab_bunny', u: 'x', t: 'ab', o: 'cafeina', q: [0.5] }, { s: 'eq_head', u: 'y', t: 'eq', o: 'cuernos', q: [0.7] }]);
-      const mal = w.pvpEquipoMal(eq); ap('0b · equipo del servidor', mal ? 'MAL: ' + mal : `${eq.fac}, ${eq.deck.length} cartas, habilidades ${Object.keys(eq.ab)}, objetos ${Object.keys(eq.equip)}`); if (mal || !eq.ab.bunny || !eq.equip.head) fallos.push('equipo del servidor mal convertido: ' + JSON.stringify(eq)); }
+      const mal = w.pvpEquipoMal(eq); ap('0b · equipo del servidor', mal ? 'MAL: ' + mal : `${eq.fac}, ${eq.deck.length} cartas, habilidades ${Object.keys(eq.ab)}, objetos ${Object.keys(eq.equip)}`); if (mal || !eq.ab.bunny || !eq.equip.head) fallos.push('equipo del servidor mal convertido: ' + JSON.stringify(eq));
+      const ida = w.eval('pvpAServidor')({ t: 'rendir' }), vuelta = w.eval('pvpDeServidor')(ida, 'e'); if (vuelta.t !== 'rendir' || JSON.stringify(ida).length >= 200) fallos.push('rendirse no viaja bien por el servidor: ' + JSON.stringify(ida)); }
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);

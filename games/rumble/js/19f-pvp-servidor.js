@@ -23,8 +23,8 @@ function pvpEquipoDeServidor(mazo, equipo) {
   return eq;
 }
 // jugada de motor → trozo corto para el servidor (menos de 200 caracteres) y al revés
-const pvpAServidor = m => ({ v: VERSION, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
-const pvpDeServidor = (d, equipo) => ({ t: 't', turno: d.t, tick: d.k, h: d.h, cmds: (d.c || []).map(c => ({ team: equipo, slot: c[0], key: c[1], x: c[2], y: c[3] })) });
+const pvpAServidor = m => (m.t === 'rendir' ? { v: VERSION, r: 1 } : { v: VERSION, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
+const pvpDeServidor = (d, equipo) => d.r ? { t: 'rendir' } : ({ t: 't', turno: d.t, tick: d.k, h: d.h, cmds: (d.c || []).map(c => ({ team: equipo, slot: c[0], key: c[1], x: c[2], y: c[3] })) });
 
 PVPNET.redes.servidor = {
   nombre: 'Servidor',

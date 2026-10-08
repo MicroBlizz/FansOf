@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.91', real: [
+      '<b>LOLA TE ENSEÑA MÁS</b>: la partida guiada sigue después del gashapón. Ahora te lleva a la máquina de cartas, te ayuda a meter tu carta nueva en el mazo y te enseña las misiones, las horas extra y las opciones.',
+      '<b>CONSEJOS EN CADA MODO</b>: la primera vez que abres la Arena, la Partida rápida, el Modo Jefe, el PvP, la Tienda y otras pantallas, Lola te cuenta en dos frases cómo va. Si no los quieres, toca «Sin consejos». Si ya habías hecho el tutorial, no te saldrán; los recuperas con TUTORIAL, en Opciones.',
+      '<b>HABILIDADES MÁS JUSTAS</b>: DLC, Microtransacción, Clon, Rage Quit y Gigante ganaban casi todas las partidas, así que bajan. Y si una carta saca varias unidades, el efecto de DLC, Microtransacción, Clon y Rage Quit se reparte entre ellas.'],
+    joke: ["Microblizz ha contratado a Lola como formadora de nuevos empleados. Sigue despedida, pero ahora también trabaja gratis."] },
   { v: '0.9.90', real: [
       '<b>LA IA SE DEFIENDE CON CABEZA</b>: cuando le atacas, responde con la unidad que mejor contrarresta la tuya (contra un tanque, asesinos o control; contra un enjambre, control o tiradores…).',
       '<b>ARREGLO: JEFES Y RIVALES QUE SE QUEDABAN QUIETOS</b>: los hechizos de la máquina ya no se le atascan en la mano, así que los jefes siguen sacando tropas hasta el final. Y en las fases con pocas cartas, la máquina puede repetir carta como antes.',

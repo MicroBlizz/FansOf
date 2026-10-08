@@ -114,4 +114,12 @@ IDIOMA.add({
   ": no te lo dejes. Lo demás te lo explica mejor Microblizz con tu tarjeta de crédito.": ": don't miss it. Microblizz will explain the rest better with your credit card.",
   "RULETA": "WHEEL",
   "de Microblizz decide antes de jugar un castigo para ti, una ventaja para la CPU o las dos. Trucada, por supuesto. A cambio, el premio es mucho mayor.": "from Microblizz decides before the match a penalty for you, a bonus for the CPU, or both. Rigged, of course. In return, the reward is much bigger.",
+  // novedades 0.9.91 (por trozos: el título en negrita y el resto aparte)
+  "LOLA TE ENSEÑA MÁS": "LOLA TEACHES YOU MORE",
+  ": la partida guiada sigue después del gashapón. Ahora te lleva a la máquina de cartas, te ayuda a meter tu carta nueva en el mazo y te enseña las misiones, las horas extra y las opciones.": ": the guided match goes on after the gacha. Now she takes you to the card machine, helps you put your new card in your deck and shows you missions, overtime and options.",
+  "CONSEJOS EN CADA MODO": "TIPS IN EVERY MODE",
+  ": la primera vez que abres la Arena, la Partida rápida, el Modo Jefe, el PvP, la Tienda y otras pantallas, Lola te cuenta en dos frases cómo va. Si no los quieres, toca «Sin consejos». Si ya habías hecho el tutorial, no te saldrán; los recuperas con TUTORIAL, en Opciones.": ": the first time you open the Arena, Quick Match, Boss Mode, PvP, the Shop and other screens, Lola tells you how it works in two sentences. If you don't want them, tap «No more tips». If you had already done the tutorial, you won't see them; get them back with TUTORIAL, in Options.",
+  "HABILIDADES MÁS JUSTAS": "FAIRER ABILITIES",
+  ": DLC, Microtransacción, Clon, Rage Quit y Gigante ganaban casi todas las partidas, así que bajan. Y si una carta saca varias unidades, el efecto de DLC, Microtransacción, Clon y Rage Quit se reparte entre ellas.": ": DLC, Microtransaction, Clone, Rage Quit and Giant were winning almost every match, so they go down. And if a card brings several units, the effect of DLC, Microtransaction, Clone and Rage Quit is split between them.",
+  "Microblizz ha contratado a Lola como formadora de nuevos empleados. Sigue despedida, pero ahora también trabaja gratis.": "Microblizz has hired Lola to train new employees. She is still fired, but now she also works for free.",
 });

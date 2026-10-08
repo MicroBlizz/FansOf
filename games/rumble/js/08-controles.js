@@ -9,7 +9,7 @@ $('#cards').innerHTML = [-1, 0, 1, 2, 3].map(s => `<button class="card" data-slo
 const elCards = [...document.querySelectorAll('#cards .card')];
 for (const el of elCards) { el._slot = +el.dataset.slot; el._art = el.querySelector('canvas'); el._charge = el.querySelector('.card-charge'); el._lock = el.querySelector('.card-lock'); el._wasPoor = true; el._lockTxt = ''; el._key = null; }
 const input = { card: null, slot: null, dragging: false, pointerId: null, startX: 0, startY: 0, selected: null, selSlot: null, ghost: null, touch: false };
-const slotKey = s => (s < 0 ? FACTIONS[G.faction].leader : S.p.hand[s]);
+const slotKey = s => (s < 0 ? FACTIONS[verFac()].leader : S[verEquipo()].hand[s]);
 function renderCard(el, k) {
   const c = CFG.cards[k]; el.dataset.card = k; el.dataset.rarity = c.rarity; el.dataset.spell = c.spell ? '1' : '';
   el.querySelector('.cost').textContent = c.cost; el.querySelector('.card-name').textContent = c.name; el.querySelector('.card-tag').textContent = c.tag;

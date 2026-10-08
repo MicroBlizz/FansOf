@@ -35,10 +35,11 @@ function resetMatch() {
   const EF = FACTIONS[G.efac]; S.e.deck = (G.edeck ? G.edeck.slice() : EF.units.slice()).concat(G.eextra || []); if (EF.leader) S.e.deck.push(EF.leader);
   const deck = (SIM.nueva ? sshuffle : shuffle)(G.pvp ? G.pvp.p.deck.slice() : deckOf(G.faction)); SIM.nueva = false; /* la mano de verdad sale del azar con semilla; la de los menús, del normal */ S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
   if (G.pvp) { const d2 = sshuffle(G.pvp.e.deck.slice()); S.e.hand = d2.slice(0, 4); S.e.queue = d2.slice(4); S.e.deck = d2.slice(); S.e.plays = {}; }   // PvP: el rival tiene mano como tú
-  towers.p = [makeStruct('p', 'tower', 110, 575, 0), makeStruct('p', 'tower', 430, 575, 1)];
-  towers.e = [makeStruct('e', 'tower', 110, 270, 0), makeStruct('e', 'tower', 430, 270, 1)];
-  bases.p = makeStruct('p', 'base', 270, 700);
-  bases.e = makeStruct('e', 'base', 270, 196);
+  const SP = STRUCT_SPOTS;   // dónde van las torres y las sedes (en PvP el campo es simétrico: ver 04b-simulacion.js)
+  towers.p = [makeStruct('p', 'tower', SP[0][0], SP[0][1], 0), makeStruct('p', 'tower', SP[1][0], SP[1][1], 1)];
+  towers.e = [makeStruct('e', 'tower', SP[3][0], SP[3][1], 0), makeStruct('e', 'tower', SP[4][0], SP[4][1], 1)];
+  bases.p = makeStruct('p', 'base', SP[2][0], SP[2][1]);
+  bases.e = makeStruct('e', 'base', SP[5][0], SP[5][1]);
   if (G.mode === 'boss') { for (const t of towers.e) { t.alive = false; t.hidden = true; } bases.e.hp = bases.e.maxHp = bossHp(G.bossWi == null ? CEO_WI : G.bossWi, G.bossDiff); }
   else if (G.level && G.level.baseHp) bases.e.hp = bases.e.maxHp = G.level.baseHp;
   else if (G.level && G.level.boss) bases.e.hp = bases.e.maxHp = 2400;

@@ -8,7 +8,7 @@ async function pruebaPvp(raiz, duerme) {
     const f = document.createElement('iframe'); f.width = 540; f.height = 960; f.src = `${raiz}games/rumble/`; document.getElementById('marcos').appendChild(f);
     await new Promise(r => { f.onload = r; });
     const w = f.contentWindow; await espera(() => { try { return w.eval('READY === true'); } catch (e) { return false; } }, 30000, 'el juego no arranca');
-    w.eval('window.__X = { get PVP() { return PVP; }, get G() { return G; }, get S() { return S; }, get SIM() { return SIM; }, get FACTIONS() { return FACTIONS; }, isLeader, cardDef }');   // lo declarado con const/let no cuelga de window
+    w.eval('window.__X = { get PVP() { return PVP; }, get G() { return G; }, get S() { return S; }, get SIM() { return SIM; }, get FACTIONS() { return FACTIONS; }, isLeader, cardDef, slotKey }');   // lo declarado con const/let no cuelga de window
     w.requestAnimationFrame = () => 0;   // el bucle de dibujo lo mueve esta prueba, a mano, para controlar los dos juegos
     return { f, w };
   }
@@ -29,13 +29,16 @@ async function pruebaPvp(raiz, duerme) {
       for (const w of [a, b]) { try { w.frame(w.performance.now()); } catch (e) { fallos.push(nombre + ': error en el bucle: ' + (e && e.message)); } }
       if (o.cada && Date.now() - t0 > (juega + 1) * o.cada) {   // una jugada de cada lado cada `cada` ms
         juega++;
-        for (const [w, y] of [[a, 620], [b, 300]]) { if (w.__X.G.state !== 'play' || w.__X.PVP.estado === 'desync') continue; const t = w.__X.PVP.seat, k = w.__X.S[t].hand[0]; if (k && !w.__X.isLeader(k) && w.__X.S[t].chaos >= w.__X.cardDef(k).cost) w.pvpJugar(0, k, 120 + (juega * 37) % 300, y); }
+        for (const w of [a, b]) {   // los dos juegan como un jugador de verdad: con las coordenadas de lo que ven (el de arriba ve el campo reflejado)
+          if (w.__X.G.state !== 'play' || w.__X.PVP.estado === 'desync') continue; const t = w.__X.PVP.seat, k = w.__X.slotKey(0);
+          if (k && !w.__X.isLeader(k) && w.__X.S[t].chaos >= w.__X.cardDef(k).cost) w.tryPlayerDeploy(0, k, 120 + (juega * 37) % 300, 540);
+        }
       }
       if (o.alMs && !o.hecho && Date.now() - t0 > o.alMs) { o.hecho = true; o.al({ a, b, corta: v => { corta = v; } }); }
     }, 16);
     try { await espera(o.hasta({ a, b }), o.limite || 90000, nombre); } catch (e) { throw new Error(`${e.message} · estados ${a.__X.PVP.estado}/${b.__X.PVP.estado} · ${a.__X.PVP.error} · ${b.__X.PVP.error} · ticks ${a.__X.SIM.tick}/${b.__X.SIM.tick} · juego ${a.__X.G.state}/${b.__X.G.state}`); } finally { clearInterval(reloj); }
     const r = { a: a.__X.PVP, b: b.__X.PVP, mensajes: enviados, ha: a.__X.PVP.hashes.slice(), hb: b.__X.PVP.hashes.slice() };
-    r.estados = [a.__X.PVP.estado, b.__X.PVP.estado]; r.fin = [clon(a.__X.PVP.fin), clon(b.__X.PVP.fin)]; r.ganador = [a.__X.G.winner, b.__X.G.winner]; r.ticks = [a.__X.SIM.tick, b.__X.SIM.tick]; r.error = a.__X.PVP.error;
+    r.estados = [a.__X.PVP.estado, b.__X.PVP.estado]; r.fin = [clon(a.__X.PVP.fin), clon(b.__X.PVP.fin)]; r.ganador = [a.__X.G.winner, b.__X.G.winner]; r.ticks = [a.__X.SIM.tick, b.__X.SIM.tick]; r.error = a.__X.PVP.error; r.jugadas = a.__X.SIM.log.map(c => c.team).join('');
     A.f.remove(); B.f.remove();
     return r;
   }
@@ -43,7 +46,8 @@ async function pruebaPvp(raiz, duerme) {
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);
-    ap('1 · partida', `${n} huellas comparadas, ${r.mensajes} mensajes, ganador ${r.ganador.join('/')}, ticks ${r.ticks.join('/')}, estados ${r.estados.join('/')}`);
+    ap('1 · partida', `${n} huellas comparadas, ${r.mensajes} mensajes, ganador ${r.ganador.join('/')}, ticks ${r.ticks.join('/')}, estados ${r.estados.join('/')}, jugadas aplicadas ${r.jugadas}`);
+    if (!r.jugadas.includes('p') || !r.jugadas.includes('e')) fallos.push('partida: no se aplicaron jugadas de los dos lados: ' + r.jugadas);
     if (n < 20) fallos.push('partida: se compararon muy pocas huellas');
     if (!iguales) fallos.push('partida: las huellas de las dos copias no coinciden');
     if (r.estados.some(e => e === 'desync' || e === 'error')) fallos.push('partida: desincronización o error: ' + r.estados.join('/'));

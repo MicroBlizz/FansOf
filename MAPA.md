@@ -79,7 +79,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `demos/terminal-shock/index.html` · 77 KB
-- `games/rumble/index.html` · 35 KB
+- `games/rumble/index.html` · 36 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 7 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
@@ -105,7 +105,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/02d-chat-rival.js` · 15 KB · CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL
 - `games/rumble/js/02e-guardado.js` · 5 KB · newSave, migrateSave, isUnlocked, other, HEAL_CONE, edgeDist, nearestBridge, laneBridge
 - `games/rumble/js/04-estado.js` · 5 KB · G, facOf, facNow, enPartida, ownerOf, ownerName, revives, S, units, towers, AI, uid, BG, makeStruct, resetMatch
-- `games/rumble/js/04b-simulacion.js` · 5 KB · SIM_DT, SIM_MAX, SIM, simSeed, srnd, srand, spick, sshuffle, simCmd, cmpCmd, simApply, simRunCmds, simStep, simHash
+- `games/rumble/js/04b-simulacion.js` · 6 KB · SIM_DT, SIM_MAX, SIM, simSeed, srnd, srand, spick, sshuffle, simCmd, cmpCmd, simApply, simRunCmds, MAPA_NORMAL, MAPA_PVP, MAPA_PVP_ON, pvpMapa, simStep, simHash
 - `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/rumble/js/05b-creadores-datos.js` · 21 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA
 - `games/rumble/js/05c-creadores-arte.js` · 15 KB · SKIN_C, cdev, screenHead
@@ -142,6 +142,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
 - `games/rumble/js/19-arena.js` · 10 KB · ARENA, ARENA_TAG, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, arenaShield, arenaBar, buildArenaPrep, arenaSetup, arenaReward
 - `games/rumble/js/19b-pvp.js` · 9 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
+- `games/rumble/js/19c-vista.js` · 4 KB · VISTA_YC, VISTA_SW, verAbajo, verEquipo, verFac, MIR_Y, otroEq, espejo, cambia, vistaOn, vistaRender
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
@@ -217,7 +218,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/dentro.js` · 13 KB
 - `herramientas/pruebas/determinismo.js` · 7 KB
 - `herramientas/pruebas/index.html` · 2 KB
-- `herramientas/pruebas/pvp.js` · 6 KB · pruebaPvp
+- `herramientas/pruebas/pvp.js` · 7 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
 - `privacidad/index.html` · 7 KB

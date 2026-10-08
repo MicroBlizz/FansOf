@@ -169,7 +169,7 @@ function openPrep(mode, lvl) {
   for (const nb of document.querySelectorAll('#fac-grid .fac-opt b')) fitText(nb, 16, 10);   // v0.9.13: «Comunidad Gamer» también cabe
 }
 function setupMatch(mode, lvl, cd, pvp) {
-  G.mode = mode; G.level = lvl || null; G.cdiff = mode === 'camp' ? cd || 'n' : 'n'; resetMods(); G.pvp = mode === 'pvp' ? pvp : null;   // pvp: { p: equipo, e: equipo } (ver 04b-simulacion.js)
+  G.mode = mode; G.level = lvl || null; G.cdiff = mode === 'camp' ? cd || 'n' : 'n'; resetMods(); G.pvp = mode === 'pvp' ? pvp : null; pvpMapa(mode === 'pvp');   // pvp: { p: equipo, e: equipo } (ver 04b-simulacion.js)
   if (mode === 'camp') {
     const Wd = WORLDS[lvl.wi]; G.efac = Wd.efac; G.elvl = lvl.elvl; G.bossOn = !!lvl.boss; G.bossName = lvl.boss || 'SurvivalBot';
     G.diffCfg = Object.assign({}, CFG.diff.normal, { aiIncome: lvl.income, think: [0.6, 1.2], bossCd: 18, stun: 2, despido: 20 + lvl.elvl * 2 });

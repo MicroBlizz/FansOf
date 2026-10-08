@@ -171,12 +171,13 @@ function playCard(team, slot, key, x, y) {
 }
 function tryPlayerDeploy(slot, key, x, y) {
   if (G.state !== 'play' || !key) return false;
-  const card = CFG.cards[key];
+  const team = verEquipo(), me = S[team], card = CFG.cards[key];
+  if (verAbajo()) y = VISTA_YC - y;   // quien juega desde el asiento de arriba ve el campo reflejado (19c-vista.js): la jugada va en coordenadas de la simulación
   if (card.spell) { x = clamp(x, BOUNDS.x0, BOUNDS.x1); y = clamp(y, BOUNDS.y0, BOUNDS.y1); }   // v0.9.15: los hechizos se lanzan en cualquier sitio
-  else { const sp = snapSpot('p', x, y); x = sp.x; y = sp.y; }
-  if (isLeader(key) && !canDeploy('p', key)) { const nm = CFG.cards[key].name; toast(S.p.leaderCd > 0 ? `${nm} vuelve en ${Math.ceil(S.p.leaderCd)} s` : `${nm} ya está en el campo`); play('deny'); return false; }
-  if (S.p.chaos < card.cost) { toast(`Te falta CAOS: ${Math.ceil(card.cost - S.p.chaos)} más`); play('deny'); return false; }
-  if (PVP.on) pvpJugar(slot, key, x, y); else simCmd({ team: 'p', slot, key, x, y });   // la jugada se aplica al empezar el siguiente tick (SIM.delay), igual que en PvP
+  else { const sp = snapSpot(team, x, y); x = sp.x; y = sp.y; }
+  if (isLeader(key) && !canDeploy(team, key)) { const nm = CFG.cards[key].name; toast(me.leaderCd > 0 ? `${nm} vuelve en ${Math.ceil(me.leaderCd)} s` : `${nm} ya está en el campo`); play('deny'); return false; }
+  if (me.chaos < card.cost) { toast(`Te falta CAOS: ${Math.ceil(card.cost - me.chaos)} más`); play('deny'); return false; }
+  if (PVP.on) pvpJugar(slot, key, x, y); else simCmd({ team, slot, key, x, y });   // la jugada se aplica al empezar el siguiente tick (SIM.delay), igual que en PvP
   hideTut();
   return true;
 }

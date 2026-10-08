@@ -4,7 +4,7 @@
 /* ---------- screens ---------- */
 // v0.9.13: el campo cambia según tu facción y la empresa rival (se pinta de nuevo solo si hace falta)
 let BG_KEY = '';
-function ensureBG(plaza) { const key = G.faction + '|' + plaza; if (BG_KEY !== key) { BG = buildBG(G.faction, plaza); BG_KEY = key; } }
+function ensureBG(plaza) { const key = verFac() + '|' + plaza; if (BG_KEY !== key) { BG = buildBG(verFac(), plaza); BG_KEY = key; } }
 function startMatch() {
   ensureBG({ phony: 'ph', iahorro: 'ia' }[ownerOf()] || 'mb');
   audioInit(); hideScreens(); simSeed(G.seedNext); G.seedNext = null; resetMatch(); chatClear(); G.state = 'countdown'; camReset(); terrainStart();
@@ -28,7 +28,7 @@ function startMatch() {
 }
 function pauseGame() { if (G.state !== 'play') return; G.state = 'paused'; input.card = null; input.dragging = false; show('scr-pause'); }
 function resumeGame() { if (G.state !== 'paused') return; hideScreens(); G.state = 'play'; }
-function goHome() { if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
+function goHome() { pvpMapa(false); if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
   ensureBG('mb'); setTagline(); $('#hud-mods').hidden = true; G.state = 'title'; chatClear(); resetMatch(); hud.update(); drawTitleArt(); updateWallets(); show('scr-title'); profileChip(); idleSc.tick = 0; achDay(); titlePopups(); }
 function toMenu() { chatClear(); if (G.mode === 'camp') { G.state = 'title'; resetMatch(); hud.update(); openCamp(); } else goHome(); }
 // v0.9.13: lo que dice cada jefe nuevo al empezar

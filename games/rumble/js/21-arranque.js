@@ -32,7 +32,7 @@ function frame(now) {
   } else { SIM.acc = 0; simStep(real); }   // menús y cuenta atrás: un solo paso con el tiempo real
   if (G.state === 'play' || G.state === 'ending' || G.state === 'countdown') hud.update();
   musicUpdate();
-  render(); fpsCount(now);
+  vistaRender(render); fpsCount(now);
   if (G.state === 'title') idleFrame(real);   // v0.9.14: HORAS EXTRA
   requestAnimationFrame(frame);
 }

@@ -119,7 +119,8 @@ function hideTut() { $('#tut').hidden = true; G.tutSeen = true; }
 const hud = {
   cache: {},
   reset() { this.cache = {}; $('#x2').hidden = true; $('#score').hidden = G.mode !== 'boss'; },
-  update() {
+  update() { vistaOn(() => this.dibuja()); },   // el asiento de arriba ve su lado como si fuera el de abajo (19c-vista.js)
+  dibuja() {
     if (!S) return; const c = this.cache; const ch = S.p.chaos;
     const fw = ((ch / CFG.chaosMax) * 100).toFixed(1) + '%'; if (c.fw !== fw) { $('#chaos-fill').style.width = fw; c.fw = fw; }
     const cn = Math.floor(ch); if (c.cn !== cn) { $('#chaos-num').textContent = cn; c.cn = cn; }

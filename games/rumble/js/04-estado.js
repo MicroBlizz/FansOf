@@ -35,7 +35,7 @@ function resetMatch() {
   const EF = FACTIONS[G.efac]; S.e.deck = (G.edeck ? G.edeck.slice() : EF.units.slice()).concat(G.eextra || []); if (EF.leader) S.e.deck.push(EF.leader);
   const deck = (SIM.nueva ? sshuffle : shuffle)(G.pvp ? G.pvp.p.deck.slice() : deckOf(G.faction)); SIM.nueva = false; /* la mano de verdad sale del azar con semilla; la de los menús, del normal */ S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
   if (G.pvp) { const d2 = sshuffle(G.pvp.e.deck.slice()); S.e.hand = d2.slice(0, 4); S.e.queue = d2.slice(4); S.e.deck = d2.slice(); S.e.plays = {}; }   // PvP: el rival tiene mano como tú
-  else { const d3 = sshuffle(S.e.deck.filter(k => !isLeader(k) && !isSpell(k))); S.e.hand = d3.slice(0, 4); S.e.queue = d3.slice(4); S.e.plays = {}; }   // IA: la misma mano de 4 que tú, con cola (solo unidades: los hechizos se leen del mazo, así no se atascan)
+  else { const d3 = sshuffle(S.e.deck.filter(k => !isLeader(k) && !isSpell(k))); S.e.hand = d3.slice(0, 4); S.e.queue = d3.slice(4); S.e.plays = {}; }   // IA: la misma mano de 4 que tú, con cola (solo unidades: los hechizos se leen del mazo, así no se atascan). Con 4 cartas o menos no hay cola: las tiene todas siempre
   const SP = STRUCT_SPOTS;   // dónde van las torres y las sedes (en PvP el campo es simétrico: ver 04b-simulacion.js)
   towers.p = [makeStruct('p', 'tower', SP[0][0], SP[0][1], 0), makeStruct('p', 'tower', SP[1][0], SP[1][1], 1)];
   towers.e = [makeStruct('e', 'tower', SP[3][0], SP[3][1], 0), makeStruct('e', 'tower', SP[4][0], SP[4][1], 1)];

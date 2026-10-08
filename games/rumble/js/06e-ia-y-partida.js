@@ -66,7 +66,7 @@ function aiGeneric(team, dt) {
   const avail = me.hand.map((k, i) => ({ k, slot: i })).filter(a => a.k);   // v1: la IA juega con la misma mano de 4 que el jugador (sin huecos si su mazo tiene menos de 4)
   if (F.leader && canDeploy(team, F.leader)) avail.push({ k: F.leader, slot: -1 });
   const find = roles => { for (const role of roles) { const c = avail.find(a => ROLES[a.k] === role && me.chaos >= cardDef(a.k).cost); if (c) return c; } return null; };
-  const go = (c, x, y) => playCard(team, c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú
+  const go = (c, x, y) => playCard(team, team === 'e' && !me.queue.length ? -2 : c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú (sin cola, con mazos de 4 o menos, la carta no se va de la mano)
   // v2: los hechizos de la IA salen de su mazo (no de la mano), así no se quedan atascados esperando un objetivo
   const hechizos = team === 'p' ? [] : sshuffle(me.deck.filter(k => isSpell(k)).map(k => ({ k, slot: -2 })));
   if (aiSpell(team, avail.concat(hechizos), go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
@@ -81,7 +81,7 @@ function aiGeneric(team, dt) {
     const myHp = units.filter(u => u.alive && u.team === team && !u.d.buildings && !u.d.healer && dst(u, t) < 140).reduce((a, u) => a + u.hp, 0);
     const close = structs.some(s => s.alive && s.team === team && dst(s, t) < 170);
     if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) {
-      const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']);
+      const c = find([...(CONTRA[ROLES[t.type]] || []), 'ranged', 'swarm', 'control', 'assassin', 'tank', 'support']);   // v2: defiende con el contrario de lo que le atacas
       if (c) { go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); A.plan = { lane: [0, 1].reduce((b, l) => Math.abs(t.x - laneBridge(l)) < Math.abs(t.x - laneBridge(b)) ? l : b, 0), n: 0 }; }   // v2: tras defender, contraataca en ese mismo carril
       return;
     }

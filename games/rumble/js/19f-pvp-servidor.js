@@ -50,10 +50,13 @@ PVPNET.redes.servidor = {
       if (!activo || !st || !st.sala) return;
       activo = false; sala = st.sala;
       const seat = st.lado === 'a' ? 'p' : 'e', equipos = { p: pvpEquipoDeServidor(st.mazo_a || [], st.equipo_a), e: pvpEquipoDeServidor(st.mazo_b || [], st.equipo_b) };
-      let desde = 0, cola = [], ultimaH = null, vivo = true, cerrando = false;
+      let desde = 0, cola = [], ultimaH = null, vivo = true, cerrando = false, enVuelo = 0, ultimaLlamada = 0, temporizador = null;
+      // Cada turno sale en cuanto está listo (sin esperar a que acabe la llamada anterior: hasta 3 a la vez) y, si no hay nada que mandar, se pregunta cada 250 ms por lo del rival.
+      // Las jugadas llevan su número de turno, así que da igual el orden en que lleguen las respuestas.
       const bucle = async () => {
-        if (!vivo) return;
-        const t0 = Date.now(), items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
+        if (!vivo || enVuelo >= 3) return;
+        enVuelo++; ultimaLlamada = Date.now();
+        const items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
           const tr0 = performance.now();
           const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
@@ -61,19 +64,19 @@ PVPNET.redes.servidor = {
           for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
           if (r && r.desync) pvpEstado('desync');
         } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
-        if (vivo) setTimeout(bucle, Math.max(20, PVP_SRV.turnoMs - (Date.now() - t0)));   // la llamada ya tarda: no se suma la espera encima
+        enVuelo--;
       };
       // cerrar la partida: ganador ('p' o 'e' del motor) → el servidor decide los puntos; si el rival aún no ha cerrado se vuelve a preguntar
       const cerrar = async (ganadorEquipo, huella, alResultado) => {
-        if (cerrando) return; cerrando = true; vivo = false;
+        if (cerrando) return; cerrando = true; vivo = false; clearInterval(temporizador);
         const g = ganadorEquipo === 'p' ? 'a' : 'b';
         for (let i = 0; i < 30; i++) {
           try { const r = await CUENTA.rpc('pvp_cerrar', { p_sala: sala, p_ganador: g, p_huella: typeof huella === 'string' ? parseInt(huella, 16) : huella }); if (alResultado) alResultado(r); if (r && r.estado !== 'esperando') return; } catch (e) { if (alResultado) alResultado({ error: pvpErrorTexto(e) }); return; }
           await new Promise(res => setTimeout(res, PVP_SRV.cierreMs));
         }
       };
-      aviso({ retardo: PVP_SRV.retardo, seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); } }, cerrar, parar: () => { vivo = false; } });
-      bucle();
+      aviso({ retardo: PVP_SRV.retardo, seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); bucle(); } }, cerrar, parar: () => { vivo = false; clearInterval(temporizador); } });
+      bucle(); temporizador = setInterval(() => { if (Date.now() - ultimaLlamada >= 250) bucle(); }, 100);
     };
     sondeo();
     return { cancelar() { activo = false; clearTimeout(tic); if (!sala) CUENTA.rpc('pvp_salir', {}).catch(() => { /* ya no estaba en la cola */ }); } };

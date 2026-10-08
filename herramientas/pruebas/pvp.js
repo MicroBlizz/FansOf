@@ -48,7 +48,7 @@ async function pruebaPvp(raiz, duerme) {
     const clon = x => JSON.parse(JSON.stringify(x));
     return { S, para(quien) {   // la función rpc de un jugador
       return async (nombre, a) => {
-        S.llamadas++; await new Promise(r => setTimeout(r, 5 + Math.random() * 30));
+        S.llamadas++; const lat = +new URLSearchParams(location.search).get('lat') || 0; await new Promise(r => setTimeout(r, 5 + Math.random() * 30 + lat * (0.5 + Math.random())));   // ?lat=N: cada llamada tarda N ms de más (para probar con una red lenta)
         const lado = S.sala ? (S.sala.a === quien ? 'a' : 'b') : null;
         if (nombre === 'pvp_buscar') {
           if (!S.cola) { S.cola = { quien, mazo: a.p_mazo }; return { espera: true }; }
@@ -82,7 +82,7 @@ async function pruebaPvp(raiz, duerme) {
     prepara(a, 'ana'); prepara(b, 'beto');
     const res = { a: {}, b: {} };
     for (const [w, k] of [[a, 'a'], [b, 'b']]) {
-      w.eval('PVPNET').redes.servidor.buscar('estandar', w.pvpEquipo('estandar'), r => { res[k].r = r; w.pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, conservar: true, tiempo: 20, alEstado: () => {} }); w.__X.PVP.net = r; });
+      w.eval('PVPNET').redes.servidor.buscar('estandar', w.pvpEquipo('estandar'), r => { res[k].r = r; w.pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, conservar: true, tiempo: 20, alEstado: () => {}, retardo: +new URLSearchParams(location.search).get('d') || 2 }); w.__X.PVP.net = r; });
     }
     const t0 = Date.now(); let juega = 0;
     const reloj = setInterval(() => {
@@ -95,14 +95,14 @@ async function pruebaPvp(raiz, duerme) {
     for (const [w, k] of [[a, 'a'], [b, 'b']]) w.__X.PVP.net.cerrar(w.__X.G.winner, w.__X.PVP.fin.h, r => { cierres[k] = r; });
     await espera(() => cierres.a && cierres.a.estado === 'cerrada' && cierres.b && cierres.b.estado === 'cerrada', 20000, 'cierre');
     const ha = a.__X.PVP.hashes, hb = b.__X.PVP.hashes, n = Math.min(ha.length, hb.length);
-    const r = { n, iguales: ha.slice(0, n).every((x, i) => x[1] === hb[i][1]), estados: [a.__X.PVP.estado, b.__X.PVP.estado], seats: [res.a.r && res.a.r.seat, res.b.r && res.b.r.seat], cierres, llamadas: srv.S.llamadas, desync: srv.S.desync, fin: [a.__X.PVP.fin, b.__X.PVP.fin] };
+    const r = { n, iguales: ha.slice(0, n).every((x, i) => x[1] === hb[i][1]), estados: [a.__X.PVP.estado, b.__X.PVP.estado], seats: [res.a.r && res.a.r.seat, res.b.r && res.b.r.seat], cierres, esperas: a.__X.PVP.stats.n + ' (' + (a.__X.PVP.stats.ms / 1000).toFixed(1) + ' s) / ' + b.__X.PVP.stats.n + ' (' + (b.__X.PVP.stats.ms / 1000).toFixed(1) + ' s)', llamadas: srv.S.llamadas, desync: srv.S.desync, fin: [a.__X.PVP.fin, b.__X.PVP.fin] };
     A.f.remove(); B.f.remove();
     return r;
   }
   try {
     // 0) con el servidor (de mentira): se empareja, juega y cierra con puntos
     const sv = await partidaServidor();
-    ap('0 · servidor simulado', `${sv.n} huellas, ${sv.llamadas} llamadas al servidor, lados ${sv.seats.join('/')}, estados ${sv.estados.join('/')}, cierres ${JSON.stringify(sv.cierres)}`);
+    ap('0 · servidor simulado', `${sv.n} huellas, ${sv.llamadas} llamadas al servidor, lados ${sv.seats.join('/')}, estados ${sv.estados.join('/')}, esperas ${sv.esperas}, cierres ${JSON.stringify(sv.cierres)}`);
     if (sv.n < 20) fallos.push('servidor: se compararon muy pocas huellas'); if (!sv.iguales) fallos.push('servidor: las huellas no coinciden'); if (sv.desync) fallos.push('servidor: el servidor ha visto una desincronización');
     if ([...sv.seats].sort().join() !== 'e,p') fallos.push('servidor: los lados no son p/e: ' + sv.seats.join('/'));
     if (JSON.stringify(sv.fin[0]) !== JSON.stringify(sv.fin[1])) fallos.push('servidor: el final no coincide');

@@ -11,6 +11,7 @@ import functools, http.server, json, os, shutil, subprocess, sys, tempfile, thre
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JUEGOS = [a for a in sys.argv[1:] if not a.startswith('--')] or ['rumble', 'td']
+EXTRA = ''.join(f'&{a[2:]}' for a in sys.argv[1:] if a.startswith(('--lat=', '--d=')))   # --lat=N (el servidor de mentira tarda N ms más) y --d=N (turnos de retardo) para --pvp
 SEG = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--seg=')), '90')
 TAM = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--tam=')), 'normal')
 NAVEGADORES = [
@@ -114,7 +115,7 @@ if '--determinismo' in sys.argv or '--pvp' in sys.argv:   # no compara con _base
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
     perfil = tempfile.mkdtemp(prefix='comprobar-')
     proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}', '--autoplay-policy=no-user-gesture-required',
-                                f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&{"pvp" if "--pvp" in sys.argv else "det"}=1&tam={TAM}&seg={SEG}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&{"pvp" if "--pvp" in sys.argv else "det"}=1&tam={TAM}&seg={SEG}{EXTRA}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         terminado = LISTO.wait(600)
     finally:

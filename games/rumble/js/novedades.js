@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.95', real: ['<b>PVP EN OBRAS</b>: cerramos el PvP un rato para afinar la conexión con el servidor: las partidas iban a tirones. Volverá en cuanto vaya fino.'],
+    joke: ['Microblizz ha puesto un cartel de «vuelvo en 5 minutos» en el PvP. Lleva 5 minutos desde hace tiempo.'] },
   { v: '0.9.94', real: ['<b>RENDIRSE EN PVP</b>: el botón ME RINDO no hacía nada contra otros jugadores; ahora pierdes y tu rival gana al momento.'],
     joke: ['Microblizz reconoce que el botón de rendirse se había rendido primero.'] },
   { v: '0.9.93', real: [

@@ -42,4 +42,6 @@ IDIOMA.add({
   ": si el móvil se atasca un momento, la partida ya no intenta recuperar el tiempo perdido de golpe. Y si tu rival tiene otra versión del juego, te avisa.": ": if your phone stalls for a moment, the match no longer tries to catch up on the lost time all at once. And if your rival has a different version of the game, it tells you.",
   "<b>RENDIRSE EN PVP</b>: el botón ME RINDO no hacía nada contra otros jugadores; ahora pierdes y tu rival gana al momento.": "<b>SURRENDERING IN PVP</b>: the SURRENDER button did nothing against other players; now you lose and your rival wins at once.",
   "Microblizz reconoce que el botón de rendirse se había rendido primero.": "Microblizz admits the surrender button had surrendered first.",
+  "<b>PVP EN OBRAS</b>: cerramos el PvP un rato para afinar la conexión con el servidor: las partidas iban a tirones. Volverá en cuanto vaya fino.": "<b>PVP UNDER CONSTRUCTION</b>: we are closing PvP for a while to tune the connection to the server: matches were choppy. It will be back as soon as it runs smoothly.",
+  "Microblizz ha puesto un cartel de «vuelvo en 5 minutos» en el PvP. Lleva 5 minutos desde hace tiempo.": "Microblizz has put a “back in 5 minutes” sign on PvP. It has been 5 minutes for a while now.",
 });

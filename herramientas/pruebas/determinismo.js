@@ -46,11 +46,11 @@ PRUEBA.pasos = async function (T) {
     return Object.assign({ fac, deck, lvl: l, stars: { [deck[0]]: 2 }, ab: { [F.leader]: { k: 'ab', id: 'cafeina', q: [0.75] } }, equip: { head: { k: 'eq', id: 'cuernos', q: [0.5] } } }, extra);
   };
   const pvp = (pvpDatos, azar, nombre, o = {}) => {
-    T.semilla(azar); setFaction('animales'); G.prep = { mode: 'pvp' }; setupMatch('pvp', null, null, pvpDatos); G.seedNext = 4242; G.autoplay = false; startMatch(); T.avanza(4200);
+    T.semilla(azar); PVP.terreno = o.terreno; setFaction('animales'); G.prep = { mode: 'pvp' }; setupMatch('pvp', null, null, pvpDatos); G.seedNext = 4242; G.autoplay = false; startMatch(); T.avanza(4200);
     if (G.state !== 'play') throw new Error('el PvP no ha empezado: ' + G.state);
     if (o.registro) SIM.cmds = o.registro.map(c => Object.assign({}, c));
     const huellas = [];
-    for (let i = 1; i <= SEGUNDOS * 60; i++) {
+    for (let i = 1; i <= (o.seg || SEGUNDOS) * 60; i++) {
       if (!o.registro && i % 300 === 0) for (const t of ['p', 'e']) { const k = S[t].hand[0]; if (k && !isLeader(k)) simCmd({ team: t, slot: 0, key: k, x: 130 + (i % 9) * 35, y: t === 'p' ? 620 : 300 }); }
       simStep(SIM_DT);
       if (i % 60 === 0) huellas.push(simHash());
@@ -72,6 +72,13 @@ PRUEBA.pasos = async function (T) {
     if (A.huellas.join() !== B.huellas.join()) fallos.push('pvp: la partida depende del SAVE del jugador');
     if (A.huellas.join() === C.huellas.join()) fallos.push('pvp: el nivel de las cartas no cambia la partida');
     if (A.huellas.join() !== D.huellas.join()) fallos.push('pvp: repetir el registro de los dos lados no da la misma partida');
+    // los 13 campos (el normal y los 12 de jefe, con sus zonas, peajes y cosas que caen): cada uno, dos veces, con las dos copias iguales
+    for (const k of ['', ...Object.keys(TERRAINS)]) {
+      const X = pvp(base(), 51, 'pvp · campo ' + (k || 'normal') + ' · 1', { terreno: k, seg: 25 }), Y = pvp(base(), 62, 'pvp · campo ' + (k || 'normal') + ' · 2', { terreno: k, seg: 25 });
+      if (X.huellas.join() !== Y.huellas.join()) fallos.push('pvp: el campo «' + (k || 'normal') + '» no es determinista');
+    }
+    PVP.terreno = undefined;
+    { const vistos = new Set(); for (let s = 1; s <= 60; s++) { G.seedNext = s; vistos.add(pvpTerreno() || 'normal'); } if (vistos.size < 10) fallos.push('pvp: el campo al azar repite demasiado (' + vistos.size + ' distintos en 60 semillas)'); }
     T.apunta('pvp', fallos.some(x => x.startsWith('pvp')) ? 'FALLO' : `${A.registro.length} jugadas de los dos lados; no depende del SAVE; el equipo cambia la partida; el registro la repite`);
   }
   T.apunta('resultado', fallos.length ? 'FALLO: ' + fallos.join('; ') : 'DETERMINISTA');

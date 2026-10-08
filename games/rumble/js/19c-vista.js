@@ -43,12 +43,13 @@ function vistaRender(fn) {
   if (!verAbajo()) return fn();
   const memo = new Map(), real = { units, structs, projs, parts, nums, spells, revives, tp: towers.p, te: towers.e, bp: bases.p, be: bases.e };
   units = espejo(units, memo); structs = espejo(structs, memo); projs = espejo(projs, memo); parts = espejo(parts, memo); nums = espejo(nums, memo); spells = espejo(spells, memo); revives = espejo(revives, memo);
+  const trReal = { z: TR.zones, f: TR.falls }; TR.zones = espejo(TR.zones, memo); TR.falls = espejo(TR.falls, memo);   // zonas y cosas que caen del campo
   const n0 = parts.length, tp = espejo(real.tp, memo), te = espejo(real.te, memo), bp = espejo(real.bp, memo), be = espejo(real.be, memo);
   towers.p = te; towers.e = tp; bases.p = be; bases.e = bp;   // mi lado es 'p' en la copia
   try { return vistaOn(() => fn()); } finally {
     const nuevas = parts.slice(n0);   // partículas que ha creado el propio dibujo (polvo, humo…): vuelven al campo de verdad, sin reflejar
     units = real.units; structs = real.structs; projs = real.projs; parts = real.parts; nums = real.nums; spells = real.spells; revives = real.revives;
-    towers.p = real.tp; towers.e = real.te; bases.p = real.bp; bases.e = real.be;
+    towers.p = real.tp; towers.e = real.te; bases.p = real.bp; bases.e = real.be; TR.zones = trReal.z; TR.falls = trReal.f;
     for (const p of nuevas) parts.push(espejo(p, new Map()));
   }
 }

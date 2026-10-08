@@ -137,7 +137,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/14d-hechizos-dibujos.js` · 6 KB · FX_SOLO, FX_GORDO, drawSpellBit
 - `games/rumble/js/15-anuncios.js` · 13 KB · ADS, AD_JOKES, TV_SVG, adsState, adsFree, adLeft, adBtn, adRun, watchAd, adOverlay, adIdleUI, idleGrantHours, adEndOffer, adGachaOffer, adShopOffer, adMissionOffer
 - `games/rumble/js/16-camara.js` · 7 KB · CAM, camTouch, camPinch, camLive, camScreen, camClamp, camReset, camZoomAt, camApply, camBtn, camTouchEnd, FEED, feedAdd, feedDraw
-- `games/rumble/js/17a-campos.js` · 14 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate
+- `games/rumble/js/17a-campos.js` · 15 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, pvpTerreno, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate
 - `games/rumble/js/17b-campos-dibujo.js` · 21 KB · terrainGround, riverFloats, drawZone, terrainAir, drawFaller
 - `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
 - `games/rumble/js/19-arena.js` · 10 KB · ARENA, ARENA_TAG, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, arenaShield, arenaBar, buildArenaPrep, arenaSetup, arenaReward
@@ -216,7 +216,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/subir_datos.py` · 4 KB
 - `herramientas/pruebas/comparar.js` · 10 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
 - `herramientas/pruebas/dentro.js` · 13 KB
-- `herramientas/pruebas/determinismo.js` · 7 KB
+- `herramientas/pruebas/determinismo.js` · 8 KB
 - `herramientas/pruebas/index.html` · 2 KB
 - `herramientas/pruebas/pvp.js` · 7 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA

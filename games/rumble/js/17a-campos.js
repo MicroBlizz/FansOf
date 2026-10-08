@@ -113,11 +113,28 @@ const TR = { on: null, key: null, t: 0, zones: [], falls: [], fallT: 0, built: '
 function terrainFor(mode, lvl) {
   if (mode === 'camp' && lvl && lvl.boss) return TERRAIN_OF[lvl.wi] || null;
   if (mode === 'boss') return TERRAIN_OF[G.bossWi] || null;
+  if (mode === 'pvp') return pvpTerreno();
   return null;
+}
+// PvP: el campo sale al azar entre todos (el normal y los 12 de jefe), pero con la semilla de la partida: los dos jugadores tienen el mismo. PVP.terreno ('' = el normal, o una clave) lo fija.
+function pvpTerreno() {
+  if (PVP.terreno !== undefined && PVP.terreno !== null) return PVP.terreno || null;
+  const todos = [null].concat(Object.keys(TERRAINS)), r = mulberry32(((G.seedNext == null ? 0 : G.seedNext) ^ 0x5bd1e995) >>> 0)();
+  return todos[Math.floor(r * todos.length)];
 }
 // zonas repartidas al azar: las mismas en cada mitad (para que sea justo), pero en sitios distintos cada partida
 function terrainPlace(defs) {
   const out = [];
+  if (G.pvp) {   // PvP: se reparten en la mitad de arriba y la de abajo es su reflejo (y' = 840 - y): exactamente lo mismo para los dos
+    for (const d of defs) for (let i = 0; i < d.n; i++) for (let tries = 0; tries < 60; tries++) {
+      const x = srand(64, W - 64), y = srand(292, 380), y2 = 840 - y;
+      if (out.some(z => Math.hypot((z.x - x) / 1.4, z.y - y) < 46 || Math.hypot((z.x - x) / 1.4, z.y - y2) < 46)) continue;
+      if (structs.some(s => Math.hypot(s.x - x, (s.y - y) * 1.3) < s.r + (d.rx || 30) + 6 || Math.hypot(s.x - x, (s.y - y2) * 1.3) < s.r + (d.rx || 30) + 6)) continue;
+      for (const yy of [y, y2]) out.push(Object.assign({}, d, { x, y: yy, rx: d.rx || 30, ry: d.ry || 16, id: out.length + 1, seed: Math.random() * 1000, life: Infinity }));
+      break;
+    }
+    return out;
+  }
   for (const d of defs) for (const half of ['e', 'p']) for (let i = 0; i < d.n; i++) for (let tries = 0; tries < 60; tries++) {
     const x = srand(64, W - 64), y = half === 'e' ? srand(292, 380) : srand(462, 556);
     if (out.some(z => Math.hypot((z.x - x) / 1.4, z.y - y) < 46)) continue;
@@ -147,9 +164,9 @@ function terrainUpdate(dt) {
     const F = T.fall;
     if ((TR.fallT -= dt) <= 0) {
       TR.fallT = F.every * srand(0.8, 1.2);
-      let x = srand(60, W - 60), y = srand(250, 610);
+      let x = srand(60, W - 60), y = G.pvp ? srand(230, 610) : srand(250, 610);   // en PvP, simétrico respecto al río
       const crowd = units.filter(u => u.alive && u.deployT <= 0);   // a veces apunta donde hay jaleo
-      if (crowd.length && srnd() < 0.55) { const u = spick(crowd); x = clamp(u.x + srand(-40, 40), 40, W - 40); y = clamp(u.y + srand(-30, 30), 230, 640); }
+      if (crowd.length && srnd() < 0.55) { const u = spick(crowd); x = clamp(u.x + srand(-40, 40), 40, W - 40); y = clamp(u.y + srand(-30, 30), G.pvp ? 200 : 230, 640); }
       TR.falls.push({ x, y, t: F.warn, max: F.warn, done: false }); play('deny');
     }
     for (const f of TR.falls) {

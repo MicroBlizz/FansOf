@@ -37,7 +37,7 @@ function pvpEquipoMal(eq) {
 // o: { seat: 'p'|'e', seed, equipos: { p, e }, red, turno, retardo, tiempo, avisoMs, abandonoMs, alEstado }
 function pvpInicio(o) {
   PVP.on = true; PVP.seat = o.seat; PVP.peer = o.seat === 'p' ? 'e' : 'p'; PVP.red = o.red; PVP.T = o.turno || 12; PVP.D = o.retardo || 2;
-  PVP.avisoMs = o.avisoMs || 3000; PVP.abandonoMs = o.abandonoMs || 18000; PVP.alEstado = o.alEstado || null;
+  PVP.terreno = o.terreno; PVP.avisoMs = o.avisoMs || 3000; PVP.abandonoMs = o.abandonoMs || 18000; PVP.alEstado = o.alEstado || null;
   PVP.propias = new Map(); PVP.pasados = new Set(); PVP.fin = null; PVP.mias = new Map(); PVP.huellas = new Map(); PVP.hashes = []; PVP.espera = 0; PVP.error = ''; PVP.log = [];
   if (!PVP.ajenas || !o.conservar) PVP.ajenas = new Map();   // los mensajes del rival pueden llegar antes de empezar: no se borran si `conservar`
   for (const t of ['p', 'e']) { const m = pvpEquipoMal(o.equipos[t]); if (m) { PVP.error = `equipo ${t}: ${m}`; pvpEstado('error'); return false; } }

@@ -44,12 +44,26 @@ function aiUpdate(team, dt) {
     P.started = true; P.seq.shift(); if (!P.seq.length) A.plan = null;
   }
 }
+// B (lee el campo): contra qué papel te conviene responder, según lo que tengas más en el campo
+const CONTRA = { tank: ['assassin', 'control', 'buster'], swarm: ['control', 'ranged', 'buster', 'tank'], ranged: ['assassin', 'swarm', 'buster'], support: ['assassin', 'swarm', 'buster'], assassin: ['tank', 'support', 'ranged'], control: ['buster', 'assassin', 'swarm'], buster: ['tank', 'swarm', 'control'] };
+function foeRoleDom(team) {
+  const foe = other(team), cuenta = {};
+  for (const u of units) if (u.alive && u.team === foe && u.deployT <= 0 && ROLES[u.type]) cuenta[ROLES[u.type]] = (cuenta[ROLES[u.type]] || 0) + 1;
+  let dom = null, best = 0; for (const r in cuenta) if (cuenta[r] > best) { best = cuenta[r]; dom = r; }
+  return dom;
+}
+// B (reparte): el carril donde tienes menos unidades; si están igual, el de la torre más débil
+function laneLess(team) {
+  const foe = other(team), n = [0, 1].map(l => units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && Math.abs(u.x - laneBridge(l)) < 90).length);
+  if (n[0] !== n[1]) return n[0] < n[1] ? 0 : 1;
+  return chooseLane(team);
+}
 // IA por papeles (tanque, enjambre, distancia...): juega cualquier mazo. La usan los rivales de facción y el modo automático de pruebas
 function aiGeneric(team, dt) {
   const A = AI[team]; A.think -= dt; if (A.think > 0) return;
   const D = G.diffCfg; A.think = team === 'e' ? srand(D.think[0], D.think[1]) : srand(0.6, 1.2);
   const me = S[team], foe = other(team), F = FACTIONS[facOf(team)], zone = ZONE[team], dir = team === 'p' ? 1 : -1;
-  const avail = me.hand.map((k, i) => ({ k, slot: i }));   // v1: la IA juega con la misma mano de 4 que el jugador
+  const avail = me.hand.map((k, i) => ({ k, slot: i })).filter(a => a.k);   // v1: la IA juega con la misma mano de 4 que el jugador (sin huecos si su mazo tiene menos de 4)
   if (F.leader && canDeploy(team, F.leader)) avail.push({ k: F.leader, slot: -1 });
   const find = roles => { for (const role of roles) { const c = avail.find(a => ROLES[a.k] === role && me.chaos >= cardDef(a.k).cost); if (c) return c; } return null; };
   const go = (c, x, y) => playCard(team, c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú
@@ -66,9 +80,10 @@ function aiGeneric(team, dt) {
     const close = structs.some(s => s.alive && s.team === team && dst(s, t) < 170);
     if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) { const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']); if (c) go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); return; }
   }
-  if (!A.plan) A.plan = { lane: chooseLane(team), n: 0 };
+  if (!A.plan) A.plan = { lane: laneLess(team), n: 0 };
   const P = A.plan; if (P.n === 0 && me.chaos < (hard ? 6.5 : 8)) return;
-  const c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find(['support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
+  const dom = foeRoleDom(team), contra = dom ? CONTRA[dom] || [] : [];
+  const c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find([...contra, 'support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
   if (!c) { if (P.n > 0 && me.chaos >= 9) A.plan = null; return; }
   const front = team === 'p' ? 495 : 330, back = team === 'p' ? 530 : 296;
   go(c, clamp(laneBridge(P.lane) + srand(-16, 16), 34, W - 34), P.n === 0 ? front : back);

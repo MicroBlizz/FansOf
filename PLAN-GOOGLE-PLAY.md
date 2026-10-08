@@ -30,3 +30,6 @@ Google puede rechazar por parecerse a *Warcraft Rumble*. «Fans of Rumble» es e
 
 ## Qué cuesta
 Solo los 25 USD de la cuenta. Lo demás es gratis (Android Studio, Capacitor, Play Console).
+
+## Enfoque (Arkioner, 8-10-2026)
+Por ahora solo Android: Capacitor con AdMob (anuncios con premio) y Play Billing (tienda), en vez de TWA. Con esto los anuncios y el cobro dejan de depender de la web; si la app lleva anuncios, marcar «Contiene anuncios» en Play Console.

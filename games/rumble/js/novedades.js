@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.94', real: ['<b>RENDIRSE EN PVP</b>: el botón ME RINDO no hacía nada contra otros jugadores; ahora pierdes y tu rival gana al momento.'],
+    joke: ['Microblizz reconoce que el botón de rendirse se había rendido primero.'] },
   { v: '0.9.93', real: [
       '<b>LOLA EN EL SALÓN DE LA FAMA</b>: la primera vez que abres el RANKING, Lola te cuenta cómo funciona.',
       '<b>PVP MÁS ESTABLE</b>: si el móvil se atasca un momento, la partida ya no intenta recuperar el tiempo perdido de golpe. Y si tu rival tiene otra versión del juego, te avisa.',

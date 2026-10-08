@@ -40,4 +40,6 @@ IDIOMA.add({
   ": marcos para tu avatar y títulos bajo tu nombre, que se ganan en los pases. Hay un pase de temporada nuevo (50 niveles, capítulos de La Gran Compra e hitos) y un pase PvP que sube al jugar partidas PvP. Son solo para lucirse: no dan ventaja.": ": frames for your avatar and titles under your name, earned in the passes. There's a new season pass (50 levels, chapters of The Big Buyout and milestones) and a PvP pass that goes up by playing PvP matches. They're just for show: no advantage.",
   "PVP MÁS ESTABLE": "MORE STABLE PVP",
   ": si el móvil se atasca un momento, la partida ya no intenta recuperar el tiempo perdido de golpe. Y si tu rival tiene otra versión del juego, te avisa.": ": if your phone stalls for a moment, the match no longer tries to catch up on the lost time all at once. And if your rival has a different version of the game, it tells you.",
+  "<b>RENDIRSE EN PVP</b>: el botón ME RINDO no hacía nada contra otros jugadores; ahora pierdes y tu rival gana al momento.": "<b>SURRENDERING IN PVP</b>: the SURRENDER button did nothing against other players; now you lose and your rival wins at once.",
+  "Microblizz reconoce que el botón de rendirse se había rendido primero.": "Microblizz admits the surrender button had surrendered first.",
 });

@@ -3,7 +3,6 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 
 ## Mensaje pendiente
 - Hay un mensaje de Daniel para Rafael en TODO.md (sección «Para Rafael»): enséñaselo a Rafael al empezar. Cuando lo hayan hablado, se borran la sección y esta línea.
-- Rafael: falta aplicar en Supabase las rarezas nuevas (TODO.md, «Para Rafael: aplicar en Supabase las rarezas nuevas»). Avísale al empezar.
 
 ## Leer poco
 - Empieza por MAPA.md (archivo, tamaño y funciones). Abre solo lo que la tarea pide.

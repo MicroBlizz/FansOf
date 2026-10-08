@@ -2,31 +2,11 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
-## Para Rafael: repasar y aplicar las misiones nuevas (Rumble 0.9.67 y 0.9.68, Daniel, 8-10-2026)
-Rafael: Daniel pidió publicarlo ya (la web tiene la 0.9.68), así que repásalo cuando lo veas. Mientras no se aplique lo del punto 2, con cuenta NO se pueden cobrar las misiones nuevas (sin cuenta, todo funciona).
-1. Qué cambia en Rumble:
-   - 0.9.67: 6 diarias al día (la fija «Empleado del día: completa 5 misiones diarias», que da 150 oro / 25 gemas / 40 pase, más 5 al azar), 8 diarias nuevas (Arena y otras), la Arena cuenta para misiones y la campaña en Fácil tiene logros de estrellas.
-   - 0.9.68: todas las misiones tienen título y descripción; 5 semanales (la fija «Empleado del mes: sé Empleado del día 7 veces», 600 / 80 / 400, más 4 al azar); las semanales normales se pueden cambiar con anuncio (mismo cupo «swap» de 2 al día que las diarias); semanales más largas (unos 5 días jugando ~10 partidas al día, medido con partidas automáticas).
-   - Sistema común (core/js/retos.js): RETOS.fijas, fijasSemana, diariasN, semanalesN, trasSemanales, y en cada misión tit, r y alCobrar. Todo opcional: TD y los demás siguen igual.
-2. Qué aplicar en Supabase, en este orden:
-   a) servidor/18-misiones-premio-propio.sql (solo cambia la rama 'mision' de _evento: si la misión tiene premio propio en premios.mision.r, da ese; si no, lo de siempre).
-   b) servidor/datos/rumble.sql (ya regenerado, versión 16: lista de misiones con las fijas, límite 6 diarias y 5 semanales, premios propios y logros de Fácil).
-3. Qué probar con una cuenta de prueba:
-   - Cobrar «Empleado del día» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
-   - Se pueden cobrar 6 diarias y 5 semanales; la siguiente se rechaza.
-   - «Empleado del mes» da 600 oro, 80 gemas y 400 de pase.
-   - Una misión inventada se rechaza.
-   - Los logros de Fácil (w1f…, st_f) se cobran una sola vez.
-4. Para revisar: tocar core sin subir el ?v= de TD, Survivors, Skate y Tácticas fue decisión de Daniel (solo cambia el Rumble; los cambios de core son compatibles).
-5. Si algo falla, avisa a Daniel. Para volver atrás la web: python herramientas/desplegar.py --lista y --a <commit>.
-
-## Para Rafael: aplicar en Supabase las rarezas nuevas (Daniel, 8-10-2026)
-La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rareza Común gris, clave `basic`). Falta el servidor:
-1. Ejecutar `servidor/17-rareza-comun.sql` (las funciones `tirar` y `_rolar_objeto` conocen la rareza Común).
-2. Ejecutar `servidor/datos/rumble.sql`, `td.sql` y `survivors.sql` (rarezas y probabilidades nuevas: Común 30 %, Poco común 25 %, Rara 30 %, Épica 12 %, Legendaria 3 %).
-- Hasta que se haga, no se rompe nada: con cuenta, el gashapón sigue con las rarezas de antes y las cosas Comunes no salen (sin cuenta ya funciona).
-- Vale para las versiones viejas del juego: el aparato saca la rareza de su propio catálogo y no mira la que devuelve el servidor.
-- Cuando esté hecho, borra esta sección y la línea de CLAUDE.md que avisa de ella.
+## Misiones nuevas de Rumble: probar con cuenta (8-10-2026)
+El servidor ya tiene aplicado (8-10-2026) servidor/17, servidor/18 y los datos de Rumble (v16), TD (v14) y Survivors (v2). Falta probar con una cuenta de prueba:
+- Cobrar «Empleado del día» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
+- Se pueden cobrar 6 diarias y 5 semanales; la siguiente se rechaza. «Empleado del mes» da 600 / 80 / 400.
+- Una misión inventada se rechaza; los logros de Fácil (w1f…, st_f) se cobran una sola vez.
 
 ## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
 ¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).

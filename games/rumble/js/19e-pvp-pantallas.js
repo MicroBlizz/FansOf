@@ -1,6 +1,7 @@
 // Fans of Rumble · PvP: pantalla de buscar rival, avisos durante la partida y pantalla final
 'use strict';
-const PVP_ABIERTO = false;   // se pondrá a true cuando el servidor del PvP esté listo; mientras, el botón solo sale en modo desarrollo
+const PVP_ABIERTO = false;   // se pondrá a true cuando el PvP esté listo para los jugadores; mientras, el botón solo sale en modo desarrollo
+const PVP_SALVAJE = false;   // el modo Salvaje (con habilidades y objetos) sale a los jugadores cuando esto pase a true; en desarrollo siempre sale
 const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se ofrece jugar contra la IA
 const pvpDisponible = () => PVP_ABIERTO || (typeof NUCLEO !== 'undefined' && !!NUCLEO.desarrollo);
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
@@ -27,7 +28,8 @@ async function pvpClasificacion() {
 }
 function pvpPinta() {
   const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo);
-  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; }
+  if (!PVP_SALVAJE && !NUCLEO.desarrollo) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
+  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !PVP_SALVAJE && !NUCLEO.desarrollo; }
   $('#pvp-sub').textContent = PVP_MODOS[PVP_UI.modo][1];
   $('#pvp-equipo').innerHTML = `<div class="ar-fac"><canvas data-pvl="${F.leader}"></canvas><span class="ar-fn"><b class="ol">${F.name}</b><small>${F.passive}</small></span><span class="ar-deck">${eq.deck.map(k => `<i class="${isSpell(k) ? 'sp' : ''}"><canvas data-pvd="${k}"></canvas></i>`).join('')}</span></div>`;
   for (const cv of document.querySelectorAll('#pvp-equipo canvas[data-pvl]')) drawArt(cv, cv.dataset.pvl, 74, 64);

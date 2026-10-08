@@ -16,6 +16,7 @@ const CONSEJOS = [
   { k: 'inv', si: () => curScreen() === 'scr-inv', sel: '#scr-inv .h2', text: 'Tu <b>INVENTARIO</b>: todas tus habilidades y objetos. Cada copia sale con su <b>calidad</b>, de Becario a CEO. Las que no te sirvan, despídelas a cambio de oro. Microblizz lo hace con personas.' },
   { k: 'pass', si: () => curScreen() === 'scr-pass', sel: '#scr-pass .h2', text: 'El <b>PASE</b>: al jugar ganas experiencia, y cada nivel del pase trae un premio. La fila de pago trae más, porque Microblizz no regala nada.' },
   { k: 'shop', si: () => curScreen() === 'scr-shop', sel: '#scr-shop .h2', text: 'La <b>TIENDA</b>. Aquí tienes un <b>regalo gratis cada día</b>: no te lo dejes. Lo demás te lo explica mejor Microblizz con tu tarjeta de crédito.' },
+  { k: 'salon', si: () => curScreen() === 'scr-salon', sel: '#scr-salon .h2', text: 'El <b>SALÓN DE LA FAMA</b>: los mejores fans del mundo en estrellas de campaña y en poder. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.' },
   { k: 'ruleta', si: () => curScreen() === 'scr-roulette', sel: '#btn-rl', text: 'La <b>RULETA</b> de Microblizz decide antes de jugar un castigo para ti, una ventaja para la CPU o las dos. Trucada, por supuesto. A cambio, el premio es mucho mayor.' },
 ];
 function consejoWant() {

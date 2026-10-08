@@ -5,7 +5,7 @@
 const NEWS = [
   { v: '0.9.82', real: [
       '<b>CAMPO IGUAL PARA LOS DOS</b>: tu sede y la del rival están ahora a la misma distancia del río (antes la suya estaba más cerca) y las zonas de los campos de jefe se reparten iguales arriba y abajo. Así es justo, también para el PvP que viene.'],
-    joke: ['Microblizz ha medido el campo con una cinta métrica y ha descubierto que llevaba años jugando en cuesta.'] },
+    joke: ['Microblizz ha medido el campo con una cinta métrica y ha descubierto que llevaba años jugando en cuesta. Y sí, la versión ha saltado de la 0.9.72 a la 0.9.82: en el taller pasaron muchas cosas con la puerta cerrada y el equipo de contabilidad se ha negado a contarlas.'] },
   { v: '0.9.72', real: [
       '<b>HECHIZOS DE VERDAD</b>: cada hechizo hace llover lo suyo (bellotas, monedas, pociones, relojes, latas…) y los gordos (el martillo del baneo, la espada del crítico, el sello de cancelado y la bomba) caen enteros y golpean. Ya no baja la carta como una bola.',
       '<b>ZONAS QUE BRILLAN</b>: las zonas del campo (hechizos, auras, el líder, la ralentización…) brillan con su color, como el cono de MeerCat. Sin rayas ni puntitos.',

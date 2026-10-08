@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fans Of · Matemáticas iguales</title>
+<style>body { font: 16px/1.5 system-ui, sans-serif; margin: 0; padding: 20px; background: #150b21; color: #f3ecff; } .bien { color: #9ef07a; } .mal { color: #ff8a8a; } code { background: #2a1840; padding: 1px 5px; border-radius: 4px; }</style>
+</head>
+<body>
+<h1>¿Este navegador hace las mismas cuentas?</h1>
+<p>El PvP de Rumble solo funciona si los dos jugadores calculan exactamente lo mismo. Esta página recorre cientos de miles de valores con las funciones de <code>games/rumble/js/04b-simulacion.js</code> (<code>hyp</code>, <code>dsin</code>, <code>dcos</code>, <code>datan2</code>) y saca una huella. Tiene que dar <b>lo mismo en todos los navegadores</b> (Chrome, Safari, Firefox, el del móvil…). Como curiosidad, también enseña la huella de las funciones nativas de <code>Math</code>: si esa cambia de un navegador a otro, es justo el problema que se evita.</p>
+<p id="res">Calculando…</p>
+<p id="nat"></p>
+<p><small id="ua"></small></p>
+<script src="../../games/rumble/js/04b-simulacion.js"></script>
+<script>
+'use strict';
+const ESPERADA = '5d1fe14a';   // la huella que sale en Chrome (V8); se pone aquí a mano si se cambian las funciones
+function huella(f) {
+  let h = 0x811c9dc5;
+  const num = v => { v = Math.round(v * 1e12); const lo = v % 4294967296 | 0, hi = Math.floor(v / 4294967296) | 0; for (const w of [lo, hi]) for (let i = 0; i < 4; i++) { h ^= (w >>> (i * 8)) & 255; h = Math.imul(h, 16777619); } };
+  for (let i = 0; i < 200000; i++) {
+    const x = i * 0.0137 - 1370, y = ((i * 7919) % 20011) / 20011 * 600 - 300, z = ((i * 104729) % 30011) / 30011 * 800 - 400;
+    num(f.hyp(y, z)); num(f.sin(x)); num(f.cos(x)); num(f.atan2(y, z)); num(f.atan2(z, y * 0.001));
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+const h1 = huella({ hyp, sin: dsin, cos: dcos, atan2: datan2 }), ok = h1 === ESPERADA;
+document.getElementById('res').innerHTML = `Huella de la simulación: <b>${h1}</b> · esperada: ${ESPERADA} · <b class="${ok ? 'bien' : 'mal'}">${ok ? 'IGUAL: este navegador sirve' : 'DISTINTA: este navegador NO calcula igual'}</b>`;
+document.getElementById('nat').textContent = 'Huella de Math nativo (informativa; puede cambiar de un navegador a otro): ' + huella({ hyp: Math.hypot, sin: Math.sin, cos: Math.cos, atan2: Math.atan2 });
+document.getElementById('ua').textContent = navigator.userAgent;
+window.RESULTADO = { h1, ok };
+</script>
+</body>
+</html>

@@ -17,10 +17,10 @@ function aiUpdate(team, dt) {
   const can = k => me.deck.includes(k) && me.chaos >= cards[k].cost && canDeploy(team, k);
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const myBase = bases[team];
-  const threats = units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && u.stealthT <= 0 && myHalf(u)).sort((a, b) => dist(a, myBase) - dist(b, myBase));
+  const threats = units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && u.stealthT <= 0 && myHalf(u)).sort((a, b) => dst(a, myBase) - dst(b, myBase));
   if (threats.length) {
     const t = threats[0];
-    const mine = units.filter(u => u.alive && u.team === team && !u.d.buildings && dist(u, t) < 130).length;
+    const mine = units.filter(u => u.alive && u.team === team && !u.d.buildings && dst(u, t) < 130).length;
     if (mine < threats.length + 1) {
       const pref = team === 'e' ? (t.hp > 300 ? ['starbot', 'becario'] : ['becario', 'starbot']) : ['squirrel', 'fox', 'bunny'];
       const k = pref.find(can);
@@ -57,13 +57,13 @@ function aiGeneric(team, dt) {
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const bh = team === 'e' && G.mode === 'boss' && !!G.bossDiff && G.bossDiff !== 'n';
   const hard = bh || (team === 'e' && G.mode === 'camp' && cdHard(G.cdiff)), myth = hard && (bh ? G.bossDiff === 'm' : G.cdiff === 'm');
-  const threats = units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && u.stealthT <= 0 && myHalf(u)).sort((a, b) => dist(a, bases[team]) - dist(b, bases[team]));
+  const threats = units.filter(u => u.alive && u.team === foe && u.deployT <= 0 && u.stealthT <= 0 && myHalf(u)).sort((a, b) => dst(a, bases[team]) - dst(b, bases[team]));
   if (threats.length) {
     // defiende si la amenaza está cerca de una torre (o le sobra CAOS); si no, ahorra para atacar
     const t = threats[0];
-    const foeHp = threats.filter(o => dist(o, t) < 120).reduce((a, o) => a + o.hp, 0);
-    const myHp = units.filter(u => u.alive && u.team === team && !u.d.buildings && !u.d.healer && dist(u, t) < 140).reduce((a, u) => a + u.hp, 0);
-    const close = structs.some(s => s.alive && s.team === team && dist(s, t) < 170);
+    const foeHp = threats.filter(o => dst(o, t) < 120).reduce((a, o) => a + o.hp, 0);
+    const myHp = units.filter(u => u.alive && u.team === team && !u.d.buildings && !u.d.healer && dst(u, t) < 140).reduce((a, u) => a + u.hp, 0);
+    const close = structs.some(s => s.alive && s.team === team && dst(s, t) < 170);
     if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) { const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']); if (c) go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); return; }
   }
   if (!A.plan) A.plan = { lane: chooseLane(team), n: 0 };

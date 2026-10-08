@@ -29,7 +29,7 @@ function moveToward(u, tx, ty, dt) {
     const atMouth = Math.abs(u.y - ey) <= 30 && Math.abs(u.x - bx) <= BRIDGE_HALF + u.r;   // ya está en la entrada: a cruzar
     gx = ex; gy = atMouth ? (uN ? RIVER.bottom + 18 : RIVER.top - 18) : ey;
   }
-  const dx = gx - u.x, dy = gy - u.y, dl = Math.hypot(dx, dy) || 1;
+  const dx = gx - u.x, dy = gy - u.y, dl = hyp(dx, dy) || 1;
   const step = Math.min(dl, u.d.speed * (u.slowT > 0 ? 0.5 : 1) * u.mSpeed * (u.tSpd || 1) * (u.abFury && u.hp < u.maxHp * 0.5 ? u.abFury : 1) * (u.runT > 0 ? 3 : 1) * (u.drinkT > 0 ? 1 + u.abDrink : 1) * (u.actT > 0 ? 1.2 : 1) * (u.d.fury && u.hp < u.maxHp * u.d.fury.f ? u.d.fury.spd : 1) * dt);
   u.x += (dx / dl) * step; u.y += (dy / dl) * step; u.runDist += step;
   if (Math.abs(dx) > 3) u.face = dx > 0 ? 1 : -1;
@@ -40,7 +40,7 @@ function explodeBeaver(u, t) {
   const m = dmgMult(u);
   u.alive = false; u.hp = 0;
   hurt(t, u.d.dmg * m, u, 'aoe');
-  for (const o of units) if (o.alive && o.team !== u.team && Math.hypot(o.x - u.x, o.y - u.y) - o.r <= u.d.splash) hurt(o, u.d.splashDmg * m, u, 'aoe');
+  for (const o of units) if (o.alive && o.team !== u.team && hyp(o.x - u.x, o.y - u.y) - o.r <= u.d.splash) hurt(o, u.d.splashDmg * m, u, 'aoe');
   ring(u.x, u.y, 8, u.d.splash * 1.6, 'rgba(255,170,60,.95)', 0.5, 7);
   puff(u.x, u.y, 14, '#ffb347', 90, 10, false, 10); puff(u.x, u.y, 8, '#8a8f9c', 60, 9, false, 16);
   chips(u.x, u.y, 12, 10, ['#e2463b', '#8a5a33', '#ffcb3d'], 'chip', 4); sparks(u.x, u.y, 14, 10, '#ffd34d'); flashAt(u.x, u.y, 14, 80, '255,160,60', 0.35); screenFlash(0.12);
@@ -57,9 +57,9 @@ function attack(u, t) {
   const tf = u.tfBoost; if (tf) { mult *= 1.5; u.tfBoost = false; }
   if (u.d.leap && t.kind === 'unit' && (t.d.healer || t.d.ranged || ROLES[t.type] === 'support')) mult *= u.d.leap.mult;   // v0.9.15: mata-sanadores
   if (surprise && u.d.ranged) { mult *= surpriseM; addNum(t.x, t.y, topOf(t) + 22, '¡SORPRESA!', '#e6a8ff', 15); if (u.team === 'p') chatEv('stealth', null, null, 0.5, 12); }   // v0.9.13: GhostAgent
-  if (u.d.chain) { zapChain(u, t, u.d.dmg * mult); u.lungeT = u.lungeMax = 0.16; const d = dist(u, t) || 1; u.lungeX = -(t.x - u.x) / d * 0.5; u.lungeY = -(t.y - u.y) / d * 0.5; return; }
-  if (u.d.ranged) { shoot(u, t, u.d.ranged, u.d.dmg * mult, tf || critHit || surprise ? 'crit' : st); u.lungeT = u.lungeMax = 0.16; const d = dist(u, t) || 1; u.lungeX = -(t.x - u.x) / d * 0.85; u.lungeY = -(t.y - u.y) / d * 0.85; flashAt(u.x + (t.x - u.x) / d * 13, u.y + (t.y - u.y) / d * 4, topOf(u) * 0.6, 20, u.team === 'p' ? '255,220,140' : '170,215,255', 0.12); puff(u.x - (t.x - u.x) / d * 5, u.y, 2, '#e9dcc0', 22, 3.5, true); return; }
-  u.lungeT = u.lungeMax = 0.24; const d = dist(u, t) || 1; u.lungeX = (t.x - u.x) / d; u.lungeY = (t.y - u.y) / d;
+  if (u.d.chain) { zapChain(u, t, u.d.dmg * mult); u.lungeT = u.lungeMax = 0.16; const d = dst(u, t) || 1; u.lungeX = -(t.x - u.x) / d * 0.5; u.lungeY = -(t.y - u.y) / d * 0.5; return; }
+  if (u.d.ranged) { shoot(u, t, u.d.ranged, u.d.dmg * mult, tf || critHit || surprise ? 'crit' : st); u.lungeT = u.lungeMax = 0.16; const d = dst(u, t) || 1; u.lungeX = -(t.x - u.x) / d * 0.85; u.lungeY = -(t.y - u.y) / d * 0.85; flashAt(u.x + (t.x - u.x) / d * 13, u.y + (t.y - u.y) / d * 4, topOf(u) * 0.6, 20, u.team === 'p' ? '255,220,140' : '170,215,255', 0.12); puff(u.x - (t.x - u.x) / d * 5, u.y, 2, '#e9dcc0', 22, 3.5, true); return; }
+  u.lungeT = u.lungeMax = 0.24; const d = dst(u, t) || 1; u.lungeX = (t.x - u.x) / d; u.lungeY = (t.y - u.y) / d;
   puff(u.x - u.lungeX * 4, u.y, 3, '#e9dcc0', 34, 4.5, true);   // v0.9.24: levanta polvo al lanzarse
   let dmg = u.d.dmg * mult, crit = surprise || tf || critHit;
   if (surprise) { dmg *= surpriseM; addNum(t.x, t.y, topOf(t) + 22, '¡SORPRESA!', '#e6a8ff', 15); if (u.team === 'p') chatEv('stealth', null, null, 0.5, 12); }
@@ -90,7 +90,7 @@ function attack(u, t) {
   if (u.abSplash) confetti(u, t, dmg * u.abSplash);
   if (u.abChain) chainOne(u, t, dmg * u.abChain);
   if (u.d.cleave) {   // BanHammer: el martillazo también da a los de alrededor
-    for (const o of units) if (o !== t && o.alive && o.team !== u.team && targetable(o) && dist(o, t) - o.r <= u.d.cleave.r) { hurt(o, dmg * u.d.cleave.f, u, 'aoe'); knockBack(u, o); }
+    for (const o of units) if (o !== t && o.alive && o.team !== u.team && targetable(o) && dst(o, t) - o.r <= u.d.cleave.r) { hurt(o, dmg * u.d.cleave.f, u, 'aoe'); knockBack(u, o); }
     ring(t.x, t.y, 6, u.d.cleave.r, 'rgba(255,255,255,.85)', 0.3, 4);
   }
   if ((u.d.knock || u.abKnock) && t.kind === 'unit') knockBack(u, t);
@@ -98,14 +98,14 @@ function attack(u, t) {
 // habilidad Rayo en cadena: el golpe salta a otro enemigo cercano
 function chainOne(u, t, dmg) {
   let best = null, bd = 75;
-  for (const o of units) if (o !== t && o.team !== u.team && targetable(o)) { const dd = dist(o, t); if (dd < bd) { bd = dd; best = o; } }
+  for (const o of units) if (o !== t && o.team !== u.team && targetable(o)) { const dd = dst(o, t); if (dd < bd) { bd = dd; best = o; } }
   if (!best) return;
   parts.push({ type: 'zap', pts: [[t.x, t.y, topOf(t) * 0.5], [best.x, best.y, topOf(best) * 0.5]], life: 0.22, max: 0.22, seed: Math.random() * 1000 });
   hurt(best, dmg, u, 'aoe');
 }
 function knockBack(u, t) {
   if (!t.alive || t.jump || t.immuneCC) return;
-  const kn = u.d.knock || u.abKnock || 0, dd = dist(u, t) || 1; t.x += (t.x - u.x) / dd * kn; t.y += (t.y - u.y) / dd * kn * 0.7;
+  const kn = u.d.knock || u.abKnock || 0, dd = dst(u, t) || 1; t.x += (t.x - u.x) / dd * kn; t.y += (t.y - u.y) / dd * kn * 0.7;
   puff(t.x, t.y, 4, '#e9dcc0', 30, 5, true);
 }
 // ThunderGod: rayo que salta entre enemigos
@@ -115,7 +115,7 @@ function zapChain(u, t, dmg) {
   hurt(t, dmg, u, 'hit');
   for (let i = 0; i < C.n; i++) {
     d *= C.f; let best = null, bd = C.r;
-    for (const o of units) if (o.team !== u.team && targetable(o) && !hit.includes(o)) { const dd = dist(o, cur); if (dd < bd) { bd = dd; best = o; } }
+    for (const o of units) if (o.team !== u.team && targetable(o) && !hit.includes(o)) { const dd = dst(o, cur); if (dd < bd) { bd = dd; best = o; } }
     if (!best) break;
     pts.push([best.x, best.y, topOf(best) * 0.5]); hurt(best, d, u, 'aoe'); hit.push(best); cur = best;
   }
@@ -134,10 +134,10 @@ function updatePassives() {
   const auras = units.filter(a => a.alive && a.d.aura && a.deployT <= 0);
   for (const u of units) {
     u.aura = 0;
-    if (auras.length && u.alive && u.deployT <= 0) for (const a of auras) if (a.team === u.team && dist(a, u) <= a.d.aura.r) { u.aura = a.d.aura.mult; break; }
+    if (auras.length && u.alive && u.deployT <= 0) for (const a of auras) if (a.team === u.team && dst(a, u) <= a.d.aura.r) { u.aura = a.d.aura.mult; break; }
     if (facOf(u.team) !== 'animales') { u.rage = 0; continue; }
     let n = 0;
-    if (u.alive && u.deployT <= 0) for (const o of units) { if (o !== u && o.alive && o.team === u.team && o.deployT <= 0 && Math.abs(o.x - u.x) < R.radius && Math.abs(o.y - u.y) < R.radius && dist(o, u) <= R.radius) n++; }
+    if (u.alive && u.deployT <= 0) for (const o of units) { if (o !== u && o.alive && o.team === u.team && o.deployT <= 0 && Math.abs(o.x - u.x) < R.radius && Math.abs(o.y - u.y) < R.radius && dst(o, u) <= R.radius) n++; }
     n = Math.min(R.maxStacks, n);
     if (n === R.maxStacks && !u.rageShown) { u.rageShown = true; addNum(u.x, u.y, TYPES[u.type].top + 20, '¡RABIA MÁXIMA!', '#ff8a3d', 13); }
     u.rage = n;

@@ -5,7 +5,7 @@ function hurt(t, amount, src, style = 'hit') {
   if (!t || !t.alive) return;
   if (t.kind === 'struct' && t.reviewUntil > G.t) amount *= 1 + (t.reviewAmp || 0.4);   // v0.9.20: Review bombing
   if (t.kind === 'unit') t.hitAt = G.t;   // v0.9.23: para la pasiva SIN CRUNCH
-  if (src && src.kind === 'unit') for (const c of units) if (c.abCute && c.alive && c.team !== src.team && dist(c, src) <= 75) { amount *= 1 - c.abCute; break; }   // orejas de gato
+  if (src && src.kind === 'unit') for (const c of units) if (c.abCute && c.alive && c.team !== src.team && dst(c, src) <= 75) { amount *= 1 - c.abCute; break; }   // orejas de gato
   if (t.kind === 'unit') {
     if (t.jump) return;
     if (t.invulnT > 0) { if (Math.random() < 0.25) addNum(t.x, t.y, topOf(t) + 12, 'PAUSA', '#7df3ff', 12); return; }
@@ -36,7 +36,7 @@ function hurt(t, amount, src, style = 'hit') {
   if (G.mode === 'boss' && t === bases.e) S.p.bossDmg += Math.min(amount, Math.max(0, t.hp));
   if (G.mode === 'sandbox' && t.team === 'e') sbDamage(amount);   // v0.9.20: contador de daño
   t.hp -= amount; t.hitT = 0.12;
-  if (t.kind === 'unit' && src && src.x !== undefined) { const kd = Math.hypot(t.x - src.x, t.y - src.y) || 1; t.kbX = (t.x - src.x) / kd; t.kbY = (t.y - src.y) / kd; t.kbT = 0.18; }   // v0.9.24: retroceso visual
+  if (t.kind === 'unit' && src && src.x !== undefined) { const kd = hyp(t.x - src.x, t.y - src.y) || 1; t.kbX = (t.x - src.x) / kd; t.kbY = (t.y - src.y) / kd; t.kbT = 0.18; }   // v0.9.24: retroceso visual
   if (src && src.abVamp && src.alive && src.kind === 'unit') { const hv = Math.min(src.maxHp - src.hp, amount * src.abVamp); src.hp += hv; if (hv >= 2 && Math.random() < 0.45) addNum(src.x + rand(-5, 5), src.y, topOf(src) * 0.75 + 8, '+' + Math.round(hv), '#8cf05a', 13); }
   const col = style === 'crit' ? '#ffd23f' : style === 'aoe' ? '#f3a6ff' : style === 'boss' ? '#ff6b7a' : style === 'rage' ? '#ff8a3d' : '#ffffff';
   addNum(t.x + rand(-7, 7), t.y, topOf(t) * 0.75 + 6, amount, col, style === 'crit' ? 22 : style === 'rage' ? 16 : t.kind === 'struct' ? 14 : 15);
@@ -72,7 +72,7 @@ function kill(t, src) {
     deathExtras(t, src);
     if (t.d.deathBlast) {
       const B = t.d.deathBlast, rgb = B.rgb || '123,224,74';
-      for (const o of units) if (o.alive && o.team !== t.team && Math.hypot(o.x - t.x, o.y - t.y) - o.r <= B.r) hurt(o, B.dmg * (t.mLvl || 1), null, 'aoe');
+      for (const o of units) if (o.alive && o.team !== t.team && hyp(o.x - t.x, o.y - t.y) - o.r <= B.r) hurt(o, B.dmg * (t.mLvl || 1), null, 'aoe');
       ring(t.x, t.y, 10, B.r * 1.3, `rgba(${rgb},.9)`, 0.55, 7); puff(t.x, t.y, 16, B.c1 || '#7be04a', 80, 10, false, 14); puff(t.x, t.y, 8, B.c2 || '#c6a4c9', 50, 8, false, 20);
       addNum(t.x, t.y, 64, B.txt || '¡NUBE TÓXICA!', B.tc || '#9cf06a', 16); flashAt(t.x, t.y, 14, 90, rgb, 0.4); shake(6); play('trash');
       if (B.txt && t.team === 'p') chatEv('ability', null, null, 0.4, 12);
@@ -153,13 +153,13 @@ const PROJ = {
 function shoot(src, tgt, kind, dmg, style = 'hit') {
   const sx = src.x + (src.kind === 'unit' ? src.face * 12 * (src.mScale || 1) : src.muzzleX), sy = src.y;
   const sz = src.kind === 'struct' ? src.muzzleZ : topOf(src) * 0.5;
-  const d = Math.hypot(tgt.x - sx, tgt.y - sy); const P = PROJ[kind];
+  const d = hyp(tgt.x - sx, tgt.y - sy); const P = PROJ[kind];
   const pr = { kind, x: sx, y: sy, z: sz, sx, sy, sz, tgt, tx: tgt.x, ty: tgt.y, t: 0, dur: Math.max(0.1, d / P.v), dmg, team: src.team, src, arc: P.lob ? 30 + d * P.lob : 0, splash: src.kind === 'unit' ? src.d.splash || 0 : 0, style };
   projs.push(pr); play(P.sfx); return pr;
 }
 function bounceShot(p) {
   const from = p.tgt; let best = null, bd = 95;
-  for (const o of units) if (o !== from && o.team !== p.team && targetable(o)) { const d = dist(o, from); if (d < bd) { bd = d; best = o; } }
+  for (const o of units) if (o !== from && o.team !== p.team && targetable(o)) { const d = dst(o, from); if (d < bd) { bd = d; best = o; } }
   if (!best) return;
   const sz = topOf(from) * 0.45;
   projs.push({ kind: p.kind, x: from.x, y: from.y, z: sz, sx: from.x, sy: from.y, sz, tgt: best, tx: best.x, ty: best.y, t: 0, dur: Math.max(0.08, bd / PROJ[p.kind].v), dmg: p.dmg * p.src.d.bounce, team: p.team, src: p.src, arc: 0, splash: 0, style: 'aoe', bounced: true });
@@ -168,12 +168,12 @@ function updateProjs(dt) {
   for (const p of projs) {
     p.t += dt; if (p.tgt.alive) { p.tx = p.tgt.x; p.ty = p.tgt.y; }
     const k = Math.min(1, p.t / p.dur); const tz = p.tgt.alive ? topOf(p.tgt) * 0.45 : 6;
-    p.x = lerp(p.sx, p.tx, k); p.y = lerp(p.sy, p.ty, k); p.z = lerp(p.sz, tz, k) + Math.sin(Math.PI * k) * p.arc;
+    p.x = lerp(p.sx, p.tx, k); p.y = lerp(p.sy, p.ty, k); p.z = lerp(p.sz, tz, k) + dsin(Math.PI * k) * p.arc;
     if (k >= 1) {
       p.done = true;
       const P = PROJ[p.kind];
       if (p.splash) {
-        for (const o of units) if (o.alive && o.team !== p.team && Math.hypot(o.x - p.x, o.y - p.y) - o.r <= p.splash) hurt(o, p.dmg, p.src, 'aoe');
+        for (const o of units) if (o.alive && o.team !== p.team && hyp(o.x - p.x, o.y - p.y) - o.r <= p.splash) hurt(o, p.dmg, p.src, 'aoe');
         if (p.tgt.kind === 'struct' && p.tgt.alive) hurt(p.tgt, p.dmg, p.src, 'aoe');
         ring(p.x, p.y, 6, p.splash, P.ring || 'rgba(255,170,60,.9)', 0.35, 5);
         if (p.kind === 'note') { for (let i = 0; i < 3; i++) parts.push({ type: 'note', x: p.x + rand(-14, 14), y: p.y, z: rand(8, 20), vx: 0, vy: 0, vz: 30, g: 0, life: 0.7, max: 0.7, col: pick(['#ff8fd0', '#22e3ff', '#ffe14d']) }); play('note'); }

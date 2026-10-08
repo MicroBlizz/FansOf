@@ -81,7 +81,7 @@ function iaUpdate(dt) {
     // ¡HOTFIX! de la IndieDev: cura a los cercanos y les quita los aturdimientos
     const H = u.d.hotfix; if (!H) continue;
     u.hfT = (u.hfT == null ? H.cd * 0.6 : u.hfT) - dt; if (u.hfT > 0) continue;
-    const near = units.filter(o => o.alive && o.team === u.team && o.deployT <= 0 && dist(o, u) <= H.r);
+    const near = units.filter(o => o.alive && o.team === u.team && o.deployT <= 0 && dst(o, u) <= H.r);
     if (!near.some(o => o.hp < o.maxHp || o.stunT > 0)) { u.hfT = 0.5; continue; }
     u.hfT = H.cd; const P = u.mLvl || 1;
     for (const o of near) { const amt = Math.min(H.heal * P, o.maxHp - o.hp); o.hp += amt; o.stunT = 0; o.slowT = 0; if (amt >= 1) addNum(o.x, o.y, topOf(o) * 0.75 + 4, '+' + Math.round(amt), '#8cf05a', 15); }

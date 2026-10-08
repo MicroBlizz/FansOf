@@ -10,16 +10,16 @@ const HEAL_TOWER_BACK = 40;   // a qué distancia se pone detrás de la torre qu
 // a quién apunta el cono: la unidad que sigue o el edificio que cura; si no, hacia delante
 function healAim(u, dt) {
   const f = u.follow && u.follow.alive ? u.follow : u.healTgt && u.healTgt.alive ? u.healTgt : null;
-  const ta = f && dist(f, u) > 8 ? Math.atan2(f.y - u.y, f.x - u.x) : healFwd(u);
+  const ta = f && dst(f, u) > 8 ? datan2(f.y - u.y, f.x - u.x) : healFwd(u);
   if (u.healAng === undefined) { u.healAng = ta; return; }
   let d = ta - u.healAng; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
   u.healAng += d * Math.min(1, dt * 6);
 }
 // ¿está dentro del cono de curación? (delante, a menos de su alcance; ni ella misma ni lo que tiene al lado)
 function inHealCone(u, a) {
-  const dx = a.x - u.x, dy = a.y - u.y, d = Math.hypot(dx, dy); if (d < 4 || d > u.d.healR + a.r * 0.5) return false;
+  const dx = a.x - u.x, dy = a.y - u.y, d = hyp(dx, dy); if (d < 4 || d > u.d.healR + a.r * 0.5) return false;
   const an = u.healAng === undefined ? healFwd(u) : u.healAng;
-  return (dx * Math.cos(an) + dy * Math.sin(an)) / d >= HEAL_COS;
+  return (dx * dcos(an) + dy * dsin(an)) / d >= HEAL_COS;
 }
 function healOne(u, a) {
   const amt = Math.min(u.d.heal, a.maxHp - a.hp); a.hp += amt;
@@ -53,27 +53,27 @@ function healPulse(u, dt) {
 function followAlly(u, dt) {
   const home = u.team === 'p' ? 1 : -1; let best = null, bs = -Infinity;
   for (const a of units) {
-    if (a === u || !a.alive || a.team !== u.team || a.deployT > 0 || a.d.healer || a.d.kamikaze || a.jump || dist(a, u) > 230) continue;   // v0.9.15: solo aliados cercanos
-    const sc = (1 - a.hp / a.maxHp) * 150 - dist(a, u) * 0.5 - Math.abs(a.x - u.x) * 0.3 + a.y * home * 0.2 - (a.d.buildings ? 40 : 0) - (a.d.ranged ? HEAL_RANGED_PEN : 0);
+    if (a === u || !a.alive || a.team !== u.team || a.deployT > 0 || a.d.healer || a.d.kamikaze || a.jump || dst(a, u) > 230) continue;   // v0.9.15: solo aliados cercanos
+    const sc = (1 - a.hp / a.maxHp) * 150 - dst(a, u) * 0.5 - Math.abs(a.x - u.x) * 0.3 + a.y * home * 0.2 - (a.d.buildings ? 40 : 0) - (a.d.ranged ? HEAL_RANGED_PEN : 0);
     if (sc > bs) { bs = sc; best = a; }
   }
   u.follow = best;
   if (best) {
     u.healTgt = null;
     const tx = clamp(best.x, 24, W - 24), ty = clamp(best.y + home * HEAL_BACK, BOUNDS.y0, BOUNDS.y1);
-    if (Math.hypot(tx - u.x, ty - u.y) > 10) moveToward(u, tx, ty, dt); else { u.moving = false; if (Math.abs(best.x - u.x) > 3) u.face = best.x > u.x ? 1 : -1; }
+    if (hyp(tx - u.x, ty - u.y) > 10) moveToward(u, tx, ty, dt); else { u.moving = false; if (Math.abs(best.x - u.x) > 3) u.face = best.x > u.x ? 1 : -1; }
     return true;
   }
-  if (units.some(o => o.alive && o.team !== u.team && targetable(o) && dist(o, u) < u.d.sight)) { u.healTgt = null; return false; }   // la atacan: se defiende
+  if (units.some(o => o.alive && o.team !== u.team && targetable(o) && dst(o, u) < u.d.sight)) { u.healTgt = null; return false; }   // la atacan: se defiende
   // sola: la torre (o la sede) de su equipo a la que más vida le falta; si ninguna está tocada, la torre más cercana, para esperar a salvo
   const mine = structs.filter(s => s.alive && s.team === u.team && s.hp > 0);
   let tgt = null, falta = 0;
   for (const s of mine) { const f = s.maxHp - s.hp; if (f > falta) { falta = f; tgt = s; } }
   const hurt = !!tgt;
-  if (!tgt) for (const s of mine) if (s.role === 'tower' && (!tgt || dist(s, u) < dist(tgt, u))) tgt = s;
+  if (!tgt) for (const s of mine) if (s.role === 'tower' && (!tgt || dst(s, u) < dst(tgt, u))) tgt = s;
   u.healTgt = hurt ? tgt : null;
   if (!tgt) { u.moving = false; return true; }
   const tx = clamp(tgt.x, 24, W - 24), ty = clamp(tgt.y + home * (tgt.r + HEAL_TOWER_BACK), BOUNDS.y0, BOUNDS.y1);
-  if (Math.hypot(tx - u.x, ty - u.y) > 10) moveToward(u, tx, ty, dt); else u.moving = false;
+  if (hyp(tx - u.x, ty - u.y) > 10) moveToward(u, tx, ty, dt); else u.moving = false;
   return true;
 }

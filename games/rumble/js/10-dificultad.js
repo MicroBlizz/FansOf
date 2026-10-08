@@ -151,7 +151,7 @@ function onLand(u) {
     if (n > 0.05) { S[foe].chaos -= n; S[u.team].chaos = Math.min(CFG.chaosMax, S[u.team].chaos + n); addNum(u.x, u.y, topOf(u) + 22, `¡MICROPAGO! +${fmtV(rnd(n, 1))} CAOS`, '#ff9be6', 13); if (u.team === 'p') chatEv('ability', null, null, 0.4, 15); }
   }
   if (u.abPhoto) {
-    let n = 0; for (const o of units) if (o.alive && o.team !== u.team && !o.immuneCC && o.deployT <= 0 && dist(o, u) <= 85) { o.stunT = Math.max(o.stunT, u.abPhoto); o.stunKind = 'daze'; n++; }
+    let n = 0; for (const o of units) if (o.alive && o.team !== u.team && !o.immuneCC && o.deployT <= 0 && dst(o, u) <= 85) { o.stunT = Math.max(o.stunT, u.abPhoto); o.stunKind = 'daze'; n++; }
     flashAt(u.x, u.y, 18, 100, '255,255,255', 0.55); ring(u.x, u.y, 8, 85, 'rgba(255,255,255,.9)', 0.35, 4, true); addNum(u.x, u.y, topOf(u) + 22, '¡FOTO!', '#ffffff', 15); play('zap');
     if (n && u.team === 'p') chatEv('ability', null, null, 0.4, 15);
   }
@@ -175,7 +175,7 @@ function tickExtras(u, dt) {
   if (u.invulnT > 0) { u.invulnT -= dt; if (Math.random() < dt * 8) ring(u.x, u.y, 4, u.r * 2.3, 'rgba(125,243,255,.85)', 0.25, 3); }
   if (u.abAura) {
     u.auraT = (u.auraT || 0) - dt; if (u.auraT > 0) return; u.auraT = 1; let any = false;
-    for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && a.hp < a.maxHp && dist(a, u) <= 80) { a.hp = Math.min(a.maxHp, a.hp + a.maxHp * u.abAura); any = true; }
+    for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && a.hp < a.maxHp && dst(a, u) <= 80) { a.hp = Math.min(a.maxHp, a.hp + a.maxHp * u.abAura); any = true; }
     if (any) ring(u.x, u.y, 4, 80, 'rgba(140,240,90,.45)', 0.45, 2, true);
   }
 }
@@ -183,7 +183,7 @@ function deathExtras(t, src) {
   if (G.state !== 'play') return;
   if (t.abRage) {
     const dmg = t.abRage * (t.mLvl || 1);
-    for (const o of units) if (o.alive && o.team !== t.team && Math.hypot(o.x - t.x, o.y - t.y) - o.r <= 64) hurt(o, dmg, null, 'aoe');
+    for (const o of units) if (o.alive && o.team !== t.team && hyp(o.x - t.x, o.y - t.y) - o.r <= 64) hurt(o, dmg, null, 'aoe');
     ring(t.x, t.y, 8, 80, 'rgba(255,90,90,.9)', 0.45, 6); puff(t.x, t.y, 10, '#ff6b6b', 70, 8, false, 12); addNum(t.x, t.y, topOf(t) + 26, '¡RAGE QUIT!', '#ff6b6b', 16); shake(4); play('trash');
     if (t.team === 'p') chatEv('ability', null, null, 0.5, 15);
   }
@@ -192,6 +192,6 @@ function deathExtras(t, src) {
   if (t.team === 'p' && G.eKillChaos && !t.summon) S.e.chaos = Math.min(CFG.chaosMax, S.e.chaos + G.eKillChaos);
 }
 function confetti(u, t, dmg) {   // Lanzaconfeti: el golpe salpica a los de alrededor
-  for (const o of units) if (o !== t && o.alive && o.team !== u.team && targetable(o) && dist(o, t) - o.r <= 48) hurt(o, dmg, u, 'aoe');
+  for (const o of units) if (o !== t && o.alive && o.team !== u.team && targetable(o) && dst(o, t) - o.r <= 48) hurt(o, dmg, u, 'aoe');
   chips(t.x, t.y, topOf(t) * 0.6, 8, ['#ff5fa8', '#ffe14d', '#7be04a', '#63cfe0', '#d08cff'], 'chip', 3);
 }

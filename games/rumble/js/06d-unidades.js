@@ -71,7 +71,7 @@ function summonTick(u, dt) {
 // onda de área que aturde: Banshee (grito), Medusa (piedra), ChonkCat (se sienta)
 function pulseTick(u, dt) {
   u.pulseT -= dt; if (u.pulseT > 0) return;
-  const P = u.d.pulse || u.abPulse; const hit = units.filter(o => o.alive && o.team !== u.team && o.deployT <= 0 && !o.jump && !o.immuneCC && dist(o, u) - o.r <= P.r);
+  const P = u.d.pulse || u.abPulse; const hit = units.filter(o => o.alive && o.team !== u.team && o.deployT <= 0 && !o.jump && !o.immuneCC && dst(o, u) - o.r <= P.r);
   if (!hit.length) { u.pulseT = 0.4; return; }
   for (const o of hit) { o.stunT = Math.max(o.stunT, P.stun); o.stunKind = P.kind; if (P.dmg) hurt(o, P.dmg * dmgMult(u), u, 'aoe'); }
   for (let i = 0; i < 3; i++) parts.push({ type: 'ring', x: u.x, y: u.y, z: 0, r0: 8 + i * 6, r1: P.r * (1 + i * 0.12), color: P.color, life: 0.45 + i * 0.1, max: 0.45 + i * 0.1, lw: 4, ground: true, circ: true });
@@ -84,21 +84,21 @@ function pulseTick(u, dt) {
 const VIRAL = { heal: ['¡CARTA: CURA!', '#8cf05a'], stun: ['¡CARTA: ATURDIR!', '#ffe14d'], fire: ['¡CARTA: FUEGO!', '#ff9a3c'], dogs: ['¡CARTA: PERRITOS!', '#ffcf8a'] };
 function viralTick(u, dt) {
   u.viralT -= dt; if (u.viralT > 0) return;
-  const foes = units.filter(o => o.team !== u.team && targetable(o) && dist(o, u) < 150);
+  const foes = units.filter(o => o.team !== u.team && targetable(o) && dst(o, u) < 150);
   const fs = structs.find(s => s.alive && s.team !== u.team && edgeDist(u, s) < 120);
   if (!foes.length && !fs) { u.viralT = 0.5; return; }
-  const hurtAllies = units.some(a => a.alive && a.team === u.team && a.deployT <= 0 && a.hp < a.maxHp * 0.7 && dist(a, u) < 130);
+  const hurtAllies = units.some(a => a.alive && a.team === u.team && a.deployT <= 0 && a.hp < a.maxHp * 0.7 && dst(a, u) < 130);
   let opts = foes.length ? ['stun', 'fire', 'dogs'] : ['fire', 'dogs']; if (hurtAllies) opts.push('heal', 'heal');
   const k = spick(opts);
   parts.push({ type: 'card', x: u.x, y: u.y, z: topOf(u) + 30, k, life: 1.1, max: 1.1 });
   if (k === 'heal') {
-    for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && dist(a, u) < 130) { const amt = Math.min(60, a.maxHp - a.hp); a.hp += amt; if (amt >= 4) addNum(a.x + rand(-5, 5), a.y, topOf(a) * 0.75 + 4, '+' + Math.round(amt), '#8cf05a', 13); }
+    for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && dst(a, u) < 130) { const amt = Math.min(60, a.maxHp - a.hp); a.hp += amt; if (amt >= 4) addNum(a.x + rand(-5, 5), a.y, topOf(a) * 0.75 + 4, '+' + Math.round(amt), '#8cf05a', 13); }
     ring(u.x, u.y, 10, 130, 'rgba(123,224,74,.85)', 0.5, 5, true); play('heal');
   } else if (k === 'stun') {
-    for (const o of foes) if (dist(o, u) - o.r < 110) { o.stunT = Math.max(o.stunT, 1.2); o.stunKind = 'daze'; }
+    for (const o of foes) if (dst(o, u) - o.r < 110) { o.stunT = Math.max(o.stunT, 1.2); o.stunKind = 'daze'; }
     ring(u.x, u.y, 10, 110, 'rgba(255,225,77,.9)', 0.5, 5, true); play('wail');
   } else if (k === 'fire') {
-    const tg = targetable(u.target) && dist(u, u.target) < 170 ? u.target : foes[0] || fs;
+    const tg = targetable(u.target) && dst(u, u.target) < 170 ? u.target : foes[0] || fs;
     const pr = shoot(u, tg, 'fireball', 80 * dmgMult(u), 'aoe'); pr.splash = 55;
   } else {
     for (let i = 0; i < 2; i++) { const s = spawnUnit(u.team, 'suchdog', clamp(u.x + (i ? 18 : -18), 24, W - 24), u.y + (u.team === 'p' ? -14 : 14)); s.summon = true; s.labelT = 0; s.deployT = s.deployMax = 0.45; }
@@ -111,9 +111,9 @@ function viralTick(u, dt) {
 function teamFightTick(u, dt) {
   u.tfT -= dt; if (u.tfT > 0) return;
   const R = u.d.teamFight.r;
-  const engaged = units.some(o => o.team !== u.team && targetable(o) && dist(o, u) < R + 20) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= u.d.range + 6);
+  const engaged = units.some(o => o.team !== u.team && targetable(o) && dst(o, u) < R + 20) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= u.d.range + 6);
   if (!engaged) { u.tfT = 0.5; return; }
-  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && !a.d.healer && dist(a, u) <= R) { a.atkT = Math.min(a.atkT, 0); a.tfBoost = true; ring(a.x, a.y, 4, a.r * 2, 'rgba(255,203,61,.9)', 0.35, 3); }
+  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && !a.d.healer && dst(a, u) <= R) { a.atkT = Math.min(a.atkT, 0); a.tfBoost = true; ring(a.x, a.y, 4, a.r * 2, 'rgba(255,203,61,.9)', 0.35, 3); }
   ring(u.x, u.y, 10, R, 'rgba(255,203,61,.95)', 0.5, 6, true); addNum(u.x, u.y, topOf(u) + 20, '¡TEAM FIGHT!', '#ffcb3d', 17); play('horn');
   u.tfT = u.d.teamFight.cd;
 }
@@ -133,7 +133,7 @@ function blinkTick(u, t, dt) {
   u.blinkT -= dt; if (u.blinkT > 0) return;
   const gap = edgeDist(u, t) - u.d.range;
   if (gap < 25 || gap > u.d.sight + 40 || (u.y < RIVER.y) !== (t.y < RIVER.y)) return;
-  const d = dist(u, t) || 1, step = Math.min(u.d.blink.dist, gap + 4);
+  const d = dst(u, t) || 1, step = Math.min(u.d.blink.dist, gap + 4);
   const BK = u.d.blink; puff(u.x, u.y, 8, BK.col || '#ff3df0', 40, 5, false, 12);
   u.x += (t.x - u.x) / d * step; u.y += (t.y - u.y) / d * step; u.face = t.x > u.x ? 1 : -1;
   ring(u.x, u.y, 4, 30, BK.ring || 'rgba(34,227,255,.9)', 0.3, 4); play('blink'); if (BK.txt && Math.random() < 0.5) addNum(u.x, u.y, topOf(u) + 16, BK.txt, BK.col, 13);
@@ -142,10 +142,10 @@ function blinkTick(u, t, dt) {
 // v0.9.13: VikingoPerdido levanta un muro de escudos: barrera dorada para él y sus aliados cercanos
 function shieldUpTick(u, dt) {
   u.shUpT = (u.shUpT == null ? 2 : u.shUpT) - dt; if (u.shUpT > 0) return;
-  const D = u.d.shieldUp, engaged = units.some(o => o.team !== u.team && targetable(o) && dist(o, u) < D.r + 40) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= rangeOf(u) + 10);
+  const D = u.d.shieldUp, engaged = units.some(o => o.team !== u.team && targetable(o) && dst(o, u) < D.r + 40) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= rangeOf(u) + 10);
   if (!engaged) { u.shUpT = 0.5; return; }
   const amt = Math.round(D.amt * (u.mLvl || 1));
-  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && !a.jump && dist(a, u) <= D.r) { a.bshield = Math.max(a.bshield || 0, amt); a.bshT = D.t; ring(a.x, a.y, 4, a.r * 2.2, 'rgba(255,203,61,.9)', 0.35, 3); }
+  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && !a.jump && dst(a, u) <= D.r) { a.bshield = Math.max(a.bshield || 0, amt); a.bshT = D.t; ring(a.x, a.y, 4, a.r * 2.2, 'rgba(255,203,61,.9)', 0.35, 3); }
   ring(u.x, u.y, 10, D.r, 'rgba(255,203,61,.95)', 0.5, 6, true); addNum(u.x, u.y, topOf(u) + 20, '¡MURO DE ESCUDOS!', '#ffcb3d', 15); play('shield'); play('horn');
   if (u.team === 'p') chatEv('shieldwall', null, null, 0.35, 15);
   u.shUpT = D.cd;
@@ -153,9 +153,9 @@ function shieldUpTick(u, dt) {
 // v0.9.13: LaDirectora grita ¡ACCIÓN!: sus aliados cercanos atacan más rápido y corren más durante unos segundos
 function actionTick(u, dt) {
   u.actCd = (u.actCd == null ? 2.5 : u.actCd) - dt; if (u.actCd > 0) return;
-  const A = u.d.action, engaged = units.some(o => o.team !== u.team && targetable(o) && dist(o, u) < A.r + 60) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= rangeOf(u) + 10);
+  const A = u.d.action, engaged = units.some(o => o.team !== u.team && targetable(o) && dst(o, u) < A.r + 60) || (u.target && u.target.kind === 'struct' && edgeDist(u, u.target) <= rangeOf(u) + 10);
   if (!engaged) { u.actCd = 0.5; return; }
-  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && dist(a, u) <= A.r) { a.actT = A.t; ring(a.x, a.y, 4, a.r * 2, 'rgba(255,154,184,.9)', 0.35, 3); }
+  for (const a of units) if (a.alive && a.team === u.team && a.deployT <= 0 && dst(a, u) <= A.r) { a.actT = A.t; ring(a.x, a.y, 4, a.r * 2, 'rgba(255,154,184,.9)', 0.35, 3); }
   ring(u.x, u.y, 10, A.r, 'rgba(255,154,184,.95)', 0.5, 6, true); addNum(u.x, u.y, topOf(u) + 20, '¡ACCIÓN!', '#ff9ab8', 17);
   parts.push({ type: 'clapper', x: u.x, y: u.y, z: topOf(u) + 36, life: 0.9, max: 0.9 }); play('card');
   if (u.team === 'p') chatEv('action', null, null, 0.35, 15);
@@ -171,7 +171,7 @@ function expireUnit(u) {
 // TrollBot: se ríe de vez en cuando (la provocación está en acquire y en las torres)
 function tauntTick(u, dt) {
   u.tauntT -= dt; if (u.tauntT > 0) return;
-  if (!units.some(o => o.team !== u.team && targetable(o) && dist(o, u) < u.d.taunt.r)) { u.tauntT = 0.6; return; }
+  if (!units.some(o => o.team !== u.team && targetable(o) && dst(o, u) < u.d.taunt.r)) { u.tauntT = 0.6; return; }
   addNum(u.x, u.y, topOf(u) + 16, '¡JAJAJA!', '#7be04a', 14); ring(u.x, u.y, 8, u.d.taunt.r, 'rgba(123,224,74,.6)', 0.5, 3, true); play('laugh');
   u.tauntT = 6;
 }
@@ -179,12 +179,12 @@ function tauntTick(u, dt) {
 function bunnyJump(u, dt) {
   if (u.jump) {
     const j = u.jump; j.t += dt; const k = Math.min(1, j.t / j.dur);
-    u.x = lerp(j.x0, j.x1, k); u.y = lerp(j.y0, j.y1, k); u.z = Math.sin(Math.PI * k) * j.h; u.spin = k * Math.PI * 2 * u.face;
+    u.x = lerp(j.x0, j.x1, k); u.y = lerp(j.y0, j.y1, k); u.z = dsin(Math.PI * k) * j.h; u.spin = k * Math.PI * 2 * u.face;
     if (k >= 1) {
       u.jump = null; u.z = 0; u.spin = 0; u.moving = false;
       const jd = u.d.jumpDmg * dmgMult(u);
-      for (const o of units) if (o.alive && o.team !== u.team && Math.hypot(o.x - u.x, o.y - u.y) - o.r <= u.d.jumpR) { const d = Math.hypot(o.x - u.x, o.y - u.y) || 1; o.x += (o.x - u.x) / d * 16; o.y += (o.y - u.y) / d * 16; hurt(o, jd, u, 'aoe'); }
-      for (const s of structs) if (s.alive && s.team !== u.team && Math.hypot(s.x - u.x, s.y - u.y) - s.r <= u.d.jumpR) hurt(s, jd, u, 'aoe');
+      for (const o of units) if (o.alive && o.team !== u.team && hyp(o.x - u.x, o.y - u.y) - o.r <= u.d.jumpR) { const d = hyp(o.x - u.x, o.y - u.y) || 1; o.x += (o.x - u.x) / d * 16; o.y += (o.y - u.y) / d * 16; hurt(o, jd, u, 'aoe'); }
+      for (const s of structs) if (s.alive && s.team !== u.team && hyp(s.x - u.x, s.y - u.y) - s.r <= u.d.jumpR) hurt(s, jd, u, 'aoe');
       ring(u.x, u.y, 10, u.d.jumpR * 1.15, 'rgba(212,60,255,.95)', 0.45, 7); ring(u.x, u.y, 6, u.d.jumpR * 0.7, 'rgba(255,255,255,.9)', 0.3, 4);
       puff(u.x, u.y, 18, '#e9dcc0', 90, 9, true); chips(u.x, u.y, 4, 10, ['#6eb646', '#8b5530', '#d9b77e'], 'chip', 4);
       addNum(u.x, u.y, 90, '¡CHAOS JUMP!', '#f3a6ff', 20); flashAt(u.x, u.y, 10, 95, '212,60,255', 0.35); screenFlash(0.1);
@@ -197,15 +197,15 @@ function bunnyJump(u, dt) {
   let best = null, bestScore = 0;
   for (const o of units) {
     if (o.team === u.team || !targetable(o)) continue;
-    const d = dist(u, o); if (d > u.d.jumpRange) continue;
+    const d = dst(u, o); if (d > u.d.jumpRange) continue;
     let sc = 0.001 * (u.d.jumpRange - d);
-    for (const q of units) if (q.alive && q.team !== u.team && Math.hypot(q.x - o.x, q.y - o.y) < u.d.jumpR) sc += 1;
+    for (const q of units) if (q.alive && q.team !== u.team && hyp(q.x - o.x, q.y - o.y) < u.d.jumpR) sc += 1;
     if (sc > bestScore) { bestScore = sc; best = o; }
   }
   if (!best) for (const s of structs) if (s.alive && s.team !== u.team && edgeDist(u, s) < 90) best = s;
   if (!best) { u.jumpCd = 0.5; return false; }
-  const ang = Math.atan2(u.y - best.y, u.x - best.x); const off = best.kind === 'struct' ? best.r + u.r - 4 : 0;
-  u.jump = { x0: u.x, y0: u.y, x1: best.x + Math.cos(ang) * off, y1: best.y + Math.sin(ang) * off, t: 0, dur: 0.7, h: 95 };
+  const ang = datan2(u.y - best.y, u.x - best.x); const off = best.kind === 'struct' ? best.r + u.r - 4 : 0;
+  u.jump = { x0: u.x, y0: u.y, x1: best.x + dcos(ang) * off, y1: best.y + dsin(ang) * off, t: 0, dur: 0.7, h: 95 };
   u.face = u.jump.x1 > u.x ? 1 : -1; u.jumpCd = u.d.jumpCd * (u.jumpCdM || 1); play('jump');
   return true;
 }
@@ -261,12 +261,12 @@ function separate() {
       const b = units[j]; if (!b.alive || b.jump) continue;
       let dx = b.x - a.x, dy = b.y - a.y; const min = (a.r + b.r) * 0.9;
       if (dx > min || dx < -min || dy > min || dy < -min) continue;
-      let d = Math.hypot(dx, dy); if (d >= min) continue;
-      if (d < 0.01) { dx = srnd() - 0.5; dy = srnd() - 0.5; d = Math.hypot(dx, dy); }
+      let d = hyp(dx, dy); if (d >= min) continue;
+      if (d < 0.01) { dx = srnd() - 0.5; dy = srnd() - 0.5; d = hyp(dx, dy); }
       const push = (min - d) * 0.5; const ma = a.r * a.r, mb = b.r * b.r; const wa = mb / (ma + mb), wb = ma / (ma + mb);
       a.x -= (dx / d) * push * wa; a.y -= (dy / d) * push * wa; b.x += (dx / d) * push * wb; b.y += (dy / d) * push * wb;
     }
-    for (const s of structs) { if (!s.alive) continue; const dx = a.x - s.x, dy = a.y - s.y; const d = Math.hypot(dx, dy) || 0.01; const min = a.r + s.r * 0.82; if (d < min) { a.x = s.x + (dx / d) * min; a.y = s.y + (dy / d) * min; } }
+    for (const s of structs) { if (!s.alive) continue; const dx = a.x - s.x, dy = a.y - s.y; const d = hyp(dx, dy) || 0.01; const min = a.r + s.r * 0.82; if (d < min) { a.x = s.x + (dx / d) * min; a.y = s.y + (dy / d) * min; } }
   }
 }
 function constrain(u) {

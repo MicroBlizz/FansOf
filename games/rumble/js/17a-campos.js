@@ -127,8 +127,8 @@ function terrainPlace(defs) {
   const out = [];
   for (const d of defs) for (let i = 0; i < d.n; i++) for (let tries = 0; tries < 60; tries++) {   // v0.9.82: se reparten arriba y abajo es su reflejo (y' = 840 - y): exactamente lo mismo para los dos, en PvP y en PvE
     const x = srand(64, W - 64), y = srand(292, 380), y2 = 840 - y;
-    if (out.some(z => Math.hypot((z.x - x) / 1.4, z.y - y) < 46 || Math.hypot((z.x - x) / 1.4, z.y - y2) < 46)) continue;
-    if (structs.some(s => Math.hypot(s.x - x, (s.y - y) * 1.3) < s.r + (d.rx || 30) + 6 || Math.hypot(s.x - x, (s.y - y2) * 1.3) < s.r + (d.rx || 30) + 6)) continue;
+    if (out.some(z => hyp((z.x - x) / 1.4, z.y - y) < 46 || hyp((z.x - x) / 1.4, z.y - y2) < 46)) continue;
+    if (structs.some(s => hyp(s.x - x, (s.y - y) * 1.3) < s.r + (d.rx || 30) + 6 || hyp(s.x - x, (s.y - y2) * 1.3) < s.r + (d.rx || 30) + 6)) continue;
     for (const yy of [y, y2]) out.push(Object.assign({}, d, { x, y: yy, rx: d.rx || 30, ry: d.ry || 16, id: out.length + 1, seed: Math.random() * 1000, life: Infinity }));
     break;
   }
@@ -164,7 +164,7 @@ function terrainUpdate(dt) {
       f.t -= dt; if (f.done || f.t > 0) continue;
       f.done = true; f.boom = 0.5; G.shake = Math.max(G.shake, 4); play('boom');
       for (const u of units) {
-        if (!u.alive || u.deployT > 0 || Math.hypot(u.x - f.x, (u.y - f.y) * 1.25) > F.r + u.r * 0.5) continue;
+        if (!u.alive || u.deployT > 0 || hyp(u.x - f.x, (u.y - f.y) * 1.25) > F.r + u.r * 0.5) continue;
         if (F.dmg) hurt(u, Math.max(1, Math.round(u.maxHp * F.dmg)), null, 'aoe');
         if (F.stun && u.alive && !u.immuneCC) { u.stunT = Math.max(u.stunT || 0, F.stun); u.stunKind = 'daze'; }
         if (F.say && u.alive) tSay(u, F.say, '#ffffff');
@@ -186,7 +186,7 @@ function terrainUpdate(dt) {
       u.tSide = side;
     }
     if (fly) continue;
-    if (RIVER_OPEN && u.y > RIVER.top && u.y < RIVER.bottom) { u.tSpd = 1.35; u.x += Math.sin(TR.t * 2.4 + u.id) * 26 * dt; }   // hielo: resbala
+    if (RIVER_OPEN && u.y > RIVER.top && u.y < RIVER.bottom) { u.tSpd = 1.35; u.x += dsin(TR.t * 2.4 + u.id) * 26 * dt; }   // hielo: resbala
     let trip = 0;
     for (const z of TR.zones) {
       if (!inZone(u, z)) continue;
@@ -195,7 +195,7 @@ function terrainUpdate(dt) {
         case 'spike': if (u.moving) { u.tSpk = (u.tSpk || 0) + dt; if (u.tSpk >= 0.25) { u.tSpk = 0; hurt(u, z.v, null, 'hit'); } } break;
         case 'slow': u.tSpd = Math.min(u.tSpd, z.v); if (z.say) tSay(u, z.say, '#ff9ef0'); break;
         case 'fast': u.tSpd = Math.max(u.tSpd, z.v); if (z.say) tSay(u, z.say, '#7df3ff'); break;
-        case 'slide': u.tSpd = Math.max(u.tSpd, z.v); u.x += Math.sin(TR.t * 3 + u.id) * 30 * dt; break;
+        case 'slide': u.tSpd = Math.max(u.tSpd, z.v); u.x += dsin(TR.t * 3 + u.id) * 30 * dt; break;
         case 'trip': trip = z.id; if (u.tTrip !== z.id && !u.immuneCC) { u.stunT = Math.max(u.stunT || 0, z.v); u.stunKind = 'daze'; if (z.say) tSay(u, z.say, '#ffe06a'); } break;
         case 'heal': if (u.hp < u.maxHp) { u.hp = Math.min(u.maxHp, u.hp + u.maxHp * z.v * dt); if (z.say) tSay(u, z.say, '#8cf05a'); } break;
       }

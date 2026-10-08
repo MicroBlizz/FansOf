@@ -13,6 +13,34 @@ const srand = (a, b) => a + srnd() * (b - a);
 const spick = a => a[(srnd() * a.length) | 0];
 function sshuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = (srnd() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
+/* ---------- matemáticas iguales en todos los navegadores ----------
+   Math.hypot, sin, cos y atan2 no dan el mismo último bit en todos los motores (Chrome, Safari, Firefox): en un lockstep eso separa las dos partidas poco a poco.
+   Para la simulación se usan estas, hechas solo con + - * / y raíz cuadrada (que sí son idénticas en todas partes). Lo que se dibuja puede seguir con Math. */
+const hyp = (a, b) => Math.sqrt(a * a + b * b);
+const dst = (a, b) => { const dx = a.x - b.x, dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy); };   // como dist() de core, pero igual en todos los navegadores
+const D_PI = 3.141592653589793, D_2PI = 6.283185307179586, D_HPI = 1.5707963267948966;
+function dsin(x) {
+  x -= D_2PI * Math.floor((x + D_PI) / D_2PI);   // a [-pi, pi)
+  if (x > D_HPI) x = D_PI - x; else if (x < -D_HPI) x = -D_PI - x;   // a [-pi/2, pi/2]
+  const x2 = x * x;
+  return x * (1 + x2 * (-1 / 6 + x2 * (1 / 120 + x2 * (-1 / 5040 + x2 * (1 / 362880 + x2 * (-1 / 39916800 + x2 / 6227020800))))));
+}
+const dcos = x => dsin(x + D_HPI);
+function datanPos(z) {   // atan de z >= 0
+  let off = 0, inv = false;
+  if (z > 1) { z = 1 / z; inv = true; }
+  if (z > 0.4142135623730951) { z = (z - 1) / (z + 1); off = D_PI / 4; }
+  const z2 = z * z, r = z * (1 + z2 * (-1 / 3 + z2 * (1 / 5 + z2 * (-1 / 7 + z2 * (1 / 9 + z2 * (-1 / 11 + z2 * (1 / 13 + z2 * (-1 / 15 + z2 / 17))))))));
+  const a = off + r;
+  return inv ? D_HPI - a : a;
+}
+function datan2(y, x) {
+  if (x === 0 && y === 0) return 0;
+  const a = datanPos(Math.abs(y) / Math.abs(x === 0 ? 1e-300 : x));
+  const r = x === 0 ? D_HPI : x > 0 ? a : D_PI - a;
+  return y < 0 ? -r : r;
+}
+
 /* ---------- jugadas ----------
    Lo que hace un jugador (echar una carta) no se ejecuta al momento: entra como jugada {t, team, key, slot, x, y} y se aplica al empezar el tick t.
    En una partida contra la IA t = el tick actual (+SIM.delay, 0); en PvP las dos máquinas se mandan las jugadas con t = tick actual + SIM.delay (~3) y las aplican en el mismo tick.

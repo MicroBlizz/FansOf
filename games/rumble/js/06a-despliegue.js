@@ -4,10 +4,10 @@
    EFFECTS
    ========================================================= */
 function shake(n) { if (!REDUCED && !SAVE.noShake) G.shake = Math.max(G.shake, n); }
-function puff(x, y, n, color, spd = 40, size = 6, ground = false, z0 = 2) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(spd * 0.4, spd); parts.push({ type: 'dust', x, y, z: z0 + rand(0, 6), vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.5, vz: rand(5, 28), g: 0, life: rand(0.35, 0.65), max: 0.65, size: rand(size * 0.6, size), color, ground }); } }
+function puff(x, y, n, color, spd = 40, size = 6, ground = false, z0 = 2) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(spd * 0.4, spd); parts.push({ type: 'dust', x, y, z: z0 + rand(0, 6), vx: dcos(a) * v, vy: dsin(a) * v * 0.5, vz: rand(5, 28), g: 0, life: rand(0.35, 0.65), max: 0.65, size: rand(size * 0.6, size), color, ground }); } }
 function ring(x, y, r0, r1, color, dur = 0.4, lw = 4, circ = false) { parts.push({ type: 'ring', x, y, z: 0, r0, r1, color, life: dur, max: dur, lw, ground: true, circ }); }   // circ: círculo exacto (áreas de efecto)
-function sparks(x, y, z, n, color) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(60, 160); parts.push({ type: 'spark', x, y, z, vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.5, vz: rand(20, 140), g: 420, life: rand(0.2, 0.35), max: 0.35, color }); } }
-function chips(x, y, z, n, colors, kind = 'chip', size = 4) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(30, 110); parts.push({ type: kind, x, y, z, vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.5, vz: rand(90, 220), g: 520, rot: rand(0, 6), vr: rand(-12, 12), life: rand(0.7, 1.1), max: 1.1, size: rand(size * 0.7, size * 1.3), color: pick(colors) }); } }
+function sparks(x, y, z, n, color) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(60, 160); parts.push({ type: 'spark', x, y, z, vx: dcos(a) * v, vy: dsin(a) * v * 0.5, vz: rand(20, 140), g: 420, life: rand(0.2, 0.35), max: 0.35, color }); } }
+function chips(x, y, z, n, colors, kind = 'chip', size = 4) { for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, v = rand(30, 110); parts.push({ type: kind, x, y, z, vx: dcos(a) * v, vy: dsin(a) * v * 0.5, vz: rand(90, 220), g: 520, rot: rand(0, 6), vr: rand(-12, 12), life: rand(0.7, 1.1), max: 1.1, size: rand(size * 0.7, size * 1.3), color: pick(colors) }); } }
 function addNum(x, y, z, txt, color, size = 15) {
   txt = String(txt);
   if (/^[+-]?[0-9]/.test(txt)) { if (SAVE.noNums) return;   // v0.9.19: Opciones → sin números de daño
@@ -20,7 +20,7 @@ function addNum(x, y, z, txt, color, size = 15) {
 // v0.9.8: destello de golpe, tajo de los ataques cuerpo a cuerpo, resplandor y flash de pantalla
 function impact(x, y, z, size, color) { parts.push({ type: 'impact', x, y, z, size, color, rot: Math.random() * Math.PI, life: 0.17, max: 0.17 }); }
 function flashAt(x, y, z, size, rgb, dur = 0.3) { parts.push({ type: 'flash', x, y, z, size, rgb, life: dur, max: dur }); }
-function slashFx(u, t, heavy) { const d = dist(u, t) || 1; parts.push({ type: 'slash', x: u.x, y: u.y, z: topOf(u) * 0.45, ang: Math.atan2((t.y - u.y) * 1.6, t.x - u.x), size: clamp(d * 1.08, 16, 54) * (heavy ? 1.2 : 1), color: u.team === 'p' ? '#ffd28a' : '#a9d8ff', life: 0.26, max: 0.26, w: heavy ? 1.6 : 1 }); }
+function slashFx(u, t, heavy) { const d = dst(u, t) || 1; parts.push({ type: 'slash', x: u.x, y: u.y, z: topOf(u) * 0.45, ang: datan2((t.y - u.y) * 1.6, t.x - u.x), size: clamp(d * 1.08, 16, 54) * (heavy ? 1.2 : 1), color: u.team === 'p' ? '#ffd28a' : '#a9d8ff', life: 0.26, max: 0.26, w: heavy ? 1.6 : 1 }); }
 // v0.9.24: golpes con más jugo. Parón del golpe (hit-stop): el juego casi se congela un instante en los golpes fuertes
 function hitStop(s) { if (REDUCED || G.state !== 'play') return; if (G.t - (G.stopAt || -9) < 0.35) return; G.stopAt = G.t; G.hitstop = Math.max(G.hitstop || 0, s); }
 // líneas de impacto tipo cómic que salen del golpe

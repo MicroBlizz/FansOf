@@ -66,18 +66,36 @@ const CUENTA = (() => {
     meta = { version: nube.version, pendiente: false }; guardarMeta();
     location.reload();
   }
-  // lo mismo con otro orden de claves o con campos vacíos cuenta como igual: solo importa el contenido
+  // Huella de la partida: solo cuenta lo que el jugador no quiere perder (se ignoran ajustes sueltos como el sonido).
+  // Si la huella coincide no se pregunta nada; si no, se enseña un resumen de en qué se diferencian para elegir con datos.
   const canon = v => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => (v[k] === undefined ? o : (o[k] = canon(v[k]), o), o), {}) : v);
-  const iguales = (a, b) => { try { return JSON.stringify(canon(a)) === JSON.stringify(canon(b)); } catch (e) { return false; } };
+  const SUELTO = ['muted', 'speed2', 'chatOff', 'seenVer', 'achSeen', 'lastFac', 'bossSel', 'tut'];
+  const huella = s => { try { const c = canon(s); SUELTO.forEach(k => delete c[k]); const t = JSON.stringify(c); let h = 5381; for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return h + ':' + t.length; } catch (e) { return String(Math.random()); } };
+  const iguales = (a, b) => huella(a) === huella(b);
+  const suma = (o, f) => Object.keys(o || {}).reduce((a, k) => a + (f ? f(o[k]) : +o[k]) || a, 0);
+  const num = v => (typeof v === 'number' && isFinite(v) ? v : 0), cuenta = o => Object.keys(o || {}).length;
+  // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale
+  const resumen = s => [
+    ['Oro', num(s.gold)], ['Gemas', num(s.gems)],
+    ['Nivel de las cartas (suma)', suma(s.units, u => num(u && u.lvl))], ['XP de las cartas', suma(s.units, u => num(u && u.xp))],
+    ['Cartas conseguidas', cuenta(s.cards)], ['Estrellas de las cartas', suma(s.cards, c => num(c && c.st))],
+    ['Habilidades y objetos', Array.isArray(s.inv) ? s.inv.length : 0], ['Estrellas de los niveles', suma(s.stars, num)],
+    ['Niveles de campaña pasados', cuenta(s.camp)], ['XP del pase', num(s.pass && s.pass.xp)], ['Logros', Array.isArray(s.achDone) ? s.achDone.length : 0],
+  ];
   function preguntar(nube, t) {
-    if (nube.datos && iguales(nube.datos, SAVE)) {   // son idénticas: no se pregunta, solo se apunta que ya coinciden
+    if (nube.datos && iguales(nube.datos, SAVE)) {   // son la misma partida: no se pregunta, solo se apunta que ya coinciden
       meta = { version: nube.version, pendiente: false }; guardarMeta(); estado = 'al día'; return;
     }
     if (typeof confirmBox !== 'function') return;
-    const n = v => (typeof fmt === 'function' ? fmt(v || 0) : String(v || 0));
-    const fila = (titulo, s, cuando) => `<b>${titulo}</b><br>${tr('Oro')}: ${n(s.gold)} · ${tr('Gemas')}: ${n(s.gems)}${cuando ? '<br><small>' + new Date(cuando).toLocaleString(NUCLEO.idioma) + '</small>' : ''}`;
-    confirmBox(tr('¿QUÉ PARTIDA QUIERES?'), tr('Has jugado en este aparato y en otro, y las dos partidas han cambiado. Elige con cuál sigues; la otra se pierde.') +
-      '<br><br>' + fila(tr('En este aparato'), SAVE) + '<br><br>' + fila(tr('En la nube'), nube.datos || {}, nube.cambiado),
+    const n = v => (typeof fmt === 'function' ? fmt(v) : String(v));
+    const aqui = resumen(SAVE), alla = resumen(nube.datos || {});
+    const filas = aqui.map((a, i) => [a[0], a[1], alla[i][1]]).filter(f => f[1] !== f[2]);
+    const mas = (x, y) => (x > y ? ' ▲' : '');
+    const cuando = nube.cambiado ? '<br><small>' + tr('En la nube') + ': ' + new Date(nube.cambiado).toLocaleString(NUCLEO.idioma) + '</small>' : '';
+    const tabla = '<table style="width:100%;margin-top:8px;font-size:.9em"><tr><th></th><th>' + tr('En este aparato') + '</th><th>' + tr('En la nube') + '</th></tr>' +
+      (filas.length ? filas.map(f => `<tr><td style="text-align:left">${tr(f[0])}</td><td>${n(f[1])}${mas(f[1], f[2])}</td><td>${n(f[2])}${mas(f[2], f[1])}</td></tr>`).join('')
+        : `<tr><td colspan="3">${tr('Los números principales coinciden; cambian otros datos de la partida.')}</td></tr>`) + '</table>';
+    confirmBox(tr('¿QUÉ PARTIDA QUIERES?'), tr('Has jugado en este aparato y en otro, y las dos partidas son distintas. Elige con cuál sigues; la otra se pierde. ▲ marca dónde hay más.') + tabla + cuando,
       tr('LA DE LA NUBE'), () => usar(nube));
     const no = document.getElementById('cf-no');
     if (no) {

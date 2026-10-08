@@ -23,5 +23,6 @@ IDIOMA.add({
   "Qué guardamos de ti, para qué y cómo borrarlo.": "What we keep about you, why, and how to delete it.",
   "Las reglas del juego, juego limpio incluido.": "The rules of the game, fair play included.",
   "© 2026 Arkioner y Daniel · MicroBlizz · Todos los derechos reservados": "© 2026 Arkioner and Daniel · MicroBlizz · All rights reserved",
+  "Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999), con cámaras fijas y control tanque. Repara la red de fibra sin perder la Lucidez.": "A demo from another project of ours. Survival horror in the Albright Memorial Hospital (Granollers, 1999), with fixed cameras and tank controls. Repair the fibre network without losing your Lucidity.",
   "Español": "Español"
 });

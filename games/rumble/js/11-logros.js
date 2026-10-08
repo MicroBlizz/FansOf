@@ -22,11 +22,11 @@ function titlePopups() {
 }
 // ---- velocidad x2 (se guarda; en la partida guiada siempre va a x1)
 function applySpeed() {
-  const on = !!SAVE.speed2 && !G.tutMatch, b = $('#btn-speed'); G.timeScale = on ? 2 : 1;
-  b.hidden = !!G.tutMatch; b.setAttribute('aria-pressed', String(on)); $('#speed-txt').textContent = on ? 'x2' : 'x1';
+  const fija = G.tutMatch || PVP.on || G.mode === 'pvp', on = !!SAVE.speed2 && !fija, b = $('#btn-speed'); G.timeScale = on ? 2 : 1;   // en PvP siempre x1: las dos partidas tienen que ir al mismo paso
+  b.hidden = !!fija; b.setAttribute('aria-pressed', String(on)); $('#speed-txt').textContent = on ? 'x2' : 'x1';
   b.setAttribute('aria-label', on ? 'Velocidad x2. Pulsa para volver a la normal' : 'Velocidad normal. Pulsa para ir el doble de rápido');
 }
-$('#btn-speed').addEventListener('click', () => { if (G.tutMatch) return; SAVE.speed2 = !SAVE.speed2; if (SAVE.speed2) stat('speed2', 1); saveGame(); applySpeed(); play('select'); toast(SAVE.speed2 ? 'Velocidad x2: todo va el doble de rápido' : 'Velocidad normal', true); });
+$('#btn-speed').addEventListener('click', () => { if (G.tutMatch || PVP.on) return; SAVE.speed2 = !SAVE.speed2; if (SAVE.speed2) stat('speed2', 1); saveGame(); applySpeed(); play('select'); toast(SAVE.speed2 ? 'Velocidad x2: todo va el doble de rápido' : 'Velocidad normal', true); });
 // ---- pack de bienvenida
 function buyStarter() {
   if (SAVE.starter) return;

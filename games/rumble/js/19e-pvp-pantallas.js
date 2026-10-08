@@ -59,7 +59,7 @@ function pvpAlEstado(e) {
   if (e === 'esperando') toast('Esperando al rival…');
   else if (e === 'jugando') { const t = document.getElementById('toast'); if (t && /Esperando/.test(t.textContent)) t.hidden = true; }
   else if (e === 'abandono' && G.state === 'play') endMatch(verEquipo(), 'abandono');   // el rival se ha ido (o se ha rendido): ganas
-  else if ((e === 'desync' || e === 'error') && G.state === 'play') { if (PVP.error === 'version') toast('Tu rival tiene otra versión del juego: recarga la página', true); endMatch(null, e); }   // la partida se anula: nadie gana ni pierde
+  else if ((e === 'desync' || e === 'error') && G.state === 'play') { if (PVP.error === 'version') toast('Tu rival tiene otra versión del juego: recarga la página', true); else if (PVP.error === 'retardo') toast('Tu rival usa otro retardo de red: partida anulada', true); endMatch(null, e); }   // la partida se anula: nadie gana ni pierde
 }
 // en PvP no hay pausa: el botón pregunta si quieres rendirte
 function pvpRendirse() {

@@ -3,6 +3,8 @@
 /* Usa las funciones de la base de datos pvp_buscar, pvp_estado, pvp_salir, pvp_jugar, pvp_cerrar y pvp_clasificacion (contrato en PLAN-CUENTAS.md, punto 9).
    Cumple la interfaz de 19d-pvp-red.js: buscar(modo, equipo, aviso) → { cancelar() }. El servidor guarda y valida el equipo (mazo, niveles, estrellas, objetos) y da la semilla:
    los equipos con los que se juega salen de lo que devuelve pvp_estado, nunca de lo que diga el otro cliente. */
+// retardo: turnos de margen de red. En desarrollo se puede probar otro con localStorage.setItem('fansof-pvp-d', '3') (los DOS jugadores el mismo; si no, la partida se anula)
+const pvpRetardo = () => { let d = 0; try { d = NUCLEO.desarrollo ? +localStorage.getItem('fansof-pvp-d') : 0; } catch (e) { /* sin guardar */ } return d >= 1 && d <= 10 ? d : PVP_SRV.retardo; };
 const PVP_SRV = { retardo: 2, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
 
 const pvpErrorTexto = e => {
@@ -23,7 +25,7 @@ function pvpEquipoDeServidor(mazo, equipo) {
   return eq;
 }
 // jugada de motor → trozo corto para el servidor (menos de 200 caracteres) y al revés
-const pvpAServidor = m => (m.t === 'rendir' ? { v: VERSION, r: 1 } : { v: VERSION, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
+const pvpAServidor = m => (m.t === 'rendir' ? { v: VERSION, r: 1 } : { v: VERSION, d: PVP.D, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
 const pvpDeServidor = (d, equipo) => d.r ? { t: 'rendir' } : ({ t: 't', turno: d.t, tick: d.k, h: d.h, cmds: (d.c || []).map(c => ({ team: equipo, slot: c[0], key: c[1], x: c[2], y: c[3] })) });
 
 PVPNET.redes.servidor = {
@@ -61,7 +63,7 @@ PVPNET.redes.servidor = {
           const tr0 = performance.now();
           const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
           const dtr = performance.now() - tr0; PVP.rtt = PVP.rtt ? PVP.rtt * 0.8 + dtr * 0.2 : dtr; PVP.rttMax = Math.max(PVP.rttMax || 0, dtr); PVP.llamadas = (PVP.llamadas || 0) + 1;   // lo que tarda cada llamada al servidor (se ve en desarrollo)
-          for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
+          for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } if (x.d.d != null && x.d.d !== PVP.D) { PVP.error = 'retardo'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
           if (r && r.desync) pvpEstado('desync');
         } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
         enVuelo--;
@@ -75,7 +77,7 @@ PVPNET.redes.servidor = {
           await new Promise(res => setTimeout(res, PVP_SRV.cierreMs));
         }
       };
-      aviso({ retardo: PVP_SRV.retardo, seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); bucle(); } }, cerrar, parar: () => { vivo = false; clearInterval(temporizador); } });
+      aviso({ retardo: pvpRetardo(), seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); bucle(); } }, cerrar, parar: () => { vivo = false; clearInterval(temporizador); } });
       bucle(); temporizador = setInterval(() => { if (Date.now() - ultimaLlamada >= 250) bucle(); }, 100);
     };
     sondeo();

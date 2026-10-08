@@ -123,4 +123,5 @@ IDIOMA.add({
   ": DLC, Microtransacción, Clon, Rage Quit y Gigante ganaban casi todas las partidas, así que bajan. Y si una carta saca varias unidades, el efecto de DLC, Microtransacción, Clon y Rage Quit se reparte entre ellas.": ": DLC, Microtransaction, Clone, Rage Quit and Giant were winning almost every match, so they go down. And if a card brings several units, the effect of DLC, Microtransaction, Clone and Rage Quit is split between them.",
   "Microblizz ha contratado a Lola como formadora de nuevos empleados. Sigue despedida, pero ahora también trabaja gratis.": "Microblizz has hired Lola to train new employees. She is still fired, but now she also works for free.",
   "Tu rival tiene otra versión del juego: recarga la página": "Your rival has another version of the game: reload the page",
+  "Tu rival usa otro retardo de red: partida anulada": "Your rival uses another network delay: match voided",
 });

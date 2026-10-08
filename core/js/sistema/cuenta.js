@@ -70,7 +70,9 @@ const CUENTA = (() => {
   // Si la huella coincide no se pregunta nada; si no, se enseña un resumen de en qué se diferencian para elegir con datos.
   const canon = v => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => (v[k] === undefined ? o : (o[k] = canon(v[k]), o), o), {}) : v);
   const huella = s => { try { const t = JSON.stringify(canon(s)); let h = 5381; for (let i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return h + ':' + t.length; } catch (e) { return String(Math.random()); } };
-  const iguales = (a, b) => huella(a) === huella(b);
+  // idle.last es la hora de la última visita: cambia en cada apertura y no es progreso, así que no cuenta
+  const sinHora = s => (s && s.idle && typeof s.idle === 'object' ? Object.assign({}, s, { idle: Object.assign({}, s.idle, { last: undefined }) }) : s);
+  const iguales = (a, b) => huella(sinHora(a)) === huella(sinHora(b));
   const suma = (o, f) => Object.keys(o || {}).reduce((a, k) => a + (f ? f(o[k]) : +o[k]) || a, 0);
   const num = v => (typeof v === 'number' && isFinite(v) ? v : 0), cuenta = o => Object.keys(o || {}).length;
   // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale
@@ -90,7 +92,7 @@ const CUENTA = (() => {
     const n = v => (typeof fmt === 'function' ? fmt(v) : String(v));
     const aqui = resumen(SAVE), alla = resumen(nube.datos || {});
     const filas = aqui.map((a, i) => [a[0], a[1], alla[i][1]]).filter(f => f[1] !== f[2]);
-    const otras = Object.keys(Object.assign({}, SAVE, nube.datos)).filter(k => huella((SAVE || {})[k]) !== huella((nube.datos || {})[k])).length;   // campos que difieren en total
+    const A = sinHora(SAVE) || {}, B = sinHora(nube.datos) || {}, otras = Object.keys(Object.assign({}, A, B)).filter(k => huella(A[k]) !== huella(B[k])).length;   // campos que difieren en total
     const mas = (x, y) => (x > y ? ' ▲' : '');
     const cuando = nube.cambiado ? '<br><small>' + tr('En la nube') + ': ' + new Date(nube.cambiado).toLocaleString(NUCLEO.idioma) + '</small>' : '';
     const tabla = '<table style="width:100%;margin-top:8px;font-size:.9em"><tr><th></th><th>' + tr('En este aparato') + '</th><th>' + tr('En la nube') + '</th></tr>' +

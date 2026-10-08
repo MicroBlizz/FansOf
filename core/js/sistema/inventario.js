@@ -2,7 +2,7 @@
 // Filtros y orden, la ficha de una copia (equipar, bloquear, despedir por oro, volver a sortear sus números) y el despido masivo.
 'use strict';
 let invTab = 'ab', invFilter = 'all', invSort = 'q', itemCur = null;
-const INV_FILTERS = { ab: [['all', 'Todas'], ['common', 'Comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
+const INV_FILTERS = { ab: [['all', 'Todas'], ['common', 'Poco comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
 const INV_SORTS = { q: 'calidad', rar: 'rareza', name: 'nombre' };
 const scrapValue = it => Math.round(ECON.scrap[defOf(it).rar] * [1, 1.5, 2, 3, 5][tierOf(avgQ(it))]);
 const canScrap = it => !it.lock && !wearer(it) && !defOf(it).pass;

@@ -3,7 +3,12 @@
 // y un juego solo reparte los que usa. ic: las dos letras del icono · fac: de qué facción es · pass: premio del pase de batalla
 // (no sale en el gashapón ni se puede despedir o volver a sortear).
 'use strict';
-const RARITY = { common: ['Común', '#63cfe0', '#2a7895'], rare: ['Rara', '#ffb04f', '#cf5a16'], epic: ['Épica', '#d08cff', '#6d28c9'], legendary: ['Legendaria', '#ffe06a', '#c47f10'] };
+// Rarezas con los colores de siempre en los videojuegos (v0.9.62): Común gris, Poco común verde, Rara azul, Épica lila,
+// Legendaria naranja y Mítica roja. [nombre, color claro, color oscuro]. OJO: la clave 'common' es «Poco común» (lo que antes
+// se llamaba Común; así no cambian las partidas guardadas ni el servidor). 'basic' (Común) y 'mythic' (Mítica) aún no tienen nada:
+// la Mítica se reserva para objetos de eventos y torneos. Las cartas de líder usan los colores de la Legendaria.
+const RARITY = { basic: ['Común', '#c3c9d4', '#5f6673'], common: ['Poco común', '#7be04a', '#2f8a1c'], rare: ['Rara', '#5aaeff', '#1d5fc9'],
+  epic: ['Épica', '#d08cff', '#6d28c9'], legendary: ['Legendaria', '#ffb547', '#d9620c'], mythic: ['Mítica', '#ff6464', '#b3121f'] };
 const CATALOGO = {
   /* ---------- habilidades: una por carta ---------- */
   ab: {
@@ -72,11 +77,13 @@ const CATALOGO = {
   },
 };
 const SLOTS = { weapon: 'Arma', head: 'Cabeza', acc: 'Accesorio' };
-// la calidad de cada copia: cada efecto sale entre el 50 % (calidad 0) y el 150 % (calidad 100) de su valor central
+// la calidad de cada copia: cada efecto sale entre el 50 % (calidad 0) y el 150 % (calidad 100) de su valor central.
+// v0.9.62: la calidad se enseña con estrellas (st: de 1 a 5), no con colores, para que el color solo diga la rareza.
 const QTIERS = [
-  { name: 'Becario (básica)', p: 30, lo: 0, hi: 0.4, col: '#b4bccb' },
-  { name: 'Junior (normal)', p: 40, lo: 0.4, hi: 0.7, col: '#63cfe0' },
-  { name: 'Senior (buena)', p: 20, lo: 0.7, hi: 0.88, col: '#8cf05a' },
-  { name: 'Director (excelente)', p: 9, lo: 0.88, hi: 0.99, col: '#e2a8ff' },
-  { name: 'CEO (perfecta)', p: 1, lo: 1, hi: 1, col: '#ffcb3d' },
+  { name: 'Becario (básica)', p: 30, lo: 0, hi: 0.4, st: 1, col: '#ffe06a' },
+  { name: 'Junior (normal)', p: 40, lo: 0.4, hi: 0.7, st: 2, col: '#ffe06a' },
+  { name: 'Senior (buena)', p: 20, lo: 0.7, hi: 0.88, st: 3, col: '#ffe06a' },
+  { name: 'Director (excelente)', p: 9, lo: 0.88, hi: 0.99, st: 4, col: '#ffe06a' },
+  { name: 'CEO (perfecta)', p: 1, lo: 1, hi: 1, st: 5, col: '#ffe06a' },
 ];
+const qStars = T => '★'.repeat(T.st) + '☆'.repeat(5 - T.st);   // la calidad en estrellas: ★★★☆☆

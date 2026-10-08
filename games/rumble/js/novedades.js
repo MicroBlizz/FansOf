@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.62', real: [
+      '<b>RAREZAS CON LOS COLORES DE SIEMPRE</b>: Poco común en verde, Rara en azul, Épica en lila y Legendaria en naranja (los líderes también). Lo que antes era Común ahora se llama Poco común. Y llegan dos rarezas nuevas que aún no tienen nada: Común (gris) y Mítica (roja), reservada para premios de eventos y torneos.',
+      '<b>CALIDAD CON ESTRELLAS</b>: la calidad de cada copia ahora se ve con estrellas, de ★☆☆☆☆ (Becario) a ★★★★★ (CEO). Así el color solo te dice la rareza.'],
+    joke: ['Microblizz ha pintado de rojo una rareza que todavía no existe. Ya están preparando el precio.'] },
   { v: '0.9.61', real: [
       '<b>GARANTÍAS CON BARRA</b>: en el Gashapón, cada garantía (épica, legendaria, calidad Director) ahora tiene su barra de progreso: ves cuánto llevas y cuánto te falta, y cuando estás cerca la barra se pone naranja y late.'],
     joke: ['Microblizz ha añadido una barrita de progreso. Casi seguro que no tiene nada que ver con que gastes más gemas.'] },

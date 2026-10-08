@@ -31,7 +31,7 @@ function drawArt(cv, key, LW, LH) {
   else { const f = ART_FIT[key] || [0, 0.92]; drawVector(x, key, LW / 2 + f[0] * LW, LH - 3, h * f[1], 1); }
 }
 /* ---------- cartera ---------- */
-const RAR_ORDER = { legendary: 0, epic: 1, rare: 2, common: 3 };
+const RAR_ORDER = { mythic: -1, legendary: 0, epic: 1, rare: 2, common: 3, basic: 4 };
 function updateWallets() {
   for (const w of document.querySelectorAll('[data-wallet]')) w.innerHTML = `<button class="wal" data-wal="gold" aria-label="Oro: ${fmt(SAVE.gold)}. Comprar más">${COIN_SVG}${fmt(SAVE.gold)}<i class="wal-plus ol">+</i></button><button class="wal" data-wal="gems" aria-label="Gemas: ${fmt(SAVE.gems)}. Comprar más">${GEM_SVG}${fmt(SAVE.gems)}<i class="wal-plus ol">+</i></button>`;
   updateBadges();

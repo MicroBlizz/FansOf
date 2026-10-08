@@ -3,8 +3,8 @@
 Object.assign(CFG.cards, {
     // No-Muertos
     necrolord: { name: 'NecroLord', rarity: 'leader', rar: 'Líder', tag: 'Invoca', desc: 'Lanza rayos de sombra y cada 8 s levanta 2 esqueletos a su lado. Si cae del todo, vuelve a los 12 s.' },
-    skeleton: { name: 'SkeletonCrew', rarity: 'common', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro esqueletos piratas, frágiles y muy rápidos. Rodean al enemigo y distraen a las torres.' },
-    zombie: { name: 'CrunchZombie', rarity: 'common', rar: 'Común', tag: 'Lentos · x3', desc: 'Tres programadores convertidos en zombis por trabajar meses sin parar. Lentos pero duros, y no se quejan.' },
+    skeleton: { name: 'SkeletonCrew', rarity: 'common', rar: 'Poco común', tag: 'Salen 4', desc: 'Cuatro esqueletos piratas, frágiles y muy rápidos. Rodean al enemigo y distraen a las torres.' },
+    zombie: { name: 'CrunchZombie', rarity: 'common', rar: 'Poco común', tag: 'Lentos · x3', desc: 'Tres programadores convertidos en zombis por trabajar meses sin parar. Lentos pero duros, y no se quejan.' },
     ghostmage: { name: 'GhostMage', rarity: 'rare', rar: 'Rara', tag: 'A distancia', desc: 'Mago fantasma que lanza rayos de escarcha desde lejos. Cada impacto frena al enemigo.' },
     banshee: { name: 'Banshee', rarity: 'rare', rar: 'Rara', tag: 'Grito aturde', desc: 'Grita cada 7 s y aturde a los enemigos cercanos. Entre grito y grito, lanza ondas que golpean en área.' },
     skullknight: { name: 'SkullKnight', rarity: 'rare', rar: 'Rara', tag: 'Ralentiza', desc: 'Caballero esqueleto con espada rúnica de hielo: cada golpe frena al enemigo.' },

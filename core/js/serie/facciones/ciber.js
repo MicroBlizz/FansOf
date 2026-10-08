@@ -3,8 +3,8 @@
 Object.assign(CFG.cards, {
     // Ciberpunks
     cybermarine: { name: 'CyberMarine', rarity: 'leader', rar: 'Líder', tag: 'Orbital Drop', desc: 'Marine con armadura y fusil rápido. Cada 9 s le caen del cielo 2 drones de apoyo.' },
-    nanobot: { name: 'NanoBots', rarity: 'common', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro robots diminutos y rápidos que rodean al enemigo.' },
-    cyberninja: { name: 'CyberNinja', rarity: 'common', rar: 'Común', tag: 'Teletransporte', desc: 'Ninja con katana de neón: cada 5 s se teletransporta hacia su objetivo.' },
+    nanobot: { name: 'NanoBots', rarity: 'common', rar: 'Poco común', tag: 'Salen 4', desc: 'Cuatro robots diminutos y rápidos que rodean al enemigo.' },
+    cyberninja: { name: 'CyberNinja', rarity: 'common', rar: 'Poco común', tag: 'Teletransporte', desc: 'Ninja con katana de neón: cada 5 s se teletransporta hacia su objetivo.' },
     techdroid: { name: 'TechDroid', rarity: 'rare', rar: 'Rara', tag: 'Repara', desc: 'Droide de soporte: va detrás de tus tropas y repara a las que tiene delante.' },
     hackerkid: { name: 'HackerKid', rarity: 'rare', rar: 'Rara', tag: 'Hackea torres', desc: 'Cada 8 s hackea la torre enemiga más cercana y la deja 3,5 s sin disparar.' },
     neonsniper: { name: 'NeonSniper', rarity: 'rare', rar: 'Rara', tag: 'Francotiradora', desc: 'Dispara muy despacio, pero desde muy lejos y con muchísimo daño.' },

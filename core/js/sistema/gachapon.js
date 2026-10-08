@@ -76,7 +76,7 @@ function acabarTirada(n, c, kind, X, res) {
   gachaAnim = { t: 0, col: (X ? X.colores : RARITY)[rarOfPull(top)][1] };
   setTimeout(() => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); }, 1100);
 }
-const RAR_PL = { common: ['común', 'comunes'], rare: ['rara', 'raras'], epic: ['épica', 'épicas'], legendary: ['legendaria', 'legendarias'] };
+const RAR_PL = { common: ['poco común', 'poco comunes'], rare: ['rara', 'raras'], epic: ['épica', 'épicas'], legendary: ['legendaria', 'legendarias'] };
 function showMulti(res) {
   const card = $('#gr-card'), top = res.reduce((a, r) => (RAR_ORDER[defOf(r.it).rar] < RAR_ORDER[defOf(a.it).rar] ? r : a)), R = RARITY[defOf(top.it).rar];
   card.classList.add('multi'); card.style.setProperty('--rc1', R[1]); card.style.setProperty('--rc2', R[2]);
@@ -85,7 +85,7 @@ function showMulti(res) {
   const order = res.slice().sort((a, b) => RAR_ORDER[defOf(a.it).rar] - RAR_ORDER[defOf(b.it).rar] || avgQ(b.it) - avgQ(a.it));
   card.innerHTML = `<div class="gr-rar ol">TIRADA x${res.length}</div><div class="gr-sum">${sum}${good ? ` · <b>${good} Director (excelente) o mejor</b>` : ''}${news ? ` · ${news} ${news > 1 ? 'nuevas' : 'nueva'}` : ''}</div><div class="gr-grid">${order.map(r => {
     const D = defOf(r.it), RR = RARITY[D.rar], T = QTIERS[tierOf(avgQ(r.it))], nw = r.it.k === 'ab' ? 'NUEVA' : 'NUEVO';
-    return `<button class="gt" data-gu="${r.it.u}" style="--rc:${RR[1]};--rc2:${RR[2]};--qc:${T.col}" aria-label="${D.name}, ${RR[0]}, calidad ${T.name}"><span class="gt-ic">${r.it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span class="gt-name">${D.name}</span><span class="gt-q ol">${T.name}</span>${r.isNew ? `<span class="gt-new ol">${nw}</span>` : r.better ? '<span class="gt-new best ol">MEJOR</span>' : ''}</button>`;
+    return `<button class="gt" data-gu="${r.it.u}" style="--rc:${RR[1]};--rc2:${RR[2]};--qc:${T.col}" aria-label="${D.name}, ${RR[0]}, calidad ${T.name}"><span class="gt-ic">${r.it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span class="gt-name">${D.name}</span><span class="gt-q">${qStars(T)}</span>${r.isNew ? `<span class="gt-new ol">${nw}</span>` : r.better ? '<span class="gt-new best ol">MEJOR</span>' : ''}</button>`;
   }).join('')}</div><small class="gr-hint">Toca una para ver sus números. Las que no quieras, despídelas en el inventario.</small>`;
   for (const b of card.querySelectorAll('[data-gu]')) b.onclick = () => { play('select'); openItem(b.dataset.gu); };
   $('#gacha-result').hidden = false;
@@ -97,7 +97,7 @@ function bestCopy(k, id) { let b = null; for (const it of SAVE.inv) if (it.k ===
 function showPull(it, tag) {
   const D = defOf(it), kind = it.k, R = RARITY[D.rar], T = QTIERS[tierOf(avgQ(it))], card = $('#gr-card');
   card.classList.remove('multi'); card.style.setProperty('--rc1', R[1]); card.style.setProperty('--rc2', R[2]);
-  card.innerHTML = `<div class="gr-rar ol">${R[0].toUpperCase()}${kind === 'eq' ? ' · ' + SLOTS[D.slot].toUpperCase() : ''}</div><div class="gr-ic">${kind === 'ab' ? D.ic : SLOT_SVG[D.slot]}</div><div class="gr-name ol">${D.name}</div><div class="gr-q ol" style="--qc:${T.col}">CALIDAD ${T.name.toUpperCase()} · ${Math.round(avgQ(it) * 100)} %</div><div class="gr-desc">${descOf(it)}<br><small class="rg">${rangeTxt(it)}</small>${kind === 'ab' && D.fac ? '<br><small>Viene de los ' + FACTIONS[D.fac].name + '</small>' : ''}</div><span class="gr-tag">${tag}</span>`;
+  card.innerHTML = `<div class="gr-rar ol">${R[0].toUpperCase()}${kind === 'eq' ? ' · ' + SLOTS[D.slot].toUpperCase() : ''}</div><div class="gr-ic">${kind === 'ab' ? D.ic : SLOT_SVG[D.slot]}</div><div class="gr-name ol">${D.name}</div><div class="gr-q ol" style="--qc:${T.col}"><span class="qst">${qStars(T)}</span> ${T.name.toUpperCase()} · ${Math.round(avgQ(it) * 100)} %</div><div class="gr-desc">${descOf(it)}<br><small class="rg">${rangeTxt(it)}</small>${kind === 'ab' && D.fac ? '<br><small>Viene de los ' + FACTIONS[D.fac].name + '</small>' : ''}</div><span class="gr-tag">${tag}</span>`;
   $('#gacha-result').hidden = false; play(tierOf(avgQ(it)) >= 3 || D.rar === 'legendary' || D.rar === 'epic' ? 'win' : 'levelup');
 }
 // Las probabilidades salen una por línea (antes era un párrafo seguido): título, líneas «nombre ··· valor» y notas sueltas. Las usa también la máquina de cartas del Rumble.
@@ -116,7 +116,7 @@ function buildGachaText() {
   const lab = n => { const c = pullCost(n); return c.gems ? `${fmt(c.gems)} ${GEM_SVG}${c.free ? `<i class="fr">+${c.free} gratis</i>` : ''}` : `${TICKET_SVG} gratis`; };
   for (const b of document.querySelectorAll('[data-pull]')) { const n = +b.dataset.pull; b.innerHTML = `${n === 10 ? '<span class="tag">FAVORITA DEL CEO</span>' : n === 50 ? '<span class="tag">MODO BALLENA</span>' : ''}x${n}<small>${lab(n)}</small>${n >= 10 ? `<span class="sure">${n === 10 ? '1 épica segura' : n / 10 + ' épicas seguras'}</span>` : ''}`; }
   const P = SAVE.pity, O = ECON.odds;
-  const rar = [['Común', O.common], ['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]];
+  const rar = [['Poco común', O.common], ['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]];
   $('#gacha-odds').innerHTML = oddsHead('Probabilidades') + rar.map(([n, v]) => oddsLine(n, v + ' %')).join('')
     + oddsHead('Calidad de cada efecto (del 50 % al 150 % de su valor)') + QTIERS.map(t => oddsLine(t.name, t.p + ' %')).join('')
     + oddsHead('Garantías')

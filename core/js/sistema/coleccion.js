@@ -50,7 +50,7 @@ function slotTile(kind, key, it, lock, label, worn) {
     return `<button class="slot" ${attr} ${dis} aria-label="${label}: vacía. Toca para equipar"><span class="sl-ic">${ic}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${n ? 'Toca para equipar' : 'Vacía · sale en el gashapón'}</span></span>${n && !lock ? `<span class="sl-n ol">${n}</span>` : ''}</button>`;
   }
   const R = RARITY[D.rar], T = QTIERS[tierOf(avgQ(it))];
-  return `<button class="slot full" ${attr} ${dis} style="--qc:${T.col};--rc2:${R[2]}" aria-label="${label}: ${D.name}, calidad ${T.name}. Toca para cambiar"><span class="sl-ic" style="background:${R[1]}">${kind === 'ab' ? D.ic : SLOT_SVG[key]}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${D.name}</span><span class="sl-q ol">${T.name}</span></span></button>`;
+  return `<button class="slot full" ${attr} ${dis} style="--qc:${R[1]};--rc2:${R[2]}" aria-label="${label}: ${D.name}, calidad ${T.name}. Toca para cambiar"><span class="sl-ic" style="background:${R[1]}">${kind === 'ab' ? D.ic : SLOT_SVG[key]}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${D.name}</span><span class="sl-q">${qStars(T)}</span></span></button>`;
 }
 function descOf(it) {
   const D = defOf(it), S = statsOf(it), V = valsOf(it); let t = D.desc + (it.k === 'eq' && D.fac ? ` <i class="wn">Solo para ${CFG.cards[FACTIONS[D.fac].leader].name}.</i>` : '');
@@ -58,7 +58,7 @@ function descOf(it) {
   return t;
 }
 const rangeTxt = it => { const S = statsOf(it); return (S.length > 1 ? 'Rangos: ' : 'Rango: ') + S.map(st => `${fmtV(rnd(st.c * 0.5, st.dec))}–${fmtV(rnd(st.c * 1.5, st.dec))}`).join(' · '); };
-const qBadge = (it, big) => { const q = avgQ(it), T = QTIERS[tierOf(q)]; return `<span class="qbadge" style="--qc:${T.col}">${big ? 'CALIDAD ' + T.name.toUpperCase() : T.name} · ${Math.round(q * 100)} %</span>`; };
+const qBadge = (it, big) => { const q = avgQ(it), T = QTIERS[tierOf(q)]; return `<span class="qbadge" style="--qc:${T.col}"><span class="qst">${qStars(T)}</span> ${big ? 'CALIDAD ' + T.name.toUpperCase() : T.name} · ${Math.round(q * 100)} %</span>`; };
 const sortInv = (a, b) => RAR_ORDER[defOf(a).rar] - RAR_ORDER[defOf(b).rar] || defOf(a).name.localeCompare(defOf(b).name) || avgQ(b) - avgQ(a);
 function wearer(it) {   // nombre de la carta que lo lleva puesto (o null)
   if (it.k === 'ab') { for (const k in SAVE.abEquip) if (SAVE.abEquip[k] === it.u) return CFG.cards[k] ? CFG.cards[k].name : k; return null; }

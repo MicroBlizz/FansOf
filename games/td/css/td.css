@@ -26,11 +26,12 @@
 /* ---------- bandeja de cartas ---------- */
 #tray { position: absolute; left: 0; bottom: 0; width: 540px; height: 168px; box-sizing: border-box; padding: 10px 6px 14px; background: linear-gradient(to bottom, var(--tray-hi), var(--tray)); border-top: 4px solid var(--outline); }
 #cards { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; height: 100%; }
-.card { --card-hi: #63cfe0; --card-lo: #2a7895; position: relative; border: 3px solid var(--outline); border-radius: 13px; padding: 0; background: linear-gradient(to bottom, var(--card-hi), var(--card-lo));
+.card { --card-hi: #7be04a; --card-lo: #2f8a1c; position: relative; border: 3px solid var(--outline); border-radius: 13px; padding: 0; background: linear-gradient(to bottom, var(--card-hi), var(--card-lo));
   box-shadow: 0 5px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.35); cursor: grab; display: flex; flex-direction: column; align-items: center; overflow: hidden; touch-action: none; transition: transform 0.12s ease, filter 0.15s; }
-.card.r-rare { --card-hi: #ffb04f; --card-lo: #cf5a16; }
+.card.r-rare { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
 .card.r-epic { --card-hi: #d08cff; --card-lo: #6d28c9; }
-.card.r-leader { --card-hi: #ffe06a; --card-lo: #c47f10; }
+.card.r-legendary { --card-hi: #ffb547; --card-lo: #d9620c; }
+.card.r-leader { --card-hi: #ffb547; --card-lo: #d9620c; }
 .card canvas { width: 100%; height: 86px; display: block; pointer-events: none; }
 .card .nm { font-weight: 800; font-size: 10px; letter-spacing: -0.4px; white-space: nowrap; line-height: 1.05; text-align: center; padding: 0 2px; color: var(--ink); text-shadow: 0 1px 0 var(--outline); pointer-events: none; }
 .card .cost { position: absolute; top: 3px; left: 3px; font-family: var(--font-display); font-size: 15px; padding: 4px 5px 1px; border-radius: 9px; background: rgba(32, 16, 44, 0.75); color: var(--gold); pointer-events: none; }

@@ -3,8 +3,8 @@
 Object.assign(CFG.cards, {
     // Memes
     memelord: { name: 'MemeLord', rarity: 'leader', rar: 'Líder', tag: 'Carta viral', desc: 'Cada 7 s juega una carta al azar: curación, aturdir, bola de fuego o invocar perros.' },
-    suchdog: { name: 'SuchDog', rarity: 'common', rar: 'Común', tag: 'Rápidos · x2', desc: 'Dos perros muy wow. Corren mucho y muerden más.' },
-    gifblaster: { name: 'GifBlaster', rarity: 'common', rar: 'Común', tag: 'Ráfagas', desc: 'Dispara GIFs en bucle a toda velocidad. Poco daño por disparo, pero no para.' },
+    suchdog: { name: 'SuchDog', rarity: 'common', rar: 'Poco común', tag: 'Rápidos · x2', desc: 'Dos perros muy wow. Corren mucho y muerden más.' },
+    gifblaster: { name: 'GifBlaster', rarity: 'common', rar: 'Poco común', tag: 'Ráfagas', desc: 'Dispara GIFs en bucle a toda velocidad. Poco daño por disparo, pero no para.' },
     synthcat: { name: 'SynthCat', rarity: 'rare', rar: 'Rara', tag: 'Daño en área', desc: 'Un gato con teclado: sus notas explotan en área. Nadie sabe por qué.' },
     trollbot: { name: 'TrollBot', rarity: 'rare', rar: 'Rara', tag: 'Provoca', desc: 'Obliga a los enemigos y torres cercanos a atacarle a él. Aguanta y se ríe.' },
     stonks: { name: 'Stonks', rarity: 'rare', rar: 'Rara', tag: 'Rompe torres', desc: 'Ejecutivo que solo ataca edificios: cada golpe pega un 15 % más que el anterior.' },

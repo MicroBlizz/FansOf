@@ -2,8 +2,8 @@
 'use strict';
 Object.assign(CFG.cards, {
     bunny: { name: 'CrazyBunny', rarity: 'leader', rar: 'Líder', tag: 'Chaos Jump', desc: 'Salta sobre el grupo enemigo más grande y hace 50 de daño en área cada 8 s. Si cae, vuelve a los 12 s.' },
-    squirrel: { name: 'MadSquirrel', rarity: 'common', rar: 'Común', tag: 'Rápidas · x2', desc: 'Salen dos. Rápidas y frágiles: perfectas para distraer a las torres.' },
-    beaver: { name: 'BoomBeaver', rarity: 'common', rar: 'Común', tag: 'Kamikaze', desc: 'Corre a la torre más cercana con dinamita y explota: 180 al edificio. Él no sobrevive, claro.' },
+    squirrel: { name: 'MadSquirrel', rarity: 'common', rar: 'Poco común', tag: 'Rápidas · x2', desc: 'Salen dos. Rápidas y frágiles: perfectas para distraer a las torres.' },
+    beaver: { name: 'BoomBeaver', rarity: 'common', rar: 'Poco común', tag: 'Kamikaze', desc: 'Corre a la torre más cercana con dinamita y explota: 180 al edificio. Él no sobrevive, claro.' },
     fox: { name: 'SlyFox', rarity: 'rare', rar: 'Rara', tag: 'Invisible · x3', desc: 'Invisible hasta que ataca. Su primer golpe hace el triple y, si mata, vuelve a desaparecer.' },
     meercat: { name: 'MeerCat', rarity: 'rare', rar: 'Rara', tag: 'Cura aliados', desc: 'Enfermera con alas de ángel. Va detrás de tus tropas y cura a las que tiene delante. Casi no pega.' },
     junkcoon: { name: 'JunkCoon', rarity: 'rare', rar: 'Rara', tag: 'Daño en área', desc: 'Lanza bolsas de basura explosivas desde lejos. Ideal contra grupos de becarios.' },

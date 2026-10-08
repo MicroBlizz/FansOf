@@ -116,11 +116,11 @@
 .dk2c[data-rarity="leader"] .dk2c-art { align-items: center; }
 .dk2-frame { flex: none; padding: 9px; border-radius: 18px; border: 4px solid var(--outline); background: linear-gradient(to bottom, #4b4466, #2c2742); box-shadow: inset 0 0 0 3px #8a7a4a, 0 6px 0 var(--outline); }
 .dk2-board { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 158px); gap: 7px; }
-.dk2c { --card-hi: #63cfe0; --card-lo: #2a7895; position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); cursor: pointer; color: var(--ink); font: inherit; min-width: 0; box-shadow: 0 3px 0 var(--outline); }
-.dk2c[data-rarity="rare"] { --card-hi: #ffb04f; --card-lo: #cf5a16; }
+.dk2c { --card-hi: #7be04a; --card-lo: #2f8a1c; position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); cursor: pointer; color: var(--ink); font: inherit; min-width: 0; box-shadow: 0 3px 0 var(--outline); }
+.dk2c[data-rarity="rare"] { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
 .dk2c[data-rarity="epic"] { --card-hi: #d08cff; --card-lo: #6d28c9; }
-.dk2c[data-rarity="legendary"] { --card-hi: #ff9ef0; --card-lo: #b0217f; }
-.dk2c[data-rarity="leader"] { --card-hi: #ffe06a; --card-lo: #c47f10; grid-row: span 2; cursor: default; }
+.dk2c[data-rarity="legendary"] { --card-hi: #ffb547; --card-lo: #d9620c; }
+.dk2c[data-rarity="leader"] { --card-hi: #ffb547; --card-lo: #d9620c; grid-row: span 2; cursor: default; }
 .dk2c-art { flex: 1; min-height: 0; display: flex; align-items: flex-end; justify-content: center; border-radius: 8px; border: 2px solid var(--outline); background: radial-gradient(ellipse at 50% 30%, #4a3a6e, #1d1230 80%); overflow: hidden; }
 .dk2c.sp .dk2c-art { background: radial-gradient(ellipse at 50% 30%, #7a3dd0, #241040 80%); }
 .dk2c-art canvas { width: 100%; height: auto; display: block; }

@@ -3,7 +3,7 @@
 /* =========================================================
    PROGRESIÓN Y ECONOMÍA (v0.9): niveles, oro, gemas, gashapón, campaña
    ========================================================= */
-const CARD_RAR = { rare: RARITY.rare, epic: RARITY.epic, legendary: ['Legendaria', '#ff9ef0', '#b0217f'] };   // v0.9.15: colores de las cartas del gashapón
+const CARD_RAR = { rare: RARITY.rare, epic: RARITY.epic, legendary: RARITY.legendary };   // colores de las cartas del gashapón (v0.9.62: los de siempre)
 // QUÉ HACE CADA HABILIDAD Y CADA OBJETO EN ESTE JUEGO (sus nombres, rarezas e iconos son de la serie: core/js/serie/catalogo.js).
 // Habilidades: una por carta, de cualquier facción. vals: [flojo, valor central, fuerte]; desc: el texto, con {v} donde va el número.
 const ABILITIES = catalogo('ab', {

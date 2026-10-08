@@ -120,10 +120,10 @@
 .fac-tab[aria-pressed="true"] { background: var(--tray-hi); box-shadow: 0 0 0 3px var(--fc, var(--gold)), 0 3px 0 var(--outline); }
 .fac-tab.locked { filter: grayscale(0.9) brightness(0.6); }
 .coll-row { position: relative; display: grid; grid-template-columns: 62px 1fr auto; gap: 8px; align-items: center; padding: 5px 8px 6px 4px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(100deg, var(--card-lo) 0%, var(--tray) 46%); box-shadow: 0 3px 0 var(--outline); text-align: left; flex: none; }
-.coll-row[data-rarity="common"] { --card-lo: #2a7895; }
-.coll-row[data-rarity="rare"] { --card-lo: #cf5a16; }
+.coll-row[data-rarity="common"] { --card-lo: #2f8a1c; }
+.coll-row[data-rarity="rare"] { --card-lo: #1d5fc9; }
 .coll-row[data-rarity="epic"] { --card-lo: #6d28c9; }
-.coll-row[data-rarity="leader"] { --card-lo: #c47f10; }
+.coll-row[data-rarity="leader"] { --card-lo: #d9620c; }
 .coll-row canvas { width: 62px; height: 54px; display: block; }
 .coll-name { font-family: var(--font-display); font-size: 17px; line-height: 1.1; }
 .coll-name em { font-style: normal; font-size: 13px; color: var(--gold); margin-left: 4px; }

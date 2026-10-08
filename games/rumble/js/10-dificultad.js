@@ -59,7 +59,7 @@ function worldOpenD(wi, d) {
 }
 const levelOpenD = (l, d) => worldOpenD(l.wi, d) && (SAVE.testAll || l.li === 0 || starsD(`${l.wi + 1}-${l.li}`, d) > 0);
 for (const b of document.querySelectorAll('[data-cd]')) b.addEventListener('click', () => { campDiff = b.dataset.cd; play('select'); buildCamp(); if (rlPending(campDiff)) openRoulette(campDiff); });
-function gearRow(id, q) { const D = ITEMS[id], T = QTIERS[tierOf(q)]; return `<div class="gear-row"><span class="gi" style="--qc:${T.col}">${SLOT_SVG[D.slot]}</span><span><b class="ol">${D.name}</b> <i class="gq" style="color:${T.col}">${T.name}</i><br>${descOf({ k: 'eq', id, q: D.st.map(() => q) })}</span></div>`; }
+function gearRow(id, q) { const D = ITEMS[id], T = QTIERS[tierOf(q)]; return `<div class="gear-row"><span class="gi" style="--qc:${RARITY[D.rar][1]}">${SLOT_SVG[D.slot]}</span><span><b class="ol">${D.name}</b> <i class="gq" style="color:${T.col}">${qStars(T)} ${T.name}</i><br>${descOf({ k: 'eq', id, q: D.st.map(() => q) })}</span></div>`; }
 function resetMods() { G.mod = null; G.pInc = 1; G.pDeployAdd = 0; G.pRespawnM = 1; G.eKillChaos = 0; G.egear = null; G.egearQ = 0.5; G.egearOn = []; }
 function setupHardMode(lvl) {
   const cd = G.cdiff, C = CDIFF[cd];

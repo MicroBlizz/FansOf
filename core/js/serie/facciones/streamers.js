@@ -3,8 +3,8 @@
 Object.assign(CFG.cards, {
     // Streamers
     twitchking: { name: 'StreamKing', rarity: 'leader', rar: 'Líder', tag: 'En directo', desc: 'El rey del directo. Mientras siga en pie, los aliados que tiene cerca pegan un 30 % más.' },
-    subswarm: { name: 'SubSwarm', rarity: 'common', rar: 'Común', tag: 'Salen 3', desc: 'Tres suscriptores con dedo de espuma. Frágiles, rápidos y muy entregados.' },
-    hypebeast: { name: 'HypeBeast', rarity: 'common', rar: 'Común', tag: 'Rápido', desc: 'Fan con ropa de marca y hasta arriba de bebida energética. Pega rapidísimo.' },
+    subswarm: { name: 'SubSwarm', rarity: 'common', rar: 'Poco común', tag: 'Salen 3', desc: 'Tres suscriptores con dedo de espuma. Frágiles, rápidos y muy entregados.' },
+    hypebeast: { name: 'HypeBeast', rarity: 'common', rar: 'Poco común', tag: 'Rápido', desc: 'Fan con ropa de marca y hasta arriba de bebida energética. Pega rapidísimo.' },
     viralbot: { name: 'ViralBot', rarity: 'rare', rar: 'Rara', tag: 'Aturde', desc: 'Cámara voladora que graba clips: cada disparo aturde un instante al objetivo.' },
     snackmom: { name: 'SnackMom', rarity: 'rare', rar: 'Rara', tag: 'Cura aliados', desc: 'La madre del streamer va detrás de tus tropas y reparte bocadillos a las que tiene delante.' },
     hypetrain: { name: 'HypeTrain', rarity: 'rare', rar: 'Rara', tag: 'Rompe torres', desc: 'El tren del hype va directo a por los edificios. No hay quien lo pare.' },

@@ -3,8 +3,8 @@
 Object.assign(CFG.cards, {
     // Cultura Pop (v0.9.13)
     directora: { name: 'LaDirectora', rarity: 'leader', rar: 'Líder', tag: '¡Acción!', desc: 'Dirige la batalla con su megáfono. Cada 8 s grita ¡ACCIÓN! y sus aliados cercanos atacan un 40 % más rápido y corren más durante 4 s. Si cae, vuelve a los 12 s.' },
-    extras: { name: 'Extras', rarity: 'common', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro extras con disfraz de cartón. Cobran poco y se caen enseguida, pero distraen a las torres.' },
-    doble: { name: 'DobleDeAcción', rarity: 'common', rar: 'Común', tag: 'Acrobacias', desc: 'El doble que rueda las escenas peligrosas. Cada 5 s da un salto acrobático hasta su objetivo.' },
+    extras: { name: 'Extras', rarity: 'common', rar: 'Poco común', tag: 'Salen 4', desc: 'Cuatro extras con disfraz de cartón. Cobran poco y se caen enseguida, pero distraen a las torres.' },
+    doble: { name: 'DobleDeAcción', rarity: 'common', rar: 'Poco común', tag: 'Acrobacias', desc: 'El doble que rueda las escenas peligrosas. Cada 5 s da un salto acrobático hasta su objetivo.' },
     detective: { name: 'Detective', rarity: 'rare', rar: 'Rara', tag: 'Marca al enemigo', desc: 'Encuentra el punto débil: cada disparo marca al enemigo 4 s y todo tu equipo le hace un 25 % más de daño.' },
     heroe: { name: 'HéroeDeSaldo', rarity: 'rare', rar: 'Rara', tag: 'Vuela · blindado', desc: 'Superhéroe de película barata, con capa de cortina. Vuela y recibe un 30 % menos de daño.' },
     spoiler: { name: 'Spoiler', rarity: 'rare', rar: 'Rara', tag: 'Aturde', desc: 'Grita el final de la película cada 7 s: los enemigos cercanos se quedan en shock 1,3 s. Entre grito y grito, tira periódicos.' },

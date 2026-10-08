@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés: dificultades Fácil y Heroica de la campaña (v0.9.55)
 'use strict';
 IDIOMA.add({
+  "<b>RAREZAS CON LOS COLORES DE SIEMPRE</b>: Poco común en verde, Rara en azul, Épica en lila y Legendaria en naranja (los líderes también). Lo que antes era Común ahora se llama Poco común. Y llegan dos rarezas nuevas que aún no tienen nada: Común (gris) y Mítica (roja), reservada para premios de eventos y torneos.": "<b>RARITIES IN THE USUAL COLORS</b>: Uncommon in green, Rare in blue, Epic in purple and Legendary in orange (leaders too). What used to be Common is now called Uncommon. And two new rarities arrive with nothing in them yet: Common (gray) and Mythic (red), saved for event and tournament prizes.",
+  "<b>CALIDAD CON ESTRELLAS</b>: la calidad de cada copia ahora se ve con estrellas, de ★☆☆☆☆ (Becario) a ★★★★★ (CEO). Así el color solo te dice la rareza.": "<b>QUALITY WITH STARS</b>: the quality of each copy is now shown with stars, from ★☆☆☆☆ (Intern) to ★★★★★ (CEO). That way the color only tells you the rarity.",
+  "Microblizz ha pintado de rojo una rareza que todavía no existe. Ya están preparando el precio.": "Microblizz has painted a rarity that doesn't exist yet in red. They're already working on the price.",
   "Fácil": "Easy",
   "Heroica": "Heroic",
   "FÁCIL": "EASY",

@@ -100,11 +100,11 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .next-lbl { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--ink-dim); padding-top: 2px; }
 .next-art { width: 40px; height: 40px; margin: -8px 0 -6px; border-radius: 10px; border: 3px solid var(--outline); box-sizing: border-box; background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); display: grid; place-items: center; overflow: hidden; }
 .next-art canvas { width: 34px; height: 34px; display: block; }
-.next-art[data-rarity="common"], .card[data-rarity="common"] { --card-hi: #63cfe0; --card-lo: #2a7895; }
-.next-art[data-rarity="rare"], .card[data-rarity="rare"] { --card-hi: #ffb04f; --card-lo: #cf5a16; }
+.next-art[data-rarity="common"], .card[data-rarity="common"] { --card-hi: #7be04a; --card-lo: #2f8a1c; }
+.next-art[data-rarity="rare"], .card[data-rarity="rare"] { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
 .next-art[data-rarity="epic"], .card[data-rarity="epic"] { --card-hi: #d08cff; --card-lo: #6d28c9; }
-.next-art[data-rarity="leader"], .card[data-rarity="leader"] { --card-hi: #ffe06a; --card-lo: #c47f10; }
-.next-art[data-rarity="legendary"], .card[data-rarity="legendary"] { --card-hi: #ff9ef0; --card-lo: #b0217f; }   /* v0.9.15 */
+.next-art[data-rarity="leader"], .card[data-rarity="leader"] { --card-hi: #ffb547; --card-lo: #d9620c; }
+.next-art[data-rarity="legendary"], .card[data-rarity="legendary"] { --card-hi: #ffb547; --card-lo: #d9620c; }   /* v0.9.15 */
 .card[data-spell="1"]::after { content: ""; position: absolute; inset: 2px; border-radius: 11px; border: 2px dashed rgba(255, 255, 255, 0.55); pointer-events: none; }
 .chaos-gem { flex: none; width: 42px; height: 42px; margin: -10px 0 -8px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--chaos-lite), var(--chaos) 45%, var(--chaos-deep)); border: 3px solid var(--outline); display: grid; place-items: center; font-family: var(--font-display); font-size: 23px; padding-top: 4px; box-sizing: border-box; box-shadow: 0 0 16px rgba(212, 60, 255, 0.6); font-variant-numeric: tabular-nums; }
 .chaos-track { position: relative; flex: 1; height: 22px; border-radius: 999px; background: #140a20; border: 3px solid var(--outline); overflow: hidden; }
@@ -148,10 +148,10 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .tut-text { position: absolute; left: 50%; top: 476px; transform: translateX(-50%); background: rgba(20, 10, 32, 0.9); border: 3px solid var(--ink); padding: 8px 18px 6px; border-radius: 14px; font-weight: 800; font-size: 18px; white-space: nowrap; }
 .deck-list { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 500px; max-height: 730px; overflow-y: auto; text-align: left; }
 .deck-row { position: relative; display: grid; grid-template-columns: 66px 1fr; gap: 8px; align-items: center; padding: 4px 10px 4px 4px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(100deg, var(--card-lo) 0%, var(--tray) 46%); box-shadow: 0 3px 0 var(--outline); }
-.deck-row[data-rarity="common"] { --card-lo: #2a7895; }
-.deck-row[data-rarity="rare"] { --card-lo: #cf5a16; }
+.deck-row[data-rarity="common"] { --card-lo: #2f8a1c; }
+.deck-row[data-rarity="rare"] { --card-lo: #1d5fc9; }
 .deck-row[data-rarity="epic"] { --card-lo: #6d28c9; }
-.deck-row[data-rarity="leader"] { --card-lo: #c47f10; }
+.deck-row[data-rarity="leader"] { --card-lo: #d9620c; }
 .deck-row canvas { width: 66px; height: 58px; display: block; }
 .deck-row .cost { left: auto; right: 8px; top: 8px; }
 .deck-info { min-width: 0; padding-right: 30px; }

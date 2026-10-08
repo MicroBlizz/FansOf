@@ -20,4 +20,8 @@ IDIOMA.add({
   "%1 personajes mejorados": "%1 characters upgraded",
   "1 partida": "1 match",
   "%1 partidas": "%1 matches",
+  "<b>PVP SIN TIRONES</b>: las partidas contra otros jugadores iban a saltos; ahora la red tiene más margen (tus cartas salen una fracción de segundo más tarde, pero todo se mueve fluido).": "<b>SMOOTH PVP</b>: matches against other players were choppy; the network now has more margin (your cards drop a fraction of a second later, but everything moves smoothly).",
+  "<b>ARMARIO Y PASE NUEVO</b>: marcos para tu avatar y títulos bajo tu nombre, que se ganan en los pases. Hay un pase de temporada nuevo (50 niveles, capítulos de La Gran Compra e hitos) y un pase PvP que sube al jugar partidas PvP. Son solo para lucirse: no dan ventaja.": "<b>WARDROBE AND NEW PASS</b>: frames for your avatar and titles under your name, earned in the passes. There is a new season pass (50 levels, chapters of The Great Purchase and milestones) and a PvP pass that levels up as you play PvP matches. Cosmetic only: no advantage.",
+  "<b>SALÓN DE LA FAMA</b>: botón RANKING en el menú con la clasificación mundial (campaña y poder; las copas PvP, en obras).": "<b>HALL OF FAME</b>: RANKING button in the menu with the world leaderboard (campaign and power; PvP cups under construction).",
+  "Microblizz ha estrenado un armario para que los perdedores del PvP puedan perder con estilo. El salto a la 0.9.92 incluye muchas cosas del taller que no caben en una nota.": "Microblizz has opened a wardrobe so PvP losers can lose in style. The jump to 0.9.92 includes lots of workshop stuff that doesn't fit in one note.",
 });

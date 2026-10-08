@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.92', real: [
+      '<b>PVP SIN TIRONES</b>: las partidas contra otros jugadores iban a saltos; ahora la red tiene más margen (tus cartas salen una fracción de segundo más tarde, pero todo se mueve fluido).',
+      '<b>ARMARIO Y PASE NUEVO</b>: marcos para tu avatar y títulos bajo tu nombre, que se ganan en los pases. Hay un pase de temporada nuevo (50 niveles, capítulos de La Gran Compra e hitos) y un pase PvP que sube al jugar partidas PvP. Son solo para lucirse: no dan ventaja.',
+      '<b>SALÓN DE LA FAMA</b>: botón RANKING en el menú con la clasificación mundial (campaña y poder; las copas PvP, en obras).'],
+    joke: ['Microblizz ha estrenado un armario para que los perdedores del PvP puedan perder con estilo. El salto a la 0.9.92 incluye muchas cosas del taller que no caben en una nota.'] },
   { v: '0.9.91', real: [
       '<b>LOLA TE ENSEÑA MÁS</b>: la partida guiada sigue después del gashapón. Ahora te lleva a la máquina de cartas, te ayuda a meter tu carta nueva en el mazo y te enseña las misiones, las horas extra y las opciones.',
       '<b>CONSEJOS EN CADA MODO</b>: la primera vez que abres la Arena, la Partida rápida, el Modo Jefe, el PvP, la Tienda y otras pantallas, Lola te cuenta en dos frases cómo va. Si no los quieres, toca «Sin consejos». Si ya habías hecho el tutorial, no te saldrán; los recuperas con TUTORIAL, en Opciones.',

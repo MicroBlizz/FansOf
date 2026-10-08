@@ -47,4 +47,6 @@ IDIOMA.add({
   "% menos de daño.": "% less damage.",
   "<b>SESIÓN MÁS ESTABLE</b>: arreglado el error «invalid refresh token» que a veces te sacaba de la cuenta.": "<b>MORE STABLE SESSION</b>: fixed the “invalid refresh token” error that sometimes logged you out of your account.",
   "Microblizz asegura que la sesión ahora es de las que no se cae. Ya lo dijo del puente.": "Microblizz swears the session is now the kind that doesn't drop. It said the same about the bridge.",
+  "<b>PASE CON ASPECTO NUEVO</b>: el pase tiene un diseño renovado y pasa a funcionar como en Rumble.": "<b>PASS WITH A NEW LOOK</b>: the pass has a renewed design and now works as in Rumble.",
+  "Microblizz ha pintado el pase de otro color y lo llama «rediseño».": "Microblizz painted the pass another colour and calls it a “redesign”.",
 });

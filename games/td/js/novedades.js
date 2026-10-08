@@ -4,6 +4,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.35', real: [
+      '<b>PASE CON ASPECTO NUEVO</b>: el pase tiene un diseño renovado y pasa a funcionar como en Rumble.'],
+    joke: ['Microblizz ha pintado el pase de otro color y lo llama «rediseño».'] },
   { v: '0.13.34', real: [
       '<b>SESIÓN MÁS ESTABLE</b>: arreglado el error «invalid refresh token» que a veces te sacaba de la cuenta.'],
     joke: ['Microblizz asegura que la sesión ahora es de las que no se cae. Ya lo dijo del puente.'] },

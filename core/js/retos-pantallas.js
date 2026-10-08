@@ -82,7 +82,7 @@ function profileChip() {
   const b = $('#btn-profile'); if (!b) return;
   b.querySelector('.pc-name').textContent = SAVE.name || 'TU PERFIL';
   const P = RETOS.perfil(); b.querySelector('.pc-sub').textContent = P.chip || P.sub;
-  drawArt(b.querySelector('canvas'), avatarOf(), 34, 34);
+  pintaPerfil(b.querySelector('canvas'), 34);
 }
 /* ---------- pantalla de perfil ---------- */
 // las dos casillas que valen para cualquier juego
@@ -100,8 +100,12 @@ function buildProfile() {
     drawArt(b.querySelector('canvas'), b.dataset.av, 46, 46);
     b.addEventListener('click', () => { SAVE.avatar = b.dataset.av; saveGame(); play('select'); buildProfile(); profileChip(); });
   }
-  drawArt($('#profile-av'), cur, 96, 96);
+  pintaPerfil($('#profile-av'), 96);
+  const tt = $('#profile-tt'); if (tt) tt.innerHTML = typeof tituloHtml === 'function' ? tituloHtml(lookDe().titulo) : '';
+  const ba = $('#arm-badge'); if (ba) ba.hidden = !(typeof lookNuevos === 'function' && lookNuevos());
 }
+// el avatar: con su marco si el juego tiene armario (core/js/armario.js)
+function pintaPerfil(cv, LW) { if (typeof pintaAvatar === 'function' && ARM()) pintaAvatar(cv, LW, lookDe().marco, avatarOf()); else drawArt(cv, avatarOf(), LW, LW); }
 
 /* ---------- avisos del menú y ventanas que salen solas al volver a él ---------- */
 function retosBadges() {
@@ -134,4 +138,5 @@ $('#name-cancel').onclick = () => { $('#scr-name').hidden = true; play('select')
 $('#btn-profile').onclick = () => { play('select'); if (!SAVE.name) { openName(true); return; } buildProfile(); $('#scr-profile').hidden = false; };
 $('#profile-close').onclick = () => { $('#scr-profile').hidden = true; play('select'); profileChip(); };
 $('#profile-name').onclick = () => { play('select'); openName(false); };
+{ const b = $('#profile-arm'); if (b) b.onclick = () => { play('select'); $('#scr-profile').hidden = true; openArmario(); }; }
 try { profileChip(); } catch (e) { /* se pinta al volver al menú */ }

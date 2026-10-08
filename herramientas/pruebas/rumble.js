@@ -18,7 +18,7 @@ var PRUEBA = {
     equip: { animales: { weapon: 'i13', head: 'i11' }, nomuertos: { head: 'i14', acc: 'i17' }, streamers: { head: 'i11' } },
     pity: { ab: 3, abL: 20, eq: 9, eqL: 49, qab: 2, qeq: 9, cd: 0, cdL: 0 },
     cards: { huron: { n: 2, st: 1 }, sp_bellotas: { n: 1, st: 0 } }, decks: { animales: ['squirrel', 'beaver', 'fox', 'meercat', 'huron', 'sp_bellotas'] },
-    pass: { xp: 1300, prem: false, free: [1], paid: [] }, tut: { done: true, step: 3 }, tutGift: { cafe: 1, tix: 1 },
+    pass: { id: 't1b', xp: 2600, prem: false, free: [1], paid: [] }, tut: { done: true, step: 3 }, tutGift: { cafe: 1, tix: 1 },
     stats: { win: 12, play: 20, kill: 600, card: 300, tower: 31, lvlup: 9, pull: 9, days: 3, caos: 900, quick: 8, camp: 12 }, achDone: ['win1'], achSeen: ['win1', 'kill500'],
     starter: false, speed2: false, chatOff: false, bestBoss: 2100, bossRec: { '6n': 2100 }, bossPay: { '6n': 1 }, bossSel: { wi: 6, d: 'n' }, mythPrize: {}, facItem: { animales: 1 }, menuMus: 'animales', vol: 80, mus: 60,
   },

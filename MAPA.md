@@ -8,6 +8,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
 - `core/css/menus-extra.css` · 21 KB
+- `core/css/menus-pases.css` · 15 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
 - `core/idioma/en-extra.js` · 17 KB
@@ -16,16 +17,19 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-pantallas-3.js` · 9 KB
 - `core/idioma/en-pantallas-4.js` · 11 KB
 - `core/idioma/en-pantallas-5.js` · 9 KB
+- `core/idioma/en-pases.js` · 4 KB
 - `core/idioma/en-plantillas-2.js` · 8 KB
 - `core/idioma/en-plantillas.js` · 11 KB
 - `core/idioma/en-raiz.js` · 3 KB
 - `core/idioma/en-serie-1.js` · 9 KB
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
+- `core/js/armario.js` · 22 KB · ARM, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
 - `core/js/nucleo.js` · 11 KB · NUCLEO, VERSION
-- `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin
-- `core/js/retos.js` · 19 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mFija, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat … (+8)
+- `core/js/pases.js` · 17 KB · PASS, PASS_Q, PASS_PVP, PASES, passTab, CANDADO_SVG, passRewardBase, pReward, passReward, pSave, pLevel, hoyISO, pFin, pDias, pAddXp, pReady, pClaimable, pClaim, passLevel, addPassXp, passReady, claimPass, passClaimable, rewardHtml, rewardTxt, giveReward, esLook, diasTxt, esHito, esGordo, ESTRELLA_SVG, passCelda, passProximo, buildPass, buyPass, openPass, passMatch, paseOrigen
+- `core/js/retos-pantallas.js` · 12 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, pintaPerfil, retosBadges, retosPopups, retosLogin
+- `core/js/retos.js` · 13 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mFija, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon, achScan, achToast, achReady, achTotals, achClaim, achCat, achRowData
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 7 KB · RARITY, CATALOGO, SLOTS, QTIERS, qStars
@@ -79,7 +83,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `demos/terminal-shock/index.html` · 76 KB
-- `games/rumble/index.html` · 36 KB
+- `games/rumble/index.html` · 38 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 7 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
@@ -88,7 +92,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-10.js` · 7 KB
 - `games/rumble/idioma/en-11.js` · 14 KB
-- `games/rumble/idioma/en-12.js` · 13 KB
+- `games/rumble/idioma/en-12.js` · 15 KB
+- `games/rumble/idioma/en-13.js` · 3 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -146,13 +151,14 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/19b-pvp.js` · 9 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
 - `games/rumble/js/19c-vista.js` · 4 KB · VISTA_YC, VISTA_SW, verAbajo, verEquipo, verFac, MIR_Y, otroEq, espejo, cambia, vistaOn, vistaRender
 - `games/rumble/js/19d-pvp-red.js` · 3 KB · PVPNET
-- `games/rumble/js/19e-pvp-pantallas.js` · 9 KB · PVP_ABIERTO, PVP_SALVAJE, PVP_UI, pvpDisponible, PVP_MODOS, pvpRed, pvpPantalla, pvpClasificacion, pvpPinta, pvpPara, pvpBuscar, pvpEncontrado, pvpAlEstado, pvpRendirse, pvpShowEnd
+- `games/rumble/js/19e-pvp-pantallas.js` · 10 KB · PVP_ABIERTO, PVP_SALVAJE, PVP_UI, pvpDisponible, PVP_MODOS, pvpRed, pvpPantalla, pvpClasificacion, pvpPinta, pvpPara, pvpBuscar, pvpEncontrado, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd
 - `games/rumble/js/19f-pvp-servidor.js` · 7 KB · PVP_SRV, pvpErrorTexto, pvpFacDeMazo, pvpEquipoDeServidor, pvpAServidor, pvpDeServidor
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
-- `games/rumble/js/novedades.js` · 17 KB · NEWS
+- `games/rumble/js/novedades.js` · 18 KB · NEWS
+- `games/rumble/js/retos-armario.js` · 5 KB
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
 - `games/rumble/js/retos.js` · 7 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
@@ -214,7 +220,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/android_www.py` · <1 KB
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
-- `herramientas/datos.html` · 4 KB
+- `herramientas/datos.html` · 5 KB
 - `herramientas/desplegar.py` · 7 KB
 - `herramientas/idioma.py` · 5 KB
 - `herramientas/mapa.py` · 2 KB

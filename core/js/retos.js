@@ -1,4 +1,4 @@
-// Fans Of · RETOS (1/2): misiones diarias y semanales, pase de batalla y premio diario. Los logros, el nombre, el perfil y los botones están en retos-pantallas.js
+// Fans Of · RETOS (1/2): misiones diarias y semanales y premio diario (los pases están en pases.js). Los logros, el nombre, el perfil y los botones están en retos-pantallas.js
 // Es el SISTEMA común: el código de js/09-menus.js, js/11-logros.js y js/20b-perfil.js de Fans of Rumble, con su mismo aspecto.
 // Los DATOS son de cada juego. Antes de este archivo, el juego define en su js/retos.js:
 //   RETOS.diarias y RETOS.semanales   las misiones que pueden salir: { id, txt, goal, ev }
@@ -91,83 +91,6 @@ function buildMissions() {
 }
 function openMissions(tab) { if (tab) missionTab = tab; updateWallets(); show('scr-missions'); buildMissions(); $('#mission-list').scrollTop = 0; }
 
-/* =========================================================
-   PASE DE BATALLA: 30 niveles, pista gratis y pista Ejecutiva (de pago simulado)
-   ========================================================= */
-const PASS = { name: 'Temporada 1: La Gran Compra', sub: 'Dura hasta que Microblizz la cierre', levels: 30, xpPer: 400, eur: 4.99, xpWin: 100, xpLose: 40, xpDaily: 60, xpWeekly: 250 };
-const PASS_Q = 0.9;   // los premios del pase salen siempre con calidad Excelente
-function passReward(track, i) {
-  if (track === 'free') {
-    if (i === PASS.levels) return { item: 'diploma' };
-    if (i % 10 === 0) return { tickets: 1 };
-    if (i % 3 === 0) return { gems: 15 };
-    return { gold: 150 };
-  }
-  if (i === PASS.levels) return { item: 'corbata_ceo' };
-  if (i % 5 === 0) return { tickets: 2 };
-  if (i % 2 === 0) return { gems: 30 };
-  return { gold: 400 };
-}
-const passLevel = () => Math.min(PASS.levels, Math.floor(SAVE.pass.xp / PASS.xpPer));
-function addPassXp(n) { const before = passLevel(); SAVE.pass.xp = Math.min(PASS.levels * PASS.xpPer, SAVE.pass.xp + n); return passLevel() - before; }
-function rewardHtml(r) {
-  if (r.gold) return `${COIN_SVG}${fmt(r.gold)}`;
-  if (r.gems) return `${GEM_SVG}${fmt(r.gems)}`;
-  if (r.tickets) return `${TICKET_SVG}${r.tickets} ${r.tickets > 1 ? 'tiradas' : 'tirada'}`;
-  if (r.item) return `<span class="itm">${ITEMS[r.item].name}</span>`;
-  return '';
-}
-const rewardTxt = r => r.gold ? `${fmt(r.gold)} de oro` : r.gems ? `${fmt(r.gems)} gemas` : r.tickets ? `${r.tickets} ${r.tickets > 1 ? 'tiradas gratis' : 'tirada gratis'} del gashapón` : r.item ? ITEMS[r.item].name : '';
-function giveReward(r, evento) {
-  const clave = ECO.ganar('premio', r, evento);
-  if (r.item) { const it = addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q)); if (clave && evento && evento.tipo === 'pase') it.pend = clave; }   // el servidor crea la de verdad (copiasDelServidor)
-}
-const passReady = (track, i) => i <= passLevel() && !SAVE.pass[track === 'free' ? 'free' : 'paid'].includes(i) && (track === 'free' || SAVE.pass.prem);
-function passClaimable() { let n = 0; for (let i = 1; i <= passLevel(); i++) { if (passReady('free', i)) n++; if (passReady('paid', i)) n++; } return n; }
-function claimPass(track, i) {
-  if (!passReady(track, i)) return false;
-  const r = passReward(track, i); giveReward(r, { tipo: 'pase', pista: track === 'free' ? 'free' : 'paid', nivel: i }); SAVE.pass[track === 'free' ? 'free' : 'paid'].push(i); return r;
-}
-function buildPass() {
-  const lv = passLevel(), into = SAVE.pass.xp - lv * PASS.xpPer, maxed = lv >= PASS.levels, P = SAVE.pass, nClaim = passClaimable();
-  $('#pass-top').innerHTML = `<div class="pass-lvl">${lv}</div><div class="pass-name ol">${PASS.name}<small>${PASS.sub}. ${P.prem ? 'Tienes el Pase Ejecutivo.' : 'Pista gratis para todos; la Ejecutiva es de pago (de prueba).'}</small></div>
-    <div><div class="xpbar"><i style="width:${maxed ? 100 : (into / PASS.xpPer) * 100}%"></i><span>${maxed ? '¡PASE COMPLETADO!' : `${into} / ${PASS.xpPer} puntos para el nivel ${lv + 1}`}</span></div></div>
-    <div class="pass-actions"><button class="btn-vip ol" id="btn-buy-pass" ${P.prem ? 'disabled' : ''}>${P.prem ? 'EJECUTIVO ✓' : 'PASE EJECUTIVO · ' + eur(PASS.eur)}</button><button class="btn-up" id="btn-claim-all" ${nClaim ? '' : 'disabled'}>COBRAR TODO${nClaim ? ` (${nClaim})` : ''}</button></div>`;
-  let rows = '';
-  for (let i = 1; i <= PASS.levels; i++) {
-    const cell = track => {
-      const r = passReward(track, i), got = SAVE.pass[track === 'free' ? 'free' : 'paid'].includes(i), ready = passReady(track, i);
-      const cls = 'pr-cell' + (track === 'paid' ? ' prem' : '') + (got ? ' done' : ready ? ' ready' : i > lv || (track === 'paid' && !P.prem) ? ' locked' : '');
-      const lock = track === 'paid' && !P.prem ? '<span class="lk">🔒</span>' : '';
-      return `<button class="${cls}" data-pc="${track}:${i}" ${ready ? '' : 'tabindex="-1"'}>${lock}${rewardHtml(r)}${got ? ' ✓' : ''}</button>`;
-    };
-    rows += `<div class="pass-row${i <= lv ? ' reached' : ''}" data-row="${i}"><div class="pr-n ol">${i}</div>${cell('free')}${cell('paid')}</div>`;
-  }
-  const list = $('#pass-list'); list.innerHTML = rows;
-  list.querySelectorAll('[data-pc]').forEach(b => { b.onclick = () => {
-    const [tr, i] = b.dataset.pc.split(':'); const r = claimPass(tr, +i);
-    if (!r) { if (tr === 'paid' && !SAVE.pass.prem) buyPass(); return; }
-    saveGame(); play('crown'); updateWallets(); buildPass(); toast('Has cobrado: ' + rewardTxt(r));
-  }; });
-  $('#btn-buy-pass').onclick = buyPass;
-  $('#btn-claim-all').onclick = () => {
-    let n = 0; for (let i = 1; i <= passLevel(); i++) { if (claimPass('free', i)) n++; if (claimPass('paid', i)) n++; }
-    if (n) { saveGame(); play('win'); updateWallets(); buildPass(); toast(`¡${n} recompensas cobradas!`); }
-  };
-  const cur = list.querySelector(`[data-row="${Math.max(1, Math.min(PASS.levels, lv))}"]`); if (cur) list.scrollTop = Math.max(0, cur.offsetTop - list.offsetTop - 60);
-}
-function buyPass() {
-  if (SAVE.pass.prem) return;
-  confirmBox('PASE EJECUTIVO', `Desbloquea la pista Ejecutiva de la ${PASS.name}: más oro, gemas, tiradas gratis y la <b>Corbata del CEO</b>, exclusiva.<span class="big">${eur(PASS.eur)}</span><small>Versión de prueba: no se cobra nada.</small>`, 'COMPRAR', () => {
-    SAVE.pass.prem = true; ECO.ganar('compra-pase', {}, { tipo: 'pase-premium' }); saveGame(); play('win'); updateWallets(); buildPass(); toast('¡Ya eres Ejecutivo! (sin cobrar nada)');
-  });
-}
-function openPass() { updateWallets(); show('scr-pass'); buildPass(); }
-// al acabar una partida: puntos de pase por jugar. Devuelve el trocito que se enseña en la pantalla del final
-function passMatch(win) {
-  const xp = win ? PASS.xpWin : PASS.xpLose, up = addPassXp(xp);
-  return `<div class="rw-xp">Pase de batalla: +${xp} puntos${up ? ` · ¡NIVEL ${passLevel()}!` : ''}</div>`;
-}
 
 /* =========================================================
    LOGROS: familias por niveles (I, II, III…). Cada nivel es un logro y da gemas una sola vez.

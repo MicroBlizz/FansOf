@@ -10,8 +10,9 @@
 // Cada juego añade los suyos en AJUSTES.topes. herramientas/subir_datos.py los sube a tablas_juego.datos.topes.
 const TOPES_COMUNES = {
   mision: { vez: { gold: 2000, gems: 200 }, dia: { gold: 20000, gems: 1000 }, calcula: 'mision' },   // el servidor da lo de premios.mision, una vez por misión y periodo
-  premio: { vez: { gold: 20000, gems: 30000, tickets: 30 }, dia: { gold: 100000, gems: 40000, tickets: 60 }, calcula: ['logros', 'login', 'pase'] },   // logros, racha de días y pase de batalla: el servidor pone la cantidad y comprueba que se pueda cobrar
+  premio: { vez: { gold: 20000, gems: 30000, tickets: 30 }, dia: { gold: 100000, gems: 40000, tickets: 60 }, calcula: ['logros', 'login', 'pase', 'pase-pvp'] },   // logros, racha de días y pase de batalla: el servidor pone la cantidad y comprueba que se pueda cobrar
   'compra-pase': { vez: {}, dia: {}, calcula: 'pase-premium' },
+  'compra-pase-pvp': { vez: {}, dia: {}, calcula: 'pase-pvp-premium' },   // el Pase del Pase (compra de prueba del pase PvP)
   objeto: { vez: {}, dia: {}, calcula: 'objeto' },   // regalos de un objeto (starter, mito, facitem, cafe): el servidor comprueba que sean posibles y los apunta una vez   // el pase Ejecutivo (compra de prueba)
   'horas-extra': { vez: { gold: 150000, gems: 5000 }, dia: { gold: 600000, gems: 20000 }, calcula: 'horas' },   // el servidor limita lo cobrado al tiempo que ha pasado desde el cobro anterior
   'regalo-diario': { vez: { gold: 300, gems: 20 }, dia: { gold: 600, gems: 40 }, fijo: 'gift', diario: true },   // fijo: el servidor da SIEMPRE lo de premios.gift, una vez por día (hora de Madrid)

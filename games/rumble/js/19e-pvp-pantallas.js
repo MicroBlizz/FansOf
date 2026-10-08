@@ -72,6 +72,14 @@ function pvpRendirse() {
 }
 
 /* ---------- el final ---------- */
+// v0.9.92: el pase PvP sube cuando el servidor da la partida por cerrada (una vez por partida); el servidor apunta lo mismo
+let pvpPaseDado = '';
+function pvpPase(r) {
+  if (!r || r.error || r.estado !== 'cerrada' || typeof PASES === 'undefined' || !PASES.p || !PVP.fin) return;
+  const k = PVP.fin.h + ':' + PVP.rival; if (pvpPaseDado === k) return; pvpPaseDado = k;
+  const xp = r.gano ? PASS_PVP.xpWin : PASS_PVP.xpLose, up = pAddXp('p', xp); saveGame();
+  const e = $('#end-pass'); if (e && !$('#scr-end').hidden) e.innerHTML = pFin('p') ? '' : `Pase PvP: +${xp} puntos${up ? ` · <b style="color:#ffe14d">¡NIVEL ${pLevel('p')}!</b>` : ''}`;
+}
 function pvpShowEnd() {
   const mi = verEquipo(), rival = PVP.peer, w = G.winner, gano = w === mi, perdio = w === rival, t = $('#end-title'), motivo = G.endReason;
   t.textContent = motivo === 'desync' || motivo === 'error' ? 'PARTIDA ANULADA' : gano ? '¡VICTORIA!' : perdio ? 'DERROTA' : 'EMPATE'; t.className = 'end-title ol-big ' + (gano ? 'win' : perdio ? 'lose' : '');
@@ -87,7 +95,7 @@ function pvpShowEnd() {
   const rw = $('#end-rewards'); rw.innerHTML = '';
   if (PVP.net && PVP.net.cerrar && G.winner && PVP.fin && motivo !== 'desync' && motivo !== 'error') {   // el servidor decide los puntos
     rw.innerHTML = '<div class="rw-xp">Esperando al servidor…</div>';
-    PVP.net.cerrar(G.winner, PVP.fin.h, r => { if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; });
+    PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; });
   } else rw.innerHTML = PVP.net && PVP.net.cerrar ? '<div class="rw-xp">Esta partida no cuenta para nadie.</div>' : '<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>';
   $('#end-pass').innerHTML = ''; $('#end-quote').textContent = '';
   $('#st-cards').textContent = S[mi].deployed; $('#st-kills').textContent = S[mi].kills; $('#st-chaos').textContent = Math.round(S[mi].spent);

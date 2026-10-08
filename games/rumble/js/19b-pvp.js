@@ -38,7 +38,7 @@ function pvpEquipoMal(eq) {
 function pvpInicio(o) {
   PVP.on = true; PVP.seat = o.seat; PVP.peer = o.seat === 'p' ? 'e' : 'p'; PVP.red = o.red; PVP.T = o.turno || 12; PVP.D = o.retardo || 2;
   PVP.terreno = o.terreno; PVP.avisoMs = o.avisoMs || 3000; PVP.abandonoMs = o.abandonoMs || 18000; PVP.alEstado = o.alEstado || null;
-  PVP.propias = new Map(); PVP.stats = { n: 0, ms: 0 }; PVP._en = false; PVP.pasados = new Set(); PVP.fin = null; PVP.mias = new Map(); PVP.huellas = new Map(); PVP.hashes = []; PVP.espera = 0; PVP.error = ''; PVP.log = [];
+  PVP.propias = new Map(); PVP.stats = { n: 0, ms: 0 }; PVP.rtt = 0; PVP.rttMax = 0; PVP.llamadas = 0; PVP.fps = 60; PVP._en = false; PVP.pasados = new Set(); PVP.fin = null; PVP.mias = new Map(); PVP.huellas = new Map(); PVP.hashes = []; PVP.espera = 0; PVP.error = ''; PVP.log = [];
   if (!PVP.ajenas || !o.conservar) PVP.ajenas = new Map();   // los mensajes del rival pueden llegar antes de empezar: no se borran si `conservar`
   for (const t of ['p', 'e']) { const m = pvpEquipoMal(o.equipos[t]); if (m) { PVP.error = `equipo ${t}: ${m}`; pvpEstado('error'); return false; } }
   PVP.estado = 'jugando'; G.seedNext = o.seed; G.autoplay = false;
@@ -47,7 +47,7 @@ function pvpInicio(o) {
   for (let k = 0; k < PVP.D - 1; k++) pvpMandar(k, []);   // los primeros turnos van vacíos: nadie ha podido jugar aún
   return true;
 }
-function pvpFin() { if (PVP.net && PVP.net.parar) PVP.net.parar(); PVP.net = null; PVP.on = false; PVP.red = null; PVP.estado = 'fuera'; }
+function pvpFin() { if (PVP.net && PVP.net.parar) PVP.net.parar(); PVP.net = null; const dbg = document.getElementById('pvp-dbg'); if (dbg) dbg.remove(); PVP.on = false; PVP.red = null; PVP.estado = 'fuera'; }
 function pvpEstado(e) { if (PVP.estado === e) return; PVP.estado = e; if (PVP.alEstado) PVP.alEstado(e, PVP); }
 
 /* ---------- jugadas ---------- */
@@ -105,6 +105,7 @@ function pvpEspera() { /* el reloj de espera lo cuenta pvpTic (por fotograma) */
 // por fotograma, con el tiempo real: avisa de la espera y, pasado el límite, de que el rival se ha ido
 function pvpTic(real) {
   if (!PVP.on || G.state !== 'play') return;
+  PVP.fps = PVP.fps * 0.95 + (1 / Math.max(0.001, real)) * 0.05; pvpDebug(real);
   if (PVP.estado !== 'jugando' && PVP.estado !== 'esperando') return;
   const faltaMensaje = SIM.tick % PVP.T === 0 && !(PVP.pasados && PVP.pasados.has(SIM.tick / PVP.T)) && !PVP.ajenas.has(SIM.tick / PVP.T);
   if (!faltaMensaje) { PVP.espera = 0; PVP._en = false; return; }

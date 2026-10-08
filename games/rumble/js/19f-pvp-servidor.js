@@ -55,7 +55,9 @@ PVPNET.redes.servidor = {
         if (!vivo) return;
         const t0 = Date.now(), items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
+          const tr0 = performance.now();
           const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
+          const dtr = performance.now() - tr0; PVP.rtt = PVP.rtt ? PVP.rtt * 0.8 + dtr * 0.2 : dtr; PVP.rttMax = Math.max(PVP.rttMax || 0, dtr); PVP.llamadas = (PVP.llamadas || 0) + 1;   // lo que tarda cada llamada al servidor (se ve en desarrollo)
           for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
           if (r && r.desync) pvpEstado('desync');
         } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono

@@ -111,3 +111,12 @@ for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListe
 $('#btn-pvp-buscar').addEventListener('click', pvpBuscar);
 $('#btn-pvp-ia').addEventListener('click', () => { pvpPara(); play('select'); openPrep('quick'); });
 for (const b of document.querySelectorAll('#scr-pvp [data-back]')) b.addEventListener('click', pvpPara);
+
+/* ---------- en desarrollo: medidor de la partida (cuánto tarda el servidor, cuánto se para, a cuántos fotogramas va) ---------- */
+function pvpDebug(real) {
+  if (!NUCLEO.desarrollo) return;
+  pvpDebug.t = (pvpDebug.t || 0) - real; if (pvpDebug.t > 0) return; pvpDebug.t = 0.5;
+  let el = document.getElementById('pvp-dbg');
+  if (!el) { el = document.createElement('div'); el.id = 'pvp-dbg'; el.style.cssText = 'position:fixed;left:4px;bottom:4px;z-index:9999;font:11px monospace;background:rgba(0,0,0,.7);color:#9ef07a;padding:3px 6px;border-radius:6px;pointer-events:none'; document.body.append(el); }
+  el.textContent = `${PVP.seat} · RTT ${Math.round(PVP.rtt)} ms (máx ${Math.round(PVP.rttMax)}) · llamadas ${PVP.llamadas} · esperas ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(PVP.fps)} fps`;
+}

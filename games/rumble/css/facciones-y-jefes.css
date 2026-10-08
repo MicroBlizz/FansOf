@@ -1,0 +1,120 @@
+/* Fans of Rumble · v0.9.71: aviso de facción nueva, rejillas simétricas (5 + 5), dificultad CEO de la partida rápida y Modo Jefe nuevo */
+
+/* ---------- facción nueva: etiqueta en la campaña, recuadro antes del jefe y ventana al ganar ---------- */
+.unlock-chip { display: flex; align-items: center; gap: 8px; margin: 2px 0 8px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 3px solid var(--outline);
+  background: linear-gradient(to bottom, #ffe06a, #e0a017); color: #2a1300; font-family: var(--font-display); font-size: 14px; line-height: 1.15; box-shadow: 0 3px 0 var(--outline); }
+.unlock-chip canvas { width: 34px; height: 30px; flex-shrink: 0; background: rgba(255, 255, 255, .45); border-radius: 999px; }
+.unlock-chip.off { background: var(--panel-2); color: var(--ink-dim); font-family: inherit; font-weight: 800; font-size: 12px; }
+.unlock-box { display: flex; align-items: center; gap: 10px; margin-top: 8px; padding: 8px 10px; border-radius: 14px; border: 3px solid #ffcb3d; text-align: left;
+  background: linear-gradient(100deg, rgba(255, 203, 61, .28), rgba(255, 203, 61, .06)); box-shadow: 0 0 12px rgba(255, 203, 61, .35); }
+.unlock-box canvas { width: 46px; height: 42px; flex-shrink: 0; }
+.unlock-box b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 17px; color: #ffe06a; }
+.unlock-box span { font-size: 13px; font-weight: 800; }
+.unlock-box.off { border-color: var(--tray-hi); background: var(--panel-2); box-shadow: none; }
+.unlock-box.off b { color: var(--ink-dim); }
+#scr-unlock { z-index: 60; }
+.unlock-card { position: relative; overflow: hidden; border-color: #ffcb3d; box-shadow: 0 0 0 3px var(--outline), 0 0 30px rgba(255, 203, 61, .5); text-align: center; }
+.unlock-card > * { position: relative; }
+.unlock-rays { position: absolute !important; inset: -60%; pointer-events: none;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 224, 106, .22) 0 10deg, transparent 10deg 20deg); animation: unlock-spin 14s linear infinite; }
+@keyframes unlock-spin { to { transform: rotate(360deg); } }
+.unlock-card h3 { font-size: 36px !important; color: #ffe06a; }
+#unlock-art { width: 150px; height: 130px; filter: drop-shadow(0 0 14px var(--fc, #ffcb3d)); animation: unlock-bob 2.4s ease-in-out infinite; }
+@keyframes unlock-bob { 50% { transform: translateY(-6px) scale(1.03); } }
+.unlock-name { font-family: var(--font-display); font-size: 28px; color: var(--fc, #fff); }
+.unlock-passive { display: flex; gap: 8px; align-items: center; text-align: left; padding: 8px 10px; border-radius: 12px; background: var(--panel-2); }
+.unlock-passive svg { width: 28px; height: 28px; flex-shrink: 0; }
+.unlock-passive b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+.unlock-passive span { font-size: 13px; font-weight: 700; }
+.unlock-note { margin: 0; font-size: 14px; font-weight: 800; color: #9ef07a; }
+.unlock-card .btn-big { font-size: 26px; padding: 12px 22px 7px; }
+
+/* ---------- rejillas de 10 facciones en 5 + 5 (antes 9 + 1 y 3 + 3 + 3 + 1) ---------- */
+#coll-tabs.fac-tabs { grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 500px; }
+#coll-tabs .fac-tab { height: 48px; display: grid; place-items: center; }
+#coll-tabs .fac-tab canvas { width: auto; height: 40px; aspect-ratio: 4 / 3; }
+#scr-prep:not(.arena) #fac-grid { grid-template-columns: repeat(5, 1fr); gap: 5px; max-width: 500px; }
+#scr-prep:not(.arena) .diff-opt.fac-opt { padding: 4px 2px 5px; border-radius: 12px; }
+#scr-prep:not(.arena) .fac-opt canvas { width: 46px; height: 36px; margin: 0 auto; }
+#scr-prep:not(.arena) .fac-opt b { font-size: 11.5px !important; line-height: 1.05; white-space: normal; min-height: 2.1em; display: flex; align-items: center; justify-content: center; }
+#scr-prep:not(.arena) .fac-opt small { font-size: 9.5px; line-height: 1.05; }
+#scr-prep:not(.arena) .fac-opt small svg { width: 9px; height: 10px; }
+#scr-prep:not(.arena) .fac-opt .lock { right: 2px; top: 2px; font-size: 8px; padding: 0 3px; }
+#profile-avs.pf-avs { display: grid; grid-template-columns: repeat(5, 1fr); justify-items: center; gap: 6px; }
+
+/* ---------- partida rápida: tres rivales en fila y el CEO en rojo y oro ---------- */
+#diff-row.diff { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; max-width: 500px; }
+#diff-row .diff-opt { min-width: 0; padding: 7px 6px 6px; }
+#diff-row .diff-opt small { font-size: 11.5px; line-height: 1.1; text-align: center; }
+#diff-row .diff-opt.ceo { background: linear-gradient(to bottom, #8a1f2e, #4a0f1c); border-color: #2a0610; }
+#diff-row .diff-opt.ceo b { color: #ffe06a; }
+#diff-row .diff-opt.ceo small { color: #ffd0d0; }
+#diff-row .diff-opt.ceo[aria-pressed="true"] { box-shadow: 0 0 0 3px #ffcb3d, 0 0 14px rgba(255, 80, 80, .7), 0 4px 0 var(--outline); }
+.ceo-box { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; padding: 8px 10px; border-radius: 12px; border: 3px solid #b0213a; text-align: left;
+  background: linear-gradient(100deg, rgba(176, 33, 58, .45), rgba(176, 33, 58, .1)); }
+.ceo-box b.ol { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: #ffe06a; }
+.ceo-box span { font-size: 13px; font-weight: 700; }
+
+/* ---------- Modo Jefe nuevo: el jefe en grande, con su aura ---------- */
+#scr-prep.jefe > * { order: 10; }
+#scr-prep.jefe > #prep-title { order: 0; }
+#scr-prep.jefe > #boss-pick { order: 1; }
+#scr-prep.jefe > #bdiff-row { order: 2; }
+#scr-prep.jefe > #prep-info { order: 3; }
+#scr-prep.jefe > #boss-fac { order: 4; }
+#scr-prep.jefe > #fac-grid { order: 5; }
+#scr-prep.jefe > #prep-deck { order: 6; }
+#scr-prep.jefe > p.diff-label:not(#diff-label) { display: none; }
+#scr-prep.jefe:not(.fac-abierta) > #fac-grid { display: none; }
+#scr-prep.jefe .prep-info { font-size: 13px; }
+#scr-prep.jefe #boss-pick.boss-pick { display: flex; flex-direction: column; align-items: center; gap: 3px; overflow: visible; padding: 0; touch-action: auto; }
+#scr-prep.jefe #boss-pick[hidden] { display: none; }
+.bs-stage { --aura: #ff6b6b; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; width: 100%; max-width: 480px; }
+.bs-hero { position: relative; height: 186px; display: grid; place-items: center; }
+.bs-aura { position: absolute; width: 210px; height: 210px; border-radius: 50%; background: radial-gradient(circle, var(--aura) 0%, transparent 68%); opacity: .55; animation: bs-latido 1.8s ease-in-out infinite; }
+.bs-rays { position: absolute; width: 300px; height: 300px; border-radius: 50%; pointer-events: none; opacity: .4;
+  background: repeating-conic-gradient(from 0deg, var(--aura) 0 7deg, transparent 7deg 20deg);
+  -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%); mask: radial-gradient(circle, #000 30%, transparent 70%); animation: unlock-spin 18s linear infinite; }
+.bs-art { position: relative; width: 210px; height: 176px; filter: drop-shadow(0 0 10px var(--aura)) drop-shadow(0 6px 0 rgba(0, 0, 0, .35)); animation: bs-flota 3s ease-in-out infinite; }
+@keyframes bs-latido { 50% { transform: scale(1.12); opacity: .8; } }
+@keyframes bs-flota { 50% { transform: translateY(-7px); } }
+.bs-stage.cd-h { --aura: #ff4d5e; } .bs-stage.cd-h .bs-aura { animation-duration: 1.2s; opacity: .7; }
+.bs-stage.cd-m { --aura: #c33bff; } .bs-stage.cd-m .bs-aura { animation-duration: .9s; opacity: .85; } .bs-stage.cd-m .bs-rays { opacity: .65; animation-duration: 9s; }
+.bs-stage.cd-m .bs-art { filter: drop-shadow(0 0 14px #ff3b5c) drop-shadow(0 0 22px var(--aura)) drop-shadow(0 6px 0 rgba(0, 0, 0, .35)); }
+.bs-stage.locked .bs-art { filter: brightness(0) drop-shadow(0 0 2px rgba(255, 255, 255, .5)); animation: none; opacity: .75; }
+.bs-stage.locked .bs-aura, .bs-stage.locked .bs-rays { display: none; }
+.bs-lock { position: absolute; bottom: 14px; font-family: var(--font-display); font-size: 16px; padding: 3px 10px 0; border-radius: 999px; background: var(--outline); color: var(--ink-dim); }
+.bs-arrow { width: 40px; height: 52px; border-radius: 12px; border: 3px solid var(--outline); background: var(--tray); color: #fff6ea; font-size: 20px; cursor: pointer; box-shadow: 0 3px 0 var(--outline); }
+.bs-arrow:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.bs-name { font-family: var(--font-display); font-size: 26px; line-height: 1.05; text-align: center; color: #fff6ea; max-width: 100%; }
+.bs-hp { position: relative; width: 100%; max-width: 420px; height: 24px; border-radius: 999px; border: 3px solid var(--outline); background: rgba(0, 0, 0, .45); overflow: hidden; }
+.bs-hp i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(to bottom, #7dff8a, #1f9c3a); }
+.bs-hp.cd-h i { background: linear-gradient(to bottom, #ff8a8a, #b0213a); }
+.bs-hp.cd-m i { background: linear-gradient(to bottom, #e09bff, #6d28d9); }
+.bs-hp span { position: relative; display: block; text-align: center; font-family: var(--font-display); font-size: 14px; line-height: 19px; color: #fff; }
+.bs-meta { font-size: 13px; font-weight: 800; color: var(--ink-dim); }
+.bs-meta { display: flex; gap: 0; flex-wrap: wrap; justify-content: center; }
+.bs-meta span + span::before { content: ' · '; white-space: pre; color: var(--ink-dim); }
+.bs-meta span:first-child { color: #fff6ea; } .bs-meta .bs-k { color: #ffe06a; }
+.bs-dots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 2px 0 4px; }
+.bs-dot { width: 13px; height: 13px; padding: 0; border-radius: 50%; border: 2px solid var(--outline); background: #fff6ea; cursor: pointer; }
+.bs-dot.off { background: #5a4a6a; }
+.bs-dot.on { background: #ffcb3d; box-shadow: 0 0 0 2px #ffcb3d; transform: scale(1.2); }
+.boss-fac { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 486px; }
+.boss-fac[hidden] { display: none; }
+.bf-lbl { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; color: var(--ink-dim); white-space: nowrap; }
+.bf-btn { flex: 1; display: grid; grid-template-columns: 44px 1fr auto; grid-template-rows: auto auto; column-gap: 8px; align-items: center; text-align: left; padding: 4px 12px 4px 6px;
+  border: 3px solid var(--outline); border-radius: 14px; background: var(--tray); box-shadow: 0 0 0 2px var(--fc, var(--gold)), 0 3px 0 var(--outline); cursor: pointer; color: inherit; }
+.bf-btn canvas { grid-row: span 2; width: 40px; height: 32px; }
+.bf-btn b { font-family: var(--font-display); font-weight: 400; font-size: 17px; line-height: 1.1; }
+.bf-btn small { grid-column: 2; font-size: 11.5px; font-weight: 700; color: var(--ink-dim); }
+.bf-btn small svg { width: 10px; height: 11px; vertical-align: -1px; }
+.bf-btn i { grid-row: 1 / span 2; grid-column: 3; font-style: normal; font-size: 14px; color: #ffe06a; }
+#btn-play:disabled { filter: grayscale(1) brightness(.75); cursor: not-allowed; }
+#scr-prep.jefe .bs-stage.locked ~ .bs-hp i { display: none; }
+/* con la lista de facciones abierta, el jefe se hace pequeño y se apartan la dificultad y el texto para que quepa todo */
+#scr-prep.jefe.fac-abierta .bs-hero { height: 112px; }
+#scr-prep.jefe.fac-abierta .bs-art { width: 132px; height: 110px; }
+#scr-prep.jefe.fac-abierta .bs-aura { width: 130px; height: 130px; }
+#scr-prep.jefe.fac-abierta .bs-rays { width: 190px; height: 190px; }
+#scr-prep.jefe.fac-abierta .bs-dots, #scr-prep.jefe.fac-abierta .bs-meta, #scr-prep.jefe.fac-abierta > #bdiff-row, #scr-prep.jefe.fac-abierta > #prep-info { display: none; }

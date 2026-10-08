@@ -44,23 +44,27 @@ function openRoulette(d) {
 }
 function rlPhaseUi(done) {
   const p = RL.phase === 'p', r = $('#rl-res'), hero = RL.d === 'x';
-  $('#rl-title').textContent = p ? 'TU CASTIGO DE LA SEMANA' : hero ? 'LA VENTAJA DE LA CPU EN HEROICA' : 'LA VENTAJA DE LA CPU';
-  $('#rl-sub').textContent = p ? 'La ruleta de Microblizz decide cómo te complica la Mítica esta semana. Cambia cada lunes.' : hero ? 'En Heroica no hay castigo para ti, pero Microblizz le hace un regalo a la CPU. Cambia cada lunes.' : 'Y ahora, el regalo de Microblizz para la CPU.';
+  const q = RL.d === 'q';   // v0.9.71: partida rápida CEO, una ruleta nueva en cada partida
+  $('#rl-title').textContent = q ? (p ? 'TU CASTIGO EN ESTA PARTIDA' : 'LA VENTAJA DE LA CPU') : p ? 'TU CASTIGO DE LA SEMANA' : hero ? 'LA VENTAJA DE LA CPU EN HEROICA' : 'LA VENTAJA DE LA CPU';
+  $('#rl-sub').textContent = q ? (p ? 'Modo CEO: la ruleta de Microblizz gira en cada partida. Primero, tu castigo.' : 'Y ahora, el regalo de Microblizz para la CPU. ¡Suerte!') : p ? 'La ruleta de Microblizz decide cómo te complica la Mítica esta semana. Cambia cada lunes.' : hero ? 'En Heroica no hay castigo para ti, pero Microblizz le hace un regalo a la CPU. Cambia cada lunes.' : 'Y ahora, el regalo de Microblizz para la CPU.';
   r.className = 'rl-res ' + (p ? 'bad' : 'good');
   if (done) { const x = p ? RL.wk.deb : RL.wk.buf; r.innerHTML = `<b class="ol">${x.name}</b>${x.desc.charAt(0).toUpperCase() + x.desc.slice(1)}`; } else r.innerHTML = '';
   $('#btn-rl').textContent = !done ? '¡GIRAR!' : p ? 'SIGUIENTE' : '¡A JUGAR!';
   $('#btn-rl').disabled = false; $('#btn-rl-skip').hidden = !!done && !p;
+  $('#btn-rl-skip').textContent = q ? 'No jugar' : 'Saltar la animación';
 }
-function rlClose() { RL.spin = null; $('#scr-roulette').hidden = true; const k = rlSeenKey(RL.d); if (SAVE[k] !== weekStr()) { SAVE[k] = weekStr(); saveGame(); } play('select'); if (!$('#scr-camp').hidden) buildCamp(); }
+function rlClose(jugar) {
+  if (RL.d === 'q') { RL.spin = null; $('#scr-roulette').hidden = true; play('select'); const f = RL.alAcabar; RL.alAcabar = null; if (jugar === true && f) f(); return; }   // CEO: «¡A JUGAR!» empieza la partida; «No jugar», no
+  RL.spin = null; $('#scr-roulette').hidden = true; const k = rlSeenKey(RL.d); if (SAVE[k] !== weekStr()) { SAVE[k] = weekStr(); saveGame(); } play('select'); if (!$('#scr-camp').hidden) buildCamp(); }
 $('#btn-rl').addEventListener('click', () => {
   if (RL.spin) return;
   if (!$('#rl-res').innerHTML) { rlSpin(); return; }
   if (RL.phase === 'p') { RL.phase = 'c'; RL.ang = 0; rlPhaseUi(false); drawRoulette(); play('select'); return; }
-  rlClose();
+  rlClose(true);
 });
-$('#btn-rl-skip').addEventListener('click', rlClose);
+$('#btn-rl-skip').addEventListener('click', () => rlClose(false));
 function rlSpin() {
-  stat('rlspin', 1);
+  if (RL.d !== 'q') stat('rlspin', 1);   // el logro es de la ruleta de la Mítica
   const list = RL.phase === 'p' ? MYTH_DEB : MYTH_BUF, TAU = Math.PI * 2, seg = TAU / list.length;
   const idx = list.indexOf(RL.phase === 'p' ? RL.wk.deb : RL.wk.buf), want = -(idx * seg + seg / 2);
   const from = RL.ang, to = from + ((((want - from) % TAU) + TAU) % TAU) + TAU * (REDUCED ? 1 : 5);

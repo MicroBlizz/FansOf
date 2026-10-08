@@ -25,6 +25,7 @@ Object.assign(CFG, {
   diff: {
     easy:   { aiIncome: 0.8, think: [1.3, 2.3], bossCd: 20, stun: 2.0, despido: 28 },
     normal: { aiIncome: 1.25, think: [0.5, 1.0], bossCd: 14, stun: 2.5, despido: 40 },
+    ceo:    { aiIncome: 1.45, think: [0.35, 0.8], bossCd: 11, stun: 2.8, despido: 48 },   // v0.9.71: partida rápida CEO (más la ruleta de cada partida: js/10c-rapida-ceo.js)
   },
 });
 const PATHS = [[[270, 700], [110, 575], [110, 270], [270, 196]]];

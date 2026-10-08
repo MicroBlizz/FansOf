@@ -121,9 +121,10 @@ function buildCamp() {
     const lockTxt = d === 'h' ? 'Pásate este mundo en Normal para jugarlo en Difícil.' : d === 'x' ? 'Pásate este mundo en Difícil para jugarlo en Heroica.' : d === 'm' ? 'Pásate este mundo en Heroica para jugarlo en Mítica.' : d === 'f' ? 'Bloqueado: gana al jefe del mundo anterior en Fácil (o ábrelo en Normal).' : w.openAfter ? (w.camp === 3 ? 'Bloqueado: gana al Presidente de Phony (mundo 12) para empezar la Campaña 3.' : 'Bloqueado: gana al CEO de Microblizz (mundo 7) para empezar la Campaña 2.') : 'Bloqueado: gana al jefe del mundo anterior.';
     const port = w.efac === 'microblizz' ? (wi ? 'parchebot' : 'becario') : w.efac === 'phony' ? (wi === 11 ? 'remasterbot' : 'descargabot') : w.efac === 'iahorro' ? (wi === IA_FINAL ? 'iahorro' : 'copiapega') : FACTIONS[w.efac].leader;
     const head = wi === 0 ? '<div class="camp-head ol">CAMPAÑA 1 · LA REBELIÓN DE LOS FANS<small>contra Microblizz</small></div>' : w.camp === 2 && WORLDS[wi - 1].camp !== 2 ? '<div class="camp-head c2 ol">CAMPAÑA 2 · LA ERA DIGITAL<small>contra Phony y su PayStation</small></div>' : w.camp === 3 && WORLDS[wi - 1].camp !== 3 ? '<div class="camp-head c3 ol">CAMPAÑA 3 · FIN DE LA PARTIDA<small>contra IAhorro, la IA del ahorro… de sueldos</small></div>' : '';
-    return head + `<div class="world${open ? '' : ' locked'}${(d === 'm' || d === 'x') && open ? ' cd-' + d : ''}" data-wi="${wi}" style="--wc:${d === 'f' ? '#1f6e46' : d === 'h' ? '#8a2b3a' : d === 'x' ? '#8a4516' : d === 'm' ? '#5b2a8f' : w.efac === 'microblizz' ? '#1d3f8a' : w.efac === 'phony' ? '#8a6a12' : w.efac === 'iahorro' ? '#0e5a6e' : FAC_COLOR[w.efac] + '77'}"><div class="world-head"><canvas data-k="${port}"></canvas><div class="world-name ol">${wi + 1}. ${w.name}<small>${enemyLabel(w.efac)} · ${reward}</small></div><div class="world-stars ol">★ ${stars}/12</div></div><p class="world-story">${open ? w.story : lockTxt}</p><div class="nodes">${nodes}</div></div>`;
+    return head + `<div class="world${open ? '' : ' locked'}${(d === 'm' || d === 'x') && open ? ' cd-' + d : ''}" data-wi="${wi}" style="--wc:${d === 'f' ? '#1f6e46' : d === 'h' ? '#8a2b3a' : d === 'x' ? '#8a4516' : d === 'm' ? '#5b2a8f' : w.efac === 'microblizz' ? '#1d3f8a' : w.efac === 'phony' ? '#8a6a12' : w.efac === 'iahorro' ? '#0e5a6e' : FAC_COLOR[w.efac] + '77'}"><div class="world-head"><canvas data-k="${port}"></canvas><div class="world-name ol">${wi + 1}. ${w.name}<small>${enemyLabel(w.efac)} · ${reward}</small></div><div class="world-stars ol">★ ${stars}/12</div></div><p class="world-story">${open ? w.story : lockTxt}</p>${w.unlock && !isUnlocked(w.unlock) ? unlockChip(w.unlock, d) : ''}<div class="nodes">${nodes}</div></div>`;
   }).join('');
   for (const cv of list.querySelectorAll('canvas[data-k]')) drawArt(cv, cv.dataset.k, 52, 46);
+  for (const cv of list.querySelectorAll('canvas[data-kc]')) drawArt(cv, cv.dataset.kc, 34, 30);   // v0.9.71: el líder de la facción que se libera
   list.querySelectorAll('[data-lv]').forEach(b => { b.onclick = () => { play('select'); openPrep('camp', findLevel(b.dataset.lv)); }; });
   const el = list.querySelector(`[data-wi="${cur}"]`); if (el) list.scrollTop = Math.max(0, el.offsetTop - list.offsetTop - 8);
 }
@@ -142,8 +143,10 @@ function openPrep(mode, lvl) {
       if (cdRoll(cd)) extra += modRows(weekMods(cd));
     }
     const ffi = lvl.boss && cdHard(cd) && worldFac(lvl.wi) && !(SAVE.facItem || {})[worldFac(lvl.wi)] ? ` · Y su objeto de facción: ${ITEMS[FAC_ITEM[worldFac(lvl.wi)]].name}` : '';
-    const prize = (cd === 'm' && lvl.boss && !SAVE.mythPrize[lvl.wi] ? ' · Al ganar por primera vez: ¡un objeto o habilidad legendario!' : '') + ffi + (cd === 'f' && lvl.boss && Wd.unlock && !isUnlocked(Wd.unlock) ? ` · En Fácil no se liberan facciones: gana este jefe en Normal para que se unan ${losOf(Wd.unlock)}.` : '');
-    info.innerHTML = `${cd !== 'n' ? `<span class="cd-badge ${cd} ol">${C.name.toUpperCase()}</span>` : ''}<b class="ol">${lvl.name}</b><br>Mundo ${lvl.wi + 1}: ${Wd.name}. Rival: ${enemyLabel(Wd.efac)}, nivel ${cd === 'n' ? lvl.elvl : C.lvl(lvl)}${lvl.boss ? ', con jefe y sus habilidades' : ''}.${extra}<br><span class="stars">${'★'.repeat(st)}<span style="color:#4a3866">${'★'.repeat(3 - st)}</span></span> Estrellas: ganar · sin perder ninguna torre · tirando su base.<br><span class="rw">${st ? `Recompensa: ${ECON.camp.replay * pay} de oro` : `Primera vez: ${fr[0] * pay} de oro y ${fr[1] * pay} gemas`}${st < 3 ? ` · 3 estrellas: +${ECON.camp.stars3[0] * pay} de oro y ${ECON.camp.stars3[1] * pay} gemas` : ''}${prize}</span>`;
+    const prize = (cd === 'm' && lvl.boss && !SAVE.mythPrize[lvl.wi] ? ' · Al ganar por primera vez: ¡un objeto o habilidad legendario!' : '') + ffi;
+    const ubox = lvl.boss && Wd.unlock && !isUnlocked(Wd.unlock) ? unlockBox(Wd.unlock, cd) : '';   // v0.9.71
+    info.innerHTML = `${cd !== 'n' ? `<span class="cd-badge ${cd} ol">${C.name.toUpperCase()}</span>` : ''}<b class="ol">${lvl.name}</b><br>Mundo ${lvl.wi + 1}: ${Wd.name}. Rival: ${enemyLabel(Wd.efac)}, nivel ${cd === 'n' ? lvl.elvl : C.lvl(lvl)}${lvl.boss ? ', con jefe y sus habilidades' : ''}.${extra}<br><span class="stars">${'★'.repeat(st)}<span style="color:#4a3866">${'★'.repeat(3 - st)}</span></span> Estrellas: ganar · sin perder ninguna torre · tirando su base.<br><span class="rw">${st ? `Recompensa: ${ECON.camp.replay * pay} de oro` : `Primera vez: ${fr[0] * pay} de oro y ${fr[1] * pay} gemas`}${st < 3 ? ` · 3 estrellas: +${ECON.camp.stars3[0] * pay} de oro y ${ECON.camp.stars3[1] * pay} gemas` : ''}${prize}</span>` + ubox;
+    for (const cv of info.querySelectorAll('canvas[data-kc]')) drawArt(cv, cv.dataset.kc, 46, 42);
   } else if (mode === 'sandbox') {   // v0.9.20
     $('#prep-title').textContent = 'SALA DE PRUEBAS';
     info.innerHTML = 'Aquí no se gana ni se pierde nada: <b>CAOS infinito</b>, el tiempo no corre y tú decides qué enemigos salen y en qué campo. Prueba tu mazo, tus hechizos y tu equipo.<br><span class="rw">Sin premios ni experiencia.</span>';
@@ -154,13 +157,14 @@ function openPrep(mode, lvl) {
     buildBossPrep();   // v0.9.15
   } else {
     $('#prep-title').textContent = 'PARTIDA RÁPIDA';
-    info.innerHTML = `Contra Microblizz. Tus cartas juegan con su nivel y Microblizz se pone a tu nivel medio.<br><span class="rw">Recompensa: ${ECON.quick.easy} de oro en Becario o ${ECON.quick.normal} en Ejecutivo si ganas (${ECON.quick.lose} si pierdes), y experiencia para tus cartas.</span>`;
+    quickInfo();   // v0.9.71: el texto cambia con la dificultad (js/10c-rapida-ceo.js)
   }
   $('#diff-label').hidden = $('#diff-row').hidden = mode !== 'quick';
-  $('#boss-pick').hidden = $('#bdiff-row').hidden = mode !== 'boss';
+  $('#boss-pick').hidden = $('#bdiff-row').hidden = $('#boss-fac').hidden = mode !== 'boss';
   if (!isUnlocked(G.faction)) setFaction(SAVE.unlocked[0]);
-  $('#scr-prep').classList.toggle('arena', mode === 'arena'); $('#scr-prep').classList.remove('fac-abierta');   // v0.9.35: la arena tiene su propia distribución
-  if (mode !== 'arena') $('#btn-play').textContent = 'JUGAR';
+  $('#scr-prep').classList.toggle('arena', mode === 'arena'); $('#scr-prep').classList.toggle('jefe', mode === 'boss'); $('#scr-prep').classList.remove('fac-abierta');   // v0.9.71: el Modo Jefe también   // v0.9.35: la arena tiene su propia distribución
+  if (mode !== 'boss') $('#btn-play').disabled = false;   // el Modo Jefe lo apaga mientras miras un jefe bloqueado (lo decide buildBossPrep)
+  if (mode !== 'arena' && mode !== 'boss') $('#btn-play').textContent = 'JUGAR';
   syncMenu(); updateWallets(); show('scr-prep'); fitText($('#prep-title'), 52, 26);
   for (const nb of document.querySelectorAll('#fac-grid .fac-opt b')) fitText(nb, 16, 10);   // v0.9.13: «Comunidad Gamer» también cabe
 }
@@ -181,6 +185,7 @@ function setupMatch(mode, lvl, cd) {
     arenaSetup();
   } else {
     G.efac = 'microblizz'; G.elvl = avgLevel(G.faction); G.bossOn = true; G.bossName = 'SurvivalBot'; G.ebaseName = 'SURVIVALBOT'; G.diffCfg = CFG.diff[G.diff];
+    if (G.diff === 'ceo') setupCeoQuick();   // v0.9.71
   }
   const deck = mode === 'arena' ? G.arenaDeck : mode === 'sandbox' ? null : mode === 'boss' ? WORLDS[G.bossWi].levels[3].deck || null : G.level && G.level.deck ? G.level.deck : G.efac === 'microblizz' && mode === 'quick' ? ['becario', 'starbot', 'fallen'] : null;
   G.classicAI = G.efac === 'microblizz' && !!deck && deck.every(k => ['becario', 'starbot', 'fallen'].includes(k));
@@ -194,7 +199,7 @@ function setupMatch(mode, lvl, cd) {
 function enemyExtras(mode, lvl) {
   const F = FACTIONS[G.efac], g = F.gacha || [], dmg = g.find(k => CFG.cards[k].spell && CFG.cards[k].spell.kind === 'dmg'), crazy = g.find(k => CFG.cards[k].rarity === 'legendary'), killer = g.find(k => CFG.units[k]);
   const own = F.spells ? F.spells.slice() : dmg ? [dmg] : [];
-  if (mode === 'quick') return G.diff === 'normal' ? own : [];
+  if (mode === 'quick') return G.diff === 'ceo' ? own.concat([killer]).filter(Boolean) : G.diff === 'normal' ? own : [];
   if (mode === 'boss') return own.concat(G.bossDiff === 'm' ? [killer, crazy] : G.bossDiff === 'h' ? [killer] : []).filter(Boolean);
   if (!lvl || lvl.elvl < 3) return [];   // el primer mundo, sin hechizos
   const cd = G.cdiff || 'n';
@@ -204,5 +209,7 @@ function enemyExtras(mode, lvl) {
 function startGame() {
   const P = G.prep || { mode: 'quick' };
   if (!isUnlocked(G.faction)) { toast('Esa facción todavía está bloqueada'); play('deny'); return; }
+  if (P.mode === 'quick' && G.diff === 'ceo' && !ceoListo && !G.autoplay) { ceoRuleta(() => { ceoListo = true; startGame(); }); return; }   // v0.9.71: la ruleta gira antes de cada partida
+  ceoListo = false;
   setupMatch(P.mode, P.lvl, P.cd); startMatch();
 }

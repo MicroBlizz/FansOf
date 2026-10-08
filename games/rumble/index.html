@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
 <script src="../../core/js/nucleo.js?v=0.9.71"></script>
-<script>NUCLEO.estilos('../../core/css/menus.css', 'css/estilos-partida.css', 'css/estilos-extra.css', 'css/arena.css', '../../core/css/biblioteca.css')</script>
+<script>NUCLEO.estilos('../../core/css/menus.css', 'css/estilos-partida.css', 'css/estilos-extra.css', 'css/arena.css', '../../core/css/biblioteca.css', 'css/facciones-y-jefes.css')</script>
 
 </head>
 <body>
@@ -120,6 +120,7 @@
         <button class="diff-opt cd-h" data-bd="h" aria-pressed="false"><b class="ol">Difícil</b><small id="bd-h"></small></button>
         <button class="diff-opt cd-m" data-bd="m" aria-pressed="false"><b class="ol">Mítica</b><small id="bd-m"></small></button>
       </div>
+      <div class="boss-fac" id="boss-fac" hidden></div>
       <p class="diff-label">TU FACCIÓN</p>
       <div class="fac-grid" id="fac-grid" role="group" aria-label="Facción"></div>
       <div class="prep-deck" id="prep-deck"></div>
@@ -127,6 +128,7 @@
       <div class="diff" id="diff-row" role="group" aria-label="Dificultad">
         <button class="diff-opt" data-diff="easy" aria-pressed="true"><b class="ol">Becario</b><small>Fácil, para aprender</small></button>
         <button class="diff-opt" data-diff="normal" aria-pressed="false"><b class="ol">Ejecutivo</b><small>El rival de verdad</small></button>
+        <button class="diff-opt ceo" data-diff="ceo" aria-pressed="false"><b class="ol">CEO</b><small>Ruleta trucada y premio gordo</small></button>
       </div>
       <button class="btn-big ol" id="btn-play">JUGAR</button>
       <button class="btn-link" id="btn-prep-back">Volver</button>
@@ -338,7 +340,7 @@ NUCLEO.juego({
   idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js', 'idioma/en-5.js', 'idioma/en-6.js', 'idioma/en-7.js', 'idioma/en-8.js', 'idioma/en-9.js', 'idioma/en-10.js', 'idioma/en-11.js'] },
   despues: [
     'js/01-campo.js', 'js/01b-unidades.js', 'js/01c-cartas.js', 'js/02a-objetos.js', 'js/02b-mundos.js', 'js/02c-chat.js', 'js/02d-chat-rival.js', 'js/02e-guardado.js', 'js/04-estado.js', 'js/04b-simulacion.js', 'js/05-audio.js', 'js/05b-creadores-datos.js', 'js/05c-creadores-arte.js', 'js/06a-despliegue.js', 'js/06b-movimiento.js', 'js/06c-dano.js', 'js/06d-unidades.js', 'js/06e-ia-y-partida.js', 'js/07a-escena.js', 'js/07b-unidades.js', 'js/07c-edificios-y-disparos.js', 'js/07d-particulas.js',
-    'js/08-controles.js', 'js/09a-chat-y-campana.js', 'js/09b-recompensas-y-hud.js', 'js/09c-pantallas.js', 'js/10-dificultad.js', 'js/10b-ruleta.js', 'js/retos.js', 'js/retos-perfil.js', 'js/retos-logros.js', '../../core/js/retos.js', '../../core/js/retos-pantallas.js', 'js/11-logros.js', 'js/12-app-y-preparacion.js', 'js/13-horas-extra.js',
+    'js/08-controles.js', 'js/09a-chat-y-campana.js', 'js/09b-recompensas-y-hud.js', 'js/09c-pantallas.js', 'js/09d-faccion-nueva.js', 'js/10-dificultad.js', 'js/10b-ruleta.js', 'js/10c-rapida-ceo.js', 'js/retos.js', 'js/retos-perfil.js', 'js/retos-logros.js', '../../core/js/retos.js', '../../core/js/retos-pantallas.js', 'js/11-logros.js', 'js/12-app-y-preparacion.js', 'js/13-horas-extra.js',
     'js/14a-hechizos.js', 'js/14b-gachapon-y-mazo.js', 'js/14c-modo-jefe.js', 'js/15-anuncios.js', 'js/16-camara.js', 'js/17a-campos.js', 'js/17b-campos-dibujo.js', 'js/18-sala.js', 'js/19-arena.js',
     'js/20-iahorro-final.js', 'js/20c-app-nativa.js', 'js/21-arranque.js'],
 });

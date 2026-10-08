@@ -4,6 +4,10 @@
 'use strict';
 const NEWS = [
   { v: '0.9.71', real: [
+      '<b>PARTIDA RÁPIDA «CEO»</b>: la dificultad más dura. La CPU juega 2 niveles por encima y antes de cada partida gira la ruleta de Microblizz: un castigo para ti y una ventaja para la CPU. Si ganas: 150 de oro y 15 gemas.',
+      '<b>MODO JEFE RENOVADO</b>: el jefe sale en grande y con su aura. Cambia de jefe con las flechas y elige tu facción en una sola línea.',
+      '<b>¡NUEVA FACCIÓN!</b>: en la campaña y antes de cada jefe se ve qué facción se une a ti si ganas, y al liberarla sale una celebración que no se cierra sola.',
+      '<b>TODO EN ORDEN</b>: las facciones salen en dos filas de 5 en la colección, al elegir facción y en el perfil.',
       '<b>6 SEMANALES Y 7 NUEVAS</b>: ahora hay 6 misiones semanales (Empleado del mes y 5 más) y 7 misiones semanales nuevas para que no se repitan tanto. Esta semana se añade la que falta sin tocar las que ya tenías.',
       '<b>FACCIONES DESDE CERO</b>: cuando liberas una facción en la campaña, sus cartas empiezan a nivel 1. Te toca subirlas a ti.',
       '<b>CAMBIAR SEMANALES</b>: las semanales tienen su propio cupo de cambios con anuncio: 6 a la semana, para usarlos cuando quieras (aunque sea todos el domingo).'],

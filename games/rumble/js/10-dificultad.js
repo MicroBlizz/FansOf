@@ -97,15 +97,16 @@ function hardBanner() {
 // v0.9.13: en Difícil, Heroica y Mítica (y en Fácil) se ve arriba a la izquierda qué está en juego (tócalo para leerlo entero)
 function hudMods() {
   const box = $('#hud-mods'); if (!box) return;
-  const bh = G.mode === 'boss' && G.bossDiff && G.bossDiff !== 'n', on = bh || (G.mode === 'camp' && G.cdiff && G.cdiff !== 'n');
+  const qc = G.mode === 'quick' && G.diff === 'ceo';   // v0.9.71: la partida rápida CEO también enseña su ruleta
+  const bh = G.mode === 'boss' && G.bossDiff && G.bossDiff !== 'n', on = bh || qc || (G.mode === 'camp' && G.cdiff && G.cdiff !== 'n');
   box.hidden = !on; if (!on) { box.innerHTML = ''; return; }
-  const C = bh ? BDIFF[G.bossDiff] : CDIFF[G.cdiff], M = bh ? null : G.mod;
+  const C = qc ? { name: 'CEO' } : bh ? BDIFF[G.bossDiff] : CDIFF[G.cdiff], M = bh ? null : G.mod;
   let h = `<div class="hm lvl" data-hm="lvl"><b>${C.name.toUpperCase()}</b>rival de nivel ${G.elvl}</div>`;
   if (M && M.deb.id) h += `<div class="hm bad" data-hm="deb"><b>TU CASTIGO</b>${M.deb.name}</div>`;
   if (M) h += `<div class="hm good" data-hm="buf"><b>CPU</b>${M.buf.name}</div>`;
   box.innerHTML = h;
   for (const el of box.querySelectorAll('[data-hm]')) el.onclick = () => {
-    const k = el.dataset.hm, t = k === 'deb' ? `${M.deb.name}: ${M.deb.desc}` : k === 'buf' ? `Ventaja de la CPU, ${M.buf.name}: ${M.buf.desc}` : !bh && C.easy ? `${C.name}: rival de nivel ${G.elvl}, con menos CAOS, tropas más flojas y torres más débiles.` : `${C.name}: rival de nivel ${G.elvl}, más CAOS y tropas de élite${G.egear ? '; su líder va equipado' : ''}.`;
+    const k = el.dataset.hm, t = k === 'deb' ? `${M.deb.name}: ${M.deb.desc}` : k === 'buf' ? `Ventaja de la CPU, ${M.buf.name}: ${M.buf.desc}` : qc ? `CEO: rival de nivel ${G.elvl}, más agresivo y con mata-sanadores.` : !bh && C.easy ? `${C.name}: rival de nivel ${G.elvl}, con menos CAOS, tropas más flojas y torres más débiles.` : `${C.name}: rival de nivel ${G.elvl}, más CAOS y tropas de élite${G.egear ? '; su líder va equipado' : ''}.`;
     toast(t, true);
   };
 }

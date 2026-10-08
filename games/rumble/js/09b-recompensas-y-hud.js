@@ -10,6 +10,7 @@ function grantRewards() {
     const x = Math.round(n * ECON.xpPerPlay * (win ? ECON.winXpMult : 1)); us.xp += x; R.xp.push([k, x]); if (canLevel(k)) R.ready.push(k);
   }
   if (G.mode === 'quick') R.gold = win ? ECON.quick[G.diff] : ECON.quick.lose;
+  if (G.mode === 'quick' && G.diff === 'ceo' && win) R.gems += ECON.quickCeoGems;   // v0.9.71
   else if (G.mode === 'arena') arenaReward(R, w);   // v0.9.20
   else if (G.mode === 'camp') {
     const L = G.level, cd = G.cdiff || 'n', pay = CDIFF[cd].pay || 1, prev = starsD(L.id, cd);

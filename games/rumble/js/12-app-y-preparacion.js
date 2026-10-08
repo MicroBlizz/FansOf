@@ -60,7 +60,7 @@ $('#btn-reset').addEventListener('click', () => {
 for (const b of document.querySelectorAll('[data-diff]')) b.addEventListener('click', () => {
   G.diff = b.dataset.diff; G.diffCfg = CFG.diff[G.diff];
   try { localStorage.setItem('for-diff', G.diff); } catch (e) { /* ignore */ }
-  syncMenu();
+  syncMenu(); if (G.prep && G.prep.mode === 'quick') quickInfo();
 });
 for (const b of document.querySelectorAll('[data-fac]')) b.addEventListener('click', () => {
   const f = b.dataset.fac; if (!isUnlocked(f)) { toast('Bloqueada: libera su mundo en la campaña'); play('deny'); return; }
@@ -74,7 +74,8 @@ function syncMenu() {
   }
   buildPrepDeck();
   if (G.prep && G.prep.mode === 'boss' && !$('#scr-prep').hidden) buildBossPrep();
-  if (G.prep && G.prep.mode === 'arena') { $('#scr-prep').classList.remove('fac-abierta'); buildArenaPrep(); }   // v0.9.35: al elegir facción se cierra la lista
+  if (G.prep && G.prep.mode === 'arena') { $('#scr-prep').classList.remove('fac-abierta'); buildArenaPrep(); }
+  if (G.prep && G.prep.mode === 'boss') { $('#scr-prep').classList.remove('fac-abierta'); buildBossPrep(); }   // v0.9.71: el nivel del rival depende de tu facción   // v0.9.35: al elegir facción se cierra la lista
 }
 function buildPrepDeck() {   // v0.9.15: el mazo que vas a llevar, con un botón para cambiarlo
   const el = $('#prep-deck'); if (!el) return;

@@ -65,4 +65,5 @@ function showEnd() {
   $('#btn-again').textContent = G.mode === 'quick' ? 'REVANCHA' : 'REPETIR';
   $('#btn-again').className = nx ? 'btn-ghost ol' : 'btn-big ol';
   updateWallets(); show('scr-end');
+  if (R.unlock) setTimeout(() => { if (!$('#scr-end').hidden) showUnlock(R.unlock); }, 1200);   // v0.9.71: la celebración de la facción nueva (no se cierra sola)
 }

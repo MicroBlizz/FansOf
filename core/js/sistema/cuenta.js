@@ -35,7 +35,14 @@ const CUENTA = (() => {
     return datos;
   }
   const deSesion = d => ({ access: d.access_token, refresh: d.refresh_token, caduca: Date.now() + (d.expires_in || 3600) * 1000, usuario: d.user && d.user.id, invitado: !!(d.user && d.user.is_anonymous), email: (d.user && d.user.email) || '', emailPendiente: (d.user && d.user.new_email) || '' });
-  async function token() {
+  let renovando = null;   // una sola renovación a la vez: con varias llamadas seguidas (PvP) la segunda reusaba el refresh_token ya gastado
+  function token() {
+    const s0 = leer(SESION, null);
+    if (s0 && s0.caduca - Date.now() > 60000) return Promise.resolve(s0.access);
+    if (!renovando) renovando = renovar().finally(() => { renovando = null; });
+    return renovando;
+  }
+  async function renovar() {
     let s = leer(SESION, null);
     if (s && s.caduca - Date.now() > 60000) return s.access;
     try {

@@ -127,6 +127,8 @@ Son la misma partida con un ajuste distinto, así que el trabajo es el mismo: la
 - `pvp_cerrar(p_sala, p_ganador 'a'|'b', p_huella)` → `{estado:'esperando'|'cerrada'|'discutida', gano}`. Si el otro no cierra en 90 s gana quien cerró (abandono). Los puntos solo los pone el servidor.
 - `pvp_clasificacion(p_juego, p_modo)` → lista `{nombre, puntos, jugadas, yo}`.
 Pendiente de servidor: que cada carta sea de la facción y tuya.
+Habilidades y objetos en `p_equipo` (aclaración 8-10-2026): cada entrada es `clave: uid` con la clave libre (letras, cifras, `_` y `-`, hasta 40 caracteres; los dos puntos NO valen), hasta 30 entradas. Usa por ejemplo `ab_<carta>` para la habilidad de una carta y `eq_<ranura>` para el objeto de una ranura del líder. El servidor devuelve cada una como `{s: clave, u: uid, t: 'ab'|'eq' (el tipo del inventario), o: objeto, q: [calidades]}`; el tipo lo pone el servidor, no la clave.
+
 Contrato exacto (8-10-2026): los errores llegan como excepción de Postgres con el texto `cuenta_no_vinculada`, `sin_sesion`, `mazo_no_valido`, `objeto_no_es_tuyo`, `sala_no_valida`, `demasiadas_jugadas`... En `pvp_estado`, `mazo_a`/`mazo_b` son `[{c: carta, n: nivel, st: estrellas}]` y `equipo_a`/`equipo_b` son `[{s: ranura, u: uid, t: tipo, o: objeto, q: [calidades]}]` (vacío en Estándar). El lado `a` es quien llevaba más tiempo en la cola (el creador de la sala); el que llama a `pvp_buscar` y encuentra rival es el `b`. `pvp_cerrar` devuelve también `puntos` (los tuyos tras la partida) cuando la sala se cierra. El mapa sale de `semilla`, como ya hace el cliente.
 
 

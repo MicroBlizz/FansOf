@@ -49,10 +49,10 @@ function aiGeneric(team, dt) {
   const A = AI[team]; A.think -= dt; if (A.think > 0) return;
   const D = G.diffCfg; A.think = team === 'e' ? srand(D.think[0], D.think[1]) : srand(0.6, 1.2);
   const me = S[team], foe = other(team), F = FACTIONS[facOf(team)], zone = ZONE[team], dir = team === 'p' ? 1 : -1;
-  const avail = team === 'p' ? me.hand.map((k, i) => ({ k, slot: i })) : sshuffle(me.deck.filter(k => !isLeader(k)).map(k => ({ k, slot: -2 })));
+  const avail = me.hand.map((k, i) => ({ k, slot: i }));   // v1: la IA juega con la misma mano de 4 que el jugador
   if (F.leader && canDeploy(team, F.leader)) avail.push({ k: F.leader, slot: -1 });
   const find = roles => { for (const role of roles) { const c = avail.find(a => ROLES[a.k] === role && me.chaos >= cardDef(a.k).cost); if (c) return c; } return null; };
-  const go = (c, x, y) => (team === 'p' ? playerPlay(c.slot, c.k, x, y) : doDeploy(team, c.k, x, y));
+  const go = (c, x, y) => playCard(team, c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú
   if (aiSpell(team, avail, go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const bh = team === 'e' && G.mode === 'boss' && !!G.bossDiff && G.bossDiff !== 'n';

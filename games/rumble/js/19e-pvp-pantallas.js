@@ -51,7 +51,7 @@ function pvpEncontrado(r) {
   PVP_UI.busca = null; clearInterval(PVP_UI.tic);
   PVP.rival = r.rival.nombre; PVP.modo = PVP_UI.modo; PVP.net = r; PVP.puntos = null;
   toast(`Rival: ${r.rival.nombre}`);
-  if (!pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, conservar: true, alEstado: pvpAlEstado })) { toast('No se ha podido empezar la partida'); PVP_UI.modo = PVP_UI.modo; pvpFin(); goHome(); }
+  if (!pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, retardo: r.retardo, conservar: true, alEstado: pvpAlEstado })) { toast('No se ha podido empezar la partida'); PVP_UI.modo = PVP_UI.modo; pvpFin(); goHome(); }
 }
 
 /* ---------- durante la partida ---------- */

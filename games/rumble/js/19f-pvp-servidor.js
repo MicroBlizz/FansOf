@@ -3,7 +3,7 @@
 /* Usa las funciones de la base de datos pvp_buscar, pvp_estado, pvp_salir, pvp_jugar, pvp_cerrar y pvp_clasificacion (contrato en PLAN-CUENTAS.md, punto 9).
    Cumple la interfaz de 19d-pvp-red.js: buscar(modo, equipo, aviso) → { cancelar() }. El servidor guarda y valida el equipo (mazo, niveles, estrellas, objetos) y da la semilla:
    los equipos con los que se juega salen de lo que devuelve pvp_estado, nunca de lo que diga el otro cliente. */
-const PVP_SRV = { turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
+const PVP_SRV = { retardo: 5, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
 
 const pvpErrorTexto = e => {
   const m = String((e && e.message) || e);
@@ -53,13 +53,13 @@ PVPNET.redes.servidor = {
       let desde = 0, cola = [], ultimaH = null, vivo = true, cerrando = false;
       const bucle = async () => {
         if (!vivo) return;
-        const items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
+        const t0 = Date.now(), items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
           const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
           for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }
           if (r && r.desync) pvpEstado('desync');
         } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
-        if (vivo) setTimeout(bucle, PVP_SRV.turnoMs);
+        if (vivo) setTimeout(bucle, Math.max(20, PVP_SRV.turnoMs - (Date.now() - t0)));   // la llamada ya tarda: no se suma la espera encima
       };
       // cerrar la partida: ganador ('p' o 'e' del motor) → el servidor decide los puntos; si el rival aún no ha cerrado se vuelve a preguntar
       const cerrar = async (ganadorEquipo, huella, alResultado) => {
@@ -70,7 +70,7 @@ PVPNET.redes.servidor = {
           await new Promise(res => setTimeout(res, PVP_SRV.cierreMs));
         }
       };
-      aviso({ seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); } }, cerrar, parar: () => { vivo = false; } });
+      aviso({ retardo: PVP_SRV.retardo, seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); } }, cerrar, parar: () => { vivo = false; } });
       bucle();
     };
     sondeo();

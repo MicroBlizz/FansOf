@@ -151,7 +151,7 @@ IDIOMA.add({
   "%1: cada objeto": "%1: each item",
   "CALIDAD DE CADA COPIA": "QUALITY OF EACH COPY",
   "En el equipo, la mitad de las veces sale un objeto de una facción que ya tienes (si tienes alguna) y la otra mitad uno general.": "For equipment, half of the time you get an item from a faction you already have (if you have any) and the other half a general one.",
-  "Solo salen cartas de las facciones que ya tienes.": "Only cards from factions you already have can come up."
+  "Solo salen cartas de las facciones que ya tienes.": "Only cards from factions you already have can come up.",
   "<b>ENTRA CON GOOGLE</b>: ya puedes guardar tu progreso con tu cuenta de Google (Opciones → Cuenta). Ahora está en pruebas: escribe a fansofmicroblizz@gmail.com con tu correo de Google y te añadimos a mano.": "<b>SIGN IN WITH GOOGLE</b>: you can now save your progress with your Google account (Options → Account). It is in testing for now: email fansofmicroblizz@gmail.com with your Google address and we will add you by hand.",
   "Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.": "Microblizz promises to open Google sign-in to everyone in under a year. It has the intern's signature.",
 });

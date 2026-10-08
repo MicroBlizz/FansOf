@@ -3,9 +3,10 @@
 /* ---------- v0.9.15: hechizos (gashapón de cartas) y mata-sanadores ---------- */
 const isSpell = k => !!(cardDef(k) && cardDef(k).spell);
 const cardStars = k => (SAVE.cards && SAVE.cards[k] && SAVE.cards[k].st) || 0;
+const starsOf = (team, k) => (G.pvp ? G.pvp[team].stars[k] || 0 : team === 'p' ? cardStars(k) : 0);   // estrellas de una carta para quien la juega
 let spells = [];   // hechizos lanzados que aún no han caído (y su efecto al caer)
 function spellPow(team, k) {   // nivel (+6 % por nivel) y estrellas (+5 % cada una). La CPU usa el nivel del rival
-  const lv = team === 'p' ? uSave(k).lvl : G.elvl || 1, st = team === 'p' ? cardStars(k) : 0;
+  const lv = G.pvp ? G.pvp[team].lvl[k] || 1 : team === 'p' ? uSave(k).lvl : G.elvl || 1, st = starsOf(team, k);
   return (1 + (lv - 1) * ECON.lvlStep) * (1 + 0.05 * st);
 }
 function castSpell(team, k, x, y) {

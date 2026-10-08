@@ -48,17 +48,19 @@ function spawnUnit(team, type, x, y) {
   return u;
 }
 function unitLevel(team, type) {
+  const k = SUMMON_PARENT[type] || type;
+  if (G.pvp) return G.pvp[team].lvl[k] || 1;   // PvP: el nivel sale del equipo firmado de cada jugador, nunca del SAVE
   if (team === 'e') return G.elvl;
-  const k = SUMMON_PARENT[type] || type; return SAVE.units[k] ? SAVE.units[k].lvl : 1;
+  return SAVE.units[k] ? SAVE.units[k].lvl : 1;
 }
 // al salir: nivel, pasivas de facción (RNG, Experiencia, Escudos), habilidad del gashapón y equipo del líder
 function applySpawnMods(u) {
   const team = u.team, f = facOf(team), P = CFG.passives;
   u.lvl = unitLevel(team, u.type); u.mLvl = 1 + (u.lvl - 1) * ECON.lvlStep;
-  u.corrupt = team === 'e' && !isCorp(G.efac);
+  u.corrupt = team === 'e' && !G.pvp && !isCorp(G.efac);
   if (f === 'olvidados') u.olvT = P.olvidados.t;   // v0.9.13: Nostalgia
   if (f === 'memes') { const m = spick(P.memes.muts); u.mut = m.id; u.mHp = m.hp; u.mDmg = m.dmg; u.mSpeed = m.speed; u.mCd = m.cd; u.mScale = m.scale; u.r = u.d.r * m.scale; u.mutTxt = m.txt; u.mutCol = m.color; }
-  if (team === 'p') { applyAbility(u); if (isLeader(u.type)) applyEquip(u); const st = cardStars(u.type); if (st) { u.mHp *= 1 + st * ECON.starStep; u.mDmg *= 1 + st * ECON.starStep; } }
+  if (team === 'p' || G.pvp) { applyAbility(u); if (isLeader(u.type)) applyEquip(u); const st = starsOf(team, u.type); if (st) { u.mHp *= 1 + st * ECON.starStep; u.mDmg *= 1 + st * ECON.starStep; } }
   else if (G.egear && (isLeader(u.type) || G.egearOn.includes(u.type))) applyEnemyGear(u);
   const M = G.mod;   // v0.9.12: ruleta de la Mítica
   if (M && team === 'p') { if (M.deb.id === 'lag') u.mSpeed *= 0.8; if (M.deb.id === 'parche') u.mHp *= 0.8; if (M.deb.id === 'becarios') u.mDmg *= 0.8; }
@@ -72,7 +74,7 @@ function applySpawnMods(u) {
   if (u.abShield) u.shieldMax = u.shield = Math.max(u.shieldMax, Math.round(u.maxHp * u.abShield));
 }
 function applyAbility(u) {
-  const k = SUMMON_PARENT[u.type] || u.type, it = invGet(SAVE.abEquip[k]); if (!it || it.k !== 'ab' || !ABILITIES[it.id]) return;
+  const k = SUMMON_PARENT[u.type] || u.type, it = G.pvp ? G.pvp[u.team].ab[k] : invGet(SAVE.abEquip[k]); if (!it || it.k !== 'ab' || !ABILITIES[it.id]) return;
   const id = it.id, v = valsOf(it)[0]; u.ab = id;
   switch (id) {
     case 'cafeina': u.mSpeed *= 1 + v / 100; break;
@@ -100,8 +102,8 @@ function applyAbility(u) {
   }
 }
 function applyEquip(u) {
-  const E = SAVE.equip[facOf(u.team)] || {};
-  for (const slot in SLOTS) { const it = invGet(E[slot]); if (it && it.k === 'eq' && ITEMS[it.id] && fitsFac(it.id, facOf(u.team))) applyItem(u, it); }
+  const E = G.pvp ? G.pvp[u.team].equip : SAVE.equip[facOf(u.team)] || {};
+  for (const slot in SLOTS) { const it = G.pvp ? E[slot] : invGet(E[slot]); if (it && it.k === 'eq' && ITEMS[it.id] && fitsFac(it.id, facOf(u.team))) applyItem(u, it); }
 }
 // v0.9.12: efecto de un objeto. Sirve para tu líder y para el equipo del rival en Difícil y Mítica
 function applyItem(u, it) {
@@ -160,10 +162,12 @@ function doDeploy(team, key, x, y) {
   for (let i = 0; i < n; i++) { const ox = n > 1 ? (i - (n - 1) / 2) * 22 : 0, oy = n > 1 ? (i % 2) * 6 : 0, v = spawnUnit(team, key, clamp(x + ox, 24, W - 24), y + oy); if (team === 'p' && G.pDeployAdd) { v.deployT += G.pDeployAdd; v.deployMax = v.deployT; } }
   play('deploy', team === 'p' ? 1 : 0.5);
 }
-function playerPlay(slot, key, x, y) {
-  doDeploy('p', key, x, y); S.p.plays[key] = (S.p.plays[key] || 0) + 1;
-  if (G.tutMatch && G.tutB === 0) { G.tutB = 1; G.tutAt = G.tutT; tipBattle('¡Muy bien! Cada carta gasta <b>CAOS</b>: la barra morada de abajo. Se recarga sola.', 7); }
-  if (slot >= 0) { const used = S.p.hand[slot]; S.p.hand[slot] = S.p.queue.shift(); S.p.queue.push(used); }
+function playerPlay(slot, key, x, y) { playCard('p', slot, key, x, y); }
+// echar una carta de la mano de un jugador: gasta el CAOS, saca las tropas y rota la mano (en PvP los dos lados juegan así)
+function playCard(team, slot, key, x, y) {
+  doDeploy(team, key, x, y); S[team].plays[key] = (S[team].plays[key] || 0) + 1;
+  if (team === 'p' && G.tutMatch && G.tutB === 0) { G.tutB = 1; G.tutAt = G.tutT; tipBattle('¡Muy bien! Cada carta gasta <b>CAOS</b>: la barra morada de abajo. Se recarga sola.', 7); }
+  if (slot >= 0) { const H = S[team], used = H.hand[slot]; H.hand[slot] = H.queue.shift(); H.queue.push(used); }
 }
 function tryPlayerDeploy(slot, key, x, y) {
   if (G.state !== 'play' || !key) return false;

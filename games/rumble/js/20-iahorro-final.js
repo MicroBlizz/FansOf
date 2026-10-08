@@ -52,7 +52,7 @@ Object.assign(TERRAIN_OF, { 12: 'prompts', 13: 'datos', 14: 'estudio', 15: 'nucl
 function iaUpdate(dt) {
   if (G.state !== 'play') return;
   // IAhorro copia la última unidad que has sacado
-  if (G.efac === 'iahorro' && G.mode !== 'sandbox') {
+  if (G.efac === 'iahorro' && G.mode !== 'sandbox' && !G.pvp) {
     const PS = CFG.passives.iahorro; if (S.e.copyT == null) S.e.copyT = PS.every * 0.8;
     S.e.copyT -= dt;
     if (S.e.copyT <= 0) {

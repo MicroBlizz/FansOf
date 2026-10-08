@@ -168,8 +168,8 @@ function openPrep(mode, lvl) {
   syncMenu(); updateWallets(); show('scr-prep'); fitText($('#prep-title'), 52, 26);
   for (const nb of document.querySelectorAll('#fac-grid .fac-opt b')) fitText(nb, 16, 10);   // v0.9.13: «Comunidad Gamer» también cabe
 }
-function setupMatch(mode, lvl, cd) {
-  G.mode = mode; G.level = lvl || null; G.cdiff = mode === 'camp' ? cd || 'n' : 'n'; resetMods();
+function setupMatch(mode, lvl, cd, pvp) {
+  G.mode = mode; G.level = lvl || null; G.cdiff = mode === 'camp' ? cd || 'n' : 'n'; resetMods(); G.pvp = mode === 'pvp' ? pvp : null;   // pvp: { p: equipo, e: equipo } (ver 04b-simulacion.js)
   if (mode === 'camp') {
     const Wd = WORLDS[lvl.wi]; G.efac = Wd.efac; G.elvl = lvl.elvl; G.bossOn = !!lvl.boss; G.bossName = lvl.boss || 'SurvivalBot';
     G.diffCfg = Object.assign({}, CFG.diff.normal, { aiIncome: lvl.income, think: [0.6, 1.2], bossCd: 18, stun: 2, despido: 20 + lvl.elvl * 2 });
@@ -181,6 +181,9 @@ function setupMatch(mode, lvl, cd) {
     G.diffCfg = Object.assign({}, CFG.diff.normal, { aiIncome: B.inc * BD.inc, think: BD.think.slice(), bossCd: BD.cd, stun: BD.stun, despido: 20 + G.elvl * 2 });
   } else if (mode === 'sandbox') {   // v0.9.20: sala de pruebas
     G.efac = SB.fac; G.elvl = avgLevel(G.faction); G.bossOn = false; G.bossName = ''; G.ebaseName = 'MUÑECO DE PRUEBAS'; G.diffCfg = Object.assign({}, CFG.diff.normal);
+  } else if (mode === 'pvp') {   // dos jugadores: cada lado sale de su equipo (mazo, niveles, estrellas, habilidades y objetos), sin IA, sin ruleta ni ajustes de dificultad
+    G.faction = pvp.p.fac; G.efac = pvp.e.fac; G.elvl = 1; G.bossOn = false; G.bossName = ''; G.ebaseName = 'RIVAL';
+    G.diffCfg = Object.assign({}, CFG.diff.normal, { aiIncome: 1, think: [1, 1], bossCd: 99, stun: 0, despido: 0 });
   } else if (mode === 'arena') {   // v0.9.20: arena contra «jugadores» inventados
     arenaSetup();
   } else {
@@ -190,7 +193,7 @@ function setupMatch(mode, lvl, cd) {
   const deck = mode === 'arena' ? G.arenaDeck : mode === 'sandbox' ? null : mode === 'boss' ? WORLDS[G.bossWi].levels[3].deck || null : G.level && G.level.deck ? G.level.deck : G.efac === 'microblizz' && mode === 'quick' ? ['becario', 'starbot', 'fallen'] : null;
   G.classicAI = G.efac === 'microblizz' && !!deck && deck.every(k => ['becario', 'starbot', 'fallen'].includes(k));
   G.edeck = deck;
-  G.eextra = mode === 'arena' ? (G.arenaSpells || []) : mode === 'sandbox' ? [] : enemyExtras(mode, lvl);   // v0.9.15: hechizos y mata-sanadores de la CPU
+  G.eextra = mode === 'arena' ? (G.arenaSpells || []) : mode === 'sandbox' || mode === 'pvp' ? [] : enemyExtras(mode, lvl);   // v0.9.15: hechizos y mata-sanadores de la CPU
   if (mode === 'boss' && BDIFF[G.bossDiff].gear) { const BD = BDIFF[G.bossDiff]; G.egear = ENEMY_GEAR[BD.gear][G.bossWi]; G.egearQ = BD.q; if (isCorp(G.efac)) G.egearOn = G.efac === 'phony' ? PH_GEAR_ON : G.efac === 'iahorro' ? IA_GEAR_ON : MB_GEAR_ON; }
   if (G.cdiff !== 'n') setupHardMode(lvl);
   G.terrain = mode === 'sandbox' ? SB.terrain : terrainFor(mode, lvl);   // v0.9.18: campo especial de algunos jefes

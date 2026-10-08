@@ -40,5 +40,39 @@ PRUEBA.pasos = async function (T) {
     if (J.huellas.join() === D.huellas.join()) fallos.push(`${nombre}: mover las jugadas un tick no cambia nada (no se aplican en su tick)`);
     T.apunta(nombre + ' · jugadas', `${J.registro.length} jugadas; repetición ${J.huellas.join() === R.huellas.join() ? 'IGUAL' : 'DISTINTA'}; movida ${J.huellas.join() === D.huellas.join() ? 'IGUAL' : 'DISTINTA'}`);
   }
+  // PvP: los dos lados salen de su equipo (mazo, niveles, estrellas, habilidad y objeto), con mano propia y jugadas de los dos; la partida no puede depender del SAVE de nadie
+  const equipo = (fac, lvl, extra = {}) => {
+    const F = FACTIONS[fac], deck = F.units.slice(0, 6), l = {}; for (const k of deck.concat(F.leader)) l[k] = lvl;
+    return Object.assign({ fac, deck, lvl: l, stars: { [deck[0]]: 2 }, ab: { [F.leader]: { k: 'ab', id: 'cafeina', q: [0.75] } }, equip: { head: { k: 'eq', id: 'cuernos', q: [0.5] } } }, extra);
+  };
+  const pvp = (pvpDatos, azar, nombre, o = {}) => {
+    T.semilla(azar); setFaction('animales'); G.prep = { mode: 'pvp' }; setupMatch('pvp', null, null, pvpDatos); G.seedNext = 4242; G.autoplay = false; startMatch(); T.avanza(4200);
+    if (G.state !== 'play') throw new Error('el PvP no ha empezado: ' + G.state);
+    if (o.registro) SIM.cmds = o.registro.map(c => Object.assign({}, c));
+    const huellas = [];
+    for (let i = 1; i <= SEGUNDOS * 60; i++) {
+      if (!o.registro && i % 300 === 0) for (const t of ['p', 'e']) { const k = S[t].hand[0]; if (k && !isLeader(k)) simCmd({ team: t, slot: 0, key: k, x: 130 + (i % 9) * 35, y: t === 'p' ? 620 : 300 }); }
+      simStep(SIM_DT);
+      if (i % 60 === 0) huellas.push(simHash());
+    }
+    T.apunta(nombre, huellas.join(' '));
+    return { huellas, registro: SIM.log.slice() };
+  };
+  {
+    const base = () => ({ p: equipo('animales', 4), e: equipo('nomuertos', 6) });
+    const A = pvp(base(), 11, 'pvp · partida 1');
+    const mio = JSON.stringify(SAVE);   // el SAVE de quien juega se desordena a propósito: no debe cambiar nada
+    for (const k in SAVE.units) SAVE.units[k].lvl = 12; SAVE.equip = { animales: { weapon: 'x1', head: 'x2' } }; SAVE.abEquip = {}; SAVE.cards = {}; SAVE.decks = { animales: ['bunny'] };
+    const B = pvp(base(), 22, 'pvp · otro SAVE');
+    Object.assign(SAVE, JSON.parse(mio));
+    const C = pvp({ p: equipo('animales', 5), e: equipo('nomuertos', 6) }, 33, 'pvp · otro nivel');
+    const D = pvp(base(), 44, 'pvp · desde el registro', { registro: A.registro });
+    const hay = A.registro.some(c => c.team === 'p') && A.registro.some(c => c.team === 'e');
+    if (!hay) fallos.push('pvp: no se aplicaron jugadas de los dos lados');
+    if (A.huellas.join() !== B.huellas.join()) fallos.push('pvp: la partida depende del SAVE del jugador');
+    if (A.huellas.join() === C.huellas.join()) fallos.push('pvp: el nivel de las cartas no cambia la partida');
+    if (A.huellas.join() !== D.huellas.join()) fallos.push('pvp: repetir el registro de los dos lados no da la misma partida');
+    T.apunta('pvp', fallos.some(x => x.startsWith('pvp')) ? 'FALLO' : `${A.registro.length} jugadas de los dos lados; no depende del SAVE; el equipo cambia la partida; el registro la repite`);
+  }
   T.apunta('resultado', fallos.length ? 'FALLO: ' + fallos.join('; ') : 'DETERMINISTA');
 };

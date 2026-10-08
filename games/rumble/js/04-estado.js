@@ -33,7 +33,8 @@ function resetMatch() {
     e: { chaos: CFG.chaosStart, crowns: 0, leaderCd: 0, spent: 0, deployed: 0, kills: 0, hype: 0, hypeLvl: 0, xp: 0, xpLvl: 0, bossT: G.diffCfg.bossCd * 0.8, phase2: false, nextDespido: true },
   };
   const EF = FACTIONS[G.efac]; S.e.deck = (G.edeck ? G.edeck.slice() : EF.units.slice()).concat(G.eextra || []); if (EF.leader) S.e.deck.push(EF.leader);
-  const deck = (SIM.nueva ? sshuffle : shuffle)(deckOf(G.faction)); SIM.nueva = false; /* la mano de verdad sale del azar con semilla; la de los menús, del normal */ S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
+  const deck = (SIM.nueva ? sshuffle : shuffle)(G.pvp ? G.pvp.p.deck.slice() : deckOf(G.faction)); SIM.nueva = false; /* la mano de verdad sale del azar con semilla; la de los menús, del normal */ S.p.hand = deck.slice(0, 4); S.p.queue = deck.slice(4);
+  if (G.pvp) { const d2 = sshuffle(G.pvp.e.deck.slice()); S.e.hand = d2.slice(0, 4); S.e.queue = d2.slice(4); S.e.deck = d2.slice(); S.e.plays = {}; }   // PvP: el rival tiene mano como tú
   towers.p = [makeStruct('p', 'tower', 110, 575, 0), makeStruct('p', 'tower', 430, 575, 1)];
   towers.e = [makeStruct('e', 'tower', 110, 270, 0), makeStruct('e', 'tower', 430, 270, 1)];
   bases.p = makeStruct('p', 'base', 270, 700);

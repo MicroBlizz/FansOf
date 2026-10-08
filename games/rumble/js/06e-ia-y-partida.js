@@ -100,6 +100,7 @@ function updateGame(dt) {
     S.e.chaos = Math.min(CFG.chaosMax, S.e.chaos + dt * rate * G.diffCfg.aiIncome);
     for (const t of ['p', 'e']) if (S[t].leaderCd > 0) S[t].leaderCd = Math.max(0, S[t].leaderCd - dt);
     if (G.mode === 'sandbox') { S.p.chaos = CFG.chaosMax; S.e.chaos = CFG.chaosMax; if (SB.ai) aiGeneric('e', dt); sbTick(dt); }
+    else if (G.pvp) { /* el rival juega por jugadas (simCmd), no con la IA */ }
     else if (G.classicAI) aiUpdate('e', dt); else aiGeneric('e', dt);
     terrainUpdate(dt);   // v0.9.18
     iaUpdate(dt);   // v0.9.23: pasivas de IAhorro y de Los Creadores, y el ¡Hotfix! de la IndieDev

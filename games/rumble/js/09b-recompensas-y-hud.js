@@ -3,7 +3,7 @@
 
 /* ---------- recompensas al terminar ---------- */
 function grantRewards() {
-  if (G.mode === 'sandbox') return { gold: 0, gems: 0, xp: [], stars: 0, unlock: null, record: false, ready: [], passXp: 0 };   // v0.9.20: la sala de pruebas no da nada
+  if (G.mode === 'sandbox' || G.mode === 'pvp') return { gold: 0, gems: 0, xp: [], stars: 0, unlock: null, record: false, ready: [], passXp: 0 };   // v0.9.20: la sala de pruebas no da nada
   const R = { gold: 0, gems: 0, xp: [], stars: 0, unlock: null, record: false, ready: [] }, win = G.winner === 'p', w = G.winner;
   for (const [k, n] of Object.entries(S.p.plays)) {
     const us = uSave(k); if (us.lvl >= ECON.maxLvl) continue;

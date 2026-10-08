@@ -134,7 +134,7 @@ const passiveText = fac => FACTIONS[fac].passiveText;
 // al entrar en el campo, tus cartas enseñan su habilidad y su equipo (así se ve que funcionan)
 const OWN_CALLOUT = ['speedrun', 'modofoto', 'microtrans', 'gigante', 'sigilo'];
 function showLoadout(u) {
-  if (u.team !== 'p' || u.summon || u.isClone) return;
+  if ((u.team !== 'p' && !G.pvp) || u.summon || u.isClone) return;
   if (u.ab && !OWN_CALLOUT.includes(u.ab)) addNum(u.x, u.y, topOf(u) + 26, ABILITIES[u.ab].name.toUpperCase(), '#ffe06a', 13);
   if (u.equip) addNum(u.x, u.y, topOf(u) + 40, 'EQUIPADO', '#ffcb3d', 12);
 }

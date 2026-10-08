@@ -22,7 +22,7 @@ const cmpCmd = (a, b) => a.t - b.t || (a.team < b.team ? -1 : a.team > b.team ? 
 function simApply(c) {
   const me = S[c.team], def = c.key && cardDef(c.key);
   if (!me || !def || me.chaos < def.cost || (isLeader(c.key) && !canDeploy(c.team, c.key))) return false;   // mismas condiciones en las dos máquinas: si ya no vale, se descarta igual en las dos
-  if (c.team === 'p') playerPlay(me.hand && me.hand[c.slot] === c.key ? c.slot : me.hand ? me.hand.indexOf(c.key) : -1, c.key, c.x, c.y); else doDeploy(c.team, c.key, c.x, c.y);
+  if (c.team === 'p' || G.pvp) playCard(c.team, me.hand && me.hand[c.slot] === c.key ? c.slot : me.hand ? me.hand.indexOf(c.key) : -1, c.key, c.x, c.y); else doDeploy(c.team, c.key, c.x, c.y);
   SIM.log.push({ t: SIM.tick, team: c.team, key: c.key, slot: c.slot, x: c.x, y: c.y });
   return true;
 }

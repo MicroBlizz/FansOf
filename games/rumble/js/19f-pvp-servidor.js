@@ -3,7 +3,7 @@
 /* Usa las funciones de la base de datos pvp_buscar, pvp_estado, pvp_salir, pvp_jugar, pvp_cerrar y pvp_clasificacion (contrato en PLAN-CUENTAS.md, punto 9).
    Cumple la interfaz de 19d-pvp-red.js: buscar(modo, equipo, aviso) → { cancelar() }. El servidor guarda y valida el equipo (mazo, niveles, estrellas, objetos) y da la semilla:
    los equipos con los que se juega salen de lo que devuelve pvp_estado, nunca de lo que diga el otro cliente. */
-// retardo: turnos de margen de red. En desarrollo se puede probar otro con localStorage.setItem('fansof-pvp-d', '3') (los DOS jugadores el mismo; si no, la partida se anula)
+// retardo: turnos de margen de red. En desarrollo se elige en la pantalla de PvP (guarda fansof-pvp-d) (los DOS jugadores el mismo; si no, la partida se anula)
 const pvpRetardo = () => { let d = 0; try { d = NUCLEO.desarrollo ? +localStorage.getItem('fansof-pvp-d') : 0; } catch (e) { /* sin guardar */ } return d >= 1 && d <= 10 ? d : PVP_SRV.retardo; };
 const PVP_SRV = { retardo: 2, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
 

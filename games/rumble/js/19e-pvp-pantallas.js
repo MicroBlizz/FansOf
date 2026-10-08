@@ -120,3 +120,12 @@ function pvpDebug(real) {
   if (!el) { el = document.createElement('div'); el.id = 'pvp-dbg'; el.style.cssText = 'position:fixed;left:4px;bottom:4px;z-index:9999;font:11px monospace;background:rgba(0,0,0,.7);color:#9ef07a;padding:3px 6px;border-radius:6px;pointer-events:none'; document.body.append(el); }
   el.textContent = `${PVP.seat} · RTT ${Math.round(PVP.rtt)} ms (máx ${Math.round(PVP.rttMax)}) · llamadas ${PVP.llamadas} · esperas ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(PVP.fps)} fps`;
 }
+
+/* ---------- solo en desarrollo: elegir el retardo de red (los dos jugadores el mismo) ---------- */
+if (NUCLEO.desarrollo) {
+  const fila = document.createElement('p'); fila.className = 'quote'; fila.id = 'pvp-dev-d';
+  fila.innerHTML = 'Retardo de red (turnos, igual en los dos): <select id="pvp-d">' + [1, 2, 3, 4, 5, 6, 8].map(n => `<option value="${n}">${n}</option>`).join('') + '</select>';
+  $('#btn-pvp-buscar').closest('.row').before(fila);
+  const sel = $('#pvp-d'); try { sel.value = localStorage.getItem('fansof-pvp-d') || '2'; } catch (e) { sel.value = '2'; }   // 19f (que lee este valor) se carga después
+  sel.addEventListener('change', () => { try { localStorage.setItem('fansof-pvp-d', sel.value); } catch (e) { /* sin guardar */ } });
+}

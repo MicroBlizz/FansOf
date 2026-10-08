@@ -67,7 +67,9 @@ function aiGeneric(team, dt) {
   if (F.leader && canDeploy(team, F.leader)) avail.push({ k: F.leader, slot: -1 });
   const find = roles => { for (const role of roles) { const c = avail.find(a => ROLES[a.k] === role && me.chaos >= cardDef(a.k).cost); if (c) return c; } return null; };
   const go = (c, x, y) => playCard(team, c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú
-  if (aiSpell(team, avail, go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
+  // v2: los hechizos de la IA salen de su mazo (no de la mano), así no se quedan atascados esperando un objetivo
+  const hechizos = team === 'p' ? [] : sshuffle(me.deck.filter(k => isSpell(k)).map(k => ({ k, slot: -2 })));
+  if (aiSpell(team, avail.concat(hechizos), go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const bh = team === 'e' && G.mode === 'boss' && !!G.bossDiff && G.bossDiff !== 'n';
   const hard = bh || (team === 'e' && G.mode === 'camp' && cdHard(G.cdiff)), myth = hard && (bh ? G.bossDiff === 'm' : G.cdiff === 'm');

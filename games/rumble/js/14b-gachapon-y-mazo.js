@@ -101,7 +101,11 @@ function buildCardGachaText() {
   const n = cardPool().length, own = cardPool().filter(k => SAVE.cards && SAVE.cards[k]).length, O = ECON.cardOdds;
   $('#gacha-sub').textContent = `Hechizos y mata-sanadores de las facciones que ya tienes (${own} de ${n}). La primera copia desbloquea la carta; las repetidas le dan estrellas: +5 % cada una, hasta 5.`;
   $('#btn-gr-inv').textContent = 'Ver en la Colección';
-  $('#gacha-odds').textContent = `Probabilidades: rara ${O.rare} %, épica ${O.epic} %, legendaria ${O.legendary} %. Garantías: épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${SAVE.pity.cd || 0}) y legendaria a las ${ECON.pityLeg} (llevas ${SAVE.pity.cdL || 0}). Con 5 estrellas, una repetida da ${ECON.dupGems} gemas.`;
+  $('#gacha-odds').innerHTML = oddsHead('Probabilidades') + [['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]].map(([n, v]) => oddsLine(n, v + ' %')).join('')
+    + oddsHead('Garantías')
+    + oddsNote(`Épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${SAVE.pity.cd || 0})`)
+    + oddsNote(`Legendaria a las ${ECON.pityLeg} tiradas (llevas ${SAVE.pity.cdL || 0})`)
+    + oddsNote(`Con 5 estrellas, una repetida da ${ECON.dupGems} gemas.`, true);
 }
 // ---- editar el mazo (v0.9.31: se despliega dentro de la Colección; cada cambio se guarda al momento y GUARDAR lo pliega)
 let deckEdit = null;   // { f, sel, pick, back } mientras el editor está desplegado

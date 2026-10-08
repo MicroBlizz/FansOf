@@ -100,6 +100,10 @@ function showPull(it, tag) {
   card.innerHTML = `<div class="gr-rar ol">${R[0].toUpperCase()}${kind === 'eq' ? ' · ' + SLOTS[D.slot].toUpperCase() : ''}</div><div class="gr-ic">${kind === 'ab' ? D.ic : SLOT_SVG[D.slot]}</div><div class="gr-name ol">${D.name}</div><div class="gr-q ol" style="--qc:${T.col}">CALIDAD ${T.name.toUpperCase()} · ${Math.round(avgQ(it) * 100)} %</div><div class="gr-desc">${descOf(it)}<br><small class="rg">${rangeTxt(it)}</small>${kind === 'ab' && D.fac ? '<br><small>Viene de los ' + FACTIONS[D.fac].name + '</small>' : ''}</div><span class="gr-tag">${tag}</span>`;
   $('#gacha-result').hidden = false; play(tierOf(avgQ(it)) >= 3 || D.rar === 'legendary' || D.rar === 'epic' ? 'win' : 'levelup');
 }
+// Las probabilidades salen una por línea (antes era un párrafo seguido): título, líneas «nombre ··· valor» y notas sueltas. Las usa también la máquina de cartas del Rumble.
+const oddsHead = t => `<span class="odds-h">${t}</span>`;
+const oddsLine = (nombre, valor) => `<span class="odds-l"><span>${nombre}</span><b>${valor}</b></span>`;
+const oddsNote = (t, extra) => `<span class="odds-n${extra ? ' extra' : ''}">${t}</span>`;
 function buildGachaText() {
   for (const b of document.querySelectorAll('[data-gt]')) b.setAttribute('aria-pressed', String(b.dataset.gt === gachaTab));
   $('#btn-gr-inv').textContent = 'Ver en el inventario';
@@ -107,7 +111,16 @@ function buildGachaText() {
   const lab = n => { const c = pullCost(n); return c.gems ? `${fmt(c.gems)} ${GEM_SVG}${c.free ? `<i class="fr">+${c.free} gratis</i>` : ''}` : `${TICKET_SVG} gratis`; };
   for (const b of document.querySelectorAll('[data-pull]')) { const n = +b.dataset.pull; b.innerHTML = `${n === 10 ? '<span class="tag">FAVORITA DEL CEO</span>' : n === 50 ? '<span class="tag">MODO BALLENA</span>' : ''}x${n}<small>${lab(n)}</small>${n >= 10 ? `<span class="sure">${n === 10 ? '1 épica segura' : n / 10 + ' épicas seguras'}</span>` : ''}`; }
   const P = SAVE.pity, O = ECON.odds;
-  $('#gacha-odds').textContent = `Probabilidades: común ${O.common} %, rara ${O.rare} %, épica ${O.epic} %, legendaria ${O.legendary} %. Calidad de cada efecto (del 50 % al 150 % de su valor): ${QTIERS.map(t => t.name + ' ' + t.p + ' %').join(', ')}. Garantías: épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${P[gachaTab] || 0}), legendaria a las ${ECON.pityLeg} (llevas ${P[gachaTab + 'L'] || 0}) y calidad Director (excelente) o mejor cada ${ECON.pityQ} (llevas ${P['q' + gachaTab] || 0}). Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10. Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas). Microblizz no se hace responsable de tu afición a las cápsulas.`;
+  const rar = [['Común', O.common], ['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]];
+  $('#gacha-odds').innerHTML = oddsHead('Probabilidades') + rar.map(([n, v]) => oddsLine(n, v + ' %')).join('')
+    + oddsHead('Calidad de cada efecto (del 50 % al 150 % de su valor)') + QTIERS.map(t => oddsLine(t.name, t.p + ' %')).join('')
+    + oddsHead('Garantías')
+    + oddsNote(`Épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${P[gachaTab] || 0})`)
+    + oddsNote(`Legendaria a las ${ECON.pityLeg} tiradas (llevas ${P[gachaTab + 'L'] || 0})`)
+    + oddsNote(`Calidad Director (excelente) o mejor cada ${ECON.pityQ} tiradas (llevas ${P['q' + gachaTab] || 0})`)
+    + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
+    + oddsNote(`Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
+    + oddsNote('Microblizz no se hace responsable de tu afición a las cápsulas.', true);
   if (MAQUINAS[gachaTab]) MAQUINAS[gachaTab].textos();
   fire('gacha.textos');
 }

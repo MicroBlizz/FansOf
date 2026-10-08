@@ -152,6 +152,15 @@
 #gacha-cv { width: 270px; height: 300px; display: block; }
 #gacha-cv.shake { animation: gshake 0.12s linear 6; }
 .small-print { font-size: 11px; font-weight: 700; color: var(--ink-dim); margin: 0; max-width: 440px; line-height: 1.3; }
+/* Probabilidades del gashapón: una por línea (v0.9.59) */
+#gacha-odds { width: 100%; max-width: 340px; font-size: 12px; line-height: 1.25; text-align: left; }
+#gacha-odds .odds-h { display: block; margin: 7px 0 2px; font-family: var(--font-display); font-size: 13px; font-weight: 400; color: var(--gold); letter-spacing: 0.3px; }
+#gacha-odds .odds-h:first-child { margin-top: 0; }
+#gacha-odds .odds-l { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; border-bottom: 1px dotted rgba(255, 255, 255, 0.18); }
+#gacha-odds .odds-l b { color: var(--ink); font-variant-numeric: tabular-nums; }
+#gacha-odds .odds-n { display: block; padding: 1px 0; }
+#gacha-odds .odds-n.extra { margin-top: 3px; font-size: 11px; opacity: 0.85; }
+#scr-gacha { overflow-y: auto; }   /* por si en un móvil muy bajo no cabe todo: se desliza */
 .gacha-result { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: rgba(12, 6, 20, 0.86); z-index: 5; }
 .gr-card { width: 300px; border: 4px solid var(--outline); border-radius: 22px; padding: 18px 16px 16px; background: linear-gradient(to bottom, var(--rc1), var(--rc2)); box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25), 0 0 60px var(--rc1), 0 8px 0 var(--outline); animation: reveal 0.55s cubic-bezier(0.2, 1.5, 0.4, 1); }
 .gr-card .gr-rar { font-family: var(--font-display); font-size: 16px; letter-spacing: 1px; }

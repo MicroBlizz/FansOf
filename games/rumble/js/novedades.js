@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.60', real: [
+      '<b>PROBABILIDADES MÁS CLARAS</b>: en el Gashapón, la letra pequeña de abajo ahora es una lista: una probabilidad por línea, y las garantías aparte.'],
+    joke: ['Microblizz ha puesto las probabilidades en lista para que se lean mejor. Las malas, igual de pequeñas.'] },
   { v: '0.9.57', real: [
       '<b>PROBABILIDADES A LA VISTA</b>: la tienda tiene una sección con las probabilidades reales del gashapón, objeto por objeto.'],
     joke: ['Microblizz jura que los porcentajes siempre estuvieron a la vista. Debajo de la letra pequeña, eso sí.'] },

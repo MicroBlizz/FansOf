@@ -1,6 +1,6 @@
 // Fans of Rumble · PvP: pantalla de buscar rival, avisos durante la partida y pantalla final
 'use strict';
-const PVP_ABIERTO = false;   // se pondrá a true cuando el PvP esté listo para los jugadores; mientras, el botón solo sale en modo desarrollo
+const PVP_ABIERTO = true;    // se pondrá a true cuando el PvP esté listo para los jugadores; mientras, el botón solo sale en modo desarrollo
 const PVP_SALVAJE = false;   // el modo Salvaje (con habilidades y objetos) sale a los jugadores cuando esto pase a true; en desarrollo siempre sale
 const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se ofrece jugar contra la IA
 const pvpDisponible = () => PVP_ABIERTO || (typeof NUCLEO !== 'undefined' && !!NUCLEO.desarrollo);

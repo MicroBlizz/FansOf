@@ -89,4 +89,6 @@ IDIOMA.add({
   'Becario del Mes': 'Intern of the Month', '+10 % de CAOS de cada cristal.': '+10% CHAOS from each crystal.',
   'Café de máquina': 'Vending machine coffee', 'Te cura 40 de vida. Sabe a despacho.': 'Heals 40 health. Tastes like an office.',
   'Bonus del CEO': 'CEO bonus', '+500 puntos. El CEO se ha llevado el resto.': '+500 points. The CEO kept the rest.',
+  "<b>SESIÓN MÁS ESTABLE</b>: arreglado el error «invalid refresh token» que a veces te sacaba de la cuenta.": "<b>MORE STABLE SESSION</b>: fixed the “invalid refresh token” error that sometimes logged you out of your account.",
+  "Microblizz asegura que la sesión ahora es de las que no se cae. Ya lo dijo del puente.": "Microblizz swears the session is now the kind that doesn't drop. It said the same about the bridge.",
 });

@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.89', real: [
+      '<b>PVP: ¡A POR EL RIVAL!</b> Ya puedes retar a otros jugadores en el modo Estándar (con tu mazo, niveles y estrellas; los objetos no cuentan) y subir en la clasificación. Necesitas vincular tu cuenta (Opciones → Cuenta). Si no aparece nadie en 30 s, puedes jugar contra la IA sin salir de la cola.',
+      '<b>IA RIVAL MÁS LISTA</b>: la máquina juega con la misma mano de 4 cartas que tú, responde a lo que tienes en el campo, contraataca por el carril que acaba de defender y ya no desperdicia el CAOS casi lleno.'],
+    joke: ['Microblizz ha puesto una arena donde los jugadores se pegan por internet y ha descubierto que, sorpresa, todos quieren ganar. Detrás: el campo igual para los dos, matemáticas iguales en todos los navegadores y muchas sesiones de rey de la pista.'] },
   { v: '0.9.82', real: [
       '<b>CAMPO IGUAL PARA LOS DOS</b>: tu sede y la del rival están ahora a la misma distancia del río (antes la suya estaba más cerca) y las zonas de los campos de jefe se reparten iguales arriba y abajo. Así es justo, también para el PvP que viene.'],
     joke: ['Microblizz ha medido el campo con una cinta métrica y ha descubierto que llevaba años jugando en cuesta. Y sí, la versión ha saltado de la 0.9.72 a la 0.9.82: en el taller pasaron muchas cosas con la puerta cerrada y el equipo de contabilidad se ha negado a contarlas.'] },

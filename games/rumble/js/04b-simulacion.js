@@ -33,17 +33,6 @@ function simRunCmds() {
   for (const c of due) simApply(c);
 }
 
-/* ---------- el campo del PvP: simétrico respecto al río (y' = 840 - y), para que ningún lado tenga ventaja ----------
-   El campo de siempre tiene la sede rival más cerca del río que la tuya. En PvP los dos lados son iguales: torres a 575 y 265, sedes a 644 y 196. */
-const MAPA_NORMAL = { zonaEy0: ZONE.e.y0, boundsY0: BOUNDS.y0, spots: STRUCT_SPOTS.map(s => s.slice()), paths: PATHS[0].map(s => s.slice()) };
-const MAPA_PVP = { zonaEy0: 840 - ZONE.p.y1, boundsY0: 840 - BOUNDS.y1, spots: [[110, 575, 34], [430, 575, 34], [270, 644, 62], [110, 265, 34], [430, 265, 34], [270, 196, 70]], paths: [[270, 644], [110, 575], [110, 265], [270, 196]] };
-let MAPA_PVP_ON = false;
-function pvpMapa(on) {
-  if (on === MAPA_PVP_ON) return; MAPA_PVP_ON = on; const M = on ? MAPA_PVP : MAPA_NORMAL;
-  ZONE.e.y0 = M.zonaEy0; BOUNDS.y0 = M.boundsY0; M.spots.forEach((s, i) => { STRUCT_SPOTS[i] = s.slice(); }); PATHS[0] = M.paths.map(s => s.slice()); PATHS[1] = PATHS[0].map(([a, b]) => [W - a, b]);
-  BG_KEY = '';   // hay que dibujar el fondo otra vez (los caminos van a otras sedes)
-}
-
 // un tick de la partida: todo lo que corre mientras se juega, con el mismo paso en todas las máquinas
 function simStep(dt) {
   if (PVP.on && G.state === 'play' && !pvpAvanza()) return false;   // PvP: un turno no empieza hasta tener las jugadas del rival

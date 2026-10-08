@@ -9,8 +9,8 @@ const BASE_BRIDGES = [110, 430];
 let RIVER_OPEN = false;      // v0.9.19: río helado: se puede cruzar por cualquier sitio
 let BRIDGE_STYLE = null;     // v0.9.19: colores de los puentes (null = madera)
 const BRIDGE_HALF = 27;
-const BOUNDS = { x0: 18, x1: 522, y0: 66, y1: 782 };
-const ZONE = { p: { y0: 452, y1: 738 }, e: { y0: 72, y1: 388 } };
+const BOUNDS = { x0: 18, x1: 522, y0: 58, y1: 782 };   // v0.9.82: el campo es simétrico respecto al río (y' = 840 - y): los dos lados, y PvP y PvE, tienen lo mismo
+const ZONE = { p: { y0: 452, y1: 738 }, e: { y0: 102, y1: 388 } };
 // el tiempo y el CAOS de la partida, los edificios y la dificultad: se añaden a CFG
 Object.assign(CFG, {
   matchTime: 240,          // 4:00
@@ -28,11 +28,11 @@ Object.assign(CFG, {
     ceo:    { aiIncome: 1.45, think: [0.35, 0.8], bossCd: 11, stun: 2.8, despido: 48 },   // v0.9.71: partida rápida CEO (más la ruleta de cada partida: js/10c-rapida-ceo.js)
   },
 });
-const PATHS = [[[270, 700], [110, 575], [110, 270], [270, 196]]];
+const PATHS = [[[270, 644], [110, 575], [110, 265], [270, 196]]];
 PATHS.push(PATHS[0].map(([a, b]) => [W - a, b]));
 function distToSeg(px, py, ax, ay, bx, by) { const dx = bx - ax, dy = by - ay; const t = clamp(((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy), 0, 1); return Math.hypot(px - (ax + dx * t), py - (ay + dy * t)); }
 function nearPath(x, y, m) { for (const p of PATHS) for (let i = 0; i < p.length - 1; i++) if (distToSeg(x, y, p[i][0], p[i][1], p[i + 1][0], p[i + 1][1]) < m) return true; return false; }
-const STRUCT_SPOTS = [[110, 575, 34], [430, 575, 34], [270, 700, 62], [110, 270, 34], [430, 270, 34], [270, 196, 70]];
+const STRUCT_SPOTS = [[110, 575, 34], [430, 575, 34], [270, 644, 62], [110, 265, 34], [430, 265, 34], [270, 196, 70]];
 function freeSpot(x, y, m = 32) {
   if (nearPath(x, y, m)) return false;
   if (y > RIVER.top - 14 && y < RIVER.bottom + 14) return false;

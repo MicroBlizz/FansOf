@@ -29,7 +29,7 @@ function startMatch() {
 }
 function pauseGame() { if (G.state !== 'play') return; if (PVP.on) { pvpRendirse(); return; } /* en PvP no hay pausa */ G.state = 'paused'; input.card = null; input.dragging = false; show('scr-pause'); }
 function resumeGame() { if (G.state !== 'paused') return; hideScreens(); G.state = 'play'; }
-function goHome() { if (PVP.on) pvpFin(); pvpMapa(false); if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
+function goHome() { if (PVP.on) pvpFin(); if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
   ensureBG('mb'); setTagline(); $('#hud-mods').hidden = true; G.state = 'title'; chatClear(); resetMatch(); hud.update(); drawTitleArt(); updateWallets(); show('scr-title'); profileChip(); idleSc.tick = 0; achDay(); titlePopups(); }
 function toMenu() { chatClear(); if (G.mode === 'camp') { G.state = 'title'; resetMatch(); hud.update(); openCamp(); } else goHome(); }
 // v0.9.13: lo que dice cada jefe nuevo al empezar

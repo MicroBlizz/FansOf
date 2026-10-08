@@ -29,4 +29,6 @@ IDIOMA.add({
   "OTRO RIVAL": "ANOTHER RIVAL",
   "Campo normal": "Normal field",
   "tu rival": "your rival",
+  "<b>CAMPO IGUAL PARA LOS DOS</b>: tu sede y la del rival están ahora a la misma distancia del río (antes la suya estaba más cerca) y las zonas de los campos de jefe se reparten iguales arriba y abajo. Así es justo, también para el PvP que viene.": "<b>THE SAME FIELD FOR BOTH SIDES</b>: your HQ and the rival's are now the same distance from the river (before, theirs was closer) and the zones on boss fields are laid out identically on both halves. It's fair now, also for the PvP that is coming.",
+  "Microblizz ha medido el campo con una cinta métrica y ha descubierto que llevaba años jugando en cuesta.": "Microblizz measured the field with a tape measure and discovered it had been playing uphill for years.",
 });

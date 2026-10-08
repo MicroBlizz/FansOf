@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Fans Of: Rumble</string>
+    <string name="title_activity_main">Fans Of: Rumble</string>
+    <string name="package_name">com.microblizz.fansofrumble</string>
+    <string name="custom_url_scheme">com.microblizz.fansofrumble</string>
+</resources>

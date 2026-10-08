@@ -1,0 +1,7 @@
+{
+  "appId": "com.microblizz.fansofrumble",
+  "appName": "Fans Of: Rumble",
+  "webDir": "www",
+  "android": { "allowMixedContent": false },
+  "server": { "androidScheme": "https" }
+}

@@ -44,7 +44,7 @@ function pvpBuscar() {
   const modo = PVP_UI.modo; delete $('#pvp-estado').dataset.fijo; PVP_UI.t0 = Date.now(); play('select'); PVPNET.actual = pvpRed();
   if (PVPNET.actual === 'servidor' && !PVPNET.redes.servidor.disponible()) { toast(typeof CUENTA === 'undefined' || !CUENTA.activa ? 'El PvP necesita conexión' : 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)', true); return; }
   PVP_UI.busca = PVPNET.redes[PVPNET.actual].buscar(modo, pvpEquipo(modo), pvpEncontrado);
-  const dibuja = () => { const s = Math.floor((Date.now() - PVP_UI.t0) / 1000); $('#pvp-estado').textContent = (s >= PVP_UI.ia ? 'No hay rivales ahora. ¿Juegas contra la IA?' : `Buscando rival… ${s} s`) + (NUCLEO.desarrollo && typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? ' [' + PVP_SRV.ultimo + ']' : ''); $('#btn-pvp-ia').hidden = s < PVP_UI.ia; };
+  const dibuja = () => { const s = Math.floor((Date.now() - PVP_UI.t0) / 1000); $('#pvp-estado').textContent = (s >= PVP_UI.ia ? `No hay rivales todavía. Sigues en la cola… ${s} s. ¿Juegas contra la IA mientras tanto?` : `Buscando rival… ${s} s`) + (NUCLEO.desarrollo && typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? ' [' + PVP_SRV.ultimo + ']' : ''); $('#btn-pvp-ia').hidden = s < PVP_UI.ia; };
   dibuja(); PVP_UI.tic = setInterval(dibuja, 500); pvpPinta();
 }
 function pvpEncontrado(r) {

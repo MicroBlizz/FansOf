@@ -9,7 +9,7 @@ IDIOMA.add({
   "CANCELAR": "CANCEL",
   "JUGAR CONTRA LA IA": "PLAY AGAINST THE AI",
   "Buscando rival… %1 s": "Looking for a rival… %1 s",
-  "No hay rivales ahora. ¿Juegas contra la IA?": "No rivals right now. Play against the AI?",
+  "No hay rivales todavía. Sigues en la cola… %1 s. ¿Juegas contra la IA mientras tanto?": "No rivals yet. You are still in the queue… %1 s. Play against the AI meanwhile?",
   "Red: %1": "Network: %1",
   "Pruebas (dos pestañas de este navegador)": "Test (two tabs of this browser)",
   "Rival: %1": "Rival: %1",

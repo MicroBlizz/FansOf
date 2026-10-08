@@ -85,6 +85,7 @@ function fit() {
   const extra = LH - H; VIEW.LH = LH; VIEW.top = Math.round(extra * 0.45); VIEW.bot = extra - VIEW.top;
   ui.style.height = LH + 'px'; ui.style.setProperty('--top', VIEW.top + 'px'); ui.style.setProperty('--bot', VIEW.bot + 'px');
   ui.style.transform = `scale(${w / W})`; VIEW.sc = w / W;
+  document.documentElement.classList.toggle('ahorro', !!SAVE.ahorro);   // v0.9.63: el modo ahorro también apaga los brillos de las cartas
   const dpr = Math.min(window.devicePixelRatio || 1, SAVE.ahorro ? 1.25 : 3);   // v0.9.39: en modo ahorro se dibuja con menos píxeles (lo que más pesa en un móvil sencillo)
   cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   VIEW.k = cv.width / W;

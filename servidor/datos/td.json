@@ -1,39 +1,44 @@
 {
  "calidades": [
   {
-   "col": "#b4bccb",
+   "col": "#ffe06a",
    "hi": 0.4,
    "lo": 0,
    "name": "Becario (básica)",
-   "p": 30
+   "p": 30,
+   "st": 1
   },
   {
-   "col": "#63cfe0",
+   "col": "#ffe06a",
    "hi": 0.7,
    "lo": 0.4,
    "name": "Junior (normal)",
-   "p": 40
+   "p": 40,
+   "st": 2
   },
   {
-   "col": "#8cf05a",
+   "col": "#ffe06a",
    "hi": 0.88,
    "lo": 0.7,
    "name": "Senior (buena)",
-   "p": 20
+   "p": 20,
+   "st": 3
   },
   {
-   "col": "#e2a8ff",
+   "col": "#ffe06a",
    "hi": 0.99,
    "lo": 0.88,
    "name": "Director (excelente)",
-   "p": 9
+   "p": 9,
+   "st": 4
   },
   {
-   "col": "#ffcb3d",
+   "col": "#ffe06a",
    "hi": 1,
    "lo": 1,
    "name": "CEO (perfecta)",
-   "p": 1
+   "p": 1,
+   "st": 5
   }
  ],
  "cartas": {
@@ -244,7 +249,8 @@
   "lvlStep": 0.06,
   "maxLvl": 10,
   "odds": {
-   "common": 55,
+   "basic": 30,
+   "common": 25,
    "epic": 12,
    "legendary": 3,
    "rare": 30
@@ -254,12 +260,14 @@
   "pityQ": 10,
   "pull": 50,
   "reroll": {
+   "basic": 150,
    "common": 250,
    "epic": 1000,
    "legendary": 2000,
    "rare": 500
   },
   "scrap": {
+   "basic": 15,
    "common": 25,
    "epic": 150,
    "legendary": 400,
@@ -453,7 +461,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": null
   },
   "clon": {
@@ -495,7 +503,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "rare",
+   "rar": "common",
    "slot": null
   },
   "iman": {
@@ -516,7 +524,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": null
   },
   "plasma": {
@@ -530,7 +538,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": null
   },
   "reflejos": {
@@ -589,7 +597,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "legendary",
+   "rar": "epic",
    "slot": "head"
   },
   "baguette": {
@@ -610,7 +618,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "legendary",
+   "rar": "epic",
    "slot": "acc"
   },
   "cartucho_dorado": {
@@ -659,7 +667,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": "head"
   },
   "diploma": {
@@ -680,7 +688,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": "weapon"
   },
   "gafas_pixel": {
@@ -771,7 +779,7 @@
    "fac": null,
    "n": 1,
    "pass": false,
-   "rar": "common",
+   "rar": "basic",
    "slot": "acc"
   },
   "teclado_rgb": {
@@ -3298,5 +3306,5 @@
    "vez": {}
   }
  },
- "version": 13
+ "version": 14
 }

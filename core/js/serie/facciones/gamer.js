@@ -3,7 +3,7 @@
 Object.assign(CFG.cards, {
     // Comunidad Gamer (v0.9.13)
     progamer: { name: 'ProGamer', rarity: 'leader', rar: 'Líder', tag: 'Combo', desc: 'Campeón de torneos con un teclado como espada. Ataca rapidísimo y cada 4.º golpe es un ¡COMBO!: triple de daño y aturde. Si cae, vuelve a los 12 s.' },
-    noobs: { name: 'Noobs', rarity: 'common', rar: 'Poco común', tag: 'Salen 3', desc: 'Tres novatos con gorro de hélice. No saben jugar, pero le ponen muchas ganas.' },
+    noobs: { name: 'Noobs', rarity: 'basic', rar: 'Común', tag: 'Salen 3', desc: 'Tres novatos con gorro de hélice. No saben jugar, pero le ponen muchas ganas.' },
     speedrunner: { name: 'Speedrunner', rarity: 'common', rar: 'Poco común', tag: 'Rompe torres', desc: 'Se salta a los enemigos (como en sus partidas) y corre directa a por las torres. Nadie corre más que ella.' },
     modder: { name: 'Modder', rarity: 'rare', rar: 'Rara', tag: 'Repara', desc: 'Arregla el juego mejor que la empresa: va detrás de tus tropas y repara a las que tiene delante.' },
     coleccionista: { name: 'Coleccionista', rarity: 'rare', rar: 'Rara', tag: 'Disco que rebota', desc: 'Lanza sus juegos en disco (los físicos, los de verdad). Cada disco rebota a otro enemigo cercano.' },

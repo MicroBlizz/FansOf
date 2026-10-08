@@ -5,13 +5,13 @@
 const pct = v => fmtV(String(Math.round(v * 100) / 100)) + ' %';
 function probsMaquina(kind) {
   const DB = kind === 'ab' ? ABILITIES : ITEMS, O = ECON.odds, lista = {};
-  for (const r of ['legendary', 'epic', 'rare', 'common']) {
+  for (const r of ['legendary', 'epic', 'rare', 'common', 'basic']) {
     const ok = k => DB[k].rar === r && !DB[k].pass, ids = Object.keys(DB);
     const general = ids.filter(k => ok(k) && (kind === 'ab' || !DB[k].fac)), fp = kind === 'eq' ? ids.filter(k => ok(k) && DB[k].fac && isUnlocked(DB[k].fac)) : [];
     const gp = fp.length ? 0.5 : 1;   // en el equipo, la mitad de las veces sale uno de una facción que ya tienes
     lista[r] = general.map(k => [DB[k].name, O[r] * gp / general.length]).concat(fp.map(k => [DB[k].name, O[r] * 0.5 / fp.length]));
   }
-  return { nombre: kind === 'ab' ? 'HABILIDADES' : 'OBJETOS DE EQUIPO', rareza: ['legendary', 'epic', 'rare', 'common'].map(r => [r, O[r]]), lista,
+  return { nombre: kind === 'ab' ? 'HABILIDADES' : 'OBJETOS DE EQUIPO', rareza: ['legendary', 'epic', 'rare', 'common', 'basic'].filter(r => O[r]).map(r => [r, O[r]]), lista,
     nota: kind === 'eq' ? 'En el equipo, la mitad de las veces sale un objeto de una facción que ya tienes (si tienes alguna) y la otra mitad uno general.' : '' };
 }
 function probsHtml() {

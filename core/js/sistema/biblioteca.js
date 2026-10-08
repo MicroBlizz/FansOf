@@ -29,15 +29,33 @@ function buildBib() {
   $('#bib-sub').textContent = bibTab === 'ab' ? `Tienes ${tengo} de ${todos.length} habilidades. Toca una para ver qué hace.` : `Tienes ${tengo} de ${todos.length} objetos. Toca uno para ver qué hace.`;
   const vista = todos.filter(D => bibFiltro === 'todo' || (bibFiltro === 'tengo') === !!D.copias.length);
   const list = $('#bib-list');
-  list.innerHTML = vista.length ? `<div class="bib-grid">${vista.map(bibCarta).join('')}</div>` : `<p class="deck-sub">${bibFiltro === 'tengo' ? 'Aún no tienes ninguno: salen en el gashapón.' : '¡Lo tienes todo!'}</p>`;
+  const miticas = bibFiltro === 'tengo' ? '' : bibMiticas();   // v0.9.63: las míticas aún no existen, pero ya se dejan ver (tapadas)
+  list.innerHTML = vista.length || miticas ? `<div class="bib-grid">${miticas}${vista.map(bibCarta).join('')}</div>` : `<p class="deck-sub">${bibFiltro === 'tengo' ? 'Aún no tienes ninguno: salen en el gashapón.' : '¡Lo tienes todo!'}</p>`;
   list.querySelectorAll('[data-bid]').forEach(b => { b.onclick = () => { play('select'); bibFicha(b.dataset.bid); }; });
+  list.querySelectorAll('[data-mitica]').forEach(b => { b.onclick = () => { play('select'); bibMitica(); }; });
   list.scrollTop = 0;
+}
+/* ---------- v0.9.63: MÍTICAS TAPADAS · la rareza roja aún no tiene nada; saldrá en eventos y torneos ---------- */
+const BIB_MITICAS = 3;
+function bibMiticas() {
+  const R = RARITY.mythic; let h = '';
+  for (let i = 0; i < BIB_MITICAS; i++) h += `<button class="bib-card mitica" data-mitica="${i}" data-rar="mythic" style="--rc:${R[2]}" aria-label="${R[0]}: próximamente">`
+    + `<span class="bib-ic" style="background:${R[1]}">??</span><b class="bib-name ol">???</b><span class="bib-rar">${R[0]}</span><span class="bib-lock">PRÓXIMAMENTE</span></button>`;
+  return h;
+}
+function bibMitica() {
+  const R = RARITY.mythic;
+  let html = `<div class="bib-ficha" style="--rc:${R[2]}"><span class="bib-ic big" style="background:${R[1]}">??</span><div><b class="ol">???</b><span class="bib-rar">${R[0]} · Próximamente</span></div></div>`;
+  html += '<p class="bib-txt">Algo rojo, brillante y carísimo se está cocinando en las oficinas de Microblizz.</p>';
+  html += '<p class="bib-txt">Las cosas <b>míticas</b> llegarán como premio de <b>eventos y torneos</b>. No salen en el gashapón… de momento.</p>';
+  html += '<p class="bib-rango">El departamento de monetización todavía está decidiendo el precio. Han pedido una sala más grande.</p>';
+  openList('MÍTICA', html, () => {});
 }
 function bibIcono(D) { return D.k === 'ab' ? D.ic : SLOT_SVG[D.slot]; }
 function bibCarta(D) {
   const R = RARITY[D.rar], n = D.copias.length;
   const etiqueta = D.pass ? 'Del pase' : D.fac && D.k === 'eq' ? 'Solo ' + CFG.cards[FACTIONS[D.fac].leader].name : D.k === 'eq' ? SLOTS[D.slot] : '';
-  return `<button class="bib-card${n ? '' : ' falta'}" data-bid="${D.id}" style="--rc:${R[2]}" aria-label="${D.name}: ${n ? n + ' copias' : 'te falta'}">`
+  return `<button class="bib-card${n ? '' : ' falta'}" data-bid="${D.id}" data-rar="${D.rar}" style="--rc:${R[2]}" aria-label="${D.name}: ${n ? n + ' copias' : 'te falta'}">`
     + `<span class="bib-ic" style="background:${R[1]}">${bibIcono(D)}</span>`
     + `<b class="bib-name ol">${D.name}</b><span class="bib-rar">${R[0]}${etiqueta ? ' · ' + etiqueta : ''}</span>`
     + (n ? `<span class="bib-n ol">x${n}</span>` : '<span class="bib-lock">TE FALTA</span>') + '</button>';

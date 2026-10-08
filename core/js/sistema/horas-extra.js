@@ -41,7 +41,7 @@ function idleTick(now) {
 const idleFull = () => idleState().h >= IDLE.cap - 1e-6;
 function idleItem() {   // un objeto o una habilidad al azar con las probabilidades del gashapón (sin tocar sus garantías)
   const kind = Math.random() < 0.5 ? 'ab' : 'eq', DB = kind === 'ab' ? ABILITIES : ITEMS;
-  let x = Math.random() * 100, rar = 'common'; for (const k of ['legendary', 'epic', 'rare']) { if (x < ECON.odds[k]) { rar = k; break; } x -= ECON.odds[k]; }
+  let x = Math.random() * 100, rar = 'common'; for (const k of ['legendary', 'epic', 'rare', 'common', 'basic']) { if (x < (ECON.odds[k] || 0)) { rar = k; break; } x -= ECON.odds[k] || 0; }
   const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)));
   return newCopy(kind, pick(pool), 0);
 }

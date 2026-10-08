@@ -3,9 +3,12 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
-  { v: '0.9.62', real: [
-      '<b>RAREZAS CON LOS COLORES DE SIEMPRE</b>: Poco común en verde, Rara en azul, Épica en lila y Legendaria en naranja (los líderes también). Lo que antes era Común ahora se llama Poco común. Y llegan dos rarezas nuevas que aún no tienen nada: Común (gris) y Mítica (roja), reservada para premios de eventos y torneos.',
-      '<b>CALIDAD CON ESTRELLAS</b>: la calidad de cada copia ahora se ve con estrellas, de ★☆☆☆☆ (Becario) a ★★★★★ (CEO). Así el color solo te dice la rareza.'],
+  { v: '0.9.63', real: [
+      '<b>RAREZAS CON LOS COLORES DE SIEMPRE</b>: Común en gris, Poco común en verde, Rara en azul, Épica en lila y Legendaria en naranja (los líderes también). Lo que antes se llamaba Común ahora es Poco común.',
+      '<b>MÁS ESCALONES</b>: las tropas de enjambre de cada facción (MadSquirrel, Noobs, Hoplites…) y lo más básico del gashapón (Cafeína, Piel dura, Puños de hierro, Espada de cartón piedra, Casco con cuernos y Taza del becario) pasan a Común. El 55 % que antes era todo Común ahora se reparte: 30 % Común y 25 % Poco común. Hitbox dudosa baja a Poco común, y el Imán de CAOS, los Auriculares y el Botón de pausa bajan a Épica.',
+      '<b>LO LEGENDARIO BRILLA</b>: todo lo legendario lleva un destello que cruza la carta (en modo ahorro se apaga).',
+      '<b>CALIDAD CON ESTRELLAS</b>: la calidad de cada copia se ve con estrellas, de ★ (Becario) a ★★★★★ (CEO), y la de CEO brilla. Así el color solo te dice la rareza.',
+      '<b>MÍTICA (ROJA)</b>: en la Biblioteca ya asoman las primeras cartas míticas, tapadas. Llegarán como premio de eventos y torneos.'],
     joke: ['Microblizz ha pintado de rojo una rareza que todavía no existe. Ya están preparando el precio.'] },
   { v: '0.9.61', real: [
       '<b>GARANTÍAS CON BARRA</b>: en el Gashapón, cada garantía (épica, legendaria, calidad Director) ahora tiene su barra de progreso: ves cuánto llevas y cuánto te falta, y cuando estás cerca la barra se pone naranja y late.'],

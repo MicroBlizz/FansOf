@@ -50,7 +50,7 @@ function slotTile(kind, key, it, lock, label, worn) {
     return `<button class="slot" ${attr} ${dis} aria-label="${label}: vacía. Toca para equipar"><span class="sl-ic">${ic}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${n ? 'Toca para equipar' : 'Vacía · sale en el gashapón'}</span></span>${n && !lock ? `<span class="sl-n ol">${n}</span>` : ''}</button>`;
   }
   const R = RARITY[D.rar], T = QTIERS[tierOf(avgQ(it))];
-  return `<button class="slot full" ${attr} ${dis} style="--qc:${R[1]};--rc2:${R[2]}" aria-label="${label}: ${D.name}, calidad ${T.name}. Toca para cambiar"><span class="sl-ic" style="background:${R[1]}">${kind === 'ab' ? D.ic : SLOT_SVG[key]}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${D.name}</span><span class="sl-q">${qStars(T)}</span></span></button>`;
+  return `<button class="slot full" ${attr} ${dis} data-rar="${D.rar}" style="--qc:${R[1]};--rc2:${R[2]}" aria-label="${label}: ${D.name}, calidad ${T.name}. Toca para cambiar"><span class="sl-ic" style="background:${R[1]}">${kind === 'ab' ? D.ic : SLOT_SVG[key]}</span><span class="sl-txt"><span class="sl-lbl ol">${label}</span><span class="sl-name">${D.name}</span><span class="sl-q">${qStars(T)}</span></span></button>`;
 }
 function descOf(it) {
   const D = defOf(it), S = statsOf(it), V = valsOf(it); let t = D.desc + (it.k === 'eq' && D.fac ? ` <i class="wn">Solo para ${CFG.cards[FACTIONS[D.fac].leader].name}.</i>` : '');
@@ -72,7 +72,7 @@ function unequip(it) {
 }
 function pickRowHtml(it, sel) {
   const D = defOf(it), R = RARITY[D.rar], w = wearer(it);
-  return `<button class="pick-opt" data-id="${it.u}" aria-pressed="${sel === it.u}" style="--rc:${R[2]}"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="pk-desc">${descOf(it)}${w ? ` <i class="wn">Lo lleva ${w}.</i>` : ''}</span></span></button>`;
+  return `<button class="pick-opt" data-id="${it.u}" data-rar="${D.rar}" aria-pressed="${sel === it.u}" style="--rc:${R[2]}"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="pk-desc">${descOf(it)}${w ? ` <i class="wn">Lo lleva ${w}.</i>` : ''}</span></span></button>`;
 }
 // ventana con una lista para elegir (sirve para Colección y para el Inventario)
 function openList(title, html, onChoose) {

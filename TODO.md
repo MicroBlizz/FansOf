@@ -2,6 +2,11 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
+## ANTES DE DESPLEGAR Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rarezas, 8-10-2026)
+- Aplicar en Supabase, en este orden: `servidor/17-rareza-comun.sql` (las funciones de tirar conocen la rareza Común, clave `basic`) y luego `servidor/datos/rumble.sql`, `td.sql` y `survivors.sql` (rarezas y probabilidades nuevas: Común 30 %, Poco común 25 %).
+- Después, `python herramientas/desplegar.py`. Si la web se despliega antes que el SQL, no se rompe nada, pero con cuenta las cosas Comunes no salen en el gashapón.
+- Funciona con las versiones viejas del juego: el aparato saca la rareza de su propio catálogo y no mira la que devuelve el servidor.
+
 ## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
 ¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).
 - [ ] **Página de privacidad** (ES/EN): obligatoria ya (la partida va a la nube) y Google Play pide su enlace. La hace Claude de Daniel (es el punto de «Cuentas» de abajo).

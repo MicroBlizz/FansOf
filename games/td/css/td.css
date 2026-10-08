@@ -29,6 +29,8 @@
 .card { --card-hi: #7be04a; --card-lo: #2f8a1c; position: relative; border: 3px solid var(--outline); border-radius: 13px; padding: 0; background: linear-gradient(to bottom, var(--card-hi), var(--card-lo));
   box-shadow: 0 5px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.35); cursor: grab; display: flex; flex-direction: column; align-items: center; overflow: hidden; touch-action: none; transition: transform 0.12s ease, filter 0.15s; }
 .card.r-rare { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
+.card.r-basic { --card-hi: #c3c9d4; --card-lo: #5f6673; }
+.card.r-mythic { --card-hi: #ff6464; --card-lo: #b3121f; }
 .card.r-epic { --card-hi: #d08cff; --card-lo: #6d28c9; }
 .card.r-legendary { --card-hi: #ffb547; --card-lo: #d9620c; }
 .card.r-leader { --card-hi: #ffb547; --card-lo: #d9620c; }

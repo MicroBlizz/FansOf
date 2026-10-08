@@ -12,9 +12,9 @@ const RARITY = { basic: ['Común', '#c3c9d4', '#5f6673'], common: ['Poco común'
 const CATALOGO = {
   /* ---------- habilidades: una por carta ---------- */
   ab: {
-    cafeina:  { name: 'Cafeína', rar: 'common', ic: 'CF' },
-    piel:     { name: 'Piel dura', rar: 'common', ic: 'PD' },
-    punos:    { name: 'Puños de hierro', rar: 'common', ic: 'PH' },
+    cafeina:  { name: 'Cafeína', rar: 'basic', ic: 'CF' },
+    piel:     { name: 'Piel dura', rar: 'basic', ic: 'PD' },
+    punos:    { name: 'Puños de hierro', rar: 'basic', ic: 'PH' },
     reflejos: { name: 'Reflejos', rar: 'common', ic: 'RF' },
     plasma:   { name: 'Escudo de plasma', rar: 'rare', fac: 'ciber', ic: 'EP' },
     sigilo:   { name: 'Sigilo inicial', rar: 'rare', fac: 'animales', ic: 'SG' },
@@ -28,25 +28,25 @@ const CATALOGO = {
     furia:    { name: 'Furia legendaria', rar: 'legendary', ic: 'FL' },
     // v0.9.12: habilidades con efectos nuevos
     speedrun:   { name: 'Speedrun', rar: 'common', ic: 'SR' },
-    hitbox:     { name: 'Hitbox dudosa', rar: 'rare', ic: 'HB' },
+    hitbox:     { name: 'Hitbox dudosa', rar: 'common', ic: 'HB' },
     microtrans: { name: 'Microtransacción', rar: 'rare', ic: 'MT' },
     ragequit:   { name: 'Rage quit', rar: 'rare', ic: 'RQ' },
     modofoto:   { name: 'Modo foto', rar: 'epic', ic: 'MF' },
     dlc:        { name: 'DLC gratis', rar: 'epic', ic: 'DL' },
     gigante:    { name: 'Modo gigante', rar: 'legendary', ic: 'MG' },
-    iman:       { name: 'Imán de CAOS', rar: 'legendary', ic: 'IC' },
+    iman:       { name: 'Imán de CAOS', rar: 'epic', ic: 'IC' },
   },
   /* ---------- objetos: arma, cabeza y accesorio ---------- */
   eq: {
-    espada_carton: { name: 'Espada de cartón piedra', slot: 'weapon', rar: 'common' },
+    espada_carton: { name: 'Espada de cartón piedra', slot: 'weapon', rar: 'basic' },
     raton_dpi:     { name: 'Ratón de 16.000 DPI', slot: 'weapon', rar: 'rare' },
     teclado_rgb:   { name: 'Teclado mecánico RGB', slot: 'weapon', rar: 'epic' },
     banhammer_oro: { name: 'BanHammer de oro', slot: 'weapon', rar: 'legendary' },
-    cuernos:       { name: 'Casco con cuernos', slot: 'head', rar: 'common' },
+    cuernos:       { name: 'Casco con cuernos', slot: 'head', rar: 'basic' },
     corona_carton: { name: 'Corona de hamburguesería', slot: 'head', rar: 'rare' },
     gorro_aluminio:{ name: 'Gorro de papel de aluminio', slot: 'head', rar: 'epic' },
-    auriculares:   { name: 'Auriculares con cancelación de ruido', slot: 'head', rar: 'legendary' },
-    taza:          { name: 'Taza del becario', slot: 'acc', rar: 'common' },
+    auriculares:   { name: 'Auriculares con cancelación de ruido', slot: 'head', rar: 'epic' },
+    taza:          { name: 'Taza del becario', slot: 'acc', rar: 'basic' },
     pase_caducado: { name: 'Pase de batalla caducado', slot: 'acc', rar: 'common' },
     almohada:      { name: 'Almohada de viaje', slot: 'acc', rar: 'rare' },
     silla_gamer:   { name: 'Silla gamer portátil', slot: 'acc', rar: 'epic' },
@@ -73,7 +73,7 @@ const CATALOGO = {
     raton_campeon:   { name: 'Ratón del campeón', slot: 'weapon', rar: 'legendary', fac: 'gamer' },
     cartucho_dorado: { name: 'Cartucho dorado', slot: 'acc', rar: 'legendary', fac: 'olvidados' },
     claqueta_oro:    { name: 'Claqueta de oro', slot: 'weapon', rar: 'legendary', fac: 'pop' },
-    boton_pausa:  { name: 'Botón de pausa', slot: 'acc', rar: 'legendary' },
+    boton_pausa:  { name: 'Botón de pausa', slot: 'acc', rar: 'epic' },
   },
 };
 const SLOTS = { weapon: 'Arma', head: 'Cabeza', acc: 'Accesorio' };
@@ -86,4 +86,5 @@ const QTIERS = [
   { name: 'Director (excelente)', p: 9, lo: 0.88, hi: 0.99, st: 4, col: '#ffe06a' },
   { name: 'CEO (perfecta)', p: 1, lo: 1, hi: 1, st: 5, col: '#ffe06a' },
 ];
-const qStars = T => '★'.repeat(T.st) + '☆'.repeat(5 - T.st);   // la calidad en estrellas: ★★★☆☆
+// la calidad en estrellas (HTML): las que tiene, encendidas; las que le faltan, apagadas; la CEO, además, brilla
+const qStars = T => `<span class="qs${T.st === 5 ? ' qs-ceo' : ''}">${'★'.repeat(T.st)}<i>${'★'.repeat(5 - T.st)}</i></span>`;

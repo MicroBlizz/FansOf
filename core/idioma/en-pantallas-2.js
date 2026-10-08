@@ -140,5 +140,12 @@ IDIOMA.add({
   "En Android, con": "On Android, with",
   "En iPhone, con": "On iPhone, with",
   "Espera de Microblizz": "Microblizz Hold Music",
-  "INSTALAR EN EL MÓVIL": "INSTALL ON YOUR PHONE"
+  "INSTALAR EN EL MÓVIL": "INSTALL ON YOUR PHONE",
+  "MÍTICA": "MYTHIC",
+  "PRÓXIMAMENTE": "COMING SOON",
+  "Próximamente": "Coming soon",
+  "%1: próximamente": "%1: coming soon",
+  "Algo rojo, brillante y carísimo se está cocinando en las oficinas de Microblizz.": "Something red, shiny and very expensive is cooking in the Microblizz offices.",
+  "Las cosas <b>míticas</b> llegarán como premio de <b>eventos y torneos</b>. No salen en el gashapón… de momento.": "<b>Mythic</b> things will arrive as <b>event and tournament</b> prizes. They don't come out of the gacha… for now.",
+  "El departamento de monetización todavía está decidiendo el precio. Han pedido una sala más grande.": "The monetization department is still deciding the price. They've asked for a bigger room."
 });

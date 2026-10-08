@@ -22,7 +22,7 @@ Object.assign(CFG.enemyCards, {
 });
 Object.assign(CFG.cards, {
   indie:        { name: 'IndieDev', cost: 5, count: 1, respawn: 12, rarity: 'leader', rar: 'Líder', tag: '¡Hotfix!', desc: 'Hizo un juego entero ella sola, en su cuarto. Dispara líneas de código y cada 8 s lanza un ¡HOTFIX!: cura 70 a los aliados cercanos y les quita los aturdimientos. Si cae, vuelve a los 12 s.' },
-  jam:          { name: 'Game Jam', cost: 2, count: 3, rarity: 'common', rar: 'Poco común', tag: 'Salen 3', desc: 'Tres creadores que han hecho un juego en 48 horas. Rápidos y con mucho café.' },
+  jam:          { name: 'Game Jam', cost: 2, count: 3, rarity: 'basic', rar: 'Común', tag: 'Salen 3', desc: 'Tres creadores que han hecho un juego en 48 horas. Rápidos y con mucho café.' },
   tester:       { name: 'Tester de QA', cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Encuentra bugs', desc: 'Lo rompe todo antes que nadie: recibe un 30 % menos de daño y marca a lo que golpea (tu equipo le hace un 20 % más durante 4 s).' },
   pixelartista: { name: 'Pixelartista', cost: 3, count: 1, rarity: 'common', rar: 'Poco común', tag: 'A distancia', desc: 'Dibuja a mano, píxel a píxel. Lanza píxeles que salpican a los de alrededor.' },
   compositora:  { name: 'Compositora', cost: 3, count: 1, rarity: 'rare', rar: 'Rara', tag: 'Banda sonora', desc: 'Su música épica anima a los de alrededor: los aliados cercanos pegan un 20 % más.' },

@@ -82,7 +82,7 @@ function cardDeServidor(r) {
 let cardsGoFac = null;
 function showCardPulls(res) {
   const card = $('#gr-card'), top = res.reduce((a, r) => (RAR_ORDER[r.rar] < RAR_ORDER[a.rar] ? r : a)), R = CARD_RAR[top.rar];
-  card.style.setProperty('--rc1', R[1]); card.style.setProperty('--rc2', R[2]); cardsGoFac = CFG.cards[top.k].fac;
+  card.dataset.rar = top.rar; card.style.setProperty('--rc1', R[1]); card.style.setProperty('--rc2', R[2]); cardsGoFac = CFG.cards[top.k].fac;
   if (res.length === 1) {
     const r = res[0], c = CFG.cards[r.k];
     card.classList.remove('multi');
@@ -91,7 +91,7 @@ function showCardPulls(res) {
   } else {
     card.classList.add('multi');
     const news = res.filter(r => r.isNew).length, ups = res.filter(r => r.up).length, order = res.slice().sort((a, b) => RAR_ORDER[a.rar] - RAR_ORDER[b.rar]);
-    card.innerHTML = `<div class="gr-rar ol">TIRADA x${res.length}</div><div class="gr-sum">${news ? `<b>${news} ${news > 1 ? 'nuevas' : 'nueva'}</b> · ` : ''}${ups} ${ups === 1 ? 'estrella' : 'estrellas'} más${res.length - news - ups ? ` · ${(res.length - news - ups) * ECON.dupGems} gemas` : ''}</div><div class="gr-grid">${order.map(r => { const c = CFG.cards[r.k], RR = CARD_RAR[r.rar]; return `<div class="gt" style="--rc:${RR[1]};--rc2:${RR[2]}"><canvas data-gk="${r.k}"></canvas><span class="gt-name">${c.name}</span><span class="gt-st">${r.gems ? '+' + ECON.dupGems + ' 💎' : '★'.repeat(cardStars(r.k))}</span>${r.isNew ? '<span class="gt-new">NUEVA</span>' : ''}</div>`; }).join('')}</div><small class="gr-hint">Ponlas en tu mazo desde la Colección.</small>`;
+    card.innerHTML = `<div class="gr-rar ol">TIRADA x${res.length}</div><div class="gr-sum">${news ? `<b>${news} ${news > 1 ? 'nuevas' : 'nueva'}</b> · ` : ''}${ups} ${ups === 1 ? 'estrella' : 'estrellas'} más${res.length - news - ups ? ` · ${(res.length - news - ups) * ECON.dupGems} gemas` : ''}</div><div class="gr-grid">${order.map(r => { const c = CFG.cards[r.k], RR = CARD_RAR[r.rar]; return `<div class="gt" data-rar="${r.rar}" style="--rc:${RR[1]};--rc2:${RR[2]}"><canvas data-gk="${r.k}"></canvas><span class="gt-name">${c.name}</span><span class="gt-st">${r.gems ? '+' + ECON.dupGems + ' 💎' : '★'.repeat(cardStars(r.k))}</span>${r.isNew ? '<span class="gt-new">NUEVA</span>' : ''}</div>`; }).join('')}</div><small class="gr-hint">Ponlas en tu mazo desde la Colección.</small>`;
     for (const cv of card.querySelectorAll('canvas[data-gk]')) drawArt(cv, cv.dataset.gk, 40, 34);
   }
   $('#btn-gr-inv').textContent = 'Ver en la Colección';

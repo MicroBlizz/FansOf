@@ -101,6 +101,8 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .next-art { width: 40px; height: 40px; margin: -8px 0 -6px; border-radius: 10px; border: 3px solid var(--outline); box-sizing: border-box; background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); display: grid; place-items: center; overflow: hidden; }
 .next-art canvas { width: 34px; height: 34px; display: block; }
 .next-art[data-rarity="common"], .card[data-rarity="common"] { --card-hi: #7be04a; --card-lo: #2f8a1c; }
+.next-art[data-rarity="basic"], .card[data-rarity="basic"] { --card-hi: #c3c9d4; --card-lo: #5f6673; }
+.next-art[data-rarity="mythic"], .card[data-rarity="mythic"] { --card-hi: #ff6464; --card-lo: #b3121f; }
 .next-art[data-rarity="rare"], .card[data-rarity="rare"] { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
 .next-art[data-rarity="epic"], .card[data-rarity="epic"] { --card-hi: #d08cff; --card-lo: #6d28c9; }
 .next-art[data-rarity="leader"], .card[data-rarity="leader"] { --card-hi: #ffb547; --card-lo: #d9620c; }
@@ -149,6 +151,8 @@ button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .deck-list { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 500px; max-height: 730px; overflow-y: auto; text-align: left; }
 .deck-row { position: relative; display: grid; grid-template-columns: 66px 1fr; gap: 8px; align-items: center; padding: 4px 10px 4px 4px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(100deg, var(--card-lo) 0%, var(--tray) 46%); box-shadow: 0 3px 0 var(--outline); }
 .deck-row[data-rarity="common"] { --card-lo: #2f8a1c; }
+.deck-row[data-rarity="basic"] { --card-lo: #5f6673; }
+.deck-row[data-rarity="mythic"] { --card-lo: #b3121f; }
 .deck-row[data-rarity="rare"] { --card-lo: #1d5fc9; }
 .deck-row[data-rarity="epic"] { --card-lo: #6d28c9; }
 .deck-row[data-rarity="leader"] { --card-lo: #d9620c; }

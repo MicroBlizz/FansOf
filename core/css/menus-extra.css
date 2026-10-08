@@ -186,3 +186,21 @@
 .idioma-fl button svg { display: block; width: 38px; height: 25px; border-radius: 3px; }
 .idioma-fl button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 3px var(--gold); }
 .idioma-fl button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- v0.9.63: RAREZAS · la calidad en estrellas y el brillo de lo legendario y lo mítico ---------- */
+.qs { font-family: system-ui, 'Segoe UI Symbol', sans-serif; font-weight: 700; letter-spacing: -0.5px; color: #ffd84a; white-space: nowrap; }
+.qs i { font-style: normal; color: rgba(255, 255, 255, 0.2); }
+.qs-ceo { color: #fff1a6; text-shadow: 0 0 3px #ffe06a, 0 0 7px #ff9d2e; animation: qsCeo 1.8s ease-in-out infinite; }
+@keyframes qsCeo { 50% { text-shadow: 0 0 5px #fff6c8, 0 0 12px #ffb547; } }
+/* un barrido de luz que cruza la carta cada pocos segundos (::before; las cartas usan ::after para otras etiquetas) */
+[data-rar="legendary"], [data-rar="mythic"] { position: relative; }
+[data-rar="legendary"]::before, [data-rar="mythic"]::before, .card[data-rarity="legendary"]::before, .card.r-legendary::before,
+.dk2c[data-rarity="legendary"]::before, .coll-row[data-rarity="legendary"]::before, .deck-row[data-rarity="legendary"]::before {
+  content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(110deg, transparent 38%, rgba(255, 255, 255, 0.5) 47%, rgba(255, 248, 220, 0.75) 50%, rgba(255, 255, 255, 0.5) 53%, transparent 62%) no-repeat;
+  background-size: 300% 100%; background-position: 100% 0; animation: brilloRar 3.4s ease-in-out infinite; }
+[data-rar="mythic"]::before { background-image: linear-gradient(110deg, transparent 38%, rgba(255, 120, 120, 0.5) 47%, rgba(255, 230, 230, 0.8) 50%, rgba(255, 120, 120, 0.5) 53%, transparent 62%); animation-duration: 2.4s; }
+[data-rar="mythic"]:not(.falta) { box-shadow: 0 4px 0 var(--outline), 0 0 0 2px #ff6464, 0 0 14px rgba(255, 70, 70, 0.55); }
+@keyframes brilloRar { 0%, 55% { background-position: 100% 0; } 100% { background-position: 0% 0; } }
+.ahorro [data-rar]::before, .ahorro .card::before, .ahorro .dk2c::before, .ahorro .coll-row::before, .ahorro .deck-row::before, .ahorro .qs-ceo { animation: none; opacity: 0; }
+@media (prefers-reduced-motion: reduce) { [data-rar]::before, .card::before, .dk2c::before, .coll-row::before, .deck-row::before, .qs-ceo { animation: none; opacity: 0; } }

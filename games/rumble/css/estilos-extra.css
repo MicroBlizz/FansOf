@@ -118,6 +118,8 @@
 .dk2-board { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 158px); gap: 7px; }
 .dk2c { --card-hi: #7be04a; --card-lo: #2f8a1c; position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 4px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--card-hi), var(--card-lo)); cursor: pointer; color: var(--ink); font: inherit; min-width: 0; box-shadow: 0 3px 0 var(--outline); }
 .dk2c[data-rarity="rare"] { --card-hi: #5aaeff; --card-lo: #1d5fc9; }
+.dk2c[data-rarity="basic"] { --card-hi: #c3c9d4; --card-lo: #5f6673; }
+.dk2c[data-rarity="mythic"] { --card-hi: #ff6464; --card-lo: #b3121f; }
 .dk2c[data-rarity="epic"] { --card-hi: #d08cff; --card-lo: #6d28c9; }
 .dk2c[data-rarity="legendary"] { --card-hi: #ffb547; --card-lo: #d9620c; }
 .dk2c[data-rarity="leader"] { --card-hi: #ffb547; --card-lo: #d9620c; grid-row: span 2; cursor: default; }

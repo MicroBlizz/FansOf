@@ -20,3 +20,6 @@
 .bib-txt { margin: 6px 0; font-size: 14.5px; line-height: 1.35; text-align: left; }
 .bib-rango { margin: 4px 0 8px; font-size: 12.5px; color: var(--ink-dim); text-align: left; }
 .bib-copia { margin: 3px 0; font-size: 12.5px; text-align: left; }
+.bib-card.mitica { border-style: dashed; background: linear-gradient(to bottom, rgba(255, 70, 70, 0.22), var(--panel-2)); }
+.bib-card.mitica .bib-ic { color: #fff; text-shadow: 0 2px 0 var(--outline); }
+.bib-card.mitica .bib-lock { color: #ff8a8a; }

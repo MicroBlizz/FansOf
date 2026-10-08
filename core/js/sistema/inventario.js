@@ -2,7 +2,7 @@
 // Filtros y orden, la ficha de una copia (equipar, bloquear, despedir por oro, volver a sortear sus números) y el despido masivo.
 'use strict';
 let invTab = 'ab', invFilter = 'all', invSort = 'q', itemCur = null;
-const INV_FILTERS = { ab: [['all', 'Todas'], ['common', 'Poco comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
+const INV_FILTERS = { ab: [['all', 'Todas'], ['basic', 'Comunes'], ['common', 'Poco comunes'], ['rare', 'Raras'], ['epic', 'Épicas'], ['legendary', 'Legendarias']], eq: [['all', 'Todo'], ['weapon', 'Armas'], ['head', 'Cabeza'], ['acc', 'Accesorios']] };
 const INV_SORTS = { q: 'calidad', rar: 'rareza', name: 'nombre' };
 const scrapValue = it => Math.round(ECON.scrap[defOf(it).rar] * [1, 1.5, 2, 3, 5][tierOf(avgQ(it))]);
 const canScrap = it => !it.lock && !wearer(it) && !defOf(it).pass;
@@ -26,7 +26,7 @@ function buildInv() {
 function invRow(it) {
   const D = defOf(it), R = RARITY[D.rar], w = wearer(it);
   const meta = w || it.lock ? `<span class="inv-meta">${it.lock ? LOCK_SVG + 'Contrato indefinido' : ''}${w && it.lock ? ' · ' : ''}${w ? 'Lo lleva ' + w : ''}</span>` : '';
-  return `<button class="inv-row" data-u="${it.u}" style="--rc:${R[2]}"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span class="inv-main"><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="inv-desc">${descOf(it)}</span>${meta}</span></button>`;
+  return `<button class="inv-row" data-u="${it.u}" data-rar="${D.rar}" style="--rc:${R[2]}"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span class="inv-main"><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="inv-desc">${descOf(it)}</span>${meta}</span></button>`;
 }
 let itemSlot = null;   // v0.9.19: la ranura de la Colección desde la que se abrió la ficha
 function openItem(uid, slot) {

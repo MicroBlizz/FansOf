@@ -7,12 +7,12 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
-- `core/css/menus-extra.css` · 19 KB
+- `core/css/menus-extra.css` · 21 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
 - `core/idioma/en-extra.js` · 15 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
-- `core/idioma/en-pantallas-2.js` · 8 KB
+- `core/idioma/en-pantallas-2.js` · 9 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
 - `core/idioma/en-pantallas-4.js` · 11 KB
 - `core/idioma/en-pantallas-5.js` · 9 KB
@@ -58,7 +58,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/facciones/phony.js` · 1 KB
 - `core/js/serie/facciones/pop.js` · 4 KB
 - `core/js/serie/facciones/streamers.js` · 4 KB
-- `core/js/sistema/biblioteca.js` · 5 KB · bibTab, BIB_FILTROS, openBib, bibCopias, bibDesc, bibLista, buildBib, bibIcono, bibCarta, bibFicha
+- `core/js/sistema/biblioteca.js` · 7 KB · bibTab, BIB_FILTROS, openBib, bibCopias, bibDesc, bibLista, buildBib, BIB_MITICAS, bibMiticas, bibMitica, bibIcono, bibCarta, bibFicha
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
 - `core/js/sistema/cuenta-pantalla.js` · 5 KB
 - `core/js/sistema/cuenta.js` · 13 KB · CUENTA
@@ -84,7 +84,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-extra.css` · 24 KB
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/idioma/en-1.js` · 14 KB
-- `games/rumble/idioma/en-10.js` · 6 KB
+- `games/rumble/idioma/en-10.js` · 7 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB

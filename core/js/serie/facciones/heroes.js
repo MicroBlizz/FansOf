@@ -4,7 +4,7 @@ Object.assign(CFG.cards, {
     // Héroes
     epicchampion: { name: 'EpicChampion', rarity: 'leader', rar: 'Líder', tag: 'Team Fight', desc: 'Cada 8 s grita ¡Team Fight! y todos los aliados cercanos dan a la vez un golpe extra con +50 % de daño.' },
     cupidarcher: { name: 'CupidArcher', rarity: 'common', rar: 'Poco común', tag: 'A distancia', desc: 'Un querubín con arco que dispara flechas rápidas desde lejos.' },
-    hoplite: { name: 'Hoplites', rarity: 'common', rar: 'Poco común', tag: 'Lanzas · x3', desc: 'Tres soldados con escudo y lanza larga. Aguantan bien en grupo.' },
+    hoplite: { name: 'Hoplites', rarity: 'basic', rar: 'Común', tag: 'Lanzas · x3', desc: 'Tres soldados con escudo y lanza larga. Aguantan bien en grupo.' },
     shieldmaiden: { name: 'ShieldMaiden', rarity: 'rare', rar: 'Rara', tag: 'Blindada', desc: 'Valquiria con escudo: recibe un 35 % menos de daño. Perfecta para ir delante.' },
     thundergod: { name: 'ThunderGod', rarity: 'rare', rar: 'Rara', tag: 'Rayo en cadena', desc: 'Dios del trueno: su rayo salta del objetivo a otros 2 enemigos cercanos.' },
     medusa: { name: 'Medusa', rarity: 'rare', rar: 'Rara', tag: 'Petrifica', desc: 'Cada 8 s se baja las gafas de sol y petrifica a los enemigos cercanos.' },

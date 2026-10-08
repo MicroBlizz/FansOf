@@ -3,7 +3,7 @@
 Object.assign(CFG.cards, {
     // Olvidados (v0.9.13)
     vikingo: { name: 'VikingoPerdido', rarity: 'leader', rar: 'Líder', tag: 'Muro de escudos', desc: 'Lleva años perdido en el sótano. Cada 8 s levanta un muro de escudos: él y sus aliados cercanos reciben una barrera dorada que para 80 de daño. Si cae, vuelve a los 12 s.' },
-    swarmbug: { name: 'SwarmBugs', rarity: 'common', rar: 'Poco común', tag: 'Salen 4', desc: 'Cuatro bichos de un juego de estrategia que nunca salió. Rapidísimos y con muchas ganas de morder.' },
+    swarmbug: { name: 'SwarmBugs', rarity: 'basic', rar: 'Común', tag: 'Salen 4', desc: 'Cuatro bichos de un juego de estrategia que nunca salió. Rapidísimos y con muchas ganas de morder.' },
     vikingsquad: { name: 'Vikingos', rarity: 'common', rar: 'Poco común', tag: 'Salen 3', desc: 'Tres vikingos que se perdieron en un juego cancelado. Con escudo y espada, aguantan bien en grupo.' },
     retromarine: { name: 'RetroMarine', rarity: 'rare', rar: 'Rara', tag: 'Ráfagas', desc: 'Marine espacial de 1998 con hombreras enormes. Dispara ráfagas rapidísimas desde lejos.' },
     ghostagent: { name: 'GhostAgent', rarity: 'rare', rar: 'Rara', tag: 'Invisible · francotirador', desc: 'Agente de un juego que se canceló en secreto. Sale invisible y su primer disparo hace el doble. Si derriba a alguien, vuelve a desaparecer.' },

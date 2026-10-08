@@ -38,7 +38,7 @@ function pvpEquipoMal(eq) {
 function pvpInicio(o) {
   PVP.on = true; PVP.seat = o.seat; PVP.peer = o.seat === 'p' ? 'e' : 'p'; PVP.red = o.red; PVP.T = o.turno || 12; PVP.D = o.retardo || 2;
   PVP.terreno = o.terreno; PVP.avisoMs = o.avisoMs || 3000; PVP.abandonoMs = o.abandonoMs || 18000; PVP.alEstado = o.alEstado || null;
-  PVP.propias = new Map(); PVP.pasados = new Set(); PVP.fin = null; PVP.mias = new Map(); PVP.huellas = new Map(); PVP.hashes = []; PVP.espera = 0; PVP.error = ''; PVP.log = [];
+  PVP.propias = new Map(); PVP.stats = { n: 0, ms: 0 }; PVP._en = false; PVP.pasados = new Set(); PVP.fin = null; PVP.mias = new Map(); PVP.huellas = new Map(); PVP.hashes = []; PVP.espera = 0; PVP.error = ''; PVP.log = [];
   if (!PVP.ajenas || !o.conservar) PVP.ajenas = new Map();   // los mensajes del rival pueden llegar antes de empezar: no se borran si `conservar`
   for (const t of ['p', 'e']) { const m = pvpEquipoMal(o.equipos[t]); if (m) { PVP.error = `equipo ${t}: ${m}`; pvpEstado('error'); return false; } }
   PVP.estado = 'jugando'; G.seedNext = o.seed; G.autoplay = false;
@@ -107,8 +107,9 @@ function pvpTic(real) {
   if (!PVP.on || G.state !== 'play') return;
   if (PVP.estado !== 'jugando' && PVP.estado !== 'esperando') return;
   const faltaMensaje = SIM.tick % PVP.T === 0 && !(PVP.pasados && PVP.pasados.has(SIM.tick / PVP.T)) && !PVP.ajenas.has(SIM.tick / PVP.T);
-  if (!faltaMensaje) { PVP.espera = 0; return; }
-  PVP.espera += real * 1000;
+  if (!faltaMensaje) { PVP.espera = 0; PVP._en = false; return; }
+  if (!PVP._en) { PVP._en = true; PVP.stats.n++; }   // cuántas veces y cuánto rato se ha parado la partida esperando al rival
+  PVP.stats.ms += real * 1000; PVP.espera += real * 1000;
   if (PVP.espera >= PVP.abandonoMs) pvpEstado('abandono'); else if (PVP.espera >= PVP.avisoMs) pvpEstado('esperando');
 }
 // resultado que se manda al servidor al acabar: los dos clientes deben dar lo mismo

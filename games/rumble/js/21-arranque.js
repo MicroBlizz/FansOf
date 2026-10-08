@@ -22,9 +22,9 @@ function frame(now) {
     let stop = 1; if (G.hitstop > 0) { G.hitstop -= real; stop = 0.07; }   // v0.9.24: parón del golpe
     SIM.acc += real * steps * G.slowmo * stop;
     for (let n = 0; SIM.acc >= SIM_DT; n++) {
-      if (n >= SIM_MAX) { SIM.acc = 0; break; }
+      if (n >= (PVP.on ? 3 : SIM_MAX)) { SIM.acc = PVP.on ? Math.min(SIM.acc, SIM_DT * 2) : 0; break; }   // PvP: nunca más de 3 ticks por fotograma, para no dar saltos al recuperarse
       SIM.acc -= SIM_DT;
-      if (simStep(SIM_DT) === false) { SIM.acc = Math.min(SIM.acc + SIM_DT, SIM_DT * SIM_MAX); break; }   // PvP: esperando al rival
+      if (simStep(SIM_DT) === false) { SIM.acc = 0; break; }   // PvP: esperando al rival: se para y, al llegar, sigue a su paso (sin acumular tiempo atrasado que luego se gastaría de golpe)
       if (G.state !== 'play' && G.state !== 'ending') break;
     }
     if (PVP.on) pvpTic(real);

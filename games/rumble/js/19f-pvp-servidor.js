@@ -23,7 +23,7 @@ function pvpEquipoDeServidor(mazo, equipo) {
   return eq;
 }
 // jugada de motor → trozo corto para el servidor (menos de 200 caracteres) y al revés
-const pvpAServidor = m => ({ t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
+const pvpAServidor = m => ({ v: VERSION, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
 const pvpDeServidor = (d, equipo) => ({ t: 't', turno: d.t, tick: d.k, h: d.h, cmds: (d.c || []).map(c => ({ team: equipo, slot: c[0], key: c[1], x: c[2], y: c[3] })) });
 
 PVPNET.redes.servidor = {
@@ -56,7 +56,7 @@ PVPNET.redes.servidor = {
         const t0 = Date.now(), items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
           const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
-          for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }
+          for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
           if (r && r.desync) pvpEstado('desync');
         } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
         if (vivo) setTimeout(bucle, Math.max(20, PVP_SRV.turnoMs - (Date.now() - t0)));   // la llamada ya tarda: no se suma la espera encima

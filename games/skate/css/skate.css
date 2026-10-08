@@ -299,3 +299,9 @@ html,body{margin:0;height:100%;background:#0d0716;overflow:hidden;display:flex;a
 .sk-nivel small{display:block;font-size:11px;opacity:.85}
 .sk-nivel.hecho{border-color:#5be36a}
 .sk-nivel i{font-style:normal;color:#5be36a;font-size:11px;font-weight:bold}
+
+/* ---------- móvil: instalar y aviso de girar ---------- */
+#sk-instalar{position:fixed;left:8px;bottom:8px;z-index:9000;font:800 13px 'Baloo 2',sans-serif;padding:6px 12px;border-radius:10px;border:2px solid #1b0f2a;background:#ffb347;color:#1b0f2a;cursor:pointer;box-shadow:0 3px 0 #1b0f2a}
+#sk-instalar[hidden]{display:none}
+#girar{display:none;position:fixed;inset:0;z-index:9500;background:#0d0716;color:#fff;align-items:center;justify-content:center;text-align:center;font:800 22px 'Baloo 2',sans-serif;padding:24px;box-sizing:border-box}
+@media (pointer:coarse) and (orientation:portrait){#girar{display:flex}}

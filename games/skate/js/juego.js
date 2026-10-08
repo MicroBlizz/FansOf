@@ -1,3 +1,6 @@
+// Móvil: en pantallas táctiles no se dibuja el brillo (shadowBlur), que es lo más pesado para el móvil.
+const SK_LIGERO = matchMedia('(pointer: coarse)').matches;
+const SK_BRILLO = SK_LIGERO ? 0 : 1;
 // Fans of Skate · prototipo técnico. Carriles arriba/abajo; el avance y los disparos son automáticos (como Skateboard Knight).
 // Cada héroe va sobre su vehículo temático (dibujado aquí) y los enemigos, la música y las cifras son los de Fans of Rumble (core/ y games/rumble/).
 'use strict';
@@ -97,7 +100,7 @@ function skRuedas(c, t, x1, x2, y, r) {
 }
 function skVehiculo(c, fac, t, col) {
   // brillo de neón bajo el vehículo
-  c.save(); c.shadowColor = col; c.shadowBlur = 14;
+  c.save(); c.shadowColor = col; c.shadowBlur = SK_BRILLO * 14;
   shape(c, rr(-38, -12, 76, 7, 3.5), '#3d2a4d', 1.8);
   shape(c, rr(-34, -11, 60, 2.5, 1.2), 'rgba(255,255,255,.35)', 0);
   if (fac === 'animales') {
@@ -195,7 +198,7 @@ function skDibujaEnemigo(c, e) {
   c.save();
   if (e.dead) c.globalAlpha = Math.max(0, e.deadT / 0.4);
   skSombra(c, e.x, e.y + 4, 22 * SK_ESCALA_ENEMIGO / 1.2, 7);
-  if (e.elite) { c.shadowColor = '#ff3b3b'; c.shadowBlur = 18; }
+  if (e.elite) { c.shadowColor = '#ff3b3b'; c.shadowBlur = SK_BRILLO * 18; }
   skRider(c, e.key, e.x, e.y + bob, SK_ESCALA_ENEMIGO, -1);
   c.restore();
 }
@@ -217,7 +220,7 @@ function skDibujaHeroe(c, S) {
 function skDibujaDisparos(c, S) {
   for (const d of S.disparos) {
     const y = SK_LANES[d.lane] - 36;
-    c.save(); c.shadowColor = d.col; c.shadowBlur = 16;
+    c.save(); c.shadowColor = d.col; c.shadowBlur = SK_BRILLO * 16;
     c.fillStyle = 'rgba(255,255,255,.35)'; c.beginPath(); c.ellipse(d.x - 26, y, 22, 4, 0, 0, Math.PI * 2); c.fill();
     c.beginPath(); c.arc(d.x, y, 9, 0, Math.PI * 2); c.fillStyle = d.col; c.fill(); c.lineWidth = 2.5; c.strokeStyle = OL; c.stroke();
     c.beginPath(); c.arc(d.x - 2, y - 3, 3, 0, Math.PI * 2); c.fillStyle = '#fff'; c.fill();
@@ -228,12 +231,12 @@ function skDibujaDrops(c, S) {
   for (const d of S.drops) {
     const y = SK_LANES[d.lane] - 14 + Math.sin(S.anim * 0.8 + d.x) * 3;
     if (d.tipo === 'oro') {
-      c.save(); c.shadowColor = '#ffd34d'; c.shadowBlur = 12;
+      c.save(); c.shadowColor = '#ffd34d'; c.shadowBlur = SK_BRILLO * 12;
       c.beginPath(); c.arc(d.x, y, 9, 0, Math.PI * 2); c.fillStyle = '#ffd34d'; c.fill(); c.lineWidth = 2; c.strokeStyle = OL; c.stroke();
-      c.shadowBlur = 0; c.fillStyle = '#7a4d00'; c.font = '900 13px Arial'; c.textAlign = 'center'; c.fillText('$', d.x, y + 5); c.textAlign = 'left';
+      c.shadowBlur = SK_BRILLO * 0; c.fillStyle = '#7a4d00'; c.font = '900 13px Arial'; c.textAlign = 'center'; c.fillText('$', d.x, y + 5); c.textAlign = 'left';
       c.restore(); continue;
     }
-    c.save(); c.shadowColor = '#9af7ff'; c.shadowBlur = 14;
+    c.save(); c.shadowColor = '#9af7ff'; c.shadowBlur = SK_BRILLO * 14;
     c.beginPath(); c.moveTo(d.x, y - 9); c.lineTo(d.x + 6, y); c.lineTo(d.x, y + 9); c.lineTo(d.x - 6, y); c.closePath();
     c.fillStyle = '#7ef0ff'; c.fill(); c.lineWidth = 2; c.strokeStyle = OL; c.stroke();
     c.restore();
@@ -244,12 +247,12 @@ function skDibujaArmas(c, S) {
     const d = SK_ARMAS.hacha, cx = SK_HERO_X, cy = S.hy - 30 * SK_ESCALA_HEROE * 0.5;
     for (let k = 0; k < 2; k++) {
       const a = S.giro + k * Math.PI;
-      c.save(); c.translate(cx, cy); c.rotate(a); c.shadowColor = d.color; c.shadowBlur = 12;
+      c.save(); c.translate(cx, cy); c.rotate(a); c.shadowColor = d.color; c.shadowBlur = SK_BRILLO * 12;
       c.beginPath(); c.arc(0, 0, 58, -0.35, 0.35); c.strokeStyle = d.color; c.lineWidth = 6; c.lineCap = 'round'; c.stroke(); c.restore();
     }
   }
-  for (const r of S.anillos) { c.save(); c.globalAlpha = Math.max(0, r.vida / r.max); c.strokeStyle = r.col; c.lineWidth = 6; c.shadowColor = r.col; c.shadowBlur = 18; c.beginPath(); c.arc(r.x, r.y, r.r, 0, Math.PI * 2); c.stroke(); c.restore(); }
-  for (const d of S.destellos) { c.save(); c.globalAlpha = Math.max(0, d.vida / d.max); c.strokeStyle = d.col; c.lineWidth = 6; c.shadowColor = d.col; c.shadowBlur = 20; c.beginPath(); c.moveTo(d.x1, d.y1); c.lineTo(d.x2, d.y2); c.stroke(); c.restore(); }
+  for (const r of S.anillos) { c.save(); c.globalAlpha = Math.max(0, r.vida / r.max); c.strokeStyle = r.col; c.lineWidth = 6; c.shadowColor = r.col; c.shadowBlur = SK_BRILLO * 18; c.beginPath(); c.arc(r.x, r.y, r.r, 0, Math.PI * 2); c.stroke(); c.restore(); }
+  for (const d of S.destellos) { c.save(); c.globalAlpha = Math.max(0, d.vida / d.max); c.strokeStyle = d.col; c.lineWidth = 6; c.shadowColor = d.col; c.shadowBlur = SK_BRILLO * 20; c.beginPath(); c.moveTo(d.x1, d.y1); c.lineTo(d.x2, d.y2); c.stroke(); c.restore(); }
 }
 function skDibujaParticulas(c, S) {
   for (const p of S.parts) {
@@ -307,7 +310,7 @@ function skDibujaMarcador(c, S) {
     c.lineWidth = 3; c.strokeStyle = s.ico; c.stroke();
     const f = s.cd > 0 ? Math.min(1, s.left / s.cd) : 0;
     c.fillStyle = 'rgba(0,0,0,.55)'; c.beginPath(); c.moveTo(x + 31, y + 31); c.arc(x + 31, y + 31, 24, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * f); c.closePath(); c.fill();
-    c.beginPath(); c.arc(x + 31, y + 31, 10, 0, Math.PI * 2); c.fillStyle = s.ico; c.shadowColor = s.ico; c.shadowBlur = 12; c.fill();
+    c.beginPath(); c.arc(x + 31, y + 31, 10, 0, Math.PI * 2); c.fillStyle = s.ico; c.shadowColor = s.ico; c.shadowBlur = SK_BRILLO * 12; c.fill();
     c.restore();
     skTexto(c, s.n, x + 31, y + 78, 11, '#fff', 'center');
   });
@@ -377,15 +380,15 @@ function skDibujaAtaques(c, S) {
     if (a.tipo === 'ola') {
       const g = c.createLinearGradient(a.x - a.w, 0, a.x, 0);
       g.addColorStop(0, 'rgba(126,240,255,0)'); g.addColorStop(0.7, 'rgba(126,240,255,.75)'); g.addColorStop(1, 'rgba(255,255,255,.95)');
-      c.shadowColor = '#7ef0ff'; c.shadowBlur = 24; c.fillStyle = g;
+      c.shadowColor = '#7ef0ff'; c.shadowBlur = SK_BRILLO * 24; c.fillStyle = g;
       skRR(c, a.x - a.w, y - 120, a.w, 150, 18); c.fill();
       c.lineWidth = 4; c.strokeStyle = '#ffffff'; c.beginPath(); c.moveTo(a.x, y - 120); c.lineTo(a.x, y + 30); c.stroke();
     } else {
       for (let k = 0; k < 2; k++) {
         const bx = a.x - a.w + k * 6, by = y - 52 - k * 10;
-        c.shadowColor = '#7ef07a'; c.shadowBlur = 12;
+        c.shadowColor = '#7ef07a'; c.shadowBlur = SK_BRILLO * 12;
         c.fillStyle = '#3fbf5a'; skRR(c, bx, by, a.w - 20, 40, 6); c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
-        c.shadowBlur = 0; c.fillStyle = '#e8ffe0'; c.fillRect(bx + (a.w - 20) / 2 - 6, by + 4, 12, 32);
+        c.shadowBlur = SK_BRILLO * 0; c.fillStyle = '#e8ffe0'; c.fillRect(bx + (a.w - 20) / 2 - 6, by + 4, 12, 32);
         skTexto(c, '$', bx + (a.w - 20) / 2, by + 30, 22, '#1f6b2c', 'center');
       }
     }

@@ -2,10 +2,13 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
-## ANTES DE DESPLEGAR Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rarezas, 8-10-2026)
-- Aplicar en Supabase, en este orden: `servidor/17-rareza-comun.sql` (las funciones de tirar conocen la rareza Común, clave `basic`) y luego `servidor/datos/rumble.sql`, `td.sql` y `survivors.sql` (rarezas y probabilidades nuevas: Común 30 %, Poco común 25 %).
-- Después, `python herramientas/desplegar.py`. Si la web se despliega antes que el SQL, no se rompe nada, pero con cuenta las cosas Comunes no salen en el gashapón.
-- Funciona con las versiones viejas del juego: el aparato saca la rareza de su propio catálogo y no mira la que devuelve el servidor.
+## Para Rafael: aplicar en Supabase las rarezas nuevas (Daniel, 8-10-2026)
+La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rareza Común gris, clave `basic`). Falta el servidor:
+1. Ejecutar `servidor/17-rareza-comun.sql` (las funciones `tirar` y `_rolar_objeto` conocen la rareza Común).
+2. Ejecutar `servidor/datos/rumble.sql`, `td.sql` y `survivors.sql` (rarezas y probabilidades nuevas: Común 30 %, Poco común 25 %, Rara 30 %, Épica 12 %, Legendaria 3 %).
+- Hasta que se haga, no se rompe nada: con cuenta, el gashapón sigue con las rarezas de antes y las cosas Comunes no salen (sin cuenta ya funciona).
+- Vale para las versiones viejas del juego: el aparato saca la rareza de su propio catálogo y no mira la que devuelve el servidor.
+- Cuando esté hecho, borra esta sección y la línea de CLAUDE.md que avisa de ella.
 
 ## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
 ¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).

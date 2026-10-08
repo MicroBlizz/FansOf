@@ -5,8 +5,8 @@
 'use strict';
 // Rarezas con los colores de siempre en los videojuegos (v0.9.62): Común gris, Poco común verde, Rara azul, Épica lila,
 // Legendaria naranja y Mítica roja. [nombre, color claro, color oscuro]. OJO: la clave 'common' es «Poco común» (lo que antes
-// se llamaba Común; así no cambian las partidas guardadas ni el servidor). 'basic' (Común) y 'mythic' (Mítica) aún no tienen nada:
-// la Mítica se reserva para objetos de eventos y torneos. Las cartas de líder usan los colores de la Legendaria.
+// se llamaba Común; así no cambian las partidas guardadas ni el servidor). 'basic' es la Común gris (desde v0.9.63). 'mythic' (Mítica)
+// aún no tiene nada: se reserva para objetos de eventos y torneos. Las cartas de líder usan los colores de la Legendaria.
 const RARITY = { basic: ['Común', '#c3c9d4', '#5f6673'], common: ['Poco común', '#7be04a', '#2f8a1c'], rare: ['Rara', '#5aaeff', '#1d5fc9'],
   epic: ['Épica', '#d08cff', '#6d28c9'], legendary: ['Legendaria', '#ffb547', '#d9620c'], mythic: ['Mítica', '#ff6464', '#b3121f'] };
 const CATALOGO = {

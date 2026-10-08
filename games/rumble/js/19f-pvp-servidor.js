@@ -30,15 +30,16 @@ PVPNET.redes.servidor = {
   nombre: 'Servidor',
   disponible: () => typeof CUENTA !== 'undefined' && CUENTA.activa && !CUENTA.invitado,
   buscar(modo, equipo, aviso) {
-    let activo = true, tic = null, sala = null, error = e => { activo = false; clearTimeout(tic); toast(pvpErrorTexto(e), true); };
+    let activo = true, tic = null, sala = null, error = e => { activo = false; clearTimeout(tic); PVP_SRV.ultimo = 'ERROR ' + String((e && e.message) || e).slice(0, 160); toast(pvpErrorTexto(e), true); if (typeof pvpPinta === 'function') { PVP_UI.busca = null; clearInterval(PVP_UI.tic); pvpPinta(); } };
     const F = FACTIONS[equipo.fac], uid = {};   // el servidor comprueba que cada objeto sea tuyo: se manda el identificador de la copia, no lo que hace
     if (modo === 'salvaje') { const E = SAVE.equip[equipo.fac] || {}; for (const s in E) if (E[s]) uid['eq_' + s] = E[s]; for (const k of equipo.deck.concat(F.leader)) if (SAVE.abEquip[k]) uid['ab_' + k] = SAVE.abEquip[k]; }   // claves libres: ab_<carta> y eq_<ranura>
     const mazo = equipo.deck.concat(F.leader);
     const sondeo = async () => {
       if (!activo) return;
       try {
+        const nom = sondeo.primera ? 'pvp_estado' : 'pvp_buscar';
         const r = await (sondeo.primera ? CUENTA.rpc('pvp_estado', {}) : CUENTA.rpc('pvp_buscar', { p_juego: AJUSTES.id, p_modo: modo, p_mazo: mazo, p_equipo: uid }));
-        sondeo.primera = true;
+        sondeo.primera = true; PVP_SRV.ultimo = nom + ' → ' + JSON.stringify(r).slice(0, 140);   // para ver qué responde el servidor (en desarrollo se enseña en la pantalla de buscar rival)
         if (!activo) return;
         const salaId = r && (r.sala || (r.estado && r.estado.sala));
         if (salaId) { await empieza(r.lado ? r : await CUENTA.rpc('pvp_estado', {})); return; }

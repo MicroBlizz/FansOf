@@ -4,8 +4,10 @@
 'use strict';
 const NEWS = [
   { v: '0.9.93', real: [
-      '<b>LOLA EN EL SALÓN DE LA FAMA</b>: la primera vez que abres el RANKING, Lola te cuenta cómo funciona.'],
-    joke: ['Lola ha intentado comprar el primer puesto del Salón. No la han dejado: el servidor no acepta sobornos. Microblizz está investigando cómo arreglarlo.'] },
+      '<b>LOLA EN EL SALÓN DE LA FAMA</b>: la primera vez que abres el RANKING, Lola te cuenta cómo funciona.',
+      '<b>PVP MÁS ESTABLE</b>: si el móvil se atasca un momento, la partida ya no intenta recuperar el tiempo perdido de golpe. Y si tu rival tiene otra versión del juego, te avisa.',
+      '<b>LOLA TE LO CUENTA</b>: la primera vez que abras el pase nuevo, el pase PvP o el armario, Lola te explica en dos frases cómo va. También si ya habías hecho el tutorial.'],
+    joke: ['Lola ha intentado comprar el primer puesto del Salón. No la han dejado: el servidor no acepta sobornos. Microblizz está investigando cómo arreglarlo.', 'Microblizz ha obligado a Lola a explicar sus pases nuevos. Ha aceptado a cambio de un marco de cartón, que es lo que le dieron al despedirla.'] },
   { v: '0.9.92', real: [
       '<b>PVP SIN TIRONES</b>: las partidas contra otros jugadores iban a saltos; ahora la red tiene más margen (tus cartas salen una fracción de segundo más tarde, pero todo se mueve fluido).',
       '<b>ARMARIO Y PASE NUEVO</b>: marcos para tu avatar y títulos bajo tu nombre, que se ganan en los pases. Hay un pase de temporada nuevo (50 niveles, capítulos de La Gran Compra e hitos) y un pase PvP que sube al jugar partidas PvP. Son solo para lucirse: no dan ventaja.',

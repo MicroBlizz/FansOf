@@ -31,4 +31,13 @@ IDIOMA.add({
   "LOLA EN EL SALÓN DE LA FAMA": "LOLA IN THE HALL OF FAME",
   ": la primera vez que abres el RANKING, Lola te cuenta cómo funciona.": ": the first time you open the RANKING, Lola tells you how it works.",
   "Lola ha intentado comprar el primer puesto del Salón. No la han dejado: el servidor no acepta sobornos. Microblizz está investigando cómo arreglarlo.": "Lola tried to buy first place in the Hall. They didn't let her: the server doesn't take bribes. Microblizz is investigating how to fix that.",
+  "<b>LOLA TE LO CUENTA</b>: la primera vez que abras el pase nuevo, el pase PvP o el armario, Lola te explica en dos frases cómo va. También si ya habías hecho el tutorial.": "<b>LOLA EXPLAINS IT</b>: the first time you open the new pass, the PvP pass or the wardrobe, Lola tells you how it works in two sentences. Even if you had already done the tutorial.",
+  "Microblizz ha obligado a Lola a explicar sus pases nuevos. Ha aceptado a cambio de un marco de cartón, que es lo que le dieron al despedirla.": "Microblizz forced Lola to explain its new passes. She agreed in exchange for a cardboard frame, which is what they gave her when they fired her.",
+  // las novedades se traducen por trozos (lo que va en negrita va aparte)
+  "LOLA TE LO CUENTA": "LOLA EXPLAINS IT",
+  ": la primera vez que abras el pase nuevo, el pase PvP o el armario, Lola te explica en dos frases cómo va. También si ya habías hecho el tutorial.": ": the first time you open the new pass, the PvP pass or the wardrobe, Lola tells you how it works in two sentences. Even if you had already done the tutorial.",
+  "ARMARIO Y PASE NUEVO": "WARDROBE AND NEW PASS",
+  ": marcos para tu avatar y títulos bajo tu nombre, que se ganan en los pases. Hay un pase de temporada nuevo (50 niveles, capítulos de La Gran Compra e hitos) y un pase PvP que sube al jugar partidas PvP. Son solo para lucirse: no dan ventaja.": ": frames for your avatar and titles under your name, earned in the passes. There's a new season pass (50 levels, chapters of The Big Buyout and milestones) and a PvP pass that goes up by playing PvP matches. They're just for show: no advantage.",
+  "PVP MÁS ESTABLE": "MORE STABLE PVP",
+  ": si el móvil se atasca un momento, la partida ya no intenta recuperar el tiempo perdido de golpe. Y si tu rival tiene otra versión del juego, te avisa.": ": if your phone stalls for a moment, the match no longer tries to catch up on the lost time all at once. And if your rival has a different version of the game, it tells you.",
 });

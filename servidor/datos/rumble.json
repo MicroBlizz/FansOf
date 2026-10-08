@@ -4227,6 +4227,7 @@
    }
   ],
   "pase": {
+   "fin": "2026-11-22",
    "free": [
     {
      "gems": 0,
@@ -4254,7 +4255,7 @@
     },
     {
      "gems": 0,
-     "gold": 150,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4286,11 +4287,65 @@
      "gems": 0,
      "gold": 0,
      "item": null,
-     "tickets": 1
+     "tickets": 0
     },
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 2
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4320,43 +4375,7 @@
     },
     {
      "gems": 0,
-     "gold": 150,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 150,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 15,
      "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 150,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 1
-    },
-    {
-     "gems": 15,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 150,
      "item": null,
      "tickets": 0
     },
@@ -4385,6 +4404,24 @@
      "tickets": 0
     },
     {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 3
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
      "gems": 15,
      "gold": 0,
      "item": null,
@@ -4393,6 +4430,90 @@
     {
      "gems": 0,
      "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4409,7 +4530,8 @@
      "tickets": 0
     }
    ],
-   "levels": 30,
+   "id": "t1b",
+   "levels": 50,
    "paid": [
     {
      "gems": 0,
@@ -4439,67 +4561,7 @@
      "gems": 0,
      "gold": 0,
      "item": null,
-     "tickets": 2
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
      "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 2
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 2
     },
     {
      "gems": 30,
@@ -4529,7 +4591,67 @@
      "gems": 0,
      "gold": 0,
      "item": null,
-     "tickets": 2
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 3
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
     },
     {
      "gems": 0,
@@ -4559,7 +4681,127 @@
      "gems": 0,
      "gold": 0,
      "item": null,
-     "tickets": 2
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 4
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
     },
     {
      "gems": 30,
@@ -4594,7 +4836,319 @@
    ],
    "q": 0.9,
    "xpLose": 40,
-   "xpPer": 400,
+   "xpPer": 800,
+   "xpWin": 100
+  },
+  "pasePvp": {
+   "fin": "2026-11-22",
+   "free": [
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 2
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 3
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    }
+   ],
+   "id": "p1",
+   "levels": 30,
+   "paid": [
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    }
+   ],
+   "xpLose": 40,
+   "xpPer": 300,
    "xpWin": 100
   },
   "pay": {
@@ -4662,6 +5216,11 @@
   },
   "compra-pase": {
    "calcula": "pase-premium",
+   "dia": {},
+   "vez": {}
+  },
+  "compra-pase-pvp": {
+   "calcula": "pase-pvp-premium",
    "dia": {},
    "vez": {}
   },
@@ -4737,7 +5296,8 @@
    "calcula": [
     "logros",
     "login",
-    "pase"
+    "pase",
+    "pase-pvp"
    ],
    "dia": {
     "gems": 40000,
@@ -4790,5 +5350,5 @@
    }
   }
  },
- "version": 18
+ "version": 19
 }

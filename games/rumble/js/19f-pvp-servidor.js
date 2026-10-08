@@ -7,7 +7,7 @@ const PVP_SRV = { turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuá
 
 const pvpErrorTexto = e => {
   const m = String((e && e.message) || e);
-  return /cuenta_no_vinculada/.test(m) ? 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)' : /sin_sesion/.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego'
+  return /cuenta_no_vinculada/.test(m) ? 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)' : /sin_sesion|refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego (una cuenta por navegador o perfil)'
     : /mazo_no_valido/.test(m) ? 'Tu mazo no vale para el PvP' : /objeto_no_es_tuyo/.test(m) ? 'Llevas un objeto que no está en tu cuenta' : /sala_no_valida/.test(m) ? 'La sala ya no existe'
     : /demasiadas_jugadas/.test(m) ? 'Demasiadas jugadas seguidas' : 'Necesitas conexión para jugar PvP';
 };

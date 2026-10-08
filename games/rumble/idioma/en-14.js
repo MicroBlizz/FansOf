@@ -26,4 +26,9 @@ IDIOMA.add({
   "Microblizz ha estrenado un armario para que los perdedores del PvP puedan perder con estilo. El salto a la 0.9.92 incluye muchas cosas del taller que no caben en una nota.": "Microblizz has opened a wardrobe so PvP losers can lose in style. The jump to 0.9.92 includes lots of workshop stuff that doesn't fit in one note.",
   // el consejo de Lola (11b-consejos.js), por trozos: el título en negrita y el resto aparte
   ": los mejores fans del mundo en estrellas de campaña y en poder. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.": ": the best fans in the world in campaign stars and power. The server counts everything, so here you can't pay to climb… for now.",
+  // novedades 0.9.93
+  "<b>LOLA EN EL SALÓN DE LA FAMA</b>: la primera vez que abres el RANKING, Lola te cuenta cómo funciona.": "<b>LOLA IN THE HALL OF FAME</b>: the first time you open the RANKING, Lola tells you how it works.",
+  "LOLA EN EL SALÓN DE LA FAMA": "LOLA IN THE HALL OF FAME",
+  ": la primera vez que abres el RANKING, Lola te cuenta cómo funciona.": ": the first time you open the RANKING, Lola tells you how it works.",
+  "Lola ha intentado comprar el primer puesto del Salón. No la han dejado: el servidor no acepta sobornos. Microblizz está investigando cómo arreglarlo.": "Lola tried to buy first place in the Hall. They didn't let her: the server doesn't take bribes. Microblizz is investigating how to fix that.",
 });

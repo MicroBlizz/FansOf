@@ -24,5 +24,7 @@ IDIOMA.add({
   "Las reglas del juego, juego limpio incluido.": "The rules of the game, fair play included.",
   "© 2026 Arkioner y Daniel · MicroBlizz · Todos los derechos reservados": "© 2026 Arkioner and Daniel · MicroBlizz · All rights reserved",
   "Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999), con cámaras fijas y control tanque. Repara la red de fibra sin perder la Lucidez.": "A demo from another project of ours. Survival horror in the Albright Memorial Hospital (Granollers, 1999), with fixed cameras and tank controls. Repair the fibre network without losing your Lucidity.",
+  "FANS OF RUMBLE: TÁCTICAS": "FANS OF RUMBLE: TACTICS",
+  "El nuevo (prototipo). Combate por turnos con barras de tiempo, como los JRPG clásicos: CrazyBunny, StreamKing y los demás líderes contra los jefes de Microblizz, hasta llegar al CEO.": "The new one (prototype). Turn-based combat with time bars, like classic JRPGs: CrazyBunny, StreamKing and the other leaders against the Microblizz bosses, all the way to the CEO.",
   "Español": "Español"
 });

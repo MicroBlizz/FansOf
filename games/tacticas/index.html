@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fans of Rumble: Tácticas</title>
+<meta name="description" content="Fans of Rumble: Tácticas. Combate por turnos con barras de tiempo: los líderes de Fans Of contra Microblizz. Prototipo.">
+<meta name="theme-color" content="#150b21">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="apple-touch-icon" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="css/tacticas.css?v=0.1.0">
+<!-- Prototipo: no usa NUCLEO (tiene su propia partida guardada). Carga de core solo el arte, la música y los efectos. VERSIÓN: el ?v= de los scripts (0.1.0). -->
+</head>
+<body>
+<div id="app">
+
+  <!-- TÍTULO -->
+  <section class="pantalla" id="p-titulo">
+    <div class="titulo-caja">
+      <p class="ante">Microblizz ha comprado tus juegos favoritos</p>
+      <h1 class="logo ol">FANS OF<br><span>RUMBLE</span></h1>
+      <p class="sub ol">TÁCTICAS</p>
+      <canvas id="cv-titulo" aria-hidden="true"></canvas>
+      <button class="btn grande naranja ol" id="b-jugar">JUGAR</button>
+      <p class="nota">Combate por turnos · Prototipo 0.1</p>
+    </div>
+  </section>
+
+  <!-- MAPA -->
+  <section class="pantalla" id="p-mapa" hidden>
+    <header class="barra">
+      <div class="cartera" id="cartera"></div>
+      <button class="btn-icono" id="b-opciones" aria-label="Opciones">⚙</button>
+    </header>
+    <nav class="mundos" id="mundos" aria-label="Mundos"></nav>
+    <div class="mundo-info">
+      <h2 class="ol" id="mundo-nombre"></h2>
+      <p id="mundo-historia"></p>
+    </div>
+    <ol class="camino" id="camino"></ol>
+    <div class="grupo-mini" id="grupo-mini"></div>
+    <div class="acciones-mapa">
+      <button class="btn violeta ol" id="b-grupo">GRUPO</button>
+      <button class="btn verde ol" id="b-cafe">CAFÉ</button>
+      <button class="btn dorado ol" id="b-tienda">TIENDA</button>
+    </div>
+  </section>
+
+  <!-- GRUPO -->
+  <section class="pantalla" id="p-grupo" hidden>
+    <header class="barra">
+      <button class="btn-volver" id="b-grupo-volver">‹ Mapa</button>
+      <h2 class="ol">TU GRUPO</h2>
+      <div class="cartera" data-cartera></div>
+    </header>
+    <p class="ayuda">Elige hasta 4 héroes. Toca uno para ver sus técnicas.</p>
+    <div class="heroes" id="heroes"></div>
+    <div class="ficha" id="ficha" hidden></div>
+  </section>
+
+  <!-- TIENDA -->
+  <section class="pantalla" id="p-tienda" hidden>
+    <header class="barra">
+      <button class="btn-volver" id="b-tienda-volver">‹ Mapa</button>
+      <h2 class="ol">TIENDA</h2>
+      <div class="cartera" data-cartera></div>
+    </header>
+    <div class="pestanas" role="tablist">
+      <button class="pest" role="tab" data-pest="objetos">Objetos</button>
+      <button class="pest" role="tab" data-pest="gemas">Gemas</button>
+      <button class="pest" role="tab" data-pest="ofertas">Ofertas</button>
+    </div>
+    <div class="tienda" id="tienda"></div>
+  </section>
+
+  <!-- BATALLA -->
+  <section class="pantalla" id="p-batalla" hidden>
+    <div class="escena">
+      <canvas id="cv" aria-label="Combate"></canvas>
+      <div class="cartel ol" id="cartel" role="status" aria-live="polite" hidden></div>
+      <button class="btn-icono pausa" id="b-pausa" aria-label="Pausa">II</button>
+    </div>
+    <div class="panel">
+      <div class="filas" id="filas"></div>
+      <div class="menu" id="menu" hidden></div>
+    </div>
+  </section>
+
+  <!-- VENTANAS -->
+  <div class="velo" id="velo" hidden>
+    <div class="ventana" id="ventana" role="dialog" aria-modal="true"></div>
+  </div>
+  <div class="anuncio" id="anuncio" hidden>
+    <p class="anuncio-et">ANUNCIO · SIMULADO</p>
+    <div class="anuncio-cuerpo">
+      <p class="ol">Aquí saldría un anuncio de verdad</p>
+      <p>En la versión publicada esto lo pone AdMob. Ahora solo esperamos unos segundos.</p>
+    </div>
+    <p class="anuncio-cuenta ol" id="anuncio-cuenta">5</p>
+  </div>
+  <div class="aviso" id="aviso" role="status" aria-live="polite" hidden></div>
+</div>
+
+<!-- de Fans Of: utilidades, sonido, facciones, arte y canciones (el tamaño de los pies sale del Rumble) -->
+<script src="../../core/js/sistema/utiles.js?v=0.1.0"></script>
+<script src="../../core/js/sistema/sonido.js?v=0.1.0"></script>
+<script src="../../core/js/serie/config.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/animales.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/nomuertos.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/streamers.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/heroes.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/ciber.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/memes.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/gamer.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/olvidados.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/pop.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/microblizz.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/phony.js?v=0.1.0"></script>
+<script src="../../core/js/serie/facciones/cierre.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/base.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/animales.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/nomuertos.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/streamers.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/heroes.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/ciber.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/memes.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/gamer.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/olvidados.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/pop.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/microblizz.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/phony.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/sprites.js?v=0.1.0"></script>
+<script src="../../core/js/serie/arte/fondos.js?v=0.1.0"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.0"></script>
+<script src="../../core/js/serie/iconos.js?v=0.1.0"></script>
+<script src="../../games/rumble/js/01b-unidades.js?v=0.1.0"></script>
+<!-- del juego -->
+<script src="js/datos.js?v=0.1.0"></script>
+<script src="js/escena.js?v=0.1.0"></script>
+<script src="js/combate.js?v=0.1.0"></script>
+<script src="js/fin.js?v=0.1.0"></script>
+<script src="js/pantallas.js?v=0.1.0"></script>
+</body>
+</html>

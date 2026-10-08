@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 10 KB
+- `index.html` · 11 KB
 - `sw.js` · <1 KB
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
@@ -10,7 +10,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/menus-extra.css` · 21 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
-- `core/idioma/en-extra.js` · 15 KB
+- `core/idioma/en-extra.js` · 16 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 9 KB
 - `core/idioma/en-pantallas-3.js` · 9 KB
@@ -18,7 +18,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-pantallas-5.js` · 9 KB
 - `core/idioma/en-plantillas-2.js` · 8 KB
 - `core/idioma/en-plantillas.js` · 11 KB
-- `core/idioma/en-raiz.js` · 2 KB
+- `core/idioma/en-raiz.js` · 3 KB
 - `core/idioma/en-serie-1.js` · 9 KB
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
@@ -61,7 +61,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/biblioteca.js` · 7 KB · bibTab, BIB_FILTROS, openBib, bibCopias, bibDesc, bibLista, buildBib, BIB_MITICAS, bibMiticas, bibMitica, bibIcono, bibCarta, bibFicha
 - `core/js/sistema/coleccion.js` · 12 KB · misFacciones, collFac, buildColl, collRow, wornSet, slotTile, descOf, rangeTxt, qBadge, sortInv, wearer, unequip, pickRowHtml, openList, pickCtx, openPick, chooseFor, equipAll
 - `core/js/sistema/cuenta-pantalla.js` · 5 KB
-- `core/js/sistema/cuenta.js` · 13 KB · CUENTA
+- `core/js/sistema/cuenta.js` · 16 KB · CUENTA
 - `core/js/sistema/desarrollo.js` · 8 KB
 - `core/js/sistema/economia-sombra.js` · 8 KB · ECO_SOMBRA
 - `core/js/sistema/economia.js` · 6 KB · TOPES_COMUNES, ECO
@@ -78,6 +78,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
+- `demos/terminal-shock/index.html` · 75 KB
 - `games/rumble/index.html` · 35 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 7 KB
@@ -156,6 +157,13 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/novedades.js` · 1 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
+- `games/tacticas/index.html` · 7 KB
+- `games/tacticas/css/tacticas.css` · 16 KB
+- `games/tacticas/js/combate.js` · 22 KB · POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, menuEl, abrirMenu, cerrarMenu, elegirObjetivo, decidir, pintarFilas, actualizarFilas, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder … (+5)
+- `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
+- `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, FONDOS, SUELO, fondoDe, dibujar, rrFill, flecha, pintarLuchador
+- `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
+- `games/tacticas/js/pantallas.js` · 20 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones
 - `games/td/index.html` · 28 KB
 - `games/td/sw.js` · <1 KB
 - `games/td/css/td.css` · 17 KB

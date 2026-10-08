@@ -2,6 +2,21 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
+## Para Rafael: validar misiones con premio propio (Rumble 0.9.67, Daniel, 8-10-2026)
+Rafael, por favor valida esto antes de desplegar. Todavía no está publicado: la web sigue en 0.9.66.
+1. Qué cambia en Rumble: 6 misiones diarias al día (la fija «Completa 5 misiones diarias» más 5 al azar), 8 diarias nuevas (Arena y otras), 2 semanales nuevas («Completa 7 veces…» y «Gana 10 partidas en la Arena»), premios propios por misión (150 oro / 25 gemas / 40 pase la de 5 diarias; 120 / 15 / 30 la de Arena) y logros de Fácil.
+2. Qué aplicar, en este orden:
+   a) Daniel regenera los datos en su PC: `python herramientas/subir_datos.py rumble` (cambian servidor/datos/rumble.json y rumble.sql).
+   b) Supabase: aplicar servidor/18-misiones-premio-propio.sql (solo cambia la rama de misiones de _evento; el resto queda igual).
+   c) Supabase: aplicar servidor/datos/rumble.sql (misiones, límite de 6 al día, premios propios y logros de Fácil).
+3. Qué probar con una cuenta de prueba:
+   - Cobrar «Completa 5 misiones diarias» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
+   - Se pueden cobrar 6 misiones diarias; la séptima se rechaza.
+   - Una misión inventada o que no está en la lista se rechaza.
+   - Las semanales nuevas aceptan su cobro.
+   - Los logros nuevos de Fácil se cobran una sola vez.
+4. Si algo falla, avisa a Daniel y no toques la versión web.
+
 ## Para Rafael: aplicar en Supabase las rarezas nuevas (Daniel, 8-10-2026)
 La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rareza Común gris, clave `basic`). Falta el servidor:
 1. Ejecutar `servidor/17-rareza-comun.sql` (las funciones `tirar` y `_rolar_objeto` conocen la rareza Común).

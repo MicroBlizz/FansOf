@@ -47,14 +47,15 @@ function pvpInicio(o) {
   for (let k = 0; k < PVP.D - 1; k++) pvpMandar(k, []);   // los primeros turnos van vacíos: nadie ha podido jugar aún
   return true;
 }
-function pvpFin() { PVP.on = false; PVP.red = null; PVP.estado = 'fuera'; }
+function pvpFin() { if (PVP.net && PVP.net.parar) PVP.net.parar(); PVP.net = null; PVP.on = false; PVP.red = null; PVP.estado = 'fuera'; }
 function pvpEstado(e) { if (PVP.estado === e) return; PVP.estado = e; if (PVP.alEstado) PVP.alEstado(e, PVP); }
 
 /* ---------- jugadas ---------- */
 // el jugador echa una carta: sale en el turno actual + PVP_RETARDO, en las dos máquinas
 function pvpJugar(slot, key, x, y) {
   const turno = Math.floor(SIM.tick / PVP.T) + PVP.D;
-  const lista = PVP.mias.get(turno) || []; lista.push({ team: PVP.seat, slot, key, x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 }); PVP.mias.set(turno, lista);
+  const lista = PVP.mias.get(turno) || []; if (lista.length >= 4) return -1;   // como mucho 4 jugadas por turno (0,2 s): el mensaje al servidor es corto
+  lista.push({ team: PVP.seat, slot, key, x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 }); PVP.mias.set(turno, lista);
   return turno;
 }
 function pvpMandar(turno, cmds, tick, h) {

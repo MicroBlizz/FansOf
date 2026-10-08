@@ -68,3 +68,10 @@
 .ar-deck canvas { width: 24px; height: 22px; }
 .ar-btns { display: flex; flex-direction: column; gap: 4px; flex: none; }
 .ar-fac .chip-btn { font-family: var(--font-display); font-size: 13px; padding: 4px 8px 2px; text-align: center; }
+/* PvP: clasificación */
+#pvp-clasif { width: 100%; max-height: 180px; overflow-y: auto; }
+.pvp-fila { display: flex; align-items: center; gap: 8px; padding: 4px 8px; margin: 2px 0; border-radius: 8px; background: rgba(255, 255, 255, .06); font-size: 13px; }
+.pvp-fila b { width: 22px; text-align: right; }
+.pvp-fila span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pvp-fila i { font-style: normal; opacity: .8; }
+.pvp-fila.yo { background: rgba(255, 203, 61, .25); }

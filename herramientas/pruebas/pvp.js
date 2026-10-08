@@ -42,7 +42,71 @@ async function pruebaPvp(raiz, duerme) {
     A.f.remove(); B.f.remove();
     return r;
   }
+  // un servidor de mentira que habla el contrato de verdad (PLAN-CUENTAS.md, punto 9): cola, sala, un RPC por turno y cierre. Dos jugadores, sin trampas ni esperas
+  function servidorFalso() {
+    const S = { cola: null, sala: null, lados: { a: { items: [], huellas: {}, cierre: null }, b: { items: [], huellas: {}, cierre: null } }, llamadas: 0, desync: false, semilla: 777001 };
+    const clon = x => JSON.parse(JSON.stringify(x));
+    return { S, para(quien) {   // la función rpc de un jugador
+      return async (nombre, a) => {
+        S.llamadas++; await new Promise(r => setTimeout(r, 5 + Math.random() * 30));
+        const lado = S.sala ? (S.sala.a === quien ? 'a' : 'b') : null;
+        if (nombre === 'pvp_buscar') {
+          if (!S.cola) { S.cola = { quien, mazo: a.p_mazo }; return { espera: true }; }
+          if (S.cola.quien === quien) return { espera: true };
+          S.sala = { id: 'sala1', a: S.cola.quien, b: quien, mazoA: S.cola.mazo, mazoB: a.p_mazo }; S.cola = null; return { sala: 'sala1' };
+        }
+        if (nombre === 'pvp_estado') {
+          if (!S.sala) return { espera: true };
+          const m = l => l.map(c => ({ c, n: 3, st: 0 }));
+          return { sala: S.sala.id, juego: 'rumble', modo: 'estandar', semilla: S.semilla, lado: S.sala.a === quien ? 'a' : 'b', mazo_a: m(S.sala.mazoA), mazo_b: m(S.sala.mazoB), equipo_a: [], equipo_b: [] };
+        }
+        if (nombre === 'pvp_salir') { if (S.cola && S.cola.quien === quien) S.cola = null; return {}; }
+        if (nombre === 'pvp_jugar') {
+          const yo = S.lados[lado], otro = S.lados[lado === 'a' ? 'b' : 'a'];
+          for (const it of a.p_jugadas) { if (JSON.stringify(it).length >= 200) throw new Error('demasiado_largo'); yo.items.push({ s: yo.items.length + 1, d: clon(it) }); }
+          if (a.p_tick_huella != null) { yo.huellas[a.p_tick_huella] = a.p_huella; if (otro.huellas[a.p_tick_huella] != null && otro.huellas[a.p_tick_huella] !== a.p_huella) S.desync = true; }
+          return { rival: otro.items.filter(x => x.s > a.p_desde).map(clon), estado: 'jugando', desync: S.desync };
+        }
+        if (nombre === 'pvp_cerrar') {
+          S.lados[lado].cierre = a.p_ganador; const otro = S.lados[lado === 'a' ? 'b' : 'a'];
+          if (otro.cierre == null) return { estado: 'esperando' };
+          return otro.cierre === a.p_ganador ? { estado: 'cerrada', gano: a.p_ganador === lado, puntos: 1000 + (a.p_ganador === lado ? 25 : -25) } : { estado: 'discutida' };
+        }
+        throw new Error('rpc_desconocido: ' + nombre);
+      };
+    } };
+  }
+  async function partidaServidor() {
+    const A = await abre(), B = await abre(), a = A.w, b = B.w, srv = servidorFalso();
+    const prepara = (w, quien) => { w.eval("CUENTA.activa = true"); w.eval('window.__CU = CUENTA'); w.__CU.rpc = srv.para(quien); w.eval('PVP_SRV.cierreMs = 400'); };
+    prepara(a, 'ana'); prepara(b, 'beto');
+    const res = { a: {}, b: {} };
+    for (const [w, k] of [[a, 'a'], [b, 'b']]) {
+      w.eval('PVPNET').redes.servidor.buscar('estandar', w.pvpEquipo('estandar'), r => { res[k].r = r; w.pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, conservar: true, tiempo: 20, alEstado: () => {} }); w.__X.PVP.net = r; });
+    }
+    const t0 = Date.now(); let juega = 0;
+    const reloj = setInterval(() => {
+      for (const w of [a, b]) { try { w.frame(w.performance.now()); } catch (e) { fallos.push('servidor: error en el bucle: ' + (e && e.message)); } }
+      if (Date.now() - t0 > (juega + 1) * 1500) { juega++; for (const w of [a, b]) { if (!w.__X || w.__X.G.state !== 'play') continue; const t = w.__X.PVP.seat, k = w.__X.slotKey(0); if (k && !w.__X.isLeader(k) && w.__X.S[t].chaos >= w.__X.cardDef(k).cost) w.tryPlayerDeploy(0, k, 120 + (juega * 37) % 300, 540); } }
+    }, 16);
+    for (const w of [a, b]) w.eval("window.__X = { get PVP() { return PVP; }, get G() { return G; }, get S() { return S; }, get SIM() { return SIM; }, isLeader, cardDef, slotKey }");
+    try { await espera(() => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state), 90000, 'partida con servidor'); } catch (e) { const d = w => { try { return `${w.__X.G.state}/${w.__X.PVP.estado}/${w.__X.PVP.on}/${w.__X.SIM.tick}/${w.__X.PVP.error}/toast:${w.document.getElementById("toast").textContent}`; } catch (x) { return 'sin __X'; } }; throw new Error(`${e.message} · A ${d(a)} · B ${d(b)} · llamadas ${srv.S.llamadas} · sala ${!!srv.S.sala} · res ${!!res.a.r}/${!!res.b.r}`); } finally { clearInterval(reloj); }
+    const cierres = {};
+    for (const [w, k] of [[a, 'a'], [b, 'b']]) w.__X.PVP.net.cerrar(w.__X.G.winner, w.__X.PVP.fin.h, r => { cierres[k] = r; });
+    await espera(() => cierres.a && cierres.a.estado === 'cerrada' && cierres.b && cierres.b.estado === 'cerrada', 20000, 'cierre');
+    const ha = a.__X.PVP.hashes, hb = b.__X.PVP.hashes, n = Math.min(ha.length, hb.length);
+    const r = { n, iguales: ha.slice(0, n).every((x, i) => x[1] === hb[i][1]), estados: [a.__X.PVP.estado, b.__X.PVP.estado], seats: [res.a.r && res.a.r.seat, res.b.r && res.b.r.seat], cierres, llamadas: srv.S.llamadas, desync: srv.S.desync, fin: [a.__X.PVP.fin, b.__X.PVP.fin] };
+    A.f.remove(); B.f.remove();
+    return r;
+  }
   try {
+    // 0) con el servidor (de mentira): se empareja, juega y cierra con puntos
+    const sv = await partidaServidor();
+    ap('0 · servidor simulado', `${sv.n} huellas, ${sv.llamadas} llamadas al servidor, lados ${sv.seats.join('/')}, estados ${sv.estados.join('/')}, cierres ${JSON.stringify(sv.cierres)}`);
+    if (sv.n < 20) fallos.push('servidor: se compararon muy pocas huellas'); if (!sv.iguales) fallos.push('servidor: las huellas no coinciden'); if (sv.desync) fallos.push('servidor: el servidor ha visto una desincronización');
+    if (sv.seats.join() !== 'p,e') fallos.push('servidor: los lados no son p/e: ' + sv.seats.join('/'));
+    if (JSON.stringify(sv.fin[0]) !== JSON.stringify(sv.fin[1])) fallos.push('servidor: el final no coincide');
+    if (!(sv.cierres.a && sv.cierres.a.puntos != null && sv.cierres.b && sv.cierres.b.puntos != null)) fallos.push('servidor: el cierre no da puntos a los dos');
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);

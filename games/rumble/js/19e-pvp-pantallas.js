@@ -5,9 +5,25 @@ const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   //
 const pvpDisponible = () => PVP_ABIERTO || (typeof NUCLEO !== 'undefined' && !!NUCLEO.desarrollo);
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
 
+// qué red se usa: la del servidor si hay cuenta vinculada; en desarrollo, sin cuenta (o con localStorage 'fansof-pvp-red' = 'local'), la de pruebas entre dos pestañas
+function pvpRed() {
+  let local = false; try { local = localStorage.getItem('fansof-pvp-red') === 'local'; } catch (e) { /* sin guardar */ }
+  const srv = PVPNET.redes.servidor.disponible();
+  if (srv && !local) return 'servidor';
+  if (NUCLEO.desarrollo) return 'local';
+  return 'servidor';   // sin cuenta vinculada: la búsqueda dirá qué falta
+}
 function pvpPantalla() {
   if (!pvpDisponible()) return;
-  PVP_UI.modo = PVP_UI.modo || 'estandar'; pvpPara(); show('scr-pvp'); pvpPinta();
+  PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
+}
+async function pvpClasificacion() {
+  const caja = $('#pvp-clasif'); caja.innerHTML = '';
+  if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
+  try {
+    const l = await PVPNET.redes.servidor.clasificacion(PVP_UI.modo);
+    caja.innerHTML = `<div class="ar-lbl ol">CLASIFICACIÓN · ${esc(PVP_MODOS[PVP_UI.modo][0].toUpperCase())}</div>` + (l || []).slice(0, 20).map((r, i) => `<div class="pvp-fila${r.yo ? ' yo' : ''}"><b>${i + 1}</b><span>${esc(r.nombre)}</span><i>${fmt(r.puntos)} · ${fmt(r.jugadas)} partidas</i></div>`).join('') || '<p class="quote">Todavía no hay nadie en la clasificación.</p>';
+  } catch (e) { /* sin conexión: se queda sin lista */ }
 }
 function pvpPinta() {
   const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo);
@@ -18,19 +34,20 @@ function pvpPinta() {
   for (const cv of document.querySelectorAll('#pvp-equipo canvas[data-pvd]')) drawArt(cv, cv.dataset.pvd, 24, 22);
   const b = $('#btn-pvp-buscar'); b.textContent = buscando ? 'CANCELAR' : 'BUSCAR RIVAL'; b.className = (buscando ? 'btn-ghost' : 'btn-big') + ' ol';
   $('#btn-pvp-ia').hidden = !(buscando && (Date.now() - PVP_UI.t0) / 1000 >= PVP_UI.ia);
-  if (!buscando && !$('#pvp-estado').dataset.fijo) $('#pvp-estado').textContent = `Red: ${PVPNET.redes[PVPNET.actual].nombre}`;
+  if (!buscando && !$('#pvp-estado').dataset.fijo) $('#pvp-estado').textContent = NUCLEO.desarrollo ? `Red: ${PVPNET.redes[PVPNET.actual].nombre}` : '';
 }
 function pvpPara() { if (PVP_UI.busca) { PVP_UI.busca.cancelar(); PVP_UI.busca = null; } clearInterval(PVP_UI.tic); }
 function pvpBuscar() {
   if (PVP_UI.busca) { pvpPara(); delete $('#pvp-estado').dataset.fijo; pvpPinta(); return; }
-  const modo = PVP_UI.modo; delete $('#pvp-estado').dataset.fijo; PVP_UI.t0 = Date.now(); play('select');
+  const modo = PVP_UI.modo; delete $('#pvp-estado').dataset.fijo; PVP_UI.t0 = Date.now(); play('select'); PVPNET.actual = pvpRed();
+  if (PVPNET.actual === 'servidor' && !PVPNET.redes.servidor.disponible()) { toast(typeof CUENTA === 'undefined' || !CUENTA.activa ? 'El PvP necesita conexión' : 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)', true); return; }
   PVP_UI.busca = PVPNET.redes[PVPNET.actual].buscar(modo, pvpEquipo(modo), pvpEncontrado);
   const dibuja = () => { const s = Math.floor((Date.now() - PVP_UI.t0) / 1000); $('#pvp-estado').textContent = s >= PVP_UI.ia ? 'No hay rivales ahora. ¿Juegas contra la IA?' : `Buscando rival… ${s} s`; $('#btn-pvp-ia').hidden = s < PVP_UI.ia; };
   dibuja(); PVP_UI.tic = setInterval(dibuja, 500); pvpPinta();
 }
 function pvpEncontrado(r) {
   PVP_UI.busca = null; clearInterval(PVP_UI.tic);
-  PVP.rival = r.rival.nombre; PVP.modo = PVP_UI.modo;
+  PVP.rival = r.rival.nombre; PVP.modo = PVP_UI.modo; PVP.net = r; PVP.puntos = null;
   toast(`Rival: ${r.rival.nombre}`);
   if (!pvpInicio({ seat: r.seat, seed: r.seed, equipos: r.equipos, red: r.red, conservar: true, alEstado: pvpAlEstado })) { toast('No se ha podido empezar la partida'); PVP_UI.modo = PVP_UI.modo; pvpFin(); goHome(); }
 }
@@ -65,7 +82,11 @@ function pvpShowEnd() {
     abandono: gano ? `${rv} se ha ido de la partida.` : 'Te has rendido.',
     desync: 'Las dos copias de la partida no coinciden. No cuenta para nadie.', error: 'No se ha podido seguir con la partida. No cuenta para nadie.',
   }[motivo] || '';
-  $('#end-rewards').innerHTML = `<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>`;
+  const rw = $('#end-rewards'); rw.innerHTML = '';
+  if (PVP.net && PVP.net.cerrar && G.winner && PVP.fin && motivo !== 'desync' && motivo !== 'error') {   // el servidor decide los puntos
+    rw.innerHTML = '<div class="rw-xp">Esperando al servidor…</div>';
+    PVP.net.cerrar(G.winner, PVP.fin.h, r => { if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; });
+  } else rw.innerHTML = PVP.net && PVP.net.cerrar ? '<div class="rw-xp">Esta partida no cuenta para nadie.</div>' : '<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>';
   $('#end-pass').innerHTML = ''; $('#end-quote').textContent = '';
   $('#st-cards').textContent = S[mi].deployed; $('#st-kills').textContent = S[mi].kills; $('#st-chaos').textContent = Math.round(S[mi].spent);
   $('#btn-next').hidden = true; $('#btn-share').hidden = true; $('#btn-again').textContent = 'OTRO RIVAL'; $('#btn-again').className = 'btn-big ol';

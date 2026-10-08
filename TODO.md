@@ -42,11 +42,11 @@ La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rar
 
 ## Cuentas (publicado el 6-10-2026: Rumble 0.9.30, TD 0.13.0)
 - [x] Páginas de privacidad y condiciones (ES/EN) en /privacidad/ y /condiciones/, enlazadas desde Opciones y la biblioteca.  Contacto: fansofmicroblizz@gmail.com.
-- [ ] Botón de Google: el código ya está (sale solo cuando Supabase tiene Google activado). Falta que el dueño cree la credencial OAuth en Google Cloud, active Google y «Allow manual linking» en Supabase (pasos en el hilo «Cuenta del jugador»).
+- [x] Botón de Google: activo desde el 8-10-2026 (Google y manual linking en Supabase); probado de principio a fin.
 - [x] Correos de Supabase en español: plantillas aplicadas en el panel el 8-10-2026 (fuente: servidor/correos/).
 - [ ] Correo: Gmail vale para empezar (~500 al día). Con muchos jugadores, pasar a un dominio propio (por ejemplo con Resend).
 - [ ] Herramientas en el panel DEV: estado de la nube, forzar subida/bajada, simular sin conexión.
-- [ ] Limpieza de invitados: servidor/16-limpiar-invitados.sql escrito (diaria, 60 días); falta que el dueño lo pegue en el SQL Editor. El usuario de prueba con la partida «prueba» se borra a mano.
+- [x] Limpieza de invitados: aplicada el 8-10-2026 (servidor/16-limpiar-invitados.sql, diaria 03:30 UTC, 60 días). Sin cuentas que borrar todavía. El usuario de prueba con la partida «prueba» se borra a mano.
 - [ ] App de Android (Capacitor): añadir su dirección a las Redirect URLs de Supabase para que funcione el enlace del email.
 - [ ] Probar el modo sin conexión con la cuenta (python herramientas/servidor.py --con-sw).
 

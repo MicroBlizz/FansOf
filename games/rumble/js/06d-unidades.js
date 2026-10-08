@@ -175,60 +175,7 @@ function tauntTick(u, dt) {
   addNum(u.x, u.y, topOf(u) + 16, '¡JAJAJA!', '#7be04a', 14); ring(u.x, u.y, 8, u.d.taunt.r, 'rgba(123,224,74,.6)', 0.5, 3, true); play('laugh');
   u.tauntT = 6;
 }
-const healFwd = u => (u.team === 'p' ? -Math.PI / 2 : Math.PI / 2);   // hacia el rival
-function healAim(u, dt) {   // v0.9.14: el cono apunta a la unidad que sigue; si va sola, hacia delante
-  const f = u.follow && u.follow.alive ? u.follow : null;
-  const ta = f && dist(f, u) > 8 ? Math.atan2(f.y - u.y, f.x - u.x) : healFwd(u);
-  if (u.healAng === undefined) { u.healAng = ta; return; }
-  let d = ta - u.healAng; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
-  u.healAng += d * Math.min(1, dt * 6);
-}
-// ¿está dentro del cono de curación? (delante, a menos de su alcance; ni ella misma ni lo que tiene al lado)
-function inHealCone(u, a) {
-  const dx = a.x - u.x, dy = a.y - u.y, d = Math.hypot(dx, dy); if (d < 4 || d > u.d.healR + a.r * 0.5) return false;
-  const an = u.healAng === undefined ? healFwd(u) : u.healAng;
-  return (dx * Math.cos(an) + dy * Math.sin(an)) / d >= HEAL_COS;
-}
-function healPulse(u, dt) {
-  u.healT = (u.healT === undefined ? 0.6 : u.healT) - dt; if (u.healT > 0) return;
-  u.healT = u.d.healCd; let any = false;
-  for (const a of units) {
-    if (a === u || !a.alive || a.team !== u.team || a.deployT > 0 || a.jump || a.hp >= a.maxHp || !inHealCone(u, a)) continue;
-    const amt = Math.min(u.d.heal, a.maxHp - a.hp); a.hp += amt; any = true;
-    // v0.9.9: que se vea a quién cura: rayo verde, círculo y «+N» más grande
-    if (a !== u) parts.push({ type: 'beam', x0: u.x, y0: u.y, z0: topOf(u) * 0.6, x1: a.x, y1: a.y, z1: topOf(a) * 0.5, color: '#8cf05a', life: 0.5, max: 0.5 });
-    ring(a.x, a.y, 4, a.r * 2.2, 'rgba(140,240,90,.9)', 0.4, 3);
-    if (amt >= 1) addNum(a.x + rand(-5, 5), a.y, topOf(a) * 0.75 + 4, '+' + Math.round(amt), '#8cf05a', 16);
-  }
-  if (!any) return;
-  u.healGlowT = G.t;   // v0.9.18: enciende el cono un momento
-  if (u.team === 'p') chatEv('heal', null, null, 0.18, 15);
-  parts.push({ type: 'cone', x: u.x, y: u.y, z: 0, a: u.healAng === undefined ? healFwd(u) : u.healAng, r0: 14, r1: u.d.healR, color: 'rgba(150,245,120,.4)', life: 0.6, max: 0.6, lw: 2, ground: true });
-  for (let i = 0; i < 4; i++) parts.push({ type: 'plus', x: u.x + rand(-22, 22), y: u.y + rand(-6, 6), z: rand(10, 30), vx: 0, vy: 0, vz: 26, g: 0, life: 0.8, max: 0.8 });
-  flashAt(u.x, u.y, 12, 40, '120,255,140', 0.3);
-  play('heal');
-}
-// v0.9.9: la curandera va detrás de sus aliados (primero los heridos y los cercanos, nunca delante del grupo)
-// v0.9.14: a más distancia (HEAL_BACK) y recordando a quién sigue, para apuntarle el cono
-// y, si está sola, espera delante de su torre en vez de ir a por las del enemigo
-function followAlly(u, dt) {
-  const home = u.team === 'p' ? 1 : -1; let best = null, bs = -Infinity;
-  for (const a of units) {
-    if (a === u || !a.alive || a.team !== u.team || a.deployT > 0 || a.d.healer || a.d.kamikaze || a.jump || dist(a, u) > 230) continue;   // v0.9.15: solo aliados cercanos
-    const sc = (1 - a.hp / a.maxHp) * 150 - dist(a, u) * 0.5 - Math.abs(a.x - u.x) * 0.3 + a.y * home * 0.2 - (a.d.buildings ? 40 : 0);
-    if (sc > bs) { bs = sc; best = a; }
-  }
-  u.follow = best;
-  if (best) {
-    const tx = clamp(best.x, 24, W - 24), ty = clamp(best.y + home * HEAL_BACK, BOUNDS.y0, BOUNDS.y1);
-    if (Math.hypot(tx - u.x, ty - u.y) > 10) moveToward(u, tx, ty, dt); else { u.moving = false; if (Math.abs(best.x - u.x) > 3) u.face = best.x > u.x ? 1 : -1; }
-    return true;
-  }
-  if (units.some(o => o.alive && o.team !== u.team && targetable(o) && dist(o, u) < u.d.sight)) return false;   // la atacan: se defiende
-  const wx = laneBridge(u.x < W / 2 ? 0 : 1), wy = u.team === 'p' ? ZONE.p.y0 + 75 : ZONE.e.y1 - 75;
-  if (Math.hypot(wx - u.x, wy - u.y) > 12) moveToward(u, wx, wy, dt); else u.moving = false;
-  return true;
-}
+// los sanadores (cono, curar, a quién siguen y qué hacen solos) están en 06f-sanadores.js (v0.9.72)
 function bunnyJump(u, dt) {
   if (u.jump) {
     const j = u.jump; j.t += dt; const k = Math.min(1, j.t / j.dur);

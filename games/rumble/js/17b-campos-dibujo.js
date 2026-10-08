@@ -26,7 +26,7 @@ function terrainGround() {
   for (const f of TR.falls) if (!f.done) {   // sombra que avisa de lo que va a caer
     const k = 1 - f.t / f.max, F = T.fall, r = F.r * (0.4 + 0.6 * k);
     c.save(); c.globalAlpha = 0.25 + 0.35 * k; c.fillStyle = '#140a1e'; c.beginPath(); c.ellipse(f.x, f.y, r, r * 0.55, 0, 0, Math.PI * 2); c.fill();
-    c.globalAlpha = 0.6 + 0.4 * Math.sin(t * 20); c.strokeStyle = '#ffe06a'; c.lineWidth = 2.5; c.setLineDash([6, 5]); c.beginPath(); c.ellipse(f.x, f.y, F.r, F.r * 0.55, 0, 0, Math.PI * 2); c.stroke(); c.restore();
+    c.restore(); glowArea(c, f.x, f.y, F.r, '#ffe06a', 1.2 + 0.5 * Math.sin(t * 20), 0.55);   // v0.9.72: el aviso, en brillo amarillo
   }
   return true;
 }

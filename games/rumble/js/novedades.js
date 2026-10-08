@@ -3,6 +3,12 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.72', real: [
+      '<b>HECHIZOS DE VERDAD</b>: cada hechizo hace llover lo suyo (bellotas, monedas, pociones, relojes, latas…) y los gordos (el martillo del baneo, la espada del crítico, el sello de cancelado y la bomba) caen enteros y golpean. Ya no baja la carta como una bola.',
+      '<b>ZONAS QUE BRILLAN</b>: las zonas del campo (hechizos, auras, el líder, la ralentización…) brillan con su color, como el cono de MeerCat. Sin rayas ni puntitos.',
+      '<b>SANADORES MÁS LISTOS</b>: MeerCat y los demás sanadores ya no se van solos al puente. Si no hay tropas a las que curar, se ponen detrás de tus torres y las curan. Y prefieren cubrir a los que pelean cuerpo a cuerpo.',
+      '<b>SIN HECHIZOS EN RÁFAGA</b>: la máquina ya no puede lanzar dos hechizos seguidos. Entre uno y otro espera 12 segundos, como tú con tu mano de cartas.'],
+    joke: ['Microblizz ha despedido a la enfermera por curar torres sin permiso. Ha vuelto como autónoma.'] },
   { v: '0.9.71', real: [
       '<b>PARTIDA RÁPIDA «CEO»</b>: la dificultad más dura. La CPU juega 2 niveles por encima y antes de cada partida gira la ruleta de Microblizz: un castigo para ti y una ventaja para la CPU. Si ganas: 150 de oro y 15 gemas.',
       '<b>MODO JEFE RENOVADO</b>: el jefe sale en grande y con su aura. Cambia de jefe con las flechas y elige tu facción en una sola línea.',

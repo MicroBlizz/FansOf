@@ -151,5 +151,6 @@ function drawZones() {
   ctx.restore();
   const a = 0.13 + 0.05 * Math.sin(G.t * 5);
   ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fillRect(0, ZONE.p.y0, W, ZONE.p.y1 - ZONE.p.y0);
-  ctx.setLineDash([10, 8]); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, ZONE.p.y0); ctx.lineTo(W, ZONE.p.y0); ctx.stroke(); ctx.setLineDash([]);
+  const lg = ctx.createLinearGradient(0, ZONE.p.y0 - 12, 0, ZONE.p.y0 + 16);   // v0.9.72: el borde de tu lado, en brillo (sin rayas)
+  lg.addColorStop(0, 'rgba(255,255,255,0)'); lg.addColorStop(0.45, 'rgba(255,255,255,.85)'); lg.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = lg; ctx.fillRect(0, ZONE.p.y0 - 12, W, 28);
 }

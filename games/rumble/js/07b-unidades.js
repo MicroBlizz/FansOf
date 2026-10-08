@@ -6,7 +6,7 @@ function drawUnitShadow(u) {
   if (u.deployT > 0 && !u.rising) { const k = 1 - u.deployT / u.deployMax; if (k < 0.55) { const f = k / 0.55; z = (1 - f * f) * 170; } }
   const sc = Math.max(0.35, 1 - z / 260);
   if (u.deployT <= 0 && u.revived) { ctx.globalAlpha = 0.5 + 0.2 * Math.sin(G.t * 5 + u.id); ctx.fillStyle = '#5ef2a0'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 1, u.r * 1.35, u.r * 0.55, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
-  if (u.slowT > 0) { ctx.globalAlpha = 0.85; ctx.strokeStyle = '#9fe3ff'; ctx.lineWidth = 3; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.ellipse(u.x, u.y + 1, u.r * 1.25, u.r * 0.5, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; }
+  if (u.slowT > 0) glowArea(ctx, u.x, u.y + 1, u.r * 1.6, '#9fe3ff', 1.6, 0.42);   // v0.9.72: ralentizada, brillo azul en el suelo
   if (u.rage > 0 && u.deployT <= 0 && !u.jump) {
     const k = u.rage / CFG.passives.animales.maxStacks, pulse = 0.85 + 0.15 * Math.sin(G.t * 8 + u.id);
     const g = ctx.createRadialGradient(u.x, u.y, 0, u.x, u.y, u.r * (1.4 + k * 0.8));
@@ -36,10 +36,10 @@ function drawUnitShadow(u) {
       ctx.beginPath(); ctx.moveTo(u.x, u.y); ctx.arc(u.x, u.y, R, ha - HEAL_CONE / 2, ha + HEAL_CONE / 2); ctx.closePath(); ctx.fillStyle = g; ctx.fill();
     }
   }
-  if (u.d.aura && u.deployT <= 0) { ctx.globalAlpha = 0.35 + 0.1 * Math.sin(G.t * 3); ctx.strokeStyle = u.team === 'p' ? '#c084fc' : '#8fc2ff'; ctx.lineWidth = 2; ctx.setLineDash([6, 6]); ctx.lineDashOffset = -G.t * 12; ctx.beginPath(); ctx.arc(u.x, u.y, u.d.aura.r, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0; ctx.globalAlpha = 1; }
+  if (u.d.aura && u.deployT <= 0) glowArea(ctx, u.x, u.y, u.d.aura.r, u.team === 'p' ? '#c084fc' : '#8fc2ff', 0.75 + 0.2 * Math.sin(G.t * 3), 0.5);   // v0.9.72: el aura, en brillo
   ctx.globalAlpha = 0.3 * sc; ctx.fillStyle = '#140a1e'; ctx.beginPath(); ctx.ellipse(u.x, u.y + 1, u.r * 1.05 * sc, u.r * 0.42 * sc, 0, 0, Math.PI * 2); ctx.fill();
   if (u.deployT <= 0 && !u.jump) { ctx.globalAlpha = u.stealthT > 0 ? 0.4 : 0.95; ctx.strokeStyle = u.team === 'p' ? '#ffa23a' : '#3d9bff'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.ellipse(u.x, u.y + 1, u.r * 0.95, u.r * 0.4, 0, 0, Math.PI * 2); ctx.stroke(); }
-  if (isLeader(u.type) && u.deployT <= 0 && !u.jump) { ctx.globalAlpha = u.stealthT > 0 ? 0.35 : 0.9; ctx.strokeStyle = '#ffcb3d'; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.lineDashOffset = -G.t * 16; ctx.beginPath(); ctx.ellipse(u.x, u.y + 1, u.r * 1.3, u.r * 0.55, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); ctx.lineDashOffset = 0; }
+  if (isLeader(u.type) && u.deployT <= 0 && !u.jump) glowArea(ctx, u.x, u.y + 1, u.r * 1.7, '#ffcb3d', (u.stealthT > 0 ? 0.6 : 1.7) + 0.2 * Math.sin(G.t * 4), 0.42);   // v0.9.72: el líder, brillo dorado
   ctx.globalAlpha = 1;
 }
 function drawFoot(fx, fy, r, col) { ctx.beginPath(); ctx.ellipse(fx, fy - 1, r * 0.3, r * 0.19, 0, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 1.6; ctx.strokeStyle = OL; ctx.stroke(); }

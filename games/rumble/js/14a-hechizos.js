@@ -16,17 +16,19 @@ function castSpell(team, k, x, y) {
   if (team === 'p') { chatSt.lastDep = G.t; chatEv('deploy', C.name, k, 0.3, 5); } else chatEv('enemyBig', C.name, null, 0.6, 8);
   addNum(x, y, 74, C.name.toUpperCase(), team === 'p' ? '#ffe06a' : '#8fc2ff', 14); play('card');
 }
-const RAIN = ['acorn', 'tomb', 'coin', 'cat', 'cart', 'letter', 'card9', 'leaf', 'heart', 'flea'];
 function updateSpells(dt) {
   if (!spells.length) return;
   for (const sp of spells) {
     sp.t += dt;
     if (!sp.done) {
-      if (RAIN.includes(sp.D.fx) && (sp.sp -= dt) <= 0) {   // lluvia de cosas (bellotas, lápidas, monedas, gatos…)
-        sp.sp = 0.05; const a = rand(0, Math.PI * 2), rr = Math.sqrt(Math.random()) * sp.D.r * 0.9;
-        sp.bits.push({ x: sp.x + Math.cos(a) * rr, y: sp.y + Math.sin(a) * rr, z: rand(200, 260), vz: -rand(420, 520), rot: rand(0, 6), vr: rand(-9, 9) });
+      const fx = sp.D.fx;
+      if (FX_GORDO.includes(fx)) {   // v0.9.72: uno grande que cae justo cuando hace efecto
+        if (!sp.gordo) { sp.gordo = true; const z = 300; sp.bits.push({ x: sp.x, y: sp.y, z, vz: -z / sp.delay, rot: 0, vr: 0, s: 3.4, gordo: true }); }
+      } else if (!FX_SOLO.includes(fx) && (sp.sp -= dt) <= 0) {   // lluvia de lo suyo (bellotas, lápidas, monedas, pociones, relojes…)
+        sp.sp = 0.04; const a = rand(0, Math.PI * 2), rr = Math.sqrt(Math.random()) * sp.D.r * 0.9;
+        sp.bits.push({ x: sp.x + Math.cos(a) * rr, y: sp.y + Math.sin(a) * rr, z: rand(200, 260), vz: -rand(420, 520), rot: rand(0, 6), vr: rand(-9, 9), s: rand(1.4, 1.9) });
       }
-      for (const b of sp.bits) { b.z = Math.max(0, b.z + b.vz * dt); b.rot += b.vr * dt; if (b.z <= 0 && !b.hit) { b.hit = true; b.t = 0.25; puff(b.x, b.y, 2, '#efe2c4', 20, 3, true); } if (b.hit) b.t -= dt; }
+      for (const b of sp.bits) { b.z = Math.max(0, b.z + b.vz * dt); b.rot += b.vr * dt; if (b.z <= 0 && !b.hit) { b.hit = true; b.t = b.gordo ? 0.35 : 0.25; puff(b.x, b.y, b.gordo ? 14 : 2, '#efe2c4', b.gordo ? 70 : 20, b.gordo ? 8 : 3, true); if (b.gordo) shake(4); } if (b.hit) b.t -= dt; }
       sp.bits = sp.bits.filter(b => !b.hit || b.t > 0);
       if (sp.t >= sp.delay) { applySpell(sp); sp.done = true; sp.tEnd = sp.t + 0.45; }
     } else { for (const b of sp.bits) { b.z = Math.max(0, b.z + b.vz * dt); if (b.z <= 0) b.hit = true; } sp.bits = sp.bits.filter(b => !b.hit); }
@@ -107,9 +109,13 @@ function spellAim(team, k) {
   const need = D.kind === 'dmg' ? D.amt * P * 1.4 : D.kind === 'heal' ? D.amt * P * 1.3 : 900;
   return best && best.v >= need ? best : null;
 }
+// v0.9.72: la CPU tiene todas sus cartas siempre a mano (tú, una mano de 4 que rota), así que entre un hechizo y el siguiente espera
+// AI_SPELL_GAP segundos de partida: lo que tardarías tú en volver a tener la carta. Así ya no lanza dos seguidos para rematar a tu sanador.
+const AI_SPELL_GAP = 12;
 function aiSpell(team, avail, go) {   // devuelve true si ha lanzado uno
   const me = S[team];
-  for (const c of avail) if (isSpell(c.k) && me.chaos >= cardDef(c.k).cost) { const p = spellAim(team, c.k); if (p) { go(c, p.x, p.y); return true; } }
+  if (me.aiSpellT !== undefined && G.t - me.aiSpellT < AI_SPELL_GAP) return false;
+  for (const c of avail) if (isSpell(c.k) && me.chaos >= cardDef(c.k).cost) { const p = spellAim(team, c.k); if (p) { go(c, p.x, p.y); me.aiSpellT = G.t; return true; } }
   return false;
 }
 // mata-sanadores: salto por encima de la primera línea hasta el sanador (o un tirador o un apoyo) que tenga a tiro
@@ -147,35 +153,20 @@ function leapTick(u, dt) {
   addNum(u.x, u.y, topOf(u) + 18, prey.d.healer ? '¡A POR EL SANADOR!' : '¡A POR ÉL!', '#ffcb3d', 13); play('jump');
   return true;
 }
-function drawSpellsGround() {
+function drawSpellsGround() {   // v0.9.72: la zona brilla con su color (como el cono de MeerCat) y crece hasta que el hechizo hace efecto; los de la CPU, con un toque rojo
   for (const sp of spells) {
-    const D = sp.D, k = sp.done ? 1 - (sp.t - sp.delay) / 0.45 : 1, f = Math.min(1, sp.t / sp.delay), col = D.col || '#ffffff', mine = sp.team === 'p';
-    ctx.save(); ctx.globalAlpha = 0.16 * k; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(sp.x, sp.y, D.r, 0, Math.PI * 2); ctx.fill();
-    ctx.globalAlpha = 0.85 * k; ctx.lineWidth = 3; ctx.strokeStyle = mine ? '#ffffff' : '#ff6b7a'; ctx.setLineDash([8, 6]); ctx.lineDashOffset = -G.t * 30; ctx.stroke(); ctx.setLineDash([]);
-    if (!sp.done) { ctx.globalAlpha = 0.5; ctx.lineWidth = 2; ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(sp.x, sp.y, Math.max(2, D.r * f), 0, Math.PI * 2); ctx.stroke(); }
-    ctx.restore();
+    const D = sp.D, k = sp.done ? Math.max(0, 1 - (sp.t - sp.delay) / 0.45) : 1, f = Math.min(1, sp.t / sp.delay), col = D.col || '#ffffff';
+    const r = D.r * (sp.done ? 1 : 0.45 + 0.55 * f), a = (sp.done ? 1.3 : 0.75 + 0.35 * f) * k;
+    glowArea(ctx, sp.x, sp.y, r, col, a, 1);
+    if (sp.team !== 'p') glowArea(ctx, sp.x, sp.y, r, '#ff4b5c', 0.45 * k, 1);
   }
 }
-function drawSpellBit(c, fx, x, y, rot, col) {
-  c.save(); c.translate(x, y); c.rotate(rot); c.lineWidth = 1.4; c.strokeStyle = OL;
-  if (fx === 'acorn') { c.beginPath(); c.ellipse(0, 1.4, 3.8, 4.2, 0, 0, Math.PI * 2); c.fillStyle = '#9a6a33'; c.fill(); c.stroke(); c.beginPath(); c.ellipse(0, -2.4, 4.4, 2.1, 0, 0, Math.PI * 2); c.fillStyle = '#5b3a1c'; c.fill(); c.stroke(); }
-  else if (fx === 'tomb') { c.beginPath(); c.moveTo(-5, 6); c.lineTo(-5, -2); c.arc(0, -2, 5, Math.PI, 0); c.lineTo(5, 6); c.closePath(); c.fillStyle = '#b9bfcc'; c.fill(); c.stroke(); }
-  else if (fx === 'coin') { c.beginPath(); c.ellipse(0, 0, 4.6, 4.6, 0, 0, Math.PI * 2); c.fillStyle = '#ffcb3d'; c.fill(); c.stroke(); }
-  else if (fx === 'cat') { c.beginPath(); c.ellipse(0, 1, 5.6, 4.6, 0, 0, Math.PI * 2); c.moveTo(-5, -1); c.lineTo(-4, -6); c.lineTo(-1, -3); c.moveTo(5, -1); c.lineTo(4, -6); c.lineTo(1, -3); c.fillStyle = '#ffb04f'; c.fill(); c.stroke(); }
-  else if (fx === 'cart') { c.beginPath(); c.rect(-4.5, -5.5, 9, 11); c.fillStyle = '#9ca3af'; c.fill(); c.stroke(); c.fillStyle = '#ffe06a'; c.fillRect(-3, -4, 6, 4.4); }
-  else if (fx === 'letter') { c.beginPath(); c.rect(-5.5, -3.6, 11, 7.2); c.fillStyle = '#fff6ea'; c.fill(); c.stroke(); c.beginPath(); c.moveTo(-5.5, -3.6); c.lineTo(0, 0.6); c.lineTo(5.5, -3.6); c.stroke(); }
-  else if (fx === 'card9') { c.beginPath(); c.rect(-6, -4, 12, 8); c.fillStyle = '#334155'; c.fill(); c.stroke(); c.fillStyle = '#ffcb3d'; c.fillRect(-4, 0.5, 3.6, 2); }
-  else if (fx === 'heart') { c.beginPath(); c.moveTo(0, 4); c.bezierCurveTo(-7, -1, -4, -7, 0, -3); c.bezierCurveTo(4, -7, 7, -1, 0, 4); c.fillStyle = col; c.fill(); c.stroke(); }
-  else if (fx === 'leaf') { c.beginPath(); c.ellipse(0, 0, 5, 2.4, 0.6, 0, Math.PI * 2); c.fillStyle = '#7be04a'; c.fill(); c.stroke(); }
-  else if (fx === 'flea') { c.beginPath(); c.ellipse(0, 0, 2.6, 2, 0, 0, Math.PI * 2); c.fillStyle = '#8b5530'; c.fill(); c.stroke(); }
-  c.restore();
-}
+// drawSpellBit (lo que cae de cada hechizo) está en 14d-hechizos-dibujos.js (v0.9.72)
 function drawSpellsAir() {
   for (const sp of spells) {
-    for (const b of sp.bits) { if (b.hit) continue; ctx.globalAlpha = 0.25; ctx.fillStyle = '#140a1e'; ctx.beginPath(); ctx.ellipse(b.x, b.y, 4, 1.8, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; drawSpellBit(ctx, sp.D.fx, b.x, b.y - b.z, b.rot, sp.D.col); }
-    if (!sp.done) {   // la carta del hechizo baja hasta el suelo
-      const f = Math.min(1, sp.t / sp.delay), z = lerp(120, 26, f * f), s0 = SPR[sp.k];
-      if (s0) { ctx.save(); ctx.globalAlpha = 0.95; ctx.translate(sp.x, sp.y - z); const sc = 0.95 + 0.1 * Math.sin(G.t * 12); ctx.scale(sc, sc); ctx.drawImage(s0.c, -s0.ax, -s0.ay, s0.wd, s0.ht); ctx.restore(); }
+    for (const b of sp.bits) { if (b.hit) continue; const s = b.s || 1; ctx.globalAlpha = 0.25; ctx.fillStyle = '#140a1e'; ctx.beginPath(); ctx.ellipse(b.x, b.y, 4 * s, 1.8 * s, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; drawSpellBit(ctx, sp.D.fx, b.x, b.y - b.z, b.rot, sp.D.col, s); }
+    if (!sp.done) {   // v0.9.72: ya no baja la carta del hechizo; el láser sigue con su rayo
+      const f = Math.min(1, sp.t / sp.delay);
       if (sp.D.fx === 'laser') { ctx.save(); ctx.globalAlpha = 0.25 + 0.5 * f; ctx.strokeStyle = '#7df3ff'; ctx.lineWidth = 2 + f * 8; ctx.beginPath(); ctx.moveTo(sp.x, sp.y - 400); ctx.lineTo(sp.x, sp.y); ctx.stroke(); ctx.restore(); }
     }
   }

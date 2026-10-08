@@ -111,17 +111,16 @@ function drawGhost() {
   if ((g.fy == null ? g.y : g.fy) >= TRAY_Y - 4) return;   // con el dedo sobre las cartas se cancela
   if (isSpell(key)) {   // v0.9.15: el hechizo cae en el sitio exacto, en cualquier parte del campo
     const C = CFG.cards[key], D = C.spell, x = clamp(g.x, BOUNDS.x0, BOUNDS.x1), y = clamp(g.y, BOUNDS.y0, BOUNDS.y1), rich = S.p.chaos >= C.cost;
-    ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = D.col; ctx.beginPath(); ctx.arc(x, y, D.r, 0, Math.PI * 2); ctx.fill();
-    ctx.globalAlpha = 0.95; ctx.lineWidth = 3; ctx.strokeStyle = rich ? '#ffffff' : '#ff4b5c'; ctx.setLineDash([8, 6]); ctx.lineDashOffset = -G.t * 30; ctx.stroke(); ctx.setLineDash([]);
-    const s0 = SPR[key]; if (s0) { ctx.globalAlpha = rich ? 0.9 : 0.45; ctx.drawImage(s0.c, x - s0.ax, y - 30 - s0.ay, s0.wd, s0.ht); }
+    ctx.save(); glowArea(ctx, x, y, D.r, rich ? D.col || '#ffffff' : '#ff4b5c', 1.1 + 0.15 * Math.sin(G.t * 6), 1);   // v0.9.72: brillo, sin rayas
+    ctx.globalAlpha = rich ? 0.95 : 0.45; drawSpellBit(ctx, D.fx, x, y - 22 + Math.sin(G.t * 4) * 3, 0, D.col, 2.6);
     ctx.globalAlpha = 1; if (!rich) text(`Faltan ${Math.ceil(C.cost - S.p.chaos)} de CAOS`, clamp(x, 90, W - 90), y - D.r - 14, 13, '#ff8a96');
     ctx.restore(); return;
   }
   const sp = snapSpot('p', g.x, g.y), x = sp.x, y = sp.y;
   const card = CFG.cards[key]; const ok = true, rich = S.p.chaos >= card.cost, can = canDeploy('p', key); const good = rich && can;
   ctx.save();
-  if (Math.hypot(g.x - x, g.y - y) > 8) { ctx.globalAlpha = 0.75; ctx.setLineDash([4, 5]); ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(g.x, g.y); ctx.lineTo(x, y); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1; }
-  ctx.strokeStyle = good ? '#ffffff' : '#ff4b5c'; ctx.lineWidth = 2.8; ctx.setLineDash([7, 5]); ctx.beginPath(); ctx.ellipse(x, y + 1, 36, 14, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+  if (Math.hypot(g.x - x, g.y - y) > 8) { ctx.globalAlpha = 0.45; ctx.lineCap = 'round'; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(g.x, g.y); ctx.lineTo(x, y); ctx.stroke(); ctx.globalAlpha = 1; }
+  glowArea(ctx, x, y + 1, 40, good ? '#ffffff' : '#ff4b5c', 1.6, 0.4);   // v0.9.72: brillo en el suelo, sin rayas
   ctx.globalAlpha = good ? 0.82 : 0.42;
   for (let i = 0; i < card.count; i++) { const ox = card.count > 1 ? (i - (card.count - 1) / 2) * 22 : 0, oy = card.count > 1 ? (i % 2) * 6 : 0; const s = SPR[key]; ctx.drawImage(s.c, x + ox - s.ax, y + oy - s.ay, s.wd, s.ht); }
   ctx.globalAlpha = 1;

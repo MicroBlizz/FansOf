@@ -1,6 +1,6 @@
 // Fans of Rumble · Botones del menú, opciones de este juego y pantalla de preparación
 'use strict';
-$('#btn-tut').addEventListener('click', () => { play('select'); SAVE.tut = { done: false, step: 0 }; saveGame(); goHome(); toast('Tutorial reiniciado: sigue a Lola', true); });
+$('#btn-tut').addEventListener('click', () => { play('select'); SAVE.tut = { done: false, step: 0 }; SAVE.tips = {}; saveGame(); goHome(); toast('Tutorial reiniciado: sigue a Lola', true); });
 $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
 $('#btn-quick').addEventListener('click', () => { play('select'); openPrep('quick'); });

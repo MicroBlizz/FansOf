@@ -37,8 +37,15 @@ function buyStarter() {
   setTimeout(() => openItem(it.u), 450);
 }
 // ---- partida guiada. Pasos: 0 = ganar una partida · 1 = ponerle una habilidad a una carta · 2 = girar el gashapón
+// v0.9.91: 3 = girar la máquina de cartas · 4 = meter la carta nueva en el mazo · 5 = misiones · 6 = horas extra · 7 = opciones
 const COACH_WHO = 'LOLA · DESPEDIDA POR MICROBLIZZ';
+const TUT_FIN = 8;   // el paso que queda apuntado al acabar
 function curScreen() { let top = null; for (const sc of document.querySelectorAll('.screen')) if (!sc.hidden && (!top || sc.classList.contains('modal'))) top = sc; return top ? top.id : ''; }
+// una carta del gashapón que ya tienes y no está en tu mazo (la que se mete en el paso 4)
+function tutCartaNueva() {
+  for (const f of FACTION_ORDER.filter(isUnlocked)) { const F = FACTIONS[f], d = deckOf(f); for (const k of (F.gacha || [])) if (ownsCard(k) && !d.includes(k)) return { f, k }; }
+  return null;
+}
 function tutStep(n) {
   const T = SAVE.tut; if (T.done || T.step >= n) return;
   T.step = n;
@@ -47,14 +54,18 @@ function tutStep(n) {
     if (!SAVE.inv.some(x => x.k === 'ab')) { tutStep(2); return; }
   }
   if (n === 2 && !SAVE.tutGift.tix) { SAVE.tutGift.tix = 1; ECO.ganar('tutorial', { tickets: 3 }); G.tutJust2 = true; updateWallets(); }
+  if (n === 3 && !(SAVE.tickets > 0)) { tutStep(tutCartaNueva() ? 4 : 5); return; }   // sin tiradas gratis no se manda a gastar gemas
+  if (n === 4) { const c = tutCartaNueva(); if (!c) { tutStep(5); return; } T.carta = c; }
   saveGame();
 }
 function tutFinish() {
   const T = SAVE.tut; if (T.done) return;
-  T.done = true; T.step = 3; delete T.sawG; if (SAVE.seenVer !== NEWS_VER) SAVE.seenVer = NEWS_VER;
+  T.done = true; T.step = TUT_FIN; delete T.sawG; delete T.carta; if (SAVE.seenVer !== NEWS_VER) SAVE.seenVer = NEWS_VER;
   G.tutMatch = false; saveGame(); tutTick(); setTimeout(titlePopups, 60);
 }
 function tutSkip() { play('select'); tutFinish(); $('#tut').hidden = true; $('#tut-tip').hidden = true; toast('Tutorial saltado. Puedes repetirlo en Opciones', true); }
+function tutDone() { play('levelup'); tutFinish(); toast('¡Tutorial completado! Ya sabes lo básico. ¡A por Microblizz!', true); }
+const tutBack = sc => ({ sel: `#${sc} .back`, text: 'Vuelve al menú con la flecha.' });
 function tutWant() {
   const T = SAVE.tut; if (!T || T.done || G.autoplay) return null;
   const sc = curScreen();
@@ -81,6 +92,50 @@ function tutWant() {
     if (sc === 'scr-gacha') return { sel: '#btn-pull', text: 'Gira <b>x1</b>: es gratis. Lo que te toque, póntelo en Colección como antes.' };
     return null;
   }
+  if (T.step === 3) {   // la máquina de cartas
+    if (sc === 'scr-gacha') {
+      if (gachaAnim) return null;
+      if (!$('#gacha-result').hidden) return { sel: '#btn-gr-ok', text: '¡Mira qué te ha tocado! Ya te lo pondrás en Colección. Toca <b>¡VALE!</b>: aún queda otra máquina.' };
+      if (gachaTab !== 'cd') return { sel: '#scr-gacha [data-gt="cd"]', text: 'Esta es la máquina de <b>CARTAS</b>: de aquí salen tropas especiales y hechizos para tu mazo. Tócala.' };
+      return { sel: '#btn-pull', text: 'Gira <b>x1</b> otra vez: también es gratis.' };
+    }
+    if (sc === 'scr-inv' || sc === 'scr-coll') return tutBack(sc);
+    if (sc === 'scr-title') return { sel: '#btn-gacha', text: 'Vuelve al <b>GASHAPÓN</b>: aún te queda una tirada gratis para la máquina de cartas.' };
+    return null;
+  }
+  if (T.step === 4) {   // la carta nueva, al mazo
+    const C = T.carta, nm = C && CFG.cards[C.k] ? CFG.cards[C.k].name : '';
+    if (sc === 'scr-gacha') {
+      if (gachaAnim) return null;
+      if (!$('#gacha-result').hidden) return { sel: '#btn-gr-inv', text: '¡Una carta nueva! Toca <b>Ver en la Colección</b> y la metemos en tu mazo.' };
+      return tutBack(sc);
+    }
+    if (sc === 'scr-inv') return tutBack(sc);
+    if (sc === 'scr-title') return { sel: '#btn-coll', text: 'Toca <b>COLECCIÓN</b> para meter tu carta nueva en el mazo.' };
+    if (sc === 'scr-coll' && C) {
+      if (!deckEdit) return { sel: '#btn-deck', text: 'Este es <b>tu mazo</b>: tu líder y 6 cartas, las que salen en la partida. Toca <b>EDITAR MAZO</b>.' };
+      if (deckEdit.sel.includes(C.k)) return { sel: '#btn-deck-ok', text: '¡Perfecto! Toca <b>GUARDAR</b>.' };
+      if (deckEdit.pick !== C.k) return { sel: `#deck-grid [data-dkp="${C.k}"]`, text: `Toca tu carta nueva: <b>${nm}</b>.` };
+      return { sel: '#deck-board [data-dks="5"]', text: 'Ahora toca la carta de tu mazo que quieres cambiar por ella. Por ejemplo, esta.' };
+    }
+    return null;
+  }
+  if (T.step === 5) {   // misiones
+    if (sc === 'scr-coll' || sc === 'scr-gacha' || sc === 'scr-inv') return tutBack(sc);
+    if (sc === 'scr-title') return { sel: '#btn-missions', text: 'Toca <b>MISIONES</b>: encargos con premio.' };
+    if (sc === 'scr-missions') return { sel: '#scr-missions .tabs', text: 'Cada día tienes encargos nuevos, y otros cada semana. Cúmplelos jugando y vuelve aquí a <b>cobrar</b> oro y gemas. En <b>Logros</b> hay más premios… y chistes.', ok: '¡ENTENDIDO!', go: () => tutStep(6) };
+    return null;
+  }
+  if (T.step === 6) {   // horas extra
+    if (sc === 'scr-missions') return tutBack(sc);
+    if (sc === 'scr-title') return { sel: '#idle', text: 'Y esto son las <b>HORAS EXTRA</b>: tu líder sigue currando aunque cierres el juego. Como en Microblizz, pero sin cobrar. Vuelve de vez en cuando a <b>RECOGER</b> lo que gana. Tocando su cara eliges quién trabaja.', ok: '¡ENTENDIDO!', go: () => tutStep(7) };
+    return null;
+  }
+  if (T.step === 7) {   // opciones
+    if (sc === 'scr-title') return { sel: '#btn-options', text: 'Lo último: toca <b>OPCIONES</b>.' };
+    if (sc === 'scr-options') return { sel: '#scr-options .opt-row', text: 'Aquí cambias el sonido, el idioma y más cosas. Y si se te olvida algo, abajo del todo puedes repetir este tutorial. ¡Ya sabes lo básico! Cuando abras un modo nuevo, saldré a contarte cómo va.', ok: '¡A JUGAR!', go: tutDone };
+    return null;
+  }
   return null;
 }
 let coachKey = '';
@@ -95,14 +150,17 @@ function coachPlace(t) {
 function tutTick() {
   const T = SAVE.tut;
   if (!T.done && !SAVE.name && !G.autoplay && curScreen() === 'scr-title' && $('#scr-name').hidden) { $('#coach').hidden = true; coachKey = ''; openName(true); return; }   // v0.9.26: Lola te pregunta el nombre
-  if (!T.done && T.step === 2 && T.sawG && curScreen() !== 'scr-gacha') { tutFinish(); return; }   // vio el gashapón y se fue: listo
-  const want = tutWant(), key = want ? want.sel + '|' + want.text : '', co = $('#coach');
+  if (!T.done && T.step === 2 && T.sawG && curScreen() !== 'scr-gacha') { tutStep(5); return; }   // vio el gashapón y se fue sin girar: a las misiones
+  if (!T.done && T.step === 4 && T.carta && typeof deckEdit !== 'undefined' && !deckEdit && deckOf(T.carta.f).includes(T.carta.k)) tutStep(5);   // carta metida y mazo guardado
+  const want = tutWant() || (typeof consejoWant === 'function' ? consejoWant() : null), key = want ? want.sel + '|' + want.text : '', co = $('#coach');
   if (key !== coachKey) {
     coachKey = key;
     for (const e of document.querySelectorAll('.coach-glow')) e.classList.remove('coach-glow');
     if (!want) { co.hidden = true; return; }
-    co.innerHTML = `<span class="coach-who">${COACH_WHO}</span>${want.text}<button class="coach-skip" id="coach-skip">Saltar tutorial</button>`;
-    co.hidden = false; $('#coach-skip').onclick = tutSkip;
+    const skip = want.skip || ['Saltar tutorial', tutSkip];
+    co.innerHTML = `<span class="coach-who">${COACH_WHO}</span>${want.text}<span class="coach-bb">${want.ok ? `<button class="coach-ok ol" id="coach-ok">${want.ok}</button>` : ''}<button class="coach-skip" id="coach-skip">${skip[0]}</button></span>`;
+    co.hidden = false; $('#coach-skip').onclick = skip[1];
+    if (want.ok) $('#coach-ok').onclick = () => { play('select'); want.go(); coachKey = '-'; tutTick(); };
   }
   if (!want) return;
   const t = document.querySelector(want.sel);
@@ -125,7 +183,11 @@ function tutBattle(dt) {
 // la partida guiada sigue lo que haces en la colección y en el gashapón
 hook('equipar', kind => { if (kind === 'ab') tutStep(2); });
 hook('gacha.abierto', () => { if (!SAVE.tut.done && SAVE.tut.step === 2) SAVE.tut.sawG = true; });
-hook('gacha.tirada', () => { if (!SAVE.tut.done && SAVE.tut.step === 2) setTimeout(() => { tutFinish(); toast('¡Tutorial completado! Ya sabes lo básico. ¡A por Microblizz!', true); }, 1500); });
+hook('gacha.tirada', () => {   // v0.9.91: tras la primera tirada, la máquina de cartas; tras la carta, el mazo
+  const T = SAVE.tut; if (T.done) return;
+  if (T.step === 2) tutStep(3);
+  else if (T.step === 3) { if (gachaTab === 'cd') tutStep(4); else if (!(SAVE.tickets > 0)) tutStep(5); }
+});
 // el pack de bienvenida, en la tienda y en el botón del menú
 hook('tienda', () => {
     if (!SAVE.starter) {

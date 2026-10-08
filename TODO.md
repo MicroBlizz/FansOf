@@ -2,11 +2,8 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
-## Misiones nuevas de Rumble: probar con cuenta (8-10-2026)
-El servidor ya tiene aplicado (8-10-2026) servidor/17, servidor/18 y los datos de Rumble (v16), TD (v14) y Survivors (v2). Falta probar con una cuenta de prueba:
-- Cobrar «Empleado del día» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
-- Se pueden cobrar 6 diarias y 5 semanales; la siguiente se rechaza. «Empleado del mes» da 600 / 80 / 400.
-- Una misión inventada se rechaza; los logros de Fácil (w1f…, st_f) se cobran una sola vez.
+## Misiones nuevas de Rumble: probadas en el servidor (8-10-2026)
+Con un invitado de prueba: «Empleado del día» da 150 / 25, no se cobra dos veces; «Empleado del mes» da 600 / 80; una misión inventada se rechaza; 6 diarias cobradas bien. Sin probar: la 7.ª diaria, las 5 semanales y los logros de Fácil (w1f…, st_f).
 
 ## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
 ¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).

@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.90', real: [
+      '<b>LA IA SE DEFIENDE CON CABEZA</b>: cuando le atacas, responde con la unidad que mejor contrarresta la tuya (contra un tanque, asesinos o control; contra un enjambre, control o tiradores…).',
+      '<b>ARREGLO: JEFES Y RIVALES QUE SE QUEDABAN QUIETOS</b>: los hechizos de la máquina ya no se le atascan en la mano, así que los jefes siguen sacando tropas hasta el final. Y en las fases con pocas cartas, la máquina puede repetir carta como antes.',
+      '<b>FÁCIL, PERO NO TONTA</b>: en la partida rápida en Fácil la máquina piensa un poco más deprisa. Sigue siendo fácil de ganar, pero ya juega a tiempo.'],
+    joke: ['Microblizz ha descubierto que su IA guardaba los hechizos en el bolsillo «por si acaso» y se olvidaba de jugar. La han mandado a un curso de productividad.'] },
   { v: '0.9.89', real: [
       '<b>PVP: ¡A POR EL RIVAL!</b> Ya puedes retar a otros jugadores en el modo Estándar (con tu mazo, niveles y estrellas; los objetos no cuentan) y subir en la clasificación. Necesitas vincular tu cuenta (Opciones → Cuenta). Si no aparece nadie en 30 s, puedes jugar contra la IA sin salir de la cola.',
       '<b>IA RIVAL MÁS LISTA</b>: la máquina juega con la misma mano de 4 cartas que tú, responde a lo que tienes en el campo, contraataca por el carril que acaba de defender y ya no desperdicia el CAOS casi lleno.'],

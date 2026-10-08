@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.69', real: [
+      '<b>ENTRA CON GOOGLE</b>: ya puedes guardar tu progreso con tu cuenta de Google (Opciones → Cuenta). Ahora está en pruebas: escribe a fansofmicroblizz@gmail.com con tu correo de Google y te añadimos a mano.'],
+    joke: ['Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.'] },
   { v: '0.9.68', real: [
       '<b>MISIONES CON NOMBRE</b>: todas las misiones tienen ahora un título (Doble despido, ERE masivo, Pausa para el café…) y debajo lo que hay que hacer.',
       '<b>EMPLEADO DEL MES</b>: en las semanales hay una misión fija: sé Empleado del día 7 veces en la semana. Da un premio gordo.',

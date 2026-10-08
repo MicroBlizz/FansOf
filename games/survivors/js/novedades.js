@@ -2,6 +2,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.12', real: [
+      '<b>ENTRA CON GOOGLE</b>: ya puedes guardar tu progreso con tu cuenta de Google (Opciones → Cuenta). Ahora está en pruebas: escribe a fansofmicroblizz@gmail.com con tu correo de Google y te añadimos a mano.'],
+    joke: ['Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.'] },
   { v: '0.1.2', real: [
       '<b>TU PROGRESO, A SALVO EN LA NUBE</b>: con cuenta, el gashapón, los premios, las misiones y el pase los comprueba el servidor, como en el Rumble y el TD. Para tirar, despedir o mejorar necesitas conexión.'],
     joke: ['Microblizz asegura que el servidor cuenta las monedas «con muchísimo cariño».'] },

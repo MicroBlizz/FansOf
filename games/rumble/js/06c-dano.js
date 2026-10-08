@@ -109,9 +109,11 @@ function kill(t, src) {
   const winner = other(t.team);
   if (t.role === 'base') { S[winner].crowns = 3; endMatch(winner, 'base'); return; }
   S[winner].crowns++;
-  if (winner === 'p') { if (facOf('e') === 'streamers') { S.e.hype = 0; S.e.hypeLvl = 0; } banner('¡TORRE DERRIBADA!', 'Microblizz dice que esa torre le sobraba', 'player'); play('crown'); chatBurst(S.p.crowns === S.e.crowns && S.e.crowns > 0 ? 'comeback' : 'towerP', 2); }
+  let lostHype = false;
+  if (winner === 'p') { if (facOf('e') === 'streamers') { S.e.hype = 0; S.e.hypeLvl = 0; } }   // quien pierde la torre pierde su hype (esto es la simulación)
+  else { lostHype = facOf('p') === 'streamers' && S.p.hype > 0; if (lostHype) { S.p.hype = 0; S.p.hypeLvl = 0; } }
+  if (winner === verEquipo()) { banner('¡TORRE DERRIBADA!', 'Microblizz dice que esa torre le sobraba', 'player'); play('crown'); chatBurst(S.p.crowns === S.e.crowns && S.e.crowns > 0 ? 'comeback' : 'towerP', 2); }   // y esto, lo que ve quien juega (en PvP, el de arriba ve lo suyo como propio)
   else {
-    const lostHype = facOf('p') === 'streamers' && S.p.hype > 0; if (lostHype) { S.p.hype = 0; S.p.hypeLvl = 0; }
     chatBurst('towerE', 2);
     banner('TE HAN TIRADO UNA TORRE', lostHype ? 'El chat se va: tu HYPE vuelve a 0' : 'Protege ese carril con más unidades', 'enemy'); play('sad');
   }

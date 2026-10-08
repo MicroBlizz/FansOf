@@ -9,10 +9,11 @@ function startMatch() {
   ensureBG({ phony: 'ph', iahorro: 'ia' }[ownerOf()] || 'mb');
   audioInit(); hideScreens(); simSeed(G.seedNext); G.seedNext = null; resetMatch(); chatClear(); G.state = 'countdown'; camReset(); terrainStart();
   G.tutMatch = !G.autoplay && G.mode !== 'pvp' && !SAVE.tut.done && SAVE.tut.step === 0; tutBattleStart(); applySpeed(); applyMatchMods(); hudMods();
-  const F = FACTIONS[G.faction];
+  const F = FACTIONS[verFac()];
   banner('PASIVA: ' + F.passive, F.banner, F.kind);
   const L = G.level;
-  const intro = G.mode === 'boss' ? [G.bossName, BOSS_QUOTE[G.bossWi] || (G.bossWi === CEO_WI ? '«Os he comprado. Ahora os cierro.»' : isCorp(G.efac) ? '«Hemos comprado vuestro juego… y lo vamos a cerrar.»' : '«Microblizz me ha ascendido. Ahora despido yo.»')]
+  const intro = G.mode === 'pvp' ? [PVP.rival || 'RIVAL', PVP_MODOS[PVP.modo || 'estandar'][0] + ' · ' + (G.terrain && TERRAINS[G.terrain] ? TERRAINS[G.terrain].name : 'Campo normal')]
+    : G.mode === 'boss' ? [G.bossName, BOSS_QUOTE[G.bossWi] || (G.bossWi === CEO_WI ? '«Os he comprado. Ahora os cierro.»' : isCorp(G.efac) ? '«Hemos comprado vuestro juego… y lo vamos a cerrar.»' : '«Microblizz me ha ascendido. Ahora despido yo.»')]
     : L && L.boss ? [L.boss, BOSS_QUOTE[L.wi] || (G.efac === 'microblizz' ? (L.wi ? '«Os he comprado. Ahora os cierro.»' : '«Hemos comprado vuestro juego… y lo vamos a cerrar.»') : '«Microblizz me ha ascendido. Ahora despido yo.»')]
     : L ? [L.name, isCorp(G.efac) ? `Mundo ${L.wi + 1}: ${WORLDS[L.wi].name}` : `${enemyLabel(G.efac)} por ${ownerName()}`]
     : ['SurvivalBot', '«Hemos comprado vuestro juego… y lo vamos a cerrar.»'];
@@ -26,15 +27,17 @@ function startMatch() {
   };
   setTimeout(tick, 900);
 }
-function pauseGame() { if (G.state !== 'play') return; G.state = 'paused'; input.card = null; input.dragging = false; show('scr-pause'); }
+function pauseGame() { if (G.state !== 'play') return; if (PVP.on) { pvpRendirse(); return; } /* en PvP no hay pausa */ G.state = 'paused'; input.card = null; input.dragging = false; show('scr-pause'); }
 function resumeGame() { if (G.state !== 'paused') return; hideScreens(); G.state = 'play'; }
-function goHome() { pvpMapa(false); if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
+function goHome() { if (PVP.on) pvpFin(); pvpMapa(false); if (G.terrain) { G.terrain = null; terrainStart(); }   // v0.9.19: el menú vuelve al campo de siempre
   ensureBG('mb'); setTagline(); $('#hud-mods').hidden = true; G.state = 'title'; chatClear(); resetMatch(); hud.update(); drawTitleArt(); updateWallets(); show('scr-title'); profileChip(); idleSc.tick = 0; achDay(); titlePopups(); }
 function toMenu() { chatClear(); if (G.mode === 'camp') { G.state = 'title'; resetMatch(); hud.update(); openCamp(); } else goHome(); }
 // v0.9.13: lo que dice cada jefe nuevo al empezar
 const BOSS_QUOTE = { 7: '«Microblizz me encerró aquí abajo. Ahora no sale nadie.»', 8: '«¿Discos? Eso es del siglo pasado. Ahora pagas cada mes.»', 9: '«Phony me paga por ganar. Tú pagas por jugar.»', 10: '«Phony quiere otra secuela. Y la vas a protagonizar tú.»', 11: '«Todo lo que compraste es mío. Lo borro cuando quiera.»' };
 function showEnd() {
   chatClear(); bannerClear();   // v0.9.11: sin carteles de la partida encima de la pantalla final
+  if (G.mode === 'pvp') { G.rewards = grantRewards(); pvpShowEnd(); return; }
+  $('#btn-share').hidden = false;
   const w = G.winner, R = G.rewards = grantRewards(), t = $('#end-title');
   if (G.mode === 'boss') { t.textContent = w === 'e' ? 'DERROTA' : bases.e.alive ? '¡FIN DEL TURNO!' : G.bossWi === CEO_WI ? '¡CEO DESPEDIDO!' : '¡JEFE DERROTADO!'; t.className = 'end-title ol-big ' + (w === 'e' ? 'lose' : 'win'); }
   else { t.textContent = w === 'p' ? '¡VICTORIA!' : w === 'e' ? 'DERROTA' : 'EMPATE'; t.className = 'end-title ol-big ' + (w === 'p' ? 'win' : w === 'e' ? 'lose' : ''); }

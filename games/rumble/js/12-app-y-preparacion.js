@@ -29,7 +29,7 @@ $('#btn-pause').addEventListener('click', () => { if (G.state === 'paused') { re
 $('#btn-passive').addEventListener('click', () => { const F = FACTIONS[G.faction]; banner(F.passive, F.passiveText, F.kind, true); });
 $('#btn-resume').addEventListener('click', resumeGame);
 $('#btn-quit').addEventListener('click', toMenu);
-$('#btn-again').addEventListener('click', startGame);
+$('#btn-again').addEventListener('click', () => { if (G.mode === 'pvp') { pvpFin(); pvpPantalla(); } else startGame(); });
 $('#btn-next').addEventListener('click', () => { const nx = nextLevel(G.level); if (nx) { G.prep = { mode: 'camp', lvl: nx, cd: G.cdiff || 'n' }; startGame(); } });
 $('#btn-menu').addEventListener('click', toMenu);
 $('#btn-bib').addEventListener('click', () => { play('select'); updateWallets(); openBib(); });   // v0.9.31: la Biblioteca

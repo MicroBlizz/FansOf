@@ -9,7 +9,7 @@ function avgLevel(f) { const F = FACTIONS[f]; const ks = [F.leader, ...F.units];
 /* ---------- sátira: chat falso en directo ---------- */
 const chatSt = { t: 6 };
 function chatSay(kind, extra, key) {
-  if (SAVE.chatOff) return;
+  if (SAVE.chatOff || G.mode === 'pvp') return;   // en PvP no hay chat (ni de mentira)
   const box = $('#chat'); if (!box) return;
   const lines = (ownerOf() === 'phony' && CHAT_PH[kind]) || (ownerOf() === 'iahorro' && CHAT_IA[kind]) || CHAT[kind]; if (!lines) return;
   const own = (CHAT_FAC[G.faction] || {})[kind];

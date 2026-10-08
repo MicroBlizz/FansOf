@@ -63,6 +63,7 @@ function pvpMandar(turno, cmds, tick, h) {
 }
 // llega un mensaje del rival (el transporte lo llama)
 function pvpRecibir(m) {
+  if (m && m.t === 'rendir') { PVP.rendido = true; pvpEstado('abandono'); return; }   // el rival se rinde: ganas
   if (!m || m.t !== 't' || !Number.isInteger(m.turno) || !Array.isArray(m.cmds)) return;
   if (PVP.ajenas.has(m.turno)) return;   // repetido
   const cmds = [];

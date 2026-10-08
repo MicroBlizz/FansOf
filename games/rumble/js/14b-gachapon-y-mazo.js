@@ -103,8 +103,8 @@ function buildCardGachaText() {
   $('#btn-gr-inv').textContent = 'Ver en la Colección';
   $('#gacha-odds').innerHTML = oddsHead('Probabilidades') + [['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]].map(([n, v]) => oddsLine(n, v + ' %')).join('')
     + oddsHead('Garantías')
-    + oddsNote(`Épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${SAVE.pity.cd || 0})`)
-    + oddsNote(`Legendaria a las ${ECON.pityLeg} tiradas (llevas ${SAVE.pity.cdL || 0})`)
+    + oddsPity('Épica o mejor', SAVE.pity.cd, ECON.pityEpic)
+    + oddsPity('Legendaria', SAVE.pity.cdL, ECON.pityLeg)
     + oddsNote(`Con 5 estrellas, una repetida da ${ECON.dupGems} gemas.`, true);
 }
 // ---- editar el mazo (v0.9.31: se despliega dentro de la Colección; cada cambio se guarda al momento y GUARDAR lo pliega)

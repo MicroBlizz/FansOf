@@ -3,6 +3,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.61', real: [
+      '<b>GARANTÍAS CON BARRA</b>: en el Gashapón, cada garantía (épica, legendaria, calidad Director) ahora tiene su barra de progreso: ves cuánto llevas y cuánto te falta, y cuando estás cerca la barra se pone naranja y late.'],
+    joke: ['Microblizz ha añadido una barrita de progreso. Casi seguro que no tiene nada que ver con que gastes más gemas.'] },
   { v: '0.9.60', real: [
       '<b>PROBABILIDADES MÁS CLARAS</b>: en el Gashapón, la letra pequeña de abajo ahora es una lista: una probabilidad por línea, y las garantías aparte.'],
     joke: ['Microblizz ha puesto las probabilidades en lista para que se lean mejor. Las malas, igual de pequeñas.'] },

@@ -158,6 +158,15 @@
 #gacha-odds .odds-h:first-child { margin-top: 0; }
 #gacha-odds .odds-l { display: flex; justify-content: space-between; gap: 10px; padding: 1px 0; border-bottom: 1px dotted rgba(255, 255, 255, 0.18); }
 #gacha-odds .odds-l b { color: var(--ink); font-variant-numeric: tabular-nums; }
+#gacha-odds .odds-p { display: block; margin: 4px 0 6px; }
+#gacha-odds .odds-pt { display: flex; justify-content: space-between; gap: 10px; }
+#gacha-odds .odds-pt b { color: var(--ink); font-variant-numeric: tabular-nums; }
+#gacha-odds .odds-bar { display: block; height: 9px; margin-top: 2px; border-radius: 5px; background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.25); overflow: hidden; }
+#gacha-odds .odds-bar i { display: block; height: 100%; min-width: 3px; border-radius: 4px; background: linear-gradient(90deg, #ffcb3d, #ffe58a); transition: width 0.4s; }
+#gacha-odds .odds-p.near .odds-bar i { background: linear-gradient(90deg, #ff8a3d, #ffcb3d); animation: odds-late 0.9s ease-in-out infinite alternate; }
+#gacha-odds .odds-p.near .odds-pt b { color: #ffcb3d; }
+@keyframes odds-late { from { filter: brightness(1); } to { filter: brightness(1.45); } }
+@media (prefers-reduced-motion: reduce) { #gacha-odds .odds-p.near .odds-bar i { animation: none; } }
 #gacha-odds .odds-n { display: block; padding: 1px 0; }
 #gacha-odds .odds-n.extra { margin-top: 3px; font-size: 11px; opacity: 0.85; }
 #scr-gacha { overflow-y: auto; }   /* por si en un móvil muy bajo no cabe todo: se desliza */

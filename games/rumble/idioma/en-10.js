@@ -34,4 +34,6 @@ IDIOMA.add({
   "Microblizz ha añadido un modo Fácil para los accionistas. Siguen perdiendo.": "Microblizz added an Easy mode for its shareholders. They're still losing.",
   "<b>PROBABILIDADES MÁS CLARAS</b>: en el Gashapón, la letra pequeña de abajo ahora es una lista: una probabilidad por línea, y las garantías aparte.": "<b>CLEARER ODDS</b>: in the Gacha, the small print at the bottom is now a list: one probability per line, with the guarantees separate.",
   "Microblizz ha puesto las probabilidades en lista para que se lean mejor. Las malas, igual de pequeñas.": "Microblizz put the odds in a list so they're easier to read. The bad ones are just as small.",
+  "<b>GARANTÍAS CON BARRA</b>: en el Gashapón, cada garantía (épica, legendaria, calidad Director) ahora tiene su barra de progreso: ves cuánto llevas y cuánto te falta, y cuando estás cerca la barra se pone naranja y late.": "<b>PITY BARS</b>: in the Gacha, each guarantee (epic, legendary, Director quality) now has a progress bar: you see how far along you are and how much is left, and when you're close the bar turns orange and pulses.",
+  "Microblizz ha añadido una barrita de progreso. Casi seguro que no tiene nada que ver con que gastes más gemas.": "Microblizz added a little progress bar. It almost certainly has nothing to do with you spending more gems.",
 });

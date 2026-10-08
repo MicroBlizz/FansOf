@@ -103,6 +103,11 @@ function showPull(it, tag) {
 // Las probabilidades salen una por línea (antes era un párrafo seguido): título, líneas «nombre ··· valor» y notas sueltas. Las usa también la máquina de cartas del Rumble.
 const oddsHead = t => `<span class="odds-h">${t}</span>`;
 const oddsLine = (nombre, valor) => `<span class="odds-l"><span>${nombre}</span><b>${valor}</b></span>`;
+// Garantía con barra de progreso: «nombre ··· 4 / 10» y debajo una barra que se llena; cerca de la meta se pone naranja y late, y a una tirada dice ¡LA PRÓXIMA!
+function oddsPity(nombre, llevas, meta) {
+  const n = Math.min(llevas || 0, meta), falta = meta - n, cerca = falta <= Math.max(1, Math.round(meta * 0.2));
+  return `<span class="odds-p${cerca ? ' near' : ''}"><span class="odds-pt"><span>${nombre}</span><b>${falta === 1 ? '¡LA PRÓXIMA!' : n + ' / ' + meta}</b></span><span class="odds-bar"><i style="width:${Math.round(n / meta * 100)}%"></i></span></span>`;
+}
 const oddsNote = (t, extra) => `<span class="odds-n${extra ? ' extra' : ''}">${t}</span>`;
 function buildGachaText() {
   for (const b of document.querySelectorAll('[data-gt]')) b.setAttribute('aria-pressed', String(b.dataset.gt === gachaTab));
@@ -115,9 +120,9 @@ function buildGachaText() {
   $('#gacha-odds').innerHTML = oddsHead('Probabilidades') + rar.map(([n, v]) => oddsLine(n, v + ' %')).join('')
     + oddsHead('Calidad de cada efecto (del 50 % al 150 % de su valor)') + QTIERS.map(t => oddsLine(t.name, t.p + ' %')).join('')
     + oddsHead('Garantías')
-    + oddsNote(`Épica o mejor como mucho cada ${ECON.pityEpic} tiradas (llevas ${P[gachaTab] || 0})`)
-    + oddsNote(`Legendaria a las ${ECON.pityLeg} tiradas (llevas ${P[gachaTab + 'L'] || 0})`)
-    + oddsNote(`Calidad Director (excelente) o mejor cada ${ECON.pityQ} tiradas (llevas ${P['q' + gachaTab] || 0})`)
+    + oddsPity('Épica o mejor', P[gachaTab], ECON.pityEpic)
+    + oddsPity('Legendaria', P[gachaTab + 'L'], ECON.pityLeg)
+    + oddsPity('Calidad Director o mejor', P['q' + gachaTab], ECON.pityQ)
     + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
     + oddsNote(`Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
     + oddsNote('Microblizz no se hace responsable de tu afición a las cápsulas.', true);

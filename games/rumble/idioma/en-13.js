@@ -41,4 +41,16 @@ IDIOMA.add({
   "Para continuar, acepta los nuevos términos (2.000 páginas).": "To continue, accept the new terms (2,000 pages).",
   "Microblizz se compra a sí misma": "Microblizz buys itself",
   "El CEO firma consigo mismo y se pone un bonus por la operación.": "The CEO signs with himself and gives himself a bonus for the deal.",
+  // consejos de Lola (v0.9.92)
+  "Microblizz ha relanzado el ": "Microblizz has relaunched the ",
+  " y fecha de caducidad, como los yogures. Cada 5 niveles hay un premio con ": " and an expiry date, like yoghurt. Every 5 levels there's a reward with a ",
+  ": marcos y títulos para tu ": ": frames and titles for your ",
+  ". Ah, y todos empezamos de cero. «Por justicia», dicen.": ". Oh, and everyone starts from zero. «For fairness», they say.",
+  " solo sube jugando contra personas: ": " only goes up by playing against people: ",
+  " por partida y ": " per match and ",
+  " si ganas. Sus premios son solo para presumir, porque aquí gana el que mejor juega. Microblizz no soportaba no cobrar nada, así que se inventó el ": " if you win. Its rewards are just for showing off, because here the best player wins. Microblizz couldn't stand not charging for anything, so it invented the ",
+  ": marcos para tu cara y títulos para debajo de tu nombre. No dan ni un punto de vida, pero hay que tener estilo hasta en el paro. Se ganan en los pases: toca uno para ponértelo.": ": frames for your face and titles for under your name. They don't give a single hit point, but you need style even when unemployed. You earn them in the passes: tap one to wear it.",
+  "estrella": "star",
+  "armario": "wardrobe",
+  "PASE PVP": "PVP PASS",
 });

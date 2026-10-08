@@ -16,4 +16,8 @@ IDIOMA.add({
   "en Fácil": "on Easy",
   "(Fácil)": "(Easy)",
   "Hasta un becario lo consigue.": "Even an intern can manage it.",
+  "<b>MISIÓN «5 DIARIAS»</b>: cada día hay 6 misiones. La de «Completa 5 misiones diarias» va siempre la primera y da más premio. En la semana hay un reto: completarla 7 veces.": "<b>«5 DAILY» MISSION</b>: there are 6 missions each day. The «Complete 5 daily missions» one is always first and pays more. This week there's a challenge: complete it 7 times.",
+  "<b>MISIONES DE LA ARENA</b>: jugar y ganar en la Arena cuenta para las misiones del día y de la semana.": "<b>ARENA MISSIONS</b>: winning and playing in the Arena counts toward the daily and weekly missions.",
+  "<b>LOGROS DE FÁCIL</b>: la campaña en Fácil también tiene logros por estrellas, como las demás dificultades.": "<b>EASY LEVEL ACHIEVEMENTS</b>: the Easy campaign now has star achievements, like the other difficulties.",
+  "Microblizz ha puesto una misión para que cumplas las demás. Es lo más parecido a un jefe que ha hecho en años.": "Microblizz has added a mission so you'll complete the others. It's the closest thing to a boss they've made in years.",
 });

@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.67', real: [
+      '<b>MISIÓN «5 DIARIAS»</b>: cada día hay 6 misiones. La de «Completa 5 misiones diarias» va siempre la primera y da más premio. En la semana hay un reto: completarla 7 veces.',
+      '<b>MISIONES DE LA ARENA</b>: jugar y ganar en la Arena cuenta para las misiones del día y de la semana.',
+      '<b>LOGROS DE FÁCIL</b>: la campaña en Fácil también tiene logros por estrellas, como las demás dificultades.'],
+    joke: ['Microblizz ha puesto una misión para que cumplas las demás. Es lo más parecido a un jefe que ha hecho en años.'] },
   { v: '0.9.63', real: [
       '<b>RAREZAS CON LOS COLORES DE SIEMPRE</b>: Común en gris, Poco común en verde, Rara en azul, Épica en lila y Legendaria en naranja (los líderes también). Lo que antes se llamaba Común ahora es Poco común.',
       '<b>MÁS ESCALONES</b>: las tropas de enjambre de cada facción (MadSquirrel, Noobs, Hoplites…) y lo más básico del gashapón (Cafeína, Piel dura, Puños de hierro, Espada de cartón piedra, Casco con cuernos y Taza del becario) pasan a Común. El 55 % que antes era todo Común ahora se reparte: 30 % Común y 25 % Poco común. Hitbox dudosa baja a Poco común, y el Imán de CAOS, los Auriculares y el Botón de pausa bajan a Épica.',

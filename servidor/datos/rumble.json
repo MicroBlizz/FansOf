@@ -912,6 +912,9 @@
  "premios": {
   "anuncios": {
    "dayMax": 30,
+   "semana": [
+    "swapw"
+   ],
    "slots": {
     "end2": 12,
     "gift2": 1,
@@ -921,6 +924,7 @@
     "pull_cd": 3,
     "pull_eq": 3,
     "swap": 2,
+    "swapw": 6,
     "turbo": 2
    }
   },
@@ -4061,7 +4065,7 @@
    ],
    "n": {
     "d": 6,
-    "w": 5
+    "w": 7
    },
    "r": {
     "arenawin1": [
@@ -4779,5 +4783,5 @@
    }
   }
  },
- "version": 16
+ "version": 17
 }

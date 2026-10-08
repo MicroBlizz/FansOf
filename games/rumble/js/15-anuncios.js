@@ -19,7 +19,8 @@ const ADS = {
     pull_eq: { max: 3, name: 'Tirada gratis: equipo' },
     pull_cd: { max: 3, name: 'Tirada gratis: cartas' },
     gift2: { max: 1, name: 'Regalo diario x2' },
-    swap:  { max: 2, name: 'Cambiar una misión (diaria o semanal)' },
+    swap:  { max: 2, name: 'Cambiar una misión diaria' },
+    swapw: { max: 6, name: 'Cambiar una misión semanal', semana: true },   // v0.9.71: cupo por semana (se pueden gastar todos el último día)
   },
 };
 const AD_JOKES = [
@@ -38,20 +39,23 @@ const TV_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="4" wi
 function adsState() {
   const A = SAVE.ads || (SAVE.ads = { day: '', n: 0, by: {}, noAds: false }), d = todayStr();
   if (A.day !== d) { A.day = d; A.n = 0; A.by = {}; }
+  const w = weekStr(); if (A.week !== w) { A.week = w; A.byW = {}; }   // los cupos semanales (semana: true) se cuentan aparte, de lunes a domingo
   return A;
 }
 const adsFree = () => !!adsState().noAds;
-function adLeft(slot) { const A = adsState(), S2 = ADS.slots[slot]; return Math.max(0, Math.min(S2.max - (A.by[slot] || 0), ADS.dayMax - A.n)); }
+function adLeft(slot) { const A = adsState(), S2 = ADS.slots[slot]; if (S2.semana) return Math.max(0, S2.max - (A.byW[slot] || 0)); return Math.max(0, Math.min(S2.max - (A.by[slot] || 0), ADS.dayMax - A.n)); }
 // botón de anuncio: «▶ texto» y cuántos quedan hoy
 function adBtn(slot, label, extra) {
-  const left = adLeft(slot), free = adsFree();
-  return `<button class="ad-btn ol${free ? ' free' : ''}" data-ad="${slot}" ${left ? '' : 'disabled'} ${extra || ''}>${free ? '' : TV_SVG}<span>${label}</span><small>${left ? (free ? 'Sin anuncios · ' : '') + `quedan ${left} hoy` : 'Mañana más'}</small></button>`;
+  const left = adLeft(slot), free = adsFree(), sem = !!ADS.slots[slot].semana;
+  return `<button class="ad-btn ol${free ? ' free' : ''}" data-ad="${slot}" ${left ? '' : 'disabled'} ${extra || ''}>${free ? '' : TV_SVG}<span>${label}</span><small>${left ? (free ? 'Sin anuncios · ' : '') + (sem ? `quedan ${left} esta semana` : `quedan ${left} hoy`) : sem ? 'La semana que viene' : 'Mañana más'}</small></button>`;
 }
+
 // ver un anuncio y, al acabar, dar el premio
 let adRun = null;
 function watchAd(slot, onReward) {
-  if (!adLeft(slot)) { toast(adsState().n >= ADS.dayMax ? `Ya has visto los ${ADS.dayMax} anuncios de hoy. ¡Mañana más!` : 'Por hoy ya no quedan más aquí. ¡Mañana más!'); play('deny'); return; }
-  const done = () => { const A = adsState(); A.n++; A.by[slot] = (A.by[slot] || 0) + 1; stat('ads', 1); onReward(); saveGame(); updateWallets(); };
+  const sem = !!ADS.slots[slot].semana;
+  if (!adLeft(slot)) { toast(sem ? 'Esta semana ya no quedan más cambios. ¡El lunes más!' : adsState().n >= ADS.dayMax ? `Ya has visto los ${ADS.dayMax} anuncios de hoy. ¡Mañana más!` : 'Por hoy ya no quedan más aquí. ¡Mañana más!'); play('deny'); return; }
+  const done = () => { const A = adsState(); if (sem) A.byW[slot] = (A.byW[slot] || 0) + 1; else { A.n++; A.by[slot] = (A.by[slot] || 0) + 1; } stat('ads', 1); onReward(); saveGame(); updateWallets(); };
   if (adsFree()) { play('crown'); done(); return; }
   adOverlay(); const ov = $('#ad-screen'), J = pick(AD_JOKES);
   $('#ad-prod').textContent = J[0]; $('#ad-line').textContent = J[1];
@@ -131,12 +135,12 @@ function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
   const b = $('#btn-noads'); if (b) b.onclick = () => { play('select'); confirmBox('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', () => { adsState().noAds = true; stat('noads', 1); saveGame(); play('win'); buildShop(); toast('Sin anuncios: los premios te llegan al momento'); }); };
 }
 function adMissionOffer(L, W) {   // cambiar una misión diaria o semanal que no te guste (las fijas no se cambian). W: semanales
-  const rows = document.querySelectorAll('#mission-list .mission');
+  const rows = document.querySelectorAll('#mission-list .mission'), slot = W ? 'swapw' : 'swap';   // diarias: 2 al día · semanales: 6 a la semana
   L.forEach((m, i) => {
     if (mFija(m, W) || m.claimed || m.prog >= mDef(m, W).goal || !rows[i]) return;
-    rows[i].insertAdjacentHTML('beforeend', adBtn('swap', 'CAMBIAR', `data-mi="${i}"`));
+    rows[i].insertAdjacentHTML('beforeend', adBtn(slot, 'CAMBIAR', `data-mi="${i}"`));
   });
-  for (const b of document.querySelectorAll('#mission-list [data-ad="swap"]')) b.onclick = () => watchAd('swap', () => { ECO.ganar('anuncio', {}, { tipo: 'anuncio', slot: 'swap' });
+  for (const b of document.querySelectorAll(`#mission-list [data-ad="${slot}"]`)) b.onclick = () => watchAd(slot, () => { ECO.ganar('anuncio', {}, { tipo: 'anuncio', slot });
     const i = +b.dataset.mi, Lst = W ? SAVE.weekly.list : SAVE.daily.list, used = Lst.map(x => x.id);
     const pool = (W ? WEEKLY : MISSIONS).filter(x => !used.includes(x.id) && x.id !== 'gift'), M = pick(pool);
     if (!M) return;

@@ -45,8 +45,8 @@ const RETOS = {
   { id: 'caos200', tit: 'Barra libre de CAOS', txt: 'Gasta 200 de CAOS.', goal: 200, ev: 'caos' },
   { id: 'quick3', tit: 'Tres cafés', txt: 'Juega 3 partidas rápidas.', goal: 3, ev: 'quick' },
   ],
-  /* ---------- misiones semanales: cada lunes, la fija y 4 al azar. Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
-  semanalesN: 5,
+  /* ---------- misiones semanales: cada lunes, la fija y 6 al azar (v0.9.71). Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
+  semanalesN: 7,
   fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 80, 400] }],
   semanales: [
   { id: 'wwin', tit: 'Semana de resultados', txt: 'Gana 30 partidas.', goal: 30, ev: 'win' },

@@ -26,7 +26,7 @@ f.onload = () => setTimeout(() => {
           free: Array.from({ length: g('PASS').levels }, (_, i) => { const r = g('passReward')('free', i + 1); return { gold: r.gold || 0, gems: r.gems || 0, tickets: r.tickets || 0, item: r.item || null }; }),
           paid: Array.from({ length: g('PASS').levels }, (_, i) => { const r = g('passReward')('paid', i + 1); return { gold: r.gold || 0, gems: r.gems || 0, tickets: r.tickets || 0, item: r.item || null }; }), q: g('PASS_Q') } : null,
         horas: g('IDLE') ? { cap: g('IDLE').cap, gold: g('IDLE').gold, gExp: g('IDLE').gExp, gems: g('IDLE').gems, gemsK: g('IDLE').gemsK, item: g('IDLE').item, itemK: g('IDLE').itemK, pwMax: ((g('AJUSTES') || {}).horas || {}).pwMax || 12, turboH: g('ADS') ? g('ADS').turboH : 2, idleH: g('ADS') ? g('ADS').idleH : 4 } : null,
-        anuncios: g('ADS') ? { dayMax: g('ADS').dayMax, slots: Object.fromEntries(Object.entries(g('ADS').slots).map(([k, v]) => [k, v.max])) } : null,
+        anuncios: g('ADS') ? { dayMax: g('ADS').dayMax, slots: Object.fromEntries(Object.entries(g('ADS').slots).map(([k, v]) => [k, v.max])), semana: Object.keys(g('ADS').slots).filter(k => g('ADS').slots[k].semana) } : null,
         facItems: g('FAC_ITEM') || null,
         gift: S.gift || null, starter: S.starter ? { gold: S.starter.gold, gems: S.starter.gems } : null }; };
       const F = {}; for (const f of g('FACTION_ORDER') || []) { const x = g('FACTIONS')[f]; F[f] = { leader: x.leader || null, units: x.units || [], gacha: x.gacha || [] }; }

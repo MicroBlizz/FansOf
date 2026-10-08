@@ -3,12 +3,15 @@
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
 ## Misiones nuevas de Rumble: probadas en el servidor (8-10-2026)
+Rumble 0.9.71 (8-10-2026): 7 semanales (la fija + 6) y cupo propio para cambiarlas con anuncio, 6 a la semana («swapw», reclamos 'adw:<lunes>:…'). Aplicados en Supabase la 19 (cupo-semanal-de-anuncios) y los datos v17; probado en el servidor: 6 cambios sí, el 7.º no, el cupo diario no se toca.
 Con un invitado de prueba: «Empleado del día» da 150 / 25, no se cobra dos veces; «Empleado del mes» da 600 / 80; una misión inventada se rechaza; 6 diarias cobradas bien. Sin probar: la 7.ª diaria, las 5 semanales y los logros de Fácil (w1f…, st_f).
 
 ## Publicar en Google Play (pendiente, 7-10-2026)
 - [ ] **Página de privacidad** (ES/EN): obligatoria ya (la partida va a la nube) y Google Play pide su enlace. Es el punto de «Cuentas» de abajo.
 - [ ] **App de Android con Capacitor**: envolver el juego web en una app.
 - [ ] **Ficha de la tienda**: capturas, imagen de cabecera 1024×500, descripción ES/EN, repaso del icono.
+- [ ] **Modo pruebas solo para el equipo** (Daniel, 8-10-2026): antes de sacar el juego, el botón de Opciones solo lo ven administradores, creadores y jugadores de la beta; los demás no.
+- [ ] **Modo pruebas con cuenta**: la copia para volver solo está en el navegador donde se activó, pero el modo pruebas se sincroniza a todos los aparatos; en los demás sale «ACTIVADO» y no se puede quitar. Guardar la copia también en la nube (o poder quitarlo desde cualquier aparato). Y lo cobrado en modo pruebas (misiones, logros) queda apuntado en el servidor y al volver ya no se puede cobrar.
 - [ ] **Cuenta de desarrollador de Google Play** (pago único), a nombre de uno de los dos. ¿Quién?
 - [ ] **12 probadores durante 14 días seguidos**: obligatorio en cuentas personales nuevas antes de poder publicar. Es lo que más tarda: buscarlos ya (amigos y familia con Android).
 - [ ] **Formularios de Google**: el de edades (IARC) y el de seguridad de datos (qué guarda la app).

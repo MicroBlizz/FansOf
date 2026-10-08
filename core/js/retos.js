@@ -39,13 +39,16 @@ function ensureWeekly() {
   const wk = weekStr();
   if (SAVE.weekly && SAVE.weekly.week === wk && SAVE.weekly.list.every(m => mDef(m, true))) {
     // una fija nueva a mitad de semana se añade delante sin volver a sortear (así no se pierde lo que llevas)
-    const falta = FIJAS_W.filter(f => !SAVE.weekly.list.some(m => m.id === f.id));
-    if (falta.length) { SAVE.weekly.list.unshift(...falta.map(f => ({ id: f.id, prog: 0, claimed: false }))); saveGame(); }
+    const L = SAVE.weekly.list, falta = FIJAS_W.filter(f => !L.some(m => m.id === f.id));
+    if (falta.length) L.unshift(...falta.map(f => ({ id: f.id, prog: 0, claimed: false })));
+    // si ahora hay más semanales que cuando se sorteó la semana, se añaden las que faltan (las que ya tenías siguen igual)
+    if (L.length < WEEKLY_N) { const R = mulberry32(seedOf('w+' + wk)), pool = WEEKLY.filter(x => !L.some(m => m.id === x.id)); while (L.length < WEEKLY_N && pool.length) L.push({ id: pool.splice(Math.floor(R() * pool.length), 1)[0].id, prog: 0, claimed: false }); }
+    if (falta.length || L.length !== SAVE.weekly._n) { SAVE.weekly._n = L.length; saveGame(); }
     return;
   }
   const R = mulberry32(seedOf('w' + wk)), pool = WEEKLY.slice(), list = FIJAS_W.slice();
   while (list.length < WEEKLY_N) list.push(pool.splice(Math.floor(R() * pool.length), 1)[0]);
-  SAVE.weekly = { week: wk, list: list.map(m => ({ id: m.id, prog: 0, claimed: false })) }; saveGame();
+  SAVE.weekly = { week: wk, _n: list.length, list: list.map(m => ({ id: m.id, prog: 0, claimed: false })) }; saveGame();
 }
 // algo ha pasado: cuenta para las estadísticas (logros) y para las misiones de hoy y de esta semana
 function missionEvent(ev, n, fac) {

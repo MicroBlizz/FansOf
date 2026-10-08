@@ -89,4 +89,11 @@ IDIOMA.add({
   "Gana 15 partidas sin perder torres.": "Win 15 matches without losing towers.",
   "Gana 12 partidas en la Arena.": "Win 12 Arena matches.",
   "Cambiar una misión (diaria o semanal)": "Swap a mission (daily or weekly)",
+  "<b>7 SEMANALES</b>: ahora hay 7 misiones semanales (Empleado del mes y 6 más). Esta semana se añaden las que faltan sin tocar las que ya tenías.": "<b>7 WEEKLIES</b>: there are now 7 weekly missions (Employee of the Month and 6 more). This week the missing ones are added without touching the ones you already had.",
+  "<b>CAMBIAR SEMANALES</b>: las semanales tienen su propio cupo de cambios con anuncio: 6 a la semana, para usarlos cuando quieras (aunque sea todos el domingo).": "<b>SWAP WEEKLIES</b>: weekly missions have their own ad swap allowance: 6 a week, to use whenever you like (even all on Sunday).",
+  "Microblizz ha ampliado la semana laboral a 7 misiones. Dice que el domingo también es un día.": "Microblizz has extended the working week to 7 missions. It says Sunday is a day too.",
+  "Cambiar una misión semanal": "Swap a weekly mission",
+  "quedan %1 esta semana": "%1 left this week",
+  "La semana que viene": "Next week",
+  "Esta semana ya no quedan más cambios. ¡El lunes más!": "No more swaps left this week. More on Monday!",
 });

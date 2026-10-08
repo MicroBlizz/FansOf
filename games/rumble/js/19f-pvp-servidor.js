@@ -16,7 +16,10 @@ const pvpFacDeMazo = mazo => { for (const c of mazo) { const f = FACTION_ORDER.f
 function pvpEquipoDeServidor(mazo, equipo) {
   const fac = pvpFacDeMazo(mazo), F = FACTIONS[fac] || {}, eq = { fac, deck: [], lvl: {}, stars: {}, ab: {}, equip: {}, modo: (equipo && equipo.length) ? 'salvaje' : 'estandar' };
   for (const c of mazo) { if (c.c !== F.leader) eq.deck.push(c.c); eq.lvl[c.c] = c.n || 1; if (c.st) eq.stars[c.c] = c.st; }
-  for (const it of equipo || []) { const x = { k: ABILITIES[it.o] ? 'ab' : 'eq', id: it.o, q: (it.q || []).slice() }; if (x.k === 'ab') eq.ab[it.s] = x; else eq.equip[it.s] = x; }
+  for (const it of equipo || []) {   // la clave es ab_<carta> o eq_<ranura>; el tipo lo pone el servidor (t)
+    const x = { k: it.t === 'ab' ? 'ab' : 'eq', id: it.o, q: (it.q || []).slice() };
+    if (x.k === 'ab') eq.ab[String(it.s).replace(/^ab_/, '')] = x; else eq.equip[String(it.s).replace(/^eq_/, '')] = x;
+  }
   return eq;
 }
 // jugada de motor → trozo corto para el servidor (menos de 200 caracteres) y al revés
@@ -29,7 +32,7 @@ PVPNET.redes.servidor = {
   buscar(modo, equipo, aviso) {
     let activo = true, tic = null, sala = null, error = e => { activo = false; clearTimeout(tic); toast(pvpErrorTexto(e), true); };
     const F = FACTIONS[equipo.fac], uid = {};   // el servidor comprueba que cada objeto sea tuyo: se manda el identificador de la copia, no lo que hace
-    if (modo === 'salvaje') { const E = SAVE.equip[equipo.fac] || {}; for (const s in E) if (E[s]) uid[s] = E[s]; for (const k of equipo.deck.concat(F.leader)) if (SAVE.abEquip[k]) uid[k] = SAVE.abEquip[k]; }
+    if (modo === 'salvaje') { const E = SAVE.equip[equipo.fac] || {}; for (const s in E) if (E[s]) uid['eq_' + s] = E[s]; for (const k of equipo.deck.concat(F.leader)) if (SAVE.abEquip[k]) uid['ab_' + k] = SAVE.abEquip[k]; }   // claves libres: ab_<carta> y eq_<ranura>
     const mazo = equipo.deck.concat(F.leader);
     const sondeo = async () => {
       if (!activo) return;

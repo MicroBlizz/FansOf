@@ -104,9 +104,11 @@ async function pruebaPvp(raiz, duerme) {
     const sv = await partidaServidor();
     ap('0 · servidor simulado', `${sv.n} huellas, ${sv.llamadas} llamadas al servidor, lados ${sv.seats.join('/')}, estados ${sv.estados.join('/')}, cierres ${JSON.stringify(sv.cierres)}`);
     if (sv.n < 20) fallos.push('servidor: se compararon muy pocas huellas'); if (!sv.iguales) fallos.push('servidor: las huellas no coinciden'); if (sv.desync) fallos.push('servidor: el servidor ha visto una desincronización');
-    if (sv.seats.join() !== 'p,e') fallos.push('servidor: los lados no son p/e: ' + sv.seats.join('/'));
+    if ([...sv.seats].sort().join() !== 'e,p') fallos.push('servidor: los lados no son p/e: ' + sv.seats.join('/'));
     if (JSON.stringify(sv.fin[0]) !== JSON.stringify(sv.fin[1])) fallos.push('servidor: el final no coincide');
     if (!(sv.cierres.a && sv.cierres.a.puntos != null && sv.cierres.b && sv.cierres.b.puntos != null)) fallos.push('servidor: el cierre no da puntos a los dos');
+    { const w = (await abre()).w, eq = w.pvpEquipoDeServidor([{ c: 'squirrel', n: 4, st: 1 }, { c: 'beaver', n: 2 }, { c: 'fox', n: 2 }, { c: 'meercat', n: 2 }, { c: 'junkcoon', n: 2 }, { c: 'mechavaca', n: 2 }, { c: 'bunny', n: 5 }], [{ s: 'ab_bunny', u: 'x', t: 'ab', o: 'cafeina', q: [0.5] }, { s: 'eq_head', u: 'y', t: 'eq', o: 'cuernos', q: [0.7] }]);
+      const mal = w.pvpEquipoMal(eq); ap('0b · equipo del servidor', mal ? 'MAL: ' + mal : `${eq.fac}, ${eq.deck.length} cartas, habilidades ${Object.keys(eq.ab)}, objetos ${Object.keys(eq.equip)}`); if (mal || !eq.ab.bunny || !eq.equip.head) fallos.push('equipo del servidor mal convertido: ' + JSON.stringify(eq)); }
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);

@@ -23,7 +23,7 @@ Object.assign(CFG, {
     base:  { hp: 1800, dmg: 28, cd: 1.1, range: 100, r: 46 },
   },
   diff: {
-    easy:   { aiIncome: 0.8, think: [1.3, 2.3], bossCd: 20, stun: 2.0, despido: 28 },
+    easy:   { aiIncome: 0.9, think: [1.0, 1.7], bossCd: 20, stun: 2.0, despido: 28 },   // v2: antes [1.3-2.3 s, CAOS 0,8]: la IA parecía tonta; ahora piensa a tiempo y sigue siendo fácil de ganar
     normal: { aiIncome: 1.25, think: [0.5, 1.0], bossCd: 14, stun: 2.5, despido: 40 },
     ceo:    { aiIncome: 1.45, think: [0.35, 0.8], bossCd: 11, stun: 2.8, despido: 48 },   // v0.9.71: partida rápida CEO (más la ruleta de cada partida: js/10c-rapida-ceo.js)
   },

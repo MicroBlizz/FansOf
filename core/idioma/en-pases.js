@@ -49,6 +49,8 @@ IDIOMA.add({
   "Desbloquea la pista Ejecutiva de la %1: más oro, gemas, tiradas gratis": "Unlocks the Executive track of %1: more gold, gems, free pulls",
   "Desbloquea la pista Ejecutiva de la %1: más oro, gemas, tiradas gratis,": "Unlocks the Executive track of %1: more gold, gems, free pulls,",
   "Desbloquea la pista Ejecutiva de la %1: más oro, gemas, tiradas gratis, ": "Unlocks the Executive track of %1: more gold, gems, free pulls, ",
+  "Desbloquea la pista Ejecutiva de la Temporada 1: La Gran Compra: más oro, gemas, tiradas gratis, ": "Unlocks the Executive track of Season 1: The Big Buyout: more gold, gems, free pulls, ",
+  "Desbloquea la pista Ejecutiva de la Temporada 1: La Gran Compra: más oro, gemas, tiradas gratis,": "Unlocks the Executive track of Season 1: The Big Buyout: more gold, gems, free pulls,",
   "y la": "and the",
   ", exclusiva.": ", exclusive.",
   "%1 marcos y %2 títulos": "%1 frames and %2 titles",

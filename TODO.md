@@ -36,14 +36,14 @@ La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rar
 - [ ] **Cuenta de desarrollador de Google Play** (pago único), a nombre de uno de los dos. ¿Quién?
 - [ ] **12 probadores durante 14 días seguidos**: obligatorio en cuentas personales nuevas antes de poder publicar. Es lo que más tarda: buscarlos ya (amigos y familia con Android).
 - [ ] **Formularios de Google**: el de edades (IARC) y el de seguridad de datos (qué guarda la app).
-- [ ] **Nube (Rafael)**: pegar las plantillas de servidor/correos/ (LEEME.md) en Supabase y la dirección de la app en las Redirect URLs para que el enlace del email funcione dentro de la app (ya están en «Cuentas»).
+- [x] **Nube (Rafael)**: plantillas de correo ya en Supabase (8-10-2026). Falta solo la dirección de la app en las Redirect URLs si aún no está.
 - [ ] **Nombre de recambio**: Google revisa a mano y podría rechazarlo por parecerse a Blizzard/Warcraft Rumble. Tener uno pensado.
 - No hace falta para la primera versión: PvP online, tienda con dinero real ni el botón de Google.
 
 ## Cuentas (publicado el 6-10-2026: Rumble 0.9.30, TD 0.13.0)
 - [x] Páginas de privacidad y condiciones (ES/EN) en /privacidad/ y /condiciones/, enlazadas desde Opciones y la biblioteca.  Contacto: fansofmicroblizz@gmail.com.
 - [ ] Botón de Google: el código ya está (sale solo cuando Supabase tiene Google activado). Falta que el dueño cree la credencial OAuth en Google Cloud, active Google y «Allow manual linking» en Supabase (pasos en el hilo «Cuenta del jugador»).
-- [ ] Correos de Supabase: plantillas listas en servidor/correos/, falta pegarlas en el panel (hoy salen en inglés).
+- [x] Correos de Supabase en español: plantillas aplicadas en el panel el 8-10-2026 (fuente: servidor/correos/).
 - [ ] Correo: Gmail vale para empezar (~500 al día). Con muchos jugadores, pasar a un dominio propio (por ejemplo con Resend).
 - [ ] Herramientas en el panel DEV: estado de la nube, forzar subida/bajada, simular sin conexión.
 - [ ] Limpieza de invitados: servidor/16-limpiar-invitados.sql escrito (diaria, 60 días); falta que el dueño lo pegue en el SQL Editor. El usuario de prueba con la partida «prueba» se borra a mano.

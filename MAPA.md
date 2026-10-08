@@ -7,6 +7,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
+- `core/css/clasificacion.css` · 12 KB
 - `core/css/menus-extra.css` · 21 KB
 - `core/css/menus-pases.css` · 15 KB
 - `core/css/menus-tienda.css` · 20 KB
@@ -21,10 +22,12 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-plantillas-2.js` · 8 KB
 - `core/idioma/en-plantillas.js` · 11 KB
 - `core/idioma/en-raiz.js` · 3 KB
+- `core/idioma/en-salon.js` · 4 KB
 - `core/idioma/en-serie-1.js` · 9 KB
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
 - `core/js/armario.js` · 22 KB · ARM, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox
+- `core/js/clasificacion.js` · 10 KB · SALON_EXCUSAS, SALON_UI, SALON_ESPERA, salonEsc, salonTab, openSalon, salonCarga, salonPinta, salonEsperando, salonSinRed, salonRetrato, salonValor, salonFila, salonPodio, salonLista, salonObras
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
 - `core/js/nucleo.js` · 11 KB · NUCLEO, VERSION
 - `core/js/pases.js` · 17 KB · PASS, PASS_Q, PASS_PVP, PASES, passTab, CANDADO_SVG, passRewardBase, pReward, passReward, pSave, pLevel, hoyISO, pFin, pDias, pAddXp, pReady, pClaimable, pClaim, passLevel, addPassXp, passReady, claimPass, passClaimable, rewardHtml, rewardTxt, giveReward, esLook, diasTxt, esHito, esGordo, ESTRELLA_SVG, passCelda, passProximo, buildPass, buyPass, openPass, passMatch, paseOrigen
@@ -94,6 +97,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-11.js` · 14 KB
 - `games/rumble/idioma/en-12.js` · 15 KB
 - `games/rumble/idioma/en-13.js` · 3 KB
+- `games/rumble/idioma/en-14.js` · 2 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -157,6 +161,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
+- `games/rumble/js/clasificacion.js` · 2 KB · SALON_PVP, SALON_DIF, salonDif, SALON
 - `games/rumble/js/novedades.js` · 18 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 5 KB
 - `games/rumble/js/retos-logros.js` · 25 KB

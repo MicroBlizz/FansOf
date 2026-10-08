@@ -1,0 +1,120 @@
+/* Fans Of · SALÓN DE LA FAMA (core/js/clasificacion.js): podio de los tres primeros, la lista, tu fila abajo y el cartel de obras.
+   Lo carga el juego que tenga Salón, después de core/css/menus.css. */
+
+/* ---------- el botón del menú: una medalla dorada con corona (el juego decide dónde va; .esquina = bajo el chip del perfil) ---------- */
+.salon-btn { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); font: inherit; }
+.salon-btn .sb-med { position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 3px solid var(--outline);
+  background: radial-gradient(circle at 35% 28%, #fff3b0 0%, #ffd84a 34%, #e08e00 78%, #a85d00 100%); box-shadow: 0 4px 0 var(--outline), inset 0 -3px 0 rgba(120, 60, 0, 0.35); overflow: hidden; }
+.salon-btn .sb-med::after { content: ""; position: absolute; top: -40%; left: -60%; width: 40%; height: 180%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent); transform: rotate(25deg); animation: salonBrillo 4.5s ease-in-out infinite; }
+.salon-btn svg { width: 28px; height: 24px; color: #fff6ea; filter: drop-shadow(0 2px 0 rgba(32, 16, 44, 0.45)); margin-top: 1px; }
+.salon-btn > span:last-child { font-family: var(--font-display); font-size: 11px; line-height: 1; letter-spacing: 0.3px; }
+.salon-btn:active .sb-med { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline), inset 0 -3px 0 rgba(120, 60, 0, 0.35); }
+.salon-btn.esquina { position: absolute; top: 60px; left: 12px; z-index: 2; }
+@keyframes salonBrillo { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+
+/* ---------- la pantalla ---------- */
+.salon .salon-tabs { width: 100%; max-width: 508px; gap: 6px; }
+.salon .salon-tabs .tab { position: relative; flex: 1 1 0; min-width: 0; padding: 8px 4px 4px; white-space: nowrap; font-size: clamp(14px, 3.8vw, 17px); }
+.salon .salon-tabs .tab[aria-pressed="true"] { background: linear-gradient(to bottom, #ffe06a, #e0a017); color: #2a1300; box-shadow: 0 0 0 3px var(--gold), 0 3px 0 var(--outline); text-shadow: none; }
+.salon-obra-chip { position: absolute; top: -11px; right: -5px; transform: rotate(7deg); padding: 2px 5px 1px; border-radius: 6px; border: 2px solid var(--outline); background: #ffd21a; color: #2a1300;
+  font-family: var(--font-ui); font-weight: 800; font-size: 9px; font-style: normal; line-height: 1; text-shadow: none; box-shadow: 0 2px 0 var(--outline); }
+.salon-sub { font-size: 13.5px; }
+.salon-sub b { color: var(--ink); }
+.salon-list { gap: 7px; }
+
+/* ---------- el podio ---------- */
+.salon-podio { flex: none; display: grid; grid-template-columns: 1fr 1.12fr 1fr; align-items: end; gap: 6px; padding: 6px 2px 10px; margin-bottom: 4px;
+  background: radial-gradient(ellipse at 50% 85%, rgba(255, 203, 61, 0.22), transparent 62%); }
+.sp-col { position: relative; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.sp-halo { position: relative; display: grid; place-items: center; width: 82px; height: 76px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 66%); }
+.sp-1 .sp-halo { width: 96px; height: 88px; background: radial-gradient(circle at 50% 60%, rgba(255, 220, 90, 0.45), rgba(255, 220, 90, 0) 66%); }
+.sp-halo canvas { width: 74px; height: 68px; }
+.sp-1 .sp-halo canvas { width: 88px; height: 81px; }
+.sp-corona { width: 40px; height: 34px; color: var(--gold); margin-bottom: -10px; z-index: 1; filter: drop-shadow(0 3px 0 rgba(32, 16, 44, 0.5)); animation: salonCorona 2.6s ease-in-out infinite; }
+.sp-corona svg { width: 100%; height: 100%; }
+@keyframes salonCorona { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-4px) rotate(4deg); } }
+.sp-nom { max-width: 100%; margin-top: 2px; font-family: var(--font-display); font-weight: 400; font-size: 15px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-1 .sp-nom { font-size: 17px; color: #ffe06a; }
+.sp-col.yo .sp-nom { color: var(--player-lite); }
+.sp-info { min-height: 17px; margin: 1px 0 4px; font-size: 11px; font-weight: 800; color: var(--ink-dim); display: flex; justify-content: center; }
+.sp-base { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 2px; padding: 6px 4px 8px; box-sizing: border-box;
+  border: 3px solid var(--outline); border-radius: 14px 14px 6px 6px; box-shadow: 0 4px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.45), inset 0 -6px 0 rgba(0, 0, 0, 0.18); }
+.sp-1 .sp-base { height: 96px; background: linear-gradient(to bottom, #ffe98a, #e0a017 60%, #b8780a); }
+.sp-2 .sp-base { height: 74px; background: linear-gradient(to bottom, #ffffff, #b9c2cf 60%, #8a93a3); }
+.sp-3 .sp-base { height: 60px; background: linear-gradient(to bottom, #ffc79a, #c4733a 60%, #8f4a1c); }
+.sp-num { font-family: var(--font-display); font-size: 30px; line-height: 1; color: #fff6ea; }
+.sp-1 .sp-num { font-size: 38px; }
+.sp-base .salon-val { justify-content: center; }
+.sp-base .salon-val b { font-size: 17px; color: #fff6ea; }
+.sp-base .salon-val small { display: none; }
+.sp-base .salon-val i { color: #fff6ea; }
+
+/* ---------- las filas ---------- */
+.salon-fila { flex: none; display: grid; grid-template-columns: 38px 46px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; text-align: left;
+  border: 3px solid var(--outline); border-radius: 14px; background: var(--panel); box-shadow: 0 3px 0 var(--outline); }
+.salon-fila.yo { border-color: #ffb347; box-shadow: 0 0 0 2px rgba(255, 179, 71, 0.4), 0 3px 0 var(--outline); }
+.salon-pos { font-family: var(--font-display); font-weight: 400; font-size: 18px; text-align: center; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+.salon-cara { display: grid; place-items: center; width: 46px; height: 42px; border-radius: 12px; background: radial-gradient(circle at 50% 70%, var(--tray-hi), var(--bg) 90%); border: 2px solid var(--outline); }
+.salon-cara canvas { width: 40px; height: 36px; }
+.salon-quien { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.salon-quien b { font-size: 15.5px; font-weight: 800; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.salon-quien b em { font-style: normal; color: var(--player-lite); }
+.salon-quien small { font-size: 11.5px; font-weight: 700; color: var(--ink-dim); display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.salon-val { display: flex; align-items: center; gap: 4px; text-align: right; }
+.salon-val i { display: inline-grid; width: 20px; height: 20px; color: var(--gold); }
+.salon-val i svg { width: 100%; height: 100%; }
+.salon-val b { font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.salon-val small { display: none; }
+.salon-mas { flex: none; margin: 4px 0 0; font-size: 12.5px; font-weight: 700; color: var(--ink-dim); text-align: center; }
+
+/* ---------- tu fila (siempre abajo) ---------- */
+.salon-pie { width: 100%; max-width: 508px; flex: none; }
+.salon-pie:empty { display: none; }
+.salon-fila.mia { background: linear-gradient(to bottom, #ffa04a, #d25a07); border-color: var(--outline); box-shadow: 0 0 0 3px rgba(255, 203, 61, 0.55), 0 4px 0 var(--outline); }
+.salon-fila.mia .salon-pos, .salon-fila.mia .salon-quien small { color: #ffe6cc; }
+.salon-fila.mia .salon-pos { text-shadow: 0 2px 0 var(--outline); }
+.salon-fila.mia .salon-quien b em { color: #fff6ea; }
+.salon-fila.mia .salon-val b, .salon-fila.mia .salon-val i { color: #fff6ea; }
+.salon-fila.mia .salon-cara { background: radial-gradient(circle at 50% 70%, #ffc27a, #b04a05 90%); }
+.salon-fila.mia.fuera { grid-template-columns: 1fr; padding: 8px 14px; }
+
+/* ---------- cargando, vacío y sin conexión ---------- */
+.salon-cargando { flex: none; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 8px 6px; }
+.salon-cargando b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--gold); }
+.salon-cargando small { font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.salon-giro { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--tray-hi); border-top-color: var(--gold); animation: salonGiro 0.8s linear infinite; }
+@keyframes salonGiro { to { transform: rotate(360deg); } }
+.salon-hueco { flex: none; height: 54px; border-radius: 14px; border: 3px solid var(--outline);
+  background: linear-gradient(90deg, var(--panel) 0%, var(--tray-hi) 50%, var(--panel) 100%); background-size: 200% 100%; animation: salonHueco 1.3s ease-in-out infinite; opacity: 0.7; }
+@keyframes salonHueco { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.salon-aviso { flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 18px; padding: 18px 16px; border: 3px solid var(--outline); border-radius: 16px; background: var(--panel); }
+.salon-aviso b { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--gold); }
+.salon-aviso p { margin: 0; font-size: 14px; font-weight: 700; color: var(--ink-dim); text-wrap: balance; }
+
+/* ---------- en construcción ---------- */
+.salon-obras { flex: none; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 18px 0 10px; overflow: hidden; }
+.so-cinta { width: 112%; height: 30px; display: grid; place-items: center; transform: rotate(-4deg); border-top: 3px solid var(--outline); border-bottom: 3px solid var(--outline);
+  background: repeating-linear-gradient(-45deg, #ffd21a 0 18px, #20102c 18px 34px); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3); overflow: hidden; }
+.so-cinta span { padding: 1px 8px 0; background: #ffd21a; color: #2a1300; font-family: var(--font-display); font-size: 13px; white-space: nowrap; }
+.so-cartel { position: relative; width: 90%; max-width: 420px; padding: 18px 18px 12px; border-radius: 16px; border: 4px solid var(--outline); cursor: pointer; font: inherit; color: #2a1300; text-align: center;
+  background: linear-gradient(to bottom, #ffe45a, #ffc61a); box-shadow: 0 6px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.55), inset 0 0 0 4px #ffd21a, inset 0 0 0 7px #2a1300; transform: rotate(-1.5deg); }
+.so-cartel:active { transform: rotate(-1.5deg) translateY(3px); box-shadow: 0 3px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.55), inset 0 0 0 4px #ffd21a, inset 0 0 0 7px #2a1300; }
+.so-cartel.meneo { animation: salonMeneo 0.45s ease; }
+@keyframes salonMeneo { 0% { transform: rotate(-1.5deg); } 30% { transform: rotate(3deg); } 60% { transform: rotate(-4deg); } 100% { transform: rotate(-1.5deg); } }
+.so-tornillo { position: absolute; top: 12px; left: 14px; width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8a7aa0, #20102c 70%); }
+.so-tornillo.d { left: auto; right: 14px; }
+.so-cartel b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; margin: 2px 0 8px; letter-spacing: 0.5px; }
+.so-cartel p { margin: 0; min-height: 66px; font-size: 15.5px; font-weight: 800; line-height: 1.3; text-wrap: balance; }
+.so-cartel small { display: block; margin-top: 8px; font-size: 11px; font-weight: 800; opacity: 0.6; }
+.so-conos { display: flex; gap: 28px; align-items: flex-end; }
+.so-conos svg { width: 40px; height: 52px; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.3)); }
+.so-conos svg:nth-child(2) { width: 46px; height: 60px; }
+.so-firma { margin: 0; font-size: 12px; font-weight: 700; color: var(--ink-dim); text-wrap: balance; }
+
+@media (prefers-reduced-motion: reduce) {
+  .salon-btn .sb-med::after, .sp-corona, .salon-giro, .salon-hueco, .so-cartel.meneo { animation: none; }
+}
+
+/* la etiqueta de color que un juego pone en la línea pequeña (por ejemplo, la dificultad más alta en Rumble) */
+.salon-dif { display: inline-block; padding: 2px 6px 0; border-radius: 6px; border: 2px solid var(--outline); color: #fff6ea; font-family: var(--font-display); font-size: 10.5px; line-height: 1.1; letter-spacing: 0.3px; }

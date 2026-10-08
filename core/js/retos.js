@@ -9,7 +9,11 @@
 //   RETOS.categorias                  las pestañas de logros, si no son las de siempre
 //   RETOS.noCuenta()                  true mientras lo que pasa no debe contar (una sala de pruebas)
 //   RETOS.antesDeRevisar()            algo que hacer antes de repasar los logros (convertir una partida guardada antigua)
-//   RETOS.trasMisiones(lista)         algo que añadir bajo las misiones diarias
+//   RETOS.trasMisiones(lista)         algo que añadir bajo las misiones diarias · RETOS.trasSemanales(lista): lo mismo bajo las semanales
+//   RETOS.fijas / RETOS.fijasSemana   misiones que salen siempre las primeras (del día / de la semana); no entran en el sorteo
+//   RETOS.diariasN / RETOS.semanalesN cuántas misiones hay en total (fijas incluidas); por defecto, 4 y 4
+// Cada misión puede llevar además: tit (título, va encima de txt, que pasa a ser la descripción), r: [oro, gemas, pase] (premio propio)
+// y alCobrar: 'evento' (al cobrarla, avisa de ese evento; así una semanal puede contar las veces que se cobra una diaria).
 //   RETOS.avatares()                  qué líderes se pueden elegir de avatar · RETOS.nombre = { primera, cambio }: los textos de «¿cómo te llamas?»
 //   RETOS.trasNombre()                qué hacer después de elegir nombre (por defecto, lo que toque enseñar en el menú)
 // y avisa de lo que pasa en la partida con missionEvent('ganar', 1) o stat('lo-que-sea', 1).
@@ -17,11 +21,12 @@
 /* =========================================================
    MISIONES (cuatro diarias y cuatro semanales, las mismas para todo el mundo cada día)
    ========================================================= */
-const MISSIONS = RETOS.diarias, WEEKLY = RETOS.semanales, FIJAS = RETOS.fijas || [], DAILY_N = RETOS.diariasN || 4, WEEKLY_N = 4;   // fijas: siempre van primero en el día; diariasN: cuántas en total
+const MISSIONS = RETOS.diarias, WEEKLY = RETOS.semanales, FIJAS = RETOS.fijas || [], FIJAS_W = RETOS.fijasSemana || [], DAILY_N = RETOS.diariasN || 4, WEEKLY_N = RETOS.semanalesN || 4;
 const ECON_W = { gold: 300, gems: 40 };   // lo que da cada misión semanal
 function weekStr() { const d = new Date(), back = (d.getDay() + 6) % 7, m = new Date(d.getFullYear(), d.getMonth(), d.getDate() - back); return `${m.getFullYear()}-${m.getMonth() + 1}-${m.getDate()}`; }
 const seedOf = str => { let h = 7; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
-const mDef = (m, weekly) => (weekly ? WEEKLY : [...FIJAS, ...MISSIONS]).find(x => x.id === m.id);
+const mDef = (m, weekly) => (weekly ? [...FIJAS_W, ...WEEKLY] : [...FIJAS, ...MISSIONS]).find(x => x.id === m.id);
+const mFija = (m, weekly) => (weekly ? FIJAS_W : FIJAS).some(f => f.id === m.id);   // las fijas no se cambian con anuncio
 const mText = (m, M) => M.txt.replace('{F}', m.fac ? FACTIONS[m.fac].name : '');
 function ensureDaily() {
   const day = todayStr(); if (SAVE.daily && SAVE.daily.day === day && SAVE.daily.list.length === DAILY_N && SAVE.daily.list.every(m => mDef(m))) return;
@@ -31,8 +36,14 @@ function ensureDaily() {
   SAVE.daily = { day, list: list.map(m => ({ id: m.id, prog: 0, claimed: false, fac: m.ev === 'facwin' ? facs[Math.floor(R() * facs.length)] : undefined })) }; saveGame();
 }
 function ensureWeekly() {
-  const wk = weekStr(); if (SAVE.weekly && SAVE.weekly.week === wk && SAVE.weekly.list.every(m => mDef(m, true))) return;
-  const R = mulberry32(seedOf('w' + wk)), pool = WEEKLY.slice(), list = [];
+  const wk = weekStr();
+  if (SAVE.weekly && SAVE.weekly.week === wk && SAVE.weekly.list.every(m => mDef(m, true))) {
+    // una fija nueva a mitad de semana se añade delante sin volver a sortear (así no se pierde lo que llevas)
+    const falta = FIJAS_W.filter(f => !SAVE.weekly.list.some(m => m.id === f.id));
+    if (falta.length) { SAVE.weekly.list.unshift(...falta.map(f => ({ id: f.id, prog: 0, claimed: false }))); saveGame(); }
+    return;
+  }
+  const R = mulberry32(seedOf('w' + wk)), pool = WEEKLY.slice(), list = FIJAS_W.slice();
   while (list.length < WEEKLY_N) list.push(pool.splice(Math.floor(R() * pool.length), 1)[0]);
   SAVE.weekly = { week: wk, list: list.map(m => ({ id: m.id, prog: 0, claimed: false })) }; saveGame();
 }
@@ -60,15 +71,17 @@ function buildMissions() {
   $('#mission-sub').textContent = W ? `${WEEKLY_N} misiones grandes cada semana. Cada una da ${ECON_W.gold} de oro, ${ECON_W.gems} gemas y ${PASS.xpWeekly} puntos de pase. Se renuevan en ${untilStr(true)}.` : `${DAILY_N} misiones nuevas cada día. Cada una da ${ECON.mission[0]} de oro, ${ECON.mission[1]} gemas y ${PASS.xpDaily} puntos de pase. Se renuevan en ${untilStr(false)}.`;
   const rw = W ? [ECON_W.gold, ECON_W.gems, PASS.xpWeekly] : [ECON.mission[0], ECON.mission[1], PASS.xpDaily];
   $('#mission-list').innerHTML = L.map((m, i) => {
-    const M = mDef(m, W), done = m.prog >= M.goal, RR = (!W && M.r) || rw;
-    return `<div class="mission${m.claimed ? ' done' : ''}"><div><b>${mText(m, M)}</b><div class="xpbar"><i style="width:${(m.prog / M.goal) * 100}%"></i><span>${fmt(m.prog)} / ${fmt(M.goal)}</span></div></div><button class="btn-up" data-claim="${i}" ${done && !m.claimed ? '' : 'disabled'}>${m.claimed ? 'HECHA' : 'COBRAR'}<small>${COIN_SVG}${RR[0]} ${GEM_SVG}${RR[1]}</small><small>+${RR[2]} pase</small></button></div>`;
+    const M = mDef(m, W), done = m.prog >= M.goal, RR = M.r || rw;
+    return `<div class="mission${m.claimed ? ' done' : ''}${mFija(m, W) ? ' fija' : ''}"><div>${M.tit ? `<b>${M.tit}</b><span class="ach-txt">${mText(m, M)}</span>` : `<b>${mText(m, M)}</b>`}<div class="xpbar"><i style="width:${(m.prog / M.goal) * 100}%"></i><span>${fmt(m.prog)} / ${fmt(M.goal)}</span></div></div><button class="btn-up" data-claim="${i}" ${done && !m.claimed ? '' : 'disabled'}>${m.claimed ? 'HECHA' : 'COBRAR'}<small>${COIN_SVG}${RR[0]} ${GEM_SVG}${RR[1]}</small><small>+${RR[2]} pase</small></button></div>`;
   }).join('');
   if (!W && RETOS.trasMisiones) RETOS.trasMisiones(L);
+  if (W && RETOS.trasSemanales) RETOS.trasSemanales(L);
   for (const b of document.querySelectorAll('[data-claim]')) b.onclick = () => {
     const m = L[+b.dataset.claim], Mx = mDef(m, W); if (m.claimed || m.prog < Mx.goal) return;
-    const RR = (!W && Mx.r) || rw;
+    const RR = Mx.r || rw;
     m.claimed = true; ECO.ganar('mision', { gold: RR[0], gems: RR[1] }, { tipo: 'mision', periodo: W ? 'w' : 'd', id: m.id });
-    const up = addPassXp(RR[2]); if (!W) { missionEvent('dailydone', 1); if (Mx.alCobrar) missionEvent(Mx.alCobrar, 1); } else stat('weekdone', 1);
+    const up = addPassXp(RR[2]); if (!W) missionEvent('dailydone', 1); else stat('weekdone', 1);
+    if (Mx.alCobrar) missionEvent(Mx.alCobrar, 1);
     saveGame(); play('crown'); updateWallets(); buildMissions();
     toast(up ? `¡Pase de batalla: nivel ${passLevel()}!` : `+${RR[2]} puntos de pase`);
   };

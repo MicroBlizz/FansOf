@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.68', real: [
+      '<b>MISIONES CON NOMBRE</b>: todas las misiones tienen ahora un título (Doble despido, ERE masivo, Pausa para el café…) y debajo lo que hay que hacer.',
+      '<b>EMPLEADO DEL MES</b>: en las semanales hay una misión fija: sé Empleado del día 7 veces en la semana. Da un premio gordo.',
+      '<b>SEMANALES MÁS LARGAS</b>: ahora hay 5 a la semana y están pensadas para durar varios días. También se pueden cambiar con un anuncio (menos la fija).'],
+    joke: ['Recursos Humanos de Microblizz ha puesto nombre a cada tarea. El presupuesto para pagarlas todavía no ha llegado.'] },
   { v: '0.9.67', real: [
       '<b>MISIÓN «5 DIARIAS»</b>: cada día hay 6 misiones. La de «Completa 5 misiones diarias» va siempre la primera y da más premio. En la semana hay un reto: completarla 7 veces.',
       '<b>MISIONES DE LA ARENA</b>: jugar y ganar en la Arena cuenta para las misiones del día y de la semana.',

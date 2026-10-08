@@ -19,7 +19,7 @@ const ADS = {
     pull_eq: { max: 3, name: 'Tirada gratis: equipo' },
     pull_cd: { max: 3, name: 'Tirada gratis: cartas' },
     gift2: { max: 1, name: 'Regalo diario x2' },
-    swap:  { max: 2, name: 'Cambiar una misión diaria' },
+    swap:  { max: 2, name: 'Cambiar una misión (diaria o semanal)' },
   },
 };
 const AD_JOKES = [
@@ -130,17 +130,19 @@ function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
     : `<div class="pack noads"><span class="joke-flag">PARA SIEMPRE</span><div class="pk-ic">${TV_SVG}</div><div><div class="pk-name ol">Sin anuncios</div><div class="pk-note">Los premios de los anuncios (tirada gratis, premio x2, turbo…) te llegan al momento, sin ver nada. Hasta ${ADS.dayMax} al día.</div></div><button class="btn-price ol" id="btn-noads">${eur(ADS.noAdsEur)}</button></div>`);
   const b = $('#btn-noads'); if (b) b.onclick = () => { play('select'); confirmBox('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', () => { adsState().noAds = true; stat('noads', 1); saveGame(); play('win'); buildShop(); toast('Sin anuncios: los premios te llegan al momento'); }); };
 }
-function adMissionOffer(L) {   // cambiar una misión diaria que no te guste
+function adMissionOffer(L, W) {   // cambiar una misión diaria o semanal que no te guste (las fijas no se cambian). W: semanales
   const rows = document.querySelectorAll('#mission-list .mission');
   L.forEach((m, i) => {
-    if ((RETOS.fijas || []).some(f => f.id === m.id) || m.claimed || m.prog >= mDef(m, false).goal || !rows[i]) return;   // la fija no se cambia
+    if (mFija(m, W) || m.claimed || m.prog >= mDef(m, W).goal || !rows[i]) return;
     rows[i].insertAdjacentHTML('beforeend', adBtn('swap', 'CAMBIAR', `data-mi="${i}"`));
   });
   for (const b of document.querySelectorAll('#mission-list [data-ad="swap"]')) b.onclick = () => watchAd('swap', () => { ECO.ganar('anuncio', {}, { tipo: 'anuncio', slot: 'swap' });
-    const i = +b.dataset.mi, used = SAVE.daily.list.map(x => x.id), pool = MISSIONS.filter(x => !used.includes(x.id) && x.id !== 'gift'), M = pick(pool);
+    const i = +b.dataset.mi, Lst = W ? SAVE.weekly.list : SAVE.daily.list, used = Lst.map(x => x.id);
+    const pool = (W ? WEEKLY : MISSIONS).filter(x => !used.includes(x.id) && x.id !== 'gift'), M = pick(pool);
+    if (!M) return;
     const facs = FACTION_ORDER.filter(isUnlocked);
-    SAVE.daily.list[i] = { id: M.id, prog: 0, claimed: false, fac: M.ev === 'facwin' ? pick(facs) : undefined };
-    buildMissions(); toast('Misión cambiada', true);
+    Lst[i] = { id: M.id, prog: 0, claimed: false, fac: M.ev === 'facwin' ? pick(facs) : undefined };
+    saveGame(); buildMissions(); toast('Misión cambiada', true);
   });
 }
 hook('gacha.textos', adGachaOffer);   // tirada gratis con anuncio

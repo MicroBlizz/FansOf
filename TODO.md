@@ -2,20 +2,23 @@
 
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
-## Para Rafael: validar misiones con premio propio (Rumble 0.9.67, Daniel, 8-10-2026)
-Rafael, por favor valida esto antes de desplegar. Todavía no está publicado: la web sigue en 0.9.66.
-1. Qué cambia en Rumble: 6 misiones diarias al día (la fija «Completa 5 misiones diarias» más 5 al azar), 8 diarias nuevas (Arena y otras), 2 semanales nuevas («Completa 7 veces…» y «Gana 10 partidas en la Arena»), premios propios por misión (150 oro / 25 gemas / 40 pase la de 5 diarias; 120 / 15 / 30 la de Arena) y logros de Fácil.
-2. Qué aplicar, en este orden:
-   a) Daniel regenera los datos en su PC: `python herramientas/subir_datos.py rumble` (cambian servidor/datos/rumble.json y rumble.sql).
-   b) Supabase: aplicar servidor/18-misiones-premio-propio.sql (solo cambia la rama de misiones de _evento; el resto queda igual).
-   c) Supabase: aplicar servidor/datos/rumble.sql (misiones, límite de 6 al día, premios propios y logros de Fácil).
+## Para Rafael: repasar y aplicar las misiones nuevas (Rumble 0.9.67 y 0.9.68, Daniel, 8-10-2026)
+Rafael: Daniel pidió publicarlo ya (la web tiene la 0.9.68), así que repásalo cuando lo veas. Mientras no se aplique lo del punto 2, con cuenta NO se pueden cobrar las misiones nuevas (sin cuenta, todo funciona).
+1. Qué cambia en Rumble:
+   - 0.9.67: 6 diarias al día (la fija «Empleado del día: completa 5 misiones diarias», que da 150 oro / 25 gemas / 40 pase, más 5 al azar), 8 diarias nuevas (Arena y otras), la Arena cuenta para misiones y la campaña en Fácil tiene logros de estrellas.
+   - 0.9.68: todas las misiones tienen título y descripción; 5 semanales (la fija «Empleado del mes: sé Empleado del día 7 veces», 600 / 80 / 400, más 4 al azar); las semanales normales se pueden cambiar con anuncio (mismo cupo «swap» de 2 al día que las diarias); semanales más largas (unos 5 días jugando ~10 partidas al día, medido con partidas automáticas).
+   - Sistema común (core/js/retos.js): RETOS.fijas, fijasSemana, diariasN, semanalesN, trasSemanales, y en cada misión tit, r y alCobrar. Todo opcional: TD y los demás siguen igual.
+2. Qué aplicar en Supabase, en este orden:
+   a) servidor/18-misiones-premio-propio.sql (solo cambia la rama 'mision' de _evento: si la misión tiene premio propio en premios.mision.r, da ese; si no, lo de siempre).
+   b) servidor/datos/rumble.sql (ya regenerado, versión 16: lista de misiones con las fijas, límite 6 diarias y 5 semanales, premios propios y logros de Fácil).
 3. Qué probar con una cuenta de prueba:
-   - Cobrar «Completa 5 misiones diarias» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
-   - Se pueden cobrar 6 misiones diarias; la séptima se rechaza.
-   - Una misión inventada o que no está en la lista se rechaza.
-   - Las semanales nuevas aceptan su cobro.
-   - Los logros nuevos de Fácil se cobran una sola vez.
-4. Si algo falla, avisa a Daniel y no toques la versión web.
+   - Cobrar «Empleado del día» da 150 oro, 25 gemas y 40 de pase, y no se puede cobrar dos veces.
+   - Se pueden cobrar 6 diarias y 5 semanales; la siguiente se rechaza.
+   - «Empleado del mes» da 600 oro, 80 gemas y 400 de pase.
+   - Una misión inventada se rechaza.
+   - Los logros de Fácil (w1f…, st_f) se cobran una sola vez.
+4. Para revisar: tocar core sin subir el ?v= de TD, Survivors, Skate y Tácticas fue decisión de Daniel (solo cambia el Rumble; los cambios de core son compatibles).
+5. Si algo falla, avisa a Daniel. Para volver atrás la web: python herramientas/desplegar.py --lista y --a <commit>.
 
 ## Para Rafael: aplicar en Supabase las rarezas nuevas (Daniel, 8-10-2026)
 La web ya está desplegada con Rumble 0.9.63 / TD 0.13.29 / Survivors 0.1.8 (rareza Común gris, clave `basic`). Falta el servidor:

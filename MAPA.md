@@ -25,7 +25,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
 - `core/js/nucleo.js` · 11 KB · NUCLEO, VERSION
 - `core/js/retos-pantallas.js` · 11 KB · buildAchs, achDay, LOGIN, dayDiff, loginState, loginRw, openLogin, claimLogin, NAME_MIN, NAME_IDEAS, esc, pname, cleanName, randomName, avatarList, avatarOf, openName, nameOk, profileChip, celdaLogros, celdaRacha, buildProfile, retosBadges, retosPopups, retosLogin
-- `core/js/retos.js` · 17 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon … (+7)
+- `core/js/retos.js` · 18 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mFija, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, PASS, PASS_Q, passReward, passLevel, addPassXp, rewardHtml, rewardTxt, giveReward, passReady, passClaimable, claimPass, buildPass, buyPass, openPass, passMatch, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat … (+8)
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
 - `core/js/serie/catalogo.js` · 7 KB · RARITY, CATALOGO, SLOTS, QTIERS, qStars
@@ -78,7 +78,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
-- `demos/terminal-shock/index.html` · 75 KB
+- `demos/terminal-shock/index.html` · 76 KB
 - `games/rumble/index.html` · 35 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 7 KB
@@ -86,6 +86,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-10.js` · 7 KB
+- `games/rumble/idioma/en-11.js` · 6 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -138,10 +139,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
-- `games/rumble/js/novedades.js` · 11 KB · NEWS
+- `games/rumble/js/novedades.js` · 12 KB · NEWS
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
-- `games/rumble/js/retos.js` · 4 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
+- `games/rumble/js/retos.js` · 6 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
+- `games/skate/index.html` · 3 KB
+- `games/skate/sw.js` · <1 KB
+- `games/skate/css/skate.css` · 32 KB
+- `games/skate/js/datos-unidades.js` · 14 KB · SK_UNIDADES
+- `games/skate/js/instalar.js` · 2 KB
+- `games/skate/js/juego.js` · 46 KB · SK_LIGERO, SK_BRILLO, SK_W, SK_LANES, SK_CALZADA, SK_HERO_X, SK_VIDA, SK_BOSS_T, SK_OLA_T, SK_ESCALA_HEROE, SK_COLOR, SAVE, sonidoApagado, volGeneral, volMusica, SK_HEROES, SK_ENEMIGOS, SK_JEFES, skU, skHp, skRand, skHeroe, SK_ARMAS, SK_PASIVAS, SK_CLASES, SK_XP, SK_TALENTOS, skCartera, skGuardaCartera, skAplicaTalentos, SK_JEFE_DE, SK_DIFS, skCampLeer, skCampGuarda, skMundoAbierto, skNivelAbierto, SK, SK_CV, SKC, skPolvoT … (+48)
+- `games/skate/js/local.js` · <1 KB · tr
+- `games/skate/js/mundos.js` · 10 KB · SK_MUNDOS
 - `games/survivors/index.html` · 25 KB
 - `games/survivors/sw.js` · <1 KB
 - `games/survivors/css/survivors.css` · 5 KB

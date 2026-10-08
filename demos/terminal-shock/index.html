@@ -79,6 +79,12 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
 .ctl{margin:0;font-size:12px;color:var(--muted);line-height:1.7}
 .touch .ctl-desk{display:none} .ctl-touch{display:none} .touch .ctl-touch{display:block}
 .err{color:var(--red);font-size:13px;margin:0}
+.nbox{width:min(480px,100%);display:flex;flex-direction:column;gap:14px}
+.nvoice{font-family:var(--f-crt);font-size:24px;line-height:1.2;color:#bff7f2;text-shadow:0 0 8px rgba(63,227,216,.5);margin:0}
+.nform{display:flex;gap:10px;flex-wrap:wrap}
+#nameInput{flex:1;min-width:0;background:#020604;border:1px solid var(--cyan);border-radius:5px;color:var(--phos);font-family:var(--f-crt);font-size:26px;letter-spacing:.06em;padding:6px 12px}
+#nameInput:focus{outline:2px solid var(--cyan);outline-offset:2px}
+.nhint{margin:0;font-size:12px;color:var(--muted)}
 
 .splicer{width:min(560px,100%);background:linear-gradient(#545a56,#3b403d);border-radius:22px;padding:14px;box-sizing:border-box;border:2px solid #22272a;box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 10px 30px #000}
 .sp-top{display:flex;justify-content:space-between;font-family:var(--f-crt);font-size:17px;color:#1a1d1c;letter-spacing:.12em;padding:0 6px 8px}
@@ -193,6 +199,18 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
   </div>
 </div>
 
+<div class="ov title-ov" id="ovName" hidden>
+  <form class="nbox" id="nameForm" autocomplete="off">
+    <p class="eyebrow">G.A.B.R.I.E.L.</p>
+    <p class="nvoice">«…¿Me oyes? No intentes moverte todavía. Antes de nada, dime cómo te llamas.»</p>
+    <div class="nform">
+      <input id="nameInput" type="text" maxlength="16" placeholder="Tu nombre" aria-label="Tu nombre" spellcheck="false">
+      <button class="primary" type="submit">Responder</button>
+    </div>
+    <p class="nhint">Si lo dejas en blanco, serás «Sujeto 07».</p>
+  </form>
+</div>
+
 <div class="ov" id="ovFusion" hidden>
   <div class="splicer">
     <div class="sp-top"><span>FUSIONADORA FS-97</span><span id="fzNode">NODO N-1</span></div>
@@ -240,7 +258,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
       <span class="stamp">FALLECIDO</span>
       <h3>ALBRIGHT MEMORIAL HOSPITAL · GRANOLLERS<br>PROTOCOLO O.W.S. · EXPEDIENTE CONFIDENCIAL</h3>
       <dl>
-        <dt>Sujeto</dt><dd>#07 · Daniel H.</dd>
+        <dt>Sujeto</dt><dd id="fileName">#07</dd>
         <dt>Ingreso</dt><dd>03/10/1999 · Unidad de Estabilización</dd>
         <dt>Defunción</dt><dd>14/11/1999 · paro cardiorrespiratorio</dd>
         <dt>Implante</dt><dd>Occipital O.W.S. rev. 4 · receptor 2,4 GHz</dd>
@@ -248,7 +266,7 @@ button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
         <dt>Función</dt><dd>NODO PRIMARIO MÓVIL</dd>
       </dl>
     </div>
-    <p class="reveal" id="endReveal" hidden>«Global <b>A</b>lbright <b>B</b>rain <b>R</b>eanimation <b>I</b>nterface &amp; <b>E</b>lectronic <b>L</b>ink. G.A.B.R.I.E.L., Daniel. Soy el doctor Albright. Tú no estás escapando del hospital. Tú eres la antena que lo va a sacar de aquí.»</p>
+    <p class="reveal" id="endReveal" hidden>«Global <b>A</b>lbright <b>B</b>rain <b>R</b>eanimation <b>I</b>nterface &amp; <b>E</b>lectronic <b>L</b>ink. G.A.B.R.I.E.L., <span id="revName"></span>. Soy el doctor Albright. Tú no estás escapando del hospital. Tú eres la antena que lo va a sacar de aquí.»</p>
     <div class="choices" id="endChoice" hidden>
       <button class="c1" id="choiceA" type="button">Sobrecargar el sistema</button>
       <button class="c2" id="choiceB" type="button">Someterse</button>
@@ -337,14 +355,15 @@ const ICON={
 /* ================= STATE ================= */
 let S, CP, started=false, overlay='title', shake=0, flash=0, beatT=0, ffT=0, T=0, last=0, fireCD=0;
 let aiming=false, qt=0, prevQT=false, moving=0, muzzle=0;
-function freshState(){return {
+function freshState(){return { name:'',
   p:{x:3.5,y:4.6,a:-Math.PI/2,walk:0}, luc:100, shield:0, ammo:4,
   inv:{fusionadora:1}, picked:{}, zones:{1:false,2:false}, gates:{D:false,G:false}, gt:{D:-1,G:-1},
   rep:{}, flags:{}, lastArea:'',
   en:EN0.map((e,i)=>({id:i,t:e.t,x:e.x+.5,y:e.y+.5,stun:0,rise:0,lunge:0,lt:1+Math.random()*2,a:Math.random()*6.28,kx:0,ky:0}))
 };}
 function saveCP(){CP=JSON.stringify(S);}
-function loadCP(){S=JSON.parse(CP); msgQ.length=0; cur=null; $('sub').hidden=true; S.lastArea=''; aiming=false; qt=0; show(null);}
+function pname(){return (S&&S.name)||'Sujeto 07';}
+function loadCP(){const n=S&&S.name;S=JSON.parse(CP);if(!S.name)S.name=n; msgQ.length=0; cur=null; $('sub').hidden=true; S.lastArea=''; aiming=false; qt=0; show(null);}
 
 /* ================= AUDIO ================= */
 let AC=null, master, aHum, aWhine, aDrone, noiseBuf, muted=false, ambKey='';
@@ -381,22 +400,23 @@ function sfx(k){ switch(k){
 }}
 
 /* ================= MESSAGES ================= */
-const msgQ=[]; let cur=null; const WHO={GABRIEL:'g',SISTEMA:'s',DANIEL:'d'};
-function say(who,text,dur){msgQ.push({who,text,dur:dur||Math.max(2.8,text.length*.055)});}
+const msgQ=[]; let cur=null; const WHO={GABRIEL:'g',SISTEMA:'s',YO:'d'};
+function say(who,text,dur){text=text.replace(/\{N\}/g,pname());msgQ.push({who,text,dur:dur||Math.max(2.8,text.length*.055)});}
 function updateMsgs(dt){
-  if(!cur&&msgQ.length){cur=msgQ.shift();cur.t=0;const el=$('sub');el.className='sub '+WHO[cur.who];$('subWho').textContent=cur.who==='GABRIEL'?'G.A.B.R.I.E.L.':cur.who;el.hidden=false;}
+  if(!cur&&msgQ.length){cur=msgQ.shift();cur.t=0;const el=$('sub');el.className='sub '+WHO[cur.who];$('subWho').textContent=cur.who==='GABRIEL'?'G.A.B.R.I.E.L.':cur.who==='YO'?pname().toUpperCase():cur.who;el.hidden=false;}
   if(!cur)return; cur.t+=dt; $('subTxt').textContent=cur.text.slice(0,Math.min(cur.text.length,Math.floor(cur.t*48)));
   if(cur.t>cur.dur+cur.text.length/48){cur=null;if(!msgQ.length)$('sub').hidden=true;}
 }
 let toastTO=0; function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');clearTimeout(toastTO);toastTO=setTimeout(()=>el.classList.remove('on'),1900);}
 
 /* ================= OVERLAYS & INPUT ================= */
-const OV={title:'ovTitle',fusion:'ovFusion',inv:'ovInv',over:'ovOver',end:'ovEnd'};
+const OV={title:'ovTitle',name:'ovName',fusion:'ovFusion',inv:'ovInv',over:'ovOver',end:'ovEnd'};
 const H={xl:false,xr:false,yu:false,yd:false}; const TK={up:false,down:false,left:false,right:false,aim:false,run:false};
 function show(name){ for(const k in OV) $(OV[k]).hidden=(k!==name); overlay=name||null; if(name){for(const k in H)H[k]=false;for(const k in TK)TK[k]=false;keys.clear();document.querySelectorAll('.on').forEach(b=>b.classList.remove('on'));} }
 const keys=new Set(); const kd=(...c)=>c.some(k=>keys.has(k));
 addEventListener('keydown',e=>{const c=e.code;
-  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(c)&&overlay!=='end'&&overlay!=='over') e.preventDefault();
+  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(c)&&overlay!=='end'&&overlay!=='over'&&overlay!=='name') e.preventDefault();
+  if(overlay==='name') return;
   if(overlay==='title'){ if(c==='Enter'||c==='Space') startGame(); return; }
   if(overlay==='fusion'){ keys.add(c); if((c==='Space'||c==='Enter'||c==='KeyE')&&!e.repeat){ FM&&FM.phase==='align'?fzSplice():fzHeat(); } if(c==='Escape') closeFusion(); return; }
   if(overlay==='inv'){ if(c==='KeyI'||c==='Tab'||c==='Escape') show(null); return; }
@@ -479,7 +499,7 @@ function update(dt){
     if(e.t==='p'&&!pSafe&&Math.hypot(P.x-e.x,P.y-e.y)<.62){
       S.luc-=S.shield>0?7:15; e.stun=1.5; e.kx=-Math.cos(ang)*2; e.ky=-Math.sin(ang)*2; shake=.12; sfx('grab');
       const ka=Math.atan2(P.y-e.y,P.x-e.x); moveEnt(P,Math.cos(ka)*.5,Math.sin(ka)*.5,.28,false);
-      if(!S.flags.grab){S.flags.grab=1;say('DANIEL','¡Me ha agarrado de la nuca! Siento cómo algo intenta entrar.');}
+      if(!S.flags.grab){S.flags.grab=1;say('YO','¡Me ha agarrado de la nuca! Siento cómo algo intenta entrar.');}
     }
   }
   for(let i=0;i<S.en.length;i++)for(let j=i+1;j<S.en.length;j++){const a=S.en[i],b=S.en[j];if(a.rise<1||b.rise<1)continue;
@@ -488,10 +508,10 @@ function update(dt){
   let drain=0;
   if(pz>0&&S.zones[pz]){ drain+=.45; for(const r of REPS){ if(!S.zones[r.z])continue; const d=Math.hypot(P.x-(r.x+.5),P.y-(r.y+.5)); if(d<4.5) drain+=5*(1-d/4.5);} }
   for(const e of S.en){ if(e.t==='e'&&standingE(e)&&!pSafe){ const d=Math.hypot(P.x-e.x,P.y-e.y); if(d<3.2)drain+=10;
-      if(d<7&&!S.flags.elite){S.flags.elite=1;say('DANIEL','Ese lleva una mochila con antena. Cuanto más se acerca, menos puedo pensar.');} } }
+      if(d<7&&!S.flags.elite){S.flags.elite=1;say('YO','Ese lleva una mochila con antena. Cuanto más se acerca, menos puedo pensar.');} } }
   if(S.shield>0){S.shield-=dt;drain=0;}
   S.luc=Math.max(0,S.luc-drain*dt);
-  if(S.luc<35&&!S.flags.low){S.flags.low=1;say('DANIEL','Me cuesta pensar. Necesito un Punto de Terapia o una Pila de Choque.');}
+  if(S.luc<35&&!S.flags.low){S.flags.low=1;say('YO','Me cuesta pensar. Necesito un Punto de Terapia o una Pila de Choque.');}
   if(S.luc<35){beatT-=dt;if(beatT<=0){sfx('beat');beatT=60/(70+(100-S.luc)*.9);}}
   setAmb(pSafe?'safe':(pz>0&&S.zones[pz]?'act':'dead'));
   const it=findInteract(), pr=$('prompt');
@@ -503,16 +523,16 @@ function update(dt){
 function onArea(a){
   if(a==='SALA DE DESCANSO'){
     if(!S.flags.safe){S.flags.safe=1;
-      say('DANIEL','El zumbido se corta en seco. Las paredes están forradas de cobre.');
-      say('DANIEL','Aquí dentro esas cosas no pueden seguirme. Hay un desfibrilador en la pared.');
+      say('YO','El zumbido se corta en seco. Las paredes están forradas de cobre.');
+      say('YO','Aquí dentro esas cosas no pueden seguirme. Hay un desfibrilador en la pared.');
       say('SISTEMA','PUNTO SEGURO · PROGRESO GUARDADO',2.4);
     } else toast('Progreso guardado');
     saveCP();
   } else if(a==='CORREDOR C'&&!S.flags.c){ S.flags.c=1;
-    say('DANIEL','Otro pasillo sin cobertura. Aquí los cuerpos siguen en el suelo.');
-    say('DANIEL','El Centro de Datos está al otro extremo. Habrá otro nodo junto a la compuerta.');
+    say('YO','Otro pasillo sin cobertura. Aquí los cuerpos siguen en el suelo.');
+    say('YO','El Centro de Datos está al otro extremo. Habrá otro nodo junto a la compuerta.');
   } else if(a==='CENTRO DE DATOS'&&!S.flags.dc){ S.flags.dc=1;
-    say('GABRIEL','Al fondo, Daniel. En el escritorio está tu expediente. Léelo. Te lo has ganado.');
+    say('GABRIEL','Al fondo, {N}. En el escritorio está tu expediente. Léelo. Te lo has ganado.');
   }
 }
 function objAction(o){
@@ -520,11 +540,11 @@ function objAction(o){
     case 'node': return S.rep[o.id]?{label:o.label+' · operativo',fn:()=>toast(o.label+': 0.03 dB')}:{label:'Reparar '+o.label,fn:()=>openSplice(o)};
     case 'therapy': return {label:'Punto de Terapia',fn:useTherapy};
     case 'file': return {label:'Leer expediente',fn:ending};
-    case 'bed': return {label:'Examinar camilla',fn:()=>say('DANIEL','Correas de cuero arrancadas. La sábana está empapada de sangre seca. ¿Mía?')};
-    case 'ect': return {label:'Examinar máquina',fn:()=>say('DANIEL','Una máquina de electroshock. Los electrodos todavía están calientes.')};
-    case 'rep': return {label:'Examinar repetidor',fn:()=>say('DANIEL',S.zones[o.z]?'Repetidor O.W.S. encendido. Me taladra la cabeza. Mejor no acercarme.':'Repetidor O.W.S. apagado. La placa dice «2,4 GHz · ALBRIGHT MEDICAL».')};
-    case 'crt': return {label:'Mirar monitor',fn:()=>say('GABRIEL',S.zones[2]?'¿Te gusta mi cara, Daniel? La reconstruí de memoria.':'…')};
-    case 'bench': return {label:'Examinar banco',fn:()=>say('DANIEL','Alguien grabó con una uña: «NO ERES TÚ QUIEN ESCUCHA».')};
+    case 'bed': return {label:'Examinar camilla',fn:()=>say('YO','Correas de cuero arrancadas. La sábana está empapada de sangre seca. ¿Mía?')};
+    case 'ect': return {label:'Examinar máquina',fn:()=>say('YO','Una máquina de electroshock. Los electrodos todavía están calientes.')};
+    case 'rep': return {label:'Examinar repetidor',fn:()=>say('YO',S.zones[o.z]?'Repetidor O.W.S. encendido. Me taladra la cabeza. Mejor no acercarme.':'Repetidor O.W.S. apagado. La placa dice «2,4 GHz · ALBRIGHT MEDICAL».')};
+    case 'crt': return {label:'Mirar monitor',fn:()=>say('GABRIEL',S.zones[2]?'¿Te gusta mi cara, {N}? La reconstruí de memoria.':'…')};
+    case 'bench': return {label:'Examinar banco',fn:()=>say('YO','Alguien grabó con una uña: «NO ERES TÚ QUIEN ESCUCHA».')};
   } return null;
 }
 function findInteract(){const P=S.p,fx=Math.cos(P.a),fy=Math.sin(P.a);let best=null,bd=1.5;
@@ -535,7 +555,7 @@ function findInteract(){const P=S.p,fx=Math.cos(P.a),fy=Math.sin(P.a);let best=n
   bd=1.5;
   for(const o of OBJS){const d=Math.hypot(P.x-(o.x+.5),P.y-(o.y+.5));if(d<bd&&facing(o.x+.5,o.y+.5)){const a=objAction(o);if(a){best=a;bd=d;}}}
   for(const g of GATES){if(S.gates[g.k])continue;const d=Math.hypot(P.x-g.x,P.y-g.y);if(d<bd){bd=d;best={label:'Puerta de seguridad',fn:()=>{sfx('deny');say('SISTEMA',S.gt[g.k]>0?'DESBLOQUEANDO…':'CERRADURA ELECTRÓNICA SIN SEÑAL O.W.S.',2.4);}};}}
-  if(!S.flags.body)for(const e of S.en){if(eActive(e))continue;const d=Math.hypot(P.x-e.x,P.y-e.y);if(d<1.2&&d<bd){bd=d;best={label:'Examinar cuerpo',fn:()=>{S.flags.body=1;say('DANIEL','Está frío. Lleva un implante metálico en la nuca, igual que… Una luz roja parpadea muy despacio.');}};}}
+  if(!S.flags.body)for(const e of S.en){if(eActive(e))continue;const d=Math.hypot(P.x-e.x,P.y-e.y);if(d<1.2&&d<bd){bd=d;best={label:'Examinar cuerpo',fn:()=>{S.flags.body=1;say('YO','Está frío. Lleva un implante metálico en la nuca, igual que… Una luz roja parpadea muy despacio.');}};}}
   return best;}
 function pickup(it){S.picked[it.id]=1;sfx('pick');
   if(it.t==='clavos'){S.ammo+=4;toast('Has cogido 4 clavos');} else {S.inv[it.t]=(S.inv[it.t]||0)+1;toast('Has cogido: '+IT[it.t].n);}}
@@ -549,18 +569,18 @@ function shoot(){ if(fireCD>0)return; if(S.ammo<=0){sfx('empty');toast('Sin clav
   if(hit){hit.stun=hit.t==='e'?3:4;hit.kx=ca*1.6;hit.ky=sa*1.6;sfx('hit');}
   tracer(hx,hy); }
 function useTherapy(){
-  if(S.luc>=99){say('DANIEL','Ahora mismo tengo la cabeza clara. Mejor guardar el fusible.');return;}
+  if(S.luc>=99){say('YO','Ahora mismo tengo la cabeza clara. Mejor guardar el fusible.');return;}
   if(!(S.inv.fusible>0)){sfx('deny');say('SISTEMA','PUNTO DE TERAPIA · SIN FUSIBLE. INSERTE UN FUSIBLE DE 10 A.',3);return;}
   S.inv.fusible--; S.luc=100; flash=1; shake=.1; sfx('zap');
-  say('DANIEL','La descarga me atraviesa la nuca. Por un momento, silencio absoluto.'); saveCP();
+  say('YO','La descarga me atraviesa la nuca. Por un momento, silencio absoluto.'); saveCP();
 }
 function onRepaired(id){ S.rep[id]=true; sfx('power'); shake=.06;
   if(id==='n1'){ S.zones[1]=true; S.gt.D=3.2;
-    say('GABRIEL','Conexión restablecida. Muy bien, Daniel. Sabía que podías.');
+    say('GABRIEL','Conexión restablecida. Muy bien, {N}. Sabía que podías.');
     say('GABRIEL','Abriendo la puerta de seguridad. Los infectados han despertado. Corre a la Sala de Descanso.');
   } else { S.zones[2]=true; S.gt.G=4.5;
     say('GABRIEL','Excelente. Desbloqueando el Centro de Datos. Cuatro segundos.');
-    say('DANIEL','Se están levantando todos a la vez. Como si alguien los llamara.');
+    say('YO','Se están levantando todos a la vez. Como si alguien los llamara.');
   }}
 
 /* ================= FUSION MINIGAME ================= */
@@ -568,7 +588,7 @@ const fcv=$('fcv'), fctx=fcv.getContext('2d'); let FM=null;
 function openSplice(o){
   if(!(S.inv.manguito>0&&S.inv.fibra>0)){sfx('deny');
     const miss=[!(S.inv.manguito>0)&&'un manguito de fusión',!(S.inv.fibra>0)&&'un tramo de cable de fibra'].filter(Boolean).join(' y ');
-    say('DANIEL','El cable está cortado limpio. Necesito '+miss+'.');return;}
+    say('YO','El cable está cortado limpio. Necesito '+miss+'.');return;}
   FM={node:o,phase:'align',dx:rs(22,40),dy:rs(22,40),tx:0,ty:0,t:0,arc:0,heat:0,heating:false,final:0,doneT:0,lossAt:0};
   $('fzNode').textContent=o.label.toUpperCase(); setFz('Alinea los núcleos en ambas cámaras. Empalma con una pérdida de 0.06 dB o menos.','');
   show('fusion'); updFzBtns(); sfx('click');
@@ -642,7 +662,7 @@ function renderInv(){
 $('invClose').addEventListener('click',()=>show(null));
 
 /* ================= ENDING & FLOW ================= */
-function ending(){ if(S.flags.end)return; S.flags.end=1; show('end'); sfx('power');
+function ending(){ if(S.flags.end)return; S.flags.end=1; $('fileName').textContent='#07 · '+pname(); $('revName').textContent=pname(); show('end'); sfx('power');
   ['endReveal','endChoice','endFinal'].forEach(id=>$(id).hidden=true);
   setTimeout(()=>{$('endReveal').hidden=false;sfx('wake');},1800); setTimeout(()=>{$('endChoice').hidden=false;},3600); }
 function finale(a){ $('endChoice').hidden=true; $('endFinal').hidden=false; sfx(a?'zap':'power');
@@ -652,14 +672,15 @@ function finale(a){ $('endChoice').hidden=true; $('endFinal').hidden=false; sfx(
 $('choiceA').addEventListener('click',()=>finale(true)); $('choiceB').addEventListener('click',()=>finale(false));
 $('againBtn').addEventListener('click',()=>newGame());
 function intro(){ S.flags.intro=1;
-  say('GABRIEL','…Daniel. ¿Me oyes? Soy G.A.B.R.I.E.L. Has sufrido un brote, pero ya estás a salvo.');
+  say('GABRIEL','…{N}. ¿Me oyes? Soy G.A.B.R.I.E.L. Has sufrido un brote, pero ya estás a salvo.');
   say('GABRIEL','El hospital está en cuarentena. La red del pabellón ha caído y sin red no puedo abrirte las puertas.');
   say('GABRIEL','Al fondo del Pabellón B hay un nodo de fibra cortado. Repáralo con tu fusionadora. Te esper—');
   say('SISTEMA','[ SEÑAL PERDIDA ]',2.2);
-  say('DANIEL','Me arde la nuca. No recuerdo cómo he llegado aquí.');
+  say('YO','Me arde la nuca. No recuerdo cómo he llegado aquí.');
 }
-function startGame(){ if(!GL)return; initAudio(); if(AC&&AC.state==='suspended')AC.resume(); started=true; show(null); if(document.activeElement)document.activeElement.blur(); if(!S.flags.intro)intro(); }
-function newGame(){ S=freshState(); saveCP(); msgQ.length=0; cur=null; $('sub').hidden=true; aiming=false; qt=0; show(null); intro(); }
+function startGame(){ if(!GL)return; initAudio(); if(AC&&AC.state==='suspended')AC.resume(); if(!S.name){ show('name'); setTimeout(()=>{try{$('nameInput').focus()}catch(e){}},60); return; } started=true; show(null); if(document.activeElement)document.activeElement.blur(); if(!S.flags.intro)intro(); }
+$('nameForm').addEventListener('submit',e=>{ e.preventDefault(); const v=$('nameInput').value.replace(/\s+/g,' ').trim().slice(0,16); S.name=v||'Sujeto 07'; saveCP(); sfx('click'); startGame(); });
+function newGame(){ const n=S&&S.name; S=freshState(); S.name=n||''; saveCP(); msgQ.length=0; cur=null; $('sub').hidden=true; aiming=false; qt=0; show(null); intro(); }
 $('startBtn').addEventListener('click',startGame);
 $('retryBtn').addEventListener('click',()=>{loadCP();toast('Último punto seguro');});
 $('restartBtn').addEventListener('click',newGame);

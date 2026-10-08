@@ -59,14 +59,14 @@ function kill(t, src) {
     const willRevive = (nm || t.abRevive || t.d.remaster) && !t.revived && !t.summon && live;
     if (willRevive) {
       const rm = !nm && !t.abRevive;   // v0.9.13: Remaster 70 € vuelve una vez (el mismo juego, otra vez a precio completo)
-      revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, t: CFG.passives.nomuertos.delay, frac: nm ? CFG.passives.nomuertos.hpFrac : rm ? t.d.remaster : t.abRevive, txt: rm ? '¡REMASTER!' : null, col: rm ? '#ffcb3d' : null, rgb: rm ? '255,203,61' : null });
+      revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, share: t.abShare, t: CFG.passives.nomuertos.delay, frac: nm ? CFG.passives.nomuertos.hpFrac : rm ? t.d.remaster : t.abRevive, txt: rm ? '¡REMASTER!' : null, col: rm ? '#ffcb3d' : null, rgb: rm ? '255,203,61' : null });
       if (rm) { addNum(t.x, t.y, topOf(t) + 20, 'VUELVE A 70 €', '#ffcb3d', 13); if (t.team === 'e') chatEv('remaster', null, null, 0.7, 10); }
       else parts.push({ type: 'grave', x: t.x, y: t.y, z: 0, life: CFG.passives.nomuertos.delay + 0.3, max: CFG.passives.nomuertos.delay + 0.3 });
     }
     // v0.9.13: Secuela (Cultura Pop): 3 de cada 10 vuelven en versión «2»
     const PP = CFG.passives.pop, seq = !willRevive && facOf(t.team) === 'pop' && !t.sequel && !t.summon && !t.isClone && live && srnd() < PP.chance;
     if (seq) {
-      revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, t: 0.9, frac: 1, seq: true, txt: '¡SECUELA!', col: '#ff9ab8', rgb: '255,154,184' });
+      revives.push({ team: t.team, type: t.type, x: t.x, y: t.y, face: t.face, share: t.abShare, t: 0.9, frac: 1, seq: true, txt: '¡SECUELA!', col: '#ff9ab8', rgb: '255,154,184' });
       parts.push({ type: 'clapper', x: t.x, y: t.y, z: topOf(t) * 0.6 + 14, life: 1.1, max: 1.1 });
     }
     deathExtras(t, src);
@@ -79,7 +79,8 @@ function kill(t, src) {
     }
     if (isLeader(t.type) && !willRevive && !seq) { const sec = Math.round(CFG.cards[t.type].respawn * (t.respawnM || 1) * (t.team === 'p' ? G.pRespawnM || 1 : 1)); S[t.team].leaderCd = sec; if (t.team === 'p') toast(`${CFG.cards[t.type].name} ha caído. Vuelve en ${sec} s`); }
     if (t.abClone && !t.isClone && (G.state === 'play' || G.state === 'ending')) {   // Clon viral
-      for (const ox of [-12, 12]) { const c = spawnUnit(t.team, t.type, clamp(t.x + ox, 24, W - 24), t.y); c.isClone = true; c.summon = true; c.abClone = 0; c.labelT = 0; c.mScale *= 0.7; c.r *= 0.7; c.maxHp = Math.max(1, Math.round(c.maxHp * t.abClone)); c.hp = c.maxHp; c.deployT = c.deployMax = 0.3; c.rising = true; }
+      const sh = t.abShare || 1;   // si su carta saca varias unidades, las copias son más pequeñas: vida y daño repartidos
+      for (const ox of [-12, 12]) { const c = spawnUnit(t.team, t.type, clamp(t.x + ox, 24, W - 24), t.y); c.isClone = true; c.summon = true; c.abClone = 0; c.labelT = 0; c.mScale *= 0.7; c.r *= 0.7; c.maxHp = Math.max(1, Math.round(c.maxHp * t.abClone / sh)); c.hp = c.maxHp; c.mDmg /= sh; c.deployT = c.deployMax = 0.3; c.rising = true; }
       addNum(t.x, t.y, topOf(t) + 20, '¡CLON VIRAL!', '#ffe14d', 15); play('pop');
     }
     if (src && src.alive && src.kind === 'unit' && src.d.restealth) src.stealthT = src.d.restealth;   // SlyFox y GhostAgent vuelven a desaparecer
@@ -90,9 +91,9 @@ function kill(t, src) {
       if (!G.layoffShown) { G.layoffShown = true; banner('DESPIDOS RENTABLES', 'Pasiva de Microblizz: cada bot despedido le devuelve CAOS', 'enemy'); }
     }
     if (t.d.eject) {
-      const n = t.d.ejectN || 1;
+      const n = t.d.ejectN || 1; spawnShare = n;
       for (let i = 0; i < n; i++) { const v = spawnUnit(t.team, t.d.eject, clamp(t.x + (n > 1 ? (i - (n - 1) / 2) * 18 : 0), 24, W - 24), t.y); v.deployT = v.deployMax = 0.35; v.face = t.face; v.labelT = 0; v.summon = true; }
-      addNum(t.x, t.y, 70, t.d.ejectTxt || '¡EYECCIÓN!', '#ff8fc8', 18); play('eject');
+      spawnShare = 1; addNum(t.x, t.y, 70, t.d.ejectTxt || '¡EYECCIÓN!', '#ff8fc8', 18); play('eject');
     }
     if (G.state === 'play' && !t.summon && G.t >= (G.quipT || 0) && Math.random() < (t.team === 'p' ? 0.12 : 0.4)) {   // frase de despedida
       const pool = t.team === 'p' ? QUIPS.player.concat(QUIPS_FAC[G.faction] || []) : isCorp(facOf(t.team)) ? QUIPS[facOf(t.team)] : (ownerOf() === 'phony' ? QUIPS.corruptPh : ownerOf() === 'iahorro' ? QUIPS.corruptIa : QUIPS.corrupt).concat(QUIPS_CORRUPT[facOf(t.team)] || []);

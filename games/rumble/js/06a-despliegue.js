@@ -73,9 +73,13 @@ function applySpawnMods(u) {
   if (f === 'ciber') u.shieldMax = u.shield = Math.round(u.maxHp * P.ciber.frac);
   if (u.abShield) u.shieldMax = u.shield = Math.max(u.shieldMax, Math.round(u.maxHp * u.abShield));
 }
+// Microtransacción, DLC, Rage Quit y Clon cuentan por unidad; si salen varias a la vez (cartas de enjambre, invocaciones), el efecto se reparte entre ellas.
+// Quien saca varias unidades pone aquí cuántas antes de llamar a spawnUnit y lo vuelve a dejar en 1.
+let spawnShare = 1;
 function applyAbility(u) {
+  u.abShare = spawnShare;
   const k = SUMMON_PARENT[u.type] || u.type, it = G.pvp ? G.pvp[u.team].ab[k] : invGet(SAVE.abEquip[k]); if (!it || it.k !== 'ab' || !ABILITIES[it.id]) return;
-  const id = it.id, v = valsOf(it)[0]; u.ab = id;
+  const id = it.id, v = valsOf(it)[0], sh = spawnShare; u.ab = id;
   switch (id) {
     case 'cafeina': u.mSpeed *= 1 + v / 100; break;
     case 'piel': u.mHp *= 1 + v / 100; break;
@@ -93,10 +97,10 @@ function applyAbility(u) {
     case 'furia': u.abFury = 1 + v / 100; break;
     case 'speedrun': u.abRun = v; break;
     case 'hitbox': u.abDodge = v / 100; break;
-    case 'microtrans': u.abSteal = v; break;
-    case 'ragequit': u.abRage = v; break;
+    case 'microtrans': u.abSteal = v / sh; break;
+    case 'ragequit': u.abRage = v / sh; break;
     case 'modofoto': u.abPhoto = v; break;
-    case 'dlc': u.abDlc = v; break;
+    case 'dlc': u.abDlc = v / sh; break;
     case 'gigante': { const k = 1 + v / 100; u.mHp *= k; u.mDmg *= k; u.mSpeed *= 0.82; u.mScale *= 1.28; u.r *= 1.28; u.abGiant = true; break; }
     case 'iman': u.abMagnet = v; break;
   }
@@ -158,8 +162,9 @@ function doDeploy(team, key, x, y) {
   if (team === 'p' && isLeader(key) && Math.random() < 0.6) chatSay('leader');
   else if (team === 'p') chatEv('deploy', def.name, key, 0.35, 5);
   else if (def.cost >= 5 || isLeader(key)) chatEv('enemyBig', def.name, null, 0.6, 8);
-  const n = def.count;
+  const n = def.count; spawnShare = n;
   for (let i = 0; i < n; i++) { const ox = n > 1 ? (i - (n - 1) / 2) * 22 : 0, oy = n > 1 ? (i % 2) * 6 : 0, v = spawnUnit(team, key, clamp(x + ox, 24, W - 24), y + oy); if (team === 'p' && G.pDeployAdd) { v.deployT += G.pDeployAdd; v.deployMax = v.deployT; } }
+  spawnShare = 1;
   play('deploy', team === 'p' ? 1 : 0.5);
 }
 function playerPlay(slot, key, x, y) { playCard('p', slot, key, x, y); }

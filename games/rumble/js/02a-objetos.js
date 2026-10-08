@@ -19,16 +19,16 @@ const ABILITIES = catalogo('ab', {
   provoca:  { desc: 'Los enemigos cercanos (a {v}) le atacan a él.', vals: [80, 95, 110], dec: 0 },
   renacer:  { desc: 'Revive una vez con el {v} % de su vida.', vals: [40, 50, 60] },
   grito:    { desc: 'Cada 9 s aturde {v} s a los enemigos cercanos.', vals: [0.8, 1, 1.2] },
-  clon:     { desc: 'Al morir se divide en 2 copias pequeñas con el {v} % de su vida. No funciona en los líderes.', vals: [30, 40, 50] },
+  clon:     { desc: 'Al morir se divide en 2 copias pequeñas con el {v} % de su vida. No funciona en los líderes. Si la carta saca varias unidades, las copias son más pequeñas.', vals: [30, 40, 50] },
   furia:    { desc: 'Con menos de la mitad de vida: +{v} % de daño y velocidad.', vals: [30, 40, 50] },
   // v0.9.12: habilidades con efectos nuevos
   speedrun:   { desc: 'Los primeros {v} s va al triple de velocidad.', vals: [2, 3, 4] },
   hitbox:     { desc: 'Esquiva el {v} % de los golpes. Nadie sabe cómo.', vals: [10, 15, 20] },
-  microtrans: { desc: 'Al entrar en el campo le roba {v} de CAOS al rival.', vals: [0.5, 0.8, 1.1] },
-  ragequit:   { desc: 'Al caer se enfada y explota: {v} de daño alrededor.', vals: [60, 90, 120] },
+  microtrans: { desc: 'Al entrar en el campo le roba {v} de CAOS al rival. Si la carta saca varias unidades, se lo reparten.', vals: [0.5, 0.8, 1.1] },
+  ragequit:   { desc: 'Al caer se enfada y explota: {v} de daño alrededor. Si la carta saca varias unidades, se lo reparten.', vals: [60, 90, 120] },
   modofoto:   { desc: 'Al entrar congela {v} s a los enemigos de alrededor. ¡Sonreíd!', vals: [0.8, 1.2, 1.6] },
-  dlc:        { desc: 'Al caer te devuelve {v} de CAOS.', vals: [1, 1.5, 2] },
-  gigante:    { desc: 'Se hace enorme: +{v} % de vida y de daño, pero va más lento.', vals: [30, 40, 50] },
+  dlc:        { desc: 'Al caer te devuelve {v} de CAOS. Si la carta saca varias unidades, se lo reparten.', vals: [1, 1.5, 2] },
+  gigante:    { desc: 'Se hace enorme: +{v} % de vida y de daño, pero va más lento.', vals: [15, 20, 25] },
   iman:       { desc: 'Cada enemigo que derrota te da {v} de CAOS.', vals: [0.3, 0.45, 0.6] },
 });
 // gashapón de equipamiento: solo para el líder (arma, cabeza y accesorio)

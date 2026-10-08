@@ -60,11 +60,13 @@ function updateUnit(u, dt) {
 function summonTick(u, dt) {
   u.sumT -= dt; if (u.sumT > 0) return; u.sumT = u.d.summonCd;
   const back = u.team === 'p' ? 16 : -16, drop = u.d.summonDrop;
+  spawnShare = u.d.summonN;
   for (let i = 0; i < u.d.summonN; i++) {
     const s = spawnUnit(u.team, u.d.summon, clamp(u.x + (i ? 20 : -20), 24, W - 24), u.y + back);
     s.summon = true; s.labelT = 0;
     if (drop) s.deployT = s.deployMax = 0.6; else { s.rising = true; s.deployT = s.deployMax = 0.5; }
   }
+  spawnShare = 1;
   if (drop) { ring(u.x, u.y + back, 10, 50, 'rgba(34,227,255,.9)', 0.5, 5); addNum(u.x, u.y, topOf(u) + 18, '¡ORBITAL DROP!', '#7df3ff', 15); play('deploy', 0.7); }
   else { ring(u.x, u.y + back, 10, 50, 'rgba(94,242,160,.9)', 0.5, 5); puff(u.x, u.y + back, 10, '#7dffb8', 40, 6, true); addNum(u.x, u.y, topOf(u) + 18, '¡LEVANTAOS!', '#7dffb8', 15); play('summon'); }
 }
@@ -101,8 +103,8 @@ function viralTick(u, dt) {
     const tg = targetable(u.target) && dst(u, u.target) < 170 ? u.target : foes[0] || fs;
     const pr = shoot(u, tg, 'fireball', 80 * dmgMult(u), 'aoe'); pr.splash = 55;
   } else {
-    for (let i = 0; i < 2; i++) { const s = spawnUnit(u.team, 'suchdog', clamp(u.x + (i ? 18 : -18), 24, W - 24), u.y + (u.team === 'p' ? -14 : 14)); s.summon = true; s.labelT = 0; s.deployT = s.deployMax = 0.45; }
-    play('deploy', 0.7);
+    spawnShare = 2; for (let i = 0; i < 2; i++) { const s = spawnUnit(u.team, 'suchdog', clamp(u.x + (i ? 18 : -18), 24, W - 24), u.y + (u.team === 'p' ? -14 : 14)); s.summon = true; s.labelT = 0; s.deployT = s.deployMax = 0.45; }
+    spawnShare = 1; play('deploy', 0.7);
   }
   addNum(u.x, u.y, topOf(u) + 16, VIRAL[k][0], VIRAL[k][1], 14);
   u.viralT = u.d.viral.cd;

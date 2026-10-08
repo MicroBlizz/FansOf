@@ -142,7 +142,7 @@ function updateGame(dt) {
   }
   for (const r of revives) {
     r.t -= dt; if (r.t > 0) continue;
-    const v = spawnUnit(r.team, r.type, r.x, r.y);
+    spawnShare = r.share || 1; const v = spawnUnit(r.team, r.type, r.x, r.y); spawnShare = 1;   // vuelve con su parte del reparto de habilidades
     v.hp = Math.round(v.maxHp * (r.frac || CFG.passives.nomuertos.hpFrac)); v.revived = true; v.rising = true; v.deployT = v.deployMax = 0.5; v.face = r.face; v.labelT = 0;
     if (r.seq) { const PP = CFG.passives.pop; v.sequel = true; v.mScale *= PP.scale; v.r *= PP.scale; v.maxHp = v.hp = Math.max(1, Math.round(v.maxHp * PP.hp)); v.labelT = 2.2; }
     const rgb = r.rgb || '94,242,160';

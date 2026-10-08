@@ -66,7 +66,13 @@ const CUENTA = (() => {
     meta = { version: nube.version, pendiente: false }; guardarMeta();
     location.reload();
   }
+  // lo mismo con otro orden de claves o con campos vacíos cuenta como igual: solo importa el contenido
+  const canon = v => (Array.isArray(v) ? v.map(canon) : v && typeof v === 'object' ? Object.keys(v).sort().reduce((o, k) => (v[k] === undefined ? o : (o[k] = canon(v[k]), o), o), {}) : v);
+  const iguales = (a, b) => { try { return JSON.stringify(canon(a)) === JSON.stringify(canon(b)); } catch (e) { return false; } };
   function preguntar(nube, t) {
+    if (nube.datos && iguales(nube.datos, SAVE)) {   // son idénticas: no se pregunta, solo se apunta que ya coinciden
+      meta = { version: nube.version, pendiente: false }; guardarMeta(); estado = 'al día'; return;
+    }
     if (typeof confirmBox !== 'function') return;
     const n = v => (typeof fmt === 'function' ? fmt(v || 0) : String(v || 0));
     const fila = (titulo, s, cuando) => `<b>${titulo}</b><br>${tr('Oro')}: ${n(s.gold)} · ${tr('Gemas')}: ${n(s.gems)}${cuando ? '<br><small>' + new Date(cuando).toLocaleString(NUCLEO.idioma) + '</small>' : ''}`;

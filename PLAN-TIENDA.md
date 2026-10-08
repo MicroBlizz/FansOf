@@ -49,3 +49,12 @@ Reglas del webhook: solo estados pagados; reembolso/disputa = restar (puede deja
 
 ## 7. Bélgica y Países Bajos (decidido 7-10-2026)
 No se vende nada allí (ni oro ni gemas): las gemas van al gachapón y el oro también alimenta azar (niveles de habilidades), así que ninguna moneda queda libre de caja de botín. Para abrir esos países habría que separar antes ese azar del oro.
+
+## 8. Solo Android por ahora (decidido 8-10-2026)
+Si el juego se vende como app en Google Play, las compras dentro de la app (monedas, gemas, pase) **deben pasar por Google Play Billing**; Paddle y Lemon Squeezy no valen allí. Lo que cambia respecto a las secciones 1 a 5:
+- Cobra Google (comisión 15-30 %, y se ocupa del IVA); no hace falta un comercio registrado aparte.
+- El aviso del pago ya no es un webhook del proveedor: la app manda el token de compra y una Edge Function lo comprueba con la API de Google Play Developer (y confirma/«acknowledge» la compra); los reembolsos llegan por las notificaciones de Google (RTDN). Las tablas `productos` y `compras` y las funciones `entregar_compra` y `revertir_compra` sirven igual: el id de la compra pasa a ser el id de pedido de Google.
+- `servidor/funciones/pagos/index.ts` (firma de Lemon Squeezy) es solo un borrador para la web; habría que sustituirlo por la comprobación de Google.
+- La versión web no vendería nada (o solo si más adelante se vuelve a abrir esa vía).
+- Siguen igual: probabilidades visibles, cuenta vinculada para comprar, adultos, precios en euros, quitar lo de prueba y Bélgica/Países Bajos (Google también exige mostrar probabilidades de las cajas de botín). Alta como desarrollador de Google Play (TODO.md) y datos fiscales del vendedor.
+Sin cambios hasta que Arkioner dé el visto bueno a la tienda.

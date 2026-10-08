@@ -78,12 +78,17 @@ function aiGeneric(team, dt) {
     const foeHp = threats.filter(o => dst(o, t) < 120).reduce((a, o) => a + o.hp, 0);
     const myHp = units.filter(u => u.alive && u.team === team && !u.d.buildings && !u.d.healer && dst(u, t) < 140).reduce((a, u) => a + u.hp, 0);
     const close = structs.some(s => s.alive && s.team === team && dst(s, t) < 170);
-    if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) { const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']); if (c) go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); return; }
+    if (myHp < foeHp * (hard ? 1.6 : 1.2) && (close || me.chaos >= (hard ? 6 : 9))) {
+      const c = find(['ranged', 'swarm', 'control', 'assassin', 'tank', 'support']);
+      if (c) { go(c, clamp(t.x + srand(-20, 20), 34, W - 34), clamp(t.y + 70 * dir, zone.y0 + 8, zone.y1 - 8)); A.plan = { lane: [0, 1].reduce((b, l) => Math.abs(t.x - laneBridge(l)) < Math.abs(t.x - laneBridge(b)) ? l : b, 0), n: 0 }; }   // v2: tras defender, contraataca en ese mismo carril
+      return;
+    }
   }
   if (!A.plan) A.plan = { lane: laneLess(team), n: 0 };
   const P = A.plan; if (P.n === 0 && me.chaos < (hard ? 6.5 : 8)) return;
   const dom = foeRoleDom(team), contra = dom ? CONTRA[dom] || [] : [];
-  const c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find([...contra, 'support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
+  let c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find([...contra, 'support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
+  if (!c && me.chaos >= CFG.chaosMax - 1) c = avail.find(a => me.chaos >= cardDef(a.k).cost) || null;   // v2: con el CAOS casi lleno no lo dejes desperdiciar: juega lo que puedas pagar
   if (!c) { if (P.n > 0 && me.chaos >= 9) A.plan = null; return; }
   const front = team === 'p' ? 495 : 330, back = team === 'p' ? 530 : 296;
   go(c, clamp(laneBridge(P.lane) + srand(-16, 16), 34, W - 34), P.n === 0 ? front : back);

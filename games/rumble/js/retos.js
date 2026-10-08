@@ -14,7 +14,10 @@ function campStars() {
 }
 
 const RETOS = {
-  /* ---------- misiones diarias: cada día salen 4 de esta lista ---------- */
+  /* ---------- misiones diarias: cada día salen 5 al azar de esta lista + la fija de abajo (v0.9.67) ---------- */
+  diariasN: 6,
+  // la fija va siempre primero y da más. alCobrar: al cobrarla, cuenta como evento para las semanales
+  fijas: [{ id: 'dmeta5', txt: 'Completa 5 misiones diarias', goal: 5, ev: 'dailydone', r: [150, 25, 40], alCobrar: 'meta5' }],
   diarias: [
   { id: 'win2', txt: 'Gana 2 partidas', goal: 2, ev: 'win' },
   { id: 'cards20', txt: 'Juega 20 cartas', goal: 20, ev: 'card' },
@@ -33,6 +36,14 @@ const RETOS = {
   { id: 'base1', txt: 'Tira una base enemiga', goal: 1, ev: 'base' },
   { id: 'facwin', txt: 'Gana una partida con {F}', goal: 1, ev: 'facwin' },
   { id: 'gift', txt: 'Recoge el regalo diario de la tienda', goal: 1, ev: 'gift' },
+  { id: 'arena2', txt: 'Juega 2 partidas en la Arena', goal: 2, ev: 'arena' },
+  { id: 'arenawin1', txt: 'Gana 1 partida en la Arena', goal: 1, ev: 'arenawin', r: [120, 15, 30] },
+  { id: 'camp5', txt: 'Juega 5 partidas de la campaña', goal: 5, ev: 'camp' },
+  { id: 'kills100', txt: 'Derrota a 100 enemigos', goal: 100, ev: 'kill' },
+  { id: 'cards40', txt: 'Juega 40 cartas', goal: 40, ev: 'card' },
+  { id: 'facwin2', txt: 'Gana 2 partidas con {F}', goal: 2, ev: 'facwin' },
+  { id: 'caos200', txt: 'Gasta 200 de CAOS', goal: 200, ev: 'caos' },
+  { id: 'quick3', txt: 'Juega 3 partidas rápidas', goal: 3, ev: 'quick' },
   ],
   /* ---------- misiones semanales: se renuevan cada lunes ---------- */
   semanales: [
@@ -46,6 +57,8 @@ const RETOS = {
   { id: 'wpull', txt: 'Gira 5 veces el gashapón', goal: 5, ev: 'pull' },
   { id: 'wdaily', txt: 'Completa 12 misiones diarias', goal: 12, ev: 'dailydone' },
   { id: 'wflaw', txt: 'Gana 5 partidas sin perder torres', goal: 5, ev: 'flawless' },
+  { id: 'wmeta7', txt: 'Completa 7 veces «Completa 5 misiones diarias»', goal: 7, ev: 'meta5' },
+  { id: 'warena', txt: 'Gana 10 partidas en la Arena', goal: 10, ev: 'arenawin' },
   ],
   noCuenta: () => G.mode === 'sandbox' && G.state !== 'title',          // la sala de pruebas no cuenta para logros ni misiones
   antesDeRevisar() { if (SAVE.achV !== 2) achInit(); },                 // las partidas guardadas de la 0.9.13 pasan al formato nuevo (js/11-logros.js)

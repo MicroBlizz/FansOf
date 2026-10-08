@@ -53,8 +53,8 @@ Object.assign(RETOS, {
     }
     fam('lvl', 'c', 'lvlup', [1, 10, 25, 50, 100, 250, 500], [5, 10, 50, 50, 50, 65, 90], 'Subida de sueldo', g => veces(g, 'Sube de nivel una carta.', 'Sube {n} niveles a tus cartas.'), 'A ti sí te suben el sueldo.', { 25: 'lvl25' });
     // -- Campaña: estrellas de cada mundo en cada dificultad, estrellas totales y jefes
-    const DIF_ACH = { n: ['', '', [5, 5, 10, 15], [10, 20, 40, 60, 100], 'Cada estrella, un juego salvado.'], h: [' (Difícil)', ' en Difícil', [5, 10, 15, 20], [15, 30, 50, 80, 150], 'Microblizz pide refuerzos.'], x: [' (Heroica)', ' en Heroica', [8, 12, 18, 25], [18, 35, 60, 95, 175], 'La CPU tenía enchufe, y aun así.'], m: [' (Mítica)', ' en Mítica', [10, 15, 20, 30], [20, 40, 70, 110, 200], 'Ni la ruleta de la semana pudo contigo.'] };
-    for (const d of ['n', 'h', 'x', 'm']) {   // v0.9.55: Heroica (la Fácil no da logros de estrellas)
+    const DIF_ACH = { f: [' (Fácil)', ' en Fácil', [3, 5, 5, 10], [5, 10, 20, 30, 50], 'Hasta un becario lo consigue.'], n: ['', '', [5, 5, 10, 15], [10, 20, 40, 60, 100], 'Cada estrella, un juego salvado.'], h: [' (Difícil)', ' en Difícil', [5, 10, 15, 20], [15, 30, 50, 80, 150], 'Microblizz pide refuerzos.'], x: [' (Heroica)', ' en Heroica', [8, 12, 18, 25], [18, 35, 60, 95, 175], 'La CPU tenía enchufe, y aun así.'], m: [' (Mítica)', ' en Mítica', [10, 15, 20, 30], [20, 40, 70, 110, 200], 'Ni la ruleta de la semana pudo contigo.'] };
+    for (const d of ['f', 'n', 'h', 'x', 'm']) {   // v0.9.67: también Fácil (antes no tenía logros de estrellas)
       const [tag, en, gw, gs, jk] = DIF_ACH[d];
       WORLDS.forEach((Wd, wi) => fam(`w${wi + 1}${d}`, 'k', () => worldStars(wi, d), [3, 6, 9, 12], gw, `${Wd.name}${tag}`, g => g === 12 ? `Consigue las 12 estrellas del mundo ${wi + 1}${en}.` : `Consigue ${g} estrellas en el mundo ${wi + 1}${en}.`, jk));
       const tot = WORLDS.length * 12;

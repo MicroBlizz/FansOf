@@ -133,7 +133,7 @@ function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
 function adMissionOffer(L) {   // cambiar una misión diaria que no te guste
   const rows = document.querySelectorAll('#mission-list .mission');
   L.forEach((m, i) => {
-    if (m.claimed || m.prog >= mDef(m, false).goal || !rows[i]) return;
+    if ((RETOS.fijas || []).some(f => f.id === m.id) || m.claimed || m.prog >= mDef(m, false).goal || !rows[i]) return;   // la fija no se cambia
     rows[i].insertAdjacentHTML('beforeend', adBtn('swap', 'CAMBIAR', `data-mi="${i}"`));
   });
   for (const b of document.querySelectorAll('#mission-list [data-ad="swap"]')) b.onclick = () => watchAd('swap', () => { ECO.ganar('anuncio', {}, { tipo: 'anuncio', slot: 'swap' });

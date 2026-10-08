@@ -94,7 +94,7 @@ function arenaReward(R, w) {
   // v0.9.35: regalos del camino, una vez por hito de tu récord
   const hito = Math.floor(A.best / ARENA.regaloCada) * ARENA.regaloCada;
   if (hito > A.hito) { const n = ((hito - A.hito) / ARENA.regaloCada) * ARENA.regalo; A.hito = hito; ECO.ganar('arena', { tickets: n }); R.arena.regalo = n; }
-  if (win) stat('arenawin', 1); stat('arena', 1);
+  if (win) missionEvent('arenawin', 1); missionEvent('arena', 1);
   A.rivals = arenaRoll(A.cups); A.sel = 0;
 }
 $('#btn-arena').addEventListener('click', () => { play('select'); openPrep('arena'); });

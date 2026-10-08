@@ -5,15 +5,14 @@ Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENT
 ## Misiones nuevas de Rumble: probadas en el servidor (8-10-2026)
 Con un invitado de prueba: «Empleado del día» da 150 / 25, no se cobra dos veces; «Empleado del mes» da 600 / 80; una misión inventada se rechaza; 6 diarias cobradas bien. Sin probar: la 7.ª diaria, las 5 semanales y los logros de Fácil (w1f…, st_f).
 
-## Para Rafael (mensaje de Daniel, 7-10-2026): publicar en Google Play
-¡¡Esfínter!! Rafael, repásalo y dile algo a Daniel. Cuando esté hablado, borrad esta sección (y la línea que la anuncia en CLAUDE.md).
-- [ ] **Página de privacidad** (ES/EN): obligatoria ya (la partida va a la nube) y Google Play pide su enlace. La hace Claude de Daniel (es el punto de «Cuentas» de abajo).
-- [ ] **App de Android con Capacitor**: envolver el juego web en una app. La hace Claude de Daniel.
-- [ ] **Ficha de la tienda**: capturas, imagen de cabecera 1024×500, descripción ES/EN, repaso del icono. La hace Claude de Daniel.
+## Publicar en Google Play (pendiente, 7-10-2026)
+- [ ] **Página de privacidad** (ES/EN): obligatoria ya (la partida va a la nube) y Google Play pide su enlace. Es el punto de «Cuentas» de abajo.
+- [ ] **App de Android con Capacitor**: envolver el juego web en una app.
+- [ ] **Ficha de la tienda**: capturas, imagen de cabecera 1024×500, descripción ES/EN, repaso del icono.
 - [ ] **Cuenta de desarrollador de Google Play** (pago único), a nombre de uno de los dos. ¿Quién?
 - [ ] **12 probadores durante 14 días seguidos**: obligatorio en cuentas personales nuevas antes de poder publicar. Es lo que más tarda: buscarlos ya (amigos y familia con Android).
 - [ ] **Formularios de Google**: el de edades (IARC) y el de seguridad de datos (qué guarda la app).
-- [x] **Nube (Rafael)**: plantillas de correo ya en Supabase (8-10-2026). Falta solo la dirección de la app en las Redirect URLs si aún no está.
+- [x] **Nube**: plantillas de correo ya en Supabase (8-10-2026, confirmado por Rafael). Falta solo la dirección de la app en las Redirect URLs si aún no está.
 - [ ] **Nombre de recambio**: Google revisa a mano y podría rechazarlo por parecerse a Blizzard/Warcraft Rumble. Tener uno pensado.
 - No hace falta para la primera versión: PvP online, tienda con dinero real ni el botón de Google.
 

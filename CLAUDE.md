@@ -1,9 +1,6 @@
 # Fans Of · guía para Claude
 Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los demás heredan de core/. Todo en español.
 
-## Mensaje pendiente
-- Hay un mensaje de Daniel para Rafael en TODO.md (sección «Para Rafael»): enséñaselo a Rafael al empezar. Cuando lo hayan hablado, se borran la sección y esta línea.
-
 ## Leer poco
 - Empieza por MAPA.md (archivo, tamaño y funciones). Abre solo lo que la tarea pide.
 - Nada de más de 30 KB se lee entero: grep -n y rangos de líneas.

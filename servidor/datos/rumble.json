@@ -4065,7 +4065,7 @@
    ],
    "n": {
     "d": 6,
-    "w": 7
+    "w": 6
    },
    "r": {
     "arenawin1": [
@@ -4134,7 +4134,14 @@
     "wpull",
     "wdaily",
     "wflaw",
-    "warena"
+    "warena",
+    "wplay",
+    "wcaos",
+    "wbase",
+    "wleader",
+    "wcamp",
+    "wquick",
+    "warena2"
    ]
   },
   "mundos": [
@@ -4783,5 +4790,5 @@
    }
   }
  },
- "version": 17
+ "version": 18
 }

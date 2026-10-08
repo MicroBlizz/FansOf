@@ -86,7 +86,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-10.js` · 7 KB
-- `games/rumble/idioma/en-11.js` · 7 KB
+- `games/rumble/idioma/en-11.js` · 8 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -142,7 +142,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/novedades.js` · 13 KB · NEWS
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
-- `games/rumble/js/retos.js` · 6 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
+- `games/rumble/js/retos.js` · 7 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
 - `games/skate/index.html` · 3 KB
 - `games/skate/sw.js` · <1 KB
 - `games/skate/css/skate.css` · 32 KB

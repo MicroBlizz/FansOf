@@ -3,7 +3,7 @@
 Lo que queda por hacer y no hay que olvidar. Detalle de cada punto en PLAN-CUENTAS.md.
 
 ## Misiones nuevas de Rumble: probadas en el servidor (8-10-2026)
-Rumble 0.9.71 (8-10-2026): 7 semanales (la fija + 6) y cupo propio para cambiarlas con anuncio, 6 a la semana («swapw», reclamos 'adw:<lunes>:…'). Aplicados en Supabase la 19 (cupo-semanal-de-anuncios) y los datos v17; probado en el servidor: 6 cambios sí, el 7.º no, el cupo diario no se toca.
+Rumble 0.9.71 (8-10-2026): 6 semanales (la fija + 5, de una lista de 18 con 7 nuevas), facciones liberadas a nivel 1 y cupo propio para cambiarlas con anuncio, 6 a la semana («swapw», reclamos 'adw:<lunes>:…'). Aplicados en Supabase la 19 (cupo-semanal-de-anuncios) y los datos v18; probado en el servidor: 6 cambios sí, el 7.º no, el cupo diario no se toca.
 Con un invitado de prueba: «Empleado del día» da 150 / 25, no se cobra dos veces; «Empleado del mes» da 600 / 80; una misión inventada se rechaza; 6 diarias cobradas bien. Sin probar: la 7.ª diaria, las 5 semanales y los logros de Fácil (w1f…, st_f).
 
 ## Publicar en Google Play (pendiente, 7-10-2026)

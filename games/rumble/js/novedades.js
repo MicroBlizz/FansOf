@@ -4,9 +4,10 @@
 'use strict';
 const NEWS = [
   { v: '0.9.71', real: [
-      '<b>7 SEMANALES</b>: ahora hay 7 misiones semanales (Empleado del mes y 6 más). Esta semana se añaden las que faltan sin tocar las que ya tenías.',
+      '<b>6 SEMANALES Y 7 NUEVAS</b>: ahora hay 6 misiones semanales (Empleado del mes y 5 más) y 7 misiones semanales nuevas para que no se repitan tanto. Esta semana se añade la que falta sin tocar las que ya tenías.',
+      '<b>FACCIONES DESDE CERO</b>: cuando liberas una facción en la campaña, sus cartas empiezan a nivel 1. Te toca subirlas a ti.',
       '<b>CAMBIAR SEMANALES</b>: las semanales tienen su propio cupo de cambios con anuncio: 6 a la semana, para usarlos cuando quieras (aunque sea todos el domingo).'],
-    joke: ['Microblizz ha ampliado la semana laboral a 7 misiones. Dice que el domingo también es un día.'] },
+    joke: ['Microblizz ha ampliado la semana laboral a 6 misiones. El séptimo día descansa. Bueno, descansa el CEO.'] },
   { v: '0.9.69', real: [
       '<b>ENTRA CON GOOGLE</b>: ya puedes guardar tu progreso con tu cuenta de Google (Opciones → Cuenta). Ahora está en pruebas: escribe a fansofmicroblizz@gmail.com con tu correo de Google y te añadimos a mano.'],
     joke: ['Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.'] },

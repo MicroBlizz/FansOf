@@ -45,8 +45,8 @@ const RETOS = {
   { id: 'caos200', tit: 'Barra libre de CAOS', txt: 'Gasta 200 de CAOS.', goal: 200, ev: 'caos' },
   { id: 'quick3', tit: 'Tres cafés', txt: 'Juega 3 partidas rápidas.', goal: 3, ev: 'quick' },
   ],
-  /* ---------- misiones semanales: cada lunes, la fija y 6 al azar (v0.9.71). Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
-  semanalesN: 7,
+  /* ---------- misiones semanales: cada lunes, la fija y 5 al azar (v0.9.71). Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
+  semanalesN: 6,
   fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 80, 400] }],
   semanales: [
   { id: 'wwin', tit: 'Semana de resultados', txt: 'Gana 30 partidas.', goal: 30, ev: 'win' },
@@ -60,6 +60,13 @@ const RETOS = {
   { id: 'wdaily', tit: 'Trabajador incansable', txt: 'Completa 25 misiones diarias.', goal: 25, ev: 'dailydone' },
   { id: 'wflaw', tit: 'Auditoría limpia', txt: 'Gana 15 partidas sin perder torres.', goal: 15, ev: 'flawless' },
   { id: 'warena', tit: 'Liga de empresa', txt: 'Gana 12 partidas en la Arena.', goal: 12, ev: 'arenawin' },
+  { id: 'wplay', tit: 'Fichaje completo', txt: 'Juega 50 partidas.', goal: 50, ev: 'play' },
+  { id: 'wcaos', tit: 'Presupuesto anual', txt: 'Gasta 4.000 de CAOS.', goal: 4000, ev: 'caos' },
+  { id: 'wbase', tit: 'Cierre de sedes', txt: 'Tira 20 bases enemigas.', goal: 20, ev: 'base' },
+  { id: 'wleader', tit: 'El jefe no descansa', txt: 'Saca a tu líder 25 veces.', goal: 25, ev: 'leader' },
+  { id: 'wcamp', tit: 'Temporada de historia', txt: 'Juega 25 partidas de la campaña.', goal: 25, ev: 'camp' },
+  { id: 'wquick', tit: 'Pausas para el café', txt: 'Juega 20 partidas rápidas.', goal: 20, ev: 'quick' },
+  { id: 'warena2', tit: 'Temporada de la Arena', txt: 'Juega 20 partidas en la Arena.', goal: 20, ev: 'arena' },
   ],
   noCuenta: () => G.mode === 'sandbox' && G.state !== 'title',          // la sala de pruebas no cuenta para logros ni misiones
   antesDeRevisar() { if (SAVE.achV !== 2) achInit(); },                 // las partidas guardadas de la 0.9.13 pasan al formato nuevo (js/11-logros.js)

@@ -19,9 +19,8 @@ function grantRewards() {
       if (R.stars === 3 && prev < 3) { R.gold += ECON.camp.stars3[0] * pay; R.gems += ECON.camp.stars3[1] * pay; }
       campOf(cd)[L.id] = Math.max(prev, R.stars);
       const Wd = WORLDS[L.wi];
-      if (L.boss && cd !== 'f' && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada llega con algo de nivel para no empezar de cero (v0.9.55: en Fácil no se libera)
+      if (L.boss && cd !== 'f' && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada se une a ti (v0.9.55: en Fácil no se libera). v0.9.71: sus cartas empiezan a nivel 1, para subirlas tú
         SAVE.unlocked.push(Wd.unlock); R.unlock = Wd.unlock; stat('unlock', 1);
-        const UF = FACTIONS[Wd.unlock]; for (const k of [UF.leader, ...UF.units]) { const us = uSave(k); us.lvl = Math.max(us.lvl, L.elvl - 1); }
       }
       missionEvent('star', R.stars);
       if (L.boss && L.wi === CEO_WI && cd !== 'f') stat('ceo', 1);

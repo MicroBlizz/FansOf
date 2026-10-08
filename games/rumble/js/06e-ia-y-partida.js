@@ -84,6 +84,7 @@ function timeUp() {
 }
 function endMatch(w, reason) {
   if (G.state !== 'play') return;
+  if (PVP.on) PVP.fin = { tick: SIM.tick, h: simHash() };   // lo que se compara con el rival: el mismo tick, la misma huella
   G.state = 'ending'; G.winner = w; G.endReason = reason; G.endT = 1.9; G.slowmo = 0.35;
   input.card = null; input.dragging = false; input.selected = null; input.ghost = null; hideTut(); $('#tut-tip').hidden = true;
   if (w === 'p') { play('win'); for (let i = 0; i < 140; i++) parts.push({ type: 'conf', x: rand(0, W), y: rand(80, 780), z: rand(250, 700), vx: rand(-20, 20), vy: 0, vz: -rand(90, 160), g: 0, rot: rand(0, 6), vr: rand(-8, 8), life: 6, max: 6, color: pick(['#ff7a1a', '#ffcb3d', '#d43cff', '#63cfe0', '#ffffff', '#7be04a']) }); }

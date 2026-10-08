@@ -8,7 +8,7 @@ function ensureBG(plaza) { const key = G.faction + '|' + plaza; if (BG_KEY !== k
 function startMatch() {
   ensureBG({ phony: 'ph', iahorro: 'ia' }[ownerOf()] || 'mb');
   audioInit(); hideScreens(); simSeed(G.seedNext); G.seedNext = null; resetMatch(); chatClear(); G.state = 'countdown'; camReset(); terrainStart();
-  G.tutMatch = !G.autoplay && !SAVE.tut.done && SAVE.tut.step === 0; tutBattleStart(); applySpeed(); applyMatchMods(); hudMods();
+  G.tutMatch = !G.autoplay && G.mode !== 'pvp' && !SAVE.tut.done && SAVE.tut.step === 0; tutBattleStart(); applySpeed(); applyMatchMods(); hudMods();
   const F = FACTIONS[G.faction];
   banner('PASIVA: ' + F.passive, F.banner, F.kind);
   const L = G.level;

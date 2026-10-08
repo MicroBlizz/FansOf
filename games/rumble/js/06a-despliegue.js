@@ -176,7 +176,7 @@ function tryPlayerDeploy(slot, key, x, y) {
   else { const sp = snapSpot('p', x, y); x = sp.x; y = sp.y; }
   if (isLeader(key) && !canDeploy('p', key)) { const nm = CFG.cards[key].name; toast(S.p.leaderCd > 0 ? `${nm} vuelve en ${Math.ceil(S.p.leaderCd)} s` : `${nm} ya está en el campo`); play('deny'); return false; }
   if (S.p.chaos < card.cost) { toast(`Te falta CAOS: ${Math.ceil(card.cost - S.p.chaos)} más`); play('deny'); return false; }
-  simCmd({ team: 'p', slot, key, x, y });   // la jugada se aplica al empezar el siguiente tick (SIM.delay), igual que en PvP
+  if (PVP.on) pvpJugar(slot, key, x, y); else simCmd({ team: 'p', slot, key, x, y });   // la jugada se aplica al empezar el siguiente tick (SIM.delay), igual que en PvP
   hideTut();
   return true;
 }

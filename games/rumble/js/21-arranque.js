@@ -23,9 +23,11 @@ function frame(now) {
     SIM.acc += real * steps * G.slowmo * stop;
     for (let n = 0; SIM.acc >= SIM_DT; n++) {
       if (n >= SIM_MAX) { SIM.acc = 0; break; }
-      SIM.acc -= SIM_DT; simStep(SIM_DT);
+      SIM.acc -= SIM_DT;
+      if (simStep(SIM_DT) === false) { SIM.acc = Math.min(SIM.acc + SIM_DT, SIM_DT * SIM_MAX); break; }   // PvP: esperando al rival
       if (G.state !== 'play' && G.state !== 'ending') break;
     }
+    if (PVP.on) pvpTic(real);
     if (G.state === 'ending') { G.endT -= real * steps; if (G.endT <= 0) { G.state = 'end'; G.slowmo = 1; showEnd(); } }
   } else { SIM.acc = 0; simStep(real); }   // menús y cuenta atrás: un solo paso con el tiempo real
   if (G.state === 'play' || G.state === 'ending' || G.state === 'countdown') hud.update();

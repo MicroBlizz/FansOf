@@ -107,6 +107,16 @@ if (AUTO.get('auto') && AUTO.get('lang')) (async () => {
   try { localStorage.removeItem('fansof-dev'); } catch (e) { /* sin guardar */ }
   await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
 })();
+// ?auto=rumble&pvp=1: la prueba de PvP (herramientas/pruebas/pvp.js): dos copias del juego jugando una partida por lockstep
+else if (AUTO.get('auto') && AUTO.get('pvp')) (async () => {
+  const sal = [];
+  try {
+    try { localStorage.setItem('fansof-dev', '0'); localStorage.removeItem('for-save-1'); } catch (e) { /* sin guardar */ }
+    (0, eval)(await texto('pvp.js') + '\n;window.pruebaPvp = pruebaPvp;');
+    sal.push({ juego: 'rumble', det: await window.pruebaPvp(RAIZ, duerme), errores: [] });
+  } catch (e) { sal.push({ juego: 'rumble', fallo: String(e && e.stack || e) }); }
+  await fetch('/__resultado', { method: 'POST', body: JSON.stringify(sal) });
+})();
 // ?auto=rumble&det=1: la prueba de determinismo (herramientas/pruebas/determinismo.js): juega dos veces la misma partida y compara huellas
 else if (AUTO.get('auto') && AUTO.get('det')) (async () => {
   const sal = [];

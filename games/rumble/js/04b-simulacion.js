@@ -35,12 +35,14 @@ function simRunCmds() {
 
 // un tick de la partida: todo lo que corre mientras se juega, con el mismo paso en todas las máquinas
 function simStep(dt) {
+  if (PVP.on && G.state === 'play' && !pvpAvanza()) return false;   // PvP: un turno no empieza hasta tener las jugadas del rival
   if (G.state !== 'title') G.t += dt;   // v0.9.9: en los menús el fondo no se mueve
   if (G.shake > 0) G.shake = Math.max(0, G.shake - dt * 32);
   if (G.state === 'play') simRunCmds();
   if (G.state === 'play' || G.state === 'ending') { updateGame(dt); SIM.tick++; }   // SIM.tick cuenta solo los ticks de partida
   if (G.state === 'play') tutBattle(dt);
   updateParts(dt);
+  return true;
 }
 
 // huella del estado de la partida (solo lo que decide el resultado); dos máquinas que simulen igual dan el mismo número

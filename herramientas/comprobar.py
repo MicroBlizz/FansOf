@@ -56,7 +56,7 @@ def fallo(msg):
     sys.exit(1)
 
 
-if '--determinismo' not in sys.argv and not os.path.isfile(os.path.join(RAIZ, '_base', 'COMMIT.txt')):
+if '--determinismo' not in sys.argv and '--pvp' not in sys.argv and not os.path.isfile(os.path.join(RAIZ, '_base', 'COMMIT.txt')):
     fallo('no hay _base/. Ejecuta primero: python herramientas/base.py')
 exe = navegador()
 if not exe:
@@ -108,13 +108,13 @@ def archivos_grandes(limite=30 * 1024):   # el plan de refactor quiere ninguno p
     return sorted((t, r) for t, r in out if t > limite)[::-1]
 
 
-if '--determinismo' in sys.argv:   # no compara con _base/: juega dos veces la misma partida de Rumble y mira que el estado sea idéntico
+if '--determinismo' in sys.argv or '--pvp' in sys.argv:   # no compara con _base/: juega dos veces la misma partida de Rumble y mira que el estado sea idéntico
     LISTO.clear()
     servidor = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Peticion, directory=RAIZ))
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
     perfil = tempfile.mkdtemp(prefix='comprobar-')
     proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}', '--autoplay-policy=no-user-gesture-required',
-                                f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&det=1&tam={TAM}&seg={SEG}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                                f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&{"pvp" if "--pvp" in sys.argv else "det"}=1&tam={TAM}&seg={SEG}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         terminado = LISTO.wait(600)
     finally:
@@ -128,8 +128,8 @@ if '--determinismo' in sys.argv:   # no compara con _base/: juega dos veces la m
         print(f'  {nombre}: {valor[:150]}')
     for e in R['errores'][:5]:
         print('  error:', e[:300])
-    ok = not R['errores'] and any(n.endswith('resultado') and v == 'DETERMINISTA' for n, v in R['det'])
-    print('DETERMINISTA' if ok else 'FALLO')
+    ok = not R['errores'] and any(n.endswith('resultado') and v in ('DETERMINISTA', 'PVP OK') for n, v in R['det'])
+    print(('PVP OK' if '--pvp' in sys.argv else 'DETERMINISTA') if ok else 'FALLO')
     sys.exit(0 if ok else 1)
 
 

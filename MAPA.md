@@ -79,7 +79,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `demos/terminal-shock/index.html` · 77 KB
-- `games/rumble/index.html` · 36 KB
+- `games/rumble/index.html` · 35 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 7 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
@@ -141,6 +141,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/17b-campos-dibujo.js` · 21 KB · terrainGround, riverFloats, drawZone, terrainAir, drawFaller
 - `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
 - `games/rumble/js/19-arena.js` · 10 KB · ARENA, ARENA_TAG, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, arenaShield, arenaBar, buildArenaPrep, arenaSetup, arenaReward
+- `games/rumble/js/19b-pvp.js` · 9 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
@@ -216,6 +217,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/dentro.js` · 13 KB
 - `herramientas/pruebas/determinismo.js` · 7 KB
 - `herramientas/pruebas/index.html` · 2 KB
+- `herramientas/pruebas/pvp.js` · 6 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
 - `privacidad/index.html` · 7 KB

@@ -1,5 +1,6 @@
-/* Fans of Rumble · ARENA (v0.9.35, boceto A): la liga en grande arriba, los 3 rivales en tarjetas, el premio y la facción en pequeño.
-   Usa la pantalla de preparación (#scr-prep) con la clase .arena; .fac-abierta enseña la lista de facciones para cambiar. */
+/* Fans of Rumble · ARENA: una puerta y dos pestañas (v0.9.109). CONTRA JUGADORES (#scr-pvp): la liga en grande, el modo, tu equipo, el premio,
+   la clasificación en corto y BUSCAR RIVAL. ENTRENAMIENTO (#scr-prep con la clase .arena): rivales de la CPU en tarjetas, sin copas.
+   .fac-abierta enseña la lista de facciones para cambiar. Naranja = PvP, turquesa = entrenamiento. */
 #scr-prep.arena { gap: 10px; }
 #scr-prep.arena #prep-title { font-size: 40px !important; }
 #scr-prep.arena .prep-info { max-width: 500px; background: none; border: 0; padding: 0; overflow: visible; display: flex; flex-direction: column; gap: 10px; }
@@ -34,11 +35,6 @@
 .ar-bar { position: relative; height: 22px; margin-top: 6px; border-radius: 11px; border: 3px solid var(--outline); background: #1a0d2b; overflow: hidden; }
 .ar-bar i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(to right, var(--gold), var(--player)); }
 .ar-bar span { position: absolute; inset: 0; text-align: center; font-size: 12.5px; font-weight: 800; line-height: 16px; }
-.ar-road { position: relative; height: 26px; }
-.ar-gift { position: absolute; top: 2px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; opacity: 0.6; }
-.ar-gift svg { width: 18px; height: 14px; }
-.ar-gift small { font-size: 10px; font-weight: 800; color: var(--ink-dim); line-height: 1; }
-.ar-gift.ok { opacity: 1; } .ar-gift.ok small { color: var(--gold); }
 /* los rivales */
 .prep-info .ar-lbl { font-family: var(--font-display); font-size: 18px; color: var(--ink-dim); letter-spacing: 0.05em; margin-bottom: -4px; }
 .ar-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
@@ -52,7 +48,6 @@
 .ar-tag.fa { background: #5fd0c5; } .ar-tag.ig { background: var(--gold); } .ar-tag.di { background: #ff7e8a; }
 .ar-mid { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: -4px; }
 .ar-mid .btn-link { font-size: 14px; padding: 0; }
-.ar-note { font-size: 11.5px; font-weight: 700; color: var(--ink-dim); text-align: right; }
 /* el premio y la facción */
 .ar-prize { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; padding: 8px 10px; border-radius: 14px; border: 3px solid var(--outline); background: var(--panel); font-size: 14px; font-weight: 800; }
 .prep-info .ar-prize b { font-family: var(--font-ui); font-size: 14px; font-weight: 800; color: var(--gold); }
@@ -68,21 +63,103 @@
 .ar-deck canvas { width: 24px; height: 22px; }
 .ar-btns { display: flex; flex-direction: column; gap: 4px; flex: none; }
 .ar-fac .chip-btn { font-family: var(--font-display); font-size: 13px; padding: 4px 8px 2px; text-align: center; }
-/* PvP: clasificación */
-#pvp-clasif { width: 100%; max-height: 180px; overflow-y: auto; }
-.pvp-fila { display: flex; align-items: center; gap: 8px; padding: 4px 8px; margin: 2px 0; border-radius: 8px; background: rgba(255, 255, 255, .06); font-size: 13px; }
-.pvp-fila b { width: 22px; text-align: right; }
-.pvp-fila span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pvp-fila i { font-style: normal; opacity: .8; }
-.pvp-fila.yo { background: rgba(255, 203, 61, .25); }
+/* ---------- las dos pestañas (salen en las dos pantallas) ---------- */
+.ar-tabs { width: 100%; max-width: 508px; }
+#scr-prep:not(.arena) .ar-tabs { display: none; }
+.ar-tabs-in { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 5px; border-radius: 20px; border: 3px solid var(--outline); background: #1a0d2b; }
+.ar-tab { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 4px 5px; border-radius: 14px; border: 3px solid transparent; background: none; color: var(--ink-dim); cursor: pointer; }
+.ar-tab b { font-family: var(--font-display); font-weight: 400; font-size: 19px; line-height: 1; padding-top: 3px; }
+.ar-tab small { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800; line-height: 1.2; }
+.ar-tab[aria-selected="true"] { color: var(--ink); border-color: var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.ar-tab[aria-selected="true"] small { color: var(--outline); }
+.ar-tab.pvp[aria-selected="true"] { background: linear-gradient(to bottom, var(--player-lite), var(--player)); box-shadow: 0 3px 0 var(--outline), 0 0 0 3px var(--gold); }
+.ar-tab.cpu[aria-selected="true"] { background: linear-gradient(to bottom, #6fe0d6, #2fb3a8); box-shadow: 0 3px 0 var(--outline), 0 0 0 3px #b5f3ee; }
+.ar-tab[aria-disabled="true"] { opacity: .45; }
+.ar-tab[aria-selected="false"] .ar-vivo { display: none; }
+.ar-vivo { display: inline-block; width: 9px; height: 9px; flex: none; border-radius: 50%; background: #3dff8a; border: 2px solid var(--outline); animation: ar-vivo 1.6s infinite; }
+@keyframes ar-vivo { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .ar-vivo, .pvp-yo i, .pvp-otro b { animation: none !important; } }
+.ar-streak { font-size: 13px; font-weight: 800; }
 
-/* PvP: selector de facción */
-.pvp-facs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 6px 0; }
+/* ---------- ENTRENAMIENTO ---------- */
+.ar-train { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 18px; border: 3px solid var(--outline); background: linear-gradient(135deg, #1f6d72, #1d3b55); box-shadow: 0 4px 0 var(--outline); text-align: left; }
+.ar-train > svg { flex: none; width: 46px; height: 46px; padding: 5px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray); }
+.ar-train > span { flex: 1; min-width: 0; }
+.ar-train b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1.05; padding-top: 3px; }
+.prep-info .ar-train b { font-size: 20px; }
+.ar-train small { display: block; font-size: 12.5px; font-weight: 700; color: #d6f5f2; line-height: 1.3; }
+.ar-cpu { position: absolute; top: 6px; right: 6px; padding: 0 5px; border-radius: 6px; border: 2px solid var(--outline); background: var(--tray); font-size: 9.5px; font-weight: 800; color: #6fe0d6; }
+#scr-prep.arena .ar-r.on { background: linear-gradient(to bottom, #1f6d72, #1d3b55); box-shadow: 0 4px 0 var(--outline), 0 0 0 3px #6fe0d6; }
+.ar-al-pvp { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 14px; border: 3px dashed #4a3a6a; font-size: 13px; font-weight: 700; color: var(--ink-dim); text-align: left; }
+.ar-al-pvp > svg { flex: none; width: 24px; height: 20px; color: var(--gold); }
+.ar-al-pvp .btn-link { padding: 0; font-size: 13px; font-weight: 800; color: var(--player-lite); }
+#scr-prep.arena.fac-abierta .ar-al-pvp, #scr-prep.arena.fac-abierta .ar-train { display: none; }
+#scr-prep.arena #btn-play { background: linear-gradient(to bottom, #6fe0d6, #2fb3a8 60%, #1f8a82); }
+#scr-prep.arena #btn-play small { color: var(--outline); text-shadow: none; }
+
+/* ---------- CONTRA JUGADORES ---------- */
+#scr-pvp > * { width: 100%; max-width: 508px; box-sizing: border-box; flex-shrink: 0; }
+#scr-pvp .scr-head .h2 { font-size: 40px; }
+#scr-pvp .ar-ln { font-size: 32px; line-height: 1; }
+#scr-pvp .ar-fac b { display: block; font-size: 15px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#scr-pvp .ar-prize b { font-weight: 800; color: var(--gold); }
+#scr-pvp .ar-liga { text-align: left; }
+.pvp-modo { display: flex; align-items: center; gap: 10px; text-align: left; }
+.pvp-modo .tabs { flex: none; gap: 6px; }
+.pvp-modo .tab { font-size: 15px; padding: 6px 12px 3px; }
+#scr-pvp .pvp-modo .deck-sub { margin: 0; font-size: 12.5px; line-height: 1.25; }
+.pvp-facs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .pvp-fac { width: 50px; height: 46px; padding: 2px; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); cursor: pointer; }
 .pvp-fac[aria-pressed="true"] { border-color: #ffe14d; box-shadow: 0 0 0 2px #ffe14d55; }
 .pvp-fac:disabled { opacity: .5; }
 .pvp-fac canvas { width: 100%; height: 100%; display: block; }
 .pvp-fac.bloq { filter: grayscale(1); opacity: .45; }
-.pvp-resumen { margin: 6px 0; }
-.pvp-rs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.pvp-rs span { padding: 4px 8px; border-radius: 10px; border: 2px solid var(--outline); background: var(--panel); font-weight: 800; font-size: 12px; }
+.pvp-cl { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 16px; border: 3px solid var(--outline); background: var(--panel-2); }
+.pvp-cl-cab { display: flex; align-items: baseline; justify-content: space-between; }
+.pvp-cl-cab span { font-family: var(--font-display); font-size: 18px; color: var(--ink-dim); letter-spacing: .05em; }
+.pvp-cl-cab .btn-link { padding: 0; font-size: 13px; }
+.pvp-cl-nada { margin: 2px 0; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+.pvp-fila { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 9px; background: rgba(255, 255, 255, .06); font-size: 14px; font-weight: 700; text-align: left; }
+.pvp-fila b { width: 22px; flex: none; text-align: right; }
+.pvp-fila b.p1 { color: var(--gold); } .pvp-fila b.p2 { color: #cdd3e0; } .pvp-fila b.p3 { color: #c08a5a; }
+.pvp-fila span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pvp-fila i { font-style: normal; color: var(--ink-dim); white-space: nowrap; }
+.pvp-fila.yo { background: rgba(255, 203, 61, .25); box-shadow: inset 0 0 0 2px var(--gold); font-weight: 800; }
+.pvp-fila.yo i { color: var(--ink); }
+.pvp-hueco { flex: 1 1 0; min-height: 0; }
+#scr-pvp #pvp-estado { margin: 0; min-height: 0; }
+#scr-pvp #pvp-estado:empty { display: none; }
+.pvp-resumen { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--ink-dim); }
+#scr-pvp .row { justify-content: center; }
+#scr-pvp #btn-pvp-buscar.btn-big { font-size: 40px; padding: 14px 64px 8px; }
+#scr-pvp #btn-pvp-buscar.btn-ghost { font-size: 26px; padding: 11px 52px 7px; }
+/* mientras buscas: se esconde lo de preparar y sale el «VS» */
+#scr-pvp.buscando .ar-tabs { opacity: .55; pointer-events: none; }
+#scr-pvp.buscando #pvp-liga, #scr-pvp.buscando .pvp-modo, #scr-pvp.buscando #pvp-equipo, #scr-pvp.buscando #pvp-premio, #scr-pvp.buscando #pvp-clasif, #scr-pvp.buscando #pvp-resumen { display: none; }
+#pvp-busca { display: flex; flex-direction: column; gap: 10px; }
+#pvp-busca[hidden] { display: none; }
+.pvp-bu { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 14px 16px; border-radius: 24px; border: 4px solid var(--outline); background: linear-gradient(160deg, #4a1f86, #2b1446 70%); box-shadow: 0 5px 0 var(--outline); }
+.pvp-bu-t { font-family: var(--font-display); font-size: 16px; color: var(--ink-dim); letter-spacing: .08em; }
+.pvp-vs { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 6px 0 2px; }
+.pvp-lado { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 150px; }
+.pvp-lado > b { font-size: 17px; }
+.pvp-lado small { font-size: 12px; font-weight: 800; color: var(--ink-dim); }
+.pvp-yo, .pvp-otro { position: relative; width: 112px; height: 112px; margin: 19px; border-radius: 50%; border: 4px solid var(--outline); display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 0 var(--outline); }
+.pvp-yo { background: radial-gradient(circle at 50% 35%, #ff9a3d, #c24d00); }
+.pvp-yo canvas { width: 92px; height: 80px; position: relative; }
+.pvp-yo i { position: absolute; inset: -23px; border-radius: 50%; border: 4px solid var(--player-lite); animation: pvp-onda 2.1s ease-out infinite; pointer-events: none; }
+.pvp-yo i:nth-child(2) { animation-delay: .7s; } .pvp-yo i:nth-child(3) { animation-delay: 1.4s; }
+@keyframes pvp-onda { 0% { transform: scale(.55); opacity: .9; } 100% { transform: scale(1.35); opacity: 0; } }
+.pvp-otro { border-style: dashed; border-color: #8f7bb0; background: radial-gradient(circle at 50% 35%, #2f6fd1, var(--enemy-deep)); }
+.pvp-otro b { font-size: 58px; padding-top: 10px; animation: pvp-duda 1.2s ease-in-out infinite; }
+@keyframes pvp-duda { 50% { transform: translateY(-6px); } }
+.pvp-vs-t { font-size: 40px; color: var(--gold); padding-top: 6px; }
+.pvp-reloj { font-size: 38px; line-height: 1; padding-top: 4px; }
+.pvp-bu-txt { font-size: 14px; font-weight: 700; color: var(--ink-dim); }
+.pvp-bu-cpu { background: var(--panel); box-shadow: none; }
+.pvp-bu-cpu small { color: var(--ink-dim); }
+.pvp-bu-btn { flex: none; padding: 9px 12px 5px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #6fe0d6, #2fb3a8); font-family: var(--font-display); font-size: 16px; line-height: 1; box-shadow: 0 4px 0 var(--outline); cursor: pointer; }
+.pvp-bu-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.pvp-bu-info { display: flex; flex-direction: column; gap: 3px; padding: 9px 14px; border-radius: 16px; border: 3px solid var(--outline); background: var(--panel-2); text-align: left; }
+.pvp-bu-info b { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--ink-dim); letter-spacing: .05em; }
+.pvp-bu-info span { font-size: 14px; font-weight: 700; line-height: 1.3; }

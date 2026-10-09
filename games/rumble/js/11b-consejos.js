@@ -7,7 +7,7 @@
    · Usa la burbuja de la partida guiada (#coach): tutTick pinta lo que devuelve consejoWant() cuando no hay paso del tutorial. */
 const prepEs = m => curScreen() === 'scr-prep' && !!G.prep && G.prep.mode === m;
 const CONSEJOS = [
-  { k: 'arena', si: () => prepEs('arena'), sel: '#prep-title', text: 'Esto es la <b>ARENA</b>. Eliges uno de 3 rivales: si ganas, te llevas <b>copas</b>, oro y gemas; si pierdes, te quitan copas. Con más copas subes de liga, de Becario a CEO. Como en una empresa, pero aquí los ascensos existen.' },
+  { k: 'arena', si: () => prepEs('arena'), sel: '#prep-title', text: 'Esto es el <b>ENTRENAMIENTO</b> de la Arena: eliges uno de 3 rivales de la CPU y ganas oro y misiones. Las <b>copas</b> y las ligas, de Becario a CEO, se ganan en <b>CONTRA JUGADORES</b>. Como en una empresa, pero aquí los ascensos existen.' },
   { k: 'quick', si: () => prepEs('quick'), sel: '#diff-row', text: 'En la <b>PARTIDA RÁPIDA</b> juegas cuando quieras, sin campaña. <b>Becario</b> es para practicar, <b>Ejecutivo</b> va en serio y <b>CEO</b> gira la ruleta trucada de Microblizz antes de cada partida… pero paga mucho mejor.' },
   { k: 'boss', si: () => prepEs('boss'), sel: '#prep-title', text: 'En el <b>MODO JEFE</b> te enfrentas una y otra vez a los jefes de la campaña que ya has desbloqueado. Cuanto más daño les haces, más premios. Y no se rinden nunca, como el departamento legal.' },
   { k: 'sala', si: () => prepEs('sandbox'), sel: '#prep-title', text: 'La <b>SALA DE PRUEBAS</b>: CAOS infinito, las torres no se caen y tú eliges qué enemigos salen. No da premios: es para probar mazos, hechizos y habilidades sin miedo a perder.' },

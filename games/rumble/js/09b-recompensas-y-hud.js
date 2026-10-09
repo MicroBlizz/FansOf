@@ -19,6 +19,7 @@ function grantRewards() {
       if (!prev) { const fr = L.boss ? ECON.camp.boss : ECON.camp.first; R.gold += fr[0] * pay; R.gems += fr[1] * pay; } else R.gold += ECON.camp.replay * pay;
       if (R.stars === 3 && prev < 3) { R.gold += ECON.camp.stars3[0] * pay; R.gems += ECON.camp.stars3[1] * pay; }
       campOf(cd)[L.id] = Math.max(prev, R.stars);
+      if (cd === 'm') mitGana(L.id, R.stars);   // la Mítica semanal (10d-mitica-semanal.js)
       const Wd = WORLDS[L.wi];
       if (L.boss && cd !== 'f' && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada se une a ti (v0.9.55: en Fácil no se libera). v0.9.71: sus cartas empiezan a nivel 1, para subirlas tú
         SAVE.unlocked.push(Wd.unlock); R.unlock = Wd.unlock; stat('unlock', 1);

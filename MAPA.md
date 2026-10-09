@@ -97,11 +97,12 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/css/facciones-y-jefes.css` · 11 KB
 - `games/rumble/css/frases.css` · 6 KB
+- `games/rumble/css/mitica.css` · 2 KB
 - `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-10.js` · 7 KB
 - `games/rumble/idioma/en-11.js` · 14 KB
 - `games/rumble/idioma/en-12.js` · 16 KB
-- `games/rumble/idioma/en-13.js` · 4 KB
+- `games/rumble/idioma/en-13.js` · 7 KB
 - `games/rumble/idioma/en-14.js` · 15 KB
 - `games/rumble/idioma/en-15.js` · 6 KB
 - `games/rumble/idioma/en-16.js` · 6 KB
@@ -146,6 +147,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/10-dificultad.js` · 17 KB · CDIFF, CD_ORDEN, cdHard, cdRoll, CAMP_SUB, ENEMY_GEAR, MB_GEAR_ON, campDiff, CAMP_KEY, campOf, starsD, anyStarsD, worldOpenD, levelOpenD, gearRow, resetMods, setupHardMode, applyMatchMods, hardBanner, hudMods, effStats, cardStats, cardDesc, passiveText, OWN_CALLOUT, showLoadout, legendaryPrize, onLand, tickExtras, deathExtras, confetti
 - `games/rumble/js/10b-ruleta.js` · 9 KB · MYTH_DEB, MYTH_BUF, NO_DEB, mythicWeek, heroicWeek, weekMods, rlSeenKey, rlPending, modRows, modBoxHtml, RL, openRoulette, rlPhaseUi, rlClose, rlSpin, rlFrame, drawRoulette
 - `games/rumble/js/10c-rapida-ceo.js` · 2 KB · CEO_Q, ceoListo, ceoRuleta, setupCeoQuick, quickInfo
+- `games/rumble/js/10d-mitica-semanal.js` · 4 KB · mitSem, mitStars, starsVer, mitSemana, mitSiempre, mitGana, mitBoxHtml, MIT_PREMIOS, mitPremioVisto, mitPremio
 - `games/rumble/js/11-logros.js` · 17 KB · ACH_OLD, achInit, titlePopups, applySpeed, buyStarter, COACH_WHO, TUT_FIN, curScreen, tutCartaNueva, tutStep, tutFinish, tutSkip, tutDone, tutBack, tutWant, coachKey, coachPlace, tutTick, tutBattleStart, tipBattle, tutBattle
 - `games/rumble/js/11b-consejos.js` · 6 KB · prepEs, CONSEJOS, consejoWant, consejosFuera
 - `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
@@ -170,9 +172,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/21-arranque.js` · 6 KB · last, FPS, fpsShow, fpsCount, frame, boot
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
-- `games/rumble/js/clasificacion.js` · 3 KB · SALON_PVP, SALON_DIF, salonDif, SALON
+- `games/rumble/js/clasificacion.js` · 5 KB · SALON_PVP, SALON_DIF, salonDif, MIT_VISTAS, mitVista, mitV, SALON
 - `games/rumble/js/novedades.js` · 27 KB · NEWS
-- `games/rumble/js/retos-armario.js` · 8 KB
+- `games/rumble/js/retos-armario.js` · 9 KB
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
 - `games/rumble/js/retos.js` · 7 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS

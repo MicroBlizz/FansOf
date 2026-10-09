@@ -115,11 +115,11 @@ function buildCamp() {
   const d = campDiff, list = $('#world-list'); let cur = 0;
   for (const b of document.querySelectorAll('[data-cd]')) { b.setAttribute('aria-pressed', String(b.dataset.cd === d)); b.classList.toggle('dim', b.dataset.cd !== 'n' && b.dataset.cd !== 'f' && !WORLDS.some((w, wi) => worldOpenD(wi, b.dataset.cd))); }
   $('#camp-sub').textContent = CAMP_SUB[d];
-  $('#camp-mod').innerHTML = cdRoll(d) ? modBoxHtml(d) : '';
+  $('#camp-mod').innerHTML = (d === 'm' ? mitBoxHtml() : '') + (cdRoll(d) ? modBoxHtml(d) : '');   // la Mítica semanal: 10d-mitica-semanal.js
   const rb = $('#btn-rl-again'); if (rb) rb.onclick = () => { play('select'); openRoulette(d); };
   list.innerHTML = WORLDS.map((w, wi) => {
-    const open = worldOpenD(wi, d), stars = w.levels.reduce((a, l) => a + starsD(l.id, d), 0); if (open) cur = wi;
-    const nodes = w.levels.map(l => { const st = starsD(l.id, d), ok = levelOpenD(l, d); return `<button class="node${d !== 'n' ? ' cd-' + d : ''}${l.boss ? ' boss' : ''}${ok && !st ? ' next' : ''}" data-lv="${l.id}" ${ok ? '' : 'disabled'}><b class="ol">${l.boss ? 'JEFE' : wi + 1 + '-' + (l.li + 1)}</b><small>${l.name}</small><span class="st">${'★'.repeat(st)}<i>${'★'.repeat(3 - st)}</i></span></button>`; }).join('');
+    const open = worldOpenD(wi, d), stars = w.levels.reduce((a, l) => a + starsVer(l.id, d), 0); if (open) cur = wi;
+    const nodes = w.levels.map(l => { const st = starsVer(l.id, d), ok = levelOpenD(l, d); return `<button class="node${d !== 'n' ? ' cd-' + d : ''}${l.boss ? ' boss' : ''}${ok && !st ? ' next' : ''}" data-lv="${l.id}" ${ok ? '' : 'disabled'}><b class="ol">${l.boss ? 'JEFE' : wi + 1 + '-' + (l.li + 1)}</b><small>${l.name}</small><span class="st">${'★'.repeat(st)}<i>${'★'.repeat(3 - st)}</i></span></button>`; }).join('');
     const lv = d === 'n' ? '' : `Nivel ${CDIFF[d].lvl(w.levels[0])}${CDIFF[d].lvl(w.levels[0]) !== CDIFF[d].lvl(w.levels[3]) ? '-' + CDIFF[d].lvl(w.levels[3]) : ''} · `;
     const nextTxt = wi === CEO_WI ? 'Premio: abre el sótano y la Campaña 2' : wi === 11 ? 'Premio: abre la Campaña 3' : wi === WORLDS.length - 1 ? 'El final de la partida' : 'Premio: abre el mundo ' + (wi + 2);
     const reward = d === 'f' ? lv + 'premios a la mitad' : d === 'h' ? lv + 'premios dobles' : d === 'x' ? lv + 'premios x2,5' : d === 'm' ? lv + (SAVE.mythPrize[wi] ? 'legendario conseguido' : 'su jefe da un legendario') : w.unlock ? `Premio: se unen ${losOf(w.unlock)}` : nextTxt;
@@ -139,7 +139,7 @@ function openPrep(mode, lvl) {
   G.prep = { mode, lvl: lvl || null, cd: mode === 'camp' ? campDiff : 'n' };
   const info = $('#prep-info');
   if (mode === 'camp') {
-    const cd = campDiff, C = CDIFF[cd], pay = C.pay || 1, Wd = WORLDS[lvl.wi], st = starsD(lvl.id, cd), fr = lvl.boss ? ECON.camp.boss : ECON.camp.first;
+    const cd = campDiff, C = CDIFF[cd], pay = C.pay || 1, Wd = WORLDS[lvl.wi], st = starsD(lvl.id, cd), sv = starsVer(lvl.id, cd), fr = lvl.boss ? ECON.camp.boss : ECON.camp.first;
     $('#prep-title').textContent = lvl.boss ? `JEFE DEL MUNDO ${lvl.wi + 1}` : `NIVEL ${lvl.wi + 1}-${lvl.li + 1}`;
     let extra = '';
     if (cdHard(cd)) {
@@ -150,7 +150,7 @@ function openPrep(mode, lvl) {
     const ffi = lvl.boss && cdHard(cd) && worldFac(lvl.wi) && !(SAVE.facItem || {})[worldFac(lvl.wi)] ? ` · Y su objeto de facción: ${ITEMS[FAC_ITEM[worldFac(lvl.wi)]].name}` : '';
     const prize = (cd === 'm' && lvl.boss && !SAVE.mythPrize[lvl.wi] ? ' · Al ganar por primera vez: ¡un objeto o habilidad legendario!' : '') + ffi;
     const ubox = lvl.boss && Wd.unlock && !isUnlocked(Wd.unlock) ? unlockBox(Wd.unlock, cd) : '';   // v0.9.71
-    info.innerHTML = `${cd !== 'n' ? `<span class="cd-badge ${cd} ol">${C.name.toUpperCase()}</span>` : ''}<b class="ol">${lvl.name}</b><br>Mundo ${lvl.wi + 1}: ${Wd.name}. Rival: ${enemyLabel(Wd.efac)}, nivel ${cd === 'n' ? lvl.elvl : C.lvl(lvl)}${lvl.boss ? ', con jefe y sus habilidades' : ''}.${extra}<br><span class="stars">${'★'.repeat(st)}<span style="color:#4a3866">${'★'.repeat(3 - st)}</span></span> Estrellas: ganar · sin perder ninguna torre · tirando su base.<br><span class="rw">${st ? `Recompensa: ${ECON.camp.replay * pay} de oro` : `Primera vez: ${fr[0] * pay} de oro y ${fr[1] * pay} gemas`}${st < 3 ? ` · 3 estrellas: +${ECON.camp.stars3[0] * pay} de oro y ${ECON.camp.stars3[1] * pay} gemas` : ''}${prize}</span>` + ubox;
+    info.innerHTML = `${cd !== 'n' ? `<span class="cd-badge ${cd} ol">${C.name.toUpperCase()}</span>` : ''}<b class="ol">${lvl.name}</b><br>Mundo ${lvl.wi + 1}: ${Wd.name}. Rival: ${enemyLabel(Wd.efac)}, nivel ${cd === 'n' ? lvl.elvl : C.lvl(lvl)}${lvl.boss ? ', con jefe y sus habilidades' : ''}.${extra}<br><span class="stars">${'★'.repeat(sv)}<span style="color:#4a3866">${'★'.repeat(3 - sv)}</span></span> Estrellas: ganar · sin perder ninguna torre · tirando su base.<br><span class="rw">${st ? `Recompensa: ${ECON.camp.replay * pay} de oro` : `Primera vez: ${fr[0] * pay} de oro y ${fr[1] * pay} gemas`}${st < 3 ? ` · 3 estrellas: +${ECON.camp.stars3[0] * pay} de oro y ${ECON.camp.stars3[1] * pay} gemas` : ''}${prize}</span>` + ubox;
     for (const cv of info.querySelectorAll('canvas[data-kc]')) drawArt(cv, cv.dataset.kc, 46, 42);
   } else if (mode === 'sandbox') {   // v0.9.20
     $('#prep-title').textContent = 'SALA DE PRUEBAS';

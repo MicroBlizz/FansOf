@@ -2,6 +2,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.22', real: [
+      '<b>COFRES MUCHO MÁS ÉPICOS</b>: cámara lenta y rayo de luz al pisarlo, mejoras con rareza (común, rara, épica y legendaria), falsos finales, un chat que se vuelve loco y, de vez en cuando, un susto: el cofre se atasca… y luego da el doble. Y con mucha suerte salen 5 mejoras: ¡cofres dentro del cofre, fuegos artificiales y SurvivalBot muerto de miedo!',
+      '<b>CAJAS ROMPIBLES CON TODAS LAS FACCIONES</b>: las armas de las facciones nuevas por fin rompen las cajas del campo.'],
+    joke: ['Microblizz asegura que el suspense «es gratis». Se ha quedado mirando el cofre media hora.'] },
   { v: '0.1.21', real: [
       '<b>8 FACCIONES NUEVAS</b>: ya puedes jugar con No-Muertos, Streamers, Héroes, Ciberpunks, Memes, Comunidad Gamer, Olvidados y Cultura Pop, cada una con 8 armas propias. Se eligen bajo JUGAR y se abren aguantando minutos en total (10, 30, 60, 100, 150, 210, 280 y 360).',
       '<b>COFRES CON SUSPENSE</b>: el cofre ahora se abre por fases. Sale una mejora, la música se acelera… ¿y habrá otra? Con un poco de suerte extra, ¡te da 5!'],

@@ -3,6 +3,7 @@
 
 function hurt(t, amount, src, style = 'hit') {
   if (!t || !t.alive) return;
+  if ((t.loca || (src && src.loca)) && LOCAS.golpe(t, amount, src, style)) return;   // Modo Dios, Ping 999 y Pay to Win
   if (t.kind === 'struct' && t.reviewUntil > G.t) amount *= 1 + (t.reviewAmp || 0.4);   // v0.9.20: Review bombing
   if (t.kind === 'unit') t.hitAt = G.t;   // v0.9.23: para la pasiva SIN CRUNCH
   if (src && src.kind === 'unit') for (const c of units) if (c.abCute && c.alive && c.team !== src.team && dst(c, src) <= 75) { amount *= 1 - c.abCute; break; }   // orejas de gato

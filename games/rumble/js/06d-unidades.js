@@ -258,9 +258,9 @@ function updateBoss(dt) {
 function separate() {
   const n = units.length;
   for (let i = 0; i < n; i++) {
-    const a = units[i]; if (!a.alive || a.jump) continue;
+    const a = units[i]; if (!a.alive || a.jump || a.clipT > 0) continue;   // con Clipping atraviesa a los demás
     for (let j = i + 1; j < n; j++) {
-      const b = units[j]; if (!b.alive || b.jump) continue;
+      const b = units[j]; if (!b.alive || b.jump || b.clipT > 0) continue;
       let dx = b.x - a.x, dy = b.y - a.y; const min = (a.r + b.r) * 0.9;
       if (dx > min || dx < -min || dy > min || dy < -min) continue;
       let d = hyp(dx, dy); if (d >= min) continue;

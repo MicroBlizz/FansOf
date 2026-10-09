@@ -7,6 +7,8 @@ import os, re
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SALTAR = {'_base', '.git', 'node_modules', '.claude'}
+# copias del juego que hace la app de Android al construirse (no van al repo): si no, el mapa cambia según quién lo genere
+SALTAR_RUTAS = {'android-app/www', 'android-app/android/app/src/main/assets/public'}
 DECLARA = re.compile(r'^(?:async\s+)?function\s*\*?\s*([A-Za-z_$][\w$]*)|^(?:const|let|var|class)\s+([A-Za-z_$][\w$]*)')
 MAX = 40   # nombres por archivo; el resto se cuenta
 
@@ -24,7 +26,8 @@ def nombres(ruta):
 def main():
     filas = []
     for dir, dirs, files in os.walk(RAIZ):
-        dirs[:] = sorted(d for d in dirs if d not in SALTAR)
+        rel_dir = os.path.relpath(dir, RAIZ).replace(os.sep, '/')
+        dirs[:] = sorted(d for d in dirs if d not in SALTAR and f'{rel_dir}/{d}'.lstrip('./') not in SALTAR_RUTAS)
         for f in sorted(files):
             if not f.endswith(('.js', '.css', '.html', '.py')):
                 continue

@@ -30,6 +30,19 @@ const ABILITIES = catalogo('ab', {
   dlc:        { desc: 'Al caer te devuelve {v} de CAOS. Si la carta saca varias unidades, se lo reparten.', vals: [0.35, 0.5, 0.65] },
   gigante:    { desc: 'Se hace enorme: +{v} % de vida y de daño, pero va más lento.', vals: [10, 15, 20] },
   iman:       { desc: 'Cada enemigo que derrota te da {v} de CAOS.', vals: [0.3, 0.45, 0.6] },
+  // octubre de 2026: habilidades locas (06h-habilidades-locas.js), tras el flag 'habilidades-nuevas'
+  ceo:      { flag: 'habilidades-nuevas', desc: 'Al caer, el CEO baja del cielo y da un manotazo: {v} de daño alrededor y aturde. Si la carta saca varias unidades, se lo reparten.', vals: [35, 50, 65] },
+  super:    { flag: 'habilidades-nuevas', desc: 'Con poca vida se transforma {v} s: +50 % de daño, +30 % de velocidad y ataca más rápido.', vals: [4, 5, 6] },
+  wallhack: { flag: 'habilidades-nuevas', desc: 'Al entrar se teletransporta hacia delante (hasta {v} de distancia) y llega invisible: su primer golpe hace el doble.', vals: [90, 120, 150], dec: 0 },
+  ragdoll:  { flag: 'habilidades-nuevas', desc: 'Al caer sale volando como un muñeco y aplasta al enemigo donde cae: {v} de daño y aturde. Si la carta saca varias unidades, se lo reparten.', vals: [30, 45, 60] },
+  lag:      { flag: 'habilidades-nuevas', desc: 'Cada 6 s le da lag: vuelve a donde estaba hace 2 s y recupera un {v} % de vida.', vals: [10, 15, 20] },
+  dios:     { flag: 'habilidades-nuevas', desc: 'Al entrar, {v} s sin recibir daño. Es un bug, pero no lo arreglan.', vals: [2, 3, 4] },
+  bullet:   { flag: 'habilidades-nuevas', desc: 'Con poca vida, los enemigos de alrededor van a cámara lenta {v} s.', vals: [2, 2.5, 3] },
+  lootbox:  { flag: 'habilidades-nuevas', desc: 'Al caer suelta una caja: el primer aliado que la coge gana una mejora al azar ({v} % de potencia).', vals: [35, 50, 65] },
+  emotes:   { flag: 'habilidades-nuevas', desc: 'Cada 7 s se pone a bailar y los enemigos de alrededor se quedan mirando {v} s.', vals: [0.5, 0.7, 0.9] },
+  ping:     { flag: 'habilidades-nuevas', desc: 'Sus golpes llegan 1 s tarde, pero hacen un {v} % más.', vals: [28, 40, 52] },
+  clipping: { flag: 'habilidades-nuevas', desc: 'Al entrar, {v} s fuera del mapa: atraviesa a todos y nadie le puede atacar (él sí pega).', vals: [2, 3, 4] },
+  p2w:      { flag: 'habilidades-nuevas', desc: '+{v} % de daño, pero cada golpe te cuesta un poco de CAOS.', vals: [45, 60, 75] },
 });
 // gashapón de equipamiento: solo para el líder (arma, cabeza y accesorio)
 const FAC_ITEM = { animales: 'zanahoria_oro', nomuertos: 'corona_huesos', streamers: 'microfono_oro', heroes: 'yelmo_olimpo', ciber: 'nucleo_plasma', memes: 'gafas_pixel', gamer: 'raton_campeon', olvidados: 'cartucho_dorado', pop: 'claqueta_oro' };   // v0.9.15

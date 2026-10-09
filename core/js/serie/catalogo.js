@@ -35,6 +35,19 @@ const CATALOGO = {
     dlc:        { name: 'DLC gratis', rar: 'epic', ic: 'DL' },
     gigante:    { name: 'Modo gigante', rar: 'legendary', ic: 'MG' },
     iman:       { name: 'Imán de CAOS', rar: 'epic', ic: 'IC' },
+    // octubre de 2026: habilidades locas (en Rumble, tras el flag 'habilidades-nuevas')
+    ceo:        { name: 'Llamada del CEO', rar: 'legendary', ic: 'LC' },
+    super:      { name: 'Modo Súper', rar: 'epic', ic: 'MS' },
+    wallhack:   { name: 'Wallhack', rar: 'rare', ic: 'WH' },
+    ragdoll:    { name: 'Ragdoll', rar: 'rare', ic: 'RD' },
+    lag:        { name: 'Lag', rar: 'rare', ic: 'LG' },
+    dios:       { name: 'Modo Dios', rar: 'epic', ic: 'GD' },
+    bullet:     { name: 'Bullet Time', rar: 'epic', ic: 'BT' },
+    lootbox:    { name: 'Lootbox humana', rar: 'epic', ic: 'LB' },
+    emotes:     { name: 'Spam de emotes', rar: 'common', ic: 'EM' },
+    ping:       { name: 'Ping 999', rar: 'rare', ic: 'PG' },
+    clipping:   { name: 'Clipping', rar: 'common', ic: 'CL' },
+    p2w:        { name: 'Pay to Win', rar: 'legendary', ic: 'P2' },
   },
   /* ---------- objetos: arma, cabeza y accesorio ---------- */
   eq: {

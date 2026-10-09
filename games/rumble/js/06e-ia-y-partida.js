@@ -171,6 +171,7 @@ function updateGame(dt) {
   for (const s of structs) updateStruct(s, dt);
   updateProjs(dt);
   updateSpells(dt);   // v0.9.15
+  LOCAS.update(dt);   // habilidades locas: la mano del CEO, los ragdolls, las lootbox, los pings…
   separate();
   for (const u of units) if (u.alive && !u.jump) constrain(u);
   units = units.filter(u => u.alive);

@@ -16,7 +16,7 @@ function pvpRed() {
 }
 function pvpPantalla() {
   if (!pvpDisponible()) return;
-  if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar JcJ necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
+  if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
 }
 async function pvpResumen() {
@@ -24,7 +24,7 @@ async function pvpResumen() {
   if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
   try {
     const r = await PVPNET.redes.servidor.resumen(); if (!r || $('#scr-pvp').hidden) return;
-    c.innerHTML = `<div class="ar-lbl ol">ÚLTIMA HORA EN EL JCJ</div><div class="pvp-rs"><span>${`Partidas: ${fmt(r.hora)} en la última hora · ${fmt(r.total)} en total`}</span><span>${`Unidades caídas: ${fmt(r.muertes)}`}</span><span>${`Hechizos lanzados: ${fmt(r.hechizos)}`}</span><span>${`CAOS gastado: ${fmt(r.caos)}`}</span></div>`; c.hidden = false;
+    c.innerHTML = `<div class="ar-lbl ol">ÚLTIMA HORA EN EL PVP</div><div class="pvp-rs"><span>${`Partidas: ${fmt(r.hora)} en la última hora · ${fmt(r.total)} en total`}</span><span>${`Unidades caídas: ${fmt(r.muertes)}`}</span><span>${`Hechizos lanzados: ${fmt(r.hechizos)}`}</span><span>${`CAOS gastado: ${fmt(r.caos)}`}</span></div>`; c.hidden = false;
   } catch (e) { /* sin conexión: sin resumen */ }
 }
 async function pvpClasificacion() {
@@ -56,7 +56,7 @@ function pvpPara() { if (PVP_UI.busca) { PVP_UI.busca.cancelar(); PVP_UI.busca =
 function pvpBuscar() {
   if (PVP_UI.busca) { pvpPara(); delete $('#pvp-estado').dataset.fijo; pvpPinta(); return; }
   const modo = PVP_UI.modo; delete $('#pvp-estado').dataset.fijo; PVP_UI.t0 = Date.now(); play('select'); PVPNET.actual = pvpRed();
-  if (PVPNET.actual === 'servidor' && !PVPNET.redes.servidor.disponible()) { toast(typeof CUENTA === 'undefined' || !CUENTA.activa ? 'El JcJ necesita conexión' : 'Para jugar JcJ necesitas vincular tu cuenta (Opciones → Cuenta)', true); return; }
+  if (PVPNET.actual === 'servidor' && !PVPNET.redes.servidor.disponible()) { toast(typeof CUENTA === 'undefined' || !CUENTA.activa ? 'El PvP necesita conexión' : 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)', true); return; }
   PVP_UI.busca = PVPNET.redes[PVPNET.actual].buscar(modo, pvpEquipo(modo), pvpEncontrado);
   const dibuja = () => { const s = Math.floor((Date.now() - PVP_UI.t0) / 1000); $('#pvp-estado').textContent = (s >= PVP_UI.ia ? `No hay rivales todavía. Sigues en la cola… ${s} s. ¿Juegas contra la IA mientras tanto?` : `Buscando rival… ${s} s`) + (NUCLEO.desarrollo && typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? ' [' + PVP_SRV.ultimo + ']' : ''); $('#btn-pvp-ia').hidden = s < PVP_UI.ia; };
   dibuja(); PVP_UI.tic = setInterval(dibuja, 500); pvpPinta();
@@ -92,7 +92,7 @@ function pvpPase(r) {
   if (!r || r.error || r.estado !== 'cerrada' || typeof PASES === 'undefined' || !PASES.p || !PVP.fin) return;
   const k = PVP.fin.h + ':' + PVP.rival; if (pvpPaseDado === k) return; pvpPaseDado = k;
   const xp = r.gano ? PASS_PVP.xpWin : PASS_PVP.xpLose, up = pAddXp('p', xp); saveGame();
-  const e = $('#end-pass'); if (e && !$('#scr-end').hidden) e.innerHTML = pFin('p') ? '' : `Pase JcJ: +${xp} puntos${up ? ` · <b style="color:#ffe14d">¡NIVEL ${pLevel('p')}!</b>` : ''}`;
+  const e = $('#end-pass'); if (e && !$('#scr-end').hidden) e.innerHTML = pFin('p') ? '' : `Pase PvP: +${xp} puntos${up ? ` · <b style="color:#ffe14d">¡NIVEL ${pLevel('p')}!</b>` : ''}`;
 }
 function pvpShowEnd() {
   const mi = verEquipo(), rival = PVP.peer, w = G.winner, gano = w === mi, perdio = w === rival, t = $('#end-title'), motivo = G.endReason;
@@ -112,7 +112,7 @@ function pvpShowEnd() {
     const mi = verEquipo(), ot = PVP.peer, pl = S[mi].plays || {}, stats = { m: S[ot].kills, h: Object.keys(pl).filter(isSpell).reduce((n, k) => n + pl[k], 0), c: Math.round(S[mi].spent) };   // lo que ve este cliente: mis bajas por culpa del rival, mis hechizos y mi CAOS (los dos clientes suman el total)
     PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; }, stats);
   } else rw.innerHTML = PVP.net && PVP.net.cerrar ? '<div class="rw-xp">Esta partida no cuenta para nadie.</div>' : '<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>';
-  $('#end-pass').innerHTML = ''; $('#end-quote').textContent = NUCLEO.desarrollo && PVP.stats ? `Esperas al rival: ${JCJ.stats.n} (${(JCJ.stats.ms / 1000).toFixed(1)} s) · retardo ${JCJ.D} · v${typeof NUCLEO !== 'undefined' && NUCLEO.version || ''}` : '';
+  $('#end-pass').innerHTML = ''; $('#end-quote').textContent = NUCLEO.desarrollo && PVP.stats ? `Esperas al rival: ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · retardo ${PVP.D} · v${typeof NUCLEO !== 'undefined' && NUCLEO.version || ''}` : '';
   $('#st-cards').textContent = S[mi].deployed; $('#st-kills').textContent = S[mi].kills; $('#st-chaos').textContent = Math.round(S[mi].spent);
   $('#btn-next').hidden = true; $('#btn-share').hidden = true; $('#btn-again').textContent = 'OTRO RIVAL'; $('#btn-again').className = 'btn-big ol';
   PVP.resultado = pvpResultado();   // lo que se mandará al servidor: los dos clientes deben dar lo mismo
@@ -121,7 +121,7 @@ function pvpShowEnd() {
 
 /* ---------- los botones ---------- */
 $('#btn-pvp').hidden = !pvpDisponible();
-hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en JcJ', true); pvpPantalla(); } });
+hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
 $('#btn-pvp').addEventListener('click', () => { play('select'); pvpPantalla(); });
 for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); });
 $('#btn-pvp-buscar').addEventListener('click', pvpBuscar);
@@ -134,7 +134,7 @@ function pvpDebug(real) {
   pvpDebug.t = (pvpDebug.t || 0) - real; if (pvpDebug.t > 0) return; pvpDebug.t = 0.5;
   let el = document.getElementById('pvp-dbg');
   if (!el) { el = document.createElement('div'); el.id = 'pvp-dbg'; el.style.cssText = 'position:fixed;left:4px;bottom:4px;z-index:9999;font:11px monospace;background:rgba(0,0,0,.7);color:#9ef07a;padding:3px 6px;border-radius:6px;pointer-events:none'; document.body.append(el); }
-  el.textContent = `${JCJ.seat} · RTT ${Math.round(JCJ.rtt)} ms (máx ${Math.round(JCJ.rttMax)}) · llamadas ${JCJ.llamadas} · esperas ${JCJ.stats.n} (${(JCJ.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(JCJ.fps)} fps${JCJ.fallos ? ` · FALLOS ${PVP.fallos}: ${PVP.ultimoError}` : ''}`;
+  el.textContent = `${PVP.seat} · RTT ${Math.round(PVP.rtt)} ms (máx ${Math.round(PVP.rttMax)}) · llamadas ${PVP.llamadas} · esperas ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(PVP.fps)} fps${PVP.fallos ? ` · FALLOS ${PVP.fallos}: ${PVP.ultimoError}` : ''}`;
 }
 
 /* ---------- solo en desarrollo: elegir el retardo de red (los dos jugadores el mismo) ---------- */

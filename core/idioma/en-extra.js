@@ -158,5 +158,5 @@ IDIOMA.add({
   "AHORA NO": "NOT NOW",
   "Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.": "No password: sign in with Google or with a link sent to your email. Your progress stays in your account.",
   "Iniciar sesión / crear cuenta": "Sign in / create account",
-  "Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el JcJ.": "With an account you keep your progress, play on other devices and can enter PvP."
+  "Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.": "With an account you keep your progress, play on other devices and can enter PvP."
 });

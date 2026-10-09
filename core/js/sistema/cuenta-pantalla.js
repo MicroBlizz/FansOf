@@ -44,7 +44,7 @@
   };
   // entrada visible en el menú principal: junto a «Cómo se juega», mientras sigas como invitado
   const links = document.querySelector('.links'), enlace = links && document.createElement('button');
-  if (enlace) { enlace.className = 'btn-link'; enlace.id = 'btn-cuenta-menu'; enlace.textContent = tr('Iniciar sesión / crear cuenta'); enlace.onclick = () => { play('select'); window.pedirCuenta('Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el JcJ.'); }; links.prepend(enlace); }
+  if (enlace) { enlace.className = 'btn-link'; enlace.id = 'btn-cuenta-menu'; enlace.textContent = tr('Iniciar sesión / crear cuenta'); enlace.onclick = () => { play('select'); window.pedirCuenta('Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.'); }; links.prepend(enlace); }
   const entrada = () => { if (enlace) enlace.hidden = !CUENTA.invitado; };
   let google = false;   // se sabe al preguntar al servidor; hasta entonces no hay botón
   function pintar() {

@@ -1,7 +1,7 @@
 // Fans of Rumble · Inglés de las pestañas del Salón de la Fama (js/clasificacion.js).
 'use strict';
 IDIOMA.add({
-  "Copas JcJ": "PvP Trophies",
+  "Copas PvP": "PvP Trophies",
   "Poder": "Power",
   "estrellas": "stars",
   "poder": "power",
@@ -12,12 +12,12 @@ IDIOMA.add({
   "Poder es la suma de los niveles de todos tus personajes. Cada mejora te sube en el Salón.": "Power is the sum of the levels of all your characters. Every upgrade moves you up the Hall.",
   "Poder es la suma de los niveles de todos tus personajes.": "Power is the sum of the levels of all your characters.",
   "Cada mejora te sube en el Salón.": "Every upgrade moves you up the Hall.",
-  "Copas del JcJ (modo Estándar): ganas contra gente de verdad y subes; pierdes y bajas.": "PvP trophies (Standard mode): beat real people and you go up; lose and you go down.",
+  "Copas del PvP (modo Estándar): ganas contra gente de verdad y subes; pierdes y bajas.": "PvP trophies (Standard mode): beat real people and you go up; lose and you go down.",
   "Clanes": "Clans",
   "Aquí irán los clanes: juntaos con otros fans y subid juntos en el Salón.": "Clans will go here: team up with other fans and climb the Hall together.",
   "Gana tu primera estrella en la campaña para entrar.": "Earn your first campaign star to get in.",
   "Mejora un personaje para entrar.": "Upgrade a character to get in.",
-  "Juega una partida de JcJ para entrar.": "Play a PvP match to get in.",
+  "Juega una partida de PvP para entrar.": "Play a PvP match to get in.",
   "1 personaje mejorado": "1 character upgraded",
   "%1 personajes mejorados": "%1 characters upgraded",
   "1 partida": "1 match",
@@ -27,7 +27,7 @@ IDIOMA.add({
   "<b>SALÓN DE LA FAMA</b>: botón RANKING en el menú con la clasificación mundial (campaña y poder; las copas PvP, en obras).": "<b>HALL OF FAME</b>: RANKING button in the menu with the world leaderboard (campaign and power; PvP cups under construction).",
   "Microblizz ha estrenado un armario para que los perdedores del PvP puedan perder con estilo. El salto a la 0.9.92 incluye muchas cosas del taller que no caben en una nota.": "Microblizz has opened a wardrobe so PvP losers can lose in style. The jump to 0.9.92 includes lots of workshop stuff that doesn't fit in one note.",
   // el consejo de Lola (11b-consejos.js), por trozos: el título en negrita y el resto aparte
-  ": los mejores fans del mundo en estrellas de campaña, en poder y en copas JcJ. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.": ": the best fans in the world in campaign stars, power and PvP trophies. The server counts everything, so here you can't pay to climb… for now.",
+  ": los mejores fans del mundo en estrellas de campaña, en poder y en copas PvP. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.": ": the best fans in the world in campaign stars, power and PvP trophies. The server counts everything, so here you can't pay to climb… for now.",
   // novedades 0.9.93
   "<b>LOLA EN EL SALÓN DE LA FAMA</b>: la primera vez que abres el RANKING, Lola te cuenta cómo funciona.": "<b>LOLA IN THE HALL OF FAME</b>: the first time you open the RANKING, Lola tells you how it works.",
   "LOLA EN EL SALÓN DE LA FAMA": "LOLA IN THE HALL OF FAME",
@@ -63,7 +63,7 @@ IDIOMA.add({
   "Microblizz asegura que el chat nunca se fue del PvP: estaba de descanso.": "Microblizz insists the chat never left PvP: it was on a break.",
   "<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» y, si entras en PvP sin cuenta, te sale una ventana para crearla o entrar con Google o con tu email (y al terminar pasas directo a PvP). También hemos afinado el PvP para que dos navegadores distintos jueguen la misma partida.": "<b>EASIER SIGN-IN</b>: the menu has a «Sign in / create account» button and, if you enter PvP without an account, a window lets you create one or sign in with Google or email (then you go straight into PvP). We also tuned PvP so two different browsers play the same match.",
   "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
-  "ÚLTIMA HORA EN EL JCJ": "LAST HOUR IN PVP",
+  "ÚLTIMA HORA EN EL PVP": "LAST HOUR IN PVP",
   "Partidas: %1 en la última hora · %2 en total": "Matches: %1 in the last hour · %2 in total",
   "Unidades caídas: %1": "Units fallen: %1",
   "Hechizos lanzados: %1": "Spells cast: %1",

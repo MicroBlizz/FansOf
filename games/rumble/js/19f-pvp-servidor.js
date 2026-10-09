@@ -9,9 +9,9 @@ const PVP_SRV = { retardo: 5, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   
 
 const pvpErrorTexto = e => {
   const m = String((e && e.message) || e);
-  return /cuenta_no_vinculada/.test(m) ? 'Para jugar JcJ necesitas vincular tu cuenta (Opciones → Cuenta)' : /sin_sesion|refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego (una cuenta por navegador o perfil)'
-    : /mazo_no_valido/.test(m) ? 'Tu mazo no vale para el JcJ' : /objeto_no_es_tuyo/.test(m) ? 'Llevas un objeto que no está en tu cuenta' : /sala_no_valida/.test(m) ? 'La sala ya no existe'
-    : /demasiadas_jugadas/.test(m) ? 'Demasiadas jugadas seguidas' : 'Necesitas conexión para jugar JcJ';
+  return /cuenta_no_vinculada/.test(m) ? 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)' : /sin_sesion|refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego (una cuenta por navegador o perfil)'
+    : /mazo_no_valido/.test(m) ? 'Tu mazo no vale para el PvP' : /objeto_no_es_tuyo/.test(m) ? 'Llevas un objeto que no está en tu cuenta' : /sala_no_valida/.test(m) ? 'La sala ya no existe'
+    : /demasiadas_jugadas/.test(m) ? 'Demasiadas jugadas seguidas' : 'Necesitas conexión para jugar PvP';
 };
 const pvpFacDeMazo = mazo => { for (const c of mazo) { const f = FACTION_ORDER.find(x => FACTIONS[x].leader === c.c); if (f) return f; } return (FACTION_ORDER.find(x => mazo.every(c => FACTIONS[x].units.includes(c.c) || (FACTIONS[x].gacha || []).includes(c.c) || FACTIONS[x].leader === c.c))) || ''; };
 // lo que devuelve el servidor (mazo [{c, n, st}] y equipo [{s, u, t, o, q}]) → el equipo que entiende el motor

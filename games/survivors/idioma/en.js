@@ -99,4 +99,6 @@ IDIOMA.add({
   "Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.": "Microblizz has discovered that Spanish is not the only language. They are very proud.",
   "<b>MENOS TECNICISMOS</b>: repasados textos en español para que se entiendan mejor.": "<b>FEWER TECHNICAL TERMS</b>: Spanish texts reviewed so they are easier to understand.",
   "Microblizz ha quitado una sigla. Dice que la nota del cambio es más larga que el cambio.": "Microblizz removed one acronym. He says the change note is longer than the change.",
+  "<b>PVP VUELVE A SU NOMBRE</b>: ajustes de textos en español.": "<b>PVP IS PVP AGAIN</b>: Spanish text tweaks.",
+  "Microblizz ha deshecho el cambio de una sigla. Dice que ya estaba acostumbrado.": "Microblizz undid the change of one acronym. He says he was used to it.",
 });

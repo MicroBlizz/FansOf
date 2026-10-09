@@ -57,4 +57,6 @@ IDIOMA.add({
   "Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.": "Microblizz has discovered that Spanish is not the only language. They are very proud.",
   "<b>MENOS TECNICISMOS</b>: en español, «income» pasa a llamarse «ingresos» y el PvP, JcJ.": "<b>FEWER TECHNICAL TERMS</b>: in Spanish, «income» is now called «ingresos» and PvP is now JcJ.",
   "Phony pide que los ingresos se queden en su cuenta. Microblizz dice que eso es otro juego.": "Phony wants the income to stay in his account. Microblizz says that's a different game.",
+  "<b>PVP VUELVE A SU NOMBRE</b>: en español vuelve a decir PvP. Los «ingresos» se quedan.": "<b>PVP IS PVP AGAIN</b>: Spanish says PvP again. «Ingresos» stay.",
+  "Phony sigue sin entender qué es un ingreso. Microblizz tampoco.": "Phony still doesn't understand what income is. Neither does Microblizz.",
 });

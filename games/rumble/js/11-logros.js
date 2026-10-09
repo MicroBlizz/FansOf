@@ -30,7 +30,7 @@ $('#btn-speed').addEventListener('click', () => { if (G.tutMatch || PVP.on) retu
 // ---- pack de bienvenida
 function buyStarter() {
   if (SAVE.starter) return;
-  const P = SHOP.starter, pool = Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass);
+  const P = SHOP.starter, pool = Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass && enCatalogo(ITEMS, k));
   SAVE.starter = true; ECO.ganar('bienvenida', P);
   const it = newCopy('eq', pick(pool), 3); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
   saveGame(); play('win'); updateWallets(); buildShop(); toast('¡Pack de bienvenida! Microblizz te da las gracias', true);

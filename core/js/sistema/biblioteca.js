@@ -17,7 +17,7 @@ function bibDesc(D) {
 }
 function bibLista() {
   const DB = bibTab === 'ab' ? ABILITIES : ITEMS;
-  return Object.keys(DB).map(id => Object.assign({ k: bibTab, id }, DB[id], { copias: bibCopias(bibTab, id) }))
+  return Object.keys(DB).filter(id => enCatalogo(DB, id)).map(id => Object.assign({ k: bibTab, id }, DB[id], { copias: bibCopias(bibTab, id) }))
     .sort((a, b) => RAR_ORDER[a.rar] - RAR_ORDER[b.rar] || a.name.localeCompare(b.name));
 }
 function buildBib() {

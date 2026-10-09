@@ -30,6 +30,10 @@ const ECON = Object.assign({
 function catalogo(tipo, efectos) { const out = {}; for (const id in efectos) out[id] = Object.assign({}, CATALOGO[tipo][id], efectos[id]); return out; }
 const fitsFac = (id, f) => !ITEMS[id] || !ITEMS[id].fac || ITEMS[id].fac === f;
 const defOf = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];
+// Un juego puede marcar una habilidad u objeto con flag: 'nombre' (lo nuevo, aún sin abrir): mientras ese flag esté cerrado no sale en el gashapón,
+// la biblioteca, las probabilidades, los premios ni los logros. Se pregunta cada vez (NUCLEO.flag), así que abrirlo llega sin recargar.
+const FLAGS_CATALOGO = { 'objetos-nuevos': 'Tanda de objetos nuevos del gashapón (octubre de 2026)' };
+const enCatalogo = (DB, id) => !!DB[id] && (!DB[id].flag || NUCLEO.flag(DB[id].flag, FLAGS_CATALOGO[DB[id].flag] || 'Habilidades u objetos nuevos'));
 /* ---------- calidades: cada copia tiene la suya ---------- */
 function rollQ(minTier) {
   const pool = QTIERS.slice(minTier || 0); let x = Math.random() * pool.reduce((a, t) => a + t.p, 0);

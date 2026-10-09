@@ -127,6 +127,7 @@ function drawEquip(u, T, cc, part) {
     case 'gorra_reves': shape(c, c2 => { c2.arc(0, hy + 4, 9, Math.PI, 0); c2.closePath(); }, '#e63946', 1.5); shape(c, rr(-15, hy + 1.6, 8, 3.4, 1.6), '#b0213a', 1.3); dot(c, 0, hy - 4.6, 1.3, '#fff6ea'); break;
     case 'casco_vr': line(c, [-10, hy + 9, -12, hy + 3], OL, 1.6); line(c, [10, hy + 9, 12, hy + 3], OL, 1.6); shape(c, rr(-10, hy + 7, 20, 8, 2.6), '#2b2d42', 1.5); line(c, [-8, hy + 10.5, 8, hy + 10.5], '#22e3ff', 1.1); dot(c, 6.5, hy + 12.6, 1.1, '#ff3df0'); break;
     case 'orejas_gato': shape(c, poly(-10, hy + 4, -7, hy - 8, -2.5, hy + 1.5), '#2b2d42', 1.4); shape(c, poly(10, hy + 4, 7, hy - 8, 2.5, hy + 1.5), '#2b2d42', 1.4); shape(c, poly(-8, hy + 2.6, -6.6, hy - 4, -4.4, hy + 1.4), '#ff8fd0', 0.8); shape(c, poly(8, hy + 2.6, 6.6, hy - 4, 4.4, hy + 1.4), '#ff8fd0', 0.8); break;
+    default: if (EQ_NUEVOS.head[E.head]) EQ_NUEVOS.head[E.head](c, hy);   // los nuevos, en 07f-objetos-nuevos.js
   }
   if (E.weapon && !EQ_BACK[u.type]) { if (EQ_MIRROR[u.type]) { c.save(); c.translate(hx, hdy); c.scale(-1, 1); drawWeapon(c, E.weapon, 0, 0); c.restore(); } else drawWeapon(c, E.weapon, hx, hdy); }
   switch (E.acc) {
@@ -144,6 +145,7 @@ function drawEquip(u, T, cc, part) {
     case 'disco_fisico': shape(c, el(ax, ay, 6.4, 6.4), '#e5e7eb', 1.3); c.beginPath(); c.arc(ax, ay, 4.2, -0.6, 0.9); c.strokeStyle = '#ff8fd0'; c.lineWidth = 1.2; c.stroke(); dot(c, ax, ay, 1.6, OL); break;
     case 'alfombrilla': shape(c, rr(ax - 8, ay + 1, 16, 5, 1.6), '#2b2d42', 1.2); line(c, [ax - 6, ay + 3.5, ax + 6, ay + 3.5], '#a855f7', 1.1); break;
     case 'boton_pausa': shape(c, el(ax, ay, 5.8, 5.8), '#ff3348', 1.3); c.fillStyle = '#fff6ea'; c.fillRect(ax - 2.6, ay - 2.6, 1.8, 5.2); c.fillRect(ax + 0.8, ay - 2.6, 1.8, 5.2); break;
+    default: if (EQ_NUEVOS.acc[E.acc]) EQ_NUEVOS.acc[E.acc](c, ax, ay, hy);
   }
   c.restore();
 }
@@ -159,5 +161,6 @@ function drawWeapon(c, id, hx, hdy) {   // v0.9.15: las armas del gashapón (la 
     case 'mando_cable': c.beginPath(); c.moveTo(hx, hdy - 4); c.quadraticCurveTo(hx - 14, hdy - 16, hx - 6, hdy - 28); c.strokeStyle = OL; c.lineWidth = 1.4; c.stroke(); shape(c, rr(hx - 7, hdy - 7, 14, 8, 3.4), '#2b2d42', 1.3); dot(c, hx - 3.5, hdy - 3, 1.2, '#ff3348'); dot(c, hx + 3.5, hdy - 3, 1.2, '#22e3ff'); break;
     case 'baguette': c.save(); c.translate(hx + 2, hdy - 9); c.rotate(0.5); shape(c, rr(-3.2, -15, 6.4, 28, 3.2), '#d9a35f', 1.4); for (const yy of [-9, -3, 3, 9]) line(c, [-1.8, yy, 1.8, yy - 2], '#a86b2d', 1); c.restore(); break;
     case 'lanzaconfeti': shape(c, poly(hx - 2.5, hdy, hx + 2.5, hdy, hx + 7, hdy - 15, hx - 7, hdy - 15), '#ffcb3d', 1.4); line(c, [hx - 5, hdy - 9, hx + 5, hdy - 9], '#ff3df0', 1.2); dot(c, hx - 5, hdy - 19, 1.5, '#ff5fa8'); dot(c, hx + 1, hdy - 21, 1.5, '#7be04a'); dot(c, hx + 6, hdy - 18, 1.5, '#63cfe0'); break;
+    default: if (EQ_NUEVOS.weapon[id]) EQ_NUEVOS.weapon[id](c, hx, hdy);
   }
 }

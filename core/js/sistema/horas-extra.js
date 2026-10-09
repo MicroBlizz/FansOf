@@ -42,7 +42,7 @@ const idleFull = () => idleState().h >= IDLE.cap - 1e-6;
 function idleItem() {   // un objeto o una habilidad al azar con las probabilidades del gashapón (sin tocar sus garantías)
   const kind = Math.random() < 0.5 ? 'ab' : 'eq', DB = kind === 'ab' ? ABILITIES : ITEMS;
   let x = Math.random() * 100, rar = 'common'; for (const k of ['legendary', 'epic', 'rare', 'common', 'basic']) { if (x < (ECON.odds[k] || 0)) { rar = k; break; } x -= ECON.odds[k] || 0; }
-  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)));
+  const pool = Object.keys(DB).filter(id => DB[id].rar === rar && !DB[id].pass && (kind === 'ab' || !DB[id].fac || isUnlocked(DB[id].fac)) && enCatalogo(DB, id));
   return newCopy(kind, pick(pool), 0);
 }
 function idleCollect(x2) {   // v0.9.16: x2 = premio doble por anuncio

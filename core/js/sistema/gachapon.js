@@ -22,8 +22,8 @@ function rollRarity(kind, force) {
 }
 // v0.9.10: tiradas x1, x10 y x50. Primero se gastan las tiradas gratis; cada tirada cuenta para las garantías
 function onePull(kind, force) {
-  const rar = rollRarity(kind, force), DB = kind === 'ab' ? ABILITIES : ITEMS, fp = kind === 'eq' ? Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && DB[k].fac && isUnlocked(DB[k].fac)) : [];
-  const pool = fp.length && Math.random() < 0.5 ? fp : Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && (kind === 'ab' || !DB[k].fac));   // v0.9.15: objetos de facción
+  const rar = rollRarity(kind, force), DB = kind === 'ab' ? ABILITIES : ITEMS, fp = kind === 'eq' ? Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && DB[k].fac && isUnlocked(DB[k].fac) && enCatalogo(DB, k)) : [];
+  const pool = fp.length && Math.random() < 0.5 ? fp : Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && (kind === 'ab' || !DB[k].fac) && enCatalogo(DB, k));   // v0.9.15: objetos de facción
   const id = pick(pool), prev = bestCopy(kind, id), nPrev = SAVE.inv.filter(x => x.k === kind && x.id === id).length;
   const P = SAVE.pity, qk = 'q' + kind; P[qk] = (P[qk] || 0) + 1;
   const it = newCopy(kind, id, P[qk] >= ECON.pityQ ? 3 : 0), tq = tierOf(avgQ(it)); if (tq >= 3) P[qk] = 0;

@@ -149,6 +149,25 @@ function applyItem(u, it) {
       case 'cartucho_dorado': u.mHp *= pc(0); u.mDmg *= pc(0); u.olvT = (u.olvT || 0) + v[1]; break;
       case 'taza_indie': u.mDmg *= pc(0); u.regen = (u.regen || 0) + v[1] / 100; break;   // v0.9.23
       case 'claqueta_oro': u.mDmg *= pc(0); u.abSplash = Math.max(u.abSplash || 0, v[1] / 100); break;
+      // octubre de 2026 (flag 'objetos-nuevos'): usan efectos que ya tenían las habilidades
+      case 'palo_selfie': u.mRange = (u.mRange || 1) * pc(0); u.mDmg *= pc(1); break;
+      case 'cable_hdmi': u.abChain = Math.max(u.abChain || 0, v[0] / 100); break;
+      case 'pincho_kebab': u.abVamp = Math.max(u.abVamp || 0, v[0] / 100); break;
+      case 'micro_karaoke': u.abPulse = u.abPulse || { cd: 7, r: 70, stun: v[0], kind: 'daze', text: '¡DESAFINA!', color: 'rgba(255,150,220,.9)', tc: '#ff9be6', sfx: 'wail' }; break;
+      case 'mazo_hotfix': u.mDmg *= pc(0); u.abSlow = { f: 0.5, t: Math.max(v[1], (u.abSlow && u.abSlow.t) || 0) }; break;
+      case 'joystick': u.mCd *= 1 - v[0] / 100; u.abDodge = Math.max(u.abDodge || 0, v[1] / 100); break;
+      case 'katana_steam': u.mDmg *= pc(0); u.abCrit = Math.max(u.abCrit || 0, v[1] / 100); break;
+      case 'gorro_abuela': u.mHp *= pc(0); break;
+      case 'gorro_cumple': u.mHp *= pc(0); u.abPulse = u.abPulse || { cd: 10, r: 85, stun: v[1], kind: 'daze', text: '¡SORPRESA!', color: 'rgba(200,140,255,.9)', tc: '#d08cff', sfx: 'pop' }; break;   // si también lleva el micrófono de karaoke, vale el primero
+      case 'casco_moto': u.abArmor = Math.max(u.abArmor || 0, v[0] / 100); break;
+      case 'mascara_luchador': u.abFury = Math.max(u.abFury || 0, 1 + v[0] / 100); break;
+      case 'corona_troll': u.mHp *= pc(0); u.abTaunt = Math.max(u.abTaunt || 0, 95); break;
+      case 'patinete': u.mSpeed *= pc(0); u.mCd *= 1 - v[1] / 100; break;
+      case 'bolsa_pipas': u.abMagnet = (u.abMagnet || 0) + v[0]; break;
+      case 'llavero_suerte': u.abDodge = Math.max(u.abDodge || 0, v[0] / 100); break;
+      case 'mochila_ruedas': u.mHp *= pc(0); u.mSpeed *= pc(1); break;
+      case 'powerbank': u.abDlc = (u.abDlc || 0) + v[0]; break;
+      case 'capa_heroe': u.abRevive = Math.max(u.abRevive || 0, v[0] / 100); break;
     }
     u.equip = u.equip || {}; u.equip[ITEMS[id].slot] = id;
   }

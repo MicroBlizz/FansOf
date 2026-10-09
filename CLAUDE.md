@@ -30,6 +30,7 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 ## Probar y publicar
 - python herramientas/servidor.py y abre http://localhost:8765/games/<juego>/ (--con-sw para probar el modo sin conexión).
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.
+- Balance de habilidades y objetos de Rumble (al crear o tocar uno, o al cambiar la IA o las unidades): python herramientas/balance.py; cómo leerlo en PLAN-BALANCE.md.
 - Publicar versión: sube el ?v= de nucleo.js en el index.html de cada juego afectado (si tocas core, en todos); si el jugador lo nota, entrada en NEWS.
 - Versión visible = una subida por DESPLIEGUE, no por commit. Mientras no se despliega, los commits intermedios no suben el número (si dos sesiones chocan, la que despliega fija el número final). Cada despliegue que sube la versión lleva una entrada en NEWS; el trabajo oculto o solo de desarrollo (por ejemplo el PvP tras PVP_ABIERTO) va dentro de la subida del siguiente despliegue, sin entrada propia. No hay saltos de versión sin nota. No reescribas las entradas pasadas. Quien despliega repasa antes TODOS los commits desde el último despliegue (`git log <último gh-pages>..main`, o `python herramientas/desplegar.py --lista`) y pone en la nota todo lo que importe al jugador o merezca mención, también con un guiño si hubo mucho trabajo por dentro.
 - Guardar el trabajo es libre: haz commit y `git push origin main` cuando quieras (los dos, Rafael y Dani, y sus sesiones). Eso NO despliega nada.

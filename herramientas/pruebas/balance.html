@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fans Of · Balance de Rumble</title>
+<style>
+  body { font: 15px/1.45 system-ui, sans-serif; margin: 0; padding: 20px; background: #150b21; color: #f3ecff; }
+  h1 { font-size: 22px; margin: 0 0 6px; }
+  p { max-width: 70ch; color: #cdb9ea; margin: 6px 0; }
+  code { background: #2a1840; padding: 1px 5px; border-radius: 4px; }
+  button, select, input { font: inherit; padding: 8px 12px; border-radius: 8px; border: 2px solid #20102c; margin: 10px 6px 10px 0; }
+  button { background: #ffcb3d; color: #20102c; font-weight: 700; cursor: pointer; }
+  select, input { background: #cdb9ea; color: #20102c; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  th, td { padding: 4px 12px; text-align: right; border-bottom: 1px solid #2a1840; } th:first-child, td:first-child { text-align: left; }
+  .mal { color: #ff8a8a; } .flojo { color: #8fc2ff; }
+  #marcos { position: absolute; left: -99999px; top: 0; }   /* el juego corre fuera de la vista */
+  #marcos iframe { border: 0; display: block; }
+</style>
+</head>
+<body>
+<h1>Balance de habilidades y objetos (Rumble)</h1>
+<p>Juega partidas «espejo»: las dos partes con la misma facción, el mismo mazo y la IA. Solo una lleva la habilidad (en sus 7 cartas) o el objeto (en el líder). Cómo leer el resultado y cómo ir más rápido: <code>PLAN-BALANCE.md</code>.</p>
+<p><b>Margen</b> = torres de ventaja que le quedan al final a quien lo lleva (0 = no cambia nada). En <span class="mal">rojo</span>, demasiado fuerte (más de 1,9); en <span class="flojo">azul</span>, casi no hace nada (menos de 0,5).</p>
+<select id="que" aria-label="Qué medir"><option value="habilidades">Todas las habilidades</option><option value="objetos">Todos los objetos</option><option value="todo">Todo</option></select>
+<input id="semillas" type="number" min="1" max="50" value="12" aria-label="Semillas por facción y lado" title="Semillas por facción y lado (12 = 216 partidas por cosa)">
+<input id="valor" placeholder="probar otro valor: dlc:0.5" aria-label="Probar otro valor central de una habilidad">
+<button id="empezar">Empezar</button>
+<button id="bajar" hidden>Descargar las partidas</button>
+<div id="estado"></div>
+<div id="lista"></div>
+<div id="marcos" aria-hidden="true"></div>
+<script src="balance-pagina.js"></script>
+</body>
+</html>

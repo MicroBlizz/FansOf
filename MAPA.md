@@ -19,7 +19,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-pantallas-4.js` · 11 KB
 - `core/idioma/en-pantallas-5.js` · 9 KB
 - `core/idioma/en-pases.js` · 4 KB
-- `core/idioma/en-plantillas-2.js` · 8 KB
+- `core/idioma/en-plantillas-2.js` · 9 KB
 - `core/idioma/en-plantillas.js` · 11 KB
 - `core/idioma/en-raiz.js` · 3 KB
 - `core/idioma/en-salon.js` · 6 KB
@@ -98,6 +98,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-12.js` · 16 KB
 - `games/rumble/idioma/en-13.js` · 4 KB
 - `games/rumble/idioma/en-14.js` · 13 KB
+- `games/rumble/idioma/en-15.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -223,14 +224,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/unidades.js` · 14 KB · FAC_BAL
 - `gestion/index.html` · 16 KB
 - `herramientas/android_www.py` · <1 KB
+- `herramientas/balance.py` · 6 KB
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
 - `herramientas/datos.html` · 5 KB
 - `herramientas/desplegar.py` · 7 KB
-- `herramientas/idioma.py` · 5 KB
+- `herramientas/idioma.py` · 8 KB
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
 - `herramientas/subir_datos.py` · 4 KB
+- `herramientas/pruebas/balance-pagina.js` · 6 KB · $, PARAM, pinta, espera, abreJuego, preparaCasos, resume, tabla, mide
+- `herramientas/pruebas/balance.html` · 2 KB
+- `herramientas/pruebas/balance.js` · 4 KB
 - `herramientas/pruebas/comparar.js` · 10 KB · RAIZ, TAMS, $, duerme, texto, LETRAS, pasada, expande, difTexto, difEstilos, diferencias, compara, esc, pinta, AUTO
 - `herramientas/pruebas/dentro.js` · 13 KB
 - `herramientas/pruebas/determinismo.js` · 8 KB

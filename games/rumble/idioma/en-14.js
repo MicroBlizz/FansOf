@@ -53,4 +53,6 @@ IDIOMA.add({
   "Aún no has desbloqueado esta facción": "You have not unlocked this faction yet",
   "<b>PVP: HÉROE EN LA MANO</b>: si tu rival sacaba el héroe de tu misma facción, tu carta de héroe salía como «en el campo» aunque el tuyo no estuviera. Arreglado.": "<b>PVP: HERO IN YOUR HAND</b>: if your rival deployed the hero of your same faction, your hero card showed “on the field” even though yours wasn't. Fixed.",
   "Microblizz ha explicado que en PvP los héroes se parecen tanto que ni su propia botonera los distinguía.": "Microblizz explained that in PvP the heroes look so alike that not even its own button bar could tell them apart.",
+  "<b>PVP SIN PARONES</b>: arreglada la partida que se quedaba parada (sin subir ni el CAOS) por un fallo de la conexión con el servidor.": "<b>PVP WITHOUT FREEZES</b>: fixed the match that froze (not even CHAOS went up) because of a server connection bug.",
+  "Microblizz ha descubierto que dos mensajes a la vez se pisaban entre sí. Ahora hacen cola, como en la cafetería.": "Microblizz discovered that two messages at once stepped on each other. Now they queue, like in the cafeteria.",
 });

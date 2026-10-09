@@ -1,9 +1,7 @@
 // Fans of Rumble · PvP: pantalla de buscar rival, avisos durante la partida y pantalla final
 'use strict';
-const PVP_ABIERTO = true;     // se pondrá a true cuando el PvP esté listo para los jugadores; mientras, el botón solo sale en modo desarrollo
-const PVP_SALVAJE = false;   // el modo Salvaje (con habilidades y objetos) sale a los jugadores cuando esto pase a true; en desarrollo siempre sale
+const PVP_SALVAJE = NUCLEO.flag('pvp-salvaje', 'PvP modo Salvaje (habilidades y objetos): sale a los jugadores cuando se quite este flag');
 const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se ofrece jugar contra la IA
-const pvpDisponible = () => PVP_ABIERTO || (typeof NUCLEO !== 'undefined' && !!NUCLEO.desarrollo);
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
 
 // qué red se usa: la del servidor si hay cuenta vinculada; en desarrollo, sin cuenta (o con localStorage 'fansof-pvp-red' = 'local'), la de pruebas entre dos pestañas
@@ -15,7 +13,6 @@ function pvpRed() {
   return 'servidor';   // sin cuenta vinculada: la búsqueda dirá qué falta
 }
 function pvpPantalla() {
-  if (!pvpDisponible()) return;
   if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
 }
@@ -38,8 +35,8 @@ async function pvpClasificacion() {
 }
 function pvpPinta() {
   const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo);
-  if (!PVP_SALVAJE && !NUCLEO.desarrollo) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
-  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !PVP_SALVAJE && !NUCLEO.desarrollo; }
+  if (!PVP_SALVAJE) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
+  for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !PVP_SALVAJE; }
   $('#pvp-sub').textContent = PVP_MODOS[PVP_UI.modo][1];
   // la facción se elige aquí mismo: salen todas y las que aún no tienes, en gris
   const facs = $('#pvp-facs'); facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader).map(x => `<button class="pvp-fac${isUnlocked(x) ? '' : ' bloq'}" data-pf="${x}" aria-pressed="${x === f}" aria-label="${esc(FACTIONS[x].name)}" ${buscando ? 'disabled' : ''}><canvas data-pfl="${FACTIONS[x].leader}"></canvas></button>`).join('');
@@ -120,7 +117,7 @@ function pvpShowEnd() {
 }
 
 /* ---------- los botones ---------- */
-$('#btn-pvp').hidden = !pvpDisponible();
+$('#btn-pvp').hidden = false;
 hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
 $('#btn-pvp').addEventListener('click', () => { play('select'); pvpPantalla(); });
 for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); });

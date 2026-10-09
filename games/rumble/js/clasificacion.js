@@ -47,7 +47,7 @@ const SALON = {
       cargar: async () => {
         if (typeof CUENTA === 'undefined' || !CUENTA.activa) throw new Error('sin_nube');
         const l = (await PVPNET.redes.servidor.clasificacion('estandar')) || [];
-        const lista = l.map((r, i) => ({ puesto: i + 1, nombre: r.nombre, avatar: r.avatar, fac: r.fac, valor: r.puntos, extra: r.jugadas, yo: !!r.yo }));
+        const lista = l.map((r, i) => ({ puesto: i + 1, nombre: r.nombre, avatar: r.avatar || (r.look && r.look.avatar), fac: r.fac || (r.look && r.look.fac), look: r.look || null, valor: r.puntos, extra: r.jugadas, yo: !!r.yo }));   // look: marco y título (v0.9.110)
         return { lista, yo: lista.find(r => r.yo) || null, total: lista.length };
       },
       info: r => r.extra === 1 ? '1 partida' : `${fmt(r.extra)} partidas` },

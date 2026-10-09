@@ -113,6 +113,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-19.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-20.js` · <1 KB
+- `games/rumble/idioma/en-21.js` · 2 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
 - `games/rumble/idioma/en-5.js` · 11 KB
@@ -181,7 +182,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 5 KB · SALON_PVP, SALON_DIF, salonDif, MIT_VISTAS, mitVista, mitV, SALON
-- `games/rumble/js/novedades.js` · 28 KB · NEWS
+- `games/rumble/js/novedades.js` · 29 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 9 KB
 - `games/rumble/js/retos-logros-2.js` · 5 KB · LOGROS_ANTES, PVP_LIGAS, armGanables, armTengo
 - `games/rumble/js/retos-logros.js` · 25 KB

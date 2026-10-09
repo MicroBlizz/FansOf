@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.113', real: [
+      '<b>RIVALES CON CABEZA</b>: la máquina ya tiene tácticas según la dificultad. En Normal, si te quedas sin CAOS te ataca por el carril donde no estás, y guarda los hechizos para pillar a un grupo. En Difícil, Heroica, Mítica, CEO y los jefes duros, además ataca con combos (el tanque y el apoyo casi a la vez), presiona el otro carril y no te ataca si tienes el CAOS lleno. En Fácil juega como siempre.',
+      '<b>PARTIDA RÁPIDA CON LA IA NUEVA</b>: SurvivalBot ya no sigue un guion fijo: juega con la IA nueva y sus tácticas según la dificultad que elijas. Las primeras fases de la campaña siguen siendo para aprender.',
+      '<b>ENTRENAMIENTO</b>: los rivales FÁCIL, IGUALADO y DIFÍCIL ahora también juegan distinto: el fácil sin tácticas, el igualado como en Normal y el difícil con todas.'],
+    joke: ['Microblizz ha enseñado a su IA a contar tu CAOS. Dice que no es espiar: es «analítica del comportamiento del usuario».'] },
   { v: '0.9.112', real: [
       '<b>13 LOGROS NUEVOS</b>: hay pestaña de <b>PvP</b> (Cara a cara, Trepa corporativo y Relaciones públicas) y logros para el modo CEO, Empleado del día y del mes, la Mítica semanal, el Top 10, el armario y los sanadores que curan torres. Y tres secretos más.',
       '<b>GASHAPÓN MÁS EXIGENTE</b>: en las máquinas de habilidades y de objetos las legendarias salen menos (de 1 de cada 23 tiradas a 1 de cada 50), y la legendaria asegurada llega a las 90 tiradas. Así tener una vuelve a ser algo especial.',

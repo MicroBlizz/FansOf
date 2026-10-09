@@ -23,6 +23,7 @@ function nuevaPartida() {
   const J = SV.jugador, MJ = modsJugador(), vida = Math.round(J.vida * MJ.hp);
   P = {
     mods: MJ, reviveUsado: false, cofres: 0, elites: 0,
+    cajasRotas: new Set(), cajasVida: new Map(), cajasGolpe: new Map(), oroCajas: 0, objetosCajas: 0,
     t: 0, estado: 'jugando', ganado: false, finT: 0,
     jug: { x: 0, y: 0, vida, vidaMax: vida, face: 1, andando: false, walk: 0, invulT: 0, golpeT: 0, congT: 0, salto: null, muerto: false },
     cam: { x: 0, y: 0 },
@@ -208,6 +209,26 @@ function herir(e, dano, kx = 0, ky = 0, kb = 0, crit = false) {
   e.kbx += kx * kb * peso; e.kby += ky * kb * peso;
   numero(e.x + rand(-6, 6), e.y - 30 * e.escala, Math.round(dano), crit ? '#ffcb3d' : '#fff', crit);
   if (e.vida <= 0) matar(e);
+}
+// cajas del campo (las de la mudanza, cosaEn con t === 2): se rompen con cualquier arma de área, proyectil o aura
+function golpeCajas(x, y, r, dano) {
+  const a = Math.floor((x - r - 20) / 180), b = Math.floor((x + r + 20) / 180), c = Math.floor((y - r) / 180), d = Math.floor((y + r + 30) / 180);
+  for (let ix = a; ix <= b; ix++) for (let iy = c; iy <= d; iy++) {
+    const o = cosaEn(ix, iy); if (!o || o.t !== 2) continue;
+    const k = ix + ',' + iy; if (P.cajasRotas.has(k)) continue;
+    if (Math.hypot(o.x - x, o.y - 10 - y) > r + 18) continue;
+    const v = (P.cajasVida.get(k) ?? CAJAS.vida) - dano * multDano();
+    P.cajasGolpe.set(k, 0.12);
+    if (v > 0) { P.cajasVida.set(k, v); continue; }
+    P.cajasRotas.add(k); P.cajasVida.delete(k); P.cajasGolpe.delete(k); romperCaja(o);
+  }
+}
+function romperCaja(o) {
+  const oro = Math.min(Math.round(rand(CAJAS.oro[0], CAJAS.oro[1])), Math.max(0, CAJAS.topeOro - P.oroCajas));
+  P.oroCajas += oro;
+  particulas(o.x, o.y - 10, 12, '#c99a5b', 200, 4); particulas(o.x, o.y - 10, 6, '#fff6ea', 120, 3); play('hit');
+  if (oro) numero(o.x, o.y - 40, '+' + oro, '#ffcb3d');
+  if (P.objetosCajas < CAJAS.topeObjetos && Math.random() < CAJAS.objeto) { P.objetosCajas++; numero(o.x, o.y - 62, '¡OBJETO!', '#e879f9', true); play('crown'); }
 }
 function matar(e) {
   e.muerto = true; P.kills++; P.puntos += e.jefe ? 5000 : e.elite ? 500 : 10;
@@ -410,6 +431,7 @@ function actualizar(dt) {
 function efectosPasan(dt) {
   for (const n of P.numeros) n.t += dt; P.numeros = P.numeros.filter(n => n.t < 0.8);
   for (const p of P.parts) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.vx *= 0.97; } P.parts = P.parts.filter(p => p.t < p.max);
+  for (const [k, v] of P.cajasGolpe) { if (v - dt <= 0) P.cajasGolpe.delete(k); else P.cajasGolpe.set(k, v - dt); }
   for (const f of P.efectos) f.t -= dt; P.efectos = P.efectos.filter(f => f.t > 0);
   for (const c of P.chat) c.t += dt; P.chat = P.chat.filter(c => c.t < 9);
   if (P.aviso) { P.aviso.t += dt; if (P.aviso.t > P.aviso.max) P.aviso = null; }

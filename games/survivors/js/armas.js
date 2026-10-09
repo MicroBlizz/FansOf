@@ -94,7 +94,7 @@ function aura(dt) {
   curarSuave(v.cura * dt);
   P.auraT -= dt; if (P.auraT > 0) return;
   P.auraT = v.tick;
-  cerca(j.x, j.y - 10, v.r, e => herir(e, v.dano, 0, 0, 0));
+  cerca(j.x, j.y - 10, v.r, e => herir(e, v.dano, 0, 0, 0)); golpeCajas(j.x, j.y - 10, v.r, v.dano);
 }
 function curarSuave(n) { const j = P.jug; j.vida = Math.min(j.vidaMax, j.vida + n); }
 
@@ -108,19 +108,20 @@ function vacasGiran(dt) {
       const dx = e.x - j.x, dy = e.y - j.y, d = Math.hypot(dx, dy) || 1;
       herir(e, V.dano, dx / d, dy / d, 380); play('hit');
     });
+    golpeCajas(x, y, 20, V.dano * 0.2);
   }
 }
 function saltoChaos(dt) {
   const S = P.jug.salto; S.t += dt;
   if (S.t < S.dur) return;
   const j = P.jug; P.jug.salto = null;
-  cerca(j.x, j.y, S.r, e => { const dx = e.x - j.x, dy = e.y - j.y, d = Math.hypot(dx, dy) || 1; herir(e, S.dano, dx / d, dy / d, 520); });
+  cerca(j.x, j.y, S.r, e => { const dx = e.x - j.x, dy = e.y - j.y, d = Math.hypot(dx, dy) || 1; herir(e, S.dano, dx / d, dy / d, 520); }); golpeCajas(j.x, j.y, S.r, S.dano);
   P.efectos.push({ tipo: 'onda', x: j.x, y: j.y, r: S.r, t: 0.45, max: 0.45 });
   particulas(j.x, j.y, 22, '#e9dcc0', 260, 5);
   P.sacudida = Math.max(P.sacudida, 7); play('slam');
 }
 function explotar(x, y, r, dano, col = '#ff9a3c') {
-  cerca(x, y, r, e => { const dx = e.x - x, dy = e.y - y, d = Math.hypot(dx, dy) || 1; herir(e, dano, dx / d, dy / d, 300); });
+  cerca(x, y, r, e => { const dx = e.x - x, dy = e.y - y, d = Math.hypot(dx, dy) || 1; herir(e, dano, dx / d, dy / d, 300); }); golpeCajas(x, y, r, dano);
   P.efectos.push({ tipo: 'boom', x, y, r, t: 0.4, max: 0.4, col });
   particulas(x, y, 16, col, 240, 5); particulas(x, y, 6, '#5a5a66', 120, 7, 0.8);
   P.sacudida = Math.max(P.sacudida, 4);
@@ -136,6 +137,7 @@ function moverProyectiles(dt) {
         p.golpeados.add(e); p.quedan--;
         const d = Math.hypot(p.vx, p.vy) || 1; herir(e, p.dano, p.vx / d, p.vy / d, p.tipo === 'ardilla' ? 140 : 90);
       });
+      if (p.quedan > 0) golpeCajas(p.x, p.y, 10, p.dano);
       if (p.quedan <= 0) p.t = 0;
     } else if (p.tipo === 'castor') {
       if (p.obj && !p.obj.muerto) { p.tx = p.obj.x; p.ty = p.obj.y; }

@@ -25,8 +25,8 @@ function cosaEn(ix, iy) {
   if (h > 0.34) return null;
   return { x: ix * 180 + 40 + ((h * 997) % 1) * 100, y: iy * 180 + 40 + ((h * 7919) % 1) * 100, t: Math.floor(h * 1000) % 5 };
 }
-function dibujaCosa(o) {
-  const c = ctx; c.save(); c.translate(o.x, o.y); c.lineJoin = 'round';
+function dibujaCosa(o, golpe) {
+  const c = ctx; c.save(); c.translate(o.x, o.y); c.lineJoin = 'round'; if (golpe) c.rotate(Math.sin(P.t * 60) * 0.06);
   c.globalAlpha = 0.25; c.fillStyle = '#140a1e'; c.beginPath(); c.ellipse(0, 2, 20, 7, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
   if (o.t === 0) { shape(c, el(0, -8, 18, 12), '#9aa3b5'); shape(c, el(-5, -12, 6, 3.5), '#c8cfdc', 0); }   // piedra
   else if (o.t === 1) { shape(c, rr(-3, -14, 6, 14, 2), '#fff6ea'); shape(c, el(0, -15, 13, 8), THEMES.animales.cap); dot(c, -5, -17, 2.2, '#fff'); dot(c, 4, -14, 1.8, '#fff'); }   // seta
@@ -95,7 +95,7 @@ function dibujar() {
     c.beginPath(); c.ellipse(m.x, m.y, m.r * k, m.r * 0.8 * k, 0, 0, Math.PI * 2); c.fillStyle = 'rgba(125,211,252,.35)'; c.fill(); c.globalAlpha = 1;
   }
   // cosas del campo
-  for (let ix = Math.floor(x0 / 180) - 1; ix <= Math.floor(x1 / 180); ix++) for (let iy = Math.floor(y0 / 180) - 1; iy <= Math.floor(y1 / 180); iy++) { const o = cosaEn(ix, iy); if (o && ver(o.x, o.y, 30)) dibujaCosa(o); }
+  for (let ix = Math.floor(x0 / 180) - 1; ix <= Math.floor(x1 / 180); ix++) for (let iy = Math.floor(y0 / 180) - 1; iy <= Math.floor(y1 / 180); iy++) { const o = cosaEn(ix, iy); if (o && ver(o.x, o.y, 30) && !P.cajasRotas.has(ix + ',' + iy)) dibujaCosa(o, P.cajasGolpe.has(ix + ',' + iy)); }
   // cristales de CAOS, cafés, imanes y cofres
   for (const g of P.gemas) if (ver(g.x, g.y)) gema(g);
   for (const o of P.cosas) if (ver(o.x, o.y)) cosaSuelta(o);

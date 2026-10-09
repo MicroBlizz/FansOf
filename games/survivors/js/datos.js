@@ -136,6 +136,14 @@ const JEFE = {
 };
 
 /* ---------- lo que sueltan ---------- */
+// las cajas de la mudanza que hay por el campo: se rompen a golpes y siempre dan oro (al acabar la partida, junto al resto del premio)
+const CAJAS = {
+  vida: 40,           // golpes que aguanta (daño de las armas)
+  oro: [3, 8],        // oro que da cada caja: mínimo y máximo
+  topeOro: 400,       // máximo de oro que se puede sacar de cajas en una partida
+  objeto: 0.01,       // probabilidad de que una caja dé además un objeto del gashapón
+  topeObjetos: 2,     // máximo de objetos por partida
+};
 const BOTIN = {
   cafe: 0.012,     // probabilidad de que un enemigo suelte una Taza del becario (cura)
   cafeCura: 25,

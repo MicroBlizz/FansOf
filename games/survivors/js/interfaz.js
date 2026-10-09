@@ -97,13 +97,18 @@ function mostrarFin() {
   const g = P.ganado, t = P.ganado ? P.t : Math.min(P.t, SV.duracion), E = ECON.partida, min = Math.floor(t / 60);
   const F = FACTIONS.animales, usadas = Object.keys(P.armas);
   // oro y gemas
-  const gold = Math.round(min * E.porMinuto + (P.kills / 100) * E.por100Bajas + (g ? E.victoria : 0)), gems = g ? E.gemasVictoria : 0;
+  const gold = Math.round(min * E.porMinuto + (P.kills / 100) * E.por100Bajas + (g ? E.victoria : 0) + P.oroCajas), gems = g ? E.gemasVictoria : 0;
   // experiencia: para el líder y para cada carta-arma que has usado
   const xp1 = Math.round(Math.max(1, min) * E.xpPorMinuto * (g ? ECON.winXpMult : 1)), cartas = new Set([F.leader]);
   for (const a of usadas) cartas.add(ARMAS[a].carta);
   for (const k of cartas) uSave(k).xp += xp1;
   cierraRetos(g, { t, kills: P.kills, nivel: P.nivel, cofres: P.cofres, elites: P.elites, armas: usadas, vida: P.jug.vida / P.jug.vidaMax });
-  const rw = give(gold, gems, xp1 * cartas.size, { tipo: 'otro', victoria: g }) + passMatch(g);
+  let rw = give(gold, gems, xp1 * cartas.size, { tipo: 'otro', victoria: g }) + passMatch(g);
+  // objetos que han salido de las cajas: sin servidor se dan aquí; con servidor aún no hay camino validado (pendiente)
+  if (P.objetosCajas && !ECO.servidor('economia')) {
+    const got = []; for (let i = 0; i < P.objetosCajas; i++) got.push(idleItem());
+    saveGame(); rw += got.map(it => { const D = defOf(it); return `<div class="rw-xp">${tr('¡Una caja escondía un objeto! Ya lo tienes en el inventario:')} <b>${D.name}</b></div>`; }).join('');
+  }
   // la pantalla
   $('#hud').hidden = true; hideScreens(); $('#scr-end').hidden = false;
   const ti = $('#end-title'); ti.textContent = g ? '¡HAS GANADO!' : 'TE HAN DESPEDIDO'; ti.className = 'end-title ol-big ' + (g ? 'win' : 'lose'); fitText(ti, 74, 34);

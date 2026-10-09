@@ -58,7 +58,7 @@ IDIOMA.add({
   'Suelta un Cofre de botín (sin microtransacciones)': 'Drops a Loot chest (no microtransactions)', '¡Que no te rodeen!': 'Don\'t get surrounded!',
   '¡LLEGA SURVIVALBOT!': 'SURVIVALBOT IS HERE!', '«Hemos comprado vuestro juego… y lo vamos a cerrar.»': '"We bought your game… and we\'re shutting it down."',
   'ENTIERRO DE IP': 'IP BURIAL', '¡DESPIDOS MASIVOS!': 'MASS LAYOFFS!', 'SurvivalBot llama a los becarios': 'SurvivalBot calls in the interns',
-  '¡CONGELADO!': 'FROZEN!', '¡ESQUIVADO!': 'DODGED!', '¡IMÁN!': 'MAGNET!', 'LICENCIA CADUCADA': 'LICENSE EXPIRED', '¡COFRE DE BOTÍN!': 'LOOT CHEST!',
+  '¡CONGELADO!': 'FROZEN!', '¡ESQUIVADO!': 'DODGED!', '¡IMÁN!': 'MAGNET!', '¡OBJETO!': 'ITEM!', '¡Una caja escondía un objeto! Ya lo tienes en el inventario:': 'A box was hiding an item! It is in your inventory now:', 'LICENCIA CADUCADA': 'LICENSE EXPIRED', '¡COFRE DE BOTÍN!': 'LOOT CHEST!',
   '¡SURVIVALBOT DESPEDIDO!': 'SURVIVALBOT FIRED!', 'Microblizz anuncia que «nunca le gustó ese robot»': 'Microblizz says it "never liked that robot"',
   'DESPEDIDO': 'FIRED',
   // armas

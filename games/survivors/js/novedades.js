@@ -2,6 +2,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.21', real: [
+      '<b>8 FACCIONES NUEVAS</b>: ya puedes jugar con No-Muertos, Streamers, Héroes, Ciberpunks, Memes, Comunidad Gamer, Olvidados y Cultura Pop, cada una con 8 armas propias. Se eligen bajo JUGAR y se abren aguantando minutos en total (10, 30, 60, 100, 150, 210, 280 y 360).',
+      '<b>COFRES CON SUSPENSE</b>: el cofre ahora se abre por fases. Sale una mejora, la música se acelera… ¿y habrá otra? Con un poco de suerte extra, ¡te da 5!'],
+    joke: ['Microblizz ha repartido facciones como quien reparte folletos. Y ha acelerado la música «para generar expectación».'] },
   { v: '0.1.20', real: [
       '<b>COFRES DE ESPECTÁCULO</b>: ya no son una subida de nivel cualquiera. Cada cofre mejora al azar entre 1 y 3 cosas de las que ya tienes: con una, entrega épica; con dos, doble premio; con tres, ¡un 777 de tragaperras con todo!',
       '<b>CAJAS ROMPIBLES</b>: las cajas del mapa ahora se rompen y dan oro (y, con muy poca suerte, un objeto).',

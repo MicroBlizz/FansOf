@@ -126,6 +126,6 @@ if (NUCLEO.desarrollo) {
   const fila = document.createElement('p'); fila.className = 'quote'; fila.id = 'pvp-dev-d';
   fila.innerHTML = 'Retardo de red (turnos, igual en los dos): <select id="pvp-d">' + [1, 2, 3, 4, 5, 6, 8].map(n => `<option value="${n}">${n}</option>`).join('') + '</select>';
   $('#btn-pvp-buscar').closest('.row').before(fila);
-  const sel = $('#pvp-d'); try { sel.value = localStorage.getItem('fansof-pvp-d') || '2'; } catch (e) { sel.value = '2'; }   // 19f (que lee este valor) se carga después
+  const sel = $('#pvp-d'); try { sel.value = localStorage.getItem('fansof-pvp-d') || '5'; } catch (e) { sel.value = '5'; }   // 19f (que lee este valor) se carga después
   sel.addEventListener('change', () => { try { localStorage.setItem('fansof-pvp-d', sel.value); } catch (e) { /* sin guardar */ } });
 }

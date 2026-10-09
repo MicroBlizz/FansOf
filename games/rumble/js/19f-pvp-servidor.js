@@ -5,7 +5,7 @@
    los equipos con los que se juega salen de lo que devuelve pvp_estado, nunca de lo que diga el otro cliente. */
 // retardo: turnos de margen de red. En desarrollo se elige en la pantalla de PvP (guarda fansof-pvp-d) (los DOS jugadores el mismo; si no, la partida se anula)
 const pvpRetardo = () => { let d = 0; try { d = NUCLEO.desarrollo ? +localStorage.getItem('fansof-pvp-d') : 0; } catch (e) { /* sin guardar */ } return d >= 1 && d <= 10 ? d : PVP_SRV.retardo; };
-const PVP_SRV = { retardo: 2, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
+const PVP_SRV = { retardo: 5, turnoMs: 200, sondeoMs: 1500, cierreMs: 5000 };   // cada cuánto se habla con el servidor mientras se juega · se espera una sala · se pregunta por el cierre
 
 const pvpErrorTexto = e => {
   const m = String((e && e.message) || e);

@@ -77,6 +77,13 @@ PRUEBA.pasos = async function (T) {
       const X = pvp(base(), 51, 'pvp · campo ' + (k || 'normal') + ' · 1', { terreno: k, seg: 25 }), Y = pvp(base(), 62, 'pvp · campo ' + (k || 'normal') + ' · 2', { terreno: k, seg: 25 });
       if (X.huellas.join() !== Y.huellas.join()) fallos.push('pvp: el campo «' + (k || 'normal') + '» no es determinista');
     }
+    // todos los ejércitos (con sus pasivas: hype, RNG, experiencia, escudos, secuelas…): cada uno contra el siguiente, dos veces, con las dos copias iguales
+    const facs = FACTION_ORDER.filter(x => FACTIONS[x].leader && FACTIONS[x].units);
+    for (let i = 0; i < facs.length; i++) {
+      const par = () => ({ p: equipo(facs[i], 5), e: equipo(facs[(i + 1) % facs.length], 5) });
+      const X = pvp(par(), 71, 'pvp · ejército ' + facs[i] + ' · 1', { terreno: '', seg: 25 }), Y = pvp(par(), 82, 'pvp · ejército ' + facs[i] + ' · 2', { terreno: '', seg: 25 });
+      if (X.huellas.join() !== Y.huellas.join()) fallos.push('pvp: el ejército «' + facs[i] + '» contra «' + facs[(i + 1) % facs.length] + '» no es determinista');
+    }
     PVP.terreno = undefined;
     { const vistos = new Set(); for (let s = 1; s <= 60; s++) { G.seedNext = s; vistos.add(pvpTerreno() || 'normal'); } if (vistos.size < 10) fallos.push('pvp: el campo al azar repite demasiado (' + vistos.size + ' distintos en 60 semillas)'); }
     T.apunta('pvp', fallos.some(x => x.startsWith('pvp')) ? 'FALLO' : `${A.registro.length} jugadas de los dos lados; no depende del SAVE; el equipo cambia la partida; el registro la repite`);

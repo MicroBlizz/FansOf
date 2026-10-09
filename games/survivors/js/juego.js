@@ -22,7 +22,7 @@ function modsJugador() {
 function nuevaPartida() {
   const J = SV.jugador, MJ = modsJugador(), vida = Math.round(J.vida * MJ.hp), fac = facNow();
   P = {
-    mods: MJ, fac, lider: FACTIONS[fac].leader, zonas: [], escudoN: 0, reviveUsado: false, cofres: 0, elites: 0,
+    mods: MJ, fac, lider: FACTIONS[fac].leader, zonas: [], trampas: [], torretas: [], escudoN: 0, reviveUsado: false, cofres: 0, elites: 0,
     cajasRotas: new Set(), cajasVida: new Map(), cajasGolpe: new Map(), oroCajas: 0, objetosCajas: 0,
     t: 0, estado: 'jugando', ganado: false, finT: 0,
     jug: { x: 0, y: 0, vida, vidaMax: vida, face: 1, andando: false, walk: 0, invulT: 0, golpeT: 0, congT: 0, salto: null, muerto: false },

@@ -21,6 +21,7 @@ colección, inventario, biblioteca, gashapón, tienda, horas extra, misiones, lo
 | `js/datos.js` | **Las cifras de la partida**: jugador, armas, mejoras, enemigos, oleadas por minuto, momentos especiales y jefe. |
 | `js/datos-facciones.js`, `js/datos-facciones-2.js` | Las armas de las otras 8 facciones (cifras base, mejoras de nivel, `DESBLOQUEO`). |
 | `js/armas-tipos.js` | Cómo dispara, se mueve y se dibuja cada tipo de arma de esas facciones (bala, nova, bomba, golpe, rayo, onda, charco, corre, aura, órbita, escudo). |
+| `js/armas-tipos-2.js` | Los tipos de las armas iniciales de los líderes: espadazos en abanico, manos del suelo, foco giratorio, torreta, carta al azar, combo y hacha boomerang. |
 | `js/facciones.js` | El botón y la lista para elegir facción. |
 | `js/catalogo.js` | Habilidades y objetos de este juego, lo que suma cada carta (`cardMods`), lo que pregunta la colección y la partida guardada. |
 | `js/sonido.js` | Silencio, volúmenes y qué canción suena. |

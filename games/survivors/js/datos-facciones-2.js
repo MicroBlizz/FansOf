@@ -2,7 +2,7 @@
 'use strict';
 
 // memes
-armaFaccion('memes', 'memelord_a', 'memelord', 'bala', 'Cartas virales', 'MemeLord lanza cartas al enemigo más cercano, y rebotan.', '🃏', '#ff9ad9', {dano: 16, rebota: 1}, ['n', 'dano', 'rebota', 'cd']);
+armaFaccion('memes', 'memelord_a', 'memelord', 'ruleta', 'Carta viral', 'Cada carta juega un efecto al azar: cura, aturde, bola de fuego o perros.', '🃏', '#ff9ad9', {}, ['dano', 'cd', 'n', 'dano']);
 armaFaccion('memes', 'memelord_b', 'memelord', 'nova', 'Lluvia de memes', 'Una lluvia de risas sale en todas direcciones.', '🤣', '#ffe14d', {n: 7, dano: 12, cd: 3.2}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('memes', 'suchdog', 'suchdog', 'corre', 'Perros wow', 'Perros muy wow que corren hacia los enemigos y muerden.', null, '#ffcb3d', {spr: 'suchdog', dano: 24, n: 2, r: 45, vel: 360, cd: 2.6}, ['n', 'dano', 'cd', 'vel']);
 armaFaccion('memes', 'gifblaster', 'gifblaster', 'bala', 'GIF en bucle', 'Una ráfaga de GIFs sin parar. Poco daño, pero muchísimos.', '🌀', '#4f9dff', {dano: 5, cd: 0.3, vel: 480}, ['dano', 'cd', 'n', 'pierce']);
@@ -13,7 +13,7 @@ armaFaccion('memes', 'chonkcat', 'chonkcat', 'onda', 'Gato aplastante', 'Un gato
 ARMA_INICIAL.memes = 'memelord_a';
 
 // gamer
-armaFaccion('gamer', 'progamer_a', 'progamer', 'bala', 'Teclado volador', 'ProGamer lanza su teclado al enemigo más cercano.', '⌨️', '#7dff5e', {dano: 18, atraviesa: 2}, ['n', 'dano', 'pierce', 'cd']);
+armaFaccion('gamer', 'progamer_a', 'progamer', 'combo', 'Combo de teclado', 'Golpes rapidísimos al enemigo más cercano; cada 4.º es un ¡COMBO! de daño triple en área.', '⌨️', '#7dff5e', {}, ['r', 'dano', 'cd', 'combo']);
 armaFaccion('gamer', 'progamer_b', 'progamer', 'golpe', '¡COMBO!', 'Golpea a dos enemigos a la vez con un combo de daño enorme.', '💥', '#ff4b5c', {dano: 45, n: 2, cd: 4.5}, ['dano', 'n', 'cd', 'alc']);
 armaFaccion('gamer', 'noobs', 'noobs', 'orbita', 'Gorros de hélice', 'Gorros con hélice que giran a tu alrededor.', '🧢', '#4f9dff', {n: 3, dano: 10, r: 75}, ['n', 'dano', 'r', 'tick']);
 armaFaccion('gamer', 'speedrunner', 'speedrunner', 'corre', 'Atajos', 'Una corredora velocísima atraviesa a los enemigos y los deja atrás.', null, '#7dff5e', {spr: 'speedrunner', dano: 30, r: 50, vel: 430, cd: 2.2}, ['n', 'dano', 'cd', 'vel']);
@@ -24,7 +24,7 @@ armaFaccion('gamer', 'recreativa', 'recreativa', 'escudo', 'Carcasa arcade', 'Un
 ARMA_INICIAL.gamer = 'progamer_a';
 
 // olvidados
-armaFaccion('olvidados', 'vikingo_a', 'vikingo', 'bala', 'Hachas voladoras', 'VikingoPerdido lanza hachas al enemigo más cercano.', '🪓', '#c9a24b', {dano: 20, atraviesa: 2}, ['n', 'dano', 'pierce', 'cd']);
+armaFaccion('olvidados', 'vikingo_a', 'vikingo', 'boomerang', 'Hacha boomerang', 'Lanza un hacha hacia el enemigo y vuelve, golpeando a la ida y a la vuelta.', '🪓', '#c9a24b', {}, ['n', 'alc', 'dano', 'cd']);
 armaFaccion('olvidados', 'vikingo_b', 'vikingo', 'escudo', 'Muro de escudos', 'Un muro de escudos que para dos golpes y se levanta de nuevo.', '🛡️', '#c9a24b', {cd: 12, n: 2}, ['golpe', 'cd', 'golpe', 'cd']);
 armaFaccion('olvidados', 'swarmbug', 'swarmbug', 'nova', 'Bichos de estrategia', 'Bichos de un juego que nunca salió salen en todas direcciones.', '🐜', '#c9a24b', {n: 6, dano: 10}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('olvidados', 'vikingsquad', 'vikingsquad', 'orbita', 'Escudos vikingos', 'Tres escudos giran a tu alrededor y golpean a quien los toca.', '🛡️', '#c9a24b', {n: 3, dano: 13, r: 80}, ['n', 'dano', 'r', 'tick']);
@@ -35,7 +35,7 @@ armaFaccion('olvidados', 'titanbeta', 'titanbeta', 'onda', 'Pisotón de la beta'
 ARMA_INICIAL.olvidados = 'vikingo_a';
 
 // pop
-armaFaccion('pop', 'directora_a', 'directora', 'bala', 'Claquetas', 'LaDirectora lanza claquetas al enemigo más cercano.', '🎬', '#ff7a7a', {dano: 17, atraviesa: 2}, ['n', 'dano', 'pierce', 'cd']);
+armaFaccion('pop', 'directora_a', 'directora', 'onda', 'Claqueta de corte', 'Una claqueta gigante se cierra de golpe y atrae a los enemigos hacia ti.', '🎬', '#ff7a7a', {dano: 14, r: 130, cd: 3.4, lento: 0.6, emp: -520}, ['r', 'dano', 'lento', 'cd']);
 armaFaccion('pop', 'directora_b', 'directora', 'onda', 'Megáfono', '¡ACCIÓN! Un grito de megáfono empuja y aturde a los enemigos cercanos.', '📣', '#ffcb3d', {dano: 20, r: 115, aturde: 0.6, cd: 4.5}, ['dano', 'r', 'aturde', 'cd']);
 armaFaccion('pop', 'extras', 'extras', 'nova', 'Extras de cartón', 'Extras de cartón salen volando en todas direcciones.', '🎭', '#ff7a7a', {n: 6, dano: 10}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('pop', 'doble', 'doble', 'golpe', 'Acrobacia', 'El doble salta desde el cielo sobre el enemigo y le cae encima.', '🤸', '#ff7a7a', {dano: 32, cd: 2.2}, ['n', 'dano', 'cd', 'alc']);

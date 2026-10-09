@@ -226,8 +226,7 @@ function golpeCajas(x, y, r, dano) {
   }
 }
 // con cuenta, los objetos de caja solo salen si el servidor ya conoce el evento 'cajas' (servidor/21-objetos-de-cajas.sql): hasta entonces, tras flag
-const FLAG_CAJAS_SERVIDOR = NUCLEO.flag('cajas-objetos-servidor', 'Survivors: con cuenta, las cajas pueden dar objetos (hace falta servidor/21-objetos-de-cajas.sql aplicado)');
-function objetosCajasOk() { return !ECO.servidor('economia') || FLAG_CAJAS_SERVIDOR; }
+function objetosCajasOk() { return !ECO.servidor('economia') || NUCLEO.flag('cajas-objetos-servidor', 'Survivors: con cuenta, las cajas pueden dar objetos (hace falta servidor/21-objetos-de-cajas.sql aplicado)'); }
 function romperCaja(o) {
   const oro = Math.min(Math.round(rand(CAJAS.oro[0], CAJAS.oro[1])), Math.max(0, CAJAS.topeOro - P.oroCajas));
   P.oroCajas += oro;

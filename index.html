@@ -89,7 +89,8 @@
   <section class="game" id="g-tacticas" style="--wc: #5b2a9a">
     <h2 class="ol">FANS OF RUMBLE: TÁCTICAS</h2>
     <p>El nuevo (prototipo). Combate por turnos con barras de tiempo, como los JRPG clásicos: CrazyBunny, StreamKing y los demás líderes contra los jefes de Microblizz, hasta llegar al CEO.</p>
-    <div class="row"><a class="play ol" href="games/tacticas/">JUGAR</a></div>
+    <div class="row"><a class="play ol" href="games/tacticas/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
   <section class="game" id="g-skate" style="--wc: #e8731a">
     <h2 class="ol">FANS OF SKATE</h2>
@@ -133,7 +134,7 @@ function show(id, ver, entries) {
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
-for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/']]) {
+for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/'], ['g-tacticas', 'games/tacticas/']]) {
   Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')]).then(([page, news]) => {
     show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1], grab(news, 'NEWS', '];') || []);
   }).catch(fail(id));

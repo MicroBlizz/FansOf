@@ -110,11 +110,12 @@ function corruptOf(key) {
 const EQ_HEAD = { bunny: -47, necrolord: -56, twitchking: -60, epicchampion: -64, cybermarine: -62, memelord: -61, progamer: -53, vikingo: -57, directora: -53 };
 const EQ_HAND = { bunny: [-12, -16], necrolord: [-13, -24], twitchking: [-20, -34.5], epicchampion: [17, -26], cybermarine: [-14, -21], memelord: [-15.6, -15.6], progamer: [-14.6, -14.6], vikingo: [16, -17], directora: [15, -28] };
 // v0.9.15: el arma va en la mano libre (la izquierda del dibujo, en espejo); si tiene las dos ocupadas (espada y escudo, hacha y escudo, megáfono y claqueta), a la espalda
+const EQ_NECK = { bunny: -26, necrolord: -31, twitchking: -31, epicchampion: -38, cybermarine: -44, memelord: -36, progamer: -39, vikingo: -35, directora: -36 };   // dónde está el cuello de cada líder (corbata, capa); si no está, debajo de la cabeza
 const EQ_MIRROR = { bunny: 1, necrolord: 1, twitchking: 1, cybermarine: 1, memelord: 1, progamer: 1 };
 const EQ_BACK = { epicchampion: [-11, -30, -0.4], vikingo: [-10, -29, -0.34], directora: [-10, -27, -0.4] };
 function drawEquip(u, T, cc, part) {
   if (part === 'back') { const BK = EQ_BACK[u.type], c = cc || ctx; if (BK && u.equip.weapon) { c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.translate(BK[0], BK[1]); c.rotate(BK[2]); c.scale(-1.55, 1.55); drawWeapon(c, u.equip.weapon, 0, 0); c.restore(); } return; }
-  const c = cc || ctx, E = u.equip, hy = EQ_HEAD[u.type] || -T.top, [hx, hdy] = EQ_HAND[u.type] || [u.d.r * 0.85, -T.top * 0.42], ax = -u.d.r * 0.9, ay = -T.top * 0.32;
+  const c = cc || ctx, E = u.equip, hy = EQ_HEAD[u.type] || -T.top, [hx, hdy] = EQ_HAND[u.type] || [u.d.r * 0.85, -T.top * 0.42], ax = -u.d.r * 0.9, ay = -T.top * 0.32, ny = EQ_NECK[u.type] != null ? EQ_NECK[u.type] : hy + 13;
   c.save(); c.lineJoin = 'round'; c.lineCap = 'round';
   switch (E.head) {
     case 'corona_huesos': shape(c, poly(-8, hy + 2, -9, hy - 6, -5, hy - 2, -2, hy - 9, 2, hy - 2, 6, hy - 9, 9, hy - 2, 8, hy + 2), '#efeadf', 1.5); dot(c, -2, hy - 1, 1.2, '#5ef2d0'); dot(c, 4, hy - 1, 1.2, '#5ef2d0'); break;
@@ -140,12 +141,12 @@ function drawEquip(u, T, cc, part) {
     case 'silla_gamer': shape(c, rr(ax - 6, ay - 12, 7, 16, 2), '#e63946', 1.3); line(c, [ax - 5, ay - 8, ax - 1, ay - 8], '#1f2937', 1.4); break;
     case 'cofre': shape(c, rr(ax - 5, ay - 3, 10, 7, 1.4), '#a16207', 1.3); line(c, [ax - 5, ay, ax + 5, ay], '#ffcb3d', 1.4); dot(c, ax, ay + 1, 1, '#ffcb3d'); break;
     case 'diploma': c.save(); c.translate(ax, ay - 2); c.rotate(-0.15); shape(c, rr(-6, -4.5, 12, 9, 1), '#8a5a33', 1.2); shape(c, rr(-4.4, -3, 8.8, 6, 0.6), '#fff6ea', 0.8); line(c, [-3, -1, 3, -1], '#a08ab8', 0.8); line(c, [-3, 1, 1.5, 1], '#a08ab8', 0.8); dot(c, 2.6, 1.6, 1.1, '#e63946'); c.restore(); break;
-    case 'corbata_ceo': { const ty = hy + 13; shape(c, poly(-2.4, ty, 2.4, ty, 1.6, ty + 3, -1.6, ty + 3), '#b0213a', 1.1); shape(c, poly(-1.6, ty + 3, 1.6, ty + 3, 3, ty + 12, 0, ty + 15, -3, ty + 12), '#e63946', 1.1); line(c, [-1.6, ty + 7, 2, ty + 5.5], '#ffcb3d', 0.9); line(c, [-2.4, ty + 11, 2.6, ty + 9], '#ffcb3d', 0.9); break; }
+    case 'corbata_ceo': { const ty = ny; shape(c, poly(-2.4, ty, 2.4, ty, 1.6, ty + 3, -1.6, ty + 3), '#b0213a', 1.1); shape(c, poly(-1.6, ty + 3, 1.6, ty + 3, 3, ty + 12, 0, ty + 15, -3, ty + 12), '#e63946', 1.1); line(c, [-1.6, ty + 7, 2, ty + 5.5], '#ffcb3d', 0.9); line(c, [-2.4, ty + 11, 2.6, ty + 9], '#ffcb3d', 0.9); break; }
     case 'bebida_xxl': shape(c, rr(ax - 3.6, ay - 7, 7.2, 12, 1.8), '#7be04a', 1.3); line(c, [ax - 3.6, ay - 4, ax + 3.6, ay - 4], OL, 1); shape(c, poly(ax - 1.5, ay - 1, ax + 1.5, ay - 2, ax - 0.5, ay + 3), '#ffcb3d', 0.6); break;
     case 'disco_fisico': shape(c, el(ax, ay, 6.4, 6.4), '#e5e7eb', 1.3); c.beginPath(); c.arc(ax, ay, 4.2, -0.6, 0.9); c.strokeStyle = '#ff8fd0'; c.lineWidth = 1.2; c.stroke(); dot(c, ax, ay, 1.6, OL); break;
     case 'alfombrilla': shape(c, rr(ax - 8, ay + 1, 16, 5, 1.6), '#2b2d42', 1.2); line(c, [ax - 6, ay + 3.5, ax + 6, ay + 3.5], '#a855f7', 1.1); break;
     case 'boton_pausa': shape(c, el(ax, ay, 5.8, 5.8), '#ff3348', 1.3); c.fillStyle = '#fff6ea'; c.fillRect(ax - 2.6, ay - 2.6, 1.8, 5.2); c.fillRect(ax + 0.8, ay - 2.6, 1.8, 5.2); break;
-    default: if (EQ_NUEVOS.acc[E.acc]) EQ_NUEVOS.acc[E.acc](c, ax, ay, hy);
+    default: if (EQ_NUEVOS.acc[E.acc]) EQ_NUEVOS.acc[E.acc](c, ax, ay, ny);
   }
   c.restore();
 }

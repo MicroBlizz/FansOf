@@ -1,5 +1,5 @@
 // Fans of Rumble · Dibujo sobre el líder de los objetos nuevos del gashapón (octubre de 2026). Los llama drawEquip/drawWeapon de 07b-unidades.js
-// cuando el objeto no es de los de antes. Cada uno: arma (c, hx, hdy: la mano), cabeza (c, hy: lo alto de la cabeza), accesorio (c, ax, ay: el costado).
+// cuando el objeto no es de los de antes. Cada uno: arma (c, hx, hdy: la mano), cabeza (c, hy: lo alto de la cabeza), accesorio (c, ax, ay: el costado; ny: el cuello).
 'use strict';
 const EQ_NUEVOS = {
   weapon: {
@@ -32,6 +32,6 @@ const EQ_NUEVOS = {
     llavero_suerte: (c, ax, ay) => { c.beginPath(); c.arc(ax, ay - 6, 2.4, 0, Math.PI * 2); c.strokeStyle = '#9ca3af'; c.lineWidth = 1.2; c.stroke(); line(c, [ax, ay - 3.6, ax, ay - 1], '#9ca3af', 1); for (const [x, y] of [[-2, 1], [2, 1], [-2, 4.6], [2, 4.6]]) shape(c, el(ax + x, ay + y, 2.1, 2.1), '#22c55e', 0.9); },
     mochila_ruedas: (c, ax, ay) => { shape(c, rr(ax - 6, ay - 8, 9, 13, 2.4), '#2e8bff', 1.3); line(c, [ax - 4.5, ay - 3, ax + 1.5, ay - 3], '#1d5fc9', 1.2); dot(c, ax - 4, ay + 6.5, 1.8, OL); dot(c, ax + 1, ay + 6.5, 1.8, OL); },
     powerbank: (c, ax, ay) => { shape(c, rr(ax - 3.8, ay - 7, 7.6, 12, 1.6), '#1f2937', 1.3); for (let i = 0; i < 3; i++) { c.fillStyle = '#7be04a'; c.fillRect(ax - 2.2, ay + 2 - i * 3, 4.4, 2); } c.fillStyle = OL; c.fillRect(ax - 1.4, ay - 8.6, 2.8, 1.8); },
-    capa_heroe: (c, ax, ay, hy) => { for (const s of [-1, 1]) shape(c, poly(s * 7, hy + 15, s * 10, hy + 15, s * 15, hy + 34, s * 8, hy + 30), '#e63946', 1.3); dot(c, -7, hy + 15.5, 1.6, '#ffcb3d'); dot(c, 7, hy + 15.5, 1.6, '#ffcb3d'); },
+    capa_heroe: (c, ax, ay, ny) => { for (const s of [-1, 1]) shape(c, poly(s * 7, ny + 2, s * 10, ny + 2, s * 15, ny + 21, s * 8, ny + 17), '#e63946', 1.3); dot(c, -7, ny + 2.5, 1.6, '#ffcb3d'); dot(c, 7, ny + 2.5, 1.6, '#ffcb3d'); },
   },
 };

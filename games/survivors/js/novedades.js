@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.28', real: ['<b>MINIATURAS NUEVAS</b>: cada habilidad y cada objeto tiene ahora su propio dibujo, en lugar de dos letras o del mismo icono para todos. El fondo lleva el color de su rareza, y las Épicas y Legendarias brillan con rayos de luz. Las verás en la Biblioteca, el inventario y el gashapón.'], joke: ['Microblizz ha encargado 75 dibujos nuevos. Al ilustrador le ha pagado en «visibilidad».'] },
   { v: '0.1.27', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.26', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.25', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },

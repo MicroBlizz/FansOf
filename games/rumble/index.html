@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.9.109"></script>
+<script src="../../core/js/nucleo.js?v=0.9.110"></script>
 <script>NUCLEO.estilos('../../core/css/menus.css', 'css/estilos-partida.css', 'css/estilos-extra.css', 'css/arena.css', '../../core/css/biblioteca.css', 'css/facciones-y-jefes.css', '../../core/css/clasificacion.css', 'css/frases.css')</script>
 
 </head>
@@ -82,7 +82,7 @@
         <button class="btn-big ol" id="btn-camp">CAMPAÑA</button>
         <button class="side-mode test ol" id="btn-sandbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9.5A2 2 0 0 0 6.8 21h10.4a2 2 0 0 0 1.8-2.5L14 9V3" fill="#bfe6ff" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><path d="M7.2 15h9.6l1.4 3.2A1.4 1.4 0 0 1 17 20H7a1.4 1.4 0 0 1-1.2-1.8z" fill="#7be04a"/><circle cx="11" cy="17" r="1" fill="#fff"/><circle cx="14" cy="16" r="0.8" fill="#fff"/></svg><span>PRUEBAS</span></button>
       </div>
-      <div class="row"><button class="btn-mode ol" id="btn-quick">PARTIDA RÁPIDA</button><button class="btn-mode ol" id="btn-bossmode">MODO JEFE</button><button class="btn-mode ol" id="btn-pvp" hidden>PVP</button></div>
+      <div class="row"><button class="btn-mode ol" id="btn-quick">PARTIDA RÁPIDA</button><button class="btn-mode ol" id="btn-bossmode">MODO JEFE</button></div>
       <div class="home-feature tres">
         <button class="feat" id="btn-gacha"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="7" fill="#bfe6ff" style="stroke: var(--outline)" stroke-width="1.8"/><circle cx="9.5" cy="9" r="2.4" fill="#ff5fa8"/><circle cx="14" cy="7.5" r="2.2" fill="#ffe14d"/><circle cx="13" cy="11.5" r="2.2" fill="#7be04a"/><rect x="6" y="15" width="12" height="7" rx="2" fill="#2e8bff" style="stroke: var(--outline)" stroke-width="1.8"/></svg><span><b class="ol">GASHAPÓN</b><small class="ol" id="feat-gacha">Tira x1, x10 o x50</small></span><i class="dotbadge" id="gacha-badge" hidden></i></button>
         <button class="feat salon-feat" data-salon aria-label="Salón de la Fama"><svg viewBox="0 0 24 20" aria-hidden="true"><path d="M2 17 L3 5 L8.5 10 L12 2 L15.5 10 L21 5 L22 17 Z" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="1.8" fill="#ff4b5c"/></svg><span><b class="ol">CLASIFICACIÓN</b><small class="ol" data-salon-puesto>Los mejores fans</small></span></button>
@@ -114,6 +114,7 @@
 
     <section id="scr-prep" class="screen" hidden>
       <h2 class="h2 ol" id="prep-title">PARTIDA RÁPIDA</h2>
+      <div class="ar-tabs" data-ar-tabs></div>
       <div class="prep-info" id="prep-info"></div>
       <div class="boss-pick" id="boss-pick" role="group" aria-label="Jefe" hidden></div>
       <div class="diff bdiff" id="bdiff-row" role="group" aria-label="Dificultad del jefe" hidden>
@@ -136,16 +137,19 @@
     </section>
 
     <section id="scr-pvp" class="screen top" hidden>
-      <div class="scr-head"><button class="icon-btn back" data-back="scr-title" aria-label="Volver"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 class="h2 ol">PVP</h2></div>
-      <div class="tabs" role="group" aria-label="Modo"><button class="tab ol" data-pm="estandar" aria-pressed="true">Estándar</button><button class="tab ol" data-pm="salvaje" aria-pressed="false">Salvaje</button></div>
-      <p class="deck-sub" id="pvp-sub"></p>
-      <div id="pvp-facs" class="pvp-facs" role="group" aria-label="Facción"></div>
+      <div class="scr-head"><button class="icon-btn back" data-back="scr-title" aria-label="Volver"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 class="h2 ol">ARENA</h2><div class="wallet" data-wallet></div></div>
+      <div class="ar-tabs" data-ar-tabs></div>
+      <div id="pvp-liga"></div>
+      <div class="pvp-modo"><div class="tabs" role="group" aria-label="Modo"><button class="tab ol" data-pm="estandar" aria-pressed="true">Estándar</button><button class="tab ol" data-pm="salvaje" aria-pressed="false">Salvaje</button></div><p class="deck-sub" id="pvp-sub"></p></div>
+      <div id="pvp-facs" class="pvp-facs" role="group" aria-label="Facción" hidden></div>
       <div id="pvp-equipo"></div>
+      <div id="pvp-premio" class="ar-prize"></div>
+      <div id="pvp-clasif"></div>
+      <div id="pvp-busca" hidden></div>
+      <div class="pvp-hueco"></div>
       <p class="quote" id="pvp-estado"></p>
       <div id="pvp-resumen" class="pvp-resumen" hidden></div>
-      <div id="pvp-clasif" class="scroll-list"></div>
       <div class="row"><button class="btn-big ol" id="btn-pvp-buscar">BUSCAR RIVAL</button></div>
-      <button class="btn-ghost ol" id="btn-pvp-ia" hidden>JUGAR CONTRA LA IA</button>
     </section>
 
     <section id="scr-camp" class="screen top" hidden>
@@ -359,7 +363,7 @@
 // antes de lo común van los archivos que no dependen de nada (por ahora, las novedades); después, el juego, en este orden
 NUCLEO.juego({
   antes: ['js/ajustes.js', 'js/novedades.js'],
-  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js', 'idioma/en-5.js', 'idioma/en-6.js', 'idioma/en-7.js', 'idioma/en-8.js', 'idioma/en-9.js', 'idioma/en-10.js', 'idioma/en-11.js', 'idioma/en-12.js', 'idioma/en-13.js', 'idioma/en-14.js', 'idioma/en-15.js', 'idioma/en-16.js'] },
+  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-4.js', 'idioma/en-5.js', 'idioma/en-6.js', 'idioma/en-7.js', 'idioma/en-8.js', 'idioma/en-9.js', 'idioma/en-10.js', 'idioma/en-11.js', 'idioma/en-12.js', 'idioma/en-13.js', 'idioma/en-14.js', 'idioma/en-15.js', 'idioma/en-16.js', 'idioma/en-17.js'] },
   despues: [
     'js/01-campo.js', 'js/01b-unidades.js', 'js/01c-cartas.js', 'js/02a-objetos.js', 'js/02b-mundos.js', 'js/02c-chat.js', 'js/02d-chat-rival.js', 'js/02e-guardado.js', 'js/04-estado.js', 'js/04b-simulacion.js', 'js/05-audio.js', 'js/05b-creadores-datos.js', 'js/05c-creadores-arte.js', 'js/06a-despliegue.js', 'js/06b-movimiento.js', 'js/06c-dano.js', 'js/06d-unidades.js', 'js/06f-sanadores.js', 'js/06e-ia-y-partida.js', 'js/07a-escena.js', 'js/07b-unidades.js', 'js/07c-edificios-y-disparos.js', 'js/07d-particulas.js', 'js/07e-brillos.js',
     'js/08-controles.js', 'js/09a-chat-y-campana.js', 'js/09b-recompensas-y-hud.js', 'js/09c-pantallas.js', 'js/09d-faccion-nueva.js', 'js/10-dificultad.js', 'js/10b-ruleta.js', 'js/10c-rapida-ceo.js', 'js/retos.js', 'js/retos-perfil.js', 'js/retos-logros.js', 'js/retos-armario.js', '../../core/js/retos.js', '../../core/js/pases.js', '../../core/js/retos-pantallas.js', '../../core/js/armario.js', '../../core/js/frases.js', '../../core/js/frases-arte.js', 'js/11-logros.js', 'js/11b-consejos.js', 'js/12-app-y-preparacion.js', 'js/13-horas-extra.js',

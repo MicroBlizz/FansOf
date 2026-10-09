@@ -1,8 +1,8 @@
-// Fans of Rumble · PvP: pantalla de buscar rival, avisos durante la partida y pantalla final
+// Fans of Rumble · PvP: la pestaña CONTRA JUGADORES de la Arena (liga, buscar rival), avisos durante la partida y pantalla final
 'use strict';
 const pvpDisponible = () => NUCLEO.flag('pvp-estandar', 'PvP Estándar: abierto a los jugadores como beta (para cerrarlo: fila de la tabla flags con valor false)', true);
 const pvpSalvaje = () => NUCLEO.flag('pvp-salvaje', 'PvP modo Salvaje (habilidades y objetos): sale a los jugadores cuando se quite este flag');
-const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se ofrece jugar contra la IA
+const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se avisa de que hay poca gente
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
 
 // qué red se usa: la del servidor si hay cuenta vinculada; en desarrollo, sin cuenta (o con localStorage 'fansof-pvp-red' = 'local'), la de pruebas entre dos pestañas
@@ -15,50 +15,110 @@ function pvpRed() {
 }
 function pvpPantalla() {
   if (!pvpDisponible()) { const m = NUCLEO.flagMensaje('pvp-estandar'); if (m) toast(m); return; }   // si se cierra con la partida en marcha, no se toca: solo se impide empezar otra
-  if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
-  PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
+  PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); SAVE.arenaTab = 'pvp';
+  $('#scr-pvp').classList.remove('fac-abierta'); show('scr-pvp'); pvpPinta(); pvpClasificacion();   // v0.9.109: la cuenta se pide al BUSCAR RIVAL, no al entrar
 }
+
+/* ---------- v0.9.109: tus copas (los puntos del servidor), tu récord y tu liga ---------- */
+function pvpMio(modo) {
+  const P = SAVE.pvp || (SAVE.pvp = {}), m = modo || 'estandar';
+  return P[m] || (P[m] = { copas: null, best: 0, w: 0, l: 0, racha: 0 });
+}
+const pvpCopas = modo => { const c = pvpMio(modo).copas; return c == null ? 1000 : c; };   // sin partidas: las 1000 con las que empieza el servidor
+// al cerrarse una partida (una vez por partida): copas nuevas, récord, racha y las misiones de la Arena
+let pvpAnotado = '';
+function pvpAnota(r) {
+  if (!r || r.error || r.estado !== 'cerrada' || !PVP.fin) return null;
+  const k = PVP.fin.h + ':' + PVP.rival; if (pvpAnotado === k) return pvpAnota.ult; pvpAnotado = k;
+  const M = pvpMio(PVP.modo), antes = pvpCopas(PVP.modo);
+  if (r.puntos != null) { M.copas = r.puntos; M.best = Math.max(M.best, r.puntos); }
+  if (r.empate) M.racha = 0; else if (r.gano) { M.w++; M.racha++; } else { M.l++; M.racha = 0; }
+  if (!r.empate && r.gano) missionEvent('arenawin', 1); missionEvent('arena', 1);
+  saveGame();
+  return (pvpAnota.ult = { d: r.puntos != null ? r.puntos - antes : null, copas: pvpCopas(PVP.modo) });
+}
+function pvpPintaLiga() {
+  const M = pvpMio(PVP_UI.modo), c = pvpCopas(PVP_UI.modo), li = arenaLeagueIdx(c), L = ARENA.leagues[li][0];
+  const racha = M.racha >= 2 ? ` · <span class="ar-streak">${FLAME_SVG}Racha ${M.racha}</span>` : '';
+  $('#pvp-liga').innerHTML = `<div class="ar-liga">${arenaShield(li)}<div class="ar-ld"><b class="ar-ln ol">LIGA ${L.toUpperCase()}</b><span class="ar-cups ol">${CROWN_SVG}${fmt(c)} copas</span>`
+    + `<span class="ar-meta">${esc(pname())} · Récord ${fmt(Math.max(M.best, c))} · ${M.w} ganadas · ${M.l} perdidas${racha}</span>${arenaBar(c, li)}</div></div>`;
+}
+
 async function pvpResumen() {
   const c = $('#pvp-resumen'); c.hidden = true;
   if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
   try {
     const r = await PVPNET.redes.servidor.resumen(); if (!r || $('#scr-pvp').hidden) return;
-    c.innerHTML = `<div class="ar-lbl ol">ÚLTIMA HORA EN EL PVP</div><div class="pvp-rs"><span>${`Partidas: ${fmt(r.hora)} en la última hora · ${fmt(r.total)} en total`}</span><span>${`Unidades caídas: ${fmt(r.muertes)}`}</span><span>${`Hechizos lanzados: ${fmt(r.hechizos)}`}</span><span>${`CAOS gastado: ${fmt(r.caos)}`}</span></div>`; c.hidden = false;
+    c.innerHTML = `<i class="ar-vivo"></i>${`Partidas en la última hora: ${fmt(r.hora)}`}`; c.hidden = false;
   } catch (e) { /* sin conexión: sin resumen */ }
 }
+// la clasificación, en corto: los 3 primeros y tú
 async function pvpClasificacion() {
   pvpResumen();
-  const caja = $('#pvp-clasif'); caja.innerHTML = '';
-  if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
+  const caja = $('#pvp-clasif'), cab = `<div class="pvp-cl-cab"><span class="ol">CLASIFICACIÓN</span><button class="btn-link" id="btn-pvp-salon">Ver entera</button></div>`;
+  const pinta = filas => { caja.innerHTML = `<div class="pvp-cl">${cab}${filas}</div>`; $('#btn-pvp-salon').onclick = () => { play('select'); pvpPara(); openSalon('pvp'); }; };
+  if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) { pinta('<p class="pvp-cl-nada">Entra con tu cuenta para ver la clasificación.</p>'); return; }
+  pinta('<p class="pvp-cl-nada">Cargando…</p>');
   try {
-    const l = await PVPNET.redes.servidor.clasificacion(PVP_UI.modo);
-    caja.innerHTML = `<div class="ar-lbl ol">CLASIFICACIÓN · ${esc(PVP_MODOS[PVP_UI.modo][0].toUpperCase())}</div>` + (l || []).slice(0, 20).map((r, i) => `<div class="pvp-fila${r.yo ? ' yo' : ''}"><b>${i + 1}</b><span>${esc(r.nombre)}</span><i>${fmt(r.puntos)} · ${fmt(r.jugadas)} partidas</i></div>`).join('') || '<p class="quote">Todavía no hay nadie en la clasificación.</p>';
-  } catch (e) { /* sin conexión: se queda sin lista */ }
+    const modo = PVP_UI.modo, l = (await PVPNET.redes.servidor.clasificacion(modo)) || [];
+    const yo = l.findIndex(r => r.yo);
+    if (yo >= 0 && l[yo].puntos != null) { const M = pvpMio(modo); M.copas = l[yo].puntos; M.best = Math.max(M.best, M.copas); saveGame(); if (!$('#scr-pvp').hidden) pvpPintaLiga(); }   // tus copas, al día con el servidor
+    const fila = (r, i) => `<div class="pvp-fila${r.yo ? ' yo' : ''}"><b class="p${i + 1}">${i + 1}</b><span>${esc(r.nombre)}${r.yo ? ' (tú)' : ''}</span><i>${fmt(r.puntos)} copas · ${arenaLeague(r.puntos)}</i></div>`;
+    const filas = l.slice(0, 3).map(fila).join('') + (yo >= 3 ? fila(l[yo], yo) : '');
+    if (modo === PVP_UI.modo) pinta(filas || '<p class="pvp-cl-nada">Todavía no hay nadie en la clasificación.</p>');
+  } catch (e) { pinta('<p class="pvp-cl-nada">Sin conexión: no se puede ver la clasificación.</p>'); }
 }
 function pvpPinta() {
-  const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo);
+  const f = G.faction, F = FACTIONS[f], buscando = !!PVP_UI.busca, eq = pvpEquipo(PVP_UI.modo), abierta = $('#scr-pvp').classList.contains('fac-abierta');
   if (!pvpSalvaje()) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
+  arenaTabs('pvp'); $('#scr-pvp').classList.toggle('buscando', buscando);
   for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !pvpSalvaje(); }
   $('#pvp-sub').textContent = PVP_MODOS[PVP_UI.modo][1];
-  // la facción se elige aquí mismo: salen todas y las que aún no tienes, en gris
-  const facs = $('#pvp-facs'); facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader).map(x => `<button class="pvp-fac${isUnlocked(x) ? '' : ' bloq'}" data-pf="${x}" aria-pressed="${x === f}" aria-label="${esc(FACTIONS[x].name)}" ${buscando ? 'disabled' : ''}><canvas data-pfl="${FACTIONS[x].leader}"></canvas></button>`).join('');
+  pvpPintaLiga();
+  // la facción se elige aquí mismo (botón FACCIÓN): salen todas y las que aún no tienes, en gris
+  const facs = $('#pvp-facs'); facs.hidden = !abierta || buscando;
+  facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader).map(x => `<button class="pvp-fac${isUnlocked(x) ? '' : ' bloq'}" data-pf="${x}" aria-pressed="${x === f}" aria-label="${esc(FACTIONS[x].name)}"><canvas data-pfl="${FACTIONS[x].leader}"></canvas></button>`).join('');
   for (const cv of facs.querySelectorAll('canvas')) drawArt(cv, cv.dataset.pfl, 40, 36);
   for (const bt of facs.querySelectorAll('button')) bt.addEventListener('click', () => { if (PVP_UI.busca || bt.dataset.pf === G.faction) return; if (!isUnlocked(bt.dataset.pf)) { play('deny'); toast('Aún no has desbloqueado esta facción', true); return; } play('select'); setFaction(bt.dataset.pf); pvpPinta(); });
-  $('#pvp-equipo').innerHTML = `<div class="ar-fac"><canvas data-pvl="${F.leader}"></canvas><span class="ar-fn"><b class="ol">${F.name}</b><small>${F.passive}</small></span><span class="ar-deck">${eq.deck.map(k => `<i class="${isSpell(k) ? 'sp' : ''}"><canvas data-pvd="${k}"></canvas></i>`).join('')}</span></div>`;
-  for (const cv of document.querySelectorAll('#pvp-equipo canvas[data-pvl]')) drawArt(cv, cv.dataset.pvl, 74, 64);
-  for (const cv of document.querySelectorAll('#pvp-equipo canvas[data-pvd]')) drawArt(cv, cv.dataset.pvd, 24, 22);
+  $('#pvp-equipo').innerHTML = arenaFacFila(f, eq.deck, abierta, 'pv'); arenaFacArte($('#pvp-equipo'), 'pv');
+  $('#pvp-equipo [data-ar-fac]').onclick = () => { play('select'); $('#scr-pvp').classList.toggle('fac-abierta'); pvpPinta(); };
+  $('#pvp-equipo [data-ar-mazo]').onclick = () => { play('select'); openDeck(G.faction, 'scr-pvp'); };
+  const pase = typeof PASS_PVP !== 'undefined' && PASS_PVP ? ' · puntos del Pase PvP' : '';
+  $('#pvp-premio').innerHTML = `<span>Si ganas: <b>unas +12 copas${pase}</b></span><span class="lose">Si pierdes: unas −12 copas</span>`;
+  pvpPintaBusca();
   const b = $('#btn-pvp-buscar'); b.textContent = buscando ? 'CANCELAR' : 'BUSCAR RIVAL'; b.className = (buscando ? 'btn-ghost' : 'btn-big') + ' ol';
-  $('#btn-pvp-ia').hidden = !(buscando && (Date.now() - PVP_UI.t0) / 1000 >= PVP_UI.ia);
   if (!buscando && !$('#pvp-estado').dataset.fijo) $('#pvp-estado').textContent = NUCLEO.desarrollo ? `Red: ${PVPNET.redes[PVPNET.actual].nombre}${typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? ' [' + PVP_SRV.ultimo + ']' : ''}` : '';
 }
-function pvpPara() { if (PVP_UI.busca) { PVP_UI.busca.cancelar(); PVP_UI.busca = null; } clearInterval(PVP_UI.tic); }
+// mientras buscas: tu líder con ondas contra un «?», el reloj y la oferta de entrenar
+function pvpPintaBusca() {
+  const c = $('#pvp-busca'), buscando = !!PVP_UI.busca; c.hidden = !buscando;
+  if (!buscando) { c.innerHTML = ''; return; }
+  if (c.dataset.hecho === String(PVP_UI.t0)) return; c.dataset.hecho = String(PVP_UI.t0);
+  const F = FACTIONS[G.faction], co = pvpCopas(PVP_UI.modo);
+  c.innerHTML = `<div class="pvp-bu"><span class="pvp-bu-t ol">${PVP_MODOS[PVP_UI.modo][0].toUpperCase()} · LIGA ${arenaLeague(co).toUpperCase()}</span>`
+    + `<div class="pvp-vs"><div class="pvp-lado"><span class="pvp-yo"><i></i><i></i><i></i><canvas data-pbl="${F.leader}"></canvas></span><b class="ol">${esc(pname())}</b><small>${fmt(co)} copas</small></div>`
+    + `<span class="pvp-vs-t ol-big">VS</span><div class="pvp-lado"><span class="pvp-otro"><b class="ol-big">?</b></span><b class="ol">Buscando…</b><small>un rival de verdad</small></div></div>`
+    + `<span class="pvp-reloj ol-big" id="pvp-reloj">0:00</span><span class="pvp-bu-txt" id="pvp-bu-txt">Buscamos a alguien para jugar contigo. Puedes cancelar cuando quieras.</span></div>`
+    + `<div class="ar-train pvp-bu-cpu">${ARENA_ROBOT}<span><b class="ol">¿Hay poca gente ahora?</b><small>Juega un entrenamiento contra la CPU. Da oro y cuenta para tus misiones.</small></span><button class="pvp-bu-btn ol" data-at="cpu">ENTRENAR</button></div>`
+    + `<div class="pvp-bu-info"><b class="ol">MIENTRAS ESPERAS</b><span>Una partida PvP dura unos 4 minutos. Si te rindes, cuenta como derrota.</span></div>`;
+  for (const cv of c.querySelectorAll('canvas[data-pbl]')) drawArt(cv, cv.dataset.pbl, 92, 80);
+  c.querySelector('[data-at]').onclick = () => arenaIr('cpu');
+}
+function pvpPara() { if (PVP_UI.busca) { PVP_UI.busca.cancelar(); PVP_UI.busca = null; } clearInterval(PVP_UI.tic); if (!$('#scr-pvp').hidden) $('#scr-pvp').classList.remove('buscando'); }
 function pvpBuscar() {
   if (PVP_UI.busca) { pvpPara(); delete $('#pvp-estado').dataset.fijo; pvpPinta(); return; }
+  if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   const modo = PVP_UI.modo; delete $('#pvp-estado').dataset.fijo; PVP_UI.t0 = Date.now(); play('select'); PVPNET.actual = pvpRed();
   if (PVPNET.actual === 'servidor' && !PVPNET.redes.servidor.disponible()) { toast(typeof CUENTA === 'undefined' || !CUENTA.activa ? 'El PvP necesita conexión' : 'Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)', true); return; }
+  $('#scr-pvp').classList.remove('fac-abierta');
   PVP_UI.busca = PVPNET.redes[PVPNET.actual].buscar(modo, pvpEquipo(modo), pvpEncontrado);
-  const dibuja = () => { const s = Math.floor((Date.now() - PVP_UI.t0) / 1000); $('#pvp-estado').textContent = (s >= PVP_UI.ia ? `No hay rivales todavía. Sigues en la cola… ${s} s. ¿Juegas contra la IA mientras tanto?` : `Buscando rival… ${s} s`) + (NUCLEO.desarrollo && typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? ' [' + PVP_SRV.ultimo + ']' : ''); $('#btn-pvp-ia').hidden = s < PVP_UI.ia; };
-  dibuja(); PVP_UI.tic = setInterval(dibuja, 500); pvpPinta();
+  const dibuja = () => {
+    const s = Math.floor((Date.now() - PVP_UI.t0) / 1000), r = $('#pvp-reloj'), t = $('#pvp-bu-txt');
+    if (r) r.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    if (t && s >= PVP_UI.ia) t.textContent = 'Hay poca gente ahora mismo. Sigues en la cola.';
+    $('#pvp-estado').textContent = NUCLEO.desarrollo && typeof PVP_SRV !== 'undefined' && PVP_SRV.ultimo ? '[' + PVP_SRV.ultimo + ']' : '';
+  };
+  pvpPinta(); dibuja(); PVP_UI.tic = setInterval(dibuja, 500);
 }
 function pvpEncontrado(r) {
   PVP_UI.busca = null; clearInterval(PVP_UI.tic);
@@ -109,7 +169,7 @@ function pvpShowEnd() {
   if (PVP.net && PVP.net.cerrar && G.winner && PVP.fin && motivo !== 'desync' && motivo !== 'error') {   // el servidor decide los puntos
     rw.innerHTML = '<div class="rw-xp">Esperando al servidor…</div>';
     const mi = verEquipo(), ot = PVP.peer, pl = S[mi].plays || {}, stats = { m: S[ot].kills, h: Object.keys(pl).filter(isSpell).reduce((n, k) => n + pl[k], 0), c: Math.round(S[mi].spent) };   // lo que ve este cliente: mis bajas por culpa del rival, mis hechizos y mi CAOS (los dos clientes suman el total)
-    PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; }, stats);
+    PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); const an = pvpAnota(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${an && an.d != null ? (an.d >= 0 ? '+' : '') + an.d + ' COPAS · ' : ''}${fmt(r.puntos)} · LIGA ${arenaLeague(r.puntos).toUpperCase()}</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; }, stats);
   } else rw.innerHTML = PVP.net && PVP.net.cerrar ? '<div class="rw-xp">Esta partida no cuenta para nadie.</div>' : '<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>';
   $('#end-pass').innerHTML = ''; $('#end-quote').textContent = NUCLEO.desarrollo && PVP.stats ? `Esperas al rival: ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · retardo ${PVP.D} · v${typeof NUCLEO !== 'undefined' && NUCLEO.version || ''}` : '';
   $('#st-cards').textContent = S[mi].deployed; $('#st-kills').textContent = S[mi].kills; $('#st-chaos').textContent = Math.round(S[mi].spent);
@@ -120,13 +180,10 @@ function pvpShowEnd() {
 
 /* ---------- los botones ---------- */
 pvpSalvaje();   // se apunta en el panel DEV
-const pvpBoton = () => { $('#btn-pvp').hidden = !pvpDisponible(); };
-pvpBoton(); NUCLEO.alCambiarFlags(pvpBoton);
 hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
-$('#btn-pvp').addEventListener('click', () => { play('select'); pvpPantalla(); });
-for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); });
+hook('pantalla', id => { if (id === 'scr-pvp' && !PVP_UI.busca) pvpPinta(); });   // al volver del editor de mazo
+for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); pvpClasificacion(); });
 $('#btn-pvp-buscar').addEventListener('click', pvpBuscar);
-$('#btn-pvp-ia').addEventListener('click', () => { pvpPara(); play('select'); openPrep('quick'); });
 for (const b of document.querySelectorAll('#scr-pvp [data-back]')) b.addEventListener('click', pvpPara);
 
 /* ---------- en desarrollo: medidor de la partida (cuánto tarda el servidor, cuánto se para, a cuántos fotogramas va) ---------- */

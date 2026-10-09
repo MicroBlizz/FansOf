@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.110', real: [
+      '<b>LA ARENA, TODA JUNTA</b>: un solo botón ARENA con dos pestañas. CONTRA JUGADORES es el PvP de verdad: ahí ganas o pierdes copas y subes de liga, de Becario a CEO, y ves tu puesto en la clasificación. ENTRENAMIENTO es la arena de siempre contra la CPU: no mueve copas, pero da oro y cuenta para las misiones, y funciona sin internet ni cuenta.',
+      '<b>BUSCAR RIVAL, MÁS CLARO</b>: mientras esperas ves tu líder contra un «?», el reloj y un botón para entrenar si hay poca gente. Las misiones de la Arena cuentan también las partidas de PvP.'],
+    joke: ['Microblizz ha juntado sus dos arenas en una para ahorrar en alquiler. Los becarios siguen en la de la CPU.'] },
   { v: '0.9.109', real: [
       '<b>FRASES Y EMOTICONOS</b>: toca el bocadillo de abajo a la derecha durante la partida y dile algo al rival: «Es una característica, no un bug», «Nos vemos en Recursos Humanos»… Y emoticonos dibujados a mano de tus personajes. Sin escribir, así que nadie insulta.',
       '<b>LA CPU CONTESTA</b>: Microblizz, Phony e IAhorro te responden, y también dicen lo suyo al tirarte una torre o al perder una. En el PvP, tus frases las ve tu rival.',

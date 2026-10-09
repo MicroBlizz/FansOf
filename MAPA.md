@@ -92,7 +92,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/terminal-shock/index.html` · 76 KB
 - `games/rumble/index.html` · 39 KB
 - `games/rumble/sw.js` · <1 KB
-- `games/rumble/css/arena.css` · 8 KB
+- `games/rumble/css/arena.css` · 16 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/css/facciones-y-jefes.css` · 11 KB
@@ -105,6 +105,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-14.js` · 15 KB
 - `games/rumble/idioma/en-15.js` · 6 KB
 - `games/rumble/idioma/en-16.js` · 6 KB
+- `games/rumble/idioma/en-17.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -158,11 +159,11 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/17a-campos.js` · 14 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, pvpTerreno, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate
 - `games/rumble/js/17b-campos-dibujo.js` · 21 KB · terrainGround, riverFloats, drawZone, terrainAir, drawFaller
 - `games/rumble/js/18-sala.js` · 5 KB · SB, SB_FACS, SB_FIELDS, sbPool, sbPick, sbSpawn, sbDamage, sbTick, sbPanel, sbLabels
-- `games/rumble/js/19-arena.js` · 9 KB · ARENA, ARENA_TAG, arenaFacs, arenaState, arenaLeague, arenaRoll, arenaGold, arenaShield, arenaBar, buildArenaPrep, arenaSetup, arenaReward
+- `games/rumble/js/19-arena.js` · 11 KB · ARENA, ARENA_TAG, ARENA_ROBOT, arenaFacs, arenaState, arenaLeague, arenaLeagueIdx, arenaRoll, arenaShield, arenaBar, arenaFacFila, arenaFacArte, arenaTabs, arenaIr, buildArenaPrep, arenaSetup, arenaReward
 - `games/rumble/js/19b-pvp.js` · 10 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
 - `games/rumble/js/19c-vista.js` · 4 KB · VISTA_YC, VISTA_SW, verAbajo, verEquipo, verFac, MIR_Y, otroEq, espejo, cambia, vistaOn, vistaRender
 - `games/rumble/js/19d-pvp-red.js` · 3 KB · PVPNET
-- `games/rumble/js/19e-pvp-pantallas.js` · 14 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpResumen, pvpClasificacion, pvpPinta, pvpPara, pvpBuscar, pvpEncontrado, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpBoton, pvpDebug
+- `games/rumble/js/19e-pvp-pantallas.js` · 19 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpMio, pvpCopas, pvpAnotado, pvpAnota, pvpPintaLiga, pvpResumen, pvpClasificacion, pvpPinta, pvpPintaBusca, pvpPara, pvpBuscar, pvpEncontrado, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpDebug
 - `games/rumble/js/19f-pvp-servidor.js` · 9 KB · pvpRetardo, PVP_SRV, pvpErrorTexto, pvpFacDeMazo, pvpEquipoDeServidor, pvpAServidor, pvpDeServidor
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
@@ -170,7 +171,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 3 KB · SALON_PVP, SALON_DIF, salonDif, SALON
-- `games/rumble/js/novedades.js` · 26 KB · NEWS
+- `games/rumble/js/novedades.js` · 27 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 8 KB
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB

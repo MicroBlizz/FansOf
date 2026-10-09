@@ -127,7 +127,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/rumble-3d/js/textos.js` · 3 KB · EN, pedido
 - `demos/rumble-3d/js/three.min.js` · 562 KB · Tc, float, float, vec4, vec2, vec3, vec4, mat3, mat3
 - `demos/rumble-3d/js/voces.js` · 8 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
-- `demos/terminal-shock/index.html` · 76 KB
+- `demos/terminal-shock/index.html` · 103 KB
+- `demos/terminal-shock/idioma/en-raiz.js` · <1 KB
 - `games/rumble/index.html` · 39 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 19 KB

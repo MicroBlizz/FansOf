@@ -1,16 +1,17 @@
 /* Fans Of · SALÓN DE LA FAMA (core/js/clasificacion.js): podio de los tres primeros, la lista, tu fila abajo y el cartel de obras.
    Lo carga el juego que tenga Salón, después de core/css/menus.css. */
 
-/* ---------- el botón del menú: una medalla dorada con corona (el juego decide dónde va; .esquina = bajo el chip del perfil) ---------- */
-.salon-btn { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink); font: inherit; }
-.salon-btn .sb-med { position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 3px solid var(--outline);
-  background: radial-gradient(circle at 35% 28%, #fff3b0 0%, #ffd84a 34%, #e08e00 78%, #a85d00 100%); box-shadow: 0 4px 0 var(--outline), inset 0 -3px 0 rgba(120, 60, 0, 0.35); overflow: hidden; }
-.salon-btn .sb-med::after { content: ""; position: absolute; top: -40%; left: -60%; width: 40%; height: 180%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent); transform: rotate(25deg); animation: salonBrillo 4.5s ease-in-out infinite; }
-.salon-btn svg { width: 28px; height: 24px; color: #fff6ea; filter: drop-shadow(0 2px 0 rgba(32, 16, 44, 0.45)); margin-top: 1px; }
-.salon-btn > span:last-child { font-family: var(--font-display); font-size: 11px; line-height: 1; letter-spacing: 0.3px; }
-.salon-btn:active .sb-med { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline), inset 0 -3px 0 rgba(120, 60, 0, 0.35); }
-.salon-btn.esquina { position: absolute; top: 60px; left: 12px; z-index: 2; }
-@keyframes salonBrillo { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+/* ---------- la tarjeta del menú: tres en fila (Gashapón · Ranking · Tienda), cada una con el icono arriba ---------- */
+.home-feature.tres { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.home-feature.tres .feat { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 2px; min-height: 92px; padding: 8px 4px 7px; }
+.home-feature.tres .feat svg { width: 42px; height: 42px; }
+.home-feature.tres .feat b { font-size: clamp(16px, 4.2vw, 21px); white-space: nowrap; }
+.home-feature.tres .feat.salon-feat b { font-size: clamp(13px, 3.4vw, 17px); letter-spacing: -0.2px; }
+.home-feature.tres .feat small { font-size: 11px; margin-top: 2px; }
+.home-feature.tres .feat .dotbadge { right: 6px; top: 6px; }
+.feat.salon-feat { background: linear-gradient(to bottom, #c49bff, #6d28d9); }
+.feat.salon-feat svg { width: 46px; height: 40px; animation: salonCorona 2.6s ease-in-out infinite; }
+.feat.salon-feat.top3 { box-shadow: 0 6px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.35), 0 0 0 3px var(--gold); }
 
 /* ---------- la pantalla ---------- */
 .salon .salon-tabs { width: 100%; max-width: 508px; gap: 6px; }
@@ -113,7 +114,7 @@
 .so-firma { margin: 0; font-size: 12px; font-weight: 700; color: var(--ink-dim); text-wrap: balance; }
 
 @media (prefers-reduced-motion: reduce) {
-  .salon-btn .sb-med::after, .sp-corona, .salon-giro, .salon-hueco, .so-cartel.meneo { animation: none; }
+  .feat.salon-feat svg, .sp-corona, .salon-giro, .salon-hueco, .so-cartel.meneo { animation: none; }
 }
 
 /* la etiqueta de color que un juego pone en la línea pequeña (por ejemplo, la dificultad más alta en Rumble) */

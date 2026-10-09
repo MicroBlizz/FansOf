@@ -27,7 +27,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
 - `core/js/armario.js` · 22 KB · ARM, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox
-- `core/js/clasificacion.js` · 11 KB · SALON_EXCUSAS, SALON_UI, SALON_ESPERA, salonEsc, salonTab, openSalon, salonCarga, salonPinta, salonEsperando, salonSinRed, salonRetrato, salonValor, salonFila, salonPodio, salonLista, salonObras
+- `core/js/clasificacion.js` · 13 KB · SALON_EXCUSAS, SALON_UI, SALON_ESPERA, salonEsc, salonTab, openSalon, salonCarga, salonPinta, salonEsperando, salonSinRed, salonRetrato, salonValor, salonFila, salonPodio, salonLista, salonObras, salonPuestoVez, salonPuesto
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
 - `core/js/nucleo.js` · 11 KB · NUCLEO, VERSION
 - `core/js/pases.js` · 17 KB · PASS, PASS_Q, PASS_PVP, PASES, passTab, CANDADO_SVG, passRewardBase, pReward, passReward, pSave, pLevel, hoyISO, pFin, pDias, pAddXp, pReady, pClaimable, pClaim, passLevel, addPassXp, passReady, claimPass, passClaimable, rewardHtml, rewardTxt, giveReward, esLook, diasTxt, esHito, esGordo, ESTRELLA_SVG, passCelda, passProximo, buildPass, buyPass, openPass, passMatch, paseOrigen

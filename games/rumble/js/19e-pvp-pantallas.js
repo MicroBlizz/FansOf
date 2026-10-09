@@ -1,6 +1,8 @@
 // Fans of Rumble · PvP: pantalla de buscar rival, avisos durante la partida y pantalla final
 'use strict';
+const PVP_ABIERTO = NUCLEO.flag('pvp-estandar', 'PvP Estándar: abierto a los jugadores como beta; poner el tercer parámetro a false lo cierra en la web', true);
 const PVP_SALVAJE = NUCLEO.flag('pvp-salvaje', 'PvP modo Salvaje (habilidades y objetos): sale a los jugadores cuando se quite este flag');
+const pvpDisponible = () => PVP_ABIERTO;
 const PVP_UI = { modo: 'estandar', busca: null, t0: 0, tic: null, ia: 30 };   // ia: segundos de búsqueda tras los que se ofrece jugar contra la IA
 const PVP_MODOS = { estandar: ['Estándar', 'Cuentan tu mazo y el nivel y las estrellas de tus cartas. Los objetos y las habilidades no entran.'], salvaje: ['Salvaje', 'Cuenta todo lo que llevas puesto: las habilidades de tus cartas y el equipo de tu líder.'] };
 
@@ -13,6 +15,7 @@ function pvpRed() {
   return 'servidor';   // sin cuenta vinculada: la búsqueda dirá qué falta
 }
 function pvpPantalla() {
+  if (!pvpDisponible()) return;
   if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
 }
@@ -117,7 +120,7 @@ function pvpShowEnd() {
 }
 
 /* ---------- los botones ---------- */
-$('#btn-pvp').hidden = false;
+$('#btn-pvp').hidden = !pvpDisponible();
 hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
 $('#btn-pvp').addEventListener('click', () => { play('select'); pvpPantalla(); });
 for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); });

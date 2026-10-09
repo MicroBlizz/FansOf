@@ -123,11 +123,12 @@ const NUCLEO = (() => {
   }
 
   // FLAGS DE DESARROLLO: lo nuevo o a medias se esconde tras NUCLEO.desarrollo (sin más) o, si hace falta un flag propio, tras NUCLEO.flag('nombre', 'qué hace').
-  // Solo vale true en modo desarrollo (y si no se ha apagado en el panel DEV); en la web publicada siempre es false. Cada flag queda registrado en el panel DEV.
+  // En desarrollo vale true salvo que se apague en el panel DEV; en la web publicada vale lo que diga el tercer parámetro (false si no se pone; true para algo ya abierto a los jugadores que
+  // se quiere poder cerrar de golpe). Cada flag queda registrado en el panel DEV.
   // Al terminar la tarea, el flag se quita y el código queda como funcionalidad normal (ver CLAUDE.md).
   const flagsDev = {};
-  const flag = (nombre, descripcion = '') => {
-    if (!desarrollo) return false;
+  const flag = (nombre, descripcion = '', enProduccion = false) => {
+    if (!desarrollo) return enProduccion;
     flagsDev[nombre] = descripcion;
     try { return localStorage.getItem('fansof-flag-' + nombre) !== '0'; } catch (e) { return true; }
   };

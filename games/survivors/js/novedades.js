@@ -2,6 +2,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.20', real: [
+      '<b>COFRES DE ESPECTÁCULO</b>: ya no son una subida de nivel cualquiera. Cada cofre mejora al azar entre 1 y 3 cosas de las que ya tienes: con una, entrega épica; con dos, doble premio; con tres, ¡un 777 de tragaperras con todo!',
+      '<b>CAJAS ROMPIBLES</b>: las cajas del mapa ahora se rompen y dan oro (y, con muy poca suerte, un objeto).',
+      'Los shiny salen ahora con más calma: una tirada por grupo en vez de por enemigo.'],
+    joke: ['Microblizz asegura que el 777 está «auditado». Por un becario con un dado.'] },
   { v: '0.1.19', real: ['<b>MINI JEFES</b>: cada 2 minutos sale un mini jefe, y al caer suelta un cofre.', '<b>BICHOS SHINY</b>: de vez en cuando sale un bicho brillante (más duro, con más experiencia y con cofre), y al menos uno cada 3 minutos.'],
     joke: ['Microblizz ha puesto purpurina a sus empleados. Dice que ahora cobran más y pegan más.'] },
   { v: '0.1.18', real: ['<b>PVP VUELVE A SU NOMBRE</b>: ajustes de textos en español.'],

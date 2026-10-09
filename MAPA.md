@@ -76,7 +76,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/economia-sombra.js` · 8 KB · ECO_SOMBRA
 - `core/js/sistema/economia.js` · 6 KB · TOPES_COMUNES, ECO
 - `core/js/sistema/flags.js` · 7 KB
-- `core/js/sistema/gachapon-anim.js` · 24 KB · GACHA_FX
+- `core/js/sistema/gachapon-anim.js` · 20 KB · GACHA_FX
+- `core/js/sistema/gachapon-clasica.js` · 6 KB
 - `core/js/sistema/gachapon.js` · 16 KB · MAQUINAS, rarOfPull, gachaTab, pityLegObj, rollRarity, onePull, resultadoTirada, copiaDeServidor, pullCost, pull, acabarTirada, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, oddsHead, oddsLine, oddsPity, oddsNote, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
 - `core/js/sistema/horas-extra.js` · 11 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC
@@ -109,7 +110,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-16.js` · 6 KB
 - `games/rumble/idioma/en-17.js` · 6 KB
 - `games/rumble/idioma/en-18.js` · 3 KB
-- `games/rumble/idioma/en-19.js` · 5 KB
+- `games/rumble/idioma/en-19.js` · <1 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -160,6 +161,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/14b-gachapon-y-mazo.js` · 17 KB · DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardDeServidor, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckRefresh, deckTile, deckEditorHtml, deckBind, deckHoldT, deckHeld, deckHold, deckSave, deckPoolTap, deckSlotTap, deckDone
 - `games/rumble/js/14c-modo-jefe.js` · 7 KB · bossVer, BOSS_AURA, BOSS_HP_MAX, buildBossPrep, bossFacBar, facItemsRetro
 - `games/rumble/js/14d-hechizos-dibujos.js` · 6 KB · FX_SOLO, FX_GORDO, drawSpellBit
+- `games/rumble/js/14e-garra.js` · 7 KB
 - `games/rumble/js/15-anuncios.js` · 13 KB · ADS, AD_JOKES, TV_SVG, adsState, adsFree, adLeft, adBtn, adRun, watchAd, adOverlay, adIdleUI, idleGrantHours, adEndOffer, adGachaOffer, adShopOffer, adMissionOffer
 - `games/rumble/js/16-camara.js` · 7 KB · CAM, camTouch, camPinch, camLive, camScreen, camClamp, camReset, camZoomAt, camApply, camBtn, camTouchEnd, FEED, feedAdd, feedDraw
 - `games/rumble/js/17a-campos.js` · 14 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, pvpTerreno, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate

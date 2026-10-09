@@ -64,7 +64,8 @@ const NUCLEO = (() => {
     'js/sistema/biblioteca.js',    // biblioteca: galería de habilidades y objetos
     'js/sistema/inventario.js',    // inventario: las copias de habilidades y objetos
     'js/sistema/gachapon.js',      // gashapón
-    'js/sistema/gachapon-anim.js', // gashapón: la máquina y la animación nuevas (flag 'gashapon-nuevo')
+    'js/sistema/gachapon-anim.js', // gashapón: la animación nueva al tirar y el marco de las máquinas animadas (flag 'gashapon-nuevo')
+    'js/sistema/gachapon-clasica.js', // gashapón: la máquina clásica animada (bolas, manivela, trampilla)
     'js/sistema/probabilidades.js', // tablas de probabilidades del gashapón (las enseña la tienda)
     'js/sistema/tienda.js',        // tienda
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú

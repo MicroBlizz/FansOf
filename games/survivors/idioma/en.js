@@ -93,4 +93,6 @@ IDIOMA.add({
   "Microblizz asegura que la sesión ahora es de las que no se cae. Ya lo dijo del puente.": "Microblizz swears the session is now the kind that doesn't drop. It said the same about the bridge.",
   "<b>PASE CON ASPECTO NUEVO</b>: el pase tiene un diseño renovado y pasa a funcionar como en Rumble.": "<b>PASS WITH A NEW LOOK</b>: the pass has a renewed design and now works as in Rumble.",
   "Microblizz ha pintado el pase de otro color y lo llama «rediseño».": "Microblizz painted the pass another colour and calls it a “redesign”.",
+  "<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» para guardar tu progreso con Google o con tu email.": "<b>EASIER SIGN-IN</b>: the menu has a «Sign in / create account» button to save your progress with Google or email.",
+  "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
 });

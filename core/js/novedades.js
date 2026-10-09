@@ -11,7 +11,7 @@
 //   · el mismo texto para la librería de la raíz, que enseña las novedades de todos los juegos (newsHtml).
 // La página del juego solo necesita la ventana: #scr-news con #news-title, #news-body y #btn-news-ok.
 'use strict';
-const newsLista = (items, cls) => (items && items.length ? `<ul${cls ? ' class="' + cls + '"' : ''}>${items.map(t => `<li>${t}</li>`).join('')}</ul>` : '');
+const newsLista = (items, cls) => (items && items.length ? `<ul${cls ? ' class="' + cls + '"' : ''}>${items.map(t => `<li>${tr(t)}</li>`).join('')}</ul>` : '');
 // el informe entero: la versión más nueva con sus dos títulos y, debajo, las anteriores
 function newsHtml(list) {
   if (!list || !list.length) return '';

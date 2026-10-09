@@ -13,7 +13,7 @@ function bibCopias(kind, id) { return SAVE.inv.filter(it => it.k === kind && it.
 function bibDesc(D) {
   const S = statsOf({ k: D.k, id: D.id }); let t = D.desc;
   S.forEach((st, i) => { t = t.replace(i === 0 && t.includes('{v}') ? '{v}' : '{' + i + '}', `<b class="sv">${fmtV(st.c)}</b>`); });
-  return t;
+  return tr(t);   // entera, con las cifras ya puestas: así encaja con la frase del diccionario y no se traduce a trozos
 }
 function bibLista() {
   const DB = bibTab === 'ab' ? ABILITIES : ITEMS;

@@ -6,7 +6,7 @@ Antes hay que haber ejecutado  python herramientas/base.py  (deja en _base/ la v
 Arranca un servidor temporal, abre el comparador en Chrome o Edge sin ventana y recibe el resultado cuando termina.
 Sale con código 0 si todo es igual y 1 si hay diferencias, errores o el comparador no termina.
 """
-import functools, http.server, json, os, shutil, subprocess, sys, tempfile, threading
+import functools, glob, http.server, json, os, shutil, subprocess, sys, tempfile, threading
 
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,6 +49,8 @@ def navegador():
     for p in NAVEGADORES:
         if os.path.isfile(p):
             return p
+    for p in sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome')):   # la nube de Claude Code lo trae aquí
+        return p
     return shutil.which('chrome') or shutil.which('msedge') or shutil.which('chromium')
 
 
@@ -69,7 +71,7 @@ def pasada(juegos, extra=''):
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
     url = f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto={",".join(juegos)}&tam={TAM}{extra}'
     perfil = tempfile.mkdtemp(prefix='comprobar-')
-    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}',
+    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}',
                                '--autoplay-policy=no-user-gesture-required', url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         terminado = LISTO.wait(600)
@@ -114,7 +116,7 @@ if '--determinismo' in sys.argv or '--pvp' in sys.argv:   # no compara con _base
     servidor = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Peticion, directory=RAIZ))
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
     perfil = tempfile.mkdtemp(prefix='comprobar-')
-    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}', '--autoplay-policy=no-user-gesture-required',
+    proceso = subprocess.Popen([exe, '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--mute-audio', '--lang=es-ES', f'--user-data-dir={perfil}', '--autoplay-policy=no-user-gesture-required',
                                 f'http://127.0.0.1:{servidor.server_port}/herramientas/pruebas/index.html?auto=rumble&{"pvp" if "--pvp" in sys.argv else "det"}=1&tam={TAM}&seg={SEG}{EXTRA}'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         terminado = LISTO.wait(600)

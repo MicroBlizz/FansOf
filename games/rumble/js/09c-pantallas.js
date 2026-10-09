@@ -44,7 +44,7 @@ function showEnd() {
   $('#end-crowns').innerHTML = G.mode === 'camp' && w === 'p' ? [0, 1, 2].map(i => `<span class="${i < R.stars ? 'on' : 'off'}">${STAR_SVG}</span>`).join('') : G.mode === 'boss' ? '' : [0, 1, 2].map(i => `<span class="${i < S.p.crowns ? 'on' : 'off'}">${CROWN_SVG}</span>`).join('');
   let sub;
   if (G.mode === 'boss') sub = `${G.bossName}${G.bossDiff !== 'n' ? ' (' + BDIFF[G.bossDiff].name + ')' : ''}: ${fmt(R.score)} de daño, el ${R.pct} % de su vida${R.record ? ' · ¡NUEVO RÉCORD!' : ' · Récord: ' + fmt(SAVE.bossRec[R.boss.key] || 0)}`;
-  else if (G.mode === 'camp' && w === 'p') sub = `${G.level.name}${G.cdiff && G.cdiff !== 'n' ? ' (' + CDIFF[G.cdiff].name + ')' : ''}: ${R.stars === 3 ? '¡3 estrellas!' : R.stars + (R.stars === 1 ? ' estrella' : ' estrellas') + (S.e.crowns ? ' (perdiste una torre)' : ' (te faltó tirar su base)')}`;
+  else if (G.mode === 'camp' && w === 'p') sub = `${tr(G.level.name)}${G.cdiff && G.cdiff !== 'n' ? ' (' + tr(CDIFF[G.cdiff].name) + ')' : ''}: ${R.stars === 3 ? tr('¡3 estrellas!') : R.stars + ' ' + tr(R.stars === 1 ? 'estrella' : 'estrellas') + ' ' + tr(S.e.crowns ? '(perdiste una torre)' : '(te faltó tirar su base)')}`;
   else sub = { base: w === 'p' ? `Has tirado ${isCorp(G.efac) ? FACTIONS[G.efac].end : 'su base'}.` : `Han tirado ${FACTIONS[G.faction].end}.`, crowns: `Tiempo: ${S.p.crowns} coronas contra ${S.e.crowns}.`, hp: 'Empate a coronas: gana quien conserva más vida en sus torres.', draw: 'Mismas coronas y misma vida.' }[G.endReason] || '';
   $('#end-sub').textContent = sub;
   let rw = '';
@@ -55,8 +55,8 @@ function showEnd() {
   if (R.boss && R.boss.tiers.length) rw += `<div class="rw-xp" style="color:#ffe06a">Premio por llegar al ${R.boss.tiers.map(i => Math.round(BOSS_TIERS[i] * 100) + ' %').join(', ')} de su vida.</div>`;
   if (R.gold) rw += `<span class="rw-chip ol">${COIN_SVG}+${fmt(R.gold)}</span>`;
   if (R.gems) rw += `<span class="rw-chip ol">${GEM_SVG}+${fmt(R.gems)}</span>`;
-  if (R.xp.length) rw += `<div class="rw-xp">Experiencia: ${R.xp.map(([k, x]) => `${CFG.cards[k].name} +${x}`).join(' · ')}</div>`;
-  if (R.ready.length) rw += `<div class="rw-xp" style="color:#9ef07a">¡Listas para subir de nivel en la Colección: ${R.ready.map(k => CFG.cards[k].name).join(', ')}!</div>`;
+  if (R.xp.length) rw += `<div class="rw-xp">Experiencia: ${R.xp.map(([k, x]) => `${tr(CFG.cards[k].name)} +${x}`).join(' · ')}</div>`;
+  if (R.ready.length) rw += `<div class="rw-xp" style="color:#9ef07a">¡Listas para subir de nivel en la Colección: ${R.ready.map(k => tr(CFG.cards[k].name)).join(', ')}!</div>`;
   if (R.arena) rw += `<span class="rw-chip big ol">${R.arena.d >= 0 ? '+' : ''}${R.arena.d} COPAS · ${fmt(R.arena.cups)} · LIGA ${R.arena.league.toUpperCase()}</span>`;   // v0.9.20
   if (R.arena && R.arena.regalo) rw += `<span class="rw-chip ol">${TICKET_SVG}+${R.arena.regalo} ${R.arena.regalo > 1 ? 'TIRADAS GRATIS' : 'TIRADA GRATIS'}</span>`;   // v0.9.35: regalo del camino de la arena
   $('#end-rewards').innerHTML = rw; adEndOffer(R);   // v0.9.16: premio x2 con anuncio

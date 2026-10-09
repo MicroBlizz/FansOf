@@ -55,7 +55,7 @@ function slotTile(kind, key, it, lock, label, worn) {
 function descOf(it) {
   const D = defOf(it), S = statsOf(it), V = valsOf(it); let t = D.desc + (it.k === 'eq' && D.fac ? ` <i class="wn">Solo para ${CFG.cards[FACTIONS[D.fac].leader].name}.</i>` : '');
   S.forEach((st, i) => { t = t.replace(i === 0 && t.includes('{v}') ? '{v}' : '{' + i + '}', `<b class="sv">${fmtV(V[i])}</b>`); });
-  return t;
+  return tr(t);   // entera, con las cifras ya puestas: así encaja con la frase del diccionario y no se traduce a trozos
 }
 const rangeTxt = it => { const S = statsOf(it); return (S.length > 1 ? 'Rangos: ' : 'Rango: ') + S.map(st => `${fmtV(rnd(st.c * 0.5, st.dec))}–${fmtV(rnd(st.c * 1.5, st.dec))}`).join(' · '); };
 const qBadge = (it, big) => { const q = avgQ(it), T = QTIERS[tierOf(q)]; return `<span class="qbadge" style="--qc:${T.col}"><span class="qst">${qStars(T)}</span> ${big ? 'CALIDAD ' + T.name.toUpperCase() : T.name} · ${Math.round(q * 100)} %</span>`; };

@@ -51,4 +51,6 @@ IDIOMA.add({
   "Microblizz ha pintado el pase de otro color y lo llama «rediseño».": "Microblizz painted the pass another colour and calls it a “redesign”.",
   "<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» para guardar tu progreso con Google o con tu email.": "<b>EASIER SIGN-IN</b>: the menu has a «Sign in / create account» button to save your progress with Google or email.",
   "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
+  "+%1 % de daño y −%2 % de vida.": "+%1 % damage and −%2 % health.",
+  "+%1 % de vida y −%2 % de velocidad.": "+%1 % health and −%2 % speed.",
 });

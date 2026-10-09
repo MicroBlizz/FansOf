@@ -62,6 +62,12 @@ IDIOMA.add({
   '¡MEJORA ÉPICA!': 'EPIC UPGRADE!', 'Mejora de las tuyas, gratis': 'One of yours, for free', '¡DOBLE MEJORA!': 'DOUBLE UPGRADE!', '¡Doble premio!': 'Double prize!', '¡¡¡SUERTE!!!': 'GOOD LUCK!!!',
   '¡¡¡777!!!': '777!!!', '¡TRIPLE MEJORA!': 'TRIPLE UPGRADE!', '¡GENIAL!': 'AWESOME!',
   '¡HAY MÁS!': 'THERE\'S MORE!', '¡¡CUÁDRUPLE!!': 'QUADRUPLE!!', '¡CUATRO MEJORAS!': 'FOUR UPGRADES!', '¡¡¡777 777!!!': '777 777!!!', '¡¡CINCO MEJORAS!!': 'FIVE UPGRADES!!',
+  '…¿Nada?': '…Nothing?', '¡¡ESPERA!!': 'WAIT!!', '¡COFRES DENTRO DEL COFRE!': 'CHESTS INSIDE THE CHEST!', '¡NOOO! ¡MI JUEGO!': 'NOOO! MY GAME!',
+  'COMÚN': 'COMMON', 'RARA': 'RARE', 'ÉPICA': 'EPIC', 'LEGENDARIA': 'LEGENDARY',
+  '¿Habrá más?': 'Will there be more?', '¡Otro, otro!': 'Another one!', 'Se acelera…': 'It\'s speeding up…', 'Que salga otro, porfa': 'One more, please', 'Se ha atascado…': 'It\'s stuck…', '¿Cofre vacío?': 'Empty chest?', 'Era un cofre roto': 'It was a broken chest', '…espera, espera…': '…wait, wait…',
+  'Una mejora gratis, sin microtransacciones': 'A free upgrade, no microtransactions', 'Eso se llama suerte': 'That\'s called luck', 'Un cofre decente, por fin': 'A decent chest, finally', '¡¡DOS!!': 'TWO!!', 'Doble premio, oye': 'Double prize, wow', '¿Dos? El CEO se ha equivocado': 'Two? The CEO made a mistake',
+  '¡¡¡TRIPLE!!!': 'TRIPLE!!!', '¡¡777!! ¡¡777!!': '777!! 777!!', 'ESTO NO ES NORMAL': 'THIS ISN\'T NORMAL', '¡Llama a Microblizz!': 'Call Microblizz!', 'CLIP CLIP CLIP': 'CLIP CLIP CLIP',
+  '¡¡¡CINCO!!!': 'FIVE!!!', 'NO. PUEDE. SER.': 'NO. WAY.', '¡¡COFRES DENTRO DEL COFRE!!': 'CHESTS INSIDE THE CHEST!!', 'Esto es un bug y me encanta': 'This is a bug and I love it', '¡¡¡YO LO VI PRIMERO!!!': 'I SAW IT FIRST!!!', 'Hacedme un clip YA': 'Make me a clip NOW',
   '¡SURVIVALBOT DESPEDIDO!': 'SURVIVALBOT FIRED!', 'Microblizz anuncia que «nunca le gustó ese robot»': 'Microblizz says it "never liked that robot"',
   'DESPEDIDO': 'FIRED',
   // armas

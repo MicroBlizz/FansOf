@@ -178,14 +178,15 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/skate/js/mundos.js` · 10 KB · SK_MUNDOS
 - `games/survivors/index.html` · 26 KB
 - `games/survivors/sw.js` · <1 KB
-- `games/survivors/css/survivors.css` · 11 KB
+- `games/survivors/css/survivors.css` · 14 KB
 - `games/survivors/idioma/en-facciones.js` · 12 KB
-- `games/survivors/idioma/en.js` · 15 KB
+- `games/survivors/idioma/en.js` · 16 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
 - `games/survivors/js/armas-tipos.js` · 14 KB · CONTINUAS, SONIDO_TIPO, estadoArma, empujeA, TIPOS, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
 - `games/survivors/js/armas.js` · 8 KB · vArma, armasDisparan, DISPARO, aura, curarSuave, vacasGiran, saltoChaos, explotar, moverProyectiles
 - `games/survivors/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, FAC_JUGABLES, minutosTotales, isUnlocked, facNow, armaDeFac, facOfCard, ARMA_DE, cardMods, modsPartida, pc, effStats, cardStats, cardDesc, passiveText, bloqueadaTexto, idlePower, give, metaDefaults, newSave, migrateSave
-- `games/survivors/js/cofre.js` · 7 KB · sleep, cofreId, sorteoCofre, iconoOp, nivelOp, abrirCofre, notas, FANFARRIA, cofreLatido, latido, confeti, tiembla, flash, cierraCofre, entregaCofre, ruedaGrande
+- `games/survivors/js/cofre-efectos.js` · 6 KB · sleep, notas, FANFARRIA, cofreLatido, latido, confeti, tiembla, flash, fuego, fuegos, botAsustado, COFRE_CHAT, chatCofre, RAREZAS, rarezaOp, miniCofre, introCofre
+- `games/survivors/js/cofre.js` · 8 KB · cofreId, sorteoCofre, iconoOp, nivelOp, abrirCofre, cierraCofre, entregaCofre
 - `games/survivors/js/datos-facciones-2.js` · 7 KB
 - `games/survivors/js/datos-facciones.js` · 11 KB · DESBLOQUEO, PASOS, BASE_TIPO, armaFaccion, ARMA_INICIAL
 - `games/survivors/js/datos.js` · 12 KB · SV, ARMAS, PASIVAS, EFECTO, RELLENO, ENEMIGOS, vidaPorMinuto, OLEADAS, MINIJEFES, EVENTOS, JEFE, CAJAS, BOTIN, COFRE
@@ -194,7 +195,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/interfaz.js` · 9 KB · cv, ajustar, TECLAS, TACTIL, mandoTeclado, jugando, aLogico, soltar, sueltaMando, empezar, abrirNivel, FRASES_PAUSA, pausar, seguir, mostrarFin, antes, fotograma, menuT, fondoMenu
 - `games/survivors/js/juego.js` · 23 KB · P, sigId, MANDO, modsJugador, nuevaPartida, nvP, multDano, multRecarga, radioRecoger, velJugador, CELDA, REJ, claveR, rehacerRejilla, cerca, masCercano, crearEnemigo, puntoFuera, elegirPeso, oleadas, tocaShiny, marcaShiny, soltarCofre, llegaJefe, moverEnemigos, jefeAtaca, herir, golpeCajas, romperCaja, matar, curar, danarJugador, soltarGema, recoger, ganarXp, puedeMejorar, opcionesNivel, aplicarOpcion, numero, particulas … (+7)
 - `games/survivors/js/menus.js` · 7 KB · VISTA, enPartida, goHome, openColl, titlePopups, showMenu, pintaRecord, dibujaPortada, optOn, openOptions, optButtons, saveCode, soundBtns
-- `games/survivors/js/novedades.js` · 4 KB · NEWS
+- `games/survivors/js/novedades.js` · 5 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/tacticas/index.html` · 7 KB

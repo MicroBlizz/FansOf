@@ -99,3 +99,30 @@
 #scr-cofre.cof-n5 .rueda { box-sizing: border-box; flex: 0 0 31%; max-width: 31%; min-height: 128px; } #scr-cofre.cof-n5 .cof-fila .op-desc { display: none; } #scr-cofre.cof-n5 .cof-fila { padding: 3px 12px; font-size: 16px; } #scr-cofre.cof-n5 .rueda-nom { font-size: 14px; }
 #scr-cofre.mega #cof-titulo { font-size: 54px; } #scr-cofre.mega { background: radial-gradient(circle at 50% 38%, rgba(255, 90, 160, .9), rgba(30, 6, 80, .99) 75%); animation: arcoiris 1.4s linear infinite; }
 .rueda.nueva { animation: ruedaGrande .5s ease-out; }
+
+/* El cofre: entrada, rarezas, cofre pequeño, fuegos, chat y SurvivalBot asustado */
+#cof-intro { position: absolute; inset: 0; z-index: 19; pointer-events: none; opacity: 0; transition: opacity .6s; background: radial-gradient(circle at 50% 55%, rgba(0, 0, 0, 0), rgba(0, 0, 0, .55)); }
+#cof-intro.on { opacity: 1; }
+#cof-intro .haz { position: absolute; left: 50%; top: 0; bottom: 38%; width: 120px; margin-left: -60px; background: linear-gradient(180deg, rgba(255, 246, 170, 0), rgba(255, 246, 170, .85)); clip-path: polygon(35% 0, 65% 0, 100% 100%, 0 100%); filter: blur(4px); }
+#cof-chat { position: absolute; left: 10px; bottom: 10px; z-index: 3; font-size: 14px; font-weight: 700; text-align: left; max-width: 62%; pointer-events: none; opacity: .92; }
+#cof-chat div { background: rgba(20, 10, 34, .7); padding: 2px 8px; border-radius: 8px; margin-top: 3px; animation: entra .25s ease-out both; }
+#cof-cofre.bufa { animation: bufa 1s ease-out; }
+@keyframes bufa { 0% { transform: scale(1, 1); } 30% { transform: scale(1.25, .8); } 55% { transform: scale(.92, 1.08); } 100% { transform: scale(1, 1); } }
+.rueda { position: relative; }
+.rueda.r1 { border-color: #5ec8ff; } .rueda.r2 { border-color: #d08cff; box-shadow: 0 0 16px 2px rgba(208, 140, 255, .55), 0 5px 0 var(--outline); }
+.rueda.r3 { border-color: var(--gold); box-shadow: 0 0 22px 5px rgba(255, 203, 61, .8), 0 5px 0 var(--outline); background: linear-gradient(120deg, #6a4a10, var(--tray) 40%, #8a6a1a 60%, var(--tray)); background-size: 250% 100%; animation: brillo 1.6s linear infinite; }
+@keyframes brillo { to { background-position: -250% 0; } }
+.rar { display: block; font-style: normal; font-size: 11px; letter-spacing: 1px; margin-top: 2px; opacity: .9; }
+.r0 .rar { color: #cdd6e6; } .r1 .rar { color: #5ec8ff; } .r2 .rar { color: #d08cff; } .r3 .rar { color: var(--gold); }
+.rueda .mini { position: absolute; left: 50%; top: 50%; width: 76px; height: 64px; margin: -40px 0 0 -38px; z-index: 2; animation: miniSale .6s cubic-bezier(.2, 1.4, .4, 1) both, miniTiembla .16s .6s linear infinite; }
+.rueda .mini svg { width: 100%; height: 100%; }
+@keyframes miniSale { from { transform: translate(0, -260px) scale(.2) rotate(-200deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes miniTiembla { 0% { transform: translateX(-3px) rotate(-4deg); } 50% { transform: translateX(3px) rotate(4deg); } 100% { transform: translateX(-3px) rotate(-4deg); } }
+#cof-ruedas.flotan .rueda { animation: flota 1s ease-in-out infinite alternate; } #cof-ruedas.flotan .rueda:nth-child(even) { animation-delay: -.5s; }
+@keyframes flota { from { transform: translateY(-10px) rotate(-2deg); } to { transform: translateY(10px) rotate(2deg); } }
+.chispa { position: absolute; width: 8px; height: 8px; border-radius: 50%; z-index: 4; pointer-events: none; animation: chispa 1s ease-out forwards; box-shadow: 0 0 8px currentColor; }
+@keyframes chispa { from { transform: translate(0, 0) scale(1.3); opacity: 1; } to { transform: translate(var(--dx), calc(var(--dy) + 40px)) scale(.2); opacity: 0; } }
+#cof-bot { position: absolute; right: 6px; bottom: 90px; z-index: 6; text-align: center; animation: botEntra .5s ease-out, tiembla .09s .5s linear infinite; pointer-events: none; }
+#cof-bot canvas { width: 130px; height: 130px; display: block; margin: 0 auto; }
+#cof-bot div { background: #fff; color: #1b0f2a; padding: 4px 10px; border-radius: 12px; border: 3px solid var(--outline); font-size: 15px; }
+@keyframes botEntra { from { transform: translateX(200px); } to { transform: none; } }

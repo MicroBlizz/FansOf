@@ -24,6 +24,9 @@ async function pruebaPvp(raiz, duerme) {
     const base = { seed: 9001, tiempo: o.tiempo || 20, conservar: true, avisoMs: o.avisoMs, abandonoMs: o.abandonoMs };
     if (!a.pvpInicio(Object.assign({ seat: 'p', red: redA, equipos: clon(equipos) }, base))) throw new Error('A no empieza: ' + a.__X.PVP.error);
     if (!b.pvpInicio(Object.assign({ seat: 'e', red: redB, equipos: clon(equipos) }, base))) throw new Error('B no empieza: ' + b.__X.PVP.error);
+    if (o.variar) {   // dos jugadores de verdad no tienen los mismos ajustes ni empiezan al mismo tiempo: nada de eso puede cambiar la partida
+      a.eval("Object.assign(SAVE, { ahorro: true, noNums: true, blood: false, feed: false, noShake: true, chatOff: true, fps: true }); G.t += 7.31"); b.eval("Object.assign(SAVE, { ahorro: false, noNums: false, blood: true, feed: true, noShake: false, chatOff: false }); G.t += 0.77");
+    }
     const t0 = Date.now(); let juega = 0;
     const reloj = setInterval(() => {
       for (const w of [a, b]) { try { w.frame(w.performance.now()); } catch (e) { fallos.push(nombre + ': error en el bucle: ' + (e && e.message)); } }
@@ -124,6 +127,8 @@ async function pruebaPvp(raiz, duerme) {
     const rd = await partidaServidor(true);
     ap('0c · rendición por el servidor', `B se entera en ${rd.ms} ms: ${rd.motivo}, ganador ${rd.ganador}`);
     if (rd.motivo !== 'abandono') fallos.push('rendición: el rival no gana por abandono: ' + JSON.stringify(rd)); if (rd.ms > 3000) fallos.push('rendición: tarda demasiado en llegar (' + rd.ms + ' ms)');
+    { const v = await partida('ajustes distintos', { tiempo: 20, cada: 1500, variar: true, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
+      const n = Math.min(v.ha.length, v.hb.length), ig = v.ha.slice(0, n).every((x, i) => x[1] === v.hb[i][1]); ap('1b · ajustes y reloj distintos', `${n} huellas, iguales: ${ig}, estados ${v.estados.join('/')}, ${v.error}`); if (!ig || v.estados.some(e => e === 'desync' || e === 'error')) fallos.push('ajustes distintos: las partidas se separan (' + v.error + ')'); }
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);

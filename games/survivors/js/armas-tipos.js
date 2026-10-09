@@ -48,6 +48,7 @@ const TIPOS = {
       P.efectos.push({ gen: 'golpe', x: e.x, y: e.y - 10, emo: A.emo, col: A.col, t: 0.45, max: 0.45 });
       const [nx, ny] = empujeA(e, j.x, j.y); herir(e, v.dano, nx, ny, 160, true); estadoArma(e, v);
     }
+    for (const e of L) golpeCajas(e.x, e.y, 20, v.dano);
     return true;
   },
   // un rayo que salta de un enemigo a otros cercanos
@@ -61,6 +62,7 @@ const TIPOS = {
         const [nx, ny] = empujeA(e, j.x, j.y); herir(e, v.dano * (s ? 0.8 : 1), nx, ny, 60); estadoArma(e, v);
         e = masCercano(e.x, e.y, 150, ya);
       }
+      for (const q of pts.slice(1)) golpeCajas(q.x, q.y + 18, 14, v.dano);
       P.efectos.push({ gen: 'rayo', pts, col: A.col, t: 0.22, max: 0.22 });
     }
     return algo;
@@ -69,6 +71,7 @@ const TIPOS = {
   onda(v, A) {
     const j = P.jug; let n = 0; cerca(j.x, j.y, v.r, () => n++); if (!n) return false;
     cerca(j.x, j.y, v.r, e => { const [nx, ny] = empujeA(e, j.x, j.y); herir(e, v.dano, nx, ny, v.emp); estadoArma(e, v); });
+    golpeCajas(j.x, j.y, v.r, v.dano);
     P.efectos.push({ gen: 'anillo', x: j.x, y: j.y, r: v.r, emo: A.emo, col: A.col, t: 0.5, max: 0.5 });
     P.sacudida = Math.max(P.sacudida, 3);
     return true;
@@ -109,11 +112,12 @@ function armasContinuas(dt) {
     const v = vArma(k); P.cd[k] = (P.cd[k] || 0) - dt;
     if (A.tipo === 'aura') {
       if (v.cura) curarSuave(v.cura * dt);
-      if (P.cd[k] <= 0) { P.cd[k] = v.tick; cerca(j.x, j.y - 10, v.r, e => { herir(e, v.dano, 0, 0, 0); estadoArma(e, v); }); }
+      if (P.cd[k] <= 0) { P.cd[k] = v.tick; cerca(j.x, j.y - 10, v.r, e => { herir(e, v.dano, 0, 0, 0); estadoArma(e, v); }); golpeCajas(j.x, j.y - 10, v.r, v.dano); }
     } else if (A.tipo === 'orbita') {
       const T = P.t;
       for (let i = 0; i < v.n; i++) {
         const a = T * v.giro + (i / v.n) * Math.PI * 2, x = j.x + Math.cos(a) * v.r, y = j.y - 10 + Math.sin(a) * v.r * 0.8;
+        if (T - (P['o_' + k + i] || -9) >= v.tick) { P['o_' + k + i] = T; golpeCajas(x, y, 18, v.dano); }
         cerca(x, y, 18, e => {
           if (T - (e['o_' + k] || -9) < v.tick) return; e['o_' + k] = T;
           const [nx, ny] = empujeA(e, j.x, j.y); herir(e, v.dano, nx, ny, 220); estadoArma(e, v);
@@ -128,7 +132,7 @@ function armasContinuas(dt) {
   // los charcos
   for (const z of P.zonas) {
     z.t -= dt; z.tt -= dt;
-    if (z.tt <= 0) { z.tt = z.tick; cerca(z.x, z.y, z.r, e => { herir(e, z.dano, 0, 0, 0); estadoArma(e, z); }); }
+    if (z.tt <= 0) { z.tt = z.tick; cerca(z.x, z.y, z.r, e => { herir(e, z.dano, 0, 0, 0); estadoArma(e, z); }); golpeCajas(z.x, z.y, z.r, z.dano); }
   }
   P.zonas = P.zonas.filter(z => z.t > 0);
 }
@@ -150,6 +154,7 @@ function moverGen(p, dt) {
       p.golpeados.add(e); p.quedan--; dio = true;
       const d = Math.hypot(p.vx, p.vy) || 1; herir(e, p.dano, p.vx / d, p.vy / d, 90); estadoArma(e, p);
     });
+    if (p.quedan > 0) golpeCajas(p.x, p.y + 14, 10, p.dano);
     if (dio && p.quedan <= 0) {
       const s = p.rebota > 0 ? masCercano(p.x, p.y, 240, p.golpeados) : null;
       if (s) {   // rebota hacia otro enemigo

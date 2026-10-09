@@ -29,3 +29,8 @@ IDIOMA.add({
   "¡TURBO!": "TURBO!",
   "$$$": "$$$",
 });
+// novedades de la 0.9.115
+IDIOMA.add({
+  "<b>12 HABILIDADES LOCAS</b>: llegan al gashapón la Llamada del CEO, el Modo Súper, el Wallhack, el Ragdoll, el Lag, el Modo Dios, el Bullet Time, la Lootbox humana, el Spam de emotes, el Ping 999, el Clipping y el Pay to Win. Cada una con su propia animación en batalla: manotazos desde el cielo, cuerpos que salen volando, cajas sorpresa, cúpulas a cámara lenta… Míralas en la Biblioteca.": "<b>12 CRAZY ABILITIES</b>: CEO Call, Super Mode, Wallhack, Ragdoll, Lag, God Mode, Bullet Time, Human Lootbox, Emote Spam, Ping 999, Clipping and Pay to Win arrive in the gacha. Each one has its own battle animation: slaps from the sky, bodies flying through the air, surprise boxes, slow-motion domes… Check them out in the Library.",
+  "El departamento legal pidió quitar el Pay to Win. El de monetización pidió subirlo a Mítica.": "Legal asked us to remove Pay to Win. Monetization asked us to make it Mythic.",
+});

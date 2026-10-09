@@ -58,9 +58,9 @@ function pvpJugar(slot, key, x, y) {
   lista.push({ team: PVP.seat, slot, key, x: Math.round(x * 100) / 100, y: Math.round(y * 100) / 100 }); PVP.mias.set(turno, lista);
   return turno;
 }
-function pvpMandar(turno, cmds, tick, h) {
+function pvpMandar(turno, cmds, tick, h, partes) {
   PVP.propias.set(turno, cmds);
-  if (PVP.red) PVP.red.enviar({ t: 't', turno, cmds, tick, h });
+  if (PVP.red) PVP.red.enviar({ t: 't', turno, cmds, tick, h, partes });
 }
 // llega un mensaje del rival (el transporte lo llama)
 function pvpRecibir(m) {
@@ -92,13 +92,13 @@ function pvpAvanza() {
   PVP.espera = 0; if (PVP.estado === 'esperando') pvpEstado('jugando');
   PVP.pasados.add(turno);
   // huella de este instante (antes de instalar las jugadas del turno) y las jugadas de este turno, de los dos
-  const h = simHash(); PVP.hashes.push([SIM.tick, h]); const e = PVP.huellas.get(SIM.tick) || {}; e.mia = h; PVP.huellas.set(SIM.tick, e); pvpComparar(SIM.tick);
+  const h = simHash(), partes = simHash.partes; PVP.hashes.push([SIM.tick, h]); const e = PVP.huellas.get(SIM.tick) || {}; e.mia = h; PVP.huellas.set(SIM.tick, e); pvpComparar(SIM.tick);
   for (const c of (PVP.propias.get(turno) || [])) simCmd(Object.assign({ t: SIM.tick }, c));
   for (const c of PVP.ajenas.get(turno)) simCmd(Object.assign({ t: SIM.tick }, c));
   PVP.propias.delete(turno); PVP.ajenas.delete(turno);
   // las jugadas que se han hecho durante el turno anterior salen hacia el turno turno+PVP_RETARDO-1 (siempre se manda algo, aunque sea vacío)
   const destino = turno + PVP.D - 1, mias = PVP.mias.get(destino) || []; PVP.mias.delete(destino);
-  pvpMandar(destino, mias, SIM.tick, h);
+  pvpMandar(destino, mias, SIM.tick, h, partes);
   return true;
 }
 function pvpEspera() { /* el reloj de espera lo cuenta pvpTic (por fotograma) */ }

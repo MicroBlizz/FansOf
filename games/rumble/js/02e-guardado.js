@@ -51,8 +51,8 @@ const isUnlocked = f => SAVE.unlocked.includes(f);
 /* ---------- utilidades del combate (las generales están en core/js/sistema/utiles.js) ---------- */
 const other = t => (t === 'p' ? 'e' : 'p');
 // v0.9.14: los sanadores curan en un cono de 90° hacia delante y se quedan a esta distancia detrás de la unidad que siguen
-const HEAL_CONE = Math.PI / 2, HEAL_COS = Math.cos(HEAL_CONE / 2), HEAL_BACK = 58;
-const edgeDist = (a, b) => dist(a, b) - a.r - b.r;
+const HEAL_CONE = Math.PI / 2, HEAL_COS = Math.SQRT1_2 /* cos(π/4) fijo: Math.cos puede dar otro último bit según el motor */, HEAL_BACK = 58;
+const edgeDist = (a, b) => dst(a, b) - a.r - b.r;   // dst (raíz cuadrada exacta) y no dist (Math.hypot, que cambia de un navegador a otro): se usa en la simulación del PvP
 const nearestBridge = x => BRIDGES.reduce((b, c) => (Math.abs(x - c) < Math.abs(x - b) ? c : b), BRIDGES[0]);
 const laneBridge = i => (i === 0 ? BRIDGES[0] : BRIDGES[BRIDGES.length - 1]);   // v0.9.19: el puente del carril izquierdo (0) o derecho (1)
 

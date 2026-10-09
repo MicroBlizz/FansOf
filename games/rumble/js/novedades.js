@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.101', real: ['<b>PVP MÁS ROBUSTO</b>: ajustes en los cálculos de la partida para que dos navegadores distintos no se separen, y la partida guarda más pistas para encontrar los desajustes que queden.'],
+    joke: ['Microblizz ha instalado un chivato en cada partida. Ya sabe dónde se le va el hilo.'] },
   { v: '0.9.100', real: ['<b>PVP SIN PARONES</b>: arreglada la partida que se quedaba parada (sin subir ni el CAOS) por un fallo de la conexión con el servidor.'],
     joke: ['Microblizz ha descubierto que dos mensajes a la vez se pisaban entre sí. Ahora hacen cola, como en la cafetería.'] },
   { v: '0.9.99', real: ['<b>PVP: HÉROE EN LA MANO</b>: si tu rival sacaba el héroe de tu misma facción, tu carta de héroe salía como «en el campo» aunque el tuyo no estuviera. Arreglado.'],

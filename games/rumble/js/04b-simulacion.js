@@ -78,12 +78,15 @@ function simHash() {
   let h = 0x811c9dc5;
   const num = v => { v = Math.round((v || 0) * 1000) | 0; for (let i = 0; i < 4; i++) { h ^= (v >>> (i * 8)) & 255; h = Math.imul(h, 16777619); } };
   const txt = s => { s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } num(s.length); };
-  num(SIM.tick); num(SIM.s); num(G.time);
+  const parts = []; num(SIM.tick); num(SIM.s); num(G.time);
   for (const t of ['p', 'e']) { const o = S[t]; num(o.chaos); num(o.crowns); num(o.spent); num(o.deployed); num(o.kills); num(o.leaderCd); if (o.hand) txt(o.hand.join()); if (o.queue) txt(o.queue.join()); }
+  parts.push(h >>> 0);   // trozos de la huella (reloj, azar y los dos jugadores · tropas · edificios y disparos): si dos máquinas se separan, se ve en cuál
   num(units.length); for (const u of units) { txt(u.type); num(u.team === 'p' ? 1 : 2); num(u.x); num(u.y); num(u.hp); num(u.maxHp); num(u.alive ? 1 : 0); num(u.stunT); num(u.atkT); num(u.deployT); }
+  parts.push(h >>> 0);
   num(structs.length); for (const s of structs) { txt(s.role + s.team); num(s.hp); num(s.alive ? 1 : 0); }
   num(projs.length); for (const p of projs) { num(p.x); num(p.y); }
   num(revives.length); num(spells.length);
   num(TR.zones.length); num(TR.falls.length); for (const z of TR.zones) { num(z.x); num(z.y); }
+  parts.push(h >>> 0); simHash.partes = parts;
   return (h >>> 0).toString(16).padStart(8, '0');
 }

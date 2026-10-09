@@ -10,7 +10,11 @@ function grantRewards() {
     const x = Math.round(n * ECON.xpPerPlay * (win ? ECON.winXpMult : 1)); us.xp += x; R.xp.push([k, x]); if (canLevel(k)) R.ready.push(k);
   }
   if (G.mode === 'quick') R.gold = win ? ECON.quick[G.diff] : ECON.quick.lose;
-  if (G.mode === 'quick' && G.diff === 'ceo' && win) R.gems += ECON.quickCeoGems;   // v0.9.71
+  if (G.mode === 'quick' && G.diff === 'ceo' && win) {   // v0.9.71 · v0.9.112: y sus logros (CEO, sin perder torres, con «Torres de cartón»)
+    R.gems += ECON.quickCeoGems; stat('ceowin', 1);
+    if (S.e.crowns === 0) stat('ceoflaw', 1);
+    if (G.mod && G.mod.deb && G.mod.deb.id === 'carton') stat('ceocarton', 1);
+  }
   else if (G.mode === 'arena') arenaReward(R, w);   // v0.9.20
   else if (G.mode === 'camp') {
     const L = G.level, cd = G.cdiff || 'n', pay = CDIFF[cd].pay || 1, prev = starsD(L.id, cd), prevW = cd === 'm' ? mitStars(L.id) : prev;   // Mítica: el premio de primera vez y el de 3 estrellas vuelven cada semana (prevW)

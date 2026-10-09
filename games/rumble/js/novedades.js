@@ -3,6 +3,11 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.112', real: [
+      '<b>13 LOGROS NUEVOS</b>: hay pestaña de <b>PvP</b> (Cara a cara, Trepa corporativo y Relaciones públicas) y logros para el modo CEO, Empleado del día y del mes, la Mítica semanal, el Top 10, el armario y los sanadores que curan torres. Y tres secretos más.',
+      '<b>GASHAPÓN MÁS EXIGENTE</b>: en las máquinas de habilidades y de objetos las legendarias salen menos (de 1 de cada 23 tiradas a 1 de cada 50), y la legendaria asegurada llega a las 90 tiradas. Así tener una vuelve a ser algo especial.',
+      '<b>ARREGLO</b>: la Corbata del CEO ya no aparece en la cara de los líderes.'],
+    joke: ['Microblizz ha recortado las legendarias para pagar los logros nuevos. Lo llama «optimizar la experiencia».'] },
   { v: '0.9.111', real: [
       '<b>MÍTICA SEMANAL</b>: en la dificultad Mítica las estrellas vuelven a 0 cada lunes. La campaña tiene una caja TEMPORADA MÍTICA con la cuenta atrás, y el Salón de la Fama una pestaña Mítica (esta semana, la pasada y de siempre). Cada semana vuelves a cobrar su oro y sus gemas, y los 10 primeros se llevan un título.',
       '<b>FÁCIL Y HEROICA PAGAN</b>: las victorias en Fácil y en Heroica ya cobran su oro y sus gemas como deben.',

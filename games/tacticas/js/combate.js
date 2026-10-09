@@ -292,6 +292,7 @@ async function accionHeroe(h, a) {
       }
       if (t.golpes > 1) { play(t.sfx); await espera(200); }
     }
+    if (t.caosGrupo) for (const ob of vivos(B.heroes)) { const n = Math.min(t.caosGrupo, ob.mpMax - ob.mp); if (n > 0) { ob.mp += n; numero(ob, '+' + n + ' CAOS', '#f3a6ff', 20); } }
     if (t.oro) { SAVE.oro += t.oro; numero(h, '+' + t.oro + ' oro', '#ffcb3d', 20); guardar(); }
   } else if (t.a === 'grupo' || t.a === 'yo') {
     const obs = t.a === 'yo' ? [h] : vivos(B.heroes);

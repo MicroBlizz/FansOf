@@ -36,7 +36,7 @@ const HEROE_ORDEN = ['bunny', 'epicchampion', 'twitchking', 'necrolord', 'cyberm
 const TECNICAS = {
   saltoCaos:    { nombre: 'Salto caótico',  mp: 12, a: 'enemigos', st: 'atk', pow: 0.85, sfx: 'jump', fx: 'slam', desc: 'Salta encima de todos los enemigos.' },
   rabia:        { nombre: 'Rabia',          mp: 10, a: 'grupo', mejora: 'atk', turnos: 3, sfx: 'hype', desc: 'Todo el grupo pega más fuerte 3 turnos.' },
-  tajoEpico:    { nombre: 'Tajo épico',     mp: 10, a: 'enemigo', st: 'atk', pow: 2.1, sfx: 'slam', fx: 'tajo', desc: 'Un golpe enorme a un enemigo.' },
+  tajoEpico:    { nombre: 'Tajo épico',     mp: 10, a: 'enemigo', st: 'atk', pow: 2.1, sfx: 'slam', fx: 'tajo', caosGrupo: 6, desc: 'Un golpe enorme a un enemigo. Inspira: todo el grupo gana 6 CAOS.' },
   gritoHeroico: { nombre: 'Grito heroico',  mp: 14, a: 'grupo', mejora: 'def', turnos: 3, sfx: 'horn', desc: 'El grupo recibe menos daño 3 turnos.' },
   donacion:     { nombre: 'Donación',       mp: 14, a: 'grupo', st: 'mag', cura: 1.4, sfx: 'heal', desc: 'Cura a todo el grupo.' },
   baneo:        { nombre: 'Baneo',          mp: 10, a: 'enemigo', st: 'mag', pow: 0.9, aturde: 0.75, sfx: 'zap', fx: 'rayo', desc: 'Daño y suele dejar al enemigo sin turno.' },

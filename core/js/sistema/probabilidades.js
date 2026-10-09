@@ -24,6 +24,6 @@ function probsHtml() {
     + `<p class="small-print">Son las probabilidades reales de cada tirada, sin contar las garantías. Las calcula el servidor con las mismas cifras que se enseñan aquí. Comprar gemas o oro no cambia ninguna.</p>`
     + maqs.map(una).join('')
     + `<h4 class="ol">CALIDAD DE CADA COPIA</h4>${tabla(['Calidad', 'Probabilidad'], QTIERS.map(t => [t.name, pct(t.p)]))}`
-    + `<p class="small-print">Garantías: una épica o mejor como mucho cada ${ECON.pityEpic} tiradas, una legendaria a las ${ECON.pityLeg} y una copia de calidad Director (excelente) o mejor como mucho cada ${ECON.pityQ}. Cada bloque de 10 tiradas trae al menos una épica.</p>`
+    + `<p class="small-print">Garantías: una épica o mejor como mucho cada ${ECON.pityEpic} tiradas, una legendaria a las ${pityLegObj()} y una copia de calidad Director (excelente) o mejor como mucho cada ${ECON.pityQ}. Cada bloque de 10 tiradas trae al menos una épica.</p>`
     + `</div></details>`;
 }

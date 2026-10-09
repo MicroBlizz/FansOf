@@ -10,11 +10,13 @@
 const MAQUINAS = {};
 const rarOfPull = r => (r.it ? defOf(r.it).rar : r.rar);   // la rareza de lo que ha salido, sea una copia o lo que dé otra máquina
 let gachaTab = 'ab', gachaAnim = null, gachaRAF = 0, gachaEsperando = false;
+// a cuántas tiradas está garantizada la legendaria en habilidades y objetos (un juego puede ponerle otra que a las cartas: pityLegObj)
+const pityLegObj = () => ECON.pityLegObj || ECON.pityLeg;
 function rollRarity(kind, force) {
   const P = SAVE.pity, pk = kind, pl = kind + 'L'; P[pk] = (P[pk] || 0) + 1; P[pl] = (P[pl] || 0) + 1;
   let r = 'common';
-  if (P[pl] >= ECON.pityLeg) r = 'legendary';
-  else if (force || P[pk] >= ECON.pityEpic) r = Math.random() < ECON.odds.legendary / (ECON.odds.legendary + ECON.odds.epic) ? 'legendary' : 'epic';
+  if (P[pl] >= pityLegObj()) r = 'legendary';
+  else if (force || P[pk] >= ECON.pityEpic) r = ECON.legSegura !== false && Math.random() < ECON.odds.legendary / (ECON.odds.legendary + ECON.odds.epic) ? 'legendary' : 'epic';   // legSegura: false = la tirada asegurada da épica, nunca legendaria
   else { let x = Math.random() * 100; for (const k of ['legendary', 'epic', 'rare', 'common', 'basic']) { if (x < (ECON.odds[k] || 0)) { r = k; break; } x -= ECON.odds[k] || 0; } }
   if (r === 'epic' || r === 'legendary') P[pk] = 0;
   if (r === 'legendary') P[pl] = 0;
@@ -121,7 +123,7 @@ function buildGachaText() {
     + oddsHead('Calidad de cada efecto (del 50 % al 150 % de su valor)') + QTIERS.map(t => oddsLine(t.name, t.p + ' %')).join('')
     + oddsHead('Garantías')
     + oddsPity('Épica o mejor', P[gachaTab], ECON.pityEpic)
-    + oddsPity('Legendaria', P[gachaTab + 'L'], ECON.pityLeg)
+    + oddsPity('Legendaria', P[gachaTab + 'L'], pityLegObj())
     + oddsPity('Calidad Director o mejor', P['q' + gachaTab], ECON.pityQ)
     + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
     + oddsNote(`Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)

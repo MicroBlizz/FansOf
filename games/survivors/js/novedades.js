@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.19', real: ['<b>MINI JEFES</b>: cada 2 minutos sale un mini jefe, y al caer suelta un cofre.', '<b>BICHOS SHINY</b>: de vez en cuando sale un bicho brillante (más duro, con más experiencia y con cofre), y al menos uno cada 3 minutos.'],
+    joke: ['Microblizz ha puesto purpurina a sus empleados. Dice que ahora cobran más y pegan más.'] },
   { v: '0.1.18', real: ['<b>PVP VUELVE A SU NOMBRE</b>: ajustes de textos en español.'],
     joke: ['Microblizz ha deshecho el cambio de una sigla. Dice que ya estaba acostumbrado.'] },
   { v: '0.1.17', real: ['<b>MENOS TECNICISMOS</b>: repasados textos en español para que se entiendan mejor.'],

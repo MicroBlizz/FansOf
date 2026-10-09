@@ -19,7 +19,7 @@ const CONSEJOS = [
   { k: 'passpvp', nuevo: true, si: () => curScreen() === 'scr-pass' && passTab === 'p', sel: '#pass-top .pass-tab.pt-p', text: 'El <b>PASE PVP</b> solo sube jugando contra personas: <b>+40</b> por partida y <b>+100</b> si ganas. Sus premios son solo para presumir, porque aquí gana el que mejor juega. Microblizz no soportaba no cobrar nada, así que se inventó el <b>Pase del Pase</b>.' },
   { k: 'armario', nuevo: true, si: () => curScreen() === 'scr-armario', sel: '#scr-armario .h2', text: 'Tu <b>ARMARIO</b>: marcos para tu cara y títulos para debajo de tu nombre. No dan ni un punto de vida, pero hay que tener estilo hasta en el paro. Se ganan en los pases: toca uno para ponértelo.' },
   { k: 'shop', si: () => curScreen() === 'scr-shop', sel: '#scr-shop .h2', text: 'La <b>TIENDA</b>. Aquí tienes un <b>regalo gratis cada día</b>: no te lo dejes. Lo demás te lo explica mejor Microblizz con tu tarjeta de crédito.' },
-  { k: 'salon', si: () => curScreen() === 'scr-salon', sel: '#scr-salon .h2', text: 'El <b>SALÓN DE LA FAMA</b>: los mejores fans del mundo en estrellas de campaña y en poder. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.' },
+  { k: 'salon', si: () => curScreen() === 'scr-salon', sel: '#scr-salon .h2', text: 'El <b>SALÓN DE LA FAMA</b>: los mejores fans del mundo en estrellas de campaña, en poder y en copas PvP. Lo cuenta todo el servidor, así que aquí no se sube pagando… de momento.' },
   { k: 'ruleta', si: () => curScreen() === 'scr-roulette', sel: '#btn-rl', text: 'La <b>RULETA</b> de Microblizz decide antes de jugar un castigo para ti, una ventaja para la CPU o las dos. Trucada, por supuesto. A cambio, el premio es mucho mayor.' },
 ];
 function consejoWant() {

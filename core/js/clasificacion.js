@@ -17,9 +17,17 @@ const SALON_EXCUSAS = [
   'Fecha de apertura: Pronto™. Es el mismo Pronto™ que prometimos en 2019, pero ahora con más sinergias.',
   'Puedes reservar tu primer puesto por solo 19,99 €. No te garantiza nada, pero te da una sensación muy agradable.',
   'Nuestros mejores ingenieros están trabajando en ello. Bueno, uno. Es el becario. Está de vacaciones.',
-  'Esta pestaña ha sido adquirida por Microblizz por 69.000 millones. Su único cambio: ahora tiene el logo más grande.',
+  'Esta sección ha sido adquirida por Microblizz por 69.000 millones. Su único cambio: ahora tiene el logo más grande.',
   'Hemos encargado un estudio de 400 páginas para decidir de qué color pintar el cartel. Ha salido amarillo.',
-  'Las copas ya están compradas. Las hemos guardado en una caja de botín: te tocarán con un 0,03 % de probabilidad.',
+  'Los premios ya están comprados. Los hemos guardado en una caja de botín: te tocarán con un 0,03 % de probabilidad.',
+  'Hemos contratado a una consultora para acabar antes. Su primera recomendación: una reunión para planificar la siguiente reunión.',
+  'Las obras van según lo previsto. Lo previsto era no acabar nunca.',
+  'Para que esto abra antes, puedes comprar el Pase de Obras Premium. Incluye un casco amarillo (cosmético, no protege).',
+  'El cartel ha costado más que todo lo que hay detrás. Prioridades.',
+  'Retraso causado por factores externos: el becario ha encontrado otro trabajo. Con sueldo.',
+  'Estamos escuchando a la comunidad. Y la comunidad pide que acabemos. Seguimos escuchando.',
+  'Microblizz anuncia una versión remasterizada de esta obra. Es la misma, pero con el cartel en 4K.',
+  'Toda la información sobre la apertura se dará en la MicroBlizzCon. Las entradas cuestan 300 €.',
 ];
 const SALON_UI = { tab: '', cache: {}, frase: 0, pide: 0 };
 const SALON_ESPERA = 60000;   // lo que dura en memoria una clasificación ya pedida (no se pregunta al servidor en cada toque)

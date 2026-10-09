@@ -61,4 +61,9 @@ IDIOMA.add({
   "Microblizz asegura que el chat nunca se fue del PvP: estaba de descanso.": "Microblizz insists the chat never left PvP: it was on a break.",
   "<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» y, si entras en PvP sin cuenta, te sale una ventana para crearla o entrar con Google o con tu email (y al terminar pasas directo a PvP). También hemos afinado el PvP para que dos navegadores distintos jueguen la misma partida.": "<b>EASIER SIGN-IN</b>: the menu has a «Sign in / create account» button and, if you enter PvP without an account, a window lets you create one or sign in with Google or email (then you go straight into PvP). We also tuned PvP so two different browsers play the same match.",
   "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
+  "ÚLTIMA HORA EN EL PVP": "LAST HOUR IN PVP",
+  "Partidas: %1 en la última hora · %2 en total": "Matches: %1 in the last hour · %2 in total",
+  "Unidades caídas: %1": "Units fallen: %1",
+  "Hechizos lanzados: %1": "Spells cast: %1",
+  "CAOS gastado: %1": "CHAOS spent: %1",
 });

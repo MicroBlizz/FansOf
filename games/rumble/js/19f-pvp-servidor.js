@@ -75,8 +75,9 @@ PVPNET.redes.servidor = {
         if (vivo && cola.length) bucle();   // lo que se ha encolado mientras esperábamos sale ya
       };
       // cerrar la partida: ganador ('p' o 'e' del motor) → el servidor decide los puntos; si el rival aún no ha cerrado se vuelve a preguntar
-      const cerrar = async (ganadorEquipo, huella, alResultado) => {
+      const cerrar = async (ganadorEquipo, huella, alResultado, stats) => {
         if (cerrando) return; cerrando = true; vivo = false; clearInterval(temporizador);
+        if (stats) CUENTA.rpc('pvp_anotar', { p_sala: sala, p_stats: stats }).catch(() => { /* son solo cifras para curiosear */ });
         const g = ganadorEquipo === 'p' ? 'a' : 'b';
         for (let i = 0; i < 30; i++) {
           try { const r = await CUENTA.rpc('pvp_cerrar', { p_sala: sala, p_ganador: g, p_huella: typeof huella === 'string' ? parseInt(huella, 16) : huella }); if (alResultado) alResultado(r); if (r && r.estado !== 'esperando') return; } catch (e) { if (alResultado) alResultado({ error: pvpErrorTexto(e) }); return; }
@@ -89,5 +90,6 @@ PVPNET.redes.servidor = {
     sondeo();
     return { cancelar() { activo = false; clearTimeout(tic); if (!sala) CUENTA.rpc('pvp_salir', {}).catch(() => { /* ya no estaba en la cola */ }); } };
   },
+  async resumen() { return CUENTA.rpc('pvp_resumen', {}); },   // partidas, unidades caídas, hechizos y CAOS de la última hora
   async clasificacion(modo) { return CUENTA.rpc('pvp_clasificacion', { p_juego: AJUSTES.id, p_modo: modo }); },
 };

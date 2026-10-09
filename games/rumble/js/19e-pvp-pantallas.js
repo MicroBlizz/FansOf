@@ -19,7 +19,16 @@ function pvpPantalla() {
   if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
 }
+async function pvpResumen() {
+  const c = $('#pvp-resumen'); c.hidden = true;
+  if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
+  try {
+    const r = await PVPNET.redes.servidor.resumen(); if (!r || $('#scr-pvp').hidden) return;
+    c.innerHTML = `<div class="ar-lbl ol">ÚLTIMA HORA EN EL PVP</div><div class="pvp-rs"><span>${`Partidas: ${fmt(r.hora)} en la última hora · ${fmt(r.total)} en total`}</span><span>${`Unidades caídas: ${fmt(r.muertes)}`}</span><span>${`Hechizos lanzados: ${fmt(r.hechizos)}`}</span><span>${`CAOS gastado: ${fmt(r.caos)}`}</span></div>`; c.hidden = false;
+  } catch (e) { /* sin conexión: sin resumen */ }
+}
 async function pvpClasificacion() {
+  pvpResumen();
   const caja = $('#pvp-clasif'); caja.innerHTML = '';
   if (PVPNET.actual !== 'servidor' || !PVPNET.redes.servidor.disponible()) return;
   try {
@@ -100,7 +109,8 @@ function pvpShowEnd() {
   const rw = $('#end-rewards'); rw.innerHTML = '';
   if (PVP.net && PVP.net.cerrar && G.winner && PVP.fin && motivo !== 'desync' && motivo !== 'error') {   // el servidor decide los puntos
     rw.innerHTML = '<div class="rw-xp">Esperando al servidor…</div>';
-    PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; });
+    const mi = verEquipo(), ot = PVP.peer, pl = S[mi].plays || {}, stats = { m: S[ot].kills, h: Object.keys(pl).filter(isSpell).reduce((n, k) => n + pl[k], 0), c: Math.round(S[mi].spent) };   // lo que ve este cliente: mis bajas por culpa del rival, mis hechizos y mi CAOS (los dos clientes suman el total)
+    PVP.net.cerrar(G.winner, PVP.fin.h, r => { pvpPase(r); if ($('#scr-end').hidden) return; rw.innerHTML = r && r.error ? `<div class="rw-xp">${esc(r.error)}</div>` : r && r.puntos != null ? `<span class="rw-chip big ol">${fmt(r.puntos)} PUNTOS</span>` : r && r.estado === 'esperando' ? '<div class="rw-xp">Esperando a que el rival confirme el resultado…</div>' : r && r.estado === 'discutida' ? '<div class="rw-xp">El resultado está en revisión: no cuenta por ahora.</div>' : ''; }, stats);
   } else rw.innerHTML = PVP.net && PVP.net.cerrar ? '<div class="rw-xp">Esta partida no cuenta para nadie.</div>' : '<div class="rw-xp">Partida de pruebas: de momento sin puntos ni premios.</div>';
   $('#end-pass').innerHTML = ''; $('#end-quote').textContent = NUCLEO.desarrollo && PVP.stats ? `Esperas al rival: ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · retardo ${PVP.D} · v${typeof NUCLEO !== 'undefined' && NUCLEO.version || ''}` : '';
   $('#st-cards').textContent = S[mi].deployed; $('#st-kills').textContent = S[mi].kills; $('#st-chaos').textContent = Math.round(S[mi].spent);

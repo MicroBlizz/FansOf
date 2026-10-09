@@ -380,6 +380,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/menus-pases.css` · 21 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
+- `core/css/miniaturas.css` · 2 KB
 - `core/idioma/en-extra.js` · 18 KB
 - `core/idioma/en-frases.js` · 2 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
@@ -410,6 +411,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/serie/config.js` · 11 KB · W, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
+- `core/js/serie/miniaturas-armas.js` · 11 KB
+- `core/js/serie/miniaturas-cabeza-y-accesorios.js` · 18 KB
+- `core/js/serie/miniaturas.js` · 12 KB · MINIS, MINI_CACHE, miniSvg, miniIcono, miniFondo
 - `core/js/serie/arte/animales.js` · 22 KB
 - `core/js/serie/arte/base.js` · 3 KB · shape, el, rr, poly, line, dot, heartPath, txt, starPath, otxt, spBg, ART, BOX
 - `core/js/serie/arte/ciber.js` · 13 KB

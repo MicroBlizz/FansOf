@@ -79,6 +79,7 @@ THEMES.creadores = { grad: ['#6fb45a', '#76bc60', '#62a84e'], greens: ['#4f9a3f'
 // ---- objeto de facción
 ITEMS.taza_indie = { name: 'Taza «Sin crunch»', slot: 'acc', rar: 'legendary', fac: 'creadores', st: [18, 1.2], desc: '+{0} % de daño y se cura un {1} % de su vida cada segundo. Pone «Me voy a mi hora».' };
 FAC_ITEM.creadores = 'taza_indie';
+MINIS.taza_indie = '<path d="M44 29h3.5a6.5 6.5 0 0 1 0 13H44" fill="none"~3.2/><path d="M14 22h30v24a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="#5ef2d0"~3/><ellipse cx="29" cy="22" rx="15" ry="3.6" fill="#7a4a24"~2.6/><circle cx="29" cy="38" r="8.5" fill="#fff6ea"~2.4/><path d="M29 38v-5.5M29 38l4 2.4" ~2.4/><path d="M18 28v14" stroke="#c8fff2" stroke-width="2.6" stroke-linecap="round"/><path d="M23 15c-3-3 3-5 0-9M31 15c-3-3 3-5 0-9" stroke="#cdb9ea" stroke-width="2.6" fill="none" stroke-linecap="round"/>';   // su miniatura (la ayuda está en core/js/serie/miniaturas.js)
 
 // ---- campaña 3: 4 mundos
 WORLDS.push(

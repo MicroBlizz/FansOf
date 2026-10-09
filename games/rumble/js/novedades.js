@@ -3,8 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
-  { v: '0.9.97', real: ['<b>PVP CON TU EJÉRCITO</b>: en la pantalla de PvP ya puedes elegir cualquiera de los ejércitos que tengas desbloqueados, no solo los Animales Locos.'],
-    joke: ['Microblizz estaba convencido de que todos los ejércitos querían ser Animales Locos. Ha tenido que preguntar.'] },
+  { v: '0.9.98', real: ['<b>TODAS LAS FACCIONES EN EL PVP</b>: en la pantalla de PvP salen todas las facciones; las que aún no tienes desbloqueadas se ven en gris.'],
+    joke: ['Microblizz ha puesto las facciones bloqueadas en gris para que dé más ganas de desbloquearlas. Funciona.'] },
+  { v: '0.9.97', real: ['<b>PVP CON TU FACCIÓN</b>: en la pantalla de PvP ya puedes elegir cualquiera de las facciones que tengas desbloqueadas, no solo los Animales Locos.'],
+    joke: ['Microblizz estaba convencido de que todas las facciones querían ser Animales Locos. Ha tenido que preguntar.'] },
   { v: '0.9.96', real: ['<b>PVP ABIERTO (EN PRUEBAS)</b>: ya puedes retar a otros jugadores en el modo Estándar. Está en pruebas: puede ir a tirones, y las puntuaciones son de la Temporada 0, que se borrará cuando todo vaya estable. Cada temporada se reiniciará. Necesitas vincular tu cuenta (Opciones → Cuenta). También: sin botón x2 en PvP, rendirse funciona y el retardo de red es más amplio.'],
     joke: ['Microblizz abre el PvP «en pruebas», que en lenguaje de empresa significa que los probadores sois vosotros.'] },
   { v: '0.9.95', real: ['<b>PVP EN OBRAS</b>: cerramos el PvP un rato para afinar la conexión con el servidor: las partidas iban a tirones. Volverá en cuanto vaya fino.'],

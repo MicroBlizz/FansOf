@@ -82,3 +82,4 @@
 .pvp-fac[aria-pressed="true"] { border-color: #ffe14d; box-shadow: 0 0 0 2px #ffe14d55; }
 .pvp-fac:disabled { opacity: .5; }
 .pvp-fac canvas { width: 100%; height: 100%; display: block; }
+.pvp-fac.bloq { filter: grayscale(1); opacity: .45; }

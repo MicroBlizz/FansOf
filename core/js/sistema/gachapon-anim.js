@@ -1,5 +1,6 @@
-// Fans Of · Gashapón animado (tras el flag 'gashapon-nuevo'): la máquina clásica con bolas que se mueven de verdad, la bola que cae por dentro hasta la
-// trampilla y la revelación a pantalla completa (la cápsula vuela al centro, tiembla más cuanto mejor es y se abre con rayos). Lo usan todos los juegos con gashapón.
+// Fans Of · Gashapón animado (tras el flag 'gashapon-nuevo'): la revelación a pantalla completa (la cápsula sale de la máquina, vuela al centro, tiembla más
+// cuanto mejor es y se abre con rayos) y el marco de las máquinas animadas. Cada máquina es un «estilo»: la clásica (gachapon-clasica.js) la usan todos los juegos;
+// un juego puede añadir otro con GACHA_FX.estilo('nombre', {...}) y ponérselo a una máquina suya (MAQUINAS.x.estilo). Ver la clásica como ejemplo.
 // gachapon.js la llama: GACHA_FX.on() dice si está abierta; GACHA_FX.maquina(cv, X, tab) dibuja la máquina; GACHA_FX.tirada(rarezas, X, mostrar) hace la animación
 // y al abrirse la cápsula llama a mostrar() (la carta o la cuadrícula de siempre). Tocar la pantalla durante la animación la salta.
 'use strict';
@@ -16,8 +17,8 @@ const GACHA_FX = (() => {
   });
   const BOLAS = ['#ff5fa8', '#ffe14d', '#7be04a', '#63cfe0', '#d08cff', '#ffb04f'], CONF = ['#ffcb3d', '#ff5fa8', '#7df3ff', '#7be04a', '#fff6ea'];
   const TIEMBLA = { basic: 1, common: 1, rare: 2, epic: 3, legendary: 3, mythic: 3 };
-  const COLORES = { ab: ['#e63946', '#b0213a', '#8a1f30'], eq: ['#2e6fd8', '#1d3f8a', '#173d8f'] };   // cuerpo, detalles, base (las máquinas de un juego traen las suyas: X.maquina)
   const ease = t => (t <= 0 ? 0 : t >= 1 ? 1 : 1 - Math.pow(1 - t, 3)), easeIn = t => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * t);
+  const easeIO = t => (t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const back = t => { t = Math.min(1, Math.max(0, t)) - 1; return t * t * (2.9 * t + 1.9) + 1; };
   const lerp = (a, b, k) => a + (b - a) * k, rnd = (a, b) => a + Math.random() * (b - a);
   const top = r => RAR_ORDER[r] <= 1;   // épica o mejor
@@ -57,76 +58,26 @@ const GACHA_FX = (() => {
     return arr.filter(p => p.vida > 0);
   }
 
-  /* ---------- la máquina (se dibuja en un espacio de 360 de ancho y se encoge a 300 × 350) ---------- */
-  const LW = 300, LH = 350, ES = 0.74, DX = 16.8, DY = -28.9, GX = 180, GY = 168, GR = 104;
-  const M = { bolas: null, manivela: 0, st: null, ultimo: 0, parts: [] };
-  const nuevaBola = (x, y) => ({ x, y, vx: rnd(-40, 40), vy: 0, r: 14, col: BOLAS[Math.floor(rnd(0, 6))], rot: rnd(0, 6) });
-  function fisica(dt) {
-    const B = M.bolas, n = B.length;
-    for (const b of B) {
-      b.vy += 1000 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.rot += b.vx * dt * 0.05;
-      const dx = b.x - GX, dy = b.y - GY, d = Math.hypot(dx, dy), lim = GR - b.r - 4;
-      if (d > lim) { const nx = dx / d, ny = dy / d; b.x = GX + nx * lim; b.y = GY + ny * lim; const vn = b.vx * nx + b.vy * ny; if (vn > 0) { b.vx -= 1.45 * vn * nx; b.vy -= 1.45 * vn * ny; } b.vx *= 0.985; }
-    }
-    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
-      const a = B[i], b = B[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), m = a.r + b.r;
-      if (d < m && d > 0.01) { const nx = dx / d, ny = dy / d, o = (m - d) / 2; a.x -= nx * o; a.y -= ny * o; b.x += nx * o; b.y += ny * o; const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny; if (rv < 0) { const im = -1.25 * rv / 2; a.vx -= im * nx; a.vy -= im * ny; b.vx += im * nx; b.vy += im * ny; } }
-    }
-  }
-  function rellena() { const S = M.st; if (S && S.quitada) { M.bolas.push(nuevaBola(GX + rnd(-10, 10), 80)); S.quitada = false; } }
-  // la tirada en la máquina: gira (se revuelven) → compuerta → tubo (se ve por la ventanita) → bandeja → fuera (la revelación se la lleva)
-  function actualiza(dt) {
-    for (let s = 0; s < 3; s++) fisica(dt / 3);
-    const S = M.st; if (!S) return; S.t += dt;
-    if (S.salta && S.f !== 'fuera') { S.f = 'fuera'; S.llega(); return; }
-    if (S.f === 'gira') {
-      M.manivela += dt * 9; if (Math.floor(S.t / 0.2) !== S.clic) { S.clic = Math.floor(S.t / 0.2); play('gcrank'); }
-      for (const b of M.bolas) if (Math.random() < 0.25) { b.vy -= rnd(500, 1100); b.vx += rnd(-420, 420); }
-      if (S.aviso && S.t > 0.35 && Math.random() < 0.55) { const a = rnd(0, TAU), r = rnd(0, 80); chispas(M.parts, GX + Math.cos(a) * r, GY + Math.sin(a) * r, 1, [S.aviso, '#fff6ea'], 40, 'estrella'); }
-      if (S.t > 0.9) { let k = 0; M.bolas.forEach((b, i) => { if (b.y > M.bolas[k].y) k = i; }); const b = M.bolas.splice(k, 1)[0]; S.quitada = true; S.bx = b.x; S.by = b.y; S.f = 'compuerta'; S.t = 0; }
-    } else if (S.f === 'compuerta') { if (S.t > 0.22) { S.f = 'tubo'; S.t = 0; play('clank'); } }
-    else if (S.f === 'tubo') { if (S.t > 0.42) { S.f = 'bandeja'; S.t = 0; play('land'); } }
-    else if (S.f === 'bandeja') { if (S.t > 0.32) { S.f = 'fuera'; S.llega(); } }
-    else if (S.f === 'fuera' && S.hecho) { rellena(); M.st = null; }
-  }
-  function dibujaMaquina(c, X, tab, t) {
-    const S = M.st, MC = X ? X.maquina : COLORES[tab] || COLORES.ab, nombre = X ? X.nombre : tab === 'eq' ? 'EQUIPO' : 'HABILIDADES';
-    fs(c, cc => cc.ellipse(180, 506, 118, 12, 0, 0, TAU), 'rgba(0,0,0,.35)', 0);
-    fs(c, rec(78, 468, 204, 32, 12), MC[2], 4);
-    fs(c, rec(84, 276, 192, 200, 24), MC[0], 4); fs(c, rec(92, 286, 14, 180, 7), 'rgba(255,255,255,.16)', 0);
-    fs(c, rec(104, 290, 152, 32, 11), OL, 0); texto(c, nombre, 180, 307, nombre.length > 10 ? 14 : 17, '#ffcb3d', 0);
-    for (let i = 0; i < 9; i++) {   // bombillas: despacio en reposo, deprisa al tirar; con aviso dorado se encienden todas
-      const x = 100 + i * 20, on = S && S.f === 'gira' ? (Math.floor(t * 16) + i) % 3 === 0 : (Math.floor(t * 3) + i) % 3 === 0, oro = S && S.aviso === '#ffcb3d' && S.f === 'gira' && S.t > 0.5;
-      fs(c, cir(x, 333, 4.5), oro ? '#ffcb3d' : on ? '#fff6a8' : 'rgba(0,0,0,.28)', 2); if (on || oro) brillo(c, x, 333, 12, oro ? '#ffcb3d' : '#fff6a8', 0.5);
-    }
-    fs(c, rec(102, 350, 42, 62, 11), MC[1], 3.5); fs(c, rec(118, 360, 10, 30, 4), OL, 0);
-    c.save(); c.translate(238, 380); fs(c, cir(0, 0, 25), '#ffcb3d', 4); c.rotate(M.manivela); fs(c, rec(-21, -6, 42, 12, 6), '#e0a92a', 3.5); fs(c, cir(17, 0, 7), '#fff6ea', 3); c.restore();
-    fs(c, rec(158, 338, 44, 74, 14), 'rgba(20,10,34,.85)', 4);
-    if (S && S.f === 'tubo') { c.save(); c.beginPath(); rrPath(c, 160, 340, 40, 70, 12); c.clip(); capsula(c, 180, lerp(300, 430, easeIn(S.t / 0.42)), 14, S.col, S.t * 8); c.restore(); }
-    c.save(); c.beginPath(); rrPath(c, 160, 340, 40, 70, 12); c.clip(); c.fillStyle = 'rgba(190,230,255,.16)'; c.fillRect(160, 340, 40, 70); c.fillStyle = 'rgba(255,255,255,.3)'; c.fillRect(165, 342, 6, 66); c.restore();
-    fs(c, rec(138, 420, 84, 44, 14), OL, 0);
-    const flap = S && (S.f === 'bandeja' || (S.f === 'fuera' && !S.hecho)) ? 1 : S && S.f === 'tubo' ? ease((S.t - 0.3) / 0.12) : 0;
-    if (S && S.f === 'bandeja') { const k = S.t / 0.32, b = Math.abs(Math.sin(k * Math.PI * 2.2)) * (1 - k) * 14; capsula(c, 180, 440 - b, 14, S.col, k * 3); }
-    fs(c, rec(140, 420, 80, 20 * (1 - flap) + 3, 7), MC[1], 3);
-    texto(c, 'MICROBLIZZ', 180, 486, 11, 'rgba(255,255,255,.7)', 0);
-    fs(c, rec(126, 252, 108, 32, 12), '#c9d2e3', 4); c.fillStyle = '#9ca3af'; c.fillRect(128, 262, 104, 8);
-    if (S && S.f === 'compuerta') { const k = easeIn(S.t / 0.22); capsula(c, lerp(S.bx, 180, k), lerp(S.by, 268, k), 14, S.col, S.t * 6); }
-    fs(c, cir(GX, GY, GR + 4), 'rgba(160,210,255,.14)', 0);
-    c.save(); c.beginPath(); c.arc(GX, GY, GR, 0, TAU); c.clip(); for (const b of M.bolas) capsula(c, b.x, b.y, b.r, b.col, b.rot); c.restore();
-    c.beginPath(); c.arc(GX, GY, GR + 4, 0, TAU); c.lineWidth = 5; c.strokeStyle = OL; c.stroke();
-    c.beginPath(); c.arc(GX - 4, GY - 4, GR - 14, Math.PI * 1.12, Math.PI * 1.42); c.lineWidth = 9; c.strokeStyle = 'rgba(255,255,255,.55)'; c.stroke();
-    fs(c, cir(GX + 52, GY - 58, 6), 'rgba(255,255,255,.6)', 0);
-    fs(c, rec(148, 54, 64, 18, 7), MC[0], 4); fs(c, cir(180, 50, 9), '#ffcb3d', 3.5);
-  }
+  /* ---------- las máquinas: cada estilo se dibuja en su propio espacio y se encoge a 300 × 350 (vista: escala y desplazamiento) ---------- */
+  // Un estilo: { primera: 'fase inicial', vista: { es, dx, dy }, salida: [x, y] (por dónde sale la cápsula), inicia(), actualiza(dt, S), dibuja(c, X, tab, t, S), acaba(S) }.
+  // S es la tirada en curso: S.f la fase, S.t el tiempo en ella (lo cuenta este archivo), S.aviso el color de las chispas de aviso (o null), S.col el color de la cápsula;
+  // cuando la cápsula llega a la salida, el estilo pone S.f = 'fuera' y llama a S.llega(). acaba(S) deja la máquina como estaba (cuando se cierra el premio).
+  const LW = 300, LH = 350, ESTILOS = {};
+  const M = { st: null, ultimo: 0, parts: [] };
+  const estiloDe = X => (X && X.estilo && ESTILOS[X.estilo]) || ESTILOS.clasica;
+  function acabaTirada() { const S = M.st; if (!S) return; S.hecho = true; if (S.estilo.acaba) S.estilo.acaba(S); M.st = null; }
   function maquina(cv, X, tab) {
     const R2 = 2; if (cv.width !== LW * R2 || cv.height !== LH * R2) { cv.width = LW * R2; cv.height = LH * R2; }
     cv.classList.add('nueva');
-    const c = cv.getContext('2d'), now = performance.now(), dt = Math.min(0.05, (now - (M.ultimo || now)) / 1000); M.ultimo = now;
-    if (!M.bolas) { M.bolas = []; for (let i = 0; i < 24; i++) M.bolas.push(nuevaBola(GX + rnd(-60, 60), 120 + rnd(0, 90))); }
-    actualiza(dt);
+    const E = estiloDe(X), c = cv.getContext('2d'), now = performance.now(), dt = Math.min(0.05, (now - (M.ultimo || now)) / 1000); M.ultimo = now;
+    if (E.inicia) E.inicia();
+    let S = M.st && M.st.estilo === E ? M.st : null;
+    if (S) { S.t += dt; if (S.salta && S.f !== 'fuera') { S.f = 'fuera'; S.llega(); } }
+    E.actualiza(dt, S && S.f !== 'fuera' ? S : null);
+    if (S && S.f === 'fuera' && S.hecho) { acabaTirada(); S = null; }
     c.setTransform(R2, 0, 0, R2, 0, 0); c.clearRect(0, 0, LW, LH);
-    c.setTransform(R2 * ES, 0, 0, R2 * ES, R2 * DX, R2 * DY); c.lineJoin = 'round'; c.lineCap = 'round';
-    dibujaMaquina(c, X, tab, now / 1000);
+    const V = E.vista; c.setTransform(R2 * V.es, 0, 0, R2 * V.es, R2 * V.dx, R2 * V.dy); c.lineJoin = 'round'; c.lineCap = 'round';
+    E.dibuja(c, X, tab, now / 1000, S);
     M.parts = pinta(c, M.parts, dt);
   }
 
@@ -147,19 +98,19 @@ const GACHA_FX = (() => {
   function tirada(rars, X, mostrar) {
     if (REDUCED) { setTimeout(mostrar, 250); return; }   // con «menos animaciones»: directo al premio
     if (F.raf) terminar(false);
-    rellena();
+    if (M.st) acabaTirada();
     const best = rars.reduce((a, r) => (RAR_ORDER[r] < RAR_ORDER[a] ? r : a)), cols = X ? X.colores : RARITY;
     // el aviso en la cúpula: casi siempre con legendaria (dorado) o épica (morado)… y alguna vez de farol
     const p = Math.random(), aviso = best === 'legendary' || best === 'mythic' ? (p < 0.75 ? '#ffcb3d' : p < 0.9 ? '#d08cff' : null) : best === 'epic' ? (p < 0.6 ? '#d08cff' : null) : p < 0.1 ? '#d08cff' : null;
     F.plan = { rars, best, cols, mostrar, visto: false, carta: -1 }; F.parts = []; F.rev = null; F.salta = false; F.sacudida = 0;
     colocar();
-    M.st = { f: 'gira', t: 0, clic: -1, aviso, col: BOLAS[Math.floor(rnd(0, 6))], llega: empieza };
+    const E = estiloDe(X); M.st = { estilo: E, f: E.primera, t: 0, clic: -1, aviso, col: BOLAS[Math.floor(rnd(0, 6))], llega: empieza };
     play('roll'); F.ultimo = performance.now(); F.raf = requestAnimationFrame(frame);
   }
   function empieza() {   // la bola sale de la trampilla de la máquina y empieza la revelación
-    const P = F.plan, cvm = $('#gacha-cv'), r = cvm.getBoundingClientRect(), s = $('#scr-gacha').getBoundingClientRect(), k = r.width / LW || 1;
-    const x0 = r.left - s.left + (DX + 180 * ES) * k, y0 = r.top - s.top + (DY + 440 * ES) * (r.height / LH || 1);
-    F.rev = { t: 0, x0, y0, r0: 14 * ES * k, col: M.st ? M.st.col : BOLAS[0], multi: P.rars.length > 1, sube: (P.best === 'legendary' || P.best === 'mythic') && Math.random() < 0.5 };
+    const P = F.plan, E = M.st ? M.st.estilo : estiloDe(null), V = E.vista, cvm = $('#gacha-cv'), r = cvm.getBoundingClientRect(), s = $('#scr-gacha').getBoundingClientRect(), k = r.width / LW || 1;
+    const x0 = r.left - s.left + (V.dx + E.salida[0] * V.es) * k, y0 = r.top - s.top + (V.dy + E.salida[1] * V.es) * (r.height / LH || 1);
+    F.rev = { t: 0, x0, y0, r0: 14 * V.es * k, col: M.st ? M.st.col : BOLAS[0], multi: P.rars.length > 1, sube: (P.best === 'legendary' || P.best === 'mythic') && Math.random() < 0.5 };
     if (F.salta) F.rev.t = 99;
   }
   function ensenar() {   // la carta (o la cuadrícula) de siempre, que entra con su animación
@@ -172,7 +123,7 @@ const GACHA_FX = (() => {
   function terminar(salida) {
     if (F.raf) cancelAnimationFrame(F.raf); F.raf = 0;
     if (F.plan && !F.plan.visto) ensenar();
-    if (M.st) M.st.hecho = true;
+    if (M.st) M.st.hecho = true;   // la máquina vuelve a su sitio en el siguiente dibujo (acaba del estilo)
     if (F.cv) F.cv.hidden = true;
     const gr = $('#gacha-result'); if (gr && (gr.hidden || salida)) { gr.classList.remove('fx'); gr.style.top = gr.style.bottom = gr.style.height = ''; }
     F.rev = null; F.plan = null; F.parts = [];
@@ -270,5 +221,7 @@ const GACHA_FX = (() => {
     if (t > 0.7 && t < tFin) { c.globalAlpha = 0.55; texto(c, 'Toca para saltar', W / 2, H - 26, 13, '#fff6ea', 4); c.globalAlpha = 1; }
     if (t > tFin) ensenar();
   }
-  return { on, maquina, tirada };
+  // para los estilos: las ayudas de dibujo y las chispas de la máquina
+  const util = { TAU, BOLAS, fs, cir, rec, texto, capsula, brillo, ease, easeIn, easeIO, back, lerp, rnd, chispas: (x, y, n, cols, v, tipo) => chispas(M.parts, x, y, n, cols, v, tipo) };
+  return { on, maquina, tirada, estilo: (nombre, e) => { ESTILOS[nombre] = e; }, util };
 })();

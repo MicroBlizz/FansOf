@@ -76,7 +76,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/economia-sombra.js` · 8 KB · ECO_SOMBRA
 - `core/js/sistema/economia.js` · 6 KB · TOPES_COMUNES, ECO
 - `core/js/sistema/flags.js` · 7 KB
-- `core/js/sistema/gachapon-anim.js` · 24 KB · GACHA_FX
+- `core/js/sistema/gachapon-anim.js` · 20 KB · GACHA_FX
+- `core/js/sistema/gachapon-clasica.js` · 6 KB
 - `core/js/sistema/gachapon.js` · 16 KB · MAQUINAS, rarOfPull, gachaTab, pityLegObj, rollRarity, onePull, resultadoTirada, copiaDeServidor, pullCost, pull, acabarTirada, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, oddsHead, oddsLine, oddsPity, oddsNote, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
 - `core/js/sistema/horas-extra.js` · 11 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC
@@ -111,6 +112,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-18.js` · 3 KB
 - `games/rumble/idioma/en-19.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
+- `games/rumble/idioma/en-20.js` · <1 KB
+- `games/rumble/idioma/en-21.js` · 2 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
 - `games/rumble/idioma/en-5.js` · 11 KB
@@ -135,8 +138,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/06b-movimiento.js` · 12 KB · acquire, moveToward, explodeBeaver, attack, chainOne, knockBack, zapChain, updatePassives, dmgMult, cdMult, topOf
 - `games/rumble/js/06c-dano.js` · 18 KB · hurt, kill, passiveKill, PROJ, shoot, bounceShot, updateProjs
 - `games/rumble/js/06d-unidades.js` · 20 KB · updateUnit, summonTick, pulseTick, VIRAL, viralTick, teamFightTick, hackTick, blinkTick, shieldUpTick, actionTick, expireUnit, tauntTick, bunnyJump, updateStruct, updateBoss, separate, constrain
-- `games/rumble/js/06e-ia-y-partida.js` · 18 KB · chooseLane, aiUpdate, CONTRA, foeRoleDom, laneLess, aiGeneric, timeUp, endMatch, updateGame, updateParts, FUR, BIG, CORP_BIG, deathFx, structDeathFx
+- `games/rumble/js/06e-ia-y-partida.js` · 20 KB · chooseLane, aiUpdate, CONTRA, foeRoleDom, laneLess, aiGeneric, timeUp, endMatch, updateGame, updateParts, FUR, BIG, CORP_BIG, deathFx, structDeathFx
 - `games/rumble/js/06f-sanadores.js` · 6 KB · healFwd, HEAL_RANGED_PEN, HEAL_TOWER_BACK, healAim, inHealCone, healOne, healPulse, followAlly
+- `games/rumble/js/06g-ia-tacticas.js` · 4 KB · aiNivel, AI_PACIENCIA, AI_CASTIGO, AI_ESPERA, AI_ABRE, aiTac, aiEstima, aiLaneCastigo, aiPapel, aiCombo, AI_DOBLE, aiDoblePrepara, aiDoble
 - `games/rumble/js/07a-escena.js` · 13 KB · cv, ctx, VIEW, CLOUDS, render, AMB, AMB_KIND, AMB_COL, ambNew, drawAmbient, drawWater, drawClouds, drawFog, drawZones
 - `games/rumble/js/07b-unidades.js` · 20 KB · drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_NECK, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon
 - `games/rumble/js/07c-edificios-y-disparos.js` · 21 KB · drawStruct, bar, text, drawBars, flame, drawProj
@@ -160,6 +164,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/14b-gachapon-y-mazo.js` · 17 KB · DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardDeServidor, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckRefresh, deckTile, deckEditorHtml, deckBind, deckHoldT, deckHeld, deckHold, deckSave, deckPoolTap, deckSlotTap, deckDone
 - `games/rumble/js/14c-modo-jefe.js` · 7 KB · bossVer, BOSS_AURA, BOSS_HP_MAX, buildBossPrep, bossFacBar, facItemsRetro
 - `games/rumble/js/14d-hechizos-dibujos.js` · 6 KB · FX_SOLO, FX_GORDO, drawSpellBit
+- `games/rumble/js/14e-garra.js` · 7 KB
 - `games/rumble/js/15-anuncios.js` · 13 KB · ADS, AD_JOKES, TV_SVG, adsState, adsFree, adLeft, adBtn, adRun, watchAd, adOverlay, adIdleUI, idleGrantHours, adEndOffer, adGachaOffer, adShopOffer, adMissionOffer
 - `games/rumble/js/16-camara.js` · 7 KB · CAM, camTouch, camPinch, camLive, camScreen, camClamp, camReset, camZoomAt, camApply, camBtn, camTouchEnd, FEED, feedAdd, feedDraw
 - `games/rumble/js/17a-campos.js` · 14 KB · TERRAINS, TERRAIN_OF, BSTYLES, TR, terrainFor, pvpTerreno, terrainPlace, terrainStart, inZone, inTunnel, tSay, terrainUpdate
@@ -177,7 +182,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 5 KB · SALON_PVP, SALON_DIF, salonDif, MIT_VISTAS, mitVista, mitV, SALON
-- `games/rumble/js/novedades.js` · 28 KB · NEWS
+- `games/rumble/js/novedades.js` · 29 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 9 KB
 - `games/rumble/js/retos-logros-2.js` · 5 KB · LOGROS_ANTES, PVP_LIGAS, armGanables, armTengo
 - `games/rumble/js/retos-logros.js` · 25 KB

@@ -196,7 +196,8 @@ function setupMatch(mode, lvl, cd, pvp) {
     if (G.diff === 'ceo') setupCeoQuick();   // v0.9.71
   }
   const deck = mode === 'arena' ? G.arenaDeck : mode === 'sandbox' ? null : mode === 'boss' ? WORLDS[G.bossWi].levels[3].deck || null : G.level && G.level.deck ? G.level.deck : G.efac === 'microblizz' && mode === 'quick' ? ['becario', 'starbot', 'fallen'] : null;
-  G.classicAI = G.efac === 'microblizz' && !!deck && deck.every(k => ['becario', 'starbot', 'fallen'].includes(k));
+  // la IA clásica (guion fijo, muy flojita) solo queda en las primeras fases de la campaña y en la partida rápida de quien no ha acabado el tutorial; v3: lo demás, la IA nueva con tácticas
+  G.classicAI = G.efac === 'microblizz' && !!deck && deck.every(k => ['becario', 'starbot', 'fallen'].includes(k)) && (mode === 'camp' || !SAVE.tut.done);
   G.edeck = deck;
   G.eextra = mode === 'arena' ? (G.arenaSpells || []) : mode === 'sandbox' || mode === 'pvp' ? [] : enemyExtras(mode, lvl);   // v0.9.15: hechizos y mata-sanadores de la CPU
   if (mode === 'boss' && BDIFF[G.bossDiff].gear) { const BD = BDIFF[G.bossDiff]; G.egear = ENEMY_GEAR[BD.gear][G.bossWi]; G.egearQ = BD.q; if (isCorp(G.efac)) G.egearOn = G.efac === 'phony' ? PH_GEAR_ON : G.efac === 'iahorro' ? IA_GEAR_ON : MB_GEAR_ON; }

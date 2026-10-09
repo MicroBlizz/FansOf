@@ -122,6 +122,15 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  return { version, nativa, idioma, elegirIdioma, desarrollo, estilos, juego, idiomaSolo };
+  // FLAGS DE DESARROLLO: lo nuevo o a medias se esconde tras NUCLEO.desarrollo (sin más) o, si hace falta un flag propio, tras NUCLEO.flag('nombre', 'qué hace').
+  // Solo vale true en modo desarrollo (y si no se ha apagado en el panel DEV); en la web publicada siempre es false. Cada flag queda registrado en el panel DEV.
+  // Al terminar la tarea, el flag se quita y el código queda como funcionalidad normal (ver CLAUDE.md).
+  const flagsDev = {};
+  const flag = (nombre, descripcion = '') => {
+    if (!desarrollo) return false;
+    flagsDev[nombre] = descripcion;
+    try { return localStorage.getItem('fansof-flag-' + nombre) !== '0'; } catch (e) { return true; }
+  };
+  return { version, nativa, idioma, elegirIdioma, desarrollo, flag, flagsDev, estilos, juego, idiomaSolo };
 })();
 const VERSION = NUCLEO.version;

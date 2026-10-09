@@ -86,6 +86,16 @@ function pintarTitulo() {
   pintarSprite(x, 'ceo', 210, 120, 0.6, 1, { alfa: 0.35 });
   pintarSprite(x, 'bunny', 210, 180, 1.05, 1);
 }
+$('#t-version').textContent = 'Combate por turnos · Prototipo ' + NEWS_VER;
+$('#b-opciones-t').onclick = () => { audioInit(); play('select'); abrirOpciones(); };
+$('#b-novedades').onclick = () => { audioInit(); play('select'); abrirNovedades(); };
+// el informe de la versión (lo monta el núcleo común: newsHtml); sale solo la primera vez que se abre tras actualizarse
+function abrirNovedades() {
+  ventana(`<h3 class="ol">NOVEDADES · ${NEWS_VER}</h3><div class="novedades">${newsHtml(NEWS)}</div><button class="btn naranja ol" id="n-ok">¡GENIAL!</button>`, () => {
+    $('#n-ok').onclick = () => { play('select'); cerrarVentana(); if (SAVE.seenVer !== NEWS_VER) { SAVE.seenVer = NEWS_VER; guardar(); } };
+  });
+}
+if (novedadesPendientes()) setTimeout(abrirNovedades, 600);
 $('#b-jugar').onclick = () => { audioInit(); play('go'); musicSet('menu'); if (!SAVE.visto) { SAVE.visto = true; guardar(); } irMapa(SAVE.mundo || 0); setTimeout(comprobarDiario, 400); };
 
 /* =========================================================
@@ -245,9 +255,11 @@ function montarAjustes() {
 }
 function abrirOpciones() {
   ventana(`<h3 class="ol">OPCIONES</h3>${ajustesHtml()}
+    <button class="btn violeta ol" id="o-news">NOVEDADES</button>
     <button class="btn naranja ol" id="o-ok">LISTO</button>
+    <p class="nota">Versión ${NEWS_VER}</p>
     <button class="btn-texto" id="o-borrar">Borrar la partida y empezar de cero</button>`, () => {
-    montarAjustes(); $('#o-ok').onclick = cerrarVentana;
+    montarAjustes(); $('#o-ok').onclick = cerrarVentana; $('#o-news').onclick = abrirNovedades;
     $('#o-borrar').onclick = () => ventana(`<h3 class="ol mal">¿BORRAR TODO?</h3><p>Perderás niveles, oro, gemas y héroes. No se puede deshacer.</p>
       <button class="btn ol" id="ob-si" style="background:#ff4b5c">SÍ, BORRAR</button><button class="btn naranja ol" id="ob-no">NO, VOLVER</button>`, () => {
       $('#ob-si').onclick = () => { const aj = SAVE.ajustes; SAVE = partidaNueva(); SAVE.ajustes = aj; guardar(); cerrarVentana(); irMapa(0); aviso('Partida nueva.'); };

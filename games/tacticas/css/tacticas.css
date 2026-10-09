@@ -188,3 +188,10 @@ h1, h2, h3 { font-family: var(--f-disp); font-weight: 400; margin: 0; letter-spa
 .aviso { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40; background: var(--ol); border: 2px solid var(--dorado); border-radius: 999px; padding: 8px 18px; font-weight: 800; max-width: calc(100% - 32px); text-align: center; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* menú del título y novedades */
+.menu-titulo { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.novedades { max-height: 46vh; overflow-y: auto; text-align: left; }
+.novedades h4 { margin: 10px 0 4px; color: var(--dorado); font-size: 15px; }
+.novedades ul { margin: 0; padding-left: 20px; color: var(--tinta-2); line-height: 1.4; }
+.novedades ul.joke { font-style: italic; color: var(--tinta-3); }

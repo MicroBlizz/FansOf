@@ -8,8 +8,12 @@ const RANK = r => (r > 1 ? ' ' + '★'.repeat(r) : '');
 function avgLevel(f) { const F = FACTIONS[f]; const ks = [F.leader, ...F.units]; return Math.max(1, Math.round(ks.reduce((a, k) => a + uSave(k).lvl, 0) / ks.length)); }
 /* ---------- sátira: chat falso en directo ---------- */
 const chatSt = { t: 6 };
+// PvP: el chat es solo de este cliente (no se sincroniza). Los avisos de la simulación hablan siempre desde el equipo 'p'; el que juega desde el asiento de arriba
+// los recibe al revés: lo del rival llega como «suyo». Aquí se le dan la vuelta (y se descartan los que solo tienen sentido para el equipo propio).
+const CHAT_ESPEJO = { deploy: 'enemyBig', leader: 'enemyBig', enemyBig: 'deploy', baseLowP: 'baseLowE', baseLowE: 'baseLowP', leaderDown: 'eLeaderDown', eLeaderDown: 'leaderDown', win: 'lose', lose: 'win', towerP: 'towerP', towerE: 'towerE', comeback: 'comeback', idle: 'idle', start: 'start', full: 'full', close: 'close' };
 function chatSay(kind, extra, key) {
-  if (SAVE.chatOff || G.mode === 'pvp') return;   // en PvP no hay chat (ni de mentira)
+  if (SAVE.chatOff) return;
+  if (PVP.on && PVP.seat === 'e' && !VISTA_SW) { kind = CHAT_ESPEJO[kind]; if (!kind) return; }
   const box = $('#chat'); if (!box) return;
   const lines = (ownerOf() === 'phony' && CHAT_PH[kind]) || (ownerOf() === 'iahorro' && CHAT_IA[kind]) || CHAT[kind]; if (!lines) return;
   const own = (CHAT_FAC[G.faction] || {})[kind];
@@ -41,8 +45,9 @@ function chatEv(kind, extra, key, prob = 1, cd = 5) {
 }
 function chatWatch(dt) {   // CAOS a tope sin gastar, nadie juega cartas, final igualado
   if (chatSt.lastDep == null) chatSt.lastDep = G.t;
-  if (S.p.chaos >= CFG.chaosMax - 0.01) { chatSt.fullT = (chatSt.fullT || 0) + dt; if (chatSt.fullT > 6) { chatSt.fullT = 0; chatEv('full', null, null, 1, 25); } } else chatSt.fullT = 0;
-  if (G.t - chatSt.lastDep > 18) chatEv('afk', null, null, 1, 30);
+  const mi = PVP.on ? PVP.seat : 'p';
+  if (S[mi].chaos >= CFG.chaosMax - 0.01) { chatSt.fullT = (chatSt.fullT || 0) + dt; if (chatSt.fullT > 6) { chatSt.fullT = 0; chatEv('full', null, null, 1, 25); } } else chatSt.fullT = 0;
+  if (mi === 'p' && G.t - chatSt.lastDep > 18) chatEv('afk', null, null, 1, 30);
   if (!chatSt.closeSaid && G.mode !== 'boss' && G.time < 20 && S.p.crowns === S.e.crowns) { chatSt.closeSaid = true; chatEv('close', null, null, 1, 0); }
 }
 /* ---------- sátira: imagen para compartir ---------- */

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Fans of Rumble 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<style>
+/* Boceto 3D de Fans of Rumble · mismos colores, letras y contornos que el juego (core/css/base.css).
+   Una sola pantalla: el campo 3D ocupa todo; arriba el medidor y tres botones, abajo las cartas como en la partida. */
+:root {
+  color-scheme: dark;
+  --bg: #150b21; --tray: #26143c; --tray-hi: #3e2363; --ink: #fff6ea; --ink-dim: #cdb9ea;
+  --player: #ff7a1a; --player-lite: #ffb347; --enemy: #2e8bff; --gold: #ffcb3d; --danger: #ff4b5c; --ok: #7ee04a; --outline: #20102c;
+  --scrim: rgba(16, 8, 26, 0.72); --panel: rgba(38, 20, 60, 0.94);
+  --font-display: "Luckiest Guy", "Arial Black", Impact, sans-serif;
+  --font-ui: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --sup: env(safe-area-inset-top, 0px); --inf: env(safe-area-inset-bottom, 0px);
+}
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; touch-action: manipulation; }
+button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.ol { text-shadow: 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 2px 0 var(--outline), 0 -2px 0 var(--outline), 2px 2px 0 var(--outline), -2px -2px 0 var(--outline), 2px -2px 0 var(--outline), -2px 2px 0 var(--outline), 0 4px 0 var(--outline); }
+
+#lienzo { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+#capa { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+
+/* arriba: nombre, medidor de fluidez y botones */
+#arriba { position: fixed; top: 0; left: 0; right: 0; padding: calc(var(--sup) + 10px) 16px 0; display: grid; gap: 8px; pointer-events: none; }
+#hud { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.marca { display: grid; line-height: 1; }
+.marca b { font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: 0.02em; }
+.marca b span { color: var(--player); }
+.marca small { font-weight: 700; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); margin-top: 3px; }
+#medidor { pointer-events: auto; display: grid; grid-template-columns: auto auto; column-gap: 6px; align-items: baseline; padding: 6px 12px 5px; border-radius: 14px; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); font-variant-numeric: tabular-nums; }
+#fps { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1; color: var(--ok); }
+#medidor .u { font-weight: 800; font-size: 12px; color: var(--ink-dim); }
+#veredicto { grid-column: 1 / -1; font-style: normal; font-weight: 800; font-size: 13px; line-height: 1.1; color: var(--ok); }
+#cuantos { grid-column: 1 / -1; font-size: 12px; font-weight: 700; color: var(--ink-dim); line-height: 1.2; }
+#medidor.justo #fps, #medidor.justo #veredicto { color: var(--gold); }
+#medidor.mal #fps, #medidor.mal #veredicto { color: var(--danger); }
+#botones { display: flex; flex-wrap: wrap; gap: 6px; }
+#botones button { pointer-events: auto; padding: 5px 11px 4px; border-radius: 12px; background: var(--tray); border: 2.5px solid var(--outline); box-shadow: 0 3px 0 var(--outline); font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--ink-dim); }
+#botones button b { color: var(--ink); font-weight: 800; }
+#botones button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+
+/* abajo: la bandeja de cartas */
+#bandeja { position: fixed; left: 0; right: 0; bottom: 0; padding: 10px 16px calc(var(--inf) + 12px); display: grid; grid-template-columns: 1fr 1fr 0.8fr; gap: 10px; background: linear-gradient(to top, var(--tray) 55%, rgba(38, 20, 60, 0)); max-width: 560px; margin: 0 auto; }
+.carta, #bMas { position: relative; display: grid; justify-items: center; align-content: end; gap: 1px; padding: 4px 4px 7px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 5px 0 var(--outline); transition: transform 0.12s ease; min-width: 0; }
+.carta { background: linear-gradient(to bottom, #5a3a8a, var(--tray-hi)); }
+.carta[data-carta="bunny"] { background: linear-gradient(to bottom, #ffcf5a, #d98a1a); }
+.carta canvas { width: 72px; height: 72px; margin-top: -2px; }
+.carta b { font-family: var(--font-display); font-weight: 400; font-size: 15px; line-height: 1; letter-spacing: 0.02em; }
+.carta small { font-weight: 800; font-size: 11px; line-height: 1.1; color: var(--ink); opacity: 0.85; }
+.carta.sel { transform: translateY(-8px); box-shadow: 0 5px 0 var(--outline), 0 0 0 3px var(--gold), 0 8px 24px rgba(255, 203, 61, 0.45); }
+#bMas { align-content: center; background: linear-gradient(to bottom, var(--player-lite), var(--player)); }
+#bMas b { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; }
+#bMas small { font-weight: 800; font-size: 12px; line-height: 1.1; }
+#bMas:active, .carta:active { transform: translateY(3px); }
+
+/* números de daño y bocadillos */
+.num { position: absolute; left: 0; top: 0; font-family: var(--font-display); font-size: 19px; color: #fff; will-change: transform, opacity; }
+.num.fuerte { color: var(--gold); font-size: 26px; }
+.num, .aviso-t { text-shadow: 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 2px 0 var(--outline), 0 -2px 0 var(--outline), 2px 2px 0 var(--outline), -2px -2px 0 var(--outline), 2px -2px 0 var(--outline), -2px 2px 0 var(--outline); }
+.bocadillo { position: absolute; left: 0; top: 0; max-width: 150px; padding: 4px 10px 3px; border-radius: 13px; background: #fff6ea; color: var(--outline); border: 3px solid var(--outline); font-weight: 800; font-size: 13px; line-height: 1.15; text-align: center; transform-origin: 50% 100%; will-change: transform, opacity; white-space: normal; width: max-content; }
+.bocadillo::after { content: ""; position: absolute; left: calc(50% + var(--cola, 0px)); bottom: -10px; margin-left: -7px; border: 7px solid transparent; border-top-color: var(--outline); border-bottom: 0; }
+.bocadillo.rival { background: #dce9ff; }
+
+#aviso { position: fixed; left: 50%; bottom: calc(var(--inf) + 150px); transform: translateX(-50%); padding: 7px 14px 5px; border-radius: 12px; background: var(--danger); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); font-weight: 800; white-space: nowrap; }
+#aviso.sale { animation: sale 1.4s ease forwards; }
+@keyframes sale { 0% { opacity: 0; transform: translate(-50%, 8px); } 12%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+#fin { position: fixed; left: 16px; right: 16px; top: 34%; display: grid; justify-items: center; text-align: center; pointer-events: none; }
+#fin b { font-family: var(--font-display); font-weight: 400; font-size: clamp(48px, 15vw, 82px); line-height: 1; color: var(--gold); animation: pum 0.5s cubic-bezier(.2, 1.6, .4, 1); }
+#fin.pierde b { color: var(--enemy); }
+#fin small { font-weight: 800; font-size: 15px; margin-top: 6px; }
+@keyframes pum { from { transform: scale(0.3); } to { transform: scale(1); } }
+
+/* pantalla de inicio: deja ver el campo detrás */
+#inicio { position: fixed; inset: 0; display: grid; place-items: center; padding: calc(var(--sup) + 16px) 16px calc(var(--inf) + 16px); background: var(--scrim); }
+#inicio .panel { width: 100%; max-width: 380px; display: grid; gap: 14px; padding: 22px 20px 20px; border-radius: 22px; background: var(--panel); border: 4px solid var(--outline); box-shadow: 0 8px 0 var(--outline); }
+#inicio h1 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 0.95; text-align: center; text-wrap: balance; }
+#inicio h1 span { display: inline-block; color: var(--player); transform: rotate(-4deg); }
+#inicio .chapa { justify-self: center; padding: 3px 10px 1px; border-radius: 8px; background: var(--gold); color: var(--outline); font-weight: 800; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+#inicio p { margin: 0; font-weight: 700; line-height: 1.35; color: var(--ink-dim); text-align: center; }
+#inicio ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+#inicio li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: center; font-weight: 700; line-height: 1.3; }
+#inicio li i { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--tray-hi); border: 2.5px solid var(--outline); font-style: normal; font-family: var(--font-display); font-size: 14px; padding-top: 2px; box-sizing: border-box; }
+#empezar { font-family: var(--font-display); font-size: 28px; line-height: 1; padding: 14px 20px 9px; border-radius: 18px; border: 4px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); box-shadow: 0 6px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.4); }
+#empezar:active { transform: translateY(3px); box-shadow: 0 3px 0 var(--outline); }
+.error { color: var(--danger); font-weight: 800; text-align: center; }
+@media (prefers-reduced-motion: reduce) { #fin b, #aviso.sale { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="lienzo"></canvas>
+<div id="capa"></div>
+
+<div id="arriba">
+  <header id="hud">
+    <div class="marca ol"><b>Fans of Rumble <span>3D</span></b><small data-t>Boceto 3D</small></div>
+    <div id="medidor" class="bien"><b id="fps">--</b><span class="u">FPS</span><em id="veredicto" data-t>Midiendo…</em><small id="cuantos"></small></div>
+  </header>
+  <nav id="botones">
+    <button id="bCamara" type="button"><span data-t>Cámara</span>: <b id="vCamara"></b></button>
+    <button id="bVoz" type="button"><span data-t>Voz</span>: <b id="vVoz"></b></button>
+    <button id="bCalidad" type="button"><span data-t>Calidad</span>: <b id="vCalidad"></b></button>
+  </nav>
+</div>
+
+<footer id="bandeja">
+  <button class="carta sel ol" data-carta="bunny" type="button"><canvas></canvas><b>CrazyBunny</b><small data-t>Líder</small></button>
+  <button class="carta ol" data-carta="squirrel" type="button"><canvas></canvas><b>MadSquirrel</b><small data-t>Común · x2</small></button>
+  <button id="bMas" class="ol" type="button"><b>+30</b><small data-t>muñecos</small></button>
+</footer>
+
+<div id="aviso" hidden></div>
+<div id="fin" class="ol" hidden><b></b><small></small></div>
+
+<div id="inicio">
+  <div class="panel">
+    <span class="chapa" data-t>Boceto 3D</span>
+    <h1 class="ol">Fans of Rumble <span>3D</span></h1>
+    <p data-t>No es el juego de verdad: es una prueba para ver cómo quedaría Fans of Rumble en 3D.</p>
+    <ul>
+      <li><i class="ol">1</i><span data-t>Toca tu lado del campo para soltar una unidad.</span></li>
+      <li><i class="ol">2</i><span data-t>Pulsa +30 para ver si tu móvil aguanta muchos muñecos a la vez.</span></li>
+      <li><i class="ol">3</i><span data-t>Sube el volumen: las unidades hablan.</span></li>
+    </ul>
+    <button id="empezar" class="ol" type="button" data-t>Toca para empezar</button>
+  </div>
+</div>
+
+<script type="module" src="js/principal.js"></script>
+</body>
+</html>

@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.96', real: ['<b>PVP ABIERTO (EN PRUEBAS)</b>: ya puedes retar a otros jugadores en el modo Estándar. Está en pruebas: puede ir a tirones, y las puntuaciones son de la Temporada 0, que se borrará cuando todo vaya estable. Cada temporada se reiniciará. Necesitas vincular tu cuenta (Opciones → Cuenta). También: sin botón x2 en PvP, rendirse funciona y el retardo de red es más amplio.'],
+    joke: ['Microblizz abre el PvP «en pruebas», que en lenguaje de empresa significa que los probadores sois vosotros.'] },
   { v: '0.9.95', real: ['<b>PVP EN OBRAS</b>: cerramos el PvP un rato para afinar la conexión con el servidor: las partidas iban a tirones. Volverá en cuanto vaya fino.'],
     joke: ['Microblizz ha puesto un cartel de «vuelvo en 5 minutos» en el PvP. Lleva 5 minutos desde hace tiempo.'] },
   { v: '0.9.94', real: ['<b>RENDIRSE EN PVP</b>: el botón ME RINDO no hacía nada contra otros jugadores; ahora pierdes y tu rival gana al momento.'],

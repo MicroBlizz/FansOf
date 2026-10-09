@@ -12,8 +12,8 @@ const SV = {
   // mini jefes y bichos shiny (los dos sueltan cofre): todo ajustable aquí
   apariciones: {
     miniJefeCada: 120,    // segundos entre mini jefes (el primero sale en este segundo)
-    shinyProb: 0.02,      // probabilidad de que cada enemigo de las oleadas nazca shiny (2 %)
-    shinyMaxEspera: 180,  // si pasa tanto tiempo sin ningún shiny, el siguiente enemigo que salga lo es
+    shinyProb: 0.02,      // probabilidad de que cada grupo que sale en las oleadas traiga un shiny (2 %)
+    shinyMaxEspera: 180,  // si pasa tanto tiempo sin ningún shiny, el siguiente grupo trae uno seguro
     shinyVida: 2.5,       // un shiny aguanta tantas veces la vida normal
     shinyXp: 6,           // CAOS extra que suelta
   },
@@ -148,4 +148,13 @@ const BOTIN = {
   cafe: 0.012,     // probabilidad de que un enemigo suelte una Taza del becario (cura)
   cafeCura: 25,
   iman: 0.003,     // probabilidad de un imán (atrae todo el CAOS)
+};
+
+/* ---------- los cofres ----------
+   Aquí se ajusta cuántas mejoras da un cofre y cuánto dura la entrega. */
+const COFRE = {
+  // peso de que un cofre dé 1, 2 o 3 mejoras (solo importa la proporción: 1/1/1 = 33 % cada una; 4/4/1 = lo común es 1 o 2)
+  pesos: { 1: 1, 2: 1, 3: 1 },
+  // los tiempos de la entrega, en milisegundos: lo que tarda en parar cada rueda, el suspense antes de la última y la apertura de la épica
+  entrega: { giro: 900, entreRuedas: 650, suspense: 1300, epica: 1500 },
 };

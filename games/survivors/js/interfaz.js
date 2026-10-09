@@ -66,9 +66,7 @@ function abrirNivel() {
   const box = $('#niv-ops'); box.innerHTML = '';
   ops.forEach((op, i) => {
     const b = document.createElement('button'); b.className = 'op' + (op.nuevo ? ' nuevo' : '');
-    const ic = document.createElement('div'); ic.className = 'op-ic';
-    if (op.carta) { const c = document.createElement('canvas'), K = Math.min(3, ESCALA * DPR * 1.5); c.width = c.height = 64 * K; const x = c.getContext('2d'); x.scale(K, K); drawVector(x, op.carta, 32, 58, 52); ic.appendChild(c); }
-    else ic.textContent = op.icono;
+    const ic = iconoOp(op);
     const tx = document.createElement('div'); tx.className = 'op-tx';
     tx.innerHTML = `<div class="op-nom ol">${tr(op.nombre)} <span class="op-nv">${op.clase === 'relleno' ? '' : op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo)}</span></div><div class="op-desc">${tr(op.desc)}</div>`;
     b.append(ic, tx);

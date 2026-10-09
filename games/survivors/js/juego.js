@@ -31,7 +31,7 @@ function nuevaPartida() {
     xp: 0, nivel: 1, xpSig: SV.xpNivel(1), pendientes: 0,
     enemigos: [], proy: [], balas: [], gemas: [], cosas: [], efectos: [], numeros: [], parts: [], marcas: [],
     vacas: null, auraT: 0, kills: 0, puntos: 0,
-    oleadaT: 0, evento: 0, miniJefe: 0, ultimoShiny: 0, jefe: null, jefeVisto: false,
+    oleadaT: 0, evento: 0, miniJefe: 0, ultimoShiny: 0, cofresPend: 0, jefe: null, jefeVisto: false,
     sacudida: 0, aviso: null, chat: [], chatT: 8, rachaKills: [], hitStop: 0,
   };
   sigId = 1;
@@ -106,7 +106,8 @@ function oleadas(dt) {
   if (P.oleadaT <= 0) {
     P.oleadaT = O.cada;
     const p = puntoFuera();
-    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(elegirPeso(O.mezcla), p.x + rand(-30, 30), p.y + rand(-30, 30), tocaShiny() ? marcaShiny() : {});
+    const brillo = tocaShiny() ? Math.floor(Math.random() * O.grupo) : -1;   // cuál del grupo sale shiny
+    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(elegirPeso(O.mezcla), p.x + rand(-30, 30), p.y + rand(-30, 30), i === brillo ? marcaShiny() : {});
   }
   // un mini jefe cada SV.apariciones.miniJefeCada segundos (no si ya viene el jefe final)
   const A = SV.apariciones, tMini = A.miniJefeCada * (P.miniJefe + 1);
@@ -134,7 +135,7 @@ function tocaShiny() {
 function marcaShiny() {   // marca al enemigo como shiny y reinicia la cuenta
   P.ultimoShiny = P.t; return { shiny: true, shinyMul: SV.apariciones.shinyVida, xp: SV.apariciones.shinyXp };
 }
-// punto de enganche para el cofre (lo sueltan los mini jefes y los shiny); el hilo de los cofres lo sustituye por el espectáculo
+// el cofre que sueltan los mini jefes y los shiny (se abre al pisarlo: js/cofre.js)
 function soltarCofre(x, y) { P.cosas.push({ tipo: 'cofre', x, y, t: 0 }); play('crown'); }
 function llegaJefe() {
   const p = puntoFuera();
@@ -291,14 +292,6 @@ function ganarXp(v) {
   P.xp += v * EFECTO.xp(nvP('diploma')) * (1 + P.mods.xp); play('blip');
   while (P.xp >= P.xpSig) { P.xp -= P.xpSig; P.nivel++; P.xpSig = SV.xpNivel(P.nivel); P.pendientes++; }
 }
-// el cofre mejora algo que ya tienes (o te da algo nuevo si no hay nada que mejorar)
-function abrirCofre() {
-  const ops = opcionesNivel(1, true);
-  const op = ops[0]; aplicarOpcion(op); P.cofres++;
-  aviso('¡COFRE DE BOTÍN!', tr(op.nombre) + ' · ' + (op.nuevo ? tr('¡NUEVO!') : tr('Nivel ' + op.nivelNuevo)));
-  play('win'); P.sacudida = 6;
-}
-
 /* ---------- subir de nivel: 3 opciones ---------- */
 function puedeMejorar() {
   const L = [];

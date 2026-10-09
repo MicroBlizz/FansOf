@@ -22,7 +22,7 @@ LETRA = re.compile('[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]')
 ESPANOL = re.compile('[áíóúñ¡¿]|\\b(el|la|los|las|del|que|con|para|por|tu|tus|una|más|solo|cada|todos|sin|nivel|oro|gemas|de|en|y)\\b', re.I)
 # con --lang=es se busca lo contrario: inglés que se ha colado en el juego en español
 INGLES = re.compile(r'\b(the|and|you|your|of|to|is|are|with|for|from|this|that|it|on|in|at|by|not|have|will|can|get|first|time|loading|click|tap|press)\b', re.I)
-IGNORA = re.compile('^(AUTO|SinSueño_Dev|Español|ESPAÑOL|ENGLISH|Idioma / Language|.*(Microblizz|Phony).*)$')
+IGNORA = re.compile('^(FANS OF|AUTO|SinSueño_Dev|Español|ESPAÑOL|ENGLISH|Idioma / Language|.*(Microblizz|Phony).*)$')
 
 
 class Textos(HTMLParser):

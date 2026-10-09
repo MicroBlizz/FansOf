@@ -47,7 +47,7 @@ function showMap() { openCamp(); }   // otras partes del juego la llaman así
 
 /* ---------- antes de jugar: elegir facción (y rival, en el modo VS) ---------- */
 const PREP = { mode: 'camp', lvl: null };
-const VS_DIFF = [['facil', 'Becario', 'Fácil, para aprender'], ['normal', 'Ejecutivo', 'El rival de verdad'], ['dificil', 'CEO', 'Gana más income que tú']];
+const VS_DIFF = [['facil', 'Becario', 'Fácil, para aprender'], ['normal', 'Ejecutivo', 'El rival de verdad'], ['dificil', 'CEO', 'Gana más ingresos que tú']];
 $('#fac-grid').innerHTML = FACTION_ORDER.filter(f => TOWERS[f]).map(f => { const F = FACTIONS[f]; return `<button class="diff-opt fac-opt" data-fac="${f}" aria-pressed="false" style="--fc: ${FAC_COLOR[f]}"><canvas></canvas><b class="ol">${F.name}</b><small>${ICONS[F.icon]} ${F.pname}</small></button>`; }).join('');
 $('#diff-row').innerHTML = VS_DIFF.map(([d, n, s]) => `<button class="diff-opt" data-vd="${d}" aria-pressed="false"><b class="ol">${n}</b><small>${s}</small></button>`).join('');
 function syncPrep() {
@@ -112,6 +112,6 @@ function showVsResult(win) {
   cierraRetos(win, { vs: true, vida: V.me.lives, camino: G.route.length });   // misiones y logros
   endScreen({ win, stars: null, rw: vsReward(win, V.diff) + passMatch(win), title: win ? '¡VICTORIA!' : 'DERROTA',
     sub: win ? `Has tirado la base de ${FAC_NAME(V.ai.fac)} en ${m}:${s}.` : `${capFirst(FAC_NAME(V.ai.fac))} han tirado ${FACTIONS[V.me.fac].end} en ${m}:${s}.`,
-    quote: pick(QUOTES[win ? 'p' : 'e']), stats: [[V.me.sent, 'unidades enviadas'], [V.me.kills || 0, 'enemigos despedidos'], [V.me.income, 'income final']],
+    quote: pick(QUOTES[win ? 'p' : 'e']), stats: [[V.me.sent, 'unidades enviadas'], [V.me.kills || 0, 'enemigos despedidos'], [V.me.income, 'ingresos finales']],
     next: null, again: () => startVS(V.diff) });
 }

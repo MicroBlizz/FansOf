@@ -52,5 +52,5 @@ IDIOMA.add({
   ": marcos para tu cara y títulos para debajo de tu nombre. No dan ni un punto de vida, pero hay que tener estilo hasta en el paro. Se ganan en los pases: toca uno para ponértelo.": ": frames for your face and titles for under your name. They don't give a single hit point, but you need style even when unemployed. You earn them in the passes: tap one to wear it.",
   "estrella": "star",
   "armario": "wardrobe",
-  "PASE PVP": "PVP PASS",
+  "PASE JCJ": "PVP PASS",
 });

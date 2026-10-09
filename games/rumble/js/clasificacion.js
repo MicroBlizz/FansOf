@@ -17,9 +17,9 @@ const SALON = {
       explica: 'Poder es la suma de los niveles de todos tus personajes. Cada mejora te sube en el Salón.',
       vacio: 'Mejora un personaje para entrar.',
       info: r => r.extra === 1 ? '1 personaje mejorado' : `${fmt(r.extra)} personajes mejorados` },
-    { id: 'pvp', nombre: 'Copas PvP', icono: CROWN_SVG, unidad: 'copas',
-      explica: 'Copas del PvP (modo Estándar): ganas contra gente de verdad y subes; pierdes y bajas.',
-      vacio: 'Juega una partida de PvP para entrar.',
+    { id: 'pvp', nombre: 'Copas JcJ', icono: CROWN_SVG, unidad: 'copas',
+      explica: 'Copas del JcJ (modo Estándar): ganas contra gente de verdad y subes; pierdes y bajas.',
+      vacio: 'Juega una partida de JcJ para entrar.',
       obras: () => !SALON_PVP,
       // cuando se abra el PvP, la lista sale de su propia clasificación (modo Estándar)
       cargar: async () => {

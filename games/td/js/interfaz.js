@@ -7,8 +7,8 @@ function buildTray() {
     // modo VS: las 6 unidades de tu raza, para mandárselas al rival
     for (const k of FACTIONS[G.fac].units) {
       const C = CFG.cards[k], b = document.createElement('button'), l = G.vs.me.ulvl[k] || 1, max = l >= TD.maxLevel; b.className = 'card send r-' + C.rarity; b.dataset.k = k; b.dataset.send = '1';
-      b.setAttribute('aria-label', `Enviar ${C.name} de nivel ${l}: ${sendCost(k)} de CAOS, +${sendIncome(k)} de income`);
-      b.innerHTML = `<canvas></canvas><span class="nm">${l > 1 ? '★'.repeat(l - 1) + ' ' : ''}+${sendIncome(k)} income</span><span class="cost ol">${sendCost(k)}</span><span class="upg ol${max ? ' max' : ''}" role="button" aria-label="Mejorar ${C.name}">${max ? 'MÁX' : '▲ ' + unitUpCost(k, l)}</span>`;
+      b.setAttribute('aria-label', `Enviar ${C.name} de nivel ${l}: ${sendCost(k)} de CAOS, +${sendIncome(k)} de ingresos`);
+      b.innerHTML = `<canvas></canvas><span class="nm">${l > 1 ? '★'.repeat(l - 1) + ' ' : ''}+${sendIncome(k)} ingresos</span><span class="cost ol">${sendCost(k)}</span><span class="upg ol${max ? ' max' : ''}" role="button" aria-label="Mejorar ${C.name}">${max ? 'MÁX' : '▲ ' + unitUpCost(k, l)}</span>`;
       tray.appendChild(b); requestAnimationFrame(() => portrait(b.querySelector('canvas'), k, C.rarity === 'epic' ? 40 : 34));
       b.addEventListener('pointerdown', e => { e.preventDefault(); if (e.target.closest('.upg')) { if (vsUpgrade(k)) buildTray(); hud(); return; } vsSend(k); hud(); });
     }
@@ -38,7 +38,7 @@ function hud() {
     if (wb.hidden !== G.over) wb.hidden = G.over; wb.classList.remove('beat'); setText($('#wave-main'), V.view === 'me' ? 'RIVAL' : 'VOLVER'); setText($('#wave-sub'), V.view === 'me' ? 'ver su campo' : 'a tu campo');
     setText($('#btn-mode'), G.trayMode === 'send' ? 'TORRES' : 'ENVIAR UNIDADES');
     setText($('#btn-speed'), 'x' + G.speed); $('#btn-speed').setAttribute('aria-pressed', String(G.speed > 1));
-    setText($('#lvl-name'), (V.view === 'me' ? 'TU CAMPO' : 'CAMPO DE ' + FAC_NAME(V.ai.fac).toUpperCase()) + ` · income +${V.me.income} en ${Math.ceil(V.tickT)} s`);
+    setText($('#lvl-name'), (V.view === 'me' ? 'TU CAMPO' : 'CAMPO DE ' + FAC_NAME(V.ai.fac).toUpperCase()) + ` · ingresos +${V.me.income} en ${Math.ceil(V.tickT)} s`);
     refreshTray(); if (G.sel) placePanel(); return;
   }
   setText($('#wave-l'), 'OLEADA'); setText($('#wave-main'), '¡OLEADA!'); setText($('#wave'), `${Math.min(G.wave, G.waves)}/${G.waves}`);

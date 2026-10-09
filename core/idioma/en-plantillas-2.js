@@ -114,7 +114,7 @@ IDIOMA.add({
   "versión %1": "version %1",
   "VUELVE EN %1": "RETURNS IN %1",
   "Volver a la vista normal": "Back to normal view",
-  "income +%1 en %2 s": "income +%1 in %2 s",
+  "ingresos +%1 en %2 s": "income +%1 in %2 s",
   "CAMPO DE %1": "FIELD OF %1",
   "Sube el hechizo %1 a nivel %2.": "Level the spell %1 up to level %2.",
   "Juega el hechizo %1 por primera vez.": "Play the spell %1 for the first time.",

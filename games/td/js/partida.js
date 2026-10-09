@@ -189,7 +189,7 @@ function startVS(diff) {
 function vsUpdate(dt) {
   const V = G.vs; V.t += dt; const hp = Math.pow(2, V.t / VS.hpDouble);
   V.tickT -= dt;
-  if (V.tickT <= 0) { V.tickT += VS.tick; G.gold += V.me.income; V.ai.gold += Math.round(V.ai.income * VS.ai[V.diff]); num(70, 96, '+' + V.me.income + ' de income', '#ffcb3d', 15); if (V.view === 'me') sfx('coin'); }
+  if (V.tickT <= 0) { V.tickT += VS.tick; G.gold += V.me.income; V.ai.gold += Math.round(V.ai.income * VS.ai[V.diff]); num(70, 96, '+' + V.me.income + ' de ingresos', '#ffcb3d', 15); if (V.view === 'me') sfx('coin'); }
   G.hpMul = hp; update(dt); vsSteal(V.ai);
   if (G.over) return;
   saveBoard(V.me); loadBoard(V.ai, 'ai');
@@ -203,7 +203,7 @@ function vsSend(k) {
   const V = G.vs, c = sendCost(k); if (G.over || G.gold < c) return false;
   if (V.ai.spawnQ.length >= VS.queue) { num(270, 720, 'COLA LLENA', '#ff4b5c', 14); return false; }
   G.gold -= c; xpPlay(k); cuenta('envio'); cuenta('caos', c); V.me.income += sendIncome(k); V.me.sent++; V.ai.spawnQ.push({ k, gap: VS.gap, lvl: V.me.ulvl[k] || 1 });
-  num(270, 720, '+' + sendIncome(k) + ' income', '#ffcb3d', 14); sfx('horn'); return true;
+  num(270, 720, '+' + sendIncome(k) + ' ingresos', '#ffcb3d', 14); sfx('horn'); return true;
 }
 // mejorar una unidad dentro de la partida: las que envíes a partir de ahora salen más duras y pegan más a la base
 const unitUpCost = (k, lvl) => Math.round(sendCost(k) * VS.upCost[lvl] / 5) * 5;

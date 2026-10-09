@@ -8,7 +8,7 @@
 'use strict';
 const PASS = Object.assign({ name: 'Temporada 1: La Gran Compra', sub: 'Dura hasta que Microblizz la cierre', levels: 30, xpPer: 400, eur: 4.99, xpWin: 100, xpLose: 40, xpDaily: 60, xpWeekly: 250 }, RETOS.pase || {});
 const PASS_Q = 0.9;   // los objetos del pase salen siempre con calidad Excelente
-const PASS_PVP = RETOS.pasePvp ? Object.assign({ name: 'Pase PvP', levels: 30, xpPer: 300, eur: 2.99, xpWin: 100, xpLose: 40 }, RETOS.pasePvp) : null;
+const PASS_PVP = RETOS.pasePvp ? Object.assign({ name: 'Pase JcJ', levels: 30, xpPer: 300, eur: 2.99, xpWin: 100, xpLose: 40 }, RETOS.pasePvp) : null;
 // t: el de temporada · p: el de PvP. k: dónde se guarda · ev: el evento con el que el servidor comprueba el cobro
 const PASES = { t: { C: PASS, k: 'pass', ev: 'pase', compra: 'compra-pase', evCompra: 'pase-premium', pago: 'EJECUTIVO', nombrePago: 'Pase Ejecutivo', corto: 'Ejecutivo', clase: 'pt-t' } };
 if (PASS_PVP) PASES.p = { C: PASS_PVP, k: 'passPvp', ev: 'pase-pvp', compra: 'compra-pase-pvp', evCompra: 'pase-pvp-premium', pago: 'PASE DEL PASE', nombrePago: 'Pase del Pase', corto: 'Pase del Pase', clase: 'pt-p' };
@@ -121,12 +121,12 @@ function buildPass() {
   if (!PASES[passTab]) passTab = 't';
   const p = passTab, P = PASES[p], C = P.C, S = pSave(p), lv = pLevel(p), into = S.xp - lv * C.xpPer, maxed = lv >= C.levels, fin = pFin(p), nClaim = pClaimable(p);
   const cols = document.querySelector('.pass-cols'); if (cols) cols.hidden = true;   // los encabezados van ahora dentro de la lista
-  const tabs = PASES.p ? `<div class="pass-tabs">${Object.keys(PASES).map(k => { const n = pClaimable(k); return `<button class="pass-tab ${PASES[k].clase}" data-pt="${k}" aria-pressed="${k === p}">${k === 't' ? 'TEMPORADA' : 'PVP'}${n ? `<i class="pt-dot ol">${n}</i>` : ''}</button>`; }).join('')}</div>` : '';
+  const tabs = PASES.p ? `<div class="pass-tabs">${Object.keys(PASES).map(k => { const n = pClaimable(k); return `<button class="pass-tab ${PASES[k].clase}" data-pt="${k}" aria-pressed="${k === p}">${k === 't' ? 'TEMPORADA' : 'JCJ'}${n ? `<i class="pt-dot ol">${n}</i>` : ''}</button>`; }).join('')}</div>` : '';
   const dias = pDias(p);
   const sub = fin ? 'La temporada ha terminado: cobra lo que te falte.' : dias != null ? `${C.levels} niveles · ${diasTxt(dias)}` : C.sub || '';
   const pr = passProximo(p);
   const prox = pr && !fin ? `<div class="ph-next"><span>Próximo premio gordo: <b>nivel ${pr.i}</b>${pr.tr === 'paid' ? ` (${P.nombrePago})` : ''}</span><em>${rewardHtml(pr.r)}</em></div>` : '';
-  const reglas = p === 'p' ? `<div class="ph-reglas"><span>Partida PvP <b>+${C.xpLose}</b></span><span>Ganar <b>+${C.xpWin}</b></span><span class="ph-limpio">Juego limpio: aquí todo es para lucirse</span></div>` : '';
+  const reglas = p === 'p' ? `<div class="ph-reglas"><span>Partida JcJ <b>+${C.xpLose}</b></span><span>Ganar <b>+${C.xpWin}</b></span><span class="ph-limpio">Juego limpio: aquí todo es para lucirse</span></div>` : '';
   $('#pass-top').className = 'pass-top pass-hero ' + P.clase;
   $('#pass-top').innerHTML = tabs + `<div class="ph-main"><div class="ph-lvl ol"><small>NIVEL</small>${lv}</div><div class="ph-name"><b class="ol">${esc(C.name)}</b><small>${sub}${S.prem ? ` · <span class="ph-vip">${P.nombrePago} ✓</span>` : ''}</small></div></div>
     <div class="xpbar ph-bar"><i style="width:${maxed ? 100 : (into / C.xpPer) * 100}%"></i><span>${maxed ? '¡PASE COMPLETADO!' : `${fmt(into)} / ${fmt(C.xpPer)} puntos para el nivel ${lv + 1}`}</span></div>${reglas}${prox}
@@ -187,7 +187,7 @@ function passMatch(win) {
 function paseOrigen(t, id) {
   for (const p in PASES) for (let i = 1; i <= PASES[p].C.levels; i++) for (const tr of ['free', 'paid']) {
     const r = pReward(p, tr, i); if ((t === 'marco' ? r.marco : r.titulo) !== id) continue;
-    const quien = tr === 'paid' ? PASES[p].corto : p === 'p' ? 'Pase PvP' : 'Temporada';
+    const quien = tr === 'paid' ? PASES[p].corto : p === 'p' ? 'Pase JcJ' : 'Temporada';
     return `${quien} · nivel ${i}`;
   }
   return '';

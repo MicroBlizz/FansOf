@@ -31,14 +31,14 @@ IDIOMA.add({
   "tu rival": "your rival",
   "<b>CAMPO IGUAL PARA LOS DOS</b>: tu sede y la del rival están ahora a la misma distancia del río (antes la suya estaba más cerca) y las zonas de los campos de jefe se reparten iguales arriba y abajo. Así es justo, también para el PvP que viene.": "<b>THE SAME FIELD FOR BOTH SIDES</b>: your HQ and the rival's are now the same distance from the river (before, theirs was closer) and the zones on boss fields are laid out identically on both halves. It's fair now, also for the PvP that is coming.",
   "Microblizz ha medido el campo con una cinta métrica y ha descubierto que llevaba años jugando en cuesta. Y sí, la versión ha saltado de la 0.9.72 a la 0.9.82: en el taller pasaron muchas cosas con la puerta cerrada y el equipo de contabilidad se ha negado a contarlas.": "Microblizz measured the field with a tape measure and discovered it had been playing uphill for years. And yes, the version jumped from 0.9.72 to 0.9.82: a lot happened in the workshop behind closed doors and the accounting team refused to talk about it.",
-  "Para jugar PvP necesitas vincular tu cuenta (Opciones → Cuenta)": "To play PvP you need to link your account (Options → Account)",
+  "Para jugar JcJ necesitas vincular tu cuenta (Opciones → Cuenta)": "To play PvP you need to link your account (Options → Account)",
   "Tu sesión ha caducado: vuelve a abrir el juego (una cuenta por navegador o perfil)": "Your session has expired: open the game again (one account per browser or profile)",
-  "Tu mazo no vale para el PvP": "Your deck is not valid for PvP",
+  "Tu mazo no vale para el JcJ": "Your deck is not valid for PvP",
   "Llevas un objeto que no está en tu cuenta": "You are wearing an item that is not in your account",
   "La sala ya no existe": "The room no longer exists",
   "Demasiadas jugadas seguidas": "Too many plays in a row",
-  "Necesitas conexión para jugar PvP": "You need a connection to play PvP",
-  "El PvP necesita conexión": "PvP needs a connection",
+  "Necesitas conexión para jugar JcJ": "You need a connection to play PvP",
+  "El JcJ necesita conexión": "PvP needs a connection",
   "CLASIFICACIÓN": "LEADERBOARD",
   "ESTÁNDAR": "STANDARD",
   "SALVAJE": "WILD",
@@ -124,6 +124,6 @@ IDIOMA.add({
   "Microblizz ha contratado a Lola como formadora de nuevos empleados. Sigue despedida, pero ahora también trabaja gratis.": "Microblizz has hired Lola to train new employees. She is still fired, but now she also works for free.",
   "Tu rival tiene otra versión del juego: recarga la página": "Your rival has another version of the game: reload the page",
   "Tu rival usa otro retardo de red: partida anulada": "Your rival uses another network delay: match voided",
-  "Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.": "To play PvP you need an account: that way your wins count in the ranking and nobody can pose as you.",
-  "¡Cuenta lista! Entrando en PvP": "Account ready! Entering PvP"
+  "Para jugar JcJ necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.": "To play PvP you need an account: that way your wins count in the ranking and nobody can pose as you.",
+  "¡Cuenta lista! Entrando en JcJ": "Account ready! Entering PvP"
 });

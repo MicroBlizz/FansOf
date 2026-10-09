@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#150b21">
+<title>Fans of Roguelite</title>
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<style>
+/* Prototipo de Fans of Roguelite: una sola pantalla de pixel art. El juego se dibuja en un canvas pequeño y se amplía
+   un número entero de veces (cada píxel, nítido). La caja respeta la muesca y la barra de los móviles. */
+html, body { height: 100%; margin: 0; background: #150b21; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+#juego { display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #cdb9ea; font: 700 14px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.1em; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Roguelite"></canvas></div>
+<div id="carga">…</div>
+<script src="js/textos.js"></script>
+<script src="js/pixel.js"></script>
+<script src="js/letras.js"></script>
+<script src="js/tiempo.js"></script>
+<script src="js/heroe.js"></script>
+<script src="js/enemigos.js"></script>
+<script src="js/fondo.js"></script>
+<script src="js/efectos.js"></script>
+<script src="js/iconos.js"></script>
+<script src="js/sonido.js"></script>
+<script src="js/datos.js"></script>
+<script src="js/reglas.js"></script>
+<script src="js/personajes.js"></script>
+<script src="js/combate.js"></script>
+<script src="js/viaje.js"></script>
+<script src="js/interfaz.js"></script>
+<script src="js/principal.js"></script>
+</body>
+</html>

@@ -91,4 +91,7 @@ IDIOMA.add({
   "cada lunes": "every Monday",
   ": tus estrellas vuelven a 0, pero los niveles siguen abiertos. Las que ganes suben tu puesto en el": ": your stars go back to 0, but the levels stay open. The ones you win raise your rank in the",
   ", y los 10 primeros se llevan un título. Microblizz lo llama «contenido renovado». Yo lo llamo trabajar gratis cada semana.": ", and the top 10 get a title. Microblizz calls it “refreshed content”. I call it working for free every week.",
+  // el aspecto del rival en el PvP (v0.9.110)
+  "TU RIVAL": "YOUR RIVAL",
+  "CONTRA": "VS",
 });

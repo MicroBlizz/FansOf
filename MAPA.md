@@ -27,8 +27,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-serie-1.js` · 9 KB
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
-- `core/js/armario.js` · 22 KB · ARM, LOOK_T, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox
-- `core/js/clasificacion.js` · 13 KB · SALON_EXCUSAS, SALON_UI, SALON_ESPERA, salonEsc, salonTab, openSalon, salonCarga, salonPinta, salonEsperando, salonSinRed, salonRetrato, salonValor, salonFila, salonPodio, salonLista, salonObras, salonPuestoVez, salonPuesto
+- `core/js/armario.js` · 24 KB · ARM, LOOK_T, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox, lookCara, miLook, pintaLooks, lookCanvas
+- `core/js/clasificacion.js` · 13 KB · SALON_EXCUSAS, SALON_UI, SALON_ESPERA, salonEsc, salonTab, openSalon, salonCarga, salonPinta, salonEsperando, salonSinRed, salonRetrato, salonValor, salonConLook, salonCara, salonTitulo, salonFila, salonPodio, salonLista, salonObras, salonPuestoVez, salonPuesto
 - `core/js/frases-arte.js` · 9 KB · EMO_OL, emoGota, emoChispa, emoTexto, emoBillete, EMO_FX, pintaEmote
 - `core/js/frases.js` · 8 KB · FR_N, FRD, fraseTipo, fraseDef, fraseTxt, fraseNombre, frasesRetro, frasesPuestas, pintaEmotes, fraseCelda, frSel, frasesTab, frItem, buildFrasesArm, frasesRepinta, openFrases, frasePremioBox
 - `core/js/novedades.js` · 3 KB · newsLista, newsHtml, NEWS_VER, novedadesPendientes, openNews, closeNews
@@ -92,7 +92,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/terminal-shock/index.html` · 76 KB
 - `games/rumble/index.html` · 39 KB
 - `games/rumble/sw.js` · <1 KB
-- `games/rumble/css/arena.css` · 16 KB
+- `games/rumble/css/arena.css` · 19 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
 - `games/rumble/css/estilos-partida.css` · 20 KB
 - `games/rumble/css/facciones-y-jefes.css` · 11 KB
@@ -165,8 +165,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/19b-pvp.js` · 10 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
 - `games/rumble/js/19c-vista.js` · 4 KB · VISTA_YC, VISTA_SW, verAbajo, verEquipo, verFac, MIR_Y, otroEq, espejo, cambia, vistaOn, vistaRender
 - `games/rumble/js/19d-pvp-red.js` · 3 KB · PVPNET
-- `games/rumble/js/19e-pvp-pantallas.js` · 19 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpMio, pvpCopas, pvpAnotado, pvpAnota, pvpPintaLiga, pvpResumen, pvpClasificacion, pvpPinta, pvpPintaBusca, pvpPara, pvpBuscar, pvpEncontrado, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpDebug
-- `games/rumble/js/19f-pvp-servidor.js` · 9 KB · pvpRetardo, PVP_SRV, pvpErrorTexto, pvpFacDeMazo, pvpEquipoDeServidor, pvpAServidor, pvpDeServidor
+- `games/rumble/js/19e-pvp-pantallas.js` · 21 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpMio, pvpCopas, pvpAnotado, pvpAnota, pvpPintaLiga, pvpResumen, pvpClasificacion, pvpPinta, pvpPintaBusca, pvpPara, pvpBuscar, pvpEncontrado, pvpCaras, pvpCaraFin, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpDebug
+- `games/rumble/js/19f-pvp-servidor.js` · 10 KB · pvpRetardo, PVP_SRV, pvpErrorTexto, pvpFacDeMazo, pvpEquipoDeServidor, pvpAServidor, pvpDeServidor
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack
 - `games/rumble/js/21-arranque.js` · 6 KB · last, FPS, fpsShow, fpsCount, frame, boot
@@ -247,7 +247,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/balance.py` · 6 KB
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
-- `herramientas/datos.html` · 5 KB
+- `herramientas/datos.html` · 6 KB
 - `herramientas/desplegar.py` · 11 KB
 - `herramientas/idioma.py` · 8 KB
 - `herramientas/mapa.py` · 2 KB

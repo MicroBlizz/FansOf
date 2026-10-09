@@ -650,6 +650,90 @@
   }
  },
  "juego": "rumble",
+ "look": {
+  "de": {
+   "marco:accionista": [
+    "pase:t1b:paid:20"
+   ],
+   "marco:billetes": [
+    "pase:t1b:free:10"
+   ],
+   "marco:carton": [
+    "pase:t1b:free:25"
+   ],
+   "marco:ceo": [
+    "pase:t1b:paid:40"
+   ],
+   "marco:corporativo": [
+    "pase:t1b:paid:5"
+   ],
+   "marco:duelista": [
+    "pasepvp:p1:free:10"
+   ],
+   "marco:leyenda": [
+    "pasepvp:p1:free:30"
+   ],
+   "marco:maletin": [
+    "pase:t1b:free:40"
+   ],
+   "marco:neon": [
+    "pasepvp:p1:paid:10"
+   ],
+   "marco:paytowin": [
+    "pasepvp:p1:paid:20"
+   ],
+   "marco:trofeo": [
+    "pasepvp:p1:paid:30"
+   ],
+   "titulo:agresivo": [
+    "pase:t1b:paid:10"
+   ],
+   "titulo:ballena": [
+    "pasepvp:p1:paid:15"
+   ],
+   "titulo:ceof": [
+    "pase:t1b:paid:45"
+   ],
+   "titulo:consejo": [
+    "pase:t1b:paid:35"
+   ],
+   "titulo:despedido": [
+    "pase:t1b:free:35"
+   ],
+   "titulo:fiel": [
+    "pase:t1b:free:5"
+   ],
+   "titulo:minoritario": [
+    "pase:t1b:free:20"
+   ],
+   "titulo:pray": [
+    "pasepvp:p1:paid:5"
+   ],
+   "titulo:riesgo": [
+    "pase:t1b:free:45"
+   ],
+   "titulo:sinpase": [
+    "pasepvp:p1:free:20"
+   ],
+   "titulo:sofa": [
+    "pasepvp:p1:free:5"
+   ],
+   "titulo:tarjeta": [
+    "pasepvp:p1:paid:25"
+   ],
+   "titulo:tiburon": [
+    "pase:t1b:paid:25"
+   ]
+  },
+  "serie": {
+   "marco": [
+    "normal"
+   ],
+   "titulo": [
+    "becario"
+   ]
+  }
+ },
  "objetos": {
   "alfombrilla": {
    "fac": null,
@@ -5351,5 +5435,5 @@
    }
   }
  },
- "version": 20
+ "version": 21
 }

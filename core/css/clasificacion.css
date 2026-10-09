@@ -119,3 +119,10 @@
 
 /* la etiqueta de color que un juego pone en la línea pequeña (por ejemplo, la dificultad más alta en Rumble) */
 .salon-dif { display: inline-block; padding: 2px 6px 0; border-radius: 6px; border: 2px solid var(--outline); color: #fff6ea; font-family: var(--font-display); font-size: 10.5px; line-height: 1.1; letter-spacing: 0.3px; }
+
+/* v0.9.110: marco y título (el armario) */
+.salon-cara.lk { width: 46px; height: 46px; background: none; border: 0; border-radius: 0; }
+.salon-cara.lk canvas { width: 46px; height: 46px; }
+.salon-quien .tt-x.salon-tt { font-size: 12px; line-height: 1.1; }
+.sp-col .tt-x.salon-tt { font-size: 11px; max-width: 100%; display: block; text-align: center; }
+.salon-fila.mia .tt-x.salon-tt { color: #fff3b0; text-shadow: 0 1px 0 var(--outline), 0 0 4px rgba(32, 16, 44, .8); }

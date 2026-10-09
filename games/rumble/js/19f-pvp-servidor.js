@@ -53,10 +53,10 @@ PVPNET.redes.servidor = {
       activo = false; sala = st.sala;
       const seat = st.lado === 'a' ? 'p' : 'e', equipos = { p: pvpEquipoDeServidor(st.mazo_a || [], st.equipo_a), e: pvpEquipoDeServidor(st.mazo_b || [], st.equipo_b) };
       let desde = 0, cola = [], ultimaH = null, vivo = true, cerrando = false, enVuelo = 0, ultimaLlamada = 0, temporizador = null;
-      // Cada turno sale en cuanto está listo (sin esperar a que acabe la llamada anterior: hasta 3 a la vez) y, si no hay nada que mandar, se pregunta cada 250 ms por lo del rival.
-      // Las jugadas llevan su número de turno, así que da igual el orden en que lleguen las respuestas.
+      // UNA llamada a la vez (si van varias a la vez, el servidor les da el mismo número de orden y falla con «duplicate key … pvp_jugadas_pkey»). Cada turno sale en cuanto está listo;
+      // en cuanto vuelve una respuesta, si hay algo en cola se manda ya, y si no, se pregunta cada 250 ms por lo del rival.
       const bucle = async () => {
-        if (!vivo || enVuelo >= 3) return;
+        if (!vivo || enVuelo >= 1) return;
         enVuelo++; ultimaLlamada = Date.now();
         const items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
@@ -67,10 +67,12 @@ PVPNET.redes.servidor = {
           if (r && r.desync) pvpEstado('desync');
         } catch (e) {   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
           PVP.fallos = (PVP.fallos || 0) + 1; PVP.ultimoError = String((e && e.message) || e).slice(0, 80);
+          if (/duplicate key|pvp_jugadas_pkey/i.test(PVP.ultimoError)) items.length = 0;   // el servidor ya tiene esos mensajes (la respuesta se perdió): no se mandan otra vez
           for (const it of items) it.n = (it.n || 0) + 1;
           cola.unshift(...items.filter(it => it.n < 8));   // un mensaje que el servidor rechaza una y otra vez se descarta, para que no bloquee a los demás
         }
         enVuelo--;
+        if (vivo && cola.length) bucle();   // lo que se ha encolado mientras esperábamos sale ya
       };
       // cerrar la partida: ganador ('p' o 'e' del motor) → el servidor decide los puntos; si el rival aún no ha cerrado se vuelve a preguntar
       const cerrar = async (ganadorEquipo, huella, alResultado) => {

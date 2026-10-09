@@ -48,6 +48,8 @@ async function pruebaPvp(raiz, duerme) {
     const clon = x => JSON.parse(JSON.stringify(x));
     return { S, para(quien) {   // la función rpc de un jugador
       return async (nombre, a) => {
+        if (nombre === 'pvp_jugar') { S.enCurso = S.enCurso || {}; if (S.enCurso[quien]) throw new Error('duplicate key value violates unique constraint "pvp_jugadas_pkey"'); S.enCurso[quien] = 1; }   /* como el de verdad: dos llamadas a la vez del mismo jugador chocan */
+        try {
         S.llamadas++; const lat = +new URLSearchParams(location.search).get('lat') || 0; await new Promise(r => setTimeout(r, 5 + Math.random() * 30 + lat * (0.5 + Math.random())));   // ?lat=N: cada llamada tarda N ms de más (para probar con una red lenta)
         const lado = S.sala ? (S.sala.a === quien ? 'a' : 'b') : null;
         if (nombre === 'pvp_buscar') {
@@ -73,6 +75,7 @@ async function pruebaPvp(raiz, duerme) {
           return otro.cierre === a.p_ganador ? { estado: 'cerrada', gano: a.p_ganador === lado, puntos: 1000 + (a.p_ganador === lado ? 25 : -25) } : { estado: 'discutida' };
         }
         throw new Error('rpc_desconocido: ' + nombre);
+        } finally { if (nombre === 'pvp_jugar') S.enCurso[quien] = 0; }
       };
     } };
   }

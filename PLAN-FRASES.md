@@ -1,6 +1,7 @@
 # Frases y emoticonos en partida · plan
 
-Estado (9-10-2026): **propuesta, nada hecho**. Falta que Daniel elija las opciones de la sección 8. Bocetos: opción A (panel) y opción B (rueda), enseñados en el chat el 9-10-2026.
+Estado (9-10-2026): **hecho y publicado en Rumble 0.9.109**. Daniel eligió: panel (A), 8 puestas (4 + 4), la CPU contesta, los textos de la sección 5 y meterlas ya en el pase actual (a quien ya cobró esos niveles se le dan al abrir el juego: `frasesRetro`). Y pidió emoticonos **dibujados a mano**, sin emojis del móvil: los adornos están en `core/js/frases-arte.js`.
+Archivos: `core/js/frases.js` (armario, pase, premio), `core/js/frases-arte.js` (dibujos), `games/rumble/js/22-frases.js` (partida, CPU, PvP, Opciones), `games/rumble/css/frases.css`, datos en `games/rumble/js/retos-armario.js`. La prueba de PvP (`comprobar.py --pvp`, paso 1c) comprueba que viajan y que la partida no cambia.
 
 Idea (Daniel, 9-10-2026): en vez de chat libre, frases y emoticonos ya preparados, en clave de sátira, como en Clash Royale. Se ganan en los pases (Temporada y PvP).
 Por qué no chat libre: habría que moderar insultos y estafas, y Google Play pide denunciar y bloquear. Con frases cerradas no se puede escribir nada feo, y siguen siendo graciosas.

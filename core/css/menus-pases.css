@@ -96,7 +96,7 @@
 .arm-top small { font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--ink-dim); }
 #arm-who { font-family: var(--font-display); font-weight: 400; font-size: 26px; line-height: 1.05; }
 #arm-tt { font-size: 15px; display: flex; }
-.arm-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 508px; }
+.arm-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; width: 100%; max-width: 508px; }
 .arm-tab { font-family: var(--font-display); font-size: 18px; line-height: 1; padding: 10px 8px 6px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); color: var(--ink-dim); box-shadow: 0 3px 0 var(--outline); cursor: pointer; }
 .arm-tab small { font-size: 13px; opacity: .85; margin-left: 2px; }
 .arm-tab[aria-pressed="true"] { color: var(--ink); background: linear-gradient(to bottom, #ffe06a, #c47f10); box-shadow: 0 3px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, .45); }
@@ -136,3 +136,49 @@
 .lp-rar { font-size: 12px; font-weight: 800; letter-spacing: .5px; padding: 2px 10px 1px; border-radius: 999px; border: 2px solid var(--outline); background: var(--rc); color: var(--outline); }
 @media (prefers-reduced-motion: reduce) { .lp-box { animation: none; } .arm-mk.rar-legendary::after { animation: none; } }
 .pass-hero #btn-buy-pass small { font-size: 14px; color: var(--outline); text-shadow: none; background: rgba(255, 255, 255, .55); border-radius: 7px; padding: 2px 5px 0; margin-left: 3px; }
+
+/* ---------- v0.9.104: FRASES Y EMOTICONOS (core/js/frases.js): la pestaña del armario, la casilla del pase y el premio ---------- */
+.fr-arm { display: flex; flex-direction: column; gap: 8px; align-content: start; }
+.fr-h { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; color: var(--ink); margin: 6px 2px 0; text-align: left; }
+.fr-puestas { display: flex; flex-direction: column; gap: 8px; padding: 9px 10px 8px; border-radius: 18px; border: 3px solid var(--outline); background: radial-gradient(ellipse at 50% 0%, rgba(255, 203, 61, .22), var(--panel) 70%); box-shadow: 0 3px 0 var(--outline), inset 0 0 0 2px rgba(255, 203, 61, .55); }
+.fr-puestas .fr-h { margin: 0 0 0 2px; color: var(--gold); }
+.fr-row.f { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; }
+.fr-row.e, .fr-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.fr-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fr-ayuda { margin: 0; font-size: 12px; font-weight: 700; line-height: 1.25; color: var(--ink-dim); text-align: left; }
+.fr-list { display: flex; flex-direction: column; gap: 9px; }
+/* la frase es un bocadillo de verdad, con su colita y una raya del color de su rareza */
+.fr-f { position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; padding: 8px 12px 7px 16px; border-radius: 16px; border: 3px solid var(--outline); background: #fff6ea; color: #20102c; font-family: var(--font-ui); box-shadow: 0 3px 0 var(--outline); }
+.fr-f::before { content: ''; position: absolute; left: 5px; top: 7px; bottom: 7px; width: 5px; border-radius: 3px; background: var(--rc); box-shadow: 0 0 0 1.5px var(--outline); }
+.fr-f::after { content: ''; position: absolute; left: 20px; bottom: -9px; width: 12px; height: 12px; background: #fff6ea; border: 3px solid var(--outline); border-top: 0; border-left: 0; transform: rotate(45deg); }
+.fr-f .fr-txt { font-weight: 800; font-size: 14.5px; line-height: 1.18; }
+.fr-f small { font-size: 10.5px; font-weight: 800; color: color-mix(in srgb, var(--rc) 70%, #20102c); }
+.fr-f.slot { min-height: 48px; justify-content: center; padding: 6px 10px 6px 15px; }
+.fr-f.slot .fr-txt { font-size: 12.5px; }
+.fr-f.lock { background: #cbbfd9; }
+.fr-f.lock::after { background: #cbbfd9; }
+.fr-f.lock .fr-txt { opacity: .55; }
+.fr-f .arm-lk { top: 50%; transform: translateY(-50%); right: 10px; }
+.fr-f .arm-new { left: auto; right: 6px; top: -9px; }
+.fr-e { position: relative; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 5px 3px 6px; border-radius: 16px; border: 3px solid var(--outline); background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--rc, #c3c9d4) 30%, transparent), var(--panel) 70%); box-shadow: 0 3px 0 var(--outline), inset 0 0 0 2px color-mix(in srgb, var(--rc, #c3c9d4) 55%, transparent); color: var(--ink); font-family: var(--font-ui); overflow: hidden; }
+.fr-e canvas { width: 72px; height: 72px; }
+.fr-e.slot canvas { width: 58px; height: 58px; }
+.fr-e b { font-family: var(--font-display); font-weight: 400; font-size: 13px; line-height: 1.05; }
+.fr-e small { font-size: 10.5px; font-weight: 800; line-height: 1.15; color: var(--rc, var(--ink-dim)); }
+.fr-e.lock { background: var(--panel-2); box-shadow: 0 3px 0 var(--outline); }
+.fr-e.lock canvas { filter: grayscale(1) brightness(.55); }
+.fr-e.lock b { opacity: .55; }
+.fr-e.lock small { color: var(--ink-dim); font-weight: 700; }
+.fr-e.rar-legendary:not(.lock)::after { content: ''; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .28) 50%, transparent 60%); background-size: 260% 100%; animation: brilloRar 3.2s ease-in-out infinite; pointer-events: none; }
+.fr-f.on, .fr-e.on { box-shadow: 0 3px 0 var(--outline), 0 0 0 3px var(--gold), 0 0 14px rgba(255, 203, 61, .55); }
+.fr-e.on small { color: var(--gold); }
+.fr-f.pick, .fr-e.pick { box-shadow: 0 3px 0 var(--outline), 0 0 0 4px #ff5fa8, 0 0 16px rgba(255, 95, 168, .6); }
+.fr-f.target, .fr-e.target { animation: frTarget .8s ease-in-out infinite alternate; }
+@keyframes frTarget { from { box-shadow: 0 3px 0 var(--outline), 0 0 0 3px #ffe14d; } to { box-shadow: 0 3px 0 var(--outline), 0 0 0 3px rgba(255, 225, 77, .25); } }
+/* en el pase */
+.pr-fr b { font-family: var(--font-ui); font-weight: 800; font-size: 11.5px; line-height: 1.1; }
+/* el premio en grande: la frase dentro de un bocadillo */
+.fr-lp { padding: 18px 20px 14px; gap: 14px; }
+.fr-bub { position: relative; display: block; max-width: 240px; padding: 10px 16px 9px; border-radius: 18px; border: 3px solid var(--outline); background: #fff6ea; color: #20102c; font-weight: 800; font-size: 18px; line-height: 1.2; box-shadow: 0 4px 0 var(--outline); }
+.fr-bub::after { content: ''; position: absolute; left: 50%; bottom: -10px; margin-left: -7px; width: 13px; height: 13px; background: #fff6ea; border: 3px solid var(--outline); border-top: 0; border-left: 0; transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) { .fr-f.target, .fr-e.target { animation: none; } .fr-e.rar-legendary::after { animation: none; } }

@@ -3,6 +3,12 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.109', real: [
+      '<b>FRASES Y EMOTICONOS</b>: toca el bocadillo de abajo a la derecha durante la partida y dile algo al rival: «Es una característica, no un bug», «Nos vemos en Recursos Humanos»… Y emoticonos dibujados a mano de tus personajes. Sin escribir, así que nadie insulta.',
+      '<b>LA CPU CONTESTA</b>: Microblizz, Phony e IAhorro te responden, y también dicen lo suyo al tirarte una torre o al perder una. En el PvP, tus frases las ve tu rival.',
+      '<b>EN EL ARMARIO Y EN LOS PASES</b>: empiezas con 8. Hay 26 más en el Pase de Temporada y en el Pase PvP. Elige cuáles llevas en la pestaña FRASES del Armario. Si ya habías cobrado esos niveles del pase, ya son tuyas.',
+      '<b>SILENCIO</b>: «Silenciar al rival» en el panel de la partida, y «Frases del rival» en Opciones para no verlas nunca.'],
+    joke: ["Microblizz quería un chat libre, pero su departamento legal tardó 3 segundos en ver lo que la gente iba a escribir. Ahora vende las frases por temporadas."] },
   { v: '0.9.108', real: [
       '<b>TU PUESTO EN EL MENÚ</b>: la CLASIFICACIÓN pasa a una tarjeta grande entre el Gashapón y la Tienda, y te dice tu mejor puesto. Tócala y te lleva a esa clasificación.',
       '<b>COPAS PVP DE VERDAD</b>: la pestaña de copas PvP ya enseña la clasificación real. Y hay una pestaña nueva, CLANES… en obras (toca el cartel: Microblizz tiene 15 excusas).'],

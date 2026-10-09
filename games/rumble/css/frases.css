@@ -1,0 +1,48 @@
+/* Fans of Rumble · Frases y emoticonos en la partida (js/22-frases.js): el botón del bocadillo, el panel y los bocadillos de cada sede */
+.btn-fr { position: absolute; right: 10px; top: calc(var(--top) + 724px); width: 60px; height: 60px; z-index: 8; pointer-events: auto; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 18px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #ffe06a, #e9a514); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, .5); overflow: hidden; }
+.btn-fr svg { width: 38px; height: 38px; position: relative; z-index: 1; }
+.btn-fr:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, .5); }
+.btn-fr[aria-expanded="true"] { background: linear-gradient(to bottom, #fff6ea, #d9c7ee); }
+.btn-fr::after { content: ''; position: absolute; inset: 0; background: conic-gradient(rgba(32, 16, 44, .62) calc(var(--cd, 0) * 360deg), transparent 0); pointer-events: none; z-index: 2; }
+.btn-fr.espera svg { opacity: .7; }
+
+#fr-panel { position: absolute; left: 14px; right: 14px; bottom: calc(var(--bot) + 252px); z-index: 9; pointer-events: auto; box-sizing: border-box; padding: 10px 12px 8px; border-radius: 22px; border: 4px solid var(--outline); background: radial-gradient(ellipse at 50% 0%, rgba(255, 203, 61, .18), transparent 65%), #26143c; box-shadow: 0 6px 0 var(--outline), 0 16px 34px rgba(0, 0, 0, .55); animation: frpIn .18s ease-out; }
+#fr-panel::after { content: ''; position: absolute; right: 26px; bottom: -14px; width: 18px; height: 18px; background: #26143c; border: 4px solid var(--outline); border-top: 0; border-left: 0; transform: rotate(45deg); }
+@keyframes frpIn { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+.frp-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 8px; }
+.frp-h b { font-family: var(--font-display); font-weight: 400; font-size: 19px; letter-spacing: 1px; color: var(--gold); }
+.frp-mute { display: flex; align-items: center; gap: 5px; padding: 5px 10px 4px; border-radius: 999px; border: 2px solid var(--outline); background: var(--tray-hi); color: var(--ink); font: 800 12px var(--font-ui); cursor: pointer; }
+.frp-mute svg { width: 17px; height: 17px; }
+.frp-mute.on { background: #ff5a4f; color: #fff; }
+.frp-f { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 10px; margin-bottom: 10px; }
+.frp-fr { position: relative; min-height: 56px; padding: 7px 10px 7px 16px; border-radius: 16px; border: 3px solid var(--outline); background: #fff6ea; color: #20102c; font: 800 14.5px/1.15 var(--font-ui); text-align: left; cursor: pointer; box-shadow: 0 3px 0 var(--outline); }
+.frp-fr::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 5px; border-radius: 3px; background: var(--rc); box-shadow: 0 0 0 1.5px var(--outline); }
+.frp-fr:active, .frp-em:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.frp-e { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+.frp-em { position: relative; display: flex; align-items: center; justify-content: center; padding: 4px 0 2px; border-radius: 16px; border: 3px solid var(--outline); background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--rc) 34%, transparent), rgba(62, 35, 99, .95) 70%); box-shadow: 0 3px 0 var(--outline), inset 0 0 0 2px color-mix(in srgb, var(--rc) 55%, transparent); cursor: pointer; overflow: hidden; }
+.frp-em canvas { width: 86px; height: 86px; }
+.frp-pie { margin: 8px 2px 0; font: 700 12px var(--font-ui); color: var(--ink-dim); text-align: left; }
+.frp-pie b { color: var(--ink); }
+
+/* los bocadillos: el del rival bajo su sede (con la colita arriba) y el tuyo encima de tu sede (colita abajo) */
+.fr-bubble { position: absolute; left: 50%; z-index: 6; pointer-events: none; box-sizing: border-box; max-width: 300px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 16px 9px; border-radius: 20px; border: 4px solid var(--outline); background: #fff6ea; color: #20102c; box-shadow: 0 5px 0 var(--outline), 0 10px 22px rgba(0, 0, 0, .4); transform: translateX(-50%); text-align: center; }
+.fr-bubble.rival { top: calc(var(--top) + 312px); padding-top: 9px; }
+.fr-bubble.yo { bottom: calc(var(--bot) + 368px); }
+.fr-bubble::after { content: ''; position: absolute; left: 50%; margin-left: -9px; width: 16px; height: 16px; background: #fff6ea; border: 4px solid var(--outline); transform: rotate(45deg); }
+.fr-bubble.rival::after { top: -12px; border-bottom: 0; border-right: 0; }
+.fr-bubble.yo::after { bottom: -12px; border-top: 0; border-left: 0; }
+
+.fr-who, .fr-say, .fr-bubble canvas { position: relative; z-index: 1; }
+.fr-who { font-family: var(--font-display); font-weight: 400; font-size: 12px; letter-spacing: 1px; color: #6d28d9; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr-bubble.rival .fr-who { color: #2e6fd8; }
+.fr-say { font: 800 18px/1.18 var(--font-ui); }
+.fr-bubble.em { padding: 6px 12px 3px; }
+.fr-bubble canvas { width: 88px; height: 88px; }
+.fr-bubble.rar-legendary { box-shadow: 0 5px 0 var(--outline), 0 0 0 3px #ffcb3d, 0 0 26px rgba(255, 203, 61, .7); }
+.fr-bubble.sale { animation: frSale .42s cubic-bezier(.2, 1.6, .4, 1); }
+.fr-bubble.sale canvas { animation: frBaile .9s ease-in-out .35s 2; }
+.fr-bubble.fuera { animation: frFuera .28s ease-in forwards; }
+@keyframes frSale { 0% { opacity: 0; transform: translateX(-50%) scale(.35) rotate(-6deg); } 100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0); } }
+@keyframes frFuera { to { opacity: 0; transform: translateX(-50%) translateY(-10px) scale(.9); } }
+@keyframes frBaile { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg) scale(1.04); } 75% { transform: rotate(6deg) scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .fr-bubble.sale, .fr-bubble.sale canvas, #fr-panel { animation: none; } }

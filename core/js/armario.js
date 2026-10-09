@@ -3,25 +3,24 @@
 // Se ganan en los pases (premios { marco } o { titulo }); el sistema de pases está en core/js/retos.js.
 'use strict';
 const ARM = () => (typeof RETOS !== 'undefined' && RETOS.armario) || null;
+const LOOK_T = { marco: 'marcos', titulo: 'titulos', frase: 'frases', emote: 'emotes' };   // v0.9.104: frases y emoticonos (core/js/frases.js)
 // lo que llevas puesto y lo que tienes (SAVE.look). Lo de serie se tiene siempre.
 function lookDe() {
   const A = ARM(), L = SAVE.look && typeof SAVE.look === 'object' ? SAVE.look : (SAVE.look = {});
-  if (!Array.isArray(L.marcos)) L.marcos = [];
-  if (!Array.isArray(L.titulos)) L.titulos = [];
+  for (const t in LOOK_T) if (!Array.isArray(L[LOOK_T[t]])) L[LOOK_T[t]] = [];
   if (A) {
-    for (const id in A.marcos) if (A.marcos[id].serie && !L.marcos.includes(id)) L.marcos.push(id);
-    for (const id in A.titulos) if (A.titulos[id].serie && !L.titulos.includes(id)) L.titulos.push(id);
+    for (const t in LOOK_T) { const D = A[LOOK_T[t]] || {}; for (const id in D) if (D[id].serie && !L[LOOK_T[t]].includes(id)) L[LOOK_T[t]].push(id); }
     if (!A.marcos[L.marco] || !L.marcos.includes(L.marco)) L.marco = Object.keys(A.marcos).find(id => A.marcos[id].serie) || '';
     if (L.titulo && (!A.titulos[L.titulo] || !L.titulos.includes(L.titulo))) L.titulo = '';
     if (L.titulo === undefined) L.titulo = Object.keys(A.titulos).find(id => A.titulos[id].serie) || '';
   }
   return L;
 }
-const LOOK_LISTA = t => (t === 'marco' ? 'marcos' : 'titulos');
+const LOOK_LISTA = t => LOOK_T[t] || 'titulos';
 const tieneLook = (t, id) => lookDe()[LOOK_LISTA(t)].includes(id);
 // da un marco o un título; devuelve true si es nuevo
 function darLook(t, id) {
-  const A = ARM(); if (!A || !(t === 'marco' ? A.marcos : A.titulos)[id]) return false;
+  const A = ARM(); if (!A || !LOOK_T[t] || !(A[LOOK_T[t]] || {})[id]) return false;
   const L = lookDe(), lista = L[LOOK_LISTA(t)];
   if (lista.includes(id)) return false;
   lista.push(id); (L.nuevos || (L.nuevos = [])).push(t + ':' + id);
@@ -251,9 +250,11 @@ function buildArmario() {
   for (const b of document.querySelectorAll('[data-armt]')) b.setAttribute('aria-pressed', String(b.dataset.armt === armTab));
   $('[data-armt="marco"]').innerHTML = `MARCOS <small>${nM}/${NM}</small>`;
   $('[data-armt="titulo"]').innerHTML = `TÍTULOS <small>${nT}/${NT}</small>`;
+  if (typeof frasesTab === 'function') frasesTab();
   const nuevo = (t, id) => (L.nuevos || []).includes(t + ':' + id) ? '<span class="arm-new ol">¡NUEVO!</span>' : '';
   const orden = (D, lista) => { const ks = Object.keys(D); return ks.slice().sort((a, b) => (lista.includes(b) - lista.includes(a)) || (ks.indexOf(a) - ks.indexOf(b))); };   // primero lo que tienes; después, en el orden de los datos
   const box = $('#arm-list');
+  if (armTab === 'frase' && typeof buildFrasesArm === 'function') { buildFrasesArm(box); return; }
   if (armTab === 'marco') {
     box.className = 'scroll-list arm-grid';
     box.innerHTML = orden(A.marcos, L.marcos).map(id => {
@@ -284,6 +285,7 @@ if (ARM()) {
 
 /* ---------- al ganar un marco o un título: enseñarlo en grande y ofrecer ponérselo ---------- */
 function lookPremioBox(r, n = 1) {
+  if ((r.frase || r.emote) && typeof frasePremioBox === 'function') { frasePremioBox(r, n); return; }
   const t = r.marco ? 'marco' : 'titulo', id = r.marco || r.titulo, D = (t === 'marco' ? marcoDef : tituloDef)(id); if (!D) return;
   $('#cf-title').textContent = t === 'marco' ? '¡MARCO NUEVO!' : '¡TÍTULO NUEVO!';
   const rar = `<span class="lp-rar" style="--rc:${rarColor(D.rar)}">${esc(RARITY[D.rar][0])}</span>`;

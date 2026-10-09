@@ -39,7 +39,7 @@ function frame(now) {
 async function boot() {
   applyLook(); setSoundIcon();
   try { await Promise.race([Promise.all([document.fonts.load('40px "Luckiest Guy"'), document.fonts.load('700 16px "Baloo 2"')]), new Promise(r => setTimeout(r, 1800))]); } catch (e) { /* fonts optional */ }
-  buildSprites(); BRIDGE_LAYER = buildBridges(); setFaction(G.faction); updateWallets(); idleTick(); facItemsRetro(); achInit(); achDay(); achSoon(); saveGame(); READY = true;
+  buildSprites(); BRIDGE_LAYER = buildBridges(); setFaction(G.faction); updateWallets(); idleTick(); facItemsRetro(); if (typeof frasesRetro === 'function') frasesRetro(); achInit(); achDay(); achSoon(); saveGame(); READY = true;
   fpsShow(); requestAnimationFrame(t => { last = t; frame(t); });
   setInterval(tutTick, 250); titlePopups();
 }

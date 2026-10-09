@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.5', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'],
+    joke: ['Microblizz ha descubierto que puede vender frases hechas. Ha mandado a todo el departamento de marketing a buscar más.'] },
   { v: '0.1.4', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'],
     joke: ['Microblizz ha instalado interruptores para encender y apagar cosas desde su despacho. Aún no sabe cuál apaga las luces.'] },
   { v: '0.1.3', real: ['<b>ESTADO FIJO, ESTILO FINAL FANTASY</b>: la vida, el turno y el CAOS de todos salen en una franja entre el campo de batalla y los botones (los enemigos arriba, tu grupo debajo), sin tapar a los personajes.', '<b>NOVEDADES ARREGLADAS</b>: ya se leen bien en el listado de juegos.'],

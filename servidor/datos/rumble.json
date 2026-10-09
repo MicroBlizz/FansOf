@@ -928,6 +928,7 @@
     "turbo": 2
    }
   },
+  "cajas": null,
   "camp": {
    "boss": [
     300,
@@ -4242,7 +4243,7 @@
      "tickets": 0
     },
     {
-     "gems": 15,
+     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4273,7 +4274,7 @@
     },
     {
      "gems": 0,
-     "gold": 150,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4332,7 +4333,7 @@
      "tickets": 0
     },
     {
-     "gems": 15,
+     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4358,24 +4359,6 @@
     {
      "gems": 0,
      "gold": 150,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 150,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 15,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4393,7 +4376,25 @@
     },
     {
      "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
      "gold": 150,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 15,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4453,7 +4454,7 @@
     },
     {
      "gems": 0,
-     "gold": 150,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4512,7 +4513,7 @@
      "tickets": 0
     },
     {
-     "gems": 15,
+     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4540,54 +4541,6 @@
      "tickets": 0
     },
     {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
      "gems": 0,
      "gold": 0,
      "item": null,
@@ -4601,6 +4554,54 @@
     },
     {
      "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4631,54 +4632,6 @@
     },
     {
      "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4692,6 +4645,54 @@
     {
      "gems": 0,
      "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
      "item": null,
      "tickets": 0
     },
@@ -4720,7 +4721,67 @@
      "tickets": 0
     },
     {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
      "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 30,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 400,
+     "item": null,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4756,67 +4817,7 @@
      "tickets": 0
     },
     {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
      "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
-     "gold": 0,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 400,
-     "item": null,
-     "tickets": 0
-    },
-    {
-     "gems": 30,
      "gold": 0,
      "item": null,
      "tickets": 0
@@ -4854,16 +4855,6 @@
     },
     {
      "gems": 0,
-     "gold": 200,
-     "tickets": 0
-    },
-    {
-     "gems": 10,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
      "gold": 0,
      "tickets": 0
     },
@@ -4874,21 +4865,11 @@
     },
     {
      "gems": 0,
-     "gold": 200,
-     "tickets": 0
-    },
-    {
-     "gems": 10,
      "gold": 0,
      "tickets": 0
     },
     {
-     "gems": 0,
-     "gold": 200,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
+     "gems": 10,
      "gold": 0,
      "tickets": 0
     },
@@ -4905,6 +4886,26 @@
     {
      "gems": 0,
      "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 200,
+     "tickets": 0
+    },
+    {
+     "gems": 10,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
      "tickets": 0
     },
     {
@@ -4954,7 +4955,7 @@
     },
     {
      "gems": 0,
-     "gold": 200,
+     "gold": 0,
      "tickets": 0
     },
     {
@@ -4978,7 +4979,7 @@
      "tickets": 0
     },
     {
-     "gems": 10,
+     "gems": 0,
      "gold": 0,
      "tickets": 0
     },
@@ -5002,57 +5003,7 @@
      "tickets": 0
     },
     {
-     "gems": 20,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
      "gems": 0,
-     "gold": 500,
-     "tickets": 0
-    },
-    {
-     "gems": 20,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 20,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 500,
-     "tickets": 0
-    },
-    {
-     "gems": 20,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 500,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 0,
-     "tickets": 0
-    },
-    {
-     "gems": 0,
-     "gold": 500,
-     "tickets": 0
-    },
-    {
-     "gems": 20,
      "gold": 0,
      "tickets": 0
     },
@@ -5082,7 +5033,17 @@
      "tickets": 0
     },
     {
-     "gems": 20,
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
      "gold": 0,
      "tickets": 0
     },
@@ -5108,6 +5069,46 @@
     },
     {
      "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 20,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 500,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
+     "gold": 0,
+     "tickets": 0
+    },
+    {
+     "gems": 0,
      "gold": 500,
      "tickets": 0
     },
@@ -5132,7 +5133,7 @@
      "tickets": 0
     },
     {
-     "gems": 20,
+     "gems": 0,
      "gold": 0,
      "tickets": 0
     },
@@ -5350,5 +5351,5 @@
    }
   }
  },
- "version": 19
+ "version": 20
 }

@@ -57,4 +57,6 @@ IDIOMA.add({
   "Microblizz ha descubierto que dos mensajes a la vez se pisaban entre sí. Ahora hacen cola, como en la cafetería.": "Microblizz discovered that two messages at once stepped on each other. Now they queue, like in the cafeteria.",
   "<b>PVP MÁS ROBUSTO</b>: ajustes en los cálculos de la partida para que dos navegadores distintos no se separen, y la partida guarda más pistas para encontrar los desajustes que queden.": "<b>MORE ROBUST PVP</b>: tweaks to the match calculations so that two different browsers don't drift apart, and the match keeps more clues to track down any remaining mismatches.",
   "Microblizz ha instalado un chivato en cada partida. Ya sabe dónde se le va el hilo.": "Microblizz has installed a snitch in every match. It now knows where it loses the thread.",
+  "<b>EL CHAT, TAMBIÉN EN PVP</b>: el chat de directo vuelve a comentar la partida en el PvP (solo lo ves tú, no se sincroniza con nadie).": "<b>THE CHAT, NOW IN PVP TOO</b>: the live chat is back to commenting on the match in PvP (only you see it, it isn't synced with anyone).",
+  "Microblizz asegura que el chat nunca se fue del PvP: estaba de descanso.": "Microblizz insists the chat never left PvP: it was on a break.",
 });

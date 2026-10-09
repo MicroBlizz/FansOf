@@ -267,7 +267,7 @@ async function accionHeroe(h, a) {
   if (a.tipo === 'defender') { h.guardia = true; numero(h, 'DEFIENDE', '#c08bff', 20); play('shield'); await espera(350); return; }
   if (a.tipo === 'atacar') {
     const ob = otroVivo('e', a.obj); if (!ob) return;
-    await embestir(h); play(pick(['hit', 'slam'])); efecto('tajo', ob); herir(ob, danio(h, ob, 'atk', 1)); await espera(260); await retroceder(h); return;
+    await embestir(h); play(pick(['hit', 'slam'])); efecto('tajo', ob); herir(ob, danio(h, ob, 'atk', 1)); const gana = Math.min(AJUSTES.caosAtaque, h.mpMax - h.mp); if (gana > 0) { h.mp += gana; numero(h, '+' + gana + ' CAOS', '#f3a6ff', 18); } await espera(260); await retroceder(h); return;
   }
   if (a.tipo === 'objeto') {
     const o = OBJETOS[a.id]; if (!(SAVE.items[a.id] > 0)) { aviso('Ya no te quedan.'); return; }

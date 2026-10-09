@@ -1,0 +1,8 @@
+// Fans of Tácticas · Novedades: el informe de cada versión, la más nueva primero. La página de entrada (index.html de la raíz) lo lee.
+// La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
+'use strict';
+const NEWS = [
+  { v: '0.1.1', real: ['<b>VIDA, TURNO Y CAOS A LA VISTA</b>: en los combates, cada personaje (y cada enemigo) muestra bajo los pies su vida en número, su barra de turno y su CAOS, también con el menú abierto.',
+      '<b>MÁS CAOS</b>: el ataque normal da 5 CAOS al héroe, y el Tajo épico del EpicChampion da 6 CAOS a todo el grupo.'],
+    joke: ['Microblizz ha puesto números a todo. Dice que así los enemigos también saben cuánto les queda.'] },
+];

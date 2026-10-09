@@ -4,6 +4,7 @@ const tr = s => s;   // el juego está en español; el motor de dibujo de Fans O
 
 /* ---------- ritmo del combate ---------- */
 const AJUSTES = {
+  caosAtaque: 5,      // CAOS que gana el héroe con cada ataque normal
   atbBase: 20,        // lo que se llena la barra por segundo, más la velocidad de cada uno (100 = turno)
   atbVel: 1.6,        // cuánto suma cada punto de velocidad
   critico: 0.08,      // probabilidad de golpe crítico

@@ -25,6 +25,7 @@ function render() {
   if (showZones && !isSpell((input.dragging && input.card) || input.selected)) drawZones();
   for (const p of parts) if (p.ground) drawPart(p);
   drawSpellsGround();   // v0.9.15
+  locasSuelo();   // habilidades locas (07g)
   for (const s of structs) { if (s.hidden) continue; ctx.globalAlpha = 0.3; ctx.fillStyle = '#140a1e'; ctx.beginPath(); ctx.ellipse(s.x + 3, s.y + 3, s.r * 1.15, s.r * 0.45, 0, 0, Math.PI * 2); ctx.fill(); }
   ctx.globalAlpha = 1;
   for (const u of units) {
@@ -39,6 +40,7 @@ function render() {
   for (const p of projs) drawProj(p);
   for (const p of parts) if (!p.ground) drawPart(p);
   drawSpellsAir();
+  locasAire();
   terrainAir();
   if (G.state !== 'title') drawAmbient(rdt); else G.flash = 0;
   for (const e of list) if (!(e.kind === 'unit' && inTunnel(e))) drawBars(e);   // v0.9.19: dentro del túnel no se ve nada

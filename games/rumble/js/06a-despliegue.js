@@ -103,6 +103,7 @@ function applyAbility(u) {
     case 'dlc': u.abDlc = v / sh; break;
     case 'gigante': { const k = 1 + v / 100; u.mHp *= k; u.mDmg *= k; u.mSpeed *= 0.82; u.mScale *= 1.28; u.r *= 1.28; u.abGiant = true; break; }
     case 'iman': u.abMagnet = v; break;
+    default: LOCAS.aplica(u, id, v, sh);   // las habilidades locas (06h-habilidades-locas.js)
   }
 }
 function applyEquip(u) {
@@ -206,7 +207,7 @@ function tryPlayerDeploy(slot, key, x, y) {
   hideTut();
   return true;
 }
-function targetable(t) { return t && t.alive && !(t.kind === 'unit' && (t.stealthT > 0 || t.jump || t.deployT > 0.2 || t.banT > 0)); }
+function targetable(t) { return t && t.alive && !(t.kind === 'unit' && (t.stealthT > 0 || t.jump || t.deployT > 0.2 || t.banT > 0 || t.clipT > 0)); }   // clipT: Clipping
 function laneStruct(u) {
   const foe = other(u.team); const li = u.x < W / 2 ? 0 : 1;
   const tw = towers[foe][li]; if (tw.alive) return tw;

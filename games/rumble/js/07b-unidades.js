@@ -70,6 +70,7 @@ function drawUnit(u) {
   if (u.mut === 'glass') alpha *= 0.72;
   const ms = (u.mScale || 1) * (u.shrinkT > 0 ? u.shrinkF || 0.6 : 1);
   if (u.banT > 0) alpha *= 0.22;   // v0.9.15: baneado
+  if (u.loca) { const P = locaPose(u); alpha *= P.a; ang += P.ang; sx *= P.sx; sy *= P.sy; z += P.z; }   // habilidades locas (07g)
   if (ghost > 0.25 && !REDUCED && u.stealthT <= 0) for (const g of [0.55, 0.25]) {   // v0.9.24: estela
     ctx.save(); ctx.globalAlpha = alpha * ghost * (g === 0.55 ? 0.3 : 0.16); ctx.translate(x - u.lungeX * ghost * 12 * (1 - g), y - z - u.lungeY * ghost * 7 * (1 - g));
     if (ang) ctx.rotate(ang * u.face * g); ctx.scale(u.face * sx * ms, sy * ms); ctx.drawImage(s.w, -s.ax, -s.ay, s.wd, s.ht); ctx.restore();
@@ -87,6 +88,7 @@ function drawUnit(u) {
   if (u.hitT > 0) { ctx.globalAlpha = alpha * (u.hitT / 0.12) * 0.9; ctx.drawImage(s.w, -s.ax, -s.ay, s.wd, s.ht); }
   if (u.stunT > 0) { if (u.stunKind === 'stone' && s.g) { ctx.globalAlpha = alpha * 0.85; ctx.drawImage(s.g, -s.ax, -s.ay, s.wd, s.ht); } else { ctx.globalAlpha = 0.45; ctx.drawImage(s.w, -s.ax, -s.ay, s.wd, s.ht); } }
   ctx.restore();
+  if (u.loca) locaEncima(u, x, y - z, T, ms);
   if (u.bshield > 0 && u.deployT <= 0) {   // v0.9.13: barrera dorada del muro de escudos
     const top = topOf(u), k = Math.min(1, u.bshT / 1.5);
     ctx.save(); ctx.globalAlpha = 0.35 + 0.5 * k; ctx.strokeStyle = '#ffcb3d'; ctx.lineWidth = 2; ctx.fillStyle = 'rgba(255,203,61,.10)';

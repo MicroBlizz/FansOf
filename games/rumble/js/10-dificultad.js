@@ -144,6 +144,7 @@ function legendaryPrize() {
 }
 // ---- efectos nuevos (habilidades y objetos de la v0.9.12)
 function onLand(u) {
+  if (u.loca) LOCAS.llega(u);   // habilidades locas
   if (u.abRun) { u.runT = u.abRun; addNum(u.x, u.y, topOf(u) + 18, '¡SPEEDRUN!', '#7df3ff', 13); }
   if (u.abDrink) { u.drinkT = 10; addNum(u.x, u.y, topOf(u) + 44, '¡BEBIDA XXL!', '#9ef07a', 12); }
   if (u.abSteal && S && G.state === 'play') {
@@ -160,6 +161,7 @@ function onLand(u) {
   showLoadout(u);
 }
 function tickExtras(u, dt) {
+  LOCAS.tick(u, dt);   // habilidades locas (y la cámara lenta del Bullet Time, que afecta a cualquiera)
   if (u.ignT > 0) u.ignT -= dt;
   for (const k of ['disarmT', 'zombT', 'shrinkT', 'confT', 'hasteT', 'crunchT']) if (u[k] > 0) { u[k] -= dt; if (k === 'confT' && u[k] <= 0) { u.target = null; u.retarget = 0; } }   // v0.9.15: efectos de hechizos
   if (u.crunchT > 0) {   // v0.9.20: hechizo Crunch: pega el doble de rápido pero se va quemando
@@ -181,6 +183,7 @@ function tickExtras(u, dt) {
 }
 function deathExtras(t, src) {
   if (G.state !== 'play') return;
+  if (t.loca) LOCAS.muere(t);   // habilidades locas
   if (t.abRage) {
     const dmg = t.abRage * (t.mLvl || 1);
     for (const o of units) if (o.alive && o.team !== t.team && hyp(o.x - t.x, o.y - t.y) - o.r <= 64) hurt(o, dmg, null, 'aoe');

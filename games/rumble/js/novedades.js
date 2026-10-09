@@ -3,6 +3,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.115', real: ['<b>12 HABILIDADES LOCAS</b>: llegan al gashapón la Llamada del CEO, el Modo Súper, el Wallhack, el Ragdoll, el Lag, el Modo Dios, el Bullet Time, la Lootbox humana, el Spam de emotes, el Ping 999, el Clipping y el Pay to Win. Cada una con su propia animación en batalla: manotazos desde el cielo, cuerpos que salen volando, cajas sorpresa, cúpulas a cámara lenta… Míralas en la Biblioteca.'], joke: ['El departamento legal pidió quitar el Pay to Win. El de monetización pidió subirlo a Mítica.'] },
   { v: '0.9.114', real: ['<b>MINIATURAS NUEVAS</b>: cada habilidad y cada objeto tiene ahora su propio dibujo, en lugar de dos letras o del mismo icono para todos. El fondo lleva el color de su rareza, y las Épicas y Legendarias brillan con rayos de luz. Las verás en la Biblioteca, el inventario y el gashapón.'], joke: ['Microblizz ha encargado 75 dibujos nuevos. Al ilustrador le ha pagado en «visibilidad».'] },
   { v: '0.9.113', real: [
       '<b>RIVALES CON CABEZA</b>: la máquina ya tiene tácticas según la dificultad. En Normal, si te quedas sin CAOS te ataca por el carril donde no estás, y guarda los hechizos para pillar a un grupo. En Difícil, Heroica, Mítica, CEO y los jefes duros, además ataca con combos (el tanque y el apoyo casi a la vez), presiona el otro carril y no te ataca si tienes el CAOS lleno. En Fácil juega como siempre.',

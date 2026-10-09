@@ -61,13 +61,14 @@
       pintaFlags = () => {
         c.textContent = '';
         const nombres = Object.keys(NUCLEO.flagsDev);
-        if (!nombres.length) { c.append(el('p', { textContent: 'Ningún flag registrado todavía (se registran al usarse con NUCLEO.flag).' })); return; }
+        if (!nombres.length) { c.append(el('p', { textContent: 'Ningún flag registrado todavía (se registran al usarse con NUCLEO.flag). Aquí mandan tus interruptores; en la web publicada manda la tabla flags.' })); return; }
         for (const n of nombres) {
           const on = NUCLEO.flag(n, NUCLEO.flagsDev[n]);
-          c.append(el('div', { className: 'fila' }, boton((on ? 'ON  ' : 'OFF ') + n, () => { try { localStorage.setItem('fansof-flag-' + n, on ? '0' : '1'); } catch (e) { /* sin guardar */ } location.reload(); }), el('span', { textContent: NUCLEO.flagsDev[n] })));
+          c.append(el('div', { className: 'fila' }, boton((on ? 'ON  ' : 'OFF ') + n, () => { try { localStorage.setItem('fansof-flag-' + n, on ? '0' : '1'); } catch (e) { /* sin guardar */ } location.reload(); }), el('span', { textContent: `${NUCLEO.flagsDev[n]} · base de datos: ${NUCLEO.flagRemoto(n) ? (NUCLEO.flagRemoto(n).valor ? 'true' : 'false') + (NUCLEO.flagRemoto(n).porcentaje < 100 ? ' al ' + NUCLEO.flagRemoto(n).porcentaje + ' %' : '') : 'sin fila'}` })));
         }
       };
       pintaFlags();
+      c.append(el('div', { className: 'fila' }, boton('Leer la base de datos ahora', async () => { await NUCLEO.leerFlags(); pintaFlags(); })));
     } },
     { titulo: 'Modo desarrollo', pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));

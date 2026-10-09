@@ -85,6 +85,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
+- `core/js/sistema/flags.js` · 7 KB · NUCLEO.flag, flagRemoto, flagMensaje, alCambiarFlags, leerFlags (flags remotos, mantenimiento, versión mínima)
 - `demos/terminal-shock/index.html` · 76 KB
 - `games/rumble/index.html` · 38 KB
 - `games/rumble/sw.js` · <1 KB

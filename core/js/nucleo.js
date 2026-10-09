@@ -42,6 +42,7 @@ const NUCLEO = (() => {
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
   const COMUN = [
     'js/sistema/utiles.js',        // utilidades: no dependen de nada
+    'js/sistema/flags.js',         // flags remotos (abrir/cerrar cosas desde la base de datos), mantenimiento y versión mínima
     'js/sistema/sonido.js',        // el altavoz, los efectos y el motor de música
     'js/serie/config.js',          // la serie: constantes y CFG (las cartas, unidades, tipos y roles los añade cada facción)
     'js/serie/facciones/animales.js', 'js/serie/facciones/nomuertos.js', 'js/serie/facciones/streamers.js', 'js/serie/facciones/heroes.js', 'js/serie/facciones/ciber.js', 'js/serie/facciones/memes.js', 'js/serie/facciones/gamer.js', 'js/serie/facciones/olvidados.js', 'js/serie/facciones/pop.js', 'js/serie/facciones/microblizz.js', 'js/serie/facciones/phony.js',
@@ -122,16 +123,6 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  // FLAGS DE DESARROLLO: lo nuevo o a medias se esconde tras NUCLEO.desarrollo (sin más) o, si hace falta un flag propio, tras NUCLEO.flag('nombre', 'qué hace').
-  // En desarrollo vale true salvo que se apague en el panel DEV; en la web publicada vale lo que diga el tercer parámetro (false si no se pone; true para algo ya abierto a los jugadores que
-  // se quiere poder cerrar de golpe). Cada flag queda registrado en el panel DEV.
-  // Al terminar la tarea, el flag se quita y el código queda como funcionalidad normal (ver CLAUDE.md).
-  const flagsDev = {};
-  const flag = (nombre, descripcion = '', enProduccion = false) => {
-    if (!desarrollo) return enProduccion;
-    flagsDev[nombre] = descripcion;
-    try { return localStorage.getItem('fansof-flag-' + nombre) !== '0'; } catch (e) { return true; }
-  };
-  return { version, nativa, idioma, elegirIdioma, desarrollo, flag, flagsDev, estilos, juego, idiomaSolo };
+  return { version, nativa, idioma, elegirIdioma, desarrollo, estilos, juego, idiomaSolo };
 })();
 const VERSION = NUCLEO.version;

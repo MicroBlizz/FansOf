@@ -130,9 +130,16 @@ async function pruebaPvp(raiz, duerme) {
     { const v = await partida('ajustes distintos', { tiempo: 20, cada: 1500, variar: true, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
       const n = Math.min(v.ha.length, v.hb.length), ig = v.ha.slice(0, n).every((x, i) => x[1] === v.hb[i][1]); ap('1b · ajustes y reloj distintos', `${n} huellas, iguales: ${ig}, estados ${v.estados.join('/')}, ${v.error}`); if (!ig || v.estados.some(e => e === 'desync' || e === 'error')) fallos.push('ajustes distintos: las partidas se separan (' + v.error + ')'); }
     // 1) una partida entera: mismas huellas en cada turno, mismo final
-    const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
+    // y a mitad, A manda una frase y B un emoticono (v0.9.104): viajan con el turno, cada uno ve lo del otro y las huellas siguen iguales
+    const frVisto = {};
+    const r = await partida('partida', { tiempo: 20, cada: 1500, alMs: 6000, al: ({ a, b }) => {
+      for (const [w, k] of [[a, 'a'], [b, 'b']]) { const o = w.frDelRival; w.frDelRival = c => { frVisto[k] = c; return o(c); }; }
+      a.frManda({ frase: 'feature' }); b.frManda({ emote: 'risa' });
+    }, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);
     ap('1 · partida', `${n} huellas comparadas, ${r.mensajes} mensajes, ganador ${r.ganador.join('/')}, ticks ${r.ticks.join('/')}, estados ${r.estados.join('/')}, jugadas aplicadas ${r.jugadas}`);
+    ap('1c · frases', `B ve ${frVisto.b} · A ve ${frVisto.a}`);
+    if (frVisto.b !== 'f:feature' || frVisto.a !== 'e:risa') fallos.push('frases: no llegan al rival: ' + JSON.stringify(frVisto));
     if (!r.jugadas.includes('p') || !r.jugadas.includes('e')) fallos.push('partida: no se aplicaron jugadas de los dos lados: ' + r.jugadas);
     if (n < 20) fallos.push('partida: se compararon muy pocas huellas');
     if (!iguales) fallos.push('partida: las huellas de las dos copias no coinciden');

@@ -60,13 +60,15 @@ function pvpJugar(slot, key, x, y) {
 }
 function pvpMandar(turno, cmds, tick, h, partes) {
   PVP.propias.set(turno, cmds);
-  if (PVP.red) PVP.red.enviar({ t: 't', turno, cmds, tick, h, partes });
+  const f = PVP.frase || null; PVP.frase = null;   // v0.9.104: una frase o un emoticono (22-frases.js) viaja con el turno; no entra en la simulación
+  if (PVP.red) PVP.red.enviar(f ? { t: 't', turno, cmds, tick, h, partes, f } : { t: 't', turno, cmds, tick, h, partes });
 }
 // llega un mensaje del rival (el transporte lo llama)
 function pvpRecibir(m) {
   if (m && m.t === 'rendir') { PVP.rendido = true; pvpEstado('abandono'); return; }   // el rival se rinde: ganas
   if (!m || m.t !== 't' || !Number.isInteger(m.turno) || !Array.isArray(m.cmds)) return;
   if (PVP.ajenas.has(m.turno)) return;   // repetido
+  if (typeof m.f === 'string' && m.f.length < 40 && typeof frDelRival === 'function') frDelRival(m.f);
   const cmds = [];
   for (const c of m.cmds.slice(0, 8)) {   // pocas por turno y con los datos justos: lo demás se descarta igual en las dos máquinas
     if (c && typeof c.key === 'string' && Number.isFinite(c.x) && Number.isFinite(c.y) && c.team === PVP.peer && Number.isInteger(c.slot) && c.slot >= -1 && c.slot < 8)

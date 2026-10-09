@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.24', real: ['<b>MEJORAS POR DENTRO</b>: el pase ya sabe dar frases y emoticonos, que estrenan los Animales Locos en Fans of Rumble. Aquí no cambia nada… de momento.'],
+    joke: ['Microblizz ha descubierto que puede vender frases hechas. Ha mandado a todo el departamento de marketing a buscar más.'] },
   { v: '0.1.23', real: [
       '<b>CADA LÍDER CON SU ARMA</b>: cada líder empieza con un arma propia: espadazos en abanico, manos que salen del suelo, un foco giratorio, una torreta, una carta al azar, combos, un hacha que vuelve como un bumerán y una claqueta que atrae a los enemigos.'],
     joke: ['Microblizz ha dado un arma distinta a cada líder. Dice que es «diversidad». Contabilidad dice que es «ocho veces más caro».'] },

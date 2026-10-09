@@ -76,36 +76,40 @@ function rewardHtml(r) {
   if (r.item) return `<span class="itm">${ITEMS[r.item].name}</span>`;
   if (r.marco && typeof marcoDef === 'function' && marcoDef(r.marco)) return `<span class="itm">Marco ${marcoDef(r.marco).name}</span>`;
   if (r.titulo && typeof tituloDef === 'function' && tituloDef(r.titulo)) return `<span class="itm">«${tituloDef(r.titulo).name}»</span>`;
+  if ((r.frase || r.emote) && typeof fraseDef === 'function' && fraseDef(r)) return `<span class="itm">${r.frase ? '«' + tr(fraseDef(r).t) + '»' : tr(fraseDef(r).name)}</span>`;
   return '';
 }
 const rewardTxt = r => (r.gold ? `${fmt(r.gold)} de oro` : r.gems ? `${fmt(r.gems)} gemas` : r.tickets ? `${r.tickets} ${r.tickets > 1 ? 'tiradas gratis' : 'tirada gratis'} del gashapón`
-  : r.item ? ITEMS[r.item].name : r.marco && typeof marcoDef === 'function' && marcoDef(r.marco) ? `el marco ${marcoDef(r.marco).name}` : r.titulo && typeof tituloDef === 'function' && tituloDef(r.titulo) ? `el título «${tituloDef(r.titulo).name}»` : '');
+  : r.item ? ITEMS[r.item].name : r.marco && typeof marcoDef === 'function' && marcoDef(r.marco) ? `el marco ${marcoDef(r.marco).name}` : r.titulo && typeof tituloDef === 'function' && tituloDef(r.titulo) ? `el título «${tituloDef(r.titulo).name}»` : (r.frase || r.emote) && typeof fraseNombre === 'function' ? fraseNombre(r) : '');
 function giveReward(r, evento) {
   const clave = ECO.ganar('premio', r, evento);
   if (r.item) { const it = addCopy('eq', r.item, Array.from({ length: Math.max(1, ITEMS[r.item].st.length) }, () => PASS_Q)); if (clave && evento && evento.tipo === 'pase') it.pend = clave; }   // el servidor crea la de verdad (copiasDelServidor)
   if (r.marco && typeof darLook === 'function') darLook('marco', r.marco);
   if (r.titulo && typeof darLook === 'function') darLook('titulo', r.titulo);
+  if (r.frase && typeof darLook === 'function') darLook('frase', r.frase);
+  if (r.emote && typeof darLook === 'function') darLook('emote', r.emote);
 }
-const esLook = r => !!(r && (r.marco || r.titulo));
+const esLook = r => !!(r && (r.marco || r.titulo || r.frase || r.emote));
 
 /* =========================================================
    PANTALLA: pestañas (si hay pase PvP), la tarjeta de arriba y la lista de niveles con sus capítulos y sus hitos
    ========================================================= */
 const diasTxt = n => (n <= 0 ? 'termina hoy' : n === 1 ? 'termina mañana' : `termina en ${n} días`);
 const esHito = i => i % 5 === 0;
-const esGordo = r => !!(r && (r.marco || r.titulo || r.item || r.tickets));   // un premio que no es oro ni gemas
+const esGordo = r => !!(r && (r.marco || r.titulo || r.frase || r.emote || r.item || r.tickets));   // un premio que no es oro ni gemas
 const ESTRELLA_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.7L10 14.5l-5.1 2.8 1.1-5.7-4.3-4 5.8-.7z" fill="#ffcb3d" stroke="#20102c" stroke-width="1.8" stroke-linejoin="round"/><path d="M7.6 7.6l1.4-3" stroke="#fff6c8" stroke-width="1.4" stroke-linecap="round"/></svg>';
 // lo que cuesta de premio en una casilla: los hitos con dibujo (marco) o con el título en su color
 function passCelda(p, track, i) {
   const S = pSave(p), lv = pLevel(p), r = pReward(p, track, i), pista = track === 'free' ? 'free' : 'paid';
   const got = S[pista].includes(i), ready = pReady(p, track, i), cerrada = track === 'paid' && !S.prem;
-  const D = r.marco && typeof marcoDef === 'function' ? marcoDef(r.marco) : r.titulo && typeof tituloDef === 'function' ? tituloDef(r.titulo) : null;
+  const D = r.marco && typeof marcoDef === 'function' ? marcoDef(r.marco) : r.titulo && typeof tituloDef === 'function' ? tituloDef(r.titulo) : (r.frase || r.emote) && typeof fraseDef === 'function' ? fraseDef(r) : null;
   const gordo = esHito(i) && esGordo(r);
   const cls = 'pr-cell' + (track === 'paid' ? ' prem' : '') + (gordo ? ' hito' : '') + (D ? ' look' : '') + (got ? ' done' : ready ? ' ready' : i > lv || cerrada ? ' locked' : '');
   const st = D ? ` style="--rc:${rarColor(D.rar)};--rd:${rarColor(D.rar, 2)}"` : '';
   let dentro;
   if (r.marco && D) dentro = `<canvas class="pr-mk" data-mk="${r.marco}" aria-hidden="true"></canvas><span class="pr-lbl"><small>MARCO</small><b>${esc(D.name)}</b></span>`;
   else if (r.titulo && D) dentro = `<span class="pr-lbl"><small>TÍTULO</small>${tituloHtml(r.titulo)}</span>`;
+  else if ((r.frase || r.emote) && typeof fraseCelda === 'function' && fraseCelda(r)) dentro = fraseCelda(r);
   else if (r.item) dentro = `<span class="pr-lbl"><small>OBJETO EXCLUSIVO</small><b>${esc(ITEMS[r.item].name)}</b></span>`;
   else dentro = `<span class="pr-val">${rewardHtml(r)}</span>`;
   const marca = gordo && ready ? '<span class="pr-go">¡COBRAR!</span>' : got ? '<span class="pr-ok" aria-label="Cobrado">✓</span>' : cerrada ? `<span class="pr-lk">${CANDADO_SVG}</span>` : '';
@@ -114,7 +118,7 @@ function passCelda(p, track, i) {
 // el próximo hito con premio para el armario: para animar a seguir
 function passProximo(p) {
   const C = PASES[p].C, lv = pLevel(p);
-  for (let i = lv + 1; i <= C.levels; i++) for (const tr of ['free', 'paid']) { const r = pReward(p, tr, i); if (esLook(r) || r.item) return { i, r, tr }; }
+  for (let i = lv + 1; i <= C.levels; i++) for (const tr of ['free', 'paid']) { const r = pReward(p, tr, i); if (r.marco || r.titulo || r.item) return { i, r, tr }; }   // los hitos (las frases no cuentan como premio gordo)
   return null;
 }
 function buildPass() {
@@ -145,6 +149,7 @@ function buildPass() {
   }
   const list = $('#pass-list'); list.innerHTML = rows; list.className = 'scroll-list pass-list ' + P.clase;
   if (typeof pintaAvatar === 'function') for (const cv of list.querySelectorAll('canvas[data-mk]')) pintaAvatar(cv, 46, cv.dataset.mk, avatarOf());
+  if (typeof pintaEmotes === 'function') pintaEmotes(list);
   list.querySelectorAll('[data-pc]').forEach(b => { b.onclick = () => {
     const [tr, i] = b.dataset.pc.split(':'); const r = pClaim(p, tr, +i);
     if (!r) { if (tr === 'paid' && !pSave(p).prem) buyPass(p); else if (+i > pLevel(p)) { play('deny'); toast(`Llega al nivel ${i} para cobrarlo`); } return; }
@@ -186,7 +191,7 @@ function passMatch(win) {
 // de dónde sale un marco o un título (lo pregunta el armario)
 function paseOrigen(t, id) {
   for (const p in PASES) for (let i = 1; i <= PASES[p].C.levels; i++) for (const tr of ['free', 'paid']) {
-    const r = pReward(p, tr, i); if ((t === 'marco' ? r.marco : r.titulo) !== id) continue;
+    const r = pReward(p, tr, i); if (r[t] !== id) continue;
     const quien = tr === 'paid' ? PASES[p].corto : p === 'p' ? 'Pase PvP' : 'Temporada';
     return `${quien} · nivel ${i}`;
   }

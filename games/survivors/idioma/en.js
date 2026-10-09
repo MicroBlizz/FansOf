@@ -54,7 +54,7 @@ IDIOMA.add({
   // en la partida
   '¡SOBREVIVE 10 MINUTOS!': 'SURVIVE 10 MINUTES!', 'Microblizz manda a toda su plantilla a por CrazyBunny': 'Microblizz sends its whole staff after CrazyBunny',
   '¡RONDA DE CONTRATACIÓN!': 'HIRING SPREE!', '¡CAJABOTÍN GIGANTE!': 'GIANT LOOTBOX!', '¡DESCARGA MASIVA AL 99 %!': 'MASS DOWNLOAD AT 99%!',
-  '¡EL PARCHE DE 80 GB!': 'THE 80 GB PATCH!', '¡RENOVACIÓN DE LICENCIAS!': 'LICENSE RENEWAL!', '¡HÉROE DESCARTADO!': 'DISCARDED HERO!',
+  '¡EL PARCHE DE 80 GB!': 'THE 80 GB PATCH!', '¡RENOVACIÓN DE LICENCIAS!': 'LICENSE RENEWAL!', '¡HÉROE DESCARTADO!': 'DISCARDED HERO!', '¡SERVIDOR CAÍDO... SOBRE TI!': 'SERVER DOWN... ON TOP OF YOU!',
   'Suelta un Cofre de botín (sin microtransacciones)': 'Drops a Loot chest (no microtransactions)', '¡Que no te rodeen!': 'Don\'t get surrounded!',
   '¡LLEGA SURVIVALBOT!': 'SURVIVALBOT IS HERE!', '«Hemos comprado vuestro juego… y lo vamos a cerrar.»': '"We bought your game… and we\'re shutting it down."',
   'ENTIERRO DE IP': 'IP BURIAL', '¡DESPIDOS MASIVOS!': 'MASS LAYOFFS!', 'SurvivalBot llama a los becarios': 'SurvivalBot calls in the interns',

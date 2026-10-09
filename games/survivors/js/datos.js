@@ -9,6 +9,14 @@ const SV = {
   maxPasivas: 6,          // huecos de mejora
   nivelMax: 5,            // nivel máximo de cada arma y cada mejora
   maxEnemigos: 320,       // tope de enemigos a la vez (para que el móvil no sufra)
+  // mini jefes y bichos shiny (los dos sueltan cofre): todo ajustable aquí
+  apariciones: {
+    miniJefeCada: 120,    // segundos entre mini jefes (el primero sale en este segundo)
+    shinyProb: 0.02,      // probabilidad de que cada enemigo de las oleadas nazca shiny (2 %)
+    shinyMaxEspera: 180,  // si pasa tanto tiempo sin ningún shiny, el siguiente enemigo que salga lo es
+    shinyVida: 2.5,       // un shiny aguanta tantas veces la vida normal
+    shinyXp: 6,           // CAOS extra que suelta
+  },
   maxGemas: 380,          // tope de cristales de CAOS en el suelo: los que sobran se juntan en uno grande
   jugador: { vida: 120, velocidad: 120, recoger: 80, invul: 0.6, r: 16 },
   // CAOS que hace falta para pasar de un nivel al siguiente
@@ -105,14 +113,18 @@ const OLEADAS = [
   { cada: 1.2, grupo: 5, mezcla: { becario: 4, cobradlc: 3, parchebot: 2, fallen: 2, servidorbot: 1 } },
   { cada: 1.1, grupo: 5, mezcla: { descargabot: 5, cobradlc: 3, fallen: 2, servidorbot: 2, soportebot: 1 } },
 ];
-// lo que pasa en momentos concretos (segundo de la partida)
+// los mini jefes salen uno cada SV.apariciones.miniJefeCada segundos, por este orden (los de después, más duros)
+const MINIJEFES = [
+  { enemigo: 'cajabotin', vida: 1100, escala: 2.2, aviso: '¡CAJABOTÍN GIGANTE!' },
+  { enemigo: 'parchebot', vida: 3200, escala: 2.1, aviso: '¡EL PARCHE DE 80 GB!' },
+  { enemigo: 'fallen', vida: 5200, escala: 2.0, aviso: '¡HÉROE DESCARTADO!' },
+  { enemigo: 'servidorbot', vida: 6500, escala: 2.0, aviso: '¡SERVIDOR CAÍDO... SOBRE TI!' },
+];
+// otros momentos concretos (segundo de la partida)
 const EVENTOS = [
   { t: 90,  tipo: 'cerco', enemigo: 'becario', n: 28, aviso: '¡RONDA DE CONTRATACIÓN!' },
-  { t: 180, tipo: 'elite', enemigo: 'cajabotin', vida: 1100, escala: 2.2, aviso: '¡CAJABOTÍN GIGANTE!' },
   { t: 270, tipo: 'cerco', enemigo: 'descargabot', n: 32, aviso: '¡DESCARGA MASIVA AL 99 %!' },
-  { t: 360, tipo: 'elite', enemigo: 'parchebot', vida: 3200, escala: 2.1, aviso: '¡EL PARCHE DE 80 GB!' },
   { t: 450, tipo: 'cerco', enemigo: 'licenciabot', n: 36, aviso: '¡RENOVACIÓN DE LICENCIAS!' },
-  { t: 510, tipo: 'elite', enemigo: 'fallen', vida: 5200, escala: 2.0, aviso: '¡HÉROE DESCARTADO!' },
 ];
 
 /* ---------- el jefe final ---------- */

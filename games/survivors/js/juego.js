@@ -30,7 +30,7 @@ function nuevaPartida() {
     xp: 0, nivel: 1, xpSig: SV.xpNivel(1), pendientes: 0,
     enemigos: [], proy: [], balas: [], gemas: [], cosas: [], efectos: [], numeros: [], parts: [], marcas: [],
     vacas: null, auraT: 0, kills: 0, puntos: 0,
-    oleadaT: 0, evento: 0, jefe: null, jefeVisto: false,
+    oleadaT: 0, evento: 0, miniJefe: 0, ultimoShiny: 0, jefe: null, jefeVisto: false,
     sacudida: 0, aviso: null, chat: [], chatT: 8, rachaKills: [], hitStop: 0,
   };
   sigId = 1;
@@ -73,12 +73,13 @@ function masCercano(x, y, max, saltar) {
 /* ---------- los enemigos ---------- */
 function crearEnemigo(tipo, x, y, extra = {}) {
   const d = ENEMIGOS[tipo], min = Math.floor(P.t / 60);
-  const vida = extra.vida || d.vida * vidaPorMinuto(min);
+  const vida = extra.vida || d.vida * vidaPorMinuto(min) * (extra.shinyMul || 1);
   const e = {
     id: sigId++, tipo, d, spr: extra.spr || d.spr, x, y, vida, vidaMax: vida, vel: (extra.vel || d.vel) * rand(0.92, 1.08), dano: extra.dano || d.dano * (1 + min * 0.05),
     r: extra.r || d.r, escala: extra.escala || 1, face: 1, walk: Math.random() * 6, hitT: 0, kbx: 0, kby: 0, edad: 0, tiroT: rand(1, 3), curaT: rand(0.5, 2),
-    elite: !!extra.elite, jefe: !!extra.jefe, xp: extra.xp !== undefined ? extra.xp : d.xp, vacaT: 0, auraT: 0, muerto: false, congT: 0,
+    elite: !!extra.elite, shiny: !!extra.shiny, jefe: !!extra.jefe, xp: extra.xp !== undefined ? extra.xp : d.xp, vacaT: 0, auraT: 0, muerto: false, congT: 0,
   };
+  if (e.shiny) { numero(x, y - 60, '✨ SHINY ✨', '#ffe45c'); play('crown'); }
   P.enemigos.push(e); return e;
 }
 // un punto justo fuera de la pantalla, alrededor del jugador
@@ -104,23 +105,36 @@ function oleadas(dt) {
   if (P.oleadaT <= 0) {
     P.oleadaT = O.cada;
     const p = puntoFuera();
-    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(elegirPeso(O.mezcla), p.x + rand(-30, 30), p.y + rand(-30, 30));
+    for (let i = 0; i < O.grupo && P.enemigos.length < SV.maxEnemigos; i++) crearEnemigo(elegirPeso(O.mezcla), p.x + rand(-30, 30), p.y + rand(-30, 30), tocaShiny() ? marcaShiny() : {});
+  }
+  // un mini jefe cada SV.apariciones.miniJefeCada segundos (no si ya viene el jefe final)
+  const A = SV.apariciones, tMini = A.miniJefeCada * (P.miniJefe + 1);
+  if (P.t >= tMini && tMini < SV.duracion - 20) {
+    const m = MINIJEFES[Math.min(P.miniJefe, MINIJEFES.length - 1)]; P.miniJefe++;
+    aviso(m.aviso, 'Suelta un Cofre de botín (sin microtransacciones)'); play('horn');
+    const p = puntoFuera(), d = ENEMIGOS[m.enemigo];
+    crearEnemigo(m.enemigo, p.x, p.y, { elite: true, vida: m.vida, escala: m.escala, r: d.r * m.escala * 0.75, vel: d.vel * 0.9, dano: d.dano * 2, xp: 40 });
   }
   // los momentos especiales
   const ev = EVENTOS[P.evento];
   if (ev && P.t >= ev.t) {
     P.evento++;
-    aviso(ev.aviso, ev.tipo === 'elite' ? 'Suelta un Cofre de botín (sin microtransacciones)' : '¡Que no te rodeen!');
+    aviso(ev.aviso, '¡Que no te rodeen!');
     play('horn');
-    if (ev.tipo === 'cerco') {
-      for (let i = 0; i < ev.n; i++) { const a = (i / ev.n) * Math.PI * 2; crearEnemigo(ev.enemigo, P.jug.x + Math.cos(a) * 380, P.jug.y + Math.sin(a) * 420); }
-    } else {
-      const p = puntoFuera();
-      crearEnemigo(ev.enemigo, p.x, p.y, { elite: true, vida: ev.vida, escala: ev.escala, r: ENEMIGOS[ev.enemigo].r * ev.escala * 0.75, vel: ENEMIGOS[ev.enemigo].vel * 0.9, dano: ENEMIGOS[ev.enemigo].dano * 2, xp: 40 });
-    }
+    for (let i = 0; i < ev.n; i++) { const a = (i / ev.n) * Math.PI * 2; crearEnemigo(ev.enemigo, P.jug.x + Math.cos(a) * 380, P.jug.y + Math.sin(a) * 420); }
   }
   if (P.t >= SV.duracion && !P.jefe) llegaJefe();
 }
+// ¿le toca ser shiny al enemigo que sale? Por suerte (SV.apariciones.shinyProb) o porque lleva mucho sin salir uno
+function tocaShiny() {
+  const A = SV.apariciones;
+  return Math.random() < A.shinyProb || P.t - P.ultimoShiny >= A.shinyMaxEspera;
+}
+function marcaShiny() {   // marca al enemigo como shiny y reinicia la cuenta
+  P.ultimoShiny = P.t; return { shiny: true, shinyMul: SV.apariciones.shinyVida, xp: SV.apariciones.shinyXp };
+}
+// punto de enganche para el cofre (lo sueltan los mini jefes y los shiny); el hilo de los cofres lo sustituye por el espectáculo
+function soltarCofre(x, y) { P.cosas.push({ tipo: 'cofre', x, y, t: 0 }); play('crown'); }
 function llegaJefe() {
   const p = puntoFuera();
   P.jefe = crearEnemigo('fallen', p.x, p.y, { jefe: true, spr: JEFE.spr, vida: JEFE.vida, escala: JEFE.escala, r: JEFE.r, vel: JEFE.vel, dano: JEFE.dano, xp: 0 });
@@ -201,7 +215,7 @@ function matar(e) {
   poof(e);
   if (e.jefe) { ganar(); return; }
   if (e.xp > 0) soltarGema(e.x, e.y, e.xp);
-  if (e.elite) { P.cosas.push({ tipo: 'cofre', x: e.x, y: e.y, t: 0 }); play('crown'); }
+  if (e.elite || e.shiny) soltarCofre(e.x, e.y);
   if (e.d.alMorir && !e.elite) for (let i = 0; i < e.d.alMorir.n; i++) crearEnemigo(e.d.alMorir.tipo, e.x + rand(-20, 20), e.y + rand(-20, 20), { xp: 0 });
   if (Math.random() < BOTIN.cafe) P.cosas.push({ tipo: 'cafe', x: e.x, y: e.y, t: 0 });
   else if (Math.random() < BOTIN.iman) P.cosas.push({ tipo: 'iman', x: e.x, y: e.y, t: 0 });

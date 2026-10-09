@@ -54,7 +54,7 @@ function personaje(key, o) {
   ctx.globalAlpha = 0.28 * (o.alfa ?? 1); ctx.fillStyle = '#140a1e'; ctx.beginPath(); ctx.ellipse(o.x, o.y + 1, r * 1.05 * esc, r * 0.42 * esc, 0, 0, Math.PI * 2); ctx.fill();
   ctx.save(); ctx.globalAlpha = o.alfa ?? 1; ctx.translate(o.x, o.y - z); if (ang) ctx.rotate(ang * (o.face || 1)); ctx.scale((o.face || 1) * sx * esc, sy * esc);
   if (T.jet) { const fl = 4 + Math.random() * 3; ctx.fillStyle = 'rgba(120,230,255,.85)'; ctx.beginPath(); ctx.moveTo(-3.5, -6); ctx.lineTo(3.5, -6); ctx.lineTo(0, -4 + fl); ctx.closePath(); ctx.fill(); }
-  ctx.drawImage(o.gris && s.g ? s.g : o.rojo ? rojoDe(key) : s.c, -s.ax, -s.ay, s.wd, s.ht);
+  ctx.drawImage(o.gris && s.g ? s.g : o.rojo ? rojoDe(key) : o.dorado ? doradoDe(key) : s.c, -s.ax, -s.ay, s.wd, s.ht);
   pies(key, r, o.walk || 0, o.andando, esc);
   if (o.blanco > 0) { ctx.globalAlpha = (o.alfa ?? 1) * o.blanco; ctx.drawImage(s.w, -s.ax, -s.ay, s.wd, s.ht); }
   ctx.restore(); ctx.globalAlpha = 1;
@@ -134,12 +134,24 @@ function cosaSuelta(o) {
     shape(c, rr(-16, -18, 32, 22, 4), '#c06a1a'); shape(c, rr(-17, -24, 34, 10, 4), '#e08a2a'); shape(c, rr(-4, -16, 8, 9, 2), '#ffcb3d'); c.restore();
   }
 }
+// el tinte dorado de los bichos shiny
+const DORADOS = {};
+function doradoDe(key) {
+  if (DORADOS[key]) return DORADOS[key];
+  const sp = SPR[key], c = document.createElement('canvas'); c.width = sp.c.width; c.height = sp.c.height;
+  const x = c.getContext('2d'); x.drawImage(sp.c, 0, 0); x.globalCompositeOperation = 'source-atop'; x.fillStyle = 'rgba(255,205,40,.6)'; x.fillRect(0, 0, c.width, c.height);
+  return (DORADOS[key] = c);
+}
 function enemigo(e) {
   const c = ctx;
+  if (e.shiny) {   // resplandor dorado y destellos
+    c.globalAlpha = 0.4 + Math.sin(P.t * 7) * 0.15; c.fillStyle = '#ffd23c'; c.beginPath(); c.ellipse(e.x, e.y, e.r * 1.4, e.r * 0.6, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+    otxt(c, '✦', e.x + Math.cos(P.t * 3 + e.id) * e.r, e.y - e.r * 1.6 + Math.sin(P.t * 5 + e.id) * 6, 14, '#fff3a0');
+  }
   if (e.elite || e.jefe) {   // aura roja de los gordos
     c.globalAlpha = 0.35 + Math.sin(P.t * 5) * 0.12; c.fillStyle = '#ff3348'; c.beginPath(); c.ellipse(e.x, e.y, e.r * 1.25, e.r * 0.5, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
   }
-  personaje(e.spr, { x: e.x, y: e.y, esc: e.escala * (e.jefe || e.elite ? 1 : 0.9), face: e.face, walk: e.walk + e.id, andando: e.congT <= 0, blanco: e.hitT / 0.12, rojo: e.elite || e.jefe });
+  personaje(e.spr, { x: e.x, y: e.y, esc: e.escala * (e.jefe || e.elite ? 1 : 0.9), face: e.face, walk: e.walk + e.id, andando: e.congT <= 0, blanco: e.hitT / 0.12, rojo: e.elite || e.jefe, dorado: e.shiny });
   if ((e.elite && !e.jefe) && e.vida < e.vidaMax) barra(e.x, e.y + 8, 60, e.vida / e.vidaMax, '#ff4b5c');
   if (e.d.caduca && e.d.caduca - e.edad < 5) { c.globalAlpha = 0.9; otxt(c, Math.ceil(e.d.caduca - e.edad) + '', e.x, e.y - 50, 13, '#c4b5fd'); c.globalAlpha = 1; }
 }

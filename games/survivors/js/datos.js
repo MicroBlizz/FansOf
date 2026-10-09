@@ -143,6 +143,7 @@ const CAJAS = {
   topeOro: 400,       // máximo de oro que se puede sacar de cajas en una partida
   objeto: 0.01,       // probabilidad de que una caja dé además un objeto del gashapón
   topeObjetos: 2,     // máximo de objetos por partida
+  topeObjetosDia: 6,  // máximo de objetos de cajas por día y cuenta (lo comprueba el servidor)
 };
 const BOTIN = {
   cafe: 0.012,     // probabilidad de que un enemigo suelte una Taza del becario (cura)

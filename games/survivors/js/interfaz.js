@@ -104,8 +104,9 @@ function mostrarFin() {
   cierraRetos(g, { fac: P.fac, t, kills: P.kills, nivel: P.nivel, cofres: P.cofres, elites: P.elites, armas: usadas, vida: P.jug.vida / P.jug.vidaMax });
   const nuevas = FAC_JUGABLES.filter(f => isUnlocked(f) && !abiertas.includes(f));
   let rw = give(gold, gems, xp1 * cartas.size, { tipo: 'otro', victoria: g }) + passMatch(g) + nuevas.map(f => `<div class="rw-xp">¡Facción nueva: ${FACTIONS[f].name}! Elígela en el menú.</div>`).join('');
-  // objetos que han salido de las cajas: sin servidor se dan aquí; con servidor aún no hay camino validado (pendiente)
-  if (P.objetosCajas && !ECO.servidor('economia')) {
+  // objetos que han salido de las cajas: sin servidor se dan aquí; con servidor los sortea él (evento 'cajas')
+  if (P.objetosCajas && ECO.servidor('economia')) { ECO.ganar('cajas', {}, { tipo: 'cajas', items: P.objetosCajas, facs: FACTION_ORDER.filter(isUnlocked) }); ECO.ya(); }   // el servidor sortea el objeto y llega después
+  else if (P.objetosCajas) {
     const got = []; for (let i = 0; i < P.objetosCajas; i++) got.push(idleItem());
     saveGame(); rw += got.map(it => { const D = defOf(it); return `<div class="rw-xp">${tr('¡Una caja escondía un objeto! Ya lo tienes en el inventario:')} <b>${D.name}</b></div>`; }).join('');
   }

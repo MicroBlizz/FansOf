@@ -1,5 +1,5 @@
 -- Rumble 0.9.55: la campaña tiene cinco dificultades: f (Fácil), n (Normal), h (Difícil), x (Heroica) y m (Mítica).
--- SIN APLICAR TODAVÍA. Hay que ejecutarlo en Supabase (SQL Editor del proyecto awivkedbmumwnkqlfixm) ANTES de publicar la 0.9.55,
+-- APLICADO el 9-10-2026 dentro de 24-mitica-paga-y-facil-heroica.sql (allí está su anotar definitiva). Era para la 0.9.55:
 -- y subir también servidor/datos/rumble.sql (trae los multiplicadores de premio de f y x y los logros nuevos de la Heroica).
 -- Si se publica el juego antes, las partidas en Fácil y Heroica no cobran premio (el servidor las rechaza).
 --

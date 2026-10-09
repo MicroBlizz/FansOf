@@ -4,8 +4,8 @@
    Idea de Daniel (9-10-2026). Cómo va:
      · Los niveles de la Mítica NO se cierran: lo que tenías abierto sigue abierto (eso lo dicen SAVE.campM y el servidor, como siempre).
      · Lo que vuelve a 0 son las estrellas que se VEN en la Mítica: las de esta semana, en SAVE.mitW = { sem: weekStr(), st: { nivel: estrellas } }.
-     · El oro y las gemas no cambian: primer pase, repeticiones y tercera estrella se cobran con las estrellas de siempre (SAVE.campM),
-       así que repetir la Mítica cada semana no regala más de la cuenta.
+     · Decisión de Daniel: el oro y las gemas también vuelven cada semana. El premio de primera vez (o de jefe) y el de 3 estrellas se
+       cobran mirando las estrellas de esta semana; el legendario de cada jefe y el objeto de facción siguen siendo una sola vez.
      · El Salón lo cuenta el servidor (servidor/23-mitica-semanal.sql): cada victoria en Mítica apunta allí las estrellas de la semana.
      · SAVE.mitHist guarda lo que hiciste cada semana (para «De siempre» sin conexión) y SAVE.mitPremio, los premios del lunes ya dados.
      · Premio del lunes: un título para el armario si acabaste entre los 10 primeros la semana anterior (MIT_PREMIOS).
@@ -32,7 +32,7 @@ function mitGana(id, n) { const W = mitSem(); if (n > (W.st[id] || 0)) W.st[id] 
 function mitBoxHtml() {
   return `<div class="mit-box"><div class="mod-head ol">TEMPORADA MÍTICA<small class="mit-reloj">Se reinicia en ${untilStr(true)}</small></div>`
     + `<div class="mit-cuentas"><span><small>ESTA SEMANA</small><b class="ol">★ ${fmt(mitSemana())}</b></span><span><small>DE SIEMPRE</small><b class="ol">★ ${fmt(mitSiempre())}</b></span></div>`
-    + `<p class="mit-txt">Cada lunes las estrellas de la Mítica vuelven a 0, pero los niveles siguen abiertos. Las que ganes suben tu puesto en el Salón de la Fama.</p>`
+    + `<p class="mit-txt">Cada lunes las estrellas de la Mítica vuelven a 0 (y con ellas sus premios de oro y gemas), pero los niveles siguen abiertos. Las que ganes suben tu puesto en el Salón de la Fama.</p>`
     + `<button class="chip-btn" data-salon="mitica">VER LA CLASIFICACIÓN</button></div>`;
 }
 

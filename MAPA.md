@@ -102,7 +102,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-10.js` · 7 KB
 - `games/rumble/idioma/en-11.js` · 14 KB
 - `games/rumble/idioma/en-12.js` · 16 KB
-- `games/rumble/idioma/en-13.js` · 7 KB
+- `games/rumble/idioma/en-13.js` · 8 KB
 - `games/rumble/idioma/en-14.js` · 15 KB
 - `games/rumble/idioma/en-15.js` · 6 KB
 - `games/rumble/idioma/en-16.js` · 6 KB
@@ -165,7 +165,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/19b-pvp.js` · 10 KB · PVP, pvpEquipo, pvpEquipoMal, pvpInicio, pvpFin, pvpEstado, pvpJugar, pvpMandar, pvpRecibir, pvpComparar, pvpAvanza, pvpEspera, pvpTic, pvpResultado
 - `games/rumble/js/19c-vista.js` · 4 KB · VISTA_YC, VISTA_SW, verAbajo, verEquipo, verFac, MIR_Y, otroEq, espejo, cambia, vistaOn, vistaRender
 - `games/rumble/js/19d-pvp-red.js` · 3 KB · PVPNET
-- `games/rumble/js/19e-pvp-pantallas.js` · 20 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpMio, pvpCopas, pvpAnotado, pvpAnota, pvpPintaLiga, pvpResumen, pvpClasificacion, pvpPinta, pvpPintaBusca, pvpPara, pvpBuscar, pvpEncontrado, pvpCaras, pvpCaraFin, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpDebug
+- `games/rumble/js/19e-pvp-pantallas.js` · 21 KB · pvpDisponible, pvpSalvaje, PVP_UI, PVP_MODOS, pvpRed, pvpPantalla, pvpMio, pvpCopas, pvpAnotado, pvpAnota, pvpPintaLiga, pvpResumen, pvpClasificacion, pvpPinta, pvpPintaBusca, pvpPara, pvpBuscar, pvpEncontrado, pvpCaras, pvpCaraFin, pvpAlEstado, pvpRendirse, pvpPaseDado, pvpPase, pvpShowEnd, pvpDebug
 - `games/rumble/js/19f-pvp-servidor.js` · 10 KB · pvpRetardo, PVP_SRV, pvpErrorTexto, pvpFacDeMazo, pvpEquipoDeServidor, pvpAServidor, pvpDeServidor
 - `games/rumble/js/20-iahorro-final.js` · 7 KB · QUOTES_IA, iaUpdate
 - `games/rumble/js/20c-app-nativa.js` · 2 KB · NATIVE, nativeBack

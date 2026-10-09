@@ -187,6 +187,7 @@ begin
     select p.puesto, p.usuario, jsonb_build_object(
              'puesto', p.puesto,
              'nombre', public._nombre_publico(p.usuario, p_juego),
+             'look', public._look_publico(p.usuario, p_juego),   -- marco y título (24-aspecto-publico.sql)
              'avatar', g.datos->>'avatar', 'fac', coalesce(g.datos->>'lastFac', g.datos->>'fac'),
              'valor', p.valor, 'extra', p.extra, 'yo', p.usuario = u) as fila
       from puestos p left join public.partidas g on g.usuario = p.usuario and g.juego = p_juego

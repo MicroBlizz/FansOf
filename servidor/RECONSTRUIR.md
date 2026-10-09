@@ -3,7 +3,7 @@
 Qué hacer si el proyecto de Supabase se borra o se vacía y hay que dejarlo como estaba, sin los datos de los jugadores.
 
 ## Qué ya está en el repo
-1. **Tablas y funciones**: `servidor/01-…sql` a `servidor/23-…sql`, ejecutados **en orden numérico** en SQL Editor (los que cambian una función, como el 18, sustituyen a la versión anterior). Cada cabecera dice si está aplicada. El `16-tienda-real.sql` es un borrador sin aplicar: no se ejecuta hasta que se abra la tienda.
+1. **Tablas y funciones**: `servidor/01-…sql` a `servidor/24-…sql`, ejecutados **en orden numérico** en SQL Editor (los que cambian una función, como el 18, sustituyen a la versión anterior). Cada cabecera dice si está aplicada. El `16-tienda-real.sql` es un borrador sin aplicar: no se ejecuta hasta que se abra la tienda.
 2. **Cifras de cada juego**: después del 04, ejecutar `servidor/datos/rumble.sql`, `td.sql` y `survivors.sql`. Si cambia un juego: `python herramientas/subir_datos.py` y volver a ejecutar su `.sql`.
 3. **Plantillas de correo**: `servidor/correos/` (ver su LEEME.md).
 4. **Pagos**: `servidor/funciones/pagos` (borrador, sin desplegar).

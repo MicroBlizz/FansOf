@@ -1,5 +1,6 @@
 -- Rumble v0.9.110: lo que los demás ven de ti (nombre, avatar, marco y título), comprobado por el servidor.
 -- Aplicada en el proyecto awivkedbmumwnkqlfixm el 9-10-2026 (migración «aspecto_publico»), probada antes dentro de una transacción deshecha; datos.look subidos (tablas_juego rumble v21).
+-- 9-10-2026 (tarde): reaplicado el cambio de clasificacion después de que 23-mitica-semanal.sql la reescribiera; ese archivo ya lleva el look.
 -- · _look_publico(usuario, juego): el nombre (_nombre_publico) y el avatar, la facción, el marco y el título de la partida guardada en la nube.
 --   El marco y el título solo se enseñan si son de serie o si el servidor tiene apuntado el cobro del nivel del pase que los da
 --   (tablas_juego.datos.look = { serie: { marco: [...], titulo: [...] }, de: { 'marco:billetes': ['pase:t1b:free:10', ...] } },

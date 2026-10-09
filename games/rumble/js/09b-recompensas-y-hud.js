@@ -134,7 +134,8 @@ const hud = {
     else if (G.faction === 'gamer') pn = S.p.comm ? '+' + S.p.comm * 5 + '%' : '';
     if (c.pn !== pn) { const em = $('#pass-n'); if (em) { em.textContent = pn; em.hidden = !pn; } c.pn = pn; }
     const lk = FACTIONS[G.faction].leader;
-    const leaderOut = units.some(u => u.alive && u.team === 'p' && u.type === lk), leaderRising = revives.some(r => r.team === 'p' && r.type === lk);
+    const mio = PVP.on ? PVP.seat : 'p';   // en PvP, `units` y `revives` no se intercambian en la vista: mi equipo es el de mi asiento (si no, el héroe del rival de tu misma facción salía como «en el campo»)
+    const leaderOut = units.some(u => u.alive && u.team === mio && u.type === lk), leaderRising = revives.some(r => r.team === mio && r.type === lk);
     const nk = S.p.queue[0];
     if (c.next !== nk) { drawArt($('#next-art canvas'), nk, 34, 34); $('#next-art').dataset.rarity = CFG.cards[nk].rarity; $('#next-art').title = 'Siguiente: ' + CFG.cards[nk].name; c.next = nk; }
     for (const el of elCards) {

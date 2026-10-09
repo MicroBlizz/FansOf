@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.99', real: ['<b>PVP: HÉROE EN LA MANO</b>: si tu rival sacaba el héroe de tu misma facción, tu carta de héroe salía como «en el campo» aunque el tuyo no estuviera. Arreglado.'],
+    joke: ['Microblizz ha explicado que en PvP los héroes se parecen tanto que ni su propia botonera los distinguía.'] },
   { v: '0.9.98', real: ['<b>TODAS LAS FACCIONES EN EL PVP</b>: en la pantalla de PvP salen todas las facciones; las que aún no tienes desbloqueadas se ven en gris.'],
     joke: ['Microblizz ha puesto las facciones bloqueadas en gris para que dé más ganas de desbloquearlas. Funciona.'] },
   { v: '0.9.97', real: ['<b>PVP CON TU FACCIÓN</b>: en la pantalla de PvP ya puedes elegir cualquiera de las facciones que tengas desbloqueadas, no solo los Animales Locos.'],

@@ -51,4 +51,6 @@ IDIOMA.add({
   "<b>TODAS LAS FACCIONES EN EL PVP</b>: en la pantalla de PvP salen todas las facciones; las que aún no tienes desbloqueadas se ven en gris.": "<b>ALL FACTIONS IN PVP</b>: the PvP screen now shows every faction; the ones you haven't unlocked yet appear greyed out.",
   "Microblizz ha puesto las facciones bloqueadas en gris para que dé más ganas de desbloquearlas. Funciona.": "Microblizz greyed out the locked factions to make unlocking them more tempting. It works.",
   "Aún no has desbloqueado esta facción": "You have not unlocked this faction yet",
+  "<b>PVP: HÉROE EN LA MANO</b>: si tu rival sacaba el héroe de tu misma facción, tu carta de héroe salía como «en el campo» aunque el tuyo no estuviera. Arreglado.": "<b>PVP: HERO IN YOUR HAND</b>: if your rival deployed the hero of your same faction, your hero card showed “on the field” even though yours wasn't. Fixed.",
+  "Microblizz ha explicado que en PvP los héroes se parecen tanto que ni su propia botonera los distinguía.": "Microblizz explained that in PvP the heroes look so alike that not even its own button bar could tell them apart.",
 });

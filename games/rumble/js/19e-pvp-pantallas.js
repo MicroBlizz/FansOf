@@ -16,6 +16,7 @@ function pvpRed() {
 }
 function pvpPantalla() {
   if (!pvpDisponible()) return;
+  if (pvpRed() === 'servidor' && typeof pedirCuenta === 'function' && pedirCuenta('Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.', 'pvp')) return;
   PVP_UI.modo = PVP_UI.modo || 'estandar'; PVPNET.actual = pvpRed(); pvpPara(); show('scr-pvp'); pvpPinta(); pvpClasificacion();
 }
 async function pvpClasificacion() {
@@ -110,6 +111,7 @@ function pvpShowEnd() {
 
 /* ---------- los botones ---------- */
 $('#btn-pvp').hidden = !pvpDisponible();
+hook('cuenta-vuelta', d => { if (d === 'pvp') { toast('¡Cuenta lista! Entrando en PvP', true); pvpPantalla(); } });
 $('#btn-pvp').addEventListener('click', () => { play('select'); pvpPantalla(); });
 for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) b.addEventListener('click', () => { if (PVP_UI.busca) return; PVP_UI.modo = b.dataset.pm; play('select'); pvpPinta(); });
 $('#btn-pvp-buscar').addEventListener('click', pvpBuscar);

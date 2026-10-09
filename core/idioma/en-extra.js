@@ -154,4 +154,9 @@ IDIOMA.add({
   "Solo salen cartas de las facciones que ya tienes.": "Only cards from factions you already have can come up.",
   "<b>ENTRA CON GOOGLE</b>: ya puedes guardar tu progreso con tu cuenta de Google (Opciones → Cuenta). Ahora está en pruebas: escribe a fansofmicroblizz@gmail.com con tu correo de Google y te añadimos a mano.": "<b>SIGN IN WITH GOOGLE</b>: you can now save your progress with your Google account (Options → Account). It is in testing for now: email fansofmicroblizz@gmail.com with your Google address and we will add you by hand.",
   "Microblizz se compromete a abrir el acceso con Google a todo el mundo en menos de un año. Tiene la firma de un becario.": "Microblizz promises to open Google sign-in to everyone in under a year. It has the intern's signature.",
+  "NECESITAS UNA CUENTA": "YOU NEED AN ACCOUNT",
+  "AHORA NO": "NOT NOW",
+  "Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.": "No password: sign in with Google or with a link sent to your email. Your progress stays in your account.",
+  "Iniciar sesión / crear cuenta": "Sign in / create account",
+  "Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.": "With an account you keep your progress, play on other devices and can enter PvP."
 });

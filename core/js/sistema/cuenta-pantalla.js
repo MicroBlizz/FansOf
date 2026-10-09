@@ -23,20 +23,38 @@
   const edad = () => tr('Para guardar tu cuenta tienes que tener 14 años o más. Si eres menor, pide a tu padre, madre o tutor que lo haga contigo.');
 
   const ponen = (...b) => b.filter(Boolean), base = location.pathname.replace(/games\/[^/]*\/.*$/, '');
+  // los botones para guardar o entrar; los usan Opciones y la ventana «necesitas una cuenta» (con la misma lógica)
+  function botonesInvitado() {
+    return ponen(
+      google && boton(tr('GUARDAR CON GOOGLE'), () => confirmBox(tr('GUARDAR TU PROGRESO'), tr('Entrarás con tu cuenta de Google y tu progreso quedará guardado en ella.') + '<small>' + edad() + '</small>', tr('CONTINUAR'), () => CUENTA.guardarConGoogle().catch(fallo))),
+      boton(tr('GUARDAR CON EMAIL'), () => pedirEmail(tr('GUARDAR TU PROGRESO'), tr('Te mandaremos un enlace, sin contraseña. Al abrirlo, tu progreso queda guardado en tu cuenta.') + '<small>' + edad() + '</small>',
+        e => CUENTA.guardarConEmail(e).then(() => { toast(tr('Mira tu correo y abre el enlace'), true); pintar(); }, fallo))),
+      google && boton(tr('ENTRAR CON GOOGLE'), () => CUENTA.entrarConGoogle()),
+      boton(tr('YA TENGO CUENTA'), () => pedirEmail(tr('ENTRAR EN TU CUENTA'), tr('Te mandaremos un enlace para entrar. Si aquí también has jugado, después te preguntaremos con qué partida sigues.'),
+        e => CUENTA.entrarConEmail(e).then(() => toast(tr('Mira tu correo y abre el enlace'), true), err => (/signups? not allowed|not found/i.test(err.message) ? toast(tr('No hay ninguna cuenta con ese email')) : fallo(err))))));
+  }
+  // Ventana «necesitas una cuenta» para lo que solo va con cuenta (p. ej. PvP). `destino` es el nombre con el que el juego,
+  // al volver con la cuenta ya vinculada, retoma lo que iba a hacer (hook 'cuenta-vuelta'). Devuelve false si no hace falta.
+  window.pedirCuenta = (motivo, destino) => {
+    if (!CUENTA.activa || !CUENTA.invitado) return false;
+    try { if (destino) localStorage.setItem('fansof-tras-cuenta', destino); } catch (e) { /* sin memoria: no se retoma solo */ }
+    confirmBox(tr('NECESITAS UNA CUENTA'), esc(tr(motivo)) + '<small>' + tr('Sin contraseña: entras con Google o con un enlace al email. Tu progreso se queda en tu cuenta.') + ' ' + edad() + '</small><div id="cuenta-modal" class="row" style="flex-direction:column;gap:8px;margin-top:10px"></div>', null, null, tr('AHORA NO'));
+    document.getElementById('cuenta-modal').append(...botonesInvitado());
+    return true;
+  };
+  // entrada visible en el menú principal: junto a «Cómo se juega», mientras sigas como invitado
+  const links = document.querySelector('.links'), enlace = links && document.createElement('button');
+  if (enlace) { enlace.className = 'btn-link'; enlace.id = 'btn-cuenta-menu'; enlace.textContent = tr('Iniciar sesión / crear cuenta'); enlace.onclick = () => { play('select'); window.pedirCuenta('Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.'); }; links.prepend(enlace); }
+  const entrada = () => { if (enlace) enlace.hidden = !CUENTA.invitado; };
   let google = false;   // se sabe al preguntar al servidor; hasta entonces no hay botón
   function pintar() {
+    entrada();
     fila.innerHTML = ''; const span = document.createElement('span'), fila2 = document.createElement('div'); fila2.className = 'row';
     if (CUENTA.invitado) {
       span.innerHTML = '<b>' + tr('Cuenta') + '</b><br>' + (CUENTA.emailPendiente
         ? tr('Te hemos enviado un enlace a {e}. Ábrelo en este aparato para terminar.', { e: '<b>' + esc(CUENTA.emailPendiente) + '</b>' })
         : tr('Tu progreso se guarda como invitado, solo en este navegador. Guárdalo con tu email para no perderlo y jugar en otros aparatos.'));
-      fila2.append(...ponen(
-        google && boton(tr('GUARDAR CON GOOGLE'), () => confirmBox(tr('GUARDAR TU PROGRESO'), tr('Entrarás con tu cuenta de Google y tu progreso quedará guardado en ella.') + '<small>' + edad() + '</small>', tr('CONTINUAR'), () => CUENTA.guardarConGoogle().catch(fallo))),
-        boton(tr('GUARDAR CON EMAIL'), () => pedirEmail(tr('GUARDAR TU PROGRESO'), tr('Te mandaremos un enlace, sin contraseña. Al abrirlo, tu progreso queda guardado en tu cuenta.') + '<small>' + edad() + '</small>',
-          e => CUENTA.guardarConEmail(e).then(() => { toast(tr('Mira tu correo y abre el enlace'), true); pintar(); }, fallo))),
-        google && boton(tr('ENTRAR CON GOOGLE'), () => CUENTA.entrarConGoogle()),
-        boton(tr('YA TENGO CUENTA'), () => pedirEmail(tr('ENTRAR EN TU CUENTA'), tr('Te mandaremos un enlace para entrar. Si aquí también has jugado, después te preguntaremos con qué partida sigues.'),
-          e => CUENTA.entrarConEmail(e).then(() => toast(tr('Mira tu correo y abre el enlace'), true), err => (/signups? not allowed|not found/i.test(err.message) ? toast(tr('No hay ninguna cuenta con ese email')) : fallo(err)))))));
+      fila2.append(...botonesInvitado());
     } else {
       span.innerHTML = '<b>' + tr('Cuenta') + '</b><br>' + tr('Tu progreso se guarda en tu cuenta {e}: puedes jugar en cualquier aparato.', { e: '<b>' + esc(CUENTA.email) + '</b>' });
       fila2.append(
@@ -49,4 +67,6 @@
   pintar();
   CUENTA.googleListo().then(v => { if (v) { google = true; pintar(); } });
   hook('cuenta', pintar);
+  // al volver del enlace del email o de Google con la cuenta ya vinculada, el juego retoma lo que iba a hacer
+  hook('cuenta', () => { if (CUENTA.invitado) return; let d = ''; try { d = localStorage.getItem('fansof-tras-cuenta') || ''; localStorage.removeItem('fansof-tras-cuenta'); } catch (e) { /* nada */ } if (d) setTimeout(() => fire('cuenta-vuelta', d), 300); });
 })();

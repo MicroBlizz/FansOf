@@ -124,4 +124,6 @@ IDIOMA.add({
   "Microblizz ha contratado a Lola como formadora de nuevos empleados. Sigue despedida, pero ahora también trabaja gratis.": "Microblizz has hired Lola to train new employees. She is still fired, but now she also works for free.",
   "Tu rival tiene otra versión del juego: recarga la página": "Your rival has another version of the game: reload the page",
   "Tu rival usa otro retardo de red: partida anulada": "Your rival uses another network delay: match voided",
+  "Para jugar PvP necesitas una cuenta: así tus victorias cuentan en la clasificación y nadie se hace pasar por ti.": "To play PvP you need an account: that way your wins count in the ranking and nobody can pose as you.",
+  "¡Cuenta lista! Entrando en PvP": "Account ready! Entering PvP"
 });

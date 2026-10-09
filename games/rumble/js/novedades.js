@@ -4,7 +4,7 @@
 'use strict';
 const NEWS = [
   { v: '0.9.111', real: [
-      '<b>MÍTICA SEMANAL</b>: en la dificultad Mítica las estrellas vuelven a 0 cada lunes. La campaña tiene una caja TEMPORADA MÍTICA con la cuenta atrás, y el Salón de la Fama una pestaña Mítica (esta semana, la pasada y de siempre). Los 10 primeros de cada semana se llevan un título.',
+      '<b>MÍTICA SEMANAL</b>: en la dificultad Mítica las estrellas vuelven a 0 cada lunes. La campaña tiene una caja TEMPORADA MÍTICA con la cuenta atrás, y el Salón de la Fama una pestaña Mítica (esta semana, la pasada y de siempre). Cada semana vuelves a cobrar su oro y sus gemas, y los 10 primeros se llevan un título.',
       '<b>TU CARA EN EL PVP</b>: tu rival ve tu avatar, tu marco y tu título en la cuenta atrás, en la pantalla final y en la clasificación.',
       '<b>FACCIONES EN LA ARENA</b>: en CONTRA JUGADORES, el botón FACCIÓN enseña las facciones en dos filas de 5 con su nombre, igual que en el resto del juego.'],
     joke: ['Microblizz quería poner 9 y 1 por pura asimetría corporativa. El becario lo ha cuadrado.'] },

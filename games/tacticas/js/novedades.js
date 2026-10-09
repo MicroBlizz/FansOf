@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.9', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.8', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.7', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.6', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },

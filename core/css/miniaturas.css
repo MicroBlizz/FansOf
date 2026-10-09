@@ -1,0 +1,15 @@
+/* Fans Of · Miniaturas de habilidades y objetos (estilo «carta brillante», octubre de 2026). Cualquier hueco de icono con data-mini
+   (lo pone miniFondo en core/js/serie/miniaturas.js) lleva el color de su rareza, que se oscurece hacia el borde, un brillo arriba
+   y, en las Épicas, Legendarias y Míticas, rayos de luz que giran detrás del dibujo. */
+/* el triple [data-mini] gana a los .ic, .bib-ic, .gr-card .gr-ic… de cada pantalla (fondo blanco o hueco arriba para las letras) */
+[data-mini][data-mini][data-mini] { position: relative; overflow: hidden; isolation: isolate; padding: 0;
+  background: radial-gradient(circle at 50% 34%, var(--mc) 0%, var(--mc) 30%, var(--mo) 100%); }
+[data-mini] > svg.mini.mini { position: relative; width: 90%; height: 90%; margin: 0; filter: drop-shadow(0 2px 0 rgba(32, 16, 44, 0.7)); }
+[data-mini]::after { content: ""; position: absolute; left: 14%; top: 7%; width: 42%; height: 20%; border-radius: 50%; background: rgba(255, 255, 255, 0.35); transform: rotate(-20deg); pointer-events: none; }
+[data-mini="epic"]::before, [data-mini="legendary"]::before, [data-mini="mythic"]::before {
+  content: ""; position: absolute; inset: -30%; z-index: -1; pointer-events: none;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.28) 0deg 12deg, transparent 12deg 30deg); animation: mini-gira 14s linear infinite; }
+@keyframes mini-gira { to { transform: rotate(360deg); } }
+/* quietas en la Biblioteca lo que aún no tienes, y para quien pide menos movimiento */
+.bib-card.falta [data-mini]::before { animation: none; }
+@media (prefers-reduced-motion: reduce) { [data-mini]::before { animation: none; } }

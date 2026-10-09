@@ -51,19 +51,19 @@ function bibMitica() {
   html += '<p class="bib-rango">El departamento de monetización todavía está decidiendo el precio. Han pedido una sala más grande.</p>';
   openList('MÍTICA', html, () => {});
 }
-function bibIcono(D) { return D.k === 'ab' ? D.ic : SLOT_SVG[D.slot]; }
+function bibIcono(D) { return miniIcono(D.k, D.id); }
 function bibCarta(D) {
   const R = RARITY[D.rar], n = D.copias.length;
   const etiqueta = D.pass ? 'Del pase' : D.fac && D.k === 'eq' ? 'Solo ' + CFG.cards[FACTIONS[D.fac].leader].name : D.k === 'eq' ? SLOTS[D.slot] : '';
   return `<button class="bib-card${n ? '' : ' falta'}" data-bid="${D.id}" data-rar="${D.rar}" style="--rc:${R[2]}" aria-label="${D.name}: ${n ? n + ' copias' : 'te falta'}">`
-    + `<span class="bib-ic" style="background:${R[1]}">${bibIcono(D)}</span>`
+    + `<span class="bib-ic"${miniFondo(D.rar)}>${bibIcono(D)}</span>`
     + `<b class="bib-name ol">${D.name}</b><span class="bib-rar">${R[0]}${etiqueta ? ' · ' + etiqueta : ''}</span>`
     + (n ? `<span class="bib-n ol">x${n}</span>` : '<span class="bib-lock">TE FALTA</span>') + '</button>';
 }
 function bibFicha(id) {
   const D = Object.assign({ k: bibTab, id }, (bibTab === 'ab' ? ABILITIES : ITEMS)[id]), R = RARITY[D.rar], copias = bibCopias(bibTab, id);
   const rango = statsOf({ k: D.k, id }).map(st => `${fmtV(rnd(st.c * 0.5, st.dec))}–${fmtV(rnd(st.c * 1.5, st.dec))}`).join(' · ');
-  let html = `<div class="bib-ficha" style="--rc:${R[2]}"><span class="bib-ic big" style="background:${R[1]}">${bibIcono(D)}</span><div><b class="ol">${D.name}</b><span class="bib-rar">${R[0]}${D.k === 'eq' ? ' · ' + SLOTS[D.slot] : ''}</span></div></div>`;
+  let html = `<div class="bib-ficha" style="--rc:${R[2]}"><span class="bib-ic big"${miniFondo(D.rar)}>${bibIcono(D)}</span><div><b class="ol">${D.name}</b><span class="bib-rar">${R[0]}${D.k === 'eq' ? ' · ' + SLOTS[D.slot] : ''}</span></div></div>`;
   html += `<p class="bib-txt">${bibDesc(D)}${D.k === 'eq' && D.fac ? ` <i class="wn">Solo para ${CFG.cards[FACTIONS[D.fac].leader].name}.</i>` : ''}</p>`;
   html += `<p class="bib-rango">Según la calidad de la copia: <b>${rango}</b></p>`;
   if (copias.length) {

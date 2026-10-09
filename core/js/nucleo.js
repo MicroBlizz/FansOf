@@ -55,6 +55,7 @@ const NUCLEO = (() => {
     'js/serie/frases.js',          //           frases de humor comunes
     'js/serie/iconos.js',          //           iconos y colores
     'js/serie/catalogo.js',        //           qué habilidades y objetos existen
+    'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
@@ -76,7 +77,7 @@ const NUCLEO = (() => {
   ];
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
-  const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css'];   // las pantallas comunes: un juego pide la primera y se cargan las cuatro, en este orden
+  const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
   function estilos(...hojas) { for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.

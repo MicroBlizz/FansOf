@@ -26,7 +26,7 @@ function buildInv() {
 function invRow(it) {
   const D = defOf(it), R = RARITY[D.rar], w = wearer(it);
   const meta = w || it.lock ? `<span class="inv-meta">${it.lock ? LOCK_SVG + 'Contrato indefinido' : ''}${w && it.lock ? ' · ' : ''}${w ? 'Lo lleva ' + w : ''}</span>` : '';
-  return `<button class="inv-row" data-u="${it.u}" data-rar="${D.rar}" style="--rc:${R[2]}"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><span class="inv-main"><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="inv-desc">${descOf(it)}</span>${meta}</span></button>`;
+  return `<button class="inv-row" data-u="${it.u}" data-rar="${D.rar}" style="--rc:${R[2]}"><span class="ic"${miniFondo(D.rar)}>${miniIcono(it.k, it.id)}</span><span class="inv-main"><span class="inv-top"><b class="ol">${D.name}</b>${qBadge(it)}</span><span class="inv-desc">${descOf(it)}</span>${meta}</span></button>`;
 }
 let itemSlot = null;   // v0.9.19: la ranura de la Colección desde la que se abrió la ficha
 function openItem(uid, slot) {
@@ -36,7 +36,7 @@ function openItem(uid, slot) {
   const bars = S.map((st, i) => { const qi = it.q[i], Ti = QTIERS[tierOf(qi)]; return `<div class="qstat">${S.length > 1 ? `Efecto ${i + 1}: ` : 'Valor: '}<b>${fmtV(V[i])}</b> <small>(de ${fmtV(rnd(st.c * 0.5, st.dec))} a ${fmtV(rnd(st.c * 1.5, st.dec))}) · ${Ti.name}</small><div class="qbar" style="--qc:${Ti.col}"><i style="width:${Math.max(2, qi * 100)}%"></i></div></div>`; }).join('');
   const others = SAVE.inv.filter(x => x !== it && x.k === it.k && x.id === it.id).sort((a, b) => avgQ(b) - avgQ(a));
   const oth = others.length ? `Tus otras copias: ${others.slice(0, 5).map(x => `${QTIERS[tierOf(avgQ(x))].name} ${Math.round(avgQ(x) * 100)} %`).join(' · ')}${others.length > 5 ? ` y ${others.length - 5} más` : ''}.` : 'Es tu única copia.';
-  $('#item-body').innerHTML = `<div class="item-head"><span class="ic" style="background:${R[1]}">${it.k === 'ab' ? D.ic : SLOT_SVG[D.slot]}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] + ' (solo líderes)' : ''}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
+  $('#item-body').innerHTML = `<div class="item-head"><span class="ic"${miniFondo(D.rar)}>${miniIcono(it.k, it.id)}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] + ' (solo líderes)' : ''}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
     <div>${qBadge(it, true)}</div><div class="inv-desc">${descOf(it)}</div>${bars}
     <div class="item-note">${w ? 'Lo lleva ' + w + '.' : 'No lo lleva nadie.'}${pass ? ' Premio del pase: no se puede despedir ni volver a tirar.' : it.lock ? ' Contrato indefinido: no se puede despedir.' : ''}</div><div class="item-note">${oth}</div>`;
   const rc = ECON.reroll[D.rar], sv = scrapValue(it);

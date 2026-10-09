@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.105', real: ['<b>CARTAS A LA ESPERA</b>: si te falta 1 de CAOS (o menos) para una tropa, ya puedes colocarla: se queda en el sitio, reserva el CAOS y sale sola en cuanto puedes pagarla. Tócala para cancelarla (contra la IA). También hay más textos traducidos al inglés y arreglos en el Salón de la Fama.'],
+    joke: ['Microblizz dice que ahora las tropas hacen cola con educación. Los jugadores, no.'] },
   { v: '0.9.104', real: ['<b>RESUMEN DEL PVP</b>: la pantalla de PvP enseña cuántas partidas se han jugado en la última hora y en total, y cuántas unidades han caído, hechizos se han lanzado y CAOS se ha gastado en esa hora.'],
     joke: ['Microblizz ha contratado a un becario para contar muertos. Dice que no es morbo, que es analítica.'] },
   { v: '0.9.103', real: ['<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» y, si entras en PvP sin cuenta, te sale una ventana para crearla o entrar con Google o con tu email (y al terminar pasas directo a PvP). También hemos afinado el PvP para que dos navegadores distintos jueguen la misma partida.'],

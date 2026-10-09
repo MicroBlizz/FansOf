@@ -53,4 +53,6 @@ IDIOMA.add({
   "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
   "+%1 % de daño y −%2 % de vida.": "+%1 % damage and −%2 % health.",
   "+%1 % de vida y −%2 % de velocidad.": "+%1 % health and −%2 % speed.",
+  "<b>MÁS TEXTOS EN INGLÉS</b>: hemos repasado y traducido textos que se habían quedado sin traducir.": "<b>MORE TEXTS IN ENGLISH</b>: we have gone through the game and translated texts that had been left untranslated.",
+  "Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.": "Microblizz has discovered that Spanish is not the only language. They are very proud.",
 });

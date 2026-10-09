@@ -1,0 +1,25 @@
+// Fans of Rumble · Inglés: los avisos al móvil (js/20d-avisos.js)
+'use strict';
+IDIOMA.add({
+  "Avisos al móvil": "Phone notifications",
+  "Horas extra llenas, regalos, misiones y el pase. Como mucho 2 al día y nunca de noche.": "Full overtime, gifts, missions and the pass. At most 2 a day and never at night.",
+  "¿TE AVISO?": "SHALL I LET YOU KNOW?",
+  ": ¿quieres que te avise cuando tu líder llene el almacén de horas extra, cuando tengas regalos o misiones nuevas…?": ": want me to let you know when your leader fills the overtime warehouse, or when you have gifts or new missions…?",
+  "Como mucho 2 avisos al día y nunca de noche. Se quitan cuando quieras en Opciones.": "At most 2 a day and never at night. Turn them off whenever you want in Options.",
+  "¡SÍ, AVÍSAME!": "YES, TELL ME!",
+  "Te avisaré. Microblizz no.": "I'll let you know. Microblizz won't.",
+  "Sin permiso del móvil no puedo avisarte. Puedes darlo en Opciones.": "Without your phone's permission I can't notify you. You can grant it in Options.",
+  "Android no deja: activa las notificaciones de la app en los ajustes del móvil": "Android won't allow it: turn on the app's notifications in your phone settings",
+  "Tu líder": "Your leader",
+  "%1 ha llenado el almacén y amenaza con montar un sindicato. Ven a RECOGER.": "%1 has filled the warehouse and is threatening to start a union. Come and COLLECT.",
+  "Microblizz ha notado tu ausencia. Y se ha alegrado. Vuelve a fastidiarles.": "Microblizz has noticed you're gone. And it's delighted. Come back and annoy them.",
+  "PASE DE BATALLA": "BATTLE PASS",
+  "Tienes premios del pase sin cobrar. Microblizz se los quedará si no vienes.": "You have unclaimed pass rewards. Microblizz will keep them if you don't come.",
+  "MÍTICA SEMANAL": "WEEKLY MYTHIC",
+  "Es lunes: la Mítica ha vuelto a empezar. Las estrellas no se ganan solas.": "It's Monday: the Mythic has started again. Stars don't earn themselves.",
+  "REGALO DIARIO": "DAILY GIFT",
+  "Tu regalo diario te espera. Contabilidad aún no se ha dado cuenta.": "Your daily gift is waiting. Accounting hasn't noticed yet.",
+  "MISIONES NUEVAS": "NEW MISSIONS",
+  "Misiones nuevas. Microblizz ha encontrado más trabajo para ti.": "New missions. Microblizz has found more work for you.",
+  "Hay algo GRATIS en la tienda. Microblizz jura que no es una trampa.": "There's something FREE in the shop. Microblizz swears it's not a trap.",
+});

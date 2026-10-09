@@ -4,6 +4,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.40', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'],
+    joke: ['Microblizz ha instalado interruptores para encender y apagar cosas desde su despacho. Aún no sabe cuál apaga las luces.'] },
   { v: '0.13.39', real: ['<b>PVP VUELVE A SU NOMBRE</b>: en español vuelve a decir PvP. Los «ingresos» se quedan.'],
     joke: ['Phony sigue sin entender qué es un ingreso. Microblizz tampoco.'] },
   { v: '0.13.38', real: ['<b>MENOS TECNICISMOS</b>: en español, «income» pasa a llamarse «ingresos» y el PvP, JcJ.'],

@@ -98,7 +98,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-11.js` · 14 KB
 - `games/rumble/idioma/en-12.js` · 16 KB
 - `games/rumble/idioma/en-13.js` · 4 KB
-- `games/rumble/idioma/en-14.js` · 14 KB
+- `games/rumble/idioma/en-14.js` · 15 KB
 - `games/rumble/idioma/en-15.js` · 6 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
@@ -164,7 +164,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/21-arranque.js` · 5 KB · last, FPS, fpsShow, fpsCount, frame, boot
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 3 KB · SALON_PVP, SALON_DIF, salonDif, SALON
-- `games/rumble/js/novedades.js` · 24 KB · NEWS
+- `games/rumble/js/novedades.js` · 25 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 5 KB
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
@@ -177,11 +177,12 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/skate/js/juego.js` · 46 KB · SK_LIGERO, SK_BRILLO, SK_W, SK_LANES, SK_CALZADA, SK_HERO_X, SK_VIDA, SK_BOSS_T, SK_OLA_T, SK_ESCALA_HEROE, SK_COLOR, SAVE, sonidoApagado, volGeneral, volMusica, SK_HEROES, SK_ENEMIGOS, SK_JEFES, skU, skHp, skRand, skHeroe, SK_ARMAS, SK_PASIVAS, SK_CLASES, SK_XP, SK_TALENTOS, skCartera, skGuardaCartera, skAplicaTalentos, SK_JEFE_DE, SK_DIFS, skCampLeer, skCampGuarda, skMundoAbierto, skNivelAbierto, SK, SK_CV, SKC, skPolvoT … (+48)
 - `games/skate/js/local.js` · <1 KB · tr
 - `games/skate/js/mundos.js` · 10 KB · SK_MUNDOS
+- `games/skate/js/novedades.js` · <1 KB · NEWS
 - `games/survivors/index.html` · 26 KB
 - `games/survivors/sw.js` · <1 KB
 - `games/survivors/css/survivors.css` · 14 KB
 - `games/survivors/idioma/en-facciones.js` · 12 KB
-- `games/survivors/idioma/en.js` · 16 KB
+- `games/survivors/idioma/en.js` · 17 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
 - `games/survivors/js/armas-tipos-2.js` · 10 KB · anguloMira, difAng
 - `games/survivors/js/armas-tipos.js` · 15 KB · CONTINUAS, CONT_EXTRA, SONIDO_TIPO, estadoArma, empujeA, TIPOS, registraTipos, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
@@ -197,7 +198,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/interfaz.js` · 10 KB · cv, ajustar, TECLAS, TACTIL, mandoTeclado, jugando, aLogico, soltar, sueltaMando, empezar, abrirNivel, FRASES_PAUSA, pausar, seguir, mostrarFin, antes, fotograma, menuT, fondoMenu
 - `games/survivors/js/juego.js` · 23 KB · P, sigId, MANDO, modsJugador, nuevaPartida, nvP, multDano, multRecarga, radioRecoger, velJugador, CELDA, REJ, claveR, rehacerRejilla, cerca, masCercano, crearEnemigo, puntoFuera, elegirPeso, oleadas, tocaShiny, marcaShiny, soltarCofre, llegaJefe, moverEnemigos, jefeAtaca, herir, golpeCajas, objetosCajasOk, romperCaja, matar, curar, danarJugador, soltarGema, recoger, ganarXp, puedeMejorar, opcionesNivel, aplicarOpcion, numero … (+8)
 - `games/survivors/js/menus.js` · 7 KB · VISTA, enPartida, goHome, openColl, titlePopups, showMenu, pintaRecord, dibujaPortada, optOn, openOptions, optButtons, saveCode, soundBtns
-- `games/survivors/js/novedades.js` · 5 KB · NEWS
+- `games/survivors/js/novedades.js` · 6 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/tacticas/index.html` · 7 KB
@@ -206,7 +207,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
 - `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, FONDOS, SUELO, fondoDe, dibujar, rrFill, flecha, pintarLuchador
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
-- `games/tacticas/js/novedades.js` · 1 KB · NEWS
+- `games/tacticas/js/novedades.js` · 2 KB · NEWS
 - `games/tacticas/js/pantallas.js` · 21 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, abrirNovedades, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones
 - `games/td/index.html` · 28 KB
 - `games/td/sw.js` · <1 KB

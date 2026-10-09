@@ -496,6 +496,14 @@
   }
  },
  "habilidades": {
+  "bullet": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
   "cadena": {
    "fac": "heroes",
    "flag": null,
@@ -512,6 +520,22 @@
    "rar": "basic",
    "slot": null
   },
+  "ceo": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
+  "clipping": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": null
+  },
   "clon": {
    "fac": "memes",
    "flag": null,
@@ -520,12 +544,28 @@
    "rar": "legendary",
    "slot": null
   },
+  "dios": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
   "dlc": {
    "fac": null,
    "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
+   "slot": null
+  },
+  "emotes": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "common",
    "slot": null
   },
   "escarcha": {
@@ -576,6 +616,22 @@
    "rar": "epic",
    "slot": null
   },
+  "lag": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "lootbox": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
   "microtrans": {
    "fac": null,
    "flag": null,
@@ -592,12 +648,28 @@
    "rar": "epic",
    "slot": null
   },
+  "p2w": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "legendary",
+   "slot": null
+  },
   "piel": {
    "fac": null,
    "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
+   "slot": null
+  },
+  "ping": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
    "slot": null
   },
   "plasma": {
@@ -622,6 +694,14 @@
    "n": 1,
    "pass": false,
    "rar": "basic",
+   "slot": null
+  },
+  "ragdoll": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
    "slot": null
   },
   "ragequit": {
@@ -664,9 +744,25 @@
    "rar": "common",
    "slot": null
   },
+  "super": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": null
+  },
   "vampiro": {
    "fac": null,
    "flag": null,
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": null
+  },
+  "wallhack": {
+   "fac": null,
+   "flag": "habilidades-nuevas",
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -5711,5 +5807,5 @@
    }
   }
  },
- "version": 22
+ "version": 23
 }

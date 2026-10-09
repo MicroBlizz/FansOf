@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 11 KB
+- `index.html` · 12 KB
 - `sw.js` · <1 KB
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
@@ -95,7 +95,40 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
-- `demos/terminal-shock/index.html` · 76 KB
+- `demos/roguelite/index.html` · 2 KB
+- `demos/roguelite/idioma/en-raiz.js` · <1 KB
+- `demos/roguelite/js/combate.js` · 12 KB · POS, centro, siguiente, combate, llegaRival, llegaJefe, accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, pegaRival, accionRival, despidoFulminante, pegaConejo, muereRival
+- `demos/roguelite/js/datos.js` · 5 KB · HEROE_BASE, SUBIDA, RAREZA, PESO, PESO_COFRE, HABILIDADES, ENEMIGOS, DIAS
+- `demos/roguelite/js/efectos.js` · 9 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, avanzaFx, pintaFx, pintaBocadillo
+- `demos/roguelite/js/enemigos.js` · 17 KB · PAL_E, PAL_OJO, letreroRecto, becario, POSE_BECARIO, fotoBecario, creaBecario, estrella, starbot, POSE_STAR, fotoStar, creaStarbot, cajaBotin, fotoCaja, creaCaja, brazoRobot, survival, POSE_JEFE, fotoJefe, creaJefe, creaPuesto, creaEnemigos
+- `demos/roguelite/js/fondo.js` · 19 KB · ESC, SUELO, BAYER, hash, DIA_LUZ, lienzoNuevo, imagen, TRAMA_CACHE, trama, rellenaTrama, FONDO, preparaFondo, pintaSol, torreDe, arbolDe, colinasDe, sueloDe, delanteDe, nubeDe, ESLOGANES, propDe, avanzaProps, tira, pintaFondo, pintaDelante, focos
+- `demos/roguelite/js/heroe.js` · 11 KB · SPR, PAL_H, BOCA, ojosConejo, bocaConejo, zanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
+- `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
+- `demos/roguelite/js/interfaz.js` · 14 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, panelHabilidad, escoge, marco, pulsado, botonPx, iconoHab, ondula, pintaHud, pintaEscenaUI, pintaPanel, panelTitulo, filaHabs, panelLog, panelElige, panelHabs, panelFin, toque, tecla
+- `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
+- `demos/roguelite/js/personajes.js` · 5 KB · CONEJO, ARDILLA, RIVAL, PROP, H, ponAnim, fotoDe, sombra, pintaEnt, pintaProp, barraRival, pintaPersonajes, avanzaPersonajes
+- `demos/roguelite/js/pixel.js` · 9 KB · OL, RGBA_CACHE, rgba, mezcla, pal, tintaPal, F, giraP, Pincel, pintaSpr, circuloPx, anilloPx, ovaloPx, tramaPx, ent
+- `demos/roguelite/js/principal.js` · 3 KB · PAN, cv, buf, bctx, ajusta, dibuja, ultimo, fotograma, arranca
+- `demos/roguelite/js/reglas.js` · 3 KB · nuevoHeroe, tiene, aplicaHabilidad, subeNivel, ofertas, nuevoEnemigo, turnoHeroe, turnoEnemigo, curaBotiquin
+- `demos/roguelite/js/sonido.js` · 6 KB · SON, sonidoInicia, sonidoCambia, tono, ruido, SONIDOS, sonido, PISTAS, hz, musica, tocaMusica
+- `demos/roguelite/js/textos.js` · 8 KB · EN, IDIOMA_RL, tr
+- `demos/roguelite/js/tiempo.js` · 2 KB · RELOJ, CANCELADO, ESPERAS, ELECCION, espera, anima, esperaEleccion, elige, congela, cancelaTodo, avanzaReloj, suave, sale, entra, salto
+- `demos/roguelite/js/viaje.js` · 7 KB · VIAJE, partida, empiezaDia, anda, subeYElige, cambiosEn, llegaArdilla, eleccion, derrota, victoria, avanzaViaje
+- `demos/rumble-3d/index.html` · 11 KB
+- `demos/rumble-3d/idioma/en-raiz.js` · <1 KB
+- `demos/rumble-3d/js/edificios.js` · 10 KB · PI, torreAnimales, madriguera, torreMicroblizz, sedeMicroblizz, escombros, cartel
+- `demos/rumble-3d/js/efectos.js` · 12 KB · _m, _z, azar, libre, estrella, Pool
+- `demos/rumble-3d/js/escena.js` · 11 KB · ESQUINAS, _v, _ray
+- `demos/rumble-3d/js/modelos.js` · 9 KB · OL, bunny, squirrel, becario
+- `demos/rumble-3d/js/munecos.js` · 9 KB · _base, _q, suave
+- `demos/rumble-3d/js/partida.js` · 21 KB · DATOS, EDIF, COLOR, azar, elige, _m, vivo, blanco, girar
+- `demos/rumble-3d/js/piezas.js` · 7 KB · gradiente, _v, matriz, ESFERAS, cacheCajas, geoCajaRedonda
+- `demos/rumble-3d/js/principal.js` · 9 KB · $, dibujante, escena, camara, distCamino, rioT, efectos, partida, retrato, modoCamara, camPos, ajustar, VOCES, rotulos, carta, avisoT, aviso, muestras, cuenta, medir, antes, bucle
+- `demos/rumble-3d/js/textos.js` · 3 KB · EN, pedido
+- `demos/rumble-3d/js/three.min.js` · 562 KB · Tc, float, float, vec4, vec2, vec3, vec4, mat3, mat3
+- `demos/rumble-3d/js/voces.js` · 8 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
+- `demos/terminal-shock/index.html` · 103 KB
+- `demos/terminal-shock/idioma/en-raiz.js` · <1 KB
 - `games/rumble/index.html` · 39 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 19 KB
@@ -126,7 +159,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-8.js` · 9 KB
 - `games/rumble/idioma/en-9.js` · 14 KB
 - `games/rumble/idioma/en-avisos.js` · 2 KB
-- `games/rumble/idioma/en-habilidades-locas.js` · 3 KB
+- `games/rumble/idioma/en-habilidades-locas.js` · 4 KB
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL

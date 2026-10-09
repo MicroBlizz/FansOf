@@ -58,9 +58,12 @@ function laneLess(team) {
   if (n[0] !== n[1]) return n[0] < n[1] ? 0 : 1;
   return chooseLane(team);
 }
-// IA por papeles (tanque, enjambre, distancia...): juega cualquier mazo. La usan los rivales de facción y el modo automático de pruebas
+// IA por papeles (tanque, enjambre, distancia...): juega cualquier mazo. La usan los rivales y el modo automático de pruebas.
+// v3: con tácticas según la dificultad (06g-ia-tacticas.js): castigo, hechizos con paciencia, ataque combinado, espera y presión en dos carriles
 function aiGeneric(team, dt) {
-  const A = AI[team]; A.think -= dt; if (A.think > 0) return;
+  const A = AI[team], niv = aiNivel(team);
+  if (niv) aiEstima(team, dt);   // cada tick: cuánto CAOS te queda, calculado como lo haría una persona
+  A.think -= dt; if (A.think > 0) return;
   const D = G.diffCfg; A.think = team === 'e' ? srand(D.think[0], D.think[1]) : srand(0.6, 1.2);
   const me = S[team], foe = other(team), F = FACTIONS[facOf(team)], zone = ZONE[team], dir = team === 'p' ? 1 : -1;
   const avail = me.hand.map((k, i) => ({ k, slot: i })).filter(a => a.k);   // v1: la IA juega con la misma mano de 4 que el jugador (sin huecos si su mazo tiene menos de 4)
@@ -69,7 +72,7 @@ function aiGeneric(team, dt) {
   const go = (c, x, y) => playCard(team, team === 'e' && !me.queue.length ? -2 : c.slot, c.k, x, y);   // gasta la carta y la rota en la mano, igual que tú (sin cola, con mazos de 4 o menos, la carta no se va de la mano)
   // v2: los hechizos de la IA salen de su mazo (no de la mano), así no se quedan atascados esperando un objetivo
   const hechizos = team === 'p' ? [] : sshuffle(me.deck.filter(k => isSpell(k)).map(k => ({ k, slot: -2 })));
-  if (aiSpell(team, avail.concat(hechizos), go)) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores)
+  if (aiSpell(team, avail.concat(hechizos), go, AI_PACIENCIA[niv])) return;   // v0.9.15: hechizos (sobre todo contra tus sanadores); v3: con paciencia desde Normal
   const myHalf = u => (team === 'e' ? u.y < RIVER.y + 24 : u.y > RIVER.y - 24);
   const bh = team === 'e' && G.mode === 'boss' && !!G.bossDiff && G.bossDiff !== 'n';
   const hard = bh || (team === 'e' && G.mode === 'camp' && cdHard(G.cdiff)), myth = hard && (bh ? G.bossDiff === 'm' : G.cdiff === 'm');
@@ -86,14 +89,26 @@ function aiGeneric(team, dt) {
       return;
     }
   }
+  if (niv >= 2 && A.doble && aiDoble(team, avail, go)) return;   // v3: la carta barata al otro carril, en los segundos después del combo
   if (!A.plan) A.plan = { lane: laneLess(team), n: 0 };
-  const P = A.plan; if (P.n === 0 && me.chaos < (hard ? 6.5 : 8)) return;
+  const P = A.plan, T = aiTac(A);
+  let castigo = false;
+  if (P.n === 0) {
+    castigo = niv >= 1 && A.est <= AI_CASTIGO;   // v3: te has quedado sin CAOS: ataca ya, y por donde no estás
+    let falta = hard ? 6.5 : 8;
+    if (niv >= 2) falta = Math.max(falta, aiCombo(avail));   // v3: ahorra para soltar la que abre y el apoyo casi a la vez
+    if (castigo) { falta = Math.min(falta, 4); P.lane = aiLaneCastigo(team); }
+    else if (niv >= 2 && A.est >= AI_ESPERA && me.chaos < CFG.chaosMax - 0.5) { if (!P.espera) { P.espera = true; T.espera++; } return; }   // v3: tienes el CAOS lleno: que gastes tú primero
+    if (me.chaos < falta) return;
+  }
   const dom = foeRoleDom(team), contra = dom ? CONTRA[dom] || [] : [];
   let c = P.n === 0 ? find(['tank', 'assassin', 'swarm']) : find([...contra, 'support', 'ranged', 'control', 'buster', 'swarm', 'assassin']);
   if (!c && me.chaos >= CFG.chaosMax - 1) c = avail.find(a => me.chaos >= cardDef(a.k).cost) || null;   // v2: con el CAOS casi lleno no lo dejes desperdiciar: juega lo que puedas pagar
   if (!c) { if (P.n > 0 && me.chaos >= 9) A.plan = null; return; }
   const front = team === 'p' ? 495 : 330, back = team === 'p' ? 530 : 296;
   go(c, clamp(laneBridge(P.lane) + srand(-16, 16), 34, W - 34), P.n === 0 ? front : back);
+  if (P.n === 0) { P.t0 = G.t; if (castigo) T.castigo++; if (niv >= 2) A.think = srand(0.2, 0.35); }   // v3: con combo, el apoyo sale enseguida detrás
+  else if (P.n === 1 && niv >= 2 && G.t - P.t0 < 1.6) { T.combo++; aiDoblePrepara(A, 1 - P.lane); }   // v3: combo hecho; después, presión en el otro carril
   P.n++; if (P.n >= (myth ? 4 : 3)) A.plan = null;
 }
 /* ---------- match flow ---------- */

@@ -92,7 +92,7 @@ function applySpell(sp) {
   if (team === 'p' && (D.kind === 'dmg' || D.side === 'foe') && foes.some(o => o.d.healer)) chatEv('heal', null, null, 0.2, 20);
 }
 // dónde lanzar un hechizo (la CPU y el modo automático): busca el mejor sitio y, con los de daño, sobre todo a los sanadores
-function spellAim(team, k) {
+function spellAim(team, k, exige = 1) {   // exige: cuánto más valor pide la CPU (paciencia, v3); cerca de sus torres no espera
   const D = cardDef(k).spell, foe = other(team), P = spellPow(team, k), R = D.r;
   const pool = units.filter(o => o.alive && o.deployT <= 0 && !o.jump && !(o.banT > 0) && !o.summon && o.team === (D.side === 'ally' ? team : foe));
   if (!pool.length) return null;
@@ -107,16 +107,18 @@ function spellAim(team, k) {
     }
     if (v > bv) { bv = v; best = { x: c.x, y: c.y, v }; }
   }
-  const need = D.kind === 'dmg' ? D.amt * P * 1.4 : D.kind === 'heal' ? D.amt * P * 1.3 : 900;
-  return best && best.v >= need ? best : null;
+  if (!best) return null;
+  const urge = exige > 1 && D.side !== 'ally' && structs.some(s => s.alive && s.team === team && hyp(s.x - best.x, s.y - best.y) < 190);
+  const need = (D.kind === 'dmg' ? D.amt * P * 1.4 : D.kind === 'heal' ? D.amt * P * 1.3 : 900) * (D.kind === 'heal' || urge ? 1 : exige);
+  return best.v >= need ? best : null;
 }
 // v0.9.72: la CPU tiene todas sus cartas siempre a mano (tú, una mano de 4 que rota), así que entre un hechizo y el siguiente espera
 // AI_SPELL_GAP segundos de partida: lo que tardarías tú en volver a tener la carta. Así ya no lanza dos seguidos para rematar a tu sanador.
 const AI_SPELL_GAP = 12;
-function aiSpell(team, avail, go) {   // devuelve true si ha lanzado uno
+function aiSpell(team, avail, go, exige = 1) {   // devuelve true si ha lanzado uno
   const me = S[team];
   if (me.aiSpellT !== undefined && G.t - me.aiSpellT < AI_SPELL_GAP) return false;
-  for (const c of avail) if (isSpell(c.k) && me.chaos >= cardDef(c.k).cost) { const p = spellAim(team, c.k); if (p) { go(c, p.x, p.y); me.aiSpellT = G.t; return true; } }
+  for (const c of avail) if (isSpell(c.k) && me.chaos >= cardDef(c.k).cost) { const p = spellAim(team, c.k, exige); if (p) { go(c, p.x, p.y); me.aiSpellT = G.t; return true; } }
   return false;
 }
 // mata-sanadores: salto por encima de la primera línea hasta el sanador (o un tirador o un apoyo) que tenga a tiro

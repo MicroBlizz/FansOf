@@ -110,8 +110,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-16.js` · 6 KB
 - `games/rumble/idioma/en-17.js` · 6 KB
 - `games/rumble/idioma/en-18.js` · 3 KB
-- `games/rumble/idioma/en-19.js` · <1 KB
+- `games/rumble/idioma/en-19.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
+- `games/rumble/idioma/en-20.js` · <1 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
 - `games/rumble/idioma/en-5.js` · 11 KB
@@ -136,8 +137,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/06b-movimiento.js` · 12 KB · acquire, moveToward, explodeBeaver, attack, chainOne, knockBack, zapChain, updatePassives, dmgMult, cdMult, topOf
 - `games/rumble/js/06c-dano.js` · 18 KB · hurt, kill, passiveKill, PROJ, shoot, bounceShot, updateProjs
 - `games/rumble/js/06d-unidades.js` · 20 KB · updateUnit, summonTick, pulseTick, VIRAL, viralTick, teamFightTick, hackTick, blinkTick, shieldUpTick, actionTick, expireUnit, tauntTick, bunnyJump, updateStruct, updateBoss, separate, constrain
-- `games/rumble/js/06e-ia-y-partida.js` · 18 KB · chooseLane, aiUpdate, CONTRA, foeRoleDom, laneLess, aiGeneric, timeUp, endMatch, updateGame, updateParts, FUR, BIG, CORP_BIG, deathFx, structDeathFx
+- `games/rumble/js/06e-ia-y-partida.js` · 20 KB · chooseLane, aiUpdate, CONTRA, foeRoleDom, laneLess, aiGeneric, timeUp, endMatch, updateGame, updateParts, FUR, BIG, CORP_BIG, deathFx, structDeathFx
 - `games/rumble/js/06f-sanadores.js` · 6 KB · healFwd, HEAL_RANGED_PEN, HEAL_TOWER_BACK, healAim, inHealCone, healOne, healPulse, followAlly
+- `games/rumble/js/06g-ia-tacticas.js` · 4 KB · aiNivel, AI_PACIENCIA, AI_CASTIGO, AI_ESPERA, AI_ABRE, aiTac, aiEstima, aiLaneCastigo, aiPapel, aiCombo, AI_DOBLE, aiDoblePrepara, aiDoble
 - `games/rumble/js/07a-escena.js` · 13 KB · cv, ctx, VIEW, CLOUDS, render, AMB, AMB_KIND, AMB_COL, ambNew, drawAmbient, drawWater, drawClouds, drawFog, drawZones
 - `games/rumble/js/07b-unidades.js` · 20 KB · drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_NECK, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon
 - `games/rumble/js/07c-edificios-y-disparos.js` · 21 KB · drawStruct, bar, text, drawBars, flame, drawProj

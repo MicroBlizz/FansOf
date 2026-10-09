@@ -31,7 +31,7 @@ function pvpPinta() {
   if (!PVP_SALVAJE && !NUCLEO.desarrollo) PVP_UI.modo = 'estandar';   // sin Salvaje abierto, solo Estándar
   for (const b of document.querySelectorAll('#scr-pvp [data-pm]')) { b.setAttribute('aria-pressed', String(b.dataset.pm === PVP_UI.modo)); b.disabled = buscando; b.hidden = b.dataset.pm === 'salvaje' && !PVP_SALVAJE && !NUCLEO.desarrollo; }
   $('#pvp-sub').textContent = PVP_MODOS[PVP_UI.modo][1];
-  // el ejército se elige aquí mismo: cualquiera de los que tienes desbloqueados
+  // la facción se elige aquí mismo: cualquiera de las que tienes desbloqueadas
   const facs = $('#pvp-facs'); facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader && isUnlocked(x)).map(x => `<button class="pvp-fac" data-pf="${x}" aria-pressed="${x === f}" aria-label="${esc(FACTIONS[x].name)}" ${buscando ? 'disabled' : ''}><canvas data-pfl="${FACTIONS[x].leader}"></canvas></button>`).join('');
   for (const cv of facs.querySelectorAll('canvas')) drawArt(cv, cv.dataset.pfl, 40, 36);
   for (const bt of facs.querySelectorAll('button')) bt.addEventListener('click', () => { if (PVP_UI.busca || bt.dataset.pf === G.faction) return; play('select'); setFaction(bt.dataset.pf); pvpPinta(); });

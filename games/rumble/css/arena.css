@@ -76,7 +76,7 @@
 .pvp-fila i { font-style: normal; opacity: .8; }
 .pvp-fila.yo { background: rgba(255, 203, 61, .25); }
 
-/* PvP: selector de ejército */
+/* PvP: selector de facción */
 .pvp-facs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 6px 0; }
 .pvp-fac { width: 50px; height: 46px; padding: 2px; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); cursor: pointer; }
 .pvp-fac[aria-pressed="true"] { border-color: #ffe14d; box-shadow: 0 0 0 2px #ffe14d55; }

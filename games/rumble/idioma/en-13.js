@@ -98,4 +98,5 @@ IDIOMA.add({
   // el aspecto del rival en el PvP (v0.9.110)
   "TU RIVAL": "YOUR RIVAL",
   "CONTRA": "VS",
+  "<b>FÁCIL Y HEROICA PAGAN</b>: las victorias en Fácil y en Heroica ya cobran su oro y sus gemas como deben.": "<b>EASY AND HEROIC PAY OUT</b>: wins on Easy and Heroic now pay their gold and gems as they should.",
 });

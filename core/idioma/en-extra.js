@@ -1,6 +1,9 @@
 // Fans Of · Inglés de lo común (extra): lo que no cabía en los otros diccionarios.
 'use strict';
 IDIOMA.add({
+  "Estamos de mantenimiento: puede que algo no funcione.": "We're doing maintenance: something may not work.",
+  "Hay una versión nueva del juego: recarga para seguir.": "There's a new version of the game: reload to continue.",
+  "RECARGAR": "RELOAD",
   "COBRAR TODO%10": "CLAIM ALL%10",
   "Campero": "Camper",
   "Automático (el idioma del navegador)": "Automatic (the browser's language)",

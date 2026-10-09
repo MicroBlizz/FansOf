@@ -21,6 +21,7 @@ f.onload = () => setTimeout(() => {
         mundos: (g('WORLDS') || g('WORLDS_TD') || []).map(w => ({ openAfter: w.openAfter || null, niveles: w.levels.length, jefe: w.levels.findIndex(l => l.boss) + 1 || null })), mision: { d: (E.mission || null), w: [g('ECON_W').gold, g('ECON_W').gems], xp: { d: g('PASS').xpDaily, w: g('PASS').xpWeekly }, n: { d: g('DAILY_N'), w: g('WEEKLY_N') }, r: Object.fromEntries([...(g('FIJAS') || []), ...(g('MISSIONS') || []), ...(g('FIJAS_W') || []), ...(g('WEEKLY') || [])].filter(m => m.r).map(m => [m.id, m.r])) } ,
         misiones: { d: [...(g('FIJAS') || []), ...(g('MISSIONS') || [])].map(m => m.id), w: [...(g('FIJAS_W') || []), ...(g('WEEKLY') || [])].map(m => m.id) },
         login: g('LOGIN') || null,
+        cajas: g('CAJAS') ? { maxItems: g('CAJAS').topeObjetos, diaMax: g('CAJAS').topeObjetosDia } : null,
         logros: Object.fromEntries((g('ACHF') || []).map(f => [f.id, f.gems])),
         pase: g('PASS') ? { id: g('PASS').id || null, fin: g('PASS').fin || null, levels: g('PASS').levels, xpPer: g('PASS').xpPer, xpWin: g('PASS').xpWin, xpLose: g('PASS').xpLose,
           free: Array.from({ length: g('PASS').levels }, (_, i) => { const r = g('passReward')('free', i + 1); return { gold: r.gold || 0, gems: r.gems || 0, tickets: r.tickets || 0, item: r.item || null }; }),

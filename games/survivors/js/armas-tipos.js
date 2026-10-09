@@ -4,6 +4,8 @@
 'use strict';
 
 const CONTINUAS = new Set(['aura', 'orbita', 'escudo']);
+// lo que añade armas-tipos-2.js (los tipos de las armas iniciales de los líderes): cada uno se engancha aquí
+const CONT_EXTRA = {}, MOVER_EXTRA = {}, DIBUJA_PROY = {}, DIBUJA_EFECTO = {}, SUELO_EXTRA = [], PIE_EXTRA = [], TICK_EXTRA = [];
 const SONIDO_TIPO = { bala: 'gun', nova: 'pop', bomba: 'missile', golpe: 'blink', rayo: 'zap', onda: 'slam', charco: 'trash', corre: 'deploy' };
 
 /* ---------- efectos que dejan algunas armas: frenar y aturdir (los jefes y los gigantes aguantan más) ---------- */
@@ -95,10 +97,13 @@ const TIPOS = {
     return true;
   },
 };
-for (const k in ARMAS) {
-  const t = ARMAS[k].tipo;
-  if (t && TIPOS[t]) DISPARO[k] = v => { const r = TIPOS[t](v, ARMAS[k]); if (r !== false) play(SONIDO_TIPO[t]); return r; };
+function registraTipos() {
+  for (const k in ARMAS) {
+    const t = ARMAS[k].tipo;
+    if (t && TIPOS[t]) DISPARO[k] = v => { const r = TIPOS[t](v, ARMAS[k]); if (r !== false && SONIDO_TIPO[t]) play(SONIDO_TIPO[t]); return r; };
+  }
 }
+registraTipos();
 
 function proyectilGen(gen, A, v, x, y, vx, vy, t, quedan) {
   return { gen, x, y, vx, vy, t, dano: v.dano, quedan, golpeados: new Set(), emo: A.emo, col: A.col, tam: v.tam || 18, giro: Math.random() * 6, gira: v.gira !== 0, rebota: v.rebota || 0, lento: v.lento || 0, aturde: v.aturde || 0 };
@@ -123,6 +128,8 @@ function armasContinuas(dt) {
           const [nx, ny] = empujeA(e, j.x, j.y); herir(e, v.dano, nx, ny, 220); estadoArma(e, v);
         });
       }
+    } else if (CONT_EXTRA[A.tipo]) {
+      CONT_EXTRA[A.tipo](k, A, v, dt);
     } else if (A.tipo === 'escudo') {
       // se recarga de uno en uno hasta los golpes que aguanta
       const T = v.cd * multRecarga();
@@ -135,6 +142,7 @@ function armasContinuas(dt) {
     if (z.tt <= 0) { z.tt = z.tick; cerca(z.x, z.y, z.r, e => { herir(e, z.dano, 0, 0, 0); estadoArma(e, z); }); golpeCajas(z.x, z.y, z.r, z.dano); }
   }
   P.zonas = P.zonas.filter(z => z.t > 0);
+  for (const f of TICK_EXTRA) f(dt);
 }
 // el escudo se come el golpe (lo llama danarJugador)
 function absorbeEscudo() {
@@ -146,6 +154,7 @@ function absorbeEscudo() {
 
 /* ---------- cómo se mueve lo que han disparado ---------- */
 function moverGen(p, dt) {
+  if (MOVER_EXTRA[p.gen]) return MOVER_EXTRA[p.gen](p, dt);
   if (p.gen === 'bala') {
     p.x += p.vx * dt; p.y += p.vy * dt; p.giro += dt * 12;
     let dio = false;
@@ -191,6 +200,7 @@ function puntoBrillo(c, x, y, col, r = 5) {
 }
 function proyectilGenDibuja(p) {
   const c = ctx;
+  if (DIBUJA_PROY[p.gen]) return DIBUJA_PROY[p.gen](p);
   if (p.gen === 'bala') {
     if (!p.emo) { puntoBrillo(c, p.x, p.y, p.col); return; }
     emoji(c, p.emo, p.x, p.y, p.tam, p.gira ? p.giro : 0, p.gira ? 1 : (p.vx < 0 ? 1 : -1));
@@ -201,6 +211,7 @@ function proyectilGenDibuja(p) {
 }
 function efectoGenDibuja(f) {
   const c = ctx, k = 1 - f.t / f.max;
+  if (DIBUJA_EFECTO[f.gen]) return DIBUJA_EFECTO[f.gen](f, c, k);
   if (f.gen === 'anillo') {
     c.globalAlpha = (1 - k) * 0.85; c.strokeStyle = f.col; c.lineWidth = 6 * (1 - k) + 1;
     c.beginPath(); c.ellipse(f.x, f.y - 8, f.r * (0.3 + k * 0.75), f.r * (0.3 + k * 0.75) * 0.75, 0, 0, Math.PI * 2); c.stroke();
@@ -227,6 +238,7 @@ function efectoGenDibuja(f) {
 // lo que va pegado al suelo: charcos y auras
 function dibujaSueloArmas(c) {
   const j = P.jug;
+  for (const f of SUELO_EXTRA) f(c);
   for (const z of P.zonas) {
     const a = Math.min(1, z.t / 0.6);
     c.globalAlpha = 0.28 * a; c.fillStyle = z.col; c.beginPath(); c.ellipse(z.x, z.y, z.r, z.r * 0.75, 0, 0, Math.PI * 2); c.fill();
@@ -244,6 +256,7 @@ function dibujaSueloArmas(c) {
 // lo que va de pie y se ordena con los demás: los que corren, lo que gira alrededor y el escudo
 function armasPie(L) {
   const j = P.jug;
+  for (const f of PIE_EXTRA) f(L);
   for (const p of P.proy) if (p.gen === 'corre') L.push({ y: p.y, f: () => proyectilGenDibuja(p) });
   for (const k in P.armas) {
     const A = ARMAS[k];

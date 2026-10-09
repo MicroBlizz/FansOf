@@ -2,6 +2,9 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.23', real: [
+      '<b>CADA LÍDER CON SU ARMA</b>: cada líder empieza con un arma propia: espadazos en abanico, manos que salen del suelo, un foco giratorio, una torreta, una carta al azar, combos, un hacha que vuelve como un bumerán y una claqueta que atrae a los enemigos.'],
+    joke: ['Microblizz ha dado un arma distinta a cada líder. Dice que es «diversidad». Contabilidad dice que es «ocho veces más caro».'] },
   { v: '0.1.22', real: [
       '<b>COFRES MUCHO MÁS ÉPICOS</b>: cámara lenta y rayo de luz al pisarlo, mejoras con rareza (común, rara, épica y legendaria), falsos finales, un chat que se vuelve loco y, de vez en cuando, un susto: el cofre se atasca… y luego da el doble. Y con mucha suerte salen 5 mejoras: ¡cofres dentro del cofre, fuegos artificiales y SurvivalBot muerto de miedo!',
       '<b>CAJAS ROMPIBLES CON TODAS LAS FACCIONES</b>: las armas de las facciones nuevas por fin rompen las cajas del campo.'],

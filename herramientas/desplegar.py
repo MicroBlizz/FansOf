@@ -1,10 +1,18 @@
-"""Despliega la web: GitHub Pages sirve la rama gh-pages, que es siempre una copia de main. Con este script se copia main a gh-pages y se comprueba la web real.
+"""Despliega la web: GitHub Pages sirve la rama gh-pages. Se despliega por juego, con core siempre al día.
+
+Protocolo:
+  - Un juego sale cuando su ?v= de nucleo.js en main es distinto del de gh-pages (y su novedades.js tiene esa versión). Los demás se quedan como están en la web.
+  - Core (y todo lo que no es un juego) siempre se publica tal como está en main. Si core ha cambiado desde el último despliegue, salen TODOS los juegos: cada uno con su versión subida y su nota
+    (para el resto, la nota estándar «mejoras en los sistemas internos»). Si falta alguna subida, el script no despliega y dice cuáles.
+  - main nunca se rompe: lo incompleto va parcial o tras un flag, porque lo que está en main de core y de los juegos que salen se publica tal cual.
 
 Uso, desde la raíz del repositorio:
-  python herramientas/desplegar.py             despliega main (sube main si hace falta, copia main a gh-pages y comprueba la web)
-  python herramientas/desplegar.py --estado    compara main, gh-pages y lo que sirve la web ahora mismo
+  python herramientas/desplegar.py             despliega lo que toca según lo anterior (sube main si hace falta, publica y comprueba la web)
+  python herramientas/desplegar.py --juego rumble,td    solo esos juegos (error si core ha cambiado: entonces salen todos)
+  python herramientas/desplegar.py --simular   muestra qué saldría sin subir nada
+  python herramientas/desplegar.py --estado    compara main, gh-pages y la web viva, juego a juego
   python herramientas/desplegar.py --lista     las últimas versiones desplegables (commits que cambiaron un ?v=) y cuál está en la web
-  python herramientas/desplegar.py --a <commit>   vuelve la web a ese commit de main (se mira en --lista); main no se toca
+  python herramientas/desplegar.py --a <commit>   vuelve la web entera a ese commit de main (se mira en --lista); main no se toca
 
 Hacer commit y subir a main se puede siempre (guarda el trabajo). Desplegar es esto, y solo cuando se decide. gh-pages no se toca a mano.
 Los cambios del servidor (Supabase) no vuelven con la web: deben seguir siendo compatibles con versiones anteriores.
@@ -14,6 +22,7 @@ import os, re, subprocess, sys, time, urllib.request
 sys.stdout.reconfigure(encoding='utf-8')
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = 'https://microblizz.github.io/FansOf/'
+SIMULAR = '--simular' in sys.argv
 JUEGOS = sorted(d for d in os.listdir(os.path.join(RAIZ, 'games')) if os.path.isfile(os.path.join(RAIZ, 'games', d, 'index.html')))
 
 
@@ -71,7 +80,36 @@ def sin_permiso(r):
              'Pide al dueño que ejecute en su ordenador:  git pull  y  python herramientas/desplegar.py\n' + (r.stderr or '').strip())
 
 
-def desplegar():
+def cambia(a, b, *rutas):
+    return subprocess.run(['git', 'diff', '--quiet', a, b, '--', *rutas], cwd=RAIZ).returncode != 0
+
+
+def tiene_nota(ref, j, v):
+    return f"v: '{v}'" in git('show', f'{ref}:games/{j}/js/novedades.js', ok=True)
+
+
+def construir(publicar, cabeza, pages):
+    """Commit para gh-pages: el árbol de main, salvo los juegos que no salen, que conservan el de gh-pages."""
+    r = subprocess.run(['git', 'rev-parse', '--git-dir'], cwd=RAIZ, capture_output=True, text=True)
+    env = {**os.environ, 'GIT_INDEX_FILE': os.path.join(RAIZ, r.stdout.strip(), 'desplegar.idx')}
+
+    def g(*a):
+        r = subprocess.run(['git', *a], cwd=RAIZ, capture_output=True, text=True, encoding='utf-8', env=env)
+        if r.returncode:
+            sys.exit(f'FALLO: git {" ".join(a)}\n{(r.stderr or r.stdout).strip()}')
+        return r.stdout.strip()
+    g('read-tree', cabeza)
+    for j in JUEGOS:
+        if j not in publicar and git('rev-parse', '--verify', '-q', f'{pages}:games/{j}', ok=True):
+            g('rm', '-r', '--cached', '-q', f'games/{j}')
+            g('read-tree', f'--prefix=games/{j}/', f'{pages}:games/{j}')
+    arbol = g('write-tree')
+    os.remove(env['GIT_INDEX_FILE'])
+    msg = 'Despliegue: ' + ', '.join(publicar) + f' (main {cabeza[:8]})'
+    return git('commit-tree', arbol, '-p', pages, '-p', cabeza, '-m', msg)
+
+
+def desplegar(solo=None):
     preparar_git()
     git('fetch', '-q', 'origin', ok=True)
     if git('branch', '--show-current') != 'main':
@@ -84,30 +122,55 @@ def desplegar():
     if '?' in v.values():
         sys.exit('FALLO: no encuentro el ?v= de nucleo.js en algún index.html.')
     cabeza = git('rev-parse', 'HEAD')
-    if git('rev-parse', 'origin/gh-pages', ok=True) == cabeza:
+    pages = git('rev-parse', 'origin/gh-pages')
+    vp = versiones_de(pages)
+    core = cambia(pages, cabeza, 'core')
+    if solo:
+        malos = [j for j in solo if j not in JUEGOS]
+        if malos:
+            sys.exit(f'FALLO: juego desconocido: {", ".join(malos)}. Hay: {", ".join(JUEGOS)}.')
+    publicar = [j for j in JUEGOS if (j in solo if solo else v[j] != vp[j] or core)]
+    if core:
+        falta = [j for j in JUEGOS if v[j] == vp[j]]
+        if falta or (solo and set(solo) != set(JUEGOS)):
+            sys.exit('FALLO: core ha cambiado desde el último despliegue, así que salen TODOS los juegos y cada uno con su versión subida y su nota.\n'
+                     f'  Sin subir versión: {", ".join(falta) or "(ninguno)"}. Sube el ?v= de nucleo.js y añade la entrada en games/<juego>/js/novedades.js (para los que solo reciben core: «mejoras en los sistemas internos»).')
+    sin_nota = [j for j in publicar if v[j] != vp[j] and not tiene_nota(cabeza, j, v[j])]
+    if sin_nota:
+        sys.exit(f'FALLO: falta la entrada de novedades de la nueva versión en: {", ".join(f"{j} {v[j]}" for j in sin_nota)}.')
+    quedan = [j for j in JUEGOS if j not in publicar and cambia(pages, cabeza, f'games/{j}')]
+    nuevo = construir(publicar, cabeza, pages)
+    if not cambia(pages, nuevo, '.'):
         web = versiones_web()
-        if all(web[j] == v[j] for j in JUEGOS):
-            print(f'Nada que desplegar: la web ya sirve main ({texto(web)}).')
+        if all(web[j] == versiones_de(pages)[j] for j in JUEGOS):
+            print(f'Nada que desplegar: la web ya sirve lo que toca ({texto(web)}).')
             return
         print(f'gh-pages ya está al día pero la web sirve {texto(web)}: espero a que GitHub Pages la actualice.')
-        sys.exit(0 if esperar_web(v) else 1)
-    print(f'Desplegando {git("rev-parse", "--short", "HEAD")}: {texto(v)}')
+        sys.exit(0 if esperar_web(versiones_de(pages)) else 1)
+    print(f'Desplegando main {cabeza[:8]}: ' + ', '.join(f'{j} {vp[j]}→{v[j]}' if v[j] != vp[j] else f'{j} {v[j]}' for j in publicar) + (' (core cambiado: salen todos)' if core else ''))
+    if quedan:
+        print(f'  Se quedan como están en la web (con cambios en main sin subir versión): {", ".join(quedan)}')
     print('  ' + (git('log', '--oneline', 'origin/gh-pages..HEAD', ok=True).replace('\n', '\n  ') or '(sin commits nuevos)'))
+    if SIMULAR:
+        print('  (simulación: no se sube nada) archivos que cambiarían en la web: ' + str(len(git('diff', '--name-only', pages, nuevo).splitlines())))
+        return
     git('push', 'origin', 'main')
-    r = subprocess.run(['git', 'push', 'origin', 'HEAD:refs/heads/gh-pages'], cwd=RAIZ, capture_output=True, text=True, encoding='utf-8')
+    r = subprocess.run(['git', 'push', 'origin', f'{nuevo}:refs/heads/gh-pages'], cwd=RAIZ, capture_output=True, text=True, encoding='utf-8')
     if r.returncode:
         sin_permiso(r)
-    if not esperar_web(v):
+    if not esperar_web(versiones_de(nuevo)):
         sys.exit(1)
 
 
 def estado():
     git('fetch', '-q', 'origin', ok=True)
     main, pages = git('rev-parse', 'origin/main'), git('rev-parse', 'origin/gh-pages')
-    print(f'main:      {main[:8]}  {texto(versiones_de(main))}')
-    print(f'gh-pages:  {pages[:8]}  {texto(versiones_de(pages))}')
-    print(f'web viva:  {texto(versiones_web())}')
-    print('Pendiente de desplegar: ' + (git('rev-list', '--count', 'origin/gh-pages..origin/main') or '0') + ' commits')
+    vm, vp, vw = versiones_de(main), versiones_de(pages), versiones_web()
+    print(f'main {main[:8]} · gh-pages {pages[:8]}')
+    for j in JUEGOS:
+        marca = 'al día' if not cambia(pages, main, f'games/{j}') else ('pendiente de desplegar' if vm[j] != vp[j] else 'cambios en main sin subir versión (no sale)')
+        print(f'  {j:10} main {vm[j]:8} gh-pages {vp[j]:8} web {vw[j]:8} {marca}')
+    print('core: ' + ('CAMBIADO desde el último despliegue: salen todos los juegos' if cambia(pages, main, 'core') else 'igual que en la web'))
 
 
 def lista():
@@ -146,4 +209,5 @@ elif '--a' in a:
         sys.exit('Uso: --a <commit>')
     volver_a(a[a.index('--a') + 1])
 else:
-    desplegar()
+    solo = a[a.index('--juego') + 1].split(',') if '--juego' in a and a.index('--juego') + 1 < len(a) else None
+    desplegar(solo)

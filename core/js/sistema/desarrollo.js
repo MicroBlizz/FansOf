@@ -3,6 +3,7 @@
 // Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja) } y pinta lo suyo dentro de `caja`.
 'use strict';
 (() => {
+  let pintaFlags = () => {};
   const CLAVE_DEPURA = 'fansof-idioma-depura';
   const guardado = () => { try { return localStorage.getItem(typeof AJUSTES !== 'undefined' && AJUSTES.guardado); } catch (e) { return null; } };
   const el = (tag, props = {}, ...hijos) => { const e = Object.assign(document.createElement(tag), props); for (const h of hijos) e.append(h); return e; };
@@ -56,6 +57,19 @@
         }),
         boton('Recargar', () => location.reload())));
     } },
+    { titulo: 'Flags de desarrollo', pinta(c) {
+      pintaFlags = () => {
+        c.textContent = '';
+        const nombres = Object.keys(NUCLEO.flagsDev);
+        if (!nombres.length) { c.append(el('p', { textContent: 'Ningún flag registrado todavía (se registran al usarse con NUCLEO.flag). Aquí mandan tus interruptores; en la web publicada manda la tabla flags.' })); return; }
+        for (const n of nombres) {
+          const on = NUCLEO.flag(n, NUCLEO.flagsDev[n]);
+          c.append(el('div', { className: 'fila' }, boton((on ? 'ON  ' : 'OFF ') + n, () => { try { localStorage.setItem('fansof-flag-' + n, on ? '0' : '1'); } catch (e) { /* sin guardar */ } location.reload(); }), el('span', { textContent: `${NUCLEO.flagsDev[n]} · base de datos: ${NUCLEO.flagRemoto(n) ? (NUCLEO.flagRemoto(n).valor ? 'true' : 'false') + (NUCLEO.flagRemoto(n).porcentaje < 100 ? ' al ' + NUCLEO.flagRemoto(n).porcentaje + ' %' : '') : 'sin fila'}` })));
+        }
+      };
+      pintaFlags();
+      c.append(el('div', { className: 'fila' }, boton('Leer la base de datos ahora', async () => { await NUCLEO.leerFlags(); pintaFlags(); })));
+    } },
     { titulo: 'Modo desarrollo', pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));
@@ -85,7 +99,7 @@
   caja.append(el('h2', {}, 'Desarrollo', boton('CERRAR', cierra)), el('div', { id: 'dev-aviso' }));
   for (const u of UTILIDADES) { caja.append(el('h3', { textContent: u.titulo })); const c = el('div'); try { u.pinta(c); } catch (e) { c.textContent = 'Error: ' + e.message; } caja.append(c); }
   panel.append(caja); panel.addEventListener('click', e => { if (e.target === panel) cierra(); });
-  const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; } });
+  const abre = el('button', { id: 'dev-boton', textContent: 'DEV', title: 'Utilidades de desarrollo', onclick: () => { panel.hidden = !panel.hidden; if (!panel.hidden) pintaFlags(); } });
   abre.setAttribute('translate', 'no');
   document.head.append(estilo); document.body.append(abre, panel);
   if (new URLSearchParams(location.search).get('devabrir')) panel.hidden = false;

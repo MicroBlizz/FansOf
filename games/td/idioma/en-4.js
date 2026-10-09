@@ -59,4 +59,6 @@ IDIOMA.add({
   "Phony pide que los ingresos se queden en su cuenta. Microblizz dice que eso es otro juego.": "Phony wants the income to stay in his account. Microblizz says that's a different game.",
   "<b>PVP VUELVE A SU NOMBRE</b>: en español vuelve a decir PvP. Los «ingresos» se quedan.": "<b>PVP IS PVP AGAIN</b>: Spanish says PvP again. «Ingresos» stay.",
   "Phony sigue sin entender qué es un ingreso. Microblizz tampoco.": "Phony still doesn't understand what income is. Neither does Microblizz.",
+  "<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.": "<b>BEHIND-THE-SCENES IMPROVEMENTS</b>: changes to the series' shared systems. You won't notice a thing… and that's a good sign.",
+  "Microblizz ha instalado interruptores para encender y apagar cosas desde su despacho. Aún no sabe cuál apaga las luces.": "Microblizz installed switches to turn things on and off from his office. He still doesn't know which one turns off the lights.",
 });

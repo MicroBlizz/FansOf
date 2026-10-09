@@ -27,6 +27,9 @@ const PASOS = {
   tick:   ['Golpea más a menudo',         v => { v.tick *= 0.7; }],
   cadena: ['Salta a más enemigos',        v => { v.cadena += 2; }],
   rebota: ['Rebota una vez más',          v => { v.rebota += 1; }],
+  arco:   ['Más alcance y más direcciones',   v => { v.arco = Math.min(270, v.arco + 60); v.r *= 1.12; }],
+  giro:   ['Gira más rápido',             v => { v.giro *= 1.3; }],
+  combo:  ['El combo llega antes',        v => { v.cadaN = Math.max(2, v.cadaN - 1); }],
 };
 
 /* ---------- las cifras base de cada tipo (cada arma cambia las que quiera) ----------
@@ -44,6 +47,14 @@ const BASE_TIPO = {
   aura:   { dano: 6, r: 75, tick: 0.5, cura: 0, lento: 0 },
   orbita: { dano: 14, n: 2, r: 80, giro: 3.2, tick: 0.45, lento: 0 },
   escudo: { cd: 9, n: 1 },
+  // las armas iniciales de los líderes (armas-tipos-2.js)
+  tajo:      { dano: 30, cd: 0.75, r: 80, arco: 90, lento: 0, aturde: 0 },
+  eclosion:  { dano: 30, cd: 1.8, n: 2, r: 50, alc: 360, demora: 0.7, lento: 0, aturde: 0 },
+  haz:       { dano: 10, n: 1, r: 150, giro: 2.2, tick: 0.25, lento: 0, aturde: 0 },
+  torreta:   { dano: 9, cd: 6, n: 1, dura: 6, cadencia: 0.45, alc: 320, vel: 480 },
+  ruleta:    { dano: 20, cd: 2.2, n: 1 },
+  combo:     { dano: 16, cd: 0.28, r: 95, mult: 3, cadaN: 4 },
+  boomerang: { dano: 20, cd: 1.6, n: 1, alc: 200, vel: 380, tam: 26 },
 };
 // armaFaccion(facción, id, carta, tipo, nombre, descripción, emoji, color, cifras que cambian, mejoras de nivel 2 a 5)
 function armaFaccion(fac, id, carta, tipo, nombre, desc, emo, col, ov, pasos) {
@@ -54,7 +65,7 @@ function armaFaccion(fac, id, carta, tipo, nombre, desc, emo, col, ov, pasos) {
 const ARMA_INICIAL = { animales: 'zanahoria' };
 
 // nomuertos
-armaFaccion('nomuertos', 'necrolord_a', 'necrolord', 'bala', 'Rayos de sombra', 'NecroLord lanza rayos de sombra al enemigo más cercano.', '🔮', '#8a5cff', {dano: 15, atraviesa: 2}, ['n', 'dano', 'pierce', 'cd']);
+armaFaccion('nomuertos', 'necrolord_a', 'necrolord', 'eclosion', 'Manos del cementerio', 'Unas manos salen del suelo bajo los enemigos tras un breve aviso y los agarran.', '🖐️', '#8a5cff', {}, ['n', 'dano', 'r', 'cd']);
 armaFaccion('nomuertos', 'necrolord_b', 'necrolord', 'corre', 'Levantar esqueletos', 'Levanta esqueletos que corren hacia los enemigos y se deshacen al llegar.', null, '#efeadf', {spr: 'skeleton', dano: 30, n: 2, r: 55, cd: 3.6}, ['n', 'dano', 'r', 'cd']);
 armaFaccion('nomuertos', 'skeleton', 'skeleton', 'nova', 'Calaveras pirata', 'Calaveras que salen volando en todas direcciones y atraviesan a todos.', '💀', '#efeadf', {n: 4, dano: 11}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('nomuertos', 'zombie', 'zombie', 'aura', 'Nube zombi', 'Un hedor que daña a los enemigos cercanos y los frena.', null, '#7ea35a', {dano: 8, r: 80, lento: 0.6}, ['r', 'dano', 'tick', 'lento']);
@@ -65,7 +76,7 @@ armaFaccion('nomuertos', 'stitchbrute', 'stitchbrute', 'charco', 'Charco tóxico
 ARMA_INICIAL.nomuertos = 'necrolord_a';
 
 // streamers
-armaFaccion('streamers', 'twitchking_a', 'twitchking', 'bala', 'Emotes del chat', 'StreamKing lanza emoticonos al enemigo más cercano.', '😂', '#b36bff', {dano: 14}, ['n', 'dano', 'pierce', 'cd']);
+armaFaccion('streamers', 'twitchking_a', 'twitchking', 'haz', 'Foco del directo', 'Un foco gira a tu alrededor y daña todo lo que cruza.', '📸', '#ff5fa2', {}, ['n', 'r', 'dano', 'giro']);
 armaFaccion('streamers', 'twitchking_b', 'twitchking', 'onda', 'Raid', 'Una oleada de espectadores golpea a todos los enemigos cercanos.', null, '#ff5fa2', {dano: 35, r: 120, cd: 6, aturde: 0.5}, ['dano', 'r', 'cd', 'aturde']);
 armaFaccion('streamers', 'subswarm', 'subswarm', 'nova', 'Lluvia de likes', 'Likes que salen volando en todas direcciones.', '👍', '#4f9dff', {n: 6, dano: 9}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('streamers', 'hypebeast', 'hypebeast', 'golpe', 'Puñetazos del hype', 'Aparece junto a un enemigo y le suelta un puñetazo rapidísimo.', '👊', '#ff5fa2', {dano: 20, cd: 1.4}, ['n', 'dano', 'cd', 'alc']);
@@ -76,7 +87,7 @@ armaFaccion('streamers', 'banhammer', 'banhammer', 'onda', 'Martillo del ban', '
 ARMA_INICIAL.streamers = 'twitchking_a';
 
 // heroes
-armaFaccion('heroes', 'epicchampion_a', 'epicchampion', 'bala', 'Espadazo épico', 'EpicChampion lanza tajos de espada al enemigo más cercano.', '⚔️', '#ffd04a', {dano: 20, atraviesa: 3, vel: 380, dur: 0.6}, ['dano', 'n', 'pierce', 'cd']);
+armaFaccion('heroes', 'epicchampion_a', 'epicchampion', 'tajo', 'Espadazos', 'EpicChampion da espadazos cuerpo a cuerpo hacia donde mira. Con cada nivel llega más lejos y cubre más direcciones, hasta 270 grados.', '⚔️', '#ffd04a', {}, ['arco', 'dano', 'arco', 'arco']);
 armaFaccion('heroes', 'epicchampion_b', 'epicchampion', 'onda', 'Team Fight', 'Un grito de guerra golpea a todos los enemigos cercanos.', null, '#ffd04a', {dano: 38, r: 110, cd: 5.5}, ['dano', 'r', 'cd', 'aturde']);
 armaFaccion('heroes', 'cupidarcher', 'cupidarcher', 'bala', 'Flechas de Cupido', 'Flechas rápidas contra el enemigo más cercano.', '💘', '#ff7aa8', {n: 2, dano: 12, cd: 0.7, vel: 520}, ['n', 'dano', 'cd', 'pierce']);
 armaFaccion('heroes', 'hoplite', 'hoplite', 'bala', 'Lanzas de hoplita', 'Lanzas largas que atraviesan a muchos enemigos.', '🔱', '#c9d3e0', {dano: 20, atraviesa: 4, cd: 1.3}, ['dano', 'pierce', 'n', 'cd']);
@@ -87,7 +98,7 @@ armaFaccion('heroes', 'minotaur', 'minotaur', 'corre', 'Embestida', 'El Minotaur
 ARMA_INICIAL.heroes = 'epicchampion_a';
 
 // ciber
-armaFaccion('ciber', 'cybermarine_a', 'cybermarine', 'bala', 'Fusil de plasma', 'CyberMarine dispara su fusil rápido al enemigo más cercano.', null, '#4de0ff', {dano: 7, cd: 0.35, vel: 520, atraviesa: 1}, ['dano', 'cd', 'n', 'pierce']);
+armaFaccion('ciber', 'cybermarine_a', 'cybermarine', 'torreta', 'Torreta desplegable', 'Deja una torreta que dispara sola a los enemigos cercanos durante unos segundos.', '🔫', '#4de0ff', {}, ['n', 'dano', 'dura', 'cd']);
 armaFaccion('ciber', 'cybermarine_b', 'cybermarine', 'bomba', 'Drones de apoyo', 'Caen del cielo drones que explotan sobre los enemigos.', '🚁', '#4de0ff', {n: 2, dano: 26, r: 58}, ['n', 'dano', 'r', 'cd']);
 armaFaccion('ciber', 'nanobot', 'nanobot', 'nova', 'NanoBots', 'Un enjambre de nanorrobots sale en todas direcciones.', null, '#7dffe0', {n: 5, dano: 10}, ['n2', 'dano', 'cd', 'vel']);
 armaFaccion('ciber', 'cyberninja', 'cyberninja', 'golpe', 'Tajo neón', 'Se teletransporta junto a un enemigo y lo corta.', '⚡', '#d43cff', {dano: 36, cd: 2.4}, ['n', 'dano', 'cd', 'alc']);

@@ -11,6 +11,9 @@
 //   info(r)                        // la línea pequeña bajo el nombre (HTML)
 //   obras()                        // true → en vez de la lista sale el cartel EN CONSTRUCCIÓN, con las excusas de SALON_EXCUSAS
 // } ], retrato(r) }                // opcional: qué personaje dibujar para una fila (si no, su retrato o el líder de su facción)
+//
+// Tu puesto en el menú: un elemento con data-salon-puesto (dentro del botón data-salon) dice «Tu puesto: 4.º» con el mejor puesto que
+// tengas en cualquier pestaña, y el botón abre esa pestaña. Se pide al volver al menú (como mucho una vez por minuto: SALON_ESPERA).
 'use strict';
 const SALON_EXCUSAS = [
   'Para acelerar las obras hemos tomado una decisión valiente: despedir al equipo que hacía las obras.',
@@ -132,3 +135,23 @@ function salonObras() {
     $('#so-frase').textContent = E[SALON_UI.frase];
   };
 }
+
+/* ---------- tu puesto en el botón del menú (motiva: si vas bajo, a jugar) ---------- */
+let salonPuestoVez = 0;   // si se piden dos a la vez (al abrir el juego y al volver al menú), solo escribe la última
+async function salonPuesto() {
+  const vez = ++salonPuestoVez;
+  const els = document.querySelectorAll('[data-salon-puesto]'); if (!els.length) return;
+  if (typeof CUENTA === 'undefined' || !CUENTA.activa) return;   // sin nube: se queda «Los mejores fans»
+  let mejor = null;
+  for (const P of SALON.pestanas.filter(p => !(p.obras && p.obras()))) {
+    try { const d = await salonCarga(P); if (d.yo && (!mejor || d.yo.puesto < mejor.puesto)) mejor = { puesto: d.yo.puesto, tab: P.id }; }
+    catch (e) { /* esa pestaña no ha cargado: se miran las demás */ }
+  }
+  if (vez !== salonPuestoVez) return;
+  for (const el of els) {
+    el.textContent = mejor ? `Tu puesto: ${fmt(mejor.puesto)}.º` : '¡Aún no estás!';
+    const b = el.closest('[data-salon]'); if (b) { b.dataset.salon = mejor ? mejor.tab : ''; b.classList.toggle('top3', !!mejor && mejor.puesto <= 3); }
+  }
+}
+hook('pantalla', id => { if (id === 'scr-title') salonPuesto(); });
+setTimeout(salonPuesto, 2500);   // al abrir el juego, cuando ya hay sesión en la nube

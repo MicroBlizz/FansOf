@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
-<script src="../../core/js/nucleo.js?v=0.9.107"></script>
+<script src="../../core/js/nucleo.js?v=0.9.108"></script>
 <script>NUCLEO.estilos('../../core/css/menus.css', 'css/estilos-partida.css', 'css/estilos-extra.css', 'css/arena.css', '../../core/css/biblioteca.css', 'css/facciones-y-jefes.css', '../../core/css/clasificacion.css')</script>
 
 </head>
@@ -73,7 +73,6 @@
 
     <section id="scr-title" class="screen">
       <button class="prof-chip" id="btn-profile" aria-label="Tu perfil"><canvas aria-hidden="true"></canvas><span><b class="pc-name ol">TU PERFIL</b><small class="pc-sub">Liga Becario</small></span></button>
-      <button class="salon-btn esquina" data-salon aria-label="Salón de la Fama"><span class="sb-med"><svg viewBox="0 0 24 20" aria-hidden="true"><path d="M2 17 L3 5 L8.5 10 L12 2 L15.5 10 L21 5 L22 17 Z" fill="currentColor" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="1.8" fill="#ff4b5c"/></svg></span><span class="ol">CLASIFICACIÓN</span></button>
       <div class="wallet" data-wallet></div>
       <h1 class="logo"><span class="l1 ol">FANS OF</span><span class="l2 ol-big">RUMBLE</span></h1>
       <p class="tagline" id="tagline"><b>Animales Locos</b> contra <i>Microblizz</i></p>
@@ -84,8 +83,9 @@
         <button class="side-mode test ol" id="btn-sandbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6l-5 9.5A2 2 0 0 0 6.8 21h10.4a2 2 0 0 0 1.8-2.5L14 9V3" fill="#bfe6ff" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><path d="M7.2 15h9.6l1.4 3.2A1.4 1.4 0 0 1 17 20H7a1.4 1.4 0 0 1-1.2-1.8z" fill="#7be04a"/><circle cx="11" cy="17" r="1" fill="#fff"/><circle cx="14" cy="16" r="0.8" fill="#fff"/></svg><span>PRUEBAS</span></button>
       </div>
       <div class="row"><button class="btn-mode ol" id="btn-quick">PARTIDA RÁPIDA</button><button class="btn-mode ol" id="btn-bossmode">MODO JEFE</button><button class="btn-mode ol" id="btn-pvp" hidden>PVP</button></div>
-      <div class="home-feature">
+      <div class="home-feature tres">
         <button class="feat" id="btn-gacha"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="7" fill="#bfe6ff" style="stroke: var(--outline)" stroke-width="1.8"/><circle cx="9.5" cy="9" r="2.4" fill="#ff5fa8"/><circle cx="14" cy="7.5" r="2.2" fill="#ffe14d"/><circle cx="13" cy="11.5" r="2.2" fill="#7be04a"/><rect x="6" y="15" width="12" height="7" rx="2" fill="#2e8bff" style="stroke: var(--outline)" stroke-width="1.8"/></svg><span><b class="ol">GASHAPÓN</b><small class="ol" id="feat-gacha">Tira x1, x10 o x50</small></span><i class="dotbadge" id="gacha-badge" hidden></i></button>
+        <button class="feat salon-feat" data-salon aria-label="Salón de la Fama"><svg viewBox="0 0 24 20" aria-hidden="true"><path d="M2 17 L3 5 L8.5 10 L12 2 L15.5 10 L21 5 L22 17 Z" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="1.8" fill="#ff4b5c"/></svg><span><b class="ol">CLASIFICACIÓN</b><small class="ol" data-salon-puesto>Los mejores fans</small></span></button>
         <button class="feat" id="btn-shop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16l-1.2 11.5a1.6 1.6 0 0 1-1.6 1.5H6.8a1.6 1.6 0 0 1-1.6-1.5z" fill="#ffcb3d" style="stroke: var(--outline)" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 11V6.5a3.5 3.5 0 0 1 7 0V11" stroke="#20102c" stroke-width="1.9" fill="none" stroke-linecap="round"/><circle cx="12" cy="15.5" r="2.6" fill="#fff6c2" style="stroke: var(--outline)" stroke-width="1.4"/></svg><span><b class="ol">TIENDA</b><small class="ol" id="feat-shop">Oro, gemas y ofertas</small></span><i class="dotbadge" id="shop-badge" hidden></i></button>
       </div>
       <div class="home-grid">

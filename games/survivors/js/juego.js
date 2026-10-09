@@ -22,7 +22,7 @@ function modsJugador() {
 function nuevaPartida() {
   const J = SV.jugador, MJ = modsJugador(), vida = Math.round(J.vida * MJ.hp), fac = facNow();
   P = {
-    mods: MJ, fac, lider: FACTIONS[fac].leader, zonas: [], escudoN: 0, reviveUsado: false, cofres: 0, elites: 0,
+    mods: MJ, fac, lider: FACTIONS[fac].leader, zonas: [], trampas: [], torretas: [], escudoN: 0, reviveUsado: false, cofres: 0, elites: 0,
     cajasRotas: new Set(), cajasVida: new Map(), cajasGolpe: new Map(), oroCajas: 0, objetosCajas: 0,
     t: 0, estado: 'jugando', ganado: false, finT: 0,
     jug: { x: 0, y: 0, vida, vidaMax: vida, face: 1, andando: false, walk: 0, invulT: 0, golpeT: 0, congT: 0, salto: null, muerto: false },
@@ -225,12 +225,14 @@ function golpeCajas(x, y, r, dano) {
     P.cajasRotas.add(k); P.cajasVida.delete(k); P.cajasGolpe.delete(k); romperCaja(o);
   }
 }
+// con cuenta, los objetos de caja solo salen si el servidor ya conoce el evento 'cajas' (servidor/21-objetos-de-cajas.sql): hasta entonces, tras flag
+function objetosCajasOk() { return !ECO.servidor('economia') || NUCLEO.flag('cajas-objetos-servidor', 'Survivors: con cuenta, las cajas pueden dar objetos (hace falta servidor/21-objetos-de-cajas.sql aplicado)'); }
 function romperCaja(o) {
   const oro = Math.min(Math.round(rand(CAJAS.oro[0], CAJAS.oro[1])), Math.max(0, CAJAS.topeOro - P.oroCajas));
   P.oroCajas += oro;
   particulas(o.x, o.y - 10, 12, '#c99a5b', 200, 4); particulas(o.x, o.y - 10, 6, '#fff6ea', 120, 3); play('hit');
   if (oro) numero(o.x, o.y - 40, '+' + oro, '#ffcb3d');
-  if (P.objetosCajas < CAJAS.topeObjetos && Math.random() < CAJAS.objeto) { P.objetosCajas++; numero(o.x, o.y - 62, '¡OBJETO!', '#e879f9', true); play('crown'); }
+  if (objetosCajasOk() && P.objetosCajas < CAJAS.topeObjetos && Math.random() < CAJAS.objeto) { P.objetosCajas++; numero(o.x, o.y - 62, '¡OBJETO!', '#e879f9', true); play('crown'); }
 }
 function matar(e) {
   e.muerto = true; P.kills++; P.puntos += e.jefe ? 5000 : e.elite ? 500 : 10;

@@ -3,6 +3,10 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.108', real: [
+      '<b>TU PUESTO EN EL MENÚ</b>: la CLASIFICACIÓN pasa a una tarjeta grande entre el Gashapón y la Tienda, y te dice tu mejor puesto. Tócala y te lleva a esa clasificación.',
+      '<b>COPAS PVP DE VERDAD</b>: la pestaña de copas PvP ya enseña la clasificación real. Y hay una pestaña nueva, CLANES… en obras (toca el cartel: Microblizz tiene 15 excusas).'],
+    joke: ['Microblizz ha trasladado la clasificación al centro del menú. Dice que es para motivarte. En realidad es para que veas lo lejos que estás del primero.'] },
   { v: '0.9.107', real: ['<b>PVP VUELVE A SU NOMBRE</b>: lo de JcJ no convencía, así que en español vuelve a decir PvP. La CLASIFICACIÓN y los «ingresos» se quedan.'],
     joke: ['Phony reclama que le devuelvan su «JvJ». Microblizz no sabe de qué le habla.'] },
   { v: '0.9.106', real: ['<b>MENOS TECNICISMOS</b>: en español, el PvP pasa a llamarse JcJ y el RANKING, CLASIFICACIÓN. Y en inglés hemos traducido más descripciones de objetos, misiones y la pantalla de victoria.'],

@@ -110,4 +110,6 @@ IDIOMA.add({
   "Microblizz ha quitado una sigla. Dice que la nota del cambio es más larga que el cambio.": "Microblizz removed one acronym. He says the change note is longer than the change.",
   "<b>PVP VUELVE A SU NOMBRE</b>: ajustes de textos en español.": "<b>PVP IS PVP AGAIN</b>: Spanish text tweaks.",
   "Microblizz ha deshecho el cambio de una sigla. Dice que ya estaba acostumbrado.": "Microblizz undid the change of one acronym. He says he was used to it.",
+  "<b>CADA LÍDER CON SU ARMA</b>: cada líder empieza con un arma propia: espadazos en abanico, manos que salen del suelo, un foco giratorio, una torreta, una carta al azar, combos, un hacha que vuelve como un bumerán y una claqueta que atrae a los enemigos.": "<b>EVERY LEADER HAS THEIR OWN WEAPON</b>: each leader starts with a weapon of their own: fan slashes, hands rising from the ground, a spinning spotlight, a turret, a random card, combos, an axe that comes back like a boomerang and a clapperboard that pulls enemies in.",
+  "Microblizz ha dado un arma distinta a cada líder. Dice que es «diversidad». Contabilidad dice que es «ocho veces más caro».": "Microblizz gave every leader a different weapon. He calls it «diversity». Accounting calls it «eight times more expensive».",
 });

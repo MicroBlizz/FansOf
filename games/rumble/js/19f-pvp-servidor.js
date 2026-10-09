@@ -25,7 +25,7 @@ function pvpEquipoDeServidor(mazo, equipo) {
   return eq;
 }
 // jugada de motor → trozo corto para el servidor (menos de 200 caracteres) y al revés
-const pvpAServidor = m => (m.t === 'rendir' ? { v: VERSION, r: 1 } : { v: VERSION, d: PVP.D, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
+const pvpAServidor = m => (m.t === 'rendir' ? { v: VERSION, t: Math.floor(SIM.tick / PVP.T), r: 1 } : { v: VERSION, d: PVP.D, t: m.turno, k: m.tick, h: m.h, c: m.cmds.map(c => [c.slot, c.key, c.x, c.y]) });
 const pvpDeServidor = (d, equipo) => d.r ? { t: 'rendir' } : ({ t: 't', turno: d.t, tick: d.k, h: d.h, cmds: (d.c || []).map(c => ({ team: equipo, slot: c[0], key: c[1], x: c[2], y: c[3] })) });
 
 PVPNET.redes.servidor = {
@@ -61,11 +61,15 @@ PVPNET.redes.servidor = {
         const items = cola.splice(0, 20), ult = items.length ? items[items.length - 1] : null; if (ult && ult.h) ultimaH = { k: ult.k, h: ult.h };
         try {
           const tr0 = performance.now();
-          const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items, p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
+          const r = await CUENTA.rpc('pvp_jugar', { p_sala: sala, p_jugadas: items.map(({ n, ...it }) => it), p_desde: desde, p_tick_huella: ultimaH ? ultimaH.k : null, p_huella: ultimaH ? parseInt(ultimaH.h, 16) : null });
           const dtr = performance.now() - tr0; PVP.rtt = PVP.rtt ? PVP.rtt * 0.8 + dtr * 0.2 : dtr; PVP.rttMax = Math.max(PVP.rttMax || 0, dtr); PVP.llamadas = (PVP.llamadas || 0) + 1;   // lo que tarda cada llamada al servidor (se ve en desarrollo)
           for (const x of (r && r.rival) || []) { if (x.s > desde) desde = x.s; if (x.d.v !== VERSION) { PVP.error = 'version'; pvpEstado('error'); continue; } if (x.d.d != null && x.d.d !== PVP.D) { PVP.error = 'retardo'; pvpEstado('error'); continue; } pvpRecibir(pvpDeServidor(x.d, seat === 'p' ? 'e' : 'p')); }   // otra versión del juego = otra simulación: no se puede seguir
           if (r && r.desync) pvpEstado('desync');
-        } catch (e) { cola.unshift(...items); }   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
+        } catch (e) {   // sin conexión: se repite; el motor avisa de la espera y, al final, del abandono
+          PVP.fallos = (PVP.fallos || 0) + 1; PVP.ultimoError = String((e && e.message) || e).slice(0, 80);
+          for (const it of items) it.n = (it.n || 0) + 1;
+          cola.unshift(...items.filter(it => it.n < 8));   // un mensaje que el servidor rechaza una y otra vez se descarta, para que no bloquee a los demás
+        }
         enVuelo--;
       };
       // cerrar la partida: ganador ('p' o 'e' del motor) → el servidor decide los puntos; si el rival aún no ha cerrado se vuelve a preguntar

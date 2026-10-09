@@ -63,7 +63,7 @@ async function pruebaPvp(raiz, duerme) {
         if (nombre === 'pvp_salir') { if (S.cola && S.cola.quien === quien) S.cola = null; return {}; }
         if (nombre === 'pvp_jugar') {
           const yo = S.lados[lado], otro = S.lados[lado === 'a' ? 'b' : 'a'];
-          for (const it of a.p_jugadas) { if (JSON.stringify(it).length >= 200) throw new Error('demasiado_largo'); yo.items.push({ s: yo.items.length + 1, d: clon(it) }); }
+          for (const it of a.p_jugadas) { if (JSON.stringify(it).length >= 200) throw new Error('demasiado_largo'); if (typeof it.t !== 'number') throw new Error('jugada_no_valida'); /* como el de verdad: cada jugada lleva su t */ yo.items.push({ s: yo.items.length + 1, d: clon(it) }); }
           if (a.p_tick_huella != null) { yo.huellas[a.p_tick_huella] = a.p_huella; if (otro.huellas[a.p_tick_huella] != null && otro.huellas[a.p_tick_huella] !== a.p_huella) S.desync = true; }
           return { rival: otro.items.filter(x => x.s > a.p_desde).map(clon), estado: 'jugando', desync: S.desync };
         }
@@ -76,7 +76,7 @@ async function pruebaPvp(raiz, duerme) {
       };
     } };
   }
-  async function partidaServidor() {
+  async function partidaServidor(rendir) {
     const A = await abre(), B = await abre(), a = A.w, b = B.w, srv = servidorFalso();
     const prepara = (w, quien) => { w.eval("CUENTA.activa = true"); w.eval('window.__CU = CUENTA'); w.__CU.rpc = srv.para(quien); w.eval('PVP_SRV.cierreMs = 400'); };
     prepara(a, 'ana'); prepara(b, 'beto');
@@ -90,6 +90,14 @@ async function pruebaPvp(raiz, duerme) {
       if (Date.now() - t0 > (juega + 1) * 1500) { juega++; for (const w of [a, b]) { if (!w.__X || w.__X.G.state !== 'play') continue; const t = w.__X.PVP.seat, k = w.__X.slotKey(0); if (k && !w.__X.isLeader(k) && w.__X.S[t].chaos >= w.__X.cardDef(k).cost) w.tryPlayerDeploy(0, k, 120 + (juega * 37) % 300, 540); } }
     }, 16);
     for (const w of [a, b]) w.eval("window.__X = { get PVP() { return PVP; }, get G() { return G; }, get S() { return S; }, get SIM() { return SIM; }, isLeader, cardDef, slotKey }");
+    if (rendir) {
+      let traza;   // A se rinde a los 6 s de juego: B tiene que enterarse al momento (no esperar al abandono de 18 s)
+      try {
+        await espera(() => a.__X.G.state === 'play' && a.__X.SIM.tick > 300, 30000, 'empieza'); const t1 = Date.now(); traza = []; const mu = setInterval(() => traza.push(((Date.now() - t1) / 1000).toFixed(1) + ':' + b.__X.PVP.estado + '/' + b.__X.SIM.tick), 1000); a.__X.PVP.red.enviar({ t: 'rendir' }); traza.push('enviado cola=' + srv.S.lados.a.items.length);
+        await espera(() => b.__X.PVP.estado === 'abandono', 8000, 'B se entera de la rendición'); const ms = Date.now() - t1;
+        const r = { ms, motivo: b.__X.PVP.estado, ganador: 'B', seat: 'B' }; clearInterval(reloj); A.f.remove(); B.f.remove(); return r;
+      } catch (e) { clearInterval(reloj); const d = w => `${w.__X.G.state}/${w.__X.PVP.estado}/tick ${w.__X.SIM.tick}/fallos ${w.__X.PVP.fallos}/${w.__X.PVP.ultimoError}`; throw new Error(e.message + ' · traza ' + (traza ? traza.join(' ') : '') + ' · A ' + d(a) + ' · B ' + d(b) + ' · srv items a:' + srv.S.lados.a.items.length + ' b:' + srv.S.lados.b.items.length + ' ' + JSON.stringify(srv.S.lados.a.items.slice(-2).map(x => x.d))); }
+    }
     try { await espera(() => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state), 90000, 'partida con servidor'); } catch (e) { const d = w => { try { return `${w.__X.G.state}/${w.__X.PVP.estado}/${w.__X.PVP.on}/${w.__X.SIM.tick}/${w.__X.PVP.error}/toast:${w.document.getElementById("toast").textContent}`; } catch (x) { return 'sin __X'; } }; throw new Error(`${e.message} · A ${d(a)} · B ${d(b)} · llamadas ${srv.S.llamadas} · sala ${!!srv.S.sala} · res ${!!res.a.r}/${!!res.b.r}`); } finally { clearInterval(reloj); }
     const cierres = {};
     for (const [w, k] of [[a, 'a'], [b, 'b']]) w.__X.PVP.net.cerrar(w.__X.G.winner, w.__X.PVP.fin.h, r => { cierres[k] = r; });
@@ -110,6 +118,9 @@ async function pruebaPvp(raiz, duerme) {
     { const w = (await abre()).w, eq = w.pvpEquipoDeServidor([{ c: 'squirrel', n: 4, st: 1 }, { c: 'beaver', n: 2 }, { c: 'fox', n: 2 }, { c: 'meercat', n: 2 }, { c: 'junkcoon', n: 2 }, { c: 'mechavaca', n: 2 }, { c: 'bunny', n: 5 }], [{ s: 'ab_bunny', u: 'x', t: 'ab', o: 'cafeina', q: [0.5] }, { s: 'eq_head', u: 'y', t: 'eq', o: 'cuernos', q: [0.7] }]);
       const mal = w.pvpEquipoMal(eq); ap('0b · equipo del servidor', mal ? 'MAL: ' + mal : `${eq.fac}, ${eq.deck.length} cartas, habilidades ${Object.keys(eq.ab)}, objetos ${Object.keys(eq.equip)}`); if (mal || !eq.ab.bunny || !eq.equip.head) fallos.push('equipo del servidor mal convertido: ' + JSON.stringify(eq));
       const ida = w.eval('pvpAServidor')({ t: 'rendir' }), vuelta = w.eval('pvpDeServidor')(ida, 'e'); if (vuelta.t !== 'rendir' || JSON.stringify(ida).length >= 200) fallos.push('rendirse no viaja bien por el servidor: ' + JSON.stringify(ida)); }
+    const rd = await partidaServidor(true);
+    ap('0c · rendición por el servidor', `B se entera en ${rd.ms} ms: ${rd.motivo}, ganador ${rd.ganador}`);
+    if (rd.motivo !== 'abandono') fallos.push('rendición: el rival no gana por abandono: ' + JSON.stringify(rd)); if (rd.ms > 3000) fallos.push('rendición: tarda demasiado en llegar (' + rd.ms + ' ms)');
     // 1) una partida entera: mismas huellas en cada turno, mismo final
     const r = await partida('partida', { tiempo: 20, cada: 1500, hasta: ({ a, b }) => () => ['ending', 'end'].includes(a.__X.G.state) && ['ending', 'end'].includes(b.__X.G.state) });
     const n = Math.min(r.ha.length, r.hb.length), iguales = r.ha.slice(0, n).every((x, i) => x[1] === r.hb[i][1] && x[0] === r.hb[i][0]);

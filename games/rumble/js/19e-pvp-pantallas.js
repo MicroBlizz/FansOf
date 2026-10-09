@@ -118,7 +118,7 @@ function pvpDebug(real) {
   pvpDebug.t = (pvpDebug.t || 0) - real; if (pvpDebug.t > 0) return; pvpDebug.t = 0.5;
   let el = document.getElementById('pvp-dbg');
   if (!el) { el = document.createElement('div'); el.id = 'pvp-dbg'; el.style.cssText = 'position:fixed;left:4px;bottom:4px;z-index:9999;font:11px monospace;background:rgba(0,0,0,.7);color:#9ef07a;padding:3px 6px;border-radius:6px;pointer-events:none'; document.body.append(el); }
-  el.textContent = `${PVP.seat} · RTT ${Math.round(PVP.rtt)} ms (máx ${Math.round(PVP.rttMax)}) · llamadas ${PVP.llamadas} · esperas ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(PVP.fps)} fps`;
+  el.textContent = `${PVP.seat} · RTT ${Math.round(PVP.rtt)} ms (máx ${Math.round(PVP.rttMax)}) · llamadas ${PVP.llamadas} · esperas ${PVP.stats.n} (${(PVP.stats.ms / 1000).toFixed(1)} s) · tick ${SIM.tick} · ${Math.round(PVP.fps)} fps${PVP.fallos ? ` · FALLOS ${PVP.fallos}: ${PVP.ultimoError}` : ''}`;
 }
 
 /* ---------- solo en desarrollo: elegir el retardo de red (los dos jugadores el mismo) ---------- */

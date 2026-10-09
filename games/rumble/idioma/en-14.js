@@ -66,4 +66,6 @@ IDIOMA.add({
   "Unidades caídas: %1": "Units fallen: %1",
   "Hechizos lanzados: %1": "Spells cast: %1",
   "CAOS gastado: %1": "CHAOS spent: %1",
+  "<b>RESUMEN DEL PVP</b>: la pantalla de PvP enseña cuántas partidas se han jugado en la última hora y en total, y cuántas unidades han caído, hechizos se han lanzado y CAOS se ha gastado en esa hora.": "<b>PVP SUMMARY</b>: the PvP screen shows how many matches have been played in the last hour and in total, and how many units fell, spells were cast and CHAOS was spent in that hour.",
+  "Microblizz ha contratado a un becario para contar muertos. Dice que no es morbo, que es analítica.": "Microblizz has hired an intern to count the dead. It says it's not morbid, it's analytics.",
 });

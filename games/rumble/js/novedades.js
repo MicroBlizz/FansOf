@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.104', real: ['<b>RESUMEN DEL PVP</b>: la pantalla de PvP enseña cuántas partidas se han jugado en la última hora y en total, y cuántas unidades han caído, hechizos se han lanzado y CAOS se ha gastado en esa hora.'],
+    joke: ['Microblizz ha contratado a un becario para contar muertos. Dice que no es morbo, que es analítica.'] },
   { v: '0.9.103', real: ['<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» y, si entras en PvP sin cuenta, te sale una ventana para crearla o entrar con Google o con tu email (y al terminar pasas directo a PvP). También hemos afinado el PvP para que dos navegadores distintos jueguen la misma partida.'],
     joke: ['Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.'] },
   { v: '0.9.102', real: ['<b>EL CHAT, TAMBIÉN EN PVP</b>: el chat de directo vuelve a comentar la partida en el PvP (solo lo ves tú, no se sincroniza con nadie).'],

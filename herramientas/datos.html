@@ -33,9 +33,15 @@ f.onload = () => setTimeout(() => {
         anuncios: g('ADS') ? { dayMax: g('ADS').dayMax, slots: Object.fromEntries(Object.entries(g('ADS').slots).map(([k, v]) => [k, v.max])), semana: Object.keys(g('ADS').slots).filter(k => g('ADS').slots[k].semana) } : null,
         facItems: g('FAC_ITEM') || null,
         gift: S.gift || null, starter: S.starter ? { gold: S.starter.gold, gems: S.starter.gems } : null }; };
+      // v0.9.110: qué marcos y títulos son de serie y qué cobro de qué pase da cada uno (el servidor lo usa para enseñar a los demás solo lo que es tuyo)
+      const look = () => { const A = g('RETOS') && g('RETOS').armario, P = g('PASES'), R = g('pReward'); if (!A || !P || !R) return null;
+        const serie = { marco: Object.keys(A.marcos || {}).filter(k => A.marcos[k].serie), titulo: Object.keys(A.titulos || {}).filter(k => A.titulos[k].serie) }, de = {};
+        for (const p in P) { const C = P[p].C, pre = (p === 't' ? 'pase' : 'pasepvp') + ':' + (C.id ? C.id + ':' : '');
+          for (let i = 1; i <= C.levels; i++) for (const tr of ['free', 'paid']) { const r = R(p, tr, i); for (const t of ['marco', 'titulo']) if (r[t]) (de[t + ':' + r[t]] = de[t + ':' + r[t]] || []).push(pre + tr + ':' + i); } }
+        return { serie, de }; };
       const F = {}; for (const f of g('FACTION_ORDER') || []) { const x = g('FACTIONS')[f]; F[f] = { leader: x.leader || null, units: x.units || [], gacha: x.gacha || [] }; }
       const cartas = {}; const C = (g('CFG') || {}).cards || {}; for (const k in C) if (C[k].gacha) cartas[k] = { rarity: C[k].rarity, fac: C[k].fac || null, cost: C[k].cost == null ? null : C[k].cost };
-      return JSON.stringify({ juego: ${JSON.stringify(juego)}, econ: R, calidades: g('QTIERS'), habilidades: cat(g('ABILITIES')), objetos: cat(g('ITEMS')), facciones: F, cartas, orden: g('FACTION_ORDER'), topes: g('ECO').topes(), premios: premios() });
+      return JSON.stringify({ juego: ${JSON.stringify(juego)}, econ: R, calidades: g('QTIERS'), habilidades: cat(g('ABILITIES')), objetos: cat(g('ITEMS')), facciones: F, cartas, orden: g('FACTION_ORDER'), topes: g('ECO').topes(), premios: premios(), look: look() });
     })()`);
   } catch (e) { out = JSON.stringify({ fallo: String(e) }); }
   fetch('/datos-resultado', { method: 'POST', body: out });

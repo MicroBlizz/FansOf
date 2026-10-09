@@ -13,12 +13,13 @@ function grantRewards() {
   if (G.mode === 'quick' && G.diff === 'ceo' && win) R.gems += ECON.quickCeoGems;   // v0.9.71
   else if (G.mode === 'arena') arenaReward(R, w);   // v0.9.20
   else if (G.mode === 'camp') {
-    const L = G.level, cd = G.cdiff || 'n', pay = CDIFF[cd].pay || 1, prev = starsD(L.id, cd);
+    const L = G.level, cd = G.cdiff || 'n', pay = CDIFF[cd].pay || 1, prev = starsD(L.id, cd), prevW = cd === 'm' ? mitStars(L.id) : prev;   // Mítica: el premio de primera vez y el de 3 estrellas vuelven cada semana (prevW)
     if (win) {
       R.stars = 1 + (S.e.crowns === 0 ? 1 : 0) + (G.endReason === 'base' ? 1 : 0);
-      if (!prev) { const fr = L.boss ? ECON.camp.boss : ECON.camp.first; R.gold += fr[0] * pay; R.gems += fr[1] * pay; } else R.gold += ECON.camp.replay * pay;
-      if (R.stars === 3 && prev < 3) { R.gold += ECON.camp.stars3[0] * pay; R.gems += ECON.camp.stars3[1] * pay; }
+      if (!prevW) { const fr = L.boss ? ECON.camp.boss : ECON.camp.first; R.gold += fr[0] * pay; R.gems += fr[1] * pay; } else R.gold += ECON.camp.replay * pay;
+      if (R.stars === 3 && prevW < 3) { R.gold += ECON.camp.stars3[0] * pay; R.gems += ECON.camp.stars3[1] * pay; }
       campOf(cd)[L.id] = Math.max(prev, R.stars);
+      if (cd === 'm') mitGana(L.id, R.stars);   // la Mítica semanal (10d-mitica-semanal.js)
       const Wd = WORLDS[L.wi];
       if (L.boss && cd !== 'f' && Wd.unlock && !isUnlocked(Wd.unlock)) {   // la facción liberada se une a ti (v0.9.55: en Fácil no se libera). v0.9.71: sus cartas empiezan a nivel 1, para subirlas tú
         SAVE.unlocked.push(Wd.unlock); R.unlock = Wd.unlock; stat('unlock', 1);

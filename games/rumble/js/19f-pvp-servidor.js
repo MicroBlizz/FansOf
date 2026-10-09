@@ -84,10 +84,11 @@ PVPNET.redes.servidor = {
           await new Promise(res => setTimeout(res, PVP_SRV.cierreMs));
         }
       };
-      aviso({ retardo: pvpRetardo(), seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival' }, red: { enviar: m => { cola.push(pvpAServidor(m)); bucle(); } }, cerrar, parar: () => { vivo = false; clearInterval(temporizador); } });
+      aviso({ retardo: pvpRetardo(), seat, seed: st.semilla, equipos, rival: { nombre: st.rival || st.nombre_rival || 'Rival', look: st.rival_look || null }, red: { enviar: m => { cola.push(pvpAServidor(m)); bucle(); } }, cerrar, parar: () => { vivo = false; clearInterval(temporizador); } });
       bucle(); temporizador = setInterval(() => { if (Date.now() - ultimaLlamada >= 250) bucle(); }, 100);
     };
-    sondeo();
+    // v0.9.110: antes de entrar en la cola se sube la partida a la nube, para que el rival vea tu marco y tu título de ahora (el servidor los lee de ahí)
+    Promise.resolve(CUENTA.sincronizar && CUENTA.sincronizar(false)).catch(() => { /* sin nube: el rival ve lo último que se subió */ }).then(sondeo);
     return { cancelar() { activo = false; clearTimeout(tic); if (!sala) CUENTA.rpc('pvp_salir', {}).catch(() => { /* ya no estaba en la cola */ }); } };
   },
   async resumen() { return CUENTA.rpc('pvp_resumen', {}); },   // partidas, unidades caídas, hechizos y CAOS de la última hora

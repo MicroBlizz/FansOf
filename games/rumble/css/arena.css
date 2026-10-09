@@ -108,12 +108,14 @@
 .pvp-modo .tabs { flex: none; gap: 6px; }
 .pvp-modo .tab { font-size: 15px; padding: 6px 12px 3px; }
 #scr-pvp .pvp-modo .deck-sub { margin: 0; font-size: 12.5px; line-height: 1.25; }
-.pvp-facs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.pvp-fac { width: 50px; height: 46px; padding: 2px; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); cursor: pointer; }
-.pvp-fac[aria-pressed="true"] { border-color: #ffe14d; box-shadow: 0 0 0 2px #ffe14d55; }
-.pvp-fac:disabled { opacity: .5; }
-.pvp-fac canvas { width: 100%; height: 100%; display: block; }
-.pvp-fac.bloq { filter: grayscale(1); opacity: .45; }
+/* la lista de facciones del PvP: 5 por fila, igual que la del entrenamiento */
+.pvp-facs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.pvp-facs[hidden] { display: none; }
+.pvp-facs .diff-opt.fac-opt { padding: 3px 2px 4px; border-radius: 12px; }
+.pvp-facs .fac-opt canvas { width: 40px; height: 32px; margin: 0 auto; }
+.pvp-facs .fac-opt b { font-size: 10.5px; line-height: 1.1; white-space: normal; }
+.pvp-facs .fac-opt .lock { right: 2px; top: 2px; font-size: 8px; padding: 0 3px; }
+#scr-pvp.fac-abierta #pvp-premio, #scr-pvp.fac-abierta #pvp-clasif { display: none; }
 .pvp-cl { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 16px; border: 3px solid var(--outline); background: var(--panel-2); }
 .pvp-cl-cab { display: flex; align-items: baseline; justify-content: space-between; }
 .pvp-cl-cab span { font-family: var(--font-display); font-size: 18px; color: var(--ink-dim); letter-spacing: .05em; }
@@ -163,3 +165,35 @@
 .pvp-bu-info { display: flex; flex-direction: column; gap: 3px; padding: 9px 14px; border-radius: 16px; border: 3px solid var(--outline); background: var(--panel-2); text-align: left; }
 .pvp-bu-info b { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--ink-dim); letter-spacing: .05em; }
 .pvp-bu-info span { font-size: 14px; font-weight: 700; line-height: 1.3; }
+
+/* ---------- v0.9.110: el aspecto de los jugadores en el PvP (marco y título) ---------- */
+.pvp-fila canvas { width: 40px; height: 40px; flex: none; }
+.pvp-fila span { display: flex; flex-direction: column; line-height: 1.15; }
+.pvp-fila .tt-x.pvp-tt { font-size: 11.5px; }
+/* durante la cuenta atrás: tu rival arriba y tú abajo; el 3, 2, 1 queda en medio */
+#pvp-caras { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+#pvp-caras::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 48%, rgba(12, 6, 20, .15), rgba(12, 6, 20, .62) 75%); }
+.pvc { position: absolute; left: 50%; display: flex; align-items: center; gap: 12px; width: 360px; margin-left: -180px; box-sizing: border-box; padding: 8px 18px 8px 8px; border-radius: 20px; border: 4px solid var(--outline); box-shadow: 0 6px 0 var(--outline), 0 0 26px rgba(0, 0, 0, .45); text-align: left; }
+.pvc.rival { top: calc(var(--top, 0px) + 178px); background: linear-gradient(105deg, #2e8bff 0%, #173d8f 55%, var(--tray) 100%); animation: pvcArriba .55s cubic-bezier(.2, 1.4, .5, 1) both; }
+.pvc.yo { top: calc(var(--top, 0px) + 512px); background: linear-gradient(105deg, #ff7a1a 0%, #a33a08 55%, var(--tray) 100%); animation: pvcAbajo .55s .12s cubic-bezier(.2, 1.4, .5, 1) both; }
+.pvc canvas { width: 84px; height: 84px; flex: none; }
+.pvc-t { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pvc-t small { font-family: var(--font-display); font-size: 13px; letter-spacing: 1px; color: #fff6ea; opacity: .9; }
+.pvc-t b { font-family: var(--font-display); font-weight: 400; font-size: 27px; line-height: 1.05; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pvc-t .tt-x { font-size: 16px; }
+#pvp-caras.fuera .pvc.rival { animation: pvcSaleArriba .4s ease-in both; }
+#pvp-caras.fuera .pvc.yo { animation: pvcSaleAbajo .4s ease-in both; }
+#pvp-caras.fuera::before { opacity: 0; transition: opacity .4s; }
+@keyframes pvcArriba { from { transform: translateX(-120%) rotate(-6deg); opacity: 0; } }
+@keyframes pvcAbajo { from { transform: translateX(120%) rotate(6deg); opacity: 0; } }
+@keyframes pvcSaleArriba { to { transform: translateY(-160%); opacity: 0; } }
+@keyframes pvcSaleAbajo { to { transform: translateY(160%); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .pvc, #pvp-caras.fuera .pvc { animation: none !important; } }
+/* en la pantalla final: contra quién has jugado */
+.pvc-fin { display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 4px; border-radius: 14px; background: rgba(12, 6, 20, .5); border: 2px solid var(--outline); font-style: normal; text-align: left; }
+.pvc-fin canvas { width: 52px; height: 52px; flex: none; }
+.pvc-fin > span { display: flex; flex-direction: column; line-height: 1.1; }
+.pvc-fin small { font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: var(--ink-dim); }
+.pvc-fin b { font-family: var(--font-display); font-weight: 400; font-size: 18px; }
+.pvc-fin .tt-x { font-size: 13px; }
+.pvc-dbg { display: block; margin-top: 4px; font-size: 11px; opacity: .7; }

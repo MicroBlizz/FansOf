@@ -300,3 +300,20 @@ function lookPremioBox(r, n = 1) {
   $('#cf-no').onclick = () => { play('select'); close(); };
   $('#cf-ok').onclick = () => { ponerLook(t, id); play('card'); close(); profileChip(); toast(t === 'marco' ? `Llevas el marco ${D.name}` : `Ahora eres «${D.name}»`, true); };
 }
+
+/* ---------- el aspecto de otros jugadores (lo que manda el servidor: { nombre, avatar, fac, marco, titulo }) · v0.9.110 ---------- */
+// el retrato: su avatar si existe en este juego; si no, el líder de su facción; si no, el primero que haya
+function lookCara(L) {
+  const vale = k => k && typeof ART !== 'undefined' && ART[k] && (TYPES[k] || TOPS[k]);
+  if (L && vale(L.avatar)) return L.avatar;
+  const F = L && FACTIONS[L.fac]; if (F && vale(F.leader)) return F.leader;
+  return FACTION_ORDER.map(f => FACTIONS[f] && FACTIONS[f].leader).find(vale) || 'bunny';
+}
+// el tuyo, con la misma forma
+const miLook = () => { const L = lookDe(); return { nombre: pname(), avatar: avatarOf(), marco: L.marco, titulo: L.titulo }; };
+// pinta todos los canvas con data-lk="marco|cara" dentro de root (tamaño: data-lw, por defecto 44)
+function pintaLooks(root) {
+  for (const cv of (root || document).querySelectorAll('canvas[data-lk]')) { const [m, k] = cv.dataset.lk.split('|'); pintaAvatar(cv, +cv.dataset.lw || 44, m, k); }
+}
+// el trozo de HTML de un canvas con su marco, para pintarlo luego con pintaLooks
+const lookCanvas = (L, lw) => `<canvas data-lk="${esc((L && L.marco) || 'normal')}|${esc(lookCara(L))}" data-lw="${lw}" aria-hidden="true"></canvas>`;

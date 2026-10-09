@@ -99,15 +99,19 @@ function salonRetrato(r) {
   return prim || '';
 }
 const salonValor = (P, r) => `<span class="salon-val"><i aria-hidden="true">${P.icono || ''}</i><b class="ol">${fmt(r.valor)}</b><small>${salonEsc(P.unidad || '')}</small></span>`;
+// v0.9.110: con marco y título si el juego tiene armario (el servidor manda r.look solo con lo que de verdad es suyo)
+const salonConLook = r => r && r.look && typeof lookCanvas === 'function';
+const salonCara = r => (salonConLook(r) ? `<span class="salon-cara lk">${lookCanvas(Object.assign({}, r.look, { avatar: salonRetrato(r) }), 46)}</span>` : `<span class="salon-cara"><canvas data-sr="${salonRetrato(r)}" aria-hidden="true"></canvas></span>`);
+const salonTitulo = r => (salonConLook(r) && r.look.titulo && typeof tituloHtml === 'function' ? tituloHtml(r.look.titulo, 'salon-tt') : '');
 function salonFila(P, r, mia) {
-  return `<div class="salon-fila${r.yo ? ' yo' : ''}${mia ? ' mia' : ''}"><b class="salon-pos ol">${fmt(r.puesto)}</b><span class="salon-cara"><canvas data-sr="${salonRetrato(r)}" aria-hidden="true"></canvas></span>`
-    + `<span class="salon-quien"><b>${salonEsc(r.nombre)}${r.yo ? ' <em>(tú)</em>' : ''}</b><small>${P.info ? P.info(r) : ''}</small></span>${salonValor(P, r)}</div>`;
+  return `<div class="salon-fila${r.yo ? ' yo' : ''}${mia ? ' mia' : ''}"><b class="salon-pos ol">${fmt(r.puesto)}</b>${salonCara(r)}`
+    + `<span class="salon-quien"><b>${salonEsc(r.nombre)}${r.yo ? ' <em>(tú)</em>' : ''}</b>${salonTitulo(r)}<small>${P.info ? P.info(r) : ''}</small></span>${salonValor(P, r)}</div>`;
 }
 function salonPodio(P, top) {
   const sitio = [1, 0, 2].filter(i => top[i]);
   return `<div class="salon-podio">${sitio.map(i => { const r = top[i]; return `<div class="sp-col sp-${i + 1}${r.yo ? ' yo' : ''}">`
     + `${i === 0 ? `<span class="sp-corona" aria-hidden="true">${CROWN_SVG}</span>` : ''}<span class="sp-halo"><canvas data-sr="${salonRetrato(r)}" aria-hidden="true"></canvas></span>`
-    + `<b class="sp-nom ol">${salonEsc(r.nombre)}</b><small class="sp-info">${P.info ? P.info(r) : ''}</small>`
+    + `<b class="sp-nom ol">${salonEsc(r.nombre)}</b>${salonTitulo(r)}<small class="sp-info">${P.info ? P.info(r) : ''}</small>`
     + `<div class="sp-base"><span class="sp-num ol">${i + 1}</span>${salonValor(P, r)}</div></div>`; }).join('')}</div>`;
 }
 function salonLista(P, d) {
@@ -118,6 +122,7 @@ function salonLista(P, d) {
   if (d.yo) pie.innerHTML = salonFila(P, d.yo, true);
   else pie.innerHTML = `<div class="salon-fila mia fuera"><span class="salon-quien"><b>Aún no estás en el Salón</b><small>${salonEsc(P.vacio || '')}</small></span></div>`;
   for (const cv of document.querySelectorAll('#scr-salon canvas[data-sr]')) if (cv.dataset.sr) { const big = cv.closest('.sp-halo'); drawArt(cv, cv.dataset.sr, big ? 74 : 40, big ? 68 : 36); }
+  if (typeof pintaLooks === 'function') pintaLooks($('#scr-salon'));
 }
 
 /* ---------- la pestaña en obras ---------- */

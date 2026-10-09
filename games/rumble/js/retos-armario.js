@@ -33,6 +33,10 @@ Object.assign(RETOS, {
       pray:        { name: 'Pay to Pray', rar: 'rare' },
       ballena:     { name: 'Ballena competitiva', rar: 'epic' },
       tarjeta:     { name: 'Leyenda con tarjeta', rar: 'legendary' },
+      // premios del lunes de la Mítica semanal (js/10d-mitica-semanal.js): de: dice en el armario dónde se ganan
+      mitico10:    { name: 'Top 10 de la Mítica', rar: 'rare', de: 'Acaba una semana entre los 10 primeros de la Mítica' },
+      mitico3:     { name: 'Podio mítico', rar: 'epic', de: 'Acaba una semana entre los 3 primeros de la Mítica' },
+      mitico1:     { name: 'Empleado de la semana', rar: 'legendary', de: 'Gana una semana de la Mítica' },
     },
     // v0.9.104: frases y emoticonos para la partida (core/js/frases.js y js/22-frases.js). t: el texto · k: el personaje (su adorno se dibuja en core/js/frases-arte.js) · anim: se mueve en la partida
     frases: {

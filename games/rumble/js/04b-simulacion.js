@@ -47,14 +47,26 @@ function datan2(y, x) {
    SIM.log guarda lo aplicado (con su tick real): con la semilla y ese registro se reproduce la partida entera. */
 function simCmd(c) { if (c.t == null) c.t = SIM.tick + SIM.delay; SIM.cmds.push(c); return c; }
 const cmpCmd = (a, b) => a.t - b.t || (a.team < b.team ? -1 : a.team > b.team ? 1 : 0) || (a.slot || 0) - (b.slot || 0) || (a.key < b.key ? -1 : a.key > b.key ? 1 : 0) || a.x - b.x || a.y - b.y;
+// v0.9.105: carta a la espera de CAOS. Si falta hasta 1 de CAOS, la jugada queda reservada (S[team].pend) y sale sola en cuanto se puede pagar; mientras tanto no entra otra jugada de ese equipo. Es parte de la simulación: sale igual en las dos máquinas
+const PEND_FALTA = 1;
+function simPend() {
+  for (const t of ['p', 'e']) {
+    const o = S[t], c = o && o.pend; if (!c || o.chaos < cardDef(c.key).cost) continue;
+    o.pend = null; simApply({ t: SIM.tick, team: t, slot: c.slot, key: c.key, x: c.x, y: c.y });
+  }
+}
 function simApply(c) {
   const me = S[c.team], def = c.key && cardDef(c.key);
+  if (me && c.cancel) { me.pend = null; return false; }
+  if (me && me.pend) return false;   // el CAOS está reservado para la carta que espera
+  if (me && def && me.chaos < def.cost && me.chaos >= def.cost - PEND_FALTA && !isSpell(c.key) && !isLeader(c.key)) { me.pend = { slot: c.slot, key: c.key, x: c.x, y: c.y }; return false; }
   if (!me || !def || me.chaos < def.cost || (isLeader(c.key) && !canDeploy(c.team, c.key))) return false;   // mismas condiciones en las dos máquinas: si ya no vale, se descarta igual en las dos
   if (c.team === 'p' || G.pvp) playCard(c.team, me.hand && me.hand[c.slot] === c.key ? c.slot : me.hand ? me.hand.indexOf(c.key) : -1, c.key, c.x, c.y); else doDeploy(c.team, c.key, c.x, c.y);
   SIM.log.push({ t: SIM.tick, team: c.team, key: c.key, slot: c.slot, x: c.x, y: c.y });
   return true;
 }
 function simRunCmds() {
+  simPend();
   if (!SIM.cmds.length) return;
   const due = SIM.cmds.filter(c => c.t <= SIM.tick); if (!due.length) return;
   SIM.cmds = SIM.cmds.filter(c => c.t > SIM.tick); due.sort(cmpCmd);
@@ -79,7 +91,7 @@ function simHash() {
   const num = v => { v = Math.round((v || 0) * 1000) | 0; for (let i = 0; i < 4; i++) { h ^= (v >>> (i * 8)) & 255; h = Math.imul(h, 16777619); } };
   const txt = s => { s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } num(s.length); };
   const parts = []; num(SIM.tick); num(SIM.s); num(G.time);
-  for (const t of ['p', 'e']) { const o = S[t]; num(o.chaos); num(o.crowns); num(o.spent); num(o.deployed); num(o.kills); num(o.leaderCd); if (o.hand) txt(o.hand.join()); if (o.queue) txt(o.queue.join()); }
+  for (const t of ['p', 'e']) { const o = S[t]; num(o.chaos); num(o.crowns); num(o.spent); num(o.deployed); num(o.kills); num(o.leaderCd); txt(o.pend ? o.pend.key : ''); if (o.hand) txt(o.hand.join()); if (o.queue) txt(o.queue.join()); }
   parts.push(h >>> 0);   // trozos de la huella (reloj, azar y los dos jugadores · tropas · edificios y disparos): si dos máquinas se separan, se ve en cuál
   num(units.length); for (const u of units) { txt(u.type); num(u.team === 'p' ? 1 : 2); num(u.x); num(u.y); num(u.hp); num(u.maxHp); num(u.alive ? 1 : 0); num(u.stunT); num(u.atkT); num(u.deployT); }
   parts.push(h >>> 0);

@@ -43,6 +43,7 @@ function render() {
   if (G.state !== 'title') drawAmbient(rdt); else G.flash = 0;
   for (const e of list) if (!(e.kind === 'unit' && inTunnel(e))) drawBars(e);   // v0.9.19: dentro del túnel no se ve nada
   for (const n of nums) drawNum(n);
+  drawPend();
   if (showZones) drawGhost();
   if (G.flash > 0.01) { ctx.setTransform(VIEW.k, 0, 0, VIEW.k, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = `rgba(255,246,225,${Math.min(0.6, G.flash)})`; ctx.fillRect(0, 0, W, VIEW.LH); G.flash *= Math.pow(0.02, rdt); }
 }

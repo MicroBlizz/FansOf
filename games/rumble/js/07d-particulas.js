@@ -106,6 +106,14 @@ function drawNum(n) {
   if (n.tx) { const th = n.size + 9; ctx.fillStyle = 'rgba(20,10,32,.74)'; ctx.beginPath(); rrPath(ctx, -tw / 2, -th / 2 - 1, tw, th, th / 2); ctx.fill(); }
   text(n.txt, 0, 0, n.size, n.color); ctx.restore(); ctx.globalAlpha = 1;
 }
+// v0.9.105: la carta que espera CAOS se queda en el sitio, apagada, hasta que se paga
+function drawPend() {
+  const c = S.p.pend; if (!c || G.state !== 'play') return;
+  const x = c.x, y = verAbajo() ? VISTA_YC - c.y : c.y, card = CFG.cards[c.key], s = SPR[c.key]; if (!card || !s) return;
+  ctx.save(); glowArea(ctx, x, y + 1, 40, '#ffd34d', 1.4, 0.4); ctx.globalAlpha = 0.55 + 0.15 * Math.sin(G.t * 8);
+  for (let i = 0; i < card.count; i++) { const ox = card.count > 1 ? (i - (card.count - 1) / 2) * 22 : 0, oy = card.count > 1 ? (i % 2) * 6 : 0; ctx.drawImage(s.c, x + ox - s.ax, y + oy - s.ay, s.wd, s.ht); }
+  ctx.globalAlpha = 1; text(tr('Esperando CAOS…'), clamp(x, 90, W - 90), y - TYPES[c.key].top - 20, 15, '#ffe28a'); ctx.restore();
+}
 function drawGhost() {
   const key = (input.dragging && input.card) || input.selected; const g = input.ghost; if (!key || !g) return;
   if ((g.fy == null ? g.y : g.fy) >= TRAY_Y - 4) return;   // con el dedo sobre las cartas se cancela

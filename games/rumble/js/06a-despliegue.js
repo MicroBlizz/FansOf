@@ -181,7 +181,8 @@ function tryPlayerDeploy(slot, key, x, y) {
   if (card.spell) { x = clamp(x, BOUNDS.x0, BOUNDS.x1); y = clamp(y, BOUNDS.y0, BOUNDS.y1); }   // v0.9.15: los hechizos se lanzan en cualquier sitio
   else { const sp = snapSpot(team, x, y); x = sp.x; y = sp.y; }
   if (isLeader(key) && !canDeploy(team, key)) { const nm = CFG.cards[key].name; toast(me.leaderCd > 0 ? `${nm} vuelve en ${Math.ceil(me.leaderCd)} s` : `${nm} ya está en el campo`); play('deny'); return false; }
-  if (me.chaos < card.cost) { toast(`Te falta CAOS: ${Math.ceil(card.cost - me.chaos)} más`); play('deny'); return false; }
+  if (me.pend) { toast('Ya hay una carta esperando CAOS'); play('deny'); return false; }
+  if (me.chaos < card.cost && (card.spell || isLeader(key) || me.chaos < card.cost - PEND_FALTA)) { toast(`Te falta CAOS: ${Math.ceil(card.cost - me.chaos)} más`); play('deny'); return false; }
   if (PVP.on) pvpJugar(slot, key, x, y); else simCmd({ team, slot, key, x, y });   // la jugada se aplica al empezar el siguiente tick (SIM.delay), igual que en PvP
   hideTut();
   return true;

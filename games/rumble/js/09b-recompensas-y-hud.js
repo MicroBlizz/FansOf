@@ -218,6 +218,9 @@ function endPointer(e, cancelled) {
 window.addEventListener('pointerup', e => endPointer(e, false));
 window.addEventListener('pointercancel', e => endPointer(e, true));
 function fieldTap(e) {
+  if (G.state === 'play' && S.p.pend && !PVP.on) {   // tocar la carta que espera la cancela (en PvP no: la espera es corta y no hay jugada para anularla)
+    const p = toLogical(e); if (p.sy < TRAY_Y && Math.hypot(p.x - S.p.pend.x, p.y - FIELD_DY - S.p.pend.y) < 40) { simCmd({ team: 'p', cancel: true, key: '', x: 0, y: 0 }); toast('Carta cancelada'); return; }
+  }
   if (G.state !== 'play' || input.selected === null) return;
   audioInit(); const p = toLogical(e); if (p.sy >= TRAY_Y) return;
   if (tryPlayerDeploy(input.selSlot, slotKey(input.selSlot), p.x, p.y - FIELD_DY)) { input.selected = null; input.selSlot = null; input.ghost = null; }

@@ -16,7 +16,7 @@ function buildColl() {
   $('#coll-tabs').innerHTML = FACTION_ORDER.map(f => `<button class="fac-tab${isUnlocked(f) ? '' : ' locked'}" data-cf="${f}" aria-pressed="${f === collFac}" style="--fc:${FAC_COLOR[f]}" aria-label="${FACTIONS[f].name}"><canvas></canvas></button>`).join('');
   for (const b of $('#coll-tabs').children) { drawArt(b.querySelector('canvas'), FACTIONS[b.dataset.cf].leader, 48, 36); b.onclick = () => { collFac = b.dataset.cf; play('select'); buildColl(); }; }
   const box = $('#passive-box'); box.className = 'passive-box ' + F.kind;
-  box.innerHTML = ICONS[F.icon] + `<div><b class="ol">${F.name.toUpperCase()} · ${F.passive}</b><span>${lock ? 'Bloqueada: libera su mundo en la campaña (o activa el modo pruebas en Opciones).' : passiveText(collFac)}</span></div>`;
+  box.innerHTML = ICONS[F.icon] + `<div><b class="ol">${F.name.toUpperCase()} · ${F.passive}</b><span>${lock ? (typeof bloqueadaTexto === 'function' ? bloqueadaTexto(collFac) : 'Bloqueada: libera su mundo en la campaña (o activa el modo pruebas en Opciones).') : passiveText(collFac)}</span></div>`;
   const list = $('#coll-list');
   const deckBar = lock ? '' : fire('coleccion.arriba', collFac);
   list.innerHTML = deckBar + (lock ? '' : '<p class="coll-hint">Toca las <b>ranuras</b> de cada carta para equipar: <b>habilidades</b> en todas y <b>objetos</b> (arma, cabeza y accesorio) solo en el líder. Salen en el <b>Gashapón</b>. El número rojo dice cuántas tienes sin usar.</p>') + [F.leader, ...F.units].map(k => collRow(k, lock)).join('') + fire('coleccion.abajo', collFac, lock);

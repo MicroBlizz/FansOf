@@ -56,6 +56,7 @@
       <p class="tagline" id="tagline"><b>CrazyBunny</b> contra <i>toda la plantilla de Microblizz</i></p>
       <canvas id="title-art" aria-hidden="true"></canvas>
       <div class="camp-row"><button class="btn-big ol" id="btn-jugar">JUGAR</button></div>
+      <div class="camp-row"><button class="btn-ghost ol" id="btn-fac"><span>FACCIÓN:</span> <b id="btn-fac-nom"></b></button></div>
       <p class="rec-line" id="rec-line"></p>
       <div class="home-feature">
         <button class="feat" id="btn-gacha"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="7" fill="#bfe6ff" style="stroke: var(--outline)" stroke-width="1.8"/><circle cx="9.5" cy="9" r="2.4" fill="#ff5fa8"/><circle cx="14" cy="7.5" r="2.2" fill="#ffe14d"/><circle cx="13" cy="11.5" r="2.2" fill="#7be04a"/><rect x="6" y="15" width="12" height="7" rx="2" fill="#2e8bff" style="stroke: var(--outline)" stroke-width="1.8"/></svg><span><b class="ol">GASHAPÓN</b><small class="ol" id="feat-gacha">Tira x1, x10 o x50</small></span><i class="dotbadge" id="gacha-badge" hidden></i></button>
@@ -252,9 +253,9 @@
 // antes de lo común van los ajustes de este juego y sus novedades; después, el juego, en este orden.
 NUCLEO.juego({
   antes: ['js/ajustes.js', 'js/novedades.js'],
-  idioma: { en: ['idioma/en.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-facciones.js'] },
   despues: [
-    'js/datos.js', 'js/catalogo.js', 'js/sonido.js', 'js/retos.js', 'js/juego.js', 'js/cofre.js', 'js/armas.js', 'js/dibujo.js', 'js/menus.js',
+    'js/datos.js', 'js/datos-facciones.js', 'js/datos-facciones-2.js', 'js/catalogo.js', 'js/sonido.js', 'js/retos.js', 'js/juego.js', 'js/cofre.js', 'js/armas.js', 'js/armas-tipos.js', 'js/dibujo.js', 'js/menus.js', 'js/facciones.js',
     '../../core/js/retos.js', '../../core/js/pases.js', '../../core/js/retos-pantallas.js', 'js/interfaz.js'],
 });
 </script>

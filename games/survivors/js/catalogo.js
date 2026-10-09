@@ -18,9 +18,13 @@ for (const DB of [ABILITIES, ITEMS]) for (const id in DB) {
 }
 
 /* ---------- las facciones de este juego ---------- */
-const FAC_JUGABLES = ['animales'];   // de momento solo Animales Locos tiene sus armas hechas
-const isUnlocked = f => FAC_JUGABLES.includes(f) || !!SAVE.testAll;
-const facNow = () => 'animales';
+// Animales Locos siempre está abierta; las demás se abren con los minutos aguantados en total (DESBLOQUEO, en datos-facciones.js)
+const FAC_JUGABLES = ['animales', ...Object.keys(DESBLOQUEO)];
+const minutosTotales = () => (SAVE.stats && SAVE.stats.minuto) || 0;
+const isUnlocked = f => f === 'animales' || (f in DESBLOQUEO && minutosTotales() >= DESBLOQUEO[f]) || !!SAVE.testAll;
+// la facción con la que juegas: la que elegiste, si sigue abierta
+const facNow = () => (SAVE.fac && FAC_JUGABLES.includes(SAVE.fac) && isUnlocked(SAVE.fac) ? SAVE.fac : 'animales');
+const armaDeFac = k => ARMAS[k].fac || 'animales';
 const facOfCard = k => FACTION_ORDER.find(f => FACTIONS[f].leader === k || FACTIONS[f].units.includes(k));
 // qué arma es cada carta (el líder dispara las Zanahorias y hace el Chaos Jump)
 const ARMA_DE = {};
@@ -58,10 +62,12 @@ function cardStats(k, es) {
   const a = ARMA_DE[k]; return a ? `Arma: ${ARMAS[a].nombre} · Daño ×${(M.lvlMul * (1 + (M.J.dmg || 0))).toFixed(2).replace('.', ',')}` : 'Todavía no es un arma en este juego';
 }
 function cardDesc(k) {
-  if (isLeader(k) && k === 'bunny') return 'Tu personaje. Lanza zanahorias y salta con Chaos Jump. Su nivel, su habilidad y sus objetos mejoran a todas tus armas.';
+  if (isLeader(k)) return k === 'bunny' ? 'Tu personaje. Lanza zanahorias y salta con Chaos Jump. Su nivel, su habilidad y sus objetos mejoran a todas tus armas.' : 'Tu personaje cuando juegas con esta facción. Su nivel, su habilidad y sus objetos mejoran a todas tus armas.';
   const a = ARMA_DE[k]; return a ? ARMAS[a].desc : CFG.cards[k].desc;
 }
-const passiveText = fac => (fac === 'animales' ? 'En este juego, tus 6 cartas son tus armas: cuanto más nivel tenga cada una, más daño hace su arma.' : 'Todavía no se puede jugar con esta facción en Fans of Survivors.');
+const passiveText = fac => (FAC_JUGABLES.includes(fac) ? 'En este juego, tus 6 cartas son tus armas: cuanto más nivel tenga cada una, más daño hace su arma.' : 'Todavía no se puede jugar con esta facción en Fans of Survivors.');
+// qué le falta a una facción cerrada (lo enseña la colección)
+const bloqueadaTexto = fac => `Bloqueada: aguanta ${DESBLOQUEO[fac]} minutos en total en Fans of Survivors (llevas ${Math.min(minutosTotales(), DESBLOQUEO[fac])}) o activa el modo pruebas en Opciones.`;
 // poder del líder en horas extra: 100 = nivel 1 sin nada
 function idlePower(fac) {
   const M = cardMods(FACTIONS[fac].leader), J = M.J;
@@ -76,7 +82,7 @@ function give(gold, gems, xp, evento) { ECO.ganar('recompensa', { gold, gems }, 
 /* ---------- la partida guardada (la misma forma que la de los otros juegos) ---------- */
 function metaDefaults(s) {
   const d = { gold: ECON.start.gold, gems: ECON.start.gems, units: {}, inv: [], invSeq: 0, abEquip: {}, equip: {}, pity: {}, giftDay: '', idle: null, seenVer: '', tickets: 0,
-    stats: {}, achC: {}, achR: {}, pass: { xp: 0, prem: false, free: [], paid: [] }, login: { last: '', day: 0, best: 0 }, record: null };
+    stats: {}, achC: {}, achR: {}, pass: { xp: 0, prem: false, free: [], paid: [] }, login: { last: '', day: 0, best: 0 }, record: null, fac: 'animales' };
   for (const k in d) if (s[k] == null) s[k] = d[k];
   s.inv = s.inv.filter(it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id]);
   return s;

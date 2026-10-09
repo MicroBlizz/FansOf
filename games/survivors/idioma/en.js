@@ -19,7 +19,7 @@ IDIOMA.add({
   'En este juego, tus 6 cartas son tus armas: cuanto más nivel tenga cada una, más daño hace su arma.': 'In this game your 6 cards are your weapons: the higher a card\'s level, the more damage its weapon does.',
   'Todavía no se puede jugar con esta facción en Fans of Survivors.': 'This faction is not playable in Fans of Survivors yet.',
   'Todavía no es un arma en este juego': 'Not a weapon in this game yet', 'No hace nada en este juego.': 'Does nothing in this game.',
-  'Equipo freak para tu líder: arma, cabeza y accesorio. Mejora a CrazyBunny y a todas sus armas. Cada objeto sale con su propia calidad.': 'Freak gear for your leader: weapon, head and accessory. Boosts CrazyBunny and all his weapons. Each item comes with its own quality.',
+  'Equipo freak para tu líder: arma, cabeza y accesorio. Mejora al líder de cada facción y a todas sus armas. Cada objeto sale con su propia calidad.': 'Freak gear for your leader: weapon, head and accessory. Boosts each faction\'s leader and all their weapons. Each item comes with its own quality.',
   // partida y final
   'RENDIRSE': 'GIVE UP', 'Los becarios no tienen pausa. Tú sí.': 'Interns don\'t get breaks. You do.', 'El CEO aprovecha la pausa para subir los precios.': 'The CEO uses the break to raise prices.',
   'Microblizz ya está pensando qué juego cerrar ahora.': 'Microblizz is already thinking about which game to shut down next.', 'SurvivalBot también se toma un café. Descafeinado.': 'SurvivalBot is having a coffee too. Decaf.',

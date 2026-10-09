@@ -20,14 +20,14 @@ function modsJugador() {
     revive: J.revive || 0, heal: J.heal || 0, arma };
 }
 function nuevaPartida() {
-  const J = SV.jugador, MJ = modsJugador(), vida = Math.round(J.vida * MJ.hp);
+  const J = SV.jugador, MJ = modsJugador(), vida = Math.round(J.vida * MJ.hp), fac = facNow();
   P = {
-    mods: MJ, reviveUsado: false, cofres: 0, elites: 0,
+    mods: MJ, fac, lider: FACTIONS[fac].leader, zonas: [], escudoN: 0, reviveUsado: false, cofres: 0, elites: 0,
     cajasRotas: new Set(), cajasVida: new Map(), cajasGolpe: new Map(), oroCajas: 0, objetosCajas: 0,
     t: 0, estado: 'jugando', ganado: false, finT: 0,
     jug: { x: 0, y: 0, vida, vidaMax: vida, face: 1, andando: false, walk: 0, invulT: 0, golpeT: 0, congT: 0, salto: null, muerto: false },
     cam: { x: 0, y: 0 },
-    armas: { [SV.arma0]: 1 }, pasivas: {}, cd: {},
+    armas: { [ARMA_INICIAL[fac]]: 1 }, pasivas: {}, cd: {},
     xp: 0, nivel: 1, xpSig: SV.xpNivel(1), pendientes: 0,
     enemigos: [], proy: [], balas: [], gemas: [], cosas: [], efectos: [], numeros: [], parts: [], marcas: [],
     vacas: null, auraT: 0, kills: 0, puntos: 0,
@@ -36,7 +36,7 @@ function nuevaPartida() {
   };
   sigId = 1;
   chatDecir('start');
-  aviso('¡SOBREVIVE 10 MINUTOS!', 'Microblizz manda a toda su plantilla a por CrazyBunny');
+  aviso('¡SOBREVIVE 10 MINUTOS!', tr('Microblizz manda a toda su plantilla a por {l}', { l: CFG.cards[P.lider].name }));
 }
 
 /* ---------- cifras del jugador con sus mejoras ---------- */
@@ -155,6 +155,7 @@ function moverEnemigos(dt) {
     // los que se han quedado muy lejos vuelven a aparecer delante del jugador
     if (dd > 900 && !e.jefe) { const p = puntoFuera(); e.x = p.x; e.y = p.y; continue; }
     let v = e.vel;
+    if (e.lentoT > 0) { e.lentoT -= dt; v *= 0.5; }   // frenado por un arma
     if (e.jefe && e.vida < e.vidaMax * JEFE.furia) v *= 1.35;
     if (e.jefe && dd > 380) v *= 2.6;   // si te alejas mucho, SurvivalBot corre a por ti
     const T = e.d.tirador;
@@ -252,6 +253,7 @@ function curar(n, ver = true) {
 function danarJugador(n, quien) {
   const j = P.jug;
   if (j.invulT > 0 || j.salto || j.muerto) return;
+  if (absorbeEscudo()) return;
   n *= 1 - P.mods.armor;
   if (Math.random() < EFECTO.esquivar(nvP('hitbox')) + P.mods.dodge) { numero(j.x, j.y - 70, '¡ESQUIVADO!', '#c8f'); j.invulT = 0.25; return; }
   j.vida -= n; j.invulT = SV.jugador.invul; j.golpeT = 0.2; P.sacudida = Math.max(P.sacudida, 5);
@@ -297,6 +299,7 @@ function puedeMejorar() {
   const L = [];
   const nArmas = Object.keys(P.armas).length, nPas = Object.keys(P.pasivas).length;
   for (const k in ARMAS) {
+    if (armaDeFac(k) !== P.fac) continue;   // solo las armas de tu facción
     const n = P.armas[k] || 0;
     if (n >= SV.nivelMax) continue;
     if (!n && nArmas >= SV.maxArmas) continue;
@@ -349,7 +352,7 @@ function aviso(titulo, sub) { P.aviso = { titulo: tr(titulo), sub: sub ? tr(sub)
 function chatDecir(tipo) {
   const L = CHAT[tipo]; if (!L || !P || SAVE.chat === false) return;
   const u = pick(CHAT_USERS);
-  const txt = tr(pick(L)).replace(/\{yo\}/g, 'CrazyBunny').replace(/\{X\}/g, 'SurvivalBot');
+  const txt = tr(pick(L)).replace(/\{yo\}/g, CFG.cards[P.lider].name).replace(/\{X\}/g, 'SurvivalBot');
   P.chat.push({ quien: u[0], col: u[1], txt, t: 0 }); if (P.chat.length > 4) P.chat.shift();
 }
 

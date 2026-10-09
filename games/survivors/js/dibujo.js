@@ -89,6 +89,7 @@ function dibujar() {
     c.fillStyle = g; c.beginPath(); c.ellipse(j.x, j.y - 10, r * pul, r * pul * 0.85, 0, 0, Math.PI * 2); c.fill();
     c.strokeStyle = 'rgba(255,240,170,.55)'; c.lineWidth = 2; c.setLineDash([6, 6]); c.lineDashOffset = -P.t * 20; c.stroke(); c.setLineDash([]);
   }
+  dibujaSueloArmas(c);
   for (const m of P.marcas) {
     const k = 1 - m.t / m.max; c.globalAlpha = 0.3 + k * 0.5; c.fillStyle = 'rgba(125,211,252,.25)'; c.strokeStyle = '#7dd3fc'; c.lineWidth = 3;
     c.beginPath(); c.ellipse(m.x, m.y, m.r, m.r * 0.8, 0, 0, Math.PI * 2); c.fill(); c.stroke();
@@ -103,12 +104,13 @@ function dibujar() {
   const L = [];
   for (const e of P.enemigos) if (ver(e.x, e.y, 80 * e.escala)) L.push({ y: e.y, f: () => enemigo(e) });
   L.push({ y: j.y, f: jugador });
+  armasPie(L);
   for (const p of P.proy) if (p.tipo === 'castor' || p.tipo === 'ardilla') L.push({ y: p.y, f: () => proyectil(p) });
   if (P.vacas) { const V = P.vacas; for (let i = 0; i < V.n; i++) { const a = V.a0 + V.t * V.giro + (i / V.n) * Math.PI * 2, x = j.x + Math.cos(a) * V.r, y = j.y - 10 + Math.sin(a) * V.r * 0.8; L.push({ y, f: () => personaje('vaca', { x, y, esc: 0.9, face: Math.cos(a + Math.PI / 2) > 0 ? 1 : -1, walk: P.t * 10, andando: true, alfa: Math.min(1, (V.dura - V.t) * 3) }) }); } }
   for (const f of P.efectos) if (f.tipo === 'zorro' || f.tipo === 'cuerpo') L.push({ y: f.y, f: () => efecto(f) });
   L.sort((a, b) => a.y - b.y); for (const o of L) o.f();
   // lo que vuela por encima
-  for (const p of P.proy) if (p.tipo !== 'castor' && p.tipo !== 'ardilla') proyectil(p);
+  for (const p of P.proy) if (p.tipo !== 'castor' && p.tipo !== 'ardilla' && p.gen !== 'corre') proyectil(p);
   for (const b of P.balas) { c.fillStyle = '#ff3348'; c.beginPath(); c.arc(b.x, b.y, 5, 0, Math.PI * 2); c.fill(); c.fillStyle = '#ffd0d6'; c.beginPath(); c.arc(b.x, b.y, 2.2, 0, Math.PI * 2); c.fill(); }
   for (const f of P.efectos) if (f.tipo !== 'zorro' && f.tipo !== 'cuerpo') efecto(f);
   for (const p of P.parts) { c.globalAlpha = Math.max(0, 1 - p.t / p.max); c.fillStyle = p.col; c.fillRect(p.x - p.tam / 2, p.y - p.tam / 2, p.tam, p.tam); } c.globalAlpha = 1;
@@ -159,13 +161,13 @@ function jugador() {
   const j = P.jug, c = ctx, S = j.salto;
   let z = 0, ang = 0;
   if (S) { const k = S.t / S.dur; z = Math.sin(k * Math.PI) * 120; ang = k * Math.PI * 2; }
-  if (j.muerto) { personaje('bunny', { x: j.x, y: j.y, esc: 0.8, face: j.face, gris: true, alfa: Math.max(0, 1 - P.finT), ang: -1.2 }); return; }
+  if (j.muerto) { personaje(P.lider, { x: j.x, y: j.y, esc: 0.8, face: j.face, gris: true, alfa: Math.max(0, 1 - P.finT), ang: -1.2 }); return; }
   // el anillo dorado del líder
   c.globalAlpha = 0.9; c.strokeStyle = '#ffcb3d'; c.lineWidth = 2; c.setLineDash([5, 4]); c.lineDashOffset = -P.t * 16;
   c.beginPath(); c.ellipse(j.x, j.y + 1, 26, 11, 0, 0, Math.PI * 2); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
   if (P.armas.suricata) { const b = Math.sin(P.t * 3) * 3; personaje('meercat', { x: j.x - j.face * 30, y: j.y - 6, z: 30 + b, esc: 0.55, face: j.face, alfa: 0.9 }); }
   const parp = j.invulT > 0 && Math.floor(P.t * 20) % 2 === 0;
-  personaje('bunny', { x: j.x, y: j.y, z, esc: 0.8, face: j.face, walk: j.walk, andando: j.andando && !S, blanco: j.golpeT / 0.2, alfa: parp ? 0.45 : 1, ang: S ? ang : 0 });
+  personaje(P.lider, { x: j.x, y: j.y, z, esc: 0.8, face: j.face, walk: j.walk, andando: j.andando && !S, blanco: j.golpeT / 0.2, alfa: parp ? 0.45 : 1, ang: S ? ang : 0 });
   if (j.congT > 0) { c.globalAlpha = 0.55; c.fillStyle = '#bfe9ff'; c.strokeStyle = '#7dd3fc'; c.lineWidth = 2; c.beginPath(); rrPath(c, j.x - 24, j.y - 58, 48, 60, 8); c.fill(); c.stroke(); c.globalAlpha = 1; }
   barra(j.x, j.y + 10, 46, j.vida / j.vidaMax, j.vida / j.vidaMax < 0.3 ? '#ff4b5c' : '#5fe05a');
 }
@@ -175,6 +177,7 @@ function barra(x, y, w, k, col) {
 }
 function proyectil(p) {
   const c = ctx;
+  if (p.gen) return proyectilGenDibuja(p);
   if (p.tipo === 'zanahoria') {
     c.save(); c.translate(p.x, p.y); c.rotate(Math.atan2(p.vy, p.vx));
     shape(c, poly(10, 0, -7, -4.5, -7, 4.5), '#ff8a1a', 1.6); line(c, [-7, -2, -12, -5], '#4fae3e', 2.2); line(c, [-7, 2, -12, 5], '#4fae3e', 2.2); c.restore();
@@ -190,6 +193,7 @@ function proyectil(p) {
 }
 function efecto(f) {
   const c = ctx, k = 1 - f.t / f.max;
+  if (f.gen) return efectoGenDibuja(f);
   if (f.tipo === 'onda' || f.tipo === 'boom') {
     c.globalAlpha = (1 - k) * 0.85; c.strokeStyle = f.tipo === 'onda' ? '#fff6ea' : f.col; c.lineWidth = 6 * (1 - k) + 1;
     c.beginPath(); c.ellipse(f.x, f.y, f.r * (0.3 + k * 0.8), f.r * (0.3 + k * 0.8) * 0.75, 0, 0, Math.PI * 2); c.stroke();

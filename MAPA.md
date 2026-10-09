@@ -176,27 +176,32 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/skate/js/juego.js` · 46 KB · SK_LIGERO, SK_BRILLO, SK_W, SK_LANES, SK_CALZADA, SK_HERO_X, SK_VIDA, SK_BOSS_T, SK_OLA_T, SK_ESCALA_HEROE, SK_COLOR, SAVE, sonidoApagado, volGeneral, volMusica, SK_HEROES, SK_ENEMIGOS, SK_JEFES, skU, skHp, skRand, skHeroe, SK_ARMAS, SK_PASIVAS, SK_CLASES, SK_XP, SK_TALENTOS, skCartera, skGuardaCartera, skAplicaTalentos, SK_JEFE_DE, SK_DIFS, skCampLeer, skCampGuarda, skMundoAbierto, skNivelAbierto, SK, SK_CV, SKC, skPolvoT … (+48)
 - `games/skate/js/local.js` · <1 KB · tr
 - `games/skate/js/mundos.js` · 10 KB · SK_MUNDOS
-- `games/survivors/index.html` · 25 KB
+- `games/survivors/index.html` · 26 KB
 - `games/survivors/sw.js` · <1 KB
 - `games/survivors/css/survivors.css` · 10 KB
+- `games/survivors/idioma/en-facciones.js` · 12 KB
 - `games/survivors/idioma/en.js` · 15 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
+- `games/survivors/js/armas-tipos.js` · 14 KB · CONTINUAS, SONIDO_TIPO, estadoArma, empujeA, TIPOS, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
 - `games/survivors/js/armas.js` · 8 KB · vArma, armasDisparan, DISPARO, aura, curarSuave, vacasGiran, saltoChaos, explotar, moverProyectiles
-- `games/survivors/js/catalogo.js` · 6 KB · STATS, ABILITIES, ITEMS, FAC_JUGABLES, isUnlocked, facNow, facOfCard, ARMA_DE, cardMods, modsPartida, pc, effStats, cardStats, cardDesc, passiveText, idlePower, give, metaDefaults, newSave, migrateSave
+- `games/survivors/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, FAC_JUGABLES, minutosTotales, isUnlocked, facNow, armaDeFac, facOfCard, ARMA_DE, cardMods, modsPartida, pc, effStats, cardStats, cardDesc, passiveText, bloqueadaTexto, idlePower, give, metaDefaults, newSave, migrateSave
 - `games/survivors/js/cofre.js` · 7 KB · sleep, cofreId, sorteoCofre, iconoOp, nivelOp, abrirCofre, notas, FANFARRIA, confeti, tiembla, flash, entregaCofre
+- `games/survivors/js/datos-facciones-2.js` · 7 KB
+- `games/survivors/js/datos-facciones.js` · 11 KB · DESBLOQUEO, PASOS, BASE_TIPO, armaFaccion, ARMA_INICIAL
 - `games/survivors/js/datos.js` · 11 KB · SV, ARMAS, PASIVAS, EFECTO, RELLENO, ENEMIGOS, vidaPorMinuto, OLEADAS, MINIJEFES, EVENTOS, JEFE, CAJAS, BOTIN, COFRE
-- `games/survivors/js/dibujo.js` · 20 KB · ctx, VW, hacerSuelo, cosaEn, dibujaCosa, pies, personaje, ROJOS, rojoDe, dibujar, gema, cosaSuelta, DORADOS, doradoDe, enemigo, jugador, barra, proyectil, efecto, ICONOS, iconoCarta, marcador, hueco, pips
+- `games/survivors/js/dibujo.js` · 21 KB · ctx, VW, hacerSuelo, cosaEn, dibujaCosa, pies, personaje, ROJOS, rojoDe, dibujar, gema, cosaSuelta, DORADOS, doradoDe, enemigo, jugador, barra, proyectil, efecto, ICONOS, iconoCarta, marcador, hueco, pips
+- `games/survivors/js/facciones.js` · 2 KB · pintaFaccion, faltanMin, abrirFacciones
 - `games/survivors/js/interfaz.js` · 9 KB · cv, ajustar, TECLAS, TACTIL, mandoTeclado, jugando, aLogico, soltar, sueltaMando, empezar, abrirNivel, FRASES_PAUSA, pausar, seguir, mostrarFin, antes, fotograma, menuT, fondoMenu
 - `games/survivors/js/juego.js` · 23 KB · P, sigId, MANDO, modsJugador, nuevaPartida, nvP, multDano, multRecarga, radioRecoger, velJugador, CELDA, REJ, claveR, rehacerRejilla, cerca, masCercano, crearEnemigo, puntoFuera, elegirPeso, oleadas, tocaShiny, marcaShiny, soltarCofre, llegaJefe, moverEnemigos, jefeAtaca, herir, golpeCajas, romperCaja, matar, curar, danarJugador, soltarGema, recoger, ganarXp, puedeMejorar, opcionesNivel, aplicarOpcion, numero, particulas … (+7)
-- `games/survivors/js/menus.js` · 6 KB · VISTA, enPartida, goHome, openColl, titlePopups, showMenu, pintaRecord, dibujaPortada, optOn, openOptions, optButtons, saveCode, soundBtns
-- `games/survivors/js/novedades.js` · 3 KB · NEWS
+- `games/survivors/js/menus.js` · 7 KB · VISTA, enPartida, goHome, openColl, titlePopups, showMenu, pintaRecord, dibujaPortada, optOn, openOptions, optButtons, saveCode, soundBtns
+- `games/survivors/js/novedades.js` · 4 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/tacticas/index.html` · 7 KB
-- `games/tacticas/css/tacticas.css` · 17 KB
-- `games/tacticas/js/combate.js` · 23 KB · POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, menuEl, abrirMenu, cerrarMenu, elegirObjetivo, decidir, pintarFilas, actualizarFilas, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder … (+5)
+- `games/tacticas/css/tacticas.css` · 18 KB
+- `games/tacticas/js/combate.js` · 24 KB · POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, menuEl, abrirMenu, cerrarMenu, elegirObjetivo, decidir, pintarFilas, actualizarFilas, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder … (+5)
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
-- `games/tacticas/js/escena.js` · 12 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, FONDOS, SUELO, fondoDe, dibujar, placa, rrFill, flecha, pintarLuchador
+- `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, FONDOS, SUELO, fondoDe, dibujar, rrFill, flecha, pintarLuchador
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
 - `games/tacticas/js/novedades.js` · 1 KB · NEWS
 - `games/tacticas/js/pantallas.js` · 21 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, abrirNovedades, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones

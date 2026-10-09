@@ -12,7 +12,7 @@ function vArma(k) {
 function armasDisparan(dt) {
   const R = multRecarga();
   for (const k in P.armas) {
-    if (k === 'suricata') continue;   // el aura va aparte
+    if (k === 'suricata' || CONTINUAS.has(ARMAS[k].tipo)) continue;   // las auras, lo que gira y los escudos van aparte
     if (k === 'vacas' && P.vacas) continue;   // mientras giran las vacas no cuenta la recarga
     P.cd[k] = (P.cd[k] || 0) - dt;
     if (P.cd[k] > 0) continue;
@@ -20,6 +20,7 @@ function armasDisparan(dt) {
     const hecho = DISPARO[k](v);
     P.cd[k] = hecho === false ? 0.4 : v.cd * R;   // si no había a quién disparar, vuelve a mirar enseguida
   }
+  armasContinuas(dt);
   if (P.armas.suricata) aura(dt);
   if (P.vacas) vacasGiran(dt);
   if (P.jug.salto) saltoChaos(dt);
@@ -130,6 +131,7 @@ function explotar(x, y, r, dano, col = '#ff9a3c') {
 function moverProyectiles(dt) {
   for (const p of P.proy) {
     p.t -= dt;
+    if (p.gen) { moverGen(p, dt); continue; }   // las armas de las otras facciones: armas-tipos.js
     if (p.tipo === 'zanahoria' || p.tipo === 'ardilla') {
       p.x += p.vx * dt; p.y += p.vy * dt; p.giro = (p.giro || 0) + dt * 14; if (p.walk !== undefined) p.walk += dt * 18;
       cerca(p.x, p.y + (p.tipo === 'ardilla' ? 0 : 14), p.tipo === 'ardilla' ? 12 : 8, e => {

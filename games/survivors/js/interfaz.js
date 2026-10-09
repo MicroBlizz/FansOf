@@ -93,15 +93,17 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && jug
 /* ---------- el final: premios, misiones y logros ---------- */
 function mostrarFin() {
   const g = P.ganado, t = P.ganado ? P.t : Math.min(P.t, SV.duracion), E = ECON.partida, min = Math.floor(t / 60);
-  const F = FACTIONS.animales, usadas = Object.keys(P.armas);
+  const F = FACTIONS[P.fac], usadas = Object.keys(P.armas);
   // oro y gemas
   const gold = Math.round(min * E.porMinuto + (P.kills / 100) * E.por100Bajas + (g ? E.victoria : 0) + P.oroCajas), gems = g ? E.gemasVictoria : 0;
   // experiencia: para el líder y para cada carta-arma que has usado
   const xp1 = Math.round(Math.max(1, min) * E.xpPorMinuto * (g ? ECON.winXpMult : 1)), cartas = new Set([F.leader]);
   for (const a of usadas) cartas.add(ARMAS[a].carta);
   for (const k of cartas) uSave(k).xp += xp1;
-  cierraRetos(g, { t, kills: P.kills, nivel: P.nivel, cofres: P.cofres, elites: P.elites, armas: usadas, vida: P.jug.vida / P.jug.vidaMax });
-  let rw = give(gold, gems, xp1 * cartas.size, { tipo: 'otro', victoria: g }) + passMatch(g);
+  const abiertas = FAC_JUGABLES.filter(isUnlocked);
+  cierraRetos(g, { fac: P.fac, t, kills: P.kills, nivel: P.nivel, cofres: P.cofres, elites: P.elites, armas: usadas, vida: P.jug.vida / P.jug.vidaMax });
+  const nuevas = FAC_JUGABLES.filter(f => isUnlocked(f) && !abiertas.includes(f));
+  let rw = give(gold, gems, xp1 * cartas.size, { tipo: 'otro', victoria: g }) + passMatch(g) + nuevas.map(f => `<div class="rw-xp">¡Facción nueva: ${FACTIONS[f].name}! Elígela en el menú.</div>`).join('');
   // objetos que han salido de las cajas: sin servidor se dan aquí; con servidor aún no hay camino validado (pendiente)
   if (P.objetosCajas && !ECO.servidor('economia')) {
     const got = []; for (let i = 0; i < P.objetosCajas; i++) got.push(idleItem());

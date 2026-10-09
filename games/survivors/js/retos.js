@@ -10,13 +10,14 @@ function cierraRetos(win, o) {
   if (o.cofres) missionEvent('cofre', o.cofres);
   if (o.elites) missionEvent('elite', o.elites);
   for (const a of o.armas) stat('arma_' + a, 1);
+  stat('fac_' + o.fac, 1);
   SAVE.stats.best_t = Math.max(SAVE.stats.best_t || 0, Math.floor(o.t));
   SAVE.stats.best_k = Math.max(SAVE.stats.best_k || 0, o.kills); SAVE.stats.best_n = Math.max(SAVE.stats.best_n || 0, o.nivel);
   const h = new Date().getHours(); if (h < 5) stat('night', 1);
   if (o.kills >= 1500) stat('massacre', 1);
   if (o.armas.length >= SV.maxArmas) stat('arsenal', 1);
   if (!win) { stat('lose', 1); SAVE.stats.streak = 0; achScan(); return; }
-  missionEvent('win', 1); missionEvent('bosskill', 1); missionEvent('facwin', 1, 'animales');
+  missionEvent('win', 1); missionEvent('bosskill', 1); missionEvent('facwin', 1, o.fac); stat('facwin_' + o.fac, 1);
   if (o.vida < 0.15) stat('closecall', 1);
   SAVE.stats.streak = (SAVE.stats.streak || 0) + 1; SAVE.stats.bestStreak = Math.max(SAVE.stats.bestStreak || 0, SAVE.stats.streak);
   achScan();
@@ -78,8 +79,15 @@ const RETOS = {
     // -- Cartas: cada arma tiene su logro de usarla y cada carta el de subirla de nivel
     const F = FACTIONS.animales;
     for (const a in ARMAS) {
+      if (armaDeFac(a) !== 'animales') continue;
       const nm = ARMAS[a].nombre;
       fam('ar_' + a, 'c', 'arma_' + a, [1, 10, 50, 100, 250], [5, 5, 10, 15, 25], `Fan de ${nm}`, g => veces(g, `Juega una partida con ${nm}.`, `Juega {n} partidas con ${nm}.`), 'Carta de Animales Locos.');
+    }
+    // -- Las otras facciones: jugar y ganar con cada una
+    for (const f of Object.keys(DESBLOQUEO)) {
+      const nm = FACTIONS[f].name;
+      fam('fp_' + f, 'c', 'fac_' + f, [1, 10, 50], [5, 10, 25], `Fan de ${nm}`, g => veces(g, `Juega una partida con ${nm}.`, `Juega {n} partidas con ${nm}.`), 'Una facción más para sobrevivir.');
+      fam('fw_' + f, 'c', 'facwin_' + f, [1, 5], [10, 25], `Campeón de ${nm}`, g => veces(g, `Gana una partida con ${nm}.`, `Gana {n} partidas con ${nm}.`), 'SurvivalBot no esperaba refuerzos.');
     }
     for (const k of [F.leader, ...F.units]) {
       const nm = CFG.cards[k].name;

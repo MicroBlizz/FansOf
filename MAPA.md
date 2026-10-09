@@ -8,11 +8,11 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
 - `core/css/clasificacion.css` · 12 KB
-- `core/css/menus-extra.css` · 21 KB
+- `core/css/menus-extra.css` · 22 KB
 - `core/css/menus-pases.css` · 21 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
-- `core/idioma/en-extra.js` · 17 KB
+- `core/idioma/en-extra.js` · 18 KB
 - `core/idioma/en-frases.js` · 2 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 9 KB
@@ -24,7 +24,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/idioma/en-plantillas.js` · 11 KB
 - `core/idioma/en-raiz.js` · 3 KB
 - `core/idioma/en-salon.js` · 6 KB
-- `core/idioma/en-serie-1.js` · 9 KB
+- `core/idioma/en-serie-1.js` · 10 KB
 - `core/idioma/en-serie-2.js` · 19 KB
 - `core/idioma/en-serie-3.js` · 11 KB
 - `core/js/armario.js` · 24 KB · ARM, LOOK_T, lookDe, LOOK_LISTA, tieneLook, darLook, lookNuevos, ponerLook, marcoDef, tituloDef, rarColor, tituloHtml, MARCO_ARTE, marcoAro, marcoMoneda, marcoGema, marcoEstrella, MARCO_ADORNO, pintaAvatar, armTab, lookOrigen, openArmario, buildArmario, lookPremioBox, lookCara, miLook, pintaLooks, lookCanvas
@@ -38,7 +38,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/retos.js` · 13 KB · MISSIONS, ECON_W, weekStr, seedOf, mDef, mFija, mText, ensureDaily, ensureWeekly, missionEvent, missionTab, untilStr, buildMissions, openMissions, ACH_CATS, ROMAN, ACHF, fam, veces, achName, achJoke, achProgF, popc, achNew, stat, achSoon, achScan, achToast, achReady, achTotals, achClaim, achCat, achRowData
 - `core/js/sw.js` · 3 KB · AQUI, CACHE, mia
 - `core/js/serie/canciones.js` · 19 KB · SCALES, mseq, TRACKS
-- `core/js/serie/catalogo.js` · 7 KB · RARITY, CATALOGO, SLOTS, QTIERS, qStars
+- `core/js/serie/catalogo.js` · 9 KB · RARITY, CATALOGO, SLOTS, QTIERS, qStars
 - `core/js/serie/config.js` · 11 KB · W, CFG, TYPES, TOPS, SKINS, FACTIONS, FACTION_ORDER, CORP, isCorp, losOf, capFirst, ROLES, isLeader, cardDef, SUMMON_PARENT
 - `core/js/serie/frases.js` · 8 KB · CHAT_USERS, CHAT, QUOTES, QUOTES_PH
 - `core/js/serie/iconos.js` · 7 KB · COIN_SVG, GEM_SVG, TICKET_SVG, CHEST_SVG, SLOT_SVG, LOCK_SVG, FLAME_SVG, SOUL_SVG, ICONS, CROWN_SVG, STAR_SVG, FAC_COLOR
@@ -76,7 +76,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/economia-sombra.js` · 8 KB · ECO_SOMBRA
 - `core/js/sistema/economia.js` · 6 KB · TOPES_COMUNES, ECO
 - `core/js/sistema/flags.js` · 7 KB
-- `core/js/sistema/gachapon.js` · 15 KB · MAQUINAS, rarOfPull, gachaTab, rollRarity, onePull, resultadoTirada, copiaDeServidor, pullCost, pull, acabarTirada, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, oddsHead, oddsLine, oddsPity, oddsNote, buildGachaText, drawGacha, openGacha
+- `core/js/sistema/gachapon-anim.js` · 24 KB · GACHA_FX
+- `core/js/sistema/gachapon.js` · 16 KB · MAQUINAS, rarOfPull, gachaTab, pityLegObj, rollRarity, onePull, resultadoTirada, copiaDeServidor, pullCost, pull, acabarTirada, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, oddsHead, oddsLine, oddsPity, oddsNote, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
 - `core/js/sistema/horas-extra.js` · 11 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC
 - `core/js/sistema/idioma.js` · 11 KB · IDIOMA, tr
@@ -84,7 +85,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/opciones.js` · 5 KB · MENU_TRACKS, menuTrack, idiomaElegido, BANDERAS, cajaIdioma, optComunes, installEvt, isStandalone, installApp
 - `core/js/sistema/pantallas.js` · 7 KB · show, hideScreens, ART_FIT, drawArt, RAR_ORDER, updateWallets, needXp, canLevel, levelUp, confirmBox, toastTimer, toast, updateBadges
 - `core/js/sistema/probabilidades.js` · 3 KB · pct, probsMaquina, probsHtml
-- `core/js/sistema/progreso.js` · 6 KB · ECON, catalogo, fitsFac, defOf, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
+- `core/js/sistema/progreso.js` · 7 KB · ECON, catalogo, fitsFac, defOf, FLAGS_CATALOGO, enCatalogo, rollQ, tierOf, avgQ, statsOf, rnd, valsOf, SHOP, SAVE_KEY, SAVE, loadSave, saveGame, uSave, invGet
 - `core/js/sistema/pruebas.js` · 4 KB · PRUEBAS_COPIA, PRUEBAS_DINERO, copiaPruebas, botonPruebas, pruebasClic, activarPruebas, volverDePruebas
 - `core/js/sistema/sonido.js` · 17 KB · AC, audioInit, tone, noise, SFX, THROTTLE, lastPlay, play, M, applyVolume, midiHz, degMidi, musicInit, mnote, mnoise, MDRUM, SHEP, shepardOf, snote, musicStep, musicSet, musicPump
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
@@ -107,6 +108,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-15.js` · 6 KB
 - `games/rumble/idioma/en-16.js` · 6 KB
 - `games/rumble/idioma/en-17.js` · 6 KB
+- `games/rumble/idioma/en-18.js` · 3 KB
+- `games/rumble/idioma/en-19.js` · 5 KB
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
@@ -118,7 +121,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/01-campo.js` · 19 KB · TRAY_Y, FIELD_DY, RIVER, BRIDGES, BASE_BRIDGES, RIVER_OPEN, BRIDGE_STYLE, BRIDGE_HALF, BOUNDS, ZONE, PATHS, distToSeg, nearPath, STRUCT_SPOTS, freeSpot, buildBG, decor, bigDecor, buildBridges
 - `games/rumble/js/01b-unidades.js` · 14 KB · FAC_BAL
 - `games/rumble/js/01c-cartas.js` · 8 KB · HEALER_SPELL
-- `games/rumble/js/02a-objetos.js` · 7 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
+- `games/rumble/js/02a-objetos.js` · 10 KB · CARD_RAR, ABILITIES, FAC_ITEM, worldFac, ITEMS, COFRE
 - `games/rumble/js/02b-mundos.js` · 8 KB · WORLDS, CEO_WI, BOSS_MODE, BOSS_HP, BOSS_ART, BOSS_SHORT, BDIFF, BOSS_TIERS, bossOf, bossHp, bossOpen
 - `games/rumble/js/02c-chat.js` · 12 KB · QUIPS, CHAT_PH, CHAT_FAC
 - `games/rumble/js/02d-chat-rival.js` · 15 KB · CHAT_VS, CHAT_BOSS, CHAT_UNIT, CHAT_USERS_FAC, QUIPS_FAC, QUIPS_CORRUPT, HEADLINES, HEADLINES_PH, GAME_URL
@@ -128,20 +131,21 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/05-audio.js` · 2 KB · muted, musVol, sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/rumble/js/05b-creadores-datos.js` · 21 KB · IA_FIRST, CHAT_IA, HEADLINES_IA, BOSS_QUOTE_IA
 - `games/rumble/js/05c-creadores-arte.js` · 15 KB · SKIN_C, cdev, screenHead
-- `games/rumble/js/06a-despliegue.js` · 16 KB · shake, puff, ring, sparks, chips, addNum, impact, flashAt, slashFx, hitStop, hitLines, screenFlash, canDeploy, validSpot, snapSpot, spawnUnit, unitLevel, applySpawnMods, spawnShare, applyAbility, applyEquip, applyItem, applyEnemyGear, doDeploy, playerPlay, playCard, tryPlayerDeploy, targetable, laneStruct, tauntR, rangeOf
+- `games/rumble/js/06a-despliegue.js` · 17 KB · shake, puff, ring, sparks, chips, addNum, impact, flashAt, slashFx, hitStop, hitLines, screenFlash, canDeploy, validSpot, snapSpot, spawnUnit, unitLevel, applySpawnMods, spawnShare, applyAbility, applyEquip, applyItem, applyEnemyGear, doDeploy, playerPlay, playCard, tryPlayerDeploy, targetable, laneStruct, tauntR, rangeOf
 - `games/rumble/js/06b-movimiento.js` · 12 KB · acquire, moveToward, explodeBeaver, attack, chainOne, knockBack, zapChain, updatePassives, dmgMult, cdMult, topOf
 - `games/rumble/js/06c-dano.js` · 18 KB · hurt, kill, passiveKill, PROJ, shoot, bounceShot, updateProjs
 - `games/rumble/js/06d-unidades.js` · 20 KB · updateUnit, summonTick, pulseTick, VIRAL, viralTick, teamFightTick, hackTick, blinkTick, shieldUpTick, actionTick, expireUnit, tauntTick, bunnyJump, updateStruct, updateBoss, separate, constrain
 - `games/rumble/js/06e-ia-y-partida.js` · 18 KB · chooseLane, aiUpdate, CONTRA, foeRoleDom, laneLess, aiGeneric, timeUp, endMatch, updateGame, updateParts, FUR, BIG, CORP_BIG, deathFx, structDeathFx
-- `games/rumble/js/06f-sanadores.js` · 5 KB · healFwd, HEAL_RANGED_PEN, HEAL_TOWER_BACK, healAim, inHealCone, healOne, healPulse, followAlly
+- `games/rumble/js/06f-sanadores.js` · 6 KB · healFwd, HEAL_RANGED_PEN, HEAL_TOWER_BACK, healAim, inHealCone, healOne, healPulse, followAlly
 - `games/rumble/js/07a-escena.js` · 13 KB · cv, ctx, VIEW, CLOUDS, render, AMB, AMB_KIND, AMB_COL, ambNew, drawAmbient, drawWater, drawClouds, drawFog, drawZones
-- `games/rumble/js/07b-unidades.js` · 20 KB · drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon
+- `games/rumble/js/07b-unidades.js` · 20 KB · drawUnitShadow, drawFoot, drawUnit, CORRUPT, corruptOf, EQ_HEAD, EQ_HAND, EQ_NECK, EQ_MIRROR, EQ_BACK, drawEquip, drawWeapon
 - `games/rumble/js/07c-edificios-y-disparos.js` · 21 KB · drawStruct, bar, text, drawBars, flame, drawProj
 - `games/rumble/js/07d-particulas.js` · 17 KB · drawPart, drawNum, drawPend, drawGhost
 - `games/rumble/js/07e-brillos.js` · 1 KB · RGB_DE, rgbOf, glowArea
+- `games/rumble/js/07f-objetos-nuevos.js` · 6 KB · EQ_NUEVOS
 - `games/rumble/js/08-controles.js` · 2 KB · stage, elCards, input, slotKey, renderCard
 - `games/rumble/js/09a-chat-y-campana.js` · 23 KB · RANK, avgLevel, chatSt, CHAT_ESPEJO, chatSay, chatBurst, chatTick, chatClear, chatCd, chatEv, chatWatch, shareHeadline, wrapLines, makeShareImage, shareResult, lvlStars, worldOpen, levelOpen, findLevel, nextLevel, enemyLabel, buildCamp, openCamp, openPrep, setupMatch, enemyExtras, startGame
-- `games/rumble/js/09b-recompensas-y-hud.js` · 19 KB · grantRewards, fit, toLogical, bannerTimer, bannerQ, banner, nextBanner, bannerClear, showTut, hideTut, hud, roleOf, showCardTip, hideCardTip, selectCard, endPointer, fieldTap
+- `games/rumble/js/09b-recompensas-y-hud.js` · 20 KB · grantRewards, fit, toLogical, bannerTimer, bannerQ, banner, nextBanner, bannerClear, showTut, hideTut, hud, roleOf, showCardTip, hideCardTip, selectCard, endPointer, fieldTap
 - `games/rumble/js/09c-pantallas.js` · 9 KB · BG_KEY, ensureBG, startMatch, pauseGame, resumeGame, goHome, toMenu, BOSS_QUOTE, showEnd
 - `games/rumble/js/09d-faccion-nueva.js` · 3 KB · unlockChip, unlockBox, showUnlock
 - `games/rumble/js/10-dificultad.js` · 17 KB · CDIFF, CD_ORDEN, cdHard, cdRoll, CAMP_SUB, ENEMY_GEAR, MB_GEAR_ON, campDiff, CAMP_KEY, campOf, starsD, anyStarsD, worldOpenD, levelOpenD, gearRow, resetMods, setupHardMode, applyMatchMods, hardBanner, hudMods, effStats, cardStats, cardDesc, passiveText, OWN_CALLOUT, showLoadout, legendaryPrize, onLand, tickExtras, deathExtras, confetti
@@ -173,8 +177,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 5 KB · SALON_PVP, SALON_DIF, salonDif, MIT_VISTAS, mitVista, mitV, SALON
-- `games/rumble/js/novedades.js` · 27 KB · NEWS
+- `games/rumble/js/novedades.js` · 28 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 9 KB
+- `games/rumble/js/retos-logros-2.js` · 5 KB · LOGROS_ANTES, PVP_LIGAS, armGanables, armTengo
 - `games/rumble/js/retos-logros.js` · 25 KB
 - `games/rumble/js/retos-perfil.js` · 1 KB
 - `games/rumble/js/retos.js` · 7 KB · facLvl, gearN, worldStars, allStars, ownCount, campStars, RETOS
@@ -244,7 +249,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/unidades.js` · 14 KB · FAC_BAL
 - `gestion/index.html` · 16 KB
 - `herramientas/android_www.py` · <1 KB
-- `herramientas/balance.py` · 6 KB
+- `herramientas/balance.py` · 7 KB
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
 - `herramientas/datos.html` · 6 KB

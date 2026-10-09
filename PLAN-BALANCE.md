@@ -75,6 +75,7 @@ Va en un solo proceso, así que tarda más que la opción A.
 - **El líder**: la IA de pruebas no lo saca por sí sola. La prueba hace que las dos partes lo saquen en cuanto pueden; sin eso, los objetos no harían nada (pasó en la primera medición).
 - **Lo visual va apagado** (partículas, sonidos, chat): no cambia el resultado (se comprobó jugando las mismas partidas con y sin) y va mucho más rápido.
 - **Objetos de facción**: solo se prueban en su facción, con 4 veces más semillas; aun así tienen menos partidas que los demás (resultado menos seguro).
+- **Objetos con aturdimiento o frenazo** (Micrófono, Gorro de cumpleaños, Mazo) pesan poco en un solo líder: necesitan algo más (vida, daño) para servir.
 - **Precisión**: con 216 partidas, un margen se mueve más o menos ±0,1 de una medición a otra. Diferencias más pequeñas no significan nada.
 - **Qué NO mide**: si la campaña es fácil (la IA de la campaña no lleva habilidades), los hechizos, ni las estrellas o niveles de las cartas. Para la dificultad de la campaña haría falta otra prueba: niveles de campaña jugados por la IA con y sin habilidades.
 
@@ -89,5 +90,8 @@ Margen después de los arreglos de DLC, Microtransacción, Clon, Rage Quit y Gig
 Renacer 1,95 · DLC 1,69 · Cadena 1,67 · Gigante 1,59 · Clon 1,58 · Imán 1,57 · Piel 1,54 · Plasma 1,49 · Rage Quit 1,43 · Hitbox 1,38 · Puños 1,34 · Reflejos 1,28 · Sigilo 1,20 · Grito 1,17 · Vampiro 1,09 · Furia 1,04 · Modo foto 0,98 · Microtransacción 0,96 · Provoca 0,63 · Escarcha 0,21 · Speedrun 0,02 · Cafeína -0,04
 
 Objetos (primera medición, IA anterior, en % de victorias): ninguno roto. Los más fuertes: Alfombrilla 63 %, Teclado RGB 61 %, Cofre 59 %, Botón de pausa 59 %. BanHammer de oro y Micrófono de oro no aportan.
+
+Objetos (9-10-2026, juego 0.9.111, margen; solo los lleva el líder, así que son más pequeños): de referencia, Casco con cuernos (común) 0,41 · Espada de cartón (común) 0,36 · Teclado RGB (épico) 0,77 · Alfombrilla (épica) 0,80. Objetivo aproximado por rareza: común 0,3-0,45 · poco común 0,35-0,5 · rara 0,4-0,6 · épica 0,6-0,85 · legendaria 0,85-1,1. La herramienta avisa en los objetos por encima de 1,1 o por debajo de 0,15.
+Tanda nueva (tras el flag 'objetos-nuevos'), ya ajustada: Katana 1,00 · Corona del troll 0,85 · Capa 0,70 · Joystick 0,68 · Powerbank 0,57 · Cable HDMI 0,47 · Máscara 0,43 · Mazo del hotfix 0,43 · Gorro de cumpleaños 0,38 · Bolsa de pipas 0,37 · Mochila 0,36 · Gorro de la abuela 0,34 · Pincho de kebab 0,33 · Llavero 0,28 · Casco de moto 0,26 · Palo selfie 0,28 · Patinete 0,28 · Micrófono de karaoke 0,20.
 
 Pendiente: Renacer algo alta; Cafeína, Speedrun, Escarcha y Provoca casi no hacen nada; volver a medir los objetos con la IA actual.

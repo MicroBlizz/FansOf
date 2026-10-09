@@ -272,6 +272,7 @@
    6000,
    12000
   ],
+  "legSegura": false,
   "lvlStep": 0.06,
   "maxLvl": 10,
   "maxStars": 5,
@@ -279,11 +280,12 @@
    "basic": 30,
    "common": 25,
    "epic": 12,
-   "legendary": 3,
-   "rare": 30
+   "legendary": 1.5,
+   "rare": 31.5
   },
   "pityEpic": 10,
   "pityLeg": 50,
+  "pityLegObj": 90,
   "pityQ": 10,
   "pull": 50,
   "reroll": {
@@ -496,6 +498,7 @@
  "habilidades": {
   "cadena": {
    "fac": "heroes",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -503,6 +506,7 @@
   },
   "cafeina": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -510,6 +514,7 @@
   },
   "clon": {
    "fac": "memes",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "legendary",
@@ -517,6 +522,7 @@
   },
   "dlc": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -524,6 +530,7 @@
   },
   "escarcha": {
    "fac": "nomuertos",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -531,6 +538,7 @@
   },
   "furia": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "legendary",
@@ -538,6 +546,7 @@
   },
   "gigante": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "legendary",
@@ -545,6 +554,7 @@
   },
   "grito": {
    "fac": "nomuertos",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -552,6 +562,7 @@
   },
   "hitbox": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
@@ -559,6 +570,7 @@
   },
   "iman": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -566,6 +578,7 @@
   },
   "microtrans": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -573,6 +586,7 @@
   },
   "modofoto": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -580,6 +594,7 @@
   },
   "piel": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -587,6 +602,7 @@
   },
   "plasma": {
    "fac": "ciber",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -594,6 +610,7 @@
   },
   "provoca": {
    "fac": "memes",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -601,6 +618,7 @@
   },
   "punos": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -608,6 +626,7 @@
   },
   "ragequit": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -615,6 +634,7 @@
   },
   "reflejos": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
@@ -622,6 +642,7 @@
   },
   "renacer": {
    "fac": "nomuertos",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -629,6 +650,7 @@
   },
   "sigilo": {
    "fac": "animales",
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -636,6 +658,7 @@
   },
   "speedrun": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
@@ -643,6 +666,7 @@
   },
   "vampiro": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -737,6 +761,7 @@
  "objetos": {
   "alfombrilla": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -744,6 +769,7 @@
   },
   "almohada": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -751,6 +777,7 @@
   },
   "auriculares": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -758,6 +785,7 @@
   },
   "baguette": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -765,6 +793,7 @@
   },
   "banhammer_oro": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "legendary",
@@ -772,13 +801,39 @@
   },
   "bebida_xxl": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
    "slot": "acc"
   },
+  "bolsa_pipas": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "basic",
+   "slot": "acc"
+  },
   "boton_pausa": {
    "fac": null,
+   "flag": null,
+   "n": 1,
+   "pass": false,
+   "rar": "epic",
+   "slot": "acc"
+  },
+  "cable_hdmi": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "weapon"
+  },
+  "capa_heroe": {
+   "fac": null,
+   "flag": "objetos-nuevos",
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -786,13 +841,23 @@
   },
   "cartucho_dorado": {
    "fac": "olvidados",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
    "slot": "acc"
   },
+  "casco_moto": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "head"
+  },
   "casco_vr": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -800,6 +865,7 @@
   },
   "claqueta_oro": {
    "fac": "pop",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -807,6 +873,7 @@
   },
   "cofre": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "legendary",
@@ -814,6 +881,7 @@
   },
   "corbata_ceo": {
    "fac": null,
+   "flag": null,
    "n": 3,
    "pass": true,
    "rar": "legendary",
@@ -821,6 +889,7 @@
   },
   "corona_carton": {
    "fac": null,
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "rare",
@@ -828,13 +897,23 @@
   },
   "corona_huesos": {
    "fac": "nomuertos",
+   "flag": null,
    "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "head"
+  },
+  "corona_troll": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
    "pass": false,
    "rar": "legendary",
    "slot": "head"
   },
   "cuernos": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -842,6 +921,7 @@
   },
   "diploma": {
    "fac": null,
+   "flag": null,
    "n": 2,
    "pass": true,
    "rar": "rare",
@@ -849,6 +929,7 @@
   },
   "disco_fisico": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "rare",
@@ -856,6 +937,7 @@
   },
   "espada_carton": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -863,6 +945,7 @@
   },
   "gafas_pixel": {
    "fac": "memes",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -870,41 +953,119 @@
   },
   "gorra_reves": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
+   "slot": "head"
+  },
+  "gorro_abuela": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "basic",
    "slot": "head"
   },
   "gorro_aluminio": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
    "slot": "head"
   },
+  "gorro_cumple": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "common",
+   "slot": "head"
+  },
+  "joystick": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "epic",
+   "slot": "weapon"
+  },
+  "katana_steam": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "legendary",
+   "slot": "weapon"
+  },
   "lanzaconfeti": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
    "slot": "weapon"
   },
+  "llavero_suerte": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "common",
+   "slot": "acc"
+  },
   "mando_cable": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
    "slot": "weapon"
   },
+  "mascara_luchador": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "head"
+  },
+  "mazo_hotfix": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "epic",
+   "slot": "weapon"
+  },
+  "micro_karaoke": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "weapon"
+  },
   "microfono_oro": {
    "fac": "streamers",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
    "slot": "acc"
   },
+  "mochila_ruedas": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "common",
+   "slot": "acc"
+  },
   "nucleo_plasma": {
    "fac": "ciber",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -912,20 +1073,55 @@
   },
   "orejas_gato": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
    "slot": "head"
   },
+  "palo_selfie": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "basic",
+   "slot": "weapon"
+  },
   "pase_caducado": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "common",
    "slot": "acc"
   },
+  "patinete": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 2,
+   "pass": false,
+   "rar": "basic",
+   "slot": "acc"
+  },
+  "pincho_kebab": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "weapon"
+  },
+  "powerbank": {
+   "fac": null,
+   "flag": "objetos-nuevos",
+   "n": 1,
+   "pass": false,
+   "rar": "rare",
+   "slot": "acc"
+  },
   "raton_campeon": {
    "fac": "gamer",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -933,6 +1129,7 @@
   },
   "raton_dpi": {
    "fac": null,
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "rare",
@@ -940,6 +1137,7 @@
   },
   "silla_gamer": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -947,6 +1145,7 @@
   },
   "taza": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "basic",
@@ -954,6 +1153,7 @@
   },
   "taza_indie": {
    "fac": "creadores",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -961,6 +1161,7 @@
   },
   "teclado_rgb": {
    "fac": null,
+   "flag": null,
    "n": 1,
    "pass": false,
    "rar": "epic",
@@ -968,6 +1169,7 @@
   },
   "yelmo_olimpo": {
    "fac": "heroes",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -975,6 +1177,7 @@
   },
   "zanahoria_oro": {
    "fac": "animales",
+   "flag": null,
    "n": 2,
    "pass": false,
    "rar": "legendary",
@@ -1082,6 +1285,12 @@
    }
   ],
   "logros": {
+   "armario": [
+    10,
+    15,
+    25,
+    60
+   ],
    "base": [
     10,
     60,
@@ -1155,6 +1364,14 @@
    ],
    "ceo": [
     150
+   ],
+   "ceow": [
+    15,
+    15,
+    20,
+    30,
+    45,
+    70
    ],
    "cl_arpia": [
     5,
@@ -3379,6 +3596,31 @@
     65,
     90
    ],
+   "meta5": [
+    5,
+    10,
+    20,
+    40,
+    80
+   ],
+   "meta7": [
+    15,
+    25,
+    40,
+    100
+   ],
+   "mitsem": [
+    10,
+    15,
+    30,
+    50,
+    100
+   ],
+   "mittop": [
+    30,
+    60,
+    100
+   ],
    "myth": [
     150,
     80,
@@ -3451,6 +3693,25 @@
     70,
     100
    ],
+   "pvpchat": [
+    5,
+    10,
+    20
+   ],
+   "pvpliga": [
+    15,
+    25,
+    40,
+    80
+   ],
+   "pvpw": [
+    15,
+    15,
+    25,
+    35,
+    50,
+    80
+   ],
    "quick": [
     5,
     5,
@@ -3475,6 +3736,12 @@
    ],
    "s_broke": [
     30
+   ],
+   "s_carton": [
+    60
+   ],
+   "s_ceoflaw": [
+    60
    ],
    "s_cheap": [
     50
@@ -3523,6 +3790,9 @@
    ],
    "s_prem": [
     30
+   ],
+   "s_pvpcb": [
+    60
    ],
    "s_scrapp": [
     60
@@ -3610,6 +3880,12 @@
     45,
     60,
     90
+   ],
+   "towerh": [
+    5,
+    15,
+    30,
+    60
    ],
    "unlock": [
     50,
@@ -5435,5 +5711,5 @@
    }
   }
  },
- "version": 21
+ "version": 22
 }

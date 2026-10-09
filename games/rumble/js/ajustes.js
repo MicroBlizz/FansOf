@@ -21,6 +21,8 @@ const AJUSTES = {
     quick: { easy: 40, normal: 60, ceo: 150, lose: 10 }, quickCeoGems: 15,                                               // oro en partida rápida
     dupGems: 15,                                                     // gashapón de cartas: una repetida sin estrellas que subir da gemas
     mission: [50, 10],
+    // octubre de 2026: menos legendarias en habilidades y objetos (antes salía 1 de cada 23 tiradas contando las garantías; ahora ~1 de cada 51)
+    odds: { basic: 30, common: 25, rare: 31.5, epic: 12, legendary: 1.5 }, pityLegObj: 90, legSegura: false,
     cardOdds: { rare: 68, epic: 25, legendary: 7 },                  // v0.9.15: gashapón de cartas (hechizos y mata-sanadores)
     starStep: 0.05, maxStars: 5,                                     // cada estrella: +5 % (vida y daño, o fuerza del hechizo)
   },

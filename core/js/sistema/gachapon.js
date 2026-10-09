@@ -10,11 +10,13 @@
 const MAQUINAS = {};
 const rarOfPull = r => (r.it ? defOf(r.it).rar : r.rar);   // la rareza de lo que ha salido, sea una copia o lo que dé otra máquina
 let gachaTab = 'ab', gachaAnim = null, gachaRAF = 0, gachaEsperando = false;
+// a cuántas tiradas está garantizada la legendaria en habilidades y objetos (un juego puede ponerle otra que a las cartas: pityLegObj)
+const pityLegObj = () => ECON.pityLegObj || ECON.pityLeg;
 function rollRarity(kind, force) {
   const P = SAVE.pity, pk = kind, pl = kind + 'L'; P[pk] = (P[pk] || 0) + 1; P[pl] = (P[pl] || 0) + 1;
   let r = 'common';
-  if (P[pl] >= ECON.pityLeg) r = 'legendary';
-  else if (force || P[pk] >= ECON.pityEpic) r = Math.random() < ECON.odds.legendary / (ECON.odds.legendary + ECON.odds.epic) ? 'legendary' : 'epic';
+  if (P[pl] >= pityLegObj()) r = 'legendary';
+  else if (force || P[pk] >= ECON.pityEpic) r = ECON.legSegura !== false && Math.random() < ECON.odds.legendary / (ECON.odds.legendary + ECON.odds.epic) ? 'legendary' : 'epic';   // legSegura: false = la tirada asegurada da épica, nunca legendaria
   else { let x = Math.random() * 100; for (const k of ['legendary', 'epic', 'rare', 'common', 'basic']) { if (x < (ECON.odds[k] || 0)) { r = k; break; } x -= ECON.odds[k] || 0; } }
   if (r === 'epic' || r === 'legendary') P[pk] = 0;
   if (r === 'legendary') P[pl] = 0;
@@ -22,8 +24,8 @@ function rollRarity(kind, force) {
 }
 // v0.9.10: tiradas x1, x10 y x50. Primero se gastan las tiradas gratis; cada tirada cuenta para las garantías
 function onePull(kind, force) {
-  const rar = rollRarity(kind, force), DB = kind === 'ab' ? ABILITIES : ITEMS, fp = kind === 'eq' ? Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && DB[k].fac && isUnlocked(DB[k].fac)) : [];
-  const pool = fp.length && Math.random() < 0.5 ? fp : Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && (kind === 'ab' || !DB[k].fac));   // v0.9.15: objetos de facción
+  const rar = rollRarity(kind, force), DB = kind === 'ab' ? ABILITIES : ITEMS, fp = kind === 'eq' ? Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && DB[k].fac && isUnlocked(DB[k].fac) && enCatalogo(DB, k)) : [];
+  const pool = fp.length && Math.random() < 0.5 ? fp : Object.keys(DB).filter(k => DB[k].rar === rar && !DB[k].pass && (kind === 'ab' || !DB[k].fac) && enCatalogo(DB, k));   // v0.9.15: objetos de facción
   const id = pick(pool), prev = bestCopy(kind, id), nPrev = SAVE.inv.filter(x => x.k === kind && x.id === id).length;
   const P = SAVE.pity, qk = 'q' + kind; P[qk] = (P[qk] || 0) + 1;
   const it = newCopy(kind, id, P[qk] >= ECON.pityQ ? 3 : 0), tq = tierOf(avgQ(it)); if (tq >= 3) P[qk] = 0;
@@ -71,10 +73,12 @@ function acabarTirada(n, c, kind, X, res) {
   if (c.gems > 0 && SAVE.gems === 0) stat('broke', 1);
   saveGame(); updateWallets(); buildGachaText();
   fire('gacha.tirada', n);
+  const ensenar = () => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); };
+  if (GACHA_FX.on()) { gachaAnim = { nuevo: true }; GACHA_FX.tirada(res.map(rarOfPull), X, ensenar); return; }   // la animación nueva (gachapon-anim.js)
   const cv = $('#gacha-cv'); cv.classList.remove('shake'); void cv.offsetWidth; cv.classList.add('shake'); play('roll');
   const top = res.reduce((a, r) => (RAR_ORDER[rarOfPull(r)] < RAR_ORDER[rarOfPull(a)] ? r : a));
   gachaAnim = { t: 0, col: (X ? X.colores : RARITY)[rarOfPull(top)][1] };
-  setTimeout(() => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); }, 1100);
+  setTimeout(ensenar, 1100);
 }
 const RAR_PL = { basic: ['común', 'comunes'], common: ['poco común', 'poco comunes'], rare: ['rara', 'raras'], epic: ['épica', 'épicas'], legendary: ['legendaria', 'legendarias'] };
 function showMulti(res) {
@@ -121,7 +125,7 @@ function buildGachaText() {
     + oddsHead('Calidad de cada efecto (del 50 % al 150 % de su valor)') + QTIERS.map(t => oddsLine(t.name, t.p + ' %')).join('')
     + oddsHead('Garantías')
     + oddsPity('Épica o mejor', P[gachaTab], ECON.pityEpic)
-    + oddsPity('Legendaria', P[gachaTab + 'L'], ECON.pityLeg)
+    + oddsPity('Legendaria', P[gachaTab + 'L'], pityLegObj())
     + oddsPity('Calidad Director o mejor', P['q' + gachaTab], ECON.pityQ)
     + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
     + oddsNote(`Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
@@ -131,6 +135,8 @@ function buildGachaText() {
 }
 function drawGacha() {
   const cv = $('#gacha-cv'); if (!cv || $('#scr-gacha').hidden) { gachaRAF = 0; return; }
+  if (GACHA_FX.on()) { GACHA_FX.maquina(cv, MAQUINAS[gachaTab], gachaTab); gachaRAF = requestAnimationFrame(drawGacha); return; }   // la máquina nueva
+  cv.classList.remove('nueva');
   const LW = 270, LH = 300, R2 = 2; if (cv.width !== LW * R2) { cv.width = LW * R2; cv.height = LH * R2; }
   const c = cv.getContext('2d'); c.setTransform(R2, 0, 0, R2, 0, 0); c.clearRect(0, 0, LW, LH); c.lineJoin = 'round'; c.lineCap = 'round';
   const t = performance.now() / 1000, an = gachaAnim; if (an) an.t += 1 / 60;

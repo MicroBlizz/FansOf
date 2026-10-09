@@ -6,7 +6,7 @@ const pct = v => fmtV(String(Math.round(v * 100) / 100)) + ' %';
 function probsMaquina(kind) {
   const DB = kind === 'ab' ? ABILITIES : ITEMS, O = ECON.odds, lista = {};
   for (const r of ['legendary', 'epic', 'rare', 'common', 'basic']) {
-    const ok = k => DB[k].rar === r && !DB[k].pass, ids = Object.keys(DB);
+    const ok = k => DB[k].rar === r && !DB[k].pass && enCatalogo(DB, k), ids = Object.keys(DB);
     const general = ids.filter(k => ok(k) && (kind === 'ab' || !DB[k].fac)), fp = kind === 'eq' ? ids.filter(k => ok(k) && DB[k].fac && isUnlocked(DB[k].fac)) : [];
     const gp = fp.length ? 0.5 : 1;   // en el equipo, la mitad de las veces sale uno de una facción que ya tienes
     lista[r] = general.map(k => [DB[k].name, O[r] * gp / general.length]).concat(fp.map(k => [DB[k].name, O[r] * 0.5 / fp.length]));
@@ -24,6 +24,6 @@ function probsHtml() {
     + `<p class="small-print">Son las probabilidades reales de cada tirada, sin contar las garantías. Las calcula el servidor con las mismas cifras que se enseñan aquí. Comprar gemas o oro no cambia ninguna.</p>`
     + maqs.map(una).join('')
     + `<h4 class="ol">CALIDAD DE CADA COPIA</h4>${tabla(['Calidad', 'Probabilidad'], QTIERS.map(t => [t.name, pct(t.p)]))}`
-    + `<p class="small-print">Garantías: una épica o mejor como mucho cada ${ECON.pityEpic} tiradas, una legendaria a las ${ECON.pityLeg} y una copia de calidad Director (excelente) o mejor como mucho cada ${ECON.pityQ}. Cada bloque de 10 tiradas trae al menos una épica.</p>`
+    + `<p class="small-print">Garantías: una épica o mejor como mucho cada ${ECON.pityEpic} tiradas, una legendaria a las ${pityLegObj()} y una copia de calidad Director (excelente) o mejor como mucho cada ${ECON.pityQ}. Cada bloque de 10 tiradas trae al menos una épica.</p>`
     + `</div></details>`;
 }

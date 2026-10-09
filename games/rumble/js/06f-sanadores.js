@@ -37,7 +37,8 @@ function healPulse(u, dt) {
   }
   for (const s of structs) {   // v0.9.72: las torres y la sede de su equipo también
     if (!s.alive || s.team !== u.team || s.hp <= 0 || s.hp >= s.maxHp || !inHealCone(u, s)) continue;
-    healOne(u, s); any = true;
+    const antes = s.hp; healOne(u, s); any = true;
+    if (u.team === 'p') stat('towerheal', Math.round(s.hp - antes));   // v0.9.112: para el logro «Mantenimiento de edificios»
   }
   if (!any) return;
   u.healGlowT = G.t;   // v0.9.18: enciende el cono un momento

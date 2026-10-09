@@ -47,7 +47,7 @@ const RETOS = {
   ],
   /* ---------- misiones semanales: cada lunes, la fija y 5 al azar (v0.9.71). Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
   semanalesN: 6,
-  fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 80, 400] }],
+  fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 80, 400], alCobrar: 'meta7' }],
   semanales: [
   { id: 'wwin', tit: 'Semana de resultados', txt: 'Gana 30 partidas.', goal: 30, ev: 'win' },
   { id: 'wkill', tit: 'Reestructuración total', txt: 'Derrota a 2.500 enemigos.', goal: 2500, ev: 'kill' },

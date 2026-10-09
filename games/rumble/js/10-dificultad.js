@@ -139,7 +139,7 @@ function showLoadout(u) {
   if (u.equip) addNum(u.x, u.y, topOf(u) + 40, 'EQUIPADO', '#ffcb3d', 12);
 }
 function legendaryPrize() {
-  const k = Math.random() < 0.5 ? 'ab' : 'eq', DB = k === 'ab' ? ABILITIES : ITEMS, pool = Object.keys(DB).filter(id => DB[id].rar === 'legendary' && !DB[id].pass && (k === 'ab' || !DB[id].fac));
+  const k = Math.random() < 0.5 ? 'ab' : 'eq', DB = k === 'ab' ? ABILITIES : ITEMS, pool = Object.keys(DB).filter(id => DB[id].rar === 'legendary' && !DB[id].pass && (k === 'ab' || !DB[id].fac) && enCatalogo(DB, id));
   return newCopy(k, pick(pool), 3);
 }
 // ---- efectos nuevos (habilidades y objetos de la v0.9.12)

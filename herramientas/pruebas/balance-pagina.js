@@ -44,7 +44,7 @@ function resume(R) {
   return Object.values(g).map(x => ({ id: x.id, partidas: x.n, gana: +(100 * x.gana / x.n).toFixed(1), margen: +(x.margen / x.n).toFixed(2), duracion: Math.round(x.seg / x.n) })).sort((a, b) => b.margen - a.margen);
 }
 function tabla(filas) {
-  return `<table><tr><th>Qué</th><th>Margen</th><th>Gana</th><th>Partidas</th><th>Dura (s)</th></tr>${filas.map(f => `<tr class="${f.margen > 1.9 ? 'mal' : f.margen < 0.5 ? 'flojo' : ''}"><td>${f.id}</td><td>${f.margen.toFixed(2)}</td><td>${f.gana} %</td><td>${f.partidas}</td><td>${f.duracion}</td></tr>`).join('')}</table>`;
+  return `<table><tr><th>Qué</th><th>Margen</th><th>Gana</th><th>Partidas</th><th>Dura (s)</th></tr>${filas.map(f => `<tr class="${f.margen > (f.id.startsWith('eq:') ? 1.1 : 1.9) ? 'mal' : f.margen < (f.id.startsWith('eq:') ? 0.15 : 0.5) ? 'flojo' : ''}"><td>${f.id}</td><td>${f.margen.toFixed(2)}</td><td>${f.gana} %</td><td>${f.partidas}</td><td>${f.duracion}</td></tr>`).join('')}</table>`;
 }
 
 async function mide(que, semillas, parte, valor, auto) {

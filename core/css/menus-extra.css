@@ -173,6 +173,17 @@
 .pf-av.on { border-color: #ffcb3d; box-shadow: 0 0 0 2px var(--outline), 0 0 10px rgba(255, 203, 61, .6); }
 .pf-av canvas { width: 46px; height: 46px; display: block; }
 .profile-card .btn-big { font-size: 26px; padding: 12px 40px 8px; flex: none; }
+/* gashapón nuevo (flag 'gashapon-nuevo', core/js/sistema/gachapon-anim.js): la máquina más alta, la capa de efectos y la carta que entra de golpe */
+#gacha-cv.nueva { width: 300px; height: 350px; }
+#gacha-fx { position: absolute; left: 0; width: 100%; z-index: 4; touch-action: none; cursor: pointer; }
+.gacha-result.fx { background: transparent; }
+.gacha-result.fx .gr-card { animation: gr-pop 0.55s cubic-bezier(0.18, 1.5, 0.4, 1) both; }
+.gacha-result.fx .gr-card.multi .gt { animation: gr-tile 0.32s cubic-bezier(0.2, 1.6, 0.4, 1) both; animation-delay: calc(var(--i, 0) * 45ms + 0.15s); }
+.gacha-result.fx > button { animation: gr-fade 0.3s ease-out 0.45s both; }
+@keyframes gr-pop { from { transform: scale(0.2) rotate(-6deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes gr-tile { from { transform: scale(0.3); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes gr-fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gacha-result.fx .gr-card, .gacha-result.fx .gr-card .gt, .gacha-result.fx > button { animation: none; } }
 @keyframes gshake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px) rotate(-1deg); } 75% { transform: translateX(5px) rotate(1deg); } }
 @keyframes reveal { from { transform: scale(0.2) rotate(-12deg); opacity: 0; } }
 @keyframes prpulse { 50% { box-shadow: 0 0 0 4px var(--gold); } }

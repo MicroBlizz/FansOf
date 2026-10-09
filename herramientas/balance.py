@@ -110,10 +110,11 @@ if fallos or len(RESULTADOS) < PROCESOS:
 partidas = [p for r in RESULTADOS for p in r['partidas']]
 version = RESULTADOS[0].get('version', '')
 lineas = [f'Balance de Rumble {version} · «{QUE}» · {len(partidas)} partidas · {SEMILLAS} semillas{" · valor " + VALOR if VALOR else ""} · {time.strftime("%Y-%m-%d %H:%M")}',
-          'Margen = torres de ventaja al final de quien lo lleva (0 = nada; más de 1,9 = demasiado fuerte; menos de 0,5 = casi no hace nada).', '',
+          'Margen = torres de ventaja al final de quien lo lleva (0 = nada). Avisos: habilidades, más de 1,9 o menos de 0,5; objetos (solo el líder), más de 1,1 o menos de 0,15.', '',
           f'{"Qué":<24}{"Margen":>8}{"Gana":>9}{"Partidas":>10}{"Dura":>7}']
 for k, m, g, n, s in resumen(partidas):
-    aviso = '  ← demasiado fuerte' if m > 1.9 else '  ← casi no hace nada' if m < 0.5 else ''
+    alto, bajo = (1.1, 0.15) if k.startswith('eq:') else (1.9, 0.5)   # los objetos solo los lleva el líder: márgenes más pequeños
+    aviso = '  ← demasiado fuerte' if m > alto else '  ← casi no hace nada' if m < bajo else ''
     lineas.append(f'{k:<24}{m:>8.2f}{g:>8.1f}%{n:>10}{s:>6.0f}s{aviso}')
 print('\n'.join(lineas))
 os.makedirs(os.path.join(RAIZ, '_balance'), exist_ok=True)

@@ -33,7 +33,8 @@ function pvpAnota(r) {
   const M = pvpMio(PVP.modo), antes = pvpCopas(PVP.modo);
   if (r.puntos != null) { M.copas = r.puntos; M.best = Math.max(M.best, r.puntos); }
   if (r.empate) M.racha = 0; else if (r.gano) { M.w++; M.racha++; } else { M.l++; M.racha = 0; }
-  if (!r.empate && r.gano) missionEvent('arenawin', 1); missionEvent('arena', 1);
+  if (!r.empate && r.gano) { missionEvent('arenawin', 1); stat('pvpwin', 1); if (typeof S === 'object' && S && S.e && S.e.crowns >= 2) stat('pvpcomeback', 1); }   // v0.9.112: logros del PvP
+  missionEvent('arena', 1);
   saveGame();
   return (pvpAnota.ult = { d: r.puntos != null ? r.puntos - antes : null, copas: pvpCopas(PVP.modo) });
 }

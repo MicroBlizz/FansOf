@@ -17,7 +17,8 @@ const ECON = Object.assign({
   camp: { first: [100, 10], replay: 30, stars3: [50, 10], boss: [300, 50], lose: 10 },  // [oro, gemas]
   pull: 50,                                                                      // gemas por tirada
   odds: { basic: 30, common: 25, rare: 30, epic: 12, legendary: 3 },            // probabilidades del gashapón (%) · v0.9.63: el 55 % de antes se reparte entre Común y Poco común
-  pityEpic: 10, pityLeg: 50,                                                     // garantía: épica o mejor cada 10, legendaria a las 50
+  pityEpic: 10, pityLeg: 50,                                                     // garantía: épica o mejor cada 10, legendaria a las 50 (un juego puede cambiar la de habilidades y objetos con pityLegObj)
+  // legSegura: false (en AJUSTES.econ) = la épica asegurada de cada 10 tiradas nunca es legendaria; sin ponerlo, a veces sí (por defecto)
   start: { gold: 150, gems: 100 },
   scrap: { basic: 15, common: 25, rare: 60, epic: 150, legendary: 400 },      // oro al despedir una copia (x1 Básica, x1,5 Normal, x2 Buena, x3 Excelente, x5 Perfecta)
   reroll: { basic: 150, common: 250, rare: 500, epic: 1000, legendary: 2000 }, // oro por volver a tirar los números de una copia
@@ -30,6 +31,10 @@ const ECON = Object.assign({
 function catalogo(tipo, efectos) { const out = {}; for (const id in efectos) out[id] = Object.assign({}, CATALOGO[tipo][id], efectos[id]); return out; }
 const fitsFac = (id, f) => !ITEMS[id] || !ITEMS[id].fac || ITEMS[id].fac === f;
 const defOf = it => (it.k === 'ab' ? ABILITIES : ITEMS)[it.id];
+// Un juego puede marcar una habilidad u objeto con flag: 'nombre' (lo nuevo, aún sin abrir): mientras ese flag esté cerrado no sale en el gashapón,
+// la biblioteca, las probabilidades, los premios ni los logros. Se pregunta cada vez (NUCLEO.flag), así que abrirlo llega sin recargar.
+const FLAGS_CATALOGO = { 'objetos-nuevos': 'Tanda de objetos nuevos del gashapón (octubre de 2026)' };
+const enCatalogo = (DB, id) => !!DB[id] && (!DB[id].flag || NUCLEO.flag(DB[id].flag, FLAGS_CATALOGO[DB[id].flag] || 'Habilidades u objetos nuevos'));
 /* ---------- calidades: cada copia tiene la suya ---------- */
 function rollQ(minTier) {
   const pool = QTIERS.slice(minTier || 0); let x = Math.random() * pool.reduce((a, t) => a + t.p, 0);

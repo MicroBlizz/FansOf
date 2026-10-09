@@ -61,6 +61,7 @@ IDIOMA.add({
   '¡CONGELADO!': 'FROZEN!', '¡ESQUIVADO!': 'DODGED!', '¡IMÁN!': 'MAGNET!', '¡OBJETO!': 'ITEM!', '¡Una caja escondía un objeto! Ya lo tienes en el inventario:': 'A box was hiding an item! It is in your inventory now:', 'LICENCIA CADUCADA': 'LICENSE EXPIRED', '¡COFRE DE BOTÍN!': 'LOOT CHEST!',
   '¡MEJORA ÉPICA!': 'EPIC UPGRADE!', 'Mejora de las tuyas, gratis': 'One of yours, for free', '¡DOBLE MEJORA!': 'DOUBLE UPGRADE!', '¡Doble premio!': 'Double prize!', '¡¡¡SUERTE!!!': 'GOOD LUCK!!!',
   '¡¡¡777!!!': '777!!!', '¡TRIPLE MEJORA!': 'TRIPLE UPGRADE!', '¡GENIAL!': 'AWESOME!',
+  '¡HAY MÁS!': 'THERE\'S MORE!', '¡¡CUÁDRUPLE!!': 'QUADRUPLE!!', '¡CUATRO MEJORAS!': 'FOUR UPGRADES!', '¡¡¡777 777!!!': '777 777!!!', '¡¡CINCO MEJORAS!!': 'FIVE UPGRADES!!',
   '¡SURVIVALBOT DESPEDIDO!': 'SURVIVALBOT FIRED!', 'Microblizz anuncia que «nunca le gustó ese robot»': 'Microblizz says it "never liked that robot"',
   'DESPEDIDO': 'FIRED',
   // armas

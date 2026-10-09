@@ -155,6 +155,8 @@ const BOTIN = {
 const COFRE = {
   // peso de que un cofre dé 1, 2 o 3 mejoras (solo importa la proporción: 1/1/1 = 33 % cada una; 4/4/1 = lo común es 1 o 2)
   pesos: { 1: 1, 2: 1, 3: 1 },
-  // los tiempos de la entrega, en milisegundos: lo que tarda en parar cada rueda, el suspense antes de la última y la apertura de la épica
-  entrega: { giro: 900, entreRuedas: 650, suspense: 1300, epica: 1500 },
+  cinco: 0.03,   // con un poco de suerte extra (3 %), el cofre da 5 mejoras en vez de lo que tocara
+  // la entrega va por fases: se abre, sale una mejora y la música se acelera con suspense; ¿saldrá otra?
+  // tiempos en milisegundos. suspense, tempos y latidos: uno por fase (la primera, la segunda…); tempos = velocidad de la música; latidos = lo que tarda cada latido
+  entrega: { epica: 1500, giro: 800, suspense: [1700, 2000, 2300, 2600, 2800], tempos: [1.25, 1.5, 1.8, 2.2, 2.5], latidos: [520, 400, 300, 220, 160] },
 };

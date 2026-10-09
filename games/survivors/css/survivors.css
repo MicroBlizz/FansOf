@@ -57,7 +57,7 @@
 #cof-cofre.sacude { animation: cofSacude .22s linear infinite; }
 #cof-cofre.abre { position: absolute; animation: cofSale .7s ease-out forwards; pointer-events: none; }
 #cof-cofre.abre .tapa { transform: rotate(-32deg) translateY(-6px); }
-#cof-ruedas { position: relative; z-index: 2; display: flex; justify-content: center; gap: 10px; width: 100%; margin-top: -8px; }
+#cof-ruedas { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; margin-top: -8px; }
 .rueda { flex: 1 1 0; max-width: 160px; min-height: 150px; padding: 10px 6px; border-radius: 16px; border: 4px solid var(--outline); background: linear-gradient(180deg, var(--tray-hi), var(--tray)); box-shadow: 0 5px 0 var(--outline); text-align: center; }
 .rueda-cara { height: 76px; display: grid; place-items: center; overflow: hidden; }
 .rueda.girando .rueda-cara { filter: blur(1.5px); }
@@ -69,7 +69,8 @@
 .rueda.grande .rueda-cara { height: 110px; } .rueda.grande .op-ic { width: 96px; height: 96px; font-size: 62px; } .rueda.grande .op-ic canvas { width: 96px; height: 96px; }
 .rueda.grande .rueda-nom { font-size: 24px; }
 #scr-cofre.cof-n1 #cof-rayos, #scr-cofre.jackpot #cof-rayos { opacity: 1; }
-#scr-cofre.suspense { animation: suspense .55s ease-in-out infinite; }
+#scr-cofre.suspense { animation: suspense var(--pulso, .6s) ease-in-out infinite; }
+#scr-cofre.suspense .rueda.para { box-shadow: 0 0 22px 4px rgba(255, 203, 61, .6), 0 5px 0 var(--outline); }
 #scr-cofre.suspense .rueda.girando { border-color: #ff4b5c; box-shadow: 0 0 30px 6px rgba(255, 75, 92, .8), 0 5px 0 var(--outline); }
 #scr-cofre.jackpot { background: radial-gradient(circle at 50% 38%, rgba(150, 90, 30, .97), rgba(40, 8, 70, .98) 75%); }
 #scr-cofre.jackpot #cof-titulo { font-size: 78px; color: #ffcb3d; text-shadow: 0 4px 0 #1b0f2a, 3px 0 0 #1b0f2a, -3px 0 0 #1b0f2a, 0 -3px 0 #1b0f2a; animation: arcoiris 1.4s linear infinite, latido .5s ease-in-out infinite; }
@@ -95,3 +96,6 @@
 @keyframes caer { to { transform: translateY(1100px) rotate(540deg); } }
 @keyframes tiembla { 0% { transform: translate(4px, -3px); } 25% { transform: translate(-4px, 3px); } 50% { transform: translate(3px, 4px); } 75% { transform: translate(-3px, -4px); } 100% { transform: translate(4px, -3px); } }
 @media (prefers-reduced-motion: reduce) { #scr-cofre, #scr-cofre * { animation-duration: .01s !important; animation-iteration-count: 1 !important; } }
+#scr-cofre.cof-n5 .rueda { box-sizing: border-box; flex: 0 0 31%; max-width: 31%; min-height: 128px; } #scr-cofre.cof-n5 .cof-fila .op-desc { display: none; } #scr-cofre.cof-n5 .cof-fila { padding: 3px 12px; font-size: 16px; } #scr-cofre.cof-n5 .rueda-nom { font-size: 14px; }
+#scr-cofre.mega #cof-titulo { font-size: 54px; } #scr-cofre.mega { background: radial-gradient(circle at 50% 38%, rgba(255, 90, 160, .9), rgba(30, 6, 80, .99) 75%); animation: arcoiris 1.4s linear infinite; }
+.rueda.nueva { animation: ruedaGrande .5s ease-out; }

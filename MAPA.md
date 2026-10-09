@@ -178,17 +178,17 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/skate/js/mundos.js` · 10 KB · SK_MUNDOS
 - `games/survivors/index.html` · 26 KB
 - `games/survivors/sw.js` · <1 KB
-- `games/survivors/css/survivors.css` · 10 KB
+- `games/survivors/css/survivors.css` · 11 KB
 - `games/survivors/idioma/en-facciones.js` · 12 KB
 - `games/survivors/idioma/en.js` · 15 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
 - `games/survivors/js/armas-tipos.js` · 14 KB · CONTINUAS, SONIDO_TIPO, estadoArma, empujeA, TIPOS, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
 - `games/survivors/js/armas.js` · 8 KB · vArma, armasDisparan, DISPARO, aura, curarSuave, vacasGiran, saltoChaos, explotar, moverProyectiles
 - `games/survivors/js/catalogo.js` · 7 KB · STATS, ABILITIES, ITEMS, FAC_JUGABLES, minutosTotales, isUnlocked, facNow, armaDeFac, facOfCard, ARMA_DE, cardMods, modsPartida, pc, effStats, cardStats, cardDesc, passiveText, bloqueadaTexto, idlePower, give, metaDefaults, newSave, migrateSave
-- `games/survivors/js/cofre.js` · 7 KB · sleep, cofreId, sorteoCofre, iconoOp, nivelOp, abrirCofre, notas, FANFARRIA, confeti, tiembla, flash, entregaCofre
+- `games/survivors/js/cofre.js` · 7 KB · sleep, cofreId, sorteoCofre, iconoOp, nivelOp, abrirCofre, notas, FANFARRIA, cofreLatido, latido, confeti, tiembla, flash, cierraCofre, entregaCofre, ruedaGrande
 - `games/survivors/js/datos-facciones-2.js` · 7 KB
 - `games/survivors/js/datos-facciones.js` · 11 KB · DESBLOQUEO, PASOS, BASE_TIPO, armaFaccion, ARMA_INICIAL
-- `games/survivors/js/datos.js` · 11 KB · SV, ARMAS, PASIVAS, EFECTO, RELLENO, ENEMIGOS, vidaPorMinuto, OLEADAS, MINIJEFES, EVENTOS, JEFE, CAJAS, BOTIN, COFRE
+- `games/survivors/js/datos.js` · 12 KB · SV, ARMAS, PASIVAS, EFECTO, RELLENO, ENEMIGOS, vidaPorMinuto, OLEADAS, MINIJEFES, EVENTOS, JEFE, CAJAS, BOTIN, COFRE
 - `games/survivors/js/dibujo.js` · 21 KB · ctx, VW, hacerSuelo, cosaEn, dibujaCosa, pies, personaje, ROJOS, rojoDe, dibujar, gema, cosaSuelta, DORADOS, doradoDe, enemigo, jugador, barra, proyectil, efecto, ICONOS, iconoCarta, marcador, hueco, pips
 - `games/survivors/js/facciones.js` · 2 KB · pintaFaccion, faltanMin, abrirFacciones
 - `games/survivors/js/interfaz.js` · 9 KB · cv, ajustar, TECLAS, TACTIL, mandoTeclado, jugando, aLogico, soltar, sueltaMando, empezar, abrirNivel, FRASES_PAUSA, pausar, seguir, mostrarFin, antes, fotograma, menuT, fondoMenu

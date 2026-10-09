@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.106', real: ['<b>MENOS TECNICISMOS</b>: en español, el PvP pasa a llamarse JcJ y el RANKING, CLASIFICACIÓN. Y en inglés hemos traducido más descripciones de objetos, misiones y la pantalla de victoria.'],
+    joke: ['Microblizz quería explicar el JcJ con menos siglas. Phony ha propuesto «JvJ». Se le ha dicho que no.'] },
   { v: '0.9.105', real: ['<b>CARTAS A LA ESPERA</b>: si te falta 1 de CAOS (o menos) para una tropa, ya puedes colocarla: se queda en el sitio, reserva el CAOS y sale sola en cuanto puedes pagarla. Tócala para cancelarla (contra la IA). También hay más textos traducidos al inglés y arreglos en el Salón de la Fama.'],
     joke: ['Microblizz dice que ahora las tropas hacen cola con educación. Los jugadores, no.'] },
   { v: '0.9.104', real: ['<b>RESUMEN DEL PVP</b>: la pantalla de PvP enseña cuántas partidas se han jugado en la última hora y en total, y cuántas unidades han caído, hechizos se han lanzado y CAOS se ha gastado en esa hora.'],

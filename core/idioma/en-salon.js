@@ -3,7 +3,7 @@
 IDIOMA.add({
   "SALÓN DE LA FAMA": "HALL OF FAME",
   "Salón de la Fama": "Hall of Fame",
-  "RANKING": "RANKING",
+  "CLASIFICACIÓN": "RANKING",
   "Clasificación": "Ranking",
   "OBRAS": "WIP",
   "(tú)": "(you)",

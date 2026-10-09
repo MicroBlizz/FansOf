@@ -37,7 +37,7 @@ const RETOS = {
   { id: 'facwin', tit: 'Orgullo de facción', txt: 'Gana una partida con {F}.', goal: 1, ev: 'facwin' },
   { id: 'gift', tit: 'Lo único gratis', txt: 'Recoge el regalo diario de la tienda.', goal: 1, ev: 'gift' },
   { id: 'arena2', tit: 'Afterwork en la Arena', txt: 'Juega 2 partidas en la Arena.', goal: 2, ev: 'arena' },
-  { id: 'arenawin1', tit: 'Ranking trimestral', txt: 'Gana 1 partida en la Arena.', goal: 1, ev: 'arenawin', r: [120, 15, 30] },
+  { id: 'arenawin1', tit: 'Clasificación trimestral', txt: 'Gana 1 partida en la Arena.', goal: 1, ev: 'arenawin', r: [120, 15, 30] },
   { id: 'camp5', tit: 'Maratón de historia', txt: 'Juega 5 partidas de la campaña.', goal: 5, ev: 'camp' },
   { id: 'kills100', tit: 'ERE masivo', txt: 'Derrota a 100 enemigos.', goal: 100, ev: 'kill' },
   { id: 'cards40', tit: 'Productividad de récord', txt: 'Juega 40 cartas.', goal: 40, ev: 'card' },

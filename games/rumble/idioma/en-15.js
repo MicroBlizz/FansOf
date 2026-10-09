@@ -42,4 +42,6 @@ IDIOMA.add({
   "Una vez por vida, cuando va a caer, se pausa y es invulnerable %1 s.": "Once per life, when it is about to fall, it pauses and is invulnerable for %1 s.",
   "+%1 % de daño y se cura un %2 % de su vida cada segundo. Pone «Me voy a mi hora».": "+%1 % damage and heals %2 % of its health every second. Says «I'm leaving on my own time».",
   "+%1 % de alcance. El cable llega a todas partes.": "+%1 % range. The cable reaches everywhere.",
+  "<b>MENOS TECNICISMOS</b>: en español, el PvP pasa a llamarse JcJ y el RANKING, CLASIFICACIÓN. Y en inglés hemos traducido más descripciones de objetos, misiones y la pantalla de victoria.": "<b>FEWER TECHNICAL TERMS</b>: in Spanish, PvP is now called JcJ and RANKING is now CLASIFICACIÓN. And in English we have translated more item descriptions, missions and the victory screen.",
+  "Microblizz quería explicar el JcJ con menos siglas. Phony ha propuesto «JvJ». Se le ha dicho que no.": "Microblizz wanted to explain PvP with fewer acronyms. Phony suggested «JvJ». He was told no.",
 });

@@ -55,4 +55,6 @@ IDIOMA.add({
   "+%1 % de vida y −%2 % de velocidad.": "+%1 % health and −%2 % speed.",
   "<b>MÁS TEXTOS EN INGLÉS</b>: hemos repasado y traducido textos que se habían quedado sin traducir.": "<b>MORE TEXTS IN ENGLISH</b>: we have gone through the game and translated texts that had been left untranslated.",
   "Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.": "Microblizz has discovered that Spanish is not the only language. They are very proud.",
+  "<b>MENOS TECNICISMOS</b>: en español, «income» pasa a llamarse «ingresos» y el PvP, JcJ.": "<b>FEWER TECHNICAL TERMS</b>: in Spanish, «income» is now called «ingresos» and PvP is now JcJ.",
+  "Phony pide que los ingresos se queden en su cuenta. Microblizz dice que eso es otro juego.": "Phony wants the income to stay in his account. Microblizz says that's a different game.",
 });

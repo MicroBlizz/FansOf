@@ -32,7 +32,7 @@ IDIOMA.add({
   "Orgullo de facción": "Faction Pride",
   "Lo único gratis": "The Only Free Thing",
   "Afterwork en la Arena": "Arena Afterwork",
-  "Ranking trimestral": "Quarterly Ranking",
+  "Clasificación trimestral": "Quarterly Ranking",
   "Maratón de historia": "Story Marathon",
   "ERE masivo": "Mass Redundancy",
   "Productividad de récord": "Record Productivity",

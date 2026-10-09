@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.17', real: ['<b>MENOS TECNICISMOS</b>: repasados textos en español para que se entiendan mejor.'],
+    joke: ['Microblizz ha quitado una sigla. Dice que la nota del cambio es más larga que el cambio.'] },
   { v: '0.1.16', real: ['<b>MÁS TEXTOS EN INGLÉS</b>: hemos repasado y traducido textos que se habían quedado sin traducir.'],
     joke: ['Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.'] },
   { v: '0.1.15', real: ['<b>INICIAR SESIÓN, MÁS FÁCIL</b>: el menú tiene un botón «Iniciar sesión / crear cuenta» para guardar tu progreso con Google o con tu email.'],

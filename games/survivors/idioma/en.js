@@ -97,4 +97,6 @@ IDIOMA.add({
   "Microblizz ha puesto un cartel de «Entrada» en la puerta. Antes había que adivinar dónde estaba.": "Microblizz has put an «Entrance» sign on the door. Before, you had to guess where it was.",
   "<b>MÁS TEXTOS EN INGLÉS</b>: hemos repasado y traducido textos que se habían quedado sin traducir.": "<b>MORE TEXTS IN ENGLISH</b>: we have gone through the game and translated texts that had been left untranslated.",
   "Microblizz ha descubierto que el inglés también existe. Está muy orgulloso.": "Microblizz has discovered that Spanish is not the only language. They are very proud.",
+  "<b>MENOS TECNICISMOS</b>: repasados textos en español para que se entiendan mejor.": "<b>FEWER TECHNICAL TERMS</b>: Spanish texts reviewed so they are easier to understand.",
+  "Microblizz ha quitado una sigla. Dice que la nota del cambio es más larga que el cambio.": "Microblizz removed one acronym. He says the change note is longer than the change.",
 });

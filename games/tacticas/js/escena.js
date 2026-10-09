@@ -137,28 +137,11 @@ function dibujar() {
     const y = n.y - sube * 22 - n.v * 10; cx.strokeText(n.txt, n.x, y); cx.fillStyle = n.col; cx.fillText(n.txt, n.x, y);
   }
   cx.globalAlpha = 1;
-  // vida e iniciativa de todos, siempre a la vista (también con el menú abierto)
-  for (const u of [...B.heroes, ...B.enemigos]) if (u.hp > 0) placa(u);
+  // nombre del jefe encima (la vida y el turno de todos están en la franja de debajo del campo)
   for (const e of B.enemigos) if (e.hp > 0 && e.jefe) {
     cx.font = '14px ' + FONT_D; cx.lineWidth = 4; cx.strokeStyle = OL; const y = e.y - alto(e) - 18;
     cx.strokeText(e.nombre, e.x, y); cx.fillStyle = '#fff'; cx.fillText(e.nombre, e.x, y);
   }
-}
-// placa bajo los pies: número de vida, barra de vida y barra de turno (dorada cuando le toca)
-function placa(u) {
-  const w = u.jefe ? 90 : 56, x = u.x - w / 2, y = u.y + 9;
-  cx.font = '13px ' + FONT_D; cx.lineWidth = 4; cx.strokeStyle = OL;
-  const t = u.hp + '/' + u.hpMax; cx.strokeText(t, u.x, y + 5); cx.fillStyle = u.hp < u.hpMax * 0.25 ? '#ff4b5c' : '#fff'; cx.fillText(t, u.x, y + 5);
-  cx.fillStyle = OL; rrFill(x - 2, y + 12, w + 4, 9, 4.5);
-  cx.fillStyle = u.lado === 'h' ? '#5ee06a' : u.fase2 ? '#ff4b5c' : '#ff8a3d'; rrFill(x, y + 14, w * u.hp / u.hpMax, 5, 2.5);
-  let yb = y + 22;
-  if (u.mpMax) {
-    cx.fillStyle = OL; rrFill(x - 2, yb, w + 4, 7, 3.5); cx.fillStyle = '#d43cff'; rrFill(x, yb + 2, w * u.mp / u.mpMax, 3, 1.5);
-    cx.font = '12px ' + FONT_D; cx.lineWidth = 3; cx.strokeStyle = OL; cx.textAlign = 'left'; cx.strokeText(u.mp, x + w + 5, yb + 5); cx.fillStyle = '#f3a6ff'; cx.fillText(u.mp, x + w + 5, yb + 5); cx.textAlign = 'center';
-    yb += 8;
-  }
-  cx.fillStyle = OL; rrFill(x - 2, yb, w + 4, 7, 3.5);
-  cx.fillStyle = u.atb >= 100 ? '#ffcb3d' : '#22e3ff'; rrFill(x, yb + 2, w * Math.min(100, u.atb) / 100, 3, 1.5);
 }
 function rrFill(x, y, w, h, r) { if (w <= 0) return; cx.beginPath(); rrPath(cx, x, y, w, h, Math.min(r, w / 2)); cx.fill(); }
 function flecha(x, y, col) { cx.beginPath(); cx.moveTo(x - 9, y - 12); cx.lineTo(x + 9, y - 12); cx.lineTo(x, y); cx.closePath(); cx.fillStyle = col; cx.fill(); cx.lineWidth = 2.5; cx.strokeStyle = OL; cx.stroke(); }

@@ -167,17 +167,28 @@ $('#filas').addEventListener('click', e => {
    FILAS DEL GRUPO (vida, CAOS y barra de tiempo)
    ========================================================= */
 function pintarFilas() {
+  $('#enemigos-fila').innerHTML = B.enemigos.map(e => `<div class="chip-e"><div class="ce-nom ol">${e.nombre}</div>
+    <div class="barrita"><i data-ehp></i></div><div class="ce-n"><b data-ehpn>${e.hp}</b>/${e.hpMax}</div><div class="barrita atb"><i data-eatb></i></div></div>`).join('');
+  B.enemigosEl = [...document.querySelectorAll('#enemigos-fila .chip-e')];
   $('#filas').innerHTML = B.heroes.map((h, i) => `<div class="fila" data-i="${i}">
     <div class="f-nom ol">${h.nombre} <em>Nv${h.lvl}</em></div>
     <div class="f-vida"><span><b data-hp>${h.hp}</b><small>/${h.hpMax}</small></span><div class="barrita"><i data-hpb></i></div></div>
-    <div class="f-atb"><div class="barrita caos"><i data-mpb></i></div><div class="barrita atb"><i data-atb></i></div><div class="estados" data-est></div></div></div>`).join('');
+    <div class="f-atb"><span class="f-caos">CAOS <b data-mp>${h.mp}</b></span><div class="barrita caos"><i data-mpb></i></div><div class="barrita atb"><i data-atb></i></div><div class="estados" data-est></div></div></div>`).join('');
   B.filasEl = [...document.querySelectorAll('#filas .fila')];
 }
 function actualizarFilas() {
+  B.enemigos.forEach((e, i) => {
+    const c = B.enemigosEl[i]; if (!c) return;
+    c.querySelector('[data-ehpn]').textContent = Math.max(0, e.hp);
+    c.querySelector('[data-ehp]').style.width = (100 * Math.max(0, e.hp) / e.hpMax) + '%';
+    c.querySelector('[data-eatb]').style.width = (e.hp > 0 ? Math.min(100, e.atb) : 0) + '%';
+    c.classList.toggle('ko', e.hp <= 0); c.querySelector('.atb').classList.toggle('llena', e.atb >= 100 && e.hp > 0);
+  });
   B.heroes.forEach((h, i) => {
     const f = B.filasEl[i]; if (!f) return;
     f.querySelector('[data-hp]').textContent = h.hp;
     f.querySelector('[data-hpb]').style.width = (100 * h.hp / h.hpMax) + '%';
+    f.querySelector('[data-mp]').textContent = h.mp;
     f.querySelector('[data-mpb]').style.width = (100 * h.mp / h.mpMax) + '%';
     f.querySelector('[data-atb]').style.width = (h.hp > 0 ? h.atb : 0) + '%';
     f.querySelector('.atb').classList.toggle('llena', h.atb >= 100 && h.hp > 0);

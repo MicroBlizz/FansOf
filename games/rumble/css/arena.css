@@ -108,12 +108,14 @@
 .pvp-modo .tabs { flex: none; gap: 6px; }
 .pvp-modo .tab { font-size: 15px; padding: 6px 12px 3px; }
 #scr-pvp .pvp-modo .deck-sub { margin: 0; font-size: 12.5px; line-height: 1.25; }
-.pvp-facs { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
-.pvp-fac { width: 50px; height: 46px; padding: 2px; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); cursor: pointer; }
-.pvp-fac[aria-pressed="true"] { border-color: #ffe14d; box-shadow: 0 0 0 2px #ffe14d55; }
-.pvp-fac:disabled { opacity: .5; }
-.pvp-fac canvas { width: 100%; height: 100%; display: block; }
-.pvp-fac.bloq { filter: grayscale(1); opacity: .45; }
+/* la lista de facciones del PvP: 5 por fila, igual que la del entrenamiento */
+.pvp-facs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.pvp-facs[hidden] { display: none; }
+.pvp-facs .diff-opt.fac-opt { padding: 3px 2px 4px; border-radius: 12px; }
+.pvp-facs .fac-opt canvas { width: 40px; height: 32px; margin: 0 auto; }
+.pvp-facs .fac-opt b { font-size: 10.5px; line-height: 1.1; white-space: normal; }
+.pvp-facs .fac-opt .lock { right: 2px; top: 2px; font-size: 8px; padding: 0 3px; }
+#scr-pvp.fac-abierta #pvp-premio, #scr-pvp.fac-abierta #pvp-clasif { display: none; }
 .pvp-cl { display: flex; flex-direction: column; gap: 4px; padding: 8px 12px; border-radius: 16px; border: 3px solid var(--outline); background: var(--panel-2); }
 .pvp-cl-cab { display: flex; align-items: baseline; justify-content: space-between; }
 .pvp-cl-cab span { font-family: var(--font-display); font-size: 18px; color: var(--ink-dim); letter-spacing: .05em; }

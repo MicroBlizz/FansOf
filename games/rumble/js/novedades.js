@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.111', real: ['<b>FACCIONES EN LA ARENA</b>: en CONTRA JUGADORES, el botón FACCIÓN enseña las facciones en dos filas de 5 con su nombre, igual que en el resto del juego.'],
+    joke: ['Microblizz quería poner 9 y 1 por pura asimetría corporativa. El becario lo ha cuadrado.'] },
   { v: '0.9.110', real: [
       '<b>LA ARENA, TODA JUNTA</b>: un solo botón ARENA con dos pestañas. CONTRA JUGADORES es el PvP de verdad: ahí ganas o pierdes copas y subes de liga, de Becario a CEO, y ves tu puesto en la clasificación. ENTRENAMIENTO es la arena de siempre contra la CPU: no mueve copas, pero da oro y cuenta para las misiones, y funciona sin internet ni cuenta.',
       '<b>BUSCAR RIVAL, MÁS CLARO</b>: mientras esperas ves tu líder contra un «?», el reloj y un botón para entrenar si hay poca gente. Las misiones de la Arena cuentan también las partidas de PvP.'],

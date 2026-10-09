@@ -77,8 +77,8 @@ function pvpPinta() {
   pvpPintaLiga();
   // la facción se elige aquí mismo (botón FACCIÓN): salen todas y las que aún no tienes, en gris
   const facs = $('#pvp-facs'); facs.hidden = !abierta || buscando;
-  facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader).map(x => `<button class="pvp-fac${isUnlocked(x) ? '' : ' bloq'}" data-pf="${x}" aria-pressed="${x === f}" aria-label="${esc(FACTIONS[x].name)}"><canvas data-pfl="${FACTIONS[x].leader}"></canvas></button>`).join('');
-  for (const cv of facs.querySelectorAll('canvas')) drawArt(cv, cv.dataset.pfl, 40, 36);
+  facs.innerHTML = FACTION_ORDER.filter(x => FACTIONS[x].leader).map(x => `<button class="diff-opt fac-opt${isUnlocked(x) ? '' : ' locked'}" data-pf="${x}" aria-pressed="${x === f}" style="--fc: ${FAC_COLOR[x]}"><canvas data-pfl="${FACTIONS[x].leader}"></canvas><b class="ol">${FACTIONS[x].name}</b>${isUnlocked(x) ? '' : '<span class="lock">BLOQUEADA</span>'}</button>`).join('');   // 5 y 5, como la lista del entrenamiento
+  for (const cv of facs.querySelectorAll('canvas')) drawArt(cv, cv.dataset.pfl, 40, 32);
   for (const bt of facs.querySelectorAll('button')) bt.addEventListener('click', () => { if (PVP_UI.busca || bt.dataset.pf === G.faction) return; if (!isUnlocked(bt.dataset.pf)) { play('deny'); toast('Aún no has desbloqueado esta facción', true); return; } play('select'); setFaction(bt.dataset.pf); pvpPinta(); });
   $('#pvp-equipo').innerHTML = arenaFacFila(f, eq.deck, abierta, 'pv'); arenaFacArte($('#pvp-equipo'), 'pv');
   $('#pvp-equipo [data-ar-fac]').onclick = () => { play('select'); $('#scr-pvp').classList.toggle('fac-abierta'); pvpPinta(); };

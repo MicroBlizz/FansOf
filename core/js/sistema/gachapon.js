@@ -73,10 +73,12 @@ function acabarTirada(n, c, kind, X, res) {
   if (c.gems > 0 && SAVE.gems === 0) stat('broke', 1);
   saveGame(); updateWallets(); buildGachaText();
   fire('gacha.tirada', n);
+  const ensenar = () => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); };
+  if (GACHA_FX.on()) { gachaAnim = { nuevo: true }; GACHA_FX.tirada(res.map(rarOfPull), X, ensenar); return; }   // la animación nueva (gachapon-anim.js)
   const cv = $('#gacha-cv'); cv.classList.remove('shake'); void cv.offsetWidth; cv.classList.add('shake'); play('roll');
   const top = res.reduce((a, r) => (RAR_ORDER[rarOfPull(r)] < RAR_ORDER[rarOfPull(a)] ? r : a));
   gachaAnim = { t: 0, col: (X ? X.colores : RARITY)[rarOfPull(top)][1] };
-  setTimeout(() => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); }, 1100);
+  setTimeout(ensenar, 1100);
 }
 const RAR_PL = { basic: ['común', 'comunes'], common: ['poco común', 'poco comunes'], rare: ['rara', 'raras'], epic: ['épica', 'épicas'], legendary: ['legendaria', 'legendarias'] };
 function showMulti(res) {
@@ -133,6 +135,8 @@ function buildGachaText() {
 }
 function drawGacha() {
   const cv = $('#gacha-cv'); if (!cv || $('#scr-gacha').hidden) { gachaRAF = 0; return; }
+  if (GACHA_FX.on()) { GACHA_FX.maquina(cv, MAQUINAS[gachaTab], gachaTab); gachaRAF = requestAnimationFrame(drawGacha); return; }   // la máquina nueva
+  cv.classList.remove('nueva');
   const LW = 270, LH = 300, R2 = 2; if (cv.width !== LW * R2) { cv.width = LW * R2; cv.height = LH * R2; }
   const c = cv.getContext('2d'); c.setTransform(R2, 0, 0, R2, 0, 0); c.clearRect(0, 0, LW, LH); c.lineJoin = 'round'; c.lineCap = 'round';
   const t = performance.now() / 1000, an = gachaAnim; if (an) an.t += 1 / 60;

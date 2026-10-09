@@ -8,11 +8,11 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
 - `core/css/clasificacion.css` · 12 KB
-- `core/css/menus-extra.css` · 21 KB
+- `core/css/menus-extra.css` · 22 KB
 - `core/css/menus-pases.css` · 21 KB
 - `core/css/menus-tienda.css` · 20 KB
 - `core/css/menus.css` · 22 KB
-- `core/idioma/en-extra.js` · 17 KB
+- `core/idioma/en-extra.js` · 18 KB
 - `core/idioma/en-frases.js` · 2 KB
 - `core/idioma/en-pantallas-1.js` · 7 KB
 - `core/idioma/en-pantallas-2.js` · 9 KB
@@ -76,6 +76,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/economia-sombra.js` · 8 KB · ECO_SOMBRA
 - `core/js/sistema/economia.js` · 6 KB · TOPES_COMUNES, ECO
 - `core/js/sistema/flags.js` · 7 KB
+- `core/js/sistema/gachapon-anim.js` · 24 KB · GACHA_FX
 - `core/js/sistema/gachapon.js` · 16 KB · MAQUINAS, rarOfPull, gachaTab, pityLegObj, rollRarity, onePull, resultadoTirada, copiaDeServidor, pullCost, pull, acabarTirada, RAR_PL, showMulti, addCopy, newCopy, bestCopy, showPull, oddsHead, oddsLine, oddsPity, oddsNote, buildGachaText, drawGacha, openGacha
 - `core/js/sistema/horas-extra-escena.js` · 22 KB · idleSpecial, idleBuild, idleSize, idleSay, idleHurt, idleBurst, idleSim, idleSprite, idleLayer, idleText, idleDraw, idleFrame
 - `core/js/sistema/horas-extra.js` · 11 KB · IDLE, IDLE_MOBS, IDLE_SAY, idleFacOk, idleR, idleState, idleRates, idleTick, idleFull, idleItem, idleCollect, idleSetHero, openIdlePick, idleUIKey, idleUI, idleCollectBox, idleSc, IDLE_SPEC

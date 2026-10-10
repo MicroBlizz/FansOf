@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="css/tacticas.css?v=0.1.10">
+<link rel="stylesheet" href="css/tacticas.css?v=0.1.11">
 <!-- Prototipo: no usa NUCLEO (tiene su propia partida guardada). Carga de core solo el arte, la música y los efectos.
-     VERSIÓN para desplegar.py (que la busca así): nucleo.js?v=0.1.10' (aquí solo se anota; súbela junto al ?v= de los scripts). -->
+     VERSIÓN para desplegar.py (que la busca así): nucleo.js?v=0.1.11' (aquí solo se anota; súbela junto al ?v= de los scripts). -->
 </head>
 <body>
 <div id="app">
@@ -81,19 +81,22 @@
     <div class="tienda" id="tienda"></div>
   </section>
 
-  <!-- BATALLA -->
+  <!-- BATALLA: la escena (540 × 960 lógicos) y su interfaz encima, a la misma escala -->
   <section class="pantalla" id="p-batalla" hidden>
-    <div class="escena">
+    <div class="escena" id="escena">
       <canvas id="cv" aria-label="Combate"></canvas>
-      <div class="cartel ol" id="cartel" role="status" aria-live="polite" hidden></div>
-      <button class="btn-icono pausa" id="b-pausa" aria-label="Pausa">II</button>
-    </div>
-    <div class="estado">
-      <div class="enemigos-fila" id="enemigos-fila"></div>
-      <div class="filas" id="filas"></div>
-    </div>
-    <div class="panel">
-      <div class="menu" id="menu" hidden></div>
+      <div class="capa" id="capa">
+        <div class="marco" id="turnos"><span class="et ol">TURNOS</span><div class="caras" id="caras"></div></div>
+        <button class="btn-icono pausa" id="b-pausa" aria-label="Pausa">II</button>
+        <div class="marco cartel ol" id="cartel" role="status" aria-live="polite" hidden></div>
+        <div class="marco espera" id="ordenes">
+          <h3 class="ol" id="ordenes-nom">Esperando turno</h3>
+          <div id="lista-ordenes"></div>
+          <svg id="cursor" viewBox="0 0 24 26" aria-hidden="true" hidden><path d="M3 3 21 13 3 23Z" fill="#ffcb3d" stroke="#20102c" stroke-width="3" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="marco" id="grupo"><div class="filas" id="filas"></div></div>
+        <div class="marco menu" id="menu" hidden></div>
+      </div>
     </div>
   </section>
 
@@ -113,45 +116,50 @@
 </div>
 
 <!-- de Fans Of: utilidades, sonido, facciones, arte y canciones (el tamaño de los pies sale del Rumble) -->
-<script src="../../core/js/sistema/utiles.js?v=0.1.10"></script>
-<script src="../../core/js/sistema/sonido.js?v=0.1.10"></script>
-<script src="../../core/js/serie/config.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/animales.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/nomuertos.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/streamers.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/heroes.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/ciber.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/memes.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/gamer.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/olvidados.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/pop.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/microblizz.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/phony.js?v=0.1.10"></script>
-<script src="../../core/js/serie/facciones/cierre.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/base.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/animales.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/nomuertos.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/streamers.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/heroes.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/ciber.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/memes.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/gamer.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/olvidados.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/pop.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/microblizz.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/phony.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/sprites.js?v=0.1.10"></script>
-<script src="../../core/js/serie/arte/fondos.js?v=0.1.10"></script>
-<script src="../../core/js/serie/canciones.js?v=0.1.10"></script>
-<script src="../../core/js/serie/iconos.js?v=0.1.10"></script>
-<script src="../../games/rumble/js/01b-unidades.js?v=0.1.10"></script>
+<script src="../../core/js/sistema/utiles.js?v=0.1.11"></script>
+<script src="../../core/js/sistema/sonido.js?v=0.1.11"></script>
+<script src="../../core/js/serie/config.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/animales.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/nomuertos.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/streamers.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/heroes.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/ciber.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/memes.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/gamer.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/olvidados.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/pop.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/microblizz.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/phony.js?v=0.1.11"></script>
+<script src="../../core/js/serie/facciones/cierre.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/base.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/animales.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/nomuertos.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/streamers.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/heroes.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/ciber.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/memes.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/gamer.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/olvidados.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/pop.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/microblizz.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/phony.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/sprites.js?v=0.1.11"></script>
+<script src="../../core/js/serie/arte/fondos.js?v=0.1.11"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.11"></script>
+<script src="../../core/js/serie/iconos.js?v=0.1.11"></script>
+<script src="../../games/rumble/js/01b-unidades.js?v=0.1.11"></script>
 <!-- del juego -->
-<script src="js/datos.js?v=0.1.10"></script>
-<script src="js/escena.js?v=0.1.10"></script>
-<script src="js/combate.js?v=0.1.10"></script>
-<script src="js/fin.js?v=0.1.10"></script>
-<script src="js/novedades.js?v=0.1.10"></script>
-<script src="../../core/js/novedades.js?v=0.1.10"></script>
-<script src="js/pantallas.js?v=0.1.10"></script>
+<script src="js/datos.js?v=0.1.11"></script>
+<script src="js/maqueta-pixel.js?v=0.1.11"></script>
+<script src="js/maqueta-mundos-1.js?v=0.1.11"></script>
+<script src="js/maqueta-mundos-2.js?v=0.1.11"></script>
+<script src="js/maqueta-capas.js?v=0.1.11"></script>
+<script src="js/escena.js?v=0.1.11"></script>
+<script src="js/combate.js?v=0.1.11"></script>
+<script src="js/interfaz.js?v=0.1.11"></script>
+<script src="js/fin.js?v=0.1.11"></script>
+<script src="js/novedades.js?v=0.1.11"></script>
+<script src="../../core/js/novedades.js?v=0.1.11"></script>
+<script src="js/pantallas.js?v=0.1.11"></script>
 </body>
 </html>

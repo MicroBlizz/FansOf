@@ -162,7 +162,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/tactics-advance/js/reglas.js` · 6 KB · TIPOS_U, TECNICAS, AJUSTES, SALIDA, ADIOS, nuevaUnidad, vivos, unidadEn, libre, distancia, alcanceMover, caminoA, objetivosDe, aciertoDe, danoDe, decideEnemigo
 - `demos/tactics-advance/js/textos.js` · 5 KB · EN, IDIOMA_TA, tr, traducePagina
 - `demos/tactics-advance/js/ventanas.js` · 8 KB · VENT, VENT_CACHE, ventanaLienzo, ventana, barra, MANO, FLECHA, CARTA, PATA, hazSello, ficha, fichaObjetivo, menu, submenu, norma, bocadillo
-- `demos/terminal-shock/index.html` · 134 KB
+- `demos/terminal-shock/index.html` · 184 KB
 - `demos/terminal-shock/idioma/en-raiz.js` · <1 KB
 - `games/rumble/index.html` · 40 KB
 - `games/rumble/sw.js` · <1 KB
@@ -300,13 +300,19 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/novedades.js` · 7 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
-- `games/tacticas/index.html` · 7 KB
-- `games/tacticas/css/tacticas.css` · 18 KB
-- `games/tacticas/js/combate.js` · 24 KB · POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, menuEl, abrirMenu, cerrarMenu, elegirObjetivo, decidir, pintarFilas, actualizarFilas, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder … (+5)
+- `games/tacticas/index.html` · 8 KB
+- `games/tacticas/css/tacticas.css` · 21 KB
+- `games/tacticas/idioma/en-1.js` · <1 KB · EN_TACTICAS
+- `games/tacticas/js/combate.js` · 17 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
-- `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, FONDOS, SUELO, fondoDe, dibujar, rrFill, flecha, pintarLuchador
+- `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, VERSION_SPR, siluetaDe, reflejoDe, dibujar, sombraDe, rrFill, flecha, pintarLuchador, pintarEfectos, barraE, pintarBarras
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
-- `games/tacticas/js/novedades.js` · 3 KB · NEWS
+- `games/tacticas/js/interfaz.js` · 13 KB · menuEl, ICONO_ORDEN, marcaOrden, abrirMenu, cerrarMenu, elegirObjetivo, decidir, alPulsarMenu, CARAS, mezclaColor, colorDe, caraDe, velAtb, ordenTurnos, firmaTurnos, pintarTurnos, pintarFilas, actualizarFilas
+- `games/tacticas/js/maqueta-capas.js` · 4 KB · MAQ, PIXELES, fondoMaqueta, capaSuave, capaDelante, capaViñeta, prepararMaqueta, motaNueva, avanzaPolvo, pintaPolvo
+- `games/tacticas/js/maqueta-mundos-1.js` · 17 KB · MUNDOS_MAQUETA, PAL, VENTANAS_SEDE, VEN_Y, SOL_INC, luzSede, pintaSede, rayosSede, haz, plantaDelante, columnaDelante, bokehDe, VENTANAS_OFI, FLUOR, luzOficina, mesaOficina, pintaOficina
+- `games/tacticas/js/maqueta-mundos-2.js` · 13 KB · TUMBAS_SUELO, lapida, pintaCementerio, FOCOS, pintaPlato
+- `games/tacticas/js/maqueta-pixel.js` · 13 KB · BAYER, trama, azarFijo, lienzo, rgbDe, u32, u32De, rampa, tono, Pincel, ampliar, FILTRO, desenfocar, conMascara, BRILLOS, brillo, pintaBrillo, PW, PARED_Y, HOR, V_PARED, uDe, sueloXY, pintaSuelo, ventanal, hoja, planta
+- `games/tacticas/js/novedades.js` · 4 KB · NEWS
 - `games/tacticas/js/pantallas.js` · 21 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, abrirNovedades, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones
 - `games/td/index.html` · 28 KB
 - `games/td/sw.js` · <1 KB

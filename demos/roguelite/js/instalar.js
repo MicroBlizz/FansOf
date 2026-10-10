@@ -13,8 +13,8 @@ const INSTALAR = (() => {
   // jugar sin conexión: se guarda la página y todo lo que carga la primera vez
   if (web && 'serviceWorker' in navigator) {
     const archivos = [...document.querySelectorAll('script[src]')].map(n => n.src);
-    const guardar = ['./', location.href, new URL('manifest.webmanifest', location.href).href, new URL('../../core/img/icon-192.png', location.href).href,
-      new URL('../../core/img/icon-512.png', location.href).href, new URL('../../core/img/icon-maskable.png', location.href).href, ...archivos];
+    const guardar = ['./', location.href, new URL('manifest.webmanifest', location.href).href, new URL('img/icon-192.png', location.href).href,
+      new URL('img/icon-512.png', location.href).href, new URL('img/icon-maskable.png', location.href).href, ...archivos];
     navigator.serviceWorker.register('sw.js?v=' + version).then(() => navigator.serviceWorker.ready)
       .then(reg => { if (reg.active) reg.active.postMessage({ guardar }); }).catch(() => { /* sin modo sin conexión */ });
   }

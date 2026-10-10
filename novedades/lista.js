@@ -9,7 +9,19 @@
 // Cada frase nueva lleva su inglés en novedades/en.js.
 'use strict';
 const NOVEDADES_WEB = [
+  // Tácticas 0.1.11–0.1.15 (estilo maqueta, ataques espectaculares, menús y golpes de luz): su línea sale sola de su NEWS
   {
+    id: '2026-10-10-tacticas',
+    fecha: '10 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
+      { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
+      { nombre: 'FANS OF RUMBLE 3D', tarjeta: 'g-rumble-3d', enlace: 'demos/rumble-3d/', texto: 'El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.' },
+    ],
+    otros: [
+      { nombre: 'TERMINAL SHOCK', tarjeta: 'g-terminal-shock', texto: 'Demo más larga: 13 salas, Zoe y personajes estilo PS1.' },
+    ],
+  },  {
     id: '2026-10-10',
     fecha: '10 de octubre de 2026',
     nuevos: [

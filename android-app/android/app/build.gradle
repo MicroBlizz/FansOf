@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.microblizz.fansofrumble"
+    namespace "com.microblizz.fansof"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.microblizz.fansofrumble"
+        applicationId project.findProperty('appId') ?: "com.microblizz.fansofrumble"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,0 +1,43 @@
+# APK de depuración de cada juego (una app por juego). Se lanza a mano: Actions > Android APK > Run workflow.
+name: Android APK
+on:
+  workflow_dispatch:
+    inputs:
+      juegos:
+        description: 'Juegos separados por coma (rumble,td,survivors,skate,tacticas)'
+        default: 'rumble'
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        juego: [rumble, td, survivors, skate, tacticas]
+    steps:
+      - name: ¿Toca este juego?
+        id: toca
+        run: |
+          if [[ ",${{ inputs.juegos }}," == *",${{ matrix.juego }},"* ]]; then echo "si=1" >> $GITHUB_OUTPUT; fi
+      - uses: actions/checkout@v4
+        if: steps.toca.outputs.si
+      - uses: actions/setup-node@v4
+        if: steps.toca.outputs.si
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        if: steps.toca.outputs.si
+        with: { distribution: temurin, java-version: 21 }
+      - name: Construir
+        if: steps.toca.outputs.si
+        run: |
+          ID=$(python3 herramientas/android_www.py ${{ matrix.juego }} | tail -1)
+          cd android-app
+          npm ci
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug -PappId=$ID
+      - uses: actions/upload-artifact@v4
+        if: steps.toca.outputs.si
+        with:
+          name: fansof-${{ matrix.juego }}-debug
+          path: android-app/android/app/build/outputs/apk/debug/app-debug.apk

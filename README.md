@@ -8,6 +8,7 @@ Se juega en https://microblizz.github.io/FansOf/
 
 ```
 index.html            la librería: un acceso rápido para probar, con el enlace, la versión y las novedades de cada juego
+versiones/            versiones anteriores: lista.json la escribe desplegar.py en cada despliegue (herramientas/versiones.py), no vive en main
 novedades/            la ventana NOVEDADES que sale al abrir la librería: juegos nuevos (lista.js) y su inglés (en.js)
 sw.js                 limpia el modo sin conexión que el TD tenía antes en la raíz (no cachea nada)
 core/                 LO COMÚN A TODOS LOS JUEGOS

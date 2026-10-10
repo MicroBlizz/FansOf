@@ -84,6 +84,20 @@
     background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
   .nov-pie button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
   .nov-x:focus-visible, .nov-pie button:focus-visible, .nov-nuevo a:focus-visible, .nov-fila:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  /* versiones anteriores: botón en cada tarjeta y una fila por versión en su ventana */
+  .game button.antes { font-family: var(--font-ui); font-size: 13px; font-weight: 800; color: var(--ink); cursor: pointer; padding: 5px 10px; border-radius: 10px; border: 3px solid var(--outline); background: var(--panel); }
+  .game button.antes:hover { color: var(--gold); }
+  .game button.antes:focus-visible, .ant-fila a:focus-visible, #ant-mas:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .ant-fila { display: flex; align-items: center; gap: 10px; padding: 8px 2px; border-bottom: 2px solid var(--tray-hi); }
+  .ant-fila:last-child { border-bottom: 0; }
+  .ant-fila div { flex: 1; min-width: 0; }
+  .ant-fila b { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--gold); }
+  .ant-fila small { margin-left: 6px; font-size: 12px; font-weight: 800; color: var(--ink-dim); }
+  .ant-fila span { display: block; font-size: 13px; font-weight: 700; line-height: 1.3; }
+  .ant-fila a { flex: none; text-decoration: none; font-family: var(--font-display); font-size: 14px; padding: 6px 11px 2px; border-radius: 10px; border: 3px solid var(--outline);
+    background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
+  #ant-mas { display: block; margin: 10px auto 0; font-family: var(--font-ui); font-size: 14px; font-weight: 800; color: var(--ink); cursor: pointer; padding: 6px 14px; border-radius: 10px; border: 3px solid var(--outline); background: var(--panel); }
+  #ant-mas[hidden] { display: none; }
   @media (max-width: 420px) { .nov-cabeza h2 { font-size: 28px; } .nov-cuerpo { padding: 2px 14px 10px; } }
 </style>
 </head>
@@ -103,6 +117,18 @@
       <p class="nov-nota">Toca un juego para ver todas sus novedades.</p>
     </div>
     <div class="nov-pie"><button type="button" class="ol" id="nov-ok">¡A JUGAR!</button></div>
+  </div>
+</div>
+<div class="nov-fondo" id="versiones" hidden>
+  <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="ant-titulo">
+    <div class="nov-cabeza"><h2 class="ol" id="ant-titulo">VERSIONES ANTERIORES</h2><p id="ant-juego"></p></div>
+    <button type="button" class="nov-x ol" id="ant-x" aria-label="Cerrar">✕</button>
+    <div class="nov-cuerpo" id="ant-cuerpo">
+      <p class="nov-nota">Se abren aparte, en otra pestaña, con una partida nueva: la tuya no se toca. Iniciar sesión y jugar en línea no funcionan en las versiones antiguas. La primera vez puede salir un aviso en inglés: pulsa «Open the page».</p>
+      <div id="ant-lista"></div>
+      <button type="button" id="ant-mas">VER MÁS</button>
+    </div>
+    <div class="nov-pie"><button type="button" class="ol" id="ant-ok">CERRAR</button></div>
   </div>
 </div>
 <main>
@@ -228,7 +254,7 @@ function fila(id, nombre, ver, texto) {
   f.innerHTML = `<b class="ol">${esc(t(nombre))}</b>${ver ? `<small>${esc(t('versión ' + ver))}</small>` : ''}<span>${esc(texto)}</span>`;
 }
 // de un informe, los títulos en negrita, en minúsculas para que no griten (sin tocar siglas como PvP o CEO)
-const SIGLAS = { pvp: 'PvP', ceo: 'CEO', caos: 'CAOS', ia: 'IA', td: 'TD', '3d': '3D', ps1: 'PS1' };
+const SIGLAS = { pvp: 'PvP', ceo: 'CEO', caos: 'CAOS', ia: 'IA', td: 'TD', '3d': '3D', ps1: 'PS1', cpu: 'CPU' };
 const suave = x => { const s = x.toLowerCase().replace(/[\wáéíóúñü]+/g, w => SIGLAS[w] || w); return s.charAt(0).toUpperCase() + s.slice(1); };
 const titulares = n => ((n && n.real) || []).map(r => (/<b>([^<]+)<\/b>/.exec(r) || [])[1]).filter(Boolean);
 function resumen(entries) {
@@ -276,6 +302,53 @@ for (const [id, dir, nombre] of JUEGOS) {
 Promise.all([text('novedades/lista.js'), cargada]).then(([src]) => { NOV_BOLETIN = (grab(src, 'NOVEDADES_WEB', '];') || [])[0] || null; for (const id of nuevos()) fila(id); pintarNuevos(NOV_BOLETIN); })
   .catch(() => pintarNuevos(null));
 abrirNovedades();
+
+// ---------- VERSIONES ANTERIORES: cada versión publicada de cada juego, para volver a jugarla ----------
+// La lista (versiones/lista.json) la escribe desplegar.py en cada despliegue (herramientas/versiones.py). Cada versión se abre en
+// rawcdn.githack.com, que sirve los archivos del repositorio tal como estaban en ese commit: otra dirección, así que otra partida
+// guardada (la de verdad no se toca), y con ?nube=0 para que nada vaya al servidor. La primera de cada lista es la que hay ahora en la web.
+const REPO = 'https://rawcdn.githack.com/MicroBlizz/FansOf/';
+const ant = { fondo: document.getElementById('versiones'), lista: null, carpeta: '', vistas: 0, volver: null };
+const fechaCorta = f => { const m = /^\d{4}-(\d\d)-(\d\d) (\d\d:\d\d)/.exec(f || ''); return m ? `${m[2]}/${m[1]} · ${m[3]}` : ''; };
+function pintarAntiguas() {
+  const todas = (ant.lista[ant.carpeta] || []).slice(1), hasta = Math.min(todas.length, ant.vistas + 15);
+  const caja = document.getElementById('ant-lista');
+  caja.insertAdjacentHTML('beforeend', todas.slice(ant.vistas, hasta).map(e =>
+    `<div class="ant-fila"><div><b class="ol">${e.v ? esc(t('versión ' + e.v)) : esc(fechaCorta(e.fecha))}</b>${e.v ? `<small>${esc(fechaCorta(e.fecha))}</small>` : ''}<span>${esc(e.titulo)}</span></div>`
+    + `<a class="ol" href="${REPO}${esc(e.commit)}/${esc(ant.carpeta)}/index.html?nube=0" target="_blank" rel="noopener">${esc(t('PROBAR'))}</a></div>`).join(''));
+  ant.vistas = hasta;
+  document.getElementById('ant-mas').hidden = hasta >= todas.length;
+}
+function abrirAntiguas(carpeta, nombre, desde) {
+  ant.carpeta = carpeta; ant.vistas = 0; ant.volver = desde || null;
+  document.getElementById('ant-juego').textContent = nombre;
+  document.getElementById('ant-lista').innerHTML = '';
+  pintarAntiguas();
+  ant.fondo.hidden = false; document.body.style.overflow = 'hidden';
+  document.getElementById('ant-cuerpo').scrollTop = 0; document.getElementById('ant-ok').focus({ preventScroll: true });
+}
+function cerrarAntiguas() {
+  if (ant.fondo.hidden) return;
+  ant.fondo.hidden = true; document.body.style.overflow = '';
+  if (ant.volver) ant.volver.focus({ preventScroll: true });
+}
+document.getElementById('ant-mas').onclick = pintarAntiguas;
+document.getElementById('ant-ok').onclick = cerrarAntiguas;
+document.getElementById('ant-x').onclick = cerrarAntiguas;
+ant.fondo.addEventListener('click', e => { if (e.target === ant.fondo) cerrarAntiguas(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarAntiguas(); });
+// un botón en cada tarjeta que tenga versiones anteriores (la carpeta sale de su enlace JUGAR)
+Promise.all([text('versiones/lista.json'), cargada]).then(([src]) => {
+  ant.lista = JSON.parse(src);
+  for (const tarjeta of document.querySelectorAll('section.game')) {
+    const jugar = tarjeta.querySelector('a.play'), carpeta = jugar && jugar.getAttribute('href').replace(/\/$/, '');
+    if (!carpeta || !ant.lista[carpeta] || ant.lista[carpeta].length < 2) continue;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'antes'; b.textContent = t('VERSIONES ANTERIORES');
+    b.onclick = () => abrirAntiguas(carpeta, tarjeta.querySelector('h2').textContent, b);
+    tarjeta.querySelector('.row').appendChild(b);
+  }
+}).catch(() => { /* sin lista (aún no se ha desplegado con ella): no sale el botón */ });
 </script>
 </body>
 </html>

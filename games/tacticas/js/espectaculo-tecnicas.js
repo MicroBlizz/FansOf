@@ -11,13 +11,18 @@ async function correA(h, ob, col, seg = 0.22, sep = 74) {
   await mover(h, ob.x + sep - h.x, ob.y - h.y, seg, entra);
 }
 async function volverA(h, seg = 0.32) { await volverCasa(h, seg, 40); sinEstela(h); }
-const golpeLuz = (ob, col, r = 110, ang = rand(0.3, 1)) => { const [x, y] = centroDe(ob); tajoFx(x, y, col, ang, r); nucleo(x, y, col, 70); };
+const golpeLuz = (ob, col, r = 110, ang = rand(0.3, 1)) => { const [x, y] = centroDe(ob); tajoFx(x, y, col, ang, r); corteLuz(x, y, col, ang - 1.2, r * 1.6); nucleo(x, y, col, 70); };
 
 const TEC_ANIM = {
   /* ---------- ataque normal: carrera con estela, tajo de luz ---------- */
   atacar: {
     antes: async (h, [ob]) => { await correA(h, ob, '#ffe58a', 0.18, 80); },
-    golpe: (h, ob) => golpeLuz(ob, '#ffe58a', 95),
+    golpe: (h, ob) => {   // corte de luz en diagonal, destello en estrella, franja que cruza la pantalla y un segundo tajo de remate
+      const [x, y] = centroDe(ob), ang = rand(-0.75, -0.45);
+      corteLuz(x, y, '#ffd36a', ang, 190, 0.34); tajoFx(x, y, '#ffe58a', ang + 2.2, 85, 0.26); nucleo(x, y, '#ffd36a', 80, 0.42);
+      franja(y, '#ffb347', 0.3); chispasLuz(x, y, '#ffe58a', Math.PI + 0.3, 16);
+      setTimeout(() => B && corteLuz(x, y + 6, '#ffffff', -ang, 120, 0.22), 70);
+    },
     despues: h => volverA(h, 0.26),
   },
   /* ---------- CrazyBunny ---------- */

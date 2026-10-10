@@ -1,6 +1,10 @@
-# APK de depuración de cada juego (una app por juego). Se lanza a mano: Actions > Android APK > Run workflow.
+# APK de depuración de cada juego (una app por juego) -> release «apk-latest».
+# Automático: miércoles y viernes a las 17:00 UTC (19:00 en España en verano). Para cambiar los días, editar el cron de abajo
+# (formato: minuto hora día-mes mes día-semana; 0=domingo). A mano: Actions > Android APK > Run workflow.
 name: Android APK
 on:
+  schedule:
+    - cron: '0 17 * * 3,5'
   workflow_dispatch:
     inputs:
       juegos:
@@ -19,7 +23,7 @@ jobs:
       - name: ¿Toca este juego?
         id: toca
         run: |
-          if [[ ",${{ inputs.juegos }}," == *",${{ matrix.juego }},"* ]]; then echo "si=1" >> $GITHUB_OUTPUT; fi
+          if [[ ",${{ inputs.juegos || 'rumble,td,survivors,skate,tacticas' }}," == *",${{ matrix.juego }},"* ]]; then echo "si=1" >> $GITHUB_OUTPUT; fi
       - uses: actions/checkout@v4
         if: steps.toca.outputs.si
       - uses: actions/setup-node@v4

@@ -2,6 +2,8 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.5.3', real: ['<b>ESCENA LIMPIA</b>: EN DIRECTO, los botones, el mapa del camino y el chat van en su propia barra, debajo de la vida. El pixel art se ve entero.', '<b>CHAT MÁS PEQUEÑO</b>: solo las 2 últimas frases, con letra pequeña.'],
+    joke: ['Microblizz quería poner anuncios en la barra nueva. No le hemos dejado.'] },
   { v: '0.5.2', real: ['<b>ICONO NUEVO</b>: CrazyBunny de frente, con su ojo en espiral y la corona, y encima las letras FoR bien gordas y en 3D.'], joke: [] },
   { v: '0.5.1', real: ['<b>ICONO PROPIO</b>: al instalarlo en el móvil, el juego tiene su icono en pixel art: la cara de CrazyBunny con su corona y las letras FoR.'],
     joke: ['Microblizz ha pedido el icono para su tienda. Le hemos dicho que la corona es nuestra.'] },

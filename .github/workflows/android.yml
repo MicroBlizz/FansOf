@@ -1,11 +1,17 @@
-# APK de depuración de cada juego (una app por juego). Se lanza a mano: Actions > Android APK > Run workflow.
+# APK de depuración de cada juego (una app por juego) -> release «apk-latest».
+# Automático: miércoles y viernes a las 17:00 UTC (19:00 en España en verano). Para cambiar los días, editar el cron de abajo
+# (formato: minuto hora día-mes mes día-semana; 0=domingo). A mano: Actions > Android APK > Run workflow.
 name: Android APK
 on:
+  schedule:
+    - cron: '0 17 * * 3,5'
   workflow_dispatch:
     inputs:
       juegos:
         description: 'Juegos separados por coma (rumble,td,survivors,skate,tacticas)'
         default: 'rumble'
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -17,7 +23,7 @@ jobs:
       - name: ¿Toca este juego?
         id: toca
         run: |
-          if [[ ",${{ inputs.juegos }}," == *",${{ matrix.juego }},"* ]]; then echo "si=1" >> $GITHUB_OUTPUT; fi
+          if [[ ",${{ inputs.juegos || 'rumble,td,survivors,skate,tacticas' }}," == *",${{ matrix.juego }},"* ]]; then echo "si=1" >> $GITHUB_OUTPUT; fi
       - uses: actions/checkout@v4
         if: steps.toca.outputs.si
       - uses: actions/setup-node@v4
@@ -29,15 +35,35 @@ jobs:
       - name: Construir
         if: steps.toca.outputs.si
         run: |
-          ID=$(python3 herramientas/android_www.py ${{ matrix.juego }} | tail -1)
+          SALIDA=$(python3 herramientas/android_www.py ${{ matrix.juego }})
+          ID=$(echo "$SALIDA" | tail -2 | head -1)
+          VER=$(echo "$SALIDA" | tail -1)
+          echo "VER=$VER" >> $GITHUB_ENV
           cd android-app
           npm ci
           npx cap sync android
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug -PappId=$ID
+          ./gradlew assembleDebug -PappId=$ID -PappVersion=$VER
       - uses: actions/upload-artifact@v4
         if: steps.toca.outputs.si
         with:
           name: fansof-${{ matrix.juego }}-debug
           path: android-app/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publicar descarga directa (release «apk-latest»)
+        if: steps.toca.outputs.si
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android-app/android/app/build/outputs/apk/debug/app-debug.apk fansof-${{ matrix.juego }}.apk
+          gh release view apk-latest >/dev/null 2>&1 || gh release create apk-latest --prerelease --title "APK de prueba" --notes "APK de depuración para probar en el móvil (no es la versión de la tienda). Descarga el de tu juego e instálalo permitiendo orígenes desconocidos."
+          gh release upload apk-latest fansof-${{ matrix.juego }}.apk --clobber
+          # Copia con versión y fecha de compilación en el nombre; se conservan 7 días (la anterior sigue disponible) y luego se borran
+          LIMITE=$(date -u -d '7 days ago' +%Y%m%d)
+          for v in $(gh release view apk-latest --json assets -q '.assets[].name' | grep "^fansof-${{ matrix.juego }}-v" || true); do
+            D=$(echo "$v" | grep -o '[0-9]\{8\}-[0-9]\{4\}' | cut -c1-8)
+            if [[ -n "$D" && "$D" < "$LIMITE" ]]; then gh release delete-asset apk-latest "$v" -y; fi
+          done
+          NOMBRE="fansof-${{ matrix.juego }}-v${VER}-$(date -u +%Y%m%d-%H%M).apk"
+          cp fansof-${{ matrix.juego }}.apk "$NOMBRE"
+          gh release upload apk-latest "$NOMBRE" --clobber

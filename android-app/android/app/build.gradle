@@ -7,8 +7,8 @@ android {
         applicationId project.findProperty('appId') ?: "com.microblizz.fansofrumble"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode project.hasProperty('appVersion') ? project.property('appVersion').split('\\.').with { it[0].toInteger() * 1000000 + it[1].toInteger() * 1000 + it[2].toInteger() } : 1
+        versionName project.findProperty('appVersion') ?: "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

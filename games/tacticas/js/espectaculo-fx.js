@@ -127,9 +127,19 @@ const DIBUJO_FX = {
     const g = c.createLinearGradient(0, o.y - h, 0, o.y + h); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.5, o.col); g.addColorStop(1, 'rgba(0,0,0,0)');
     c.globalAlpha = a; c.fillStyle = g; c.fillRect(-20, o.y - h, 580, h * 2);
   },
-  anillo(c, o, p) {
-    c.globalCompositeOperation = 'lighter'; const r = o.r * (0.15 + sale(p) * 0.85);
-    for (const [k, a, w] of [[1, 1, o.grosor], [0.75, 0.6, o.grosor * 0.5], [1, 0.25, o.grosor * 3]]) { c.globalAlpha = (1 - p) * a; c.strokeStyle = o.col; c.lineWidth = w * (1 - p * 0.5); c.beginPath(); c.ellipse(o.x, o.y, r * k, r * k * 0.34, 0, 0, TAU); c.stroke(); }
+  anillo(c, o, p) {   // onda en el suelo hecha de trazos irregulares, que se va borrando alrededor desde un punto
+    if (!o.ruido) o.ruido = Array.from({ length: 56 }, () => [rand(0, 1), rand(0, 1), rand(-1, 1)]), o.ini = rand(0, TAU);
+    c.globalCompositeOperation = 'lighter'; c.strokeStyle = o.col; c.lineCap = 'round';
+    const r = o.r * (0.15 + sale(p) * 0.85), M = 56, borra = p * 1.25;
+    for (let k = 0; k < M; k++) {
+      const [hueco, grosor, jit] = o.ruido[k]; if (hueco < 0.18) continue;
+      const f = k / M, vis = Math.min(1, Math.max(0, (f - borra) / 0.25 + 1)) * (1 - p * 0.5); if (vis <= 0) continue;
+      const a1 = o.ini + f * TAU, a2 = o.ini + (k + 0.8) / M * TAU, rr = r * (1 + jit * 0.06);
+      for (const [w, al] of [[o.grosor * 2.6, 0.22], [o.grosor * (0.4 + grosor), 0.9]]) {
+        c.globalAlpha = al * vis * (0.5 + 0.5 * grosor); c.lineWidth = w * (1 - p * 0.6);
+        c.beginPath(); c.ellipse(o.x, o.y, rr, rr * 0.34, 0, a1, a2); c.stroke();
+      }
+    }
   },
   pilar(c, o, p) {   // columna de luz del cielo al suelo
     c.globalCompositeOperation = 'lighter'; const a = Math.min(1, p * 5) * (1 - p) * 1.4, w = o.ancho * (0.5 + 0.5 * Math.sin(Math.min(1, p * 3) * Math.PI / 2)) * (1 + 0.06 * Math.sin(o.v * 40));
@@ -165,12 +175,22 @@ const DIBUJO_FX = {
     for (const [w, col, al] of [[18, o.col, 0.35], [7, o.col, 0.9], [2.5, '#ffffff', 1]]) { c.globalAlpha = a * al; c.strokeStyle = col; c.lineWidth = w; c.lineJoin = 'round'; c.beginPath(); pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke(); }
     pintaBrillo(c, o.col, o.x, o.y, 110, a * 0.8);
   },
-  tajo(c, o, p) {   // media luna de luz
-    c.globalCompositeOperation = 'lighter'; c.translate(o.x, o.y); c.rotate(o.ang); c.lineCap = 'round';
-    const barrido = sale(Math.min(1, p * 2.5)), a = 1 - Math.max(0, (p - 0.35) / 0.65);
-    for (const [w, col, al] of [[34, o.col, 0.3], [14, o.col, 0.85], [5, '#ffffff', 1]]) {
-      c.globalAlpha = a * al; c.strokeStyle = col; c.lineWidth = w * (1 - p * 0.5);
-      c.beginPath(); c.arc(0, 0, o.r, -Math.PI * 0.85, -Math.PI * 0.85 + Math.PI * 1.25 * barrido); c.stroke();
+  tajo(c, o, p) {   // media luna de luz: gruesa cerca de la punta, afilada en la cola, con el borde irregular; se borra de la cola a la punta
+    if (!o.ruido) o.ruido = Array.from({ length: 41 }, () => rand(-1, 1));
+    c.globalCompositeOperation = 'lighter'; c.translate(o.x, o.y); c.rotate(o.ang);
+    const N = 40, a0 = -Math.PI * 0.85, arco = Math.PI * 1.25, cabeza = sale(Math.min(1, p * 2.6)), borra = Math.max(0, (p - 0.12) / 0.88) * 1.15;
+    const punto = (t, dr) => { const an = a0 + arco * t, r = o.r * (1 + o.ruido[Math.round(t * N)] * 0.05) + dr; return [Math.cos(an) * r, Math.sin(an) * r]; };
+    for (const [W, col, al] of [[30, o.col, 0.28], [13, o.col, 0.85], [4.5, '#ffffff', 1]]) {
+      for (let i = 0; i < N; i++) {
+        const t0 = i / N, t1 = (i + 1) / N; if (t1 > cabeza) break;
+        const rel = t0 / Math.max(0.01, cabeza);                                            // 0 en la cola, 1 en la punta
+        const ancho = W * Math.pow(rel, 0.8) * (1 - Math.pow(rel, 7)) * (1 + o.ruido[i] * 0.3);
+        const vis = Math.min(1, Math.max(0, (t0 - borra) / 0.22 + 1)) * Math.min(1, Math.max(0, (t0 - borra * 0.9) * 6 + 0.4));   // se borra desde la cola
+        if (vis <= 0 || ancho <= 0.3) continue;
+        const [ax, ay] = punto(t0, ancho / 2), [bx, by] = punto(t1, ancho / 2), [cx2, cy2] = punto(t1, -ancho / 2), [dx2, dy2] = punto(t0, -ancho / 2);
+        c.globalAlpha = al * vis * (0.55 + 0.45 * rel); c.fillStyle = col;
+        c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.lineTo(cx2, cy2); c.lineTo(dx2, dy2); c.closePath(); c.fill();
+      }
     }
   },
   grieta(c, o, p) {

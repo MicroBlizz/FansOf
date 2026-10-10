@@ -26,6 +26,13 @@ function dibuja() {
   const b = bctx, W = PAN.W;
   BOTONES = [];
   b.fillStyle = COL.fondo; b.fillRect(0, 0, W, PAN.H);
+  // en pantallas altas, la barra del directo va aparte y todo lo de debajo baja (la escena queda limpia)
+  BARRA.h = VIAJE.modo !== 'menu' && PAN.H >= 400 ? 52 : 0;
+  const B = BARRA.h, alto = PAN.H, i0 = BOTONES.length;
+  if (B) { pintaBarra(b); }
+  const i1 = BOTONES.length;
+  PAN.H -= B; DESPL = B;
+  b.save(); b.translate(0, B);
   b.save(); b.beginPath(); b.rect(0, ESC.Y, W, ESC.H); b.clip();
   b.translate(TEMBLOR.x, TEMBLOR.y);
   pintaFondo(b, VIAJE.mx, RELOJ.t, W);
@@ -36,9 +43,13 @@ function dibuja() {
   b.restore();
   b.save(); b.translate(TEMBLOR.x, TEMBLOR.y); pintaFx(b, 'arriba'); b.restore();
   pintaEscenaUI(b);
-  pintaHud(b);
   pintaPanel(b);
   pintaFx(b, 'monedas');
+  b.restore();
+  PAN.H = alto; DESPL = 0;
+  for (let i = i1; i < BOTONES.length; i++) BOTONES[i].y += B;
+  pintaHud(b);
+  MONEDERO[1] -= B;   // las monedas vuelan con la escena bajada: su destino, subido lo mismo
   g.drawImage(buf, 0, 0, cv.width, cv.height);
 }
 

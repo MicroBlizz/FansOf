@@ -9,3 +9,8 @@ Una app por juego (rumble, td, survivors, skate, tacticas), cada una con su id `
 - Plugins: `@capacitor/app` (botón ATRÁS; antes faltaba en package.json, así que el botón no funcionaba) y `@capacitor/local-notifications` (avisos al móvil, 9-10-2026).
 - Avisos al móvil: los programa `games/rumble/js/20d-avisos.js` al salir de la app y los borra al volver (sin servidor). Icono pequeño: `res/drawable/ic_stat_aviso.xml`. El permiso se pide tras la primera victoria; interruptor en Opciones (solo se ve en la app). Probar en un móvil de verdad: ganar una partida, aceptar, salir de la app y mirar los avisos pendientes (o adelantar la hora del móvil).
 
+
+## Probar en el móvil sin cuenta de Google Play
+Tras ejecutar el workflow, los APK quedan en https://github.com/MicroBlizz/FansOf/releases/tag/apk-latest (descarga directa desde el móvil). Instalar: abrir el .apk descargado → permitir «instalar apps de esta fuente» cuando lo pida. Son de depuración (firma de prueba): para publicar se generará el .aab firmado.
+
+En la release `apk-latest` cada juego tiene dos archivos: `fansof-<juego>.apk` (enlace fijo, el que usa /android/) y `fansof-<juego>-v<versión>-<fecha UTC>.apk` (la misma compilación, con versión y fecha en el nombre; se conservan 7 días).

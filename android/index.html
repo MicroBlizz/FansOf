@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Android · Fans Of</title><meta name="robots" content="noindex"><link rel="icon" href="../core/img/icon-192.png">
+<!-- Los enlaces apuntan a la release fija «apk-latest»: cada vez que se ejecuta el workflow «Android APK» se actualizan los archivos y esta página no cambia. -->
+<style>body{margin:0;background:#150b21;color:#f3ecff;font:16px/1.55 system-ui,sans-serif}
+main{max-width:640px;margin:0 auto;padding:24px 18px 60px}
+h1{font-size:28px;margin:.2em 0}a{color:#8fd3ff}.bar{display:flex;gap:14px;font-weight:700;margin-bottom:8px}
+.apk{display:block;margin:10px 0;padding:14px 16px;border-radius:12px;background:#2a1844;color:#ffd75e;font-weight:800;text-decoration:none}
+.apk span{display:block;color:#bba9d6;font-weight:400;font-size:14px}small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}</style></head><body><main>
+<div class="bar"><a href="../">Inicio</a><a href="#" data-l="es">Español</a><a href="#" data-l="en">English</a></div>
+<div lang="es"><h1>Android · versión de prueba</h1>
+<p>Descarga el juego, ábrelo y Android te pedirá permitir «instalar apps de esta fuente». Son versiones de prueba: pueden fallar y no son las de la tienda.</p>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-rumble.apk">Fans of Rumble<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-td.apk">Fans of TD<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-survivors.apk">Fans of Survivors<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-skate.apk">Fans of Skate<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-tacticas.apk">Fans of Tácticas<span>.apk</span></a></div>
+<div lang="en"><h1>Android · test version</h1>
+<p>Download a game and open it; Android will ask you to allow «install apps from this source». These are test builds: they may break and are not the store versions.</p>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-rumble.apk">Fans of Rumble<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-td.apk">Fans of TD<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-survivors.apk">Fans of Survivors<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-skate.apk">Fans of Skate<span>.apk</span></a>
+<a class="apk" href="https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-tacticas.apk">Fans of Tácticas<span>.apk</span></a></div>
+</main><script>
+var L=(navigator.language||'es').slice(0,2)==='en'?'en':'es';
+function set(l){document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.lang===l)});}
+document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();set(a.dataset.l)}});set(L);
+</script></body></html>

@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 13 KB
+- `index.html` · 23 KB
 - `sw.js` · <1 KB
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
@@ -98,7 +98,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/index.html` · 3 KB
 - `demos/roguelite/sw.js` · <1 KB
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
-- `demos/roguelite/js/chat.js` · 8 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, INSIGNIA, pintaInsignia, lineasChat, pintaFilas, pintaChat, pintaChatEscena
+- `demos/roguelite/js/chat.js` · 10 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, INSIGNIA, pintaInsignia, lineasChat, pintaFilas, pintaChat, CHAT_ESTILO, INS_MINI, lineaMini, pintaChatEscena
 - `demos/roguelite/js/combate-conejo.js` · 8 KB · accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, bolsaBasura, castorBoom, tazaCafe, curaMeercat, pegaRival
 - `demos/roguelite/js/combate.js` · 13 KB · POS, centro, siguiente, COMBATE, TROZOS, LLUVIA, combate, llegaRival, llegaJefe, accionRival, ataqueEspecial, pegaConejo, levanta, muereRival, lluviaMonedas
 - `demos/roguelite/js/datos-chat.js` · 7 KB · CHAT_USUARIOS, CHAT_LOLA, CHAT_FRASES, CHAT_MUNDO, ESPECTA
@@ -118,9 +118,10 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
 - `demos/roguelite/js/instalar.js` · 2 KB · INSTALAR
 - `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, MARCA_DIA, pintaMapa, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, toque, tecla
+- `demos/roguelite/js/letras-mini.js` · 4 KB · MINI, QUITA_TILDE, limpiaMini, glifoMini, anchoMini, MINI_CACHE, escribeMini, cortaMini
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
 - `demos/roguelite/js/menu.js` · 12 KB · MENU, volverMadriguera, irA, pintaMadriguera, pintaMenuEscena, pintaPanelMenu, titulo, volver, panelInicio, panelMundos, paginas, panelMejoras, panelColeccion, panelAjustes
-- `demos/roguelite/js/novedades.js` · 2 KB · NEWS
+- `demos/roguelite/js/novedades.js` · 3 KB · NEWS
 - `demos/roguelite/js/paneles.js` · 6 KB · panelHabilidad, panelObjeto, panelHabs, fichaObjeto, panelObj, panelFin
 - `demos/roguelite/js/personajes.js` · 9 KB · CONEJO, ARDILLA, RIVAL, PROP, H, ponAnim, fotoDe, sombra, silueta, pintaEnt, PROP_ALTO, nuevoProp, pintaProp, pintaSueltas, barraRival, pintaPersonajes, avanzaPersonajes
 - `demos/roguelite/js/pixel.js` · 9 KB · OL, RGBA_CACHE, rgba, mezcla, pal, tintaPal, F, giraP, Pincel, pintaSpr, circuloPx, anilloPx, ovaloPx, tramaPx, ent
@@ -312,7 +313,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/js/combate.js` · 18 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
 - `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, VERSION_SPR, siluetaDe, reflejoDe, dibujar, sombraDe, rrFill, flecha, pintarLuchador, pintarEfectos, barraE, pintarBarras
-- `games/tacticas/js/espectaculo-fx.js` · 17 KB · TAU, anim, suaveFx, sale, entra, parada, fx, avanzaFx, luzGolpe, rayos, nucleo, anillo, pilar, destello, oscuro, aura, escudo, rayoCielo, tajoFx, grieta, textoFx, velocidad, proyectil, lluvia, estela, sinEstela, mover, volverCasa, entradaTecnica, pintarFx, CAPA_FX, DIBUJO_FX
+- `games/tacticas/js/espectaculo-fx.js` · 20 KB · TAU, anim, suaveFx, sale, entra, parada, fx, avanzaFx, luzGolpe, rayos, nucleo, corteLuz, franja, chispasLuz, anillo, pilar, destello, oscuro, aura, escudo, rayoCielo, tajoFx, grieta, textoFx, velocidad, proyectil, lluvia, estela, sinEstela, mover, volverCasa, entradaTecnica, pintarFx, CAPA_FX, DIBUJO_FX
 - `games/tacticas/js/espectaculo-tecnicas.js` · 12 KB · centroDe, medio, correA, volverA, golpeLuz, TEC_ANIM, previaEnemigo, golpeEnemigo
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
 - `games/tacticas/js/interfaz.js` · 13 KB · menuEl, ICONO_ORDEN, marcaOrden, abrirMenu, cerrarMenu, elegirObjetivo, decidir, alPulsarMenu, CARAS, mezclaColor, colorDe, caraDe, velAtb, ordenTurnos, firmaTurnos, pintarTurnos, pintarFilas, actualizarFilas
@@ -369,6 +370,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/pvp.js` · 18 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
+- `novedades/en.js` · 1 KB
+- `novedades/lista.js` · 2 KB · NOVEDADES_WEB
 - `privacidad/index.html` · 7 KB
 - `servidor/correos/cambio-de-email.html` · 2 KB
 - `servidor/correos/confirmar-registro.html` · 2 KB

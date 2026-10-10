@@ -4,12 +4,16 @@ Un prototipo para enseñar **el aspecto y el ritmo** de un juego táctico por ca
 en pixel art de consola portátil (240 × 160, como la Game Boy Advance). Es un juego nuevo de la serie: **no sustituye**
 a Fans of Rumble: Tácticas (`games/tacticas`, el de barras de tiempo), que sigue igual.
 
-Es **jugable** y ocupa **toda la pantalla**, con menú principal (Jugar, Cómo se juega, Opciones con idioma y pantalla
-completa, Biblioteca), elegir batalla, pausa y final. Zoom con dos dedos, rueda del ratón o los botones + y −; arrastrar
+Es **jugable** y ocupa **toda la pantalla**. La primera vez sale la **presentación** (Arkioner y Pepins presentan y cuatro
+viñetas con la historia; se puede saltar). Luego el **título** (logo, una islita con CrazyBunny, EpicChampion y un esqueleto, y
+«Toca para empezar») y el menú principal: Jugar, **Tutorial** (con Lola, paso a paso), Opciones (idioma, pantalla completa,
+ver la presentación) y Biblioteca. Hay elegir batalla, pausa y final. Zoom con dos dedos, rueda del ratón o los botones + y −; arrastrar
 mueve la cámara. Cada batalla es de 2 contra 4 por turnos. Tocas a CrazyBunny o a EpicChampion y eliges Mover (casillas
 azules), Atacar o Técnica (zona roja; se toca dos veces al enemigo para confirmar) o Esperar. Luego juega Microblizz.
 **No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea, se borra esta carpeta
 (y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
+
+Lo visto (la presentación y el tutorial) se apunta en este navegador (`fota-intro`, `fota-tutorial`).
 
 Los scripts de `index.html` llevan `?v=`: al cambiar el juego, súbelo en todos para que el navegador no mezcle archivos viejos y nuevos.
 
@@ -55,7 +59,9 @@ Las cifras son de prueba. Jugando a lo bruto (siempre atacar al primero que pill
 | `reglas.js` | Personajes y sus cifras, técnicas, salidas, caminos, objetivos, acierto, daño y lo que decide Microblizz |
 | `dibujo.js` | Pinta la batalla: cielo, mapa, casillas marcadas, decorados, personajes con su pose y los efectos |
 | `interfaz.js` | Las ventanas de la batalla pegadas a los bordes (fichas, órdenes, botones de pausa y zoom, carteles, pista) |
-| `pantallas.js` | Menú principal con el logo, elegir batalla, cómo se juega, opciones, pausa y final |
+| `pantallas.js` | Menú principal, elegir batalla, cómo se juega, opciones, pausa y final (ventanas con la manita) |
+| `intro.js` | La presentación (viñetas con texto a máquina) y la pantalla de título con la isla y el logo |
+| `tutorial.js` | El tutorial con Lola: los pasos, qué se deja hacer en cada uno, la casilla que parpadea y su tarjeta |
 | `juego.js` | El estado de la batalla, los turnos, las órdenes y las acciones animadas; la cámara |
 | `controles.js` | Tocar, arrastrar, pellizcar, rueda, pasar el ratón y teclado; qué hay debajo de un punto; la pista |
 | `principal.js` | Pantalla completa, tamaño del píxel de las ventanas y del mundo (zoom), el bucle y el menú principal |

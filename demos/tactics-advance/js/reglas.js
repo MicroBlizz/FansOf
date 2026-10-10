@@ -17,6 +17,7 @@ const AJUSTES = { caosTurno: 6, caosGolpe: 4, aciertoBase: 85, aciertoAltura: 7,
 // dónde empieza cada uno; los enemigos dependen del escenario
 const SALIDA = {
   aliados: [['conejo', 3, 3], ['campeon', 2, 5]],
+  tutorial: { aliados: [['conejo', 3, 3]], enemigos: [['esqueleto', 5, 3]] },
   cementerio: [['esqueleto', 5, 4], ['esqueleto', 7, 5], ['esqueleto', 6, 2], ['esqueleto', 8, 3]],
   oficinas: [['becario', 5, 4], ['starbot', 7, 5], ['becario', 6, 2], ['starbot', 8, 3]],
 };
@@ -62,7 +63,7 @@ function objetivosDe(u, tec) {
   return J.unidades.filter(o => o.vivo && o.eq !== u.eq && distancia(u, o) <= al && (libreAltura || Math.abs(altura(o.gx, o.gy) - altura(u.gx, u.gy)) <= 2));
 }
 function aciertoDe(u, o, tec) {
-  if (tec) return TECNICAS[tec].acierto;
+  if (tec || (TUT && u.eq === 'a')) return tec ? TECNICAS[tec].acierto : 100;   // en el tutorial, los tuyos no fallan
   const dh = altura(u.gx, u.gy) - altura(o.gx, o.gy);
   return Math.max(40, Math.min(100, AJUSTES.aciertoBase + AJUSTES.aciertoAltura * dh));
 }

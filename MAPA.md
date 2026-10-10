@@ -149,19 +149,21 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/tactics-advance/idioma/en-raiz.js` · <1 KB
 - `demos/tactics-advance/js/controles.js` · 7 KB · cv, puntos, unidadEnPantalla, casillaEnPantalla, filaTocada, botonPeq, toca, pasa, DEDOS, PELLIZCO, separacion, suelta, actualizaPista
 - `demos/tactics-advance/js/decorados.js` · 7 KB · cajaIso, PIEDRA, PIEDRA_F, MUSGO, tumba, cruz, CORTEZA, arbolMuerto, HOJAS, arbol, arbusto, HIERRO, farol, cripta, MADERA, mesa, planta, fuente, cajas, archivador
-- `demos/tactics-advance/js/dibujo.js` · 11 KB · LW, lo, uo, centroX, CAJAS, SPRS, spr, gris, ESC, preparaEscena, suave, pieMundo, pantalla, CAM, spriteDe, sombraUnidad, pintaUnidad, EFECTOS, efecto, DURA, avanzaEfectos, ESPIRAL_PEQ, pintaEfectos, brilloFarol, pinta
+- `demos/tactics-advance/js/dibujo.js` · 12 KB · LW, lo, uo, centroX, CAJAS, SPRS, spr, gris, ESC, preparaEscena, suave, pieMundo, pantalla, CAM, spriteDe, sombraUnidad, pintaUnidad, EFECTOS, efecto, DURA, avanzaEfectos, ESPIRAL_PEQ, pintaEfectos, brilloFarol, pinta
 - `demos/tactics-advance/js/escenas.js` · 1 KB · ESCENAS
 - `demos/tactics-advance/js/fondo.js` · 6 KB · FW, lienzoNuevo, degradado, pintaPixeles, CIELO_TARDE, NUBES_TARDE, fondoAtardecer, nubesSueltas, CIELO_NOCHE, fondoNoche, LUCES, pintaLuciernagas, pintaLetrero
-- `demos/tactics-advance/js/interfaz.js` · 5 KB · dentro, MENU_X, geoMenu, geoSub, geoBoton, BOTONES_PEQ, geoPeq, pintaMenu, pintaSub, pintaBoton, ICONOS, pintaPeq, pintaFicha, bannerTexto, aUI, pintaUI
-- `demos/tactics-advance/js/juego.js` · 13 KB · J, TWEENS, GEN, espera, avanzaTweens, vista, empieza, cartel, comienzaTuTurno, botonFin, deselecciona, selecciona, modoMover, abreTecnicas, modoAtacar, apunta, volver, termina, ejecutaMover_, ejecutaAtaque_, turnoMicroblizz_, compruebaFin, mira, mueve, di, impacto, ataca, muere, CAMB, actualiza, seguro, ejecutaMover
+- `demos/tactics-advance/js/interfaz.js` · 6 KB · dentro, MENU_X, geoMenu, geoSub, geoBoton, BOTONES_PEQ, geoPeq, pintaMenu, pintaSub, pintaBoton, ICONOS, pintaPeq, pintaFicha, bannerTexto, aUI, pintaUI
+- `demos/tactics-advance/js/intro.js` · 10 KB · VISTO, VINETAS, INTRO, FONDOS_INTRO, presentacion, letrasVistas, avanzaIntro, terminaIntro, actualizaIntro, geoSaltar, cubre, grande, pintaIntro, tocaIntro, TITULO, pantallaTitulo, escalaLogo, ISLA_W, geoTitulo, ISLA, islaLienzo, pintaIsla, BRILLO, pintaLogo, pintaTitulo
+- `demos/tactics-advance/js/juego.js` · 14 KB · J, TWEENS, GEN, espera, avanzaTweens, vista, empieza, cartel, comienzaTuTurno, botonFin, refrescaMenu, deselecciona, selecciona, modoMover, abreTecnicas, modoAtacar, apunta, volver, termina, ejecutaMover_, ejecutaAtaque_, turnoMicroblizz_, compruebaFin, mira, mueve, di, impacto, ataca, muere, CAMB, actualiza, seguro, ejecutaMover
 - `demos/tactics-advance/js/letras.js` · 11 KB · L, LETRAS, TILDES, glifo, anchoGlifo, anchoTexto, escribe, MINI, anchoMini, escribeMini, escribeGordo
 - `demos/tactics-advance/js/mapa.js` · 13 KB · HU, MAT, ALT, TIPO, N, altura, esAgua, wx, wy, alturaPx, ruido, colorArriba, colorLado, hazCasilla, pintaAgua, rombo, romboBorde, marca, PUNTA, cursor
-- `demos/tactics-advance/js/pantallas.js` · 8 KB · PANT, abre, cierra, GRANDES, textoGrande, envuelve, geoPantalla, pintaPantalla, pintaLogo, menuPrincipal, elegirBatalla, ayuda, opciones, pausa, final, cambiaIdioma, pantallaCompleta, tocaPantalla, pasaPantalla, teclaPantalla
+- `demos/tactics-advance/js/pantallas.js` · 7 KB · PANT, abre, cierra, GRANDES, textoGrande, envuelve, tamPantalla, geoPantalla, pintaPantalla, menuPrincipal, elegirBatalla, ayuda, opciones, pausa, final, cambiaIdioma, pantallaCompleta, tocaPantalla, pasaPantalla, teclaPantalla
 - `demos/tactics-advance/js/personajes.js` · 16 KB · PB, OJO_ESPIRAL, OJO_ESPIRAL_B, OJO_COL, BOCA, conejo, PC, campeon, PE, esqueleto, PM, becario, PS, starbot, retratoConejo
 - `demos/tactics-advance/js/pixel.js` · 8 KB · OL, RGBA_CACHE, rgba, mezcla, pal, F, giraP, Pincel, pintaSpr, BAYER, bayer, hash
-- `demos/tactics-advance/js/principal.js` · 2 KB · mc, DPR, zoomMin, ajusta, aplicaZoom, puedeZoom, zoom, ponZoom, RELOJ, fotograma
+- `demos/tactics-advance/js/principal.js` · 3 KB · mc, DPR, zoomMin, ajusta, aplicaZoom, puedeZoom, zoom, ponZoom, RELOJ, fotograma
 - `demos/tactics-advance/js/reglas.js` · 6 KB · TIPOS_U, TECNICAS, AJUSTES, SALIDA, ADIOS, nuevaUnidad, vivos, unidadEn, libre, distancia, alcanceMover, caminoA, objetivosDe, aciertoDe, danoDe, decideEnemigo
-- `demos/tactics-advance/js/textos.js` · 5 KB · EN, IDIOMA_TA, tr, traducePagina
+- `demos/tactics-advance/js/textos.js` · 8 KB · EN, IDIOMA_TA, tr, traducePagina
+- `demos/tactics-advance/js/tutorial.js` · 5 KB · TUT, PASOS_TUT, empiezaTutorial, pasoTut, dejaTut, tutEvento, valeTut, finTutorial, marcaTut, geoLola, pintaLola, tocaLola
 - `demos/tactics-advance/js/ventanas.js` · 8 KB · VENT, VENT_CACHE, ventanaLienzo, ventana, barra, MANO, FLECHA, CARTA, PATA, hazSello, ficha, fichaObjetivo, menu, submenu, norma, bocadillo
 - `demos/terminal-shock/index.html` · 184 KB
 - `demos/terminal-shock/idioma/en-raiz.js` · <1 KB

@@ -3,7 +3,10 @@
 /* =========================================================
    CREAR LOS LUCHADORES
    ========================================================= */
-const POS_HEROES = [[398, 222], [424, 286], [450, 350], [476, 414]];
+// las posiciones se piensan en el campo antiguo (y de 205 a 420) y aEscena las lleva al suelo de la maqueta (y de 400 a 650)
+const aEscena = ([x, y]) => [x, Math.round(400 + (y - 205) * 1.15)];
+const profundidad = y => 0.94 + (y - 430) / 200 * 0.08;   // lo de delante, un poco más grande
+const POS_HEROES = [[374, 211], [406, 270], [438, 327], [470, 385]];
 const alto = u => (SPR[u.key] ? SPR[u.key].ay : 50) * u.esc;   // altura del dibujo en pantalla
 function posEnemigos(lista) {
   const n = lista.length, jefe = lista.findIndex(k => ENEMIGOS[k].jefe);
@@ -21,12 +24,13 @@ function crearHeroe(key, i) {
   const s = statsHeroe(key), g = SAVE.heroes[key];
   const hp = g.hp == null ? s.hp : Math.min(g.hp, s.hp), mp = g.mp == null ? s.mp : Math.min(g.mp, s.mp);
   return { key, lado: 'h', nombre: nombreHeroe(key), lvl: g.lvl, ...s, hpMax: s.hp, mpMax: s.mp, hp, mp, atb: rand(10, 60),
-    x: POS_HEROES[i][0], y: POS_HEROES[i][1], esc: 0.95, est: estadoVacio(), guardia: false, esperando: false, dx: 0, golpe: 0, alfa: 1 };
+    x: aEscena(POS_HEROES[i])[0], y: aEscena(POS_HEROES[i])[1], esc: 0.95 * 1.25 * profundidad(aEscena(POS_HEROES[i])[1]), id: ++B_ID, est: estadoVacio(), guardia: false, esperando: false, dx: 0, golpe: 0, alfa: 1 };
 }
+let B_ID = 0;
 function crearEnemigo(key, pos) {
-  const e = ENEMIGOS[key];
+  const e = ENEMIGOS[key]; pos = aEscena(pos);
   return { key, lado: 'e', nombre: nombreDe(key), jefe: !!e.jefe, corrupto: !!e.corrupto, hp: e.hp, hpMax: e.hp, mp: 0, mpMax: 0, atk: e.atk, def: e.def, mag: e.atk, spd: e.spd,
-    atb: rand(0, 45), x: pos[0], y: pos[1], esc: e.esc || 1.2, est: estadoVacio(), guardia: false, esperando: false, dx: 0, golpe: 0, alfa: 1, muerto: false, fase2: false };
+    atb: rand(0, 45), x: pos[0], y: pos[1], esc: (e.esc || 1.2) * 1.25 * profundidad(pos[1]), id: ++B_ID, est: estadoVacio(), guardia: false, esperando: false, dx: 0, golpe: 0, alfa: 1, muerto: false, fase2: false };
 }
 
 /* =========================================================
@@ -46,9 +50,12 @@ function empezarBatalla(wi, li) {
   play('horn'); evento('batalla_empieza', { mundo: wi, nivel: li });
   B.ultimo = performance.now(); requestAnimationFrame(bucle);
 }
+// la escena es de 540 × 960 lógicos: se escala para caber entera en la pantalla (la interfaz de encima, igual)
 function ajustarCanvas() {
-  const dpr = Math.min(2.5, window.devicePixelRatio || 1), w = cv.clientWidth || 360;
-  cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr * LH / LW);
+  const p = $('#p-batalla'), W = p.clientWidth || innerWidth, H = p.clientHeight || innerHeight, K = Math.max(0.2, Math.min(W / LW, H / LH));
+  const esc = $('#escena'); esc.style.width = LW * K + 'px'; esc.style.height = LH * K + 'px'; $('#capa').style.transform = `scale(${K})`;
+  const dpr = Math.min(2.5, window.devicePixelRatio || 1);
+  cv.width = Math.round(LW * K * dpr); cv.height = Math.round(LH * K * dpr);
 }
 window.addEventListener('resize', () => { if (B) ajustarCanvas(); });
 function bucle(ahora) {
@@ -95,111 +102,6 @@ function turnoLleno(u) {
 }
 
 /* =========================================================
-   MENÚ DEL HÉROE
-   ========================================================= */
-const menuEl = $('#menu');
-function abrirMenu(h, vista = 'ordenes') {
-  B.menu = { h, vista }; B.eligiendo = null; menuEl.hidden = false;
-  const cab = `<div class="menu-cab"><h3 class="ol">${h.nombre}</h3><small>Vida ${h.hp}/${h.hpMax} · CAOS ${h.mp}</small></div>`;
-  if (vista === 'ordenes') {
-    menuEl.innerHTML = cab + `<div class="ordenes">
-      <button class="btn naranja ol" data-o="atacar">ATACAR</button>
-      <button class="btn violeta ol" data-o="tecnicas">TÉCNICAS</button>
-      <button class="btn dorado ol" data-o="objetos">OBJETOS</button>
-      <button class="btn ol" data-o="defender">DEFENDER</button></div>`;
-  } else if (vista === 'tecnicas') {
-    menuEl.innerHTML = cab + `<div class="lista-op">${HEROES[h.key].tec.map(id => { const t = TECNICAS[id];
-      return `<button class="op" data-tec="${id}" ${h.mp < t.mp ? 'disabled' : ''}><span><b>${t.nombre}</b><small>${t.desc}</small></span><span class="coste">${t.mp} CAOS</span></button>`; }).join('')}
-      <button class="btn-texto" data-o="volver">‹ Volver</button></div>`;
-  } else if (vista === 'objetos') {
-    const hay = OBJETO_ORDEN.filter(k => SAVE.items[k] > 0);
-    menuEl.innerHTML = cab + `<div class="lista-op">${hay.length ? hay.map(k => { const o = OBJETOS[k];
-      return `<button class="op" data-obj="${k}"><span><b>${o.nombre}</b><small>${o.desc}</small></span><span class="cuantos">x${SAVE.items[k]}</span></button>`; }).join('') : '<p class="ayuda">No te quedan objetos. Cómpralos en la tienda del mapa.</p>'}
-      <button class="btn-texto" data-o="volver">‹ Volver</button></div>`;
-  }
-}
-function cerrarMenu() { if (B) { B.menu = null; B.eligiendo = null; } menuEl.hidden = true; menuEl.innerHTML = ''; }
-// elegir a quién: lista en el menú y también tocando en la escena
-function elegirObjetivo(h, a, alElegir) {
-  const lista = a === 'enemigo' ? vivos(B.enemigos) : a === 'aliado' ? vivos(B.heroes) : B.heroes.filter(u => u.hp <= 0);
-  if (!lista.length) { aviso(a === 'caido' ? 'No hay nadie fuera de combate.' : 'No hay objetivos.'); return; }
-  B.eligiendo = { lista, alElegir };
-  menuEl.innerHTML = `<div class="menu-cab"><h3 class="ol">¿A quién?</h3><small>Toca en la lista o en la escena</small></div><div class="lista-op">${lista.map((u, i) =>
-    `<button class="op" data-obj-i="${i}"><span><b>${u.nombre}</b><small>Vida ${u.hp}/${u.hpMax}</small></span></button>`).join('')}<button class="btn-texto" data-o="volver">‹ Volver</button></div>`;
-}
-function decidir(h, acc) {
-  acc.actor = h; B.cola.push(acc); B.listos = B.listos.filter(x => x !== h); cerrarMenu(); play('card');
-}
-menuEl.addEventListener('click', e => {
-  if (!B || !B.menu) return;
-  const h = B.menu.h, b = e.target.closest('button'); if (!b) return;
-  if (b.dataset.o === 'volver') { play('select'); abrirMenu(h); return; }
-  if (b.dataset.o === 'atacar') elegirObjetivo(h, 'enemigo', u => decidir(h, { tipo: 'atacar', obj: u }));
-  else if (b.dataset.o === 'tecnicas') abrirMenu(h, 'tecnicas');
-  else if (b.dataset.o === 'objetos') abrirMenu(h, 'objetos');
-  else if (b.dataset.o === 'defender') decidir(h, { tipo: 'defender' });
-  else if (b.dataset.tec) {
-    const id = b.dataset.tec, t = TECNICAS[id];
-    if (['enemigo', 'aliado', 'caido'].includes(t.a)) elegirObjetivo(h, t.a, u => decidir(h, { tipo: 'tecnica', id, obj: u }));
-    else decidir(h, { tipo: 'tecnica', id });
-  } else if (b.dataset.obj) {
-    const id = b.dataset.obj, o = OBJETOS[id];
-    if (o.a === 'grupo') decidir(h, { tipo: 'objeto', id });
-    else elegirObjetivo(h, o.a, u => decidir(h, { tipo: 'objeto', id, obj: u }));
-  } else if (b.dataset.objI != null && B.eligiendo) B.eligiendo.alElegir(B.eligiendo.lista[+b.dataset.objI]);
-  play('select');
-});
-// tocar en la escena para elegir objetivo
-cv.addEventListener('pointerdown', e => {
-  if (!B || !B.eligiendo) return;
-  const r = cv.getBoundingClientRect(), x = (e.clientX - r.left) * LW / r.width, y = (e.clientY - r.top) * LH / r.height;
-  let mejor = null, md = 1e9;
-  for (const u of B.eligiendo.lista) { const d = Math.hypot(u.x - x, u.y - alto(u) * 0.45 - y); if (d < md) { md = d; mejor = u; } }
-  if (mejor && md < 110) { play('select'); B.eligiendo.alElegir(mejor); }
-});
-// tocar una fila de un héroe listo lo pone primero (como cambiar de turno en los clásicos)
-$('#filas').addEventListener('click', e => {
-  const f = e.target.closest('.fila'); if (!f || !B || B.eligiendo) return;
-  const h = B.heroes[+f.dataset.i]; if (B.listos.includes(h) && (!B.menu || B.menu.h !== h)) { B.listos = [h, ...B.listos.filter(x => x !== h)]; abrirMenu(h); play('select'); }
-});
-
-/* =========================================================
-   FILAS DEL GRUPO (vida, CAOS y barra de tiempo)
-   ========================================================= */
-function pintarFilas() {
-  $('#enemigos-fila').innerHTML = B.enemigos.map(e => `<div class="chip-e"><div class="ce-nom ol">${e.nombre}</div>
-    <div class="barrita"><i data-ehp></i></div><div class="ce-n"><b data-ehpn>${e.hp}</b>/${e.hpMax}</div><div class="barrita atb"><i data-eatb></i></div></div>`).join('');
-  B.enemigosEl = [...document.querySelectorAll('#enemigos-fila .chip-e')];
-  $('#filas').innerHTML = B.heroes.map((h, i) => `<div class="fila" data-i="${i}">
-    <div class="f-nom ol">${h.nombre} <em>Nv${h.lvl}</em></div>
-    <div class="f-vida"><span><b data-hp>${h.hp}</b><small>/${h.hpMax}</small></span><div class="barrita"><i data-hpb></i></div></div>
-    <div class="f-atb"><span class="f-caos">CAOS <b data-mp>${h.mp}</b></span><div class="barrita caos"><i data-mpb></i></div><div class="barrita atb"><i data-atb></i></div><div class="estados" data-est></div></div></div>`).join('');
-  B.filasEl = [...document.querySelectorAll('#filas .fila')];
-}
-function actualizarFilas() {
-  B.enemigos.forEach((e, i) => {
-    const c = B.enemigosEl[i]; if (!c) return;
-    c.querySelector('[data-ehpn]').textContent = Math.max(0, e.hp);
-    c.querySelector('[data-ehp]').style.width = (100 * Math.max(0, e.hp) / e.hpMax) + '%';
-    c.querySelector('[data-eatb]').style.width = (e.hp > 0 ? Math.min(100, e.atb) : 0) + '%';
-    c.classList.toggle('ko', e.hp <= 0); c.querySelector('.atb').classList.toggle('llena', e.atb >= 100 && e.hp > 0);
-  });
-  B.heroes.forEach((h, i) => {
-    const f = B.filasEl[i]; if (!f) return;
-    f.querySelector('[data-hp]').textContent = h.hp;
-    f.querySelector('[data-hpb]').style.width = (100 * h.hp / h.hpMax) + '%';
-    f.querySelector('[data-mp]').textContent = h.mp;
-    f.querySelector('[data-mpb]').style.width = (100 * h.mp / h.mpMax) + '%';
-    f.querySelector('[data-atb]').style.width = (h.hp > 0 ? h.atb : 0) + '%';
-    f.querySelector('.atb').classList.toggle('llena', h.atb >= 100 && h.hp > 0);
-    f.querySelector('.f-vida').classList.toggle('baja', h.hp > 0 && h.hp < h.hpMax * 0.25);
-    f.classList.toggle('ko', h.hp <= 0); f.classList.toggle('lista', B.listos.includes(h)); f.classList.toggle('turno', !!B.menu && B.menu.h === h);
-    const e = []; if (h.est.atk) e.push('ATQ+'); if (h.est.def) e.push('DEF+'); if (h.est.prisa) e.push('VEL+'); if (h.est.provoca) e.push('PROV'); if (h.est.bajo) e.push('ATQ−'); if (h.est.aturdido) e.push('ATUR'); if (h.guardia) e.push('GUARD'); if (h.hp <= 0) e.push('K.O.');
-    const t = e.join(' · '); const el = f.querySelector('[data-est]'); if (el.textContent !== t) el.textContent = t;
-  });
-}
-
-/* =========================================================
    EFECTOS
    ========================================================= */
 let cartelT = null;
@@ -239,7 +141,7 @@ function herir(u, d) {
   else if (u.jefe && !u.fase2 && u.hp < u.hpMax / 2) { u.fase2 = true; cartel(u.nombre + ' se enfada', true); play('womp'); }
 }
 function cartelCrit() { numeroLibre('¡CRÍTICO!', '#ffcb3d'); }
-function numeroLibre(t, col) { B.nums.push({ x: LW / 2, y: 70, txt: t, col, tam: 30, v: 0 }); }
+function numeroLibre(t, col) { B.nums.push({ x: LW / 2, y: 214, txt: t, col, tam: 30, v: 0 }); }
 function curar(u, n) { if (u.hp <= 0) return; n = Math.round(Math.min(n, u.hpMax - u.hp)); u.hp += n; numero(u, '+' + n, '#8be06a'); efecto('cura', u); }
 function caer(u) {
   u.esperando = false; u.atb = 0; u.est = estadoVacio();
@@ -257,14 +159,14 @@ function otroVivo(lado, prefer) {
    ========================================================= */
 async function ejecutar(a) {
   const u = a.actor; if (!u || u.hp <= 0) return;
-  B.ocupado = true;
+  B.ocupado = true; B.actuando = u;
   try {
     if (u.lado === 'h') await accionHeroe(u, a); else await accionEnemigo(u, a);
   } catch (err) { console.error(err); }
   u.atb = 0; u.esperando = false;
   for (const k of ['atk', 'def', 'prisa', 'provoca', 'bajo']) if (u.est[k] > 0) u.est[k]--;
   await espera(160);
-  B.ocupado = false;
+  B.ocupado = false; B.actuando = null;
   comprobarFin();
 }
 async function embestir(u, dir) {   // el que actúa da un paso adelante
@@ -362,7 +264,7 @@ async function accionEnemigo(u, a) {
     for (const h of vivos(B.heroes)) { h.est.bajo = 3; numero(h, 'ATQ−', '#ff8aa0', 20); }
   } else if (x.t === 'llamar') {
     const ocup = B.enemigos.filter(e => !e.muerto).map(e => e.x + ',' + e.y);
-    const sitio = [[155, 205], [65, 325], [300, 215], [290, 420]].find(p => !ocup.includes(p.join(','))) || [60 + rand(0, 200), 230 + rand(0, 160)];
+    const sitio = [[155, 205], [65, 325], [300, 215], [290, 420]].find(p => !ocup.includes(aEscena(p).join(','))) || [60 + rand(0, 200), 230 + rand(0, 160)];
     const n = crearEnemigo(x.que, sitio); n.atb = 0; B.enemigos.push(n); chispas(n.x, n.y - 20, ['#c08bff', '#fff'], 16); numero(n, '¡CONTRATADO!', '#ff8aa0', 16);
   }
   await espera(380); await retroceder(u);

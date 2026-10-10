@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.11', real: ['<b>COMBATES EN ESTILO MAQUETA</b>: cada mundo es ahora un decorado de píxeles con luz de verdad: el atardecer en el despacho del CEO, los fluorescentes de las oficinas, la luna del cementerio y los focos del plató. Rayos de luz, polvo flotando, brillos en los golpes y números más grandes. Los personajes son los de siempre, con sombra, reflejo en el suelo y contraluz.', '<b>INTERFAZ NUEVA</b>: arriba, la línea de TURNOS dice quién actúa ahora y quién después; abajo a la izquierda, las órdenes (al alcance del pulgar), y a la derecha, tu grupo con su vida, CAOS y barra de tiempo. Las técnicas, los objetos y los objetivos se abren encima del grupo.'],
+    joke: ['Microblizz ha subastado el decorado del despacho como NFT. Lo ha comprado el propio CEO.'] },
   { v: '0.1.10', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.9', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.8', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },

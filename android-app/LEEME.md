@@ -13,4 +13,4 @@ Una app por juego (rumble, td, survivors, skate, tacticas), cada una con su id `
 ## Probar en el móvil sin cuenta de Google Play
 Tras ejecutar el workflow, los APK quedan en https://github.com/MicroBlizz/FansOf/releases/tag/apk-latest (descarga directa desde el móvil). Instalar: abrir el .apk descargado → permitir «instalar apps de esta fuente» cuando lo pida. Son de depuración (firma de prueba): para publicar se generará el .aab firmado.
 
-En la release `apk-latest` cada juego tiene dos archivos: `fansof-<juego>.apk` (enlace fijo, el que usa /android/) y `fansof-<juego>-v<versión>-<fecha UTC>.apk` (la misma compilación, con versión y fecha en el nombre; solo queda la última de cada juego).
+En la release `apk-latest` cada juego tiene dos archivos: `fansof-<juego>.apk` (enlace fijo, el que usa /android/) y `fansof-<juego>-v<versión>-<fecha UTC>.apk` (la misma compilación, con versión y fecha en el nombre; se conservan 7 días).

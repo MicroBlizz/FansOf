@@ -3,7 +3,7 @@
 // empezar cada día (para «Continuar») y, al acabar, las monedas van a La Madriguera.
 'use strict';
 
-const VIAJE = { modo: 'menu', andando: false, mx: 0, vel: 40, mundo: 0, dia: 1, plan: null, fundido: 0, cartel: null, fin: null, usados: [], sueltas: [], esp: 0, espVista: 0 };
+const VIAJE = { modo: 'menu', andando: false, mx: 0, vel: 40, mundo: 0, dia: 1, plan: null, fundido: 0, cartel: null, fin: null, usados: [], sueltas: [], esp: 0, espVista: 0, glitch: 0 };
 
 // empieza un mundo (o sigue la partida guardada si «seguir»)
 async function partida(mundo, seguir) {
@@ -35,6 +35,7 @@ async function partida(mundo, seguir) {
       if (d === 1 && d0 === 1) consejo('inicio');
       if (!await juegaDia(VIAJE.plan[d - 1])) return await derrota();
       PROP = null;
+      if (d % DIAS_CAPITULO === 0 && d < M.dias) await finCapitulo(d);
     }
     await victoria();
   } catch (e) { if (e !== CANCELADO) throw e; }
@@ -61,15 +62,16 @@ async function empiezaDia(d) {
   VIAJE.dia = d;
   if (d > 1) VIAJE.esp += Math.round((2 + Math.random() * 6) * (1 + VIAJE.mundo));
   // se guarda al empezar el día: si sales, «Continuar» vuelve aquí
-  GUARDA.run = { mundo: VIAJE.mundo, dia: d, plan: VIAJE.plan, usados: VIAJE.usados, h: JSON.parse(JSON.stringify(H)) };
-  guarda();
+  guardaRun(d);
   if (fase !== VIAJE.fase) {
     if (VIAJE.fundido < 1) await anima(0.45, k => { VIAJE.fundido = k; });
     VIAJE.fase = fase; preparaFondo(VIAJE.mundo, fase); FONDO.sigProp = VIAJE.mx + 30;
     FONDO.cosas = []; avanzaProps(VIAJE.mx, PAN.W);
   }
   VIAJE.andando = true; ponAnim(CONEJO, 'andar'); if (ARDILLA.activa) ponAnim(ARDILLA, 'andar');
-  VIAJE.cartel = { n: d, titulo: TITULO_DIA[tipo], t0: RELOJ.t, jefe: tipo === 'jefe' || tipo === 'mini' };
+  const cap = (d - 1) % DIAS_CAPITULO === 0 ? Math.floor((d - 1) / DIAS_CAPITULO) : -1;
+  VIAJE.cartel = { n: d, titulo: TITULO_DIA[tipo], t0: RELOJ.t, jefe: tipo === 'jefe' || tipo === 'mini', cap: cap >= 0 ? { n: cap + 1, nombre: M.capitulos[cap] } : null };
+  if (cap >= 0) log('Capítulo {n}: {c}.', { n: cap + 1, c: tr(M.capitulos[cap]) });
   sonido('dia');
   log('Día {n}: {t}.', { n: d, t: tr(TITULO_DIA[tipo]) });
   if (VIAJE.fundido > 0) await anima(0.45, k => { VIAJE.fundido = 1 - k; });
@@ -81,6 +83,33 @@ async function empiezaDia(d) {
     chatEv('cuota', null, 0.5, 20);
   }
   await espera(0.6);
+}
+function guardaRun(d) {
+  GUARDA.run = { mundo: VIAJE.mundo, dia: d, plan: VIAJE.plan, usados: VIAJE.usados, h: JSON.parse(JSON.stringify(H)) };
+  guarda();
+}
+// fin de capítulo: fiesta, premio (monedas y cura) y elegir entre seguir o descansar en La Madriguera
+async function finCapitulo(d) {
+  const M = MUNDOS[VIAJE.mundo], n = d / DIAS_CAPITULO;
+  VIAJE.andando = false; ponAnim(CONEJO, 'gana'); if (ARDILLA.activa) ponAnim(ARDILLA, 'quieto');
+  sonido('victoria'); destella('#fff3a0', 0.06);
+  rotulo(PAN.W / 2, ESC.Y + 50, formatea(tr('¡CAPÍTULO {n} SUPERADO!'), { n }), COL.oro, 2.2, 1);
+  for (let i = 0; i < 6; i++) espera(i * 0.2).then(() => { chispas(rnd(20, PAN.W - 20), ESC.Y + rnd(40, 90), 14, ['#ffcb3d', '#ff7aa8', '#5aaeff', '#7be04a'][i % 4], 120); sonido('moneda'); }).catch(() => {});
+  chatRafaga('capitulo', 3);
+  log('¡Capítulo {n} superado! Premio: monedas y un descanso.', { n });
+  await espera(0.8);
+  const antes = foto(); cura(H, H.vidaMax * 0.25); muestraCambios(antes);
+  lluviaMonedas(PAN.W / 2, ESC.Y + 70, ganaMonedas(H, precioMundo(15 + n * 10)), 18);
+  await espera(1.4);
+  guardaRun(d + 1);
+  consejo('capitulo');
+  const sig = formatea(tr('Capítulo {n}: {c}'), { n: n + 1, c: tr(M.capitulos[n]) });
+  const i = await panelOpciones(formatea(tr('Capítulo {n} superado'), { n }), formatea(tr('Lo siguiente: {s}. Tu partida está guardada.'), { s: sig }), [
+    { n: 'Seguir', d: formatea(tr('Empieza el {s}.'), { s: sig }) },
+    { n: 'Descansar en La Madriguera', d: 'Sigues después desde aquí con «Continuar».' },
+  ]);
+  if (i === 1) { volverMadriguera(); throw CANCELADO; }
+  ponAnim(CONEJO, 'andar');
 }
 async function anda(s) { VIAJE.andando = true; ponAnim(CONEJO, 'andar'); if (ARDILLA.activa) ponAnim(ARDILLA, 'andar'); await espera(s); }
 

@@ -131,6 +131,10 @@ function pintaEscenaUI(ctx) {
       ctx.fillStyle = c3; ctx.fillRect(dx, y + 30, W, 2);
       ondula(ctx, formatea(tr('Día {n}'), { n: c.n }), W / 2 + dx, y + 2, 2, COL.oro, COL.naranja, 0, 1);
       escribe(ctx, tr(c.titulo), W / 2 + dx, y + 21, { alin: 'centro', c: COL.tinta });
+      if (c.cap) {   // al empezar capítulo, una franja dorada debajo con su nombre
+        ctx.fillStyle = OL; ctx.fillRect(dx, y + 34, W, 14); ctx.fillStyle = '#b8860b'; ctx.fillRect(dx, y + 35, W, 12); ctx.fillStyle = '#ffcb3d'; ctx.fillRect(dx, y + 35, W, 1);
+        escribe(ctx, formatea(tr('Capítulo {n}: {c}'), { n: c.cap.n, c: tr(c.cap.nombre) }), W / 2 + dx, y + 37, { alin: 'centro', c: '#fff6ea' });
+      }
     }
   }
   if (VIAJE.fundido > 0) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, Math.round(VIAJE.fundido * 16), COL.fondo);
@@ -145,13 +149,44 @@ function pintaEscenaUI(ctx) {
     pintaSpr(ctx, SPR.icono.casa, 11, ESC.Y + 9 + dy);
     if (armado) escribe(ctx, tr('¿Salir? Toca otra vez'), 22, ESC.Y + 7, { c: '#ffb0b8' });
     else pintaDirecto(ctx, 22, ESC.Y + 5);
+    if (VIAJE.plan) pintaMapa(ctx);
   }
+  if (VIAJE.glitch > RELOJ.t) pintaGlitch(ctx);
   if (VIAJE.modo !== 'menu') {
     const dy = botonPx(ctx, W - 40, ESC.Y + 4, 20, 13, RELOJ.vel > 1 ? COL.naranja : COL.trayHi, RELOJ.vel > 1 ? COL.naranjaO : OL, () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
     escribe(ctx, RELOJ.vel > 1 ? 'x2' : 'x1', W - 30, ESC.Y + 6 + dy, { alin: 'centro' });
   }
   const dy = botonPx(ctx, W - 17, ESC.Y + 4, 13, 13, COL.trayHi, OL, () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
   pintaSpr(ctx, SON.on ? SPR.icono.sonido : SPR.icono.mudo, W - 11, ESC.Y + 9 + dy);
+}
+
+// el mapa del camino: los 40 días en una raya, con los capítulos, lo especial que viene y dónde está el conejo
+const MARCA_DIA = { jefe: ['#ff3348', 2], mini: ['#ff8a1f', 2], elite: ['#ffcb3d', 1], tienda: ['#ff7a1a', 1], cofre: ['#ffe14d', 1], hoguera: ['#e63946', 1], pase: ['#d08cff', 1], gashapon: ['#ff7aa8', 1], ruleta: ['#7be04a', 1], raid: ['#e91e3c', 1], misterioso: ['#5aaeff', 1], bug: ['#33e0ff', 1] };
+function pintaMapa(ctx) {
+  const W = PAN.W, n = VIAJE.plan.length, x0 = 8, x1 = W - 9, y = ESC.Y + 24, paso = (x1 - x0) / (n - 1), xd = d => Math.round(x0 + (d - 1) * paso);
+  ctx.fillStyle = OL; ctx.fillRect(x0 - 2, y - 2, x1 - x0 + 5, 5);
+  ctx.fillStyle = '#3e2363'; ctx.fillRect(x0 - 1, y - 1, x1 - x0 + 3, 3);
+  ctx.fillStyle = COL.oro; ctx.fillRect(x0 - 1, y, xd(VIAJE.dia) - x0 + 1, 1);
+  for (let k = 1; k < n / DIAS_CAPITULO; k++) { const x = Math.round((xd(k * DIAS_CAPITULO) + xd(k * DIAS_CAPITULO + 1)) / 2); ctx.fillStyle = OL; ctx.fillRect(x - 1, y - 4, 3, 9); ctx.fillStyle = '#cdb9ea'; ctx.fillRect(x, y - 3, 1, 7); }
+  for (let d = 1; d <= n; d++) {
+    const m = MARCA_DIA[VIAJE.plan[d - 1]]; if (!m) continue;
+    const [col, r] = m, x = xd(d), pasado = d < VIAJE.dia;
+    ctx.fillStyle = OL; ctx.fillRect(x - r - 1, y - r - 1, r * 2 + 3, r * 2 + 3);
+    ctx.fillStyle = pasado ? '#4a3a5e' : col; ctx.fillRect(x - r, y - r, r * 2 + 1, r * 2 + 1);
+  }
+  const x = xd(VIAJE.dia), sube = Math.sin(RELOJ.t * 6) > 0 ? 1 : 0;
+  ctx.fillStyle = OL; ctx.fillRect(x - 3, y - 9 - sube, 7, 6); ctx.fillRect(x - 2, y - 12 - sube, 1, 4); ctx.fillRect(x + 2, y - 12 - sube, 1, 4);
+  ctx.fillStyle = '#fff6ea'; ctx.fillRect(x - 2, y - 8 - sube, 5, 4); ctx.fillStyle = '#ffc2dc'; ctx.fillRect(x - 2, y - 11 - sube, 1, 3); ctx.fillRect(x + 2, y - 11 - sube, 1, 3);
+  ctx.fillStyle = '#8a2bff'; ctx.fillRect(x + 1, y - 7 - sube, 1, 1);
+}
+// el bug de Microblizz: franjas de colores que tiemblan sobre la escena
+function pintaGlitch(ctx) {
+  const W = PAN.W;
+  for (let i = 0; i < 9; i++) {
+    const y = ESC.Y + Math.floor(Math.random() * ESC.H), h = 1 + Math.floor(Math.random() * 6), dx = Math.floor(Math.random() * 16) - 8;
+    ctx.drawImage(ctx.canvas, 0, y, W, h, dx, y, W, h);
+    if (Math.random() < 0.4) { ctx.fillStyle = ['#33e0ff', '#ff3348', '#7be04a', '#ff7aa8'][i % 4]; ctx.fillRect(Math.floor(Math.random() * W), y, 6 + Math.floor(Math.random() * 30), 1); }
+  }
 }
 
 /* ---------- el panel de abajo ---------- */

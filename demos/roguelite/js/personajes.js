@@ -65,7 +65,7 @@ function pintaEnt(ctx, ent, ancho) {
 }
 
 /* ---------- lo que hay en el camino ---------- */
-const PROP_ALTO = { puesto: 44, abogado: 32, becario: 32, zombi: 34, soporte: 34, starbotRoto: 26, maquina: 44, caja: 26, tumba: 30, hoguera: 30, cofre: 24, gashapon: 40, ruleta: 48 };
+const PROP_ALTO = { fallen: 38, puesto: 44, abogado: 32, becario: 32, zombi: 34, soporte: 34, starbotRoto: 26, maquina: 44, caja: 26, tumba: 30, hoguera: 30, cofre: 24, gashapon: 40, ruleta: 48 };
 function nuevoProp(tipo) { return tipo ? { tipo, wx: VIAJE.mx + PAN.W + 40, x: PAN.W + 40, y: SUELO, z: tipo === 'soporte' ? 14 : 0, alto: PROP_ALTO[tipo] || 30, t0: RELOJ.t, anim: 'quieto', ang: 0, abierto: false, sacude: 0 } : null; }
 function pintaProp(ctx, mx) {
   if (!PROP) return;
@@ -78,7 +78,7 @@ function pintaProp(ctx, mx) {
       sombra(ctx, x, 20, 0); pintaSpr(ctx, SPR.puesto, x, SUELO);
       for (let k = 0; k < 5; k++) { const ph = (t * 0.8 + k * 0.2) % 1, vx = x - 8 + Math.round(Math.sin(ph * 6 + k) * 1.5), vy = SUELO - 34 - Math.round(ph * 14); ctx.fillStyle = ph < 0.6 ? '#ffffff' : '#d8d8f0'; ctx.fillRect(vx, vy, 1, 1); }
       break;
-    case 'abogado': case 'becario': case 'zombi': P.spr = P.tipo; pintaEnt(ctx, P, 9); break;
+    case 'abogado': case 'becario': case 'zombi': case 'fallen': P.spr = P.tipo; pintaEnt(ctx, P, 9); break;
     case 'soporte': P.spr = 'soporte'; P.def = { vuela: 14 }; pintaEnt(ctx, P, 8); break;
     case 'starbotRoto':
       sombra(ctx, x, 10, 0); pintaSpr(ctx, SPR.starbot.dano, x, SUELO + 2);
@@ -112,7 +112,7 @@ function pintaSueltas(ctx, mx) {
 function barraRival(ctx) {
   if (!RIVAL || RIVAL.anim === 'muere') return;
   const grande = RIVAL.def.jefe || RIVAL.def.mini, w = grande ? 56 : 34, x = Math.round(RIVAL.x - w / 2);
-  const y = Math.max(ESC.Y + 22, Math.round(RIVAL.y - RIVAL.z - RIVAL.alto - 14));
+  const y = Math.max(ESC.Y + 38, Math.round(RIVAL.y - RIVAL.z - RIVAL.alto - 14));
   const k = Math.max(0, RIVAL.vidaVista / RIVAL.e.vidaMax), kr = Math.max(0, RIVAL.e.vida / RIVAL.e.vidaMax);
   const nombre = (RIVAL.elite ? '★ ' : '') + tr(RIVAL.def.n), nx = Math.max(4 + anchoTexto(nombre) / 2, Math.min(PAN.W - 4 - anchoTexto(nombre) / 2, RIVAL.x));
   escribe(ctx, nombre, nx, y - 10, { alin: 'centro', c: RIVAL.def.jefe ? '#ffb0b8' : RIVAL.elite || RIVAL.def.mini ? '#ffcb3d' : '#fff6ea' });

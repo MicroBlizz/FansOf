@@ -256,4 +256,58 @@ async function recompensas(e, tipo) {
   if (tipo === 'elite') await premioObjeto('common');
   if (tipo === 'mini') { await premioObjeto('rare'); await premioHabilidad(null, true); }
 }
-const EVENTO_DIA = { encuentro: diaEncuentro, tienda: diaTienda, cofre: diaCofre, ruleta: diaRuleta, gashapon: diaGashapon, hoguera: diaHoguera, monedas: diaMonedas, pase: diaPase };
+// raid: otro canal manda a sus espectadores y llueven regalos (sin pararse)
+async function diaRaid() {
+  const u = CHAT_USUARIOS[Math.floor(Math.random() * CHAT_USUARIOS.length)][0], n = Math.round((200 + Math.random() * 300) * (1 + VIAJE.mundo));
+  VIAJE.esp += n; sonido('sirena');
+  rotulo(PAN.W / 2, ESC.Y + 50, tr('¡RAID!'), '#e91e3c', 1.6, 3);
+  log('¡{u} hace una raid con {n} espectadores! Llueven regalos.', { u, n: miles(n) });
+  chatRafaga('raid', 4);
+  for (let i = 0; i < 4; i++) { await espera(0.45); lluviaMonedas(rnd(30, PAN.W - 30), ESC.Y + 40, ganaMonedas(H, precioMundo(6)), 8, i > 0); }
+  await anda(1.2);
+}
+// el comerciante misterioso: FallenHero vende lo que le queda de cuando era protagonista
+async function diaMisterioso() {
+  await paraEnProp('fallen');
+  bocadillo(PROP, 'Psst… ¿quieres algo de cuando era famoso?', 2); sonido('voz');
+  consejo('misterioso'); chatEv('misterioso', null, 1, 0);
+  await espera(0.8);
+  const po = precioMundo(90), ph = precioMundo(110);
+  const i = await panelOpciones('Un comerciante misterioso', 'FallenHero vende su equipo de cuando era protagonista. «Solo lo usé en una secuela».', [
+    { n: 'Su equipo', d: 'Un objeto épico o legendario.', precio: po, no: H.monedas < po },
+    { n: 'Su secreto', d: 'Eliges 1 de 3 habilidades épicas o legendarias.', precio: ph, no: H.monedas < ph },
+    { n: 'No, gracias', d: 'FallenHero suspira. Otra vez.' },
+  ]);
+  if (i < 2) {
+    const p = i === 0 ? po : ph; H.monedas -= p; sonido('compra'); rotulo(MONEDERO[0], ESC.Y + 12, '-' + p, '#ff5a6a', 1.4);
+    bocadillo(PROP, '¡Gracias! Por fin pago el alquiler.', 1.6);
+    if (i === 0) await premioObjeto('epic'); else await premioHabilidad('epic');
+  } else { bocadillo(PROP, 'Volveré… en el DLC.', 1.6); await espera(1); }
+}
+// el bug de Microblizz: la pantalla se rompe y pasa algo raro (casi siempre bueno)
+async function diaBug() {
+  await anda(0.8);
+  VIAJE.andando = false; ponAnim(CONEJO, 'quieto');
+  VIAJE.glitch = RELOJ.t + 1.4; sonido('rayo'); tiembla(3);
+  chatRafaga('bug', 3);
+  await espera(1.5);
+  const r = Math.random(), antes = foto();
+  if (r < 0.4) {
+    const n = Math.min(H.monedas, precioMundo(80));
+    log('¡El bug duplica tus monedas! (Microblizz lo arreglará en el próximo parche).');
+    rotulo(PAN.W / 2, ESC.Y + 60, tr('¡MONEDAS x2!'), COL.oro, 1.6);
+    lluviaMonedas(CONEJO.x + 20, SUELO - 40, Math.max(5, n), 20, true);
+  } else if (r < 0.75) {
+    const res = afilar(H);
+    log('El bug sube de nivel algo tuyo sin querer.');
+    if (res.sube) { const hab = HABILIDADES[res.sube]; rotulo(CONEJO.x, SUELO - 66, tr(hab.n), RAREZA[hab.rar][1], 1.4); rotulo(CONEJO.x, SUELO - 56, formatea(tr('Nv {n}'), { n: nivelHab(H, res.sube) }), '#ffcb3d', 1.4); sonido('nivel'); }
+    muestraCambios(antes);
+  } else {
+    dana(H, H.vidaMax * 0.15); muestraCambios(antes);
+    log('Error 404: parte de tu vida no encontrada.');
+    rotulo(PAN.W / 2, ESC.Y + 60, 'ERROR 404', '#33e0ff', 1.6);
+  }
+  await espera(1.2);
+  await anda(0.3);
+}
+const EVENTO_DIA = { raid: diaRaid, misterioso: diaMisterioso, bug: diaBug, encuentro: diaEncuentro, tienda: diaTienda, cofre: diaCofre, ruleta: diaRuleta, gashapon: diaGashapon, hoguera: diaHoguera, monedas: diaMonedas, pase: diaPase };

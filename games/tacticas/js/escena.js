@@ -72,10 +72,12 @@ function dibujar() {
   for (const l of d.luces) pintaBrillo(cx, l.col, l.x, l.y, l.r, l.a * (0.92 + 0.08 * Math.sin(t * 2.1 + l.x)));
   cx.globalCompositeOperation = 'source-over';
   const todos = [...B.enemigos.filter(e => e.alfa > 0), ...B.heroes].sort((a, b) => a.y - b.y);
-  for (const u of todos) if (u.hp > 0) pintarSprite(cx, u.key, u.x + u.dx, u.y + 2, u.esc, u.lado === 'h' ? -1 : 1, { img: reflejoDe(u.key), voltea: true, alfa: 0.16 * u.alfa });
+  pintarFx('detras');
+  for (const u of todos) if (u.hp > 0 && !(u.dy < -4)) pintarSprite(cx, u.key, u.x + u.dx, u.y + 2, u.esc, u.lado === 'h' ? -1 : 1, { img: reflejoDe(u.key), voltea: true, alfa: 0.16 * u.alfa });
   for (const u of todos) sombraDe(u);
   for (const u of todos) pintarLuchador(u, d);
   pintarEfectos();
+  pintarFx('delante');
   cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = 0.85 + 0.15 * Math.sin(t * 0.7);
   cx.drawImage(M.rayos, 0, 0, LW, LH); cx.globalAlpha = 1;
   pintaPolvo(cx, t);
@@ -99,11 +101,12 @@ function dibujar() {
     cx.restore();
   }
   cx.globalAlpha = 1;
+  pintarFx('pantalla');
 }
 function sombraDe(u) {
   const sp = SPR[u.key]; if (!sp) return;
-  const w = sp.wd * 0.36 * u.esc; cx.globalAlpha = 0.55 * u.alfa;
-  cx.drawImage(brillo('#08020c'), u.x + u.dx - w * 1.5, u.y - 9 * u.esc, w * 3, 18 * u.esc); cx.globalAlpha = 1;
+  const k = 1 / (1 + Math.max(0, -(u.dy || 0)) / 120), w = sp.wd * 0.36 * u.esc * k; cx.globalAlpha = 0.55 * u.alfa * k;
+  cx.drawImage(brillo('#08020c'), u.x + u.dx - w * 1.5, u.y + Math.max(0, u.dy || 0) - 9 * u.esc, w * 3, 18 * u.esc); cx.globalAlpha = 1;
 }
 function rrFill(x, y, w, h, r) { if (w <= 0) return; cx.beginPath(); rrPath(cx, x, y, w, h, Math.min(r, w / 2)); cx.fill(); }
 function flecha(x, y, col) { cx.beginPath(); cx.moveTo(x - 11, y - 15); cx.lineTo(x + 11, y - 15); cx.lineTo(x, y); cx.closePath(); cx.fillStyle = col; cx.fill(); cx.lineWidth = 3; cx.strokeStyle = OL; cx.stroke(); }
@@ -112,7 +115,7 @@ function pintarLuchador(u, d) {
   const sp = SPR[u.key]; if (!sp) return;
   const resp = u.hp > 0 && !u.esperando ? Math.sin(B.t * 3 + u.x) * 0.012 : 0;   // respiración
   const sacude = u.golpe > 0 ? Math.sin(u.golpe * 40) * 4 * u.golpe : 0;
-  const x = u.x + u.dx + sacude, y = u.y + (ko ? 6 : 0), esc = u.esc * (1 + resp);
+  const x = u.x + u.dx + sacude, y = u.y + (u.dy || 0) + (ko ? 6 : 0), esc = u.esc * (1 + resp);
   if (!ko) pintarSprite(cx, u.key, x + d.cdx, y + d.cdy, esc, giro, { img: siluetaDe(u.key, d.contraluz), alfa: 0.85 * u.alfa });   // contraluz
   pintarSprite(cx, u.key, x, y, esc, giro, {
     corrupto: u.corrupto, alfa: u.lado === 'e' ? u.alfa : ko ? 0.75 : 1, gris: ko, rot: ko ? -1.3 * giro : 0, blanco: u.golpe > 0.6 ? 0.7 : 0 });

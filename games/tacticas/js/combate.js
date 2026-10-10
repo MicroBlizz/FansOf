@@ -42,7 +42,7 @@ function empezarBatalla(wi, li) {
   const heroes = SAVE.grupo.map((k, i) => crearHeroe(k, i));
   if (heroes.every(h => h.hp <= 0)) { aviso('Tu grupo está fuera de combate: pasa por el café.'); return; }
   B = { wi, li, nivel, heroes, enemigos: nivel.e.map((k, i) => crearEnemigo(k, pos[i])), cola: [], listos: [], menu: null, eligiendo: null,
-    ocupado: false, pausa: false, fin: false, t: 0, esperas: [], parts: [], nums: [], ondas: [], temblor: 0, revivido: false, oroRobado: 0, ultimo: 0 };
+    ocupado: false, pausa: false, fin: false, t: 0, esperas: [], parts: [], nums: [], ondas: [], fx: [], anims: [], fantasmas: [], parada: 0, temblor: 0, revivido: false, oroRobado: 0, ultimo: 0 };
   mostrar('p-batalla'); ajustarCanvas(); pintarFilas(); cerrarMenu();
   const musica = nivel.jefe ? MUNDOS[wi].musica : HEROES[SAVE.grupo[0]].fac;
   musicSet(TRACKS[musica] ? musica : 'boss');
@@ -70,7 +70,9 @@ function espera(ms) { return new Promise(r => B.esperas.push({ fin: B.t + ms / 1
 const vivos = lista => lista.filter(u => u.hp > 0);
 
 function actualizar(dt) {
+  if (B.parada > 0) { B.parada -= dt; dt *= 0.08; }   // parón al golpear fuerte
   B.t += dt;
+  avanzaFx(dt);
   for (let i = B.esperas.length - 1; i >= 0; i--) if (B.t >= B.esperas[i].fin) { const e = B.esperas.splice(i, 1)[0]; e.r(); }
   // partículas, números y ondas
   for (const p of B.parts) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.g || 0) * dt; p.v -= dt; }
@@ -134,7 +136,7 @@ function danio(at, ob, stat, pow) {
 }
 function herir(u, d) {
   if (u.hp <= 0) return;
-  u.hp = Math.max(0, u.hp - d.n); u.golpe = 1;
+  u.hp = Math.max(0, u.hp - d.n); u.golpe = 1; luzGolpe(u, d);
   numero(u, d.n, d.crit ? '#ffcb3d' : '#fff', d.crit ? 34 : 26); if (d.crit) { cartelCrit(); B.temblor = Math.max(B.temblor, 5); }
   play('hit');
   if (u.hp <= 0) caer(u);
@@ -180,7 +182,7 @@ async function accionHeroe(h, a) {
   if (a.tipo === 'defender') { h.guardia = true; numero(h, 'DEFIENDE', '#c08bff', 20); play('shield'); await espera(350); return; }
   if (a.tipo === 'atacar') {
     const ob = otroVivo('e', a.obj); if (!ob) return;
-    await embestir(h); play(pick(['hit', 'slam'])); efecto('tajo', ob); herir(ob, danio(h, ob, 'atk', 1)); const gana = Math.min(AJUSTES.caosAtaque, h.mpMax - h.mp); if (gana > 0) { h.mp += gana; numero(h, '+' + gana + ' CAOS', '#f3a6ff', 18); } await espera(260); await retroceder(h); return;
+    const A = TEC_ANIM.atacar; await A.antes(h, [ob]); play(pick(['hit', 'slam'])); A.golpe(h, ob); herir(ob, danio(h, ob, 'atk', 1)); const gana = Math.min(AJUSTES.caosAtaque, h.mpMax - h.mp); if (gana > 0) { h.mp += gana; numero(h, '+' + gana + ' CAOS', '#f3a6ff', 18); } await espera(260); await A.despues(h); return;
   }
   if (a.tipo === 'objeto') {
     const o = OBJETOS[a.id]; if (!(SAVE.items[a.id] > 0)) { aviso('Ya no te quedan.'); return; }
@@ -193,17 +195,20 @@ async function accionHeroe(h, a) {
   // técnica
   const t = TECNICAS[a.id]; if (h.mp < t.mp) return;
   h.mp -= t.mp; cartel(t.nombre); play(t.sfx || 'card');
-  await embestir(h); await espera(120);
-  if (t.ruleta) { await ruleta(h); await retroceder(h); return; }
+  // a quién va (para la animación) y la animación de la técnica (espectaculo-tecnicas.js)
+  const obs = t.a === 'enemigo' ? [otroVivo('e', a.obj)] : t.a === 'enemigos' ? vivos(B.enemigos) : t.a === 'aliado' ? [otroVivo('h', a.obj)]
+    : t.a === 'caido' ? [a.obj && a.obj.hp <= 0 ? a.obj : B.heroes.find(x => x.hp <= 0)].filter(Boolean) : t.a === 'yo' ? [h] : vivos(B.heroes);
+  const an = TEC_ANIM[a.id] || {}, vuelve = () => (an.despues ? an.despues(h, obs) : retroceder(h));
+  if (an.antes) await an.antes(h, obs); else { await embestir(h); await espera(120); }
+  if (t.ruleta) { await ruleta(h); await vuelve(); return; }
   if (t.a === 'enemigo' || t.a === 'enemigos') {
-    const obs = t.a === 'enemigo' ? [otroVivo('e', a.obj)] : vivos(B.enemigos);
     for (let g = 0; g < (t.golpes || 1); g++) {
       for (const ob of obs) {
         if (!ob || ob.hp <= 0) continue;
-        if (t.pow) { efecto(t.fx, ob); const d = danio(h, ob, t.st, t.pow); herir(ob, d); if (t.roba) curar(h, d.n * t.roba); }
+        if (t.pow) { if (an.golpe) an.golpe(h, ob, g); else efecto(t.fx, ob); const d = danio(h, ob, t.st, t.pow); herir(ob, d); if (t.roba) curar(h, d.n * t.roba); }
         if (t.aturde && ob.hp > 0) { if (Math.random() < (ob.jefe ? t.aturde * 0.4 : t.aturde)) { ob.est.aturdido = 1; numero(ob, 'SIN TURNO', '#c08bff', 18); } else numero(ob, 'FALLA', '#cdb9ea', 18); }
       }
-      if (t.golpes > 1) { play(t.sfx); await espera(200); }
+      if (t.golpes > 1) { play(t.sfx); await (an.entre ? an.entre(h, obs, g) : espera(200)); }
     }
     if (t.caosGrupo) for (const ob of vivos(B.heroes)) { const n = Math.min(t.caosGrupo, ob.mpMax - ob.mp); if (n > 0) { ob.mp += n; numero(ob, '+' + n + ' CAOS', '#f3a6ff', 20); } }
     if (t.oro) { SAVE.oro += t.oro; numero(h, '+' + t.oro + ' oro', '#ffcb3d', 20); guardar(); }
@@ -214,11 +219,11 @@ async function accionHeroe(h, a) {
       if (t.cura) curar(ob, h[t.st] * t.cura * rand(2.6, 3));
     }
   } else if (t.a === 'aliado') {
-    const ob = otroVivo('h', a.obj); curar(ob, h[t.st] * t.cura * rand(2.6, 3)); if (t.limpia) { ob.est.bajo = 0; ob.est.aturdido = 0; }
+    const ob = obs[0] || otroVivo('h', a.obj); curar(ob, h[t.st] * t.cura * rand(2.6, 3)); if (t.limpia) { ob.est.bajo = 0; ob.est.aturdido = 0; }
   } else if (t.a === 'caido') {
-    const ob = a.obj && a.obj.hp <= 0 ? a.obj : B.heroes.find(x => x.hp <= 0); if (ob) revivir(ob, t.revive); else numero(h, 'FALLA', '#cdb9ea', 18);
+    const ob = obs[0]; if (ob && ob.hp <= 0) revivir(ob, t.revive); else numero(h, 'FALLA', '#cdb9ea', 18);
   }
-  await espera(380); await retroceder(h);
+  await espera(380); await vuelve();
 }
 async function ruleta(h) {
   const r = Math.random();
@@ -248,15 +253,15 @@ function objetivoHeroe() {
 }
 async function accionEnemigo(u, a) {
   const x = a.acc; cartel(x.n, true);
-  await embestir(u); if (x.sfx) play(x.sfx);
+  await previaEnemigo(u, x); await embestir(u); if (x.sfx) play(x.sfx);
   if (x.t === 'golpe' || x.t === 'drenar' || x.t === 'robar' || x.t === 'aturdir') {
     const h = objetivoHeroe(); if (!h) return;
-    efecto(u.jefe ? 'slam' : 'tajo', h); const d = danio(u, h, 'atk', x.pow || 1); herir(h, d);
+    efecto(u.jefe ? 'slam' : 'tajo', h); golpeEnemigo(u, h, x); const d = danio(u, h, 'atk', x.pow || 1); herir(h, d);
     if (x.t === 'drenar') curar(u, d.n * 0.5);
     if (x.t === 'robar') { const n = Math.min(SAVE.oro, 10 + Math.round(rand(0, 10))); if (n > 0) { SAVE.oro -= n; B.oroRobado += n; numero(h, '−' + n + ' oro', '#ffcb3d', 20); guardar(); } }
     if (x.t === 'aturdir' && h.hp > 0 && Math.random() < 0.6) { h.est.aturdido = 1; numero(h, 'SIN TURNO', '#c08bff', 18); }
   } else if (x.t === 'todos') {
-    B.temblor = 7; for (const h of vivos(B.heroes)) { efecto('slam', h); herir(h, danio(u, h, 'atk', x.pow)); }
+    B.temblor = 7; for (const h of vivos(B.heroes)) { efecto('slam', h); golpeEnemigo(u, h, x); herir(h, danio(u, h, 'atk', x.pow)); }
   } else if (x.t === 'curar') {
     const l = vivos(B.enemigos).sort((p, q) => p.hp / p.hpMax - q.hp / q.hpMax); const ob = x.yo ? u : l[0];
     curar(ob, x.yo ? u.hpMax * 0.08 * x.pow : u.atk * x.pow * 2);

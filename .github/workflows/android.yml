@@ -6,6 +6,8 @@ on:
       juegos:
         description: 'Juegos separados por coma (rumble,td,survivors,skate,tacticas)'
         default: 'rumble'
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -41,3 +43,11 @@ jobs:
         with:
           name: fansof-${{ matrix.juego }}-debug
           path: android-app/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publicar descarga directa (release «apk-latest»)
+        if: steps.toca.outputs.si
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android-app/android/app/build/outputs/apk/debug/app-debug.apk fansof-${{ matrix.juego }}.apk
+          gh release view apk-latest >/dev/null 2>&1 || gh release create apk-latest --prerelease --title "APK de prueba" --notes "APK de depuración para probar en el móvil (no es la versión de la tienda). Descarga el de tu juego e instálalo permitiendo orígenes desconocidos."
+          gh release upload apk-latest fansof-${{ matrix.juego }}.apk --clobber

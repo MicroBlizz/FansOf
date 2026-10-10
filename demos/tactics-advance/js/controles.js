@@ -1,11 +1,16 @@
-// Fans of Tactics Advance (prototipo) · CONTROLES: tocar o hacer clic (personajes, casillas, menús y botones), arrastrar para
-// mover la cámara, pasar el ratón por encima (cursor y menú) y Esc para volver. También la pista de debajo de la pantalla.
+// Fans of Tactics Advance (prototipo) · CONTROLES: tocar o hacer clic (pantallas, ventanas, personajes y casillas), arrastrar
+// para mover la cámara, pellizcar con dos dedos o la rueda del ratón para el zoom, pasar el ratón por encima, y el teclado
+// (flechas, Intro, Esc y + / −). Cada toque se mira en los dos lienzos: el de las ventanas y el del mundo.
 'use strict';
 
 const cv = document.getElementById('cv');
-function aLo(ev) { const r = cv.getBoundingClientRect(); return [(ev.clientX - r.left) / r.width * LW, (ev.clientY - r.top) / r.height * LH]; }
+// de un punto de la pantalla del navegador a píxeles de las ventanas (ui) y del mundo
+function puntos(ev) {
+  const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) * DPR, y = (ev.clientY - r.top) * DPR;
+  return { ux: x / ESC_UI, uy: y / ESC_UI, mx: x / ESC_MUNDO, my: y / ESC_MUNDO };
+}
 
-// qué hay debajo de un punto de la pantalla: primero los personajes (los de delante ganan), luego la casilla
+// qué hay debajo de un punto del mundo: primero los personajes (los de delante ganan), luego la casilla
 function unidadEnPantalla(x, y) {
   const lista = vivos().slice().sort((a, b) => (b.fx + b.fy) - (a.fx + a.fy));
   for (const u of lista) { const [px, py] = pantalla(u.fx, u.fy, u.fh); if (x >= px - 9 && x <= px + 9 && y >= py - (u.tipo === 'conejo' ? 34 : 28) && y <= py + 3) return u; }
@@ -20,23 +25,29 @@ function casillaEnPantalla(x, y) {
   return null;
 }
 function filaTocada(items, g, x, y) { if (!items || !dentro(g, x, y)) return -2; return g.filas.findIndex(f => dentro(f, x, y)); }
+const botonPeq = (x, y) => BOTONES_PEQ.find((_, i) => dentro(geoPeq(i), x, y));
 
-function toca(x, y) {
-  if (J.fin) { if (dentro(geoOtraVez(), x, y)) empieza(NOMBRE_ESC); return; }
+function toca(p) {
+  if (PANT) return tocaPantalla(p.ux, p.uy);
+  if (J.fase === 'titulo' || J.fase === 'fin') return;
+  const { ux, uy, mx, my } = p;
+  const peq = botonPeq(ux, uy);
+  if (peq === 'pausa') return pausa();
+  if (peq) return zoom(peq === 'mas' ? 1 : -1);
   if (J.ocupado || J.fase !== 'jugador') return;
   if (J.sub) {
-    const i = filaTocada(J.sub, geoSub(J.sub, MENU_X, SUB_Y), x, y);
+    const i = filaTocada(J.sub, geoSub(J.sub, MENU_X(), SUB_Y()), ux, uy);
     if (i >= 0) { if (J.sub[i].ok) J.sub[i].f(); return; }
     if (i === -1) return;
     J.sub = null; return;
   }
   if (J.menu) {
-    const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X, MENU_Y), x, y);
+    const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X(), MENU_Y()), ux, uy);
     if (i >= 0) { if (J.menu[i].ok) J.menu[i].f(); return; }
     if (i === -1) return;
   }
-  if (J.boton && dentro(geoBoton(J.boton.t, MENU_X, BOTON_Y), x, y)) { J.boton.f(); return; }
-  const u = unidadEnPantalla(x, y), c = casillaEnPantalla(x, y);
+  if (J.boton && dentro(geoBoton(J.boton.t, MENU_X(), BOTON_Y()), ux, uy)) { J.boton.f(); return; }
+  const u = unidadEnPantalla(mx, my), c = casillaEnPantalla(mx, my);
   if (c) J.cursor = c;
   const enCasilla = u || (c ? unidadEn(c[0], c[1]) : null);
   if (J.modo === 'mover') {
@@ -53,47 +64,60 @@ function toca(x, y) {
   if (enCasilla) { if (enCasilla.eq === 'e') J.fichaE = enCasilla; else J.fichaA = enCasilla; return; }
   deselecciona();
 }
-// con ratón: el cursor sigue a la casilla, la manita al menú, y al pasar por un objetivo se ve el acierto y el daño
-function pasa(x, y) {
+// con ratón: el cursor sigue a la casilla, la manita a los menús, y al pasar por un objetivo se ve el acierto y el daño
+function pasa(p) {
+  if (PANT) return pasaPantalla(p.ux, p.uy);
   if (J.ocupado || J.fase !== 'jugador') return;
-  if (J.sub) { const i = filaTocada(J.sub, geoSub(J.sub, MENU_X, SUB_Y), x, y); if (i >= 0 && J.sub[i].ok) J.subActivo = i; }
-  if (J.menu) { const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X, MENU_Y), x, y); if (i >= 0 && J.menu[i].ok) J.menuActivo = i; }
-  const c = casillaEnPantalla(x, y);
+  const { ux, uy, mx, my } = p;
+  if (J.sub) { const i = filaTocada(J.sub, geoSub(J.sub, MENU_X(), SUB_Y()), ux, uy); if (i >= 0 && J.sub[i].ok) J.subActivo = i; }
+  if (J.menu) { const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X(), MENU_Y()), ux, uy); if (i >= 0 && J.menu[i].ok) J.menuActivo = i; }
+  const c = casillaEnPantalla(mx, my);
   if (c) J.cursor = c;
-  if (J.modo === 'atacar') { const o = unidadEnPantalla(x, y) || (c ? unidadEn(c[0], c[1]) : null); if (o && J.objetivos.includes(o) && (!J.previa || J.previa.o !== o)) apunta(o); }
+  if (J.modo === 'atacar') { const o = unidadEnPantalla(mx, my) || (c ? unidadEn(c[0], c[1]) : null); if (o && J.objetivos.includes(o) && (!J.previa || J.previa.o !== o)) apunta(o); }
 }
 
+/* ---------- dedos y ratón: tocar, arrastrar y pellizcar ---------- */
+const DEDOS = new Map();
+let PELLIZCO = null;
+const separacion = () => { const [a, b] = [...DEDOS.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
 cv.addEventListener('pointerdown', ev => {
-  const [x, y] = aLo(ev);
-  J.toque = { x, y, cx: ev.clientX, cy: ev.clientY, arrastra: false, pan: [...J.pan], escala: LW / cv.getBoundingClientRect().width };
+  DEDOS.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
   try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* sin captura */ }
+  if (DEDOS.size === 2) { PELLIZCO = { d: separacion(), z: ZOOM }; J.toque = null; return; }
+  if (DEDOS.size === 1) J.toque = { cx: ev.clientX, cy: ev.clientY, arrastra: false, pan: [...J.pan] };
 });
 cv.addEventListener('pointermove', ev => {
-  const [x, y] = aLo(ev), T = J.toque;
+  if (DEDOS.has(ev.pointerId)) DEDOS.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+  if (PELLIZCO && DEDOS.size === 2) { ponZoom(PELLIZCO.z * separacion() / Math.max(10, PELLIZCO.d)); return; }
+  const T = J.toque;
   if (T) {
     const dx = ev.clientX - T.cx, dy = ev.clientY - T.cy;
     if (!T.arrastra && Math.hypot(dx, dy) > 8) T.arrastra = true;
-    if (T.arrastra && !J.fin) J.pan = [Math.max(-140, Math.min(140, T.pan[0] + dx * T.escala)), Math.max(-90, Math.min(90, T.pan[1] + dy * T.escala))];
-  } else if (ev.pointerType === 'mouse') pasa(x, y);
+    if (T.arrastra && !PANT && J.fase !== 'titulo') { const k = DPR / ESC_MUNDO; J.pan = [Math.max(-180, Math.min(180, T.pan[0] + dx * k)), Math.max(-120, Math.min(120, T.pan[1] + dy * k))]; }
+  } else if (ev.pointerType === 'mouse' && !DEDOS.size) pasa(puntos(ev));
 });
-cv.addEventListener('pointerup', ev => {
+function suelta(ev, vale) {
+  DEDOS.delete(ev.pointerId);
+  if (PELLIZCO) { if (!DEDOS.size) PELLIZCO = null; J.toque = null; return; }
   const T = J.toque; J.toque = null;
-  if (T && !T.arrastra) { const [x, y] = aLo(ev); toca(x, y); }
+  if (vale && T && !T.arrastra) toca(puntos(ev));
+}
+cv.addEventListener('pointerup', ev => suelta(ev, true));
+cv.addEventListener('pointercancel', ev => suelta(ev, false));
+cv.addEventListener('wheel', ev => { ev.preventDefault(); if (!PANT) zoom(ev.deltaY < 0 ? 1 : -1); }, { passive: false });
+cv.addEventListener('contextmenu', ev => { ev.preventDefault(); if (!PANT && !J.ocupado && J.fase === 'jugador') volver(); });
+window.addEventListener('keydown', ev => {
+  if (PANT) { if (teclaPantalla(ev.key)) ev.preventDefault(); return; }
+  if (ev.key === '+' || ev.key === '=') return zoom(1);
+  if (ev.key === '-') return zoom(-1);
+  if (ev.key === 'Escape' && J.fase === 'jugador' && !J.ocupado && !J.sel) { ev.preventDefault(); return pausa(); }
+  if ((ev.key === 'Escape' || ev.key === 'Backspace') && !J.ocupado && J.fase === 'jugador') { ev.preventDefault(); volver(); }
 });
-cv.addEventListener('pointercancel', () => { J.toque = null; });
-cv.addEventListener('contextmenu', ev => { ev.preventDefault(); if (!J.ocupado && J.fase === 'jugador') volver(); });
-window.addEventListener('keydown', ev => { if ((ev.key === 'Escape' || ev.key === 'Backspace') && !J.ocupado && J.fase === 'jugador') { ev.preventDefault(); volver(); } });
 
-// la pista de debajo de la pantalla: qué se puede hacer ahora
-const pista = document.getElementById('pista');
-let PISTA = '';
+// la pista de arriba a la izquierda: qué se puede hacer ahora (corta, que cabe en la pantalla)
 function actualizaPista() {
-  let t;
-  if (J.fase === 'fin') t = 'Pulsa «Otra vez» para jugar de nuevo.';
-  else if (J.fase === 'enemigo') t = 'Le toca a Microblizz…';
-  else if (J.modo === 'mover') t = 'Toca una casilla azul para moverte.';
-  else if (J.modo === 'atacar') t = 'Toca un enemigo en la zona roja y vuelve a tocarlo para confirmar.';
-  else if (J.modo === 'menu') t = 'Elige qué hace: moverse, atacar, una técnica o esperar.';
-  else t = 'Toca a CrazyBunny o a EpicChampion para darle órdenes. Arrastra para mover la cámara.';
-  if (t !== PISTA) { PISTA = t; pista.textContent = tr(t); }
+  let t = '';
+  if (J.fase === 'enemigo') t = 'Le toca a Microblizz…';
+  else if (J.fase === 'jugador') t = J.modo === 'mover' ? 'Elige una casilla azul' : J.modo === 'atacar' ? 'Toca dos veces al objetivo' : J.modo === 'menu' ? 'Elige una orden' : 'Toca a uno de los tuyos';
+  J.pista = t ? tr(t) : '';
 }

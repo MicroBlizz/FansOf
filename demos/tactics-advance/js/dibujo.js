@@ -1,9 +1,13 @@
-// Fans of Tactics Advance (prototipo) · DIBUJO: pinta la batalla en una pantalla de 240 × 160 (cielo, mapa de atrás hacia
-// delante con sus casillas marcadas, decorados, personajes con su pose, efectos y ventanas). Lo que pinta sale del estado J.
+// Fans of Tactics Advance (prototipo) · DIBUJO: pinta el mundo (cielo, mapa de atrás hacia delante con sus casillas marcadas,
+// decorados, personajes con su pose y efectos) en su lienzo, que cambia de tamaño con la pantalla y el zoom. Sale del estado J.
 'use strict';
 
-const LW = 240, LH = 160;
+// el mundo se pinta en lo (LW × LH píxeles del juego) y las ventanas en uo (UW × UH); principal.js decide sus tamaños
+let LW = 240, LH = 160, UW = 240, UH = 160;
 const lo = lienzoNuevo(LW, LH), lc = lo.getContext('2d');
+const uo = lienzoNuevo(UW, UH), uc = uo.getContext('2d');
+// centro de la vista del mundo (donde queda el foco de la cámara)
+const centroX = () => Math.round(LW / 2) - 2, centroY = () => Math.round(LH / 2) + 6;
 
 /* ---------- sprites guardados por pose (y su versión gris, para los que ya han actuado) ---------- */
 const CAJAS = { conejo: [36, 48, 16, 46], campeon: [34, 42, 15, 40], esqueleto: [30, 36, 14, 34], becario: [30, 36, 14, 34], starbot: [34, 34, 14, 32] };
@@ -134,9 +138,14 @@ function brilloFarol(x, y, t) {
 /* ---------- un fotograma ---------- */
 function pinta(t) {
   const CX = CAM.x, CY = CAM.y;
-  lc.drawImage(FONDO, Math.round(-60 + (CX - 118) * 0.18), Math.round(-40 + (CY - 20) * 0.12));
-  if (NUBES) { const dx = Math.round(-((t * 4) % FW)) + Math.round((CX - 118) * 0.25), y = HORIZONTE - 52 + Math.round((CY - 20) * 0.12); lc.drawImage(NUBES, dx, y); lc.drawImage(NUBES, dx + FW * 2, y); }
-  if (ESC.enemigo === 'becario') pintaLetrero(lc, t, Math.round(-60 + (CX - 118) * 0.18) + 268, Math.round(-40 + (CY - 20) * 0.12) + 44);
+  // el cielo se amplía (en números enteros) si la vista es más grande que él; se mueve un poco con la cámara
+  const k = Math.max(1, Math.ceil(Math.max((LW + 60) / FW, (LH + 50) / FH)));
+  const px = Math.round(Math.max(LW - FW * k, Math.min(0, (LW - FW * k) / 2 + (CX - centroX()) * 0.18)));
+  const py = Math.round(Math.max(LH - FH * k, Math.min(0, (LH - FH * k) / 2 + (CY - 20) * 0.12)));
+  lc.imageSmoothingEnabled = false;
+  lc.drawImage(FONDO, px, py, FW * k, FH * k);
+  if (NUBES) { const ny = py + (HORIZONTE - 52) * k, nx = Math.round(-((t * 4 * k) % (FW * 2 * k))) + Math.round((CX - centroX()) * 0.25); for (let i = 0; i < 3; i++) lc.drawImage(NUBES, nx + i * FW * 2 * k, ny, FW * 2 * k, 40 * k); }
+  if (ESC.enemigo === 'becario') pintaLetrero(lc, t, px + 268 * k, py + 44 * k);
   const porProf = new Map();
   for (const u of J.unidades) {
     if (!u.vivo && !u.muere) continue;
@@ -166,9 +175,8 @@ function pinta(t) {
     }
     for (const u of (porProf.get(d) || []).sort((a, b) => a.fx - b.fx)) pintaUnidad(u, t);
   }
-  if (ESC.luciernagas) pintaLuciernagas(lc, t, Math.round((CX - 118) * 0.6), Math.round(CY * 0.3) - 10);
+  if (ESC.luciernagas) pintaLuciernagas(lc, t, Math.round((CX - centroX()) * 0.6) + Math.round((LW - 240) / 2), Math.round(CY * 0.3) - 10 + Math.round((LH - 160) / 2));
   pintaEfectos();
   if (J.sel && J.fase === 'jugador' && !J.ocupado) { const [x, y] = pantalla(J.sel.fx, J.sel.fy, J.sel.fh); lc.drawImage(FLECHA, x - 4, y - (J.sel.tipo === 'conejo' ? 54 : 46) + (Math.floor(t * 3) % 2)); }
-  pintaUI(t);
   if (J.destello > 0) { lc.globalAlpha = 0.3 * J.destello / 0.08; lc.fillStyle = '#ffffff'; lc.fillRect(0, 0, LW, LH); lc.globalAlpha = 1; }
 }

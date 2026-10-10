@@ -2,7 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
-  { v: '0.1.30', real: ['<b>OBJETOS EN LAS CAJAS CON CUENTA</b>: si juegas con cuenta, las cajas rotas del campo ya pueden esconder un objeto (muy rara vez), anotado en tu inventario por el servidor.'], joke: [] },
+  { v: '0.1.30', real: ['<b>CAJAS QUE SE ROMPEN</b>: las cajas de la mudanza del campo se destruyen a golpes, siempre dan oro y, muy rara vez, un objeto del juego (con cuenta, lo anota el servidor en tu inventario).', '<b>MÁS BOTÍN</b>: minijefes cada 2 minutos, bichos shiny y cofres con aperturas mucho más épicas (cámara lenta, falsos finales y hasta 5 mejoras si hay suerte).', '<b>TODAS LAS FACCIONES</b>: ya se pueden jugar las 8 que faltaban, con 64 armas nuevas; se desbloquean por minutos aguantados.'], joke: ['Microblizz ha descubierto que las cajas de la mudanza tenían oro dentro. Las tenía guardadas para la jubilación del CEO.'] },
   { v: '0.1.29', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.28', real: ['<b>MINIATURAS NUEVAS</b>: cada habilidad y cada objeto tiene ahora su propio dibujo, en lugar de dos letras o del mismo icono para todos. El fondo lleva el color de su rareza, y las Épicas y Legendarias brillan con rayos de luz. Las verás en la Biblioteca, el inventario y el gashapón.'], joke: ['Microblizz ha encargado 75 dibujos nuevos. Al ilustrador le ha pagado en «visibilidad».'] },
   { v: '0.1.27', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },

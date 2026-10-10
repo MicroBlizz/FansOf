@@ -1,6 +1,5 @@
 // Fans of Roguelite · El chat falso del directo (como el de Fans of Rumble, que imita a Twitch): quién escribe (con su color
 // y su insignia: mod, vip o sub) y qué dice según lo que pasa. {X} es un nombre (una habilidad, un objeto o un enemigo).
-// Lola es la moderadora: la primera vez de cada cosa da el consejo de verdad (CONSEJOS, en datos-meta.js).
 'use strict';
 
 const CHAT_USUARIOS = [
@@ -10,7 +9,6 @@ const CHAT_USUARIOS = [
   ['ZorroSigiloso', '#fb923c'], ['ParcheDia1', '#c4b5fd'], ['CAOSenjoyer', '#e879f9', 'sub'], ['RoguelikeNoLite', '#ff8a94'],
   ['YoLoComproTodo', '#ffd36b', 'sub'], ['Zanahorio', '#7be04a'],
 ];
-const CHAT_LOLA = ['Lola_Cafe', '#ffcb3d', 'mod'];
 
 const CHAT_FRASES = {
   inicio: ['¡empieza el directo!', 'primer', 'hola desde el trabajo', '¡vamos conejo!', 'hoy sí llegamos al jefe', 'llego tarde, ¿qué me he perdido?', 'saludos a mi madre'],

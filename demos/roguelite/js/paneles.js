@@ -51,7 +51,9 @@ function panelObj(ctx, W, y0) {
   y += LINEA + 3;
   escribe(ctx, tr(NOMBRE_HUECO[o.tipo]) + ' · ' + tr(RAREZA[o.rar][0]), W / 2, y, { alin: 'centro', c: COL.tenue }); y += LINEA + 1;
   y += fichaObjeto(ctx, id, 6, y, W - 12) + 4;
-  if (viejo) {
+  if (viejo && PAN.H - y < 70) {   // pantalla justa: lo que llevas, en una línea
+    escribe(ctx, envuelve(tr('Ahora llevas:') + ' ' + tr(OBJETOS[viejo].n), W - 16)[0], 8, y, { c: COL.tenue }); y += LINEA;
+  } else if (viejo) {
     escribe(ctx, tr('Ahora llevas:'), 8, y, { c: COL.tenue }); y += LINEA;
     y += fichaObjeto(ctx, viejo, 6, y, W - 12, true) + 4;
   }

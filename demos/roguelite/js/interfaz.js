@@ -141,7 +141,7 @@ function pintaEscenaUI(ctx) {
   if (VIAJE.fundido > 0) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, Math.round(VIAJE.fundido * 16), COL.fondo);
   if (DESTELLO) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, DESTELLO.t > DESTELLO.dur / 2 ? 10 : 5, DESTELLO.color);
   if (VIAJE.glitch > RELOJ.t) pintaGlitch(ctx);
-  if (!BARRA.h) pintaControles(ctx, ESC.Y + 4, ESC.Y + 24, ESC.Y + 31);
+  if (!BARRA.h) pintaControles(ctx, ESC.Y + 4, ESC.Y + 24, null);
 }
 // la barra del directo: casa, EN DIRECTO, velocidad y sonido en la fila y0; el mapa del camino en ym; el chat en yc
 function pintaControles(ctx, y0, ym, yc) {
@@ -156,7 +156,7 @@ function pintaControles(ctx, y0, ym, yc) {
     if (armado) escribe(ctx, tr('¿Salir? Toca otra vez'), 22, y0 + 3, { c: '#ffb0b8' });
     else pintaDirecto(ctx, 22, y0 + 1);
     if (VIAJE.plan) pintaMapa(ctx, ym);
-    pintaChatEscena(ctx, yc);
+    if (yc) pintaChatEscena(ctx, yc);
   }
   if (VIAJE.modo !== 'menu') {
     const dy = botonPx(ctx, W - 40, y0, 20, 13, RELOJ.vel > 1 ? COL.naranja : COL.trayHi, RELOJ.vel > 1 ? COL.naranjaO : OL, () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
@@ -166,13 +166,13 @@ function pintaControles(ctx, y0, ym, yc) {
   pintaSpr(ctx, SON.on ? SPR.icono.sonido : SPR.icono.mudo, W - 11, y0 + 5 + dy);
 }
 // en pantallas altas, todo eso va en su propia barra entre la vida y la escena, para que la escena se vea entera
-const BARRA = { h: 0 };
+const BARRA = { h: 0, chat: false };
 function pintaBarra(ctx) {
   const W = PAN.W, y = ESC.Y;
   ctx.fillStyle = COL.fondo; ctx.fillRect(0, y, W, BARRA.h);
-  ctx.fillStyle = '#1c0f2e'; ctx.fillRect(0, y + 31, W, BARRA.h - 31);
+  if (BARRA.chat) { ctx.fillStyle = '#1c0f2e'; ctx.fillRect(0, y + 31, W, BARRA.h - 31); }
   ctx.fillStyle = OL; ctx.fillRect(0, y + BARRA.h - 1, W, 1);
-  pintaControles(ctx, y + 2, y + 25, y + 33);
+  pintaControles(ctx, y + 2, y + 25, BARRA.chat ? y + 33 : null);
 }
 
 // el mapa del camino: los 40 días en una raya, con los capítulos, lo especial que viene y dónde está el conejo

@@ -173,7 +173,7 @@ function panelAjustes(ctx, W, y0) {
   };
   fila(tr('Sonido'), tr(SON.on ? 'Sí' : 'No'), () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
   fila(tr('Velocidad'), RELOJ.vel > 1 ? 'x2' : 'x1', () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
-  fila(tr('Chat del directo'), tr(GUARDA.chatOff ? 'No' : 'Sí'), () => { GUARDA.chatOff = !GUARDA.chatOff; if (!GUARDA.chatOff) GUARDA.consejos = {}; guarda(); sonido('toque'); });
+  fila(tr('Chat del directo'), tr(GUARDA.chatOff ? 'No' : 'Sí'), () => { GUARDA.chatOff = !GUARDA.chatOff; guarda(); sonido('toque'); });
   fila(tr(INSTALAR.yaInstalada() ? 'Ya está instalado' : 'Instalar en el móvil'), '', () => { sonido('toque'); const t = INSTALAR.instala(); if (t) MENU.aviso = { txt: t, t0: RELOJ.t }; });
   const armado = performance.now() - MENU.borrar < 3000;
   fila(tr(armado ? '¿Seguro? Toca otra vez' : 'Borrar progreso'), '', () => {

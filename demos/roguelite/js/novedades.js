@@ -2,6 +2,13 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.5.5', real: [
+      '<b>TODO SE LEE ENTERO</b>: ningún texto se corta. Al elegir habilidad, objeto o en la tienda, la escena sube un poco para dejar sitio y, si aun así no cabe, la explicación sale en letra pequeña.',
+      '<b>TIEMPO PARA LEER</b>: a x1 los textos duran más. Las frases del chat salen de una en una, y los bocadillos, los carteles del día y los rótulos se quedan más rato.',
+      '<b>MAPA NUEVO, ARRIBA DEL TODO</b>: los 10 días del capítulo con su dibujito (combate, tienda, cofre, jefe…) y el conejo encima del día de hoy.',
+      '<b>EL CHAT, EN TODOS LOS MÓVILES</b>: sale siempre, y una frase larga ya no se corta: se lee en dos partes.',
+      '<b>SIEMPRE LA ÚLTIMA VERSIÓN</b>: el móvil ya no se queda con la versión vieja guardada.'],
+    joke: ['Microblizz quería cobrar por cada letra que se leía entera. Hemos dicho que no.'] },
   { v: '0.5.4', real: ['<b>EL CHAT, EN SU SITIO</b>: va en su propia franja de la barra de arriba, nunca encima del juego ni del cartel del día, también en los móviles más bajitos. En pantallas muy pequeñas se esconde para dejar sitio.', '<b>CONSEJOS DE LOLA</b>: ahora salen abajo, en dorado, con lo que va pasando.'],
     joke: ['Microblizz ha puesto el chat en una franja. Dice que es su «zona de bajos salarios».'] },
   { v: '0.5.3', real: ['<b>ESCENA LIMPIA</b>: EN DIRECTO, los botones, el mapa del camino y el chat van en su propia barra, debajo de la vida. El pixel art se ve entero.', '<b>CHAT MÁS PEQUEÑO</b>: solo las 2 últimas frases, con letra pequeña.'],

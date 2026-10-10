@@ -35,10 +35,12 @@ function empieza(nombre, conTut = false) {
   J.foco = pieMundo(4, 3.6, 2);
   CAM.x = centroX() - J.foco[0]; CAM.y = centroY() - J.foco[1]; CAMB.x = CAM.x; CAMB.y = CAM.y;
   actualizaPista();
+  musica(musicaBatalla());
   comienzaTuTurno();
 }
 async function cartel(texto, tono) {
   J.banner = { texto: tr(texto), tono, t: 0, dura: 1.3 };
+  play(tono === 'rojo' ? 'horn' : 'go');
   await espera(1.3);
   J.banner = null;
 }
@@ -64,6 +66,7 @@ function deselecciona() {
   actualizaPista();
 }
 function selecciona(u) {
+  if (J.sel !== u) play('select');
   const conTec = TIPOS_U[u.tipo].tec.some(id => u.caos >= TECNICAS[id].coste);
   Object.assign(J, { sel: u, modo: 'menu', sub: null, marcas: {}, previa: null, fichaA: u, fichaE: null, boton: null, pan: [0, 0] });
   J.foco = pieMundo(u.gx, u.gy, altura(u.gx, u.gy));
@@ -80,6 +83,7 @@ function selecciona(u) {
   tutEvento('elige');
 }
 function modoMover(u) {
+  play('blip');
   J.mapa = alcanceMover(u);
   Object.assign(J, { modo: 'mover', menu: null, sub: null, boton: dejaTut('volver') ? { t: tr('Volver'), tono: 'oscuro', f: volver } : null });
   J.marcas = { azul: new Set([...J.mapa].filter(([k, v]) => !v.ocupada && k !== u.gx + ',' + u.gy).map(([k]) => k)) };
@@ -87,6 +91,7 @@ function modoMover(u) {
   tutEvento('modoMover');
 }
 function abreTecnicas(u) {
+  play('card');
   J.sub = TIPOS_U[u.tipo].tec.map(id => ({ t: tr(TECNICAS[id].nombre), coste: tr('{n} CAOS').replace('{n}', TECNICAS[id].coste), ok: u.caos >= TECNICAS[id].coste && dejaTut('tecnica'), f: () => modoAtacar(u, id) }));
   J.subActivo = J.sub.findIndex(i => i.ok);
 }
@@ -103,6 +108,7 @@ function modoAtacar(u, tec) {
   tutEvento(tec ? 'modoTecnica' : 'modoAtacar');
 }
 function apunta(o) {
+  if (!J.previa || J.previa.o !== o) play('blip');
   J.previa = { o, acierto: aciertoDe(J.sel, o, J.tec), dano: danoDe(J.sel, o, J.tec) };
   J.fichaE = o; J.cursor = [o.gx, o.gy];
 }
@@ -165,6 +171,7 @@ function compruebaFin() {
   if (!vivos('e').length) J.fin = { gana: true };
   else if (!vivos('a').length) J.fin = { gana: false };
   else return false;
+  if (J.fin.gana) { play('crown'); musica('win'); } else { play('womp'); musica('lose'); }
   if (TUT && J.fin.gana) tutEvento('gana');   // en el tutorial, Lola despide la batalla
   else final(J.fin.gana);
   Object.assign(J, { fase: 'fin', ocupado: false, menu: null, sub: null, boton: null, marcas: {}, sel: null });
@@ -184,12 +191,14 @@ async function mueve(u, camino) {
     });
     Object.assign(u, { gx: bx, gy: by, fx: bx, fy: by, fh: hb, arco: 0, pose: 'aterriza' });
     efecto('polvo', ...pieMundo(bx, by, hb));
+    play('land', 0.35);
     J.foco = pieMundo(bx, by, hb);
     await espera(0.06);
   }
   u.pose = 'quieto';
 }
 function di(u, lineas, dura = 1.8) {
+  play('note');
   const [x, y] = pieMundo(u.gx, u.gy, altura(u.gx, u.gy));
   const b = { lineas: lineas.map(tr), x, y: y - (u.tipo === 'conejo' ? 46 : 34) };
   J.bocadillos.push(b);
@@ -197,11 +206,12 @@ function di(u, lineas, dura = 1.8) {
 }
 function impacto(u, o, acierta, dano, opciones = {}) {
   const [x, y] = pieMundo(o.gx, o.gy, altura(o.gx, o.gy));
-  if (!acierta) { efecto('numero', x, y - 38, { texto: tr('Fallo'), fallo: true }); return; }
+  if (!acierta) { efecto('numero', x, y - 38, { texto: tr('Fallo'), fallo: true }); play('deny'); return; }
   o.vida = Math.max(0, o.vida - dano); o.flash = 0.3; o.pose = 'ay';
   espera(0.3).then(() => { if (o.pose === 'ay') o.pose = 'quieto'; });
   efecto('numero', x + 4, y - 38, { texto: String(dano) });
   efecto('chispas', x - 2, y - 20, opciones);
+  play(opciones.onda ? 'slam' : 'hit'); if (opciones.onda) play('boom'); else play('clank');
   if (opciones.onda) efecto('onda', x, y);
   J.destello = 0.08; J.temblor = 0.3;
   if (u.caosMax) u.caos = Math.min(u.caosMax, u.caos + AJUSTES.caosGolpe);
@@ -216,6 +226,7 @@ async function ataca(u, o, tec) {
   if (tec) u.caos -= TECNICAS[tec].coste;
   if (tec === 'saltoCaos') {
     u.pose = 'agacha'; await espera(0.3);
+    play('jump');
     const sx = u.fx, sy = u.fy, sh = u.fh, oh = altura(o.gx, o.gy), lejos = distancia(u, o);
     await espera(0.5 + lejos * 0.06, k => {
       const kk = suave(k);
@@ -237,6 +248,7 @@ async function ataca(u, o, tec) {
   } else if (TIPOS_U[u.tipo].alcance > 1) {
     u.pose = 'golpe';
     efecto('laser', ox, oy - 14, { ax: ux + u.giro * 13, ay: uy - 8 });
+    play('laser');
     await espera(0.16);
     impacto(u, o, acierta, dano, { colores: ['#ffffff', '#5ee0f0', '#c8fbff'] });
     await espera(0.2); u.pose = 'quieto';
@@ -244,7 +256,7 @@ async function ataca(u, o, tec) {
     u.pose = 'golpe';
     const vx = (o.gx - u.gx) * 0.38, vy = (o.gy - u.gy) * 0.38;
     await espera(0.14, k => { u.dx = vx * k; u.dy = vy * k; });
-    if (tec === 'tajoEpico') efecto('tajo', ox - 2, oy - 14);
+    if (tec === 'tajoEpico') { efecto('tajo', ox - 2, oy - 14); play('carrot'); }
     impacto(u, o, acierta, dano, tec ? { onda: true, colores: ['#ffffff', '#fff27a', '#ffb347'] } : {});
     await espera(0.18, k => { u.dx = vx * (1 - k); u.dy = vy * (1 - k); });
     u.dx = u.dy = 0; u.pose = 'quieto';
@@ -253,9 +265,11 @@ async function ataca(u, o, tec) {
   if (o.vida <= 0 && o.vivo) await muere(o);
 }
 async function muere(o) {
+  play('despido');
   o.muere = true;
   await espera(0.6);
   o.muere = false; o.vivo = false;
+  play('poof');
   if (ADIOS[o.tipo]) di(o, ADIOS[o.tipo]);
   if (J.fichaE === o) J.fichaE = null;
 }
@@ -263,6 +277,7 @@ async function muere(o) {
 /* ---------- cámara (sigue al foco, se puede arrastrar, tiembla con los golpes) ---------- */
 const CAMB = { x: 0, y: 0 };
 function actualiza(dt, t) {
+  vigilaMusica();
   if (J.fase === 'titulo') J.pan = [Math.sin(t * 0.12) * 40, 0];
   const quieto = PANT && PANT.pausa;   // en la pausa no avanza la batalla (la cámara sí)
   if (!quieto) {

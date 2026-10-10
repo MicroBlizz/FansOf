@@ -47,9 +47,11 @@ function gotas(x, y, n, col) { for (let i = 0; i < n; i++) fx('gota', { x, y, vx
 function rayas(x, y, dir) { for (let i = 0; i < 3; i++) fx('raya', { x: x + rnd(-4, 4), y: y + rnd(-14, 0), vx: -dir * 260, vida: 0.12, l: Math.floor(rnd(6, 14)) }); }
 // número de daño: tipo 'golpe' | 'critico' | 'herida' | 'cura' | 'poco'
 function numero(x, y, n, clase = 'golpe') { fx('num', { x: x + rnd(-4, 4), y, txt: String(n), clase, vida: clase === 'critico' ? 1.1 : 0.85, vy: clase === 'poco' ? -50 : -78, vx: rnd(-14, 14), g: 170 }); }
-function rotulo(x, y, txt, col = '#fff6ea', vida = 1.1, esc = 1) { fx('rotulo', { x, y, txt, col, vida, esc }); }
+// a velocidad x1 tiene que dar tiempo a leerlo todo: los rótulos duran la mitad más y los bocadillos, según lo que digan
+const lectura = (txt, s) => Math.max(s * 1.4, 1.3 + tr(txt).length / 11);
+function rotulo(x, y, txt, col = '#fff6ea', vida = 1.1, esc = 1) { fx('rotulo', { x, y, txt, col, vida: Math.max(1, vida * 1.5), esc }); }
 function moneda(x, y, alFinal) { fx('moneda', { x, y, x0: x, y0: y, vx: rnd(-70, 70), vy: rnd(-150, -80), g: 340, vida: 1.6, alFinal, suelo: SUELO + rnd(-1, 4), espera: rnd(0.55, 0.85) }); }
-function bocadillo(ent, txt, s = 1.8) { for (const e of FX) if (e.tipo === 'bocadillo' && e.ent === ent) e.t = e.vida; fx('bocadillo', { ent, txt, vida: s }); }
+function bocadillo(ent, txt, s = 1.8) { for (const e of FX) if (e.tipo === 'bocadillo' && e.ent === ent) e.t = e.vida; fx('bocadillo', { ent, txt, vida: lectura(txt, s) }); }
 function laser(x1, y, x2, s = 0.18) { fx('laser', { x: x1, y, x2, vida: s }); }
 // rayo eléctrico en zigzag de (x1, y1) a (x2, y2)
 function rayo(x1, y1, x2, y2, col = '#fff3a0', s = 0.22) { fx('rayo', { x: x1, y: y1, x2, y2, col, vida: s }); }
@@ -115,7 +117,11 @@ function pintaFx(ctx, capa) {
         escribe(ctx, e.txt + (e.clase === 'critico' ? '!' : ''), x, y - 8, { esc, c: C[0], c2: C[1], alin: 'centro' });
         break;
       }
-      case 'rotulo': { if (k > 0.8 && Math.floor(e.t * 20) % 2) break; escribe(ctx, e.txt, x, Math.round(y - 14 * sale(Math.min(1, k * 2))), { c: e.col, alin: 'centro', esc: e.esc }); break; }
+      case 'rotulo': {
+        if (k > 0.8 && Math.floor(e.t * 20) % 2) break;
+        const m = anchoTexto(e.txt, e.esc) / 2 + 2, rx = Math.max(m, Math.min(PAN.W - m, x));   // nunca se sale por un lado
+        escribe(ctx, e.txt, rx, Math.max(ESC.Y + ESC.corte + 4, Math.round(y - 14 * sale(Math.min(1, k * 2)))), { c: e.col, alin: 'centro', esc: e.esc }); break;
+      }
       case 'bocadillo': pintaBocadillo(ctx, e, k); break;
     }
   }
@@ -126,7 +132,7 @@ function pintaBocadillo(ctx, e, k) {
   const sube = e.t < 0.08 ? 3 : 0;
   let cx = Math.round(ent.x), base = Math.round(ent.y - ent.z - ent.alto - 6 + sube);
   let x = Math.round(cx - w / 2); x = Math.max(3, Math.min(PAN.W - w - 3, x));
-  const y = base - h;
+  const y = Math.max(ESC.Y + ESC.corte + 3, base - h);
   ctx.fillStyle = OL; ctx.fillRect(x - 1, y, w + 2, h); ctx.fillRect(x, y - 1, w, h + 2);
   ctx.fillStyle = '#fff6ea'; ctx.fillRect(x, y, w, h);
   ctx.fillStyle = '#e2d4f2'; ctx.fillRect(x, y + h - 1, w, 1);

@@ -30,7 +30,7 @@ const botonPeq = (x, y) => BOTONES_PEQ.find((_, i) => dentro(geoPeq(i), x, y));
 function toca(p) {
   if (J.fase === 'intro') return tocaIntro(p.ux, p.uy);
   if (PANT) return tocaPantalla(p.ux, p.uy);
-  if (J.fase === 'titulo') return menuPrincipal();
+  if (J.fase === 'titulo') { play('go'); return menuPrincipal(); }
   if (TUT && tocaLola(p.ux, p.uy)) return;
   if (J.fase === 'fin') return;
   const { ux, uy, mx, my } = p;
@@ -40,16 +40,16 @@ function toca(p) {
   if (J.ocupado || J.fase !== 'jugador') return;
   if (J.sub) {
     const i = filaTocada(J.sub, geoSub(J.sub, MENU_X(), SUB_Y()), ux, uy);
-    if (i >= 0) { if (J.sub[i].ok) J.sub[i].f(); return; }
+    if (i >= 0) { if (J.sub[i].ok) { play('select'); J.sub[i].f(); } else play('deny'); return; }
     if (i === -1) return;
     J.sub = null; return;
   }
   if (J.menu) {
     const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X(), MENU_Y()), ux, uy);
-    if (i >= 0) { if (J.menu[i].ok) J.menu[i].f(); return; }
+    if (i >= 0) { if (J.menu[i].ok) J.menu[i].f(); else play('deny'); return; }
     if (i === -1) return;
   }
-  if (J.boton && dentro(geoBoton(J.boton.t, MENU_X(), BOTON_Y()), ux, uy)) { J.boton.f(); return; }
+  if (J.boton && dentro(geoBoton(J.boton.t, MENU_X(), BOTON_Y()), ux, uy)) { play('select'); J.boton.f(); return; }
   const u = unidadEnPantalla(mx, my), c = casillaEnPantalla(mx, my);
   if (c) J.cursor = c;
   const enCasilla = u || (c ? unidadEn(c[0], c[1]) : null);

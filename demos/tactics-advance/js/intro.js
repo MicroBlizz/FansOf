@@ -19,19 +19,23 @@ function presentacion() {
   cierra(); TUT = null;
   if (!FONDOS_INTRO) FONDOS_INTRO = { noche: fondoNoche(), tarde: fondoAtardecer() };
   Object.assign(J, { fase: 'intro', unidades: [], bocadillos: [], banner: null, ocupado: true, pan: [0, 0], toque: null });
-  Object.assign(INTRO, { i: 0, t: 0 });
+  Object.assign(INTRO, { i: 0, t: 0, letras: 0 });
+  musica('menu');
 }
 const letrasVistas = () => Math.floor(INTRO.t * 38);
 function avanzaIntro() {
   const v = VINETAS[INTRO.i], texto = tr(v.texto);
   if (!v.dura && letrasVistas() < texto.length) { INTRO.t = 99; return; }   // primero se completa el texto
   if (INTRO.i >= VINETAS.length - 1) return terminaIntro();
-  INTRO.i++; INTRO.t = 0;
+  INTRO.i++; INTRO.t = 0; INTRO.letras = 0; play('card');
 }
 function terminaIntro() { VISTO.poner('intro'); pantallaTitulo(); }
 function actualizaIntro(dt) {
   INTRO.t += dt;
+  vigilaMusica();
   const v = VINETAS[INTRO.i];
+  // el texto suena al escribirse (una nota cada tres letras)
+  if (!v.dura) { const n = Math.min(tr(v.texto).length, letrasVistas()); if (n - INTRO.letras >= 3) { INTRO.letras = n; play('tick'); } }
   if (v.dura && INTRO.t > v.dura) { INTRO.i++; INTRO.t = 0; }
 }
 const geoSaltar = () => { const w = anchoTexto(tr('Saltar')) + 18; return { x: UW - w - 4, y: 4, w, h: 17 }; };
@@ -80,7 +84,7 @@ function pintaIntro(t) {
   // fundido al cambiar de viñeta
   if (k < 0.35) { uc.globalAlpha = 1 - k / 0.35; uc.fillStyle = '#05030a'; uc.fillRect(0, 0, UW, UH); uc.globalAlpha = 1; }
 }
-function tocaIntro(x, y) { if (dentro(geoSaltar(), x, y)) return terminaIntro(); avanzaIntro(); }
+function tocaIntro(x, y) { if (dentro(geoSaltar(), x, y)) { play('select'); return terminaIntro(); } avanzaIntro(); }
 
 /* ---------- la pantalla de título ---------- */
 const TITULO = { etapa: 'pulsa', t: 0 };
@@ -88,6 +92,7 @@ function pantallaTitulo() {
   cierra(); TUT = null;
   vista('cementerio');
   TITULO.etapa = 'pulsa'; TITULO.t = 0;
+  musica('menu');
 }
 // dónde va cada cosa: el logo arriba; debajo, la isla (y el menú a su derecha si la pantalla es ancha, o debajo si es alta)
 function escalaLogo() { return Math.max(1, Math.min(3, Math.floor((UW - 20) / 45), Math.floor(UH / 90))); }

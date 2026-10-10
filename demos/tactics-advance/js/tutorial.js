@@ -21,6 +21,7 @@ function empiezaTutorial() {
   cierra();
   empieza('cementerio', true);
   TUT = { paso: 0 };
+  musica('animales');
   const e = J.unidades.find(u => u.eq === 'e');
   if (e) { e.vida = e.vidaMax = e.vidaVista = 110; }
 }
@@ -36,12 +37,13 @@ function dejaTut(tipo, arg) {
 }
 function tutEvento(nombre) {
   const p = pasoTut();
-  if (p && p.espera === nombre) { TUT.paso++; actualizaPista(); refrescaMenu(); if (J.fase === 'jugador' && !J.ocupado && !J.sel) J.boton = botonFin(); }
+  if (p && p.espera === nombre) { TUT.paso++; play('pop'); actualizaPista(); refrescaMenu(); if (J.fase === 'jugador' && !J.ocupado && !J.sel) J.boton = botonFin(); }
 }
 function valeTut() {
   const p = pasoTut();
   if (!p || !p.vale) return;
-  if (p.fin) { VISTO.poner('tutorial'); TUT = null; return finTutorial(); }
+  play('select');
+  if (p.fin) { VISTO.poner('tutorial'); TUT = null; play('levelup'); return finTutorial(); }
   TUT.paso++;
   refrescaMenu(); if (J.fase === 'jugador' && !J.ocupado && !J.sel) J.boton = botonFin();
 }

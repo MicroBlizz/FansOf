@@ -3,7 +3,7 @@
 'use strict';
 
 let PANT = null;   // la pantalla abierta (null = se está jugando)
-function abre(p) { PANT = { activo: 0, ...p }; PANT.activo = Math.max(0, PANT.items.findIndex(i => i.ok !== false)); }
+function abre(p) { if (!PANT || PANT.titulo !== p.titulo) play('card'); PANT = { activo: 0, ...p }; PANT.activo = Math.max(0, PANT.items.findIndex(i => i.ok !== false)); }
 function cierra() { PANT = null; }
 
 // texto grande con borde, guardado (el logo y los títulos)
@@ -61,6 +61,7 @@ function pintaPantalla(t) {
 function menuPrincipal() {
   if (J.fase !== 'titulo') pantallaTitulo();
   TUT = null; TITULO.etapa = 'menu';
+  musica('menu');
   const tut = VISTO.leer('tutorial');
   abre({ logo: true, items: [
     { t: tr('Jugar'), f: elegirBatalla },
@@ -89,6 +90,8 @@ function opciones(volver) {
   const pantalla = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
   abre({ titulo: tr('Opciones'), items: [
     { t: tr('Idioma: Español'), f: () => cambiaIdioma(IDIOMA_TA === 'es' ? 'en' : 'es') },
+    { t: tr(AUDIO.mudo ? 'Sonido: No' : 'Sonido: Sí'), f: () => { cambiaSonido(); opciones(volver); } },
+    { t: tr(AUDIO.sinMusica ? 'Música: No' : 'Música: Sí'), f: () => { cambiaMusica(); opciones(volver); } },
     ...(pantalla ? [{ t: tr('Pantalla completa'), f: pantallaCompleta }] : []),
     { t: tr('Ver la presentación'), f: presentacion },
     { t: tr('Volver'), f: volver },
@@ -124,16 +127,16 @@ function pantallaCompleta() {
 // tocar o pulsar en una pantalla
 function tocaPantalla(x, y) {
   const g = geoPantalla(PANT), i = g.filas.findIndex(f => dentro(f, x, y));
-  if (i >= 0 && PANT.items[i].ok !== false) { PANT.activo = i; PANT.items[i].f(); }
+  if (i >= 0 && PANT.items[i].ok !== false) { PANT.activo = i; play('select'); PANT.items[i].f(); }
 }
 function pasaPantalla(x, y) {
   const g = geoPantalla(PANT), i = g.filas.findIndex(f => dentro(f, x, y));
-  if (i >= 0 && PANT.items[i].ok !== false) PANT.activo = i;
+  if (i >= 0 && PANT.items[i].ok !== false && PANT.activo !== i) { PANT.activo = i; play('blip'); }
 }
 function teclaPantalla(k) {
   const n = PANT.items.length;
-  if (k === 'ArrowDown' || k === 'ArrowUp') { const d = k === 'ArrowDown' ? 1 : -1; let i = PANT.activo; do { i = (i + d + n) % n; } while (PANT.items[i].ok === false); PANT.activo = i; return true; }
-  if (k === 'Enter' || k === ' ') { PANT.items[PANT.activo].f(); return true; }
+  if (k === 'ArrowDown' || k === 'ArrowUp') { const d = k === 'ArrowDown' ? 1 : -1; let i = PANT.activo; do { i = (i + d + n) % n; } while (PANT.items[i].ok === false); PANT.activo = i; play('blip'); return true; }
+  if (k === 'Enter' || k === ' ') { play('select'); PANT.items[PANT.activo].f(); return true; }
   if (k === 'Escape') { if (PANT.pausa) cierra(); else if (!PANT.logo) { const v = PANT.items[n - 1]; if (v) v.f(); } return true; }
   return false;
 }

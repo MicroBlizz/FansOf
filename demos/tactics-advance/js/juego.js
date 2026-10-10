@@ -2,7 +2,7 @@
 // tocar (elegir, mover, atacar, técnicas), las animaciones de cada acción y el final. Las animaciones son esperas encadenadas.
 'use strict';
 
-const J = { unidades: [], marcas: {}, bocadillos: [], dichos: new Set() };
+const J = { fase: 'intro', unidades: [], marcas: {}, bocadillos: [], dichos: new Set(), pan: [0, 0], foco: [0, 0], ocupado: true };
 const TWEENS = [];
 let GEN = 0;   // cada partida nueva deja tiradas las animaciones de la anterior
 const espera = (dura, paso) => new Promise(res => TWEENS.push({ t: 0, dura, paso, res, gen: GEN }));
@@ -23,13 +23,15 @@ function vista(nombre) {
   J.unidades = [...SALIDA.aliados.map(([t, x, y]) => nuevaUnidad(t, x, y, 'a')), ...SALIDA[nombre].map(([t, x, y]) => nuevaUnidad(t, x, y, 'e'))];
   J.foco = pieMundo(4.5, 4.5, 1.6);
 }
-function empieza(nombre) {
+function empieza(nombre, conTut = false) {
   GEN++; TWEENS.length = 0; EFECTOS.length = 0;
+  TUT = null;
   preparaEscena(nombre);
   Object.assign(J, { fase: 'jugador', ronda: 1, sel: null, modo: null, menu: null, sub: null, menuActivo: -1, subActivo: -1, boton: null, marcas: {},
     cursor: null, previa: null, objetivos: [], tec: null, fichaA: null, fichaE: null, banner: null, bocadillos: [], fin: null, ocupado: false,
     destello: 0, temblor: 0, pan: [0, 0], toque: null, dichos: new Set() });
-  J.unidades = [...SALIDA.aliados.map(([t, x, y]) => nuevaUnidad(t, x, y, 'a')), ...SALIDA[nombre].map(([t, x, y]) => nuevaUnidad(t, x, y, 'e'))];
+  const S = conTut ? SALIDA.tutorial : { aliados: SALIDA.aliados, enemigos: SALIDA[nombre] };
+  J.unidades = [...S.aliados.map(([t, x, y]) => nuevaUnidad(t, x, y, 'a')), ...S.enemigos.map(([t, x, y]) => nuevaUnidad(t, x, y, 'e'))];
   J.foco = pieMundo(4, 3.6, 2);
   CAM.x = centroX() - J.foco[0]; CAM.y = centroY() - J.foco[1]; CAMB.x = CAM.x; CAMB.y = CAM.y;
   actualizaPista();
@@ -46,10 +48,17 @@ async function comienzaTuTurno() {
   await cartel('Turno de los Fans', 'azul');
   if (g !== GEN) return;
   J.ocupado = false; deselecciona();
+  tutEvento('tuTurno');
 }
-const botonFin = () => ({ t: tr('Fin del turno'), tono: 'oscuro', f: () => { for (const a of vivos('a')) a.hecho = true; turnoMicroblizz(); } });
+const botonFin = () => (!dejaTut('boton') ? null : { t: tr('Fin del turno'), tono: 'oscuro', f: () => { for (const a of vivos('a')) a.hecho = true; turnoMicroblizz(); } });
 
 /* ---------- tu turno: elegir y dar órdenes ---------- */
+// en el tutorial, las órdenes que no tocan salen apagadas (se vuelve a mirar cada vez que Lola pasa de paso)
+function refrescaMenu() {
+  if (!J.menu) return;
+  for (const it of J.menu) it.ok = it.base && dejaTut('orden', it.id);
+  if (!J.menu[J.menuActivo] || !J.menu[J.menuActivo].ok) J.menuActivo = J.menu.findIndex(i => i.ok);
+}
 function deselecciona() {
   Object.assign(J, { sel: null, modo: null, menu: null, sub: null, marcas: {}, previa: null, fichaA: null, fichaE: null, boton: botonFin() });
   actualizaPista();
@@ -59,22 +68,26 @@ function selecciona(u) {
   Object.assign(J, { sel: u, modo: 'menu', sub: null, marcas: {}, previa: null, fichaA: u, fichaE: null, boton: null, pan: [0, 0] });
   J.foco = pieMundo(u.gx, u.gy, altura(u.gx, u.gy));
   J.menu = [
-    { t: tr('Mover'), ok: !u.movido, f: () => modoMover(u) },
-    { t: tr('Atacar'), ok: objetivosDe(u).length > 0, f: () => modoAtacar(u, null) },
-    { t: tr('Técnica'), ok: conTec, f: () => abreTecnicas(u) },
-    { t: tr('Esperar'), ok: true, f: () => termina(u) },
+    { id: 'mover', t: tr('Mover'), ok: !u.movido, f: () => modoMover(u) },
+    { id: 'atacar', t: tr('Atacar'), ok: objetivosDe(u).length > 0, f: () => modoAtacar(u, null) },
+    { id: 'tecnica', t: tr('Técnica'), ok: conTec, f: () => abreTecnicas(u) },
+    { id: 'esperar', t: tr('Esperar'), ok: true, f: () => termina(u) },
   ];
+  for (const it of J.menu) it.base = it.ok;
+  refrescaMenu();
   J.menuActivo = J.menu.findIndex(i => i.ok);
   actualizaPista();
+  tutEvento('elige');
 }
 function modoMover(u) {
   J.mapa = alcanceMover(u);
-  Object.assign(J, { modo: 'mover', menu: null, sub: null, boton: { t: tr('Volver'), tono: 'oscuro', f: volver } });
+  Object.assign(J, { modo: 'mover', menu: null, sub: null, boton: dejaTut('volver') ? { t: tr('Volver'), tono: 'oscuro', f: volver } : null });
   J.marcas = { azul: new Set([...J.mapa].filter(([k, v]) => !v.ocupada && k !== u.gx + ',' + u.gy).map(([k]) => k)) };
   actualizaPista();
+  tutEvento('modoMover');
 }
 function abreTecnicas(u) {
-  J.sub = TIPOS_U[u.tipo].tec.map(id => ({ t: tr(TECNICAS[id].nombre), coste: tr('{n} CAOS').replace('{n}', TECNICAS[id].coste), ok: u.caos >= TECNICAS[id].coste, f: () => modoAtacar(u, id) }));
+  J.sub = TIPOS_U[u.tipo].tec.map(id => ({ t: tr(TECNICAS[id].nombre), coste: tr('{n} CAOS').replace('{n}', TECNICAS[id].coste), ok: u.caos >= TECNICAS[id].coste && dejaTut('tecnica'), f: () => modoAtacar(u, id) }));
   J.subActivo = J.sub.findIndex(i => i.ok);
 }
 function modoAtacar(u, tec) {
@@ -83,16 +96,18 @@ function modoAtacar(u, tec) {
     const d = Math.abs(gx - u.gx) + Math.abs(gy - u.gy);
     if (d > 0 && d <= al && !esAgua(gx, gy)) zona.add(gx + ',' + gy);
   }
-  Object.assign(J, { modo: 'atacar', tec, menu: null, sub: null, objetivos: objetivosDe(u, tec), previa: null, boton: { t: tr('Volver'), tono: 'oscuro', f: volver } });
+  Object.assign(J, { modo: 'atacar', tec, menu: null, sub: null, objetivos: objetivosDe(u, tec), previa: null, boton: dejaTut('volver') ? { t: tr('Volver'), tono: 'oscuro', f: volver } : null });
   J.marcas = { rojo: zona };
   if (J.objetivos.length === 1) apunta(J.objetivos[0]);
   actualizaPista();
+  tutEvento(tec ? 'modoTecnica' : 'modoAtacar');
 }
 function apunta(o) {
   J.previa = { o, acierto: aciertoDe(J.sel, o, J.tec), dano: danoDe(J.sel, o, J.tec) };
   J.fichaE = o; J.cursor = [o.gx, o.gy];
 }
 function volver() {
+  if (TUT && !dejaTut('volver')) return;
   if (J.sub) { J.sub = null; return; }
   if (J.sel && (J.modo === 'mover' || J.modo === 'atacar')) selecciona(J.sel); else deselecciona();
 }
@@ -108,6 +123,7 @@ async function ejecutaMover_(u, destino) {
   if (g !== GEN) return;
   u.movido = true; J.ocupado = false;
   selecciona(u);
+  tutEvento('movido');
 }
 async function ejecutaAtaque_(u, o, tec) {
   const g = GEN;
@@ -115,6 +131,7 @@ async function ejecutaAtaque_(u, o, tec) {
   await ataca(u, o, tec);
   if (g !== GEN) return;
   u.hecho = true; J.previa = null; J.ocupado = false;
+  tutEvento('atacado');
   if (compruebaFin()) return;
   deselecciona();
   if (vivos('a').every(a => a.hecho)) turnoMicroblizz();
@@ -148,7 +165,8 @@ function compruebaFin() {
   if (!vivos('e').length) J.fin = { gana: true };
   else if (!vivos('a').length) J.fin = { gana: false };
   else return false;
-  final(J.fin.gana);
+  if (TUT && J.fin.gana) tutEvento('gana');   // en el tutorial, Lola despide la batalla
+  else final(J.fin.gana);
   Object.assign(J, { fase: 'fin', ocupado: false, menu: null, sub: null, boton: null, marcas: {}, sel: null });
   actualizaPista();
   return true;
@@ -245,7 +263,7 @@ async function muere(o) {
 /* ---------- cámara (sigue al foco, se puede arrastrar, tiembla con los golpes) ---------- */
 const CAMB = { x: 0, y: 0 };
 function actualiza(dt, t) {
-  if (J.fase === 'titulo') J.pan = [Math.sin(t * 0.17) * 70, Math.sin(t * 0.11) * 26];
+  if (J.fase === 'titulo') J.pan = [Math.sin(t * 0.12) * 40, 0];
   const quieto = PANT && PANT.pausa;   // en la pausa no avanza la batalla (la cámara sí)
   if (!quieto) {
   avanzaTweens(dt); avanzaEfectos(dt);

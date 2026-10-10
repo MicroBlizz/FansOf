@@ -58,7 +58,7 @@ function pintaFicha(u, abajo, extra) {
   if (u.tipo === 'conejo' && abajo && !extra) { ficha(uc, 2, UH - 52, { ...d, retrato: RETRATO_B, nombre: 'CrazyBunny', nivel: 12 }); return; }
   d.retrato = spr(u.tipo, {}, { espejo: u.eq === 'e' });
   d.tono = u.eq === 'a' ? 'azul' : 'rojo';
-  if (abajo) { d.izq = 2; d.abajo = UH - 2; fichaObjetivo(uc, 0, 0, d); } else fichaObjetivo(uc, UW - 2, 21, d);
+  if (abajo) { d.izq = 2; d.abajo = UH - 2; fichaObjetivo(uc, 0, 0, d); } else { const l = TUT && geoLola(); fichaObjetivo(uc, UW - 2, l ? l.y + l.h + 2 : 21, d); }
 }
 function bannerTexto(k, texto, tono) {
   const entra = suave(Math.min(1, k / 0.22)), sale = suave(Math.max(0, (k - 0.8) / 0.2));
@@ -73,7 +73,7 @@ function pintaUI(t) {
   norma(uc, 2, 2, tr(ESC.norma));
   ventana(uc, UW - 44, 2, 42, 15);
   escribeMini(uc, tr('TURNO {n}').replace('{n}', J.ronda), UW - 23, 7, '#ffffff', '#101438', 'centro');
-  if (J.pista && !J.fin && !J.banner) {
+  if (J.pista && !J.fin && !J.banner && !TUT) {
     const w = anchoTexto(J.pista) + 12;
     ventana(uc, 2, 21, w, 15, 'oscuro');
     escribe(uc, J.pista, 8, 25, '#d8e2ff');
@@ -91,5 +91,6 @@ function pintaUI(t) {
   if (J.menu) pintaMenu(J.menu, geoMenu(J.menu, MENU_X(), MENU_Y()), J.menuActivo, t);
   if (J.sub) pintaSub(J.sub, geoSub(J.sub, MENU_X(), SUB_Y()), J.subActivo, t);
   if (J.boton && !J.ocupado) pintaBoton(J.boton.t, geoBoton(J.boton.t, MENU_X(), BOTON_Y()), J.boton.tono);
+  if (TUT) pintaLola(t);
   if (J.banner) bannerTexto(J.banner.t / J.banner.dura, J.banner.texto, J.banner.tono);
 }

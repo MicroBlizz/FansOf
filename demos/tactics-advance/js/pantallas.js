@@ -28,54 +28,47 @@ function envuelve(texto, ancho) {
 }
 
 /* ---------- dónde va cada cosa de una pantalla ---------- */
-function geoPantalla(P) {
+// el tamaño de la ventana (las del menú principal se colocan al lado de la isla del título: ver intro.js)
+function tamPantalla(P) {
   const lineas = (P.texto || []).flatMap(t => t === '' ? [''] : envuelve(t, Math.min(UW - 30, 260)));
   const anchos = [P.titulo ? anchoTexto(P.titulo) : 0, ...lineas.map(l => anchoTexto(l)), ...P.items.map(i => anchoTexto(i.t) + 14)];
   const w = Math.min(UW - 8, Math.max(...anchos) + 28), h = (P.titulo ? 16 : 6) + lineas.length * 10 + (lineas.length ? 6 : 0) + P.items.length * 12 + 6;
-  const x = Math.round((UW - w) / 2), y = P.logo ? Math.min(UH - h - 8, Math.round(UH * 0.55)) : Math.round((UH - h) / 2);
+  return { w, h, lineas };
+}
+function geoPantalla(P) {
+  const { w, h, lineas } = tamPantalla(P);
+  let x = Math.round((UW - w) / 2), y = Math.round((UH - h) / 2);
+  if (P.logo) { const g = geoTitulo({ w, h }); x = g.mx; y = g.my; }
   const y0 = y + (P.titulo ? 16 : 6) + lineas.length * 10 + (lineas.length ? 6 : 0);
   return { x, y, w, h, lineas, filas: P.items.map((_, i) => ({ x, y: y0 + i * 12 - 2, w, h: 12 })) };
 }
 function pintaPantalla(t) {
   const P = PANT, g = geoPantalla(P);
-  uc.globalAlpha = P.logo ? 0.25 : 0.5; uc.fillStyle = '#0c0818'; uc.fillRect(0, 0, UW, UH); uc.globalAlpha = 1;
-  if (P.logo) pintaLogo(t, g.y);
+  if (!P.logo) { uc.globalAlpha = 0.5; uc.fillStyle = '#0c0818'; uc.fillRect(0, 0, UW, UH); uc.globalAlpha = 1; }
   ventana(uc, g.x, g.y, g.w, g.h, P.tono || 'azul');
   let y = g.y + 5;
-  if (P.titulo) { escribe(uc, P.titulo, Math.round(UW / 2), y, '#ffe27a', '#101438', 'centro'); y += 16; }
+  if (P.titulo) { escribe(uc, P.titulo, Math.round(g.x + g.w / 2), y, '#ffe27a', '#101438', 'centro'); y += 16; }
   for (const l of g.lineas) { escribe(uc, l, g.x + 12, y, '#e8eeff'); y += 10; }
   P.items.forEach((it, i) => {
     const f = g.filas[i];
     escribe(uc, it.t, f.x + 22, f.y + 3, it.ok === false ? '#7d8cc0' : i === P.activo ? '#ffffff' : '#d8e2ff');
+    if (it.nuevo) { const nx = f.x + 26 + anchoTexto(it.t); uc.fillStyle = '#c81e3a'; uc.fillRect(nx, f.y + 2, anchoMini(it.nuevo) + 4, 8); escribeMini(uc, it.nuevo, nx + 2, f.y + 3, '#ffffff'); }
   });
   uc.drawImage(MANO, g.x + 6 + (Math.floor(t * 4) % 2), g.filas[P.activo].y + 2);
-}
-// el logo del menú principal, con CrazyBunny saltando al lado si cabe
-function pintaLogo(t, hasta) {
-  const s = Math.max(1, Math.min(3, Math.floor((UW - 20) / (anchoTexto('ADVANCE') + 4)), Math.floor((hasta - 14) / 30)));
-  const a = textoGrande(tr('FANS OF'), '#ffffff', Math.max(1, s - 1)), b = textoGrande('TACTICS', '#ffffff', s), c = textoGrande('ADVANCE', '#ff8a2a', s);
-  const alto = a.height + b.height + c.height - 6 * s, y0 = Math.max(4, Math.round((hasta - alto) / 2) - 2);
-  const bota = Math.round(Math.sin(t * 2) * 1.5);
-  uc.drawImage(a, Math.round((UW - a.width) / 2), y0 + bota);
-  uc.drawImage(b, Math.round((UW - b.width) / 2), y0 + a.height - 3 * s + bota);
-  uc.drawImage(c, Math.round((UW - c.width) / 2), y0 + a.height + b.height - 6 * s + bota);
-  if (UW - c.width > 120) {
-    const salto = Math.abs(Math.sin(t * 2.6)) * 10, sp = spr('conejo', salto > 6 ? { ondea: -1, oreja: -1, espiral: Math.floor(t * 7) % 2 } : {}, {}), e = 2;
-    const x = Math.round((UW + c.width) / 2) + 14, y = y0 + alto - 4 - Math.round(salto);
-    uc.imageSmoothingEnabled = false;
-    uc.drawImage(sp.c, x, y - sp.oy * e, sp.c.width * e, sp.c.height * e);
-  }
 }
 
 /* ---------- las pantallas ---------- */
 function menuPrincipal() {
-  vista('cementerio');
+  if (J.fase !== 'titulo') pantallaTitulo();
+  TUT = null; TITULO.etapa = 'menu';
+  const tut = VISTO.leer('tutorial');
   abre({ logo: true, items: [
     { t: tr('Jugar'), f: elegirBatalla },
-    { t: tr('Cómo se juega'), f: () => ayuda(menuPrincipal) },
+    { t: tr('Tutorial'), f: empiezaTutorial, nuevo: tut ? null : tr('NUEVO') },
     { t: tr('Opciones'), f: () => opciones(menuPrincipal) },
     { t: tr('Biblioteca'), f: () => { location.href = '../../#biblioteca'; } },
   ] });
+  if (!tut) PANT.activo = 1;
 }
 function elegirBatalla() {
   abre({ titulo: tr('Elige la batalla'), items: [
@@ -97,13 +90,14 @@ function opciones(volver) {
   abre({ titulo: tr('Opciones'), items: [
     { t: tr('Idioma: Español'), f: () => cambiaIdioma(IDIOMA_TA === 'es' ? 'en' : 'es') },
     ...(pantalla ? [{ t: tr('Pantalla completa'), f: pantallaCompleta }] : []),
+    { t: tr('Ver la presentación'), f: presentacion },
     { t: tr('Volver'), f: volver },
   ] });
 }
 function pausa() {
   abre({ titulo: tr('Pausa'), pausa: true, items: [
     { t: tr('Seguir'), f: cierra },
-    { t: tr('Empezar de nuevo'), f: () => { cierra(); empieza(NOMBRE_ESC); } },
+    { t: tr('Empezar de nuevo'), f: () => { if (TUT) empiezaTutorial(); else { cierra(); empieza(NOMBRE_ESC); } } },
     { t: tr('Cambiar de batalla'), f: elegirBatalla },
     { t: tr('Cómo se juega'), f: () => ayuda(pausa) },
     { t: tr('Opciones'), f: () => opciones(pausa) },

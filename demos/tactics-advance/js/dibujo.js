@@ -138,6 +138,7 @@ function brilloFarol(x, y, t) {
 /* ---------- un fotograma ---------- */
 function pinta(t) {
   const CX = CAM.x, CY = CAM.y;
+  if (J.fase === 'intro') { lc.fillStyle = '#05030a'; lc.fillRect(0, 0, LW, LH); return; }
   // el cielo se amplía (en números enteros) si la vista es más grande que él; se mueve un poco con la cámara
   const k = Math.max(1, Math.ceil(Math.max((LW + 60) / FW, (LH + 50) / FH)));
   const px = Math.round(Math.max(LW - FW * k, Math.min(0, (LW - FW * k) / 2 + (CX - centroX()) * 0.18)));
@@ -146,6 +147,8 @@ function pinta(t) {
   lc.drawImage(FONDO, px, py, FW * k, FH * k);
   if (NUBES) { const ny = py + (HORIZONTE - 52) * k, nx = Math.round(-((t * 4 * k) % (FW * 2 * k))) + Math.round((CX - centroX()) * 0.25); for (let i = 0; i < 3; i++) lc.drawImage(NUBES, nx + i * FW * 2 * k, ny, FW * 2 * k, 40 * k); }
   if (ESC.enemigo === 'becario') pintaLetrero(lc, t, px + 268 * k, py + 44 * k);
+  if (J.fase === 'titulo') return;   // en el título solo se ve el cielo (la isla y el logo van en las ventanas)
+  const mt = TUT && marcaTut();
   const porProf = new Map();
   for (const u of J.unidades) {
     if (!u.vivo && !u.muere) continue;
@@ -164,6 +167,7 @@ function pinta(t) {
       if (J.marcas.azul && J.marcas.azul.has(k)) marca(lc, X, Y, 'azul', t);
       if (J.marcas.rojo && J.marcas.rojo.has(k)) marca(lc, X, Y, J.previa && J.previa.o.gx === gx && J.previa.o.gy === gy ? 'rojo' : 'rosa', t);
       if (J.cursor && J.cursor[0] === gx && J.cursor[1] === gy && J.fase === 'jugador') cursor(lc, X, Y, t);
+      if (mt && mt[0] === gx && mt[1] === gy) { marca(lc, X, Y, 'amarillo', t * 1.6); romboBorde(lc, X, Y, Math.floor(t * 4) % 2 ? '#ffffff' : '#ffd23a', 0); }
     }
     for (let gx = 0; gx < N; gx++) {
       const gy = d - gx; if (gy < 0 || gy >= N) continue;
@@ -177,6 +181,7 @@ function pinta(t) {
   }
   if (ESC.luciernagas) pintaLuciernagas(lc, t, Math.round((CX - centroX()) * 0.6) + Math.round((LW - 240) / 2), Math.round(CY * 0.3) - 10 + Math.round((LH - 160) / 2));
   pintaEfectos();
+  if (mt && (!J.sel || !unidadEn(mt[0], mt[1]) || J.modo === 'atacar')) { const [x, y] = pantalla(mt[0], mt[1], altura(mt[0], mt[1])); const u = unidadEn(mt[0], mt[1]); lc.drawImage(FLECHA, x - 4, y - (u ? (u.tipo === 'conejo' ? 56 : 44) : 22) + (Math.floor(t * 3) % 2) * 2); }
   if (J.sel && J.fase === 'jugador' && !J.ocupado) { const [x, y] = pantalla(J.sel.fx, J.sel.fy, J.sel.fh); lc.drawImage(FLECHA, x - 4, y - (J.sel.tipo === 'conejo' ? 54 : 46) + (Math.floor(t * 3) % 2)); }
   if (J.destello > 0) { lc.globalAlpha = 0.3 * J.destello / 0.08; lc.fillStyle = '#ffffff'; lc.fillRect(0, 0, LW, LH); lc.globalAlpha = 1; }
 }

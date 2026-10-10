@@ -28,8 +28,11 @@ function filaTocada(items, g, x, y) { if (!items || !dentro(g, x, y)) return -2;
 const botonPeq = (x, y) => BOTONES_PEQ.find((_, i) => dentro(geoPeq(i), x, y));
 
 function toca(p) {
+  if (J.fase === 'intro') return tocaIntro(p.ux, p.uy);
   if (PANT) return tocaPantalla(p.ux, p.uy);
-  if (J.fase === 'titulo' || J.fase === 'fin') return;
+  if (J.fase === 'titulo') return menuPrincipal();
+  if (TUT && tocaLola(p.ux, p.uy)) return;
+  if (J.fase === 'fin') return;
   const { ux, uy, mx, my } = p;
   const peq = botonPeq(ux, uy);
   if (peq === 'pausa') return pausa();
@@ -51,21 +54,22 @@ function toca(p) {
   if (c) J.cursor = c;
   const enCasilla = u || (c ? unidadEn(c[0], c[1]) : null);
   if (J.modo === 'mover') {
-    if (u && u.eq === 'a' && u !== J.sel && !u.hecho) return selecciona(u);
-    if (c && J.marcas.azul.has(c.join(','))) return ejecutaMover(J.sel, c);
+    if (u && u.eq === 'a' && u !== J.sel && !u.hecho && dejaTut('elegir')) return selecciona(u);
+    if (c && J.marcas.azul.has(c.join(',')) && dejaTut('casilla', c)) return ejecutaMover(J.sel, c);
     return volver();
   }
   if (J.modo === 'atacar') {
-    const o = enCasilla && J.objetivos.includes(enCasilla) ? enCasilla : null;
+    const o = enCasilla && J.objetivos.includes(enCasilla) && dejaTut('objetivo') ? enCasilla : null;
     if (o) { if (J.previa && J.previa.o === o) return ejecutaAtaque(J.sel, o, J.tec); return apunta(o); }
     return volver();
   }
-  if (enCasilla && enCasilla.eq === 'a' && !enCasilla.hecho) return selecciona(enCasilla);
+  if (enCasilla && enCasilla.eq === 'a' && !enCasilla.hecho) { if (dejaTut('elegir')) selecciona(enCasilla); return; }
   if (enCasilla) { if (enCasilla.eq === 'e') J.fichaE = enCasilla; else J.fichaA = enCasilla; return; }
-  deselecciona();
+  if (dejaTut('volver')) deselecciona();
 }
 // con ratón: el cursor sigue a la casilla, la manita a los menús, y al pasar por un objetivo se ve el acierto y el daño
 function pasa(p) {
+  if (J.fase === 'intro') return;
   if (PANT) return pasaPantalla(p.ux, p.uy);
   if (J.ocupado || J.fase !== 'jugador') return;
   const { ux, uy, mx, my } = p;
@@ -73,7 +77,7 @@ function pasa(p) {
   if (J.menu) { const i = filaTocada(J.menu, geoMenu(J.menu, MENU_X(), MENU_Y()), ux, uy); if (i >= 0 && J.menu[i].ok) J.menuActivo = i; }
   const c = casillaEnPantalla(mx, my);
   if (c) J.cursor = c;
-  if (J.modo === 'atacar') { const o = unidadEnPantalla(mx, my) || (c ? unidadEn(c[0], c[1]) : null); if (o && J.objetivos.includes(o) && (!J.previa || J.previa.o !== o)) apunta(o); }
+  if (J.modo === 'atacar' && dejaTut('objetivo')) { const o = unidadEnPantalla(mx, my) || (c ? unidadEn(c[0], c[1]) : null); if (o && J.objetivos.includes(o) && (!J.previa || J.previa.o !== o)) apunta(o); }
 }
 
 /* ---------- dedos y ratón: tocar, arrastrar y pellizcar ---------- */
@@ -107,7 +111,10 @@ cv.addEventListener('pointercancel', ev => suelta(ev, false));
 cv.addEventListener('wheel', ev => { ev.preventDefault(); if (!PANT) zoom(ev.deltaY < 0 ? 1 : -1); }, { passive: false });
 cv.addEventListener('contextmenu', ev => { ev.preventDefault(); if (!PANT && !J.ocupado && J.fase === 'jugador') volver(); });
 window.addEventListener('keydown', ev => {
+  if (J.fase === 'intro') { if (ev.key === 'Escape') terminaIntro(); else if (ev.key === 'Enter' || ev.key === ' ') avanzaIntro(); return; }
   if (PANT) { if (teclaPantalla(ev.key)) ev.preventDefault(); return; }
+  if (J.fase === 'titulo') { if (ev.key === 'Enter' || ev.key === ' ') menuPrincipal(); return; }
+  if (TUT && (ev.key === 'Enter' || ev.key === ' ')) { valeTut(); return; }
   if (ev.key === '+' || ev.key === '=') return zoom(1);
   if (ev.key === '-') return zoom(-1);
   if (ev.key === 'Escape' && J.fase === 'jugador' && !J.ocupado && !J.sel) { ev.preventDefault(); return pausa(); }
@@ -117,7 +124,8 @@ window.addEventListener('keydown', ev => {
 // la pista de arriba a la izquierda: qué se puede hacer ahora (corta, que cabe en la pantalla)
 function actualizaPista() {
   let t = '';
-  if (J.fase === 'enemigo') t = 'Le toca a Microblizz…';
+  if (TUT) t = '';
+  else if (J.fase === 'enemigo') t = 'Le toca a Microblizz…';
   else if (J.fase === 'jugador') t = J.modo === 'mover' ? 'Elige una casilla azul' : J.modo === 'atacar' ? 'Toca dos veces al objetivo' : J.modo === 'menu' ? 'Elige una orden' : 'Toca a uno de los tuyos';
   J.pista = t ? tr(t) : '';
 }

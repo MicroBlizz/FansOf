@@ -1,5 +1,5 @@
 // Fans of Tactics Advance (prototipo) · ARRANQUE: la pantalla completa, el tamaño del píxel (el de las ventanas y el del mundo,
-// que cambia con el zoom; siempre números enteros para que cada píxel sea cuadrado), el bucle y el menú principal.
+// que cambia con el zoom; siempre números enteros para que cada píxel sea cuadrado), el bucle y la presentación o el título.
 'use strict';
 
 traducePagina();
@@ -33,10 +33,12 @@ let RELOJ = 0, ultimo = 0;
 function fotograma(ahora) {
   const dt = Math.min(0.05, (ahora - ultimo) / 1000 || 0); ultimo = ahora;
   RELOJ += dt;
-  actualiza(dt, RELOJ);
+  if (J.fase === 'intro') actualizaIntro(dt); else actualiza(dt, RELOJ);
   pinta(RELOJ);
   uc.clearRect(0, 0, UW, UH);
-  if (J.fase !== 'titulo') pintaUI(RELOJ);
+  if (J.fase === 'intro') pintaIntro(RELOJ);
+  else if (J.fase === 'titulo') pintaTitulo(RELOJ);
+  else pintaUI(RELOJ);
   if (PANT) pintaPantalla(RELOJ);
   mc.imageSmoothingEnabled = false;
   mc.drawImage(lo, 0, 0, LW * ESC_MUNDO, LH * ESC_MUNDO);
@@ -45,6 +47,8 @@ function fotograma(ahora) {
 }
 window.addEventListener('resize', ajusta);
 ajusta();
-menuPrincipal();
+preparaEscena('cementerio');
+// la primera vez, la presentación; después, directo al título
+if (VISTO.leer('intro')) pantallaTitulo(); else presentacion();
 document.getElementById('carga').hidden = true;
 requestAnimationFrame(t => { ultimo = t; fotograma(t); });

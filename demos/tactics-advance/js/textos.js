@@ -33,6 +33,28 @@ const EN = {
   'Microblizz tendrá que contratar más becarios.': 'Microblizz will have to hire more interns.',
   'Microblizz te agradece los servicios prestados.': 'Microblizz thanks you for your services.',
   'Fans of Tactics Advance': 'Fans of Tactics Advance',
+  // presentación y título
+  'Arkioner y Pepins presentan': 'Arkioner and Pepins present',
+  'Microblizz, una empresa millonaria, ha comprado tus juegos favoritos.': 'Microblizz, a billion-dollar company, has bought your favourite games.',
+  'Ahora los cierra uno a uno y despide a todo el mundo. Hasta a Lola, la del café.': 'Now it shuts them down one by one and fires everyone. Even Lola, from the coffee stand.',
+  'Pero los fans no se rinden. CrazyBunny y EpicChampion van a plantarle cara…': "But the fans won't give up. CrazyBunny and EpicChampion are going to stand up to it…",
+  '…por turnos. Casilla a casilla.': '…turn by turn. Tile by tile.',
+  'Saltar': 'Skip', 'Toca para empezar': 'Tap to start', 'Tutorial': 'Tutorial', 'NUEVO': 'NEW', 'Ver la presentación': 'Watch the intro',
+  // el tutorial (Lola)
+  'LOLA - DESPEDIDA POR MICROBLIZZ': 'LOLA - FIRED BY MICROBLIZZ', '¡Vale!': 'OK!',
+  '¡Hola! Soy Lola. Microblizz me despidió del puesto de café, así que ahora te enseño a pelear por turnos.': "Hi! I'm Lola. Microblizz fired me from the coffee stand, so now I teach you turn-based fighting.",
+  'Este es CrazyBunny. Tócalo para darle órdenes.': 'This is CrazyBunny. Tap him to give him orders.',
+  'Elige Mover. Las casillas azules son los sitios a los que puede ir.': 'Choose Move. The blue tiles are the places he can go.',
+  'Toca la casilla que parpadea: al lado del esqueleto y más alta que la suya.': "Tap the flashing tile: next to the skeleton and higher than his.",
+  'Ahora elige Atacar. Desde más arriba aciertas más y pegas más fuerte.': 'Now choose Attack. From higher up you hit more often and harder.',
+  'Toca al esqueleto una vez para ver el acierto y el daño. Tócalo otra vez para atacar.': 'Tap the skeleton once to see the hit chance and damage. Tap it again to attack.',
+  'Cuando todos los tuyos han actuado, le toca a Microblizz. Paciencia: los esqueletos no cobran, pero pegan.': "Once all your team has acted, it's Microblizz's turn. Patience: skeletons don't get paid, but they do hit.",
+  'Para el zoom, pellizca con dos dedos, usa la rueda o los botones + y −. Arrastrando mueves la cámara.': 'To zoom, pinch with two fingers, use the wheel or the + and − buttons. Drag to move the camera.',
+  'Golpeando y en cada turno se gana CAOS. Toca a CrazyBunny y elige Técnica: el Salto caótico.': 'You gain CHAOS every turn and when you hit. Tap CrazyBunny and choose Skill: the Chaos Jump.',
+  'El Salto caótico llega a 3 casillas y pega casi el doble. ¡Aplasta a ese esqueleto!': 'The Chaos Jump reaches 3 tiles and hits almost twice as hard. Squash that skeleton!',
+  '¡Despedido! Así se hace. Ya sabes mover, atacar y usar técnicas. Ahora, a por Microblizz.': "Fired! That's how it's done. You can move, attack and use skills. Now go get Microblizz.",
+  'Tutorial completado': 'Tutorial complete', 'Lola vuelve a su café. Microblizz no sabe lo que le espera.': "Lola goes back to her coffee. Microblizz has no idea what's coming.",
+  'Jugar una batalla': 'Play a battle',
 };
 
 const IDIOMA_TA = (() => {

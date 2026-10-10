@@ -8,14 +8,14 @@ function ventanaLienzo(w, h, tono) {
   const k = w + 'x' + h + tono;
   if (VENT_CACHE.has(k)) return VENT_CACHE.get(k);
   const c = lienzoNuevo(w, h), g = c.getContext('2d');
-  const F2 = tono === 'rojo' ? ['#e05c6a', '#d04a5c', '#bc3c50', '#a63046', '#90263c', '#7a1e32'] : tono === 'oscuro' ? ['#3a4466', '#323b5a', '#2a324e', '#232a44', '#1c223a', '#161b30'] : VENT.fondo;
+  const F2 = tono === 'crema' ? ['#fff8ee', '#fff4e6', '#fdefdd', '#fbead6', '#f8e4ce', '#f5dfc6'] : tono === 'rojo' ? ['#e05c6a', '#d04a5c', '#bc3c50', '#a63046', '#90263c', '#7a1e32'] : tono === 'oscuro' ? ['#3a4466', '#323b5a', '#2a324e', '#232a44', '#1c223a', '#161b30'] : VENT.fondo;
   g.fillStyle = VENT.borde; g.fillRect(2, 0, w - 4, h); g.fillRect(0, 2, w, h - 4); g.fillRect(1, 1, w - 2, h - 2);
   g.fillStyle = VENT.luz; g.fillRect(2, 1, w - 4, h - 2); g.fillRect(1, 2, w - 2, h - 4);
-  g.fillStyle = tono === 'rojo' ? '#f0a0a8' : VENT.bisel; g.fillRect(2, 2, w - 4, h - 4);
+  g.fillStyle = tono === 'crema' ? '#d8bfa0' : tono === 'rojo' ? '#f0a0a8' : VENT.bisel; g.fillRect(2, 2, w - 4, h - 4);
   for (let j = 3; j < h - 3; j++) for (let i = 3; i < w - 3; i++) {
     g.fillStyle = degradado(null, w, i, j, F2, (j - 3) / Math.max(1, h - 7)); g.fillRect(i, j, 1, 1);
   }
-  g.fillStyle = tono === 'rojo' ? '#f4a0aa' : VENT.brillo; g.fillRect(3, 3, w - 6, 1);
+  g.fillStyle = tono === 'crema' ? '#ffffff' : tono === 'rojo' ? '#f4a0aa' : VENT.brillo; g.fillRect(3, 3, w - 6, 1);
   VENT_CACHE.set(k, c);
   return c;
 }

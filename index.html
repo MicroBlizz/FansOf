@@ -62,21 +62,28 @@
   .nov-cabeza p { margin: 4px 0 0; font-size: 14px; font-weight: 700; color: var(--ink-dim); }
   .nov-x { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 10px; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); font-family: var(--font-display); font-size: 18px; line-height: 1; cursor: pointer; padding: 3px 0 0; }
   .nov-cuerpo { overflow-y: auto; padding: 4px 18px 12px; -webkit-overflow-scrolling: touch; }
-  .nov-cuerpo h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--player-lite); margin: 16px 0 2px; }
-  .nov-cuerpo p.nov-nota { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
-  .nov-bloque { margin-top: 10px; background: var(--panel); border: 3px solid var(--outline); border-radius: 12px; padding: 8px 12px 10px; }
-  .nov-bloque h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-family: var(--font-display); font-weight: 400; font-size: 17px; color: var(--gold); margin: 0; }
-  .nov-bloque h4 small { font-family: var(--font-ui); font-size: 13px; font-weight: 800; color: var(--ink-dim); }
-  .nov-bloque ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; font-weight: 600; line-height: 1.35; }
-  .nov-bloque li { margin: 3px 0; }
-  .nov-bloque li b { color: var(--player-lite); }
-  .nov-bloque a { display: inline-block; margin-top: 6px; font-size: 14px; font-weight: 800; color: var(--gold); }
-  .nov-cuerpo ul.joke { color: var(--ink-dim); font-style: italic; font-size: 14px; font-weight: 600; padding-left: 20px; }
+  .nov-cuerpo h3 { font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--player-lite); margin: 14px 0 6px; }
+  .nov-cuerpo p.nov-nota { margin: 8px 0 0; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+  /* juegos nuevos: una tarjeta pequeña con su color, una frase y JUGAR */
+  .nov-nuevo { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 12px; border: 3px solid var(--outline); border-radius: 14px;
+    background: linear-gradient(110deg, var(--wc, var(--tray-hi)) 0%, var(--tray) 80%); }
+  .nov-nuevo div { flex: 1; min-width: 0; }
+  .nov-nuevo b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 17px; line-height: 1.1; }
+  .nov-nuevo span { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; line-height: 1.3; color: var(--ink-dim); }
+  .nov-nuevo a { flex: none; text-decoration: none; font-family: var(--font-display); font-size: 15px; padding: 7px 12px 3px; border-radius: 10px; border: 3px solid var(--outline);
+    background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
+  /* actualizaciones: una línea por juego */
+  .nov-fila { display: block; text-decoration: none; color: var(--ink); padding: 7px 4px; border-bottom: 2px solid var(--tray-hi); }
+  .nov-fila:last-child { border-bottom: 0; }
+  .nov-fila b { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--gold); }
+  .nov-fila small { margin-left: 6px; font-size: 12px; font-weight: 800; color: var(--ink-dim); }
+  .nov-fila span { display: block; font-size: 14px; font-weight: 700; line-height: 1.3; }
+  .nov-fila:hover b { color: var(--player-lite); }
   .nov-pie { padding: 10px 18px 14px; border-top: 3px solid var(--outline); display: flex; justify-content: center; }
   .nov-pie button { font-family: var(--font-display); font-size: 20px; padding: 9px 26px 5px; border-radius: 14px; border: 3px solid var(--outline); cursor: pointer;
     background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
   .nov-pie button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
-  .nov-x:focus-visible, .nov-pie button:focus-visible, .nov-bloque a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .nov-x:focus-visible, .nov-pie button:focus-visible, .nov-nuevo a:focus-visible, .nov-fila:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   @media (max-width: 420px) { .nov-cabeza h2 { font-size: 28px; } .nov-cuerpo { padding: 2px 14px 10px; } }
 </style>
 </head>
@@ -87,13 +94,13 @@
 </nav>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
-    <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub">Novedades y parches</p></div>
+    <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
     <button type="button" class="nov-x ol" id="nov-x" aria-label="Cerrar">✕</button>
     <div class="nov-cuerpo" id="nov-cuerpo">
-      <div id="nov-ultimo"></div>
-      <h3 class="ol">PARCHES DE CADA JUEGO</h3>
-      <p class="nov-nota">Cada juego se actualiza por su cuenta: aquí tienes su última versión y lo que trae.</p>
-      <div id="nov-parches"></div>
+      <div id="nov-nuevos"></div>
+      <h3 class="ol">ACTUALIZACIONES</h3>
+      <div id="nov-act"></div>
+      <p class="nov-nota">Toca un juego para ver todas sus novedades.</p>
     </div>
     <div class="nov-pie"><button type="button" class="ol" id="nov-ok">¡A JUGAR!</button></div>
   </div>
@@ -190,34 +197,47 @@ function show(id, ver, entries) {
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 const fail = id => () => {
   const news = document.getElementById(id) && document.getElementById(id).querySelector('[data-news]'); if (news) news.textContent = 'No se han podido leer las novedades.';
-  parche(id, null, []);
+  parche(id, null, [], (JUEGOS.find(j => j[0] === id) || [])[2]);
 };
 
 // ---------- la ventana NOVEDADES: sale cada vez que se carga la página y desde la pestaña Novedades del menú ----------
-// LO ÚLTIMO sale de novedades/lista.js (el boletín, escrito a mano); los PARCHES, del js/novedades.js de cada juego, así que se ponen al día solos.
+// Corta, de un vistazo: JUEGOS NUEVOS sale de novedades/lista.js (escrito a mano) y ACTUALIZACIONES, una línea por juego, del js/novedades.js
+// de cada juego, así que se pone al día sola con cada despliegue. El detalle completo sigue en la tarjeta de cada juego.
 // tr() llega con el idioma, que se carga aparte: hasta entonces el texto va tal cual (y la página lo traduce sola al pintarlo)
 const t = s => (typeof tr === 'function' ? tr(s) : s);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nov = { fondo: document.getElementById('novedades'), volver: null };
-function boletinHtml(b, entero) {
-  const cab = entero ? '' : `<h3>${esc(t(b.titulo))}</h3><p class="nov-nota">${esc(t(b.fecha))}</p>`;
-  return cab + (b.juegos || []).map(j => `<div class="nov-bloque"><h4>${esc(t(j.nombre))}${j.ver ? ` <small>${esc(j.ver)}</small>` : ''}</h4>`
-    + newsLista(j.real) + (entero && j.tarjeta ? `<a href="#${j.tarjeta}" data-cierra>${esc(t('Ir al juego'))}</a>` : '') + '</div>').join('')
-    + newsLista(b.joke, 'joke');
+// JUEGOS NUEVOS: del boletín de novedades/lista.js (solo el primero), con el color de su tarjeta en la librería
+function pintarNuevos(b) {
+  const caja = document.getElementById('nov-nuevos');
+  document.getElementById('nov-sub').textContent = b ? t(b.fecha) : '';
+  caja.innerHTML = b && b.nuevos && b.nuevos.length ? `<h3 class="ol">${esc(t('JUEGOS NUEVOS'))}</h3>` + b.nuevos.map(j => {
+    const tarjeta = document.getElementById(j.tarjeta), color = tarjeta ? tarjeta.style.getPropertyValue('--wc') : '';
+    return `<div class="nov-nuevo"${color ? ` style="--wc: ${esc(color)}"` : ''}><div><b class="ol">${esc(t(j.nombre))}</b><span>${esc(t(j.texto))}</span></div>`
+      + `<a class="ol" href="${esc(j.enlace)}">${esc(t('JUGAR'))}</a></div>`;
+  }).join('') : '';
+  for (const o of (b && b.otros) || []) fila(o.tarjeta, o.nombre, '', t(o.texto));
 }
-function pintarBoletines(lista) {
-  const ultimo = document.getElementById('nov-ultimo');
-  if (!lista || !lista.length) { ultimo.innerHTML = ''; return; }
-  document.getElementById('nov-sub').textContent = t(lista[0].titulo) + ' · ' + t(lista[0].fecha);
-  ultimo.innerHTML = `<h3 class="ol">${esc(t('LO ÚLTIMO'))}</h3>` + boletinHtml(lista[0], true) + lista.slice(1, 3).map(b => boletinHtml(b, false)).join('');
+// ACTUALIZACIONES: una línea por juego, que se rellena cuando llega su informe; los juegos que salen como nuevos no se repiten
+const nuevos = () => new Set(((NOV_BOLETIN && NOV_BOLETIN.nuevos) || []).map(j => j.tarjeta));
+let NOV_BOLETIN = null;
+function fila(id, nombre, ver, texto) {
+  if (nuevos().has(id)) { const f = document.getElementById('act-' + id); if (f) f.remove(); return; }
+  let f = document.getElementById('act-' + id);
+  if (!f) { f = document.createElement('a'); f.className = 'nov-fila'; f.id = 'act-' + id; f.href = '#' + id; f.dataset.cierra = id; document.getElementById('nov-act').appendChild(f); }
+  f.innerHTML = `<b class="ol">${esc(t(nombre))}</b>${ver ? `<small>${esc(t('versión ' + ver))}</small>` : ''}<span>${esc(texto)}</span>`;
 }
-// un hueco por juego, en el orden de la librería, que se rellena cuando llega su informe
-function parche(id, ver, entries) {
-  const caja = document.getElementById('par-' + id); if (!caja) return;
-  const n = entries[0];
-  caja.querySelector('small').textContent = ver ? t('versión ' + ver) : '';
-  caja.querySelector('div').innerHTML = n ? newsLista(n.real) + newsLista(n.joke, 'joke') : esc(t('No se han podido leer las novedades.'));
+// de un informe, los títulos en negrita, en minúsculas para que no griten (sin tocar siglas como PvP o CEO)
+const SIGLAS = { pvp: 'PvP', ceo: 'CEO', caos: 'CAOS', ia: 'IA', td: 'TD', '3d': '3D', ps1: 'PS1' };
+const suave = x => { const s = x.toLowerCase().replace(/[\wáéíóúñü]+/g, w => SIGLAS[w] || w); return s.charAt(0).toUpperCase() + s.slice(1); };
+const titulares = n => ((n && n.real) || []).map(r => (/<b>([^<]+)<\/b>/.exec(r) || [])[1]).filter(Boolean);
+function resumen(entries) {
+  // el último informe con algo que contar (los de «mejoras por dentro» se saltan si hay otro antes)
+  const n = entries.find(e => titulares(e).some(h => !/MEJORAS POR DENTRO/i.test(h))) || entries[0];
+  const hs = titulares(n).filter(h => !/MEJORAS POR DENTRO/i.test(h)).slice(0, 2).map(h => t(suave(h)));
+  return hs.length ? hs.join(' · ') : t('Mejoras por dentro');
 }
+function parche(id, ver, entries, nombre) { fila(id, nombre, ver, entries.length ? resumen(entries) : t('No se han podido leer las novedades.')); }
 function abrirNovedades(desde) {
   nov.volver = desde || null; nov.fondo.hidden = false; document.body.style.overflow = 'hidden';
   document.getElementById('nov-cuerpo').scrollTop = 0; document.getElementById('nov-ok').focus({ preventScroll: true });
@@ -231,26 +251,30 @@ function cerrarNovedades() {
 document.getElementById('abrir-novedades').onclick = e => { e.preventDefault(); abrirNovedades(e.currentTarget); };
 document.getElementById('nov-ok').onclick = cerrarNovedades;
 document.getElementById('nov-x').onclick = cerrarNovedades;
-nov.fondo.addEventListener('click', e => { if (e.target === nov.fondo || e.target.closest('[data-cierra]')) cerrarNovedades(); });
+nov.fondo.addEventListener('click', e => {
+  const enlace = e.target.closest('[data-cierra]');
+  if (enlace) { const d = document.querySelector('#' + enlace.dataset.cierra + ' details'); if (d) d.open = true; }
+  if (e.target === nov.fondo || enlace) cerrarNovedades();
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarNovedades(); });
 
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
 // (las demos sin nucleo.js, como Fans of Roguelite, toman la versión de su primer informe)
 const JUEGOS = [['g-rumble', 'games/rumble/', 'FANS OF RUMBLE'], ['g-td', 'games/td/', 'FANS OF TD'], ['g-survivors', 'games/survivors/', 'FANS OF SURVIVORS'],
   ['g-tacticas', 'games/tacticas/', 'FANS OF RUMBLE: TÁCTICAS'], ['g-skate', 'games/skate/', 'FANS OF SKATE'], ['g-roguelite', 'demos/roguelite/', 'FANS OF ROGUELITE']];
-document.getElementById('nov-parches').innerHTML = JUEGOS.map(([id, dir, nombre]) =>
-  `<div class="nov-bloque" id="par-${id}"><h4>${esc(t(nombre))} <small></small></h4><div>${esc(t('Cargando…'))}</div><a href="${dir}">${esc(t('JUGAR'))}</a></div>`).join('');
 // se pinta con la página ya cargada: así el diccionario del idioma ya está y los textos salen traducidos
 const cargada = new Promise(r => (document.readyState === 'complete' ? r() : window.addEventListener('load', r)));
-for (const [id, dir] of JUEGOS) {
+for (const [id, , nombre] of JUEGOS) fila(id, nombre, '', t('Cargando…'));
+for (const [id, dir, nombre] of JUEGOS) {
   Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js'), cargada]).then(([page, news]) => {
     const entries = grab(news, 'NEWS', '];') || [];
     const ver = (/nucleo\.js\?v=([\d.]+)/.exec(page) || [])[1] || (entries[0] && entries[0].v);
-    show(id, ver, entries); parche(id, ver, entries);
+    show(id, ver, entries); parche(id, ver, entries, nombre);
   }).catch(fail(id));
 }
 // el boletín se pide sin caché, como los informes de los juegos, para que salga al día en cuanto se publica
-Promise.all([text('novedades/lista.js'), cargada]).then(([src]) => pintarBoletines(grab(src, 'NOVEDADES_WEB', '];'))).catch(() => pintarBoletines([]));
+Promise.all([text('novedades/lista.js'), cargada]).then(([src]) => { NOV_BOLETIN = (grab(src, 'NOVEDADES_WEB', '];') || [])[0] || null; for (const id of nuevos()) fila(id); pintarNuevos(NOV_BOLETIN); })
+  .catch(() => pintarNuevos(null));
 abrirNovedades();
 </script>
 </body>

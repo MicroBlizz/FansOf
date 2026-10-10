@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 23 KB
+- `index.html` · 24 KB
 - `sw.js` · <1 KB
 - `android/index.html` · 3 KB
 - `condiciones/index.html` · 6 KB
@@ -134,6 +134,30 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/js/textos.js` · 7 KB · EN, IDIOMA_RL, tr
 - `demos/roguelite/js/tiempo.js` · 2 KB · RELOJ, CANCELADO, ESPERAS, ELECCION, espera, anima, esperaEleccion, elige, congela, cancelaTodo, avanzaReloj, suave, sale, entra, salto
 - `demos/roguelite/js/viaje.js` · 8 KB · VIAJE, partida, juegaDia, faseDe, empiezaDia, guardaRun, finCapitulo, anda, derrota, victoria, finPartida, avanzaViaje
+- `demos/rouflage/estilo.css` · 21 KB
+- `demos/rouflage/index.html` · 11 KB
+- `demos/rouflage/idioma/en-raiz.js` · <1 KB
+- `demos/rouflage/js/alubia.js` · 10 KB · CAJA_W, ESC_PIEL, BLANCO_PIEL, trazaAlubia, MASCARA, PIXELES_ALUBIA, preparaAlubia, nuevaPiel, dentroDeAlubia, ADORNOS, pintaAlubia
+- `demos/rouflage/js/audio.js` · 3 KB · SAVE, AUDIO, sonidoApagado, volGeneral, volMusica, MUSICA, musica, vigilaMusica, cambiaSonido, cambiaMusica
+- `demos/rouflage/js/bot-camaleon.js` · 4 KB · cerebroCamaleon, eligeSitio, escondeYa, huye, piensaCamaleon
+- `demos/rouflage/js/bot-cazador.js` · 13 KB · cerebroCazador, veCazador, minimoVista, ojoPara, ponRumbo, destraba, sigueCamino, giraHacia, puntosDe, nuevaSala, ronda, mira, sospecha, oyeSilbido, NOMBRE_SENUELO, senueloCerca, disparaBot, piensaCazador
+- `demos/rouflage/js/controles.js` · 7 KB · ENTRADA, jugando, vectorMueve, sueltaPuntero, controlaJugador, disparaJugador
+- `demos/rouflage/js/dibujo.js` · 10 KB · cv, DPR, CAM, zoomJuego, avanzaCamara, calculaVista, ponMundo, aMundo, aPantalla, COSA_PUERTA, pintaPuerta, pintaYoEnTaller, pintaSigno, pintaMarcas, flechaBorde, pintaEncima, dibuja
+- `demos/rouflage/js/efectos.js` · 4 KB · FX, COLORES_MANCHA, limpiaFx, volumenEn, ondaSilbido, fxTexto, fxGota, fxSalpica, fxSudor, fxDisparo, fxSello, fxMancha, fxAro, avanzaFx, pintaFxSuelo, pintaFx
+- `demos/rouflage/js/entes.js` · 6 KB · AJUSTES, J, NOMBRES, _semilla, nuevoEnte, escondidos, cazadoresVivos, avanzaEnte, congela, descongela, loQueCanta, silba, despide
+- `demos/rouflage/js/interfaz.js` · 16 KB · $, ICONOS, ESTRELLA, ponIcono, ponIconos, avisa, limpiaAvisos, cartel, PISTA, pista, pistaDeAhora, HUD, ponTexto, colorCamo, veredicto, refrescaHud, muestraTaller, pintaMedidor, refrescaTaller, PANTALLAS, pantalla, _trasAyuda, irTitulo, muestraAyuda, muestraPausa, elige, refrescaSonido, muestraFin, pintaMapaFinal, pintaTarjetas, preparaInterfaz
+- `demos/rouflage/js/luz.js` · 3 KB · LZ, abanico, conLuz, pintaLuces
+- `demos/rouflage/js/mapa-datos.js` · 9 KB · CEL, VACIO, ALTO_CARA, SALAS, PASOS, ZONAS, zona, GRID, CARAS, PUERTA, celdaEn, zonaEn, MUEBLES, pon, CARTELES, EPITAFIOS, SALIDA_CAMALEONES, SALIDA_CAZADORES
+- `demos/rouflage/js/mapa.js` · 11 KB · ESC_FONDO, MAPA, TODO, cruzan, pintaMundo, construyeMapa, cuentagotas, tapado, MEDIO_PIE, chocaCaja, cabe, mueve, RAYO, rayo, seVen, celdaLibre, casillaCerca, pasoLibre, _g, buscaCamino, sitioLibre, salaDe
+- `demos/rouflage/js/muebles.js` · 14 KB · cajon, LUCES, TIPOS_MUEBLE, starPath, sombraMueble, pintaMueble
+- `demos/rouflage/js/paredes.js` · 11 KB · COLOR_MURO, pintaMuro, pintaBordes, PAPELES, pintaCaras, rotuloJusto, pintaCartel
+- `demos/rouflage/js/partida.js` · 12 KB · limpiaPartida, escenaTitulo, empiezaPartida, cambiaFase, silbidoGeneral, chivatazo, avanzaPartida, miraLosOjos, mmss, termina, accionPintar, accionCongelar, accionSilbar, accionListo, accionPausa
+- `demos/rouflage/js/pintura.js` · 5 KB · PIEL_W, trazo, rellena, guardaPaso, deshace, mideCamuflaje, pintaBot
+- `demos/rouflage/js/principal.js` · 2 KB · ajusta, RELOJ, fotograma, arranca
+- `demos/rouflage/js/suelos.js` · 14 KB · rango, peligro, mancha, SUELOS, PEGATINAS, pintaPegatina
+- `demos/rouflage/js/taller.js` · 7 KB · RADIOS, TALLER, abreTaller, encuadraTaller, preparaCapas, cierraTaller, avanzaTaller, mideTaller, cogeColor, ponColor, enCaja, empiezaTrazo, tallerAbajo, tallerMueve, tallerArriba, tallerHerramienta, tallerRadio, tallerRellena, tallerDeshace, tallerCalco
+- `demos/rouflage/js/textos.js` · 11 KB · EN, IDIOMA_RF, tr, traducePagina
+- `demos/rouflage/js/util.js` · 5 KB · TAU, OL, limita, entre, lejos, suaviza, giro, rand, pick, baraja, hash2, hexRgb, rgbHex, tono, difColor, lienzo, rrPath, forma, caja, ovalo, poli, raya, punto, LETRA_GORDA, rotulo
 - `demos/rumble-3d/index.html` · 17 KB
 - `demos/rumble-3d/idioma/en-raiz.js` · <1 KB
 - `demos/rumble-3d/js/edificios.js` · 10 KB · PI, torreAnimales, madriguera, torreMicroblizz, sedeMicroblizz, escombros, cartel
@@ -290,7 +314,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/sw.js` · <1 KB
 - `games/survivors/css/survivors.css` · 14 KB
 - `games/survivors/idioma/en-facciones.js` · 12 KB
-- `games/survivors/idioma/en.js` · 19 KB
+- `games/survivors/idioma/en.js` · 20 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
 - `games/survivors/js/armas-tipos-2.js` · 10 KB · anguloMira, difAng
 - `games/survivors/js/armas-tipos.js` · 15 KB · CONTINUAS, CONT_EXTRA, SONIDO_TIPO, estadoArma, empujeA, TIPOS, registraTipos, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
@@ -359,6 +383,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/datos.html` · 6 KB
 - `herramientas/desplegar.py` · 11 KB
 - `herramientas/idioma.py` · 8 KB
+- `herramientas/idioma_claves.py` · 5 KB
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
 - `herramientas/subir_datos.py` · 4 KB
@@ -374,7 +399,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
 - `novedades/en.js` · 1 KB
-- `novedades/lista.js` · 2 KB · NOVEDADES_WEB
+- `novedades/lista.js` · 3 KB · NOVEDADES_WEB
 - `privacidad/index.html` · 7 KB
 - `servidor/correos/cambio-de-email.html` · 2 KB
 - `servidor/correos/confirmar-registro.html` · 2 KB

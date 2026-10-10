@@ -2,6 +2,7 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.5.2', real: ['<b>ICONO NUEVO</b>: CrazyBunny de frente, con su ojo en espiral y la corona, y encima las letras FoR bien gordas y en 3D.'], joke: [] },
   { v: '0.5.1', real: ['<b>ICONO PROPIO</b>: al instalarlo en el móvil, el juego tiene su icono en pixel art: la cara de CrazyBunny con su corona y las letras FoR.'],
     joke: ['Microblizz ha pedido el icono para su tienda. Le hemos dicho que la corona es nuestra.'] },
   { v: '0.5.0', real: [

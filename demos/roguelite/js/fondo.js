@@ -1,9 +1,10 @@
-// Fans of Roguelite (prototipo) · El paisaje: cielo a franjas con tramas (cambia cada día, de la mañana a la noche roja del jefe),
-// montañas, la torre de Microblizz que se acerca día a día, colinas con árboles, el camino y los carteles. Cada capa se mueve
-// a su velocidad (las de lejos, más despacio) para dar profundidad.
+// Fans of Roguelite · El paisaje: cielo a franjas con tramas (cambia a lo largo del mundo, de la mañana a la noche del jefe),
+// montañas, un edificio a lo lejos que se acerca, colinas, el camino y las cosas del camino. Cada capa se mueve a su velocidad
+// (las de lejos, más despacio) para dar profundidad. Aquí está el motor y el bosque del mundo 1; el cementerio y la ciudad,
+// en fondo-mundos.js.
 'use strict';
 
-const ESC = { Y: 24, H: 172 };          // dónde va la escena dentro de la pantalla (debajo del marcador)
+const ESC = { Y: 27, H: 172 };          // dónde va la escena dentro de la pantalla (debajo del marcador)
 const SUELO = ESC.Y + 138;              // la línea de los pies
 const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
 const hash = (x, y = 0, s = 0) => { let h = Math.imul(x ^ 0x9e3779b9, 374761393) ^ Math.imul(y + s * 7919, 668265263); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
@@ -13,8 +14,8 @@ const DIA_LUZ = [
   { cielo: ['#2f6fe0', '#3d86f2', '#4f9cff', '#6cb6ff', '#93d0ff', '#bfe6ff', '#e9f9ff'], tinte: '#ffffff', k: 0, sol: 'mediodia' },
   { cielo: ['#4a5fd6', '#6a74e8', '#8f86f0', '#c49af0', '#f0b2d4', '#ffd0b0', '#ffe9a8'], tinte: '#ffb070', k: 0.12, sol: 'tarde' },
   { cielo: ['#2a1b5e', '#4b2580', '#7a2e93', '#b8399a', '#ec5a8a', '#ff8a5c', '#ffc85a'], tinte: '#ff6a8a', k: 0.2, sol: 'ocaso' },
-  { cielo: ['#160d3a', '#271a5e', '#3b2580', '#5b2f93', '#8a3a9a', '#c4508a', '#ff7a6a'], tinte: '#5a3aa0', k: 0.34, sol: 'luna' },
-  { cielo: ['#0b0618', '#160a2a', '#22103d', '#331552', '#4a1a5c', '#6a1f5a', '#a02a4a'], tinte: '#2a1050', k: 0.46, sol: 'roja' },
+  { cielo: ['#160d3a', '#271a5e', '#3b2580', '#5b2f93', '#8a3a9a', '#c4508a', '#ff7a6a'], tinte: '#5a3aa0', k: 0.34, sol: 'luna', noche: true },
+  { cielo: ['#0b0618', '#160a2a', '#22103d', '#331552', '#4a1a5c', '#6a1f5a', '#a02a4a'], tinte: '#2a1050', k: 0.46, sol: 'roja', noche: true },
 ];
 
 function lienzoNuevo(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
@@ -39,12 +40,10 @@ function rellenaTrama(ctx, x, y, w, h, n, color) {
   ctx.fillStyle = ctx.createPattern(trama(n, color), 'repeat'); ctx.fillRect(x, y, w, h);
 }
 
-/* ---------- cada día se pinta su paisaje (con su luz) ---------- */
-const FONDO = { dia: -1 };
-function preparaFondo(d) {
-  const L = DIA_LUZ[d], ti = c => L.k ? mezcla(c, L.tinte, L.k) : c, hz = L.cielo[5];
-  FONDO.dia = d; FONDO.L = L; FONDO.ti = ti;
-  // cielo a franjas, con trama entre una y otra
+/* ---------- cada tramo del mundo se pinta su paisaje (con su luz) ---------- */
+const FONDO = { fase: -1 };
+const ESTILO = {};   // cómo pinta cada mundo su paisaje: luces, capas, cosas del camino y su edificio a lo lejos
+function cieloDe(L, semilla) {
   const alto = SUELO - ESC.Y - 18, n = L.cielo.length;
   const cielo = imagen(256, ESC.H, (x, y) => {
     const t = Math.min(n - 0.001, (y / alto) * n), i = Math.floor(t), fr = t - i;
@@ -52,13 +51,15 @@ function preparaFondo(d) {
     return BAYER[y & 3][x & 3] / 16 < u * u ? L.cielo[sig] : L.cielo[i];
   });
   const g = cielo.getContext('2d');
-  if (d >= 4) for (let k = 0; k < 70; k++) { const x = Math.floor(hash(k, 1, d) * 256), y = Math.floor(hash(k, 2, d) * 90); g.fillStyle = hash(k, 3) > 0.7 ? '#fff6ea' : '#b8a8e8'; g.fillRect(x, y, 1, 1); }
+  if (L.noche) for (let k = 0; k < 70; k++) { const x = Math.floor(hash(k, 1, semilla) * 256), y = Math.floor(hash(k, 2, semilla) * 90); g.fillStyle = hash(k, 3) > 0.7 ? '#fff6ea' : '#b8a8e8'; g.fillRect(x, y, 1, 1); }
   pintaSol(g, L.sol);
-  FONDO.cielo = cielo;
-  // montañas lejanas (tira que se repite)
-  const lejos = mezcla(ti('#6a7fd0'), hz, 0.45), lejosL = mezcla(ti('#a2b4f4'), hz, 0.35), lejosS = mezcla(ti('#4b5aa8'), hz, 0.4);
-  const alt = x => 26 + 9 * Math.sin((x / 256) * Math.PI * 4 + 0.5) + 6 * Math.sin((x / 256) * Math.PI * 10 + 1.3) + 3 * Math.sin((x / 256) * Math.PI * 22);
-  FONDO.montes = imagen(256, 48, (x, y) => {
+  return cielo;
+}
+// montañas lejanas (tira de 256 que se repite); picos > 1 las hace más puntiagudas
+function montesDe(f, base, claro, oscuro, picos = 1) {
+  const lejos = mezcla(f.ti(base), f.hz, 0.45), lejosL = mezcla(f.ti(claro), f.hz, 0.35), lejosS = mezcla(f.ti(oscuro), f.hz, 0.4);
+  const alt = x => 26 + 9 * Math.sin((x / 256) * Math.PI * 4 + 0.5) + 6 * picos * Math.sin((x / 256) * Math.PI * 10 + 1.3) + 3 * picos * Math.sin((x / 256) * Math.PI * 22) + (picos > 1 ? 4 * Math.abs(Math.sin((x / 256) * Math.PI * 30)) : 0);
+  return imagen(256, 48, (x, y) => {
     const top = 48 - Math.round(alt(x)); if (y < top) return null;
     const sube = alt(x) > alt(x - 1);
     if (y === top) return lejosL;
@@ -66,15 +67,14 @@ function preparaFondo(d) {
     if (sube && y < top + 3) return mezcla(lejos, lejosL, 0.5);
     return lejos;
   });
-  FONDO.torre = torreDe(d, ti, hz);
-  FONDO.colinas = colinasDe(d, ti, hz);
-  FONDO.suelo = sueloDe(ti);
-  FONDO.delante = delanteDe(ti);
-  FONDO.nubes = [0, 1, 2].map(i => nubeDe(i, L, ti));
-  FONDO.props = {};
-  FONDO.cosas = [];
-  FONDO.sigProp = 40;
-  FONDO.nubesPos = [0, 1, 2, 3].map(i => ({ x: hash(i, 5, d) * 300, y: ESC.Y + 6 + Math.floor(hash(i, 6, d) * 46), n: i % 3, v: 2 + hash(i, 7) * 3 }));
+}
+function preparaFondo(mundo, fase) {
+  const est = ESTILO[MUNDOS[mundo].fondo], L = est.luces[fase];
+  const ti = c => L.k ? mezcla(c, L.tinte, L.k) : c;
+  Object.assign(FONDO, { mundo, fase, estilo: est, L, ti, hz: L.cielo[5], props: {}, cosas: [], sigProp: 40, semilla: mundo * 10 + fase, nubes: null, delante: null });
+  FONDO.cielo = cieloDe(L, FONDO.semilla);
+  est.capas(FONDO);
+  FONDO.nubesPos = [0, 1, 2, 3].map(i => ({ x: hash(i, 5, fase) * 300, y: ESC.Y + 6 + Math.floor(hash(i, 6, fase) * 46), n: i % 3, v: 2 + hash(i, 7) * 3 }));
 }
 
 function pintaSol(g, tipo) {
@@ -93,6 +93,11 @@ function pintaSol(g, tipo) {
     }
   }
   if (tipo === 'luna') { circuloPx(g, 64, 30, 9, '#fff1d6'); circuloPx(g, 68, 27, 8, '#3b2580'); }
+  if (tipo === 'lunaVerde') { anilloPx(g, 186, 36, 18, 2, '#3a5a4a'); circuloPx(g, 186, 36, 14, '#d8ffd0'); circuloPx(g, 181, 31, 3, '#a8e0b0'); circuloPx(g, 192, 41, 2, '#a8e0b0'); circuloPx(g, 189, 29, 1, '#a8e0b0'); }
+  if (tipo === 'ocasoCiudad' || tipo === 'ocasoBajo') {
+    const cx = 150, cy = tipo === 'ocasoBajo' ? 112 : 96, r = 22;
+    for (let dy = -r; dy <= r; dy++) { const dx = Math.floor(Math.sqrt(r * r - dy * dy)); if (dy > 4 && (dy % 5) < 2) continue; g.fillStyle = dy < -10 ? '#fff3a0' : dy < 2 ? '#ffc24a' : '#ff7a5a'; g.fillRect(cx - dx, cy + dy, dx * 2 + 1, 1); }
+  }
   if (tipo === 'roja') { anilloPx(g, 70, 36, 17, 2, '#6a1f3a'); circuloPx(g, 70, 36, 13, '#ff5a5a'); circuloPx(g, 66, 32, 4, '#ff8a8a'); circuloPx(g, 76, 40, 2, '#c43a4a'); circuloPx(g, 64, 42, 2, '#c43a4a'); }
 }
 
@@ -214,14 +219,16 @@ function nubeDe(i, L, ti) {
 const ESLOGANES = [['MICROBLIZZ', 'TE QUIERE'], ['JUGAR ES', 'TRABAJAR'], ['¡OFERTA!', 'CAJAS DE BOTÍN'], ['SE BUSCAN', 'BECARIOS'], ['TUS DATOS', 'NOS ENCANTAN'], ['PRÓXIMAMENTE', 'MÁS ANUNCIOS']];
 function propDe(tipo, v) {
   const clave = tipo + v;
-  if (FONDO.props[clave]) return FONDO.props[clave];
-  const ti = FONDO.ti, T = c => ti(c);
+  if (!FONDO.props[clave]) FONDO.props[clave] = FONDO.estilo.prop(tipo, v, c => FONDO.ti(c));
+  return FONDO.props[clave];
+}
+function propBosque(tipo, v, T) {
   let s;
   if (tipo === 'arbusto') { const p = new Pincel(26, 14, 13, 13); p.parte(F.y(F.un(F.ov(0, -5, 8, 5.5), F.ov(-6, -3, 5, 3.6), F.ov(6, -3, 5.5, 3.6)), F.re(-20, -20, 40, 20)), pal(T('#4cb04a'), T('#2e7a3a'), T('#8fe060'), T('#1d4a26')), { sombra: 2, luz: 2 }); if (v) for (const [x, y] of [[-3, -7], [3, -5], [-6, -3]]) { p.px(x, y, T('#ff5c8a')); p.px(x + 1, y, T('#ffd6e8')); } s = p.lienzo(); }
   if (tipo === 'flores') { const p = new Pincel(14, 10, 7, 9); p.parte(F.y(F.ov(0, -1, 6, 2.5), F.re(-9, -9, 18, 8)), pal(T('#3e9a48'), T('#2e7a3a'), T('#7ad05a'), T('#1d4a26')), { sombra: 0 }); for (const [x, y, c] of [[-3, -4, '#ff7aa8'], [1, -6, '#ffcb3d'], [4, -3, '#b98aff']]) { p.plano(F.tr(x, y, x, -1, 0.5), T('#2e7a3a')); p.plano(F.ov(x, y, 1.4, 1.4), T(c)); p.px(x, y, '#fff6ea'); } s = p.lienzo(); }
   if (tipo === 'roca') { const p = new Pincel(14, 9, 7, 8); p.parte(F.y(F.ov(0, -2, 6, 4.5), F.re(-9, -9, 18, 8)), pal(T('#8a7a9a'), T('#5a4a6a'), T('#b8aac8'), T('#3a2a4a')), { sombra: 2 }); s = p.lienzo(); }
   if (tipo === 'valla') { const p = new Pincel(30, 14, 15, 13); const mad = pal(T('#c8874a'), T('#8f5428'), T('#e8b07a'), T('#4a2a14')); p.parte(F.un(F.re(-13, -8, 26, 2), F.re(-13, -4, 26, 2)), mad, { sombra: 0 }); for (const x of [-12, 0, 11]) p.parte(F.pol(x - 1.5, 0, x + 1.5, 0, x + 1.5, -10, x, -11.5, x - 1.5, -10), mad, { sombra: 1 }); s = p.lienzo(); }
-  if (tipo === 'farola') { const p = new Pincel(12, 36, 6, 35); const hierro = pal(T('#3a4258'), T('#232838'), T('#5b6680'), '#10131f'); p.parte(F.re(-1, -28, 2, 28), hierro, { sombra: 0 }); p.parte(F.re(-2.5, -3, 5, 3), hierro, { sombra: 0 }); p.parte(F.pol(-4, -28, 4, -28, 2.5, -33, -2.5, -33), hierro, { sombra: 1 }); p.plano(F.re(-2, -31, 4, 3), FONDO.dia >= 4 ? '#fff3a0' : T('#c8f0ff')); s = p.lienzo(); s.luz = [0, -30]; }
+  if (tipo === 'farola') { const p = new Pincel(12, 36, 6, 35); const hierro = pal(T('#3a4258'), T('#232838'), T('#5b6680'), '#10131f'); p.parte(F.re(-1, -28, 2, 28), hierro, { sombra: 0 }); p.parte(F.re(-2.5, -3, 5, 3), hierro, { sombra: 0 }); p.parte(F.pol(-4, -28, 4, -28, 2.5, -33, -2.5, -33), hierro, { sombra: 1 }); p.plano(F.re(-2, -31, 4, 3), FONDO.L.noche ? '#fff3a0' : T('#c8f0ff')); s = p.lienzo(); s.luz = [0, -30]; }
   if (tipo === 'cartel') {
     const [l1, l2] = ESLOGANES[v % ESLOGANES.length].map(tr), ancho = Math.max(anchoTexto(l1), anchoTexto(l2)) + 10, w = ancho + 8;
     const p = new Pincel(w, 40, Math.floor(w / 2), 39), mad = pal(T('#5a6378'), T('#3a4256'), T('#7d8aa3'), '#20263a');
@@ -232,17 +239,18 @@ function propDe(tipo, v) {
     letreroRecto(p, l1, 0, -31, T('#1d3f8a')); letreroRecto(p, l2, 0, -23, T('#e63946'));
     s = p.lienzo();
   }
-  FONDO.props[clave] = s;
   return s;
 }
 // pone cosas por delante del camino según se avanza
 function avanzaProps(mx, W) {
   while (FONDO.sigProp < mx + W + 60) {
-    const x = FONDO.sigProp, r = hash(Math.floor(x), 1, FONDO.dia);
-    let tipo = r < 0.3 ? 'arbusto' : r < 0.52 ? 'flores' : r < 0.64 ? 'valla' : r < 0.74 ? 'roca' : r < 0.88 ? 'cartel' : 'farola';
-    if (!FONDO.cosas.some(c => c.tipo === 'cartel') && x > mx + 90) tipo = 'cartel';
-    FONDO.cosas.push({ tipo, x, v: Math.floor(hash(Math.floor(x), 2, FONDO.dia) * 12) });
-    FONDO.sigProp += tipo === 'cartel' ? 90 : 26 + Math.floor(hash(Math.floor(x), 3) * 40);
+    const x = FONDO.sigProp, tipos = FONDO.estilo.tipos, total = tipos.reduce((a, t) => a + t[1], 0);
+    let r = hash(Math.floor(x), 1, FONDO.semilla) * total, tipo = tipos[0][0];
+    for (const [t, p] of tipos) { r -= p; if (r <= 0) { tipo = t; break; } }
+    const grande = FONDO.estilo.grande || 'cartel';
+    if (tipos.some(t => t[0] === grande) && !FONDO.cosas.some(c => c.tipo === grande) && x > mx + 90) tipo = grande;
+    FONDO.cosas.push({ tipo, x, v: Math.floor(hash(Math.floor(x), 2, FONDO.semilla) * 12) });
+    FONDO.sigProp += tipo === grande ? 90 : 26 + Math.floor(hash(Math.floor(x), 3) * 40);
   }
   FONDO.cosas = FONDO.cosas.filter(c => c.x > mx - 80);
 }
@@ -255,27 +263,45 @@ function tira(ctx, img, desp, y, W) {
 
 // dibuja todo el paisaje de detrás de los personajes. mx = cuánto se ha andado; t = tiempo (para lo que se mueve solo)
 function pintaFondo(ctx, mx, t, W) {
-  const L = FONDO.L, d = FONDO.dia;
+  const L = FONDO.L, est = FONDO.estilo, sem = FONDO.semilla;
   ctx.drawImage(FONDO.cielo, Math.floor((W - 256) / 2), ESC.Y);
-  if (d >= 4) for (let k = 0; k < 8; k++) if (Math.sin(t * 3 + k * 1.7) > 0.6) { ctx.fillStyle = '#ffffff'; const x = Math.floor(hash(k, 8, d) * W), y = ESC.Y + 4 + Math.floor(hash(k, 9, d) * 70); ctx.fillRect(x, y, 1, 1); ctx.fillStyle = '#b8a8e8'; ctx.fillRect(x - 1, y, 1, 1); ctx.fillRect(x + 1, y, 1, 1); ctx.fillRect(x, y - 1, 1, 1); ctx.fillRect(x, y + 1, 1, 1); }
-  for (const n of FONDO.nubesPos) { const x = ((n.x - mx * 0.06 - t * n.v) % (W + 60) + W + 60) % (W + 60) - 50; ctx.drawImage(FONDO.nubes[n.n].c, Math.round(x), n.y); }
-  // la torre de Microblizz, casi quieta (está lejísimos)
-  const T = FONDO.torre, tx = Math.round(W * 0.8 - d * 6 - T.width / 2 - mx * 0.015), ty = SUELO - 30 - T.height;
-  if (d === 5) focos(ctx, tx + T.punta[0], ty + T.punta[1] + 10, t, W);
-  ctx.drawImage(T, tx, ty);
-  if (Math.sin(t * 4) > 0) { ctx.fillStyle = '#ff3348'; ctx.fillRect(tx + T.punta[0] - 1, ty, 3, 2); ctx.fillStyle = '#ffd0d4'; ctx.fillRect(tx + T.punta[0], ty, 1, 1); }
+  if (L.noche) for (let k = 0; k < 8; k++) if (Math.sin(t * 3 + k * 1.7) > 0.6) { ctx.fillStyle = '#ffffff'; const x = Math.floor(hash(k, 8, sem) * W), y = ESC.Y + 4 + Math.floor(hash(k, 9, sem) * 70); ctx.fillRect(x, y, 1, 1); ctx.fillStyle = '#b8a8e8'; ctx.fillRect(x - 1, y, 1, 1); ctx.fillRect(x + 1, y, 1, 1); ctx.fillRect(x, y - 1, 1, 1); ctx.fillRect(x, y + 1, 1, 1); }
+  if (FONDO.nubes) for (const n of FONDO.nubesPos) { const x = ((n.x - mx * 0.06 - t * n.v) % (W + 60) + W + 60) % (W + 60) - 50; ctx.drawImage(FONDO.nubes[n.n].c, Math.round(x), n.y); }
+  if (est.lejos) est.lejos(ctx, mx, t, W);
+  est.hito(ctx, mx, t, W);
   tira(ctx, FONDO.montes, mx * 0.12, SUELO - 66, W);
   tira(ctx, FONDO.colinas, mx * 0.35, SUELO - 70, W);
   tira(ctx, FONDO.suelo, mx, SUELO - 10, W);
+  if (est.tras) est.tras(ctx, mx, t, W);
   for (const c of FONDO.cosas) {
     const s = propDe(c.tipo, c.v), x = Math.round(c.x - mx);
     if (x < -60 || x > W + 60) continue;
-    const y = c.tipo === 'flores' || c.tipo === 'roca' ? SUELO - 4 : SUELO - 6;
-    if (s.luz && d >= 4) { const lx = x - s.ox + s.luz[0] + s.ox, ly = y + s.luz[1]; for (let r = 9; r >= 3; r -= 3) { ctx.save(); ctx.beginPath(); ctx.rect(lx - r, ly - r, r * 2, r * 2); ctx.clip(); rellenaTrama(ctx, lx - r, ly - r, r * 2, r * 2, r > 6 ? 3 : 6, '#fff3a0'); ctx.restore(); } }
+    const y = s.bajo ? SUELO - 4 : SUELO - 6;
+    if (s.luz && L.noche) { const lx = x + s.luz[0], ly = y + s.luz[1], col = s.colorLuz || '#fff3a0'; for (let r = 9; r >= 3; r -= 3) { ctx.save(); ctx.beginPath(); ctx.rect(lx - r, ly - r, r * 2, r * 2); ctx.clip(); rellenaTrama(ctx, lx - r, ly - r, r * 2, r * 2, r > 6 ? 3 : 6, col); ctx.restore(); } }
     pintaSpr(ctx, s, x, y);
   }
+  if (est.ambiente) est.ambiente(ctx, mx, t, W);
 }
-function pintaDelante(ctx, mx, W) { tira(ctx, FONDO.delante, mx * 1.35, ESC.Y + ESC.H - 14, W); }
+function pintaDelante(ctx, mx, W) { if (FONDO.delante) tira(ctx, FONDO.delante, mx * 1.35, ESC.Y + ESC.H - 14, W); }
+// la torre de Microblizz a lo lejos (mundo 1): casi quieta, con su luz roja y los focos la noche del jefe
+function pintaTorreLejos(ctx, mx, t, W, desdeX = 0.8, paso = 6) {
+  const T = FONDO.hito, f = FONDO.fase, tx = Math.round(W * desdeX - f * paso - T.width / 2 - mx * 0.015), ty = SUELO - 30 - T.height;
+  if (f === 5) focos(ctx, tx + T.punta[0], ty + T.punta[1] + 10, t, W);
+  ctx.drawImage(T, tx, ty);
+  if (Math.sin(t * 4) > 0) { ctx.fillStyle = '#ff3348'; ctx.fillRect(tx + T.punta[0] - 1, ty, 3, 2); ctx.fillStyle = '#ffd0d4'; ctx.fillRect(tx + T.punta[0], ty, 1, 1); }
+}
+
+ESTILO.bosque = {
+  luces: DIA_LUZ, sombra: ['#b47a48', '#9a6438'],
+  tipos: [['arbusto', 30], ['flores', 22], ['valla', 12], ['roca', 10], ['cartel', 14], ['farola', 12]],
+  capas(f) {
+    f.montes = montesDe(f, '#6a7fd0', '#a2b4f4', '#4b5aa8');
+    f.hito = torreDe(f.fase, f.ti, f.hz); f.colinas = colinasDe(f.fase, f.ti, f.hz); f.suelo = sueloDe(f.ti); f.delante = delanteDe(f.ti);
+    f.nubes = [0, 1, 2].map(i => nubeDe(i, f.L, f.ti));
+  },
+  prop: (tipo, v, T) => { const s = propBosque(tipo, v, T); if (tipo === 'flores' || tipo === 'roca') s.bajo = true; return s; },
+  hito: (ctx, mx, t, W) => pintaTorreLejos(ctx, mx, t, W),
+};
 
 // los focos de la sede la noche del jefe (franjas con trama que barren el cielo)
 function focos(ctx, x, y, t, W) {

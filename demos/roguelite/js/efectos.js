@@ -1,5 +1,6 @@
-// Fans of Roguelite (prototipo) · Efectos: polvo, chispas, estrellas de golpe, trozos que rebotan, números de daño que saltan,
-// monedas que vuelan al marcador, bocadillos, bellotas, sobres de despido y rayos láser. Todo en píxeles enteros.
+// Fans of Roguelite · Efectos: polvo, chispas, estrellas de golpe, trozos que rebotan, números de daño que saltan, monedas que
+// vuelan al marcador, bocadillos, bellotas, sobres de despido, rayos láser, bolas de hielo o de sombra, rayos eléctricos y
+// destellos de curación. Todo en píxeles enteros.
 'use strict';
 
 const FX = [];
@@ -50,6 +51,12 @@ function rotulo(x, y, txt, col = '#fff6ea', vida = 1.1, esc = 1) { fx('rotulo', 
 function moneda(x, y, alFinal) { fx('moneda', { x, y, x0: x, y0: y, vx: rnd(-70, 70), vy: rnd(-150, -80), g: 340, vida: 1.6, alFinal, suelo: SUELO + rnd(-1, 4), espera: rnd(0.55, 0.85) }); }
 function bocadillo(ent, txt, s = 1.8) { for (const e of FX) if (e.tipo === 'bocadillo' && e.ent === ent) e.t = e.vida; fx('bocadillo', { ent, txt, vida: s }); }
 function laser(x1, y, x2, s = 0.18) { fx('laser', { x: x1, y, x2, vida: s }); }
+// rayo eléctrico en zigzag de (x1, y1) a (x2, y2)
+function rayo(x1, y1, x2, y2, col = '#fff3a0', s = 0.22) { fx('rayo', { x: x1, y: y1, x2, y2, col, vida: s }); }
+// una bola que se lanza (hielo, sombra…): devuelve el efecto para moverlo; al acabar, b.t = b.vida
+function bola(x, y, col, r = 3) { return fx('bola', { x, y, col, r, vida: 9 }); }
+// cruces verdes que suben (curación)
+function curita(x, y, n = 6) { for (let i = 0; i < n; i++) fx('cruz', { x: x + rnd(-10, 10), y: y + rnd(-8, 8), vy: rnd(-34, -18), vida: rnd(0.5, 0.8) }); }
 
 function avanzaFx(dt, real) {
   if (TEMBLOR.a > 0) { TEMBLOR.a = Math.max(0, TEMBLOR.a - real * 30); const a = Math.ceil(TEMBLOR.a); TEMBLOR.x = Math.round(rnd(-a, a)); TEMBLOR.y = Math.round(rnd(-a, a) * 0.6); } else { TEMBLOR.x = TEMBLOR.y = 0; }
@@ -73,7 +80,7 @@ function avanzaFx(dt, real) {
 function pintaFx(ctx, capa) {
   for (const e of FX) {
     const k = e.t / e.vida, x = Math.round(e.x), y = Math.round(e.y);
-    const c = e.capa || e.tipo === 'moneda' ? e.capa || 'monedas' : e.tipo === 'num' || e.tipo === 'rotulo' || e.tipo === 'bocadillo' ? 'arriba' : 'abajo';
+    const c = e.capa || e.tipo === 'moneda' ? e.capa || 'monedas' : e.tipo === 'num' || e.tipo === 'rotulo' || e.tipo === 'bocadillo' || e.tipo === 'cruz' ? 'arriba' : 'abajo';
     if (c !== capa) continue;
     switch (e.tipo) {
       case 'polvo': { const r = e.r + Math.floor(k * 3); if (k < 0.55) { circuloPx(ctx, x, y, r, '#e8d2b0'); circuloPx(ctx, x - 1, y - 1, Math.max(0, r - 1), '#fff6ea'); } else anilloPx(ctx, x, y, r, 1, '#e8d2b0'); break; }
@@ -86,10 +93,24 @@ function pintaFx(ctx, capa) {
       case 'raya': { ctx.fillStyle = '#ffffff'; ctx.fillRect(x, y, e.l, 1); break; }
       case 'spr': pintaSpr(ctx, e.spr, x, y); break;
       case 'moneda': { pintaSpr(ctx, SPR.moneda[Math.floor(e.t * 14) % 4], x, y); break; }
+      case 'rayo': {
+        if (Math.floor(e.t * 30) % 3 === 2) break;
+        const n = 7, sem = Math.floor(e.t * 30);
+        let px = x, py = y;
+        for (let i = 1; i <= n; i++) {
+          const q = i / n, nx = Math.round(e.x + (e.x2 - e.x) * q), ny = Math.round(e.y + (e.y2 - e.y) * q + (i < n ? (hash(i, sem) - 0.5) * 12 : 0));
+          for (const [c, w] of [[OL, 3], [e.col, 1]]) { ctx.fillStyle = c; const pasos = Math.max(Math.abs(nx - px), Math.abs(ny - py)) || 1; for (let k = 0; k <= pasos; k++) ctx.fillRect(Math.round(px + (nx - px) * k / pasos) - (w >> 1), Math.round(py + (ny - py) * k / pasos) - (w >> 1), w, w); }
+          ctx.fillStyle = '#ffffff'; ctx.fillRect(nx, ny, 1, 1);
+          px = nx; py = ny;
+        }
+        break;
+      }
+      case 'bola': { circuloPx(ctx, x, y, e.r + 1, OL); circuloPx(ctx, x, y, e.r, e.col); circuloPx(ctx, x - 1, y - 1, Math.max(0, e.r - 2), mezcla(e.col, '#ffffff', 0.6)); ctx.fillStyle = '#ffffff'; ctx.fillRect(x - 1, y - 1, 1, 1); break; }
+      case 'cruz': { if (k > 0.7 && Math.floor(e.t * 20) % 2) break; ctx.fillStyle = OL; ctx.fillRect(x - 2, y - 1, 5, 3); ctx.fillRect(x - 1, y - 2, 3, 5); ctx.fillStyle = '#7be04a'; ctx.fillRect(x - 1, y, 3, 1); ctx.fillRect(x, y - 1, 1, 3); break; }
       case 'laser': { if (Math.floor(e.t * 40) % 2) break; const a = Math.min(e.x, e.x2), b = Math.max(e.x, e.x2); ctx.fillStyle = OL; ctx.fillRect(a, y - 3, b - a, 7); ctx.fillStyle = '#33e0ff'; ctx.fillRect(a, y - 2, b - a, 5); ctx.fillStyle = '#ffffff'; ctx.fillRect(a, y - 1, b - a, 2); break; }
       case 'num': {
         if (k > 0.75 && Math.floor(e.t * 20) % 2) break;
-        const C = { golpe: ['#fff6ea', '#ffcb3d'], critico: ['#fff3a0', '#ff8a1f'], herida: ['#ffb0b8', '#ff3348'], cura: ['#d8ffb0', '#7be04a'], poco: ['#fff6ea', '#cdb9ea'] }[e.clase];
+        const C = { golpe: ['#fff6ea', '#ffcb3d'], critico: ['#fff3a0', '#ff8a1f'], herida: ['#ffb0b8', '#ff3348'], cura: ['#d8ffb0', '#7be04a'], poco: ['#fff6ea', '#cdb9ea'], escudo: ['#e8f4ff', '#5aaeff'] }[e.clase];
         const esc = (e.clase === 'critico' ? 3 : e.clase === 'poco' ? 1 : 2) + (e.t < 0.06 ? 1 : 0);
         escribe(ctx, e.txt + (e.clase === 'critico' ? '!' : ''), x, y - 8, { esc, c: C[0], c2: C[1], alin: 'centro' });
         break;

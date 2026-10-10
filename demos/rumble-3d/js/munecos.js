@@ -37,7 +37,7 @@ export class Especie {
       _q.setFromEuler(_e.set(R.rx, u.yaw + R.ry, R.rz, 'YXZ'));
       _s.set(esc * R.sx, esc * R.sy, esc * R.sz);
       _base.compose(_p, _q, _s);
-      const brillo = 1 + u.destello * 2.2;
+      const brillo = 1 + u.destello * 2.2, hielo = u.congelado > 0;   // congelado: azulado
       for (const h of this.huesos) {
         const o = P[h.nombre];
         _a.makeTranslation(h.pivote.x + o.x, h.pivote.y + o.y, h.pivote.z + o.z);
@@ -45,7 +45,7 @@ export class Especie {
         _b.makeTranslation(-h.pivote.x, -h.pivote.y, -h.pivote.z);
         h.mundo.copy(h.padre >= 0 ? this.huesos[h.padre].mundo : _base).multiply(_a).multiply(_r).multiply(_b);
         h.malla.setMatrixAt(i, h.mundo);
-        h.malla.setColorAt(i, _c.setRGB(brillo, brillo, brillo));
+        h.malla.setColorAt(i, hielo ? _c.setRGB(0.7 * brillo, 0.95 * brillo, 1.9 * brillo) : _c.setRGB(brillo, brillo, brillo));
       }
     }
     for (const h of this.huesos) {

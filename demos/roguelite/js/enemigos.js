@@ -55,7 +55,7 @@ function becario(p, o) {
   p.parte(F.tr(-8, Y(-18), o.bx, Y(o.byy), 2), ab ? P.traje : P.grisF, { sombra: 1 });
   p.parte(F.ov(o.bx, Y(o.byy), 2.2, 2.2), P.grisF, { sombra: 0 });
   p.parte(U(F.rr(-9, -27, 18, 21, 5)), cuerpo, { sombra: 3 });
-  p.parte(U(F.rr(-5, -24, 14, 9, 2)), ab ? pal('#c4243c', '#8a1428', '#ff6a7a', '#4a0a14') : P.pant, { sombra: 1 });
+  p.parte(U(F.rr(-5, -24, 14, 9, 2)), ab ? pal('#c4243c', '#8a1428', '#ff6a7a', '#4a0a14') : o.mes ? pal('#e0a020', '#a86a10', '#ffe08a', '#5a3a08') : P.pant, { sombra: 1 });
   p.px(-3.5, Y(-22.5), ab ? '#ff9aa4' : '#a8c8ff'); p.px(-2.5, Y(-22.5), ab ? '#ff9aa4' : '#a8c8ff');
   const ojo = ab ? '#ffe0e4' : '#e8f1ff';
   if (o.cara === 'x') { for (const cx of [-0.5, 5.5]) { for (let k = -1; k <= 1; k++) { p.px(cx + k, Y(-20 + k), ojo); p.px(cx + k, Y(-20 - k), ojo); } } }
@@ -63,8 +63,9 @@ function becario(p, o) {
   else if (o.cara === 'malo') { for (const cx of [-0.5, 5.5]) { p.px(cx - 1, Y(-21), ojo); p.px(cx, Y(-20.5), ojo); p.px(cx + 1, Y(-20), ojo); } p.plano(U(F.re(1, -17.5, 3, 1)), ojo); }
   else { for (const cx of [-0.5, 5.5]) for (let k = -1; k <= 1; k++) p.px(cx + k, Y(-20), ojo); p.px(-1, Y(-18.5), '#4a82ff'); p.px(5, Y(-18.5), '#4a82ff'); }
   p.plano(U(F.pol(-1.5, -14.5, 2, -14.5, 0.3, -12.5)), '#ffffff'); p.plano(U(F.pol(2, -14.5, 5.5, -14.5, 3.8, -12.5)), '#ffffff');
-  p.parte(U(F.pol(0.6, -14.2, 3, -14.2, 3.8, -9.5, 1.8, -7.2, -0.2, -9.5)), ab ? PAL_H.oro : P.rojo, { sombra: 1 });
-  if (!ab) { p.plano(U(F.re(-7, -12, 4, 5)), '#fff6ea'); p.plano(U(F.re(-7, -12, 4, 1.5)), '#2e8bff'); p.px(-5.5, Y(-8.6), '#5b6578'); p.px(-4.5, Y(-8.6), '#5b6578'); }
+  p.parte(U(F.pol(0.6, -14.2, 3, -14.2, 3.8, -9.5, 1.8, -7.2, -0.2, -9.5)), ab || o.mes ? PAL_H.oro : P.rojo, { sombra: 1 });
+  if (o.mes) p.plano(U(estrella(-5, -10, 2.6, 1.2)), '#ffcb3d');
+  else if (!ab) { p.plano(U(F.re(-7, -12, 4, 5)), '#fff6ea'); p.plano(U(F.re(-7, -12, 4, 1.5)), '#2e8bff'); p.px(-5.5, Y(-8.6), '#5b6578'); p.px(-4.5, Y(-8.6), '#5b6578'); }
   p.plano(F.tr(0, Y(-27), o.ant, Y(-32), 0.55), OL);
   p.parte(F.ov(o.ant, Y(-33.2), 2, 2), P.rojo, { sombra: 1 });
   // brazo de delante: taza de café (becario) o contrato (abogado)

@@ -1,4 +1,4 @@
-// Fans of Roguelite (prototipo) · La letra de píxeles: 7 de alto, en mayúsculas, con tildes, ñ, ¿ y ¡. Se escribe con contorno
+// Fans of Roguelite · La letra de píxeles: 7 de alto, en mayúsculas, con tildes, ñ, ¿ y ¡. Se escribe con contorno
 // oscuro y sombra debajo, como los letreros de los juegos de 16 bits. Cada texto se dibuja una vez y se guarda.
 'use strict';
 
@@ -64,6 +64,11 @@ const LETRA = {
   '>': ['#..', '.#.', '..#', '..#', '..#', '.#.', '#..'],
   '<': ['..#', '.#.', '#..', '#..', '#..', '.#.', '..#'],
   '*': ['.....', '#.#.#', '.###.', '#####', '.###.', '#.#.#', '.....'],
+  '$': ['..#..', '.####', '#.#..', '.###.', '..#.#', '####.', '..#..'],
+  '#': ['.#.#.', '#####', '.#.#.', '.#.#.', '#####', '.#.#.', '.....'],
+  '_': ['...', '...', '...', '...', '...', '...', '###'],
+  '★': ['..#..', '..#..', '#####', '.###.', '.###.', '##.##', '#...#'],
+  '\u2003': ['.......', '.......', '.......', '.......', '.......', '.......', '.......'],   // hueco para una insignia del chat
 };
 // letras con tilde: la letra base y la marca encima (filas -2 y -1)
 const TILDES = { 'Á': ['A', 'agudo'], 'É': ['E', 'agudo'], 'Í': ['I', 'agudo'], 'Ó': ['O', 'agudo'], 'Ú': ['U', 'agudo'], 'Ü': ['U', 'dieresis'], 'Ñ': ['N', 'virgulilla'], 'À': ['A', 'grave'], 'Ç': ['C', 'cedilla'] };

@@ -2,5 +2,5 @@
 'use strict';
 IDIOMA.add({
   "FANS OF RUMBLE 3D": "FANS OF RUMBLE 3D",
-  "El boceto (prueba). Así quedaría Fans of Rumble en 3D, como un dibujo animado: CrazyBunny, MadSquirrel y los becarios con animaciones, efectos y voces. Pulsa +30 para ver si tu móvil aguanta.": "The sketch (test). This is how Fans of Rumble would look in 3D, like a cartoon: CrazyBunny, MadSquirrel and the interns with animations, effects and voices. Press +30 to see if your phone can handle it.",
+  "El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.": "The sketch (test). Fans of Rumble in 3D, like a cartoon: a short mission with CrazyBunny, MadSquirrel, MeerCat and MechaVaca against SurvivalBot, with a commentator, voices and the game's music. Plus a free mode to see if your phone can handle it.",
 });

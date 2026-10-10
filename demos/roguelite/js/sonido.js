@@ -1,5 +1,6 @@
-// Fans of Roguelite (prototipo) · Sonido de 8 bits hecho con código: golpes, monedas, láser, sirena, fanfarria y una
-// musiquilla para el camino y otra para el jefe. Empieza al primer toque (los navegadores no dejan sonar antes).
+// Fans of Roguelite · Sonido de 8 bits hecho con código: golpes, monedas, láser, rayos, hielo, cofres, la ruleta, fanfarria
+// y una musiquilla para La Madriguera, otra para cada mundo y otra para los jefes. Empieza al primer toque (los navegadores
+// no dejan sonar antes).
 'use strict';
 
 const SON = { ctx: null, on: true, master: null, musica: null, paso: 0, siguiente: 0, temp: null };
@@ -61,11 +62,29 @@ const SONIDOS = {
   victoria: () => [523, 523, 523, 659, 784, 659, 784, 1047].forEach((f, i) => tono(f, f, i === 7 ? 0.5 : 0.11, 'square', 0.1, [0, 0.12, 0.24, 0.36, 0.6, 0.84, 0.96, 1.08][i])),
   derrota: () => [392, 370, 349, 330].forEach((f, i) => tono(f, f * 0.98, 0.3, 'square', 0.1, i * 0.3)),
   dia: () => [784, 988, 1175].forEach((f, i) => tono(f, f, 0.1, 'triangle', 0.12, i * 0.09)),
+  no: () => { tono(200, 160, 0.08, 'square', 0.1); tono(160, 120, 0.1, 'square', 0.1, 0.08); },
+  compra: () => { tono(1319, 1319, 0.05, 'square', 0.08); tono(1047, 1047, 0.05, 'square', 0.08, 0.05); tono(1568, 1568, 0.12, 'square', 0.08, 0.1); },
+  tic: () => tono(1800, 1500, 0.02, 'square', 0.05),
+  cofre: () => { [523, 784, 1047, 1568].forEach((f, i) => tono(f, f, 0.1, 'triangle', 0.12, i * 0.06)); ruido(0.2, 0.08, 6000, 0, 'highpass'); },
+  cura: () => [880, 1109, 1319].forEach((f, i) => tono(f, f, 0.08, 'triangle', 0.08, i * 0.05)),
+  esquiva: () => tono(500, 1400, 0.12, 'sine', 0.1),
+  escudo: () => { tono(400, 400, 0.08, 'triangle', 0.14); ruido(0.06, 0.15, 900); },
+  rayo: () => { ruido(0.25, 0.3, 5000, 0, 'highpass'); tono(80, 60, 0.25, 'sawtooth', 0.12); },
+  hielo: () => { tono(2000, 600, 0.25, 'triangle', 0.1); tono(2600, 900, 0.2, 'sine', 0.06, 0.03); },
+  sombra: () => { tono(220, 70, 0.35, 'sawtooth', 0.1); tono(230, 75, 0.35, 'square', 0.05); },
+  cargaMagia: () => tono(200, 900, 0.3, 'sine', 0.1),
+  mecha: () => { ruido(0.7, 0.1, 7000, 0, 'highpass'); tono(1200, 1300, 0.6, 'square', 0.02); },
+  revive: () => [392, 523, 659, 784, 1047, 1319].forEach((f, i) => tono(f, f, 0.14, 'square', 0.09, i * 0.07)),
+  fuego: () => { for (let i = 0; i < 5; i++) ruido(0.08, 0.06, 1200, i * 0.09); },
+  gashapon: () => { for (let i = 0; i < 6; i++) tono(300 + i * 40, 260 + i * 40, 0.05, 'square', 0.06, i * 0.12); },
 };
 function sonido(n) { if (SON.ctx && SON.on && SONIDOS[n]) SONIDOS[n](); }
 
 // la música: 32 corcheas que se repiten (melodía, bajo y platillo)
 const PISTAS = {
+  menu: { bpm: 104, mel: [72, 0, 0, 76, 0, 74, 0, 72, 69, 0, 72, 0, 74, 0, 0, 0, 76, 0, 0, 79, 0, 76, 0, 74, 72, 0, 74, 0, 72, 0, 0, 0], bajo: [48, 45, 41, 43, 48, 45, 43, 43] },
+  cementerio: { bpm: 120, mel: [69, 0, 72, 0, 71, 0, 68, 0, 69, 0, 0, 64, 65, 0, 64, 0, 69, 0, 72, 0, 76, 0, 75, 0, 76, 77, 76, 72, 71, 0, 0, 0], bajo: [45, 45, 41, 41, 45, 45, 40, 40] },
+  torre: { bpm: 150, mel: [76, 0, 76, 79, 0, 76, 74, 0, 72, 0, 72, 74, 0, 71, 0, 0, 76, 0, 76, 79, 0, 81, 79, 0, 78, 0, 76, 0, 74, 0, 71, 0], bajo: [40, 40, 36, 36, 38, 38, 35, 35] },
   viaje: { bpm: 138, mel: [72, 0, 76, 0, 79, 0, 76, 0, 74, 0, 77, 0, 81, 0, 77, 0, 76, 0, 79, 0, 84, 0, 79, 0, 77, 76, 74, 72, 74, 0, 0, 0], bajo: [48, 55, 50, 57, 52, 59, 53, 55] },
   jefe: { bpm: 156, mel: [69, 0, 72, 0, 76, 0, 72, 0, 71, 0, 74, 0, 77, 0, 74, 0, 69, 72, 76, 81, 80, 0, 76, 0, 77, 76, 74, 71, 72, 0, 71, 0], bajo: [45, 52, 47, 54, 45, 52, 44, 52] },
 };

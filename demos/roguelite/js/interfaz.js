@@ -11,7 +11,7 @@ let BOTONES = [], MONEDERO = [170, 6], PULSA = null, SALIR = -1e9;
 const PANEL_Y = ESC.Y + ESC.H;
 
 const formatea = (s, v) => v ? s.replace(/\{(\w+)\}/g, (m, k) => (v[k] !== undefined ? v[k] : m)) : s;
-function log(txt, v) { LOG.push({ txt: formatea(tr(txt), v), t0: RELOJ.t }); if (LOG.length > 14) LOG.shift(); }
+function log(txt, v) { LOG.push({ txt: formatea(tr(txt), v), t0: RELOJ.t }); if (LOG.length > 60) LOG.shift(); }
 function panelOpciones(titulo, texto, opciones) {
   Object.assign(PANEL, { modo: 'opciones', titulo, texto, opciones, t0: RELOJ.t, elegida: -1 });
   return esperaEleccion().then(i => { PANEL.modo = 'log'; return i; });
@@ -118,6 +118,7 @@ function pintaHud(ctx) {
 function pintaEscenaUI(ctx) {
   const W = PAN.W;
   if (VIAJE.modo === 'menu') pintaMenuEscena(ctx);
+  if (VIAJE.modo !== 'menu') pintaChatEscena(ctx);
   const c = VIAJE.cartel;
   if (c) {
     const t = RELOJ.t - c.t0;
@@ -198,8 +199,6 @@ function pintaPanel(ctx) {
   const f = { opciones: panelElige, habilidad: panelHabs, objeto: panelObj, fin: panelFin, log: panelLog }[PANEL.modo];
   if (!f) return pintaPanelMenu(ctx, W, y0, h);
   const yFin = f(ctx, W, y0, h);
-  // debajo de las elecciones, si cabe, lo último del chat
-  if (yFin && PAN.H - 5 - yFin >= LINEA * 2 + 6) { ctx.fillStyle = '#3a2058'; ctx.fillRect(6, yFin + 2, W - 12, 1); pintaChat(ctx, W, yFin + 5, PAN.H - 5, true); }
 }
 
 // tus objetos y habilidades en fila (tocar uno lo explica abajo); devuelve el alto usado

@@ -1,0 +1,17 @@
+{
+  "name": "Fans of Roguelite",
+  "short_name": "Fans of Roguelite",
+  "description": "CrazyBunny cruza 3 mundos de Microblizz en directo: habilidades, objetos, jefes y mejoras en La Madriguera.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#150b21",
+  "theme_color": "#150b21",
+  "icons": [
+    { "src": "../../core/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../../core/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "../../core/img/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

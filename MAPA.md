@@ -96,8 +96,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `core/js/sistema/tienda.js` · 5 KB · eur, shopTab, PILE, bonusPct, giftReady, jokeClock, buildShop, openShop
 - `core/js/sistema/utiles.js` · 3 KB · $, OL, FONT_D, REDUCED, fitText, rand, clamp, lerp, pick, dist, shuffle, mulberry32, fmt, fmtV, todayStr, rrPath, paintLight, HOOKS, hook, fire
 - `demos/roguelite/index.html` · 3 KB
+- `demos/roguelite/sw.js` · <1 KB
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
-- `demos/roguelite/js/chat.js` · 7 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, INSIGNIA, pintaInsignia, lineasChat, pintaChat
+- `demos/roguelite/js/chat.js` · 8 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, INSIGNIA, pintaInsignia, lineasChat, pintaFilas, pintaChat, pintaChatEscena
 - `demos/roguelite/js/combate-conejo.js` · 8 KB · accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, bolsaBasura, castorBoom, tazaCafe, curaMeercat, pegaRival
 - `demos/roguelite/js/combate.js` · 13 KB · POS, centro, siguiente, COMBATE, TROZOS, LLUVIA, combate, llegaRival, llegaJefe, accionRival, ataqueEspecial, pegaConejo, levanta, muereRival, lluviaMonedas
 - `demos/roguelite/js/datos-chat.js` · 7 KB · CHAT_USUARIOS, CHAT_LOLA, CHAT_FRASES, CHAT_MUNDO, ESPECTA
@@ -115,6 +116,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/js/heroe.js` · 12 KB · SPR, PAL_H, BOCA, ojoLejos, ojoConejo, bocaConejo, zanahoria, manoZanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
 - `demos/roguelite/js/iconos-2.js` · 11 KB · zanaIcono, PAL_I, creaIconos2
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
+- `demos/roguelite/js/instalar.js` · 2 KB · INSTALAR
 - `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, MARCA_DIA, pintaMapa, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, toque, tecla
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
 - `demos/roguelite/js/menu.js` · 12 KB · MENU, volverMadriguera, irA, pintaMadriguera, pintaMenuEscena, pintaPanelMenu, titulo, volver, panelInicio, panelMundos, paginas, panelMejoras, panelColeccion, panelAjustes

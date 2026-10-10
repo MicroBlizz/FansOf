@@ -2,8 +2,8 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
-  { v: '0.5.4', real: ['<b>FUERA EL CHAT</b>: ya no tapa nada. Arriba queda una barra fina con EN DIRECTO, los espectadores, los botones y el mapa del camino, y el pixel art se ve entero.', '<b>CONSEJOS DE LOLA</b>: ahora salen abajo, en dorado, con lo que va pasando.'],
-    joke: ['Microblizz ha despedido al chat. Dice que era «personal no esencial».'] },
+  { v: '0.5.4', real: ['<b>EL CHAT, EN SU SITIO</b>: va en su propia franja de la barra de arriba, nunca encima del juego ni del cartel del día, también en los móviles más bajitos. En pantallas muy pequeñas se esconde para dejar sitio.', '<b>CONSEJOS DE LOLA</b>: ahora salen abajo, en dorado, con lo que va pasando.'],
+    joke: ['Microblizz ha puesto el chat en una franja. Dice que es su «zona de bajos salarios».'] },
   { v: '0.5.3', real: ['<b>ESCENA LIMPIA</b>: EN DIRECTO, los botones, el mapa del camino y el chat van en su propia barra, debajo de la vida. El pixel art se ve entero.', '<b>CHAT MÁS PEQUEÑO</b>: solo las 2 últimas frases, con letra pequeña.'],
     joke: ['Microblizz quería poner anuncios en la barra nueva. No le hemos dejado.'] },
   { v: '0.5.2', real: ['<b>ICONO NUEVO</b>: CrazyBunny de frente, con su ojo en espiral y la corona, y encima las letras FoR bien gordas y en 3D.'], joke: [] },

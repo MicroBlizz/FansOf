@@ -5,7 +5,7 @@
 'use strict';
 
 const CLAVE_GUARDA = 'fansof-roguelite';
-const GUARDA_NUEVA = () => ({ monedas: 0, mejoras: {}, abierto: 0, record: [0, 0, 0], victorias: [0, 0, 0], partidas: 0, vistos: { h: [], o: [], e: [] }, consejos: {}, vel: 1, run: null });
+const GUARDA_NUEVA = () => ({ monedas: 0, mejoras: {}, abierto: 0, record: [0, 0, 0], victorias: [0, 0, 0], partidas: 0, vistos: { h: [], o: [], e: [] }, consejos: {}, chatOff: false, vel: 1, run: null });
 const GUARDA = GUARDA_NUEVA();
 
 function cargaGuarda() {

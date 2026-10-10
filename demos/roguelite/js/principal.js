@@ -23,17 +23,19 @@ function ajusta() {
 }
 
 function dibuja() {
-  const b = bctx, W = PAN.W;
+  const b = bctx, W = PAN.W, alto = PAN.H;
   BOTONES = [];
-  b.fillStyle = COL.fondo; b.fillRect(0, 0, W, PAN.H);
-  // en pantallas altas, la barra del directo va aparte y todo lo de debajo baja (la escena queda limpia)
-  BARRA.h = VIAJE.modo !== 'menu' && PAN.H >= 360 ? 33 : 0;
-  const B = BARRA.h, alto = PAN.H, i0 = BOTONES.length;
-  if (B) { pintaBarra(b); }
+  b.fillStyle = COL.fondo; b.fillRect(0, 0, W, alto);
+  // jugando, la barra del directo (botones, mapa y chat) va aparte, entre la vida y la escena: nada tapa el pixel art.
+  // En pantallas bajas, la barra va sin chat y, si hace falta sitio para el panel, se recorta un poco el suelo de abajo
+  BARRA.chat = alto >= 345 && !GUARDA.chatOff;
+  BARRA.h = VIAJE.modo !== 'menu' ? (BARRA.chat ? 52 : 33) : 0;
+  const B = BARRA.h, recorte = B ? Math.max(0, Math.min(24, B + PANEL_Y + 140 - alto)) : 0, dp = B - recorte;
+  if (B) pintaBarra(b);
+  // la escena (bajada B)
   const i1 = BOTONES.length;
-  PAN.H -= B; DESPL = B;
   b.save(); b.translate(0, B);
-  b.save(); b.beginPath(); b.rect(0, ESC.Y, W, ESC.H); b.clip();
+  b.save(); b.beginPath(); b.rect(0, ESC.Y, W, ESC.H - recorte); b.clip();
   b.translate(TEMBLOR.x, TEMBLOR.y);
   pintaFondo(b, VIAJE.mx, RELOJ.t, W);
   pintaPersonajes(b, VIAJE.mx);
@@ -42,12 +44,18 @@ function dibuja() {
   barraRival(b);
   b.restore();
   b.save(); b.translate(TEMBLOR.x, TEMBLOR.y); pintaFx(b, 'arriba'); b.restore();
-  pintaEscenaUI(b);
-  pintaPanel(b);
-  pintaFx(b, 'monedas');
+  DESPL = B; pintaEscenaUI(b);
   b.restore();
-  PAN.H = alto; DESPL = 0;
-  for (let i = i1; i < BOTONES.length; i++) BOTONES[i].y += B;
+  const i2 = BOTONES.length;
+  // el panel (bajado lo que baja la escena, menos el recorte)
+  PAN.H = alto - dp; DESPL = dp;
+  b.save(); b.translate(0, dp); pintaPanel(b); b.restore();
+  const i3 = BOTONES.length;
+  PAN.H = alto;
+  b.save(); b.translate(0, B); pintaFx(b, 'monedas'); b.restore();
+  DESPL = 0;
+  for (let i = i1; i < i2; i++) BOTONES[i].y += B;
+  for (let i = i2; i < i3; i++) BOTONES[i].y += dp;
   pintaHud(b);
   MONEDERO[1] -= B;   // las monedas vuelan con la escena bajada: su destino, subido lo mismo
   g.drawImage(buf, 0, 0, cv.width, cv.height);

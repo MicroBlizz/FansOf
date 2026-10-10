@@ -26,11 +26,12 @@ async function combate(id, elite) {
   RIVAL = { def, e, x: PAN.W + 40, y: SUELO, z: def.vuela || 0, alto: def.alto, anim: 'andar', t0: RELOJ.t, blanco: 0, elite: !!elite };
   RIVAL.vidaVista = e.vida;
   log(def.llega);
-  if (elite) log('¡Enemigo de élite! Más fuerte, pero suelta un objeto.');
+  if (elite) { log('¡Enemigo de élite! Más fuerte, pero suelta un objeto.'); chatEv('elite', null, 0.9, 0); }
+  if (def.mini) chatEv('mini', tr(def.n), 1, 0);
   if (def.jefe) {
     const raid = Math.round((150 + Math.random() * 120) * (1 + VIAJE.mundo));
-    VIAJE.esp += raid;
-    log('¡{u} llega con una raid de {n} espectadores para ver al jefe!', { u: CANALES[Math.floor(Math.random() * CANALES.length)], n: miles(raid) });
+    VIAJE.esp += raid; chatRafaga('jefe', 3, tr(def.n));
+    log('¡{u} llega con una raid de {n} espectadores para ver al jefe!', { u: CHAT_USUARIOS[Math.floor(Math.random() * CHAT_USUARIOS.length)][0], n: miles(raid) });
   }
   if (def.jefe) await llegaJefe(); else await llegaRival();
   bocadillo(RIVAL, def.frases[Math.floor(Math.random() * def.frases.length)], 2.2); sonido('voz');
@@ -161,11 +162,11 @@ function pegaConejo(r, gordo) {
   const [cx, cy] = centro(CONEJO);
   if (r.bloqueo === 'huelga') {
     anillo(cx, cy, 30, '#7be04a', 0.4); rotulo(cx, cy - 30, tr('¡HUELGA!'), '#7be04a', 1); sonido('bloqueo');
-    log('¡Huelga general! Ese golpe no cuenta.');
+    log('¡Huelga general! Ese golpe no cuenta.'); chatEv('huelga', null, 0.5, 15);
     return;
   }
   if (r.bloqueo === 'esquiva') {
-    rotulo(cx, cy - 30, tr('¡ESQUIVA!'), '#5aaeff', 0.9); sonido('esquiva'); rayas(cx + 8, cy, -1);
+    rotulo(cx, cy - 30, tr('¡ESQUIVA!'), '#5aaeff', 0.9); sonido('esquiva'); rayas(cx + 8, cy, -1); chatEv('esquiva', null, 0.5, 10);
     const x0 = CONEJO.x;
     anima(0.26, k => { CONEJO.x = Math.round(x0 - salto(k) * 10); CONEJO.z = Math.round(salto(k) * 12); }).then(() => { CONEJO.x = x0; CONEJO.z = 0; }).catch(() => {});
     return;
@@ -177,6 +178,7 @@ function pegaConejo(r, gordo) {
     estallido(cx + 6, cy, gordo); chispas(cx + 4, cy, gordo ? 10 : 5, '#ff8a94', 100);
     numero(cx, cy - 14, r.dano, 'herida');
     tiembla(gordo ? 7 : 3); congela(gordo ? 140 : 70); sonido('herida');
+    if (H.vida > 0 && H.vida < H.vidaMax * 0.3) chatEv('pocaVida', null, 0.8, 14);
     const x0 = CONEJO.x;
     CONEJO.x -= gordo ? 6 : 3;
     espera(0.16).then(() => { CONEJO.x = x0; if (H.vida > 0 && CONEJO.anim === 'dano') ponAnim(CONEJO, 'guardia'); }).catch(() => {});
@@ -202,7 +204,7 @@ async function levanta() {
   rotulo(cx, SUELO - 66, tr(quien === 'mechavaca' ? '¡MECHAVACA!' : '¡CONTRATO INDEFINIDO!'), '#ffcb3d', 1.4);
   log(quien === 'mechavaca' ? 'La MechaVaca aterriza y te pone en pie. ¡Muuu!' : 'Tu Contrato indefinido te devuelve al trabajo. Con la mitad de vida.');
   numero(cx, cy - 10, '+' + H.vida, 'cura');
-  espectadores('revive');
+  chatRafaga('revive', 2);
   ponAnim(CONEJO, 'gana'); await espera(0.5); ponAnim(CONEJO, 'guardia');
   await espera(0.3);
   return true;
@@ -222,7 +224,7 @@ async function muereRival() {
   tiembla(grande ? 10 : 5); congela(grande ? 220 : 90); sonido('boom'); destella('#ffffff', grande ? 0.12 : 0.05);
   if (grande) for (let i = 1; i <= (def.jefe ? 4 : 2); i++) espera(i * 0.22).then(() => { estallido(cx + rnd(-20, 20), cy + rnd(-30, 10), true); chispas(cx, cy, 10, '#ffcb3d', 120); sonido('boom'); tiembla(6); }).catch(() => {});
   if (RIVAL.elite) { chispas(cx, cy, 16, '#ffcb3d', 140); anillo(cx, cy, 44, '#ffcb3d', 0.45); }
-  if (grande) espectadores('ganaJefe');
+  if (grande) chatRafaga('ganaJefe', 3); else chatEv('gana', null, 0.35, 6);
   lluviaMonedas(cx, cy, ganaMonedas(H, e.monedas), def.jefe ? 34 : def.mini ? 26 : 18);
   H.derrotados++;
   RIVAL = null;

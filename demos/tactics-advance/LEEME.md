@@ -4,9 +4,10 @@ Un prototipo para enseñar **el aspecto y el ritmo** de un juego táctico por ca
 en pixel art de consola portátil (240 × 160, como la Game Boy Advance). Es un juego nuevo de la serie: **no sustituye**
 a Fans of Rumble: Tácticas (`games/tacticas`, el de barras de tiempo), que sigue igual.
 
-De momento **se mira, no se juega**: un turno completo de CrazyBunny que se repite. Se puede parar, mover con la barra
-y cambiar de escenario. **No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea,
-se borra esta carpeta (y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
+Es **jugable**: una batalla de 2 contra 4 por turnos. Tocas a CrazyBunny o a EpicChampion y eliges Mover (casillas
+azules), Atacar o Técnica (zona roja; se toca dos veces al enemigo para confirmar) o Esperar. Luego juega Microblizz.
+**No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea, se borra esta carpeta
+(y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
 
 Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tactics-advance/ (con `?idioma=en` sale en inglés).
 
@@ -21,8 +22,16 @@ Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tact
   de Microblizz de noche (moqueta, mesas, cajas de despido, fosos de servidores, la ciudad y el letrero de Microblizz).
 - **Ventanas de consola**: letra de píxeles propia con minúsculas y tildes, la manita, la norma del día, la ficha con
   VIDA y CAOS, menú y submenú, probabilidad de acierto, el daño que salta y el bocadillo del enemigo.
-- **El turno**: elegir a CrazyBunny, casillas azules de movimiento, cursor, saltos con polvo, Salto caótico
-  (se agacha, salta, aplasta: onda, chispas, espirales, temblor y destello), queja del enemigo y su turno.
+- **Las reglas** (todo en `reglas.js`): vida, CAOS, ataque, defensa, movimiento y cuánto puede subir cada uno de un salto.
+  Desde más arriba se acierta más y se pega más fuerte. Técnicas: Salto caótico (CrazyBunny, 12 de CAOS, a 3 casillas, sin
+  importar la altura) y Tajo épico (EpicChampion, 10). Se gana CAOS cada turno y al golpear. StarBot dispara a 3 casillas.
+- **Microblizz** mueve a cada uno hacia quien pueda pegar (mejor al que menos vida tenga y desde arriba) o se acerca.
+- **Animaciones**: saltos de casilla en casilla con polvo, embestida, Salto caótico (se agacha, salta, aplasta: onda,
+  chispas, espirales, temblor y destello), láser, números, parpadeo al caer y bocadillos con quejas.
+- Con ratón: el cursor sigue a la casilla y al pasar por un objetivo se ve el acierto y el daño. Arrastrar mueve la cámara;
+  Esc o el botón derecho vuelven atrás.
+
+Las cifras son de prueba. Jugando a lo bruto (siempre atacar al primero que pilla) se gana casi siempre, a veces por poco.
 
 ## Archivos (js/), en el orden en que se cargan
 
@@ -33,11 +42,15 @@ Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tact
 | `personajes.js` | CrazyBunny, EpicChampion, el esqueleto, el becario, StarBot y el retrato grande de CrazyBunny |
 | `decorados.js` | Tumbas, cruz, árboles, arbusto, farol, cripta, mesa, planta, fuente, cajas y archivador |
 | `mapa.js` | El mapa (alturas y suelos), la textura de cada casilla, el agua, las casillas marcadas y el cursor |
-| `escenas.js` | Los dos escenarios: suelos, decorados, enemigo, norma del día y queja |
+| `escenas.js` | Los dos escenarios: suelos, decorados, norma del día y queja del enemigo |
 | `fondo.js` | El cielo de cada escenario, las nubes, las luciérnagas y el letrero de Microblizz |
 | `letras.js` | La letra de píxeles, la pequeña de 3 × 5 y las cifras gordas del daño |
 | `ventanas.js` | Marcos, barras, manita, flecha, ficha, menús, norma y bocadillo |
-| `demo.js` | El turno: dónde está cada cosa en cada instante, la cámara, los efectos y las ventanas |
-| `principal.js` | Traduce la página, la escala del lienzo, el bucle y los botones |
+| `reglas.js` | Personajes y sus cifras, técnicas, salidas, caminos, objetivos, acierto, daño y lo que decide Microblizz |
+| `dibujo.js` | Pinta la batalla: cielo, mapa, casillas marcadas, decorados, personajes con su pose y los efectos |
+| `interfaz.js` | Dónde va cada ventana (para pintarla y para saber qué se toca) y las fichas, menús, carteles y el final |
+| `juego.js` | El estado de la batalla, los turnos, las órdenes y las acciones animadas; la cámara |
+| `controles.js` | Tocar, arrastrar, pasar el ratón y Esc; qué hay debajo de un punto; la pista de la página |
+| `principal.js` | Traduce la página, la escala del lienzo, el bucle y los botones de los escenarios |
 
 `idioma/en-raiz.js` es el inglés de la ficha en la Biblioteca de la página de la raíz.

@@ -61,27 +61,36 @@ function ficha(ctx, x, y, d) {
   escribeMini(ctx, nv, x + 9, y + 38, '#ffe27a');
   escribeMini(ctx, tr('VIDA'), x + 51, y + 24, '#ffe27a');
   escribeMini(ctx, d.vida + '/' + d.vidaMax, x + 115, y + 24, '#ffffff', null, 'der');
-  barra(ctx, x + 51, y + 30, 64, d.vida / d.vidaMax, 'vida');
+  barra(ctx, x + 51, y + 30, 64, (d.vidaVista ?? d.vida) / d.vidaMax, 'vida');
   escribeMini(ctx, tr('CAOS'), x + 51, y + 37, '#ffe27a');
   escribeMini(ctx, d.caos + '/' + d.caosMax, x + 115, y + 37, '#ffffff', null, 'der');
   barra(ctx, x + 51, y + 43, 64, d.caos / d.caosMax, 'caos');
 }
-// la ficha pequeña del objetivo
+// la ficha pequeña (enemigos y los aliados sin retrato grande): x es el borde derecho, o d.izq el izquierdo; d.abajo la apoya abajo.
+// Con d.caosMax lleva también CAOS y con d.extra una línea más (acierto y daño)
 function fichaObjetivo(ctx, x, y, d) {
-  const w = Math.max(100, 40 + anchoTexto(d.nombre));
-  x -= w;
-  ventana(ctx, x, y, w, 38, 'rojo');
+  const w = Math.max(100, 40 + anchoTexto(d.nombre)), h = 38 + (d.caosMax ? 8 : 0) + (d.extra ? 8 : 0);
+  x = d.izq != null ? d.izq : x - w;
+  if (d.abajo != null) y = d.abajo - h;
+  ventana(ctx, x, y, w, h, d.tono || 'rojo');
   ctx.fillStyle = '#0c1030'; ctx.fillRect(x + 5, y + 5, 24, 28);
-  ctx.fillStyle = '#3a2a4a'; ctx.fillRect(x + 6, y + 6, 22, 26);
-  ctx.fillStyle = '#4c3660'; ctx.fillRect(x + 6, y + 20, 22, 12);
+  ctx.fillStyle = d.tono === 'azul' ? '#2a3a6a' : '#3a2a4a'; ctx.fillRect(x + 6, y + 6, 22, 26);
+  ctx.fillStyle = d.tono === 'azul' ? '#36508a' : '#4c3660'; ctx.fillRect(x + 6, y + 20, 22, 12);
   ctx.save(); ctx.beginPath(); ctx.rect(x + 6, y + 6, 22, 26); ctx.clip();
   ctx.drawImage(d.retrato.c, x + 17 - d.retrato.ox, y + 40 - d.retrato.oy);
   ctx.restore();
   escribe(ctx, d.nombre, x + 33, y + 5);
-  escribeMini(ctx, d.clase, x + 33, y + 15, '#ffd0d6');
+  escribeMini(ctx, d.clase, x + 33, y + 15, d.tono === 'azul' ? '#b8cdf8' : '#ffd0d6');
   escribeMini(ctx, tr('VIDA'), x + 33, y + 22, '#ffe27a');
   escribeMini(ctx, d.vida + '/' + d.vidaMax, x + w - 5, y + 22, '#ffffff', null, 'der');
-  barra(ctx, x + 33, y + 28, w - 38, d.vida / d.vidaMax, 'vida');
+  barra(ctx, x + 33, y + 28, w - 38, d.vidaVista / d.vidaMax, 'vida');
+  let yy = y + 35;
+  if (d.caosMax) {
+    escribeMini(ctx, tr('CAOS'), x + 33, yy, '#ffe27a');
+    escribeMini(ctx, d.caos + '/' + d.caosMax, x + w - 5, yy, '#ffffff', null, 'der');
+    barra(ctx, x + 33, yy + 6, w - 38, d.caos / d.caosMax, 'caos'); yy += 8;
+  }
+  if (d.extra) escribeMini(ctx, d.extra, x + 6, yy + 2, '#ffffff', '#101438');
 }
 // menú de órdenes; activo = índice de la manita; apagado = se ve detrás de un submenú
 function menu(ctx, x, y, items, activo, t, apagado) {

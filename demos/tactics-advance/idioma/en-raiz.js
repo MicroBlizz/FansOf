@@ -2,5 +2,5 @@
 'use strict';
 IDIOMA.add({
   "FANS OF TACTICS ADVANCE": "FANS OF TACTICS ADVANCE",
-  "El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mira un turno de CrazyBunny en el Cementerio de juegos o en las oficinas de Microblizz, con su Salto caótico y la norma del día.": "The prototype (test). Tile-based tactics in handheld-console pixel art: watch one of CrazyBunny's turns in the Game Graveyard or the Microblizz offices, with his Chaos Jump and the rule of the day.",
+  "El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mueve a CrazyBunny y a EpicChampion, aprovecha la altura y el CAOS, y despide a los esbirros de Microblizz en el Cementerio de juegos o en sus oficinas.": "The prototype (test). Tile-based tactics in handheld-console pixel art: move CrazyBunny and EpicChampion, use height and CHAOS to your advantage, and fire the Microblizz minions in the Game Graveyard or in their offices.",
 });

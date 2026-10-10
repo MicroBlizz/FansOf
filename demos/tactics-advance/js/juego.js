@@ -14,7 +14,15 @@ function avanzaTweens(dt) {
   }
 }
 
-/* ---------- empezar una batalla ---------- */
+/* ---------- empezar una batalla (o solo enseñarla, de fondo del menú principal) ---------- */
+function vista(nombre) {
+  GEN++; TWEENS.length = 0; EFECTOS.length = 0;
+  if (NOMBRE_ESC !== nombre || !ESC) preparaEscena(nombre);
+  Object.assign(J, { fase: 'titulo', ronda: 1, sel: null, modo: null, menu: null, sub: null, boton: null, marcas: {}, cursor: null, previa: null,
+    fichaA: null, fichaE: null, banner: null, bocadillos: [], fin: null, ocupado: true, destello: 0, temblor: 0, pan: [0, 0], toque: null, pista: '' });
+  J.unidades = [...SALIDA.aliados.map(([t, x, y]) => nuevaUnidad(t, x, y, 'a')), ...SALIDA[nombre].map(([t, x, y]) => nuevaUnidad(t, x, y, 'e'))];
+  J.foco = pieMundo(4.5, 4.5, 1.6);
+}
 function empieza(nombre) {
   GEN++; TWEENS.length = 0; EFECTOS.length = 0;
   preparaEscena(nombre);
@@ -23,7 +31,7 @@ function empieza(nombre) {
     destello: 0, temblor: 0, pan: [0, 0], toque: null, dichos: new Set() });
   J.unidades = [...SALIDA.aliados.map(([t, x, y]) => nuevaUnidad(t, x, y, 'a')), ...SALIDA[nombre].map(([t, x, y]) => nuevaUnidad(t, x, y, 'e'))];
   J.foco = pieMundo(4, 3.6, 2);
-  CAM.x = 118 - J.foco[0]; CAM.y = 86 - J.foco[1]; CAMB.x = CAM.x; CAMB.y = CAM.y;
+  CAM.x = centroX() - J.foco[0]; CAM.y = centroY() - J.foco[1]; CAMB.x = CAM.x; CAMB.y = CAM.y;
   actualizaPista();
   comienzaTuTurno();
 }
@@ -137,9 +145,10 @@ async function turnoMicroblizz_() {
   comienzaTuTurno();
 }
 function compruebaFin() {
-  if (!vivos('e').length) J.fin = { titulo: tr('¡Victoria!'), lineas: [tr('Microblizz tendrá que'), tr('contratar más becarios.')], tono: 'azul' };
-  else if (!vivos('a').length) J.fin = { titulo: tr('¡Te han despedido!'), lineas: [tr('Microblizz te agradece'), tr('los servicios prestados.')], tono: 'rojo' };
+  if (!vivos('e').length) J.fin = { gana: true };
+  else if (!vivos('a').length) J.fin = { gana: false };
   else return false;
+  final(J.fin.gana);
   Object.assign(J, { fase: 'fin', ocupado: false, menu: null, sub: null, boton: null, marcas: {}, sel: null });
   actualizaPista();
   return true;
@@ -235,12 +244,16 @@ async function muere(o) {
 
 /* ---------- cámara (sigue al foco, se puede arrastrar, tiembla con los golpes) ---------- */
 const CAMB = { x: 0, y: 0 };
-function actualiza(dt) {
+function actualiza(dt, t) {
+  if (J.fase === 'titulo') J.pan = [Math.sin(t * 0.17) * 70, Math.sin(t * 0.11) * 26];
+  const quieto = PANT && PANT.pausa;   // en la pausa no avanza la batalla (la cámara sí)
+  if (!quieto) {
   avanzaTweens(dt); avanzaEfectos(dt);
   for (const u of J.unidades) { if (u.flash > 0) u.flash -= dt; u.vidaVista += (u.vida - u.vidaVista) * Math.min(1, dt * 8); }
   J.destello = Math.max(0, J.destello - dt);
   if (J.banner) J.banner.t += dt;
-  const tx = 118 - J.foco[0] + J.pan[0], ty = 86 - J.foco[1] + J.pan[1], f = Math.min(1, dt * 6);
+  }
+  const tx = centroX() - J.foco[0] + J.pan[0], ty = centroY() - J.foco[1] + J.pan[1], f = Math.min(1, dt * 6);
   CAMB.x += (tx - CAMB.x) * f; CAMB.y += (ty - CAMB.y) * f;
   CAM.x = CAMB.x; CAM.y = CAMB.y;
   if (J.temblor > 0) { J.temblor -= dt; const s = Math.max(0, J.temblor / 0.3) * 3; CAM.x += Math.round(Math.sin(J.temblor * 90) * s); CAM.y += Math.round(Math.cos(J.temblor * 70) * s * 0.6); }

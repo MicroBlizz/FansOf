@@ -4,7 +4,9 @@ Un prototipo para enseñar **el aspecto y el ritmo** de un juego táctico por ca
 en pixel art de consola portátil (240 × 160, como la Game Boy Advance). Es un juego nuevo de la serie: **no sustituye**
 a Fans of Rumble: Tácticas (`games/tacticas`, el de barras de tiempo), que sigue igual.
 
-Es **jugable**: una batalla de 2 contra 4 por turnos. Tocas a CrazyBunny o a EpicChampion y eliges Mover (casillas
+Es **jugable** y ocupa **toda la pantalla**, con menú principal (Jugar, Cómo se juega, Opciones con idioma y pantalla
+completa, Biblioteca), elegir batalla, pausa y final. Zoom con dos dedos, rueda del ratón o los botones + y −; arrastrar
+mueve la cámara. Cada batalla es de 2 contra 4 por turnos. Tocas a CrazyBunny o a EpicChampion y eliges Mover (casillas
 azules), Atacar o Técnica (zona roja; se toca dos veces al enemigo para confirmar) o Esperar. Luego juega Microblizz.
 **No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea, se borra esta carpeta
 (y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
@@ -29,7 +31,9 @@ Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tact
 - **Animaciones**: saltos de casilla en casilla con polvo, embestida, Salto caótico (se agacha, salta, aplasta: onda,
   chispas, espirales, temblor y destello), láser, números, parpadeo al caer y bocadillos con quejas.
 - Con ratón: el cursor sigue a la casilla y al pasar por un objetivo se ve el acierto y el daño. Arrastrar mueve la cámara;
-  Esc o el botón derecho vuelven atrás.
+  Esc o el botón derecho vuelven atrás (Esc sin nadie elegido abre la pausa). En los menús, flechas e Intro.
+- **Dos tamaños de píxel**: el mundo se pinta en un lienzo y las ventanas en otro; cada uno se amplía un número entero de
+  veces. El de las ventanas lo decide la pantalla (caben 200 × 170) y el del mundo, el zoom.
 
 Las cifras son de prueba. Jugando a lo bruto (siempre atacar al primero que pilla) se gana casi siempre, a veces por poco.
 
@@ -48,9 +52,10 @@ Las cifras son de prueba. Jugando a lo bruto (siempre atacar al primero que pill
 | `ventanas.js` | Marcos, barras, manita, flecha, ficha, menús, norma y bocadillo |
 | `reglas.js` | Personajes y sus cifras, técnicas, salidas, caminos, objetivos, acierto, daño y lo que decide Microblizz |
 | `dibujo.js` | Pinta la batalla: cielo, mapa, casillas marcadas, decorados, personajes con su pose y los efectos |
-| `interfaz.js` | Dónde va cada ventana (para pintarla y para saber qué se toca) y las fichas, menús, carteles y el final |
+| `interfaz.js` | Las ventanas de la batalla pegadas a los bordes (fichas, órdenes, botones de pausa y zoom, carteles, pista) |
+| `pantallas.js` | Menú principal con el logo, elegir batalla, cómo se juega, opciones, pausa y final |
 | `juego.js` | El estado de la batalla, los turnos, las órdenes y las acciones animadas; la cámara |
-| `controles.js` | Tocar, arrastrar, pasar el ratón y Esc; qué hay debajo de un punto; la pista de la página |
-| `principal.js` | Traduce la página, la escala del lienzo, el bucle y los botones de los escenarios |
+| `controles.js` | Tocar, arrastrar, pellizcar, rueda, pasar el ratón y teclado; qué hay debajo de un punto; la pista |
+| `principal.js` | Pantalla completa, tamaño del píxel de las ventanas y del mundo (zoom), el bucle y el menú principal |
 
 `idioma/en-raiz.js` es el inglés de la ficha en la Biblioteca de la página de la raíz.

@@ -1,34 +1,50 @@
-// Fans of Tactics Advance (prototipo) · ARRANQUE: traduce la página, pone la pantalla a escala (píxeles nítidos), el bucle y los
-// botones de los escenarios.
+// Fans of Tactics Advance (prototipo) · ARRANQUE: la pantalla completa, el tamaño del píxel (el de las ventanas y el del mundo,
+// que cambia con el zoom; siempre números enteros para que cada píxel sea cuadrado), el bucle y el menú principal.
 'use strict';
 
 traducePagina();
 const mc = cv.getContext('2d');
-// la pantalla de 240 × 160 se amplía un número entero de veces (lo más cerca del ancho que hay) para que cada píxel sea cuadrado
+let DPR = 1, ESC_UI = 3, ESC_MUNDO = 3, ZOOM = 1;
+const zoomMin = () => Math.max(1, Math.ceil(ESC_UI * 0.5)), zoomMax = () => ESC_UI * 2 + 1;
 function ajusta() {
-  const dpr = Math.min(3, window.devicePixelRatio || 1), ancho = Math.max(240, cv.parentElement.clientWidth - 12);
-  const escala = Math.max(1, Math.round((ancho * dpr) / LW));
-  cv.width = LW * escala; cv.height = LH * escala;
-  const css = Math.min(ancho, (LW * escala) / dpr);
-  cv.style.width = css + 'px'; cv.style.height = (css * LH) / LW + 'px';
-  mc.imageSmoothingEnabled = false;
+  DPR = Math.min(3, window.devicePixelRatio || 1);
+  const w = Math.max(240, window.innerWidth), h = Math.max(160, window.innerHeight);
+  cv.width = Math.round(w * DPR); cv.height = Math.round(h * DPR);
+  cv.style.width = w + 'px'; cv.style.height = h + 'px';
+  // las ventanas: el píxel más grande con el que caben 200 × 170 píxeles del juego
+  ESC_UI = Math.max(1, Math.floor(Math.min(cv.width / 200, cv.height / 170)));
+  UW = Math.ceil(cv.width / ESC_UI); UH = Math.ceil(cv.height / ESC_UI);
+  uo.width = UW; uo.height = UH;
+  aplicaZoom(Math.round(ESC_UI * ZOOM));
 }
+// el mundo: cuántos píxeles de pantalla mide cada píxel del juego (más = más cerca)
+function aplicaZoom(e) {
+  const antes = [centroX(), centroY()];
+  ESC_MUNDO = Math.max(zoomMin(), Math.min(zoomMax(), e));
+  LW = Math.ceil(cv.width / ESC_MUNDO); LH = Math.ceil(cv.height / ESC_MUNDO);
+  lo.width = LW; lo.height = LH;
+  CAMB.x += centroX() - antes[0]; CAMB.y += centroY() - antes[1];
+}
+const puedeZoom = d => (d > 0 ? ESC_MUNDO < zoomMax() : ESC_MUNDO > zoomMin());
+function zoom(d) { if (!puedeZoom(d)) return; aplicaZoom(ESC_MUNDO + d); ZOOM = ESC_MUNDO / ESC_UI; }
+function ponZoom(z) { ZOOM = Math.max(zoomMin() / ESC_UI, Math.min(zoomMax() / ESC_UI, z)); const e = Math.round(ESC_UI * ZOOM); if (e !== ESC_MUNDO) aplicaZoom(e); }
+
 let RELOJ = 0, ultimo = 0;
 function fotograma(ahora) {
   const dt = Math.min(0.05, (ahora - ultimo) / 1000 || 0); ultimo = ahora;
   RELOJ += dt;
-  actualiza(dt);
+  actualiza(dt, RELOJ);
   pinta(RELOJ);
+  uc.clearRect(0, 0, UW, UH);
+  if (J.fase !== 'titulo') pintaUI(RELOJ);
+  if (PANT) pintaPantalla(RELOJ);
   mc.imageSmoothingEnabled = false;
-  mc.drawImage(lo, 0, 0, cv.width, cv.height);
+  mc.drawImage(lo, 0, 0, LW * ESC_MUNDO, LH * ESC_MUNDO);
+  mc.drawImage(uo, 0, 0, UW * ESC_UI, UH * ESC_UI);
   requestAnimationFrame(fotograma);
 }
-const bC = document.getElementById('b-cem'), bO = document.getElementById('b-ofi'), bR = document.getElementById('b-otra');
-function elige(n) { empieza(n); bC.setAttribute('aria-pressed', n === 'cementerio'); bO.setAttribute('aria-pressed', n === 'oficinas'); }
-bC.addEventListener('click', () => elige('cementerio'));
-bO.addEventListener('click', () => elige('oficinas'));
-bR.addEventListener('click', () => elige(NOMBRE_ESC));
 window.addEventListener('resize', ajusta);
-ajusta(); elige('cementerio');
+ajusta();
+menuPrincipal();
 document.getElementById('carga').hidden = true;
 requestAnimationFrame(t => { ultimo = t; fotograma(t); });

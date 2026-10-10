@@ -19,33 +19,20 @@ const EN = {
   '¡Te han despedido!': "You're fired!", 'Microblizz te agradece': 'Microblizz thanks you', 'los servicios prestados.': 'for your services.',
   'Otra vez': 'Again',
   // la pista
-  'Pulsa «Otra vez» para jugar de nuevo.': 'Press "Again" to play once more.',
-  'Le toca a Microblizz…': "Microblizz's move…",
-  'Toca una casilla azul para moverte.': 'Tap a blue tile to move there.',
-  'Toca un enemigo en la zona roja y vuelve a tocarlo para confirmar.': 'Tap an enemy in the red area, then tap it again to confirm.',
-  'Elige qué hace: moverse, atacar, una técnica o esperar.': 'Choose what to do: move, attack, use a skill or wait.',
-  'Toca a CrazyBunny o a EpicChampion para darle órdenes. Arrastra para mover la cámara.': 'Tap CrazyBunny or EpicChampion to give orders. Drag to move the camera.',
-  // la página
-  'Biblioteca': 'Library',
-  'Prototipo jugable · una batalla': 'Playable prototype · one battle',
-  'Combate táctico por casillas en pixel art de consola portátil. Mueve a CrazyBunny y a EpicChampion por el mapa y despide a los esbirros de Microblizz antes de que te despidan a ti.':
-    'Tile-based tactics in handheld-console pixel art. Move CrazyBunny and EpicChampion across the map and fire the Microblizz minions before they fire you.',
-  'Pantalla del juego: un mapa en diagonal con tus personajes y los de Microblizz': 'Game screen: a diagonal map with your characters and the Microblizz ones',
-  '240 × 160 píxeles, como la consola': '240 × 160 pixels, like the console', 'Arrastra para mover la cámara': 'Drag to move the camera',
-  'Escenario': 'Stage', 'Cementerio': 'Graveyard', 'Oficinas': 'Offices', 'Empezar de nuevo': 'Start over',
-  'Cómo se juega': 'How to play',
-  'Toca a uno de los tuyos y elige: Mover (casillas azules), Atacar o Técnica (zona roja). Toca dos veces al enemigo para confirmar.':
-    'Tap one of your characters and choose: Move (blue tiles), Attack or Skill (red area). Tap the enemy twice to confirm.',
-  'La altura importa': 'Height matters',
-  'Desde más arriba aciertas más y pegas más fuerte. Los escalones muy altos no se suben de un salto.':
-    'From higher up you hit more often and harder. Very tall steps can’t be climbed in one jump.',
-  'Técnicas con CAOS': 'Skills with CHAOS',
-  'Salto caótico de CrazyBunny (12 de CAOS, llega a 3 casillas) y Tajo épico de EpicChampion (10). Ganas CAOS cada turno y al golpear.':
-    "CrazyBunny's Chaos Jump (12 CHAOS, reaches 3 tiles) and EpicChampion's Epic Slash (10). You gain CHAOS every turn and when you hit.",
-  'La norma del día': 'Rule of the day',
-  'En cada batalla, Microblizz impone una norma absurda. Hoy: prohibido curarse. Tampoco tenías con qué.':
-    "In every battle, Microblizz imposes an absurd rule. Today: no healing. Not that you had anything to heal with.",
-  '© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados': '© 2026 Arkioner and Pepins · MicroBlizz · All rights reserved',
+  'Le toca a Microblizz…': "Microblizz's move…", 'Elige una casilla azul': 'Pick a blue tile', 'Toca dos veces al objetivo': 'Tap the target twice',
+  'Elige una orden': 'Pick an order', 'Toca a uno de los tuyos': 'Tap one of your team',
+  // menús
+  'FANS OF': 'FANS OF', 'Jugar': 'Play', 'Cómo se juega': 'How to play', 'Opciones': 'Options', 'Biblioteca': 'Library',
+  'Elige la batalla': 'Choose a battle', 'Cementerio de juegos': 'Game Graveyard', 'Oficinas de Microblizz': 'Microblizz Offices',
+  'Toca a CrazyBunny o a EpicChampion y elige: Mover, Atacar, Técnica o Esperar.': 'Tap CrazyBunny or EpicChampion and choose: Move, Attack, Skill or Wait.',
+  'Para atacar, toca al enemigo una vez para ver el acierto y otra para confirmar.': 'To attack, tap the enemy once to see the hit chance and again to confirm.',
+  'Desde más alto aciertas más y pegas más fuerte. Las técnicas gastan CAOS.': 'From higher up you hit more often and harder. Skills spend CHAOS.',
+  'Zoom: pellizca con dos dedos, usa la rueda o los botones + y −. Arrastra para mover la cámara.': 'Zoom: pinch with two fingers, use the wheel or the + and − buttons. Drag to move the camera.',
+  'Idioma: Español': 'Language: English', 'Pantalla completa': 'Full screen',
+  'Pausa': 'Pause', 'Seguir': 'Resume', 'Empezar de nuevo': 'Start over', 'Cambiar de batalla': 'Change battle', 'Menú principal': 'Main menu',
+  'Microblizz tendrá que contratar más becarios.': 'Microblizz will have to hire more interns.',
+  'Microblizz te agradece los servicios prestados.': 'Microblizz thanks you for your services.',
+  'Fans of Tactics Advance': 'Fans of Tactics Advance',
 };
 
 const IDIOMA_TA = (() => {

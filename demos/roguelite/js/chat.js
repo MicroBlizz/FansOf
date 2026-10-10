@@ -18,8 +18,8 @@ function chatDice(tipo, extra) {
   let u = CHAT_USUARIOS[Math.floor(Math.random() * CHAT_USUARIOS.length)];
   if (u === CHATS.quien) u = CHAT_USUARIOS[(CHAT_USUARIOS.indexOf(u) + 1) % CHAT_USUARIOS.length];
   CHATS.quien = u;
-  LOG.push({ txt: tr(txt).replace(/\{X\}/g, extra || ''), quien: u, t0: RELOJ.t });
-  if (LOG.length > 30) LOG.shift();
+  LOG.push({ txt: tr(txt).replace(/\{X\}/g, extra || ''), quien: u, t0: RELOJ.t, fin: RELOJ.t + 9 });
+  if (LOG.length > 60) LOG.shift();
   if (ESPECTA[tipo]) VIAJE.esp += Math.round(ESPECTA[tipo] * (0.6 + Math.random()) * (1 + VIAJE.mundo * 0.5));
 }
 // un comentario por algo que pasa: con su probabilidad y su pausa (y nunca dos casi a la vez)
@@ -42,8 +42,8 @@ function consejo(k) {
   const T = GUARDA.consejos;
   if (chatApagado() || !CONSEJOS[k] || T[k]) return;
   T[k] = 1; guarda();
-  LOG.push({ txt: tr(CONSEJOS[k]), quien: CHAT_LOLA, t0: RELOJ.t });
-  if (LOG.length > 30) LOG.shift();
+  LOG.push({ txt: tr(CONSEJOS[k]), quien: CHAT_LOLA, t0: RELOJ.t, fin: RELOJ.t + 14 });
+  if (LOG.length > 60) LOG.shift();
   CHATS.t = Math.max(CHATS.t, 6);
 }
 // cada fotograma: la charla de fondo y los espectadores que se ven
@@ -89,28 +89,40 @@ function lineasChat(e, ancho) {
   const [nombre, , ins] = e.quien, pre = (ins ? ' ' : '') + nombre + ':';
   return envuelve(pre + ' ' + e.txt, ancho).map((l, j) => ({ l, j }));
 }
-function pintaChat(ctx, W, ya, yb, mini) {
-  const ancho = W - 14, filas = [], cabe = Math.floor((yb - ya) / LINEA);
+// pinta mensajes de abajo arriba en el hueco [ya, yb]: lista de LOG, desde x con «ancho»; fondo: cajita oscura (sobre la escena)
+function pintaFilas(ctx, lista, x, ancho, ya, yb, fondo) {
+  const filas = [], cabe = Math.floor((yb - ya) / LINEA);
   if (cabe < 1) return;
-  for (let i = LOG.length - 1; i >= 0 && filas.length < cabe; i--) {
-    const e = LOG[i], ls = lineasChat(e, ancho);
-    for (let j = ls.length - 1; j >= 0 && filas.length < cabe; j--) filas.unshift({ ...ls[j], e, antes: ls.slice(0, j).reduce((s, x) => s + x.l.length + 1, 0) });
+  for (let i = lista.length - 1; i >= 0 && filas.length < cabe; i--) {
+    const e = lista[i], ls = lineasChat(e, ancho);
+    for (let j = ls.length - 1; j >= 0 && filas.length < cabe; j--) filas.unshift({ ...ls[j], e, antes: ls.slice(0, j).reduce((s, q) => s + q.l.length + 1, 0) });
   }
-  const ult = LOG[LOG.length - 1];
+  const ult = lista[lista.length - 1];
   let y = yb - filas.length * LINEA;
   for (const f of filas) {
-    const e = f.e, nueva = e === ult && !mini, x = 7, sube = Math.max(0, Math.round((1 - Math.min(1, (RELOJ.t - e.t0) / 0.15)) * 4));
+    const e = f.e, nueva = e === ult && !fondo, sube = Math.max(0, Math.round((1 - Math.min(1, (RELOJ.t - e.t0) / 0.15)) * 4));
+    if (fondo) {   // se va apagando al final de su vida
+      if (e.fin - RELOJ.t < 0.5 && Math.floor(RELOJ.t * 16) % 2) { y += LINEA; continue; }
+      ctx.save(); ctx.globalAlpha = 0.62; ctx.fillStyle = '#10081c'; ctx.fillRect(x - 3, y - 2 + sube, anchoTexto(f.l) + (f.j === 0 && e.quien && e.quien[2] ? 2 : 0) + 7, LINEA); ctx.restore();
+    }
     if (f.sis) {
       const vis = nueva ? Math.floor((RELOJ.t - e.t0) * 70) - f.antes : undefined;
       if (f.j === 0) escribe(ctx, '>', x, y, { c: nueva ? COL.oro : '#6a4a9a' });
       if (vis === undefined || vis > 0) escribe(ctx, f.l, x + 8, y, { c: nueva ? COL.tinta : COL.tenue, hasta: vis });
     } else if (f.j === 0) {
-      const [nombre, col, ins] = e.quien, k = f.l.indexOf(' '), nom = k < 0 ? f.l : f.l.slice(0, k), resto = k < 0 ? '' : f.l.slice(k + 1);
+      const [, col, ins] = e.quien, k = f.l.indexOf(' '), nom = k < 0 ? f.l : f.l.slice(0, k), resto = k < 0 ? '' : f.l.slice(k + 1);
       let nx = x;
-      if (ins) { pintaInsignia(ctx, ins, x, y + sube); nx += anchoTexto(' ') + 1; }
-      escribe(ctx, nom.replace(' ', ''), nx, y + sube, { c: col });
+      if (ins) { pintaInsignia(ctx, ins, x, y + sube); nx += anchoTexto('\u2003') + 1; }
+      escribe(ctx, nom.replace('\u2003', ''), nx, y + sube, { c: col });
       if (resto) escribe(ctx, resto, x + anchoTexto(nom + ' ') + 1, y + sube, { c: e.quien === CHAT_LOLA ? '#fff3c4' : COL.tinta });
     } else escribe(ctx, f.l, x, y + sube, { c: e.quien === CHAT_LOLA ? '#fff3c4' : COL.tinta });
     y += LINEA;
   }
+}
+// el panel de abajo: solo lo que va pasando
+function pintaChat(ctx, W, ya, yb) { pintaFilas(ctx, LOG.filter(e => !e.quien), 7, W - 14, ya, yb); }
+// el chat del directo, sobre la escena debajo de la vida (como en los directos): pocos mensajes y se van solos
+function pintaChatEscena(ctx) {
+  const lista = LOG.filter(e => e.quien && e.fin > RELOJ.t).slice(-4);
+  if (lista.length) pintaFilas(ctx, lista, 6, Math.round(PAN.W * 0.8), ESC.Y + 31, ESC.Y + 31 + LINEA * 7, true);
 }

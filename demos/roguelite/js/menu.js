@@ -174,10 +174,12 @@ function panelAjustes(ctx, W, y0) {
   fila(tr('Sonido'), tr(SON.on ? 'Sí' : 'No'), () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
   fila(tr('Velocidad'), RELOJ.vel > 1 ? 'x2' : 'x1', () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
   fila(tr('Chat del directo'), tr(GUARDA.chatOff ? 'No' : 'Sí'), () => { GUARDA.chatOff = !GUARDA.chatOff; if (!GUARDA.chatOff) GUARDA.consejos = {}; guarda(); sonido('toque'); });
+  fila(tr(INSTALAR.yaInstalada() ? 'Ya está instalado' : 'Instalar en el móvil'), '', () => { sonido('toque'); const t = INSTALAR.instala(); if (t) MENU.aviso = { txt: t, t0: RELOJ.t }; });
   const armado = performance.now() - MENU.borrar < 3000;
   fila(tr(armado ? '¿Seguro? Toca otra vez' : 'Borrar progreso'), '', () => {
     if (performance.now() - MENU.borrar < 3000) { borraTodo(); MENU.borrar = 0; sonido('boom'); tiembla(4); } else { MENU.borrar = performance.now(); sonido('alerta'); }
   }, armado ? '#c43a4a' : COL.trayHi, armado ? '#6a1020' : OL);
   if (y + 23 < PAN.H - 26) fila(tr('Biblioteca de juegos'), '', () => { location.href = '../../#biblioteca'; });
+  if (MENU.aviso && RELOJ.t - MENU.aviso.t0 < 10) { let ya = y + 2; for (const l of envuelve(tr(MENU.aviso.txt), W - 16)) { if (ya > PAN.H - 38) break; escribe(ctx, l, 8, ya, { c: COL.oro }); ya += LINEA; } }
   volver(ctx, W, PAN.H - 26);
 }

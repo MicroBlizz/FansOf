@@ -2,6 +2,10 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.5.0', real: [
+      '<b>INSTÁLALO EN EL MÓVIL</b>: en Opciones, «Instalar en el móvil». Se abre como una app y funciona sin internet.',
+      '<b>CHAT EN SU SITIO</b>: los mensajes del directo salen ahora sobre la escena, debajo de la vida, como en los directos de verdad, y se van solos. Abajo solo queda lo que va pasando, y las elecciones ya no se llenan de frases.'],
+    joke: ['Microblizz quería cobrar por instalarlo. Le hemos dicho que ya cobra por respirar.'] },
   { v: '0.4.0', real: [
       '<b>CAPÍTULOS</b>: cada mundo se divide en 4 capítulos de 10 días, cada uno con su nombre. Al acabar uno hay fiesta, monedas y un descanso, y puedes volver a La Madriguera con la partida guardada.',
       '<b>MAPA DEL CAMINO</b>: arriba ves los 40 días, los capítulos, dónde vas y lo que viene: tiendas, cofres, élites, el mini jefe y el jefe.',

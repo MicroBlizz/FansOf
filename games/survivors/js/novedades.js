@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.32', real: ['<b>MÁS TEXTOS EN INGLÉS</b>: hemos traducido textos que se habían quedado sin traducir y ahora se revisan solos en cada cambio.'], joke: ['Microblizz dice que el inglés ya se revisa solo. Él sigue sin saber cuál de los dos idiomas habla.'] },
   { v: '0.1.31', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.30', real: ['<b>CAJAS QUE SE ROMPEN</b>: las cajas de la mudanza del campo se destruyen a golpes, siempre dan oro y, muy rara vez, un objeto del juego (con cuenta, lo anota el servidor en tu inventario).', '<b>MÁS BOTÍN</b>: minijefes cada 2 minutos, bichos shiny y cofres con aperturas mucho más épicas (cámara lenta, falsos finales y hasta 5 mejoras si hay suerte).', '<b>TODAS LAS FACCIONES</b>: ya se pueden jugar las 8 que faltaban, con 64 armas nuevas; se desbloquean por minutos aguantados.'], joke: ['Microblizz ha descubierto que las cajas de la mudanza tenían oro dentro. Las tenía guardadas para la jubilación del CEO.'] },
   { v: '0.1.29', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },

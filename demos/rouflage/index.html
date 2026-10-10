@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#191430">
+<title>Fans of Rouflage</title>
+<meta name="description" content="Fans of Rouflage (prototipo jugable): el escondite con pintura. Píntate como el suelo, congélate y que los becarios de Microblizz no te despidan. O coge la linterna y encuéntralos tú.">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="estilo.css?v=0.1.0">
+</head>
+<body>
+<canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
+
+<!-- durante la partida: marcador, avisos y botones -->
+<div id="hud" hidden>
+  <div id="arriba">
+    <div class="chip rol" id="chip-rol"><i data-icono="pincel"></i><b></b></div>
+    <div id="marcador"><span id="fase-txt"></span><b id="reloj" class="ol">0:45</b></div>
+    <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+  </div>
+  <div id="estado">
+    <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
+    <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>
+    <div class="chip" id="e-balas" data-tr-title title="Cartas de despido: fallar gasta una, acertar la devuelve"><span data-tr>CARTAS</span><span id="e-balas-n"></span></div>
+    <div class="chip" id="e-quedan"><span data-tr>COLADOS</span><b id="e-quedan-n">5</b></div>
+  </div>
+  <div id="avisos" aria-live="polite"></div>
+  <div id="cartel" hidden><b class="ol-big" id="cartel-t"></b><span id="cartel-s"></span></div>
+  <div id="pista" hidden></div>
+  <div id="acciones">
+    <button type="button" class="accion listo" id="b-listo" hidden><b data-tr>¡LISTO!</b><small data-tr>Que salgan ya</small></button>
+    <button type="button" class="accion silbar" id="b-silbar" hidden><i data-icono="silbato"></i><b data-tr>SILBAR</b><kbd>Q</kbd></button>
+    <button type="button" class="accion congelar" id="b-congelar"><i data-icono="hielo"></i><b id="b-congelar-t"></b><kbd data-tr>Espacio</kbd></button>
+    <button type="button" class="accion pintar" id="b-pintar"><i data-icono="pincel"></i><b data-tr>PINTAR</b><kbd>F</kbd></button>
+  </div>
+</div>
+<div id="peligro"></div>
+
+<!-- el taller: las herramientas para pintarse -->
+<div id="taller" hidden>
+  <div class="t-medidor"><span data-tr>CAMUFLAJE</span><b id="t-camo">0 %</b><i class="barra"><i id="t-barra"></i></i></div>
+  <p class="t-ayuda" data-tr>Toca el suelo para coger su color y pinta tu cuerpo con el dedo.</p>
+  <div class="t-herr">
+    <button type="button" id="t-gota" data-tr-title title="Cuentagotas: coge el color que toques (I)"><i data-icono="gota"></i><small data-tr>Color</small></button>
+    <button type="button" class="t-radio" data-radio="0" data-tr-title title="Pincel fino (1)"><i class="pto p0"></i><small data-tr>Fino</small></button>
+    <button type="button" class="t-radio" data-radio="1" data-tr-title title="Pincel medio (2)"><i class="pto p1"></i><small data-tr>Medio</small></button>
+    <button type="button" class="t-radio" data-radio="2" data-tr-title title="Pincel gordo (3)"><i class="pto p2"></i><small data-tr>Gordo</small></button>
+    <button type="button" id="t-cubo" data-tr-title title="Rellenar todo el cuerpo con el color (R)"><i data-icono="cubo"></i><small data-tr>Rellenar</small></button>
+    <button type="button" id="t-deshacer" data-tr-title title="Deshacer (Z)"><i data-icono="deshacer"></i><small data-tr>Deshacer</small></button>
+    <button type="button" id="t-calco" data-tr-title title="Calco: ver el suelo a través de tu cuerpo (C)"><i data-icono="ojo"></i><small data-tr>Calco</small></button>
+  </div>
+  <div class="t-colores"><i id="t-color"></i><div id="t-recientes"></div><button type="button" class="boton" id="t-listo" data-tr>LISTO</button></div>
+</div>
+
+<!-- título -->
+<div class="pantalla" id="p-titulo" hidden>
+  <div class="titulo-caja">
+    <h1 class="logo" aria-label="Fans of Rouflage"><span class="ol">FANS OF</span><b aria-hidden="true"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b></h1>
+    <p class="lema" data-tr>El escondite con pintura</p>
+    <div class="papeles">
+      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
+      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
+    </div>
+    <div class="fila-botones">
+      <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
+      <button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
+      <button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
+      <button type="button" class="boton peq" id="b-idioma">English</button>
+      <a class="boton peq" href="../../#biblioteca" data-tr>Biblioteca</a>
+    </div>
+    <p class="nota" data-tr>Prototipo de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
+  </div>
+</div>
+
+<!-- cómo se juega -->
+<div class="pantalla" id="p-ayuda" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>CÓMO SE JUEGA</h2>
+    <div class="pasos">
+      <h3 class="ol"><i data-icono="pincel"></i><span data-tr>De camaleón</span></h3>
+      <ol>
+        <li data-tr-html>Tienes <b>45 segundos</b>. Busca un sitio: un suelo con dibujo, una pared, detrás de una planta…</li>
+        <li data-tr-html>Toca <b>PINTAR</b>. Toca el suelo para coger su color y pinta tu cuerpo. Con <b>Calco</b> ves el suelo a través de ti.</li>
+        <li data-tr-html>Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.</li>
+        <li data-tr-html>Aguanta hasta que acabe el turno. Cada cierto tiempo <b>silbarás</b> sin querer y los becarios irán a mirar.</li>
+      </ol>
+      <h3 class="ol azul"><i data-icono="diana"></i><span data-tr>De cazador</span></h3>
+      <ol>
+        <li data-tr-html>Hay <b>5 colados</b> pintados por la estación. Busca manchas raras: dibujos torcidos, colores que no casan.</li>
+        <li data-tr-html><b>Toca</b> donde creas que hay uno para despedirlo. Tiene que estar cerca y sin muros en medio.</li>
+        <li data-tr-html>Tienes <b>5 cartas de despido</b>. Fallar gasta una y te deja medio a oscuras; acertar te la devuelve.</li>
+        <li data-tr-html>Los <b>silbidos</b> te dicen por dónde andan. Si alumbras a uno un buen rato, se pone nervioso y tiembla.</li>
+      </ol>
+    </div>
+    <button type="button" class="boton" id="b-ayuda-ok" data-tr>ENTENDIDO</button>
+  </div>
+</div>
+
+<!-- pausa -->
+<div class="pantalla" id="p-pausa" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>PAUSA</h2>
+    <div class="columna">
+      <button type="button" class="boton" id="b-seguir" data-tr>SEGUIR</button>
+      <button type="button" class="boton gris" id="b-reiniciar" data-tr>Empezar de nuevo</button>
+      <button type="button" class="boton gris" id="b-ayuda2" data-tr>Cómo se juega</button>
+      <div class="fila-botones">
+        <button type="button" class="boton peq cuadrado" id="b-sonido2" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
+        <button type="button" class="boton peq cuadrado" id="b-musica2" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
+        <button type="button" class="boton peq" id="b-salir" data-tr>Salir al menú</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- final -->
+<div class="pantalla" id="p-fin" hidden>
+  <div class="caja fin">
+    <div class="columna">
+      <h2 class="ol" id="fin-titulo"></h2>
+      <p class="sub" id="fin-sub"></p>
+      <div class="estrellas" id="fin-estrellas"></div>
+      <canvas id="fin-mapa" width="560" height="400" data-tr-aria aria-label="Dónde estaba cada uno"></canvas>
+      <div class="leyenda" id="fin-leyenda"></div>
+    </div>
+    <div class="columna">
+      <div class="filas" id="fin-filas"></div>
+      <div class="fila-botones">
+        <button type="button" class="boton" id="b-otra" data-tr>OTRA VEZ</button>
+        <button type="button" class="boton gris" id="b-cambia"></button>
+        <button type="button" class="boton peq" id="b-menu" data-tr>Menú</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="carga">…</div>
+<script>
+// si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
+</script>
+<!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
+<script src="../../core/js/sistema/sonido.js?v=0.1.0"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.0"></script>
+<script src="js/textos.js?v=0.1.0"></script>
+<script src="js/util.js?v=0.1.0"></script>
+<script src="js/audio.js?v=0.1.0"></script>
+<script src="js/mapa-datos.js?v=0.1.0"></script>
+<script src="js/suelos.js?v=0.1.0"></script>
+<script src="js/paredes.js?v=0.1.0"></script>
+<script src="js/muebles.js?v=0.1.0"></script>
+<script src="js/alubia.js?v=0.1.0"></script>
+<script src="js/mapa.js?v=0.1.0"></script>
+<script src="js/pintura.js?v=0.1.0"></script>
+<script src="js/entes.js?v=0.1.0"></script>
+<script src="js/efectos.js?v=0.1.0"></script>
+<script src="js/bot-cazador.js?v=0.1.0"></script>
+<script src="js/bot-camaleon.js?v=0.1.0"></script>
+<script src="js/luz.js?v=0.1.0"></script>
+<script src="js/dibujo.js?v=0.1.0"></script>
+<script src="js/taller.js?v=0.1.0"></script>
+<script src="js/controles.js?v=0.1.0"></script>
+<script src="js/partida.js?v=0.1.0"></script>
+<script src="js/interfaz.js?v=0.1.0"></script>
+<script src="js/principal.js?v=0.1.0"></script>
+</body>
+</html>

@@ -44,6 +44,10 @@ const CHAT_FRASES = {
   pase: ['NO LO COMPRES', 'cómpralo, confía', 'pay to win', 'yo lo compré y ahora vivo en La Madriguera', 'la cuota es para siempre, chat'],
   cuota: ['la cuota del pase ya cobra', 'te lo dije', 'Premium = menos vida. Qué gran trato'],
   monedas: ['¡monedas!', 'cógelas todas', 'el camión de Microblizz pierde más que gana', 'ka-ching'],
+  capitulo: ['¡CAPÍTULO SUPERADO!', 'GG, a por el siguiente', 'yo me voy a cenar, ahora vuelvo', 'esto se pone serio', 'clip del capítulo'],
+  raid: ['¡RAID!', 'hola, venimos de la raid', 'qué directo más bonito', 'os dejamos monedas', 'RAID RAID RAID'],
+  misterioso: ['ese es FallenHero, ¿no?', 'cómprale algo, pobrecito', 'a mí me vendió una espada de cartón', 'precios de héroe caído'],
+  bug: ['¿qué ha pasado con la pantalla?', 'BUG BUG BUG', 'Microblizz: «es una característica»', 'mi pantalla está bien, ¿no?', 'reportado (mentira)'],
   encuentro: ['¿qué hará?', 'elige la primera', 'la segunda, siempre la segunda', 'esto es una trampa'],
 };
 // lo que se comenta en cada mundo mientras se camina

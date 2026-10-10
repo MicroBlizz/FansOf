@@ -41,17 +41,22 @@ const ENEMIGOS = {
 
 const MUNDOS = [
   { n: 'Oficinas de Microblizz', corto: 'Oficinas', dias: 40, fuerza: 1, enemigos: ['becario', 'starbot', 'caja'], mini: 'becariomes', jefe: 'jefe', fondo: 'bosque', musica: 'viaje', color: '#ff7a1a',
+    capitulos: ['La salida', 'El polígono', 'Recursos Humanos', 'El despacho del jefe'],
     intro: 'Microblizz ha comprado el bosque. CrazyBunny sale de La Madriguera con su zanahoria.' },
   { n: 'Cementerio de juegos', corto: 'Cementerio', dias: 40, fuerza: 1.5, enemigos: ['esqueleto', 'zombi', 'fantasma'], mini: 'cosido', jefe: 'necrolord', fondo: 'cementerio', musica: 'cementerio', color: '#5ef2d0',
+    capitulos: ['Las afueras', 'Las lápidas', 'Las criptas', 'El mausoleo'],
     intro: 'Aquí entierra Microblizz los juegos que cierra. Los No-Muertos trabajan para ellos… sin cobrar.' },
   { n: 'Torre de Microblizz', corto: 'Torre', dias: 40, fuerza: 1.9, enemigos: ['abogado', 'fallen', 'soporte'], mini: 'parche', jefe: 'ceo', fondo: 'ciudad', musica: 'torre', color: '#ff5a6a',
+    capitulos: ['La calle', 'El vestíbulo', 'Las plantas de arriba', 'La azotea'],
     intro: 'La sede de la empresa. En el último piso, el CEO cuenta sus millones mientras decide qué juego cerrar.' },
 ];
 
 // qué puede tocar cada día (el 1 siempre es combate; a mitad, el mini jefe; el último, el jefe) y los días fijos
-const PESOS_DIA = { combate: 44, elite: 8, encuentro: 15, monedas: 7, ruleta: 5, gashapon: 5, cofre: 4, tienda: 3, hoguera: 3 };
+const PESOS_DIA = { combate: 44, elite: 8, encuentro: 15, monedas: 6, ruleta: 5, gashapon: 5, cofre: 4, tienda: 3, hoguera: 3, raid: 3, misterioso: 3, bug: 3 };
+const DIAS_CAPITULO = 10;   // cada mundo son 4 capítulos de 10 días
 const DIAS_FIJOS = { 6: 'tienda', 10: 'cofre', 14: 'pase', 18: 'hoguera', 25: 'tienda', 29: 'cofre', 33: 'gashapon', 38: 'hoguera' };
 const TITULO_DIA = {
   combate: 'En marcha', elite: '¡Élite!', mini: 'Mini jefe', jefe: '¡El jefe!', encuentro: 'Un encuentro', monedas: 'Monedas por el camino',
   ruleta: 'La ruleta', gashapon: 'El gashapón', cofre: 'Un cofre', tienda: 'La tienda de Lola', hoguera: 'La hoguera de la huelga', pase: 'El Pase Premium',
+  raid: '¡Raid en el directo!', misterioso: 'Un comerciante misterioso', bug: '¡Un bug de Microblizz!',
 };

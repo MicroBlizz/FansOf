@@ -105,7 +105,8 @@
   <section class="game" id="g-roguelite" style="--wc: #9a2f86">
     <h2 class="ol">FANS OF ROGUELITE</h2>
     <p>Roguelite en pixel art dibujado a mano, emitido «en directo» con su chat. CrazyBunny cruza 3 mundos de 40 días (Oficinas, Cementerio de juegos y Torre de Microblizz): habilidades, objetos, tienda de Lola, ruleta, gashapón, jefes y mejoras para siempre en La Madriguera.</p>
-    <div class="row"><a class="play ol" href="demos/roguelite/">JUGAR</a></div>
+    <div class="row"><a class="play ol" href="demos/roguelite/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
   <section class="game" id="g-tactics-advance" style="--wc: #2f4fae">
     <h2 class="ol">FANS OF TACTICS ADVANCE</h2>
@@ -149,9 +150,11 @@ function show(id, ver, entries) {
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
-for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/'], ['g-tacticas', 'games/tacticas/']]) {
+// (las demos sin nucleo.js, como Fans of Roguelite, toman la versión de su primer informe)
+for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/'], ['g-tacticas', 'games/tacticas/'], ['g-roguelite', 'demos/roguelite/']]) {
   Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')]).then(([page, news]) => {
-    show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1], grab(news, 'NEWS', '];') || []);
+    const entries = grab(news, 'NEWS', '];') || [];
+    show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1] || (entries[0] && entries[0].v), entries);
   }).catch(fail(id));
 }
 </script>

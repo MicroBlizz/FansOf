@@ -90,5 +90,7 @@ const CONSEJOS = {
   gashapon: 'El gashapón: gratis te da un objeto cualquiera; pagando, uno raro o mejor. Como en los juegos de móvil, pero aquí te lo cuento antes.',
   hoguera: 'La hoguera de los huelguistas. Descansa si vas mal de vida, o afila la zanahoria para subir de nivel una habilidad.',
   pase: 'Cuidado con el Pase Premium: da una habilidad legendaria, pero cada día te cobra vida máxima. Para siempre. Como los de verdad.',
+  capitulo: 'Fin de capítulo: tu partida queda guardada. Si tienes que irte, descansa en La Madriguera y luego pulsa Continuar.',
+  misterioso: 'Ese es FallenHero, que vende lo que le queda de cuando era protagonista. Caro, pero épico o mejor.',
   elite: 'Ese enemigo brilla: es de élite. Pega más y aguanta más, pero siempre suelta un objeto.',
 };

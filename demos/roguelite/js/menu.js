@@ -26,6 +26,7 @@ function pintaMadriguera(ctx, x) {
 }
 function pintaMenuEscena(ctx) {
   const W = PAN.W;
+  if (FX.some(e => e.tipo === 'bocadillo')) return;   // si el conejo está explicando algo, el título deja ver el bocadillo
   escribe(ctx, tr('Fans of'), W / 2, ESC.Y + 10, { esc: 2, alin: 'centro' });
   ondula(ctx, tr('Roguelite'), W / 2, ESC.Y + 28, 3, COL.oro, COL.naranja);
 }
@@ -106,7 +107,9 @@ function panelMejoras(ctx, W, y0) {
     escribe(ctx, tr(m.n), 33, yy + 3, { c: lleno ? COL.oro : COL.tinta });
     escribe(ctx, nv + '/' + m.max, W - 10, yy + 3, { alin: 'der', c: lleno ? COL.oro : COL.tenue });
     const bw = 40, bx = W - 10 - bw;
-    envuelve(formatea(tr(m.d), { v: m.v }), bx - 37).slice(0, 3).forEach((l, j) => escribe(ctx, l, 33, yy + 13 + j * 8, { c: COL.tenue, borde: null }));
+    const dm = formatea(tr(m.d), { v: m.v }), ln = envuelve(dm, bx - 37);
+    if (ln.length <= 3) ln.forEach((l, j) => escribe(ctx, l, 33, yy + 13 + j * 8, { c: COL.tenue, borde: null }));
+    else { const lm = envuelveMini(dm, bx - 37); if (lm.length > 3) corte(m.n); lm.forEach((l, j) => escribeMini(ctx, l, 33, yy + 14 + j * 7, COL.tenue)); }
     if (lleno) escribe(ctx, tr('MÁX'), bx + bw / 2, yy + 20, { alin: 'centro', c: COL.oro });
     else {
       marco(ctx, bx, yy + 14, bw, 16, puede ? COL.verde : COL.gris, puede ? COL.verdeO : COL.grisO);
@@ -131,7 +134,6 @@ function panelColeccion(ctx, W, y0) {
   y += 20;
   const vistos = GUARDA.vistos[MENU.tab], detalle = 32;
   const lista = MENU.tab === 'h' ? Object.keys(HABILIDADES) : MENU.tab === 'o' ? Object.keys(OBJETOS) : Object.keys(ENEMIGOS);
-  escribe(ctx, formatea(tr('{n} de {t}'), { n: lista.filter(id => vistos.includes(id)).length, t: lista.length }), W - 8, PAN.H - 20, { alin: 'der', c: COL.tenue });
   const alto = PAN.H - 30 - detalle - y;
   if (MENU.tab === 'e') {
     const filas = Math.max(1, Math.floor(alto / LINEA)), caben = filas * 2, desde = paginas(ctx, W, lista.length, caben), cw = Math.floor((W - 12) / 2);
@@ -159,27 +161,35 @@ function panelColeccion(ctx, W, y0) {
     else if (MENU.tab === 'o') { const o = OBJETOS[id]; n = tr(o.n) + ' · ' + tr(NOMBRE_HUECO[o.tipo]); col = RAREZA[o.rar][1]; d = descObjeto(id); }
     else { const e = ENEMIGOS[id]; n = tr(e.n); col = COL.oro; d = tr(e.llega); }
     escribe(ctx, n, 8, yd, { c: col });
-    envuelve(d, W - 16).slice(0, 2).forEach((l, j) => escribe(ctx, l, 8, yd + 10 + j * 9, { c: COL.tenue, borde: null }));
-  } else escribe(ctx, tr('Toca algo para verlo.'), 8, yd, { c: '#6a4a9a' });
+    const ln = envuelve(d, W - 16);
+    if (ln.length <= 2) ln.forEach((l, j) => escribe(ctx, l, 8, yd + 10 + j * 9, { c: COL.tenue, borde: null }));
+    else { const lm = envuelveMini(d, W - 16); if (lm.length > 3) corte(n); lm.forEach((l, j) => escribeMini(ctx, l, 8, yd + 10 + j * 6, COL.tenue)); }
+  } else {   // sin nada elegido: cuántos has visto (abajo no cabe: ahí van las flechas de las páginas)
+    escribe(ctx, tr('Toca algo para verlo.'), 8, yd, { c: '#6a4a9a' });
+    escribe(ctx, formatea(tr('{n} de {t}'), { n: lista.filter(id => vistos.includes(id)).length, t: lista.length }), 8, yd + 11, { c: COL.tenue });
+  }
   volver(ctx, W, PAN.H - 26);
 }
 
 function panelAjustes(ctx, W, y0) {
   let y = titulo(ctx, W, y0 + 7, tr('Opciones'));
   const fila = (txt, valor, f, col = COL.trayHi, colO = OL) => {
-    const dy = botonPx(ctx, 6, y, W - 12, 20, col, colO, f);
-    escribe(ctx, txt, 12, y + 5 + dy); if (valor) escribe(ctx, valor, W - 12, y + 5 + dy, { alin: 'der', c: COL.oro });
-    y += 23;
+    const dy = botonPx(ctx, 6, y, W - 12, 18, col, colO, f);
+    escribe(ctx, txt, 12, y + 4 + dy); if (valor) escribe(ctx, valor, W - 12, y + 4 + dy, { alin: 'der', c: COL.oro });
+    y += 20;
   };
   fila(tr('Sonido'), tr(SON.on ? 'Sí' : 'No'), () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
   fila(tr('Velocidad'), RELOJ.vel > 1 ? 'x2' : 'x1', () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
   fila(tr('Chat del directo'), tr(GUARDA.chatOff ? 'No' : 'Sí'), () => { GUARDA.chatOff = !GUARDA.chatOff; guarda(); sonido('toque'); });
-  fila(tr(INSTALAR.yaInstalada() ? 'Ya está instalado' : 'Instalar en el móvil'), '', () => { sonido('toque'); const t = INSTALAR.instala(); if (t) MENU.aviso = { txt: t, t0: RELOJ.t }; });
+  // cómo instalarlo te lo explica el conejo, en un bocadillo (en el panel no cabe entero)
+  fila(tr(INSTALAR.yaInstalada() ? 'Ya está instalado' : 'Instalar en el móvil'), '', () => { sonido('toque'); const t = INSTALAR.instala(); if (t) { bocadillo(CONEJO, t, 9); sonido('voz'); } });
   const armado = performance.now() - MENU.borrar < 3000;
   fila(tr(armado ? '¿Seguro? Toca otra vez' : 'Borrar progreso'), '', () => {
     if (performance.now() - MENU.borrar < 3000) { borraTodo(); MENU.borrar = 0; sonido('boom'); tiembla(4); } else { MENU.borrar = performance.now(); sonido('alerta'); }
   }, armado ? '#c43a4a' : COL.trayHi, armado ? '#6a1020' : OL);
-  if (y + 23 < PAN.H - 26) fila(tr('Biblioteca de juegos'), '', () => { location.href = '../../#biblioteca'; });
-  if (MENU.aviso && RELOJ.t - MENU.aviso.t0 < 10) { let ya = y + 2; for (const l of envuelve(tr(MENU.aviso.txt), W - 16)) { if (ya > PAN.H - 38) break; escribe(ctx, l, 8, ya, { c: COL.oro }); ya += LINEA; } }
+  // abajo: volver y la biblioteca, en la misma fila
   volver(ctx, W, PAN.H - 26);
+  botonTxt(ctx, 74, PAN.H - 26, W - 80, 20, tr('Más juegos'), COL.azul, COL.azulO, () => { location.href = '../../#biblioteca'; });
 }
+// lo que pide cada página del menú: si no cabe, se recorta un poco el suelo de la escena
+function altoMenu() { return PANEL.modo === 'ajustes' ? 22 + 5 * 20 + 30 : 0; }

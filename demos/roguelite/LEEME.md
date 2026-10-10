@@ -41,6 +41,7 @@ mejoras y el 3, bastantes.
 | `efectos.js` | Polvo, chispas, golpes, números, monedas, bocadillos, láser, rayos y bolas |
 | `props.js` | Castor, bolsa, máquina, gashapón, ruleta, hoguera, cofre, La Madriguera |
 | `iconos.js / iconos-2.js` | Iconos de habilidades, objetos, mejoras y marcador |
+| `mapa.js` | El mapa del camino, arriba del todo: los 10 días del capítulo con su dibujito y el conejo en el de hoy |
 | `sonido.js` | Efectos y músicas de 8 bits (menú, 3 mundos y jefe) |
 | `datos.js` | El conejo y las 23 habilidades |
 | `datos-mundos.js` | Enemigos, mundos y qué toca cada día |

@@ -8,6 +8,13 @@ const COL = { fondo: '#150b21', tray: '#26143c', trayHi: '#3e2363', tinta: '#fff
 const PANEL = { modo: 'inicio', titulo: '', texto: '', opciones: [], habs: [], cofre: false, t0: 0, elegida: -1 };
 const LOG = [];
 let BOTONES = [], MONEDERO = [170, 6], PULSA = null, SALIR = -1e9;
+// las letras para explicar: la normal y la pequeña (si con la normal no cabe). Nada se corta nunca
+const LETRAS = {
+  n: { linea: LINEA, env: (s, w) => (s ? envuelve(s, w) : []), pinta: (ctx, s, x, y, c, borde) => escribe(ctx, s, x, y, { c, borde }) },
+  m: { linea: 7, env: (s, w) => envuelveMini(s, w), pinta: (ctx, s, x, y, c) => escribeMini(ctx, s, x, y + 1, c) },
+};
+const CORTES = [];   // para las pruebas: lo que no ha cabido ni con la letra pequeña (tiene que quedarse vacío)
+function corte(que) { const q = String(tr(que || '?')).slice(0, 50); if (!CORTES.includes(q) && CORTES.length < 40) CORTES.push(q); }
 const PANEL_Y = ESC.Y + ESC.H;   // (si hay barra, todo lo de debajo va bajado BARRA.h)
 
 const formatea = (s, v) => v ? s.replace(/\{(\w+)\}/g, (m, k) => (v[k] !== undefined ? v[k] : m)) : s;
@@ -122,10 +129,11 @@ function pintaEscenaUI(ctx) {
   const c = VIAJE.cartel;
   if (c) {
     const t = RELOJ.t - c.t0;
-    if (t > 2.1) VIAJE.cartel = null;
+    const dura = c.cap ? 3.6 : 3.0;
+    if (t > dura) VIAJE.cartel = null;
     else {
-      const entra_ = sale(Math.min(1, t / 0.3)), fuera = t > 1.75 ? entra((t - 1.75) / 0.35) : 0;
-      const dx = Math.round((1 - entra_) * -W + fuera * W), y = ESC.Y + 34, [c1, c2, c3] = c.jefe ? ['#801a2a', '#c43a4a', '#4a0a14'] : ['#4b2580', '#7a2e93', '#2a1050'];
+      const entra_ = sale(Math.min(1, t / 0.3)), fuera = t > dura - 0.35 ? entra((t - dura + 0.35) / 0.35) : 0;
+      const dx = Math.round((1 - entra_) * -W + fuera * W), y = ESC.Y + Math.max(34, ESC.corte + 14), [c1, c2, c3] = c.jefe ? ['#801a2a', '#c43a4a', '#4a0a14'] : ['#4b2580', '#7a2e93', '#2a1050'];
       ctx.fillStyle = OL; ctx.fillRect(dx, y - 2, W, 36);
       ctx.fillStyle = c1; ctx.fillRect(dx, y, W, 32);
       ctx.fillStyle = c2; ctx.fillRect(dx, y, W, 2);
@@ -141,10 +149,10 @@ function pintaEscenaUI(ctx) {
   if (VIAJE.fundido > 0) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, Math.round(VIAJE.fundido * 16), COL.fondo);
   if (DESTELLO) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, DESTELLO.t > DESTELLO.dur / 2 ? 10 : 5, DESTELLO.color);
   if (VIAJE.glitch > RELOJ.t) pintaGlitch(ctx);
-  if (!BARRA.h) pintaControles(ctx, ESC.Y + 4, ESC.Y + 24, null);
+  if (!BARRA.h) pintaControles(ctx, ESC.Y + 4, null);
 }
 // la barra del directo: casa, EN DIRECTO, velocidad y sonido en la fila y0; el mapa del camino en ym; el chat en yc
-function pintaControles(ctx, y0, ym, yc) {
+function pintaControles(ctx, y0, yc) {
   const W = PAN.W;
   if (VIAJE.modo === 'juego') {
     const armado = performance.now() - SALIR < 2500;
@@ -155,8 +163,7 @@ function pintaControles(ctx, y0, ym, yc) {
     pintaSpr(ctx, SPR.icono.casa, 11, y0 + 5 + dy);
     if (armado) escribe(ctx, tr('¿Salir? Toca otra vez'), 22, y0 + 3, { c: '#ffb0b8' });
     else pintaDirecto(ctx, 22, y0 + 1);
-    if (VIAJE.plan) pintaMapa(ctx, ym);
-    if (yc) pintaChatEscena(ctx, yc);
+    if (yc) pintaChatEscena(ctx, yc, BARRA.lineas);
   }
   if (VIAJE.modo !== 'menu') {
     const dy = botonPx(ctx, W - 40, y0, 20, 13, RELOJ.vel > 1 ? COL.naranja : COL.trayHi, RELOJ.vel > 1 ? COL.naranjaO : OL, () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
@@ -166,34 +173,15 @@ function pintaControles(ctx, y0, ym, yc) {
   pintaSpr(ctx, SON.on ? SPR.icono.sonido : SPR.icono.mudo, W - 11, y0 + 5 + dy);
 }
 // en pantallas altas, todo eso va en su propia barra entre la vida y la escena, para que la escena se vea entera
-const BARRA = { h: 0, chat: false };
+const BARRA = { h: 0, chat: false, lineas: 2 };
 function pintaBarra(ctx) {
   const W = PAN.W, y = ESC.Y;
   ctx.fillStyle = COL.fondo; ctx.fillRect(0, y, W, BARRA.h);
-  if (BARRA.chat) { ctx.fillStyle = '#1c0f2e'; ctx.fillRect(0, y + 31, W, BARRA.h - 31); }
+  if (BARRA.chat) { ctx.fillStyle = '#1c0f2e'; ctx.fillRect(0, y + 17, W, BARRA.h - 17); }
   ctx.fillStyle = OL; ctx.fillRect(0, y + BARRA.h - 1, W, 1);
-  pintaControles(ctx, y + 2, y + 25, BARRA.chat ? y + 33 : null);
+  pintaControles(ctx, y + 2, BARRA.chat ? y + 19 : null);
 }
 
-// el mapa del camino: los 40 días en una raya, con los capítulos, lo especial que viene y dónde está el conejo
-const MARCA_DIA = { jefe: ['#ff3348', 2], mini: ['#ff8a1f', 2], elite: ['#ffcb3d', 1], tienda: ['#ff7a1a', 1], cofre: ['#ffe14d', 1], hoguera: ['#e63946', 1], pase: ['#d08cff', 1], gashapon: ['#ff7aa8', 1], ruleta: ['#7be04a', 1], raid: ['#e91e3c', 1], misterioso: ['#5aaeff', 1], bug: ['#33e0ff', 1] };
-function pintaMapa(ctx, y) {
-  const W = PAN.W, n = VIAJE.plan.length, x0 = 8, x1 = W - 9, paso = (x1 - x0) / (n - 1), xd = d => Math.round(x0 + (d - 1) * paso);
-  ctx.fillStyle = OL; ctx.fillRect(x0 - 2, y - 2, x1 - x0 + 5, 5);
-  ctx.fillStyle = '#3e2363'; ctx.fillRect(x0 - 1, y - 1, x1 - x0 + 3, 3);
-  ctx.fillStyle = COL.oro; ctx.fillRect(x0 - 1, y, xd(VIAJE.dia) - x0 + 1, 1);
-  for (let k = 1; k < n / DIAS_CAPITULO; k++) { const x = Math.round((xd(k * DIAS_CAPITULO) + xd(k * DIAS_CAPITULO + 1)) / 2); ctx.fillStyle = OL; ctx.fillRect(x - 1, y - 4, 3, 9); ctx.fillStyle = '#cdb9ea'; ctx.fillRect(x, y - 3, 1, 7); }
-  for (let d = 1; d <= n; d++) {
-    const m = MARCA_DIA[VIAJE.plan[d - 1]]; if (!m) continue;
-    const [col, r] = m, x = xd(d), pasado = d < VIAJE.dia;
-    ctx.fillStyle = OL; ctx.fillRect(x - r - 1, y - r - 1, r * 2 + 3, r * 2 + 3);
-    ctx.fillStyle = pasado ? '#4a3a5e' : col; ctx.fillRect(x - r, y - r, r * 2 + 1, r * 2 + 1);
-  }
-  const x = xd(VIAJE.dia), sube = Math.sin(RELOJ.t * 6) > 0 ? 1 : 0;
-  ctx.fillStyle = OL; ctx.fillRect(x - 3, y - 9 - sube, 7, 6); ctx.fillRect(x - 2, y - 12 - sube, 1, 4); ctx.fillRect(x + 2, y - 12 - sube, 1, 4);
-  ctx.fillStyle = '#fff6ea'; ctx.fillRect(x - 2, y - 8 - sube, 5, 4); ctx.fillStyle = '#ffc2dc'; ctx.fillRect(x - 2, y - 11 - sube, 1, 3); ctx.fillRect(x + 2, y - 11 - sube, 1, 3);
-  ctx.fillStyle = '#8a2bff'; ctx.fillRect(x + 1, y - 7 - sube, 1, 1);
-}
 // el bug de Microblizz: franjas de colores que tiemblan sobre la escena
 function pintaGlitch(ctx) {
   const W = PAN.W;
@@ -213,6 +201,7 @@ function pintaPanel(ctx) {
   const f = { opciones: panelElige, habilidad: panelHabs, objeto: panelObj, fin: panelFin, log: panelLog }[PANEL.modo];
   if (!f) return pintaPanelMenu(ctx, W, y0, h);
   const yFin = f(ctx, W, y0, h);
+  PANEL.yFin = yFin; PANEL.hueco = PAN.H;   // hasta dónde llega lo pintado y el sitio que había (para las pruebas)
 }
 
 // tus objetos y habilidades en fila (tocar uno lo explica abajo); devuelve el alto usado
@@ -245,29 +234,46 @@ function panelLog(ctx, W, y0) {
 
 // elegir entre opciones (encuentros, tienda, ruleta…); o.precio pinta las monedas y o.no la apaga
 function panelElige(ctx, W, y0) {
-  const t = RELOJ.t - PANEL.t0;
+  const t = RELOJ.t - PANEL.t0, L = medidaElige(W);
   let y = y0 + 8;
   escribe(ctx, tr(PANEL.titulo), W / 2, y, { alin: 'centro', c: COL.oro }); y += LINEA + 3;
-  const cajas = PANEL.opciones.map(o => envuelve(tr(o.d), W - 30));
-  let lin = 3;
-  const alto = () => cajas.reduce((s, ls) => s + 16 + Math.min(lin, ls.length) * LINEA + 3, 0) + 4;
-  while (lin > 1 && alto() > PAN.H - 8 - y - LINEA) lin--;
-  const texto = envuelve(tr(PANEL.texto), W - 16), sitio = Math.floor((PAN.H - 6 - alto() - y) / LINEA);
-  for (const l of texto.slice(0, Math.max(1, sitio))) { escribe(ctx, l, 8, y, { c: COL.tinta }); y += LINEA; }
+  for (const l of L.texto) { L.ft.pinta(ctx, l, 8, y, COL.tinta); y += L.ft.linea; }
   y += 3;
   PANEL.opciones.forEach((o, i) => {
-    const ls = cajas[i].slice(0, lin), bh = 16 + ls.length * LINEA, k = sale(Math.max(0, Math.min(1, (t - i * 0.1) / 0.28)));
+    const bh = L.altos[i], k = sale(Math.max(0, Math.min(1, (t - i * 0.1) / 0.28)));
     const x = 6 + Math.round((1 - k) * W), base = [[COL.naranja, COL.naranjaO], [COL.azul, COL.azulO], [COL.verde, COL.verdeO], [COL.gris, COL.grisO]][i % 4];
     const [col, colO] = o.no ? [COL.gris, COL.grisO] : base;
     const elegida = PANEL.elegida === i, otra = PANEL.elegida >= 0 && !elegida;
     const dy = botonPx(ctx, x, y, W - 12, bh, otra ? COL.trayHi : elegida ? mezcla(col, '#ffffff', 0.3) : col, colO, () => escoge(i));
-    escribe(ctx, tr(o.n), x + 7, y + 4 + dy, { c: o.no ? '#9a8ab0' : COL.tinta });
+    L.nombres[i].forEach((l, j) => escribe(ctx, l, x + 7, y + 4 + j * LINEA + dy, { c: o.no ? '#9a8ab0' : COL.tinta }));
     if (o.precio) monedasEn(ctx, o.precio, x + W - 20, y + 4 + dy, o.no ? '#ff8a94' : COL.oro);
     else escribe(ctx, String(i + 1), x + W - 20, y + 4 + dy, { c: mezcla(col, '#ffffff', 0.5), alin: 'der' });
-    ls.forEach((l, j) => escribe(ctx, l, x + 7, y + 13 + j * LINEA + dy, { c: o.no ? '#b8a8c8' : '#ffe8d8', borde: mezcla(colO, OL, 0.4) }));
+    const yd = y + 13 + (L.nombres[i].length - 1) * LINEA;
+    L.cajas[i].forEach((l, j) => L.fd.pinta(ctx, l, x + 7, yd + j * L.fd.linea + dy, o.no ? '#b8a8c8' : '#ffe8d8', mezcla(colO, OL, 0.4)));
     y += bh + 3;
   });
   return y;
+}
+// cómo se reparte: todo con la letra normal si cabe; si no, el texto de arriba y luego las explicaciones en pequeño.
+// «ideal» = lo que ocuparía con la letra normal (para pedir sitio a la escena)
+function medidaElige(W, ideal) {
+  const nombres = PANEL.opciones.map(o => envuelve(tr(o.n), W - 30 - (o.precio ? anchoTexto(String(o.precio)) + 14 : 10)));
+  const prueba = (ft, fd) => {
+    const texto = ft.env(tr(PANEL.texto), W - 16), cajas = PANEL.opciones.map(o => fd.env(tr(o.d || ''), W - 30));
+    const altos = cajas.map((ls, i) => 13 + (nombres[i].length - 1) * LINEA + ls.length * fd.linea + (ls.length ? 3 : 1));
+    return { ft, fd, texto, cajas, nombres, altos, alto: 8 + LINEA + 3 + texto.length * ft.linea + 3 + altos.reduce((s, h) => s + h + 3, 0) + 3 };
+  };
+  const N = LETRAS.n, P = LETRAS.m;
+  if (ideal) return prueba(N, N);
+  return eligeMedida([() => prueba(N, N), () => prueba(P, N), () => prueba(P, P)], PANEL.titulo);
+}
+// la primera manera de repartir que cabe en el panel (y, si ninguna, la última y se apunta para las pruebas)
+function eligeMedida(maneras, que) {
+  const sitio = PAN.H - PANEL_Y;
+  let m;
+  for (const f of maneras) { m = f(); if (m.alto <= sitio) return m; }
+  corte(que);
+  return m;
 }
 
 // un toque en la pantalla (x, y en píxeles del juego)

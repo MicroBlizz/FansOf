@@ -35,7 +35,7 @@ async function combate(id, elite) {
   }
   if (def.jefe) await llegaJefe(); else await llegaRival();
   bocadillo(RIVAL, def.frases[Math.floor(Math.random() * def.frases.length)], 2.2); sonido('voz');
-  await espera(1.0);
+  await espera(1.5);
   const c = COMBATE.c = {};
   for (const a of empiezaCombate(H, c)) { await accionHeroe(a); if (RIVAL.e.vida <= 0) break; }
   let nh = 0, ne = 0;
@@ -215,7 +215,7 @@ async function muereRival() {
   ponAnim(RIVAL, 'dano');
   bocadillo(RIVAL, def.muere, 1.4);
   RIVAL.parpadeo = true; sonido('caida');
-  await espera(0.9);
+  await espera(1.4);
   const [cx, cy] = centro(RIVAL);
   RIVAL.anim = 'muere';
   estallido(cx, cy, true); anillo(cx, cy, 36, '#fff3a0', 0.35); anillo(cx, cy, 56, '#ff8a1f', 0.5); humo(cx, cy, 12);

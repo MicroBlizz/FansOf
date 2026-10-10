@@ -1,5 +1,5 @@
 // Fans of Roguelite · La letra pequeña (5 de alto) para el chat del directo: ocupa la mitad que la normal y se lee igual.
-// Sin tildes encima (no caben): la Á se escribe como A; la Ñ lleva su rayita.
+// Sin tildes encima (no caben): la Á se escribe como A; la Ñ lleva su rayita. También sirve para explicaciones que no caben.
 'use strict';
 
 const MINI = {
@@ -46,10 +46,15 @@ function escribeMini(ctx, s, x, y, color) {
   ctx.drawImage(c, Math.round(x), Math.round(y));
   return c.width - 1;
 }
-// recorta un texto para que quepa en «ancho» (con «…» al final)
-function cortaMini(s, ancho) {
-  if (anchoMini(s) <= ancho) return s;
-  let t = s;
-  while (t.length > 1 && anchoMini(t + '...') > ancho) t = t.slice(0, -1);
-  return t.trimEnd() + '...';
+// parte un texto en líneas que caben en «ancho» (la primera puede ser más corta: «primera»), como envuelve()
+function envuelveMini(s, ancho, primera = ancho) {
+  const out = [];
+  let linea = '';
+  for (const pal of String(s).split(/\s+/).filter(Boolean)) {
+    const prueba = linea ? linea + ' ' + pal : pal, cabe = out.length ? ancho : primera;
+    if (anchoMini(prueba) <= cabe || !linea) linea = prueba;
+    else { out.push(linea); linea = pal; }
+  }
+  if (linea) out.push(linea);
+  return out;
 }

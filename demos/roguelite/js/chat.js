@@ -1,9 +1,11 @@
 // Fans of Roguelite · El directo: el juego se ve como un directo de Twitch. En la barra de arriba, la etiqueta EN DIRECTO
-// con los espectadores y el chat (las 2 últimas frases, con letra pequeña): los espectadores comentan lo que pasa y dan
+// con los espectadores y el chat (las últimas frases, con letra pequeña, enteras): los espectadores comentan lo que pasa y dan
 // consejos, buenos y malos. Abajo, lo que va pasando, con los consejos de Lola en dorado. El chat se apaga en Opciones.
 'use strict';
 
-const CHATS = { t: 5, cd: {}, ult: -9, recientes: [], quien: null };
+const CHATS = { t: 5, cd: {}, ult: -9, recientes: [], quien: null, cola: [], paso: 0 };
+// cada cuánto sale una frase nueva (con 1 línea, cada frase se queda sola en pantalla: necesita más)
+const pasoChat = () => BARRA.lineas > 1 ? 2.6 : 3.4;
 const chatApagado = () => !!GUARDA.chatOff;
 
 // alguien del chat dice algo de la lista «tipo» ({X} = extra)
@@ -17,15 +19,14 @@ function chatDice(tipo, extra) {
   let u = CHAT_USUARIOS[Math.floor(Math.random() * CHAT_USUARIOS.length)];
   if (u === CHATS.quien) u = CHAT_USUARIOS[(CHAT_USUARIOS.indexOf(u) + 1) % CHAT_USUARIOS.length];
   CHATS.quien = u;
-  LOG.push({ txt: tr(txt).replace(/\{X\}/g, extra || ''), quien: u, t0: RELOJ.t, fin: RELOJ.t + 9 });
-  if (LOG.length > 60) LOG.shift();
+  CHATS.cola.push({ txt: tr(txt).replace(/\{X\}/g, extra || ''), quien: u });
+  if (CHATS.cola.length > 4) CHATS.cola.shift();   // si se amontonan, lo más viejo ya no viene a cuento
   if (ESPECTA[tipo]) VIAJE.esp += Math.round(ESPECTA[tipo] * (0.6 + Math.random()) * (1 + VIAJE.mundo * 0.5));
 }
 // un comentario por algo que pasa: con su probabilidad y su pausa (y nunca dos casi a la vez)
 function chatEv(tipo, extra, prob = 1, cd = 5) {
   if (chatApagado() || VIAJE.modo !== 'juego' || Math.random() > prob) return;
   if (CHATS.cd[tipo] != null && RELOJ.t - CHATS.cd[tipo] < cd) return;
-  if (RELOJ.t - CHATS.ult < 0.8) { espera(0.9).then(() => chatEv(tipo, extra, 1, cd)).catch(() => {}); return; }
   CHATS.cd[tipo] = CHATS.ult = RELOJ.t; CHATS.t = Math.max(CHATS.t, 3.5);
   chatDice(tipo, extra);
 }
@@ -33,8 +34,7 @@ function chatEv(tipo, extra, prob = 1, cd = 5) {
 function chatRafaga(tipo, n, extra) {
   if (chatApagado()) return;
   CHATS.ult = RELOJ.t; CHATS.t = Math.max(CHATS.t, 4);
-  chatDice(tipo, extra);
-  for (let i = 1; i < n; i++) espera(0.45 + i * 0.55 + Math.random() * 0.3).then(() => chatDice(tipo, extra)).catch(() => {});
+  for (let i = 0; i < n; i++) chatDice(tipo, extra);
 }
 // Lola da el consejo la primera vez de cada cosa: una línea dorada en lo que va pasando (no para el juego)
 function consejo(k) {
@@ -46,13 +46,20 @@ function consejo(k) {
 }
 // cada fotograma: la charla de fondo y los espectadores que se ven
 function avanzaChat(dt) {
-  if (VIAJE.modo !== 'juego') return;
-  CHATS.t -= dt;
-  if (CHATS.t <= 0) { chatDice('idle'); CHATS.t = 4 + Math.random() * 5; }
+  if (VIAJE.modo === 'menu') return;
+  CHATS.t -= dt; CHATS.paso -= dt;
+  if (CHATS.t <= 0 && VIAJE.modo === 'juego') { if (!CHATS.cola.length) chatDice('idle'); CHATS.t = 4 + Math.random() * 5; }
+  if (CHATS.paso <= 0 && CHATS.cola.length) {   // sale la siguiente frase de la cola
+    const e = CHATS.cola.shift();
+    LOG.push(Object.assign(e, { t0: RELOJ.t, fin: RELOJ.t + 11 }));
+    if (LOG.length > 60) LOG.shift();
+    const n = filasChat(e).length;   // una frase larga se queda más rato
+    CHATS.paso = Math.max(pasoChat(), n > BARRA.lineas ? Math.ceil(n / BARRA.lineas) * PAGINA_CHAT + 0.8 : n > 1 ? 3.4 : 0);
+  }
   VIAJE.espVista += (VIAJE.esp - VIAJE.espVista) * Math.min(1, dt * 2);
 }
 function nuevoDirecto() {
-  Object.assign(CHATS, { t: 3, cd: {}, ult: -9, recientes: [], quien: null });
+  Object.assign(CHATS, { t: 3, cd: {}, ult: -9, recientes: [], quien: null, cola: [], paso: 0 });
   VIAJE.esp = VIAJE.espVista = Math.round(60 + VIAJE.mundo * 140 + Math.random() * 40 + Math.min(200, GUARDA.partidas * 4));
 }
 const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, IDIOMA_RL === 'es' ? '.' : ',');
@@ -88,16 +95,35 @@ function pintaChat(ctx, W, ya, yb) {
     y += LINEA;
   }
 }
-// el chat del directo, en su franja de la barra de arriba, con la letra pequeña: las 2 últimas frases
+// el chat del directo, en su franja de la barra de arriba, con la letra pequeña: las últimas frases (2 filas, o 1 en
+// pantallas bajas). Nada se corta: una frase larga ocupa dos filas y, si solo hay una, se lee en dos partes seguidas
 const INS_MINI = { mod: '#2fb84a', vip: '#e0308a', sub: '#7a4ad6' };
-function lineaMini(ctx, e, x, y, ancho) {
-  const [nombre, col, ins] = e.quien;
-  const txt = cortaMini(e.txt, ancho - anchoMini(nombre + ': ') - (ins ? 5 : 0));
+const ANCHO_CHAT = () => PAN.W - 12;
+function filasChat(e) {
+  if (!e.filas) {
+    const [nombre, , ins] = e.quien, pre = (ins ? 5 : 0) + anchoMini(nombre + ':') + 3;
+    e.filas = envuelveMini(e.txt, ANCHO_CHAT() - 4, ANCHO_CHAT() - pre);
+  }
+  return e.filas;
+}
+function filaMini(ctx, e, j, x, y) {
+  const [nombre, col, ins] = e.quien, txt = filasChat(e)[j];
+  if (j > 0) return escribeMini(ctx, txt, x + 4, y, '#fff6ea');
   if (ins) { ctx.fillStyle = OL; ctx.fillRect(x - 1, y, 5, 5); ctx.fillStyle = INS_MINI[ins]; ctx.fillRect(x, y + 1, 3, 3); x += 5; }
   x += escribeMini(ctx, nombre + ':', x, y, col) + 3;
   escribeMini(ctx, txt, x, y, '#fff6ea');
 }
-function pintaChatEscena(ctx, y) {
-  const vivos = LOG.filter(e => e.quien && e.fin > RELOJ.t).slice(-2);
-  vivos.forEach((e, i) => lineaMini(ctx, e, 6, y + (vivos.length === 2 ? i * 9 : 9), PAN.W - 12));
+const PAGINA_CHAT = 1.8;   // lo que se ve cada parte de una frase que no cabe entera
+function pintaChatEscena(ctx, y, lineas = 2) {
+  const vivos = LOG.filter(e => e.quien && e.fin > RELOJ.t), filas = [];
+  for (let i = vivos.length - 1; i >= 0; i--) {
+    const e = vivos[i], n = filasChat(e).length;
+    if (filas.length + n <= lineas) { for (let j = n - 1; j >= 0; j--) filas.unshift([e, j]); continue; }
+    if (!filas.length) {   // la más nueva no cabe entera: se enseña por partes
+      const partes = Math.ceil(n / lineas), p = Math.min(partes - 1, Math.floor((RELOJ.t - e.t0) / PAGINA_CHAT));
+      for (let j = Math.min(n, (p + 1) * lineas) - 1; j >= p * lineas; j--) filas.unshift([e, j]);
+    }
+    break;
+  }
+  filas.forEach(([e, j], k) => filaMini(ctx, e, j, 6, y + (lineas - filas.length + k) * 9));
 }

@@ -82,7 +82,7 @@ async function empiezaDia(d) {
     log('Cuota del Pase Premium: -{n} de vida máxima.', { n: H.cuota });
     chatEv('cuota', null, 0.5, 20);
   }
-  await espera(0.6);
+  await espera(VIAJE.cartel && VIAJE.cartel.cap ? 1.5 : 1.0);
 }
 function guardaRun(d) {
   GUARDA.run = { mundo: VIAJE.mundo, dia: d, plan: VIAJE.plan, usados: VIAJE.usados, h: JSON.parse(JSON.stringify(H)) };

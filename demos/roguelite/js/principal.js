@@ -26,16 +26,28 @@ function dibuja() {
   const b = bctx, W = PAN.W, alto = PAN.H;
   BOTONES = [];
   b.fillStyle = COL.fondo; b.fillRect(0, 0, W, alto);
-  // jugando, la barra del directo (botones, mapa y chat) va aparte, entre la vida y la escena: nada tapa el pixel art.
-  // En pantallas bajas, la barra va sin chat y, si hace falta sitio para el panel, se recorta un poco el suelo de abajo
-  BARRA.chat = alto >= 345 && !GUARDA.chatOff;
-  BARRA.h = VIAJE.modo !== 'menu' ? (BARRA.chat ? 52 : 33) : 0;
-  const B = BARRA.h, recorte = B ? Math.max(0, Math.min(24, B + PANEL_Y + 140 - alto)) : 0, dp = B - recorte;
-  if (B) pintaBarra(b);
-  // la escena (bajada B)
+  // jugando: arriba del todo el mapa del camino, debajo la vida y luego la barra del directo (botones y chat), aparte de la
+  // escena para que nada tape el pixel art. El chat enseña 2 frases (1 en pantallas bajas). Si el panel de abajo necesita
+  // sitio para que sus textos quepan enteros, la escena se recorta (poco a poco): primero el suelo de abajo y después el
+  // cielo de arriba (para elegir, hasta 64 de cielo: el conejo y lo que hay en el suelo se siguen viendo)
+  const jugando = VIAJE.modo !== 'menu' && !!VIAJE.plan;
+  MAPA.h = jugando ? ALTO_MAPA : 0;
+  BARRA.chat = !GUARDA.chatOff;
+  BARRA.lineas = alto >= 380 ? 2 : 1;
+  BARRA.h = VIAJE.modo !== 'menu' ? (BARRA.chat ? 19 + BARRA.lineas * 9 : 18) : 0;
+  const M = MAPA.h, B = M + BARRA.h, falta = B ? B + PANEL_Y + altoPanel(W) - alto : PANEL_Y + altoMenu() - alto;
+  const obj = Math.max(0, Math.min(B ? 24 + (PANEL.modo === 'log' ? 18 : 64) : 24, falta));
+  ESC.v += (obj - ESC.v) * 0.22; if (Math.abs(obj - ESC.v) < 0.6) ESC.v = obj;
+  const vis = Math.round(ESC.v), rAbajo = Math.min(24, vis), rArriba = vis - rAbajo, dE = B - rArriba, dp = B - vis, dpObj = B - obj;
+  const i0 = BOTONES.length;
+  ESC.corte = rArriba;
+  DESPL = M;
+  if (BARRA.h) { b.save(); b.translate(0, M); pintaBarra(b); b.restore(); }
+  for (let i = i0; i < BOTONES.length; i++) BOTONES[i].y += M;
+  // la escena (bajada dE)
   const i1 = BOTONES.length;
-  b.save(); b.translate(0, B);
-  b.save(); b.beginPath(); b.rect(0, ESC.Y, W, ESC.H - recorte); b.clip();
+  b.save(); b.translate(0, dE);
+  b.save(); b.beginPath(); b.rect(0, ESC.Y + rArriba, W, ESC.H - rArriba - rAbajo); b.clip();
   b.translate(TEMBLOR.x, TEMBLOR.y);
   pintaFondo(b, VIAJE.mx, RELOJ.t, W);
   pintaPersonajes(b, VIAJE.mx);
@@ -44,20 +56,24 @@ function dibuja() {
   barraRival(b);
   b.restore();
   b.save(); b.translate(TEMBLOR.x, TEMBLOR.y); pintaFx(b, 'arriba'); b.restore();
-  DESPL = B; pintaEscenaUI(b);
+  DESPL = dE; pintaEscenaUI(b);
   b.restore();
   const i2 = BOTONES.length;
-  // el panel (bajado lo que baja la escena, menos el recorte)
-  PAN.H = alto - dp; DESPL = dp;
+  // el panel (bajado lo que baja la escena, menos los recortes); se reparte con el sitio que tendrá al acabar de subir
+  PAN.H = alto - Math.min(dp, dpObj); DESPL = dp;
   b.save(); b.translate(0, dp); pintaPanel(b); b.restore();
   const i3 = BOTONES.length;
   PAN.H = alto;
-  b.save(); b.translate(0, B); pintaFx(b, 'monedas'); b.restore();
+  b.save(); b.translate(0, dE); pintaFx(b, 'monedas'); b.restore();
   DESPL = 0;
-  for (let i = i1; i < i2; i++) BOTONES[i].y += B;
+  for (let i = i1; i < i2; i++) BOTONES[i].y += dE;
   for (let i = i2; i < i3; i++) BOTONES[i].y += dp;
-  pintaHud(b);
-  MONEDERO[1] -= B;   // las monedas vuelan con la escena bajada: su destino, subido lo mismo
+  // la vida (bajada lo que ocupa el mapa) y el mapa arriba del todo
+  const i4 = BOTONES.length;
+  DESPL = M; b.save(); b.translate(0, M); pintaHud(b); b.restore(); DESPL = 0;
+  for (let i = i4; i < BOTONES.length; i++) BOTONES[i].y += M;
+  if (M) pintaMapa(b);
+  MONEDERO[1] += M - dE;   // las monedas vuelan con la escena bajada: su destino, en las mismas medidas
   g.drawImage(buf, 0, 0, cv.width, cv.height);
 }
 
@@ -75,7 +91,7 @@ function fotograma(ahora) {
 function arranca() {
   cargaGuarda(); RELOJ.vel = GUARDA.vel > 1 ? 2 : 1;
   ajusta();
-  creaHeroe(); creaArdilla(); creaEnemigos(); creaEnemigos2(); creaEnemigos3(); creaEfectos(); creaProps(); creaIconos(); creaIconos2();
+  creaHeroe(); creaArdilla(); creaEnemigos(); creaEnemigos2(); creaEnemigos3(); creaEfectos(); creaProps(); creaIconos(); creaIconos2(); creaIconosMapa();
   volverMadriguera();
   document.getElementById('carga').hidden = true;
   cv.addEventListener('pointerdown', e => {

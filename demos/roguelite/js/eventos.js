@@ -21,7 +21,7 @@ function muestraCambios(antes) {
   if (dv < 0) { numero(cx - 10, cy - 10, -dv, 'herida'); CONEJO.blanco = 0.1; sonido('herida'); }
   const dm = H.monedas - antes.monedas;
   if (dm > 0) lluviaMonedas(cx + 18, cy - 6, dm, 12);
-  if (dm < 0) { rotulo(MONEDERO[0], ESC.Y + 12, signo(dm), '#ff5a6a', 1.4); sonido('compra'); }
+  if (dm < 0) { rotulo(MONEDERO[0], ESC.Y + ESC.corte + 12, signo(dm), '#ff5a6a', 1.4); sonido('compra'); }
 }
 
 /* ---------- habilidades y niveles ---------- */
@@ -120,7 +120,7 @@ async function eleccion(enc) {
   if (res.sube) { const hab = HABILIDADES[res.sube]; rotulo(CONEJO.x, SUELO - 66, tr(hab.n), RAREZA[hab.rar][1], 1.4); rotulo(CONEJO.x, SUELO - 56, formatea(tr('Nv {n}'), { n: nivelHab(H, res.sube) }), '#ffcb3d', 1.4); sonido('nivel'); log('{h} sube a nivel {n}.', { h: tr(hab.n), n: nivelHab(H, res.sube) }); }
   ponAnim(CONEJO, H.atq > antes.atq || H.vida > antes.vida ? 'gana' : 'quieto');
   if (dice) { bocadillo(quienHabla(), dice, 2.4); sonido('voz'); log('{q}: {d}', { q: tr(enc.quien), d: tr(dice) }); }
-  await espera(dice ? 2.2 : 0.8);
+  await espera(dice ? Math.min(3.4, lectura(dice, 2.4) - 0.6) : 0.8);
   if (res.premio === 'objeto') await premioObjeto(res.min);
   if (res.premio === 'habilidad') await premioHabilidad(res.min);
 }
@@ -135,13 +135,13 @@ async function diaEncuentro() {
   await eleccion(enc);
 }
 async function diaHoguera() { await paraEnProp('hoguera'); sonido('fuego'); consejo('hoguera'); chatEv('hoguera', null, 0.8, 0); await eleccion(HOGUERA); }
-async function diaPase() { await paraEnProp(PASE.prop); bocadillo(PROP, '¡Oferta exclusiva!', 1.4); sonido('voz'); await espera(0.6); consejo('pase'); chatRafaga('pase', 2); await eleccion(PASE); }
+async function diaPase() { await paraEnProp(PASE.prop); bocadillo(PROP, '¡Oferta exclusiva!', 1.4); sonido('voz'); await espera(1.0); consejo('pase'); chatRafaga('pase', 2); await eleccion(PASE); }
 
 // la tienda de Lola: compras lo que quieras mientras te lleguen las monedas
 async function diaTienda() {
   await paraEnProp('puesto');
   bocadillo(PROP, '¡Pasa, pasa! Hoy todo a mitad de precio. Del doble.', 2.2); sonido('voz');
-  await espera(0.8);
+  await espera(1.4);
   consejo('tienda'); chatEv('tienda', null, 0.9, 0);
   const lista = [
     { n: 'Bocadillo de Lola', d: 'Te curas el 40 % de tu vida.', precio: precioMundo(25), hace: async () => { const a = foto(); cura(H, H.vidaMax * 0.4); muestraCambios(a); } },
@@ -155,12 +155,12 @@ async function diaTienda() {
     if (i >= lista.length) break;
     const o = lista.splice(i, 1)[0];
     H.monedas -= o.precio; sonido('compra');
-    rotulo(MONEDERO[0], ESC.Y + 12, '-' + o.precio, '#ff5a6a', 1.4);
+    rotulo(MONEDERO[0], ESC.Y + ESC.corte + 12, '-' + o.precio, '#ff5a6a', 1.4);
     log('Compras: {o}.', { o: tr(o.n) });
     await o.hace();
   }
   bocadillo(PROP, '¡Gracias por apoyar al pequeño comercio!', 1.8); sonido('voz');
-  await espera(1.0);
+  await espera(1.8);
 }
 
 // el cofre: se sacude, se abre, suelta monedas y eliges una habilidad buena
@@ -217,7 +217,7 @@ async function diaGashapon() {
     { n: 'Girar gratis', d: 'Un objeto al azar.' },
     { n: 'Girar a lo grande', d: 'Un objeto raro o mejor.', precio, no: H.monedas < precio },
   ]);
-  if (i === 1) { H.monedas -= precio; sonido('compra'); rotulo(MONEDERO[0], ESC.Y + 12, '-' + precio, '#ff5a6a', 1.4); }
+  if (i === 1) { H.monedas -= precio; sonido('compra'); rotulo(MONEDERO[0], ESC.Y + ESC.corte + 12, '-' + precio, '#ff5a6a', 1.4); }
   PROP.sacude = 1; sonido('gashapon'); await espera(0.9); PROP.sacude = 0;
   const x0 = PROP.x + 5, y0 = SUELO - 10, x1 = CONEJO.x + 12, y1 = SUELO - 34, cap = fx('spr', { spr: SPR.capsulas[Math.floor(Math.random() * 5)], x: x0, y: y0, vida: 9 });
   sonido('salto');
@@ -271,7 +271,7 @@ async function diaMisterioso() {
   await paraEnProp('fallen');
   bocadillo(PROP, 'Psst… ¿quieres algo de cuando era famoso?', 2); sonido('voz');
   consejo('misterioso'); chatEv('misterioso', null, 1, 0);
-  await espera(0.8);
+  await espera(1.4);
   const po = precioMundo(90), ph = precioMundo(110);
   const i = await panelOpciones('Un comerciante misterioso', 'FallenHero vende su equipo de cuando era protagonista. «Solo lo usé en una secuela».', [
     { n: 'Su equipo', d: 'Un objeto épico o legendario.', precio: po, no: H.monedas < po },
@@ -279,10 +279,10 @@ async function diaMisterioso() {
     { n: 'No, gracias', d: 'FallenHero suspira. Otra vez.' },
   ]);
   if (i < 2) {
-    const p = i === 0 ? po : ph; H.monedas -= p; sonido('compra'); rotulo(MONEDERO[0], ESC.Y + 12, '-' + p, '#ff5a6a', 1.4);
+    const p = i === 0 ? po : ph; H.monedas -= p; sonido('compra'); rotulo(MONEDERO[0], ESC.Y + ESC.corte + 12, '-' + p, '#ff5a6a', 1.4);
     bocadillo(PROP, '¡Gracias! Por fin pago el alquiler.', 1.6);
     if (i === 0) await premioObjeto('epic'); else await premioHabilidad('epic');
-  } else { bocadillo(PROP, 'Volveré… en el DLC.', 1.6); await espera(1); }
+  } else { bocadillo(PROP, 'Volveré… en el DLC.', 1.6); await espera(1.8); }
 }
 // el bug de Microblizz: la pantalla se rompe y pasa algo raro (casi siempre bueno)
 async function diaBug() {

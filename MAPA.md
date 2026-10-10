@@ -99,14 +99,14 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/index.html` · 3 KB
 - `demos/roguelite/sw.js` · <1 KB
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
-- `demos/roguelite/js/chat.js` · 6 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, pintaChat, INS_MINI, lineaMini, pintaChatEscena
+- `demos/roguelite/js/chat.js` · 7 KB · CHATS, pasoChat, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, pintaChat, INS_MINI, ANCHO_CHAT, filasChat, filaMini, PAGINA_CHAT, pintaChatEscena
 - `demos/roguelite/js/combate-conejo.js` · 8 KB · accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, bolsaBasura, castorBoom, tazaCafe, curaMeercat, pegaRival
 - `demos/roguelite/js/combate.js` · 13 KB · POS, centro, siguiente, COMBATE, TROZOS, LLUVIA, combate, llegaRival, llegaJefe, accionRival, ataqueEspecial, pegaConejo, levanta, muereRival, lluviaMonedas
 - `demos/roguelite/js/datos-chat.js` · 6 KB · CHAT_USUARIOS, CHAT_FRASES, CHAT_MUNDO, ESPECTA
 - `demos/roguelite/js/datos-meta.js` · 11 KB · OBJETOS, HUECOS, NOMBRE_HUECO, MEJORAS, costeMejora, ENCUENTROS, PASE, HOGUERA, CONSEJOS
 - `demos/roguelite/js/datos-mundos.js` · 8 KB · ENEMIGOS, MUNDOS, PESOS_DIA, DIAS_CAPITULO, DIAS_FIJOS, TITULO_DIA
 - `demos/roguelite/js/datos.js` · 4 KB · HEROE_BASE, SUBIDA, NIVEL_MAX_HAB, xpPara, RAREZA, ORDEN_RAREZA, PESO, PESO_COFRE, HABILIDADES
-- `demos/roguelite/js/efectos.js` · 11 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, rayo, bola, curita, avanzaFx, pintaFx, pintaBocadillo
+- `demos/roguelite/js/efectos.js` · 12 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, lectura, rotulo, moneda, bocadillo, laser, rayo, bola, curita, avanzaFx, pintaFx, pintaBocadillo
 - `demos/roguelite/js/enemigos-2.js` · 14 KB · PAL_N, CIAN, pierna, esqueleto, fotoEsq, creaEsqueleto, zombi, fotoZombi, creaZombi, fantasma, fotoFant, creaFantasma, cosido, fotoCosido, creaCosido, necrolord, fotoNecro, creaNecro, creaEnemigos2
 - `demos/roguelite/js/enemigos-3.js` · 13 KB · PAL_T, creaAbogadoCombate, fotoBecarioMes, creaBecarioMes, fallen, fotoFallen, creaFallen, soporte, fotoSoporte, creaSoporte, parche, fotoParche, creaParche, ceo, fotoCeo, creaCeo, creaEnemigos3
 - `demos/roguelite/js/enemigos.js` · 17 KB · PAL_E, PAL_OJO, letreroRecto, becario, POSE_BECARIO, fotoBecario, creaBecario, estrella, starbot, POSE_STAR, fotoStar, creaStarbot, cajaBotin, fotoCaja, creaCaja, brazoRobot, survival, POSE_JEFE, fotoJefe, creaJefe, creaPuesto, creaEnemigos
@@ -118,15 +118,16 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/js/iconos-2.js` · 11 KB · zanaIcono, PAL_I, creaIconos2
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
 - `demos/roguelite/js/instalar.js` · 2 KB · INSTALAR
-- `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, DESPL, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, pintaControles, BARRA, pintaBarra, MARCA_DIA, pintaMapa, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, toque, tecla
-- `demos/roguelite/js/letras-mini.js` · 4 KB · MINI, QUITA_TILDE, limpiaMini, glifoMini, anchoMini, MINI_CACHE, escribeMini, cortaMini
+- `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, LETRAS, CORTES, corte, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, DESPL, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, pintaControles, BARRA, pintaBarra, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, medidaElige, eligeMedida, toque, tecla
+- `demos/roguelite/js/letras-mini.js` · 5 KB · MINI, QUITA_TILDE, limpiaMini, glifoMini, anchoMini, MINI_CACHE, escribeMini, envuelveMini
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
-- `demos/roguelite/js/menu.js` · 12 KB · MENU, volverMadriguera, irA, pintaMadriguera, pintaMenuEscena, pintaPanelMenu, titulo, volver, panelInicio, panelMundos, paginas, panelMejoras, panelColeccion, panelAjustes
+- `demos/roguelite/js/mapa.js` · 8 KB · MAPA, creaIconosMapa, pintaMapa, sube_, mapaCapitulo
+- `demos/roguelite/js/menu.js` · 13 KB · MENU, volverMadriguera, irA, pintaMadriguera, pintaMenuEscena, pintaPanelMenu, titulo, volver, panelInicio, panelMundos, paginas, panelMejoras, panelColeccion, panelAjustes, altoMenu
 - `demos/roguelite/js/novedades.js` · 4 KB · NEWS
-- `demos/roguelite/js/paneles.js` · 6 KB · panelHabilidad, panelObjeto, panelHabs, fichaObjeto, panelObj, panelFin
+- `demos/roguelite/js/paneles.js` · 8 KB · panelHabilidad, panelObjeto, panelHabs, medidaHabs, altoFicha, fichaObjeto, panelObj, medidaObj, altoFin, altoPanel, panelFin
 - `demos/roguelite/js/personajes.js` · 9 KB · CONEJO, ARDILLA, RIVAL, PROP, H, ponAnim, fotoDe, sombra, silueta, pintaEnt, PROP_ALTO, nuevoProp, pintaProp, pintaSueltas, barraRival, pintaPersonajes, avanzaPersonajes
 - `demos/roguelite/js/pixel.js` · 9 KB · OL, RGBA_CACHE, rgba, mezcla, pal, tintaPal, F, giraP, Pincel, pintaSpr, circuloPx, anilloPx, ovaloPx, tramaPx, ent
-- `demos/roguelite/js/principal.js` · 4 KB · PAN, cv, buf, bctx, ajusta, dibuja, ultimo, fotograma, arranca
+- `demos/roguelite/js/principal.js` · 5 KB · PAN, cv, buf, bctx, ajusta, dibuja, ultimo, fotograma, arranca
 - `demos/roguelite/js/props.js` · 11 KB · PAL_P, hazProp, creaProps, creaMadriguera, SEGMENTOS_RULETA, pintaRuleta, pintaLlamas
 - `demos/roguelite/js/reglas.js` · 10 KB · nvMejora, nuevoHeroe, nivelHab, valorHab, deObjetos, recalcula, cura, dana, extra, ganaMonedas, afilar, aplicaHabilidad, equipa, precioVenta, subeNivel, ganaXp, pesoRar, sorteo, minimo, ofertas, habilidadAzar, objetoAzar, nuevoEnemigo, empiezaCombate, turnoHeroe, turnoEnemigo, curaBotiquin, salvacion, planMundo, encuentrosDe
 - `demos/roguelite/js/sonido.js` · 8 KB · SON, sonidoInicia, sonidoCambia, tono, ruido, SONIDOS, sonido, PISTAS, hz, musica, tocaMusica

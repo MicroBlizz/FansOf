@@ -4,7 +4,7 @@
 // en fondo-mundos.js.
 'use strict';
 
-const ESC = { Y: 27, H: 172 };          // dónde va la escena dentro de la pantalla (debajo del marcador)
+const ESC = { Y: 27, H: 172, corte: 0, v: 0 };   // corte: el cielo recortado; v: el recorte de ahora (va hacia el que toca)          // dónde va la escena dentro de la pantalla (debajo del marcador)
 const SUELO = ESC.Y + 138;              // la línea de los pies
 const BAYER = [[0, 8, 2, 10], [12, 4, 14, 6], [3, 11, 1, 9], [15, 7, 13, 5]];
 const hash = (x, y = 0, s = 0) => { let h = Math.imul(x ^ 0x9e3779b9, 374761393) ^ Math.imul(y + s * 7919, 668265263); h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };

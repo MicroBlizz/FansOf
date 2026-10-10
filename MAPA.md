@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 12 KB
+- `index.html` · 13 KB
 - `sw.js` · <1 KB
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
@@ -127,7 +127,20 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/rumble-3d/js/textos.js` · 3 KB · EN, pedido
 - `demos/rumble-3d/js/three.min.js` · 562 KB · Tc, float, float, vec4, vec2, vec3, vec4, mat3, mat3
 - `demos/rumble-3d/js/voces.js` · 8 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
-- `demos/terminal-shock/index.html` · 103 KB
+- `demos/tactics-advance/index.html` · 7 KB
+- `demos/tactics-advance/idioma/en-raiz.js` · <1 KB
+- `demos/tactics-advance/js/decorados.js` · 7 KB · cajaIso, PIEDRA, PIEDRA_F, MUSGO, tumba, cruz, CORTEZA, arbolMuerto, HOJAS, arbol, arbusto, HIERRO, farol, cripta, MADERA, mesa, planta, fuente, cajas, archivador
+- `demos/tactics-advance/js/demo.js` · 17 KB · LW, lo, CAJAS, SPRS, spr, ESC, preparaEscena, UNIDADES, CAMINO, OBJETIVO, ocupada, alcanceMover, suave, tramo, entre, pie, estado, poseConejo, spriteUnidad, sombraUnidad, pinta, polvo, onda, ESPIRAL_PEQ, chispas, brilloFarol, pintaVentanas, bannerTurno
+- `demos/tactics-advance/js/escenas.js` · 1 KB · ESCENAS
+- `demos/tactics-advance/js/fondo.js` · 6 KB · FW, lienzoNuevo, degradado, pintaPixeles, CIELO_TARDE, NUBES_TARDE, fondoAtardecer, nubesSueltas, CIELO_NOCHE, fondoNoche, LUCES, pintaLuciernagas, pintaLetrero
+- `demos/tactics-advance/js/letras.js` · 11 KB · L, LETRAS, TILDES, glifo, anchoGlifo, anchoTexto, escribe, MINI, anchoMini, escribeMini, escribeGordo
+- `demos/tactics-advance/js/mapa.js` · 13 KB · HU, MAT, ALT, TIPO, N, altura, esAgua, wx, wy, alturaPx, ruido, colorArriba, colorLado, hazCasilla, pintaAgua, rombo, romboBorde, marca, PUNTA, cursor
+- `demos/tactics-advance/js/personajes.js` · 16 KB · PB, OJO_ESPIRAL, OJO_ESPIRAL_B, OJO_COL, BOCA, conejo, PC, campeon, PE, esqueleto, PM, becario, PS, starbot, retratoConejo
+- `demos/tactics-advance/js/pixel.js` · 8 KB · OL, RGBA_CACHE, rgba, mezcla, pal, F, giraP, Pincel, pintaSpr, BAYER, bayer, hash
+- `demos/tactics-advance/js/principal.js` · 2 KB · cv, ESCALA, ajusta, T, barraT, fotograma, bC, elige, pon
+- `demos/tactics-advance/js/textos.js` · 4 KB · EN, IDIOMA_TA, tr, traducePagina
+- `demos/tactics-advance/js/ventanas.js` · 7 KB · VENT, VENT_CACHE, ventanaLienzo, ventana, barra, MANO, FLECHA, CARTA, PATA, hazSello, ficha, fichaObjetivo, menu, submenu, norma, bocadillo
+- `demos/terminal-shock/index.html` · 134 KB
 - `demos/terminal-shock/idioma/en-raiz.js` · <1 KB
 - `games/rumble/index.html` · 40 KB
 - `games/rumble/sw.js` · <1 KB

@@ -7,9 +7,15 @@ Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/rumb
 
 ## Qué enseña
 
+- **La misión** (unos 3 minutos, `js/mision.js`): presentación de los personajes hablando a cámara, batalla con oro y cuatro
+  cartas, SurvivalBot saliendo de la sede con su música, y el final. Narra Paco Rumble, el comentarista.
+- **La música es la del juego**: la página carga `core/js/serie/canciones.js` y `js/musica.js` la toca (menú, Animales,
+  SurvivalBot, ganar y perder).
+- **El modo libre** con el botón +30, para medir la fluidez.
+
 - El campo del juego en 3D, con las mismas medidas que `games/rumble/js/01-campo.js` (10 px del juego = 1 unidad en 3D):
   río, puentes, caminos, las torres, La Madriguera y la sede de Microblizz con su ciudad detrás.
-- CrazyBunny, MadSquirrel y el Becario modelados con código (bolas, cajas, conos), copiando los colores de sus dibujos
+- CrazyBunny, MadSquirrel, MeerCat, MechaVaca (y su vaca), el Becario y SurvivalBot modelados con código (bolas, cajas, conos), copiando los colores de sus dibujos
   (`core/js/serie/arte/animales.js` y `microblizz.js`). Estilo dibujo animado: tres tonos de luz y borde negro.
 - Animaciones hechas con código: caer del cielo, aplastarse al llegar, saludar, andar, atacar, recibir golpes,
   el salto del CAOS de CrazyBunny, desaparecer con un «¡puf!» y celebrar.
@@ -30,6 +36,9 @@ Las reglas de la pelea son de mentira, solo para que haya movimiento.
 | `munecos.js` | Cómo se mueven (animaciones), sombras y barras de vida |
 | `piezas.js` | Las formas básicas, el estilo dibujo animado y el borde negro |
 | `partida.js` | La partida de mentira: unidades, torres, IA de Microblizz |
+| `habilidades.js` | Salto del CAOS, curar, la vaca que sale del mecha, golpes y congelar del jefe |
+| `mision.js` | La misión: guion, oro, oleadas, jefe, final y el comentarista |
+| `musica.js` | Toca las canciones del juego |
 | `efectos.js` | Partículas, números de daño, bocadillos y temblor |
 | `voces.js` | Sonidos y voces |
 | `textos.js` | Los textos y su inglés |

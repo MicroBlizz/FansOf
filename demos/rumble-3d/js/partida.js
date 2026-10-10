@@ -1,6 +1,7 @@
 // Boceto 3D de Fans of Rumble · Una partida de mentira para ver el 3D en movimiento (NO son las reglas del juego):
 // las unidades bajan del cielo, saludan, van por su carril, pelean con lo que encuentran, las torres disparan,
-// los edificios caen (y se reconstruyen) y Microblizz manda becarios sin parar.
+// los edificios caen (y se reconstruyen) y Microblizz manda becarios sin parar. En la misión (mision.js) quien manda
+// las oleadas y decide el final es la misión: aquí solo se avisa de lo que pasa con evento().
 'use strict';
 import * as THREE from './three.min.js';
 import { MODELOS } from './modelos.js';
@@ -8,6 +9,7 @@ import { Especie, nuevaPose, animar, Sombras, Barras } from './munecos.js';
 import { CAMPO } from './escena.js';
 import { crearEdificios } from './edificios.js';
 import { bola, unir, materialToon, materialContorno } from './piezas.js';
+import { blanco, probarSalto, saltar, curandera, expulsarVaca, jefe, golpeJefe } from './habilidades.js';
 import { SFX, hablar } from './voces.js';
 import { tr, FRASES } from './textos.js';
 
@@ -15,9 +17,14 @@ const DATOS = {
   bunny:    { vida: 700, dano: 45, cada: 1.3, vel: 2.7, alcance: 1.5, vista: 9 },
   squirrel: { vida: 120, dano: 16, cada: 0.65, vel: 4.3, alcance: 1.0, vista: 8 },
   becario:  { vida: 150, dano: 14, cada: 1.0, vel: 2.9, alcance: 1.0, vista: 8 },
+  meercat:  { vida: 220, dano: 8, cada: 1.0, vel: 2.7, alcance: 1.0, vista: 6, cura: 45, curaCada: 1.1, curaAlcance: 6 },
+  mechavaca: { vida: 1100, dano: 42, cada: 1.4, vel: 2.0, alcance: 1.5, vista: 8 },
+  vaca:     { vida: 280, dano: 22, cada: 0.9, vel: 3.3, alcance: 1.0, vista: 8 },
+  survivalbot: { vida: 3200, dano: 70, cada: 1.7, vel: 1.7, alcance: 2.0, vista: 13 },
 };
-const EDIF = { torre: { vida: 1000, dano: 38, cada: 1.0, alcance: 13 }, base: { vida: 1800, dano: 48, cada: 1.25, alcance: 11 } };
+export const EDIF = { torre: { vida: 1000, dano: 38, cada: 1.0, alcance: 13 }, base: { vida: 1800, dano: 48, cada: 1.25, alcance: 11 } };
 const COLOR = { p: 0xff7a1a, e: 0x2e8bff };
+const ANCHO_BARRA = { bunny: 2.2, mechavaca: 2.8, survivalbot: 4.5 };
 const azar = (a, b) => a + Math.random() * (b - a);
 const elige = lista => lista[(Math.random() * lista.length) | 0];
 const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(), _s = new THREE.Vector3();
@@ -26,7 +33,7 @@ export class Partida {
   constructor(escena, efectos) {
     this.fx = efectos;
     this.especies = {};
-    for (const k of Object.keys(MODELOS)) this.especies[k] = new Especie(escena, MODELOS[k], 90);
+    for (const k of Object.keys(MODELOS)) this.especies[k] = new Especie(escena, MODELOS[k], k === 'survivalbot' ? 3 : 90);
     this.sombras = new Sombras(escena); this.barras = new Barras(escena);
     this.edificios = crearEdificios(escena).map(e => ({ ...e, ...EDIF[e.tipo], max: EDIF[e.tipo].vida, cd: azar(0, 1), estado: 'ok', t: 0, golpe: 0 }));
     // los proyectiles de las torres: bellotas (las tuyas) y bolas de energía (las de Microblizz)
@@ -36,7 +43,8 @@ export class Partida {
     this.unidades = []; this.proyectiles = [];
     this.id = 1; this.t = 0; this.iaT = 1.5; this.autoT = 2.5; this.ultimoToque = -99; this.charla = { p: 0, e: 0 };
     this.fin = null; this.finT = 0; this.alFin = null;
-    this.listas = { bunny: [], squirrel: [], becario: [] };
+    this.listas = {}; for (const k of Object.keys(MODELOS)) this.listas[k] = [];
+    this.modo = 'libre'; this.alEvento = null;
   }
   pool(escena, geo, mat) {
     const m = new THREE.InstancedMesh(geo, mat, 80);
@@ -46,36 +54,37 @@ export class Partida {
   }
 
   /* ---------- soltar unidades ---------- */
-  soltar(tipo, x, z, lado, alto = 16, siempreHabla = false) {
-    if (this.unidades.reduce((n, v) => n + (v.tipo === tipo), 0) >= 88) return null;   // caben 90 de cada (Especie)
+  evento(tipo, datos) { if (this.alEvento) this.alEvento(tipo, datos); }
+  soltar(tipo, x, z, lado, alto = 16, siempreHabla = false, op = {}) {
+    if (this.unidades.reduce((n, v) => n + (v.tipo === tipo), 0) >= this.especies[tipo].max - 2) return null;
     const def = MODELOS[tipo], d = DATOS[tipo];
     const u = {
       id: this.id++, tipo, def, d, lado, x, z, y: alto, vy: 0, yaw: lado === 'p' ? 0 : 0,
       vida: d.vida, max: d.vida, estado: 'cae', estadoT: 0, mueve: 0, paso: Math.random() * 6, ataque: -1, cd: 0.3,
       golpe: 0, destello: 0, aplasta: 0, habla: 0, silaba: 0, objetivo: null, buscaT: 0, saltoCd: 3, radio: def.radio * 0.8,
-      pose: nuevaPose(def), quitado: false, siempreHabla,
+      pose: nuevaPose(def), quitado: false, siempreHabla, callado: !!op.callado, congelado: 0, curaCd: 0, congelaCd: 5,
     };
     this.unidades.push(u);
-    this.fx.anilloSuelo(x, z, 1.6, lado === 'p' ? 0xffb347 : 0x7da8ff, Math.sqrt((2 * alto) / 60) + 0.1);
+    if (!op.sinAnillo) this.fx.anilloSuelo(x, z, 1.6, lado === 'p' ? 0xffb347 : 0x7da8ff, Math.sqrt((2 * alto) / 60) + 0.1);
     SFX.cae();
     return u;
   }
   // lo que pide el jugador al tocar su lado del campo
   pedir(carta, x, z) {
     this.ultimoToque = this.t;
-    if (carta === 'squirrel') { this.soltar('squirrel', x - 0.9, z, 'p', 16, true); this.soltar('squirrel', x + 0.9, z + 0.4, 'p', 17.5); }
-    else this.soltar('bunny', x, z, 'p', 16, true);
+    if (carta === 'squirrel') { const a = this.soltar('squirrel', x - 0.9, z, 'p', 16, true); this.soltar('squirrel', x + 0.9, z + 0.4, 'p', 17.5); return a; }
+    return this.soltar(carta, x, z, 'p', 16, true);
   }
   // +30: lluvia de muñecos para ver si el móvil aguanta
   avalancha() {
     for (let i = 0; i < 15; i++) {
-      this.soltar(i % 3 === 0 ? 'bunny' : 'squirrel', azar(-22, 22), azar(5, 28), 'p', azar(14, 34));
+      this.soltar(['bunny', 'squirrel', 'squirrel', 'meercat', 'mechavaca'][i % 5], azar(-22, 22), azar(5, 28), 'p', azar(14, 34));
       this.soltar('becario', azar(-22, 22), azar(-28, -5), 'e', azar(14, 34));
     }
   }
 
   hablar(u, frase, aunque = false) {
-    if (!aunque && this.t < this.charla[u.lado]) return;
+    if (!aunque && (this.t < this.charla[u.lado] || u.callado)) return;
     this.charla[u.lado] = this.t + 2.8;
     const dur = hablar(frase, u.tipo, () => { u.silaba = 1; });
     u.habla = dur;
@@ -86,13 +95,13 @@ export class Partida {
   /* ---------- cada fotograma ---------- */
   actualizar(dt) {
     this.t += dt;
-    this.iaRival(dt); this.iaJugador(dt);
+    if (this.modo === 'libre') { this.iaRival(dt); this.iaJugador(dt); }
     for (const u of this.unidades) this.mover(u, dt);
     this.separar();
     for (const e of this.edificios) this.edificio(e, dt);
     this.volar(dt);
     for (let i = this.unidades.length - 1; i >= 0; i--) if (this.unidades[i].quitado) this.unidades.splice(i, 1);
-    if (this.fin) { this.finT -= dt; if (this.finT <= 0) this.reiniciar(); }
+    if (this.fin && this.modo === 'libre') { this.finT -= dt; if (this.finT <= 0) this.reiniciar(); }
   }
 
   iaRival(dt) {
@@ -129,63 +138,75 @@ export class Partida {
       const piso = this.suelo(u.x, u.z);
       if (u.y <= piso) {
         u.y = piso; u.vy = 0; u.estado = 'pose'; u.estadoT = 0; u.aplasta = 0.3;
-        const grande = u.tipo === 'bunny';
+        const grande = u.tipo === 'bunny' || u.tipo === 'mechavaca' || u.tipo === 'survivalbot';
         this.fx.polvo(u.x, u.z, grande ? 10 : 5, 0xe6d6b0, grande ? 1.5 : 1);
         this.fx.anilloSuelo(u.x, u.z, grande ? 4.5 : 2.6, 0xffffff, 0.35);
-        if (grande) this.fx.temblor(0.22);
+        if (grande) this.fx.temblor(u.tipo === 'survivalbot' ? 0.6 : 0.22);
         SFX.aterriza(grande);
-        this.hablar(u, elige(FRASES[u.tipo].sale), u.siempreHabla);
+        if (FRASES[u.tipo]?.sale) this.hablar(u, elige(FRASES[u.tipo].sale), u.siempreHabla);
+        this.evento('llega', u);
       }
       return;
     }
     if (u.estado === 'pose') {
       u.yaw = girar(u.yaw, 0, dt * 8);   // se vuelve hacia la cámara para saludar
-      if (u.estadoT > (u.lado === 'p' ? 1.05 : 0.55)) { u.estado = 'anda'; u.estadoT = 0; }
+      if (u.estadoT > (u.lado === 'p' ? 1.05 : 0.55) && !u.quieto) { u.estado = 'anda'; u.estadoT = 0; }   // quieto: en las escenas de la misión
       return;
     }
     if (u.estado === 'muere') {
       if (u.estadoT > 0.22) {
         u.quitado = true;
         this.fx.puf(u.x, u.y + 0.6, u.z, COLOR[u.lado]);
+        this.evento('cae', u);
+        if (u.tipo === 'mechavaca') expulsarVaca(this, u);
         if (u.tipo === 'becario') { this.fx.salpica(u.x, u.y + 1.2, u.z, 0x6b3f22, 7); if (Math.random() < 0.25) this.hablar(u, elige(FRASES.becario.cae)); }
         SFX.puf();
       }
       return;
     }
     if (u.estado === 'fiesta') { u.mueve = Math.max(0, u.mueve - dt * 4); u.yaw = girar(u.yaw, 0, dt * 5); return; }
-    if (u.estado === 'salto') { this.saltar(u, dt); return; }
+    if (u.estado === 'salto') { saltar(this, u); return; }
+    if (u.congelado > 0) { u.congelado -= dt; u.mueve = 0; return; }
+    if (u.tipo === 'survivalbot') jefe(this, u, dt);
 
     // buscar a quién pegar: primero unidades cerca, si no, la torre de su carril (y si cayó, la sede)
     u.buscaT -= dt;
     if (u.buscaT <= 0 || !vivo(u.objetivo)) { u.objetivo = this.buscar(u); u.buscaT = 0.3; }
-    if (u.tipo === 'bunny' && u.saltoCd <= 0 && this.probarSalto(u)) return;
-    const o = u.objetivo;
+    if (u.tipo === 'bunny' && u.saltoCd <= 0 && probarSalto(this, u)) return;
+    let o = u.objetivo;
     let tx, tz, alcance;
-    if (o) { tx = o.x; tz = o.z; alcance = (o.def ? o.radio : o.r) + u.radio + u.d.alcance; }
+    const sigue = u.tipo === 'meercat' ? curandera(this, u, dt) : null;
+    if (sigue && !(o && o.def && Math.hypot(o.x - u.x, o.z - u.z) < 2.5)) { o = null; tx = sigue[0]; tz = sigue[1]; alcance = 0.6; }
+    else if (o) { tx = o.x; tz = o.z; alcance = (o.def ? o.radio : o.r) + u.radio + u.d.alcance; }
     else { tx = u.x; tz = u.z; alcance = 99; }
     const dx = tx - u.x, dz = tz - u.z, dist = Math.hypot(dx, dz);
-    if (o && dist <= alcance) {
+    if (sigue && !o) {   // la curandera va detrás de los suyos
+      if (dist > alcance) this.andar(u, tx, tz, dt); else { u.mueve = Math.max(0, u.mueve - dt * 6); u.yaw = girar(u.yaw, u.lado === 'p' ? Math.PI : 0, dt * 6); }
+    } else if (o && dist <= alcance) {
       u.mueve = Math.max(0, u.mueve - dt * 6);
       u.yaw = girar(u.yaw, Math.atan2(dx, dz), dt * 10);
       if (u.ataque < 0 && u.cd <= 0) { u.ataque = 0; u.cd = u.d.cada; }
-    } else if (o) {
-      const [wx, wz] = this.paso(u, tx, tz);
-      const mx = wx - u.x, mz = wz - u.z, l = Math.hypot(mx, mz) || 1;
-      const v = u.d.vel * (u.ataque >= 0 ? 0.3 : 1);
-      u.x += (mx / l) * v * dt; u.z += (mz / l) * v * dt;
-      u.mueve = Math.min(1, u.mueve + dt * 5);
-      u.yaw = girar(u.yaw, Math.atan2(mx, mz), dt * 9);
-      const antes = Math.floor(u.paso / Math.PI);
-      u.paso += dt * v * 2.4;
-      if (Math.floor(u.paso / Math.PI) !== antes && Math.random() < 0.6) this.fx.polvo(u.x, u.z, 1, 0xdcc9a0, 0.6);
-    } else u.mueve = Math.max(0, u.mueve - dt * 5);
+    } else if (o) this.andar(u, tx, tz, dt);
+    else u.mueve = Math.max(0, u.mueve - dt * 5);
     if (u.ataque >= 0) {
       const antes = u.ataque;
-      u.ataque += dt / (u.tipo === 'bunny' ? 0.6 : 0.45);
+      u.ataque += dt / (u.tipo === 'bunny' || u.tipo === 'survivalbot' || u.tipo === 'mechavaca' ? 0.6 : 0.45);
       if (antes < 0.5 && u.ataque >= 0.5) { SFX.zas(); if (o && vivo(o) && dist <= alcance + 0.8) this.impacto(u, o); }
       if (u.ataque >= 1) u.ataque = -1;
     }
     u.y += (this.suelo(u.x, u.z) - u.y) * Math.min(1, dt * 12);
+  }
+
+  andar(u, tx, tz, dt) {
+    const [wx, wz] = this.paso(u, tx, tz);
+    const mx = wx - u.x, mz = wz - u.z, l = Math.hypot(mx, mz) || 1;
+    const v = u.d.vel * (u.ataque >= 0 ? 0.3 : 1);
+    u.x += (mx / l) * v * dt; u.z += (mz / l) * v * dt;
+    u.mueve = Math.min(1, u.mueve + dt * 5);
+    u.yaw = girar(u.yaw, Math.atan2(mx, mz), dt * 9);
+    const antes = Math.floor(u.paso / Math.PI);
+    u.paso += dt * v * 2.4;
+    if (Math.floor(u.paso / Math.PI) !== antes && Math.random() < 0.6) this.fx.polvo(u.x, u.z, 1, 0xdcc9a0, u.tipo === 'survivalbot' || u.tipo === 'mechavaca' ? 1.2 : 0.6);
   }
 
   // por dónde ir: si el objetivo está al otro lado del río, primero al puente
@@ -220,12 +241,13 @@ export class Partida {
   }
 
   impacto(u, o) {
-    const fuerte = u.tipo === 'bunny';
+    const fuerte = u.tipo === 'bunny' || u.tipo === 'mechavaca' || u.tipo === 'survivalbot';
     const hx = (u.x + o.x) / 2, hz = (u.z + o.z) / 2, hy = o.def ? o.y + o.def.alto * 0.45 : 2.5;
     this.fx.chispas(hx, hy, hz, fuerte ? 7 : 4, fuerte ? 0xffcb3d : 0xffffff);
     if (u.tipo === 'becario') this.fx.salpica(hx, hy, hz, 0x6b3f22, 4);   // le tira el café
     SFX.golpe(fuerte);
     if (fuerte) this.fx.temblor(0.06);
+    if (u.tipo === 'survivalbot') golpeJefe(this, u, o);
     if (o.def) this.herir(o, u.d.dano, u); else this.danarEdificio(o, u.d.dano);
   }
 
@@ -234,40 +256,7 @@ export class Partida {
     v.vida -= dano; v.golpe = 0.22; v.destello = 1;
     if (de) { const dx = v.x - de.x, dz = v.z - de.z, l = Math.hypot(dx, dz) || 1; v.x += (dx / l) * 0.25; v.z += (dz / l) * 0.25; }
     this.fx.numero(v.x, v.y + v.def.alto * 0.9, v.z, Math.round(dano), dano >= 40);
-    if (v.vida <= 0) { v.estado = 'muere'; v.estadoT = 0; v.ataque = -1; }
-  }
-
-  /* ---------- el Salto del CAOS de CrazyBunny: cae sobre el grupo más grande ---------- */
-  probarSalto(u) {
-    let mejor = null, cuantos = 1;
-    for (const v of this.unidades) {
-      if (v.lado === u.lado || !blanco(v)) continue;
-      const d = Math.hypot(v.x - u.x, v.z - u.z);
-      if (d > 13 || d < 2.5) continue;
-      let n = 0;
-      for (const w of this.unidades) if (w.lado !== u.lado && blanco(w) && Math.hypot(w.x - v.x, w.z - v.z) < 4) n++;
-      if (n > cuantos) { cuantos = n; mejor = v; }
-    }
-    if (!mejor) { u.saltoCd = 1; return false; }
-    u.estado = 'salto'; u.estadoT = 0; u.saltoDura = 0.95; u.saltoCd = 8; u.ataque = -1;
-    u.desde = [u.x, u.z]; u.hasta = [mejor.x, mejor.z];
-    u.yaw = Math.atan2(mejor.x - u.x, mejor.z - u.z);
-    this.hablar(u, elige(FRASES.bunny.salto));
-    SFX.salto();
-    this.fx.polvo(u.x, u.z, 6, 0xe6d6b0, 1.2);
-    return true;
-  }
-  saltar(u, dt) {
-    const k = Math.min(1, u.estadoT / u.saltoDura);
-    u.x = u.desde[0] + (u.hasta[0] - u.desde[0]) * k; u.z = u.desde[1] + (u.hasta[1] - u.desde[1]) * k;
-    u.y = 4 * 6.5 * k * (1 - k) + this.suelo(u.x, u.z);
-    u.mueve = 0;
-    if (k < 1) return;
-    u.estado = 'anda'; u.estadoT = 0; u.aplasta = 0.3; u.y = this.suelo(u.x, u.z);
-    this.fx.anilloSuelo(u.x, u.z, 6, 0xff7a1a, 0.5); this.fx.anilloSuelo(u.x, u.z, 3.5, 0xffffff, 0.3);
-    this.fx.polvo(u.x, u.z, 14, 0xe6d6b0, 1.8); this.fx.chispas(u.x, 1, u.z, 10, 0xffcb3d);
-    this.fx.temblor(0.5); SFX.explosion(false); SFX.aterriza(true);
-    for (const v of this.unidades) if (v.lado !== u.lado && blanco(v) && Math.hypot(v.x - u.x, v.z - u.z) < 4.5) this.herir(v, 60, u);
+    if (v.vida <= 0) { v.estado = 'muere'; v.estadoT = 0; v.ataque = -1; v.congelado = 0; }
   }
 
   separar() {
@@ -318,7 +307,7 @@ export class Partida {
       g.position.y = -k * k * 4; g.scale.set(1 + k * 0.2, 1 - k * 0.55, 1 + k * 0.2); g.rotation.z = k * 0.25;
       if (k >= 1) { e.estado = 'roto'; e.t = 0; g.visible = false; e.roto.visible = true; }
     } else if (e.estado === 'roto') {
-      if (e.t > 12 && !this.fin) { e.estado = 'sube'; e.t = 0; g.visible = true; e.roto.visible = false; e.vida = e.max; this.fx.polvo(e.x, e.z, 12, 0xe6d6b0, 1.6); }
+      if (e.t > 12 && !this.fin && this.modo === 'libre') { e.estado = 'sube'; e.t = 0; g.visible = true; e.roto.visible = false; e.vida = e.max; this.fx.polvo(e.x, e.z, 12, 0xe6d6b0, 1.6); }
     } else if (e.estado === 'sube') {
       const k = Math.min(1, e.t / 0.8), rebote = 1 + Math.sin(k * Math.PI) * 0.12;
       g.position.y = -(1 - k) * 6; g.scale.set(1, rebote, 1); g.rotation.z = 0;
@@ -335,6 +324,7 @@ export class Partida {
     this.fx.temblor(e.tipo === 'base' ? 1 : 0.7); SFX.explosion(true);
     const frase = e.lado === 'e' ? 'Microblizz: «esa torre nos sobraba»' : '¡Nuestra torre!';
     if (e.tipo === 'torre') { const dur = hablar(frase, e.lado === 'e' ? 'becario' : 'bunny'); const v = new THREE.Vector3(e.x, e.alto * 0.7, e.z); this.fx.bocadillo(() => v, tr(frase), dur, e.lado); }
+    this.evento('edificio', e);
     if (e.tipo === 'base') {
       this.fin = e.lado === 'e' ? 'p' : 'e'; this.finT = 4.5;
       for (const u of this.unidades) if (u.lado === this.fin && blanco(u)) { u.estado = 'fiesta'; u.ataque = -1; }
@@ -367,7 +357,7 @@ export class Partida {
     for (const u of this.unidades) u.quitado = true;
     this.unidades.length = 0; this.proyectiles.length = 0;
     for (const e of this.edificios) { e.vida = e.max; e.estado = 'ok'; e.t = 0; e.entero.visible = true; e.roto.visible = false; e.entero.position.y = 0; e.entero.scale.set(1, 1, 1); e.entero.rotation.z = 0; }
-    this.fin = null; this.iaT = 1.5; this.autoT = 1;
+    this.fin = null; this.iaT = 1.5; this.autoT = 1; this.t = 0; this.ultimoToque = -99;
     if (this.alFin) this.alFin(null);
   }
 
@@ -380,10 +370,10 @@ export class Partida {
       this.listas[u.tipo].push(u);
       const r = u.def.radio * 0.95 / (1 + u.y * 0.07);
       this.sombras.poner(u.x, u.z, r);
-      if (u.vida < u.max && u.estado !== 'muere') this.barras.poner(u.x, u.y + u.def.alto + 0.35, u.z, u.tipo === 'bunny' ? 2.2 : 1.5, Math.max(0, u.vida / u.max), COLOR[u.lado]);
+      if (u.vida < u.max && u.estado !== 'muere') this.barras.poner(u.x, u.y + u.def.alto + 0.35, u.z, ANCHO_BARRA[u.tipo] || 1.5, Math.max(0, u.vida / u.max), COLOR[u.lado]);
     }
     for (const k in this.especies) this.especies[k].pintar(this.listas[k]);
-    for (const e of this.edificios) if (e.estado === 'ok') this.barras.poner(e.x, e.alto + 0.6, e.z, e.tipo === 'base' ? 6 : 4.2, Math.max(0, e.vida / e.max), COLOR[e.lado]);
+    if (!this.sinBarras) for (const e of this.edificios) if (e.estado === 'ok') this.barras.poner(e.x, e.alto + 0.6, e.z, e.tipo === 'base' ? 6 : 4.2, Math.max(0, e.vida / e.max), COLOR[e.lado]);
     let nb = 0, no = 0;
     for (const p of this.proyectiles) {
       const malla = p.enemigo ? this.mallaOrbe : this.mallaBellota;
@@ -403,7 +393,6 @@ export class Partida {
 }
 
 function vivo(o) { return o && (o.def ? !o.quitado && o.estado !== 'muere' : o.estado === 'ok'); }
-function blanco(v) { return !v.quitado && v.estado !== 'cae' && v.estado !== 'muere'; }
 function girar(a, b, k) {
   let d = ((b - a + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
   return a + d * Math.min(1, k);

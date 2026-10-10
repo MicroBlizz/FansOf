@@ -112,10 +112,10 @@ export class Efectos {
     const k = this.trauma * this.trauma, t = this.tiempo * 38;
     return destino.set(Math.sin(t * 1.3) * k * 1.2, Math.sin(t * 1.7 + 1) * k * 0.9, Math.sin(t * 1.1 + 2) * k * 1.2);
   }
-  numero(x, y, z, valor, fuerte = false) {
+  numero(x, y, z, valor, fuerte = false, cura = false) {
     const n = libre(this.numeros);
     n.x = x + azar(-0.9, 0.9); n.y = y + azar(-0.3, 0.5); n.z = z + azar(-0.5, 0.5); n.t = 0; n.vida = fuerte ? 1.0 : 0.75;
-    n.el.textContent = valor; n.el.className = fuerte ? 'num fuerte' : 'num'; n.el.hidden = false;
+    n.el.textContent = valor; n.el.className = cura ? 'num cura' : fuerte ? 'num fuerte' : 'num'; n.el.hidden = false;
   }
   // un bocadillo que sigue a quien habla (seguir() devuelve dónde está su cabeza, o null si ya no está)
   bocadillo(seguir, texto, vida, lado = 'p') {

@@ -6,6 +6,8 @@ import { tr, IDIOMA } from './textos.js';
 
 let ac = null, salida = null, ruido = null;
 export const VOZ = { modo: 'inventada' };   // 'inventada' | 'movil' | 'nada'
+// para la música (musica.js): el mismo altavoz y el mismo ruido
+export function audio() { return ac && ac.state === 'running' ? { ac, salida, ruido } : null; }
 
 // el navegador solo deja sonar después de un toque del jugador: se llama desde ese toque
 export function despertarAudio() {
@@ -92,6 +94,27 @@ export const SFX = {
     if (!toca('salto', 0.2)) return;
     tono(ac.currentTime, 0.4, 'triangle', 220, 900, 0.14);
   },
+  cura() {
+    if (!toca('cura', 0.25)) return;
+    const t = ac.currentTime; tono(t, 0.18, 'sine', 660, 990, 0.08); tono(t + 0.08, 0.2, 'sine', 990, 1320, 0.07);
+  },
+  congela() {
+    if (!toca('congela', 0.3)) return;
+    const t = ac.currentTime; ruidoFiltrado(t, 0.6, 'highpass', 6000, 2500, 0.25); tono(t, 0.5, 'sine', 1800, 600, 0.1);
+  },
+  expulsa() {
+    if (!toca('expulsa', 0.2)) return;
+    const t = ac.currentTime; tono(t, 0.2, 'square', 300, 900, 0.08); ruidoFiltrado(t, 0.15, 'bandpass', 1200, 600, 0.2);
+  },
+  carta() {
+    if (!toca('carta', 0.06)) return;
+    const t = ac.currentTime; ruidoFiltrado(t, 0.06, 'highpass', 5000, 4000, 0.08); tono(t, 0.08, 'triangle', 500, 900, 0.07);
+  },
+  no() { if (toca('no', 0.12)) tono(ac.currentTime, 0.13, 'square', 190, 140, 0.07); },
+  bocina() {
+    if (!toca('bocina', 0.5)) return;
+    const t = ac.currentTime; tono(t, 0.3, 'sawtooth', 330, 330, 0.08); tono(t + 0.05, 0.35, 'sawtooth', 440, 440, 0.07);
+  },
 };
 
 /* ---------- las voces ---------- */
@@ -100,11 +123,16 @@ const PERFIL = {
   bunny:    { f0: 300, salto: 0.55, silaba: 0.085, onda: 'sawtooth', loco: true },
   squirrel: { f0: 540, salto: 0.35, silaba: 0.058, onda: 'sawtooth' },
   becario:  { f0: 132, salto: 0.08, silaba: 0.125, onda: 'square', cansado: true },
+  meercat:  { f0: 430, salto: 0.25, silaba: 0.075, onda: 'triangle' },
+  mechavaca:{ f0: 175, salto: 0.3, silaba: 0.1, onda: 'square' },
+  vaca:     { f0: 240, salto: 0.4, silaba: 0.11, onda: 'sawtooth' },
+  survivalbot: { f0: 92, salto: 0.12, silaba: 0.13, onda: 'square' },
+  narrador: { f0: 205, salto: 0.3, silaba: 0.068, onda: 'sawtooth' },
 };
 // las dos «formantes» de cada vocal: lo que hace que una «a» suene a «a» y no a «i»
 const VOCAL = { a: [800, 1200], e: [480, 1900], i: [300, 2400], o: [500, 880], u: [330, 760] };
 // con la voz del móvil: lo agudo y lo rápido que habla cada uno
-const MOVIL = { bunny: [1.45, 1.15], squirrel: [2, 1.4], becario: [0.25, 0.78] };
+const MOVIL = { bunny: [1.45, 1.15], squirrel: [2, 1.4], becario: [0.25, 0.78], meercat: [1.7, 1.05], mechavaca: [0.6, 0.95], vaca: [1.2, 0.9], survivalbot: [0.1, 0.8], narrador: [1, 1.25] };
 
 let vozMovil = null;
 function elegirVozMovil() {

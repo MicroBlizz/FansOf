@@ -2,6 +2,11 @@
   "permissions": {
     "deny": [
       "Read(_base/**)"
+    ],
+    "ask": [
+      "Bash(python herramientas/desplegar.py:*)",
+      "Bash(python3 herramientas/desplegar.py:*)",
+      "mcp__Supabase__apply_migration"
     ]
   }
 }

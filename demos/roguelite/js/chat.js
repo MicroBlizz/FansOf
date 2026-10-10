@@ -133,8 +133,8 @@ function lineaMini(ctx, e, x, y, ancho) {
   x += escribeMini(ctx, nombre + ':', x, y, col) + 3;
   escribeMini(ctx, txt, x, y, e.quien === CHAT_LOLA ? '#fff3c4' : '#fff6ea');
 }
-function pintaChatEscena(ctx) {
-  const vivos = LOG.filter(e => e.quien && e.fin > RELOJ.t), W = PAN.W, y = ESC.Y + 31;
+function pintaChatEscena(ctx, y) {
+  const vivos = LOG.filter(e => e.quien && e.fin > RELOJ.t), W = PAN.W;
   if (!vivos.length) return;
   if (CHAT_ESTILO === 'B') {   // teletipo: la última frase cruza la pantalla
     const e = vivos[vivos.length - 1], [nombre, col] = e.quien, w = anchoMini(nombre + ': ' + e.txt), t = RELOJ.t - e.t0, x = Math.round(W - t * 38);

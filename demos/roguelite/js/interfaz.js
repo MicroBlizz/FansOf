@@ -8,7 +8,7 @@ const COL = { fondo: '#150b21', tray: '#26143c', trayHi: '#3e2363', tinta: '#fff
 const PANEL = { modo: 'inicio', titulo: '', texto: '', opciones: [], habs: [], cofre: false, t0: 0, elegida: -1 };
 const LOG = [];
 let BOTONES = [], MONEDERO = [170, 6], PULSA = null, SALIR = -1e9;
-const PANEL_Y = ESC.Y + ESC.H;
+const PANEL_Y = ESC.Y + ESC.H;   // (si hay barra, todo lo de debajo va bajado BARRA.h)
 
 const formatea = (s, v) => v ? s.replace(/\{(\w+)\}/g, (m, k) => (v[k] !== undefined ? v[k] : m)) : s;
 function log(txt, v) { LOG.push({ txt: formatea(tr(txt), v), t0: RELOJ.t }); if (LOG.length > 60) LOG.shift(); }
@@ -38,7 +38,8 @@ function marco(ctx, x, y, w, h, fondo, borde = OL) {
   ctx.fillStyle = borde; ctx.fillRect(x + 1, y, w - 2, h); ctx.fillRect(x, y + 1, w, h - 2);
   ctx.fillStyle = fondo; ctx.fillRect(x + 1, y + 1, w - 2, h - 2);
 }
-const pulsado = (x, y) => PULSA && PULSA.x === x && PULSA.y === y && performance.now() - PULSA.t < 140;
+let DESPL = 0;   // cuánto está bajada la escena por la barra (para los toques)
+const pulsado = (x, y) => PULSA && PULSA.x === x && PULSA.y === y + DESPL && performance.now() - PULSA.t < 140;
 // un botón de canto grueso, como una tecla; devuelve cuánto se ha hundido
 function botonPx(ctx, x, y, w, h, col, colO, f) {
   BOTONES.push({ x, y, w, h, f });
@@ -118,7 +119,6 @@ function pintaHud(ctx) {
 function pintaEscenaUI(ctx) {
   const W = PAN.W;
   if (VIAJE.modo === 'menu') pintaMenuEscena(ctx);
-  if (VIAJE.modo !== 'menu') pintaChatEscena(ctx);
   const c = VIAJE.cartel;
   if (c) {
     const t = RELOJ.t - c.t0;
@@ -140,31 +140,45 @@ function pintaEscenaUI(ctx) {
   }
   if (VIAJE.fundido > 0) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, Math.round(VIAJE.fundido * 16), COL.fondo);
   if (DESTELLO) rellenaTrama(ctx, 0, ESC.Y, W, ESC.H, DESTELLO.t > DESTELLO.dur / 2 ? 10 : 5, DESTELLO.color);
-  // casa (volver a La Madriguera; dos toques), velocidad y sonido
+  if (VIAJE.glitch > RELOJ.t) pintaGlitch(ctx);
+  if (!BARRA.h) pintaControles(ctx, ESC.Y + 4, ESC.Y + 24, ESC.Y + 31);
+}
+// la barra del directo: casa, EN DIRECTO, velocidad y sonido en la fila y0; el mapa del camino en ym; el chat en yc
+function pintaControles(ctx, y0, ym, yc) {
+  const W = PAN.W;
   if (VIAJE.modo === 'juego') {
     const armado = performance.now() - SALIR < 2500;
-    const dy = botonPx(ctx, 4, ESC.Y + 4, 15, 13, armado ? '#c43a4a' : COL.trayHi, armado ? '#6a1020' : OL, () => {
+    const dy = botonPx(ctx, 4, y0, 15, 13, armado ? '#c43a4a' : COL.trayHi, armado ? '#6a1020' : OL, () => {
       sonido('toque');
       if (performance.now() - SALIR < 2500) { SALIR = 0; volverMadriguera(); } else { SALIR = performance.now(); }
     });
-    pintaSpr(ctx, SPR.icono.casa, 11, ESC.Y + 9 + dy);
-    if (armado) escribe(ctx, tr('¿Salir? Toca otra vez'), 22, ESC.Y + 7, { c: '#ffb0b8' });
-    else pintaDirecto(ctx, 22, ESC.Y + 5);
-    if (VIAJE.plan) pintaMapa(ctx);
+    pintaSpr(ctx, SPR.icono.casa, 11, y0 + 5 + dy);
+    if (armado) escribe(ctx, tr('¿Salir? Toca otra vez'), 22, y0 + 3, { c: '#ffb0b8' });
+    else pintaDirecto(ctx, 22, y0 + 1);
+    if (VIAJE.plan) pintaMapa(ctx, ym);
+    pintaChatEscena(ctx, yc);
   }
-  if (VIAJE.glitch > RELOJ.t) pintaGlitch(ctx);
   if (VIAJE.modo !== 'menu') {
-    const dy = botonPx(ctx, W - 40, ESC.Y + 4, 20, 13, RELOJ.vel > 1 ? COL.naranja : COL.trayHi, RELOJ.vel > 1 ? COL.naranjaO : OL, () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
-    escribe(ctx, RELOJ.vel > 1 ? 'x2' : 'x1', W - 30, ESC.Y + 6 + dy, { alin: 'centro' });
+    const dy = botonPx(ctx, W - 40, y0, 20, 13, RELOJ.vel > 1 ? COL.naranja : COL.trayHi, RELOJ.vel > 1 ? COL.naranjaO : OL, () => { RELOJ.vel = RELOJ.vel > 1 ? 1 : 2; GUARDA.vel = RELOJ.vel; guarda(); sonido('toque'); });
+    escribe(ctx, RELOJ.vel > 1 ? 'x2' : 'x1', W - 30, y0 + 2 + dy, { alin: 'centro' });
   }
-  const dy = botonPx(ctx, W - 17, ESC.Y + 4, 13, 13, COL.trayHi, OL, () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
-  pintaSpr(ctx, SON.on ? SPR.icono.sonido : SPR.icono.mudo, W - 11, ESC.Y + 9 + dy);
+  const dy = botonPx(ctx, W - 17, y0, 13, 13, COL.trayHi, OL, () => { sonidoInicia(); sonidoCambia(); sonido('toque'); });
+  pintaSpr(ctx, SON.on ? SPR.icono.sonido : SPR.icono.mudo, W - 11, y0 + 5 + dy);
+}
+// en pantallas altas, todo eso va en su propia barra entre la vida y la escena, para que la escena se vea entera
+const BARRA = { h: 0 };
+function pintaBarra(ctx) {
+  const W = PAN.W, y = ESC.Y;
+  ctx.fillStyle = COL.fondo; ctx.fillRect(0, y, W, BARRA.h);
+  ctx.fillStyle = '#1c0f2e'; ctx.fillRect(0, y + 31, W, BARRA.h - 31);
+  ctx.fillStyle = OL; ctx.fillRect(0, y + BARRA.h - 1, W, 1);
+  pintaControles(ctx, y + 2, y + 25, y + 33);
 }
 
 // el mapa del camino: los 40 días en una raya, con los capítulos, lo especial que viene y dónde está el conejo
 const MARCA_DIA = { jefe: ['#ff3348', 2], mini: ['#ff8a1f', 2], elite: ['#ffcb3d', 1], tienda: ['#ff7a1a', 1], cofre: ['#ffe14d', 1], hoguera: ['#e63946', 1], pase: ['#d08cff', 1], gashapon: ['#ff7aa8', 1], ruleta: ['#7be04a', 1], raid: ['#e91e3c', 1], misterioso: ['#5aaeff', 1], bug: ['#33e0ff', 1] };
-function pintaMapa(ctx) {
-  const W = PAN.W, n = VIAJE.plan.length, x0 = 8, x1 = W - 9, y = ESC.Y + 24, paso = (x1 - x0) / (n - 1), xd = d => Math.round(x0 + (d - 1) * paso);
+function pintaMapa(ctx, y) {
+  const W = PAN.W, n = VIAJE.plan.length, x0 = 8, x1 = W - 9, paso = (x1 - x0) / (n - 1), xd = d => Math.round(x0 + (d - 1) * paso);
   ctx.fillStyle = OL; ctx.fillRect(x0 - 2, y - 2, x1 - x0 + 5, 5);
   ctx.fillStyle = '#3e2363'; ctx.fillRect(x0 - 1, y - 1, x1 - x0 + 3, 3);
   ctx.fillStyle = COL.oro; ctx.fillRect(x0 - 1, y, xd(VIAJE.dia) - x0 + 1, 1);

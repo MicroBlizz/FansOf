@@ -77,15 +77,8 @@ function verAnuncio(motivo, alAcabar) {
 /* =========================================================
    TÍTULO
    ========================================================= */
-function pintarTitulo() {
-  const c = $('#cv-titulo'), r = c.getBoundingClientRect(), dpr = Math.min(3, window.devicePixelRatio || 1);
-  c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
-  const x = c.getContext('2d'), k = c.width / 420; x.setTransform(k, 0, 0, k, 0, 0);
-  x.fillStyle = 'rgba(20,6,36,.35)'; x.beginPath(); x.ellipse(210, 178, 190, 12, 0, 0, Math.PI * 2); x.fill();
-  pintarSprite(x, 'twitchking', 80, 172, 0.9, 1); pintarSprite(x, 'epicchampion', 340, 172, 0.9, -1);
-  pintarSprite(x, 'ceo', 210, 120, 0.6, 1, { alfa: 0.35 });
-  pintarSprite(x, 'bunny', 210, 180, 1.05, 1);
-}
+// el grupo del título se pinta en el fondo de los menús (menu-fondo.js), encima del suelo del despacho; aquí no hace falta nada
+function pintarTitulo() {}
 $('#t-version').textContent = 'Combate por turnos · Prototipo ' + NEWS_VER;
 $('#b-opciones-t').onclick = () => { audioInit(); play('select'); abrirOpciones(); };
 $('#b-novedades').onclick = () => { audioInit(); play('select'); abrirNovedades(); };
@@ -114,7 +107,7 @@ function irMapa(wi = mundoVisto) {
     return `<li><button class="nodo ${hecho ? 'hecho' : ''} ${n.jefe ? 'jefe' : ''}" data-l="${li}" ${abierto ? '' : 'disabled'}>
       <canvas data-k="${n.e.find(k => ENEMIGOS[k].jefe) || n.e[n.e.length > 1 ? 1 : 0]}" ${n.e.some(k => ENEMIGOS[k].corrupto) ? 'data-c="1"' : ''}></canvas>
       <span class="n-txt"><span class="n-num">${n.jefe ? 'Jefe' : 'Combate ' + (li + 1)}</span><br><span class="n-nom">${n.nombre}</span></span>
-      <span class="n-est">${hecho ? 'HECHO' : abierto ? '¡VAMOS!' : '🔒'}</span></button></li>`;
+      <span class="n-est">${hecho ? 'HECHO' : abierto ? '¡VAMOS!' : `<span class="candado">${LOCK_SVG}</span>`}</span></button></li>`;
   }).join('');
   for (const c of document.querySelectorAll('#camino canvas')) retrato(c, c.dataset.k, { corrupto: !!c.dataset.c, gris: c.closest('.nodo').disabled });
   pintarGrupoMini();

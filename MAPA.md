@@ -301,7 +301,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/novedades.js` · 7 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
-- `games/tacticas/index.html` · 8 KB
+- `games/tacticas/index.html` · 9 KB
+- `games/tacticas/css/menus.css` · 6 KB
 - `games/tacticas/css/tacticas.css` · 21 KB
 - `games/tacticas/idioma/en-1.js` · <1 KB · EN_TACTICAS
 - `games/tacticas/js/combate.js` · 18 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
@@ -315,7 +316,8 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/js/maqueta-mundos-1.js` · 17 KB · MUNDOS_MAQUETA, PAL, VENTANAS_SEDE, VEN_Y, SOL_INC, luzSede, pintaSede, rayosSede, haz, plantaDelante, columnaDelante, bokehDe, VENTANAS_OFI, FLUOR, luzOficina, mesaOficina, pintaOficina
 - `games/tacticas/js/maqueta-mundos-2.js` · 13 KB · TUMBAS_SUELO, lapida, pintaCementerio, FOCOS, pintaPlato
 - `games/tacticas/js/maqueta-pixel.js` · 13 KB · BAYER, trama, azarFijo, lienzo, rgbDe, u32, u32De, rampa, tono, Pincel, ampliar, FILTRO, desenfocar, conMascara, BRILLOS, brillo, pintaBrillo, PW, PARED_Y, HOR, V_PARED, uDe, sueloXY, pintaSuelo, ventanal, hoja, planta
-- `games/tacticas/js/novedades.js` · 4 KB · NEWS
+- `games/tacticas/js/menu-fondo.js` · 5 KB · FM, pantallaVisible, fondoMenu, grupoTitulo, rayosLogo
+- `games/tacticas/js/novedades.js` · 5 KB · NEWS
 - `games/tacticas/js/pantallas.js` · 21 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, abrirNovedades, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones
 - `games/td/index.html` · 28 KB
 - `games/td/sw.js` · <1 KB

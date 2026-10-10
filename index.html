@@ -52,13 +52,52 @@
   .game li b { color: var(--player-lite); }
   .game ul.joke { color: var(--ink-dim); font-style: italic; }
   p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 6px 0 0; max-width: 460px; }
+  /* la ventana NOVEDADES: sale al cargar la página y desde la pestaña del menú (los textos, en novedades/lista.js y en los NEWS de cada juego) */
+  .nov-fondo { position: fixed; inset: 0; z-index: 20; background: var(--modal); display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; }
+  .nov-fondo[hidden] { display: none; }
+  .nov-caja { position: relative; width: 100%; max-width: 560px; max-height: 100%; display: flex; flex-direction: column; box-sizing: border-box; text-align: left; color: var(--ink);
+    border: 4px solid var(--outline); border-radius: 20px; background: linear-gradient(170deg, var(--tray-hi) 0%, var(--tray) 40%, var(--bg) 100%); box-shadow: 0 6px 0 var(--outline); }
+  .nov-cabeza { padding: 16px 52px 8px 18px; border-bottom: 3px solid var(--outline); }
+  .nov-cabeza h2 { font-family: var(--font-display); font-weight: 400; font-size: 34px; line-height: 1; margin: 0; color: var(--gold); }
+  .nov-cabeza p { margin: 4px 0 0; font-size: 14px; font-weight: 700; color: var(--ink-dim); }
+  .nov-x { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 10px; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); font-family: var(--font-display); font-size: 18px; line-height: 1; cursor: pointer; padding: 3px 0 0; }
+  .nov-cuerpo { overflow-y: auto; padding: 4px 18px 12px; -webkit-overflow-scrolling: touch; }
+  .nov-cuerpo h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--player-lite); margin: 16px 0 2px; }
+  .nov-cuerpo p.nov-nota { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+  .nov-bloque { margin-top: 10px; background: var(--panel); border: 3px solid var(--outline); border-radius: 12px; padding: 8px 12px 10px; }
+  .nov-bloque h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-family: var(--font-display); font-weight: 400; font-size: 17px; color: var(--gold); margin: 0; }
+  .nov-bloque h4 small { font-family: var(--font-ui); font-size: 13px; font-weight: 800; color: var(--ink-dim); }
+  .nov-bloque ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+  .nov-bloque li { margin: 3px 0; }
+  .nov-bloque li b { color: var(--player-lite); }
+  .nov-bloque a { display: inline-block; margin-top: 6px; font-size: 14px; font-weight: 800; color: var(--gold); }
+  .nov-cuerpo ul.joke { color: var(--ink-dim); font-style: italic; font-size: 14px; font-weight: 600; padding-left: 20px; }
+  .nov-pie { padding: 10px 18px 14px; border-top: 3px solid var(--outline); display: flex; justify-content: center; }
+  .nov-pie button { font-family: var(--font-display); font-size: 20px; padding: 9px 26px 5px; border-radius: 14px; border: 3px solid var(--outline); cursor: pointer;
+    background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
+  .nov-pie button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+  .nov-x:focus-visible, .nov-pie button:focus-visible, .nov-bloque a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  @media (max-width: 420px) { .nov-cabeza h2 { font-size: 28px; } .nov-cuerpo { padding: 2px 14px 10px; } }
 </style>
 </head>
 <body>
 <nav class="menu" aria-label="Menú">
-  <a href="#inicio">Inicio</a><a href="#biblioteca">Biblioteca</a><a href="#legal">Privacidad y condiciones</a>
+  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="#legal">Privacidad y condiciones</a>
   <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
 </nav>
+<div class="nov-fondo" id="novedades" hidden>
+  <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
+    <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub">Novedades y parches</p></div>
+    <button type="button" class="nov-x ol" id="nov-x" aria-label="Cerrar">✕</button>
+    <div class="nov-cuerpo" id="nov-cuerpo">
+      <div id="nov-ultimo"></div>
+      <h3 class="ol">PARCHES DE CADA JUEGO</h3>
+      <p class="nov-nota">Cada juego se actualiza por su cuenta: aquí tienes su última versión y lo que trae.</p>
+      <div id="nov-parches"></div>
+    </div>
+    <div class="nov-pie"><button type="button" class="ol" id="nov-ok">¡A JUGAR!</button></div>
+  </div>
+</div>
 <main>
   <section class="hero" id="inicio">
     <h1><span class="l2 ol-big">FANS OF</span></h1>
@@ -130,7 +169,7 @@
 </main>
 <script src="core/js/nucleo.js?v=0"></script>
 <script src="core/js/novedades.js"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js'] })</script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -143,20 +182,76 @@ function grab(src, name, close) {
   return new Function('return ' + src.slice(i + name.length + 9, j + 1 + close.length - 1))();
 }
 function show(id, ver, entries) {
-  const box = document.getElementById(id);
+  const box = document.getElementById(id), news = box && box.querySelector('[data-news]');
+  if (!news) return;   // juegos sin tarjeta de novedades (Skate): solo salen en la ventana
   box.querySelector('[data-ver]').textContent = ver ? 'versión ' + ver : '';
-  box.querySelector('[data-news]').innerHTML = entries.length ? `<h3>Versión ${entries[0].v}</h3>` + newsHtml(entries) : 'No se han podido leer las novedades.';
+  news.innerHTML = entries.length ? `<h3>Versión ${entries[0].v}</h3>` + newsHtml(entries) : 'No se han podido leer las novedades.';
 }
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
-const fail = id => () => { document.getElementById(id).querySelector('[data-news]').textContent = 'No se han podido leer las novedades.'; };
+const fail = id => () => {
+  const news = document.getElementById(id) && document.getElementById(id).querySelector('[data-news]'); if (news) news.textContent = 'No se han podido leer las novedades.';
+  parche(id, null, []);
+};
+
+// ---------- la ventana NOVEDADES: sale cada vez que se carga la página y desde la pestaña Novedades del menú ----------
+// LO ÚLTIMO sale de novedades/lista.js (el boletín, escrito a mano); los PARCHES, del js/novedades.js de cada juego, así que se ponen al día solos.
+// tr() llega con el idioma, que se carga aparte: hasta entonces el texto va tal cual (y la página lo traduce sola al pintarlo)
+const t = s => (typeof tr === 'function' ? tr(s) : s);
+const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nov = { fondo: document.getElementById('novedades'), volver: null };
+function boletinHtml(b, entero) {
+  const cab = entero ? '' : `<h3>${esc(t(b.titulo))}</h3><p class="nov-nota">${esc(t(b.fecha))}</p>`;
+  return cab + (b.juegos || []).map(j => `<div class="nov-bloque"><h4>${esc(t(j.nombre))}${j.ver ? ` <small>${esc(j.ver)}</small>` : ''}</h4>`
+    + newsLista(j.real) + (entero && j.tarjeta ? `<a href="#${j.tarjeta}" data-cierra>${esc(t('Ir al juego'))}</a>` : '') + '</div>').join('')
+    + newsLista(b.joke, 'joke');
+}
+function pintarBoletines(lista) {
+  const ultimo = document.getElementById('nov-ultimo');
+  if (!lista || !lista.length) { ultimo.innerHTML = ''; return; }
+  document.getElementById('nov-sub').textContent = t(lista[0].titulo) + ' · ' + t(lista[0].fecha);
+  ultimo.innerHTML = `<h3 class="ol">${esc(t('LO ÚLTIMO'))}</h3>` + boletinHtml(lista[0], true) + lista.slice(1, 3).map(b => boletinHtml(b, false)).join('');
+}
+// un hueco por juego, en el orden de la librería, que se rellena cuando llega su informe
+function parche(id, ver, entries) {
+  const caja = document.getElementById('par-' + id); if (!caja) return;
+  const n = entries[0];
+  caja.querySelector('small').textContent = ver ? t('versión ' + ver) : '';
+  caja.querySelector('div').innerHTML = n ? newsLista(n.real) + newsLista(n.joke, 'joke') : esc(t('No se han podido leer las novedades.'));
+}
+function abrirNovedades(desde) {
+  nov.volver = desde || null; nov.fondo.hidden = false; document.body.style.overflow = 'hidden';
+  document.getElementById('nov-cuerpo').scrollTop = 0; document.getElementById('nov-ok').focus({ preventScroll: true });
+}
+function cerrarNovedades() {
+  if (nov.fondo.hidden) return;
+  nov.fondo.hidden = true; document.body.style.overflow = '';
+  if (location.hash === '#novedades') history.replaceState(null, '', location.pathname + location.search);
+  if (nov.volver) nov.volver.focus({ preventScroll: true });
+}
+document.getElementById('abrir-novedades').onclick = e => { e.preventDefault(); abrirNovedades(e.currentTarget); };
+document.getElementById('nov-ok').onclick = cerrarNovedades;
+document.getElementById('nov-x').onclick = cerrarNovedades;
+nov.fondo.addEventListener('click', e => { if (e.target === nov.fondo || e.target.closest('[data-cierra]')) cerrarNovedades(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarNovedades(); });
+
 // Cada juego escribe su versión en un solo sitio, el ?v= de core/js/nucleo.js en su index.html, y sus informes en js/novedades.js
 // (las demos sin nucleo.js, como Fans of Roguelite, toman la versión de su primer informe)
-for (const [id, dir] of [['g-td', 'games/td/'], ['g-rumble', 'games/rumble/'], ['g-survivors', 'games/survivors/'], ['g-tacticas', 'games/tacticas/'], ['g-roguelite', 'demos/roguelite/']]) {
-  Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js')]).then(([page, news]) => {
+const JUEGOS = [['g-rumble', 'games/rumble/', 'FANS OF RUMBLE'], ['g-td', 'games/td/', 'FANS OF TD'], ['g-survivors', 'games/survivors/', 'FANS OF SURVIVORS'],
+  ['g-tacticas', 'games/tacticas/', 'FANS OF RUMBLE: TÁCTICAS'], ['g-skate', 'games/skate/', 'FANS OF SKATE'], ['g-roguelite', 'demos/roguelite/', 'FANS OF ROGUELITE']];
+document.getElementById('nov-parches').innerHTML = JUEGOS.map(([id, dir, nombre]) =>
+  `<div class="nov-bloque" id="par-${id}"><h4>${esc(t(nombre))} <small></small></h4><div>${esc(t('Cargando…'))}</div><a href="${dir}">${esc(t('JUGAR'))}</a></div>`).join('');
+// se pinta con la página ya cargada: así el diccionario del idioma ya está y los textos salen traducidos
+const cargada = new Promise(r => (document.readyState === 'complete' ? r() : window.addEventListener('load', r)));
+for (const [id, dir] of JUEGOS) {
+  Promise.all([text(dir + 'index.html'), text(dir + 'js/novedades.js'), cargada]).then(([page, news]) => {
     const entries = grab(news, 'NEWS', '];') || [];
-    show(id, (/nucleo\.js\?v=([^"']+)/.exec(page) || [])[1] || (entries[0] && entries[0].v), entries);
+    const ver = (/nucleo\.js\?v=([\d.]+)/.exec(page) || [])[1] || (entries[0] && entries[0].v);
+    show(id, ver, entries); parche(id, ver, entries);
   }).catch(fail(id));
 }
+// el boletín se pide sin caché, como los informes de los juegos, para que salga al día en cuanto se publica
+Promise.all([text('novedades/lista.js'), cargada]).then(([src]) => pintarBoletines(grab(src, 'NOVEDADES_WEB', '];'))).catch(() => pintarBoletines([]));
+abrirNovedades();
 </script>
 </body>
 </html>

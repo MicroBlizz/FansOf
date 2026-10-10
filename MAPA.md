@@ -145,7 +145,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/rumble-3d/js/textos.js` · 9 KB · EN, pedido
 - `demos/rumble-3d/js/three.min.js` · 562 KB · Tc, float, float, vec4, vec2, vec3, vec4, mat3, mat3
 - `demos/rumble-3d/js/voces.js` · 10 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
-- `demos/tactics-advance/index.html` · 2 KB
+- `demos/tactics-advance/index.html` · 3 KB
 - `demos/tactics-advance/idioma/en-raiz.js` · <1 KB
 - `demos/tactics-advance/js/controles.js` · 7 KB · cv, puntos, unidadEnPantalla, casillaEnPantalla, filaTocada, botonPeq, toca, pasa, DEDOS, PELLIZCO, separacion, suelta, actualizaPista
 - `demos/tactics-advance/js/decorados.js` · 7 KB · cajaIso, PIEDRA, PIEDRA_F, MUSGO, tumba, cruz, CORTEZA, arbolMuerto, HOJAS, arbol, arbusto, HIERRO, farol, cripta, MADERA, mesa, planta, fuente, cajas, archivador
@@ -304,9 +304,11 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/index.html` · 8 KB
 - `games/tacticas/css/tacticas.css` · 21 KB
 - `games/tacticas/idioma/en-1.js` · <1 KB · EN_TACTICAS
-- `games/tacticas/js/combate.js` · 17 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
+- `games/tacticas/js/combate.js` · 18 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
 - `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, VERSION_SPR, siluetaDe, reflejoDe, dibujar, sombraDe, rrFill, flecha, pintarLuchador, pintarEfectos, barraE, pintarBarras
+- `games/tacticas/js/espectaculo-fx.js` · 17 KB · TAU, anim, suaveFx, sale, entra, parada, fx, avanzaFx, luzGolpe, rayos, nucleo, anillo, pilar, destello, oscuro, aura, escudo, rayoCielo, tajoFx, grieta, textoFx, velocidad, proyectil, lluvia, estela, sinEstela, mover, volverCasa, entradaTecnica, pintarFx, CAPA_FX, DIBUJO_FX
+- `games/tacticas/js/espectaculo-tecnicas.js` · 12 KB · centroDe, medio, correA, volverA, golpeLuz, TEC_ANIM, previaEnemigo, golpeEnemigo
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
 - `games/tacticas/js/interfaz.js` · 13 KB · menuEl, ICONO_ORDEN, marcaOrden, abrirMenu, cerrarMenu, elegirObjetivo, decidir, alPulsarMenu, CARAS, mezclaColor, colorDe, caraDe, velAtb, ordenTurnos, firmaTurnos, pintarTurnos, pintarFilas, actualizarFilas
 - `games/tacticas/js/maqueta-capas.js` · 4 KB · MAQ, PIXELES, fondoMaqueta, capaSuave, capaDelante, capaViñeta, prepararMaqueta, motaNueva, avanzaPolvo, pintaPolvo

@@ -10,7 +10,8 @@ viñetas con la historia; se puede saltar). Luego el **título** (logo, una isli
 ver la presentación) y Biblioteca. Hay elegir batalla, pausa y final. Zoom con dos dedos, rueda del ratón o los botones + y −; arrastrar
 mueve la cámara. Cada batalla es de 2 contra 4 por turnos. Tocas a CrazyBunny o a EpicChampion y eliges Mover (casillas
 azules), Atacar o Técnica (zona roja; se toca dos veces al enemigo para confirmar) o Esperar. Luego juega Microblizz.
-**No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea, se borra esta carpeta
+**No toca nada más**: de `core/` solo carga el sonido y las canciones de la serie (sin cambiarlos); no usa partida guardada
+ni Supabase. Si se descarta la idea, se borra esta carpeta
 (y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
 
 Lo visto (la presentación y el tutorial) se apunta en este navegador (`fota-intro`, `fota-tutorial`).
@@ -38,6 +39,10 @@ Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tact
   chispas, espirales, temblor y destello), láser, números, parpadeo al caer y bocadillos con quejas.
 - Con ratón: el cursor sigue a la casilla y al pasar por un objetivo se ve el acierto y el daño. Arrastrar mueve la cámara;
   Esc o el botón derecho vuelven atrás (Esc sin nadie elegido abre la pausa). En los menús, flechas e Intro.
+- **Sonido y música de la serie** (`core/js/sistema/sonido.js` y `core/js/serie/canciones.js`, hechos con código): la del
+  menú en la presentación y el título, la de los jefes en cada batalla (Cementerio `boss1`, Oficinas `boss0`), la de los
+  Animales Locos en el tutorial y las de victoria y derrota. Efectos en menús, pasos, golpes, Salto caótico, láser, despidos,
+  carteles de turno y Lola. En Opciones se quitan el sonido o la música (`fota-mudo`, `fota-sin-musica`).
 - **Dos tamaños de píxel**: el mundo se pinta en un lienzo y las ventanas en otro; cada uno se amplía un número entero de
   veces. El de las ventanas lo decide la pantalla (caben 200 × 170) y el del mundo, el zoom.
 
@@ -48,6 +53,7 @@ Las cifras son de prueba. Jugando a lo bruto (siempre atacar al primero que pill
 | Archivo | Qué hace |
 |---|---|
 | `textos.js` | Los textos en inglés (en el código y en la página van en español), `tr()` y la traducción de la página |
+| `audio.js` | Lo que pide el motor de sonido de la serie (volumen, silencio), la canción de cada momento y los interruptores |
 | `pixel.js` | El pincel de píxeles: formas, tres tonos, contornos, trama de Bayer y `hash` |
 | `personajes.js` | CrazyBunny, EpicChampion, el esqueleto, el becario, StarBot y el retrato grande de CrazyBunny |
 | `decorados.js` | Tumbas, cruz, árboles, arbusto, farol, cripta, mesa, planta, fuente, cajas y archivador |

@@ -24,23 +24,27 @@ body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
 window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small style="opacity:.6">' + String(e.message || '').slice(0, 120) + '</small>'; });
 </script>
-<script src="js/textos.js?v=4"></script>
-<script src="js/pixel.js?v=4"></script>
-<script src="js/personajes.js?v=4"></script>
-<script src="js/decorados.js?v=4"></script>
-<script src="js/mapa.js?v=4"></script>
-<script src="js/escenas.js?v=4"></script>
-<script src="js/fondo.js?v=4"></script>
-<script src="js/letras.js?v=4"></script>
-<script src="js/ventanas.js?v=4"></script>
-<script src="js/reglas.js?v=4"></script>
-<script src="js/dibujo.js?v=4"></script>
-<script src="js/interfaz.js?v=4"></script>
-<script src="js/pantallas.js?v=4"></script>
-<script src="js/intro.js?v=4"></script>
-<script src="js/tutorial.js?v=4"></script>
-<script src="js/juego.js?v=4"></script>
-<script src="js/controles.js?v=4"></script>
-<script src="js/principal.js?v=4"></script>
+<!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble y Tácticas, hechos con código) -->
+<script src="../../core/js/sistema/sonido.js?v=5"></script>
+<script src="../../core/js/serie/canciones.js?v=5"></script>
+<script src="js/textos.js?v=5"></script>
+<script src="js/audio.js?v=5"></script>
+<script src="js/pixel.js?v=5"></script>
+<script src="js/personajes.js?v=5"></script>
+<script src="js/decorados.js?v=5"></script>
+<script src="js/mapa.js?v=5"></script>
+<script src="js/escenas.js?v=5"></script>
+<script src="js/fondo.js?v=5"></script>
+<script src="js/letras.js?v=5"></script>
+<script src="js/ventanas.js?v=5"></script>
+<script src="js/reglas.js?v=5"></script>
+<script src="js/dibujo.js?v=5"></script>
+<script src="js/interfaz.js?v=5"></script>
+<script src="js/pantallas.js?v=5"></script>
+<script src="js/intro.js?v=5"></script>
+<script src="js/tutorial.js?v=5"></script>
+<script src="js/juego.js?v=5"></script>
+<script src="js/controles.js?v=5"></script>
+<script src="js/principal.js?v=5"></script>
 </body>
 </html>

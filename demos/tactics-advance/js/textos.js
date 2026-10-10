@@ -28,7 +28,7 @@ const EN = {
   'Para atacar, toca al enemigo una vez para ver el acierto y otra para confirmar.': 'To attack, tap the enemy once to see the hit chance and again to confirm.',
   'Desde más alto aciertas más y pegas más fuerte. Las técnicas gastan CAOS.': 'From higher up you hit more often and harder. Skills spend CHAOS.',
   'Zoom: pellizca con dos dedos, usa la rueda o los botones + y −. Arrastra para mover la cámara.': 'Zoom: pinch with two fingers, use the wheel or the + and − buttons. Drag to move the camera.',
-  'Idioma: Español': 'Language: English', 'Pantalla completa': 'Full screen',
+  'Idioma: Español': 'Language: English', 'Sonido: Sí': 'Sound: On', 'Sonido: No': 'Sound: Off', 'Música: Sí': 'Music: On', 'Música: No': 'Music: Off', 'Pantalla completa': 'Full screen',
   'Pausa': 'Pause', 'Seguir': 'Resume', 'Empezar de nuevo': 'Start over', 'Cambiar de batalla': 'Change battle', 'Menú principal': 'Main menu',
   'Microblizz tendrá que contratar más becarios.': 'Microblizz will have to hire more interns.',
   'Microblizz te agradece los servicios prestados.': 'Microblizz thanks you for your services.',

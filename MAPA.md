@@ -2,7 +2,7 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 29 KB
+- `index.html` · 23 KB
 - `sw.js` · <1 KB
 - `android/index.html` · 3 KB
 - `condiciones/index.html` · 6 KB
@@ -152,6 +152,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/rumble-3d/js/voces.js` · 10 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
 - `demos/tactics-advance/index.html` · 3 KB
 - `demos/tactics-advance/idioma/en-raiz.js` · <1 KB
+- `demos/tactics-advance/js/audio.js` · 2 KB · SAVE, AUDIO, sonidoApagado, volGeneral, volMusica, rand, pick, MUSICA, musica, vigilaMusica, musicaBatalla, cambiaSonido, cambiaMusica
 - `demos/tactics-advance/js/controles.js` · 7 KB · cv, puntos, unidadEnPantalla, casillaEnPantalla, filaTocada, botonPeq, toca, pasa, DEDOS, PELLIZCO, separacion, suelta, actualizaPista
 - `demos/tactics-advance/js/decorados.js` · 7 KB · cajaIso, PIEDRA, PIEDRA_F, MUSGO, tumba, cruz, CORTEZA, arbolMuerto, HOJAS, arbol, arbusto, HIERRO, farol, cripta, MADERA, mesa, planta, fuente, cajas, archivador
 - `demos/tactics-advance/js/dibujo.js` · 12 KB · LW, lo, uo, centroX, CAJAS, SPRS, spr, gris, ESC, preparaEscena, suave, pieMundo, pantalla, CAM, spriteDe, sombraUnidad, pintaUnidad, EFECTOS, efecto, DURA, avanzaEfectos, ESPIRAL_PEQ, pintaEfectos, brilloFarol, pinta
@@ -162,7 +163,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/tactics-advance/js/juego.js` · 14 KB · J, TWEENS, GEN, espera, avanzaTweens, vista, empieza, cartel, comienzaTuTurno, botonFin, refrescaMenu, deselecciona, selecciona, modoMover, abreTecnicas, modoAtacar, apunta, volver, termina, ejecutaMover_, ejecutaAtaque_, turnoMicroblizz_, compruebaFin, mira, mueve, di, impacto, ataca, muere, CAMB, actualiza, seguro, ejecutaMover
 - `demos/tactics-advance/js/letras.js` · 11 KB · L, LETRAS, TILDES, glifo, anchoGlifo, anchoTexto, escribe, MINI, anchoMini, escribeMini, escribeGordo
 - `demos/tactics-advance/js/mapa.js` · 13 KB · HU, MAT, ALT, TIPO, N, altura, esAgua, wx, wy, alturaPx, ruido, colorArriba, colorLado, hazCasilla, pintaAgua, rombo, romboBorde, marca, PUNTA, cursor
-- `demos/tactics-advance/js/pantallas.js` · 7 KB · PANT, abre, cierra, GRANDES, textoGrande, envuelve, tamPantalla, geoPantalla, pintaPantalla, menuPrincipal, elegirBatalla, ayuda, opciones, pausa, final, cambiaIdioma, pantallaCompleta, tocaPantalla, pasaPantalla, teclaPantalla
+- `demos/tactics-advance/js/pantallas.js` · 8 KB · PANT, abre, cierra, GRANDES, textoGrande, envuelve, tamPantalla, geoPantalla, pintaPantalla, menuPrincipal, elegirBatalla, ayuda, opciones, pausa, final, cambiaIdioma, pantallaCompleta, tocaPantalla, pasaPantalla, teclaPantalla
 - `demos/tactics-advance/js/personajes.js` · 16 KB · PB, OJO_ESPIRAL, OJO_ESPIRAL_B, OJO_COL, BOCA, conejo, PC, campeon, PE, esqueleto, PM, becario, PS, starbot, retratoConejo
 - `demos/tactics-advance/js/pixel.js` · 8 KB · OL, RGBA_CACHE, rgba, mezcla, pal, F, giraP, Pincel, pintaSpr, BAYER, bayer, hash
 - `demos/tactics-advance/js/principal.js` · 3 KB · mc, DPR, zoomMin, ajusta, aplicaZoom, puedeZoom, zoom, ponZoom, RELOJ, fotograma
@@ -356,12 +357,11 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
 - `herramientas/datos.html` · 6 KB
-- `herramientas/desplegar.py` · 12 KB
+- `herramientas/desplegar.py` · 11 KB
 - `herramientas/idioma.py` · 8 KB
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
 - `herramientas/subir_datos.py` · 4 KB
-- `herramientas/versiones.py` · 5 KB
 - `herramientas/pruebas/balance-pagina.js` · 6 KB · $, PARAM, pinta, espera, abreJuego, preparaCasos, resume, tabla, mide
 - `herramientas/pruebas/balance.html` · 2 KB
 - `herramientas/pruebas/balance.js` · 4 KB
@@ -373,7 +373,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/pvp.js` · 18 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
-- `novedades/en.js` · 2 KB
+- `novedades/en.js` · 1 KB
 - `novedades/lista.js` · 2 KB · NOVEDADES_WEB
 - `privacidad/index.html` · 7 KB
 - `servidor/correos/cambio-de-email.html` · 2 KB

@@ -26,7 +26,7 @@ function aplicaZoom(e) {
   CAMB.x += centroX() - antes[0]; CAMB.y += centroY() - antes[1];
 }
 const puedeZoom = d => (d > 0 ? ESC_MUNDO < zoomMax() : ESC_MUNDO > zoomMin());
-function zoom(d) { if (!puedeZoom(d)) return; aplicaZoom(ESC_MUNDO + d); ZOOM = ESC_MUNDO / ESC_UI; }
+function zoom(d) { if (!puedeZoom(d)) return; play('tick'); aplicaZoom(ESC_MUNDO + d); ZOOM = ESC_MUNDO / ESC_UI; }
 function ponZoom(z) { ZOOM = Math.max(zoomMin() / ESC_UI, Math.min(zoomMax() / ESC_UI, z)); const e = Math.round(ESC_UI * ZOOM); if (e !== ESC_MUNDO) aplicaZoom(e); }
 
 let RELOJ = 0, ultimo = 0;

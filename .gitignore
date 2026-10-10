@@ -2,6 +2,3 @@
 _base/
 __pycache__/
 _balance/
-
-# la lista de versiones anteriores la escribe desplegar.py en cada despliegue (herramientas/versiones.py)
-versiones/lista.json

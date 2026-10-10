@@ -103,13 +103,6 @@ def construir(publicar, cabeza, pages):
         if j not in publicar and git('rev-parse', '--verify', '-q', f'{pages}:games/{j}', ok=True):
             g('rm', '-r', '--cached', '-q', f'games/{j}')
             g('read-tree', f'--prefix=games/{j}/', f'{pages}:games/{j}')
-    # versiones/lista.json: todo lo publicado, para volver a jugarlo desde la librería (herramientas/versiones.py). No vive en main.
-    try:
-        from versiones import generar
-        blob = subprocess.run(['git', 'hash-object', '-w', '--stdin'], cwd=RAIZ, input=generar(pages, cabeza, publicar), capture_output=True, text=True, encoding='utf-8').stdout.strip()
-        g('update-index', '--add', '--cacheinfo', f'100644,{blob},versiones/lista.json')
-    except Exception as e:
-        print(f'  Aviso: no he podido preparar la lista de versiones anteriores ({e}); la web sale igual.')
     arbol = g('write-tree')
     os.remove(env['GIT_INDEX_FILE'])
     msg = 'Despliegue: ' + ', '.join(publicar) + f' (main {cabeza[:8]})'

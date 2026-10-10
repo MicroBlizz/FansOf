@@ -18,6 +18,14 @@ const BOCA = '#5a1530', LENGUA = '#ff7aa8', ESPIRAL = '#8a2bff';
 
 // CrazyBunny de lado (perfil, mirando a la derecha): se ve un ojo, el de la espiral, con el hocico delante, la cola de algodón
 // detrás y la pata larga de conejo. La oreja larga va hacia atrás y la doblada (la del otro lado) asoma por detrás.
+// el ojo normal, el del otro lado: asoma un poco junto al hocico porque el conejo está girado un poquito hacia ti
+function ojoLejos(p, o, ex, ey, cabeza) {
+  if (o.ojo === 'x') { for (let d = -1; d <= 1; d++) { p.px(ex + d * 0.6, ey + d, OL); p.px(ex + d * 0.6, ey - d, OL); } return; }
+  if (o.ojo === 'feliz') { p.px(ex - 0.5, ey, OL); p.px(ex + 0.5, ey - 0.5, OL); p.px(ex + 1.3, ey, OL); return; }
+  p.parte(F.y(F.ov(ex, ey, 2.3, 3.3), cabeza), PAL_H.ojo, { sombra: 0, luz: false });
+  p.plano(F.y(F.re(ex + 0.4, ey - 1.5, 1.4, o.ojo === 'furia' ? 2 : 2.8), cabeza), OL);
+  if (o.ojo === 'furia') for (let i = -1; i <= 1; i++) p.px(ex + i, ey - 3.6 + i * 0.4, OL);
+}
 function ojoConejo(p, o, ex, ey) {
   if (o.ojo === 'x') { for (let d = -1.5; d <= 1.5; d++) { p.px(ex + d, ey + d, OL); p.px(ex + d, ey - d, OL); } return; }
   if (o.ojo === 'feliz') { p.px(ex - 1.5, ey + 0.5, OL); p.px(ex - 0.5, ey - 0.5, OL); p.px(ex + 0.5, ey - 0.5, OL); p.px(ex + 1.5, ey + 0.5, OL); return; }
@@ -63,13 +71,15 @@ function conejo(p, o) {
   p.parte(F.ov(o.ba[0], o.ba[1], 2.4, 2.6), P.peloF, { sombra: 1 });
   p.parte(F.un(F.ov(-8.4, -8.5, 3, 2.8), F.ov(-9.4, -10, 2, 2)), P.pelo, { sombra: 1 });
   p.parte(F.ov(0.5, -10, 7.6, 8.6, 0.18), P.pelo, { sombra: 3 });
-  p.parte(F.y(F.ov(4.4, -9, 3.4, 6, 0.18), F.ov(0.5, -10, 6.6, 7.6, 0.18)), P.rosa, { sombra: 1, linea: false, luz: false });
+  p.parte(F.y(F.ov(3.9, -9, 3.9, 6.2, 0.18), F.ov(0.5, -10, 6.6, 7.6, 0.18)), P.rosa, { sombra: 1, linea: false, luz: false });
   p.parte(F.ov(-2.5, -5.2, 5, 4.6), P.pelo, { sombra: 2 });
   p.parte(F.ov(o.pb[0], o.pb[1], 5.6, 2.1), P.pelo, { sombra: 1 });
   // zanahoria «detrás»: al hombro o preparando el golpe; la tapa la cabeza
   if (o.zDetras) manoZanahoria(p, o);
   // cabeza, hocico y la oreja larga de este lado
-  p.parte(F.ov(3 + hx, -24 + hy, 9, 8.6), P.pelo, { sombra: 3, luz: 2 });
+  const cabeza = F.ov(3 + hx, -24 + hy, 9, 8.6);
+  p.parte(cabeza, P.pelo, { sombra: 3, luz: 2 });
+  ojoLejos(p, o, 9.6 + hx, -26.8 + hy, F.ov(3 + hx, -24 + hy, 8.8, 8.4));
   p.parte(F.ov(10.2 + hx, -21.4 + hy, 4.2, 3.6), P.pelo, { sombra: 2 });
   const ra = [-1 + hx, -30.5 + hy], ca = [ra[0] + Math.sin(o.oa) * 9.5, ra[1] - Math.cos(o.oa) * 9.5];
   p.parte(F.ov(ca[0], ca[1], 3.3, 10, o.oa), P.pelo, { sombra: 2 });
@@ -80,14 +90,14 @@ function conejo(p, o) {
   const [gx, gy] = giraP(cx, cy - 1.4, -0.22, cx, cy);
   p.px(gx, gy, '#ff4b5c'); p.px(gx + 1, gy, '#ff4b5c');
   // cara: el ojo en espiral, la nariz rosa en la punta del hocico, la boca y el colorete
-  ojoConejo(p, o, 6.4 + hx, -25.6 + hy);
+  ojoConejo(p, o, 5.4 + hx, -25.6 + hy);
   p.px(13.8 + hx, -22.8 + hy, LENGUA); p.px(13.8 + hx, -21.8 + hy, LENGUA);
   bocaConejo(p, o, 10.8 + hx, -18.6 + hy);
-  p.px(6 + hx, -20.6 + hy, '#ff9ec4'); p.px(7 + hx, -20.6 + hy, '#ff9ec4');
+  p.px(5 + hx, -20.6 + hy, '#ff9ec4'); p.px(6 + hx, -20.6 + hy, '#ff9ec4');
   if (!o.zDetras) manoZanahoria(p, o);
 }
 
-const POSE_CONEJO = { hx: 0, hy: 0, fase: 0, capa: 0.3, pa: [0, -1.6], pb: [3, -1.4], ba: [5.5, -12], oa: -0.32, ob: 0.1, od: 0.5, ojo: 'loco', boca: 'risa', esp: 0, za: -2.6, zx: 4, zy: -14, zDetras: true };
+const POSE_CONEJO = { hx: 0, hy: 0, fase: 0, capa: 0.3, pa: [5.5, -2.6], pb: [3, -1.4], ba: [5.5, -12], oa: -0.32, ob: 0.1, od: 0.5, ojo: 'loco', boca: 'risa', esp: 0, za: -2.6, zx: 4, zy: -14, zDetras: true };
 const HOP_CONEJO = [0, 0, 0, 3, 6, 7, 5, 2];   // altura de cada fotograma del saltito al andar
 const fotoConejo = (t, cambios) => { const p = new Pincel(64, 66, 28, 62, t); conejo(p, Object.assign({}, POSE_CONEJO, cambios)); return p.lienzo(); };
 
@@ -95,18 +105,18 @@ function creaHeroe() {
   const H = SPR.heroe = {};
   const T = [[1.14, 0.86], [1.05, 0.95], [1.07, 0.93], [0.9, 1.12], [0.95, 1.06], [1, 1], [0.96, 1.05], [0.92, 1.1]];
   const OA = [0, -0.15, -0.3, -0.55, -0.6, -0.45, -0.3, -0.25], OD = [1.2, 0.9, 0.6, 1, 1.1, 0.7, 0.1, -0.1];
-  const PA = [[-1, -1.4], [0, -1.6], [0, -1.6], [-5, -2], [-1, -3], [-1, -3], [2, -2], [2, -2]];
   const PB = [[4, -1.4], [3, -1.4], [3, -1.4], [-2, -2.2], [1, -3], [1, -3], [5, -1.8], [5, -1.8]];
+  const PA = PB.map(([x, y], f) => [x + (f === 3 ? 1.5 : 2.6), y - 1.1]);   // el otro pie, un poco por delante y más lejos
   H.andar = T.map(([sx, sy], f) => fotoConejo({ sx, sy }, { oa: OA[f], od: OD[f], pa: PA[f], pb: PB[f], capa: 1, fase: f * Math.PI / 4, esp: f * 0.8 }));
   const resp = [[1, 0], [1.02, 0], [1.04, -1], [1.02, 0]];
   H.quieto = resp.map(([sy, hy], f) => fotoConejo({ sy }, { hy, oa: -0.32 + Math.sin(f * Math.PI / 2) * 0.06, capa: 0.4, fase: f * Math.PI / 2, esp: f * 0.8 }));
-  H.guardia = resp.map(([sy, hy], f) => fotoConejo({ sy }, { hy, oa: -0.36 + Math.sin(f * Math.PI / 2) * 0.06, capa: 0.4, fase: f * Math.PI / 2, esp: f * 0.8, zDetras: false, za: -0.55, zx: 10, zy: -11 + (f === 2 ? -1 : 0), ojo: 'furia', pa: [-2, -1.6], pb: [4, -1.4] }));
-  H.carga = fotoConejo({ sx: 1.08, sy: 0.92, inc: -0.22 }, { zDetras: true, za: -2.9, zx: -3, zy: -18, ojo: 'furia', boca: 'grito', oa: -0.7, od: 1.1, capa: 0.6, fase: 1, pa: [-4, -1.6], pb: [2, -1.4] });
-  H.golpe = fotoConejo({ sx: 1.12, sy: 0.92, inc: 0.3 }, { zDetras: false, za: 0.6, zx: 12, zy: -12, ojo: 'furia', boca: 'grito', oa: -0.75, od: 1.3, capa: 1, fase: 2, pa: [-5, -2], pb: [5, -1.8] });
-  H.remate = fotoConejo({ sx: 1.04, sy: 0.96, inc: 0.15 }, { zDetras: false, za: 1.15, zx: 11, zy: -8, ojo: 'furia', oa: -0.5, od: 1, capa: 0.8, fase: 3, pa: [-3, -1.6], pb: [5, -1.6] });
-  H.dano = fotoConejo({ sx: 0.95, sy: 1.05, inc: -0.3 }, { zDetras: false, za: 2.3, zx: 4, zy: -10, ojo: 'x', boca: 'ay', oa: -0.75, od: 1.4, capa: 0.8, fase: 4, pa: [-2, -1.8], pb: [2, -1.4] });
-  H.sube = fotoConejo({ sx: 0.88, sy: 1.14 }, { zDetras: false, za: -1.35, zx: 13, zy: -15, ojo: 'furia', boca: 'grito', oa: -0.5, od: 1.3, pa: [-4, -2.6], pb: [-1, -2.4], capa: 1, fase: 5 });
-  H.cae = fotoConejo({ sx: 0.9, sy: 1.12 }, { zDetras: false, za: 1.45, zx: 7, zy: -7, ojo: 'furia', boca: 'grito', oa: -0.1, od: -0.4, pa: [1, -1.6], pb: [4, -1.4], capa: 1, fase: 6 });
+  H.guardia = resp.map(([sy, hy], f) => fotoConejo({ sy }, { hy, oa: -0.36 + Math.sin(f * Math.PI / 2) * 0.06, capa: 0.4, fase: f * Math.PI / 2, esp: f * 0.8, zDetras: false, za: -0.55, zx: 10, zy: -11 + (f === 2 ? -1 : 0), ojo: 'furia', pa: [6.5, -2.6], pb: [4, -1.4] }));
+  H.carga = fotoConejo({ sx: 1.08, sy: 0.92, inc: -0.22 }, { zDetras: true, za: -2.9, zx: -3, zy: -18, ojo: 'furia', boca: 'grito', oa: -0.7, od: 1.1, capa: 0.6, fase: 1, pa: [4.5, -2.6], pb: [2, -1.4] });
+  H.golpe = fotoConejo({ sx: 1.12, sy: 0.92, inc: 0.3 }, { zDetras: false, za: 0.6, zx: 12, zy: -12, ojo: 'furia', boca: 'grito', oa: -0.75, od: 1.3, capa: 1, fase: 2, pa: [-3, -2.8], pb: [5, -1.8] });
+  H.remate = fotoConejo({ sx: 1.04, sy: 0.96, inc: 0.15 }, { zDetras: false, za: 1.15, zx: 11, zy: -8, ojo: 'furia', oa: -0.5, od: 1, capa: 0.8, fase: 3, pa: [7.5, -2.6], pb: [5, -1.6] });
+  H.dano = fotoConejo({ sx: 0.95, sy: 1.05, inc: -0.3 }, { zDetras: false, za: 2.3, zx: 4, zy: -10, ojo: 'x', boca: 'ay', oa: -0.75, od: 1.4, capa: 0.8, fase: 4, pa: [4.5, -2.8], pb: [2, -1.4] });
+  H.sube = fotoConejo({ sx: 0.88, sy: 1.14 }, { zDetras: false, za: -1.35, zx: 13, zy: -15, ojo: 'furia', boca: 'grito', oa: -0.5, od: 1.3, pa: [1.5, -3.4], pb: [-1, -2.4], capa: 1, fase: 5 });
+  H.cae = fotoConejo({ sx: 0.9, sy: 1.12 }, { zDetras: false, za: 1.45, zx: 7, zy: -7, ojo: 'furia', boca: 'grito', oa: -0.1, od: -0.4, pa: [6.5, -2.6], pb: [4, -1.4], capa: 1, fase: 6 });
   H.gana = [0, 1].map(f => fotoConejo({ sy: f ? 1.04 : 1 }, { zDetras: false, za: -1.3, zx: 13.5, zy: -26 - f, ojo: 'feliz', boca: 'feliz', oa: f ? -0.2 : -0.4, od: f ? 0.2 : 0.6, capa: 0.6, fase: f * 2 }));
   H.hop = HOP_CONEJO;
 }

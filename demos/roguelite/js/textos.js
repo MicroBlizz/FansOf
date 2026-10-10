@@ -1,5 +1,4 @@
-// Fans of Roguelite (prototipo) · Textos: se escriben en español en el código y aquí está su inglés.
-// El idioma se elige como en los juegos: el de Opciones (`fansof-idioma`) o, si no hay, el del navegador. Para probar: ?idioma=en
+// Fans of Roguelite · Textos: se escriben en español en el código y aquí está el inglés del prototipo (sin terminar).
 'use strict';
 
 const EN = {
@@ -70,11 +69,7 @@ const EN = {
   'TUS DATOS': 'YOUR DATA', 'NOS ENCANTAN': 'WE LOVE IT', 'PRÓXIMAMENTE': 'COMING SOON', 'MÁS ANUNCIOS': 'MORE ADS',
 };
 
-const IDIOMA_RL = (() => {
-  let q = '';
-  try { q = new URLSearchParams(location.search).get('idioma') || localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
-  if (!q) for (const l of (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'])) { const c = String(l).slice(0, 2).toLowerCase(); if (c === 'es' || c === 'en') { q = c; break; } }
-  return q === 'es' ? 'es' : 'en';
-})();
+// De momento el juego va solo en español (lo decidió Daniel); el inglés de abajo queda para más adelante. Para probarlo: ?idioma=en
+const IDIOMA_RL = (() => { try { return new URLSearchParams(location.search).get('idioma') === 'en' ? 'en' : 'es'; } catch (e) { return 'es'; } })();
 document.documentElement.lang = IDIOMA_RL;
 function tr(s) { return IDIOMA_RL === 'es' ? s : (EN[s] ?? s); }

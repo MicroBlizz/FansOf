@@ -1,5 +1,6 @@
 // Fans of Rouflage (prototipo) · TEXTOS: en el código y en la página van en español, y aquí está su inglés.
 // El idioma se elige como en los demás juegos: el guardado (`fansof-idioma`) o, si no hay, el del navegador. Para probar: ?idioma=en
+// El botón del título lo cambia al momento, sin recargar la página.
 'use strict';
 
 const EN = {
@@ -83,7 +84,8 @@ const EN = {
   'DESCANSE': 'REST IN', 'EN PARCHE': 'PATCH', 'FALTABA': 'NEEDED', 'UN PASE': 'A PASS', 'MODO HISTORIA': 'STORY MODE',
 };
 
-const IDIOMA_RF = (() => {
+// el idioma de ahora ('es' o 'en'); el botón del título lo cambia al momento (cambiaIdioma, en interfaz.js)
+let IDIOMA_RF = (() => {
   let q = '';
   try { q = new URLSearchParams(location.search).get('idioma') || localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   if (!q) for (const l of (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'])) { const c = String(l).slice(0, 2).toLowerCase(); if (c === 'es' || c === 'en') { q = c; break; } }
@@ -92,10 +94,12 @@ const IDIOMA_RF = (() => {
 document.documentElement.lang = IDIOMA_RF;
 function tr(s) { return IDIOMA_RF === 'es' ? s : (EN[s] ?? s); }
 
-// la página: data-tr traduce el texto de un elemento; data-tr-html, su contenido con negritas; data-tr-aria y data-tr-title, sus descripciones
+// la página: data-tr traduce el texto de un elemento; data-tr-html, su contenido con negritas; data-tr-aria y data-tr-title, sus descripciones.
+// Cada elemento se guarda su español la primera vez, así que se puede llamar otra vez al cambiar de idioma.
 function traducePagina() {
-  for (const el of document.querySelectorAll('[data-tr]')) el.textContent = tr(el.textContent.trim());
-  for (const el of document.querySelectorAll('[data-tr-html]')) el.innerHTML = tr(el.innerHTML.trim());
-  for (const el of document.querySelectorAll('[data-tr-aria]')) el.setAttribute('aria-label', tr(el.getAttribute('aria-label')));
-  for (const el of document.querySelectorAll('[data-tr-title]')) el.setAttribute('title', tr(el.getAttribute('title')));
+  const es = (el, clave, lee) => { if (el[clave] === undefined) el[clave] = lee(); return el[clave]; };
+  for (const el of document.querySelectorAll('[data-tr]')) el.textContent = tr(es(el, '_es', () => el.textContent.trim()));
+  for (const el of document.querySelectorAll('[data-tr-html]')) el.innerHTML = tr(es(el, '_esHtml', () => el.innerHTML.trim()));
+  for (const el of document.querySelectorAll('[data-tr-aria]')) el.setAttribute('aria-label', tr(es(el, '_esAria', () => el.getAttribute('aria-label'))));
+  for (const el of document.querySelectorAll('[data-tr-title]')) el.setAttribute('title', tr(es(el, '_esTitulo', () => el.getAttribute('title'))));
 }

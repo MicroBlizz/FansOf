@@ -123,6 +123,17 @@ function refrescaSonido() {
   for (const id of ['b-sonido', 'b-sonido2']) $(id).classList.toggle('apagado', AUDIO.mudo);
   for (const id of ['b-musica', 'b-musica2']) $(id).classList.toggle('apagado', AUDIO.sinMusica);
 }
+// el botón de idioma del título: cambia al momento, sin recargar la página (así va igual en la web, en un archivo suelto o dentro
+// de un marco). Se vuelven a traducir la página y el mapa, que lleva sus carteles pintados de una sola vez.
+function cambiaIdioma() {
+  IDIOMA_RF = IDIOMA_RF === 'es' ? 'en' : 'es';
+  try { localStorage.setItem('fansof-idioma', IDIOMA_RF); } catch (_) { /* sin guardar */ }
+  // si la dirección traía ?idioma=, se le quita: al recargar volvería a mandar ella y no lo elegido
+  try { const u = new URL(location.href); if (u.searchParams.has('idioma')) { u.searchParams.delete('idioma'); history.replaceState(null, '', u); } } catch (_) { /* da igual */ }
+  document.documentElement.lang = IDIOMA_RF;
+  traducePagina(); construyeMapa(); refrescaHud(true);
+  $('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
+}
 
 // el final: título, estrellas, el mapa con dónde estaba cada uno y las cifras
 function muestraFin() {
@@ -149,7 +160,7 @@ function pintaMapaFinal() {
   };
   for (const h of J.cazadores) marca(h, '#2e8bff', h.jugador ? tr('TÚ') : '');
   for (const e of J.camaleones) marca(e, e.jugador ? '#ffcb3d' : e.fuera ? '#ff4b5c' : '#7ee04a', e.jugador ? tr('TÚ') : e.nombre);
-  $('fin-leyenda').innerHTML = `<span><i style="background:#7ee04a"></i>${tr('No le han pillado')}</span><span><i style="background:#ff4b5c"></i>${tr('Despedido')}</span><span><i style="background:#2e8bff"></i>${tr('Becario')}</span>`;
+  $('fin-leyenda').innerHTML = `<span><i class="libre"></i>${tr('No le han pillado')}</span><span><i class="fuera"></i>${tr('Despedido')}</span><span><i class="becario"></i>${tr('Becario')}</span>`;
 }
 
 // los dibujos de las dos tarjetas del título, hechos con las piezas del propio juego
@@ -184,7 +195,7 @@ function preparaInterfaz() {
   for (const id of ['b-sonido', 'b-sonido2']) $(id).onclick = () => { cambiaSonido(); refrescaSonido(); };
   for (const id of ['b-musica', 'b-musica2']) $(id).onclick = () => { cambiaMusica(); refrescaSonido(); };
   $('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
-  $('b-idioma').onclick = () => { try { localStorage.setItem('fansof-idioma', IDIOMA_RF === 'es' ? 'en' : 'es'); } catch (_) { /* sin guardar */ } location.href = location.pathname; };
+  $('b-idioma').onclick = () => { cambiaIdioma(); play('select'); };
   $('b-pausa').onclick = accionPausa; $('b-seguir').onclick = accionPausa;
   $('b-reiniciar').onclick = () => { pantalla(null); empiezaPartida(J.modo); };
   $('b-salir').onclick = () => { play('select'); irTitulo(); };

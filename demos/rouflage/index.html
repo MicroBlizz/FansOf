@@ -141,7 +141,7 @@
 <div id="carga">…</div>
 <script>
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
-window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small style="opacity:.6">' + String(e.message || '').slice(0, 140) + '</small>'; });
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
 </script>
 <!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
 <script src="../../core/js/sistema/sonido.js?v=0.1.0"></script>

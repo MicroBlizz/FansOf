@@ -52,6 +52,9 @@ El mapa se pinta entero una vez al arrancar (al doble de tamaño, para que se ve
 de cada punto: de ahí leen el cuentagotas y el medidor. Cada alubia tiene su propio lienzo de «piel». Al pintarse, el trozo de
 mapa que se ve se vuelve a pintar ampliado.
 
+El botón de idioma del título cambia al momento, sin recargar la página: vuelve a traducir los textos y a pintar el mapa (por los
+carteles). Así el juego funciona igual en la web, abierto como archivo suelto o metido dentro de otra página.
+
 Los scripts de `index.html` llevan `?v=`: al cambiar el juego, súbelo en todos para que el navegador no mezcle archivos.
 
 | Archivo (`js/`) | Qué hace |

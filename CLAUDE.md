@@ -29,6 +29,7 @@ Juegos web sin compilación (HTML + JS + CSS). Rumble es el principal; TD y los 
 
 ## Probar y publicar
 - python herramientas/servidor.py y abre http://localhost:8765/games/<juego>/ (--con-sw para probar el modo sin conexión).
+- Al terminar CUALQUIER prueba en navegador, ciérralo (y para el servidor local): si se queda abierto, la música del juego suena en bucle en el PC de Arkioner.
 - Cambio que no debe notarse: python herramientas/base.py y el comparador (/herramientas/pruebas/) en cada juego afectado.
 - Balance de habilidades y objetos de Rumble (al crear o tocar uno, o al cambiar la IA o las unidades): python herramientas/balance.py; cómo leerlo en PLAN-BALANCE.md.
 - main NUNCA se rompe (ni core ni ningún juego): lo que se sube está terminado, o es parcial pero inofensivo, o va tras un flag/interruptor apagado. Se despliega lo que hay en main, así que nada a medias que se note.

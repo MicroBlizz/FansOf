@@ -41,7 +41,7 @@ async function chaosJump(a) {
   ponAnim(CONEJO, 'cae'); sonido('cae');
   await anima(0.13, k => { CONEJO.z = Math.round(150 * (1 - entra(k))); if (k > 0.4) rayas(CONEJO.x - 4, SUELO - 40 - CONEJO.z, 0); });
   CONEJO.z = 0;
-  pegaRival(a.dano, 'chaos'); chatEv('chaos', null, 0.6, 10);
+  pegaRival(a.dano, 'chaos'); espectadores('chaos');
   anillo(xd, SUELO - 2, 44, '#fff3a0', 0.4); polvo(xd - 12, SUELO, 6, -1); polvo(xd + 12, SUELO, 6, 1);
   const [s1, s2] = FONDO.estilo.sombra;
   trozos(xd, SUELO, 12, [FONDO.ti(s1), FONDO.ti(s2), FONDO.ti('#a8ec5c')]);
@@ -104,7 +104,7 @@ async function castorBoom(a) {
   s.t = s.vida;
   humo(xd, SUELO - 10, 12); anillo(xd, SUELO - 12, 44, '#ff8a1f', 0.45); anillo(xd, SUELO - 12, 26, '#fff3a0', 0.3);
   trozos(xd, SUELO - 6, 10, ['#8a5a33', '#e63946', '#ffcb3d', '#5e3a1e']);
-  sonido('boom'); destella('#ffcb3d', 0.06); chatEv('castor', null, 0.6, 12);
+  sonido('boom'); destella('#ffcb3d', 0.06); espectadores('castor');
   if (RIVAL && RIVAL.e.vida > 0) pegaRival(a.dano, 'chaos');
   await espera(0.3);
 }
@@ -141,7 +141,7 @@ function pegaRival(dano, tipo, suave_) {
   numero(cx, cy - 12, dano, grande ? 'critico' : tipo);
   tiembla(grande ? 6 : suave_ ? 1.5 : 2.5); congela(grande ? 130 : suave_ ? 30 : 60);
   sonido(grande ? 'critico' : 'golpe');
-  if (tipo === 'critico') { rotulo(cx, cy - 34, tr('¡CRÍTICO!'), '#ffcb3d', 0.9); log('¡Golpe crítico!'); chatEv('critico', null, 0.45, 8); }
+  if (tipo === 'critico') { rotulo(cx, cy - 34, tr('¡CRÍTICO!'), '#ffcb3d', 0.9); log('¡Golpe crítico!'); espectadores('critico'); }
   const x0 = RIVAL.x, r = RIVAL;
   RIVAL.x += grande ? 6 : 3;
   espera(0.12).then(() => { if (RIVAL === r) { RIVAL.x = x0; if (RIVAL.e.vida > 0 && RIVAL.anim === 'dano') ponAnim(RIVAL, 'quieto'); } }).catch(() => {});

@@ -43,10 +43,8 @@ async function premioHabilidad(min, cofre) {
   let ofs = min ? ofertasMin(H, min) : ofertas(H, cofre);
   if (!ofs.length) { const antes = foto(); extra(H, 'atq', 3); muestraCambios(antes); log('Ya lo sabes todo: +3 de ataque.'); return; }
   const leg = ofs.find(id => HABILIDADES[id].rar === 'legendary');
-  if (leg) chatEv('legendaria', tr(HABILIDADES[leg].n), 1, 0);
-  else chatEv('consejoHab', tr(HABILIDADES[ofs[Math.floor(Math.random() * ofs.length)]].n), 0.8, 0);
+  if (leg) espectadores('legendaria');
   const i = await panelHabilidad(ofs, cofre || !!min);
-  chatEv('elige', tr(HABILIDADES[ofs[i]].n), 0.5, 0);
   await aprende(ofs[i]);
 }
 function ofertasMin(h, min) {
@@ -70,7 +68,7 @@ async function llegaArdilla() {
   ARDILLA.activa = true; ARDILLA.x = -20; ARDILLA.z = 0; ponAnim(ARDILLA, 'andar');
   const xd = POS.conejo() - 26;
   await anima(0.7, k => { ARDILLA.x = Math.round(-20 + (xd + 20) * sale(k)); });
-  ponAnim(ARDILLA, 'quieto'); bocadillo(ARDILLA, '¡Bellotaaas!', 1.2); sonido('voz'); chatEv('ardilla', null, 1, 0);
+  ponAnim(ARDILLA, 'quieto'); bocadillo(ARDILLA, '¡Bellotaaas!', 1.2); sonido('voz'); espectadores('ardilla');
 }
 
 /* ---------- objetos ---------- */
@@ -82,7 +80,7 @@ async function premioObjeto(min, id) {
   fx('spr', { spr: SPR.icono[id], x: cx, y: SUELO - 60, vy: -8, vida: 1.4 });
   chispas(cx, SUELO - 64, 14, col, 100); anillo(cx, SUELO - 64, 20, col, 0.4);
   log('¡Encuentras {o}!', { o: tr(o.n) });
-  consejo('objeto'); chatEv('objeto', tr(o.n), 0.8, 0);
+  consejo('objeto');
   const i = await panelObjeto(id);
   if (i === 0) {
     const antes = foto(), viejo = equipa(H, id);
@@ -131,18 +129,17 @@ async function diaEncuentro() {
   const enc = lista[Math.floor(Math.random() * lista.length)];
   VIAJE.usados.push(enc.id);
   await paraEnProp(enc.prop);
-  chatEv('encuentro', null, 0.6, 0);
   await eleccion(enc);
 }
-async function diaHoguera() { await paraEnProp('hoguera'); sonido('fuego'); consejo('hoguera'); chatEv('hoguera', null, 0.8, 0); await eleccion(HOGUERA); }
-async function diaPase() { await paraEnProp(PASE.prop); bocadillo(PROP, '¡Oferta exclusiva!', 1.4); sonido('voz'); await espera(0.6); consejo('pase'); chatRafaga('pase', 2); await eleccion(PASE); }
+async function diaHoguera() { await paraEnProp('hoguera'); sonido('fuego'); consejo('hoguera'); await eleccion(HOGUERA); }
+async function diaPase() { await paraEnProp(PASE.prop); bocadillo(PROP, '¡Oferta exclusiva!', 1.4); sonido('voz'); await espera(0.6); consejo('pase'); await eleccion(PASE); }
 
 // la tienda de Lola: compras lo que quieras mientras te lleguen las monedas
 async function diaTienda() {
   await paraEnProp('puesto');
   bocadillo(PROP, '¡Pasa, pasa! Hoy todo a mitad de precio. Del doble.', 2.2); sonido('voz');
   await espera(0.8);
-  consejo('tienda'); chatEv('tienda', null, 0.9, 0);
+  consejo('tienda');
   const lista = [
     { n: 'Bocadillo de Lola', d: 'Te curas el 40 % de tu vida.', precio: precioMundo(25), hace: async () => { const a = foto(); cura(H, H.vidaMax * 0.4); muestraCambios(a); } },
     { n: 'Habilidad de la trastienda', d: 'Eliges 1 de 3 habilidades (rara o mejor).', precio: precioMundo(70), hace: () => premioHabilidad('rare') },
@@ -169,7 +166,7 @@ async function diaCofre() {
   log('Un cofre de Microblizz, abandonado en mitad del camino.');
   await espera(0.3);
   PROP.sacude = 1; sonido('rasca'); await espera(0.6); PROP.sacude = 0;
-  PROP.abierto = true; sonido('cofre'); destella('#fff3a0', 0.06); tiembla(2); chatEv('cofre', null, 0.9, 0);
+  PROP.abierto = true; sonido('cofre'); destella('#fff3a0', 0.06); tiembla(2);
   const x = PROP.x, y = SUELO - 14;
   chispas(x, y, 22, '#ffcb3d', 130); chispas(x, y, 10, '#fff6ea', 90); anillo(x, y, 32, '#fff3a0', 0.4);
   lluviaMonedas(x, y, ganaMonedas(H, precioMundo(12 + VIAJE.dia)), 12);
@@ -195,14 +192,14 @@ async function diaRuleta() {
   const s = sorteo([0, 1, 2, 3, 4, 5, 6, 7], i => RULETA[i].p), q = Math.PI / 4;
   const fin = -Math.PI / 2 - (s + 0.5 + rnd(-0.3, 0.3)) * q - 4 * Math.PI * 2;
   let ultimo = 0;
-  sonido('elige'); chatEv('ruleta', null, 1, 0);
+  sonido('elige');
   await anima(2.6, k => { PROP.ang = fin * (1 - Math.pow(1 - k, 3)); const seg = Math.floor(PROP.ang / q); if (seg !== ultimo) { ultimo = seg; sonido('tic'); } });
   const pr = RULETA[s], [rx, ry] = [PROP.x, SUELO - 32];
   chispas(rx, ry - 14, 12, SEGMENTOS_RULETA[s] === '#3a4258' ? '#8a8aa0' : SEGMENTOS_RULETA[s], 100);
   rotulo(rx, ry - 26, tr(pr.txt), s === 7 ? '#ff5a6a' : '#ffcb3d', 1.6);
   sonido(s === 7 ? 'derrota' : 'victoria');
   log('La ruleta: {p}', { p: tr(pr.txt) });
-  if (s === 7) chatRafaga('cuotaRuleta', 2); else if (s === 6) chatRafaga('gordo', 3);
+  if (s === 6) espectadores('gordo');
   await espera(1.0);
   await pr.hace();
   await espera(0.6);
@@ -211,7 +208,7 @@ async function diaRuleta() {
 // el gashapón: gratis da un objeto cualquiera; pagando, uno raro o mejor
 async function diaGashapon() {
   await paraEnProp('gashapon');
-  consejo('gashapon'); chatEv('gashapon', null, 0.8, 0);
+  consejo('gashapon');
   const precio = precioMundo(60);
   const i = await panelOpciones('El gashapón', 'Un gashapón de Microblizz. Dentro hay objetos… y mucho plástico.', [
     { n: 'Girar gratis', d: 'Un objeto al azar.' },
@@ -228,7 +225,7 @@ async function diaGashapon() {
 
 // monedas por el camino: el conejo las recoge al pasar, sin pararse
 async function diaMonedas() {
-  log('¡A un camión de Microblizz se le han caído monedas!'); chatEv('monedas', null, 0.9, 0);
+  log('¡A un camión de Microblizz se le han caído monedas!');
   const n = 12, v = Math.max(1, Math.round((2 + VIAJE.dia * 0.12) * (1 + VIAJE.mundo * 0.6)));
   for (let i = 0; i < n; i++) VIAJE.sueltas.push({ wx: VIAJE.mx + PAN.W + 10 + i * 11 + (i % 3) * 2, v });
   VIAJE.vel = 70; VIAJE.andando = true; ponAnim(CONEJO, 'andar'); if (ARDILLA.activa) ponAnim(ARDILLA, 'andar');
@@ -258,11 +255,10 @@ async function recompensas(e, tipo) {
 }
 // raid: otro canal manda a sus espectadores y llueven regalos (sin pararse)
 async function diaRaid() {
-  const u = CHAT_USUARIOS[Math.floor(Math.random() * CHAT_USUARIOS.length)][0], n = Math.round((200 + Math.random() * 300) * (1 + VIAJE.mundo));
+  const u = CANALES[Math.floor(Math.random() * CANALES.length)], n = Math.round((200 + Math.random() * 300) * (1 + VIAJE.mundo));
   VIAJE.esp += n; sonido('sirena');
   rotulo(PAN.W / 2, ESC.Y + 50, tr('¡RAID!'), '#e91e3c', 1.6, 3);
   log('¡{u} hace una raid con {n} espectadores! Llueven regalos.', { u, n: miles(n) });
-  chatRafaga('raid', 4);
   for (let i = 0; i < 4; i++) { await espera(0.45); lluviaMonedas(rnd(30, PAN.W - 30), ESC.Y + 40, ganaMonedas(H, precioMundo(6)), 8, i > 0); }
   await anda(1.2);
 }
@@ -270,7 +266,7 @@ async function diaRaid() {
 async function diaMisterioso() {
   await paraEnProp('fallen');
   bocadillo(PROP, 'Psst… ¿quieres algo de cuando era famoso?', 2); sonido('voz');
-  consejo('misterioso'); chatEv('misterioso', null, 1, 0);
+  consejo('misterioso');
   await espera(0.8);
   const po = precioMundo(90), ph = precioMundo(110);
   const i = await panelOpciones('Un comerciante misterioso', 'FallenHero vende su equipo de cuando era protagonista. «Solo lo usé en una secuela».', [
@@ -289,7 +285,6 @@ async function diaBug() {
   await anda(0.8);
   VIAJE.andando = false; ponAnim(CONEJO, 'quieto');
   VIAJE.glitch = RELOJ.t + 1.4; sonido('rayo'); tiembla(3);
-  chatRafaga('bug', 3);
   await espera(1.5);
   const r = Math.random(), antes = foto();
   if (r < 0.4) {

@@ -2,8 +2,9 @@
 
 Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es archivo, tamaño y lo que declara en el primer nivel (funciones, const, let, class). Los objetos grandes (ART, CFG, TYPES…) se buscan con grep.
 
-- `index.html` · 23 KB
+- `index.html` · 29 KB
 - `sw.js` · <1 KB
+- `android/index.html` · 3 KB
 - `condiciones/index.html` · 6 KB
 - `core/css/base.css` · 3 KB
 - `core/css/biblioteca.css` · 2 KB
@@ -98,18 +99,18 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/index.html` · 3 KB
 - `demos/roguelite/sw.js` · <1 KB
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
-- `demos/roguelite/js/chat.js` · 10 KB · CHATS, chatApagado, chatDice, chatEv, chatRafaga, consejo, avanzaChat, nuevoDirecto, miles, pintaDirecto, INSIGNIA, pintaInsignia, lineasChat, pintaFilas, pintaChat, CHAT_ESTILO, INS_MINI, lineaMini, pintaChatEscena
 - `demos/roguelite/js/combate-conejo.js` · 8 KB · accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, bolsaBasura, castorBoom, tazaCafe, curaMeercat, pegaRival
 - `demos/roguelite/js/combate.js` · 13 KB · POS, centro, siguiente, COMBATE, TROZOS, LLUVIA, combate, llegaRival, llegaJefe, accionRival, ataqueEspecial, pegaConejo, levanta, muereRival, lluviaMonedas
-- `demos/roguelite/js/datos-chat.js` · 7 KB · CHAT_USUARIOS, CHAT_LOLA, CHAT_FRASES, CHAT_MUNDO, ESPECTA
+- `demos/roguelite/js/datos-directo.js` · <1 KB · CANALES, ESPECTA
 - `demos/roguelite/js/datos-meta.js` · 11 KB · OBJETOS, HUECOS, NOMBRE_HUECO, MEJORAS, costeMejora, ENCUENTROS, PASE, HOGUERA, CONSEJOS
 - `demos/roguelite/js/datos-mundos.js` · 8 KB · ENEMIGOS, MUNDOS, PESOS_DIA, DIAS_CAPITULO, DIAS_FIJOS, TITULO_DIA
 - `demos/roguelite/js/datos.js` · 4 KB · HEROE_BASE, SUBIDA, NIVEL_MAX_HAB, xpPara, RAREZA, ORDEN_RAREZA, PESO, PESO_COFRE, HABILIDADES
+- `demos/roguelite/js/directo.js` · 3 KB · espectadores, consejo, avanzaDirecto, nuevoDirecto, miles, pintaDirecto, pintaLog
 - `demos/roguelite/js/efectos.js` · 11 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, rayo, bola, curita, avanzaFx, pintaFx, pintaBocadillo
 - `demos/roguelite/js/enemigos-2.js` · 14 KB · PAL_N, CIAN, pierna, esqueleto, fotoEsq, creaEsqueleto, zombi, fotoZombi, creaZombi, fantasma, fotoFant, creaFantasma, cosido, fotoCosido, creaCosido, necrolord, fotoNecro, creaNecro, creaEnemigos2
 - `demos/roguelite/js/enemigos-3.js` · 13 KB · PAL_T, creaAbogadoCombate, fotoBecarioMes, creaBecarioMes, fallen, fotoFallen, creaFallen, soporte, fotoSoporte, creaSoporte, parche, fotoParche, creaParche, ceo, fotoCeo, creaCeo, creaEnemigos3
 - `demos/roguelite/js/enemigos.js` · 17 KB · PAL_E, PAL_OJO, letreroRecto, becario, POSE_BECARIO, fotoBecario, creaBecario, estrella, starbot, POSE_STAR, fotoStar, creaStarbot, cajaBotin, fotoCaja, creaCaja, brazoRobot, survival, POSE_JEFE, fotoJefe, creaJefe, creaPuesto, creaEnemigos
-- `demos/roguelite/js/eventos.js` · 18 KB · precioMundo, signo, foto, muestraCambios, aprende, premioHabilidad, ofertasMin, subeYElige, llegaArdilla, premioObjeto, paraEnProp, quienHabla, eleccion, diaEncuentro, diaHoguera, diaPase, diaTienda, diaCofre, RULETA, diaRuleta, diaGashapon, diaMonedas, recogeSueltas, recompensas, diaRaid, diaMisterioso, diaBug, EVENTO_DIA
+- `demos/roguelite/js/eventos.js` · 17 KB · precioMundo, signo, foto, muestraCambios, aprende, premioHabilidad, ofertasMin, subeYElige, llegaArdilla, premioObjeto, paraEnProp, quienHabla, eleccion, diaEncuentro, diaHoguera, diaPase, diaTienda, diaCofre, RULETA, diaRuleta, diaGashapon, diaMonedas, recogeSueltas, recompensas, diaRaid, diaMisterioso, diaBug, EVENTO_DIA
 - `demos/roguelite/js/fondo-mundos.js` · 19 KB · LUZ_CEMENTERIO, EPITAFIOS, criptaDe, arbolMuertoEn, colinasCementerio, sueloCementerio, propCementerio, LUZ_CIUDAD, ANUNCIOS, NEONES, edificios, torreGrande, sueloCiudad, propCiudad
 - `demos/roguelite/js/fondo.js` · 21 KB · ESC, SUELO, BAYER, hash, DIA_LUZ, lienzoNuevo, imagen, TRAMA_CACHE, trama, rellenaTrama, FONDO, ESTILO, cieloDe, montesDe, preparaFondo, pintaSol, torreDe, arbolDe, colinasDe, sueloDe, delanteDe, nubeDe, ESLOGANES, propDe, propBosque, avanzaProps, tira, pintaFondo, pintaDelante, pintaTorreLejos, focos
 - `demos/roguelite/js/guardado.js` · 1 KB · CLAVE_GUARDA, GUARDA_NUEVA, GUARDA, cargaGuarda, guarda, marcaVisto, borraTodo
@@ -117,8 +118,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/js/iconos-2.js` · 11 KB · zanaIcono, PAL_I, creaIconos2
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
 - `demos/roguelite/js/instalar.js` · 2 KB · INSTALAR
-- `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, MARCA_DIA, pintaMapa, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, toque, tecla
-- `demos/roguelite/js/letras-mini.js` · 4 KB · MINI, QUITA_TILDE, limpiaMini, glifoMini, anchoMini, MINI_CACHE, escribeMini, cortaMini
+- `demos/roguelite/js/interfaz.js` · 17 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, escoge, descHab, CAMPOS_OBJ, descObjeto, marco, DESPL, pulsado, botonPx, botonTxt, iconoCosa, huecoVacio, ondula, monedasEn, pintaHud, pintaEscenaUI, pintaControles, BARRA, pintaBarra, MARCA_DIA, pintaMapa, pintaGlitch, pintaPanel, filaCosas, panelLog, panelElige, toque, tecla
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
 - `demos/roguelite/js/menu.js` · 12 KB · MENU, volverMadriguera, irA, pintaMadriguera, pintaMenuEscena, pintaPanelMenu, titulo, volver, panelInicio, panelMundos, paginas, panelMejoras, panelColeccion, panelAjustes
 - `demos/roguelite/js/novedades.js` · 3 KB · NEWS
@@ -268,7 +268,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/22-frases.js` · 11 KB · FRP, FR_ST, FR_CPU, frEnPartida, frRivalFuera, frCpuDe, frRivalNombre, frBocadillo, frAnima, frLimpia, frPuede, frManda, frCpu, frDelRival, frBoton, frAbre, frCierra, ICO_VOZ, ICO_MUDO
 - `games/rumble/js/ajustes.js` · 2 KB · AJUSTES
 - `games/rumble/js/clasificacion.js` · 5 KB · SALON_PVP, SALON_DIF, salonDif, MIT_VISTAS, mitVista, mitV, SALON
-- `games/rumble/js/novedades.js` · 30 KB · NEWS
+- `games/rumble/js/novedades.js` · 31 KB · NEWS
 - `games/rumble/js/retos-armario.js` · 9 KB
 - `games/rumble/js/retos-logros-2.js` · 5 KB · LOGROS_ANTES, PVP_LIGAS, armGanables, armTengo
 - `games/rumble/js/retos-logros.js` · 25 KB
@@ -287,7 +287,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/sw.js` · <1 KB
 - `games/survivors/css/survivors.css` · 14 KB
 - `games/survivors/idioma/en-facciones.js` · 12 KB
-- `games/survivors/idioma/en.js` · 18 KB
+- `games/survivors/idioma/en.js` · 19 KB
 - `games/survivors/js/ajustes.js` · 4 KB · AJUSTES
 - `games/survivors/js/armas-tipos-2.js` · 10 KB · anguloMira, difAng
 - `games/survivors/js/armas-tipos.js` · 15 KB · CONTINUAS, CONT_EXTRA, SONIDO_TIPO, estadoArma, empujeA, TIPOS, registraTipos, proyectilGen, armasContinuas, absorbeEscudo, moverGen, emoji, puntoBrillo, proyectilGenDibuja, efectoGenDibuja, dibujaSueloArmas, armasPie
@@ -301,9 +301,9 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/survivors/js/dibujo.js` · 21 KB · ctx, VW, hacerSuelo, cosaEn, dibujaCosa, pies, personaje, ROJOS, rojoDe, dibujar, gema, cosaSuelta, DORADOS, doradoDe, enemigo, jugador, barra, proyectil, efecto, ICONOS, iconoCarta, marcador, hueco, pips
 - `games/survivors/js/facciones.js` · 2 KB · pintaFaccion, faltanMin, abrirFacciones
 - `games/survivors/js/interfaz.js` · 10 KB · cv, ajustar, TECLAS, TACTIL, mandoTeclado, jugando, aLogico, soltar, sueltaMando, empezar, abrirNivel, FRASES_PAUSA, pausar, seguir, mostrarFin, antes, fotograma, menuT, fondoMenu
-- `games/survivors/js/juego.js` · 23 KB · P, sigId, MANDO, modsJugador, nuevaPartida, nvP, multDano, multRecarga, radioRecoger, velJugador, CELDA, REJ, claveR, rehacerRejilla, cerca, masCercano, crearEnemigo, puntoFuera, elegirPeso, oleadas, tocaShiny, marcaShiny, soltarCofre, llegaJefe, moverEnemigos, jefeAtaca, herir, golpeCajas, objetosCajasOk, romperCaja, matar, curar, danarJugador, soltarGema, recoger, ganarXp, puedeMejorar, opcionesNivel, aplicarOpcion, numero … (+8)
+- `games/survivors/js/juego.js` · 23 KB · P, sigId, MANDO, modsJugador, nuevaPartida, nvP, multDano, multRecarga, radioRecoger, velJugador, CELDA, REJ, claveR, rehacerRejilla, cerca, masCercano, crearEnemigo, puntoFuera, elegirPeso, oleadas, tocaShiny, marcaShiny, soltarCofre, llegaJefe, moverEnemigos, jefeAtaca, herir, golpeCajas, romperCaja, matar, curar, danarJugador, soltarGema, recoger, ganarXp, puedeMejorar, opcionesNivel, aplicarOpcion, numero, particulas … (+7)
 - `games/survivors/js/menus.js` · 7 KB · VISTA, enPartida, goHome, openColl, titlePopups, showMenu, pintaRecord, dibujaPortada, optOn, openOptions, optButtons, saveCode, soundBtns
-- `games/survivors/js/novedades.js` · 7 KB · NEWS
+- `games/survivors/js/novedades.js` · 8 KB · NEWS
 - `games/survivors/js/retos.js` · 11 KB · cierraRetos, mmss, RETOS
 - `games/survivors/js/sonido.js` · 1 KB · sonidoApagado, volGeneral, volMusica, musicUpdate
 - `games/tacticas/index.html` · 9 KB
@@ -313,7 +313,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/js/combate.js` · 18 KB · aEscena, profundidad, POS_HEROES, alto, posEnemigos, nombreHeroe, nombreDe, estadoVacio, crearHeroe, B_ID, crearEnemigo, empezarBatalla, ajustarCanvas, bucle, espera, vivos, actualizar, turnoLleno, cartelT, cartel, numero, chispas, onda, centro, efecto, danio, herir, cartelCrit, numeroLibre, curar, caer, revivir, otroVivo, ejecutar, embestir, retroceder, accionHeroe, ruleta, decidirEnemigo, objetivoHeroe … (+1)
 - `games/tacticas/js/datos.js` · 15 KB · tr, AJUSTES, HEROES, HEROE_ORDEN, TECNICAS, OBJETOS, OBJETO_ORDEN, ENEMIGOS, MUNDOS, TIENDA
 - `games/tacticas/js/escena.js` · 11 KB · LW, B, cv, TINTE, spriteDe, pintarSprite, retrato, VERSION_SPR, siluetaDe, reflejoDe, dibujar, sombraDe, rrFill, flecha, pintarLuchador, pintarEfectos, barraE, pintarBarras
-- `games/tacticas/js/espectaculo-fx.js` · 20 KB · TAU, anim, suaveFx, sale, entra, parada, fx, avanzaFx, luzGolpe, rayos, nucleo, corteLuz, franja, chispasLuz, anillo, pilar, destello, oscuro, aura, escudo, rayoCielo, tajoFx, grieta, textoFx, velocidad, proyectil, lluvia, estela, sinEstela, mover, volverCasa, entradaTecnica, pintarFx, CAPA_FX, DIBUJO_FX
+- `games/tacticas/js/espectaculo-fx.js` · 22 KB · TAU, anim, suaveFx, sale, entra, parada, fx, avanzaFx, luzGolpe, rayos, nucleo, corteLuz, franja, chispasLuz, anillo, pilar, destello, oscuro, aura, escudo, rayoCielo, tajoFx, grieta, textoFx, velocidad, proyectil, lluvia, estela, sinEstela, mover, volverCasa, entradaTecnica, pintarFx, CAPA_FX, DIBUJO_FX
 - `games/tacticas/js/espectaculo-tecnicas.js` · 12 KB · centroDe, medio, correA, volverA, golpeLuz, TEC_ANIM, previaEnemigo, golpeEnemigo
 - `games/tacticas/js/fin.js` · 5 KB · comprobarFin, guardarGrupo, victoria, derrota, salirBatalla, pausar
 - `games/tacticas/js/interfaz.js` · 13 KB · menuEl, ICONO_ORDEN, marcaOrden, abrirMenu, cerrarMenu, elegirObjetivo, decidir, alPulsarMenu, CARAS, mezclaColor, colorDe, caraDe, velAtb, ordenTurnos, firmaTurnos, pintarTurnos, pintarFilas, actualizarFilas
@@ -322,7 +322,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/tacticas/js/maqueta-mundos-2.js` · 13 KB · TUMBAS_SUELO, lapida, pintaCementerio, FOCOS, pintaPlato
 - `games/tacticas/js/maqueta-pixel.js` · 13 KB · BAYER, trama, azarFijo, lienzo, rgbDe, u32, u32De, rampa, tono, Pincel, ampliar, FILTRO, desenfocar, conMascara, BRILLOS, brillo, pintaBrillo, PW, PARED_Y, HOR, V_PARED, uDe, sueloXY, pintaSuelo, ventanal, hoja, planta
 - `games/tacticas/js/menu-fondo.js` · 5 KB · FM, pantallaVisible, fondoMenu, grupoTitulo, rayosLogo
-- `games/tacticas/js/novedades.js` · 5 KB · NEWS
+- `games/tacticas/js/novedades.js` · 6 KB · NEWS
 - `games/tacticas/js/pantallas.js` · 21 KB · CLAVE, partidaNueva, SAVE, guardar, statsHeroe, darXp, vidaDe, sonidoApagado, volGeneral, volMusica, mostrar, moneda, pintarCarteras, avisoT, aviso, ventana, cerrarVentana, evento, hoy, pagar, verAnuncio, pintarTitulo, abrirNovedades, mundoVisto, mundoAbierto, irMapa, pintarGrupoMini, fichaDe, abrirGrupo, pintarFicha, pestana, abrirTienda, anunciosQuedan, darPremio, premioTxt, comprobarDiario, ajustesHtml, montarAjustes, abrirOpciones
 - `games/td/index.html` · 28 KB
 - `games/td/sw.js` · <1 KB
@@ -349,16 +349,17 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/td/js/sonido.js` · 3 KB · sonidoApagado, volGeneral, volMusica, SFX_TD, sfx, musicUpdate
 - `games/td/js/unidades.js` · 14 KB · FAC_BAL
 - `gestion/index.html` · 16 KB
-- `herramientas/android_www.py` · <1 KB
+- `herramientas/android_www.py` · 3 KB
 - `herramientas/balance.py` · 7 KB
 - `herramientas/base.py` · 1 KB
 - `herramientas/comprobar.py` · 7 KB
 - `herramientas/datos.html` · 6 KB
-- `herramientas/desplegar.py` · 11 KB
+- `herramientas/desplegar.py` · 12 KB
 - `herramientas/idioma.py` · 8 KB
 - `herramientas/mapa.py` · 2 KB
 - `herramientas/servidor.py` · 2 KB
 - `herramientas/subir_datos.py` · 4 KB
+- `herramientas/versiones.py` · 5 KB
 - `herramientas/pruebas/balance-pagina.js` · 6 KB · $, PARAM, pinta, espera, abreJuego, preparaCasos, resume, tabla, mide
 - `herramientas/pruebas/balance.html` · 2 KB
 - `herramientas/pruebas/balance.js` · 4 KB
@@ -370,7 +371,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `herramientas/pruebas/pvp.js` · 18 KB · pruebaPvp
 - `herramientas/pruebas/rumble.js` · 23 KB · PRUEBA
 - `herramientas/pruebas/td.js` · 19 KB · PRUEBA
-- `novedades/en.js` · 1 KB
+- `novedades/en.js` · 2 KB
 - `novedades/lista.js` · 2 KB · NOVEDADES_WEB
 - `privacidad/index.html` · 7 KB
 - `servidor/correos/cambio-de-email.html` · 2 KB

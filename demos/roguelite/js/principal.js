@@ -27,7 +27,7 @@ function dibuja() {
   BOTONES = [];
   b.fillStyle = COL.fondo; b.fillRect(0, 0, W, PAN.H);
   // en pantallas altas, la barra del directo va aparte y todo lo de debajo baja (la escena queda limpia)
-  BARRA.h = VIAJE.modo !== 'menu' && PAN.H >= 400 ? 52 : 0;
+  BARRA.h = VIAJE.modo !== 'menu' && PAN.H >= 360 ? 33 : 0;
   const B = BARRA.h, alto = PAN.H, i0 = BOTONES.length;
   if (B) { pintaBarra(b); }
   const i1 = BOTONES.length;

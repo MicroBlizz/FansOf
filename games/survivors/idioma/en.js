@@ -119,4 +119,13 @@ IDIOMA.add({
   "<b>MÁS BOTÍN</b>: minijefes cada 2 minutos, bichos shiny y cofres con aperturas mucho más épicas (cámara lenta, falsos finales y hasta 5 mejoras si hay suerte).": "<b>MORE LOOT</b>: mini bosses every 2 minutes, shiny bugs and chests with far more epic openings (slow motion, fake endings and up to 5 upgrades if you are lucky).",
   "<b>TODAS LAS FACCIONES</b>: ya se pueden jugar las 8 que faltaban, con 64 armas nuevas; se desbloquean por minutos aguantados.": "<b>ALL FACTIONS</b>: the 8 missing factions are now playable, with 64 new weapons; they unlock by minutes survived.",
   "Microblizz ha descubierto que las cajas de la mudanza tenían oro dentro. Las tenía guardadas para la jubilación del CEO.": "Microblizz has discovered the moving boxes had gold inside. It was saved for the CEO's retirement.",
+  "¡NOOO! ¡MI JUEGO!": "NOOO! MY GAME!",
+  "¡COFRE DE BOTÍN!": "LOOT CHEST!",
+  "¡COFRES DENTRO DEL COFRE!": "CHESTS INSIDE THE CHEST!",
+  "¡HAY MÁS!": "THERE'S MORE!",
+  "¡¡ESPERA!!": "WAIT!!",
+  "…¿Nada?": "…Nothing?",
+  "DESPEDIDO": "FIRED",
+  "¡ASCENSO!": "PROMOTION!",
+  "¡Una caja escondía un objeto! Ya lo tienes en el inventario:": "A box was hiding an item! It's already in your inventory:",
 });

@@ -113,7 +113,7 @@ def navegador():
             return p
     for p in sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome')):
         return p
-    return shutil.which('chrome') or shutil.which('msedge') or shutil.which('chromium')
+    return shutil.which('chrome') or shutil.which('google-chrome') or shutil.which('msedge') or shutil.which('chromium')
 
 
 sys.stdout.reconfigure(encoding='utf-8')
@@ -125,6 +125,8 @@ if shutil.which('node'):   # un diccionario con un error de sintaxis (una coma o
             if r.returncode:
                 print('DICCIONARIO CON ERROR:', os.path.relpath(os.path.join(d, f), RAIZ), '\n ', (r.stderr.strip().splitlines() or [''])[0:5])
                 limpio = False
+if subprocess.run([sys.executable, os.path.join(RAIZ, 'herramientas', 'idioma_claves.py')] + [a for a in sys.argv[1:] if a.startswith('--lang=')]).returncode:
+    limpio = False   # los diccionarios tienen errores (se listan arriba); sigue con la prueba en pantalla
 exe = navegador()
 if not exe:
     print('FALLO: no encuentro Chrome ni Edge')

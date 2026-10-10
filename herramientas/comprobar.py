@@ -51,7 +51,7 @@ def navegador():
             return p
     for p in sorted(glob.glob('/opt/pw-browsers/chromium-*/chrome-linux/chrome')):   # la nube de Claude Code lo trae aquí
         return p
-    return shutil.which('chrome') or shutil.which('msedge') or shutil.which('chromium')
+    return shutil.which('chrome') or shutil.which('google-chrome') or shutil.which('msedge') or shutil.which('chromium')
 
 
 def fallo(msg):

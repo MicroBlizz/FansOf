@@ -1,0 +1,22 @@
+# Revisa las traducciones en cada subida a main: diccionarios sin errores, ningún tr() sin traducir y ninguna pantalla del guion con texto en español en inglés.
+# Si falla, GitHub avisa por correo a quien subió el cambio. En local: python herramientas/idioma.py
+name: Idiomas
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  idioma:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Diccionarios y tr()
+        run: python herramientas/idioma_claves.py
+      - name: Pantallas en inglés
+        run: python herramientas/idioma.py

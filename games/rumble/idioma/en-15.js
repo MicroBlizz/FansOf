@@ -46,4 +46,7 @@ IDIOMA.add({
   "Microblizz quería explicar el JcJ con menos siglas. Phony ha propuesto «JvJ». Se le ha dicho que no.": "Microblizz wanted to explain PvP with fewer acronyms. Phony suggested «JvJ». He was told no.",
   "<b>PVP VUELVE A SU NOMBRE</b>: lo de JcJ no convencía, así que en español vuelve a decir PvP. La CLASIFICACIÓN y los «ingresos» se quedan.": "<b>PVP IS PVP AGAIN</b>: JcJ didn't catch on, so Spanish says PvP again. CLASIFICACIÓN and «ingresos» stay.",
   "Phony reclama que le devuelvan su «JvJ». Microblizz no sabe de qué le habla.": "Phony demands his «JvJ» back. Microblizz has no idea what he is talking about.",
+  "<b>COLORES DEL JUEGO</b>: en Opciones puedes elegir entre cuatro paletas para los menús, los botones y los paneles: Clásico, Taberna, Neón y Pergamino. Los dibujos de la partida no cambian.": "<b>GAME COLORS</b>: in Options you can choose between four palettes for the menus, buttons and panels: Classic, Tavern, Neon and Parchment. The in-match artwork doesn't change.",
+  "<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.": "<b>UNDER-THE-HOOD IMPROVEMENTS</b>: changes to the series' shared systems. You won't notice anything… and that's a good sign.",
+  "Microblizz ha puesto la paleta Pergamino para que su CEO pueda imprimir el juego y leerlo en papel.": "Microblizz added the Parchment palette so its CEO can print the game and read it on paper.",
 });

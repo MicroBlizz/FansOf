@@ -24,7 +24,8 @@ function avanzaFx(dtReal) {
 function luzGolpe(u, d) {
   const [x, y] = [u.x + (u.dx || 0), u.y - alto(u) * 0.48], fuerte = d.crit || d.n > 80, col = u.lado === 'h' ? '#ff6a5a' : (d.crit ? '#ffcb3d' : '#fff2c0');
   fx({ t: 'rayos', x, y, col, n: fuerte ? 18 : 12, largo: fuerte ? 230 : 150, ancho: fuerte ? 0.09 : 0.07, rot: rand(0, TAU), dur: fuerte ? 0.45 : 0.32 });
-  fx({ t: 'nucleo', x, y, col, r: fuerte ? 90 : 60, dur: 0.25 });
+  fx({ t: 'nucleo', x, y, col, r: fuerte ? 70 : 50, dur: fuerte ? 0.4 : 0.3 });
+  chispasLuz(x, y, col, u.lado === 'h' ? 0 : Math.PI, fuerte ? 18 : 11);
   fx({ t: 'anillo', x, y: u.y, r: fuerte ? 110 : 70, col, grosor: 6, dur: 0.35 });
   parada(fuerte ? 0.11 : 0.05);
   if (d.crit) { fx({ t: 'destello', col: '#fff6d8', a: 0.28, dur: 0.2 }); B.temblor = Math.max(B.temblor, 8); }
@@ -33,6 +34,10 @@ function luzGolpe(u, d) {
 /* ---------- atajos para las coreografías ---------- */
 const rayos = (x, y, col, largo = 200, n = 16, dur = 0.45, ancho = 0.08) => fx({ t: 'rayos', x, y, col, n, largo, ancho, rot: rand(0, TAU), dur });
 const nucleo = (x, y, col, r = 80, dur = 0.3) => fx({ t: 'nucleo', x, y, col, r, dur });
+const corteLuz = (x, y, col, ang, largo = 170, dur = 0.32) => fx({ t: 'corteLuz', x, y, col, ang, largo, dur });
+const franja = (y, col, dur = 0.35) => fx({ t: 'franja', y, col, dur });
+// chispas que salen hacia `dir` (0 = derecha, π = izquierda) en abanico
+const chispasLuz = (x, y, col, dir, n = 14, dur = 0.45) => fx({ t: 'chispasLuz', x, y, col, dur, chispas: Array.from({ length: n }, () => ({ a: dir + rand(-0.75, 0.75), v: rand(120, 340), g: rand(2, 4.5), blanca: Math.random() < 0.4 })) });
 const anillo = (x, y, col, r = 120, dur = 0.45, grosor = 8) => fx({ t: 'anillo', x, y, col, r, grosor, dur });
 const pilar = (x, y, col, ancho = 70, dur = 0.8) => fx({ t: 'pilar', x, y, col, ancho, dur });
 const destello = (col = '#fff', a = 0.6, dur = 0.25) => fx({ t: 'destello', col, a, dur });
@@ -93,7 +98,35 @@ const DIBUJO_FX = {
     }
     c.globalAlpha = 1; pintaBrillo(c, o.col, 0, 0, o.largo * 0.5, a * 0.8);
   },
-  nucleo(c, o, p) { c.globalCompositeOperation = 'lighter'; const r = o.r * (0.6 + p * 0.6); pintaBrillo(c, '#ffffff', o.x, o.y, r * 0.5, (1 - p) * 1); pintaBrillo(c, o.col, o.x, o.y, r, (1 - p) * 0.9); },
+  nucleo(c, o, p) {   // destello en estrella: cuatro puntas finas y una franja horizontal larga (como la luz en una lente)
+    c.globalCompositeOperation = 'lighter'; c.translate(o.x, o.y); const a = (1 - p) * (1 - p), r = o.r * (0.7 + sale(Math.min(1, p * 3)) * 0.6);
+    const punta = (ang, largo, ancho, col) => { c.save(); c.rotate(ang); const g = c.createLinearGradient(-largo, 0, largo, 0); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.5, col); g.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = g; c.beginPath(); c.moveTo(-largo, 0); c.quadraticCurveTo(0, -ancho, largo, 0); c.quadraticCurveTo(0, ancho, -largo, 0); c.fill(); c.restore(); };
+    c.globalAlpha = a; punta(0, r * 4.2, r * 0.07, o.col); punta(0, r * 2.4, r * 0.035, '#ffffff');
+    c.globalAlpha = a * 0.9; punta(Math.PI / 2, r * 1.5, r * 0.06, o.col); punta(Math.PI / 2, r * 1, r * 0.03, '#ffffff');
+    c.globalAlpha = a * 0.6; punta(Math.PI / 4 + o.v, r * 0.9, r * 0.04, '#ffffff'); punta(-Math.PI / 4 + o.v, r * 0.9, r * 0.04, '#ffffff');
+    c.globalAlpha = a; pintaBrillo(c, '#ffffff', 0, 0, r * 0.22, 1);
+  },
+  corteLuz(c, o, p) {   // un corte de luz que cruza al enemigo de lado a lado: aparece de golpe y se afina
+    c.globalCompositeOperation = 'lighter'; c.translate(o.x, o.y); c.rotate(o.ang); c.lineCap = 'round';
+    const L = o.largo * sale(Math.min(1, p * 5)), a = 1 - Math.max(0, (p - 0.2) / 0.8), afina = 1 - p * 0.85;
+    for (const [w, col, al] of [[26, o.col, 0.25], [10, o.col, 0.8], [3.5, '#ffffff', 1]]) {
+      c.globalAlpha = a * al; c.strokeStyle = col; c.lineWidth = w * afina; c.beginPath(); c.moveTo(-L, 0); c.lineTo(L, 0); c.stroke();
+    }
+    for (const k of [-1, 1]) { c.globalAlpha = a * 0.5; c.strokeStyle = '#ffffff'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(-L * 0.8, k * 9 * (1 + p * 3)); c.lineTo(L * 0.8, k * 9 * (1 + p * 3)); c.stroke(); }
+  },
+  chispasLuz(c, o, p) {   // chispas alargadas que salen disparadas en la dirección del golpe
+    c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+    for (const s of o.chispas) {
+      const d = s.v * sale(p), x = o.x + Math.cos(s.a) * d, y = o.y + Math.sin(s.a) * d + p * p * 60, cola = 18 + s.v * 0.08 * (1 - p);
+      c.globalAlpha = (1 - p); c.strokeStyle = s.blanca ? '#ffffff' : o.col; c.lineWidth = s.g * (1 - p * 0.6);
+      c.beginPath(); c.moveTo(x, y); c.lineTo(x - Math.cos(s.a) * cola, y - Math.sin(s.a) * cola); c.stroke();
+    }
+  },
+  franja(c, o, p) {   // franja de luz horizontal que cruza toda la pantalla un instante
+    c.globalCompositeOperation = 'lighter'; const a = (1 - p) * (1 - p) * 0.55, h = 26 * (1 - p * 0.7);
+    const g = c.createLinearGradient(0, o.y - h, 0, o.y + h); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.5, o.col); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.globalAlpha = a; c.fillStyle = g; c.fillRect(-20, o.y - h, 580, h * 2);
+  },
   anillo(c, o, p) {
     c.globalCompositeOperation = 'lighter'; const r = o.r * (0.15 + sale(p) * 0.85);
     for (const [k, a, w] of [[1, 1, o.grosor], [0.75, 0.6, o.grosor * 0.5], [1, 0.25, o.grosor * 3]]) { c.globalAlpha = (1 - p) * a; c.strokeStyle = o.col; c.lineWidth = w * (1 - p * 0.5); c.beginPath(); c.ellipse(o.x, o.y, r * k, r * k * 0.34, 0, 0, TAU); c.stroke(); }
@@ -139,7 +172,6 @@ const DIBUJO_FX = {
       c.globalAlpha = a * al; c.strokeStyle = col; c.lineWidth = w * (1 - p * 0.5);
       c.beginPath(); c.arc(0, 0, o.r, -Math.PI * 0.85, -Math.PI * 0.85 + Math.PI * 1.25 * barrido); c.stroke();
     }
-    pintaBrillo(c, o.col, 0, 0, o.r * 1.2, a * 0.5);
   },
   grieta(c, o, p) {
     c.globalCompositeOperation = 'lighter'; const a = Math.min(1, p * 8) * (1 - p), L = sale(Math.min(1, p * 4));

@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.14', real: ['<b>GOLPES DE LUZ</b>: el ataque normal ya no suelta una bola de luz: ahora es un corte de luz que cruza al enemigo, un destello en estrella con una franja que atraviesa la pantalla, chispas que salen disparadas en la dirección del golpe y un segundo tajo de remate. Todos los golpes de las técnicas usan el mismo destello nuevo.'],
+    joke: ['Microblizz ha patentado el corte de luz. Cada vez que golpeas, le debes 0,01 € al CEO.'] },
   { v: '0.1.13', real: ['<b>MENÚS NUEVOS</b>: el título es ahora el despacho del CEO al atardecer, vivo, con rayos de sol, polvo flotando y tu grupo esperando en el suelo, y el logo brilla con rayos de luz detrás. El mapa, el grupo y la tienda muestran de fondo la maqueta del mundo en el que estás, con ventanas de marco dorado como las del combate, un camino de combates que se ilumina y un candado dibujado en los combates cerrados.'],
     joke: ['Microblizz ha redecorado los menús. La factura del interiorista la pagan los fans.'] },
   { v: '0.1.12', real: ['<b>ATAQUES ESPECTACULARES</b>: cada golpe suelta rayos de luz y el mundo se congela un instante en los golpes fuertes. Las 18 técnicas tienen su propia animación, con una entrada en grande del héroe: CrazyBunny salta fuera de la pantalla y cae en medio de los enemigos, EpicChampion corta con una media luna dorada, el Vikingo parte el suelo de un hachazo, StreamKing hace llover monedas, NecroLord roba almas, LaDirectora grita ¡CORTEN! y mucho más.', '<b>JEFES CON PRESENCIA</b>: los ataques fuertes de los jefes oscurecen la sala y caen como columnas de luz roja.'],

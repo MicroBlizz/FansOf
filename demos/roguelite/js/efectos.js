@@ -47,7 +47,7 @@ function rayas(x, y, dir) { for (let i = 0; i < 3; i++) fx('raya', { x: x + rnd(
 // número de daño: tipo 'golpe' | 'critico' | 'herida' | 'cura' | 'poco'
 function numero(x, y, n, clase = 'golpe') { fx('num', { x: x + rnd(-4, 4), y, txt: String(n), clase, vida: clase === 'critico' ? 1.1 : 0.85, vy: clase === 'poco' ? -50 : -78, vx: rnd(-14, 14), g: 170 }); }
 function rotulo(x, y, txt, col = '#fff6ea', vida = 1.1, esc = 1) { fx('rotulo', { x, y, txt, col, vida, esc }); }
-function moneda(x, y, alFinal) { fx('moneda', { x, y, x0: x, y0: y, vx: rnd(-40, 40), vy: rnd(-110, -70), g: 300, vida: 1.2, alFinal, suelo: SUELO + rnd(2) }); }
+function moneda(x, y, alFinal) { fx('moneda', { x, y, x0: x, y0: y, vx: rnd(-70, 70), vy: rnd(-150, -80), g: 340, vida: 1.6, alFinal, suelo: SUELO + rnd(-1, 4), espera: rnd(0.55, 0.85) }); }
 function bocadillo(ent, txt, s = 1.8) { for (const e of FX) if (e.tipo === 'bocadillo' && e.ent === ent) e.t = e.vida; fx('bocadillo', { ent, txt, vida: s }); }
 function laser(x1, y, x2, s = 0.18) { fx('laser', { x: x1, y, x2, vida: s }); }
 
@@ -57,11 +57,11 @@ function avanzaFx(dt, real) {
   for (let i = FX.length - 1; i >= 0; i--) {
     const e = FX[i];
     e.t += dt;
-    if (e.tipo === 'moneda' && e.t > 0.45) {   // primero salta, luego vuela al marcador
-      const k = Math.min(1, (e.t - 0.45) / 0.45), [hx, hy] = MONEDERO;
+    if (e.tipo === 'moneda' && e.t > e.espera) {   // primero salta y rebota, luego vuela al marcador
+      const k = Math.min(1, (e.t - e.espera) / 0.45), [hx, hy] = MONEDERO;
       if (e.kx === undefined) { e.kx = e.x; e.ky = e.y; }
       e.x = e.kx + (hx - e.kx) * entra(k); e.y = e.ky + (hy - e.ky) * k - Math.sin(k * Math.PI) * 20;
-      if (k >= 1) { FX.splice(i, 1); if (e.alFinal) e.alFinal(); continue; }
+      if (k >= 1) { FX.splice(i, 1); fx('chispa', { x: hx, y: hy, vx: rnd(-30, 30), vy: rnd(-40, -10), g: 80, vida: 0.3, col: '#fff3a0', capa: 'monedas' }); if (e.alFinal) e.alFinal(); continue; }
     } else {
       e.vy += e.g * dt; e.x += e.vx * dt; e.y += e.vy * dt;
       if (e.suelo !== undefined && e.y > e.suelo) { e.y = e.suelo; e.vy *= -0.35; e.vx *= 0.6; }
@@ -73,7 +73,7 @@ function avanzaFx(dt, real) {
 function pintaFx(ctx, capa) {
   for (const e of FX) {
     const k = e.t / e.vida, x = Math.round(e.x), y = Math.round(e.y);
-    const c = e.tipo === 'moneda' ? 'monedas' : e.tipo === 'num' || e.tipo === 'rotulo' || e.tipo === 'bocadillo' ? 'arriba' : 'abajo';
+    const c = e.capa || e.tipo === 'moneda' ? e.capa || 'monedas' : e.tipo === 'num' || e.tipo === 'rotulo' || e.tipo === 'bocadillo' ? 'arriba' : 'abajo';
     if (c !== capa) continue;
     switch (e.tipo) {
       case 'polvo': { const r = e.r + Math.floor(k * 3); if (k < 0.55) { circuloPx(ctx, x, y, r, '#e8d2b0'); circuloPx(ctx, x - 1, y - 1, Math.max(0, r - 1), '#fff6ea'); } else anilloPx(ctx, x, y, r, 1, '#e8d2b0'); break; }

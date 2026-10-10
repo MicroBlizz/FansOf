@@ -99,10 +99,10 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
 - `demos/roguelite/js/combate.js` · 12 KB · POS, centro, siguiente, combate, llegaRival, llegaJefe, accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, pegaRival, accionRival, despidoFulminante, pegaConejo, muereRival
 - `demos/roguelite/js/datos.js` · 5 KB · HEROE_BASE, SUBIDA, RAREZA, PESO, PESO_COFRE, HABILIDADES, ENEMIGOS, DIAS
-- `demos/roguelite/js/efectos.js` · 9 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, avanzaFx, pintaFx, pintaBocadillo
+- `demos/roguelite/js/efectos.js` · 10 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, avanzaFx, pintaFx, pintaBocadillo
 - `demos/roguelite/js/enemigos.js` · 17 KB · PAL_E, PAL_OJO, letreroRecto, becario, POSE_BECARIO, fotoBecario, creaBecario, estrella, starbot, POSE_STAR, fotoStar, creaStarbot, cajaBotin, fotoCaja, creaCaja, brazoRobot, survival, POSE_JEFE, fotoJefe, creaJefe, creaPuesto, creaEnemigos
 - `demos/roguelite/js/fondo.js` · 19 KB · ESC, SUELO, BAYER, hash, DIA_LUZ, lienzoNuevo, imagen, TRAMA_CACHE, trama, rellenaTrama, FONDO, preparaFondo, pintaSol, torreDe, arbolDe, colinasDe, sueloDe, delanteDe, nubeDe, ESLOGANES, propDe, avanzaProps, tira, pintaFondo, pintaDelante, focos
-- `demos/roguelite/js/heroe.js` · 11 KB · SPR, PAL_H, BOCA, ojosConejo, bocaConejo, zanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
+- `demos/roguelite/js/heroe.js` · 11 KB · SPR, PAL_H, BOCA, ojoConejo, bocaConejo, zanahoria, manoZanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
 - `demos/roguelite/js/interfaz.js` · 14 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, panelHabilidad, escoge, marco, pulsado, botonPx, iconoHab, ondula, pintaHud, pintaEscenaUI, pintaPanel, panelTitulo, filaHabs, panelLog, panelElige, panelHabs, panelFin, toque, tecla
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe
@@ -129,7 +129,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/rumble-3d/js/voces.js` · 8 KB · ac, ultimo, toca, ruidoFiltrado, tono, PERFIL, VOCAL, MOVIL, vozMovil, elegirVozMovil, silaba
 - `demos/terminal-shock/index.html` · 103 KB
 - `demos/terminal-shock/idioma/en-raiz.js` · <1 KB
-- `games/rumble/index.html` · 39 KB
+- `games/rumble/index.html` · 40 KB
 - `games/rumble/sw.js` · <1 KB
 - `games/rumble/css/arena.css` · 19 KB
 - `games/rumble/css/estilos-extra.css` · 25 KB
@@ -137,6 +137,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/css/facciones-y-jefes.css` · 11 KB
 - `games/rumble/css/frases.css` · 6 KB
 - `games/rumble/css/mitica.css` · 2 KB
+- `games/rumble/css/paletas.css` · 7 KB
 - `games/rumble/idioma/en-1.js` · 14 KB
 - `games/rumble/idioma/en-10.js` · 7 KB
 - `games/rumble/idioma/en-11.js` · 14 KB
@@ -151,6 +152,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/idioma/en-2.js` · 13 KB
 - `games/rumble/idioma/en-20.js` · <1 KB
 - `games/rumble/idioma/en-21.js` · 3 KB
+- `games/rumble/idioma/en-22.js` · <1 KB
 - `games/rumble/idioma/en-3.js` · 15 KB
 - `games/rumble/idioma/en-4.js` · 15 KB
 - `games/rumble/idioma/en-5.js` · 11 KB
@@ -200,6 +202,7 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `games/rumble/js/11-logros.js` · 17 KB · ACH_OLD, achInit, titlePopups, applySpeed, buyStarter, COACH_WHO, TUT_FIN, curScreen, tutCartaNueva, tutStep, tutFinish, tutSkip, tutDone, tutBack, tutWant, coachKey, coachPlace, tutTick, tutBattleStart, tipBattle, tutBattle
 - `games/rumble/js/11b-consejos.js` · 6 KB · prepEs, CONSEJOS, consejoWant, consejosFuera
 - `games/rumble/js/12-app-y-preparacion.js` · 11 KB · applyLook, optLabels, resetArm, syncMenu, buildPrepDeck, setFaction, setTagline, setSoundIcon, drawTitleArt
+- `games/rumble/js/12c-paletas.js` · 1 KB · PALETAS, paletaActual, aplicarPaleta
 - `games/rumble/js/13-horas-extra.js` · <1 KB · idlePower
 - `games/rumble/js/14a-hechizos.js` · 13 KB · isSpell, cardStars, starsOf, spells, spellPow, castSpell, updateSpells, applySpell, spellAim, AI_SPELL_GAP, aiSpell, leapPrey, leapTick, drawSpellsGround, drawSpellsAir
 - `games/rumble/js/14b-gachapon-y-mazo.js` · 17 KB · DECK_SPELLS, ownsCard, starsHtml, deckPool, deckOf, deckCost, deckBarHtml, gachaRows, lockedRow, spellNums, spellRow, showSpellTip, cardPool, rollCardRarity, cardStartLevel, cardPull, cardDeServidor, cardsGoFac, showCardPulls, buildCardGachaText, deckEdit, openDeck, deckRefresh, deckTile, deckEditorHtml, deckBind, deckHoldT, deckHeld, deckHold, deckSave, deckPoolTap, deckSlotTap, deckDone

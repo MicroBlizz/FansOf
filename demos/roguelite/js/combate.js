@@ -134,7 +134,8 @@ function pegaRival(dano, tipo, suave_) {
   RIVAL.e.vida = Math.max(0, RIVAL.e.vida - dano);
   RIVAL.blanco = grande ? 0.12 : 0.08;
   ponAnim(RIVAL, 'dano');
-  estallido(cx - 4, cy, grande); chispas(cx, cy, grande ? 10 : 5, grande ? '#ffcb3d' : '#fff3a0', grande ? 130 : 90);
+  estallido(cx - 4, cy, grande); chispas(cx, cy, grande ? 16 : 8, grande ? '#ffcb3d' : '#fff3a0', grande ? 140 : 95);
+  if (grande) { chispas(cx, cy, 8, '#ff8a1f', 110); trozos(cx, cy, 4, ['#fff3a0', '#ffcb3d']); }
   numero(cx, cy - 12, dano, tipo === 'chaos' ? 'critico' : tipo);
   tiembla(grande ? 6 : suave_ ? 1.5 : 2.5); congela(grande ? 130 : suave_ ? 30 : 60);
   sonido(grande ? 'critico' : 'golpe');
@@ -228,12 +229,13 @@ async function muereRival() {
   await espera(0.9);
   const [cx, cy] = centro(RIVAL);
   RIVAL.anim = 'muere';
-  estallido(cx, cy, true); anillo(cx, cy, 36, '#fff3a0', 0.35); humo(cx, cy, 8);
+  estallido(cx, cy, true); anillo(cx, cy, 36, '#fff3a0', 0.35); anillo(cx, cy, 56, '#ff8a1f', 0.5); humo(cx, cy, 12);
+  chispas(cx, cy, 18, '#fff3a0', 150); chispas(cx, cy, 12, '#ff7aa8', 120); chispas(cx, cy, 12, '#5aaeff', 120);
   const cols = { becario: ['#aab4c4', '#1b4fc4', '#ff4b5c', '#fff6ea'], starbot: ['#34466e', '#33e0ff', '#ffcb3d', '#4d6496'], caja: ['#2e5bb8', '#ffcb3d', '#3a7de0', '#ffffff'], jefe: ['#9aa5ba', '#2e5bb8', '#ff3348', '#ffe08a'] }[def.spr];
-  trozos(cx, cy, def.jefe ? 26 : 14, cols);
+  trozos(cx, cy, def.jefe ? 40 : 22, cols);
   tiembla(def.jefe ? 10 : 5); congela(def.jefe ? 220 : 90); sonido('boom'); destella('#ffffff', def.jefe ? 0.12 : 0.05);
   if (def.jefe) { for (let i = 1; i <= 3; i++) espera(i * 0.22).then(() => { estallido(cx + rnd(-20, 20), cy + rnd(-30, 10), true); sonido('boom'); tiembla(6); }).catch(() => {}); }
-  const n = Math.min(def.monedas, 8), cada = def.monedas / n;
+  const n = Math.min(def.monedas, def.jefe ? 30 : 16), cada = def.monedas / n;
   let dadas = 0, llegan = 0;
   for (let i = 0; i < n; i++) moneda(cx, cy, () => { llegan++; const v = Math.round(cada * llegan) - dadas; dadas += v; H.monedas += v; sonido('moneda'); });
   log('+{n} monedas.', { n: def.monedas });

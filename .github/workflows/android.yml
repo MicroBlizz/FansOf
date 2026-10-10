@@ -35,13 +35,15 @@ jobs:
       - name: Construir
         if: steps.toca.outputs.si
         run: |
-          ID=$(python3 herramientas/android_www.py ${{ matrix.juego }} | tail -1)
+          SALIDA=$(python3 herramientas/android_www.py ${{ matrix.juego }})
+          ID=$(echo "$SALIDA" | tail -2 | head -1)
+          VER=$(echo "$SALIDA" | tail -1)
           cd android-app
           npm ci
           npx cap sync android
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug -PappId=$ID
+          ./gradlew assembleDebug -PappId=$ID -PappVersion=$VER
       - uses: actions/upload-artifact@v4
         if: steps.toca.outputs.si
         with:

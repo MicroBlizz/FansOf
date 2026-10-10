@@ -99,10 +99,10 @@ Generado por `python herramientas/mapa.py`: no se edita a mano. Cada línea es a
 - `demos/roguelite/idioma/en-raiz.js` · <1 KB
 - `demos/roguelite/js/combate.js` · 12 KB · POS, centro, siguiente, combate, llegaRival, llegaJefe, accionHeroe, golpeConejo, chaosJump, mordisco, lluviaBellotas, pegaRival, accionRival, despidoFulminante, pegaConejo, muereRival
 - `demos/roguelite/js/datos.js` · 5 KB · HEROE_BASE, SUBIDA, RAREZA, PESO, PESO_COFRE, HABILIDADES, ENEMIGOS, DIAS
-- `demos/roguelite/js/efectos.js` · 9 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, avanzaFx, pintaFx, pintaBocadillo
+- `demos/roguelite/js/efectos.js` · 10 KB · FX, TEMBLOR, DESTELLO, rnd, tiembla, destella, fx, creaEfectos, polvo, chispas, estallido, anillo, trozos, humo, gotas, rayas, numero, rotulo, moneda, bocadillo, laser, avanzaFx, pintaFx, pintaBocadillo
 - `demos/roguelite/js/enemigos.js` · 17 KB · PAL_E, PAL_OJO, letreroRecto, becario, POSE_BECARIO, fotoBecario, creaBecario, estrella, starbot, POSE_STAR, fotoStar, creaStarbot, cajaBotin, fotoCaja, creaCaja, brazoRobot, survival, POSE_JEFE, fotoJefe, creaJefe, creaPuesto, creaEnemigos
 - `demos/roguelite/js/fondo.js` · 19 KB · ESC, SUELO, BAYER, hash, DIA_LUZ, lienzoNuevo, imagen, TRAMA_CACHE, trama, rellenaTrama, FONDO, preparaFondo, pintaSol, torreDe, arbolDe, colinasDe, sueloDe, delanteDe, nubeDe, ESLOGANES, propDe, avanzaProps, tira, pintaFondo, pintaDelante, focos
-- `demos/roguelite/js/heroe.js` · 11 KB · SPR, PAL_H, BOCA, ojosConejo, bocaConejo, zanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
+- `demos/roguelite/js/heroe.js` · 11 KB · SPR, PAL_H, BOCA, ojoConejo, bocaConejo, zanahoria, manoZanahoria, conejo, POSE_CONEJO, HOP_CONEJO, fotoConejo, creaHeroe, PAL_A, ardilla, POSE_ARDILLA, fotoArdilla, creaArdilla
 - `demos/roguelite/js/iconos.js` · 4 KB · icono, creaIconos
 - `demos/roguelite/js/interfaz.js` · 14 KB · COL, PANEL, LOG, BOTONES, PANEL_Y, formatea, log, panelOpciones, panelHabilidad, escoge, marco, pulsado, botonPx, iconoHab, ondula, pintaHud, pintaEscenaUI, pintaPanel, panelTitulo, filaHabs, panelLog, panelElige, panelHabs, panelFin, toque, tecla
 - `demos/roguelite/js/letras.js` · 8 KB · LETRA, TILDES, MARCAS, ALTO_LETRA, limpiaTexto, anchoLetra, anchoTexto, envuelve, TEXTO_CACHE, lienzoTexto, escribe

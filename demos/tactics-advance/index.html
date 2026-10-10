@@ -13,28 +13,32 @@
 html, body { height: 100%; margin: 0; background: #0c0818; overflow: hidden; overscroll-behavior: none; }
 body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
 #cv { position: fixed; inset: 0; display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: pointer; }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #aca6cf; font: 700 14px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.1em; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 16px; line-height: 1.6; color: #aca6cf; font: 700 14px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.1em; }
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Tactics Advance"></canvas>
 <div id="carga">…</div>
-<script src="js/textos.js"></script>
-<script src="js/pixel.js"></script>
-<script src="js/personajes.js"></script>
-<script src="js/decorados.js"></script>
-<script src="js/mapa.js"></script>
-<script src="js/escenas.js"></script>
-<script src="js/fondo.js"></script>
-<script src="js/letras.js"></script>
-<script src="js/ventanas.js"></script>
-<script src="js/reglas.js"></script>
-<script src="js/dibujo.js"></script>
-<script src="js/interfaz.js"></script>
-<script src="js/pantallas.js"></script>
-<script src="js/juego.js"></script>
-<script src="js/controles.js"></script>
-<script src="js/principal.js"></script>
+<script>
+// si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small style="opacity:.6">' + String(e.message || '').slice(0, 120) + '</small>'; });
+</script>
+<script src="js/textos.js?v=3"></script>
+<script src="js/pixel.js?v=3"></script>
+<script src="js/personajes.js?v=3"></script>
+<script src="js/decorados.js?v=3"></script>
+<script src="js/mapa.js?v=3"></script>
+<script src="js/escenas.js?v=3"></script>
+<script src="js/fondo.js?v=3"></script>
+<script src="js/letras.js?v=3"></script>
+<script src="js/ventanas.js?v=3"></script>
+<script src="js/reglas.js?v=3"></script>
+<script src="js/dibujo.js?v=3"></script>
+<script src="js/interfaz.js?v=3"></script>
+<script src="js/pantallas.js?v=3"></script>
+<script src="js/juego.js?v=3"></script>
+<script src="js/controles.js?v=3"></script>
+<script src="js/principal.js?v=3"></script>
 </body>
 </html>

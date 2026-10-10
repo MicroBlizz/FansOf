@@ -11,6 +11,8 @@ azules), Atacar o Técnica (zona roja; se toca dos veces al enemigo para confirm
 **No toca nada más**: no usa `core/`, ni partida guardada, ni Supabase. Si se descarta la idea, se borra esta carpeta
 (y su ficha de la Biblioteca en el `index.html` de la raíz) y ya está.
 
+Los scripts de `index.html` llevan `?v=`: al cambiar el juego, súbelo en todos para que el navegador no mezcle archivos viejos y nuevos.
+
 Se abre con `python herramientas/servidor.py` y http://localhost:8765/demos/tactics-advance/ (con `?idioma=en` sale en inglés).
 
 ## Qué enseña

@@ -2,6 +2,8 @@
 // lo lee; el juego no lo carga. La versión que sale en la Biblioteca es la del primer informe.
 'use strict';
 const NEWS = [
+  { v: '0.5.1', real: ['<b>ICONO PROPIO</b>: al instalarlo en el móvil, el juego tiene su icono en pixel art: la cara de CrazyBunny con su corona y las letras FoR.'],
+    joke: ['Microblizz ha pedido el icono para su tienda. Le hemos dicho que la corona es nuestra.'] },
   { v: '0.5.0', real: [
       '<b>INSTÁLALO EN EL MÓVIL</b>: en Opciones, «Instalar en el móvil». Se abre como una app y funciona sin internet.',
       '<b>CHAT EN SU SITIO</b>: los mensajes del directo salen ahora sobre la escena, debajo de la vida, como en los directos de verdad, y se van solos. Abajo solo queda lo que va pasando, y las elecciones ya no se llenan de frases.'],

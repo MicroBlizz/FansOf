@@ -8,7 +8,7 @@ Se juega en https://microblizz.github.io/FansOf/
 
 ```
 index.html            la librería: un acceso rápido para probar, con el enlace, la versión y las novedades de cada juego
-novedades/            el boletín de la web (lista.js) y su inglés (en.js): la ventana NOVEDADES que sale al abrir la librería
+novedades/            la ventana NOVEDADES que sale al abrir la librería: juegos nuevos (lista.js) y su inglés (en.js)
 sw.js                 limpia el modo sin conexión que el TD tenía antes en la raíz (no cachea nada)
 core/                 LO COMÚN A TODOS LOS JUEGOS
   css/base.css          colores, letras, contornos, marco de la pantalla y capa de interfaz de 540 x 960

@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.16', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
   { v: '0.1.15', real: ['<b>TAJOS DE LUZ IRREGULARES</b>: las medias lunas de los golpes ya no son un arco perfecto: son gruesas cerca de la punta, afiladas en la cola, con el borde irregular, y se van borrando poco a poco de la cola a la punta. La onda del suelo también es ahora de trazos sueltos que se apagan alrededor.'],
     joke: ['Microblizz ha despedido al compás que dibujaba los círculos perfectos. Le han dado una carta de despido con forma de media luna.'] },
   { v: '0.1.14', real: ['<b>GOLPES DE LUZ</b>: el ataque normal ya no suelta una bola de luz: ahora es un corte de luz que cruza al enemigo, un destello en estrella con una franja que atraviesa la pantalla, chispas que salen disparadas en la dirección del golpe y un segundo tajo de remate. Todos los golpes de las técnicas usan el mismo destello nuevo.'],

@@ -49,4 +49,6 @@ IDIOMA.add({
   "<b>COLORES DEL JUEGO</b>: en Opciones puedes elegir entre cuatro paletas para los menús, los botones y los paneles: Clásico, Taberna, Neón y Pergamino. Los dibujos de la partida no cambian.": "<b>GAME COLORS</b>: in Options you can choose between four palettes for the menus, buttons and panels: Classic, Tavern, Neon and Parchment. The in-match artwork doesn't change.",
   "<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.": "<b>UNDER-THE-HOOD IMPROVEMENTS</b>: changes to the series' shared systems. You won't notice anything… and that's a good sign.",
   "Microblizz ha puesto la paleta Pergamino para que su CEO pueda imprimir el juego y leerlo en papel.": "Microblizz added the Parchment palette so its CEO can print the game and read it on paper.",
+  "<b>MÁS TEXTOS EN INGLÉS</b>: hemos traducido textos que se habían quedado sin traducir y ahora se revisan solos en cada cambio.": "<b>MORE TEXTS IN ENGLISH</b>: we translated texts that had been left untranslated, and they are now checked automatically on every change.",
+  "Microblizz dice que el inglés ya se revisa solo. Él sigue sin saber cuál de los dos idiomas habla.": "Microblizz says English now checks itself. He still doesn't know which of the two languages he speaks.",
 });

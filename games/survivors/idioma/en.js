@@ -128,4 +128,6 @@ IDIOMA.add({
   "DESPEDIDO": "FIRED",
   "¡ASCENSO!": "PROMOTION!",
   "¡Una caja escondía un objeto! Ya lo tienes en el inventario:": "A box was hiding an item! It's already in your inventory:",
+  "<b>MÁS TEXTOS EN INGLÉS</b>: hemos traducido textos que se habían quedado sin traducir y ahora se revisan solos en cada cambio.": "<b>MORE TEXTS IN ENGLISH</b>: we translated texts that had been left untranslated, and they are now checked automatically on every change.",
+  "Microblizz dice que el inglés ya se revisa solo. Él sigue sin saber cuál de los dos idiomas habla.": "Microblizz says English now checks itself. He still doesn't know which of the two languages he speaks.",
 });

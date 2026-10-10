@@ -121,8 +121,37 @@ function pintaFilas(ctx, lista, x, ancho, ya, yb, fondo) {
 }
 // el panel de abajo: solo lo que va pasando
 function pintaChat(ctx, W, ya, yb) { pintaFilas(ctx, LOG.filter(e => !e.quien), 7, W - 14, ya, yb); }
-// el chat del directo, sobre la escena debajo de la vida (como en los directos): pocos mensajes y se van solos
+// el chat del directo, arriba de la escena con la letra pequeña: como mucho 2 líneas, para que se vea el juego
+let CHAT_ESTILO = 'A';   // A: las 2 últimas frases; B: una sola línea que pasa de derecha a izquierda (bocetos)
+const INS_MINI = { mod: '#2fb84a', vip: '#e0308a', sub: '#7a4ad6' };
+function lineaMini(ctx, e, x, y, ancho) {
+  const [nombre, col, ins] = e.quien;
+  ctx.save(); ctx.globalAlpha = 0.6; ctx.fillStyle = '#10081c';
+  const txt = cortaMini(e.txt, ancho - anchoMini(nombre + ': ') - (ins ? 5 : 0)), w = (ins ? 5 : 0) + anchoMini(nombre + ': ') + anchoMini(txt);
+  ctx.fillRect(x - 2, y - 1, w + 5, 8); ctx.restore();
+  if (ins) { ctx.fillStyle = OL; ctx.fillRect(x - 1, y, 5, 5); ctx.fillStyle = INS_MINI[ins]; ctx.fillRect(x, y + 1, 3, 3); x += 5; }
+  x += escribeMini(ctx, nombre + ':', x, y, col) + 3;
+  escribeMini(ctx, txt, x, y, e.quien === CHAT_LOLA ? '#fff3c4' : '#fff6ea');
+}
 function pintaChatEscena(ctx) {
-  const lista = LOG.filter(e => e.quien && e.fin > RELOJ.t).slice(-4);
-  if (lista.length) pintaFilas(ctx, lista, 6, Math.round(PAN.W * 0.8), ESC.Y + 31, ESC.Y + 31 + LINEA * 7, true);
+  const vivos = LOG.filter(e => e.quien && e.fin > RELOJ.t), W = PAN.W, y = ESC.Y + 31;
+  if (!vivos.length) return;
+  if (CHAT_ESTILO === 'B') {   // teletipo: la última frase cruza la pantalla
+    const e = vivos[vivos.length - 1], [nombre, col] = e.quien, w = anchoMini(nombre + ': ' + e.txt), t = RELOJ.t - e.t0, x = Math.round(W - t * 38);
+    if (x + w < 0) return;
+    ctx.save(); ctx.globalAlpha = 0.6; ctx.fillStyle = '#10081c'; ctx.fillRect(0, y - 1, W, 8); ctx.restore();
+    const nx = x + escribeMini(ctx, nombre + ':', x, y, col) + 3; escribeMini(ctx, e.txt, nx, y, '#fff6ea');
+    return;
+  }
+  // los consejos de Lola, largos, ocupan sus 2 líneas; si no, las 2 últimas frases
+  const ultimo = vivos[vivos.length - 1], ancho = W - 12;
+  if (ultimo.quien === CHAT_LOLA && anchoMini('Lola_Cafe: ' + ultimo.txt) > ancho) {
+    const corte = Math.floor(ultimo.txt.length / 2), k = ultimo.txt.indexOf(' ', corte);
+    lineaMini(ctx, Object.assign({}, ultimo, { txt: ultimo.txt.slice(0, k) }), 6, y, ancho);
+    const resto = cortaMini(ultimo.txt.slice(k + 1), ancho);
+    ctx.save(); ctx.globalAlpha = 0.6; ctx.fillStyle = '#10081c'; ctx.fillRect(4, y + 8, anchoMini(resto) + 5, 8); ctx.restore();
+    escribeMini(ctx, resto, 6, y + 9, '#fff3c4');
+    return;
+  }
+  vivos.slice(-2).forEach((e, i, l) => lineaMini(ctx, e, 6, y + (l.length - 1 - i === 0 ? (l.length - 1) * 9 : 0), ancho));
 }

@@ -5,34 +5,46 @@
 const EN = {
   // en la pantalla de la consola
   'Norma:': 'Rule:', 'Prohibido curarse': 'No healing', 'Prohibido descansar': 'No breaks',
-  'TURNO {n}': 'TURN {n}', 'Turno de {q}': "{q}'s turn",
-  'ANIMALES LOCOS': 'CRAZY ANIMALS', 'NO-MUERTOS': 'UNDEAD', 'MICROBLIZZ': 'MICROBLIZZ',
+  'TURNO {n}': 'TURN {n}', 'Turno de los Fans': "Fans' turn", 'Turno de Microblizz': "Microblizz's turn",
+  'ANIMALES LOCOS': 'CRAZY ANIMALS', 'HEROES': 'HEROES', 'NO-MUERTOS': 'UNDEAD', 'MICROBLIZZ': 'MICROBLIZZ',
+  'CrazyBunny': 'CrazyBunny', 'EpicChampion': 'EpicChampion', 'StarBot': 'StarBot',
   'Esqueleto en paro': 'Jobless Skeleton', 'Becario sin sueldo': 'Unpaid Intern',
-  'Mover': 'Move', 'Actuar': 'Act', 'Esperar': 'Wait', 'Estado': 'Status',
-  'Golpe': 'Attack', 'Salto caótico': 'Chaos Jump', '{n} CAOS': '{n} CHAOS',
-  'VIDA': 'HP', 'CAOS': 'CHAOS', 'NV': 'LV',
+  'Mover': 'Move', 'Atacar': 'Attack', 'Técnica': 'Skill', 'Esperar': 'Wait', 'Volver': 'Back', 'Fin del turno': 'End turn',
+  'Salto caótico': 'Chaos Jump', 'Tajo épico': 'Epic Slash', '{n} CAOS': '{n} CHAOS',
+  'VIDA': 'HP', 'CAOS': 'CHAOS', 'NV': 'LV', 'Fallo': 'Miss', 'ACIERTO {a}%  DAÑO {d}': 'HIT {a}%  DMG {d}',
   '¡Primero me despiden': 'First they fire me,', 'y ahora esto!': 'and now this?!',
   '¡Ni siquiera': "They don't even", 'me pagan!': 'pay me!',
+  '¡Otra vez': 'Back on', 'al paro!': 'the dole!', '¡Por fin': 'Finally,', 'vacaciones!': 'a holiday!', 'Error 404:': 'Error 404:', 'sueldo': 'salary',
+  '¡Victoria!': 'Victory!', 'Microblizz tendrá que': 'Microblizz will have', 'contratar más becarios.': 'to hire more interns.',
+  '¡Te han despedido!': "You're fired!", 'Microblizz te agradece': 'Microblizz thanks you', 'los servicios prestados.': 'for your services.',
+  'Otra vez': 'Again',
+  // la pista
+  'Pulsa «Otra vez» para jugar de nuevo.': 'Press "Again" to play once more.',
+  'Le toca a Microblizz…': "Microblizz's move…",
+  'Toca una casilla azul para moverte.': 'Tap a blue tile to move there.',
+  'Toca un enemigo en la zona roja y vuelve a tocarlo para confirmar.': 'Tap an enemy in the red area, then tap it again to confirm.',
+  'Elige qué hace: moverse, atacar, una técnica o esperar.': 'Choose what to do: move, attack, use a skill or wait.',
+  'Toca a CrazyBunny o a EpicChampion para darle órdenes. Arrastra para mover la cámara.': 'Tap CrazyBunny or EpicChampion to give orders. Drag to move the camera.',
   // la página
   'Biblioteca': 'Library',
-  'Prototipo · un turno de muestra': 'Prototype · a sample turn',
-  'Combate táctico por casillas en pixel art de consola portátil: CrazyBunny y EpicChampion contra los esqueletos en paro del Cementerio de juegos y los becarios de Microblizz.':
-    'Tile-based tactics in handheld-console pixel art: CrazyBunny and EpicChampion against the jobless skeletons of the Game Graveyard and the Microblizz interns.',
-  'Demo animada: CrazyBunny se mueve por un mapa en diagonal y hace un Salto caótico sobre un esqueleto':
-    'Animated demo: CrazyBunny moves across a diagonal map and does a Chaos Jump on a skeleton',
-  '240 × 160 píxeles, como la consola': '240 × 160 pixels, like the console', 'Un turno que se repite': 'One turn on a loop',
-  'Escenario': 'Stage', 'Cementerio': 'Graveyard', 'Oficinas': 'Offices', 'Pausa': 'Pause', 'Seguir': 'Resume', 'Momento': 'Timeline',
-  'Mapa con alturas': 'A map with heights',
-  'Casillas en diagonal con escalones, agua y decorados. Cada uno se mueve por turnos, casilla a casilla.':
-    'Diagonal tiles with steps, water and scenery. Everyone moves in turns, tile by tile.',
+  'Prototipo jugable · una batalla': 'Playable prototype · one battle',
+  'Combate táctico por casillas en pixel art de consola portátil. Mueve a CrazyBunny y a EpicChampion por el mapa y despide a los esbirros de Microblizz antes de que te despidan a ti.':
+    'Tile-based tactics in handheld-console pixel art. Move CrazyBunny and EpicChampion across the map and fire the Microblizz minions before they fire you.',
+  'Pantalla del juego: un mapa en diagonal con tus personajes y los de Microblizz': 'Game screen: a diagonal map with your characters and the Microblizz ones',
+  '240 × 160 píxeles, como la consola': '240 × 160 pixels, like the console', 'Arrastra para mover la cámara': 'Drag to move the camera',
+  'Escenario': 'Stage', 'Cementerio': 'Graveyard', 'Oficinas': 'Offices', 'Empezar de nuevo': 'Start over',
+  'Cómo se juega': 'How to play',
+  'Toca a uno de los tuyos y elige: Mover (casillas azules), Atacar o Técnica (zona roja). Toca dos veces al enemigo para confirmar.':
+    'Tap one of your characters and choose: Move (blue tiles), Attack or Skill (red area). Tap the enemy twice to confirm.',
+  'La altura importa': 'Height matters',
+  'Desde más arriba aciertas más y pegas más fuerte. Los escalones muy altos no se suben de un salto.':
+    'From higher up you hit more often and harder. Very tall steps can’t be climbed in one jump.',
+  'Técnicas con CAOS': 'Skills with CHAOS',
+  'Salto caótico de CrazyBunny (12 de CAOS, llega a 3 casillas) y Tajo épico de EpicChampion (10). Ganas CAOS cada turno y al golpear.':
+    "CrazyBunny's Chaos Jump (12 CHAOS, reaches 3 tiles) and EpicChampion's Epic Slash (10). You gain CHAOS every turn and when you hit.",
   'La norma del día': 'Rule of the day',
-  'En cada batalla, Microblizz impone una norma absurda. Hoy: prohibido curarse.':
-    'In every battle, Microblizz imposes an absurd rule. Today: no healing.',
-  'La técnica de CrazyBunny: gasta 12 de CAOS, salta muy alto y aplasta al enemigo desde arriba.':
-    "CrazyBunny's move: it spends 12 CHAOS, jumps sky-high and flattens the enemy from above.",
-  'Pronto, jugable': 'Playable soon',
-  'Este prototipo enseña el aspecto y el ritmo de un turno. Lo siguiente: que lo juegues tú.':
-    'This prototype shows the look and pace of one turn. Next up: you play it.',
+  'En cada batalla, Microblizz impone una norma absurda. Hoy: prohibido curarse. Tampoco tenías con qué.':
+    "In every battle, Microblizz imposes an absurd rule. Today: no healing. Not that you had anything to heal with.",
   '© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados': '© 2026 Arkioner and Pepins · MicroBlizz · All rights reserved',
 };
 

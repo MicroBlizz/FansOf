@@ -1,0 +1,28 @@
+// Fans Of Skate · Novedades: registro de versiones (el prototipo aún no tiene pantalla de novedades; desplegar.py busca aquí la entrada de cada versión).
+'use strict';
+const NEWS = [
+  { v: '0.1.23', real: ["<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla."], joke: ["Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas."] },
+  { v: '0.1.22', real: ["<b>ENTRAR CON GOOGLE, MÁS FÁCIL</b>: ahora hay un solo botón, «Continuar con Google», que sirve tanto para crear la cuenta como para entrar en la que ya tenías. Y si la ventana de cuenta te tapaba la confirmación, ya no pasa."], joke: ["Microblizz ha fundido dos botones de Google en uno. Phony pregunta si el otro se ha ido de vacaciones."] },
+  { v: '0.1.21', real: ["<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño."], joke: ["Microblizz ha puesto una barra de carga en la rampa. Se llena cuesta abajo, claro."] },
+  { v: '0.1.20', real: ["<b>FEEDBACK</b>: una pestañita para contarnos una idea, un fallo o tu opinión, con la versión del juego. Si quieres, nos dejas permiso para escribirte por email."], joke: ["Microblizz ha abierto un buzón de sugerencias en la rampa. Nadie sabe quién lo vacía."] },
+  { v: '0.1.19', real: ["<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal."], joke: ["Microblizz ha pulido las ruedas del monopatín. Ahora patina… hacia la factura."] },
+  { v: '0.1.18', real: ["<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal."], joke: ["Microblizz ha revisado los frenos del monopatín. Ha decidido que frenar es opcional."] },
+  { v: '0.1.17', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: ['Microblizz ha mejorado el monopatín por dentro. Por fuera sigue pareciendo un patinete, pero ahora con licencia.'] },
+  { v: '0.1.16', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.15', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.14', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.13', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.12', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.11', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.10', real: ['<b>TU PARTIDA EN LA NUBE</b>: en Opciones (nuevo botón del menú) puedes guardar tu progreso con tu cuenta, como en el resto de juegos, y jugar en otros aparatos. El oro, los talentos y la campaña van ahora todos juntos.', '<b>EN INGLÉS</b>: el juego entero se puede jugar en inglés; el idioma se elige en Opciones.'],
+    joke: ['Microblizz ha intentado cobrar por la nube. Se la ha llevado el viento.'] },
+  { v: '0.1.9', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.8', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.7', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.6', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.5', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.4', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.3', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.'], joke: [] },
+  { v: '0.1.2', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie.'], joke: [] },
+  { v: '0.1.1', real: ['<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie.'], joke: [] },
+];

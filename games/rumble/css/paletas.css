@@ -1,0 +1,76 @@
+/* Fans of Rumble · Colores del juego (Opciones): tres paletas además de la clásica morada y dorada.
+   Se eligen con html[data-paleta] (js/12c-paletas.js). Solo cambian los menús, los botones y los paneles: los dibujos del canvas siguen igual.
+   Cada paleta pone sus variables y estos colores propios: --velo (fondo de las pantallas), --p1/--p2 (botón principal),
+   --m1/--m2 (botones de modo), --r1/--r2 (conseguir cosas: gashapón, tienda, premios) y --mazo (barra del mazo). */
+
+html[data-paleta="taberna"]:root {
+  --bg: #0e2626; --bg-2: #173b3a; --tray: #173b3a; --tray-hi: #2f5a57; --off: #24423f;
+  --ink: #f1f7f2; --ink-dim: #9fc2bc; --outline: #071616; --gold: #6cf0c2; --danger: #ff4d6d;
+  --panel: rgba(23, 59, 58, 0.94); --panel-2: rgba(14, 38, 38, 0.88); --scrim: rgba(8, 24, 24, 0.9); --modal: rgba(5, 16, 16, 0.82);
+  --chaos: #3fd9a6; --chaos-lite: #a6f7dc; --chaos-deep: #138a6a;
+  --velo: rgba(23, 59, 58, 0.62); --p1: #ffb15c; --p2: #ff8a1f; --m1: #4fc4b4; --m2: #1d6f66; --r1: #a6f7dc; --r2: #2fbf8f; --mazo: #1d5550;
+}
+html[data-paleta="neon"]:root {
+  --bg: #12141c; --bg-2: #1e2230; --tray: #1e2230; --tray-hi: #3a4258; --off: #2a2f40;
+  --ink: #f4f1ea; --ink-dim: #a3abc2; --outline: #0a0b10; --gold: #ff5cc8; --danger: #ff3b4a;
+  --panel: rgba(30, 34, 48, 0.94); --panel-2: rgba(18, 20, 28, 0.88); --scrim: rgba(10, 11, 16, 0.9); --modal: rgba(6, 7, 10, 0.82);
+  --chaos: #b8f030; --chaos-lite: #dcff8a; --chaos-deep: #6f9a10;
+  --velo: rgba(30, 34, 48, 0.62); --p1: #d6ff6e; --p2: #9fd622; --m1: #6fe6ff; --m2: #1596c4; --r1: #ff8ad8; --r2: #d6249c; --mazo: #2b3550;
+}
+html[data-paleta="pergamino"]:root {
+  --bg: #f3ead7; --bg-2: #fffbf2; --tray: #fffbf2; --tray-hi: #e9dcc2; --off: #e2d6bf;
+  --ink: #2b1d14; --ink-dim: #6b5a4c; --outline: #2b1d14; --gold: #f28a1e; --danger: #c4162f;
+  --panel: rgba(255, 251, 242, 0.96); --panel-2: rgba(243, 234, 215, 0.94); --scrim: rgba(243, 234, 215, 0.93); --modal: rgba(43, 29, 20, 0.55);
+  --chaos: #2f9a62; --chaos-lite: #8fd6ac; --chaos-deep: #145234;
+  --velo: rgba(255, 251, 242, 0.75); --p1: #3aa36a; --p2: #1e7a4a; --m1: #5b8ff0; --m2: #1f5fd1; --r1: #f7a54a; --r2: #d9700f; --mazo: #c9b79a;
+  --olt: #fffbf2;   /* contorno de las letras: crema sobre el papel; oscuro dentro de los botones de color (más abajo) */
+}
+
+/* Lo que estaba escrito a mano en morado o dorado pasa a los colores de la paleta */
+html[data-paleta] .screen:not(.modal) { background: radial-gradient(ellipse at 50% 32%, var(--velo), var(--scrim) 72%); }
+html[data-paleta] .btn-big { background: linear-gradient(to bottom, var(--p1), var(--p2)); }
+html[data-paleta] .btn-mode, html[data-paleta] #btn-bossmode, html[data-paleta] .side-mode, html[data-paleta] .feat.salon-feat,
+html[data-paleta] .pass-tab[aria-pressed="true"] { background: linear-gradient(to bottom, var(--m1), var(--m2)); }
+html[data-paleta] #btn-gacha.feat, html[data-paleta] #btn-shop.feat, html[data-paleta] .prep-deck .pd-edit, html[data-paleta] .btn-up.save,
+html[data-paleta] .btn-up.max, html[data-paleta] .mission .xpbar i, html[data-paleta] .rw-chip.big,
+html[data-paleta] .speed-btn[aria-pressed="true"] { background: linear-gradient(to bottom, var(--r1), var(--r2)); }
+html[data-paleta] .prep-deck { background: linear-gradient(100deg, var(--mazo) 0%, var(--panel-2) 70%); }
+html[data-paleta] .opt-row textarea { background: var(--panel-2); }
+html[data-paleta] .xpbar, html[data-paleta] .qbar { background: var(--barra); }
+html[data-paleta] .idle-bar { background: var(--horas); }
+html[data-paleta] .tut-text { background: var(--scrim); }
+html[data-paleta] .pass-top, html[data-paleta] .arm-top { background: linear-gradient(110deg, var(--mazo) 0%, var(--tray) 75%); }
+html[data-paleta] .ar-liga { background: linear-gradient(135deg, var(--m2), var(--bg-2)); }
+html[data-paleta] .pass-head { background: var(--bg); }
+html[data-paleta="taberna"]:root { --barra: #081a1a; --horas: #143533; }
+html[data-paleta="neon"]:root { --barra: #0a0b10; --horas: #1a1e2b; }
+html[data-paleta="pergamino"]:root { --barra: #e2d6bf; --horas: #3b2a20; }
+
+/* Pergamino es clara: las letras oscuras llevan contorno crema, y las claras (las de los botones de color) contorno oscuro.
+   Donde el navegador sabe mirar el color de la letra, lo elige él solo; si no, crema por defecto y oscuro en los botones de color. */
+@supports (color: rgb(from currentColor r g b)) {
+  html[data-paleta="pergamino"]:root {
+    --olt: rgb(from currentColor
+      calc(43 + clamp(0, (150 - (0.299 * r + 0.587 * g + 0.114 * b)) * 1000, 1) * 212)
+      calc(29 + clamp(0, (150 - (0.299 * r + 0.587 * g + 0.114 * b)) * 1000, 1) * 222)
+      calc(20 + clamp(0, (150 - (0.299 * r + 0.587 * g + 0.114 * b)) * 1000, 1) * 222));
+  }
+}
+/* Horas extra es una escena de noche: dentro sigue con letras claras y contorno oscuro */
+html[data-paleta="pergamino"] .idle { --ink: #fff6ea; --ink-dim: #e3d3bd; --tray-hi: #5a4232; --panel-2: rgba(43, 29, 20, 0.86); --olt: #2b1d14; color: var(--ink); }
+html[data-paleta="pergamino"] .ol { text-shadow: 2px 0 0 var(--olt), -2px 0 0 var(--olt), 0 2px 0 var(--olt), 0 -2px 0 var(--olt), 1.5px 1.5px 0 var(--olt), -1.5px -1.5px 0 var(--olt), 1.5px -1.5px 0 var(--olt), -1.5px 1.5px 0 var(--olt); }
+html[data-paleta="pergamino"] .ol-big { text-shadow: 4px 0 0 var(--olt), -4px 0 0 var(--olt), 0 4px 0 var(--olt), 0 -4px 0 var(--olt), 3px 3px 0 var(--olt), -3px -3px 0 var(--olt), 3px -3px 0 var(--olt), -3px 3px 0 var(--olt), 0 7px 0 var(--olt); }
+html[data-paleta="pergamino"] :is(.btn-big, .btn-mode, #btn-bossmode, .side-mode, .feat, .pd-edit, .btn-up, .rw-chip, .card, .next-art, .dk2c,
+  .speed-btn[aria-pressed="true"], .pass-tab[aria-pressed="true"], .lg-day.big) { --olt: #2b1d14; color: #fff; }
+
+/* Opciones → Colores del juego: cuatro muestras con un dibujo pequeño de cada paleta (sus colores van en el style de cada botón) */
+.pal-opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.pal-opt { display: flex; flex-direction: column; align-items: stretch; gap: 5px; padding: 6px 5px 5px; border: 3px solid var(--outline); border-radius: 14px; background: var(--tray-hi); box-shadow: 0 4px 0 var(--outline); cursor: pointer; }
+.pal-opt:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.pal-opt[aria-pressed="true"] { box-shadow: 0 0 0 3px var(--gold), 0 4px 0 var(--outline); }
+.pal-opt b { font-family: var(--font-display); font-weight: 400; font-size: 13px; line-height: 1.1; text-align: center; white-space: nowrap; }
+.pal-mini { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 4px; height: 46px; padding: 5px; box-sizing: border-box; border-radius: 9px; border: 2px solid var(--outline); background: var(--f); }
+.pal-mini i { border-radius: 5px; border: 1.5px solid rgba(0, 0, 0, 0.55); }
+.pal-mini .pm-p { grid-column: 1 / span 2; background: var(--p); }
+.pal-mini .pm-m { background: var(--m); }
+.pal-mini .pm-r { background: var(--r); }

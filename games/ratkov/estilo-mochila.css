@@ -1,0 +1,63 @@
+/* Fans of Ratkov · LA MOCHILA TETRIS Y LOS MINIJUEGOS: las cuadrículas, las piezas que se arrastran, la ficha del objeto elegido,
+   la cerradura y el rebuscar. De pie, una cuadrícula encima de otra; tumbado, una al lado de la otra. */
+.ventana.rej-v { width: min(620px, 94vw); max-height: 90vh; }
+@media (orientation: landscape) and (min-width: 640px) {
+  /* tumbado: las cuadrículas a la izquierda; la ficha del objeto y COGER TODO, en una columna a la derecha */
+  .ventana.rej-v { width: min(980px, 97vw); display: grid; grid-template-columns: auto minmax(200px, 1fr); grid-template-areas: "cab cab" "rej info" "rej pie" "rej ."; column-gap: 14px; align-items: start; }
+  .ventana.rej-v > header { grid-area: cab; } .ventana.rej-v > .rejillas { grid-area: rej; } .ventana.rej-v > .rej-info { grid-area: info; position: static; margin-top: 0; flex-wrap: wrap; } .ventana.rej-v > .pie { grid-area: pie; justify-content: flex-start; }
+  .ventana.rej-v .bloque-tuyo { display: grid; grid-template-columns: auto auto; grid-template-areas: "t t" "m f"; column-gap: 10px; align-items: start; }
+  .ventana.rej-v .bloque-tuyo > h4 { grid-area: t; } .ventana.rej-v .bloque-tuyo > [data-sitio="moch"] { grid-area: m; } .ventana.rej-v .bloque-tuyo > .fila-rej { grid-area: f; flex-direction: column; margin-top: 0; }
+}
+.rejillas { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+@media (orientation: landscape) and (min-width: 640px) { .rejillas { flex-direction: row; } }
+.bloque-rej { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bloque-rej h4 { margin: 2px 0 2px; }
+.fila-rej { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.fila-rej h5 { margin: 0 0 3px; font: 12px var(--rk-tit); letter-spacing: 0.08em; color: var(--rk-tenue); }
+.fila-rej h5 small { font: 14px var(--rk-num); color: #6f8a92; letter-spacing: 0; }
+.bols { display: flex; gap: 6px; }
+.rej { position: relative; touch-action: none; box-sizing: content-box; border: 2px solid var(--rk-borde); background-color: #0e1318;
+  background-image: linear-gradient(to right, #1f2a31 1px, transparent 1px), linear-gradient(to bottom, #1f2a31 1px, transparent 1px);
+  background-size: var(--c) var(--c); cursor: grab; }
+.rej[data-rej="cont"] { border-color: #5a6a3a; background-color: #11150e; }
+.rej[data-rej="rin"] { border-color: var(--rk-oro); }
+.rej.bolsillo-rej { border-color: var(--rk-hielo); }
+.pieza { position: absolute; pointer-events: none; }
+.pieza canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
+.pieza b { position: absolute; right: 2px; bottom: -2px; font: 16px var(--rk-num); color: var(--rk-oro); text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; }
+.pieza u { position: absolute; left: 3px; top: 3px; width: 6px; height: 6px; background: var(--rk-bien); border: 1px solid #000; }
+.pieza.sel canvas { filter: drop-shadow(0 0 1px var(--rk-oro)) drop-shadow(0 0 1px var(--rk-oro)) drop-shadow(0 0 3px var(--rk-oro)); }
+.pieza.oculta i { position: absolute; box-sizing: border-box; background: #1a2026; border: 1px solid #2a343c; }
+.pieza.oculta i::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; color: #3a4a52; font: 18px var(--rk-num); }
+#flota { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
+.pieza.vuela { filter: drop-shadow(0 6px 6px rgba(0, 0, 0, 0.6)); z-index: 41; }
+.sombra-rej { position: absolute; pointer-events: none; box-sizing: border-box; border: 2px solid; }
+.sombra-rej.si { background: rgba(126, 224, 74, 0.25); border-color: var(--rk-bien); }
+.sombra-rej.no { background: rgba(255, 75, 92, 0.28); border-color: var(--rk-mal); }
+#b-girar-flota { position: fixed; z-index: 42; right: calc(16px + env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom)); width: 84px; height: 84px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #ffe07a, #e0a11f 60%, #8a5a08); color: #2a1c00; border: 3px solid #fff2b0; font: 14px var(--rk-tit); }
+.rej-info { margin-top: 8px; position: sticky; bottom: -14px; background: var(--rk-panel2); border-left-color: var(--rk-oro); min-height: 56px; z-index: 2; }
+.rej-info .fo-t span + span { color: var(--rk-tenue); font-size: 16px; }
+.rej-info u { text-decoration: none; font: 12px var(--rk-tit); color: var(--rk-bien); border: 1px solid var(--rk-bien); padding: 0 4px; margin-left: 4px; vertical-align: middle; }
+.tarjeta .rej-info { position: static; }
+.rej-pista { margin: 0; color: var(--rk-tenue); font-size: 17px; }
+button.mini.oro { border-color: var(--rk-oro); color: var(--rk-oro); }
+
+/* ---------- los minijuegos (cerradura y rebuscar) ---------- */
+#v-mini { width: min(440px, 94vw); text-align: center; }
+#v-mini canvas.mini-cv { width: min(100%, 360px); aspect-ratio: 1; image-rendering: pixelated; display: block; margin: 0 auto; touch-action: none; border: 2px solid var(--rk-borde); background: #10151a; }
+#v-mini .mini-estado { font: 15px var(--rk-tit); letter-spacing: 0.05em; min-height: 22px; margin: 6px 0; }
+#v-mini .mini-estado.bien { color: var(--rk-bien); } #v-mini .mini-estado.mal { color: var(--rk-mal); } #v-mini .mini-estado.oro { color: var(--rk-oro); }
+#v-mini .mini-barra { display: flex; align-items: center; gap: 8px; margin: 4px 0; font: 12px var(--rk-tit); letter-spacing: 0.06em; color: var(--rk-tenue); }
+#v-mini .mini-barra .barra { flex: 1; height: 10px; }
+#v-mini .mini-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+#v-mini .mini-botones .grande { grid-column: 1 / -1; padding: 16px; font: 16px var(--rk-tit); background: radial-gradient(circle at 40% 35%, #ffe07a, #e0a11f 60%, #8a5a08); color: #2a1c00; border: 2px solid #fff2b0; }
+#v-mini .mini-premio { display: flex; gap: 10px; align-items: center; text-align: left; margin-top: 8px; }
+u.fir { text-decoration: none; font: 11px var(--rk-tit); color: var(--rk-bien); border: 1px solid var(--rk-bien); padding: 0 3px; margin-left: 4px; vertical-align: middle; letter-spacing: 0.04em; }
+
+/* ---------- lo del PASE VIP (aún no existe): botón apagado con un candado dibujado ---------- */
+.vip-cerrado { display: inline-flex; align-items: center; gap: 8px; opacity: 0.85; border-color: #6f5a1e !important; color: #b8a05a !important; background: rgba(30, 26, 12, 0.9) !important; cursor: not-allowed; }
+.vip-cerrado small { font: 11px var(--rk-tit); letter-spacing: 0.08em; padding: 1px 5px; background: var(--rk-oro); color: #1a1408; border: 2px solid #000; }
+.candado { position: relative; display: inline-block; width: 14px; height: 11px; margin-top: 7px; background: var(--rk-oro); border: 2px solid #000; box-sizing: content-box; }
+.candado::before { content: ''; position: absolute; left: 1px; top: -10px; width: 8px; height: 8px; border: 2px solid #000; border-bottom: 0; box-shadow: inset 0 0 0 2px var(--rk-oro); background: transparent; }
+.candado::after { content: ''; position: absolute; left: 6px; top: 3px; width: 2px; height: 4px; background: #000; }

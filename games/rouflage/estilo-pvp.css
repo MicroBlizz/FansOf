@@ -1,0 +1,30 @@
+/* Fans of Rouflage (prototipo) · El PvP: el botón del título, el menú, la sala llenándose, la clasificación y la explicación. Mismos colores y contornos que estilo.css. */
+.pvp-boton { width: 100%; max-width: 620px; display: grid; justify-items: center; gap: 1px; padding: 8px 14px 7px; background: linear-gradient(to bottom, #a063e8, #5b2ea6); }
+.pvp-boton b { font-family: var(--font-display); font-weight: 400; font-size: clamp(19px, 5vw, 24px); letter-spacing: 0.03em; }
+.pvp-boton span { font-family: var(--font-ui); font-weight: 700; font-size: 12.5px; letter-spacing: 0; text-shadow: 0 1px 0 var(--outline); color: var(--ink); opacity: 0.95; }
+.caja.pvp { max-width: 440px; }
+.caja.pvp .gancho { color: var(--ink-dim); font-size: 14.5px; }
+.caja.pvp .error { color: var(--danger); font-size: 14px; }
+/* el medidor del caos primordial: fijo en la esquina, encima de cualquier menú */
+#rf-energia { position: fixed; top: calc(var(--sup) + 8px); right: calc(var(--der) + 8px); z-index: 30; display: flex; gap: 6px; align-items: center; font-weight: 700; color: var(--ink); }
+#rf-energia[hidden] { display: none; }
+.caja.pvp .pasos { text-align: left; display: grid; gap: 8px; font-size: 14.5px; }
+.caja.pvp .pasos p { margin: 0; font-weight: 700; }
+.caja.pvp .pasos .chiste { color: var(--gold); font-style: italic; }
+.sala, .clasif { list-style: none; margin: 0; padding: 8px 10px; text-align: left; border-radius: 12px; background: rgba(12, 6, 20, 0.5); display: grid; gap: 4px; max-height: 44vh; overflow-y: auto; }
+.sala li, .clasif li { display: flex; align-items: center; gap: 8px; font-weight: 800; padding: 3px 6px 2px; border-radius: 8px; }
+.sala li.yo, .clasif li.yo { background: rgba(255, 203, 61, 0.16); color: var(--gold); }
+.sala li span, .clasif li .nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sala li small, .clasif li small { font-size: 11px; color: var(--ink-dim); font-weight: 800; letter-spacing: 0.04em; }
+.clasif li .nom { display: grid; }
+.clasif li b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--gold); }
+.clasif li .pos { width: 1.6em; text-align: center; font-family: var(--font-display); color: var(--ink-dim); }
+.sala li i { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 3px solid var(--outline); box-sizing: content-box; }
+.sala li i.cam { background: var(--ok); }
+.sala li i.caz { background: var(--enemy); }
+.sala li i.esp { background: #7a6a98; }
+.sala li.maquina { opacity: 0.7; font-style: italic; }
+.nota-sala { font-size: 12.5px; color: var(--ink-dim); }
+.pvp-puntos { color: var(--gold); font-family: var(--font-display); font-size: 18px; letter-spacing: 0.03em; }
+.pvp-puntos.mal { color: var(--danger); font-family: var(--font-ui); font-size: 14px; }
+.caja.pvp .aviso-pvp { color: var(--ink); background: rgba(255,203,61,.16); border: 2px solid var(--outline); border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 700; white-space: pre-line; }

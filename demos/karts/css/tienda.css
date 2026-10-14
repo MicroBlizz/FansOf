@@ -1,0 +1,139 @@
+/* Fans of Karts · LA TIENDA, EL PASE Y LAS VENTANAS DE PREMIO en grande: pantallas en HTML encima del juego, con las letras y los
+   contornos de la serie (core/css/base.css). Las fotos de los karts son los mismos modelos del juego, ampliados sin suavizar. */
+.kt-scr { position: fixed; inset: 0; z-index: 35; display: flex; flex-direction: column; color: var(--ink); font-family: var(--font-ui);
+  background: radial-gradient(120% 70% at 50% 0%, rgba(62, 35, 99, 0.96), rgba(16, 8, 26, 0.97) 70%);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); box-sizing: border-box; }
+.kt-scr * { box-sizing: border-box; }
+.kt-px { image-rendering: pixelated; image-rendering: crisp-edges; }
+.kt-d { font-family: var(--font-display); letter-spacing: 0.02em; font-weight: 400; }
+/* ---------- cabecera: volver, título y monedero ---------- */
+.kt-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px 6px; flex: none; }
+.kt-head h2 { margin: 0; font-size: 30px; line-height: 1; padding-top: 4px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kt-back { flex: none; height: 44px; padding: 6px 14px 2px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(#5d3a8f, #3e2363); color: var(--ink); font: 400 18px/1 var(--font-display); cursor: pointer; box-shadow: 0 4px 0 var(--outline); }
+.kt-back::before { content: ''; display: inline-block; width: 0; height: 0; border: 7px solid transparent; border-right: 9px solid var(--ink); border-left: 0; margin-right: 6px; vertical-align: 1px; }
+.kt-wallet { display: flex; gap: 6px; flex: none; }
+.kt-chip { display: flex; align-items: center; gap: 5px; height: 38px; padding: 2px 12px 0 5px; border-radius: 999px; background: rgba(20, 10, 34, 0.85); border: 3px solid var(--tray-hi); font: 400 19px/1 var(--font-display); }
+.kt-chip img { width: 26px; height: 26px; }
+.kt-chip.oro { color: #ffe9a8; } .kt-chip.gema { color: #ffc4f8; }
+/* ---------- pestañas ---------- */
+.kt-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 6px 12px 10px; flex: none; scrollbar-width: none; touch-action: pan-x; }
+.kt-tabs::-webkit-scrollbar { display: none; }
+.kt-tab { flex: none; height: 42px; padding: 6px 16px 2px; border-radius: 999px; border: 3px solid var(--outline); background: #2c1847; color: var(--ink-dim); font: 400 17px/1 var(--font-display); cursor: pointer; }
+.kt-tab[aria-pressed="true"] { background: linear-gradient(var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 3px 0 var(--outline); }
+.kt-tab.gema[aria-pressed="false"] { color: #ffc4f8; } .kt-tab.vip[aria-pressed="false"] { color: var(--gold); }
+/* ---------- el cuerpo con desplazamiento ---------- */
+.kt-body { flex: 1; overflow-y: auto; padding: 4px 12px 24px; touch-action: pan-y; overscroll-behavior: contain; }
+.kt-wrap { max-width: 980px; margin: 0 auto; }
+.kt-intro { display: block; background: rgba(20, 10, 34, 0.7); border: 3px solid var(--tray-hi); border-radius: 16px; padding: 10px 14px; margin-bottom: 12px; font-size: 16px; line-height: 1.3; font-weight: 700; }
+.kt-intro b { color: var(--gold); }
+.kt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 12px; }
+/* ---------- tarjeta de producto ---------- */
+.kt-card { position: relative; display: flex; flex-direction: column; border-radius: 18px; border: 4px solid var(--outline); background: linear-gradient(#3b2161, #26143c); overflow: hidden; cursor: pointer; box-shadow: 0 5px 0 var(--outline); text-align: center; padding: 0; color: inherit; font: inherit; }
+.kt-card:focus-visible, .kt-card.kt-foco, .kt-btn.kt-foco, .kt-tab.kt-foco, .kt-back.kt-foco { outline: 4px solid var(--gold); outline-offset: 2px; }
+.kt-card .kt-foto { position: relative; height: 128px; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 85%, rgba(255, 255, 255, 0.16), transparent 60%), linear-gradient(#5b3a86, #3b2161); }
+.kt-card.r-ceo .kt-foto { background: radial-gradient(ellipse at 50% 85%, rgba(255, 220, 120, 0.35), transparent 60%), linear-gradient(#7a5a14, #3b2a10); }
+.kt-card.r-pase .kt-foto { background: radial-gradient(ellipse at 50% 85%, rgba(140, 255, 160, 0.25), transparent 60%), linear-gradient(#1f6b3a, #163a2a); }
+.kt-card.r-vip .kt-foto { background: radial-gradient(ellipse at 50% 85%, rgba(255, 220, 120, 0.3), transparent 60%), linear-gradient(#1c1028, #3b2a10); }
+.kt-card.r-gema .kt-foto { background: radial-gradient(ellipse at 50% 85%, rgba(255, 160, 250, 0.3), transparent 60%), linear-gradient(#6b2a8a, #3b1650); }
+.kt-foto img { width: 100%; height: 100%; object-fit: contain; }
+.kt-card .kt-info { padding: 8px 8px 10px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.kt-name { font: 400 18px/1.05 var(--font-display); min-height: 38px; display: flex; align-items: center; justify-content: center; }
+.kt-tag { display: inline-block; align-self: center; font-size: 13px; font-weight: 800; line-height: 1; padding: 5px 9px 4px; border-radius: 999px; background: rgba(20, 10, 34, 0.8); color: #9ef07a; }
+.kt-tag.solo { color: #ffb3cf; }
+.kt-ribbon { position: absolute; top: 8px; left: -2px; padding: 4px 10px 3px 8px; border-radius: 0 999px 999px 0; font: 400 13px/1 var(--font-display); border: 3px solid var(--outline); border-left: 0; }
+.kt-ribbon.ceo { background: var(--gold); color: var(--outline); } .kt-ribbon.pase { background: #5ef27a; color: var(--outline); } .kt-ribbon.vip { background: #1c1028; color: var(--gold); }
+.kt-ribbon.tuyo { background: #22e3ff; color: var(--outline); } .kt-ribbon.puesto { background: #5ef27a; color: var(--outline); }
+/* ---------- botones ---------- */
+.kt-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 46px; padding: 8px 14px 4px; border-radius: 14px; border: 3px solid var(--outline); font: 400 19px/1 var(--font-display); color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--outline); background: linear-gradient(var(--player-lite), var(--player)); }
+.kt-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.kt-btn img { width: 24px; height: 24px; margin-top: -3px; }
+.kt-btn.verde { background: linear-gradient(#9ef07a, #2f8a1f); } .kt-btn.rojo { background: linear-gradient(#ff8fa0, #c7283a); }
+.kt-btn.oro { background: linear-gradient(#ffe06a, #c47f10); color: var(--outline); } .kt-btn.gema { background: linear-gradient(#f3a6ff, #9b2ad6); }
+.kt-btn.gris { background: #3a2b52; color: var(--ink-dim); box-shadow: 0 4px 0 var(--outline); font-size: 15px; }
+.kt-btn.hecho { background: rgba(20, 10, 34, 0.8); color: #9ef07a; box-shadow: none; }
+.kt-btn.ancho { width: 100%; }
+/* ---------- banners de Destacado ---------- */
+.kt-banners { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.kt-banner { position: relative; display: flex; align-items: center; gap: 12px; min-height: 120px; padding: 12px 14px; border-radius: 20px; border: 4px solid var(--outline); box-shadow: 0 5px 0 var(--outline); cursor: pointer; text-align: left; color: var(--ink); font: inherit; overflow: hidden; }
+.kt-banner.vip { background: linear-gradient(120deg, #1c1028 0%, #4a3410 60%, #c47f10 140%); }
+.kt-banner.pase { background: linear-gradient(120deg, #163a2a, #2f8a1f 140%); }
+.kt-banner.gema { background: linear-gradient(120deg, #3b1650, #9b2ad6 140%); }
+.kt-banner.ceo { background: linear-gradient(120deg, #3b2a10, #a8770e 140%); }
+.kt-banner > img { width: 104px; height: 104px; flex: none; object-fit: contain; }
+.kt-banner h3 { margin: 0 0 4px; font: 400 25px/1 var(--font-display); }
+.kt-banner p { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.25; color: #f3e6ff; }
+.kt-banner .kt-btn { margin-top: 8px; min-height: 40px; font-size: 16px; }
+.kt-h3 { font: 400 22px/1 var(--font-display); margin: 18px 2px 10px; }
+/* ---------- la ficha de un producto (ventana) ---------- */
+.kt-modal { position: fixed; inset: 0; z-index: 45; display: grid; place-items: center; background: rgba(12, 6, 20, 0.82); padding: 14px; padding-top: max(14px, env(safe-area-inset-top)); }
+.kt-ficha { width: min(560px, 100%); max-height: 100%; overflow-y: auto; touch-action: pan-y; border-radius: 22px; border: 4px solid var(--outline); background: linear-gradient(#3b2161, #26143c); box-shadow: 0 7px 0 var(--outline); padding: 14px; display: flex; flex-direction: column; gap: 10px; text-align: center; }
+.kt-ficha h3 { margin: 0; font: 400 28px/1.05 var(--font-display); }
+.kt-lado { display: grid; gap: 10px; } .kt-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kt-vista { flex: none; position: relative; height: 210px; border-radius: 16px; background: radial-gradient(ellipse at 50% 88%, rgba(255, 255, 255, 0.2), transparent 55%), linear-gradient(#5b3a86, #2b1446); display: grid; place-items: center; }
+.kt-vista canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.kt-pilotos { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.kt-pil { width: 54px; height: 54px; border-radius: 12px; border: 3px solid var(--outline); background: #2c1847; padding: 0; cursor: pointer; }
+.kt-pil[aria-pressed="true"] { background: #5b3a86; box-shadow: 0 0 0 3px var(--gold); }
+.kt-pil img { width: 100%; height: 100%; }
+.kt-datos { display: grid; gap: 6px; text-align: left; }
+.kt-dato { display: grid; grid-template-columns: 112px 1fr; gap: 8px; align-items: baseline; background: rgba(20, 10, 34, 0.6); border-radius: 12px; padding: 8px 10px; font-size: 16px; font-weight: 700; line-height: 1.25; }
+.kt-dato > img { width: 44px; height: auto; }
+.kt-dato b { font: 400 15px/1 var(--font-display); color: var(--gold); }
+.kt-acciones { display: flex; gap: 10px; }
+.kt-acciones .kt-btn { flex: 1; }
+.kt-aviso { color: #ff8fb0; font-weight: 800; font-size: 15px; min-height: 0; }
+/* ---------- el pase ---------- */
+.kt-pase-top { background: rgba(20, 10, 34, 0.7); border: 3px solid var(--tray-hi); border-radius: 18px; padding: 12px 14px; display: grid; gap: 8px; margin-bottom: 12px; }
+.kt-pase-top .kt-temp { font-size: 15px; font-weight: 800; color: var(--ink-dim); }
+.kt-nivel { display: flex; align-items: center; gap: 12px; }
+.kt-nivel .kt-num { font: 400 40px/1 var(--font-display); color: #9ef07a; min-width: 64px; text-align: center; }
+.kt-barra { flex: 1; height: 22px; border-radius: 999px; border: 3px solid var(--outline); background: #2c1847; overflow: hidden; position: relative; }
+.kt-barra i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(#9ef07a, #2f8a1f); }
+.kt-barra span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+.kt-cols { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 8px; position: sticky; top: -4px; z-index: 2; padding: 6px 0; background: rgba(28, 14, 44, 0.96); }
+.kt-cols div { font: 400 18px/1 var(--font-display); text-align: center; padding-top: 3px; }
+.kt-fila { display: grid; grid-template-columns: 52px 1fr 1fr; gap: 8px; margin-bottom: 8px; align-items: stretch; }
+.kt-lv { display: grid; place-items: center; border-radius: 14px; border: 3px solid var(--outline); background: #2c1847; font: 400 24px/1 var(--font-display); color: var(--ink-dim); }
+.kt-lv.ya { background: linear-gradient(#9ef07a, #2f8a1f); color: var(--ink); }
+.kt-rec { position: relative; display: flex; align-items: center; gap: 8px; min-height: 76px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(#3b2161, #2c1847); padding: 6px 8px; text-align: left; font-size: 15px; font-weight: 800; line-height: 1.15; }
+.kt-rec.p { background: linear-gradient(#5a1f6b, #3b1650); }
+.kt-rec img { width: 58px; height: 58px; flex: none; }
+.kt-rec.apagado { opacity: 0.55; }
+.kt-rec .kt-marca { position: absolute; top: -8px; right: -6px; width: 30px; height: 30px; }
+.kt-liga { display: grid; gap: 6px; }
+.kt-rango { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 7px; border-radius: 14px; background: rgba(20, 10, 34, 0.7); border: 3px solid var(--tray-hi); font: 400 18px/1 var(--font-display); }
+.kt-rango.yo { border-color: var(--gold); }
+/* ---------- la ventana de premio ---------- */
+.kt-premio { width: min(420px, 100%); border-radius: 24px; border: 4px solid var(--outline); background: linear-gradient(#3b2161, #26143c); box-shadow: 0 8px 0 var(--outline); padding: 16px; text-align: center; position: relative; overflow: hidden; animation: kt-entra 0.35s cubic-bezier(.2, 1.4, .4, 1); }
+.kt-premio::before { content: ''; position: absolute; left: 50%; top: 18%; width: 560px; height: 560px; margin: -280px 0 0 -280px; background: repeating-conic-gradient(rgba(255, 220, 120, 0.13) 0 10deg, transparent 10deg 20deg); animation: kt-gira 12s linear infinite; pointer-events: none; }
+.kt-premio > * { position: relative; }
+.kt-premio h3 { margin: 4px 0 6px; font: 400 32px/1 var(--font-display); }
+.kt-premio .kt-sub { font-size: 15px; font-weight: 800; color: var(--ink-dim); margin-bottom: 8px; }
+.kt-premios { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 8px 0 14px; }
+.kt-pr { width: 116px; border-radius: 16px; border: 3px solid var(--outline); background: rgba(20, 10, 34, 0.75); padding: 6px; font-size: 15px; font-weight: 800; line-height: 1.15; }
+.kt-pr img { width: 92px; height: 80px; object-fit: contain; display: block; margin: 0 auto 4px; }
+.kt-pr.ancho { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; }
+.kt-pr.ancho img { width: 64px; height: 48px; margin: 0; flex: none; }
+@keyframes kt-entra { from { transform: scale(0.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes kt-gira { to { transform: rotate(360deg); } }
+/* ---------- el monedero del menú principal ---------- */
+#kt-monedero { position: fixed; top: calc(6px + env(safe-area-inset-top)); left: calc(6px + env(safe-area-inset-left)); z-index: 30; display: flex; gap: 6px; }
+#kt-monedero .kt-chip { height: 32px; font-size: 16px; cursor: pointer; }
+#kt-monedero .kt-chip img { width: 22px; height: 22px; }
+/* móvil estrecho: cabecera más apretada para que quepan título y monedero */
+@media (max-width: 520px) {
+  .kt-head { gap: 6px; padding: 8px 8px 4px; } .kt-head h2 { font-size: 24px; } .kt-back { padding: 6px 10px 2px; font-size: 16px; height: 40px; }
+  .kt-head .kt-chip { height: 34px; font-size: 16px; padding: 2px 9px 0 4px; } .kt-head .kt-chip img { width: 22px; height: 22px; }
+  .kt-grid { gap: 10px; } .kt-name { font-size: 17px; }
+}
+/* con el móvil tumbado (poco alto): cabecera y fotos más bajas */
+@media (max-height: 500px) {
+  .kt-head { padding: 6px 10px 2px; } .kt-head h2 { font-size: 24px; } .kt-back { height: 38px; font-size: 16px; } .kt-chip { height: 34px; font-size: 17px; }
+  .kt-tabs { padding: 4px 10px 6px; } .kt-tab { height: 36px; font-size: 15px; }
+  .kt-card .kt-foto { height: 100px; } .kt-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .kt-ficha { width: min(860px, 100%); gap: 8px; padding: 10px; } .kt-ficha h3 { font-size: 24px; }
+  .kt-lado { grid-template-columns: 1fr 1.15fr; align-items: start; } .kt-vista { height: 170px; } .kt-pil { width: 44px; height: 44px; }
+  .kt-dato { padding: 6px 10px; font-size: 15px; }
+  .kt-premio { max-height: 100%; overflow-y: auto; padding: 10px; } .kt-premio h3 { font-size: 26px; } .kt-pr { width: 100px; } .kt-pr img { width: 72px; height: 54px; } .kt-premios { margin: 4px 0 8px; }
+  .kt-banner { min-height: 96px; } .kt-banner > img { width: 80px; height: 80px; }
+}

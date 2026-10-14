@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#150b21">
+<title>Fans of Island</title>
+<meta name="description" content="Fans of Island: plataformas cooperativo en píxel art con CrazyBunny y SlyFox, zanahorias de poder y un paisaje de acuarela. Prototipo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<script src="../../core/js/nucleo.js?v=0.3.1"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/island.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="960" height="540"></canvas>
+  <div id="is-ui">
+    <section id="is-titulo">
+      <h1 class="is-logo ol-big">FANS OF ISLAND</h1>
+      <p class="is-lema">Plataformas cooperativo con CrazyBunny</p>
+      <button class="btn-big" id="is-solo" type="button">JUGAR SOLO</button>
+      <button class="btn-ghost" id="is-dos" type="button">JUGAR A DOS</button>
+      <button class="btn-ghost" id="is-t-opc" type="button">OPCIONES</button>
+      <p class="is-proto">Prototipo: el primer nivel, en píxel art.</p>
+    </section>
+    <div id="is-hud" hidden><button class="is-redondo" id="is-pausa" type="button" aria-label="Pausa"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="#fff"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="#fff"/></svg></button></div>
+    <div id="is-mandos" hidden>
+      <button type="button" data-m="izq" aria-label="Izquierda"><svg viewBox="0 0 24 24"><path d="M16 4 6 12l10 8z" fill="#fff"/></svg></button><button type="button" data-m="der" aria-label="Derecha"><svg viewBox="0 0 24 24"><path d="M8 4l10 8-10 8z" fill="#fff"/></svg></button>
+      <button type="button" data-m="accion">COGER</button><button type="button" data-m="salto">SALTO</button>
+    </div>
+    <section id="is-modal" hidden><div class="modal-card" id="is-tarjeta"></div></section>
+  </div>
+</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta y el idioma de core: Fans of Island lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: ['../../core/js/serie/canciones.js',   // las canciones de la serie: Island toca las de los Animales Locos
+    'js/pixel.js', 'js/lona.js', 'js/letras.js', 'js/paleta.js', 'js/cifras.js', 'js/guardado.js', 'js/entrada.js', 'js/fisica.js', 'js/zanahorias.js', 'js/poderes.js', 'js/interruptores.js', 'js/enemigos.js', 'js/personaje.js', 'js/aliado.js', 'js/nivel.js', 'js/camara.js',
+    'js/partida.js', 'js/arte-fondo.js', 'js/arte-escena.js', 'js/arte-personajes.js', 'js/pantallas.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

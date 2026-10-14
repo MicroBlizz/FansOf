@@ -1,0 +1,32 @@
+{
+  "name": "Fans of Tácticas",
+  "short_name": "Fans of Tácticas",
+  "description": "Combate por turnos de Animales Locos y compañía contra Microblizz.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08030c",
+  "theme_color": "#08030c",
+  "icons": [
+    {
+      "src": "../../core/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../core/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../../core/img/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

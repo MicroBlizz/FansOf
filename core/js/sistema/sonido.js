@@ -1,0 +1,226 @@
+// Fans Of · SONIDO Y MÚSICA: todo se crea con código, sin archivos de sonido.
+// Aquí están el altavoz, los efectos comunes (SFX), play('nombre') y el motor que toca las canciones de core/js/serie/canciones.js.
+//
+// Cada juego dice (en su propio código):
+//   sonidoApagado()   true si el jugador lo ha silenciado
+//   volGeneral()      cuánto suena todo, de 0 a 1 (0 si está silenciado)
+//   volMusica()       cuánto suena la música respecto a lo demás, de 0 a 1
+//   musicUpdate()     qué canción toca en cada momento: llama a musicSet('nombre') y pone M.tmT (prisa) cuando quiera
+// y avisa con applyVolume() cuando cambia el volumen o el silencio. Un juego añade sus efectos con Object.assign(SFX, {…})
+// o tocando notas sueltas con tone() y noise(). Con M.shepard = true, una canción no vuelve a empezar: sigue subiendo de tono sin fin.
+'use strict';
+/* =========================================================
+   AUDIO (synthesised, no files)
+   ========================================================= */
+let AC = null, master = null, noiseBuf = null;
+function audioInit() {
+  try {
+    if (!AC) {
+      AC = new (window.AudioContext || window.webkitAudioContext)();
+      master = AC.createGain(); master.gain.value = 0; master.connect(AC.destination); applyVolume();
+      noiseBuf = AC.createBuffer(1, AC.sampleRate, AC.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      musicInit();
+    }
+    if (AC.state === 'suspended') AC.resume();
+  } catch (e) { AC = null; }
+}
+function tone(f0, f1, dur, type = 'sine', vol = 0.3, delay = 0) {
+  if (!AC) return; const t = AC.currentTime + delay; const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
+}
+function noise(dur, vol, freq = 1200, ftype = 'lowpass', delay = 0) {
+  if (!AC) return; const t = AC.currentTime + delay; const s = AC.createBufferSource(); s.buffer = noiseBuf;
+  const f = AC.createBiquadFilter(); f.type = ftype; f.frequency.value = freq; const g = AC.createGain();
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + 0.05);
+}
+const SFX = {
+  deploy: (v = 1) => { tone(560, 200, 0.18, 'sine', 0.22 * v); noise(0.1, 0.08 * v, 900); },
+  land: (v = 1) => { noise(0.16, 0.22 * v, 500); tone(150, 60, 0.14, 'sine', 0.25 * v); },
+  hit: () => noise(0.06, 0.1, 2400, 'bandpass'),
+  acorn: () => tone(900, 520, 0.08, 'triangle', 0.07),
+  carrot: () => tone(700, 380, 0.1, 'triangle', 0.08),
+  laser: () => tone(1500, 320, 0.12, 'square', 0.035),
+  eyelaser: () => tone(900, 200, 0.18, 'sawtooth', 0.05),
+  plasma: () => tone(720, 260, 0.14, 'sawtooth', 0.04),
+  boom: () => { noise(0.7, 0.5, 650); tone(95, 40, 0.55, 'sine', 0.4); },
+  jump: () => tone(220, 900, 0.35, 'triangle', 0.16),
+  slam: () => { noise(0.35, 0.4, 420); tone(120, 45, 0.3, 'sine', 0.35); },
+  womp: () => { tone(320, 290, 0.26, 'sawtooth', 0.09); tone(270, 170, 0.55, 'sawtooth', 0.09, 0.28); },
+  despido: () => { tone(500, 500, 0.08, 'square', 0.06); tone(500, 500, 0.08, 'square', 0.06, 0.12); },
+  poof: () => { noise(0.16, 0.1, 1600); tone(620, 300, 0.1, 'sine', 0.06); },
+  clank: () => { noise(0.12, 0.12, 3000, 'highpass'); tone(260, 180, 0.12, 'square', 0.04); },
+  deny: () => tone(190, 140, 0.13, 'square', 0.07),
+  heal: () => { tone(660, 990, 0.18, 'sine', 0.06); tone(990, 1320, 0.2, 'sine', 0.05, 0.08); },
+  summon: () => { tone(160, 320, 0.4, 'sawtooth', 0.06); tone(240, 480, 0.4, 'triangle', 0.06, 0.1); },
+  wail: () => { tone(900, 1400, 0.25, 'sawtooth', 0.05); tone(1400, 700, 0.35, 'sawtooth', 0.05, 0.22); },
+  revive: () => { tone(220, 660, 0.3, 'triangle', 0.08); noise(0.2, 0.06, 1500); },
+  eject: () => { tone(300, 900, 0.2, 'square', 0.07); noise(0.15, 0.15, 1200); },
+  trash: () => { noise(0.18, 0.2, 900); tone(220, 90, 0.18, 'sine', 0.18); },
+  select: () => tone(660, 880, 0.07, 'triangle', 0.08),
+  pop: () => tone(880, 1400, 0.08, 'sine', 0.06),
+  gun: () => noise(0.05, 0.08, 3200, 'bandpass'),
+  snipe: () => { tone(1800, 200, 0.22, 'sawtooth', 0.06); noise(0.12, 0.12, 2400, 'highpass'); },
+  zap: () => { noise(0.18, 0.16, 4000, 'highpass'); tone(1200, 300, 0.16, 'square', 0.05); },
+  note: () => tone(pick([523, 587, 659, 784, 880]), 0, 0.14, 'square', 0.05),
+  card: () => { noise(0.06, 0.08, 5000, 'highpass'); tone(500, 900, 0.08, 'triangle', 0.05); },
+  hack: () => { for (let i = 0; i < 5; i++) tone(rand(300, 1600), 0, 0.04, 'square', 0.04, i * 0.05); },
+  blink: () => { tone(1400, 400, 0.14, 'sine', 0.08); noise(0.1, 0.06, 3000, 'highpass'); },
+  shield: () => tone(500, 1000, 0.18, 'sine', 0.05),
+  levelup: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.14, 'triangle', 0.08, i * 0.07)),
+  hype: () => { tone(660, 990, 0.12, 'square', 0.06); tone(990, 1320, 0.14, 'square', 0.06, 0.1); },
+  roll: () => { for (let i = 0; i < 4; i++) noise(0.03, 0.08, 2600, 'bandpass', i * 0.05); tone(700, 1000, 0.1, 'triangle', 0.05, 0.22); },
+  laugh: () => [0, 0.11, 0.22].forEach(d => tone(420, 300, 0.09, 'square', 0.05, d)),
+  blip: () => { tone(880, 880, 0.05, 'square', 0.035); tone(1320, 1320, 0.05, 'square', 0.03, 0.05); },
+  missile: () => { noise(0.25, 0.12, 1800, 'bandpass'); tone(300, 900, 0.22, 'sawtooth', 0.04); },
+  horn: () => { tone(330, 330, 0.25, 'sawtooth', 0.07); tone(440, 440, 0.3, 'sawtooth', 0.06, 0.05); },
+  tick: () => tone(660, 660, 0.1, 'square', 0.09),
+  go: () => { tone(880, 1320, 0.3, 'square', 0.1); noise(0.3, 0.1, 2000); },
+  crown: () => { tone(784, 1568, 0.35, 'triangle', 0.14); tone(1046, 1046, 0.3, 'triangle', 0.1, 0.12); },
+  sad: () => { tone(330, 300, 0.3, 'triangle', 0.12); tone(262, 220, 0.45, 'triangle', 0.12, 0.25); },
+  win: () => [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f, 0.24, 'square', 0.08, i * 0.11)),
+  lose: () => [392, 370, 349, 294].forEach((f, i) => tone(f, f * 0.97, 0.38, 'sawtooth', 0.08, i * 0.32)),
+};
+const THROTTLE = { blip: 70, missile: 120, heal: 250, trash: 80, hit: 45, acorn: 60, laser: 60, plasma: 60, carrot: 60, eyelaser: 60, poof: 50, clank: 50, pop: 70, gun: 60, note: 90, card: 90, zap: 80, shield: 300, roll: 120, laugh: 1500 };
+const lastPlay = {};
+function play(name, ...a) {
+  if (!AC || sonidoApagado()) return;
+  const now = performance.now(); if (lastPlay[name] && now - lastPlay[name] < (THROTTLE[name] || 25)) return; lastPlay[name] = now;
+  try { SFX[name](...a); } catch (e) { /* ignore */ }
+}
+
+/* =========================================================
+   MUSIC (synthesised, no files): menu, one theme per faction, boss, last-minute rush, win / lose jingles
+   Las canciones están en core/js/serie/canciones.js; aquí está el motor que las toca.
+   ========================================================= */
+const M = { name: null, trk: null, out: null, bus: null, lp: null, step: 0, bar: 0, next: 0, tm: 1, tmT: 1, want: undefined, duck: false, timer: null, shepard: false, shx: 0 };
+function applyVolume() { if (master) master.gain.value = volGeneral(); if (M.bus) M.bus.gain.value = volMusica(); }
+const midiHz = m => 440 * Math.pow(2, (m - 69) / 12);
+function degMidi(T, d) { const n = T.sc.length, o = Math.floor(d / n); return T.tonic + T.sc[d - o * n] + 12 * o; }
+function musicInit() {
+  M.bus = AC.createGain(); M.lp = AC.createBiquadFilter(); M.lp.type = 'lowpass'; M.lp.frequency.value = 18000;
+  M.bus.connect(M.lp); M.lp.connect(master);
+  try { const comp = AC.createDynamicsCompressor(); comp.threshold.value = -12; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.004; comp.release.value = 0.18; master.disconnect(); master.connect(comp); comp.connect(AC.destination); } catch (e) { /* sin compresor */ }
+  applyVolume();
+  if (!M.timer) M.timer = setInterval(musicPump, 40);
+}
+function mnote(out, f, t, dur, type, vol, o = {}) {
+  const osc = AC.createOscillator(), g = AC.createGain(); osc.type = type; osc.frequency.value = f;
+  const a = o.att || 0.01, r = o.rel || 0.08, tEnd = t + dur, tA = Math.min(t + a, tEnd);
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, tA);
+  if (o.dec) { const tD = Math.min(tA + o.dec, tEnd); if (tD > tA) g.gain.exponentialRampToValueAtTime(Math.max(0.0001, vol * Math.pow(o.sus == null ? 0.3 : o.sus, (tD - tA) / o.dec)), tD); }
+  g.gain.exponentialRampToValueAtTime(0.0001, tEnd + r);
+  let node = osc;
+  if (o.lp) { const fl = AC.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = o.lp; osc.connect(fl); node = fl; }
+  node.connect(g); g.connect(out);
+  osc.start(t); osc.stop(tEnd + r + 0.05);
+  if (o.det) { // segundo oscilador desafinado: sonido más grueso
+    const o2 = AC.createOscillator(); o2.type = type; o2.frequency.value = f; o2.detune.value = o.det; let n2 = o2;
+    if (o.lp) { const f2 = AC.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = o.lp; o2.connect(f2); n2 = f2; }
+    n2.connect(g); o2.start(t); o2.stop(tEnd + r + 0.05);
+  }
+}
+function mnoise(out, t, dur, vol, freq, type = 'bandpass') {
+  const s = AC.createBufferSource(); s.buffer = noiseBuf; const f = AC.createBiquadFilter(); f.type = type; f.frequency.value = freq; const g = AC.createGain();
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(f); f.connect(g); g.connect(out); s.start(t, Math.random() * 0.08); s.stop(t + dur + 0.02);
+}
+const MDRUM = {
+  k: (o, t, v) => { const os = AC.createOscillator(), g = AC.createGain(); os.type = 'sine'; os.frequency.setValueAtTime(165, t); os.frequency.exponentialRampToValueAtTime(48, t + 0.14);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.9 * v, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22); os.connect(g); g.connect(o); os.start(t); os.stop(t + 0.26); },
+  s: (o, t, v) => { mnoise(o, t, 0.13, 0.5 * v, 1900); mnote(o, 190, t, 0.07, 'triangle', 0.3 * v, { rel: 0.05 }); },
+  c: (o, t, v) => { [0, 0.012, 0.024].forEach(d => mnoise(o, t + d, 0.05, 0.3 * v, 1500)); mnoise(o, t + 0.036, 0.16, 0.35 * v, 1300); },
+  h: (o, t, v) => mnoise(o, t, 0.04, 0.16 * v, 7500, 'highpass'),
+  o: (o, t, v) => mnoise(o, t, 0.2, 0.16 * v, 7000, 'highpass'),
+  t: (o, t, v) => { const os = AC.createOscillator(), g = AC.createGain(); os.type = 'sine'; os.frequency.setValueAtTime(190, t); os.frequency.exponentialRampToValueAtTime(95, t + 0.25);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.55 * v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35); os.connect(g); g.connect(o); os.start(t); os.stop(t + 0.4); },
+  X: (o, t, v) => mnoise(o, t, 0.9, 0.3 * v, 4500, 'highpass'),
+};
+/* ---------- paradoja de Shepard (solo con M.shepard) ----------
+   Cuando la canción ya ha sonado entera, en vez de volver a empezar sigue subiendo de tono para siempre. Cada nota suena en dos octavas
+   a la vez: según sube, la de arriba se apaga y la de abajo entra; al subir una octava entera está justo donde empezó, y no se nota. */
+const SHEP = { startLoop: 8, barsPerSemitone: 4 };   // las 8 primeras vueltas, tal cual; después, un semitono cada 4 compases
+// cuánto ha subido el tono en este compás: [semitonos, reparto entre las dos octavas (0 a 1)]
+function shepardOf(T, bar, loop) {
+  const orig = Math.floor(loop / 4) % 2 === 1 ? (T.mod == null ? 2 : T.mod) : 0;
+  if (!M.shepard || T.once || loop < SHEP.startLoop) return [orig, 0];
+  const base = Math.floor((SHEP.startLoop - 1) / 4) % 2 === 1 ? (T.mod == null ? 2 : T.mod) : 0;   // el tono en el que acaba la canción
+  const rise = (bar - SHEP.startLoop * T.prog.length) / SHEP.barsPerSemitone, r = ((rise % 12) + 12) % 12;
+  return [base + r, r / 12];
+}
+// una nota de la canción: sola o, con la paradoja en marcha, repartida entre su octava y la de abajo
+function snote(out, f, t, dur, type, vol, o) {
+  const x = M.shx; if (x < 0.004) { mnote(out, f, t, dur, type, vol, o); return; }
+  const up = Math.cos(x * Math.PI / 2), lo = Math.sin(x * Math.PI / 2);
+  if (up > 0.03) mnote(out, f, t, dur, type, vol * up, o);
+  if (lo > 0.03) mnote(out, f / 2, t, dur, type, vol * lo, o);
+}
+// v0.9.16: cada tema es una canción de 8 vueltas (32 compases) antes de repetirse:
+//   vuelta 0 = tema tal cual · 1 = más agudo y con segunda voz · 2 = pregunta y respuesta (la melodía se da la vuelta)
+//   3 = respiro (melodía suelta, sin bombo al principio) y redoble para volver · 4 a 7 = lo mismo, un tono más alto
+function musicStep(T, out, step, bar, loop, t, sd) {
+  const bi = bar % T.prog.length, d = T.prog[bi], song = !T.once, sec = song ? loop % 4 : 0, odd = song ? sec === 1 : loop % 2 === 1;
+  const [mod, shx] = song ? shepardOf(T, bar, loop) : [0, 0], hz = deg => midiHz(degMidi(T, deg) + mod);
+  M.shx = shx;
+  const last = bi === T.prog.length - 1, n7 = T.sc.length, tones = [d, d + 2, d + 4, d + n7];
+  if (step === 0) {
+    if (T.pad) { const vs = T.seven ? [d, d + 2, d + 4, d + 6] : [d, d + 2, d + 4]; vs.forEach(x => snote(out, hz(x), t, sd * 16 * 0.98, T.pad.wave, T.pad.vol / vs.length * (sec === 3 ? 2 : 1.6), { att: T.pad.att, rel: 0.3, lp: T.pad.lp, det: 6 })); }
+    if (T.crash && bi === 0) MDRUM.X(out, t, 1);
+  }
+  // bajo
+  for (const ev of T.B) if (ev.s === step) {
+    const sh = T.bass.oct == null ? -n7 : T.bass.oct, deg = ev.v === 'r' ? d + sh : ev.v === 'f' ? d + 4 + sh : ev.v === 'o' ? d + sh + n7 : d + sh - n7;
+    snote(out, hz(deg), t, ev.n * sd * 0.92, T.bass.wave, T.bass.vol, { att: 0.012, rel: 0.06, lp: T.bass.lp });
+  }
+  // batería (en el respiro, los dos primeros compases sin bombo; en el último, redoble para volver)
+  if (T.drums) {
+    const dv = (T.dv || 1) * (M.rush ? 1.1 : 1), brk = sec === 3 && bi < 2;
+    for (const k in T.drums) if (T.drums[k][step] === 'x' && !(brk && (k === 'k' || k === 's' || k === 'c'))) MDRUM[k](out, t, dv);
+    if (M.rush && !T.drums.h && step % 2 === 0) MDRUM.h(out, t, dv);       // en el último minuto se añaden hi-hats
+    if (M.rush && T.drums.h && step % 2 === 1 && step % 4 !== 3) MDRUM.h(out, t, dv * 0.7);
+    if (song && sec === 3 && last && step >= 12 && T.drums.k) MDRUM.s(out, t, dv * (0.55 + (step - 12) * 0.15));
+    if (song && sec === 3 && last && step === 14 && T.drums.k) MDRUM.s(out, t + sd / 2, dv * 0.8);
+  }
+  // arpegio
+  if (T.A && T.A[step] !== '.') snote(out, hz(tones[+T.A[step]] + (T.arp.oct || 0)), t, sd * T.arp.gate, T.arp.wave, T.arp.vol, { att: 0.005, rel: 0.05, lp: T.arp.lp });
+  // melodía
+  const Ld = T.lead, resp = sec === 2 && bi % 2 === 1, src = T.L[(resp ? bi + 2 : bi) % T.L.length];
+  for (const ev of src) if (ev.s === step) {
+    if (sec === 3 && ev.s % 4 !== 0) continue;   // respiro: solo las notas fuertes
+    let v = ev.v === '?' ? pick([0, 1, 2, 4, 5, 7, 8, 9]) : ev.v;
+    if (resp) v = 8 - v;                          // respuesta: la frase de otro compás, dada la vuelta
+    const deg = v + (Ld.oct || 0) + (odd ? (Ld.up || 0) : 0);
+    const dur = Math.max(ev.n * sd * (Ld.gate || 0.9) * (sec === 3 ? 2 : 1), Ld.min || 0), f = hz(deg);
+    if (Ld.bell) { snote(out, f, t, dur, 'sine', Ld.vol, { att: 0.004, rel: 0.4, dec: dur * 0.9, sus: 0.05 }); snote(out, f * 2.01, t, dur * 0.4, 'sine', Ld.vol * 0.3, { att: 0.002, rel: 0.2, dec: 0.2, sus: 0.05 }); }
+    else snote(out, f, t, dur, Ld.wave, Ld.vol, { att: Ld.att || 0.012, rel: 0.07, lp: Ld.lp, det: Ld.det });
+    if (sec === 1) snote(out, hz(deg + 2), t, dur, Ld.bell ? 'sine' : Ld.wave, Ld.vol * 0.38, { att: Ld.att || 0.012, rel: 0.07, lp: Ld.lp });   // segunda voz, una tercera por encima
+  }
+}
+function musicSet(name, at) {
+  if (!AC || !M.bus) return;
+  const now = AC.currentTime, t0 = Math.max(now + 0.03, at || 0), old = M.out;
+  if (old) { old.gain.setTargetAtTime(0, Math.max(now, at || now), 0.12); setTimeout(() => { try { old.disconnect(); } catch (e) { /* ya desconectado */ } }, Math.max(0, t0 - now) * 1000 + 2500); }
+  M.name = name; M.trk = name ? TRACKS[name] : null; M.out = null;
+  if (!M.trk) return;
+  M.out = AC.createGain(); M.out.gain.setValueAtTime(0.0001, t0); M.out.gain.linearRampToValueAtTime(1, t0 + (M.trk.once ? 0.02 : 0.5)); M.out.connect(M.bus);
+  M.step = 0; M.bar = 0; M.next = t0 + 0.02;
+}
+// programa las notas con un poco de antelación (así no se corta aunque el juego vaya justo)
+function musicPump(limitOverride) {
+  if (!AC || !M.trk) return;
+  const T = M.trk, now = AC.currentTime;
+  if (limitOverride === undefined && (sonidoApagado() || volMusica() === 0 || document.hidden)) { M.next = Math.max(M.next, now + 0.05); return; }
+  if (limitOverride === undefined && M.next < now - 0.1) M.next = now + 0.03;
+  const limit = typeof limitOverride === 'number' ? limitOverride : now + 0.3;
+  while (M.next < limit && M.trk === T) {
+    const sd = 60 / (T.bpm * M.tm) / 4, loop = Math.floor(M.bar / T.prog.length);
+    M.rush = M.tmT > 1;
+    musicStep(T, M.out, M.step, M.bar, loop, M.next + (M.step % 2 === 1 ? (T.swing || 0) * sd : 0), sd);
+    M.next += sd; M.step++; M.tm += (M.tmT - M.tm) * 0.06;
+    if (M.step >= 16) { M.step = 0; M.bar++; if (T.once && M.bar >= T.prog.length) { musicSet(T.next === 'menu' && SAVE.menuMus && TRACKS[SAVE.menuMus] ? SAVE.menuMus : T.next || null, M.next + 0.6); return; } }
+  }
+}
+// el navegador solo deja sonar tras un toque: el primero arranca el audio (y con él la música)
+for (const ev of ['pointerdown', 'keydown']) document.addEventListener(ev, audioInit, { capture: true });

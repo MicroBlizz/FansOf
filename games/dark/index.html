@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Fans of Dark · prototipo</title>
+<meta name="description" content="Fans of Dark: baja a la mazmorra con un Animal Loco, con sus propios ojos y una antorcha, llena la mochila y sal por un portal antes de que la niebla te alcance. Prototipo retro.">
+<meta name="theme-color" content="#0b0812">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&family=Press+Start+2P&family=Pixelify+Sans:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="css/dark.css?v=0.2.3">
+<!-- Prototipo: no usa NUCLEO (tiene su propia partida guardada). Carga de core el arte, la música, los efectos y las cifras del Rumble.
+     VERSIÓN para desplegar.py (que la busca así): nucleo.js?v=0.2.3' (aquí solo se anota; súbela junto al ?v= de los scripts). -->
+</head>
+<body>
+<canvas id="cv" aria-label="Mazmorra"></canvas>
+<div id="app">
+
+  <!-- TÍTULO -->
+  <section class="pantalla" id="p-titulo">
+    <div class="caja">
+      <p class="ante">Las facciones han bajado a los sótanos de Microblizz</p>
+      <h1 class="logo"><canvas id="logo" aria-label="Fans of Dark"></canvas></h1>
+      <canvas id="cv-titulo" aria-hidden="true"></canvas>
+      <button class="btn grande naranja" id="b-bajar">BAJAR A LA MAZMORRA</button>
+      <div class="fila">
+        <button class="btn violeta" id="b-alijo">ALIJO</button>
+        <button class="btn gris" id="b-sonido" aria-label="Sonido"></button>
+      </div>
+      <p class="nota" id="t-stats"></p>
+      <p class="nota" id="t-version"></p>
+    </div>
+  </section>
+
+  <!-- PREPARAR LA BAJADA -->
+  <section class="pantalla" id="p-prep" hidden>
+    <header class="barra"><button class="btn-volver" data-volver="titulo">‹ Volver</button><h2>PREPARA LA BAJADA</h2><span class="oro"><i data-ico="moneda"></i> <b id="prep-oro">0</b></span></header>
+    <div class="columnas">
+      <div>
+        <h3 class="et">TU ANIMAL</h3>
+        <div class="heroes" id="heroes"></div>
+        <div class="ficha" id="heroe-ficha"></div>
+        <h3 class="et">EQUIPO</h3>
+        <div id="prep-equipo"></div>
+        <div class="ranura"><i data-ico="pocion"></i> Pociones: <b id="prep-pociones"></b> <button class="btn mini" id="b-pocion-compra">COMPRAR (30 de oro)</button></div>
+      </div>
+      <div>
+        <h3 class="et">LA MAZMORRA</h3>
+        <div class="mazmorras" id="mazmorras"></div>
+        <p class="ayuda" id="mazmorra-desc"></p>
+        <button class="btn grande naranja" id="b-entrar">ENTRAR</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALIJO -->
+  <section class="pantalla" id="p-alijo" hidden>
+    <header class="barra"><button class="btn-volver" data-volver="titulo">‹ Volver</button><h2>EL ALIJO</h2><span class="oro"><i data-ico="moneda"></i> <b id="alijo-oro">0</b></span></header>
+    <h3 class="et">LLEVAS PUESTO</h3>
+    <div id="alijo-lleva"></div>
+    <h3 class="et">GUARDADO</h3>
+    <div class="lista" id="alijo-lista"></div>
+  </section>
+
+  <!-- PARTIDA: el HUD encima del lienzo -->
+  <section class="pantalla hud" id="p-partida" hidden>
+    <div class="arriba">
+      <div class="vida">
+        <div id="h-heroe"></div>
+        <div class="barra-vida"><div id="h-vida"></div><span id="h-vida-n"></span></div>
+        <div class="barra-aguante" title="Aguante"><div id="h-aguante"></div></div>
+        <span id="h-efecto"></span>
+      </div>
+      <div class="estado">
+        <p id="h-tiempo"></p><p id="h-portales"></p>
+        <p class="cuentas"><i data-ico="bolsa"></i> <span id="h-bolsa"></span> <i data-ico="moneda"></i> <span id="h-oro"></span></p>
+      </div>
+      <canvas id="minimapa" aria-hidden="true"></canvas>
+      <button id="b-pausa" aria-label="Pausa"><i data-ico="pausa"></i></button>
+    </div>
+    <div id="pausa-capa" hidden>
+      <div class="caja panel">
+        <h2>PAUSA</h2>
+        <p>Los monstruos esperan. La niebla también, que es muy educada.</p>
+        <button class="btn grande naranja" id="b-seguir">SEGUIR</button>
+        <button class="btn gris" id="b-abandonar">ABANDONAR (pierdes la mochila)</button>
+      </div>
+    </div>
+    <div id="h-avisos" role="status" aria-live="polite"></div>
+    <div id="palanca" hidden><div></div></div>
+    <div class="botones alta">
+      <button id="b-lanza"><i data-ico="bellota"></i><b>3</b><small>LANZAR</small></button>
+      <button id="b-esquiva"><i data-ico="esquiva"></i><small>ESQUIVAR</small></button>
+      <button id="b-bloqueo"><i data-ico="escudo"></i><small>BLOQUEAR</small></button>
+    </div>
+    <div class="botones">
+      <button id="b-usa" hidden><i data-ico="cofre"></i><small>ABRIR</small></button>
+      <button id="b-pocion"><i data-ico="pocion"></i><b>1</b><small>POCIÓN</small></button>
+      <button id="b-hab"><i data-ico="estrella"></i><small></small></button>
+      <button id="b-ataca"><i data-ico="espada"></i><small>ATACAR</small></button>
+    </div>
+    <div id="fin-capa" hidden>
+      <div class="caja panel">
+        <h2 id="fin-titulo"></h2>
+        <p id="fin-texto"></p>
+        <button class="btn grande naranja" id="b-fin-volver">VOLVER A LA SUPERFICIE</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- de Fans Of: utilidades, sonido, facciones, arte, canciones y las cifras de las unidades del Rumble -->
+<script src="../../core/js/sistema/utiles.js?v=0.2.3"></script>
+<script src="../../core/js/sistema/sonido.js?v=0.2.3"></script>
+<script src="../../core/js/serie/config.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/animales.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/nomuertos.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/streamers.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/heroes.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/ciber.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/memes.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/gamer.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/olvidados.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/pop.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/microblizz.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/phony.js?v=0.2.3"></script>
+<script src="../../core/js/serie/facciones/cierre.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/base.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/animales.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/nomuertos.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/streamers.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/heroes.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/ciber.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/memes.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/gamer.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/olvidados.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/pop.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/microblizz.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/phony.js?v=0.2.3"></script>
+<script src="../../core/js/serie/arte/sprites.js?v=0.2.3"></script>
+<script src="../../core/js/serie/canciones.js?v=0.2.3"></script>
+<script src="../../games/rumble/js/01b-unidades.js?v=0.2.3"></script>
+<!-- del juego -->
+<script src="js/novedades.js?v=0.2.3"></script>
+<script src="js/datos.js?v=0.2.3"></script>
+<script src="js/pixel.js?v=0.2.3"></script>
+<script src="js/pixel-props.js?v=0.2.3"></script>
+<script src="js/pixel-ui.js?v=0.2.3"></script>
+<script src="js/mapa.js?v=0.2.3"></script>
+<script src="js/juego.js?v=0.2.3"></script>
+<script src="js/heroe.js?v=0.2.3"></script>
+<script src="js/monstruos.js?v=0.2.3"></script>
+<script src="js/retro.js?v=0.2.3"></script>
+<script src="js/interfaz.js?v=0.2.3"></script>
+<script>dkArrancar();</script>
+</body>
+</html>

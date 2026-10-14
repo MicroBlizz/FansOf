@@ -1,0 +1,17 @@
+{
+  "name": "Fans of Karts",
+  "short_name": "Fans of Karts",
+  "description": "Carreras de karts en pixel art de consola portátil con los líderes de Fans of Rumble: 3 pistas, 6 pilotos y objetos con mala idea.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#150b21",
+  "theme_color": "#150b21",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

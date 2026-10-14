@@ -1,0 +1,35 @@
+// Fans of Crush · Inglés de lo que la página de entrada (index.html de la raíz) enseña de este juego: la tarjeta de la librería
+// y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
+'use strict';
+IDIOMA.add({
+  "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",
+  "Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas.": "Microblizz has renewed your session without warning. Phony asks if he renews his own too.",
+  "<b>ENTRAR CON GOOGLE, MÁS FÁCIL</b>: ahora hay un solo botón, «Continuar con Google», que sirve tanto para crear la cuenta como para entrar en la que ya tenías. Y si la ventana de cuenta te tapaba la confirmación, ya no pasa.": "<b>SIGNING IN WITH GOOGLE, EASIER</b>: there is now a single \"Continue with Google\" button that both creates your account and signs you in to the one you already had. And the account window no longer hides the confirmation.",
+  "Microblizz ha fundido dos botones en uno. Dice que ahorra tinta y, sobre todo, explicaciones.": "Microblizz has merged two buttons into one. He says it saves ink and, above all, explanations.",
+  "El nuevo (prototipo). Un tres en raya con los Animales Locos: junta sus caras, lanza cohetes de CrazyBunny y sube la Escalera Corporativa de Microblizz hasta despedir a SurvivalBot, el jefe de Recursos Humanos.":
+    "The new one (prototype). A match-3 with the Crazy Animals: match their faces, launch CrazyBunny's rockets and climb Microblizz's Corporate Ladder until you fire SurvivalBot, the head of Human Resources.",
+  "nuevo juego de la serie. Junta las caras de los Animales Locos en un tablero de tres en raya, con tonos suaves y mucho mimo.": "a new game in the series. Match the Crazy Animals' faces on a match-3 board, with soft colors and lots of love.",
+  "LA ESCALERA CORPORATIVA": "THE CORPORATE LADDER",
+  "15 niveles con StarBots congelados, cinta de CANCELADO, CajaBotín y becarios que rescatar, y SurvivalBot, el jefe de Recursos Humanos, al final.": "15 levels with frozen StarBots, CANCELLED tape, CajaBotín boxes and interns to rescue, and SurvivalBot, the head of Human Resources, at the top.",
+  "ESPECIALES": "SPECIALS",
+  "el cohete Chaos Jump, la dinamita de BoomBeaver y el láser IP Burial. Juntos hacen combos todavía más gordos.": "the Chaos Jump rocket, BoomBeaver's dynamite and the IP Burial laser. Put them together for even bigger combos.",
+  "HORAS EXTRA": "OVERTIME",
+  "los movimientos que te sobran se convierten en cohetes.": "your leftover moves turn into rockets.",
+  "TUTORIAL Y APP": "TUTORIAL AND APP",
+  "CrazyBunny ha pedido que su cara salga más grande. Le hemos dicho que no.": "CrazyBunny asked for his face to be bigger. We said no.",
+  "LETRAS MÁS GRANDES": "BIGGER TEXT",
+  ": el marcador, los consejos de Lola, los potenciadores, el mapa y las ventanas se leen mejor en el móvil.": ": the scoreboard, Lola's tips, the boosters, the map and the windows are easier to read on your phone.",
+  "Microblizz dice que la letra pequeña era a propósito. Como en sus contratos.": "Microblizz says the small print was on purpose. Just like in its contracts.",
+  "ICONO NUEVO": "NEW ICON",
+  ": al instalar el juego, en tu móvil sale la ficha de CrazyBunny.": ": when you install the game, the CrazyBunny piece shows up on your phone.",
+  "Lola te enseña a jugar en el primer nivel, y el juego se puede instalar en el móvil.": "Lola teaches you how to play in the first level, and you can install the game on your phone.",
+  "Microblizz ya ha registrado la palabra «Crush». Llega tarde.": "Microblizz has already trademarked the word «Crush». Too late.",
+  // la nota de las versiones que solo reciben cambios de core
+  "<b>MEJORAS POR DENTRO</b>: cambios en los sistemas comunes de la serie. No notarás nada… y eso es buena señal.": "<b>UNDER-THE-HOOD IMPROVEMENTS</b>: changes to the series' shared systems. You won't notice a thing… and that's a good sign.",
+  "Microblizz ha engrasado las tuberías del juego. Dice que ahora las fichas caen un 0,0 % más rápido.": "Microblizz has greased the game's pipes. It says the tiles now fall 0.0% faster.",
+  "Microblizz ha barrido las fichas del suelo. Dice que ahora caen con más ilusión.": "Microblizz swept the tiles off the floor. It says they now fall with more enthusiasm.",
+  "<b>FEEDBACK</b>: una pestañita para contarnos una idea, un fallo o tu opinión, con la versión del juego. Si quieres, nos dejas permiso para escribirte por email.": "<b>FEEDBACK</b>: a little tab to tell us an idea, a bug or your opinion, with the game version attached. If you want, you can give us permission to email you.",
+  "Microblizz dice que el feedback se lee «con mucho cariño». Lo lee un becario. Con cariño.": "Microblizz says feedback is read «with great care». An intern reads it. With care.",
+  "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
+  "Microblizz ha instalado una barra de carga. Tarda lo mismo, pero ahora se nota que tarda.": "Microblizz has installed a loading bar. It takes just as long, but now you can see it taking long.",
+});

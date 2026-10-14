@@ -1,0 +1,15 @@
+/* Fans of Skate · la ventana de Opciones (sonido, idioma y cuenta de core) encima del escenario */
+#sk-opc { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; background: rgba(13, 7, 22, .8); overflow: auto; font-family: var(--font-ui, "Baloo 2", sans-serif); }
+#sk-opc[hidden] { display: none; }
+.sk-opc-caja { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(96%, 520px); max-height: 96%; overflow: auto; padding: 10px 8px; }
+.sk-opc-caja .opt-row { font-size: 14px; }
+.sk-opc-caja .btn-big { font-size: 26px; padding: 12px 40px 8px; }
+.sk-opc-ver { margin: 0; font-size: 13px; opacity: .8; }
+.idioma-fl { display: flex; gap: 8px; flex: none; }
+.idioma-fl button { padding: 4px; border: 3px solid var(--outline); border-radius: 10px; background: var(--panel); cursor: pointer; opacity: .7; }
+.idioma-fl button svg { display: block; width: 38px; height: 25px; border-radius: 3px; }
+.idioma-fl button[aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 3px var(--gold); }
+#opt-cuenta small { font-size: 12px; }
+#scr-confirm.screen.modal { position: absolute; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; background: rgba(13, 7, 22, .85); font-family: var(--font-ui, "Baloo 2", sans-serif); }
+#scr-confirm[hidden] { display: none; }
+#toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 50; }

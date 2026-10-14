@@ -1,0 +1,154 @@
+// Fans of Rouflage (prototipo) · PvP, LA RED: la sesión de la cuenta (la de core, o la que dejó otro juego de Fans Of en este navegador), las llamadas al servidor
+// (rouflage_pvp_buscar, rouflage_pvp_estado, rouflage_pvp_salir, rouflage_pvp_rendir, rouflage_pvp_cerrar, rouflage_pvp_clasificacion) y el canal de la partida por
+// Supabase Realtime (difusión en 'rouflage-sala-<id>': cada jugador manda dónde está y lo que hace; pvp.js lo convierte en los personajes de los demás).
+// También una red de PRUEBAS entre pestañas del mismo navegador (?pvp=local, solo para desarrollar), sin servidor ni cuenta.
+'use strict';
+
+const RFRED = (() => {
+  const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co', CLAVE = 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn';   // pública: la seguridad la ponen las reglas de la base de datos
+  const SESION = 'fansof-cuenta';
+  const leer = () => { try { return JSON.parse(localStorage.getItem(SESION) || 'null'); } catch (e) { return null; } };
+
+  // ---------- la sesión: la de core (CUENTA) si está cargado; si no, la que dejó otro juego de Fans Of en este navegador ----------
+  const conCuenta = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
+  async function pedir(ruta, cuerpo, token) {
+    const cab = { apikey: CLAVE, 'Content-Type': 'application/json' }; if (token) cab.Authorization = 'Bearer ' + token;
+    const r = await fetch(SERVIDOR + ruta, { method: 'POST', cache: 'no-store', headers: cab, body: JSON.stringify(cuerpo) });
+    const texto = await r.text(), datos = texto ? JSON.parse(texto) : null;
+    if (!r.ok) throw new Error((datos && (datos.msg || datos.message || datos.error_description)) || ('HTTP ' + r.status));
+    return datos;
+  }
+  let renovando = null;
+  async function token() {
+    const s = leer();
+    if (!s || !s.refresh) throw new Error('sin_sesion');
+    if (s.caduca - Date.now() > 60000) return s.access;
+    // mismo cerrojo que core/js/sistema/cuenta.js: el token de renovación solo vale una vez y otra pestaña puede haberlo gastado ya
+    const renovar = () => { const a = leer(); if (a && a.caduca - Date.now() > 60000) return Promise.resolve(a.access); return pedir('/auth/v1/token?grant_type=refresh_token', { refresh_token: (a || s).refresh }).then(d => {
+      const n = { access: d.access_token, refresh: d.refresh_token, caduca: Date.now() + (d.expires_in || 3600) * 1000, usuario: d.user && d.user.id, invitado: !!(d.user && d.user.is_anonymous), email: (d.user && d.user.email) || '' };
+      try { localStorage.setItem(SESION, JSON.stringify(n)); } catch (e) { /* sin guardar */ }
+      return n.access;
+    }); };
+    if (!renovando) renovando = (navigator.locks ? navigator.locks.request('fansof-cuenta-renovar', renovar) : renovar()).finally(() => { renovando = null; });
+    return renovando;
+  }
+  const rpc = async (nombre, cuerpo = {}) => (conCuenta() ? CUENTA.rpc(nombre, cuerpo) : pedir('/rest/v1/rpc/' + nombre, cuerpo, await token()));
+  // ¿hay una cuenta vinculada (no invitado) con la que jugar?
+  const vinculada = () => { if (conCuenta()) return !CUENTA.invitado; const s = leer(); return !!(s && s.refresh && s.invitado === false); };
+  const errorTexto = e => {
+    const m = String((e && e.message) || e);
+    return /cuenta_no_vinculada|sin_sesion/.test(m) ? 'Para jugar PvP necesitas una cuenta vinculada: botón CUENTA del título.'
+      : /could not find|schema cache|PGRST202|HTTP 404/i.test(m) ? 'El PvP de Rouflage todavía no está abierto en el servidor. Pronto.' : /refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego.'
+      : /sala_no_valida/.test(m) ? 'La sala ya no existe.' : 'Necesitas conexión para jugar PvP.';
+  };
+
+  // ---------- el canal de la partida (Realtime, protocolo Phoenix): canal(sala, alMensaje, alEstado) → { enviar(datos), cerrar() } ----------
+  function canal(sala, alMensaje, alEstado) {
+    const topic = 'realtime:rouflage-sala-' + sala;
+    let ws = null, ref = 0, latido = null, vivo = true, unido = false, reintentos = 0, cola = [];
+    const manda = o => { if (ws && ws.readyState === 1) ws.send(JSON.stringify(Object.assign({ ref: String(++ref) }, o))); };
+    const abre = () => {
+      if (!vivo) return;
+      unido = false;
+      ws = new WebSocket(SERVIDOR.replace('https', 'wss') + '/realtime/v1/websocket?apikey=' + CLAVE + '&vsn=1.0.0');
+      ws.onopen = () => { reintentos = 0; manda({ topic, event: 'phx_join', payload: { config: { broadcast: { self: false, ack: false }, presence: { key: '' }, private: false } } }); };
+      ws.onmessage = e => {
+        let m; try { m = JSON.parse(e.data); } catch (err) { return; }
+        if (m.topic !== topic) return;
+        if (m.event === 'phx_reply' && !unido) { unido = m.payload && m.payload.status === 'ok'; if (unido) { for (const d of cola) manda(d); cola = []; if (alEstado) alEstado('unido'); } }
+        else if (m.event === 'broadcast' && m.payload && m.payload.event === 'r') alMensaje(m.payload.payload);
+      };
+      ws.onclose = () => { unido = false; if (!vivo) return; if (alEstado) alEstado('cortado'); if (reintentos++ < 6) setTimeout(abre, 400 * reintentos); else if (alEstado) alEstado('perdido'); };
+      ws.onerror = () => { /* onclose se encarga */ };
+    };
+    abre();
+    latido = setInterval(() => manda({ topic: 'phoenix', event: 'heartbeat', payload: {} }), 25000);
+    return {
+      enviar(datos) { const d = { topic, event: 'broadcast', payload: { type: 'broadcast', event: 'r', payload: datos } }; if (unido) manda(d); else if (cola.length < 40) cola.push(d); },
+      cerrar() { vivo = false; clearInterval(latido); try { if (ws) { manda({ topic, event: 'phx_leave', payload: {} }); ws.close(); } } catch (e) { /* ya cerrado */ } },
+      get unido() { return unido; },
+    };
+  }
+
+  /* Una red tiene buscar(aviso) → { cancelar() }. Mientras se espera, aviso(sala) cada vez que hay noticias, con sala = { sala, estado: 'espera', n, max, faltan, jugadores };
+     cuando arranca, aviso(sala) con estado 'jugando' (y orden, semilla, ncaz y jugadores [{ orden, nombre, animal, rol, yo }]). Si falla: aviso(null, error).
+     canal(sala, alMensaje, alEstado) abre el canal de la partida; cerrar(sala, gano) apunta el resultado; rendir() da la partida por abandonada; clasificacion() da la lista. */
+  const servidor = {
+    nombre: 'Servidor',
+    buscar(aviso) {
+      let activo = true, tic = null, primera = false;
+      const sondeo = async () => {
+        if (!activo) return;
+        try {
+          const r = await rpc(primera ? 'rouflage_pvp_estado' : 'rouflage_pvp_buscar');
+          primera = true;
+          if (!activo) return;
+          if (r && r.sala) { aviso(r); if (r.estado !== 'espera') { activo = false; return; } }
+          else if (r && r.espera === false) { primera = false; }      // la sala se esfumó: se vuelve a buscar
+          tic = setTimeout(sondeo, 1500);
+        } catch (e) { activo = false; aviso(null, e); }
+      };
+      sondeo();
+      return { cancelar() { if (!activo) return; activo = false; clearTimeout(tic); rpc('rouflage_pvp_salir').catch(() => { /* da igual */ }); } };
+    },
+    canal: (sala, alMensaje, alEstado) => canal(sala, alMensaje, alEstado),
+    cerrar: (sala, gano) => rpc('rouflage_pvp_cerrar', { p_sala: sala, p_gano: !!gano }),
+    // vivo = true: te vas con tu papel en juego (solo se apunta el abandono); false: espectador (cobras o pierdes con tu bando). Si el servidor aún no tiene la función nueva, la de siempre
+    rendir: vivo => rpc('rouflage_pvp_retirar', { p_vivo: vivo !== false }).catch(() => rpc('rouflage_pvp_rendir')),
+    pendientes: () => rpc('rouflage_pvp_pendientes').catch(() => []),
+    latido: vivo => rpc('rouflage_pvp_latido', { p_vivo: vivo !== false }).catch(() => { /* da igual */ }),
+    clasificacion: () => rpc('rouflage_pvp_clasificacion'),
+  };
+
+  // ---------- pruebas: varias pestañas del mismo navegador (BroadcastChannel). La de id más bajo hace de servidor: junta hasta 10 en 6 s, reparte los papeles y la sala ----------
+  const local = {
+    nombre: 'Pruebas (pestañas)',
+    espera: 6, total: 10, ncaz: 2,
+    buscar(aviso) {
+      const id = Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas'), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
+      let activo = true, tic = null;
+      const para = () => { activo = false; clearInterval(tic); try { bc.close(); } catch (e) { /* ya cerrado */ } };
+      const nombreDe = i => 'Pestaña ' + i.slice(0, 3).toUpperCase();
+      const empieza = m => { para(); aviso({ sala: m.sala, estado: 'jugando', orden: m.ids.indexOf(id), semilla: m.semilla, n: m.ids.length, max: local.total, ncaz: local.ncaz, faltan: 0,
+        jugadores: m.ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: m.animales[i], rol: m.roles[i], yo: x === id })) }); };
+      bc.onmessage = e => {
+        const m = e.data; if (!activo || !m) return;
+        if (m.t === 'busco') vistos.set(m.id, { t: Date.now() });
+        else if (m.t === 'par' && m.ids.includes(id)) empieza(m);
+      };
+      const paso = () => {
+        if (!activo) return;
+        bc.postMessage({ t: 'busco', id });
+        for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
+        const ids = [...vistos.keys()].sort(), n = ids.length;
+        aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
+          jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: 'bunny', rol: null, yo: x === id })) });
+        if (ids[0] === id && (n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000))) {
+          // los papeles al azar: entre 1 y ncaz cazadores humanos, y al menos 1 camaleón humano
+          const ord = ids.slice(0, local.total).map((x, i) => [Math.random(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]), nn = ord.length;
+          const min = Math.max(1, nn - (local.total - local.ncaz)), max = Math.min(local.ncaz, nn - 1), cazs = min + Math.floor(Math.random() * (max - min + 1));
+          const roles = ids.slice(0, local.total).map(() => 'camaleon'); ord.slice(0, cazs).forEach(i => { roles[i] = 'cazador'; });
+          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, local.total), roles, animales: ids.slice(0, local.total).map(() => ['bunny', 'squirrel', 'fox', 'meercat', 'coon'][(Math.random() * 5) | 0]), semilla: (Math.random() * 2147483647) | 0 };
+          bc.postMessage(m); empieza(m);
+        }
+      };
+      paso(); tic = setInterval(paso, 800);
+      return { cancelar: para };
+    },
+    canal(sala, alMensaje, alEstado) {
+      const bc = new BroadcastChannel('rf-pvp-sala-' + sala);
+      bc.onmessage = e => alMensaje(e.data);
+      setTimeout(() => alEstado && alEstado('unido'), 0);
+      return { enviar: d => bc.postMessage(d), cerrar: () => bc.close(), unido: true };
+    },
+    puntos: 1000,
+    cerrar: (sala, gano) => { const d = gano ? 12 : -12; local.puntos += d; return Promise.resolve({ estado: 'cerrada', gano: !!gano, puntos: local.puntos, delta: d, energia_premio: 0 }); },
+    rendir: () => Promise.resolve(),
+    pendientes: () => Promise.resolve([]),
+    latido: () => Promise.resolve(),
+    clasificacion: () => Promise.resolve({ lista: [{ nombre: 'Pepins', puntos: 1048, jugadas: 9, ganadas: 6 }, { nombre: 'Arkioner', puntos: 1012, jugadas: 4, ganadas: 2, yo: true }, { nombre: 'Fan#A1B2', puntos: 976, jugadas: 3, ganadas: 1 }], yo: { puntos: 1012, jugadas: 4, ganadas: 2, puesto: 2 } }),
+  };
+
+  const esLocal = () => { try { return new URLSearchParams(location.search).get('pvp') === 'local'; } catch (e) { return false; } };
+  return { rpc, vinculada, errorTexto, servidor, local, get red() { return esLocal() ? local : servidor; }, esLocal };
+})();

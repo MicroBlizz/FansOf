@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d12">
+<title>Fans of Ratkov</title>
+<!-- Fans of Ratkov ya es un juego (games/ratkov). Esta página manda a quien llega por la dirección antigua de la demo, conservando lo que lleve
+     (?idioma, #…). Pero si se abre como app instalada desde aquí (la app vieja), saltar fuera la deja con la barra del navegador y sin girar
+     bien: en ese caso se juega dentro de esta misma página (a pantalla completa) y se explica cómo instalar la app nueva. -->
+<link rel="canonical" href="../../games/ratkov/">
+<style>
+  html, body { margin: 0; height: 100%; background: #0b0d12; color: #e8eef4; font: 17px/1.35 monospace; }
+  #juego { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: none; }
+  #aviso { position: fixed; inset: 0; display: none; place-items: center; padding: 20px; box-sizing: border-box; }
+  .caja { max-width: 460px; background: #141c22; border: 3px solid #000; box-shadow: 0 0 0 2px #2a343c, 6px 6px 0 #000; padding: 18px 20px; }
+  h1 { margin: 0 0 6px; font: 700 22px monospace; color: #ff7a1a; letter-spacing: 0.04em; }
+  p { margin: 8px 0; }
+  ol { margin: 8px 0 12px; padding-left: 22px; } li { margin: 4px 0; }
+  b { color: #ffcb3d; }
+  .fila { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  button { font: 700 16px monospace; padding: 12px 16px; border: 3px solid #000; background: #ff7a1a; color: #1a0e04; box-shadow: 3px 3px 0 #000; cursor: pointer; }
+  button.otro { background: #2a343c; color: #e8eef4; }
+</style>
+</head>
+<body>
+<iframe id="juego" title="Fans of Ratkov" allow="fullscreen; screen-wake-lock; gamepad"></iframe>
+<div id="aviso"><div class="caja">
+  <h1 id="t-tit">FANS OF RATKOV SE HA MUDADO</h1>
+  <p id="t-1">Ya no es una demo: ahora es un juego y vive en otra dirección. Tu partida sigue en este móvil, no se pierde.</p>
+  <p id="t-2">Esta app es la vieja. Para tener la nueva, a pantalla completa y que gire bien:</p>
+  <ol><li id="t-3">Toca <b>ABRIR EN EL NAVEGADOR</b> y, en el juego, <b>OPCIONES &gt; INSTALAR</b>.</li><li id="t-4">Después, borra esta app vieja del móvil.</li></ol>
+  <p id="t-5">¿Quieres jugar ya? <b>JUGAR</b> funciona aquí mismo.</p>
+  <div class="fila"><button type="button" id="b-jugar">JUGAR</button><button type="button" class="otro" id="b-abrir">ABRIR EN EL NAVEGADOR</button></div>
+</div></div>
+<script>
+'use strict';
+(() => {
+  const destino = '../../games/ratkov/' + location.search + location.hash;
+  const app = (window.matchMedia && (matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches)) || navigator.standalone === true;
+  if (!app) { location.replace(destino); return; }
+  // en inglés si así se eligió en la serie o lo pide el móvil
+  let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin memoria */ }
+  if (!idioma) idioma = (navigator.language || 'es').slice(0, 2).toLowerCase() === 'es' ? 'es' : 'en';
+  if (idioma !== 'es') {
+    const en = { 't-tit': 'FANS OF RATKOV HAS MOVED', 't-1': 'It is no longer a demo: it is now a full game and lives at a new address. Your save is still on this phone, nothing is lost.',
+      't-2': 'This is the old app. To get the new one, full screen and rotating properly:', 't-3': 'Tap <b>OPEN IN THE BROWSER</b> and, in the game, <b>OPTIONS &gt; INSTALL</b>.', 't-4': 'Then delete this old app from your phone.', 't-5': 'Want to play now? <b>PLAY</b> works right here.',
+      'b-jugar': 'PLAY', 'b-abrir': 'OPEN IN THE BROWSER' };
+    for (const id in en) document.getElementById(id).innerHTML = en[id];
+  }
+  document.getElementById('aviso').style.display = 'grid';
+  // JUGAR: el juego dentro de esta página, a pantalla completa (así sigue dentro de la app y gira bien)
+  document.getElementById('b-jugar').onclick = () => {
+    const f = document.getElementById('juego'); f.src = destino; f.style.display = 'block'; document.getElementById('aviso').style.display = 'none'; f.focus();
+  };
+  document.getElementById('b-abrir').onclick = () => { location.href = destino; };
+})();
+</script>
+<noscript><p><a href="../../games/ratkov/">Fans of Ratkov</a></p></noscript>
+</body>
+</html>

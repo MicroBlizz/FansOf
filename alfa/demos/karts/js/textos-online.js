@@ -1,0 +1,37 @@
+// Fans of Karts · TEXTOS DEL ONLINE (sala de espera, jugar con amigos, copa online, objetos nuevos por la red, misiones y temporada): su inglés.
+'use strict';
+IDIOMA.add({
+  // ---------- la pantalla del PvP y los errores ----------
+  'Pulsa BUSCAR: el servidor te junta con hasta 7 jugadores. En cuanto sois 2, espera un minuto a que lleguen más.': 'Press FIND: the server puts you with up to 7 players. Once there are 2 of you, it waits a minute for more.',
+  'Los huecos libres los ocupa la máquina. La pista se vota en la sala y la salida es al azar. Con AMIGOS, sala privada con código.': 'Empty spots go to the machine. The track is voted in the room and the start grid is random. With FRIENDS, a private room with a code.',
+  'RANKING': 'RANKING', 'AMIGOS': 'FRIENDS', 'BUSCAR': 'FIND',
+  'No hay ninguna sala con ese código.': 'There is no room with that code.', 'Esa sala ya está llena.': 'That room is already full.', 'Solo el anfitrión puede empezar.': 'Only the host can start.',
+  'Sala con amigos: no suma puntos de liga': 'Friends room: no league points', 'COPA ONLINE: CARRERA %1 DE %2': 'ONLINE CUP: RACE %1 OF %2',
+  // ---------- la sala de espera ----------
+  'SALA CON AMIGOS': 'FRIENDS ROOM', 'CARRERA ONLINE': 'ONLINE RACE', 'CÓDIGO DE LA SALA': 'ROOM CODE', 'COMPARTIR': 'SHARE', 'ANFITRIÓN': 'HOST',
+  'Cuando estéis todos, pulsa EMPEZAR.': 'When everyone is here, press START.', 'Esperando a que el anfitrión empiece.': 'Waiting for the host to start.',
+  'VOTA LA PISTA': 'VOTE FOR THE TRACK', 'VOTOS: %1': 'VOTES: %1', 'Gana la más votada. Si nadie vota, elige el servidor.': 'The most voted wins. If nobody votes, the server picks.',
+  'COPA DE 4 CARRERAS': '4-RACE CUP', 'UNA CARRERA': 'ONE RACE', 'EMPEZAR': 'START',
+  '¡Únete a mi sala de Fans of Karts! Código: %1': 'Join my Fans of Karts room! Code: %1', 'Enlace copiado: pégaselo a tus amigos.': 'Link copied: paste it to your friends.',
+  // ---------- mensajes rápidos ----------
+  'GG': 'GG', '¡LAG!': 'LAG!', 'FUE EL NERF': 'IT WAS THE NERF', 'REVANCHA': 'REMATCH',
+  // ---------- jugar con amigos ----------
+  'JUGAR CON AMIGOS': 'PLAY WITH FRIENDS', 'CREAR SALA': 'CREATE ROOM', 'ENTRAR CON UN CÓDIGO': 'JOIN WITH A CODE', 'ENTRAR': 'JOIN',
+  'Te damos un código de 4 letras para tus amigos. Hasta 8 jugadores; los huecos, la máquina.': 'You get a 4-letter code for your friends. Up to 8 players; empty spots go to the machine.',
+  'Escribe el código que te han pasado.': 'Type the code they sent you.', 'El código tiene 4 letras.': 'The code has 4 letters.',
+  'Corres con %1. Para cambiar de piloto, vuelve atrás.': 'You race as %1. To change driver, go back.',
+  'Las salas con amigos no gastan caos ni dan puntos de liga. Microblizz las llama «contenido social».': 'Friends rooms spend no chaos and give no league points. Microblizz calls them "social content".',
+  // ---------- la copa online ----------
+  'VER LA COPA': 'SEE THE CUP', 'COPA: FINAL': 'CUP: FINAL', 'OTRA SALA': 'ANOTHER ROOM', 'COPA ONLINE': 'ONLINE CUP', 'COPA ONLINE: FINAL': 'ONLINE CUP: FINAL',
+  'CARRERA %1 DE %2': 'RACE %1 OF %2', '¡COPA ONLINE!': 'ONLINE CUP!', '¡Copa tuya! Microblizz ya está preparando el nerf.': 'The cup is yours! Microblizz is already preparing the nerf.',
+  'Has quedado %1 en la copa.': 'You finished %1 in the cup.', 'SIGUIENTE: %1': 'NEXT: %1', 'Sigue sola en %1 s': 'Continues by itself in %1 s', 'El anfitrión decide cuándo seguir.': 'The host decides when to continue.',
+  // ---------- los objetos nuevos por la red ----------
+  '%1 está enterrado en ventanas.': '%1 is buried in pop-ups.', 'A %1 le va a tirones.': '%1 is stuttering.', '%1 ha pagado sin rechistar.': '%1 paid without complaining.',
+  // ---------- misiones y temporada ----------
+  'MISIONES ONLINE DE HOY': "TODAY'S ONLINE MISSIONS", '¡MISIÓN CUMPLIDA!': 'MISSION COMPLETE!',
+  'Corre 3 carreras online': 'Race 3 online races', 'Gana una carrera online': 'Win an online race', 'Acaba 2 veces en el podio online': 'Finish on the online podium twice',
+  'Usa 6 objetos en carreras online': 'Use 6 items in online races', 'Dale 3 veces a otro jugador con un objeto': 'Hit another player with an item 3 times',
+  'Manda un mensaje rápido': 'Send a quick message', 'Juega una sala con amigos': 'Play a friends room',
+  'FIN DE TEMPORADA': 'END OF SEASON', 'Temporada %1: acabaste con %2 puntos.': 'Season %1: you finished with %2 points.',
+  'Los rangos salen de tus puntos del PvP. Al acabar la temporada, el servidor te da las gemas de tu rango y los puntos se acercan a 1000.': 'Ranks come from your PvP points. When the season ends, the server gives you the gems of your rank and points move closer to 1000.',
+});

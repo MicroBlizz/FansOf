@@ -1,0 +1,14 @@
+/* Fans of Rumble · MÍTICA SEMANAL: la caja de la temporada en la campaña y los botones Semana / Pasada / De siempre del Salón (js/10d-mitica-semanal.js) */
+.mit-box { width: 100%; max-width: 508px; box-sizing: border-box; border: 3px solid var(--outline); border-radius: 14px; background: linear-gradient(110deg, #5b2a8f 0%, var(--tray) 82%); padding: 8px 12px 9px; text-align: left; display: flex; flex-direction: column; gap: 6px; flex: none; box-shadow: 0 3px 0 var(--outline), inset 0 0 0 2px rgba(255, 203, 61, 0.35); margin-bottom: 6px; }
+.mit-box .mit-reloj { text-shadow: none; -webkit-text-stroke: 0; paint-order: normal; background: var(--gold); color: #2a1300; border: 2px solid var(--outline); border-radius: 999px; padding: 1px 8px 0; font-size: 12px; }
+.mit-cuentas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mit-cuentas span { background: var(--panel-2); border-radius: 10px; padding: 4px 8px 3px; text-align: center; display: flex; flex-direction: column; }
+.mit-cuentas small { font-size: 11.5px; font-weight: 800; color: var(--ink-dim); letter-spacing: 0.4px; }
+.mit-cuentas b { font-family: var(--font-display); font-weight: 400; font-size: 22px; line-height: 1.05; color: var(--gold); }
+.mit-cuentas span + span b { color: var(--ink); }
+.mit-txt { margin: 0; font-size: 12.5px; font-weight: 700; line-height: 1.3; color: var(--ink-dim); }
+.mit-box .chip-btn { align-self: flex-start; font-size: 12.5px; padding: 4px 9px 2px; }
+/* el Salón: tres botones bajo la explicación de la pestaña Mítica */
+.mit-vistas { display: flex; gap: 6px; justify-content: center; margin-top: 6px; flex-wrap: wrap; }
+.mit-vistas button { font: 800 13px var(--font-ui); color: var(--ink-dim); background: var(--tray); border: 2px solid var(--outline); border-radius: 999px; padding: 3px 12px 2px; cursor: pointer; box-shadow: 0 2px 0 var(--outline); }
+.mit-vistas button[aria-pressed="true"] { background: #7a2fd6; color: var(--ink); box-shadow: 0 0 0 2px var(--gold), 0 2px 0 var(--outline); }

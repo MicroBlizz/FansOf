@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#191430">
+<title>Fans of Rouflage</title>
+<meta name="description" content="Fans of Rouflage (juego): el escondite con pintura. Píntate como el suelo, congélate y que los becarios de Microblizz no te despidan. O coge la linterna y encuéntralos tú.">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<script src="../../core/js/nucleo.js?v=0.2.5-a4701aeb"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
+<link rel="stylesheet" href="estilo.css?v=0.2.5">
+<link rel="stylesheet" href="estilo-pvp.css?v=0.2.5">
+</head>
+<body>
+<canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
+
+<!-- durante la partida: marcador, avisos y botones -->
+<div id="hud" hidden>
+  <div id="arriba">
+    <div class="chip rol" id="chip-rol"><i data-icono="pincel"></i><b></b></div>
+    <div id="marcador"><span id="fase-txt"></span><b id="reloj" class="ol">0:45</b></div>
+    <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+  </div>
+  <div id="estado">
+    <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
+    <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>
+    <div class="chip" id="e-balas" data-tr-title title="Cartas de despido: fallar gasta una, acertar la devuelve"><span data-tr>CARTAS</span><span id="e-balas-n"></span></div>
+    <div class="chip" id="e-quedan"><span data-tr>COLADOS</span><b id="e-quedan-n">5</b></div>
+  </div>
+  <div id="avisos" aria-live="polite"></div>
+  <div id="cartel" hidden><b class="ol-big" id="cartel-t"></b><span id="cartel-s"></span></div>
+  <div id="pista" hidden></div>
+  <button type="button" class="accion retiro" id="b-retiro" hidden><b data-tr>ME RETIRO</b></button>
+  <div id="acciones">
+    <button type="button" class="accion listo" id="b-listo" hidden><b data-tr>¡LISTO!</b><small data-tr>Que salgan ya</small></button>
+    <button type="button" class="accion granada" id="b-granada" hidden><i data-icono="granada"></i><b data-tr>GRANADA</b><kbd>E</kbd></button>
+    <button type="button" class="accion silbar" id="b-silbar" hidden><i data-icono="silbato"></i><b data-tr>SILBAR</b><kbd>Q</kbd></button>
+    <button type="button" class="accion congelar" id="b-congelar"><i data-icono="hielo"></i><b id="b-congelar-t"></b><kbd data-tr>Espacio</kbd></button>
+    <button type="button" class="accion pintar" id="b-pintar"><i data-icono="pincel"></i><b data-tr>PINTAR</b><kbd>F</kbd></button>
+  </div>
+</div>
+<div id="peligro"></div>
+
+<!-- el taller: las herramientas para pintarse -->
+<div id="taller" hidden>
+  <button type="button" id="t-plegar" class="t-plegar" aria-label="Ocultar las herramientas" data-tr-aria aria-expanded="true"><i></i></button>
+  <div class="t-medidor"><span data-tr>CAMUFLAJE</span><b id="t-camo">0 %</b><i class="barra"><i id="t-barra"></i></i></div>
+  <div class="t-medidor t-tinta"><span data-tr>TINTA</span><b id="t-tinta-n">100</b><i class="barra"><i id="t-tinta-barra"></i></i></div>
+  <p class="t-ayuda" id="t-ayuda"></p>
+  <div class="t-posturas" role="group" data-tr-aria aria-label="Postura al congelarte">
+    <button type="button" class="t-postura" data-postura="firmes" data-tr-title title="Firmes: brazos pegados al cuerpo, menos que pintar"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Firmes</small></button>
+    <button type="button" class="t-postura" data-postura="saludo" data-tr-title title="Saludo: un brazo arriba"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Saludo</small></button>
+    <button type="button" class="t-postura" data-postura="estrella" data-tr-title title="Estrella: brazos arriba y piernas abiertas"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Estrella</small></button>
+    <button type="button" class="t-postura" data-postura="bolita" data-tr-title title="Bolita: sentado y recogido, la más pequeña"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Bolita</small></button>
+  </div>
+  <div class="t-herr">
+    <button type="button" id="t-gota" data-tr-title title="Cuentagotas: coge el color que toques (I)"><i data-icono="gota"></i><small data-tr>Color</small></button>
+    <button type="button" class="t-radio" data-radio="0" data-tr-title title="Pincel muy fino, para detalles (1)"><i class="pto p0"></i><small data-tr>Muy fino</small></button>
+    <button type="button" class="t-radio" data-radio="1" data-tr-title title="Pincel fino (2)"><i class="pto p1"></i><small data-tr>Fino</small></button>
+    <button type="button" class="t-radio" data-radio="2" data-tr-title title="Pincel medio (3)"><i class="pto p2"></i><small data-tr>Medio</small></button>
+    <button type="button" class="t-radio" data-radio="3" data-tr-title title="Pincel gordo (4)"><i class="pto p3"></i><small data-tr>Gordo</small></button>
+    <button type="button" class="t-cabezal" data-cabezal="redondo" data-tr-title title="Cabezal redondo: el pincel y las líneas con el borde redondo (X)"><i data-icono="cabezaRedonda"></i><small data-tr>Punta redonda</small></button>
+    <button type="button" class="t-cabezal" data-cabezal="cuadrado" data-tr-title title="Cabezal cuadrado: el pincel y las líneas con el borde cuadrado (X)"><i data-icono="cabezaCuadrada"></i><small data-tr>Punta cuadrada</small></button>
+    <button type="button" id="t-cubo" data-tr-title title="Rellenar todo el cuerpo con el color (R)"><i data-icono="cubo"></i><small data-tr>Rellenar</small></button>
+    <button type="button" class="t-figura" data-figura="linea" data-tr-title title="Línea: arrastra de un punto a otro; usa el gordo del pincel (L)"><i data-icono="linea"></i><small data-tr>Línea</small></button>
+    <button type="button" class="t-figura" data-figura="cuadro" data-tr-title title="Cuadrado: arrastra de una esquina a la otra (B)"><i data-icono="cuadro"></i><small data-tr>Cuadrado</small></button>
+    <button type="button" class="t-figura" data-figura="circulo" data-tr-title title="Círculo: arrastra para darle tamaño (O)"><i data-icono="circulo"></i><small data-tr>Círculo</small></button>
+    <button type="button" id="t-senuelo" data-tr-title title="Señuelo: pinta en el suelo, fuera de tu cuerpo, con tinta limitada. Los becarios pueden picar"><i data-icono="senuelo"></i><small data-tr>Señuelo</small></button>
+    <button type="button" id="t-deshacer" data-tr-title title="Deshacer (Z)"><i data-icono="deshacer"></i><small data-tr>Deshacer</small></button>
+    <button type="button" id="t-calco" data-tr-title title="Calco: ver el suelo a través de tu cuerpo (C)"><i data-icono="ojo"></i><small data-tr>Calco</small></button>
+  </div>
+  <div id="t-paleta" role="group" data-tr-aria aria-label="Colores del mapa"></div>
+  <div class="t-colores"><i id="t-color"></i><div id="t-recientes"></div><button type="button" class="boton" id="t-listo" data-tr>LISTO</button></div>
+</div>
+
+<!-- título -->
+<div class="pantalla" id="p-titulo" hidden>
+  <div class="titulo-caja">
+    <h1 class="logo" aria-label="Fans of Rouflage"><span class="ol">FANS OF</span><b aria-hidden="true"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b></h1>
+    <p class="lema" data-tr>El escondite con pintura</p>
+    <div class="papeles">
+      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
+      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
+    </div>
+    <button type="button" class="boton pvp-boton" id="b-pvp"><b class="ol" data-tr>JUGAR EN LÍNEA · PvP</b><span data-tr>Esconderse de un bot es fácil. De tus amigos, no tanto.</span></button>
+    <div class="fila-botones">
+      <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
+      <button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
+      <button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
+      <button type="button" class="boton peq" id="b-idioma">English</button>
+      <button type="button" class="boton peq" id="b-cuenta" data-tr>Cuenta</button>
+      <a class="boton peq" href="../../#biblioteca" data-tr>Biblioteca</a>
+    </div>
+    <p class="pronto"><b class="ol" data-tr>PRÓXIMAMENTE</b> <span data-tr>Nuevo mapa: las Backrooms</span></p>
+    <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
+  </div>
+</div>
+
+<!-- cómo se juega -->
+<div class="pantalla" id="p-ayuda" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>CÓMO SE JUEGA</h2>
+    <div class="pasos">
+      <h3 class="ol"><i data-icono="pincel"></i><span data-tr>De camaleón</span></h3>
+      <ol>
+        <li data-tr-html>Tienes <b>60 segundos</b>. Busca un sitio: un suelo con dibujo, una pared, detrás de una planta…</li>
+        <li data-tr-html>Toca <b>PINTAR</b>. Elige tu <b>postura</b>, toca el suelo para coger su color y píntate con el pincel, líneas, cuadrados o círculos. Con <b>Calco</b> ves el suelo a través de ti.</li>
+        <li data-tr-html>Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.</li>
+        <li data-tr-html>Aguanta hasta que acabe el turno. Cada cierto tiempo <b>silbarás</b> sin querer y los becarios irán a mirar. Si silbas tú antes (<b>SILBAR</b>), tu cuenta atrás vuelve a empezar: elige un momento sin becarios cerca.</li>
+        <li data-tr-html>Si te van a pillar, tienes <b>una granada cegadora</b> por partida: te vuelve invisible 15 segundos y deja a ciegas un rato a los becarios cercanos.</li>
+      </ol>
+      <h3 class="ol azul"><i data-icono="diana"></i><span data-tr>De cazador</span></h3>
+      <ol>
+        <li data-tr-html>Hay <b>5 colados</b> pintados por la estación. Busca manchas raras: dibujos torcidos, colores que no casan.</li>
+        <li data-tr-html><b>Toca</b> donde creas que hay uno para despedirlo. Tiene que estar cerca y sin muros en medio.</li>
+        <li data-tr-html>Tienes <b>5 cartas de despido</b>. Fallar gasta una y te deja medio a oscuras; acertar te la devuelve.</li>
+        <li data-tr-html>Los <b>silbidos</b> te dicen por dónde andan. Si alumbras a uno un buen rato, se pone nervioso y tiembla.</li>
+      </ol>
+    </div>
+    <button type="button" class="boton" id="b-ayuda-ok" data-tr>ENTENDIDO</button>
+  </div>
+</div>
+
+<!-- pausa -->
+<div class="pantalla" id="p-pausa" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>PAUSA</h2>
+    <div class="columna">
+      <button type="button" class="boton" id="b-seguir" data-tr>SEGUIR</button>
+      <button type="button" class="boton gris" id="b-reiniciar" data-tr>Empezar de nuevo</button>
+      <button type="button" class="boton gris" id="b-ayuda2" data-tr>Cómo se juega</button>
+      <div class="fila-botones">
+        <button type="button" class="boton peq cuadrado" id="b-sonido2" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
+        <button type="button" class="boton peq cuadrado" id="b-musica2" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
+        <button type="button" class="boton peq" id="b-salir" data-tr>Salir al menú</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- final -->
+<div class="pantalla" id="p-fin" hidden>
+  <div class="caja fin">
+    <div class="columna">
+      <h2 class="ol" id="fin-titulo"></h2>
+      <p class="sub" id="fin-sub"></p>
+      <p class="pvp-puntos" id="fin-pvp" hidden></p>
+      <div class="estrellas" id="fin-estrellas"></div>
+      <canvas id="fin-mapa" width="560" height="400" data-tr-aria aria-label="Dónde estaba cada uno"></canvas>
+      <div class="leyenda" id="fin-leyenda"></div>
+    </div>
+    <div class="columna">
+      <div class="ranking"><h3 class="ol" data-tr>CLASIFICACIÓN</h3><ol id="fin-ranking"></ol></div>
+      <div class="filas" id="fin-filas"></div>
+      <div class="fila-botones">
+        <button type="button" class="boton" id="b-otra" data-tr>OTRA VEZ</button>
+        <button type="button" class="boton gris" id="b-cambia"></button>
+        <button type="button" class="boton peq" id="b-menu" data-tr>Menú</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PvP: el menú, la sala llenándose, la clasificación y cómo funciona -->
+<div class="pantalla" id="p-pvp" hidden>
+  <div class="caja pvp">
+    <h2 class="ol">PvP</h2>
+    <p class="gancho" data-tr>Esconderse de un bot es fácil. De tus amigos, no tanto.</p>
+    <p class="error" id="pvp-error" hidden></p>
+    <p class="aviso-pvp" id="pvp-pendiente" hidden></p>
+    <div class="columna">
+      <button type="button" class="boton" id="b-pvp-buscar" data-tr>BUSCAR PARTIDA</button>
+      <button type="button" class="boton gris" id="b-pvp-cuenta" data-tr hidden>VINCULAR CUENTA</button>
+      <div class="fila-botones">
+        <button type="button" class="boton peq" id="b-pvp-clasif" data-tr>Clasificación</button>
+        <button type="button" class="boton peq" id="b-pvp-info" data-tr>Cómo funciona</button>
+        <button type="button" class="boton peq" id="b-pvp-volver" data-tr>Volver</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="pantalla" id="p-busca" hidden>
+  <div class="caja pvp">
+    <h2 class="ol" id="busca-titulo" data-tr>BUSCANDO PARTIDA</h2>
+    <p class="sub" id="busca-sub"></p>
+    <ul class="sala" id="busca-lista"></ul>
+    <p class="nota-sala" data-tr>Los huecos hasta 10 los llena la máquina. Los papeles se reparten al azar al empezar.</p>
+    <button type="button" class="boton gris" id="b-busca-cancelar" data-tr>CANCELAR</button>
+  </div>
+</div>
+<div class="pantalla" id="p-clasif" hidden>
+  <div class="caja pvp">
+    <h2 class="ol" data-tr>CLASIFICACIÓN</h2>
+    <p class="sub" id="clasif-yo"></p>
+    <ol class="clasif" id="clasif-lista"></ol>
+    <button type="button" class="boton" id="b-clasif-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+<div class="pantalla" id="p-pvp-info" hidden>
+  <div class="caja pvp">
+    <h2 class="ol" data-tr>CÓMO FUNCIONA</h2>
+    <div class="pasos">
+      <p data-tr>Pulsa BUSCAR PARTIDA: el servidor te mete en una sala de hasta 10 jugadores. En cuanto sois 2, espera 10 segundos a que lleguen más. Si se te cae la conexión o cierras la pestaña, puedes volver con BUSCAR PARTIDA mientras la partida siga abierta; si te vas con RENDIRSE, ya no.</p>
+      <p data-tr>Los papeles se reparten al azar: siempre hay al menos un camaleón y un cazador de verdad, y un cazador por cada 4 camaleones como mínimo. Los huecos los llena la máquina.</p>
+      <p data-tr>Gana el bando entero: los camaleones aguantan el tiempo o dejan a los becarios sin cartas; los cazadores despiden a todos los colados.</p>
+      <p data-tr>Cada partida con 2 o más personas gasta 1 de caos primordial y quien gana lo recupera. Ganar da puntos y perder los quita; contra la máquina sola no se suma nada.</p>
+      <p class="chiste" data-tr>Microblizz no se hace responsable de los despidos improcedentes.</p>
+    </div>
+    <button type="button" class="boton" id="b-info-ok" data-tr>ENTENDIDO</button>
+  </div>
+</div>
+
+<div id="carga">…</div>
+<script>
+// si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
+</script>
+<script>
+// lo ligero de core (cuenta, idioma y caos primordial: NUCLEO.juego con ligero), los ajustes antes y el juego después, en este orden.
+// El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
+NUCLEO.juego({
+  ligero: true,
+  idioma: { en: ['idioma/en.js'] },
+  antes: ['js/ajustes.js'],
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/textos.js',
+    'js/util.js',
+    'js/audio.js',
+    'js/mapa-datos.js',
+    'js/suelos.js',
+    'js/paredes.js',
+    'js/muebles.js',
+    'js/alubia.js',
+    'js/mapa.js',
+    'js/pintura.js',
+    'js/entes.js',
+    'js/granada.js',
+    'js/efectos.js',
+    'js/efectos-granada.js',
+    'js/senuelos.js',
+    'js/espectador.js',
+    'js/bot-cazador.js',
+    'js/bot-camaleon.js',
+    'js/luz.js',
+    'js/dibujo.js',
+    'js/taller.js',
+    'js/controles.js',
+    'js/partida.js',
+    'js/interfaz.js',
+    'js/pvp-red.js',
+    'js/pvp.js',
+    'js/pvp-sync.js',
+    'js/pvp-vuelta.js',
+    'js/pvp-pantallas.js',
+    'js/pvp-energia.js',
+    'js/principal.js',
+  ],
+});
+</script>
+</body>
+</html>

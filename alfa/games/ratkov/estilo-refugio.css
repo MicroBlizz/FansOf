@@ -1,0 +1,85 @@
+/* Fans of Ratkov · ESTILO DEL TÍTULO Y DEL REFUGIO: pantallas encima de la ciudad (que sigue de fondo, paseando), con tarjetas oscuras,
+   pestañas y los retratos del escuadrón pintados con el motor. */
+#titulo { position: fixed; inset: 0; display: grid; place-items: center; background: linear-gradient(to bottom, rgba(8, 10, 14, 0.2), rgba(8, 10, 14, 0.75)); padding: 16px; }
+.t-caja { text-align: center; display: grid; gap: 12px; justify-items: center; max-width: 640px; }
+.t-pre { margin: 0; font-size: 18px; letter-spacing: 0.3em; color: var(--rk-tenue); }
+#titulo h1 { margin: 0; font: clamp(40px, 9vw, 86px)/0.95 var(--rk-tit); letter-spacing: 0.02em; color: var(--rk-tinta); text-shadow: 0 4px 0 #0b0d12, 0 0 24px rgba(0, 0, 0, 0.6); }
+#titulo h1 b { display: block; font-weight: 400; color: var(--rk-naranja); font-size: 1.25em; transform: rotate(-2deg); }
+.t-lema { margin: 0; font-size: 22px; line-height: 1.2; color: #d8e4e8; text-shadow: 0 2px 0 #000; }
+.t-fila { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.t-ver { margin: 0; font-size: 16px; color: var(--rk-tenue); letter-spacing: 0.2em; }
+
+#refugio { position: fixed; inset: 0; display: grid; grid-template-rows: auto auto 1fr; background: rgba(8, 10, 14, 0.62); }
+#r-cabeza { display: flex; align-items: center; gap: 12px; padding: calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 6px calc(12px + env(safe-area-inset-left)); background: rgba(8, 10, 14, 0.9); border-bottom: 2px solid var(--rk-borde); }
+.r-titulo { display: grid; line-height: 1; }
+.r-titulo b { font: 18px var(--rk-tit); color: var(--rk-naranja); } .r-titulo span { font-size: 16px; color: var(--rk-tenue); letter-spacing: 0.2em; }
+.r-chapas { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.r-chapas b { font-weight: 400; font-size: 30px; color: var(--rk-oro); } .r-chapas span { font-size: 15px; color: var(--rk-tenue); }
+.icono-chapa { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle, #f0f0f0 0 25%, #e0484f 26% 55%, #c8ccd2 56%); border: 2px solid #120e18; }
+.r-op { background: #1a242a; border: 2px solid var(--rk-borde2); padding: 6px 10px; font: 13px var(--rk-tit); }
+#r-pestanas { display: flex; gap: 4px; overflow-x: auto; padding: 6px 10px; background: rgba(8, 10, 14, 0.85); scrollbar-width: none; touch-action: pan-x; }
+#r-pestanas button { flex: none; background: #141c22; border: 2px solid var(--rk-borde); padding: 7px 12px; font: 14px var(--rk-tit); letter-spacing: 0.04em; color: var(--rk-tenue); }
+#r-pestanas button.activa { background: var(--rk-naranja); border-color: var(--rk-naranja); color: #1a0e04; }
+#r-cuerpo { overflow-y: auto; padding: 10px calc(10px + env(safe-area-inset-right)) calc(30px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); display: grid; gap: 10px; align-content: start; grid-template-columns: minmax(0, 1fr); max-width: 760px; width: 100%; margin: 0 auto; box-sizing: border-box; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.tarjeta { background: var(--rk-panel2); border: 2px solid var(--rk-borde); padding: 10px 12px; }
+.tarjeta h3 { margin: 0 0 8px; font: 17px var(--rk-tit); letter-spacing: 0.05em; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.tarjeta h3 small { font: 17px var(--rk-num); color: var(--rk-tenue); letter-spacing: 0; }
+.tarjeta h4 { font: 14px var(--rk-tit); color: var(--rk-tenue); margin: 12px 0 6px; letter-spacing: 0.06em; display: flex; gap: 8px; align-items: center; }
+.tarjeta h4 small { font: 16px var(--rk-num); color: #6f8a92; }
+.tarjeta p { margin: 4px 0 8px; font-size: 19px; line-height: 1.2; color: #cfdce0; }
+.tarjeta .btn, .tarjeta .btn-grande { margin-top: 4px; }
+.prepara { display: flex; gap: 12px; align-items: center; }
+.prepara.elegido { border-color: var(--rk-naranja); }
+.retrato { width: 112px; height: 112px; image-rendering: pixelated; flex: none; background: radial-gradient(circle at 50% 60%, #2a3a44, #0e1418 70%); border: 2px solid var(--rk-borde); }
+.prepara h2 { margin: 0; font: 24px var(--rk-tit); }
+.prepara .sup { margin: 0; font: 13px var(--rk-tit); color: var(--rk-naranja); letter-spacing: 0.1em; }
+.datos { color: var(--rk-tenue) !important; font-size: 17px !important; } .datos b { font-weight: 400; color: var(--rk-tinta); }
+.aviso-t { border-color: var(--rk-oro); }
+.filtros { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.pide { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.pide span { display: inline-flex; align-items: center; gap: 2px; font-size: 16px; } .pide .ic { width: 22px; height: 22px; }
+.pide .si { color: var(--rk-bien); } .pide .no { color: var(--rk-mal); }
+.taller .arma-grande { display: flex; gap: 12px; align-items: center; } .taller .arma-grande .ic { width: 80px; height: 80px; }
+.taller h2 { margin: 0; font: 22px var(--rk-tit); }
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 4px; margin: 10px 0; }
+.stats div { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--rk-borde); padding: 3px 8px; display: grid; }
+.stats span { font-size: 13px; color: var(--rk-tenue); letter-spacing: 0.06em; } .stats b { font-weight: 400; font-size: 24px; color: var(--rk-oro); line-height: 1; }
+.efecto { font-size: 18px !important; }
+.encargo.hecho { opacity: 0.55; }
+.banderas { display: flex; gap: 8px; justify-content: center; padding: 4px 0; }
+.banderas button { width: 54px; height: 36px; padding: 3px; background: #10161a; border: 2px solid var(--rk-borde); display: grid; }
+.banderas button svg { width: 100%; height: 100%; display: block; }
+.banderas button[aria-pressed="true"] { border-color: var(--rk-naranja); }
+#v-opciones, #v-como { z-index: 25; }
+@media (max-width: 520px) { .retrato { width: 84px; height: 84px; } .prepara h2 { font-size: 20px; } .fo-b { max-width: 48%; } }
+/* la ventana de confirmar (la pone core): con el aspecto de este juego */
+#scr-confirm .modal-card { background: var(--rk-panel2); border: 2px solid var(--rk-borde2); border-radius: 0; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); max-width: 480px; }
+#scr-confirm .modal-card h3 { font: 22px var(--rk-tit); text-shadow: none; color: var(--rk-tinta); text-align: center; }
+#scr-confirm .cf-body { font: 19px/1.25 var(--rk-num); color: #cfdce0; text-align: center; }
+#scr-confirm button { font: 15px var(--rk-tit); text-shadow: none; border-radius: 0; padding: 10px 16px; background: #1a242a; border: 2px solid var(--rk-borde2); color: var(--rk-tinta); box-shadow: none; }
+#scr-confirm button.btn-ok { background: var(--rk-naranja); border-color: #ffb070; color: #1a0e04; }
+
+/* ---------- Opciones > TECLAS (js/ventana-teclas.js) ---------- */
+#v-teclas { width: min(560px, 94vw); max-height: 90vh; overflow-y: auto; z-index: 40; }   /* encima del juego, pero debajo de la confirmación (45) */
+#v-teclas .teclas { display: grid; gap: 4px; margin: 8px 0; }
+#v-teclas .tecla-fila { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px solid #1f2a31; }
+#v-teclas .tecla-fila span { font: 13px var(--rk-tit); letter-spacing: 0.05em; color: var(--rk-tenue); }
+#v-teclas .tecla { min-width: 150px; padding: 6px 10px; font: 16px var(--rk-num); }
+#v-teclas .tecla.cambiada { border-color: var(--rk-oro); color: var(--rk-oro); }
+#v-teclas .tecla.espera { border-color: var(--rk-bien); color: var(--rk-bien); animation: tecla-espera 0.8s steps(2) infinite; }
+@keyframes tecla-espera { 50% { background: rgba(126, 224, 74, 0.15); } }
+#v-teclas .pie { display: flex; gap: 8px; justify-content: flex-end; }
+@media (min-width: 760px) { #v-teclas { width: min(900px, 96vw); } #v-teclas .teclas { grid-template-columns: 1fr 1fr; column-gap: 18px; } }
+#v-teclas .tecla-fila { padding: 1px 0; } #v-teclas .tecla { padding: 4px 8px; min-width: 130px; font-size: 15px; }
+/* en el móvil de pie, las pestañas en dos filas: así se ven todas (con 8 ya no caben en una) */
+@media (max-width: 640px) { #r-pestanas { flex-wrap: wrap; justify-content: center; overflow-x: visible; gap: 4px; padding: 6px 6px; } #r-pestanas button { padding: 6px 8px; font-size: 13px; } }
+@media (max-height: 500px) and (min-width: 641px) { #r-pestanas { gap: 3px; padding: 5px 6px; } #r-pestanas button { padding: 5px 8px; font-size: 12px; } }
+
+/* el título en un móvil tumbado (poca altura): todo más pequeño para que quepan los botones; y si no, se desliza */
+#titulo { overflow-y: auto; }
+@media (max-height: 520px) {
+  #titulo { padding: 8px 16px; } .t-caja { gap: 6px; }
+  .t-pre { font-size: 13px; } .t-lema { font-size: 15px; } .t-ver { font-size: 12px; }
+  #titulo h1 { font-size: clamp(26px, 10vh, 56px); }
+  #titulo .btn-grande { padding: 8px 22px; font-size: 18px; } #titulo .t-fila .btn { padding: 6px 12px; font-size: 13px; }
+}

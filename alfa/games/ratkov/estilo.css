@@ -1,0 +1,219 @@
+/* Fans of Ratkov · ESTILO DEL JUEGO: el HUD encima de la ciudad, los mandos del móvil y las ventanas de la incursión (botín, mochila,
+   mapa, pausa y final). Letras de terminal (VT323) para los números y Russo One para lo grande. Colores fríos con el naranja de CrazyBunny. */
+:root {
+  --rk-fondo: #0b0d12; --rk-panel: rgba(10, 14, 18, 0.86); --rk-panel2: rgba(18, 24, 30, 0.96); --rk-borde: #40525a; --rk-borde2: #5c7480;
+  --rk-tinta: #e6eef0; --rk-tenue: #9ab8c0; --rk-naranja: #ff7a1a; --rk-bien: #7ee04a; --rk-mal: #ff4b5c; --rk-oro: #ffcb3d; --rk-raro: #c99bff; --rk-hielo: #7fd8ff;
+  --rk-num: "VT323", ui-monospace, Menlo, monospace; --rk-tit: "Russo One", "Arial Black", Impact, sans-serif;
+}
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--rk-fondo); color: var(--rk-tinta); overscroll-behavior: none; }
+body { display: block; font-family: var(--rk-num); font-size: 20px; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#cv { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; image-rendering: pixelated; image-rendering: crisp-edges; cursor: crosshair; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; padding: 16px; font: 24px var(--rk-num); color: var(--rk-tenue); letter-spacing: 0.1em; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { opacity: 0.4; cursor: default; }
+.lab { color: var(--rk-tenue); font-size: 17px; letter-spacing: 0.12em; }
+.barra { display: block; height: 8px; background: #06080a; border: 1px solid #1e2a30; margin: 2px 0 4px; }
+.barra > i { display: block; height: 100%; background: var(--rk-bien); transition: width 0.15s; }
+.malo { color: var(--rk-mal); } .bien { color: var(--rk-bien); } .raro { color: var(--rk-raro); }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#hud button, #hud .palanca, #hud .bolsillo { pointer-events: auto; }
+.panel { position: absolute; background: var(--rk-panel); border: 2px solid var(--rk-borde); padding: 5px 10px 4px; }
+.panel b { font-weight: 400; font-size: 26px; line-height: 1; }
+.fila { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+#h-vida { left: calc(10px + env(safe-area-inset-left)); top: calc(10px + env(safe-area-inset-top)); width: 190px; }
+#h-vida b { font-size: 22px; }
+#h-frio-b { background: var(--rk-hielo); }
+.estados { display: flex; flex-wrap: wrap; gap: 4px; }
+.estados span { font-size: 15px; padding: 0 5px; border: 1px solid currentColor; letter-spacing: 0.06em; }
+.estados .malo { animation: late 0.9s ease-in-out infinite; }
+#h-reloj { right: calc(10px + env(safe-area-inset-right)); top: calc(10px + env(safe-area-inset-top)); text-align: right; display: grid; }
+#h-reloj b { font-size: 34px; color: var(--rk-hielo); }
+#h-reloj.prisa b { color: var(--rk-mal); animation: late 0.6s ease-in-out infinite; }
+#h-mapa { position: absolute; right: calc(10px + env(safe-area-inset-right)); top: calc(78px + env(safe-area-inset-top)); width: 160px; height: 120px; image-rendering: pixelated; opacity: 0.92; }
+#h-peso { left: calc(10px + env(safe-area-inset-left)); top: calc(162px + env(safe-area-inset-top)); display: flex; gap: 8px; align-items: baseline; }
+#h-peso b { font-size: 20px; } #h-peso.malo b { color: var(--rk-mal); }
+#h-arma { right: calc(10px + env(safe-area-inset-right)); bottom: calc(14px + env(safe-area-inset-bottom)); text-align: right; display: grid; min-width: 150px; }
+#h-arma b { font-size: 32px; color: var(--rk-oro); }
+#h-arma-r { color: var(--rk-raro); font-size: 15px; min-height: 15px; }
+#h-avisos { position: absolute; left: 50%; top: calc(12px + env(safe-area-inset-top)); transform: translateX(-50%); width: min(520px, 54vw); display: grid; gap: 4px; }
+.aviso { background: var(--rk-panel2); border-left: 4px solid var(--rk-tenue); padding: 3px 10px; font-size: 18px; line-height: 1.15; transition: opacity 0.7s; }
+.aviso.malo { border-color: var(--rk-mal); color: #ffd0d4; } .aviso.bien { border-color: var(--rk-bien); } .aviso.raro { border-color: var(--rk-raro); color: #ecdcff; }
+.aviso.jefe { border-color: var(--rk-oro); color: var(--rk-oro); font-family: var(--rk-tit); font-size: 15px; letter-spacing: 0.04em; }
+.aviso.fuera { opacity: 0; }
+#h-accion { position: absolute; left: 50%; bottom: 30%; transform: translateX(-50%); text-align: center; background: var(--rk-panel2); border: 2px solid var(--rk-borde); padding: 4px 14px; min-width: 200px; }
+#h-accion b { font-weight: 400; font-size: 20px; } #h-accion .barra > i { background: var(--rk-oro); }
+#h-salida { position: absolute; left: 50%; top: 32%; transform: translateX(-50%); text-align: center; background: rgba(10, 30, 14, 0.9); border: 2px solid var(--rk-bien); padding: 6px 22px; display: grid; }
+#h-salida b { font-size: 60px; line-height: 1; color: var(--rk-bien); font-weight: 400; }
+#h-bolsillos { z-index: 4; position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); display: flex; gap: 6px; }
+.bolsillo { position: relative; width: 52px; height: 52px; background: var(--rk-panel); border: 2px solid var(--rk-borde); display: grid; place-items: center; padding: 0; }
+.bolsillo .ic { width: 36px; height: 36px; }
+.bolsillo b { position: absolute; right: 2px; bottom: -2px; font-weight: 400; font-size: 17px; }
+.bolsillo kbd { position: absolute; left: 3px; top: 0; font: 14px var(--rk-num); color: var(--rk-tenue); }
+.btn-h { position: absolute; background: var(--rk-panel); border: 2px solid var(--rk-borde2); color: var(--rk-tinta); font: 15px var(--rk-tit); letter-spacing: 0.03em; padding: 6px 10px; }
+.btn-h:active { background: #22303a; }
+#h-arriba { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: calc(186px + env(safe-area-inset-right)); display: flex; gap: 4px; }
+#h-arriba .btn-h { position: static; font-size: 13px; padding: 5px 9px; opacity: 0.9; }
+#h-mira { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border: 2px solid rgba(255, 255, 255, 0.85); border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); }
+#h-mira::after { content: ''; position: absolute; left: 8px; top: 8px; width: 2px; height: 2px; background: #fff; }
+#h-mira.lejos { border-color: rgba(255, 75, 92, 0.85); }
+.marca-c { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; transform: rotate(45deg); background: rgba(255, 203, 61, 0.85); border: 1px solid #120e18; }
+.marca-c.visto { background: rgba(154, 184, 192, 0.6); } .marca-c.cuerpo { background: rgba(255, 122, 26, 0.9); } .marca-c.raro { background: var(--rk-raro); }
+.marca-c.cerca { width: 14px; height: 14px; margin: -7px 0 0 -7px; animation: late 0.8s infinite; }
+@keyframes late { 50% { opacity: 0.45; } }
+
+/* ---------- mandos del móvil ----------
+   body.tactil + .horizontal / .vertical (lo detecta controles.js) + .modo-auto (palanca y botón de disparar que apunta solo, lo normal)
+   o .modo-palancas (dos palancas). Tumbado se pone todo en las esquinas para dejar libre el centro. */
+#mandos, #b-fuego, #h-cubierta { display: none; }
+body.tactil #mandos { display: block; }
+#h-blanco { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 3px solid var(--rk-mal); border-radius: 50%; box-shadow: 0 0 0 2px #120e18; pointer-events: none; }
+.palanca { position: absolute; bottom: 0; touch-action: none; }
+.palanca > i { position: absolute; width: 62px; height: 62px; margin: -31px 0 0 -31px; border-radius: 50%; background: rgba(230, 238, 240, 0.25); border: 2px solid rgba(230, 238, 240, 0.55); opacity: 0.9; pointer-events: none; }
+.palanca::before { content: ''; position: absolute; width: 140px; height: 140px; margin: -70px 0 0 -70px; border-radius: 50%; border: 2px solid rgba(230, 238, 240, 0.35); background: rgba(255, 255, 255, 0.04); pointer-events: none; }
+#p-der > i { background: rgba(255, 122, 26, 0.3); border-color: rgba(255, 160, 80, 0.7); }
+body.tactil #mandos .btn-h:not(#b-accion) { border-radius: 50%; width: 58px; height: 58px; padding: 0; font-size: 10px; display: grid; place-items: center; text-align: center; line-height: 1.05; }
+#b-accion { background: rgba(60, 50, 10, 0.92); border-color: var(--rk-oro); border-radius: 999px; padding: 11px 22px; font-size: 15px; }
+#b-accion.apagado { opacity: 0.3; }
+body.tactil #b-accion { left: 50%; transform: translateX(-50%); }
+#b-fuego { place-items: center; position: absolute; width: 106px; height: 106px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ffb347, #ff7a1a 60%, #a8420a); border: 3px solid #ffd0a0; font: 14px var(--rk-tit); color: #1a0e04; box-shadow: 0 5px 0 #6a2a06; touch-action: none; pointer-events: auto; }
+#b-fuego:active { transform: translateY(3px); box-shadow: 0 2px 0 #6a2a06; }
+body.tactil.modo-auto #b-fuego { display: grid; }
+body.tactil.modo-auto #p-der, body.tactil.modo-auto #b-accion { display: none; }
+#b-fuego.accion { background: radial-gradient(circle at 40% 35%, #ffe07a, #e0a11f 60%, #8a5a08); border-color: #fff2b0; font-size: 13px; padding: 0 6px; text-align: center; line-height: 1.1; }
+body.tactil .bolsillo { width: 42px; height: 42px; } body.tactil .bolsillo .ic { width: 30px; height: 30px; }
+body.tactil #h-vida { width: 150px; padding: 3px 8px; } body.tactil #h-vida b { font-size: 18px; } body.tactil .lab { font-size: 14px; }
+body.tactil #h-reloj b { font-size: 26px; }
+body.tactil #h-peso { display: none; }
+body.tactil #h-arriba .btn-h { font-size: 12px; padding: 6px 8px; }
+
+/* tumbado */
+body.tactil.horizontal #h-mapa { width: 96px; height: 72px; top: calc(8px + env(safe-area-inset-top)); right: calc(128px + env(safe-area-inset-right)); }
+body.tactil.horizontal #h-arma { bottom: auto; top: calc(86px + env(safe-area-inset-top)); min-width: 0; padding: 2px 8px; }
+body.tactil.horizontal #h-arma b { font-size: 22px; }
+body.tactil.horizontal #h-arriba { right: auto; left: 50%; transform: translateX(-50%); top: calc(8px + env(safe-area-inset-top)); }
+body.tactil.horizontal #h-avisos { top: calc(46px + env(safe-area-inset-top)); width: 38vw; }
+body.tactil.horizontal #h-bolsillos { bottom: calc(10px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal #b-accion { bottom: calc(66px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal #p-izq { left: 0; width: 42%; height: 70%; }
+body.tactil.horizontal #p-izq::before, body.tactil.horizontal #p-izq:not(.activa) > i { left: var(--cx, 40%); top: var(--cy, 68%); }
+body.tactil.horizontal #p-der { right: 0; width: 38%; height: 70%; }
+body.tactil.horizontal #p-der::before, body.tactil.horizontal #p-der:not(.activa) > i { left: var(--cx, 58%); top: var(--cy, 68%); }
+body.tactil.horizontal.modo-auto #b-fuego { right: calc(26px + env(safe-area-inset-right)); bottom: calc(28px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-auto #b-recarga { right: calc(140px + env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-auto #b-esquiva { right: calc(146px + env(safe-area-inset-right)); bottom: calc(84px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-auto #b-granada { right: calc(106px + env(safe-area-inset-right)); bottom: calc(148px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-auto #b-cambia { right: calc(30px + env(safe-area-inset-right)); bottom: calc(146px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-accion { left: auto; transform: none; right: calc(12px + env(safe-area-inset-right)); bottom: calc(240px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-recarga { right: calc(12px + env(safe-area-inset-right)); bottom: calc(176px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-esquiva { right: calc(76px + env(safe-area-inset-right)); bottom: calc(176px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-granada { right: calc(140px + env(safe-area-inset-right)); bottom: calc(176px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-cambia { right: calc(204px + env(safe-area-inset-right)); bottom: calc(176px + env(safe-area-inset-bottom)); }
+
+/* de pie */
+body.tactil.vertical #h-mapa { width: 96px; height: 72px; top: calc(62px + env(safe-area-inset-top)); }
+body.tactil.vertical #h-arma { bottom: auto; top: calc(140px + env(safe-area-inset-top)); min-width: 0; padding: 2px 8px; }
+body.tactil.vertical #h-arma b { font-size: 22px; }
+body.tactil.vertical #h-arriba { left: calc(10px + env(safe-area-inset-left)); right: auto; transform: none; top: calc(150px + env(safe-area-inset-top)); }
+body.tactil.vertical.modo-auto #p-izq { left: 0; width: 60%; height: 42%; }
+body.tactil.vertical.modo-auto #p-izq::before, body.tactil.vertical.modo-auto #p-izq:not(.activa) > i { left: var(--cx, 42%); top: var(--cy, 62%); }
+body.tactil.vertical.modo-auto #b-fuego { right: calc(20px + env(safe-area-inset-right)); bottom: calc(60px + env(safe-area-inset-bottom)); width: 112px; height: 112px; }
+body.tactil.vertical.modo-auto #b-recarga { right: calc(140px + env(safe-area-inset-right)); bottom: calc(40px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #b-esquiva { right: calc(148px + env(safe-area-inset-right)); bottom: calc(110px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #b-granada { right: calc(100px + env(safe-area-inset-right)); bottom: calc(178px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #b-cambia { right: calc(24px + env(safe-area-inset-right)); bottom: calc(186px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #b-accion { bottom: calc(42% + 10px); }
+body.tactil.vertical.modo-auto #h-bolsillos { left: calc(12px + env(safe-area-inset-left)); transform: none; bottom: calc(12px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #h-avisos { top: auto; left: calc(12px + env(safe-area-inset-left)); transform: none; bottom: calc(42% + 66px); width: 70vw; }
+body.tactil.vertical.modo-palancas #h-cubierta { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 36%; background: linear-gradient(to bottom, rgba(8, 10, 14, 0.5), rgba(8, 10, 14, 0.92)); border-top: 2px solid var(--rk-borde); pointer-events: none; }
+body.tactil.vertical.modo-palancas .palanca { height: 36%; width: 50%; }
+body.tactil.vertical.modo-palancas #p-izq { left: 0; } body.tactil.vertical.modo-palancas #p-der { right: 0; }
+body.tactil.vertical.modo-palancas .palanca::before, body.tactil.vertical.modo-palancas .palanca:not(.activa) > i { left: var(--cx, 50%); top: var(--cy, 58%); }
+body.tactil.vertical.modo-palancas #b-recarga { right: calc(12px + env(safe-area-inset-right)); bottom: calc(36% - 29px); }
+body.tactil.vertical.modo-palancas #b-esquiva { right: calc(76px + env(safe-area-inset-right)); bottom: calc(36% - 29px); }
+body.tactil.vertical.modo-palancas #b-granada { right: calc(140px + env(safe-area-inset-right)); bottom: calc(36% - 29px); }
+body.tactil.vertical.modo-palancas #b-cambia { left: calc(12px + env(safe-area-inset-left)); bottom: calc(36% - 29px); }
+body.tactil.vertical.modo-palancas #b-accion { left: auto; transform: none; right: calc(12px + env(safe-area-inset-right)); bottom: calc(36% + 40px); }
+body.tactil.vertical.modo-palancas #h-bolsillos { left: calc(12px + env(safe-area-inset-left)); transform: none; bottom: calc(36% + 40px); }   /* encima de la fila de botones: ahí ya no caben */
+body.tactil.vertical.modo-palancas #h-avisos { top: auto; left: calc(12px + env(safe-area-inset-left)); transform: none; bottom: calc(36% + 100px); width: 58vw; }
+
+/* ---------- el tutorial ---------- */
+#h-tuto { position: absolute; left: 50%; transform: translateX(-50%); top: calc(64px + env(safe-area-inset-top)); width: min(560px, 60vw); background: rgba(40, 30, 6, 0.94); border: 2px solid var(--rk-oro); padding: 8px 14px; display: grid; gap: 3px; }
+#h-tuto span { font: 12px var(--rk-tit); color: var(--rk-oro); letter-spacing: 0.08em; }
+#h-tuto b { font-weight: 400; font-size: 21px; line-height: 1.15; }
+#h-tuto em { font-style: normal; font-size: 18px; color: #ffe8a8; }
+body.en-tuto #h-mapa, body.en-tuto #h-reloj, body.en-tuto #b-mapa { display: none !important; }
+body.tactil.vertical #h-tuto { top: calc(104px + env(safe-area-inset-top)); width: 94vw; }
+body.tactil.vertical.en-tuto #h-arriba { top: auto; bottom: calc(42% + 10px); left: auto; right: 10px; }
+body.tactil.vertical.modo-palancas.en-tuto #b-accion { bottom: calc(42% + 62px); }
+body.tactil.horizontal #h-tuto { top: calc(44px + env(safe-area-inset-top)); width: 48vw; }
+body.en-tuto #h-avisos { display: none; }
+
+/* ---------- ventanas ---------- */
+.ventana { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(620px, 94vw); max-height: 88vh; overflow-y: auto; background: var(--rk-panel2); border: 2px solid var(--rk-borde2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); padding: 0 14px 14px; z-index: 20; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.ventana header { position: sticky; top: 0; z-index: 1; background: var(--rk-panel2); display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; border-bottom: 1px solid var(--rk-borde); margin-bottom: 8px; flex-wrap: wrap; }
+.ventana header b { font: 22px var(--rk-tit); letter-spacing: 0.03em; }
+.ventana header span { color: var(--rk-tenue); font-size: 18px; flex: 1; }
+.ventana .x { margin-left: auto; background: none; border: 2px solid var(--rk-borde2); padding: 3px 10px; font: 14px var(--rk-tit); }
+.ventana h4 { font: 15px var(--rk-tit); letter-spacing: 0.06em; color: var(--rk-tenue); margin: 12px 0 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ventana h4 small { font: 16px var(--rk-num); letter-spacing: 0; color: #6f8a92; }
+.lista { display: grid; gap: 4px; }
+.fila-obj { display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.03); border-left: 3px solid #5a6a72; padding: 4px 8px; min-height: 46px; }
+.fila-obj.r1 { border-color: #7ec0e0; } .fila-obj.r2 { border-color: var(--rk-bien); } .fila-obj.r3 { border-color: var(--rk-oro); } .fila-obj.r4 { border-color: var(--rk-raro); background: rgba(138, 43, 255, 0.08); }
+.fila-obj.hueco { opacity: 0.5; } .fila-obj.oculta { opacity: 0.6; }
+.ic { width: 40px; height: 40px; image-rendering: pixelated; flex: none; display: block; }
+i.ic { background: rgba(255, 255, 255, 0.04); }
+.ic.buscando { background: repeating-linear-gradient(45deg, #1e2a30 0 6px, #2a3a42 6px 12px); animation: late 0.6s infinite; }
+.fo-t { flex: 1; min-width: 0; display: grid; line-height: 1.05; }
+.fo-t b { font-weight: 400; font-size: 20px; } .fo-t b i { font-style: normal; color: var(--rk-oro); }
+.fo-t span { color: var(--rk-tenue); font-size: 16px; }
+.fo-t em { font: 12px var(--rk-tit); font-style: normal; color: var(--rk-naranja); letter-spacing: 0.05em; }
+.fo-b { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; max-width: 55%; }
+.mini { background: #1a242a; border: 1px solid var(--rk-borde2); padding: 4px 8px; font: 12px var(--rk-tit); letter-spacing: 0.03em; }
+.mini.bien { border-color: var(--rk-bien); color: #c8f8b0; } .mini.malo { border-color: var(--rk-mal); color: #ffc8cc; } .mini.raro { border-color: var(--rk-raro); color: #ecdcff; }
+.mini.activa { background: var(--rk-naranja); color: #1a0e04; border-color: var(--rk-naranja); }
+.mini.grande { padding: 10px 18px; font-size: 15px; }
+.mini:active { transform: translateY(1px); }
+.pie { display: flex; justify-content: center; margin: 10px 0; }
+.vacio { color: var(--rk-tenue); margin: 6px 0; }
+.nota { color: var(--rk-tenue); font-size: 18px; margin: 8px 0; } .nota.bien { color: var(--rk-bien); }
+.botones { display: grid; gap: 8px; padding: 6px 0; }
+.btn, .btn-grande { background: #1a242a; border: 2px solid var(--rk-borde2); padding: 10px 16px; font: 16px var(--rk-tit); letter-spacing: 0.04em; color: var(--rk-tinta); text-decoration: none; text-align: center; display: inline-block; }
+.btn-grande { background: var(--rk-naranja); border-color: #ffb070; color: #1a0e04; font-size: 20px; padding: 14px 22px; box-shadow: 0 4px 0 #8a3a08; }
+.btn-grande:active { transform: translateY(3px); box-shadow: 0 1px 0 #8a3a08; }
+.btn.malo { border-color: var(--rk-mal); color: #ffc8cc; }
+#m-grande { width: 100%; image-rendering: pixelated; display: block; border: 1px solid var(--rk-borde); }
+.texto p { font-size: 19px; line-height: 1.25; margin: 4px 0 8px; color: #cfdce0; }
+.texto h4 { margin-top: 14px; }
+.fin { text-align: center; padding-top: 14px; display: grid; gap: 6px; }
+.fin-pre { font: 30px var(--rk-tit); margin: 6px 0 0; letter-spacing: 0.06em; }
+.fin.bien .fin-pre { color: var(--rk-bien); } .fin.malo .fin-pre { color: var(--rk-mal); }
+.fin h2 { font: 22px var(--rk-num); margin: 0 0 6px; color: var(--rk-tenue); font-weight: 400; }
+.fin .lista { text-align: left; }
+.fin-datos { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.fin-datos div { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--rk-borde); padding: 6px 12px; display: grid; min-width: 90px; }
+.fin-datos b { font-weight: 400; font-size: 32px; color: var(--rk-oro); line-height: 1; } .fin-datos span { font-size: 14px; color: var(--rk-tenue); letter-spacing: 0.08em; }
+#v-fin { z-index: 30; }
+#fok-cuenta, #scr-confirm { position: fixed; inset: 0; z-index: 40; }
+#scr-confirm { z-index: 41; }
+#toast { position: fixed; top: 12px; z-index: 50; }
+
+/* el minijuego del fuego: las manos que se frotan */
+#h-frota { position: absolute; left: 50%; top: 58%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; pointer-events: none; background: rgba(40, 18, 6, .82); border: 2px solid #ff9a3a; padding: 4px 10px 6px; }
+#h-frota canvas { width: 96px; height: 56px; image-rendering: pixelated; }
+#h-frota b { font-family: var(--rk-mono, 'VT323', monospace); font-size: 18px; color: #ffd27a; letter-spacing: .04em; white-space: nowrap; }
+#h-frota.arde { border-color: #ffd27a; box-shadow: 0 0 12px #ff9a3a; }
+
+/* ---------- correr, agacharse y despedir (js/sigilo.js) ---------- */
+#h-despide { position: absolute; transform: translate(-50%, -100%); pointer-events: none; padding: 3px 8px; background: rgba(60, 50, 10, 0.92); border: 2px solid var(--rk-oro); color: var(--rk-oro); font: 13px var(--rk-tit); letter-spacing: 0.06em; white-space: nowrap; box-shadow: 0 2px 0 #000; }
+#b-agacha.activo { background: rgba(40, 70, 30, 0.95); border-color: var(--rk-bien); color: var(--rk-bien); }
+.palanca.corre::before { border-color: var(--rk-oro); box-shadow: 0 0 0 4px rgba(255, 203, 61, 0.25); }
+body.tactil.horizontal.modo-auto #b-agacha { right: calc(214px + env(safe-area-inset-right)); bottom: calc(50px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-auto #b-agacha { right: calc(166px + env(safe-area-inset-right)); bottom: calc(184px + env(safe-area-inset-bottom)); }
+body.tactil.horizontal.modo-palancas #b-agacha { right: calc(268px + env(safe-area-inset-right)); bottom: calc(176px + env(safe-area-inset-bottom)); }
+body.tactil.vertical.modo-palancas #b-agacha { right: calc(204px + env(safe-area-inset-right)); bottom: calc(36% - 29px); }
+#h-despide.falta { border-color: #6f7a82; color: #b8c0cc; background: rgba(20, 24, 28, 0.9); }
+#h-salida { z-index: 5; }
+body.tactil #h-avisos .aviso { font-size: 15px; padding: 4px 8px; }

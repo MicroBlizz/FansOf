@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lore · Fans Of</title>
+<meta name="description" content="La historia de Fans Of: Microblizz ha comprado tus juegos favoritos para cerrarlos y los fans se rebelan.">
+<meta name="theme-color" content="#150b21">
+<link rel="icon" type="image/png" href="../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="../core/css/base.css">
+<style>
+  /* Fans Of · LORE: la historia de la serie para quien llega nuevo. Textos en español aquí; su inglés en lore/en.js.
+     Una facción, un villano o un personaje nuevo de la serie se añade aquí (y su inglés). */
+  body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; }
+  html { scroll-behavior: smooth; }
+  nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+  nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+  nav.menu a:hover, nav.menu a:focus-visible, nav.menu a.on { color: var(--gold); outline: none; }
+  nav.menu .idiomas { font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+  nav.menu .idiomas a { font-family: var(--font-ui); font-size: 13px; }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; box-sizing: border-box; }
+  .hero { text-align: center; padding: 34px 0 6px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 400; font-size: 72px; line-height: .9; margin: 0; color: var(--player); transform: rotate(-3deg); }
+  .hero p { margin: 14px auto 0; max-width: 560px; font-size: 18px; font-weight: 800; color: var(--ink-dim); }
+  .indice { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 18px 0 4px; }
+  .indice a { text-decoration: none; color: var(--ink); font-weight: 800; font-size: 14px; padding: 5px 12px; border-radius: 99px; border: 2px solid var(--outline); background: var(--panel); }
+  .indice a:hover, .indice a:focus-visible { color: var(--gold); outline: none; }
+  h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; text-align: center; margin: 40px 0 6px; scroll-margin-top: 70px; }
+  p.intro { text-align: center; max-width: 640px; margin: 0 auto 16px; font-size: 15px; font-weight: 700; color: var(--ink-dim); }
+  /* la historia: tres viñetas */
+  .vinetas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .vineta { border: 4px solid var(--outline); border-radius: 18px; overflow: hidden; background: var(--panel); box-shadow: 0 5px 0 var(--outline); }
+  .vineta .img { aspect-ratio: 4 / 3; background: center 35% / cover; border-bottom: 3px solid var(--outline); }
+  .vineta .num { font-family: var(--font-display); font-size: 15px; color: var(--gold); margin: 10px 14px 0; }
+  .vineta h3 { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.05; margin: 2px 14px 0; }
+  .vineta p { margin: 6px 14px 14px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+  /* fichas de personajes, villanos y facciones */
+  .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .ficha { position: relative; border: 4px solid var(--outline); border-radius: 18px; padding: 14px 16px 16px; box-shadow: 0 5px 0 var(--outline);
+    background: linear-gradient(160deg, var(--c, var(--tray-hi)) 0%, var(--tray) 62%); }
+  .ficha h3 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1; margin: 0; }
+  .ficha .alias { display: block; margin-top: 4px; font-size: 13px; font-weight: 800; color: var(--gold); }
+  .ficha p { margin: 8px 0 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .datos { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; }
+  .dato small { display: block; font-size: 11px; font-weight: 800; color: var(--ink-dim); }
+  .dato b { font-family: var(--font-display); font-weight: 400; font-size: 16px; }
+  .ficha .poder { margin-top: 8px; padding: 7px 10px; border-radius: 10px; background: rgba(20, 10, 34, .55); border: 2px solid var(--outline); font-size: 13px; font-weight: 700; line-height: 1.35; }
+  .villano { --c: #1d3f8a; }
+  .villano .lema { display: block; margin-top: 8px; font-style: italic; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+  /* el caos */
+  .caos { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .caos .ficha { --c: #7b22ff; }
+  .caos .ficha.prim { --c: #d43cff; }
+  /* las tres campañas */
+  .campanas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .campana { border: 4px solid var(--outline); border-radius: 18px; padding: 14px 16px; background: var(--panel); box-shadow: 0 5px 0 var(--outline); }
+  .campana .num { font-family: var(--font-display); font-size: 15px; color: var(--gold); }
+  .campana h3 { font-family: var(--font-display); font-weight: 400; font-size: 22px; margin: 2px 0 6px; }
+  .campana p { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .fin { text-align: center; margin-top: 40px; }
+  .fin p { font-size: 18px; font-weight: 800; color: var(--ink-dim); margin: 0 0 14px; }
+  .boton { display: inline-block; text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 28px 6px; border-radius: 14px; border: 3px solid var(--outline);
+    background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 4px 0 var(--outline); }
+  .boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  footer { text-align: center; margin-top: 30px; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+  @media (max-width: 720px) {
+    .hero h1 { font-size: 56px; }
+    .vinetas, .campanas, .caos { grid-template-columns: 1fr; }
+    h2.sec { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<nav class="menu" aria-label="Menú">
+  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="./" class="on" aria-current="page">Lore</a>
+  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
+</nav>
+<main>
+  <section class="hero">
+    <h1 class="ol-big">LORE</h1>
+    <p>La historia de Fans Of en un minuto: quiénes son los buenos, quiénes los malos y por qué todo el mundo grita «¡CAOS!».</p>
+    <div class="indice">
+      <a href="#historia">La historia</a><a href="#malos">Los malos</a><a href="#fans">Los fans</a><a href="#personajes">Quién es quién</a><a href="#caos">El caos</a><a href="#campanas">Las campañas</a>
+    </div>
+  </section>
+
+  <h2 class="sec ol" id="historia">LA HISTORIA</h2>
+  <div class="vinetas">
+    <article class="vineta">
+      <div class="img" style="background-image:url('../biblioteca/capturas/rumble-1.jpg')"></div>
+      <div class="num ol">1</div>
+      <h3 class="ol">LA GRAN COMPRA</h3>
+      <p>Microblizz, una empresa millonaria, ha comprado el estudio que hacía tus juegos favoritos. No para mejorarlos: para recortar, despedir a todo el mundo y cerrarlos.</p>
+    </article>
+    <article class="vineta">
+      <div class="img" style="background-image:url('../biblioteca/capturas/roguelite-1.jpg')"></div>
+      <div class="num ol">2</div>
+      <h3 class="ol">LOS FANS SE PLANTAN</h3>
+      <p>Los personajes de esos juegos, y sus fans, no piensan quedarse quietos. CrazyBunny sale de La Madriguera con su zanahoria y empieza la rebelión.</p>
+    </article>
+    <article class="vineta">
+      <div class="img" style="background-image:url('../biblioteca/capturas/tacticas-1.jpg')"></div>
+      <div class="num ol">3</div>
+      <h3 class="ol">TODOS CONTRA MICROBLIZZ</h3>
+      <p>Cada juego de Fans Of es otra forma de pararle los pies: batallas, torres, hordas, carreras o turnos. Siempre con humor, y siempre contra la empresa que quiere cerrarlo todo.</p>
+    </article>
+  </div>
+
+  <h2 class="sec ol" id="malos">LOS MALOS</h2>
+  <p class="intro">Tres empresas que quieren lo mismo: tu dinero y tus juegos favoritos, en ese orden.</p>
+  <div class="rejilla">
+    <article class="ficha villano" style="--c:#1d3f8a">
+      <h3 class="ol">MICROBLIZZ</h3><span class="alias">El enemigo principal</span>
+      <p>La empresa que lo ha comprado todo. Cambia a los trabajadores por robots, llena los juegos de cajas sorpresa y cierra lo que no da dinero. Su jefe es el CEO, que vive en lo alto de la Torre de Microblizz.</p>
+      <span class="lema">«No es un despido: es una optimización de la plantilla».</span>
+    </article>
+    <article class="ficha villano" style="--c:#2a4fa8">
+      <h3 class="ol">PHONY</h3><span class="alias">Los de la PayStation</span>
+      <p>Quieren que nada sea tuyo: todo digital, de alquiler y con suscripción. Su consola, la PayStation, ni siquiera tiene lector de discos. Te cobran hasta por cruzar un puente.</p>
+      <span class="lema">«Este juego ya no está disponible en tu región».</span>
+    </article>
+    <article class="ficha villano" style="--c:#3a3a6a">
+      <h3 class="ol">IAHORRO</h3><span class="alias">La IA del ahorro… de sueldos</span>
+      <p>Una máquina que copia el trabajo de los creadores para que las empresas no tengan que pagarles. Clona a tus unidades, pero siempre le salen grises y a medias.</p>
+      <span class="lema">«Lo he hecho yo solo. Bueno, con lo tuyo».</span>
+    </article>
+  </div>
+
+  <h2 class="sec ol" id="fans">LOS FANS</h2>
+  <p class="intro">Diez facciones, cada una con su líder, su casa y su forma de liarla. Al principio solo tienes a los Animales Locos; las demás se unen a ti cuando las liberas de Microblizz.</p>
+  <div class="rejilla">
+    <article class="ficha" style="--c:#8a3a12">
+      <h3 class="ol">ANIMALES LOCOS</h3><span class="alias">Los primeros en rebelarse</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">CrazyBunny</b></div><div class="dato"><small>SU CASA</small><b class="ol">La Madriguera</b></div></div>
+      <p>Una pandilla de animales con muy poca paciencia: ardillas, un castor con dinamita, una zorra invisible y una vaca dentro de un robot.</p>
+      <div class="poder">Su poder, RABIA: cuantos más van juntos, más fuerte pegan.</div>
+    </article>
+    <article class="ficha" style="--c:#2f6b4a">
+      <h3 class="ol">NO-MUERTOS</h3><span class="alias">Los juegos que Microblizz enterró</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">NecroLord</b></div><div class="dato"><small>SU CASA</small><b class="ol">La Cripta</b></div></div>
+      <p>Esqueletos, fantasmas y programadores convertidos en zombis por trabajar meses sin parar. Se niegan a quedarse muertos.</p>
+      <div class="poder">Su poder, RENACER: cada uno vuelve a levantarse una vez.</div>
+    </article>
+    <article class="ficha" style="--c:#6d28d9">
+      <h3 class="ol">STREAMERS</h3><span class="alias">El directo nunca se apaga</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">StreamKing</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Plató</b></div></div>
+      <p>Suscriptores con dedo de espuma, cámaras voladoras y la madre del streamer repartiendo bocadillos.</p>
+      <div class="poder">Su poder, HYPE: cuanto más caos hay, más rápido atacan.</div>
+    </article>
+    <article class="ficha" style="--c:#a8781a">
+      <h3 class="ol">HÉROES</h3><span class="alias">Leyendas de otro tiempo</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">EpicChampion</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Templo</b></div></div>
+      <p>Querubines con arco, soldados con escudo, un dios del trueno y hasta un minotauro.</p>
+      <div class="poder">Su poder, EXPERIENCIA: suben de nivel en plena batalla.</div>
+    </article>
+    <article class="ficha" style="--c:#0f6f8a">
+      <h3 class="ol">CIBERPUNKS</h3><span class="alias">Soldados del futuro</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">CyberMarine</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Búnker</b></div></div>
+      <p>Ninjas de neón, robots diminutos y francotiradores con más luces que una feria.</p>
+      <div class="poder">Su poder, ESCUDOS: llevan un escudo de plasma que se recarga solo.</div>
+    </article>
+    <article class="ficha" style="--c:#b0428a">
+      <h3 class="ol">MEMES</h3><span class="alias">Nunca sabes qué va a salir</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">MemeLord</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Foro</b></div></div>
+      <p>Perros muy wow, gatos sintetizadores y GIFs que disparan en bucle.</p>
+      <div class="poder">Su poder, RNG: cada unidad llega con una sorpresa al azar.</div>
+    </article>
+    <article class="ficha" style="--c:#1f7a5a">
+      <h3 class="ol">COMUNIDAD GAMER</h3><span class="alias">Juntos son más fuertes</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">ProGamer</b></div></div>
+      <p>Campeones de torneo, novatos con gorro de hélice y speedrunners que no esperan a nadie.</p>
+      <div class="poder">Su poder, COMUNIDAD: cuanto más variado es el equipo, más pega.</div>
+    </article>
+    <article class="ficha" style="--c:#6b5a3a">
+      <h3 class="ol">OLVIDADOS</h3><span class="alias">Perdidos en el sótano</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">VikingoPerdido</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Almacén</b></div></div>
+      <p>Personajes de juegos cancelados que llevan años guardados en el sótano de Microblizz.</p>
+      <div class="poder">Su poder, NOSTALGIA: nadie se acuerda de ellos, ni las torres que deberían dispararles.</div>
+    </article>
+    <article class="ficha" style="--c:#c2385a">
+      <h3 class="ol">CULTURA POP</h3><span class="alias">¡Luces, cámara, acción!</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">LaDirectora</b></div><div class="dato"><small>SU CASA</small><b class="ol">El Estudio</b></div></div>
+      <p>Extras con disfraz de cartón, dobles de acción y un monstruo gigante de goma.</p>
+      <div class="poder">Su poder, SECUELA: a veces, quien cae vuelve en versión «2».</div>
+    </article>
+    <article class="ficha" style="--c:#3f7a2a">
+      <h3 class="ol">LOS CREADORES</h3><span class="alias">La gente que hace los juegos</span>
+      <div class="datos"><div class="dato"><small>LÍDER</small><b class="ol">IndieDev</b></div></div>
+      <p>Pixelartistas, compositoras, testers y diseñadoras de niveles. Son la última facción en unirse: la que todos los malos quieren sustituir.</p>
+      <div class="poder">Su poder, SIN CRUNCH: si los dejan descansar, se recuperan solos.</div>
+    </article>
+  </div>
+
+  <h2 class="sec ol" id="personajes">QUIÉN ES QUIÉN</h2>
+  <div class="rejilla">
+    <article class="ficha" style="--c:#8a3a12">
+      <h3 class="ol">CRAZYBUNNY</h3><span class="alias">El conejo de la zanahoria</span>
+      <p>El líder de los Animales Locos y la cara de la rebelión. Salta en medio de los enemigos y se lía a zanahoriazos. Sale en casi todos los juegos.</p>
+    </article>
+    <article class="ficha" style="--c:#a3325e">
+      <h3 class="ol">LOLA</h3><span class="alias">Despedida por Microblizz</span>
+      <p>Trabajaba en el estudio hasta que Microblizz la echó. Ahora te enseña a jugar, lleva la tienda y modera el chat de los directos. Sabe todos los trucos de la empresa.</p>
+    </article>
+    <article class="ficha villano" style="--c:#1d3f8a">
+      <h3 class="ol">EL CEO</h3><span class="alias">El jefe de Microblizz</span>
+      <p>Vive en lo alto de la Torre de Microblizz, rodeado de monedas y de diapositivas. Es el último jefe de la primera campaña.</p>
+    </article>
+    <article class="ficha villano" style="--c:#2a4fa8">
+      <h3 class="ol">SURVIVALBOT</h3><span class="alias">El robot de los despidos</span>
+      <p>El primer jefe que te encuentras: un robot que reparte cartas de despido y congela a tus unidades.</p>
+    </article>
+    <article class="ficha villano" style="--c:#3a3a6a">
+      <h3 class="ol">LOS BECARIOS</h3><span class="alias">Siempre con su taza de café</span>
+      <p>Los robots más pequeños de Microblizz. Salen en grupo, cobran poco y se los despide enseguida.</p>
+    </article>
+    <article class="ficha villano" style="--c:#2a4fa8">
+      <h3 class="ol">EL PRESIDENTE DE PHONY</h3><span class="alias">El rey de las suscripciones</span>
+      <p>Pone peaje en los puentes y te tira facturas desde el cielo. Es el jefe final de la segunda campaña.</p>
+    </article>
+  </div>
+
+  <h2 class="sec ol" id="caos">EL CAOS</h2>
+  <div class="caos">
+    <article class="ficha">
+      <h3 class="ol">CAOS</h3><span class="alias">La energía de los fans</span>
+      <p>Es lo que gastas para sacar a tus unidades en las batallas. Se va llenando solo y en el último minuto va el doble de rápido. Cuanto más caos, más difícil se lo pones a Microblizz.</p>
+    </article>
+    <article class="ficha prim">
+      <h3 class="ol">CAOS PRIMORDIAL</h3><span class="alias">El caos para jugar en línea</span>
+      <p>La energía de las partidas contra otros jugadores. Cada partida gasta un poco y se recupera con el tiempo.</p>
+    </article>
+  </div>
+
+  <h2 class="sec ol" id="campanas">LAS CAMPAÑAS</h2>
+  <p class="intro">La rebelión se juega en tres campañas, una contra cada empresa. Cada vez que vences a un jefe, su facción se libera y se une a ti.</p>
+  <div class="campanas">
+    <article class="campana"><div class="num ol">CAMPAÑA 1</div><h3 class="ol">LA REBELIÓN DE LOS FANS</h3><p>Contra Microblizz: de sus oficinas al Cementerio de juegos, el Foro Infinito y la Torre del CEO.</p></article>
+    <article class="campana"><div class="num ol">CAMPAÑA 2</div><h3 class="ol">LA ERA DIGITAL</h3><p>Contra Phony: tiendas sin discos, una LAN Party y los estudios de cine de Phony.</p></article>
+    <article class="campana"><div class="num ol">CAMPAÑA 3</div><h3 class="ol">FIN DE LA PARTIDA</h3><p>Contra IAhorro: la Granja de Prompts, el Almacén de Datos y el núcleo de la máquina.</p></article>
+  </div>
+
+  <div class="fin">
+    <p>Ya lo sabes todo. Ahora, a pararle los pies a Microblizz.</p>
+    <a class="boton ol" href="../#biblioteca">VER LOS JUEGOS</a>
+  </div>
+  <footer>Fans Of es una parodia. Microblizz, Phony e IAhorro son inventados.<br>© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</footer>
+</main>
+<script src="../core/js/nucleo.js?v=0-a4701aeb"></script>
+<script>NUCLEO.idiomaSolo({ en: ['../core/idioma/en-raiz.js', 'en.js'] })</script>
+<script>
+'use strict';
+for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
+</script>
+</body>
+</html>

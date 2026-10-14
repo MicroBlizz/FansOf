@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0c1018">
+<title>Fans of Recruit</title>
+<meta name="description" content="Fans of Recruit (demo): corre y dispara por las Oficinas de Microblizz con CrazyBunny. Rescata fans, súbete a la MechaVaca y cancela a SurvivalBot. Píxel a píxel, como en las recreativas.">
+<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+<style>
+/* Fans of Recruit: todo el juego se dibuja en un lienzo pequeño (como una recreativa de los 90, a lo ancho) y se amplía un
+   número entero de veces, así cada píxel se ve nítido. No hay nada más en la página. */
+html, body { height: 100%; margin: 0; background: #0c1018; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+#caja { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+#juego { display: block; image-rendering: crisp-edges; image-rendering: pixelated; touch-action: none; outline: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; color: #8c9cac; font: 700 14px/1.5 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.1em; }
+#gira { display: none; position: fixed; left: 0; right: 0; bottom: 12%; text-align: center; color: #ffd23c; font: 700 15px/1.5 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.08em; pointer-events: none; }
+/* con el móvil de pie se juega en pequeño: se avisa de que tumbado va mejor */
+@media (orientation: portrait) and (pointer: coarse) { #gira { display: block; } #caja { align-items: flex-start; padding-top: 14vh; } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Recruit"></canvas></div>
+<div id="gira">GIRA EL MÓVIL<br>para jugar a lo ancho</div>
+<div id="carga">…</div>
+<script>
+// si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
+</script>
+<!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
+<script src="../../core/js/sistema/sonido.js?v=0.1.3"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.3"></script>
+<!-- ?v= es la versión de la demo: súbela al publicar un cambio para que el navegador no mezcle archivos viejos y nuevos -->
+<script src="js/textos.js?v=0.1.3"></script>
+<script src="js/pixel.js?v=0.1.3"></script>
+<script src="js/lona.js?v=0.1.3"></script>
+<script src="js/paleta.js?v=0.1.3"></script>
+<script src="js/letras.js?v=0.1.3"></script>
+<script src="js/audio.js?v=0.1.3"></script>
+<script src="js/heroe.js?v=0.1.3"></script>
+<script src="js/heroe-anim.js?v=0.1.3"></script>
+<script src="js/enemigos.js?v=0.1.3"></script>
+<script src="js/vehiculos.js?v=0.1.3"></script>
+<script src="js/rehenes.js?v=0.1.3"></script>
+<script src="js/efectos.js?v=0.1.3"></script>
+<script src="js/oficina.js?v=0.1.3"></script>
+<script src="js/oficina-2.js?v=0.1.3"></script>
+<script src="js/fondo.js?v=0.1.3"></script>
+<script src="js/fondo-2.js?v=0.1.3"></script>
+<script src="js/marcador.js?v=0.1.3"></script>
+<script src="js/enemigos-anim.js?v=0.1.3"></script>
+<script src="js/jefe.js?v=0.1.3"></script>
+<script src="js/extras.js?v=0.1.3"></script>
+<script src="js/nivel.js?v=0.1.3"></script>
+<script src="js/controles.js?v=0.1.3"></script>
+<script src="js/teclas.js?v=0.1.3"></script>
+<script src="js/chat.js?v=0.1.3"></script>
+<script src="js/juego.js?v=0.1.3"></script>
+<script src="js/jugador.js?v=0.1.3"></script>
+<script src="js/enemigos-ia.js?v=0.1.3"></script>
+<script src="js/jefe-ia.js?v=0.1.3"></script>
+<script src="js/dibujo.js?v=0.1.3"></script>
+<script src="js/pantallas.js?v=0.1.3"></script>
+<script src="js/instalar.js?v=0.1.3"></script>
+<script src="js/opciones.js?v=0.1.3"></script>
+<script src="js/principal.js?v=0.1.3"></script>
+</body>
+</html>

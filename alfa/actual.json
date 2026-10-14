@@ -1,0 +1,17 @@
+{
+ "hash": "4701aeb",
+ "fecha": "2026-10-14T23:17:46Z",
+ "mensaje": "alfa.yml: no dejar las credenciales del repo privado en git (daban 403 en el público)",
+ "juegos": {
+  "crush": "0.1.14",
+  "dark": "0.2.3",
+  "island": "0.3.1",
+  "ratkov": "0.2.2",
+  "rouflage": "0.2.5",
+  "rumble": "0.9.133",
+  "skate": "0.1.23",
+  "survivors": "0.1.46",
+  "tacticas": "0.1.30",
+  "td": "0.13.62"
+ }
+}

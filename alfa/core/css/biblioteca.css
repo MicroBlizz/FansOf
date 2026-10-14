@@ -1,0 +1,25 @@
+/* Fans Of · BIBLIOTECA: la rejilla de habilidades y objetos (lo que tienes y lo que te falta) y su ficha.
+   Usa los colores y letras de base.css; las pestañas, filtros y la ventana de ficha son las comunes (menus*.css). */
+#bib-filtros { display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; }
+.bib-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; padding: 2px 2px 10px; box-sizing: border-box; }
+.bib-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 5px 8px; min-height: 128px;
+  border-radius: 14px; border: 3px solid var(--outline); background: var(--panel-2); box-shadow: 0 4px 0 var(--outline), inset 0 0 0 2px var(--rc); cursor: pointer; text-align: center; }
+.bib-card:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline), inset 0 0 0 2px var(--rc); }
+.bib-card.falta { filter: grayscale(0.85) brightness(0.7); box-shadow: 0 4px 0 var(--outline); border-style: dashed; }
+.bib-ic { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; flex: none; border-radius: 12px; border: 2.5px solid var(--outline);
+  font-family: var(--font-display); font-size: 19px; color: var(--outline); }
+.bib-ic svg { width: 30px; height: 30px; }
+.bib-ic.big { width: 62px; height: 62px; font-size: 26px; }
+.bib-ic.big svg { width: 40px; height: 40px; }
+.bib-name { font-family: var(--font-display); font-size: 13px; line-height: 1.1; }
+.bib-rar { display: block; font-size: 11px; font-weight: 800; color: var(--ink-dim); line-height: 1.2; }
+.bib-n { position: absolute; top: 5px; right: 6px; font-family: var(--font-display); font-size: 14px; color: var(--gold); }
+.bib-lock { margin-top: auto; font-size: 10.5px; font-weight: 800; color: var(--danger); letter-spacing: 0.04em; }
+.bib-ficha { display: flex; gap: 12px; align-items: center; text-align: left; margin-bottom: 6px; }
+.bib-ficha b { font-family: var(--font-display); font-size: 20px; line-height: 1.1; }
+.bib-txt { margin: 6px 0; font-size: 14.5px; line-height: 1.35; text-align: left; }
+.bib-rango { margin: 4px 0 8px; font-size: 12.5px; color: var(--ink-dim); text-align: left; }
+.bib-copia { margin: 3px 0; font-size: 12.5px; text-align: left; }
+.bib-card.mitica { border-style: dashed; background: linear-gradient(to bottom, rgba(255, 70, 70, 0.22), var(--panel-2)); }
+.bib-card.mitica .bib-ic { color: #fff; text-shadow: 0 2px 0 var(--outline); }
+.bib-card.mitica .bib-lock { color: #ff8a8a; }

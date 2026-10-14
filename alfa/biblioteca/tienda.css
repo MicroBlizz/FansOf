@@ -1,0 +1,131 @@
+/* Fans Of · LA TIENDA de la librería (index.html de la raíz): tarjetas con captura, el DESTACADO de arriba y la ficha de cada juego.
+   Las tarjetas son las mismas <section class="game"> de index.html; biblioteca/tienda.js les pone la captura y abre la ficha. */
+
+/* ---------- la página, más ancha en el ordenador ---------- */
+body main { max-width: 1060px; }   /* «body» para ganar a la regla de index.html, que viene después */
+section.hero { padding: 84px 0 0; gap: 6px; }
+section.hero h1 .l2 { font-size: 72px; margin: 6px 0 2px; }
+section.hero p.sub { font-size: 16px; max-width: 520px; }
+
+/* ---------- las tarjetas: una rejilla con la captura arriba ---------- */
+#biblioteca { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; align-items: stretch; }
+#biblioteca > h2.sec, #biblioteca > p.note { grid-column: 1 / -1; justify-self: center; text-align: center; }
+.game { position: relative; width: 100%; box-sizing: border-box; color: var(--ink); text-align: left; border: 4px solid var(--outline); border-radius: 18px; padding: 0 0 12px; overflow: hidden;
+  background: linear-gradient(170deg, var(--wc) 0%, var(--tray) 55%); box-shadow: 0 5px 0 var(--outline); cursor: pointer; transition: transform .12s; }
+.game:hover { transform: translateY(-3px); }
+.game:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.game .cap-img { aspect-ratio: 4 / 3; background: var(--wc) center 40% / cover no-repeat; border-bottom: 3px solid var(--outline); }
+.game h2 { font-family: var(--font-display); font-weight: 400; font-size: 21px; line-height: 1.05; margin: 10px 12px 0; }
+.game > p, .game > details { display: none; }   /* la descripción y las novedades salen en la ficha */
+.game .row { display: flex; align-items: center; gap: 8px; margin: 4px 12px 0; }
+.game .row a.play { display: none; }
+.game .ver { font-family: var(--font-ui); font-size: 12px; font-weight: 800; color: var(--ink-dim); }
+.etiq { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 12px 0; }
+.etiq span { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 99px; background: rgba(255, 255, 255, .1); border: 2px solid var(--outline); color: var(--ink-dim); }
+.game .tipo { position: absolute; top: 8px; right: 8px; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 8px; background: rgba(20, 10, 34, .85); border: 2px solid var(--outline); color: var(--ink); }
+.marca-nuevo { position: absolute; top: 8px; left: 8px; font-family: var(--font-display); font-size: 13px; padding: 3px 8px 0; border-radius: 8px; background: var(--danger); border: 2px solid var(--outline); color: var(--ink); }
+
+/* ---------- DESTACADO: los juegos nuevos, uno tras otro ---------- */
+#destacado { width: 100%; }
+.dest { position: relative; width: 100%; border: 4px solid var(--outline); border-radius: 20px; overflow: hidden; box-shadow: 0 6px 0 var(--outline); text-align: left; min-height: 280px; display: flex; cursor: pointer; }
+.dest .fondo { position: absolute; inset: -24px; background: var(--wc, var(--tray)) center / cover; filter: blur(16px) brightness(.5) saturate(1.3); }
+.dest .cap { position: relative; flex: none; width: 38%; max-width: 250px; margin: 14px 0 14px 14px; border-radius: 12px; border: 3px solid var(--outline); background: center top / cover; }
+.dest .cap.h { width: 52%; max-width: 460px; aspect-ratio: 16 / 9; align-self: center; }
+.dest .info { position: relative; padding: 18px 16px; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
+.dest .info .dicho { font-family: var(--font-display); font-size: 14px; color: var(--gold); }
+.dest .info h3 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1; margin: 0; }
+.dest .info p { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.3; }
+.dest .info .etiq { margin: 0; }
+.dest .info .botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.boton { display: inline-block; text-decoration: none; cursor: pointer; font-family: var(--font-display); font-size: 18px; padding: 9px 20px 5px; border-radius: 14px; border: 3px solid var(--outline);
+  background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 4px 0 var(--outline); }
+.boton.sec { background: var(--panel); font-family: var(--font-ui); font-weight: 800; font-size: 14px; padding: 8px 14px; }
+.boton:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline); }
+.boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.dest { touch-action: pan-y; }   /* deslizar a los lados lo coge el DESTACADO; arriba y abajo sigue moviendo la página */
+.puntos { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+.puntos .punto { width: 14px; height: 14px; padding: 0; border-radius: 14px; background: var(--off); border: 2px solid var(--outline); cursor: pointer; }
+.puntos .punto.on { background: var(--gold); width: 30px; }
+.puntos .flecha { width: 40px; height: 40px; padding: 2px 0 0; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); font-family: var(--font-display); font-size: 24px; line-height: 1; cursor: pointer; }
+.puntos button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- LA FICHA de un juego (estilo biblioteca) ---------- */
+.ficha { position: fixed; inset: 0; z-index: 15; overflow-y: auto; background: var(--bg); text-align: left; -webkit-overflow-scrolling: touch; }
+.ficha[hidden] { display: none; }
+.fi-banner { position: relative; height: 340px; overflow: hidden; border-bottom: 3px solid var(--outline); }
+.fi-fondo { position: absolute; inset: -30px; background: var(--wc, var(--tray)) center 30% / cover; filter: blur(18px) brightness(.5) saturate(1.3); }
+.fi-caps { position: absolute; right: 26px; top: 64px; bottom: 20px; display: flex; gap: 12px; }
+.fi-caps i { height: 100%; aspect-ratio: 9 / 16; border-radius: 12px; border: 3px solid var(--outline); background: center top / cover; box-shadow: 0 6px 0 var(--outline); }
+.fi-caps i:nth-child(2) { transform: translateY(12px) rotate(2deg); }
+.fi-caps.h i { aspect-ratio: 16 / 9; }
+.fi-caps.h i:nth-child(2) { display: none; }
+.fi-volver { position: absolute; top: 14px; left: 16px; z-index: 1; font-family: var(--font-display); font-size: 16px; padding: 7px 14px 3px; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); cursor: pointer; }
+.fi-volver:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.fi-titulo { position: absolute; left: 26px; bottom: 22px; right: 46%; }
+.fi-titulo h2 { font-family: var(--font-display); font-weight: 400; font-size: 44px; line-height: .95; margin: 0 0 8px; }
+.fi-titulo .etiq { margin: 0; }
+.fi-barra { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 14px 26px; background: rgba(20, 10, 34, .6); border-bottom: 3px solid var(--outline); }
+.fi-barra .boton { font-size: 22px; padding: 10px 36px 6px; }
+.dato small { display: block; font-size: 11px; font-weight: 800; color: var(--ink-dim); }
+.dato b { font-size: 15px; }
+.fi-cols > div { min-width: 0; }   /* que la tira de capturas no ensanche la columna */
+.fi-cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; padding: 4px 26px 40px; max-width: 1100px; }
+.fi-caja { margin-top: 14px; background: var(--panel); border: 3px solid var(--outline); border-radius: 14px; padding: 10px 14px; }
+.fi-caja h4, .fi-cols h4.ol { font-family: var(--font-display); font-weight: 400; font-size: 17px; color: var(--gold); margin: 0 0 4px; }
+.fi-cols h4.ol { margin: 18px 0 0; }
+.fi-caja p { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.fi-caja ul { margin: 4px 0 0; padding-left: 20px; font-size: 14px; font-weight: 600; line-height: 1.35; }
+.fi-caja li { margin: 3px 0; }
+.fi-caja li b { color: var(--player-lite); }
+.fi-caja ul.joke { color: var(--ink-dim); font-style: italic; }
+.fi-caja summary { cursor: pointer; font-family: var(--font-display); font-size: 17px; color: var(--gold); }
+.fi-caja summary:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.fi-caja h3, .fi-caja h4 { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: var(--gold); margin: 12px 0 2px; }
+.fi-tira { display: flex; gap: 10px; overflow-x: auto; margin-top: 10px; padding-bottom: 6px; }
+.fi-tira button { flex: none; width: 140px; aspect-ratio: 9 / 16; padding: 0; border-radius: 10px; border: 3px solid var(--outline); background: center top / cover; cursor: zoom-in; }
+.fi-tira.h button { width: 260px; aspect-ratio: 16 / 9; }
+.fi-tira button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.fi-caps i { cursor: zoom-in; }
+.fi-zoom { position: fixed; inset: 0; z-index: 25; background: rgba(8, 4, 14, .94); display: flex; align-items: center; justify-content: center; padding: 64px 16px 52px; box-sizing: border-box; touch-action: pan-y; }
+.fi-zoom[hidden] { display: none; }
+.fi-zoom img { cursor: zoom-out; max-width: 100%; max-height: 100%; border-radius: 12px; border: 3px solid var(--outline); user-select: none; -webkit-user-drag: none; }
+.fi-zoom button { position: absolute; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); font-family: var(--font-display); cursor: pointer; border-radius: 14px; }
+.fi-zoom button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.z-x { top: 12px; right: 12px; width: 46px; height: 46px; font-size: 22px; padding-top: 3px; }
+.z-flecha { top: 50%; transform: translateY(-50%); width: 46px; height: 64px; font-size: 32px; padding-top: 4px; background: rgba(38, 20, 60, .85) !important; }
+.z-ant { left: 10px; } .z-sig { right: 10px; }
+.z-cuenta { pointer-events: none; position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-family: var(--font-display); font-size: 18px; color: var(--ink); }
+
+/* ---------- en el móvil ---------- */
+@media (max-width: 640px) {
+  section.hero h1 .l2 { font-size: 56px; }
+  #biblioteca { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .game h2 { font-size: 16px; margin: 8px 9px 0; }
+  .game .row, .etiq { margin-left: 9px; margin-right: 9px; }
+  .game .etiq span:nth-child(n+3) { display: none; }
+  .dest { min-height: 0; }
+  .dest .cap { width: 40%; }
+  .dest.horiz { flex-direction: column; }   /* la captura horizontal va arriba a lo ancho y el texto debajo */
+  .dest.horiz .cap.h { width: auto; max-width: none; margin: 12px 12px 0; align-self: stretch; }
+  .dest.horiz .info { padding-top: 12px; }
+  .dest .info h3 { font-size: 22px; }
+  .dest .info p { font-size: 13px; }
+  .dest .info .boton.sec { display: none; }
+  .fi-banner { height: 270px; }
+  .fi-caps { right: 12px; top: 60px; bottom: 14px; }
+  .fi-caps i:nth-child(2) { display: none; }
+  .fi-titulo { left: 16px; bottom: 16px; right: 44%; }
+  /* ficha de un juego horizontal: la captura arriba a lo ancho y el título debajo */
+  .ficha.horiz .fi-banner { height: auto; }
+  .ficha.horiz .fi-caps { position: relative; display: block; left: auto; right: auto; top: auto; bottom: auto; margin: 64px 12px 0; }
+  .ficha.horiz .fi-caps i { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; transform: none; }
+  .ficha.horiz .fi-caps i:nth-child(2) { display: none; }
+  .ficha.horiz .fi-titulo { position: relative; left: auto; right: auto; bottom: auto; padding: 12px 16px 16px; }
+  .fi-titulo h2 { font-size: 27px; }
+  .fi-barra { padding: 12px 16px; gap: 14px; }
+  .fi-barra .boton { width: 100%; text-align: center; box-sizing: border-box; }
+  .fi-cols { grid-template-columns: 1fr; padding: 0 16px 40px; gap: 0; }
+  .fi-tira button { width: 110px; }
+  .fi-tira.h button { width: 220px; }
+}
+@media (prefers-reduced-motion: reduce) { .game { transition: none; } .game:hover { transform: none; } }

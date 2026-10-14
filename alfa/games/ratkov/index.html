@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0d12">
+<title>Fans of Ratkov</title>
+<meta name="description" content="Fans of Ratkov: shooter de extracción visto desde arriba en la ciudad nevada y en ruinas de Microblizz. Entra con CrazyBunny y su escuadrón, registra, fabrica, monta anomalías en tus armas y sal antes de la ventisca. Si caes, lo pierdes todo.">
+<link rel="icon" type="image/png" href="img/icon-192.png">
+<link rel="apple-touch-icon" href="img/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Russo+One&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="../../core/js/nucleo.js?v=0.2.2-a4701aeb"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<link rel="stylesheet" href="estilo.css?v=0.2.2">
+<link rel="stylesheet" href="estilo-refugio.css?v=0.2.2">
+<link rel="stylesheet" href="estilo-mochila.css?v=0.2.2">
+</head>
+<body>
+<canvas id="cv" aria-label="Fans of Ratkov"></canvas>
+<div id="carga">…</div>
+
+<!-- ======== LA INCURSIÓN: lo que se ve encima del juego ======== -->
+<div id="hud" hidden>
+  <div class="panel" id="h-vida">
+    <div class="fila"><span class="lab">VIDA</span><b id="h-vida-n">100</b></div><i class="barra"><i id="h-vida-b"></i></i>
+    <div class="fila"><span class="lab">FRÍO</span><b id="h-frio-n">0</b></div><i class="barra"><i id="h-frio-b"></i></i>
+    <div class="fila"><span class="lab">AGUANTE</span><b id="h-aguante-n">100</b></div><i class="barra"><i id="h-aguante-b"></i></i>
+    <div class="estados" id="h-estados"></div>
+  </div>
+  <div class="panel der" id="h-reloj"><span class="lab" id="h-reloj-t">VENTISCA EN</span><b id="h-reloj-n">9:00</b></div>
+  <div class="panel" id="h-arma"><span class="lab" id="h-arma-n">ARMA</span><b id="h-arma-m">0/0</b><span class="lab" id="h-arma-r"></span></div>
+  <div class="panel" id="h-peso"><span class="lab">PESO</span><b id="h-peso-n">0 kg</b></div>
+  <div id="h-avisos" aria-live="polite"></div>
+  <div id="h-tuto" hidden></div>
+  <div id="h-frota" hidden><canvas id="h-frota-c" width="48" height="28"></canvas><b id="h-frota-t"></b></div>
+  <div id="h-accion" hidden><b id="h-accion-t"></b><i class="barra"><i id="h-accion-b"></i></i></div>
+  <div id="h-salida" hidden><span class="lab" id="h-salida-n"></span><b id="h-salida-t">6</b></div>
+  <canvas id="h-mapa" width="160" height="120"></canvas>
+  <div id="h-bolsillos"></div>
+  <!-- botones (en el móvil y con el ratón) -->
+  <div id="mandos">
+    <div class="palanca" id="p-izq"><i></i></div>
+    <div class="palanca" id="p-der"><i></i></div>
+    <button class="btn-h" id="b-recarga" type="button">RECARGAR</button>
+    <button class="btn-h" id="b-accion" type="button">REGISTRAR</button>
+    <button class="btn-h" id="b-esquiva" type="button">ESQUIVAR</button>
+    <button class="btn-h" id="b-agacha" type="button">AGACHARSE</button>
+    <button class="btn-h" id="b-granada" type="button">GRANADA</button>
+    <button class="btn-h" id="b-cambia" type="button">CAMBIAR ARMA</button>
+    <button id="b-fuego" type="button">DISPARAR</button>
+  </div>
+  <div id="h-cubierta"></div>
+  <i id="h-blanco" hidden></i>
+  <b id="h-despide" hidden></b>
+  <div id="h-arriba"><button class="btn-h" id="b-mochila" type="button">MOCHILA</button><button class="btn-h" id="b-mapa" type="button">MAPA</button><button class="btn-h" id="b-pausa" type="button">PAUSA</button></div>
+  <div id="h-mira"></div>
+</div>
+
+<!-- ventanas de la incursión: botín, mochila, mapa, pausa y fin -->
+<section class="ventana" id="v-botin" hidden></section>
+<section class="ventana" id="v-mochila" hidden></section>
+<section class="ventana" id="v-mapa" hidden></section>
+<section class="ventana" id="v-pausa" hidden></section>
+<section class="ventana" id="v-fin" hidden></section>
+<section class="ventana" id="v-mini" hidden></section>
+<button type="button" id="b-girar-flota" hidden>GIRAR</button>
+
+<!-- ======== EL REFUGIO ======== -->
+<section id="refugio" hidden>
+  <header id="r-cabeza">
+    <div class="r-titulo"><b>FANS OF RATKOV</b><span>EL REFUGIO</span></div>
+    <div class="r-chapas"><i class="icono-chapa"></i><b id="r-chapas">0</b><span>CHAPAS</span></div>
+    <button class="r-op" id="r-opciones" type="button">OPCIONES</button>
+  </header>
+  <nav id="r-pestanas">
+    <button type="button" data-p="incursion">INCURSIÓN</button>
+    <button type="button" data-p="alijo">ALIJO</button>
+    <button type="button" data-p="mercader">MERCADER</button>
+    <button type="button" data-p="banco">BANCO</button>
+    <button type="button" data-p="taller">TALLER</button>
+    <button type="button" data-p="mejoras">MEJORAS</button>
+    <button type="button" data-p="escuadron">ESCUADRÓN</button>
+    <button type="button" data-p="encargos">ENCARGOS</button>
+  </nav>
+  <main id="r-cuerpo"></main>
+</section>
+<section class="ventana" id="v-opciones" hidden></section>
+<section class="ventana" id="v-detalle" hidden></section>
+<section class="ventana" id="v-teclas" hidden></section>
+
+<!-- ======== EL TÍTULO ======== -->
+<section id="titulo" hidden>
+  <div class="t-caja">
+    <p class="t-pre">MICROBLIZZ PRESENTA, AUNQUE NO QUIERA</p>
+    <h1>FANS OF <b>RATKOV</b></h1>
+    <p class="t-lema">La ciudad de Microblizz, años después de la Guerra del Parche. Entra, registra, sal. Si caes, lo pierdes todo.</p>
+    <button class="btn-grande" id="t-jugar" type="button">ENTRAR AL REFUGIO</button>
+    <div class="t-fila"><button class="btn" id="t-como" type="button">CÓMO SE JUEGA</button><button class="btn" id="t-op" type="button">OPCIONES</button><a class="btn" href="../../">BIBLIOTECA</a></div>
+    <p class="t-ver">VERSIÓN <span id="t-ver"></span></p>
+  </div>
+</section>
+<section class="ventana" id="v-como" hidden></section>
+
+<script>
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small style="opacity:.6">' + String(e.message || '').slice(0, 120) + '</small>'; });
+</script>
+<script>
+// Fans of Ratkov: lo ligero de core (cuenta e idioma), los ajustes antes y el juego después, en este orden
+NUCLEO.juego({
+  ligero: true,
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js'] },
+  antes: ['js/ajustes.js'],
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/textos.js',
+    'js/util.js',
+    'js/audio.js',
+    'js/datos-objetos.js',
+    'js/datos-armas.js',
+    'js/datos-refugio.js',
+    'js/inventario.js',
+    'js/iconos.js',
+    'js/formas.js',
+    'js/motor.js',
+    'js/modelos.js',
+    'js/mapa-piezas.js',
+    'js/mapa-piezas-2.js',
+    'js/mapa.js',
+    'js/tren.js',
+    'js/controles.js',
+    'js/movil.js',
+    'js/balas.js',
+    'js/enemigos.js',
+    'js/sigilo.js',
+    'js/jugador.js',
+    'js/incursion.js',
+    'js/hud.js',
+    'js/rejilla.js',
+    'js/ventanas.js',
+    'js/ventanas-mochila.js',
+    'js/minijuegos.js',
+    'js/tutorial.js',
+    'js/refugio.js',
+    'js/instalar.js',
+    'js/refugio-2.js',
+    'js/mejoras.js',
+    'js/copias.js',
+    'js/ventana-teclas.js',
+    'js/novedades.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

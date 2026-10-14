@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fans Of</title>
+<meta name="description" content="Fans Of: los juegos de Fans of Rumble, Fans of TD y Fans of Survivors. Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.">
+<meta name="theme-color" content="#150b21">
+<link rel="icon" type="image/png" href="core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="core/css/base.css">
+<link rel="stylesheet" href="biblioteca/tienda.css">
+<link rel="stylesheet" href="novedades/ventana.css">
+<link rel="stylesheet" href="biblioteca/votos.css">
+<style>
+  /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
+  body { overflow: auto; touch-action: auto; align-items: flex-start; }
+  html { scroll-behavior: smooth; }
+  main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  /* menú fijo arriba: secciones de la landing y las partes comunes (privacidad, condiciones) */
+  nav.menu { position: fixed; top: 0; left: 0; right: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+  nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+  nav.menu a:hover, nav.menu a:focus-visible { color: var(--gold); outline: none; }
+  nav.menu .idiomas { font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+  nav.menu .idiomas a { font-family: inherit; font-size: 13px; }
+  section.hero { padding: 96px 0 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  section.hero a.play { text-decoration: none; font-family: var(--font-display); font-size: 22px; padding: 10px 26px 6px; border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); margin-top: 6px; }
+  section.hero a.play:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 18px 0 0; scroll-margin-top: 80px; }
+  section.sec { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; scroll-margin-top: 80px; }
+  .partes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; }
+  .partes a { flex: 1 1 220px; box-sizing: border-box; color: var(--ink); text-decoration: none; text-align: left; border: 3px solid var(--outline); border-radius: 14px; padding: 12px 14px; background: var(--panel); }
+  .partes a b { display: block; font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--gold); }
+  .partes a span { font-size: 14px; font-weight: 600; color: var(--ink-dim); }
+  h1 { font-family: var(--font-display); font-weight: 400; line-height: 0.9; margin: 0; }
+  h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
+  h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
+  p.sub { font-weight: 800; font-size: 18px; color: var(--ink-dim); margin: 0 0 6px; }
+  p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 6px 0 0; max-width: 460px; }
+</style>
+</head>
+<body>
+<nav class="menu" aria-label="Menú">
+  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="lore/">Lore</a><a href="#legal">Privacidad y condiciones</a>
+  <a href="#" id="m-cuenta" class="m-cuenta" hidden>Entrar</a>
+  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
+</nav>
+<div class="nov-fondo" id="novedades" hidden>
+  <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
+    <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
+    <button type="button" class="nov-x ol" id="nov-x" aria-label="Cerrar">✕</button>
+    <div class="nov-cuerpo" id="nov-cuerpo">
+      <p class="nov-nota" id="nov-desde" hidden>Lo que ha cambiado desde tu última visita.</p>
+      <div id="nov-nuevos"></div>
+      <h3 class="ol">ACTUALIZACIONES</h3>
+      <div id="nov-act"></div>
+      <button type="button" class="nov-todas" id="nov-todas" hidden>VER TODAS LAS ACTUALIZACIONES</button>
+      <p class="nov-nota">Toca un juego para ver todas sus novedades.</p>
+    </div>
+    <div class="nov-pie"><button type="button" class="ol" id="nov-ok">¡A JUGAR!</button></div>
+  </div>
+</div>
+<div class="ficha" id="ficha" hidden role="dialog" aria-modal="true" aria-labelledby="fi-nombre">
+  <div class="fi-banner"><div class="fi-fondo" id="fi-fondo"></div><div class="fi-caps" id="fi-caps"></div>
+    <button type="button" class="fi-volver ol" id="fi-volver">‹ VOLVER</button>
+    <div class="fi-titulo"><h2 class="ol" id="fi-nombre"></h2><div id="fi-etiq"></div></div></div>
+  <div class="fi-barra"><a class="boton ol" id="fi-jugar">JUGAR</a><button type="button" class="boton sec" id="fi-fav"></button><div class="dato"><small>VERSIÓN</small><b id="fi-ver"></b></div><div class="dato"><small>TIPO</small><b id="fi-tipo"></b></div></div>
+  <div class="fi-cols">
+    <div><div class="fi-caja"><h4 class="ol" id="fi-ultimo-t">LO ÚLTIMO</h4><div id="fi-ultimo"></div></div>
+      <div id="fi-capturas"><h4 class="ol">CAPTURAS</h4><div class="fi-tira" id="fi-tira"></div></div></div>
+    <div><div class="fi-caja"><h4 class="ol">DE QUÉ VA</h4><p id="fi-texto"></p></div>
+      <div class="fi-caja" id="fi-voto"></div>
+      <details class="fi-caja" id="fi-todas"><summary>TODAS LAS NOVEDADES</summary><div id="fi-novedades"></div></details></div>
+  </div>
+</div>
+<div class="fi-zoom" id="fi-zoom" hidden></div>
+<main>
+  <section class="hero" id="inicio">
+    <h1><span class="l2 ol-big">FANS OF</span></h1>
+    <p class="sub">Microblizz ha comprado tus juegos favoritos para cerrarlos. Elige cómo pararle los pies.</p>
+  </section>
+  <section class="sec" id="destacado">
+    <h2 class="sec ol">DESTACADO</h2>
+    <div class="dest" id="dest"></div>
+    <div class="puntos" id="dest-puntos"></div>
+  </section>
+  <section class="sec" id="biblioteca">
+    <h2 class="sec ol">BIBLIOTECA</h2>
+    <p class="note">Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
+  <section class="game" id="g-rumble" style="--wc: #8a3a12" data-tipo="Juego" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
+    <h2 class="ol">FANS OF RUMBLE</h2>
+    <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
+    <div class="row"><a class="play ol" href="games/rumble/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-td" style="--wc: #1d3f8a" data-tipo="Juego" data-etiquetas="Defensa de torres · Campaña" data-capturas="td-1.jpg td-2.jpg">
+    <h2 class="ol">FANS OF TD</h2>
+    <p>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</p>
+    <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-crush" style="--wc: #c35b9e" data-tipo="Prototipo" data-etiquetas="Puzle · Tres en raya" data-capturas="crush-1.jpg crush-2.jpg">
+    <h2 class="ol">FANS OF CRUSH</h2>
+    <p>El nuevo (prototipo). Un tres en raya con los Animales Locos: junta sus caras, lanza cohetes de CrazyBunny y sube la Escalera Corporativa de Microblizz hasta despedir a SurvivalBot, el jefe de Recursos Humanos.</p>
+    <div class="row"><a class="play ol" href="games/crush/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-survivors" style="--wc: #2f7a2a" data-tipo="Prototipo" data-etiquetas="Acción · Hordas" data-capturas="survivors-1.jpg survivors-2.jpg">
+    <h2 class="ol">FANS OF SURVIVORS</h2>
+    <p>El nuevo (prototipo). CrazyBunny contra toda la plantilla de Microblizz: muévete, tus cartas disparan solas. Aguanta 10 minutos y despide a SurvivalBot.</p>
+    <div class="row"><a class="play ol" href="games/survivors/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-tacticas" style="--wc: #5b2a9a" data-tipo="Prototipo" data-etiquetas="Por turnos · JRPG" data-capturas="tacticas-1.jpg tacticas-2.jpg">
+    <h2 class="ol">FANS OF RUMBLE: TÁCTICAS</h2>
+    <p>El nuevo (prototipo). Combate por turnos con barras de tiempo, como los JRPG clásicos: CrazyBunny, StreamKing y los demás líderes contra los jefes de Microblizz, hasta llegar al CEO.</p>
+    <div class="row"><a class="play ol" href="games/tacticas/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-skate" style="--wc: #e8731a" data-tipo="Prototipo" data-etiquetas="Runner · Talentos" data-capturas="skate-1.jpg skate-2.jpg" data-horizontal>
+    <h2 class="ol">FANS OF SKATE</h2>
+    <p>El nuevo (prototipo). Carriles horizontales como un runner: CrazyBunny y los líderes sobre sus vehículos, esquivando las olas y los fajos de Microblizz. Con árbol de talentos y campaña de 12 mundos.</p>
+    <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-dark" style="--wc: #4a1f7a" data-tipo="Prototipo" data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
+    <h2 class="ol">FANS OF DARK</h2>
+    <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
+    <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-island" style="--wc: #c9741a" data-tipo="Prototipo" data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
+    <h2 class="ol">FANS OF ISLAND</h2>
+    <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
+    <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Boceto" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
+    <h2 class="ol">FANS OF RUMBLE 3D</h2>
+    <p>El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.</p>
+    <div class="row"><a class="play ol" href="demos/rumble-3d/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-roguelite" style="--wc: #9a2f86" data-tipo="Prototipo" data-etiquetas="Roguelite · Pixel art" data-capturas="roguelite-1.jpg roguelite-2.jpg">
+    <h2 class="ol">FANS OF ROGUELITE</h2>
+    <p>Roguelite en pixel art dibujado a mano, emitido «en directo» con su chat. CrazyBunny cruza 3 mundos de 40 días (Oficinas, Cementerio de juegos y Torre de Microblizz): habilidades, objetos, tienda de Lola, ruleta, gashapón, jefes y mejoras para siempre en La Madriguera.</p>
+    <div class="row"><a class="play ol" href="demos/roguelite/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-tactics-advance" style="--wc: #2f4fae" data-tipo="Prueba" data-etiquetas="Tácticas · Casillas · Pixel art" data-capturas="tactics-advance-1.jpg tactics-advance-2.jpg">
+    <h2 class="ol">FANS OF TACTICS ADVANCE</h2>
+    <p>El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mueve a CrazyBunny y a EpicChampion, aprovecha la altura y el CAOS, y despide a los esbirros de Microblizz en el Cementerio de juegos o en sus oficinas.</p>
+    <div class="row"><a class="play ol" href="demos/tactics-advance/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-dungeons" style="--wc: #5a2a9a" data-tipo="Prototipo" data-etiquetas="Roguelike · Turnos" data-capturas="dungeons-1.jpg dungeons-2.jpg">
+    <h2 class="ol">FANS OF DUNGEONS</h2>
+    <p>El prototipo (prueba). Roguelike por turnos: sube la Torre de Microblizz planta a planta por mazmorras que se generan solas, con CrazyBunny, CyberMarine o NecroLord. Cada paso es un turno; si mueres, se acabó, pero los hitos liberan héroes. Pixel art nuevo de 32 bits con explosiones de verdad.</p>
+    <div class="row"><a class="play ol" href="demos/dungeons/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-rouflage" style="--wc: #7a8c1c" data-tipo="Juego" data-etiquetas="Escondite · Pintura" data-capturas="rouflage-1.jpg rouflage-2.jpg">
+    <h2 class="ol">FANS OF ROUFLAGE</h2>
+    <p>El escondite con pintura: cuélate en la estación de Microblizz, píntate como el suelo con el cuentagotas y el pincel, congélate y que los becarios no te despidan. O coge tú la linterna y encuentra a los cinco colados.</p>
+    <div class="row"><a class="play ol" href="games/rouflage/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-karts" style="--wc: #b3261e" data-tipo="Prototipo" data-etiquetas="Carreras · Pixel art" data-capturas="karts-1.jpg karts-2.jpg karts-3.jpg" data-horizontal>
+    <h2 class="ol">FANS OF KARTS</h2>
+    <p>El prototipo (prueba). Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.</p>
+    <div class="row"><a class="play ol" href="demos/karts/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-recruit" style="--wc: #c98a12" data-tipo="Prototipo" data-etiquetas="Acción · Corre y dispara · Pixel art" data-capturas="recruit-1.jpg recruit-2.jpg recruit-3.jpg" data-horizontal>
+    <h2 class="ol">FANS OF RECRUIT</h2>
+    <p>El prototipo (prueba). Corre y dispara como en las recreativas de los 90: CrazyBunny asalta las Oficinas de Microblizz con pistola, metralleta y zanahorias bomba, rescata a los fans, se sube a la MechaVaca y cancela a SurvivalBot. Todo el pixel art está dibujado con código.</p>
+    <div class="row"><a class="play ol" href="demos/recruit/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-ratkov" style="--wc: #c4581a" data-tipo="Juego" data-etiquetas="Extracción · Acción · Pixel art" data-capturas="ratkov-1.jpg ratkov-2.jpg" data-horizontal>
+    <h2 class="ol">FANS OF RATKOV</h2>
+    <p>Shooter de extracción visto desde arriba en la ciudad nevada y en ruinas de Microblizz: entra con CrazyBunny y su escuadrón, registra, fabrica, monta anomalías bugueadas en tus armas y sal antes de la ventisca. Si caes, lo pierdes todo.</p>
+    <div class="row"><a class="play ol" href="games/ratkov/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-terminal-shock" style="--wc: #0f5450" data-tipo="Demo" data-etiquetas="Terror · Cámaras fijas" data-capturas="terminal-shock-1.jpg terminal-shock-2.jpg" data-horizontal>
+    <h2 class="ol">TERMINAL SHOCK</h2>
+    <p>Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999): 13 salas con cámaras fijas y control tanque. Repara la red de fibra, encuentra a Zoe y no pierdas la Lucidez.</p>
+    <div class="row"><a class="play ol" href="demos/terminal-shock/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  </section>
+  <section class="sec" id="legal">
+    <h2 class="sec ol">LO COMÚN</h2>
+    <div class="partes">
+      <a href="privacidad/"><b>Privacidad</b><span>Qué guardamos de ti, para qué y cómo borrarlo.</span></a>
+      <a href="energia/"><b>Caos primordial</b><span>Cómo funciona el caos primordial, la energía del juego online, y su versión ilimitada.</span></a>
+      <a href="android/"><b>Android (versión de prueba)</b><span>Descarga los juegos como app para probarlos en el móvil.</span></a>
+      <a href="condiciones/"><b>Condiciones de uso</b><span>Las reglas del juego, juego limpio incluido.</span></a>
+    </div>
+  </section>
+  <p class="note">© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
+</main>
+<script src="core/js/nucleo.js?v=0-a4701aeb"></script>
+<script src="core/js/novedades.js"></script>
+<script>
+// La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
+const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
+// los huecos con nombre que usa cuenta.js (en los juegos los pone core/js/sistema/utiles.js, que esta página no carga)
+const HOOKS = {};
+function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
+function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
+</script>
+<script src="core/js/sistema/cuenta.js"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'demos/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script>
+// La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
+// El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
+'use strict';
+const text = url => fetch(url, { cache: 'no-cache' }).then(r => { if (!r.ok) throw new Error(r.status); return r.text(); });
+// del código de un juego, el valor de «const NOMBRE = …;» (son solo textos: una lista u objeto de frases)
+function grab(src, name, close) {
+  const i = src.indexOf('const ' + name + ' = '); if (i < 0) return null;
+  const j = src.indexOf(String.fromCharCode(10) + close, i); if (j < 0) return null;
+  return new Function('return ' + src.slice(i + name.length + 9, j + 1 + close.length - 1))();
+}
+function show(id, ver, entries) {
+  const box = document.getElementById(id), news = box && box.querySelector('[data-news]');
+  if (!news) return;   // juegos sin tarjeta de novedades (Skate): solo salen en la ventana
+  box.querySelector('[data-ver]').textContent = ver ? 'versión ' + ver : '';
+  news.innerHTML = entries.length ? `<h3>Versión ${entries[0].v}</h3>` + newsHtml(entries) : 'No se han podido leer las novedades.';
+}
+for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
+const fail = id => () => {
+  const news = document.getElementById(id) && document.getElementById(id).querySelector('[data-news]'); if (news) news.textContent = 'No se han podido leer las novedades.';
+  parche(id, null, [], (JUEGOS.find(j => j[0] === id) || [])[2]);
+};
+
+</script>
+<script src="novedades/ventana.js"></script>
+<script src="biblioteca/tienda.js"></script>
+<script src="biblioteca/cuenta-web.js"></script>
+<script src="biblioteca/votos.js"></script>
+<script src="biblioteca/alfa.js"></script>
+</body>
+</html>

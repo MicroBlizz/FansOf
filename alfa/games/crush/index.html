@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e2d6ff">
+<title>Fans of Crush</title>
+<meta name="description" content="Fans of Crush: junta las caras de los Animales Locos, lanza cohetes de CrazyBunny y sube la Escalera Corporativa de Microblizz hasta despedir al jefe de Recursos Humanos.">
+<link rel="icon" type="image/png" href="img/icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<script src="../../core/js/nucleo.js?v=0.1.14-a4701aeb"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/crush.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="540" height="960"></canvas>
+  <div id="cr-ui">
+    <section id="cr-titulo">
+      <p class="cr-lema">Junta caras. Despide a Microblizz.</p>
+      <button class="cr-btn cr-enorme" id="cr-jugar" type="button">JUGAR</button>
+      <div class="cr-fila">
+        <button class="cr-btn2" id="cr-p-opc" type="button">OPCIONES</button>
+        <button class="cr-btn2" id="cr-instalar" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3" fill="#ffffff" stroke="#4a2d6b" stroke-width="2.2"/><path d="M12 7v7m-3-3l3 3 3-3" fill="none" stroke="#ff7a96" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>INSTALAR</button>
+      </div>
+    </section>
+    <header id="cr-barra" hidden></header>
+    <section id="cr-modal" class="cr-modal" hidden><div class="cr-tarjeta" id="cr-tarjeta"></div></section>
+  </div>
+</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta y el idioma de core: Fans of Crush lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/arte/base.js',
+    '../../core/js/serie/arte/animales.js',
+    '../../core/js/serie/arte/microblizz.js',
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/fichas.js', 'js/tablero.js', 'js/niveles.js', 'js/partida.js', 'js/sonidos.js',
+    'js/efectos.js', 'js/pintar.js', 'js/marcador.js', 'js/reacciones.js', 'js/tutorial.js', 'js/mapa.js', 'js/pantallas.js',
+    'js/principal.js'],
+});
+</script>
+</body>
+</html>

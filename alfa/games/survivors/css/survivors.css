@@ -1,0 +1,128 @@
+/* Fans of Survivors · Estilos de este juego. Los colores y las letras son los de core/css/base.css y las pantallas comunes
+   (menú, colección, gashapón, tienda…) los de core/css/menus*.css. Aquí va lo que casa esas pantallas con esta página
+   (lo mismo que en games/td/css/td.css) y las pantallas de la partida: subir de nivel, pausa y marcador. */
+/* ---------- lo común, como en el TD ---------- */
+.btn-big { font-family: var(--font-display); font-size: 36px; line-height: 1; padding: 16px 56px 10px; border-radius: 20px; border: 4px solid var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); cursor: pointer; box-shadow: 0 7px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.4); }
+.btn-big:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--outline); }
+.btn-ghost { font-family: var(--font-display); font-size: 22px; line-height: 1; padding: 13px 22px 8px; border-radius: 16px; border: 3px solid var(--outline); background: var(--tray-hi); cursor: pointer; box-shadow: 0 5px 0 var(--outline); }
+.btn-ghost:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; padding: 40px 26px; background: radial-gradient(110% 70% at 50% 20%, rgba(43, 20, 70, 0.55), rgba(21, 11, 33, 0.9)); }
+.screen.top, .screen.modal { gap: 10px; text-align: center; z-index: 20; }
+.screen.modal { display: flex; justify-content: center; z-index: 30; }
+.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+#toast:not(.menu) { top: 104px; }   /* en partida, por debajo del marcador */
+#ui #scr-title .home-grid { grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 508px; }   /* siete casillas en una fila, como en el Rumble (0.13.1: Biblioteca) */
+#ui #scr-title .camp-row .btn-big { flex: 1 1 auto; }
+#ui .passive-box svg { flex: none; width: 26px; height: 32px; }
+#ui #scr-pause .btn-sound { position: absolute; left: 14px; top: 14px; }
+#ui .opt-list { margin-top: 2px; touch-action: pan-y; }
+#ui .opt-row .btn-ghost:disabled { opacity: 0.6; cursor: default; }
+.rec-line { margin: 2px 0 0; font-size: 15px; font-weight: 700; color: var(--ink-dim); text-align: center; }
+.rec-line b { color: var(--gold); }
+#ui #scr-title .logo .l2 { font-size: 64px; }
+/* ---------- en partida ---------- */
+#hud { position: absolute; right: 10px; top: 30px; pointer-events: auto; z-index: 5; }
+.icon-btn { width: 44px; height: 44px; border-radius: 12px; border: 3px solid var(--outline); background: rgba(38, 20, 60, .85); color: var(--ink); display: grid; place-items: center; cursor: pointer; padding: 0; font-size: 20px; }
+.icon-btn svg { width: 22px; height: 22px; }
+#scr-nivel, #scr-pause, #scr-cofre { background: var(--modal); justify-content: center; gap: 12px; z-index: 20; }
+#scr-end { justify-content: center; z-index: 20; }
+#niv-titulo { margin: 0; font-weight: 400; font-size: 46px; color: var(--gold); text-align: center; }
+#niv-titulo small { display: block; font-size: 26px; color: var(--ink); margin-top: 4px; }
+.niv-sub { margin: 0 0 6px; font-size: 16px; font-weight: 700; color: var(--ink-dim); text-align: center; }
+#niv-ops { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 470px; }
+.op { display: flex; align-items: center; gap: 14px; text-align: left; padding: 12px 14px; border-radius: 16px; border: 4px solid var(--outline); background: linear-gradient(110deg, var(--tray-hi), var(--tray)); box-shadow: 0 5px 0 var(--outline); cursor: pointer; color: var(--ink); animation: entra .28s ease-out both; }
+.op.nuevo { background: linear-gradient(110deg, #6a3a14, var(--tray)); }
+.op:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+.op:hover { filter: brightness(1.12); }
+.op-ic { flex: none; width: 64px; height: 64px; display: grid; place-items: center; font-size: 38px; border-radius: 12px; background: rgba(20, 10, 34, .55); }
+.op-ic canvas { width: 64px; height: 64px; }
+.op-nom { font-family: var(--font-display); font-size: 21px; line-height: 1.05; }
+.op-nv { font-size: 15px; color: var(--gold); margin-left: 4px; }
+.op.nuevo .op-nv { color: #7dff7a; }
+.op-desc { font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ink-dim); margin-top: 3px; }
+@keyframes entra { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: none; } }
+#pau-lista { list-style: none; margin: 0 0 6px; padding: 12px 18px; background: var(--panel); border: 3px solid var(--outline); border-radius: 14px; font-size: 16px; font-weight: 600; text-align: left; min-width: 260px; }
+#pau-lista:empty { display: none; }
+#pau-lista li { margin: 3px 0; }
+@media (prefers-reduced-motion: reduce) { .op { animation: none; } }
+
+/* El cofre de botín: 1 mejora (épica), 2 (doble) o 3 (tragaperras, ¡777!) */
+#scr-cofre { overflow: hidden; background: rgba(15, 6, 28, .9); }
+#cof-titulo { margin: 0; font-weight: 400; font-size: 46px; color: var(--gold); text-align: center; position: relative; z-index: 2; }
+#cof-titulo small { display: block; font-size: 22px; color: var(--ink); margin-top: 4px; }
+#cof-escena { position: relative; width: 100%; max-width: 500px; min-height: 330px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+#cof-rayos { position: absolute; left: 50%; top: 50%; width: 560px; height: 560px; margin: -280px 0 0 -280px; opacity: 0; background: repeating-conic-gradient(rgba(255, 203, 61, .35) 0 8deg, transparent 8deg 20deg); border-radius: 50%; -webkit-mask: radial-gradient(circle, #000 20%, transparent 68%); mask: radial-gradient(circle, #000 20%, transparent 68%); animation: gira 9s linear infinite; pointer-events: none; }
+#cof-cofre { width: 190px; height: 160px; position: relative; z-index: 1; transform-origin: 50% 90%; }
+#cof-cofre .tapa { transform-origin: 8% 40%; transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+#cof-cofre.sacude { animation: cofSacude .22s linear infinite; }
+#cof-cofre.abre { position: absolute; animation: cofSale .7s ease-out forwards; pointer-events: none; }
+#cof-cofre.abre .tapa { transform: rotate(-32deg) translateY(-6px); }
+#cof-ruedas { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; width: 100%; margin-top: -8px; }
+.rueda { flex: 1 1 0; max-width: 160px; min-height: 150px; padding: 10px 6px; border-radius: 16px; border: 4px solid var(--outline); background: linear-gradient(180deg, var(--tray-hi), var(--tray)); box-shadow: 0 5px 0 var(--outline); text-align: center; }
+.rueda-cara { height: 76px; display: grid; place-items: center; overflow: hidden; }
+.rueda.girando .rueda-cara { filter: blur(1.5px); }
+.rueda .op-ic { margin: 0 auto; }
+.rueda-nom { font-size: 17px; line-height: 1.05; margin-top: 6px; min-height: 40px; }
+.rueda-nom small { display: block; font-size: 14px; color: var(--gold); margin-top: 3px; }
+.rueda.para { animation: ruedaPara .5s ease-out; border-color: var(--gold); }
+.rueda.grande { max-width: 270px; min-height: 210px; transform: scale(1.12); box-shadow: 0 0 0 4px var(--gold), 0 0 40px 8px rgba(255, 203, 61, .7), 0 5px 0 var(--outline); animation: ruedaGrande 1.1s ease-out; }
+.rueda.grande .rueda-cara { height: 110px; } .rueda.grande .op-ic { width: 96px; height: 96px; font-size: 62px; } .rueda.grande .op-ic canvas { width: 96px; height: 96px; }
+.rueda.grande .rueda-nom { font-size: 24px; }
+#scr-cofre.cof-n1 #cof-rayos, #scr-cofre.jackpot #cof-rayos { opacity: 1; }
+#scr-cofre.suspense { animation: suspense var(--pulso, .6s) ease-in-out infinite; }
+#scr-cofre.suspense .rueda.para { box-shadow: 0 0 22px 4px rgba(255, 203, 61, .6), 0 5px 0 var(--outline); }
+#scr-cofre.suspense .rueda.girando { border-color: #ff4b5c; box-shadow: 0 0 30px 6px rgba(255, 75, 92, .8), 0 5px 0 var(--outline); }
+#scr-cofre.jackpot { background: radial-gradient(circle at 50% 38%, rgba(150, 90, 30, .97), rgba(40, 8, 70, .98) 75%); }
+#scr-cofre.jackpot #cof-titulo { font-size: 78px; color: #ffcb3d; text-shadow: 0 4px 0 #1b0f2a, 3px 0 0 #1b0f2a, -3px 0 0 #1b0f2a, 0 -3px 0 #1b0f2a; animation: arcoiris 1.4s linear infinite, latido .5s ease-in-out infinite; }
+#scr-cofre.jackpot #cof-titulo small { font-size: 30px; text-shadow: none; }
+#scr-cofre.jackpot .rueda.para { box-shadow: 0 0 26px 6px rgba(255, 203, 61, .85), 0 5px 0 var(--outline); animation: latido .5s ease-in-out infinite; }
+#cof-lista { position: relative; z-index: 2; width: 100%; max-width: 470px; display: flex; flex-direction: column; gap: 6px; margin: 6px 0 4px; animation: entra .4s ease-out both; }
+.cof-fila { text-align: left; padding: 6px 12px; border-radius: 12px; background: rgba(20, 10, 34, .6); font-size: 18px; }
+.cof-fila .op-desc { margin-top: 0; font-size: 14px; }
+#btn-cofre { position: relative; z-index: 2; animation: entra .4s ease-out both; }
+#cof-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 5; }
+#cof-flash.on { animation: destello .7s ease-out; }
+.confeti { position: absolute; top: -50px; z-index: 4; pointer-events: none; animation: caer 3s linear forwards; }
+#scr-cofre.tiembla { animation: tiembla .09s linear infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+@keyframes cofSacude { 0% { transform: translateX(-5px) rotate(-4deg); } 50% { transform: translateX(5px) rotate(4deg); } 100% { transform: translateX(-5px) rotate(-4deg); } }
+@keyframes cofSale { 0% { transform: scale(1); opacity: 1; } 40% { transform: scale(1.35); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes ruedaPara { 0% { transform: scale(1.25); } 60% { transform: scale(.95); } 100% { transform: scale(1); } }
+@keyframes ruedaGrande { 0% { transform: scale(.2) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.3) rotate(3deg); opacity: 1; } 100% { transform: scale(1.12); } }
+@keyframes suspense { 50% { background-color: rgba(120, 0, 20, .55); } }
+@keyframes arcoiris { to { filter: hue-rotate(360deg); } }
+@keyframes latido { 50% { transform: scale(1.07); } }
+@keyframes destello { 0% { opacity: .95; } 100% { opacity: 0; } }
+@keyframes caer { to { transform: translateY(1100px) rotate(540deg); } }
+@keyframes tiembla { 0% { transform: translate(4px, -3px); } 25% { transform: translate(-4px, 3px); } 50% { transform: translate(3px, 4px); } 75% { transform: translate(-3px, -4px); } 100% { transform: translate(4px, -3px); } }
+@media (prefers-reduced-motion: reduce) { #scr-cofre, #scr-cofre * { animation-duration: .01s !important; animation-iteration-count: 1 !important; } }
+#scr-cofre.cof-n5 .rueda { box-sizing: border-box; flex: 0 0 31%; max-width: 31%; min-height: 128px; } #scr-cofre.cof-n5 .cof-fila .op-desc { display: none; } #scr-cofre.cof-n5 .cof-fila { padding: 3px 12px; font-size: 16px; } #scr-cofre.cof-n5 .rueda-nom { font-size: 14px; }
+#scr-cofre.mega #cof-titulo { font-size: 54px; } #scr-cofre.mega { background: radial-gradient(circle at 50% 38%, rgba(255, 90, 160, .9), rgba(30, 6, 80, .99) 75%); animation: arcoiris 1.4s linear infinite; }
+.rueda.nueva { animation: ruedaGrande .5s ease-out; }
+
+/* El cofre: entrada, rarezas, cofre pequeño, fuegos, chat y SurvivalBot asustado */
+#cof-intro { position: absolute; inset: 0; z-index: 19; pointer-events: none; opacity: 0; transition: opacity .6s; background: radial-gradient(circle at 50% 55%, rgba(0, 0, 0, 0), rgba(0, 0, 0, .55)); }
+#cof-intro.on { opacity: 1; }
+#cof-intro .haz { position: absolute; left: 50%; top: 0; bottom: 38%; width: 120px; margin-left: -60px; background: linear-gradient(180deg, rgba(255, 246, 170, 0), rgba(255, 246, 170, .85)); clip-path: polygon(35% 0, 65% 0, 100% 100%, 0 100%); filter: blur(4px); }
+#cof-chat { position: absolute; left: 10px; bottom: 10px; z-index: 3; font-size: 14px; font-weight: 700; text-align: left; max-width: 62%; pointer-events: none; opacity: .92; }
+#cof-chat div { background: rgba(20, 10, 34, .7); padding: 2px 8px; border-radius: 8px; margin-top: 3px; animation: entra .25s ease-out both; }
+#cof-cofre.bufa { animation: bufa 1s ease-out; }
+@keyframes bufa { 0% { transform: scale(1, 1); } 30% { transform: scale(1.25, .8); } 55% { transform: scale(.92, 1.08); } 100% { transform: scale(1, 1); } }
+.rueda { position: relative; }
+.rueda.r1 { border-color: #5ec8ff; } .rueda.r2 { border-color: #d08cff; box-shadow: 0 0 16px 2px rgba(208, 140, 255, .55), 0 5px 0 var(--outline); }
+.rueda.r3 { border-color: var(--gold); box-shadow: 0 0 22px 5px rgba(255, 203, 61, .8), 0 5px 0 var(--outline); background: linear-gradient(120deg, #6a4a10, var(--tray) 40%, #8a6a1a 60%, var(--tray)); background-size: 250% 100%; animation: brillo 1.6s linear infinite; }
+@keyframes brillo { to { background-position: -250% 0; } }
+.rar { display: block; font-style: normal; font-size: 11px; letter-spacing: 1px; margin-top: 2px; opacity: .9; }
+.r0 .rar { color: #cdd6e6; } .r1 .rar { color: #5ec8ff; } .r2 .rar { color: #d08cff; } .r3 .rar { color: var(--gold); }
+.rueda .mini { position: absolute; left: 50%; top: 50%; width: 76px; height: 64px; margin: -40px 0 0 -38px; z-index: 2; animation: miniSale .6s cubic-bezier(.2, 1.4, .4, 1) both, miniTiembla .16s .6s linear infinite; }
+.rueda .mini svg { width: 100%; height: 100%; }
+@keyframes miniSale { from { transform: translate(0, -260px) scale(.2) rotate(-200deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes miniTiembla { 0% { transform: translateX(-3px) rotate(-4deg); } 50% { transform: translateX(3px) rotate(4deg); } 100% { transform: translateX(-3px) rotate(-4deg); } }
+#cof-ruedas.flotan .rueda { animation: flota 1s ease-in-out infinite alternate; } #cof-ruedas.flotan .rueda:nth-child(even) { animation-delay: -.5s; }
+@keyframes flota { from { transform: translateY(-10px) rotate(-2deg); } to { transform: translateY(10px) rotate(2deg); } }
+.chispa { position: absolute; width: 8px; height: 8px; border-radius: 50%; z-index: 4; pointer-events: none; animation: chispa 1s ease-out forwards; box-shadow: 0 0 8px currentColor; }
+@keyframes chispa { from { transform: translate(0, 0) scale(1.3); opacity: 1; } to { transform: translate(var(--dx), calc(var(--dy) + 40px)) scale(.2); opacity: 0; } }
+#cof-bot { position: absolute; right: 6px; bottom: 90px; z-index: 6; text-align: center; animation: botEntra .5s ease-out, tiembla .09s .5s linear infinite; pointer-events: none; }
+#cof-bot canvas { width: 130px; height: 130px; display: block; margin: 0 auto; }
+#cof-bot div { background: #fff; color: #1b0f2a; padding: 4px 10px; border-radius: 12px; border: 3px solid var(--outline); font-size: 15px; }
+@keyframes botEntra { from { transform: translateX(200px); } to { transform: none; } }

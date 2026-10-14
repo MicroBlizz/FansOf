@@ -118,7 +118,7 @@ body.tactil.vertical #h-arma { bottom: auto; top: calc(140px + env(safe-area-ins
 body.tactil.vertical #h-arma b { font-size: 22px; }
 body.tactil.vertical #h-arriba { left: calc(10px + env(safe-area-inset-left)); right: auto; transform: none; top: calc(150px + env(safe-area-inset-top)); }
 body.tactil.vertical.modo-auto #p-izq { left: 0; width: 60%; height: 42%; }
-body.tactil.vertical.modo-auto #p-izq::before, body.tactil.vertical.modo-auto #p-izq:not(.activa) > i { left: var(--cx, 42%); top: var(--cy, 62%); }
+body.tactil.vertical.modo-auto #p-izq::before, body.tactil.vertical.modo-auto #p-izq:not(.activa) > i { left: var(--cx, 42%); top: var(--cy, 50%); }
 body.tactil.vertical.modo-auto #b-fuego { right: calc(20px + env(safe-area-inset-right)); bottom: calc(60px + env(safe-area-inset-bottom)); width: 112px; height: 112px; }
 body.tactil.vertical.modo-auto #b-recarga { right: calc(140px + env(safe-area-inset-right)); bottom: calc(40px + env(safe-area-inset-bottom)); }
 body.tactil.vertical.modo-auto #b-esquiva { right: calc(148px + env(safe-area-inset-right)); bottom: calc(110px + env(safe-area-inset-bottom)); }

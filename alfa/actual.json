@@ -1,7 +1,8 @@
 {
- "hash": "4701aeb",
- "fecha": "2026-10-14T23:17:46Z",
- "mensaje": "alfa.yml: no dejar las credenciales del repo privado en git (daban 403 en el público)",
+ "build": 3,
+ "hash": "69c41b9",
+ "fecha": "2026-10-14T23:45:58Z",
+ "mensaje": "Feedback: la versión (y en la alfa el build y el hash) sombreada bajo la pestaña y en el cuadro; alfa con build <ver>-a<build>.<hash>",
  "juegos": {
   "crush": "0.1.14",
   "dark": "0.2.3",

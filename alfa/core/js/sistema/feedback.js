@@ -34,20 +34,28 @@
   #fb-contacto button { margin-top: 6px; cursor: pointer; font: 800 13px "Baloo 2", system-ui, sans-serif; padding: 6px 12px; border-radius: 10px; border: 3px solid #20102c; background: #26143c; color: #fff6ea; }
   #fb-enviar { margin-top: 12px; width: 100%; cursor: pointer; font-family: "Luckiest Guy", "Arial Black", Impact, sans-serif; font-size: 22px; padding: 10px 0 6px; border-radius: 14px; border: 3px solid #20102c; background: linear-gradient(to bottom, #ffb347, #ff7a1a); color: #fff6ea; box-shadow: 0 3px 0 #20102c; text-shadow: 2px 2px 0 #20102c; }
   #fb-enviar:disabled { opacity: .55; cursor: default; }
+  #fb-ver { position: fixed; left: 0; z-index: 39; width: 30px; display: flex; justify-content: center; pointer-events: none; font: 700 10px/1 system-ui, sans-serif; color: rgba(255, 246, 234, .5); text-shadow: 0 1px 2px #20102c, 0 0 3px #20102c; }
+  #fb-ver[hidden] { display: none; }
+  #fb-ver span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
   #fb-aviso { margin-top: 8px; font-size: 13px; font-weight: 800; color: #ffb347; min-height: 1em; }`;
   document.head.appendChild(css);
 
   const pestana = document.createElement('button');
   pestana.id = 'fb-pestana'; pestana.type = 'button'; pestana.hidden = true;
   pestana.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H11l-5 4v-4H4z" fill="#ffcb3d" stroke="#20102c" stroke-width="2.2" stroke-linejoin="round"/></svg>';
+  // la versión, sombreada, bajo la pestaña (y completa en el cuadro): la release «0.9.133»; la alfa «b12» (build) con su hash. Es la misma que se manda con el comentario.
+  const partes = String(NUCLEO.version || '0').split('-a'), alfaB = partes[1] ? partes[1].split('.') : null;
+  const verCorta = alfaB ? 'ALFA b' + alfaB[0] : partes[0];
+  const verLarga = () => tr('versión') + ' ' + partes[0] + (alfaB ? ' · ' + tr('copia de pruebas') + ' (alfa) · build ' + alfaB[0] + ' · ' + (alfaB[1] || '') : '');
+  const ver = document.createElement('div'); ver.id = 'fb-ver'; ver.hidden = true; ver.innerHTML = '<span></span>'; ver.firstChild.textContent = verCorta;
   const fondo = document.createElement('div');
   fondo.id = 'fb-fondo'; fondo.hidden = true;
   fondo.innerHTML = '<div id="fb-caja" role="dialog" aria-modal="true" aria-labelledby="fb-titulo"><button type="button" id="fb-x" aria-label="X">✕</button><div id="fb-cuerpo"></div></div>';
-  const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); };
-  const ponerEtiqueta = () => { const t = tr('Enviar comentarios'); pestana.title = t; pestana.setAttribute('aria-label', t); };
-  const colocar = () => { const st = document.getElementById('stage'); pestana.style.left = st ? Math.max(0, st.getBoundingClientRect().left) + 'px' : '0'; };
+  const mostrar = () => { pestana.hidden = !!(typeof enPartida === 'function' && enPartida()); ver.hidden = pestana.hidden; };
+  const ponerEtiqueta = () => { const t = tr('Enviar comentarios'); pestana.title = t + ' · ' + verLarga(); pestana.setAttribute('aria-label', t); };
+  const colocar = () => { const st = document.getElementById('stage'); const x = st ? Math.max(0, st.getBoundingClientRect().left) + 'px' : '0'; pestana.style.left = ver.style.left = x; ver.style.bottom = 'calc(30% - ' + (verCorta.length * 6 + 6) + 'px)'; };
   function iniciar() {
-    document.body.append(pestana, fondo); ponerEtiqueta(); colocar(); mostrar();
+    document.body.append(pestana, ver, fondo); ponerEtiqueta(); colocar(); mostrar();
     window.addEventListener('resize', colocar); setInterval(() => { mostrar(); colocar(); }, 1500);
   }
   const cerrar = () => { fondo.hidden = true; };
@@ -66,6 +74,7 @@
       + (conEmail() ? `<small style="margin-top:2px">${esc(tr('Usaremos {e}.', { e: CUENTA.email }))}</small>`
         : `<small style="margin-top:2px">${esc(tr('Para eso necesitamos tu email: entra con tu cuenta.'))}</small>${typeof pedirCuenta === 'function' ? `<button type="button" id="fb-entrar">${esc(tr('ENTRAR CON MI CUENTA'))}</button>` : ''}`)
       + `</div></div><button type="button" id="fb-enviar">${esc(tr('ENVIAR'))}</button><div id="fb-aviso" role="status">${esc(aviso || '')}</div>`
+      + `<small style="opacity:.7">${esc(verLarga())}</small>`
       + `<small>${esc(tr('Tu email solo lo usamos si marcas la casilla.'))} <a href="${base}privacidad/?lang=${typeof IDIOMA !== 'undefined' ? IDIOMA.actual : 'es'}" target="_blank" rel="noopener">${esc(tr('Privacidad'))}</a></small>`;
     document.getElementById('fb-texto').value = texto; if (marcado && conEmail()) document.getElementById('fb-check').checked = true;
   }

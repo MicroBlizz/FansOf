@@ -21,4 +21,6 @@ IDIOMA.add({
   "CERRAR": "CLOSE",
   "Hoy has mandado muchos comentarios. Vuelve mañana.": "You've sent a lot of comments today. Come back tomorrow.",
   "No se ha podido enviar. Prueba otra vez.": "Couldn't send it. Try again.",
+  "versión": "version",
+  "copia de pruebas": "test copy"
 });

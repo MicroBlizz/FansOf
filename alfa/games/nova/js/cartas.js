@@ -1,6 +1,8 @@
 // Fans of Nova · Cartas de rango: arma nueva, mejora, fusión o defensa, con el pool inclinado por sinergia (PLAN-NOVA.md, «El pool inclinado»).
 // Cada carta es { tipo, titulo, detalle, carga, tendencia, peso, aplicar() }.
 'use strict';
+// Las armas nuevas salen del tamaño que toca a tu rango (más tarde, medianas y grandes); el taller de la estación las une o las divide.
+function nvTamNuevo(rango) { return rango >= 18 ? 'L' : rango >= 9 ? 'M' : 'S'; }
 const NV_CARGAS = ['cinetica', 'energia', 'termica', 'em', 'explosiva'];
 // Prototipo: todas las ranuras de armas admiten los cinco portadores, para probar toda la matriz de fusiones (en el juego real manda la plantilla de la facción).
 const NV_TIPOS_LIBRES = ['railgun', 'flak', 'laser', 'lanzador', 'drones'];
@@ -26,27 +28,27 @@ function nvCandidatas(S) {
     const tipos = (sl.cara === 'popa' ? [] : S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]);
     for (const portador of tipos) for (const carga of NV_CARGAS) {
       const peso = nvPesoTendencia(S, portador, carga);
-      out.push({ tipo: 'arma', cat: 'of', peso: peso * (n.armas.length ? 0.35 : 1) * 1 / (tipos.length || 1) / 2, carga, tendencia: peso > 1.4,
+      out.push({ tipo: 'arma', cat: 'of', ic: ['arma', portador], peso: peso * (n.armas.length ? 0.35 : 1) * 1 / (tipos.length || 1) / 2, carga, tendencia: peso > 1.4,
         titulo: tr(NOVA_ARMAS.portadores[portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
-        detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (S). ' + tr(NOVA_ARMAS.portadores[portador].fuerte),
-        aplicar: () => n.armas.push(nvArmaNueva(sl, portador, carga)) });
+        detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + nvTamNuevo(n.rango) + '). ' + tr(NOVA_ARMAS.portadores[portador].fuerte),
+        aplicar: () => n.armas.push(nvArmaNueva(sl, portador, carga, null, nvTamNuevo(n.rango))) });
     }
     if (sl.tipos.includes('defensa')) {
-      if (!n.esc) out.push({ tipo: 'defensa', cat: 'de', peso: 1.2, carga: 'energia', titulo: tr('Escudo'), detalle: tr('Absorbe 200 de daño y se regenera si pasas 3 s sin que te peguen'), aplicar: () => { n.esc = { hp: 200, cap: 200, reg: 15, sin: 0 }; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'energia', nivel: 0, cd: 0 }); } });
-      if (!S.mejoras.blindaje) out.push({ tipo: 'defensa', cat: 'de', peso: 1, carga: 'cinetica', titulo: tr('Blindaje'), detalle: tr('Recibes un 25 % menos de daño'), aplicar: () => { S.mejoras.blindaje = 0.25; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'cinetica', nivel: 0, cd: 0 }); } });
+      if (!n.esc) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'escudo'], peso: 1.2, carga: 'energia', titulo: tr('Escudo'), detalle: tr('Absorbe 200 de daño y se regenera si pasas 3 s sin que te peguen'), aplicar: () => { n.esc = { hp: 200, cap: 200, reg: 15, sin: 0 }; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'energia', nivel: 0, cd: 0 }); } });
+      if (!S.mejoras.blindaje) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'blindaje'], peso: 1, carga: 'cinetica', titulo: tr('Blindaje'), detalle: tr('Recibes un 25 % menos de daño'), aplicar: () => { S.mejoras.blindaje = 0.25; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'cinetica', nivel: 0, cd: 0 }); } });
     }
   }
   const act = n.armas.filter(w => w.portador !== 'defensa');
-  for (const w of act) if (w.nivel < NOVA_ARMAS.mejora.maxNiveles) out.push({ tipo: 'mejora', cat: 'of', peso: 0.9, carga: w.carga, titulo: tr('Mejora') + ': ' + nvNombreArma(w), detalle: tr('+25 % de daño') + ' (' + (w.nivel + 1) + '/' + NOVA_ARMAS.mejora.maxNiveles + ')', aplicar: () => { w.nivel++; } });
+  for (const w of act) if (w.nivel < NOVA_ARMAS.mejora.maxNiveles) out.push({ tipo: 'mejora', cat: 'of', ic: ['arma', w.portador], peso: 0.9, carga: w.carga, titulo: tr('Mejora') + ': ' + nvNombreArma(w), detalle: tr('+25 % de daño') + ' (' + (w.nivel + 1) + '/' + NOVA_ARMAS.mejora.maxNiveles + ')', aplicar: () => { w.nivel++; } });
   const llenas = !out.some(o => o.tipo === 'arma');   // con todas las ranuras llenas, las mejoras pequeñas pasan a ser lo normal
-  for (const m of NV_MEJORAS_SISTEMA) if ((S.sist[m.id] || 0) < m.max && !(m.id === 'robo' && !act.length)) out.push({ tipo: 'sistema', cat: m.cat, peso: llenas ? 1.6 : 0.5, carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
+  for (const m of NV_MEJORAS_SISTEMA) if ((S.sist[m.id] || 0) < m.max && !(m.id === 'robo' && !act.length)) out.push({ tipo: 'sistema', cat: m.cat, ic: ['sis', m.id], peso: llenas ? 1.6 : 0.5, carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
   // fusiones: portador de una + carga de la otra (mixta), o dos del mismo portador (doble)
   for (const a of act) for (const b of act) {
     if (a === b || a.fusion || b.fusion) continue;
     for (const f of NOVA_ARMAS.fusiones) {
       const ok = f.tipo === 'doble' ? (a.portador === f.portador && b.portador === f.portador && a.carga === f.carga) : (a.portador === f.portador && b.carga === f.carga && a.carga !== b.carga);
       if (!ok) continue;
-      out.push({ tipo: 'fusion', cat: 'of', peso: 3, carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
+      out.push({ tipo: 'fusion', cat: 'of', ic: ['sis', 'fusion'], peso: 3, carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
         aplicar: () => { n.armas.splice(n.armas.indexOf(b), 1); a.fusion = f; a.portador = f.portador; a.carga = f.carga; a.nivel = Math.max(a.nivel, b.nivel); if (b.tam === 'L' || (b.tam === 'M' && a.tam === 'S')) a.tam = b.tam; } });
     }
   }

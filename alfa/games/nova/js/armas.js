@@ -6,8 +6,8 @@ const NV_CARAS_DIR = { proa: [0, -1], babor: [-1, 0], estribor: [1, 0], dorsal: 
 const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco útil baja de aquí (en datos-cascos.js la proa tiene 30°: por decidir)
 
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
-// Las de arma siguen Fibonacci: 2 al empezar (una con el arma de la facción y otra vacía para la primera subida), 3, 5, 8 y 13; la de popa (defensa) va aparte.
-const NV_FIB_SLOTS = [[1, 2], [3, 3], [6, 5], [11, 8], [18, 13]];   // [rango desde el que vale, cuántas ranuras de arma]
+// Las de arma siguen Fibonacci: 2 al empezar (una con el arma de la facción y otra vacía para la primera subida), 3, 5 y 8; la de popa (defensa) va aparte.
+const NV_FIB_SLOTS = [[1, 2], [6, 3], [12, 5], [20, 8]];   // [rango desde el que vale, cuántas ranuras de arma]
 const NV_ORDEN_SLOTS = ['proa1', 'babor1', 'estribor1', 'dorsal1', 'dorsal2', 'babor2', 'estribor2', 'babor3', 'estribor3', 'babor4', 'estribor4', 'babor5', 'estribor5'];
 function nvNumSlots(rango) { let n = 0; for (const [r, c] of NV_FIB_SLOTS) if (rango >= r) n = c; return n; }
 function nvRanuras(rango, S) {

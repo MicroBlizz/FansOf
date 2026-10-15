@@ -15,6 +15,13 @@
 .nv-titulo { font-family: 'Luckiest Guy', 'Baloo 2', sans-serif; font-size: 30px; text-align: center; color: #fff; text-shadow: 0 3px 0 #1a0f2e; letter-spacing: 1px; }
 .nv-carta { --col: #ff9a3c; display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 11px 14px; border-radius: 14px; border: 3px solid #1a0f2e; border-left: 10px solid var(--col); background: linear-gradient(135deg, #26306a, #151b43); color: #fff; font-family: 'Baloo 2', sans-serif; cursor: pointer; }
 .nv-carta:active { transform: scale(.98); }
+.nv-cic { flex-direction: row; align-items: center; gap: 12px; }
+.nv-cic > canvas { flex: none; }
+.nv-celda { position: relative; }
+.nv-tam { position: absolute; right: 8px; top: 6px; font-weight: 800; font-size: 22px; color: var(--col); text-shadow: 0 2px 0 #1a0f2e; }
+.nv-sel { outline: 3px solid #ffd93d; }
+.nv-receta { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; font-size: 13px; font-weight: 800; }
+.nv-receta span { padding: 3px 9px; border-radius: 10px; background: #12142c; border: 2px solid #1a0f2e; }
 .nv-ctipo { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: var(--col); }
 .nv-cnom { font-size: 19px; font-weight: 800; line-height: 1.1; }
 .nv-cdet { font-size: 13px; opacity: .85; line-height: 1.2; }

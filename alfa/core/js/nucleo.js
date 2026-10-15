@@ -79,6 +79,7 @@ const NUCLEO = (() => {
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
+    'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
     'js/sistema/pruebas.js',       // el modo pruebas de Opciones: todo al máximo, con copia para volver a tu partida
@@ -95,6 +96,7 @@ const NUCLEO = (() => {
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
+    'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
     'js/sistema/energia-premio.js',  // la celebración al ganar y recuperar el caos primordial gastado
   ];

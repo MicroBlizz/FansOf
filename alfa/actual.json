@@ -1,8 +1,8 @@
 {
- "build": 52,
- "hash": "0c961f2",
- "fecha": "2026-10-15T10:01:44Z",
- "mensaje": "Rouflage: el cazador ve mucho menos fuera de la linterna (velo 0.70 a 0.93)",
+ "build": 53,
+ "hash": "9cce968",
+ "fecha": "2026-10-15T10:24:33Z",
+ "mensaje": "Nova: iconos, taller de tamaños claro, ranuras Fibonacci a la mitad, armas M/L al subir; contador de fps y rendimiento anónimo (SQL sin aplicar)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

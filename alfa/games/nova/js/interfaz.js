@@ -74,6 +74,7 @@ function nvPanelesDOM(S) {
       const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c');
       b.appendChild(nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : '')));
       b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));
+      if (c.ic) nvConIcono(b, c.ic[0], c.ic[1], NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c', 52);
       b.onclick = () => { nvElegirCarta(S, i); cont.textContent = ''; NVI.cartasVistas = null; };
       p.appendChild(b);
     });
@@ -143,6 +144,7 @@ function nvMenuCapitan(casco) {
     b.appendChild(nvEl('nv-cnom', tr(K.nombre)));
     b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
     if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
+    nvConIcono(b, 'cap', id, NV_COL_CAP[id], 58);
     b.onclick = () => nvMenuOficial(casco, id);
     p.appendChild(b);
   }
@@ -157,60 +159,61 @@ function nvMenuOficial(casco, cap) {
     const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', '#6fc4ff');
     b.appendChild(nvEl('nv-cnom', tr(F.nombre)));
     b.appendChild(nvEl('nv-cdet', tr(NV_OFICIAL_TXT[id])));
+    nvConIcono(b, 'fac', id, '#6fc4ff', 52);
     b.onclick = () => { cont.textContent = ''; NVP.casco = casco; NVP.cap = cap; NVP.ofi = id; nvEmpieza(casco, cap, id); };
     p.appendChild(b);
   }
   const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => nvMenuCapitan(casco); p.appendChild(at);
   cont.appendChild(p);
 }
+const NV_COL_CAP = { progamer: '#6fc4ff', bunny: '#ff9a3c', necrolord: '#7ad06b', twitchking: '#b46bff', epicchampion: '#ff5b5b' };
 const NV_OFICIAL_TXT = { fuego: 'Daño +10 %', defensa: 'Casco +15 %', ingenieria: 'Reparación automática y un 1 % de robo de casco', tacticas: 'Una repetición de cartas más en cada subida', navegacion: 'Velocidad +8 % y la chatarra te alcanza de más lejos' };
 
 // ---------- estación: reparar y cambiar armas por chatarra de la cartera ----------
+function nvTile(w, sel) {   // una arma como ficha: icono, nombre y el tamaño grande en la esquina
+  const b = nvEl('nv-carta nv-celda' + (sel ? ' nv-sel' : ''), '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[w.carga].color);
+  b.appendChild(nvEl('nv-cnom', nvNombreArma(w) + (w.nivel ? ' +' + w.nivel : '')));
+  b.appendChild(nvEl('nv-cdet', tr(w.cara) + ' · ' + tr({ S: 'pequeña', M: 'mediana', L: 'grande' }[w.tam])));
+  nvConIcono(b, 'arma', w.portador, NOVA_ARMAS.cargas[w.carga].color, 48);
+  b.appendChild(nvEl('nv-tam', w.tam));
+  return b;
+}
 function nvRenderEstacion(S) {
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
   const n = S.nave, p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ESTACIÓN')));
   p.appendChild(nvEl('nv-cdet', tr('Chatarra para gastar') + ': ' + Math.floor(S.cartera)));
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
+  const armas = n.armas.filter(w => w.portador !== 'defensa');
   if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
-    const T = S.estTaller, armas = n.armas.filter(w => w.portador !== 'defensa');
-    T.sel = T.sel.filter(w => armas.includes(w));
-    p.appendChild(nvEl('nv-cdet', tr('Elige 2 armas del mismo tamaño para unirlas, o 1 para dividirla')));
-    for (const w of armas) {
-      const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[w.carga].color);
-      if (T.sel.includes(w)) b.style.outline = '3px solid #ffd93d';
-      b.appendChild(nvEl('nv-cnom', nvNombreArma(w) + (w.nivel ? ' +' + w.nivel : '')));
-      b.appendChild(nvEl('nv-cdet', tr('Tamaño') + ' ' + w.tam));
-      b.onclick = () => { T.sel = T.sel.includes(w) ? T.sel.filter(x => x !== w) : T.sel.concat(w).slice(-2); nvRenderEstacion(S); };
-      p.appendChild(b);
-    }
+    const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
+    const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
+    p.appendChild(nvEl('nv-titulo', tr('TALLER DE TAMAÑOS')));
+    const rc = nvEl('nv-receta'); for (const t of ['S + S → M', 'M + M → L', 'L → M + M', 'M → S + S']) rc.appendChild(nvEl('', t)); p.appendChild(rc);
+    p.appendChild(nvEl('nv-cdet', tr('Ranuras libres') + ': ' + libres + ' · ' + tr('Más tamaño = mucho más daño, alcance y bala')));
+    for (const w of armas) { const t = nvTile(w, T.sel.includes(w)); t.onclick = () => { T.sel = T.sel.includes(w) ? T.sel.filter(x => x !== w) : T.sel.concat(w).slice(-2); nvRenderEstacion(S); }; p.appendChild(t); }
     const [a, b2] = T.sel;
-    if (T.sel.length === 2 && nvPuedeUnir(a, b2)) {
-      const u = nvEl('nv-boton', tr(a.tam === 'S' ? 'Unir en una mediana' : 'Unir en una grande'), 'button');
-      u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
-    }
-    if (T.sel.length === 1 && NV_ANT_TAM[a.tam]) {
-      const libre = !!nvRanuraLibre(S, a.portador), d = nvEl('nv-boton', tr(a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (libre ? '' : ' · ' + tr('sin ranura libre')), 'button');
-      d.disabled = !libre; d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
-    }
+    let pista = 'Toca 2 armas del mismo tamaño para unirlas, o 1 para dividirla';
+    if (T.sel.length === 1) pista = a.tam === 'S' ? 'Toca otra pequeña para unirlas en una mediana' : 'Toca otra del mismo tamaño para unirlas, o divide esta';
+    if (T.sel.length === 2) pista = nvPuedeUnir(a, b2) ? 'Se unen en una ' + (a.tam === 'S' ? 'mediana' : 'grande') : 'Tienen que ser del mismo tamaño y no grandes';
+    p.appendChild(nvEl('nv-cdet', tr(pista)));
+    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2));
+    u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
+    const ok = T.sel.length === 1 && NV_ANT_TAM[a.tam] && nvRanuraLibre(S, a.portador);
+    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok;
+    d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
   } else if (!S.estSel) {
-    const ta = nvEl('nv-boton', tr('Taller de tamaños'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
+    const ta = nvEl('nv-boton', tr('Taller de tamaños') + ' · ' + tr('unir y dividir armas'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
     p.appendChild(nvEl('nv-cdet', tr('Cambiar un arma')));
-    for (const w of n.armas) {
-      if (w.portador === 'defensa') continue;
-      const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[w.carga].color);
-      b.appendChild(nvEl('nv-cnom', nvNombreArma(w) + (w.nivel ? ' +' + w.nivel : '')));
-      b.appendChild(nvEl('nv-cdet', tr(w.cara) + ' · ' + w.tam));
-      b.onclick = () => { S.estSel = { w, ofertas: nvOfertasEstacion(S, w.slot) }; nvRenderEstacion(S); };
-      p.appendChild(b);
-    }
+    for (const w of armas) { const t = nvTile(w, false); t.onclick = () => { S.estSel = { w, ofertas: nvOfertasEstacion(S, w.slot) }; nvRenderEstacion(S); }; p.appendChild(t); }
   } else {
     p.appendChild(nvEl('nv-cdet', tr('Sustituir') + ': ' + nvNombreArma(S.estSel.w)));
     for (const o of S.estSel.ofertas) {
       const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[o.carga].color); b.disabled = S.cartera < o.precio;
       b.appendChild(nvEl('nv-cnom', tr(NOVA_ARMAS.portadores[o.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[o.carga].nombre)));
       b.appendChild(nvEl('nv-cdet', tr(NOVA_ARMAS.portadores[o.portador].fuerte) + ' · ' + o.precio));
+      nvConIcono(b, 'arma', o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
       b.onclick = () => { nvCompraArma(S, o, S.estSel.w); S.estSel = null; nvRenderEstacion(S); };
       p.appendChild(b);
     }

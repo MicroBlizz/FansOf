@@ -147,15 +147,20 @@ function nvBucle(ahora) {
   if (NVP.auto && S.estado === 'estacion') nvBotEstacion(S);
   for (let i = 0; i < NVP.vel; i++) nvPaso(S, dt);
   nvDibuja(S);
+  if (typeof RENDIMIENTO !== 'undefined') {   // fps en pantalla y, al acabar la partida, resumen anónimo al servidor
+    RENDIMIENTO.dato('enemigos', S.enem.length); RENDIMIENTO.dato('balas', S.proy.length + S.eproy.length); RENDIMIENTO.dato('particulas', S.parts.length + S.fx.length); RENDIMIENTO.dato('rango', S.nave.rango); RENDIMIENTO.dato('armas', S.nave.armas.length);
+    if ((S.estado === 'victoria' || S.estado === 'derrota') && !S.rendEnviado) { S.rendEnviado = true; RENDIMIENTO.parar(); }
+  }
   NVP.raf = requestAnimationFrame(nvBucle);
 }
 function nvEmpieza(casco, cap, ofi) {
   nvNuevaPartida(casco, cap, ofi);
+  if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.activar();
   NVP.ult = 0;
   cancelAnimationFrame(NVP.raf);
   NVP.raf = requestAnimationFrame(nvBucle);
 }
-function nvParar() { cancelAnimationFrame(NVP.raf); NVP.S = null; }
+function nvParar() { cancelAnimationFrame(NVP.raf); NVP.S = null; if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.parar(); }
 
 // Simulación sin dibujar, para el bot de pruebas: devuelve cuando acaba la partida o pasan `max` segundos.
 function nvSimular(max, dt, bot) {

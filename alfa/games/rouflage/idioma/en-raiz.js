@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.17
+  "<b>TUTORIAL CON BOCADILLOS</b>: la primera vez que juegas contra bots con cada papel, un bocadillo te señala el botón que toca (pintarte, coger color, LISTO, congelarte, silbar…) y espera a que lo hagas. Si quieres verlo otra vez: OPCIONES › Repetir tutorial.": "<b>SPEECH-BUBBLE TUTORIAL</b>: the first time you play against bots with each role, a bubble points at the button you need (paint yourself, pick a colour, DONE, freeze, whistle…) and waits for you to do it. Want to see it again? OPTIONS › Replay tutorial.",
+  "Microblizz ha contratado a un becario solo para sujetar los bocadillos del tutorial. Phony dice que eso no es un trabajo, que es un globo.": "Microblizz has hired an intern just to hold the tutorial bubbles. Phony says that's not a job, that's a balloon.",
   // 0.2.16
   "<b>RANKING Y PAUSA ARREGLADOS</b>: si entrabas en la habitación y volvías al menú por el armario o el perfil, los botones de ranking y pausa desaparecían de todas las partidas siguientes.": "<b>RANKING AND PAUSE FIXED</b>: if you went into the room and back to the menu through the wardrobe or the profile, the ranking and pause buttons vanished from every match after that.",
   "Microblizz asegura que los botones no se habían perdido: estaban probándose ropa en la habitación. Phony les ha cobrado el probador.": "Microblizz insists the buttons weren't lost: they were trying on clothes in the room. Phony charged them for the fitting room.",

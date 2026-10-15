@@ -539,5 +539,18 @@ IDIOMA.add({
   "VALE": "OK",
   "Saltar tutorial": "Skip tutorial",
   "Repetir tutorial": "Replay tutorial",
-  "El tutorial saldrá otra vez en tu próxima partida contra bots": "The tutorial will show again in your next match against bots"
+  "El tutorial saldrá otra vez en tu próxima partida contra bots": "The tutorial will show again in your next match against bots",
+  // el premio diario (diario.js)
+  "DIARIO": "DAILY",
+  "PREMIO DIARIO": "DAILY REWARD",
+  "Si un día no entras, no pierdes nada: sigues por donde ibas.": "Miss a day and you lose nothing: you carry on where you left off.",
+  "Tus Migas": "Your Crumbs",
+  "Semana {n} de {t}": "Week {n} of {t}",
+  "Día {n}": "Day {n}",
+  "¡RECOGER!": "CLAIM!",
+  "Vuelve mañana": "Come back tomorrow",
+  "Premio del día: {p}": "Today's reward: {p}",
+  "Premio de 20 días: ¡conseguido este mes!": "20-day reward: earned this month!",
+  "Días recogidos este mes: {n} de 20 (premio especial)": "Days claimed this month: {n} of 20 (special reward)",
+  "ESCENARIO": "SCENE"
 });

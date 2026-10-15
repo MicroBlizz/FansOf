@@ -1,8 +1,8 @@
 {
- "build": 36,
- "hash": "ac07a5b",
- "fecha": "2026-10-15T07:47:33Z",
- "mensaje": "Rouflage: poderes de fantasma (apagón, silbido falso, mano fría), uno al azar por partida",
+ "build": 37,
+ "hash": "83d1444",
+ "fecha": "2026-10-15T07:49:49Z",
+ "mensaje": "Nova: dificultad más suave (rangos, oleadas, Rey antes) y docs del prototipo",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -3,14 +3,14 @@
 'use strict';
 const NV_ESCALA_NAVE = 0.5;                // tamaño de la nave dibujada (1 = el PNG de arte tal cual); el hitbox sale de él: r = 90 × escala
 const NV_ARENA = 4200;                       // radio de la arena
-const NV_CHATARRA_RANGO = [150, 420, 900, 1700];   // chatarra acumulada para pasar a los rangos 2, 3, 4 y 5
+const NV_CHATARRA_RANGO = [110, 300, 640, 1200];   // chatarra acumulada para pasar a los rangos 2, 3, 4 y 5
 
 const NVP = { casco: 'caza', S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
 
 // Cascos del prototipo: cada facción empieza con un arma de su clase ya montada (afinidad de datos-cascos.js).
 const NV_CASCOS = {
   caza:    { hp: 220, vel: 215, arma: ['flak', 'cinetica'] },
-  crucero: { hp: 170, vel: 190, arma: ['laser', 'termica'] },
+  crucero: { hp: 230, vel: 190, arma: ['laser', 'termica'] },
   fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
 };
 function nvNuevaPartida(casco) {

@@ -2,23 +2,23 @@
 // Cifras PROVISIONALES: se iteran con la partida (PLAN-NOVA.md, «Enemigos»).
 'use strict';
 const NV_ENEM = {
-  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 10,  chat: 4,  tragable: 1, color: '#9be26b' },
+  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 7,  chat: 5,  tragable: 1, color: '#9be26b' },
   fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 21, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8', tira: { cada: 1.7, dano: 9, alcance: 330, v: 250 } },
-  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 22, chat: 18, tragable: 5, color: '#8a6bd1', esc: 150 },
+  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 16, chat: 22, tragable: 5, color: '#8a6bd1', esc: 150 },
   asteroide: { nombre: 'Asteroide', hp: 60, vel: 0, r: 30, contacto: 0, chat: 10, tragable: 1, color: '#8a8fa8', pasivo: 1 },
   nido:      { nombre: 'Nido', hp: 700, vel: 0, r: 62, contacto: 14, chat: 90, color: '#7ad06b', pasivo: 0, nido: 1 },
   capitan:   { nombre: 'Capitán', hp: 1100, vel: 78, r: 52, contacto: 22, chat: 140, color: '#b49cff', esc: 200, capitan: 1 },
-  jefe:      { nombre: 'Rey de los huesos', hp: 9000, vel: 56, r: 80, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
+  jefe:      { nombre: 'Rey de los huesos', hp: 7000, vel: 56, r: 80, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
 };
 // Oleadas: a partir de `desde` segundos aparece ese tipo cada `cada` segundos (por tandas de `lote`).
 const NV_OLEADAS = [
-  { tipo: 'rastrero', desde: 0, cada: 1.6, lote: 1 },
+  { tipo: 'rastrero', desde: 0, cada: 2.4, lote: 1 },
   { tipo: 'rastrero', desde: 60, cada: 4, lote: 3 },
   { tipo: 'fusilero', desde: 60, cada: 6, lote: 1 },
   { tipo: 'sepulturero', desde: 150, cada: 14, lote: 1 },
   { tipo: 'fusilero', desde: 200, cada: 6, lote: 2 }
 ];
-const NV_TIEMPO_JEFE = 660;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
+const NV_TIEMPO_JEFE = 540;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
 
 function nvEnemigo(S, tipo, x, y) {
   const d = NV_ENEM[tipo], e = { tipo, d, rango: 1, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };

@@ -122,6 +122,7 @@ function nvDibujaEnemigo(c, e, S) {
     if (d.capitan) { c.fillStyle = '#ffd93d'; c.font = '800 ' + r * 0.7 + 'px Baloo 2, sans-serif'; c.textAlign = 'center'; c.fillText(String(e.rango), 0, r * 0.62); }
     if (d.jefe) { c.fillStyle = '#ffd93d'; for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(k * r * 0.3 - 6, -r * 0.95); c.lineTo(k * r * 0.3, -r * 1.3); c.lineTo(k * r * 0.3 + 6, -r * 0.95); c.fill(); } }
   }
+  if (e.armas) for (const w of e.armas) { c.beginPath(); c.arc(w.ax * r, w.ay * r, r * { S: 0.13, M: 0.2, L: 0.3 }[w.tam], 0, 6.283); c.fillStyle = '#ff6b6b'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#1a0f2e'; c.stroke(); }   // armas en sus anclajes
   if (!d.pasivo && !d.nido && !d.jefe) {   // anillo de peligro según su rango frente al tuyo: rojo = huye, naranja = cuidado, amarillo = parecido, verde = presa
     const df = e.rango - S.nave.rango, col = df >= 4 ? '#ff3b3b' : df >= 2 ? '#ff9a3c' : df >= -1 ? '#ffe066' : '#6bff8a';
     c.beginPath(); c.arc(0, 0, r + 4, 0, 6.283); c.lineWidth = df >= 4 ? 4 : 2.5; c.strokeStyle = col; c.globalAlpha = df >= 4 ? 0.55 + 0.4 * Math.sin(S.t * 8) : 0.75; c.stroke(); c.globalAlpha = 1;

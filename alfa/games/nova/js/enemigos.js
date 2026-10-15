@@ -2,9 +2,9 @@
 // Cifras PROVISIONALES: se iteran con la partida (PLAN-NOVA.md, «Enemigos»).
 'use strict';
 const NV_ENEM = {
-  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 5,  chat: 6,  tragable: 1, color: '#9be26b', tira: { cada: 1.9, dano: 5, alcance: 240, v: 230 } },
-  fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 21, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8', tira: { cada: 1.7, dano: 9, alcance: 330, v: 250 } },
-  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 16, chat: 22, tragable: 5, color: '#8a6bd1', esc: 150, tira: { cada: 1.5, dano: 12, alcance: 380, v: 240 } },
+  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 5,  chat: 6,  tragable: 1, color: '#9be26b' },
+  fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 21, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8' },
+  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 16, chat: 22, tragable: 5, color: '#8a6bd1', esc: 150 },
   asteroide: { nombre: 'Asteroide', hp: 60, vel: 0, r: 30, contacto: 0, chat: 10, tragable: 1, color: '#8a8fa8', pasivo: 1 },
   nido:      { nombre: 'Nido', hp: 700, vel: 0, r: 62, contacto: 14, chat: 90, color: '#7ad06b', pasivo: 0, nido: 1 },
   capitan:   { nombre: 'Capitán', hp: 1100, vel: 78, r: 52, contacto: 22, chat: 140, color: '#b49cff', esc: 200, capitan: 1 },
@@ -20,6 +20,31 @@ const NV_OLEADAS = [
 ];
 const NV_TIEMPO_JEFE = 540;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
 
+// Armas de las naves enemigas: cada tamaño cuesta puntos (S 1, M 2, L 4) y una nave de rango k tiene 1 + 0,7·(k-1) puntos.
+// Se reparten entre sus anclajes predefinidos sin pasarse: muchas pequeñas, unas cuantas medianas, alguna grande o mezcla.
+const NV_ARMA_E = { S: { c: 1, dano: 4, cada: 1.7, alc: 260, v: 240, r: 4 }, M: { c: 2, dano: 9, cada: 2.1, alc: 360, v: 250, r: 6 }, L: { c: 4, dano: 20, cada: 2.7, alc: 480, v: 260, r: 9 } };
+const NV_ANCLAJES = {   // posiciones sobre la nave, en fracciones del radio
+  rastrero: [[0, -0.9], [-0.75, -0.3], [0.75, -0.3], [-0.5, 0.6], [0.5, 0.6], [0, 0.2], [-0.95, 0.3], [0.95, 0.3], [0, 0.9], [-0.3, -0.6], [0.3, -0.6], [0, -0.3]],
+  fusilero: [[0, -1.1], [-0.55, 0.1], [0.55, 0.1], [-0.9, 0.8], [0.9, 0.8], [0, 0.3], [-0.3, -0.4], [0.3, -0.4], [-0.7, 0.45], [0.7, 0.45], [0, 0.8], [0, -0.6]],
+  sepulturero: [[0, -0.9], [-0.7, -0.6], [0.7, -0.6], [-0.95, 0], [0.95, 0], [-0.7, 0.6], [0.7, 0.6], [0, 0.9], [0, 0], [-0.4, -0.3], [0.4, -0.3], [-0.4, 0.4], [0.4, 0.4], [0, -0.5]]
+};
+function nvArmasEnemigo(tipo, rango) {
+  const anc = NV_ANCLAJES[tipo];
+  if (!anc) return null;
+  let resto = Math.round(1 + 0.7 * (rango - 1));
+  const modos = [[4, 0.6, 0], [2, 3, 0.4], [0.5, 2, 3], [3, 2, 1]], w = modos[Math.floor(Math.random() * modos.length)], lista = [];
+  const libres = anc.slice().sort(() => Math.random() - 0.5);
+  while (resto > 0 && lista.length < anc.length) {
+    const op = ['S', 'M', 'L'].filter((t, i) => NV_ARMA_E[t].c <= resto && w[i] > 0), tot = op.reduce((a, t) => a + w[['S', 'M', 'L'].indexOf(t)], 0);
+    let q = Math.random() * tot, t = op[0];
+    for (const o of op) { q -= w[['S', 'M', 'L'].indexOf(o)]; if (q <= 0) { t = o; break; } }
+    resto -= NV_ARMA_E[t].c;
+    const a = libres[lista.length];
+    lista.push({ tam: t, ax: a[0], ay: a[1], cd: 0.5 + Math.random() * 2 });
+  }
+  return lista;
+}
+
 // Naves de todos los tamaños: cada rango es ×1,07 de tamaño (igual que tú), ×1,2 de casco, ×1,12 de daño y ×1,3 de chatarra.
 function nvEnemigo(S, tipo, x, y, rango) {
   rango = Math.max(1, Math.min(40, rango || 1));
@@ -28,9 +53,10 @@ function nvEnemigo(S, tipo, x, y, rango) {
     const q = Math.pow(1.12, rango - 1);
     d = Object.assign({}, d, { r: Math.round(d.r * nvFactor(rango)), hp: Math.round(d.hp * Math.pow(1.2, rango - 1)), contacto: Math.round(d.contacto * q), chat: d.chat * Math.pow(1.3, rango - 1) });
     if (d.esc) d.esc = Math.round(d.esc * Math.pow(1.2, rango - 1));
-    if (d.tira) d.tira = Object.assign({}, d.tira, { dano: Math.round(d.tira.dano * q) });
   }
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
+  e.armas = nvArmasEnemigo(tipo, rango);
+  if (e.armas) e.alcMax = Math.max(...e.armas.map(w => NV_ARMA_E[w.tam].alc));
   S.enem.push(e);
   return e;
 }
@@ -77,11 +103,16 @@ function nvEnemigos(S, dt) {
     if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) { if (e.errante) { e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt; } continue; }   // lejos: dormido o a lo suyo
     const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
     let vx = 0, vy = 0;
-    if (e.d.tira) {   // el fusilero orbita a su alcance y dispara
-      const ideal = e.d.tira.alcance * 0.7, radial = dist > ideal ? 1 : -0.6;
+    if (e.armas) {   // la nave orbita a su alcance y cada arma dispara desde su anclaje
+      const ideal = e.alcMax * 0.7, radial = dist > ideal ? 1 : -0.6;
       vx = ux * radial + -uy * 0.8; vy = uy * radial + ux * 0.8;
-      e.cd -= dt * (apagado ? 0 : 1);
-      if (e.cd <= 0 && dist < e.d.tira.alcance) { e.cd = e.d.tira.cada; S.eproy.push({ x: e.x, y: e.y, vx: ux * e.d.tira.v, vy: uy * e.d.tira.v, dano: e.d.tira.dano, vida: 2.5, r: 5 }); }
+      if (!apagado) for (const w of e.armas) {
+        const A = NV_ARMA_E[w.tam];
+        if ((w.cd -= dt) > 0 || dist > A.alc + e.r) continue;
+        w.cd = A.cada;
+        const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1;
+        S.eproy.push({ x: px, y: py, vx: (n.x - px) / d * A.v, vy: (n.y - py) / d * A.v, dano: A.dano, vida: A.alc / A.v + 0.4, r: A.r });
+      }
     } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
     else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }
     else { vx = ux; vy = uy; }

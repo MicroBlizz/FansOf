@@ -1,8 +1,8 @@
 {
- "build": 45,
- "hash": "a7f2287",
- "fecha": "2026-10-15T09:01:54Z",
- "mensaje": "Nova: los enemigos solo hacen daño con sus armas, no por chocar",
+ "build": 46,
+ "hash": "d9c70a3",
+ "fecha": "2026-10-15T09:04:46Z",
+ "mensaje": "Nova: armas de las naves enemigas con cupo por tamaño y anclajes predefinidos",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

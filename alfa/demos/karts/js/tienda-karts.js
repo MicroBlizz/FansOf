@@ -109,7 +109,7 @@ function pintaFicha() {
 function animaFicha() {
   if (!TK.modal || !TK.lienzo) return;
   const c = COS[TK.ficha], [cv2, x] = TK.lienzo; x.clearRect(0, 0, cv2.width, cv2.height);
-  if (c.tipo === 'titulo') { const f = figuraJugador(JUGABLES[TK.pil].id); pintaKartCon(x, f, 80, 74, BASE_KART * 1.2, RELOJ * 1.2); escribe(x, tr(JUGABLES[TK.pil].nombre), 80, 82, '#ffffff', '#1c1028', 'centro'); escribe(x, tr(c.nombre), 80, 94, '#ffcb3d', '#1c1028', 'centro'); return; }
+  if (c.tipo === 'titulo') { const f = figuraJugador(JUGABLES[TK.pil].id); pintaKartCon(x, f, 80, 74, BASE_KART * 1.2, RELOJ * 1.2); escribePx(x, tr(JUGABLES[TK.pil].nombre), 80, 82, '#ffffff', '#1c1028', 'centro'); escribePx(x, tr(c.nombre), 80, 94, '#ffcb3d', '#1c1028', 'centro'); return; }
   const pil = c.solo || JUGABLES[TK.pil].id;
   pintaKartCon(x, figuraPrueba(pil, c), 80, 100, BASE_KART * 1.6, c.tipo === 'humo' ? Math.PI * 0.08 + Math.sin(RELOJ) * 0.4 : RELOJ * 1.1, c.tipo === 'humo' ? c : null, RELOJ * 0.8);
 }

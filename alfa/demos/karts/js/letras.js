@@ -101,7 +101,7 @@ function glifo(ch) {
   }
   return (GLIFOS[ch] = { w, pts });
 }
-function anchoTexto(t, esc = 1) { let w = 0; for (const ch of t) w += (ch === ' ' ? 3 : glifo(ch).w) + 1; return Math.max(0, w - 1) * esc; }
+function anchoTextoPx(t, esc = 1) { let w = 0; for (const ch of t) w += (ch === ' ' ? 3 : glifo(ch).w) + 1; return Math.max(0, w - 1) * esc; }
 
 // el dibujito de una letra con su color, su sombra (abajo a la derecha) o su borde, a un tamaño: se hace una vez y se guarda
 const SELLOS_LETRA = new Map();
@@ -119,9 +119,9 @@ function selloLetra(ch, color, sombra, borde, esc) {
   return s;
 }
 // escribe en (x, y) = arriba a la izquierda de las mayúsculas. al: 'izq', 'centro' o 'der'. Con `borde`, la letra lleva contorno.
-function escribe(ctx, t, x, y, color = '#ffffff', sombra = '#1c1028', al = 'izq', esc = 1, borde = null) {
+function escribePx(ctx, t, x, y, color = '#ffffff', sombra = '#1c1028', al = 'izq', esc = 1, borde = null) {
   t = String(t);
-  if (al === 'der') x -= anchoTexto(t, esc); else if (al === 'centro') x -= Math.floor(anchoTexto(t, esc) / 2);
+  if (al === 'der') x -= anchoTextoPx(t, esc); else if (al === 'centro') x -= Math.floor(anchoTextoPx(t, esc) / 2);
   for (const ch of t) {
     if (ch === ' ') { x += 4 * esc; continue; }
     const s = selloLetra(ch, color, sombra, borde, esc);
@@ -140,10 +140,14 @@ function lineas(t, ancho, esc = 1) {
   if (lin) sal.push(lin);
   return sal;
 }
+// (las frases largas van con la letra de cuerpo, Baloo 2: letras-nuevas.js)
 function escribeLineas(ctx, t, x, y, ancho, color, sombra, al = 'izq', salto = 11) {
-  const ls = lineas(t, ancho);
-  ls.forEach((l, i) => escribe(ctx, l, x, y + i * salto, color, sombra, al));
-  return ls.length;
+  const antes = LETRA_CUERPO; LETRA_CUERPO = true;
+  try {
+    const ls = lineas(t, ancho);
+    ls.forEach((l, i) => escribe(ctx, l, x, y + i * salto, color, sombra, al));
+    return ls.length;
+  } finally { LETRA_CUERPO = antes; }
 }
 
 /* ---------- letra pequeña (3 × 5): etiquetas y cifras ---------- */
@@ -166,7 +170,7 @@ const MINI = {
 };
 const SIN_TILDE = { 'Á': 'A', 'É': 'E', 'Í': 'I', 'Ó': 'O', 'Ú': 'U', 'Ü': 'U' };
 const miniDe = ch => MINI[ch] || MINI[SIN_TILDE[ch]] || MINI['-'];
-function anchoMini(t) { let w = 0; for (const ch of t) w += (ch === ' ' ? 2 : miniDe(ch)[0].length) + 1; return Math.max(0, w - 1); }
+function anchoMiniPx(t) { let w = 0; for (const ch of t) w += (ch === ' ' ? 2 : miniDe(ch)[0].length) + 1; return Math.max(0, w - 1); }
 const SELLOS_MINI = new Map();
 function selloMini(ch, color, sombra) {
   const k = ch + color + (sombra || '');
@@ -181,9 +185,9 @@ function selloMini(ch, color, sombra) {
   return s;
 }
 // la letra pequeña solo tiene mayúsculas: el texto se pasa a mayúsculas solo
-function mini(ctx, t, x, y, color = '#ffffff', sombra = null, al = 'izq') {
+function miniPx(ctx, t, x, y, color = '#ffffff', sombra = null, al = 'izq') {
   t = String(t).toUpperCase();
-  if (al === 'der') x -= anchoMini(t); else if (al === 'centro') x -= Math.floor(anchoMini(t) / 2);
+  if (al === 'der') x -= anchoMiniPx(t); else if (al === 'centro') x -= Math.floor(anchoMiniPx(t) / 2);
   for (const ch of t) {
     if (ch === ' ') { x += 3; continue; }
     const s = selloMini(ch, color, sombra);

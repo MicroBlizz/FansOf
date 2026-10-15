@@ -18,6 +18,20 @@ function modeloPuente(m) {
   return { medio: m + 9, alto: 31, mats, piezas: p };
 }
 COSAS.puenteTutorial = modeloPuente(54);
+// las rampas de tierra que suben al puente (vistas desde abajo): un talud con hierba arriba y la franja naranja, de varias alturas
+function modeloTalud(h) {
+  const mats = { tierra: { c: '#a8784a', s: '#6e4a2a', l: '#c99a68' }, hierba: { c: '#5cbf4a', s: '#3f8a32', l: '#8ad870' }, naranja: { c: '#ff8a1f', plano: true } };
+  return { medio: 36, alto: h + 3, mats, piezas: [CAJA([0, 0, h / 2], [32, 6, h / 2], 'tierra'), CAJA([0, 0, h + 0.8], [33, 6.5, 0.9], 'hierba', { parte: 2 }), PL([0, -6.6, h - 1.2], [32.5, 0.1, 0.6], 'naranja')] };
+}
+const ALTOS_TALUD = [4, 8, 12, 16, 20, 23];
+for (const h of ALTOS_TALUD) COSAS['talud' + h] = modeloTalud(h);
+// cuánto ha subido el tramo de arriba en este punto (0 al pie de la rampa, 1 en el tablero): plano encima del cruce (unas 64 unidades a
+// cada lado del centro) y en cuesta recta hasta el suelo al final del tramo, como un talud
+function perfilPuente(P, f) {
+  const B = P.puente; if (!B || !enTramoF(f, B.fa0, B.fa1)) return 0;
+  const fc = B.fc, lado = f >= fc ? (B.fa1 - fc + 1) % 1 : (fc - B.fa0 + 1) % 1, d = Math.min(Math.abs(f - fc), 1 - Math.abs(f - fc)) * P.largo, L = lado * P.largo;
+  return limita((L - d) / Math.max(1, L - 64), 0, 1);
+}
 
 // ---------- quién va por arriba ----------
 const enTramoF = (f, a, b) => (a <= b ? f >= a && f <= b : f >= a || f <= b);
@@ -38,7 +52,7 @@ function alturaPuente(P, f) {
 function preparaPuente(P) {
   const def = P.def.puente; if (!def) return;
   const B = P.puente = { fa0: P.f(def.arriba[0]), fa1: P.f(def.arriba[1]), fb0: P.f(def.abajo[0]), fb1: P.f(def.abajo[1]), alto: def.alto || 12, radio: def.radio || 70, capa: null };
-  B.c = enVia(P, P.f(def.centro));
+  B.c = enVia(P, P.f(def.centro)); B.fc = P.f(def.centro);
   const T = P.def.tema, R = B.radio + 10, x0 = Math.max(0, Math.floor(B.c.x - R)), y0 = Math.max(0, Math.floor(B.c.y - R)), x1 = Math.min(TM - 1, Math.ceil(B.c.x + R)), y1 = Math.min(TM - 1, Math.ceil(B.c.y + R));
   B.caja = { x0, y0, x1, y1 };
   const n = (x1 - x0 + 1) * (y1 - y0 + 1); B.orig = new Uint32Array(n); B.arriba = new Uint32Array(n); B.abajo = new Uint32Array(n);
@@ -88,6 +102,15 @@ for (const def of PISTAS) {
     preparaPuente(P);
     const l = original ? original(P) : [];
     const c = P.puente.c; l.push({ x: c.x, y: c.y, fig: figCosa('puenteTutorial'), r: 0, dmin: CAM_ATRAS + 9, soloAbajo: true });
+    // las rampas a los dos lados: trozos de talud por el tramo de arriba, cada uno de la altura que lleva la pista ahí
+    const B = P.puente, d = P.def.puente;
+    for (let u = d.arriba[0] + 0.15; u < d.arriba[1] - 0.1; u += 0.1) {
+      const f = P.f(u), p = enVia(P, f);
+      if (Math.hypot(p.x - c.x, p.y - c.y) < 58) continue;      // en el cruce ya está el puente
+      const h = 26 * perfilPuente(P, f) - 3, alto = ALTOS_TALUD.reduce((m, a) => (Math.abs(a - h) < Math.abs(m - h) ? a : m), ALTOS_TALUD[0]);
+      if (h < 2) continue;
+      l.push({ x: p.x, y: p.y, fig: figCosa('talud' + alto), r: 0, dmin: CAM_ATRAS + 9, soloAbajo: true });
+    }
     return l;
   };
 }
@@ -102,9 +125,12 @@ function puenteAntesDePintar(P, yo) {
   ponCapaPuente(P, CAPA_VISTA);
 }
 // cuánto hay que subir (o si hay que esconder) un kart: null = no se ve; número = unidades de más
+// visto desde abajo, el de arriba va subido a la rampa o al tablero (hasta 26 de alto), sin saltos; visto desde arriba, el de abajo
+// no se ve mientras pasa por debajo del puente
 function alzaPuente(k) {
-  const P = PISTA; if (!P || !P.puente || !cercaPuente(P, k)) return 0;
+  const P = PISTA; if (!P || !P.puente) return 0;
   const c = capaDe(P, k);
   if (c === CAPA_VISTA) return 0;
-  return c === 'arriba' ? 26 : null;      // encima del tablero del puente (a 26 de alto)
+  if (c === 'arriba') return 26 * perfilPuente(P, ((k.idx % P.N) + P.N) % P.N / P.N);
+  return cercaPuente(P, k) ? null : 0;
 }

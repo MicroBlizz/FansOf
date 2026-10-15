@@ -8,18 +8,41 @@ const HZ = 52;            // la fila del horizonte (la de siempre)
 let HZV = HZ;             // la de este fotograma: sube y baja con las cuestas (escena.js), así la pista no se ve plana
 const FOCO = 150;         // cuanto mayor, más «teleobjetivo» (campo de visión de unos 77°)
 const CAM_ALTO = 26, CAM_ATRAS = 45;   // la cámara, por encima y por detrás del kart (en unidades de pista)
-// CALIDAD de imagen: 1 = clásica (el mundo a 240 × 160) o 2 = HD (el mundo al doble: 480 × 320). Los menús y el marcador se pintan
-// siempre en 240 × 160 y se amplían (modoUI); el mundo (cielo, suelo y cosas de pie) se pinta a la resolución de verdad (modoMundo).
-let CAL = 1, VW = PW, VH = PH, lo, lx, IMG, FB;
+// CALIDAD de imagen: 1 = clásica (el mundo a 240 × 160) o 2 = HD (el mundo al doble: 480 × 320). Son dos lienzos:
+//  · el del MUNDO (cielo, suelo y cosas de pie) a esa resolución, pixelado (modoMundo);
+//  · el de los MENÚS y el marcador, mucho más grande (UIK veces 240 × 160, según la pantalla), para que las letras se vean nítidas;
+//    al pasar a modoUI el mundo se copia ampliado (sin suavizar) y encima va todo lo demás, siempre en coordenadas de 240 × 160.
+// lo y lx son el lienzo de turno (el del mundo o el de los menús): el resto del juego pinta en ellos sin saber cuál es.
+let CAL = 1, VW = PW, VH = PH, lo, lx, IMG, FB, LM, LMX, LU = null, LUX = null, UIK = 0, EN_MUNDO = false;
+const PENDIENTES_UI = [];
 function ponCalidad(k) {
   CAL = k === 2 ? 2 : 1; VW = PW * CAL; VH = PH * CAL;
-  [lo, lx] = lienzo(VW, VH); IMG = lx.createImageData(VW, VH); FB = new Uint32Array(IMG.data.buffer);
-  modoUI();
+  [LM, LMX] = lienzo(VW, VH); IMG = LMX.createImageData(VW, VH); FB = new Uint32Array(IMG.data.buffer);
+  EN_MUNDO = false; modoUI();
 }
-function modoMundo() { lx.setTransform(1, 0, 0, 1, 0, 0); }
-function modoUI() { lx.setTransform(CAL, 0, 0, CAL, 0, 0); }
-// un texto (u otra cosa de interfaz) en mitad del mundo: se pinta con la letra de siempre, ampliada
-function enUI(f) { lx.save(); lx.setTransform(CAL, 0, 0, CAL, 0, 0); f(1 / CAL); lx.restore(); }
+// el tamaño del lienzo de los menús: lo que mida la pantalla (como mucho 6 veces 240 × 160)
+function ponUIK() {
+  const k = Math.max(CAL, Math.min(6, Math.ceil(typeof ESC === 'number' ? ESC : 3)));
+  if (k === UIK && LU) return;
+  UIK = k; [LU, LUX] = lienzo(PW * k, PH * k);
+}
+function modoMundo() { lo = LM; lx = LMX; lx.setTransform(1, 0, 0, 1, 0, 0); EN_MUNDO = true; }
+function modoUI() {
+  ponUIK();
+  if (EN_MUNDO) {      // el mundo recién pintado, ampliado al lienzo de los menús (volteado en el modo espejo: crono.js)
+    EN_MUNDO = false;
+    const espejo = typeof CARRERA !== 'undefined' && CARRERA && CARRERA.espejo && PANT.id === 'carrera';
+    LUX.setTransform(espejo ? -1 : 1, 0, 0, 1, espejo ? LU.width : 0, 0); LUX.imageSmoothingEnabled = false;
+    LUX.drawImage(LM, 0, 0, LU.width, LU.height);
+  }
+  lo = LU; lx = LUX; lx.setTransform(UIK, 0, 0, UIK, 0, 0);
+  if (PENDIENTES_UI.length) for (const f of PENDIENTES_UI.splice(0)) f();
+}
+// un texto (u otra cosa de interfaz) en mitad del mundo: se apunta y se pinta encima en cuanto el mundo pasa al lienzo de los menús
+function enUI(f) {
+  if (EN_MUNDO) { PENDIENTES_UI.push(() => f(1 / CAL)); return; }
+  lx.save(); lx.setTransform(UIK, 0, 0, UIK, 0, 0); f(1 / CAL); lx.restore();
+}
 ponCalidad(AJUSTES.calidad === 'clasica' ? 1 : 2);
 const CAM = { x: 512, y: 512, ang: 0, fx: 1, fy: 0, alto: CAM_ALTO };
 function ponCamara(x, y, ang, alto = CAM_ALTO) { CAM.x = x; CAM.y = y; CAM.ang = ang; CAM.fx = Math.cos(ang); CAM.fy = Math.sin(ang); CAM.alto = alto; }

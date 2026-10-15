@@ -61,8 +61,10 @@ function pantallaTitulo() {
   lx.fillStyle = 'rgba(20,10,34,0.35)'; lx.fillRect(0, 0, PW, PH);
   escribeB(lx, 'FANS OF', PW / 2, 14, '#ffffff', '#1c1028', 'centro', 2);
   const bote = Math.round(Math.sin(RELOJ * 3) * 1.5);
-  escribeB(lx, 'KARTS', PW / 2 + 2, 35 + bote + 2, '#b3360a', '#1c1028', 'centro', 5);
-  escribeB(lx, 'KARTS', PW / 2, 35 + bote, '#ffcb3d', '#1c1028', 'centro', 5);
+  conLetraPixel(() => {      // las letras amarillas de KARTS siguen siendo de píxeles (el logo)
+    escribeB(lx, 'KARTS', PW / 2 + 2, 35 + bote + 2, '#b3360a', '#1c1028', 'centro', 5);
+    escribeB(lx, 'KARTS', PW / 2, 35 + bote, '#ffcb3d', '#1c1028', 'centro', 5);
+  });
   escribeB(lx, tr('Microblizz ha comprado la carrera. Gánasela.'), PW / 2, 77, '#ffffff', '#1c1028', 'centro');
   menuPrincipal();      // los botones, en HTML con el estilo de Fans of Rumble (menu-principal.js)
   mini(lx, tr('PROTOTIPO') + ' ' + VERSION, 4, 152, '#bdb6d6', '#1c1028');

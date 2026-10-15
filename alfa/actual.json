@@ -1,8 +1,8 @@
 {
- "build": 26,
- "hash": "633dff0",
- "fecha": "2026-10-15T02:21:04Z",
- "mensaje": "Nova: motores largos (largoMotor) para que queden estilizados en naves pequeñas",
+ "build": 27,
+ "hash": "be59052",
+ "fecha": "2026-10-15T02:34:20Z",
+ "mensaje": "Nova: motores más estrechos por el lado de proa",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

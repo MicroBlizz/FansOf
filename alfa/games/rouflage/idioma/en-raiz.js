@@ -147,4 +147,7 @@ IDIOMA.add({
   "<b>IDIOMA AL MOMENTO</b>: cambiar entre español e inglés ya no necesita recargar.": "<b>INSTANT LANGUAGE</b>: switching between Spanish and English no longer needs a reload.",
   "IDIOMA AL MOMENTO": "INSTANT LANGUAGE",
   "Recursos Humanos asegura que la pintura no es camuflaje: es «falta de transparencia».": "Human Resources says the paint isn't camouflage: it's a «lack of transparency».",
+  "<b>ELIGE TU MENÚ DE PINTAR</b>: en el taller hay una pestaña nueva, MENÚ, para elegir cómo quieres las herramientas: Clásico (como siempre), A (pestañas por pasos), B (herramientas a los lados, donde caen los pulgares) o C (cinco botones grandes que abren su bandeja, para jugar con una mano). Botones más grandes para el dedo y se guarda para tus próximas partidas.": "<b>CHOOSE YOUR PAINT MENU</b>: the workshop has a new tab, MENU, to choose how you want your tools: Classic (as always), A (step-by-step tabs), B (tools on the sides, right where your thumbs are) or C (five big buttons that open their own tray, for one-handed play). Bigger buttons for your finger, and it's saved for your next games.",
+  "ELIGE TU MENÚ DE PINTAR": "CHOOSE YOUR PAINT MENU",
+  "Microblizz ha hecho una encuesta para elegir el mejor menú. Ganó la opción D: «que pinte el becario».": "Microblizz ran a poll to pick the best menu. Option D won: «let the intern do the painting».",
 });

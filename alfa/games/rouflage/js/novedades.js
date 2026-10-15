@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.20', real: ["<b>ELIGE TU MENÚ DE PINTAR</b>: en el taller hay una pestaña nueva, MENÚ, para elegir cómo quieres las herramientas: Clásico (como siempre), A (pestañas por pasos), B (herramientas a los lados, donde caen los pulgares) o C (cinco botones grandes que abren su bandeja, para jugar con una mano). Botones más grandes para el dedo y se guarda para tus próximas partidas."],
+    joke: ["Microblizz ha hecho una encuesta para elegir el mejor menú. Ganó la opción D: «que pinte el becario»."] },
   { v: '0.2.19', real: ["<b>CADA MAPA CON SU MÚSICA</b>: el parking, las cloacas, los jardines, la urbanización y el hotel tienen ya sus propios temas para el taller, la caza y la recta final."],
     joke: ["Microblizz ha puesto hilo musical en las cloacas. Phony dice que las ratas lo han pedido en inglés."] },
   { v: '0.2.18', real: ["<b>ZOOM PARA EL CAZADOR</b>: con la lupa de arriba (tres niveles), pellizcando con dos dedos, con la rueda del ratón o con + y −, te acercas para mirar de cerca. El pellizco no dispara."],

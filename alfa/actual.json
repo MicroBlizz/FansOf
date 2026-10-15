@@ -1,8 +1,8 @@
 {
- "build": 68,
- "hash": "44a18d8",
- "fecha": "2026-10-15T13:29:10Z",
- "mensaje": "Fans of Rouflage: botón temporal «Sonido: nuevo / antiguo» en título y pausa para comparar en la alfa",
+ "build": 69,
+ "hash": "19f3af9",
+ "fecha": "2026-10-15T13:33:58Z",
+ "mensaje": "Fans of Rouflage: ventana OPCIONES en el título (volumen de efectos y música, comparar sonido, idioma y cuenta)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

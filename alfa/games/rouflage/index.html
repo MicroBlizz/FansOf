@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.11-a68.44a18d8"></script>
+<script src="../../core/js/nucleo.js?v=0.2.11-a69.19f3af9"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -99,13 +99,7 @@
     </div>
     <div class="fila-botones">
       <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
-      <button type="button" class="boton peq" id="b-idioma">English</button>
-      <button type="button" class="boton peq" id="b-cuenta" data-tr>Cuenta</button>
-    </div>
-    <div class="fila-botones fila-volumen">
-      <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
-      <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
-      <button type="button" class="boton peq" id="b-viejo"></button>
+      <button type="button" class="boton peq" id="b-opciones" data-tr>Opciones</button>
     </div>
     <p class="pronto"><b class="ol" data-tr>PRÓXIMAMENTE</b> <span data-tr>Nuevo mapa: las Backrooms</span></p>
     <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
@@ -134,6 +128,21 @@
       </ol>
     </div>
     <button type="button" class="boton" id="b-ayuda-ok" data-tr>ENTENDIDO</button>
+  </div>
+</div>
+
+<!-- opciones (desde el título): sonido, idioma y cuenta -->
+<div class="pantalla" id="p-opciones" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>OPCIONES</h2>
+    <div class="columna">
+      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><span data-tr>Efectos</span><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
+      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><span data-tr>Música</span><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
+      <button type="button" class="boton gris" id="b-viejo"></button>
+      <button type="button" class="boton gris" id="b-idioma">English</button>
+      <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
+      <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
+    </div>
   </div>
 </div>
 

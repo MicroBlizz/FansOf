@@ -1,0 +1,63 @@
+/* Fans of Rouflage · ARMARIO y PERFIL (armario.js): pensado primero para el móvil en vertical */
+.fila-armario .boton { min-width: 132px; }
+
+.caja.armario, .caja.perfil { max-width: 560px; gap: 8px; padding: 12px 12px 12px; }
+.ar-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ar-cabeza h2 { font-size: clamp(26px, 7.5vw, 38px); }
+.ar-cuenta { font-weight: 800; font-size: 14px; color: var(--ink-dim); background: var(--outline); border-radius: 10px; padding: 3px 10px; }
+
+.ar-escena { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px;
+  background: radial-gradient(circle at 30% 40%, #4a2c78 0%, #2a1746 70%); }
+.ar-vista { position: relative; display: flex; align-items: flex-end; gap: 4px; }
+.ar-vista canvas { display: block; }
+.ar-vista canvas[hidden] { display: none; }
+.ar-vista .ar-extra { align-self: center; }
+.ar-info { display: grid; gap: 4px; text-align: left; min-width: 0; }
+.ar-info b { font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1.05; color: var(--ink); text-shadow: 0 2px 0 var(--outline); }
+.ar-info span { font-size: 13px; font-weight: 700; color: var(--ink-dim); line-height: 1.2; }
+.ar-estado { justify-self: start; padding: 2px 9px; border-radius: 9px; border: 2px solid var(--outline); font-family: var(--font-display); font-size: 13px !important; letter-spacing: .03em; }
+.ar-estado:empty { display: none; }
+.ar-estado.puesto { background: var(--ok); color: var(--outline) !important; }
+.ar-estado.tuyo { background: var(--hielo); color: var(--outline) !important; }
+.ar-estado.bloq { background: var(--gold); color: var(--outline) !important; }
+
+.ar-pestanas { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 6px; scrollbar-width: thin; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
+.ar-pest { flex: 0 0 auto; font-family: var(--font-display); font-size: 15px; color: var(--ink-dim); background: var(--tray); border: 3px solid var(--outline); border-radius: 12px; padding: 6px 12px 3px; cursor: pointer; }
+.ar-pest.activa { background: var(--gold); color: var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.ar-nota { font-size: 13px; color: var(--ink-dim); text-align: left; margin: 0; }
+.ar-aviso { font-size: 12px; color: var(--ink-dim); opacity: .8; }
+
+.ar-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 7px; max-height: 44vh; overflow-y: auto; padding: 2px; touch-action: pan-y; }
+.ar-casilla { position: relative; display: grid; justify-items: center; gap: 2px; padding: 5px 3px 4px; border-radius: 13px; border: 3px solid var(--outline); background: #2a1746; cursor: pointer; color: var(--ink); font-family: var(--font-ui); }
+.ar-casilla canvas { display: block; }
+.ar-casilla small { font-size: 11px; font-weight: 700; line-height: 1.05; min-height: 2.1em; display: grid; place-items: center; text-align: center; }
+.ar-casilla.r-rara { box-shadow: inset 0 0 0 2px #39d5e8; }
+.ar-casilla.r-epica { box-shadow: inset 0 0 0 2px #b45cff; }
+.ar-casilla.r-legend { box-shadow: inset 0 0 0 2px #ffcb3d; background: #3a2448; }
+.ar-casilla.bloq canvas:first-child { opacity: .5; filter: saturate(.5); }
+.ar-casilla .ar-candado { position: absolute; top: 3px; right: 3px; }
+.ar-casilla.puesto { background: #2f5a2a; }
+.ar-casilla.puesto::after { content: ''; position: absolute; top: 4px; left: 5px; width: 9px; height: 5px; border-left: 3px solid var(--ok); border-bottom: 3px solid var(--ok); transform: rotate(-45deg); }
+.ar-casilla.sel { border-color: var(--gold); }
+#ar-nombre.r-rara { color: #8fe3ff; } #ar-nombre.r-epica { color: #d7a8ff; } #ar-nombre.r-legend { color: var(--gold); }
+
+.pf-ficha { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px; background: radial-gradient(circle at 30% 40%, #4a2c78 0%, #2a1746 70%); }
+.pf-galleta canvas, #pf-titulo-sitio canvas { display: block; }
+.pf-datos { display: grid; gap: 4px; text-align: left; min-width: 0; }
+.pf-nombre { font-family: var(--font-display); font-weight: 400; font-size: 24px; color: var(--ink); overflow-wrap: anywhere; }
+#pf-titulo-sitio canvas { max-width: 100%; height: auto !important; }
+.pf-datos p { display: flex; justify-content: space-between; gap: 6px; font-size: 13px; color: var(--ink-dim); border-top: 2px dashed rgba(205, 185, 234, .25); padding-top: 3px; }
+.pf-datos p b { color: var(--ink); text-align: right; }
+.pf-coleccion { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
+.pf-fila { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; color: var(--ink); font-family: var(--font-ui); font-weight: 700; font-size: 12px; text-align: left; cursor: pointer; }
+.pf-fila .barra { width: auto; height: 10px; }
+.pf-fila .barra i { background: var(--gold); }
+.pf-pruebas { display: grid; gap: 4px; justify-items: center; border: 3px dashed var(--gold); border-radius: 14px; padding: 8px; }
+.pf-pruebas small { font-size: 12px; color: var(--ink-dim); }
+
+@media (max-width: 380px) {
+  .ar-vista #ar-vista { width: 120px !important; height: 138px !important; }
+  .ar-vista .ar-extra { width: 120px !important; height: 120px !important; }
+  .pf-coleccion { grid-template-columns: 1fr; }
+  .pf-galleta canvas { width: 130px !important; height: 153px !important; }
+}

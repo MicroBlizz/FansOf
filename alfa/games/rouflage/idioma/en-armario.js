@@ -1,0 +1,111 @@
+// Fans of Rouflage · Inglés del ARMARIO y el PERFIL (armario.js y su catálogo, armario-datos.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  // pantallas
+  "PERFIL": "PROFILE",
+  "Prueba de la alfa: lo que te pones aún no sale en la partida.": "Alpha test: what you wear doesn't show up in matches yet.",
+  "Pase · Temporada 1": "Pass · Season 1",
+  "Solo para probar cómo queda: este botón no estará en el juego final.": "Just to see how it looks: this button won't be in the final game.",
+  "DESBLOQUEAR TODO": "UNLOCK EVERYTHING",
+  "VOLVER A BLOQUEAR": "LOCK IT AGAIN",
+  "{t} de {n}": "{t} of {n}",
+  "Nivel {n}": "Level {n}",
+  "Fan sin nombre": "Nameless fan",
+  "{p} puntos · {g} ganadas de {j}": "{p} points · {g} won of {j}",
+  "Sin partidas": "No matches yet",
+  "Sin nada": "Nothing",
+  "Nada": "Nothing",
+  "La galleta en blanco, como al empezar": "The blank cookie, like at the start",
+  "ES TUYO": "YOURS",
+  "TE LO ESTÁS PROBANDO": "TRYING IT ON",
+  // de dónde sale cada cosa
+  "{n} Purpurina (≈ {e} €)": "{n} Glitter (≈ €{e})",
+  "Pase gratis · nv {n}": "Free pass · lv {n}",
+  "Pase premium · nv {n}": "Premium pass · lv {n}",
+  "{n} Migas": "{n} Crumbs",
+  "Diario · día 7 (semana {n})": "Daily · day 7 (week {n})",
+  "Diario · día {n}": "Daily · day {n}",
+  "Diario · 20 días del mes": "Daily · 20 days in a month",
+  "Al empezar": "From the start",
+  "Al empezar (CrazyBunny)": "From the start (CrazyBunny)",
+  "Pack de inicio": "Starter pack",
+  "Caos ilimitado · octubre": "Unlimited chaos · October",
+  "Caos ilimitado · noviembre": "Unlimited chaos · November",
+  "Caos ilimitado · diciembre": "Unlimited chaos · December",
+  "Misión de temporada": "Season mission",
+  "Misión: despide a 50": "Mission: fire 50",
+  // categorías
+  "Ojos": "Eyes",
+  "Bocas": "Mouths",
+  "Boca": "Mouth",
+  "Papel (el color de tu galleta)": "Paper (your cookie's colour)",
+  "Papel": "Paper",
+  "En la cabeza": "On your head",
+  "Colas, alas y espalda": "Tails, wings and back",
+  "Espalda": "Back",
+  "Bomba de humo": "Smoke bomb",
+  "Humo": "Smoke",
+  "Rastro del silbido": "Whistle trail",
+  "Silbido": "Whistle",
+  "Fantasma al ser despedido": "Ghost when fired",
+  "Fantasma": "Ghost",
+  "Efecto al congelarte": "Freeze effect",
+  "Congelar": "Freeze",
+  "Sello de «DESPEDIDO»": "«FIRED» stamp",
+  "Sello": "Stamp",
+  "Linterna del becario": "Intern's flashlight",
+  "Linterna": "Flashlight",
+  "Marcos de la clasificación": "Ranking frames",
+  "Marco": "Frame",
+  "Títulos (salen bajo tu nombre)": "Titles (shown under your name)",
+  "Título": "Title",
+  "Gestos": "Emotes",
+  "Desaparecen al congelarte, igual para todos": "They vanish when you freeze, same for everyone",
+  "Se ve mientras andas; al pintarte lo tapa tu pintura": "Shows while you walk; your paint covers it when you paint yourself",
+  "Desaparecen al congelarte": "They vanish when you freeze",
+  "Todas tapan igual: mismo tamaño, misma duración; solo cambia el color": "They all hide the same: same size, same duration; only the colour changes",
+  "Se oye y se ve igual de lejos con todos": "Heard and seen just as far with all of them",
+  "Dura 1 segundo y luego no queda nada": "Lasts 1 second and then nothing is left",
+  "Lo que dejas en el suelo cuando despides a alguien (de becario)": "What you leave on the floor when you fire someone (as an intern)",
+  "Solo cambia el color del borde: el haz alumbra igual": "Only the edge colour changes: the beam lights the same",
+  "Solo en la sala de espera, al final de la ronda o de fantasma": "Only in the waiting room, at the end of the round or as a ghost",
+  // ojos
+  "Puntos": "Dots", "Grandes": "Big", "Dormido": "Sleepy", "Gafas redondas": "Round glasses", "Estrellas": "Stars", "Guiño": "Wink", "Bizco": "Cross-eyed",
+  "Gafas de sol": "Sunglasses", "Monóculo": "Monocle", "Láser de jefe": "Boss laser", "Corazones": "Hearts", "Espiral (CrazyBunny)": "Spiral (CrazyBunny)",
+  // bocas
+  "Sonrisa": "Smile", "«O»": "«O»", "Lengua": "Tongue", "Bigote": "Moustache", "Dientón": "Buck tooth", "Silbando": "Whistling", "Sorprendido": "Surprised",
+  "Barba de papel": "Paper beard", "Vampiro": "Vampire", "Mascarilla Microblizz": "Microblizz face mask",
+  // papel
+  "Folio blanco": "White sheet", "Kraft": "Kraft", "Cuadriculado": "Graph paper", "Libreta de rayas": "Lined notebook", "Periódico": "Newspaper", "Cartón": "Cardboard",
+  "Purpurina": "Glitter", "Papel de regalo": "Wrapping paper", "Mapa del tesoro": "Treasure map", "Partitura": "Sheet music", "Billete de Microblizz": "Microblizz banknote", "Celofán": "Cellophane",
+  // cabeza
+  "Orejas de conejo": "Bunny ears", "Gorra de becario": "Intern cap", "Corona": "Crown", "Aureola": "Halo", "Chistera": "Top hat", "Cuernos": "Horns", "Flor": "Flower",
+  "Antena": "Antenna", "Auriculares": "Headphones", "Casco de obra": "Hard hat", "Gorro de fiesta": "Party hat", "Lazo": "Bow", "Brote": "Sprout", "Pulpo sombrero": "Octopus hat",
+  // espalda
+  "Cola de zorro": "Fox tail", "Cola de ardilla": "Squirrel tail", "Alas de ángel": "Angel wings", "Alas de murciélago": "Bat wings", "Alas de mariposa": "Butterfly wings",
+  "Capa": "Cape", "Mochila": "Backpack", "Cola de gato": "Cat tail", "Propulsor": "Jetpack",
+  // humo
+  "Gris de oficina": "Office grey", "Confeti": "Confetti", "Arcoíris": "Rainbow", "Tinta de calamar": "Squid ink", "Café con leche": "Latte", "Fuego frío": "Cold fire",
+  "Menta": "Mint", "Atardecer": "Sunset", "Microblizz azul": "Microblizz blue",
+  // silbido
+  "Ondas": "Waves", "Notas musicales": "Music notes", "Pajaritos de papel": "Paper birds", "Burbujas": "Bubbles", "Zzz": "Zzz", "Monedas Microblizz": "Microblizz coins", "Chispas": "Sparks",
+  // fantasma
+  "Tu galleta fantasma": "Your ghost cookie", "Sábana": "Bedsheet", "Avión de papel": "Paper plane", "Caja de cartón": "Cardboard box", "Bola de papel": "Paper ball",
+  "Globo": "Balloon", "Nube": "Cloud", "Fantasma dorado": "Golden ghost", "Foto de despedida": "Farewell photo", "ADIÓS": "BYE",
+  // congelar
+  "Sin efecto": "No effect", "Destello": "Sparkle", "Pegatina": "Sticker", "Flash de foto": "Camera flash", "Mancha de tinta": "Ink blot",
+  // sello
+  "Tampón rojo": "Red stamp", "Tampón azul": "Blue stamp", "Tampón verde": "Green stamp", "Grapa": "Staple", "Firma del jefe": "Boss's signature", "Huella de becario": "Intern's paw print",
+  "«ASCENDIDO» dorado": "Golden «PROMOTED»", "ASCENDIDO": "PROMOTED",
+  // linterna
+  "Bombilla": "Light bulb", "Ámbar": "Amber", "Hielo": "Ice", "Discoteca": "Disco", "Estrellada": "Starry", "Verde radar": "Radar green",
+  // marcos
+  "Madera": "Wood", "Corcho con chinchetas": "Corkboard with pins", "Cinta adhesiva": "Sticky tape", "Píxel": "Pixel", "Neón": "Neon",
+  // títulos
+  "BECARIO": "INTERN", "Indespedible": "Unfireable", "INDESPEDIBLE": "UNFIREABLE", "Becario del mes": "Intern of the month", "BECARIO DEL MES": "INTERN OF THE MONTH",
+  "Mancha en la pared": "Stain on the wall", "MANCHA EN LA PARED": "STAIN ON THE WALL", "Recursos Inhumanos": "Inhuman Resources", "RECURSOS INHUMANOS": "INHUMAN RESOURCES",
+  "Ni Phony me encuentra": "Not even Phony finds me", "NI PHONY ME ENCUENTRA": "NOT EVEN PHONY FINDS ME", "Café con piernas": "Coffee with legs", "CAFÉ CON PIERNAS": "COFFEE WITH LEGS",
+  "Despedidor": "Firer", "DESPEDIDOR": "FIRER",
+  // gestos
+  "Baile": "Dance", "Reverencia": "Bow down", "Risa": "Laugh", "Llorar": "Cry", "Selfie": "Selfie", "Pausa del café": "Coffee break", "Siesta": "Nap", "¡HOLA!": "HI!",
+});

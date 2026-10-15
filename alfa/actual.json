@@ -1,8 +1,8 @@
 {
- "build": 65,
- "hash": "e80a65b",
- "fecha": "2026-10-15T12:04:47Z",
- "mensaje": "Versiones de todos los juegos por el cambio de core (feedback con estrellas) para la release",
+ "build": 66,
+ "hash": "bdf7dc4",
+ "fecha": "2026-10-15T13:05:55Z",
+ "mensaje": "Fans of Rouflage: armario y perfil (solo alfa y desarrollo) con el catálogo de la Temporada 1 y botón de pruebas para desbloquearlo todo; fuera el botón Biblioteca del título",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

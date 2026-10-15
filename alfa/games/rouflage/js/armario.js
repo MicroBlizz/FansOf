@@ -1,0 +1,140 @@
+// Fans of Rouflage · ARMARIO y PERFIL: dos pantallas del menú del título. En el armario se viste la galleta con lo del catálogo
+// (armario-datos.js): tocar una cosa te la prueba; si es tuya, se queda puesta. En el perfil está tu galleta con su marco, tu título y lo
+// que llevas coleccionado, y un botón de pruebas para desbloquearlo todo (se quitará en el juego final).
+// De momento solo se ve en la alfa y en modo desarrollo, y lo que te pones aún no sale dentro de la partida. Se guarda en SAVE.armario.
+'use strict';
+const ARMARIO = { cat: 'ojos', sel: null, prueba: null };
+function armarioVisible() { return !!(NUCLEO.alfa || NUCLEO.desarrollo); }
+function armarioEstado() {
+  if (!SAVE.armario) SAVE.armario = { tengo: [], puesto: {}, todo: false };
+  const a = SAVE.armario, p = a.puesto;
+  for (const cat of CATALOGO_AR) if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza en blanco
+  return a;
+}
+const arCat = id => CATALOGO_AR.find(c => c.id === id);
+const arItem = (cat, id) => { const c = arCat(cat); return c && id ? c.items.find(x => x.id === id) || null : null; };
+function arTiene(cat, it) { const a = armarioEstado(); return a.todo || it.de === 'base' || a.tengo.includes(cat + ':' + it.id); }
+function arCuenta() { let t = 0, n = 0; for (const c of CATALOGO_AR) for (const it of c.items) { n++; if (arTiene(c.id, it)) t++; } return [t, n]; }
+// lo que se le pone a la galleta: lo puesto y, encima, lo que te estás probando
+function arVestido(prueba) {
+  const p = armarioEstado().puesto, o = {};
+  const pon = (cat, id) => { const it = arItem(cat, id); if (!it) return; if (cat === 'ojos') o.ojos = it.x; else if (cat === 'bocas') o.boca = it.x; else if (cat === 'papel') o.papel = it.v; else if (cat === 'cabeza') o.cabeza = it.v; else if (cat === 'espalda') o.espalda = it.v; };
+  for (const cat of ['papel', 'espalda', 'cabeza', 'ojos', 'bocas']) pon(cat, p[cat]);
+  if (prueba) { if (prueba.it) pon(prueba.cat, prueba.it.id); else if (prueba.cat === 'ojos') delete o.ojos; else if (prueba.cat === 'bocas') delete o.boca; else if (prueba.cat === 'cabeza') delete o.cabeza; else if (prueba.cat === 'espalda') delete o.espalda; }
+  return o;
+}
+const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
+function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
+function arTextoDe(it) {
+  const t = it.txt; let m;
+  if (typeof t === 'number') return tr('{n} Purpurina (≈ {e} €)', { n: t, e: arEuros(t) });
+  if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
+  if ((m = /^(\d+) Migas$/.exec(t))) return tr('{n} Migas', { n: m[1] });
+  if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
+  if ((m = /^Diario · día (\d+)$/.exec(t))) return tr('Diario · día {n}', { n: m[1] });
+  return tr(t);
+}
+// un lienzo nítido (al doble) de w×h en pantalla
+function arLienzo(w, h, clase) { const k = document.createElement('canvas'); k.width = w * 2; k.height = h * 2; k.style.width = w + 'px'; k.style.height = h + 'px'; if (clase) k.className = clase; return k; }
+function arPinta(k, f) { const c = k.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, k.width, k.height); c.save(); try { f(c, k.width, k.height); } catch (e) { console.warn('[armario]', e); } c.restore(); }
+
+/* ---------- el armario ---------- */
+function abreArmario(cat) {
+  armarioEstado(); if (cat) ARMARIO.cat = cat; ARMARIO.prueba = null; ARMARIO.sel = null;
+  pantalla('p-armario'); arPintaPestanas(); arPintaTodo();
+}
+function arPintaTodo() { arPintaVista(); arPintaInfo(); arPintaRejilla(); const [t, n] = arCuenta(); E('ar-cuenta').textContent = tr('{t} de {n}', { t, n }); }
+function arPintaPestanas() {
+  const fila = E('ar-pestanas'); fila.innerHTML = '';
+  for (const cat of CATALOGO_AR) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ar-pest' + (cat.id === ARMARIO.cat ? ' activa' : '');
+    b.textContent = tr(cat.corto);
+    b.onclick = () => { play('select'); ARMARIO.cat = cat.id; ARMARIO.prueba = null; ARMARIO.sel = null; arPintaPestanas(); arPintaTodo(); };
+    fila.appendChild(b);
+  }
+  const act = fila.querySelector('.activa'); if (act && act.scrollIntoView) act.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+function arPintaVista() {
+  const cat = arCat(ARMARIO.cat), pr = ARMARIO.prueba;
+  arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, arVestido(pr && pr.cat !== undefined && cat.cuerpo ? pr : null))));
+  // lo que no se lleva en el cuerpo (humo, silbido, fantasma…): al lado, en grande, lo puesto o lo que te estás probando
+  const ex = E('ar-extra'); ex.hidden = !!cat.cuerpo; E('ar-vista').hidden = !cat.cuerpo;
+  if (!cat.cuerpo) { const it = pr ? pr.it : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); }
+}
+function arPintaInfo() {
+  const cat = arCat(ARMARIO.cat), a = armarioEstado(), sel = ARMARIO.sel;
+  const it = sel === 'nada' ? null : sel || arItem(cat.id, a.puesto[cat.id]);
+  const nom = E('ar-nombre'), de = E('ar-de'), est = E('ar-estado');
+  E('ar-nota').textContent = tr(cat.nombre) + (cat.nota ? ' · ' + tr(cat.nota) : '');
+  if (!it) { nom.textContent = tr('Sin nada'); nom.className = ''; de.textContent = cat.vacio ? tr('La galleta en blanco, como al empezar') : ''; est.textContent = ''; est.className = 'ar-estado'; return; }
+  nom.textContent = tr(it.n); nom.className = 'r-' + it.r;
+  de.textContent = tr(RAREZA_AR[it.r]) + ' · ' + arTextoDe(it);
+  const tuyo = arTiene(cat.id, it), puesto = a.puesto[cat.id] === it.id;
+  est.className = 'ar-estado ' + (puesto ? 'puesto' : tuyo ? 'tuyo' : 'bloq');
+  est.textContent = puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
+}
+function arPintaRejilla() {
+  const cat = arCat(ARMARIO.cat), a = armarioEstado(), rej = E('ar-rejilla'); rej.innerHTML = '';
+  const casilla = (it, tuyo, puesto, alTocar, dibuja, nombre, rar) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ar-casilla r-' + rar + (puesto ? ' puesto' : '') + (tuyo ? '' : ' bloq') + (ARMARIO.sel === it ? ' sel' : '');
+    const k = arLienzo(64, 64); arPinta(k, dibuja); b.appendChild(k);
+    const s = document.createElement('small'); s.textContent = nombre; b.appendChild(s);
+    if (!tuyo) { const cd = arLienzo(22, 22, 'ar-candado'); arPinta(cd, (c, w) => ARD.ICONOS.candado(c, w)); b.appendChild(cd); }
+    b.onclick = alTocar; rej.appendChild(b);
+  };
+  if (cat.vacio) casilla('nada', true, a.puesto[cat.id] === null, () => { play('select'); a.puesto[cat.id] = null; ARMARIO.sel = 'nada'; ARMARIO.prueba = null; guardaPartida(); arPintaTodo(); }, (c, w) => ARD.ICONOS.nada(c, w), tr('Nada'), 'comun');
+  for (const it of cat.items) {
+    const tuyo = arTiene(cat.id, it);
+    casilla(it, tuyo, a.puesto[cat.id] === it.id, () => {
+      ARMARIO.sel = it;
+      if (tuyo) { play('select'); a.puesto[cat.id] = it.id; ARMARIO.prueba = null; guardaPartida(); }
+      else { play('tick'); ARMARIO.prueba = { cat: cat.id, it }; }
+      arPintaTodo();
+    }, (c, w) => it.x(c, w), tr(it.n), it.r);
+  }
+}
+
+/* ---------- el perfil ---------- */
+function abrePerfil() {
+  const a = armarioEstado(); pantalla('p-perfil');
+  const marcoId = a.puesto.marcos || 'madera', tit = arItem('titulos', a.puesto.titulos);
+  arPinta(E('pf-galleta'), (c, w, h) => ARD.marco(c, w, marcoId, (g, ww, hh) => ARD.vestida(g, ww, hh * .86, Object.assign({ esc: hh / 100 }, arVestido(null))), h));
+  arPinta(E('pf-titulo'), (c, w, h) => { if (tit) { c.translate(0, (h - w) / 2); tit.x(c, w); } });
+  const [t, n] = arCuenta();
+  E('pf-cosas').textContent = tr('{t} de {n}', { t, n });
+  E('pf-nivel').textContent = tr('Nivel {n}', { n: 1 });
+  E('pf-nombre').textContent = tr('Fan sin nombre');
+  Promise.resolve(CUENTA.perfil()).then(p => { if (p && p.nombre) E('pf-nombre').textContent = p.nombre; }).catch(() => {});
+  E('pf-pvp').textContent = '–';
+  try { Promise.resolve(RFRED.red.clasificacion()).then(r => { const y = r && r.yo; E('pf-pvp').textContent = y ? tr('{p} puntos · {g} ganadas de {j}', { p: y.puntos, g: y.ganadas, j: y.jugadas }) : tr('Sin partidas'); }).catch(() => {}); } catch (_) { /* sin red */ }
+  const col = E('pf-coleccion'); col.innerHTML = '';
+  for (const cat of CATALOGO_AR) {
+    const tiene = cat.items.filter(it => arTiene(cat.id, it)).length;
+    const f = document.createElement('button'); f.type = 'button'; f.className = 'pf-fila';
+    f.innerHTML = '<span></span><i class="barra"><i></i></i><b></b>';
+    f.children[0].textContent = tr(cat.corto); f.children[1].firstChild.style.width = Math.round(tiene / cat.items.length * 100) + '%'; f.children[2].textContent = tiene + '/' + cat.items.length;
+    f.onclick = () => { play('select'); abreArmario(cat.id); };
+    col.appendChild(f);
+  }
+  E('b-pf-todo').textContent = a.todo ? tr('VOLVER A BLOQUEAR') : tr('DESBLOQUEAR TODO');
+}
+function arDesbloqueaTodo() {
+  const a = armarioEstado(); a.todo = !a.todo;
+  if (!a.todo) for (const cat of CATALOGO_AR) { const it = arItem(cat.id, a.puesto[cat.id]); if (it && !arTiene(cat.id, it)) a.puesto[cat.id] = cat.vacio ? null : cat.items[0].id; }   // lo que ya no es tuyo, fuera
+  guardaPartida(); play('pop'); abrePerfil();
+}
+function preparaArmario() {
+  PANTALLAS.push('p-armario', 'p-perfil');
+  E('fila-armario').hidden = !armarioVisible();
+  E('b-armario').onclick = () => { play('select'); abreArmario(); };
+  E('b-perfil').onclick = () => { play('select'); abrePerfil(); };
+  E('b-ar-perfil').onclick = () => { play('select'); abrePerfil(); };
+  E('b-ar-volver').onclick = () => { play('select'); irTitulo(); };
+  E('b-pf-armario').onclick = () => { play('select'); abreArmario(); };
+  E('b-pf-volver').onclick = () => { play('select'); irTitulo(); };
+  E('b-pf-todo').onclick = arDesbloqueaTodo;
+  const ev = arLienzo(150, 172); ev.id = 'ar-vista'; E('ar-vista-sitio').appendChild(ev);
+  const ex = arLienzo(150, 150, 'ar-extra'); ex.id = 'ar-extra'; E('ar-vista-sitio').appendChild(ex);
+  const pg = arLienzo(170, 200); pg.id = 'pf-galleta'; E('pf-galleta-sitio').appendChild(pg);
+  const pt = arLienzo(190, 64); pt.id = 'pf-titulo'; E('pf-titulo-sitio').appendChild(pt);
+}

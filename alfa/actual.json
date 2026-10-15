@@ -1,8 +1,8 @@
 {
- "build": 103,
- "hash": "c9cc3d9",
- "fecha": "2026-10-15T20:29:31Z",
- "mensaje": "Rouflage (alfa): economía con Gotas de pintura y Acciones (antes Migas y Purpurina): gotas por partida con tope diario, pase de temporada que sube jugando (gratis con algo de Acciones y premium), botón COMPRAR en el armario",
+ "build": 104,
+ "hash": "9f291b7",
+ "fecha": "2026-10-15T20:31:00Z",
+ "mensaje": "Rouflage (alfa): la gota de pintura de la moneda, arcoíris con brillo y una gotita que salpica",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

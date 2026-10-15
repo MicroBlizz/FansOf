@@ -60,12 +60,21 @@ function diarioRecoge() {
 }
 
 /* ---------- la ventana ---------- */
-// el icono de las Gotas: una gota de pintura naranja con su brillo
+// el icono de las Gotas: una gota de pintura arcoíris, con franjas suaves, brillo y una gotita que salpica
 function pintaGotas(c, w) {
   c.save(); c.scale(w / 40, w / 40);
-  c.beginPath(); c.moveTo(20, 5); c.bezierCurveTo(27, 15, 32, 21, 32, 26); c.arc(20, 26, 12, 0, Math.PI); c.bezierCurveTo(8, 21, 13, 15, 20, 5); c.closePath();
-  c.fillStyle = '#ff7a1a'; c.fill(); c.lineWidth = 2.6; c.strokeStyle = OL; c.stroke();
-  c.beginPath(); c.ellipse(15, 26, 2.6, 4.2, 0.3, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.6)'; c.fill();
+  const gota = g => { g.beginPath(); g.moveTo(20, 4); g.bezierCurveTo(27, 14, 32.5, 20.5, 32.5, 26); g.arc(20, 26, 12.5, 0, Math.PI); g.bezierCurveTo(7.5, 20.5, 13, 14, 20, 4); g.closePath(); };
+  c.save(); gota(c); c.clip();
+  const col = ['#ff4b5c', '#ff7a1a', '#ffcb3d', '#7ee04a', '#39d5e8', '#3a7de0', '#b45cff'];
+  const g = c.createLinearGradient(10, 9, 28, 38); col.forEach((k, i) => g.addColorStop(0.04 + i / (col.length - 1) * 0.92, k));
+  c.fillStyle = g; c.fillRect(0, 0, 40, 40);
+  const r = c.createRadialGradient(15, 22, 1, 20, 26, 16); r.addColorStop(0, 'rgba(255,255,255,0.35)'); r.addColorStop(0.5, 'rgba(255,255,255,0)'); r.addColorStop(1, 'rgba(32,16,44,0.15)');
+  c.fillStyle = r; c.fillRect(0, 0, 40, 40);
+  c.restore();
+  gota(c); c.lineWidth = 2.6; c.strokeStyle = OL; c.stroke();
+  c.beginPath(); c.ellipse(14.5, 25, 2.4, 4.6, 0.35, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.85)'; c.fill();
+  c.beginPath(); c.arc(17.5, 17.5, 1.3, 0, TAU); c.fill();
+  c.beginPath(); c.arc(33, 9, 2.6, 0, TAU); c.fillStyle = '#b45cff'; c.fill(); c.lineWidth = 1.6; c.stroke();      // una gotita que salpica
   c.restore();
 }
 function diarioPinta() {

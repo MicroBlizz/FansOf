@@ -1,8 +1,8 @@
 {
- "build": 17,
- "hash": "d6d796b",
- "fecha": "2026-10-15T01:36:32Z",
- "mensaje": "Fans of Nova fase 0 (4/6): plantillas de ranuras por facción y rango (datos-cascos.js)",
+ "build": 18,
+ "hash": "f41efcc",
+ "fecha": "2026-10-15T01:37:43Z",
+ "mensaje": "Fans of Nova fase 0 (5/6): facetas, capitanes y auras de La Directora (datos-tripulacion.js) con comprobación contra core",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

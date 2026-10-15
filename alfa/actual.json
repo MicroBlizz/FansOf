@@ -1,8 +1,8 @@
 {
- "build": 12,
- "hash": "759fc63",
- "fecha": "2026-10-15T01:21:12Z",
- "mensaje": "Mi cuenta (web): cambiar el nombre público y enlace a la alfa para el rol alfa",
+ "build": 13,
+ "hash": "51f88b0",
+ "fecha": "2026-10-15T01:23:05Z",
+ "mensaje": "Fans of Nova fase 0 (1/6): games/nova con portada «en construcción», solo desarrollo; fuera de la web pública y de la alfa",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

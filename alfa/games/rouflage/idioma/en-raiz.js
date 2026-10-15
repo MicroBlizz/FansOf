@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.16
+  "<b>RANKING Y PAUSA ARREGLADOS</b>: si entrabas en la habitación y volvías al menú por el armario o el perfil, los botones de ranking y pausa desaparecían de todas las partidas siguientes.": "<b>RANKING AND PAUSE FIXED</b>: if you went into the room and back to the menu through the wardrobe or the profile, the ranking and pause buttons vanished from every match after that.",
+  "Microblizz asegura que los botones no se habían perdido: estaban probándose ropa en la habitación. Phony les ha cobrado el probador.": "Microblizz insists the buttons weren't lost: they were trying on clothes in the room. Phony charged them for the fitting room.",
   // 0.2.15
   "<b>EL HOTEL, REFORMADO</b>: las paredes entre el pasillo y las habitaciones ya se ven enteras (antes eran bajitas), dos pasillos nuevos bajan al vestíbulo y la recepción y el piano están redibujados.": "<b>THE HOTEL, REFURBISHED</b>: the walls between the corridor and the rooms are now shown in full (they used to be stubby), two new corridors lead down to the lobby, and the reception desk and the piano have been redrawn.",
   "<b>MI PERFIL</b>: en el menú principal, el grupo del armario, el perfil y la habitación se llama así.": "<b>MY PROFILE</b>: on the main menu, the group with the wardrobe, the profile and the room is now called that.",

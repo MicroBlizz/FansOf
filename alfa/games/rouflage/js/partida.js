@@ -3,6 +3,7 @@
 'use strict';
 
 function limpiaPartida() {
+  E('hab').hidden = true; E('esquina').hidden = false;      // fuera lo de la habitación: el ranking y la pausa vuelven (aunque se saliera de ella por el armario o el perfil)
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };

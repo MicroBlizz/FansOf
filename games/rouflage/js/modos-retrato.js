@@ -11,7 +11,10 @@ function retratoPinta(fuerza) {
   const caja = E('retratos'); if (!caja) return;
   const ver = modoEs('retrato') && J.yo && J.yo.clase === 'cazador' && (J.fase === 'cuenta' || J.fase === 'caza');
   if (caja.hidden === ver) caja.hidden = !ver;
-  if (!ver) { RETRATO.lista = []; return; }
+  if (!ver) { RETRATO.lista = []; E('ranking').style.top = ''; return; }
+  // justo debajo de la fila de CARTAS / COLADOS (que puede ocupar dos filas si sale el silbato caliente), y la clasificación debajo de la tira
+  const abajo = E('estado').getBoundingClientRect().bottom + 6; caja.style.top = Math.round(abajo) + 'px';
+  E('ranking').style.top = Math.round(abajo + (caja.getBoundingClientRect().height || 84) + 6) + 'px';
   const colados = J.camaleones.filter(e => e.pintado || e.jugador || e.humano);
   if (fuerza || RETRATO.lista.length !== colados.length) {
     RETRATO.lista = colados;

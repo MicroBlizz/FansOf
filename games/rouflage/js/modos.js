@@ -12,7 +12,8 @@ const MODOS = {
   retrato: { nombre: 'RETRATO ROBOT', texto: 'Los becarios ven la ficha de cada colado antes de salir. No hay bandos: gana quien más puntos sume.' },
 };
 const EXTRAS = {
-  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
+  dia: { nombre: 'Jugar de día', texto: 'Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.', luz: true },
+  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.', luz: true },
   galeria: { nombre: 'Galería de disfraces', texto: 'Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.' },
   halcon: { nombre: 'Ojo de halcón', texto: 'Quedarse quieto dentro de la luz de un becario da muchos puntos; más cuanto más cerca. Gana quien se esconde a la vista.' },
   bufon: { nombre: 'El bufón', texto: 'Un colado es el bufón en secreto: solo gana si lo despiden en el último minuto. Antes, pierde.' },
@@ -20,6 +21,13 @@ const EXTRAS = {
   chivato: { nombre: 'Fantasmas chivatos', texto: 'Un fantasma puede chivarle una pista a un becario: si este despide a alguien en 20 s, el fantasma resucita.' },
   bote: { nombre: 'Llena el bote', texto: 'Hay gotas de pintura por el suelo: los colados ganan si llevan cinco al cubo de la cafetería.' },
 };
+// LA LUZ de la partida: uno de tres, siempre uno marcado (se guarda como los extras: dia, apagon o ninguno)
+const LUCES_SALA = [
+  { k: 'dia', nombre: 'DÍA', texto: 'Luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.' },
+  { k: '', nombre: 'NORMAL', texto: 'De noche, como siempre: se ve lo que alumbran las linternas.' },
+  { k: 'apagon', nombre: 'APAGÓN', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
+];
+const luzDe = d => (d && d.x && d.x.dia) ? 'dia' : (d && d.x && d.x.apagon) ? 'apagon' : '';
 const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
 
@@ -27,8 +35,10 @@ const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
 function modoPon(d) {
   MODO.m = d && MODOS[d.m] ? d.m : 'normal'; MODO.x = {};
   for (const k in (d && d.x) || {}) if (EXTRAS[k] && d.x[k]) MODO.x[k] = 1;
-  REGLAS.luzLargo = REGLAS_BASE.luzLargo * (MODO.x.apagon ? 0.75 : 1);
-  REGLAS.luzAngulo = REGLAS_BASE.luzAngulo * (MODO.x.apagon ? 0.6 : 1);
+  if (MODO.x.dia) delete MODO.x.apagon;      // de día no hay apagón (si llegan los dos, gana el día)
+  // la vista de los becarios: corta y estrecha en el apagón; de día ven más lejos y más abierto (con todo encendido)
+  REGLAS.luzLargo = REGLAS_BASE.luzLargo * (MODO.x.apagon ? 0.75 : MODO.x.dia ? 1.35 : 1);
+  REGLAS.luzAngulo = REGLAS_BASE.luzAngulo * (MODO.x.apagon ? 0.6 : MODO.x.dia ? 1.6 : 1);
 }
 const modoEs = m => MODO.m === m;
 const extraOn = k => !!MODO.x[k];

@@ -69,7 +69,7 @@ function silbatoAvanza(dt) {
 const silbatoSlot = () => extraOn('silbato') && SILBATO.quien ? SILBATO.quien.slot : undefined;
 function silbatoRecibido(s) { if (s === undefined || !extraOn('silbato')) return; const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e !== SILBATO.quien) silbatoPon(e, !SILBATO.quien); }
 // lo que ve el que lo lleva, debajo del reloj
-function silbatoTexto() { return extraOn('silbato') && SILBATO.quien ? tr('Silbato: {a} · {n} s', { a: SILBATO.quien.jugador ? tr('TÚ') : SILBATO.quien.nombre, n: Math.max(0, Math.ceil(SILBATO.t)) }) : ''; }
+function silbatoTexto() { return extraOn('silbato') && SILBATO.quien ? tr('Silbato {n} s · {a}', { a: SILBATO.quien.jugador ? tr('TÚ') : SILBATO.quien.nombre, n: Math.max(0, Math.ceil(SILBATO.t)) }) : ''; }
 
 // ---------- al terminar: lo que cambian los extras en el resultado ----------
 function modoResultado(r, victoria) {

@@ -101,7 +101,10 @@ function refrescaHud(todo) {
   if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
   const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
-  ponTexto('fase', E('fase-txt'), caza && silbatoTexto() ? silbatoTexto() : paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  // el silbato caliente va en su propia etiqueta, en la fila de abajo (encima del reloj pisaba el resto en el móvil)
+  const caliente = caza ? silbatoTexto() : ''; if (HUD.calienteVer !== !!caliente) { HUD.calienteVer = !!caliente; E('e-caliente').hidden = !caliente; }
+  if (caliente) ponTexto('caliente', E('e-caliente-n'), caliente);
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
   refrescaPoder(); refrescaChivato();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)

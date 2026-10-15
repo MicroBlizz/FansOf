@@ -124,7 +124,7 @@ function avanzaPartida(dt) {
   }
   miraLosOjos();
   PUERTA.abierta = limita(PUERTA.abierta + (PUERTA.cerrada ? -dt : dt) * 1.5, 0, 1);
-  J.oscuro += ((J.fase === 'caza' || (J.fase === 'fin' && J.tFase < 1.2) ? 1 : 0) - J.oscuro) * Math.min(1, dt * 2.2);
+  J.oscuro += ((J.fase === 'caza' || (J.fase === 'fin' && J.tFase < 1.2)) && !extraOn('dia') ? 1 - J.oscuro : -J.oscuro) * Math.min(1, dt * 2.2);      // Jugar de día: las luces no se apagan
   const yo = J.yo, manda = !J.pvp || rfpSoyAnfitrion();   // en el PvP, las fases las cambia el anfitrión (y avisa a los demás)
 
   if (J.fase === 'prep') {

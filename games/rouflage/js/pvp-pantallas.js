@@ -77,13 +77,21 @@ function pvpPintaModo(ver, soyAnf) {
   const d = soyAnf ? MODO_ELEGIDO : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
   caja.classList.toggle('mira', !soyAnf);
   E('busca-modo-n').textContent = tr(MODOS[m].nombre); E('busca-modo-t').textContent = tr(MODOS[m].texto);
-  const ex = E('busca-extras');
+  const ex = E('busca-extras'), otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz);
   if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
     ex.dataset.anf = String(soyAnf);
-    ex.innerHTML = Object.keys(EXTRAS).map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
-    if (soyAnf) for (const k of Object.keys(EXTRAS)) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
+    // la luz: tres botones, siempre uno marcado (día, normal o apagón); debajo, los extras que se encienden aparte
+    ex.innerHTML = `<div class="luz-sala"><small>${esc(tr('LUZ'))}</small><div class="luz-botones">${LUCES_SALA.map(l => `<button type="button" class="luz-b" data-luz="${l.k}" ${soyAnf ? '' : 'disabled'}>${esc(tr(l.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto" id="luz-texto"></p></div>`
+      + otros.map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
+    if (soyAnf) {
+      for (const b of ex.querySelectorAll('.luz-b')) b.onclick = () => { play('select'); for (const l of LUCES_SALA) if (l.k) delete MODO_ELEGIDO.x[l.k]; if (b.dataset.luz) MODO_ELEGIDO.x[b.dataset.luz] = 1; pvpMandaModo(); };
+      for (const k of otros) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
+    }
   }
-  for (const k of Object.keys(EXTRAS)) E('x-' + k).checked = !!(d.x && d.x[k]);
+  const luz = luzDe(d);
+  for (const b of ex.querySelectorAll('.luz-b')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
+  E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
+  for (const k of otros) E('x-' + k).checked = !!(d.x && d.x[k]);
 }
 function pvpMandaModo() {
   modoElegidoGuarda();

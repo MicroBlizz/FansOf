@@ -6,22 +6,21 @@ const NV_CARAS_DIR = { proa: [0, -1], babor: [-1, 0], estribor: [1, 0], dorsal: 
 const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco útil baja de aquí (en datos-cascos.js la proa tiene 30°: por decidir)
 
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
+// Las de arma siguen Fibonacci: 2 al empezar (una con el arma de la facción y otra vacía para la primera subida), 3, 5, 8 y 13; la de popa (defensa) va aparte.
+const NV_FIB_SLOTS = [[1, 2], [3, 3], [6, 5], [11, 8], [18, 13]];   // [rango desde el que vale, cuántas ranuras de arma]
+const NV_ORDEN_SLOTS = ['proa1', 'babor1', 'estribor1', 'dorsal1', 'dorsal2', 'babor2', 'estribor2', 'babor3', 'estribor3', 'babor4', 'estribor4', 'babor5', 'estribor5'];
+function nvNumSlots(rango) { let n = 0; for (const [r, c] of NV_FIB_SLOTS) if (rango >= r) n = c; return n; }
 function nvRanuras(rango, S) {
-  const cuenta = {}, H = NOVA_PIEZAS.cascos[S.casco];
-  const base = novaPlantilla(H.faccion, nvTier(rango));
-  // más ranuras al hacerte grande: cada 5 rangos desde el 8 se abre un par más en las alas (S, luego M y L al crecer); sus anclajes están en datos-piezas
-  const lat = novaPlantilla(H.faccion, 5).filter(r => r.cara === 'babor' || r.cara === 'estribor'), tipos = [...new Set([].concat(...lat.map(r => r.tipos)))];
-  for (let k = 0; k < 4; k++) {
-    const desde = 8 + 5 * k;
-    if (rango < desde) break;
-    const tam = rango >= desde + 16 ? 'L' : rango >= desde + 8 ? 'M' : 'S';
-    for (const cara of ['babor', 'estribor']) base.push({ id: cara + (2 + k), cara, tam, tipos, arco: NOVA_CASCOS.caras[cara].arco, extra: 1 });
+  const H = NOVA_PIEZAS.cascos[S.casco], F = NOVA_CASCOS.facciones[H.faccion], tier = nvTier(rango), N = nvNumSlots(rango);
+  const tamEn = r => { let t = r.tam; for (const k in (r.crece || {})) if (+k <= tier) t = r.crece[k]; return t; };
+  const prop = F.ranuras.filter(r => r.cara !== 'popa'), libres = [...new Set([].concat(...prop.map(r => r.tipos)))].filter(t => t !== 'defensa');
+  const out = [];
+  for (const id of NV_ORDEN_SLOTS.filter(i => H.ranuras.some(x => x.id === i)).slice(0, N)) {
+    const cara = id.replace(/\d+/, ''), i = +id.slice(cara.length) - 1, fr = prop.filter(r => r.cara === cara)[i], a = H.ranuras.find(x => x.id === id);
+    out.push({ id, x: a.x, y: a.y, cara, tam: fr ? tamEn(fr) : rango >= 24 ? 'L' : rango >= 14 ? 'M' : 'S', tipos: fr ? fr.tipos : libres, arco: NOVA_CASCOS.caras[cara].arco });
   }
-  return base.map(r => {
-    if (!r.extra) cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
-    const id = r.extra ? r.id : r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
-    return Object.assign({}, r, { id, x: a.x, y: a.y });
-  });
+  F.ranuras.filter(r => r.cara === 'popa' && r.desde <= tier).forEach((r, i) => { const id = 'popa' + (i + 1), a = H.ranuras.find(x => x.id === id); out.push({ id, x: a.x, y: a.y, cara: 'popa', tam: tamEn(r), tipos: r.tipos, arco: NOVA_CASCOS.caras.popa.arco }); });
+  return out;
 }
 
 // Un arma nueva en una ranura: portador + carga. `fusion` (de NOVA_ARMAS.fusiones) la sustituye por una de las estrella.

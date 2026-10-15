@@ -1,8 +1,8 @@
 {
- "build": 48,
- "hash": "cec74c4",
- "fecha": "2026-10-15T09:40:47Z",
- "mensaje": "Nova: balas, trazos y efectos que escalan con el rango; estelas, fogonazos, chispas y explosiones más vistosas",
+ "build": 49,
+ "hash": "f5f7ac3",
+ "fecha": "2026-10-15T09:43:40Z",
+ "mensaje": "Nova: ranuras de arma por Fibonacci (2, 3, 5, 8, 13) con una vacía desde el principio",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

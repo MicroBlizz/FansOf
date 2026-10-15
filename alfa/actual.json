@@ -1,8 +1,8 @@
 {
- "build": 99,
- "hash": "a11dd8f",
- "fecha": "2026-10-15T20:10:50Z",
- "mensaje": "Rouflage (armario): fuera el billete de Monopoly, ahora papel arcoíris; el celofán redibujado como plástico arrugado y tornasolado (antes parecía cinta adhesiva)",
+ "build": 100,
+ "hash": "b74cedc",
+ "fecha": "2026-10-15T20:12:18Z",
+ "mensaje": "Rouflage (armario): el papel Celofán se llama Cinta adhesiva y vuelve a su dibujo de tiras de celo",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

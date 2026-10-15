@@ -37,7 +37,10 @@ function nvEnemigo(S, tipo, x, y, rango) {
 function nvSpawn(S, dt) {
   if (S.jefe) return;
   const n = S.nave;
+  let carga = 0;   // con la zona llena (los grandes cuentan doble) no salen más: así se combinan tamaños sin taponar
+  for (const e of S.enem) if (!e.muerto && !e.d.pasivo && !e.d.nido && Math.hypot(e.x - n.x, e.y - n.y) < 1200) carga += e.rango > n.rango + 1 ? 2 : 1;
   for (const o of NV_OLEADAS) {
+    if (carga >= 12) break;
     if (S.t < o.desde) continue;
     o.tiempo = (S.o_t[o.tipo + o.desde] = (S.o_t[o.tipo + o.desde] || 0) + dt);
     if (o.tiempo < o.cada) continue;
@@ -55,7 +58,7 @@ function nvSpawn(S, dt) {
 // Los que salen a tu paso son de tu tamaño o algo menores, y de vez en cuando uno mucho mayor del que hay que huir.
 function nvRangoRelativo(r) {
   const q = Math.random();
-  return Math.max(1, r + (q < 0.3 ? -2 : q < 0.5 ? -1 : q < 0.72 ? 0 : q < 0.85 ? 1 : q < 0.92 ? 2 : q < 0.96 ? 3 : q < 0.985 ? 5 : 8));
+  return Math.max(1, r + (q < 0.25 ? -4 : q < 0.5 ? -2 : q < 0.7 ? -1 : q < 0.85 ? 0 : q < 0.93 ? 1 : q < 0.97 ? 3 : q < 0.99 ? 5 : 8));
 }
 
 // ---------- IA ----------
@@ -84,8 +87,6 @@ function nvEnemigos(S, dt) {
     else { vx = ux; vy = uy; }
     const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
     e.x += vx / l * v * dt; e.y += vy / l * v * dt;
-    // se apartan entre sí un poco
-    for (let j = i - 1; j >= Math.max(0, i - 12); j--) { const o = S.enem[j]; if (o.muerto) continue; const ax = e.x - o.x, ay = e.y - o.y, m = e.r + o.r, q = Math.hypot(ax, ay); if (q < m && q > 0.1) { const p = (m - q) * 0.4; e.x += ax / q * p; e.y += ay / q * p; o.x -= ax / q * p * 0.5; o.y -= ay / q * p * 0.5; } }
     // contacto con la nave: no se comen vivos, solo hacen daño
     if (dist < e.r + n.r) {
       e.golpe -= dt;

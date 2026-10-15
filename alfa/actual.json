@@ -1,8 +1,8 @@
 {
- "build": 43,
- "hash": "2402a9f",
- "fecha": "2026-10-15T08:46:27Z",
- "mensaje": "Nova: 30 rangos graduales y chatarra según el tamaño del rival",
+ "build": 44,
+ "hash": "0c59daa",
+ "fecha": "2026-10-15T08:52:27Z",
+ "mensaje": "Nova: los enemigos ya no se empujan, la zona no se llena y salen más pequeños que grandes",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

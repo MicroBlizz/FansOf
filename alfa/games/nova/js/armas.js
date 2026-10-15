@@ -38,6 +38,7 @@ function nvDanoArma(w) {
   const P = NOVA_ARMAS, p = P.portadores[w.portador], c = P.cargas[w.carga];
   let d = p.dano * P.tamanos[w.tam] * (1 + P.mejora.porNivel * w.nivel) * (NOVA_CASCOS.caras[w.cara].dano || 1) * c.multDano;
   d *= (NVP.S && NVP.S.mejoras.dano) || 1;
+  if (NVP.S) { d *= 1 + (NVP.S.capDano || 0); if (NVP.S.cap === 'necrolord' && w.portador === 'drones') d *= 0.5; }
   if (w.fusion) d *= w.fusion.tipo === 'doble' ? (w.fusion.mult || 1) : P.fusionMixta.mult;
   return d;
 }
@@ -55,7 +56,7 @@ function nvArmas(S, dt) {
     w.x = pos.x; w.y = pos.y;
     if (w.portador === 'drones') { nvDrones(S, w, p, dt); continue; }
     const f = NV_CARAS_DIR[w.cara], dx = f[0] * Math.cos(n.ang) - f[1] * Math.sin(n.ang), dy = f[0] * Math.sin(n.ang) + f[1] * Math.cos(n.ang);
-    const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
+    const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * (S.cap === 'bunny' && (w.portador === 'railgun' || w.portador === 'laser') ? 0.8 : 1) * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
     let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
       if (e.muerto || e.d.pasivo === 2) continue;
@@ -71,7 +72,7 @@ function nvArmas(S, dt) {
     if (!obj) { w.ang += (Math.atan2(dy, dx) - w.ang) * Math.min(1, dt * 6); continue; }
     w.ang = Math.atan2(obj.y - w.y, obj.x - w.x);
     if (w.cd > 0) continue;
-    w.cd += 1 / (p.cadencia * (S.mejoras.cadencia || 1));
+    w.cd += 1 / (p.cadencia * (S.mejoras.cadencia || 1) * (S.hype || 1));
     nvDispara(S, w, p, obj);
   }
 }

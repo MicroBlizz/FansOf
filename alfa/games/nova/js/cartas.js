@@ -74,7 +74,7 @@ function nvTresCartas(S) {
 function nvAbrirCartas(S) {
   S.estado = 'cartas';
   S.cartas = nvTresCartas(S);
-  S.rerolls = 1;
+  S.rerolls = S.cap === 'epicchampion' ? 0 : 1 + (S.rerollExtra || 0);
   if (!S.cartas.length) { S.estado = 'juego'; return; }
 }
 function nvElegirCarta(S, i) {

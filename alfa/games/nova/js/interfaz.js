@@ -34,7 +34,7 @@ function nvHud(c, S, W, H, vs) {
   c.textAlign = 'left'; c.font = '800 ' + 14 * u + 'px Baloo 2, sans-serif';
   nvBarra(c, m, m, bw, 14 * u, n.hp / n.hpMax, n.hp / n.hpMax > 0.3 ? '#5be36b' : '#ff5b5b');
   if (n.esc) nvBarra(c, m, m + 14 * u, bw * n.esc.hp / n.esc.cap, 4 * u, 1, '#6fc4ff', 'rgba(0,0,0,0)');
-  const ant = n.rango > 1 ? nvUmbral(n.rango - 1) : 0, sig = nvUmbral(n.rango);
+  const ant = n.rango > 1 ? nvUmbralS(S, n.rango - 1) : 0, sig = nvUmbralS(S, n.rango);
   nvBarra(c, m, m + 20 * u, bw, 9 * u, (S.chat - ant) / (sig - ant), '#ffd93d');
   c.fillStyle = '#fff'; c.lineWidth = 4; c.strokeStyle = '#1a0f2e';
   const txt = tr('RANGO') + ' ' + n.rango, t = Math.floor(S.t), tt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
@@ -114,6 +114,7 @@ function nvPreview(cv, casco) {
   nvPieza(c, casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvPieza(c, casco + '-casco', 0, 0);
   c.restore();
 }
+// Antes de la misión: nave, capitán y un oficial (tres pasos en el mismo panel).
 function nvMenu() {
   nvParar();
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
@@ -126,12 +127,43 @@ function nvMenu() {
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
     t.appendChild(nvEl('nv-cdet', tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
-    b.appendChild(t); b.onclick = () => { cont.textContent = ''; NVP.casco = id; nvEmpieza(id); };
+    b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
   cont.appendChild(p);
 }
+function nvMenuCapitan(casco) {
+  const cont = document.getElementById('nv-paneles'); cont.textContent = '';
+  const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE TU CAPITÁN')));
+  for (const id of NV_CAPITANES) {
+    const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id), F = NOVA_CASCOS.facciones[K.faccion];
+    const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', '#ffd93d');
+    b.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
+    b.appendChild(nvEl('nv-cnom', tr(K.nombre)));
+    b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
+    if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
+    b.onclick = () => nvMenuOficial(casco, id);
+    p.appendChild(b);
+  }
+  const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = nvMenu; p.appendChild(at);
+  cont.appendChild(p);
+}
+function nvMenuOficial(casco, cap) {
+  const cont = document.getElementById('nv-paneles'); cont.textContent = '';
+  const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE UN OFICIAL')));
+  for (const id of Object.keys(NV_OFICIALES)) {
+    const F = NOVA_TRIPULACION.facetas[id];
+    const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', '#6fc4ff');
+    b.appendChild(nvEl('nv-cnom', tr(F.nombre)));
+    b.appendChild(nvEl('nv-cdet', tr(NV_OFICIAL_TXT[id])));
+    b.onclick = () => { cont.textContent = ''; NVP.casco = casco; NVP.cap = cap; NVP.ofi = id; nvEmpieza(casco, cap, id); };
+    p.appendChild(b);
+  }
+  const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => nvMenuCapitan(casco); p.appendChild(at);
+  cont.appendChild(p);
+}
+const NV_OFICIAL_TXT = { fuego: 'Daño +10 %', defensa: 'Casco +15 %', ingenieria: 'Reparación automática y un 1 % de robo de casco', tacticas: 'Una repetición de cartas más en cada subida', navegacion: 'Velocidad +8 % y la chatarra te alcanza de más lejos' };
 
 // ---------- estación: reparar y cambiar armas por chatarra de la cartera ----------
 function nvRenderEstacion(S) {

@@ -6,6 +6,7 @@ const NV_ARENA = 4200;                       // radio de la arena
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
 // Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
 function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }
+function nvUmbralS(S, k) { return Math.round(nvUmbral(k) * (S.cap === 'epicchampion' ? 0.8 : 1)); }
 function nvFactor(r) { return Math.pow(1.07, r - 1); }
 function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
 function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces
@@ -14,7 +15,7 @@ function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el 
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
 function nvValorKill(base, rangoE, rangoN) { const d = rangoE - rangoN; return base * (d >= 0 ? Math.pow(1.5, Math.min(d, 8)) : Math.pow(0.6, Math.min(-d, 6))); }
 
-const NVP = { casco: 'caza', S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
+const NVP = { casco: 'caza', cap: 'progamer', ofi: null, S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
 
 // Cascos del prototipo: cada facción empieza con un arma de su clase ya montada (afinidad de datos-cascos.js).
 const NV_CASCOS = {
@@ -22,8 +23,8 @@ const NV_CASCOS = {
   crucero: { hp: 230, vel: 190, arma: ['laser', 'termica'] },
   fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
 };
-function nvNuevaPartida(casco) {
-  casco = casco || 'caza';
+function nvNuevaPartida(casco, cap, ofi) {
+  casco = casco || 'caza'; cap = cap || NVP.cap || 'progamer'; ofi = ofi === undefined ? NVP.ofi : ofi;
   const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
   const S = {
     t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
@@ -38,6 +39,8 @@ function nvNuevaPartida(casco) {
   const sl = nvRanuras(1, S)[0];
   S.nave.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1]));
   nvGeneraMundo(S);
+  S.cap = cap; S.ofi = ofi; S.kills = [];
+  nvAplicaTripulacion(S);
   return S;
 }
 
@@ -49,6 +52,7 @@ function nvPaso(S, dt) {
   nvMueve(S, dt);
   nvSpawn(S, dt);
   nvMundo(S, dt);
+  nvTripulacionPaso(S);
   nvEnemigos(S, dt);
   nvSumaChatarra(S, 0);
   nvArmas(S, dt);
@@ -124,7 +128,7 @@ function nvRestos(S, dt) {
 function nvSumaChatarra(S, v) {
   S.chat += v; S.cartera += v;
   const n = S.nave;
-  if (S.estado === 'juego' && S.chat >= nvUmbral(n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
+  if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
     n.rango++; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala;
     n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
@@ -145,8 +149,8 @@ function nvBucle(ahora) {
   nvDibuja(S);
   NVP.raf = requestAnimationFrame(nvBucle);
 }
-function nvEmpieza(casco) {
-  nvNuevaPartida(casco);
+function nvEmpieza(casco, cap, ofi) {
+  nvNuevaPartida(casco, cap, ofi);
   NVP.ult = 0;
   cancelAnimationFrame(NVP.raf);
   NVP.raf = requestAnimationFrame(nvBucle);
@@ -171,4 +175,29 @@ function nvBotEstacion(S) {
   for (let hecho = true; hecho;) { hecho = false; const a = S.nave.armas.filter(w => w.portador !== 'defensa'); for (const x of a) { const y = a.find(w => nvPuedeUnir(x, w)); if (y) { nvUneArmas(S, x, y); hecho = true; break; } } }   // el bot une las armas iguales
   if (S.nave.hp < S.nave.hpMax * 0.6 && S.cartera >= 40) { S.cartera -= 40; S.nave.hp = S.nave.hpMax; }
   S.est.cd = 25; S.estado = 'juego'; S.est = null;
+}
+
+// ---------- tripulación: capitán (ventaja y pega) y un oficial (faceta). Solo los capitanes que ya tienen mecánica en el prototipo ----------
+const NV_CAPITANES = ['progamer', 'bunny', 'necrolord', 'twitchking', 'epicchampion'];
+const NV_OFICIALES = {   // faceta de datos-tripulacion.js → efecto en la partida
+  fuego: S => { S.mejoras.dano = (S.mejoras.dano || 1) * 1.1; },
+  defensa: S => { S.nave.hpMax = Math.round(S.nave.hpMax * 1.15); S.nave.hp = S.nave.hpMax; },
+  ingenieria: S => { S.mejoras.regen = (S.mejoras.regen || 0) + 0.8; S.mejoras.robo = (S.mejoras.robo || 0) + 0.01; },
+  tacticas: S => { S.rerollExtra = 1; },
+  navegacion: S => { S.mejoras.vel = (S.mejoras.vel || 1) * 1.08; S.mejoras.iman = (S.mejoras.iman || 0) + 1; }
+};
+function nvAplicaTripulacion(S) {
+  if (S.ofi && NV_OFICIALES[S.ofi]) NV_OFICIALES[S.ofi](S);
+}
+function nvTripulacionPaso(S) {
+  const n = S.nave;
+  if (S.cap === 'bunny') {   // +10 % de daño por enemigo cerca, hasta +50 %
+    let k = 0; const R = 140 * nvFactor(n.rango);
+    for (const e of S.enem) if (!e.muerto && !e.d.pasivo && Math.hypot(e.x - n.x, e.y - n.y) < R + e.r) k++;
+    S.capDano = Math.min(0.5, 0.1 * k);
+  }
+  if (S.cap === 'twitchking') {   // cada baja en los últimos 2 s da +5 % de cadencia, hasta +50 %
+    S.kills = S.kills.filter(t => S.t - t < 2);
+    S.hype = 1 + Math.min(0.5, 0.05 * S.kills.length);
+  }
 }

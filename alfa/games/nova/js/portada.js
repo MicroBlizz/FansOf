@@ -13,7 +13,9 @@
     if (/[?&]auto=1/.test(q)) NVP.auto = true;
     const v = /[?&]vel=(\d+)/.exec(q); if (v) NVP.vel = +v[1];
     const c = /[?&]casco=(\w+)/.exec(q);
-    if (c) { nvJugar(); document.getElementById('nv-paneles').textContent = ''; NVP.casco = c[1]; nvEmpieza(c[1]); }
+    if (c) { nvJugar(); document.getElementById('nv-paneles').textContent = ''; NVP.casco = c[1]; const k = /[?&]cap=(\w+)/.exec(q), o = /[?&]of=(\w+)/.exec(q); NVP.cap = k ? k[1] : 'progamer'; NVP.ofi = o ? o[1] : null; nvEmpieza(c[1], NVP.cap, NVP.ofi); }
+    else if (/[?&]menu=capitan/.test(q)) { nvJugar(); nvMenuCapitan('caza'); }
+    else if (/[?&]menu=oficial/.test(q)) { nvJugar(); nvMenuOficial('caza', 'bunny'); }
     else if (/[?&]jugar=1/.test(q)) nvJugar();
     const rg = /[?&]rango=(\d+)/.exec(q);   // solo pruebas: empezar en ese rango, con las ranuras llenas y sin morir
     if (rg && NVP.S) { const S = NVP.S, n = S.nave; n.rango = +rg[1]; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = 1e6; S.chat = nvUmbral(n.rango - 1); nvAjustaTamanos(S); const ps = ['railgun', 'flak', 'laser', 'lanzador', 'drones'], cs = ['cinetica', 'energia', 'termica', 'em', 'explosiva']; for (const sl of nvRanuras(n.rango, S)) if (!n.armas.some(w => w.slot === sl.id) && sl.cara !== 'popa' && sl.tipos.includes(ps[0]) || sl.tipos.includes(ps[1])) if (!n.armas.some(w => w.slot === sl.id)) n.armas.push(nvArmaNueva(sl, sl.tipos.filter(t => ps.includes(t))[0], cs[n.armas.length % 5])); }

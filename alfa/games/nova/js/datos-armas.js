@@ -41,7 +41,7 @@ const NOVA_ARMAS = {
   "rafaga": { "nombre": "Ráfaga", "efecto": "Tres disparos, más recarga", "mult": 1.2, "origen": "élites" },
   "sifon": { "nombre": "Sifón", "efecto": "Los enemigos muertos sueltan más chatarra", "mult": 1.0, "origen": "élites" }
  },
- "tamanos": { "S": 1.0, "M": 2.0, "L": 4.0 },
+ "tamanos": { "S": 1.0, "M": 2.6, "L": 7.0 },
  "mejora": { "porNivel": 0.25, "maxNiveles": 5, "nota": "+25 % de daño por mejora de carta (provisional)" },
  "coincidencia": { "factor": 0.6, "nota": "Parte del tiempo en que los dos estados de una reacción coinciden sobre el mismo enemigo (provisional)" },
  "fusionMixta": { "mult": 1.15, "nota": "Una fusión ocupa una ranura y rinde lo de dos: premio +15 %" },

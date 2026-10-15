@@ -26,9 +26,9 @@ function nvCandidatas(S) {
     const tipos = (sl.cara === 'popa' ? [] : S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]);
     for (const portador of tipos) for (const carga of NV_CARGAS) {
       const peso = nvPesoTendencia(S, portador, carga);
-      out.push({ tipo: 'arma', cat: 'of', peso: peso * (n.armas.length ? 0.35 : 1) * (sl.tam === 'S' ? 1 : 1.4) / (tipos.length || 1) / 2, carga, tendencia: peso > 1.4,
+      out.push({ tipo: 'arma', cat: 'of', peso: peso * (n.armas.length ? 0.35 : 1) * 1 / (tipos.length || 1) / 2, carga, tendencia: peso > 1.4,
         titulo: tr(NOVA_ARMAS.portadores[portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
-        detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + sl.tam + '). ' + tr(NOVA_ARMAS.portadores[portador].fuerte),
+        detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (S). ' + tr(NOVA_ARMAS.portadores[portador].fuerte),
         aplicar: () => n.armas.push(nvArmaNueva(sl, portador, carga)) });
     }
     if (sl.tipos.includes('defensa')) {
@@ -92,7 +92,7 @@ function nvReroll(S) {
 // Cada arma crece con su ranura (S→M→L según el rango).
 function nvAjustaTamanos(S) {
   const sl = nvRanuras(S.nave.rango, S);
-  for (const w of S.nave.armas) { const r = sl.find(x => x.id === w.slot); if (r && w.portador !== 'defensa') w.tam = r.tam; }
+  // el tamaño ya es del arma (se cambia en la estación): nada que ajustar al subir de rango
 }
 
 // ---------- estación: cambiar el arma de una ranura (cuesta chatarra de la cartera) ----------
@@ -101,15 +101,37 @@ function nvOfertasEstacion(S, slotId) {
   const sl = nvRanuras(S.nave.rango, S).find(r => r.id === slotId), tipos = (S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]), out = [];
   for (let i = 0; i < 40 && out.length < 3; i++) {
     const p = tipos[Math.floor(Math.random() * tipos.length)], c = NV_CARGAS[Math.floor(Math.random() * NV_CARGAS.length)];
-    if (!out.some(o => o.portador === p && o.carga === c)) out.push({ portador: p, carga: c, precio: NV_PRECIO_TAM[sl.tam], slot: sl });
+    if (!out.some(o => o.portador === p && o.carga === c)) out.push({ portador: p, carga: c, precio: NV_PRECIO_TAM[(S.nave.armas.find(w => w.slot === slotId) || { tam: 'S' }).tam], slot: sl });
   }
   return out;
 }
 function nvCompraArma(S, oferta, viejo) {
   if (S.cartera < oferta.precio) return false;
   S.cartera -= oferta.precio;
-  const n = S.nave, w = nvArmaNueva(oferta.slot, oferta.portador, oferta.carga);
+  const n = S.nave, w = nvArmaNueva(oferta.slot, oferta.portador, oferta.carga, null, viejo.tam);
   w.nivel = viejo.nivel;   // la mejora se conserva; la fusión no
   n.armas.splice(n.armas.indexOf(viejo), 1, w);
+  return true;
+}
+
+// ---------- taller de la estación: 2 pequeñas = 1 mediana, 2 medianas = 1 grande, y al revés (dividir necesita una ranura libre) ----------
+const NV_SIG_TAM = { S: 'M', M: 'L' }, NV_ANT_TAM = { M: 'S', L: 'M' };
+function nvPuedeUnir(a, b) { return a && b && a !== b && a.tam === b.tam && !!NV_SIG_TAM[a.tam] && a.portador !== 'defensa' && b.portador !== 'defensa'; }
+function nvUneArmas(S, a, b) {
+  if (!nvPuedeUnir(a, b)) return false;
+  a.tam = NV_SIG_TAM[a.tam]; a.nivel = Math.max(a.nivel, b.nivel);
+  if (!a.fusion && b.fusion) { a.fusion = b.fusion; a.portador = b.portador; a.carga = b.carga; }
+  S.nave.armas.splice(S.nave.armas.indexOf(b), 1);
+  return true;
+}
+function nvRanuraLibre(S, portador) {
+  return nvRanuras(S.nave.rango, S).find(r => r.cara !== 'popa' && !S.nave.armas.some(w => w.slot === r.id) && r.tipos.includes(portador));
+}
+function nvDivideArma(S, a) {
+  const sl = a.portador !== 'defensa' && NV_ANT_TAM[a.tam] ? nvRanuraLibre(S, a.portador) : null;
+  if (!sl) return false;
+  const t = NV_ANT_TAM[a.tam], b = nvArmaNueva(sl, a.portador, a.carga, null, t);
+  b.nivel = a.nivel; a.tam = t; a.fusion = null;
+  S.nave.armas.push(b);
   return true;
 }

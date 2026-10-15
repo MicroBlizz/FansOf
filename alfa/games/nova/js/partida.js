@@ -168,6 +168,7 @@ function nvSimular(max, dt, bot) {
 
 // Bot en la estación: repara si hace falta y, si no, se va (los cambios de arma son cosa del jugador).
 function nvBotEstacion(S) {
+  for (let hecho = true; hecho;) { hecho = false; const a = S.nave.armas.filter(w => w.portador !== 'defensa'); for (const x of a) { const y = a.find(w => nvPuedeUnir(x, w)); if (y) { nvUneArmas(S, x, y); hecho = true; break; } } }   // el bot une las armas iguales
   if (S.nave.hp < S.nave.hpMax * 0.6 && S.cartera >= 40) { S.cartera -= 40; S.nave.hp = S.nave.hpMax; }
   S.est.cd = 25; S.estado = 'juego'; S.est = null;
 }

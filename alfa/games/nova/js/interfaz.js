@@ -140,7 +140,30 @@ function nvRenderEstacion(S) {
   p.appendChild(nvEl('nv-cdet', tr('Chatarra para gastar') + ': ' + Math.floor(S.cartera)));
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
-  if (!S.estSel) {
+  if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
+    const T = S.estTaller, armas = n.armas.filter(w => w.portador !== 'defensa');
+    T.sel = T.sel.filter(w => armas.includes(w));
+    p.appendChild(nvEl('nv-cdet', tr('Elige 2 armas del mismo tamaño para unirlas, o 1 para dividirla')));
+    for (const w of armas) {
+      const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[w.carga].color);
+      if (T.sel.includes(w)) b.style.outline = '3px solid #ffd93d';
+      b.appendChild(nvEl('nv-cnom', nvNombreArma(w) + (w.nivel ? ' +' + w.nivel : '')));
+      b.appendChild(nvEl('nv-cdet', tr('Tamaño') + ' ' + w.tam));
+      b.onclick = () => { T.sel = T.sel.includes(w) ? T.sel.filter(x => x !== w) : T.sel.concat(w).slice(-2); nvRenderEstacion(S); };
+      p.appendChild(b);
+    }
+    const [a, b2] = T.sel;
+    if (T.sel.length === 2 && nvPuedeUnir(a, b2)) {
+      const u = nvEl('nv-boton', tr(a.tam === 'S' ? 'Unir en una mediana' : 'Unir en una grande'), 'button');
+      u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
+    }
+    if (T.sel.length === 1 && NV_ANT_TAM[a.tam]) {
+      const libre = !!nvRanuraLibre(S, a.portador), d = nvEl('nv-boton', tr(a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (libre ? '' : ' · ' + tr('sin ranura libre')), 'button');
+      d.disabled = !libre; d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
+    }
+    const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
+  } else if (!S.estSel) {
+    const ta = nvEl('nv-boton', tr('Taller de tamaños'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
     p.appendChild(nvEl('nv-cdet', tr('Cambiar un arma')));
     for (const w of n.armas) {
       if (w.portador === 'defensa') continue;
@@ -162,6 +185,6 @@ function nvRenderEstacion(S) {
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
+  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
   p.appendChild(sa); cont.appendChild(p);
 }

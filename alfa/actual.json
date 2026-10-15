@@ -1,8 +1,8 @@
 {
- "build": 49,
- "hash": "f5f7ac3",
- "fecha": "2026-10-15T09:43:40Z",
- "mensaje": "Nova: ranuras de arma por Fibonacci (2, 3, 5, 8, 13) con una vacía desde el principio",
+ "build": 50,
+ "hash": "2990887",
+ "fecha": "2026-10-15T09:46:27Z",
+ "mensaje": "Nova: tamaño de arma propio, taller de estación para unir y dividir armas",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

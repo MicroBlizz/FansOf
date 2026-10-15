@@ -77,9 +77,8 @@ function nvDibujaNave(c, S) {
   nvPieza(c, S.casco + '-casco', 0, 0);
   const abiertas = nvRanuras(n.rango, S);
   for (const sl of abiertas) {
-    const rr = NOVA_PIEZAS.radioRanura[sl.tam];
+    const w = n.armas.find(a => a.slot === sl.id), rr = NOVA_PIEZAS.radioRanura[w ? w.tam : 'S'];
     nvPlaca(c, sl.x, sl.y, rr);
-    const w = n.armas.find(a => a.slot === sl.id);
     if (!w) continue;
     if (w.portador === 'defensa') { c.beginPath(); for (let k = 0; k < 6; k++) { const a = k * 1.047 - 1.57; c[k ? 'lineTo' : 'moveTo'](sl.x + Math.cos(a) * rr, sl.y + Math.sin(a) * rr); } c.closePath(); c.fillStyle = w.carga === 'energia' ? '#4aa8ff' : '#ff9a3c'; c.fill(); c.stroke(); continue; }
     c.save(); c.translate(sl.x, sl.y); nvTorreta(c, w, rr, (w.ang || 0) - n.ang + 1.5708); c.restore();

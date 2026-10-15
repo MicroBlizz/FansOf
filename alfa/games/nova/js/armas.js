@@ -24,8 +24,10 @@ function nvRanuras(rango, S) {
 }
 
 // Un arma nueva en una ranura: portador + carga. `fusion` (de NOVA_ARMAS.fusiones) la sustituye por una de las estrella.
-function nvArmaNueva(slot, portador, carga, fusion) {
-  return { slot: slot.id, cara: slot.cara, tam: slot.tam, portador, carga, nivel: 0, fusion: fusion || null, cd: 0, ang: 0, fase: Math.random() * 6.28, rayo: 0 };
+// El tamaño es del arma, no de la ranura: empieza pequeña y se une/divide en la estación. Más tamaño = mucho más daño, alcance y bala.
+const NV_RANGO_TAM = { S: 1, M: 1.3, L: 1.7 }, NV_BALA_TAM = { S: 1, M: 1.35, L: 1.8 };
+function nvArmaNueva(slot, portador, carga, fusion, tam) {
+  return { slot: slot.id, cara: slot.cara, tam: tam || 'S', portador, carga, nivel: 0, fusion: fusion || null, cd: 0, ang: 0, fase: Math.random() * 6.28, rayo: 0 };
 }
 function nvNombreArma(w) {
   if (w.fusion) return tr(w.fusion.nombre);
@@ -53,7 +55,7 @@ function nvArmas(S, dt) {
     w.x = pos.x; w.y = pos.y;
     if (w.portador === 'drones') { nvDrones(S, w, p, dt); continue; }
     const f = NV_CARAS_DIR[w.cara], dx = f[0] * Math.cos(n.ang) - f[1] * Math.sin(n.ang), dy = f[0] * Math.sin(n.ang) + f[1] * Math.cos(n.ang);
-    const kf = nvFactor(n.rango), alc = p.alcance * kf * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
+    const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
     let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
       if (e.muerto || e.d.pasivo === 2) continue;
@@ -89,8 +91,8 @@ function nvDispara(S, w, p, obj) {
     if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - 0.5) * 0.12;
     const v = (w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9);   // las balas también corren más cuanto mayor es la nave
     S.proy.push(Object.assign({}, base, {
-      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 5 : w.portador === 'flak' ? 4 : 6) * kf,
-      vida: (w.portador === 'flak' ? p.alcance * kf / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) : 3), perf: w.portador === 'railgun' ? 3 : 1,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 5 : w.portador === 'flak' ? 4 : 6) * kf * NV_BALA_TAM[w.tam],
+      vida: (w.portador === 'flak' ? p.alcance * kf * NV_RANGO_TAM[w.tam] / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) * NV_RANGO_TAM[w.tam] : 3), perf: w.portador === 'railgun' ? 3 : 1,
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
   }

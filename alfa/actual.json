@@ -1,8 +1,8 @@
 {
- "build": 61,
- "hash": "a371332",
- "fecha": "2026-10-15T11:33:06Z",
- "mensaje": "Fans of Karts 0.6.1: tutorial en ocho alto con rectas largas y menú principal con los botones de Fans of Rumble (sin BIBLIOTECA)",
+ "build": 62,
+ "hash": "a6be71e",
+ "fecha": "2026-10-15T11:37:44Z",
+ "mensaje": "Rouflage: zoom con rueda en PC (también sobre el panel), vista inicial del señuelo al área entera y cámara dentro del área",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

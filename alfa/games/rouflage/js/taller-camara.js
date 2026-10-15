@@ -8,10 +8,10 @@ const senCamActiva = () => TALLER.abierto && TALLER.herr === 'senuelo' && !!J.yo
 
 // pone la cámara del taller dentro de los límites: el punto del mundo que queda en el centro del hueco libre no sale del alcance del brazo
 function senCamPon(x, y, z) {
-  const yo = J.yo, [sx, sy] = TALLER.libre; z = limita(z, SENCAM.z0, SENCAM.zMax);
+  const yo = J.yo, [sx, sy, lw, lh] = TALLER.libre; z = limita(z, SENCAM.z0, SENCAM.zMax);
   let fx = x + (sx - VW / 2) / z, fy = y + (sy - VH / 2) / z;
-  const cx = yo.x, cy = yo.y - 20, d = Math.hypot(fx - cx, fy - cy), r = SEN.alcance;
-  if (d > r) { fx = cx + (fx - cx) * r / d; fy = cy + (fy - cy) * r / d; }
+  const cx = yo.x, cy = yo.y - 20, r = SEN.alcance + 8, hw = lw / z / 2, hh = lh / z / 2;      // lo que se ve no sale del cuadrado del área del señuelo
+  fx = hw >= r ? cx : limita(fx, cx - r + hw, cx + r - hw); fy = hh >= r ? cy : limita(fy, cy - r + hh, cy + r - hh);
   TALLER.cam = [fx - (sx - VW / 2) / z, fy - (sy - VH / 2) / z, z];
 }
 // zoom alrededor de un punto de la pantalla
@@ -49,5 +49,8 @@ function senCamPuntero(ev, tipo) {
   if (!SENCAM.toques.size) SENCAM.gesto = false;
   return estaba && gesto;
 }
-cv.addEventListener('wheel', ev => { if (!senCamActiva()) return; ev.preventDefault(); senCamZoom(ev.clientX, ev.clientY, Math.exp(-ev.deltaY * 0.0015)); }, { passive: false });
+// si la rueda está sobre el panel y el panel se desplaza (pantalla pequeña), se deja desplazar
+function senCamPanelScroll(t) { const p = document.getElementById('taller'); return !!(p && t && p.contains(t) && p.scrollHeight > p.clientHeight + 2); }
+// en el documento entero (no solo en el lienzo) para que la rueda funcione también sobre el HUD; el panel de herramientas sigue pudiendo desplazarse
+document.addEventListener('wheel', ev => { if (!senCamActiva() || senCamPanelScroll(ev.target)) return; ev.preventDefault(); senCamZoom(ev.clientX, ev.clientY, Math.exp(-ev.deltaY * (ev.deltaMode === 1 ? 33 : 1) * 0.0015)); }, { passive: false });
 cv.addEventListener('contextmenu', ev => { if (TALLER.abierto) ev.preventDefault(); });

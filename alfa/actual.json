@@ -1,8 +1,8 @@
 {
- "build": 93,
- "hash": "b9a8096",
- "fecha": "2026-10-15T19:15:08Z",
- "mensaje": "Nova: cada arma solo admite las cargas que tienen sentido (nada de láser cinético); fuera las fusiones Flak sónica y Aguja de fricción",
+ "build": 94,
+ "hash": "44781dd",
+ "fecha": "2026-10-15T19:33:12Z",
+ "mensaje": "Rouflage: el hotel con paredes de altura normal (dos filas), dos pasillos que bajan al vestíbulo, mostrador y piano redibujados; la habitación siempre en la estación",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

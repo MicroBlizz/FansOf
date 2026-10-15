@@ -13,6 +13,7 @@ function senCamPon(x, y, z) {
   const cx = yo.x, cy = yo.y - 20, r = SEN.alcance + 8, hw = lw / z / 2, hh = lh / z / 2;      // lo que se ve no sale del cuadrado del área del señuelo
   fx = hw >= r ? cx : limita(fx, cx - r + hw, cx + r - hw); fy = hh >= r ? cy : limita(fy, cy - r + hh, cy + r - hh);
   TALLER.cam = [fx - (sx - VW / 2) / z, fy - (sy - VH / 2) / z, z];
+  TALLER.capas = false;      // el fondo congelado del taller (capas) ya no vale: la vista se repinta y, cuando la cámara llega, se vuelve a congelar
 }
 // zoom alrededor de un punto de la pantalla
 function senCamZoom(px, py, factor) {

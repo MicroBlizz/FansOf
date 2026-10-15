@@ -1,8 +1,8 @@
 {
- "build": 63,
- "hash": "252508c",
- "fecha": "2026-10-15T11:44:15Z",
- "mensaje": "Rouflage: la cámara del señuelo también con teclado (WASD/flechas, + / -) y pista con los controles",
+ "build": 64,
+ "hash": "e979e61",
+ "fecha": "2026-10-15T11:49:19Z",
+ "mensaje": "Rouflage: el zoom y la cámara del señuelo repintan la vista (el fondo congelado del taller no se actualizaba)",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

@@ -41,6 +41,7 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .redondo { justify-self: end; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); font-size: 18px; }
 .redondo:active, .boton:active, .accion:active, .papel:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
 #esquina { justify-self: end; display: flex; gap: 8px; }
+#b-zoom.puesto { background: linear-gradient(to bottom, #ffe07a, #e0a11f); }
 #b-ranking.puesto { background: linear-gradient(to bottom, #ffe07a, #e0a11f); }
 /* la clasificación en vivo: solo texto con contorno, sin ventana, en la esquina de arriba a la derecha */
 #ranking { position: absolute; top: calc(var(--sup) + 128px); right: calc(var(--der) + 12px); margin: 0; padding: 0; list-style: none; text-align: right; pointer-events: none; font-family: var(--font-display); font-weight: 400; font-size: 14px; line-height: 1.35; color: #fff6ea; text-shadow: 0 2px 0 var(--outline), -1px 0 0 var(--outline), 1px 0 0 var(--outline), 0 -1px 0 var(--outline); font-variant-numeric: tabular-nums; }

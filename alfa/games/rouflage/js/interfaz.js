@@ -26,6 +26,7 @@ const ICONOS = {
   linea: '<path d="M5 19 19 5" stroke-width="3"/><circle cx="5" cy="19" r="1.8" fill="currentColor"/><circle cx="19" cy="5" r="1.8" fill="currentColor"/>',
   cuadro: '<rect x="4.5" y="5.5" width="15" height="13" rx="2" fill="currentColor" fill-opacity=".35"/>',
   circulo: '<circle cx="12" cy="12" r="7.5" fill="currentColor" fill-opacity=".35"/>',
+  lupa: '<circle cx="10" cy="10" r="6.6"/><path d="M15 15l6 6M10 7v6M7 10h6"/>',
   diana: '<circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><path d="M12 1.4v3M12 19.6v3M1.4 12h3M19.6 12h3"/>',
 };
 const ESTRELLA = '<svg viewBox="0 0 24 24"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z"/></svg>';
@@ -107,7 +108,7 @@ function refrescaHud(todo) {
   refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
-    'b-silbar': caza && !espectando(), 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
+    'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
   if (cam) {
     const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;

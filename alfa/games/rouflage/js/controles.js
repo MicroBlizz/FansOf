@@ -25,18 +25,21 @@ cv.addEventListener('pointerdown', ev => {
   if (ev.pointerType === 'mouse') { ENTRADA.raton = [ev.clientX, ev.clientY]; if (ev.button === 0 && (J.yo.clase === 'cazador' || J.fase === 'paseo')) { const [x, y] = aMundo(ev.clientX, ev.clientY); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 4); } return; }
   try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* da igual */ }
   ENTRADA.toques.set(ev.pointerId, { x0: ev.clientX, y0: ev.clientY, x: ev.clientX, y: ev.clientY, t0: performance.now(), palanca: false });
+  if (ENTRADA.toques.size >= 2 && zoomCazadorPinza(ENTRADA.toques)) { for (const t of ENTRADA.toques.values()) t.gesto = true; ENTRADA.palanca = null; }      // dos dedos de cazador: zoom
 });
 cv.addEventListener('pointermove', ev => {
   if (ev.pointerType === 'mouse') ENTRADA.raton = [ev.clientX, ev.clientY];
   if (TALLER.abierto) { tallerMueve(ev); return; }
   const t = ENTRADA.toques.get(ev.pointerId); if (!t) return;
   t.x = ev.clientX; t.y = ev.clientY;
+  if (t.gesto) { zoomCazadorPinza(ENTRADA.toques); return; }
   if (!t.palanca && !ENTRADA.palanca && Math.hypot(t.x - t.x0, t.y - t.y0) > 10) { t.palanca = true; ENTRADA.palanca = t; }
 });
 function sueltaPuntero(ev) {
   if (TALLER.abierto) { tallerArriba(ev); return; }
   const t = ENTRADA.toques.get(ev.pointerId); if (!t) return;
   ENTRADA.toques.delete(ev.pointerId);
+  if (t.gesto) { if (ENTRADA.toques.size < 2) ZOOMC.pinza = null; return; }      // el pellizco no dispara
   if (t === ENTRADA.palanca) ENTRADA.palanca = null;
   else if (ev.type === 'pointerup' && !t.palanca && performance.now() - t.t0 < 380 && Math.hypot(t.x - t.x0, t.y - t.y0) < 12 && jugando() && (J.yo.clase === 'cazador' || J.fase === 'paseo')) {
     const [x, y] = aMundo(t.x, t.y); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 9);

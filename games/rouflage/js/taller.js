@@ -22,7 +22,8 @@ function abreTaller() {
 function encuadraTaller() {
   const yo = J.yo, p = document.getElementById('taller').getBoundingClientRect(), deLado = matchMedia('(orientation: landscape) and (max-height: 520px)').matches;   // móvil tumbado: el panel va a un lado
   const libreW = deLado ? VW - p.width : VW, arriba = 66, libreH = deLado ? VH - arriba : VH - p.height - arriba;
-  const z = limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
+  // con el señuelo la cámara se abre para ver todo hasta donde llega el brazo (se pinta lejos de uno, no encima)
+  const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, libreH) / (SEN.alcance * 2 + 50), 0.45, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
   const sx = libreW / 2, sy = arriba + libreH / 2;
   TALLER.cam = [yo.x - (sx - VW / 2) / z, yo.y - 26 - (sy - VH / 2) / z, z];
   TALLER.capas = false;
@@ -119,8 +120,8 @@ function tallerPlegar() {
   TALLER.plegado = !TALLER.plegado; play('select'); refrescaTaller();
   if (TALLER.abierto) encuadraTaller();
 }
-function tallerHerramienta(h) { TALLER.herr = TALLER.herr === h ? 'pincel' : h; play('select'); refrescaTaller(); }
-function tallerRadio(i) { TALLER.radio = RADIOS[i]; if (TALLER.herr !== 'linea' && TALLER.herr !== 'senuelo') TALLER.herr = 'pincel'; play('select'); refrescaTaller(); }   // la línea usa el gordo del pincel
+function tallerHerramienta(h) { TALLER.herr = TALLER.herr === h ? 'pincel' : h; play('select'); refrescaTaller(); if (TALLER.abierto) encuadraTaller(); }      // el señuelo abre la cámara, el resto la cierra
+function tallerRadio(i) { const antes = TALLER.herr; TALLER.radio = RADIOS[i]; if (TALLER.herr !== 'linea' && TALLER.herr !== 'senuelo') TALLER.herr = 'pincel'; play('select'); refrescaTaller(); if (antes !== TALLER.herr && TALLER.abierto) encuadraTaller(); }   // la línea usa el gordo del pincel
 function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.color); yo.pintado = true; play('cubo'); mideTaller(); }
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }
 function tallerCalco() { TALLER.calco = !TALLER.calco; play('select'); refrescaTaller(); }

@@ -59,7 +59,9 @@ function pintaYoEnTaller(c, yo, t) {
   c.beginPath(); trazaAlubia(c, null, yo.postura); c.lineWidth = 0.8; c.setLineDash([2.5, 2.5]);
   c.lineDashOffset = -t * 6; c.strokeStyle = 'rgba(32,16,44,0.95)'; c.stroke();
   c.lineDashOffset = -t * 6 + 2.5; c.strokeStyle = 'rgba(255,255,255,0.95)'; c.stroke();
-  c.setLineDash([]); c.restore();
+  c.setLineDash([]);
+  if (TALLER.herr === 'senuelo') { c.beginPath(); c.arc(0, -20, SEN.alcance, 0, TAU); c.lineWidth = 1.4; c.setLineDash([6, 6]); c.lineDashOffset = -t * 8; c.strokeStyle = 'rgba(255,246,234,0.55)'; c.stroke(); c.setLineDash([]); }      // hasta dónde llega el brazo
+  c.restore();
 }
 
 // un bocadillo pequeño con un signo encima de alguien
@@ -90,9 +92,9 @@ function pintaMarcas(c, t) {
   }
   pintaFantasma(c, t);
   if (yo && yo.clase === 'cazador' && J.fase === 'caza') {
-    // la ayuda del cazador: a los camaleones congelados que tiene cerca y en la luz les brilla el contorno (sobre todo si están pegados), aunque estén perfectos
+    // la ayuda del cazador: SOLO al camaleón que se pasa de listo (100 % de camuflaje, imposible de ver) y está cerca y en la luz le brilla el contorno; al 99 % ya no. Para el resto están los señuelos
     for (const k of J.camaleones) {
-      if (k.fuera || invisible(k) || k.hielo < 0.85) continue;
+      if (k.fuera || invisible(k) || k.hielo < 0.85 || (k.camo || 0) < 100) continue;
       const d = lejos(yo.x, yo.y, k.x, k.y); if (d > 110 || !veCazador(yo, k.x, k.y - 8)) continue;
       c.save(); c.translate(k.x, k.y); c.beginPath(); trazaAlubia(c, null, k.postura); c.globalAlpha = (1 - d / 110) * (0.35 + 0.2 * Math.sin(t * 5));
       c.lineWidth = 1.6; c.setLineDash([3, 4]); c.lineDashOffset = -t * 6; c.strokeStyle = '#fff6ea'; c.stroke(); c.restore();

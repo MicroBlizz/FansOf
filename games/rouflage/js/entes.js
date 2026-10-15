@@ -4,7 +4,7 @@
 
 // Las cifras del prototipo, juntas para poder tocarlas: tiempos en segundos, distancias en píxeles del mundo.
 const REGLAS = {
-  prep: 60,              // lo que dura pintarse (de camaleón)
+  prep: 90,              // lo que dura pintarse (de camaleón)
   caza: 120,             // lo que dura la caza siendo camaleón
   cazaCazador: 150,      // lo que dura la caza siendo cazador
   cuenta: 3.4,           // la cuenta atrás antes de que salgan los becarios
@@ -12,7 +12,9 @@ const REGLAS = {
   primerSilbido: 16,
   rectaFinal: 30,        // los últimos segundos: pistas extra para los cazadores
   velCamaleon: 168, velCazador: 150,
-  balas: 5,              // cartas de despido: fallar gasta una, acertar la devuelve
+  balas: 5,              // cartas de despido (el máximo): fallar gasta una, acertar la devuelve
+  balasIni: 2, balasExtra: 3,   // el cazador sale con balasIni y gana hasta balasExtra más en el minijuego de los wakameles
+  prepCazador: 30,       // la partida en solitario como cazador: lo que dura el minijuego antes de la cuenta atrás
   enfria: 1.5,           // espera entre disparos
   enfriaFallo: 2.6,      // …y tras un despido improcedente
   ciego: 2.4,            // tras fallar, la linterna alumbra la mitad durante este rato
@@ -41,7 +43,7 @@ function nuevoEnte(clase, tipo, nombre, x, y) {
     piel, pctx, pasos: [], congelado: false, hielo: 0, camo: 0, vis: 1, tapada: 0, pintado: false,
     fuera: false, tFuera: 0, bot: null, jugador: false, slot: -1, humano: false, remoto: false, red: null,   // PvP: su plaza en la sala, si lo lleva una persona y si lo mueve la red
     semilla: _semilla++ * 1.37, ojoX: 0, ojoY: 0, susto: false, tiembla: 0,
-    balas: REGLAS.balas, enfria: 0, ciego: 0, alerta: 0, marca: '', tMarca: 0, tSilbo: 0, sitio: null,
+    balas: clase === 'cazador' ? REGLAS.balasIni : REGLAS.balas, enfria: 0, ciego: 0, alerta: 0, marca: '', tMarca: 0, tSilbo: 0, sitio: null,
     granada: clase === 'camaleon' ? 1 : 0, invis: 0, tinta: 100,      // tinta para los señuelos
        // la granada cegadora (una por partida) y los segundos que le quedan de invisible
     silbido: REGLAS.primerSilbido, avisado: false,   // su reloj del silbido obligatorio (cada uno el suyo)
@@ -73,6 +75,7 @@ function avanzaEnte(e, dt) {
 function congela(e) {
   if (e.fuera || e.congelado) return;
   e.congelado = true; e.vx = e.vy = 0; e.x = Math.round(e.x); e.y = Math.round(e.y);
+  if (e.trasHumo && e.jugador) autoCamuflaje(e);      // el humo ya se acabó para él: se pintó de cero y no puede
   mideCamuflaje(e);
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel
 }

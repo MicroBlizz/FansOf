@@ -73,6 +73,7 @@ function rfpRecibe(m) {
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
+    case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
     case 'a': if (m.de === RFP.host && !RFP.soyHost) rfpEstadoIA(m); break;
     case 'fa': if (m.de === RFP.host && !RFP.soyHost) rfpSigueFase(m.f, m.r); break;
     case 't': if (m.de === RFP.host && !RFP.soyHost) rfpAplicaTiro(m); break;
@@ -261,4 +262,10 @@ function rfpAplicaFin(fin) {
 // si no queda anfitrión que cierre la partida (y el tiempo ya pasó), se cierra con lo que se sabe
 function rfpSinAnfitrion() {
   if (J.fase === 'caza' && J.reloj < -8) { const g = escondidos().length ? 'camaleon' : 'cazador'; termina((J.yo.clase === 'camaleon') === (g === 'camaleon'), 'tiempo'); }
+}
+
+// un cazador dice cuántas cartas extra ha ganado con los wakameles: el anfitrión se las pone (con tope, y solo antes de la caza)
+function rfpCartasExtra(sl, m) {
+  const h = sl.ente; if (!h || h.clase !== 'cazador' || h.bot || !['prep', 'cuenta'].includes(J.fase)) return;
+  h.balas = Math.max(h.balas, Math.min(REGLAS.balas, REGLAS.balasIni + Math.max(0, Math.min(REGLAS.balasExtra, m.n | 0))));
 }

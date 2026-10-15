@@ -522,7 +522,11 @@ IDIOMA.add({
   "JUGAR CONTRA BOTS": "PLAY AGAINST BOTS",
   "RELLENAR CON BOTS": "FILL WITH BOTS",
   "Jugar de día": "Play by day",
-  "Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna. No se puede con Apagón total.": "With the lights on: the whole office is visible, not just what the flashlight shows. Can't be combined with Total blackout.",
+  "Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.": "With the lights on: the whole office is visible, not just what the flashlight shows.",
+  "LUZ": "LIGHT",
+  "DÍA": "DAY",
+  "Luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.": "Lights on: the whole office is visible, not just what the flashlight shows.",
+  "De noche, como siempre: se ve lo que alumbran las linternas.": "At night, as usual: you see what the flashlights light up.",
   "Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.": "Pick a mode and press FILL WITH BOTS to play now, or share the code with your friends.",
   // el tutorial con bocadillos (bocadillos.js)
   "<b>¡PÍNTATE!</b> Toca aquí para pintarte con los colores del suelo que tienes detrás.": "<b>PAINT YOURSELF!</b> Tap here to paint yourself with the colours of the floor behind you.",

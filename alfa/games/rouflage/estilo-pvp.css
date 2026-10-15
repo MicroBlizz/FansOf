@@ -96,3 +96,15 @@
 .accion.chivato small { font-weight: 800; font-size: 11px; color: var(--outline); }
 /* la tira va debajo de CARTAS / COLADOS (antes los pisaba); modos-retrato.js la ajusta si esa fila crece */
 #retratos { top: calc(var(--sup) + 120px); }
+
+/* ---------- la luz de la sala (pvp-pantallas.js): día, normal o apagón, siempre uno marcado ---------- */
+.luz-sala { display: grid; gap: 4px; padding: 2px 4px 6px; }
+.luz-sala > small { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: var(--ink-dim); text-align: center; }
+.luz-botones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.luz-b { font-family: var(--font-display); font-weight: 400; font-size: 14px; letter-spacing: 0.03em; padding: 8px 4px 5px; border-radius: 10px; border: 3px solid var(--outline); background: #2a3550; color: var(--ink-dim); box-shadow: 0 3px 0 var(--outline); }
+.luz-b.puesto { background: var(--gold); color: var(--outline); }
+.luz-b[data-luz="dia"].puesto { background: linear-gradient(to bottom, #fff2a8, var(--gold)); }
+.luz-b[data-luz="apagon"].puesto { background: linear-gradient(to bottom, #6b7ba8, #2b3456); color: var(--ink); }
+.luz-b:disabled { cursor: default; }
+.luz-b:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.luz-sala .modo-texto { text-align: center; }

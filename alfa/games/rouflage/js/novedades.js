@@ -2,7 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
-  { v: '0.2.21', real: ["<b>JUGAR DE DÍA</b>: un extra nuevo en la sala de amigos y contra bots. Con las luces encendidas se ve toda la oficina, no solo lo que alumbra la linterna, y los becarios ven más lejos. No se puede juntar con Apagón total: al encender uno se apaga el otro. Si no eliges ninguno, se juega de noche como siempre."],
+  { v: '0.2.21', real: ["<b>LUZ: DÍA, NORMAL O APAGÓN</b>: en la sala de amigos y contra bots, una fila nueva para elegir la luz de la partida, siempre con una marcada. DÍA es nuevo: con las luces encendidas se ve toda la oficina, no solo lo que alumbra la linterna, y los becarios ven más lejos. NORMAL es la noche de siempre y APAGÓN el antiguo Apagón total."],
     joke: ["Microblizz ha encendido las luces de día para que se note que la oficina está vacía. Phony pide que las apaguen: así no se le ve dormir."] },
   { v: '0.2.20', real: ["<b>ELIGE TU MENÚ DE PINTAR</b>: en el taller hay una pestaña nueva, MENÚ, para elegir cómo quieres las herramientas: Clásico (como siempre), A (pestañas por pasos), B (herramientas a los lados, donde caen los pulgares) o C (cinco botones grandes que abren su bandeja, para jugar con una mano). Botones más grandes para el dedo y se guarda para tus próximas partidas."],
     joke: ["Microblizz ha hecho una encuesta para elegir el mejor menú. Ganó la opción D: «que pinte el becario»."] },

@@ -1,8 +1,8 @@
 {
- "build": 114,
- "hash": "bcf84d2",
- "fecha": "2026-10-15T21:31:00Z",
- "mensaje": "Rouflage 0.2.21: la nota de JUGAR DE DÍA va en la 0.2.21 (la 0.2.20 ya estaba publicada), con su inglés",
+ "build": 115,
+ "hash": "0b1be7b",
+ "fecha": "2026-10-15T21:34:46Z",
+ "mensaje": "Rouflage 0.2.21: la luz de la sala en una fila de tres botones (DÍA, NORMAL, APAGÓN), siempre uno marcado",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

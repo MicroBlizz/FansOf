@@ -12,8 +12,8 @@ const MODOS = {
   retrato: { nombre: 'RETRATO ROBOT', texto: 'Los becarios ven la ficha de cada colado antes de salir. No hay bandos: gana quien más puntos sume.' },
 };
 const EXTRAS = {
-  dia: { nombre: 'Jugar de día', texto: 'Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna. No se puede con Apagón total.', choca: ['apagon'] },
-  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.', choca: ['dia'] },
+  dia: { nombre: 'Jugar de día', texto: 'Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.', luz: true },
+  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.', luz: true },
   galeria: { nombre: 'Galería de disfraces', texto: 'Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.' },
   halcon: { nombre: 'Ojo de halcón', texto: 'Quedarse quieto dentro de la luz de un becario da muchos puntos; más cuanto más cerca. Gana quien se esconde a la vista.' },
   bufon: { nombre: 'El bufón', texto: 'Un colado es el bufón en secreto: solo gana si lo despiden en el último minuto. Antes, pierde.' },
@@ -21,6 +21,13 @@ const EXTRAS = {
   chivato: { nombre: 'Fantasmas chivatos', texto: 'Un fantasma puede chivarle una pista a un becario: si este despide a alguien en 20 s, el fantasma resucita.' },
   bote: { nombre: 'Llena el bote', texto: 'Hay gotas de pintura por el suelo: los colados ganan si llevan cinco al cubo de la cafetería.' },
 };
+// LA LUZ de la partida: uno de tres, siempre uno marcado (se guarda como los extras: dia, apagon o ninguno)
+const LUCES_SALA = [
+  { k: 'dia', nombre: 'DÍA', texto: 'Luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.' },
+  { k: '', nombre: 'NORMAL', texto: 'De noche, como siempre: se ve lo que alumbran las linternas.' },
+  { k: 'apagon', nombre: 'APAGÓN', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
+];
+const luzDe = d => (d && d.x && d.x.dia) ? 'dia' : (d && d.x && d.x.apagon) ? 'apagon' : '';
 const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
 

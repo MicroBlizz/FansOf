@@ -40,9 +40,18 @@ const aMundo = (sx, sy) => [(sx * DPR - CAM.ox) / CAM.esc, (sy * DPR - CAM.oy) /
 const aPantalla = (x, y) => [(x * CAM.esc + CAM.ox) / DPR, (y * CAM.esc + CAM.oy) / DPR];
 
 // la barrera de Recursos Humanos: dos postes y un haz rojo que se apaga al abrirse
-const COSA_PUERTA = { y: PUERTA.y + PUERTA.h - 2, puerta: true };
+const COSA_PUERTA = { y: 0, puerta: true };   // su y la pone cargaMapa()
 function pintaPuerta(c, t) {
   const x = PUERTA.x + PUERTA.w / 2, y0 = PUERTA.y + 6, y1 = PUERTA.y + PUERTA.h - 4, a = 1 - PUERTA.abierta;
+  if (PUERTA.estilo === 'madera') {   // una puerta de madera vieja de canto, con su letrero de EXIT; al abrirse gira hacia dentro
+    const w = PUERTA.w, h = PUERTA.h, giro = (1 - a) * 0.9;
+    c.save(); c.translate(PUERTA.x + w / 2, PUERTA.y + 2); c.scale(1, Math.max(0.08, Math.cos(giro)));
+    forma(c, caja(-w / 2 + 6, -4, w - 12, h, 3), '#8f6a3a', 3); c.fillStyle = '#6e4f28'; c.fillRect(-w / 2 + 12, 6, w - 24, h - 20);
+    forma(c, caja(-w / 2 + 16, 10, w - 32, h / 2 - 16, 2), '#a67c48', 2); forma(c, caja(-w / 2 + 16, h / 2 + 2, w - 32, h / 2 - 16, 2), '#a67c48', 2);
+    punto(c, w / 2 - 15, h / 2 - 2, 3.2, '#e9c46a'); c.restore();
+    forma(c, caja(x - 20, PUERTA.y - 18, 40, 12, 2), '#191430', 2.5); rotulo(c, 'EXIT', x, PUERTA.y - 12, 9, a > 0.5 ? '#ff4b5c' : '#7ee04a');
+    return;
+  }
   if (a > 0.02) {
     c.globalAlpha = a * (0.75 + Math.sin(t * 9) * 0.1);
     for (const dx of [-7, 0, 7]) { raya(c, [x + dx, y0, x + dx, y1], '#ff4b5c', 5); raya(c, [x + dx, y0, x + dx, y1], '#ffd0d4', 1.6); }
@@ -149,9 +158,9 @@ function pintaEncima(c, t) {
 
 // un camaleón ya congelado (o congelándose) se comporta como el suelo al dibujar el orden de las cosas
 const esSuelo = e => e.clase === 'camaleon' && !e.fuera && e.hielo > 0.3;
-// mientras los colados se pintan, los becarios no ven nada fuera de Recursos Humanos
+// mientras los colados se pintan, los becarios no ven nada fuera de su sala de espera
 function tapaFueraDeSala(c, x0, y0, vw, vh) {
-  const z = SALAS.find(s => s.id === 'rrhh'); if (!z) return;
+  const z = salaEspera(); if (!z) return;
   ponMundo(c); c.fillStyle = '#0b0718'; c.beginPath(); c.rect(x0 - 60, y0 - 60, vw + 120, vh + 120); c.rect(z.px, z.py, z.pw, z.ph); c.fill('evenodd');
 }
 function dibuja(t) {

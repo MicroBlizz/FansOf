@@ -346,5 +346,25 @@ IDIOMA.add({
   "Poniéndote al día con los demás": "Catching you up with the others",
   "{a} se ha desconectado": "{a} has disconnected",
   "{a} ha vuelto": "{a} is back",
-  "VOLVER A LA PARTIDA": "BACK TO THE MATCH"
+  "VOLVER A LA PARTIDA": "BACK TO THE MATCH",
+  // los mapas (elige-mapa.js) y los carteles de las Backrooms (mapa-backrooms.js)
+  "Mapa": "Map",
+  "La estación": "The station",
+  "Oficinas, cafetería y almacén: el clásico.": "Offices, cafeteria and warehouse: the classic.",
+  "Las Backrooms": "The Backrooms",
+  "Pasillos amarillos que se repiten. No hay salida.": "Yellow corridors that repeat. There is no exit.",
+  "NO HAY SALIDA": "NO WAY OUT",
+  "EN SERIO": "SERIOUSLY",
+  "SALIDA": "EXIT",
+  "OFICINA ALQUILADA EN 2019. SIN USAR": "OFFICE RENTED IN 2019. NEVER USED",
+  "NIVEL 0": "LEVEL 0",
+  "DE 999": "OF 999",
+  "LLEVAS AQUÍ": "YOU HAVE BEEN HERE",
+  "3 DÍAS": "3 DAYS",
+  "PISCINA": "POOL",
+  "ZONA": "WET",
+  "HÚMEDA": "AREA",
+  "EL SILENCIO": "THE SILENCE",
+  "TE OYE": "HEARS YOU",
+  "VESTÍBULO": "LOBBY"
 });

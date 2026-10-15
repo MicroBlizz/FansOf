@@ -8,7 +8,6 @@
 
 const PRACTICA_POR_CARTA = 3, PRACTICA_A_LA_VEZ = 2;
 const PRACTICA = { activa: false, munecos: [], aciertos: 0, extra: 0, sig: 0 };
-const salaEspera = () => ZONAS.find(z => z.id === 'rrhh');
 
 // un camaleón de prácticas: un colado de verdad, pero fuera de las listas de la partida
 function practicaNuevo() {

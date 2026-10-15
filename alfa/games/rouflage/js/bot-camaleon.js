@@ -6,7 +6,7 @@
 function cerebroCamaleon(e, mana) { e.bot = { estado: 'ir', mana, t: 0, camino: null, i: 0, atasco: 0, ax: e.x, ay: e.y, nervios: 0, huidas: 0, tPinta: 0 }; }
 // dónde esconderse: lejos de los demás y, una de cada tres veces, pegado a una pared (pintado como el papel)
 function eligeSitio(e, ocupados) {
-  const salas = SALAS.filter(z => z.id !== 'rrhh');
+  const salas = SALAS.filter(z => z !== salaEspera());
   for (let n = 0; n < 30; n++) { const p = sitioLibre({ sala: pick(salas), lejosDe: ocupados, min: 130, pared: Math.random() < 0.32, intentos: 40 }); if (p) return p; }
   return sitioLibre({ lejosDe: ocupados, min: 60 }) || [e.x, e.y];
 }
@@ -59,9 +59,9 @@ function piensaCamaleon(e, dt) {
     case 'huir':
       if (sigueCamino(e, dt)) { e.prisa = 1; b.estado = 'pintar'; b.t = 0; b.tPinta = rand(1.4, 3); e.pintado = false; }      // al pararse en el sitio nuevo, se vuelve a pintar
       break;
-    case 'pasea':       // en la pantalla de título: paseos sin prisa por la cafetería
+    case 'pasea':       // en la pantalla de título: paseos sin prisa por la plaza del mapa (la cafetería, el vestíbulo…)
       if (b.espera > 0) { b.espera -= dt; e.vx = e.vy = 0; break; }
-      if (!b.camino) { const p = sitioLibre({ sala: zona('cafeteria'), intentos: 30 }); if (p) ponRumbo(e, p[0], p[1]); break; }
+      if (!b.camino) { const p = sitioLibre({ sala: plazaTitulo(), intentos: 30 }); if (p) ponRumbo(e, p[0], p[1]); break; }
       e.prisa = 0.55; if (sigueCamino(e, dt)) { b.camino = null; b.espera = rand(0.6, 2.6); }
       break;
   }

@@ -16,6 +16,7 @@ function limpiaPartida() {
 
 // la pantalla de título: el mapa de fondo con cinco alubias de paseo por la cafetería
 function escenaTitulo() {
+  if (MAPA.id !== mapaElegido()) cargaMapa(mapaElegido());
   limpiaPartida(); J.fase = 'titulo'; J.modo = 'camaleon'; J.t = 0;
   Object.keys(NOMBRES).forEach((tipo, i) => {
     const e = nuevoEnte('camaleon', tipo, NOMBRES[tipo], ...SALIDA_CAMALEONES[i]);

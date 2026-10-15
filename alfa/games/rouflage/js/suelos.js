@@ -184,14 +184,10 @@ const SUELOS = {
   },
 };
 
-// manchas y trastos pintados en el suelo (no se chocan con nada): x, y, tipo
-const PEGATINAS = [
-  [706, 300, 'cafe'], [1012, 482, 'cafe'], [938, 150, 'cafe'], [612, 196, 'papel'],
-  [182, 300, 'papel'], [312, 452, 'papel'], [420, 180, 'cafe'], [90, 450, 'papel'], [470, 330, 'papel'],
-  [640, 770, 'tiza'], [1104, 760, 'papel'], [246, 800, 'papel'], [86, 1060, 'cafe'],
-  [690, 1050, 'papel'], [1060, 1016, 'flor'], [1100, 1100, 'flor'], [596, 1010, 'flor'],
-];
+// manchas y trastos pintados en el suelo (no se chocan con nada): la lista (x, y, tipo) la trae cada mapa (PEGATINAS)
+const PEGATINAS_EXTRA = {};   // tipos de pegatina de otros mapas (dibujo-backrooms.js): tipo → f(c, x, y, s)
 function pintaPegatina(c, x, y, tipo, s) {
+  if (PEGATINAS_EXTRA[tipo]) { PEGATINAS_EXTRA[tipo](c, x, y, s); return; }
   if (tipo === 'cafe') { mancha(c, x, y, 13, 'rgba(92,52,24,0.45)', s); c.strokeStyle = 'rgba(92,52,24,0.5)'; c.lineWidth = 2; c.beginPath(); c.arc(x + 14, y - 8, 7, 0, TAU); c.stroke(); }
   else if (tipo === 'papel') {
     c.save(); c.translate(x, y); c.rotate(hash2(s, 1, 71) * 3 - 1.5);

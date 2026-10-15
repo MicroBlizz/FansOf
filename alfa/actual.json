@@ -1,8 +1,8 @@
 {
- "build": 29,
- "hash": "d7428e4",
- "fecha": "2026-10-15T06:22:32Z",
- "mensaje": "Nova: arte final Caza (casco, alas) y 9 motores (ComfyUI)",
+ "build": 30,
+ "hash": "4c0c65c",
+ "fecha": "2026-10-15T06:23:15Z",
+ "mensaje": "Nova: arte final Crucero y Fragata (casco, alas) y escudo",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

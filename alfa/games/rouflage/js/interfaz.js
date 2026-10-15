@@ -96,15 +96,15 @@ function refrescaHud(todo) {
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
   if (!enPartida) { E('peligro').style.opacity = 0; return; }
-  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza';
+  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
-  ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
-  ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' ? '' : mmss(J.reloj));
+  ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
   refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
   refrescaRanking();
   // lo de cada papel
-  const ver = { 'e-camo': cam, 'e-silbo': cam && caza, 'e-balas': !cam, 'e-quedan': !cam, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
+  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
     'b-silbar': caza && !espectando(), 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
   if (cam) {

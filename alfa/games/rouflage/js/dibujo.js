@@ -172,14 +172,15 @@ function dibuja(t) {
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
   for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
+  if (J.fase === 'paseo') cosas.push(HABITACION.armario);      // el armario de la habitación (habitacion.js)
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   // un camaleón congelado es «parte del suelo»: quien pase por detrás de él se pinta ENCIMA, no debajo. Si no, su pintura
   // de suelo quedaría sobre el becario y dejaría ver su silueta recortada (y sería facilísimo encontrarlo).
   for (const k of cosas) k.ordenY = k.y;
   for (const k of cosas) {
-    if (k.T || k.puerta || !esSuelo(k)) continue;
+    if (k.T || k.puerta || k.armario || !esSuelo(k)) continue;
     for (const o of cosas) {
-      if (o === k || o.T || o.puerta || esSuelo(o) || o.y >= k.y) continue;
+      if (o === k || o.T || o.puerta || o.armario || esSuelo(o) || o.y >= k.y) continue;
       if (Math.abs(o.x - k.x) < CAJA_W && k.y - o.y < CAJA_H + 4) o.ordenY = Math.max(o.ordenY, k.y + 0.5);
     }
   }
@@ -187,6 +188,7 @@ function dibuja(t) {
   for (const k of cosas) {
     if (k.T) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h);
     else if (k.puerta) pintaPuerta(c, t);
+    else if (k.armario) pintaArmarioSala(c, k, t);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);
     else if (k.invis > 0) { if (J.yo && J.yo.clase === 'cazador') continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: los becarios no lo ven; los suyos, como un fantasma
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }

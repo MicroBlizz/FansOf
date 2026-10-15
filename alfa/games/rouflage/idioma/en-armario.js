@@ -1,9 +1,38 @@
 // Fans of Rouflage · Inglés del ARMARIO y el PERFIL (armario.js y su catálogo, armario-datos.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  // la habitación y los conjuntos
+  "HABITACIÓN": "ROOM",
+  "TU HABITACIÓN": "YOUR ROOM",
+  "Pasea y mira cómo te queda. El armario de la sala te cambia de ropa": "Walk around and see how it looks. The wardrobe in the room changes your outfit",
+  "Habitación": "Room",
+  "Salir": "Leave",
+  "Toca el armario para cambiarte de ropa": "Tap the wardrobe to change your outfit",
+  "Conjuntos del Rumble": "Rumble outfits",
+  "Conjuntos": "Outfits",
+  "Un personaje entero: cabeza, espalda, cara y papel. Luego puedes mezclar sus piezas": "A whole character: head, back, face and paper. You can mix the pieces afterwards",
+  "Conjunto {n}": "{n} outfit",
+  "Piezas mezcladas": "Mixed pieces",
+  "Toca un conjunto para vestirte entero": "Tap an outfit to dress up fully",
+  "Sin nada": "Nothing",
+  "La galleta sin adornos, como al empezar": "The cookie with no accessories, like at the start",
+  "Los de la campaña": "Campaign eyes",
+  "Espiral de CrazyBunny": "CrazyBunny's spiral", "Gafas de SlyFox": "SlyFox's glasses", "Ojos de NecroLord": "NecroLord's eyes", "Visor de CyberNinja": "CyberNinja's visor",
+  "Dientes de CrazyBunny": "CrazyBunny's teeth", "Diente de MadSquirrel": "MadSquirrel's tooth", "Dientón de BoomBeaver": "BoomBeaver's buck teeth", "Colmillos de JunkCoon": "JunkCoon's fangs",
+  "Bufanda de lana": "Wool scarf",
+  "Oro de EpicChampion": "EpicChampion's gold", "Túnica de NecroLord": "NecroLord's robe", "Traje de CyberNinja": "CyberNinja's suit", "Camiseta de ProGamer": "ProGamer's jersey",
+  "Billete de Monopoly roto": "Torn Monopoly banknote",
+  "Orejas y corona de CrazyBunny": "CrazyBunny's ears and crown", "Orejas de MadSquirrel": "MadSquirrel's ears", "Orejas de SlyFox": "SlyFox's ears", "Casco de BoomBeaver": "BoomBeaver's helmet",
+  "Cofia y aureola de MeerCat": "MeerCat's cap and halo", "Antifaz de JunkCoon": "JunkCoon's mask", "Yelmo de EpicChampion": "EpicChampion's helm", "Cuernos de NecroLord": "NecroLord's horns",
+  "Cascos de ProGamer": "ProGamer's headset", "Orejas de SuchDog": "SuchDog's ears", "Serpientes de Medusa": "Medusa's snakes", "Gorra de becario": "Intern cap",
+  "Capa de CrazyBunny": "CrazyBunny's cape", "Cola de MadSquirrel": "MadSquirrel's tail", "Cola de SlyFox": "SlyFox's tail", "Cola de BoomBeaver": "BoomBeaver's tail",
+  "Alas de MeerCat": "MeerCat's wings", "Cola de JunkCoon": "JunkCoon's tail", "Capa de EpicChampion": "EpicChampion's cape", "Capa de NecroLord": "NecroLord's cape",
+  "Katana de CyberNinja": "CyberNinja's katana", "Teclado de ProGamer": "ProGamer's keyboard", "Bastón de NecroLord": "NecroLord's staff",
+  "Cielo": "Sky", "Bellotas de MadSquirrel": "MadSquirrel's acorns",
+  "Ni mi madre me encuentra": "Not even my mum finds me", "NI MI MADRE ME ENCUENTRA": "NOT EVEN MY MUM FINDS ME",
   // pantallas
   "PERFIL": "PROFILE",
-  "Prueba de la alfa: lo que te pones aún no sale en la partida.": "Alpha test: what you wear doesn't show up in matches yet.",
+  "Prueba de la alfa: lo que te pones se ve en la habitación; en las partidas aún no.": "Alpha test: what you wear shows in the room; not in matches yet.",
   "Pase · Temporada 1": "Pass · Season 1",
   "Solo para probar cómo queda: este botón no estará en el juego final.": "Just to see how it looks: this button won't be in the final game.",
   "DESBLOQUEAR TODO": "UNLOCK EVERYTHING",
@@ -13,9 +42,7 @@ IDIOMA.add({
   "Fan sin nombre": "Nameless fan",
   "{p} puntos · {g} ganadas de {j}": "{p} points · {g} won of {j}",
   "Sin partidas": "No matches yet",
-  "Sin nada": "Nothing",
   "Nada": "Nothing",
-  "La galleta en blanco, como al empezar": "The blank cookie, like at the start",
   "ES TUYO": "YOURS",
   "TE LO ESTÁS PROBANDO": "TRYING IT ON",
   // de dónde sale cada cosa
@@ -74,21 +101,21 @@ IDIOMA.add({
   "Gafas de sol": "Sunglasses", "Monóculo": "Monocle", "Láser de jefe": "Boss laser", "Corazones": "Hearts", "Espiral (CrazyBunny)": "Spiral (CrazyBunny)",
   // bocas
   "Sonrisa": "Smile", "«O»": "«O»", "Lengua": "Tongue", "Bigote": "Moustache", "Dientón": "Buck tooth", "Silbando": "Whistling", "Sorprendido": "Surprised",
-  "Barba de papel": "Paper beard", "Vampiro": "Vampire", "Mascarilla Microblizz": "Microblizz face mask",
+  "Barba de papel": "Paper beard", "Vampiro": "Vampire",
   // papel
   "Folio blanco": "White sheet", "Kraft": "Kraft", "Cuadriculado": "Graph paper", "Libreta de rayas": "Lined notebook", "Periódico": "Newspaper", "Cartón": "Cardboard",
-  "Purpurina": "Glitter", "Papel de regalo": "Wrapping paper", "Mapa del tesoro": "Treasure map", "Partitura": "Sheet music", "Billete de Microblizz": "Microblizz banknote", "Celofán": "Cellophane",
+  "Purpurina": "Glitter", "Papel de regalo": "Wrapping paper", "Mapa del tesoro": "Treasure map", "Partitura": "Sheet music", "Celofán": "Cellophane",
   // cabeza
-  "Orejas de conejo": "Bunny ears", "Gorra de becario": "Intern cap", "Corona": "Crown", "Aureola": "Halo", "Chistera": "Top hat", "Cuernos": "Horns", "Flor": "Flower",
+  "Orejas de conejo": "Bunny ears", "Corona": "Crown", "Aureola": "Halo", "Chistera": "Top hat", "Cuernos": "Horns", "Flor": "Flower",
   "Antena": "Antenna", "Auriculares": "Headphones", "Casco de obra": "Hard hat", "Gorro de fiesta": "Party hat", "Lazo": "Bow", "Brote": "Sprout", "Pulpo sombrero": "Octopus hat",
   // espalda
   "Cola de zorro": "Fox tail", "Cola de ardilla": "Squirrel tail", "Alas de ángel": "Angel wings", "Alas de murciélago": "Bat wings", "Alas de mariposa": "Butterfly wings",
   "Capa": "Cape", "Mochila": "Backpack", "Cola de gato": "Cat tail", "Propulsor": "Jetpack",
   // humo
   "Gris de oficina": "Office grey", "Confeti": "Confetti", "Arcoíris": "Rainbow", "Tinta de calamar": "Squid ink", "Café con leche": "Latte", "Fuego frío": "Cold fire",
-  "Menta": "Mint", "Atardecer": "Sunset", "Microblizz azul": "Microblizz blue",
+  "Menta": "Mint", "Atardecer": "Sunset",
   // silbido
-  "Ondas": "Waves", "Notas musicales": "Music notes", "Pajaritos de papel": "Paper birds", "Burbujas": "Bubbles", "Zzz": "Zzz", "Monedas Microblizz": "Microblizz coins", "Chispas": "Sparks",
+  "Ondas": "Waves", "Notas musicales": "Music notes", "Pajaritos de papel": "Paper birds", "Burbujas": "Bubbles", "Zzz": "Zzz", "Chispas": "Sparks",
   // fantasma
   "Tu galleta fantasma": "Your ghost cookie", "Sábana": "Bedsheet", "Avión de papel": "Paper plane", "Caja de cartón": "Cardboard box", "Bola de papel": "Paper ball",
   "Globo": "Balloon", "Nube": "Cloud", "Fantasma dorado": "Golden ghost", "Foto de despedida": "Farewell photo", "ADIÓS": "BYE",
@@ -103,8 +130,7 @@ IDIOMA.add({
   "Madera": "Wood", "Corcho con chinchetas": "Corkboard with pins", "Cinta adhesiva": "Sticky tape", "Píxel": "Pixel", "Neón": "Neon",
   // títulos
   "BECARIO": "INTERN", "Indespedible": "Unfireable", "INDESPEDIBLE": "UNFIREABLE", "Becario del mes": "Intern of the month", "BECARIO DEL MES": "INTERN OF THE MONTH",
-  "Mancha en la pared": "Stain on the wall", "MANCHA EN LA PARED": "STAIN ON THE WALL", "Recursos Inhumanos": "Inhuman Resources", "RECURSOS INHUMANOS": "INHUMAN RESOURCES",
-  "Ni Phony me encuentra": "Not even Phony finds me", "NI PHONY ME ENCUENTRA": "NOT EVEN PHONY FINDS ME", "Café con piernas": "Coffee with legs", "CAFÉ CON PIERNAS": "COFFEE WITH LEGS",
+  "Mancha en la pared": "Stain on the wall", "MANCHA EN LA PARED": "STAIN ON THE WALL", "Recursos Inhumanos": "Inhuman Resources", "RECURSOS INHUMANOS": "INHUMAN RESOURCES", "Café con piernas": "Coffee with legs", "CAFÉ CON PIERNAS": "COFFEE WITH LEGS",
   "Despedidor": "Firer", "DESPEDIDOR": "FIRER",
   // gestos
   "Baile": "Dance", "Reverencia": "Bow down", "Risa": "Laugh", "Llorar": "Cry", "Selfie": "Selfie", "Pausa del café": "Coffee break", "Siesta": "Nap", "¡HOLA!": "HI!",

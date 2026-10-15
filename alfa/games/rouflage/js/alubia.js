@@ -233,7 +233,8 @@ function pintaCara(c, e, t, p) {
   const parp = (t * 0.9 + (e.semilla || 0)) % 3.4 < 0.12;
   if (e.fuera || (e.clase === 'cazador' && e.ciego > 0)) {
     for (const s of [-1, 1]) { raya(c, [x + s * 4.4 - 1.8, y - 2.3, x + s * 4.4 + 1.8, y + 1.3], OL, 1.8); raya(c, [x + s * 4.4 + 1.8, y - 2.3, x + s * 4.4 - 1.8, y + 1.3], OL, 1.8); }
-  } else {
+  } else if (e.ropa && e.ropa.ojos) e.ropa.ojos(c, x, y);   // unos ojos del armario (habitacion.js)
+  else {
     for (const s of [-1, 1]) {
       if (parp) { raya(c, [x + s * 4.4 - 1.8, y - 0.5, x + s * 4.4 + 1.8, y - 0.5], OL, 1.6); continue; }
       if (s < 0 && e.tipo === 'bunny') {
@@ -247,6 +248,7 @@ function pintaCara(c, e, t, p) {
     if (e.clase === 'cazador' && e.alerta > 0.5) { raya(c, [x - 6.5, y - 5.2, x - 2.6, y - 3.8], OL, 1.5); raya(c, [x + 6.5, y - 5.2, x + 2.6, y - 3.8], OL, 1.5); }
   }
   for (const s of [-1, 1]) { c.beginPath(); c.ellipse(x + s * 7.2, y + 3.4, 2, 1.2, 0, 0, TAU); c.fillStyle = 'rgba(255,120,150,0.45)'; c.fill(); }
+  if (e.ropa && e.ropa.boca && !e.susto && !e.fuera) { e.ropa.boca(c, x, y); return; }   // una boca del armario
   c.beginPath();
   if (e.susto || e.fuera) c.ellipse(x, y + 4.2, 1.4, 1.7, 0, 0, TAU); else c.arc(x, y + 2.6, 2.5, 0.25, Math.PI - 0.25);
   c.lineWidth = 1.3; c.strokeStyle = OL; c.lineCap = 'round'; c.stroke();
@@ -279,7 +281,7 @@ function pintaAlubia(c, e, t, velo = 1) {
     c.restore();
     c.globalAlpha = a;
     c.save(); c.translate(0, p.dy || 0); c.scale(giraCara, 1); pintaCara(c, e, t, p);
-    if (e.clase === 'cazador') ad.delante(c, e);
+    if (e.clase === 'cazador' || e.tipo === 'fan') ad.delante(c, e);   // el fan (habitacion.js) ya está en las medidas de la galleta
     else { c.save(); c.translate(0, CABEZA.y); c.scale(0.8, 0.8); c.translate(0, 33); ad.delante(c, e); c.restore(); }   // los adornos de cabeza estaban hechos para una cabeza más grande
     if (e.clase === 'cazador') {   // la linterna, en la mano de delante
       const q = PIEZAS.brazoD, an = q.ang + p.brazoD, hx = q.x + Math.cos(an) * (q.largo + 2), hy = q.y + Math.sin(an) * (q.largo + 2);

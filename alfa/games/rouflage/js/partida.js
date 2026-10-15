@@ -111,7 +111,7 @@ function avanzaPartida(dt) {
   senueloPaso(dt);
   humoPaso(J.yo);
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
-  controlaJugador(dt); poderAvanza(dt);
+  controlaJugador(dt); poderAvanza(dt); habitacionAvanza();
   for (const e of J.entes) {
     if (e.bot && J.fase !== 'fin') (e.clase === 'cazador' ? piensaCazador : piensaCamaleon)(e, dt);
     else if (e.bot) e.vx = e.vy = 0;

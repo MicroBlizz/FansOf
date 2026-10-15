@@ -5,7 +5,7 @@
 (() => {
   if (!NUCLEO.alfa) return;
   const CLAVE = 'fansof-alfa', HORAS = 6;
-  const hash = String(NUCLEO.version).split('-a')[1] || '';
+  const [build, hash] = (String(NUCLEO.version).split('-a')[1] || '').split('.');   // «<versión>-a<build>.<hash>»
   const base = location.pathname.split('/alfa/')[0] + '/';   // la librería, un nivel por encima de alfa/
   const leer = () => { try { return JSON.parse(localStorage.getItem(CLAVE) || 'null') || {}; } catch (e) { return {}; } };
   const guardar = v => { try { localStorage.setItem(CLAVE, JSON.stringify(v)); } catch (e) { /* sin guardar */ } };
@@ -13,7 +13,7 @@
 
   // la franja: siempre visible, no estorba (abajo a la izquierda, no recibe toques)
   const franja = document.createElement('div');
-  franja.textContent = 'ALFA ' + hash;
+  franja.textContent = 'ALFA b' + (build || '?') + ' · ' + (hash || '');
   franja.style.cssText = 'position:fixed;left:6px;bottom:6px;z-index:99980;pointer-events:none;background:#7a2cff;color:#fff;font:800 11px/1 system-ui,sans-serif;padding:4px 7px;border-radius:6px;border:2px solid #20102c;opacity:.9';
   const poner = () => document.body.append(franja);
   document.body ? poner() : window.addEventListener('DOMContentLoaded', poner);

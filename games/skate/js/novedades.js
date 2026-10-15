@@ -1,6 +1,7 @@
 // Fans Of Skate · Novedades: registro de versiones (el prototipo aún no tiene pantalla de novedades; desplegar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.1.24', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },
   { v: '0.1.23', real: ["<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla."], joke: ["Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas."] },
   { v: '0.1.22', real: ["<b>ENTRAR CON GOOGLE, MÁS FÁCIL</b>: ahora hay un solo botón, «Continuar con Google», que sirve tanto para crear la cuenta como para entrar en la que ya tenías. Y si la ventana de cuenta te tapaba la confirmación, ya no pasa."], joke: ["Microblizz ha fundido dos botones de Google en uno. Phony pregunta si el otro se ha ido de vacaciones."] },
   { v: '0.1.21', real: ["<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño."], joke: ["Microblizz ha puesto una barra de carga en la rampa. Se llena cuesta abajo, claro."] },

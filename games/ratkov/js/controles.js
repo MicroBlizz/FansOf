@@ -80,15 +80,18 @@ function preparaControles() {
   // ¿de pie o tumbado? Se mira al empezar y cada vez que se gira el móvil
   const mira = () => ponOrientacion(); matchMedia('(orientation: portrait)').addEventListener('change', mira); window.addEventListener('resize', mira); mira();
   // la palanca izquierda: si llevas el dedo bastante más allá del aro, corres
-  palanca('p-izq', (x, y, m, bruto) => { ENT.mx = x; ENT.mz = y; ENT.correTactil = bruto > 1.45; }, () => { ENT.mx = 0; ENT.mz = 0; ENT.correTactil = false; });
+  palanca('p-izq', (x, y, m, bruto) => { ENT.mx = x; ENT.mz = y; ENT.correTactil = bruto > CORRE_PALANCA; }, () => { ENT.mx = 0; ENT.mz = 0; ENT.correTactil = false; });
   palanca('p-der', (x, y, m) => { if (m > 0.2) { ENT.ax = x / m; ENT.az = y / m; ENT.apunta = true; } ENT.dispara = m > 0.62; }, () => { ENT.dispara = false; ENT.apunta = false; });
 }
 // una palanca táctil: aparece donde pones el dedo dentro de su zona y devuelve el vector (-1 a 1)
+// El centro nunca queda pegado a un borde: siempre hay sitio para empujar hasta correr (abajo, además, Android se queda los toques de sus gestos)
+const CORRE_PALANCA = 1.3;   // más allá de este tanto del aro, se corre
 function palanca(id, mueve, suelta) {
   const zona = el(id), bola = zona.querySelector('i'); let dedo = null, cx = 0, cy = 0;
-  const R = 56;
-  zona.addEventListener('pointerdown', e => { e.preventDefault(); dedo = e.pointerId; zona.setPointerCapture(dedo); const b = zona.getBoundingClientRect(); cx = e.clientX; cy = e.clientY; zona.classList.add('activa'); bola.style.left = (cx - b.left) + 'px'; bola.style.top = (cy - b.top) + 'px'; zona.style.setProperty('--cx', (cx - b.left) + 'px'); zona.style.setProperty('--cy', (cy - b.top) + 'px'); mover(e); });
-  const mover = e => { if (e.pointerId !== dedo) return; let dx = (e.clientX - cx) / R, dy = (e.clientY - cy) / R; const m = Math.hypot(dx, dy); if (m > 1) { dx /= m; dy /= m; } zona.classList.toggle('corre', m > 1.45); const b = zona.getBoundingClientRect(); bola.style.left = (cx - b.left + dx * R) + 'px'; bola.style.top = (cy - b.top + dy * R) + 'px'; mueve(dx, dy, Math.min(1, m), m); };
+  const R = 56, lado = Math.round(R * CORRE_PALANCA) + 26, abajo = Math.round(R * CORRE_PALANCA) + 64;
+  zona.addEventListener('pointerdown', e => { e.preventDefault(); dedo = e.pointerId; zona.setPointerCapture(dedo); const b = zona.getBoundingClientRect();
+    cx = Math.max(lado, Math.min(innerWidth - lado, e.clientX)); cy = Math.max(lado, Math.min(innerHeight - abajo, e.clientY)); zona.classList.add('activa'); bola.style.left = (cx - b.left) + 'px'; bola.style.top = (cy - b.top) + 'px'; zona.style.setProperty('--cx', (cx - b.left) + 'px'); zona.style.setProperty('--cy', (cy - b.top) + 'px'); mover(e); });
+  const mover = e => { if (e.pointerId !== dedo) return; let dx = (e.clientX - cx) / R, dy = (e.clientY - cy) / R; const m = Math.hypot(dx, dy); if (m > 1) { dx /= m; dy /= m; } zona.classList.toggle('corre', m > CORRE_PALANCA); const b = zona.getBoundingClientRect(); bola.style.left = (cx - b.left + dx * R) + 'px'; bola.style.top = (cy - b.top + dy * R) + 'px'; mueve(dx, dy, Math.min(1, m), m); };
   zona.addEventListener('pointermove', mover);
   const fin = e => { if (e.pointerId !== dedo) return; dedo = null; zona.classList.remove('activa', 'corre'); bola.style.left = bola.style.top = ''; zona.style.removeProperty('--cx'); zona.style.removeProperty('--cy'); suelta(); };
   zona.addEventListener('pointerup', fin); zona.addEventListener('pointercancel', fin);

@@ -3,7 +3,7 @@
 // - PASE DE TEMPORADA: experiencia por partida (100, +50 si ganas, ×1,5 en línea); cada 1000 es un nivel, hasta el 40 (unas 8 partidas por
 //   nivel). Al subir, las cosas del armario marcadas «Pase gratis · nv N» son tuyas; las «Pase premium · nv N», si tienes el premium
 //   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles.
-// - ACCIONES (de pago): la tienda del armario. Comprarlas con dinero aún no existe; de momento solo salen del pase gratis.
+// - ACCIONES (de pago): la tienda del armario. Se compran en la TIENDA (tienda.js; de momento de prueba, sin cobrar) y salen también del pase gratis.
 // En el armario, lo que se compra con Gotas o Acciones lleva un botón COMPRAR. Todo se guarda en la partida: SAVE.gotas, SAVE.acciones,
 // SAVE.pase = { xp, premium, purp: [niveles cobrados] } y SAVE.eco = { dia, gotasHoy }.
 'use strict';
@@ -66,7 +66,7 @@ function arPrecio(it) {
 function arCompra(cat, it) {
   const pr = arPrecio(it); if (!pr || arTiene(cat.id, it)) return;
   ecoEstado();
-  if (SAVE[pr.moneda] < pr.precio) { play('deny'); avisa(pr.moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return; }
+  if (SAVE[pr.moneda] < pr.precio) { play('deny'); avisa(pr.moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); if (pr.moneda === 'acciones') abreTienda('armario'); return; }
   SAVE[pr.moneda] -= pr.precio; armarioEstado().tengo.push(cat.id + ':' + it.id);
   if (!cat.conjuntos) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
   guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno');
@@ -112,7 +112,7 @@ function pasePinta() {
 }
 function pasePremium() {
   const p = ecoEstado(); if (p.premium) return;
-  if (SAVE.acciones < ECO.premium) { play('deny'); avisa(tr('No tienes bastantes Acciones para el pase premium'), 'malo'); return; }
+  if (SAVE.acciones < ECO.premium) { play('deny'); avisa(tr('No tienes bastantes Acciones para el pase premium'), 'malo'); abreTienda('pase'); return; }
   SAVE.acciones -= ECO.premium; p.premium = true; const nuevo = paseReparte(); guardaPartida(); play('crown');
   avisa(tr('¡Pase premium activado!') + (nuevo.length ? ' ' + nuevo.join(', ') : ''), 'bueno'); pasePinta();
 }

@@ -74,7 +74,7 @@ function pintaGotas(c, w) {
   gota(c); c.lineWidth = 2.6; c.strokeStyle = OL; c.stroke();
   c.beginPath(); c.ellipse(14.5, 25, 2.4, 4.6, 0.35, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.85)'; c.fill();
   c.beginPath(); c.arc(17.5, 17.5, 1.3, 0, TAU); c.fill();
-  c.beginPath(); c.arc(33, 9, 2.6, 0, TAU); c.fillStyle = '#b45cff'; c.fill(); c.lineWidth = 1.6; c.stroke();      // una gotita que salpica
+  c.beginPath(); c.arc(33, 9, 2.6, 0, TAU); c.fillStyle = '#39d5e8'; c.fill(); c.lineWidth = 1.6; c.stroke();      // una gotita que salpica
   c.restore();
 }
 function diarioPinta() {

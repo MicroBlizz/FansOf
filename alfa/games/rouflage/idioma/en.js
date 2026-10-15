@@ -578,5 +578,21 @@ IDIOMA.add({
   "Sube jugando partidas: más si ganas y más en línea.": "Level up by playing: more if you win and more online.",
   "GRATIS": "FREE",
   "PREMIUM": "PREMIUM",
-  "Acciones": "Shares"
+  "Acciones": "Shares",
+  // la tienda (tienda.js)
+  "TIENDA": "SHOP",
+  "Pruebas de la alfa: no se cobra nada y lo que compras se te da.": "Alpha test: nothing is charged and whatever you buy is given to you.",
+  "OFERTAS": "OFFERS",
+  "ACCIONES": "SHARES",
+  "GOTAS DE PINTURA": "PAINT DROPS",
+  "CAOS PRIMORDIAL": "PRIMORDIAL CHAOS",
+  "Caos primordial ilimitado": "Unlimited primordial chaos",
+  "¡Comprado! {c}": "Bought! {c}",
+  "(pruebas: no se ha cobrado nada)": "(test: nothing was charged)",
+  "una sola vez": "one time only",
+  "YA ES TUYO": "ALREADY YOURS",
+  "Pase premium": "Premium pass",
+  "Todo lo premium de los 40 niveles del pase de temporada": "All the premium rewards of the 40 season-pass levels",
+  "+{n} % de regalo": "+{n}% bonus",
+  "+{n} Gotas": "+{n} Drops"
 });

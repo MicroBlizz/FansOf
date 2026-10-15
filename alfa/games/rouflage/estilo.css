@@ -306,7 +306,7 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .diario-dia { display: grid; justify-items: center; align-content: start; gap: 2px; padding: 6px 4px 8px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); box-shadow: 0 4px 0 var(--outline); }
 .diario-dia small { font: 400 12px var(--font-display); color: var(--ink-dim); letter-spacing: 0.03em; }
 .diario-dia b { font-weight: 800; font-size: 11.5px; line-height: 1.1; color: var(--ink); }
-.diario-dia.grande { grid-column: span 2; background: linear-gradient(160deg, #6a3e9a, #3a2160); }
+.diario-dia.grande { grid-column: span 2; background: linear-gradient(160deg, #6a4a1a, #3a2a10); }
 .diario-dia.hoy { background: linear-gradient(160deg, #ffb347, #ff7a1a); animation: diarioLate 1s ease-in-out infinite; }
 .diario-dia.hoy small, .diario-dia.hoy b { color: var(--outline); }
 .diario-dia.cobrado { opacity: 0.45; position: relative; }

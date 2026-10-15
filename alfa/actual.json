@@ -1,12 +1,13 @@
 {
- "build": 31,
- "hash": "ffd5ce2",
- "fecha": "2026-10-15T06:32:24Z",
- "mensaje": "Nova fase 1: prototipo de partida jugable (modo desarrollo) con el arte final de ComfyUI",
+ "build": 32,
+ "hash": "1151e47",
+ "fecha": "2026-10-15T07:18:26Z",
+ "mensaje": "Nova: sale en la alfa (rol alfa), no en la release",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",
   "island": "0.3.2",
+  "nova": "0.1.0",
   "ratkov": "0.2.4",
   "rouflage": "0.2.9",
   "rumble": "0.9.134",

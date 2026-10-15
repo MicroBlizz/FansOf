@@ -1,0 +1,23 @@
+/* Fans of Nova · estilos de la portada en construcción (el resto sale de core/css). */
+#stage { width: min(100vw, calc(100vh * 9 / 16)); height: min(100vh, calc(100vw * 16 / 9)); background: radial-gradient(ellipse at 50% 30%, #1b2f66 0%, #0a1226 70%); }
+#nv-portada { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; padding: 24px; }
+#nv-portada .logo { display: flex; flex-direction: column; align-items: center; margin: 0; }
+#nv-portada .l1 { font-size: 34px; letter-spacing: 2px; }
+#nv-portada .l2 { font-size: 72px; line-height: 1; }
+#nv-portada .tagline { font-size: 18px; opacity: .85; }
+
+/* Partida (prototipo de la fase 1) */
+#nv-partida { padding: 0; }
+#nv-canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; display: block; }
+#nv-paneles { position: absolute; inset: 0; pointer-events: none; }
+#nv-paneles > * { pointer-events: auto; }
+.nv-panel { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 10px; padding: 22px 18px; background: rgba(6, 10, 30, .82); }
+.nv-titulo { font-family: 'Luckiest Guy', 'Baloo 2', sans-serif; font-size: 30px; text-align: center; color: #fff; text-shadow: 0 3px 0 #1a0f2e; letter-spacing: 1px; }
+.nv-carta { --col: #ff9a3c; display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 11px 14px; border-radius: 14px; border: 3px solid #1a0f2e; border-left: 10px solid var(--col); background: linear-gradient(135deg, #26306a, #151b43); color: #fff; font-family: 'Baloo 2', sans-serif; cursor: pointer; }
+.nv-carta:active { transform: scale(.98); }
+.nv-ctipo { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: var(--col); }
+.nv-cnom { font-size: 19px; font-weight: 800; line-height: 1.1; }
+.nv-cdet { font-size: 13px; opacity: .85; line-height: 1.2; }
+.nv-boton { align-self: center; padding: 10px 26px; border-radius: 999px; border: 3px solid #1a0f2e; background: linear-gradient(#ffd93d, #f29a2e); color: #2a1500; font: 800 17px 'Baloo 2', sans-serif; cursor: pointer; }
+.nv-boton:disabled { opacity: .45; cursor: default; }
+.nv-fila { display: flex; justify-content: space-between; font: 700 16px 'Baloo 2', sans-serif; color: #fff; border-bottom: 1px solid rgba(255, 255, 255, .15); padding: 3px 4px; }

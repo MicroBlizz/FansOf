@@ -1,0 +1,223 @@
+{
+ "pxPorUnidad": 2,
+ "escala": 2,
+ "piezas": [
+  {
+   "id": "caza-casco",
+   "tipo": "casco",
+   "nave": "caza",
+   "ancho": 108,
+   "alto": 479,
+   "pivote": [
+    54,
+    277
+   ],
+   "archivo": "caza-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-alas",
+   "tipo": "alas",
+   "nave": "caza",
+   "ancho": 426,
+   "alto": 240,
+   "pivote": [
+    213,
+    6
+   ],
+   "archivo": "caza-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco",
+   "tipo": "casco",
+   "nave": "crucero",
+   "ancho": 150,
+   "alto": 463,
+   "pivote": [
+    75,
+    265
+   ],
+   "archivo": "crucero-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas",
+   "tipo": "alas",
+   "nave": "crucero",
+   "ancho": 484,
+   "alto": 192,
+   "pivote": [
+    242,
+    6
+   ],
+   "archivo": "crucero-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-escudo",
+   "tipo": "escudo",
+   "nave": "crucero",
+   "ancho": 546,
+   "alto": 554,
+   "pivote": [
+    273,
+    289
+   ],
+   "archivo": "crucero-escudo.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco",
+   "tipo": "casco",
+   "nave": "fragata",
+   "ancho": 164,
+   "alto": 463,
+   "pivote": [
+    82,
+    245
+   ],
+   "archivo": "fragata-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas",
+   "tipo": "alas",
+   "nave": "fragata",
+   "ancho": 396,
+   "alto": 233,
+   "pivote": [
+    198,
+    6
+   ],
+   "archivo": "fragata-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-simple-S",
+   "tipo": "motor",
+   "motor": "simple",
+   "tam": "S",
+   "ancho": 38,
+   "alto": 81,
+   "pivote": [
+    19,
+    47
+   ],
+   "archivo": "motor-simple-S.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-simple-M",
+   "tipo": "motor",
+   "motor": "simple",
+   "tam": "M",
+   "ancho": 46,
+   "alto": 101,
+   "pivote": [
+    23,
+    59
+   ],
+   "archivo": "motor-simple-M.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-simple-L",
+   "tipo": "motor",
+   "motor": "simple",
+   "tam": "L",
+   "ancho": 58,
+   "alto": 131,
+   "pivote": [
+    29,
+    77
+   ],
+   "archivo": "motor-simple-L.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-doble-S",
+   "tipo": "motor",
+   "motor": "doble",
+   "tam": "S",
+   "ancho": 72,
+   "alto": 81,
+   "pivote": [
+    36,
+    47
+   ],
+   "archivo": "motor-doble-S.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-doble-M",
+   "tipo": "motor",
+   "motor": "doble",
+   "tam": "M",
+   "ancho": 88,
+   "alto": 101,
+   "pivote": [
+    44,
+    59
+   ],
+   "archivo": "motor-doble-M.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-doble-L",
+   "tipo": "motor",
+   "motor": "doble",
+   "tam": "L",
+   "ancho": 112,
+   "alto": 131,
+   "pivote": [
+    56,
+    77
+   ],
+   "archivo": "motor-doble-L.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-triple-S",
+   "tipo": "motor",
+   "motor": "triple",
+   "tam": "S",
+   "ancho": 106,
+   "alto": 81,
+   "pivote": [
+    53,
+    47
+   ],
+   "archivo": "motor-triple-S.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-triple-M",
+   "tipo": "motor",
+   "motor": "triple",
+   "tam": "M",
+   "ancho": 130,
+   "alto": 101,
+   "pivote": [
+    65,
+    59
+   ],
+   "archivo": "motor-triple-M.png",
+   "escala": 2
+  },
+  {
+   "id": "motor-triple-L",
+   "tipo": "motor",
+   "motor": "triple",
+   "tam": "L",
+   "ancho": 166,
+   "alto": 131,
+   "pivote": [
+    83,
+    77
+   ],
+   "archivo": "motor-triple-L.png",
+   "escala": 2
+  }
+ ]
+}

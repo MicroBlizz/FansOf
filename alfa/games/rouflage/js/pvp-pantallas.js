@@ -81,7 +81,7 @@ function pvpPintaModo(ver, soyAnf) {
   if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
     ex.dataset.anf = String(soyAnf);
     ex.innerHTML = Object.keys(EXTRAS).map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
-    if (soyAnf) for (const k of Object.keys(EXTRAS)) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
+    if (soyAnf) for (const k of Object.keys(EXTRAS)) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) { MODO_ELEGIDO.x[k] = 1; for (const o of EXTRAS[k].choca || []) delete MODO_ELEGIDO.x[o]; } else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };      // los que no casan (de día y apagón): encender uno apaga el otro
   }
   for (const k of Object.keys(EXTRAS)) E('x-' + k).checked = !!(d.x && d.x[k]);
 }

@@ -12,7 +12,8 @@ const MODOS = {
   retrato: { nombre: 'RETRATO ROBOT', texto: 'Los becarios ven la ficha de cada colado antes de salir. No hay bandos: gana quien más puntos sume.' },
 };
 const EXTRAS = {
-  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
+  dia: { nombre: 'Jugar de día', texto: 'Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna. No se puede con Apagón total.', choca: ['apagon'] },
+  apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.', choca: ['dia'] },
   galeria: { nombre: 'Galería de disfraces', texto: 'Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.' },
   halcon: { nombre: 'Ojo de halcón', texto: 'Quedarse quieto dentro de la luz de un becario da muchos puntos; más cuanto más cerca. Gana quien se esconde a la vista.' },
   bufon: { nombre: 'El bufón', texto: 'Un colado es el bufón en secreto: solo gana si lo despiden en el último minuto. Antes, pierde.' },
@@ -27,8 +28,10 @@ const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
 function modoPon(d) {
   MODO.m = d && MODOS[d.m] ? d.m : 'normal'; MODO.x = {};
   for (const k in (d && d.x) || {}) if (EXTRAS[k] && d.x[k]) MODO.x[k] = 1;
-  REGLAS.luzLargo = REGLAS_BASE.luzLargo * (MODO.x.apagon ? 0.75 : 1);
-  REGLAS.luzAngulo = REGLAS_BASE.luzAngulo * (MODO.x.apagon ? 0.6 : 1);
+  if (MODO.x.dia) delete MODO.x.apagon;      // de día no hay apagón (si llegan los dos, gana el día)
+  // la vista de los becarios: corta y estrecha en el apagón; de día ven más lejos y más abierto (con todo encendido)
+  REGLAS.luzLargo = REGLAS_BASE.luzLargo * (MODO.x.apagon ? 0.75 : MODO.x.dia ? 1.35 : 1);
+  REGLAS.luzAngulo = REGLAS_BASE.luzAngulo * (MODO.x.apagon ? 0.6 : MODO.x.dia ? 1.6 : 1);
 }
 const modoEs = m => MODO.m === m;
 const extraOn = k => !!MODO.x[k];

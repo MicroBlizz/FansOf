@@ -1,8 +1,8 @@
 {
- "build": 112,
- "hash": "f07e504",
- "fecha": "2026-10-15T21:29:31Z",
- "mensaje": "Rouflage: título con los botones en dos columnas iguales; letras claras con contorno en YA ES TUYO y PREMIUM ACTIVO; en RETRATO ROBOT la tira va debajo del marcador y el silbato caliente en su propia etiqueta (en el móvil se pisaba todo)",
+ "build": 113,
+ "hash": "0f94421",
+ "fecha": "2026-10-15T21:29:59Z",
+ "mensaje": "Rouflage 0.2.15: extra JUGAR DE DÍA (luces encendidas, becarios ven más lejos), incompatible con Apagón total",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

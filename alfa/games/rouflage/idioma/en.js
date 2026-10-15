@@ -521,6 +521,8 @@ IDIOMA.add({
   "¡El carrito de la limpieza te ha arrollado! Vuelve a pintarte": "The cleaning trolley ran you over! Paint yourself again",
   "JUGAR CONTRA BOTS": "PLAY AGAINST BOTS",
   "RELLENAR CON BOTS": "FILL WITH BOTS",
+  "Jugar de día": "Play by day",
+  "Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna. No se puede con Apagón total.": "With the lights on: the whole office is visible, not just what the flashlight shows. Can't be combined with Total blackout.",
   "Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.": "Pick a mode and press FILL WITH BOTS to play now, or share the code with your friends.",
   // el tutorial con bocadillos (bocadillos.js)
   "<b>¡PÍNTATE!</b> Toca aquí para pintarte con los colores del suelo que tienes detrás.": "<b>PAINT YOURSELF!</b> Tap here to paint yourself with the colours of the floor behind you.",

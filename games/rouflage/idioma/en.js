@@ -552,5 +552,7 @@ IDIOMA.add({
   "Premio del día: {p}": "Today's reward: {p}",
   "Premio de 20 días: ¡conseguido este mes!": "20-day reward: earned this month!",
   "Días recogidos este mes: {n} de 20 (premio especial)": "Days claimed this month: {n} of 20 (special reward)",
-  "ESCENARIO": "SCENE"
+  "ESCENARIO": "SCENE",
+  "Zoom": "Zoom",
+  "Con la <b>LUPA</b> (o pellizcando con dos dedos) te acercas para mirar de cerca. Vuelve a tocarla para alejarte.": "With the <b>MAGNIFIER</b> (or pinching with two fingers) you zoom in for a closer look. Tap it again to zoom out."
 });

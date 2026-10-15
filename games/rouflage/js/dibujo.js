@@ -10,7 +10,7 @@ const CAM = { x: 840, y: 360, z: 1, tiembla: 0, ox: 0, oy: 0, esc: 1 };
 // el zoom normal: en el móvil se ven unas 400 unidades a lo ancho; en pantallas grandes, unas 560 a lo alto
 function zoomJuego() {
   const z = limita(Math.max(Math.max(VW, VH) / 860, Math.min(VW, VH) / 560), 0.8, 2.2);
-  return J.fase !== 'titulo' && J.modo === 'cazador' ? z * 0.92 : z;
+  return J.fase !== 'titulo' && J.modo === 'cazador' ? z * 0.92 * (zoomCazadorVale() ? ZOOMC.f : 1) : z;      // el zoom del cazador (zoom-cazador.js)
 }
 function avanzaCamara(dt, deGolpe) {
   let tx = CAM.x, ty = CAM.y, tz = zoomJuego();

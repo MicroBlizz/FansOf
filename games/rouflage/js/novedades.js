@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.18', real: ["<b>ZOOM PARA EL CAZADOR</b>: con la lupa de arriba (tres niveles), pellizcando con dos dedos, con la rueda del ratón o con + y −, te acercas para mirar de cerca. El pellizco no dispara."],
+    joke: ["Microblizz ha dado una lupa a cada becario. Phony dice que con eso por fin ven lo poco que cobran."] },
   { v: '0.2.17', real: ["<b>TUTORIAL CON BOCADILLOS</b>: la primera vez que juegas contra bots con cada papel, un bocadillo te señala el botón que toca (pintarte, coger color, LISTO, congelarte, silbar…) y espera a que lo hagas. Si quieres verlo otra vez: OPCIONES › Repetir tutorial."],
     joke: ["Microblizz ha contratado a un becario solo para sujetar los bocadillos del tutorial. Phony dice que eso no es un trabajo, que es un globo."] },
   { v: '0.2.16', real: ["<b>RANKING Y PAUSA ARREGLADOS</b>: si entrabas en la habitación y volvías al menú por el armario o el perfil, los botones de ranking y pausa desaparecían de todas las partidas siguientes."],

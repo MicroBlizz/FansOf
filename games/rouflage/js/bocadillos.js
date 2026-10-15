@@ -21,6 +21,7 @@ const BOCADILLOS = {
     { fase: 'prep', a: '#e-balas', t: 'Estas son tus <b>CARTAS DE DESPIDO</b>. Fallar gasta una; acertar te la devuelve.', seg: 8 },
     { fase: 'prep', a: null, t: 'Mientras los colados se pintan, <b>PRACTICA</b>: toca a los camaleones de prácticas que salen en la sala.', empieza: s => { s.n = PRACTICA.aciertos + J.cuenta.fallos; }, hecho: s => PRACTICA.aciertos + J.cuenta.fallos > s.n, seg: 20 },
     { fase: 'caza', a: null, t: '¡A buscar! <b>Toca</b> donde creas que hay un colado: busca colores que no casan y dibujos torcidos.', seg: 9 },
+    { fase: 'caza', a: '#b-zoom', t: 'Con la <b>LUPA</b> (o pellizcando con dos dedos) te acercas para mirar de cerca. Vuelve a tocarla para alejarte.', empieza: s => { s.f = ZOOMC.f; }, hecho: s => ZOOMC.f !== s.f, seg: 10 },
     { fase: 'caza', a: '#e-quedan', t: 'Aquí ves cuántos colados <b>QUEDAN</b>. Las ondas de los silbidos te dicen por dónde andan.', seg: 8 },
   ],
 };

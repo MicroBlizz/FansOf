@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.17"></script>
+<script src="../../core/js/nucleo.js?v=0.2.18"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -25,6 +25,7 @@
     <div class="chip rol" id="chip-rol"><i data-icono="pincel"></i><b></b></div>
     <div id="marcador"><span id="fase-txt"></span><b id="reloj" class="ol">0:45</b></div>
     <div id="esquina">
+      <button type="button" class="redondo" id="b-zoom" data-tr-aria aria-label="Zoom" hidden><i data-icono="lupa"></i></button>
       <button type="button" class="redondo" id="b-ranking" data-tr-aria aria-label="Clasificación"><i data-icono="podio"></i></button>
       <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
     </div>
@@ -415,6 +416,7 @@ NUCLEO.juego({
     'js/tutorial.js',
     'js/bocadillos.js',
     'js/controles.js',
+    'js/zoom-cazador.js',
     'js/entrenamiento.js',
     'js/modos.js',
     'js/modos-extra.js',

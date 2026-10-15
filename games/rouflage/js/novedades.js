@@ -2,7 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
-  { v: '0.2.20', real: ["<b>MENÚ A TODO COLOR</b>: los botones del título ya no son grises: armario verde, perfil azul, habitación de madera, cómo se juega celeste y opciones gris azulado claro."],
+  { v: '0.2.22', real: ["<b>MENÚ A TODO COLOR</b>: los botones del título ya no son grises: armario verde, perfil azul, habitación de madera, cómo se juega celeste y opciones gris azulado claro."],
     joke: ["Microblizz ha pintado los botones del menú con la pintura que sobró de los camaleones. Phony quiere cobrarla como obra de arte."] },
   { v: '0.2.21', real: ["<b>LUZ: DÍA, NORMAL O APAGÓN</b>: en la sala de amigos y contra bots, una fila nueva para elegir la luz de la partida, siempre con una marcada. DÍA es nuevo: con las luces encendidas se ve toda la oficina, no solo lo que alumbra la linterna, y los becarios ven más lejos. NORMAL es la noche de siempre y APAGÓN el antiguo Apagón total."],
     joke: ["Microblizz ha encendido las luces de día para que se note que la oficina está vacía. Phony pide que las apaguen: así no se le ve dormir."] },

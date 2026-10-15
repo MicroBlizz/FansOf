@@ -2,6 +2,7 @@
 'use strict';
 IDIOMA.add({
   // 0.2.9
+  "<b>HUMO MÁS FIABLE</b>: tras la bomba de humo, en cuanto sales corriendo y vuelves a quedarte quieto (también en el PvP) te camufla al 80 % al instante.": "<b>MORE RELIABLE SMOKE</b>: after the smoke bomb, as soon as you run off and stand still again (in PvP too) the game camouflages you to 80 % instantly.",
   "<b>CAZADORES CON 2 CARTAS</b>: los becarios salen con 2 cartas de despido en vez de 5, pero mientras los colados se pintan juegan a «Caza wakameles»: tocan los bichos que asoman de los agujeros y cada 4 aciertos ganan una carta extra, hasta 5 en total. En solitario como cazador hay 30 segundos de calentamiento antes de la cuenta atrás.": "<b>HUNTERS WITH 2 CARDS</b>: hunters now start with 2 firing cards instead of 5, but while the chameleons paint they play «Whack the wakamele»: tap the critters popping out of the holes and every 4 hits earns an extra card, up to 5 in total. Playing solo as a hunter there are 30 seconds of warm-up before the countdown.",
   "Los wakameles han pedido el convenio de los topos de feria. Phony ya les cobra la entrada.": "The wakamele have demanded the same contract as fairground moles. Phony already charges them admission.",
   // 0.2.8

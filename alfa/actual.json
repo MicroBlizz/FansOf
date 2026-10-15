@@ -1,8 +1,8 @@
 {
- "build": 10,
- "hash": "89809ad",
- "fecha": "2026-10-15T00:41:45Z",
- "mensaje": "Rouflage 0.2.9: cazadores con 2 cartas y minijuego de wakameles para ganar extra",
+ "build": 11,
+ "hash": "ee4852f",
+ "fecha": "2026-10-15T00:58:25Z",
+ "mensaje": "Rouflage 0.2.9: el camuflaje tras el humo se aplica también si el hielo llega por otro camino (PvP)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

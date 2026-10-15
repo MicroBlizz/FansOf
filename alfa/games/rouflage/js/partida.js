@@ -108,6 +108,7 @@ function avanzaPartida(dt) {
   J.t += dt; J.tFase += dt;
   for (const k of J.camaleones) k.enVista = false;
   senueloPaso(dt);
+  humoPaso(J.yo);
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
   controlaJugador(dt);
   for (const e of J.entes) {

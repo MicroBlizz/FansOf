@@ -8,7 +8,7 @@ const invisible = e => e.invis > 0;      // no lo ven los becarios ni pueden des
 
 function lanzaGranada(e) {
   if (!e || e.fuera || !(e.granada > 0) || J.fase !== 'caza') return false;
-  e.granada = 0; e.invis = GRANADA.dura; e.trasHumo = !e.bot;      // al volver a pararse se camufla solo (ver autoCamuflaje)
+  e.granada = 0; e.invis = GRANADA.dura; e.trasHumo = !e.bot; e.salioDelHumo = false;      // al volver a pararse se camufla solo (ver autoCamuflaje)
   granadaEstalla(e.x, e.y, e);
   if (J.pvp) rfpManda({ t: 'gr', x: Math.round(e.x), y: Math.round(e.y) });
   return true;
@@ -29,4 +29,12 @@ function autoCamuflaje(e) {
   e.trasHumo = false; pintaBot(e, 0.95); for (let n = 0; n < 3 && e.camo < 80; n++) afinaBot(e);
   for (let n = 0; n < 16 && e.camo > 84; n++) { ensuciaBot(e, 1 + Math.floor((e.camo - 80) / 3)); mideCamuflaje(e); }
   e.pintado = true; avisa(tr('Te camuflas rápido: un 80 %'), 'aviso'); play('pop');
+}
+
+// red de seguridad: pase lo que pase al pararte (también en el PvP, donde el hielo puede llegar por otro camino), si saliste corriendo tras el humo y vuelves a estar quieto, te camufla
+function humoPaso(e) {
+  if (!e || !e.jugador || !e.trasHumo || e.fuera) return;
+  if (!e.congelado) { e.salioDelHumo = true; return; }
+  if (!e.salioDelHumo) return;
+  e.salioDelHumo = false; autoCamuflaje(e); if (J.pvp) rfpMandaPiel(e);
 }

@@ -1,19 +1,19 @@
 {
- "build": 64,
- "hash": "e979e61",
- "fecha": "2026-10-15T11:49:19Z",
- "mensaje": "Rouflage: el zoom y la cámara del señuelo repintan la vista (el fondo congelado del taller no se actualizaba)",
+ "build": 65,
+ "hash": "e80a65b",
+ "fecha": "2026-10-15T12:04:47Z",
+ "mensaje": "Versiones de todos los juegos por el cambio de core (feedback con estrellas) para la release",
  "juegos": {
-  "crush": "0.1.16",
-  "dark": "0.2.5",
-  "island": "0.3.3",
+  "crush": "0.1.17",
+  "dark": "0.2.6",
+  "island": "0.3.4",
   "nova": "0.2.0",
-  "ratkov": "0.2.5",
+  "ratkov": "0.2.6",
   "rouflage": "0.2.11",
-  "rumble": "0.9.135",
-  "skate": "0.1.25",
-  "survivors": "0.1.48",
-  "tacticas": "0.1.32",
-  "td": "0.13.64"
+  "rumble": "0.9.136",
+  "skate": "0.1.26",
+  "survivors": "0.1.49",
+  "tacticas": "0.1.33",
+  "td": "0.13.65"
  }
 }

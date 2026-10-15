@@ -1,6 +1,7 @@
 // Fans of Dark · Novedades: el informe de cada versión, la más nueva primero. La versión que se publica se escribe en index.html (…?v=…).
 'use strict';
 const NEWS = [
+  { v: '0.2.6', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },
   { v: '0.2.5', real: ["<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego."], joke: ["Microblizz ha puesto tu nombre en la mazmorra. Phony dice que las antorchas ya lo susurran."] },
   { v: '0.2.4', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },
   { v: '0.2.3', real: ["<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla."], joke: ["Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas."] },

@@ -2,6 +2,8 @@
 // más nueva de js/novedades.js (y las anteriores). El juego en sí todavía se juega solo en español (datos.js: tr = s => s).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
+  "Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta.": "Microblizz counted your stars twice to be sure. Phony counts them separately, in his own account.",
   "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",
   "<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego.": "<b>ONE NAME FOR THE WHOLE SERIES</b>: your Fans Of account now has a single public name in every game, and you change it from \"My account\", where you can also see whether you have the unlimited chaos pass. And under the hood, the shared systems measure how each game runs better.",
   "Microblizz ha puesto tu nombre en la mazmorra. Phony dice que las antorchas ya lo susurran.": "Microblizz has put your name in the dungeon. Phony says the torches already whisper it.",

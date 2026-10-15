@@ -1,8 +1,8 @@
 {
- "build": 18,
- "hash": "f41efcc",
- "fecha": "2026-10-15T01:37:43Z",
- "mensaje": "Fans of Nova fase 0 (5/6): facetas, capitanes y auras de La Directora (datos-tripulacion.js) con comprobación contra core",
+ "build": 19,
+ "hash": "dba0825",
+ "fecha": "2026-10-15T01:39:45Z",
+ "mensaje": "Fans of Nova fase 0 (6/6): bocetos de nave cartoon y pixel (rangos 1, 3 y 5), solo local",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

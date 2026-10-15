@@ -34,10 +34,10 @@ function nvHud(c, S, W, H, vs) {
   c.textAlign = 'left'; c.font = '800 ' + 14 * u + 'px Baloo 2, sans-serif';
   nvBarra(c, m, m, bw, 14 * u, n.hp / n.hpMax, n.hp / n.hpMax > 0.3 ? '#5be36b' : '#ff5b5b');
   if (n.esc) nvBarra(c, m, m + 14 * u, bw * n.esc.hp / n.esc.cap, 4 * u, 1, '#6fc4ff', 'rgba(0,0,0,0)');
-  const ant = n.rango > 1 ? NV_CHATARRA_RANGO[n.rango - 2] : 0, sig = n.rango < 5 ? NV_CHATARRA_RANGO[n.rango - 1] : ant + 1;
-  nvBarra(c, m, m + 20 * u, bw, 9 * u, n.rango < 5 ? (S.chat - ant) / (sig - ant) : 1, '#ffd93d');
+  const ant = n.rango > 1 ? nvUmbral(n.rango - 1) : 0, sig = nvUmbral(n.rango);
+  nvBarra(c, m, m + 20 * u, bw, 9 * u, (S.chat - ant) / (sig - ant), '#ffd93d');
   c.fillStyle = '#fff'; c.lineWidth = 4; c.strokeStyle = '#1a0f2e';
-  const txt = tr('RANGO') + ' ' + n.rango + (n.rango < 5 ? '' : ' · MAX'), t = Math.floor(S.t), tt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
+  const txt = tr('RANGO') + ' ' + n.rango, t = Math.floor(S.t), tt = Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0');
   c.strokeText(txt, m, m + 46 * u); c.fillText(txt, m, m + 46 * u);
   c.textAlign = 'right'; c.strokeText(tt, W - m, m + 46 * u); c.fillText(tt, W - m, m + 46 * u);
   if (S.jefe && !S.jefe.muerto) { c.textAlign = 'center'; const j = S.jefe; nvBarra(c, W * 0.2, m + 56 * u, W * 0.6, 8 * u, j.hp / j.hpMax, '#ff4b9a'); c.strokeText(tr(j.d.nombre), W / 2, m + 80 * u); c.fillText(tr(j.d.nombre), W / 2, m + 80 * u); }
@@ -86,7 +86,7 @@ function nvPanelesDOM(S) {
     NVI.finVisto = S; cont.textContent = '';
     const p = nvEl('nv-panel'), ok = S.estado === 'victoria';
     p.appendChild(nvEl('nv-titulo', ok ? tr('¡SECTOR LIMPIO!') : tr('NAVE DESTRUIDA')));
-    const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Enemigos tragados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación'), Math.floor(S.chat / 10)]];
+    const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación'), Math.floor(S.chat / 10)]];
     for (const [a, b] of l) { const f = nvEl('nv-fila'); f.appendChild(nvEl('', a)); f.appendChild(nvEl('', String(b))); p.appendChild(f); }
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));

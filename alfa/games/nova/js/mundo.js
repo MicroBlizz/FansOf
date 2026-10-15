@@ -1,7 +1,7 @@
 // Fans of Nova · El mundo de la partida: mapa grande con asteroides (se comen), pecios, nidos que sueltan enemigos, capitanes que crecen,
 // estaciones donde cambiar armas y el Rey de los huesos al final. Todo se coloca al empezar con el azar de la partida.
 'use strict';
-const NV_MUNDO = { asteroides: 130, pecios: 18, pecioRaro: 5, nidos: 9, capitanes: 4, estaciones: 5, nebulosas: 18 };
+const NV_MUNDO = { asteroides: 130, pecios: 18, pecioRaro: 5, nidos: 9, capitanes: 4, estaciones: 5, nebulosas: 18, naves: 90 };
 
 function nvGeneraMundo(S) {
   const R = NV_ARENA, puestos = [];
@@ -21,6 +21,11 @@ function nvGeneraMundo(S) {
   for (let i = 0; i < NV_MUNDO.asteroides; i++) {
     const g = Math.random() < 0.35, p = g ? sitio(500, R, 60) : sitio(380, R, 60), e = nvEnemigo(S, 'asteroide', p.x, p.y);
     e.r = 20 + Math.random() * 30; e.hp = e.hpMax = Math.round(e.r * 2.2); e.valor = Math.round(e.r / 3); e.d = Object.assign({}, e.d, { chat: e.valor }); e.ang = Math.random() * 6.28; e.forma = Math.random();
+  }
+  // naves de todos los tamaños repartidas por el mapa: las grandes, lejos del centro
+  for (let i = 0; i < NV_MUNDO.naves; i++) {
+    const f = Math.random(), p = sitio(500, R, 120), d = Math.hypot(p.x, p.y) / R, rango = Math.max(1, Math.min(10, Math.round(1 + d * 7 * (0.4 + f * 0.9))));
+    const e = nvEnemigo(S, f < 0.55 ? 'rastrero' : f < 0.85 ? 'fusilero' : 'sepulturero', p.x, p.y, rango); e.errante = 1;
   }
   const cols = ['#3b2a8c', '#1d5a8c', '#7a2a6a', '#1f6b5a'];
   for (let i = 0; i < NV_MUNDO.nebulosas; i++) S.nebulosas.push({ x: (Math.random() * 2 - 1) * R, y: (Math.random() * 2 - 1) * R, r: 300 + Math.random() * 500, col: cols[i % cols.length] });

@@ -1,9 +1,12 @@
 // Fans of Nova · La partida: estado, bucle, movimiento de la nave, chatarra, rangos y fin de partida (prototipo de la fase 1).
 // El dibujo está en dibujo.js y los menús en interfaz.js. Todo el estado vive en S; no se guarda nada (la partida dura 3-5 min).
 'use strict';
-const NV_ESCALA_NAVE = 0.5;                // tamaño de la nave dibujada (1 = el PNG de arte tal cual); el hitbox sale de él: r = 90 × escala
+const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujada (1 = el PNG de arte tal cual); empiezas muy pequeño y creces; el hitbox sale de él
 const NV_ARENA = 4200;                       // radio de la arena
-const NV_CHATARRA_RANGO = [110, 300, 640, 1200];   // chatarra acumulada para pasar a los rangos 2, 3, 4 y 5
+// Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
+function nvUmbral(k) { return Math.round(110 * Math.pow(k, 1.8)); }
+function nvEscalaRango(r) { return NV_ESCALA_NAVE * (1 + 0.06 * (r - 1)); }
+function nvVista(S) { return 560 + Math.min(700, 45 * (S.nave.rango - 1)); }   // la cámara se aleja según creces
 
 const NVP = { casco: 'caza', S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
 
@@ -47,6 +50,7 @@ function nvPaso(S, dt) {
   nvRestos(S, dt);
   if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
   if (n.golpeado > 0) n.golpeado -= dt;
+  if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
   // cámara suave
@@ -61,7 +65,7 @@ function nvMueve(S, dt) {
   if (NVP.teclas.ArrowDown || NVP.teclas.s) iy += 1;
   if (NVP.auto) { const g = nvBotMeta(S); ix = g[0]; iy = g[1]; }   // bot de pruebas
   const m = Math.hypot(ix, iy); if (m > 1) { ix /= m; iy /= m; }
-  const vmax = n.vel + 6 * (n.rango - 1);
+  const vmax = (n.vel + 6 * Math.min(12, n.rango - 1)) * (S.mejoras.vel || 1);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
   const d = Math.hypot(n.x, n.y); if (d > NV_ARENA) { n.x *= NV_ARENA / d; n.y *= NV_ARENA / d; }
@@ -76,7 +80,14 @@ function nvBotMeta(S) {
   const n = S.nave;
   let mejor = null, md = 1e12;
   const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
-  for (const e of S.enem) if (!e.muerto && (e.d.pasivo === 1 || e.d.nido || (e.d.capitan && n.rango >= e.rango + 1))) mira(e.x, e.y, e.d.pasivo ? 1 : e.d.nido ? 1.4 : 1.8);
+  let huir = null;
+  for (const e of S.enem) {
+    if (e.muerto) continue;
+    if (!e.d.pasivo && e.rango >= n.rango + 1 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
+    else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
+  }
+  for (const r of S.restos) mira(r.x, r.y, 0.5);
+  if (huir) { const hx = n.x - huir.x, hy = n.y - huir.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
   for (const p of S.pecios) mira(p.x, p.y, 0.7);
   if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
   if (S.jefe && !S.jefe.muerto) mejor = [S.jefe.x, S.jefe.y];
@@ -99,16 +110,16 @@ function nvRestos(S, dt) {
     const r = S.restos[i], d = Math.hypot(n.x - r.x, n.y - r.y);
     r.t += dt;
     if (d < im || r.t > 6) { const v = Math.min(1, dt * (d < im ? 7 : 0)); r.x += (n.x - r.x) * v; r.y += (n.y - r.y) * v; }
-    if (d < n.r + 10) { S.restos.splice(i, 1); nvSumaChatarra(S, r.v); }
+    if (d < n.r + 10) { S.restos.splice(i, 1); S.stats.tragados++; nvSumaChatarra(S, r.v); }
     else if (r.t > 25) S.restos.splice(i, 1);
   }
 }
 function nvSumaChatarra(S, v) {
   S.chat += v; S.cartera += v;
   const n = S.nave;
-  while (n.rango < 5 && S.chat >= NV_CHATARRA_RANGO[n.rango - 1]) {
-    n.rango++; n.escala = NV_ESCALA_NAVE * (1 + 0.07 * (n.rango - 1)); n.r = 0.42 * n.rAncho * n.escala;
-    n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.25);
+  while (S.chat >= nvUmbral(n.rango)) {
+    n.rango++; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala;
+    n.hpMax = Math.round(n.hpMax * 1.12); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
     nvAjustaTamanos(S);

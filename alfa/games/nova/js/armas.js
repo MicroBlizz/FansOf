@@ -8,7 +8,7 @@ const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
 function nvRanuras(rango, S) {
   const cuenta = {}, H = NOVA_PIEZAS.cascos[S.casco];
-  return novaPlantilla(H.faccion, rango).map(r => {
+  return novaPlantilla(H.faccion, Math.min(5, rango)).map(r => {
     cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
     const id = r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
     return Object.assign({ id, x: a.x, y: a.y }, r);
@@ -27,6 +27,7 @@ function nvNombreArma(w) {
 function nvDanoArma(w) {
   const P = NOVA_ARMAS, p = P.portadores[w.portador], c = P.cargas[w.carga];
   let d = p.dano * P.tamanos[w.tam] * (1 + P.mejora.porNivel * w.nivel) * (NOVA_CASCOS.caras[w.cara].dano || 1) * c.multDano;
+  d *= (NVP.S && NVP.S.mejoras.dano) || 1;
   if (w.fusion) d *= w.fusion.tipo === 'doble' ? (w.fusion.mult || 1) : P.fusionMixta.mult;
   return d;
 }
@@ -158,7 +159,7 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion) {
   e.hp -= d;
   e.flash = 0.08;
   S.nums.push({ x: x + (Math.random() - 0.5) * 14, y: y - 8, t: 0.7, txt: String(Math.round(d)), color: crit ? '#ffd93d' : c.color, g: crit ? 1 : 0 });
-  if (w.vampiro) S.nave.hp = Math.min(S.nave.hpMax, S.nave.hp + d * 0.02);
+  if (S.mejoras.robo) S.nave.hp = Math.min(S.nave.hpMax, S.nave.hp + d * S.mejoras.robo);
   S.stats.dano += d; if (d > S.stats.mayor) S.stats.mayor = d;
   if (e.hp <= 0 && !e.muerto) nvMuere(S, e);
 }

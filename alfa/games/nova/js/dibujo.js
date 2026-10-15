@@ -5,9 +5,8 @@ const NVA = { img: {}, meta: {}, listo: false, base: 'arte/' };   // piezas del 
 // Motor por rango: simple → doble → triple, y de tamaño S/M hasta el máximo de ese casco (tamMax de datos-piezas.js).
 function nvMotorRango(casco, rango) {
   const L = NOVA_PIEZAS.cascos[casco].motor.tamMax === 'L';
-  return [['simple', L ? 'M' : 'S'], ['simple', 'M'], ['doble', L ? 'L' : 'M'], ['doble', L ? 'L' : 'M'], ['triple', L ? 'L' : 'M']][rango - 1];
+  return [['simple', L ? 'M' : 'S'], ['simple', 'M'], ['doble', L ? 'L' : 'M'], ['doble', L ? 'L' : 'M'], ['triple', L ? 'L' : 'M']][Math.min(5, rango) - 1];
 }
-const NV_VISTA = 800;   // unidades de mundo que caben a lo ancho de la pantalla
 
 function nvCargaArte(listo) {
   fetch(NVA.base + 'piezas.json').then(r => r.json()).then(d => {
@@ -158,13 +157,17 @@ function nvDibujaPecio(c, p, t) {
   c.restore();
 }
 function nvDibujaMundo(c, S) {
-  const n = S.nave, cx = S.cam.x, cy = S.cam.y, V = NV_VISTA * 0.75;
+  const n = S.nave, cx = S.cam.x, cy = S.cam.y, V = nvVista(S) * 0.75;
   for (const b of S.nebulosas) { if (Math.abs(b.x - cx) > b.r + V || Math.abs(b.y - cy) > b.r + V) continue; const g = c.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, b.col + '55'); g.addColorStop(1, b.col + '00'); c.fillStyle = g; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); }
   const cerca = o => Math.abs(o.x - cx) < V && Math.abs(o.y - cy) < V * 1.6;
   for (const st of S.estaciones) if (cerca(st)) nvDibujaEstacion(c, st, S.t);
   for (const p of S.pecios) if (cerca(p)) nvDibujaPecio(c, p, S.t * 2);
   c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 10; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
-  for (const r of S.restos) { c.fillStyle = '#ffd93d'; c.save(); c.translate(r.x, r.y); c.rotate(r.ang + r.t * 2); c.fillRect(-4, -4, 8, 8); c.restore(); }
+  for (const r of S.restos) {   // restos de nave: chapas retorcidas con el borde dorado
+    const q = 5 + Math.min(10, r.v * 0.6);
+    c.save(); c.translate(r.x, r.y); c.rotate(r.ang + r.t * 0.8); c.lineWidth = 2; c.strokeStyle = '#ffd93d'; c.fillStyle = '#6b7090';
+    c.beginPath(); c.moveTo(-q, -q * 0.4); c.lineTo(q * 0.2, -q); c.lineTo(q, q * 0.3); c.lineTo(-q * 0.3, q * 0.8); c.closePath(); c.fill(); c.stroke(); c.restore();
+  }
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const b of S.eproy) { c.fillStyle = '#ff6bd6'; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#fff'; c.stroke(); }
   nvDibujaNave(c, S);
@@ -184,7 +187,7 @@ function nvDibujaMundo(c, S) {
 function nvDibuja(S) {
   const cv = document.getElementById('nv-canvas');
   if (!cv) return;
-  const W = cv.width, H = cv.height, vs = W / NV_VISTA, c = cv.getContext('2d');
+  const W = cv.width, H = cv.height, vs = W / nvVista(S), c = cv.getContext('2d');
   nvFondo(c, S, W, H, vs);
   c.save(); c.translate(W / 2, H / 2); c.scale(vs, vs); c.translate(-S.cam.x, -S.cam.y);
   nvDibujaMundo(c, S);

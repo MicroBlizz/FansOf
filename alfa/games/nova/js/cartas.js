@@ -5,10 +5,13 @@ const NV_CARGAS = ['cinetica', 'energia', 'termica', 'em', 'explosiva'];
 // Prototipo: todas las ranuras de armas admiten los cinco portadores, para probar toda la matriz de fusiones (en el juego real manda la plantilla de la facción).
 const NV_TIPOS_LIBRES = ['railgun', 'flak', 'laser', 'lanzador', 'drones'];
 const NV_MEJORAS_SISTEMA = [
-  { id: 'cadencia', titulo: 'Cargador rápido', detalle: 'Todas las armas disparan un 15 % más rápido', max: 3, aplicar: S => { S.mejoras.cadencia = (S.mejoras.cadencia || 1) * 1.15; } },
-  { id: 'iman', titulo: 'Imán de chatarra', detalle: 'La chatarra te alcanza desde más lejos', max: 3, aplicar: S => { S.mejoras.iman = (S.mejoras.iman || 0) + 1; } },
-  { id: 'casco', titulo: 'Casco reforzado', detalle: 'Casco +60 y se repara por completo', max: 3, aplicar: S => { S.nave.hpMax += 60; S.nave.hp = S.nave.hpMax; } },
-  { id: 'vampiro', titulo: 'Sifón de casco', detalle: 'Un 2 % del daño que haces repara tu casco', max: 1, aplicar: S => { for (const w of S.nave.armas) w.vampiro = 1; S.mejoras.vampiro = 1; } }
+  { id: 'dano', titulo: 'Munición mejorada', detalle: 'Todas las armas hacen un 8 % más de daño', max: 40, aplicar: S => { S.mejoras.dano = (S.mejoras.dano || 1) * 1.08; } },
+  { id: 'cadencia', titulo: 'Cargador rápido', detalle: 'Todas las armas disparan un 6 % más rápido', max: 25, aplicar: S => { S.mejoras.cadencia = (S.mejoras.cadencia || 1) * 1.06; } },
+  { id: 'robo', titulo: 'Sifón de casco', detalle: 'Un 1 % más del daño que haces repara tu casco', max: 25, aplicar: S => { S.mejoras.robo = (S.mejoras.robo || 0) + 0.01; } },
+  { id: 'casco', titulo: 'Casco reforzado', detalle: 'Casco +10 % y se repara un 30 %', max: 25, aplicar: S => { S.nave.hpMax = Math.round(S.nave.hpMax * 1.1); S.nave.hp = Math.min(S.nave.hpMax, S.nave.hp + S.nave.hpMax * 0.3); } },
+  { id: 'regen', titulo: 'Reparación automática', detalle: 'El casco se repara solo un poco más cada segundo', max: 20, aplicar: S => { S.mejoras.regen = (S.mejoras.regen || 0) + 0.6; } },
+  { id: 'vel', titulo: 'Motores afinados', detalle: 'La nave va un 5 % más rápido', max: 15, aplicar: S => { S.mejoras.vel = (S.mejoras.vel || 1) * 1.05; } },
+  { id: 'iman', titulo: 'Imán de chatarra', detalle: 'La chatarra te alcanza desde más lejos', max: 12, aplicar: S => { S.mejoras.iman = (S.mejoras.iman || 0) + 1; } }
 ];
 
 // Cuánto «encaja» un arma nueva con lo que llevas: ×1,5 por portador o carga repetidos, hasta ×4.
@@ -35,7 +38,8 @@ function nvCandidatas(S) {
   }
   const act = n.armas.filter(w => w.portador !== 'defensa');
   for (const w of act) if (w.nivel < NOVA_ARMAS.mejora.maxNiveles) out.push({ tipo: 'mejora', peso: 0.9, carga: w.carga, titulo: tr('Mejora') + ': ' + nvNombreArma(w), detalle: tr('+25 % de daño') + ' (' + (w.nivel + 1) + '/' + NOVA_ARMAS.mejora.maxNiveles + ')', aplicar: () => { w.nivel++; } });
-  for (const m of NV_MEJORAS_SISTEMA) if ((S.sist[m.id] || 0) < m.max && !(m.id === 'vampiro' && !act.length)) out.push({ tipo: 'sistema', peso: 0.5, carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
+  const llenas = !out.some(o => o.tipo === 'arma');   // con todas las ranuras llenas, las mejoras pequeñas pasan a ser lo normal
+  for (const m of NV_MEJORAS_SISTEMA) if ((S.sist[m.id] || 0) < m.max && !(m.id === 'robo' && !act.length)) out.push({ tipo: 'sistema', peso: llenas ? 1.6 : 0.5, carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
   // fusiones: portador de una + carga de la otra (mixta), o dos del mismo portador (doble)
   for (const a of act) for (const b of act) {
     if (a === b || a.fusion || b.fusion) continue;
@@ -102,6 +106,5 @@ function nvCompraArma(S, oferta, viejo) {
   const n = S.nave, w = nvArmaNueva(oferta.slot, oferta.portador, oferta.carga);
   w.nivel = viejo.nivel;   // la mejora se conserva; la fusión no
   n.armas.splice(n.armas.indexOf(viejo), 1, w);
-  if (S.mejoras.vampiro) w.vampiro = 1;
   return true;
 }

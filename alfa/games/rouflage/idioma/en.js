@@ -1,6 +1,20 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "APAGÓN": "BLACKOUT",
+  "¡Listo!": "Ready!",
+  "SILBIDO": "WHISTLE",
+  "MANO FRÍA": "COLD HAND",
+  "Apagón: acércate a un becario y apágale la linterna 1 segundo": "Blackout: get close to an intern and switch his flashlight off for 1 second",
+  "Silbido falso: silba desde donde estés y los becarios irán a mirar ahí": "Fake whistle: whistle from where you are and the interns will go and look there",
+  "Mano fría: toca a un becario y le temblará la linterna 2 segundos": "Cold hand: touch an intern and his flashlight will shake for 2 seconds",
+  "Poder recargándose: {n} s": "Power recharging: {n} s",
+  "Acércate más a un becario": "Get closer to an intern",
+  "¡Fiuuu!": "Wheeet!",
+  "¡Brrr!": "Brrr!",
+  "¡Un fantasma te ha apagado la linterna!": "A ghost switched off your flashlight!",
+  "¡Una mano fría! Te tiembla la linterna": "A cold hand! Your flashlight is shaking",
+  "Estás despedido: ayuda a los tuyos con tu poder de fantasma": "You're fired: help your team with your ghost power",
   "Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas": "Practice: drag to walk and TAP a hidden chameleon to shoot it. Missing costs no cards",
   "Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas": "Practice: WASD to walk and CLICK a hidden chameleon to shoot it. Missing costs no cards",
   "Cada {n} despidos, una carta extra ({c} de {m} ganadas)": "Every {n} firings, an extra card ({c} of {m} earned)",

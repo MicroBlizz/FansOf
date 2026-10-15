@@ -43,7 +43,8 @@ function nuevoEnte(clase, tipo, nombre, x, y) {
     piel, pctx, pasos: [], congelado: false, hielo: 0, camo: 0, vis: 1, tapada: 0, pintado: false,
     fuera: false, tFuera: 0, bot: null, jugador: false, slot: -1, humano: false, remoto: false, red: null,   // PvP: su plaza en la sala, si lo lleva una persona y si lo mueve la red
     semilla: _semilla++ * 1.37, ojoX: 0, ojoY: 0, susto: false, tiembla: 0,
-    balas: clase === 'cazador' ? REGLAS.balasIni : REGLAS.balas, enfria: 0, ciego: 0, alerta: 0, marca: '', tMarca: 0, tSilbo: 0, sitio: null,
+    balas: clase === 'cazador' ? REGLAS.balasIni : REGLAS.balas, enfria: 0, ciego: 0, apagada: 0, manoFria: 0,      // el poder de un fantasma: linterna apagada o temblona (segundos)
+    alerta: 0, marca: '', tMarca: 0, tSilbo: 0, sitio: null,
     granada: clase === 'camaleon' ? 1 : 0, invis: 0, tinta: 100,      // tinta para los señuelos
        // la granada cegadora (una por partida) y los segundos que le quedan de invisible
     silbido: REGLAS.primerSilbido, avisado: false,   // su reloj del silbido obligatorio (cada uno el suyo)
@@ -58,7 +59,7 @@ const cazadoresVivos = () => J.cazadores.filter(h => !h.fuera && h.balas > 0);
 // cada fotograma: anda hacia donde quiere (vx, vy entre -1 y 1), y el contorno se desvanece o vuelve según esté congelado
 function avanzaEnte(e, dt) {
   e.hielo = limita(e.hielo + (e.congelado ? dt : -dt) / 0.5, 0, 1);
-  e.enfria = Math.max(0, e.enfria - dt); e.ciego = Math.max(0, e.ciego - dt); e.tiembla = Math.max(0, e.tiembla - dt);
+  e.enfria = Math.max(0, e.enfria - dt); e.ciego = Math.max(0, e.ciego - dt); e.apagada = Math.max(0, e.apagada - dt); e.manoFria = Math.max(0, e.manoFria - dt); e.tiembla = Math.max(0, e.tiembla - dt);
   e.movido = Math.max(0, e.movido - dt); e.tMarca = Math.max(0, e.tMarca - dt); e.tSilbo = Math.max(0, e.tSilbo - dt); e.invis = Math.max(0, e.invis - dt);
   if (e.fuera) { e.tFuera += dt; e.moviendo = false; return; }
   if (e.remoto) { avanzaRemoto(e, dt); return; }      // PvP: lo mueve la red (pvp-sync.js)

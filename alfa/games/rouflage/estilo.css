@@ -77,6 +77,9 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .accion.silbar { background: linear-gradient(to bottom, #ffe07a, #e0a11f); width: 66px; height: 66px; border-radius: 20px; }
 .accion.granada { background: linear-gradient(to bottom, #fff6ea, #f0a8ff); width: 66px; height: 66px; border-radius: 20px; }
 .accion.retiro { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 14px); width: auto; height: auto; padding: 10px 16px 7px; border-radius: 18px; background: linear-gradient(to bottom, #ffb0a4, #d94c3a); }
+.accion.poder { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 70px); width: 84px; height: 84px; border-radius: 24px; background: linear-gradient(to bottom, #e6f4ff, #8fb8e8); }
+.accion.poder small { font-weight: 800; font-size: 11px; color: var(--outline); }
+.accion.poder.cargando { opacity: 0.6; }
 .accion.listo { width: auto; height: auto; padding: 9px 16px 6px; border-radius: 18px; background: linear-gradient(to bottom, #a4f070, #4fae2a); animation: late 0.9s ease-in-out infinite; }
 .accion.listo b { font-size: 18px; }
 .accion.listo small { font-weight: 800; font-size: 11px; color: var(--outline); }

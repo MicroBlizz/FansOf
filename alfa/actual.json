@@ -1,8 +1,8 @@
 {
- "build": 35,
- "hash": "ac9e975",
- "fecha": "2026-10-15T07:44:58Z",
- "mensaje": "Nova: mapa grande con asteroides, nidos, pecios y capitanes que crecen, menú de naves, estaciones, minimapa y conducción hacia donde miras",
+ "build": 36,
+ "hash": "ac07a5b",
+ "fecha": "2026-10-15T07:47:33Z",
+ "mensaje": "Rouflage: poderes de fantasma (apagón, silbido falso, mano fría), uno al azar por partida",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

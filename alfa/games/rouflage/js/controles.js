@@ -67,6 +67,7 @@ window.addEventListener('keydown', ev => {
     }
     return;
   }
+  if (espectando() && (ev.code === 'Space' || ev.code === 'KeyQ') && !ev.target.closest('button, a')) { accionPoder(); return; }      // el poder del fantasma
   switch (ev.code) {
     case 'KeyF': accionPintar(); break;
     case 'Space': if (!ev.target.closest('button, a')) accionCongelar(); break;

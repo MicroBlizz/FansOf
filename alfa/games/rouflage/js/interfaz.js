@@ -15,6 +15,8 @@ const ICONOS = {
   cabezaRedonda: '<circle cx="12" cy="12" r="6.5" fill="currentColor"/>',
   cabezaCuadrada: '<rect x="5.5" y="5.5" width="13" height="13" fill="currentColor"/>',
   senuelo: '<path d="M3 15c3-7 5 3 8-4s4 4 7-3"/><circle cx="19.5" cy="17.5" r="2.2"/>',
+  apagon: '<path d="M4 7.5h7l5-3v12l-5-3H4zM16 9.5v2M3 3l18 18"/>',
+  mano: '<path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7.5a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.3-2.4L3.6 14.2a1.4 1.4 0 0 1 2.3-1.6L8 15V12"/>',
   granada: '<circle cx="11" cy="14.5" r="6.2"/><path d="M9 8.4V5.2h4v3.2M13 5.2l4.2-1.8M3.2 4.6l2 1.4M2.4 9.6h2.4M20 10.6l1.6-1.6M20.6 14.6h1.8"/>',
   silbato: '<path d="M3 9.5h11.5M3 9.5V13h6.2"/><circle cx="14.5" cy="14" r="5.6"/><circle cx="14.5" cy="14" r="1.5" fill="currentColor"/><path d="M14.5 2.4v2.4M19 3.8l-1.3 2.1M10 3.8l1.3 2.1"/>',
   pausa: '<path d="M8.2 5v14M15.8 5v14" stroke-width="3.6"/>',
@@ -47,7 +49,7 @@ function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t +
 function pistaDeAhora() {
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
-  if (espectando()) return tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.');
+  if (espectando()) { const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
   if (yo.clase === 'camaleon') {
@@ -86,6 +88,7 @@ function refrescaHud(todo) {
   ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
+  refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
   // lo de cada papel
   const ver = { 'e-camo': cam, 'e-silbo': cam && caza, 'e-balas': !cam, 'e-quedan': !cam, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
     'b-silbar': caza && !espectando(), 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
@@ -237,7 +240,7 @@ function preparaInterfaz() {
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

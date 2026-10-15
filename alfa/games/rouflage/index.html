@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.10-a35.ac9e975"></script>
+<script src="../../core/js/nucleo.js?v=0.2.10-a36.ac07a5b"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -35,6 +35,7 @@
   <div id="cartel" hidden><b class="ol-big" id="cartel-t"></b><span id="cartel-s"></span></div>
   <div id="pista" hidden></div>
   <button type="button" class="accion retiro" id="b-retiro" hidden><b data-tr>ME RETIRO</b></button>
+  <button type="button" class="accion poder" id="b-poder" hidden><i data-icono="apagon"></i><b></b><small></small><kbd data-tr>Espacio</kbd></button>
   <div id="acciones">
     <button type="button" class="accion listo" id="b-listo" hidden><b data-tr>¡LISTO!</b><small data-tr>Que salgan ya</small></button>
     <button type="button" class="accion granada" id="b-granada" hidden><i data-icono="granada"></i><b data-tr>GRANADA</b><kbd>E</kbd></button>
@@ -244,6 +245,7 @@ NUCLEO.juego({
     'js/efectos-granada.js',
     'js/senuelos.js',
     'js/espectador.js',
+    'js/fantasma-poder.js',
     'js/bot-cazador.js',
     'js/bot-camaleon.js',
     'js/luz.js',

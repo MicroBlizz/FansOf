@@ -20,13 +20,13 @@ const NV_OLEADAS = [
 ];
 const NV_TIEMPO_JEFE = 540;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
 
-// Naves de todos los tamaños: cada rango es ×1,3 de tamaño, ×1,7 de casco, ×1,4 de daño y ×1,8 de chatarra.
+// Naves de todos los tamaños: cada rango es ×1,4 de tamaño, ×1,7 de casco, ×1,4 de daño y ×1,8 de chatarra.
 function nvEnemigo(S, tipo, x, y, rango) {
   rango = Math.max(1, Math.min(12, rango || 1));
   let d = NV_ENEM[tipo];
   if (rango > 1) {
     const q = Math.pow(1.4, rango - 1);
-    d = Object.assign({}, d, { r: Math.round(d.r * Math.pow(1.3, rango - 1)), hp: Math.round(d.hp * Math.pow(1.7, rango - 1)), contacto: Math.round(d.contacto * q), chat: Math.round(d.chat * Math.pow(1.8, rango - 1)) });
+    d = Object.assign({}, d, { r: Math.round(d.r * Math.pow(1.4, rango - 1)), hp: Math.round(d.hp * Math.pow(1.7, rango - 1)), contacto: Math.round(d.contacto * q), chat: Math.round(d.chat * Math.pow(1.8, rango - 1)) });
     if (d.esc) d.esc = Math.round(d.esc * Math.pow(1.7, rango - 1));
     if (d.tira) d.tira = Object.assign({}, d.tira, { dano: Math.round(d.tira.dano * q) });
   }

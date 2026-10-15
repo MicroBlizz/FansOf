@@ -1,8 +1,8 @@
 {
- "build": 41,
- "hash": "29ac8b4",
- "fecha": "2026-10-15T08:26:46Z",
- "mensaje": "Nova: empiezas muy pequeño y creces sin tope, naves de todos los tamaños, solo se comen restos, mejoras pequeñas con las ranuras llenas",
+ "build": 42,
+ "hash": "39c02a4",
+ "fecha": "2026-10-15T08:41:11Z",
+ "mensaje": "Nova: anillos de peligro y número de rango en cada nave, saltos de tamaño más marcados",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

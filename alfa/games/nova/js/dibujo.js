@@ -122,6 +122,11 @@ function nvDibujaEnemigo(c, e, S) {
     if (d.capitan) { c.fillStyle = '#ffd93d'; c.font = '800 ' + r * 0.7 + 'px Baloo 2, sans-serif'; c.textAlign = 'center'; c.fillText(String(e.rango), 0, r * 0.62); }
     if (d.jefe) { c.fillStyle = '#ffd93d'; for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(k * r * 0.3 - 6, -r * 0.95); c.lineTo(k * r * 0.3, -r * 1.3); c.lineTo(k * r * 0.3 + 6, -r * 0.95); c.fill(); } }
   }
+  if (!d.pasivo && !d.nido && !d.jefe) {   // anillo de peligro según su rango frente al tuyo: rojo = huye, naranja = cuidado, amarillo = igual, verde = presa
+    const df = e.rango - S.nave.rango, col = df >= 2 ? '#ff3b3b' : df === 1 ? '#ff9a3c' : df === 0 ? '#ffe066' : '#6bff8a';
+    c.beginPath(); c.arc(0, 0, r + 4, 0, 6.283); c.lineWidth = df >= 2 ? 4 : 2.5; c.strokeStyle = col; c.globalAlpha = df >= 2 ? 0.55 + 0.4 * Math.sin(S.t * 8) : 0.75; c.stroke(); c.globalAlpha = 1;
+    if (!d.capitan) { c.fillStyle = col; c.font = '800 ' + Math.max(11, r * 0.5) + 'px Baloo 2, sans-serif'; c.textAlign = 'center'; c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.strokeText(String(e.rango), 0, -r - 8); c.fillText(String(e.rango), 0, -r - 8); }
+  }
   if (e.esc > 0 && !(e.est.escudoCaido > 0)) { c.beginPath(); c.arc(0, 0, r + 6, 0, 6.283); c.lineWidth = 3; c.strokeStyle = 'rgba(120,190,255,' + (0.3 + 0.6 * e.esc / e.escMax) + ')'; c.stroke(); }
   if (e.est.brecha > 0) { c.strokeStyle = '#ff9a3c'; c.lineWidth = 2; c.beginPath(); c.moveTo(-r * 0.5, -r * 0.6); c.lineTo(0, 0); c.lineTo(r * 0.4, r * 0.5); c.stroke(); }
   if (e.est.marcado > 0) { c.strokeStyle = '#ffd93d'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 9, 0, 6.283); c.moveTo(-r - 14, 0); c.lineTo(r + 14, 0); c.moveTo(0, -r - 14); c.lineTo(0, r + 14); c.stroke(); }

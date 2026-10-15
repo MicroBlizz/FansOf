@@ -1,13 +1,13 @@
 {
- "build": 110,
- "hash": "2a01bea",
- "fecha": "2026-10-15T21:01:36Z",
- "mensaje": "Fans of Ratkov: sin botón de coger todo; enemigos que no se quedan dentro del tren, no nacen ni pasean por huecos cerrados y no se amontonan; ventanas opacas y ficha del objeto en horizontal",
+ "build": 111,
+ "hash": "84c6108",
+ "fecha": "2026-10-15T21:18:12Z",
+ "mensaje": "Fans of Nova 0.3.1: armas con munición coherente",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",
   "island": "0.3.4",
-  "nova": "0.3.0",
+  "nova": "0.3.1",
   "ratkov": "0.2.6",
   "rouflage": "0.2.20",
   "rumble": "0.9.136",

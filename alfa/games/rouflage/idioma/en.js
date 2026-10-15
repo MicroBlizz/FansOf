@@ -457,5 +457,19 @@ IDIOMA.add({
   "¡GANA {a}!": "{a} WINS!",
   "Retrato robot: solo gana uno, y es quien más puntos suma.": "Photofit: only one wins, whoever scores most.",
   "SE BUSCAN": "WANTED",
-  "Memoriza sus fichas: ahí abajo tienes su pintura y su postura": "Memorize their cards: their paint and pose are right below"
+  "Memoriza sus fichas: ahí abajo tienes su pintura y su postura": "Memorize their cards: their paint and pose are right below",
+  // los jardines (mapa-jardines.js)
+  "Los jardines": "The gardens",
+  "Setos, césped y aspersores traicioneros.": "Hedges, lawns and treacherous sprinklers.",
+  "JARDINES MICROBLIZZ · HORARIO: NUNCA": "MICROBLIZZ GARDENS · OPENING HOURS: NEVER",
+  "NO PISAR": "KEEP OFF",
+  "EL CÉSPED": "THE GRASS",
+  "LABERINTO": "MAZE",
+  "ASPERSORES": "SPRINKLERS",
+  "FLORES": "PLASTIC",
+  "DE PLÁSTICO": "FLOWERS",
+  "ESTATUA": "STATUE",
+  "EN OBRAS": "UNDER WORKS",
+  "Se encienden los aspersores": "The sprinklers are coming on",
+  "¡El aspersor te ha lavado la pintura! Vuelve a pintarte": "The sprinkler washed your paint off! Paint yourself again"
 });

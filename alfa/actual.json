@@ -1,8 +1,8 @@
 {
- "build": 22,
- "hash": "fc0ae91",
- "fecha": "2026-10-15T02:01:54Z",
- "mensaje": "Fans of Nova fase 0: naves sueltas en vectorial (Caza, Crucero, Fragata), solo local",
+ "build": 23,
+ "hash": "3a999c0",
+ "fecha": "2026-10-15T02:09:55Z",
+ "mensaje": "Fans of Nova fase 0: naves modulares, piezas separadas con medidas y anclajes estándar (casco, alas, motor, escudo)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

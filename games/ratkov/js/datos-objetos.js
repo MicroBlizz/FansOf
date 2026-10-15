@@ -34,8 +34,8 @@ const OBJ = {
   cart: { n: 'Cartuchos', t: 'muni', p: 0.04, v: 15, r: 0, max: 30, d: 'Para la escopeta. De cerca no fallan.' },
   m762: { n: 'Balas de 7,62', t: 'muni', p: 0.02, v: 18, r: 1, max: 60, d: 'Para el fusil y el de precisión.' },
   // ---- lo que se usa ----
-  venda: { n: 'Venda', t: 'med', p: 0.1, v: 35, r: 0, max: 4, d: 'Corta la hemorragia y cura 10.', usa: { sangra: true, vida: 10, t: 1.2 } },
-  botiquin: { n: 'Botiquín', t: 'med', p: 0.6, v: 150, r: 1, max: 1, d: 'Cura 60 poco a poco y corta la hemorragia.', usa: { sangra: true, vida: 60, t: 3 } },
+  venda: { n: 'Venda', t: 'med', p: 0.1, v: 35, r: 0, max: 4, d: 'Corta la hemorragia y cura 10.', usa: { sangra: true, vida: 10, t: 2.4 } },
+  botiquin: { n: 'Botiquín', t: 'med', p: 0.6, v: 150, r: 1, max: 1, d: 'Cura 60 poco a poco y corta la hemorragia.', usa: { sangra: true, vida: 60, t: 4 } },
   te: { n: 'Té caliente', t: 'med', p: 0.4, v: 60, r: 0, max: 2, d: 'Quita 45 de frío. Sabe a refugio.', usa: { frio: 45, t: 1.6 } },
   inyector: { n: 'Inyector de horas extra', t: 'med', p: 0.1, v: 240, r: 2, max: 2, d: 'Cura 30 y corres más durante 20 s. Microblizz lo daba en la cena de Navidad.', usa: { vida: 30, prisa: 20, t: 0.8 } },
   granada: { n: 'Zanahoria bomba', t: 'granada', p: 0.4, v: 90, r: 1, max: 3, d: 'Se lanza con el botón de granada. Explota a los dos segundos.' },

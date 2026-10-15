@@ -109,6 +109,7 @@ function construyeMapa() {
   MAPA.grupo = o.hecha(); e.add(MAPA.grupo);
   construyeTutorial();
   construyeTren();
+  construyeTerminales();
   creaFuegos();
   MAPA.verja = verja;
 }

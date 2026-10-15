@@ -52,6 +52,7 @@ function pintaBotin() {
   h += '<div class="rejillas"><div class="bloque-rej"><h4>' + esc(tr(c.tipo === 'cadaver' ? 'LO QUE LLEVA' : 'DENTRO')) + '</h4><div data-sitio="cont"></div>';
   if (!c.cosas.length) h += '<p class="vacio">' + esc(tr('Vacío. Alguien llegó antes.')) + '</p>';
   if (c.escondite && !c.escondite.hecho) h += '<button type="button" class="mini oro" data-a="rebusca">' + esc(tr('ALGO ABULTA… REBUSCAR')) + '</button>';
+  if (c.tipo === 'coche' && !c.puenteHecho) h += '<button type="button" class="mini oro" data-a="puente">' + esc(tr('HACER UN PUENTE')) + '</button>';
   h += '</div>' + htmlTuyo(dim) + '</div><div class="rej-info fila-obj"></div>';
   if (c.cosas.length && c.vistos >= c.cosas.length) h += '<div class="pie">' + (paseVip() ? boton('COGER TODO', 'todo', 0, 'bien grande') : botonVip('COGER TODO', 'todo', 'mini grande')) + '</div>';
   const v = abreVentana('v-botin', h); v.classList.add('rej-v'); enganchaCerrar(v, 'v-botin');
@@ -60,7 +61,7 @@ function pintaBotin() {
     alQuitar: (o, k) => { if (k < c.vistos) c.vistos--; }, alPoner: o => { c.cosas.splice(c.vistos, 0, o); c.vistos++; } };
   montaRejillas([cont, ...sitiosTuyos(v, dim)], { C, alCambiar: pintaBotin, alElegir: (o, s) => pintaInfo(v, o, s, botonesBotin, accionBotin), alMover: (o, de, a) => { if (de.id === 'cont' && a.id !== 'cont') tomaComoEncontrado(o); } });
   pintaInfo(v, REJ.sel, REJ.sel && sitioDePieza(REJ.sel), botonesBotin, accionBotin);
-  v.querySelectorAll('.pie [data-a], [data-a="rebusca"]').forEach(b => (b.onclick = () => accionBotin(b.dataset.a)));
+  v.querySelectorAll('.pie [data-a], [data-a="rebusca"], [data-a="puente"]').forEach(b => (b.onclick = () => accionBotin(b.dataset.a)));
 }
 function botonesBotin(o, s) {
   let b = '';
@@ -92,6 +93,7 @@ function accionBotin(a, o, s) {
   } else if (a === 'usar') { const lista = s.lista; if (usaObjeto(lista, lista.indexOf(o))) cierraVentana('v-botin'); return; }
   else if (a === 'girar') { giraEnSitio(o); return; }
   else if (a === 'rebusca') { abreRebuscar(c); return; }
+  else if (a === 'puente') { abrePuente(c); return; }
   else if (a === 'ponmochila') { if (RAID.eq.mochila) return; sacaDeCont(o); RAID.eq.mochila = sinSitio(o); colocaTodo(RAID.mochila, casillasMochila(RAID.eq)); play('recarga'); REJ.sel = null; }
   pintaBotin();
 }

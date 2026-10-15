@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  "<b>FANTASMA NUEVO</b>: al despedirte ya no eres una sábana: eres tu misma galleta, con tus orejas y tu cara, pero con cola de fantasma que se menea, como Casper.": "<b>NEW GHOST</b>: when you get fired you are no longer a sheet: you are your own cookie, with your ears and your face, but with a wiggly ghost tail, like Casper.",
+  "FANTASMA NUEVO": "NEW GHOST",
+  "Recursos Humanos ha confirmado que los despedidos pueden seguir rondando la oficina. Phony pregunta si cobran el plus de nocturnidad.": "Human Resources has confirmed that fired staff may keep haunting the office. Phony asks whether they get the night-shift bonus.",
   "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",
   "<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después.": "<b>VERSION IN FEEDBACK</b>: the feedback tab now shows the game version you're on, and it is saved with your message so we can review it later.",
   "Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya.": "Microblizz has put the game's age on the tab. Phony asks if it also shows his.",

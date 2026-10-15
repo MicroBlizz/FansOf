@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.7', real: ["<b>FANTASMA NUEVO</b>: al despedirte ya no eres una sábana: eres tu misma galleta, con tus orejas y tu cara, pero con cola de fantasma que se menea, como Casper."], joke: ["Recursos Humanos ha confirmado que los despedidos pueden seguir rondando la oficina. Phony pregunta si cobran el plus de nocturnidad."] },
   { v: '0.2.6', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },
   { v: '0.2.5', real: ["<b>ABANDONAR SE NOTA</b>: si te vas vivo de una partida PvP, o te desconectas y no vuelves en 3 minutos, pierdes puntos como en una derrota, gane o no tu bando, y se apunta el abandono. Los espectadores que se retiran siguen compartiendo el resultado de su bando."],
     joke: ["Recursos Humanos ha puesto un fichador de salidas en Rouflage. Phony jura que él solo salió a por un café."] },

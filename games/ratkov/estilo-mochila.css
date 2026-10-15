@@ -61,3 +61,22 @@ u.fir { text-decoration: none; font: 11px var(--rk-tit); color: var(--rk-bien); 
 .candado { position: relative; display: inline-block; width: 14px; height: 11px; margin-top: 7px; background: var(--rk-oro); border: 2px solid #000; box-sizing: content-box; }
 .candado::before { content: ''; position: absolute; left: 1px; top: -10px; width: 8px; height: 8px; border: 2px solid #000; border-bottom: 0; box-shadow: inset 0 0 0 2px var(--rk-oro); background: transparent; }
 .candado::after { content: ''; position: absolute; left: 6px; top: 3px; width: 2px; height: 4px; background: #000; }
+
+/* ---------- curarse con minijuego (js/minijuegos-cura.js): un panelito que no tapa los mandos ---------- */
+#m-cura { position: absolute; z-index: 6; left: 50%; transform: translateX(-50%); top: 110px; width: 124px; padding: 6px; box-sizing: border-box; background: rgba(14, 19, 24, 0.92); border: 2px solid var(--rk-oro); box-shadow: 3px 3px 0 #000; text-align: center; pointer-events: auto; }
+#m-cura canvas { width: 96px; height: 96px; image-rendering: pixelated; touch-action: none; display: block; margin: 0 auto; cursor: grab; }
+#m-cura b { display: block; font: 13px var(--rk-tit); letter-spacing: 0.04em; color: var(--rk-oro); margin-top: 3px; }
+#m-cura small { display: block; font-size: 12px; line-height: 1.1; color: var(--rk-tenue); }
+body.tactil.vertical #m-cura { left: auto; right: calc(12px + env(safe-area-inset-right)); transform: none; top: 33%; }
+body.tactil.horizontal #m-cura { left: calc(12px + env(safe-area-inset-left)); transform: none; top: 150px; }
+
+/* ---------- el terminal de Microblizz y la pegatina de la trampa (js/minijuegos-mapa.js) ---------- */
+#v-mini .term { background: #06120a; border: 2px solid #1e5a2e; padding: 10px; text-align: left; font-family: var(--rk-num); color: #5cff8a; }
+#v-mini .term-cab { margin: 0 0 6px; font-size: 15px; letter-spacing: 0.06em; color: #3cff7a; }
+#v-mini .term-ayuda { margin: 0 0 8px; font-size: 15px; color: #9adfaa; }
+#v-mini .term-pal { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+#v-mini .term-pal button { font: 20px var(--rk-num); letter-spacing: 0.15em; padding: 8px 6px; background: #0a2414; color: #5cff8a; border: 2px solid #1e5a2e; }
+#v-mini .term-pal button:disabled { color: #2a6a3a; border-color: #123a1e; }
+#v-mini .term-pal button i { font-style: normal; color: #ffcb3d; letter-spacing: 0; }
+#v-mini .term-int { margin: 8px 0 0; font-size: 16px; } #v-mini .term-int span { color: #2a6a3a; }
+#v-mini .term-regla { margin: 6px 0; font-size: 15px; color: var(--rk-tenue); } #v-mini .term-regla b { color: var(--rk-oro); font-weight: 400; }

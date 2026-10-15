@@ -76,6 +76,10 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
   </header>
 
   <section id="vista-entrar" class="caja">
+    <div class="entrada" style="display:grid;gap:10px;max-width:360px;margin-inline:auto">
+      <button class="fuerte" type="button" id="g-boton">Entrar con Google</button>
+      <div class="aviso" id="g-aviso" role="alert"></div>
+      <details><summary>Acceso antiguo con usuario y contraseña</summary>
     <form id="f-entrar" class="entrada" autocomplete="on">
       <label for="e-usuario">Usuario<input id="e-usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
       <label for="e-clave">Contraseña<input id="e-clave" type="password" autocomplete="current-password" required></label>
@@ -92,10 +96,12 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
       <button class="fuerte" type="submit" id="a-boton">Crear mi acceso</button>
       <button class="enlace" type="button" id="ir-entrar">Ya tengo contraseña</button>
     </form>
+      </details>
+    </div>
   </section>
 
   <section id="vista-panel" hidden>
-    <div class="filtros"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button></div>
+    <div class="filtros"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -118,6 +124,16 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
       </div>
       <div class="aviso" id="v-aviso" role="alert"></div>
       <div class="lista" id="v-lista"></div>
+    </div>
+    <div id="pan-roles" hidden>
+      <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo de una cuenta que ya haya entrado con Google.</div>
+      <form class="filtros" id="r-form">
+        <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required style="flex:1 1 220px;width:auto">
+        <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="admin">admin</option></select>
+        <button class="fuerte" type="submit">Dar rol</button>
+      </form>
+      <div class="aviso" id="r-aviso" role="alert"></div>
+      <div class="lista" id="r-lista"></div>
     </div>
   </section>
 </main>
@@ -224,8 +240,27 @@ $('lista').onclick = async ev => {
   } catch (e) { $('p-aviso').textContent = textoError(e); b.disabled = false; }
 };
 
-if (leerToken()) abrir(); else vista(false);
+// Entrada con Google: la sesión de Google solo se usa en esta carga para pedir el token de gestión; no se guarda.
+const volver = () => location.origin + location.pathname;
+$('g-boton').onclick = () => { location.href = SERVIDOR + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(volver()); };
+async function volverDeGoogle() {
+  const h = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const t = h.get('access_token');
+  if (!t && !h.get('error_description')) return false;
+  history.replaceState(null, '', location.pathname);
+  if (!t) { $('g-aviso').textContent = 'Google no ha dejado entrar: ' + h.get('error_description'); return false; }
+  try {
+    const r = await fetch(SERVIDOR + '/rest/v1/rpc/gestion_entrar_google', { method: 'POST', cache: 'no-store', headers: { apikey: CLAVE, Authorization: 'Bearer ' + t, 'Content-Type': 'application/json' }, body: '{}' });
+    const x = await r.text(); let j = null; try { j = x ? JSON.parse(x) : null; } catch (e) { /* no era JSON */ }
+    if (!r.ok) { $('g-aviso').textContent = 'No se ha podido comprobar el acceso (' + ((j && j.message) || r.status) + ').'; return false; }
+    if (!j) { $('g-aviso').textContent = 'Esta cuenta de Google no tiene el rol de administración.'; return false; }
+    guardarToken(j); await abrir(); return true;
+  } catch (e) { $('g-aviso').textContent = textoError(e); return false; }
+}
+
+volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vista(false); } });
 </script>
 <script src="votos.js"></script>
+<script src="roles.js"></script>
 </body>
 </html>

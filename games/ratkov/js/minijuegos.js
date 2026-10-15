@@ -173,7 +173,7 @@ function avanzaMini(dt) {
   if (!MINI.tipo) return; if (el('v-mini').hidden) { MINI.tipo = null; return; }
   MINI.t += dt;
   if (MINI.c && lejos(JUG.x, JUG.z, MINI.c.x, MINI.c.z) > 2.8) return cierraMini();
-  if (MINI.tipo === 'cerradura') avanzaCerradura(dt); else avanzaRebuscar(dt);
+  const f = { cerradura: avanzaCerradura, rebuscar: avanzaRebuscar, trampa: avanzaTrampa, puente: avanzaPuente }[MINI.tipo]; if (f) f(dt);   // el terminal no se mueve solo
 }
 // en el ordenador: la tecla de registrar (E) para la cerradura. Espacio no: esa es esquivar
 window.addEventListener('keydown', e => {

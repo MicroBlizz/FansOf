@@ -4,6 +4,8 @@ IDIOMA.add({
   "Deja de ser prototipo y pasa a juego: mochila Tetris, sigilo con abrecartas y cada animal con lo suyo.": "No longer a prototype, now a full game: Tetris backpack, stealth with a letter opener and every animal with its own thing.",
   "Shooter de extracción en la ciudad nevada de Microblizz: entra, registra, monta anomalías y sal antes de la ventisca.": "Extraction shooter in Microblizz's snowy city: go in, loot, mount anomalies and get out before the blizzard.",
   "FANS OF RATKOV": "FANS OF RATKOV",
+  "FANS OF NOVA": "FANS OF NOVA",
+  "El juego espacial de la serie: una nave que crece comiendo chatarra, cartas y armas que se fusionan.": "The series' space game: a ship that grows by eating scrap, with cards and weapons that fuse.",
   "Roguelike por turnos: sube la Torre de Microblizz con CrazyBunny, CyberMarine o NecroLord. Pixel art nuevo de 32 bits.": "Turn-based roguelike: climb the Microblizz Tower as CrazyBunny, CyberMarine or NecroLord. Brand-new 32-bit pixel art.",
   "Rehecho como un shooter de los 90: primera persona, píxel gordo y una antorcha contra la oscuridad.": "Rebuilt like a 90s shooter: first person, chunky pixels and a torch against the dark.",
   "Plataformas cooperativo con CrazyBunny y zanahorias de poder. Prototipo en preparación: aún no se juega.": "Co-op platformer with CrazyBunny and power carrots. Prototype in the works: not playable yet.",

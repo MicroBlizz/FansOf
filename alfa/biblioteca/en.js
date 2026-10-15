@@ -90,6 +90,7 @@ IDIOMA.add({
   "Campaña": "Campaign",
   "Acción": "Action",
   "Hordas": "Hordes",
+  "Espacial": "Space",
   "Por turnos": "Turn-based",
   "JRPG": "JRPG",
   "Runner": "Runner",

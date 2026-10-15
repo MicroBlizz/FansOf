@@ -1,11 +1,9 @@
-// Fans of Nova · Portada: la pantalla «en construcción» y, en modo desarrollo, el botón del prototipo de partida (fase 1).
-// Solo con NUCLEO.desarrollo o en la alfa se ve algo jugable; en la release no existe (herramientas/publico_excluye.py).
+// Fans of Nova · Portada del prototipo: el botón que abre la partida (fase 1).
 'use strict';
 (function () {
   const portada = document.getElementById('nv-portada');
-  if (!(NUCLEO.desarrollo || NUCLEO.alfa)) {   // oculto: solo en modo desarrollo o en la alfa (rol alfa) hay algo que jugar
-    portada.querySelector('#nv-estado').textContent = tr('Este juego aún no está disponible');
-  } else {
+  {
+    portada.querySelector('#nv-estado').textContent = tr('Fans of Nova · prototipo');
     const b = document.getElementById('nv-jugar');
     b.hidden = false; b.textContent = tr('Jugar el prototipo');
     b.onclick = nvJugar;

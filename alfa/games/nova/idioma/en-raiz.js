@@ -1,0 +1,9 @@
+// Fans Of · Inglés de la ficha de Fans of Nova en la biblioteca de la página de la raíz y de sus novedades (js/novedades.js).
+// Va aquí y no en core/idioma para no tocar core.
+'use strict';
+IDIOMA.add({
+  "FANS OF NOVA": "FANS OF NOVA",
+  "<b>PRIMER PROTOTIPO JUGABLE</b>: mueves la nave con un pulgar y las armas disparan solas. Cada enemigo deja chatarra que tu nave se come para subir de rango (del 1 al 5), con cartas de arma, mejora, fusión y defensa en cada subida. Las armas se fusionan en combos y hay reacciones entre estados (Fundido, Impacto limpio, Detonación...). Enfrente, los No-Muertos y su jefe, el Rey de los huesos. Arte en pixel art.": "<b>FIRST PLAYABLE PROTOTYPE</b>: you move the ship with one thumb and the weapons fire by themselves. Every enemy drops scrap that your ship eats to rank up (from 1 to 5), with weapon, upgrade, fusion and defense cards on each rank. Weapons fuse into combos and statuses react with each other (Meltdown, Clean hit, Detonation...). Against you: the Undead and their boss, the King of Bones. Pixel art.",
+  "Microblizz ha confundido el botón de «comer chatarra» con el de «comprar chatarra». Phony se ha quedado con las vueltas.": "Microblizz mixed up the \"eat scrap\" button with the \"buy scrap\" one. Phony kept the change.",
+  "El juego espacial de la serie. Mueves tu nave con un pulgar, las armas disparan solas y cada enemigo destruido deja chatarra que tu nave se come para crecer: sube de rango, elige cartas, fusiona armas en combos y devora a los No-Muertos hasta enfrentarte al Rey de los huesos. Es un prototipo: la partida dura unos cinco minutos.": "The series' space game. You move your ship with one thumb, the weapons fire by themselves and every destroyed enemy drops scrap that your ship eats to grow: rank up, pick cards, fuse weapons into combos and devour the Undead until you face the King of Bones. It's a prototype: a run lasts about five minutes."
+});

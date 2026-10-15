@@ -76,7 +76,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarNoveda
 const JUEGOS = [['g-rumble', 'games/rumble/', 'FANS OF RUMBLE'], ['g-td', 'games/td/', 'FANS OF TD'], ['g-crush', 'games/crush/', 'FANS OF CRUSH'], ['g-survivors', 'games/survivors/', 'FANS OF SURVIVORS'],
   ['g-tacticas', 'games/tacticas/', 'FANS OF RUMBLE: TÁCTICAS'], ['g-skate', 'games/skate/', 'FANS OF SKATE'], ['g-dark', 'games/dark/', 'FANS OF DARK'], ['g-island', 'games/island/', 'FANS OF ISLAND'], ['g-rouflage', 'games/rouflage/', 'FANS OF ROUFLAGE'], ['g-roguelite', 'demos/roguelite/', 'FANS OF ROGUELITE'],
   ['g-rumble-3d', 'demos/rumble-3d/', 'FANS OF RUMBLE 3D'], ['g-tactics-advance', 'demos/tactics-advance/', 'FANS OF TACTICS ADVANCE'], 
-  ['g-dungeons', 'demos/dungeons/', 'FANS OF DUNGEONS'], ['g-karts', 'demos/karts/', 'FANS OF KARTS'], ['g-recruit', 'demos/recruit/', 'FANS OF RECRUIT'], ['g-terminal-shock', 'demos/terminal-shock/', 'TERMINAL SHOCK'], ['g-ratkov', 'games/ratkov/', 'FANS OF RATKOV']];
+  ['g-dungeons', 'demos/dungeons/', 'FANS OF DUNGEONS'], ['g-karts', 'demos/karts/', 'FANS OF KARTS'], ['g-recruit', 'demos/recruit/', 'FANS OF RECRUIT'], ['g-terminal-shock', 'demos/terminal-shock/', 'TERMINAL SHOCK'], ['g-ratkov', 'games/ratkov/', 'FANS OF RATKOV'], ['g-nova', 'games/nova/', 'FANS OF NOVA']];
 // se pinta con la página ya cargada: así el diccionario del idioma ya está y los textos salen traducidos
 const cargada = new Promise(r => (document.readyState === 'complete' ? r() : window.addEventListener('load', r)));
 for (const [id, , nombre] of JUEGOS) fila(id, nombre, '', t('Cargando…'));

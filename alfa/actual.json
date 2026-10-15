@@ -1,13 +1,13 @@
 {
- "build": 32,
- "hash": "1151e47",
- "fecha": "2026-10-15T07:18:26Z",
- "mensaje": "Nova: sale en la alfa (rol alfa), no en la release",
+ "build": 33,
+ "hash": "9a88595",
+ "fecha": "2026-10-15T07:24:21Z",
+ "mensaje": "Nova en la biblioteca: tarjeta, capturas, novedades 0.2.0 y boletín; ya es un juego más (no se excluye de la release)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",
   "island": "0.3.2",
-  "nova": "0.1.0",
+  "nova": "0.2.0",
   "ratkov": "0.2.4",
   "rouflage": "0.2.9",
   "rumble": "0.9.134",

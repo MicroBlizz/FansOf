@@ -19,6 +19,7 @@ const REGLAS = {
   enfriaFallo: 2.6,      // …y tras un despido improcedente
   ciego: 2.4,            // tras fallar, la linterna alumbra la mitad durante este rato
   alcance: 250,          // hasta dónde llega un disparo
+  luzPaso: 0.35,         // la parte de la luz que atraviesa los muebles (lo que no es pared): sombras suaves
   luzLargo: 250, luzAngulo: 0.62, luzCerca: 58,   // el abanico de la linterna (medio ángulo, en radianes) y el círculo de alrededor
   cazaPvp: 150,          // lo que dura la caza en el PvP (ahí los dos bandos juegan a la vez)
   vistaCerca: 0.32, vistaLejos: 0.7,   // lo que tienes que «cantar» (de 0 a 1) para que un becario bot te distinga pegado a ti y al final de su luz

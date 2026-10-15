@@ -25,7 +25,7 @@ function pvpPintaMenu() {
   const err = E('pvp-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
   E('b-pvp-buscar').textContent = rfpSalaGuardada() ? tr('VOLVER A LA PARTIDA') : tr('BUSCAR PARTIDA');      // si te dejaste una partida abierta, buscar te devuelve a ella
   E('b-pvp-cuenta').hidden = RFRED.esLocal() || RFRED.vinculada();
-  pvpPendientes();
+  pvpPendientes(); tutoConsejoPvp();
 }
 // partidas de las que te retiraste de espectador: cómo acabaron y qué te tocó (el servidor te las apunta cuando alguien cierra la sala; se cuentan una sola vez)
 function pvpPendientes() {

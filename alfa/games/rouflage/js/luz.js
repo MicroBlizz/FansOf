@@ -6,12 +6,13 @@
 const LZ = { cv: null, c: null, w: 0, h: 0, pts: [] };
 
 // el abanico de un cazador como lista de puntos del mundo: el foco y los extremos de cada rayo
-function abanico(e, pts) {
+// (soloMuros: el abanico que cortan solo las paredes, sin contar los muebles: la luz que se cuela entre ellos, difuminada)
+function abanico(e, pts, soloMuros = false) {
   const ox = e.x, oy = e.y - 6, largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1), n = 30, medio = REGLAS.luzAngulo;
   pts.length = 0; pts.push(ox, oy);
   for (let k = 0; k <= n; k++) {
     const a = dirLuz(e) - medio + (2 * medio * k) / n, dx = Math.cos(a), dy = Math.sin(a);
-    let d = rayo(ox, oy, dx, dy, largo);
+    let d = soloMuros ? rayoMapa(ox, oy, dx, dy, largo) : rayo(ox, oy, dx, dy, largo);
     if (RAYO.cara && dy < -0.08) d = Math.min(largo, d + Math.min(76, 62 / -dy));   // la pared de frente se ilumina hasta arriba
     pts.push(ox + dx * d, oy + dy * d);
   }
@@ -33,7 +34,10 @@ function pintaLuces(c) {
     if (!conLuz(e)) continue;
     const largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1), x = e.x, y = e.y - 6, pts = abanico(e, []);
     const gr = g.createRadialGradient(x, y, 8, x, y, largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.72, 'rgba(0,0,0,0.94)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = gr; g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
+    g.fillStyle = gr;
+    g.globalAlpha = REGLAS.luzPaso; const tras = abanico(e, [], true);      // primero la luz que atraviesa mesas, conos y estanterías a medias: sombras suaves en vez de duras
+    g.beginPath(); g.moveTo(tras[0], tras[1]); for (let k = 2; k < tras.length; k += 2) g.lineTo(tras[k], tras[k + 1]); g.closePath(); g.fill(); g.globalAlpha = 1;
+    g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
     const rc = REGLAS.luzCerca + 16, gc = g.createRadialGradient(x, y, 6, x, y, rc); gc.addColorStop(0, 'rgba(0,0,0,0.92)'); gc.addColorStop(0.6, 'rgba(0,0,0,0.7)'); gc.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = gc; g.beginPath(); g.arc(x, y, rc, 0, TAU); g.fill();
     haces.push(pts);

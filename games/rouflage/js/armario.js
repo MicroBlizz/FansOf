@@ -9,6 +9,8 @@ function armarioVisible() { return !!(NUCLEO.alfa || NUCLEO.desarrollo); }
 function armarioEstado() {
   if (!SAVE.armario) SAVE.armario = { tengo: [], puesto: {}, todo: false };
   const a = SAVE.armario, p = a.puesto;
+  if (typeof SAVE.migas === 'number') { SAVE.gotas = (SAVE.gotas || 0) + SAVE.migas; delete SAVE.migas; }      // las monedas se llamaban Migas y Purpurina
+  if (typeof SAVE.purpurina === 'number') { SAVE.acciones = (SAVE.acciones || 0) + SAVE.purpurina; delete SAVE.purpurina; }
   if (p.papel === 'monopoly') p.papel = 'arcoiris';      // el billete de Monopoly se quitó: ahora es el papel arcoíris
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
   for (const cat of CATALOGO_AR) if (cat.conjuntos) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
@@ -35,9 +37,9 @@ const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Leg
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
 function arTextoDe(it) {
   const t = it.txt; let m;
-  if (typeof t === 'number') return tr('{n} Purpurina (≈ {e} €)', { n: t, e: arEuros(t) });
+  if (typeof t === 'number') return tr('{n} Acciones (≈ {e} €)', { n: t, e: arEuros(t) });
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
-  if ((m = /^(\d+) Migas$/.exec(t))) return tr('{n} Migas', { n: m[1] });
+  if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
   if ((m = /^Diario · día (\d+)$/.exec(t))) return tr('Diario · día {n}', { n: m[1] });
   if ((m = /^Conjunto (.+)$/.exec(t))) return tr('Conjunto {n}', { n: m[1] });
@@ -79,13 +81,14 @@ function arPintaInfo() {
   E('ar-nota').textContent = tr(cat.nombre) + (cat.nota ? ' · ' + tr(cat.nota) : '');
   if (!it) {
     nom.textContent = cat.conjuntos ? tr('Piezas mezcladas') : tr('Sin nada'); nom.className = '';
-    de.textContent = cat.conjuntos ? tr('Toca un conjunto para vestirte entero') : cat.vacio ? tr('La galleta sin adornos, como al empezar') : ''; est.textContent = ''; est.className = 'ar-estado'; return;
+    de.textContent = cat.conjuntos ? tr('Toca un conjunto para vestirte entero') : cat.vacio ? tr('La galleta sin adornos, como al empezar') : ''; est.textContent = ''; est.className = 'ar-estado'; arPintaCompra(cat, null); return;
   }
   nom.textContent = tr(it.n); nom.className = 'r-' + it.r;
   de.textContent = tr(RAREZA_AR[it.r]) + ' · ' + arTextoDe(it);
   const tuyo = arTiene(cat.id, it), puesto = cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
   est.className = 'ar-estado ' + (puesto ? 'puesto' : tuyo ? 'tuyo' : 'bloq');
   est.textContent = puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
+  arPintaCompra(cat, it);      // el botón COMPRAR y lo que tienes (economia.js)
 }
 function arPintaRejilla() {
   const cat = arCat(ARMARIO.cat), a = armarioEstado(), rej = E('ar-rejilla'); rej.innerHTML = '';

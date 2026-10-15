@@ -55,6 +55,7 @@ const CARTELES_RES = [
 
 defineMapa({
   id: 'residencial', nombre: 'La urbanización', lema: 'Adosados, coches aparcados y un vecino que lo ve todo.', ancho: 84, alto: 60,
+  musica: { taller: 'rfRsTaller', caza: 'rfRsCaza', recta: 'rfRsRecta' },      // sus temas (musica-mapas.js)
   muro: '#4a3a3a', canto: '#8a6a5a',
   espera: 'V1', plaza: [800, 360],
   evento: { tipo: 'vecino' },

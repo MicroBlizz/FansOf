@@ -38,6 +38,7 @@ const PLANO_PARKING = `
 
 defineMapa({
   id: 'parking', nombre: 'El parking', lema: 'Sótano -2. Escóndete entre los coches.', ancho: 84, alto: 60,
+  musica: { taller: 'rfPkTaller', caza: 'rfPkCaza', recta: 'rfPkRecta' },      // sus temas (musica-mapas.js)
   muro: '#2b2d36', canto: '#595d6a',
   espera: 'V1', plaza: [600, 790],
   evento: { tipo: 'faros' },

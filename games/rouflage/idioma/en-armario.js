@@ -46,10 +46,10 @@ IDIOMA.add({
   "ES TUYO": "YOURS",
   "TE LO ESTÁS PROBANDO": "TRYING IT ON",
   // de dónde sale cada cosa
-  "{n} Purpurina (≈ {e} €)": "{n} Glitter (≈ €{e})",
+  "{n} Acciones (≈ {e} €)": "{n} Shares (≈ €{e})",
   "Pase gratis · nv {n}": "Free pass · lv {n}",
   "Pase premium · nv {n}": "Premium pass · lv {n}",
-  "{n} Migas": "{n} Crumbs",
+  "{n} Gotas": "{n} Drops",
   "Diario · día 7 (semana {n})": "Daily · day 7 (week {n})",
   "Diario · día {n}": "Daily · day {n}",
   "Diario · 20 días del mes": "Daily · 20 days in a month",

@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.19', real: ["<b>CADA MAPA CON SU MÚSICA</b>: el parking, las cloacas, los jardines, la urbanización y el hotel tienen ya sus propios temas para el taller, la caza y la recta final."],
+    joke: ["Microblizz ha puesto hilo musical en las cloacas. Phony dice que las ratas lo han pedido en inglés."] },
   { v: '0.2.18', real: ["<b>ZOOM PARA EL CAZADOR</b>: con la lupa de arriba (tres niveles), pellizcando con dos dedos, con la rueda del ratón o con + y −, te acercas para mirar de cerca. El pellizco no dispara."],
     joke: ["Microblizz ha dado una lupa a cada becario. Phony dice que con eso por fin ven lo poco que cobran."] },
   { v: '0.2.17', real: ["<b>TUTORIAL CON BOCADILLOS</b>: la primera vez que juegas contra bots con cada papel, un bocadillo te señala el botón que toca (pintarte, coger color, LISTO, congelarte, silbar…) y espera a que lo hagas. Si quieres verlo otra vez: OPCIONES › Repetir tutorial."],

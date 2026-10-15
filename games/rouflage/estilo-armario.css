@@ -79,3 +79,46 @@
 #hab { flex-wrap: wrap; }
 .hab-mapa { display: grid; justify-items: center; line-height: 1; padding-top: 6px; padding-bottom: 6px; }
 .hab-mapa small { font: 700 11px var(--font-ui); opacity: 0.85; margin-top: 2px; }
+
+/* la economía (economia.js): la cartera, el botón de comprar del armario y el pase */
+.cartera { display: flex; justify-content: center; gap: 14px; font-weight: 800; font-size: 13px; color: var(--ink-dim); margin: 2px 0 6px; }
+.cartera b { color: var(--gold); font-size: 15px; }
+#b-ar-comprar { margin-top: 6px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+#b-ar-comprar.falta { filter: grayscale(0.7); opacity: 0.8; }
+.pase-caja { max-width: 560px; text-align: center; max-height: calc(100vh - 30px); display: flex; flex-direction: column; }
+.pase-sub { margin: 0 0 8px; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.pase-sub b { color: var(--gold); }
+.pase-barra { height: 14px; border-radius: 8px; border: 3px solid var(--outline); background: var(--tray); overflow: hidden; }
+.pase-barra i { display: block; height: 100%; background: linear-gradient(to right, #39d5e8, #7ee04a); }
+.pase-xp { margin: 4px 0; font-weight: 700; font-size: 12px; color: var(--ink-dim); }
+.pase-cols, .pase-fila { display: grid; grid-template-columns: 34px 1fr 1fr; gap: 6px; align-items: stretch; }
+.pase-cols b { font: 400 14px var(--font-display); color: var(--ink); }
+.pase-cols b.premium { color: var(--gold); }
+.pase-lista { overflow-y: auto; flex: 1; min-height: 120px; display: grid; gap: 6px; padding: 4px 2px 8px; margin-bottom: 8px; }
+.pase-fila { opacity: 0.75; }
+.pase-fila.hecho { opacity: 1; }
+.pase-fila.siguiente .pase-n { background: var(--player); }
+.pase-n { display: grid; place-items: center; border-radius: 10px; border: 3px solid var(--outline); background: var(--tray-hi); font: 400 15px var(--font-display); }
+.pase-fila.hecho .pase-n { background: var(--ok); color: var(--outline); }
+.pase-premio { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 6px; min-height: 44px; padding: 4px; border-radius: 10px; border: 3px solid var(--outline); background: var(--tray); }
+.pase-premio.premium { background: linear-gradient(160deg, #6a4a1a, #3a2a10); }
+.pase-premio.bloq { filter: grayscale(0.6) brightness(0.8); }
+.pase-premio small { font-weight: 800; font-size: 11px; line-height: 1.1; }
+.pase-premio small.purp { color: #9ff07a; }
+#b-pase-premium:disabled { filter: none; background: linear-gradient(to bottom, #ffe07a, #e0a11f); color: var(--outline); }
+
+/* la tienda (tienda.js) */
+.tienda-caja { max-width: 520px; max-height: calc(100vh - 30px); display: flex; flex-direction: column; text-align: center; }
+.tienda-aviso { margin: 0 0 8px; padding: 6px 10px; border-radius: 10px; background: rgba(255, 203, 61, 0.14); border: 2px dashed var(--gold); font-weight: 700; font-size: 12.5px; color: var(--ink); }
+.tienda-lista { overflow-y: auto; flex: 1; min-height: 140px; text-align: left; padding: 0 2px 8px; margin-bottom: 8px; }
+.tienda-lista h3 { font: 400 16px var(--font-display); color: var(--gold); margin: 10px 2px 6px; letter-spacing: 0.03em; }
+.tienda-lista > div { display: grid; gap: 8px; }
+#tienda-caos .boton { width: 100%; }
+.tn-tarjeta { display: grid; grid-template-columns: 54px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); box-shadow: 0 4px 0 var(--outline); }
+.tn-tarjeta.oferta { background: linear-gradient(160deg, #2f6a4a, #1c3f2c); }
+.tn-tarjeta.destacado { background: linear-gradient(160deg, #2c5f8a, #1b3a60); }
+.tn-texto { display: grid; gap: 2px; }
+.tn-texto b { font: 400 16px var(--font-display); letter-spacing: 0.02em; }
+.tn-texto small { font-weight: 700; font-size: 12px; color: var(--ink-dim); line-height: 1.15; }
+.tn-tarjeta .boton { min-width: 86px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+.tn-tarjeta .boton:disabled { background: linear-gradient(to bottom, #9be07a, #4fa83a); opacity: 1; color: var(--outline); }

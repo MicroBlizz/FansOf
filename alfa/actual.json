@@ -1,8 +1,8 @@
 {
- "build": 23,
- "hash": "3a999c0",
- "fecha": "2026-10-15T02:09:55Z",
- "mensaje": "Fans of Nova fase 0: naves modulares, piezas separadas con medidas y anclajes estándar (casco, alas, motor, escudo)",
+ "build": 24,
+ "hash": "9a08224",
+ "fecha": "2026-10-15T02:13:37Z",
+ "mensaje": "Fans of Nova fase 0: el escudo del Crucero es una pompa que envuelve toda la nave",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -102,7 +102,7 @@ function refrescaHud(todo) {
   ponTexto('fase', E('fase-txt'), caza && silbatoTexto() ? silbatoTexto() : paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
-  refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
+  refrescaPoder(); refrescaChivato();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
@@ -278,7 +278,7 @@ function preparaInterfaz() {
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

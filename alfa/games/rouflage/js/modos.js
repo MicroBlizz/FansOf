@@ -16,6 +16,8 @@ const EXTRAS = {
   halcon: { nombre: 'Ojo de halcón', texto: 'Quedarse quieto dentro de la luz de un becario da muchos puntos; más cuanto más cerca. Gana quien se esconde a la vista.' },
   bufon: { nombre: 'El bufón', texto: 'Un colado es el bufón en secreto: solo gana si lo despiden en el último minuto. Antes, pierde.' },
   silbato: { nombre: 'Silbato caliente', texto: 'Un colado lleva un silbato que suena solo: pásaselo a otro tocándole antes de que explote.' },
+  chivato: { nombre: 'Fantasmas chivatos', texto: 'Un fantasma puede chivarle una pista a un becario: si este despide a alguien en 20 s, el fantasma resucita.' },
+  bote: { nombre: 'Llena el bote', texto: 'Hay gotas de pintura por el suelo: los colados ganan si llevan cinco al cubo de la cafetería.' },
 };
 const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
@@ -51,7 +53,7 @@ function modoElegidoGuarda() { try { localStorage.setItem('rouflage-modo', JSON.
 // un colado despedido (lo llama despide): se queda su sello un momento y luego se hace becario
 function contagioDespedido(k) { if (modoEs('contagio')) k.contagio = 1.2; }
 function modoAvanza(dt) {
-  silbatoAvanza(dt); retratoAvanza(dt);
+  silbatoAvanza(dt); retratoAvanza(dt); chivatoAvanza(dt); boteAvanza(dt);
   if (!modoEs('contagio') || J.fase !== 'caza') return;
   for (const k of J.camaleones) if (k.fuera && k.contagio > 0 && (k.contagio -= dt) <= 0) contagia(k);
 }

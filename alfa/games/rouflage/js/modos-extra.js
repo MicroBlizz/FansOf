@@ -19,7 +19,7 @@ function modoEmpiezaCaza() {
   }
   if (extraOn('silbato')) { SILBATO.t = SILBATO.plazo; SILBATO.tPase = 0; if (!J.pvp || RFP.soyHost) silbatoPon(vivos[Math.floor(Math.random() * vivos.length)], true); }
 }
-function modoLimpia() { SILBATO.quien = null; SILBATO.t = 0; }
+function modoLimpia() { SILBATO.quien = null; SILBATO.t = 0; CHIVATO.apuestas = []; BOTE.gotas = []; BOTE.cubo = null; BOTE.n = 0; BOTE.lleno = false; }
 
 // ---------- OJO DE HALCÓN: lo que vale cada segundo congelado dentro de una luz (1 normal; en el modo, de 1 a 3 según lo cerca que esté el becario) ----------
 function modoNarices(e) {

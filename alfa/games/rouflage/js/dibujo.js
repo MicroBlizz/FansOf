@@ -175,7 +175,7 @@ function dibuja(t) {
     if (sw > 0 && sh > 0) c.drawImage(MAPA.fondo, sx * ESC_FONDO, sy * ESC_FONDO, sw * ESC_FONDO, sh * ESC_FONDO, sx, sy, sw, sh);
   }
   ponMundo(c);
-  pintaFxSuelo(c); pintaSenuelos(c); eventosPintaSuelo(c, t);
+  pintaFxSuelo(c); pintaSenuelos(c); eventosPintaSuelo(c, t); botePinta(c, t);
   // muebles, puerta y personajes, de atrás adelante
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);

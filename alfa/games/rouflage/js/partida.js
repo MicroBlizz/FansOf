@@ -74,7 +74,7 @@ function cambiaFase(f) {
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
-    modoEmpiezaCaza();      // los papeles secretos y el silbato (modos-extra.js)
+    modoEmpiezaCaza(); botePrepara();      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
     musica(temaDe('caza')); play('comienzaCaza');
     cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
   }
@@ -151,8 +151,10 @@ function avanzaPartida(dt) {
       if (yo.fuera && !escondidos().length) termina(false, 'despedido');      // despedido, pero sigue de espectador mientras algún compañero aguante
       else if (J.reloj <= 0) termina(true, 'tiempo');
       else if (!cazadoresVivos().length) termina(true, 'cartas');
+      else if (boteLleno()) termina(true, 'bote');
     } else if (!escondidos().length) termina(true, 'todos');
-    else if (!cazadoresVivos().length) termina(false, 'cartas');      // sin cartas sigues de espectador mientras otro cazador aguante
+    else if (!cazadoresVivos().length) termina(false, 'cartas');
+    else if (boteLleno()) termina(false, 'bote');      // sin cartas sigues de espectador mientras otro cazador aguante
     else if (J.reloj <= 0) termina(false, 'tiempo');
   } else if (J.fase === 'fin') {
     J.peligro *= 0.9; galeriaAvanza(dt);
@@ -199,8 +201,8 @@ function termina(victoria, motivo, fin) {
     const vivos = J.camaleones.filter(e => !e.jugador && !e.fuera).length, total = J.camaleones.length - 1;
     puntos = marcadorDe(yo);
     estrellas = victoria ? 1 + (puntos >= 700 ? 1 : 0) + (puntos >= 880 ? 1 : 0) : 0;
-    titulo = victoria ? (motivo === 'cartas' ? tr('¡SIN CARTAS!') : tr('¡TE HAS LIBRADO!')) : tr('¡DESPEDIDO!');
-    sub = victoria ? (motivo === 'cartas' ? tr('Los becarios se han quedado sin cartas de despido.') : tr('Se acaba el turno de noche y nadie te ha visto.')) : tr('Y eso que ni siquiera trabajabas aquí.');
+    titulo = victoria ? (motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('¡TE HAS LIBRADO!')) : tr('¡DESPEDIDO!');
+    sub = victoria ? (motivo === 'cartas' ? tr('Los becarios se han quedado sin cartas de despido.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura antes de tiempo.') : tr('Se acaba el turno de noche y nadie te ha visto.')) : tr('Y eso que ni siquiera trabajabas aquí.');
     if (J.pvp) {      // en el PvP gana o pierde todo el bando: a ti te pueden haber despedido y ganar igual
       if (victoria && yo.fuera) { titulo = tr('¡DESPEDIDO, PERO GANÁIS!'); sub = tr('Tus compañeros han aguantado hasta el final.'); }
       else if (!victoria) { titulo = tr('¡OS HAN DESPEDIDO A TODOS!'); sub = tr('Microblizz deja la estación limpia de colados.'); }
@@ -210,8 +212,8 @@ function termina(victoria, motivo, fin) {
     const total = J.camaleones.length, hechos = total - quedan.length;
     puntos = marcadorDe(yo);
     estrellas = victoria ? 1 + (k.fallos <= 2 ? 1 : 0) + (k.fallos === 0 || J.reloj >= 45 ? 1 : 0) : 0;
-    titulo = victoria ? tr('¡TODOS DESPEDIDOS!') : motivo === 'cartas' ? tr('¡SIN CARTAS!') : tr('SE TE HAN ESCAPADO');
-    sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
+    titulo = victoria ? tr('¡TODOS DESPEDIDOS!') : motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('SE TE HAN ESCAPADO');
+    sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura delante de tus narices.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
     filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
   }
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
@@ -229,6 +231,7 @@ function accionCongelar() {
   const yo = J.yo; if (!jugando() || yo.clase !== 'camaleon') return;
   if (TALLER.abierto) cierraTaller();
   if (yo.congelado) { descongela(yo); play('descongela'); }
+  else if (boteLleva(yo)) { play('deny'); pista(tr('Con la gota no puedes congelarte: llévala al cubo'), 2); }
   else {
     congela(yo); play('congela');
     fxTexto(yo.x, yo.y - 66, yo.camo + ' %', colorCamo(yo.camo), 19);

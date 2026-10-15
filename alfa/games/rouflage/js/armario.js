@@ -9,6 +9,8 @@ function armarioVisible() { return !!(NUCLEO.alfa || NUCLEO.desarrollo); }
 function armarioEstado() {
   if (!SAVE.armario) SAVE.armario = { tengo: [], puesto: {}, todo: false };
   const a = SAVE.armario, p = a.puesto;
+  if (p.papel === 'monopoly') p.papel = 'arcoiris';      // el billete de Monopoly se quitó: ahora es el papel arcoíris
+  { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
   for (const cat of CATALOGO_AR) if (cat.conjuntos) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
   return a;
 }

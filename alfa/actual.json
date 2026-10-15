@@ -1,8 +1,8 @@
 {
- "build": 98,
- "hash": "126179a",
- "fecha": "2026-10-15T20:03:51Z",
- "mensaje": "Rouflage 0.2.17: tutorial con bocadillos; en la alfa, premio diario (calendario de 4 semanas con Migas y los cosméticos «Diario») y ESCENARIO en la habitación",
+ "build": 99,
+ "hash": "a11dd8f",
+ "fecha": "2026-10-15T20:10:50Z",
+ "mensaje": "Rouflage (armario): fuera el billete de Monopoly, ahora papel arcoíris; el celofán redibujado como plástico arrugado y tornasolado (antes parecía cinta adhesiva)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

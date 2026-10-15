@@ -21,7 +21,7 @@ IDIOMA.add({
   "Dientes de CrazyBunny": "CrazyBunny's teeth", "Diente de MadSquirrel": "MadSquirrel's tooth", "Dientón de BoomBeaver": "BoomBeaver's buck teeth", "Colmillos de JunkCoon": "JunkCoon's fangs",
   "Bufanda de lana": "Wool scarf",
   "Oro de EpicChampion": "EpicChampion's gold", "Túnica de NecroLord": "NecroLord's robe", "Traje de CyberNinja": "CyberNinja's suit", "Camiseta de ProGamer": "ProGamer's jersey",
-  "Billete de Monopoly roto": "Torn Monopoly banknote",
+  "Papel arcoíris": "Rainbow paper",
   "Orejas y corona de CrazyBunny": "CrazyBunny's ears and crown", "Orejas de MadSquirrel": "MadSquirrel's ears", "Orejas de SlyFox": "SlyFox's ears", "Casco de BoomBeaver": "BoomBeaver's helmet",
   "Cofia y aureola de MeerCat": "MeerCat's cap and halo", "Antifaz de JunkCoon": "JunkCoon's mask", "Yelmo de EpicChampion": "EpicChampion's helm", "Cuernos de NecroLord": "NecroLord's horns",
   "Cascos de ProGamer": "ProGamer's headset", "Orejas de SuchDog": "SuchDog's ears", "Serpientes de Medusa": "Medusa's snakes", "Gorra de becario": "Intern cap",

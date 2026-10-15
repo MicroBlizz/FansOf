@@ -88,7 +88,7 @@ const ARD = (() => {
     colmillos(c, x, y) { shape(c, g => { g.moveTo(x - 5, y + 2.5); g.quadraticCurveTo(x, y + 6.5, x + 5.5, y + 1.7); g.quadraticCurveTo(x, y + 4.4, x - 5, y + 2.5); }, '#5a1530', 1.1); c.fillStyle = '#fff'; c.fillRect(x - 1.8, y + 2.9, 1.6, 1.4); c.fillRect(x + 1.2, y + 2.7, 1.6, 1.4); },
   };
   /* ---------- papeles ---------- */
-  const COLOR_PAPEL = { blanco: '#f4f1fa', kraft: '#c99a62', cuadricula: '#ffffff', rayas: '#fffdf4', periodico: '#e8e2d2', purpurina: '#d9a6ff', carton: '#b98a4f', regalo: '#58b8ff', mapa: '#efe0b4', partitura: '#fbf6ea', monopoly: '#f3e6c4', celofan: '#8fe3ff', negro: '#1f2937', oro: '#facc15', morado: '#6b4a9a', verde: '#22c55e' };
+  const COLOR_PAPEL = { blanco: '#f4f1fa', kraft: '#c99a62', cuadricula: '#ffffff', rayas: '#fffdf4', periodico: '#e8e2d2', purpurina: '#d9a6ff', carton: '#b98a4f', regalo: '#58b8ff', mapa: '#efe0b4', partitura: '#fbf6ea', arcoiris: '#ff4b5c', celofan: '#bfeefa', negro: '#1f2937', oro: '#facc15', morado: '#6b4a9a', verde: '#22c55e' };
   const PAPEL = {
     cuadricula: c => { c.strokeStyle = 'rgba(70,120,200,.4)'; c.lineWidth = .6; for (let k = -70; k < 20; k += 4) line(c, [-30, k, 30, k], 'rgba(70,120,200,.4)', .6); for (let k = -30; k < 30; k += 4) line(c, [k, -70, k, 10], 'rgba(70,120,200,.4)', .6); },
     rayas: c => { for (let k = -70; k < 20; k += 5) line(c, [-30, k, 30, k], 'rgba(70,120,200,.45)', .7); line(c, [-8, -70, -8, 10], 'rgba(255,75,92,.6)', .7); },
@@ -98,8 +98,16 @@ const ARD = (() => {
     regalo: c => { c.fillStyle = '#ff4b5c'; c.fillRect(-2.5, -70, 5, 80); c.fillRect(-30, -24, 60, 5); for (let k = 0; k < 30; k++) dot(c, Math.sin(k * 3.1) * 12, -55 + (k * 2.1) % 50, .9, '#ffcb3d'); },
     mapa: c => { c.beginPath(); c.moveTo(-12, -50); c.bezierCurveTo(0, -46, 4, -30, 10, -20); c.strokeStyle = 'rgba(40,110,80,.5)'; c.lineWidth = 1; c.stroke(); c.setLineDash([1.5, 1.5]); c.beginPath(); c.moveTo(-8, -15); c.quadraticCurveTo(6, -28, 2, -45); c.strokeStyle = 'rgba(255,75,92,.8)'; c.stroke(); c.setLineDash([]); line(c, [-2, -30, 2, -26], 'rgba(255,75,92,.9)', 1.4); line(c, [2, -30, -2, -26], 'rgba(255,75,92,.9)', 1.4); },
     partitura: c => { for (let g = -58; g < 0; g += 14) for (let k = 0; k < 5; k++) line(c, [-30, g + k * 1.6, 30, g + k * 1.6], 'rgba(40,30,50,.45)', .5); for (let k = 0; k < 8; k++) shape(c, el(-12 + k * 3.5, -55 + (k % 3) * 1.6 + Math.floor(k / 3) * 14, 1, .8, -.4), 'rgba(40,30,50,.7)', 0); },
-    monopoly: c => { shape(c, rr(-11, -30, 22, 13, 1), null, .8); shape(c, el(0, -23.5, 5, 5), 'rgba(30,100,60,.25)', .8); c.fillStyle = 'rgba(30,100,60,.75)'; c.font = '700 5px sans-serif'; c.textAlign = 'center'; c.fillText('500', 0, -21.6); c.fillStyle = 'rgba(30,100,60,.5)'; c.fillRect(-10, -17.5, 6, 1); c.fillRect(4, -17.5, 6, 1); shape(c, poly(4, -10, 8, -14, 10, -8, 13, -12, 14, -6, 9, -4), 'rgba(90,60,20,.0)', 1); },   // un billete roto por una esquina
-    celofan: c => { c.fillStyle = 'rgba(255,255,255,.35)'; shape(c, poly(-14, -60, -4, -60, -18, -10, -28, -10), 'rgba(255,255,255,.35)', 0); shape(c, poly(6, -60, 10, -60, -4, -10, -8, -10), 'rgba(255,255,255,.35)', 0); },
+    // el papel arcoíris: franjas de todos los colores de arriba abajo, con un brillo
+    arcoiris: c => { ['#ff4b5c', '#ff7a1a', '#ffcb3d', '#7ee04a', '#39d5e8', '#3a7de0', '#b45cff'].forEach((col, k) => { c.fillStyle = col; c.fillRect(-30, -62 + k * 10.2, 60, 10.6); }); for (let k = 0; k < 7; k++) { c.fillStyle = 'rgba(255,255,255,.22)'; c.fillRect(-30, -59 + k * 10.2, 60, 1.2); } },
+    // el celofán: plástico de envolver arrugado, transparente y tornasolado (arrugas brillantes en zigzag y destellos)
+    celofan: c => {
+      const g = c.createLinearGradient(-30, -70, 30, 10); g.addColorStop(0, 'rgba(255,170,220,.35)'); g.addColorStop(0.35, 'rgba(255,255,255,0)'); g.addColorStop(0.6, 'rgba(170,255,200,.3)'); g.addColorStop(1, 'rgba(255,230,140,.35)');
+      c.fillStyle = g; c.fillRect(-30, -70, 60, 80);
+      const arrugas = [[-16, -62, 10], [-4, -50, -12], [8, -66, 8], [-20, -36, 14], [4, -28, -10], [14, -44, 9], [-10, -14, 12], [10, -8, -9]];
+      for (const [x, y, d] of arrugas) { c.beginPath(); c.moveTo(x, y); c.lineTo(x + d * 0.5, y + 4); c.lineTo(x + d * 0.2, y + 8); c.lineTo(x + d, y + 12); c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1.1; c.stroke(); c.strokeStyle = 'rgba(40,120,150,.25)'; c.lineWidth = 0.7; c.beginPath(); c.moveTo(x + 1, y + 1); c.lineTo(x + d * 0.5 + 1, y + 5); c.stroke(); }
+      for (const [x, y] of [[-12, -56], [12, -30], [-6, -22], [16, -60]]) { line(c, [x - 2.5, y, x + 2.5, y], '#fff', 1); line(c, [x, y - 2.5, x, y + 2.5], '#fff', 1); }
+    },
     oro: c => { line(c, [0, -32, 0, -12], '#ca8a04', 1.4); shape(c, g => starPath(g, 0, -22, 4.2, 1.9), '#fff7d6', 1); },
     negro: c => { line(c, [-9, -22, 9, -22], '#ff3df0', 1.6); line(c, [-1, -32, 4, -22], '#374151', 1.4); },
     morado: c => { shape(c, poly(-4, -32, 4, -32, 6, -8, -6, -8), '#2a1840', 1.2); shape(c, rr(-10, -22, 20, 3.6, 1.2), '#5c6d8a', 1.2); dot(c, 0, -20.2, 1.9, '#efeadf'); },

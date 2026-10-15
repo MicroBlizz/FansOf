@@ -1,8 +1,8 @@
 {
- "build": 14,
- "hash": "60e1b52",
- "fecha": "2026-10-15T01:27:48Z",
- "mensaje": "Cuenta de Fans Of, paso 1: perfil global con un nombre único para todos los juegos",
+ "build": 15,
+ "hash": "cff506b",
+ "fecha": "2026-10-15T01:34:48Z",
+ "mensaje": "Fans of Nova fase 0 (3/6): hoja de armas (datos-armas.js) y herramientas/nova-balance.py con escalada rango 1 a 5",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -1,8 +1,8 @@
 {
- "build": 62,
- "hash": "a6be71e",
- "fecha": "2026-10-15T11:37:44Z",
- "mensaje": "Rouflage: zoom con rueda en PC (también sobre el panel), vista inicial del señuelo al área entera y cámara dentro del área",
+ "build": 63,
+ "hash": "252508c",
+ "fecha": "2026-10-15T11:44:15Z",
+ "mensaje": "Rouflage: la cámara del señuelo también con teclado (WASD/flechas, + / -) y pista con los controles",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

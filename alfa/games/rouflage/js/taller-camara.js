@@ -54,3 +54,13 @@ function senCamPanelScroll(t) { const p = document.getElementById('taller'); ret
 // en el documento entero (no solo en el lienzo) para que la rueda funcione también sobre el HUD; el panel de herramientas sigue pudiendo desplazarse
 document.addEventListener('wheel', ev => { if (!senCamActiva() || senCamPanelScroll(ev.target)) return; ev.preventDefault(); senCamZoom(ev.clientX, ev.clientY, Math.exp(-ev.deltaY * (ev.deltaMode === 1 ? 33 : 1) * 0.0015)); }, { passive: false });
 cv.addEventListener('contextmenu', ev => { if (TALLER.abierto) ev.preventDefault(); });
+
+// con el teclado: WASD o flechas mueven la cámara y + / - (o Q / E) hacen zoom, mientras el señuelo está puesto
+function senCamTeclas(dt) {
+  if (!senCamActiva()) return;
+  const t = ENTRADA.teclas, k = (...c) => c.some(x => t.has(x)), v = 520 * dt;
+  const dx = (k('KeyD', 'ArrowRight') ? 1 : 0) - (k('KeyA', 'ArrowLeft') ? 1 : 0), dy = (k('KeyS', 'ArrowDown') ? 1 : 0) - (k('KeyW', 'ArrowUp') ? 1 : 0);
+  if (dx || dy) senCamPan(-dx * v, -dy * v);
+  const zz = (k('Equal', 'NumpadAdd', 'KeyE') ? 1 : 0) - (k('Minus', 'NumpadSubtract', 'KeyQ') ? 1 : 0);
+  if (zz) senCamZoom(TALLER.libre[0], TALLER.libre[1], Math.exp(zz * dt * 1.6));
+}

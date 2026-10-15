@@ -57,7 +57,7 @@ IDIOMA.add({
   "Sin cartas: pasea por el mapa para ver qué pasa": "Out of cards: wander around the map to see what happens",
   "ME RETIRO": "I QUIT",
   "Estás en señuelo: vuelve a pulsar SEÑUELO para usar otra herramienta": "You are in decoy mode: press DECOY again to use another tool",
-  "Dos dedos (o la rueda) para acercar y mover la cámara; botón derecho para mover": "Two fingers (or the wheel) to zoom and move the camera; right button to pan",
+  "Zoom: rueda, + / - o pellizco. Mover cámara: WASD, botón derecho o dos dedos": "Zoom: wheel, + / - or pinch. Move camera: WASD, right button or two fingers",
   "Camaleón: toca PINTAR y copia los colores de lo que tienes detrás. Cuanto más cerca del 100 %, menos te ven. Luego CONGÉLATE.": "Chameleon: tap PAINT and copy the colors of what is behind you. The closer to 100 %, the less they see you. Then FREEZE.",
   "SEÑUELO: pinta garabatos en el suelo, lejos de ti, para que los becarios pierdan el tiempo mirándolos. Gasta tinta.": "DECOY: paint scribbles on the floor, far from you, so the interns waste time looking at them. It uses ink.",
   "Quieto y callado. Cada cierto tiempo silbas sin querer. Si te ven, corre o lanza la granada de humo (una sola vez).": "Stay still and quiet. Every so often you whistle without meaning to. If they see you, run or throw the smoke bomb (just once).",

@@ -122,6 +122,7 @@ function piensaCazador(e, dt) {
   // lo que ve: la sospecha de cada camaleón que tiene en la luz sube hacia su «nivel» (lo que canta entre el mínimo para verlo desde ahí)
   let top = null, topS = 0;
   for (const k of J.camaleones) {
+    if (k === e.cuerpo) continue;      // Ida y vuelta: su propio cuerpo no lo busca
     if (k.invis > 0) { b.sosp.delete(k); continue; }
     if (k.fuera) { b.sosp.delete(k); continue; }
     const ign = b.ignora.get(k) || 0; if (ign > 0) { b.ignora.set(k, ign - dt); if (k.hielo >= 0.85) continue; b.ignora.set(k, 0); }   // si se mueve, deja de ignorarlo

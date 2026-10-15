@@ -45,8 +45,9 @@ function pvpEmpezar() {
 const rfpAzar = semilla => { let a = (semilla | 0) + 91; return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 // plazas: primero los humanos (por su número de sala), luego los becarios de la máquina y luego los camaleones de la máquina. Cada plaza: { s, humano, clase, tipo, nombre, mana, yo }
 function rfpReparte(info) {
-  const humanos = (info.jugadores || []).slice().sort((a, b) => a.orden - b.orden), azar = rfpAzar(info.semilla), total = info.max || 10, ncaz = info.ncaz || 2;
-  const slots = humanos.map((j, i) => ({ s: i, humano: true, clase: j.rol === 'cazador' ? 'cazador' : 'camaleon', tipo: j.rol === 'cazador' ? 'becario' : (NOMBRES[j.animal] ? j.animal : 'bunny'), nombre: j.nombre || ('Fan#' + (i + 1)), mana: 0, yo: !!j.yo }));
+  const ida = !!(info.modo && info.modo.m === 'ida');      // Ida y vuelta (modos-ida.js): todos empiezan de colado
+  const humanos = (info.jugadores || []).slice().sort((a, b) => a.orden - b.orden), azar = rfpAzar(info.semilla), total = info.max || 10, ncaz = ida ? 0 : info.ncaz || 2;
+  const slots = humanos.map((j, i) => ({ s: i, humano: true, clase: j.rol === 'cazador' && !ida ? 'cazador' : 'camaleon', tipo: j.rol === 'cazador' && !ida ? 'becario' : (NOMBRES[j.animal] ? j.animal : 'bunny'), nombre: j.nombre || ('Fan#' + (i + 1)), mana: 0, yo: !!j.yo }));
   const hc = slots.filter(x => x.clase === 'cazador').length, hm = slots.length - hc;
   const iaCaz = Math.max(0, ncaz - hc), iaCam = Math.max(0, total - ncaz - hm), numeros = [7, 12, 3, 9, 5];
   for (let i = 0; i < iaCaz; i++) slots.push({ s: slots.length, humano: false, clase: 'cazador', tipo: 'becario', nombre: tr('Becario {n}', { n: numeros[i % numeros.length] }), mana: 0, yo: false });
@@ -125,7 +126,7 @@ function rfpActualizaAnfitrion() {
 // la máquina pasa a moverla este navegador: cerebro nuevo, desde donde estaba
 function rfpCogeIA(e, ocupados) {
   const sl = RFP.slots[e.slot]; e.remoto = false; e.red = null;
-  if (e.fuera) return;
+  if (e.fuera || e.dueno) return;      // (un cuerpo de Ida y vuelta no se mueve)
   if (e.clase === 'cazador') {
     cerebroCazador(e);
     if (J.fase === 'caza') ronda(e);

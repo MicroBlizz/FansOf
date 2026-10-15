@@ -492,5 +492,13 @@ IDIOMA.add({
   "Cubo: {n} / {m}": "Bucket: {n} / {m}",
   "Los colados han llenado el cubo de pintura antes de tiempo.": "The gatecrashers filled the paint bucket ahead of time.",
   "Los colados han llenado el cubo de pintura delante de tus narices.": "The gatecrashers filled the paint bucket right under your nose.",
-  "Con la gota no puedes congelarte: llévala al cubo": "You can't freeze with the drop: take it to the bucket"
+  "Con la gota no puedes congelarte: llévala al cubo": "You can't freeze with the drop: take it to the bucket",
+  "IDA Y VUELTA": "ROUND TRIP",
+  "Todos se pintan y se esconden; luego todos salen de becario a cazar. Si encuentran tu cuerpo, fuera. Gana quien más puntos sume.": "Everyone paints and hides; then everyone heads out as an intern to hunt. If they find your body, you're out. Highest score wins.",
+  "¡IDA Y VUELTA!": "ROUND TRIP!",
+  "Tu cuerpo se queda escondido: despide a los demás antes de que encuentren el tuyo": "Your body stays hidden: fire the others before they find yours",
+  "Han encontrado tu cuerpo: estás fuera": "They found your body: you're out",
+  "TU CUERPO": "YOUR BODY",
+  "Ida y vuelta: solo gana uno, y es quien más puntos suma.": "Round trip: only one wins, whoever scores most.",
+  "Estás fuera: pasea por el mapa para ver qué pasa": "You're out: wander around the map to see what happens"
 });

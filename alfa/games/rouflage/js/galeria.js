@@ -29,7 +29,7 @@ function galeriaPrepara() {
 const galeriaActiva = () => GALERIA.candidatos.length > 0;
 // un bot vota: el mejor camuflaje suele ser el de más porcentaje, el peor el de menos (con algo de azar para que no sea un cálculo)
 function galeriaVotaBot(b) {
-  const otros = GALERIA.candidatos.filter(e => e !== b); if (otros.length < 2) return;
+  const otros = GALERIA.candidatos.filter(e => e !== b && e !== b.cuerpo); if (otros.length < 2) return;
   const nota = e => e.camo + Math.random() * 30;
   const orden = otros.slice().sort((a, c) => nota(c) - nota(a));
   galeriaVota(b, galId(orden[0]), galId(orden[orden.length - 1]), true);
@@ -37,7 +37,7 @@ function galeriaVotaBot(b) {
 // el voto de alguien (tuyo, de un bot o llegado por la red): mejor y peor, sin votarse a uno mismo
 function galeriaVota(quien, mejor, peor, manda) {
   if (GALERIA.cerrada || mejor === peor) return;
-  const id = galId(quien); if (mejor === id || peor === id) return;
+  const id = galId(quien), suyo = quien.cuerpo ? galId(quien.cuerpo) : -1; if (mejor === id || peor === id || mejor === suyo || peor === suyo) return;
   if (!galEnte(mejor) || !galEnte(peor)) return;
   GALERIA.votos.set(id, { mejor, peor });
   if (manda && J.pvp) rfpManda({ t: 'vt', s: id, b: mejor, p: peor });
@@ -50,7 +50,7 @@ function rfpVotoRecibido(m) {
   if (!(m.de === m.s || (m.de === RFP.host && e.bot))) return;      // cada uno vota por sí mismo; los bots, el anfitrión
   galeriaVota(e, m.b, m.p, false);
 }
-const galeriaTodosVotaron = () => J.entes.every(e => GALERIA.votos.has(galId(e)));
+const galeriaTodosVotaron = () => J.entes.filter(e => !e.dueno).every(e => GALERIA.votos.has(galId(e)));      // (los cuerpos de Ida y vuelta no votan: vota su becario)
 // el recuento: cuántos votos de mejor y de peor tiene cada candidato
 function galeriaRecuento() {
   const r = new Map(GALERIA.candidatos.map(e => [galId(e), { mejor: 0, peor: 0 }]));
@@ -98,7 +98,7 @@ function galeriaPinta() {
     f.querySelector('.mejor').textContent = v.mejor ? '+' + v.mejor : ''; f.querySelector('.peor').textContent = v.peor ? '-' + v.peor : '';
     f.classList.toggle('mio-mejor', GALERIA.mio.mejor === id); f.classList.toggle('mio-peor', GALERIA.mio.peor === id);
     f.classList.toggle('gana', GALERIA.cerrada && GALERIA.mejor === e); f.classList.toggle('pierde', GALERIA.cerrada && GALERIA.peor === e);
-    f.querySelector('.gal-botones').hidden = !puedo || (yo && galId(yo) === id);
+    f.querySelector('.gal-botones').hidden = !puedo || (yo && (galId(yo) === id || (yo.cuerpo && galId(yo.cuerpo) === id)));
     for (const b of f.querySelectorAll('button')) b.classList.toggle('puesto', GALERIA.pre && GALERIA.pre[b.dataset.v] === id);
   }
   const sub = E('gal-sub');

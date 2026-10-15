@@ -8,6 +8,7 @@
 const MODOS = {
   normal: { nombre: 'NORMAL', texto: 'Los colados se esconden, los becarios los buscan. Lo de siempre.' },
   contagio: { nombre: 'CONTAGIO', texto: 'Al despedirte te dan la camisa de becario: sales de Recursos Humanos a cazar a los tuyos.' },
+  ida: { nombre: 'IDA Y VUELTA', texto: 'Todos se pintan y se esconden; luego todos salen de becario a cazar. Si encuentran tu cuerpo, fuera. Gana quien más puntos sume.' },
   retrato: { nombre: 'RETRATO ROBOT', texto: 'Los becarios ven la ficha de cada colado antes de salir. No hay bandos: gana quien más puntos sume.' },
 };
 const EXTRAS = {

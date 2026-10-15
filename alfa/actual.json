@@ -1,8 +1,8 @@
 {
- "build": 86,
- "hash": "52d7f90",
- "fecha": "2026-10-15T18:36:45Z",
- "mensaje": "Rouflage 0.2.13: nota de novedades (tres mapas nuevos, modos de la sala de amigos, música por mapa, menú ordenado, colores y clasificación en vivo arreglada); la 0.2.12 queda como se publicó",
+ "build": 87,
+ "hash": "0f6eb97",
+ "fecha": "2026-10-15T18:39:16Z",
+ "mensaje": "Rouflage: modo IDA Y VUELTA (todos se esconden, luego todos cazan; si encuentran tu cuerpo, fuera; gana uno solo), también por internet",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

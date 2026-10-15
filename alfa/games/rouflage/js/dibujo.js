@@ -204,7 +204,7 @@ function dibuja(t) {
   }
   if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
   if (!TALLER.abierto) { ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c); eventosPintaVelo(c, t); }
-  ponMundo(c); pintaFx(c); pintaMarcas(c, t);
+  ponMundo(c); pintaFx(c); pintaMarcas(c, t); idaPinta(c);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);
 }

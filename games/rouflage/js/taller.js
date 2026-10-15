@@ -14,7 +14,7 @@ function abreTaller() {
   const yo = J.yo;
   if (TALLER.abierto || !yo || yo.fuera || yo.clase !== 'camaleon' || (J.fase !== 'prep' && J.fase !== 'caza') || J.pausa) return;
   yo.vx = yo.vy = 0; yo.x = Math.round(yo.x); yo.y = Math.round(yo.y); yo.moviendo = false;
-  TALLER.abierto = true; TALLER.capas = false; TALLER.trazo = null; TALLER.figura = null; TALLER.duda = null; TALLER.puntero = null; TALLER.herr = 'pincel';
+  TALLER.abierto = true; TALLER.capas = false; TALLER.trazo = null; TALLER.figura = null; TALLER.duda = null; TALLER.puntero = null; if (TALLER.herr !== 'senuelo') TALLER.herr = 'pincel';      // el señuelo se queda puesto hasta que lo vuelvas a apretar
   ENTRADA.palanca = null; ENTRADA.toques.clear();
   muestraTaller(true); encuadraTaller(); mideTaller(); play('select');
 }
@@ -23,8 +23,10 @@ function encuadraTaller() {
   const yo = J.yo, p = document.getElementById('taller').getBoundingClientRect(), deLado = matchMedia('(orientation: landscape) and (max-height: 520px)').matches;   // móvil tumbado: el panel va a un lado
   const libreW = deLado ? VW - p.width : VW, arriba = 66, libreH = deLado ? VH - arriba : VH - p.height - arriba;
   // con el señuelo la cámara se abre para ver todo hasta donde llega el brazo (se pinta lejos de uno, no encima)
-  const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, libreH) / (SEN.alcance * 2 + 50), 0.45, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
+  // señuelo: la vista de entrada abarca el área entera del brazo (el panel puede tapar parte del área: se mueve la cámara con el ratón o los dedos)
+  const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, Math.max(libreH, 0.62 * (VH - arriba))) / (SEN.alcance * 2 + 16), 0.3, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
   const sx = libreW / 2, sy = arriba + libreH / 2;
+  TALLER.libre = [sx, sy, libreW, libreH]; if (TALLER.herr === 'senuelo') SENCAM.z0 = z;   // la vista de entrada es la del área entera: de ahí solo se acerca
   TALLER.cam = [yo.x - (sx - VW / 2) / z, yo.y - 26 - (sy - VH / 2) / z, z];
   TALLER.capas = false;
 }
@@ -55,6 +57,7 @@ function avanzaTaller(dt) {
     const [tx, ty, tz] = TALLER.cam;
     if (Math.abs(CAM.z - tz) < tz * 0.004 && Math.abs(CAM.x - tx) < 0.3 && Math.abs(CAM.y - ty) < 0.3) preparaCapas();
   }
+  senCamTeclas(dt);
   if (TALLER.sucio > 0) { TALLER.sucio -= dt; if (TALLER.sucio <= 0) mideTaller(); }
 }
 function mideTaller() { if (J.yo) pintaMedidor(mideCamuflaje(J.yo)); }
@@ -79,6 +82,7 @@ function empiezaTrazo(id, bx, by) {
   trazo(yo, bx, by, bx, by, TALLER.radio, TALLER.color, TALLER.cabezal); yo.pintado = true; TALLER.sucio = 0.2; play('pincel');
 }
 function tallerAbajo(ev) {
+  if (senCamPuntero(ev, 'abajo')) return;
   const yo = J.yo, [x, y] = aMundo(ev.clientX, ev.clientY);
   TALLER.puntero = [ev.clientX, ev.clientY]; TALLER.duda = null;
   if (TALLER.herr === 'gota') { cogeColor(x, y); return; }
@@ -88,6 +92,7 @@ function tallerAbajo(ev) {
   const [bx, by] = enCaja(yo, x, y); empiezaTrazo(ev.pointerId, bx, by);
 }
 function tallerMueve(ev) {
+  if (senCamPuntero(ev, 'mueve')) return;
   TALLER.puntero = [ev.clientX, ev.clientY];
   const yo = J.yo, [x, y] = aMundo(ev.clientX, ev.clientY), [bx, by] = enCaja(yo, x, y), d = TALLER.duda;
   if (SEN.pinta && SEN.pinta.id === ev.pointerId) { senueloMueve(x, y); return; }
@@ -99,6 +104,7 @@ function tallerMueve(ev) {
   if (Math.random() < 0.06) play('pincel');
 }
 function tallerArriba(ev) {
+  if (senCamPuntero(ev, 'arriba')) return;
   if (ev.pointerType !== 'mouse') TALLER.puntero = null;
   if (SEN.pinta && SEN.pinta.id === ev.pointerId) { senueloArriba(); return; }
   const f = TALLER.figura;
@@ -120,7 +126,9 @@ function tallerPlegar() {
   TALLER.plegado = !TALLER.plegado; play('select'); refrescaTaller();
   if (TALLER.abierto) encuadraTaller();
 }
-function tallerHerramienta(h) { TALLER.herr = TALLER.herr === h ? 'pincel' : h; play('select'); refrescaTaller(); if (TALLER.abierto) encuadraTaller(); }      // el señuelo abre la cámara, el resto la cierra
+function tallerHerramienta(h) {
+  if (TALLER.herr === 'senuelo' && h !== 'senuelo') { pista(tr('Estás en señuelo: vuelve a pulsar SEÑUELO para usar otra herramienta'), 2.4); play('deny'); return; }      // fijado hasta volver a apretarlo
+  TALLER.herr = TALLER.herr === h ? 'pincel' : h; if (TALLER.herr === 'senuelo') { tutoDi('cam-senuelo'); if (J.t >= PISTA.hasta) pista(tr('Zoom: rueda, + / - o pellizco. Mover cámara: WASD, botón derecho o dos dedos'), 3.2); } play('select'); refrescaTaller(); if (TALLER.abierto) encuadraTaller(); }      // el señuelo abre la cámara, el resto la cierra
 function tallerRadio(i) { const antes = TALLER.herr; TALLER.radio = RADIOS[i]; if (TALLER.herr !== 'linea' && TALLER.herr !== 'senuelo') TALLER.herr = 'pincel'; play('select'); refrescaTaller(); if (antes !== TALLER.herr && TALLER.abierto) encuadraTaller(); }   // la línea usa el gordo del pincel
 function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.color); yo.pintado = true; play('cubo'); mideTaller(); }
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }

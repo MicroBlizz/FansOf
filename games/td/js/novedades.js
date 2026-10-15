@@ -4,6 +4,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.65', real: ["<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },
   { v: '0.13.64', real: ["<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego."], joke: ["Microblizz ha puesto tu nombre en la torre. Phony dice que las torres no leen, pero lo agradecen."] },
   { v: '0.13.63', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },
   { v: '0.13.62', real: ["<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla."], joke: ["Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas."] },

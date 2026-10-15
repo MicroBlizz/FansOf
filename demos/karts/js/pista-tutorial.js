@@ -1,14 +1,16 @@
 // Fans of Karts · TUTORIAL · LA MADRIGUERA: el circuito de prácticas de CrazyBunny, en el prado de los Animales Locos, junto a La
-// Madriguera (la casa de Fans of Roguelite). Un ocho muy ancho y sin peligros, con un puente en medio (puente.js): aquí se aprende a jugar paso a
+// Madriguera (la casa de Fans of Roguelite). Un ocho alto y torcido (dos lazos y dos rectas largas que se cruzan, para probar objetos) sin peligros, con un puente en el cruce (puente.js): aquí se aprende a jugar paso a
 // paso (tutorial.js). No pertenece a ningún mundo (mundo 0): se entra desde el botón TUTORIAL.
 'use strict';
 
 PISTAS.push({
   id: 'tutorial', mundo: 0, nombre: 'La Madriguera', lema: 'El circuito de prácticas de CrazyBunny. Aquí no hay micropagos (todavía).', dificultad: 1, musica: 'animales', color: '#5cbf4a', polvo: '#c8a070',
-  // un ocho: dos lazos que se cruzan en el centro del mapa
-  puntos: Array.from({ length: 16 }, (_, i) => { const t = Math.PI / 4 + (i / 16) * TAU; return [Math.round(512 + 360 * Math.sin(t)), Math.round(512 + 262 * Math.sin(2 * t))]; }),
+  // un ocho alto y torcido: sale bajando por la recta de la derecha, da la vuelta al lazo de abajo, sube por la recta larga en diagonal
+  // (por el puente) hasta el lazo de arriba y vuelve a la salida. Las dos rectas se cruzan en el centro (en u 1,54 y u 9,5)
+  puntos: [[620, 349], [560, 425], [542, 571], [530, 698], [560, 833], [656, 915], [764, 879], [797, 782], [746, 680], [644, 583], [446, 420], [326, 334], [230, 247],
+    [242, 155], [350, 109], [488, 117], [602, 165], [653, 257]],
   ancho: 88, margen: 54, borde: 'muro',
-  puente: { arriba: [12.3, 15.7], abajo: [5.2, 6.8], centro: 14, alto: 12, radio: 72 },      // el lazo de la vuelta pasa por encima del de ida
+  puente: { arriba: [8.3, 10.7], abajo: [0.9, 2.2], centro: 9.5, alto: 12, radio: 80 },      // la recta en diagonal pasa por encima de la de la salida
   lejos: ['#4aa83a', '#46a036'],
   tema: (() => {
     const [t1, t2, t3, raya, borde, k1, k2, h1, h2, h3, flor1, flor2, v1, v2, f1, f2, surco] = C32('#c8a070', '#bc9466', '#d4ac7c', '#ff8a1f', '#f4f4f8', '#ff8a1f', '#ffffff', '#5cbf4a', '#52b444', '#68c856', '#ff5c8a', '#ffe14d', '#c98a4b', '#8b5530', '#4aa83a', '#46a036', '#8a6038');
@@ -41,18 +43,19 @@ PISTAS.push({
   },
   voladores: [{ id: 'globoconejo', s: 800, y: 12, vel: -4, tam: 0.34 }],
   pinta(P) {
-    turboEn(P, 0.6, 0); turboEn(P, 0.95, 0); turboEn(P, 8.6, 0); turboEn(P, 12.6, 0, 24);
-    rampaEn(P, 4.6, 12); rampaEn(P, 11.0, 12);
+    turboEn(P, 2.7, 0); turboEn(P, 3.05, 0); turboEn(P, 11, 0); turboEn(P, 16.2, 0, 24);
+    rampaEn(P, 3.8, 12); rampaEn(P, 11.6, 12);
   },
   cosas(P) {
     const l = [];
-    regalosEn(P, 1.9, 5); regalosEn(P, 7.4, 5); regalosEn(P, 13.4, 5);
-    monedasPor(P, [[1.2, 6, 0], [2.6, 5, 16], [3.6, 5, -16], [5.3, 5, 0], [7.9, 6, 0], [9.6, 5, 16], [10.4, 5, -16], [12.0, 5, 0], [14.6, 6, 0]]);
-    adorno(P, l, 'madriguera', 0.15, 38); adorno(P, l, 'madriguera', 8.1, 40);
-    adornosPor(P, l, ['zanahoria', 'zanahoria', 'vaca', 'seta', 'globos', 'helecho', 'vaca'], 0.6, 15.6, 0.45, 14, 34, 21);
-    cartelesPor(P, l, [[['LA', 'MADRIGUERA'], 0.5, -26, '#5cbf4a', '#ffffff'], [['¡FLECHAS!', 'TURBO'], 0.75, 26, '#ff8a1f', '#ffffff'], [['REGALOS', 'AQUÍ'], 1.6, -26, '#ff5c8a', '#ffffff'],
-      [['¡DERRAPA!'], 2.6, 30, '#ffcb3d', '#22212c'], [['RAMPA'], 4.3, -26, '#ffcb3d', '#22212c'], [['PASO', 'SUBTERRÁNEO'], 5.4, 30, '#22212c', '#ffcb3d'], [['PUENTE', 'DE TABLAS'], 12.9, 28, '#c98a4b', '#ffffff'],
-      [['PROHIBIDO', 'MICROBLIZZ'], 9.0, -28, '#e63946', '#ffffff'], [['ZANAHORIAS', 'POR LA CARA'], 10.4, 28, '#ff8a1f', '#ffffff'], [['TUTORIAL', 'SIN ANUNCIOS'], 13.0, -26, '#22212c', '#5ef27a']]);
+    regalosEn(P, 2.4, 5); regalosEn(P, 8.4, 5); regalosEn(P, 12.3, 5); regalosEn(P, 15.6, 5);      // en las rectas largas: hay sitio para probar lo que toque
+    monedasPor(P, [[3.3, 6, 0], [4.6, 5, 16], [6, 5, -16], [7.4, 5, 0], [10.6, 6, 0], [12.9, 5, 16], [14, 5, -16], [17, 6, 0]]);
+    adorno(P, l, 'madriguera', 5.9, 44); adorno(P, l, 'madriguera', 13.6, 44);
+    const bichos = ['zanahoria', 'zanahoria', 'vaca', 'seta', 'globos', 'helecho', 'vaca'];      // lejos del cruce, que allí estorbarían a la otra recta
+    adornosPor(P, l, bichos, 2.6, 8.6, 0.45, 14, 34, 21); adornosPor(P, l, bichos, 10.5, 17.9, 0.45, 14, 34, 22);
+    cartelesPor(P, l, [[['LA', 'MADRIGUERA'], 17.9, -26, '#5cbf4a', '#ffffff'], [['PASO', 'SUBTERRÁNEO'], 0.4, 30, '#22212c', '#ffcb3d'], [['¡FLECHAS!', 'TURBO'], 2.5, 26, '#ff8a1f', '#ffffff'],
+      [['REGALOS', 'AQUÍ'], 2.2, -26, '#ff5c8a', '#ffffff'], [['RAMPA'], 3.6, -26, '#ffcb3d', '#22212c'], [['¡DERRAPA!'], 4.6, 30, '#ffcb3d', '#22212c'], [['PUENTE', 'DE TABLAS'], 8.6, 28, '#c98a4b', '#ffffff'],
+      [['PROHIBIDO', 'MICROBLIZZ'], 10.8, -28, '#e63946', '#ffffff'], [['ZANAHORIAS', 'POR LA CARA'], 13, 28, '#ff8a1f', '#ffffff'], [['TUTORIAL', 'SIN ANUNCIOS'], 15.2, -26, '#22212c', '#5ef27a']]);
     return l;
   },
 });

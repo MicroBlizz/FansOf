@@ -28,11 +28,15 @@
     const hecho = v.gestionado ? `<div class="meta">${esc(v.gestionado_por || '')} · ${fecha(v.gestionado)}${v.gestion_nota ? ' · ' + esc(v.gestion_nota) : ''}</div>` : '';
     return `<article class="cuenta${v.estado === 'pendiente' ? '' : ' marcada'}" data-id="${v.id}" data-o="${v.origen}"><div class="cab"><span class="codigo">${esc(v.juego)}</span>${estado}`
       + `<span class="meta">${v.origen === 'juego' ? 'desde el juego · ' + esc(v.tipo) : v.voto > 0 ? 'biblioteca · SÍ lo recomienda' : 'biblioteca · NO lo recomienda'} · escrito en la versión <b>${esc(v.version || '?')}</b> · ${fecha(v.creado)}${act ? ' · ahora ' + esc(act) : ''}</span></div>`
+      + respuestas(v)
       + `<p style="margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere">${esc(v.nota)}</p><div class="meta">${v.origen === 'juego' ? (v.contacto ? 'Acepta que le escribamos: ' + esc(v.email || '(sin email)') : 'Sin permiso para contactar · cuenta ' + esc(v.corto)) : esc(v.email || 'cuenta ' + v.corto)}</div>${pista}${hecho}`
       + `<div class="accion"><input type="text" class="g-ver" placeholder="Versión que lo resuelve" maxlength="24" value="${esc(v.resuelto_version || act)}" aria-label="Versión que lo resuelve">`
       + `<input type="text" class="g-nota" placeholder="Nota del equipo (opcional)" maxlength="300" value="${esc(v.gestion_nota || '')}" aria-label="Nota del equipo"></div>`
       + `<div class="accion">${v.estado !== 'resuelto' ? '<button data-e="resuelto">Resuelto</button>' : ''}${v.estado !== 'descartado' ? '<button data-e="descartado">Descartar</button>' : ''}${v.estado !== 'pendiente' ? '<button data-e="pendiente">Reabrir</button>' : ''}</div></article>`;
   }
+  // las respuestas a las preguntas del feedback ({id_de_pregunta: respuesta}); el texto libre sale debajo, como siempre
+  const respuestas = v => (v.respuestas && Object.keys(v.respuestas).length
+    ? '<div class="meta" style="margin:6px 0">' + Object.entries(v.respuestas).map(([k, r]) => `<div><b>${esc(k)}</b>: ${esc(r)}</div>`).join('') + '</div>' : '');
   // los comentarios de la biblioteca (votos con nota) y el feedback que mandan desde los juegos, juntos y por fecha
   const todos = () => [...V.votos.filter(v => v.nota).map(v => Object.assign({ origen: 'biblioteca' }, v)),
     ...((F && F.feedback) || []).map(f => Object.assign({ origen: 'juego', nota: f.texto }, f))].sort((a, b) => (a.creado < b.creado ? 1 : -1));

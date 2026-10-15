@@ -1,6 +1,17 @@
 // Fans Of · Inglés del feedback de los juegos (core/js/sistema/feedback.js).
 'use strict';
 IDIOMA.add({
+  "¿Qué nota le das al juego?": "What score do you give the game?",
+  "Nota de 1 a 5 estrellas": "Score from 1 to 5 stars",
+  "Pon una nota de 1 a 5 estrellas.": "Give it a score from 1 to 5 stars.",
+  "Nota": "Score",
+  "¿Qué te parece lo nuevo de la versión {v}?": "What do you think of what's new in version {v}?",
+  "¿Qué es lo que más te gusta?": "What do you like the most?",
+  "¿Qué es lo que más te molesta?": "What bothers you the most?",
+  "Ver qué ha cambiado": "See what has changed",
+  "Me gusta": "I like it",
+  "Me da igual": "I don't mind",
+  "No me gusta": "I don't like it",
   "Enviar comentarios": "Send feedback",
   "TU OPINIÓN": "YOUR FEEDBACK",
   "Cuéntanos una idea, un fallo o lo que te parezca. Lo leemos nosotros.": "Tell us an idea, a bug or whatever you think. We read it ourselves.",

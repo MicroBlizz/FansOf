@@ -9,7 +9,7 @@ function limpiaPartida() {
   practicaCierra(); J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
-  TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
+  TALLER.herr = 'pincel'; TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
   limpiaFx(); limpiaAvisos();
   M.tmT = 1;
 }
@@ -56,6 +56,7 @@ function empiezaPartida(modo) {
 function cambiaFase(f) {
   J.fase = f; J.tFase = 0;
   if (f !== 'prep') practicaCierra();
+  tutoFase(f);
   if (f === 'prep') {
     J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica('menu');
     if (J.modo === 'cazador') { cartel(J.pvp ? tr('¡ERES CAZADOR!') : tr('¡CALENTAMIENTO!'), tr('Dispara a los camaleones de prácticas de la sala y gana cartas de despido')); practicaEmpieza(); }
@@ -208,6 +209,7 @@ function termina(victoria, motivo, fin) {
     sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
     filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
   }
+  if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   musica(victoria ? 'win' : 'lose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);

@@ -1,6 +1,7 @@
 // Fans of Island · Novedades: el informe de cada versión, la más nueva primero. La versión que se publica se escribe en index.html (…?v=…).
 'use strict';
 const NEWS = [
+  { v: '0.3.4', real: ["<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },
   { v: '0.3.3', real: ["<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego."], joke: ["Microblizz ha unificado tu nombre hasta en la pradera de hilo. Phony pregunta si el conejo también cuenta."] },
   { v: '0.3.2', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },
   { v: '0.3.1', real: ["<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla."], joke: ["Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas."] },

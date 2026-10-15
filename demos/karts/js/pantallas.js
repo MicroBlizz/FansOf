@@ -64,16 +64,7 @@ function pantallaTitulo() {
   escribeB(lx, 'KARTS', PW / 2 + 2, 35 + bote + 2, '#b3360a', '#1c1028', 'centro', 5);
   escribeB(lx, 'KARTS', PW / 2, 35 + bote, '#ffcb3d', '#1c1028', 'centro', 5);
   escribeB(lx, tr('Microblizz ha comprado la carrera. Gánasela.'), PW / 2, 77, '#ffffff', '#1c1028', 'centro');
-  if (pvpAbierto()) { boton('JUGAR', 22, 91, 94, () => ve('piloto'), 18); boton('PVP', 124, 91, 94, () => { KPVP.error = ''; KPVP.aviso = ''; ve('pvp'); }, 18, '#ff5c8a'); }
-  else boton('JUGAR', 70, 91, 100, () => ve('piloto'), 18);
-  // la tienda y el pase, grandes (se abren en pantallas en grande: tienda-karts.js y pase.js)
-  boton('TIENDA', 22, 113, 94, () => abreTienda('destacado'), 16, '#ffcb3d');
-  boton('PASE', 124, 113, 94, () => ve('pase'), 16, '#5ef27a');
-  if (nivelPase() < KPASE.length && SAVE.xp % KECO.xpNivel >= KECO.xpNivel * 0.8 && Math.sin(RELOJ * 4) > 0) { lx.fillStyle = '#5ef27a'; lx.fillRect(213, 111, 6, 6); }
-  const fila = [['AYUDA', () => ve('ayuda'), '#ffcb3d'], ['OPCIONES', () => { ve('opciones'); PANT.vuelve = 'titulo'; }, '#ffcb3d'], ['TUTORIAL', empiezaTutorial, '#5ef27a'], ['BIBLIOTECA', () => { location.href = '../../'; }, '#22e3ff']];
-  fila.forEach(([t, f, c], i) => boton(t, 5 + i * 58, 133, 56, f, 13, c));
-  // sin el tutorial hecho, el botón de TUTORIAL parpadea en verde
-  if (!tutoHecho() && Math.sin(RELOJ * 5) > -0.2) { lx.strokeStyle = '#5ef27a'; lx.lineWidth = 1; lx.strokeRect(120.5, 131.5, 59, 16); }
+  menuPrincipal();      // los botones, en HTML con el estilo de Fans of Rumble (menu-principal.js)
   mini(lx, tr('PROTOTIPO') + ' ' + VERSION, 4, 152, '#bdb6d6', '#1c1028');
   mini(lx, 'ARKIONER Y PEPINS', PW - 4, 152, '#bdb6d6', '#1c1028', 'der');
   PANT.atras = null;
@@ -282,7 +273,8 @@ function pintaPantalla(dt) {
   energiaVista();
   modoUI();
   htmlKartsVista();      // la tienda y el pase en grande se quitan al salir de ellos (tienda-karts.js)
-  pvpSalaVista(dt);      // la sala de espera, la de amigos y los mensajes rápidos (pvp-sala.js)
+  pvpSalaVista(dt);
+  menuVista();        // el menú principal se quita al salir del título (menu-principal.js)      // la sala de espera, la de amigos y los mensajes rápidos (pvp-sala.js)
   PANT.acciones.length = 0; PANT.rects.length = 0; PANT.directas.length = 0; PANT.t += dt;
   if (PANT.id === 'carrera') pantallaCarrera(dt);
   else if (PANT.id === 'titulo') pantallaTitulo();

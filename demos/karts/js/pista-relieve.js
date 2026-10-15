@@ -5,7 +5,7 @@
 
 const RELIEVE = {
   oficinas: { arco: 'arcoOficinas', arcos: [0.2, 0.5, 0.78], tunel: [0.6, 0.66], filas: [['archivador', 0.3, 0.38, 26, 12], ['fuente', 0.86, 0.94, 30, 12]], hitos: ['granPlanta', 'granPlanta'] },
-  tutorial: { arco: 'arcoTutorial', arcos: [0.15, 0.6, 0.68], filas: [['zanahoria', 0.05, 0.12, 22, 14], ['zanahoria', 0.52, 0.6, 22, 14]], hitos: ['granZanahoria', 'granVaca', 'granZanahoria'] },
+  tutorial: { arco: 'arcoTutorial', arcos: [0.29, 0.72, 0.88], filas: [['zanahoria', 0.14, 0.19, 22, 14], ['zanahoria', 0.6, 0.65, 22, 14]], hitos: ['granZanahoria', 'granVaca', 'granZanahoria'] },
   playa: { arco: 'arcoPlaya', arcos: [0.18, 0.46, 0.8], filas: [['palmera', 0.24, 0.36, 30, 14], ['palmera', 0.62, 0.72, 30, 14]], hitos: ['granCastillo', 'granPalmera', 'granCastillo'] },
   parque: { arco: 'arcoParque', arcos: [0.12, 0.34, 0.56, 0.86], tunel: [0.68, 0.74], filas: [['globos', 0.4, 0.5, 26, 12]], hitos: ['granTiovivo', 'granTiovivo'] },
   centro: { arco: 'arcoCentro', arcos: [0.3, 0.62, 0.9], tunel: [0.4, 0.47], filas: [['maniqui', 0.7, 0.8, 18, 10], ['expositor', 0.12, 0.2, 22, 10]], hitos: ['granManiqui', 'granManiqui'] },

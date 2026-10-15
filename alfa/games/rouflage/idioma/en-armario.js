@@ -21,7 +21,7 @@ IDIOMA.add({
   "Dientes de CrazyBunny": "CrazyBunny's teeth", "Diente de MadSquirrel": "MadSquirrel's tooth", "Dientón de BoomBeaver": "BoomBeaver's buck teeth", "Colmillos de JunkCoon": "JunkCoon's fangs",
   "Bufanda de lana": "Wool scarf",
   "Oro de EpicChampion": "EpicChampion's gold", "Túnica de NecroLord": "NecroLord's robe", "Traje de CyberNinja": "CyberNinja's suit", "Camiseta de ProGamer": "ProGamer's jersey",
-  "Papel arcoíris": "Rainbow paper",
+  "Papel arcoíris": "Rainbow paper", "Papel tornasol": "Iridescent paper",
   "Orejas y corona de CrazyBunny": "CrazyBunny's ears and crown", "Orejas de MadSquirrel": "MadSquirrel's ears", "Orejas de SlyFox": "SlyFox's ears", "Casco de BoomBeaver": "BoomBeaver's helmet",
   "Cofia y aureola de MeerCat": "MeerCat's cap and halo", "Antifaz de JunkCoon": "JunkCoon's mask", "Yelmo de EpicChampion": "EpicChampion's helm", "Cuernos de NecroLord": "NecroLord's horns",
   "Cascos de ProGamer": "ProGamer's headset", "Orejas de SuchDog": "SuchDog's ears", "Serpientes de Medusa": "Medusa's snakes", "Gorra de becario": "Intern cap",
@@ -104,7 +104,7 @@ IDIOMA.add({
   "Barba de papel": "Paper beard", "Vampiro": "Vampire",
   // papel
   "Folio blanco": "White sheet", "Kraft": "Kraft", "Cuadriculado": "Graph paper", "Libreta de rayas": "Lined notebook", "Periódico": "Newspaper", "Cartón": "Cardboard",
-  "Purpurina": "Glitter", "Papel de regalo": "Wrapping paper", "Mapa del tesoro": "Treasure map", "Partitura": "Sheet music", "Celofán": "Cellophane",
+  "Purpurina": "Glitter", "Papel de regalo": "Wrapping paper", "Mapa del tesoro": "Treasure map", "Partitura": "Sheet music",
   // cabeza
   "Orejas de conejo": "Bunny ears", "Corona": "Crown", "Aureola": "Halo", "Chistera": "Top hat", "Cuernos": "Horns", "Flor": "Flower",
   "Antena": "Antenna", "Auriculares": "Headphones", "Casco de obra": "Hard hat", "Gorro de fiesta": "Party hat", "Lazo": "Bow", "Brote": "Sprout", "Pulpo sombrero": "Octopus hat",

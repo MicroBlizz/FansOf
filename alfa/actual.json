@@ -1,8 +1,8 @@
 {
- "build": 100,
- "hash": "b74cedc",
- "fecha": "2026-10-15T20:12:18Z",
- "mensaje": "Rouflage (armario): el papel Celofán se llama Cinta adhesiva y vuelve a su dibujo de tiras de celo",
+ "build": 101,
+ "hash": "5b5bb08",
+ "fecha": "2026-10-15T20:15:07Z",
+ "mensaje": "Rouflage (armario): papel nuevo Papel tornasol (plástico arrugado y tornasolado, 400 de Purpurina); fuera la palabra celofán",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -57,7 +57,7 @@ const CATALOGO_AR = (() => {
     ['blanco', 'Folio blanco', 'comun', 'base', 'Al empezar'], ['kraft', 'Kraft', 'comun', 'base', 'Al empezar'], ['cuadricula', 'Cuadriculado', 'comun', 'base', 'Al empezar'], ['rayas', 'Libreta de rayas', 'comun', 'base', 'Al empezar'],
     ['oro', 'Oro de EpicChampion', 'epica', 'conjunto', dc('EpicChampion')], ['morado', 'Túnica de NecroLord', 'legend', 'conjunto', dc('NecroLord')], ['negro', 'Traje de CyberNinja', 'epica', 'conjunto', dc('CyberNinja')], ['verde', 'Camiseta de ProGamer', 'epica', 'conjunto', dc('ProGamer')],
     ['periodico', 'Periódico', 'rara', 'gratis', 'Pase gratis · nv 13'], ['carton', 'Cartón', 'comun', 'migas', '250 Migas'], ['purpurina', 'Purpurina', 'epica', 'premium', 'Pase premium · nv 25'], ['regalo', 'Papel de regalo', 'rara', 'tienda', 250],
-    ['mapa', 'Mapa del tesoro', 'epica', 'tienda', 500], ['partitura', 'Partitura', 'rara', 'diario', 'Diario · 20 días del mes'], ['arcoiris', 'Papel arcoíris', 'legend', 'premium', 'Pase premium · nv 38'], ['celofan', 'Cinta adhesiva', 'epica', 'subs', 'Caos ilimitado · noviembre'],
+    ['mapa', 'Mapa del tesoro', 'epica', 'tienda', 500], ['partitura', 'Partitura', 'rara', 'diario', 'Diario · 20 días del mes'], ['arcoiris', 'Papel arcoíris', 'legend', 'premium', 'Pase premium · nv 38'], ['celofan', 'Cinta adhesiva', 'epica', 'subs', 'Caos ilimitado · noviembre'], ['tornasol', 'Papel tornasol', 'epica', 'tienda', 400],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, PA(k), k));
   const CA = k => G({ cabeza: k, esc: 1.3 });
   const cabezaR = [

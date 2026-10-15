@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-15a',
+    fecha: '15 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF NOVA', tarjeta: 'g-nova', enlace: 'games/nova/', texto: 'El juego espacial de la serie: una nave que crece comiendo chatarra, cartas y armas que se fusionan.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-14c',
     fecha: '14 de octubre de 2026',
     nuevos: [

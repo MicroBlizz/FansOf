@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fans of Nova</title>
+<meta name="description" content="Fans of Nova: el juego espacial de la serie Fans Of. Prototipo.">
+<meta name="theme-color" content="#0a1226">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="apple-touch-icon" href="../../core/img/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fans of Nova">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
+<script src="../../core/js/nucleo.js?v=0.3.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/nova.css')</script>
+</head>
+<body>
+<div id="stage">
+  <section id="nv-portada" class="screen" hidden>
+    <h1 class="logo"><span class="l1 ol">FANS OF</span><span class="l2 ol-big">NOVA</span></h1>
+    <p class="tagline" id="nv-estado">Fans of Nova · prototipo</p>
+    <button class="nv-boton" id="nv-jugar" hidden>Jugar el prototipo</button>
+  </section>
+  <section id="nv-partida" class="screen" hidden>
+    <canvas id="nv-canvas"></canvas>
+    <div id="nv-paneles"></div>
+  </section>
+</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta y el idioma de core: Nova lleva su propia partida y sus propias pantallas
+  antes: ['js/ajustes.js', 'js/novedades.js'],
+  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js', 'idioma/en-raiz.js'] },
+  despues: ['js/retos.js', 'js/datos-armas.js', 'js/datos-cascos.js', 'js/datos-piezas.js', 'js/datos-tripulacion.js', 'js/iconos.js', 'js/armas.js', 'js/enemigos.js', 'js/cartas.js', 'js/mundo.js', 'js/partida.js', 'js/dibujo.js', 'js/interfaz.js', 'js/portada.js']
+})
+</script>
+</body>
+</html>

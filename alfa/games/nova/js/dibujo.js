@@ -29,9 +29,14 @@ function nvPieza(c, id, ax, ay) {
 
 // ---------- fondo ----------
 const NV_ESTRELLAS = (() => { const l = []; let s = 7; const r = () => (s = (s * 16807) % 2147483647) / 2147483647; for (let i = 0; i < 160; i++) l.push({ x: r(), y: r(), z: 0.2 + r() * 0.8, t: 0.6 + r() * 1.4 }); return l; })();
+const NV_NUBES = [{ x: .1, y: .2, r: .55, c: 'rgba(70,40,140,.28)' }, { x: .6, y: .7, r: .65, c: 'rgba(20,90,140,.24)' }, { x: .85, y: .15, r: .4, c: 'rgba(140,40,90,.2)' }, { x: .35, y: .9, r: .5, c: 'rgba(40,60,150,.22)' }];
 function nvFondo(c, S, W, H, vs) {
   c.fillStyle = '#070d1f'; c.fillRect(0, 0, W, H);
   const g = c.createRadialGradient(W / 2, H * 0.3, 10, W / 2, H * 0.3, H * 0.9); g.addColorStop(0, '#16275a'); g.addColorStop(1, '#070d1f00'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  for (const b of NV_NUBES) {   // nubes lejanas: se mueven poco, dan fondo
+    const x = (((b.x * W * 1.6 - S.cam.x * vs * 0.06) % (W * 1.6)) + W * 1.6) % (W * 1.6) - W * 0.3, y = (((b.y * H * 1.6 - S.cam.y * vs * 0.06) % (H * 1.6)) + H * 1.6) % (H * 1.6) - H * 0.3, rr = b.r * W;
+    const gn = c.createRadialGradient(x, y, 0, x, y, rr); gn.addColorStop(0, b.c); gn.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gn; c.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+  }
   for (const e of NV_ESTRELLAS) {
     const x = (((e.x * W - S.cam.x * vs * e.z * 0.35) % W) + W) % W, y = (((e.y * H - S.cam.y * vs * e.z * 0.35) % H) + H) % H;
     c.fillStyle = 'rgba(255,255,255,' + (0.25 + e.z * 0.6) + ')'; c.fillRect(x, y, e.t * e.z * 1.6, e.t * e.z * 1.6);
@@ -62,6 +67,9 @@ function nvTorreta(c, w, r, rot) {
 }
 function nvDibujaNave(c, S) {
   const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam];
+  c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.filter = 'brightness(0)';   // sombra proyectada: da altura sobre el fondo
+  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, S.casco + '-casco', 0, 0);
+  c.restore();
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);

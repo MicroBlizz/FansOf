@@ -1,8 +1,8 @@
 {
- "build": 92,
- "hash": "8a00c04",
- "fecha": "2026-10-15T19:11:38Z",
- "mensaje": "Rouflage: el grupo del título se llama MI PERFIL (antes TU GALLETA)",
+ "build": 93,
+ "hash": "b9a8096",
+ "fecha": "2026-10-15T19:15:08Z",
+ "mensaje": "Nova: cada arma solo admite las cargas que tienen sentido (nada de láser cinético); fuera las fusiones Flak sónica y Aguja de fricción",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

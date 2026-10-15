@@ -1,8 +1,8 @@
 {
- "build": 82,
- "hash": "7afa2c7",
- "fecha": "2026-10-15T18:23:50Z",
- "mensaje": "Rouflage: extras FANTASMAS CHIVATOS (chivatazo a un becario y resurrección) y LLENA EL BOTE (gotas de pintura y cubo en la cafetería)",
+ "build": 83,
+ "hash": "4a85a21",
+ "fecha": "2026-10-15T18:25:45Z",
+ "mensaje": "Rouflage 0.2.12: la nota de novedades cuenta los modos de juego de la sala de amigos",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

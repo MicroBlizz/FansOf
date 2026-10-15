@@ -156,6 +156,7 @@ function refrescaTaller() {
     b.onclick = () => { ponColor(col); if (TALLER.herr === 'gota') TALLER.herr = 'pincel'; play('select'); refrescaTaller(); };
     caja.appendChild(b);
   }
+  refrescaMenuPintar();
 }
 
 /* ---------- pantallas ---------- */

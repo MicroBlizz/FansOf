@@ -1,8 +1,8 @@
 {
- "build": 107,
- "hash": "d017fdf",
- "fecha": "2026-10-15T20:43:33Z",
- "mensaje": "Fans of Rouflage 0.2.19: música propia en los mapas nuevos",
+ "build": 108,
+ "hash": "18a5ea0",
+ "fecha": "2026-10-15T20:43:59Z",
+ "mensaje": "Rouflage (taller): botón «Menú» para elegir cómo quieres el panel de pintar: clásico, A (pestañas por pasos), B (herramientas a los lados) o C (cinco botones y bandeja). Se guarda en la partida; botones de 44 px o más y medidor arriba en los nuevos",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

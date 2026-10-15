@@ -1,8 +1,8 @@
 {
- "build": 6,
- "hash": "cda0b03",
- "fecha": "2026-10-15T00:07:21Z",
- "mensaje": "Fans of Ratkov 0.2.4: cinco minijuegos (vendar dando vueltas, coser con el botiquín, terminales con contraseña y radar, trampas de cable que se desactivan y puente en los coches con alarma)",
+ "build": 7,
+ "hash": "1cc0cb8",
+ "fecha": "2026-10-15T00:20:35Z",
+ "mensaje": "Gestión: entrada con Google y rol admin, pestaña Roles (SQL 35); TODO al día",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

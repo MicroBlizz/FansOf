@@ -6,7 +6,7 @@ function limpiaPartida() {
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };
-  J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
+  minijuegoCierra(); J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
   TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
@@ -47,7 +47,7 @@ function empiezaPartida(modo) {
       cambiaPostura(e, posturaBot());
       cerebroCamaleon(e, mana); e.sitio = eligeSitio(e, ocupados); ocupados.push(e.sitio); escondeYa(e);
     });
-    cambiaFase('cuenta');
+    cambiaFase('prep');      // en solitario la preparación es solo el minijuego de los wakameles (REGLAS.prepCazador)
   }
   avanzaCamara(0, true);
   refrescaHud(true);
@@ -55,11 +55,13 @@ function empiezaPartida(modo) {
 
 function cambiaFase(f) {
   J.fase = f; J.tFase = 0;
+  if (f !== 'prep') minijuegoCierra();
   if (f === 'prep') {
-    J.reloj = REGLAS.prep; musica('menu');
-    if (J.pvp && J.modo === 'cazador') cartel(tr('¡ERES CAZADOR!'), tr('Espera en Recursos Humanos: los colados se están pintando'));
+    J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica('menu');
+    if (J.modo === 'cazador') { cartel(J.pvp ? tr('¡ERES CAZADOR!') : tr('¡CALENTAMIENTO!'), tr('Mientras los colados se pintan, caza wakameles y gana cartas de despido')); minijuegoEmpieza(); }
     else cartel(tr('¡PÍNTATE!'), tr('Busca un sitio, cópiale los colores y congélate'));
   } else if (f === 'cuenta') {
+    for (const h of J.cazadores) if (h.bot) h.balas = Math.min(REGLAS.balas, REGLAS.balasIni + Math.floor(rand(1, REGLAS.balasExtra + 1)));   // los becarios bot también juegan a los wakameles (en el PvP manda lo que sincroniza el anfitrión)
     J.reloj = REGLAS.cuenta; J.digito = 0;   // el taller no se cierra: quien está pintando sigue (solo se le avisa)
     for (const e of J.camaleones) if (e.bot && e.bot.estado !== 'quieto') escondeYa(e);
     // si se te acaba el tiempo sin congelarte, te quedas congelado donde estés (luego puedes moverte, bajo tu cuenta y riesgo)

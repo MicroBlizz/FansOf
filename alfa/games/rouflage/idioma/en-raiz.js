@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.9
+  "<b>CAZADORES CON 2 CARTAS</b>: los becarios salen con 2 cartas de despido en vez de 5, pero mientras los colados se pintan juegan a «Caza wakameles»: tocan los bichos que asoman de los agujeros y cada 4 aciertos ganan una carta extra, hasta 5 en total. En solitario como cazador hay 30 segundos de calentamiento antes de la cuenta atrás.": "<b>HUNTERS WITH 2 CARDS</b>: hunters now start with 2 firing cards instead of 5, but while the chameleons paint they play «Whack the wakamele»: tap the critters popping out of the holes and every 4 hits earns an extra card, up to 5 in total. Playing solo as a hunter there are 30 seconds of warm-up before the countdown.",
+  "Los wakameles han pedido el convenio de los topos de feria. Phony ya les cobra la entrada.": "The wakamele have demanded the same contract as fairground moles. Phony already charges them admission.",
   // 0.2.8
   "<b>LA SILUETA, SOLO A LOS PASADOS DE LISTOS</b>: el contorno que brilla al cazador solo sale si te pones al 100 % de camuflaje, que es imposible de ver. Al 99 % ya no te delata: para despistar, usa señuelos.": "<b>THE OUTLINE, ONLY FOR SHOW-OFFS</b>: the outline that glows for the hunter only shows if you reach 100 % camouflage, which is impossible to see. At 99 % it no longer gives you away: use decoys to distract.",
   "<b>SEÑUELOS DE LEJOS</b>: al elegir el señuelo la cámara se abre y puedes pintar lejos de ti, hasta donde marca un aro.": "<b>DECOYS FROM AFAR</b>: when you pick the decoy tool the camera opens up and you can paint away from you, as far as a ring shows.",

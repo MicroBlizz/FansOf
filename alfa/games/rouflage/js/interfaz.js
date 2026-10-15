@@ -77,7 +77,7 @@ function refrescaHud(todo) {
   if (!enPartida) { E('peligro').style.opacity = 0; return; }
   const cam = yo.clase === 'camaleon', caza = J.fase === 'caza';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
-  ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? tr('Píntate') : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
   // lo de cada papel

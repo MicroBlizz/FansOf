@@ -82,3 +82,11 @@
 .gal-ficha.gana { background: rgba(126, 224, 74, 0.18); border-color: var(--gold); }
 .gal-ficha.pierde { background: rgba(255, 75, 92, 0.14); }
 .gal-ficha.gana::before { content: '★'; position: absolute; top: -12px; right: -6px; font-size: 22px; color: var(--gold); text-shadow: 0 2px 0 var(--outline), 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 -2px 0 var(--outline); }
+
+/* ---------- el retrato robot (modos-retrato.js): la tira de fichas de los colados para los becarios ---------- */
+#retratos { position: absolute; top: calc(var(--sup) + 92px); left: 50%; transform: translateX(-50%); display: flex; gap: 6px; max-width: calc(100% - 24px); overflow-x: auto; padding: 4px; pointer-events: none; }
+#retratos figure { margin: 0; display: grid; justify-items: center; gap: 1px; flex: none; }
+#retratos canvas { width: 48px; height: 57px; border-radius: 8px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+#retratos figcaption { font-size: 10px; font-weight: 800; color: var(--ink); text-shadow: 0 1px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline); max-width: 56px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#retratos figure.fuera { opacity: 0.45; }
+#retratos figure.fuera canvas { filter: grayscale(1); }

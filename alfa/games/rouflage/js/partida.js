@@ -6,7 +6,7 @@ function limpiaPartida() {
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };
-  practicaCierra(); modoPon(null); J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
+  practicaCierra(); modoPon(null); modoLimpia(); J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
   TALLER.herr = 'pincel'; TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
@@ -64,7 +64,8 @@ function cambiaFase(f) {
     else cartel(tr('¡PÍNTATE!'), tr('Busca un sitio, cópiale los colores y congélate'));
   } else if (f === 'cuenta') {
     for (const h of J.cazadores) if (h.bot) h.balas = Math.min(REGLAS.balas, REGLAS.balasIni + Math.floor(rand(1, REGLAS.balasExtra + 1)));   // los becarios bot también hacen las prácticas (en el PvP manda lo que sincroniza el anfitrión)
-    J.reloj = REGLAS.cuenta; J.digito = 0;   // el taller no se cierra: quien está pintando sigue (solo se le avisa)
+    J.reloj = modoEs('retrato') ? RETRATO.cuenta : REGLAS.cuenta; J.digito = 0;
+    if (modoEs('retrato')) { retratoPinta(true); if (J.modo === 'cazador') cartel(tr('SE BUSCAN'), tr('Memoriza sus fichas: ahí abajo tienes su pintura y su postura'), true); }   // el taller no se cierra: quien está pintando sigue (solo se le avisa)
     for (const e of J.camaleones) if (e.bot && e.bot.estado !== 'quieto') escondeYa(e);
     // si se te acaba el tiempo sin congelarte, te quedas congelado donde estés (luego puedes moverte, bajo tu cuenta y riesgo)
     if (J.modo === 'camaleon' && J.yo && !J.yo.congelado) { congela(J.yo); play('congela'); }
@@ -73,6 +74,7 @@ function cambiaFase(f) {
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
+    modoEmpiezaCaza();      // los papeles secretos y el silbato (modos-extra.js)
     musica(temaDe('caza')); play('comienzaCaza');
     cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
   }
@@ -86,7 +88,7 @@ function avanzaSilbidos(dt) {
   for (const e of J.camaleones) {
     if (e.fuera) continue;
     e.pts.aguante += dt;
-    if (e.congelado && e.enVista) e.pts.narices += dt;   // delante de sus narices: en la luz de un becario sin que te vea
+    if (e.congelado && e.enVista) e.pts.narices += dt * modoNarices(e);   // delante de sus narices: en la luz de un becario sin que te vea
     if (e.remoto) continue;      // PvP: el silbido de cada uno lo cuenta su dueño (o el anfitrión, si es de la máquina) y avisa a los demás
     e.silbido -= dt;
     if (e.jugador && e.silbido <= 5 && !e.avisado) { e.avisado = true; avisa(tr('Silbido obligatorio en 5 segundos'), 'aviso'); play('tick'); }
@@ -171,11 +173,11 @@ function miraLosOjos() {
 //   colado: camuflaje × 3 + segundos delante de sus narices × 12 + silbidos por gusto × 25 + segundos aguantados × 2 + 300 si no le pillan
 //   becario: despidos × 150 − despidos improcedentes × 30 + (si no queda nadie) segundos de sobra × 4 y cartas que le quedan × 40
 function marcadorDe(e) {
-  if (J.pvp && e.puntosRed != null) return e.puntosRed + (e.galeria || 0);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
+  if (J.pvp && e.puntosRed != null) return e.puntosRed + (e.galeria || 0) + (e.bonus || 0);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
   const k = e.pts;
-  if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300)) + (e.galeria || 0);
+  if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * (extraOn('halcon') ? HALCON.peso : HALCON.pesoNormal) + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300)) + (e.galeria || 0) + (e.bonus || 0);
   const colado = e.contagiado ? e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 : 0;      // Contagio: lo ganado de colado se queda
-  return Math.max(0, Math.round(colado + k.aciertos * 150 - k.fallos * 30 + (escondidos().length ? 0 : Math.max(0, J.reloj) * 4 + Math.max(0, e.balas) * 40)));
+  return Math.max(0, Math.round(colado + k.aciertos * 150 - k.fallos * 30 + (escondidos().length ? 0 : Math.max(0, J.reloj) * 4 + Math.max(0, e.balas) * 40))) + (e.bonus || 0);
 }
 function clasificacion() {
   return J.entes.map(e => ({
@@ -215,6 +217,7 @@ function termina(victoria, motivo, fin) {
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   galeriaPrepara();      // la galería de disfraces, si está puesta (galeria.js)
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
+  modoResultado(J.resultado, victoria); victoria = J.resultado.victoria;      // el bufón, el ojo de halcón y el retrato robot cambian el resultado
   musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);
   if (J.pvp) rfpCierra(victoria);      // PvP: se apunta el resultado en el servidor

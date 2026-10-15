@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.12-a79.898f81d"></script>
+<script src="../../core/js/nucleo.js?v=0.2.12-a80.d1ab57c"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -30,6 +30,7 @@
     </div>
   </div>
   <ol id="ranking" hidden></ol>
+  <div id="retratos" hidden></div>
   <div id="estado">
     <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
     <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>
@@ -391,6 +392,8 @@ NUCLEO.juego({
     'js/controles.js',
     'js/entrenamiento.js',
     'js/modos.js',
+    'js/modos-extra.js',
+    'js/modos-retrato.js',
     'js/partida.js',
     'js/interfaz.js',
     'js/galeria.js',

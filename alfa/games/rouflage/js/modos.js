@@ -8,10 +8,14 @@
 const MODOS = {
   normal: { nombre: 'NORMAL', texto: 'Los colados se esconden, los becarios los buscan. Lo de siempre.' },
   contagio: { nombre: 'CONTAGIO', texto: 'Al despedirte te dan la camisa de becario: sales de Recursos Humanos a cazar a los tuyos.' },
+  retrato: { nombre: 'RETRATO ROBOT', texto: 'Los becarios ven la ficha de cada colado antes de salir. No hay bandos: gana quien más puntos sume.' },
 };
 const EXTRAS = {
   apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
   galeria: { nombre: 'Galería de disfraces', texto: 'Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.' },
+  halcon: { nombre: 'Ojo de halcón', texto: 'Quedarse quieto dentro de la luz de un becario da muchos puntos; más cuanto más cerca. Gana quien se esconde a la vista.' },
+  bufon: { nombre: 'El bufón', texto: 'Un colado es el bufón en secreto: solo gana si lo despiden en el último minuto. Antes, pierde.' },
+  silbato: { nombre: 'Silbato caliente', texto: 'Un colado lleva un silbato que suena solo: pásaselo a otro tocándole antes de que explote.' },
 };
 const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
@@ -47,6 +51,7 @@ function modoElegidoGuarda() { try { localStorage.setItem('rouflage-modo', JSON.
 // un colado despedido (lo llama despide): se queda su sello un momento y luego se hace becario
 function contagioDespedido(k) { if (modoEs('contagio')) k.contagio = 1.2; }
 function modoAvanza(dt) {
+  silbatoAvanza(dt); retratoAvanza(dt);
   if (!modoEs('contagio') || J.fase !== 'caza') return;
   for (const k of J.camaleones) if (k.fuera && k.contagio > 0 && (k.contagio -= dt) <= 0) contagia(k);
 }

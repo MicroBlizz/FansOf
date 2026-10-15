@@ -55,6 +55,7 @@ function nvEnemigo(S, tipo, x, y, rango) {
     if (d.esc) d.esc = Math.round(d.esc * Math.pow(1.2, rango - 1));
   }
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
+  if (S.peligro > 1) { const kp = 1 + 0.25 * (S.peligro - 1); e.hp = e.hpMax = Math.round(e.hp * kp); }   // sectores peligrosos: enemigos más duros
   e.armas = nvArmasEnemigo(tipo, rango);
   e.kf = nvFactor(rango);   // el alcance y el tamaño de las balas crecen con la nave, igual que las tuyas
   if (e.armas) e.alcMax = Math.max(...e.armas.map(w => NV_ARMA_E[w.tam].alc)) * e.kf;
@@ -159,11 +160,12 @@ function nvMuere(S, e) {
 }
 // La chatarra queda flotando hasta que la nave se acerca (imán).
 function nvChatarra(S, x, y, valor) {
+  valor *= 1 + (S.chatExtra || 0);
   const k = Math.max(1, Math.min(6, Math.round(valor / 4)));
   for (let i = 0; i < k; i++) S.restos.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 30, v: valor / k, t: 0, ang: Math.random() * 6.28 });
 }
 function nvDanoNave(S, d) {
-  const n = S.nave, rd = d * (1 - (S.mejoras.blindaje || 0));
+  const n = S.nave, rd = d * (1 - (S.mejoras.blindaje || 0)) * (1 + 0.15 * ((S.peligro || 1) - 1));
   let r = rd;
   if (n.esc && n.esc.hp > 0) { const a = Math.min(n.esc.hp, r); n.esc.hp -= a; r -= a; n.esc.sin = 3; }
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;

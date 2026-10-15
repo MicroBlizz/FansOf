@@ -1,8 +1,8 @@
 {
- "build": 119,
- "hash": "1bf3de8",
- "fecha": "2026-10-15T21:48:33Z",
- "mensaje": "Fans of Rouflage 0.2.22: los botones del título a todo color (la nota pasa encima de la 0.2.21, que salió antes)",
+ "build": 120,
+ "hash": "ca80da4",
+ "fecha": "2026-10-15T22:40:12Z",
+ "mensaje": "Nova: campaña con galaxia hexagonal de sectores, peligro, aleación por misión y mejoras de la nave capital que se guardan entre partidas",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

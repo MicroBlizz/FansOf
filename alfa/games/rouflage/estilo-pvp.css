@@ -94,3 +94,5 @@
 /* ---------- el chivatazo del fantasma (modos-fantasma.js): un botón más, encima del poder ---------- */
 .accion.chivato { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 166px); width: 84px; height: 84px; border-radius: 24px; background: linear-gradient(to bottom, #ffd6a0, #d9823a); }
 .accion.chivato small { font-weight: 800; font-size: 11px; color: var(--outline); }
+/* la tira va debajo de CARTAS / COLADOS (antes los pisaba); modos-retrato.js la ajusta si esa fila crece */
+#retratos { top: calc(var(--sup) + 120px); }

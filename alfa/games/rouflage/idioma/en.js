@@ -446,7 +446,7 @@ IDIOMA.add({
   "Le has pasado el silbato a {a}": "You passed the whistle to {a}",
   "¡El silbato ha explotado en manos de {a}!": "The whistle blew up in {a}'s hands!",
   "ti": "you",
-  "Silbato: {a} · {n} s": "Whistle: {a} · {n} s",
+  "Silbato {n} s · {a}": "Whistle {n} s · {a}",
   "El bufón era {a}: le han despedido en el último minuto y gana.": "The jester was {a}: fired in the last minute, so they win.",
   "El bufón era {a}: le han despedido demasiado pronto.": "The jester was {a}: fired too early.",
   "El bufón era {a}: nadie le ha hecho caso.": "The jester was {a}: nobody paid any attention.",

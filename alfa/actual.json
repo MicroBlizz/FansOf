@@ -1,8 +1,8 @@
 {
- "build": 34,
- "hash": "1cc676f",
- "fecha": "2026-10-15T07:38:11Z",
- "mensaje": "Rouflage 0.2.10: prácticas en la sala de espera en vez del Caza wakameles",
+ "build": 35,
+ "hash": "ac9e975",
+ "fecha": "2026-10-15T07:44:58Z",
+ "mensaje": "Nova: mapa grande con asteroides, nidos, pecios y capitanes que crecen, menú de naves, estaciones, minimapa y conducción hacia donde miras",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -18,7 +18,7 @@ function nvPesoTendencia(S, portador, carga) {
   return Math.min(4, k);
 }
 function nvCandidatas(S) {
-  const n = S.nave, out = [], libres = nvRanuras(n.rango).filter(r => !n.armas.some(w => w.slot === r.id));
+  const n = S.nave, out = [], libres = nvRanuras(n.rango, S).filter(r => !n.armas.some(w => w.slot === r.id));
   for (const sl of libres) {
     const tipos = (sl.cara === 'popa' ? [] : S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]);
     for (const portador of tipos) for (const carga of NV_CARGAS) {
@@ -82,6 +82,26 @@ function nvReroll(S) {
 }
 // Cada arma crece con su ranura (S→M→L según el rango).
 function nvAjustaTamanos(S) {
-  const sl = nvRanuras(S.nave.rango);
+  const sl = nvRanuras(S.nave.rango, S);
   for (const w of S.nave.armas) { const r = sl.find(x => x.id === w.slot); if (r && w.portador !== 'defensa') w.tam = r.tam; }
+}
+
+// ---------- estación: cambiar el arma de una ranura (cuesta chatarra de la cartera) ----------
+const NV_PRECIO_TAM = { S: 40, M: 90, L: 180 };
+function nvOfertasEstacion(S, slotId) {
+  const sl = nvRanuras(S.nave.rango, S).find(r => r.id === slotId), tipos = (S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]), out = [];
+  for (let i = 0; i < 40 && out.length < 3; i++) {
+    const p = tipos[Math.floor(Math.random() * tipos.length)], c = NV_CARGAS[Math.floor(Math.random() * NV_CARGAS.length)];
+    if (!out.some(o => o.portador === p && o.carga === c)) out.push({ portador: p, carga: c, precio: NV_PRECIO_TAM[sl.tam], slot: sl });
+  }
+  return out;
+}
+function nvCompraArma(S, oferta, viejo) {
+  if (S.cartera < oferta.precio) return false;
+  S.cartera -= oferta.precio;
+  const n = S.nave, w = nvArmaNueva(oferta.slot, oferta.portador, oferta.carga);
+  w.nivel = viejo.nivel;   // la mejora se conserva; la fusión no
+  n.armas.splice(n.armas.indexOf(viejo), 1, w);
+  if (S.mejoras.vampiro) w.vampiro = 1;
+  return true;
 }

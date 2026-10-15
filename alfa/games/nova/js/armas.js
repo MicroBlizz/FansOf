@@ -3,12 +3,14 @@
 'use strict';
 const NV_CARAS_DIR = { proa: [0, -1], babor: [-1, 0], estribor: [1, 0], dorsal: [0, -1], popa: [0, 1] };   // hacia dónde mira cada cara, en el sistema de la nave
 
+const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco útil baja de aquí (en datos-cascos.js la proa tiene 30°: por decidir)
+
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
-function nvRanuras(rango) {
-  const cuenta = {};
-  return novaPlantilla('animales', rango).map(r => {
+function nvRanuras(rango, S) {
+  const cuenta = {}, H = NOVA_PIEZAS.cascos[S.casco];
+  return novaPlantilla(H.faccion, rango).map(r => {
     cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
-    const id = r.cara + cuenta[r.cara], a = NOVA_PIEZAS.cascos.caza.ranuras.find(x => x.id === id);
+    const id = r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
     return Object.assign({ id, x: a.x, y: a.y }, r);
   });
 }
@@ -29,7 +31,7 @@ function nvDanoArma(w) {
   return d;
 }
 function nvPosRanura(S, id) {
-  const n = S.nave, a = NOVA_PIEZAS.cascos.caza.ranuras.find(x => x.id === id), e = n.escala, c = Math.cos(n.ang), s = Math.sin(n.ang);
+  const n = S.nave, a = NOVA_PIEZAS.cascos[S.casco].ranuras.find(x => x.id === id), e = n.escala, c = Math.cos(n.ang), s = Math.sin(n.ang);
   return { x: n.x + (a.x * c - a.y * s) * e, y: n.y + (a.x * s + a.y * c) * e };
 }
 
@@ -42,15 +44,17 @@ function nvArmas(S, dt) {
     w.x = pos.x; w.y = pos.y;
     if (w.portador === 'drones') { nvDrones(S, w, p, dt); continue; }
     const f = NV_CARAS_DIR[w.cara], dx = f[0] * Math.cos(n.ang) - f[1] * Math.sin(n.ang), dy = f[0] * Math.sin(n.ang) + f[1] * Math.cos(n.ang);
-    const alc = p.alcance * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = NOVA_CASCOS.caras[w.cara].arco / 2 * Math.PI / 180;
-    let obj = null, mejor = alc * alc;
+    const alc = p.alcance * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
+    let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
-      if (e.muerto) continue;
+      if (e.muerto || e.d.pasivo === 2) continue;
       const vx = e.x - w.x, vy = e.y - w.y, d2 = vx * vx + vy * vy;
       if (d2 > mejor) continue;
       if (w.cara !== 'dorsal') { const dot = (vx * dx + vy * dy) / Math.sqrt(d2 || 1); if (Math.acos(Math.max(-1, Math.min(1, dot))) > arco) continue; }
+      if (e.d.pasivo) { if (d2 < mejorR) { mejorR = d2; roca = e; } continue; }   // las rocas solo se disparan si no hay enemigos a tiro
       mejor = d2; obj = e;
     }
+    if (!obj) obj = roca;
     w.cd -= dt;
     if (w.rayo > 0) w.rayo -= dt;
     if (!obj) { w.ang += (Math.atan2(dy, dx) - w.ang) * Math.min(1, dt * 6); continue; }

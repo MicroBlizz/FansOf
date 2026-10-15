@@ -2,23 +2,26 @@
 // Cifras PROVISIONALES: se iteran con la partida (PLAN-NOVA.md, «Enemigos»).
 'use strict';
 const NV_ENEM = {
-  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 12, contacto: 10,  chat: 4,  tragable: 1, color: '#9be26b' },
-  fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 15, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8', tira: { cada: 1.7, dano: 9, alcance: 330, v: 250 } },
-  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 24, contacto: 22, chat: 18, tragable: 5, color: '#8a6bd1', esc: 150 },
-  jefe:      { nombre: 'Rey de los huesos', hp: 9000, vel: 56, r: 58, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
+  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 10,  chat: 4,  tragable: 1, color: '#9be26b' },
+  fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 21, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8', tira: { cada: 1.7, dano: 9, alcance: 330, v: 250 } },
+  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 22, chat: 18, tragable: 5, color: '#8a6bd1', esc: 150 },
+  asteroide: { nombre: 'Asteroide', hp: 60, vel: 0, r: 30, contacto: 0, chat: 10, tragable: 1, color: '#8a8fa8', pasivo: 1 },
+  nido:      { nombre: 'Nido', hp: 700, vel: 0, r: 62, contacto: 14, chat: 90, color: '#7ad06b', pasivo: 0, nido: 1 },
+  capitan:   { nombre: 'Capitán', hp: 1100, vel: 78, r: 52, contacto: 22, chat: 140, color: '#b49cff', esc: 200, capitan: 1 },
+  jefe:      { nombre: 'Rey de los huesos', hp: 9000, vel: 56, r: 80, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
 };
 // Oleadas: a partir de `desde` segundos aparece ese tipo cada `cada` segundos (por tandas de `lote`).
 const NV_OLEADAS = [
-  { tipo: 'rastrero', desde: 0, cada: 0.9, lote: 1 },
-  { tipo: 'rastrero', desde: 30, cada: 2.2, lote: 3 },
-  { tipo: 'fusilero', desde: 30, cada: 3.5, lote: 1 },
-  { tipo: 'sepulturero', desde: 80, cada: 9, lote: 1 },
-  { tipo: 'fusilero', desde: 110, cada: 3, lote: 2 }
+  { tipo: 'rastrero', desde: 0, cada: 1.6, lote: 1 },
+  { tipo: 'rastrero', desde: 60, cada: 4, lote: 3 },
+  { tipo: 'fusilero', desde: 60, cada: 6, lote: 1 },
+  { tipo: 'sepulturero', desde: 150, cada: 14, lote: 1 },
+  { tipo: 'fusilero', desde: 200, cada: 6, lote: 2 }
 ];
-const NV_TIEMPO_JEFE = 210;   // el jefe llega a los 210 s
+const NV_TIEMPO_JEFE = 660;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
 
 function nvEnemigo(S, tipo, x, y) {
-  const d = NV_ENEM[tipo], e = { tipo, d, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
+  const d = NV_ENEM[tipo], e = { tipo, d, rango: 1, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
   S.enem.push(e);
   return e;
 }
@@ -32,8 +35,9 @@ function nvSpawn(S, dt) {
     S.o_t[o.tipo + o.desde] = 0;
     for (let i = 0; i < o.lote; i++) { const a = Math.random() * 6.283, R = 560 + Math.random() * 120; nvEnemigo(S, o.tipo, n.x + Math.cos(a) * R, n.y + Math.sin(a) * R); }
   }
-  if (S.t >= NV_TIEMPO_JEFE) {
-    S.jefe = nvEnemigo(S, 'jefe', n.x + 520, n.y - 400);
+  if (S.capMuertos >= 3 || S.t >= NV_TIEMPO_JEFE) {
+    const a = Math.random() * 6.283, x = n.x + Math.cos(a) * 750, y = n.y + Math.sin(a) * 750, d = Math.hypot(x, y), k = d > NV_ARENA - 100 ? (NV_ARENA - 100) / d : 1;
+    S.jefe = nvEnemigo(S, 'jefe', x * k, y * k);
     S.jefe.cd = 3; S.jefe.cdInv = 7;
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
   }
@@ -50,6 +54,9 @@ function nvEnemigos(S, dt) {
     if (e.dot) { e.hp -= e.dot.dps * dt; S.stats.dano += e.dot.dps * dt; if ((e.dot.t -= dt) <= 0) e.dot = null; if (e.hp <= 0) { nvMuere(S, e); continue; } }
     if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
     const dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
+    if (e.d.nido) { if (dist < e.r + n.r) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 0.8; nvDanoNave(S, e.d.contacto); } } continue; }   // el nido no se mueve
+    if (e.d.pasivo) { if (dist < e.r + n.r && n.rango >= e.d.tragable) nvTraga(S, e); continue; }   // las rocas se comen al tocarlas
+    if (dist > 2600 && !e.d.jefe && !e.d.capitan) continue;   // lejos: dormido
     const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
     let vx = 0, vy = 0;
     if (e.d.tira) {   // el fusilero orbita a su alcance y dispara
@@ -57,7 +64,8 @@ function nvEnemigos(S, dt) {
       vx = ux * radial + -uy * 0.8; vy = uy * radial + ux * 0.8;
       e.cd -= dt * (apagado ? 0 : 1);
       if (e.cd <= 0 && dist < e.d.tira.alcance) { e.cd = e.d.tira.cada; S.eproy.push({ x: e.x, y: e.y, vx: ux * e.d.tira.v, vy: uy * e.d.tira.v, dano: e.d.tira.dano, vida: 2.5, r: 5 }); }
-    } else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }
+    } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
+    else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }
     else { vx = ux; vy = uy; }
     const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
     e.x += vx / l * v * dt; e.y += vy / l * v * dt;
@@ -65,11 +73,31 @@ function nvEnemigos(S, dt) {
     for (let j = i - 1; j >= Math.max(0, i - 12); j--) { const o = S.enem[j]; if (o.muerto) continue; const ax = e.x - o.x, ay = e.y - o.y, m = e.r + o.r, q = Math.hypot(ax, ay); if (q < m && q > 0.1) { const p = (m - q) * 0.4; e.x += ax / q * p; e.y += ay / q * p; o.x -= ax / q * p * 0.5; o.y -= ay / q * p * 0.5; } }
     // contacto con la nave: se traga (rango suficiente) o hace daño
     if (dist < e.r + n.r) {
-      if (e.d.tragable && n.rango >= e.d.tragable && !e.d.jefe) { nvTraga(S, e); continue; }
+      if ((e.d.tragable && n.rango >= e.d.tragable && !e.d.jefe) || (e.d.capitan && n.rango >= e.rango + 2)) { nvTraga(S, e); continue; }
       e.golpe -= dt;
       if (e.golpe <= 0 && !apagado) { e.golpe = 0.7; nvDanoNave(S, e.d.contacto); }
     }
   }
+}
+// El capitán patrulla, se come las rocas que encuentra (cada dos sube de rango y crece) y persigue y dispara si te acercas.
+function nvCapitan(S, e, dt, ux, uy, dist, apagado) {
+  e.vida = (e.vida || 0) + dt;
+  if (e.vida > 140 * e.rango && e.rango < 1 + Math.floor(S.t / 120)) nvCapitanSube(e);
+  if (dist < 1000) {
+    e.cd -= dt * (apagado ? 0 : 1);
+    if (e.cd <= 0 && dist < 700) { e.cd = Math.max(1.6, 3.6 - 0.35 * e.rango); for (const da of [-0.18, 0, 0.18]) { const a = Math.atan2(uy, ux) + da; S.eproy.push({ x: e.x, y: e.y, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, dano: 8 + 2 * e.rango, vida: 3, r: 6 }); } }
+    return [ux * (dist > 260 ? 1 : 0.1) - uy * 0.35, uy * (dist > 260 ? 1 : 0.1) + ux * 0.35];
+  }
+  let roca = null, m = 900 * 900;
+  for (const o of S.enem) if (o.d.pasivo === 1 && !o.muerto) { const q = (o.x - e.x) ** 2 + (o.y - e.y) ** 2; if (q < m) { m = q; roca = o; } }
+  if (!roca) return [Math.cos(e.fase += dt * 0.3), Math.sin(e.fase)];
+  const rx = roca.x - e.x, ry = roca.y - e.y, d = Math.hypot(rx, ry) || 1;
+  if (d < e.r + roca.r) { roca.muerto = true; e.comidos = (e.comidos || 0) + 1; if (e.comidos % 4 === 0 && e.rango < 1 + Math.floor(S.t / 120)) nvCapitanSube(e); }   // cada 4 rocas sube de rango, y nunca más rápido que el reloj
+  return [rx / d, ry / d];
+}
+function nvCapitanSube(e) {
+  if (e.rango >= 5) return;
+  e.rango++; e.r *= 1.1; e.hpMax *= 1.3; e.hp = Math.min(e.hpMax, e.hp + e.hpMax * 0.25); e.d = Object.assign({}, e.d, { contacto: e.d.contacto + 4 });
 }
 function nvJefe(S, e, dt, ux, uy, dist, apagado) {
   if (apagado) return;
@@ -84,13 +112,15 @@ function nvJefe(S, e, dt, ux, uy, dist, apagado) {
 }
 function nvTraga(S, e) {
   const n = S.nave;
-  e.muerto = true; n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.06 * Math.max(1, e.d.tragable * 0.6));
+  e.muerto = true; if (e.d.capitan) S.capMuertos++;
+  if (!e.d.pasivo) n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.06 * Math.max(1, (e.d.tragable || 3) * 0.6));
   nvChatarra(S, e.x, e.y, Math.round(e.d.chat * 1.5));
   S.fx.push({ t: 0.35, x: e.x, y: e.y, r: e.r * 1.3, color: '#9bffb0', tipo: 'onda' });
   S.nums.push({ x: e.x, y: e.y - 18, t: 0.9, txt: tr('¡Tragado!'), color: '#9bffb0', g: 1 }); S.stats.tragados++;
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++;
+  if (e.d.capitan) S.capMuertos++;
   nvChatarra(S, e.x, e.y, e.d.chat);
   S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
   for (let i = 0; i < 6; i++) S.parts.push({ x: e.x, y: e.y, vx: (Math.random() - 0.5) * 220, vy: (Math.random() - 0.5) * 220, t: 0.5, color: e.d.color });

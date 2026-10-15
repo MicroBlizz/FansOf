@@ -1,21 +1,34 @@
 // Fans of Nova · La partida: estado, bucle, movimiento de la nave, chatarra, rangos y fin de partida (prototipo de la fase 1).
 // El dibujo está en dibujo.js y los menús en interfaz.js. Todo el estado vive en S; no se guarda nada (la partida dura 3-5 min).
 'use strict';
-const NV_ARENA = 1500;                       // radio de la arena
-const NV_CHATARRA_RANGO = [130, 340, 700, 1250];   // chatarra acumulada para pasar a los rangos 2, 3, 4 y 5
+const NV_ESCALA_NAVE = 0.5;                // tamaño de la nave dibujada (1 = el PNG de arte tal cual); el hitbox sale de él: r = 90 × escala
+const NV_ARENA = 4200;                       // radio de la arena
+const NV_CHATARRA_RANGO = [150, 420, 900, 1700];   // chatarra acumulada para pasar a los rangos 2, 3, 4 y 5
 
-const NVP = { S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
+const NVP = { casco: 'caza', S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
 
-function nvNuevaPartida(semilla) {
+// Cascos del prototipo: cada facción empieza con un arma de su clase ya montada (afinidad de datos-cascos.js).
+const NV_CASCOS = {
+  caza:    { hp: 220, vel: 215, arma: ['flak', 'cinetica'] },
+  crucero: { hp: 170, vel: 190, arma: ['laser', 'termica'] },
+  fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
+};
+function nvNuevaPartida(casco) {
+  casco = casco || 'caza';
+  const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
   const S = {
-    t: 0, estado: 'cartas', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: true,
-    nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: 220, hpMax: 220, r: 26, escala: 1, armas: [], esc: null, golpeado: 0 },
+    t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
+    nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
     enem: [], proy: [], eproy: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
     stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
   };
+  S.nave.rAncho = alas ? alas.ancho / 2 : 200;   // semienvergadura en unidades de nave: el hitbox sale del dibujo
+  S.nave.r = 0.42 * S.nave.rAncho * S.nave.escala;
   NVP.S = S;
-  nvAbrirCartas(S);
+  const sl = nvRanuras(1, S)[0];
+  S.nave.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1]));
+  nvGeneraMundo(S);
   return S;
 }
 
@@ -26,6 +39,7 @@ function nvPaso(S, dt) {
   const n = S.nave;
   nvMueve(S, dt);
   nvSpawn(S, dt);
+  nvMundo(S, dt);
   nvEnemigos(S, dt);
   nvArmas(S, dt);
   nvProyectiles(S, dt);
@@ -45,20 +59,30 @@ function nvMueve(S, dt) {
   if (NVP.teclas.ArrowRight || NVP.teclas.d) ix += 1;
   if (NVP.teclas.ArrowUp || NVP.teclas.w) iy -= 1;
   if (NVP.teclas.ArrowDown || NVP.teclas.s) iy += 1;
-  if (NVP.auto) { const a = S.t * 0.6; ix = Math.cos(a); iy = Math.sin(a * 1.3); }   // bot de pruebas: da vueltas
+  if (NVP.auto) { const g = nvBotMeta(S); ix = g[0]; iy = g[1]; }   // bot de pruebas
   const m = Math.hypot(ix, iy); if (m > 1) { ix /= m; iy /= m; }
-  const vmax = 200 + 6 * (n.rango - 1);
+  const vmax = n.vel + 6 * (n.rango - 1);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
   const d = Math.hypot(n.x, n.y); if (d > NV_ARENA) { n.x *= NV_ARENA / d; n.y *= NV_ARENA / d; }
-  // la proa apunta al enemigo más cercano; sin enemigos, hacia donde vas
-  let obj = null, mejor = 1e12;
-  for (const en of S.enem) { const q = (en.x - n.x) ** 2 + (en.y - n.y) ** 2; if (!en.muerto && q < mejor) { mejor = q; obj = en; } }
-  let meta = n.ang;
-  if (obj && mejor < 700 * 700) meta = Math.atan2(obj.x - n.x, -(obj.y - n.y));
-  else if (m > 0.1) meta = Math.atan2(n.vx, -n.vy);
-  let df = meta - n.ang; while (df > Math.PI) df -= 6.283; while (df < -Math.PI) df += 6.283;
-  n.ang += Math.max(-4 * dt, Math.min(4 * dt, df));
+  // la proa mira hacia donde te mueves (parado, se queda como estaba); las armas son las que apuntan a los enemigos
+  if (m > 0.1) {
+    let df = Math.atan2(n.vx, -n.vy) - n.ang; while (df > Math.PI) df -= 6.283; while (df < -Math.PI) df += 6.283;
+    n.ang += Math.max(-7 * dt, Math.min(7 * dt, df));
+  }
+}
+// Bot de pruebas: va a la estación si tiene chatarra, si no a lo comestible más cercano (rocas, pecios, nidos, capitanes) y huye si le queda poca vida.
+function nvBotMeta(S) {
+  const n = S.nave;
+  let mejor = null, md = 1e12;
+  const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
+  for (const e of S.enem) if (!e.muerto && (e.d.pasivo === 1 || e.d.nido || (e.d.capitan && n.rango >= e.rango + 1))) mira(e.x, e.y, e.d.pasivo ? 1 : e.d.nido ? 1.4 : 1.8);
+  for (const p of S.pecios) mira(p.x, p.y, 0.7);
+  if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
+  if (S.jefe && !S.jefe.muerto) mejor = [S.jefe.x, S.jefe.y];
+  if (!mejor) return [Math.cos(S.t * 0.6), Math.sin(S.t * 0.7)];
+  const dx = mejor[0] - n.x, dy = mejor[1] - n.y, d = Math.hypot(dx, dy) || 1, k = n.hp < n.hpMax * 0.25 ? -1 : 1;
+  return [dx / d * k, dy / d * k];
 }
 function nvProyectilesEnemigos(S, dt) {
   const n = S.nave;
@@ -80,10 +104,10 @@ function nvRestos(S, dt) {
   }
 }
 function nvSumaChatarra(S, v) {
-  S.chat += v;
+  S.chat += v; S.cartera += v;
   const n = S.nave;
   while (n.rango < 5 && S.chat >= NV_CHATARRA_RANGO[n.rango - 1]) {
-    n.rango++; n.escala = 1 + 0.07 * (n.rango - 1); n.r = 26 * n.escala;
+    n.rango++; n.escala = NV_ESCALA_NAVE * (1 + 0.07 * (n.rango - 1)); n.r = 0.42 * n.rAncho * n.escala;
     n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.25);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
@@ -99,12 +123,13 @@ function nvBucle(ahora) {
   if (!S) return;
   const dt = Math.min(0.05, (ahora - (NVP.ult || ahora)) / 1000); NVP.ult = ahora;
   if (NVP.auto && S.estado === 'cartas') nvElegirCarta(S, 0);   // bot de pruebas (?auto=1): elige la primera carta
+  if (NVP.auto && S.estado === 'estacion') nvBotEstacion(S);
   for (let i = 0; i < NVP.vel; i++) nvPaso(S, dt);
   nvDibuja(S);
   NVP.raf = requestAnimationFrame(nvBucle);
 }
-function nvEmpieza() {
-  nvNuevaPartida();
+function nvEmpieza(casco) {
+  nvNuevaPartida(casco);
   NVP.ult = 0;
   cancelAnimationFrame(NVP.raf);
   NVP.raf = requestAnimationFrame(nvBucle);
@@ -113,12 +138,19 @@ function nvParar() { cancelAnimationFrame(NVP.raf); NVP.S = null; }
 
 // Simulación sin dibujar, para el bot de pruebas: devuelve cuando acaba la partida o pasan `max` segundos.
 function nvSimular(max, dt, bot) {
-  const S = NVP.S || nvNuevaPartida();
+  const S = NVP.S || nvNuevaPartida(NVP.casco);
   NVP.auto = true;
   let pasos = 0;
   while (S.estado !== 'victoria' && S.estado !== 'derrota' && S.t < max && pasos++ < 400000) {
     if (S.estado === 'cartas') { nvElegirCarta(S, bot ? bot(S) : 0); continue; }
+    if (S.estado === 'estacion') { nvBotEstacion(S); continue; }
     nvPaso(S, dt || 1 / 30);
   }
   return S;
+}
+
+// Bot en la estación: repara si hace falta y, si no, se va (los cambios de arma son cosa del jugador).
+function nvBotEstacion(S) {
+  if (S.nave.hp < S.nave.hpMax * 0.6 && S.cartera >= 40) { S.cartera -= 40; S.nave.hp = S.nave.hpMax; }
+  S.est.cd = 25; S.estado = 'juego'; S.est = null;
 }

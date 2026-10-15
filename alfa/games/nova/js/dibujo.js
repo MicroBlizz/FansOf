@@ -2,8 +2,12 @@
 // Las piezas se colocan con los anclajes de datos-piezas.js: pivote de la pieza = anclaje (ver docs/nova/naves-modulares.md).
 'use strict';
 const NVA = { img: {}, meta: {}, listo: false, base: 'arte/' };   // piezas del arte final (cambiar base a 'bocetos/piezas/' usa el placeholder)
-const NV_MOTOR_RANGO = [['simple', 'S'], ['simple', 'M'], ['doble', 'M'], ['doble', 'M'], ['triple', 'M']];
-const NV_VISTA = 900;   // unidades de mundo que caben a lo ancho de la pantalla
+// Motor por rango: simple → doble → triple, y de tamaño S/M hasta el máximo de ese casco (tamMax de datos-piezas.js).
+function nvMotorRango(casco, rango) {
+  const L = NOVA_PIEZAS.cascos[casco].motor.tamMax === 'L';
+  return [['simple', L ? 'M' : 'S'], ['simple', 'M'], ['doble', L ? 'L' : 'M'], ['doble', L ? 'L' : 'M'], ['triple', L ? 'L' : 'M']][rango - 1];
+}
+const NV_VISTA = 800;   // unidades de mundo que caben a lo ancho de la pantalla
 
 function nvCargaArte(listo) {
   fetch(NVA.base + 'piezas.json').then(r => r.json()).then(d => {
@@ -57,14 +61,14 @@ function nvTorreta(c, w, r, rot) {
   c.restore();
 }
 function nvDibujaNave(c, S) {
-  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos.caza, [tm, tam] = NV_MOTOR_RANGO[n.rango - 1], r = NOVA_PIEZAS.radioTobera[tam];
+  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam];
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);
-  nvPieza(c, 'caza-alas', H.alas.x, H.alas.y);
+  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y);
   nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y);
-  nvPieza(c, 'caza-casco', 0, 0);
-  const abiertas = nvRanuras(n.rango);
+  nvPieza(c, S.casco + '-casco', 0, 0);
+  const abiertas = nvRanuras(n.rango, S);
   for (const sl of abiertas) {
     const rr = NOVA_PIEZAS.radioRanura[sl.tam];
     nvPlaca(c, sl.x, sl.y, rr);
@@ -73,10 +77,11 @@ function nvDibujaNave(c, S) {
     if (w.portador === 'defensa') { c.beginPath(); for (let k = 0; k < 6; k++) { const a = k * 1.047 - 1.57; c[k ? 'lineTo' : 'moveTo'](sl.x + Math.cos(a) * rr, sl.y + Math.sin(a) * rr); } c.closePath(); c.fillStyle = w.carga === 'energia' ? '#4aa8ff' : '#ff9a3c'; c.fill(); c.stroke(); continue; }
     c.save(); c.translate(sl.x, sl.y); nvTorreta(c, w, rr, (w.ang || 0) - n.ang + 1.5708); c.restore();
   }
-  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvPieza(c, 'caza-casco', 0, 0); }
+  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvPieza(c, S.casco + '-casco', 0, 0); }
   c.restore();
   // escudo del jugador: una pompa que se apaga al caer
-  if (n.esc && n.esc.hp > 0) { const R = 118 * e; c.beginPath(); c.arc(n.x, n.y, R, 0, 6.283); c.fillStyle = 'rgba(74,168,255,' + 0.10 * n.esc.hp / n.esc.cap + ')'; c.fill(); c.lineWidth = 2; c.strokeStyle = 'rgba(160,220,255,' + (0.25 + 0.5 * n.esc.hp / n.esc.cap) + ')'; c.stroke(); }
+  if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; nvPieza(c, S.casco + '-escudo', H.escudo.x, H.escudo.y); c.restore(); }
+  else if (n.esc && n.esc.hp > 0) { const R = 118 * e; c.beginPath(); c.arc(n.x, n.y, R, 0, 6.283); c.fillStyle = 'rgba(74,168,255,' + 0.10 * n.esc.hp / n.esc.cap + ')'; c.fill(); c.lineWidth = 2; c.strokeStyle = 'rgba(160,220,255,' + (0.25 + 0.5 * n.esc.hp / n.esc.cap) + ')'; c.stroke(); }
   // drones orbitando
   for (const w of n.armas) if (w.drones) for (const d of w.drones) { c.beginPath(); c.arc(d.x, d.y, 7, 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2; c.strokeStyle = '#1a0f2e'; c.stroke(); }
 }
@@ -87,7 +92,17 @@ function nvDibujaEnemigo(c, e, S) {
   c.save(); c.translate(e.x, e.y);
   if (e.est.sobrecalentado > 0 || e.calor > 40) { c.beginPath(); c.arc(0, 0, r + 5, 0, 6.283); c.fillStyle = 'rgba(255,75,75,' + Math.min(0.5, e.calor / 200 + 0.1) + ')'; c.fill(); }
   c.lineWidth = 2.5; c.strokeStyle = '#1a0f2e'; c.fillStyle = e.flash > 0 ? '#ffffff' : d.color;
-  if (e.tipo === 'rastrero') {   // cráneo con patas
+  if (e.tipo === 'asteroide') {   // roca irregular
+    c.rotate(e.ang); c.beginPath();
+    for (let k = 0; k < 9; k++) { const a = k * 0.698, q = r * (0.78 + 0.28 * Math.sin(k * 2.3 + e.forma * 9)); c[k ? 'lineTo' : 'moveTo'](Math.cos(a) * q, Math.sin(a) * q); }
+    c.closePath(); c.fillStyle = e.flash > 0 ? '#fff' : '#7b7f9c'; c.fill(); c.stroke();
+    c.fillStyle = 'rgba(30,25,60,.45)'; c.beginPath(); c.arc(-r * 0.25, -r * 0.1, r * 0.22, 0, 6.283); c.arc(r * 0.3, r * 0.25, r * 0.15, 0, 6.283); c.fill();
+  } else if (e.tipo === 'nido') {   // nido de huesos que late
+    const lat = 1 + 0.05 * Math.sin(S.t * 5 + e.fase);
+    c.scale(lat, lat); c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fillStyle = e.flash > 0 ? '#fff' : '#3d7a3a'; c.fill(); c.stroke();
+    c.fillStyle = '#d8e6c8'; for (let k = 0; k < 6; k++) { const a = k * 1.047 + e.fase; c.beginPath(); c.moveTo(Math.cos(a) * r * 0.5, Math.sin(a) * r * 0.5); c.lineTo(Math.cos(a + 0.18) * r * 1.2, Math.sin(a + 0.18) * r * 1.2); c.lineTo(Math.cos(a - 0.18) * r * 1.2, Math.sin(a - 0.18) * r * 1.2); c.fill(); c.stroke(); }
+    c.fillStyle = '#9bff8a'; c.beginPath(); c.arc(0, 0, r * 0.3, 0, 6.283); c.fill(); c.stroke();
+  } else if (e.tipo === 'rastrero') {   // cráneo con patas
     c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); c.stroke();
     c.fillStyle = '#1a0f2e'; c.beginPath(); c.arc(-r * 0.35, -r * 0.1, r * 0.22, 0, 6.283); c.arc(r * 0.35, -r * 0.1, r * 0.22, 0, 6.283); c.fill();
   } else if (e.tipo === 'fusilero') {   // nave de huesos en flecha
@@ -97,13 +112,15 @@ function nvDibujaEnemigo(c, e, S) {
   } else {   // sepulturero y jefe: lápida / corona de huesos
     c.beginPath(); for (let k = 0; k < 8; k++) { const a = k * 0.785 + 0.39; c[k ? 'lineTo' : 'moveTo'](Math.cos(a) * r, Math.sin(a) * r); } c.closePath(); c.fill(); c.stroke();
     c.fillStyle = '#1a0f2e'; c.beginPath(); c.arc(-r * 0.3, -r * 0.1, r * 0.2, 0, 6.283); c.arc(r * 0.3, -r * 0.1, r * 0.2, 0, 6.283); c.fill();
+    if (d.capitan) { c.fillStyle = '#ffd93d'; c.font = '800 ' + r * 0.7 + 'px Baloo 2, sans-serif'; c.textAlign = 'center'; c.fillText(String(e.rango), 0, r * 0.62); }
     if (d.jefe) { c.fillStyle = '#ffd93d'; for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(k * r * 0.3 - 6, -r * 0.95); c.lineTo(k * r * 0.3, -r * 1.3); c.lineTo(k * r * 0.3 + 6, -r * 0.95); c.fill(); } }
   }
   if (e.esc > 0 && !(e.est.escudoCaido > 0)) { c.beginPath(); c.arc(0, 0, r + 6, 0, 6.283); c.lineWidth = 3; c.strokeStyle = 'rgba(120,190,255,' + (0.3 + 0.6 * e.esc / e.escMax) + ')'; c.stroke(); }
   if (e.est.brecha > 0) { c.strokeStyle = '#ff9a3c'; c.lineWidth = 2; c.beginPath(); c.moveTo(-r * 0.5, -r * 0.6); c.lineTo(0, 0); c.lineTo(r * 0.4, r * 0.5); c.stroke(); }
   if (e.est.marcado > 0) { c.strokeStyle = '#ffd93d'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 9, 0, 6.283); c.moveTo(-r - 14, 0); c.lineTo(r + 14, 0); c.moveTo(0, -r - 14); c.lineTo(0, r + 14); c.stroke(); }
   if (e.est.apagado > 0) { c.fillStyle = 'rgba(180,107,255,.45)'; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); }
-  if (e.hp < e.hpMax || d.jefe) { c.fillStyle = '#1a0f2e'; c.fillRect(-r, -r - 12, 2 * r, 5); c.fillStyle = d.jefe ? '#ff4b9a' : '#ff6b6b'; c.fillRect(-r, -r - 12, 2 * r * Math.max(0, e.hp / e.hpMax), 5); }
+  if (d.capitan) { c.fillStyle = '#fff'; c.font = '800 13px Baloo 2, sans-serif'; c.textAlign = 'center'; c.lineWidth = 3; c.strokeText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); c.fillText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); }
+  if (e.hp < e.hpMax || d.jefe || d.capitan) { c.fillStyle = '#1a0f2e'; c.fillRect(-r, -r - 12, 2 * r, 5); c.fillStyle = d.jefe ? '#ff4b9a' : '#ff6b6b'; c.fillRect(-r, -r - 12, 2 * r * Math.max(0, e.hp / e.hpMax), 5); }
   c.restore();
 }
 function nvFormaCarga(c, forma, x, y, r) {
@@ -115,11 +132,32 @@ function nvFormaCarga(c, forma, x, y, r) {
   else c.arc(x, y, r, 0, 6.283);
   c.fill();
 }
+function nvDibujaEstacion(c, st, t) {
+  c.save(); c.translate(st.x, st.y);
+  c.lineWidth = 4; c.strokeStyle = '#1a0f2e';
+  c.rotate(t * 0.15); c.fillStyle = '#5a6bb8';
+  for (let k = 0; k < 4; k++) { c.rotate(1.5708); c.fillRect(-9, 30, 18, 62); c.strokeRect(-9, 30, 18, 62); c.fillStyle = '#9fb3ff'; c.fillRect(-18, 84, 36, 14); c.strokeRect(-18, 84, 36, 14); c.fillStyle = '#5a6bb8'; }
+  c.rotate(-t * 0.15);
+  c.beginPath(); c.arc(0, 0, 34, 0, 6.283); c.fillStyle = '#c8d2ff'; c.fill(); c.stroke();
+  c.beginPath(); c.arc(0, 0, 16, 0, 6.283); c.fillStyle = st.cd > 0 ? '#5a6bb8' : '#6fe3ff'; c.fill(); c.stroke();
+  c.restore();
+}
+function nvDibujaPecio(c, p, t) {
+  c.save(); c.translate(p.x, p.y); c.rotate(p.ang + Math.sin(t) * 0.1);
+  c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.fillStyle = p.rara ? '#ffd93d' : '#6f7fb8';
+  c.beginPath(); c.moveTo(0, -p.r); c.lineTo(p.r * 0.7, p.r * 0.2); c.lineTo(p.r * 0.2, p.r * 0.8); c.lineTo(-p.r * 0.5, p.r * 0.5); c.lineTo(-p.r * 0.8, -p.r * 0.1); c.closePath(); c.fill(); c.stroke();
+  c.beginPath(); c.arc(0, 0, p.r * 0.28, 0, 6.283); c.fillStyle = p.rara ? '#fff6c2' : '#6fe3ff'; c.fill();
+  c.restore();
+}
 function nvDibujaMundo(c, S) {
-  const n = S.nave;
-  c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 6; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
+  const n = S.nave, cx = S.cam.x, cy = S.cam.y, V = NV_VISTA * 0.75;
+  for (const b of S.nebulosas) { if (Math.abs(b.x - cx) > b.r + V || Math.abs(b.y - cy) > b.r + V) continue; const g = c.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, b.col + '55'); g.addColorStop(1, b.col + '00'); c.fillStyle = g; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); }
+  const cerca = o => Math.abs(o.x - cx) < V && Math.abs(o.y - cy) < V * 1.6;
+  for (const st of S.estaciones) if (cerca(st)) nvDibujaEstacion(c, st, S.t);
+  for (const p of S.pecios) if (cerca(p)) nvDibujaPecio(c, p, S.t * 2);
+  c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 10; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
   for (const r of S.restos) { c.fillStyle = '#ffd93d'; c.save(); c.translate(r.x, r.y); c.rotate(r.ang + r.t * 2); c.fillRect(-4, -4, 8, 8); c.restore(); }
-  for (const e of S.enem) nvDibujaEnemigo(c, e, S);
+  for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const b of S.eproy) { c.fillStyle = '#ff6bd6'; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#fff'; c.stroke(); }
   nvDibujaNave(c, S);
   for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = 3 + w.rayo * 20; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }

@@ -21,3 +21,7 @@
 .nv-boton { align-self: center; padding: 10px 26px; border-radius: 999px; border: 3px solid #1a0f2e; background: linear-gradient(#ffd93d, #f29a2e); color: #2a1500; font: 800 17px 'Baloo 2', sans-serif; cursor: pointer; }
 .nv-boton:disabled { opacity: .45; cursor: default; }
 .nv-fila { display: flex; justify-content: space-between; font: 700 16px 'Baloo 2', sans-serif; color: #fff; border-bottom: 1px solid rgba(255, 255, 255, .15); padding: 3px 4px; }
+.nv-nave { flex-direction: row; align-items: center; gap: 12px; }
+.nv-nave canvas { width: 66px; height: 90px; flex: none; }
+.nv-ntxt { display: flex; flex-direction: column; gap: 2px; }
+.nv-carta:disabled { opacity: .45; cursor: default; }

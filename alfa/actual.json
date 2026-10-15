@@ -1,8 +1,8 @@
 {
- "build": 74,
- "hash": "4cff1c2",
- "fecha": "2026-10-15T14:26:40Z",
- "mensaje": "Fans of Rouflage: música por mapa (cada mapa trae sus temas de taller, caza y recta final) y los tres temas de las Backrooms",
+ "build": 75,
+ "hash": "bfdbe59",
+ "fecha": "2026-10-15T17:42:44Z",
+ "mensaje": "Rouflage: la clasificación en vivo se actualiza en todas las partidas (usaba el reloj de la partida, que vuelve a 0), sale en toda la partida y se esconde en el título",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

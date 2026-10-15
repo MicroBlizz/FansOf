@@ -76,11 +76,11 @@ function pistaDeAhora() {
 /* ---------- la clasificación en vivo (botón de la esquina): quién va primero, solo números sobre el mapa ---------- */
 const RANKING = { abierto: (() => { try { return localStorage.getItem('rouflage-ranking') === '1'; } catch (_) { return false; } })(), t: 0, txt: '' };
 function refrescaRanking() {
-  const ver = RANKING.abierto && (J.fase === 'caza' || J.fase === 'fin') && !TALLER.abierto, el = E('ranking'), b = E('b-ranking');
+  const ver = RANKING.abierto && J.fase !== 'titulo' && J.fase !== 'paseo' && !TALLER.abierto, el = E('ranking'), b = E('b-ranking');
   if (b.classList.contains('puesto') !== RANKING.abierto) b.classList.toggle('puesto', RANKING.abierto);
-  if (el.hidden === ver) el.hidden = !ver;
-  if (!ver || J.t - RANKING.t < 0.5) return;      // dos veces por segundo basta
-  RANKING.t = J.t;
+  if (el.hidden === ver) { el.hidden = !ver; RANKING.txt = ''; }      // al volver a salir, se pinta de nuevo al momento
+  if (!ver || (RELOJ - RANKING.t < 0.5 && RANKING.txt)) return;      // dos veces por segundo basta (con el reloj general: J.t vuelve a 0 en cada partida)
+  RANKING.t = RELOJ;
   const html = clasificacion().map((r, i) => `<li class="${r.jugador ? 'yo' : ''}${r.fuera ? ' fuera' : ''}"><i>${i + 1}</i><span>${r.nombre}</span><b>${r.puntos}</b></li>`).join('');
   if (html !== RANKING.txt) { RANKING.txt = html; el.innerHTML = html; }
 }
@@ -95,7 +95,7 @@ function refrescaHud(todo) {
   const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado;
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
-  if (!enPartida) { E('peligro').style.opacity = 0; return; }
+  if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
   const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
   ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');

@@ -22,7 +22,7 @@ function sorteaBotin(tabla) {
 function empiezaIncursion() {
   RAID.tuto = false; document.body.classList.remove('en-tuto'); el('h-tuto').hidden = true; if (TUTO.marca) TUTO.marca.visible = false;
   // lo que llevas sale del refugio (si caes, se pierde)
-  RAID.avisoSoborno = false; RAID.soborno = null; preparaTren(); copiaAntesDeEntrar();
+  RAID.avisoSoborno = false; RAID.soborno = null; preparaTren(); preparaMinisMapa(); copiaAntesDeEntrar();
   RAID.seguro = !!SAVE.seguro; SAVE.seguro = false; RAID.phony = null;
   ajustaMochilas(); RAID.eq = copia(SAVE.equipo); RAID.mochila = copia(SAVE.mochila); RAID.bolsillos = copia(SAVE.bolsillos); RAID.rinonera = copia(SAVE.rinonera);
   RAID.dur = dif().dur; RAID.t = 0; RAID.ventisca = 0; RAID.dano = 0; RAID.deDonde = null; RAID.registro = null; RAID.salida = null; RAID.abierto = null; RAID.aviso2 = false; RAID.aviso1 = false;
@@ -60,14 +60,14 @@ function avanzaIncursion(dt) {
   MOTOR.hemi.intensity = 0.68 - RAID.ventisca * 0.2;
   vientoSuena(0.15 + RAID.ventisca * 0.85);
   if (RAID.tuto) avanzaTutorial(dt);
-  avanzaMini(dt);
+  avanzaMini(dt); avanzaCura(dt); avanzaMinisMapa(dt);
   avanzaJugador(dt); avanzaEnemigos(dt); avanzaBalas(dt); avanzaGranadas(dt); avanzaParticulas(dt);
   if (!JUG || !JUG.vivo) return;
   // registrar: lo más cercano que se pueda abrir
   RAID.cerca = null; let dMin = 1.9;
   for (const c of MAPA.contenedores) { const d = lejos(JUG.x, JUG.z, c.x, c.z); if (d < dMin) { dMin = d; RAID.cerca = c; } }
   const c = RAID.cerca;
-  avanzaSoborno();   // junto al puente cerrado, el toque de REGISTRAR soborna (antes de que lo gaste frotarse las manos)
+  avanzaSoborno(); avanzaTrampaCerca();   // junto al puente cerrado, el toque de REGISTRAR soborna (antes de que lo gaste frotarse las manos)
   // en el móvil basta un toque: registra solo mientras sigas al lado (moverte lejos o disparar lo corta)
   // junto a un bidón con fuego (y sin nada que registrar al lado): cada toque frota las manos y calienta mucho, más si vas rápido
   const alFuego = !c && fuegoCerca(JUG.x, JUG.z) < RADIO_CALOR;
@@ -82,6 +82,7 @@ function avanzaIncursion(dt) {
       if (cuantos(RAID.mochila, 'tarjeta') + cuantos(RAID.bolsillos, 'tarjeta') + cuantos(RAID.rinonera, 'tarjeta') <= 0) { if (!RAID.registro) avisa(tr('Cerrado. Hace falta la tarjeta roja de directivo.'), 'malo'); RAID.registro = { c, t: 0, max: 99 }; }
       else { if (!RAID.registro || RAID.registro.c !== c) RAID.registro = { c, t: 0, max: 2.2 }; RAID.registro.t += dt; if (RAID.registro.t >= 2.2) abreVerja(c); }
     } else if (c.abierto && c.tipo !== 'verja') { if (!RAID.registro) { abreBotin(c); RAID.registro = { c, t: 99, max: 99 }; } }
+    else if (c.hackeo && !c.abierto) { if (!MINI.tipo && !RAID.registro) abreTerminal(c); RAID.registro = { c, t: 99, max: 99 }; }
     else if (c.cerradura) { if (!MINI.tipo && !RAID.registro) abreCerradura(c); RAID.registro = { c, t: 99, max: 99 }; }
     else if (c.tipo !== 'verja') {
       const base = c.t || (TABLAS[c.tipo] ? TABLAS[c.tipo].t : 1.5), max = base * (SAVE.animal === 'junkcoon' ? 0.5 : 1);

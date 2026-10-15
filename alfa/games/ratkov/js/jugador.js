@@ -145,14 +145,17 @@ function usaObjeto(lista, i) {
   if (D.t === 'granada') { tiraGranada(); return true; }
   if (D.t !== 'med' || !D.usa) return false;
   if (JUG.uso) return false;
-  JUG.uso = { t: D.usa.t, max: D.usa.t, id: o.id, lista, i, o };
+  JUG.uso = { t: D.usa.t, max: D.usa.t, id: o.id, lista, i, o }; empiezaCura(JUG.uso);   // la venda y el botiquín, con minijuego (js/minijuegos-cura.js)
   play(o.id === 'te' ? 'bebe' : 'registra'); return true;
 }
 function terminaUso() {
-  const J = JUG, u = J.uso; J.uso = null; if (!u) return;
+  const J = JUG, u = J.uso; J.uso = null; if (!u) return; u.terminado = true;
   const o = u.o; if (!o || o.id !== u.id || u.lista.indexOf(o) < 0) return;
   const ef = OBJ[u.id].usa, k = SAVE.animal === 'meercat' ? 1.5 : 1;
-  if (ef.vida) J.vida = Math.min(J.max, J.vida + ef.vida * k);
+  // el minijuego bien hecho: vendaje perfecto (+5) o cura de manual (+25 %)
+  const extra = u.perfecto ? (u.id === 'venda' ? 5 : u.id === 'botiquin' ? ef.vida * 0.25 : 0) : 0;
+  if (u.perfecto) avisa(tr(u.id === 'venda' ? '¡Vendaje perfecto!' : '¡Cura de manual!'), 'bien');
+  if (ef.vida) J.vida = Math.min(J.max, J.vida + ef.vida * k + extra);
   if (ef.sangra) J.sangra = false;
   if (ef.frio) J.frio = Math.max(0, J.frio - ef.frio);
   if (ef.prisa) J.prisa = ef.prisa;

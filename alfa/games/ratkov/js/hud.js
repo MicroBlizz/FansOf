@@ -68,13 +68,13 @@ function avanzaHud(dt) {
   el('h-accion').hidden = !acc; if (acc) { pon('h-accion-t', acc); ancho('h-accion-b', f); }
   // el botón de acción dice qué harías
   const c = RAID.cerca;
-  const txt = !c ? tr('REGISTRAR') : c.tipo === 'verja' ? (c.cerrado ? tr('ABRIR VERJA') : tr('REGISTRAR')) : c.cerradura && !c.abierto ? tr('ABRIR CERRADURA') : c.abierto ? tr('MIRAR') : c.tipo === 'cadaver' ? tr('REGISTRAR CUERPO') : tr('REGISTRAR');
-  const frota = !c && RAID.alFuego, txtB = RAID.soborno ? trf('SOBORNAR (%1)', miles(PRECIO_SOBORNO)) : frota ? tr('FROTAR MANOS') : txt;
-  pon('b-accion', J.blancoDespide ? tr('DESPEDIR') : txtB); el('b-accion').classList.toggle('apagado', !c && !frota && !J.blancoDespide && !RAID.soborno);
+  const txt = !c ? tr('REGISTRAR') : c.tipo === 'verja' ? (c.cerrado ? tr('ABRIR VERJA') : tr('REGISTRAR')) : c.hackeo && !c.abierto ? tr('HACKEAR TERMINAL') : c.cerradura && !c.abierto ? tr('ABRIR CERRADURA') : c.abierto ? tr('MIRAR') : c.tipo === 'cadaver' ? tr('REGISTRAR CUERPO') : tr('REGISTRAR');
+  const frota = !c && RAID.alFuego, txtB = RAID.trampaCerca ? tr('DESACTIVAR TRAMPA') : RAID.soborno ? trf('SOBORNAR (%1)', miles(PRECIO_SOBORNO)) : frota ? tr('FROTAR MANOS') : txt;
+  pon('b-accion', J.blancoDespide ? tr('DESPEDIR') : txtB); el('b-accion').classList.toggle('apagado', !c && !frota && !J.blancoDespide && !RAID.soborno && !RAID.trampaCerca);
   pintaFrota(dt);
   // el botón de disparar (apuntado automático) se convierte en REGISTRAR si estás junto a algo y no hay nadie a tiro
   if (modoAuto()) {
-    const f = el('b-fuego'), accion = (frota || !!c || !!RAID.soborno) && !ENT.blanco && !ENT.fuego && !(c && c.tipo === 'verja' && !c.cerrado && c.abierto && !c.cosas);
+    const f = el('b-fuego'), accion = (frota || !!c || !!RAID.soborno || !!RAID.trampaCerca) && !ENT.blanco && !ENT.fuego && !(c && c.tipo === 'verja' && !c.cerrado && c.abierto && !c.cosas);
     const modo = J.blancoDespide ? 'despide' : accion ? 'accion' : 'fuego';
     f.dataset.modo = modo; f.classList.toggle('accion', modo !== 'fuego'); pon('b-fuego', modo === 'despide' ? tr('DESPEDIR') : accion ? txtB : tr('DISPARAR'));
   }
@@ -137,6 +137,8 @@ function pintaMinimapa() {
   const sx = (JUG.x - MAPA.x0) * k - W / 2, sz = (JUG.z - MAPA.z0) * k - H / 2;
   g.drawImage(HUD.mapa, -sx, -sz);
   for (const s of SALIDAS) { if (!RAID.salidas[s.id] || (s.cond === 'horario' && !(RAID.tren && RAID.tren.esta))) continue; const x = (s.x - MAPA.x0) * k - sx, y = (s.z - MAPA.z0) * k - sz; const dentro = x > 4 && y > 4 && x < W - 4 && y < H - 4; const cx = Math.max(4, Math.min(W - 4, x)), cy = Math.max(4, Math.min(H - 4, y)); g.fillStyle = s.pide ? '#ffcb3d' : '#7ee04a'; g.fillRect(cx - (dentro ? 4 : 3), cy - (dentro ? 4 : 3), dentro ? 8 : 6, dentro ? 8 : 6); }
+  // con el radar de un terminal: los enemigos, en rojo
+  if (RAID.radar > 0) { g.fillStyle = RAID.radar < 5 && Math.sin(HUD.t * 12) > 0 ? '#7a2a30' : '#ff4b5c'; for (const e of ENEMIGOS) if (e.vivo) { const x = (e.x - MAPA.x0) * k - sx, y = (e.z - MAPA.z0) * k - sz; if (x > 2 && y > 2 && x < W - 2 && y < H - 2) g.fillRect(x - 2, y - 2, 4, 4); } }
   // tú, con tu flecha
   g.save(); g.translate(W / 2, H / 2); g.rotate(-JUG.a + Math.PI); g.fillStyle = '#ff7a1a'; g.beginPath(); g.moveTo(0, -6); g.lineTo(4, 4); g.lineTo(-4, 4); g.closePath(); g.fill(); g.restore();
   if (RAID.deDonde) { g.save(); g.translate(W / 2, H / 2); g.rotate(-RAID.deDonde.a + Math.PI); g.fillStyle = 'rgba(255,75,92,' + Math.min(1, RAID.deDonde.t) + ')'; g.fillRect(-10, -H / 2 + 2, 20, 4); g.restore(); }

@@ -1,8 +1,8 @@
 {
- "build": 109,
- "hash": "b799e20",
- "fecha": "2026-10-15T20:48:10Z",
- "mensaje": "Fans of Rouflage 0.2.20: elige tu menú de pintar (clásico, A, B o C)",
+ "build": 110,
+ "hash": "2a01bea",
+ "fecha": "2026-10-15T21:01:36Z",
+ "mensaje": "Fans of Ratkov: sin botón de coger todo; enemigos que no se quedan dentro del tren, no nacen ni pasean por huecos cerrados y no se amontonan; ventanas opacas y ficha del objeto en horizontal",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

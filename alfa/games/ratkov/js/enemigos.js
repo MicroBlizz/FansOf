@@ -20,7 +20,7 @@ let MARCAS = null;
 function marcaTex(txt, color) { return textura(16, 16, g => { g.fillStyle = '#120e18'; g.fillRect(3, 1, 10, 14); g.fillStyle = color; g.fillRect(4, 2, 8, 12); g.fillStyle = '#120e18'; g.font = 'bold 11px monospace'; g.textAlign = 'center'; g.fillText(txt, 8, 12); }); }
 
 function creaEnemigo(tipo, x, z, extra = {}) {
-  const T = TIPOS_ENEMIGO[tipo], p = libreCerca(x, z, T.radio);
+  const T = TIPOS_ENEMIGO[tipo], p = libreAlcanzable(x, z, T.radio);
   const mod = montaPersonaje(tipo, false); ponArma(mod, T.arma);
   if (!MARCAS) MARCAS = { '?': new THREE.SpriteMaterial({ map: marcaTex('?', '#ffcb3d') }), '!': new THREE.SpriteMaterial({ map: marcaTex('!', '#ff4b5c') }) };
   const marca = new THREE.Sprite(MARCAS['?']); marca.scale.set(0.9, 0.9, 1); marca.visible = false; MOTOR.escena.add(marca);
@@ -32,6 +32,7 @@ function creaEnemigo(tipo, x, z, extra = {}) {
 }
 function limpiaEnemigos() { for (const e of ENEMIGOS) { MOTOR.escena.remove(e.mod.grupo); MOTOR.escena.remove(e.marca); } ENEMIGOS.length = 0; }
 function pueblaMapa() {
+  if (JUG) calculaAlcance(JUG.x, JUG.z);
   const sitios = baraja(SITIOS.carronero.slice()).slice(0, Math.round(10 * dif().cuantos));
   for (const [x, z] of sitios) creaEnemigo('carronero', x + entre(-2, 2), z + entre(-2, 2));
   for (const [x, z, n0] of SITIOS.seguridad) { const g = {}, n = Math.max(1, Math.round(n0 * dif().cuantos)); for (let i = 0; i < n; i++) creaEnemigo('seguridad', x + i * 1.6, z + (i % 2) * 1.4, { grupo: g }); }
@@ -89,11 +90,27 @@ function avanzaEnemigos(dt) {
     } else {
       // la ronda: pasea cerca de su casa
       e.tPensar -= dt;
-      if (!e.obj || e.tPensar <= 0) { const p = libreCerca(e.casa.x + entre(-9, 9), e.casa.z + entre(-9, 9), e.radio); e.obj = p; e.tPensar = entre(4, 9); }
+      if (!e.obj || e.tPensar <= 0) { const p = libreAlcanzable(e.casa.x + entre(-9, 9), e.casa.z + entre(-9, 9), e.radio); e.obj = p; e.tPensar = entre(4, 9); }
       const d = lejos(e.x, e.z, e.obj.x, e.obj.z);
       if (d > 0.8) { const q = Math.atan2(e.obj.x - e.x, e.obj.z - e.z); e.a += giroA(e.a, q) * Math.min(1, dt * 4); mx = Math.sin(e.a) * 0.45; mz = Math.cos(e.a) * 0.45; }
     }
     mueveEnemigo(e, mx, mz, T.vel * corre * lento, dt);
+  }
+  separaEnemigos();
+}
+// que no se queden unos dentro de otros (los de un grupo nacen juntos y van al mismo sitio)
+function separaEnemigos() {
+  for (let i = 0; i < ENEMIGOS.length; i++) {
+    const a = ENEMIGOS[i]; if (!a.vivo) continue;
+    if (desatasca(a, a.radio)) a.mod.grupo.position.set(a.x, 0, a.z);
+    for (let j = i + 1; j < ENEMIGOS.length; j++) {
+      const b = ENEMIGOS[j]; if (!b.vivo) continue;
+      const dx = b.x - a.x, dz = b.z - a.z, d = Math.hypot(dx, dz), min = (a.radio + b.radio) * 0.9;
+      if (d >= min) continue;
+      const ux = d > 0.001 ? dx / d : 1, uz = d > 0.001 ? dz / d : 0, emp = (min - d) / 2;
+      mueve(a, -ux * emp, -uz * emp, a.radio); mueve(b, ux * emp, uz * emp, b.radio);
+      a.mod.grupo.position.set(a.x, 0, a.z); b.mod.grupo.position.set(b.x, 0, b.z);
+    }
   }
 }
 function mueveEnemigo(e, mx, mz, vel, dt) {

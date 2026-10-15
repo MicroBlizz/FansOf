@@ -166,5 +166,32 @@ function libreCerca(x, z, r = 0.6) {
   for (let k = 0; k < 40; k++) { const a = k * 2.4, d = k * 0.35, px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d; if (!choca(px, pz, r)) return { x: px, z: pz }; }
   return { x, z };
 }
+// las casillas (de 1 m) a las que se llega andando desde donde empiezas: se calcula al empezar cada incursión. Así ningún enemigo
+// aparece ni pasea hacia un hueco cerrado (el despacho con la verja, el espacio entre dos edificios pegados…)
+const ALCANCE = { set: null };
+function calculaAlcance(x0, z0) {
+  const ok = new Set(), cola = [[Math.round(x0), Math.round(z0)]], k = (i, j) => i + ',' + j;
+  ok.add(k(cola[0][0], cola[0][1]));
+  while (cola.length) {
+    const [i, j] = cola.pop();
+    for (const [a, b] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const ni = i + a, nj = j + b, kk = k(ni, nj);
+      if (ok.has(kk) || Math.abs(ni) > 92 || Math.abs(nj) > 92 || choca(ni, nj, 0.45)) continue;
+      ok.add(kk); cola.push([ni, nj]);
+    }
+  }
+  ALCANCE.set = ok;
+}
+const alcanzable = (x, z) => !ALCANCE.set || ALCANCE.set.has(Math.round(x) + ',' + Math.round(z));
+// como libreCerca, pero además en un sitio al que se puede llegar andando
+function libreAlcanzable(x, z, r = 0.6) {
+  for (let k = 0; k < 120; k++) { const a = k * 2.4, d = k * 0.3, px = x + Math.cos(a) * d, pz = z + Math.sin(a) * d; if (!choca(px, pz, r) && alcanzable(px, pz)) return { x: px, z: pz }; }
+  return libreCerca(x, z, r);
+}
+// si algo se ha quedado metido en un sólido (el tren que llega y se para encima, por ejemplo), lo saca al sitio libre más cercano
+function desatasca(e, r) {
+  if (!choca(e.x, e.z, r * 0.8)) return false;
+  const p = libreAlcanzable(e.x, e.z, r); e.x = p.x; e.z = p.z; return true;
+}
 // lo cerca que está el fuego más cercano
 function fuegoCerca(x, z) { let d = 99; for (const f of MAPA.fuegos) d = Math.min(d, lejos(x, z, f.x, f.z)); return d; }

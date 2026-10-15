@@ -2,9 +2,10 @@
    la cerradura y el rebuscar. De pie, una cuadrícula encima de otra; tumbado, una al lado de la otra. */
 .ventana.rej-v { width: min(620px, 94vw); max-height: 90vh; }
 @media (orientation: landscape) and (min-width: 640px) {
-  /* tumbado: las cuadrículas a la izquierda; la ficha del objeto y COGER TODO, en una columna a la derecha */
+  /* tumbado: las cuadrículas a la izquierda; la ficha del objeto, en una columna a la derecha (texto ancho y botones debajo) */
   .ventana.rej-v { width: min(980px, 97vw); display: grid; grid-template-columns: auto minmax(200px, 1fr); grid-template-areas: "cab cab" "rej info" "rej pie" "rej ."; column-gap: 14px; align-items: start; }
   .ventana.rej-v > header { grid-area: cab; } .ventana.rej-v > .rejillas { grid-area: rej; } .ventana.rej-v > .rej-info { grid-area: info; position: static; margin-top: 0; flex-wrap: wrap; } .ventana.rej-v > .pie { grid-area: pie; justify-content: flex-start; }
+  .ventana.rej-v > .rej-info .fo-t { flex: 1 1 140px; min-width: 0; } .ventana.rej-v > .rej-info .fo-b { flex-basis: 100%; max-width: none; justify-content: flex-start; }
   .ventana.rej-v .bloque-tuyo { display: grid; grid-template-columns: auto auto; grid-template-areas: "t t" "m f"; column-gap: 10px; align-items: start; }
   .ventana.rej-v .bloque-tuyo > h4 { grid-area: t; } .ventana.rej-v .bloque-tuyo > [data-sitio="moch"] { grid-area: m; } .ventana.rej-v .bloque-tuyo > .fila-rej { grid-area: f; flex-direction: column; margin-top: 0; }
 }
@@ -36,7 +37,7 @@
 .sombra-rej.no { background: rgba(255, 75, 92, 0.28); border-color: var(--rk-mal); }
 #b-girar-flota { position: fixed; z-index: 42; right: calc(16px + env(safe-area-inset-right)); bottom: calc(16px + env(safe-area-inset-bottom)); width: 84px; height: 84px; border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, #ffe07a, #e0a11f 60%, #8a5a08); color: #2a1c00; border: 3px solid #fff2b0; font: 14px var(--rk-tit); }
-.rej-info { margin-top: 8px; position: sticky; bottom: -14px; background: var(--rk-panel2); border-left-color: var(--rk-oro); min-height: 56px; z-index: 2; }
+.rej-info { margin-top: 8px; position: sticky; bottom: -14px; background: rgb(18, 24, 30); border-left-color: var(--rk-oro); min-height: 56px; z-index: 2; box-shadow: 0 -10px 12px -4px rgba(0, 0, 0, 0.75); border-top: 1px solid var(--rk-borde); }
 .rej-info .fo-t span + span { color: var(--rk-tenue); font-size: 16px; }
 .rej-info u { text-decoration: none; font: 12px var(--rk-tit); color: var(--rk-bien); border: 1px solid var(--rk-bien); padding: 0 4px; margin-left: 4px; vertical-align: middle; }
 .tarjeta .rej-info { position: static; }

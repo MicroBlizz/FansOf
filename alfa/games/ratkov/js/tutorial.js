@@ -59,6 +59,7 @@ function empiezaTutorial() {
   TUTO.caja.abierto = false; TUTO.caja.cosas = null; TUTO.caja.dim = null;
   TUTO.fuerte.abierto = false; TUTO.fuerte.cosas = null; TUTO.fuerte.dim = null; TUTO.fuerte.cerradura = true;
   limpiaEnemigos(); limpiaBalas(); quitaJugador();
+  ALCANCE.set = null;   // en el patio no hay huecos cerrados: sin mapa de alcance
   creaJugador(112, 0, Math.PI / 2);
   el('titulo').hidden = true; el('refugio').hidden = true;
   RAID.activa = true; MOTOR.escena.fog.near = 50; MOTOR.escena.fog.far = 95;

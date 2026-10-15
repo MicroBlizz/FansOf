@@ -38,7 +38,7 @@ function avanzaTren(dt) {
   const T = RAID.tren; if (!T || RAID.tuto || !TREN.grupo) return;
   const g = TREN.grupo;
   if (T.fase === 'espera' && RAID.t >= T.llega) { T.fase = 'entra'; T.t = 0; g.visible = true; play('bocina'); avisa(tr('Bocina en la playa de vías: llega un tren de mercancías. Se va en dos minutos.'), 'info'); oyeRuido(48, TREN.z, 40); }
-  if (T.fase === 'entra') { T.t += dt; const f = Math.min(1, T.t / TREN.entra); g.position.x = (1 - f) * (1 - f) * 70; if (f >= 1) { T.fase = 'para'; T.t = 0; T.esta = true; TREN.solido.abierto = false; } }
+  if (T.fase === 'entra') { T.t += dt; const f = Math.min(1, T.t / TREN.entra); g.position.x = (1 - f) * (1 - f) * 70; if (f >= 1) { T.fase = 'para'; T.t = 0; T.esta = true; TREN.solido.abierto = false; if (JUG && JUG.vivo) desatasca(JUG, JUG.radio); } }
   if (T.fase === 'para') {
     T.t += dt;
     if (!T.aviso && T.t > T.dura - 20) { T.aviso = true; play('bocina'); avisa(tr('¡El tren se va en 20 segundos!'), 'malo'); }

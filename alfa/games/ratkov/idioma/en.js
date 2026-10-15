@@ -243,7 +243,6 @@ IDIOMA.add({
   "toca DEJAR para meterlo aquí": "tap LEAVE to put it here",
   "COGER": "TAKE",
   "COGER TODO": "TAKE ALL",
-  "¡AL SACO!": "YOINK IT ALL!",
   "DEJAR": "LEAVE",
   "%1 de %2 casillas · %3 kg": "%1 of %2 slots · %3 kg",
   "LLEVAS PUESTO": "EQUIPPED",

@@ -15,15 +15,39 @@ ADORNOS.fan = {
   detras(c, e) { const r = e.ropa; if (r && r.espalda && ARD.ESPALDAS[r.espalda]) ARD.ESPALDAS[r.espalda](c); },
   delante(c, e) { const r = e.ropa; if (r && r.cabeza && ARD.CABEZAS[r.cabeza]) ARD.CABEZAS[r.cabeza](c); },
 };
-function empiezaHabitacion(rol) {
-  if (MAPA.id !== 'estacion') cargaMapa('estacion');      // la habitación es siempre en la estación (al volver al título se carga otra vez el mapa elegido)
+function empiezaHabitacion(rol, sinCartel) {
+  const mapa = MAPAS[SAVE.habMapa] ? SAVE.habMapa : 'estacion';      // el escenario de la habitación se elige con su botón (al volver al título se carga otra vez el mapa de jugar)
+  if (MAPA.id !== mapa) cargaMapa(mapa);
+  const sitio = habitacionSitioArmario(); HABITACION.armario.x = sitio[0]; HABITACION.armario.y = sitio[1];
   limpiaPartida(); J.modo = rol; J.t = 0; J.fase = 'paseo'; J.reloj = 0; PUERTA.cerrada = false; PUERTA.abierta = 1;
   const viejo = J.yo, [sx, sy] = viejo ? [viejo.x, viejo.y] : SALIDA_CAMALEONES[0];
   const yo = nuevoEnte(rol, 'fan', tr('Tú'), sx, sy); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; yo.dir = Math.PI / 2; yo.mira = 1;
   vistePersonaje(yo, ropaDe());
   pantalla(null); avanzaCamara(0, true); refrescaHud(true); musica('rfTitulo');
   E('hab').hidden = false; E('esquina').hidden = true; habRefrescaRol();
-  cartel(tr('TU HABITACIÓN'), tr('Pasea y mira cómo te queda. El armario de la sala te cambia de ropa'));
+  habPintaMapa();
+  if (!sinCartel) cartel(tr('TU HABITACIÓN'), tr('Pasea y mira cómo te queda. El armario de la sala te cambia de ropa'));
+}
+// dónde va el armario en este escenario: en la estación, en la cafetería; en los demás, el sitio libre más cercano a la salida de los colados
+// donde quepa entero (con suelo detrás para su dibujo) y no estorbe al aparecer
+function habitacionSitioArmario() {
+  if (MAPA.id === 'estacion') return [780, 318];
+  const [sx, sy] = SALIDA_CAMALEONES[0]; let mejor = null, md = 1e9;
+  for (let dy = -200; dy <= 160; dy += 20) for (let dx = -260; dx <= 260; dx += 20) {
+    const x = sx + dx, y = sy + dy, d = Math.hypot(dx, dy);
+    if (d < 90 || d >= md) continue;
+    if (!cabe(x, y) || !cabe(x - 22, y) || !cabe(x + 22, y) || celdaEn(x, y - 70) === VACIO) continue;
+    if (MUEBLES.some(m => m.dib.x0 < x + 34 && m.dib.x0 + m.dib.w > x - 34 && m.dib.y0 < y + 10 && m.dib.y0 + m.dib.h > y - 96)) continue;      // sin taparse con ningún mueble
+    mejor = [x, y]; md = d;
+  }
+  return mejor || [sx + 100, sy];
+}
+// el botón ESCENARIO: pasa al siguiente mapa
+function habPintaMapa() { const b = E('b-hab-mapa'); if (b) b.querySelector('small').textContent = tr(MAPA_ACT.nombre); }
+function habCambiaMapa() {
+  if (J.fase !== 'paseo') return;
+  const i = ORDEN_MAPAS.indexOf(MAPA.id); SAVE.habMapa = ORDEN_MAPAS[(i + 1) % ORDEN_MAPAS.length]; guardaPartida();
+  play('select'); empiezaHabitacion(J.modo, true);
 }
 function habRefrescaRol() { E('b-hab-cam').classList.toggle('activo', J.modo === 'camaleon'); E('b-hab-caz').classList.toggle('activo', J.modo === 'cazador'); }
 function habCambiaRol(rol) {
@@ -62,4 +86,5 @@ function preparaHabitacion() {
   E('b-hab-caz').onclick = () => habCambiaRol('cazador');
   E('b-hab-armario').onclick = () => { if (J.fase === 'paseo') { play('select'); habitacionAbreArmario(); } };
   E('b-hab-salir').onclick = () => { play('select'); habitacionSale(); };
+  E('b-hab-mapa').onclick = habCambiaMapa;
 }

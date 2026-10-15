@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.16"></script>
+<script src="../../core/js/nucleo.js?v=0.2.17"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -56,6 +56,7 @@
 <div id="hab" hidden>
   <div class="hab-roles"><button type="button" class="hab-rol" id="b-hab-cam"><i data-icono="pincel"></i><b data-tr>CAMALEÓN</b></button><button type="button" class="hab-rol" id="b-hab-caz"><i data-icono="diana"></i><b data-tr>CAZADOR</b></button></div>
   <button type="button" class="boton azul" id="b-hab-armario" data-tr>ARMARIO</button>
+  <button type="button" class="boton gris peq hab-mapa" id="b-hab-mapa"><b data-tr>ESCENARIO</b><small></small></button>
   <button type="button" class="boton gris peq" id="b-hab-salir" data-tr>Salir</button>
 </div>
 
@@ -107,6 +108,7 @@
         <button type="button" class="boton gris" id="b-armario"><b data-tr>ARMARIO</b></button>
         <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
         <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
+        <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
       </div>
     </div>
     <div class="fila-botones">
@@ -172,6 +174,7 @@
       <button type="button" class="boton gris" id="b-viejo"></button>
       <button type="button" class="boton gris" id="b-idioma">English</button>
       <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
+      <button type="button" class="boton gris" id="b-tuto-repite" data-tr>Repetir tutorial</button>
       <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
     </div>
   </div>
@@ -319,6 +322,19 @@
     </div>
   </div>
 </div>
+<!-- el premio diario (diario.js) -->
+<div class="pantalla" id="p-diario" hidden>
+  <div class="caja diario-caja">
+    <h2 class="ol" data-tr>PREMIO DIARIO</h2>
+    <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>Si un día no entras, no pierdes nada: sigues por donde ibas.</span></p>
+    <div class="diario-dias" id="diario-dias"></div>
+    <p class="diario-mes" id="diario-mes"></p>
+    <p class="diario-migas"><span data-tr>Tus Migas</span> <b id="diario-migas">0</b></p>
+    <button type="button" class="boton grande" id="b-diario-recoger"></button>
+    <button type="button" class="boton peq" id="b-diario-volver" data-tr>Volver</button>
+  </div>
+</div>
+
 <div class="pantalla" id="p-perfil" hidden>
   <div class="caja perfil">
     <h2 class="ol" data-tr>PERFIL</h2>
@@ -397,6 +413,7 @@ NUCLEO.juego({
     'js/taller.js',
     'js/taller-camara.js',
     'js/tutorial.js',
+    'js/bocadillos.js',
     'js/controles.js',
     'js/entrenamiento.js',
     'js/modos.js',
@@ -419,6 +436,7 @@ NUCLEO.juego({
     'js/armario-dibujo2.js',
     'js/armario-datos.js',
     'js/armario.js',
+    'js/diario.js',
     'js/habitacion.js',
     'js/principal.js',
   ],

@@ -74,3 +74,8 @@
 #b-hab-armario.cerca { animation: hab-late .8s ease-in-out infinite alternate; }
 @keyframes hab-late { from { transform: scale(1); } to { transform: scale(1.08); } }
 @media (max-width: 420px) { .hab-rol b { display: none; } .hab-rol { padding: 8px 12px; } .hab-rol i { width: 20px; height: 20px; } }
+
+/* el botón ESCENARIO de la habitación: el nombre del mapa debajo */
+#hab { flex-wrap: wrap; }
+.hab-mapa { display: grid; justify-items: center; line-height: 1; padding-top: 6px; padding-bottom: 6px; }
+.hab-mapa small { font: 700 11px var(--font-ui); opacity: 0.85; margin-top: 2px; }

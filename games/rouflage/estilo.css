@@ -281,3 +281,40 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 @media (max-height: 640px) and (orientation: portrait) { .papel canvas { max-width: 150px; } }
 @media (orientation: landscape) and (max-height: 520px) { .titulo-caja { max-width: 760px; gap: 6px; } .logo b { font-size: clamp(40px, 15vh, 76px); } .logo span { font-size: 20px; } .papel canvas { max-width: 130px; } .papel { padding: 6px 10px 8px; } .papel span { font-size: 12.5px; } .lema { font-size: 14px; } .nota { display: none; } }
 @media (prefers-reduced-motion: reduce) { .accion.listo, #reloj.prisa, #e-silbo.pronto { animation: none; } }
+
+/* el tutorial con bocadillos (bocadillos.js) */
+.bocadillo { position: fixed; z-index: 900; max-width: min(270px, calc(100vw - 20px)); background: var(--ink); color: #20102c; border: 4px solid var(--outline); border-radius: 18px; padding: 10px 14px 10px; font: 800 15px/1.22 var(--font-ui); box-shadow: 0 5px 0 var(--outline); pointer-events: auto; animation: bocadilloEntra 0.25s ease-out; }
+.bocadillo b { font-family: var(--font-display); font-weight: 400; color: var(--player); letter-spacing: 0.02em; }
+.bocadillo small { display: flex; gap: 10px; align-items: center; margin-top: 8px; font: 700 12px var(--font-ui); color: #6a6f80; }
+.bocadillo small i { font-style: normal; background: var(--player); color: var(--ink); border: 3px solid var(--outline); border-radius: 10px; padding: 1px 12px 0; font: 400 14px var(--font-display); margin-left: auto; }
+.bocadillo small u { text-decoration: underline; cursor: pointer; margin-left: auto; }
+.bocadillo small i + u { margin-left: 0; }
+.bocadillo::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--ink); border-right: 4px solid var(--outline); border-bottom: 4px solid var(--outline); transform: rotate(45deg); bottom: -14px; left: var(--flecha, 50%); margin-left: -10px; }
+.bocadillo.abajo::after { bottom: auto; top: -14px; transform: rotate(225deg); }
+.bocadillo.centro::after { display: none; }
+.foco-tuto { position: fixed; z-index: 890; border-radius: 24px; box-shadow: 0 0 0 4000px rgba(8, 11, 20, 0.3), 0 0 0 5px var(--gold); pointer-events: none; animation: focoLate 1s ease-in-out infinite; }
+@keyframes focoLate { 50% { box-shadow: 0 0 0 4000px rgba(8, 11, 20, 0.3), 0 0 0 9px var(--gold); } }
+@keyframes bocadilloEntra { from { transform: scale(0.85); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .foco-tuto, .bocadillo { animation: none; } }
+
+/* el premio diario (diario.js) */
+.diario-caja { max-width: 560px; text-align: center; }
+.diario-sub { margin: 0 0 10px; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.diario-sub b { color: var(--gold); }
+.diario-dias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.diario-dia { display: grid; justify-items: center; align-content: start; gap: 2px; padding: 6px 4px 8px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); box-shadow: 0 4px 0 var(--outline); }
+.diario-dia small { font: 400 12px var(--font-display); color: var(--ink-dim); letter-spacing: 0.03em; }
+.diario-dia b { font-weight: 800; font-size: 11.5px; line-height: 1.1; color: var(--ink); }
+.diario-dia.grande { grid-column: span 2; background: linear-gradient(160deg, #6a3e9a, #3a2160); }
+.diario-dia.hoy { background: linear-gradient(160deg, #ffb347, #ff7a1a); animation: diarioLate 1s ease-in-out infinite; }
+.diario-dia.hoy small, .diario-dia.hoy b { color: var(--outline); }
+.diario-dia.cobrado { opacity: 0.45; position: relative; }
+.diario-dia.cobrado::after { content: ''; position: absolute; left: 50%; top: 46%; width: 16px; height: 28px; margin: -18px 0 0 -8px; border-right: 6px solid var(--ok); border-bottom: 6px solid var(--ok); transform: rotate(40deg); }
+.diario-mes { margin: 12px 0 2px; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.diario-migas { margin: 0 0 10px; font-weight: 800; }
+.diario-migas b { color: var(--gold); font-size: 18px; }
+#b-diario-recoger:disabled { filter: grayscale(0.8); opacity: 0.7; }
+#b-diario { position: relative; }
+#b-diario.aviso::after { content: ''; position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
+@keyframes diarioLate { 50% { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .diario-dia.hoy { animation: none; } }

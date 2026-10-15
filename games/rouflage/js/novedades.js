@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.17', real: ["<b>TUTORIAL CON BOCADILLOS</b>: la primera vez que juegas contra bots con cada papel, un bocadillo te señala el botón que toca (pintarte, coger color, LISTO, congelarte, silbar…) y espera a que lo hagas. Si quieres verlo otra vez: OPCIONES › Repetir tutorial."],
+    joke: ["Microblizz ha contratado a un becario solo para sujetar los bocadillos del tutorial. Phony dice que eso no es un trabajo, que es un globo."] },
   { v: '0.2.16', real: ["<b>RANKING Y PAUSA ARREGLADOS</b>: si entrabas en la habitación y volvías al menú por el armario o el perfil, los botones de ranking y pausa desaparecían de todas las partidas siguientes."],
     joke: ["Microblizz asegura que los botones no se habían perdido: estaban probándose ropa en la habitación. Phony les ha cobrado el probador."] },
   { v: '0.2.15', real: ["<b>EL HOTEL, REFORMADO</b>: las paredes entre el pasillo y las habitaciones ya se ven enteras (antes eran bajitas), dos pasillos nuevos bajan al vestíbulo y la recepción y el piano están redibujados.", "<b>MI PERFIL</b>: en el menú principal, el grupo del armario, el perfil y la habitación se llama así.", "<b>LA HABITACIÓN</b> (para probarte la ropa) es siempre en la estación, elijas el mapa que elijas: en el parking el armario caía encima de una columna."],

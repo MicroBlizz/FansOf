@@ -19,8 +19,7 @@ function tutoDi(clave) {
 // al cambiar de fase (la llama cambiaFase)
 function tutoFase(f) {
   if (J.pvp || !J.yo) return;
-  const cam = J.yo.clase === 'camaleon';
-  if (f === 'prep') tutoDi(cam ? 'cam-prep' : 'caz-prep'); else if (f === 'caza') tutoDi(cam ? 'cam-caza' : 'caz-caza');
+  if (f === 'prep') bocadilloEmpieza();      // la primera vez con cada papel, los bocadillos (bocadillos.js) enseñan los botones uno a uno
 }
 const tutoFaltan = () => ['camaleon', 'cazador'].filter(m => !(SAVE.gana && SAVE.gana[m]));
 const tutoRol = m => m === 'camaleon' ? tr('camaleón') : tr('cazador');

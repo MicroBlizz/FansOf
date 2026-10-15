@@ -48,6 +48,7 @@ function cartel(titulo, sub = '', numero = false) {
 const PISTA = { texto: '', hasta: 0, vista: '' };
 function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t + segundos; }
 function pistaDeAhora() {
+  if (bocadilloActivo()) return '';      // con un bocadillo del tutorial en pantalla, la franja de pistas se calla
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
   if (espectando()) { const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
@@ -157,10 +158,10 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info', 'p-diario'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
-function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }
+function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); }
 function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); }
 function muestraPausa(si) {
   E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
@@ -267,6 +268,7 @@ function preparaInterfaz() {
   for (const id of ['b-viejo', 'b-viejo2']) E(id).onclick = () => { cambiaSonidoViejo(); refrescaSonido(); };
   E('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
   E('b-idioma').onclick = () => { cambiaIdioma(); play('select'); };
+  E('b-tuto-repite').onclick = bocadilloRepite;
   E('b-ranking').onclick = () => { RANKING.abierto = !RANKING.abierto; try { localStorage.setItem('rouflage-ranking', RANKING.abierto ? '1' : '0'); } catch (_) { /* sin guardar */ } play('select'); refrescaHud(true); };
   E('b-pausa').onclick = accionPausa; E('b-seguir').onclick = accionPausa;
   E('b-reiniciar').onclick = () => { pantalla(null); empiezaPartida(J.modo); };

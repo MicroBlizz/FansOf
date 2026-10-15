@@ -2,7 +2,7 @@
 'use strict';
 IDIOMA.add({
   "Buscar partida o jugar con amigos. De un bot te escondes fácil; de ellos, no tanto.": "Find a match or play with friends. Hiding from a bot is easy; from them, not so much.",
-  "TU GALLETA": "YOUR COOKIE",
+  "MI PERFIL": "MY PROFILE",
   "CONTRA BOTS": "VS BOTS",
   "1 · TU PAPEL": "1 · YOUR ROLE",
   "Píntate, congélate y que no te encuentren.": "Paint yourself, freeze and don't get found.",

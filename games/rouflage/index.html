@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.13"></script>
+<script src="../../core/js/nucleo.js?v=0.2.14"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -232,6 +232,7 @@
     <div class="columna">
       <button type="button" class="boton" id="b-pvp-buscar" data-tr>BUSCAR PARTIDA</button>
       <button type="button" class="boton gris" id="b-pvp-amigos" data-tr>JUGAR CON AMIGOS</button>
+      <button type="button" class="boton gris" id="b-pvp-bots" data-tr>JUGAR CONTRA BOTS</button>
       <button type="button" class="boton gris" id="b-pvp-cuenta" data-tr hidden>VINCULAR CUENTA</button>
       <div class="fila-botones">
         <button type="button" class="boton peq" id="b-pvp-clasif" data-tr>Clasificación</button>
@@ -375,6 +376,10 @@ NUCLEO.juego({
     'js/mapa-cloacas.js',
     'js/dibujo-jardines.js',
     'js/mapa-jardines.js',
+    'js/dibujo-residencial.js',
+    'js/mapa-residencial.js',
+    'js/dibujo-hotel.js',
+    'js/mapa-hotel.js',
     'js/alubia.js',
     'js/mapa.js',
     'js/pintura.js',
@@ -399,6 +404,7 @@ NUCLEO.juego({
     'js/modos-retrato.js',
     'js/modos-fantasma.js',
     'js/modos-bote.js',
+    'js/modos-ida.js',
     'js/partida.js',
     'js/interfaz.js',
     'js/galeria.js',

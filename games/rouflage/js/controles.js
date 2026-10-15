@@ -113,7 +113,7 @@ function disparaJugador(x, y, margen) {
   yo.dir = Math.atan2(y - oy, x - ox); yo.mira = Math.cos(yo.dir) >= 0 ? 1 : -1; yo.tApunta = 0.7;
   fxDisparo(yo, x, y);
   if (J.pvp) { rfpDispara(x, y, margen); return; }      // por internet decide el anfitrión: el resultado llega en rfpAplicaTiro
-  const k = J.camaleones.find(k => !k.fuera && !invisible(k) && dentroDeAlubia(k, x, y, margen));
+  const k = J.camaleones.find(k => k !== yo.cuerpo && !k.fuera && !invisible(k) && dentroDeAlubia(k, x, y, margen));      // (en Ida y vuelta, tu cuerpo no cuenta)
   if (k) { despide(k, yo); yo.balas = Math.min(REGLAS.balas, yo.balas + 1); yo.enfria = REGLAS.enfria * 0.7; return; }
   fxMancha(x, y);
   // a quien va corriendo se le puede disparar sin gastar carta
@@ -123,6 +123,6 @@ function disparaJugador(x, y, margen) {
   if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); }
   else {
     avisa(tr('Ahí no había nadie. Despido improcedente: pierdes una carta.'), 'malo');
-    if (J.camaleones.some(k => !k.fuera && !invisible(k) && lejos(k.x, k.y - 20, x, y) < 90)) avisa(tr('Caliente: hay alguien muy cerca de ahí'), 'aviso');   // una pista para no seguir a ciegas
+    if (J.camaleones.some(k => k !== yo.cuerpo && !k.fuera && !invisible(k) && lejos(k.x, k.y - 20, x, y) < 90)) avisa(tr('Caliente: hay alguien muy cerca de ahí'), 'aviso');   // una pista para no seguir a ciegas
   }
 }

@@ -124,8 +124,10 @@ function rotuloJusto(c, s, x, y, tam, ancho, color, borde) {
   c.font = tam + 'px ' + LETRA_GORDA; const w = c.measureText(s).width;
   rotulo(c, s, x, y + 1, w > ancho ? tam * ancho / w : tam, color, borde);
 }
+const CARTELES_EXTRA = {};   // tipos de cartel de otros mapas (dibujo-residencial.js…): tipo → f(c, k)
 function pintaCartel(c, k) {
   const { x, y } = k;
+  if (CARTELES_EXTRA[k.t]) { CARTELES_EXTRA[k.t](c, k); return; }
   if (k.t === 'poster') {       // un cartel pequeño de dos líneas, con sus trocitos de celo
     forma(c, caja(x - 33, y - 21, 66, 42, 2), '#191430', 2.5);
     c.fillStyle = k.color; c.fillRect(x - 30, y - 18, 60, 4);

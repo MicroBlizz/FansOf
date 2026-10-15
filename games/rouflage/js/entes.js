@@ -117,7 +117,7 @@ function despide(k, por) {
   fxSello(k.x, k.y - 26); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
   suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
   if (por) por.pts.aciertos++;
-  contagioDespedido(k); chivatoDespido(k, por);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)
+  contagioDespedido(k); chivatoDespido(k, por); idaDespido(k);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)
   if (por && por.jugador) { avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno'); }
   else if (k.jugador) avisa(tr('{a} te ha despedido').replace('{a}', por ? por.nombre : '?'), 'malo');
   else avisa(tr('{a} ha despedido a {b}').replace('{a}', por ? por.nombre : '?').replace('{b}', k.nombre), J.modo === 'camaleon' ? 'malo' : 'aviso');

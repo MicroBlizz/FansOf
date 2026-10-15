@@ -28,7 +28,7 @@ function escenaTitulo() {
 // la postura de un colado bot: casi siempre firmes; a veces otra, para que no todos tengan la misma silueta
 const posturaBot = () => pick(['firmes', 'firmes', 'firmes', 'bolita', 'estrella', 'saludo']);
 function empiezaPartida(modo) {
-  limpiaPartida(); J.modo = modo; J.t = 0; modoDesdeUrl(); eventosPrepara();      // en solitario el modo sale de la URL (modos.js)
+  limpiaPartida(); modoDesdeUrl(); if (modoEs('ida')) modo = 'camaleon'; J.modo = modo; J.t = 0; eventosPrepara();      // en solitario el modo sale de la URL (modos.js); en Ida y vuelta todos empiezan de colado
   if (modo === 'camaleon') {
     // tú eres CrazyBunny; tres compañeros se esconden por su cuenta y dos becarios esperan encerrados en Recursos Humanos
     const yo = nuevoEnte('camaleon', 'bunny', NOMBRES.bunny, ...SALIDA_CAMALEONES[0]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts;
@@ -37,7 +37,8 @@ function empiezaPartida(modo) {
       const e = nuevoEnte('camaleon', tipo, NOMBRES[tipo], ...SALIDA_CAMALEONES[i + 1]);
       cambiaPostura(e, posturaBot()); cerebroCamaleon(e, mana); e.sitio = eligeSitio(e, ocupados); ocupados.push(e.sitio);
     });
-    SALIDA_CAZADORES.forEach(([x, y], i) => { const h = nuevoEnte('cazador', 'becario', tr('Becario {n}').replace('{n}', [7, 12][i]), x, y); cerebroCazador(h); h.dir = -Math.PI / 2 + (i ? 0.5 : -0.5); h.mira = i ? -1 : 1; });
+    if (modoEs('ida')) { const e = nuevoEnte('camaleon', 'coon', NOMBRES.coon, ...SALIDA_CAMALEONES[4 % SALIDA_CAMALEONES.length]); cambiaPostura(e, posturaBot()); cerebroCamaleon(e, 0.4); e.sitio = eligeSitio(e, ocupados); ocupados.push(e.sitio); }
+    else SALIDA_CAZADORES.forEach(([x, y], i) => { const h = nuevoEnte('cazador', 'becario', tr('Becario {n}').replace('{n}', [7, 12][i]), x, y); cerebroCazador(h); h.dir = -Math.PI / 2 + (i ? 0.5 : -0.5); h.mira = i ? -1 : 1; });
     cambiaFase('prep');
   } else {
     // tú eres el becario; cinco colados ya están escondidos y pintados, cada uno con su maña
@@ -76,7 +77,7 @@ function cambiaFase(f) {
     for (const h of J.cazadores) if (h.bot) ronda(h);
     modoEmpiezaCaza(); botePrepara();      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
     musica(temaDe('caza')); play('comienzaCaza');
-    cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
+    if (!modoEs('ida')) cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
   }
   refrescaHud(true);
   if (J.pvp) rfpFase(f);      // PvP: el anfitrión se lo cuenta a los demás
@@ -91,7 +92,7 @@ function avanzaSilbidos(dt) {
     if (e.congelado && e.enVista) e.pts.narices += dt * modoNarices(e);   // delante de sus narices: en la luz de un becario sin que te vea
     if (e.remoto) continue;      // PvP: el silbido de cada uno lo cuenta su dueño (o el anfitrión, si es de la máquina) y avisa a los demás
     e.silbido -= dt;
-    if (e.jugador && e.silbido <= 5 && !e.avisado) { e.avisado = true; avisa(tr('Silbido obligatorio en 5 segundos'), 'aviso'); play('tick'); }
+    if ((e.jugador || e.mio) && e.silbido <= 5 && !e.avisado) { e.avisado = true; avisa(tr('Silbido obligatorio en 5 segundos'), 'aviso'); play('tick'); }
     if (e.silbido <= 0) silba(e, true);
     else if (e.bot && e.congelado && e.bot.mana >= 0.5 && e.silbido > 1 && e.silbido < 9 && Math.random() < dt * 0.5
       && J.cazadores.every(h => h.fuera || lejos(h.x, h.y, e.x, e.y) > 380)) silba(e, false);
@@ -147,6 +148,7 @@ function avanzaPartida(dt) {
     }
     // ¿se acaba? (en el PvP lo decide el anfitrión: rfpComprueba, y los demás lo reciben)
     if (J.pvp) { if (manda) rfpComprueba(); else rfpSinAnfitrion(); }
+    else if (modoEs('ida')) { if (idaAcaba()) termina(true, 'ida'); }
     else if (J.modo === 'camaleon') {
       if (yo.fuera && !escondidos().length) termina(false, 'despedido');      // despedido, pero sigue de espectador mientras algún compañero aguante
       else if (J.reloj <= 0) termina(true, 'tiempo');
@@ -178,11 +180,11 @@ function marcadorDe(e) {
   if (J.pvp && e.puntosRed != null) return e.puntosRed + (e.galeria || 0) + (e.bonus || 0);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
   const k = e.pts;
   if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * (extraOn('halcon') ? HALCON.peso : HALCON.pesoNormal) + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300)) + (e.galeria || 0) + (e.bonus || 0);
-  const colado = e.contagiado ? e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 : 0;      // Contagio: lo ganado de colado se queda
+  const colado = e.cuerpo ? marcadorDe(e.cuerpo) : e.contagiado ? e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 : 0;      // Contagio: lo ganado de colado se queda
   return Math.max(0, Math.round(colado + k.aciertos * 150 - k.fallos * 30 + (escondidos().length ? 0 : Math.max(0, J.reloj) * 4 + Math.max(0, e.balas) * 40))) + (e.bonus || 0);
 }
 function clasificacion() {
-  return J.entes.map(e => ({
+  return J.entes.filter(e => !e.dueno).map(e => ({
     nombre: e.jugador ? tr('Tú') : e.nombre, clase: e.clase, tipo: e.tipo, jugador: e.jugador, fuera: e.fuera, puntos: marcadorDe(e),
     detalle: e.clase === 'camaleon' ? (e.fuera ? tr('Despedido') : e.camo + ' %') : (e.pts.aciertos === 1 ? tr('1 despido') : tr('{n} despidos').replace('{n}', e.pts.aciertos)),
   })).sort((a, b) => b.puntos - a.puntos || (a.jugador ? -1 : 1));

@@ -87,6 +87,7 @@ function rfpRecibe(m) {
 // el estado de otro jugador: dónde está, si se mueve, si está congelado, hacia dónde mira y apunta
 function rfpEstado(sl, m) {
   const e = sl.ente; if (!e || e.fuera) return;
+  if (modoEs('ida') && J.fase === 'cuenta' && e.clase === 'camaleon' && e.congelado && !m.c) return;      // Ida y vuelta: ya es su becario y yo aún no he salido a la caza
   const r = e.red || (e.red = { x: m.x, y: m.y, m: false, mi: 1, di: 0 });
   rfpFijaRed(r, m.x, m.y); r.m = !!m.m; r.mi = m.mi; r.di = m.di || 0;
   e.ciego = m.ci ? 0.5 : 0; e.invis = m.iv || 0;
@@ -207,7 +208,7 @@ function rfpTiroPedido(sl, m) {
 // solo el anfitrión: ¿a quién le da? cs: 0 acierta · 1 dispara a alguien que corre (no gasta carta) · 2 despido improcedente (pierde una carta) · 3 contra un señuelo (un extintor…)
 function rfpResuelve(h, x, y, margen) {
   const r = { s: h.slot, x, y, k: -1, cs: 2, sn: -1, b: h.balas };
-  const k = J.camaleones.find(c => !c.fuera && !invisible(c) && dentroDeAlubia(c, x, y, margen));
+  const k = J.camaleones.find(c => c !== h.cuerpo && !c.fuera && !invisible(c) && dentroDeAlubia(c, x, y, margen));
   if (k) { r.k = k.slot; r.cs = 0; h.balas = Math.min(REGLAS.balas, h.balas + 1); }
   else if (J.camaleones.some(c => !c.fuera && !invisible(c) && c.hielo < 0.85 && (c.moviendo || c.movido > 0) && lejos(c.x, c.y - 24, x, y) < 60)) r.cs = 1;
   else {
@@ -246,6 +247,7 @@ function rfpAplicaTiro(r) {
 // solo el anfitrión, durante la caza: ¿ha ganado algún bando?
 function rfpComprueba() {
   if (J.fase !== 'caza') return;
+  if (modoEs('ida')) { if (idaAcaba()) rfpFinHost('cazador', 'ida'); return; }
   if (!escondidos().length) rfpFinHost('cazador', 'todos');
   else if (!cazadoresVivos().length) rfpFinHost('camaleon', 'cartas');
   else if (boteLleno()) rfpFinHost('camaleon', 'bote');

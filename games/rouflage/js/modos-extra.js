@@ -11,6 +11,7 @@ const SILBATO = { cada: 8, plazo: 45, roce: 44, pasmo: 3, t: 0, quien: null, tPa
 
 // ---------- al empezar la caza: se reparten los papeles secretos ----------
 function modoEmpiezaCaza() {
+  idaEmpieza();      // Ida y vuelta: de cada colado sale su becario (modos-ida.js)
   const vivos = escondidos(); if (!vivos.length) return;
   const azar = J.pvp ? rfpAzar(RFP.info.semilla + 7) : Math.random;
   if (extraOn('bufon')) {
@@ -81,6 +82,6 @@ function modoResultado(r, victoria) {
     if (e === yo) { r.titulo = logro ? tr('¡EL BUFÓN GANA!') : fallo ? tr('BUFÓN DESPEDIDO ANTES DE HORA') : r.titulo; if (logro) { r.victoria = true; r.estrellas = Math.max(r.estrellas, 2); } }
   }
   if (extraOn('halcon')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) r.sub += ' ' + tr('Ojo de halcón: gana {a} con {n} puntos.', { a: top.nombre, n: top.puntos }); }
-  if (modoEs('retrato')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) { r.titulo = top.jugador ? tr('¡GANAS TÚ!') : tr('¡GANA {a}!', { a: top.nombre }); r.sub = tr('Retrato robot: solo gana uno, y es quien más puntos suma.') + ' ' + r.sub; r.victoria = !!top.jugador; r.estrellas = top.jugador ? 3 : Math.min(r.estrellas, 1); } }
+  if (modoEs('retrato') || modoEs('ida')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) { r.titulo = top.jugador ? tr('¡GANAS TÚ!') : tr('¡GANA {a}!', { a: top.nombre }); r.sub = modoEs('ida') ? tr('Ida y vuelta: solo gana uno, y es quien más puntos suma.') : tr('Retrato robot: solo gana uno, y es quien más puntos suma.') + ' ' + r.sub; r.victoria = !!top.jugador; r.estrellas = top.jugador ? 3 : Math.min(r.estrellas, 1); } }
   r.ranking = clasificacion(); r.puntos = marcadorDe(yo);
 }

@@ -131,11 +131,11 @@ const RFRED = (() => {
         const ids = [...vistos.keys()].sort(), n = ids.length;
         aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null, codigo, privada: !!codigo, anfitrion: 0, modo: ids[0] === id ? local.modoSala : modoVisto,
           jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: 'bunny', rol: null, yo: x === id })) });
-        const toca = codigo ? local.arranque && n >= 2 : n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000);
+        const toca = codigo ? local.arranque && n >= 1 : n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000);
         if (ids[0] === id && toca) {
           // los papeles al azar: entre 1 y ncaz cazadores humanos, y al menos 1 camaleón humano
           const ord = ids.slice(0, local.total).map((x, i) => [Math.random(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]), nn = ord.length;
-          const min = Math.max(1, nn - (local.total - local.ncaz)), max = Math.min(local.ncaz, nn - 1), cazs = min + Math.floor(Math.random() * (max - min + 1));
+          const min = Math.max(1, nn - (local.total - local.ncaz)), max = Math.min(local.ncaz, nn - 1), cazs = nn === 1 ? (Math.random() < 0.5 ? 1 : 0) : min + Math.floor(Math.random() * (max - min + 1));      // solo contra la máquina: a cara o cruz
           const roles = ids.slice(0, local.total).map(() => 'camaleon'); ord.slice(0, cazs).forEach(i => { roles[i] = 'cazador'; });
           const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, local.total), roles, animales: ids.slice(0, local.total).map(() => ['bunny', 'squirrel', 'fox', 'meercat', 'coon'][(Math.random() * 5) | 0]), semilla: (Math.random() * 2147483647) | 0, modo: local.modoSala };
           bc.postMessage(m); empieza(m);

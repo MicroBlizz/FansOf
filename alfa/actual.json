@@ -1,8 +1,8 @@
 {
- "build": 13,
- "hash": "51f88b0",
- "fecha": "2026-10-15T01:23:05Z",
- "mensaje": "Fans of Nova fase 0 (1/6): games/nova con portada «en construcción», solo desarrollo; fuera de la web pública y de la alfa",
+ "build": 14,
+ "hash": "60e1b52",
+ "fecha": "2026-10-15T01:27:48Z",
+ "mensaje": "Cuenta de Fans Of, paso 1: perfil global con un nombre único para todos los juegos",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -37,16 +37,16 @@
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
   let google = false;
 
-  // cambia el nombre público en todas las partidas de la cuenta (servidor/36-nombre-cuenta.sql); sin esa función en la base de datos avisa sin romper nada
+  // cambia el nombre de la cuenta, el mismo en todos los juegos (perfil global, servidor/36-perfil.sql); sin esa función en la base de datos avisa sin romper nada
   async function cambiarNombre() {
     const v = (document.getElementById('cuenta-nombre-web').value || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 14);
     if (v.length < 3) { window.avisar(t('Tiene que tener al menos 3 letras o números.')); return; }
     try {
-      const r = await CUENTA.rpc('cambiar_nombre', { p_nombre: v });
-      window.avisar(r && r.partidas ? t('Ahora te llamas {n}', { n: r.nombre }) : t('Guardado. Se verá en cuanto juegues y guardes una partida.'), true);
+      const r = await CUENTA.ponNombre(v);
+      window.avisar(t('Ahora te llamas {n}', { n: (r && r.nombre) || v }), true);
     } catch (err) {
       const m = String((err && err.message) || '');
-      window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /cambiar_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
+      window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /perfil_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
     }
   }
   // enlace directo a la copia de pruebas para quien tiene el rol «alfa» (sin rol, sin función o sin red no se enseña nada)
@@ -70,6 +70,7 @@
       const fn = document.createElement('div'); fn.className = 'cuenta-botones';
       fn.append(boton(t('CAMBIAR NOMBRE'), 'boton ol', cambiarNombre));
       cuerpo.append(fn);
+      CUENTA.perfil().then(p => { const i = document.getElementById('cuenta-nombre-web'); if (p && p.nombre && i && !i.value) i.value = p.nombre; });
       alfaEnlace(cuerpo);
       cuerpo.insertAdjacentHTML('beforeend', leyes());
       return;

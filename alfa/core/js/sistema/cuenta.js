@@ -205,7 +205,10 @@ const CUENTA = (() => {
   const sesion = () => leer(SESION, null) || {};
   // llamada a una función de la base de datos con la sesión de aquí; cuerpo puede ser una función que se evalúa justo después de tener la sesión
   const rpc = async (nombre, cuerpo) => { const t = await token(); return pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); };
-  return { activa, cambio, sincronizar, rpc, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
+  // PERFIL GLOBAL (servidor/36-perfil.sql): el nombre único de la cuenta para todos los juegos. Sin cuenta, sin red o sin esa función → null / no hace nada.
+  const perfil = async () => { if (!activa || sesion().invitado !== false) return null; try { return await rpc('perfil_leer', {}); } catch (e) { return null; } };
+  const ponNombre = nombre => rpc('perfil_nombre', { p_nombre: nombre });
+  return { activa, cambio, sincronizar, rpc, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; } };
 })();

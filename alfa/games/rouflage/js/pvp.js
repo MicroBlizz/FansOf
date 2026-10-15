@@ -72,6 +72,7 @@ function rfpEmpieza(info, red, vuelta) {
   rfpGuardaSala(info.sala);
   cargaMapa(mapaDeSemilla(info.semilla));      // el mapa sale de la semilla de la sala: el mismo en todos los navegadores
   modoPon(info.modo);      // el modo de la sala (modos.js); las públicas van en el normal
+  eventosPrepara(info.semilla);                // y los eventos del mapa también
   J.pvp = true; J.modo = mio.clase; J.t = 0;
   let nc = 0, nh = 0;
   for (const sl of slots) {

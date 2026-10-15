@@ -28,7 +28,7 @@ function escenaTitulo() {
 // la postura de un colado bot: casi siempre firmes; a veces otra, para que no todos tengan la misma silueta
 const posturaBot = () => pick(['firmes', 'firmes', 'firmes', 'bolita', 'estrella', 'saludo']);
 function empiezaPartida(modo) {
-  limpiaPartida(); J.modo = modo; J.t = 0; modoDesdeUrl();      // en solitario el modo sale de la URL (modos.js)
+  limpiaPartida(); J.modo = modo; J.t = 0; modoDesdeUrl(); eventosPrepara();      // en solitario el modo sale de la URL (modos.js)
   if (modo === 'camaleon') {
     // tú eres CrazyBunny; tres compañeros se esconden por su cuenta y dos becarios esperan encerrados en Recursos Humanos
     const yo = nuevoEnte('camaleon', 'bunny', NOMBRES.bunny, ...SALIDA_CAMALEONES[0]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts;
@@ -112,7 +112,7 @@ function avanzaPartida(dt) {
   senueloPaso(dt);
   humoPaso(J.yo);
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
-  controlaJugador(dt); poderAvanza(dt); modoAvanza(dt); habitacionAvanza();
+  controlaJugador(dt); poderAvanza(dt); modoAvanza(dt); eventosAvanza(dt); habitacionAvanza();
   for (const e of J.entes) {
     if (e.bot && J.fase !== 'fin') (e.clase === 'cazador' ? piensaCazador : piensaCamaleon)(e, dt);
     else if (e.bot) e.vx = e.vy = 0;

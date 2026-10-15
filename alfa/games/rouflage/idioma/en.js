@@ -402,5 +402,32 @@ IDIOMA.add({
   "Microblizz: «Eso no es camuflaje, es una petición de ayuda».": "Microblizz: \"That's not camouflage, that's a cry for help.\"",
   "Microblizz: «Hemos visto extintores mejor escondidos».": "Microblizz: \"We've seen better-hidden fire extinguishers.\"",
   "Microblizz: «La pintura se cobra del sueldo. Y no hay sueldo».": "Microblizz: \"The paint comes out of your salary. And there is no salary.\"",
-  "Phony: «Yo lo habría encontrado con los ojos cerrados. Que es como los tengo».": "Phony: \"I'd have found it with my eyes closed. Which is how they are.\""
+  "Phony: «Yo lo habría encontrado con los ojos cerrados. Que es como los tengo».": "Phony: \"I'd have found it with my eyes closed. Which is how they are.\"",
+  // el parking (mapa-parking.js)
+  "El parking": "The car park",
+  "Sótano -2. Escóndete entre los coches.": "Level -2. Hide among the cars.",
+  "PLANTA -2": "LEVEL -2",
+  "ENTRADA": "ENTRANCE",
+  "MICROBLIZZ NO SE HACE RESPONSABLE DE NADA": "MICROBLIZZ IS NOT RESPONSIBLE FOR ANYTHING",
+  "TARIFA": "RATE",
+  "1 ALMA / HORA": "1 SOUL / HOUR",
+  "APARQUE": "PARK",
+  "SU FUTURO": "YOUR FUTURE",
+  "VIGILANCIA": "SECURITY",
+  "Un coche enciende los faros": "A car turns its headlights on",
+  // las cloacas (mapa-cloacas.js)
+  "Las cloacas": "The sewers",
+  "Canales de agua verde, ratas y niebla. Huele a Ratkov.": "Green water channels, rats and fog. Smells of Ratkov.",
+  "COLECTOR SUR · MICROBLIZZ": "SOUTH COLLECTOR · MICROBLIZZ",
+  "AGUA": "WATER",
+  "NO POTABLE": "NOT DRINKABLE",
+  "PROHIBIDO": "NO",
+  "BAÑARSE": "SWIMMING",
+  "SUPERFICIE": "SURFACE",
+  "CUIDADO": "BEWARE OF",
+  "RATAS": "RATS",
+  "AQUÍ VIVIÓ": "HERE LIVED",
+  "UN BECARIO": "AN INTERN",
+  "BOMBAS": "PUMPS",
+  "Sube la niebla": "The fog is rising"
 });

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.10-a37.83d1444"></script>
+<script src="../../core/js/nucleo.js?v=0.2.10-a38.b266e29"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -23,8 +23,12 @@
   <div id="arriba">
     <div class="chip rol" id="chip-rol"><i data-icono="pincel"></i><b></b></div>
     <div id="marcador"><span id="fase-txt"></span><b id="reloj" class="ol">0:45</b></div>
-    <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+    <div id="esquina">
+      <button type="button" class="redondo" id="b-ranking" data-tr-aria aria-label="Clasificación"><i data-icono="podio"></i></button>
+      <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+    </div>
   </div>
+  <ol id="ranking" hidden></ol>
   <div id="estado">
     <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
     <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>

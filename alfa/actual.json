@@ -1,8 +1,8 @@
 {
- "build": 37,
- "hash": "83d1444",
- "fecha": "2026-10-15T07:49:49Z",
- "mensaje": "Nova: dificultad más suave (rangos, oleadas, Rey antes) y docs del prototipo",
+ "build": 38,
+ "hash": "b266e29",
+ "fecha": "2026-10-15T07:50:51Z",
+ "mensaje": "Rouflage: clasificación en vivo con botón en la esquina (solo texto, sin ventana)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

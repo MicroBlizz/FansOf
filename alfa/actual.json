@@ -1,8 +1,8 @@
 {
- "build": 11,
- "hash": "ee4852f",
- "fecha": "2026-10-15T00:58:25Z",
- "mensaje": "Rouflage 0.2.9: el camuflaje tras el humo se aplica también si el hielo llega por otro camino (PvP)",
+ "build": 12,
+ "hash": "759fc63",
+ "fecha": "2026-10-15T01:21:12Z",
+ "mensaje": "Mi cuenta (web): cambiar el nombre público y enlace a la alfa para el rol alfa",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

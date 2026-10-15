@@ -37,13 +37,41 @@
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
   let google = false;
 
+  // cambia el nombre público en todas las partidas de la cuenta (servidor/36-nombre-cuenta.sql); sin esa función en la base de datos avisa sin romper nada
+  async function cambiarNombre() {
+    const v = (document.getElementById('cuenta-nombre-web').value || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 14);
+    if (v.length < 3) { window.avisar(t('Tiene que tener al menos 3 letras o números.')); return; }
+    try {
+      const r = await CUENTA.rpc('cambiar_nombre', { p_nombre: v });
+      window.avisar(r && r.partidas ? t('Ahora te llamas {n}', { n: r.nombre }) : t('Guardado. Se verá en cuanto juegues y guardes una partida.'), true);
+    } catch (err) {
+      const m = String((err && err.message) || '');
+      window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /cambiar_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
+    }
+  }
+  // enlace directo a la copia de pruebas para quien tiene el rol «alfa» (sin rol, sin función o sin red no se enseña nada)
+  async function alfaEnlace(donde) {
+    if (NUCLEO.alfa) return;
+    let tiene = false; try { tiene = await CUENTA.rpc('tiene_rol', { p_rol: 'alfa' }); } catch (e) { return; }
+    if (!tiene || !donde.isConnected || donde.querySelector('.cuenta-alfa')) return;
+    const a = document.createElement('a'); a.className = 'boton sec cuenta-alfa'; a.href = base + 'alfa/'; a.textContent = t('IR A LA ALFA');
+    const fila = document.createElement('div'); fila.className = 'cuenta-botones'; fila.append(a);
+    const leyesEl = donde.querySelector('.cuenta-leyes'); leyesEl ? leyesEl.before(fila) : donde.append(fila);
+  }
+
   function pintar(motivo) {
     cuerpo.innerHTML = '';
     if (conCuenta()) {
       cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('TU CUENTA'))}</h3><p>${t('Has entrado con {e}. Es la misma cuenta en todos los juegos.', { e: '<b>' + esc(CUENTA.email) + '</b>' })}</p>`;
       const fila = document.createElement('div'); fila.className = 'cuenta-botones';
       fila.append(boton(t('CERRAR SESIÓN'), 'boton sec', () => CUENTA.cerrarSesion().then(() => { window.avisar(t('Sesión cerrada'), true); pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); cerrar(); }, fallo)));
-      cuerpo.append(fila); cuerpo.insertAdjacentHTML('beforeend', leyes());
+      cuerpo.append(fila);
+      cuerpo.insertAdjacentHTML('beforeend', `<h4 class="cuenta-sub ol">${esc(t('TU NOMBRE'))}</h4><p>${esc(t('Es el que ven los demás en las clasificaciones y las partidas. Se cambia en todos tus juegos.'))}</p><input id="cuenta-nombre-web" type="text" maxlength="14" autocomplete="nickname" placeholder="${esc(t('Tu nombre'))}" aria-label="${esc(t('Tu nombre'))}">`);
+      const fn = document.createElement('div'); fn.className = 'cuenta-botones';
+      fn.append(boton(t('CAMBIAR NOMBRE'), 'boton ol', cambiarNombre));
+      cuerpo.append(fn);
+      alfaEnlace(cuerpo);
+      cuerpo.insertAdjacentHTML('beforeend', leyes());
       return;
     }
     cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('ENTRAR'))}</h3>`

@@ -159,7 +159,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info', 'p-diario'];
+const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info', 'p-diario', 'p-pase'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); }

@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.18-a102.dbc3b7b"></script>
+<script src="../../core/js/nucleo.js?v=0.2.18-a103.c9cc3d9"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -110,6 +110,7 @@
         <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
         <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
+        <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
       </div>
     </div>
     <div class="fila-botones">
@@ -309,9 +310,10 @@
 <div class="pantalla" id="p-armario" hidden>
   <div class="caja armario">
     <div class="ar-cabeza"><h2 class="ol" data-tr>ARMARIO</h2><span class="ar-cuenta" id="ar-cuenta"></span></div>
+    <div class="cartera" id="ar-cartera"></div>
     <div class="ar-escena">
       <div class="ar-vista" id="ar-vista-sitio"></div>
-      <div class="ar-info"><b id="ar-nombre"></b><span id="ar-de"></span><span class="ar-estado" id="ar-estado"></span></div>
+      <div class="ar-info"><b id="ar-nombre"></b><span id="ar-de"></span><span class="ar-estado" id="ar-estado"></span><button type="button" class="boton peq" id="b-ar-comprar" hidden></button></div>
     </div>
     <div class="ar-pestanas" id="ar-pestanas" role="tablist"></div>
     <p class="ar-nota" id="ar-nota"></p>
@@ -323,6 +325,21 @@
     </div>
   </div>
 </div>
+<!-- el pase de temporada (economia.js) -->
+<div class="pantalla" id="p-pase" hidden>
+  <div class="caja pase-caja">
+    <h2 class="ol" data-tr>PASE DE TEMPORADA</h2>
+    <p class="pase-sub"><b id="pase-nivel"></b> · <span data-tr>Sube jugando partidas: más si ganas y más en línea.</span></p>
+    <div class="pase-barra"><i id="pase-barra"></i></div>
+    <p class="pase-xp" id="pase-xp"></p>
+    <div class="cartera" id="pase-cartera"></div>
+    <div class="pase-cols"><span></span><b data-tr>GRATIS</b><b class="premium" data-tr>PREMIUM</b></div>
+    <div class="pase-lista" id="pase-lista"></div>
+    <button type="button" class="boton grande" id="b-pase-premium"></button>
+    <button type="button" class="boton peq" id="b-pase-volver" data-tr>Volver</button>
+  </div>
+</div>
+
 <!-- el premio diario (diario.js) -->
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">
@@ -330,7 +347,7 @@
     <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>Si un día no entras, no pierdes nada: sigues por donde ibas.</span></p>
     <div class="diario-dias" id="diario-dias"></div>
     <p class="diario-mes" id="diario-mes"></p>
-    <p class="diario-migas"><span data-tr>Tus Migas</span> <b id="diario-migas">0</b></p>
+    <p class="diario-gotas"><span data-tr>Tus gotas</span> <b id="diario-gotas">0</b></p>
     <button type="button" class="boton grande" id="b-diario-recoger"></button>
     <button type="button" class="boton peq" id="b-diario-volver" data-tr>Volver</button>
   </div>
@@ -439,6 +456,7 @@ NUCLEO.juego({
     'js/armario-datos.js',
     'js/armario.js',
     'js/diario.js',
+    'js/economia.js',
     'js/habitacion.js',
     'js/principal.js',
   ],

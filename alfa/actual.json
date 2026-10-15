@@ -1,8 +1,8 @@
 {
- "build": 102,
- "hash": "dbc3b7b",
- "fecha": "2026-10-15T20:19:45Z",
- "mensaje": "Rouflage 0.2.18: zoom para el cazador (lupa con tres niveles, pellizco, rueda y + / −) y su bocadillo en el tutorial",
+ "build": 103,
+ "hash": "c9cc3d9",
+ "fecha": "2026-10-15T20:29:31Z",
+ "mensaje": "Rouflage (alfa): economía con Gotas de pintura y Acciones (antes Migas y Purpurina): gotas por partida con tope diario, pase de temporada que sube jugando (gratis con algo de Acciones y premium), botón COMPRAR en el armario",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

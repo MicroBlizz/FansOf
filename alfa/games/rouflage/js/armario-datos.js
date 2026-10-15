@@ -1,6 +1,6 @@
 // Fans of Rouflage · ARMARIO (datos): el catálogo de la Temporada 1. Primero los CONJUNTOS (un personaje del Rumble entero: cabeza,
 // espalda, cara y papel a la vez) y luego las piezas sueltas por categoría. Cada cosa: id, nombre (n), rareza (r: comun, rara, epica,
-// legend), de dónde sale (de: base, conjunto, gratis, premium, diario, tienda, migas, subs), el texto de cómo se consigue (txt; en la tienda
+// legend), de dónde sale (de: base, conjunto, gratis, premium, diario, tienda, gotas, subs), el texto de cómo se consigue (txt; en la tienda
 // es su precio en Purpurina, un número) y su dibujo de icono (x). Las piezas del cuerpo llevan además `v`: la clave de ARD con la que se
 // dibujan sobre la galleta (OJOS, BOCAS, PAPEL/COLOR_PAPEL, CABEZAS, ESPALDAS). Todo es cosmético: nada cambia cómo se juega.
 'use strict';
@@ -39,7 +39,7 @@ const CATALOGO_AR = (() => {
     it('espiral', 'Espiral de CrazyBunny', 'rara', 'conjunto', dc('CrazyBunny'), O('espiral'), 'espiral'), it('foxgafas', 'Gafas de SlyFox', 'rara', 'conjunto', dc('SlyFox'), O('foxgafas'), 'foxgafas'),
     it('necro', 'Ojos de NecroLord', 'legend', 'conjunto', dc('NecroLord'), O('necro'), 'necro'), it('visor', 'Visor de CyberNinja', 'epica', 'conjunto', dc('CyberNinja'), O('visor'), 'visor'),
     it('gafas', 'Gafas redondas', 'rara', 'gratis', 'Pase gratis · nv 4', O('gafas'), 'gafas'), it('estrellas', 'Estrellas', 'epica', 'premium', 'Pase premium · nv 18', O('estrellas'), 'estrellas'),
-    it('guino', 'Guiño', 'comun', 'migas', '150 Migas', O('guino'), 'guino'), it('bizco', 'Bizco', 'rara', 'diario', 'Diario · día 7 (semana 2)', O('bizco'), 'bizco'),
+    it('guino', 'Guiño', 'comun', 'gotas', '150 Gotas', O('guino'), 'guino'), it('bizco', 'Bizco', 'rara', 'diario', 'Diario · día 7 (semana 2)', O('bizco'), 'bizco'),
     it('sol', 'Gafas de sol', 'rara', 'tienda', 200, O('sol'), 'sol'), it('monoculo', 'Monóculo', 'epica', 'premium', 'Pase premium · nv 31', O('monoculo'), 'monoculo'),
     it('laser', 'Láser de jefe', 'legend', 'tienda', 800, O('laser'), 'laser'), it('corazones', 'Corazones', 'rara', 'gratis', 'Pase gratis · nv 22', O('corazones'), 'corazones'),
   ];
@@ -48,7 +48,7 @@ const CATALOGO_AR = (() => {
     it('conejo', 'Dientes de CrazyBunny', 'rara', 'conjunto', dc('CrazyBunny'), B('conejo'), 'conejo'), it('ardilla', 'Diente de MadSquirrel', 'rara', 'conjunto', dc('MadSquirrel'), B('ardilla'), 'ardilla'),
     it('dienton', 'Dientón de BoomBeaver', 'rara', 'conjunto', dc('BoomBeaver'), B('dienton'), 'dienton'), it('colmillos', 'Colmillos de JunkCoon', 'epica', 'conjunto', dc('JunkCoon'), B('colmillos'), 'colmillos'),
     it('lengua', 'Lengua', 'rara', 'gratis', 'Pase gratis · nv 7', B('lengua'), 'lengua'), it('bigote', 'Bigote', 'epica', 'premium', 'Pase premium · nv 9', B('bigote'), 'bigote'),
-    it('silbando', 'Silbando', 'rara', 'diario', 'Diario · día 7 (semana 1)', B('silbando'), 'silbando'), it('sorpresa', 'Sorprendido', 'comun', 'migas', '150 Migas', B('sorpresa'), 'sorpresa'),
+    it('silbando', 'Silbando', 'rara', 'diario', 'Diario · día 7 (semana 1)', B('silbando'), 'silbando'), it('sorpresa', 'Sorprendido', 'comun', 'gotas', '150 Gotas', B('sorpresa'), 'sorpresa'),
     it('barba', 'Barba de papel', 'epica', 'tienda', 400, B('barba'), 'barba'), it('vampiro', 'Vampiro', 'rara', 'gratis', 'Pase gratis · nv 28', B('vampiro'), 'vampiro'),
     it('bufanda', 'Bufanda de lana', 'rara', 'tienda', 200, B('bufanda'), 'bufanda'),
   ];
@@ -56,7 +56,7 @@ const CATALOGO_AR = (() => {
   const papelR = [
     ['blanco', 'Folio blanco', 'comun', 'base', 'Al empezar'], ['kraft', 'Kraft', 'comun', 'base', 'Al empezar'], ['cuadricula', 'Cuadriculado', 'comun', 'base', 'Al empezar'], ['rayas', 'Libreta de rayas', 'comun', 'base', 'Al empezar'],
     ['oro', 'Oro de EpicChampion', 'epica', 'conjunto', dc('EpicChampion')], ['morado', 'Túnica de NecroLord', 'legend', 'conjunto', dc('NecroLord')], ['negro', 'Traje de CyberNinja', 'epica', 'conjunto', dc('CyberNinja')], ['verde', 'Camiseta de ProGamer', 'epica', 'conjunto', dc('ProGamer')],
-    ['periodico', 'Periódico', 'rara', 'gratis', 'Pase gratis · nv 13'], ['carton', 'Cartón', 'comun', 'migas', '250 Migas'], ['purpurina', 'Purpurina', 'epica', 'premium', 'Pase premium · nv 25'], ['regalo', 'Papel de regalo', 'rara', 'tienda', 250],
+    ['periodico', 'Periódico', 'rara', 'gratis', 'Pase gratis · nv 13'], ['carton', 'Cartón', 'comun', 'gotas', '250 Gotas'], ['purpurina', 'Purpurina', 'epica', 'premium', 'Pase premium · nv 25'], ['regalo', 'Papel de regalo', 'rara', 'tienda', 250],
     ['mapa', 'Mapa del tesoro', 'epica', 'tienda', 500], ['partitura', 'Partitura', 'rara', 'diario', 'Diario · 20 días del mes'], ['arcoiris', 'Papel arcoíris', 'legend', 'premium', 'Pase premium · nv 38'], ['celofan', 'Cinta adhesiva', 'epica', 'subs', 'Caos ilimitado · noviembre'], ['tornasol', 'Papel tornasol', 'epica', 'tienda', 400],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, PA(k), k));
   const CA = k => G({ cabeza: k, esc: 1.3 });
@@ -66,35 +66,35 @@ const CATALOGO_AR = (() => {
     ['yelmo', 'Yelmo de EpicChampion', 'epica', 'conjunto', dc('EpicChampion')], ['cuernosNecro', 'Cuernos de NecroLord', 'legend', 'conjunto', dc('NecroLord')], ['cascoGamer', 'Cascos de ProGamer', 'epica', 'conjunto', dc('ProGamer')],
     ['orejasDog', 'Orejas de SuchDog', 'rara', 'conjunto', dc('SuchDog')], ['medusa', 'Serpientes de Medusa', 'legend', 'conjunto', dc('Medusa')],
     ['gorra', 'Gorra de becario', 'rara', 'tienda', 'Pack de inicio'], ['corona', 'Corona', 'epica', 'tienda', 300], ['aureola', 'Aureola', 'rara', 'gratis', 'Pase gratis · nv 10'],
-    ['chistera', 'Chistera', 'epica', 'premium', 'Pase premium · nv 15'], ['cuernos', 'Cuernos', 'rara', 'gratis', 'Pase gratis · nv 31'], ['flor', 'Flor', 'comun', 'migas', '200 Migas'], ['antena', 'Antena', 'comun', 'diario', 'Diario · día 2'],
-    ['fiesta', 'Gorro de fiesta', 'comun', 'gratis', 'Pase gratis · nv 1'], ['lazo', 'Lazo', 'comun', 'migas', '200 Migas'], ['hoja', 'Brote', 'comun', 'gratis', 'Pase gratis · nv 16'], ['pulpo', 'Pulpo sombrero', 'legend', 'premium', 'Pase premium · nv 35'],
+    ['chistera', 'Chistera', 'epica', 'premium', 'Pase premium · nv 15'], ['cuernos', 'Cuernos', 'rara', 'gratis', 'Pase gratis · nv 31'], ['flor', 'Flor', 'comun', 'gotas', '200 Gotas'], ['antena', 'Antena', 'comun', 'diario', 'Diario · día 2'],
+    ['fiesta', 'Gorro de fiesta', 'comun', 'gratis', 'Pase gratis · nv 1'], ['lazo', 'Lazo', 'comun', 'gotas', '200 Gotas'], ['hoja', 'Brote', 'comun', 'gratis', 'Pase gratis · nv 16'], ['pulpo', 'Pulpo sombrero', 'legend', 'premium', 'Pase premium · nv 35'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, CA(k), k));
   const ES = k => G({ espalda: k, esc: 1.25 });
   const espaldaR = [
     ['capa', 'Capa de CrazyBunny', 'rara', 'conjunto', dc('CrazyBunny')], ['colaArdilla', 'Cola de MadSquirrel', 'rara', 'conjunto', dc('MadSquirrel')], ['colaFox', 'Cola de SlyFox', 'rara', 'conjunto', dc('SlyFox')],
     ['colaBeaver', 'Cola de BoomBeaver', 'rara', 'conjunto', dc('BoomBeaver')], ['alasAngel', 'Alas de MeerCat', 'epica', 'conjunto', dc('MeerCat')], ['colaCoon', 'Cola de JunkCoon', 'epica', 'conjunto', dc('JunkCoon')],
     ['capaAzul', 'Capa de EpicChampion', 'epica', 'conjunto', dc('EpicChampion')], ['capaNecro', 'Capa de NecroLord', 'legend', 'conjunto', dc('NecroLord')], ['katana', 'Katana de CyberNinja', 'epica', 'conjunto', dc('CyberNinja')], ['teclado', 'Teclado de ProGamer', 'epica', 'conjunto', dc('ProGamer')],
-    ['alasMurci', 'Alas de murciélago', 'epica', 'tienda', 500], ['alasMariposa', 'Alas de mariposa', 'legend', 'tienda', 900], ['mochila', 'Mochila', 'comun', 'migas', '250 Migas'],
+    ['alasMurci', 'Alas de murciélago', 'epica', 'tienda', 500], ['alasMariposa', 'Alas de mariposa', 'legend', 'tienda', 900], ['mochila', 'Mochila', 'comun', 'gotas', '250 Gotas'],
     ['colaGato', 'Cola de gato', 'comun', 'diario', 'Diario · día 7 (semana 3)'], ['propulsor', 'Propulsor', 'legend', 'premium', 'Pase premium · nv 20'], ['baston', 'Bastón de NecroLord', 'epica', 'premium', 'Pase premium · nv 12'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, ES(k), k));
   const H = col => (c, w) => humo(c, w, col);
   const humoR = [
     it('gris', 'Gris de oficina', 'comun', 'base', 'Al empezar', H()), it('confeti', 'Confeti', 'rara', 'gratis', 'Pase gratis · nv 13', H(['#7ee04a', '#39d5e8', '#ffcb3d'])),
     it('purpurina', 'Purpurina', 'epica', 'premium', 'Pase premium · nv 11', H(['#ff6fb5', '#ffcb3d', '#b45cff'])), it('arcoiris', 'Arcoíris', 'epica', 'tienda', 500, H(['#ff4b5c', '#ffcb3d', '#7ee04a', '#39d5e8', '#b45cff'])),
-    it('calamar', 'Tinta de calamar', 'rara', 'gratis', 'Pase gratis · nv 25', H(['#3a2a5e', '#55407e'])), it('cafe', 'Café con leche', 'comun', 'migas', '200 Migas', H(['#b98a4f', '#e3c69a'])),
+    it('calamar', 'Tinta de calamar', 'rara', 'gratis', 'Pase gratis · nv 25', H(['#3a2a5e', '#55407e'])), it('cafe', 'Café con leche', 'comun', 'gotas', '200 Gotas', H(['#b98a4f', '#e3c69a'])),
     it('fuego', 'Fuego frío', 'legend', 'premium', 'Pase premium · nv 38', H(['#39d5e8', '#8fe3ff', '#2e8bff'])), it('menta', 'Menta', 'comun', 'diario', 'Diario · día 7 (semana 4)', H(['#7ee04a', '#c8f7a8'])),
     it('atardecer', 'Atardecer', 'rara', 'tienda', 300, H(['#ff7a1a', '#ff6fb5', '#ffcb3d'])), it('cielo', 'Cielo', 'rara', 'subs', 'Caos ilimitado · diciembre', H(['#58b8ff', '#cfe0ff'])),
   ];
   const R = t => (c, w) => rastro(c, w, t);
   const silbidoR = [
     it('ondas', 'Ondas', 'comun', 'base', 'Al empezar', R('ondas')), it('notas', 'Notas musicales', 'rara', 'gratis', 'Pase gratis · nv 6', R('notas')),
-    it('pajaros', 'Pajaritos de papel', 'epica', 'premium', 'Pase premium · nv 22', R('pajaros')), it('burbujas', 'Burbujas', 'comun', 'migas', '200 Migas', R('burbujas')),
+    it('pajaros', 'Pajaritos de papel', 'epica', 'premium', 'Pase premium · nv 22', R('pajaros')), it('burbujas', 'Burbujas', 'comun', 'gotas', '200 Gotas', R('burbujas')),
     it('estrellas', 'Estrellas', 'rara', 'tienda', 250, R('estrellas')), it('zzz', 'Zzz', 'comun', 'diario', 'Diario · día 4', R('zzz')),
     it('arcoiris', 'Arcoíris', 'epica', 'tienda', 500, R('arcoiris')), it('bellotas', 'Bellotas de MadSquirrel', 'legend', 'premium', 'Pase premium · nv 33', R('bellotas')), it('chispas', 'Chispas', 'rara', 'gratis', 'Pase gratis · nv 34', R('chispas')),
   ];
   const F = t => (c, w) => fantasma(c, w, t);
   const fantasmaR = [
-    it('galleta', 'Tu galleta fantasma', 'comun', 'base', 'Al empezar', F('galleta')), it('sabana', 'Sábana', 'comun', 'migas', '150 Migas', F('sabana')),
+    it('galleta', 'Tu galleta fantasma', 'comun', 'base', 'Al empezar', F('galleta')), it('sabana', 'Sábana', 'comun', 'gotas', '150 Gotas', F('sabana')),
     it('avion', 'Avión de papel', 'rara', 'diario', 'Diario · 20 días del mes', F('avion')), it('caja', 'Caja de cartón', 'rara', 'gratis', 'Pase gratis · nv 37', F('caja')),
     it('bola', 'Bola de papel', 'comun', 'gratis', 'Pase gratis · nv 3', F('bola')), it('globo', 'Globo', 'epica', 'tienda', 400, F('globo')),
     it('nube', 'Nube', 'rara', 'tienda', 300, F('nube')), it('dorado', 'Fantasma dorado', 'epica', 'premium', 'Pase premium · nv 14', F('dorado')), it('polaroid', 'Foto de despedida', 'legend', 'premium', 'Pase premium · nv 27', F('polaroid')),
@@ -103,23 +103,23 @@ const CATALOGO_AR = (() => {
   const congelarR = [
     it('nada', 'Sin efecto', 'comun', 'base', 'Al empezar', C('')), it('destello', 'Destello', 'rara', 'gratis', 'Pase gratis · nv 9', C('destello')),
     it('escarcha', 'Escarcha', 'epica', 'premium', 'Pase premium · nv 24', C('escarcha')), it('pegatina', 'Pegatina', 'rara', 'tienda', 250, C('pegatina')),
-    it('confeti', 'Confeti', 'comun', 'migas', '200 Migas', C('confeti')), it('flash', 'Flash de foto', 'rara', 'diario', 'Diario · día 7 (semana 2)', C('flash')), it('tinta', 'Mancha de tinta', 'epica', 'tienda', 400, C('tinta')),
+    it('confeti', 'Confeti', 'comun', 'gotas', '200 Gotas', C('confeti')), it('flash', 'Flash de foto', 'rara', 'diario', 'Diario · día 7 (semana 2)', C('flash')), it('tinta', 'Mancha de tinta', 'epica', 'tienda', 400, C('tinta')),
   ];
   const S = t => (c, w) => sello(c, w, t);
   const selloR = [
-    it('rojo', 'Tampón rojo', 'comun', 'base', 'Al empezar', S('rojo')), it('azul', 'Tampón azul', 'comun', 'migas', '150 Migas', S('azul')),
+    it('rojo', 'Tampón rojo', 'comun', 'base', 'Al empezar', S('rojo')), it('azul', 'Tampón azul', 'comun', 'gotas', '150 Gotas', S('azul')),
     it('verde', 'Tampón verde', 'comun', 'gratis', 'Pase gratis · nv 21', S('verde')), it('grapa', 'Grapa', 'rara', 'gratis', 'Pase gratis · nv 26', S('grapa')),
     it('firma', 'Firma del jefe', 'epica', 'premium', 'Pase premium · nv 17', S('firma')), it('huella', 'Huella de becario', 'rara', 'tienda', 250, S('huella')), it('oro', '«ASCENDIDO» dorado', 'legend', 'premium', 'Pase premium · nv 36', S('oro')),
   ];
   const L = (col, b) => (c, w) => linterna(c, w, col, b);
   const linternaR = [
-    it('bombilla', 'Bombilla', 'comun', 'base', 'Al empezar', L('rgba(255,236,170,.6)', '')), it('ambar', 'Ámbar', 'comun', 'migas', '200 Migas', L('rgba(255,160,60,.55)', 'linea')),
+    it('bombilla', 'Bombilla', 'comun', 'base', 'Al empezar', L('rgba(255,236,170,.6)', '')), it('ambar', 'Ámbar', 'comun', 'gotas', '200 Gotas', L('rgba(255,160,60,.55)', 'linea')),
     it('hielo', 'Hielo', 'rara', 'gratis', 'Pase gratis · nv 18', L('rgba(143,227,255,.55)', 'linea')), it('disco', 'Discoteca', 'epica', 'premium', 'Pase premium · nv 26', L('rgba(255,111,181,.55)', 'puntos')),
     it('estrellada', 'Estrellada', 'legend', 'tienda', 800, L('rgba(255,203,61,.55)', 'estrellas')), it('radar', 'Verde radar', 'rara', 'diario', 'Diario · día 7 (semana 3)', L('rgba(126,224,74,.5)', 'linea')),
   ];
   const M = t => (c, w) => marco(c, w, t);
   const marcosR = [
-    ['madera', 'Madera', 'comun', 'base', 'Al empezar'], ['corcho', 'Corcho con chinchetas', 'comun', 'migas', '200 Migas'], ['cinta', 'Cinta adhesiva', 'rara', 'gratis', 'Pase gratis · nv 30'],
+    ['madera', 'Madera', 'comun', 'base', 'Al empezar'], ['corcho', 'Corcho con chinchetas', 'comun', 'gotas', '200 Gotas'], ['cinta', 'Cinta adhesiva', 'rara', 'gratis', 'Pase gratis · nv 30'],
     ['pixel', 'Píxel', 'rara', 'tienda', 'Pack de inicio'], ['neon', 'Neón', 'epica', 'premium', 'Pase premium · nv 21'], ['oro', 'Oro', 'legend', 'premium', 'Pase premium · nv 39'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, M(k), k));
   const TI = (t, col) => Object.assign((c, w) => titulo(c, w, t, col), { texto: t, color: col });
@@ -127,12 +127,12 @@ const CATALOGO_AR = (() => {
     it('becario', 'Becario', 'comun', 'base', 'Al empezar', TI('BECARIO', '#cdb9ea')), it('indespedible', 'Indespedible', 'rara', 'gratis', 'Pase gratis · nv 20', TI('INDESPEDIBLE', '#7ee04a')),
     it('delmes', 'Becario del mes', 'epica', 'premium', 'Pase premium · nv 23', TI('BECARIO DEL MES', '#ffcb3d')), it('mancha', 'Mancha en la pared', 'rara', 'diario', 'Diario · 20 días del mes', TI('MANCHA EN LA PARED', '#39d5e8')),
     it('inhumanos', 'Recursos Inhumanos', 'epica', 'gratis', 'Misión de temporada', TI('RECURSOS INHUMANOS', '#ff4b5c')), it('nimimadre', 'Ni mi madre me encuentra', 'legend', 'premium', 'Pase premium · nv 37', TI('NI MI MADRE ME ENCUENTRA', '#ff6fb5')),
-    it('cafe', 'Café con piernas', 'comun', 'migas', '150 Migas', TI('CAFÉ CON PIERNAS', '#d9a25b')), it('despedidor', 'Despedidor', 'rara', 'gratis', 'Misión: despide a 50', TI('DESPEDIDOR', '#2e8bff')),
+    it('cafe', 'Café con piernas', 'comun', 'gotas', '150 Gotas', TI('CAFÉ CON PIERNAS', '#d9a25b')), it('despedidor', 'Despedidor', 'rara', 'gratis', 'Misión: despide a 50', TI('DESPEDIDOR', '#2e8bff')),
   ];
   const GE = t => (c, w) => gesto(c, w, t);
   const gestosR = [
     it('saludo', 'Saludo', 'comun', 'base', 'Al empezar', GE('saludo')), it('baile', 'Baile', 'rara', 'gratis', 'Pase gratis · nv 15', GE('baile')),
-    it('reverencia', 'Reverencia', 'epica', 'premium', 'Pase premium · nv 29', GE('reverencia')), it('risa', 'Risa', 'comun', 'migas', '200 Migas', GE('risa')),
+    it('reverencia', 'Reverencia', 'epica', 'premium', 'Pase premium · nv 29', GE('reverencia')), it('risa', 'Risa', 'comun', 'gotas', '200 Gotas', GE('risa')),
     it('llorar', 'Llorar', 'rara', 'diario', 'Diario · día 7 (semana 4)', GE('llorar')), it('selfie', 'Selfie', 'epica', 'tienda', 400, GE('selfie')),
     it('cafe', 'Pausa del café', 'rara', 'premium', 'Pase premium · nv 8', GE('cafe')), it('dormir', 'Siesta', 'comun', 'gratis', 'Pase gratis · nv 24', GE('dormir')),
   ];

@@ -41,10 +41,10 @@ const ARD = (() => {
     if (o.cabeza && CABEZAS[o.cabeza]) CABEZAS[o.cabeza](c);
     c.restore();
   }
-  /* ---------- iconos (migas, purpurina, candado, nada) ---------- */
+  /* ---------- iconos (gotas, acciones, candado, nada) ---------- */
   const ICONOS = {
-    migas(c, w) { const r = w * .36; shape(c, g => { g.arc(w / 2, w / 2, r, .5, T - .1); g.arc(w * .82, w * .38, r * .32, -1.1, 2.2, true); g.closePath(); }, '#d9a25b', w * .09); for (const [x, y] of [[.4, .45], [.55, .62], [.36, .66]]) dot(c, w * x, w * y, w * .05, '#6b3c1c'); },
-    purpurina(c, w) { shape(c, rr(w * .22, w * .32, w * .56, w * .56, w * .12), '#ff6fb5', w * .09); shape(c, rr(w * .28, w * .16, w * .44, w * .18, w * .05), '#ffcb3d', w * .09); for (const [x, y, r] of [[.4, .52, .06], [.6, .66, .05], [.45, .74, .04], [.62, .46, .04]]) dot(c, w * x, w * y, w * r, '#fff'); },
+    gotas(c, w) { const r = w * .36; shape(c, g => { g.arc(w / 2, w / 2, r, .5, T - .1); g.arc(w * .82, w * .38, r * .32, -1.1, 2.2, true); g.closePath(); }, '#d9a25b', w * .09); for (const [x, y] of [[.4, .45], [.55, .62], [.36, .66]]) dot(c, w * x, w * y, w * .05, '#6b3c1c'); },
+    acciones(c, w) { shape(c, rr(w * .22, w * .32, w * .56, w * .56, w * .12), '#ff6fb5', w * .09); shape(c, rr(w * .28, w * .16, w * .44, w * .18, w * .05), '#ffcb3d', w * .09); for (const [x, y, r] of [[.4, .52, .06], [.6, .66, .05], [.45, .74, .04], [.62, .46, .04]]) dot(c, w * x, w * y, w * r, '#fff'); },
     candado(c, w) { c.beginPath(); c.arc(w / 2, w * .42, w * .22, Math.PI, 0); c.lineWidth = w * .13; c.strokeStyle = OL; c.stroke(); c.lineWidth = w * .07; c.strokeStyle = '#cdb9ea'; c.stroke(); shape(c, rr(w * .2, w * .42, w * .6, w * .46, w * .08), '#ffcb3d', w * .1); },
     xp(c, w) { shape(c, g => starPath(g, w / 2, w / 2, w * .44, w * .2), '#39d5e8', w * .08); },
     nada(c, w) { c.lineWidth = w * .08; c.strokeStyle = 'rgba(205,185,234,.7)'; c.lineCap = 'round'; c.beginPath(); c.arc(w / 2, w / 2, w * .3, 0, T); c.moveTo(w * .29, w * .71); c.lineTo(w * .71, w * .29); c.stroke(); },

@@ -1,8 +1,8 @@
 {
- "build": 58,
- "hash": "51187f6",
- "fecha": "2026-10-15T10:44:39Z",
- "mensaje": "Feedback con preguntas: nota de 1 a 5 estrellas, la del cambio reciente (sale de NEWS, con botón para leerlo), las del juego (AJUSTES.feedbackPreguntas) y las de core; respuestas en jsonb (servidor/39, aún sin aplicar: mientras tanto se manda como texto)",
+ "build": 59,
+ "hash": "a15a128",
+ "fecha": "2026-10-15T10:48:27Z",
+ "mensaje": "Nova: retrato del NecroLord con la cara de la serie (el resto se queda como estaba)",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

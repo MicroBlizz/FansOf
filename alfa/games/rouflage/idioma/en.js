@@ -518,5 +518,8 @@ IDIOMA.add({
   "5 ESTRELLAS (DE 50)": "5 STARS (OUT OF 50)",
   "SEGURIDAD": "SECURITY",
   "¡Limpieza! El carrito viene por el pasillo": "Housekeeping! The trolley is coming down the corridor",
-  "¡El carrito de la limpieza te ha arrollado! Vuelve a pintarte": "The cleaning trolley ran you over! Paint yourself again"
+  "¡El carrito de la limpieza te ha arrollado! Vuelve a pintarte": "The cleaning trolley ran you over! Paint yourself again",
+  "JUGAR CONTRA BOTS": "PLAY AGAINST BOTS",
+  "RELLENAR CON BOTS": "FILL WITH BOTS",
+  "Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.": "Pick a mode and press FILL WITH BOTS to play now, or share the code with your friends."
 });

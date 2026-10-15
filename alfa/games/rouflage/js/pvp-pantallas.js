@@ -58,11 +58,11 @@ function pvpPintaBusca() {
   const jug = i.jugadores || [], jugando = i.estado !== 'espera', mio = jug.find(j => j.yo), priv = !!i.privada, soyAnf = priv && !!mio && mio.orden === i.anfitrion;
   E('busca-titulo').textContent = jugando ? tr('¡EMPIEZA LA PARTIDA!') : tr('SALA: {n} DE {max}', { n: i.n, max: i.max });
   E('busca-sub').textContent = jugando ? (mio && mio.rol === 'cazador' ? tr('Te toca de CAZADOR') : tr('Te toca de CAMALEÓN'))
-    : priv ? (soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Pásales el código a tus amigos. Hacen falta al menos dos personas.')) : tr('Esperando a que el anfitrión empiece.'))
+    : priv ? (soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.')) : tr('Esperando a que el anfitrión empiece.'))
     : i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
   // la sala con amigos: el código grande para compartir y el botón EMPEZAR del anfitrión
   E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
-  const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.classList.toggle('apagado', i.n < 2);
+  const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.textContent = i.n < 2 ? tr('RELLENAR CON BOTS') : tr('EMPEZAR');      // solo en la sala: la máquina rellena el resto y se juega ya
   const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
   const hueco = Math.max(0, (i.max || 10) - jug.length);
   lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
@@ -131,6 +131,7 @@ function preparaPvp() {
   E('b-amigos-volver').onclick = () => { play('select'); RFP.error = ''; pvpMuestra('p-pvp'); };
   E('b-busca-empezar').onclick = () => { play('select'); pvpEmpezar(); };
   E('b-busca-compartir').onclick = () => { play('select'); pvpCompartir(); };
+  E('b-pvp-bots').onclick = () => { play('select'); pvpBuscar({ crear: true }); };      // jugar contra bots: tu propia sala, para elegir modo y rellenar con la máquina
   E('b-modo-ant').onclick = () => pvpCambiaModo(-1); E('b-modo-sig').onclick = () => pvpCambiaModo(1);
 
   E('b-pvp-clasif').onclick = () => { play('select'); pvpClasificacion(); };

@@ -2,9 +2,9 @@
 // Cifras PROVISIONALES: se iteran con la partida (PLAN-NOVA.md, «Enemigos»).
 'use strict';
 const NV_ENEM = {
-  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 5,  chat: 6,  tragable: 1, color: '#9be26b' },
+  rastrero:  { nombre: 'Rastrero',  hp: 40,  vel: 100, r: 17, contacto: 5,  chat: 6,  tragable: 1, color: '#9be26b', tira: { cada: 1.9, dano: 5, alcance: 240, v: 230 } },
   fusilero:  { nombre: 'Fusilero',  hp: 90,  vel: 74, r: 21, contacto: 7,  chat: 8,  tragable: 3, color: '#d8e6c8', tira: { cada: 1.7, dano: 9, alcance: 330, v: 250 } },
-  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 16, chat: 22, tragable: 5, color: '#8a6bd1', esc: 150 },
+  sepulturero: { nombre: 'Sepulturero', hp: 320, vel: 50, r: 32, contacto: 16, chat: 22, tragable: 5, color: '#8a6bd1', esc: 150, tira: { cada: 1.5, dano: 12, alcance: 380, v: 240 } },
   asteroide: { nombre: 'Asteroide', hp: 60, vel: 0, r: 30, contacto: 0, chat: 10, tragable: 1, color: '#8a8fa8', pasivo: 1 },
   nido:      { nombre: 'Nido', hp: 700, vel: 0, r: 62, contacto: 14, chat: 90, color: '#7ad06b', pasivo: 0, nido: 1 },
   capitan:   { nombre: 'Capitán', hp: 1100, vel: 78, r: 52, contacto: 22, chat: 140, color: '#b49cff', esc: 200, capitan: 1 },
@@ -72,7 +72,7 @@ function nvEnemigos(S, dt) {
     if (e.dot) { e.hp -= e.dot.dps * dt; S.stats.dano += e.dot.dps * dt; if ((e.dot.t -= dt) <= 0) e.dot = null; if (e.hp <= 0) { nvMuere(S, e); continue; } }
     if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
     const dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
-    if (e.d.nido) { if (dist < e.r + n.r) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 0.8; nvDanoNave(S, e.d.contacto); } } continue; }   // el nido no se mueve
+    if (e.d.nido) { if (dist < 520) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 2.2; S.eproy.push({ x: e.x, y: e.y, vx: ux * 210, vy: uy * 210, dano: 9, vida: 3, r: 7 }); } } continue; }   // el nido no se mueve y escupe si te acercas
     if (e.d.pasivo) continue;   // las rocas solo estorban: se rompen a tiros
     if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) { if (e.errante) { e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt; } continue; }   // lejos: dormido o a lo suyo
     const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
@@ -87,11 +87,7 @@ function nvEnemigos(S, dt) {
     else { vx = ux; vy = uy; }
     const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
     e.x += vx / l * v * dt; e.y += vy / l * v * dt;
-    // contacto con la nave: no se comen vivos, solo hacen daño
-    if (dist < e.r + n.r) {
-      e.golpe -= dt;
-      if (e.golpe <= 0 && !apagado) { e.golpe = 0.7; nvDanoNave(S, e.d.contacto); }
-    }
+    // sin daño por choque: solo hacen daño con sus armas
   }
 }
 // El capitán patrulla, se come las rocas que encuentra (cada dos sube de rango y crece) y persigue y dispara si te acercas.

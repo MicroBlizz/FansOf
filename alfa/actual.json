@@ -1,8 +1,8 @@
 {
- "build": 44,
- "hash": "0c59daa",
- "fecha": "2026-10-15T08:52:27Z",
- "mensaje": "Nova: los enemigos ya no se empujan, la zona no se llena y salen más pequeños que grandes",
+ "build": 45,
+ "hash": "a7f2287",
+ "fecha": "2026-10-15T09:01:54Z",
+ "mensaje": "Nova: los enemigos solo hacen daño con sus armas, no por chocar",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

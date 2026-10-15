@@ -2,6 +2,8 @@
 'use strict';
 IDIOMA.add({
   "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",
+  "<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después.": "<b>VERSION IN FEEDBACK</b>: the feedback tab now shows the game version you're on, and it is saved with your message so we can review it later.",
+  "Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya.": "Microblizz has put the game's age on the tab. Phony asks if it also shows his.",
   "Microblizz ha renovado tu sesión sin avisar. Phony pregunta si también renueva las suyas.": "Microblizz has renewed your session without warning. Phony asks if he renews his own too.",
   "(los líderes de tus facciones)": "(the leaders of your factions)",
   ", con una ruleta que cambia cada semana.": ", with a wheel that changes every week.",

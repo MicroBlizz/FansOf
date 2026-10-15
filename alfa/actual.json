@@ -1,18 +1,18 @@
 {
- "build": 4,
- "hash": "0928e0e",
- "fecha": "2026-10-14T23:50:27Z",
- "mensaje": "Fans of Ratkov 0.2.3: la palanca de andar no se pega a los bordes (se corre en cualquier dirección sin tocar la franja de gestos) y se corre empujando algo menos",
+ "build": 5,
+ "hash": "352ec31",
+ "fecha": "2026-10-15T00:01:02Z",
+ "mensaje": "Versiones: todos los juegos suben (core cambió: versión visible en el feedback) con su entrada de novedades",
  "juegos": {
-  "crush": "0.1.14",
-  "dark": "0.2.3",
-  "island": "0.3.1",
+  "crush": "0.1.15",
+  "dark": "0.2.4",
+  "island": "0.3.2",
   "ratkov": "0.2.3",
-  "rouflage": "0.2.5",
-  "rumble": "0.9.133",
-  "skate": "0.1.23",
-  "survivors": "0.1.46",
-  "tacticas": "0.1.30",
-  "td": "0.13.62"
+  "rouflage": "0.2.6",
+  "rumble": "0.9.134",
+  "skate": "0.1.24",
+  "survivors": "0.1.47",
+  "tacticas": "0.1.31",
+  "td": "0.13.63"
  }
 }

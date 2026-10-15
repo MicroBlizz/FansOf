@@ -1,13 +1,13 @@
 {
- "build": 66,
- "hash": "bdf7dc4",
- "fecha": "2026-10-15T13:05:55Z",
- "mensaje": "Fans of Rouflage: armario y perfil (solo alfa y desarrollo) con el catálogo de la Temporada 1 y botón de pruebas para desbloquearlo todo; fuera el botón Biblioteca del título",
+ "build": 67,
+ "hash": "65d702f",
+ "fecha": "2026-10-15T13:06:36Z",
+ "mensaje": "Nova 0.3.0 sale en la release: menús con scroll vertical, novedades nuevas, Nova ya no es solo de la alfa",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",
   "island": "0.3.4",
-  "nova": "0.2.0",
+  "nova": "0.3.0",
   "ratkov": "0.2.6",
   "rouflage": "0.2.11",
   "rumble": "0.9.136",

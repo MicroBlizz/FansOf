@@ -1,8 +1,8 @@
 {
- "build": 83,
- "hash": "4a85a21",
- "fecha": "2026-10-15T18:25:45Z",
- "mensaje": "Rouflage 0.2.12: la nota de novedades cuenta los modos de juego de la sala de amigos",
+ "build": 84,
+ "hash": "9006ba1",
+ "fecha": "2026-10-15T18:32:30Z",
+ "mensaje": "Rouflage: menús sin morado ni lila (ventanas azul noche, botones secundarios gris azulado; naranja para la acción)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

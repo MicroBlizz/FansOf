@@ -13,7 +13,7 @@ const PODERES = {
 const PODER = { cada: 20 };
 
 // al hacerse fantasma (solo los colados): le toca uno
-function poderElige(f) { f.poder = pick(Object.keys(PODERES)); f.enfria = 4; }
+function poderElige(f) { f.poder = pick(Object.keys(PODERES).filter(k => k !== 'apagon' || !extraOn('apagon'))); f.enfria = 4; }      // en el Apagón total no hay linternas que apagar
 const poderDe = () => (J.fantasma && J.yo && J.yo.clase === 'camaleon' && J.fantasma.poder) ? PODERES[J.fantasma.poder] : null;
 // el becario con linterna más cercano al fantasma, si está al alcance del poder
 function poderObjetivo(p) {
@@ -36,7 +36,9 @@ function accionPoder() {
 function poderAplica(k, h, x, y, mio) {
   if (k === 'silbido') {
     ondaSilbido(x, y, null);
+    const antes = REGLAS.oido; if (extraOn('apagon')) REGLAS.oido = antes * 2;      // Apagón total: el silbido falso se oye el doble
     if (!J.pvp || RFP.soyHost) for (const b of J.cazadores) if (b.bot && !b.fuera) oyeSilbido(b, x, y);
+    REGLAS.oido = antes;
     if (mio) { fxTexto(x, y - 60, tr('¡Fiuuu!'), '#fff6ea'); play('silbido'); }
     return;
   }

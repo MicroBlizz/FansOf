@@ -61,6 +61,40 @@
         '0 . 2 . 4 . 7 - - . 4 . 7 - - .',
         '5 . 4 . 2 . 5 - - . 4 . 2 . . .',
         '0 . 4 . 7 - - - - - - - - - - -'] } }),
+    // LAS BACKROOMS · TALLER: escala de tonos enteros (la de los sueños en los dibujos animados), un piano de juguete que gotea en pasillos vacíos
+    rfBkTaller: mk({
+      bpm: 86, tonic: 52, scale: 'wt', prog: [0, 0, 1, 0], dv: 0.5,
+      pad: { wave: 'triangle', vol: 0.3, lp: 900, att: 0.8 },
+      bass: { wave: 'sine', vol: 0.5, seq: 'r . . . . . . . r . . . . . f .' },
+      drums: { h: 'x.......x.......', o: '............x...' },
+      lead: { wave: 'sine', bell: true, vol: 0.3, gate: 1.2, min: 0.7, oct: 6, up: 0, seq: [
+        '0 . . . 2 . . . 4 . . . 2 . . .',
+        '3 . . . 1 . . . . . . . 5 . . .',
+        '4 . . 2 . . 0 . . . 3 . . . . .',
+        '1 . . . . . 2 . . . . . 0 . . .'] } }),
+    // LAS BACKROOMS · CAZA: un órgano desafinado que anda de puntillas por pasillos que se repiten; inquietante pero de dibujos animados
+    rfBkCaza: mk({
+      bpm: 100, tonic: 43, scale: 'hmin', prog: [0, 0, 3, 5], swing: 0.22, dv: 0.5,
+      pad: { wave: 'sawtooth', vol: 0.12, lp: 600, att: 0.5 },
+      bass: { wave: 'square', vol: 0.4, lp: 480, seq: 'r . . r . . o . r . . r . . f .' },
+      drums: { h: 'x.x.x.x.x.x.x.x.', t: '......x.........', s: '............x...' },
+      lead: { wave: 'sawtooth', vol: 0.15, det: 18, lp: 1500, gate: 0.5, oct: 7, up: 0, att: 0.02, seq: [
+        '0 . 1 . 0 . -1 . 0 - - . . . 3 2',
+        '1 . 2 . 1 . 0 . -1 - - . . . . .',
+        '3 . 4 . 3 . 2 . 1 . 0 . -1 . 0 .',
+        '0 . . . 7 - - . 6 . 5 . 4 . 3 .'] } }),
+    // LAS BACKROOMS · RECTA FINAL: el mismo órgano, pero corriendo por los pasillos
+    rfBkRecta: mk({
+      bpm: 126, tonic: 43, scale: 'hmin', prog: [0, 0, 3, 5], swing: 0.14, dv: 0.85,
+      pad: { wave: 'sawtooth', vol: 0.12, lp: 800, att: 0.08 },
+      bass: { wave: 'square', vol: 0.42, lp: 600, seq: 'r . r . r . o . r . r . r . f .' },
+      drums: { k: 'x...x...x...x...', s: '....x.......x...', h: 'x.x.x.x.x.x.x.x.' },
+      arp: { wave: 'square', vol: 0.06, lp: 2600, oct: 7, gate: 0.3, seq: '0 . 1 . 2 . 1 . 0 . 1 . 3 . 1 .' },
+      lead: { wave: 'sawtooth', vol: 0.16, det: 12, lp: 2200, gate: 0.5, oct: 7, up: 0, seq: [
+        '0 . 1 . 0 . -1 . 0 - - . . . 3 2',
+        '1 . 2 . 1 . 0 . -1 - - . . . . .',
+        '3 . 4 . 3 . 2 . 1 . 0 . -1 . 0 .',
+        '0 . . . 7 - - . 6 . 5 . 4 . 3 .'] } }),
     // DERROTA: el trombón del «uah uah uaaah»; luego vuelve el título
     rfLose: mk({
       bpm: 84, tonic: 45, scale: 'min', prog: [0, 0], dv: 0.8, once: true, next: 'rfTitulo',
@@ -74,7 +108,10 @@
 
 // la canción que debe sonar ahora; las cortas (victoria, derrota) suenan una vez y luego sigue la del título
 // PARA COMPARAR (temporal): con el sonido viejo, cada canción nueva se cambia por la que sonaba antes (las del Rumble)
-const MUSICA_VIEJA = { rfTitulo: 'menu', rfTaller: 'menu', rfCaza: 'boss0', rfRecta: 'boss0', rfWin: 'win', rfLose: 'lose' };
+const MUSICA_VIEJA = { rfTitulo: 'menu', rfTaller: 'menu', rfCaza: 'boss0', rfRecta: 'boss0', rfWin: 'win', rfLose: 'lose', rfBkTaller: 'menu', rfBkCaza: 'boss0', rfBkRecta: 'boss0' };
+// el tema de cada fase según el mapa: cada mapa trae su `musica: { taller, caza, recta }` (mapa-*.js); si no, los de la estación
+const MUSICA_BASE = { taller: 'rfTaller', caza: 'rfCaza', recta: 'rfRecta' };
+const temaDe = fase => (typeof MAPA_ACT !== 'undefined' && MAPA_ACT && MAPA_ACT.musica && MAPA_ACT.musica[fase]) || MUSICA_BASE[fase];
 let MUSICA = null, MUSICA_PEDIDA = null;
 function musica(pedida) {
   MUSICA_PEDIDA = pedida;

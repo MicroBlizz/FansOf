@@ -76,11 +76,12 @@ function pistaDeAhora() {
 /* ---------- la clasificación en vivo (botón de la esquina): quién va primero, solo números sobre el mapa ---------- */
 const RANKING = { abierto: (() => { try { return localStorage.getItem('rouflage-ranking') === '1'; } catch (_) { return false; } })(), t: 0, txt: '' };
 function refrescaRanking() {
-  const ver = RANKING.abierto && (J.fase === 'caza' || J.fase === 'fin') && !TALLER.abierto, el = E('ranking'), b = E('b-ranking');
+  const ver = RANKING.abierto && J.fase !== 'titulo' && J.fase !== 'paseo' && !TALLER.abierto && !extraOn('apagon'), el = E('ranking'), b = E('b-ranking');
+  if (b.hidden !== extraOn('apagon')) b.hidden = extraOn('apagon');      // Apagón total: ni ranking ni botón
   if (b.classList.contains('puesto') !== RANKING.abierto) b.classList.toggle('puesto', RANKING.abierto);
-  if (el.hidden === ver) el.hidden = !ver;
-  if (!ver || J.t - RANKING.t < 0.5) return;      // dos veces por segundo basta
-  RANKING.t = J.t;
+  if (el.hidden === ver) { el.hidden = !ver; RANKING.txt = ''; }      // al volver a salir, se pinta de nuevo al momento
+  if (!ver || (RELOJ - RANKING.t < 0.5 && RANKING.txt)) return;      // dos veces por segundo basta (con el reloj general: J.t vuelve a 0 en cada partida)
+  RANKING.t = RELOJ;
   const html = clasificacion().map((r, i) => `<li class="${r.jugador ? 'yo' : ''}${r.fuera ? ' fuera' : ''}"><i>${i + 1}</i><span>${r.nombre}</span><b>${r.puntos}</b></li>`).join('');
   if (html !== RANKING.txt) { RANKING.txt = html; el.innerHTML = html; }
 }
@@ -95,13 +96,13 @@ function refrescaHud(todo) {
   const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado;
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
-  if (!enPartida) { E('peligro').style.opacity = 0; return; }
+  if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
   const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
-  ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  ponTexto('fase', E('fase-txt'), caza && silbatoTexto() ? silbatoTexto() : paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
-  refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
+  refrescaPoder(); refrescaChivato();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
@@ -156,7 +157,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }
@@ -166,6 +167,13 @@ function muestraPausa(si) {
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
 }
 // al elegir papel: la primera vez se enseña antes cómo se juega
+// la pantalla CONTRA BOTS: el papel (viene marcado desde la tarjeta del título) y el mapa, y luego ¡JUGAR!
+const BOTS = { modo: 'camaleon' };
+function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); pantalla('p-bots'); }
+function pintaBots() {
+  E('b-bots-camaleon').classList.toggle('elegido', BOTS.modo === 'camaleon');
+  E('b-bots-cazador').classList.toggle('elegido', BOTS.modo === 'cazador');
+}
 function elige(modo) {
   audioInit(); play('select');
   let visto = false; try { visto = localStorage.getItem('rouflage-ayuda') === '1'; } catch (_) { /* sin guardar */ }
@@ -191,12 +199,13 @@ function muestraFin() {
   E('fin-filas').innerHTML = r.filas.map(([a, b]) => `<span>${a}</span><b>${b}</b>`).join('') + `<div class="total"><span>${tr('PUNTOS')}</span><b>${r.puntos}</b></div>`;
   // la clasificación: todos (personas y bots) por puntos; tú resaltado
   const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  E('fin-ranking').innerHTML = r.ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}"><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');
+  E('fin-ranking').innerHTML = pintaRankingFin(r.ranking);
   E('b-cambia').textContent = J.modo === 'camaleon' ? tr('Ahora de cazador') : tr('Ahora de camaleón');
   E('b-cambia').hidden = J.pvp; E('b-otra').textContent = J.pvp ? tr('OTRA PARTIDA') : tr('OTRA VEZ');      // por internet los papeles los reparte el servidor al azar
-  pintaMapaFinal();
+  pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
 }
+const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}"><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');
 function pintaMapaFinal() {
   const m = E('fin-mapa'), c = m.getContext('2d'), k = m.width / ANCHO;
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, m.width, m.height);
@@ -240,7 +249,12 @@ function pintaTarjetas() {
 
 function preparaInterfaz() {
   pintaTarjetas();
-  E('b-camaleon').onclick = () => elige('camaleon'); E('b-cazador').onclick = () => elige('cazador');
+  // las tarjetas del título abren CONTRA BOTS con ese papel marcado; ahí se elige el mapa y se pulsa ¡JUGAR!
+  E('b-camaleon').onclick = () => abreBots('camaleon'); E('b-cazador').onclick = () => abreBots('cazador');
+  E('b-bots-camaleon').onclick = () => { play('select'); BOTS.modo = 'camaleon'; pintaBots(); };
+  E('b-bots-cazador').onclick = () => { play('select'); BOTS.modo = 'cazador'; pintaBots(); };
+  E('b-bots-jugar').onclick = () => elige(BOTS.modo);
+  E('b-bots-volver').onclick = () => { play('select'); pantalla('p-titulo'); };
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-titulo')); };
   E('b-opciones').onclick = () => { play('select'); pantalla('p-opciones'); refrescaSonido(); };
   E('b-opciones-ok').onclick = () => { play('select'); pantalla('p-titulo'); };
@@ -264,7 +278,7 @@ function preparaInterfaz() {
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

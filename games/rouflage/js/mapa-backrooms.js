@@ -42,6 +42,7 @@ defineMapa({
   id: 'backrooms', nombre: 'Las Backrooms', lema: 'Pasillos amarillos que se repiten. No hay salida.', ancho: 84, alto: 60,
   muro: '#3a2f10', canto: '#6b561e',      // los muros vistos desde arriba: madera vieja y oscura, no la chapa de la estación
   espera: 'V1', plaza: [400, 500],
+  musica: { taller: 'rfBkTaller', caza: 'rfBkCaza', recta: 'rfBkRecta' },      // sus temas (musica.js)
 
   salas: salasDePlano(PLANO_BACKROOMS, {
     '.': { nombre: 'Pasillo amarillo', suelo: 'moquetaBk', pared: 'amarillo' },

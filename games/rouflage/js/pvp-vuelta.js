@@ -27,7 +27,7 @@ function rfpPideEstado(dt) {
 function rfpMandaEstado(a) {
   if (!RFP.soyHost || a === RFP.yo) return;
   const es = J.entes.map(e => [e.slot, r1(e.x), r1(e.y), e.congelado ? 1 : 0, e.fuera ? 1 : 0, e.balas | 0, e.mira, Math.round(e.dir * 100) / 100]);
-  rfpManda({ t: 'sn', a, f: J.fase, r: r1(J.reloj), tf: r1(J.tFase), es, ido: Object.keys(RFP.ido).filter(k => RFP.ido[k]).map(Number), ls: Array.from(RFP.listos) });
+  rfpManda({ t: 'sn', a, f: J.fase, r: r1(J.reloj), tf: r1(J.tFase), es, md: MODO, cg: contagiados(), ido: Object.keys(RFP.ido).filter(k => RFP.ido[k]).map(Number), ls: Array.from(RFP.listos) });
   let n = 0;
   for (const e of J.camaleones) if (!e.fuera && e.congelado) setTimeout(() => { if (RFP.activo && e.congelado) rfpMandaPiel(e); }, 150 + 90 * n++);
 }
@@ -35,6 +35,7 @@ function rfpMandaEstado(a) {
 function rfpAplicaEstado(m) {
   if (!RFP.vuelta || m.a !== RFP.yo) return;
   RFP.vuelta = false; setTimeout(() => { RFP.sinPiel = false; }, 4000);      // da tiempo a que llegue mi piel (si no llega, tampoco había que mandar una en blanco)
+  if (m.md) modoPon(m.md); contagiaSlots(m.cg);
   for (const [s, x, y, c, fu, ba, mi, di] of m.es || []) {
     const e = RFP.slots[s] && RFP.slots[s].ente; if (!e) continue;
     e.x = x; e.y = y; e.mira = mi; e.dir = di; if (e.clase === 'cazador') e.balas = ba;

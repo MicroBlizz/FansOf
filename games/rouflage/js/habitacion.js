@@ -20,7 +20,7 @@ function empiezaHabitacion(rol) {
   const viejo = J.yo, [sx, sy] = viejo ? [viejo.x, viejo.y] : SALIDA_CAMALEONES[0];
   const yo = nuevoEnte(rol, 'fan', tr('Tú'), sx, sy); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; yo.dir = Math.PI / 2; yo.mira = 1;
   vistePersonaje(yo, ropaDe());
-  pantalla(null); avanzaCamara(0, true); refrescaHud(true); musica('menu');
+  pantalla(null); avanzaCamara(0, true); refrescaHud(true); musica('rfTitulo');
   E('hab').hidden = false; E('esquina').hidden = true; habRefrescaRol();
   cartel(tr('TU HABITACIÓN'), tr('Pasea y mira cómo te queda. El armario de la sala te cambia de ropa'));
 }

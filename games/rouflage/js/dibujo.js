@@ -136,7 +136,7 @@ function flechaBorde(c, x, y, color, alfa) {
 }
 // la palanca que aparece bajo el dedo, las flechas del borde y el pincel o el cuentagotas en el taller (en píxeles de pantalla)
 function pintaEncima(c, t) {
-  if (!TALLER.abierto && J.fase === 'caza' && J.yo) {
+  if (!TALLER.abierto && J.fase === 'caza' && J.yo && !extraOn('apagon')) {      // Apagón total: sin pistas en pantalla
     for (const f of FX.lista) if (f.k === 'onda') flechaBorde(c, f.x, f.y, '#ffcb3d', Math.min(1, (1 - f.t / f.dur) * 2));
     if (J.yo.clase === 'camaleon') for (const h of J.cazadores) { const d = lejos(h.x, h.y, J.yo.x, J.yo.y); if (!h.fuera && h.balas > 0 && d < 620) flechaBorde(c, h.x, h.y - 26, h.alerta >= 1 ? '#ff4b5c' : '#6fa8ff', limita(1.25 - d / 620, 0.25, 1)); }
   }
@@ -175,7 +175,7 @@ function dibuja(t) {
     if (sw > 0 && sh > 0) c.drawImage(MAPA.fondo, sx * ESC_FONDO, sy * ESC_FONDO, sw * ESC_FONDO, sh * ESC_FONDO, sx, sy, sw, sh);
   }
   ponMundo(c);
-  pintaFxSuelo(c); pintaSenuelos(c);
+  pintaFxSuelo(c); pintaSenuelos(c); eventosPintaSuelo(c, t); botePinta(c, t);
   // muebles, puerta y personajes, de atrás adelante
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
@@ -203,7 +203,7 @@ function dibuja(t) {
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
   }
   if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
-  if (!TALLER.abierto) pintaLuces(c);
+  if (!TALLER.abierto) { ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c); eventosPintaVelo(c, t); }
   ponMundo(c); pintaFx(c); pintaMarcas(c, t);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);

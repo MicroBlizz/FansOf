@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#191430">
+<meta name="theme-color" content="#121a2c">
 <title>Fans of Rouflage</title>
 <meta name="description" content="Fans of Rouflage (juego): el escondite con pintura. Píntate como el suelo, congélate y que los becarios de Microblizz no te despidan. O coge la linterna y encuéntralos tú.">
 <link rel="icon" type="image/png" href="../../core/img/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.12"></script>
+<script src="../../core/js/nucleo.js?v=0.2.13"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -30,6 +30,7 @@
     </div>
   </div>
   <ol id="ranking" hidden></ol>
+  <div id="retratos" hidden></div>
   <div id="estado">
     <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
     <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>
@@ -41,6 +42,7 @@
   <div id="pista" hidden></div>
   <button type="button" class="accion retiro" id="b-retiro" hidden><b data-tr>ME RETIRO</b></button>
   <button type="button" class="accion poder" id="b-poder" hidden><i data-icono="apagon"></i><b></b><small></small><kbd data-tr>Espacio</kbd></button>
+  <button type="button" class="accion chivato" id="b-chivato" hidden><i data-icono="silbato"></i><b data-tr>CHIVARSE</b><small data-tr>a un becario</small><kbd>C</kbd></button>
   <div id="acciones">
     <button type="button" class="accion listo" id="b-listo" hidden><b data-tr>¡LISTO!</b><small data-tr>Que salgan ya</small></button>
     <button type="button" class="accion granada" id="b-granada" hidden><i data-icono="granada"></i><b data-tr>GRANADA</b><kbd>E</kbd></button>
@@ -98,18 +100,40 @@
       <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
       <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
     </div>
-    <div class="mapas" id="mapas" role="group" data-tr-aria aria-label="Mapa"></div>
-    <button type="button" class="boton pvp-boton" id="b-pvp"><b class="ol" data-tr>JUGAR EN LÍNEA · PvP</b><span data-tr>Esconderse de un bot es fácil. De tus amigos, no tanto.</span></button>
-    <div class="fila-botones fila-armario" id="fila-armario" hidden>
-      <button type="button" class="boton" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
-      <button type="button" class="boton azul" id="b-armario"><b data-tr>ARMARIO</b></button>
-      <button type="button" class="boton verde" id="b-perfil"><b data-tr>PERFIL</b></button>
+    <button type="button" class="boton pvp-boton" id="b-pvp"><b class="ol" data-tr>JUGAR EN LÍNEA · PvP</b><span data-tr>Buscar partida o jugar con amigos. De un bot te escondes fácil; de ellos, no tanto.</span></button>
+    <div class="grupo-titulo" id="fila-armario" hidden>
+      <h3 class="ol" data-tr>TU GALLETA</h3>
+      <div class="fila-botones fila-armario">
+        <button type="button" class="boton gris" id="b-armario"><b data-tr>ARMARIO</b></button>
+        <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
+        <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
+      </div>
     </div>
     <div class="fila-botones">
       <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
       <button type="button" class="boton peq" id="b-opciones" data-tr>Opciones</button>
     </div>
     <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
+  </div>
+</div>
+
+<!-- contra bots: papel y mapa antes de empezar -->
+<div class="pantalla" id="p-bots" hidden>
+  <div class="caja bots">
+    <h2 class="ol" data-tr>CONTRA BOTS</h2>
+    <div class="grupo-titulo">
+      <h3 class="ol" data-tr>1 · TU PAPEL</h3>
+      <div class="papeles mini" role="group" data-tr-aria aria-label="Papel">
+        <button type="button" class="papel camaleon" id="b-bots-camaleon"><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate, congélate y que no te encuentren.</span></button>
+        <button type="button" class="papel cazador" id="b-bots-cazador"><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los colados.</span></button>
+      </div>
+    </div>
+    <div class="grupo-titulo">
+      <h3 class="ol" data-tr>2 · EL MAPA</h3>
+      <div class="mapas" id="mapas" role="group" data-tr-aria aria-label="Mapa"></div>
+    </div>
+    <button type="button" class="boton grande" id="b-bots-jugar" data-tr>¡JUGAR!</button>
+    <button type="button" class="boton peq" id="b-bots-volver" data-tr>Volver</button>
   </div>
 </div>
 
@@ -183,6 +207,7 @@
       <div class="estrellas" id="fin-estrellas"></div>
       <canvas id="fin-mapa" width="560" height="400" data-tr-aria aria-label="Dónde estaba cada uno"></canvas>
       <div class="leyenda" id="fin-leyenda"></div>
+      <div class="galeria" id="fin-galeria" hidden></div>
     </div>
     <div class="columna">
       <div class="ranking"><h3 class="ol" data-tr>CLASIFICACIÓN</h3><ol id="fin-ranking"></ol></div>
@@ -206,7 +231,7 @@
     <p class="aviso-pvp" id="pvp-consejo" hidden></p>
     <div class="columna">
       <button type="button" class="boton" id="b-pvp-buscar" data-tr>BUSCAR PARTIDA</button>
-      <button type="button" class="boton verde" id="b-pvp-amigos" data-tr>JUGAR CON AMIGOS</button>
+      <button type="button" class="boton gris" id="b-pvp-amigos" data-tr>JUGAR CON AMIGOS</button>
       <button type="button" class="boton gris" id="b-pvp-cuenta" data-tr hidden>VINCULAR CUENTA</button>
       <div class="fila-botones">
         <button type="button" class="boton peq" id="b-pvp-clasif" data-tr>Clasificación</button>
@@ -223,12 +248,12 @@
     <div class="bloque">
       <h3 class="ol" data-tr>CREAR SALA</h3>
       <p class="nota-sala" data-tr>Te damos un código de 4 letras para tus amigos. Hasta 10 jugadores; los huecos, la máquina.</p>
-      <button type="button" class="boton verde" id="b-amigos-crear" data-tr>CREAR SALA</button>
+      <button type="button" class="boton" id="b-amigos-crear" data-tr>CREAR SALA</button>
     </div>
     <div class="bloque">
       <h3 class="ol" data-tr>ENTRAR CON UN CÓDIGO</h3>
       <p class="nota-sala" data-tr>Escribe el código que te han pasado.</p>
-      <div class="fila-cod"><input class="codigo-in" id="amigos-codigo" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" data-tr-aria aria-label="Código de la sala"><button type="button" class="boton azul" id="b-amigos-entrar" data-tr>ENTRAR</button></div>
+      <div class="fila-cod"><input class="codigo-in" id="amigos-codigo" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" data-tr-aria aria-label="Código de la sala"><button type="button" class="boton" id="b-amigos-entrar" data-tr>ENTRAR</button></div>
     </div>
     <p class="nota-sala" data-tr>Las salas con amigos no gastan caos primordial ni suben o bajan tu clasificación. Microblizz las llama «contenido social».</p>
     <button type="button" class="boton gris" id="b-amigos-volver" data-tr>VOLVER</button>
@@ -240,6 +265,11 @@
     <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
     <p class="sub" id="busca-sub"></p>
     <p class="error" id="busca-error" hidden></p>
+    <div class="modo-sala" id="busca-modo" hidden>
+      <div class="modo-fila"><button type="button" class="boton peq flecha" id="b-modo-ant" data-tr-aria aria-label="Modo anterior">&#9664;</button><span class="modo-nombre"><small data-tr>MODO</small><b class="ol" id="busca-modo-n">NORMAL</b></span><button type="button" class="boton peq flecha" id="b-modo-sig" data-tr-aria aria-label="Modo siguiente">&#9654;</button></div>
+      <p class="nota-sala modo-texto" id="busca-modo-t"></p>
+      <div class="extras" id="busca-extras"></div>
+    </div>
     <ul class="sala" id="busca-lista"></ul>
     <p class="nota-sala" data-tr>Los huecos hasta 10 los llena la máquina. Los papeles se reparten al azar al empezar.</p>
     <div class="fila-botones">
@@ -331,6 +361,7 @@ NUCLEO.juego({
     'js/util.js',
     'js/audio.js',
     'js/musica.js',
+    'js/eventos.js',
     'js/mapa-datos.js',
     'js/mapa-estacion.js',
     'js/suelos.js',
@@ -338,6 +369,12 @@ NUCLEO.juego({
     'js/muebles.js',
     'js/dibujo-backrooms.js',
     'js/mapa-backrooms.js',
+    'js/dibujo-parking.js',
+    'js/mapa-parking.js',
+    'js/dibujo-cloacas.js',
+    'js/mapa-cloacas.js',
+    'js/dibujo-jardines.js',
+    'js/mapa-jardines.js',
     'js/alubia.js',
     'js/mapa.js',
     'js/pintura.js',
@@ -357,8 +394,14 @@ NUCLEO.juego({
     'js/tutorial.js',
     'js/controles.js',
     'js/entrenamiento.js',
+    'js/modos.js',
+    'js/modos-extra.js',
+    'js/modos-retrato.js',
+    'js/modos-fantasma.js',
+    'js/modos-bote.js',
     'js/partida.js',
     'js/interfaz.js',
+    'js/galeria.js',
     'js/elige-mapa.js',
     'js/pvp-red.js',
     'js/pvp.js',

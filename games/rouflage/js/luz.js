@@ -8,7 +8,7 @@ const LZ = { cv: null, c: null, w: 0, h: 0, pts: [] };
 // el abanico de un cazador como lista de puntos del mundo: el foco y los extremos de cada rayo
 // (soloMuros: el abanico que cortan solo las paredes, sin contar los muebles: la luz que se cuela entre ellos, difuminada)
 function abanico(e, pts, soloMuros = false) {
-  const ox = e.x, oy = e.y - 6, largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1), n = 30, medio = REGLAS.luzAngulo;
+  const ox = e.x, oy = e.y - 6, largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1) * eventoVisibilidad(), n = 30, medio = REGLAS.luzAngulo;
   pts.length = 0; pts.push(ox, oy);
   for (let k = 0; k <= n; k++) {
     const a = dirLuz(e) - medio + (2 * medio * k) / n, dx = Math.cos(a), dy = Math.sin(a);
@@ -21,7 +21,7 @@ function abanico(e, pts, soloMuros = false) {
 const conLuz = e => !e.fuera && !(e.bot && e.bot.estado === 'espera') && e.balas > 0 && e.apagada <= 0;      // (apagada: el apagón de un fantasma)
 
 function pintaLuces(c) {
-  const a = J.oscuro * (J.modo === 'cazador' ? 0.93 : 0.54); if (a < 0.01) return;
+  const a = J.oscuro * (extraOn('apagon') ? (J.modo === 'cazador' ? 0.985 : 0.86) : J.modo === 'cazador' ? 0.93 : 0.54); if (a < 0.01) return;      // Apagón total: casi nada
   const w = Math.ceil(cv.width / 2), h = Math.ceil(cv.height / 2);
   if (!LZ.cv || LZ.w !== w || LZ.h !== h) { [LZ.cv, LZ.c] = lienzo(w, h); LZ.w = w; LZ.h = h; }
   const g = LZ.c;
@@ -32,7 +32,7 @@ function pintaLuces(c) {
   const haces = [];
   for (const e of J.cazadores) {
     if (!conLuz(e)) continue;
-    const largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1), x = e.x, y = e.y - 6, pts = abanico(e, []);
+    const largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1) * eventoVisibilidad(), x = e.x, y = e.y - 6, pts = abanico(e, []);
     const gr = g.createRadialGradient(x, y, 8, x, y, largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.72, 'rgba(0,0,0,0.94)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = gr;
     g.globalAlpha = REGLAS.luzPaso; const tras = abanico(e, [], true);      // primero la luz que atraviesa mesas, conos y estanterías a medias: sombras suaves en vez de duras
@@ -40,6 +40,11 @@ function pintaLuces(c) {
     g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
     const rc = REGLAS.luzCerca + 16, gc = g.createRadialGradient(x, y, 6, x, y, rc); gc.addColorStop(0, 'rgba(0,0,0,0.92)'); gc.addColorStop(0.6, 'rgba(0,0,0,0.7)'); gc.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = gc; g.beginPath(); g.arc(x, y, rc, 0, TAU); g.fill();
+    haces.push(pts);
+  }
+  for (const f of eventoFocos()) {      // los focos del mapa (faros, una ventana encendida…)
+    const pts = abanicoFoco(f, []), gr = g.createRadialGradient(f.x, f.y, 8, f.x, f.y, f.largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.75, 'rgba(0,0,0,0.9)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = gr; g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
     haces.push(pts);
   }
   c.setTransform(1, 0, 0, 1, 0, 0); c.imageSmoothingEnabled = true; c.drawImage(LZ.cv, 0, 0, cv.width, cv.height);

@@ -98,11 +98,13 @@ const loQueCanta = k => (k.hielo < 0.85 ? (k.moviendo || k.movido > 0 ? 1 : 0.85
 function silba(e, forzado) {
   if (e.fuera || e.tSilbo > 0) return false;
   e.tSilbo = 2.5;
-  e.silbido = REGLAS.silbido; e.avisado = false;   // al silbar (por gusto o por obligación) su reloj vuelve a empezar
+  e.silbido = e.silbato ? SILBATO.cada : REGLAS.silbido; e.avisado = false;   // al silbar (por gusto o por obligación) su reloj vuelve a empezar (con el silbato caliente, cada poco)
   const a = Math.random() * TAU, d = rand(46, 110), x = e.x + Math.cos(a) * d, y = e.y - 22 + Math.sin(a) * d;
   // quien silba ve su propia onda en su sitio; los demás, descolocada
   ondaSilbido(e.jugador ? e.x : x, e.jugador ? e.y - 24 : y, e);
+  const oido = REGLAS.oido; if (e.silbato) REGLAS.oido = oido * 2;      // el silbato caliente se oye el doble
   for (const h of J.cazadores) if (h.bot && !h.fuera) oyeSilbido(h, x, y);
+  REGLAS.oido = oido;
   if (!forzado) { e.pts.silbidos++; if (e.jugador) fxTexto(e.x, e.y - 70, '+25', '#ffcb3d'); }
   if (J.pvp) rfpSilbo(e, forzado);      // PvP: los demás también lo ven y lo oyen
   return true;
@@ -111,10 +113,11 @@ function silba(e, forzado) {
 // despedir a un camaleón: reaparece su contorno, se le planta el sello y sale de la partida
 function despide(k, por) {
   if (k.fuera) return;
-  k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0;
+  k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0; k.tDespido = J.reloj;      // (el bufón mira en qué segundo cayó)
   fxSello(k.x, k.y - 26); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
   suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
   if (por) por.pts.aciertos++;
+  contagioDespedido(k); chivatoDespido(k, por);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)
   if (por && por.jugador) { avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno'); }
   else if (k.jugador) avisa(tr('{a} te ha despedido').replace('{a}', por ? por.nombre : '?'), 'malo');
   else avisa(tr('{a} ha despedido a {b}').replace('{a}', por ? por.nombre : '?').replace('{b}', k.nombre), J.modo === 'camaleon' ? 'malo' : 'aviso');

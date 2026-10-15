@@ -96,15 +96,15 @@ function refrescaHud(todo) {
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
   if (!enPartida) { E('peligro').style.opacity = 0; return; }
-  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza';
+  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
-  ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
-  ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' ? '' : mmss(J.reloj));
+  ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
+  ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
   refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
   refrescaRanking();
   // lo de cada papel
-  const ver = { 'e-camo': cam, 'e-silbo': cam && caza, 'e-balas': !cam, 'e-quedan': !cam, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
+  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
     'b-silbar': caza && !espectando(), 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
   if (cam) {
@@ -156,7 +156,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }
@@ -172,9 +172,13 @@ function elige(modo) {
   if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => { pantalla(null); empiezaPartida(modo); }); return; }
   pantalla(null); empiezaPartida(modo);
 }
+// las barras de volumen (título y pausa) enseñan lo que hay; el icono de al lado silencia y recupera
 function refrescaSonido() {
   for (const id of ['b-sonido', 'b-sonido2']) E(id).classList.toggle('apagado', AUDIO.mudo);
   for (const id of ['b-musica', 'b-musica2']) E(id).classList.toggle('apagado', AUDIO.sinMusica);
+  for (const id of ['v-sonido', 'v-sonido2']) E(id).value = Math.round(AUDIO.vol * 100);
+  for (const id of ['v-musica', 'v-musica2']) E(id).value = Math.round(AUDIO.volMus * 100);
+  for (const id of ['b-viejo', 'b-viejo2']) { E(id).hidden = !(NUCLEO.alfa || NUCLEO.desarrollo); E(id).textContent = AUDIO.viejo ? tr('Sonido: antiguo') : tr('Sonido: nuevo'); }      // temporal, para comparar (solo alfa y dev)
 }
 // el botón de idioma del título: core guarda el idioma elegido y recarga la página (como en los demás juegos)
 function cambiaIdioma() { NUCLEO.elegirIdioma(IDIOMA_RF === 'es' ? 'en' : 'es'); }
@@ -238,10 +242,15 @@ function preparaInterfaz() {
   pintaTarjetas();
   E('b-camaleon').onclick = () => elige('camaleon'); E('b-cazador').onclick = () => elige('cazador');
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-titulo')); };
+  E('b-opciones').onclick = () => { play('select'); pantalla('p-opciones'); refrescaSonido(); };
+  E('b-opciones-ok').onclick = () => { play('select'); pantalla('p-titulo'); };
   E('b-ayuda2').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-pausa')); };
   E('b-ayuda-ok').onclick = () => { play('select'); const f = _trasAyuda; _trasAyuda = null; if (f) f(); else pantalla('p-titulo'); };
   for (const id of ['b-sonido', 'b-sonido2']) E(id).onclick = () => { cambiaSonido(); refrescaSonido(); };
   for (const id of ['b-musica', 'b-musica2']) E(id).onclick = () => { cambiaMusica(); refrescaSonido(); };
+  for (const id of ['v-sonido', 'v-sonido2']) E(id).oninput = ev => { ponVolumen('vol', ev.target.value / 100); refrescaSonido(); };
+  for (const id of ['v-musica', 'v-musica2']) E(id).oninput = ev => { ponVolumen('volMus', ev.target.value / 100); refrescaSonido(); };
+  for (const id of ['b-viejo', 'b-viejo2']) E(id).onclick = () => { cambiaSonidoViejo(); refrescaSonido(); };
   E('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
   E('b-idioma').onclick = () => { cambiaIdioma(); play('select'); };
   E('b-ranking').onclick = () => { RANKING.abierto = !RANKING.abierto; try { localStorage.setItem('rouflage-ranking', RANKING.abierto ? '1' : '0'); } catch (_) { /* sin guardar */ } play('select'); refrescaHud(true); };

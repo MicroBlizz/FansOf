@@ -4,7 +4,7 @@
 'use strict';
 
 const ENTRADA = { teclas: new Set(), toques: new Map(), palanca: null, raton: null, tactil: false };
-const jugando = () => (J.fase === 'prep' || J.fase === 'caza') && !J.pausa && J.yo && !J.yo.fuera;
+const jugando = () => (J.fase === 'prep' || J.fase === 'caza' || J.fase === 'paseo') && !J.pausa && J.yo && !J.yo.fuera;
 
 // hacia dónde quiere andar el jugador: [x, y] entre -1 y 1
 function vectorMueve() {
@@ -22,7 +22,7 @@ cv.addEventListener('pointerdown', ev => {
   if (ev.pointerType !== 'mouse') ENTRADA.tactil = true; else if (ENTRADA.tactil && ev.movementX !== undefined) ENTRADA.tactil = false;
   if (TALLER.abierto) { try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* da igual */ } tallerAbajo(ev); return; }
   if (!jugando() && !espectando()) return;
-  if (ev.pointerType === 'mouse') { ENTRADA.raton = [ev.clientX, ev.clientY]; if (ev.button === 0 && J.yo.clase === 'cazador') { const [x, y] = aMundo(ev.clientX, ev.clientY); disparaJugador(x, y, 4); } return; }
+  if (ev.pointerType === 'mouse') { ENTRADA.raton = [ev.clientX, ev.clientY]; if (ev.button === 0 && (J.yo.clase === 'cazador' || J.fase === 'paseo')) { const [x, y] = aMundo(ev.clientX, ev.clientY); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 4); } return; }
   try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* da igual */ }
   ENTRADA.toques.set(ev.pointerId, { x0: ev.clientX, y0: ev.clientY, x: ev.clientX, y: ev.clientY, t0: performance.now(), palanca: false });
 });
@@ -38,8 +38,8 @@ function sueltaPuntero(ev) {
   const t = ENTRADA.toques.get(ev.pointerId); if (!t) return;
   ENTRADA.toques.delete(ev.pointerId);
   if (t === ENTRADA.palanca) ENTRADA.palanca = null;
-  else if (ev.type === 'pointerup' && !t.palanca && performance.now() - t.t0 < 380 && Math.hypot(t.x - t.x0, t.y - t.y0) < 12 && jugando() && J.yo.clase === 'cazador') {
-    const [x, y] = aMundo(t.x, t.y); disparaJugador(x, y, 9);
+  else if (ev.type === 'pointerup' && !t.palanca && performance.now() - t.t0 < 380 && Math.hypot(t.x - t.x0, t.y - t.y0) < 12 && jugando() && (J.yo.clase === 'cazador' || J.fase === 'paseo')) {
+    const [x, y] = aMundo(t.x, t.y); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 9);
   }
 }
 cv.addEventListener('pointerup', sueltaPuntero);
@@ -117,7 +117,7 @@ function disparaJugador(x, y, margen) {
   fxMancha(x, y);
   // a quien va corriendo se le puede disparar sin gastar carta
   if (J.camaleones.some(k => !k.fuera && !invisible(k) && k.hielo < 0.85 && (k.moviendo || k.movido > 0) && lejos(k.x, k.y - 24, x, y) < 60)) { yo.enfria = REGLAS.enfria * 0.7; play('gun'); return; }
-  yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('clank'); play('deny');
+  yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('salpica'); play('deny');
   const m = MUEBLES.find(m => m.T.senuelo && x > m.dib.x0 + 8 && x < m.dib.x0 + m.dib.w - 8 && y > m.dib.y0 && y < m.y + 2);
   if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); }
   else {

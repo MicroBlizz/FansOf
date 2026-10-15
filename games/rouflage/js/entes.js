@@ -63,7 +63,7 @@ function avanzaEnte(e, dt) {
   e.enfria = Math.max(0, e.enfria - dt); e.ciego = Math.max(0, e.ciego - dt); e.apagada = Math.max(0, e.apagada - dt); e.manoFria = Math.max(0, e.manoFria - dt); e.tiembla = Math.max(0, e.tiembla - dt);
   e.movido = Math.max(0, e.movido - dt); e.tMarca = Math.max(0, e.tMarca - dt); e.tSilbo = Math.max(0, e.tSilbo - dt); e.invis = Math.max(0, e.invis - dt);
   if (e.fuera) { e.tFuera += dt; e.moviendo = false; return; }
-  if (e.remoto) { avanzaRemoto(e, dt); return; }      // PvP: lo mueve la red (pvp-sync.js)
+  if (e.remoto) { avanzaRemoto(e, dt); suenaEnte(e, dt); return; }      // PvP: lo mueve la red (pvp-sync.js)
   const v = Math.hypot(e.vx, e.vy);
   if (e.congelado || v < 0.05) { e.moviendo = false; return; }
   const vel = (e.clase === 'cazador' ? REGLAS.velCazador : REGLAS.velCamaleon) * e.prisa * dt, ax = e.x, ay = e.y;
@@ -71,6 +71,15 @@ function avanzaEnte(e, dt) {
   e.moviendo = lejos(ax, ay, e.x, e.y) > vel * 0.2;
   if (Math.abs(e.vx) > 0.2) e.mira = e.vx > 0 ? 1 : -1;
   if (e.moviendo) { e.anda += dt * Math.min(1, v) * e.prisa; e.movido = 0.5; }
+  suenaEnte(e, dt);
+}
+// lo que se oye de un becario: sus pasos y el barrido de la linterna, desde donde está (más flojo cuanto más lejos)
+function suenaEnte(e, dt) {
+  if (e.clase !== 'cazador' || J.fase !== 'caza') return;
+  if (e.moviendo) { e.tPaso = (e.tPaso || 0) - dt * (e.prisa || 1); if (e.tPaso <= 0) { e.tPaso = 0.34; suenaEn('paso', e.x, e.y, e.jugador ? 0.5 : 1); } } else e.tPaso = 0.12;
+  const d = e.dir || 0, giro = Math.abs(Math.atan2(Math.sin(d - (e.dirSon == null ? d : e.dirSon)), Math.cos(d - (e.dirSon == null ? d : e.dirSon))));
+  e.dirSon = d; e.giroSon = (e.giroSon || 0) * Math.max(0, 1 - dt * 2) + giro;
+  if (e.giroSon > 1.1 && e.apagada <= 0) { e.giroSon = 0; suenaEn('linterna', e.x, e.y, e.jugador ? 0.6 : 1); }
 }
 
 // congelarse: uno se queda clavado en un punto entero del mundo (así la pintura casa con el suelo) y se mide su camuflaje
@@ -104,7 +113,7 @@ function despide(k, por) {
   if (k.fuera) return;
   k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0;
   fxSello(k.x, k.y - 26); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
-  play('despido'); play('slam');
+  suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
   if (por) por.pts.aciertos++;
   if (por && por.jugador) { avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno'); }
   else if (k.jugador) avisa(tr('{a} te ha despedido').replace('{a}', por ? por.nombre : '?'), 'malo');

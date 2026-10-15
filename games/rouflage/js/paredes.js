@@ -6,13 +6,13 @@ const COLOR_MURO = '#191430', COLOR_CANTO = '#3d3668';
 
 // el muro: base oscura con chapas y, alrededor de todo lo que no es muro, el canto claro con su contorno
 function pintaMuro(c, R) {
-  c.fillStyle = COLOR_MURO; c.fillRect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0);
+  c.fillStyle = MAPA_ACT.muro || COLOR_MURO; c.fillRect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0);
   c.strokeStyle = 'rgba(255,255,255,0.035)'; c.lineWidth = 2; c.beginPath();
   for (let x = Math.floor(R.x0 / 60) * 60; x <= R.x1; x += 60) { c.moveTo(x, R.y0); c.lineTo(x, R.y1); }
   for (let y = Math.floor(R.y0 / 60) * 60; y <= R.y1; y += 60) { c.moveTo(R.x0, y); c.lineTo(R.x1, y); }
   c.stroke();
   const i0 = Math.max(0, Math.floor(R.x0 / CEL) - 1), i1 = Math.min(MW - 1, Math.ceil(R.x1 / CEL)), j0 = Math.max(0, Math.floor(R.y0 / CEL) - 1), j1 = Math.min(MH - 1, Math.ceil(R.y1 / CEL));
-  for (const [crece, color] of [[10, OL], [7, COLOR_CANTO]]) {
+  for (const [crece, color] of [[10, OL], [7, MAPA_ACT.canto || COLOR_CANTO]]) {
     c.fillStyle = color;
     for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (GRID[j * MW + i] !== VACIO) c.fillRect(i * CEL - crece, j * CEL - crece, CEL + crece * 2, CEL + crece * 2);
   }

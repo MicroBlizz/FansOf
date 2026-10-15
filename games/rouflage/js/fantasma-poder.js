@@ -41,8 +41,8 @@ function poderAplica(k, h, x, y, mio) {
     return;
   }
   if (!h) return;
-  if (k === 'apagon') { h.apagada = Math.max(h.apagada, PODERES.apagon.dura); play('luces'); if (h.jugador) avisa(tr('¡Un fantasma te ha apagado la linterna!'), 'malo'); }
-  else if (k === 'mano') { h.manoFria = Math.max(h.manoFria, PODERES.mano.dura); play('pop'); if (h.jugador) avisa(tr('¡Una mano fría! Te tiembla la linterna'), 'malo'); }
+  if (k === 'apagon') { h.apagada = Math.max(h.apagada, PODERES.apagon.dura); play('apagon'); if (h.jugador) avisa(tr('¡Un fantasma te ha apagado la linterna!'), 'malo'); }
+  else if (k === 'mano') { h.manoFria = Math.max(h.manoFria, PODERES.mano.dura); play('manoFria'); if (h.jugador) avisa(tr('¡Una mano fría! Te tiembla la linterna'), 'malo'); }
   fxSalpica(h.x, h.y - 30, '#cfe9ff', 8); fxTexto(h.x, h.y - 70, tr('¡Brrr!'), '#cfe9ff');
 }
 // PvP: un fantasma ha usado su poder. Cada navegador se lo aplica a su becario (el suyo, o los de la máquina si es el anfitrión)

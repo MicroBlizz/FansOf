@@ -157,6 +157,7 @@ function pintaFiguraPrevia(c, yo) {
 
 /* ---------- la paleta: los colores que más se repiten en los suelos y las paredes del mapa (con lo que haya encima), calculados una vez ---------- */
 let PALETA = null;
+function olvidaPaleta() { PALETA = null; }   // al cambiar de mapa: la paleta sale de sus colores
 function paletaDelMapa() {
   if (PALETA) return PALETA;
   const F = MAPA.px, cuenta = new Map();

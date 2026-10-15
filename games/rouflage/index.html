@@ -10,10 +10,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.11"></script>
+<script src="../../core/js/nucleo.js?v=0.2.12"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
+<link rel="stylesheet" href="estilo-armario.css?v=0.2.9">
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -49,6 +50,12 @@
   </div>
 </div>
 <div id="peligro"></div>
+<!-- la habitación (habitacion.js): elegir papel, abrir el armario y salir -->
+<div id="hab" hidden>
+  <div class="hab-roles"><button type="button" class="hab-rol" id="b-hab-cam"><i data-icono="pincel"></i><b data-tr>CAMALEÓN</b></button><button type="button" class="hab-rol" id="b-hab-caz"><i data-icono="diana"></i><b data-tr>CAZADOR</b></button></div>
+  <button type="button" class="boton azul" id="b-hab-armario" data-tr>ARMARIO</button>
+  <button type="button" class="boton gris peq" id="b-hab-salir" data-tr>Salir</button>
+</div>
 
 <!-- el taller: las herramientas para pintarse -->
 <div id="taller" hidden>
@@ -91,16 +98,17 @@
       <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
       <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
     </div>
+    <div class="mapas" id="mapas" role="group" data-tr-aria aria-label="Mapa"></div>
     <button type="button" class="boton pvp-boton" id="b-pvp"><b class="ol" data-tr>JUGAR EN LÍNEA · PvP</b><span data-tr>Esconderse de un bot es fácil. De tus amigos, no tanto.</span></button>
+    <div class="fila-botones fila-armario" id="fila-armario" hidden>
+      <button type="button" class="boton" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
+      <button type="button" class="boton azul" id="b-armario"><b data-tr>ARMARIO</b></button>
+      <button type="button" class="boton verde" id="b-perfil"><b data-tr>PERFIL</b></button>
+    </div>
     <div class="fila-botones">
       <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
-      <button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
-      <button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
-      <button type="button" class="boton peq" id="b-idioma">English</button>
-      <button type="button" class="boton peq" id="b-cuenta" data-tr>Cuenta</button>
-      <a class="boton peq" href="../../#biblioteca" data-tr>Biblioteca</a>
+      <button type="button" class="boton peq" id="b-opciones" data-tr>Opciones</button>
     </div>
-    <p class="pronto"><b class="ol" data-tr>PRÓXIMAMENTE</b> <span data-tr>Nuevo mapa: las Backrooms</span></p>
     <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
   </div>
 </div>
@@ -130,6 +138,21 @@
   </div>
 </div>
 
+<!-- opciones (desde el título): sonido, idioma y cuenta -->
+<div class="pantalla" id="p-opciones" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>OPCIONES</h2>
+    <div class="columna">
+      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><span data-tr>Efectos</span><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
+      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><span data-tr>Música</span><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
+      <button type="button" class="boton gris" id="b-viejo"></button>
+      <button type="button" class="boton gris" id="b-idioma">English</button>
+      <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
+      <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
+    </div>
+  </div>
+</div>
+
 <!-- pausa -->
 <div class="pantalla" id="p-pausa" hidden>
   <div class="caja">
@@ -138,9 +161,12 @@
       <button type="button" class="boton" id="b-seguir" data-tr>SEGUIR</button>
       <button type="button" class="boton gris" id="b-reiniciar" data-tr>Empezar de nuevo</button>
       <button type="button" class="boton gris" id="b-ayuda2" data-tr>Cómo se juega</button>
+      <div class="fila-botones fila-volumen">
+        <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-sonido2" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><input type="range" class="deslizador" id="v-sonido2" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
+        <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-musica2" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><input type="range" class="deslizador" id="v-musica2" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
+        <button type="button" class="boton peq" id="b-viejo2"></button>
+      </div>
       <div class="fila-botones">
-        <button type="button" class="boton peq cuadrado" id="b-sonido2" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button>
-        <button type="button" class="boton peq cuadrado" id="b-musica2" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button>
         <button type="button" class="boton peq" id="b-salir" data-tr>Salir al menú</button>
       </div>
     </div>
@@ -244,6 +270,49 @@
   </div>
 </div>
 
+<!-- armario y perfil (de momento solo en la alfa y en desarrollo: armario.js) -->
+<div class="pantalla" id="p-armario" hidden>
+  <div class="caja armario">
+    <div class="ar-cabeza"><h2 class="ol" data-tr>ARMARIO</h2><span class="ar-cuenta" id="ar-cuenta"></span></div>
+    <div class="ar-escena">
+      <div class="ar-vista" id="ar-vista-sitio"></div>
+      <div class="ar-info"><b id="ar-nombre"></b><span id="ar-de"></span><span class="ar-estado" id="ar-estado"></span></div>
+    </div>
+    <div class="ar-pestanas" id="ar-pestanas" role="tablist"></div>
+    <p class="ar-nota" id="ar-nota"></p>
+    <div class="ar-rejilla" id="ar-rejilla"></div>
+    <p class="ar-aviso" data-tr>Prueba de la alfa: lo que te pones se ve en la habitación; en las partidas aún no.</p>
+    <div class="fila-botones">
+      <button type="button" class="boton verde" id="b-ar-perfil" data-tr>PERFIL</button>
+      <button type="button" class="boton gris" id="b-ar-volver" data-tr>VOLVER</button>
+    </div>
+  </div>
+</div>
+<div class="pantalla" id="p-perfil" hidden>
+  <div class="caja perfil">
+    <h2 class="ol" data-tr>PERFIL</h2>
+    <div class="pf-ficha">
+      <div class="pf-galleta" id="pf-galleta-sitio"></div>
+      <div class="pf-datos">
+        <b class="pf-nombre ol" id="pf-nombre"></b>
+        <div id="pf-titulo-sitio"></div>
+        <p><span data-tr>Pase · Temporada 1</span><b id="pf-nivel"></b></p>
+        <p><span data-tr>Colección</span><b id="pf-cosas"></b></p>
+        <p><span data-tr>PvP</span><b id="pf-pvp"></b></p>
+      </div>
+    </div>
+    <div class="pf-coleccion" id="pf-coleccion"></div>
+    <div class="pf-pruebas">
+      <button type="button" class="boton" id="b-pf-todo"></button>
+      <small data-tr>Solo para probar cómo queda: este botón no estará en el juego final.</small>
+    </div>
+    <div class="fila-botones">
+      <button type="button" class="boton azul" id="b-pf-armario" data-tr>ARMARIO</button>
+      <button type="button" class="boton gris" id="b-pf-volver" data-tr>VOLVER</button>
+    </div>
+  </div>
+</div>
+
 <div id="carga">…</div>
 <script>
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
@@ -254,17 +323,21 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
     'js/textos.js',
     'js/util.js',
     'js/audio.js',
+    'js/musica.js',
     'js/mapa-datos.js',
+    'js/mapa-estacion.js',
     'js/suelos.js',
     'js/paredes.js',
     'js/muebles.js',
+    'js/dibujo-backrooms.js',
+    'js/mapa-backrooms.js',
     'js/alubia.js',
     'js/mapa.js',
     'js/pintura.js',
@@ -286,12 +359,18 @@ NUCLEO.juego({
     'js/entrenamiento.js',
     'js/partida.js',
     'js/interfaz.js',
+    'js/elige-mapa.js',
     'js/pvp-red.js',
     'js/pvp.js',
     'js/pvp-sync.js',
     'js/pvp-vuelta.js',
     'js/pvp-pantallas.js',
     'js/pvp-energia.js',
+    'js/armario-dibujo.js',
+    'js/armario-dibujo2.js',
+    'js/armario-datos.js',
+    'js/armario.js',
+    'js/habitacion.js',
     'js/principal.js',
   ],
 });

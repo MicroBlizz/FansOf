@@ -40,9 +40,18 @@ const aMundo = (sx, sy) => [(sx * DPR - CAM.ox) / CAM.esc, (sy * DPR - CAM.oy) /
 const aPantalla = (x, y) => [(x * CAM.esc + CAM.ox) / DPR, (y * CAM.esc + CAM.oy) / DPR];
 
 // la barrera de Recursos Humanos: dos postes y un haz rojo que se apaga al abrirse
-const COSA_PUERTA = { y: PUERTA.y + PUERTA.h - 2, puerta: true };
+const COSA_PUERTA = { y: 0, puerta: true };   // su y la pone cargaMapa()
 function pintaPuerta(c, t) {
   const x = PUERTA.x + PUERTA.w / 2, y0 = PUERTA.y + 6, y1 = PUERTA.y + PUERTA.h - 4, a = 1 - PUERTA.abierta;
+  if (PUERTA.estilo === 'madera') {   // una puerta de madera vieja de canto, con su letrero de EXIT; al abrirse gira hacia dentro
+    const w = PUERTA.w, h = PUERTA.h, giro = (1 - a) * 0.9;
+    c.save(); c.translate(PUERTA.x + w / 2, PUERTA.y + 2); c.scale(1, Math.max(0.08, Math.cos(giro)));
+    forma(c, caja(-w / 2 + 6, -4, w - 12, h, 3), '#8f6a3a', 3); c.fillStyle = '#6e4f28'; c.fillRect(-w / 2 + 12, 6, w - 24, h - 20);
+    forma(c, caja(-w / 2 + 16, 10, w - 32, h / 2 - 16, 2), '#a67c48', 2); forma(c, caja(-w / 2 + 16, h / 2 + 2, w - 32, h / 2 - 16, 2), '#a67c48', 2);
+    punto(c, w / 2 - 15, h / 2 - 2, 3.2, '#e9c46a'); c.restore();
+    forma(c, caja(x - 20, PUERTA.y - 18, 40, 12, 2), '#191430', 2.5); rotulo(c, 'EXIT', x, PUERTA.y - 12, 9, a > 0.5 ? '#ff4b5c' : '#7ee04a');
+    return;
+  }
   if (a > 0.02) {
     c.globalAlpha = a * (0.75 + Math.sin(t * 9) * 0.1);
     for (const dx of [-7, 0, 7]) { raya(c, [x + dx, y0, x + dx, y1], '#ff4b5c', 5); raya(c, [x + dx, y0, x + dx, y1], '#ffd0d4', 1.6); }
@@ -149,9 +158,9 @@ function pintaEncima(c, t) {
 
 // un camaleón ya congelado (o congelándose) se comporta como el suelo al dibujar el orden de las cosas
 const esSuelo = e => e.clase === 'camaleon' && !e.fuera && e.hielo > 0.3;
-// mientras los colados se pintan, los becarios no ven nada fuera de Recursos Humanos
+// mientras los colados se pintan, los becarios no ven nada fuera de su sala de espera
 function tapaFueraDeSala(c, x0, y0, vw, vh) {
-  const z = SALAS.find(s => s.id === 'rrhh'); if (!z) return;
+  const z = salaEspera(); if (!z) return;
   ponMundo(c); c.fillStyle = '#0b0718'; c.beginPath(); c.rect(x0 - 60, y0 - 60, vw + 120, vh + 120); c.rect(z.px, z.py, z.pw, z.ph); c.fill('evenodd');
 }
 function dibuja(t) {
@@ -172,14 +181,15 @@ function dibuja(t) {
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
   for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
+  if (J.fase === 'paseo') cosas.push(HABITACION.armario);      // el armario de la habitación (habitacion.js)
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   // un camaleón congelado es «parte del suelo»: quien pase por detrás de él se pinta ENCIMA, no debajo. Si no, su pintura
   // de suelo quedaría sobre el becario y dejaría ver su silueta recortada (y sería facilísimo encontrarlo).
   for (const k of cosas) k.ordenY = k.y;
   for (const k of cosas) {
-    if (k.T || k.puerta || !esSuelo(k)) continue;
+    if (k.T || k.puerta || k.armario || !esSuelo(k)) continue;
     for (const o of cosas) {
-      if (o === k || o.T || o.puerta || esSuelo(o) || o.y >= k.y) continue;
+      if (o === k || o.T || o.puerta || o.armario || esSuelo(o) || o.y >= k.y) continue;
       if (Math.abs(o.x - k.x) < CAJA_W && k.y - o.y < CAJA_H + 4) o.ordenY = Math.max(o.ordenY, k.y + 0.5);
     }
   }
@@ -187,6 +197,7 @@ function dibuja(t) {
   for (const k of cosas) {
     if (k.T) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h);
     else if (k.puerta) pintaPuerta(c, t);
+    else if (k.armario) pintaArmarioSala(c, k, t);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);
     else if (k.invis > 0) { if (J.yo && J.yo.clase === 'cazador') continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: los becarios no lo ven; los suyos, como un fantasma
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }

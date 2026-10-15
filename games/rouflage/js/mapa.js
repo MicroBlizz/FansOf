@@ -4,8 +4,8 @@
 'use strict';
 
 const ESC_FONDO = 2;     // el fondo se guarda al doble de tamaño para que se vea nítido en el móvil
-const MAPA = { fondo: null, px: null, dibujos: {}, libre: new Uint8Array(MW * MH), coste: new Uint8Array(MW * MH), porY: [] };
-const TODO = { x0: 0, y0: 0, x1: ANCHO, y1: ALTO };
+const MAPA = { id: '', fondo: null, px: null, dibujos: {}, libre: new Uint8Array(0), coste: new Uint8Array(0), porY: [] };
+const TODO = { x0: 0, y0: 0, x1: 0, y1: 0 };
 const cruzan = (a, R) => a.x0 < R.x1 && a.x0 + a.w > R.x0 && a.y0 < R.y1 && a.y0 + a.h > R.y0;
 
 // pinta el suelo, los muros, las paredes y los carteles del trozo R (el lienzo ya está puesto en unidades del mundo)
@@ -24,6 +24,18 @@ function pintaMundo(c, R) {
   c.restore();
 }
 
+// deja un mapa como el actual y lo construye entero. Cambiar de mapa borra lo que se guardaba del anterior (paleta, señuelos, dibujos)
+function cargaMapa(id) {
+  cargaDatosMapa(id); MAPA.id = MAPA_ACT.id;
+  TODO.x1 = ANCHO; TODO.y1 = ALTO;
+  MAPA.dibujos = {}; MAPA.libre = new Uint8Array(MW * MH); MAPA.coste = new Uint8Array(MW * MH);
+  _g = new Float32Array(MW * MH); _de = new Int32Array(MW * MH); _visto = new Uint8Array(MW * MH);
+  COSA_PUERTA.y = PUERTA.y + PUERTA.h - 2;
+  preparaMuebles();
+  if (typeof olvidaPaleta === 'function') olvidaPaleta();
+  if (typeof olvidaSenuelos === 'function') olvidaSenuelos();
+  construyeMapa();
+}
 function construyeMapa() {
   // 1) el fondo que se ve
   let c;
@@ -160,7 +172,7 @@ function pasoLibre(ax, ay, bx, by) {
   for (let k = 1; k <= n; k++) { const t = k / n, x = ax + (bx - ax) * t, y = ay + (by - ay) * t; if (chocaCaja(x - MEDIO_PIE - 2, y - FONDO_PIE - 2, x + MEDIO_PIE + 2, y + 2)) return false; }
   return true;
 }
-const _g = new Float32Array(MW * MH), _de = new Int32Array(MW * MH), _visto = new Uint8Array(MW * MH);
+let _g = new Float32Array(0), _de = new Int32Array(0), _visto = new Uint8Array(0);   // (al tamaño del mapa: los hace cargaMapa)
 function buscaCamino(ax, ay, bx, by) {
   const a = casillaCerca(ax, ay), b = casillaCerca(bx, by); if (!a || !b) return null;
   const ini = a[1] * MW + a[0], fin = b[1] * MW + b[0];

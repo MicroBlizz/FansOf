@@ -15,7 +15,7 @@ function lanzaGranada(e) {
 }
 // el fogonazo: a todos los becarios cercanos que lleva este navegador los deja a medio ver unos segundos
 function granadaEstalla(x, y, e) {
-  fxGranada(x, y, GRANADA.dura); fxTexto(x, y - 80, tr('¡FLASH!'), '#fff6ea', 22); play('luces'); play('disparo', 0.8);
+  fxGranada(x, y, GRANADA.dura); fxTexto(x, y - 80, tr('¡FLASH!'), '#fff6ea', 22); play('humo');
   for (const h of J.cazadores) {
     if (h.fuera || lejos(h.x, h.y, x, y) > GRANADA.radio) continue;
     if (!J.pvp || h.jugador || (h.bot && RFP.soyHost)) h.ciego = Math.max(h.ciego, GRANADA.ciego);

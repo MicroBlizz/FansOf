@@ -25,9 +25,9 @@ function rfpLatido(dt) {
   if ((LATIDO.t -= dt) > 0 || !RFP.red || J.fase === 'fin' || RFP.cerrado) return;
   LATIDO.t = LATIDO.cada; RFP.red.latido(!(J.yo && sinJuego(J.yo)));
 }
-// un becario espera en Recursos Humanos mientras los colados se pintan
+// un becario espera en su sala (Recursos Humanos, el vestíbulo…) mientras los colados se pintan
 function rfpConfinaBecario() {
-  const yo = J.yo, z = SALAS.find(s => s.id === 'rrhh');
+  const yo = J.yo, z = salaEspera();
   if (!yo || !z || yo.clase !== 'cazador' || (J.fase !== 'prep' && J.fase !== 'cuenta')) return;
   yo.x = limita(yo.x, z.px + 12, z.px + z.pw - 12); yo.y = limita(yo.y, z.py + 22, z.py + z.ph - 6);
 }

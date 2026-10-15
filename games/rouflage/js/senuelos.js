@@ -5,6 +5,7 @@
 
 const SEN = { cv: null, c: null, puntos: [], pinta: null, pend: [], tPend: 0, max: 100, alcance: 240 };
 const SEN_ESC = 0.5;      // la capa se guarda a la mitad de tamaño
+function olvidaSenuelos() { limpiaSenuelos(); SEN.cv = SEN.c = null; }   // al cambiar de mapa (la capa mide lo que el mapa)
 
 function limpiaSenuelos() { SEN.puntos.length = 0; SEN.pend.length = 0; SEN.pinta = null; if (SEN.c) SEN.c.clearRect(0, 0, SEN.cv.width, SEN.cv.height); }
 function senueloCapa() { if (!SEN.cv) [SEN.cv, SEN.c] = lienzo(Math.ceil(ANCHO * SEN_ESC), Math.ceil(ALTO * SEN_ESC)); return SEN.c; }

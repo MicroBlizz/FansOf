@@ -23,9 +23,9 @@ async function arranca() {
   traducePagina(); ponIconos();
   // las letras de la serie: se esperan un poco, porque los carteles del mapa se pintan una sola vez
   try { await Promise.race([Promise.all([document.fonts.load('20px "Luckiest Guy"'), document.fonts.load('800 12px "Baloo 2"')]), new Promise(r => setTimeout(r, 2500))]); } catch (_) { /* sin letras: salen las del sistema */ }
-  preparaAlubia(); construyeMapa();
+  preparaAlubia(); cargaMapa(mapaElegido());
   ajusta(); window.addEventListener('resize', ajusta);
-  preparaInterfaz(); preparaPvp();
+  preparaInterfaz(); preparaEligeMapa(); preparaPvp(); preparaArmario(); preparaHabitacion();
   const modo = new URLSearchParams(location.search).get('modo');   // ?modo=camaleon o ?modo=cazador entra directo (para probar)
   if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else { irTitulo(); pvpEntradaDirecta(); }
   E('carga').hidden = true;

@@ -281,3 +281,18 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 @media (max-height: 640px) and (orientation: portrait) { .papel canvas { max-width: 150px; } }
 @media (orientation: landscape) and (max-height: 520px) { .titulo-caja { max-width: 760px; gap: 6px; } .logo b { font-size: clamp(40px, 15vh, 76px); } .logo span { font-size: 20px; } .papel canvas { max-width: 130px; } .papel { padding: 6px 10px 8px; } .papel span { font-size: 12.5px; } .lema { font-size: 14px; } .nota { display: none; } }
 @media (prefers-reduced-motion: reduce) { .accion.listo, #reloj.prisa, #e-silbo.pronto { animation: none; } }
+
+/* el tutorial con bocadillos (bocadillos.js) */
+.bocadillo { position: fixed; z-index: 900; max-width: min(270px, calc(100vw - 20px)); background: var(--ink); color: #20102c; border: 4px solid var(--outline); border-radius: 18px; padding: 10px 14px 10px; font: 800 15px/1.22 var(--font-ui); box-shadow: 0 5px 0 var(--outline); pointer-events: auto; animation: bocadilloEntra 0.25s ease-out; }
+.bocadillo b { font-family: var(--font-display); font-weight: 400; color: var(--player); letter-spacing: 0.02em; }
+.bocadillo small { display: flex; gap: 10px; align-items: center; margin-top: 8px; font: 700 12px var(--font-ui); color: #6a6f80; }
+.bocadillo small i { font-style: normal; background: var(--player); color: var(--ink); border: 3px solid var(--outline); border-radius: 10px; padding: 1px 12px 0; font: 400 14px var(--font-display); margin-left: auto; }
+.bocadillo small u { text-decoration: underline; cursor: pointer; margin-left: auto; }
+.bocadillo small i + u { margin-left: 0; }
+.bocadillo::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--ink); border-right: 4px solid var(--outline); border-bottom: 4px solid var(--outline); transform: rotate(45deg); bottom: -14px; left: var(--flecha, 50%); margin-left: -10px; }
+.bocadillo.abajo::after { bottom: auto; top: -14px; transform: rotate(225deg); }
+.bocadillo.centro::after { display: none; }
+.foco-tuto { position: fixed; z-index: 890; border-radius: 24px; box-shadow: 0 0 0 4000px rgba(8, 11, 20, 0.3), 0 0 0 5px var(--gold); pointer-events: none; animation: focoLate 1s ease-in-out infinite; }
+@keyframes focoLate { 50% { box-shadow: 0 0 0 4000px rgba(8, 11, 20, 0.3), 0 0 0 9px var(--gold); } }
+@keyframes bocadilloEntra { from { transform: scale(0.85); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .foco-tuto, .bocadillo { animation: none; } }

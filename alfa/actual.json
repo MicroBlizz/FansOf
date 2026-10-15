@@ -1,8 +1,8 @@
 {
- "build": 96,
- "hash": "797aabd",
- "fecha": "2026-10-15T19:40:18Z",
- "mensaje": "Rouflage 0.2.16: el ranking y la pausa ya no desaparecen tras salir de la habitación por el armario o el perfil",
+ "build": 97,
+ "hash": "cc3c610",
+ "fecha": "2026-10-15T19:48:29Z",
+ "mensaje": "Rouflage: tutorial con bocadillos (señala el botón que toca y espera a que lo hagas; camaleón y cazador, una vez cada uno; se repite desde OPCIONES)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

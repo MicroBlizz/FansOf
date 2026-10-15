@@ -521,5 +521,23 @@ IDIOMA.add({
   "¡El carrito de la limpieza te ha arrollado! Vuelve a pintarte": "The cleaning trolley ran you over! Paint yourself again",
   "JUGAR CONTRA BOTS": "PLAY AGAINST BOTS",
   "RELLENAR CON BOTS": "FILL WITH BOTS",
-  "Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.": "Pick a mode and press FILL WITH BOTS to play now, or share the code with your friends."
+  "Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.": "Pick a mode and press FILL WITH BOTS to play now, or share the code with your friends.",
+  // el tutorial con bocadillos (bocadillos.js)
+  "<b>¡PÍNTATE!</b> Toca aquí para pintarte con los colores del suelo que tienes detrás.": "<b>PAINT YOURSELF!</b> Tap here to paint yourself with the colours of the floor behind you.",
+  "<b>CUENTAGOTAS</b>: tócalo y luego toca el suelo para coger su color.": "<b>EYEDROPPER</b>: tap it, then tap the floor to pick up its colour.",
+  "Ahora pasa el dedo por tu cuerpo para pintarlo. Este número es tu <b>CAMUFLAJE</b>: cuanto más alto, menos te ven.": "Now run your finger over your body to paint it. This number is your <b>CAMOUFLAGE</b>: the higher, the harder you are to spot.",
+  "Cuando te guste cómo has quedado, toca <b>LISTO</b>.": "When you like how you look, tap <b>DONE</b>.",
+  "<b>CONGÉLATE</b>: te quedas quieto y desaparecen tu contorno y tus orejas. Solo queda la pintura.": "<b>FREEZE</b>: you stand still and your outline and ears vanish. Only the paint is left.",
+  "Cada rato <b>SILBAS</b> sin querer y los becarios van a mirar. Aquí ves cuánto falta.": "Every so often you <b>WHISTLE</b> without meaning to and the interns come to look. This shows how long is left.",
+  "Si silbas tú cuando no hay becarios cerca, ese reloj vuelve a empezar. ¡Elige bien el momento!": "If you whistle yourself when no interns are near, that timer starts again. Pick your moment!",
+  "¿Te han visto? La <b>GRANADA</b> te vuelve invisible un rato. Solo tienes una por partida.": "Spotted? The <b>GRENADE</b> makes you invisible for a while. You only get one per match.",
+  "Estas son tus <b>CARTAS DE DESPIDO</b>. Fallar gasta una; acertar te la devuelve.": "These are your <b>DISMISSAL SLIPS</b>. A miss uses one up; a hit gives it back.",
+  "Mientras los colados se pintan, <b>PRACTICA</b>: toca a los camaleones de prácticas que salen en la sala.": "While the intruders paint up, <b>PRACTISE</b>: tap the training chameleons that pop up in the room.",
+  "¡A buscar! <b>Toca</b> donde creas que hay un colado: busca colores que no casan y dibujos torcidos.": "Go find them! <b>Tap</b> where you think an intruder is: look for colours that don't match and wonky patterns.",
+  "Aquí ves cuántos colados <b>QUEDAN</b>. Las ondas de los silbidos te dicen por dónde andan.": "This shows how many intruders are <b>LEFT</b>. Whistle ripples tell you where they are.",
+  "{n} de {t}": "{n} of {t}",
+  "VALE": "OK",
+  "Saltar tutorial": "Skip tutorial",
+  "Repetir tutorial": "Replay tutorial",
+  "El tutorial saldrá otra vez en tu próxima partida contra bots": "The tutorial will show again in your next match against bots"
 });

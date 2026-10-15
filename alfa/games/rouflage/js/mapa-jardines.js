@@ -38,6 +38,7 @@ const PLANO_JARDINES = `
 
 defineMapa({
   id: 'jardines', nombre: 'Los jardines', lema: 'Setos, césped y aspersores traicioneros.', ancho: 84, alto: 60,
+  musica: { taller: 'rfJdTaller', caza: 'rfJdCaza', recta: 'rfJdRecta' },      // sus temas (musica-mapas.js)
   muro: '#2f5a2a', canto: '#4f8a3e',
   espera: 'V1', plaza: [800, 320],
   evento: { tipo: 'aspersores' },

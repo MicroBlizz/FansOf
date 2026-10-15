@@ -44,6 +44,7 @@ const HAB_ABAJO = [[80, 320], [400, 600], [760, 960], [1040, 1240], [1400, 1600]
 
 defineMapa({
   id: 'hotel', nombre: 'El hotel', lema: 'Cinco estrellas (de cincuenta). Cuidado con el carrito de la limpieza.', ancho: 84, alto: 60,
+  musica: { taller: 'rfHtTaller', caza: 'rfHtCaza', recta: 'rfHtRecta' },      // sus temas (musica-mapas.js)
   muro: '#3a1f24', canto: '#7a4a3a',
   espera: 'V1', plaza: [1000, 1060],
   evento: { tipo: 'carrito', carriles: [[420, 100, 1580]] },

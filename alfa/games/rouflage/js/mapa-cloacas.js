@@ -38,6 +38,7 @@ const PLANO_CLOACAS = `
 
 defineMapa({
   id: 'cloacas', nombre: 'Las cloacas', lema: 'Canales de agua verde, ratas y niebla. Huele a Ratkov.', ancho: 84, alto: 60,
+  musica: { taller: 'rfClTaller', caza: 'rfClCaza', recta: 'rfClRecta' },      // sus temas (musica-mapas.js)
   muro: '#2b2320', canto: '#5a3a30',
   espera: 'V1', plaza: [600, 1000],
   evento: { tipo: 'niebla' },

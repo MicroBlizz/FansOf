@@ -1,8 +1,8 @@
 {
- "build": 30,
- "hash": "4c0c65c",
- "fecha": "2026-10-15T06:23:15Z",
- "mensaje": "Nova: arte final Crucero y Fragata (casco, alas) y escudo",
+ "build": 31,
+ "hash": "ffd5ce2",
+ "fecha": "2026-10-15T06:32:24Z",
+ "mensaje": "Nova fase 1: prototipo de partida jugable (modo desarrollo) con el arte final de ComfyUI",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

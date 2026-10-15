@@ -500,5 +500,23 @@ IDIOMA.add({
   "Han encontrado tu cuerpo: estás fuera": "They found your body: you're out",
   "TU CUERPO": "YOUR BODY",
   "Ida y vuelta: solo gana uno, y es quien más puntos suma.": "Round trip: only one wins, whoever scores most.",
-  "Estás fuera: pasea por el mapa para ver qué pasa": "You're out: wander around the map to see what happens"
+  "Estás fuera: pasea por el mapa para ver qué pasa": "You're out: wander around the map to see what happens",
+  // la urbanización (mapa-residencial.js)
+  "La urbanización": "The suburb",
+  "Adosados, coches aparcados y un vecino que lo ve todo.": "Terraced houses, parked cars and a neighbour who sees everything.",
+  "URBANIZACIÓN LOS JEFES": "BOSSES' ESTATE",
+  "SE VENDE": "FOR SALE:",
+  "TU ALMA": "YOUR SOUL",
+  "BAR": "BAR",
+  "VECINOS": "NEIGHBOURHOOD",
+  "VIGILANTES": "WATCH",
+  "Un vecino se asoma a la ventana": "A neighbour looks out of the window",
+  // el hotel (mapa-hotel.js)
+  "El hotel": "The hotel",
+  "Cinco estrellas (de cincuenta). Cuidado con el carrito de la limpieza.": "Five stars (out of fifty). Watch out for the cleaning trolley.",
+  "RECEPCIÓN": "RECEPTION",
+  "5 ESTRELLAS (DE 50)": "5 STARS (OUT OF 50)",
+  "SEGURIDAD": "SECURITY",
+  "¡Limpieza! El carrito viene por el pasillo": "Housekeeping! The trolley is coming down the corridor",
+  "¡El carrito de la limpieza te ha arrollado! Vuelve a pintarte": "The cleaning trolley ran you over! Paint yourself again"
 });

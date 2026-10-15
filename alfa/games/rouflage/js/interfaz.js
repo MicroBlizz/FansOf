@@ -59,7 +59,13 @@ function pistaDeAhora() {
       if (mira) return tr('Un becario sospecha de ti: quieto… o corre');
       return J.tFase < 7 ? tr('Quieto. Si un becario pone «!», sal corriendo') : '';
     }
-  } else if (J.fase === 'prep') return tr('Espera en Recursos Humanos: los colados se están pintando');
+  } else if (J.fase === 'prep') {
+    // las prácticas: la explicación se queda hasta el primer acierto (así se aprende a disparar) y luego cuánto falta
+    if (!PRACTICA.activa) return tr('Espera en Recursos Humanos: los colados se están pintando');
+    if (!PRACTICA.aciertos) return ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas') : tr('Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas');
+    if (PRACTICA.extra >= REGLAS.balasExtra) return tr('¡Cartas al máximo! Sigue practicando hasta la caza');
+    return tr('Cada {n} despidos, una carta extra ({c} de {m} ganadas)', { n: PRACTICA_POR_CARTA, c: PRACTICA.extra, m: REGLAS.balasExtra });
+  }
   else if (J.fase === 'caza' && J.tFase < 9) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
   return '';
 }

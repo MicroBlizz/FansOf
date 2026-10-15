@@ -264,7 +264,7 @@ function rfpSinAnfitrion() {
   if (J.fase === 'caza' && J.reloj < -8) { const g = escondidos().length ? 'camaleon' : 'cazador'; termina((J.yo.clase === 'camaleon') === (g === 'camaleon'), 'tiempo'); }
 }
 
-// un cazador dice cuántas cartas extra ha ganado con los wakameles: el anfitrión se las pone (con tope, y solo antes de la caza)
+// un cazador dice cuántas cartas extra ha ganado en las prácticas: el anfitrión se las pone (con tope, y solo antes de la caza)
 function rfpCartasExtra(sl, m) {
   const h = sl.ente; if (!h || h.clase !== 'cazador' || h.bot || !['prep', 'cuenta'].includes(J.fase)) return;
   h.balas = Math.max(h.balas, Math.min(REGLAS.balas, REGLAS.balasIni + Math.max(0, Math.min(REGLAS.balasExtra, m.n | 0))));

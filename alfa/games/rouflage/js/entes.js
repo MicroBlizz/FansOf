@@ -13,8 +13,8 @@ const REGLAS = {
   rectaFinal: 30,        // los últimos segundos: pistas extra para los cazadores
   velCamaleon: 168, velCazador: 150,
   balas: 5,              // cartas de despido (el máximo): fallar gasta una, acertar la devuelve
-  balasIni: 2, balasExtra: 3,   // el cazador sale con balasIni y gana hasta balasExtra más en el minijuego de los wakameles
-  prepCazador: 30,       // la partida en solitario como cazador: lo que dura el minijuego antes de la cuenta atrás
+  balasIni: 2, balasExtra: 3,   // el cazador sale con balasIni y gana hasta balasExtra más en las prácticas de la sala de espera
+  prepCazador: 30,       // la partida en solitario como cazador: lo que duran las prácticas antes de la cuenta atrás
   enfria: 1.5,           // espera entre disparos
   enfriaFallo: 2.6,      // …y tras un despido improcedente
   ciego: 2.4,            // tras fallar, la linterna alumbra la mitad durante este rato

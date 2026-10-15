@@ -1,6 +1,13 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas": "Practice: drag to walk and TAP a hidden chameleon to shoot it. Missing costs no cards",
+  "Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas": "Practice: WASD to walk and CLICK a hidden chameleon to shoot it. Missing costs no cards",
+  "Cada {n} despidos, una carta extra ({c} de {m} ganadas)": "Every {n} firings, an extra card ({c} of {m} earned)",
+  "Dispara a los camaleones de prácticas de la sala y gana cartas de despido": "Shoot the training chameleons in the room and win firing cards",
+  "Camaleón de prácticas": "Training chameleon",
+  "¡Carta de despido extra!": "Extra firing card!",
+  "¡Cartas al máximo! Sigue practicando hasta la caza": "Cards maxed out! Keep practising until the hunt",
   "<b>FANTASMA NUEVO</b>: al despedirte ya no eres una sábana: eres tu misma galleta, con tus orejas y tu cara, pero con cola de fantasma que se menea, como Casper.": "<b>NEW GHOST</b>: when you get fired you are no longer a sheet: you are your own cookie, with your ears and your face, but with a wiggly ghost tail, like Casper.",
   "FANTASMA NUEVO": "NEW GHOST",
   "Recursos Humanos ha confirmado que los despedidos pueden seguir rondando la oficina. Phony pregunta si cobran el plus de nocturnidad.": "Human Resources has confirmed that fired staff may keep haunting the office. Phony asks whether they get the night-shift bonus.",
@@ -13,12 +20,8 @@ IDIOMA.add({
   "Sin cartas: pasea por el mapa para ver qué pasa": "Out of cards: wander around the map to see what happens",
   "ME RETIRO": "I QUIT",
   "Te camuflas rápido: un 80 %": "Quick camo: 80 %",
-  "¡CAZA WAKAMELES!": "WHACK THE WAKAMELE!",
-  "¡Cartas al máximo! Espera a que acabe la preparación": "Cards maxed out! Wait for the preparation to end",
-  "Toca los wakameles: cada {n} te dan una carta extra": "Tap the wakamele: every {n} give you an extra card",
   "¡CALENTAMIENTO!": "WARM-UP!",
   "Calentamiento": "Warm-up",
-  "Mientras los colados se pintan, caza wakameles y gana cartas de despido": "While the sneaks paint, whack wakamele and win firing cards",
   "de caos primordial": "of primordial chaos",
   "puntos": "points",
   "Tu bando ganó la partida que dejaste": "Your side won the match you left",

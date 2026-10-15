@@ -56,7 +56,8 @@ function nvEnemigo(S, tipo, x, y, rango) {
   }
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
   e.armas = nvArmasEnemigo(tipo, rango);
-  if (e.armas) e.alcMax = Math.max(...e.armas.map(w => NV_ARMA_E[w.tam].alc));
+  e.kf = nvFactor(rango);   // el alcance y el tamaño de las balas crecen con la nave, igual que las tuyas
+  if (e.armas) e.alcMax = Math.max(...e.armas.map(w => NV_ARMA_E[w.tam].alc)) * e.kf;
   S.enem.push(e);
   return e;
 }
@@ -108,10 +109,10 @@ function nvEnemigos(S, dt) {
       vx = ux * radial + -uy * 0.8; vy = uy * radial + ux * 0.8;
       if (!apagado) for (const w of e.armas) {
         const A = NV_ARMA_E[w.tam];
-        if ((w.cd -= dt) > 0 || dist > A.alc + e.r) continue;
+        if ((w.cd -= dt) > 0 || dist > A.alc * e.kf + e.r) continue;
         w.cd = A.cada;
         const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1;
-        S.eproy.push({ x: px, y: py, vx: (n.x - px) / d * A.v, vy: (n.y - py) / d * A.v, dano: A.dano, vida: A.alc / A.v + 0.4, r: A.r });
+        S.eproy.push({ x: px, y: py, vx: (n.x - px) / d * A.v, vy: (n.y - py) / d * A.v, dano: A.dano, vida: A.alc * e.kf / A.v + 0.4, r: A.r * e.kf });
       }
     } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
     else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }

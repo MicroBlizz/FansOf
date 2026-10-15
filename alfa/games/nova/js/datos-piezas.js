@@ -29,7 +29,15 @@ const NOVA_PIEZAS = {
     { "id": "babor1", "cara": "babor", "x": -58, "y": 50, "tamMax": "M" },
     { "id": "estribor1", "cara": "estribor", "x": 58, "y": 50, "tamMax": "M" },
     { "id": "dorsal1", "cara": "dorsal", "x": 0, "y": 4, "tamMax": "M" },
-    { "id": "popa1", "cara": "popa", "x": 0, "y": 66, "tamMax": "S" }
+    { "id": "popa1", "cara": "popa", "x": 0, "y": 66, "tamMax": "S" },
+    { "id": "babor2", "cara": "babor", "x": -34, "y": -6, "tamMax": "L" },
+    { "id": "estribor2", "cara": "estribor", "x": 34, "y": -6, "tamMax": "L" },
+    { "id": "babor3", "cara": "babor", "x": -80, "y": 18, "tamMax": "L" },
+    { "id": "estribor3", "cara": "estribor", "x": 80, "y": 18, "tamMax": "L" },
+    { "id": "babor4", "cara": "babor", "x": -36, "y": 38, "tamMax": "L" },
+    { "id": "estribor4", "cara": "estribor", "x": 36, "y": 38, "tamMax": "L" },
+    { "id": "babor5", "cara": "babor", "x": -84, "y": 50, "tamMax": "L" },
+    { "id": "estribor5", "cara": "estribor", "x": 84, "y": 50, "tamMax": "L" }
    ]
   },
   "crucero": {
@@ -43,7 +51,15 @@ const NOVA_PIEZAS = {
     { "id": "babor1", "cara": "babor", "x": -70, "y": 14, "tamMax": "S" },
     { "id": "estribor1", "cara": "estribor", "x": 70, "y": 14, "tamMax": "S" },
     { "id": "dorsal1", "cara": "dorsal", "x": 0, "y": 36, "tamMax": "S" },
-    { "id": "popa1", "cara": "popa", "x": 0, "y": 70, "tamMax": "L" }
+    { "id": "popa1", "cara": "popa", "x": 0, "y": 70, "tamMax": "L" },
+    { "id": "babor2", "cara": "babor", "x": -40, "y": -24, "tamMax": "L" },
+    { "id": "estribor2", "cara": "estribor", "x": 40, "y": -24, "tamMax": "L" },
+    { "id": "babor3", "cara": "babor", "x": -96, "y": -2, "tamMax": "L" },
+    { "id": "estribor3", "cara": "estribor", "x": 96, "y": -2, "tamMax": "L" },
+    { "id": "babor4", "cara": "babor", "x": -96, "y": 34, "tamMax": "L" },
+    { "id": "estribor4", "cara": "estribor", "x": 96, "y": 34, "tamMax": "L" },
+    { "id": "babor5", "cara": "babor", "x": -44, "y": 52, "tamMax": "L" },
+    { "id": "estribor5", "cara": "estribor", "x": 44, "y": 52, "tamMax": "L" }
    ]
   },
   "fragata": {
@@ -58,7 +74,15 @@ const NOVA_PIEZAS = {
     { "id": "estribor1", "cara": "estribor", "x": 66, "y": 20, "tamMax": "L" },
     { "id": "dorsal1", "cara": "dorsal", "x": 0, "y": 26, "tamMax": "L" },
     { "id": "dorsal2", "cara": "dorsal", "x": 0, "y": 58, "tamMax": "L" },
-    { "id": "popa1", "cara": "popa", "x": 0, "y": 84, "tamMax": "L" }
+    { "id": "popa1", "cara": "popa", "x": 0, "y": 84, "tamMax": "L" },
+    { "id": "babor2", "cara": "babor", "x": -38, "y": -24, "tamMax": "L" },
+    { "id": "estribor2", "cara": "estribor", "x": 38, "y": -24, "tamMax": "L" },
+    { "id": "babor3", "cara": "babor", "x": -92, "y": 0, "tamMax": "L" },
+    { "id": "estribor3", "cara": "estribor", "x": 92, "y": 0, "tamMax": "L" },
+    { "id": "babor4", "cara": "babor", "x": -98, "y": 40, "tamMax": "L" },
+    { "id": "estribor4", "cara": "estribor", "x": 98, "y": 40, "tamMax": "L" },
+    { "id": "babor5", "cara": "babor", "x": -40, "y": 58, "tamMax": "L" },
+    { "id": "estribor5", "cara": "estribor", "x": 40, "y": 58, "tamMax": "L" }
    ]
   }
  }

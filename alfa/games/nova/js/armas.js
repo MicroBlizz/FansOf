@@ -8,10 +8,19 @@ const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
 function nvRanuras(rango, S) {
   const cuenta = {}, H = NOVA_PIEZAS.cascos[S.casco];
-  return novaPlantilla(H.faccion, nvTier(rango)).map(r => {
-    cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
-    const id = r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
-    return Object.assign({ id, x: a.x, y: a.y }, r);
+  const base = novaPlantilla(H.faccion, nvTier(rango));
+  // más ranuras al hacerte grande: cada 5 rangos desde el 8 se abre un par más en las alas (S, luego M y L al crecer); sus anclajes están en datos-piezas
+  const lat = novaPlantilla(H.faccion, 5).filter(r => r.cara === 'babor' || r.cara === 'estribor'), tipos = [...new Set([].concat(...lat.map(r => r.tipos)))];
+  for (let k = 0; k < 4; k++) {
+    const desde = 8 + 5 * k;
+    if (rango < desde) break;
+    const tam = rango >= desde + 16 ? 'L' : rango >= desde + 8 ? 'M' : 'S';
+    for (const cara of ['babor', 'estribor']) base.push({ id: cara + (2 + k), cara, tam, tipos, arco: NOVA_CASCOS.caras[cara].arco, extra: 1 });
+  }
+  return base.map(r => {
+    if (!r.extra) cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
+    const id = r.extra ? r.id : r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
+    return Object.assign({}, r, { id, x: a.x, y: a.y });
   });
 }
 
@@ -45,7 +54,7 @@ function nvArmas(S, dt) {
     w.x = pos.x; w.y = pos.y;
     if (w.portador === 'drones') { nvDrones(S, w, p, dt); continue; }
     const f = NV_CARAS_DIR[w.cara], dx = f[0] * Math.cos(n.ang) - f[1] * Math.sin(n.ang), dy = f[0] * Math.sin(n.ang) + f[1] * Math.cos(n.ang);
-    const alc = p.alcance * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
+    const kf = nvFactor(n.rango), alc = p.alcance * kf * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
     let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
       if (e.muerto || e.d.pasivo === 2) continue;
@@ -73,14 +82,14 @@ function nvDispara(S, w, p, obj) {
     nvGolpe(S, obj, dano * (id === 'hazEnfocado' ? 1.2 : 1), w, obj.x, obj.y, id === 'hazEnfocado' ? 2 : 1);
     return;
   }
-  const n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) : 1;
+  const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) : 1;
   for (let i = 0; i < n; i++) {
     let a = Math.atan2(obj.y - w.y, obj.x - w.x);
     if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - 0.5) * 0.12;
     const v = w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270;
     S.proy.push(Object.assign({}, base, {
-      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 5,
-      vida: (w.portador === 'flak' ? p.alcance / v + 0.1 : w.portador === 'railgun' ? 0.9 : 3), perf: w.portador === 'railgun' ? 3 : 1,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 5) * kf,
+      vida: (w.portador === 'flak' ? p.alcance * kf / v + 0.1 : w.portador === 'railgun' ? 0.9 * kf : 3), perf: w.portador === 'railgun' ? 3 : 1,
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
   }
@@ -123,6 +132,7 @@ function nvProyectiles(S, dt) {
   }
 }
 function nvExplosion(S, x, y, radio, dano, w, salvo) {
+  radio *= nvFactor(S.nave.rango);   // las explosiones también crecen con la nave
   S.fx.push({ t: 0.3, x, y, r: radio, color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'onda' });
   for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true);
 }

@@ -5,7 +5,7 @@ const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujad
 const NV_ARENA = 4200;                       // radio de la arena
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
 // Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
-function nvUmbral(k) { return Math.round(600 * (Math.pow(1.3, k) - 1)); }
+function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }
 function nvFactor(r) { return Math.pow(1.07, r - 1); }
 function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
 function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces

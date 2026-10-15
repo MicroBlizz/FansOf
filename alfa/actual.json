@@ -1,8 +1,8 @@
 {
- "build": 57,
- "hash": "dcfbfc3",
- "fecha": "2026-10-15T10:31:57Z",
- "mensaje": "Release sin Nova: Nova solo en la alfa (se quita su tarjeta y boletín de los archivos compartidos al publicar); todos los juegos suben versión por el cambio de core",
+ "build": 58,
+ "hash": "51187f6",
+ "fecha": "2026-10-15T10:44:39Z",
+ "mensaje": "Feedback con preguntas: nota de 1 a 5 estrellas, la del cambio reciente (sale de NEWS, con botón para leerlo), las del juego (AJUSTES.feedbackPreguntas) y las de core; respuestas en jsonb (servidor/39, aún sin aplicar: mientras tanto se manda como texto)",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

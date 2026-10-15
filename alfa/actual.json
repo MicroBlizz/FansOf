@@ -1,8 +1,8 @@
 {
- "build": 28,
- "hash": "f2a10f1",
- "fecha": "2026-10-15T02:39:42Z",
- "mensaje": "Nova: notas de combos de defensa aceptados",
+ "build": 29,
+ "hash": "d7428e4",
+ "fecha": "2026-10-15T06:22:32Z",
+ "mensaje": "Nova: arte final Caza (casco, alas) y 9 motores (ComfyUI)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

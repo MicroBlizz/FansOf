@@ -15,17 +15,18 @@ function abreTaller() {
   if (TALLER.abierto || !yo || yo.fuera || yo.clase !== 'camaleon' || (J.fase !== 'prep' && J.fase !== 'caza') || J.pausa) return;
   yo.vx = yo.vy = 0; yo.x = Math.round(yo.x); yo.y = Math.round(yo.y); yo.moviendo = false;
   TALLER.abierto = true; TALLER.capas = false; TALLER.trazo = null; TALLER.figura = null; TALLER.duda = null; TALLER.puntero = null; if (TALLER.herr !== 'senuelo') TALLER.herr = 'pincel';      // el señuelo se queda puesto hasta que lo vuelvas a apretar
-  ENTRADA.palanca = null; ENTRADA.toques.clear();
+  ENTRADA.palanca = null; ENTRADA.toques.clear(); TMENU.volar = null; if (!TMENU.sec && !(SAVE.tuto && SAVE.tuto.bcam)) TMENU.sec = 'color';   // con el tutorial a medias, la bandeja de color abierta (el bocadillo señala el cuentagotas)
   muestraTaller(true); encuadraTaller(); mideTaller(); play('select');
 }
 // dónde tiene que ponerse la cámara para que la alubia quede grande en el hueco que deja el panel de herramientas
 function encuadraTaller() {
   const yo = J.yo, p = document.getElementById('taller').getBoundingClientRect(), deLado = matchMedia('(orientation: landscape) and (max-height: 520px)').matches;   // móvil tumbado: el panel va a un lado
-  const libreW = deLado ? VW - p.width : VW, arriba = 66, libreH = deLado ? VH - arriba : VH - p.height - arriba;
+  const h = !deLado && huecoMenuPintar(), arriba = h ? h.arriba : 66;      // con los menús nuevos, el medidor va arriba y en B hay columnas a los lados
+  const libreW = deLado ? VW - p.width : VW - (h ? h.lados : 0), libreH = deLado ? VH - arriba : VH - p.height - arriba;
   // con el señuelo la cámara se abre para ver todo hasta donde llega el brazo (se pinta lejos de uno, no encima)
   // señuelo: la vista de entrada abarca el área entera del brazo (el panel puede tapar parte del área: se mueve la cámara con el ratón o los dedos)
   const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, Math.max(libreH, 0.62 * (VH - arriba))) / (SEN.alcance * 2 + 16), 0.3, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
-  const sx = libreW / 2, sy = arriba + libreH / 2;
+  const sx = deLado ? libreW / 2 : VW / 2, sy = arriba + libreH / 2;
   TALLER.libre = [sx, sy, libreW, libreH]; if (TALLER.herr === 'senuelo') SENCAM.z0 = z;   // la vista de entrada es la del área entera: de ahí solo se acerca
   TALLER.cam = [yo.x - (sx - VW / 2) / z, yo.y - 26 - (sy - VH / 2) / z, z];
   TALLER.capas = false;

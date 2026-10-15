@@ -1,0 +1,144 @@
+/* Fans of Rouflage · Los menús de pintar que elige cada jugador (js/taller-menus.js): clásico, A (pestañas), B (a los lados) y C (bandejas).
+   Los botones son los de siempre cambiados de sitio; aquí se les da el tamaño de dedo (44 px o más) en cada menú. */
+
+/* la pestañita para elegir menú, al lado de la de plegar */
+.t-menus { position: absolute; top: -30px; right: 76px; height: 30px; padding: 0 10px; border-radius: 12px 12px 0 0; background: var(--tray-hi); border: 3px solid var(--outline); border-bottom: 0;
+  display: flex; align-items: center; gap: 4px; color: var(--ink); }
+.t-menus i[data-icono] { width: 16px; height: 16px; }
+.t-menus b { font-family: var(--font-display); font-weight: 400; font-size: 13px; letter-spacing: 0.04em; padding-top: 2px; }
+#taller[data-menu="c"] .t-menus { right: 14px; }
+
+/* la ventanita para elegir */
+.elige-menu { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: var(--modal); }
+.elige-tarjeta { width: min(100%, 380px); box-sizing: border-box; display: grid; gap: 10px; justify-items: center; padding: 16px; border-radius: 20px; border: 4px solid var(--outline);
+  background: linear-gradient(to bottom, var(--tray-hi), var(--tray)); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); text-align: center; }
+.elige-tarjeta h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: 0.03em; }
+.elige-tarjeta p { margin: 0; font-weight: 700; font-size: 14px; color: var(--ink-dim); }
+.elige-lista { width: 100%; display: grid; gap: 8px; }
+.elige-op { display: grid; gap: 1px; text-align: left; padding: 9px 12px; border-radius: 14px; background: var(--tray); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.elige-op b { font-family: var(--font-display); font-weight: 400; font-size: 18px; letter-spacing: 0.03em; }
+.elige-op span { font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--ink-dim); }
+.elige-op.puesto { background: linear-gradient(to bottom, var(--player-lite), var(--player)); }
+.elige-op.puesto b { text-shadow: 0 2px 0 var(--outline); }
+.elige-op.puesto span { color: var(--outline); }
+.elige-op:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+
+/* ---------- lo común de A, B y C ---------- */
+#taller:not([data-menu="clasico"]) .t-sec { display: none; }
+#taller[data-sec="postura"] .t-sec[data-sec="postura"], #taller[data-sec="color"] .t-sec[data-sec="color"], #taller[data-sec="pincel"] .t-sec[data-sec="pincel"], #taller[data-sec="formas"] .t-sec[data-sec="formas"] { display: flex; flex-direction: column; gap: 8px; }
+#taller:not([data-menu="clasico"]) :is(#t-gota, .t-radio, .t-cabezal, #t-cubo, .t-figura, #t-senuelo, #t-deshacer, #t-calco, .t-pest, .t-abre, .t-grande) {
+  display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 48px; min-width: 44px; padding: 0 4px; border-radius: 13px; background: var(--tray); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); color: var(--ink); }
+#taller:not([data-menu="clasico"]) :is(#t-gota, .t-radio, .t-cabezal, #t-cubo, .t-figura, #t-senuelo, #t-deshacer, #t-calco, .t-pest, .t-abre, .t-grande) small { font-weight: 800; font-size: 11px; line-height: 1; color: var(--ink-dim); }
+#taller:not([data-menu="clasico"]) :is(#t-gota, .t-radio, .t-cabezal, #t-cubo, .t-figura, #t-senuelo, #t-deshacer, #t-calco, .t-pest, .t-abre, .t-grande) i[data-icono] { font-size: 18px; }
+#taller:not([data-menu="clasico"]) :is(#t-gota, .t-radio, .t-cabezal, #t-cubo, .t-figura, #t-senuelo, #t-deshacer, #t-calco, .t-pest, .t-abre).puesto { background: linear-gradient(to bottom, var(--player-lite), var(--player)); }
+#taller:not([data-menu="clasico"]) :is(#t-gota, .t-radio, .t-cabezal, #t-cubo, .t-figura, #t-senuelo, #t-deshacer, #t-calco, .t-pest, .t-abre).puesto small { color: var(--outline); }
+#taller:not([data-menu="clasico"]) #t-calco.puesto { background: linear-gradient(to bottom, #7fe9f5, #22a9c0); }
+#taller:not([data-menu="clasico"]) button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+#taller:not([data-menu="clasico"]) .t-fila { display: flex; gap: 6px; align-items: center; }
+#taller:not([data-menu="clasico"]) #t-recientes { flex-wrap: nowrap; gap: 6px; min-height: 0; }
+#taller:not([data-menu="clasico"]) #t-recientes button { flex: none; width: 42px; height: 42px; border-radius: 12px; }
+#taller:not([data-menu="clasico"]) #t-paleta button { width: 42px; height: 42px; border-radius: 12px; flex: none; }
+#taller:not([data-menu="clasico"]) .t-posturas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+#taller:not([data-menu="clasico"]) .t-postura { height: 64px; grid-template-columns: 1fr; justify-items: center; align-content: center; }
+#taller:not([data-menu="clasico"]) .t-postura canvas { width: 28px; height: 33px; }
+#taller:not([data-menu="clasico"]) .t-postura small { font-size: 12px; }
+#taller:not(.con-senuelo) .t-arriba .t-tinta { display: none; }
+/* la tira que se desliza de lado con el dedo */
+#taller:not([data-menu="clasico"]) :is(.t-tira, #t-paleta) { touch-action: pan-x; }
+
+@media (orientation: portrait), (min-height: 521px) {
+  #taller:not([data-menu="clasico"]) { left: 0; right: 0; margin: 0 auto; transform: none; }
+  #taller:not([data-menu="clasico"]) .t-arriba { position: fixed; top: calc(var(--sup) + 76px); left: 50%; transform: translateX(-50%); width: min(260px, 70vw); box-sizing: border-box; display: grid; gap: 2px;
+    background: var(--panel); border: 3px solid var(--outline); border-radius: 12px; padding: 3px 10px; }
+  #taller:not([data-menu="clasico"]) .t-arriba .t-medidor b { font-size: 18px; min-width: 50px; }
+  #taller:not([data-menu="clasico"]) .t-arriba .t-medidor .barra { height: 10px; }
+}
+
+/* ---------- A · pestañas por pasos ---------- */
+#taller[data-menu="a"] { display: flex; flex-direction: column; gap: 8px; }
+#taller[data-menu="a"] .t-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+#taller[data-menu="a"] .t-pest { min-height: 46px; }
+#taller[data-menu="a"] .t-cuerpo { height: 112px; }
+#taller[data-menu="a"] .t-fila-color #t-gota { padding: 0 10px; }
+#taller[data-menu="a"] #t-paleta { flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; }
+#taller[data-menu="a"] .t-fila-tam { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+#taller[data-menu="a"] .t-fila-tam .t-radio { min-height: 58px; }
+#taller[data-menu="a"] .t-fila-cab { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#taller[data-menu="a"] .t-fila-forma { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+#taller[data-menu="a"] .t-fila-forma button { min-height: 62px; }
+#taller[data-menu="a"] .t-barra { display: flex; align-items: center; gap: 8px; border-top: 2px solid var(--outline); padding-top: 8px; }
+#taller[data-menu="a"] .t-barra :is(#t-deshacer, #t-calco) { width: 54px; height: 54px; }
+#taller[data-menu="a"] .t-barra #t-color { width: 50px; height: 50px; border-radius: 50%; }
+#taller[data-menu="a"] .t-barra #t-listo { margin-left: auto; min-height: 54px; padding: 8px 28px 4px; font-size: 21px; }
+#taller[data-menu="a"].plegado :is(.t-nav, .t-cuerpo) { display: none; }
+
+/* ---------- B · herramientas a los lados ---------- */
+#taller[data-menu="b"] { display: flex; flex-direction: column; gap: 8px; }
+#taller[data-menu="b"] .t-riel { display: flex; flex-direction: column; gap: 6px; padding: 5px; background: var(--panel); border: 3px solid var(--outline); border-radius: 16px; }
+#taller[data-menu="b"] .t-riel button { width: 52px; min-height: 46px; }
+#taller[data-menu="b"] .t-riel small { font-size: 9px !important; }
+#taller[data-menu="b"] .t-der .t-radio { min-height: 40px; }
+#taller[data-menu="b"] .t-der .t-radio small, #taller[data-menu="b"] .t-der .t-cabezal small { display: none; }
+#taller[data-menu="b"] .t-der .t-cabezal { min-height: 38px; }
+#taller[data-menu="b"] .t-volar { display: none; gap: 6px; padding: 6px; background: var(--panel); border: 3px solid var(--outline); border-radius: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); z-index: 5; }
+#taller[data-menu="b"][data-volar="postura"] .t-volar-postura, #taller[data-menu="b"][data-volar="formas"] .t-volar-formas { display: flex; }
+#taller[data-menu="b"] .t-volar-postura .t-posturas { width: 264px; }
+#taller[data-menu="b"] .t-volar-formas button { width: 56px; min-height: 56px; }
+#taller[data-menu="b"] .t-barra { display: flex; align-items: center; gap: 8px; }
+#taller[data-menu="b"] .t-tira { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; overflow-x: auto; padding: 2px 0; }
+#taller[data-menu="b"] .t-tira #t-color { flex: none; width: 46px; height: 46px; border-radius: 50%; }
+#taller[data-menu="b"] .t-tira :is(#t-recientes, #t-paleta) { display: flex; flex-wrap: nowrap; flex: none; gap: 6px; }
+#taller[data-menu="b"] .t-tira #t-paleta { padding-left: 6px; border-left: 2px solid var(--outline); }
+#taller[data-menu="b"] .t-barra #t-listo { flex: none; min-height: 52px; padding: 8px 20px 4px; font-size: 20px; }
+#taller[data-menu="b"].plegado :is(.t-riel, .t-volar) { display: none !important; }
+@media (orientation: portrait), (min-height: 521px) {
+  #taller[data-menu="b"] .t-riel { position: fixed; top: calc(var(--sup) + 130px); }
+  #taller[data-menu="b"] .t-izq { left: calc(var(--izq) + 6px); }
+  #taller[data-menu="b"] .t-der { right: calc(var(--der) + 6px); }
+  #taller[data-menu="b"] .t-volar { position: fixed; }
+}
+@media (orientation: portrait) and (max-height: 720px) {
+  #taller[data-menu="b"] .t-riel { gap: 4px; padding: 4px; top: calc(var(--sup) + 118px); }
+  #taller[data-menu="b"] .t-riel button { min-height: 42px; }
+  #taller[data-menu="b"] .t-der .t-radio { min-height: 36px; }
+  #taller[data-menu="b"] .t-der .t-cabezal { min-height: 34px; }
+}
+
+/* ---------- C · cinco botones y bandeja ---------- */
+#taller[data-menu="c"] { display: flex; flex-direction: column; gap: 8px; }
+#taller[data-menu="c"][data-sec=""] .t-cuerpo { display: none; }
+#taller[data-menu="c"] .t-fila-color #t-gota { padding: 0 10px; }
+#taller[data-menu="c"] #t-paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 6px; }
+#taller[data-menu="c"] #t-paleta button { width: auto; }
+#taller[data-menu="c"] .t-fila-tam { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+#taller[data-menu="c"] .t-fila-tam button { min-height: 56px; }
+#taller[data-menu="c"] .t-fila-forma { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+#taller[data-menu="c"] .t-fila-forma button { min-height: 56px; }
+#taller[data-menu="c"] .t-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) 100px; gap: 8px; align-items: stretch; }
+#taller[data-menu="c"] .t-nav :is(.t-grande, #t-deshacer) { min-height: 60px; border-radius: 16px; }
+#taller[data-menu="c"] .t-grande.abierto { background: var(--gold); }
+#taller[data-menu="c"] .t-grande.abierto small { color: var(--outline); }
+#taller[data-menu="c"] .t-grande #t-color { width: 26px; height: 26px; border-radius: 50%; border-width: 3px; box-shadow: 0 0 0 2px var(--gold); }
+#taller[data-menu="c"] .t-nav #t-listo { min-height: 60px; padding: 8px 6px 4px; font-size: 20px; border-radius: 16px; }
+#taller[data-menu="c"] .t-plegar { display: none; }
+@media (orientation: portrait), (min-height: 521px) {
+  #taller[data-menu="c"] #t-calco { position: fixed; top: calc(var(--sup) + 128px); right: calc(var(--der) + 10px); width: 54px; height: 54px; }
+}
+
+/* ---------- móvil tumbado: todo va dentro del panel de la derecha ---------- */
+@media (orientation: landscape) and (max-height: 520px) {
+  #taller .t-menus { position: static; justify-self: start; align-self: flex-start; border-radius: 12px; border-bottom: 3px solid var(--outline); height: 30px; }
+  #taller:not([data-menu="clasico"]) .t-arriba { display: grid; gap: 2px; }
+  #taller[data-menu="b"] .t-riel { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  #taller[data-menu="b"] .t-abre { display: none; }
+  #taller[data-menu="b"] .t-volar { display: flex !important; flex-wrap: wrap; justify-content: center; box-shadow: none; }
+  #taller[data-menu="b"] .t-volar-postura .t-posturas { width: 100%; }
+  #taller[data-menu="b"] .t-barra { flex-wrap: wrap; }
+  #taller[data-menu="a"] .t-cuerpo { height: auto; }
+  #taller[data-menu="a"] .t-pest small { font-size: 9.5px; }
+  #taller[data-menu="c"] .t-nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #taller[data-menu="c"] .t-nav #t-listo { grid-column: 1 / -1; }
+  #taller[data-menu="c"] .t-nav { order: 2; } #taller[data-menu="c"] .t-cuerpo { order: 3; }
+  #taller[data-menu="c"] #t-calco { order: 4; align-self: flex-start; width: 64px; }
+}
+#taller .t-arriba .t-ayuda { display: none; }

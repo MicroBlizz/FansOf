@@ -199,12 +199,13 @@ function muestraFin() {
   E('fin-filas').innerHTML = r.filas.map(([a, b]) => `<span>${a}</span><b>${b}</b>`).join('') + `<div class="total"><span>${tr('PUNTOS')}</span><b>${r.puntos}</b></div>`;
   // la clasificación: todos (personas y bots) por puntos; tú resaltado
   const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  E('fin-ranking').innerHTML = r.ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}"><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');
+  E('fin-ranking').innerHTML = pintaRankingFin(r.ranking);
   E('b-cambia').textContent = J.modo === 'camaleon' ? tr('Ahora de cazador') : tr('Ahora de camaleón');
   E('b-cambia').hidden = J.pvp; E('b-otra').textContent = J.pvp ? tr('OTRA PARTIDA') : tr('OTRA VEZ');      // por internet los papeles los reparte el servidor al azar
-  pintaMapaFinal();
+  pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
 }
+const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}"><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');
 function pintaMapaFinal() {
   const m = E('fin-mapa'), c = m.getContext('2d'), k = m.width / ANCHO;
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, m.width, m.height);

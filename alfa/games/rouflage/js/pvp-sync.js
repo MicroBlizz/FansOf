@@ -75,6 +75,7 @@ function rfpRecibe(m) {
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
     case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
     case 'fp': rfpPoderRecibido(m); break;
+    case 'vt': rfpVotoRecibido(m); break;
     case 'a': if (m.de === RFP.host && !RFP.soyHost) rfpEstadoIA(m); break;
     case 'fa': if (m.de === RFP.host && !RFP.soyHost) rfpSigueFase(m.f, m.r); break;
     case 't': if (m.de === RFP.host && !RFP.soyHost) rfpAplicaTiro(m); break;

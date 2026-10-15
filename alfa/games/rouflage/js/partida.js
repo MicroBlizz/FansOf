@@ -153,7 +153,7 @@ function avanzaPartida(dt) {
     else if (!cazadoresVivos().length) termina(false, 'cartas');      // sin cartas sigues de espectador mientras otro cazador aguante
     else if (J.reloj <= 0) termina(false, 'tiempo');
   } else if (J.fase === 'fin') {
-    J.peligro *= 0.9;
+    J.peligro *= 0.9; galeriaAvanza(dt);
     if (J.tFase > 2.6 && !J.finMostrado) { J.finMostrado = true; muestraFin(); }
   }
 }
@@ -171,9 +171,9 @@ function miraLosOjos() {
 //   colado: camuflaje × 3 + segundos delante de sus narices × 12 + silbidos por gusto × 25 + segundos aguantados × 2 + 300 si no le pillan
 //   becario: despidos × 150 − despidos improcedentes × 30 + (si no queda nadie) segundos de sobra × 4 y cartas que le quedan × 40
 function marcadorDe(e) {
-  if (J.pvp && e.puntosRed != null) return e.puntosRed;      // PvP: los puntos los cuenta el anfitrión
+  if (J.pvp && e.puntosRed != null) return e.puntosRed + (e.galeria || 0);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
   const k = e.pts;
-  if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300));
+  if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300)) + (e.galeria || 0);
   const colado = e.contagiado ? e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 : 0;      // Contagio: lo ganado de colado se queda
   return Math.max(0, Math.round(colado + k.aciertos * 150 - k.fallos * 30 + (escondidos().length ? 0 : Math.max(0, J.reloj) * 4 + Math.max(0, e.balas) * 40)));
 }
@@ -213,6 +213,7 @@ function termina(victoria, motivo, fin) {
     filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
   }
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
+  galeriaPrepara();      // la galería de disfraces, si está puesta (galeria.js)
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);

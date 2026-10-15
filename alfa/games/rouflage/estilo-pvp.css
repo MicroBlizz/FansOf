@@ -62,3 +62,23 @@
 .extras input:checked::after { left: 24px; background: var(--ink); }
 .extras input:disabled { cursor: default; }
 .extras input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- la galería de disfraces (galeria.js): los pedestales al acabar y la votación ---------- */
+.galeria { text-align: left; padding: 8px 10px 10px; border-radius: 12px; background: rgba(12, 6, 20, 0.5); display: grid; gap: 6px; }
+.galeria h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 16px; letter-spacing: 0.06em; }
+.gal-sub, .gal-frase { margin: 0; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.gal-frase { color: var(--gold); }
+.gal-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+.gal-ficha { display: grid; gap: 3px; justify-items: center; padding: 4px; border-radius: 10px; border: 3px solid transparent; position: relative; min-width: 0; }
+.gal-ficha canvas { width: 84px; height: 84px; max-width: 100%; border-radius: 8px; border: 3px solid var(--outline); background: #191430; }
+.gal-nom { display: grid; text-align: center; font-weight: 800; font-size: 12px; line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gal-nom small { font-weight: 700; font-size: 10px; color: var(--ink-dim); }
+.gal-votos { display: flex; gap: 6px; font-family: var(--font-display); font-size: 13px; min-height: 16px; }
+.gal-votos .mejor { color: var(--ok); } .gal-votos .peor { color: var(--danger); }
+.gal-botones { display: flex; gap: 4px; }
+.gal-botones .boton { font-size: 11px; padding: 5px 7px 3px; }
+.gal-botones .boton.puesto { outline: 3px solid var(--gold); }
+.gal-ficha.mio-mejor { border-color: var(--ok); } .gal-ficha.mio-peor { border-color: var(--danger); }
+.gal-ficha.gana { background: rgba(126, 224, 74, 0.18); border-color: var(--gold); }
+.gal-ficha.pierde { background: rgba(255, 75, 92, 0.14); }
+.gal-ficha.gana::before { content: '★'; position: absolute; top: -12px; right: -6px; font-size: 22px; color: var(--gold); text-shadow: 0 2px 0 var(--outline), 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 -2px 0 var(--outline); }

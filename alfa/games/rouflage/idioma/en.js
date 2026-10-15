@@ -389,5 +389,18 @@ IDIOMA.add({
   "¡Ya es becario!": "Now an intern!",
   "¡CONTAGIADO!": "CONTAGION!",
   "Te dan la camisa de becario: a cazar a tus antiguos compañeros": "You get the intern shirt: go hunt your former colleagues",
-  "{a} ahora es becario": "{a} is now an intern"
+  "{a} ahora es becario": "{a} is now an intern",
+  "Galería de disfraces": "Costume gallery",
+  "Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.": "At the end, every gatecrasher stands on a pedestal and everyone votes the best and worst camouflage.",
+  "GALERÍA DE DISFRACES": "COSTUME GALLERY",
+  "MEJOR": "BEST",
+  "PEOR": "WORST",
+  "Vota el mejor y el peor camuflaje": "Vote the best and the worst camouflage",
+  "Esperando los demás votos": "Waiting for the other votes",
+  "Mejor camuflaje: {a} (+{n} puntos)": "Best camouflage: {a} (+{n} points)",
+  "Peor camuflaje: {a}.": "Worst camouflage: {a}.",
+  "Microblizz: «Eso no es camuflaje, es una petición de ayuda».": "Microblizz: \"That's not camouflage, that's a cry for help.\"",
+  "Microblizz: «Hemos visto extintores mejor escondidos».": "Microblizz: \"We've seen better-hidden fire extinguishers.\"",
+  "Microblizz: «La pintura se cobra del sueldo. Y no hay sueldo».": "Microblizz: \"The paint comes out of your salary. And there is no salary.\"",
+  "Phony: «Yo lo habría encontrado con los ojos cerrados. Que es como los tengo».": "Phony: \"I'd have found it with my eyes closed. Which is how they are.\""
 });

@@ -1,8 +1,8 @@
 {
- "build": 77,
- "hash": "5da35ae",
- "fecha": "2026-10-15T18:08:37Z",
- "mensaje": "Rouflage: menú del título ordenado (tarjetas → CONTRA BOTS con papel y mapa, en línea, TU GALLETA, ayuda y opciones) con los colores de la primera versión",
+ "build": 78,
+ "hash": "2b12be9",
+ "fecha": "2026-10-15T18:12:16Z",
+ "mensaje": "Rouflage: GALERÍA DE DISFRACES (extra): al acabar, cada colado en su pedestal y todos votan el mejor y el peor camuflaje",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

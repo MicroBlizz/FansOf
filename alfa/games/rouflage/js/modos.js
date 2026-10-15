@@ -11,6 +11,7 @@ const MODOS = {
 };
 const EXTRAS = {
   apagon: { nombre: 'Apagón total', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
+  galeria: { nombre: 'Galería de disfraces', texto: 'Al acabar, cada colado sale en su pedestal y todos votan el mejor y el peor camuflaje.' },
 };
 const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };

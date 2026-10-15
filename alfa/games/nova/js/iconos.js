@@ -48,7 +48,20 @@ function nvIcEstrella(x, y, R, r, n, giro) { const o = []; for (let i = 0; i < n
 function nvIcRetrato(c, col) { nvIcCirculo(c, 32, 32, 29, col); nvIcCirculo(c, 32, 26, 12, '#f1d2b0'); nvIcPoli(c, [[10, 58], [16, 44], [48, 44], [54, 58]], '#26306a'); }
 
 // Un lienzo de `tam` px con el icono (grupo: arma | sis | fac | cap). Si el icono no existe, queda un círculo del color.
+const NV_PNG_PREFIJO = { arma: 'arma', fac: 'ofi', cap: 'cap' };
+const NV_PNG_SIS = { escudo: 'mod-escudo', blindaje: 'mod-blindaje' };
+// Si existe el PNG de arte final lo usa; si no carga, cae al dibujo de código.
 function nvIcono(grupo, clave, col, tam) {
+  const nombre = grupo === 'sis' ? NV_PNG_SIS[clave] : (NV_PNG_PREFIJO[grupo] ? NV_PNG_PREFIJO[grupo] + '-' + clave : null);
+  if (nombre) {
+    const im = new Image(); im.src = 'arte/iconos/' + nombre + '.png';
+    im.style.width = im.style.height = (tam || 52) + 'px'; im.style.imageRendering = 'pixelated';
+    im.onerror = () => { im.onerror = null; im.replaceWith(nvIconoCodigo(grupo, clave, col, tam)); };
+    return im;
+  }
+  return nvIconoCodigo(grupo, clave, col, tam);
+}
+function nvIconoCodigo(grupo, clave, col, tam) {
   const cv = document.createElement('canvas'), d = (tam || 52) * 2; cv.width = cv.height = d;
   const c = cv.getContext('2d'), f = NV_ICONOS[grupo] && NV_ICONOS[grupo][clave];
   c.scale(d / 64, d / 64);

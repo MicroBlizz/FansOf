@@ -1,8 +1,8 @@
 {
- "build": 54,
- "hash": "12e3e91",
- "fecha": "2026-10-15T10:24:57Z",
- "mensaje": "Nova: 35 iconos de arma, carga, módulo, modificador, oficial y capitán (ComfyUI)",
+ "build": 55,
+ "hash": "17f7c1e",
+ "fecha": "2026-10-15T10:26:32Z",
+ "mensaje": "Nova: los iconos usan los PNG de arte final (con el dibujo de código de reserva)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

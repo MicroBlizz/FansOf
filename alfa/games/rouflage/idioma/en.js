@@ -12,6 +12,7 @@ IDIOMA.add({
   "Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.": "Spectator: wander around the map (WASD or drag your finger). To leave, I QUIT.",
   "Sin cartas: pasea por el mapa para ver qué pasa": "Out of cards: wander around the map to see what happens",
   "ME RETIRO": "I QUIT",
+  "Te camuflas rápido: un 80 %": "Quick camo: 80 %",
   "de caos primordial": "of primordial chaos",
   "puntos": "points",
   "Tu bando ganó la partida que dejaste": "Your side won the match you left",

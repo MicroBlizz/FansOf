@@ -45,7 +45,7 @@ function deshace(e) { const d = e.pasos.pop(); if (d) e.pctx.putImageData(d, 0, 
 //   camo  0 a 100: lo que ve el jugador en su medidor
 //   vis   0 a 1: lo que «canta» (0 = no se distingue del fondo, 1 = no se parece en nada)
 // Lo que queda tapado por un mueble que está delante no cuenta: no se ve.
-const VIS_MIN = 0.1;   // lo que «canta» como mínimo un camaleón (su camuflaje no pasa del 90 %)
+const VIS_MIN = 0;   // el camuflaje puede llegar al 100 %: solo entonces al cazador le brilla el contorno (ver dibujo.js), a partir del 99 % ya no
 function mideCamuflaje(e) {
   const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, d = e.pctx.getImageData(0, 0, PIEL_W, PIEL_H).data, F = MAPA.px;
   const delante = MUEBLES.filter(m => m.y > e.y && m.dib.x0 < bx + CAJA_W && m.dib.x0 + m.dib.w > bx && m.dib.y0 < by + CAJA_H && m.dib.y0 + m.dib.h > by);
@@ -63,7 +63,7 @@ function mideCamuflaje(e) {
     const k = (wy * ANCHO + wx) * 4, dif = difColor(r / n, g / n, b / n, F[k], F[k + 1], F[k + 2]);
     fallo += limita((dif - 14) / 50, 0, 1);   // hasta 14 no se nota; de 64 en adelante canta del todo (dos tonos del mismo color ya son unos 70)
   }
-  e.vis = Math.max(fallo / N, VIS_MIN);      // ni el mejor camuflaje es perfecto: queda la sombra del contorno
+  e.vis = Math.max(fallo / N, VIS_MIN);
   e.tapada = 1 - vistos / N;
   e.camo = Math.round(100 * (1 - e.vis));
   return e.camo;

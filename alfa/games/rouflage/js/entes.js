@@ -4,7 +4,7 @@
 
 // Las cifras del prototipo, juntas para poder tocarlas: tiempos en segundos, distancias en píxeles del mundo.
 const REGLAS = {
-  prep: 60,              // lo que dura pintarse (de camaleón)
+  prep: 90,              // lo que dura pintarse (de camaleón)
   caza: 120,             // lo que dura la caza siendo camaleón
   cazaCazador: 150,      // lo que dura la caza siendo cazador
   cuenta: 3.4,           // la cuenta atrás antes de que salgan los becarios
@@ -73,6 +73,7 @@ function avanzaEnte(e, dt) {
 function congela(e) {
   if (e.fuera || e.congelado) return;
   e.congelado = true; e.vx = e.vy = 0; e.x = Math.round(e.x); e.y = Math.round(e.y);
+  if (e.trasHumo && e.jugador) autoCamuflaje(e);      // el humo ya se acabó para él: se pintó de cero y no puede
   mideCamuflaje(e);
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel
 }

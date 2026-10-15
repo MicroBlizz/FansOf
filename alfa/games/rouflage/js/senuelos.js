@@ -3,7 +3,7 @@
 // se acercan a mirar un garabato que les parece sospechoso y, si disparan, fallan y pierden una carta (como con un extintor). En el PvP se mandan los trazos (sz) a los demás.
 'use strict';
 
-const SEN = { cv: null, c: null, puntos: [], pinta: null, pend: [], tPend: 0, max: 100, alcance: 300 };
+const SEN = { cv: null, c: null, puntos: [], pinta: null, pend: [], tPend: 0, max: 100, alcance: 240 };
 const SEN_ESC = 0.5;      // la capa se guarda a la mitad de tamaño
 
 function limpiaSenuelos() { SEN.puntos.length = 0; SEN.pend.length = 0; SEN.pinta = null; if (SEN.c) SEN.c.clearRect(0, 0, SEN.cv.width, SEN.cv.height); }

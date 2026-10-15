@@ -13,16 +13,17 @@ const RFP = { activo: false, red: null, canal: null, info: null, sala: null, bus
 const RFP_AJ = { envioHz: 15, avisosSala: 40, iaHz: 10, sinRed: 8, sinAnfitrion: 3.5, gracia: 12, entreMensajes: 0 };      // avisos por segundo de cada jugador como mucho (con muchos baja para que toda la sala sume unos 40) · segundos sin noticias de alguien antes de darlo por ido o de pasar el mando · segundos de gracia al empezar (todos están cargando)
 
 // ---------- buscar partida ----------
-function pvpBuscar() {
+// opc: nada (partida pública), { crear: true } (sala con amigos nueva) o { codigo } (entrar en la de un amigo). Las salas con amigos no gastan caos primordial
+function pvpBuscar(opc) {
   const red = RFRED.red;
-  RFP.error = ''; RFP.resultado = null;
+  RFP.error = ''; RFP.resultado = null; RFP.amigos = !!(opc && (opc.crear || opc.codigo));
   if (!RFRED.esLocal() && !RFRED.vinculada()) { RFP.error = RFRED.errorTexto(new Error('cuenta_no_vinculada')); pvpMuestra('p-pvp'); return; }
   const guardada = rfpSalaGuardada();      // si estabas en una partida abierta, volver no gasta caos primordial
-  if (!guardada && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado
+  if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado
   if (RFP.buscando) RFP.buscando.cancelar();
   RFP.info = null; pvpMuestra('p-busca');
   RFP.buscando = red.buscar((info, err) => {
-    if (!info) { RFP.buscando = null; RFP.error = energiaError(err) ? '' : RFRED.errorTexto(err); pvpMuestra('p-pvp'); return; }
+    if (!info) { RFP.buscando = null; RFP.error = energiaError(err) ? '' : RFRED.errorTexto(err); pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); return; }
     RFP.info = info; pvpPintaBusca();
     if (guardada && guardada !== info.sala) rfpOlvidaSala();      // aquella partida ya se cerró: esta es otra
     if (info.estado !== 'espera') {
@@ -30,9 +31,14 @@ function pvpBuscar() {
       if (guardada === info.sala) rfpEmpieza(info, red, true);      // vuelves a la tuya
       else setTimeout(() => { if (RFP.info === info) rfpEmpieza(info, red); }, 2200);      // un momento para ver con quién juegas
     }
-  });
+  }, opc);
 }
-function pvpCancelar() { if (RFP.buscando) { RFP.buscando.cancelar(); RFP.buscando = null; } RFP.info = null; pvpMuestra('p-pvp'); }
+function pvpCancelar() { if (RFP.buscando) { RFP.buscando.cancelar(); RFP.buscando = null; } RFP.info = null; pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); }
+// el anfitrión de una sala con amigos la arranca (el sondeo de la sala recoge el cambio)
+function pvpEmpezar() {
+  const b = E('b-busca-empezar'); b.disabled = true;
+  Promise.resolve(RFRED.red.empezar()).catch(e => { RFP.error = RFRED.errorTexto(e); pvpPintaBusca(); }).finally(() => { b.disabled = false; });
+}
 
 // ---------- el reparto de plazas: igual en todos los navegadores (sale de la semilla de la sala) ----------
 // mulberry32: azar repetible a partir de un número

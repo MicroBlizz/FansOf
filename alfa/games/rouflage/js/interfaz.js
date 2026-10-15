@@ -156,7 +156,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-pausa', 'p-fin', 'p-pvp', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }

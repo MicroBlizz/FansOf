@@ -1,8 +1,8 @@
 {
- "build": 39,
- "hash": "57067c7",
- "fecha": "2026-10-15T08:01:19Z",
- "mensaje": "Nova: sombra proyectada bajo la nave y nubes de fondo con parallax",
+ "build": 40,
+ "hash": "fbdd03f",
+ "fecha": "2026-10-15T08:07:44Z",
+ "mensaje": "Rouflage: salas con amigos con código (JUGAR CON AMIGOS), como en Karts",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

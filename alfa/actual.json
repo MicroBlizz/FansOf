@@ -1,8 +1,8 @@
 {
- "build": 60,
- "hash": "35062cd",
- "fecha": "2026-10-15T11:17:31Z",
- "mensaje": "Rouflage 0.2.11: sombras suaves tras los muebles, cámara libre con zoom en el señuelo (herramienta fijada) y tutorial sin conexión",
+ "build": 61,
+ "hash": "a371332",
+ "fecha": "2026-10-15T11:33:06Z",
+ "mensaje": "Fans of Karts 0.6.1: tutorial en ocho alto con rectas largas y menú principal con los botones de Fans of Rumble (sin BIBLIOTECA)",
  "juegos": {
   "crush": "0.1.16",
   "dark": "0.2.5",

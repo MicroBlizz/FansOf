@@ -71,7 +71,7 @@ function preparaDedos() {
   const suelta = e => { DEDOS.delete(e.pointerId); dedosAlDia(); };
   cv.addEventListener('pointerup', suelta); cv.addEventListener('pointercancel', suelta);
   // fuera de las pantallas en HTML (tienda, pase, premios, cuenta…) el dedo no hace scroll ni zoom; dentro sí, y sus botones reciben el toque
-  const enHtml = e => e.target !== cv && e.target.closest && !!e.target.closest('.kt-scr, .kt-modal, #fok-cuenta, #scr-confirm, #kt-monedero, #fok-energia, #kt-charla');
+  const enHtml = e => e.target !== cv && e.target.closest && !!e.target.closest('.kt-scr, .kt-modal, #fok-cuenta, #scr-confirm, #kt-monedero, #fok-energia, #kt-charla, #kt-menu');
   for (const ev of ['touchstart', 'touchmove', 'gesturestart', 'contextmenu', 'dblclick']) document.addEventListener(ev, e => { if (!enHtml(e) || ev === 'contextmenu') e.preventDefault(); }, { passive: false });
   // en algunos móviles el sonido solo arranca con estos gestos; y lo que el navegador solo deja hacer «dentro de un toque»
   // (pedir permiso para el giroscopio, la ventana de instalar, la pantalla completa) se hace aquí mismo, no en el fotograma siguiente

@@ -1,8 +1,8 @@
 {
- "build": 51,
- "hash": "8e3c1ae",
- "fecha": "2026-10-15T09:55:35Z",
- "mensaje": "Nova: elegir capitán y oficial antes de la misión, con ventaja y pega en la partida",
+ "build": 52,
+ "hash": "0c961f2",
+ "fecha": "2026-10-15T10:01:44Z",
+ "mensaje": "Rouflage: el cazador ve mucho menos fuera de la linterna (velo 0.70 a 0.93)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

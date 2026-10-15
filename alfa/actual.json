@@ -1,8 +1,8 @@
 {
- "build": 55,
- "hash": "17f7c1e",
- "fecha": "2026-10-15T10:26:32Z",
- "mensaje": "Nova: los iconos usan los PNG de arte final (con el dibujo de código de reserva)",
+ "build": 56,
+ "hash": "eda4340",
+ "fecha": "2026-10-15T10:30:13Z",
+ "mensaje": "Nova: retratos de capitán rehechos con los diseños de la serie como referencia",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -42,3 +42,23 @@
 .pvp-puntos { color: var(--gold); font-family: var(--font-display); font-size: 18px; letter-spacing: 0.03em; }
 .pvp-puntos.mal { color: var(--danger); font-family: var(--font-ui); font-size: 14px; }
 .caja.pvp .aviso-pvp { color: var(--ink); background: rgba(255,203,61,.16); border: 2px solid var(--outline); border-radius: 12px; padding: 6px 10px; font-size: 14px; font-weight: 700; white-space: pre-line; }
+
+/* ---------- el modo de la sala con amigos (modos.js): el anfitrión lo elige, los demás lo ven ---------- */
+.modo-sala { display: grid; gap: 6px; padding: 8px 10px; border-radius: 12px; background: rgba(12, 6, 20, 0.5); text-align: left; }
+.modo-fila { display: flex; align-items: center; gap: 8px; }
+.modo-fila .flecha { min-width: 40px; padding-left: 10px; padding-right: 10px; }
+.modo-sala.mira .flecha { visibility: hidden; }
+.modo-nombre { flex: 1; min-width: 0; display: grid; text-align: center; line-height: 1.05; }
+.modo-nombre small { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: var(--ink-dim); }
+.modo-nombre b { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--gold); }
+.modo-texto { margin: 0; font-size: 12px; }
+.extras { display: grid; gap: 4px; }
+.extras label { display: flex; align-items: center; gap: 8px; font-weight: 800; cursor: pointer; padding: 2px 4px; border-radius: 8px; }
+.extras label span { flex: 1; min-width: 0; }
+.extras label small { display: block; font-weight: 700; font-size: 11px; color: var(--ink-dim); }
+.extras input { appearance: none; -webkit-appearance: none; flex: none; width: 44px; height: 22px; border-radius: 11px; border: 3px solid var(--outline); background: #5a3b7e; position: relative; margin: 0; cursor: pointer; }
+.extras input::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--ink-dim); transition: left 0.15s, background 0.15s; }
+.extras input:checked { background: var(--ok); }
+.extras input:checked::after { left: 24px; background: var(--ink); }
+.extras input:disabled { cursor: default; }
+.extras input:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }

@@ -60,6 +60,7 @@ function pintaFx(c) {
     if (f.k === 'destello' || f.k === 'choque' || f.k === 'bocanada' || f.k === 'nube') { pintaGranadaFx(c, f, J.t); continue; }
     const p = f.t / f.dur;
     if (f.k === 'onda') {
+      if (extraOn('apagon')) continue;      // Apagón total: solo se oye
       for (let k = 0; k < 3; k++) {
         const q = p * 1.5 - k * 0.24; if (q <= 0 || q >= 1) continue;
         c.globalAlpha = (1 - q) * 0.9; const r = 10 + q * 78;

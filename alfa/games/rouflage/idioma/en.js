@@ -366,5 +366,19 @@ IDIOMA.add({
   "HÚMEDA": "AREA",
   "EL SILENCIO": "THE SILENCE",
   "TE OYE": "HEARS YOU",
-  "VESTÍBULO": "LOBBY"
+  "VESTÍBULO": "LOBBY",
+  "MODO": "MODE",
+  "Modo anterior": "Previous mode",
+  "Modo siguiente": "Next mode",
+  "NORMAL": "NORMAL",
+  "CONTAGIO": "CONTAGION",
+  "Los colados se esconden, los becarios los buscan. Lo de siempre.": "Gatecrashers hide, interns seek. The usual.",
+  "Al despedirte te dan la camisa de becario: sales de Recursos Humanos a cazar a los tuyos.": "When you get fired you get the intern shirt: you leave Human Resources to hunt your own.",
+  "Apagón total": "Total blackout",
+  "Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.": "Almost pitch black, short flashlight, no ranking or on-screen hints: ears only.",
+  "Modo {m}": "{m} mode",
+  "¡Ya es becario!": "Now an intern!",
+  "¡CONTAGIADO!": "CONTAGION!",
+  "Te dan la camisa de becario: a cazar a tus antiguos compañeros": "You get the intern shirt: go hunt your former colleagues",
+  "{a} ahora es becario": "{a} is now an intern"
 });

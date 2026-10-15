@@ -51,7 +51,7 @@ function rfpEnvia(dt) {
     if (e.humano || e.remoto || e.fuera) continue;
     ks.push([e.slot, r1(e.x), r1(e.y), e.moviendo ? 1 : 0, e.mira, Math.round(e.dir * 100) / 100, e.congelado ? 1 : 0, Math.max(0, MARCAS.indexOf(e.marca)), e.alerta >= 1 ? 1 : 0, e.ciego > 0 ? 1 : 0]);
   }
-  rfpManda({ t: 'a', f: J.fase, r: Math.round(J.reloj * 10) / 10, ks, fu, ba });
+  rfpManda({ t: 'a', f: J.fase, r: Math.round(J.reloj * 10) / 10, ks, fu, ba, cg: modoEs('contagio') ? contagiados() : undefined });
 }
 
 // ---------- lo que llega ----------
@@ -103,7 +103,8 @@ function rfpEstadoIA(m) {
     if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
     else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
   }
-  for (const s of m.fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera) rfpApartar(e); }
+  if (m.cg) contagiaSlots(m.cg);      // Contagio: por si a alguien se le perdió el disparo
+  for (const s of m.fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
   for (const [s, b] of m.ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = b; }
 }
 // el anfitrión cambia de fase: los demás lo siguen (siempre hacia delante)

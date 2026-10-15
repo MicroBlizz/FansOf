@@ -136,7 +136,7 @@ function flechaBorde(c, x, y, color, alfa) {
 }
 // la palanca que aparece bajo el dedo, las flechas del borde y el pincel o el cuentagotas en el taller (en píxeles de pantalla)
 function pintaEncima(c, t) {
-  if (!TALLER.abierto && J.fase === 'caza' && J.yo) {
+  if (!TALLER.abierto && J.fase === 'caza' && J.yo && !extraOn('apagon')) {      // Apagón total: sin pistas en pantalla
     for (const f of FX.lista) if (f.k === 'onda') flechaBorde(c, f.x, f.y, '#ffcb3d', Math.min(1, (1 - f.t / f.dur) * 2));
     if (J.yo.clase === 'camaleon') for (const h of J.cazadores) { const d = lejos(h.x, h.y, J.yo.x, J.yo.y); if (!h.fuera && h.balas > 0 && d < 620) flechaBorde(c, h.x, h.y - 26, h.alerta >= 1 ? '#ff4b5c' : '#6fa8ff', limita(1.25 - d / 620, 0.25, 1)); }
   }

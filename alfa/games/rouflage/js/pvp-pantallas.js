@@ -68,6 +68,32 @@ function pvpPintaBusca() {
   lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
     + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
   E('b-busca-cancelar').hidden = jugando;
+  pvpPintaModo(priv && !jugando, soyAnf);
+}
+// el modo de la sala con amigos (modos.js): el anfitrión lo cambia con las flechas y los interruptores y el servidor se lo enseña a los demás
+function pvpPintaModo(ver, soyAnf) {
+  const caja = E('busca-modo'); caja.hidden = !ver; if (!ver) return;
+  if (soyAnf && !RFP.modoMandado) { RFP.modoMandado = true; pvpMandaModo(); }      // recién abierta la sala: el modo de la última vez
+  const d = soyAnf ? MODO_ELEGIDO : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
+  caja.classList.toggle('mira', !soyAnf);
+  E('busca-modo-n').textContent = tr(MODOS[m].nombre); E('busca-modo-t').textContent = tr(MODOS[m].texto);
+  const ex = E('busca-extras');
+  if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
+    ex.dataset.anf = String(soyAnf);
+    ex.innerHTML = Object.keys(EXTRAS).map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
+    if (soyAnf) for (const k of Object.keys(EXTRAS)) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
+  }
+  for (const k of Object.keys(EXTRAS)) E('x-' + k).checked = !!(d.x && d.x[k]);
+}
+function pvpMandaModo() {
+  modoElegidoGuarda();
+  const i = RFP.info; if (i && i.privada) i.modo = { m: MODO_ELEGIDO.m, x: Object.assign({}, MODO_ELEGIDO.x) };
+  if (RFRED.red.modo) Promise.resolve(RFRED.red.modo(RFP.info && RFP.info.modo)).catch(() => { /* se reintenta al cambiarlo otra vez */ });
+  if (!E('p-busca').hidden) pvpPintaBusca();
+}
+function pvpCambiaModo(paso) {
+  const lista = Object.keys(MODOS), i = Math.max(0, lista.indexOf(MODO_ELEGIDO.m));
+  MODO_ELEGIDO.m = lista[(i + paso + lista.length) % lista.length]; play('select'); pvpMandaModo();
 }
 // la clasificación (los 20 primeros y tu sitio)
 function pvpClasificacion() {
@@ -105,6 +131,7 @@ function preparaPvp() {
   E('b-amigos-volver').onclick = () => { play('select'); RFP.error = ''; pvpMuestra('p-pvp'); };
   E('b-busca-empezar').onclick = () => { play('select'); pvpEmpezar(); };
   E('b-busca-compartir').onclick = () => { play('select'); pvpCompartir(); };
+  E('b-modo-ant').onclick = () => pvpCambiaModo(-1); E('b-modo-sig').onclick = () => pvpCambiaModo(1);
 
   E('b-pvp-clasif').onclick = () => { play('select'); pvpClasificacion(); };
   E('b-pvp-info').onclick = () => { play('select'); pantalla('p-pvp-info'); };

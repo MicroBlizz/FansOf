@@ -76,7 +76,8 @@ function pistaDeAhora() {
 /* ---------- la clasificación en vivo (botón de la esquina): quién va primero, solo números sobre el mapa ---------- */
 const RANKING = { abierto: (() => { try { return localStorage.getItem('rouflage-ranking') === '1'; } catch (_) { return false; } })(), t: 0, txt: '' };
 function refrescaRanking() {
-  const ver = RANKING.abierto && J.fase !== 'titulo' && J.fase !== 'paseo' && !TALLER.abierto, el = E('ranking'), b = E('b-ranking');
+  const ver = RANKING.abierto && J.fase !== 'titulo' && J.fase !== 'paseo' && !TALLER.abierto && !extraOn('apagon'), el = E('ranking'), b = E('b-ranking');
+  if (b.hidden !== extraOn('apagon')) b.hidden = extraOn('apagon');      // Apagón total: ni ranking ni botón
   if (b.classList.contains('puesto') !== RANKING.abierto) b.classList.toggle('puesto', RANKING.abierto);
   if (el.hidden === ver) { el.hidden = !ver; RANKING.txt = ''; }      // al volver a salir, se pinta de nuevo al momento
   if (!ver || (RELOJ - RANKING.t < 0.5 && RANKING.txt)) return;      // dos veces por segundo basta (con el reloj general: J.t vuelve a 0 en cada partida)

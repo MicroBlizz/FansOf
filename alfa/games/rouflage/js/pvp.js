@@ -68,9 +68,10 @@ function rfpEmpieza(info, red, vuelta) {
   limpiaPartida();                    // (si era otra partida por internet, cierra su canal)
   const slots = rfpReparte(info), mio = slots.find(x => x.yo);
   if (!mio) { RFP.error = RFRED.errorTexto(new Error('sala_no_valida')); pvpMuestra('p-pvp'); return; }
-  Object.assign(RFP, { activo: true, red, info, sala: info.sala, slots, yo: mio.s, host: 0, soyHost: false, mandoListo: false, rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0 });
+  Object.assign(RFP, { activo: true, red, info, sala: info.sala, slots, yo: mio.s, host: 0, soyHost: false, mandoListo: false, rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0, modoMandado: false });
   rfpGuardaSala(info.sala);
   cargaMapa(mapaDeSemilla(info.semilla));      // el mapa sale de la semilla de la sala: el mismo en todos los navegadores
+  modoPon(info.modo);      // el modo de la sala (modos.js); las públicas van en el normal
   J.pvp = true; J.modo = mio.clase; J.t = 0;
   let nc = 0, nh = 0;
   for (const sl of slots) {

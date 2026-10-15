@@ -21,7 +21,7 @@ function abanico(e, pts, soloMuros = false) {
 const conLuz = e => !e.fuera && !(e.bot && e.bot.estado === 'espera') && e.balas > 0 && e.apagada <= 0;      // (apagada: el apagón de un fantasma)
 
 function pintaLuces(c) {
-  const a = J.oscuro * (J.modo === 'cazador' ? 0.93 : 0.54); if (a < 0.01) return;
+  const a = J.oscuro * (extraOn('apagon') ? (J.modo === 'cazador' ? 0.985 : 0.86) : J.modo === 'cazador' ? 0.93 : 0.54); if (a < 0.01) return;      // Apagón total: casi nada
   const w = Math.ceil(cv.width / 2), h = Math.ceil(cv.height / 2);
   if (!LZ.cv || LZ.w !== w || LZ.h !== h) { [LZ.cv, LZ.c] = lienzo(w, h); LZ.w = w; LZ.h = h; }
   const g = LZ.c;

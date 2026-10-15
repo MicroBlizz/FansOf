@@ -331,3 +331,11 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 }
 /* con el botón del fantasma (molestar / chivarse) a la derecha, la pista se pone a la izquierda para no taparlo */
 #hud:has(#b-poder:not([hidden]), #b-chivato:not([hidden])) #pista { left: calc(var(--izq) + 12px); transform: none; max-width: calc(100% - 160px); text-align: left; }
+/* MI PERFIL: el PASE (dorado) y la TIENDA (rojo cálido) destacan sobre los botones grises, con un brillo que pasa de vez en cuando */
+#b-pase, #b-tienda { position: relative; overflow: hidden; }
+#b-pase { background: linear-gradient(to bottom, #ffe07a, #e0a11f); }
+#b-tienda { background: linear-gradient(to bottom, #ff7a5c, #e0362a); }
+#b-pase::before, #b-tienda::before { content: ''; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; background: linear-gradient(100deg, transparent, rgba(255,255,255,0.45), transparent); transform: skewX(-20deg); animation: brilloBoton 3.2s ease-in-out infinite; pointer-events: none; }
+#b-tienda::before { animation-delay: 1.6s; }
+@keyframes brilloBoton { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+@media (prefers-reduced-motion: reduce) { #b-pase::before, #b-tienda::before { animation: none; display: none; } }

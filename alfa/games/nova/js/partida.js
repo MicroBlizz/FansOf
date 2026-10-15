@@ -4,9 +4,14 @@
 const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujada (1 = el PNG de arte tal cual); empiezas muy pequeño y creces; el hitbox sale de él
 const NV_ARENA = 4200;                       // radio de la arena
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
-function nvUmbral(k) { return Math.round(110 * Math.pow(k, 1.8)); }
-function nvEscalaRango(r) { return NV_ESCALA_NAVE * (1 + 0.06 * (r - 1)); }
-function nvVista(S) { return 560 + Math.min(700, 45 * (S.nave.rango - 1)); }   // la cámara se aleja según creces
+// Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
+function nvUmbral(k) { return Math.round(600 * (Math.pow(1.3, k) - 1)); }
+function nvFactor(r) { return Math.pow(1.07, r - 1); }
+function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
+function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces
+function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
+// Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
+function nvValorKill(base, rangoE, rangoN) { const d = rangoE - rangoN; return base * (d >= 0 ? Math.pow(1.5, Math.min(d, 8)) : Math.pow(0.6, Math.min(-d, 6))); }
 
 const NVP = { casco: 'caza', S: null, ult: 0, raf: 0, entrada: { x: 0, y: 0 }, teclas: {}, joy: null, auto: false, vel: 1 };   // auto y vel solo para pruebas (?auto=1&vel=4)
 
@@ -44,6 +49,7 @@ function nvPaso(S, dt) {
   nvSpawn(S, dt);
   nvMundo(S, dt);
   nvEnemigos(S, dt);
+  nvSumaChatarra(S, 0);
   nvArmas(S, dt);
   nvProyectiles(S, dt);
   nvProyectilesEnemigos(S, dt);
@@ -65,7 +71,7 @@ function nvMueve(S, dt) {
   if (NVP.teclas.ArrowDown || NVP.teclas.s) iy += 1;
   if (NVP.auto) { const g = nvBotMeta(S); ix = g[0]; iy = g[1]; }   // bot de pruebas
   const m = Math.hypot(ix, iy); if (m > 1) { ix /= m; iy /= m; }
-  const vmax = (n.vel + 6 * Math.min(12, n.rango - 1)) * (S.mejoras.vel || 1);
+  const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
   const d = Math.hypot(n.x, n.y); if (d > NV_ARENA) { n.x *= NV_ARENA / d; n.y *= NV_ARENA / d; }
@@ -83,7 +89,7 @@ function nvBotMeta(S) {
   let huir = null;
   for (const e of S.enem) {
     if (e.muerto) continue;
-    if (!e.d.pasivo && e.rango >= n.rango + 1 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
+    if (!e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
     else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
   }
   for (const r of S.restos) mira(r.x, r.y, 0.5);
@@ -117,14 +123,13 @@ function nvRestos(S, dt) {
 function nvSumaChatarra(S, v) {
   S.chat += v; S.cartera += v;
   const n = S.nave;
-  while (S.chat >= nvUmbral(n.rango)) {
+  if (S.estado === 'juego' && S.chat >= nvUmbral(n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
     n.rango++; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala;
-    n.hpMax = Math.round(n.hpMax * 1.12); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
+    n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
     nvAjustaTamanos(S);
     nvAbrirCartas(S);
-    break;
   }
 }
 

@@ -1,8 +1,8 @@
 {
- "build": 42,
- "hash": "39c02a4",
- "fecha": "2026-10-15T08:41:11Z",
- "mensaje": "Nova: anillos de peligro y número de rango en cada nave, saltos de tamaño más marcados",
+ "build": 43,
+ "hash": "2402a9f",
+ "fecha": "2026-10-15T08:46:27Z",
+ "mensaje": "Nova: 30 rangos graduales y chatarra según el tamaño del rival",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

@@ -24,7 +24,7 @@ function nvGeneraMundo(S) {
   }
   // naves de todos los tamaños repartidas por el mapa: las grandes, lejos del centro
   for (let i = 0; i < NV_MUNDO.naves; i++) {
-    const f = Math.random(), p = sitio(500, R, 120), d = Math.hypot(p.x, p.y) / R, rango = Math.max(1, Math.min(10, Math.round(1 + d * 7 * (0.4 + f * 0.9))));
+    const f = Math.random(), p = sitio(500, R, 120), d = Math.hypot(p.x, p.y) / R, rango = Math.max(1, Math.min(32, Math.round(1 + d * 24 * (0.35 + f * 0.9))));
     const e = nvEnemigo(S, f < 0.55 ? 'rastrero' : f < 0.85 ? 'fusilero' : 'sepulturero', p.x, p.y, rango); e.errante = 1;
   }
   const cols = ['#3b2a8c', '#1d5a8c', '#7a2a6a', '#1f6b5a'];
@@ -49,7 +49,7 @@ function nvMundo(S, dt) {
     const p = S.pecios[i];
     if (Math.hypot(n.x - p.x, n.y - p.y) > p.r + n.r) continue;
     S.pecios.splice(i, 1);
-    nvChatarra(S, p.x, p.y, 40); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.1);
+    nvChatarra(S, p.x, p.y, Math.round(40 * Math.pow(1.2, n.rango - 1))); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.1);
     S.nums.push({ x: p.x, y: p.y - 20, t: 1.2, txt: tr(p.rara ? '¡Pecio raro!' : 'Pecio'), color: '#6fe3ff', g: 1 });
     if (p.rara) nvAbrirCartas(S);
   }

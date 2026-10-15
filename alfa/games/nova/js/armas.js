@@ -8,7 +8,7 @@ const NV_ARCO_MIN = 90;   // grados: la torreta gira sola, así que ningún arco
 // Las ranuras del casco en un rango, con su id y su sitio en el casco (NOVA_PIEZAS).
 function nvRanuras(rango, S) {
   const cuenta = {}, H = NOVA_PIEZAS.cascos[S.casco];
-  return novaPlantilla(H.faccion, Math.min(5, rango)).map(r => {
+  return novaPlantilla(H.faccion, nvTier(rango)).map(r => {
     cuenta[r.cara] = (cuenta[r.cara] || 0) + 1;
     const id = r.cara + cuenta[r.cara], a = H.ranuras.find(x => x.id === id);
     return Object.assign({ id, x: a.x, y: a.y }, r);

@@ -20,14 +20,14 @@ const NV_OLEADAS = [
 ];
 const NV_TIEMPO_JEFE = 540;   // el Rey llega a los 11 min aunque no hayas matado a los capitanes (si matas a 3 antes, llega antes)
 
-// Naves de todos los tamaños: cada rango es ×1,4 de tamaño, ×1,7 de casco, ×1,4 de daño y ×1,8 de chatarra.
+// Naves de todos los tamaños: cada rango es ×1,07 de tamaño (igual que tú), ×1,2 de casco, ×1,12 de daño y ×1,3 de chatarra.
 function nvEnemigo(S, tipo, x, y, rango) {
-  rango = Math.max(1, Math.min(12, rango || 1));
+  rango = Math.max(1, Math.min(40, rango || 1));
   let d = NV_ENEM[tipo];
   if (rango > 1) {
-    const q = Math.pow(1.4, rango - 1);
-    d = Object.assign({}, d, { r: Math.round(d.r * Math.pow(1.4, rango - 1)), hp: Math.round(d.hp * Math.pow(1.7, rango - 1)), contacto: Math.round(d.contacto * q), chat: Math.round(d.chat * Math.pow(1.8, rango - 1)) });
-    if (d.esc) d.esc = Math.round(d.esc * Math.pow(1.7, rango - 1));
+    const q = Math.pow(1.12, rango - 1);
+    d = Object.assign({}, d, { r: Math.round(d.r * nvFactor(rango)), hp: Math.round(d.hp * Math.pow(1.2, rango - 1)), contacto: Math.round(d.contacto * q), chat: d.chat * Math.pow(1.3, rango - 1) });
+    if (d.esc) d.esc = Math.round(d.esc * Math.pow(1.2, rango - 1));
     if (d.tira) d.tira = Object.assign({}, d.tira, { dano: Math.round(d.tira.dano * q) });
   }
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
@@ -55,7 +55,7 @@ function nvSpawn(S, dt) {
 // Los que salen a tu paso son de tu tamaño o algo menores, y de vez en cuando uno mucho mayor del que hay que huir.
 function nvRangoRelativo(r) {
   const q = Math.random();
-  return Math.max(1, r + (q < 0.45 ? -1 : q < 0.85 ? 0 : q < 0.96 ? 1 : q < 0.99 ? 2 : 3));
+  return Math.max(1, r + (q < 0.3 ? -2 : q < 0.5 ? -1 : q < 0.72 ? 0 : q < 0.85 ? 1 : q < 0.92 ? 2 : q < 0.96 ? 3 : q < 0.985 ? 5 : 8));
 }
 
 // ---------- IA ----------
@@ -121,7 +121,7 @@ function nvJefe(S, e, dt, ux, uy, dist, apagado) {
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++;
   if (e.d.capitan) S.capMuertos++;
-  nvChatarra(S, e.x, e.y, e.d.chat);
+  nvChatarra(S, e.x, e.y, e.d.pasivo || e.d.nido || e.d.jefe || e.d.capitan ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
   S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
   for (let i = 0; i < 6; i++) S.parts.push({ x: e.x, y: e.y, vx: (Math.random() - 0.5) * 220, vy: (Math.random() - 0.5) * 220, t: 0.5, color: e.d.color });
   if (e.d.jefe) S.estado = 'victoria';

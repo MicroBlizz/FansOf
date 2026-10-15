@@ -37,13 +37,53 @@
   const boton = (texto, clase, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = clase; b.textContent = texto; b.onclick = fn; return b; };
   let google = false;
 
+  // cambia el nombre de la cuenta, el mismo en todos los juegos (perfil global, servidor/36-perfil.sql); sin esa función en la base de datos avisa sin romper nada
+  async function cambiarNombre() {
+    const v = (document.getElementById('cuenta-nombre-web').value || '').replace(/[^\p{L}\p{N} _.\-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 14);
+    if (v.length < 3) { window.avisar(t('Tiene que tener al menos 3 letras o números.')); return; }
+    try {
+      const r = await CUENTA.ponNombre(v);
+      window.avisar(t('Ahora te llamas {n}', { n: (r && r.nombre) || v }), true);
+    } catch (err) {
+      const m = String((err && err.message) || '');
+      window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /perfil_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
+    }
+  }
+  // enlaces directos para quien tiene el rol: «alfa» → la copia de pruebas, «admin» → el panel /gestion (sin rol, sin función o sin red no se enseña nada)
+  async function rolEnlaces(donde) {
+    const tiene = async rol => { try { return !!(await CUENTA.rpc('tiene_rol', { p_rol: rol })); } catch (e) { return false; } };
+    const [alfa, admin] = await Promise.all([NUCLEO.alfa ? false : tiene('alfa'), tiene('admin')]);
+    if (!donde.isConnected || donde.querySelector('.cuenta-roles') || !(alfa || admin)) return;
+    const fila = document.createElement('div'); fila.className = 'cuenta-botones cuenta-roles';
+    const enlace = (txt, href) => { const a = document.createElement('a'); a.className = 'boton sec'; a.href = href; a.textContent = txt; fila.append(a); };
+    if (alfa) enlace(t('IR A LA ALFA'), base + 'alfa/');
+    if (admin) enlace(t('IR A GESTIÓN'), base + 'gestion/');
+    const leyesEl = donde.querySelector('.cuenta-leyes'); leyesEl ? leyesEl.before(fila) : donde.append(fila);
+  }
+
   function pintar(motivo) {
     cuerpo.innerHTML = '';
     if (conCuenta()) {
       cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('TU CUENTA'))}</h3><p>${t('Has entrado con {e}. Es la misma cuenta en todos los juegos.', { e: '<b>' + esc(CUENTA.email) + '</b>' })}</p>`;
       const fila = document.createElement('div'); fila.className = 'cuenta-botones';
       fila.append(boton(t('CERRAR SESIÓN'), 'boton sec', () => CUENTA.cerrarSesion().then(() => { window.avisar(t('Sesión cerrada'), true); pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); cerrar(); }, fallo)));
-      cuerpo.append(fila); cuerpo.insertAdjacentHTML('beforeend', leyes());
+      cuerpo.append(fila);
+      cuerpo.insertAdjacentHTML('beforeend', `<h4 class="cuenta-sub ol">${esc(t('TU NOMBRE'))}</h4><p>${esc(t('Es el que ven los demás en las clasificaciones y las partidas. Se cambia en todos tus juegos.'))}</p><input id="cuenta-nombre-web" type="text" maxlength="14" autocomplete="nickname" placeholder="${esc(t('Tu nombre'))}" aria-label="${esc(t('Tu nombre'))}">`);
+      const fn = document.createElement('div'); fn.className = 'cuenta-botones';
+      fn.append(boton(t('CAMBIAR NOMBRE'), 'boton ol', cambiarNombre));
+      cuerpo.append(fn);
+      // estado del caos primordial ilimitado: es de la cuenta y vale en todos los juegos (la función pide un juego, pero el pase no depende de él)
+      const pase = document.createElement('p'); pase.className = 'cuenta-pase'; cuerpo.append(pase);
+      CUENTA.rpc('pvp_energia', { p_juego: 'rumble' }).then(e => {
+        if (!e || !pase.isConnected) return;
+        const vivo = e.pase_hasta && new Date(e.pase_hasta) > new Date();
+        if (!vivo && !e.activa) return;
+        const f = vivo ? new Date(e.pase_hasta).toLocaleDateString(IDIOMA.actual === 'en' ? 'en-GB' : 'es-ES') : '';
+        pase.innerHTML = '<b>' + esc(t('CAOS PRIMORDIAL ILIMITADO')) + '</b>: ' + esc(vivo ? t('activo hasta el {f}. Vale en todos los juegos.', { f }) : t('sin activar. Se usa la energía de cada juego.'));
+      }).catch(() => { /* sin red o sin la función: no se enseña nada */ });
+      CUENTA.perfil().then(p => { const i = document.getElementById('cuenta-nombre-web'); if (p && p.nombre && i && !i.value) i.value = p.nombre; });
+      rolEnlaces(cuerpo);
+      cuerpo.insertAdjacentHTML('beforeend', leyes());
       return;
     }
     cuerpo.innerHTML = `<h3 class="ol" id="cuenta-titulo">${esc(t('ENTRAR'))}</h3>`

@@ -40,6 +40,16 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 #reloj.prisa { color: var(--danger); animation: late 0.5s ease-in-out infinite; }
 .redondo { justify-self: end; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); font-size: 18px; }
 .redondo:active, .boton:active, .accion:active, .papel:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+#esquina { justify-self: end; display: flex; gap: 8px; }
+#b-ranking.puesto { background: linear-gradient(to bottom, #ffe07a, #e0a11f); }
+/* la clasificación en vivo: solo texto con contorno, sin ventana, en la esquina de arriba a la derecha */
+#ranking { position: absolute; top: calc(var(--sup) + 128px); right: calc(var(--der) + 12px); margin: 0; padding: 0; list-style: none; text-align: right; pointer-events: none; font-family: var(--font-display); font-weight: 400; font-size: 14px; line-height: 1.35; color: #fff6ea; text-shadow: 0 2px 0 var(--outline), -1px 0 0 var(--outline), 1px 0 0 var(--outline), 0 -1px 0 var(--outline); font-variant-numeric: tabular-nums; }
+#ranking[hidden] { display: none; }
+#ranking li { display: flex; justify-content: flex-end; gap: 7px; }
+#ranking li.yo { color: #ffcb3d; }
+#ranking li.fuera { opacity: 0.55; }
+#ranking li i { font-style: normal; color: #c9c3e6; min-width: 1.1em; }
+#ranking li b { font-weight: 400; min-width: 3.2em; }
 #estado { position: absolute; top: calc(var(--sup) + 76px); left: 0; right: 0; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 0 10px; }
 .barra { display: block; width: 62px; height: 9px; border-radius: 5px; background: var(--outline); overflow: hidden; }
 .barra i { display: block; height: 100%; width: 0; border-radius: 5px; background: var(--ok); transition: width 0.2s; }
@@ -77,6 +87,9 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .accion.silbar { background: linear-gradient(to bottom, #ffe07a, #e0a11f); width: 66px; height: 66px; border-radius: 20px; }
 .accion.granada { background: linear-gradient(to bottom, #fff6ea, #f0a8ff); width: 66px; height: 66px; border-radius: 20px; }
 .accion.retiro { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 14px); width: auto; height: auto; padding: 10px 16px 7px; border-radius: 18px; background: linear-gradient(to bottom, #ffb0a4, #d94c3a); }
+.accion.poder { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 70px); width: 84px; height: 84px; border-radius: 24px; background: linear-gradient(to bottom, #e6f4ff, #8fb8e8); }
+.accion.poder small { font-weight: 800; font-size: 11px; color: var(--outline); }
+.accion.poder.cargando { opacity: 0.6; }
 .accion.listo { width: auto; height: auto; padding: 9px 16px 6px; border-radius: 18px; background: linear-gradient(to bottom, #a4f070, #4fae2a); animation: late 0.9s ease-in-out infinite; }
 .accion.listo b { font-size: 18px; }
 .accion.listo small { font-weight: 800; font-size: 11px; color: var(--outline); }
@@ -152,6 +165,7 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
   .t-colores .boton { grid-column: 1 / -1; }
   #reloj { font-size: 30px; }
   /* el marcador de cada papel, a la izquierda bajo el nombre; los avisos, debajo; la pista, abajo a la izquierda de los botones */
+  #ranking { top: calc(var(--sup) + 60px); }
   #estado { top: calc(var(--sup) + 56px); left: calc(var(--izq) + 10px); right: auto; padding: 0; justify-content: flex-start; flex-direction: column; align-items: flex-start; gap: 6px; }
   #avisos { top: calc(var(--sup) + 132px); max-width: 300px; }
   #cartel { top: 20%; }
@@ -241,6 +255,3 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 @media (max-height: 640px) and (orientation: portrait) { .papel canvas { max-width: 150px; } }
 @media (orientation: landscape) and (max-height: 520px) { .titulo-caja { max-width: 760px; gap: 6px; } .logo b { font-size: clamp(40px, 15vh, 76px); } .logo span { font-size: 20px; } .papel canvas { max-width: 130px; } .papel { padding: 6px 10px 8px; } .papel span { font-size: 12.5px; } .lema { font-size: 14px; } .nota { display: none; } }
 @media (prefers-reduced-motion: reduce) { .accion.listo, #reloj.prisa, #e-silbo.pronto { animation: none; } }
-#rf-mini { position: fixed; left: 0; right: 0; bottom: 0; top: calc(var(--sup) + 56px); z-index: 8; display: grid; place-items: center; background: rgba(25, 20, 48, 0.94); }
-#rf-mini[hidden] { display: none; }
-#rf-mini canvas { height: min(100%, 440px); aspect-ratio: 360 / 440; max-width: 100%; touch-action: none; user-select: none; -webkit-user-select: none; }

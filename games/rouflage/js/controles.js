@@ -67,6 +67,7 @@ window.addEventListener('keydown', ev => {
     }
     return;
   }
+  if (espectando() && (ev.code === 'Space' || ev.code === 'KeyQ') && !ev.target.closest('button, a')) { accionPoder(); return; }      // el poder del fantasma
   switch (ev.code) {
     case 'KeyF': accionPintar(); break;
     case 'Space': if (!ev.target.closest('button, a')) accionCongelar(); break;
@@ -100,6 +101,7 @@ function controlaJugador(dt) {
 
 // el jugador dispara (de cazador) a un punto del mundo
 function disparaJugador(x, y, margen) {
+  if (J.fase === 'prep') { practicaDispara(x, y, margen); return; }      // en la sala de espera: las prácticas
   const yo = J.yo; if (J.fase !== 'caza' || !yo || yo.clase !== 'cazador' || yo.balas <= 0) return;
   if (yo.enfria > 0) { play('deny'); return; }
   const ox = yo.x, oy = yo.y - 6;

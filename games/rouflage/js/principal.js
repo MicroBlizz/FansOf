@@ -27,7 +27,7 @@ async function arranca() {
   ajusta(); window.addEventListener('resize', ajusta);
   preparaInterfaz(); preparaPvp();
   const modo = new URLSearchParams(location.search).get('modo');   // ?modo=camaleon o ?modo=cazador entra directo (para probar)
-  if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else irTitulo();
+  if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else { irTitulo(); pvpEntradaDirecta(); }
   E('carga').hidden = true;
   requestAnimationFrame(t => { _ultimo = t; fotograma(t); });
 }

@@ -18,6 +18,7 @@ hook('cuenta', () => { if (!CAJA_CUENTA.hidden) abreCuenta(); });
 function pvpMuestra(id) {
   pantalla(id);
   if (id === 'p-pvp') pvpPintaMenu();
+  else if (id === 'p-amigos') pvpPintaAmigos();
   else if (id === 'p-busca') pvpPintaBusca();
 }
 function pvpPintaMenu() {
@@ -37,16 +38,34 @@ function pvpPendientes() {
   }).catch(() => { /* sin red: ya saldrá la próxima vez */ });
 }
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// jugar con amigos: solo hay que enseñar el error, si lo hay (sin cuenta vinculada, código malo, sala llena…)
+function pvpPintaAmigos() {
+  const err = E('amigos-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
+  if (!RFRED.esLocal() && !RFRED.vinculada()) { err.hidden = false; err.textContent = tr(RFRED.errorTexto(new Error('cuenta_no_vinculada'))); }
+}
+// compartir la sala con amigos: el enlace abre el juego con el código puesto (con la hoja de compartir del móvil, o copiado)
+function pvpCompartir() {
+  const i = RFP.info; if (!i || !i.codigo) return;
+  const url = location.origin + location.pathname + '?sala=' + i.codigo, txt = tr('¡Únete a mi sala de Fans of Rouflage! Código: {c}', { c: i.codigo });
+  if (navigator.share) { navigator.share({ title: 'Fans of Rouflage', text: txt, url }).catch(() => { /* cancelado */ }); return; }
+  const listo = () => { E('busca-sub').textContent = tr('Enlace copiado: pégaselo a tus amigos.'); };
+  try { navigator.clipboard.writeText(txt + ' ' + url).then(listo, () => { E('busca-sub').textContent = url; }); } catch (_) { E('busca-sub').textContent = url; }
+}
 // la sala: quién hay y, cuando arranca, el papel de cada uno
 function pvpPintaBusca() {
   const i = RFP.info, lista = E('busca-lista');
   if (!i) { E('busca-titulo').textContent = tr('BUSCANDO PARTIDA'); E('busca-sub').textContent = ''; lista.innerHTML = ''; return; }
-  const jug = i.jugadores || [], jugando = i.estado !== 'espera', mio = jug.find(j => j.yo);
+  const jug = i.jugadores || [], jugando = i.estado !== 'espera', mio = jug.find(j => j.yo), priv = !!i.privada, soyAnf = priv && !!mio && mio.orden === i.anfitrion;
   E('busca-titulo').textContent = jugando ? tr('¡EMPIEZA LA PARTIDA!') : tr('SALA: {n} DE {max}', { n: i.n, max: i.max });
   E('busca-sub').textContent = jugando ? (mio && mio.rol === 'cazador' ? tr('Te toca de CAZADOR') : tr('Te toca de CAMALEÓN'))
+    : priv ? (soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Pásales el código a tus amigos. Hacen falta al menos dos personas.')) : tr('Esperando a que el anfitrión empiece.'))
     : i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
+  // la sala con amigos: el código grande para compartir y el botón EMPEZAR del anfitrión
+  E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
+  const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.classList.toggle('apagado', i.n < 2);
+  const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
   const hueco = Math.max(0, (i.max || 10) - jug.length);
-  lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
+  lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
     + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
   E('b-busca-cancelar').hidden = jugando;
 }
@@ -62,7 +81,7 @@ function pvpClasificacion() {
 function pvpResultadoExtra() {
   const p = E('fin-pvp'), r = RFP.resultado; if (!p || !J.pvp || !r) return;
   p.hidden = false; p.classList.toggle('mal', !!r.error);
-  p.textContent = r.error ? tr(r.error) : r.delta != null && r.puntos != null ? tr('PvP: {p} puntos ({d})', { p: r.puntos, d: (r.delta >= 0 ? '+' : '') + r.delta }) : '';
+  p.textContent = r.error ? tr(r.error) : r.privada ? tr('Sala con amigos: no cuenta para la clasificación') : r.delta != null && r.puntos != null ? tr('PvP: {p} puntos ({d})', { p: r.puntos, d: (r.delta >= 0 ? '+' : '') + r.delta }) : '';
 }
 
 function preparaPvp() {
@@ -70,12 +89,35 @@ function preparaPvp() {
   E('b-cuenta').onclick = () => { play('select'); abreCuenta(); };
   E('b-pvp-cuenta').onclick = () => { play('select'); abreCuenta(); };
   E('b-pvp-buscar').onclick = () => { play('select'); pvpBuscar(); };
+  // jugar con amigos: crear una sala o entrar con el código (el enlace ?sala=CODIGO abre esta pantalla con el código puesto)
+  const caja = E('amigos-codigo');
+  const entrar = () => {
+    const c = (caja.value || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    if (c.length !== 4) { RFP.error = 'El código tiene 4 letras.'; pvpPintaAmigos(); play('deny'); return; }
+    play('select'); caja.blur(); pvpBuscar({ codigo: c });
+  };
+  caja.oninput = () => { caja.value = caja.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); };
+  caja.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); entrar(); } ev.stopPropagation(); };
+  caja.onkeyup = ev => ev.stopPropagation();
+  E('b-pvp-amigos').onclick = () => { play('select'); RFP.error = ''; pvpMuestra('p-amigos'); };
+  E('b-amigos-crear').onclick = () => { play('select'); pvpBuscar({ crear: true }); };
+  E('b-amigos-entrar').onclick = entrar;
+  E('b-amigos-volver').onclick = () => { play('select'); RFP.error = ''; pvpMuestra('p-pvp'); };
+  E('b-busca-empezar').onclick = () => { play('select'); pvpEmpezar(); };
+  E('b-busca-compartir').onclick = () => { play('select'); pvpCompartir(); };
+
   E('b-pvp-clasif').onclick = () => { play('select'); pvpClasificacion(); };
   E('b-pvp-info').onclick = () => { play('select'); pantalla('p-pvp-info'); };
   E('b-pvp-volver').onclick = () => { play('select'); irTitulo(); };
   E('b-busca-cancelar').onclick = () => { play('select'); pvpCancelar(); };
   E('b-clasif-volver').onclick = () => { play('select'); pvpMuestra('p-pvp'); };
   E('b-info-ok').onclick = () => { play('select'); pvpMuestra('p-pvp'); };
-  // ?pvp=local o ?pvp=abrir: entra directo en el menú del PvP (para probar)
-  try { const q = new URLSearchParams(location.search).get('pvp'); if (q === 'local' || q === 'abrir') pvpMuestra('p-pvp'); } catch (_) { /* da igual */ }
+}
+// al arrancar (tras el título): ?pvp=local o ?pvp=abrir entra directo en el menú del PvP (para probar); ?sala=CODIGO, en JUGAR CON AMIGOS con el código puesto
+function pvpEntradaDirecta() {
+  try {
+    const q = new URLSearchParams(location.search), c = q.get('sala');
+    if (c) { E('amigos-codigo').value = c.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4); pvpMuestra('p-amigos'); }
+    else if (q.get('pvp') === 'local' || q.get('pvp') === 'abrir') pvpMuestra('p-pvp');
+  } catch (_) { /* da igual */ }
 }

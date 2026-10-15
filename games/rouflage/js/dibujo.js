@@ -171,6 +171,7 @@ function dibuja(t) {
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
   for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   // un camaleón congelado es «parte del suelo»: quien pase por detrás de él se pinta ENCIMA, no debajo. Si no, su pintura
   // de suelo quedaría sobre el becario y dejaría ver su silueta recortada (y sería facilísimo encontrarlo).

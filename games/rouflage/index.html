@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.9"></script>
+<script src="../../core/js/nucleo.js?v=0.2.10"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -23,8 +23,12 @@
   <div id="arriba">
     <div class="chip rol" id="chip-rol"><i data-icono="pincel"></i><b></b></div>
     <div id="marcador"><span id="fase-txt"></span><b id="reloj" class="ol">0:45</b></div>
-    <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+    <div id="esquina">
+      <button type="button" class="redondo" id="b-ranking" data-tr-aria aria-label="Clasificación"><i data-icono="podio"></i></button>
+      <button type="button" class="redondo" id="b-pausa" data-tr-aria aria-label="Pausa"><i data-icono="pausa"></i></button>
+    </div>
   </div>
+  <ol id="ranking" hidden></ol>
   <div id="estado">
     <div class="chip" id="e-camo"><span data-tr>CAMUFLAJE</span><b id="e-camo-n">0 %</b><i class="barra"><i id="e-camo-b"></i></i></div>
     <div class="chip" id="e-silbo" data-tr-title title="Segundos para el próximo silbido obligatorio"><i data-icono="silbato"></i><b id="e-silbo-n">0</b></div>
@@ -35,6 +39,7 @@
   <div id="cartel" hidden><b class="ol-big" id="cartel-t"></b><span id="cartel-s"></span></div>
   <div id="pista" hidden></div>
   <button type="button" class="accion retiro" id="b-retiro" hidden><b data-tr>ME RETIRO</b></button>
+  <button type="button" class="accion poder" id="b-poder" hidden><i data-icono="apagon"></i><b></b><small></small><kbd data-tr>Espacio</kbd></button>
   <div id="acciones">
     <button type="button" class="accion listo" id="b-listo" hidden><b data-tr>¡LISTO!</b><small data-tr>Que salgan ya</small></button>
     <button type="button" class="accion granada" id="b-granada" hidden><i data-icono="granada"></i><b data-tr>GRANADA</b><kbd>E</kbd></button>
@@ -174,6 +179,7 @@
     <p class="aviso-pvp" id="pvp-pendiente" hidden></p>
     <div class="columna">
       <button type="button" class="boton" id="b-pvp-buscar" data-tr>BUSCAR PARTIDA</button>
+      <button type="button" class="boton verde" id="b-pvp-amigos" data-tr>JUGAR CON AMIGOS</button>
       <button type="button" class="boton gris" id="b-pvp-cuenta" data-tr hidden>VINCULAR CUENTA</button>
       <div class="fila-botones">
         <button type="button" class="boton peq" id="b-pvp-clasif" data-tr>Clasificación</button>
@@ -183,13 +189,36 @@
     </div>
   </div>
 </div>
+<div class="pantalla" id="p-amigos" hidden>
+  <div class="caja pvp">
+    <h2 class="ol" data-tr>JUGAR CON AMIGOS</h2>
+    <p class="error" id="amigos-error" hidden></p>
+    <div class="bloque">
+      <h3 class="ol" data-tr>CREAR SALA</h3>
+      <p class="nota-sala" data-tr>Te damos un código de 4 letras para tus amigos. Hasta 10 jugadores; los huecos, la máquina.</p>
+      <button type="button" class="boton verde" id="b-amigos-crear" data-tr>CREAR SALA</button>
+    </div>
+    <div class="bloque">
+      <h3 class="ol" data-tr>ENTRAR CON UN CÓDIGO</h3>
+      <p class="nota-sala" data-tr>Escribe el código que te han pasado.</p>
+      <div class="fila-cod"><input class="codigo-in" id="amigos-codigo" maxlength="4" placeholder="ABCD" autocapitalize="characters" autocomplete="off" spellcheck="false" data-tr-aria aria-label="Código de la sala"><button type="button" class="boton azul" id="b-amigos-entrar" data-tr>ENTRAR</button></div>
+    </div>
+    <p class="nota-sala" data-tr>Las salas con amigos no gastan caos primordial ni suben o bajan tu clasificación. Microblizz las llama «contenido social».</p>
+    <button type="button" class="boton gris" id="b-amigos-volver" data-tr>VOLVER</button>
+  </div>
+</div>
 <div class="pantalla" id="p-busca" hidden>
   <div class="caja pvp">
     <h2 class="ol" id="busca-titulo" data-tr>BUSCANDO PARTIDA</h2>
+    <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
     <p class="sub" id="busca-sub"></p>
+    <p class="error" id="busca-error" hidden></p>
     <ul class="sala" id="busca-lista"></ul>
     <p class="nota-sala" data-tr>Los huecos hasta 10 los llena la máquina. Los papeles se reparten al azar al empezar.</p>
-    <button type="button" class="boton gris" id="b-busca-cancelar" data-tr>CANCELAR</button>
+    <div class="fila-botones">
+      <button type="button" class="boton gris" id="b-busca-cancelar" data-tr>CANCELAR</button>
+      <button type="button" class="boton" id="b-busca-empezar" data-tr hidden>EMPEZAR</button>
+    </div>
   </div>
 </div>
 <div class="pantalla" id="p-clasif" hidden>
@@ -244,13 +273,14 @@ NUCLEO.juego({
     'js/efectos-granada.js',
     'js/senuelos.js',
     'js/espectador.js',
+    'js/fantasma-poder.js',
     'js/bot-cazador.js',
     'js/bot-camaleon.js',
     'js/luz.js',
     'js/dibujo.js',
     'js/taller.js',
     'js/controles.js',
-    'js/minijuego.js',
+    'js/entrenamiento.js',
     'js/partida.js',
     'js/interfaz.js',
     'js/pvp-red.js',

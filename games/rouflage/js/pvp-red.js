@@ -1,5 +1,5 @@
 // Fans of Rouflage (prototipo) · PvP, LA RED: la sesión de la cuenta (la de core, o la que dejó otro juego de Fans Of en este navegador), las llamadas al servidor
-// (rouflage_pvp_buscar, rouflage_pvp_estado, rouflage_pvp_salir, rouflage_pvp_rendir, rouflage_pvp_cerrar, rouflage_pvp_clasificacion) y el canal de la partida por
+// (rouflage_pvp_buscar, rouflage_pvp_estado, rouflage_pvp_salir, rouflage_pvp_rendir, rouflage_pvp_cerrar, rouflage_pvp_clasificacion; salas con amigos: rouflage_pvp_privada y rouflage_pvp_empezar) y el canal de la partida por
 // Supabase Realtime (difusión en 'rouflage-sala-<id>': cada jugador manda dónde está y lo que hace; pvp.js lo convierte en los personajes de los demás).
 // También una red de PRUEBAS entre pestañas del mismo navegador (?pvp=local, solo para desarrollar), sin servidor ni cuenta.
 'use strict';
@@ -39,7 +39,8 @@ const RFRED = (() => {
     const m = String((e && e.message) || e);
     return /cuenta_no_vinculada|sin_sesion/.test(m) ? 'Para jugar PvP necesitas una cuenta vinculada: botón CUENTA del título.'
       : /could not find|schema cache|PGRST202|HTTP 404/i.test(m) ? 'El PvP de Rouflage todavía no está abierto en el servidor. Pronto.' : /refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego.'
-      : /sala_no_valida/.test(m) ? 'La sala ya no existe.' : 'Necesitas conexión para jugar PvP.';
+      : /sala_no_valida/.test(m) ? 'La sala ya no existe.' : /codigo_no_valido/.test(m) ? 'Ese código no existe o la sala ya empezó.' : /sala_llena/.test(m) ? 'La sala está llena.'
+      : /faltan_jugadores/.test(m) ? 'Hacen falta al menos dos personas para empezar.' : /no_eres_anfitrion/.test(m) ? 'Solo el anfitrión puede empezar.' : 'Necesitas conexión para jugar PvP.';
   };
 
   // ---------- el canal de la partida (Realtime, protocolo Phoenix): canal(sala, alMensaje, alEstado) → { enviar(datos), cerrar() } ----------
@@ -70,17 +71,18 @@ const RFRED = (() => {
     };
   }
 
-  /* Una red tiene buscar(aviso) → { cancelar() }. Mientras se espera, aviso(sala) cada vez que hay noticias, con sala = { sala, estado: 'espera', n, max, faltan, jugadores };
+  /* Una red tiene buscar(aviso, opc) → { cancelar() }. Sin opc busca partida pública; con opc.crear abre una sala con amigos (código de 4 letras) y con opc.codigo entra en esa.
+     empezar() la arranca (solo el anfitrión). Mientras se espera, aviso(sala) cada vez que hay noticias, con sala = { sala, estado: 'espera', n, max, faltan, jugadores };
      cuando arranca, aviso(sala) con estado 'jugando' (y orden, semilla, ncaz y jugadores [{ orden, nombre, animal, rol, yo }]). Si falla: aviso(null, error).
      canal(sala, alMensaje, alEstado) abre el canal de la partida; cerrar(sala, gano) apunta el resultado; rendir() da la partida por abandonada; clasificacion() da la lista. */
   const servidor = {
     nombre: 'Servidor',
-    buscar(aviso) {
+    buscar(aviso, opc) {
       let activo = true, tic = null, primera = false;
       const sondeo = async () => {
         if (!activo) return;
         try {
-          const r = await rpc(primera ? 'rouflage_pvp_estado' : 'rouflage_pvp_buscar');
+          const r = await rpc(primera ? 'rouflage_pvp_estado' : opc && (opc.crear || opc.codigo) ? 'rouflage_pvp_privada' : 'rouflage_pvp_buscar', !primera && opc && opc.codigo ? { p_codigo: String(opc.codigo).toUpperCase() } : {});
           primera = true;
           if (!activo) return;
           if (r && r.sala) { aviso(r); if (r.estado !== 'espera') { activo = false; return; } }
@@ -91,6 +93,7 @@ const RFRED = (() => {
       sondeo();
       return { cancelar() { if (!activo) return; activo = false; clearTimeout(tic); rpc('rouflage_pvp_salir').catch(() => { /* da igual */ }); } };
     },
+    empezar: () => rpc('rouflage_pvp_empezar'),
     canal: (sala, alMensaje, alEstado) => canal(sala, alMensaje, alEstado),
     cerrar: (sala, gano) => rpc('rouflage_pvp_cerrar', { p_sala: sala, p_gano: !!gano }),
     // vivo = true: te vas con tu papel en juego (solo se apunta el abandono); false: espectador (cobras o pierdes con tu bando). Si el servidor aún no tiene la función nueva, la de siempre
@@ -104,8 +107,11 @@ const RFRED = (() => {
   const local = {
     nombre: 'Pruebas (pestañas)',
     espera: 6, total: 10, ncaz: 2,
-    buscar(aviso) {
-      const id = Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas'), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
+    arranque: false,
+    buscar(aviso, opc) {
+      const codigo = opc && opc.crear ? 'PRUE' : opc && opc.codigo ? String(opc.codigo).toUpperCase() : null;      // en las pruebas la sala con amigos siempre se llama PRUE
+      local.arranque = false;
+      const id = (opc && opc.crear ? '0' : '') + Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas' + (codigo ? '-' + codigo : '')), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
       let activo = true, tic = null;
       const para = () => { activo = false; clearInterval(tic); try { bc.close(); } catch (e) { /* ya cerrado */ } };
       const nombreDe = i => 'Pestaña ' + i.slice(0, 3).toUpperCase();
@@ -121,9 +127,10 @@ const RFRED = (() => {
         bc.postMessage({ t: 'busco', id });
         for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
         const ids = [...vistos.keys()].sort(), n = ids.length;
-        aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
+        aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null, codigo, privada: !!codigo, anfitrion: 0,
           jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: 'bunny', rol: null, yo: x === id })) });
-        if (ids[0] === id && (n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000))) {
+        const toca = codigo ? local.arranque && n >= 2 : n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000);
+        if (ids[0] === id && toca) {
           // los papeles al azar: entre 1 y ncaz cazadores humanos, y al menos 1 camaleón humano
           const ord = ids.slice(0, local.total).map((x, i) => [Math.random(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]), nn = ord.length;
           const min = Math.max(1, nn - (local.total - local.ncaz)), max = Math.min(local.ncaz, nn - 1), cazs = min + Math.floor(Math.random() * (max - min + 1));
@@ -135,6 +142,7 @@ const RFRED = (() => {
       paso(); tic = setInterval(paso, 800);
       return { cancelar: para };
     },
+    empezar: () => { local.arranque = true; return Promise.resolve(); },
     canal(sala, alMensaje, alEstado) {
       const bc = new BroadcastChannel('rf-pvp-sala-' + sala);
       bc.onmessage = e => alMensaje(e.data);

@@ -10,17 +10,17 @@ function abanico(e, pts) {
   const ox = e.x, oy = e.y - 6, largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1), n = 30, medio = REGLAS.luzAngulo;
   pts.length = 0; pts.push(ox, oy);
   for (let k = 0; k <= n; k++) {
-    const a = e.dir - medio + (2 * medio * k) / n, dx = Math.cos(a), dy = Math.sin(a);
+    const a = dirLuz(e) - medio + (2 * medio * k) / n, dx = Math.cos(a), dy = Math.sin(a);
     let d = rayo(ox, oy, dx, dy, largo);
     if (RAYO.cara && dy < -0.08) d = Math.min(largo, d + Math.min(76, 62 / -dy));   // la pared de frente se ilumina hasta arriba
     pts.push(ox + dx * d, oy + dy * d);
   }
   return pts;
 }
-const conLuz = e => !e.fuera && !(e.bot && e.bot.estado === 'espera') && e.balas > 0;
+const conLuz = e => !e.fuera && !(e.bot && e.bot.estado === 'espera') && e.balas > 0 && e.apagada <= 0;      // (apagada: el apagón de un fantasma)
 
 function pintaLuces(c) {
-  const a = J.oscuro * (J.modo === 'cazador' ? 0.7 : 0.54); if (a < 0.01) return;
+  const a = J.oscuro * (J.modo === 'cazador' ? 0.93 : 0.54); if (a < 0.01) return;
   const w = Math.ceil(cv.width / 2), h = Math.ceil(cv.height / 2);
   if (!LZ.cv || LZ.w !== w || LZ.h !== h) { [LZ.cv, LZ.c] = lienzo(w, h); LZ.w = w; LZ.h = h; }
   const g = LZ.c;

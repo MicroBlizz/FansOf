@@ -10,7 +10,11 @@ const espectando = () => J.fase === 'caza' && !J.pausa && !!J.yo && sinJuego(J.y
 // cada fotograma, desde controlaJugador: lo mueve según las teclas o la palanca
 function mueveFantasma(dt) {
   const yo = J.yo;
-  if (!J.fantasma) { J.fantasma = { x: yo.x, y: yo.y - 20, t: 0 }; avisa(yo.clase === 'cazador' ? tr('Sin cartas: pasea por el mapa para ver qué pasa') : tr('Estás despedido: pasea por el mapa para ver qué pasa'), 'aviso'); }
+  if (!J.fantasma) {
+    J.fantasma = { x: yo.x, y: yo.y - 20, t: 0, poder: null, enfria: 0, usado: 0 };
+    if (yo.clase === 'camaleon') poderElige(J.fantasma);      // a un colado despedido le toca un poder (fantasma-poder.js)
+    avisa(yo.clase === 'cazador' ? tr('Sin cartas: pasea por el mapa para ver qué pasa') : tr('Estás despedido: ayuda a los tuyos con tu poder de fantasma'), 'aviso'); refrescaHud(true);
+  }
   const f = J.fantasma, [mx, my] = vectorMueve();
   f.t += dt; f.mueve = Math.hypot(mx, my) > 0.1; if (Math.abs(mx) > 0.15) f.mira = mx > 0 ? 1 : -1;
   f.x = limita(f.x + mx * FANTASMA.vel * dt, 6, ANCHO - 6); f.y = limita(f.y + my * FANTASMA.vel * dt, 6, ALTO - 6);

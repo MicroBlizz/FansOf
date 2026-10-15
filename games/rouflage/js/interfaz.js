@@ -15,6 +15,9 @@ const ICONOS = {
   cabezaRedonda: '<circle cx="12" cy="12" r="6.5" fill="currentColor"/>',
   cabezaCuadrada: '<rect x="5.5" y="5.5" width="13" height="13" fill="currentColor"/>',
   senuelo: '<path d="M3 15c3-7 5 3 8-4s4 4 7-3"/><circle cx="19.5" cy="17.5" r="2.2"/>',
+  podio: '<path d="M3 20h18M9 20V10h6v10M3 20v-6h6M15 20v-8h6M12 3l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 9l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z"/>',
+  apagon: '<path d="M4 7.5h7l5-3v12l-5-3H4zM16 9.5v2M3 3l18 18"/>',
+  mano: '<path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7.5a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.3-2.4L3.6 14.2a1.4 1.4 0 0 1 2.3-1.6L8 15V12"/>',
   granada: '<circle cx="11" cy="14.5" r="6.2"/><path d="M9 8.4V5.2h4v3.2M13 5.2l4.2-1.8M3.2 4.6l2 1.4M2.4 9.6h2.4M20 10.6l1.6-1.6M20.6 14.6h1.8"/>',
   silbato: '<path d="M3 9.5h11.5M3 9.5V13h6.2"/><circle cx="14.5" cy="14" r="5.6"/><circle cx="14.5" cy="14" r="1.5" fill="currentColor"/><path d="M14.5 2.4v2.4M19 3.8l-1.3 2.1M10 3.8l1.3 2.1"/>',
   pausa: '<path d="M8.2 5v14M15.8 5v14" stroke-width="3.6"/>',
@@ -47,7 +50,7 @@ function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t +
 function pistaDeAhora() {
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
-  if (espectando()) return tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.');
+  if (espectando()) { const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
   if (yo.clase === 'camaleon') {
@@ -59,9 +62,27 @@ function pistaDeAhora() {
       if (mira) return tr('Un becario sospecha de ti: quieto… o corre');
       return J.tFase < 7 ? tr('Quieto. Si un becario pone «!», sal corriendo') : '';
     }
-  } else if (J.fase === 'prep') return tr('Espera en Recursos Humanos: los colados se están pintando');
+  } else if (J.fase === 'prep') {
+    // las prácticas: la explicación se queda hasta el primer acierto (así se aprende a disparar) y luego cuánto falta
+    if (!PRACTICA.activa) return tr('Espera en Recursos Humanos: los colados se están pintando');
+    if (!PRACTICA.aciertos) return ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas') : tr('Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas');
+    if (PRACTICA.extra >= REGLAS.balasExtra) return tr('¡Cartas al máximo! Sigue practicando hasta la caza');
+    return tr('Cada {n} despidos, una carta extra ({c} de {m} ganadas)', { n: PRACTICA_POR_CARTA, c: PRACTICA.extra, m: REGLAS.balasExtra });
+  }
   else if (J.fase === 'caza' && J.tFase < 9) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
   return '';
+}
+
+/* ---------- la clasificación en vivo (botón de la esquina): quién va primero, solo números sobre el mapa ---------- */
+const RANKING = { abierto: (() => { try { return localStorage.getItem('rouflage-ranking') === '1'; } catch (_) { return false; } })(), t: 0, txt: '' };
+function refrescaRanking() {
+  const ver = RANKING.abierto && (J.fase === 'caza' || J.fase === 'fin') && !TALLER.abierto, el = E('ranking'), b = E('b-ranking');
+  if (b.classList.contains('puesto') !== RANKING.abierto) b.classList.toggle('puesto', RANKING.abierto);
+  if (el.hidden === ver) el.hidden = !ver;
+  if (!ver || J.t - RANKING.t < 0.5) return;      // dos veces por segundo basta
+  RANKING.t = J.t;
+  const html = clasificacion().map((r, i) => `<li class="${r.jugador ? 'yo' : ''}${r.fuera ? ' fuera' : ''}"><i>${i + 1}</i><span>${r.nombre}</span><b>${r.puntos}</b></li>`).join('');
+  if (html !== RANKING.txt) { RANKING.txt = html; el.innerHTML = html; }
 }
 
 /* ---------- el marcador y los botones ---------- */
@@ -80,6 +101,8 @@ function refrescaHud(todo) {
   ponTexto('fase', E('fase-txt'), J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
+  refrescaPoder();      // el botón del poder del fantasma (fantasma-poder.js)
+  refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam, 'e-silbo': cam && caza, 'e-balas': !cam, 'e-quedan': !cam, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
     'b-silbar': caza && !espectando(), 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
@@ -133,7 +156,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-pausa', 'p-fin', 'p-pvp', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }
@@ -221,6 +244,7 @@ function preparaInterfaz() {
   for (const id of ['b-musica', 'b-musica2']) E(id).onclick = () => { cambiaMusica(); refrescaSonido(); };
   E('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
   E('b-idioma').onclick = () => { cambiaIdioma(); play('select'); };
+  E('b-ranking').onclick = () => { RANKING.abierto = !RANKING.abierto; try { localStorage.setItem('rouflage-ranking', RANKING.abierto ? '1' : '0'); } catch (_) { /* sin guardar */ } play('select'); refrescaHud(true); };
   E('b-pausa').onclick = accionPausa; E('b-seguir').onclick = accionPausa;
   E('b-reiniciar').onclick = () => { pantalla(null); empiezaPartida(J.modo); };
   E('b-salir').onclick = () => {
@@ -231,7 +255,7 @@ function preparaInterfaz() {
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

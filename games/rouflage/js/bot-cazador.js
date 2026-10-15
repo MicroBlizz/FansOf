@@ -13,8 +13,8 @@ function cerebroCazador(e) {
 // ¿ve este cazador el punto (x, y)? Devuelve a qué distancia lo ve, o 0 si no lo ve (fuera de su luz o con un muro en medio)
 function veCazador(e, x, y) {
   const ox = e.x, oy = e.y - 6, d = lejos(ox, oy, x, y), largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1);
-  if (d > largo) return 0;
-  if (d > REGLAS.luzCerca && Math.abs(giro(e.dir, Math.atan2(y - oy, x - ox))) > REGLAS.luzAngulo) return 0;
+  if (d > largo || e.apagada > 0) return 0;      // con la linterna apagada por un fantasma no ve nada
+  if (d > REGLAS.luzCerca && Math.abs(giro(dirLuz(e), Math.atan2(y - oy, x - ox))) > REGLAS.luzAngulo) return 0;
   return seVen(ox, oy, x, y) ? Math.max(d, 0.01) : 0;
 }
 // lo que tiene que «cantar» un camaleón (de 0 a 1) para que un becario lo distinga a esa distancia; si va atento (tras un silbido), algo menos

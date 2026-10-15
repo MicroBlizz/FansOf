@@ -73,10 +73,22 @@ function nameOk() {
   const first = !SAVE.name;
   SAVE.name = n; if (!SAVE.since) { const d = new Date(); SAVE.since = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; }
   saveGame(); $('#scr-name').hidden = true; play('select');
+  if (typeof CUENTA !== 'undefined' && CUENTA.activa && !CUENTA.invitado) CUENTA.ponNombre(n).catch(() => { /* sin red o sin la función: queda el nombre de esta partida */ });
   toast(first ? `¡Encantada, ${n}!` : `Ahora te llamas ${n}`, true);
   profileChip(); if (!$('#scr-profile').hidden) buildProfile();
   (RETOS.trasNombre || titlePopups)();
 }
+// el nombre es de la cuenta (perfil global, servidor/36-perfil.sql): si la cuenta ya tiene uno, manda sobre el de esta partida; si no, esta partida lo sube
+async function aplicaPerfil() {
+  if (typeof CUENTA === 'undefined' || !CUENTA.activa || CUENTA.invitado) return;
+  const p = await CUENTA.perfil();
+  if (!p || !p.nombre) { if (SAVE.name) CUENTA.ponNombre(SAVE.name).catch(() => { /* se intenta otra vez luego */ }); return; }
+  if (p.nombre === SAVE.name) return;
+  const primera = !SAVE.name;
+  SAVE.name = p.nombre; saveGame(); profileChip(); if (!$('#scr-profile').hidden) buildProfile();
+  if (primera && !$('#scr-name').hidden) $('#scr-name').hidden = true;
+}
+if (typeof hook === 'function') hook('cuenta', () => { aplicaPerfil(); });
 /* ---------- botón del menú ---------- */
 function profileChip() {
   const b = $('#btn-profile'); if (!b) return;

@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.3', real: ["<b>CRUCE A LO BRUTO</b>: el ocho del tutorial ya no tiene puente, ni rampas, ni cuestas: las dos rectas se cruzan a ras de suelo y en el cruce te puedes chocar con los demás."],
+    joke: ["Microblizz ha quitado el puente para ahorrar en madera. Recursos Humanos dice que los choques cuentan como team building."] },
   { v: '0.6.2', real: ["<b>LETRA NUEVA</b>: todos los textos y números del juego (marcador, menús, resultados, avisos) usan ahora la letra de los botones de Fans of Rumble, grande y nítida en cualquier pantalla. Las letras amarillas de KARTS siguen igual.", "<b>RAMPAS DEL PUENTE</b>: en el tutorial, el puente tiene rampas de tierra a los dos lados y los karts suben y bajan poco a poco, sin saltos raros."],
     joke: ["Microblizz ha cambiado la letra del juego para que se lea mejor la letra pequeña de los contratos. Phony sigue sin leerla."] },
   { v: '0.6.1', real: ["<b>TUTORIAL NUEVO</b>: La Madriguera es ahora un ocho alto y torcido, con dos rectas largas que se cruzan por el puente: hay sitio para probar cada objeto con calma.", "<b>MENÚ PRINCIPAL NUEVO</b>: botones grandes como los de Fans of Rumble: JUGAR en el centro, TUTORIAL y PVP a los lados y abajo TIENDA, PASE, AYUDA y OPCIONES."],

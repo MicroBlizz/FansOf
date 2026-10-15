@@ -16,6 +16,7 @@ ADORNOS.fan = {
   delante(c, e) { const r = e.ropa; if (r && r.cabeza && ARD.CABEZAS[r.cabeza]) ARD.CABEZAS[r.cabeza](c); },
 };
 function empiezaHabitacion(rol) {
+  if (MAPA.id !== 'estacion') cargaMapa('estacion');      // la habitación es siempre en la estación (al volver al título se carga otra vez el mapa elegido)
   limpiaPartida(); J.modo = rol; J.t = 0; J.fase = 'paseo'; J.reloj = 0; PUERTA.cerrada = false; PUERTA.abierta = 1;
   const viejo = J.yo, [sx, sy] = viejo ? [viejo.x, viejo.y] : SALIDA_CAMALEONES[0];
   const yo = nuevoEnte(rol, 'fan', tr('Tú'), sx, sy); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; yo.dir = Math.PI / 2; yo.mira = 1;

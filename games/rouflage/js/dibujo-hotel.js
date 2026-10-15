@@ -126,18 +126,30 @@ Object.assign(TIPOS_MUEBLE, {
     forma(c, caja(-16, -34, 18, 22, 4), '#c8303a', 2.5); forma(c, caja(2, -30, 14, 18, 4), '#3a7de0', 2.5);
     for (const dx of [-18, 18]) punto(c, dx, -2, 3.5, OL);
   } },
-  // el mostrador de recepción, con el timbre y el libro de firmas
-  mostrador: { w: 200, d: 30, h: 30, pared: true, tope: 70, pinta(c) {
-    cajon(c, 200, 30, 30, '#8f5a2e', '#6e4228', 4);
-    c.strokeStyle = 'rgba(224,184,74,0.7)'; c.lineWidth = 2; for (let x = -90; x <= 70; x += 40) c.strokeRect(x, -26, 30, 18);
-    forma(c, ovalo(-60, -64, 7, 4), '#e0b84a', 2); punto(c, -60, -69, 2, '#e0b84a');
-    forma(c, caja(10, -68, 30, 8, 1), '#f4f1e6', 1.5); forma(c, caja(60, -74, 20, 14, 2), '#2a2f55', 2);
+  // el mostrador de recepción: tablero de madera clara visto desde arriba, frente con paneles dorados y, encima, timbre, libro, flexo y ordenador
+  mostrador: { w: 200, d: 34, h: 30, tope: 78, pinta(c) {
+    cajon(c, 200, 34, 30, '#c08a56', '#7a4a2c', 4);                                                         // tablero (y -64..-30) y frente (-30..0)
+    c.fillStyle = 'rgba(255,255,255,0.18)'; c.fillRect(-96, -61, 192, 4);                                   // el canto con brillo
+    for (let x = -88; x <= 56; x += 36) { forma(c, caja(x, -25, 30, 19, 2), '#6a3e24', 1.5); c.strokeStyle = '#e0b84a'; c.lineWidth = 1.5; c.strokeRect(x + 3, -22, 24, 13); }
+    // encima del tablero (todo apoyado entre y -60 y -34)
+    forma(c, ovalo(-70, -42, 9, 4), '#b8902e', 2); forma(c, g => { g.moveTo(-77, -43); g.quadraticCurveTo(-70, -55, -63, -43); g.closePath(); }, '#e0b84a', 2); punto(c, -70, -53, 2, '#e0b84a');   // el timbre
+    forma(c, caja(-40, -54, 36, 16, 2), '#2c5f8a', 2); forma(c, caja(-38, -52, 15, 12, 1), '#f4f1e6', 1); forma(c, caja(-21, -52, 15, 12, 1), '#f4f1e6', 1);   // el libro de firmas abierto
+    raya(c, [-30, -48, -26, -48], 'rgba(32,16,44,0.4)', 1); raya(c, [-14, -46, -9, -46], 'rgba(32,16,44,0.4)', 1);
+    raya(c, [26, -40, 26, -62, 36, -70], OL, 2.5); forma(c, poli(32, -74, 44, -70, 40, -62), '#3f8a35', 2); forma(c, ovalo(26, -40, 7, 3), '#3f8a35', 2);   // el flexo verde
+    forma(c, caja(56, -44, 30, 8, 2), '#c8ccd6', 2); forma(c, caja(64, -50, 14, 7, 1), '#8e929d', 1.5); forma(c, caja(54, -76, 34, 26, 3), '#2a2f55', 2.5); c.fillStyle = '#9fd6e8'; c.fillRect(58, -72, 26, 18);   // el ordenador
   } },
-  // un piano de cola, tapa abierta
-  piano: { w: 80, d: 50, h: 24, pinta(c) {
-    forma(c, g => { g.moveTo(-40, -20); g.lineTo(-40, -62); g.quadraticCurveTo(-40, -74, -26, -74); g.lineTo(10, -74); g.quadraticCurveTo(40, -74, 40, -50); g.quadraticCurveTo(40, -20, 20, -20); g.closePath(); }, '#20102c');
-    forma(c, caja(-40, -26, 80, 10, 2), '#2a1f3a'); c.fillStyle = '#fff6ea'; c.fillRect(-36, -24, 50, 5); c.fillStyle = OL; for (let x = -32; x < 14; x += 6) c.fillRect(x, -24, 2.5, 3);
-    raya(c, [-30, -66, 20, -88], '#e0b84a', 2); for (const dx of [-34, 30]) forma(c, caja(dx - 3, -16, 6, 14, 1), '#20102c', 1.5);
+  // un piano de cola: caja negra con la tapa levantada (se le ve el interior dorado), teclado blanco y negro y tres patas
+  piano: { w: 80, d: 50, h: 24, tope: 92, pinta(c) {
+    for (const [dx, dy] of [[-32, 0], [30, 0], [24, -40]]) forma(c, caja(dx - 3, dy - 18, 6, 18, 1), '#20102c', 1.5);   // las patas
+    const cuerpo = g => { g.moveTo(-40, -24); g.lineTo(-40, -66); g.quadraticCurveTo(-40, -78, -26, -78); g.lineTo(8, -78); g.quadraticCurveTo(40, -78, 40, -54); g.quadraticCurveTo(40, -30, 18, -28); g.lineTo(18, -24); g.closePath(); };
+    forma(c, cuerpo, '#2a1f3a', 3);
+    c.save(); c.beginPath(); cuerpo(c); c.clip(); c.fillStyle = '#c89a3a'; c.beginPath(); c.moveTo(-34, -30); c.lineTo(-34, -64); c.quadraticCurveTo(-34, -72, -24, -72); c.lineTo(6, -72); c.quadraticCurveTo(32, -72, 32, -54); c.quadraticCurveTo(32, -36, 14, -34); c.closePath(); c.fill();
+    c.strokeStyle = 'rgba(90,60,20,0.8)'; c.lineWidth = 1; c.beginPath(); for (let k = 0; k < 8; k++) { c.moveTo(-30 + k * 7, -34); c.lineTo(-22 + k * 5, -70); } c.stroke(); c.restore();
+    forma(c, poli(-40, -66, 30, -94, 36, -86, -36, -60), '#20102c', 2.5);                                     // la tapa levantada
+    raya(c, [-2, -76, 6, -88], OL, 2);                                                                          // el palo de la tapa
+    forma(c, caja(-40, -30, 60, 10, 2), '#20102c', 2.5); c.fillStyle = '#fff6ea'; c.fillRect(-37, -28, 54, 6);  // el teclado
+    c.fillStyle = OL; for (let x = -34; x < 16; x += 5) if ((((x + 34) / 5) % 7) !== 2 && (((x + 34) / 5) % 7) !== 6) c.fillRect(x + 2.5, -28, 2.5, 3.5);
+    forma(c, caja(-20, -40, 24, 9, 1), '#20102c', 1.5);                                                         // el atril
   } },
   // el váter del baño (otro señuelo con forma de alubia sentada)
   vater: { w: 22, d: 20, h: 16, senuelo: true, pinta(c) {

@@ -6,6 +6,7 @@
 defineMapa({
   id: 'estacion', nombre: 'La estación', lema: 'Oficinas, cafetería y almacén: el clásico.', ancho: 84, alto: 60,
   espera: 'rrhh', plaza: 'cafeteria',
+  musica: { taller: 'rfTaller', caza: 'rfCaza', recta: 'rfRecta' },      // sus temas (musica.js)
 
   // salas: x, y, w, h en casillas; `suelo` y `pared` dicen con qué dibujo se pintan (suelos.js y paredes.js)
   salas: [

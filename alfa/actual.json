@@ -1,8 +1,8 @@
 {
- "build": 73,
- "hash": "9e3b8ac",
- "fecha": "2026-10-15T14:21:32Z",
- "mensaje": "Rouflage 0.2.12: la nota cuenta también la música, los efectos y las opciones; el botón de comparar sonido solo en alfa y dev",
+ "build": 74,
+ "hash": "4cff1c2",
+ "fecha": "2026-10-15T14:26:40Z",
+ "mensaje": "Fans of Rouflage: música por mapa (cada mapa trae sus temas de taller, caza y recta final) y los tres temas de las Backrooms",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -1,8 +1,8 @@
 {
- "build": 72,
- "hash": "f193e1f",
- "fecha": "2026-10-15T13:51:18Z",
- "mensaje": "Rouflage 0.2.12: mapa de las Backrooms y selector de mapa",
+ "build": 73,
+ "hash": "9e3b8ac",
+ "fecha": "2026-10-15T14:21:32Z",
+ "mensaje": "Rouflage 0.2.12: la nota cuenta también la música, los efectos y las opciones; el botón de comparar sonido solo en alfa y dev",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

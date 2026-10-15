@@ -178,7 +178,7 @@ function refrescaSonido() {
   for (const id of ['b-musica', 'b-musica2']) E(id).classList.toggle('apagado', AUDIO.sinMusica);
   for (const id of ['v-sonido', 'v-sonido2']) E(id).value = Math.round(AUDIO.vol * 100);
   for (const id of ['v-musica', 'v-musica2']) E(id).value = Math.round(AUDIO.volMus * 100);
-  for (const id of ['b-viejo', 'b-viejo2']) E(id).textContent = AUDIO.viejo ? tr('Sonido: antiguo') : tr('Sonido: nuevo');      // temporal, para comparar
+  for (const id of ['b-viejo', 'b-viejo2']) { E(id).hidden = !(NUCLEO.alfa || NUCLEO.desarrollo); E(id).textContent = AUDIO.viejo ? tr('Sonido: antiguo') : tr('Sonido: nuevo'); }      // temporal, para comparar (solo alfa y dev)
 }
 // el botón de idioma del título: core guarda el idioma elegido y recarga la página (como en los demás juegos)
 function cambiaIdioma() { NUCLEO.elegirIdioma(IDIOMA_RF === 'es' ? 'en' : 'es'); }

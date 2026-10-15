@@ -1,15 +1,16 @@
 // Fans of Nova · Datos de armas: portadores, cargas, estados, reacciones, modificadores, fusiones estrella y defensas (PLAN-NOVA.md, «Sistema de armas»).
+// Cada portador solo admite las cargas de su lista «admite» (un láser no dispara balas cinéticas).
 // CIFRAS PROVISIONALES de la fase 0. El contenido es JSON estricto a propósito: herramientas/nova-balance.py lo lee de aquí, así hay una sola fuente.
 'use strict';
 const NOVA_ARMAS = {
  "version": "provisional-0.1",
  "nota": "Cifras PROVISIONALES de la fase 0 (PLAN-NOVA.md). Lo decidido son las tablas; los números se iteran con herramientas/nova-balance.py y con el prototipo.",
  "portadores": {
-  "railgun": { "nombre": "Railgun", "dano": 70, "cadencia": 0.8, "proyectiles": 1, "acierto": 1.0, "alcance": 560, "arco": 3, "objetivos": 1.5, "fuerte": "Un objetivo, largo alcance", "debil": "Grupos" },
-  "flak": { "nombre": "Flak", "dano": 14, "cadencia": 2.0, "proyectiles": 6, "acierto": 0.5, "alcance": 260, "arco": 50, "objetivos": 2.5, "fuerte": "Grupos, corto alcance", "debil": "Blindaje" },
-  "laser": { "nombre": "Láser", "dano": 18, "cadencia": 4.0, "proyectiles": 1, "acierto": 0.8, "alcance": 400, "arco": 2, "objetivos": 1.0, "fuerte": "Precisión, acumula estados", "debil": "Recarga lenta al saturar" },
-  "lanzador": { "nombre": "Lanzador", "dano": 40, "cadencia": 1.2, "proyectiles": 1, "acierto": 0.8, "alcance": 640, "arco": 20, "objetivos": 1.0, "fuerte": "Lo que huye, alcance", "debil": "Interceptables" },
-  "drones": { "nombre": "Drones", "dano": 9, "cadencia": 2.0, "proyectiles": 3, "acierto": 1.0, "alcance": 220, "arco": 360, "objetivos": 1.0, "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
+  "railgun": { "nombre": "Railgun", "dano": 70, "cadencia": 0.8, "proyectiles": 1, "acierto": 1.0, "alcance": 560, "arco": 3, "objetivos": 1.5, "admite": ["cinetica", "energia", "explosiva"], "fuerte": "Un objetivo, largo alcance", "debil": "Grupos" },
+  "flak": { "nombre": "Flak", "dano": 14, "cadencia": 2.0, "proyectiles": 6, "acierto": 0.5, "alcance": 260, "arco": 50, "objetivos": 2.5, "admite": ["cinetica", "termica", "explosiva"], "fuerte": "Grupos, corto alcance", "debil": "Blindaje" },
+  "laser": { "nombre": "Láser", "dano": 18, "cadencia": 4.0, "proyectiles": 1, "acierto": 0.8, "alcance": 400, "arco": 2, "objetivos": 1.0, "admite": ["energia", "termica", "em"], "fuerte": "Precisión, acumula estados", "debil": "Recarga lenta al saturar" },
+  "lanzador": { "nombre": "Lanzador", "dano": 40, "cadencia": 1.2, "proyectiles": 1, "acierto": 0.8, "alcance": 640, "arco": 20, "objetivos": 1.0, "admite": ["explosiva", "termica", "em", "cinetica"], "fuerte": "Lo que huye, alcance", "debil": "Interceptables" },
+  "drones": { "nombre": "Drones", "dano": 9, "cadencia": 2.0, "proyectiles": 3, "acierto": 1.0, "alcance": 220, "arco": 360, "objetivos": 1.0, "admite": ["cinetica", "energia", "em", "explosiva"], "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
  },
  "cargas": {
   "cinetica": { "nombre": "Cinética", "contra": "Casco", "estado": "brecha", "multDano": 1.0, "multGrupo": 1.0, "forma": "cuadrado", "color": "#ff9a3c" },
@@ -53,8 +54,6 @@ const NOVA_ARMAS = {
   { "id": "railgunGemela", "nombre": "Railgun gemela", "portador": "railgun", "carga": "cinetica", "tipo": "doble", "mult": 1.3, "nombreProvisional": false, "efecto": "Dos proyectiles en abanico" },
   { "id": "bateriaFlak", "nombre": "Batería de flak", "portador": "flak", "carga": "cinetica", "tipo": "doble", "mult": 1.25, "nombreProvisional": false, "efecto": "Cono completo" },
   { "id": "canonIones", "nombre": "Cañón de iones", "portador": "railgun", "carga": "energia", "tipo": "mixta", "nombreProvisional": true, "efecto": "Perfora y deja sin escudo" },
-  { "id": "flakSonica", "nombre": "Flak sónica", "portador": "flak", "carga": "em", "tipo": "mixta", "nombreProvisional": true, "efecto": "Cono que apaga a los que alcanza" },
-  { "id": "agujaFriccion", "nombre": "Aguja de fricción", "portador": "laser", "carga": "cinetica", "tipo": "mixta", "nombreProvisional": true, "efecto": "Haz que abre Brecha" },
   { "id": "misilRacimo", "nombre": "Misil de racimo", "portador": "lanzador", "carga": "explosiva", "tipo": "mixta", "nombreProvisional": true, "efecto": "Marca a todo un grupo" },
   { "id": "misilPerforador", "nombre": "Misil perforador", "portador": "lanzador", "carga": "cinetica", "tipo": "mixta", "nombreProvisional": true, "efecto": "Abre Brecha a distancia" },
   { "id": "dronesKamikaze", "nombre": "Drones kamikaze", "portador": "drones", "carga": "explosiva", "tipo": "mixta", "nombreProvisional": true, "efecto": "Los drones estallan al impactar" },

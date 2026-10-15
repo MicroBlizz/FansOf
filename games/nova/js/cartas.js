@@ -4,6 +4,8 @@
 // Las armas nuevas salen del tamaño que toca a tu rango (más tarde, medianas y grandes); el taller de la estación las une o las divide.
 function nvTamNuevo(rango) { return rango >= 18 ? 'L' : rango >= 9 ? 'M' : 'S'; }
 const NV_CARGAS = ['cinetica', 'energia', 'termica', 'em', 'explosiva'];
+// Las cargas que tienen sentido en ese portador (railgun de iones sí; láser cinético no).
+function nvCargasDe(portador) { const p = NOVA_ARMAS.portadores[portador]; return (p && p.admite) || NV_CARGAS; }
 // Prototipo: todas las ranuras de armas admiten los cinco portadores, para probar toda la matriz de fusiones (en el juego real manda la plantilla de la facción).
 const NV_TIPOS_LIBRES = ['railgun', 'flak', 'laser', 'lanzador', 'drones'];
 const NV_MEJORAS_SISTEMA = [
@@ -26,7 +28,7 @@ function nvCandidatas(S) {
   const n = S.nave, out = [], libres = nvRanuras(n.rango, S).filter(r => !n.armas.some(w => w.slot === r.id));
   for (const sl of libres) {
     const tipos = (sl.cara === 'popa' ? [] : S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]);
-    for (const portador of tipos) for (const carga of NV_CARGAS) {
+    for (const portador of tipos) for (const carga of nvCargasDe(portador)) {
       const peso = nvPesoTendencia(S, portador, carga);
       out.push({ tipo: 'arma', cat: 'of', ic: ['arma', portador], peso: peso * (n.armas.length ? 0.35 : 1) * 1 / (tipos.length || 1) / 2, carga, tendencia: peso > 1.4,
         titulo: tr(NOVA_ARMAS.portadores[portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
@@ -102,7 +104,7 @@ const NV_PRECIO_TAM = { S: 40, M: 90, L: 180 };
 function nvOfertasEstacion(S, slotId) {
   const sl = nvRanuras(S.nave.rango, S).find(r => r.id === slotId), tipos = (S.libre ? NV_TIPOS_LIBRES : sl.tipos).filter(t => NOVA_ARMAS.portadores[t]), out = [];
   for (let i = 0; i < 40 && out.length < 3; i++) {
-    const p = tipos[Math.floor(Math.random() * tipos.length)], c = NV_CARGAS[Math.floor(Math.random() * NV_CARGAS.length)];
+    const p = tipos[Math.floor(Math.random() * tipos.length)], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
     if (!out.some(o => o.portador === p && o.carga === c)) out.push({ portador: p, carga: c, precio: NV_PRECIO_TAM[(S.nave.armas.find(w => w.slot === slotId) || { tam: 'S' }).tam], slot: sl });
   }
   return out;

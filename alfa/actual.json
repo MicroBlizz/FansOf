@@ -1,8 +1,8 @@
 {
- "build": 76,
- "hash": "267da82",
- "fecha": "2026-10-15T18:07:34Z",
- "mensaje": "Rouflage: modos de juego en la sala de amigos (selector + extras), CONTAGIO y APAGÓN TOTAL",
+ "build": 77,
+ "hash": "5da35ae",
+ "fecha": "2026-10-15T18:08:37Z",
+ "mensaje": "Rouflage: menú del título ordenado (tarjetas → CONTRA BOTS con papel y mapa, en línea, TU GALLETA, ayuda y opciones) con los colores de la primera versión",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -157,7 +157,7 @@ function refrescaTaller() {
 }
 
 /* ---------- pantallas ---------- */
-const PANTALLAS = ['p-titulo', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
+const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); }
@@ -167,6 +167,13 @@ function muestraPausa(si) {
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
 }
 // al elegir papel: la primera vez se enseña antes cómo se juega
+// la pantalla CONTRA BOTS: el papel (viene marcado desde la tarjeta del título) y el mapa, y luego ¡JUGAR!
+const BOTS = { modo: 'camaleon' };
+function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); pantalla('p-bots'); }
+function pintaBots() {
+  E('b-bots-camaleon').classList.toggle('elegido', BOTS.modo === 'camaleon');
+  E('b-bots-cazador').classList.toggle('elegido', BOTS.modo === 'cazador');
+}
 function elige(modo) {
   audioInit(); play('select');
   let visto = false; try { visto = localStorage.getItem('rouflage-ayuda') === '1'; } catch (_) { /* sin guardar */ }
@@ -241,7 +248,12 @@ function pintaTarjetas() {
 
 function preparaInterfaz() {
   pintaTarjetas();
-  E('b-camaleon').onclick = () => elige('camaleon'); E('b-cazador').onclick = () => elige('cazador');
+  // las tarjetas del título abren CONTRA BOTS con ese papel marcado; ahí se elige el mapa y se pulsa ¡JUGAR!
+  E('b-camaleon').onclick = () => abreBots('camaleon'); E('b-cazador').onclick = () => abreBots('cazador');
+  E('b-bots-camaleon').onclick = () => { play('select'); BOTS.modo = 'camaleon'; pintaBots(); };
+  E('b-bots-cazador').onclick = () => { play('select'); BOTS.modo = 'cazador'; pintaBots(); };
+  E('b-bots-jugar').onclick = () => elige(BOTS.modo);
+  E('b-bots-volver').onclick = () => { play('select'); pantalla('p-titulo'); };
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-titulo')); };
   E('b-opciones').onclick = () => { play('select'); pantalla('p-opciones'); refrescaSonido(); };
   E('b-opciones-ok').onclick = () => { play('select'); pantalla('p-titulo'); };

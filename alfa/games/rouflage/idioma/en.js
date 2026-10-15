@@ -1,6 +1,15 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Buscar partida o jugar con amigos. De un bot te escondes fácil; de ellos, no tanto.": "Find a match or play with friends. Hiding from a bot is easy; from them, not so much.",
+  "TU GALLETA": "YOUR COOKIE",
+  "CONTRA BOTS": "VS BOTS",
+  "1 · TU PAPEL": "1 · YOUR ROLE",
+  "Píntate, congélate y que no te encuentren.": "Paint yourself, freeze and don't get found.",
+  "Linterna en mano: encuentra a los colados.": "Flashlight in hand: find the intruders.",
+  "2 · EL MAPA": "2 · THE MAP",
+  "Papel": "Role",
+  "¡JUGAR!": "PLAY!",
   "JUGAR CON AMIGOS": "PLAY WITH FRIENDS",
   "CREAR SALA": "CREATE ROOM",
   "Te damos un código de 4 letras para tus amigos. Hasta 10 jugadores; los huecos, la máquina.": "You get a 4-letter code for your friends. Up to 10 players; empty spots go to the machine.",

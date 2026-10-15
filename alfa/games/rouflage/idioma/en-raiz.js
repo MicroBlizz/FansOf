@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.21
+  "<b>JUGAR DE DÍA</b>: un extra nuevo en la sala de amigos y contra bots. Con las luces encendidas se ve toda la oficina, no solo lo que alumbra la linterna, y los becarios ven más lejos. No se puede juntar con Apagón total: al encender uno se apaga el otro. Si no eliges ninguno, se juega de noche como siempre.": "<b>PLAY BY DAY</b>: a new extra in the friends room and against bots. With the lights on you see the whole office, not just what the flashlight shows, and interns see further. It can't be combined with Total blackout: switching one on turns the other off. If you pick neither, it's night as usual.",
+  "Microblizz ha encendido las luces de día para que se note que la oficina está vacía. Phony pide que las apaguen: así no se le ve dormir.": "Microblizz turned the lights on by day so everyone can see the office is empty. Phony wants them off: that way nobody sees him sleeping.",
   // 0.2.19
   "<b>CADA MAPA CON SU MÚSICA</b>: el parking, las cloacas, los jardines, la urbanización y el hotel tienen ya sus propios temas para el taller, la caza y la recta final.": "<b>EVERY MAP WITH ITS OWN MUSIC</b>: the car park, the sewers, the gardens, the housing estate and the hotel now have their own tracks for the workshop, the hunt and the final stretch.",
   "Microblizz ha puesto hilo musical en las cloacas. Phony dice que las ratas lo han pedido en inglés.": "Microblizz has put background music in the sewers. Phony says the rats asked for it in English.",

@@ -1,8 +1,8 @@
 {
- "build": 84,
- "hash": "9006ba1",
- "fecha": "2026-10-15T18:32:30Z",
- "mensaje": "Rouflage: menús sin morado ni lila (ventanas azul noche, botones secundarios gris azulado; naranja para la acción)",
+ "build": 85,
+ "hash": "d9683f3",
+ "fecha": "2026-10-15T18:33:25Z",
+ "mensaje": "Rouflage: novedades, colores nuevos de los menús",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -1,8 +1,8 @@
 {
- "build": 27,
- "hash": "be59052",
- "fecha": "2026-10-15T02:34:20Z",
- "mensaje": "Nova: motores más estrechos por el lado de proa",
+ "build": 28,
+ "hash": "f2a10f1",
+ "fecha": "2026-10-15T02:39:42Z",
+ "mensaje": "Nova: notas de combos de defensa aceptados",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

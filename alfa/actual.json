@@ -1,8 +1,8 @@
 {
- "build": 24,
- "hash": "9a08224",
- "fecha": "2026-10-15T02:13:37Z",
- "mensaje": "Fans of Nova fase 0: el escudo del Crucero es una pompa que envuelve toda la nave",
+ "build": 25,
+ "hash": "c7847ec",
+ "fecha": "2026-10-15T02:18:04Z",
+ "mensaje": "Fans of Nova fase 0: cascos sin placas, anclajes como datos y editor de anclajes (anclajes.html)",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

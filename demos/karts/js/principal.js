@@ -127,8 +127,9 @@ function fotograma(ahora) {
   mc.fillStyle = '#150b21'; mc.fillRect(0, 0, LW, LH);
   const w = Math.round(PW * ESC), h = Math.round(PH * ESC), g = Math.max(2, Math.round(ESC));
   mc.fillStyle = '#3a2a52'; mc.fillRect(OX - g, OY - g, w + 2 * g, h + 2 * g);
+  if (EN_MUNDO) modoUI();
   mc.imageSmoothingEnabled = false;
-  mc.drawImage(lo, OX, OY, w, h);
+  mc.drawImage(LU, OX, OY, w, h);
   pintaBotones();
   requestAnimationFrame(fotograma);
 }

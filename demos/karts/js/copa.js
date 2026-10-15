@@ -39,7 +39,7 @@ function pantallaMundo() {
     lx.fillStyle = m.color; lx.globalAlpha = sel ? 0.45 : 0.22;
     for (let k = -2; k < 8; k++) { const o = ((RELOJ * (sel ? 14 : 5)) % 14) + k * 14; lx.beginPath(); lx.moveTo(x + o, y); lx.lineTo(x + o + 7, y); lx.lineTo(x + o + 7 - h, y + h); lx.lineTo(x + o - h, y + h); lx.fill(); }
     lx.globalAlpha = 1; lx.restore();
-    mini(lx, trf('MUNDO %1', i + 1), x + w / 2, y + 5, '#ffffff', '#1c1028', 'centro');
+    mini(lx, trf('MUNDO %1', i + 1), x + 5, y + 5, '#ffffff', '#1c1028');      // a la izquierda: a la derecha va el trofeo
     trofeo(x + w - 13, y + 4, RECORDS[i]);
     // la figura del mundo, botando
     figCosa(m.fig).pinta(lx, x + w / 2, y + 50 + Math.round(sel ? Math.sin(RELOJ * 5) * 1.5 : 0), BASE_COSA * 0.62, BASE_COSA, 0);

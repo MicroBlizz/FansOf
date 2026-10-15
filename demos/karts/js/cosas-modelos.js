@@ -112,13 +112,13 @@ const CARTELES = new Map();
 function cartelDe(lineasTxt, fondo = '#22212c', tinta = '#ffcb3d', marco = '#f4f4f8') {
   const k = lineasTxt.join('|') + fondo + tinta;
   if (CARTELES.has(k)) return CARTELES.get(k);
-  const w = Math.max(...lineasTxt.map(l => anchoTexto(l))) + 10, hTabla = lineasTxt.length * 10 + 7, poste = 14, [c, x] = lienzo(w, hTabla + poste);
+  const w = Math.max(...lineasTxt.map(l => anchoTextoPx(l))) + 10, hTabla = lineasTxt.length * 10 + 7, poste = 14, [c, x] = lienzo(w, hTabla + poste);
   x.fillStyle = '#4a4e66'; x.fillRect((w >> 1) - 1, hTabla - 1, 3, poste + 1);
   x.fillStyle = '#1c1028'; x.fillRect((w >> 1) - 2, hTabla, 1, poste); x.fillRect((w >> 1) + 2, hTabla, 1, poste);
   x.fillStyle = '#1c1028'; x.fillRect(0, 0, w, hTabla);
   x.fillStyle = marco; x.fillRect(1, 1, w - 2, hTabla - 2);
   x.fillStyle = fondo; x.fillRect(2, 2, w - 4, hTabla - 4);
-  lineasTxt.forEach((l, i) => escribe(x, l, w >> 1, 5 + i * 10, tinta, null, 'centro'));
+  lineasTxt.forEach((l, i) => escribePx(x, l, w >> 1, 5 + i * 10, tinta, null, 'centro'));      // los carteles son dibujo del mundo: letra de píxeles
   const s = { c, w, h: hTabla + poste };
   CARTELES.set(k, s);
   return s;

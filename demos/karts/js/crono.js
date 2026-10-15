@@ -98,9 +98,5 @@ function pantallaCrono() {
 }
 
 // ---------- el espejo: la pantalla se voltea entera (como en las consolas) y el volante va al revés ----------
-let LIENZO_ESPEJO = null;
-function volteaPantalla() {
-  if (!LIENZO_ESPEJO || LIENZO_ESPEJO[0].width !== lo.width) LIENZO_ESPEJO = lienzo(lo.width, lo.height);
-  const [c, x] = LIENZO_ESPEJO; x.clearRect(0, 0, lo.width, lo.height); x.drawImage(lo, 0, 0);
-  lx.save(); lx.setTransform(-1, 0, 0, 1, lo.width, 0); lx.drawImage(c, 0, 0); lx.restore();
-}
+// (el volteo lo hace modoUI al copiar el mundo al lienzo de los menús: suelo.js; así las letras no salen al revés)
+function volteaPantalla() { /* ya está volteado */ }

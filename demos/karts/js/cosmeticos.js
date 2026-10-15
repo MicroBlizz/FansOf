@@ -101,10 +101,10 @@ function fotoMonton(t, n) {
 // la placa de un título, con la letra del juego
 function fotoTitulo(c) {
   const k = 'tit-' + c.id + IDIOMA_K; if (FOTOS[k]) return FOTOS[k];
-  const [cv2, x] = lienzo(96, 56), ls = lineas(tr(c.nombre), 80).slice(0, 2);
+  const [cv2, x] = lienzo(96, 56), ls = conLetraPixel(() => lineas(tr(c.nombre), 80)).slice(0, 2);
   x.fillStyle = '#1c1028'; x.fillRect(4, 10, 88, 36); x.fillStyle = '#b3870a'; x.fillRect(5, 11, 86, 34); x.fillStyle = '#ffcb3d'; x.fillRect(6, 12, 84, 31);
   x.fillStyle = '#fff3a0'; x.fillRect(6, 12, 84, 2); x.fillStyle = '#1c1028'; x.fillRect(10, 16, 2, 2); x.fillRect(84, 16, 2, 2); x.fillRect(10, 38, 2, 2); x.fillRect(84, 38, 2, 2);
-  ls.forEach((l, i) => escribe(x, l, 48, 28 - ls.length * 5 + i * 10, '#3b2410', null, 'centro'));
+  ls.forEach((l, i) => escribePx(x, l, 48, 28 - ls.length * 5 + i * 10, '#3b2410', null, 'centro'));
   return (FOTOS[k] = aUrl(cv2));
 }
 // un kart con lo que sea puesto, en tres cuartos (o de espaldas, para el humo)

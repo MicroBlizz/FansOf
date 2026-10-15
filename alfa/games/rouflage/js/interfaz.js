@@ -36,8 +36,25 @@ function ponIconos() { for (const el of document.querySelectorAll('i[data-icono]
 /* ---------- avisos, cartel y pista ---------- */
 function avisa(texto, tipo = 'aviso') {
   const caja = E('avisos'), p = document.createElement('p'); p.className = tipo; p.textContent = texto; caja.appendChild(p);
-  while (caja.children.length > 4) caja.firstChild.remove();
-  setTimeout(() => p.classList.add('adios'), 4200); setTimeout(() => p.remove(), 4800);
+  // en el móvil en vertical: como mucho dos a la vez, duran menos y salen justo debajo del marcador (y de la tira de retratos), nunca encima
+  const movil = matchMedia('(orientation: portrait) and (max-width: 600px)').matches;
+  while (caja.children.length > (movil ? 2 : 4)) caja.firstChild.remove();
+  colocaAvisos();
+  setTimeout(() => p.classList.add('adios'), movil ? 2800 : 4200); setTimeout(() => p.remove(), movil ? 3300 : 4800);
+}
+// dónde acaba por abajo lo de arriba del marcador (reloj, CARTAS / COLADOS y la tira de retratos)
+function finMarcador() {
+  let abajo = 0;
+  for (const id of ['arriba', 'estado', 'retratos']) { const el = E(id); if (el && !el.hidden && el.getClientRects().length) abajo = Math.max(abajo, el.getBoundingClientRect().bottom); }
+  return abajo;
+}
+function colocaAvisos() { const abajo = finMarcador(); E('avisos').style.top = abajo ? Math.round(abajo + 8) + 'px' : ''; }
+// para la cámara: cuánto tapa el marcador por arriba, para que el borde de arriba del mapa pueda bajar por debajo de él y no quede nadie escondido detrás
+const MARGEN = { t: -1e9, px: 70 };
+function margenArriba() {
+  const ahora = performance.now();
+  if (ahora - MARGEN.t > 400) { MARGEN.t = ahora; MARGEN.px = E('hud').hidden ? 70 : Math.max(70, finMarcador() + 8); }
+  return MARGEN.px;
 }
 function limpiaAvisos() { E('avisos').textContent = ''; E('cartel').hidden = true; PISTA.hasta = 0; }
 // el cartel grande del centro; con `numero`, la cifra de la cuenta atrás
@@ -52,7 +69,10 @@ function pistaDeAhora() {
   if (bocadilloActivo()) return '';      // con un bocadillo del tutorial en pantalla, la franja de pistas se calla
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
-  if (espectando()) { const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
+  if (espectando()) {      // la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
+    if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
+    if (J.t - yo.tPistaFant > 9) return '';
+    const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
   if (yo.clase === 'camaleon') {

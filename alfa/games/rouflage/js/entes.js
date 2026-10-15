@@ -119,6 +119,6 @@ function despide(k, por) {
   if (por) por.pts.aciertos++;
   contagioDespedido(k); chivatoDespido(k, por); idaDespido(k);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)
   if (por && por.jugador) { avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno'); }
-  else if (k.jugador) avisa(tr('{a} te ha despedido').replace('{a}', por ? por.nombre : '?'), 'malo');
-  else avisa(tr('{a} ha despedido a {b}').replace('{a}', por ? por.nombre : '?').replace('{b}', k.nombre), J.modo === 'camaleon' ? 'malo' : 'aviso');
+  else if (k.jugador) { if (por) avisa(tr('{a} te ha despedido').replace('{a}', por.nombre), 'malo'); }      // sin culpable (el silbato) ya lo ha contado su propio aviso
+  else if (por) avisa(tr('{a} ha despedido a {b}').replace('{a}', por.nombre).replace('{b}', k.nombre), J.modo === 'camaleon' ? 'malo' : 'aviso');
 }

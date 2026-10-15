@@ -1,8 +1,8 @@
 {
- "build": 115,
- "hash": "0b1be7b",
- "fecha": "2026-10-15T21:34:46Z",
- "mensaje": "Rouflage 0.2.21: la luz de la sala en una fila de tres botones (DÍA, NORMAL, APAGÓN), siempre uno marcado",
+ "build": 116,
+ "hash": "1337ad5",
+ "fecha": "2026-10-15T21:44:10Z",
+ "mensaje": "Rouflage (móvil vertical): avisos más pequeños, de dos en dos y debajo del marcador; la cámara deja ver el borde de arriba del mapa por debajo del marcador (nadie queda escondido tras él); sin «? ha despedido» cuando explota el silbato; la pista del fantasma se va a los 9 s y no tapa su botón",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

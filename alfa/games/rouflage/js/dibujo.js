@@ -23,7 +23,7 @@ function avanzaCamara(dt, deGolpe) {
   const k = deGolpe ? 1 : Math.min(1, dt * 7);
   CAM.z += (tz - CAM.z) * (deGolpe ? 1 : Math.min(1, dt * 9)); CAM.x += (tx - CAM.x) * k; CAM.y += (ty - CAM.y) * k;
   if (!TALLER.abierto) {   // sin enseñar más allá del mundo (dejando sitio a los botones de arriba y de abajo)
-    const mw = VW / CAM.z / 2, mh = VH / CAM.z / 2, lado = 30 / CAM.z, arriba = 70 / CAM.z, abajo = 150 / CAM.z;
+    const mw = VW / CAM.z / 2, mh = VH / CAM.z / 2, lado = 30 / CAM.z, arriba = margenArriba() / CAM.z, abajo = 150 / CAM.z;
     CAM.x = mw * 2 >= ANCHO + lado * 2 ? ANCHO / 2 : limita(CAM.x, mw - lado, ANCHO - mw + lado);
     CAM.y = mh * 2 >= ALTO + arriba + abajo ? ALTO / 2 : limita(CAM.y, mh - arriba, ALTO - mh + abajo);
   }

@@ -117,7 +117,7 @@ function disparaJugador(x, y, margen) {
   fxMancha(x, y);
   // a quien va corriendo se le puede disparar sin gastar carta
   if (J.camaleones.some(k => !k.fuera && !invisible(k) && k.hielo < 0.85 && (k.moviendo || k.movido > 0) && lejos(k.x, k.y - 24, x, y) < 60)) { yo.enfria = REGLAS.enfria * 0.7; play('gun'); return; }
-  yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('clank'); play('deny');
+  yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('salpica'); play('deny');
   const m = MUEBLES.find(m => m.T.senuelo && x > m.dib.x0 + 8 && x < m.dib.x0 + m.dib.w - 8 && y > m.dib.y0 && y < m.y + 2);
   if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); }
   else {

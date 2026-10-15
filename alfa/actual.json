@@ -1,8 +1,8 @@
 {
- "build": 67,
- "hash": "65d702f",
- "fecha": "2026-10-15T13:06:36Z",
- "mensaje": "Nova 0.3.0 sale en la release: menús con scroll vertical, novedades nuevas, Nova ya no es solo de la alfa",
+ "build": 68,
+ "hash": "44a18d8",
+ "fecha": "2026-10-15T13:29:10Z",
+ "mensaje": "Fans of Rouflage: botón temporal «Sonido: nuevo / antiguo» en título y pausa para comparar en la alfa",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

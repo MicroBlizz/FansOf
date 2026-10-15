@@ -65,9 +65,9 @@ function practicaDispara(x, y, margen) {
   yo.dir = Math.atan2(y - oy, x - ox); yo.mira = Math.cos(yo.dir) >= 0 ? 1 : -1; yo.tApunta = 0.7;
   fxDisparo(yo, x, y); yo.enfria = 0.3;
   const k = PRACTICA.munecos.find(k => !k.fuera && dentroDeAlubia(k, x, y, margen + 4));
-  if (!k) { fxMancha(x, y); marcaPractica(); play('gun'); return; }
+  if (!k) { fxMancha(x, y); marcaPractica(); play('salpica'); return; }
   k.fuera = true; k.tFuera = 2.2; k.congelado = false; k.hielo = 0;
-  fxSello(k.x, k.y - 6); marcaPractica(); fxSalpica(k.x, k.y - 24, '#fff6ea', 10); play('pop');
+  fxSello(k.x, k.y - 6); marcaPractica(); fxSalpica(k.x, k.y - 24, '#fff6ea', 10); play('diana');
   PRACTICA.aciertos++; PRACTICA.sig = Math.min(PRACTICA.sig, 0.25);      // frenético: enseguida sale otro
   if (PRACTICA.extra >= REGLAS.balasExtra) return;
   const falta = PRACTICA_POR_CARTA - PRACTICA.aciertos % PRACTICA_POR_CARTA;

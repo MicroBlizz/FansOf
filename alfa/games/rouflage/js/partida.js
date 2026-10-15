@@ -21,7 +21,7 @@ function escenaTitulo() {
     const e = nuevoEnte('camaleon', tipo, NOMBRES[tipo], ...SALIDA_CAMALEONES[i]);
     e.bot = { estado: 'pasea', t: 0, camino: null, i: 0, atasco: 0, ax: e.x, ay: e.y, espera: rand(0, 1.5) };
   });
-  musica('menu'); avanzaCamara(0, true);
+  musica('rfTitulo'); avanzaCamara(0, true);
 }
 
 // la postura de un colado bot: casi siempre firmes; a veces otra, para que no todos tengan la misma silueta
@@ -58,7 +58,7 @@ function cambiaFase(f) {
   if (f !== 'prep') practicaCierra();
   tutoFase(f);
   if (f === 'prep') {
-    J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica('menu');
+    J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica('rfTaller');
     if (J.modo === 'cazador') { cartel(J.pvp ? tr('¡ERES CAZADOR!') : tr('¡CALENTAMIENTO!'), tr('Dispara a los camaleones de prácticas de la sala y gana cartas de despido')); practicaEmpieza(); }
     else cartel(tr('¡PÍNTATE!'), tr('Busca un sitio, cópiale los colores y congélate'));
   } else if (f === 'cuenta') {
@@ -72,7 +72,7 @@ function cambiaFase(f) {
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
-    musica('boss0'); play('go'); play('luces');
+    musica('rfCaza'); play('comienzaCaza');
     cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length));
   }
   refrescaHud(true);
@@ -129,17 +129,18 @@ function avanzaPartida(dt) {
   } else if (J.fase === 'cuenta') {
     J.reloj -= dt;
     const d = Math.ceil(J.reloj - 0.4);
-    if (d !== J.digito && d >= 1 && d <= 3) { J.digito = d; cartel(String(d), J.modo === 'camaleon' ? tr('Los becarios salen de Recursos Humanos') : tr('Los colados ya están escondidos'), true); play('tick'); }
+    if (d !== J.digito && d >= 1 && d <= 3) { J.digito = d; cartel(String(d), J.modo === 'camaleon' ? tr('Los becarios salen de Recursos Humanos') : tr('Los colados ya están escondidos'), true); play('cuenta', d); }
     if (manda && J.reloj <= 0) cambiaFase('caza');
   } else if (J.fase === 'caza') {
     J.reloj -= dt;
     avanzaSilbidos(dt);
-    if (J.reloj <= REGLAS.rectaFinal && !J.recta) { J.recta = true; M.tmT = 1.2; cartel(tr('¡RECTA FINAL!'), J.modo === 'camaleon' ? tr('Los becarios reciben un chivatazo') : tr('Los colados silban más a menudo'), true); play('horn'); J.pings = 0; }
+    if (J.reloj <= REGLAS.rectaFinal && !J.recta) { J.recta = true; M.tmT = 1; musica('rfRecta'); cartel(tr('¡RECTA FINAL!'), J.modo === 'camaleon' ? tr('Los becarios reciben un chivatazo') : tr('Los colados silban más a menudo'), true); play('recta'); J.pings = 0; }
     if (J.recta) { J.pings -= dt; if (J.pings <= 0) { J.pings = J.modo === 'cazador' ? 6 : 10; chivatazo(); } }
     if (yo.clase === 'camaleon') {
       // el peligro: la mayor sospecha que algún becario tiene de ti, y lo cerca que anda el más próximo
       let p = 0; for (const h of J.cazadores) if (!h.fuera && h.balas > 0) p = Math.max(p, 0.45 * limita(1 - lejos(h.x, h.y, yo.x, yo.y) / 230, 0, 1), h.bot ? Math.max(h.bot.sosp.get(yo) || 0, h.bot.objetivo === yo ? 0.7 : 0) : 0);
-      J.peligro += (limita(p, 0, 1) - J.peligro) * Math.min(1, dt * 6);
+      const antes = J.peligro; J.peligro += (limita(p, 0, 1) - J.peligro) * Math.min(1, dt * 6);
+      if (J.peligro >= 0.8 && antes < 0.8 && !yo.fuera) play('visto');      // un becario casi te tiene: el susto
     }
     // ¿se acaba? (en el PvP lo decide el anfitrión: rfpComprueba, y los demás lo reciben)
     if (J.pvp) { if (manda) rfpComprueba(); else rfpSinAnfitrion(); }
@@ -211,7 +212,7 @@ function termina(victoria, motivo, fin) {
   }
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
-  musica(victoria ? 'win' : 'lose'); play(victoria ? 'crown' : 'sad');
+  musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);
   if (J.pvp) rfpCierra(victoria);      // PvP: se apunta el resultado en el servidor
 }
@@ -221,7 +222,7 @@ function accionPintar() { if (TALLER.abierto) { cierraTaller(); play('select'); 
 function accionCongelar() {
   const yo = J.yo; if (!jugando() || yo.clase !== 'camaleon') return;
   if (TALLER.abierto) cierraTaller();
-  if (yo.congelado) { descongela(yo); play('pop'); }
+  if (yo.congelado) { descongela(yo); play('descongela'); }
   else {
     congela(yo); play('congela');
     fxTexto(yo.x, yo.y - 66, yo.camo + ' %', colorCamo(yo.camo), 19);

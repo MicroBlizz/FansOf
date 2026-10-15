@@ -172,9 +172,13 @@ function elige(modo) {
   if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => { pantalla(null); empiezaPartida(modo); }); return; }
   pantalla(null); empiezaPartida(modo);
 }
+// las barras de volumen (título y pausa) enseñan lo que hay; el icono de al lado silencia y recupera
 function refrescaSonido() {
   for (const id of ['b-sonido', 'b-sonido2']) E(id).classList.toggle('apagado', AUDIO.mudo);
   for (const id of ['b-musica', 'b-musica2']) E(id).classList.toggle('apagado', AUDIO.sinMusica);
+  for (const id of ['v-sonido', 'v-sonido2']) E(id).value = Math.round(AUDIO.vol * 100);
+  for (const id of ['v-musica', 'v-musica2']) E(id).value = Math.round(AUDIO.volMus * 100);
+  for (const id of ['b-viejo', 'b-viejo2']) E(id).textContent = AUDIO.viejo ? tr('Sonido: antiguo') : tr('Sonido: nuevo');      // temporal, para comparar
 }
 // el botón de idioma del título: core guarda el idioma elegido y recarga la página (como en los demás juegos)
 function cambiaIdioma() { NUCLEO.elegirIdioma(IDIOMA_RF === 'es' ? 'en' : 'es'); }
@@ -242,6 +246,9 @@ function preparaInterfaz() {
   E('b-ayuda-ok').onclick = () => { play('select'); const f = _trasAyuda; _trasAyuda = null; if (f) f(); else pantalla('p-titulo'); };
   for (const id of ['b-sonido', 'b-sonido2']) E(id).onclick = () => { cambiaSonido(); refrescaSonido(); };
   for (const id of ['b-musica', 'b-musica2']) E(id).onclick = () => { cambiaMusica(); refrescaSonido(); };
+  for (const id of ['v-sonido', 'v-sonido2']) E(id).oninput = ev => { ponVolumen('vol', ev.target.value / 100); refrescaSonido(); };
+  for (const id of ['v-musica', 'v-musica2']) E(id).oninput = ev => { ponVolumen('volMus', ev.target.value / 100); refrescaSonido(); };
+  for (const id of ['b-viejo', 'b-viejo2']) E(id).onclick = () => { cambiaSonidoViejo(); refrescaSonido(); };
   E('b-idioma').textContent = IDIOMA_RF === 'es' ? 'English' : 'Español';
   E('b-idioma').onclick = () => { cambiaIdioma(); play('select'); };
   E('b-ranking').onclick = () => { RANKING.abierto = !RANKING.abierto; try { localStorage.setItem('rouflage-ranking', RANKING.abierto ? '1' : '0'); } catch (_) { /* sin guardar */ } play('select'); refrescaHud(true); };

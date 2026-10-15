@@ -11,7 +11,7 @@ const volumenEn = (x, y) => limita(1.15 - lejos(x, y, CAM.x, CAM.y) / 620, 0, 1)
 
 function ondaSilbido(x, y, e) {
   FX.lista.push({ k: 'onda', x, y, t: 0, dur: 1.6 });
-  const v = volumenEn(x, y); if (v > 0.05) play('silbido', v);
+  suenaEn('silbido', x, y);
 }
 function fxTexto(x, y, s, color, tam = 15) { FX.lista.push({ k: 'texto', x, y, s, color, tam, t: 0, dur: 1.5 }); }
 function fxGota(x, y, color, vx = rand(-30, 30), vy = rand(-70, -20)) { FX.lista.push({ k: 'gota', x, y, vx, vy, color, r: rand(1.6, 3.4), t: 0, dur: rand(0.45, 0.8) }); }
@@ -19,7 +19,7 @@ function fxSalpica(x, y, color, n) { for (let k = 0; k < n; k++) fxGota(x, y, co
 function fxSudor(e) { fxGota(e.x + rand(-13, 13), e.y - rand(36, 48), '#bdeeff', rand(-24, 24), -46); }
 function fxDisparo(e, x, y) {
   FX.lista.push({ k: 'tiro', x0: e.x + e.mira * 24, y0: e.y - 16, x, y, t: 0, dur: 0.24 });
-  const v = volumenEn(x, y); if (v > 0.05) play('disparo', v);
+  suenaEn('disparo', x, y);
 }
 function fxSello(x, y) { FX.suelo.push({ k: 'sello', x, y, rot: rand(-0.32, 0.32), t: 0 }); if (FX.suelo.length > 26) FX.suelo.shift(); }
 function fxMancha(x, y) {

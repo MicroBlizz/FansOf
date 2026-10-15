@@ -15,6 +15,8 @@
     const c = /[?&]casco=(\w+)/.exec(q);
     if (c) { nvJugar(); document.getElementById('nv-paneles').textContent = ''; NVP.casco = c[1]; nvEmpieza(c[1]); }
     else if (/[?&]jugar=1/.test(q)) nvJugar();
+    const rg = /[?&]rango=(\d+)/.exec(q);   // solo pruebas: empezar en ese rango, con las ranuras llenas y sin morir
+    if (rg && NVP.S) { const S = NVP.S, n = S.nave; n.rango = +rg[1]; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = 1e6; S.chat = nvUmbral(n.rango - 1); nvAjustaTamanos(S); const ps = ['railgun', 'flak', 'laser', 'lanzador', 'drones'], cs = ['cinetica', 'energia', 'termica', 'em', 'explosiva']; for (const sl of nvRanuras(n.rango, S)) if (!n.armas.some(w => w.slot === sl.id) && sl.cara !== 'popa' && sl.tipos.includes(ps[0]) || sl.tipos.includes(ps[1])) if (!n.armas.some(w => w.slot === sl.id)) n.armas.push(nvArmaNueva(sl, sl.tipos.filter(t => ps.includes(t))[0], cs[n.armas.length % 5])); }
     const ff = /[?&]ff=(\d+)/.exec(q);
     if (ff && NVP.S) { const S = NVP.S; NVP.auto = true; while (S.t < +ff[1] && S.estado !== 'derrota' && S.estado !== 'victoria') { if (S.estado === 'cartas') nvElegirCarta(S, 0); else if (S.estado === 'estacion') nvBotEstacion(S); else nvPaso(S, 1 / 30); } }
   });

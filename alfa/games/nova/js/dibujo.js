@@ -177,16 +177,26 @@ function nvDibujaMundo(c, S) {
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const b of S.eproy) { c.fillStyle = '#ff6bd6'; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#fff'; c.stroke(); }
   nvDibujaNave(c, S);
-  for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = 3 + w.rayo * 20; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }
+  const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
+  c.globalCompositeOperation = 'lighter';
+  for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = (3 + w.rayo * 20) * z; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }
   for (const b of S.proy) {
-    c.fillStyle = b.color; c.strokeStyle = '#1a0f2e'; c.lineWidth = 1;
-    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-14, -2.5, 28, 5); c.restore(); }
+    c.fillStyle = b.color; c.strokeStyle = '#1a0f2e'; c.lineWidth = 1 * z;
+    c.globalCompositeOperation = 'lighter'; c.strokeStyle = b.color; c.globalAlpha = 0.45; c.lineWidth = b.r * 1.5; c.lineCap = 'round';   // estela
+    c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - b.vx * 0.045, b.y - b.vy * 0.045); c.stroke(); c.globalAlpha = 1; c.lineCap = 'butt'; c.globalCompositeOperation = 'source-over'; c.strokeStyle = '#1a0f2e';
+    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
     else nvFormaCarga(c, b.forma, b.x, b.y, b.r);
   }
-  for (const f of S.fx) { c.beginPath(); c.arc(f.x, f.y, f.r * (1.4 - f.t * 2), 0, 6.283); c.lineWidth = 4; c.strokeStyle = f.color; c.globalAlpha = Math.max(0, f.t * 2.4); c.stroke(); c.globalAlpha = 1; }
-  for (const p of S.parts) { c.globalAlpha = Math.max(0, p.t * 2); c.fillStyle = p.color; c.fillRect(p.x - 2, p.y - 2, 4, 4); c.globalAlpha = 1; }
+  c.globalCompositeOperation = 'source-over';
+  for (const f of S.fx) {
+    if (f.tipo === 'flash') { c.globalCompositeOperation = 'lighter'; c.beginPath(); c.arc(f.x, f.y, f.r * (0.6 + f.t * 4), 0, 6.283); c.fillStyle = f.color; c.globalAlpha = Math.min(1, f.t * 6); c.fill(); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; continue; }
+    c.beginPath(); c.arc(f.x, f.y, f.r * (1.4 - f.t * 2), 0, 6.283); c.lineWidth = 4 * z; c.strokeStyle = f.color; c.globalAlpha = Math.max(0, f.t * 2.4); c.stroke(); c.globalAlpha = 1;
+  }
+  c.globalCompositeOperation = 'lighter';
+  for (const p of S.parts) { const q = p.s || 4 * z; c.globalAlpha = Math.max(0, p.t * 2); c.fillStyle = p.color; c.fillRect(p.x - q / 2, p.y - q / 2, q, q); c.globalAlpha = 1; }
+  c.globalCompositeOperation = 'source-over';
   c.textAlign = 'center';
-  for (const t of S.nums) { c.globalAlpha = Math.min(1, t.t * 2); c.font = (t.g ? '800 20px' : '700 14px') + ' Baloo 2, sans-serif'; c.lineWidth = 4; c.strokeStyle = '#1a0f2e'; c.strokeText(t.txt, t.x, t.y); c.fillStyle = t.color; c.fillText(t.txt, t.x, t.y); c.globalAlpha = 1; }
+  for (const t of S.nums) { c.globalAlpha = Math.min(1, t.t * 2); const zt = Math.pow(z, 0.6); c.font = (t.g ? '800 ' + 20 * zt + 'px' : '700 ' + 14 * zt + 'px') + ' Baloo 2, sans-serif'; c.lineWidth = 4 * zt; c.strokeStyle = '#1a0f2e'; c.strokeText(t.txt, t.x, t.y); c.fillStyle = t.color; c.fillText(t.txt, t.x, t.y); c.globalAlpha = 1; }
 }
 
 // ---------- fotograma completo ----------

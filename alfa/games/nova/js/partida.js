@@ -9,6 +9,7 @@ function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }
 function nvFactor(r) { return Math.pow(1.07, r - 1); }
 function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
 function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces
+function nvZ(S) { return nvVista(S) / 560; }   // cuántas unidades de mundo mide «un píxel de rango 1»: los efectos y trazos fijos se multiplican por esto para verse igual a cualquier tamaño
 function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
 function nvValorKill(base, rangoE, rangoN) { const d = rangoE - rangoN; return base * (d >= 0 ? Math.pow(1.5, Math.min(d, 8)) : Math.pow(0.6, Math.min(-d, 6))); }
@@ -57,7 +58,7 @@ function nvPaso(S, dt) {
   if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
   if (n.golpeado > 0) n.golpeado -= dt;
   if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
-  for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * dt; if (o.t <= 0) l.splice(i, 1); }
+  for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
   // cámara suave
   S.cam.x += (n.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (n.y - S.cam.y) * Math.min(1, dt * 6);

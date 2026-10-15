@@ -1,8 +1,8 @@
 {
- "build": 47,
- "hash": "232f593",
- "fecha": "2026-10-15T09:26:45Z",
- "mensaje": "Nova: más ranuras al crecer, 4 cartas por categoría y armas que escalan con la nave",
+ "build": 48,
+ "hash": "cec74c4",
+ "fecha": "2026-10-15T09:40:47Z",
+ "mensaje": "Nova: balas, trazos y efectos que escalan con el rango; estelas, fogonazos, chispas y explosiones más vistosas",
  "juegos": {
   "crush": "0.1.15",
   "dark": "0.2.4",

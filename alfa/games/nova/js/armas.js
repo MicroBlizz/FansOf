@@ -80,16 +80,18 @@ function nvDispara(S, w, p, obj) {
   if (w.portador === 'laser') {   // haz instantáneo contra el objetivo
     w.rayo = 0.09; w.rx = obj.x; w.ry = obj.y;
     nvGolpe(S, obj, dano * (id === 'hazEnfocado' ? 1.2 : 1), w, obj.x, obj.y, id === 'hazEnfocado' ? 2 : 1);
+    S.fx.push({ t: 0.16, x: w.x, y: w.y, r: 9 * nvZ(S), color: c.color, tipo: 'flash' });
     return;
   }
   const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) : 1;
+  S.fx.push({ t: 0.14, x: w.x, y: w.y, r: 8 * nvZ(S), color: c.color, tipo: 'flash' });   // fogonazo
   for (let i = 0; i < n; i++) {
     let a = Math.atan2(obj.y - w.y, obj.x - w.x);
     if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - 0.5) * 0.12;
-    const v = w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270;
+    const v = (w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9);   // las balas también corren más cuanto mayor es la nave
     S.proy.push(Object.assign({}, base, {
-      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 5) * kf,
-      vida: (w.portador === 'flak' ? p.alcance * kf / v + 0.1 : w.portador === 'railgun' ? 0.9 * kf : 3), perf: w.portador === 'railgun' ? 3 : 1,
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 5 : w.portador === 'flak' ? 4 : 6) * kf,
+      vida: (w.portador === 'flak' ? p.alcance * kf / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) : 3), perf: w.portador === 'railgun' ? 3 : 1,
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
   }
@@ -142,6 +144,9 @@ function nvExplosion(S, x, y, radio, dano, w, salvo) {
 function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion) {
   const A = NOVA_ARMAS, carga = w.carga, c = A.cargas[carga], est = e.est;
   let d = dano * (mult || 1), crit = false, reac = null;
+  const z = nvZ(S);
+  for (let i = 0; i < 4; i++) { const a = Math.random() * 6.283, v = (60 + Math.random() * 140) * z; S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.35, color: c.color, s: 3 * z }); }   // chispas de impacto
+  S.fx.push({ t: 0.12, x, y, r: 7 * z, color: '#ffffff', tipo: 'flash' });
   if (carga === 'cinetica' && est.brecha > 0) d *= 1.5;
   if (e.resiste === carga) d *= 0.5;
   if (est.marcado > 0 && carga !== 'explosiva') { crit = true; est.marcado = 0; }   // el siguiente impacto de otro tipo es crítico

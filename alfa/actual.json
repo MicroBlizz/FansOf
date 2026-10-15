@@ -1,19 +1,19 @@
 {
- "build": 56,
- "hash": "eda4340",
- "fecha": "2026-10-15T10:30:13Z",
- "mensaje": "Nova: retratos de capitán rehechos con los diseños de la serie como referencia",
+ "build": 57,
+ "hash": "dcfbfc3",
+ "fecha": "2026-10-15T10:31:57Z",
+ "mensaje": "Release sin Nova: Nova solo en la alfa (se quita su tarjeta y boletín de los archivos compartidos al publicar); todos los juegos suben versión por el cambio de core",
  "juegos": {
-  "crush": "0.1.15",
-  "dark": "0.2.4",
-  "island": "0.3.2",
+  "crush": "0.1.16",
+  "dark": "0.2.5",
+  "island": "0.3.3",
   "nova": "0.2.0",
-  "ratkov": "0.2.4",
+  "ratkov": "0.2.5",
   "rouflage": "0.2.10",
-  "rumble": "0.9.134",
-  "skate": "0.1.24",
-  "survivors": "0.1.47",
-  "tacticas": "0.1.31",
-  "td": "0.13.63"
+  "rumble": "0.9.135",
+  "skate": "0.1.25",
+  "survivors": "0.1.48",
+  "tacticas": "0.1.32",
+  "td": "0.13.64"
  }
 }

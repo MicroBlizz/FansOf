@@ -6,6 +6,9 @@ IDIOMA.add({
   "FANS OF KARTS": "FANS OF KARTS",
   "El prototipo (prueba). Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.": "The prototype (test). Kart racing in handheld-console pixel art: pick one of the six leaders and race 16 tracks in 4 worlds (from the beach to the CEO's Tower), with cup mode, jumps, shortcuts and hazards falling from the sky. Microblizz bought the race: win it back.",
   // sus novedades (js/novedades.js)
+  // 0.6.4
+  "<b>HORIZONTAL CON EL MÓVIL DE PIE</b>: si en Opciones eliges jugar en horizontal, ahora el menú, la tienda, el pase y las salas online también se giran con el juego, y las listas se mueven con el dedo.": "<b>LANDSCAPE WITH THE PHONE UPRIGHT</b>: if you choose landscape in Options, the menu, shop, pass and online rooms now turn with the game too, and the lists scroll with your finger.",
+  "Microblizz ha girado los menús para que no te tuerzas el cuello. Phony ya se lo había torcido y pide una indemnización.": "Microblizz turned the menus so you do not twist your neck. Phony had already twisted his and wants compensation.",
   // 0.6.3
   "<b>CRUCE A LO BRUTO</b>: el ocho del tutorial ya no tiene puente, ni rampas, ni cuestas: las dos rectas se cruzan a ras de suelo y en el cruce te puedes chocar con los demás.": "<b>RAW CROSSING</b>: the tutorial eight no longer has a bridge, ramps or hills: the two straights cross at ground level and you can crash into the others at the crossing.",
   "Microblizz ha quitado el puente para ahorrar en madera. Recursos Humanos dice que los choques cuentan como team building.": "Microblizz removed the bridge to save on wood. Human Resources says the crashes count as team building.",

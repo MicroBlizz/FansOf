@@ -155,3 +155,8 @@
 .kt-punto { position: absolute; top: -5px; right: -5px; width: 16px; height: 16px; border-radius: 50%; background: #ff3348; border: 3px solid var(--outline); }
 .kt-brilla { animation: kt-brilla 1.1s ease-in-out infinite; }
 @keyframes kt-brilla { 50% { box-shadow: 0 5px 0 var(--outline), 0 0 0 5px #5ef27a, 0 0 18px 6px rgba(94, 242, 122, 0.7); } }
+/* ---------- la capa que gira con el juego (capa-girada.js): lo «fijo» de dentro se coloca respecto a ella ---------- */
+#kt-capa { position: fixed; z-index: 30; transform-origin: 0 0; pointer-events: none; }
+#kt-capa > * { pointer-events: auto; }
+#kt-capa > [hidden] { display: none; }
+#kt-capa.girada * { touch-action: none; }      /* girada, el dedo lo lleva capa-girada.js */

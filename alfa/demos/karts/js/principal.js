@@ -131,6 +131,7 @@ function fotograma(ahora) {
   mc.imageSmoothingEnabled = false;
   mc.drawImage(LU, OX, OY, w, h);
   pintaBotones();
+  giraCapa();      // las pantallas en HTML giran con el juego (capa-girada.js)
   requestAnimationFrame(fotograma);
 }
 

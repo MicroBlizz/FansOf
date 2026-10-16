@@ -1,8 +1,8 @@
 {
- "build": 126,
- "hash": "405ede8",
- "fecha": "2026-10-16T01:06:31Z",
- "mensaje": "Fans of Rouflage 0.2.24: cuentagotas exacto (también en líneas finas) y paleta de hasta 40 colores del mapa",
+ "build": 127,
+ "hash": "efc39bd",
+ "fecha": "2026-10-16T01:12:08Z",
+ "mensaje": "Fans of Karts 0.6.4: con «horizontal» y el móvil de pie, las pantallas HTML (menú, tienda, pase, salas) giran con el juego y se desplazan con el dedo",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

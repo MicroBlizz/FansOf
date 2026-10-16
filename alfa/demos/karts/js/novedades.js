@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.6.4', real: ["<b>HORIZONTAL CON EL MÓVIL DE PIE</b>: si en Opciones eliges jugar en horizontal, ahora el menú, la tienda, el pase y las salas online también se giran con el juego, y las listas se mueven con el dedo."],
+    joke: ["Microblizz ha girado los menús para que no te tuerzas el cuello. Phony ya se lo había torcido y pide una indemnización."] },
   { v: '0.6.3', real: ["<b>CRUCE A LO BRUTO</b>: el ocho del tutorial ya no tiene puente, ni rampas, ni cuestas: las dos rectas se cruzan a ras de suelo y en el cruce te puedes chocar con los demás."],
     joke: ["Microblizz ha quitado el puente para ahorrar en madera. Recursos Humanos dice que los choques cuentan como team building."] },
   { v: '0.6.2', real: ["<b>LETRA NUEVA</b>: todos los textos y números del juego (marcador, menús, resultados, avisos) usan ahora la letra de los botones de Fans of Rumble, grande y nítida en cualquier pantalla. Las letras amarillas de KARTS siguen igual.", "<b>RAMPAS DEL PUENTE</b>: en el tutorial, el puente tiene rampas de tierra a los dos lados y los karts suben y bajan poco a poco, sin saltos raros."],

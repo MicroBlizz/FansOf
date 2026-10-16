@@ -33,8 +33,8 @@ function pintaMenuHtml() {
 }
 // encima del lienzo, en su mitad de abajo, del tamaño que toque
 function colocaMenu() {
-  const r = cv.getBoundingClientRect(), alto = r.height * 0.38, esc = Math.min(r.width / 600, alto / 215);
-  Object.assign(MENU.caja.style, { left: r.left + r.width / 2 + 'px', top: r.top + r.height * 0.545 + 'px', transform: 'translateX(-50%) scale(' + esc.toFixed(3) + ')' });
+  const r = rectoJuego(), alto = r.h * 0.38, esc = Math.min(r.w / 600, alto / 215);
+  Object.assign(MENU.caja.style, { left: r.x + r.w / 2 + 'px', top: r.y + r.h * 0.545 + 'px', transform: 'translateX(-50%) scale(' + esc.toFixed(3) + ')' });
 }
 // cada fotograma del título (pantallas.js)
 function menuPrincipal() {

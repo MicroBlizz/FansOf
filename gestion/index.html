@@ -79,24 +79,6 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
     <div class="entrada" style="display:grid;gap:10px;max-width:360px;margin-inline:auto">
       <button class="fuerte" type="button" id="g-boton">Entrar con Google</button>
       <div class="aviso" id="g-aviso" role="alert"></div>
-      <details><summary>Acceso antiguo con usuario y contraseña</summary>
-    <form id="f-entrar" class="entrada" autocomplete="on">
-      <label for="e-usuario">Usuario<input id="e-usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
-      <label for="e-clave">Contraseña<input id="e-clave" type="password" autocomplete="current-password" required></label>
-      <div class="aviso" id="e-aviso" role="alert"></div>
-      <button class="fuerte" type="submit" id="e-boton">Entrar</button>
-      <button class="enlace" type="button" id="ir-activar">Primera vez: tengo un código</button>
-    </form>
-    <form id="f-activar" class="entrada" hidden>
-      <label for="a-usuario">Usuario<input id="a-usuario" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
-      <label for="a-codigo">Código de invitación<input id="a-codigo" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
-      <label for="a-clave">Contraseña nueva (mínimo 12 caracteres)<input id="a-clave" type="password" autocomplete="new-password" minlength="12" required></label>
-      <label for="a-clave2">Repite la contraseña<input id="a-clave2" type="password" autocomplete="new-password" minlength="12" required></label>
-      <div class="aviso" id="a-aviso" role="alert"></div>
-      <button class="fuerte" type="submit" id="a-boton">Crear mi acceso</button>
-      <button class="enlace" type="button" id="ir-entrar">Ya tengo contraseña</button>
-    </form>
-      </details>
     </div>
   </section>
 
@@ -165,34 +147,11 @@ function vista(panel) {
   $('vista-entrar').hidden = panel; $('vista-panel').hidden = !panel; $('salir').hidden = !panel;
   $('sub').textContent = panel ? '' : 'Acceso restringido.';
 }
-$('ir-activar').onclick = () => { $('f-entrar').hidden = true; $('f-activar').hidden = false; $('a-usuario').value = $('e-usuario').value; $('a-codigo').focus(); };
-$('ir-entrar').onclick = () => { $('f-activar').hidden = true; $('f-entrar').hidden = false; $('e-usuario').focus(); };
-
-$('f-entrar').onsubmit = async ev => {
-  ev.preventDefault(); $('e-aviso').textContent = ''; $('e-boton').disabled = true;
-  try {
-    const t = await rpc('gestion_entrar', { p_usuario: $('e-usuario').value, p_clave: $('e-clave').value });
-    if (!t) { $('e-aviso').textContent = 'Usuario o contraseña incorrectos.'; return; }
-    guardarToken(t); $('e-clave').value = ''; await abrir();
-  } catch (e) { $('e-aviso').textContent = textoError(e); } finally { $('e-boton').disabled = false; }
-};
-$('f-activar').onsubmit = async ev => {
-  ev.preventDefault(); $('a-aviso').textContent = '';
-  if ($('a-clave').value !== $('a-clave2').value) { $('a-aviso').textContent = 'Las dos contraseñas no coinciden.'; return; }
-  $('a-boton').disabled = true;
-  try {
-    const ok = await rpc('gestion_activar', { p_usuario: $('a-usuario').value, p_codigo: $('a-codigo').value.trim().toUpperCase(), p_clave: $('a-clave').value });
-    if (!ok) { $('a-aviso').textContent = 'El código no vale o ha caducado.'; return; }
-    $('e-usuario').value = $('a-usuario').value; $('e-clave').value = $('a-clave').value;
-    $('a-clave').value = $('a-clave2').value = $('a-codigo').value = '';
-    $('ir-entrar').click(); $('e-aviso').textContent = 'Acceso creado. Ya puedes entrar.'; $('e-aviso').style.color = 'var(--ok)'; $('e-clave').value = '';
-  } catch (e) { $('a-aviso').textContent = textoError(e); } finally { $('a-boton').disabled = false; }
-};
 $('salir').onclick = async () => { try { await rpc('gestion_salir', { p_token: leerToken() }); } catch (e) { /* da igual */ } guardarToken(''); datos = null; vista(false); };
 
 async function abrir() {
   try { datos = await rpc('gestion_datos', { p_token: leerToken() }); }
-  catch (e) { guardarToken(''); vista(false); $('e-aviso').style.color = ''; $('e-aviso').textContent = textoError(e); return; }
+  catch (e) { guardarToken(''); vista(false); $('g-aviso').style.color = ''; $('g-aviso').textContent = textoError(e); return; }
   vista(true); pinta();
 }
 $('recargar').onclick = abrir;

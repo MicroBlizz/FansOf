@@ -38,7 +38,7 @@ function nvDanoArma(w) {
   const P = NOVA_ARMAS, p = P.portadores[w.portador], c = P.cargas[w.carga];
   let d = p.dano * P.tamanos[w.tam] * (1 + P.mejora.porNivel * w.nivel) * (NOVA_CASCOS.caras[w.cara].dano || 1) * c.multDano;
   d *= (NVP.S && NVP.S.mejoras.dano) || 1;
-  if (NVP.S) { d *= 1 + (NVP.S.capDano || 0); if (NVP.S.cap === 'necrolord' && w.portador === 'drones') d *= 0.5; }
+  if (NVP.S) { d *= (1 + (NVP.S.capDano || 0)) * (1 + (NVP.S.nucleoBono || 0)); if (NVP.S.cap === 'necrolord' && w.portador === 'drones') d *= 0.5; }
   if (w.fusion) d *= w.fusion.tipo === 'doble' ? (w.fusion.mult || 1) : P.fusionMixta.mult;
   return d;
 }

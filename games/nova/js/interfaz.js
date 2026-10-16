@@ -87,11 +87,12 @@ function nvPanelesDOM(S) {
     NVI.finVisto = S; cont.textContent = '';
     const p = nvEl('nv-panel'), ok = S.estado === 'victoria';
     p.appendChild(nvEl('nv-titulo', ok ? tr('¡SECTOR LIMPIO!') : tr('NAVE DESTRUIDA')));
-    const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación'), Math.floor(S.chat / 10)]];
+    const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación ganada'), nvCierraMision(S) || S.aleacionGanada || 0]];
     for (const [a, b] of l) { const f = nvEl('nv-fila'); f.appendChild(nvEl('', a)); f.appendChild(nvEl('', String(b))); p.appendChild(f); }
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
-    const b = nvEl('nv-boton', tr('Jugar otra vez'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvMenu(); };
+    if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
+    const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
     const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
     p.appendChild(b); p.appendChild(s); cont.appendChild(p);
   }
@@ -131,7 +132,7 @@ function nvMenu() {
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);
   }
-  const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
+  const s = nvEl('nv-boton', tr('Atrás'), 'button'); s.onclick = nvGalaxiaMenu; p.appendChild(s);
   cont.appendChild(p);
 }
 function nvMenuCapitan(casco) {

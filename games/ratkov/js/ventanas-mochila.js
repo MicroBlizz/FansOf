@@ -1,6 +1,6 @@
 // Fans of Ratkov · EL BOTÍN Y LA MOCHILA (la mochila Tetris en la incursión). El contenedor o el cuerpo es una cuadrícula con sus cosas
 // (aparecen poco a poco); tu mochila, otra; los bolsillos, tres casillas sueltas, y la riñonera, una cuadrícula de 2 x 2 que no se pierde.
-// Se arrastra de una a otra (js/rejilla.js). COGER TODO solo mete lo que quepa. Aquí no hay ORDENAR: eso es del refugio.
+// Se arrastra de una a otra (js/rejilla.js). No hay botón de coger todo: se coloca a mano. Aquí no hay ORDENAR: eso es del refugio.
 // Ojo: mientras miras el botín o la mochila, el juego sigue. Solo la pausa lo para.
 'use strict';
 // el tamaño de casilla para que quepa todo en la ventana (de pie: una cuadrícula encima de otra; tumbado: una al lado de la otra)
@@ -54,7 +54,7 @@ function pintaBotin() {
   if (c.escondite && !c.escondite.hecho) h += '<button type="button" class="mini oro" data-a="rebusca">' + esc(tr('ALGO ABULTA… REBUSCAR')) + '</button>';
   if (c.tipo === 'coche' && !c.puenteHecho) h += '<button type="button" class="mini oro" data-a="puente">' + esc(tr('HACER UN PUENTE')) + '</button>';
   h += '</div>' + htmlTuyo(dim) + '</div><div class="rej-info fila-obj"></div>';
-  if (c.cosas.length && c.vistos >= c.cosas.length) h += '<div class="pie">' + (paseVip() ? boton('COGER TODO', 'todo', 0, 'bien grande') : botonVip('COGER TODO', 'todo', 'mini grande')) + '</div>';
+  // sin botón de COGER TODO: el botín se coloca a mano, jugando al Tetris (el código de 'todo' sigue abajo por si vuelve)
   const v = abreVentana('v-botin', h); v.classList.add('rej-v'); enganchaCerrar(v, 'v-botin');
   const C = casillaVentana(Math.max(c.dim.w, dim.w), c.dim.h + dim.h + 2.4, c.dim.w + dim.w + 3.6, Math.max(c.dim.h, dim.h) + 0.6);
   const cont = { id: 'cont', raiz: v.querySelector('[data-sitio="cont"]'), lista: c.cosas, dim: c.dim, oculto: o => c.cosas.indexOf(o) >= c.vistos,

@@ -35,3 +35,6 @@
 .nv-nave canvas { width: 66px; height: 90px; flex: none; }
 .nv-ntxt { display: flex; flex-direction: column; gap: 2px; }
 .nv-carta:disabled { opacity: .45; cursor: default; }
+
+.nv-gal { width: 100%; max-width: 520px; align-self: center; display: block; touch-action: manipulation; cursor: pointer; }
+.nv-galinfo { cursor: default; }

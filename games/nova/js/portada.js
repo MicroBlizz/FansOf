@@ -6,7 +6,7 @@
   portada.querySelector('#nv-estado').textContent = tr('Fans of Nova · prototipo');
   const b = document.getElementById('nv-jugar');
   b.textContent = tr('Jugar el prototipo');
-  b.onclick = nvJugar;
+  b.onclick = nvJugarCampana;
   nvEntrada();
   nvCargaArte(() => {   // el botón aparece cuando el arte está cargado (el menú enseña las naves)
     b.hidden = false;
@@ -17,6 +17,8 @@
     else if (/[?&]menu=capitan/.test(q)) { nvJugar(); nvMenuCapitan('caza'); }
     else if (/[?&]menu=oficial/.test(q)) { nvJugar(); nvMenuOficial('caza', 'bunny'); }
     else if (/[?&]jugar=1/.test(q)) nvJugar();
+    else if (/[?&]galaxia=1/.test(q)) nvJugarCampana();
+    else if (/[?&]capital=1/.test(q)) { nvJugarCampana(); nvNaveCapital(); }
     const rg = /[?&]rango=(\d+)/.exec(q);   // solo pruebas: empezar en ese rango, con las ranuras llenas y sin morir
     if (rg && NVP.S) { const S = NVP.S, n = S.nave; n.rango = +rg[1]; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = 1e6; S.chat = nvUmbral(n.rango - 1); nvAjustaTamanos(S); const ps = ['railgun', 'flak', 'laser', 'lanzador', 'drones'], cs = ['cinetica', 'energia', 'termica', 'em', 'explosiva']; for (const sl of nvRanuras(n.rango, S)) if (!n.armas.some(w => w.slot === sl.id) && sl.cara !== 'popa' && sl.tipos.includes(ps[0]) || sl.tipos.includes(ps[1])) if (!n.armas.some(w => w.slot === sl.id)) n.armas.push(nvArmaNueva(sl, sl.tipos.filter(t => ps.includes(t))[0], cs[n.armas.length % 5])); }
     if (/[?&]estacion=1/.test(q) && NVP.S) { NVP.S.estado = 'estacion'; NVP.S.est = { cd: 0 }; NVP.S.estTaller = /[?&]taller=1/.test(q) ? { sel: [] } : null; }   // solo pruebas

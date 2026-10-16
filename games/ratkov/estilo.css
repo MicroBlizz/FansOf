@@ -152,7 +152,7 @@ body.tactil.horizontal #h-tuto { top: calc(44px + env(safe-area-inset-top)); wid
 body.en-tuto #h-avisos { display: none; }
 
 /* ---------- ventanas ---------- */
-.ventana { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(620px, 94vw); max-height: 88vh; overflow-y: auto; background: var(--rk-panel2); border: 2px solid var(--rk-borde2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); padding: 0 14px 14px; z-index: 20; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
+.ventana { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(620px, 94vw); max-height: 88vh; overflow-y: auto; background: rgb(18, 24, 30); border: 2px solid var(--rk-borde2); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); padding: 0 14px 14px; z-index: 20; -webkit-overflow-scrolling: touch; touch-action: pan-y; }
 .ventana header { position: sticky; top: 0; z-index: 1; background: var(--rk-panel2); display: flex; align-items: center; gap: 10px; padding: 12px 0 8px; border-bottom: 1px solid var(--rk-borde); margin-bottom: 8px; flex-wrap: wrap; }
 .ventana header b { font: 22px var(--rk-tit); letter-spacing: 0.03em; }
 .ventana header span { color: var(--rk-tenue); font-size: 18px; flex: 1; }

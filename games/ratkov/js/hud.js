@@ -96,6 +96,8 @@ function avisa(texto, tipo = 'info') {
   const d = document.createElement('div'); d.className = 'aviso ' + tipo; d.textContent = texto; caja.prepend(d);
   while (caja.children.length > (ENT.tactil ? 2 : 4)) caja.lastChild.remove();   // en el móvil, dos a la vez: más tapan el juego
   setTimeout(() => d.classList.add('fuera'), 4200); setTimeout(() => d.remove(), 5000);
+  // con la mochila o el botín abiertos los avisos quedan debajo de la ventana: los que importan (no cabe, te dan…) salen también arriba
+  if (tipo === 'malo' && typeof ventanaAbierta === 'function' && ventanaAbierta() && typeof toast === 'function') toast(texto);
 }
 
 /* ---------- bolsillos: tres casillas rápidas ---------- */

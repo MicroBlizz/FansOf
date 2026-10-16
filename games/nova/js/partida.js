@@ -38,9 +38,11 @@ function nvNuevaPartida(casco, cap, ofi) {
   NVP.S = S;
   const sl = nvRanuras(1, S)[0];
   S.nave.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1]));
+  nvSectorPartida(S);
   nvGeneraMundo(S);
   S.cap = cap; S.ofi = ofi; S.kills = [];
   nvAplicaTripulacion(S);
+  nvAplicaCampana(S);
   return S;
 }
 

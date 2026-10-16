@@ -2,6 +2,8 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  "<b>RATKOV, MÁS LIMPIO</b>: ya no hay botón de coger todo (el botín se coloca a mano). Los enemigos ya no se quedan metidos dentro del tren cuando llega, no aparecen ni pasean por huecos cerrados y los de un mismo grupo ya no se amontonan. La mochila y el botín dejan de dejar ver los avisos por debajo, y la ficha del objeto se lee mejor con el móvil tumbado.": "<b>RATKOV, CLEANER</b>: the grab-all button is gone (loot is placed by hand). Enemies no longer get stuck inside the train when it arrives, no longer spawn or wander in closed-off gaps, and enemies in the same group no longer pile on top of each other. The backpack and loot windows no longer let warnings show through underneath, and the item card reads better with the phone on its side.",
+  "Microblizz asegura que quitar el botón de coger todo es «para fomentar el ejercicio». Phony se ha comprado una mochila más grande.": "Microblizz claims removing the grab-all button is \"to encourage exercise\". Phony has bought a bigger backpack.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",
   "Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta.": "Microblizz counted your stars twice to be sure. Phony counts them separately, in his own account.",
   "FANS OF RATKOV": "FANS OF RATKOV",

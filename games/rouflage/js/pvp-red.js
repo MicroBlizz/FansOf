@@ -40,7 +40,7 @@ const RFRED = (() => {
     return /cuenta_no_vinculada|sin_sesion/.test(m) ? 'Para jugar PvP necesitas una cuenta vinculada: botón CUENTA del título.'
       : /could not find|schema cache|PGRST202|HTTP 404/i.test(m) ? 'El PvP de Rouflage todavía no está abierto en el servidor. Pronto.' : /refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego.'
       : /sala_no_valida/.test(m) ? 'La sala ya no existe.' : /codigo_no_valido/.test(m) ? 'Ese código no existe o la sala ya empezó.' : /sala_llena/.test(m) ? 'La sala está llena.'
-      : /faltan_jugadores/.test(m) ? 'Hacen falta al menos dos personas para empezar.' : /no_eres_anfitrion/.test(m) ? 'Solo el anfitrión puede empezar.' : 'Necesitas conexión para jugar PvP.';
+      : /voto_en_espera/.test(m) ? 'Aún no se puede volver a votar.' : /faltan_jugadores/.test(m) ? 'Hacen falta al menos dos personas para empezar.' : /no_eres_anfitrion/.test(m) ? 'Solo el anfitrión puede empezar.' : 'Necesitas conexión para jugar PvP.';
   };
 
   // ---------- el canal de la partida (Realtime, protocolo Phoenix): canal(sala, alMensaje, alEstado) → { enviar(datos), cerrar() } ----------
@@ -82,7 +82,7 @@ const RFRED = (() => {
       const sondeo = async () => {
         if (!activo) return;
         try {
-          const r = await rpc(primera ? 'rouflage_pvp_estado' : opc && (opc.crear || opc.codigo) ? 'rouflage_pvp_privada' : 'rouflage_pvp_buscar', !primera && opc && opc.codigo ? { p_codigo: String(opc.codigo).toUpperCase() } : {});
+          const r = await rpc(primera ? 'rouflage_pvp_estado' : opc && (opc.crear || opc.codigo) ? 'rouflage_pvp_privada' : 'rouflage_pvp_buscar_modos', !primera && opc && opc.codigo ? { p_codigo: String(opc.codigo).toUpperCase() } : {});
           primera = true;
           if (!activo) return;
           if (r && r.sala) { aviso(r); if (r.estado !== 'espera') { activo = false; return; } }
@@ -94,7 +94,8 @@ const RFRED = (() => {
       return { cancelar() { if (!activo) return; activo = false; clearTimeout(tic); rpc('rouflage_pvp_salir').catch(() => { /* da igual */ }); } };
     },
     empezar: () => rpc('rouflage_pvp_empezar'),
-    modo: m => rpc('rouflage_pvp_modo', { p_modo: m }),      // el anfitrión de una sala con amigos elige el modo (modos.js); el sondeo lo trae a todos
+    modo: m => rpc('rouflage_pvp_modo', { p_modo: m }),
+    voto: v => rpc('rouflage_pvp_voto', { p_voto: v }),      // en la sala pública: 'ya' (empezar ya), 'mas' (sumar 60 s) o null (quitar el voto); devuelve la sala      // el anfitrión de una sala con amigos elige el modo (modos.js); el sondeo lo trae a todos
     canal: (sala, alMensaje, alEstado) => canal(sala, alMensaje, alEstado),
     cerrar: (sala, gano) => rpc('rouflage_pvp_cerrar', { p_sala: sala, p_gano: !!gano }),
     // vivo = true: te vas con tu papel en juego (solo se apunta el abandono); false: espectador (cobras o pierdes con tu bando). Si el servidor aún no tiene la función nueva, la de siempre
@@ -107,31 +108,47 @@ const RFRED = (() => {
   // ---------- pruebas: varias pestañas del mismo navegador (BroadcastChannel). La de id más bajo hace de servidor: junta hasta 10 en 6 s, reparte los papeles y la sala ----------
   const local = {
     nombre: 'Pruebas (pestañas)',
-    espera: 6, total: 10, ncaz: 2,
-    arranque: false, modoSala: null,
+    espera: 60, total: 10, ncaz: 2,
+    arranque: false, modoSala: null, miVoto: null, votar: null,
     buscar(aviso, opc) {
       const codigo = opc && opc.crear ? 'PRUE' : opc && opc.codigo ? String(opc.codigo).toUpperCase() : null;      // en las pruebas la sala con amigos siempre se llama PRUE
-      local.arranque = false; local.modoSala = null;
+      local.arranque = false; local.modoSala = codigo ? null : modoAzar(); local.miVoto = null;
       const id = (opc && opc.crear ? '0' : '') + Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas' + (codigo ? '-' + codigo : '')), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
       let activo = true, tic = null;
       const para = () => { activo = false; clearInterval(tic); try { bc.close(); } catch (e) { /* ya cerrado */ } };
       const nombreDe = i => 'Pestaña ' + i.slice(0, 3).toUpperCase();
-      let modoVisto = null;
+      let modoVisto = null, hasta = Date.now() + local.espera * 1000, libre = 0, empate = 0, ronda = 0, rondaHost = 0, votoHost = null;
+      local.votar = v => { if (v && Date.now() < (votoHost ? votoHost.libre : libre)) return Promise.reject(new Error('voto_en_espera')); local.miVoto = v; paso(); return Promise.resolve(null); };
       const empieza = m => { para(); aviso({ sala: m.sala, estado: 'jugando', orden: m.ids.indexOf(id), semilla: m.semilla, n: m.ids.length, max: local.total, ncaz: local.ncaz, faltan: 0, modo: m.modo || null,
         jugadores: m.ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: m.animales[i], rol: m.roles[i], yo: x === id })) }); };
       bc.onmessage = e => {
         const m = e.data; if (!activo || !m) return;
-        if (m.t === 'busco') { vistos.set(m.id, { t: Date.now() }); if (m.modo !== undefined && m.id < id) modoVisto = m.modo; }
+        if (m.t === 'busco') {
+          vistos.set(m.id, { t: Date.now(), v: m.v, r: m.r });
+          if (m.modo !== undefined && m.id < id) modoVisto = m.modo;
+          if (m.host && m.id < id) { votoHost = m.host; if (m.host.ronda !== rondaHost) { rondaHost = m.host.ronda; local.miVoto = null; } }      // el que hace de servidor borra los votos: se vota otra vez
+        }
         else if (m.t === 'par' && m.ids.includes(id)) empieza(m);
       };
       const paso = () => {
         if (!activo) return;
-        bc.postMessage({ t: 'busco', id, modo: local.modoSala });
         for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
-        const ids = [...vistos.keys()].sort(), n = ids.length;
-        aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null, codigo, privada: !!codigo, anfitrion: 0, modo: ids[0] === id ? local.modoSala : modoVisto,
+        vistos.get(id).v = local.miVoto; vistos.get(id).r = [...vistos.keys()].sort()[0] === id ? ronda : rondaHost;
+        const ids = [...vistos.keys()].sort(), n = ids.length, soy = ids[0] === id;
+        // la votación (solo en la pública): la cuenta el que hace de servidor, igual que _rf_arranca
+        let ya = 0, mas = 0;
+        if (!codigo && soy) {
+          for (const k of ids) { const v = vistos.get(k); if (v.r === ronda) { if (v.v === 'ya') ya++; else if (v.v === 'mas') mas++; } }
+          if (ya * 2 > n) local.arranque = true;
+          else if (mas * 2 > n) { hasta = Math.min(hasta + 60000, t0 + 300000); libre = Date.now() + 30000; ronda++; local.miVoto = null; ya = mas = 0; }
+          else if (ya + mas === n && n > 0) { empate = Date.now(); ronda++; local.miVoto = null; ya = mas = 0; }
+        }
+        const h = soy ? { hasta, libre, empate, ronda, ya, mas } : votoHost || { hasta, libre: 0, empate: 0, ronda: 0, ya: 0, mas: 0 };
+        bc.postMessage({ t: 'busco', id, modo: local.modoSala, v: local.miVoto, r: soy ? ronda : rondaHost, host: soy ? h : null });
+        aviso({ sala: 'pruebas', estado: 'espera', n, max: local.total, ncaz: local.ncaz, faltan: codigo ? null : Math.max(0, Math.ceil((h.hasta - Date.now()) / 1000)), codigo, privada: !!codigo, anfitrion: 0, modo: ids[0] === id ? local.modoSala : modoVisto,
+          votos: codigo ? null : { ya: h.ya, mas: h.mas, yo: local.miVoto, libre: Math.max(0, Math.ceil((h.libre - Date.now()) / 1000)), empate: Date.now() - h.empate < 4000 },
           jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: 'bunny', rol: null, yo: x === id })) });
-        const toca = codigo ? local.arranque && n >= 1 : n >= local.total || (n >= 2 && Date.now() - t0 > local.espera * 1000);
+        const toca = codigo ? local.arranque && n >= 1 : n >= local.total || local.arranque || Date.now() >= hasta;
         if (ids[0] === id && toca) {
           // los papeles al azar: entre 1 y ncaz cazadores humanos, y al menos 1 camaleón humano
           const ord = ids.slice(0, local.total).map((x, i) => [Math.random(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]), nn = ord.length;
@@ -145,6 +162,7 @@ const RFRED = (() => {
       return { cancelar: para };
     },
     empezar: () => { local.arranque = true; return Promise.resolve(); },
+    voto: v => local.votar ? local.votar(v) : Promise.resolve(null),
     modo: m => { local.modoSala = m; return Promise.resolve(); },
     canal(sala, alMensaje, alEstado) {
       const bc = new BroadcastChannel('rf-pvp-sala-' + sala);

@@ -32,6 +32,13 @@ const MODO = { m: 'normal', x: {} };                 // la partida en curso
 const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
 
 // deja la partida en un modo (null: el normal). Viene del servidor ({ m, x: { apagon: 1 } }) o de la URL en solitario
+// un modo al azar, como el que pone el servidor a las salas públicas (_rf_modo_azar en servidor/42-rouflage-publica.sql): lo usa la red de pruebas
+function modoAzar() {
+  const ms = ['normal', 'contagio', 'ida', 'retrato'], ex = ['galeria', 'halcon', 'bufon', 'silbato', 'chivato', 'bote'], x = {}, r = Math.random();
+  if (Math.random() < 0.5) x[ex[Math.floor(Math.random() * ex.length)]] = 1;
+  if (r < 0.2) x.apagon = 1; else if (r < 0.4) x.dia = 1;
+  return { m: ms[Math.floor(Math.random() * ms.length)], x };
+}
 function modoPon(d) {
   MODO.m = d && MODOS[d.m] ? d.m : 'normal'; MODO.x = {};
   for (const k in (d && d.x) || {}) if (EXTRAS[k] && d.x[k]) MODO.x[k] = 1;

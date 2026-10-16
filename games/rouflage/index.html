@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.22"></script>
+<script src="../../core/js/nucleo.js?v=0.2.23"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -278,6 +278,10 @@
       <div class="modo-fila"><button type="button" class="boton peq flecha" id="b-modo-ant" data-tr-aria aria-label="Modo anterior">&#9664;</button><span class="modo-nombre"><small data-tr>MODO</small><b class="ol" id="busca-modo-n">NORMAL</b></span><button type="button" class="boton peq flecha" id="b-modo-sig" data-tr-aria aria-label="Modo siguiente">&#9654;</button></div>
       <p class="nota-sala modo-texto" id="busca-modo-t"></p>
       <div class="extras" id="busca-extras"></div>
+    </div>
+    <div class="voto-sala" id="busca-voto" hidden>
+      <div class="voto-botones"><button type="button" class="voto-b" id="b-voto-ya"><span data-tr>EMPEZAR YA</span><b id="voto-ya">0</b></button><button type="button" class="voto-b" id="b-voto-mas"><span data-tr>+60 S</span><b id="voto-mas">0</b></button></div>
+      <p class="nota-sala" id="voto-nota"></p>
     </div>
     <ul class="sala" id="busca-lista"></ul>
     <p class="nota-sala" data-tr>Los huecos hasta 10 los llena la máquina. Los papeles se reparten al azar al empezar.</p>

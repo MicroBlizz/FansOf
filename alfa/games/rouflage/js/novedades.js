@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.24', real: ["<b>CUENTAGOTAS Y PALETA MEJORADOS</b>: el cuentagotas coge el color exacto del punto que tocas, también en las líneas finas (las juntas de los azulejos, las rayas de la alfombra del hotel, el gris de los pasillos). La paleta trae hasta 40 colores del mapa, elegidos para que casi todo el suelo y las paredes tengan uno igual."],
+    joke: ["Microblizz ha comprado un cuentagotas de diseño para la estación. Phony dice que lleva tres semanas copiando el color de su sueldo y le sale siempre gris."] },
   { v: '0.2.23', real: ["<b>BUSCAR PARTIDA CON MODOS</b>: cada sala pública trae un modo al azar (Normal, Contagio, Ida y vuelta o Retrato robot, a veces con un extra o con la luz cambiada) y lo ves mientras esperas. La sala espera 60 segundos y el reloj nunca se para. Mientras, votáis con dos botones: EMPEZAR YA o +60 S. Gana el que tenga más de la mitad de los votos; si empatáis, se vota otra vez, y tras ganar +60 S hay que esperar 30 segundos para volver a votar. Si no hay gente suficiente, la máquina rellena con bots (solo contra bots no se gasta caos primordial ni se ganan puntos)."],
     joke: ['Microblizz ha puesto una votación en la sala de espera para que parezca una democracia. Phony ha votado +60 S once veces: dice que así cobra más horas.'] },
   { v: '0.2.22', real: ["<b>MENÚ A TODO COLOR</b>: los botones del título ya no son grises: armario verde, perfil azul, habitación de madera, cómo se juega celeste y opciones gris azulado claro."],

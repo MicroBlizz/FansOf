@@ -35,6 +35,7 @@ function trazaColaFantasma(c, t, mira, mueve) {
 }
 function pintaFantasma(c, t) {
   const f = J.fantasma; if (!f || !espectando()) return;
+  if (J.yo.ropa && J.yo.ropa.fantasma && J.yo.ropa.fantasma !== 'galleta') return pintaFantasmaArmario(c, t, f, J.yo.ropa.fantasma);
   const yo = J.yo, L = LIENZO_FANTASMA, mira = f.mira || 1, bote = Math.sin(t * 3.4) * 3;
   if (!L.cv) [L.cv, L.c] = lienzo(L.w * L.esc, L.h * L.esc);
   const g = L.c;
@@ -66,5 +67,12 @@ function pintaFantasma(c, t) {
   c.save(); c.globalAlpha = 0.8;
   c.drawImage(L.cv, x - L.w / 2, y - (L.h - 26), L.w, L.h);
   c.restore();
+  rotulo(c, tr('TÚ'), x, y - 78, 10, '#ffcb3d', OL, LETRA_UI);
+}
+// el fantasma que elegiste en el armario (sábana, globo, nube…): su dibujo del armario (ARD.fantasma), flotando y medio transparente como el de siempre
+function pintaFantasmaArmario(c, t, f, tipo) {
+  const x = f.x, y = f.y + 30 + Math.sin(t * 3.4) * 3, w = 74;
+  c.save(); c.globalAlpha = 0.85; c.translate(x, y - w * 0.5); c.rotate(Math.sin(t * 1.7) * 0.06 + (f.mueve ? (f.mira || 1) * 0.1 : 0)); c.translate(-w / 2, -w / 2);
+  ARD.fantasma(c, w, tipo); c.restore();
   rotulo(c, tr('TÚ'), x, y - 78, 10, '#ffcb3d', OL, LETRA_UI);
 }

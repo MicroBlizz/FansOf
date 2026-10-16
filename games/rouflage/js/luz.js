@@ -40,7 +40,7 @@ function pintaLuces(c) {
     g.beginPath(); g.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) g.lineTo(pts[k], pts[k + 1]); g.closePath(); g.fill();
     const rc = REGLAS.luzCerca + 16, gc = g.createRadialGradient(x, y, 6, x, y, rc); gc.addColorStop(0, 'rgba(0,0,0,0.92)'); gc.addColorStop(0.6, 'rgba(0,0,0,0.7)'); gc.addColorStop(1, 'rgba(0,0,0,0)');
     g.fillStyle = gc; g.beginPath(); g.arc(x, y, rc, 0, TAU); g.fill();
-    haces.push(pts);
+    haces.push(e.ropa && e.ropa.linterna ? { pts, col: e.ropa.linterna.color, borde: e.ropa.linterna.borde } : pts);      // la linterna del armario: su tono y su borde
   }
   for (const f of eventoFocos()) {      // los focos del mapa (faros, una ventana encendida…)
     const pts = abanicoFoco(f, []), gr = g.createRadialGradient(f.x, f.y, 8, f.x, f.y, f.largo); gr.addColorStop(0, 'rgba(0,0,0,1)'); gr.addColorStop(0.75, 'rgba(0,0,0,0.9)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
@@ -49,6 +49,15 @@ function pintaLuces(c) {
   }
   c.setTransform(1, 0, 0, 1, 0, 0); c.imageSmoothingEnabled = true; c.drawImage(LZ.cv, 0, 0, cv.width, cv.height);
   // un velo cálido dentro de cada haz
-  ponMundo(c); c.fillStyle = `rgba(255,236,170,${0.075 * J.oscuro})`;
-  for (const pts of haces) { c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); c.fill(); }
+  ponMundo(c);
+  for (const hz of haces) {
+    const pts = hz.pts || hz, traza = () => { c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); };
+    c.fillStyle = hz.col ? hz.col.replace(/,[^,]*\)$/, `,${0.1 * J.oscuro})`) : `rgba(255,236,170,${0.075 * J.oscuro})`; traza(); c.fill();
+    if (hz.borde) {
+      c.save(); c.globalAlpha = 0.75 * J.oscuro; c.strokeStyle = hz.col.replace(/,[^,]*\)$/, ',1)'); c.lineWidth = 2.4; c.lineJoin = 'round';
+      if (hz.borde === 'puntos') c.setLineDash([3, 6]);
+      traza(); c.stroke(); c.restore();
+      if (hz.borde === 'estrellas') for (let k = 1; k < 4; k++) { const i = 2 * Math.floor(pts.length / 4) - (k % 2) * 2, a = k / 4; c.save(); c.globalAlpha = 0.8 * J.oscuro; c.translate(pts[0] + (pts[i] - pts[0]) * a, pts[1] + (pts[i + 1] - pts[1]) * a); c.rotate(RELOJ * 1.5 + k); c.fillStyle = '#ffcb3d'; c.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 2.2 : 5.5, g = j * Math.PI / 5; c.lineTo(Math.cos(g) * r, Math.sin(g) * r); } c.closePath(); c.fill(); c.restore(); }
+    }
+  }
 }

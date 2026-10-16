@@ -30,8 +30,45 @@ function arConjuntoPuesto(cj) { const p = armarioEstado().puesto; return Object.
 function ropaDe(prueba) {
   const p = Object.assign({}, armarioEstado().puesto);
   if (prueba) { if (prueba.cat === 'conjuntos') Object.assign(p, prueba.it.piezas); else p[prueba.cat] = prueba.it ? prueba.it.id : null; }
-  const v = cat => { const it = arItem(cat, p[cat]); return it ? it.v : null; };
-  return { ojos: ARD.OJOS[v('ojos')] || null, boca: ARD.BOCAS[v('bocas')] || null, papel: v('papel') || 'blanco', cabeza: v('cabeza'), espalda: v('espalda'), ids: p };
+  return ropaDeIds(p);
+}
+// lo mismo a partir de los ids (lo tuyo o lo que manda otro jugador por la red): ojos, boca, papel, cabeza, espalda, los colores del humo y el fantasma
+function ropaDeIds(p) {
+  const v = cat => { const it = arItem(cat, p[cat]); return it ? it.v : null; }, h = arItem('humo', p.humo), l = arItem('linterna', p.linterna), t = arItem('titulos', p.titulos);
+  return { ojos: ARD.OJOS[v('ojos')] || null, boca: ARD.BOCAS[v('bocas')] || null, papel: v('papel') || 'blanco', cabeza: v('cabeza'), espalda: v('espalda'),
+    humo: (h && h.x && h.x.colores) || null, fantasma: arItem('fantasma', p.fantasma) ? p.fantasma : null,
+    silbido: arItem('silbido', p.silbido) ? p.silbido : null, congelar: arItem('congelar', p.congelar) ? p.congelar : null, sello: arItem('sello', p.sello) ? p.sello : null,
+    linterna: (l && l.x && l.x.color) ? { color: l.x.color, borde: l.x.borde } : null, marco: arItem('marcos', p.marcos) ? p.marcos : null,
+    titulo: (t && t.x && t.x.texto) ? { texto: t.x.texto, color: t.x.color } : null, gesto: arItem('gestos', p.gestos) ? p.gestos : null, ids: p };
+}
+// EN LA PARTIDA (de momento, como el armario, solo en la alfa y en desarrollo): lo que va en el cuerpo, el humo, el fantasma y el papel (el camaleón lo lleva
+// mientras anda: al congelarse o abrir el pincel vuelve a ser un lienzo en blanco, así que no cambia el camuflaje; el becario lo lleva siempre). Contra bots se lo pone tu personaje; en el PvP viaja a los demás en un aviso `rp` (pvp-sync.js) y cada uno lo dibuja.
+const ROPA_PARTIDA = ['papel', 'ojos', 'bocas', 'cabeza', 'espalda', 'humo', 'fantasma', 'silbido', 'congelar', 'sello', 'linterna', 'marcos', 'titulos', 'gestos'];      // (lo de la tanda 2 se dibuja en armario-partida.js)
+function ropaPartida() {
+  if (!armarioVisible()) return null;
+  const p = armarioEstado().puesto, r = {};
+  for (const k of ROPA_PARTIDA) if (p[k]) r[k] = p[k];
+  return r;
+}
+// se lo pone a un personaje de la partida: pasa a ser la galleta (tipo fan) con sus adornos; la piel (la pintura) no se toca. Solo se aceptan cosas que existen
+function vistePartida(e, ids) {
+  if (!e || !ids || typeof ids !== 'object') return;
+  const p = {}; for (const k of ROPA_PARTIDA) if (typeof ids[k] === 'string' && arItem(k, ids[k])) p[k] = ids[k];
+  e.tipo = 'fan'; e.ropa = ropaDeIds(p);
+  if (e.clase === 'cazador' || (!['cuenta', 'caza', 'fin'].includes(J.fase) && !e.congelado && !e.pintado)) ponPapel(e);      // el colado, solo antes de empezar a pintarse
+}
+// el papel como piel: su color y, si tiene, su dibujo (lo mismo que en la habitación)
+function ponPapel(e) {
+  const papel = (e.ropa && e.ropa.papel) || 'blanco', postura = e.postura || 'firmes';
+  if (papel === 'blanco' && e.clase !== 'cazador') { if (e.papelPuesto) lienzoBlanco(e); return; }
+  const [cv, g] = nuevaPiel(e.clase === 'cazador' && papel === 'blanco' ? '#aab4c4' : ARD.COLOR_PAPEL[papel] || BLANCO_PIEL, postura);
+  if (ARD.PAPEL[papel]) { g.save(); g.scale(ESC_PIEL, ESC_PIEL); g.translate(PIE_X, PIE_Y); g.beginPath(); trazaAlubia(g, null, postura); g.clip(); ARD.PAPEL[papel](g); g.restore(); }
+  e.piel = cv; e.pctx = g; e.papelPuesto = e.clase === 'camaleon'; if (e.pasos) e.pasos.length = 0;
+}
+// al congelarse o abrir el pincel, el colado vuelve a ser un lienzo en blanco para pintarse
+function lienzoBlanco(e) {
+  if (!e.papelPuesto) return;
+  e.papelPuesto = false; [e.piel, e.pctx] = nuevaPiel(BLANCO_PIEL, e.postura || 'firmes'); if (e.pasos) e.pasos.length = 0;
 }
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }

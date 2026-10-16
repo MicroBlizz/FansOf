@@ -86,6 +86,7 @@ function suenaEnte(e, dt) {
 function congela(e) {
   if (e.fuera || e.congelado) return;
   e.congelado = true; e.vx = e.vy = 0; e.x = Math.round(e.x); e.y = Math.round(e.y);
+  if (e.ropa && J.fase !== 'paseo') { lienzoBlanco(e); fxCongelar(e); }      // el papel del armario se va: a pintarse en blanco (armario.js)      // el efecto del armario (armario-partida.js)
   if (e.trasHumo && e.jugador) autoCamuflaje(e);      // el humo ya se acabó para él: se pintó de cero y no puede
   mideCamuflaje(e);
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel
@@ -114,7 +115,7 @@ function silba(e, forzado) {
 function despide(k, por) {
   if (k.fuera) return;
   k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0; k.tDespido = J.reloj;      // (el bufón mira en qué segundo cayó)
-  fxSello(k.x, k.y - 26); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
+  fxSello(k.x, k.y - 26, por && por.ropa && por.ropa.sello); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
   suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
   if (por) por.pts.aciertos++;
   contagioDespedido(k); chivatoDespido(k, por); idaDespido(k);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)

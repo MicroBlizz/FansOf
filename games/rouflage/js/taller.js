@@ -14,6 +14,7 @@ function abreTaller() {
   const yo = J.yo;
   if (TALLER.abierto || !yo || yo.fuera || yo.clase !== 'camaleon' || (J.fase !== 'prep' && J.fase !== 'caza') || J.pausa) return;
   yo.vx = yo.vy = 0; yo.x = Math.round(yo.x); yo.y = Math.round(yo.y); yo.moviendo = false;
+  if (J.fase !== 'paseo') lienzoBlanco(yo);      // el papel del armario se va: a pintarse en blanco (armario.js)
   TALLER.abierto = true; TALLER.capas = false; TALLER.trazo = null; TALLER.figura = null; TALLER.duda = null; TALLER.puntero = null; if (TALLER.herr !== 'senuelo') TALLER.herr = 'pincel';      // el señuelo se queda puesto hasta que lo vuelvas a apretar
   ENTRADA.palanca = null; ENTRADA.toques.clear(); TMENU.volar = null; if (!TMENU.sec && !(SAVE.tuto && SAVE.tuto.bcam)) TMENU.sec = 'color';   // con el tutorial a medias, la bandeja de color abierta (el bocadillo señala el cuentagotas)
   muestraTaller(true); encuadraTaller(); mideTaller(); play('select');
@@ -156,23 +157,36 @@ function pintaFiguraPrevia(c, yo) {
   c.setLineDash([1.6, 1.6]); c.lineWidth = 0.5; c.strokeStyle = '#ffffff'; c.stroke(); c.restore();
 }
 
-/* ---------- la paleta: los colores que más se repiten en los suelos y las paredes del mapa (con lo que haya encima), calculados una vez ---------- */
+/* ---------- la paleta: los colores de los suelos y las paredes del mapa (con lo que haya encima), calculados una vez al cargarlo ----------
+   Antes eran los 18 que más se repetían y quedaban fuera muchos tonos (y casi todas las líneas finas: juntas de azulejos, rayas de alfombras).
+   Ahora se eligen uno a uno los que cubren más trozos de mapa que todavía no tienen un color parecido en la paleta, hasta cubrir casi todo. */
+const PALETA_MAX = 40, PALETA_PARECIDO = 13;      // hasta 13 de diferencia ni el medidor ni el ojo lo notan
 let PALETA = null;
 function olvidaPaleta() { PALETA = null; }   // al cambiar de mapa: la paleta sale de sus colores
 function paletaDelMapa() {
   if (PALETA) return PALETA;
-  const F = MAPA.px, cuenta = new Map();
-  for (let i = 0; i < F.length; i += 4 * 7) {
-    const px = (i >> 2) % ANCHO, py = ((i >> 2) / ANCHO) | 0, celda = GRID[((py / CEL) | 0) * MW + ((px / CEL) | 0)];
+  const F = MAPA.px, cuenta = new Map(); let total = 0;
+  for (let py = 0; py < ALTO; py += 2) for (let px = (py >> 1) & 1; px < ANCHO; px += 2) {
+    const celda = GRID[((py / CEL) | 0) * MW + ((px / CEL) | 0)];
     if (celda !== SUELO && celda !== CARA) continue;   // solo suelos y paredes de frente: los muros por arriba no sirven para esconderse
-    const clave = ((F[i] >> 4) << 8) | ((F[i + 1] >> 4) << 4) | (F[i + 2] >> 4), v = cuenta.get(clave);
+    const i = (py * ANCHO + px) * 4, clave = ((F[i] >> 3) << 10) | ((F[i + 1] >> 3) << 5) | (F[i + 2] >> 3), v = cuenta.get(clave);
     if (v) { v.n++; v.r += F[i]; v.g += F[i + 1]; v.b += F[i + 2]; } else cuenta.set(clave, { n: 1, r: F[i], g: F[i + 1], b: F[i + 2] });
+    total++;
   }
-  const todos = [...cuenta.values()].sort((a, b) => b.n - a.n), elegidos = [];
-  for (const v of todos) {
-    const r = v.r / v.n, g = v.g / v.n, b = v.b / v.n;
-    if (elegidos.every(o => difColor(r, g, b, o[0], o[1], o[2]) > 46)) elegidos.push([r, g, b]);
-    if (elegidos.length >= 18) break;
+  // los tonos (sin las motas sueltas, que son mezclas de borde): su color medio y cuántos puntos tienen
+  const tonos = [...cuenta.values()].filter(v => v.n >= 3).sort((a, b) => b.n - a.n).slice(0, 1600).map(v => ({ r: v.r / v.n, g: v.g / v.n, b: v.b / v.n, n: v.n, falta: true }));
+  const cand = tonos.slice(0, 400), elegidos = [];
+  let sinCubrir = tonos.reduce((s, t) => s + t.n, 0);
+  while (elegidos.length < PALETA_MAX && sinCubrir > total * 0.01) {
+    let mejor = null, gana = 0;
+    for (const c of cand) {
+      if (c.usado) continue;
+      let g = 0; for (const t of tonos) if (t.falta && difColor(c.r, c.g, c.b, t.r, t.g, t.b) <= PALETA_PARECIDO) g += t.n;
+      if (g > gana) { gana = g; mejor = c; }
+    }
+    if (!mejor || gana < total * 0.0008) break;      // lo que queda son motas que no merecen un hueco
+    mejor.usado = true; elegidos.push([mejor.r, mejor.g, mejor.b]);
+    for (const t of tonos) if (t.falta && difColor(mejor.r, mejor.g, mejor.b, t.r, t.g, t.b) <= PALETA_PARECIDO) { t.falta = false; sinCubrir -= t.n; }
   }
   // de oscuro a claro, para encontrar el tono enseguida
   elegidos.sort((a, b) => (a[0] * 0.3 + a[1] * 0.59 + a[2] * 0.11) - (b[0] * 0.3 + b[1] * 0.59 + b[2] * 0.11));

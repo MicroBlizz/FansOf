@@ -32,7 +32,7 @@ function empiezaPartida(modo) {
   limpiaPartida(); modoDesdeUrl(); if (modoEs('ida')) modo = 'camaleon'; J.modo = modo; J.t = 0; eventosPrepara();      // en solitario el modo sale de la URL (modos.js); en Ida y vuelta todos empiezan de colado
   if (modo === 'camaleon') {
     // tú eres CrazyBunny; tres compañeros se esconden por su cuenta y dos becarios esperan encerrados en Recursos Humanos
-    const yo = nuevoEnte('camaleon', 'bunny', NOMBRES.bunny, ...SALIDA_CAMALEONES[0]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts;
+    const yo = nuevoEnte('camaleon', 'bunny', NOMBRES.bunny, ...SALIDA_CAMALEONES[0]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; vistePartida(yo, ropaPartida());      // lo del armario (armario.js)
     const ocupados = [];
     [['squirrel', 0.2], ['fox', 0.86], ['meercat', 0.55]].forEach(([tipo, mana], i) => {
       const e = nuevoEnte('camaleon', tipo, NOMBRES[tipo], ...SALIDA_CAMALEONES[i + 1]);
@@ -43,7 +43,7 @@ function empiezaPartida(modo) {
     cambiaFase('prep');
   } else {
     // tú eres el becario; cinco colados ya están escondidos y pintados, cada uno con su maña
-    const yo = nuevoEnte('cazador', 'becario', tr('Tú'), ...SALIDA_CAZADORES[1]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; yo.dir = 0;
+    const yo = nuevoEnte('cazador', 'becario', tr('Tú'), ...SALIDA_CAZADORES[1]); yo.jugador = true; J.yo = yo; J.cuenta = yo.pts; yo.dir = 0; vistePartida(yo, ropaPartida());
     const ocupados = [];
     baraja([['bunny', 0.5], ['squirrel', 0.2], ['fox', 0.88], ['meercat', 0.64], ['coon', 0.36]]).forEach(([tipo, mana]) => {
       const e = nuevoEnte('camaleon', tipo, NOMBRES[tipo], 0, 0);
@@ -187,6 +187,7 @@ function marcadorDe(e) {
 function clasificacion() {
   return J.entes.filter(e => !e.dueno).map(e => ({
     nombre: e.jugador ? tr('Tú') : e.nombre, clase: e.clase, tipo: e.tipo, jugador: e.jugador, fuera: e.fuera, puntos: marcadorDe(e),
+    marco: e.ropa && e.ropa.marco, titulo: e.ropa && e.ropa.titulo,      // del armario (armario-partida.js)
     detalle: e.clase === 'camaleon' ? (e.fuera ? tr('Despedido') : e.camo + ' %') : (e.pts.aciertos === 1 ? tr('1 despido') : tr('{n} despidos').replace('{n}', e.pts.aciertos)),
   })).sort((a, b) => b.puntos - a.puntos || (a.jugador ? -1 : 1));
 }

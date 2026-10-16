@@ -86,7 +86,7 @@ function suenaEnte(e, dt) {
 function congela(e) {
   if (e.fuera || e.congelado) return;
   e.congelado = true; e.vx = e.vy = 0; e.x = Math.round(e.x); e.y = Math.round(e.y);
-  if (e.ropa && J.fase !== 'paseo') fxCongelar(e);      // el efecto del armario (armario-partida.js)
+  if (e.ropa && J.fase !== 'paseo') { lienzoBlanco(e); fxCongelar(e); }      // el papel del armario se va: a pintarse en blanco (armario.js)      // el efecto del armario (armario-partida.js)
   if (e.trasHumo && e.jugador) autoCamuflaje(e);      // el humo ya se acabó para él: se pintó de cero y no puede
   mideCamuflaje(e);
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel

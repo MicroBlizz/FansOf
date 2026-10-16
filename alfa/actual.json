@@ -1,8 +1,8 @@
 {
- "build": 123,
- "hash": "fc8d388",
- "fecha": "2026-10-16T00:57:26Z",
- "mensaje": "Rouflage (alfa): lo del armario en la partida, tanda 2: rastro del silbido, efecto al congelarte (no lo ven los becarios), sello del becario, tono y borde de la linterna, marco y título en la clasificación y GESTOS (botón o tecla G, aviso gs)",
+ "build": 124,
+ "hash": "c9a584c",
+ "fecha": "2026-10-16T01:01:09Z",
+ "mensaje": "Rouflage (alfa): el papel del armario también en la partida: el colado lo lleva mientras anda y vuelve al lienzo en blanco al congelarse o abrir el pincel; el becario lo lleva siempre",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -94,7 +94,7 @@ function rfpEstado(sl, m) {
   rfpFijaRed(r, m.x, m.y); r.m = !!m.m; r.mi = m.mi; r.di = m.di || 0;
   e.ciego = m.ci ? 0.5 : 0; e.invis = m.iv || 0;
   if (e.clase === 'camaleon') {
-    if (m.c && !e.congelado) { e.congelado = true; e.x = m.x; e.y = m.y; fxCongelar(e); }       // (la piel llega en su propio aviso)
+    if (m.c && !e.congelado) { e.congelado = true; e.x = m.x; e.y = m.y; lienzoBlanco(e); fxCongelar(e); }       // (la piel llega en su propio aviso)
     else if (!m.c && e.congelado) { descongela(e); RFP.listos.delete(sl.s); }
   }
 }

@@ -14,6 +14,7 @@ function abreTaller() {
   const yo = J.yo;
   if (TALLER.abierto || !yo || yo.fuera || yo.clase !== 'camaleon' || (J.fase !== 'prep' && J.fase !== 'caza') || J.pausa) return;
   yo.vx = yo.vy = 0; yo.x = Math.round(yo.x); yo.y = Math.round(yo.y); yo.moviendo = false;
+  if (J.fase !== 'paseo') lienzoBlanco(yo);      // el papel del armario se va: a pintarse en blanco (armario.js)
   TALLER.abierto = true; TALLER.capas = false; TALLER.trazo = null; TALLER.figura = null; TALLER.duda = null; TALLER.puntero = null; if (TALLER.herr !== 'senuelo') TALLER.herr = 'pincel';      // el señuelo se queda puesto hasta que lo vuelvas a apretar
   ENTRADA.palanca = null; ENTRADA.toques.clear(); TMENU.volar = null; if (!TMENU.sec && !(SAVE.tuto && SAVE.tuto.bcam)) TMENU.sec = 'color';   // con el tutorial a medias, la bandeja de color abierta (el bocadillo señala el cuentagotas)
   muestraTaller(true); encuadraTaller(); mideTaller(); play('select');

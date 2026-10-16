@@ -1,8 +1,8 @@
 {
- "build": 130,
- "hash": "4f262db",
- "fecha": "2026-10-16T21:04:33Z",
- "mensaje": "Música al 50% por defecto en todos los juegos (sin tocar lo que el jugador ya guardó)",
+ "build": 131,
+ "hash": "451e4c7",
+ "fecha": "2026-10-16T23:14:06Z",
+ "mensaje": "Herramientas: MAPA.md por carpeta enlazados; comprobar.py sin nombres compara solo lo que cambió (core = todos) y los juegos sin guion pasan una prueba de humo genérica",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

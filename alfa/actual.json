@@ -1,8 +1,8 @@
 {
- "build": 127,
- "hash": "efc39bd",
- "fecha": "2026-10-16T01:12:08Z",
- "mensaje": "Fans of Karts 0.6.4: con «horizontal» y el móvil de pie, las pantallas HTML (menú, tienda, pase, salas) giran con el juego y se desplazan con el dedo",
+ "build": 128,
+ "hash": "75272f1",
+ "fecha": "2026-10-16T19:17:19Z",
+ "mensaje": "Seguridad: recorta permisos de tabla, cierra el acceso con contraseña de /gestion (SQL 43 y 44, aplicados)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

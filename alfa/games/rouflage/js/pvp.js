@@ -80,11 +80,12 @@ function rfpEmpieza(info, red, vuelta) {
     const [x, y] = rfpSalida(sl, sl.clase === 'cazador' ? nh++ : nc++);
     const e = nuevoEnte(sl.clase, sl.tipo, sl.nombre, x, y);
     e.slot = sl.s; e.humano = sl.humano; sl.ente = e;
-    if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; } else e.remoto = true;
+    if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; vistePartida(e, ropaPartida()); } else e.remoto = true;      // lo tuyo del armario (armario.js)
     if (sl.clase === 'cazador') { e.dir = -Math.PI / 2 + (nh % 2 ? -0.5 : 0.5); e.mira = nh % 2 ? 1 : -1; }
     if (sl.humano) RFP.rx[sl.s] = RELOJ + RFP_AJ.gracia;      // los humanos están cargando: de margen
   }
   RFP.canal = red.canal(info.sala, rfpRecibe, est => { RFP.redEstado = est; });
+  rfpMandaRopa(true);      // lo que llevas del armario, y que los demás te cuenten lo suyo
   if (vuelta) RFP.vuelta = true;
   rfpActualizaAnfitrion();
   pantalla(null); cambiaFase('prep'); avanzaCamara(0, true); refrescaHud(true);

@@ -15,6 +15,7 @@ function idaEmpieza() {
   cuerpos.forEach((k, i) => {
     const p = SALIDA_CAZADORES[i % SALIDA_CAZADORES.length], v = Math.floor(i / SALIDA_CAZADORES.length);
     const h = nuevoEnte('cazador', 'becario', k.nombre, p[0] + (v % 2 ? 1 : -1) * 18 * Math.ceil(v / 2), p[1] + v * 6);
+    if (k.ropa) { h.tipo = 'fan'; h.ropa = k.ropa; }      // su becario lleva lo mismo del armario
     h.cuerpo = k; k.dueno = h; h.balas = IDA.balas; h.dir = -Math.PI / 2; h.mira = i % 2 ? -1 : 1;
     // el cuerpo: quieto y congelado para siempre (sin cerebro), con sus puntos de colado
     if (!k.congelado) congela(k);

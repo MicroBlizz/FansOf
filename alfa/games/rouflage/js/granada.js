@@ -14,8 +14,8 @@ function lanzaGranada(e) {
   return true;
 }
 // el fogonazo: a todos los becarios cercanos que lleva este navegador los deja a medio ver unos segundos
-function granadaEstalla(x, y, e) {
-  fxGranada(x, y, GRANADA.dura); fxTexto(x, y - 80, tr('¡FLASH!'), '#fff6ea', 22); play('humo');
+function granadaEstalla(x, y, e, colores = e && e.ropa && e.ropa.humo) {      // (colores: los del humo de su armario)
+  fxGranada(x, y, GRANADA.dura, colores); fxTexto(x, y - 80, tr('¡FLASH!'), '#fff6ea', 22); play('humo');
   for (const h of J.cazadores) {
     if (h.fuera || lejos(h.x, h.y, x, y) > GRANADA.radio) continue;
     if (!J.pvp || h.jugador || (h.bot && RFP.soyHost)) h.ciego = Math.max(h.ciego, GRANADA.ciego);

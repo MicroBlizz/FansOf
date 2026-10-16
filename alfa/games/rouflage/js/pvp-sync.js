@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · PvP, LA SINCRONÍA: lo que se manda por el canal de la sala y qué se hace con lo que llega. Cada jugador lleva su personaje y avisa de dónde está (e);
 // los demás lo ven como una copia que se mueve suave hacia ese punto. La piel pintada se manda una sola vez, al congelarse (p). El ANFITRIÓN manda cómo van los personajes de la máquina,
 // el reloj y la fase (a, fa), decide los disparos (tq → t) y el final (fn). Silbidos (s), «¡listo!» (l) y rendirse (rd) los manda cada uno.
-// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy.
+// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que llevas del armario.
 'use strict';
 
 const rfpManda = m => { if (RFP.canal && RFP.activo) RFP.canal.enviar(Object.assign({ de: RFP.yo }, m)); };
@@ -69,7 +69,8 @@ function rfpRecibe(m) {
     case 'l': RFP.listos.add(m.de); break;
     case 'rd': rfpSeVa(m.de); break;
     case 'sz': senueloRecibe(m.l); break;
-    case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null); } break;
+    case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
+    case 'rp': if (m.r && sl.ente) vistePartida(sl.ente, m.r); if (m.q) rfpMandaRopa(false); break;
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
@@ -118,9 +119,12 @@ function rfpSigueFase(f, reloj) {
   while (FASES[J.fase] < FASES[f]) cambiaFase(['prep', 'cuenta', 'caza'][FASES[J.fase] + 1]);
   if (typeof reloj === 'number') J.reloj = reloj;
 }
+// lo que llevas del armario (armario.js): se manda al entrar (q: que los demás contesten con lo suyo) y al empezar la cuenta atrás. Sin armario, solo se pregunta
+function rfpMandaRopa(q) { const r = ropaPartida(); if (r) rfpManda(q ? { t: 'rp', r, q: 1 } : { t: 'rp', r }); else if (q) rfpManda({ t: 'rp', q: 1 }); }
 // el anfitrión cambia de fase (lo llama cambiaFase): se lo cuenta a todos y, al salir a la caza, repite las pieles por si alguien no las tenía
 function rfpFase(f) {
   if (!RFP.activo) return;
+  if (f === 'cuenta') rfpMandaRopa(false);      // lo del armario, otra vez, por si alguien no lo tenía
   if (RFP.soyHost) rfpManda({ t: 'fa', f, r: Math.round(J.reloj * 10) / 10 });
   if (f === 'cuenta' || f === 'caza') {
     let n = 0;

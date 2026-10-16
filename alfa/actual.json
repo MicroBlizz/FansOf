@@ -1,8 +1,8 @@
 {
- "build": 121,
- "hash": "fef3187",
- "fecha": "2026-10-16T00:13:52Z",
- "mensaje": "Fans of Rouflage 0.2.23: BUSCAR PARTIDA con modo al azar, 60 s que nunca se paran y votación EMPEZAR YA / +60 S (empate: se vota otra vez; tras +60 S, 30 s sin votar); si faltan jugadores, bots",
+ "build": 122,
+ "hash": "268fe2b",
+ "fecha": "2026-10-16T00:47:36Z",
+ "mensaje": "Rouflage (alfa): lo del armario en la partida, tanda 1: ojos, boca, cabeza y espalda en tu galleta (contra bots y online, aviso rp), la bomba de humo con tus colores y tu fantasma al ser despedido",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -77,7 +77,7 @@ const CATALOGO_AR = (() => {
     ['alasMurci', 'Alas de murciélago', 'epica', 'tienda', 500], ['alasMariposa', 'Alas de mariposa', 'legend', 'tienda', 900], ['mochila', 'Mochila', 'comun', 'gotas', '250 Gotas'],
     ['colaGato', 'Cola de gato', 'comun', 'diario', 'Diario · día 7 (semana 3)'], ['propulsor', 'Propulsor', 'legend', 'premium', 'Pase premium · nv 20'], ['baston', 'Bastón de NecroLord', 'epica', 'premium', 'Pase premium · nv 12'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, ES(k), k));
-  const H = col => (c, w) => humo(c, w, col);
+  const H = col => Object.assign((c, w) => humo(c, w, col), { colores: col || null });      // los colores también los usa la bomba de verdad (efectos-granada.js)
   const humoR = [
     it('gris', 'Gris de oficina', 'comun', 'base', 'Al empezar', H()), it('confeti', 'Confeti', 'rara', 'gratis', 'Pase gratis · nv 13', H(['#7ee04a', '#39d5e8', '#ffcb3d'])),
     it('purpurina', 'Purpurina', 'epica', 'premium', 'Pase premium · nv 11', H(['#ff6fb5', '#ffcb3d', '#b45cff'])), it('arcoiris', 'Arcoíris', 'epica', 'tienda', 500, H(['#ff4b5c', '#ffcb3d', '#7ee04a', '#39d5e8', '#b45cff'])),

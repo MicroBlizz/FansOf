@@ -76,6 +76,14 @@ function construyeMapa() {
 // el color más repetido alrededor de un punto del mundo (así un borde entre dos baldosas no da un color mezclado)
 function cuentagotas(x, y) {
   x = limita(Math.round(x), 2, ANCHO - 3); y = limita(Math.round(y), 2, ALTO - 3);
+  // el color exacto del punto tocado, si no es una mezcla de borde (tiene al menos dos vecinos de su mismo color): así se pueden coger
+  // los detalles finos (rayas, letras, bordes de muebles), que antes perdían la votación contra el color de alrededor
+  const k0 = (y * ANCHO + x) * 4, F = MAPA.px; let iguales = 0;
+  for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+    if (!i && !j) continue;
+    const q = ((y + j) * ANCHO + x + i) * 4; if (difColor(F[k0], F[k0 + 1], F[k0 + 2], F[q], F[q + 1], F[q + 2]) < 10) iguales++;
+  }
+  if (iguales >= 2) return rgbHex(F[k0], F[k0 + 1], F[k0 + 2]);
   const votos = new Map(); let mejor = null, max = 0;
   for (let j = -2; j <= 2; j++) for (let i = -2; i <= 2; i++) {
     const k = ((y + j) * ANCHO + x + i) * 4, r = MAPA.px[k], g = MAPA.px[k + 1], b = MAPA.px[k + 2], clave = ((r >> 2) << 12) | ((g >> 2) << 6) | (b >> 2);

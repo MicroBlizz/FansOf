@@ -1,8 +1,8 @@
 {
- "build": 124,
- "hash": "c9a584c",
- "fecha": "2026-10-16T01:01:09Z",
- "mensaje": "Rouflage (alfa): el papel del armario también en la partida: el colado lo lleva mientras anda y vuelve al lienzo en blanco al congelarse o abrir el pincel; el becario lo lleva siempre",
+ "build": 125,
+ "hash": "5fab6d3",
+ "fecha": "2026-10-16T01:05:19Z",
+ "mensaje": "Rouflage: el cuentagotas coge el color exacto del punto tocado (antes las líneas finas, como juntas de azulejos o rayas de alfombra, perdían contra el color de alrededor) y la paleta del mapa tiene hasta 40 colores elegidos para cubrir casi todo el suelo y las paredes",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

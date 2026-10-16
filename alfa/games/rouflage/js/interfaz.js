@@ -104,7 +104,7 @@ function refrescaRanking() {
   if (el.hidden === ver) { el.hidden = !ver; RANKING.txt = ''; }      // al volver a salir, se pinta de nuevo al momento
   if (!ver || (RELOJ - RANKING.t < 0.5 && RANKING.txt)) return;      // dos veces por segundo basta (con el reloj general: J.t vuelve a 0 en cada partida)
   RANKING.t = RELOJ;
-  const html = clasificacion().map((r, i) => `<li class="${r.jugador ? 'yo' : ''}${r.fuera ? ' fuera' : ''}"><i>${i + 1}</i><span>${r.nombre}</span><b>${r.puntos}</b></li>`).join('');
+  const html = clasificacion().map((r, i) => `<li class="${r.jugador ? 'yo' : ''}${r.fuera ? ' fuera' : ''}"><i>${i + 1}</i><span${marcoColor(r.marco) ? ` class="marco-ar" style="border-color:${marcoColor(r.marco)}"` : ''}>${esc(r.nombre)}</span><b>${r.puntos}</b></li>`).join('');
   if (html !== RANKING.txt) { RANKING.txt = html; el.innerHTML = html; }
 }
 
@@ -127,7 +127,7 @@ function refrescaHud(todo) {
   if (caliente) ponTexto('caliente', E('e-caliente-n'), caliente);
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
-  refrescaPoder(); refrescaChivato();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
+  refrescaPoder(); refrescaChivato(); refrescaGesto();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
@@ -231,7 +231,7 @@ function muestraFin() {
   pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
 }
-const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}"><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');
+const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}${marcoColor(f.marco) ? ' marco-ar' : ''}"${marcoColor(f.marco) ? ` style="border-color:${marcoColor(f.marco)}"` : ''}><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}${tituloHtml(f.titulo)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');      // con el marco y el título del armario (armario-partida.js)
 function pintaMapaFinal() {
   const m = E('fin-mapa'), c = m.getContext('2d'), k = m.width / ANCHO;
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, m.width, m.height);
@@ -305,7 +305,7 @@ function preparaInterfaz() {
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-gesto').onclick = accionGesto; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

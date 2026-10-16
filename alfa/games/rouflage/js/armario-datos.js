@@ -111,7 +111,7 @@ const CATALOGO_AR = (() => {
     it('verde', 'Tampón verde', 'comun', 'gratis', 'Pase gratis · nv 21', S('verde')), it('grapa', 'Grapa', 'rara', 'gratis', 'Pase gratis · nv 26', S('grapa')),
     it('firma', 'Firma del jefe', 'epica', 'premium', 'Pase premium · nv 17', S('firma')), it('huella', 'Huella de becario', 'rara', 'tienda', 250, S('huella')), it('oro', '«ASCENDIDO» dorado', 'legend', 'premium', 'Pase premium · nv 36', S('oro')),
   ];
-  const L = (col, b) => (c, w) => linterna(c, w, col, b);
+  const L = (col, b) => Object.assign((c, w) => linterna(c, w, col, b), { color: col, borde: b });      // el color y el borde también los usa la linterna de verdad (luz.js)
   const linternaR = [
     it('bombilla', 'Bombilla', 'comun', 'base', 'Al empezar', L('rgba(255,236,170,.6)', '')), it('ambar', 'Ámbar', 'comun', 'gotas', '200 Gotas', L('rgba(255,160,60,.55)', 'linea')),
     it('hielo', 'Hielo', 'rara', 'gratis', 'Pase gratis · nv 18', L('rgba(143,227,255,.55)', 'linea')), it('disco', 'Discoteca', 'epica', 'premium', 'Pase premium · nv 26', L('rgba(255,111,181,.55)', 'puntos')),

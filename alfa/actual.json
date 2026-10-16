@@ -1,8 +1,8 @@
 {
- "build": 122,
- "hash": "268fe2b",
- "fecha": "2026-10-16T00:47:36Z",
- "mensaje": "Rouflage (alfa): lo del armario en la partida, tanda 1: ojos, boca, cabeza y espalda en tu galleta (contra bots y online, aviso rp), la bomba de humo con tus colores y tu fantasma al ser despedido",
+ "build": 123,
+ "hash": "fc8d388",
+ "fecha": "2026-10-16T00:57:26Z",
+ "mensaje": "Rouflage (alfa): lo del armario en la partida, tanda 2: rastro del silbido, efecto al congelarte (no lo ven los becarios), sello del becario, tono y borde de la linterna, marco y título en la clasificación y GESTOS (botón o tecla G, aviso gs)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

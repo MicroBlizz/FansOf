@@ -72,6 +72,7 @@ window.addEventListener('keydown', ev => {
   }
   if (espectando() && (ev.code === 'Space' || ev.code === 'KeyQ') && !ev.target.closest('button, a')) { accionPoder(); return; }      // el poder del fantasma
   if (espectando() && ev.code === 'KeyC' && !ev.target.closest('button, a')) { accionChivato(); return; }      // el chivatazo del fantasma (modos-fantasma.js)
+  if (ev.code === 'KeyG' && gestoPuede()) { accionGesto(); return; }      // un gesto del armario (armario-partida.js)
   switch (ev.code) {
     case 'KeyF': accionPintar(); break;
     case 'Space': if (!ev.target.closest('button, a')) accionCongelar(); break;

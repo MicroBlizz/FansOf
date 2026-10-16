@@ -187,6 +187,7 @@ function marcadorDe(e) {
 function clasificacion() {
   return J.entes.filter(e => !e.dueno).map(e => ({
     nombre: e.jugador ? tr('Tú') : e.nombre, clase: e.clase, tipo: e.tipo, jugador: e.jugador, fuera: e.fuera, puntos: marcadorDe(e),
+    marco: e.ropa && e.ropa.marco, titulo: e.ropa && e.ropa.titulo,      // del armario (armario-partida.js)
     detalle: e.clase === 'camaleon' ? (e.fuera ? tr('Despedido') : e.camo + ' %') : (e.pts.aciertos === 1 ? tr('1 despido') : tr('{n} despidos').replace('{n}', e.pts.aciertos)),
   })).sort((a, b) => b.puntos - a.puntos || (a.jugador ? -1 : 1));
 }

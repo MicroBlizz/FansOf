@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · PvP, LA SINCRONÍA: lo que se manda por el canal de la sala y qué se hace con lo que llega. Cada jugador lleva su personaje y avisa de dónde está (e);
 // los demás lo ven como una copia que se mueve suave hacia ese punto. La piel pintada se manda una sola vez, al congelarse (p). El ANFITRIÓN manda cómo van los personajes de la máquina,
 // el reloj y la fase (a, fa), decide los disparos (tq → t) y el final (fn). Silbidos (s), «¡listo!» (l) y rendirse (rd) los manda cada uno.
-// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que llevas del armario.
+// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que llevas del armario · gs un gesto.
 'use strict';
 
 const rfpManda = m => { if (RFP.canal && RFP.activo) RFP.canal.enviar(Object.assign({ de: RFP.yo }, m)); };
@@ -70,6 +70,7 @@ function rfpRecibe(m) {
     case 'rd': rfpSeVa(m.de); break;
     case 'sz': senueloRecibe(m.l); break;
     case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
+    case 'gs': rfpGestoRecibido(sl, m); break;
     case 'rp': if (m.r && sl.ente) vistePartida(sl.ente, m.r); if (m.q) rfpMandaRopa(false); break;
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
@@ -93,7 +94,7 @@ function rfpEstado(sl, m) {
   rfpFijaRed(r, m.x, m.y); r.m = !!m.m; r.mi = m.mi; r.di = m.di || 0;
   e.ciego = m.ci ? 0.5 : 0; e.invis = m.iv || 0;
   if (e.clase === 'camaleon') {
-    if (m.c && !e.congelado) { e.congelado = true; e.x = m.x; e.y = m.y; }       // (la piel llega en su propio aviso)
+    if (m.c && !e.congelado) { e.congelado = true; e.x = m.x; e.y = m.y; fxCongelar(e); }       // (la piel llega en su propio aviso)
     else if (!m.c && e.congelado) { descongela(e); RFP.listos.delete(sl.s); }
   }
 }

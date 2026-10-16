@@ -522,6 +522,7 @@ IDIOMA.add({
   "JUGAR CONTRA BOTS": "PLAY AGAINST BOTS",
   "RELLENAR CON BOTS": "FILL WITH BOTS",
   "EMPEZAR YA": "START NOW",
+  "GESTO": "EMOTE",
   "+60 S": "+60 S",
   "Empieza en {t} s. Si no hay gente suficiente, la máquina rellena con bots.": "Starts in {t} s. If there aren't enough people, the machine fills in with bots.",
   "Ha ganado +60 S. Se puede volver a votar en {n} s.": "+60 S won. You can vote again in {n} s.",

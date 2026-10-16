@@ -100,6 +100,7 @@ function pintaMarcas(c, t) {
     }
   }
   pintaFantasma(c, t);
+  pintaGestos(c);      // los bocadillos de los gestos del armario (armario-partida.js)
   if (yo && yo.clase === 'cazador' && J.fase === 'caza') {
     // la ayuda del cazador: SOLO al camaleón que se pasa de listo (100 % de camuflaje, imposible de ver) y está cerca y en la luz le brilla el contorno; al 99 % ya no. Para el resto están los señuelos
     for (const k of J.camaleones) {

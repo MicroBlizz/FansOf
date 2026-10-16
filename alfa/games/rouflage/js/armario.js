@@ -34,13 +34,16 @@ function ropaDe(prueba) {
 }
 // lo mismo a partir de los ids (lo tuyo o lo que manda otro jugador por la red): ojos, boca, papel, cabeza, espalda, los colores del humo y el fantasma
 function ropaDeIds(p) {
-  const v = cat => { const it = arItem(cat, p[cat]); return it ? it.v : null; }, h = arItem('humo', p.humo);
+  const v = cat => { const it = arItem(cat, p[cat]); return it ? it.v : null; }, h = arItem('humo', p.humo), l = arItem('linterna', p.linterna), t = arItem('titulos', p.titulos);
   return { ojos: ARD.OJOS[v('ojos')] || null, boca: ARD.BOCAS[v('bocas')] || null, papel: v('papel') || 'blanco', cabeza: v('cabeza'), espalda: v('espalda'),
-    humo: (h && h.x && h.x.colores) || null, fantasma: arItem('fantasma', p.fantasma) ? p.fantasma : null, ids: p };
+    humo: (h && h.x && h.x.colores) || null, fantasma: arItem('fantasma', p.fantasma) ? p.fantasma : null,
+    silbido: arItem('silbido', p.silbido) ? p.silbido : null, congelar: arItem('congelar', p.congelar) ? p.congelar : null, sello: arItem('sello', p.sello) ? p.sello : null,
+    linterna: (l && l.x && l.x.color) ? { color: l.x.color, borde: l.x.borde } : null, marco: arItem('marcos', p.marcos) ? p.marcos : null,
+    titulo: (t && t.x && t.x.texto) ? { texto: t.x.texto, color: t.x.color } : null, gesto: arItem('gestos', p.gestos) ? p.gestos : null, ids: p };
 }
 // EN LA PARTIDA (de momento, como el armario, solo en la alfa y en desarrollo): lo que va en el cuerpo, el humo y el fantasma. El papel no, que cambiaría el
 // camuflaje. Contra bots se lo pone tu personaje; en el PvP viaja a los demás en un aviso `rp` (pvp-sync.js) y cada uno lo dibuja.
-const ROPA_PARTIDA = ['ojos', 'bocas', 'cabeza', 'espalda', 'humo', 'fantasma'];
+const ROPA_PARTIDA = ['ojos', 'bocas', 'cabeza', 'espalda', 'humo', 'fantasma', 'silbido', 'congelar', 'sello', 'linterna', 'marcos', 'titulos', 'gestos'];      // (lo de la tanda 2 se dibuja en armario-partida.js)
 function ropaPartida() {
   if (!armarioVisible()) return null;
   const p = armarioEstado().puesto, r = {};

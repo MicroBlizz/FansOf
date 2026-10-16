@@ -10,7 +10,7 @@ function limpiaFx() { FX.lista.length = 0; FX.suelo.length = 0; if (typeof limpi
 const volumenEn = (x, y) => limita(1.15 - lejos(x, y, CAM.x, CAM.y) / 620, 0, 1);
 
 function ondaSilbido(x, y, e) {
-  FX.lista.push({ k: 'onda', x, y, t: 0, dur: 1.6 });
+  FX.lista.push({ k: 'onda', x, y, t: 0, dur: 1.6 }); fxRastro(x, y, e);      // (el rastro del armario: armario-partida.js)
   suenaEn('silbido', x, y);
 }
 function fxTexto(x, y, s, color, tam = 15) { FX.lista.push({ k: 'texto', x, y, s, color, tam, t: 0, dur: 1.5 }); }
@@ -21,7 +21,8 @@ function fxDisparo(e, x, y) {
   FX.lista.push({ k: 'tiro', x0: e.x + e.mira * 24, y0: e.y - 16, x, y, t: 0, dur: 0.24 });
   suenaEn('disparo', x, y);
 }
-function fxSello(x, y) { FX.suelo.push({ k: 'sello', x, y, rot: rand(-0.32, 0.32), t: 0 }); if (FX.suelo.length > 26) FX.suelo.shift(); }
+// tipo: el sello del armario de quien despide (armario-partida.js)
+function fxSello(x, y, tipo) { FX.suelo.push({ k: 'sello', x, y, rot: rand(-0.32, 0.32), t: 0, tipo: tipo || null }); if (FX.suelo.length > 26) FX.suelo.shift(); }
 function fxMancha(x, y) {
   const color = pick(COLORES_MANCHA);
   FX.suelo.push({ k: 'mancha', x, y, s: (Math.random() * 9999) | 0, color, t: 0 }); if (FX.suelo.length > 26) FX.suelo.shift();
@@ -44,6 +45,7 @@ function avanzaFx(dt) {
 function pintaFxSuelo(c) {
   for (const s of FX.suelo) {
     if (s.k === 'mancha') { c.globalAlpha = Math.min(1, s.t / 0.08) * 0.85; mancha(c, s.x, s.y, 13, s.color, s.s); c.globalAlpha = 1; }
+    else if (s.tipo && s.tipo !== 'rojo') pintaSelloArmario(c, s);
     else {
       const e = s.t < 0.16 ? 2.3 - (s.t / 0.16) * 1.3 : 1;
       c.save(); c.translate(s.x, s.y); c.rotate(s.rot); c.scale(e, e); c.globalAlpha = Math.min(1, s.t / 0.06) * 0.92;
@@ -59,6 +61,8 @@ function pintaFx(c) {
   for (const f of FX.lista) {
     if (f.k === 'destello' || f.k === 'choque' || f.k === 'bocanada' || f.k === 'nube') { pintaGranadaFx(c, f, J.t); continue; }
     const p = f.t / f.dur;
+    if (f.k === 'rastro') { pintaRastroFx(c, f, p); continue; }
+    if (f.k === 'congela') { pintaCongelarFx(c, f, p); continue; }
     if (f.k === 'onda') {
       if (extraOn('apagon')) continue;      // Apagón total: solo se oye
       for (let k = 0; k < 3; k++) {

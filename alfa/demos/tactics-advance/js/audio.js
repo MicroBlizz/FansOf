@@ -8,7 +8,7 @@ const AUDIO = { mudo: false, sinMusica: false };
 try { AUDIO.mudo = localStorage.getItem('fota-mudo') === '1'; AUDIO.sinMusica = localStorage.getItem('fota-sin-musica') === '1'; } catch (_) { /* sin guardar */ }
 const sonidoApagado = () => AUDIO.mudo;
 const volGeneral = () => (AUDIO.mudo ? 0 : 0.55);
-const volMusica = () => (AUDIO.sinMusica ? 0 : 0.6);
+const volMusica = () => (AUDIO.sinMusica ? 0 : 0.3);
 // el motor usa estas dos para algunos efectos
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];

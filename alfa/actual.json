@@ -1,8 +1,8 @@
 {
- "build": 129,
- "hash": "4dbfe21",
- "fecha": "2026-10-16T20:44:44Z",
- "mensaje": "Nova 0.3.2 (campaña en la galaxia) y Ratkov 0.2.7 (arreglos del tren, enemigos y botín): suben versión con su nota",
+ "build": 130,
+ "hash": "4f262db",
+ "fecha": "2026-10-16T21:04:33Z",
+ "mensaje": "Música al 50% por defecto en todos los juegos (sin tocar lo que el jugador ya guardó)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

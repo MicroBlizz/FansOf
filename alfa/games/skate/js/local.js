@@ -4,7 +4,7 @@
 const SK_SAVE = (() => {
   const leer = k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
   const s = leer(SAVE_KEY); if (s && s.cartera) return s;
-  return { cartera: leer('sk-cartera-v1') || { oro: 0, compras: [] }, campana: leer('sk-campana-v1') || { hechos: {}, dif: 'n' }, muted: false, vol: 1, mus: 1 };
+  return { cartera: leer('sk-cartera-v1') || { oro: 0, compras: [] }, campana: leer('sk-campana-v1') || { hechos: {}, dif: 'n' }, muted: false, vol: 1, mus: 0.5 };
 })();
 function skGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SK_SAVE)); } catch (e) { /* sin almacenamiento: se juega igual */ } CUENTA.cambio(); }
 function skCartera() { return SK_SAVE.cartera; }

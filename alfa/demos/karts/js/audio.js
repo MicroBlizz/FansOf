@@ -7,7 +7,7 @@
 // SAVE (la canción del menú, que el motor mira al acabar las cortas) y AJUSTES están en js/ajustes.js
 const sonidoApagado = () => AJUSTES.mudo;
 const volGeneral = () => (AJUSTES.mudo ? 0 : 0.55);
-const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.5);
+const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.25);
 // rand y pick (que el motor de sonido usa) vienen de core/js/sistema/utiles.js
 
 Object.assign(SFX, {

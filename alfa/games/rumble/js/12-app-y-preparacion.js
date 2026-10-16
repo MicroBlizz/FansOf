@@ -5,7 +5,7 @@ $('#btn-play').addEventListener('click', startGame);
 $('#btn-camp').addEventListener('click', () => { play('select'); openCamp(); });
 $('#btn-quick').addEventListener('click', () => { play('select'); openPrep('quick'); });
 $('#btn-bossmode').addEventListener('click', () => { play('select'); openPrep('boss'); });
-$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 70 : SAVE.mus; botonPruebas($('#btn-test')); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
+$('#btn-options').addEventListener('click', () => { play('select'); updateWallets(); $('#opt-vol').value = SAVE.vol == null ? 100 : SAVE.vol; $('#opt-mus').value = SAVE.mus == null ? 50 : SAVE.mus; botonPruebas($('#btn-test')); $('#btn-chat').textContent = SAVE.chatOff ? 'NO' : 'SÍ'; show('scr-options'); });
 $('#btn-share').addEventListener('click', () => { shareResult(); stat('share', 1); });
 $('#btn-share-close').addEventListener('click', () => { $('#scr-share').hidden = true; });
 // v0.9.17 probó un modo claro y uno pixel art; Daniel los descartó en la v0.9.18: el juego va siempre oscuro y sin pixelar

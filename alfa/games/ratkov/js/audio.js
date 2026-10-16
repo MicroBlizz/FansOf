@@ -4,7 +4,7 @@
 'use strict';
 const sonidoApagado = () => AJUSTES.mudo;
 const volGeneral = () => (AJUSTES.mudo ? 0 : 0.55);
-const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.42);
+const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.21);
 
 Object.assign(SFX, {
   pistola: (v = 1) => { noise(0.07, 0.16 * v, 2200, 'bandpass'); tone(420, 120, 0.06, 'square', 0.05 * v); },

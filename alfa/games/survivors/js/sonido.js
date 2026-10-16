@@ -3,7 +3,7 @@
 'use strict';
 const sonidoApagado = () => !!SAVE.muted;
 const volGeneral = () => (SAVE.muted ? 0 : SAVE.vol == null ? 1 : SAVE.vol);
-const volMusica = () => 0.3 * (SAVE.mus == null ? 1 : SAVE.mus);
+const volMusica = () => 0.3 * (SAVE.mus == null ? 0.5 : SAVE.mus);
 // en el menú, la que elijas en Opciones; jugando, la de Animales Locos (más rápida en el último minuto); con el jefe, la suya
 function musicUpdate() {
   if (!AC || !M.bus) return;

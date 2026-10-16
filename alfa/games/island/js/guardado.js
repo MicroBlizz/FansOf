@@ -17,7 +17,7 @@ function isNivelSuperado(id, seg, zanahorias = 0) {   // guarda la mejor marca d
 // lo que pide el motor de sonido de core
 function sonidoApagado() { return !!SAVE.muted; }
 function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.musica === false ? 0 : 0.3; }
+function volMusica() { return SAVE.musica === false ? 0 : 0.15; }
 function musicUpdate() { /* la elige principal.js (isMusica) según la pantalla */ }
 // la canción que debe sonar: la de la serie que toque (core/js/serie/canciones.js). Las cortas (win) suenan una vez
 let IS_MUSICA = null;

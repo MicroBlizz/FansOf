@@ -8,7 +8,7 @@ function partidaNueva() {
   const heroes = {}; for (const k of HEROE_ORDEN) heroes[k] = { lvl: 1, xp: 0, hp: null, mp: null };
   return { oro: 150, gemas: 30, heroes, desbloq: HEROE_ORDEN.filter(k => !HEROES[k].gemas), grupo: ['bunny', 'epicchampion', 'twitchking', 'necrolord'],
     items: { botiquin: 3, bebida: 2, pizza: 0, contrato: 1 }, hechos: {}, comprados: {}, sinAnuncios: false, pase: false,
-    diario: { ultimo: '', dia: 0 }, anuncios: { fecha: '', n: 0 }, ajustes: { vol: 80, mus: 70, espera: true, vel: 1, mudo: false }, mundo: 0 };
+    diario: { ultimo: '', dia: 0 }, anuncios: { fecha: '', n: 0 }, ajustes: { vol: 80, mus: 50, espera: true, vel: 1, mudo: false }, mundo: 0 };
 }
 let SAVE = partidaNueva();
 try { const g = JSON.parse(localStorage.getItem(CLAVE)); if (g && g.heroes) SAVE = Object.assign(partidaNueva(), g, { ajustes: Object.assign(partidaNueva().ajustes, g.ajustes) }); } catch (e) { /* sin guardado */ }

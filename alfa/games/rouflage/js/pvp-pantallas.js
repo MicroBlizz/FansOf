@@ -59,6 +59,7 @@ function pvpPintaBusca() {
   E('busca-titulo').textContent = jugando ? tr('¡EMPIEZA LA PARTIDA!') : tr('SALA: {n} DE {max}', { n: i.n, max: i.max });
   E('busca-sub').textContent = jugando ? (mio && mio.rol === 'cazador' ? tr('Te toca de CAZADOR') : tr('Te toca de CAMALEÓN'))
     : priv ? (soyAnf ? (i.n >= 2 ? tr('Cuando estéis todos, pulsa EMPEZAR.') : tr('Elige modo y pulsa RELLENAR CON BOTS para jugar ya, o pásales el código a tus amigos.')) : tr('Esperando a que el anfitrión empiece.'))
+    : i.modo ? tr('Empieza en {t} s. Si no hay gente suficiente, la máquina rellena con bots.', { t: i.faltan || 0 })
     : i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
   // la sala con amigos: el código grande para compartir y el botón EMPEZAR del anfitrión
   E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
@@ -68,7 +69,32 @@ function pvpPintaBusca() {
   lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
     + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
   E('b-busca-cancelar').hidden = jugando;
-  pvpPintaModo(priv && !jugando, soyAnf);
+  E('busca-modo').classList.toggle('publica', !priv);
+  pvpPintaModo((priv || !!i.modo) && !jugando, soyAnf);      // en la pública se ve el modo que ha tocado (sin tocarlo)
+  pvpPintaVoto(!priv && !!i.modo && !jugando && i.votos);
+}
+// la votación de la sala pública: EMPEZAR YA o +60 S. Gana el botón con más de la mitad de los votos; con empate se vota otra vez; tras ganar +60 S, 30 s sin votar
+function pvpPintaVoto(ver) {
+  const caja = E('busca-voto'); caja.hidden = !ver; if (!ver) return;
+  const v = RFP.info.votos, libre = v.libre > 0;
+  for (const [k, b] of [['ya', E('b-voto-ya')], ['mas', E('b-voto-mas')]]) {
+    b.disabled = libre; b.classList.toggle('puesto', v.yo === k); b.setAttribute('aria-pressed', String(v.yo === k));
+    E('voto-' + k).textContent = v[k] || 0;
+  }
+  E('voto-nota').textContent = RFP.votoError ? tr(RFP.votoError) : libre ? tr('Ha ganado +60 S. Se puede volver a votar en {n} s.', { n: v.libre })
+    : v.empate ? tr('¡Empate! Se vota otra vez.') : tr('Gana el botón con más de la mitad de los votos.');
+}
+// tocar un botón vota; tocar otra vez el tuyo quita el voto
+function pvpVota(k) {
+  const i = RFP.info; if (!i || !i.votos || i.votos.libre > 0) return;
+  play('select');
+  const antes = i.votos.yo, nuevo = antes === k ? null : k;
+  if (antes) i.votos[antes] = Math.max(0, (i.votos[antes] || 0) - 1);
+  if (nuevo) i.votos[nuevo] = (i.votos[nuevo] || 0) + 1;
+  i.votos.yo = nuevo; pvpPintaBusca();
+  Promise.resolve(RFRED.red.voto && RFRED.red.voto(nuevo)).then(r => {
+    if (r && r.sala && RFP.info && RFP.info.sala === r.sala && r.estado === 'espera') { RFP.info.votos = r.votos; RFP.info.faltan = r.faltan; pvpPintaBusca(); }
+  }).catch(e => { RFP.votoError = RFRED.errorTexto(e); pvpPintaBusca(); setTimeout(() => { RFP.votoError = ''; if (!E('p-busca').hidden) pvpPintaBusca(); }, 3000); });
 }
 // el modo de la sala con amigos (modos.js): el anfitrión lo cambia con las flechas y los interruptores y el servidor se lo enseña a los demás
 function pvpPintaModo(ver, soyAnf) {
@@ -91,7 +117,7 @@ function pvpPintaModo(ver, soyAnf) {
   const luz = luzDe(d);
   for (const b of ex.querySelectorAll('.luz-b')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
   E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
-  for (const k of otros) E('x-' + k).checked = !!(d.x && d.x[k]);
+  for (const k of otros) { const on = !!(d.x && d.x[k]); E('x-' + k).checked = on; E('x-' + k).closest('label').classList.toggle('on', on); }
 }
 function pvpMandaModo() {
   modoElegidoGuarda();
@@ -138,6 +164,7 @@ function preparaPvp() {
   E('b-amigos-entrar').onclick = entrar;
   E('b-amigos-volver').onclick = () => { play('select'); RFP.error = ''; pvpMuestra('p-pvp'); };
   E('b-busca-empezar').onclick = () => { play('select'); pvpEmpezar(); };
+  E('b-voto-ya').onclick = () => pvpVota('ya'); E('b-voto-mas').onclick = () => pvpVota('mas');
   E('b-busca-compartir').onclick = () => { play('select'); pvpCompartir(); };
   E('b-pvp-bots').onclick = () => { play('select'); pvpBuscar({ crear: true }); };      // jugar contra bots: tu propia sala, para elegir modo y rellenar con la máquina
   E('b-modo-ant').onclick = () => pvpCambiaModo(-1); E('b-modo-sig').onclick = () => pvpCambiaModo(1);

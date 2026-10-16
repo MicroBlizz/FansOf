@@ -108,3 +108,16 @@
 .luz-b:disabled { cursor: default; }
 .luz-b:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 .luz-sala .modo-texto { text-align: center; }
+
+/* la sala pública: el modo que ha tocado (solo los extras encendidos) y la votación EMPEZAR YA / +60 S */
+.modo-sala.publica .extras label:not(.on) { display: none; }
+.voto-sala { display: grid; gap: 6px; margin: 4px 0 8px; }
+.voto-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.voto-b { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-display); font-weight: 400; font-size: 17px; letter-spacing: 0.03em; padding: 10px 6px 7px; border-radius: 12px; border: 3px solid var(--outline); background: #2a3550; color: var(--ink); box-shadow: 0 4px 0 var(--outline); cursor: pointer; }
+.voto-b b { min-width: 26px; padding: 1px 6px; border-radius: 9px; border: 2px solid var(--outline); background: var(--outline); color: var(--gold); font-size: 15px; }
+#b-voto-ya.puesto { background: linear-gradient(to bottom, #ffd36a, #f08a3c); color: var(--outline); }
+#b-voto-mas.puesto { background: linear-gradient(to bottom, #8fd0ff, #3d7fd6); color: var(--outline); }
+.voto-b:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.voto-b:disabled { opacity: 0.5; cursor: default; }
+.voto-b:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+#voto-nota { text-align: center; margin: 0; }

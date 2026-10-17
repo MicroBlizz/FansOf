@@ -29,10 +29,15 @@ const NV_TUTO = {
     'La fusión rinde lo de dos armas en una sola ranura, así que te deja un hueco libre para otra.'] }],
   estacion: [{ titulo: 'LA ESTACIÓN', ic: ['sis', 'regen'], lineas: [
     'Al entrar en una estación la partida se para.',
-    'Con la chatarra que llevas puedes reparar el casco y cambiar un arma por otra.',
+    'Con la chatarra que llevas puedes reparar el casco, cambiar un arma por otra y pasar por la tienda de módulos.',
     'Verás tu nave con sus armas en los anclajes. Toca un anclaje para ver hasta dónde tira, y toca otro para cambiar las dos armas de sitio.',
     'Las de proa tiran 90° al frente, las de los lados 180° hacia su lado, las de popa 180° hacia atrás y las de arriba 360°.',
     'El taller de tamaños sirve para unir y dividir armas.'] }],
+  tienda: [{ titulo: 'LA TIENDA DE MÓDULOS', ic: ['sis', 'mejora'], lineas: [
+    'Comprar: la estación vende armas, escudos, blindajes y mejoras del equipo. Se montan en una ranura libre y se pagan con chatarra.',
+    'Mejorar: cada subida da un 25 % más de daño a un arma y cuesta más cuanto más alta, grande o rara es.',
+    'Reciclar: desmontas un módulo y recuperas la mitad de lo que vale, mejoras incluidas. Sirve para hacer sitio. Siempre te queda un arma.',
+    'Renovar el surtido cambia lo que se vende. Lo que ves es lo que pagas: aquí no hay azar de pago.'] }],
   taller: [{ titulo: 'EL TALLER', ic: ['taller', 'unir'], lineas: [
     'Toca dos armas del mismo tamaño y pulsa Unir: dos pequeñas hacen una mediana y dos medianas una grande.',
     'Más tamaño es mucho más daño, alcance y bala.',
@@ -66,7 +71,7 @@ const NV_TUTO = {
     'Las cargas dejan estados en el enemigo. Si otra carga le da encima, salta una reacción con daño extra.',
     'Ejemplo: la cinética abre brecha y la térmica la funde.'] }]
 };
-const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'taller', 'capital', 'arsenal'];
+const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal'];
 
 function nvTutoVisto() { try { return JSON.parse(localStorage.getItem(NV_TUTO_CLAVE) || '{}'); } catch (e) { return {}; } }
 function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id] = 1; try { localStorage.setItem(NV_TUTO_CLAVE, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }

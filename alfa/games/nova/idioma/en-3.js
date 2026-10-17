@@ -30,7 +30,6 @@ IDIOMA.add({
   "La fusión rinde lo de dos armas en una sola ranura, así que te deja un hueco libre para otra.": "A fusion does the work of two weapons in one slot, so it frees a slot for another.",
   "LA ESTACIÓN": "THE STATION",
   "Al entrar en una estación la partida se para.": "Entering a station pauses the game.",
-  "Con la chatarra que llevas puedes reparar el casco y cambiar un arma por otra.": "With the scrap you carry you can repair your hull and swap one weapon for another.",
   "El taller de tamaños sirve para unir y dividir armas.": "The size workshop is for merging and splitting weapons.",
   "Verás tu nave con sus armas en los anclajes. Toca un anclaje para ver hasta dónde tira, y toca otro para cambiar las dos armas de sitio.": "You will see your ship with its weapons on their mounts. Tap a mount to see how far it fires, and tap another to swap the two weapons.",
   "Las de proa tiran 90° al frente, las de los lados 180° hacia su lado, las de popa 180° hacia atrás y las de arriba 360°.": "Bow weapons fire 90° ahead, side weapons 180° toward their side, stern weapons 180° backward and top ones 360°.",

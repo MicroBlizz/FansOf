@@ -197,7 +197,8 @@ function nvRenderEstacion(S) {
   const armas = n.armas.filter(w => w.portador !== 'defensa');
   const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
   p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(aviso);
-  if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
+  if (S.estTienda) nvRenderTienda(S, p);
+  else if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
     const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
     const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
     p.appendChild(nvEl('nv-titulo', tr('TALLER DE TAMAÑOS')));
@@ -216,6 +217,7 @@ function nvRenderEstacion(S) {
     d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
   } else if (!S.estSel) {
+    const ti = nvEl('nv-boton', tr('Tienda de módulos') + ' · ' + tr('comprar, mejorar y reciclar'), 'button'); ti.onclick = () => { S.estTienda = { tab: 'comprar', aviso: '' }; nvRenderEstacion(S); }; p.appendChild(ti);
     const ta = nvEl('nv-boton', tr('Taller de tamaños') + ' · ' + tr('unir y dividir armas'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
     p.appendChild(nvEl('nv-cdet', tr('Cambiar un arma')));
     for (const w of armas) { const t = nvTile(w, false); t.onclick = () => { S.estSel = { w, ofertas: nvOfertasEstacion(S, w.slot) }; nvRenderEstacion(S); }; p.appendChild(t); }
@@ -234,6 +236,6 @@ function nvRenderEstacion(S) {
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
-  p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
+  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estTienda = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
+  p.appendChild(sa); nvInfo(p, S.estTienda ? 'tienda' : S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
 }

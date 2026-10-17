@@ -1,8 +1,8 @@
 {
- "build": 172,
- "hash": "0a4fe15",
- "fecha": "2026-10-17T12:12:49Z",
- "mensaje": "Nova: las naves revientan en trozos y el final espera 2,4 s (cadena de explosiones de tu nave o del jefe) antes de la puntuación",
+ "build": 173,
+ "hash": "9f224a8",
+ "fecha": "2026-10-17T12:17:23Z",
+ "mensaje": "Nova: tienda de módulos en la estación (comprar, mejorar y reciclar)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

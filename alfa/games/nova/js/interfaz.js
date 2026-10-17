@@ -5,7 +5,7 @@ const NVI = { cartasVistas: null, finVisto: null };
 function nvAjustaLienzo() {
   const cv = document.getElementById('nv-canvas'), st = document.getElementById('stage');
   if (!cv || !st) return;
-  const d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || st.clientWidth, h = cv.clientHeight || st.clientHeight;
+  const d = Math.min(2, window.devicePixelRatio || 1) * (NVP.calidad || 1), w = cv.clientWidth || st.clientWidth, h = cv.clientHeight || st.clientHeight;
   if (cv.width !== Math.round(w * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
 }
 function nvEntrada() {

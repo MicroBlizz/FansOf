@@ -112,6 +112,7 @@ function nvChocaMisil(S, b, r) {
 function nvDibujaBalasE(c, S) {
   const z = nvZ(S);
   for (const b of S.eproy) {
+    if (!nvVisible(S, b.x, b.y, 40)) continue;   // lo de fuera de la pantalla no se dibuja
     const a = Math.atan2(b.vy, b.vx);
     c.save(); c.translate(b.x, b.y); c.rotate(a);
     c.globalCompositeOperation = 'lighter'; c.strokeStyle = b.color; c.globalAlpha = 0.4; c.lineWidth = b.r * 1.4; c.lineCap = 'round';   // estela

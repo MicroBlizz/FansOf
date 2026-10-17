@@ -1,8 +1,8 @@
 {
- "build": 166,
- "hash": "af10b0f",
- "fecha": "2026-10-17T02:38:15Z",
- "mensaje": "Nova: iconos de las 20 variantes de arma en cartas, Arsenal y estación",
+ "build": 167,
+ "hash": "f19fcba",
+ "fecha": "2026-10-17T02:39:27Z",
+ "mensaje": "Nova: rendimiento del dibujo (fondo a baja resolución, sombra de la nave sin filter, sprites enemigos ya escalados, restos y balas agrupados, nada fuera de pantalla) y resolución que baja sola por debajo de 45 fps",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

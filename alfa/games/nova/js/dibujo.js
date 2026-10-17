@@ -39,8 +39,9 @@ function nvSpriteEnemigo(c, e, S) {
     if (e.rumbo === undefined) e.rumbo = obj;
     e.rumbo += Math.atan2(Math.sin(obj - e.rumbo), Math.cos(obj - e.rumbo)) * 0.15; c.rotate(e.rumbo);
   }
-  c.drawImage(im, -t / 2, -t / 2, t, t);
-  if (e.flash > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.7, e.flash * 6); c.drawImage(im, -t / 2, -t / 2, t, t); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; }
+  const sp = nvSpriteEscalado(e.tipo, im, t * (S.vs || 1));
+  c.drawImage(sp, -t / 2, -t / 2, t, t);
+  if (e.flash > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.7, e.flash * 6); c.drawImage(sp, -t / 2, -t / 2, t, t); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; }
   c.restore();
   return true;
 }
@@ -55,15 +56,22 @@ function nvPieza(c, id, ax, ay) {
 const NV_ESTRELLAS = (() => { const l = []; let s = 7; const r = () => (s = (s * 16807) % 2147483647) / 2147483647; for (let i = 0; i < 160; i++) l.push({ x: r(), y: r(), z: 0.2 + r() * 0.8, t: 0.6 + r() * 1.4 }); return l; })();
 const NV_NUBES = [{ x: .1, y: .2, r: .55, c: 'rgba(70,40,140,.28)' }, { x: .6, y: .7, r: .65, c: 'rgba(20,90,140,.24)' }, { x: .85, y: .15, r: .4, c: 'rgba(140,40,90,.2)' }, { x: .35, y: .9, r: .5, c: 'rgba(40,60,150,.22)' }];
 function nvFondo(c, S, W, H, vs) {
+  const cf = c; c = nvFondoCapa(W, H).getContext('2d'); c.setTransform(c.canvas.width / W, 0, 0, c.canvas.height / H, 0, 0);   // degradado y nubes, a baja resolución
   c.fillStyle = '#070d1f'; c.fillRect(0, 0, W, H);
   const g = c.createRadialGradient(W / 2, H * 0.3, 10, W / 2, H * 0.3, H * 0.9); g.addColorStop(0, '#16275a'); g.addColorStop(1, '#070d1f00'); c.fillStyle = g; c.fillRect(0, 0, W, H);
   for (const b of NV_NUBES) {   // nubes lejanas: se mueven poco, dan fondo
     const x = (((b.x * W * 1.6 - S.cam.x * vs * 0.06) % (W * 1.6)) + W * 1.6) % (W * 1.6) - W * 0.3, y = (((b.y * H * 1.6 - S.cam.y * vs * 0.06) % (H * 1.6)) + H * 1.6) % (H * 1.6) - H * 0.3, rr = b.r * W;
     const gn = c.createRadialGradient(x, y, 0, x, y, rr); gn.addColorStop(0, b.c); gn.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gn; c.fillRect(x - rr, y - rr, rr * 2, rr * 2);
   }
-  for (const e of NV_ESTRELLAS) {
-    const x = (((e.x * W - S.cam.x * vs * e.z * 0.35) % W) + W) % W, y = (((e.y * H - S.cam.y * vs * e.z * 0.35) % H) + H) % H;
-    c.fillStyle = 'rgba(255,255,255,' + (0.25 + e.z * 0.6) + ')'; c.fillRect(x, y, e.t * e.z * 1.6, e.t * e.z * 1.6);
+  cf.drawImage(c.canvas, 0, 0, W, H); c = cf;
+  for (let k = 0; k < 4; k++) {   // estrellas en 4 capas de brillo: un solo relleno por capa
+    c.beginPath();
+    for (const e of NV_ESTRELLAS) {
+      if (Math.min(3, Math.floor(e.z * 4 - 0.8)) !== k && !(k === 0 && e.z * 4 - 0.8 < 0)) continue;
+      const x = (((e.x * W - S.cam.x * vs * e.z * 0.35) % W) + W) % W, y = (((e.y * H - S.cam.y * vs * e.z * 0.35) % H) + H) % H;
+      c.rect(x, y, e.t * e.z * 1.6, e.t * e.z * 1.6);
+    }
+    c.fillStyle = 'rgba(255,255,255,' + (0.4 + k * 0.15) + ')'; c.fill();
   }
 }
 
@@ -91,9 +99,8 @@ function nvTorreta(c, w, r, rot) {
 }
 function nvDibujaNave(c, S) {
   const n = S.nave, e = n.escala, H = nvHull(S.casco, n.rango), [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam], k = nvClase(n.rango);
-  c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.filter = 'brightness(0)';   // sombra proyectada: da altura sobre el fondo
-  nvCuerpo(c, S.casco, k, 'alas'); nvCuerpo(c, S.casco, k, 'casco');
-  c.restore();
+  const so = nvSombraNave(S.casco, k);   // sombra proyectada: da altura sobre el fondo
+  if (so) { c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.drawImage(so, -NV_SOMBRA_L / 2, -NV_SOMBRA_L / 2); c.restore(); }
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);
@@ -201,6 +208,7 @@ function nvDibujaPecio(c, p, t) {
   c.beginPath(); c.arc(0, 0, p.r * 0.28, 0, 6.283); c.fillStyle = p.rara ? '#fff6c2' : '#6fe3ff'; c.fill();
   c.restore();
 }
+const NV_RESTO_FORMA = [[-1, -0.4], [0.2, -1], [1, 0.3], [-0.3, 0.8]];
 function nvDibujaMundo(c, S) {
   const n = S.nave, cx = S.cam.x, cy = S.cam.y, V = nvVista(S) * 0.75;
   for (const b of S.nebulosas) { if (Math.abs(b.x - cx) > b.r + V || Math.abs(b.y - cy) > b.r + V) continue; const g = c.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r); g.addColorStop(0, b.col + '55'); g.addColorStop(1, b.col + '00'); c.fillStyle = g; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); }
@@ -208,11 +216,14 @@ function nvDibujaMundo(c, S) {
   for (const st of S.estaciones) if (cerca(st)) nvDibujaEstacion(c, st, S.t);
   for (const p of S.pecios) if (cerca(p)) nvDibujaPecio(c, p, S.t * 2);
   c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 10; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
-  for (const r of S.restos) {   // restos de nave: chapas retorcidas con el borde dorado
-    const q = 5 + Math.min(10, r.v * 0.6);
-    c.save(); c.translate(r.x, r.y); c.rotate(r.ang + r.t * 0.8); c.lineWidth = 2; c.strokeStyle = '#ffd93d'; c.fillStyle = '#6b7090';
-    c.beginPath(); c.moveTo(-q, -q * 0.4); c.lineTo(q * 0.2, -q); c.lineTo(q, q * 0.3); c.lineTo(-q * 0.3, q * 0.8); c.closePath(); c.fill(); c.stroke(); c.restore();
+  c.beginPath();   // restos de nave: chapas retorcidas con el borde dorado, todas en un solo trazo
+  for (const r of S.restos) {
+    if (!nvVisible(S, r.x, r.y, 20)) continue;
+    const q = 5 + Math.min(10, r.v * 0.6), a = r.ang + r.t * 0.8, co = Math.cos(a) * q, si = Math.sin(a) * q;
+    for (let i = 0; i < 4; i++) { const [px, py] = NV_RESTO_FORMA[i]; c[i ? 'lineTo' : 'moveTo'](r.x + px * co - py * si, r.y + px * si + py * co); }
+    c.closePath();
   }
+  c.fillStyle = '#6b7090'; c.fill(); c.lineWidth = 2; c.strokeStyle = '#ffd93d'; c.stroke();
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const s of S.saltos) nvDibujaSalto(c, s, S);
   nvDibujaBalasE(c, S);
@@ -220,23 +231,26 @@ function nvDibujaMundo(c, S) {
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
   c.globalCompositeOperation = 'lighter';
   for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = (3 + w.rayo * 20) * z; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }
-  for (const b of S.proy) {
-    c.fillStyle = b.color; c.strokeStyle = '#1a0f2e'; c.lineWidth = 1 * z;
-    c.globalCompositeOperation = 'lighter'; c.strokeStyle = b.color; c.globalAlpha = 0.45; c.lineWidth = b.r * 1.5; c.lineCap = 'round';   // estela
-    c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - b.vx * 0.045, b.y - b.vy * 0.045); c.stroke(); c.globalAlpha = 1; c.lineCap = 'butt'; c.globalCompositeOperation = 'source-over'; c.strokeStyle = '#1a0f2e';
+  const bv = S.proy.filter(b => nvVisible(S, b.x, b.y, 40));
+  c.globalAlpha = 0.45; c.lineCap = 'round';   // estelas, todas con el mismo modo de mezcla
+  for (const b of bv) { c.strokeStyle = b.color; c.lineWidth = b.r * 1.5; c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - b.vx * 0.045, b.y - b.vy * 0.045); c.stroke(); }
+  c.globalAlpha = 1; c.lineCap = 'butt'; c.globalCompositeOperation = 'source-over';
+  for (const b of bv) {
+    c.fillStyle = b.color;
     if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
     else nvFormaCarga(c, b.forma, b.x, b.y, b.r);
   }
   c.globalCompositeOperation = 'source-over';
   for (const f of S.fx) {
+    if (!nvVisible(S, f.x, f.y, f.r * 3)) continue;
     if (f.tipo === 'flash') { c.globalCompositeOperation = 'lighter'; c.beginPath(); c.arc(f.x, f.y, f.r * (0.6 + f.t * 4), 0, 6.283); c.fillStyle = f.color; c.globalAlpha = Math.min(1, f.t * 6); c.fill(); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; continue; }
     c.beginPath(); c.arc(f.x, f.y, f.r * (1.4 - f.t * 2), 0, 6.283); c.lineWidth = 4 * z; c.strokeStyle = f.color; c.globalAlpha = Math.max(0, f.t * 2.4); c.stroke(); c.globalAlpha = 1;
   }
   c.globalCompositeOperation = 'lighter';
-  for (const p of S.parts) { const q = p.s || 4 * z; c.globalAlpha = Math.max(0, p.t * 2); c.fillStyle = p.color; c.fillRect(p.x - q / 2, p.y - q / 2, q, q); c.globalAlpha = 1; }
+  for (const p of S.parts) { if (!nvVisible(S, p.x, p.y, 20)) continue; const q = p.s || 4 * z; c.globalAlpha = Math.max(0, p.t * 2); c.fillStyle = p.color; c.fillRect(p.x - q / 2, p.y - q / 2, q, q); c.globalAlpha = 1; }
   c.globalCompositeOperation = 'source-over';
   c.textAlign = 'center';
-  for (const t of S.nums) { c.globalAlpha = Math.min(1, t.t * 2); const zt = Math.pow(z, 0.6); c.font = (t.g ? '800 ' + 20 * zt + 'px' : '700 ' + 14 * zt + 'px') + ' Baloo 2, sans-serif'; c.lineWidth = 4 * zt; c.strokeStyle = '#1a0f2e'; c.strokeText(t.txt, t.x, t.y); c.fillStyle = t.color; c.fillText(t.txt, t.x, t.y); c.globalAlpha = 1; }
+  for (const t of S.nums) { if (!nvVisible(S, t.x, t.y, 60)) continue; c.globalAlpha = Math.min(1, t.t * 2); const zt = Math.pow(z, 0.6); c.font = (t.g ? '800 ' + 20 * zt + 'px' : '700 ' + 14 * zt + 'px') + ' Baloo 2, sans-serif'; c.lineWidth = 4 * zt; c.strokeStyle = '#1a0f2e'; c.strokeText(t.txt, t.x, t.y); c.fillStyle = t.color; c.fillText(t.txt, t.x, t.y); c.globalAlpha = 1; }
 }
 
 // ---------- fotograma completo ----------
@@ -244,7 +258,7 @@ function nvDibuja(S) {
   const cv = document.getElementById('nv-canvas');
   if (!cv) return;
   const W = cv.width, H = cv.height, vs = W / nvVista(S), c = cv.getContext('2d');
-  S.aspecto = H / W;
+  S.aspecto = H / W; S.vs = vs; nvMideFotograma();
   nvFondo(c, S, W, H, vs);
   c.save(); c.translate(W / 2, H / 2); c.scale(vs, vs); c.translate(-S.cam.x, -S.cam.y);
   nvDibujaMundo(c, S);

@@ -1,8 +1,8 @@
 {
- "build": 162,
- "hash": "1ef6900",
- "fecha": "2026-10-17T02:34:12Z",
- "mensaje": "Nova: armas con rareza (20 variantes), repetir cada carta por separado y Arsenal en la nave capital para desbloquear, retirar y potenciar el pool",
+ "build": 163,
+ "hash": "93a9cc1",
+ "fecha": "2026-10-17T02:34:31Z",
+ "mensaje": "Mapas regenerados",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

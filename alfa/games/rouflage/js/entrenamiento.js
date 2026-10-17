@@ -22,7 +22,7 @@ function practicaNuevo() {
 }
 // llega a su sitio (o se cansa de intentarlo) y se esconde pintado con poca maña: así se le encuentra
 function practicaEsconde(e) {
-  e.vx = e.vy = 0; pintaBot(e, 0.35); ensuciaBot(e, 3); e.pintado = true;
+  e.vx = e.vy = 0; pintaBot(e, 0.2); e.pintado = true;
   e.congelado = true; e.x = Math.round(e.x); e.y = Math.round(e.y); play('congela');      // sin congela(): no hay que avisar a nadie por internet
 }
 

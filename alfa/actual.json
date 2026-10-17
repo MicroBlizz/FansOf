@@ -1,8 +1,8 @@
 {
- "build": 153,
- "hash": "a8299f8",
- "fecha": "2026-10-17T02:16:15Z",
- "mensaje": "Nova: los enemigos llegan en salto hiperespacial desde fuera de la pantalla (estela y destello al llegar) y nada dispara desde fuera de la pantalla; el simulador carga clases.js",
+ "build": 154,
+ "hash": "15cce3d",
+ "fecha": "2026-10-17T02:17:03Z",
+ "mensaje": "Rouflage: los bots copian el fondo a mano (descuadre de 1-2 px y franjas que no clavan el ancho), sin brochazos",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

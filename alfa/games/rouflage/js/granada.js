@@ -27,7 +27,7 @@ function accionGranada() { const yo = J.yo; if (J.fase === 'caza' && jugando() &
 // tras la bomba de humo, el colado que sale corriendo y vuelve a pararse no puede pintarse desde cero: el juego lo camufla al instante a un 80 % (de ahí, a afinar)
 function autoCamuflaje(e) {
   e.trasHumo = false; pintaBot(e, 0.95); for (let n = 0; n < 3 && e.camo < 80; n++) afinaBot(e);
-  for (let n = 0; n < 16 && e.camo > 84; n++) { ensuciaBot(e, 1 + Math.floor((e.camo - 80) / 3)); mideCamuflaje(e); }
+  for (let m = 0.8; m > 0.1 && e.camo > 84; m -= 0.15) pintaBot(e, m);      // sin pasarse: si le sale demasiado bien, con la mano más suelta
   e.pintado = true; avisa(tr('Te camuflas rápido: un 80 %'), 'aviso'); play('pop');
 }
 

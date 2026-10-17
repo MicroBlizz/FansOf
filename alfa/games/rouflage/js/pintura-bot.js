@@ -1,5 +1,5 @@
-// Fans of Rouflage · LA PINTURA DE LA MÁQUINA Y EL CUARTEO: cómo se pinta un camaleón bot (como una persona: coge unos pocos colores con el
-// cuentagotas, rellena, pinta las formas grandes a brochazos algo desplazados, se salta los detalles finos y remata mal los bordes) y cómo
+// Fans of Rouflage · LA PINTURA DE LA MÁQUINA Y EL CUARTEO: cómo se pinta un camaleón bot (como una persona: copia el fondo a mano, descuadrado
+// 1 o 2 píxeles y por franjas que no clavan el ancho) y cómo
 // se cuartea la pintura de todos durante la caza (grietas que bajan el camuflaje poco a poco: quedarse quieto al 100 % no dura para siempre).
 'use strict';
 
@@ -17,37 +17,28 @@ function _paletaBot(e, n) {
   for (const c of lista) { if (pal.length >= n) break; if (!pal.some(p => difColor(p.r, p.g, p.b, c.r, c.g, c.b) < 18)) pal.push(c); }   // colores casi iguales cuentan como uno
   return pal;
 }
-const _masCercano = (pal, r, g, b) => { let m = pal[0], md = 1e9; for (const p of pal) { const d = difColor(p.r, p.g, p.b, r, g, b); if (d < md) { md = d; m = p; } } return m; };
 
-// Un bot se pinta solo, como lo haría una persona con maña de 0 a 1: con poca, coge 3 colores, le sale desplazado y torcido y deja los bordes
-// sin rematar; con mucha, 7 colores, brocha fina y casi en su sitio. Nunca pinta un color que no esté detrás de él.
+// Un bot se pinta solo, como lo haría una persona con maña de 0 a 1: COPIA el fondo que tiene detrás, pero a mano. La mano se va: todo el cuerpo
+// queda descuadrado 1 o 2 píxeles, y va por franjas (como quien pinta de arriba abajo) que cada una se desvía un poco más y sale algo más ancha o más
+// estrecha, así las baldosas y las rayas no clavan el ancho. Con poca maña, más descuadre, franjas más torcidas y un tono algo cambiado (pintura de bote).
 function pintaBot(e, mana) {
   mana = limita(mana, 0, 1);
-  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, M = formaDe(e).mascara;
-  const pal = _paletaBot(e, 3 + Math.round(mana * 4));
+  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, pal = _paletaBot(e, 1);
   if (!pal.length) return mideCamuflaje(e);
-  rellena(e, rgbHex(pal[0].r, pal[0].g, pal[0].b));
-  // lo que se le va la mano: unos píxeles de desplazamiento, un poco de giro y un tono algo cambiado (la pintura del bote no es la de la pantalla)
-  const torcido = (1 - mana) * 5, dx = rand(-torcido, torcido), dy = rand(-torcido, torcido), giro = rand(-1, 1) * (1 - mana) * 0.14, tono = rand(-1, 1) * (1 - mana) * 14;
-  const radio = entre(4.2, 2.2, mana), paso = radio * 0.9, orilla = Math.round((1 - mana) * 3), cos = Math.cos(giro), sin = Math.sin(giro), cx = CAJA_W / 2, cy = CAJA_H / 2;
+  rellena(e, rgbHex(pal[0].r, pal[0].g, pal[0].b));      // de base el color que más hay (por si alguna franja deja un hueco)
+  const vaiven = 0.5 + (1 - mana) * 2.2;                  // cuánto se le va la mano, en píxeles del mundo
+  let dx = rand(-vaiven, vaiven), dy = rand(-vaiven, vaiven);
   const c = e.pctx;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL); c.lineCap = 'round';
-  for (let y = 1; y < CAJA_H; y += paso) for (let x = 1; x < CAJA_W; x += paso) {
-    const px = x + rand(-0.3, 0.3) * paso, py = y + rand(-0.3, 0.3) * paso, ix = Math.round(px), iy = Math.round(py);
-    if (ix < 0 || iy < 0 || ix >= CAJA_W || iy >= CAJA_H || !M[iy * CAJA_W + ix]) continue;
-    // cerca del borde de la silueta los torpes no pintan (se queda el color de base): el remate es lo que peor se les da
-    if (orilla && (ix < orilla || iy < orilla || ix + orilla >= CAJA_W || iy + orilla >= CAJA_H || !M[iy * CAJA_W + ix - orilla] || !M[iy * CAJA_W + ix + orilla] || !M[(iy - orilla) * CAJA_W + ix] || !M[(iy + orilla) * CAJA_W + ix])) continue;
-    // mira el fondo en el punto girado y desplazado, y lo pinta con el color de su paleta que más se le parezca
-    const rx = cx + (px - cx) * cos - (py - cy) * sin + dx, ry = cy + (px - cx) * sin + (py - cy) * cos + dy;
-    const [r, g, b] = _colorFondo(bx + rx, by + ry), p = _masCercano(pal, r, g, b);
-    if (p === pal[0]) continue;      // ya es el color de base
-    c.strokeStyle = rgbHex(p.r + tono, p.g + tono, p.b + tono * 0.8); c.lineWidth = radio * rand(0.8, 1.2);
-    const a = rand(0, TAU), l = radio * rand(0.4, 0.9);      // un brochazo corto en vez de un punto
-    c.beginPath(); c.moveTo(px - Math.cos(a) * l, py - Math.sin(a) * l); c.lineTo(px + Math.cos(a) * l, py + Math.sin(a) * l); c.stroke();
+  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL); c.imageSmoothingEnabled = false;
+  for (let y = 0; y < CAJA_H;) {
+    const alto = Math.min(CAJA_H - y, 5 + Math.round(rand(0, 7)));
+    dx = limita(dx + rand(-vaiven, vaiven) * 0.6, -vaiven * 2, vaiven * 2); dy = limita(dy + rand(-vaiven, vaiven) * 0.35, -vaiven * 2, vaiven * 2);
+    const ancho = 1 + rand(-1, 1) * (1 - mana) * 0.09, altoF = 1 + rand(-1, 1) * (1 - mana) * 0.09;      // esta franja sale algo más ancha o estrecha
+    c.drawImage(MAPA.fondo, (bx + dx) * ESC_FONDO, (by + y + dy) * ESC_FONDO, CAJA_W / ancho * ESC_FONDO, alto / altoF * ESC_FONDO, 0, y, CAJA_W, alto);
+    y += alto;
   }
+  const tono = (1 - mana) * 0.05; if (tono > 0.005) { c.fillStyle = Math.random() < 0.5 ? `rgba(255,255,255,${tono})` : `rgba(32,16,44,${tono})`; c.fillRect(0, 0, CAJA_W, CAJA_H); }
   c.restore();
-  // los que tienen maña repasan después a pincel fino parte del cuerpo (como una persona con paciencia y el calco puesto): con 1, casi todo
-  if (mana > 0.5) afinaBot(e, (mana - 0.5) * 1.7);
   return mideCamuflaje(e);
 }
 // una pasada de pincel fino copiando el fondo tal cual (lo que hace una persona con paciencia y el calco puesto)
@@ -61,25 +52,12 @@ function afinaBot(e, parte = 1) {
   }
   c.restore(); mideCamuflaje(e);
 }
-// se le estropea un poco: brochazos del tono equivocado (un color del fondo, pero más claro u oscuro de la cuenta) en sitios al azar. Nada de colores que no estén detrás
-function ensuciaBot(e, manchas) {
-  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, c = e.pctx, M = formaDe(e).mascara;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL); c.lineCap = 'round';
-  for (let k = 0; k < manchas; k++) {
-    let x, y, t = 0; do { x = rand(2, CAJA_W - 2); y = rand(2, CAJA_H - 2); } while (!M[Math.floor(y) * CAJA_W + Math.floor(x)] && ++t < 40);
-    const [r, g, b] = _colorFondo(bx + x + rand(-6, 6), by + y + rand(-6, 6)), tono = rand(22, 40) * (Math.random() < 0.5 ? -1 : 1), a = rand(0, TAU), l = rand(2, 5);
-    c.strokeStyle = rgbHex(r + tono, g + tono, b + tono * 0.8); c.lineWidth = rand(2, 3.6);
-    c.beginPath(); c.moveTo(x - Math.cos(a) * l, y - Math.sin(a) * l); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke();
-  }
-  c.restore();
-}
-// La tirada de dados de la máquina: cada vez que va a pintarse saca una meta entre 80 y 99 (nunca 100) y se pinta lo bien que pueda; si le sale mejor que la meta,
-// se le estropea con brochazos del tono equivocado hasta quedar en ella. Si el fondo es tan difícil que no llega a 80, repasa a pincel fino y se queda como le salga.
+// La tirada de dados de la máquina: cada vez que va a pintarse saca una meta entre 80 y 97 (nunca 100) y se pinta con la maña que haga falta
+// para quedarse por debajo: si le sale mejor, repite con la mano más suelta (más descuadre). Si el fondo es tan difícil que no llega, se queda como le salga.
 function pintaBotDados(e) {
-  const meta = 80 + Math.floor(Math.random() * 20);
-  pintaBot(e, 0.95);
-  if (e.camo < 80) afinaBot(e);
-  for (let n = 0; n < 24 && e.camo > meta; n++) { ensuciaBot(e, 1 + Math.floor((e.camo - meta) / 3)); mideCamuflaje(e); }
+  const meta = 80 + Math.floor(Math.random() * 18);
+  let mana = 0.95; pintaBot(e, mana);
+  for (let n = 0; n < 8 && e.camo > meta && mana > 0.1; n++) { mana -= 0.12; pintaBot(e, mana); }
   return e.camo;
 }
 

@@ -480,6 +480,8 @@ IDIOMA.add({
   "Fantasmas chivatos": "Snitch ghosts",
   "Un fantasma puede chivarle una pista a un becario: si este despide a alguien en 20 s, el fantasma resucita.": "A ghost can tip off an intern: if that intern fires someone within 20 s, the ghost comes back to life.",
   "Llena el bote": "Fill the bucket",
+  "Aguante infinito": "Infinite stamina",
+  "Los colados corren sin cansarse: sin barra de aguante, como antes de la 0.2.26.": "Intruders run without tiring: no stamina bar, as before 0.2.26.",
   "Hay gotas de pintura por el suelo: los colados ganan si llevan cinco al cubo de la cafetería.": "Paint drops lie around the floor: gatecrashers win if they carry five to the cafeteria bucket.",
   "CHIVARSE": "SNITCH",
   "a un becario": "to an intern",

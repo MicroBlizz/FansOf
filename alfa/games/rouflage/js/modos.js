@@ -20,6 +20,7 @@ const EXTRAS = {
   silbato: { nombre: 'Silbato caliente', texto: 'Un colado lleva un silbato que suena solo: pásaselo a otro tocándole antes de que explote.' },
   chivato: { nombre: 'Fantasmas chivatos', texto: 'Un fantasma puede chivarle una pista a un becario: si este despide a alguien en 20 s, el fantasma resucita.' },
   bote: { nombre: 'Llena el bote', texto: 'Hay gotas de pintura por el suelo: los colados ganan si llevan cinco al cubo de la cafetería.' },
+  aguante: { nombre: 'Aguante infinito', texto: 'Los colados corren sin cansarse: sin barra de aguante, como antes de la 0.2.26.' },
 };
 // LA LUZ de la partida: uno de tres, siempre uno marcado (se guarda como los extras: dia, apagon o ninguno)
 const LUCES_SALA = [

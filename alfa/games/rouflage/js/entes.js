@@ -98,6 +98,7 @@ function descongela(e) { e.congelado = false; }
 // el aguante de un colado: corriendo se gasta (REGLAS.aguante segundos seguidos); parado o congelado se recupera (REGLAS.descanso segundos para entero).
 // Agotado va a paso de tortuga hasta recuperar la mitad: así una carrera saca de un apuro, pero no se puede cruzar el mapa sin que te pillen
 function aguanta(e, dt, corre) {
+  if (extraOn('aguante')) { e.aguante = 1; e.cansado = false; return; }      // el extra de la sala: sin cansancio
   e.aguante = limita(e.aguante + (corre ? -dt / REGLAS.aguante : dt / REGLAS.descanso), 0, 1);
   if (!e.cansado && e.aguante <= 0) { e.cansado = true; if (e.jugador) play('deny'); }
   else if (e.cansado && e.aguante >= 0.5) e.cansado = false;

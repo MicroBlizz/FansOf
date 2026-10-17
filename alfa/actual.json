@@ -1,8 +1,8 @@
 {
- "build": 148,
- "hash": "8bc0763",
- "fecha": "2026-10-17T01:47:54Z",
- "mensaje": "Rumble: la pantalla de preparación (partida rápida, modo jefe, pruebas, niveles) usa la misma flecha atrás arriba a la izquierda que el resto de pantallas",
+ "build": 149,
+ "hash": "f0a2a1d",
+ "fecha": "2026-10-17T01:48:23Z",
+ "mensaje": "Nova 0.3.3: la nota recoge los botones de info y las naves enemigas de arte final",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

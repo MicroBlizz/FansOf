@@ -26,7 +26,9 @@ function nvGalaxiaMenu() {
   lanzar.onclick = () => { if (NV_GAL.sel && nvSectorAbierto(NV_GAL.sel)) { NVP.sector = NV_GAL.sel; nvMenu(); } };
   p.appendChild(lanzar);
   const cap = nvEl('nv-boton', tr('Nave capital'), 'button'); cap.onclick = nvNaveCapital; p.appendChild(cap);
+  const ay = nvEl('nv-boton', tr('Cómo se juega'), 'button'); ay.onclick = () => { if (!NVP.tuto) nvTutoTodo(); }; ay.prepend(nvIcono('ui', 'info', '#2f8cff', 26)); p.appendChild(ay);
   const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
+  nvInfo(p, 'galaxia');
   cont.appendChild(p);
   if (!NV_GAL.sel || !NVP.gal[NV_GAL.sel]) NV_GAL.sel = NVP.gal._base;
   const pinta = () => { nvPintaGalaxia(cv); nvInfoSector(info); lanzar.disabled = !nvSectorAbierto(NV_GAL.sel); };
@@ -50,6 +52,7 @@ function nvEligeFaccion() {
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
+  nvInfo(p, 'faccion');
   cont.appendChild(p);
 }
 function nvSectores() { return Object.keys(NVP.gal).filter(k => k[0] !== '_'); }
@@ -118,5 +121,6 @@ function nvNaveCapital() {
     p.appendChild(b);
   }
   const v = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); v.onclick = nvGalaxiaMenu; p.appendChild(v);
+  nvInfo(p, 'capital');
   cont.appendChild(p);
 }

@@ -8,6 +8,7 @@
   b.textContent = tr('Jugar el prototipo');
   b.onclick = nvJugarCampana;
   nvEntrada();
+  nvCargaEnemigos();
   nvCargaArte(() => {   // el botón aparece cuando el arte está cargado (el menú enseña las naves)
     b.hidden = false;
     if (/[?&]auto=1/.test(q)) NVP.auto = true;

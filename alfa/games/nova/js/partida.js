@@ -148,7 +148,7 @@ function nvBucle(ahora) {
   const dt = Math.min(0.05, (ahora - (NVP.ult || ahora)) / 1000); NVP.ult = ahora;
   if (NVP.auto && S.estado === 'cartas') nvElegirCarta(S, 0);   // bot de pruebas (?auto=1): elige la primera carta
   if (NVP.auto && S.estado === 'estacion') nvBotEstacion(S);
-  for (let i = 0; i < NVP.vel; i++) nvPaso(S, dt);
+  if (!NVP.tuto) for (let i = 0; i < NVP.vel; i++) nvPaso(S, dt);   // con la ayuda abierta, la partida espera
   nvDibuja(S);
   if (typeof RENDIMIENTO !== 'undefined') {   // fps en pantalla y, al acabar la partida, resumen anónimo al servidor
     RENDIMIENTO.dato('enemigos', S.enem.length); RENDIMIENTO.dato('balas', S.proy.length + S.eproy.length); RENDIMIENTO.dato('particulas', S.parts.length + S.fx.length); RENDIMIENTO.dato('rango', S.nave.rango); RENDIMIENTO.dato('armas', S.nave.armas.length);
@@ -162,6 +162,7 @@ function nvEmpieza(casco, cap, ofi) {
   NVP.ult = 0;
   cancelAnimationFrame(NVP.raf);
   NVP.raf = requestAnimationFrame(nvBucle);
+  if (typeof nvTuto === 'function') nvTuto('mision');   // la primera misión explica los controles (no existe en el simulador)
 }
 function nvParar() { cancelAnimationFrame(NVP.raf); NVP.S = null; if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.parar(); }
 

@@ -1,8 +1,8 @@
 {
- "build": 145,
- "hash": "83613f8",
- "fecha": "2026-10-17T01:34:07Z",
- "mensaje": "Nova: la nave evoluciona de clase por rangos (caza, corbeta, fragata, crucero pesado, acorazado) con forma propia; el menú enseña la nave del nivel",
+ "build": 146,
+ "hash": "c2486f8",
+ "fecha": "2026-10-17T01:37:35Z",
+ "mensaje": "Nova: botón de info en cada menú con su ayuda (sale sola la primera vez y pausa la partida), «Cómo se juega» en la galaxia, y arte final de las naves enemigas",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

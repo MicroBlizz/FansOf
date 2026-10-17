@@ -80,7 +80,7 @@ function nvPanelesDOM(S) {
     });
     const rr = nvEl('nv-boton', tr('Repetir cartas') + ' (' + S.rerolls + ')', 'button'); rr.disabled = S.rerolls <= 0;
     rr.onclick = () => { nvReroll(S); };
-    p.appendChild(rr); cont.appendChild(p);
+    p.appendChild(rr); nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
   } else if (S.estado !== 'cartas' && NVI.cartasVistas) { NVI.cartasVistas = null; cont.textContent = ''; }
   if (S.estado === 'estacion' && S.estVista !== S.est) { S.estVista = S.est; S.estSel = null; nvRenderEstacion(S); }
   if ((S.estado === 'victoria' || S.estado === 'derrota') && NVI.finVisto !== S) {
@@ -135,6 +135,7 @@ function nvMenu() {
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Atrás'), 'button'); s.onclick = nvGalaxiaMenu; p.appendChild(s);
+  nvInfo(p, 'nave');
   cont.appendChild(p);
 }
 function nvMenuCapitan(casco) {
@@ -152,6 +153,7 @@ function nvMenuCapitan(casco) {
     p.appendChild(b);
   }
   const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = nvMenu; p.appendChild(at);
+  nvInfo(p, 'capitan');
   cont.appendChild(p);
 }
 function nvMenuOficial(casco, cap) {
@@ -167,6 +169,7 @@ function nvMenuOficial(casco, cap) {
     p.appendChild(b);
   }
   const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => nvMenuCapitan(casco); p.appendChild(at);
+  nvInfo(p, 'oficial');
   cont.appendChild(p);
 }
 const NV_COL_CAP = { progamer: '#6fc4ff', bunny: '#ff9a3c', necrolord: '#7ad06b', twitchking: '#b46bff', epicchampion: '#ff5b5b' };
@@ -224,5 +227,5 @@ function nvRenderEstacion(S) {
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
   sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
-  p.appendChild(sa); cont.appendChild(p);
+  p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
 }

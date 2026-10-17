@@ -24,6 +24,9 @@ const NV_ICONOS = {
     fusion: c => { nvIcCirculo(c, 24, 32, 16, '#6fc4ff'); nvIcCirculo(c, 40, 32, 16, '#ff9a3c'); },
     mejora: c => { nvIcPoli(c, [[32, 6], [54, 32], [40, 32], [40, 58], [24, 58], [24, 32], [10, 32]], '#5be36b'); }
   },
+  ui: {
+    info: c => { nvIcCirculo(c, 32, 32, 26, '#2f8cff'); nvIcCirculo(c, 32, 19, 5, '#fff'); nvIcRect(c, 27, 28, 10, 22, '#fff'); }
+  },
   fac: {   // facetas de oficial
     fuego: c => { nvIcCirculo(c, 32, 32, 22, 'rgba(0,0,0,0)'); c.lineWidth = 4; c.strokeStyle = '#ff5b5b'; c.beginPath(); c.arc(32, 32, 20, 0, 6.283); c.moveTo(32, 4); c.lineTo(32, 20); c.moveTo(32, 44); c.lineTo(32, 60); c.moveTo(4, 32); c.lineTo(20, 32); c.moveTo(44, 32); c.lineTo(60, 32); c.stroke(); nvIcCirculo(c, 32, 32, 6, '#ffd93d'); },
     defensa: c => nvIcPoli(c, [[32, 4], [56, 14], [52, 42], [32, 60], [12, 42], [8, 14]], '#6fa8ff'),
@@ -48,7 +51,7 @@ function nvIcEstrella(x, y, R, r, n, giro) { const o = []; for (let i = 0; i < n
 function nvIcRetrato(c, col) { nvIcCirculo(c, 32, 32, 29, col); nvIcCirculo(c, 32, 26, 12, '#f1d2b0'); nvIcPoli(c, [[10, 58], [16, 44], [48, 44], [54, 58]], '#26306a'); }
 
 // Un lienzo de `tam` px con el icono (grupo: arma | sis | fac | cap). Si el icono no existe, queda un círculo del color.
-const NV_PNG_PREFIJO = { arma: 'arma', fac: 'ofi', cap: 'cap', taller: 'taller', cat: 'cat', estado: 'estado' };
+const NV_PNG_PREFIJO = { arma: 'arma', fac: 'ofi', cap: 'cap', taller: 'taller', cat: 'cat', estado: 'estado', ui: 'ui' };
 const NV_PNG_SIS = { escudo: 'mod-escudo', blindaje: 'mod-blindaje', dano: 'sis-dano', cadencia: 'sis-cadencia', robo: 'sis-robo', casco: 'sis-casco', regen: 'sis-regen', vel: 'sis-vel', iman: 'sis-iman' };
 // Si existe el PNG de arte final lo usa; si no carga, cae al dibujo de código.
 function nvIcono(grupo, clave, col, tam) {

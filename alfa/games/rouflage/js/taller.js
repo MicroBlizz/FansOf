@@ -60,6 +60,7 @@ function avanzaTaller(dt) {
     if (Math.abs(CAM.z - tz) < tz * 0.004 && Math.abs(CAM.x - tx) < 0.3 && Math.abs(CAM.y - ty) < 0.3) preparaCapas();
   }
   senCamTeclas(dt);
+  refrescaRapida();
   if (TALLER.sucio > 0) { TALLER.sucio -= dt; if (TALLER.sucio <= 0) mideTaller(); }
 }
 function mideTaller() { if (J.yo) pintaMedidor(mideCamuflaje(J.yo)); }
@@ -140,6 +141,12 @@ function tallerHerramienta(h) {
   TALLER.herr = TALLER.herr === h ? 'pincel' : h; if (TALLER.herr === 'senuelo') { tutoDi('cam-senuelo'); if (J.t >= PISTA.hasta) pista(tr('Zoom: rueda, + / - o pellizco. Mover cámara: WASD, botón derecho o dos dedos'), 3.2); } play('select'); refrescaTaller(); if (TALLER.abierto) encuadraTaller(); }      // el señuelo abre la cámara, el resto la cierra
 function tallerRadio(i) { const antes = TALLER.herr; TALLER.radio = RADIOS[i]; if (TALLER.herr !== 'linea' && TALLER.herr !== 'senuelo') TALLER.herr = 'pincel'; play('select'); refrescaTaller(); if (antes !== TALLER.herr && TALLER.abierto) encuadraTaller(); }   // la línea usa el gordo del pincel
 function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.color); yo.pintado = true; play('cubo'); mideTaller(); }
+// la pintura rápida: te pinta de golpe como un bot con maña (copia del fondo, con sus descuadres), una vez cada REGLAS.pintaRapida segundos. Luego se retoca a mano
+function tallerRapida() {
+  const yo = J.yo; if (!yo || !TALLER.abierto) return;
+  if (yo.rapida > 0) { play('deny'); return; }
+  guardaPaso(yo); pintaBot(yo, 0.8); yo.pintado = true; yo.rapida = REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
+}
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }
 function tallerCalco() { TALLER.calco = !TALLER.calco; play('select'); refrescaTaller(); }
 function tallerFigura(h) { tallerHerramienta(h); }

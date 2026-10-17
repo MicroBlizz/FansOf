@@ -1,8 +1,8 @@
 {
- "build": 156,
- "hash": "b29c6d5",
- "fecha": "2026-10-17T02:18:01Z",
- "mensaje": "Nova: etapas de nave cada 10 rangos y mejora Academia de la nave capital (empiezas con más rango)",
+ "build": 157,
+ "hash": "e674128",
+ "fecha": "2026-10-17T02:25:19Z",
+ "mensaje": "Rouflage: pintura rápida (te pinta como un bot, una vez cada 45 s) y aguante de los colados",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

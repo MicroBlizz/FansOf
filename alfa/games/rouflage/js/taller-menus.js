@@ -26,7 +26,7 @@ function preparaMenusPintar() {
   const T = E('taller'), Q = s => T.querySelector(s), QA = s => [...T.querySelectorAll(s)];
   const N = TMENU.N = {
     plegar: E('t-plegar'), medidor: Q('.t-medidor:not(.t-tinta)'), tinta: Q('.t-tinta'), ayuda: E('t-ayuda'), posturas: Q('.t-posturas'), herr: Q('.t-herr'),
-    gota: E('t-gota'), radios: QA('.t-radio'), cabezales: QA('.t-cabezal'), cubo: E('t-cubo'), figuras: QA('.t-figura'), senuelo: E('t-senuelo'),
+    gota: E('t-gota'), radios: QA('.t-radio'), cabezales: QA('.t-cabezal'), cubo: E('t-cubo'), rapida: E('t-rapida'), figuras: QA('.t-figura'), senuelo: E('t-senuelo'),
     deshacer: E('t-deshacer'), calco: E('t-calco'), paleta: E('t-paleta'), colores: Q('.t-colores'), color: E('t-color'), recientes: E('t-recientes'), listo: E('t-listo'),
   };
   N.ordenTaller = [...T.children]; N.ordenHerr = [...N.herr.children]; N.ordenColores = [...N.colores.children];
@@ -81,11 +81,11 @@ function ponMenuPintar(id, guarda = true) {
       C.filaColor.append(N.gota, N.recientes);
       C.sec.postura.append(N.posturas); C.sec.color.append(C.filaColor, N.paleta);
       C.filaTam.append(...N.radios); C.sec.pincel.append(C.filaTam, elMenu('div', 't-fila t-fila-cab', N.cabezales));
-      C.filaForma.append(...N.figuras, N.cubo, N.senuelo); C.sec.formas.append(C.filaForma);
+      C.filaForma.append(...N.figuras, N.cubo, N.rapida, N.senuelo); C.sec.formas.append(C.filaForma);
       C.barra.append(N.deshacer, N.calco, N.color, N.listo);
       T.append(C.elige, N.plegar, C.arriba, C.nav, C.cuerpo, C.barra);
     } else if (id === 'b') {
-      C.izq.append(C.bPostura, N.gota, C.bFormas, N.cubo, N.senuelo);
+      C.izq.append(C.bPostura, N.gota, C.bFormas, N.cubo, N.rapida, N.senuelo);
       C.der.append(...N.radios.slice().reverse(), ...N.cabezales, N.deshacer, N.calco);
       C.volarPostura.append(N.posturas); C.volarFormas.append(...N.figuras);
       C.tira.append(N.color, N.recientes, N.paleta);
@@ -94,7 +94,7 @@ function ponMenuPintar(id, guarda = true) {
     } else {
       C.filaColor.append(N.gota, N.recientes);
       C.sec.postura.append(N.posturas); C.sec.color.append(C.filaColor, N.paleta);
-      C.filaTam.append(...N.radios, ...N.cabezales); C.filaForma.append(...N.figuras, N.cubo, N.senuelo);
+      C.filaTam.append(...N.radios, ...N.cabezales); C.filaForma.append(...N.figuras, N.cubo, N.rapida, N.senuelo);
       C.sec.pincel.append(C.filaTam, C.filaForma);
       C.cColor.prepend(N.color);
       C.nav.append(C.cPostura, C.cColor, C.cPincel, N.deshacer, N.listo);

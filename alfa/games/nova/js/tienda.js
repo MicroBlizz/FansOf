@@ -33,8 +33,8 @@ function nvReciclaModulo(S, w) {
 
 // ---------- surtido ----------
 function nvRanuraDefensa(S) { return nvRanuras(S.nave.rango, S).find(r => !S.nave.armas.some(w => w.slot === r.id) && r.tipos.includes('defensa') && (r.cara === 'popa' || r.cara === 'dorsal')); }
-function nvArmaAlAzar(S) {   // una arma del pool al estilo de las cartas: más común cuanto menos rara
-  const tipos = NV_TIPOS_LIBRES.filter(t => nvVariantesPool(t).length); if (!tipos.length) return null;
+function nvArmaAlAzar(S) {   // una arma del pool al estilo de las cartas: más común cuanto menos rara; solo de tipos que admita alguna ranura libre
+  const tipos = NV_TIPOS_LIBRES.filter(t => nvVariantesPool(t).length && nvRanuraLibre(S, t)); if (!tipos.length) return null;
   const p = tipos[Math.floor(Math.random() * tipos.length)], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
   const vs = nvVariantesPool(p), tot = vs.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
   let r = Math.random() * tot, v = vs[0];
@@ -47,8 +47,9 @@ function nvGeneraSurtido(S) {
     const o = nvArmaAlAzar(S);
     if (o && !out.some(x => x.portador === o.portador && x.carga === o.carga && x.variante === o.variante)) out.push(o);
   }
-  if (!S.nave.esc && nvEnPool('def:escudo')) out.push({ tipo: 'defensa', id: 'escudo', carga: 'energia', precio: NV_PRECIO_DEF });
-  if (!S.mejoras.blindaje && nvEnPool('def:blindaje')) out.push({ tipo: 'defensa', id: 'blindaje', carga: 'cinetica', precio: NV_PRECIO_DEF });
+  const defOk = !!nvRanuraDefensa(S);   // sin anclaje de defensa libre no se ofrece
+  if (defOk && !S.nave.esc && nvEnPool('def:escudo')) out.push({ tipo: 'defensa', id: 'escudo', carga: 'energia', precio: NV_PRECIO_DEF });
+  if (defOk && !S.mejoras.blindaje && nvEnPool('def:blindaje')) out.push({ tipo: 'defensa', id: 'blindaje', carga: 'cinetica', precio: NV_PRECIO_DEF });
   const sis = NV_MEJORAS_SISTEMA.filter(m => nvEnPool('sis:' + m.id) && (S.sist[m.id] || 0) < m.max && !(m.id === 'robo' && !S.nave.armas.some(w => w.portador !== 'defensa')));
   for (let i = 0; i < 2 && sis.length; i++) { const m = sis.splice(Math.floor(Math.random() * sis.length), 1)[0]; out.push({ tipo: 'sistema', id: m.id, precio: Math.round(NV_PRECIO_SIS * (1 + 0.25 * (S.sist[m.id] || 0))) }); }
   return out;
@@ -65,7 +66,7 @@ function nvCompraModulo(S, o) {
     if (o.id === 'escudo') n.esc = { hp: 200, cap: 200, reg: 15, sin: 0 }; else S.mejoras.blindaje = 0.25;
     n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: o.carga, nivel: 0, cd: 0 });
   } else {
-    const sl = nvRanuraLibre(S, o.portador); if (!sl) return tr('Sin ranura libre: recicla un módulo');
+    const sl = nvRanuraLibre(S, o.portador); if (!sl) return tr('Ninguna ranura libre admite esa arma: recicla un módulo');
     const w = nvArmaNueva(sl, o.portador, o.carga, null, nvTamNuevo(n.rango)); if (o.variante) w.variante = o.variante;
     n.armas.push(w);
   }

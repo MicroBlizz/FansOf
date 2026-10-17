@@ -62,3 +62,14 @@
 .nv-rar-rara { box-shadow: 0 0 10px rgba(74, 168, 255, .55); }
 .nv-rar-epica { box-shadow: 0 0 14px rgba(180, 107, 255, .7); }
 .nv-rar-legendaria { box-shadow: 0 0 18px rgba(255, 181, 46, .85); }
+
+.nv-anclaje { white-space: pre-line; }
+.nv-leyenda { display: flex; flex-direction: column; gap: 3px; font-size: 13px; font-weight: 700; }
+.nv-ley { padding: 3px 10px; border-radius: 8px; background: #12142c; border: 2px solid #1a0f2e; }
+.nv-ley.nv-libre { color: #ffd93d; }
+.nv-tabs { display: flex; gap: 0; border-radius: 999px; overflow: hidden; border: 3px solid #1a0f2e; background: #12142c; }
+.nv-tabs button { flex: 1; padding: 8px 4px; border: 0; background: none; color: #9fb4d8; font: 800 16px 'Baloo 2', sans-serif; cursor: pointer; }
+.nv-tabs button.nv-sel { background: linear-gradient(#ffd93d, #f29a2e); color: #2a1500; outline: 0; }
+.nv-fila { position: relative; padding-right: 74px; }
+.nv-precio { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); padding: 3px 10px; border-radius: 999px; background: #12142c; border: 2px solid #1a0f2e; color: #ffd93d; font-weight: 800; font-size: 15px; }
+.nv-fila:disabled .nv-precio { color: #8a90b8; }

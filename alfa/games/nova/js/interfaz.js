@@ -196,7 +196,7 @@ function nvRenderEstacion(S) {
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
   const armas = n.armas.filter(w => w.portador !== 'defensa');
   const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
-  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(aviso);
+  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(nvLeyendaAnclajes(S)); p.appendChild(aviso);
   if (S.estTienda) nvRenderTienda(S, p);
   else if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
     const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));

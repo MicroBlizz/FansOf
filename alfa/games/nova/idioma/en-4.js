@@ -95,5 +95,10 @@ IDIOMA.add({
   "Mejorar: cada subida da un 25 % más de daño a un arma y cuesta más cuanto más alta, grande o rara es.": "Upgrade: each step gives a weapon 25 % more damage and costs more the higher, bigger or rarer it is.",
   "Reciclar: desmontas un módulo y recuperas la mitad de lo que vale, mejoras incluidas. Sirve para hacer sitio. Siempre te queda un arma.": "Recycle: you strip a module and get back half of its value, upgrades included. It makes room. You always keep one weapon.",
   "Renovar el surtido cambia lo que se vende. Lo que ves es lo que pagas: aquí no hay azar de pago.": "Refreshing the stock changes what is on sale. What you see is what you pay for: there is no paid luck here.",
-  "Con la chatarra que llevas puedes reparar el casco, cambiar un arma por otra y pasar por la tienda de módulos.": "With the scrap you carry you can repair your hull, swap one weapon for another and visit the module shop."
+  "Con la chatarra que llevas puedes reparar el casco, cambiar un arma por otra y pasar por la tienda de módulos.": "With the scrap you carry you can repair your hull, swap one weapon for another and visit the module shop.",
+  "Todas las armas": "All weapons",
+  "Admite": "Accepts",
+  "Libre": "Free",
+  "Ninguna ranura libre admite esa arma: recicla un módulo": "No free slot accepts that weapon: recycle a module",
+  "Solo se vende lo que cabe en una ranura libre de tu nave": "Only what fits a free slot on your ship is for sale"
 });

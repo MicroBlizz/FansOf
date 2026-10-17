@@ -125,6 +125,7 @@ function nvRestos(S, dt) {
   }
 }
 function nvSumaChatarra(S, v) {
+  if (v > 0) nvSnd('nvChatarra', S);
   S.chat += v; S.cartera += v;
   const n = S.nave;
   if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
@@ -133,6 +134,7 @@ function nvSumaChatarra(S, v) {
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
     if (nvClase(n.rango) !== nvClase(n.rango - 1)) S.aviso = { t: 3.5, txt: tr('Evolución') + ': ' + tr(NV_ETAPAS[nvClase(n.rango)].nombre) + '!' };   // la nave cambia de clase
+    nvSnd(nvClase(n.rango) !== nvClase(n.rango - 1) ? 'nvEvolucion' : 'nvRango', S);
     nvAjustaTamanos(S);
     nvAbrirCartas(S);
   }

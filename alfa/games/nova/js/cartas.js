@@ -100,11 +100,12 @@ function nvAbrirCartas(S) {
   S.cartas = nvTresCartas(S);
   S.rr = S.cartas.map(() => S.cap === 'epicchampion' ? 0 : 1 + (S.rerollExtra || 0));   // cada carta tiene sus propias repeticiones
   if (!S.cartas.length) { S.estado = 'juego'; return; }
+  nvSnd('nvCartas', S);
 }
 function nvElegirCarta(S, i) {
   const c = S.cartas && S.cartas[i];
   if (!c) return;
-  c.aplicar();
+  c.aplicar(); nvSnd('nvElige', S);
   S.stats.cartas.push(c.titulo);
   nvAjustaTamanos(S);
   S.cartas = null; S.estado = 'juego';

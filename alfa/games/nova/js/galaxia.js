@@ -27,6 +27,7 @@ function nvGalaxiaMenu() {
   p.appendChild(lanzar);
   const cap = nvEl('nv-boton', tr('Nave capital'), 'button'); cap.onclick = nvNaveCapital; p.appendChild(cap);
   const ay = nvEl('nv-boton', tr('Cómo se juega'), 'button'); ay.onclick = () => { if (!NVP.tuto) nvTutoTodo(); }; ay.prepend(nvIcono('ui', 'info', '#2f8cff', 26)); p.appendChild(ay);
+  p.appendChild(nvControlSonido());
   const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
   nvInfo(p, 'galaxia');
   cont.appendChild(p);

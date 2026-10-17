@@ -1,8 +1,8 @@
 {
- "build": 178,
- "hash": "00660c4",
- "fecha": "2026-10-17T20:00:39Z",
- "mensaje": "Nova: el menú de la estación conserva el scroll al comprar, mejorar o reciclar",
+ "build": 179,
+ "hash": "f849819",
+ "fecha": "2026-10-17T20:02:44Z",
+ "mensaje": "Nova: sonido y música (efectos y canciones sintetizados, volumen en la galaxia)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

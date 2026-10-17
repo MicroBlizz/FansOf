@@ -81,6 +81,7 @@ function nvArmas(S, dt) {
 }
 function nvDispara(S, w, p, obj) {
   const c = NOVA_ARMAS.cargas[w.carga], dano = nvDanoArma(w), id = w.fusion ? w.fusion.id : '';
+  nvSnd({ laser: 'nvLaser', railgun: 'nvRail', flak: 'nvFlak', lanzador: 'nvMisil' }[w.portador] || 'nvLaser', S);
   const base = { x: w.x, y: w.y, w, carga: w.carga, color: c.color, forma: c.forma, dano, golpeados: [] };
   if (w.portador === 'laser') {   // haz instantáneo contra el objetivo
     w.rayo = 0.09; w.rx = obj.x; w.ry = obj.y;
@@ -141,6 +142,7 @@ function nvProyectiles(S, dt) {
   }
 }
 function nvExplosion(S, x, y, radio, dano, w, salvo) {
+  nvSnd('nvEstalla', S, x, y);
   radio *= nvFactor(S.nave.rango);   // las explosiones también crecen con la nave
   S.fx.push({ t: 0.3, x, y, r: radio, color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'onda' });
   for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true);
@@ -149,6 +151,7 @@ function nvExplosion(S, x, y, radio, dano, w, salvo) {
 // ---------- el golpe: escudo, estados, reacciones ----------
 // mult: multiplicador extra (haz enfocado); sinReaccion: los golpes de área no encadenan reacciones.
 function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion) {
+  nvSnd('nvImpacto', S, x, y, 0.8);
   const A = NOVA_ARMAS, carga = w.carga, c = A.cargas[carga], est = e.est;
   let d = dano * (mult || 1), crit = false, reac = null;
   const z = nvZ(S);

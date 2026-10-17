@@ -1,6 +1,9 @@
 // Fans of Nova · Inglés: rarezas, variantes de armas, repetir por carta y Arsenal.
 'use strict';
 IDIOMA.add({
+  "Sonido: sí": "Sound: on",
+  "Sonido: no": "Sound: off",
+  "Efectos": "Effects",
   "Común": "Common",
   "Rara": "Rare",
   "Épica": "Epic",

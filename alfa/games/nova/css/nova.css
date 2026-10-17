@@ -73,3 +73,6 @@
 .nv-fila { position: relative; padding-right: 74px; }
 .nv-precio { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); padding: 3px 10px; border-radius: 999px; background: #12142c; border: 2px solid #1a0f2e; color: #ffd93d; font-weight: 800; font-size: 15px; }
 .nv-fila:disabled .nv-precio { color: #8a90b8; }
+.nv-sonido { display: flex; flex-direction: column; gap: 4px; }
+.nv-sonfila { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 700 15px 'Baloo 2', sans-serif; color: #fff; }
+.nv-sonfila input { flex: 1; max-width: 60%; accent-color: #ffd93d; }

@@ -55,6 +55,6 @@ function nvMundo(S, dt) {
   }
   for (const st of S.estaciones) {
     if (st.cd > 0) { st.cd -= dt; continue; }
-    if (S.estado === 'juego' && Math.hypot(n.x - st.x, n.y - st.y) < st.r + n.r * 0.6) { S.estado = 'estacion'; S.est = st; S.estVista = null; }
+    if (S.estado === 'juego' && Math.hypot(n.x - st.x, n.y - st.y) < st.r + n.r * 0.6) { S.estado = 'estacion'; S.est = st; S.estVista = null; nvSnd('nvEstacion', S); }
   }
 }

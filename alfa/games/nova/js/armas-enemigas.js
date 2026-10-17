@@ -39,6 +39,7 @@ function nvDisparaE(S, e, w) {
   const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1, ang = Math.atan2(n.y - py, n.x - px);
   const cada = A.cada * T.cada, dano = A.dps * T.c * cada / A.n;
   w.cd = cada;
+  nvSnd(w.portador === 'laser' ? 'nvLaserE' : 'nvDisparoE', S, px, py, 0.8);
   S.fx.push({ t: 0.12, x: px, y: py, r: 6 * T.r * nvZ(S), color: c.color, tipo: 'flash' });
   if (w.portador === 'laser') {   // haz instantáneo
     S.rayosE.push({ x: px, y: py, rx: n.x, ry: n.y, t: 0.12, color: c.color, g: 2 + T.r });

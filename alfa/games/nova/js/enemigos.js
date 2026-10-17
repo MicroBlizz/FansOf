@@ -104,6 +104,7 @@ function nvEnemigos(S, dt) {
 // con un destello. Mientras viaja no existe para nadie (ni dispara ni se le puede dar); al llegar, nace de verdad.
 const NV_SALTO_T = 0.45;
 function nvSaltoEntra(S, tipo, rango, f, alLlegar) {
+  nvSnd(tipo === 'jefe' ? 'nvJefeLlega' : 'nvSalto', S);
   const n = S.nave, [hw, hh] = nvMediaPantalla(S), a = Math.random() * 6.283, ca = Math.cos(a), sa = Math.sin(a);
   const borde = Math.min(hw / Math.abs(ca || 1e-6), hh / Math.abs(sa || 1e-6));   // distancia al borde de la pantalla en esa dirección
   let x = n.x + ca * borde * f, y = n.y + sa * borde * f;
@@ -150,6 +151,7 @@ function nvJefe(S, e, dt, ux, uy, dist, apagado) {
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);
+  if (e.d.jefe || e.d.capitan || e.d.nido) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
   if (e.d.capitan) S.capMuertos++;
   nvChatarra(S, e.x, e.y, e.d.pasivo || e.d.nido || e.d.jefe || e.d.capitan ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
   S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
@@ -170,6 +172,7 @@ function nvDanoNave(S, d) {
   let r = rd;
   if (n.esc && n.esc.hp > 0) { const a = Math.min(n.esc.hp, r); n.esc.hp -= a; r -= a; n.esc.sin = 3; }
   if (NVP.inmortal) r = 0;   // ?inmortal=1: escenario de pruebas de rendimiento, no te matan (los enemigos siguen disparando y el daño se cuenta)
+  if (r > 0) nvSnd('nvGolpeNave', S);
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;
   if (S.cap === 'twitchking') S.kills = [];   // el hype se pierde al recibir daño
   if (n.hp <= 0 && S.cap === 'necrolord' && !S.revivido) { S.revivido = true; n.hp = n.hpMax * 0.5; S.aviso = { t: 2.5, txt: tr('¡Renaces!') }; return; }

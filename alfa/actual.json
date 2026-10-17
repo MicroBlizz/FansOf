@@ -1,8 +1,8 @@
 {
- "build": 147,
- "hash": "04bbbe6",
- "fecha": "2026-10-17T01:47:06Z",
- "mensaje": "Todos los juegos suben versión con su nota (mejoras por dentro: core cambió con el texto del feedback)",
+ "build": 148,
+ "hash": "8bc0763",
+ "fecha": "2026-10-17T01:47:54Z",
+ "mensaje": "Rumble: la pantalla de preparación (partida rápida, modo jefe, pruebas, niveles) usa la misma flecha atrás arriba a la izquierda que el resto de pantallas",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

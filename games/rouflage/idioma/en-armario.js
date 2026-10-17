@@ -32,7 +32,6 @@ IDIOMA.add({
   "Ni mi madre me encuentra": "Not even my mum finds me", "NI MI MADRE ME ENCUENTRA": "NOT EVEN MY MUM FINDS ME",
   // pantallas
   "PERFIL": "PROFILE",
-  "Prueba de la alfa: lo que te pones se ve en la habitación; en las partidas aún no.": "Alpha test: what you wear shows in the room; not in matches yet.",
   "Pase · Temporada 1": "Pass · Season 1",
   "Solo para probar cómo queda: este botón no estará en el juego final.": "Just to see how it looks: this button won't be in the final game.",
   "DESBLOQUEAR TODO": "UNLOCK EVERYTHING",

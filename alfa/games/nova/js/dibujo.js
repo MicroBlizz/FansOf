@@ -227,7 +227,8 @@ function nvDibujaMundo(c, S) {
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const s of S.saltos) nvDibujaSalto(c, s, S);
   nvDibujaBalasE(c, S);
-  nvDibujaNave(c, S);
+  if (!S.nave.destruida) nvDibujaNave(c, S);
+  nvDibujaTrozos(c, S);
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
   c.globalCompositeOperation = 'lighter';
   for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = (3 + w.rayo * 20) * z; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }

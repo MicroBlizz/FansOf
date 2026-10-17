@@ -156,7 +156,8 @@ function nvMuere(S, e) {
   const z = nvZ(S);
   S.fx.push({ t: 0.25, x: e.x, y: e.y, r: e.r * 1.1, color: '#ffe9a8', tipo: 'flash' });
   for (let i = 0; i < 10 + Math.min(14, e.rango); i++) { const a = Math.random() * 6.283, v = (80 + Math.random() * 260) * Math.max(z, e.r / 24); S.parts.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.5 + Math.random() * 0.4, color: i % 3 ? e.d.color : '#ffd93d', s: Math.max(3 * z, e.r * 0.12) }); }
-  if (e.d.jefe) S.estado = 'victoria';
+  if (!e.d.pasivo && nvVisible(S, e.x, e.y, e.r)) nvTrozos(S, e, e.d.capitan || e.d.nido ? 6 : 4);   // revienta en pedazos
+  if (e.d.jefe) nvAcaba(S, 'victoria', e.x, e.y, e.r);
 }
 // La chatarra queda flotando hasta que la nave se acerca (imán).
 function nvChatarra(S, x, y, valor) {
@@ -172,5 +173,5 @@ function nvDanoNave(S, d) {
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;
   if (S.cap === 'twitchking') S.kills = [];   // el hype se pierde al recibir daño
   if (n.hp <= 0 && S.cap === 'necrolord' && !S.revivido) { S.revivido = true; n.hp = n.hpMax * 0.5; S.aviso = { t: 2.5, txt: tr('¡Renaces!') }; return; }
-  if (n.hp <= 0 && S.estado === 'juego') S.estado = 'derrota';
+  if (n.hp <= 0 && S.estado === 'juego') nvAcaba(S, 'derrota');
 }

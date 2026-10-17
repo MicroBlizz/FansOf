@@ -1,8 +1,8 @@
 {
- "build": 171,
- "hash": "94c230e",
- "fecha": "2026-10-17T10:58:57Z",
- "mensaje": "Rouflage 0.2.27: armario, tienda y pase para todos (nota y versión)",
+ "build": 172,
+ "hash": "0a4fe15",
+ "fecha": "2026-10-17T12:12:49Z",
+ "mensaje": "Nova: las naves revientan en trozos y el final espera 2,4 s (cadena de explosiones de tu nave o del jefe) antes de la puntuación",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

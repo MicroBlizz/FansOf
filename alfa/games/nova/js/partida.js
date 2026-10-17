@@ -14,6 +14,8 @@ function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   //
 function nvMediaPantalla(S) { const w = nvVista(S) / 2; return [w, w * (S.aspecto || 16 / 9)]; }
 // ¿Está (x, y) dentro de la pantalla? `m` > 0 exige ese margen hacia dentro. Nada dispara desde fuera de la pantalla.
 function nvEnPantalla(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw - (m || 0) && Math.abs(y - S.cam.y) < hh - (m || 0); }
+// ¿Se ve (x, y)? Con margen m hacia fuera (lo de fuera no se dibuja ni revienta en trozos).
+function nvVisible(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw + m && Math.abs(y - S.cam.y) < hh + m; }
 function nvZ(S) { return nvVista(S) / 560; }   // cuántas unidades de mundo mide «un píxel de rango 1»: los efectos y trazos fijos se multiplican por esto para verse igual a cualquier tamaño
 function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
@@ -52,25 +54,24 @@ function nvNuevaPartida(casco, cap, ofi) {
 
 // ---------- un paso de simulación (dt en segundos) ----------
 function nvPaso(S, dt) {
-  if (S.estado !== 'juego') return;
-  S.t += dt;
+  const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
+  if (S.estado !== 'juego' && !fin) return;
+  if (!fin) S.t += dt;
   const n = S.nave;
-  nvMueve(S, dt);
-  nvSpawn(S, dt); nvSaltos(S, dt);
-  nvMundo(S, dt);
-  nvTripulacionPaso(S);
+  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); }
   nvEnemigos(S, dt);
-  nvSumaChatarra(S, 0);
-  nvArmas(S, dt);
+  if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
   nvProyectilesEnemigos(S, dt);
-  nvRestos(S, dt);
+  if (!fin) nvRestos(S, dt);
+  nvPasoTrozos(S, dt);
   if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
   if (n.golpeado > 0) n.golpeado -= dt;
   if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
   // cámara suave
+  if (fin) { nvPasoFinal(S, dt); return; }
   S.cam.x += (n.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (n.y - S.cam.y) * Math.min(1, dt * 6);
 }
 function nvMueve(S, dt) {

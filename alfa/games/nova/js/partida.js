@@ -135,6 +135,7 @@ function nvSumaChatarra(S, v) {
     n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
+    if (nvClase(n.rango) !== nvClase(n.rango - 1)) S.aviso = { t: 3.5, txt: tr('Evolución') + ': ' + tr(NV_ETAPAS[nvClase(n.rango)].nombre) + '!' };   // la nave cambia de clase
     nvAjustaTamanos(S);
     nvAbrirCartas(S);
   }

@@ -1,8 +1,8 @@
 {
- "build": 144,
- "hash": "76c0e59",
- "fecha": "2026-10-17T01:29:46Z",
- "mensaje": "Nova: iconos de interfaz ui-info y ui-ayuda para el botón de información contextual",
+ "build": 145,
+ "hash": "83613f8",
+ "fecha": "2026-10-17T01:34:07Z",
+ "mensaje": "Nova: la nave evoluciona de clase por rangos (caza, corbeta, fragata, crucero pesado, acorazado) con forma propia; el menú enseña la nave del nivel",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

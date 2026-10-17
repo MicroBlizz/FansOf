@@ -65,16 +65,16 @@ function nvTorreta(c, w, r, rot) {
   c.restore();
 }
 function nvDibujaNave(c, S) {
-  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam];
+  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam], k = nvClase(n.rango);
   c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.filter = 'brightness(0)';   // sombra proyectada: da altura sobre el fondo
-  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, S.casco + '-casco', 0, 0);
+  nvCuerpo(c, S.casco, k, 'alas'); nvCuerpo(c, S.casco, k, 'casco');
   c.restore();
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);
-  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y);
+  nvCuerpo(c, S.casco, k, 'alas');
   nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y);
-  nvPieza(c, S.casco + '-casco', 0, 0);
+  nvCuerpo(c, S.casco, k, 'casco');
   const abiertas = nvRanuras(n.rango, S);
   for (const sl of abiertas) {
     const w = n.armas.find(a => a.slot === sl.id), rr = NOVA_PIEZAS.radioRanura[w ? w.tam : 'S'];
@@ -83,7 +83,7 @@ function nvDibujaNave(c, S) {
     if (w.portador === 'defensa') { c.beginPath(); for (let k = 0; k < 6; k++) { const a = k * 1.047 - 1.57; c[k ? 'lineTo' : 'moveTo'](sl.x + Math.cos(a) * rr, sl.y + Math.sin(a) * rr); } c.closePath(); c.fillStyle = w.carga === 'energia' ? '#4aa8ff' : '#ff9a3c'; c.fill(); c.stroke(); continue; }
     c.save(); c.translate(sl.x, sl.y); nvTorreta(c, w, rr, (w.ang || 0) - n.ang + 1.5708); c.restore();
   }
-  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvPieza(c, S.casco + '-casco', 0, 0); }
+  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvCuerpo(c, S.casco, k, 'casco'); }
   c.restore();
   // escudo del jugador: una pompa que se apaga al caer
   if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; nvPieza(c, S.casco + '-escudo', H.escudo.x, H.escudo.y); c.restore(); }

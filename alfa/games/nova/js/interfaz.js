@@ -110,10 +110,11 @@ function nvJugar() {
 }
 
 // ---------- menú de naves: cada facción empieza con un arma de su clase ----------
-function nvPreview(cv, casco) {
-  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, 5), e = cv.height / 330;
+function nvPreview(cv, casco, rango) {
+  rango = rango || nvRangoInicial();   // la nave que sale al desplegar: la de tu nivel
+  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
   c.clearRect(0, 0, cv.width, cv.height); c.save(); c.translate(cv.width / 2, cv.height * 0.55); c.scale(e, e);
-  nvPieza(c, casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvPieza(c, casco + '-casco', 0, 0);
+  nvCuerpo(c, casco, k, 'alas'); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvCuerpo(c, casco, k, 'casco');
   c.restore();
 }
 // Antes de la misión: nave, capitán y un oficial (tres pasos en el mismo panel).
@@ -128,6 +129,7 @@ function nvMenu() {
     const t = nvEl('nv-ntxt'); t.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
+    t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial())].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial()) + 1).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
     t.appendChild(nvEl('nv-cdet', tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);

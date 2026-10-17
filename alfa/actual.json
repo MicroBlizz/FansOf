@@ -1,8 +1,8 @@
 {
- "build": 137,
- "hash": "2535404",
- "fecha": "2026-10-17T01:11:42Z",
- "mensaje": "Rouflage: de cazador contra bots, con las cartas al máximo en las prácticas empieza la caza sin esperar",
+ "build": 138,
+ "hash": "f4b7953",
+ "fecha": "2026-10-17T01:12:41Z",
+ "mensaje": "Nova: 17 iconos más (mejoras de sistema, estados, taller y categorías de carta)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

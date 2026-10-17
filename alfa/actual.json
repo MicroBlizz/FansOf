@@ -1,8 +1,8 @@
 {
- "build": 160,
- "hash": "5706c31",
- "fecha": "2026-10-17T02:30:18Z",
- "mensaje": "Nova: anclajes de ranuras, alas y motor por clase de nave, con el arte nuevo de las etapas 2 a 5",
+ "build": 161,
+ "hash": "5d46e15",
+ "fecha": "2026-10-17T02:33:01Z",
+ "mensaje": "Nova: escenario de pruebas ?inmortal=1 y herramientas/nova-rendimiento.js para medir sim y dibujo por fotograma",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

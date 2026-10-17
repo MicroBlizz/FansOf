@@ -14,6 +14,7 @@ const ICONOS = {
   andar: '<path d="M12 3v18M3 12h18"/><path d="M9 6l3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3"/>',
   cabezaRedonda: '<circle cx="12" cy="12" r="6.5" fill="currentColor"/>',
   cabezaCuadrada: '<rect x="5.5" y="5.5" width="13" height="13" fill="currentColor"/>',
+  rapida: '<path d="M13 3 6 13h5l-1 8 7-10h-5z" fill="currentColor" stroke-linejoin="round"/><path d="M3 8h2M2.5 12h2M3 16h2"/>',
   senuelo: '<path d="M3 15c3-7 5 3 8-4s4 4 7-3"/><circle cx="19.5" cy="17.5" r="2.2"/>',
   podio: '<path d="M3 20h18M9 20V10h6v10M3 20v-6h6M15 20v-8h6M12 3l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 9l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z"/>',
   apagon: '<path d="M4 7.5h7l5-3v12l-5-3H4zM16 9.5v2M3 3l18 18"/>',
@@ -152,8 +153,15 @@ function refrescaHud(todo) {
 function muestraTaller(si) { E('taller').hidden = !si; if (si) refrescaTaller(); refrescaHud(true); }
 function pintaMedidor(n) { E('t-camo').textContent = n + ' %'; const b = E('t-barra'); b.style.width = n + '%'; b.style.background = colorCamo(n); }
 function refrescaTinta() { const yo = J.yo; if (!yo) return; const n = Math.max(0, Math.ceil(yo.tinta)); ponTexto('tinta', E('t-tinta-n'), String(n)); E('t-tinta-barra').style.width = Math.max(0, yo.tinta) + '%'; }
+// el botón de la pintura rápida: apagado mientras se recarga, con los segundos que faltan en el rótulo (lo llama avanzaTaller cada fotograma)
+const RAPIDA = { seg: -1 };
+function refrescaRapida() {
+  const yo = J.yo, b = E('t-rapida'); if (!yo || !b) return;
+  const seg = Math.ceil(yo.rapida); if (seg === RAPIDA.seg) return; RAPIDA.seg = seg;
+  b.disabled = seg > 0; b.querySelector('small').textContent = seg > 0 ? seg + ' s' : tr('Rápida');
+}
 function refrescaTaller() {
-  E('taller').classList.toggle('plegado', TALLER.plegado);
+  E('taller').classList.toggle('plegado', TALLER.plegado); RAPIDA.seg = -1; refrescaRapida();
   const pl = E('t-plegar'); pl.setAttribute('aria-expanded', String(!TALLER.plegado)); pl.setAttribute('aria-label', TALLER.plegado ? tr('Mostrar las herramientas') : tr('Ocultar las herramientas'));
   E('t-gota').classList.toggle('puesto', TALLER.herr === 'gota');
   for (const b of document.querySelectorAll('.t-radio')) b.classList.toggle('puesto', TALLER.herr === 'pincel' && RADIOS[+b.dataset.radio] === TALLER.radio);
@@ -316,7 +324,7 @@ function preparaInterfaz() {
     const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1.2, 0, 0, 1.2, 33, 72);
     c.beginPath(); trazaAlubia(c, null, b.dataset.postura); c.fillStyle = '#f4f1fa'; c.fill(); c.lineWidth = 2.6; c.strokeStyle = OL; c.lineJoin = 'round'; c.stroke();
   }
-  E('t-cubo').onclick = tallerRellena; E('t-deshacer').onclick = tallerDeshace; E('t-calco').onclick = tallerCalco;
+  E('t-cubo').onclick = tallerRellena; E('t-rapida').onclick = tallerRapida; E('t-deshacer').onclick = tallerDeshace; E('t-calco').onclick = tallerCalco;
   E('t-listo').onclick = () => { cierraTaller(); play('select'); };
   E('t-plegar').onclick = tallerPlegar;
 }

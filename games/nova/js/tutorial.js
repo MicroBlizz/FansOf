@@ -22,22 +22,31 @@ const NV_TUTO = {
     'Al subir de rango eliges una carta: una ofensiva, una defensiva, una de utilidad y otra al azar.',
     'Las armas nuevas ocupan una ranura libre. Al crecer ganas ranuras y las armas salen más grandes.',
     'Con todas las ranuras llenas salen mejoras pequeñas: daño, robo de vida, velocidad...',
-    'Si no te convence ninguna, pulsa Repetir cartas.'] }],
+    'Las armas tienen rareza: común, rara, épica y legendaria. Cuanto más rara, más fuerte y más difícil de ver.',
+    'Cada carta tiene su propio botón Repetir: cambia solo esa carta y las demás se quedan, así puedes probar suerte con el arma sin perder la fusión o el escudo.'] }],
   fusion: [{ titulo: 'FUSIONES', ic: ['sis', 'fusion'], lineas: [
     'Dos armas que encajan se funden en una sola más fuerte.',
     'La fusión rinde lo de dos armas en una sola ranura, así que te deja un hueco libre para otra.'] }],
   estacion: [{ titulo: 'LA ESTACIÓN', ic: ['sis', 'regen'], lineas: [
     'Al entrar en una estación la partida se para.',
     'Con la chatarra que llevas puedes reparar el casco y cambiar un arma por otra.',
+    'Verás tu nave con sus armas en los anclajes. Toca un anclaje para ver hasta dónde tira, y toca otro para cambiar las dos armas de sitio.',
+    'Las de proa tiran 90° al frente, las de los lados 180° hacia su lado, las de popa 180° hacia atrás y las de arriba 360°.',
     'El taller de tamaños sirve para unir y dividir armas.'] }],
   taller: [{ titulo: 'EL TALLER', ic: ['taller', 'unir'], lineas: [
     'Toca dos armas del mismo tamaño y pulsa Unir: dos pequeñas hacen una mediana y dos medianas una grande.',
     'Más tamaño es mucho más daño, alcance y bala.',
     'Dividir hace lo contrario, y necesita una ranura libre.',
+    'La nave sigue a la vista: toca un anclaje y luego otro para cambiar las armas de sitio, o para mover una a un anclaje vacío.',
     'Muchas pequeñas van bien contra enjambres; pocas grandes, contra jefes.'] }],
   capital: [{ titulo: 'NAVE CAPITAL', ic: ['sis', 'mejora'], lineas: [
     'Aquí se gasta la aleación que ganas en las misiones. Perder también paga, pero la mitad.',
-    'Sus mejoras se quedan entre partidas: Núcleo, Hangar, Sensores y Astillero.'] }],
+    'Sus mejoras se quedan entre partidas: Núcleo, Hangar, Sensores, Academia, Arsenal y Astillero.',
+    'El Arsenal desbloquea armas y módulos mejores para las cartas. Se empieza solo con las armas básicas.'] }],
+  arsenal: [{ titulo: 'EL ARSENAL', ic: ['arma', 'railgun'], lineas: [
+    'Aquí ves todo lo que puede salir en las cartas. Lo bloqueado se abre subiendo el Arsenal de la nave capital.',
+    'Retirar un objeto del pool lo quita de las cartas, pero cada retirada cuesta más que la anterior. Reponerlo es gratis.',
+    'Más probable gasta aleación para que ese objeto salga más a menudo. Siempre queda al menos un arma en el pool.'] }],
   faccion: [{ titulo: 'TU FACCIÓN', ic: ['sis', 'vel'], lineas: [
     'Tu facción decide el color con el que pintas la galaxia.',
     'Empiezas en un enclave rebelde, justo enfrente del territorio oficial de tu facción.',
@@ -57,7 +66,7 @@ const NV_TUTO = {
     'Las cargas dejan estados en el enemigo. Si otra carga le da encima, salta una reacción con daño extra.',
     'Ejemplo: la cinética abre brecha y la térmica la funde.'] }]
 };
-const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'taller', 'capital'];
+const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'taller', 'capital', 'arsenal'];
 
 function nvTutoVisto() { try { return JSON.parse(localStorage.getItem(NV_TUTO_CLAVE) || '{}'); } catch (e) { return {}; } }
 function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id] = 1; try { localStorage.setItem(NV_TUTO_CLAVE, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }

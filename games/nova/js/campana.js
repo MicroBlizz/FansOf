@@ -19,6 +19,8 @@ const NV_CAPITAL = [
   { id: 'nucleo', nombre: 'Núcleo', txt: '+2 % de daño y de casco por nivel', max: 20, coste: k => 40 + 25 * k },
   { id: 'hangar', nombre: 'Hangar', txt: 'Empiezas con más chatarra en la cartera para la estación', max: 10, coste: k => 30 + 20 * k },
   { id: 'sensores', nombre: 'Sensores', txt: 'La chatarra te alcanza de más lejos', max: 5, coste: k => 50 + 40 * k },
+  { id: 'academia', nombre: 'Academia', txt: '+1 rango al empezar cada misión; la chatarra para subir sigue igual', max: 40, coste: k => 50 + 30 * k },
+  { id: 'arsenal', nombre: 'Arsenal', txt: 'Desbloquea armas y módulos mejores en el pool de cartas (rarezas hasta legendaria)', max: 4, coste: k => 80 + 100 * k },
   { id: 'astillero', nombre: 'Astillero', txt: 'Empiezas la misión con la ranura vacía ya armada', max: 1, coste: () => 300 }
 ];
 
@@ -93,7 +95,11 @@ function nvSectorPartida(S) {   // antes de generar el mundo: los enemigos ya na
 }
 function nvAplicaCampana(S) {
   if (!NVP.camp) return;
-  const n = S.nave, k = nvNivelCapital('nucleo');
+  const n = S.nave, k = nvNivelCapital('nucleo'), r0 = nvRangoInicial();
+  if (r0 > 1) {   // empiezas ya en ese rango (y su clase de nave); la chatarra que falta para el siguiente es la de siempre
+    n.rango = r0; n.escala = nvEscalaRango(r0); n.rAncho = nvRAncho(S.casco, r0); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = Math.round(n.hpMax * Math.pow(1.08, r0 - 1));
+    S.chat = nvUmbralS(S, r0 - 1); nvAjustaTamanos(S);
+  }
   S.nucleoBono = 0.02 * k; n.hpMax = n.hp = Math.round(n.hpMax * (1 + S.nucleoBono));
   S.cartera += 25 * nvNivelCapital('hangar');
   S.mejoras.iman = (S.mejoras.iman || 0) + nvNivelCapital('sensores');

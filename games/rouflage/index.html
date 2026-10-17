@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.25"></script>
+<script src="../../core/js/nucleo.js?v=0.2.26"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -85,6 +85,7 @@
     <button type="button" class="t-cabezal" data-cabezal="redondo" data-tr-title title="Cabezal redondo: el pincel y las líneas con el borde redondo (X)"><i data-icono="cabezaRedonda"></i><small data-tr>Punta redonda</small></button>
     <button type="button" class="t-cabezal" data-cabezal="cuadrado" data-tr-title title="Cabezal cuadrado: el pincel y las líneas con el borde cuadrado (X)"><i data-icono="cabezaCuadrada"></i><small data-tr>Punta cuadrada</small></button>
     <button type="button" id="t-cubo" data-tr-title title="Rellenar todo el cuerpo con el color (R)"><i data-icono="cubo"></i><small data-tr>Rellenar</small></button>
+    <button type="button" id="t-rapida" data-tr-title title="Pintura rápida: te pinta de golpe copiando el fondo, como un bot (con sus fallos). Una vez cada 45 s (Q)"><i data-icono="rapida"></i><small data-tr>Rápida</small></button>
     <button type="button" class="t-figura" data-figura="linea" data-tr-title title="Línea: arrastra de un punto a otro; usa el gordo del pincel (L)"><i data-icono="linea"></i><small data-tr>Línea</small></button>
     <button type="button" class="t-figura" data-figura="cuadro" data-tr-title title="Cuadrado: arrastra de una esquina a la otra (B)"><i data-icono="cuadro"></i><small data-tr>Cuadrado</small></button>
     <button type="button" class="t-figura" data-figura="circulo" data-tr-title title="Círculo: arrastra para darle tamaño (O)"><i data-icono="circulo"></i><small data-tr>Círculo</small></button>
@@ -443,6 +444,7 @@ NUCLEO.juego({
     'js/alubia.js',
     'js/mapa.js',
     'js/pintura.js',
+    'js/pintura-bot.js',
     'js/entes.js',
     'js/granada.js',
     'js/efectos.js',

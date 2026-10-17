@@ -19,6 +19,8 @@ const REGLAS = {
   enfriaFallo: 2.6,      // …y tras un despido improcedente
   ciego: 2.4,            // tras fallar, la linterna alumbra la mitad durante este rato
   alcance: 250,          // hasta dónde llega un disparo
+  aguante: 5, descanso: 2.5, cansado: 0.62,   // el AGUANTE de los colados: segundos de carrera seguida, segundos parado para recuperarlo entero, y a qué parte de su velocidad van agotados (por debajo del becario)
+  pintaRapida: 45,       // la pintura rápida (te pinta como un bot): cada cuánto se puede usar
   luzPaso: 0.35,         // la parte de la luz que atraviesa los muebles (lo que no es pared): sombras suaves
   luzLargo: 250, luzAngulo: 0.62, luzCerca: 58,   // el abanico de la linterna (medio ángulo, en radianes) y el círculo de alrededor
   cazaPvp: 150,          // lo que dura la caza en el PvP (ahí los dos bandos juegan a la vez)
@@ -46,7 +48,7 @@ function nuevoEnte(clase, tipo, nombre, x, y) {
     semilla: _semilla++ * 1.37, ojoX: 0, ojoY: 0, susto: false, tiembla: 0,
     balas: clase === 'cazador' ? REGLAS.balasIni : REGLAS.balas, enfria: 0, ciego: 0, apagada: 0, manoFria: 0,      // el poder de un fantasma: linterna apagada o temblona (segundos)
     alerta: 0, marca: '', tMarca: 0, tSilbo: 0, sitio: null,
-    granada: clase === 'camaleon' ? 1 : 0, invis: 0, tinta: 100,      // tinta para los señuelos
+    granada: clase === 'camaleon' ? 1 : 0, invis: 0, tinta: 100, rapida: 0, aguante: 1, cansado: false,      // tinta para los señuelos
        // la granada cegadora (una por partida) y los segundos que le quedan de invisible
     silbido: REGLAS.primerSilbido, avisado: false,   // su reloj del silbido obligatorio (cada uno el suyo)
     pts: { narices: 0, silbidos: 0, aguante: 0, aciertos: 0, fallos: 0, senuelos: 0 },   // lo que cuenta para la clasificación
@@ -60,13 +62,14 @@ const cazadoresVivos = () => J.cazadores.filter(h => !h.fuera && h.balas > 0);
 // cada fotograma: anda hacia donde quiere (vx, vy entre -1 y 1), y el contorno se desvanece o vuelve según esté congelado
 function avanzaEnte(e, dt) {
   e.hielo = limita(e.hielo + (e.congelado ? dt : -dt) / 0.5, 0, 1);
-  e.enfria = Math.max(0, e.enfria - dt); e.ciego = Math.max(0, e.ciego - dt); e.apagada = Math.max(0, e.apagada - dt); e.manoFria = Math.max(0, e.manoFria - dt); e.tiembla = Math.max(0, e.tiembla - dt);
+  e.enfria = Math.max(0, e.enfria - dt); e.rapida = Math.max(0, e.rapida - dt); e.ciego = Math.max(0, e.ciego - dt); e.apagada = Math.max(0, e.apagada - dt); e.manoFria = Math.max(0, e.manoFria - dt); e.tiembla = Math.max(0, e.tiembla - dt);
   e.movido = Math.max(0, e.movido - dt); e.tMarca = Math.max(0, e.tMarca - dt); e.tSilbo = Math.max(0, e.tSilbo - dt); e.invis = Math.max(0, e.invis - dt);
   if (e.fuera) { e.tFuera += dt; e.moviendo = false; return; }
   if (e.remoto) { avanzaRemoto(e, dt); suenaEnte(e, dt); return; }      // PvP: lo mueve la red (pvp-sync.js)
-  const v = Math.hypot(e.vx, e.vy);
-  if (e.congelado || v < 0.05) { e.moviendo = false; return; }
-  const vel = (e.clase === 'cazador' ? REGLAS.velCazador : REGLAS.velCamaleon) * e.prisa * dt, ax = e.x, ay = e.y;
+  const v = Math.hypot(e.vx, e.vy), corre = !e.congelado && v >= 0.05;
+  if (e.clase === 'camaleon') aguanta(e, dt, corre);
+  if (!corre) { e.moviendo = false; return; }
+  const vel = (e.clase === 'cazador' ? REGLAS.velCazador : REGLAS.velCamaleon) * e.prisa * (e.cansado ? REGLAS.cansado : 1) * dt, ax = e.x, ay = e.y;
   mueve(e, e.vx * vel, e.vy * vel);
   e.moviendo = lejos(ax, ay, e.x, e.y) > vel * 0.2;
   if (Math.abs(e.vx) > 0.2) e.mira = e.vx > 0 ? 1 : -1;
@@ -92,6 +95,14 @@ function congela(e) {
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel
 }
 function descongela(e) { e.congelado = false; }
+// el aguante de un colado: corriendo se gasta (REGLAS.aguante segundos seguidos); parado o congelado se recupera (REGLAS.descanso segundos para entero).
+// Agotado va a paso de tortuga hasta recuperar la mitad: así una carrera saca de un apuro, pero no se puede cruzar el mapa sin que te pillen
+function aguanta(e, dt, corre) {
+  e.aguante = limita(e.aguante + (corre ? -dt / REGLAS.aguante : dt / REGLAS.descanso), 0, 1);
+  if (!e.cansado && e.aguante <= 0) { e.cansado = true; if (e.jugador) play('deny'); }
+  else if (e.cansado && e.aguante >= 0.5) e.cansado = false;
+  if (e.cansado && corre && Math.random() < dt * 2) fxSudor(e);
+}
 // lo que «canta» un camaleón ahora mismo, de 0 (no se distingue) a 1 (se le ve entero): sin congelar se le ve el contorno
 const loQueCanta = k => (k.hielo < 0.85 ? (k.moviendo || k.movido > 0 ? 1 : 0.85) : k.vis);
 

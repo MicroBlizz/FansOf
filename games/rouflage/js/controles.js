@@ -59,6 +59,7 @@ window.addEventListener('keydown', ev => {
       case 'KeyF': case 'Enter': case 'Escape': cierraTaller(); play('select'); break;
       case 'KeyI': tallerHerramienta('gota'); break;
       case 'KeyR': tallerRellena(); break;
+      case 'KeyQ': tallerRapida(); break;
       case 'KeyZ': tallerDeshace(); break;
       case 'KeyC': tallerCalco(); break;
       case 'Digit1': case 'Digit2': case 'Digit3': case 'Digit4': tallerRadio(+ev.code.slice(-1) - 1); break;

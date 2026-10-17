@@ -3,7 +3,7 @@
  "ladoCapitanes": 160,
  "nota": "PNG con fondo transparente; el nombre es <prefijo>-<clave del juego>.",
  "prefijos": {
-  "arma": "portadores (clave de NOVA_ARMAS.portadores)",
+  "arma": "portadores (clave de NOVA_ARMAS.portadores) y variantes por rareza (id de NOVA_VARIANTES en datos-variantes.js: marco azul-gris, azul, violeta y dorado según la rareza)",
   "carga": "cargas (NOVA_ARMAS.cargas)",
   "mod": "módulos de defensa (NOVA_ARMAS.modulosDefensa)",
   "mejora": "modificadores (NOVA_ARMAS.modificadores)",
@@ -69,6 +69,26 @@
   "taller-dividir": "taller-dividir.png",
   "taller-unir": "taller-unir.png",
   "ui-ayuda": "ui-ayuda.png",
-  "ui-info": "ui-info.png"
+  "ui-info": "ui-info.png",
+  "arma-carabinaRiel": "arma-carabinaRiel.png",
+  "arma-railgunPesado": "arma-railgunPesado.png",
+  "arma-lanzaRiel": "arma-lanzaRiel.png",
+  "arma-railgunVacio": "arma-railgunVacio.png",
+  "arma-flakCalle": "arma-flakCalle.png",
+  "arma-flakDispersion": "arma-flakDispersion.png",
+  "arma-flakAsalto": "arma-flakAsalto.png",
+  "arma-flakTormenta": "arma-flakTormenta.png",
+  "arma-laserPulso": "arma-laserPulso.png",
+  "arma-laserPrecision": "arma-laserPrecision.png",
+  "arma-laserPesado": "arma-laserPesado.png",
+  "arma-rayoSolar": "arma-rayoSolar.png",
+  "arma-miniMisiles": "arma-miniMisiles.png",
+  "arma-lanzamisiles": "arma-lanzamisiles.png",
+  "arma-torpedo": "arma-torpedo.png",
+  "arma-misilNuclear": "arma-misilNuclear.png",
+  "arma-dronesEnjambre": "arma-dronesEnjambre.png",
+  "arma-dronesGuardian": "arma-dronesGuardian.png",
+  "arma-dronesCombate": "arma-dronesCombate.png",
+  "arma-colmena": "arma-colmena.png"
  }
 }

@@ -12,6 +12,7 @@
   nvCargaArte(() => {   // el botón aparece cuando el arte está cargado (el menú enseña las naves)
     b.hidden = false;
     if (/[?&]auto=1/.test(q)) NVP.auto = true;
+    if (/[?&]inmortal=1/.test(q)) NVP.inmortal = true;   // escenario de pruebas de rendimiento (con ?auto=1&casco=caza deja la partida sola)
     const v = /[?&]vel=(\d+)/.exec(q); if (v) NVP.vel = +v[1];
     const c = /[?&]casco=(\w+)/.exec(q);
     if (c) { nvJugar(); document.getElementById('nv-paneles').textContent = ''; NVP.casco = c[1]; const k = /[?&]cap=(\w+)/.exec(q), o = /[?&]of=(\w+)/.exec(q); NVP.cap = k ? k[1] : 'progamer'; NVP.ofi = o ? o[1] : null; nvEmpieza(c[1], NVP.cap, NVP.ofi); }

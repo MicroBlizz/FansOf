@@ -5,7 +5,8 @@ const NVI = { cartasVistas: null, finVisto: null };
 function nvAjustaLienzo() {
   const cv = document.getElementById('nv-canvas'), st = document.getElementById('stage');
   if (!cv || !st) return;
-  const d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth || st.clientWidth, h = cv.clientHeight || st.clientHeight;
+  const r = window.devicePixelRatio || 1, d = Math.max(Math.min(1, r), Math.min(2, r) * (NVP.calidad || 1)),   // la calidad adaptable nunca baja de 1 px por punto
+        w = cv.clientWidth || st.clientWidth, h = cv.clientHeight || st.clientHeight;
   if (cv.width !== Math.round(w * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
 }
 function nvEntrada() {
@@ -71,16 +72,19 @@ function nvPanelesDOM(S) {
     NVI.cartasVistas = S.cartas; cont.textContent = '';
     const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE UNA CARTA')));
     S.cartas.forEach((c, i) => {
-      const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c');
-      b.appendChild(nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : '')));
+      const celda = nvEl('nv-celda'), col = NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c';
+      const b = nvEl('nv-carta' + (c.rareza && c.rareza !== 'comun' ? ' nv-rar-' + c.rareza : ''), '', 'button'); b.style.setProperty('--col', col);
+      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
+      if (c.rareza && (c.tipo === 'arma' || c.tipo === 'defensa')) { const r = nvEl('nv-rareza', ' · ' + tr(NOVA_RAREZAS[c.rareza].nombre).toUpperCase(), 'span'); r.style.color = NOVA_RAREZAS[c.rareza].color; tipo.appendChild(r); }
+      b.appendChild(tipo);
       b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));
-      if (c.ic) nvConIcono(b, c.ic[0], c.ic[1], NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c', 52);
+      if (c.ic) nvConIcono(b, c.ic[0], c.ic[1], col, 52);
       b.onclick = () => { nvElegirCarta(S, i); cont.textContent = ''; NVI.cartasVistas = null; };
-      p.appendChild(b);
+      const rr = nvEl('nv-boton nv-chico', tr('Repetir esta carta') + ' (' + S.rr[i] + ')', 'button'); rr.disabled = !(S.rr[i] > 0);
+      rr.onclick = () => { nvRerollCarta(S, i); };
+      celda.appendChild(b); celda.appendChild(rr); p.appendChild(celda);
     });
-    const rr = nvEl('nv-boton', tr('Repetir cartas') + ' (' + S.rerolls + ')', 'button'); rr.disabled = S.rerolls <= 0;
-    rr.onclick = () => { nvReroll(S); };
-    p.appendChild(rr); nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
+    nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
   } else if (S.estado !== 'cartas' && NVI.cartasVistas) { NVI.cartasVistas = null; cont.textContent = ''; }
   if (S.estado === 'estacion' && S.estVista !== S.est) { S.estVista = S.est; S.estSel = null; nvRenderEstacion(S); }
   if ((S.estado === 'victoria' || S.estado === 'derrota') && NVI.finVisto !== S) {
@@ -112,7 +116,7 @@ function nvJugar() {
 // ---------- menú de naves: cada facción empieza con un arma de su clase ----------
 function nvPreview(cv, casco, rango) {
   rango = rango || nvRangoInicial();   // la nave que sale al desplegar: la de tu nivel
-  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
+  const c = cv.getContext('2d'), H = nvHull(casco, rango), [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
   c.clearRect(0, 0, cv.width, cv.height); c.save(); c.translate(cv.width / 2, cv.height * 0.55); c.scale(e, e);
   nvCuerpo(c, casco, k, 'alas'); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvCuerpo(c, casco, k, 'casco');
   c.restore();
@@ -191,6 +195,8 @@ function nvRenderEstacion(S) {
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
   const armas = n.armas.filter(w => w.portador !== 'defensa');
+  const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
+  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(aviso);
   if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
     const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
     const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
@@ -217,15 +223,17 @@ function nvRenderEstacion(S) {
     p.appendChild(nvEl('nv-cdet', tr('Sustituir') + ': ' + nvNombreArma(S.estSel.w)));
     for (const o of S.estSel.ofertas) {
       const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[o.carga].color); b.disabled = S.cartera < o.precio;
-      b.appendChild(nvEl('nv-cnom', tr(NOVA_ARMAS.portadores[o.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[o.carga].nombre)));
-      b.appendChild(nvEl('nv-cdet', tr(NOVA_ARMAS.portadores[o.portador].fuerte) + ' · ' + o.precio));
-      nvConIcono(b, 'arma', o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
+      const V = o.variante ? NV_VAR_ID[o.variante] : null;
+      b.appendChild(nvEl('nv-ctipo', tr(NOVA_RAREZAS[o.rareza].nombre).toUpperCase())); b.lastChild.style.color = NOVA_RAREZAS[o.rareza].color;
+      b.appendChild(nvEl('nv-cnom', tr(V ? V.nombre : NOVA_ARMAS.portadores[o.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[o.carga].nombre)));
+      b.appendChild(nvEl('nv-cdet', tr(V ? V.efecto : NOVA_ARMAS.portadores[o.portador].fuerte) + ' · ' + o.precio));
+      nvConIcono(b, 'arma', o.variante || o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
       b.onclick = () => { nvCompraArma(S, o, S.estSel.w); S.estSel = null; nvRenderEstacion(S); };
       p.appendChild(b);
     }
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
+  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
   p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
 }

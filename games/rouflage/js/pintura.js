@@ -1,6 +1,6 @@
 // Fans of Rouflage (prototipo) · LA PINTURA: los trazos y las figuras (línea, cuadrado, círculo) sobre la piel (nunca se salen de la silueta), el relleno, deshacer,
 // y la medida del camuflaje: se compara, punto a punto, la piel con lo que la alubia tiene detrás en el mundo. Esa misma cifra sirve
-// de marcador para el jugador y de «ojos» para los becarios que mandan los bots. También está aquí cómo se pinta un bot.
+// de marcador para el jugador y de «ojos» para los becarios que mandan los bots. Cómo se pinta un bot y el cuarteo están en pintura-bot.js.
 'use strict';
 
 const PIEL_W = CAJA_W * ESC_PIEL, PIEL_H = CAJA_H * ESC_PIEL;
@@ -45,79 +45,42 @@ function deshace(e) { const d = e.pasos.pop(); if (d) e.pctx.putImageData(d, 0, 
 //   camo  0 a 100: lo que ve el jugador en su medidor
 //   vis   0 a 1: lo que «canta» (0 = no se distingue del fondo, 1 = no se parece en nada)
 // Lo que queda tapado por un mueble que está delante no cuenta: no se ve.
+// Dos medidas por punto: el COLOR (si se parece al fondo) y la CONTINUIDAD (si el dibujo del fondo sigue por el cuerpo: una raya que
+// no sigue por donde debe, o un relleno liso sobre una textura, resta aunque el color medio coincida). Así el 100 % cuesta de verdad.
 const VIS_MIN = 0;   // el camuflaje puede llegar al 100 %: solo entonces al cazador le brilla el contorno (ver dibujo.js), a partir del 99 % ya no
+const CAMO_PERDON = 10, CAMO_CANTA = 50;        // diferencia de color que no se nota, y a partir de cuánta más canta del todo (dos tonos del mismo color son unos 70)
+const BORDE_PERDON = 12, BORDE_CANTA = 48;     // lo mismo para el salto de luz entre un punto y el de al lado (la continuidad)
+const _camoLumPiel = new Float32Array(CAJA_W * CAJA_H), _camoLumFondo = new Float32Array(CAJA_W * CAJA_H), _camoVisto = new Uint8Array(CAJA_W * CAJA_H), _camoFallo = new Float32Array(CAJA_W * CAJA_H);
 function mideCamuflaje(e) {
   const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, d = e.pctx.getImageData(0, 0, PIEL_W, PIEL_H).data, F = MAPA.px;
   const delante = MUEBLES.filter(m => m.y > e.y && m.dib.x0 < bx + CAJA_W && m.dib.x0 + m.dib.w > bx && m.dib.y0 < by + CAJA_H && m.dib.y0 + m.dib.h > by);
   const { mascara: M, pixeles: N } = formaDe(e);
   let fallo = 0, vistos = 0;
+  _camoVisto.fill(0);
   for (let j = 0; j < CAJA_H; j++) for (let i = 0; i < CAJA_W; i++) {
-    if (!M[j * CAJA_W + i]) continue;
+    const u = j * CAJA_W + i; if (!M[u]) continue;
     const wx = bx + i, wy = by + j;
     if (wx < 0 || wy < 0 || wx >= ANCHO || wy >= ALTO || (delante.length && tapado(wx, wy, delante))) continue;
-    vistos++;
     // el color medio de la piel en este punto (cada punto del mundo son 4 × 4 de piel; basta con mirar cuatro)
     let r = 0, g = 0, b = 0, n = 0;
     for (let q = 0; q < 4; q += 2) for (let p = 0; p < 4; p += 2) { const k = ((j * ESC_PIEL + q + 1) * PIEL_W + i * ESC_PIEL + p + 1) * 4; if (d[k + 3] > 127) { r += d[k]; g += d[k + 1]; b += d[k + 2]; n++; } }
     if (!n) continue;
+    vistos++; _camoVisto[u] = 1;
     const k = (wy * ANCHO + wx) * 4, dif = difColor(r / n, g / n, b / n, F[k], F[k + 1], F[k + 2]);
-    fallo += limita((dif - 14) / 50, 0, 1);   // hasta 14 no se nota; de 64 en adelante canta del todo (dos tonos del mismo color ya son unos 70)
+    _camoFallo[u] = limita((dif - CAMO_PERDON) / CAMO_CANTA, 0, 1);
+    _camoLumPiel[u] = (r * 0.3 + g * 0.59 + b * 0.11) / n; _camoLumFondo[u] = F[k] * 0.3 + F[k + 1] * 0.59 + F[k + 2] * 0.11;
+  }
+  // la continuidad: el salto de luz hacia la derecha y hacia abajo debe ser el mismo en la piel que en el fondo
+  for (let j = 0; j < CAJA_H; j++) for (let i = 0; i < CAJA_W; i++) {
+    const u = j * CAJA_W + i; if (!_camoVisto[u]) continue;
+    let salto = 0, pares = 0;
+    if (i + 1 < CAJA_W && _camoVisto[u + 1]) { salto += Math.abs((_camoLumPiel[u + 1] - _camoLumPiel[u]) - (_camoLumFondo[u + 1] - _camoLumFondo[u])); pares++; }
+    if (j + 1 < CAJA_H && _camoVisto[u + CAJA_W]) { salto += Math.abs((_camoLumPiel[u + CAJA_W] - _camoLumPiel[u]) - (_camoLumFondo[u + CAJA_W] - _camoLumFondo[u])); pares++; }
+    const borde = pares ? limita((salto / pares - BORDE_PERDON) / BORDE_CANTA, 0, 1) : 0;
+    fallo += Math.min(1, _camoFallo[u] + borde * 0.6);
   }
   e.vis = Math.max(fallo / N, VIS_MIN);
   e.tapada = 1 - vistos / N;
   e.camo = Math.round(100 * (1 - e.vis));
   return e.camo;
-}
-
-// La tirada de dados de la máquina: cada vez que va a pintarse saca una meta entre 80 y 99 (nunca 100) y se pinta lo bien que pueda; si le sale mejor que la meta, se estropea un poco
-// con manchas de otro tono hasta quedar en ella. Si el fondo es tan difícil que no llega a la meta, se queda como le salga.
-function pintaBotDados(e) {
-  const meta = 80 + Math.floor(Math.random() * 20);
-  pintaBot(e, 0.95);
-  if (e.camo < 80) afinaBot(e);      // una pasada de pincel fino si el fondo se le ha resistido
-  for (let n = 0; n < 24 && e.camo > meta; n++) { ensuciaBot(e, 1 + Math.floor((e.camo - meta) / 3)); mideCamuflaje(e); }
-  return e.camo;
-}
-function afinaBot(e) {
-  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, F = MAPA.px, M = formaDe(e).mascara, c = e.pctx;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL);
-  for (let y = 0; y < CAJA_H; y += 2) for (let x = 0; x < CAJA_W; x += 2) {
-    if (!M[y * CAJA_W + x]) continue;
-    const wx = limita(bx + x + 1, 0, ANCHO - 1), wy = limita(by + y + 1, 0, ALTO - 1), k = (wy * ANCHO + wx) * 4;
-    c.fillStyle = rgbHex(F[k], F[k + 1], F[k + 2]); c.fillRect(x, y, 2.4, 2.4);
-  }
-  c.restore(); mideCamuflaje(e);
-}
-function ensuciaBot(e, manchas) {
-  const c = e.pctx, M = formaDe(e).mascara;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL);
-  for (let k = 0; k < manchas; k++) {
-    let x, y, t = 0; do { x = rand(2, CAJA_W - 2); y = rand(2, CAJA_H - 2); } while (!M[Math.floor(y) * CAJA_W + Math.floor(x)] && ++t < 40);
-    c.fillStyle = rgbHex(rand(40, 230), rand(40, 230), rand(40, 230)); c.beginPath(); c.arc(x, y, rand(2.2, 4.5), 0, TAU); c.fill();
-  }
-  c.restore();
-}
-// Un bot se pinta solo: mira el fondo que tiene detrás y lo copia a pinceladas redondas. Con poca maña (0) usa un pincel gordo,
-// le sale torcido, con los colores algo cambiados y se deja trozos; con mucha (1), pinceladas finas y casi en su sitio.
-function pintaBot(e, mana) {
-  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, F = MAPA.px;
-  const colorEn = (x, y) => { const k = (limita(Math.round(y), 0, ALTO - 1) * ANCHO + limita(Math.round(x), 0, ANCHO - 1)) * 4; return [F[k], F[k + 1], F[k + 2]]; };
-  // de base, el color que más se repite detrás (los más torpes ni eso: se quedan con trozos en blanco)
-  const votos = new Map(), M = formaDe(e).mascara; let base = null, max = 0;
-  for (let j = 2; j < CAJA_H; j += 3) for (let i = 2; i < CAJA_W; i += 3) if (M[j * CAJA_W + i]) {
-    const [r, g, b] = colorEn(bx + i, by + j), clave = ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3), v = votos.get(clave) || { n: 0, r, g, b };
-    v.n++; votos.set(clave, v); if (v.n > max) { max = v.n; base = v; }
-  }
-  rellena(e, mana < 0.3 ? BLANCO_PIEL : rgbHex(base.r, base.g, base.b));
-  const torcido = (1 - mana) * 6.5, dx = rand(-torcido, torcido), dy = rand(-torcido, torcido);
-  const radio = entre(7.5, 2.7, mana), paso = radio * 1.1, tinte = (1 - mana) * 30, salta = (1 - mana) * 0.22;
-  const c = e.pctx;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL);
-  for (let y = 1; y < CAJA_H; y += paso) for (let x = 1; x < CAJA_W; x += paso) {
-    if (Math.random() < salta) continue;
-    const px = x + rand(-0.35, 0.35) * paso, py = y + rand(-0.35, 0.35) * paso, [r, g, b] = colorEn(bx + px + dx, by + py + dy), t = rand(-tinte, tinte);
-    c.fillStyle = rgbHex(r + t, g + t, b + t * 0.8); c.beginPath(); c.arc(px, py, radio * rand(0.9, 1.2), 0, TAU); c.fill();
-  }
-  c.restore();
-  return mideCamuflaje(e);
 }

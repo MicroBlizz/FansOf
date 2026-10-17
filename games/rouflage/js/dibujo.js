@@ -96,7 +96,11 @@ function pintaMarcas(c, t) {
       if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
       if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
     } else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) {
-      c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI); c.globalAlpha = 1;
+      c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
+      if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
+        c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
+      }
+      c.globalAlpha = 1;
     }
   }
   pintaFantasma(c, t);

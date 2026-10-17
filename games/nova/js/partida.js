@@ -10,6 +10,10 @@ function nvUmbralS(S, k) { return Math.round(nvUmbral(k) * (S.cap === 'epicchamp
 function nvFactor(r) { return Math.pow(1.07, r - 1); }
 function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
 function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces
+// Mitad del ancho y del alto de lo que se ve, en unidades de mundo (S.aspecto = alto/ancho del lienzo; sin lienzo, móvil en vertical).
+function nvMediaPantalla(S) { const w = nvVista(S) / 2; return [w, w * (S.aspecto || 16 / 9)]; }
+// ¿Está (x, y) dentro de la pantalla? `m` > 0 exige ese margen hacia dentro. Nada dispara desde fuera de la pantalla.
+function nvEnPantalla(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw - (m || 0) && Math.abs(y - S.cam.y) < hh - (m || 0); }
 function nvZ(S) { return nvVista(S) / 560; }   // cuántas unidades de mundo mide «un píxel de rango 1»: los efectos y trazos fijos se multiplican por esto para verse igual a cualquier tamaño
 function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
@@ -27,9 +31,9 @@ function nvNuevaPartida(casco, cap, ofi) {
   casco = casco || 'caza'; cap = cap || NVP.cap || 'progamer'; ofi = ofi === undefined ? NVP.ofi : ofi;
   const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
   const S = {
-    t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
+    t: 0, estado: 'juego', cartas: null, rr: [], aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
-    enem: [], proy: [], eproy: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
+    enem: [], saltos: [], proy: [], eproy: [], rayosE: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
     stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
   };
@@ -52,7 +56,7 @@ function nvPaso(S, dt) {
   S.t += dt;
   const n = S.nave;
   nvMueve(S, dt);
-  nvSpawn(S, dt);
+  nvSpawn(S, dt); nvSaltos(S, dt);
   nvMundo(S, dt);
   nvTripulacionPaso(S);
   nvEnemigos(S, dt);
@@ -108,15 +112,6 @@ function nvBotMeta(S) {
   const dx = mejor[0] - n.x, dy = mejor[1] - n.y, d = Math.hypot(dx, dy) || 1, k = n.hp < n.hpMax * 0.25 ? -1 : 1;
   return [dx / d * k, dy / d * k];
 }
-function nvProyectilesEnemigos(S, dt) {
-  const n = S.nave;
-  for (let i = S.eproy.length - 1; i >= 0; i--) {
-    const b = S.eproy[i];
-    b.x += b.vx * dt; b.y += b.vy * dt;
-    if (Math.hypot(b.x - n.x, b.y - n.y) < b.r + n.r) { nvDanoNave(S, b.dano); S.eproy.splice(i, 1); continue; }
-    if ((b.vida -= dt) <= 0) S.eproy.splice(i, 1);
-  }
-}
 function nvRestos(S, dt) {
   const n = S.nave, im = 70 + 45 * (S.mejoras.iman || 0) + 6 * n.rango;
   for (let i = S.restos.length - 1; i >= 0; i--) {
@@ -131,7 +126,7 @@ function nvSumaChatarra(S, v) {
   S.chat += v; S.cartera += v;
   const n = S.nave;
   if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
-    n.rango++; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala;
+    n.rango++; n.escala = nvEscalaRango(n.rango); n.rAncho = nvRAncho(S.casco, n.rango); n.r = 0.42 * n.rAncho * n.escala;
     n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };

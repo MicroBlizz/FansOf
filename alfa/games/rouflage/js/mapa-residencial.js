@@ -73,9 +73,9 @@ defineMapa({
 
   muebles: listaMuebles(pon => {
     // coches aparcados en las tres calles (280..440, 640..800 y 1000..1160)
-    [[300, 330], [1300, 330], [560, 430], [1000, 430], [1500, 430]].forEach(([x, y], i) => pon('coche', x, y, { v: i, arriba: y < 400 }));
-    [[200, 690], [1400, 690], [460, 790], [900, 790], [1560, 790]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 3, arriba: y < 750 }));
-    [[700, 1050], [1200, 1050], [500, 1150], [1000, 1150], [1500, 1150]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 1, arriba: y < 1100 }));
+    [[300, 330], [1300, 330], [560, 430], [1000, 430], [1500, 430]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i, izq: y < 400 }));
+    [[200, 690], [1400, 690], [460, 790], [900, 790], [1560, 790]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i + 3, izq: y < 750 }));
+    [[700, 1050], [1200, 1050], [500, 1150], [1000, 1150], [1500, 1150]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i + 1, izq: y < 1100 }));
     // farolas, buzones y cubos por las aceras
     for (const x of [120, 760, 1420]) { pon('farola', x, 278); pon('farola', x, 998); }
     for (const x of [420, 1060, 1560]) pon('farola', x, 638);

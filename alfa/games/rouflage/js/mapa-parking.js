@@ -1,6 +1,6 @@
 // Fans of Rouflage · MAPA 3, EL PARKING: el sótano -2 de Microblizz. Asfalto casi liso (FÁCIL), coches aparcados para esconderse detrás,
 // columnas numeradas, la rampa de rayas y la zona de aceite (DIFÍCILES). Los becarios esperan en la caseta del vigilante, tras la barrera.
-// Gracia propia (EVENTOS.faros, en dibujo-parking.js): cada poco, un coche enciende los faros de golpe y alumbra un pasillo entero.
+// Gracia propia (EVENTOS.faros, en dibujo-parking.js): la alarma: un coche con alguien moviéndose a su lado enciende los faros de golpe y alumbra un pasillo entero.
 'use strict';
 
 const PLANO_PARKING = `

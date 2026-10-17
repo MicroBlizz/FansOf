@@ -1,8 +1,8 @@
 {
- "build": 131,
- "hash": "451e4c7",
- "fecha": "2026-10-16T23:14:06Z",
- "mensaje": "Herramientas: MAPA.md por carpeta enlazados; comprobar.py sin nombres compara solo lo que cambió (core = todos) y los juegos sin guion pasan una prueba de humo genérica",
+ "build": 132,
+ "hash": "aa29c0e",
+ "fecha": "2026-10-17T00:15:30Z",
+ "mensaje": "Rouflage: coches vistos desde arriba (parking y urbanización, a lo largo de la calle), alarma de coche si pasa alguien al lado, el haz de la linterna nace detrás del becario y la sala de espera del PvP enseña su pared y su canto",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -1,8 +1,8 @@
 {
- "build": 168,
- "hash": "af20598",
- "fecha": "2026-10-17T02:40:26Z",
- "mensaje": "Nova: la resolución adaptable nunca baja de 1 píxel por punto",
+ "build": 169,
+ "hash": "46c6082",
+ "fecha": "2026-10-17T02:41:35Z",
+ "mensaje": "Nova 0.3.4: la nota recoge la mejora de rendimiento",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

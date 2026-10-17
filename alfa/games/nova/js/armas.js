@@ -25,7 +25,7 @@ function nvRanuras(rango, S) {
 
 // Un arma nueva en una ranura: portador + carga. `fusion` (de NOVA_ARMAS.fusiones) la sustituye por una de las estrella.
 // El tamaño es del arma, no de la ranura: empieza pequeña y se une/divide en la estación. Más tamaño = mucho más daño, alcance y bala.
-const NV_RANGO_TAM = { S: 1, M: 1.3, L: 1.7 }, NV_BALA_TAM = { S: 1, M: 1.35, L: 1.8 };
+const NV_RANGO_TAM = { S: 1, M: 1.2, L: 1.4 }, NV_BALA_TAM = { S: 1, M: 1.25, L: 1.5 };
 function nvArmaNueva(slot, portador, carga, fusion, tam) {
   return { slot: slot.id, cara: slot.cara, tam: tam || 'S', portador, carga, nivel: 0, fusion: fusion || null, cd: 0, ang: 0, fase: Math.random() * 6.28, rayo: 0 };
 }
@@ -67,6 +67,8 @@ function nvArmas(S, dt) {
       mejor = d2; obj = e;
     }
     if (!obj) obj = roca;
+    const mis = nvMisilCerca(S, w, dx, dy, arco, grados, alc);   // las cinéticas derriban misiles: son lo primero
+    if (mis) obj = mis;
     w.cd -= dt;
     if (w.rayo > 0) w.rayo -= dt;
     if (!obj) { w.ang += (Math.atan2(dy, dx) - w.ang) * Math.min(1, dt * 6); continue; }
@@ -92,7 +94,7 @@ function nvDispara(S, w, p, obj) {
     if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - 0.5) * 0.12;
     const v = (w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9);   // las balas también corren más cuanto mayor es la nave
     S.proy.push(Object.assign({}, base, {
-      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 5 : w.portador === 'flak' ? 4 : 6) * kf * NV_BALA_TAM[w.tam],
+      vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 4.5) * kf * NV_BALA_TAM[w.tam],
       vida: (w.portador === 'flak' ? p.alcance * kf * NV_RANGO_TAM[w.tam] / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) * NV_RANGO_TAM[w.tam] : 3), perf: w.portador === 'railgun' ? 3 : 1,
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
@@ -103,6 +105,7 @@ function nvDrones(S, w, p, dt) {
   w.fase += dt * 2.6; w.cd -= dt;
   w.drones = [];
   for (let i = 0; i < cant; i++) { const a = w.fase + i * 6.283 / cant; w.drones.push({ x: n.x + Math.cos(a) * R, y: n.y + Math.sin(a) * R }); }
+  if (w.carga === 'cinetica') for (const d of w.drones) nvChocaMisil(S, d, 14);   // los drones cinéticos derriban misiles
   if (w.cd > 0) return;
   w.cd += 1 / p.cadencia;
   const dano = nvDanoArma(w);
@@ -125,6 +128,7 @@ function nvProyectiles(S, dt) {
     }
     b.x += b.vx * dt; b.y += b.vy * dt;
     let fin = b.vida <= 0;
+    if (b.carga === 'cinetica' && nvChocaMisil(S, b) && --b.perf <= 0) fin = true;   // una bala cinética derriba misiles enemigos
     for (const e of S.enem) {
       if (e.muerto || b.golpeados.includes(e) || Math.hypot(e.x - b.x, e.y - b.y) > e.r + b.r) continue;
       b.golpeados.push(e);

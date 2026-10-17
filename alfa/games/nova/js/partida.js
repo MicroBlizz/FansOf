@@ -33,7 +33,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   const S = {
     t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
-    enem: [], saltos: [], proy: [], eproy: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
+    enem: [], saltos: [], proy: [], eproy: [], rayosE: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
     stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
   };
@@ -111,15 +111,6 @@ function nvBotMeta(S) {
   if (!mejor) return [Math.cos(S.t * 0.6), Math.sin(S.t * 0.7)];
   const dx = mejor[0] - n.x, dy = mejor[1] - n.y, d = Math.hypot(dx, dy) || 1, k = n.hp < n.hpMax * 0.25 ? -1 : 1;
   return [dx / d * k, dy / d * k];
-}
-function nvProyectilesEnemigos(S, dt) {
-  const n = S.nave;
-  for (let i = S.eproy.length - 1; i >= 0; i--) {
-    const b = S.eproy[i];
-    b.x += b.vx * dt; b.y += b.vy * dt;
-    if (Math.hypot(b.x - n.x, b.y - n.y) < b.r + n.r) { nvDanoNave(S, b.dano); S.eproy.splice(i, 1); continue; }
-    if ((b.vida -= dt) <= 0) S.eproy.splice(i, 1);
-  }
 }
 function nvRestos(S, dt) {
   const n = S.nave, im = 70 + 45 * (S.mejoras.iman || 0) + 6 * n.rango;

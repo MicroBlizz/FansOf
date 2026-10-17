@@ -215,7 +215,7 @@ function nvDibujaMundo(c, S) {
   }
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const s of S.saltos) nvDibujaSalto(c, s, S);
-  for (const b of S.eproy) { c.fillStyle = '#ff6bd6'; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#fff'; c.stroke(); }
+  nvDibujaBalasE(c, S);
   nvDibujaNave(c, S);
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
   c.globalCompositeOperation = 'lighter';

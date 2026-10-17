@@ -1,8 +1,8 @@
 {
- "build": 158,
- "hash": "2c6cb0d",
- "fecha": "2026-10-17T02:27:15Z",
- "mensaje": "Nova: arte de los cascos y alas de las etapas 2 a 5 (corbeta, fragata, crucero pesado, acorazado) de las tres líneas, y su entrada en piezas.json",
+ "build": 159,
+ "hash": "7fe0258",
+ "fecha": "2026-10-17T02:29:16Z",
+ "mensaje": "Nova: los enemigos usan railgun, flak, láser y lanzador (alcance según la pantalla); las armas cinéticas derriban misiles; armas del jugador más suaves",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

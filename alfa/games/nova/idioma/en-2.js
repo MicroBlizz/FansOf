@@ -178,6 +178,7 @@ IDIOMA.add({
   "¡Llega el Rey de los huesos!": "The King of Bones is coming!",
   "¡SECTOR LIMPIO!": "SECTOR CLEARED!",
   "¡Sobrecarga!": "Overload!",
+  "¡Derribado!": "Shot down!",
   "¡Tragado!": "Swallowed!",
   "EM": "EM",
   "ARMA": "WEAPON", "MEJORA": "UPGRADE", "FUSIÓN": "FUSION", "DEFENSA": "DEFENSE", "SISTEMA": "SYSTEM",

@@ -1,8 +1,8 @@
 {
- "build": 132,
- "hash": "aa29c0e",
- "fecha": "2026-10-17T00:15:30Z",
- "mensaje": "Rouflage: coches vistos desde arriba (parking y urbanización, a lo largo de la calle), alarma de coche si pasa alguien al lado, el haz de la linterna nace detrás del becario y la sala de espera del PvP enseña su pared y su canto",
+ "build": 133,
+ "hash": "0f4aa5e",
+ "fecha": "2026-10-17T00:52:29Z",
+ "mensaje": "Librería: el carrusel destacado va por orden de última actualización (novedades/fechas.json, que publicar.py actualiza al subir la versión de un juego)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -61,14 +61,23 @@ function juegosRecientes() {
   }
   return out.slice(0, MAX_DESTACADO);
 }
-function pintarDestacado() {
+// el orden del DESTACADO: de más a menos reciente por la fecha de la última versión de cada juego (novedades/fechas.json, que mantiene publicar.py al publicar);
+// a igual fecha, primero los anunciados en un boletín y luego por el orden de la librería. Sin ese archivo, solo salen los de los boletines.
+async function fechasJuegos() {
+  try { const r = await fetch('novedades/fechas.json', { cache: 'no-cache' }); return r.ok ? await r.json() : {}; } catch (_) { return {}; }
+}
+async function pintarDestacado() {
   const caja = document.getElementById('dest');
-  const nuevosB = juegosRecientes();
+  const nuevosB = juegosRecientes(), fechas = await fechasJuegos();
+  const pos = id => [...document.querySelectorAll('section.game')].findIndex(x => x.id === id), anunciado = new Map(nuevosB.map(j => [j.tarjeta, j]));
+  const porFecha = Object.keys(fechas).map(j => 'g-' + j).filter(id => document.getElementById(id))
+    .sort((a, b) => String(fechas[b.slice(2)]).localeCompare(String(fechas[a.slice(2)])) || (anunciado.has(b) - anunciado.has(a)) || pos(a) - pos(b))
+    .slice(0, MAX_DESTACADO).map(id => anunciado.get(id) || { tarjeta: id });
   for (const j of nuevosB) {
     const s = document.getElementById(j.tarjeta);
     if (!s.querySelector('.marca-nuevo')) s.insertAdjacentHTML('beforeend', `<span class="marca-nuevo ol">${esc(t('NUEVO'))}</span>`);
   }
-  dest.lista = nuevosB.length ? nuevosB : [{ tarjeta: 'g-rumble' }];
+  dest.lista = porFecha.length ? porFecha : nuevosB.length ? nuevosB : [{ tarjeta: 'g-rumble' }];
   const puntos = document.getElementById('dest-puntos');
   puntos.innerHTML = dest.lista.length > 1
     ? `<button type="button" class="flecha" data-paso="-1" aria-label="${esc(t('Anterior'))}">‹</button>`

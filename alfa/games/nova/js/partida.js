@@ -126,7 +126,7 @@ function nvSumaChatarra(S, v) {
   S.chat += v; S.cartera += v;
   const n = S.nave;
   if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
-    n.rango++; n.escala = nvEscalaRango(n.rango); n.r = 0.42 * n.rAncho * n.escala;
+    n.rango++; n.escala = nvEscalaRango(n.rango); n.rAncho = nvRAncho(S.casco, n.rango); n.r = 0.42 * n.rAncho * n.escala;
     n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };

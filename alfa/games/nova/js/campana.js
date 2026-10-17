@@ -96,7 +96,7 @@ function nvAplicaCampana(S) {
   if (!NVP.camp) return;
   const n = S.nave, k = nvNivelCapital('nucleo'), r0 = nvRangoInicial();
   if (r0 > 1) {   // empiezas ya en ese rango (y su clase de nave); la chatarra que falta para el siguiente es la de siempre
-    n.rango = r0; n.escala = nvEscalaRango(r0); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = Math.round(n.hpMax * Math.pow(1.08, r0 - 1));
+    n.rango = r0; n.escala = nvEscalaRango(r0); n.rAncho = nvRAncho(S.casco, r0); n.r = 0.42 * n.rAncho * n.escala; n.hpMax = n.hp = Math.round(n.hpMax * Math.pow(1.08, r0 - 1));
     S.chat = nvUmbralS(S, r0 - 1); nvAjustaTamanos(S);
   }
   S.nucleoBono = 0.02 * k; n.hpMax = n.hp = Math.round(n.hpMax * (1 + S.nucleoBono));

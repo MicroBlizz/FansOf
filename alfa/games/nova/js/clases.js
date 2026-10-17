@@ -8,11 +8,24 @@ function nvClase(rango) { let k = 0; while (k + 1 < NV_ETAPAS.length && rango >=
 function nvRangoClase(k) { return NV_ETAPAS[k].desde; }
 // Rango con el que empiezas a desplegar (la campaña podrá subirlo); el menú de naves enseña la nave de ese nivel.
 function nvRangoInicial() { return NVP.camp ? 1 + nvNivelCapital('academia') : 1; }
+// Casco con los anclajes de la clase del rango: el arte de cada clase es más grande, así que ranuras, alas y motor se recolocan a escala (y = proporcional a lo largo del casco, x = según la envergadura de las alas).
+const NV_H_CACHE = {};
+function nvHull(casco, rango) {
+  const B = NOVA_PIEZAS.cascos[casco], k = nvClase(rango), m = NVA.meta;
+  if (!k || !m[casco + '-casco-c' + (k + 1)]) return B;
+  const clave = casco + k; if (NV_H_CACHE[clave]) return NV_H_CACHE[clave];
+  const h1 = m[casco + '-casco'], hk = m[casco + '-casco-c' + (k + 1)], w1 = m[casco + '-alas'], wk = m[casco + '-alas-c' + (k + 1)];
+  const top1 = -h1.pivote[1] / 2, lon1 = h1.alto / 2, topk = -hk.pivote[1] / 2, lonk = hk.alto / 2, sx = wk.ancho / w1.ancho;
+  const fy = y => topk + (y - top1) / lon1 * lonk, fx = x => x * sx;
+  const H = Object.assign({}, B, { alas: { x: 0, y: fy(B.alas.y) }, motor: Object.assign({}, B.motor, { y: B.motor.y + (hk.alto - hk.pivote[1]) / 2 - (h1.alto - h1.pivote[1]) / 2 }),
+    ranuras: B.ranuras.map(r => Object.assign({}, r, { x: fx(r.x), y: fy(r.y) })), escudo: B.escudo && Object.assign({}, B.escudo, { y: fy(B.escudo.y), rx: B.escudo.rx * sx, ry: B.escudo.ry * lonk / lon1 }) });
+  return NV_H_CACHE[clave] = H;
+}
 // Pieza de la clase k si hay arte propio; si no, la del casco base.
 function nvPz(c, id, k, ax, ay) { nvPieza(c, k && NVA.meta[id + '-c' + (k + 1)] ? id + '-c' + (k + 1) : id, ax, ay); }
 // Una capa del cuerpo: 'alas' (lo que va detrás del motor) o 'casco' (lo de delante).
 function nvCuerpo(c, casco, k, capa) {
-  const H = NOVA_PIEZAS.cascos[casco], propio = k && NVA.meta[casco + '-casco-c' + (k + 1)];
+  const H = nvHull(casco, nvRangoClase(k)), propio = k && NVA.meta[casco + '-casco-c' + (k + 1)];
   if (capa === 'alas') {
     if (k && !propio) for (let j = k; j >= 1; j--) {   // alas cada vez más anchas, una capa por clase
       c.save(); c.translate(H.alas.x, H.alas.y + 6 * j); c.scale(1 + 0.16 * j, 1 + 0.05 * j); nvPieza(c, casco + '-alas', 0, 0); c.restore();
@@ -30,3 +43,5 @@ function nvCuerpo(c, casco, k, capa) {
   }
   nvPz(c, casco + '-casco', k, 0, 0);
 }
+// Semienvergadura de la nave según su clase (el hitbox sale de ella).
+function nvRAncho(casco, rango) { const k = nvClase(rango), m = NVA.meta[casco + '-alas' + (k && NVA.meta[casco + '-alas-c' + (k + 1)] ? '-c' + (k + 1) : '')]; return m ? m.ancho / 2 : 200; }

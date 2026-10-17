@@ -11,7 +11,7 @@ const NV_FIB_SLOTS = [[1, 2], [6, 3], [12, 5], [20, 8]];   // [rango desde el qu
 const NV_ORDEN_SLOTS = ['proa1', 'babor1', 'estribor1', 'dorsal1', 'dorsal2', 'babor2', 'estribor2', 'babor3', 'estribor3', 'babor4', 'estribor4', 'babor5', 'estribor5'];
 function nvNumSlots(rango) { let n = 0; for (const [r, c] of NV_FIB_SLOTS) if (rango >= r) n = c; return n; }
 function nvRanuras(rango, S) {
-  const H = NOVA_PIEZAS.cascos[S.casco], F = NOVA_CASCOS.facciones[H.faccion], tier = nvTier(rango), N = nvNumSlots(rango);
+  const H = nvHull(S.casco, rango), F = NOVA_CASCOS.facciones[H.faccion], tier = nvTier(rango), N = nvNumSlots(rango);
   const tamEn = r => { let t = r.tam; for (const k in (r.crece || {})) if (+k <= tier) t = r.crece[k]; return t; };
   const prop = F.ranuras.filter(r => r.cara !== 'popa'), libres = [...new Set([].concat(...prop.map(r => r.tipos)))].filter(t => t !== 'defensa');
   const out = [];
@@ -43,7 +43,7 @@ function nvDanoArma(w) {
   return d;
 }
 function nvPosRanura(S, id) {
-  const n = S.nave, a = NOVA_PIEZAS.cascos[S.casco].ranuras.find(x => x.id === id), e = n.escala, c = Math.cos(n.ang), s = Math.sin(n.ang);
+  const n = S.nave, a = nvHull(S.casco, n.rango).ranuras.find(x => x.id === id), e = n.escala, c = Math.cos(n.ang), s = Math.sin(n.ang);
   return { x: n.x + (a.x * c - a.y * s) * e, y: n.y + (a.x * s + a.y * c) * e };
 }
 

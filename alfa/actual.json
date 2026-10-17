@@ -1,8 +1,8 @@
 {
- "build": 159,
- "hash": "7fe0258",
- "fecha": "2026-10-17T02:29:16Z",
- "mensaje": "Nova: los enemigos usan railgun, flak, láser y lanzador (alcance según la pantalla); las armas cinéticas derriban misiles; armas del jugador más suaves",
+ "build": 160,
+ "hash": "5706c31",
+ "fecha": "2026-10-17T02:30:18Z",
+ "mensaje": "Nova: anclajes de ranuras, alas y motor por clase de nave, con el arte nuevo de las etapas 2 a 5",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

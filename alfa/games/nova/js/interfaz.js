@@ -112,7 +112,7 @@ function nvJugar() {
 // ---------- menú de naves: cada facción empieza con un arma de su clase ----------
 function nvPreview(cv, casco, rango) {
   rango = rango || nvRangoInicial();   // la nave que sale al desplegar: la de tu nivel
-  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
+  const c = cv.getContext('2d'), H = nvHull(casco, rango), [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
   c.clearRect(0, 0, cv.width, cv.height); c.save(); c.translate(cv.width / 2, cv.height * 0.55); c.scale(e, e);
   nvCuerpo(c, casco, k, 'alas'); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvCuerpo(c, casco, k, 'casco');
   c.restore();

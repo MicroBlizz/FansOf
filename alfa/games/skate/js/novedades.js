@@ -1,6 +1,7 @@
 // Fans Of Skate · Novedades: registro de versiones (el prototipo aún no tiene pantalla de novedades; desplegar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.1.27', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando."], joke: ["Microblizz ha encerado la rampa por dentro. Phony ya ha salido volando dos veces."] },
   { v: '0.1.26', real: ["<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },
   { v: '0.1.25', real: ["<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego."], joke: ["Microblizz ha puesto tu nombre en la rampa. Phony asegura que se cae igual con cualquier nombre."] },
   { v: '0.1.24', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },

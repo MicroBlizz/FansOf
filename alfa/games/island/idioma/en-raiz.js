@@ -1,6 +1,8 @@
 // Fans of Island · Inglés de lo que la página de entrada (index.html de la raíz) enseña de este juego: la tarjeta de la librería y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
+  "Microblizz ha reparado el puente de la isla con cinta aislante. Phony asegura que aguanta, y no lo ha probado.": "Microblizz has fixed the island bridge with duct tape. Phony swears it holds, and has not tested it.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",
   "Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta.": "Microblizz counted your stars twice to be sure. Phony counts them separately, in his own account.",
   "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",

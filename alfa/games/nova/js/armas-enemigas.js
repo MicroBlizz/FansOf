@@ -5,10 +5,10 @@
 'use strict';
 // fr: alcance en fracción de media pantalla · cada: segundos entre disparos · dps: daño por segundo y por punto · n: balas por disparo
 const NV_ARMA_E = {
-  railgun: { fr: 0.95, cada: 3.0, dps: 1.7, n: 1, v: 950, r: 3.5, cargas: ['cinetica', 'energia'] },
-  flak: { fr: 0.4, cada: 2.0, dps: 1.7, n: 5, v: 380, r: 3, cargas: ['cinetica', 'termica'] },
-  laser: { fr: 0.62, cada: 1.1, dps: 1.4, n: 1, v: 0, r: 0, cargas: ['energia', 'termica'] },
-  lanzador: { fr: 0.95, cada: 4.2, dps: 1.7, n: 1, v: 210, r: 5.5, giro: 1.5, cargas: ['explosiva', 'termica'] }
+  railgun: { fr: 0.95, cada: 3.0, dps: 0.9, n: 1, v: 950, r: 3.5, cargas: ['cinetica', 'energia'] },
+  flak: { fr: 0.4, cada: 2.0, dps: 0.9, n: 5, v: 380, r: 3, cargas: ['cinetica', 'termica'] },
+  laser: { fr: 0.62, cada: 1.1, dps: 0.75, n: 1, v: 0, r: 0, cargas: ['energia', 'termica'] },
+  lanzador: { fr: 0.95, cada: 4.2, dps: 0.9, n: 1, v: 210, r: 5.5, giro: 1.5, cargas: ['explosiva', 'termica'] }
 };
 const NV_TAM_E = { S: { c: 1, fr: 0.85, cada: 1, r: 1 }, M: { c: 2, fr: 1, cada: 1.15, r: 1.3 }, L: { c: 4, fr: 1.1, cada: 1.3, r: 1.7 } };
 const NV_DOCTRINA_E = { rastrero: ['flak', 'laser'], fusilero: ['railgun', 'laser'], sepulturero: ['lanzador', 'railgun', 'flak'] };   // qué suele llevar cada tipo

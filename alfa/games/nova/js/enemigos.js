@@ -86,8 +86,7 @@ function nvEnemigos(S, dt) {
     const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
     let vx = 0, vy = 0;
     if (e.armas) {   // la nave orbita a su alcance y cada arma dispara desde su anclaje
-      const ideal = nvAlcMaxE(S, e) * 0.75, radial = dist > ideal ? 1 : -0.6;
-      vx = ux * radial + -uy * 0.8; vy = uy * radial + ux * 0.8;
+      nvNavegaE(S, e, dt, Math.atan2(uy, ux), dist, lento);
       if (!apagado) for (const w of e.armas) {
         if ((w.cd -= dt) > 0 || dist > nvAlcE(S, w) + e.r || !e.vis) continue;
         nvDisparaE(S, e, w);
@@ -95,6 +94,7 @@ function nvEnemigos(S, dt) {
     } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
     else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }
     else { vx = ux; vy = uy; }
+    if (e.armas) continue;   // las armadas ya se han movido solas (navegacion-enemiga.js)
     const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
     e.x += vx / l * v * dt; e.y += vy / l * v * dt;
     // sin daño por choque: solo hacen daño con sus armas

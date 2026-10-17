@@ -1,8 +1,8 @@
 {
- "build": 173,
- "hash": "9f224a8",
- "fecha": "2026-10-17T12:17:23Z",
- "mensaje": "Nova: tienda de módulos en la estación (comprar, mejorar y reciclar)",
+ "build": 174,
+ "hash": "56b2db4",
+ "fecha": "2026-10-17T12:22:10Z",
+ "mensaje": "Nova: las naves enemigas no vuelan de lado: las de corto alcance hacen pasadas y las de medio y largo alcance guardan distancia y huyen hacia delante; armas enemigas más suaves",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

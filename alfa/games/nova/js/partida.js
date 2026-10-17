@@ -103,6 +103,7 @@ function nvBotMeta(S) {
     if (e.muerto) continue;
     if (!e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
     else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
+    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
   }
   for (const r of S.restos) mira(r.x, r.y, 0.5);
   if (huir) { const hx = n.x - huir.x, hy = n.y - huir.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }

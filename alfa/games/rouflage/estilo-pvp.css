@@ -121,3 +121,15 @@
 .voto-b:disabled { opacity: 0.5; cursor: default; }
 .voto-b:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 #voto-nota { text-align: center; margin: 0; }
+
+/* ---------- el mapa de la sala (pvp-mapas.js): tira de miniaturas, la elegida resaltada ---------- */
+.mapa-sala { display: grid; gap: 4px; padding: 2px 4px 6px; }
+.mapa-sala > small { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: var(--ink-dim); text-align: center; }
+.mapas-mini { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.mapa-mini { display: grid; gap: 2px; padding: 3px; border-radius: 10px; border: 3px solid var(--outline); background: #2a3550; color: var(--ink-dim); box-shadow: 0 3px 0 var(--outline); font-family: var(--font-display); font-size: 10px; line-height: 1.1; }
+.mapa-mini img, .mapa-mini .azar { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 6px; background: #14192b; }
+.mapa-mini .azar { display: grid; place-items: center; font-style: normal; font-size: 22px; color: var(--gold); }
+.mapa-mini span { text-align: center; overflow-wrap: anywhere; }
+.mapa-mini.puesto { background: var(--gold); color: var(--outline); }
+.mapa-mini:disabled { cursor: default; }
+.modo-sala.publica .mapa-sala { display: none; }

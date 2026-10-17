@@ -103,6 +103,7 @@ function pvpPintaModo(ver, soyAnf) {
   const d = soyAnf ? MODO_ELEGIDO : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
   caja.classList.toggle('mira', !soyAnf);
   E('busca-modo-n').textContent = tr(MODOS[m].nombre); E('busca-modo-t').textContent = tr(MODOS[m].texto);
+  pvpPintaMapas(d, soyAnf);
   const ex = E('busca-extras'), otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz);
   if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
     ex.dataset.anf = String(soyAnf);
@@ -121,7 +122,7 @@ function pvpPintaModo(ver, soyAnf) {
 }
 function pvpMandaModo() {
   modoElegidoGuarda();
-  const i = RFP.info; if (i && i.privada) i.modo = { m: MODO_ELEGIDO.m, x: Object.assign({}, MODO_ELEGIDO.x) };
+  const i = RFP.info; if (i && i.privada) i.modo = { m: MODO_ELEGIDO.m, x: Object.assign({}, MODO_ELEGIDO.x), mapa: MODO_ELEGIDO.mapa || undefined };
   if (RFRED.red.modo) Promise.resolve(RFRED.red.modo(RFP.info && RFP.info.modo)).catch(() => { /* se reintenta al cambiarlo otra vez */ });
   if (!E('p-busca').hidden) pvpPintaBusca();
 }

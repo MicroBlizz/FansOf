@@ -1,8 +1,8 @@
 {
- "build": 134,
- "hash": "8d0717f",
- "fecha": "2026-10-17T01:02:36Z",
- "mensaje": "Rouflage: faros en 2 conos pequeños, luces y aspersores siguen encendidos con un infiltrado cerca",
+ "build": 135,
+ "hash": "e41ed93",
+ "fecha": "2026-10-17T01:05:05Z",
+ "mensaje": "Rouflage: selector de mapa con miniatura en las opciones de la sala con amigos (viaja en el modo de la sala; sin elegir, el de la semilla)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

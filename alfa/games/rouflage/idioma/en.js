@@ -377,6 +377,8 @@ IDIOMA.add({
   "TE OYE": "HEARS YOU",
   "VESTÍBULO": "LOBBY",
   "MODO": "MODE",
+  "MAPA": "MAP",
+  "AL AZAR": "RANDOM",
   "Modo anterior": "Previous mode",
   "Modo siguiente": "Next mode",
   "NORMAL": "NORMAL",

@@ -1,0 +1,90 @@
+{
+ "nota": "Naves enemigas de la facción No-Muertos, vista cenital con la proa a la derecha (pixel art hi-res). La clave es la de NV_ENEM (games/nova/js/enemigos.js); el sprite ocupa el cuadrado entero (margen del 3 %), con el centro de la nave en el pivote.",
+ "faccion": "nomuertos",
+ "enemigos": [
+  {
+   "id": "rastrero",
+   "nombre": "Rastrero",
+   "archivo": "rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "fusilero",
+   "nombre": "Fusilero",
+   "archivo": "fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "sepulturero",
+   "nombre": "Sepulturero",
+   "archivo": "sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "asteroide",
+   "nombre": "Asteroide",
+   "archivo": "asteroide.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "capitan",
+   "nombre": "Capitán",
+   "archivo": "capitan.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "jefe",
+   "nombre": "Rey de los huesos",
+   "archivo": "jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "nido",
+   "nombre": "Nido",
+   "archivo": "nido.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "sin orientación"
+  }
+ ]
+}

@@ -1,8 +1,8 @@
 {
- "build": 142,
- "hash": "c32d660",
- "fecha": "2026-10-17T01:28:12Z",
- "mensaje": "Rouflage 0.2.25 (alarma de coches, selector de mapa, caza más rápida) y Nova 0.3.3 (galaxia en decágono, iconos): suben versión con su nota",
+ "build": 143,
+ "hash": "1cca908",
+ "fecha": "2026-10-17T01:28:28Z",
+ "mensaje": "Nova: arte de las naves enemigas No-Muertos (rastrero, fusilero, sepulturero, capitán, jefe, nido y asteroide) con su enemigos.json",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -69,7 +69,14 @@ function cogeColor(x, y) {
   ponColor(color); TALLER.herr = 'pincel';
   fxAro(x, y, color); play('gota'); refrescaTaller();
 }
+// la pintura es de bote, no de pantalla: cada color que coges sale con un pelín de tono distinto (así el 100 % exacto cuesta). El blanco se queda blanco
+function colorDeBote(color) {
+  if (color === BLANCO_PIEL) return color;
+  const [r, g, b] = hexRgb(color), t = rand(-4, 4);
+  return rgbHex(limita(r + t, 0, 255), limita(g + t, 0, 255), limita(b + t * 0.8, 0, 255));
+}
 function ponColor(color) {
+  color = colorDeBote(color);
   TALLER.color = color;
   const i = TALLER.recientes.indexOf(color); if (i > 0) TALLER.recientes.splice(i, 1);
   if (i !== 0) { TALLER.recientes.splice(1, 0, color); TALLER.recientes.length = Math.min(TALLER.recientes.length, 7); }   // el blanco se queda siempre el primero

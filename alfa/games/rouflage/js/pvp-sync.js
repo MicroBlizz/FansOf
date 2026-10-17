@@ -175,7 +175,7 @@ function rfpCongela(e) {
 function rfpMandaPiel(e) {
   if (RFP.sinPiel && e === J.yo) return;      // recién vuelto: mi piel en blanco no debe pisar la buena
   let png; try { png = e.piel.toDataURL('image/png'); } catch (x) { return; }
-  rfpManda({ t: 'p', s: e.slot, x: e.x, y: e.y, po: e.postura || 'firmes', pi: e.pintado ? 1 : 0, cm: e.camo, png: png.slice(png.indexOf(',') + 1) });
+  rfpManda({ t: 'p', s: e.slot, x: e.x, y: e.y, po: e.postura || 'firmes', pi: e.pintado ? 1 : 0, cm: e.camo, gr: e.grietas || 0, png: png.slice(png.indexOf(',') + 1) });
 }
 function rfpPiel(m) {
   const e = RFP.slots[m.s] && RFP.slots[m.s].ente; if (!e || (e === J.yo && !RFP.sinPiel) || e.fuera || (!e.remoto && e !== J.yo) || (m.de !== m.s && !(RFP.slots[m.de] && RFP.slots[m.de].humano)) || typeof m.png !== 'string') return;
@@ -185,6 +185,7 @@ function rfpPiel(m) {
     if ((e.postura || 'firmes') !== m.po && POSTURAS[m.po]) { const [cv, g] = nuevaPiel(BLANCO_PIEL, m.po); e.piel = cv; e.pctx = g; e.postura = m.po; e.pz = null; }
     e.pctx.save(); e.pctx.globalCompositeOperation = 'copy'; e.pctx.drawImage(img, 0, 0); e.pctx.restore();
     e.pintado = !!m.pi; e.x = m.x; e.y = m.y; if (e.red) { e.red.x = m.x; e.red.y = m.y; }
+    const g = e.grietas || 0; e.grietas = m.gr || 0; while (e.grietas < g) cuartea(e);      // la piel llega con sus grietas; las que ya le tocaban aquí se vuelven a dibujar (misma semilla)
     e.congelado = true; if (e === J.yo) RFP.sinPiel = false;
     if (RFP.soyHost || e === J.yo) mideCamuflaje(e); else e.camo = m.cm || 0;      // quien manda la mide él mismo (los becarios bot ven con esa cifra)
   };

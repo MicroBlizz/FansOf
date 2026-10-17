@@ -1,8 +1,8 @@
 {
- "build": 176,
- "hash": "f7ca9af",
- "fecha": "2026-10-17T19:42:44Z",
- "mensaje": "Nova: la tienda solo vende lo que cabe en una ranura libre; el dibujo y la leyenda de la estación muestran qué admite cada anclaje; menú de la tienda más limpio",
+ "build": 177,
+ "hash": "c88dfab",
+ "fecha": "2026-10-17T19:58:50Z",
+ "mensaje": "Nova: las armas enemigas hacen algo más de daño",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

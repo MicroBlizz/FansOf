@@ -1,8 +1,8 @@
 {
- "build": 164,
- "hash": "eeb4694",
- "fecha": "2026-10-17T02:35:38Z",
- "mensaje": "Nova 0.3.4: naves que evolucionan, armas con rareza y enemigos con armamento (nota y versión)",
+ "build": 165,
+ "hash": "6c482ad",
+ "fecha": "2026-10-17T02:37:43Z",
+ "mensaje": "Nova: 20 iconos de arma por rareza (5 portadores x 4 rarezas), con marco que crece con la rareza, registrados en iconos.json",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

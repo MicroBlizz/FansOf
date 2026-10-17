@@ -1,8 +1,8 @@
 {
- "build": 155,
- "hash": "1e7d8eb",
- "fecha": "2026-10-17T02:17:31Z",
- "mensaje": "Nova: la estación y el taller enseñan la nave con sus armas en los anclajes y se pueden cambiar de sitio; arcos de tiro: proa 90°, lados 180°, popa 180°, dorsal 360°",
+ "build": 156,
+ "hash": "b29c6d5",
+ "fecha": "2026-10-17T02:18:01Z",
+ "mensaje": "Nova: etapas de nave cada 10 rangos y mejora Academia de la nave capital (empiezas con más rango)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

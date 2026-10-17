@@ -2,12 +2,12 @@
 // Si existe el arte propio de una clase (ids «<casco>-casco-c2», «<casco>-alas-c2»… en arte/piezas.json) se usa; si no, se compone con piezas del casco base (alas más anchas y góndolas).
 'use strict';
 const NV_ETAPAS = [   // rango desde el que la nave es de esa clase (dato de diseño: cambiar aquí mueve todo)
-  { desde: 1, nombre: 'Caza' }, { desde: 7, nombre: 'Corbeta' }, { desde: 13, nombre: 'Fragata' }, { desde: 19, nombre: 'Crucero pesado' }, { desde: 25, nombre: 'Acorazado' }
+  { desde: 1, nombre: 'Caza' }, { desde: 10, nombre: 'Corbeta' }, { desde: 20, nombre: 'Fragata' }, { desde: 30, nombre: 'Crucero pesado' }, { desde: 40, nombre: 'Acorazado' }
 ];
 function nvClase(rango) { let k = 0; while (k + 1 < NV_ETAPAS.length && rango >= NV_ETAPAS[k + 1].desde) k++; return k; }
 function nvRangoClase(k) { return NV_ETAPAS[k].desde; }
 // Rango con el que empiezas a desplegar (la campaña podrá subirlo); el menú de naves enseña la nave de ese nivel.
-function nvRangoInicial() { return 1; }
+function nvRangoInicial() { return NVP.camp ? 1 + nvNivelCapital('academia') : 1; }
 // Pieza de la clase k si hay arte propio; si no, la del casco base.
 function nvPz(c, id, k, ax, ay) { nvPieza(c, k && NVA.meta[id + '-c' + (k + 1)] ? id + '-c' + (k + 1) : id, ax, ay); }
 // Una capa del cuerpo: 'alas' (lo que va detrás del motor) o 'casco' (lo de delante).

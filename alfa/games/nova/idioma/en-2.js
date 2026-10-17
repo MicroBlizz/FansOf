@@ -220,6 +220,8 @@ IDIOMA.add({
   "Empiezas con más chatarra en la cartera para la estación": "You start with more scrap in your wallet for the station",
   "Sensores": "Sensors",
   "La chatarra te alcanza de más lejos": "Scrap reaches you from further away",
+  "Academia": "Academy",
+  "+1 rango al empezar cada misión; la chatarra para subir sigue igual": "+1 rank at the start of every mission; the scrap to level up stays the same",
   "Astillero": "Shipyard",
   "Empiezas la misión con la ranura vacía ya armada": "You start the mission with the empty slot already armed",
   "ELIGE TU FACCIÓN": "PICK YOUR FACTION",

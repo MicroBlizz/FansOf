@@ -74,8 +74,11 @@ function practicaDispara(x, y, margen) {
     PRACTICA.extra++; play('select');
     yo.balas = Math.min(REGLAS.balas, REGLAS.balasIni + PRACTICA.extra);
     if (J.pvp) rfpManda({ t: 'cg', n: PRACTICA.extra });
-    if (PRACTICA.extra >= REGLAS.balasExtra) avisa(tr('¡Cartas al máximo! Sigue practicando hasta la caza'), 'bueno');
-    else avisa(tr('¡Carta de despido extra!'), 'bueno');
+    if (PRACTICA.extra >= REGLAS.balasExtra) {
+      // los bots se disfrazan enseguida: con las cartas al máximo no hay que esperar más (en el PvP, solo si todos los demás son bots)
+      const solo = !J.pvp || (rfpSoyAnfitrion() && RFP.slots.filter(sl => sl.humano).length <= 1);
+      if (solo && J.fase === 'prep') cambiaFase('cuenta'); else avisa(tr('¡Cartas al máximo! Sigue practicando hasta la caza'), 'bueno');
+    } else avisa(tr('¡Carta de despido extra!'), 'bueno');
     refrescaHud(true);
   } else fxTexto(k.x, k.y - 70, `${PRACTICA_POR_CARTA - falta}/${PRACTICA_POR_CARTA}`, '#ffd34d');
 }

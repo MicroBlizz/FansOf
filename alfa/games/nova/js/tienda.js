@@ -35,7 +35,9 @@ function nvReciclaModulo(S, w) {
 function nvRanuraDefensa(S) { return nvRanuras(S.nave.rango, S).find(r => !S.nave.armas.some(w => w.slot === r.id) && r.tipos.includes('defensa') && (r.cara === 'popa' || r.cara === 'dorsal')); }
 function nvArmaAlAzar(S) {   // una arma del pool al estilo de las cartas: más común cuanto menos rara; solo de tipos que admita alguna ranura libre
   const tipos = NV_TIPOS_LIBRES.filter(t => nvVariantesPool(t).length && nvRanuraLibre(S, t)); if (!tipos.length) return null;
-  const p = tipos[Math.floor(Math.random() * tipos.length)], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
+  const pesos = tipos.map(t => nvAfinidad(S, t)); let q = Math.random() * pesos.reduce((a, b) => a + b, 0), i = 0;   // la facción y el piloto empujan sus armas
+  while (i < tipos.length - 1 && (q -= pesos[i]) > 0) i++;
+  const p = tipos[i], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
   const vs = nvVariantesPool(p), tot = vs.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
   let r = Math.random() * tot, v = vs[0];
   for (const x of vs) { v = x; if ((r -= NOVA_RAREZAS[x.rareza].peso) <= 0) break; }

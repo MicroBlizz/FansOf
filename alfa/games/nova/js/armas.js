@@ -10,14 +10,23 @@ const NV_CARAS_DIR = { proa: [0, -1], babor: [-1, 0], estribor: [1, 0], dorsal: 
 const NV_FIB_SLOTS = [[1, 2], [6, 3], [12, 5], [20, 8]];   // [rango desde el que vale, cuántas ranuras de arma]
 const NV_ORDEN_SLOTS = ['proa1', 'babor1', 'estribor1', 'dorsal1', 'dorsal2', 'babor2', 'estribor2', 'babor3', 'estribor3', 'babor4', 'estribor4', 'babor5', 'estribor5'];
 function nvNumSlots(rango) { let n = 0; for (const [r, c] of NV_FIB_SLOTS) if (rango >= r) n = c; return n; }
+function nvTodasArmas() { return ['railgun', 'flak', 'laser', 'lanzador', 'drones']; }
+// Cuánto encaja un tipo de arma con tu facción y tu piloto (1 = nada; sube por cada uno que lo usa en su plantilla). Solo sesga las ofertas.
+function nvAfinidad(S, portador) {
+  const usa = fid => { const F = NOVA_CASCOS.facciones[fid]; if (!F) return false; const ts = new Set([].concat(...F.ranuras.map(r => r.tipos))); return ts.has(portador) && nvTodasArmas().some(t => !ts.has(t)); };
+  const cap = S.cap && NOVA_TRIPULACION.capitanes.find(c => c.id === S.cap);
+  return 1 + (usa(S.faccion) ? 1.5 : 0) + (cap && usa(cap.faccion) ? 1 : 0);
+}
 function nvRanuras(rango, S) {
   const H = nvHull(S.casco, rango), F = NOVA_CASCOS.facciones[H.faccion], tier = nvTier(rango), N = nvNumSlots(rango);
   const tamEn = r => { let t = r.tam; for (const k in (r.crece || {})) if (+k <= tier) t = r.crece[k]; return t; };
-  const prop = F.ranuras.filter(r => r.cara !== 'popa'), libres = [...new Set([].concat(...prop.map(r => r.tipos)))].filter(t => t !== 'defensa');
+  const prop = F.ranuras.filter(r => r.cara !== 'popa'), libres = nvTodasArmas();
+  // cualquier ranura de arma admite cualquier arma; las de solo defensa siguen siendo solo defensa. La facción no limita: inclina lo que se ofrece (nvAfinidad)
+  const abre = ts => ts.some(t => t !== 'defensa') ? nvTodasArmas().concat(ts.includes('defensa') ? ['defensa'] : []) : ts;
   const out = [];
   for (const id of NV_ORDEN_SLOTS.filter(i => H.ranuras.some(x => x.id === i)).slice(0, N)) {
     const cara = id.replace(/\d+/, ''), i = +id.slice(cara.length) - 1, fr = prop.filter(r => r.cara === cara)[i], a = H.ranuras.find(x => x.id === id);
-    out.push({ id, x: a.x, y: a.y, cara, tam: fr ? tamEn(fr) : rango >= 24 ? 'L' : rango >= 14 ? 'M' : 'S', tipos: fr ? fr.tipos : libres, arco: NOVA_CASCOS.caras[cara].arco });
+    out.push({ id, x: a.x, y: a.y, cara, tam: fr ? tamEn(fr) : rango >= 24 ? 'L' : rango >= 14 ? 'M' : 'S', tipos: fr ? abre(fr.tipos) : libres, arco: NOVA_CASCOS.caras[cara].arco });
   }
   F.ranuras.filter(r => r.cara === 'popa' && r.desde <= tier).forEach((r, i) => { const id = 'popa' + (i + 1), a = H.ranuras.find(x => x.id === id); out.push({ id, x: a.x, y: a.y, cara: 'popa', tam: tamEn(r), tipos: r.tipos, arco: NOVA_CASCOS.caras.popa.arco }); });
   return out;

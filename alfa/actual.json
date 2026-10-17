@@ -1,8 +1,8 @@
 {
- "build": 179,
- "hash": "f849819",
- "fecha": "2026-10-17T20:02:44Z",
- "mensaje": "Nova: sonido y música (efectos y canciones sintetizados, volumen en la galaxia)",
+ "build": 180,
+ "hash": "da9da43",
+ "fecha": "2026-10-17T20:05:57Z",
+ "mensaje": "Nova: cualquier ranura de arma admite cualquier arma; la facción y el piloto solo inclinan lo que ofrecen cartas y tienda",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

@@ -10,12 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.26-a169.46c6082"></script>
+<script src="../../core/js/nucleo.js?v=0.2.26-a170.1554ca5"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<link rel="stylesheet" href="estilo.css?v=0.2.9">
-<link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
-<link rel="stylesheet" href="estilo-armario.css?v=0.2.23a">
-<link rel="stylesheet" href="estilo-menus.css?v=0.2.9">
+<script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -316,7 +313,7 @@
   </div>
 </div>
 
-<!-- armario y perfil (de momento solo en la alfa y en desarrollo: armario.js) -->
+<!-- armario y perfil (armario.js) -->
 <div class="pantalla" id="p-armario" hidden>
   <div class="caja armario">
     <div class="ar-cabeza"><h2 class="ol" data-tr>ARMARIO</h2><span class="ar-cuenta" id="ar-cuenta"></span></div>
@@ -328,7 +325,6 @@
     <div class="ar-pestanas" id="ar-pestanas" role="tablist"></div>
     <p class="ar-nota" id="ar-nota"></p>
     <div class="ar-rejilla" id="ar-rejilla"></div>
-    <p class="ar-aviso" data-tr>Prueba de la alfa: lo que te pones se ve en la habitación; en las partidas aún no.</p>
     <div class="fila-botones">
       <button type="button" class="boton verde" id="b-ar-perfil" data-tr>PERFIL</button>
       <button type="button" class="boton gris" id="b-ar-volver" data-tr>VOLVER</button>
@@ -340,7 +336,7 @@
   <div class="caja tienda-caja">
     <h2 class="ol" data-tr>TIENDA</h2>
     <div class="cartera" id="tienda-cartera"></div>
-    <p class="tienda-aviso" data-tr>Pruebas de la alfa: no se cobra nada y lo que compras se te da.</p>
+    <p class="tienda-aviso" data-tr>De momento no se cobra nada: lo que compras se te da.</p>
     <div class="tienda-lista">
       <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>

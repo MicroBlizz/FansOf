@@ -2,10 +2,10 @@
 // (armario-datos.js): tocar una cosa te la prueba; si es tuya, se queda puesta. Un conjunto se pone entero. En el perfil están tu galleta
 // con su marco, tu título y lo que llevas coleccionado, y un botón de pruebas para desbloquearlo todo (se quitará en el juego final).
 // Lo puesto se guarda en SAVE.armario y se ve en la habitación (habitacion.js: `ropaDe()` es lo que se le pone al personaje).
-// De momento solo se ve en la alfa y en modo desarrollo.
+// Desde la 0.2.26 lo ve todo el mundo (antes solo la alfa y desarrollo): armarioVisible lo deja encendido y sigue siendo el interruptor de todo lo que cuelga de él (diario, economía, tienda, habitación, ropa en partida).
 'use strict';
 const ARMARIO = { cat: 'conjuntos', sel: null, prueba: null, desde: 'titulo' };
-function armarioVisible() { return !!(NUCLEO.alfa || NUCLEO.desarrollo); }
+function armarioVisible() { return true; }
 function armarioEstado() {
   if (!SAVE.armario) SAVE.armario = { tengo: [], puesto: {}, todo: false };
   const a = SAVE.armario, p = a.puesto;

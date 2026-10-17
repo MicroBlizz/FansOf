@@ -1,8 +1,8 @@
 {
- "build": 169,
- "hash": "46c6082",
- "fecha": "2026-10-17T02:41:35Z",
- "mensaje": "Nova 0.3.4: la nota recoge la mejora de rendimiento",
+ "build": 170,
+ "hash": "1554ca5",
+ "fecha": "2026-10-17T10:57:15Z",
+ "mensaje": "Rouflage: nada tras el rol alfa (armario, diario, pase, tienda y habitación para todos), «Sonido: antiguo» solo en desarrollo, y las hojas de estilo con la versión del juego",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

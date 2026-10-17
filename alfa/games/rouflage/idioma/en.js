@@ -600,7 +600,7 @@ IDIOMA.add({
   "Acciones": "Shares",
   // la tienda (tienda.js)
   "TIENDA": "SHOP",
-  "Pruebas de la alfa: no se cobra nada y lo que compras se te da.": "Alpha test: nothing is charged and whatever you buy is given to you.",
+  "De momento no se cobra nada: lo que compras se te da.": "For now nothing is charged: whatever you buy is given to you.",
   "OFERTAS": "OFFERS",
   "ACCIONES": "SHARES",
   "GOTAS DE PINTURA": "PAINT DROPS",

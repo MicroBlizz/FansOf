@@ -15,7 +15,7 @@ function crBorraTodo() { const n = CR_NUEVA(); for (const k of Object.keys(SAVE)
 // lo que pide el motor de sonido de core
 function sonidoApagado() { return !!SAVE.muted; }
 function volGeneral() { return SAVE.muted ? 0 : 1; }
-function volMusica() { return SAVE.musica === false ? 0 : 0.3; }
+function volMusica() { return SAVE.musica === false ? 0 : 0.15; }
 function musicUpdate() { /* la música la elige crMusica (js/sonidos.js) */ }
 // lo que se consulta a menudo
 const crEstrellasDe = id => (SAVE.niveles[id] && SAVE.niveles[id].e) || 0;

@@ -106,7 +106,7 @@
     c.innerHTML = `<h3 id="fb-titulo">${esc(tr('TU OPINIÓN'))}</h3><p>${esc(tr('Cuéntanos una idea, un fallo o lo que te parezca. Lo leemos nosotros.'))}</p>`
       + `<div id="fb-tipos">${TIPOS.map(([k, n]) => `<button type="button" data-t="${k}" aria-pressed="${k === tipo}">${esc(tr(n))}</button>`).join('')}</div>`
       + preguntasHtml()
-      + `<textarea id="fb-texto" maxlength="1000" placeholder="${esc(tr('Escribe aquí'))}" aria-label="${esc(tr('Tu comentario'))}"></textarea>`
+      + `<div class="fb-p"><label for="fb-texto">${esc(tr('Cuéntanos lo que quieras'))}</label><textarea id="fb-texto" maxlength="1000" placeholder="${esc(tr('Escribe aquí'))}"></textarea></div>`
       + `<div id="fb-contacto"><input type="checkbox" id="fb-check"${conEmail() ? '' : ' disabled'}><div><label for="fb-check">${esc(tr('Podéis escribirme por email para preguntarme por este comentario, hablar del juego o pedirme opinión.'))}</label>`
       + (conEmail() ? `<small style="margin-top:2px">${esc(tr('Usaremos {e}.', { e: CUENTA.email }))}</small>`
         : `<small style="margin-top:2px">${esc(tr('Para eso necesitamos tu email: entra con tu cuenta.'))}</small>${typeof pedirCuenta === 'function' ? `<button type="button" id="fb-entrar">${esc(tr('ENTRAR CON MI CUENTA'))}</button>` : ''}`)

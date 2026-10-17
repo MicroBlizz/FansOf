@@ -1,7 +1,7 @@
 // Fans of Rouflage · MAPA 6, LA ZONA RESIDENCIAL: la calle de los adosados de los jefes de Microblizz, de noche. Aceras y asfalto (FÁCIL),
 // pasos de cebra, jardincitos, la terraza del bar con sus baldosas (DIFÍCIL) y, en cada fachada, puertas de garaje lisas (la pared más fácil
 // de copiar del juego). Los becarios esperan en un garaje. Gracia propia (EVENTOS.vecino, en dibujo-residencial.js): cada poco se enciende
-// una ventana, el vecino se asoma y su luz delata a quien tenga debajo.
+// una ventana, el vecino se asoma y su luz delata a quien tenga debajo. Además (`siempre: ['faros']`) sus coches aparcados saltan como alarma, igual que en el parking.
 'use strict';
 
 const PLANO_RESIDENCIAL = `
@@ -58,7 +58,7 @@ defineMapa({
   musica: { taller: 'rfRsTaller', caza: 'rfRsCaza', recta: 'rfRsRecta' },      // sus temas (musica-mapas.js)
   muro: '#4a3a3a', canto: '#8a6a5a',
   espera: 'V1', plaza: [800, 360],
-  evento: { tipo: 'vecino' },
+  evento: { tipo: 'vecino' }, siempre: ['faros'],      // además del vecino, los coches aparcados saltan como alarma (los faros)
 
   salas: salasDePlano(PLANO_RESIDENCIAL, {
     S: { nombre: 'Acera', suelo: 'acera', pared: 'fachada' },
@@ -73,9 +73,9 @@ defineMapa({
 
   muebles: listaMuebles(pon => {
     // coches aparcados en las tres calles (280..440, 640..800 y 1000..1160)
-    [[300, 330], [1300, 330], [560, 430], [1000, 430], [1500, 430]].forEach(([x, y], i) => pon('coche', x, y, { v: i, arriba: y < 400 }));
-    [[200, 690], [1400, 690], [460, 790], [900, 790], [1560, 790]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 3, arriba: y < 750 }));
-    [[700, 1050], [1200, 1050], [500, 1150], [1000, 1150], [1500, 1150]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 1, arriba: y < 1100 }));
+    [[300, 330], [1300, 330], [560, 430], [1000, 430], [1500, 430]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i, izq: y < 400 }));
+    [[200, 690], [1400, 690], [460, 790], [900, 790], [1560, 790]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i + 3, izq: y < 750 }));
+    [[700, 1050], [1200, 1050], [500, 1150], [1000, 1150], [1500, 1150]].forEach(([x, y], i) => pon('cocheH', x, y, { v: i + 1, izq: y < 1100 }));
     // farolas, buzones y cubos por las aceras
     for (const x of [120, 760, 1420]) { pon('farola', x, 278); pon('farola', x, 998); }
     for (const x of [420, 1060, 1560]) pon('farola', x, 638);

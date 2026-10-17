@@ -3,7 +3,7 @@
 'use strict';
 let muted = false;
 try { muted = localStorage.getItem('for-muted') === '1'; } catch (e) { /* storage blocked */ }
-const musVol = () => (SAVE.mus == null ? 70 : SAVE.mus) / 100;
+const musVol = () => (SAVE.mus == null ? 50 : SAVE.mus) / 100;
 const sonidoApagado = () => muted;
 const volGeneral = () => (muted ? 0 : 0.55 * ((SAVE.vol == null ? 100 : SAVE.vol) / 100));
 const volMusica = () => 0.7 * musVol();

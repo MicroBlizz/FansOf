@@ -2,6 +2,7 @@
 // más nueva de js/novedades.js (y las anteriores). El juego en sí todavía se juega solo en español (datos.js: tr = s => s).
 'use strict';
 IDIOMA.add({
+  "Microblizz ha engrasado las bisagras de la mazmorra. Phony dice que ahora los fantasmas entran sin chirriar.": "Microblizz has oiled the dungeon hinges. Phony says the ghosts now come in without squeaking.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
   "Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta.": "Microblizz counted your stars twice to be sure. Phony counts them separately, in his own account.",
   "<b>SESIÓN MÁS ROBUSTA</b>: si tu sesión de Google caducaba, el feedback, la partida en la nube y los votos fallaban sin decir por qué. Ahora se avisa y puedes entrar otra vez. Y ya no se pelean dos pestañas por renovarla.": "<b>MORE ROBUST SESSIONS</b>: if your Google session expired, feedback, the cloud save and votes failed without saying why. Now you get a notice and can sign in again. And two tabs no longer fight over renewing it.",

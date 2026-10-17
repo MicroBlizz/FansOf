@@ -1,6 +1,6 @@
 // Fans of Rouflage · EL DIBUJO DE LOS JARDINES: césped (fácil), caminos de gravilla (fácil-medio), parterres de flores y el estanque
-// (difíciles), los setos que hacen de muro, árboles, farolas, bancos, gnomos y el EVENTO «aspersores»: cada poco se encienden dos
-// aspersores y a quien pillan le lavan media pintura: toca pintarse otra vez.
+// (difíciles), los setos que hacen de muro, árboles, farolas, bancos, gnomos y el EVENTO «aspersores»: se enciende el que alguien toca
+// o pasa muy cerca, se queda encendido mientras haya un infiltrado relativamente cerca (pista) y lava media pintura a quien pilla debajo: toca pintarse otra vez.
 'use strict';
 
 const FLORES = ['#ff4b5c', '#f2c230', '#ff7ad8', '#fff6ea', '#8b3dff', '#ff7a1a'];
@@ -119,29 +119,34 @@ Object.assign(PEGATINAS_EXTRA, {
 
 /* ---------- el evento: los aspersores ---------- */
 EVENTOS.aspersores = {
-  primero: 11, cada: 17, dura: 5, radio: 120,
-  nuevo() { return { todos: MUEBLES.filter(m => m.t === 'aspersor'), en: [], lavado: false }; },
-  empieza(est, azar) {
-    const lista = est.todos.slice(); est.en = [];
-    for (let k = 0; k < 2 && lista.length; k++) est.en.push(lista.splice(Math.floor(azar() * lista.length), 1)[0]);
-    est.lavado = false; play('luces');
-    if (J.yo && J.yo.clase === 'camaleon') avisa(tr('Se encienden los aspersores'), 'aviso');
-  },
-  avanza(est, dt, t) {
-    if (est.lavado || t < 1.2) return;
-    est.lavado = true;      // al segundo de empezar, el agua llega: a quien esté debajo se le corre la pintura
-    for (const e of J.camaleones) {
-      if (!eventoLeToca(e) || !est.en.some(a => lejos(a.x, a.y - 10, e.x, e.y - 20) < this.radio)) continue;
-      lavaPiel(e, 0.6); eventoMolesta(e, tr('¡El aspersor te ha lavado la pintura! Vuelve a pintarte'));
-      fxSalpica(e.x, e.y - 20, '#9fd6e8', 14);
+  primero: 0, cada: 0, dura: 1e9, radio: 120, toca: 30, rango: 170,      // vigila durante toda la caza
+  nuevo() { return { todos: MUEBLES.filter(m => m.t === 'aspersor').map(m => ({ m, on: false, t: 0, lavados: new Set() })) }; },
+  empieza() {},
+  // un aspersor se enciende si alguien lo toca o pasa muy cerca; mientras haya un infiltrado relativamente cerca se queda encendido (pista) y cuando se marcha se apaga.
+  // El agua corre la pintura a quien esté debajo (una vez por cada vez que se enciende).
+  avanza(est, dt) {
+    for (const a of est.todos) {
+      const m = a.m;
+      if (a.on) {
+        a.t += dt;
+        if (a.t > 1.5 && !infiltradoCerca(m.x, m.y - 10, this.rango)) { a.on = false; a.lavados.clear(); continue; }
+        if (a.t < 1.2) continue;      // al segundo y pico de encenderse, el agua llega
+        for (const e of J.camaleones) {
+          if (a.lavados.has(e) || !eventoLeToca(e) || lejos(m.x, m.y - 10, e.x, e.y - 20) >= this.radio) continue;
+          a.lavados.add(e); lavaPiel(e, 0.6); eventoMolesta(e, tr('¡El aspersor te ha lavado la pintura! Vuelve a pintarte'));
+          fxSalpica(e.x, e.y - 20, '#9fd6e8', 14);
+        }
+      } else if (alguienPasa({ x0: m.x, y0: m.y - 10, x1: m.x, y1: m.y - 10 }, this.toca)) {
+        a.on = true; a.t = 0; a.lavados.clear(); play('luces');
+        if (J.yo && J.yo.clase === 'camaleon' && lejos(J.yo.x, J.yo.y, m.x, m.y) < 420) avisa(tr('Se encienden los aspersores'), 'aviso');
+      }
     }
   },
-  termina(est) { est.en = []; },
-  pintaEncima(c, est, t, reloj) {
-    if (t < 0) return;
-    const k = t < 0.6 ? t / 0.6 : t > this.dura - 0.8 ? (this.dura - t) / 0.8 : 1;
-    for (const a of est.en) {
-      const ox = a.x, oy = a.y - 12, r = this.radio * k;
+  termina() {},
+  pintaEncima(c, est, t0, reloj) {
+    for (const a of est.todos) {
+      if (!a.on) continue;
+      const k = Math.min(1, a.t / 0.6), ox = a.m.x, oy = a.m.y - 12, r = this.radio * k;
       c.fillStyle = 'rgba(120,200,240,0.14)'; c.beginPath(); c.ellipse(ox, oy, r, r * 0.6, 0, 0, TAU); c.fill();
       c.strokeStyle = 'rgba(200,240,255,0.8)'; c.lineWidth = 2.5; c.beginPath();
       for (let n = 0; n < 7; n++) { const ang = reloj * 5 + (n / 7) * TAU; c.moveTo(ox, oy); c.quadraticCurveTo(ox + Math.cos(ang) * r * 0.5, oy - 30 + Math.sin(ang) * r * 0.3, ox + Math.cos(ang) * r, oy + Math.sin(ang) * r * 0.6); }

@@ -57,7 +57,7 @@
 
 /* ---------- Modo Jefe nuevo: el jefe en grande, con su aura ---------- */
 #scr-prep.jefe > * { order: 10; }
-#scr-prep.jefe > #prep-title { order: 0; }
+#scr-prep.jefe > .scr-head { order: 0; }
 #scr-prep.jefe > #boss-pick { order: 1; }
 #scr-prep.jefe > #bdiff-row { order: 2; }
 #scr-prep.jefe > #prep-info { order: 3; }

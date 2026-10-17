@@ -8,7 +8,12 @@
   "mod": "módulos de defensa (NOVA_ARMAS.modulosDefensa)",
   "mejora": "modificadores (NOVA_ARMAS.modificadores)",
   "ofi": "facetas de oficial (NOVA_TRIPULACION.facetas)",
-  "cap": "capitanes (NOVA_TRIPULACION.capitanes[].id)"
+  "cap": "capitanes (NOVA_TRIPULACION.capitanes[].id)",
+  "sis": "mejoras de sistema de las cartas (NV_MEJORAS_SISTEMA[].id: dano, cadencia, robo, casco, regen, vel, iman)",
+  "estado": "estados (NOVA_ARMAS.estados)",
+  "taller": "botones del taller de estación: unir y dividir",
+  "cat": "categorías de carta: ofensiva (of), defensiva (de), utilidad (ut)",
+  "ui": "botones de interfaz: ui-info (botón «i» de información contextual, 96 px) y ui-ayuda (interrogación)"
  },
  "iconos": {
   "arma-drones": "arma-drones.png",
@@ -30,6 +35,14 @@
   "carga-energia": "carga-energia.png",
   "carga-explosiva": "carga-explosiva.png",
   "carga-termica": "carga-termica.png",
+  "cat-defensiva": "cat-defensiva.png",
+  "cat-ofensiva": "cat-ofensiva.png",
+  "cat-utilidad": "cat-utilidad.png",
+  "estado-apagado": "estado-apagado.png",
+  "estado-brecha": "estado-brecha.png",
+  "estado-escudoCaido": "estado-escudoCaido.png",
+  "estado-marcado": "estado-marcado.png",
+  "estado-sobrecalentado": "estado-sobrecalentado.png",
   "mejora-cadena": "mejora-cadena.png",
   "mejora-critico": "mejora-critico.png",
   "mejora-perforante": "mejora-perforante.png",
@@ -45,6 +58,17 @@
   "ofi-fuego": "ofi-fuego.png",
   "ofi-ingenieria": "ofi-ingenieria.png",
   "ofi-navegacion": "ofi-navegacion.png",
-  "ofi-tacticas": "ofi-tacticas.png"
+  "ofi-tacticas": "ofi-tacticas.png",
+  "sis-cadencia": "sis-cadencia.png",
+  "sis-casco": "sis-casco.png",
+  "sis-dano": "sis-dano.png",
+  "sis-iman": "sis-iman.png",
+  "sis-regen": "sis-regen.png",
+  "sis-robo": "sis-robo.png",
+  "sis-vel": "sis-vel.png",
+  "taller-dividir": "taller-dividir.png",
+  "taller-unir": "taller-unir.png",
+  "ui-ayuda": "ui-ayuda.png",
+  "ui-info": "ui-info.png"
  }
 }

@@ -38,3 +38,15 @@
 
 .nv-gal { width: 100%; max-width: 520px; align-self: center; display: block; touch-action: manipulation; cursor: pointer; }
 .nv-galinfo { cursor: default; }
+.nv-boton > img, .nv-boton > canvas { vertical-align: middle; margin-right: 6px; }
+/* ayuda: botón de info en la esquina de cada menú y la ventana que abre */
+.nv-info { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 3px 0 #1a0f2e); z-index: 2; }
+.nv-info:active { transform: translateY(2px); filter: none; }
+.nv-info > img, .nv-info > canvas { width: 38px; height: 38px; }
+.nv-tuto { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 18px; background: rgba(4, 6, 20, .78); }
+.nv-tutocaja { width: 100%; max-width: 420px; max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 18px; background: #232a63; border: 4px solid #1a0f2e; border-radius: 18px; box-shadow: 0 6px 0 #1a0f2e; }
+.nv-tutocaja > .nv-titulo { font-size: 26px; }
+.nv-tutolinea { align-self: stretch; text-align: left; color: #e8ebff; font-size: 16px; line-height: 1.35; padding-left: 16px; position: relative; }
+.nv-tutolinea::before { content: ''; position: absolute; left: 2px; top: .5em; width: 7px; height: 7px; border-radius: 50%; background: #ffd93d; box-shadow: 0 0 0 2px #1a0f2e; }
+.nv-tutocaja > .nv-boton { align-self: stretch; }
+.nv-tutosaltar { border: 0; background: none; color: #a8b0e0; font: 700 14px 'Baloo 2', sans-serif; text-decoration: underline; cursor: pointer; }

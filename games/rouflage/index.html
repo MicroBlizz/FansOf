@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.24"></script>
+<script src="../../core/js/nucleo.js?v=0.2.25"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <link rel="stylesheet" href="estilo.css?v=0.2.9">
 <link rel="stylesheet" href="estilo-pvp.css?v=0.2.9">
@@ -278,6 +278,7 @@
     <div class="modo-sala" id="busca-modo" hidden>
       <div class="modo-fila"><button type="button" class="boton peq flecha" id="b-modo-ant" data-tr-aria aria-label="Modo anterior">&#9664;</button><span class="modo-nombre"><small data-tr>MODO</small><b class="ol" id="busca-modo-n">NORMAL</b></span><button type="button" class="boton peq flecha" id="b-modo-sig" data-tr-aria aria-label="Modo siguiente">&#9654;</button></div>
       <p class="nota-sala modo-texto" id="busca-modo-t"></p>
+      <div class="mapa-sala" id="busca-mapas"></div>
       <div class="extras" id="busca-extras"></div>
     </div>
     <div class="voto-sala" id="busca-voto" hidden>
@@ -475,6 +476,7 @@ NUCLEO.juego({
     'js/pvp.js',
     'js/pvp-sync.js',
     'js/pvp-vuelta.js',
+    'js/pvp-mapas.js',
     'js/pvp-pantallas.js',
     'js/pvp-energia.js',
     'js/armario-dibujo.js',

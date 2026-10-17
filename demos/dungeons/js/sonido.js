@@ -7,7 +7,7 @@ const SAVE = { menuMus: 'menu' };   // el motor lo mira al acabar las canciones 
 const SON = { on: true, musica: true };
 const sonidoApagado = () => !SON.on;
 const volGeneral = () => (SON.on ? 0.55 : 0);
-const volMusica = () => (SON.musica ? 0.45 : 0);
+const volMusica = () => (SON.musica ? 0.225 : 0);
 // el motor usa estas dos para algunos efectos
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];

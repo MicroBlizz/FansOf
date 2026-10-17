@@ -24,7 +24,7 @@ function showMenu() {
 const optOn = k => SAVE[k] !== false;   // números de daño y temblor vienen activados
 function openOptions() {
   show('scr-options'); updateWallets();
-  $('#opt-vol').value = Math.round((SAVE.vol == null ? 1 : SAVE.vol) * 100); $('#opt-mus').value = Math.round((SAVE.mus == null ? 1 : SAVE.mus) * 100);
+  $('#opt-vol').value = Math.round((SAVE.vol == null ? 1 : SAVE.vol) * 100); $('#opt-mus').value = Math.round((SAVE.mus == null ? 0.5 : SAVE.mus) * 100);
   optButtons(); $('#save-code').value = '';
 }
 function optButtons() {

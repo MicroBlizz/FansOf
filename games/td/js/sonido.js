@@ -3,7 +3,7 @@
 'use strict';
 const sonidoApagado = () => !!SAVE.muted;
 const volGeneral = () => (SAVE.muted ? 0 : SAVE.vol == null ? 1 : SAVE.vol);
-const volMusica = () => 0.3 * (SAVE.mus == null ? 1 : SAVE.mus);
+const volMusica = () => 0.3 * (SAVE.mus == null ? 0.5 : SAVE.mus);
 M.shepard = true;   // aquí las partidas son largas: la canción no vuelve a empezar, sigue subiendo de tono
 
 // efectos de la partida: [nota inicial, nota final, duración, forma de onda, volumen]

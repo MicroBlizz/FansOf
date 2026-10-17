@@ -4,7 +4,7 @@
 'use strict';
 import { audio } from './voces.js';
 
-const M = { trk: null, out: null, bus: null, paso: 0, compas: 0, sig: 0, reloj: null, volumen: 0.38, on: true };
+const M = { trk: null, out: null, bus: null, paso: 0, compas: 0, sig: 0, reloj: null, volumen: 0.19, on: true };
 const hz = m => 440 * Math.pow(2, (m - 69) / 12);
 const elige = l => l[(Math.random() * l.length) | 0];
 function grado(T, d) { const n = T.sc.length, o = Math.floor(d / n); return T.tonic + T.sc[d - o * n] + 12 * o; }

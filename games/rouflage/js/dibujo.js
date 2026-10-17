@@ -160,9 +160,13 @@ function pintaEncima(c, t) {
 // un camaleón ya congelado (o congelándose) se comporta como el suelo al dibujar el orden de las cosas
 const esSuelo = e => e.clase === 'camaleon' && !e.fuera && e.hielo > 0.3;
 // mientras los colados se pintan, los becarios no ven nada fuera de su sala de espera
+// el PvP, antes de abrirse la barrera: el becario solo ve su sala, con la pared de frente que tiene encima (el cartel de «Recursos Humanos», la del vestíbulo…) y el canto del muro que la rodea
 function tapaFueraDeSala(c, x0, y0, vw, vh) {
   const z = salaEspera(); if (!z) return;
-  ponMundo(c); c.fillStyle = '#0b0718'; c.beginPath(); c.rect(x0 - 60, y0 - 60, vw + 120, vh + 120); c.rect(z.px, z.py, z.pw, z.ph); c.fill('evenodd');
+  const zi = ZONAS.indexOf(z); let arriba = z.py;
+  for (let y = Math.max(0, z.y - ALTO_CARA); y < z.y; y++) for (let x = z.x; x < z.x + z.w; x++) if (ZONA_DE[y * MW + x] === zi && GRID[y * MW + x] === CARA) arriba = Math.min(arriba, y * CEL);
+  const r = 10;      // lo que sobresale el contorno del canto (paredes.js); por arriba más: carteles y máquinas asoman sobre la pared
+  ponMundo(c); c.fillStyle = '#0b0718'; c.beginPath(); c.rect(x0 - 60, y0 - 60, vw + 120, vh + 120); c.rect(z.px - r, arriba - 28, z.pw + 2 * r, z.py + z.ph - arriba + r + 28); c.fill('evenodd');
 }
 function dibuja(t) {
   const c = ctx; calculaVista();
@@ -204,7 +208,11 @@ function dibuja(t) {
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
   }
   if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
-  if (!TALLER.abierto) { ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c); eventosPintaVelo(c, t); }
+  if (!TALLER.abierto) {
+    ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
+    for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
+    eventosPintaVelo(c, t);
+  }
   ponMundo(c); pintaFx(c); pintaMarcas(c, t); idaPinta(c);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);

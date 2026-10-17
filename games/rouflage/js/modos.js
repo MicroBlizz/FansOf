@@ -64,7 +64,7 @@ function modoDesdeUrl() {
 }
 
 // ---------- lo que el anfitrión elige en la sala de amigos (se recuerda para la próxima) ----------
-const MODO_ELEGIDO = (() => { try { const d = JSON.parse(localStorage.getItem('rouflage-modo') || 'null'); return d && typeof d === 'object' ? { m: MODOS[d.m] ? d.m : 'normal', x: d.x || {} } : { m: 'normal', x: {} }; } catch (_) { return { m: 'normal', x: {} }; } })();
+const MODO_ELEGIDO = (() => { try { const d = JSON.parse(localStorage.getItem('rouflage-modo') || 'null'); return d && typeof d === 'object' ? { m: MODOS[d.m] ? d.m : 'normal', x: d.x || {}, mapa: typeof d.mapa === 'string' ? d.mapa : '' } : { m: 'normal', x: {}, mapa: '' }; } catch (_) { return { m: 'normal', x: {}, mapa: '' }; } })();
 function modoElegidoGuarda() { try { localStorage.setItem('rouflage-modo', JSON.stringify(MODO_ELEGIDO)); } catch (_) { /* sin guardar */ } }
 
 // ---------- CONTAGIO ----------

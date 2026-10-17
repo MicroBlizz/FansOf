@@ -9,7 +9,7 @@ try { const a = JSON.parse(localStorage.getItem('fansof-recruit') || '{}'); Obje
 function guardaAjustes() { try { localStorage.setItem('fansof-recruit', JSON.stringify(AJUSTES)); } catch (_) { /* sin guardar */ } }
 const sonidoApagado = () => AJUSTES.mudo;
 const volGeneral = () => (AJUSTES.mudo ? 0 : 0.55);
-const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.5);
+const volMusica = () => (AJUSTES.sinMusica ? 0 : 0.25);
 // el motor usa estas dos para algunos efectos
 const rand = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];

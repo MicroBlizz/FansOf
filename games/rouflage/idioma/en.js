@@ -377,6 +377,8 @@ IDIOMA.add({
   "TE OYE": "HEARS YOU",
   "VESTÍBULO": "LOBBY",
   "MODO": "MODE",
+  "MAPA": "MAP",
+  "AL AZAR": "RANDOM",
   "Modo anterior": "Previous mode",
   "Modo siguiente": "Next mode",
   "NORMAL": "NORMAL",
@@ -414,7 +416,7 @@ IDIOMA.add({
   "APARQUE": "PARK",
   "SU FUTURO": "YOUR FUTURE",
   "VIGILANCIA": "SECURITY",
-  "Un coche enciende los faros": "A car turns its headlights on",
+  "¡Salta la alarma de un coche!": "A car alarm goes off!",
   // las cloacas (mapa-cloacas.js)
   "Las cloacas": "The sewers",
   "Canales de agua verde, ratas y niebla. Huele a Ratkov.": "Green water channels, rats and fog. Smells of Ratkov.",

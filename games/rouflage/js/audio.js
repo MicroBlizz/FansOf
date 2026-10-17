@@ -5,11 +5,11 @@
 'use strict';
 
 // volúmenes de 0 a 1 (efectos y música por separado); se guardan en el navegador. `mudo`/`sinMusica` quedan por si algo viejo los mira.
-const AUDIO = { vol: 1, volMus: 1, get mudo() { return this.vol === 0; }, get sinMusica() { return this.volMus === 0; } };
+const AUDIO = { vol: 1, volMus: 0.5, get mudo() { return this.vol === 0; }, get sinMusica() { return this.volMus === 0; } };
 try {
   const v = localStorage.getItem('rouflage-vol'), m = localStorage.getItem('rouflage-vol-musica');
   AUDIO.vol = v === null ? (localStorage.getItem('rouflage-mudo') === '1' ? 0 : 1) : limita(+v, 0, 1);
-  AUDIO.volMus = m === null ? (localStorage.getItem('rouflage-sin-musica') === '1' ? 0 : 1) : limita(+m, 0, 1);
+  AUDIO.volMus = m === null ? (localStorage.getItem('rouflage-sin-musica') === '1' ? 0 : 0.5) : limita(+m, 0, 1);
 } catch (_) { /* sin guardar */ }
 // PARA COMPARAR (temporal, alfa): con `viejo` suenan la música y los efectos de antes (los prestados del Rumble); se quita al decidir
 try { AUDIO.viejo = localStorage.getItem('rouflage-sonido-viejo') === '1'; } catch (_) { AUDIO.viejo = false; }
@@ -29,7 +29,7 @@ function ponVolumen(que, v) {
   if (que === 'vol' && AUDIO.vol > 0) play('select');
 }
 // el botón del icono: silencia o recupera el último volumen que tenía
-const _ultimoVol = { vol: 1, volMus: 1 };
+const _ultimoVol = { vol: 1, volMus: 0.5 };
 function cambiaSonido() { if (AUDIO.vol > 0) { _ultimoVol.vol = AUDIO.vol; ponVolumen('vol', 0); } else ponVolumen('vol', _ultimoVol.vol || 1); }
 function cambiaMusica() { if (AUDIO.volMus > 0) { _ultimoVol.volMus = AUDIO.volMus; ponVolumen('volMus', 0); } else ponVolumen('volMus', _ultimoVol.volMus || 1); }
 

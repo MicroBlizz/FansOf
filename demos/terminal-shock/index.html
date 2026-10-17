@@ -1581,7 +1581,7 @@ const THEME=[[45,[57,60,64,67,71],[45,52,57]],[41,[57,60,64,65,69],[41,48,57]],[
 const ENDT=[[38,[62,65,69,72],[38,45,53]],[34,[62,65,70,74],[34,41,50]],[41,[60,65,69,72],[41,48,57]],[40,[60,64,67,72],[40,48,55]]];
 function musicInit(){
   if(!AC||MU) return; const ac=AC;
-  const out=ac.createGain(); out.gain.value=musicOn?1:0; out.connect(master);
+  const out=ac.createGain(); out.gain.value=musicOn?.5:0; out.connect(master);
   const bus=ac.createGain(); bus.gain.value=.68; bus.connect(out);
   const rev=ac.createConvolver(); rev.buffer=makeIR(ac,3.6,2.2); const wet=ac.createGain(); wet.gain.value=.85; rev.connect(wet); wet.connect(bus);
   const sfxRev=ac.createGain(); sfxRev.gain.value=.5; sfxRev.connect(rev);   // los sonidos de puertas también pasan por el eco
@@ -1610,7 +1610,7 @@ function musicInit(){
     f.connect(g); g.connect(bus); const s=ac.createGain(); s.gain.value=.6; g.connect(s); s.connect(rev); MU.pad={g,os}; }
 }
 function musicToggle(){ musicOn=!musicOn; try{localStorage.setItem('ts_musica',musicOn?'1':'0');}catch(e){}
-  const b=$('musicBtn'); if(b) b.textContent='Música: '+(musicOn?'sí':'no'); if(MU) MU.out.gain.setTargetAtTime(musicOn?1:0,MU.ac.currentTime,.3); }
+  const b=$('musicBtn'); if(b) b.textContent='Música: '+(musicOn?'sí':'no'); if(MU) MU.out.gain.setTargetAtTime(musicOn?.5:0,MU.ac.currentTime,.3); }
 /* ---- voces ---- */
 function vPiano(n,vel,when,dry){ const ac=MU.ac, t=when||ac.currentTime+.02, f=N2F(n), g=ac.createGain(), lp=ac.createBiquadFilter();
   lp.type='lowpass'; lp.frequency.value=Math.min(4200,900+f*2.2); g.gain.value=1; lp.connect(g);

@@ -80,7 +80,7 @@ function nvPanelesDOM(S) {
     });
     const rr = nvEl('nv-boton', tr('Repetir cartas') + ' (' + S.rerolls + ')', 'button'); rr.disabled = S.rerolls <= 0;
     rr.onclick = () => { nvReroll(S); };
-    p.appendChild(rr); cont.appendChild(p);
+    p.appendChild(rr); nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
   } else if (S.estado !== 'cartas' && NVI.cartasVistas) { NVI.cartasVistas = null; cont.textContent = ''; }
   if (S.estado === 'estacion' && S.estVista !== S.est) { S.estVista = S.est; S.estSel = null; nvRenderEstacion(S); }
   if ((S.estado === 'victoria' || S.estado === 'derrota') && NVI.finVisto !== S) {
@@ -110,10 +110,11 @@ function nvJugar() {
 }
 
 // ---------- menú de naves: cada facción empieza con un arma de su clase ----------
-function nvPreview(cv, casco) {
-  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, 5), e = cv.height / 330;
+function nvPreview(cv, casco, rango) {
+  rango = rango || nvRangoInicial();   // la nave que sale al desplegar: la de tu nivel
+  const c = cv.getContext('2d'), H = NOVA_PIEZAS.cascos[casco], [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
   c.clearRect(0, 0, cv.width, cv.height); c.save(); c.translate(cv.width / 2, cv.height * 0.55); c.scale(e, e);
-  nvPieza(c, casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvPieza(c, casco + '-casco', 0, 0);
+  nvCuerpo(c, casco, k, 'alas'); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvCuerpo(c, casco, k, 'casco');
   c.restore();
 }
 // Antes de la misión: nave, capitán y un oficial (tres pasos en el mismo panel).
@@ -128,11 +129,13 @@ function nvMenu() {
     const t = nvEl('nv-ntxt'); t.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
+    t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial())].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial()) + 1).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
     t.appendChild(nvEl('nv-cdet', tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Atrás'), 'button'); s.onclick = nvGalaxiaMenu; p.appendChild(s);
+  nvInfo(p, 'nave');
   cont.appendChild(p);
 }
 function nvMenuCapitan(casco) {
@@ -150,6 +153,7 @@ function nvMenuCapitan(casco) {
     p.appendChild(b);
   }
   const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = nvMenu; p.appendChild(at);
+  nvInfo(p, 'capitan');
   cont.appendChild(p);
 }
 function nvMenuOficial(casco, cap) {
@@ -165,6 +169,7 @@ function nvMenuOficial(casco, cap) {
     p.appendChild(b);
   }
   const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => nvMenuCapitan(casco); p.appendChild(at);
+  nvInfo(p, 'oficial');
   cont.appendChild(p);
 }
 const NV_COL_CAP = { progamer: '#6fc4ff', bunny: '#ff9a3c', necrolord: '#7ad06b', twitchking: '#b46bff', epicchampion: '#ff5b5b' };
@@ -198,10 +203,10 @@ function nvRenderEstacion(S) {
     if (T.sel.length === 1) pista = a.tam === 'S' ? 'Toca otra pequeña para unirlas en una mediana' : 'Toca otra del mismo tamaño para unirlas, o divide esta';
     if (T.sel.length === 2) pista = nvPuedeUnir(a, b2) ? 'Se unen en una ' + (a.tam === 'S' ? 'mediana' : 'grande') : 'Tienen que ser del mismo tamaño y no grandes';
     p.appendChild(nvEl('nv-cdet', tr(pista)));
-    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2));
+    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2)); u.prepend(nvIcono('taller', 'unir', '#ffd93d', 26));
     u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
     const ok = T.sel.length === 1 && NV_ANT_TAM[a.tam] && nvRanuraLibre(S, a.portador);
-    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok;
+    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok; d.prepend(nvIcono('taller', 'dividir', '#ffd93d', 26));
     d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
   } else if (!S.estSel) {
@@ -222,5 +227,5 @@ function nvRenderEstacion(S) {
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
   sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
-  p.appendChild(sa); cont.appendChild(p);
+  p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
 }

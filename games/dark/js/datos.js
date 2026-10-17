@@ -113,7 +113,7 @@ function dkTextoObjeto(o) {
 
 /* ---------- partida guardada (la de este juego; no se comparte con ningún otro) ---------- */
 const DK_GUARDA = 'fansof-dark';
-const SAVE = { muted: false, vol: 1, mus: 1 };   // los pide el motor de sonido de la serie
+const SAVE = { muted: false, vol: 1, mus: 0.5 };   // los pide el motor de sonido de la serie
 function sonidoApagado() { return !!SAVE.muted; }
 function volGeneral() { return SAVE.muted ? 0 : SAVE.vol; }
 function volMusica() { return 0.3 * SAVE.mus; }

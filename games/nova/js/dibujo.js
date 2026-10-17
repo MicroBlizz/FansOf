@@ -19,6 +19,31 @@ function nvCargaArte(listo) {
     }
   }).catch(() => { NVA.listo = true; listo && listo(); });
 }
+// Naves enemigas de arte final (arte/enemigos/enemigos.json): si un tipo no tiene PNG, se dibuja en código como antes.
+const NVE = { img: {}, meta: {} };
+function nvCargaEnemigos() {
+  fetch(NVA.base + 'enemigos/enemigos.json').then(r => r.json()).then(d => {
+    for (const m of d.enemigos) { const im = new Image(); im.src = NVA.base + 'enemigos/' + m.archivo; NVE.img[m.id] = im; NVE.meta[m.id] = m; }
+  }).catch(() => { /* sin arte: dibujo de código */ });
+}
+// Dibuja el sprite del enemigo (proa a la derecha) del tamaño de su radio; devuelve false si no hay PNG listo.
+function nvSpriteEnemigo(c, e, S) {
+  const im = NVE.img[e.tipo], m = NVE.meta[e.tipo];
+  if (!im || !im.complete || !im.naturalWidth) return false;
+  const redondo = m.proa !== 'derecha', t = e.r * (redondo ? 2.3 : 2.6);   // las naves son alargadas: su largo supera el círculo de choque
+  c.save();
+  if (e.tipo === 'nido') { const lat = 1 + 0.05 * Math.sin(S.t * 5 + e.fase); c.scale(lat, lat); }
+  else if (redondo) c.rotate(e.ang || 0);
+  else {   // mira hacia donde va; parado, hacia ti
+    const v = Math.hypot(e.vx, e.vy), obj = v > 8 ? Math.atan2(e.vy, e.vx) : Math.atan2(S.nave.y - e.y, S.nave.x - e.x);
+    if (e.rumbo === undefined) e.rumbo = obj;
+    e.rumbo += Math.atan2(Math.sin(obj - e.rumbo), Math.cos(obj - e.rumbo)) * 0.15; c.rotate(e.rumbo);
+  }
+  c.drawImage(im, -t / 2, -t / 2, t, t);
+  if (e.flash > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.7, e.flash * 6); c.drawImage(im, -t / 2, -t / 2, t, t); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; }
+  c.restore();
+  return true;
+}
 // Una pieza con su pivote sobre el anclaje (ax, ay), en unidades de nave (los PNG de muestra miden 2 px por unidad).
 function nvPieza(c, id, ax, ay) {
   const m = NVA.meta[id], im = NVA.img[id];
@@ -65,16 +90,16 @@ function nvTorreta(c, w, r, rot) {
   c.restore();
 }
 function nvDibujaNave(c, S) {
-  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam];
+  const n = S.nave, e = n.escala, H = NOVA_PIEZAS.cascos[S.casco], [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam], k = nvClase(n.rango);
   c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.filter = 'brightness(0)';   // sombra proyectada: da altura sobre el fondo
-  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y); nvPieza(c, S.casco + '-casco', 0, 0);
+  nvCuerpo(c, S.casco, k, 'alas'); nvCuerpo(c, S.casco, k, 'casco');
   c.restore();
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);
-  nvPieza(c, S.casco + '-alas', H.alas.x, H.alas.y);
+  nvCuerpo(c, S.casco, k, 'alas');
   nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y);
-  nvPieza(c, S.casco + '-casco', 0, 0);
+  nvCuerpo(c, S.casco, k, 'casco');
   const abiertas = nvRanuras(n.rango, S);
   for (const sl of abiertas) {
     const w = n.armas.find(a => a.slot === sl.id), rr = NOVA_PIEZAS.radioRanura[w ? w.tam : 'S'];
@@ -83,7 +108,7 @@ function nvDibujaNave(c, S) {
     if (w.portador === 'defensa') { c.beginPath(); for (let k = 0; k < 6; k++) { const a = k * 1.047 - 1.57; c[k ? 'lineTo' : 'moveTo'](sl.x + Math.cos(a) * rr, sl.y + Math.sin(a) * rr); } c.closePath(); c.fillStyle = w.carga === 'energia' ? '#4aa8ff' : '#ff9a3c'; c.fill(); c.stroke(); continue; }
     c.save(); c.translate(sl.x, sl.y); nvTorreta(c, w, rr, (w.ang || 0) - n.ang + 1.5708); c.restore();
   }
-  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvPieza(c, S.casco + '-casco', 0, 0); }
+  if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvCuerpo(c, S.casco, k, 'casco'); }
   c.restore();
   // escudo del jugador: una pompa que se apaga al caer
   if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; nvPieza(c, S.casco + '-escudo', H.escudo.x, H.escudo.y); c.restore(); }
@@ -98,7 +123,9 @@ function nvDibujaEnemigo(c, e, S) {
   c.save(); c.translate(e.x, e.y);
   if (e.est.sobrecalentado > 0 || e.calor > 40) { c.beginPath(); c.arc(0, 0, r + 5, 0, 6.283); c.fillStyle = 'rgba(255,75,75,' + Math.min(0.5, e.calor / 200 + 0.1) + ')'; c.fill(); }
   c.lineWidth = 2.5; c.strokeStyle = '#1a0f2e'; c.fillStyle = e.flash > 0 ? '#ffffff' : d.color;
-  if (e.tipo === 'asteroide') {   // roca irregular
+  const arte = nvSpriteEnemigo(c, e, S);
+  if (arte) { /* arte final */ }
+  else if (e.tipo === 'asteroide') {   // roca irregular
     c.rotate(e.ang); c.beginPath();
     for (let k = 0; k < 9; k++) { const a = k * 0.698, q = r * (0.78 + 0.28 * Math.sin(k * 2.3 + e.forma * 9)); c[k ? 'lineTo' : 'moveTo'](Math.cos(a) * q, Math.sin(a) * q); }
     c.closePath(); c.fillStyle = e.flash > 0 ? '#fff' : '#7b7f9c'; c.fill(); c.stroke();
@@ -121,7 +148,7 @@ function nvDibujaEnemigo(c, e, S) {
     if (d.capitan) { c.fillStyle = '#ffd93d'; c.font = '800 ' + r * 0.7 + 'px Baloo 2, sans-serif'; c.textAlign = 'center'; c.fillText(String(e.rango), 0, r * 0.62); }
     if (d.jefe) { c.fillStyle = '#ffd93d'; for (let k = -2; k <= 2; k++) { c.beginPath(); c.moveTo(k * r * 0.3 - 6, -r * 0.95); c.lineTo(k * r * 0.3, -r * 1.3); c.lineTo(k * r * 0.3 + 6, -r * 0.95); c.fill(); } }
   }
-  if (e.armas) for (const w of e.armas) { c.beginPath(); c.arc(w.ax * r, w.ay * r, r * { S: 0.13, M: 0.2, L: 0.3 }[w.tam], 0, 6.283); c.fillStyle = '#ff6b6b'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#1a0f2e'; c.stroke(); }   // armas en sus anclajes
+  if (e.armas && !arte) for (const w of e.armas) { c.beginPath(); c.arc(w.ax * r, w.ay * r, r * { S: 0.13, M: 0.2, L: 0.3 }[w.tam], 0, 6.283); c.fillStyle = '#ff6b6b'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#1a0f2e'; c.stroke(); }   // armas en sus anclajes
   if (!d.pasivo && !d.nido && !d.jefe) {   // anillo de peligro según su rango frente al tuyo: rojo = huye, naranja = cuidado, amarillo = parecido, verde = presa
     const df = e.rango - S.nave.rango, col = df >= 4 ? '#ff3b3b' : df >= 2 ? '#ff9a3c' : df >= -1 ? '#ffe066' : '#6bff8a';
     c.beginPath(); c.arc(0, 0, r + 4, 0, 6.283); c.lineWidth = df >= 4 ? 4 : 2.5; c.strokeStyle = col; c.globalAlpha = df >= 4 ? 0.55 + 0.4 * Math.sin(S.t * 8) : 0.75; c.stroke(); c.globalAlpha = 1;

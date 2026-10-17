@@ -12,7 +12,8 @@
   "sis": "mejoras de sistema de las cartas (NV_MEJORAS_SISTEMA[].id: dano, cadencia, robo, casco, regen, vel, iman)",
   "estado": "estados (NOVA_ARMAS.estados)",
   "taller": "botones del taller de estación: unir y dividir",
-  "cat": "categorías de carta: ofensiva (of), defensiva (de), utilidad (ut)"
+  "cat": "categorías de carta: ofensiva (of), defensiva (de), utilidad (ut)",
+  "ui": "botones de interfaz: ui-info (botón «i» de información contextual, 96 px) y ui-ayuda (interrogación)"
  },
  "iconos": {
   "arma-drones": "arma-drones.png",
@@ -66,6 +67,8 @@
   "sis-robo": "sis-robo.png",
   "sis-vel": "sis-vel.png",
   "taller-dividir": "taller-dividir.png",
-  "taller-unir": "taller-unir.png"
+  "taller-unir": "taller-unir.png",
+  "ui-ayuda": "ui-ayuda.png",
+  "ui-info": "ui-info.png"
  }
 }

@@ -1,8 +1,8 @@
 {
- "build": 143,
- "hash": "1cca908",
- "fecha": "2026-10-17T01:28:28Z",
- "mensaje": "Nova: arte de las naves enemigas No-Muertos (rastrero, fusilero, sepulturero, capitán, jefe, nido y asteroide) con su enemigos.json",
+ "build": 144,
+ "hash": "76c0e59",
+ "fecha": "2026-10-17T01:29:46Z",
+ "mensaje": "Nova: iconos de interfaz ui-info y ui-ayuda para el botón de información contextual",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

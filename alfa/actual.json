@@ -1,8 +1,8 @@
 {
- "build": 149,
- "hash": "f0a2a1d",
- "fecha": "2026-10-17T01:48:23Z",
- "mensaje": "Nova 0.3.3: la nota recoge los botones de info y las naves enemigas de arte final",
+ "build": 150,
+ "hash": "9da611f",
+ "fecha": "2026-10-17T01:49:25Z",
+ "mensaje": "Notas: Rumble (flecha atrás unificada) y Nova (clases de nave por rangos)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

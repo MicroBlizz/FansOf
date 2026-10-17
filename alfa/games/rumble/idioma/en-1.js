@@ -1,7 +1,7 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
-  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando. Y los botones de volver de la preparación (partida rápida, modo jefe, pruebas y niveles) son ahora la misma flecha de arriba a la izquierda.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving. And the back buttons on the setup screens (quick match, boss mode, tests and levels) are now the same arrow at the top left.",
   "Microblizz ha pulido los bajos del Rumble. Phony ha encontrado dos calcetines y un trofeo.": "Microblizz has polished the underside of Rumble. Phony found two socks and a trophy.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",
   "Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta.": "Microblizz counted your stars twice to be sure. Phony counts them separately, in his own account.",

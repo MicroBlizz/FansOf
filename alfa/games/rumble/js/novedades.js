@@ -3,7 +3,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
-  { v: '0.9.137', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando."], joke: ["Microblizz ha pulido los bajos del Rumble. Phony ha encontrado dos calcetines y un trofeo."] },
+  { v: '0.9.137', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando. Y los botones de volver de la preparación (partida rápida, modo jefe, pruebas y niveles) son ahora la misma flecha de arriba a la izquierda."], joke: ["Microblizz ha pulido los bajos del Rumble. Phony ha encontrado dos calcetines y un trofeo."] },
   { v: '0.9.136', real: ["<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },
   { v: '0.9.135', real: ["<b>UN SOLO NOMBRE PARA TODA LA SERIE</b>: tu cuenta de Fans Of tiene ahora un único nombre público en todos los juegos, y lo cambias desde «Mi cuenta», donde además ves si tienes el pase de caos ilimitado. Y por dentro, los sistemas comunes miden mejor cómo corre cada juego."], joke: ["Microblizz ha repartido tu nombre por todos los juegos. Phony cobra la fotocopia."] },
   { v: '0.9.134', real: ["<b>VERSIÓN EN EL FEEDBACK</b>: la pestaña de feedback muestra ahora la versión del juego en la que estás, y se guarda con tu mensaje para poder revisarlo después."], joke: ["Microblizz ha puesto la edad del juego en la pestaña. Phony pregunta si también enseña la suya."] },

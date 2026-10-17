@@ -59,7 +59,7 @@ function nvArmas(S, dt) {
     const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * (S.cap === 'bunny' && (w.portador === 'railgun' || w.portador === 'laser') ? 0.8 : 1) * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), arco = Math.max(NOVA_CASCOS.caras[w.cara].arco, NV_ARCO_MIN) / 2 * Math.PI / 180;
     let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
-      if (e.muerto || e.d.pasivo === 2) continue;
+      if (e.muerto || e.d.pasivo === 2 || !nvEnPantalla(S, e.x, e.y, -e.r * 0.5)) continue;   // solo lo que se ve
       const vx = e.x - w.x, vy = e.y - w.y, d2 = vx * vx + vy * vy;
       if (d2 > mejor) continue;
       if (w.cara !== 'dorsal') { const dot = (vx * dx + vy * dy) / Math.sqrt(d2 || 1); if (Math.acos(Math.max(-1, Math.min(1, dot))) > arco) continue; }

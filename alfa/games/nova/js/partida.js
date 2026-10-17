@@ -10,6 +10,10 @@ function nvUmbralS(S, k) { return Math.round(nvUmbral(k) * (S.cap === 'epicchamp
 function nvFactor(r) { return Math.pow(1.07, r - 1); }
 function nvEscalaRango(r) { return NV_ESCALA_NAVE * nvFactor(r); }
 function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   // la cámara se aleja según creces
+// Mitad del ancho y del alto de lo que se ve, en unidades de mundo (S.aspecto = alto/ancho del lienzo; sin lienzo, móvil en vertical).
+function nvMediaPantalla(S) { const w = nvVista(S) / 2; return [w, w * (S.aspecto || 16 / 9)]; }
+// ¿Está (x, y) dentro de la pantalla? `m` > 0 exige ese margen hacia dentro. Nada dispara desde fuera de la pantalla.
+function nvEnPantalla(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw - (m || 0) && Math.abs(y - S.cam.y) < hh - (m || 0); }
 function nvZ(S) { return nvVista(S) / 560; }   // cuántas unidades de mundo mide «un píxel de rango 1»: los efectos y trazos fijos se multiplican por esto para verse igual a cualquier tamaño
 function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
@@ -29,7 +33,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   const S = {
     t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
-    enem: [], proy: [], eproy: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
+    enem: [], saltos: [], proy: [], eproy: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
     stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
   };
@@ -52,7 +56,7 @@ function nvPaso(S, dt) {
   S.t += dt;
   const n = S.nave;
   nvMueve(S, dt);
-  nvSpawn(S, dt);
+  nvSpawn(S, dt); nvSaltos(S, dt);
   nvMundo(S, dt);
   nvTripulacionPaso(S);
   nvEnemigos(S, dt);

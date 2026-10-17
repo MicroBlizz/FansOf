@@ -63,7 +63,7 @@ function nvEnemigo(S, tipo, x, y, rango) {
   return e;
 }
 function nvSpawn(S, dt) {
-  if (S.jefe) return;
+  if (S.jefe || S.jefeSalto) return;
   const n = S.nave;
   let carga = 0;   // con la zona llena (los grandes cuentan doble) no salen más: así se combinan tamaños sin taponar
   for (const e of S.enem) if (!e.muerto && !e.d.pasivo && !e.d.nido && Math.hypot(e.x - n.x, e.y - n.y) < 1200) carga += e.rango > n.rango + 1 ? 2 : 1;
@@ -73,12 +73,11 @@ function nvSpawn(S, dt) {
     o.tiempo = (S.o_t[o.tipo + o.desde] = (S.o_t[o.tipo + o.desde] || 0) + dt);
     if (o.tiempo < o.cada) continue;
     S.o_t[o.tipo + o.desde] = 0;
-    for (let i = 0; i < o.lote; i++) { const a = Math.random() * 6.283, R = 560 + Math.random() * 120; nvEnemigo(S, o.tipo, n.x + Math.cos(a) * R, n.y + Math.sin(a) * R, nvRangoRelativo(n.rango)); }
+    for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
   }
   if (S.capMuertos >= 3 || S.t >= NV_TIEMPO_JEFE) {
-    const a = Math.random() * 6.283, x = n.x + Math.cos(a) * 750, y = n.y + Math.sin(a) * 750, d = Math.hypot(x, y), k = d > NV_ARENA - 100 ? (NV_ARENA - 100) / d : 1;
-    S.jefe = nvEnemigo(S, 'jefe', x * k, y * k);
-    S.jefe.cd = 3; S.jefe.cdInv = 7;
+    S.jefeSalto = true;
+    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; j.cd = 3; j.cdInv = 7; });
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
   }
 }
@@ -100,17 +99,18 @@ function nvEnemigos(S, dt) {
     if (e.dot) { e.hp -= e.dot.dps * dt; S.stats.dano += e.dot.dps * dt; if ((e.dot.t -= dt) <= 0) e.dot = null; if (e.hp <= 0) { nvMuere(S, e); continue; } }
     if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
     const dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
-    if (e.d.nido) { if (dist < 520) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 2.2; S.eproy.push({ x: e.x, y: e.y, vx: ux * 210, vy: uy * 210, dano: 9, vida: 3, r: 7 }); } } continue; }   // el nido no se mueve y escupe si te acercas
+    e.vis = nvEnPantalla(S, e.x, e.y);   // fuera de la pantalla no dispara
+    if (e.d.nido) { if (dist < 520 && e.vis) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 2.2; S.eproy.push({ x: e.x, y: e.y, vx: ux * 210, vy: uy * 210, dano: 9, vida: 3, r: 7 }); } } continue; }   // el nido no se mueve y escupe si te acercas
     if (e.d.pasivo) continue;   // las rocas solo estorban: se rompen a tiros
     if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) { if (e.errante) { e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt; } continue; }   // lejos: dormido o a lo suyo
     const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
     let vx = 0, vy = 0;
     if (e.armas) {   // la nave orbita a su alcance y cada arma dispara desde su anclaje
-      const ideal = e.alcMax * 0.7, radial = dist > ideal ? 1 : -0.6;
+      const ideal = Math.min(e.alcMax * 0.7, nvMediaPantalla(S)[0] * 0.8), radial = dist > ideal ? 1 : -0.6;
       vx = ux * radial + -uy * 0.8; vy = uy * radial + ux * 0.8;
       if (!apagado) for (const w of e.armas) {
         const A = NV_ARMA_E[w.tam];
-        if ((w.cd -= dt) > 0 || dist > A.alc * e.kf + e.r) continue;
+        if ((w.cd -= dt) > 0 || dist > A.alc * e.kf + e.r || !e.vis) continue;
         w.cd = A.cada;
         const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1;
         S.eproy.push({ x: px, y: py, vx: (n.x - px) / d * A.v, vy: (n.y - py) / d * A.v, dano: A.dano, vida: A.alc * e.kf / A.v + 0.4, r: A.r * e.kf });
@@ -123,13 +123,36 @@ function nvEnemigos(S, dt) {
     // sin daño por choque: solo hacen daño con sus armas
   }
 }
+// Salto hiperespacial: la nave entra a toda velocidad desde fuera de la pantalla y frena a una fracción `f` del borde,
+// con un destello. Mientras viaja no existe para nadie (ni dispara ni se le puede dar); al llegar, nace de verdad.
+const NV_SALTO_T = 0.45;
+function nvSaltoEntra(S, tipo, rango, f, alLlegar) {
+  const n = S.nave, [hw, hh] = nvMediaPantalla(S), a = Math.random() * 6.283, ca = Math.cos(a), sa = Math.sin(a);
+  const borde = Math.min(hw / Math.abs(ca || 1e-6), hh / Math.abs(sa || 1e-6));   // distancia al borde de la pantalla en esa dirección
+  let x = n.x + ca * borde * f, y = n.y + sa * borde * f;
+  const d = Math.hypot(x, y), k = d > NV_ARENA - 100 ? (NV_ARENA - 100) / d : 1; x *= k; y *= k;
+  const lejos = Math.hypot(hw, hh) * 1.6;
+  S.saltos.push({ tipo, rango, x0: x + ca * lejos, y0: y + sa * lejos, x, y, ang: a + Math.PI, t: 0, alLlegar });
+}
+function nvSaltos(S, dt) {
+  for (let i = S.saltos.length - 1; i >= 0; i--) {
+    const s = S.saltos[i]; s.t += dt;
+    if (s.t < NV_SALTO_T) continue;
+    S.saltos.splice(i, 1);
+    const e = nvEnemigo(S, s.tipo, s.x, s.y, s.rango); e.rumbo = s.ang;
+    S.fx.push({ t: 0.25, x: s.x, y: s.y, r: e.r * 2.2, color: '#bff4ff', tipo: 'flash' }, { t: 0.45, x: s.x, y: s.y, r: e.r * 2.4, color: '#6fe3ff', tipo: 'onda' });
+    if (s.alLlegar) s.alLlegar(e);
+  }
+}
+// Posición de una nave en pleno salto: frena de golpe al final (curva de salida).
+function nvSaltoPos(s) { const k = 1 - Math.pow(1 - Math.min(1, s.t / NV_SALTO_T), 3); return [s.x0 + (s.x - s.x0) * k, s.y0 + (s.y - s.y0) * k]; }
 // El capitán patrulla, se come las rocas que encuentra (cada dos sube de rango y crece) y persigue y dispara si te acercas.
 function nvCapitan(S, e, dt, ux, uy, dist, apagado) {
   e.vida = (e.vida || 0) + dt;
   if (e.vida > 100 * e.rango && e.rango < 1 + Math.floor(S.t / 100)) nvCapitanSube(e);
   if (dist < 1000) {
     e.cd -= dt * (apagado ? 0 : 1);
-    if (e.cd <= 0 && dist < 700) { e.cd = Math.max(1.6, 3.6 - 0.35 * e.rango); for (const da of [-0.18, 0, 0.18]) { const a = Math.atan2(uy, ux) + da; S.eproy.push({ x: e.x, y: e.y, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, dano: 8 + 2 * e.rango, vida: 3, r: 6 }); } }
+    if (e.cd <= 0 && dist < 700 && e.vis) { e.cd = Math.max(1.6, 3.6 - 0.35 * e.rango); for (const da of [-0.18, 0, 0.18]) { const a = Math.atan2(uy, ux) + da; S.eproy.push({ x: e.x, y: e.y, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, dano: 8 + 2 * e.rango, vida: 3, r: 6 }); } }
     return [ux * (dist > 260 ? 1 : 0.1) - uy * 0.35, uy * (dist > 260 ? 1 : 0.1) + ux * 0.35];
   }
   return [Math.cos(e.fase += dt * 0.3), Math.sin(e.fase)];   // patrulla; crece con el reloj
@@ -141,7 +164,7 @@ function nvJefe(S, e, dt, ux, uy, dist, apagado) {
   if (apagado) return;
   const f2 = e.hp < e.hpMax / 2;
   e.cd -= dt; e.cdInv -= dt;
-  if (e.cd <= 0) {   // salva radial
+  if (e.cd <= 0 && e.vis) {   // salva radial
     e.cd = f2 ? 2.4 : 3.4;
     const k = f2 ? 18 : 12, a0 = Math.random() * 6.28;
     for (let i = 0; i < k; i++) { const a = a0 + i * 6.283 / k; S.eproy.push({ x: e.x, y: e.y, vx: Math.cos(a) * 210, vy: Math.sin(a) * 210, dano: 9, vida: 3.2, r: 6 }); }

@@ -162,6 +162,19 @@ function nvDibujaEnemigo(c, e, S) {
   if (e.hp < e.hpMax || d.jefe || d.capitan) { c.fillStyle = '#1a0f2e'; c.fillRect(-r, -r - 12, 2 * r, 5); c.fillStyle = d.jefe ? '#ff4b9a' : '#ff6b6b'; c.fillRect(-r, -r - 12, 2 * r * Math.max(0, e.hp / e.hpMax), 5); }
   c.restore();
 }
+// Nave en salto: una estela de luz desde fuera de la pantalla y la nave estirada, que se recoge al frenar.
+function nvDibujaSalto(c, s, S) {
+  const [x, y] = nvSaltoPos(s), k = Math.min(1, s.t / NV_SALTO_T), r = (NV_ENEM[s.tipo] ? NV_ENEM[s.tipo].r : 20) * nvFactor(s.rango || 1);
+  const largo = (1 - k) * Math.hypot(s.x - s.x0, s.y - s.y0) * 0.5 + r;
+  c.save(); c.translate(x, y); c.rotate(s.ang);
+  c.globalCompositeOperation = 'lighter';
+  const g = c.createLinearGradient(-largo, 0, r, 0); g.addColorStop(0, 'rgba(111,227,255,0)'); g.addColorStop(1, 'rgba(191,244,255,.85)');
+  c.fillStyle = g; c.fillRect(-largo, -r * 0.35, largo + r, r * 0.7);
+  c.globalCompositeOperation = 'source-over';
+  const im = NVE.img[s.tipo];
+  if (im && im.complete && im.naturalWidth) { const t = r * 2.6, est = 1 + 2.5 * (1 - k); c.globalAlpha = 0.4 + 0.6 * k; c.drawImage(im, -t * est / 2, -t / 2, t * est, t); c.globalAlpha = 1; }
+  c.restore();
+}
 function nvFormaCarga(c, forma, x, y, r) {
   c.beginPath();
   if (forma === 'cuadrado') c.rect(x - r, y - r, 2 * r, 2 * r);
@@ -201,6 +214,7 @@ function nvDibujaMundo(c, S) {
     c.beginPath(); c.moveTo(-q, -q * 0.4); c.lineTo(q * 0.2, -q); c.lineTo(q, q * 0.3); c.lineTo(-q * 0.3, q * 0.8); c.closePath(); c.fill(); c.stroke(); c.restore();
   }
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
+  for (const s of S.saltos) nvDibujaSalto(c, s, S);
   for (const b of S.eproy) { c.fillStyle = '#ff6bd6'; c.beginPath(); c.arc(b.x, b.y, b.r, 0, 6.283); c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#fff'; c.stroke(); }
   nvDibujaNave(c, S);
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
@@ -230,6 +244,7 @@ function nvDibuja(S) {
   const cv = document.getElementById('nv-canvas');
   if (!cv) return;
   const W = cv.width, H = cv.height, vs = W / nvVista(S), c = cv.getContext('2d');
+  S.aspecto = H / W;
   nvFondo(c, S, W, H, vs);
   c.save(); c.translate(W / 2, H / 2); c.scale(vs, vs); c.translate(-S.cam.x, -S.cam.y);
   nvDibujaMundo(c, S);

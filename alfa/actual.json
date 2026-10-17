@@ -1,8 +1,8 @@
 {
- "build": 152,
- "hash": "62cf67f",
- "fecha": "2026-10-17T02:01:03Z",
- "mensaje": "Rouflage: grano fino y lámparas del techo en todos los mapas (ningún suelo es de color plano)",
+ "build": 153,
+ "hash": "a8299f8",
+ "fecha": "2026-10-17T02:16:15Z",
+ "mensaje": "Nova: los enemigos llegan en salto hiperespacial desde fuera de la pantalla (estela y destello al llegar) y nada dispara desde fuera de la pantalla; el simulador carga clases.js",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

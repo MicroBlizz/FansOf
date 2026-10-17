@@ -1,13 +1,13 @@
 {
- "build": 163,
- "hash": "93a9cc1",
- "fecha": "2026-10-17T02:34:31Z",
- "mensaje": "Mapas regenerados",
+ "build": 164,
+ "hash": "eeb4694",
+ "fecha": "2026-10-17T02:35:38Z",
+ "mensaje": "Nova 0.3.4: naves que evolucionan, armas con rareza y enemigos con armamento (nota y versión)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",
   "island": "0.3.5",
-  "nova": "0.3.3",
+  "nova": "0.3.4",
   "ratkov": "0.2.8",
   "rouflage": "0.2.26",
   "rumble": "0.9.137",

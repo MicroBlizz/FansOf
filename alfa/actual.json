@@ -1,8 +1,8 @@
 {
- "build": 151,
- "hash": "4ef5c29",
- "fecha": "2026-10-17T01:56:01Z",
- "mensaje": "Rouflage 0.2.26: camuflarse cuesta más y los bots pintan como personas",
+ "build": 152,
+ "hash": "62cf67f",
+ "fecha": "2026-10-17T02:01:03Z",
+ "mensaje": "Rouflage: grano fino y lámparas del techo en todos los mapas (ningún suelo es de color plano)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

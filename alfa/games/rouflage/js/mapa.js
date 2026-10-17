@@ -14,13 +14,47 @@ function pintaMundo(c, R) {
   pintaMuro(c, R);
   for (const z of ZONAS) {
     if (z.px > R.x1 || z.px + z.pw < R.x0 || z.py > R.y1 || z.py + z.ph < R.y0) continue;
-    c.save(); c.beginPath(); c.rect(z.px, z.py, z.pw, z.ph); c.clip(); SUELOS[z.suelo](c, z, R); c.restore();
+    c.save(); c.beginPath(); c.rect(z.px, z.py, z.pw, z.ph); c.clip(); SUELOS[z.suelo](c, z, R); pintaLamparas(c, z); c.restore();
   }
   PEGATINAS.forEach(([x, y, t], i) => { if (x > R.x0 - 40 && x < R.x1 + 40 && y > R.y0 - 40 && y < R.y1 + 40) pintaPegatina(c, x, y, t, i); });
   for (const m of MUEBLES) if (cruzan(m.dib, R)) sombraMueble(c, m);
   pintaBordes(c, R);
   pintaCaras(c, R);
   for (const k of CARTELES) if (k.x > R.x0 - 140 && k.x < R.x1 + 140 && k.y > R.y0 - 40 && k.y < R.y1 + 40) pintaCartel(c, k);
+  pintaGrano(c, R);
+  c.restore();
+}
+// EL GRANO Y LAS LÁMPARAS: ningún suelo ni pared es de un color plano del todo. Un grano fino (fibras de la moqueta, el poro del asfalto, el
+// césped) por encima de todo, y en cada sala las lámparas del techo: charcos de luz tenue y las esquinas algo más oscuras. Así rellenarse de
+// un solo color no da el 100 % ni en el suelo más liso: hay que copiar también las luces y las sombras. Todo con azar repetible (hash2).
+const GRANO = { amp: 14, lado: 96, lienzo: null };      // amplitud del gris (de 128) y lado del mosaico, en unidades del mundo
+function pintaGrano(c, R) {
+  if (!GRANO.lienzo) {
+    const [cv, g] = lienzo(GRANO.lado, GRANO.lado), d = g.createImageData(GRANO.lado, GRANO.lado);
+    for (let j = 0; j < GRANO.lado; j++) for (let i = 0; i < GRANO.lado; i++) {
+      const fino = hash2(i, j, 77) - 0.5, grueso = hash2(i >> 2, j >> 2, 78) - 0.5, v = 128 + (fino * 1.4 + grueso * 0.8) * GRANO.amp, k = (j * GRANO.lado + i) * 4;
+      d.data[k] = d.data[k + 1] = d.data[k + 2] = limita(Math.round(v), 0, 255); d.data[k + 3] = 255;
+    }
+    g.putImageData(d, 0, 0); GRANO.lienzo = cv;
+  }
+  c.save(); c.globalCompositeOperation = 'soft-light'; c.fillStyle = c.createPattern(GRANO.lienzo, 'repeat');
+  c.fillRect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0); c.restore();
+}
+function pintaLamparas(c, z) {
+  const PASO = 170, s = (z.px * 7 + z.py * 13) | 0;
+  c.save();
+  // las esquinas de la sala, algo más oscuras: la luz no llega igual a todas partes
+  const r = Math.hypot(z.pw, z.ph) / 2, g = c.createRadialGradient(z.px + z.pw / 2, z.py + z.ph / 2, r * 0.25, z.px + z.pw / 2, z.py + z.ph / 2, r);
+  g.addColorStop(0, 'rgba(32,16,44,0)'); g.addColorStop(1, 'rgba(32,16,44,0.12)');
+  c.fillStyle = g; c.fillRect(z.px, z.py, z.pw, z.ph);
+  // los charcos de luz de las lámparas del techo, en una rejilla con un poco de vaivén
+  c.globalCompositeOperation = 'soft-light';
+  const nx = Math.max(1, Math.round(z.pw / PASO)), ny = Math.max(1, Math.round(z.ph / PASO));
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const x = z.px + z.pw * (i + 0.5) / nx + (hash2(i, j, s) - 0.5) * 30, y = z.py + z.ph * (j + 0.5) / ny + (hash2(i, j, s + 1) - 0.5) * 30, rad = 70 + hash2(i, j, s + 2) * 40;
+    const l = c.createRadialGradient(x, y, 0, x, y, rad); l.addColorStop(0, 'rgba(255,255,255,0.4)'); l.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = l; c.fillRect(x - rad, y - rad, rad * 2, rad * 2);
+  }
   c.restore();
 }
 

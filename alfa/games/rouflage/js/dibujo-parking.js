@@ -111,7 +111,7 @@ Object.assign(PEGATINAS_EXTRA, {
 const ALARMA = { cerca: 34, rango: 240, minimo: 1.5 };
 EVENTOS.faros = {
   primero: 0, cada: 0, dura: 1e9,      // vigila durante toda la caza
-  nuevo() { return { coches: MUEBLES.filter(m => m.t === 'coche').map(m => ({ m, luz: false, t: 0 })) }; },
+  nuevo() { return { coches: MUEBLES.filter(m => m.t === 'coche' || m.t === 'cocheH').map(m => ({ m, luz: false, t: 0 })) }; },
   empieza() {},
   avanza(est, dt) {
     for (const k of est.coches) {
@@ -130,7 +130,13 @@ EVENTOS.faros = {
     const out = [];
     for (const k of est.coches) {
       if (!k.luz || (k.t < 0.5 && Math.floor(k.t * 20) % 2)) continue;      // al saltar parpadean un instante
-      const m = k.m, arr = !!m.arriba, y = arr ? m.y - 44 : m.y - 2;
+      const m = k.m;
+      if (m.t === 'cocheH') {      // aparcado a lo largo de la calle: los faros miran a un lado
+        const sx = m.izq ? -1 : 1;
+        for (const dy of [-14, 14]) out.push({ x: m.x + sx * 21, y: m.y - 22 + dy, dir: m.izq ? Math.PI : 0, ang: 0.17, largo: 240 });
+        continue;
+      }
+      const arr = !!m.arriba, y = arr ? m.y - 44 : m.y - 2;
       for (const dx of [-14, 14]) out.push({ x: m.x + dx, y, dir: arr ? -Math.PI / 2 : Math.PI / 2, ang: 0.17, largo: 240 });      // un cono pequeño por faro
     }
     return out;

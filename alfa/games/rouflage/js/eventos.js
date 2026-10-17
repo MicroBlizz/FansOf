@@ -8,21 +8,25 @@
 'use strict';
 
 const EVENTOS = {};
-const EV = { def: null, cfg: null, est: null, t: 0, en: false, tEn: 0, prox: 0, k: 0, azar: Math.random };
+const EV = { sie: [], def: null, cfg: null, est: null, t: 0, en: false, tEn: 0, prox: 0, k: 0, azar: Math.random };
 
 // mulberry32: azar repetible a partir de un número (el mismo que usa el PvP para repartir plazas)
 const azarDe = semilla => { let a = (semilla | 0) + 91; return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 
 // al empezar una partida (semilla: la de la sala en el PvP; al azar en solitario)
 function eventosPrepara(semilla) {
-  EV.def = null; EV.est = null; EV.en = false; EV.t = 0; EV.tEn = 0; EV.k = 0;
+  EV.sie = []; EV.def = null; EV.est = null; EV.en = false; EV.t = 0; EV.tEn = 0; EV.k = 0;
   EV.azar = azarDe(semilla === undefined ? (Math.random() * 2147483647) | 0 : semilla + 7);
+  // `siempre`: eventos que vigilan toda la caza además del principal (los faros de los coches de un mapa que tiene otra gracia)
+  for (const tipo of (MAPA_ACT && MAPA_ACT.siempre) || []) if (EVENTOS[tipo]) EV.sie.push({ def: EVENTOS[tipo], est: EVENTOS[tipo].nuevo({}, EV.azar) });
   const cfg = MAPA_ACT && MAPA_ACT.evento; if (!cfg || !EVENTOS[cfg.tipo]) return;
   EV.def = EVENTOS[cfg.tipo]; EV.cfg = cfg; EV.est = EV.def.nuevo(cfg, EV.azar); EV.prox = EV.def.primero;
 }
 // cada paso de la caza: arranca el evento cuando toca y lo hace avanzar mientras dura
 function eventosAvanza(dt) {
-  if (!EV.def || J.fase !== 'caza') return;
+  if (J.fase !== 'caza') return;
+  for (const x of EV.sie) x.def.avanza(x.est, dt, 0);
+  if (!EV.def) return;
   EV.t += dt;
   if (!EV.en && EV.t >= EV.prox) { EV.en = true; EV.tEn = 0; EV.def.empieza(EV.est, EV.azar, EV.k++); }
   if (EV.en) {
@@ -30,10 +34,10 @@ function eventosAvanza(dt) {
     if (EV.tEn >= EV.def.dura) { EV.en = false; if (EV.def.termina) EV.def.termina(EV.est); EV.prox = EV.t + EV.def.cada; }
   }
 }
-const eventoFocos = () => (EV.def && EV.en && EV.def.focos ? EV.def.focos(EV.est, EV.tEn) : []);
+const eventoFocos = () => [].concat(...EV.sie.map(x => x.def.focos(x.est, 0)), EV.def && EV.en && EV.def.focos ? EV.def.focos(EV.est, EV.tEn) : []);
 const eventoVisibilidad = () => (EV.def && EV.en && EV.def.visibilidad ? EV.def.visibilidad(EV.est, EV.tEn) : 1);
 function eventosPintaSuelo(c, t) { if (EV.def && EV.def.pintaSuelo) EV.def.pintaSuelo(c, EV.est, EV.en ? EV.tEn : -1, t); }
-function eventosPintaEncima(c, t) { if (EV.def && EV.def.pintaEncima) EV.def.pintaEncima(c, EV.est, EV.en ? EV.tEn : -1, t); }
+function eventosPintaEncima(c, t) { for (const x of EV.sie) x.def.pintaEncima(c, x.est, 0, t); if (EV.def && EV.def.pintaEncima) EV.def.pintaEncima(c, EV.est, EV.en ? EV.tEn : -1, t); }
 function eventosPintaVelo(c, t) { if (EV.def && EV.def.pintaVelo) EV.def.pintaVelo(c, EV.est, EV.en ? EV.tEn : -1, t); }      // por encima de la oscuridad (la niebla)
 
 // ¿alumbra algún foco de evento el punto (x, y)? (dentro del cono y sin muro en medio)

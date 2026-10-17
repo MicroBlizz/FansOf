@@ -198,10 +198,10 @@ function nvRenderEstacion(S) {
     if (T.sel.length === 1) pista = a.tam === 'S' ? 'Toca otra pequeña para unirlas en una mediana' : 'Toca otra del mismo tamaño para unirlas, o divide esta';
     if (T.sel.length === 2) pista = nvPuedeUnir(a, b2) ? 'Se unen en una ' + (a.tam === 'S' ? 'mediana' : 'grande') : 'Tienen que ser del mismo tamaño y no grandes';
     p.appendChild(nvEl('nv-cdet', tr(pista)));
-    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2));
+    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2)); u.prepend(nvIcono('taller', 'unir', '#ffd93d', 26));
     u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
     const ok = T.sel.length === 1 && NV_ANT_TAM[a.tam] && nvRanuraLibre(S, a.portador);
-    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok;
+    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok; d.prepend(nvIcono('taller', 'dividir', '#ffd93d', 26));
     d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
   } else if (!S.estSel) {

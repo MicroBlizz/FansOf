@@ -1,8 +1,8 @@
 {
- "build": 138,
- "hash": "f4b7953",
- "fecha": "2026-10-17T01:12:41Z",
- "mensaje": "Nova: 17 iconos más (mejoras de sistema, estados, taller y categorías de carta)",
+ "build": 139,
+ "hash": "0179dab",
+ "fecha": "2026-10-17T01:14:23Z",
+ "mensaje": "Nova: iconos de arte final para las mejoras de sistema y los botones de unir/dividir del taller",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

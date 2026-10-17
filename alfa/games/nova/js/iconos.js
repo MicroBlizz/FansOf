@@ -48,8 +48,8 @@ function nvIcEstrella(x, y, R, r, n, giro) { const o = []; for (let i = 0; i < n
 function nvIcRetrato(c, col) { nvIcCirculo(c, 32, 32, 29, col); nvIcCirculo(c, 32, 26, 12, '#f1d2b0'); nvIcPoli(c, [[10, 58], [16, 44], [48, 44], [54, 58]], '#26306a'); }
 
 // Un lienzo de `tam` px con el icono (grupo: arma | sis | fac | cap). Si el icono no existe, queda un círculo del color.
-const NV_PNG_PREFIJO = { arma: 'arma', fac: 'ofi', cap: 'cap' };
-const NV_PNG_SIS = { escudo: 'mod-escudo', blindaje: 'mod-blindaje' };
+const NV_PNG_PREFIJO = { arma: 'arma', fac: 'ofi', cap: 'cap', taller: 'taller', cat: 'cat', estado: 'estado' };
+const NV_PNG_SIS = { escudo: 'mod-escudo', blindaje: 'mod-blindaje', dano: 'sis-dano', cadencia: 'sis-cadencia', robo: 'sis-robo', casco: 'sis-casco', regen: 'sis-regen', vel: 'sis-vel', iman: 'sis-iman' };
 // Si existe el PNG de arte final lo usa; si no carga, cae al dibujo de código.
 function nvIcono(grupo, clave, col, tam) {
   const nombre = grupo === 'sis' ? NV_PNG_SIS[clave] : (NV_PNG_PREFIJO[grupo] ? NV_PNG_PREFIJO[grupo] + '-' + clave : null);

@@ -38,3 +38,4 @@
 
 .nv-gal { width: 100%; max-width: 520px; align-self: center; display: block; touch-action: manipulation; cursor: pointer; }
 .nv-galinfo { cursor: default; }
+.nv-boton > img, .nv-boton > canvas { vertical-align: middle; margin-right: 6px; }

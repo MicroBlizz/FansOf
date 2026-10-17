@@ -59,6 +59,11 @@ function abanicoFoco(f, pts) {
 }
 
 /* ---------- lo que un evento le puede hacer a alguien ---------- */
+// ¿hay algún infiltrado (un colado que sigue en juego, quieto o no) a menos de `r` píxeles de (x, y)? Los eventos que «se quedan encendidos» lo usan de pista
+const infiltradoCerca = (x, y, r) => J.camaleones.some(k => !k.fuera && lejos(x, y, k.x, k.y) < r);
+// ¿pasa alguien (el que sea) andando a menos de `r` píxeles de la caja `p` ({ x0, y0, x1, y1 })? Es lo que enciende una alarma
+const alguienPasa = (p, r) => J.entes.find(e => !e.fuera && !e.congelado && (e.moviendo || Math.hypot(e.vx, e.vy) > 0.1) && e.x > p.x0 - r && e.x < p.x1 + r && e.y > p.y0 - r && e.y < p.y1 + r);
+
 // ¿le toca a este personaje lo que pasa aquí? Solo a los que lleva este navegador: yo y, si soy el anfitrión (o juego solo), la máquina
 const eventoLeToca = e => !e.fuera && !e.remoto && (e.jugador || (e.bot && (!J.pvp || rfpSoyAnfitrion())));
 // quitarle a alguien parte de la pintura (de 0 a 1): manchas blancas grandes, como si se le hubiera corrido

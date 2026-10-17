@@ -1,6 +1,6 @@
 // Fans of Rouflage · MAPA 5, LOS JARDINES: los jardines de la sede de Microblizz, de noche. Setos que hacen de muro, césped (FÁCIL),
 // caminos de gravilla, parterres de flores y un estanque con fuente (DIFÍCILES). Los becarios esperan en la caseta del jardinero.
-// Gracia propia (EVENTOS.aspersores, en dibujo-jardines.js): cada poco se encienden dos aspersores y lavan la pintura a quien pillan.
+// Gracia propia (EVENTOS.aspersores, en dibujo-jardines.js): un aspersor se enciende si alguien lo toca o pasa muy cerca, se queda encendido mientras haya un infiltrado cerca y lava la pintura a quien pilla.
 'use strict';
 
 const PLANO_JARDINES = `

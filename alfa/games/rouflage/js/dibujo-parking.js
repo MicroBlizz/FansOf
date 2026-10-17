@@ -1,6 +1,6 @@
 // Fans of Rouflage · EL DIBUJO DEL PARKING: asfalto (fácil), la rampa de rayas y la zona de aceite (difíciles), el hormigón de las paredes
-// con su franja amarilla, los coches aparcados, las columnas numeradas y el EVENTO «faros» (la alarma): un coche con alguien moviéndose a su lado enciende
-// los faros de golpe y alumbra un pasillo entero; a quien pilla el haz se le ve como si le dieran con una linterna.
+// con su franja amarilla, los coches aparcados, las columnas numeradas y el EVENTO «faros» (la alarma): un coche con alguien andando a su lado enciende
+// los faros (dos conos pequeños) y se queda encendido mientras haya un infiltrado cerca: es una pista. A quien pilla el haz se le ve como si le dieran con una linterna.
 'use strict';
 
 const COCHES = ['#e0484f', '#3a7de0', '#f2c230', '#59e07a', '#f1e6cc', '#8b3dff'];
@@ -106,38 +106,40 @@ Object.assign(PEGATINAS_EXTRA, {
 });
 
 /* ---------- el evento: la alarma de los coches ---------- */
-// Un coche con alguien moviéndose a su lado salta como una alarma: enciende los faros de golpe y alumbra el pasillo de delante (a quien pilla el haz se le ve
-// como si le dieran con una linterna). Cada coche tiene su propio reloj: dura `dura` segundos y luego se calla `espera` antes de poder saltar otra vez.
-const ALARMA = { cerca: 34, dura: 4.5, espera: 10 };
+// Un coche con alguien andando a su lado salta como una alarma y enciende los faros blancos (dos conos pequeños, uno por faro). Se queda encendido
+// mientras haya un infiltrado relativamente cerca (así sirve de pista) y se apaga cuando se marcha. Cada coche tiene su propio estado.
+const ALARMA = { cerca: 34, rango: 240, minimo: 1.5 };
 EVENTOS.faros = {
   primero: 0, cada: 0, dura: 1e9,      // vigila durante toda la caza
-  nuevo() { return { coches: MUEBLES.filter(m => m.t === 'coche').map(m => ({ m, luz: 0, t: 0, espera: 0 })) }; },
+  nuevo() { return { coches: MUEBLES.filter(m => m.t === 'coche').map(m => ({ m, luz: false, t: 0 })) }; },
   empieza() {},
   avanza(est, dt) {
     for (const k of est.coches) {
-      if (k.luz > 0) { k.t += dt; k.luz -= dt; if (k.luz <= 0) k.espera = ALARMA.espera; continue; }
-      if (k.espera > 0) { k.espera -= dt; continue; }
-      const p = k.m.pisa, q = J.entes.find(e => !e.fuera && !e.congelado && (e.moviendo || Math.hypot(e.vx, e.vy) > 0.1) && e.x > p.x0 - ALARMA.cerca && e.x < p.x1 + ALARMA.cerca && e.y > p.y0 - ALARMA.cerca && e.y < p.y1 + ALARMA.cerca);
-      if (!q) continue;
-      k.luz = ALARMA.dura; k.t = 0; play('luces');
-      if (J.yo && J.yo.clase === 'camaleon' && Math.hypot(J.yo.x - k.m.x, J.yo.y - k.m.y) < 420) avisa(tr('¡Salta la alarma de un coche!'), 'aviso');
+      const m = k.m;
+      if (k.luz) {
+        k.t += dt;
+        if (k.t > ALARMA.minimo && !infiltradoCerca(m.x, m.y - 23, ALARMA.rango)) k.luz = false;
+      } else if (alguienPasa(m.pisa, ALARMA.cerca)) {
+        k.luz = true; k.t = 0; play('luces');
+        if (J.yo && J.yo.clase === 'camaleon' && Math.hypot(J.yo.x - m.x, J.yo.y - m.y) < 420) avisa(tr('¡Salta la alarma de un coche!'), 'aviso');
+      }
     }
   },
   termina() {},
   focos(est) {
     const out = [];
     for (const k of est.coches) {
-      if (k.luz <= 0 || (k.t < 0.5 && Math.floor(k.t * 20) % 2)) continue;      // al saltar parpadean un instante
-      const m = k.m;
-      out.push({ x: m.x, y: m.arriba ? m.y - 42 : m.y - 4, dir: m.arriba ? -Math.PI / 2 : Math.PI / 2, ang: 0.42, largo: 330, k });
+      if (!k.luz || (k.t < 0.5 && Math.floor(k.t * 20) % 2)) continue;      // al saltar parpadean un instante
+      const m = k.m, arr = !!m.arriba, y = arr ? m.y - 44 : m.y - 2;
+      for (const dx of [-14, 14]) out.push({ x: m.x + dx, y, dir: arr ? -Math.PI / 2 : Math.PI / 2, ang: 0.17, largo: 240 });      // un cono pequeño por faro
     }
     return out;
   },
   pintaEncima(c, est) {
     for (const f of this.focos(est)) {
       const pts = abanicoFoco(f, []);
-      c.fillStyle = 'rgba(255,240,180,0.22)'; c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); c.fill();
-      for (const dx of [-14, 14]) punto(c, f.x + dx, f.y, 6, '#fff6ea');
+      c.fillStyle = 'rgba(255,246,222,0.24)'; c.beginPath(); c.moveTo(pts[0], pts[1]); for (let k = 2; k < pts.length; k += 2) c.lineTo(pts[k], pts[k + 1]); c.closePath(); c.fill();
+      punto(c, f.x, f.y, 5, '#fff6ea');
     }
   },
 };

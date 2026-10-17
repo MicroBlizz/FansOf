@@ -1,8 +1,8 @@
 {
- "build": 133,
- "hash": "0f4aa5e",
- "fecha": "2026-10-17T00:52:29Z",
- "mensaje": "Librería: el carrusel destacado va por orden de última actualización (novedades/fechas.json, que publicar.py actualiza al subir la versión de un juego)",
+ "build": 134,
+ "hash": "8d0717f",
+ "fecha": "2026-10-17T01:02:36Z",
+ "mensaje": "Rouflage: faros en 2 conos pequeños, luces y aspersores siguen encendidos con un infiltrado cerca",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

@@ -216,5 +216,11 @@ IDIOMA.add({
   "Sensores": "Sensors",
   "La chatarra te alcanza de más lejos": "Scrap reaches you from further away",
   "Astillero": "Shipyard",
-  "Empiezas la misión con la ranura vacía ya armada": "You start the mission with the empty slot already armed"
+  "Empiezas la misión con la ranura vacía ya armada": "You start the mission with the empty slot already armed",
+  "ELIGE TU FACCIÓN": "PICK YOUR FACTION",
+  "Empiezas en un enclave rebelde, enfrente del territorio oficial de tu facción. Cada sector que liberes se pinta de tu color.": "You start in a rebel enclave, opposite your faction's official territory. Every sector you free is painted in your colour.",
+  "Territorio rebelde sin reclamar": "Unclaimed rebel territory",
+  "Núcleo de Microblizz": "Microblizz core",
+  "Territorio de": "Territory of",
+  "Liberado": "Freed"
 });

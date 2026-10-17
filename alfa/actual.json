@@ -1,8 +1,8 @@
 {
- "build": 135,
- "hash": "e41ed93",
- "fecha": "2026-10-17T01:05:05Z",
- "mensaje": "Rouflage: selector de mapa con miniatura en las opciones de la sala con amigos (viaja en el modo de la sala; sin elegir, el de la semilla)",
+ "build": 136,
+ "hash": "13613d0",
+ "fecha": "2026-10-17T01:09:08Z",
+ "mensaje": "Nova: galaxia en decágono con 10 cuñas (9 facciones + tu enclave rebelde) y Microblizz en el núcleo; colores de facción y lo liberado se pinta de tu color",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

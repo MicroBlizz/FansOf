@@ -1,10 +1,11 @@
 // Fans of Nova · Campaña: la galaxia de sectores y la nave capital que guarda lo ganado entre misiones (aleación, núcleo, sectores liberados).
 // Prototipo: se guarda en este navegador (localStorage). Diseño completo en docs/nova/mapa-y-facciones.md y docs/nova/economia.md.
 'use strict';
-const NV_CAMP_CLAVE = 'nova-campana-1';
-const NV_GAL_RADIO = 3;   // galaxia de prueba: un hexágono de radio 3 (37 sectores)
-const NV_BASE = { q: -3, r: 0 };   // tu enclave rebelde, en un borde
-const NV_NUCLEO_MB = { q: 3, r: 0 };   // el núcleo corporativo de Microblizz, en el borde opuesto
+const NV_CAMP_CLAVE = 'nova-campana-2';
+const NV_GAL_R = 7;   // rejilla hexagonal de radio 5, recortada en forma de decágono: 10 cuñas = 9 facciones + tu enclave rebelde
+// Mismos colores que la serie (core/js/serie/iconos.js, FAC_COLOR); Nova carga core «ligero» y no lo trae.
+const NV_FAC_COLOR = { animales: '#ff9a3c', nomuertos: '#5ef2c0', streamers: '#c084fc', heroes: '#ffcb3d', ciber: '#22e3ff', memes: '#a3e635', gamer: '#4ade80', olvidados: '#d6a96a', pop: '#ff6b9a', microblizz: '#ff5b5b' };
+const NV_FACCIONES = ['animales', 'nomuertos', 'streamers', 'heroes', 'ciber', 'memes', 'gamer', 'olvidados', 'pop'];
 const NV_TIPOS_SECTOR = {
   planeta: { nombre: 'Planeta', color: '#5be36b', txt: 'Mucho tráfico: naves de todos los tamaños' },
   cinturon: { nombre: 'Cinturón de asteroides', color: '#c8a37a', txt: 'Rocas que estorban y esconden enemigos' },
@@ -26,30 +27,54 @@ function nvHexVecinos(h) { return [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [
 function nvHexClave(h) { return h.q + ',' + h.r; }
 function nvAzar(sem) { let s = sem >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
 
-// La galaxia sale siempre igual para la misma semilla: tipo y peligro de cada sector.
-function nvGalaxia(semilla) {
+function nvHexXY(h) { return [Math.sqrt(3) * (h.q + h.r / 2), 1.5 * h.r]; }   // centro del hexágono, en tamaños de hexágono
+// La galaxia sale siempre igual para la misma semilla y facción: un decágono de 10 cuñas alrededor del núcleo de Microblizz.
+// Las 9 facciones se barajan; tu enclave rebelde ocupa la cuña opuesta a la de tu facción oficial, y tu base, su punta exterior.
+function nvGalaxia(semilla, faccion) {
   const rnd = nvAzar(semilla), tipos = ['planeta', 'cinturon', 'nebulosa', 'estacion', 'pecio'], out = {};
-  for (let q = -NV_GAL_RADIO; q <= NV_GAL_RADIO; q++) for (let r = -NV_GAL_RADIO; r <= NV_GAL_RADIO; r++) {
-    const h = { q, r }; if (nvHexDist(h, { q: 0, r: 0 }) > NV_GAL_RADIO) continue;
-    const d = nvHexDist(h, NV_BASE), base = d === 0, mb = q === NV_NUCLEO_MB.q && r === NV_NUCLEO_MB.r;
-    out[nvHexClave(h)] = { q, r, base, tipo: base ? 'estacion' : mb ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)], peligro: mb ? 5 : Math.max(1, Math.min(5, Math.ceil(d / 1.4))) };
+  const orden = NV_FACCIONES.slice().sort(() => rnd() - 0.5), cunas = new Array(10), suya = orden.indexOf(faccion);
+  // 10 cuñas: las 9 en su orden barajado y el enclave insertado enfrente de la tuya
+  const sinYo = orden.filter(f => f !== faccion); let k = 0;
+  const iOf = suya < 0 ? 0 : suya, iReb = (iOf + 5) % 10;
+  for (let i = 0; i < 10; i++) cunas[i] = i === iOf ? faccion : i === iReb ? 'rebelde' : sinYo[k++];
+  const D = 8.4, ap = D * Math.cos(Math.PI / 10);   // radio y apotema del decágono
+  for (let q = -NV_GAL_R; q <= NV_GAL_R; q++) for (let r = -NV_GAL_R; r <= NV_GAL_R; r++) {
+    const h = { q, r }; if (nvHexDist(h, { q: 0, r: 0 }) > NV_GAL_R) continue;
+    const [x, y] = nvHexXY(h), dist = Math.hypot(x, y), ang = (Math.atan2(y, x) + Math.PI * 2.5) % (Math.PI * 2);   // 0 = arriba
+    const rel = (ang % (Math.PI / 5)) - Math.PI / 10;
+    if (dist > ap / Math.cos(rel) - 0.4) continue;   // fuera del decágono
+    const dueno = dist < 1.9 ? 'microblizz' : cunas[Math.floor(ang / (Math.PI / 5)) % 10];
+    out[nvHexClave(h)] = { q, r, x, y, dist, dueno, tipo: dueno === 'microblizz' ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)] };
   }
+  // la base: la celda más exterior del enclave, en el eje de su cuña
+  const ejeReb = (iReb + 0.5) * Math.PI / 5;
+  let base = null, mejor = -1e9;
+  for (const kk in out) { const s = out[kk]; if (s.dueno !== 'rebelde') continue; const ang = (Math.atan2(s.y, s.x) + Math.PI * 2.5) % (Math.PI * 2), v = s.dist - 3 * Math.abs(ang - ejeReb); if (v > mejor) { mejor = v; base = kk; } }
+  out[base].base = true; out[base].tipo = 'estacion';
+  // peligro 1–5: por distancia a la base; el núcleo, siempre 5
+  let maxd = 1; for (const kk in out) maxd = Math.max(maxd, nvHexDist(out[kk], out[base]));
+  for (const kk in out) { const s = out[kk]; s.peligro = s.dueno === 'microblizz' ? 5 : Math.max(1, Math.min(5, Math.ceil(5 * nvHexDist(s, out[base]) / maxd))); }
+  out._base = base;
   return out;
 }
 
-function nvCampNueva() { return { v: 1, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: 0, mejoras: {}, libres: [nvHexClave(NV_BASE)], misiones: 0, victorias: 0 }; }
+function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0 }; }
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
-  let c = null;
-  try { c = JSON.parse(localStorage.getItem(NV_CAMP_CLAVE) || 'null'); } catch (e) { c = null; }
-  NVP.camp = c && c.v === 1 ? c : nvCampNueva();
-  NVP.gal = nvGalaxia(NVP.camp.semilla);
+  let c = null, viejo = null;
+  try { c = JSON.parse(localStorage.getItem(NV_CAMP_CLAVE) || 'null'); viejo = JSON.parse(localStorage.getItem('nova-campana-1') || 'null'); } catch (e) { c = null; }
+  NVP.camp = c && c.v === 2 ? c : nvCampNueva(viejo);   // de la v1 se conservan la aleación y las mejoras de la nave capital
+  if (NVP.camp.faccion) nvCampGalaxia();
   return NVP.camp;
 }
+function nvCampGalaxia() { NVP.gal = nvGalaxia(NVP.camp.semilla, NVP.camp.faccion); if (!NVP.camp.libres.length) NVP.camp.libres = [NVP.gal._base]; }
+function nvCampFaccion(f) { const c = nvCamp(); c.faccion = f; nvCampGalaxia(); nvCampGuarda(); }
+// De quién es un sector ahora: lo liberado pasa a ser de tu facción.
+function nvDuenoActual(k) { const s = NVP.gal[k]; return nvCamp().libres.includes(k) ? NVP.camp.faccion : s.dueno; }
 function nvCampGuarda() { try { localStorage.setItem(NV_CAMP_CLAVE, JSON.stringify(NVP.camp)); } catch (e) { /* sin almacenamiento: la campaña dura lo que la pestaña */ } }
 // Un sector se puede atacar si es vecino de uno liberado (o es tu base).
 function nvSectorAbierto(k) {
-  const c = nvCamp(), s = NVP.gal[k]; if (!s) return false;
+  const c = nvCamp(), s = NVP.gal && NVP.gal[k]; if (!s || k[0] === '_') return false;
   if (c.libres.includes(k)) return true;
   return nvHexVecinos(s).some(v => c.libres.includes(nvHexClave(v)));
 }
@@ -63,6 +88,7 @@ function nvMejoraCapital(id) {
 // Al empezar la misión: peligro del sector y mejoras de la nave capital.
 function nvSectorPartida(S) {   // antes de generar el mundo: los enemigos ya nacen con el peligro del sector
   const s = NVP.sector && NVP.gal ? NVP.gal[NVP.sector] : null;
+  if (s) S.duenoSector = s.dueno;
   S.sector = s ? NVP.sector : null; S.peligro = s ? s.peligro : 1; S.tipoSector = s ? s.tipo : null;
 }
 function nvAplicaCampana(S) {

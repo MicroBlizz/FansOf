@@ -1,8 +1,8 @@
 {
- "build": 167,
- "hash": "f19fcba",
- "fecha": "2026-10-17T02:39:27Z",
- "mensaje": "Nova: rendimiento del dibujo (fondo a baja resolución, sombra de la nave sin filter, sprites enemigos ya escalados, restos y balas agrupados, nada fuera de pantalla) y resolución que baja sola por debajo de 45 fps",
+ "build": 168,
+ "hash": "af20598",
+ "fecha": "2026-10-17T02:40:26Z",
+ "mensaje": "Nova: la resolución adaptable nunca baja de 1 píxel por punto",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

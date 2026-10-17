@@ -218,6 +218,342 @@
    ],
    "archivo": "motor-triple-L.png",
    "escala": 2
+  },
+  {
+   "id": "caza-casco-c2",
+   "tipo": "casco",
+   "nave": "caza",
+   "etapa": 2,
+   "ancho": 239,
+   "alto": 536,
+   "pivote": [
+    120,
+    310
+   ],
+   "archivo": "caza-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-alas-c2",
+   "tipo": "alas",
+   "nave": "caza",
+   "etapa": 2,
+   "ancho": 490,
+   "alto": 275,
+   "pivote": [
+    245,
+    6
+   ],
+   "archivo": "caza-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-casco-c3",
+   "tipo": "casco",
+   "nave": "caza",
+   "etapa": 3,
+   "ancho": 321,
+   "alto": 599,
+   "pivote": [
+    160,
+    346
+   ],
+   "archivo": "caza-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-alas-c3",
+   "tipo": "alas",
+   "nave": "caza",
+   "etapa": 3,
+   "ancho": 554,
+   "alto": 311,
+   "pivote": [
+    277,
+    6
+   ],
+   "archivo": "caza-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-casco-c4",
+   "tipo": "casco",
+   "nave": "caza",
+   "etapa": 4,
+   "ancho": 522,
+   "alto": 671,
+   "pivote": [
+    261,
+    388
+   ],
+   "archivo": "caza-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-alas-c4",
+   "tipo": "alas",
+   "nave": "caza",
+   "etapa": 4,
+   "ancho": 639,
+   "alto": 360,
+   "pivote": [
+    320,
+    6
+   ],
+   "archivo": "caza-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-casco-c5",
+   "tipo": "casco",
+   "nave": "caza",
+   "etapa": 5,
+   "ancho": 319,
+   "alto": 766,
+   "pivote": [
+    160,
+    443
+   ],
+   "archivo": "caza-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-alas-c5",
+   "tipo": "alas",
+   "nave": "caza",
+   "etapa": 5,
+   "ancho": 746,
+   "alto": 467,
+   "pivote": [
+    373,
+    6
+   ],
+   "archivo": "caza-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco-c2",
+   "tipo": "casco",
+   "nave": "crucero",
+   "etapa": 2,
+   "ancho": 295,
+   "alto": 519,
+   "pivote": [
+    148,
+    297
+   ],
+   "archivo": "crucero-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas-c2",
+   "tipo": "alas",
+   "nave": "crucero",
+   "etapa": 2,
+   "ancho": 557,
+   "alto": 221,
+   "pivote": [
+    278,
+    6
+   ],
+   "archivo": "crucero-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco-c3",
+   "tipo": "casco",
+   "nave": "crucero",
+   "etapa": 3,
+   "ancho": 350,
+   "alto": 579,
+   "pivote": [
+    175,
+    331
+   ],
+   "archivo": "crucero-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas-c3",
+   "tipo": "alas",
+   "nave": "crucero",
+   "etapa": 3,
+   "ancho": 629,
+   "alto": 250,
+   "pivote": [
+    314,
+    6
+   ],
+   "archivo": "crucero-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco-c4",
+   "tipo": "casco",
+   "nave": "crucero",
+   "etapa": 4,
+   "ancho": 476,
+   "alto": 648,
+   "pivote": [
+    238,
+    371
+   ],
+   "archivo": "crucero-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas-c4",
+   "tipo": "alas",
+   "nave": "crucero",
+   "etapa": 4,
+   "ancho": 726,
+   "alto": 332,
+   "pivote": [
+    363,
+    6
+   ],
+   "archivo": "crucero-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco-c5",
+   "tipo": "casco",
+   "nave": "crucero",
+   "etapa": 5,
+   "ancho": 320,
+   "alto": 741,
+   "pivote": [
+    160,
+    424
+   ],
+   "archivo": "crucero-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas-c5",
+   "tipo": "alas",
+   "nave": "crucero",
+   "etapa": 5,
+   "ancho": 847,
+   "alto": 495,
+   "pivote": [
+    424,
+    6
+   ],
+   "archivo": "crucero-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco-c2",
+   "tipo": "casco",
+   "nave": "fragata",
+   "etapa": 2,
+   "ancho": 243,
+   "alto": 519,
+   "pivote": [
+    122,
+    275
+   ],
+   "archivo": "fragata-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas-c2",
+   "tipo": "alas",
+   "nave": "fragata",
+   "etapa": 2,
+   "ancho": 455,
+   "alto": 421,
+   "pivote": [
+    228,
+    6
+   ],
+   "archivo": "fragata-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco-c3",
+   "tipo": "casco",
+   "nave": "fragata",
+   "etapa": 3,
+   "ancho": 348,
+   "alto": 579,
+   "pivote": [
+    174,
+    306
+   ],
+   "archivo": "fragata-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas-c3",
+   "tipo": "alas",
+   "nave": "fragata",
+   "etapa": 3,
+   "ancho": 515,
+   "alto": 302,
+   "pivote": [
+    258,
+    6
+   ],
+   "archivo": "fragata-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco-c4",
+   "tipo": "casco",
+   "nave": "fragata",
+   "etapa": 4,
+   "ancho": 431,
+   "alto": 648,
+   "pivote": [
+    216,
+    343
+   ],
+   "archivo": "fragata-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas-c4",
+   "tipo": "alas",
+   "nave": "fragata",
+   "etapa": 4,
+   "ancho": 594,
+   "alto": 348,
+   "pivote": [
+    297,
+    6
+   ],
+   "archivo": "fragata-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco-c5",
+   "tipo": "casco",
+   "nave": "fragata",
+   "etapa": 5,
+   "ancho": 319,
+   "alto": 741,
+   "pivote": [
+    160,
+    392
+   ],
+   "archivo": "fragata-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas-c5",
+   "tipo": "alas",
+   "nave": "fragata",
+   "etapa": 5,
+   "ancho": 693,
+   "alto": 578,
+   "pivote": [
+    346,
+    6
+   ],
+   "archivo": "fragata-alas-c5.png",
+   "escala": 2
   }
  ]
 }

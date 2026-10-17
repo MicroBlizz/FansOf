@@ -61,26 +61,51 @@ function pintaBotDados(e) {
   return e.camo;
 }
 
-// ---------- EL CUARTEO ----------
-// Durante la caza la pintura se seca y se cuartea: cada CUARTEO.cada segundos a cada colado congelado le sale una grieta (una línea fina de un tono
-// más oscuro que su piel) y el camuflaje baja poco a poco (del 100 % a unos 85 % en dos minutos). Moverse a retocarse lo arregla (a riesgo de que te vean).
-// Las grietas salen de la semilla del ente y del número de grieta: en el PvP todos los navegadores dibujan las mismas sin mandar nada por la red.
-const CUARTEO = { cada: 5, grietas: 1, desde: 6 };      // cada cuánto, cuántas grietas cada vez, y a partir de qué segundo de caza empieza
-function cuartea(e) {
-  const c = e.pctx, M = formaDe(e).mascara, n = e.grietas = (e.grietas || 0) + 1;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL); c.lineCap = 'round'; c.lineJoin = 'round';
-  for (let g = 0; g < CUARTEO.grietas; g++) {
-    const s = n * 7 + g, sem = e.slot >= 0 ? e.slot + 1 : Math.round(e.semilla * 1000), az = k => hash2(sem, s, k);      // en el PvP la semilla es la plaza: igual en todos los navegadores
-    let x = 4 + az(1) * (CAJA_W - 8), y = 4 + az(2) * (CAJA_H - 8), t = 0;
-    while (!M[Math.floor(y) * CAJA_W + Math.floor(x)] && ++t < 12) { x = 4 + az(10 + t) * (CAJA_W - 8); y = 4 + az(30 + t) * (CAJA_H - 8); }
-    const d = c.getImageData(Math.floor(x * ESC_PIEL), Math.floor(y * ESC_PIEL), 1, 1).data, osc = d[0] * 0.3 + d[1] * 0.59 + d[2] * 0.11 < 90 ? 1.7 : 0.62;      // el tono de la grieta: la piel de ahí, más oscura (más clara si la piel es oscura)
-    c.strokeStyle = rgbHex(d[0] * osc + (osc > 1 ? 30 : 0), d[1] * osc + (osc > 1 ? 30 : 0), d[2] * osc + (osc > 1 ? 30 : 0)); c.lineWidth = 0.7;
-    c.beginPath(); c.moveTo(x, y);
-    let a = az(3) * TAU;
-    for (let k = 0; k < 3; k++) { a += (az(4 + k) - 0.5) * 1.6; const l = 1.5 + az(8 + k) * 2; x += Math.cos(a) * l; y += Math.sin(a) * l; c.lineTo(x, y); }
-    c.stroke();
+// ---------- EL DESGASTE DE LA PINTURA ----------
+// Durante la caza la pintura se seca y se va estropeando, muy poco a poco: cada CUARTEO.cada segundos, a cada colado congelado unos puñados de píxeles
+// de su piel le cambian de tono apenas (más claros, más oscuros, un pelín de otro matiz), en manchas suaves. Del 100 % a unos 85 % en dos minutos.
+// Moverse a retocarse lo arregla (a riesgo de que te vean). Todo sale de la semilla del ente y del número de paso: en el PvP todos los navegadores
+// dibujan lo mismo sin mandar nada por la red.
+const CUARTEO = { cada: 2, grietas: 1, desde: 6 };      // cada cuánto, cuántos puñados cada vez, y a partir de qué segundo de caza empieza
+// cambia de tono los píxeles de la piel dentro de `manchas` círculos suaves (radio en píxeles de caja); az(k) es el azar de cada decisión
+function desgasta(e, az, manchas, radio, fuerza) {
+  const c = e.pctx, M = formaDe(e).mascara, W = CAJA_W * ESC_PIEL, H = CAJA_H * ESC_PIEL, im = c.getImageData(0, 0, W, H), d = im.data;
+  for (let m = 0; m < manchas; m++) {
+    let x = 4 + az(m * 9 + 1) * (CAJA_W - 8), y = 4 + az(m * 9 + 2) * (CAJA_H - 8), t = 0;
+    while (!M[Math.floor(y) * CAJA_W + Math.floor(x)] && ++t < 12) { x = 4 + az(m * 9 + 100 + t) * (CAJA_W - 8); y = 4 + az(m * 9 + 200 + t) * (CAJA_H - 8); }
+    const r = radio * (0.7 + az(m * 9 + 3) * 0.6) * ESC_PIEL, cx = x * ESC_PIEL, cy = y * ESC_PIEL;
+    const luz = (az(m * 9 + 4) - 0.5) * 2 * fuerza, tr_ = (az(m * 9 + 5) - 0.5) * fuerza * 0.4, tg = (az(m * 9 + 6) - 0.5) * fuerza * 0.4, tb = (az(m * 9 + 7) - 0.5) * fuerza * 0.4;
+    for (let py = Math.max(0, Math.floor(cy - r)); py < Math.min(H, cy + r); py++) for (let px = Math.max(0, Math.floor(cx - r)); px < Math.min(W, cx + r); px++) {
+      const q = (py * W + px) * 4; if (d[q + 3] < 200) continue;
+      const dd = Math.hypot(px - cx, py - cy) / r; if (dd >= 1) continue;
+      const k = (1 - dd) * (1 - dd) * (0.8 + 0.4 * az(1e4 + py * W + px));      // suave en el borde y con el grano de cada píxel
+      d[q] = Math.max(0, Math.min(255, d[q] + (luz + tr_) * k)); d[q + 1] = Math.max(0, Math.min(255, d[q + 1] + (luz + tg) * k)); d[q + 2] = Math.max(0, Math.min(255, d[q + 2] + (luz + tb) * k));
+    }
   }
-  c.restore();
+  c.putImageData(im, 0, 0);
+}
+function cuartea(e) {
+  const n = e.grietas = (e.grietas || 0) + 1, sem = e.slot >= 0 ? e.slot + 1 : Math.round(e.semilla * 1000);      // en el PvP la semilla es la plaza
+  desgasta(e, k => hash2(sem, n * 7, k), 4 * CUARTEO.grietas, 5, 11);
+}
+// el agua se lleva la pintura: ablanda los tonos con manchas más grandes y, aquí y allá, arrastra un trocito de piel hacia abajo (un churrete que se va aclarando)
+function arrastraAbajo(e, goteos, az) {
+  const c = e.pctx, M = formaDe(e).mascara, W = CAJA_W * ESC_PIEL, H = CAJA_H * ESC_PIEL, im = c.getImageData(0, 0, W, H), d = im.data;
+  for (let g = 0; g < goteos; g++) {
+    const x0 = Math.floor((3 + az(g * 5 + 1) * (CAJA_W - 6)) * ESC_PIEL), y0 = Math.floor((3 + az(g * 5 + 2) * (CAJA_H * 0.6)) * ESC_PIEL);
+    const ancho = 2 + Math.floor(az(g * 5 + 3) * 4), largo = Math.floor((4 + az(g * 5 + 4) * 9) * ESC_PIEL / 2);
+    for (let px = x0; px < Math.min(W, x0 + ancho); px++) {
+      const o = (y0 * W + px) * 4; if (d[o + 3] < 200) continue;
+      const r0 = d[o], g0 = d[o + 1], b0 = d[o + 2];
+      for (let l = 1; l <= largo; l++) {
+        const py = y0 + l; if (py >= H) break;
+        const q = (py * W + px) * 4; if (d[q + 3] < 200) break;
+        const a = 0.55 * (1 - l / largo);      // el churrete se aclara según baja
+        d[q] += (r0 - d[q]) * a; d[q + 1] += (g0 - d[q + 1]) * a; d[q + 2] += (b0 - d[q + 2]) * a;
+      }
+    }
+  }
+  c.putImageData(im, 0, 0);
 }
 // cada fotograma de la caza: a quien lleva este navegador (o a todos, si no hay red) le va saliendo su grieta; en el PvP los remotos también, con la misma semilla
 function cuarteoAvanza(dt) {

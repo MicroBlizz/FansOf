@@ -1,8 +1,8 @@
 {
- "build": 180,
- "hash": "da9da43",
- "fecha": "2026-10-17T20:05:57Z",
- "mensaje": "Nova: cualquier ranura de arma admite cualquier arma; la facción y el piloto solo inclinan lo que ofrecen cartas y tienda",
+ "build": 181,
+ "hash": "db36b0e",
+ "fecha": "2026-10-17T21:45:06Z",
+ "mensaje": "Rouflage: la pintura se estropea por píxeles, sutil; el aspersor arrastra churretes hacia abajo",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

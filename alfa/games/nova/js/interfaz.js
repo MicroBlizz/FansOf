@@ -191,6 +191,8 @@ function nvRenderEstacion(S) {
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
   const armas = n.armas.filter(w => w.portador !== 'defensa');
+  const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
+  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(aviso);
   if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
     const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
     const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
@@ -226,6 +228,6 @@ function nvRenderEstacion(S) {
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
+  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
   p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
 }

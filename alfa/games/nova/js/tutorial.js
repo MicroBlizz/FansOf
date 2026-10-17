@@ -29,11 +29,14 @@ const NV_TUTO = {
   estacion: [{ titulo: 'LA ESTACIÓN', ic: ['sis', 'regen'], lineas: [
     'Al entrar en una estación la partida se para.',
     'Con la chatarra que llevas puedes reparar el casco y cambiar un arma por otra.',
+    'Verás tu nave con sus armas en los anclajes. Toca un anclaje para ver hasta dónde tira, y toca otro para cambiar las dos armas de sitio.',
+    'Las de proa tiran 90° al frente, las de los lados 180° hacia su lado, las de popa 180° hacia atrás y las de arriba 360°.',
     'El taller de tamaños sirve para unir y dividir armas.'] }],
   taller: [{ titulo: 'EL TALLER', ic: ['taller', 'unir'], lineas: [
     'Toca dos armas del mismo tamaño y pulsa Unir: dos pequeñas hacen una mediana y dos medianas una grande.',
     'Más tamaño es mucho más daño, alcance y bala.',
     'Dividir hace lo contrario, y necesita una ranura libre.',
+    'La nave sigue a la vista: toca un anclaje y luego otro para cambiar las armas de sitio, o para mover una a un anclaje vacío.',
     'Muchas pequeñas van bien contra enjambres; pocas grandes, contra jefes.'] }],
   capital: [{ titulo: 'NAVE CAPITAL', ic: ['sis', 'mejora'], lineas: [
     'Aquí se gasta la aleación que ganas en las misiones. Perder también paga, pero la mitad.',

@@ -1,8 +1,8 @@
 {
- "build": 154,
- "hash": "15cce3d",
- "fecha": "2026-10-17T02:17:03Z",
- "mensaje": "Rouflage: los bots copian el fondo a mano (descuadre de 1-2 px y franjas que no clavan el ancho), sin brochazos",
+ "build": 155,
+ "hash": "1e7d8eb",
+ "fecha": "2026-10-17T02:17:31Z",
+ "mensaje": "Nova: la estación y el taller enseñan la nave con sus armas en los anclajes y se pueden cambiar de sitio; arcos de tiro: proa 90°, lados 180°, popa 180°, dorsal 360°",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

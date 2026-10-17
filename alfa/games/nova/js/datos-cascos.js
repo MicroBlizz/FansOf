@@ -5,11 +5,11 @@ const NOVA_CASCOS = {
  "version": "provisional-0.1",
  "nota": "Plantillas PROVISIONALES de la fase 0 (PLAN-NOVA.md, «Afinidad arma-facción» y «Ranuras por cara»). Cada ranura se abre en el rango `desde`; `crece` dice a qué tamaño pasa en cada rango. JSON estricto para que herramientas/nova-balance.py lo lea.",
  "caras": {
-  "proa": { "arco": 30, "dano": 1.2, "nota": "Más daño, arco estrecho" },
-  "babor": { "arco": 120, "dano": 1.0, "nota": "Lateral" },
-  "estribor": { "arco": 120, "dano": 1.0, "nota": "Lateral" },
+  "proa": { "arco": 90, "dano": 1.2, "nota": "Más daño, 90° al frente" },
+  "babor": { "arco": 180, "dano": 1.0, "nota": "Lateral: 180° hacia su lado" },
+  "estribor": { "arco": 180, "dano": 1.0, "nota": "Lateral: 180° hacia su lado" },
   "dorsal": { "arco": 360, "dano": 0.8, "nota": "Cobertura total, menos daño" },
-  "popa": { "arco": 0, "dano": 0, "soloDefensa": true, "nota": "Solo defensivo y de movilidad" }
+  "popa": { "arco": 180, "dano": 0.9, "nota": "180° hacia atrás; las defensas van aquí por defecto" }
  },
  "tamanos": ["S", "M", "L"],
  "tipos": ["railgun", "flak", "laser", "lanzador", "drones", "defensa", "universal"],

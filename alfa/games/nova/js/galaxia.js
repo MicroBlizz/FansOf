@@ -116,10 +116,11 @@ function nvNaveCapital() {
     b.appendChild(nvEl('nv-cdet', tr(m.txt)));
     b.appendChild(nvEl('nv-cdet', tope ? tr('Al máximo') : tr('Mejorar') + ': ' + coste + ' ' + tr('de aleación')));
     b.disabled = tope || camp.aleacion < coste;
-    nvConIcono(b, 'sis', { nucleo: 'mejora', hangar: 'casco', sensores: 'iman', astillero: 'dano', academia: 'mejora' }[m.id], '#ffd93d', 48);
+    nvConIcono(b, 'sis', { nucleo: 'mejora', hangar: 'casco', sensores: 'iman', arsenal: 'fusion', astillero: 'dano', academia: 'mejora' }[m.id], '#ffd93d', 48);
     b.onclick = () => { if (nvMejoraCapital(m.id)) nvNaveCapital(); };
     p.appendChild(b);
   }
+  const ar = nvEl('nv-boton', tr('Arsenal') + ' · ' + tr('retirar y potenciar armas'), 'button'); ar.onclick = nvArsenal; p.appendChild(ar);
   const v = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); v.onclick = nvGalaxiaMenu; p.appendChild(v);
   nvInfo(p, 'capital');
   cont.appendChild(p);

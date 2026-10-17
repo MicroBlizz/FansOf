@@ -1,8 +1,8 @@
 {
- "build": 161,
- "hash": "5d46e15",
- "fecha": "2026-10-17T02:33:01Z",
- "mensaje": "Nova: escenario de pruebas ?inmortal=1 y herramientas/nova-rendimiento.js para medir sim y dibujo por fotograma",
+ "build": 162,
+ "hash": "1ef6900",
+ "fecha": "2026-10-17T02:34:12Z",
+ "mensaje": "Nova: armas con rareza (20 variantes), repetir cada carta por separado y Arsenal en la nave capital para desbloquear, retirar y potenciar el pool",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

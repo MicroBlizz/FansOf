@@ -53,3 +53,12 @@
 .nv-tutolinea::before { content: ''; position: absolute; left: 2px; top: .5em; width: 7px; height: 7px; border-radius: 50%; background: #ffd93d; box-shadow: 0 0 0 2px #1a0f2e; }
 .nv-tutocaja > .nv-boton { align-self: stretch; }
 .nv-tutosaltar { border: 0; background: none; color: #a8b0e0; font: 700 14px 'Baloo 2', sans-serif; text-decoration: underline; cursor: pointer; }
+
+/* cartas: repetir por carta y rarezas; arsenal */
+.nv-celda { display: flex; flex-direction: column; gap: 4px; }
+.nv-chico { padding: 5px 16px; font-size: 14px; }
+.nv-botones { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+.nv-rareza { font-weight: 800; }
+.nv-rar-rara { box-shadow: 0 0 10px rgba(74, 168, 255, .55); }
+.nv-rar-epica { box-shadow: 0 0 14px rgba(180, 107, 255, .7); }
+.nv-rar-legendaria { box-shadow: 0 0 18px rgba(255, 181, 46, .85); }

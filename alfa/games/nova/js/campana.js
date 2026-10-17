@@ -20,6 +20,7 @@ const NV_CAPITAL = [
   { id: 'hangar', nombre: 'Hangar', txt: 'Empiezas con más chatarra en la cartera para la estación', max: 10, coste: k => 30 + 20 * k },
   { id: 'sensores', nombre: 'Sensores', txt: 'La chatarra te alcanza de más lejos', max: 5, coste: k => 50 + 40 * k },
   { id: 'academia', nombre: 'Academia', txt: '+1 rango al empezar cada misión; la chatarra para subir sigue igual', max: 40, coste: k => 50 + 30 * k },
+  { id: 'arsenal', nombre: 'Arsenal', txt: 'Desbloquea armas y módulos mejores en el pool de cartas (rarezas hasta legendaria)', max: 4, coste: k => 80 + 100 * k },
   { id: 'astillero', nombre: 'Astillero', txt: 'Empiezas la misión con la ranura vacía ya armada', max: 1, coste: () => 300 }
 ];
 

@@ -31,12 +31,13 @@ function nvArmaNueva(slot, portador, carga, fusion, tam) {
 }
 function nvNombreArma(w) {
   if (w.fusion) return tr(w.fusion.nombre);
+  if (w.variante) return tr(NV_VAR_ID[w.variante].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[w.carga].nombre);
   return tr(NOVA_ARMAS.portadores[w.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[w.carga].nombre);
 }
 // Daño de un proyectil de esa arma (todo multiplicado: tamaño, mejoras, cara, carga y premio de fusión).
 function nvDanoArma(w) {
   const P = NOVA_ARMAS, p = P.portadores[w.portador], c = P.cargas[w.carga];
-  let d = p.dano * P.tamanos[w.tam] * (1 + P.mejora.porNivel * w.nivel) * (NOVA_CASCOS.caras[w.cara].dano || 1) * c.multDano;
+  let d = p.dano * P.tamanos[w.tam] * (1 + P.mejora.porNivel * w.nivel) * (NOVA_CASCOS.caras[w.cara].dano || 1) * c.multDano * nvVar(w).dano;
   d *= (NVP.S && NVP.S.mejoras.dano) || 1;
   if (NVP.S) { d *= (1 + (NVP.S.capDano || 0)) * (1 + (NVP.S.nucleoBono || 0)); if (NVP.S.cap === 'necrolord' && w.portador === 'drones') d *= 0.5; }
   if (w.fusion) d *= w.fusion.tipo === 'doble' ? (w.fusion.mult || 1) : P.fusionMixta.mult;
@@ -56,7 +57,7 @@ function nvArmas(S, dt) {
     w.x = pos.x; w.y = pos.y;
     if (w.portador === 'drones') { nvDrones(S, w, p, dt); continue; }
     const f = NV_CARAS_DIR[w.cara], dx = f[0] * Math.cos(n.ang) - f[1] * Math.sin(n.ang), dy = f[0] * Math.sin(n.ang) + f[1] * Math.cos(n.ang);
-    const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * (S.cap === 'bunny' && (w.portador === 'railgun' || w.portador === 'laser') ? 0.8 : 1) * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), grados = NOVA_CASCOS.caras[w.cara].arco, arco = grados / 2 * Math.PI / 180;
+    const kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam] * nvVar(w).alc * (S.cap === 'bunny' && (w.portador === 'railgun' || w.portador === 'laser') ? 0.8 : 1) * (w.fusion && w.fusion.id === 'bateriaFlak' ? 1.1 : 1), grados = NOVA_CASCOS.caras[w.cara].arco, arco = grados / 2 * Math.PI / 180;
     let obj = null, mejor = alc * alc, roca = null, mejorR = alc * alc;
     for (const e of S.enem) {
       if (e.muerto || e.d.pasivo === 2 || !nvEnPantalla(S, e.x, e.y, -e.r * 0.5)) continue;   // solo lo que se ve
@@ -74,7 +75,7 @@ function nvArmas(S, dt) {
     if (!obj) { w.ang += (Math.atan2(dy, dx) - w.ang) * Math.min(1, dt * 6); continue; }
     w.ang = Math.atan2(obj.y - w.y, obj.x - w.x);
     if (w.cd > 0) continue;
-    w.cd += 1 / (p.cadencia * (S.mejoras.cadencia || 1) * (S.hype || 1));
+    w.cd += 1 / (p.cadencia * nvVar(w).cad * (S.mejoras.cadencia || 1) * (S.hype || 1));
     nvDispara(S, w, p, obj);
   }
 }
@@ -87,7 +88,7 @@ function nvDispara(S, w, p, obj) {
     S.fx.push({ t: 0.16, x: w.x, y: w.y, r: 9 * nvZ(S), color: c.color, tipo: 'flash' });
     return;
   }
-  const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) : 1;
+  const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) + nvVar(w).n : 1;
   S.fx.push({ t: 0.14, x: w.x, y: w.y, r: 8 * nvZ(S), color: c.color, tipo: 'flash' });   // fogonazo
   for (let i = 0; i < n; i++) {
     let a = Math.atan2(obj.y - w.y, obj.x - w.x);
@@ -95,19 +96,19 @@ function nvDispara(S, w, p, obj) {
     const v = (w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9);   // las balas también corren más cuanto mayor es la nave
     S.proy.push(Object.assign({}, base, {
       vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 4.5) * kf * NV_BALA_TAM[w.tam],
-      vida: (w.portador === 'flak' ? p.alcance * kf * NV_RANGO_TAM[w.tam] / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) * NV_RANGO_TAM[w.tam] : 3), perf: w.portador === 'railgun' ? 3 : 1,
+      vida: (w.portador === 'flak' ? p.alcance * kf * NV_RANGO_TAM[w.tam] / v + 0.1 : w.portador === 'railgun' ? 0.9 * Math.pow(kf, 0.1) * NV_RANGO_TAM[w.tam] : 3), perf: (w.portador === 'railgun' ? 3 : 1) + nvVar(w).perf,
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
   }
 }
 function nvDrones(S, w, p, dt) {
-  const n = S.nave, cant = p.proyectiles + (w.fusion ? 1 : 0), R = 85 * n.escala;
+  const n = S.nave, cant = p.proyectiles + (w.fusion ? 1 : 0) + nvVar(w).n, R = 85 * n.escala;
   w.fase += dt * 2.6; w.cd -= dt;
   w.drones = [];
   for (let i = 0; i < cant; i++) { const a = w.fase + i * 6.283 / cant; w.drones.push({ x: n.x + Math.cos(a) * R, y: n.y + Math.sin(a) * R }); }
   if (w.carga === 'cinetica') for (const d of w.drones) nvChocaMisil(S, d, 14);   // los drones cinéticos derriban misiles
   if (w.cd > 0) return;
-  w.cd += 1 / p.cadencia;
+  w.cd += 1 / (p.cadencia * nvVar(w).cad);
   const dano = nvDanoArma(w);
   for (const d of w.drones) for (const e of S.enem) if (!e.muerto && Math.hypot(e.x - d.x, e.y - d.y) < e.r + 14) {
     nvGolpe(S, e, dano, w, d.x, d.y, 1);

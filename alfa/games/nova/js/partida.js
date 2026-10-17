@@ -31,7 +31,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   casco = casco || 'caza'; cap = cap || NVP.cap || 'progamer'; ofi = ofi === undefined ? NVP.ofi : ofi;
   const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
   const S = {
-    t: 0, estado: 'juego', cartas: null, rerolls: 1, aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
+    t: 0, estado: 'juego', cartas: null, rr: [], aviso: null, jefe: null, libre: false, casco, faccion: H.faccion, capMuertos: 0, cartera: 0,
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
     enem: [], saltos: [], proy: [], eproy: [], rayosE: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },

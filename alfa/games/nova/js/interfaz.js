@@ -189,7 +189,7 @@ function nvTile(w, sel) {   // una arma como ficha: icono, nombre y el tamaño g
   return b;
 }
 function nvRenderEstacion(S) {
-  const cont = document.getElementById('nv-paneles'); cont.textContent = '';
+  const cont = document.getElementById('nv-paneles'), vieja = cont.querySelector('.nv-panel'), scroll = vieja ? vieja.scrollTop : 0; cont.textContent = '';   // repintar no mueve el scroll
   const n = S.nave, p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ESTACIÓN')));
   p.appendChild(nvEl('nv-cdet', tr('Chatarra para gastar') + ': ' + Math.floor(S.cartera)));
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
@@ -238,4 +238,5 @@ function nvRenderEstacion(S) {
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
   sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estTienda = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
   p.appendChild(sa); nvInfo(p, S.estTienda ? 'tienda' : S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
+  p.scrollTop = scroll; requestAnimationFrame(() => { p.scrollTop = scroll; });
 }

@@ -1,8 +1,8 @@
 {
- "build": 177,
- "hash": "c88dfab",
- "fecha": "2026-10-17T19:58:50Z",
- "mensaje": "Nova: las armas enemigas hacen algo más de daño",
+ "build": 178,
+ "hash": "00660c4",
+ "fecha": "2026-10-17T20:00:39Z",
+ "mensaje": "Nova: el menú de la estación conserva el scroll al comprar, mejorar o reciclar",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

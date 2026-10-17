@@ -9,7 +9,7 @@ function nvArsenalEntradas() {
   const out = [];
   for (const p in NOVA_ARMAS.portadores) {
     out.push({ id: 'arma:' + p + ':base', tipo: 'arma', portador: p, variante: null, nombre: NOVA_ARMAS.portadores[p].nombre, rareza: 'comun', nivel: 0, txt: NOVA_ARMAS.portadores[p].fuerte, ic: ['arma', p] });
-    for (const v of NOVA_VARIANTES) if (v.portador === p) out.push({ id: 'arma:' + p + ':' + v.id, tipo: 'arma', portador: p, variante: v.id, nombre: v.nombre, rareza: v.rareza, nivel: NV_ARS_NIVEL[v.rareza], txt: v.efecto, ic: ['arma', p] });
+    for (const v of NOVA_VARIANTES) if (v.portador === p) out.push({ id: 'arma:' + p + ':' + v.id, tipo: 'arma', portador: p, variante: v.id, nombre: v.nombre, rareza: v.rareza, nivel: NV_ARS_NIVEL[v.rareza], txt: v.efecto, ic: ['arma', v.id] });
   }
   out.push({ id: 'def:escudo', tipo: 'def', nombre: 'Escudo', rareza: 'rara', nivel: 1, txt: 'Absorbe daño y se regenera', ic: ['sis', 'escudo'] });
   out.push({ id: 'def:blindaje', tipo: 'def', nombre: 'Blindaje', rareza: 'rara', nivel: 2, txt: 'Recibes menos daño', ic: ['sis', 'blindaje'] });

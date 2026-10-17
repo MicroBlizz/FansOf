@@ -1,8 +1,8 @@
 {
- "build": 165,
- "hash": "6c482ad",
- "fecha": "2026-10-17T02:37:43Z",
- "mensaje": "Nova: 20 iconos de arma por rareza (5 portadores x 4 rarezas), con marco que crece con la rareza, registrados en iconos.json",
+ "build": 166,
+ "hash": "af10b0f",
+ "fecha": "2026-10-17T02:38:15Z",
+ "mensaje": "Nova: iconos de las 20 variantes de arma en cartas, Arsenal y estación",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

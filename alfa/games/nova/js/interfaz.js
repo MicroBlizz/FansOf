@@ -226,7 +226,7 @@ function nvRenderEstacion(S) {
       b.appendChild(nvEl('nv-ctipo', tr(NOVA_RAREZAS[o.rareza].nombre).toUpperCase())); b.lastChild.style.color = NOVA_RAREZAS[o.rareza].color;
       b.appendChild(nvEl('nv-cnom', tr(V ? V.nombre : NOVA_ARMAS.portadores[o.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[o.carga].nombre)));
       b.appendChild(nvEl('nv-cdet', tr(V ? V.efecto : NOVA_ARMAS.portadores[o.portador].fuerte) + ' · ' + o.precio));
-      nvConIcono(b, 'arma', o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
+      nvConIcono(b, 'arma', o.variante || o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
       b.onclick = () => { nvCompraArma(S, o, S.estSel.w); S.estSel = null; nvRenderEstacion(S); };
       p.appendChild(b);
     }

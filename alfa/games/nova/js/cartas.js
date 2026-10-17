@@ -40,7 +40,7 @@ function nvCandidatas(S) {
         const tend = nvPesoTendencia(S, portador, carga);
         for (const v of vars) {
           const R = NOVA_RAREZAS[v.rareza], V = v.variante ? NV_VAR_ID[v.variante] : null;
-          out.push({ tipo: 'arma', cat: 'of', ic: ['arma', portador], rareza: v.rareza, peso: tend * (n.armas.length ? 0.35 : 1) * (R.peso * nvPesoPool(v.id) / suma) / NV_TIPOS_LIBRES.length / 2, carga, tendencia: tend > 1.4,
+          out.push({ tipo: 'arma', cat: 'of', ic: ['arma', v.variante || portador], rareza: v.rareza, peso: tend * (n.armas.length ? 0.35 : 1) * (R.peso * nvPesoPool(v.id) / suma) / NV_TIPOS_LIBRES.length / 2, carga, tendencia: tend > 1.4,
             titulo: (V ? tr(V.nombre) : tr(NOVA_ARMAS.portadores[portador].nombre)) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
             detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + nvTamNuevo(n.rango) + '). ' + tr(V ? V.efecto : NOVA_ARMAS.portadores[portador].fuerte),
             aplicar: () => { const w = nvArmaNueva(sl, portador, carga, null, nvTamNuevo(n.rango)); if (V) w.variante = V.id; n.armas.push(w); } });

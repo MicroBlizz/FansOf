@@ -19,6 +19,7 @@ IDIOMA.add({
   "FALLO": "BUG",
   "OPINIÓN": "OPINION",
   "Escribe aquí": "Write here",
+  "Cuéntanos lo que quieras": "Tell us whatever you like",
   "Tu comentario": "Your comment",
   "Podéis escribirme por email para preguntarme por este comentario, hablar del juego o pedirme opinión.": "You may email me to ask about this comment, talk about the game or ask for my opinion.",
   "Usaremos {e}.": "We'll use {e}.",

@@ -1,8 +1,8 @@
 {
- "build": 140,
- "hash": "95225bb",
- "fecha": "2026-10-17T01:15:16Z",
- "mensaje": "Rouflage: la alarma de los coches (faros) vale en cualquier mapa con coches: la urbanización también (eventos 'siempre' junto al principal)",
+ "build": 141,
+ "hash": "25fa55b",
+ "fecha": "2026-10-17T01:25:01Z",
+ "mensaje": "Feedback: el cuadro de texto libre tiene su etiqueta visible «Cuéntanos lo que quieras» (con su inglés)",
  "juegos": {
   "crush": "0.1.17",
   "dark": "0.2.6",

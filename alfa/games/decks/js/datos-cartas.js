@@ -1,9 +1,10 @@
 // Fans Of Decks · Cartas: qué hace cada una (coste, cifras, texto) y los mazos. Core dice quién es cada unidad (nombre, rareza, dibujo); aquí van sus cifras en Decks.
 // fx: dano/veces/obj ('uno' o 'todos'), bloqueo, cura, roba, caos, vulnerable, debil, aturde, fuerza (toda la reunión), fuerzaTurno, poder (nido, espinas),
-// palabras clave (se añaden solas al texto): despedida (se va al jugarla), indefinido (no se descarta), madrugador (siempre en la mano inicial).
+// palabras clave (se añaden solas al texto): despedida (se va al jugarla), indefinido (si no la juegas se queda en la mano), madrugador (siempre en la mano inicial).
+// blindaje: n turnos en los que tu bloqueo no se pierde al empezar el turno.
 // asc: lo que cambia al ascender (Becario → Junior): cifras, coste, quitar despedida (despedida: false) o añadir madrugador; dcVerAscenso lo enseña antes.
 // cond ('primerGolpe' = x3 si el rival tiene toda la vida; 'noMax' = x2 si no es el rival con más vida; 'porTropa' = daño por cada empleado jugado este turno; 'atacantes' = pega solo a los rivales que van a atacar, sin elegir objetivo (la guardaespaldas MechaVaca)).
-// Marcas: despedida (se va al jugarse), indefinido (no se descarta), primeraHora (siempre en la mano inicial), injugable, alRobar ('caos-1').
+// Marcas: despedida (se va al jugarse), indefinido (si no la juegas se queda en la mano), primeraHora (siempre en la mano inicial), injugable, alRobar ('caos-1').
 // asc: lo que cambia al ascender (Becario → Junior). El texto usa {clave} y se rellena con las cifras de la carta, ascendida o no.
 'use strict';
 // Los radios que drawVector necesita para los pies de cada unidad (los mismos que en Rumble).
@@ -33,6 +34,8 @@ const DC_CARTAS = {
   cafe: { nombre: 'Café de la máquina', tipo: 'tramite', rar: 'basic', coste: 0, ic: 'CF', fx: { roba: 2, despedida: true }, asc: { madrugador: true }, texto: 'Un café aguado: roba {roba}.' },
   horapunta: { nombre: 'Hora punta', tipo: 'tramite', rar: 'basic', coste: 1, ic: 'HP', fx: { roba: 2 }, asc: { coste: 0 }, texto: 'Todo el mundo a la vez: roba {roba}.' },
   rabia: { nombre: 'Rabia', tipo: 'directiva', rar: 'rare', coste: 1, ic: 'RB', fx: { fuerza: 2 }, asc: { fuerza: 3 }, texto: 'Rabia: +{fuerza} de fuerza el resto de la reunión.' },
+  chaleco: { nombre: 'Chaleco reflectante', tipo: 'tramite', rar: 'common', coste: 1, ic: 'CR', fx: { bloqueo: 5, blindaje: 2 }, asc: { bloqueo: 7, blindaje: 3 }, texto: 'Te pones el chaleco reflectante: {bloqueo} de bloqueo y Blindaje {blindaje}.' },
+  mampara: { nombre: 'Mampara de metacrilato', tipo: 'tramite', rar: 'rare', coste: 2, ic: 'MM', fx: { bloqueo: 11, blindaje: 3 }, asc: { bloqueo: 15 }, texto: 'Montas una mampara en tu mesa: {bloqueo} de bloqueo y Blindaje {blindaje}.' },
   esconderse: { nombre: 'Esconderse', tipo: 'tramite', rar: 'common', coste: 1, ic: 'ES', fx: { bloqueo: 5, indefinido: true }, asc: { bloqueo: 7 }, texto: 'Te escondes tras la fotocopiadora: {bloqueo} de bloqueo.' },
   zancadilla: { nombre: 'Zancadilla', tipo: 'tramite', rar: 'basic', coste: 1, ic: 'ZC', fx: { dano: 4, vulnerable: 2 }, asc: { dano: 6 }, texto: '{dano} de daño y Vulnerable {vulnerable}.' },
   manada: { nombre: 'Manada', tipo: 'tramite', rar: 'rare', coste: 2, ic: 'MN', fx: { dano: 3, cond: 'porTropa' }, asc: { dano: 4 }, texto: '{dano} de daño a un rival por cada empleado jugado este turno.' },

@@ -32,6 +32,8 @@ function dcEstados(o) {
 // Los efectos activos del líder, para que se vea qué tiene encima: los que duran toda la reunión (directivas, fuerza) van lisos;
 // los que se van al acabar el turno (fuerza del turno, racha de empleados, débil, vulnerable) llevan un reloj. Al tocar uno, lo explica.
 const DC_PODER_ICONO = { nido: 'defensa', espinas: 'ataque' };
+// Lo que significa cada palabra clave (sale al ver una carta en grande).
+const DC_GLOSARIO = { indefinido: 'Contrato indefinido: si no la juegas, se queda en tu mano al acabar el turno (y robas tus 5 cartas igual).', despedida: 'Despedida: al jugarla se va hasta el final de la reunión.', madrugador: 'Madrugador: siempre está en tu mano inicial.', blindaje: 'Blindaje: durante esos turnos tu bloqueo no se pierde al empezar el turno; se acumula.' };
 function dcPoderCarta(k) { for (const id in DC_CARTAS) if (DC_CARTAS[id].fx && DC_CARTAS[id].fx.poder === k) return DC_CARTAS[id]; return null; }
 function dcEfecto(cls, icono, texto, n, explica, turno) {
   const e = dcEl('span', 'dc-est dc-efecto ' + cls); e.append(dcSvg(icono), dcEl('span', '', texto), dcEl('b', '', String(n)));
@@ -41,6 +43,7 @@ function dcEfecto(cls, icono, texto, n, explica, turno) {
 function dcEfectosLider(C) {
   const e = dcEl('div', 'dc-estados dc-efectos');
   for (const k in C.poderes) { const D = dcPoderCarta(k); if (!D || !C.poderes[k]) continue; e.append(dcEfecto('dc-est-fijo', DC_PODER_ICONO[k] || 'fuerza', tr(D.nombre), C.poderes[k], tr('Directiva, toda la reunión.') + ' ' + tr(D.texto, { n: C.poderes[k] }))); }
+  if (C.blindaje) e.append(dcEfecto('dc-est-blindaje', 'defensa', tr('Blindaje'), C.blindaje, tr('Blindaje: tu bloqueo se conserva durante {n} turnos más.', { n: C.blindaje }), true));
   if (C.fuerza) e.append(dcEfecto('dc-est-fuerza', 'fuerza', tr('Fuerza'), '+' + C.fuerza, tr('Fuerza: tus golpes pegan {n} más durante toda la reunión.', { n: C.fuerza })));
   if (C.fuerzaTurno) e.append(dcEfecto('dc-est-turno', 'fuerza', tr('Empleados'), '+' + C.fuerzaTurno, tr('Tus empleados pegan {n} más hasta el fin del turno.', { n: C.fuerzaTurno }), true));
   if (C.tropasTurno) { const n = Math.min(5, C.tropasTurno); e.append(dcEfecto('dc-est-turno', 'refuerzo', tr('Racha'), '+' + n, tr('Racha: el próximo empleado de este turno pega {n} más (uno por cada empleado ya jugado, hasta 5).', { n }), true)); }
@@ -123,7 +126,7 @@ function dcPintaCombate() {
   dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
   if (n) DCC.altoMano = Math.max(DCC.altoMano || 0, mano.offsetHeight); if (DCC.altoMano) mano.style.minHeight = DCC.altoMano + 'px';
-  dcEscala(s, z);
+  dcEscala(s, z); if (DC_VIGIA) { DC_VIGIA.disconnect(); [...z.children].forEach(c => DC_VIGIA.observe(c)); }
   if (DCC.elegida !== null) s.onclick = ev => { if (!ev.target.closest('.dc-rival, .dc-carta')) { DCC.elegida = null; dcPintaCombate(); } }; else s.onclick = null;
   // lo que pasó desde el último dibujo se anima en orden; mientras los rivales actúan no se toca nada
   const dur = dcPintaEventos(C);
@@ -133,14 +136,17 @@ function dcPintaCombate() {
 }
 // La reunión está pensada para 540×960; en pantallas más bajas (móviles pequeños, PC apaisado) se encoge entera para que quepa sin cortar nada.
 function dcEscala(s, z) {
-  const W = s.clientWidth, H = s.clientHeight; if (!W || !H) return;
+  const W = s.clientWidth, H = s.clientHeight; if (!W || !H) return; s.scrollTop = 0; // que nada la desplace (al enfocar una carta de abajo)
   z.style.transform = ''; z.style.width = W + 'px'; z.style.height = 'auto';
   const fila = z.querySelector('.dc-rivales'), rv = fila ? [...fila.children].filter(e => e.classList.contains('dc-rival')) : [];
   const anchoFila = rv.reduce((a, e) => a + e.offsetWidth, 0) + Math.max(0, rv.length - 1) * (parseFloat(getComputedStyle(fila || z).columnGap) || 0) + 20; // con la sala llena, que quepan los cinco
   const k = Math.min(1, (H - 2) / Math.max(1, z.offsetHeight), W / Math.max(W, anchoFila)); // 2 px de margen por el redondeo
   z.style.width = (W / k) + 'px'; z.style.height = (H / k) + 'px'; z.style.transform = k < 1 ? 'scale(' + k + ')' : '';
 }
-addEventListener('resize', () => { const s = document.getElementById('dc-combate'), z = s && !s.hidden && s.querySelector(':scope > .dc-escala'); if (z) dcEscala(s, z); });
+function dcReescala() { const s = document.getElementById('dc-combate'), z = s && !s.hidden && s.querySelector(':scope > .dc-escala'); if (z) dcEscala(s, z); }
+addEventListener('resize', dcReescala);
+// si algo cambia de alto después de pintar (una fuente que llega tarde, un texto que crece), se vuelve a escalar
+const DC_VIGIA = typeof ResizeObserver === 'function' ? new ResizeObserver(dcReescala) : null;
 // Un rótulo que cruza la pantalla (turno nuevo, hora de cierre).
 function dcRotulo(texto, alarma) {
   const s = document.getElementById('dc-combate'), viejo = s.querySelector('.dc-rotulo'); if (viejo) viejo.remove();
@@ -186,13 +192,14 @@ function dcPintaCarta(c, o = {}) {
 function dcVerCarta(c) {
   const v = dcVentana(dcNombre(c)); const g = dcPintaCarta(c, { grande: true }); g.onclick = null;
   v.append(g, dcEl('p', 'dc-nota', tr(DC_NOTA_TIPO[DC_CARTAS[c.id].tipo])));
+  const fx = dcFx(c); for (const k in DC_GLOSARIO) if (fx[k]) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
   if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
 // El ascenso de una carta (Becario → Junior): la carta de ahora, la de después con lo que cambia marcado, y la lista de cambios.
 // alConfirmar (si hay) asciende; alOtra vuelve a la lista o a la carta.
-const DC_ETIQUETA_FX = { coste: 'Coste', dano: 'Daño', veces: 'Veces', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba', caos: 'CAOS', vulnerable: 'Vulnerable', debil: 'Débil', aturde: 'Aturde', fuerza: 'Fuerza', fuerzaTurno: 'Fuerza del turno', n: 'Cifra' };
-const DC_PALABRA_CAMBIO = { despedida: ['Ya no se despide: vuelve al mazo', 'Despedida: se va al jugarla'], indefinido: ['Ya se descarta', 'Contrato indefinido: no se descarta'], madrugador: ['Ya no madruga', 'Madrugador: siempre en tu mano inicial'] };
+const DC_ETIQUETA_FX = { coste: 'Coste', dano: 'Daño', veces: 'Veces', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba', caos: 'CAOS', vulnerable: 'Vulnerable', debil: 'Débil', aturde: 'Aturde', fuerza: 'Fuerza', fuerzaTurno: 'Fuerza del turno', blindaje: 'Blindaje', n: 'Cifra' };
+const DC_PALABRA_CAMBIO = { despedida: ['Ya no se despide: vuelve al mazo', 'Despedida: se va al jugarla'], indefinido: ['Ya no se queda en la mano', 'Contrato indefinido: si no la juegas, se queda en tu mano'], madrugador: ['Ya no madruga', 'Madrugador: siempre en tu mano inicial'] };
 function dcVerAscenso(c, alConfirmar, alOtra) {
   const v = dcVentana(tr('Ascenso: {n}', { n: dcNombre(c) })), cambios = dcCambiosAscenso(c), resalta = new Set(cambios.map(x => x.k));
   const fila = dcEl('div', 'dc-ascenso');

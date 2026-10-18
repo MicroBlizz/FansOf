@@ -1,5 +1,5 @@
 /* Fans Of Decks · la reunión y las cartas: rivales con su intención, el líder, la franja de CAOS, la mano en abanico, las cifras flotantes y los rótulos. */
-#dc-combate { padding: 0; overflow: hidden; }
+#dc-combate { padding: 0; overflow: hidden; overflow: clip; }
 .dc-escala { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; padding: 8px 8px 4px; box-sizing: border-box; transform-origin: 0 0; isolation: isolate; }
 .dc-escala > .dc-fondo { inset: auto; left: 50%; bottom: 0; width: max(540px, 100%); height: auto; aspect-ratio: 9 / 16; transform: translateX(-50%); }
 #dc-combate.dc-cierre-on::before { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px rgba(255, 75, 92, .45); animation: dc-late 1s infinite alternate; }
@@ -38,7 +38,7 @@
 .dc-est { display: inline-flex; align-items: center; gap: 2px; font-size: 10px; font-weight: 800; padding: 1px 6px 1px 4px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .25); background: var(--tray-hi); } .dc-est .dc-svg { width: 12px; height: 12px; }
 .dc-est-fuerza { background: #c2410c; } .dc-est-vul { background: #b91c1c; } .dc-est-deb { background: #4c1d95; } .dc-est-atu { background: #1d4ed8; }
 .dc-efecto { font-size: 11px; padding: 2px 7px 2px 5px; cursor: pointer; } .dc-efecto b { margin-left: 1px; } .dc-efecto .dc-svg:last-child { width: 11px; height: 11px; opacity: .8; margin-left: 2px; }
-.dc-est-fijo { background: var(--chaos-deep); } .dc-est-turno { background: #0f766e; border-style: dashed; }
+.dc-est-fijo { background: var(--chaos-deep); } .dc-est-blindaje { background: #1d4ed8; } .dc-est-turno { background: #0f766e; border-style: dashed; }
 /* el líder */
 .dc-lider { display: flex; align-items: center; gap: 12px; width: 100%; padding: 6px 10px 6px 8px; border-radius: 16px; border: 1px solid var(--dc-linea); background: linear-gradient(90deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02)); box-sizing: border-box; }
 .dc-lider-arte { position: relative; flex: none; width: 92px; height: 92px; display: grid; place-items: center; }
@@ -87,7 +87,7 @@
 .dc-ccab { display: flex; flex-direction: column; gap: 0; width: 100%; }
 .dc-cnombre { font-size: 12px; font-weight: 800; line-height: 1.1; text-shadow: 0 1px 0 var(--outline); }
 .dc-ctipo { font-size: 8.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
-.dc-ctexto-in { display: block; width: 100%; }
+.dc-ctexto-in { display: block; width: 100%; hyphens: auto; overflow-wrap: anywhere; } /* una palabra larga en una carta estrecha se parte en vez de salirse */
 .dc-cambio-fuera { opacity: .55; }
 .dc-ctexto { font-size: 10.5px; font-weight: 700; line-height: 1.2; background: rgba(20, 10, 32, .6); border-radius: 7px; padding: 4px 4px; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
 .dc-carta.dc-grande { width: 196px; min-height: 270px; padding: 14px 10px 10px; gap: 6px; cursor: default; border-radius: 16px; }

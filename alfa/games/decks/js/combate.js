@@ -2,7 +2,7 @@
 // Turno: robas 5 y recibes 3 de CAOS; juegas cartas; fin de turno; los rivales hacen lo que anunciaban; el bloqueo se va. Hora de cierre: a partir del turno
 // DC_CIERRE el CAOS es el doble y los rivales pegan un 50 % más. Vulnerable: recibe +50 %. Débil: pega −25 %. Aturdido: pierde el turno.
 'use strict';
-const DC_MANO = 5, DC_CAOS = 3, DC_CIERRE = 6;
+const DC_MANO = 5, DC_MANO_MAX = 10, DC_CAOS = 3, DC_CIERRE = 6;
 const DC_OBJETIVOS = { ataque: 'uno' };
 
 function dcRival(id) {
@@ -26,7 +26,7 @@ function dcDanoRival(C, r, j) { j = j || r.jug; if (!j || !j.d) return 0; let d 
 // ---------- empezar ----------
 function dcCombateNuevo(encuentro, tramo) {
   const r = DCP.run, L = DC_LIDERES[r.lider];
-  const C = { tramo, rivales: encuentro.map(dcRival), bloqueo: 0, fuerza: 0, fuerzaTurno: 0, debil: 0, vulnerable: 0, caos: 0, poderes: {}, pila: shuffle(r.mazo.map(c => Object.assign({}, c))), mano: [], descartes: [], despedidas: [],
+  const C = { tramo, rivales: encuentro.map(dcRival), bloqueo: 0, blindaje: 0, fuerza: 0, fuerzaTurno: 0, debil: 0, vulnerable: 0, caos: 0, poderes: {}, pila: shuffle(r.mazo.map(c => Object.assign({}, c))), mano: [], descartes: [], despedidas: [],
     turno: 0, tropasTurno: 0, ataques: 0, saltoCarga: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], eventos: [], objetivo: null, meriendasUsadas: [] };
   // C.eventos: lo que pasó desde el último dibujo ({ t: 'dano'|'cura'|'bloqueo'|'esquiva', r: índice del rival o -1 si es el líder, n }); combate-ui los pinta como cifras flotantes y los vacía.
   // los madrugadores van arriba del mazo: salen siempre en la mano inicial
@@ -51,7 +51,9 @@ function dcRoba(C, n) {
 }
 function dcEmpiezaTurno(C) {
   C.turno++; DCP.run.stats.turnos++;
-  C.bloqueo = C.turno === 1 ? C.bloqueo : 0; C.fuerzaTurno = 0; C.tropasTurno = 0;
+  // Blindaje (regla de Arkioner, 18-10-2026): mientras quede, el bloqueo no se pierde al empezar el turno; gasta un punto por turno
+  if (C.turno > 1) { if (C.blindaje > 0) C.blindaje--; else C.bloqueo = 0; }
+  C.fuerzaTurno = 0; C.tropasTurno = 0;
   if (C.debil) C.debil--; if (C.vulnerable) C.vulnerable--;
   C.caos = C.turno >= C.cierre ? DC_CAOS * 2 : DC_CAOS;
   if (C.turno === 1 && dcObjeto('taza')) C.caos += dcObjeto('taza').caosTurno1;
@@ -62,7 +64,9 @@ function dcEmpiezaTurno(C) {
   for (const c of inic) { C.pila.splice(C.pila.indexOf(c), 1); C.mano.push(c); }
   const V = dcVentaja();
   if (C.turno === 1 && V && V.caosInicial) C.caos += V.caosInicial;
-  dcRoba(C, DC_MANO + (C.turno === 1 ? (dcObjeto('mochila') ? dcObjeto('mochila').manoInicial : 0) + (V && V.manoInicial ? V.manoInicial : 0) : 0) - C.mano.length);
+  // Contrato indefinido: lo que se quedó en la mano no quita robo; se roban las 5 de siempre (hasta 10 en la mano)
+  const extra = C.turno === 1 ? (dcObjeto('mochila') ? dcObjeto('mochila').manoInicial : 0) + (V && V.manoInicial ? V.manoInicial : 0) : 0, roba = DC_MANO + extra - (C.turno === 1 ? C.mano.length : 0);
+  dcRoba(C, Math.max(0, Math.min(roba, DC_MANO_MAX - C.mano.length)));
   C.fase = 'jugador';
 }
 
@@ -112,6 +116,7 @@ function dcResuelve(C, c, obj, gratis) {
   if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
   if (fx.cura) { dcVida(fx.cura); C.eventos.push({ t: 'cura', r: -1, n: fx.cura }); }
   if (fx.caos) C.caos += fx.caos;
+  if (fx.blindaje) C.blindaje += fx.blindaje;
   if (fx.fuerza) C.fuerza += fx.fuerza;
   if (fx.fuerzaTurno) C.fuerzaTurno += fx.fuerzaTurno;
   if (fx.poder) C.poderes[fx.poder] = (C.poderes[fx.poder] || 0) + fx.n;

@@ -1,8 +1,8 @@
 {
- "build": 214,
- "hash": "52ceb04",
- "fecha": "2026-10-18T21:10:56Z",
- "mensaje": "Publicación: Decks vuelve a poder salir en la release (SOLO_ALFA vacío)",
+ "build": 215,
+ "hash": "33d9167",
+ "fecha": "2026-10-18T21:17:21Z",
+ "mensaje": "Decks: Contrato indefinido se queda en la mano y Blindaje (Chaleco reflectante, Mampara de metacrilato)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

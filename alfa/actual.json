@@ -1,8 +1,8 @@
 {
- "build": 213,
- "hash": "364bac6",
- "fecha": "2026-10-18T20:26:40Z",
- "mensaje": "Decks: bot que comprueba la pantalla en móviles y PC, y arreglos de lo que encontró",
+ "build": 214,
+ "hash": "52ceb04",
+ "fecha": "2026-10-18T21:10:56Z",
+ "mensaje": "Publicación: Decks vuelve a poder salir en la release (SOLO_ALFA vacío)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

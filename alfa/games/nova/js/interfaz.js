@@ -106,6 +106,7 @@ function nvSalir() {
   nvParar(); NVI.cartasVistas = null; NVI.finVisto = null;
   document.getElementById('nv-partida').hidden = true;
   document.getElementById('nv-portada').hidden = false;
+  nvPintaMenu();
 }
 function nvJugar() {
   document.getElementById('nv-portada').hidden = true;

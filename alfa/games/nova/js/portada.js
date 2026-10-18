@@ -3,10 +3,8 @@
 'use strict';
 (function () {
   const portada = document.getElementById('nv-portada'), q = location.search;
-  portada.querySelector('#nv-estado').textContent = tr('Fans of Nova · prototipo');
   const b = document.getElementById('nv-jugar');
-  b.textContent = tr('Jugar el prototipo');
-  b.onclick = nvJugarCampana;
+  nvMontaMenu();
   nvEntrada();
   nvCargaEnemigos();
   nvCargaArte(() => {   // el botón aparece cuando el arte está cargado (el menú enseña las naves)
@@ -19,6 +17,7 @@
     else if (/[?&]menu=capitan/.test(q)) { nvJugar(); nvMenuCapitan('caza'); }
     else if (/[?&]menu=oficial/.test(q)) { nvJugar(); nvMenuOficial('caza', 'bunny'); }
     else if (/[?&]jugar=1/.test(q)) nvJugar();
+    else if (!/[?&](galaxia|capital|casco|menu)=/.test(q) && nvNovedadesPendientes()) setTimeout(nvNovedades, 500);   // versión nueva: sus novedades salen solas una vez
     else if (/[?&]galaxia=1/.test(q)) nvJugarCampana();
     else if (/[?&]capital=1/.test(q)) { nvJugarCampana(); nvNaveCapital(); }
     const rg = /[?&]rango=(\d+)/.exec(q);   // solo pruebas: empezar en ese rango, con las ranuras llenas y sin morir

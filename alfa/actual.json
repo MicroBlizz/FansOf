@@ -1,8 +1,8 @@
 {
- "build": 204,
- "hash": "399811c",
- "fecha": "2026-10-18T03:25:27Z",
- "mensaje": "Nova: en la campaña el capitán es el líder o una unidad de la facción elegida (las unidades dan la faceta de su rol)",
+ "build": 205,
+ "hash": "c96a99e",
+ "fecha": "2026-10-18T03:45:36Z",
+ "mensaje": "Nova: menú principal como el del resto de la serie (CAMPAÑA, nave capital, novedades, opciones con sonido, idioma, cuenta y empezar de cero, y Cómo se juega); las novedades salen solas en cada versión nueva",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

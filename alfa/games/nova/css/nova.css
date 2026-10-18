@@ -2,9 +2,6 @@
 #stage { width: min(100vw, calc(100vh * 9 / 16)); height: min(100vh, calc(100vw * 16 / 9)); background: radial-gradient(ellipse at 50% 30%, #1b2f66 0%, #0a1226 70%); }
 #nv-portada { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 18px; padding: 24px; }
 #nv-portada .logo { display: flex; flex-direction: column; align-items: center; margin: 0; }
-#nv-portada .l1 { font-size: 34px; letter-spacing: 2px; }
-#nv-portada .l2 { font-size: 72px; line-height: 1; }
-#nv-portada .tagline { font-size: 18px; opacity: .85; }
 
 /* Partida (prototipo de la fase 1) */
 #nv-partida { padding: 0; }
@@ -76,3 +73,16 @@
 .nv-sonido { display: flex; flex-direction: column; gap: 4px; }
 .nv-sonfila { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 700 15px 'Baloo 2', sans-serif; color: #fff; }
 .nv-sonfila input { flex: 1; max-width: 60%; accent-color: #ffd93d; }
+/* menú principal: ventanas de opciones y novedades (la tarjeta es la de core/css/menus.css) */
+#nv-portada .row { gap: 12px; }
+#nv-ventana { z-index: 50; background: rgba(5, 8, 22, .72); }
+.nv-ventana { position: relative; overflow: hidden; }
+.nv-ventana .opt-list { overflow-y: auto; }
+.nv-cerrar { position: absolute; top: 8px; right: 10px; width: 34px; height: 34px; border-radius: 50%; border: 3px solid #1a0f2e; background: #3e2363; color: #fff; font: 800 20px/1 'Baloo 2', sans-serif; cursor: pointer; }
+.nv-news { overflow-y: auto; text-align: left; width: 100%; font-size: 14px; font-weight: 700; }
+.nv-news h4 { margin: 10px 0 4px; color: #ffcb3d; font-size: 13px; letter-spacing: 1px; }
+.nv-news ul { margin: 0; padding-left: 18px; }
+.nv-news ul.joke { opacity: .8; font-style: italic; }
+.nv-ok { font-size: 26px; padding: 12px 36px 8px; }
+.nv-peligro { background: #ff4b5c !important; }
+.nv-ver { margin: 0; font-size: 12px; opacity: .7; }

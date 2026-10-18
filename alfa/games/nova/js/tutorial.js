@@ -113,7 +113,7 @@ function nvTutoTodo() {   // «Cómo se juega»: todas las páginas seguidas
   nvTutoMuestra(pags, () => nvTutoMarca(NV_TUTO_ORDEN));
 }
 function nvTutoMuestra(pags, alAcabar) {
-  const raiz = document.getElementById('nv-partida'); if (!raiz) return;
+  const pa = document.getElementById('nv-partida'), raiz = pa && !pa.hidden ? pa : document.getElementById('stage'); if (!raiz) return;   // también desde la portada
   let i = 0; NVP.tuto = true;
   const capa = nvEl('nv-tuto'); raiz.appendChild(capa);
   const cierra = todo => { capa.remove(); NVP.tuto = false; NVP.ult = 0; alAcabar(); if (todo) nvTutoMarca(NV_TUTO_ORDEN); };

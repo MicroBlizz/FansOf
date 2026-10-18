@@ -1,8 +1,8 @@
 {
- "build": 200,
- "hash": "617dd35",
- "fecha": "2026-10-18T02:48:53Z",
- "mensaje": "Decks: animaciones de cartas y rivales, y fondos por tipo de cita",
+ "build": 201,
+ "hash": "fc5d703",
+ "fecha": "2026-10-18T02:55:10Z",
+ "mensaje": "Limpieza: Skate a EN PAUSA, juegos en pausa congelados en publicar.py, SQL con número único y registro de lo aplicado (sql_aplicadas.py)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

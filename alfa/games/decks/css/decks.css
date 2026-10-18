@@ -105,3 +105,5 @@
 .dc-premio { display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 78px; padding: 10px 10px 8px; border-radius: 14px; background: rgba(20, 10, 34, .55); border: 1px solid var(--dc-linea); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06); }
 .dc-premio .dc-svg { width: 22px; height: 22px; color: var(--gold); } .dc-premio b { font-family: var(--font-display); font-size: 22px; padding-top: 3px; color: var(--ink); } .dc-premio small { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-dim); }
 .dc-premio:nth-child(2) .dc-svg { color: var(--dc-azul); } .dc-premio:nth-child(3) .dc-svg { color: var(--danger); } .dc-premio:nth-child(4) .dc-svg { color: var(--dc-verde); }
+.dc-chip-ventaja { background: linear-gradient(90deg, #8a6a12, #5a4208); border-color: rgba(255, 203, 61, .6); }
+.dc-ventaja.dc-cerrada { opacity: .5; cursor: default; } .dc-ventaja.dc-cerrada .dc-riesgo { background: #4a3a5a; } .dc-ventaja .dc-riesgo { background: #2f8a1c; }

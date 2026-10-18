@@ -37,8 +37,10 @@ function dcPintaMapa() {
     const fila = dcEl('div', 'dc-hora dc-hora-' + estado);
     const eti = dcEl('div', 'dc-hora-eti'); eti.append(dcEl('b', '', DC_HORAS[p]), dcEl('small', '', tr({ pasada: 'Hecho', actual: 'Ahora', siguiente: 'Elige', futura: 'Más tarde' }[estado])));
     const citas = dcEl('div', 'dc-citas');
-    piso.forEach((n, k) => {
-      const posible = estado === 'siguiente', elegida = p <= m.piso && m.nodo === k;
+    // la cita elegida va la primera: se lee la hora y debajo lo que se dejó de lado
+    const eleg = dcElegidoEn(p), orden = piso.map((n, k) => k); if (eleg >= 0) { orden.splice(orden.indexOf(eleg), 1); orden.unshift(eleg); }
+    orden.forEach(k => {
+      const n = piso[k], posible = estado === 'siguiente', elegida = k === eleg;
       const b = dcEl('button', 'dc-cita dc-cita-' + n.tipo + (posible ? ' dc-posible' : '') + (elegida ? (estado === 'actual' ? ' dc-actual' : ' dc-hecha') : '') + (p <= m.piso && !elegida ? ' dc-saltada' : '') + (estado === 'futura' ? ' dc-futura' : ''));
       const ic = dcEl('span', 'dc-cita-ic'); ic.append(dcSvg(DC_ICONO_NODO[n.tipo]));
       const txt = dcEl('span', 'dc-cita-txt'); txt.append(dcEl('b', '', dcTituloNodo(n)), dcEl('small', '', tr(n.sala) + ' · ' + dcSubtituloNodo(n)));
@@ -55,6 +57,7 @@ function dcPintaMapa() {
   const pie = dcEl('div', 'dc-pie');
   const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); o.onclick = () => toast(tr(DC_OBJETOS[k].texto)); objs.append(o); }
   for (const k of r.meriendas) { const o = dcEl('span', 'dc-chip dc-chip-merienda', tr(DC_MERIENDAS[k].nombre)); o.title = tr(DC_MERIENDAS[k].texto); objs.append(o); }
+  if (dcVentaja()) { const o = dcEl('span', 'dc-chip dc-chip-ventaja', tr(dcVentaja().nombre)); o.title = tr(dcVentaja().texto); o.onclick = () => toast(tr(dcVentaja().texto)); objs.prepend(o); }
   pie.append(objs, dcEl('p', 'dc-nota', tr(m.piso < 0 ? 'Cada hora eliges a qué reunión vas. A las 17:00 te espera SurvivalBot.' : 'Elige la reunión de las {h}.', { h: DC_HORAS[sig] || '17:00' })));
   s.append(pie);
   requestAnimationFrame(() => { const a = s.querySelector('.dc-hora-siguiente'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); });
@@ -74,7 +77,7 @@ function dcFinReunion(resultado, C) {
   const r = DCP.run, n = dcNodoActual();
   if (resultado === 'derrota') { play('lose'); dcFinPartida(false); return dcPintaFin(false); }
   play('win');
-  const [a, b] = DC_NOMINAS[n.tipo]; const nom = a + Math.round(Math.random() * (b - a)); r.nominas += nom;
+  const [a, b] = DC_NOMINAS[n.tipo]; const nom = a + Math.round(Math.random() * (b - a)) + (dcVentaja() && dcVentaja().nominas ? dcVentaja().nominas : 0); r.nominas += nom;
   const s = dcPanel(tr(n.tipo === 'jefe' ? '¡Despacho conquistado!' : '¡Reunión ganada!'));
   s.append(dcTarjetaResultado(dcTituloNodo(n), tr(n.sala), [['nominas', '+' + nom, tr('nóminas')], ['reloj', String(C.turno), tr('turnos')], ['vida', r.hp + '/' + r.hpMax, tr('vida')]]));
   const pasos = [];
@@ -107,6 +110,17 @@ function dcEligeObjeto(ids, titulo) {
   const r = DCP.run, s = dcPanel(titulo), g = dcEl('div', 'dc-rejilla');
   ids.forEach(k => { const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
   s.append(g);
+}
+// ---------- la ventaja fiscal: se elige una al empezar la partida ----------
+function dcEligeVentaja(alElegir) {
+  const s = dcPanel(tr('Ventaja fiscal'));
+  s.append(dcEl('p', 'dc-nota', tr('Elige una ventaja para toda la partida. Jugando se desbloquean las demás.')));
+  for (const k in DC_VENTAJAS) {
+    const V = DC_VENTAJAS[k], abierta = dcVentajaAbierta(k), b = dcEl('button', 'dc-opcion dc-ventaja' + (abierta ? '' : ' dc-cerrada'));
+    b.append(dcEl('b', '', tr(V.nombre)), dcEl('small', 'dc-riesgo', abierta ? tr('Desbloqueada') : tr('Se desbloquea: {h}', { h: dcTextoHito(k) })), dcEl('span', '', tr(V.texto)));
+    b.disabled = !abierta; b.onclick = () => { play('levelup'); alElegir(k); }; s.append(b);
+  }
+  const n = dcEl('button', 'btn-ghost ol', tr('SIN VENTAJA')); n.onclick = () => alElegir(null); s.append(n);
 }
 // ---------- correos ----------
 function dcPintaCorreo(E) {
@@ -147,17 +161,17 @@ function dcPintaPausa() {
 function dcPintaEconomato() {
   const r = DCP.run, n = dcNodoActual();
   if (!n.tienda) { n.tienda = { cartas: dcOferta(3).map(id => ({ id, precio: dcPrecioCarta(id) })), objeto: dcObjetoAlAzar(), merienda: pick(Object.keys(DC_MERIENDAS)) }; dcGuarda(); }
-  const T = n.tienda, s = dcPanel(tr('Economato de Lola'));
+  const T = n.tienda, s = dcPanel(tr('Economato de Lola')), desc = x => Math.round(x * (1 - (dcVentaja() && dcVentaja().descuento ? dcVentaja().descuento : 0)));
   s.append(dcEl('p', 'dc-nota', tr('«Lo que ves es lo que hay. Y lo que hay, lo he sacado yo del almacén de Microblizz».')));
   const compra = (precio, fn) => { if (r.nominas < precio) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } r.nominas -= precio; play('levelup'); fn(); dcGuarda(); dcPintaEconomato(); };
   const g = dcEl('div', 'dc-rejilla dc-oferta');
-  T.cartas.forEach(it => { if (it.vendida) return; const c = dcCarta(it.id), w = dcEl('div', 'dc-producto'); w.append(dcPintaCarta(c, { grande: true, al: () => compra(it.precio, () => { r.mazo.push(c); it.vendida = true; }) }), dcEl('b', 'dc-precio', fmt(it.precio))); g.append(w); });
+  T.cartas.forEach(it => { if (it.vendida) return; const c = dcCarta(it.id), w = dcEl('div', 'dc-producto'); w.append(dcPintaCarta(c, { grande: true, al: () => compra(desc(it.precio), () => { r.mazo.push(c); it.vendida = true; }) }), dcEl('b', 'dc-precio', fmt(desc(it.precio)))); g.append(w); });
   s.append(g);
   const fila = dcEl('div', 'dc-fila');
-  if (T.objeto && !T.objetoVendido) { const O = DC_OBJETOS[T.objeto], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto)), dcEl('b', 'dc-precio', '120')); b.onclick = () => compra(120, () => { r.objetos.push(T.objeto); T.objetoVendido = true; }); fila.append(b); }
-  if (T.merienda && !T.meriendaVendida) { const M = DC_MERIENDAS[T.merienda], b = dcEl('button', 'dc-objeto dc-rar-common'); b.append(dcEl('b', '', tr(M.nombre)), dcEl('span', '', tr(M.texto)), dcEl('b', 'dc-precio', '35')); b.disabled = r.meriendas.length >= 2; b.onclick = () => compra(35, () => { r.meriendas.push(T.merienda); T.meriendaVendida = true; }); fila.append(b); }
-  const q = dcEl('button', 'dc-objeto dc-rar-basic'); q.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Lola la pierde «sin querer» en el archivo.')), dcEl('b', 'dc-precio', fmt(r.quitarPrecio)));
-  q.onclick = () => { if (r.nominas < r.quitarPrecio) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.nominas -= r.quitarPrecio; r.quitarPrecio += 15; r.mazo.splice(r.mazo.indexOf(c), 1); play('levelup'); dcGuarda(); dcPintaEconomato(); }); };
+  if (T.objeto && !T.objetoVendido) { const O = DC_OBJETOS[T.objeto], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto)), dcEl('b', 'dc-precio', String(desc(120)))); b.onclick = () => compra(desc(120), () => { r.objetos.push(T.objeto); T.objetoVendido = true; }); fila.append(b); }
+  if (T.merienda && !T.meriendaVendida) { const M = DC_MERIENDAS[T.merienda], b = dcEl('button', 'dc-objeto dc-rar-common'); b.append(dcEl('b', '', tr(M.nombre)), dcEl('span', '', tr(M.texto)), dcEl('b', 'dc-precio', String(desc(35)))); b.disabled = r.meriendas.length >= 2; b.onclick = () => compra(desc(35), () => { r.meriendas.push(T.merienda); T.meriendaVendida = true; }); fila.append(b); }
+  const q = dcEl('button', 'dc-objeto dc-rar-basic'); q.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Lola la pierde «sin querer» en el archivo.')), dcEl('b', 'dc-precio', fmt(desc(r.quitarPrecio))));
+  q.onclick = () => { if (r.nominas < desc(r.quitarPrecio)) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.nominas -= desc(r.quitarPrecio); r.quitarPrecio += 15; r.mazo.splice(r.mazo.indexOf(c), 1); play('levelup'); dcGuarda(); dcPintaEconomato(); }); };
   fila.append(q); s.append(fila);
   const b = dcEl('button', 'btn-big ol', tr('SALIR')); b.onclick = () => { dcNodoResuelto(); dcPintaMapa(); }; s.append(b);
 }
@@ -173,7 +187,7 @@ function dcPintaFin(victoria) {
 function dcComoSeJuega() {
   const v = dcVentana(tr('Cómo se juega'));
   const ul = dcEl('ol', 'steps');
-  for (const t of ['Tu día en Microblizz es una agenda llena de reuniones: cada hora eliges a cuál vas. A las 17:00 te espera SurvivalBot.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Toca la carta; si hay varios rivales, toca después a quién.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny pega +1 con cada empleado por cada empleado jugado antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'Las nóminas se gastan en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada nodo.'])
+  for (const t of ['Tu día en Microblizz es una agenda llena de reuniones: cada hora eliges a cuál vas. A las 17:00 te espera SurvivalBot.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Toca la carta; si hay varios rivales, toca después a quién.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny pega +1 con cada empleado por cada empleado jugado antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'Las nóminas se gastan en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada cita.', 'Jugando desbloqueas Ventajas fiscales: al empezar una partida eliges una y vale hasta el final.'])
     ul.append((() => { const li = dcEl('li'); li.append(dcEl('span', 'n', String(ul.children.length + 1)), dcEl('span', '', tr(t))); return li; })());
   v.append(ul); const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }

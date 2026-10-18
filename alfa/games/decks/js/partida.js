@@ -51,6 +51,10 @@ function dcCambiosAscenso(carta) {
   return out;
 }
 function dcObjeto(clave) { return DCP.run && DCP.run.objetos.includes(clave) ? DC_OBJETOS[clave] : null; }
+// La ventaja fiscal de la partida (o null) y si una está desbloqueada por lo jugado hasta ahora.
+function dcVentaja() { return DCP.run && DCP.run.ventaja ? DC_VENTAJAS[DCP.run.ventaja] || null : null; }
+function dcVentajaAbierta(k) { const h = DC_VENTAJAS[k].hito; if (!h) return true; for (const q in h) if ((DCP.meta[q] || 0) < h[q]) return false; return true; }
+function dcTextoHito(k) { const h = DC_VENTAJAS[k].hito; if (!h) return ''; if (h.reuniones) return tr('Gana {n} reuniones', { n: h.reuniones }); if (h.victorias) return tr(h.victorias === 1 ? 'Gana una partida' : 'Gana {n} partidas', { n: h.victorias }); return tr(h.partidas === 1 ? 'Juega una partida' : 'Juega {n} partidas', { n: h.partidas }); }
 
 // ---------- la agenda ----------
 function dcGeneraMapa() {
@@ -65,23 +69,25 @@ function dcGeneraMapa() {
     const T = DC_TITULOS[n.tipo]; vistos[n.tipo] = (vistos[n.tipo] || 0) + 1; n.titulo = (vistos[n.tipo] - 1) % T.length;
     n.sala = n.tipo === 'pausa' ? 'Cafetería' : n.tipo === 'economato' ? 'Almacén' : n.tipo === 'jefe' ? 'Última planta' : salas.pop() || pick(DC_SALAS);
   }
-  return { pisos, piso: -1, nodo: -1 };
+  return { pisos, piso: -1, nodo: -1, elegidos: [] };   // elegidos[hora] = índice de la cita a la que se fue
 }
+// La cita elegida en una hora ya pasada (o la actual); -1 si todavía no se ha ido a ninguna.
+function dcElegidoEn(p) { const m = DCP.run.mapa; if (p > m.piso) return -1; if (p === m.piso) return m.nodo; return m.elegidos && m.elegidos[p] !== undefined ? m.elegidos[p] : -1; }
 function dcNodoActual() { const m = DCP.run.mapa; return m.piso >= 0 ? m.pisos[m.piso][m.nodo] : null; }
 // A qué citas se puede ir ahora: a cualquiera de la hora siguiente (cada hora se elige una reunión de la agenda).
 function dcNodosPosibles() { const m = DCP.run.mapa, p = m.piso + 1; return p < m.pisos.length ? m.pisos[p].map((n, i) => [p, i]) : []; }
 function dcTituloNodo(n) { const T = DC_TITULOS[n.tipo]; return tr(T[(n.titulo || 0) % T.length]); }
 
 // ---------- partida nueva ----------
-function dcNuevaPartida(lider) {
-  const L = DC_LIDERES[lider];
-  DCP.run = { lider, hp: L.hp, hpMax: L.hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: dcGeneraMapa(), acto: 1,
+function dcNuevaPartida(lider, ventaja) {
+  const L = DC_LIDERES[lider], V = ventaja && DC_VENTAJAS[ventaja] ? DC_VENTAJAS[ventaja] : null, hp = L.hp + (V && V.vidaMax ? V.vidaMax : 0);
+  DCP.run = { lider, ventaja: V ? ventaja : null, hp, hpMax: hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: dcGeneraMapa(), acto: 1,
     quitarUsado: false, quitarPrecio: 60, stats: { reuniones: 0, turnos: 0, nodos: 0 }, pendiente: null, empezada: Date.now() };
   DCP.meta.partidas++;
   dcGuarda();
 }
 // Ir a un nodo: lo apunta como pendiente de resolver y guarda (si se recarga, se vuelve a ese nodo).
-function dcIrA(piso, nodo) { const m = DCP.run.mapa; m.piso = piso; m.nodo = nodo; DCP.run.pendiente = m.pisos[piso][nodo].tipo; DCP.run.stats.nodos++; dcGuarda(); }
+function dcIrA(piso, nodo) { const m = DCP.run.mapa; m.piso = piso; m.nodo = nodo; m.elegidos = m.elegidos || []; m.elegidos[piso] = nodo; DCP.run.pendiente = m.pisos[piso][nodo].tipo; DCP.run.stats.nodos++; dcGuarda(); }
 function dcNodoResuelto() { if (DCP.run) { DCP.run.pendiente = null; dcGuarda(); } }
 function dcFinPartida(victoria) { if (victoria) DCP.meta.victorias++; DCP.meta.ultima = { victoria, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
 

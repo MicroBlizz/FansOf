@@ -117,3 +117,9 @@
 .dc-toggle { display: inline-flex; align-items: center; gap: 8px; font: 800 13px/1 var(--font-ui); padding: 7px 14px 7px 8px; border-radius: 999px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 34, .6); color: var(--ink); cursor: pointer; }
 .dc-toggle-caja { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--ink-dim); background: rgba(255, 255, 255, .06); color: transparent; transition: background .15s, color .15s; } .dc-toggle-caja .dc-svg { width: 16px; height: 16px; }
 .dc-toggle-on .dc-toggle-caja { background: var(--gold); border-color: var(--gold); color: #3a2300; } .dc-toggle-on { border-color: rgba(255, 203, 61, .6); }
+/* compañeros en la mesa y protocolos armados */
+.dc-equipo { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.dc-comp { position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, .08); border: 1px solid var(--dc-linea); animation: dc-pop .3s cubic-bezier(.2, .8, .3, 1.4) both; }
+.dc-comp .dc-sprite { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .5)); }
+.dc-comp b { position: absolute; right: -5px; bottom: -4px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--gold); color: #3a2300; font: 400 12px/18px var(--font-display); text-align: center; border: 2px solid var(--outline); box-sizing: border-box; padding: 1px 3px 0; }
+.dc-prot { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 800; padding: 3px 8px 2px 5px; border-radius: 999px; background: rgba(90, 174, 255, .18); border: 1px solid rgba(90, 174, 255, .6); color: #cfe8ff; animation: dc-pop .3s cubic-bezier(.2, .8, .3, 1.4) both; } .dc-prot .dc-svg { width: 13px; height: 13px; color: var(--dc-azul); }

@@ -15,6 +15,16 @@ const DC_OBJETOS = {
   cofre: { nombre: 'Cofre de botín sin abrir', rar: 'legendary', texto: 'Al empezar cada reunión juegas gratis una carta al azar de tu mazo.', cartaGratis: 1 },
 };
 const DC_OBJETOS_POOL = Object.keys(DC_OBJETOS).filter(k => DC_OBJETOS[k].rar !== 'legendary');
+// Ventajas fiscales (idea de Arkioner, 18-10-2026): se desbloquean jugando (hito sobre DCP.meta) y se elige UNA al empezar la partida; vale toda la partida.
+// hito: { partidas | reuniones | victorias: n } o null (desde el principio). El efecto se lee con dcVentaja().
+const DC_VENTAJAS = {
+  desgravacion: { nombre: 'Desgravación', texto: '+5 nóminas por cada reunión ganada.', hito: null, nominas: 5 },
+  seguro: { nombre: 'Seguro médico', texto: '+10 de vida máxima.', hito: { partidas: 1 }, vidaMax: 10 },
+  deduccion: { nombre: 'Deducción de CAOS', texto: 'Empiezas cada reunión con 1 CAOS extra.', hito: { reuniones: 5 }, caosInicial: 1 },
+  pensiones: { nombre: 'Plan de pensiones', texto: 'El Economato te hace un 20 % de descuento.', hito: { partidas: 3 }, descuento: 0.2 },
+  objetivos: { nombre: 'Bonus por objetivos', texto: 'El Salto del caos se carga con 1 de CAOS menos.', hito: { victorias: 1 }, carga: 1 },
+  horasextra: { nombre: 'Horas extra', texto: 'Robas 1 carta más en el primer turno de cada reunión.', hito: { reuniones: 12 }, manoInicial: 1 },
+};
 // Meriendas: se usan en tu turno, de un toque. Dos huecos.
 const DC_MERIENDAS = {
   energetica: { nombre: 'Bebida energética XXL', texto: '+2 CAOS este turno.', caos: 2 },

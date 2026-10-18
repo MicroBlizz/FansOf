@@ -5,8 +5,8 @@
 const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0 };
 // Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
 // Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
-const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', clausula: 'Cláusula', spam: 'Spam' };
-const DC_NOTA_TIPO = { empleado: 'Empleado: sale, hace su trabajo y vuelve al mazo.', tarea: 'Tarea: efecto inmediato.', tramite: 'Trámite: algo puntual de tu líder, como bloquear, robar o curarse.', directiva: 'Directiva: un poder que dura toda la reunión.', clausula: 'Cláusula: una carta que estorba. Se quita en el Economato.', spam: 'Spam: basura del rival. Se tira al acabar el turno.' };
+const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', companero: 'Compañero', protocolo: 'Protocolo', clausula: 'Cláusula', spam: 'Spam' };
+const DC_NOTA_TIPO = { empleado: 'Empleado: sale, hace su trabajo y vuelve al mazo.', tarea: 'Tarea: efecto inmediato.', tramite: 'Trámite: algo puntual de tu líder, como bloquear, robar o curarse.', directiva: 'Directiva: un poder que dura toda la reunión.', companero: 'Compañero: se queda en la mesa unos turnos y actúa solo al acabar cada turno tuyo.', protocolo: 'Protocolo: se deja armado y salta solo cuando un rival hace lo que anuncia.', clausula: 'Cláusula: una carta que estorba. Se quita en el Economato.', spam: 'Spam: basura del rival. Se tira al acabar el turno.' };
 const dcEl = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
 
 function dcEmpiezaReunion(encuentro, tramo, alFin) {
@@ -43,6 +43,13 @@ function dcPintaRival(C, r, i) {
   d.onclick = () => { if (DCC.elegida !== null && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k); dcJugar(C, k, i); play('card'); dcTrasJugada(); } };
   return d;
 }
+// Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
+function dcPintaEquipo(C) {
+  const e = dcEl('div', 'dc-equipo');
+  for (const k of C.companeros) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-comp'); d.append(dcSprite(D.arte, 34), dcEl('b', '', String(k.turnos))); d.title = tr(D.nombre) + ': ' + dcTextoCarta({ id: k.id, asc: k.asc }); e.append(d); }
+  for (const k of C.protocolos) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-prot'); d.append(dcSvg('defensa'), dcEl('span', '', tr(D.nombre))); d.title = dcTextoCarta({ id: k.id, asc: k.asc }); e.append(d); }
+  return e;
+}
 function dcPintaCombate() {
   const C = DCC.C, r = DCP.run, L = DC_LIDERES[r.lider], s = document.getElementById('dc-combate');
   s.textContent = ''; s.classList.toggle('dc-cierre-on', C.turno >= C.cierre);
@@ -58,6 +65,7 @@ function dcPintaCombate() {
   const lsp = dcEl('div', 'dc-lider-arte'); lsp.append(dcSprite('bunny', 92));
   const inf = dcEl('div', 'dc-lider-info');
   inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEstados(C));
+  if (C.companeros.length || C.protocolos.length) inf.append(dcPintaEquipo(C));
   const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); objs.append(o); }
   if (r.objetos.length) inf.append(objs);
   med.append(lsp, inf);

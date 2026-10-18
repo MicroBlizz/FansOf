@@ -40,6 +40,14 @@ const DC_CARTAS = {
   rastro: { nombre: 'Rastro', tipo: 'tramite', rar: 'common', coste: 0, ic: 'RS', fx: { caos: 1, roba: 1, despedida: true }, asc: { despedida: false }, texto: 'Sigues el rastro: +{caos} CAOS y roba {roba}.' },
   merendar: { nombre: 'Hora de merendar', tipo: 'tramite', rar: 'basic', coste: 1, ic: 'HM', fx: { cura: 4, roba: 1 }, asc: { cura: 6 }, texto: 'Un bocadillo rápido: te cura {cura} y roba {roba}.' },
   espinas: { nombre: 'Espinas del seto', tipo: 'directiva', rar: 'common', coste: 1, ic: 'EP', fx: { poder: 'espinas', n: 2 }, asc: { n: 3 }, texto: 'Espinas: cada rival que te pega recibe {n} de daño.' },
+  // ---------- compañeros: se quedan en la mesa unos turnos y actúan al acabar cada turno tuyo (hasta 3) ----------
+  comp_ardilla: { nombre: 'Ardilla de guardia', tipo: 'companero', rar: 'common', coste: 1, arte: 'squirrel', fx: { companero: true, turnos: 3, dano: 3 }, asc: { dano: 4 }, texto: 'Se queda {turnos} turnos: al acabar cada uno pega {dano} al rival con menos vida.' },
+  comp_castor: { nombre: 'Castor de obras', tipo: 'companero', rar: 'rare', coste: 2, arte: 'beaver', fx: { companero: true, turnos: 2, bloqueo: 5 }, asc: { bloqueo: 7 }, texto: 'Se queda {turnos} turnos: al acabar cada uno te da {bloqueo} de bloqueo.' },
+  comp_enfermera: { nombre: 'Enfermera de planta', tipo: 'companero', rar: 'rare', coste: 2, arte: 'meercat', fx: { companero: true, turnos: 3, cura: 3 }, asc: { cura: 4 }, texto: 'Se queda {turnos} turnos: al acabar cada uno te cura {cura}.' },
+  // ---------- protocolos: se dejan armados y saltan solos ante lo que anuncia el rival (hasta 3) ----------
+  pr_incendios: { nombre: 'Protocolo de incendios', tipo: 'protocolo', rar: 'common', coste: 1, ic: 'PI', fx: { protocolo: 'golpe', bloqueo: 8 }, asc: { bloqueo: 11 }, texto: 'Armado: la próxima vez que un rival vaya a pegarte, {bloqueo} de bloqueo justo antes.' },
+  pr_antispam: { nombre: 'Protocolo antispam', tipo: 'protocolo', rar: 'rare', coste: 1, ic: 'PA', fx: { protocolo: 'spam', dano: 10 }, asc: { dano: 14 }, texto: 'Armado: el próximo Spam que te manden rebota: no llega y el rival recibe {dano}.' },
+  pr_evacuacion: { nombre: 'Protocolo de evacuación', tipo: 'protocolo', rar: 'rare', coste: 1, ic: 'PE', fx: { protocolo: 'refuerzo' }, asc: { coste: 0 }, texto: 'Armado: los próximos refuerzos que llame un rival llegan con la mitad de vida.' },
   // ---------- cláusulas y spam ----------
   cl_suscripcion: { nombre: 'Suscripción obligatoria', tipo: 'clausula', rar: 'basic', coste: 0, ic: 'SO', fx: { injugable: true, alRobar: 'caos-1' }, texto: 'Injugable. Al robarla pierdes 1 CAOS.' },
   cl_reunion: { nombre: 'Reunión que podía ser un correo', tipo: 'clausula', rar: 'basic', coste: 0, ic: 'RC', fx: { injugable: true }, texto: 'Injugable. Ocupa sitio en la mano y no hace nada.' },

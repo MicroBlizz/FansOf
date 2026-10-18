@@ -1,8 +1,8 @@
 {
- "build": 194,
- "hash": "6bc0893",
- "fecha": "2026-10-18T02:34:47Z",
- "mensaje": "Nova: facciones con tres armas propias (insignia, especial por rango, secreta por campaña) y seis naves nuevas con arte provisional",
+ "build": 195,
+ "hash": "8fea7bc",
+ "fecha": "2026-10-18T02:35:38Z",
+ "mensaje": "Decks: Compañero y Protocolo, Ventaja fiscal y la cita elegida primera en la agenda",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

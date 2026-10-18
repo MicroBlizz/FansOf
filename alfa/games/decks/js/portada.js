@@ -15,7 +15,7 @@ function dcPortada() {
   if (!abierto) { document.getElementById('dc-estado').textContent = tr('Fans Of Decks · en construcción'); document.getElementById('dc-portada').hidden = false; return; }
   botones.hidden = false;
   document.getElementById('dc-nueva').onclick = () => {
-    const empieza = () => { play('select'); dcNuevaPartida('bunny'); dcPintaMapa(); };
+    const empieza = () => { play('select'); dcEligeVentaja(v => { dcNuevaPartida('bunny', v); dcPintaMapa(); }); };
     if (DCP.run) confirmBox(tr('¿Partida nueva?'), tr('Perderás la partida que tienes a medias.'), tr('SÍ, NUEVA'), empieza); else empieza();
   };
   document.getElementById('dc-continuar').onclick = () => { play('select'); if (DCP.run.pendiente) dcResuelveNodo(); else dcPintaMapa(); };

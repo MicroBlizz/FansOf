@@ -29,7 +29,7 @@ function nvVariantesPool(portador) {
 function nvPesoTendencia(S, portador, carga) {
   let k = 1;
   for (const w of S.nave.armas) { if (w.portador === portador) k *= 1.5; if (w.carga === carga) k *= 1.5; }
-  return Math.min(4, k);
+  return nvAura(S, 'remake') ? 1 + (Math.min(4, k) - 1) * 0.5 : Math.min(4, k);   // Remake (La Directora): el pool se inclina menos
 }
 function nvCandidatas(S) {
   const n = S.nave, out = [], libres = nvRanuras(n.rango, S).filter(r => !n.armas.some(w => w.slot === r.id));
@@ -63,7 +63,7 @@ function nvCandidatas(S) {
     for (const f of NOVA_ARMAS.fusiones) {
       const ok = f.tipo === 'doble' ? (a.portador === f.portador && b.portador === f.portador && a.carga === f.carga) : (a.portador === f.portador && b.carga === f.carga && a.carga !== b.carga);
       if (!ok) continue;
-      out.push({ tipo: 'fusion', cat: 'of', ic: ['sis', 'fusion'], peso: 3, carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
+      out.push({ tipo: 'fusion', cat: 'of', ic: ['sis', 'fusion'], peso: 3 * (nvAura(S, 'remake') ? 2 : 1), carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
         aplicar: () => { n.armas.splice(n.armas.indexOf(b), 1); a.fusion = f; a.portador = f.portador; a.carga = f.carga; a.nivel = Math.max(a.nivel, b.nivel); if (b.tam === 'L' || (b.tam === 'M' && a.tam === 'S')) a.tam = b.tam; } });
     }
   }
@@ -99,6 +99,7 @@ function nvTresCartas(S) {
 function nvAbrirCartas(S) {
   S.estado = 'cartas';
   S.cartas = nvTresCartas(S);
+  nvLiderCartas(S);   // lideres.js: MemeLord
   S.rr = S.cartas.map(() => S.cap === 'epicchampion' ? 0 : 1 + (S.rerollExtra || 0));   // cada carta tiene sus propias repeticiones
   if (!S.cartas.length) { S.estado = 'juego'; return; }
   nvSnd('nvCartas', S);

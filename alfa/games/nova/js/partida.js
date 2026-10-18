@@ -73,7 +73,7 @@ function nvPaso(S, dt) {
   if (S.estado !== 'juego' && !fin) return;
   if (!fin) S.t += dt;
   const n = S.nave;
-  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); }
+  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
   nvEnemigos(S, dt);
   if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
@@ -201,7 +201,7 @@ function nvBotEstacion(S) {
 }
 
 // ---------- tripulación: capitán (ventaja y pega) y un oficial (faceta). Solo los capitanes que ya tienen mecánica en el prototipo ----------
-const NV_CAPITANES = ['progamer', 'bunny', 'necrolord', 'twitchking', 'epicchampion'];
+const NV_CAPITANES = ['progamer', 'bunny', 'necrolord', 'twitchking', 'epicchampion', 'cybermarine', 'memelord', 'vikingo', 'directora'];   // los cuatro últimos, en lideres.js
 const NV_OFICIALES = {   // faceta de datos-tripulacion.js → efecto en la partida
   fuego: S => { S.mejoras.dano = (S.mejoras.dano || 1) * 1.1; },
   defensa: S => { S.nave.hpMax = Math.round(S.nave.hpMax * 1.15); S.nave.hp = S.nave.hpMax; },
@@ -214,6 +214,7 @@ function nvAplicaTripulacion(S) {
   S.capFaccion = K ? K.faccion : NVP.camp && NVP.camp.faccion || null;   // una unidad de comandante es de la facción de la campaña
   const fc = typeof nvCapFaceta === 'function' ? nvCapFaceta(S.cap) : null;   // comandantes.js: líderes sin pasiva y unidades dan su faceta
   if (fc && NV_OFICIALES[fc]) NV_OFICIALES[fc](S);
+  nvLiderInicio(S);   // lideres.js
   if (S.ofi && NV_OFICIALES[S.ofi]) NV_OFICIALES[S.ofi](S);
 }
 function nvTripulacionPaso(S) {

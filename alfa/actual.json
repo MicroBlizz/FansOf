@@ -1,8 +1,8 @@
 {
- "build": 205,
- "hash": "c96a99e",
- "fecha": "2026-10-18T03:45:36Z",
- "mensaje": "Nova: menú principal como el del resto de la serie (CAMPAÑA, nave capital, novedades, opciones con sonido, idioma, cuenta y empezar de cero, y Cómo se juega); las novedades salen solas en cada versión nueva",
+ "build": 206,
+ "hash": "8a436ea",
+ "fecha": "2026-10-18T03:49:57Z",
+ "mensaje": "Nova: pasivas de CyberMarine, MemeLord, Vikingo y La Directora (auras)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

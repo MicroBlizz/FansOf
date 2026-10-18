@@ -107,8 +107,8 @@ const NOVA_TRIPULACION = {
    "pasivaSerie": "Nostalgia",
    "ventaja": "Las armas L pegan +25 %",
    "ventajaFx": { "danoL": 0.25 },
-   "pega": "Las S no se pueden montar",
-   "pegaFx": { "sinArmasS": true }
+   "pega": "Las armas S pegan −30 %",
+   "pegaFx": { "danoS": -0.3 }
   },
   {
    "id": "progamer",
@@ -125,9 +125,9 @@ const NOVA_TRIPULACION = {
    "nombre": "La Directora",
    "faccion": "pop",
    "pasivaSerie": "Auras",
-   "ventaja": "Auras apilables, cada una con un bono y una penalización (ver `aurasDirectora`)",
+   "ventaja": "Empiezas con un aura al azar y ganas otra cada vez que tu nave evoluciona",
    "ventajaFx": { "auras": true },
-   "pega": "La penalización de cada aura",
+   "pega": "Cada aura trae también su penalización",
    "pegaFx": { "auras": true }
   }
  ],
@@ -144,8 +144,8 @@ const NOVA_TRIPULACION = {
   {
    "id": "remake",
    "nombre": "Remake",
-   "bono": "Las fusiones cuestan la mitad",
-   "bonoFx": { "costeFusion": 0.5 },
+   "bono": "Las fusiones salen el doble",
+   "bonoFx": { "pesoFusion": 2 },
    "penalizacion": "El pool se inclina menos",
    "penalizacionFx": { "inclinacionPool": -0.5 },
    "propuesta": false

@@ -74,7 +74,7 @@ function nvPanelesDOM(S) {
     S.cartas.forEach((c, i) => {
       const celda = nvEl('nv-celda'), col = NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c';
       const b = nvEl('nv-carta' + (c.rareza && c.rareza !== 'comun' ? ' nv-rar-' + c.rareza : ''), '', 'button'); b.style.setProperty('--col', col);
-      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
+      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA', basura: 'MEME' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
       if (c.rareza && (c.tipo === 'arma' || c.tipo === 'defensa')) { const r = nvEl('nv-rareza', ' · ' + tr(NOVA_RAREZAS[c.rareza].nombre).toUpperCase(), 'span'); r.style.color = NOVA_RAREZAS[c.rareza].color; tipo.appendChild(r); }
       b.appendChild(tipo);
       b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));

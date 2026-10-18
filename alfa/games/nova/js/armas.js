@@ -50,6 +50,7 @@ function nvDanoArma(w) {
   d *= (NVP.S && NVP.S.mejoras.dano) || 1;
   if (NVP.S) { d *= (1 + (NVP.S.capDano || 0)) * (1 + (NVP.S.nucleoBono || 0)); if (NVP.S.cap === 'necrolord' && w.portador === 'drones') d *= 0.5; }
   if (w.fusion) d *= w.fusion.tipo === 'doble' ? (w.fusion.mult || 1) : P.fusionMixta.mult;
+  if (NVP.S) d *= nvLiderDano(NVP.S, w);   // lideres.js
   return d;
 }
 function nvPosRanura(S, id) {

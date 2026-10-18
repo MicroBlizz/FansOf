@@ -44,6 +44,8 @@ IDIOMA.add({
   "Un dron más, algo más flojos": "One more drone, a bit weaker",
   "Drones guardianes": "Guardian drones",
   "Pegan más y más a menudo": "They hit harder and more often",
+  "Drones reparadores": "Repair drones",
+  "No atacan: reparan tu casco cada pocos segundos": "They don't attack: they repair your hull every few seconds",
   "Drones de combate": "Combat drones",
   "Dos drones más y con más mordisco": "Two more drones with more bite",
   "Colmena": "Hive",

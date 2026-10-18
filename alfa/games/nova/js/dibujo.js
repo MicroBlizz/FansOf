@@ -121,7 +121,7 @@ function nvDibujaNave(c, S) {
   if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; c.translate(H.escudo.x, H.escudo.y); c.scale(H.escudo.rx / NOVA_PIEZAS.cascos[S.casco].escudo.rx, H.escudo.ry / NOVA_PIEZAS.cascos[S.casco].escudo.ry); nvPieza(c, S.casco + '-escudo', 0, 0); c.restore(); }
   else if (n.esc && n.esc.hp > 0) { const R = 118 * e; c.beginPath(); c.arc(n.x, n.y, R, 0, 6.283); c.fillStyle = 'rgba(74,168,255,' + 0.10 * n.esc.hp / n.esc.cap + ')'; c.fill(); c.lineWidth = 2; c.strokeStyle = 'rgba(160,220,255,' + (0.25 + 0.5 * n.esc.hp / n.esc.cap) + ')'; c.stroke(); }
   // drones orbitando
-  for (const w of n.armas) if (w.drones) for (const d of w.drones) { c.beginPath(); c.arc(d.x, d.y, 7, 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2; c.strokeStyle = '#1a0f2e'; c.stroke(); }
+  for (const w of n.armas) if (w.drones) for (const d of w.drones) { if (d.dock) continue; c.beginPath(); c.arc(d.x, d.y, 7, 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2; c.strokeStyle = '#1a0f2e'; c.stroke(); }
 }
 
 // ---------- enemigos, disparos y efectos ----------

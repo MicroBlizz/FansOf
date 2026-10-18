@@ -10,7 +10,7 @@ const NOVA_ARMAS = {
   "flak": { "nombre": "Flak", "dano": 14, "cadencia": 1.7, "proyectiles": 6, "acierto": 0.5, "alcance": 230, "arco": 50, "objetivos": 2.5, "admite": ["cinetica", "termica", "explosiva"], "fuerte": "Grupos, corto alcance", "debil": "Blindaje" },
   "laser": { "nombre": "Láser", "dano": 14, "cadencia": 2.4, "proyectiles": 1, "acierto": 0.8, "alcance": 320, "arco": 2, "objetivos": 1.0, "admite": ["energia", "termica", "em"], "fuerte": "Precisión, acumula estados", "debil": "Recarga lenta al saturar" },
   "lanzador": { "nombre": "Lanzador", "dano": 40, "cadencia": 1.0, "proyectiles": 1, "acierto": 0.8, "alcance": 640, "arco": 20, "objetivos": 1.0, "admite": ["explosiva", "termica", "em", "cinetica"], "fuerte": "Lo que huye, alcance", "debil": "Interceptables" },
-  "drones": { "nombre": "Drones", "dano": 8, "cadencia": 1.8, "proyectiles": 3, "acierto": 1.0, "alcance": 220, "arco": 360, "objetivos": 1.0, "admite": ["cinetica", "energia", "em", "explosiva"], "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
+  "drones": { "nombre": "Drones", "dano": 12, "cadencia": 1.8, "proyectiles": 3, "acierto": 1.0, "alcance": 220, "arco": 360, "objetivos": 1.0, "admite": ["cinetica", "energia", "em", "explosiva"], "fuerte": "Cobertura 360°, defensa", "debil": "Daño bajo por unidad" }
  },
  "cargas": {
   "cinetica": { "nombre": "Cinética", "contra": "Casco", "estado": "brecha", "multDano": 1.0, "multGrupo": 1.0, "forma": "cuadrado", "color": "#ff9a3c" },

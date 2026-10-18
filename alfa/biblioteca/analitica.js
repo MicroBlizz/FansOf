@@ -27,8 +27,8 @@
     const d = document.createElement('div'); d.setAttribute('role', 'dialog');
     d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:520px;margin:0 auto;padding:12px 14px;border:3px solid #20102c;border-radius:14px;background:#26143c;color:#fff6ea;font:600 14px/1.35 "Baloo 2",system-ui,sans-serif;box-shadow:0 6px 0 #20102c';
     d.innerHTML = '<div>' + (en
-      ? 'May we count visits with Google Analytics? It uses cookies and tells us how many people come and which pages they see. No ads, no profiles.'
-      : '¿Podemos contar las visitas con Google Analytics? Usa cookies y nos dice cuánta gente viene y qué páginas ve. Sin anuncios ni perfiles.')
+      ? 'May we count visits with Google Analytics? It uses cookies and tells us how many people come and which pages they see. We do not use it for advertising or to build personal profiles.'
+      : '¿Podemos contar las visitas con Google Analytics? Usa cookies y nos dice cuánta gente viene y qué páginas ve. No lo usamos para publicidad ni para crear perfiles personales.')
       + ' <a href="' + ruta() + 'privacidad/" style="color:#ffb347">' + (en ? 'Privacy' : 'Privacidad') + '</a></div>'
       + '<div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end"></div>';
     const fila = d.lastChild;

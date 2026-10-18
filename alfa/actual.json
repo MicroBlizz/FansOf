@@ -1,8 +1,8 @@
 {
- "build": 217,
- "hash": "6b230f6",
- "fecha": "2026-10-18T23:15:35Z",
- "mensaje": "Web: Google Analytics (G-T6C335RWHZ) solo con consentimiento; política de privacidad actualizada",
+ "build": 218,
+ "hash": "17d138c",
+ "fecha": "2026-10-18T23:20:28Z",
+ "mensaje": "Analytics: texto del aviso más preciso (sin afirmar que no hay anuncios)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

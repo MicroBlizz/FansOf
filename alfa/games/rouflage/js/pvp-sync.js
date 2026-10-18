@@ -49,7 +49,7 @@ function rfpEnvia(dt) {
     if (e.fuera) fu.push(e.slot);
     if (e.clase === 'cazador') ba.push([e.slot, e.balas]);
     if (e.humano || e.remoto || e.fuera) continue;
-    ks.push([e.slot, r1(e.x), r1(e.y), e.moviendo ? 1 : 0, e.mira, Math.round(e.dir * 100) / 100, e.congelado ? 1 : 0, Math.max(0, MARCAS.indexOf(e.marca)), e.alerta >= 1 ? 1 : 0, e.ciego > 0 ? 1 : 0]);
+    ks.push([e.slot, r1(e.x), r1(e.y), e.moviendo ? 1 : 0, e.mira, Math.round(e.dir * 100) / 100, e.congelado ? 1 : 0, Math.max(0, MARCAS.indexOf(e.marca)), e.alerta >= 1 ? 1 : 0, e.ciego > 0 ? 1 : 0, Math.ceil(e.invis || 0)]);
   }
   rfpManda({ t: 'a', f: J.fase, r: Math.round(J.reloj * 10) / 10, ks, fu, ba, cg: modoEs('contagio') ? contagiados() : undefined, sb: silbatoSlot(), bt: boteEstado() });
 }
@@ -106,6 +106,7 @@ function rfpEstadoIA(m) {
     const e = RFP.slots[k[0]] && RFP.slots[k[0]].ente; if (!e || !e.remoto || e.humano || e.fuera) continue;
     const r = e.red || (e.red = {});
     rfpFijaRed(r, k[1], k[2]); r.m = !!k[3]; r.mi = k[4]; r.di = k[5];
+    e.invis = k[10] || 0;      // la granada de la máquina: invisible también en los demás navegadores
     if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
     else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
   }

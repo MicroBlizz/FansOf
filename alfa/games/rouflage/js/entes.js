@@ -99,17 +99,18 @@ function descongela(e) { e.congelado = false; }
 // Agotado va a paso de tortuga hasta recuperar la mitad: así una carrera saca de un apuro, pero no se puede cruzar el mapa sin que te pillen
 function aguanta(e, dt, corre) {
   if (extraOn('aguante')) { e.aguante = 1; e.cansado = false; return; }      // el extra de la sala: sin cansancio
+  if (e.invis > 0) corre = false;      // con la granada puesta corre sin cansarse: que el humo no se acabe antes de llegar
   e.aguante = limita(e.aguante + (corre ? -dt / REGLAS.aguante : dt / REGLAS.descanso), 0, 1);
   if (!e.cansado && e.aguante <= 0) { e.cansado = true; if (e.jugador) play('deny'); }
   else if (e.cansado && e.aguante >= 0.5) e.cansado = false;
-  if (e.cansado && corre && Math.random() < dt * 2) fxSudor(e);
+  if (e.cansado && corre && e.invis <= 0 && Math.random() < dt * 2) fxSudor(e);
 }
 // lo que «canta» un camaleón ahora mismo, de 0 (no se distingue) a 1 (se le ve entero): sin congelar se le ve el contorno
 const loQueCanta = k => (k.hielo < 0.85 ? (k.moviendo || k.movido > 0 ? 1 : 0.85) : k.vis);
 
 // silbar: una onda que se ve y se oye. A los cazadores no les dice el punto exacto, solo la zona.
 function silba(e, forzado) {
-  if (e.fuera || e.tSilbo > 0) return false;
+  if (e.fuera || e.tSilbo > 0 || e.invis > 0) return false;      // invisible no silba: sería decir dónde está
   e.tSilbo = 2.5;
   e.silbido = e.silbato ? SILBATO.cada : REGLAS.silbido; e.avisado = false;   // al silbar (por gusto o por obligación) su reloj vuelve a empezar (con el silbato caliente, cada poco)
   const a = Math.random() * TAU, d = rand(46, 110), x = e.x + Math.cos(a) * d, y = e.y - 22 + Math.sin(a) * d;

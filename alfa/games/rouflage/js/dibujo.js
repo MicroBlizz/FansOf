@@ -208,7 +208,7 @@ function dibuja(t) {
     else if (k.puerta) pintaPuerta(c, t);
     else if (k.armario) pintaArmarioSala(c, k, t);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);
-    else if (k.invis > 0) { if (J.yo && J.yo.clase === 'cazador') continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: los becarios no lo ven; los suyos, como un fantasma
+    else if (k.invis > 0) { if (k !== J.yo) continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: nadie lo ve (ni becarios ni otros colados); solo él, como un fantasma
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
   }
   if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }

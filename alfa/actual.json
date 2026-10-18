@@ -1,8 +1,8 @@
 {
- "build": 181,
- "hash": "db36b0e",
- "fecha": "2026-10-17T21:45:06Z",
- "mensaje": "Rouflage: la pintura se estropea por píxeles, sutil; el aspersor arrastra churretes hacia abajo",
+ "build": 182,
+ "hash": "fa3508d",
+ "fecha": "2026-10-18T00:55:22Z",
+ "mensaje": "Rouflage: invisibilidad total durante la granada (todos, también bots online); sin cansancio ni silbidos mientras dura",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

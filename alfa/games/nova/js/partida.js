@@ -130,7 +130,7 @@ function nvSumaChatarra(S, v) {
   const n = S.nave;
   if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
     n.rango++; n.escala = nvEscalaRango(n.rango); n.rAncho = nvRAncho(S.casco, n.rango); n.r = 0.42 * n.rAncho * n.escala;
-    n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
+    const hpAntes = n.hpMax; n.hpMax = Math.round(hpAntes * 1.08); n.hp += n.hpMax - hpAntes;   // el casco máximo crece poco a poco y solo ganas esa vida nueva: subir de rango no cura
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
     if (nvClase(n.rango) !== nvClase(n.rango - 1)) S.aviso = { t: 3.5, txt: tr('Evolución') + ': ' + tr(NV_ETAPAS[nvClase(n.rango)].nombre) + '!' };   // la nave cambia de clase

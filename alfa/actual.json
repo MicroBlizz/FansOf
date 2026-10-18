@@ -1,8 +1,8 @@
 {
- "build": 186,
- "hash": "cd02421",
- "fecha": "2026-10-18T01:09:09Z",
- "mensaje": "Decks: plan de diseño (PLAN-DECKS.md) y prototipo jugable del acto 1",
+ "build": 187,
+ "hash": "8fc1e10",
+ "fecha": "2026-10-18T01:42:31Z",
+ "mensaje": "Nova: al subir de rango el casco máximo crece (+8 %) pero ya no se cura, solo gana esa vida",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

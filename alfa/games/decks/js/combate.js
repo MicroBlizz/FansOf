@@ -26,8 +26,10 @@ function dcDanoRival(C, r, j) { j = j || r.jug; if (!j || !j.d) return 0; let d 
 function dcCombateNuevo(encuentro, tramo) {
   const r = DCP.run, L = DC_LIDERES[r.lider];
   const C = { tramo, rivales: encuentro.map(dcRival), bloqueo: 0, fuerza: 0, fuerzaTurno: 0, debil: 0, vulnerable: 0, caos: 0, poderes: {}, pila: shuffle(r.mazo.map(c => Object.assign({}, c))), mano: [], descartes: [], despedidas: [],
-    turno: 0, tropasTurno: 0, ataques: 0, saltoCd: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], objetivo: null, meriendasUsadas: [] };
-  C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.cd = dcObjeto('zanahoriaoro').saltoCd;
+    turno: 0, tropasTurno: 0, ataques: 0, saltoCarga: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], eventos: [], objetivo: null, meriendasUsadas: [] };
+  // C.eventos: lo que pasó desde el último dibujo ({ t: 'dano'|'cura'|'bloqueo'|'esquiva', r: índice del rival o -1 si es el líder, n }); combate-ui los pinta como cifras flotantes y los vacía.
+  C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = dcObjeto('zanahoriaoro').saltoCarga;
+  // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.
   for (const rv of C.rivales) dcAnuncia(C, rv);
   if (dcObjeto('alfombrilla')) C.bloqueo += dcObjeto('alfombrilla').bloqueoInicial;
   dcEmpiezaTurno(C);
@@ -46,7 +48,6 @@ function dcEmpiezaTurno(C) {
   C.turno++; DCP.run.stats.turnos++;
   C.bloqueo = C.turno === 1 ? C.bloqueo : 0; C.fuerzaTurno = 0; C.tropasTurno = 0;
   if (C.debil) C.debil--; if (C.vulnerable) C.vulnerable--;
-  if (C.saltoCd > 0) C.saltoCd--;
   C.caos = C.turno >= C.cierre ? DC_CAOS * 2 : DC_CAOS;
   if (C.turno === 1 && dcObjeto('taza')) C.caos += dcObjeto('taza').caosTurno1;
   if (C.poderes.nido) C.bloqueo += C.poderes.nido;
@@ -70,13 +71,14 @@ function dcDanoA(C, r, base, esTropa) {
 }
 function dcGolpea(C, r, d) {
   const b = Math.min(r.bloqueo, d); r.bloqueo -= b; d -= b; r.hp = Math.max(0, r.hp - d); r.golpe = (r.golpe || 0) + 1;
+  C.eventos.push({ t: d > 0 ? 'dano' : 'esquiva', r: C.rivales.indexOf(r), n: d });
   if (r.hp <= 0) C.log.push(tr('{rival} cae', { rival: r.nombre }));
   return d;
 }
 // Juega la carta i de la mano sobre el rival `obj` (índice) si hace falta.
 function dcJugar(C, i, obj) {
   const c = C.mano[i]; if (!c || !dcPuedeJugar(C, c)) return false;
-  C.caos -= dcCoste(c); C.mano.splice(i, 1);
+  C.caos -= dcCoste(c); C.saltoCarga += dcCoste(c); C.mano.splice(i, 1);
   dcResuelve(C, c, obj, false);
   dcCompruebaFin(C);
   return true;
@@ -95,8 +97,8 @@ function dcResuelve(C, c, obj, gratis) {
     }
   }
   for (const r of objs) { if (fx.vulnerable) r.vulnerable += fx.vulnerable; if (fx.debil) r.debil += fx.debil; if (fx.aturde) r.aturdido = Math.max(r.aturdido, fx.aturde); }
-  if (fx.bloqueo) C.bloqueo += fx.bloqueo;
-  if (fx.cura) dcVida(fx.cura);
+  if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
+  if (fx.cura) { dcVida(fx.cura); C.eventos.push({ t: 'cura', r: -1, n: fx.cura }); }
   if (fx.caos) C.caos += fx.caos;
   if (fx.fuerza) C.fuerza += fx.fuerza;
   if (fx.fuerzaTurno) C.fuerzaTurno += fx.fuerzaTurno;
@@ -106,15 +108,15 @@ function dcResuelve(C, c, obj, gratis) {
   if (fx.despedida || gratis) C.despedidas.push(c); else C.descartes.push(c);
 }
 function dcUsaSalto(C) {
-  if (C.fase !== 'jugador' || C.saltoCd > 0 || C.caos < C.salto.coste) return false;
-  C.caos -= C.salto.coste; C.saltoCd = C.salto.cd;
+  if (C.fase !== 'jugador' || C.saltoCarga < C.salto.carga) return false;
+  C.saltoCarga -= C.salto.carga;
   for (const r of C.rivales) if (r.hp > 0) dcGolpea(C, r, dcDanoA(C, r, C.salto.dano, false));
   C.ataques++; C.log.push(tr('¡{jugada}!', { jugada: tr(C.salto.nombre) }));
   dcCompruebaFin(C); return true;
 }
 function dcUsaMerienda(C, i) {
   const k = DCP.run.meriendas[i], M = DC_MERIENDAS[k]; if (!M || C.fase !== 'jugador') return false;
-  if (M.caos) C.caos += M.caos; if (M.roba) dcRoba(C, M.roba); if (M.cura) dcVida(M.cura);
+  if (M.caos) C.caos += M.caos; if (M.roba) dcRoba(C, M.roba); if (M.cura) { dcVida(M.cura); C.eventos.push({ t: 'cura', r: -1, n: M.cura }); }
   DCP.run.meriendas.splice(i, 1); C.log.push(tr('Te tomas {merienda}', { merienda: tr(M.nombre) })); return true;
 }
 
@@ -129,7 +131,7 @@ function dcFinTurno(C) {
     const j = r.jug; r.bloqueo = 0;
     if (j.d) for (let k = 0; k < (j.n || 1); k++) {
       let d = dcDanoRival(C, r, j); if (C.vulnerable) d = Math.floor(d * 1.5);
-      const b = Math.min(C.bloqueo, d); C.bloqueo -= b; d -= b; dcVida(-d);
+      const b = Math.min(C.bloqueo, d); C.bloqueo -= b; d -= b; dcVida(-d); C.eventos.push({ t: d > 0 ? 'dano' : 'esquiva', r: -1, n: d });
       if (C.poderes.espinas) dcGolpea(C, r, C.poderes.espinas);
       if (DCP.run.hp <= 0) break;
     }

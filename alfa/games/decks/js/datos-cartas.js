@@ -15,7 +15,7 @@ const DC_CARTAS = {
   beaver: { nombre: 'BoomBeaver', tipo: 'tropa', rar: 'basic', coste: 2, arte: 'beaver', fx: { dano: 12, despedida: true }, asc: { dano: 16 }, texto: 'Corre con la dinamita: {dano} de daño. Despedida.' },
   zanahoria: { nombre: 'Zanahoria', tipo: 'tactica', rar: 'basic', coste: 1, ic: 'ZN', fx: { bloqueo: 6 }, asc: { bloqueo: 9 }, texto: 'Un mordisco de zanahoria: {bloqueo} de bloqueo.' },
   sp_bellotas: { nombre: 'Lluvia de bellotas', tipo: 'hechizo', rar: 'common', coste: 2, arte: 'sp_bellotas', fx: { dano: 6, obj: 'todos' }, asc: { dano: 9 }, texto: 'Llueven bellotas: {dano} de daño a todos los rivales.' },
-  grito: { nombre: 'Grito de la madriguera', tipo: 'tactica', rar: 'basic', coste: 1, ic: 'GM', fx: { fuerzaTurno: 2 }, asc: { fuerzaTurno: 3 }, texto: 'Las tropas de este turno pegan +{fuerzaTurno}.' },
+  grito: { nombre: 'Grito de la madriguera', tipo: 'tactica', rar: 'basic', coste: 0, ic: 'GM', fx: { fuerzaTurno: 2 }, asc: { fuerzaTurno: 3 }, texto: 'Gratis: las tropas de este turno pegan +{fuerzaTurno}.' },
   // ---------- pool de los Animales Locos y de la rebelión ----------
   fox: { nombre: 'SlyFox', tipo: 'tropa', rar: 'rare', coste: 2, arte: 'fox', fx: { dano: 8, cond: 'primerGolpe' }, asc: { dano: 10 }, texto: 'Invisible: {dano} de daño; el triple si el rival tiene toda la vida.' },
   meercat: { nombre: 'MeerCat', tipo: 'tropa', rar: 'rare', coste: 1, arte: 'meercat', fx: { cura: 5 }, asc: { cura: 7 }, texto: 'La enfermera te cura {cura}.' },
@@ -34,7 +34,7 @@ const DC_CARTAS = {
   esconderse: { nombre: 'Esconderse', tipo: 'tactica', rar: 'common', coste: 1, ic: 'ES', fx: { bloqueo: 5, indefinido: true }, asc: { bloqueo: 7 }, texto: 'Te escondes tras la fotocopiadora: {bloqueo} de bloqueo. Contrato indefinido.' },
   zancadilla: { nombre: 'Zancadilla', tipo: 'tactica', rar: 'basic', coste: 1, ic: 'ZC', fx: { dano: 4, vulnerable: 2 }, asc: { dano: 6 }, texto: '{dano} de daño y Vulnerable {vulnerable}.' },
   manada: { nombre: 'Manada', tipo: 'tactica', rar: 'rare', coste: 2, ic: 'MN', fx: { dano: 3, cond: 'porTropa' }, asc: { dano: 4 }, texto: '{dano} de daño a un rival por cada tropa jugada este turno.' },
-  nido: { nombre: 'Nido', tipo: 'tactica', rar: 'rare', coste: 2, ic: 'ND', fx: { poder: 'nido', n: 3 }, asc: { n: 4 }, texto: 'Nido: al empezar cada turno, {n} de bloqueo.' },
+  nido: { nombre: 'Nido', tipo: 'tactica', rar: 'rare', coste: 1, ic: 'ND', fx: { poder: 'nido', n: 3 }, asc: { n: 4 }, texto: 'Nido: al empezar cada turno, {n} de bloqueo.' },
   rastro: { nombre: 'Rastro', tipo: 'tactica', rar: 'common', coste: 0, ic: 'RS', fx: { caos: 1, roba: 1, despedida: true }, asc: { roba: 2 }, texto: 'Sigues el rastro: +{caos} CAOS y roba {roba}. Despedida.' },
   merendar: { nombre: 'Hora de merendar', tipo: 'tactica', rar: 'basic', coste: 1, ic: 'HM', fx: { cura: 4, roba: 1 }, asc: { cura: 6 }, texto: 'Un bocadillo rápido: te cura {cura} y roba {roba}.' },
   espinas: { nombre: 'Espinas del seto', tipo: 'tactica', rar: 'common', coste: 1, ic: 'EP', fx: { poder: 'espinas', n: 2 }, asc: { n: 3 }, texto: 'Espinas: cada rival que te pega recibe {n} de daño.' },
@@ -52,5 +52,5 @@ const DC_PESOS_RAREZA = { basic: 60, common: 30, rare: 8, epic: 2 };
 // Los líderes: vida, pasiva y jugada activa.
 const DC_LIDERES = {
   bunny: { nombre: 'CrazyBunny', faccion: 'animales', hp: 75, pasiva: 'RABIA', pasivaTexto: 'Cada tropa pega +1 por cada tropa jugada antes en el turno (hasta +5).',
-    jugada: { nombre: 'Salto del caos', coste: 1, cd: 3, dano: 8, texto: 'Salta sobre la reunión: {dano} de daño a todos los rivales. Cada {cd} turnos.' } },
+    jugada: { nombre: 'Salto del caos', carga: 6, dano: 8, texto: 'Gratis cuando has gastado {carga} de CAOS en cartas: {dano} de daño a todos los rivales.' } },
 };

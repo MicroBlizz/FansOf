@@ -11,7 +11,7 @@ const DC_OBJETOS = {
   llavero: { nombre: 'Llavero de la suerte', rar: 'common', texto: 'Las ofertas de empleo traen 4 cartas en vez de 3.', oferta: 1 },
   alfombrilla: { nombre: 'Alfombrilla XXL', rar: 'epic', texto: '8 de bloqueo al empezar cada reunión.', bloqueoInicial: 8 },
   // legendarios: solo los da el jefe
-  zanahoriaoro: { nombre: 'Zanahoria de oro', rar: 'legendary', texto: 'El Salto del caos vuelve cada 2 turnos.', saltoCd: 2 },
+  zanahoriaoro: { nombre: 'Zanahoria de oro', rar: 'legendary', texto: 'El Salto del caos se carga con 4 de CAOS en vez de 6.', saltoCarga: 4 },
   cofre: { nombre: 'Cofre de botín sin abrir', rar: 'legendary', texto: 'Al empezar cada reunión juegas gratis una carta al azar de tu mazo.', cartaGratis: 1 },
 };
 const DC_OBJETOS_POOL = Object.keys(DC_OBJETOS).filter(k => DC_OBJETOS[k].rar !== 'legendary');

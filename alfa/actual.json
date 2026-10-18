@@ -1,8 +1,8 @@
 {
- "build": 188,
- "hash": "3e52849",
- "fecha": "2026-10-18T01:44:30Z",
- "mensaje": "Nova: los enemigos con calor explotan al morir con daño en área proporcional al calor; el casco brilla en rojo según el calor acumulado",
+ "build": 189,
+ "hash": "d95c463",
+ "fecha": "2026-10-18T01:56:04Z",
+ "mensaje": "Decks: agenda por horas, acabado premium y Salto del caos por carga",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

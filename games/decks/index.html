@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fans Of Decks</title>
+<meta name="description" content="Fans Of Decks: el constructor de mazos de la serie Fans Of. Prototipo.">
+<meta name="theme-color" content="#150b21">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="apple-touch-icon" href="../../core/img/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fans Of Decks">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<!-- core/js/nucleo.js carga lo común y el juego. LA VERSIÓN SE ESCRIBE SOLO AQUÍ, en su ?v= -->
+<script src="../../core/js/nucleo.js?v=0.2.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/decks.css', 'css/decks-reunion.css', 'css/decks-anim.css', 'css/decks-campana.css')</script>
+</head>
+<body>
+<div id="stage">
+  <section id="dc-portada" class="screen dc-pantalla" hidden>
+    <h1 class="logo"><span class="l1 ol">FANS OF</span><span class="l2 ol-big">DECKS</span></h1>
+    <canvas id="dc-portada-arte" width="300" height="160" aria-hidden="true"></canvas>
+    <p class="tagline" id="dc-estado">Fans Of Decks · prototipo</p>
+    <div class="dc-col" id="dc-portada-botones" hidden>
+      <button class="btn-big ol" id="dc-continuar" hidden>CONTINUAR</button>
+      <button class="btn-big ol" id="dc-nueva">NUEVA PARTIDA</button>
+      <button class="btn-ghost ol" id="dc-como">CÓMO SE JUEGA</button>
+    </div>
+  </section>
+  <section id="dc-mapa" class="screen dc-pantalla" hidden></section>
+  <section id="dc-combate" class="screen dc-pantalla" hidden></section>
+  <section id="dc-panel" class="screen dc-pantalla" hidden></section>
+</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta y el idioma de core: Decks lleva su propia partida y sus propias pantallas
+  antes: ['js/ajustes.js', 'js/novedades.js'],
+  idioma: { en: ['idioma/en-1.js', 'idioma/en-2.js'] },
+  despues: [
+    // la serie, cargada a mano como en Tácticas: las cartas, sus datos y sus dibujos
+    '../../core/js/serie/config.js',
+    '../../core/js/serie/facciones/animales.js', '../../core/js/serie/facciones/nomuertos.js', '../../core/js/serie/facciones/streamers.js', '../../core/js/serie/facciones/heroes.js',
+    '../../core/js/serie/facciones/ciber.js', '../../core/js/serie/facciones/memes.js', '../../core/js/serie/facciones/gamer.js', '../../core/js/serie/facciones/olvidados.js',
+    '../../core/js/serie/facciones/pop.js', '../../core/js/serie/facciones/microblizz.js', '../../core/js/serie/facciones/phony.js', '../../core/js/serie/facciones/cierre.js',
+    '../../core/js/serie/arte/base.js',
+    '../../core/js/serie/arte/animales.js', '../../core/js/serie/arte/nomuertos.js', '../../core/js/serie/arte/streamers.js', '../../core/js/serie/arte/heroes.js',
+    '../../core/js/serie/arte/ciber.js', '../../core/js/serie/arte/memes.js', '../../core/js/serie/arte/gamer.js', '../../core/js/serie/arte/olvidados.js',
+    '../../core/js/serie/arte/pop.js', '../../core/js/serie/arte/microblizz.js', '../../core/js/serie/arte/phony.js', '../../core/js/serie/arte/sprites.js',
+    '../../core/js/serie/canciones.js', '../../core/js/serie/iconos.js', '../../core/js/serie/catalogo.js',
+    // el juego
+    'js/retos.js', 'js/datos-cartas.js', 'js/datos-enemigos.js', 'js/datos-objetos.js', 'js/dibujo.js', 'js/fondos.js', 'js/partida.js', 'js/campana.js', 'js/combate.js', 'js/combate-ui.js', 'js/combate-anim.js', 'js/arrastre.js', 'js/pantallas.js', 'js/jornadas.js', 'js/portada.js'
+  ]
+})
+</script>
+</body>
+</html>

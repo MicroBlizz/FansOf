@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-18a',
+    fecha: '18 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF DECKS', tarjeta: 'g-decks', enlace: 'games/decks/', texto: 'El constructor de mazos de la serie, en fase alfa: sobrevive a la semana en Microblizz a golpe de carta. Cuéntanos qué te parece.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-15a',
     fecha: '15 de octubre de 2026',
     nuevos: [

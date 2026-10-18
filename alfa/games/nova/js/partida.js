@@ -2,7 +2,7 @@
 // El dibujo está en dibujo.js y los menús en interfaz.js. Todo el estado vive en S; no se guarda nada (la partida dura 3-5 min).
 'use strict';
 const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujada (1 = el PNG de arte tal cual); empiezas muy pequeño y creces; el hitbox sale de él
-const NV_ARENA = 4200;                       // radio de la zona donde se reparte el mundo al empezar (el sector no tiene bordes: da la vuelta)
+const NV_ARENA = 2900;                       // radio de la zona donde se reparte el mundo al empezar (el sector no tiene bordes: da la vuelta)
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
 // Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
 function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }

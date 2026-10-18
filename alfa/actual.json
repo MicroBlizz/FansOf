@@ -1,8 +1,8 @@
 {
- "build": 197,
- "hash": "3d856bf",
- "fecha": "2026-10-18T02:37:05Z",
- "mensaje": "Biblioteca: capturas de Nova a 540x960 como el resto",
+ "build": 198,
+ "hash": "f4da757",
+ "fecha": "2026-10-18T02:39:26Z",
+ "mensaje": "Nova: el sector no se vacía (asteroides, naves errantes a tu rango, nidos, pecios y estaciones reaparecen fuera de la pantalla) y empieza más compacto",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

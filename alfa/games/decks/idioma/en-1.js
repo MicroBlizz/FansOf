@@ -69,7 +69,6 @@ IDIOMA.add({
   "Invisible: {dano} de daño; el triple si el rival tiene toda la vida.": "Invisible: {dano} damage; triple if the foe has full health.",
   "La enfermera te cura {cura}.": "The nurse heals you {cura}.",
   "Bolsas de basura explosivas: {dano} de daño a todos los rivales.": "Exploding trash bags: {dano} damage to all foes.",
-  "El mecha embiste: {dano} de daño y {bloqueo} de bloqueo.": "The mech charges: {dano} damage and {bloqueo} block.",
   "Salta la primera línea: {dano} de daño; el doble si el rival no es el que más vida tiene.": "Leaps over the front line: {dano} damage; double if the foe isn't the one with the most health.",
   "La vaca": "The cow",
   "La vaca empuja: {dano} de daño y Débil {debil}.": "The cow shoves: {dano} damage and Weak {debil}.",
@@ -276,4 +275,5 @@ IDIOMA.add({
   "Tus empleados pegan +1.": "Your employees hit +1.",
   "Gratis: los empleados de este turno pegan +{fuerzaTurno}.": "Free: this turn’s employees hit for +{fuerzaTurno}.",
   "CrazyBunny pega +1 con cada empleado por cada empleado jugado antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.": "CrazyBunny hits +1 with each employee for every employee played earlier this turn. Chaos Leap charges with the CHAOS you spend on cards and is free: it hits every foe.",
+  "Se planta delante: {bloqueo} de bloqueo y embiste con {dano} a cada rival que vaya a atacarte.": "Plants itself in front: {bloqueo} block, and rams every foe about to attack you for {dano}.",
 });

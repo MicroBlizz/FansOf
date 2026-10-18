@@ -63,7 +63,9 @@ function dcEmpiezaTurno(C) {
 
 // ---------- jugar ----------
 function dcPuedeJugar(C, c) { const fx = dcFx(c); return C.fase === 'jugador' && !fx.injugable && dcCoste(c) <= C.caos; }
-function dcNecesitaObjetivo(C, c) { const fx = dcFx(c); return (fx.dano || fx.vulnerable || fx.debil || fx.aturde) && fx.obj !== 'todos' && C.rivales.filter(r => r.hp > 0).length > 1; }
+function dcNecesitaObjetivo(C, c) { const fx = dcFx(c); return (fx.dano || fx.vulnerable || fx.debil || fx.aturde) && fx.obj !== 'todos' && fx.cond !== 'atacantes' && C.rivales.filter(r => r.hp > 0).length > 1; }
+// Los rivales que van a atacar este turno (para las cartas que defienden embistiendo).
+function dcAtacantes(C) { return C.rivales.filter(r => r.hp > 0 && !r.aturdido && dcTipoJugada(r.jug) === 'ataque'); }
 function dcDanoA(C, r, base, esTropa) {
   let d = base + C.fuerza + (esTropa ? C.fuerzaTurno + Math.min(5, C.tropasTurno) + (dcObjeto('teclado') ? dcObjeto('teclado').tropaDano : 0) : 0);
   if (C.ataques === 0 && dcObjeto('gorra')) d += dcObjeto('gorra').primerAtaque;
@@ -87,7 +89,7 @@ function dcJugar(C, i, obj) {
 }
 function dcResuelve(C, c, obj, gratis) {
   const D = DC_CARTAS[c.id], fx = dcFx(c), vivos = C.rivales.filter(r => r.hp > 0);
-  let objs = fx.obj === 'todos' ? vivos : [C.rivales[obj] && C.rivales[obj].hp > 0 ? C.rivales[obj] : vivos[0]].filter(Boolean);
+  let objs = fx.cond === 'atacantes' ? dcAtacantes(C) : fx.obj === 'todos' ? vivos : [C.rivales[obj] && C.rivales[obj].hp > 0 ? C.rivales[obj] : vivos[0]].filter(Boolean);
   if (fx.dano) {
     const veces = fx.cond === 'porTropa' ? C.tropasTurno : (fx.veces || 1);
     for (let k = 0; k < veces; k++) for (const r of objs) {

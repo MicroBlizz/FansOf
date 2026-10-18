@@ -1,8 +1,8 @@
 {
- "build": 192,
- "hash": "b0f8cf5",
- "fecha": "2026-10-18T02:20:33Z",
- "mensaje": "Nova: sector sin bordes que da la vuelta y crece con la nave (minimapa centrado en ti); balas con contorno, drones a escala y la resolución adaptable no baja de 3/4 y se recupera",
+ "build": 193,
+ "hash": "6ea5b5f",
+ "fecha": "2026-10-18T02:22:31Z",
+ "mensaje": "Decks: MechaVaca es la guardaespaldas",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

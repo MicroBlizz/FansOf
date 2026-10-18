@@ -2,7 +2,7 @@
 // fx: dano/veces/obj ('uno' o 'todos'), bloqueo, cura, roba, caos, vulnerable, debil, aturde, fuerza (toda la reunión), fuerzaTurno, poder (nido, espinas),
 // palabras clave (se añaden solas al texto): despedida (se va al jugarla), indefinido (no se descarta), madrugador (siempre en la mano inicial).
 // asc: lo que cambia al ascender (Becario → Junior): cifras, coste, quitar despedida (despedida: false) o añadir madrugador; dcVerAscenso lo enseña antes.
-// cond ('primerGolpe' = x3 si el rival tiene toda la vida; 'noMax' = x2 si no es el rival con más vida; 'porTropa' = daño por cada empleado jugado este turno).
+// cond ('primerGolpe' = x3 si el rival tiene toda la vida; 'noMax' = x2 si no es el rival con más vida; 'porTropa' = daño por cada empleado jugado este turno; 'atacantes' = pega solo a los rivales que van a atacar, sin elegir objetivo (la guardaespaldas MechaVaca)).
 // Marcas: despedida (se va al jugarse), indefinido (no se descarta), primeraHora (siempre en la mano inicial), injugable, alRobar ('caos-1').
 // asc: lo que cambia al ascender (Becario → Junior). El texto usa {clave} y se rellena con las cifras de la carta, ascendida o no.
 'use strict';
@@ -22,7 +22,7 @@ const DC_CARTAS = {
   fox: { nombre: 'SlyFox', tipo: 'empleado', rar: 'rare', coste: 2, arte: 'fox', fx: { dano: 8, cond: 'primerGolpe' }, asc: { dano: 10 }, texto: 'Invisible: {dano} de daño; el triple si el rival tiene toda la vida.' },
   meercat: { nombre: 'MeerCat', tipo: 'empleado', rar: 'rare', coste: 1, arte: 'meercat', fx: { cura: 5 }, asc: { cura: 7 }, texto: 'La enfermera te cura {cura}.' },
   junkcoon: { nombre: 'JunkCoon', tipo: 'empleado', rar: 'rare', coste: 2, arte: 'junkcoon', fx: { dano: 7, obj: 'todos' }, asc: { dano: 9 }, texto: 'Bolsas de basura explosivas: {dano} de daño a todos los rivales.' },
-  mechavaca: { nombre: 'MechaVaca', tipo: 'empleado', rar: 'epic', coste: 3, arte: 'mechavaca', fx: { dano: 14, bloqueo: 6 }, asc: { dano: 18, bloqueo: 8 }, texto: 'El mecha embiste: {dano} de daño y {bloqueo} de bloqueo.' },
+  mechavaca: { nombre: 'MechaVaca', tipo: 'empleado', rar: 'epic', coste: 3, arte: 'mechavaca', fx: { bloqueo: 10, dano: 10, cond: 'atacantes' }, asc: { bloqueo: 13, dano: 13 }, texto: 'Se planta delante: {bloqueo} de bloqueo y embiste con {dano} a cada rival que vaya a atacarte.' },
   huron: { nombre: 'HurónNinja', tipo: 'empleado', rar: 'epic', coste: 2, arte: 'huron', fx: { dano: 8, cond: 'noMax' }, asc: { dano: 10 }, texto: 'Salta la primera línea: {dano} de daño; el doble si el rival no es el que más vida tiene.' },
   vaca: { nombre: 'La vaca', tipo: 'empleado', rar: 'basic', coste: 1, arte: 'vaca', fx: { dano: 6, debil: 1 }, asc: { dano: 8 }, texto: 'La vaca empuja: {dano} de daño y Débil {debil}.' },
   ardillasfuriosas: { nombre: 'Ardillas furiosas', tipo: 'empleado', rar: 'common', coste: 2, arte: 'squirrel', fx: { dano: 3, veces: 4 }, asc: { dano: 4 }, texto: 'Una horda de ardillas: {dano} de daño, {veces} veces.' },

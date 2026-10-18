@@ -123,3 +123,21 @@
 .dc-comp .dc-sprite { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .5)); }
 .dc-comp b { position: absolute; right: -5px; bottom: -4px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--gold); color: #3a2300; font: 400 12px/18px var(--font-display); text-align: center; border: 2px solid var(--outline); box-sizing: border-box; padding: 1px 3px 0; }
 .dc-prot { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 800; padding: 3px 8px 2px 5px; border-radius: 999px; background: rgba(90, 174, 255, .18); border: 1px solid rgba(90, 174, 255, .6); color: #cfe8ff; animation: dc-pop .3s cubic-bezier(.2, .8, .3, 1.4) both; } .dc-prot .dc-svg { width: 13px; height: 13px; color: var(--dc-azul); }
+/* fondos y las acciones animadas */
+.dc-fondo { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.dc-fondo-tenue { opacity: .42; }
+#dc-combate.dc-ocupado .dc-mano, #dc-combate.dc-ocupado .dc-franja, #dc-combate.dc-ocupado .dc-acciones, #dc-combate.dc-ocupado .dc-rivales { pointer-events: none; }
+.dc-acto-ataque { animation: dc-embiste .5s cubic-bezier(.3, .7, .4, 1) both; } @keyframes dc-embiste { 0% { transform: none; } 30% { transform: translateY(-10px) scale(1.04); } 55% { transform: translateY(34px) scale(1.1); } 100% { transform: none; } }
+.dc-acto-defensa { animation: dc-escuda .6s ease-out both; } @keyframes dc-escuda { 0% { box-shadow: 0 0 0 0 rgba(159, 216, 255, 0); transform: none; } 40% { box-shadow: 0 0 0 6px rgba(159, 216, 255, .5), 0 0 24px rgba(90, 174, 255, .6); transform: translateY(-6px); } 100% { box-shadow: 0 0 0 0 rgba(159, 216, 255, 0); transform: none; } }
+.dc-acto-cura { animation: dc-brillo-verde .6s ease-out both; } @keyframes dc-brillo-verde { 40% { box-shadow: 0 0 0 6px rgba(123, 224, 74, .45), 0 0 24px rgba(123, 224, 74, .6); transform: translateY(-6px); } }
+.dc-acto-refuerzo { animation: dc-brillo-oro .6s ease-out both; } @keyframes dc-brillo-oro { 40% { box-shadow: 0 0 0 6px rgba(255, 203, 61, .45); transform: scale(1.05); } }
+.dc-acto-spam { animation: dc-sacude .5s ease-out both; } @keyframes dc-sacude { 25% { transform: rotate(-5deg); } 60% { transform: rotate(5deg) translateY(-6px); } }
+.dc-acto-fuerza { animation: dc-brillo-rojo .6s ease-out both; } @keyframes dc-brillo-rojo { 40% { box-shadow: 0 0 0 6px rgba(255, 122, 26, .45), 0 0 24px rgba(255, 75, 92, .6); transform: scale(1.08); } }
+.dc-acto-debil { animation: dc-brillo-morado .6s ease-out both; } @keyframes dc-brillo-morado { 40% { box-shadow: 0 0 0 6px rgba(205, 185, 234, .45); transform: translateY(-4px); } }
+.dc-acto-aturdido { animation: dc-cabecea .6s ease-in-out both; } @keyframes dc-cabecea { 30% { transform: rotate(-8deg); } 70% { transform: rotate(6deg); } }
+.dc-brinca { animation: dc-brinca .5s cubic-bezier(.3, .7, .4, 1) both; } @keyframes dc-brinca { 30% { transform: translateY(-18px) scale(1.06, .96); } 60% { transform: translateY(0) scale(.96, 1.06); } 100% { transform: none; } }
+.dc-impacto { position: absolute; left: 50%; top: 45%; width: 44px; height: 44px; margin: -22px 0 0 -22px; display: grid; place-items: center; border-radius: 50%; pointer-events: none; z-index: 19; animation: dc-impacto .6s cubic-bezier(.2, .8, .3, 1) both; }
+.dc-impacto .dc-svg { width: 30px; height: 30px; filter: drop-shadow(0 2px 0 var(--outline)); }
+.dc-impacto-ataque { color: #fff; background: radial-gradient(circle, rgba(255, 75, 92, .85), rgba(255, 75, 92, 0) 70%); } .dc-impacto-cura { color: #fff; background: radial-gradient(circle, rgba(123, 224, 74, .85), rgba(123, 224, 74, 0) 70%); } .dc-impacto-defensa { color: #fff; background: radial-gradient(circle, rgba(90, 174, 255, .85), rgba(90, 174, 255, 0) 70%); } .dc-impacto-refuerzo { color: #fff; background: radial-gradient(circle, rgba(255, 203, 61, .85), rgba(255, 203, 61, 0) 70%); }
+@keyframes dc-impacto { 0% { transform: scale(.2); opacity: 0; } 35% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+.dc-vuelo { position: absolute; z-index: 60; width: 32px; height: 32px; pointer-events: none; display: grid; place-items: center; } .dc-vuelo .dc-svg { width: 32px; height: 32px; filter: drop-shadow(0 2px 0 var(--outline)); }

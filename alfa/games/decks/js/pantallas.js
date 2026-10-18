@@ -78,7 +78,7 @@ function dcFinReunion(resultado, C) {
   if (resultado === 'derrota') { play('lose'); dcFinPartida(false); return dcPintaFin(false); }
   play('win');
   const [a, b] = DC_NOMINAS[n.tipo]; const nom = a + Math.round(Math.random() * (b - a)) + (dcVentaja() && dcVentaja().nominas ? dcVentaja().nominas : 0); r.nominas += nom;
-  const s = dcPanel(tr(n.tipo === 'jefe' ? '¡Despacho conquistado!' : '¡Reunión ganada!'));
+  const s = dcPanel(tr(n.tipo === 'jefe' ? '¡Despacho conquistado!' : '¡Reunión ganada!'), n.tipo);
   s.append(dcTarjetaResultado(dcTituloNodo(n), tr(n.sala), [['nominas', '+' + nom, tr('nóminas')], ['reloj', String(C.turno), tr('turnos')], ['vida', r.hp + '/' + r.hpMax, tr('vida')]]));
   const pasos = [];
   if (n.tipo === 'jefe') pasos.push(() => dcEligeObjeto(['zanahoriaoro', 'cofre'], tr('Un objeto legendario del despacho')));
@@ -96,9 +96,9 @@ function dcTarjetaResultado(titulo, sub, fichas, derrota) {
   const g = dcEl('div', 'dc-premios'); for (const [icono, valor, eti] of fichas) { const c = dcEl('div', 'dc-premio'); c.append(dcSvg(icono), dcEl('b', '', valor), dcEl('small', '', eti)); g.append(c); }
   t.append(g); return t;
 }
-function dcPanel(titulo) { const s = document.getElementById('dc-panel'); s.textContent = ''; dcMuestra('dc-panel'); if (DCP.run) s.append(dcCabecera(titulo)); else s.append(dcEl('h2', 'ol', titulo)); return s; }
+function dcPanel(titulo, fondo) { const s = document.getElementById('dc-panel'); s.textContent = ''; dcMuestra('dc-panel'); dcPonFondo(s, fondo || null); if (DCP.run) s.append(dcCabecera(titulo)); else s.append(dcEl('h2', 'ol', titulo)); return s; }
 function dcOfertaEmpleo(legendaria) {
-  const r = DCP.run, s = dcPanel(tr('Oferta de empleo'));
+  const r = DCP.run, n = dcNodoActual(), s = dcPanel(tr('Oferta de empleo'), n && n.tipo);
   s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra 15 nóminas.')));
   const g = dcEl('div', 'dc-rejilla dc-oferta');
   const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (legendaria) ids[0] = 'sp_pulgas';
@@ -107,7 +107,7 @@ function dcOfertaEmpleo(legendaria) {
   const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 nóminas')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);
 }
 function dcEligeObjeto(ids, titulo) {
-  const r = DCP.run, s = dcPanel(titulo), g = dcEl('div', 'dc-rejilla');
+  const r = DCP.run, n = dcNodoActual(), s = dcPanel(titulo, n && n.tipo), g = dcEl('div', 'dc-rejilla');
   ids.forEach(k => { const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
   s.append(g);
 }
@@ -124,7 +124,7 @@ function dcEligeVentaja(alElegir) {
 }
 // ---------- correos ----------
 function dcPintaCorreo(E) {
-  const r = DCP.run, s = dcPanel(tr('Correo interno'));
+  const r = DCP.run, s = dcPanel(tr('Correo interno'), 'correo');
   const caja = dcEl('div', 'dc-correo'); caja.append(dcEl('h3', 'ol', tr(E.titulo)), dcEl('p', '', tr(E.texto))); s.append(caja);
   for (const o of E.opciones) {
     const b = dcEl('button', 'dc-opcion dc-riesgo-' + o.riesgo); b.append(dcEl('b', '', tr(o.texto)), dcEl('small', 'dc-riesgo', tr(o.riesgo === 'seguro' ? 'Seguro' : 'Arriesgado')), dcEl('span', '', tr(o.det)));
@@ -148,7 +148,7 @@ function dcAplicaCorreo(fx) {
 }
 // ---------- la pausa para el café ----------
 function dcPintaPausa() {
-  const r = DCP.run, s = dcPanel(tr('Pausa para el café')), luego = () => { dcNodoResuelto(); dcPintaMapa(); };
+  const r = DCP.run, s = dcPanel(tr('Pausa para el café'), 'pausa'), luego = () => { dcNodoResuelto(); dcPintaMapa(); };
   s.append(dcEl('p', 'dc-nota', tr('Cinco minutos de paz en la cafetería. Elige una cosa.')));
   const cura = Math.round(r.hpMax * 0.3);
   const b1 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b1.append(dcEl('b', '', tr('Descansar')), dcEl('span', '', tr('Te curas {n}.', { n: cura }))); b1.onclick = () => { dcVida(cura); play('heal'); luego(); };
@@ -161,7 +161,7 @@ function dcPintaPausa() {
 function dcPintaEconomato() {
   const r = DCP.run, n = dcNodoActual();
   if (!n.tienda) { n.tienda = { cartas: dcOferta(3).map(id => ({ id, precio: dcPrecioCarta(id) })), objeto: dcObjetoAlAzar(), merienda: pick(Object.keys(DC_MERIENDAS)) }; dcGuarda(); }
-  const T = n.tienda, s = dcPanel(tr('Economato de Lola')), desc = x => Math.round(x * (1 - (dcVentaja() && dcVentaja().descuento ? dcVentaja().descuento : 0)));
+  const T = n.tienda, s = dcPanel(tr('Economato de Lola'), 'economato'), desc = x => Math.round(x * (1 - (dcVentaja() && dcVentaja().descuento ? dcVentaja().descuento : 0)));
   s.append(dcEl('p', 'dc-nota', tr('«Lo que ves es lo que hay. Y lo que hay, lo he sacado yo del almacén de Microblizz».')));
   const compra = (precio, fn) => { if (r.nominas < precio) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } r.nominas -= precio; play('levelup'); fn(); dcGuarda(); dcPintaEconomato(); };
   const g = dcEl('div', 'dc-rejilla dc-oferta');
@@ -177,7 +177,7 @@ function dcPintaEconomato() {
 }
 // ---------- el final ----------
 function dcPintaFin(victoria) {
-  const s = dcPanel(tr(victoria ? '¡SURVIVALBOT, DESPEDIDO!' : 'DESPIDO FULMINANTE')), u = DCP.meta.ultima || {};
+  const s = dcPanel(tr(victoria ? '¡SURVIVALBOT, DESPEDIDO!' : 'DESPIDO FULMINANTE'), victoria ? 'jefe' : 'correo'), u = DCP.meta.ultima || {};
   s.append(dcTarjetaResultado(tr(victoria ? 'Jornada completada' : 'Jornada truncada'), tr('Oficinas de Microblizz'), [['reunion', String(u.nodos || 0), tr('citas')], ['ataque', String(u.reuniones || 0), tr('ganadas')], ['reloj', String(u.turnos || 0), tr('turnos')], ['pausa', String(u.min || 0), tr('min')]], !victoria));
   s.append(dcEl('p', 'dc-nota', tr(victoria ? 'Has sobrevivido a la agenda entera de las Oficinas. El acto 2 llegará en la siguiente versión.' : 'Microblizz te ha echado del edificio. Lola dice que la puerta de atrás sigue abierta.')));
   s.append(dcEl('p', 'dc-nota dc-joke', tr(victoria ? 'Microblizz ha emitido un comunicado: SurvivalBot «ha decidido explorar nuevos retos». Phony le ha ofrecido una suscripción.' : 'Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.')));

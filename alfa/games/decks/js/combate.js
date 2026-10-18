@@ -139,8 +139,8 @@ function dcFinTurno(C) {
   dcActuanCompaneros(C); if (dcCompruebaFin(C)) return;
   for (const r of C.rivales) {
     if (r.hp <= 0) continue;
-    if (r.aturdido) { r.aturdido--; C.log.push(tr('{rival} está rascándose', { rival: r.nombre })); r.bloqueo = 0; dcAnuncia(C, r); continue; }
-    const j = r.jug; r.bloqueo = 0;
+    if (r.aturdido) { C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: 'aturdido' }); r.aturdido--; C.log.push(tr('{rival} está rascándose', { rival: r.nombre })); r.bloqueo = 0; dcAnuncia(C, r); continue; }
+    const j = r.jug; r.bloqueo = 0; C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: dcTipoJugada(j) });
     if (j.d) { const pg = dcProtocolo(C, 'golpe'); if (pg) { C.bloqueo += pg.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: pg.bloqueo }); } }
     if (j.d) for (let k = 0; k < (j.n || 1); k++) {
       let d = dcDanoRival(C, r, j); if (C.vulnerable) d = Math.floor(d * 1.5);
@@ -164,6 +164,7 @@ function dcFinTurno(C) {
 function dcActuanCompaneros(C) {
   for (const k of C.companeros.slice()) {
     const fx = dcFx({ id: k.id, asc: k.asc }), vivos = C.rivales.filter(r => r.hp > 0);
+    C.eventos.push({ t: 'accion', r: -1, comp: C.companeros.indexOf(k) });
     if (fx.dano && vivos.length) { const r = vivos.reduce((a, b) => b.hp < a.hp ? b : a); dcGolpea(C, r, dcDanoA(C, r, fx.dano, false)); }
     if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
     if (fx.cura) { dcVida(fx.cura); C.eventos.push({ t: 'cura', r: -1, n: fx.cura }); }

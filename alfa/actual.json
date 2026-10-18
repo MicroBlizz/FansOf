@@ -1,8 +1,8 @@
 {
- "build": 182,
- "hash": "fa3508d",
- "fecha": "2026-10-18T00:55:22Z",
- "mensaje": "Rouflage: invisibilidad total durante la granada (todos, también bots online); sin cansancio ni silbidos mientras dura",
+ "build": 183,
+ "hash": "a4e04e6",
+ "fecha": "2026-10-18T00:55:47Z",
+ "mensaje": "Nova: las explosiones en cadena de la sobrecarga se cortan a 3 saltos (desbordaba la pila en un racimo de enemigos calientes)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

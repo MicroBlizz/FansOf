@@ -154,7 +154,11 @@ function nvExplosion(S, x, y, radio, dano, w, salvo) {
   nvSnd('nvEstalla', S, x, y);
   radio *= nvFactor(S.nave.rango);   // las explosiones también crecen con la nave
   S.fx.push({ t: 0.3, x, y, r: radio, color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'onda' });
-  for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true);
+  // una explosión puede encender la sobrecarga de un vecino, que explota y enciende la del siguiente...: la cadena se corta a 3 saltos
+  if ((S.expProf || 0) >= 3) return;
+  S.expProf = (S.expProf || 0) + 1;
+  try { for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true); }
+  finally { S.expProf--; }
 }
 
 // ---------- el golpe: escudo, estados, reacciones ----------

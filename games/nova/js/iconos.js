@@ -66,7 +66,8 @@ function nvIcono(grupo, clave, col, tam) {
 }
 function nvIconoCodigo(grupo, clave, col, tam) {
   const cv = document.createElement('canvas'), d = (tam || 52) * 2; cv.width = cv.height = d;
-  const c = cv.getContext('2d'), f = NV_ICONOS[grupo] && NV_ICONOS[grupo][clave];
+  const c = cv.getContext('2d'), V = grupo === 'arma' && typeof NV_VAR_ID !== 'undefined' ? NV_VAR_ID[clave] : null;
+  let f = NV_ICONOS[grupo] && (NV_ICONOS[grupo][clave] || (V && NV_ICONOS[grupo][V.portador]));   // las armas de facción usan el dibujo de su portador
   c.scale(d / 64, d / 64);
   if (f) f(c, col || '#ffd93d'); else nvIcCirculo(c, 32, 32, 24, col || '#ffd93d');
   cv.style.width = cv.style.height = (tam || 52) + 'px';

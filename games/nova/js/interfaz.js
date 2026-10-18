@@ -51,15 +51,15 @@ function nvHud(c, S, W, H, vs) {
   if (NVP.joy && NVP.joy.px !== undefined) { const j = NVP.joy, r = cvRect(); c.beginPath(); c.arc((j.x - r.left) * W / r.width, (j.y - r.top) * H / r.height, 40 * u, 0, 6.283); c.strokeStyle = 'rgba(255,255,255,.3)'; c.lineWidth = 3; c.stroke(); c.beginPath(); c.arc((j.px - r.left) * W / r.width, (j.py - r.top) * H / r.height, 16 * u, 0, 6.283); c.fillStyle = 'rgba(255,255,255,.35)'; c.fill(); }
   nvPanelesDOM(S);
 }
-// Minimapa: la arena entera con estaciones (azul), nidos (rojo), capitanes (rosa), pecios, el Rey (dorado) y tú.
+// Minimapa: el sector entero centrado en ti (no tiene bordes, da la vuelta) con estaciones (azul), nidos (rojo), capitanes (rosa), pecios y el Rey (dorado).
 function nvMinimapa(c, S, W, H, u) {
-  const R = 52 * u, x = W - R - 10 * u, y = H - R - 10 * u, k = R / NV_ARENA, n = S.nave;
-  c.save(); c.beginPath(); c.arc(x, y, R, 0, 6.283); c.fillStyle = 'rgba(8,12,40,.7)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.stroke(); c.clip();
+  const R = 52 * u, n = S.nave, k = R / (nvLado(S) / 2), x0 = W - R - 10 * u, y0 = H - R - 10 * u, x = x0 - n.x * k, y = y0 - n.y * k;
+  c.save(); c.beginPath(); c.arc(x0, y0, R, 0, 6.283); c.fillStyle = 'rgba(8,12,40,.7)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.stroke(); c.clip();
   const punto = (px, py, col, r) => { c.fillStyle = col; c.fillRect(x + px * k - r, y + py * k - r, 2 * r, 2 * r); };
   for (const p of S.pecios) punto(p.x, p.y, p.rara ? '#ffd93d' : '#6fe3ff', 1.2 * u);
   for (const st of S.estaciones) punto(st.x, st.y, '#7aa8ff', 3 * u);
   for (const e of S.enem) { if (e.muerto) continue; if (e.d.nido) punto(e.x, e.y, '#ff5b5b', 2.6 * u); else if (e.d.capitan) punto(e.x, e.y, '#ff4b9a', 3 * u); else if (e.d.jefe) punto(e.x, e.y, '#ffd93d', 4 * u); }
-  c.fillStyle = '#fff'; c.beginPath(); c.arc(x + n.x * k, y + n.y * k, 3 * u, 0, 6.283); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(x0, y0, 3 * u, 0, 6.283); c.fill();
   c.restore();
 }
 function cvRect() { return document.getElementById('nv-canvas').getBoundingClientRect(); }
@@ -74,7 +74,7 @@ function nvPanelesDOM(S) {
     S.cartas.forEach((c, i) => {
       const celda = nvEl('nv-celda'), col = NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c';
       const b = nvEl('nv-carta' + (c.rareza && c.rareza !== 'comun' ? ' nv-rar-' + c.rareza : ''), '', 'button'); b.style.setProperty('--col', col);
-      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
+      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA', basura: 'MEME' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
       if (c.rareza && (c.tipo === 'arma' || c.tipo === 'defensa')) { const r = nvEl('nv-rareza', ' · ' + tr(NOVA_RAREZAS[c.rareza].nombre).toUpperCase(), 'span'); r.style.color = NOVA_RAREZAS[c.rareza].color; tipo.appendChild(r); }
       b.appendChild(tipo);
       b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));
@@ -96,6 +96,7 @@ function nvPanelesDOM(S) {
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
     if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
+    if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Arma desbloqueada!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
     const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
     const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
     p.appendChild(b); p.appendChild(s); cont.appendChild(p);
@@ -105,6 +106,7 @@ function nvSalir() {
   nvParar(); NVI.cartasVistas = null; NVI.finVisto = null;
   document.getElementById('nv-partida').hidden = true;
   document.getElementById('nv-portada').hidden = false;
+  nvPintaMenu();
 }
 function nvJugar() {
   document.getElementById('nv-portada').hidden = true;
@@ -134,25 +136,29 @@ function nvMenu() {
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
     t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial())].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial()) + 1).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
-    t.appendChild(nvEl('nv-cdet', tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
+    const VI = C.arma[2] && NV_VAR_ID[C.arma[2]];
+    t.appendChild(nvEl('nv-cdet', VI ? tr('Arma insignia') + ': ' + tr(VI.nombre) + '. ' + tr(VI.efecto) : tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Atrás'), 'button'); s.onclick = nvGalaxiaMenu; p.appendChild(s);
-  nvInfo(p, 'nave');
+  nvInfo(p, ['nave', 'armasFaccion']);
   cont.appendChild(p);
 }
 function nvMenuCapitan(casco) {
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
   const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE TU CAPITÁN')));
-  for (const id of NV_CAPITANES) {
-    const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id), F = NOVA_CASCOS.facciones[K.faccion];
+  for (const id of nvComandantes()) {   // en campaña: el líder y las unidades de tu facción (comandantes.js)
+    const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id), fc = nvCapFaceta(id), fac = K ? K.faccion : nvFaccionCampana(), F = NOVA_CASCOS.facciones[fac];
     const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', '#ffd93d');
-    b.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
-    b.appendChild(nvEl('nv-cnom', tr(K.nombre)));
-    b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
-    if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
-    nvConIcono(b, 'cap', id, NV_COL_CAP[id], 58);
+    b.appendChild(nvEl('nv-ctipo', tr(F.nombre) + (nvFaccionCampana() ? ' · ' + tr(K ? 'Líder' : 'Unidad') : '')));
+    b.appendChild(nvEl('nv-cnom', tr(nvCapNombre(id))));
+    if (fc) b.appendChild(nvEl('nv-cdet', tr(NOVA_TRIPULACION.facetas[fc].nombre) + ': ' + tr(NV_OFICIAL_TXT[fc])));
+    else {
+      b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
+      if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
+    }
+    nvConIcono(b, 'cap', id, NV_COL_CAP[id] || NV_FAC_COLOR[fac], 58);
     b.onclick = () => nvMenuOficial(casco, id);
     p.appendChild(b);
   }
@@ -189,15 +195,16 @@ function nvTile(w, sel) {   // una arma como ficha: icono, nombre y el tamaño g
   return b;
 }
 function nvRenderEstacion(S) {
-  const cont = document.getElementById('nv-paneles'); cont.textContent = '';
+  const cont = document.getElementById('nv-paneles'), vieja = cont.querySelector('.nv-panel'), scroll = vieja ? vieja.scrollTop : 0; cont.textContent = '';   // repintar no mueve el scroll
   const n = S.nave, p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ESTACIÓN')));
   p.appendChild(nvEl('nv-cdet', tr('Chatarra para gastar') + ': ' + Math.floor(S.cartera)));
   const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
   rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
   const armas = n.armas.filter(w => w.portador !== 'defensa');
   const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
-  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(aviso);
-  if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
+  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(nvLeyendaAnclajes(S)); p.appendChild(aviso);
+  if (S.estTienda) nvRenderTienda(S, p);
+  else if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
     const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
     const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
     p.appendChild(nvEl('nv-titulo', tr('TALLER DE TAMAÑOS')));
@@ -216,6 +223,7 @@ function nvRenderEstacion(S) {
     d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
   } else if (!S.estSel) {
+    const ti = nvEl('nv-boton', tr('Tienda de módulos') + ' · ' + tr('comprar, mejorar y reciclar'), 'button'); ti.onclick = () => { S.estTienda = { tab: 'comprar', aviso: '' }; nvRenderEstacion(S); }; p.appendChild(ti);
     const ta = nvEl('nv-boton', tr('Taller de tamaños') + ' · ' + tr('unir y dividir armas'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
     p.appendChild(nvEl('nv-cdet', tr('Cambiar un arma')));
     for (const w of armas) { const t = nvTile(w, false); t.onclick = () => { S.estSel = { w, ofertas: nvOfertasEstacion(S, w.slot) }; nvRenderEstacion(S); }; p.appendChild(t); }
@@ -234,6 +242,7 @@ function nvRenderEstacion(S) {
     const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
   }
   const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
-  p.appendChild(sa); nvInfo(p, S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
+  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estTienda = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
+  p.appendChild(sa); nvInfo(p, S.estTienda ? 'tienda' : S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
+  p.scrollTop = scroll; requestAnimationFrame(() => { p.scrollTop = scroll; });
 }

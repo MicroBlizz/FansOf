@@ -26,6 +26,16 @@ function nvSectorCara(c, x, y, cara, R, col, vivo) {
   c.restore();
 }
 
+// Qué admite cada anclaje: letras sobre el dibujo y lista de nombres en el texto.
+const NV_LETRA_TIPO = { railgun: 'R', flak: 'F', laser: 'L', lanzador: 'M', drones: 'D', defensa: 'E' };
+function nvAdmite(sl) {   // «Todas las armas» si admite las cinco; si no, sus nombres
+  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = NV_TIPOS_LIBRES.every(t => ar.includes(t));
+  return (todas ? tr('Todas las armas') : ar.map(t => tr(NOVA_ARMAS.portadores[t].nombre)).join(', ')) + (sl.tipos.includes('defensa') ? (ar.length ? ' + ' : '') + tr('Defensa') : '');
+}
+function nvLetrasAnclaje(sl) {
+  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = NV_TIPOS_LIBRES.every(t => ar.includes(t));
+  return (todas ? '★' : ar.map(t => NV_LETRA_TIPO[t]).join('')) + (sl.tipos.includes('defensa') ? 'E' : '');
+}
 // Pinta la nave de frente en el lienzo, con el arco del anclaje elegido y un aro en cada anclaje.
 function nvPintaEstacion(cv, S) {
   const c = cv.getContext('2d'), n = S.nave, L = NV_EST_LADO, sel = S.estSlot, ESC = nvEstEsc(n);
@@ -38,6 +48,8 @@ function nvPintaEstacion(cv, S) {
     const w = n.armas.find(a => a.slot === r.id), rr = (NOVA_PIEZAS.radioRanura[w ? w.tam : 'S'] + 6) * ESC;
     c.beginPath(); c.arc(r.x * ESC, r.y * ESC, rr, 0, 6.283);
     c.lineWidth = r.id === sel ? 4 : 2; c.strokeStyle = r.id === sel ? '#ffd93d' : 'rgba(255,255,255,.55)'; c.setLineDash(w ? [] : [4, 4]); c.stroke(); c.setLineDash([]);
+    c.font = '800 12px sans-serif'; c.textAlign = 'center'; c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.fillStyle = w ? '#fff' : '#ffd93d';   // letras de lo que admite el anclaje
+    const tx = nvLetrasAnclaje(r), ty = r.y * ESC + rr + 12; c.strokeText(tx, r.x * ESC, ty); c.fillText(tx, r.x * ESC, ty);
   }
   c.restore();
 }
@@ -67,5 +79,15 @@ function nvTextoAnclaje(S) {
   const sl = S.estSlot && nvRanuras(S.nave.rango, S).find(r => r.id === S.estSlot);
   if (!sl) return tr('Toca un anclaje para ver su arco de tiro, y otro para cambiar las armas de sitio');
   const w = S.nave.armas.find(a => a.slot === sl.id), arco = NOVA_CASCOS.caras[sl.cara].arco;
-  return (w ? nvNombreArma(w) : tr('Vacío')) + ' · ' + tr(sl.cara) + ' · ' + tr('Arco de tiro') + ' ' + arco + '°';
+  return (w ? nvNombreArma(w) : tr('Vacío')) + ' · ' + tr(sl.cara) + ' · ' + tr('Arco de tiro') + ' ' + arco + '°\n' + tr('Admite') + ': ' + nvAdmite(sl) + ' · ' + tr({ S: 'pequeña', M: 'mediana', L: 'grande' }[sl.tam]);
+}
+// Leyenda de los anclajes: una línea por anclaje con lo que admite y si está libre.
+function nvLeyendaAnclajes(S) {
+  const cont = document.createElement('div'); cont.className = 'nv-leyenda';
+  for (const r of nvRanuras(S.nave.rango, S)) {
+    const w = S.nave.armas.find(a => a.slot === r.id), f = document.createElement('div'); f.className = 'nv-ley' + (w ? '' : ' nv-libre');
+    f.textContent = tr(r.cara) + ' · ' + nvLetrasAnclaje(r) + ' · ' + (w ? (w.portador === 'defensa' ? tr('Defensa') : nvNombreArma(w)) : tr('Libre') + ': ' + nvAdmite(r));
+    cont.appendChild(f);
+  }
+  return cont;
 }

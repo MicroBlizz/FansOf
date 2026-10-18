@@ -2,7 +2,7 @@
 // El dibujo está en dibujo.js y los menús en interfaz.js. Todo el estado vive en S; no se guarda nada (la partida dura 3-5 min).
 'use strict';
 const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujada (1 = el PNG de arte tal cual); empiezas muy pequeño y creces; el hitbox sale de él
-const NV_ARENA = 4200;                       // radio de la arena
+const NV_ARENA = 2900;                       // radio de la zona donde se reparte el mundo al empezar (el sector no tiene bordes: da la vuelta)
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
 // Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
 function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }
@@ -14,6 +14,8 @@ function nvVista(S) { return 560 * Math.pow(nvFactor(S.nave.rango), 0.9); }   //
 function nvMediaPantalla(S) { const w = nvVista(S) / 2; return [w, w * (S.aspecto || 16 / 9)]; }
 // ¿Está (x, y) dentro de la pantalla? `m` > 0 exige ese margen hacia dentro. Nada dispara desde fuera de la pantalla.
 function nvEnPantalla(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw - (m || 0) && Math.abs(y - S.cam.y) < hh - (m || 0); }
+// ¿Se ve (x, y)? Con margen m hacia fuera (lo de fuera no se dibuja ni revienta en trozos).
+function nvVisible(S, x, y, m) { const [hw, hh] = nvMediaPantalla(S); return Math.abs(x - S.cam.x) < hw + m && Math.abs(y - S.cam.y) < hh + m; }
 function nvZ(S) { return nvVista(S) / 560; }   // cuántas unidades de mundo mide «un píxel de rango 1»: los efectos y trazos fijos se multiplican por esto para verse igual a cualquier tamaño
 function nvTier(r) { return Math.min(5, 1 + Math.floor((r - 1) / 5)); }   // el casco gana ranuras y motores cada 5 rangos
 // Chatarra de un enemigo según su tamaño frente al tuyo: uno mayor da muchísimo, uno menor casi nada.
@@ -27,6 +29,20 @@ const NV_CASCOS = {
   crucero: { hp: 230, vel: 190, arma: ['laser', 'termica'] },
   fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
 };
+// Sector sin bordes: es un toro de lado L que crece con la nave. La nave nunca salta; lo que queda a más de L/2 de ella
+// reaparece por el otro lado (siempre fuera de la pantalla), así que todo se ve, se apunta y se mide en su copia más cercana.
+function nvLado(S) { return Math.max(2 * NV_ARENA, nvVista(S) * 8); }
+function nvEnvuelve(S) {
+  const L = nvLado(S), h = L / 2, n = S.nave;
+  const mueve = o => {
+    let sx = 0, sy = 0; const dx = o.x - n.x, dy = o.y - n.y;
+    if (dx > h || dx < -h) sx = -L * Math.round(dx / L);
+    if (dy > h || dy < -h) sy = -L * Math.round(dy / L);
+    if (!sx && !sy) return;
+    o.x += sx; o.y += sy; if (o.x0 !== undefined) { o.x0 += sx; o.y0 += sy; }
+  };
+  for (const l of [S.enem, S.proy, S.eproy, S.restos, S.pecios, S.estaciones, S.nebulosas, S.saltos, S.trozos || [], S.parts, S.fx, S.nums]) for (const o of l) mueve(o);
+}
 function nvNuevaPartida(casco, cap, ofi) {
   casco = casco || 'caza'; cap = cap || NVP.cap || 'progamer'; ofi = ofi === undefined ? NVP.ofi : ofi;
   const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
@@ -42,6 +58,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   NVP.S = S;
   const sl = nvRanuras(1, S)[0];
   S.nave.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1]));
+  if (C.arma[2]) S.nave.armas[0].variante = C.arma[2];   // el arma insignia de la facción (facciones.js)
   nvSectorPartida(S);
   nvGeneraMundo(S);
   S.cap = cap; S.ofi = ofi; S.kills = [];
@@ -52,25 +69,25 @@ function nvNuevaPartida(casco, cap, ofi) {
 
 // ---------- un paso de simulación (dt en segundos) ----------
 function nvPaso(S, dt) {
-  if (S.estado !== 'juego') return;
-  S.t += dt;
+  const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
+  if (S.estado !== 'juego' && !fin) return;
+  if (!fin) S.t += dt;
   const n = S.nave;
-  nvMueve(S, dt);
-  nvSpawn(S, dt); nvSaltos(S, dt);
-  nvMundo(S, dt);
-  nvTripulacionPaso(S);
+  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
   nvEnemigos(S, dt);
-  nvSumaChatarra(S, 0);
-  nvArmas(S, dt);
+  if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
   nvProyectilesEnemigos(S, dt);
-  nvRestos(S, dt);
+  if (!fin) nvRestos(S, dt);
+  nvPasoTrozos(S, dt);
   if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
+  nvEnvuelve(S);
   if (n.golpeado > 0) n.golpeado -= dt;
   if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
   // cámara suave
+  if (fin) { nvPasoFinal(S, dt); return; }
   S.cam.x += (n.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (n.y - S.cam.y) * Math.min(1, dt * 6);
 }
 function nvMueve(S, dt) {
@@ -85,7 +102,6 @@ function nvMueve(S, dt) {
   const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
-  const d = Math.hypot(n.x, n.y); if (d > NV_ARENA) { n.x *= NV_ARENA / d; n.y *= NV_ARENA / d; }
   // la proa mira hacia donde te mueves (parado, se queda como estaba); las armas son las que apuntan a los enemigos
   if (m > 0.1) {
     let df = Math.atan2(n.vx, -n.vy) - n.ang; while (df > Math.PI) df -= 6.283; while (df < -Math.PI) df += 6.283;
@@ -102,6 +118,7 @@ function nvBotMeta(S) {
     if (e.muerto) continue;
     if (!e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
     else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
+    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
   }
   for (const r of S.restos) mira(r.x, r.y, 0.5);
   if (huir) { const hx = n.x - huir.x, hy = n.y - huir.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
@@ -123,14 +140,16 @@ function nvRestos(S, dt) {
   }
 }
 function nvSumaChatarra(S, v) {
+  if (v > 0) nvSnd('nvChatarra', S);
   S.chat += v; S.cartera += v;
   const n = S.nave;
   if (S.estado === 'juego' && S.chat >= nvUmbralS(S, n.rango)) {   // una subida cada vez; si queda chatarra, la siguiente llega tras elegir la carta
     n.rango++; n.escala = nvEscalaRango(n.rango); n.rAncho = nvRAncho(S.casco, n.rango); n.r = 0.42 * n.rAncho * n.escala;
-    n.hpMax = Math.round(n.hpMax * 1.08); n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.3);
+    const hpAntes = n.hpMax; n.hpMax = Math.round(hpAntes * 1.08); n.hp += n.hpMax - hpAntes;   // el casco máximo crece poco a poco y solo ganas esa vida nueva: subir de rango no cura
     S.stats.rangoT.push(Math.round(S.t));
     S.aviso = { t: 2, txt: tr('Rango') + ' ' + n.rango + '!' };
     if (nvClase(n.rango) !== nvClase(n.rango - 1)) S.aviso = { t: 3.5, txt: tr('Evolución') + ': ' + tr(NV_ETAPAS[nvClase(n.rango)].nombre) + '!' };   // la nave cambia de clase
+    nvSnd(nvClase(n.rango) !== nvClase(n.rango - 1) ? 'nvEvolucion' : 'nvRango', S);
     nvAjustaTamanos(S);
     nvAbrirCartas(S);
   }
@@ -182,7 +201,7 @@ function nvBotEstacion(S) {
 }
 
 // ---------- tripulación: capitán (ventaja y pega) y un oficial (faceta). Solo los capitanes que ya tienen mecánica en el prototipo ----------
-const NV_CAPITANES = ['progamer', 'bunny', 'necrolord', 'twitchking', 'epicchampion'];
+const NV_CAPITANES = ['progamer', 'bunny', 'necrolord', 'twitchking', 'epicchampion', 'cybermarine', 'memelord', 'vikingo', 'directora'];   // los cuatro últimos, en lideres.js
 const NV_OFICIALES = {   // faceta de datos-tripulacion.js → efecto en la partida
   fuego: S => { S.mejoras.dano = (S.mejoras.dano || 1) * 1.1; },
   defensa: S => { S.nave.hpMax = Math.round(S.nave.hpMax * 1.15); S.nave.hp = S.nave.hpMax; },
@@ -191,6 +210,11 @@ const NV_OFICIALES = {   // faceta de datos-tripulacion.js → efecto en la part
   navegacion: S => { S.mejoras.vel = (S.mejoras.vel || 1) * 1.08; S.mejoras.iman = (S.mejoras.iman || 0) + 1; }
 };
 function nvAplicaTripulacion(S) {
+  const K = NOVA_TRIPULACION.capitanes.find(c => c.id === S.cap);
+  S.capFaccion = K ? K.faccion : NVP.camp && NVP.camp.faccion || null;   // una unidad de comandante es de la facción de la campaña
+  const fc = typeof nvCapFaceta === 'function' ? nvCapFaceta(S.cap) : null;   // comandantes.js: líderes sin pasiva y unidades dan su faceta
+  if (fc && NV_OFICIALES[fc]) NV_OFICIALES[fc](S);
+  nvLiderInicio(S);   // lideres.js
   if (S.ofi && NV_OFICIALES[S.ofi]) NV_OFICIALES[S.ofi](S);
 }
 function nvTripulacionPaso(S) {

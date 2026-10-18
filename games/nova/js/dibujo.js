@@ -14,7 +14,7 @@ function nvCargaArte(listo) {
     for (const p of d.piezas) {
       NVA.meta[p.id] = p;
       const im = new Image();
-      im.onload = im.onerror = () => { if (--falta === 0) { NVA.listo = true; listo && listo(); } };
+      im.onload = im.onerror = () => { if (--falta === 0) { NVA.listo = true; nvFacArtePrestado(); listo && listo(); } };
       im.src = NVA.base + p.archivo; NVA.img[p.id] = im;
     }
   }).catch(() => { NVA.listo = true; listo && listo(); });
@@ -121,14 +121,14 @@ function nvDibujaNave(c, S) {
   if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; c.translate(H.escudo.x, H.escudo.y); c.scale(H.escudo.rx / NOVA_PIEZAS.cascos[S.casco].escudo.rx, H.escudo.ry / NOVA_PIEZAS.cascos[S.casco].escudo.ry); nvPieza(c, S.casco + '-escudo', 0, 0); c.restore(); }
   else if (n.esc && n.esc.hp > 0) { const R = 118 * e; c.beginPath(); c.arc(n.x, n.y, R, 0, 6.283); c.fillStyle = 'rgba(74,168,255,' + 0.10 * n.esc.hp / n.esc.cap + ')'; c.fill(); c.lineWidth = 2; c.strokeStyle = 'rgba(160,220,255,' + (0.25 + 0.5 * n.esc.hp / n.esc.cap) + ')'; c.stroke(); }
   // drones orbitando
-  for (const w of n.armas) if (w.drones) for (const d of w.drones) { c.beginPath(); c.arc(d.x, d.y, 7, 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2; c.strokeStyle = '#1a0f2e'; c.stroke(); }
+  for (const w of n.armas) if (w.drones) for (const d of w.drones) { if (d.dock) continue; c.beginPath(); c.arc(d.x, d.y, 7 * nvZ(S), 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2 * nvZ(S); c.strokeStyle = '#1a0f2e'; c.stroke(); }
 }
 
 // ---------- enemigos, disparos y efectos ----------
 function nvDibujaEnemigo(c, e, S) {
   const d = e.d, r = e.r;
   c.save(); c.translate(e.x, e.y);
-  if (e.est.sobrecalentado > 0 || e.calor > 40) { c.beginPath(); c.arc(0, 0, r + 5, 0, 6.283); c.fillStyle = 'rgba(255,75,75,' + Math.min(0.5, e.calor / 200 + 0.1) + ')'; c.fill(); }
+  if (e.calor > 3) { c.beginPath(); c.arc(0, 0, r + 5, 0, 6.283); c.fillStyle = 'rgba(255,75,75,' + Math.min(0.5, e.calor / 200 + 0.05) + ')'; c.fill(); }
   c.lineWidth = 2.5; c.strokeStyle = '#1a0f2e'; c.fillStyle = e.flash > 0 ? '#ffffff' : d.color;
   const arte = nvSpriteEnemigo(c, e, S);
   if (arte) { /* arte final */ }
@@ -164,7 +164,9 @@ function nvDibujaEnemigo(c, e, S) {
   if (e.esc > 0 && !(e.est.escudoCaido > 0)) { c.beginPath(); c.arc(0, 0, r + 6, 0, 6.283); c.lineWidth = 3; c.strokeStyle = 'rgba(120,190,255,' + (0.3 + 0.6 * e.esc / e.escMax) + ')'; c.stroke(); }
   if (e.est.brecha > 0) { c.strokeStyle = '#ff9a3c'; c.lineWidth = 2; c.beginPath(); c.moveTo(-r * 0.5, -r * 0.6); c.lineTo(0, 0); c.lineTo(r * 0.4, r * 0.5); c.stroke(); }
   if (e.est.marcado > 0) { c.strokeStyle = '#ffd93d'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 9, 0, 6.283); c.moveTo(-r - 14, 0); c.lineTo(r + 14, 0); c.moveTo(0, -r - 14); c.lineTo(0, r + 14); c.stroke(); }
-  if (e.est.apagado > 0) { c.fillStyle = 'rgba(180,107,255,.45)'; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); }
+  if (e.calor > 3) { const g = c.createRadialGradient(0, 0, 0, 0, 0, r); const q = Math.min(0.75, e.calor / 130); g.addColorStop(0, 'rgba(255,60,40,' + q + ')'); g.addColorStop(1, 'rgba(255,60,40,' + q * 0.35 + ')'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, r * 0.95, 0, 6.283); c.fill(); }   // brillo rojo del casco según el calor acumulado
+  if (e.est.apagon > 0) { c.fillStyle = 'rgba(180,107,255,.45)'; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); }
+  if (e.est.interferido > 0) { c.save(); c.setLineDash([6, 5]); c.lineDashOffset = -(e.fase || 0) * 20; c.strokeStyle = 'rgba(180,107,255,.85)'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 12, 0, 6.283); c.stroke(); c.restore(); }
   if (d.capitan) { c.fillStyle = '#fff'; c.font = '800 13px Baloo 2, sans-serif'; c.textAlign = 'center'; c.lineWidth = 3; c.strokeText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); c.fillText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); }
   if (e.hp < e.hpMax || d.jefe || d.capitan) { c.fillStyle = '#1a0f2e'; c.fillRect(-r, -r - 12, 2 * r, 5); c.fillStyle = d.jefe ? '#ff4b9a' : '#ff6b6b'; c.fillRect(-r, -r - 12, 2 * r * Math.max(0, e.hp / e.hpMax), 5); }
   c.restore();
@@ -215,7 +217,6 @@ function nvDibujaMundo(c, S) {
   const cerca = o => Math.abs(o.x - cx) < V && Math.abs(o.y - cy) < V * 1.6;
   for (const st of S.estaciones) if (cerca(st)) nvDibujaEstacion(c, st, S.t);
   for (const p of S.pecios) if (cerca(p)) nvDibujaPecio(c, p, S.t * 2);
-  c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 10; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
   c.beginPath();   // restos de nave: chapas retorcidas con el borde dorado, todas en un solo trazo
   for (const r of S.restos) {
     if (!nvVisible(S, r.x, r.y, 20)) continue;
@@ -227,7 +228,8 @@ function nvDibujaMundo(c, S) {
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const s of S.saltos) nvDibujaSalto(c, s, S);
   nvDibujaBalasE(c, S);
-  nvDibujaNave(c, S);
+  if (!S.nave.destruida) nvDibujaNave(c, S);
+  nvDibujaTrozos(c, S);
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango
   c.globalCompositeOperation = 'lighter';
   for (const w of n.armas) if (w.rayo > 0) { c.strokeStyle = NOVA_ARMAS.cargas[w.carga].color; c.lineWidth = (3 + w.rayo * 20) * z; c.beginPath(); c.moveTo(w.x, w.y); c.lineTo(w.rx, w.ry); c.stroke(); }
@@ -235,10 +237,11 @@ function nvDibujaMundo(c, S) {
   c.globalAlpha = 0.45; c.lineCap = 'round';   // estelas, todas con el mismo modo de mezcla
   for (const b of bv) { c.strokeStyle = b.color; c.lineWidth = b.r * 1.5; c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - b.vx * 0.045, b.y - b.vy * 0.045); c.stroke(); }
   c.globalAlpha = 1; c.lineCap = 'butt'; c.globalCompositeOperation = 'source-over';
+  c.strokeStyle = '#1a0f2e'; c.lineWidth = 1.5 * z;   // contorno oscuro: a cualquier tamaño la bala se recorta nítida contra el fondo
   for (const b of bv) {
     c.fillStyle = b.color;
-    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
-    else nvFormaCarga(c, b.forma, b.x, b.y, b.r);
+    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.strokeRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
+    else { nvFormaCarga(c, b.forma, b.x, b.y, b.r); c.stroke(); }
   }
   c.globalCompositeOperation = 'source-over';
   for (const f of S.fx) {

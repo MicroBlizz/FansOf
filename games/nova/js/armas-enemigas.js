@@ -5,10 +5,10 @@
 'use strict';
 // fr: alcance en fracción de media pantalla · cada: segundos entre disparos · dps: daño por segundo y por punto · n: balas por disparo
 const NV_ARMA_E = {
-  railgun: { fr: 0.95, cada: 3.0, dps: 1.7, n: 1, v: 950, r: 3.5, cargas: ['cinetica', 'energia'] },
-  flak: { fr: 0.4, cada: 2.0, dps: 1.7, n: 5, v: 380, r: 3, cargas: ['cinetica', 'termica'] },
-  laser: { fr: 0.62, cada: 1.1, dps: 1.4, n: 1, v: 0, r: 0, cargas: ['energia', 'termica'] },
-  lanzador: { fr: 0.95, cada: 4.2, dps: 1.7, n: 1, v: 210, r: 5.5, giro: 1.5, cargas: ['explosiva', 'termica'] }
+  railgun: { fr: 0.95, cada: 3.0, dps: 1.1, n: 1, v: 950, r: 3.5, cargas: ['cinetica', 'energia'] },
+  flak: { fr: 0.4, cada: 2.0, dps: 1.1, n: 5, v: 380, r: 3, cargas: ['cinetica', 'termica'] },
+  laser: { fr: 0.62, cada: 1.1, dps: 0.9, n: 1, v: 0, r: 0, cargas: ['energia', 'termica'] },
+  lanzador: { fr: 0.95, cada: 4.2, dps: 1.1, n: 1, v: 210, r: 5.5, giro: 1.5, cargas: ['explosiva', 'termica'] }
 };
 const NV_TAM_E = { S: { c: 1, fr: 0.85, cada: 1, r: 1 }, M: { c: 2, fr: 1, cada: 1.15, r: 1.3 }, L: { c: 4, fr: 1.1, cada: 1.3, r: 1.7 } };
 const NV_DOCTRINA_E = { rastrero: ['flak', 'laser'], fusilero: ['railgun', 'laser'], sepulturero: ['lanzador', 'railgun', 'flak'] };   // qué suele llevar cada tipo
@@ -37,8 +37,9 @@ function nvAlcMaxE(S, e) { return e.armas.reduce((m, w) => Math.max(m, nvAlcE(S,
 function nvDisparaE(S, e, w) {
   const A = NV_ARMA_E[w.portador], T = NV_TAM_E[w.tam], n = S.nave, c = NOVA_ARMAS.cargas[w.carga];
   const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1, ang = Math.atan2(n.y - py, n.x - px);
-  const cada = A.cada * T.cada, dano = A.dps * T.c * cada / A.n;
+  const cada = A.cada * T.cada, dano = A.dps * T.c * cada / A.n * (e.est.interferido > 0 ? NOVA_ARMAS.combos.interferencia.danoEnemigo : 1);   // Interferido: sus armas pegan menos
   w.cd = cada;
+  nvSnd(w.portador === 'laser' ? 'nvLaserE' : 'nvDisparoE', S, px, py, 0.8);
   S.fx.push({ t: 0.12, x: px, y: py, r: 6 * T.r * nvZ(S), color: c.color, tipo: 'flash' });
   if (w.portador === 'laser') {   // haz instantáneo
     S.rayosE.push({ x: px, y: py, rx: n.x, ry: n.y, t: 0.12, color: c.color, g: 2 + T.r });

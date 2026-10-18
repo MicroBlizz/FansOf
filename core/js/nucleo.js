@@ -115,6 +115,7 @@ const NUCLEO = (() => {
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false }) {
     codigo(CORE + 'js/sistema/idioma.js');
+    codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
     if (desarrollo) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado

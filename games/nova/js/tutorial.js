@@ -18,6 +18,11 @@ const NV_TUTO = {
     'Arriba tienes el casco (verde) y la barra de chatarra hasta el siguiente rango (amarilla).',
     'El mapa pequeño de abajo enseña a los enemigos y las estaciones.',
     'Acaba con los capitanes y llegará el jefe del sector. Derrótalo para liberar el sector.'] }],
+  armasFaccion: [{ titulo: 'ARMAS DE FACCIÓN', ic: ['arma', 'railgun'], lineas: [
+    'Cada facción tiene tres armas propias.',
+    'La insignia la lleva su nave desde el principio y solo existe en ella.',
+    'La especial se desbloquea al llegar al rango 15 con esa facción en la campaña.',
+    'La secreta se desbloquea al pasarte la campaña con ella, liberando el núcleo de Microblizz. Desde entonces sale en las cartas de todas tus partidas.'] }],
   cartas: [{ titulo: 'SUBIR DE RANGO', ic: ['cat', 'ofensiva'], lineas: [
     'Al subir de rango eliges una carta: una ofensiva, una defensiva, una de utilidad y otra al azar.',
     'Las armas nuevas ocupan una ranura libre. Al crecer ganas ranuras y las armas salen más grandes.',
@@ -29,10 +34,15 @@ const NV_TUTO = {
     'La fusión rinde lo de dos armas en una sola ranura, así que te deja un hueco libre para otra.'] }],
   estacion: [{ titulo: 'LA ESTACIÓN', ic: ['sis', 'regen'], lineas: [
     'Al entrar en una estación la partida se para.',
-    'Con la chatarra que llevas puedes reparar el casco y cambiar un arma por otra.',
+    'Con la chatarra que llevas puedes reparar el casco, cambiar un arma por otra y pasar por la tienda de módulos.',
     'Verás tu nave con sus armas en los anclajes. Toca un anclaje para ver hasta dónde tira, y toca otro para cambiar las dos armas de sitio.',
     'Las de proa tiran 90° al frente, las de los lados 180° hacia su lado, las de popa 180° hacia atrás y las de arriba 360°.',
     'El taller de tamaños sirve para unir y dividir armas.'] }],
+  tienda: [{ titulo: 'LA TIENDA DE MÓDULOS', ic: ['sis', 'mejora'], lineas: [
+    'Comprar: la estación vende armas, escudos, blindajes y mejoras del equipo. Se montan en una ranura libre y se pagan con chatarra.',
+    'Mejorar: cada subida da un 25 % más de daño a un arma y cuesta más cuanto más alta, grande o rara es.',
+    'Reciclar: desmontas un módulo y recuperas la mitad de lo que vale, mejoras incluidas. Sirve para hacer sitio. Siempre te queda un arma.',
+    'Renovar el surtido cambia lo que se vende. Lo que ves es lo que pagas: aquí no hay azar de pago.'] }],
   taller: [{ titulo: 'EL TALLER', ic: ['taller', 'unir'], lineas: [
     'Toca dos armas del mismo tamaño y pulsa Unir: dos pequeñas hacen una mediana y dos medianas una grande.',
     'Más tamaño es mucho más daño, alcance y bala.',
@@ -56,7 +66,8 @@ const NV_TUTO = {
     'Debajo del nombre pone en qué destaca. La eliges antes de cada misión.'] }],
   capitan: [{ titulo: 'EL CAPITÁN', ic: ['cap', 'bunny'], lineas: [
     'El capitán da una ventaja para toda la misión y casi siempre una pega.',
-    'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.'] }],
+    'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.',
+    'En la campaña, el capitán es el líder o una unidad de la facción que elegiste al empezar. Las unidades dan el bonus de su especialidad.'] }],
   oficial: [{ titulo: 'EL OFICIAL', ic: ['fac', 'fuego'], lineas: [
     'El oficial suma un bonus pequeño para toda la misión.',
     'Elige el que encaje con tu forma de jugar: más daño, más casco, más cartas...'] }],
@@ -64,9 +75,21 @@ const NV_TUTO = {
     'Cada arma es un portador (railgun, flak, láser, lanzador o drones) con una carga: cinética, energía, térmica, explosiva o EM.',
     'Cada portador solo admite las cargas que tienen sentido: no hay láseres cinéticos.',
     'Las cargas dejan estados en el enemigo. Si otra carga le da encima, salta una reacción con daño extra.',
-    'Ejemplo: la cinética abre brecha y la térmica la funde.'] }]
+    'Ejemplo: la cinética abre brecha y la térmica la funde.'] },
+  { titulo: 'ESPECIALIDADES', ic: ['arma', 'laser'], lineas: [
+    'Cinética: golpea el casco; contra un escudo rebota y hace solo un 60 %.',
+    'Energía: hace el doble de daño a los escudos y lo normal al casco.',
+    'Térmica: ablanda el casco. Cuanto más calor acumula un enemigo, más daño cinético y explosivo recibe.',
+    'EM: no hace daño. Interfiere: sus armas pegan menos, recibe más daño, no regenera escudo y, a la cuarta, se apaga. Un escudo activo la repele: túmbalo antes con energía.',
+    'Explosiva: daño en área y marca al enemigo: el siguiente impacto de otro tipo es crítico.'] },
+  { titulo: 'COMBOS DE CARGAS', ic: ['sis', 'fusion'], lineas: [
+    'Térmica y cinética o explosiva: Ablandado, el daño sube con el calor.',
+    'EM y térmica: un enemigo interferido se calienta un 50 % más deprisa y, si le das al casco, no regenera escudo durante 8 s.',
+    'Energía y EM: el escudo tumbado tarda el doble en volver.',
+    'Energía y térmica: la energía atiza el calor de un enemigo caliente.',
+    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] }]
 };
-const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'taller', 'capital', 'arsenal'];
+const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal', 'armasFaccion'];
 
 function nvTutoVisto() { try { return JSON.parse(localStorage.getItem(NV_TUTO_CLAVE) || '{}'); } catch (e) { return {}; } }
 function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id] = 1; try { localStorage.setItem(NV_TUTO_CLAVE, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
@@ -90,7 +113,7 @@ function nvTutoTodo() {   // «Cómo se juega»: todas las páginas seguidas
   nvTutoMuestra(pags, () => nvTutoMarca(NV_TUTO_ORDEN));
 }
 function nvTutoMuestra(pags, alAcabar) {
-  const raiz = document.getElementById('nv-partida'); if (!raiz) return;
+  const pa = document.getElementById('nv-partida'), raiz = pa && !pa.hidden ? pa : document.getElementById('stage'); if (!raiz) return;   // también desde la portada
   let i = 0; NVP.tuto = true;
   const capa = nvEl('nv-tuto'); raiz.appendChild(capa);
   const cierra = todo => { capa.remove(); NVP.tuto = false; NVP.ult = 0; alAcabar(); if (todo) nvTutoMarca(NV_TUTO_ORDEN); };

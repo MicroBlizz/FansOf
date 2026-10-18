@@ -28,14 +28,15 @@ const NOVA_VARIANTES = [
   { id: 'misilNuclear', portador: 'lanzador', nombre: 'Misil de cabeza nuclear', rareza: 'legendaria', dano: 2.6, cad: 0.7, alc: 1.2, perf: 2, efecto: 'El misil que borra al jefe' },
   { id: 'dronesEnjambre', portador: 'drones', nombre: 'Drones de enjambre', rareza: 'comun', dano: 0.8, n: 1, efecto: 'Un dron más, algo más flojos' },
   { id: 'dronesGuardian', portador: 'drones', nombre: 'Drones guardianes', rareza: 'rara', dano: 1.3, cad: 1.2, efecto: 'Pegan más y más a menudo' },
+  { id: 'dronesReparador', portador: 'drones', nombre: 'Drones reparadores', rareza: 'rara', repara: true, efecto: 'No atacan: reparan tu casco cada pocos segundos' },
   { id: 'dronesCombate', portador: 'drones', nombre: 'Drones de combate', rareza: 'epica', dano: 1.2, n: 2, efecto: 'Dos drones más y con más mordisco' },
   { id: 'colmena', portador: 'drones', nombre: 'Colmena', rareza: 'legendaria', dano: 1.15, cad: 1.2, n: 4, efecto: 'Un enjambre de cuatro drones extra' }
 ];
 const NV_VAR_ID = {};
 for (const v of NOVA_VARIANTES) NV_VAR_ID[v.id] = v;
 // Multiplicadores de la variante de un arma (1 / 0 si es la básica).
-const NV_VAR_BASE = { dano: 1, cad: 1, alc: 1, perf: 0, n: 0 };
+const NV_VAR_BASE = { dano: 1, cad: 1, alc: 1, perf: 0, n: 0, repara: false, rasgos: [] };
 function nvVar(w) {
   const v = w && w.variante && NV_VAR_ID[w.variante];
-  return v ? { dano: v.dano || 1, cad: v.cad || 1, alc: v.alc || 1, perf: v.perf || 0, n: v.n || 0 } : NV_VAR_BASE;
+  return v ? { dano: v.dano || 1, cad: v.cad || 1, alc: v.alc || 1, perf: v.perf || 0, n: v.n || 0, repara: !!v.repara, rasgos: v.rasgos || [] } : NV_VAR_BASE;
 }

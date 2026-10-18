@@ -150,20 +150,20 @@ function nvProyectiles(S, dt) {
     if (fin) S.proy.splice(i, 1);
   }
 }
-function nvExplosion(S, x, y, radio, dano, w, salvo) {
+function nvExplosion(S, x, y, radio, dano, w, salvo, sinEstado) {
   nvSnd('nvEstalla', S, x, y);
   radio *= nvFactor(S.nave.rango);   // las explosiones también crecen con la nave
   S.fx.push({ t: 0.3, x, y, r: radio, color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'onda' });
   // una explosión puede encender la sobrecarga de un vecino, que explota y enciende la del siguiente...: la cadena se corta a 3 saltos
   if ((S.expProf || 0) >= 3) return;
   S.expProf = (S.expProf || 0) + 1;
-  try { for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true); }
+  try { for (const e of S.enem) if (e !== salvo && !e.muerto && Math.hypot(e.x - x, e.y - y) < radio + e.r) nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true, sinEstado); }
   finally { S.expProf--; }
 }
 
 // ---------- el golpe: escudo, estados, reacciones ----------
 // mult: multiplicador extra (haz enfocado); sinReaccion: los golpes de área no encadenan reacciones.
-function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion) {
+function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   nvSnd('nvImpacto', S, x, y, 0.8);
   const A = NOVA_ARMAS, carga = w.carga, c = A.cargas[carga], est = e.est;
   let d = dano * (mult || 1), crit = false, reac = null;
@@ -189,9 +189,10 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion) {
   }
   // estado que deja la carga
   const dur = A.estados[c.estado].duracion;
-  if (c.estado === 'sobrecalentado') {
+  if (sinEstado) { /* la onda de una sobrecarga solo hace daño en área: no calienta a los vecinos */ }
+  else if (c.estado === 'sobrecalentado') {
     e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1);
-    if (e.calor >= 100) { e.calor = 0; nvExplosion(S, e.x, e.y, 70, 50 * A.tamanos[w.tam], w, e); S.nums.push({ x: e.x, y: e.y - 20, t: 1, txt: tr('¡Sobrecarga!'), color: '#ff4b4b', g: 1 }); }
+    if (e.calor >= 100) { e.calor = 0; nvExplosion(S, e.x, e.y, 70, 50 * A.tamanos[w.tam], w, e, true); S.nums.push({ x: e.x, y: e.y - 20, t: 1, txt: tr('¡Sobrecarga!'), color: '#ff4b4b', g: 1 }); }
   } else if (c.estado === 'apagado') est.apagado = dur * ((est.brecha > 0 && !sinReaccion) ? 2 : 1);
   else est[c.estado] = dur;
   e.hp -= d;

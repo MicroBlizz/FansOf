@@ -31,7 +31,25 @@ function dcCarta(id, asc) { return { id, asc: !!asc, uid: DCP.uid++ }; }
 function dcFx(carta) { const D = DC_CARTAS[carta.id]; return carta.asc ? Object.assign({}, D.fx, D.asc) : D.fx; }
 function dcCoste(carta) { const D = DC_CARTAS[carta.id]; return carta.asc && D.asc && D.asc.coste !== undefined ? D.asc.coste : D.coste; }
 function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? '+' : ''); }
-function dcTextoCarta(carta) { return tr(DC_CARTAS[carta.id].texto, dcFx(carta)); }
+// Las palabras clave de una carta según sus cifras (se añaden al final del texto).
+const DC_PALABRAS = [['despedida', 'Despedida.'], ['indefinido', 'Contrato indefinido.'], ['madrugador', 'Madrugador.']];
+function dcPalabras(fx) { return DC_PALABRAS.filter(([k]) => fx[k]).map(([, t]) => tr(t)); }
+function dcTextoCarta(carta) { const fx = dcFx(carta), p = dcPalabras(fx); return tr(DC_CARTAS[carta.id].texto, fx) + (p.length ? ' ' + p.join(' ') : ''); }
+// El mismo texto en HTML, con las cifras y palabras de `resalta` marcadas (para enseñar un ascenso).
+function dcTextoCartaHTML(carta, resalta) {
+  const fx = dcFx(carta), esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  let t = esc(tr(DC_CARTAS[carta.id].texto)).replace(/\{(\w+)\}/g, (m, k) => k in fx ? (resalta.has(k) ? '<b class="dc-cambio">' + esc(String(fx[k])) + '</b>' : esc(String(fx[k]))) : m);
+  for (const [k, p] of DC_PALABRAS) if (fx[k]) t += ' ' + (resalta.has(k) ? '<b class="dc-cambio">' + esc(tr(p)) + '</b>' : esc(tr(p))); else if (resalta.has(k)) t += ' <s class="dc-cambio-fuera">' + esc(tr(p)) + '</s>';
+  return t;
+}
+// Lo que cambia al ascender una carta: [{ k, antes, despues }] (coste incluido; una palabra clave que aparece o desaparece lleva antes/despues booleanos).
+function dcCambiosAscenso(carta) {
+  const D = DC_CARTAS[carta.id]; if (!D.asc) return [];
+  const a = dcCarta(carta.id, false), b = dcCarta(carta.id, true), fa = dcFx(a), fb = dcFx(b), out = [];
+  if (dcCoste(a) !== dcCoste(b)) out.push({ k: 'coste', antes: dcCoste(a), despues: dcCoste(b) });
+  for (const k of new Set([...Object.keys(fa), ...Object.keys(fb)])) if (fa[k] !== fb[k]) out.push({ k, antes: fa[k], despues: fb[k] });
+  return out;
+}
 function dcObjeto(clave) { return DCP.run && DCP.run.objetos.includes(clave) ? DC_OBJETOS[clave] : null; }
 
 // ---------- la agenda ----------

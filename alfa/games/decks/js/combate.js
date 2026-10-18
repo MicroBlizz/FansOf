@@ -28,6 +28,8 @@ function dcCombateNuevo(encuentro, tramo) {
   const C = { tramo, rivales: encuentro.map(dcRival), bloqueo: 0, fuerza: 0, fuerzaTurno: 0, debil: 0, vulnerable: 0, caos: 0, poderes: {}, pila: shuffle(r.mazo.map(c => Object.assign({}, c))), mano: [], descartes: [], despedidas: [],
     turno: 0, tropasTurno: 0, ataques: 0, saltoCarga: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], eventos: [], objetivo: null, meriendasUsadas: [] };
   // C.eventos: lo que pasó desde el último dibujo ({ t: 'dano'|'cura'|'bloqueo'|'esquiva', r: índice del rival o -1 si es el líder, n }); combate-ui los pinta como cifras flotantes y los vacía.
+  // los madrugadores van arriba del mazo: salen siempre en la mano inicial
+  const mad = C.pila.filter(c => dcFx(c).madrugador); if (mad.length) C.pila = C.pila.filter(c => !dcFx(c).madrugador).concat(mad);
   C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = dcObjeto('zanahoriaoro').saltoCarga;
   // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.
   for (const rv of C.rivales) dcAnuncia(C, rv);
@@ -90,7 +92,7 @@ function dcResuelve(C, c, obj, gratis) {
     const veces = fx.cond === 'porTropa' ? C.tropasTurno : (fx.veces || 1);
     for (let k = 0; k < veces; k++) for (const r of objs) {
       if (r.hp <= 0) continue;
-      let d = dcDanoA(C, r, fx.dano, D.tipo === 'tropa');
+      let d = dcDanoA(C, r, fx.dano, D.tipo === 'empleado');
       if (fx.cond === 'primerGolpe' && r.hp === r.hpMax) d *= 3;
       if (fx.cond === 'noMax' && r.hp < Math.max(...vivos.map(v => v.hp))) d *= 2;
       dcGolpea(C, r, d); C.ataques++;
@@ -104,7 +106,7 @@ function dcResuelve(C, c, obj, gratis) {
   if (fx.fuerzaTurno) C.fuerzaTurno += fx.fuerzaTurno;
   if (fx.poder) C.poderes[fx.poder] = (C.poderes[fx.poder] || 0) + fx.n;
   if (fx.roba) dcRoba(C, fx.roba);
-  if (D.tipo === 'tropa') C.tropasTurno++;
+  if (D.tipo === 'empleado') C.tropasTurno++;
   if (fx.despedida || gratis) C.despedidas.push(c); else C.descartes.push(c);
 }
 function dcUsaSalto(C) {

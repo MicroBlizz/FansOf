@@ -3,7 +3,7 @@
 'use strict';
 const DC_OBJETOS = {
   taza: { nombre: 'Taza del becario', rar: 'basic', texto: '+1 CAOS en el primer turno de cada reunión.', caosTurno1: 1 },
-  teclado: { nombre: 'Teclado mecánico RGB', rar: 'epic', texto: 'Tus tropas pegan +1.', tropaDano: 1 },
+  teclado: { nombre: 'Teclado mecánico RGB', rar: 'epic', texto: 'Tus empleados pegan +1.', tropaDano: 1 },
   mochila: { nombre: 'Mochila con ruedas', rar: 'common', texto: 'Robas una carta más al empezar cada reunión.', manoInicial: 1 },
   pausa: { nombre: 'Botón de pausa', rar: 'epic', texto: 'La hora de cierre llega un turno más tarde.', cierre: 1 },
   almohada: { nombre: 'Almohada de viaje', rar: 'rare', texto: 'Te curas 6 al acabar cada reunión.', trasReunion: 6 },

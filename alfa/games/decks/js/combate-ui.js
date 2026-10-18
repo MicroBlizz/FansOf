@@ -3,6 +3,10 @@
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
 const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0 };
+// Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
+// Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
+const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', clausula: 'Cláusula', spam: 'Spam' };
+const DC_NOTA_TIPO = { empleado: 'Empleado: sale, hace su trabajo y vuelve al mazo.', tarea: 'Tarea: efecto inmediato.', tramite: 'Trámite: algo puntual de tu líder, como bloquear, robar o curarse.', directiva: 'Directiva: un poder que dura toda la reunión.', clausula: 'Cláusula: una carta que estorba. Se quita en el Economato.', spam: 'Spam: basura del rival. Se tira al acabar el turno.' };
 const dcEl = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
 
 function dcEmpiezaReunion(encuentro, tramo, alFin) {
@@ -141,8 +145,9 @@ function dcPintaCarta(c, o = {}) {
   const R = RARITY[D.rar] || RARITY.basic; d.style.setProperty('--rc', R[1]); d.style.setProperty('--ro', R[2]);
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
-  const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr({ tropa: 'Tropa', hechizo: 'Hechizo', tactica: 'Táctica', clausula: 'Cláusula', spam: 'Spam' }[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
-  d.append(cab, dcEl('span', 'dc-ctexto', dcTextoCarta(c)));
+  const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
+  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c); tx.append(txi); d.append(cab, tx);
+  if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
   let t = null; const abre = () => { t = setTimeout(() => { t = null; dcVerCarta(c); }, 450); }, cierra = () => { if (t) clearTimeout(t); t = null; };
   d.addEventListener('pointerdown', abre); d.addEventListener('pointerup', cierra); d.addEventListener('pointerleave', cierra); d.addEventListener('pointercancel', cierra);
@@ -150,14 +155,55 @@ function dcPintaCarta(c, o = {}) {
 }
 function dcVerCarta(c) {
   const v = dcVentana(dcNombre(c)); const g = dcPintaCarta(c, { grande: true }); g.onclick = null;
-  v.append(g, dcEl('p', 'dc-nota', tr({ tropa: 'Tropa: la unidad sale, actúa y vuelve al mazo.', hechizo: 'Hechizo: efecto inmediato.', tactica: 'Táctica: afecta a tu líder, tu mano o la reunión.', clausula: 'Cláusula: una carta que estorba. Se quita en el Economato.', spam: 'Spam: basura del rival. Se tira al acabar el turno.' }[DC_CARTAS[c.id].tipo])));
+  v.append(g, dcEl('p', 'dc-nota', tr(DC_NOTA_TIPO[DC_CARTAS[c.id].tipo])));
+  if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
-function dcVerCartas(titulo, cartas, alElegir) {
+// El ascenso de una carta (Becario → Junior): la carta de ahora, la de después con lo que cambia marcado, y la lista de cambios.
+// alConfirmar (si hay) asciende; alOtra vuelve a la lista o a la carta.
+const DC_ETIQUETA_FX = { coste: 'Coste', dano: 'Daño', veces: 'Veces', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba', caos: 'CAOS', vulnerable: 'Vulnerable', debil: 'Débil', aturde: 'Aturde', fuerza: 'Fuerza', fuerzaTurno: 'Fuerza del turno', n: 'Cifra' };
+const DC_PALABRA_CAMBIO = { despedida: ['Ya no se despide: vuelve al mazo', 'Despedida: se va al jugarla'], indefinido: ['Ya se descarta', 'Contrato indefinido: no se descarta'], madrugador: ['Ya no madruga', 'Madrugador: siempre en tu mano inicial'] };
+function dcVerAscenso(c, alConfirmar, alOtra) {
+  const v = dcVentana(tr('Ascenso: {n}', { n: dcNombre(c) })), cambios = dcCambiosAscenso(c), resalta = new Set(cambios.map(x => x.k));
+  const fila = dcEl('div', 'dc-ascenso');
+  const antes = dcEl('div', 'dc-ascenso-col'); antes.append(dcEl('small', '', tr('Ahora')), dcPintaCarta(dcCarta(c.id, false), { grande: true }));
+  const fl = dcEl('div', 'dc-ascenso-flecha'); fl.append(dcSvg('fuerza'));
+  const despues = dcEl('div', 'dc-ascenso-col dc-ascenso-nueva'); despues.append(dcEl('small', '', tr('Junior')), dcPintaCarta(dcCarta(c.id, true), { grande: true, resalta }));
+  fila.append(antes, fl, despues); v.append(fila);
+  const lista = dcEl('div', 'dc-cambios');
+  for (const x of cambios) {
+    const ch = dcEl('span', 'dc-cambio-chip');
+    if (DC_PALABRA_CAMBIO[x.k]) ch.textContent = tr(DC_PALABRA_CAMBIO[x.k][x.despues ? 1 : 0]);
+    else { ch.append(dcEl('span', '', tr(DC_ETIQUETA_FX[x.k] || x.k) + ' '), dcEl('s', '', String(x.antes)), dcEl('b', '', ' ' + String(x.despues))); }
+    lista.append(ch);
+  }
+  v.append(lista);
+  if (alConfirmar) { const b = dcEl('button', 'btn-big ol dc-ascender', tr('ASCENDER')); b.onclick = () => { dcCierraVentana(); alConfirmar(); }; v.append(b); }
+  const o = dcEl('button', 'btn-ghost ol', tr(alConfirmar ? 'OTRA CARTA' : 'CERRAR')); o.onclick = () => { dcCierraVentana(); if (alOtra) alOtra(); }; v.append(o);
+}
+// Elegir qué carta ascender: la lista, y al tocar una, su ascenso para confirmarlo.
+function dcEligeAscenso(alHecho) {
+  const r = DCP.run, cands = r.mazo.filter(c => !c.asc && DC_CARTAS[c.id].asc);
+  dcVerCartas(tr('¿Qué carta asciendes?'), cands, c => dcVerAscenso(c, () => { c.asc = true; alHecho(c); }, () => dcEligeAscenso(alHecho)), { mejoradas: true });
+}
+// o.mejoradas: con el interruptor «Ver mejoradas» cada carta se pinta como quedará ascendida, con los cambios marcados (se recuerda mientras dura la sesión).
+function dcVerCartas(titulo, cartas, alElegir, o = {}) {
   const v = dcVentana(titulo), g = dcEl('div', 'dc-rejilla');
-  if (!cartas.length) g.append(dcEl('p', 'dc-nota', tr('No hay cartas aquí')));
-  cartas.forEach(c => g.append(dcPintaCarta(c, { al: alElegir ? () => { dcCierraVentana(); alElegir(c); } : () => dcVerCarta(c) })));
-  v.append(g);
+  let mejoradas = !!(o.mejoradas && DCC.verMejoradas);
+  const pinta = () => {
+    g.textContent = ''; if (!cartas.length) g.append(dcEl('p', 'dc-nota', tr('No hay cartas aquí')));
+    cartas.forEach(c => {
+      const m = mejoradas && !c.asc && DC_CARTAS[c.id].asc, cc = m ? dcCarta(c.id, true) : c;
+      g.append(dcPintaCarta(cc, { resalta: m ? new Set(dcCambiosAscenso(c).map(x => x.k)) : undefined, al: alElegir ? () => { dcCierraVentana(); alElegir(c); } : () => dcVerCarta(cc) }));
+    });
+  };
+  if (o.mejoradas) {
+    const t = dcEl('button', 'dc-toggle'), caja = dcEl('span', 'dc-toggle-caja'); caja.append(dcSvg('check')); t.append(caja, dcEl('span', '', tr('Ver mejoradas')));
+    const refresca = () => t.classList.toggle('dc-toggle-on', mejoradas); refresca();
+    t.onclick = () => { mejoradas = !mejoradas; DCC.verMejoradas = mejoradas; play('select'); refresca(); pinta(); };
+    v.append(t);
+  }
+  pinta(); v.append(g);
   const b = dcEl('button', 'btn-ghost ol', tr(alElegir ? 'MEJOR NO' : 'CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
 // Una ventana encima de todo (una sola a la vez).

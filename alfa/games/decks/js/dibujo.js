@@ -1,4 +1,4 @@
-// Fans Of Decks · Dibujo: los personajes de la serie en miniatura (drawVector, de core) y los iconos de las tácticas, en lienzos pequeños con caché.
+// Fans Of Decks · Dibujo: los personajes de la serie en miniatura (drawVector, de core) y los iconos de los trámites y directivas, en lienzos pequeños con caché.
 'use strict';
 const DC_CACHE = {};
 // Un lienzo con el personaje `key` de `alto` puntos de alto (el dibujo se hace a la escala del aparato, nítido).
@@ -15,7 +15,7 @@ function dcSprite(key, alto, ancho) {
   return DC_CACHE[id].cloneNode ? dcClona(DC_CACHE[id]) : DC_CACHE[id];
 }
 function dcClona(c) { const n = document.createElement('canvas'); n.width = c.width; n.height = c.height; n.style.cssText = c.style.cssText; n.className = c.className; n.getContext('2d').drawImage(c, 0, 0); return n; }
-// El icono de una táctica sin dibujo propio: dos letras sobre un redondel del color de la rareza.
+// El icono de una carta sin dibujo propio: dos letras sobre un redondel del color de la rareza.
 function dcIcono(letras, rar, alto) {
   const R = RARITY[rar] || RARITY.basic, d = document.createElement('div');
   d.className = 'dc-icono'; d.style.setProperty('--c1', R[1]); d.style.setProperty('--c2', R[2]); d.style.width = d.style.height = alto + 'px'; d.style.fontSize = Math.round(alto * 0.42) + 'px';

@@ -82,6 +82,8 @@
 .dc-ccab { display: flex; flex-direction: column; gap: 0; width: 100%; }
 .dc-cnombre { font-size: 12px; font-weight: 800; line-height: 1.1; text-shadow: 0 1px 0 var(--outline); }
 .dc-ctipo { font-size: 8.5px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; opacity: .85; }
+.dc-ctexto-in { display: block; width: 100%; }
+.dc-cambio-fuera { opacity: .55; }
 .dc-ctexto { font-size: 10.5px; font-weight: 700; line-height: 1.2; background: rgba(20, 10, 32, .6); border-radius: 7px; padding: 4px 4px; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; box-sizing: border-box; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08); }
 .dc-carta.dc-grande { width: 196px; min-height: 270px; padding: 14px 10px 10px; gap: 6px; cursor: default; border-radius: 16px; }
 .dc-grande::before { inset: 5px; border-radius: 12px; } .dc-grande .dc-arte { height: 92px; border-radius: 10px; } .dc-grande .dc-cnombre { font-size: 18px; } .dc-grande .dc-ctipo { font-size: 10px; } .dc-grande .dc-ctexto { font-size: 15px; padding: 8px; } .dc-grande .dc-coste { width: 38px; height: 38px; font-size: 20px; left: -12px; top: -12px; }
@@ -101,3 +103,17 @@
 .dc-salto { position: relative; overflow: hidden; } .dc-salto::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--carga, 0) * 100%); background: rgba(255, 255, 255, .35); transition: width .3s; pointer-events: none; }
 .dc-salto:disabled { opacity: .75; filter: saturate(.5); } .dc-salto.dc-salto-listo { animation: dc-listo 1s ease-in-out infinite; } .dc-salto.dc-salto-listo::before { display: none; }
 @keyframes dc-listo { 50% { box-shadow: 0 3px 0 var(--outline), 0 0 16px var(--chaos); } }
+/* el ascenso de una carta: antes y después, con lo que cambia marcado */
+.dc-ascenso { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; }
+.dc-ascenso-col { display: flex; flex-direction: column; align-items: center; gap: 6px; } .dc-ascenso-col > small { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-dim); } .dc-ascenso-nueva > small { color: var(--gold); }
+.dc-ascenso .dc-carta.dc-grande { width: 148px; min-height: 212px; padding: 10px 7px 7px; gap: 4px; cursor: default; } .dc-ascenso .dc-grande .dc-arte { height: 66px; } .dc-ascenso .dc-grande .dc-cnombre { font-size: 14px; } .dc-ascenso .dc-grande .dc-ctipo { font-size: 8.5px; } .dc-ascenso .dc-grande .dc-ctexto { font-size: 12px; padding: 6px; } .dc-ascenso .dc-grande .dc-coste { width: 32px; height: 32px; font-size: 17px; left: -10px; top: -10px; }
+.dc-ascenso-nueva .dc-carta { box-shadow: 0 0 0 2px var(--gold), 0 4px 0 var(--outline), 0 0 22px rgba(255, 203, 61, .45); }
+.dc-ascenso-flecha { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: #3a2300; flex: none; transform: rotate(90deg); box-shadow: 0 2px 0 var(--outline); } .dc-ascenso-flecha .dc-svg { width: 20px; height: 20px; }
+.dc-cambio { color: var(--gold); text-shadow: 0 0 6px rgba(255, 203, 61, .7), 0 1px 0 var(--outline); font-weight: 800; }
+.dc-coste.dc-cambio { box-shadow: 0 0 0 2px var(--gold), 0 2px 6px rgba(212, 60, 255, .5); color: #fff; }
+.dc-cambios { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; width: 100%; }
+.dc-cambio-chip { font-size: 12px; font-weight: 800; padding: 4px 10px 3px; border-radius: 999px; border: 1px solid rgba(255, 203, 61, .5); background: rgba(255, 203, 61, .12); color: var(--ink); } .dc-cambio-chip s { opacity: .55; } .dc-cambio-chip b { color: var(--gold); }
+@media (max-width: 380px) { .dc-ascenso { flex-direction: column; } .dc-ascenso-flecha { transform: rotate(180deg); } }
+.dc-toggle { display: inline-flex; align-items: center; gap: 8px; font: 800 13px/1 var(--font-ui); padding: 7px 14px 7px 8px; border-radius: 999px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 34, .6); color: var(--ink); cursor: pointer; }
+.dc-toggle-caja { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px; border: 2px solid var(--ink-dim); background: rgba(255, 255, 255, .06); color: transparent; transition: background .15s, color .15s; } .dc-toggle-caja .dc-svg { width: 16px; height: 16px; }
+.dc-toggle-on .dc-toggle-caja { background: var(--gold); border-color: var(--gold); color: #3a2300; } .dc-toggle-on { border-color: rgba(255, 203, 61, .6); }

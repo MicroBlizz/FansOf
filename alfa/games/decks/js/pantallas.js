@@ -127,7 +127,7 @@ function dcAplicaCorreo(fx) {
   if (r.hp <= 0) { dcFinPartida(false); return dcPintaFin(false); }
   play('select');
   if (fx.carta === 'quitar') return dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); luego(); });
-  if (fx.carta === 'ascender') return dcVerCartas(tr('¿Qué carta asciendes?'), r.mazo.filter(c => !c.asc && DC_CARTAS[c.id].asc), c => { c.asc = true; luego(); });
+  if (fx.carta === 'ascender') return dcEligeAscenso(() => luego());
   if (fx.carta === 'rara') r.mazo.push(dcCarta(dcCartaRara()));
   else if (fx.carta) r.mazo.push(dcCarta(fx.carta));
   luego();
@@ -139,9 +139,9 @@ function dcPintaPausa() {
   const cura = Math.round(r.hpMax * 0.3);
   const b1 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b1.append(dcEl('b', '', tr('Descansar')), dcEl('span', '', tr('Te curas {n}.', { n: cura }))); b1.onclick = () => { dcVida(cura); play('heal'); luego(); };
   const b2 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b2.append(dcEl('b', '', tr('Ascender una carta')), dcEl('span', '', tr('Becario → Junior: la carta mejora sus cifras.')));
-  b2.onclick = () => dcVerCartas(tr('¿Qué carta asciendes?'), r.mazo.filter(c => !c.asc && DC_CARTAS[c.id].asc), c => { c.asc = true; play('levelup'); luego(); });
+  b2.onclick = () => dcEligeAscenso(() => { play('levelup'); luego(); });
   s.append(b1, b2);
-  if (!r.quitarUsado) { const b3 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b3.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Una vez por acto: una carta desaparece del mazo.'))); b3.onclick = () => dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); r.quitarUsado = true; luego(); }); s.append(b3); }
+  if (!r.quitarUsado) { const b3 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b3.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Una vez por jornada: una carta desaparece del mazo.'))); b3.onclick = () => dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); r.quitarUsado = true; luego(); }); s.append(b3); }
 }
 // ---------- el Economato de Lola ----------
 function dcPintaEconomato() {
@@ -173,7 +173,7 @@ function dcPintaFin(victoria) {
 function dcComoSeJuega() {
   const v = dcVentana(tr('Cómo se juega'));
   const ul = dcEl('ol', 'steps');
-  for (const t of ['Tu día en Microblizz es una agenda llena de reuniones: cada hora eliges a cuál vas. A las 17:00 te espera SurvivalBot.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Toca la carta; si hay varios rivales, toca después a quién.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny pega +1 con cada tropa por cada tropa jugada antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'Las nóminas se gastan en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada nodo.'])
+  for (const t of ['Tu día en Microblizz es una agenda llena de reuniones: cada hora eliges a cuál vas. A las 17:00 te espera SurvivalBot.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Toca la carta; si hay varios rivales, toca después a quién.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny pega +1 con cada empleado por cada empleado jugado antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'Las nóminas se gastan en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada nodo.'])
     ul.append((() => { const li = dcEl('li'); li.append(dcEl('span', 'n', String(ul.children.length + 1)), dcEl('span', '', tr(t))); return li; })());
   v.append(ul); const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }

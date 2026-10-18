@@ -1,12 +1,12 @@
 {
- "build": 215,
- "hash": "33d9167",
- "fecha": "2026-10-18T21:17:21Z",
- "mensaje": "Decks: Contrato indefinido se queda en la mano y Blindaje (Chaleco reflectante, Mampara de metacrilato)",
+ "build": 216,
+ "hash": "52de748",
+ "fecha": "2026-10-18T21:22:11Z",
+ "mensaje": "Decks 0.2.0: abierto para todos en fase alfa (tarjeta, novedades y boletín de juego nuevo)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",
-  "decks": "0.1.0",
+  "decks": "0.2.0",
   "island": "0.3.5",
   "nova": "0.3.4",
   "ratkov": "0.2.8",

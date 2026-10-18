@@ -1,4 +1,4 @@
-// Fans Of Decks · Portada del prototipo: continuar o empezar una partida con CrazyBunny. Tras NUCLEO.desarrollo y en la alfa; en la web publicada, «en construcción».
+// Fans Of Decks · Portada del prototipo: continuar o empezar una partida con CrazyBunny. Abierta para todos; los atajos de prueba, solo en dev y en la alfa.
 // Para pruebas: ?jugar=1 empieza una partida nueva; ?acto=1&dia=4 salta a ese día de la campaña (desde 0); ?nodo=minijefe|jefe|elite salta a esa cita del día.
 'use strict';
 function dcPortada() {
@@ -9,10 +9,9 @@ function dcPortada() {
 }
 (function () {
   dcCarga();
-  const q = location.search, abierto = NUCLEO.desarrollo || NUCLEO.alfa;
+  const q = (NUCLEO.desarrollo || NUCLEO.alfa) ? location.search : '';   // los atajos de prueba no saltan días en la web
   dcPortadaArte(document.getElementById('dc-portada-arte'));
   const botones = document.getElementById('dc-portada-botones');
-  if (!abierto) { document.getElementById('dc-estado').textContent = tr('Fans Of Decks · en construcción'); document.getElementById('dc-portada').hidden = false; return; }
   botones.hidden = false;
   document.getElementById('dc-nueva').onclick = () => {
     const empieza = () => { play('select'); dcEligeVentaja(v => { dcNuevaPartida('bunny', v); dcPintaMapa(); }); };

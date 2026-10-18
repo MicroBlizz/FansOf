@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "FANS OF DECKS": "FANS OF DECKS",
+  "El constructor de mazos de la serie, en fase alfa: sobrevive a la semana en Microblizz a golpe de carta. Cuéntanos qué te parece.": "The series' deck builder, in alpha: survive the week at Microblizz one card at a time. Tell us what you think.",
+  "18 de octubre de 2026": "18 October 2026",
   "Deja de ser prototipo y pasa a juego: mochila Tetris, sigilo con abrecartas y cada animal con lo suyo.": "No longer a prototype, now a full game: Tetris backpack, stealth with a letter opener and every animal with its own thing.",
   "Shooter de extracción en la ciudad nevada de Microblizz: entra, registra, monta anomalías y sal antes de la ventisca.": "Extraction shooter in Microblizz's snowy city: go in, loot, mount anomalies and get out before the blizzard.",
   "FANS OF RATKOV": "FANS OF RATKOV",

@@ -2,7 +2,6 @@
 'use strict';
 IDIOMA.add({
   "Fans Of Decks · prototipo": "Fans Of Decks · prototype",
-  "Fans Of Decks · en construcción": "Fans Of Decks · under construction",
   "Partidas: {a} · Victorias: {b}": "Runs: {a} · Wins: {b}",
   "NUEVA PARTIDA": "NEW RUN",
   "CONTINUAR": "CONTINUE",
@@ -171,6 +170,10 @@ IDIOMA.add({
   "{n} min": "{n} min",
   "Microblizz ha emitido un comunicado: SurvivalBot «ha decidido explorar nuevos retos». Phony le ha ofrecido una suscripción.": "Microblizz issued a statement: SurvivalBot \"has decided to explore new challenges\". Phony offered it a subscription.",
   "Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.": "Microblizz insists the layoff was \"performance-related\". Phony charged for the cardboard box.",
+  "<b>YA SE PUEDE JUGAR</b>: el constructor de mazos de la serie abre en fase alfa. Sobrevive a la semana en Microblizz con CrazyBunny: eliges a qué reunión vas cada hora, juegas cartas contra rivales que anuncian su jugada y mejoras tu mazo.": "<b>NOW PLAYABLE</b>: the series' deck builder opens in alpha. Survive the week at Microblizz with CrazyBunny: pick which meeting to attend each hour, play cards against rivals who announce their move and improve your deck.",
+  "<b>LA CAMPAÑA</b>: cinco días con su minijefe a las 17:00, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.": "<b>THE CAMPAIGN</b>: five days with a mini-boss at 17:00, a promotion and the department head; then another week that ends in front of the CEO.",
+  "<b>CUÉNTANOS QUÉ TAL</b>: está a medio hacer y queremos tu opinión: toca el bocadillo del borde izquierdo de la pantalla.": "<b>TELL US WHAT YOU THINK</b>: it's half-built and we want your feedback: tap the speech bubble on the left edge of the screen.",
+  "Phony ha convocado una reunión para decidir si esto era un juego o una reunión. Ha ganado la reunión por cinco votos a CrazyBunny.": "Phony called a meeting to decide whether this was a game or a meeting. The meeting won, five votes to CrazyBunny.",
   "<b>DECKS EN CONSTRUCCIÓN</b>: primera pieza del constructor de mazos de la serie. Todavía no se puede jugar.": "<b>DECKS UNDER CONSTRUCTION</b>: first piece of the series' deck builder. You can't play it yet.",
   "Microblizz ha barajado el organigrama y le ha salido el mismo CEO tres veces. Phony dice que eso es una carta legendaria.": "Microblizz shuffled the org chart and drew the same CEO three times. Phony says that's a legendary card.",
   "Daily de los becarios": "Interns’ daily stand-up",

@@ -1,0 +1,18 @@
+/* Fans Of Decks · El calendario de la campaña: la tira de la semana y la cita final del día. */
+.dc-semana { display: flex; gap: 6px; justify-content: center; width: 100%; margin: 2px 0 8px; }
+.dc-sem-dia { display: inline-flex; align-items: center; justify-content: center; gap: 3px; min-width: 46px; padding: 5px 8px 4px; border-radius: 999px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 34, .55); font: 800 11px/1 var(--font-ui); letter-spacing: .6px; text-transform: uppercase; color: var(--ink-dim); }
+.dc-sem-dia .dc-svg { width: 12px; height: 12px; color: var(--dc-verde); }
+.dc-sem-hecho { opacity: .7; }
+.dc-sem-hoy { color: var(--ink); border-color: var(--player-lite); background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .04)); box-shadow: 0 0 10px rgba(255, 255, 255, .12); }
+.dc-sem-jefe { border-color: var(--danger); color: #ffb4bb; }
+.dc-nota-ok { color: var(--dc-verde); }
+.dc-fin-dia { --t: var(--gold); display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; padding: 8px 14px 8px 8px; border-radius: 16px; border: 1px solid var(--t); background: linear-gradient(90deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02)); box-shadow: 0 0 14px rgba(255, 203, 61, .12); }
+.dc-fin-jefe { --t: var(--danger); box-shadow: 0 0 16px rgba(255, 75, 92, .22); }
+.dc-fin-arte { display: grid; place-items: center; flex: none; width: 84px; height: 76px; }
+.dc-fin-arte .dc-sprite { filter: drop-shadow(0 5px 6px rgba(0, 0, 0, .5)); }
+.dc-fin-txt { display: flex; flex-direction: column; gap: 2px; text-align: left; min-width: 0; }
+.dc-fin-txt small { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--t); }
+.dc-fin-txt b { font-family: var(--font-display); font-size: 18px; line-height: 1.1; color: var(--ink); }
+.dc-fin-txt em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.dc-cita-minijefe { --t: var(--gold); }
+.dc-cita-minijefe, .dc-cita-jefe { border-color: var(--t); }

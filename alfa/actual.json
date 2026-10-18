@@ -1,8 +1,8 @@
 {
- "build": 202,
- "hash": "3f0b840",
- "fecha": "2026-10-18T02:57:33Z",
- "mensaje": "Decks: efectos activos del líder, máximo 5 rivales y derrotados fuera de la mesa",
+ "build": 203,
+ "hash": "1b5b8b4",
+ "fecha": "2026-10-18T03:08:16Z",
+ "mensaje": "Decks: campaña del mundo 1 (semana de 5 días con minijefes, ascenso del lunes, jefe de departamento, segunda semana desde el martes y CEO)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

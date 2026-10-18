@@ -121,7 +121,7 @@ function dcFondo(tipo, w, h) {
   return DC_FONDOS[id];
 }
 // Pone el fondo `tipo` detrás de la sección (o lo quita si tipo es null). Los tramos de reunión se traducen a su sala.
-const DC_FONDO_TRAMO = { facil: 'sala', normal: 'sala', elite: 'elite', jefe: 'jefe', pausa: 'pausa', economato: 'economato', correo: 'correo' };
+const DC_FONDO_TRAMO = { facil: 'sala', normal: 'sala', elite: 'elite', minijefe: 'elite', jefe: 'jefe', pausa: 'pausa', economato: 'economato', correo: 'correo' };
 function dcPonFondo(seccion, tipo) {
   const viejo = seccion.querySelector(':scope > .dc-fondo'); if (viejo) viejo.remove();
   if (!tipo) return;

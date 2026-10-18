@@ -67,4 +67,4 @@ const DC_SVG = {
 };
 function dcSvg(nombre, cls) { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true'); s.setAttribute('class', 'dc-svg' + (cls ? ' ' + cls : '')); s.innerHTML = DC_SVG[nombre] || ''; return s; }
 // El icono de un tipo de cita de la agenda.
-const DC_ICONO_NODO = { facil: 'reunion', normal: 'reunion', elite: 'elite', jefe: 'jefe', correo: 'correo', pausa: 'pausa', economato: 'economato' };
+const DC_ICONO_NODO = { facil: 'reunion', normal: 'reunion', elite: 'elite', minijefe: 'elite', jefe: 'jefe', correo: 'correo', pausa: 'pausa', economato: 'economato' };

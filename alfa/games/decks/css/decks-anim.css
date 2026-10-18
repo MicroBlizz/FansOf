@@ -17,3 +17,11 @@
 @keyframes dc-impacto { 0% { transform: scale(.2); opacity: 0; } 35% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
 .dc-vuelo { position: absolute; z-index: 60; width: 32px; height: 32px; pointer-events: none; display: grid; place-items: center; } .dc-vuelo .dc-svg { width: 32px; height: 32px; filter: drop-shadow(0 2px 0 var(--outline)); }
 .dc-rival.dc-sale { animation: dc-sale .45s ease-in .75s both; pointer-events: none; } @keyframes dc-sale { to { opacity: 0; transform: scale(.6) translateY(20px); } }
+/* arrastrar cartas: el fantasma que sigue al dedo, el hueco en la mano y el blanco marcado */
+.dc-mano .dc-carta { touch-action: none; }
+.dc-carta-arrastre { position: absolute; z-index: 70; pointer-events: none; margin: 0 !important; transform: rotate(-3deg) scale(.8) !important; transform-origin: 50% 100%; box-shadow: 0 14px 28px rgba(0, 0, 0, .55); transition: box-shadow .15s; }
+.dc-carta-arrastre.dc-lista { box-shadow: 0 0 0 3px var(--gold), 0 14px 28px rgba(0, 0, 0, .55); }
+.dc-mano .dc-carta.dc-arrastrada { opacity: .25; }
+.dc-arrastrando .dc-rivales { outline: 2px dashed rgba(255, 255, 255, .14); outline-offset: -6px; border-radius: 20px; }
+.dc-rivales.dc-apunta { outline: 3px solid var(--gold); background: rgba(255, 203, 61, .07); }
+.dc-rival.dc-apunta { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255, 203, 61, .3), 0 0 24px rgba(255, 203, 61, .35); transform: translateY(-4px); }

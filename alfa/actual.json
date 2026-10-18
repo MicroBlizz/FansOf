@@ -1,8 +1,8 @@
 {
- "build": 210,
- "hash": "aa23353",
- "fecha": "2026-10-18T19:08:03Z",
- "mensaje": "Publicación: Decks solo en la alfa (SOLO_ALFA)",
+ "build": 211,
+ "hash": "a0c1712",
+ "fecha": "2026-10-18T19:21:49Z",
+ "mensaje": "Decks: arrastrar cartas al rival o a la zona de rivales",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

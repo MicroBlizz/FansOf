@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.138
+  "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
+  "Microblizz ha puesto un contador a las batallas de Rumble. Phony ha pedido que apunte también las que pierde por despiste.": "Microblizz has put a counter on Rumble battles. Phony has asked it to also note the ones he loses by distraction.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando. Y los botones de volver de la preparación (partida rápida, modo jefe, pruebas y niveles) son ahora la misma flecha de arriba a la izquierda.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving. And the back buttons on the setup screens (quick match, boss mode, tests and levels) are now the same arrow at the top left.",
   "Microblizz ha pulido los bajos del Rumble. Phony ha encontrado dos calcetines y un trofeo.": "Microblizz has polished the underside of Rumble. Phony found two socks and a trophy.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",

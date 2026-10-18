@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.67
+  "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
+  "Microblizz cuenta cuántas torres aguantan la oleada. Phony asegura que las suyas aguantan, pero en otra dimensión.": "Microblizz counts how many towers hold the wave. Phony insists his hold, but in another dimension.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
   "Microblizz ha repasado las torres por dentro. Phony dice que ahora disparan con más ganas.": "Microblizz has gone over the towers on the inside. Phony says they now shoot with more enthusiasm.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",

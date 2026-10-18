@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.51
+  "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
+  "Microblizz cuenta cuántos sobreviven a la oleada. Phony dice que a él lo apuntan siempre como \"desaparecido\".": "Microblizz counts how many survive the wave. Phony says he is always listed as \"missing\".",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando.": "<b>UNDER THE HOOD</b>: the series' shared systems keep improving.",
   "Microblizz ha reforzado el sótano de los supervivientes. Phony dice que huele mejor, pero no mucho.": "Microblizz has reinforced the survivors' basement. Phony says it smells better, but not by much.",
   "<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando.": "<b>STAR RATINGS IN FEEDBACK</b>: the feedback tab now asks for a 1 to 5 rating and a short question about the latest change. And under the hood, the shared systems keep improving.",

@@ -96,6 +96,7 @@ function nvPanelesDOM(S) {
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
     if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
+    if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Arma desbloqueada!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
     const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
     const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
     p.appendChild(b); p.appendChild(s); cont.appendChild(p);
@@ -134,12 +135,13 @@ function nvMenu() {
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
     t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial())].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial()) + 1).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
-    t.appendChild(nvEl('nv-cdet', tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
+    const VI = C.arma[2] && NV_VAR_ID[C.arma[2]];
+    t.appendChild(nvEl('nv-cdet', VI ? tr('Arma insignia') + ': ' + tr(VI.nombre) + '. ' + tr(VI.efecto) : tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);
     p.appendChild(b);
   }
   const s = nvEl('nv-boton', tr('Atrás'), 'button'); s.onclick = nvGalaxiaMenu; p.appendChild(s);
-  nvInfo(p, 'nave');
+  nvInfo(p, ['nave', 'armasFaccion']);
   cont.appendChild(p);
 }
 function nvMenuCapitan(casco) {

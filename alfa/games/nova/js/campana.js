@@ -60,7 +60,7 @@ function nvGalaxia(semilla, faccion) {
   return out;
 }
 
-function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0 }; }
+function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0, fac: prev && prev.fac ? prev.fac : {} }; }   // fac: armas de facción desbloqueadas, para siempre
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
   let c = null, viejo = null;
@@ -118,6 +118,7 @@ function nvCierraMision(S) {
   const c = nvCamp(), a = nvAleacionMision(S);
   c.aleacion += a; c.misiones++;
   if (S.estado === 'victoria') { c.victorias++; if (S.sector && !c.libres.includes(S.sector)) c.libres.push(S.sector); }
+  S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();
   S.aleacionGanada = a;
   return a;

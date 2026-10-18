@@ -37,10 +37,11 @@ function nvArmaAlAzar(S) {   // una arma del pool al estilo de las cartas: más 
   const tipos = NV_TIPOS_LIBRES.filter(t => nvVariantesPool(t).length && nvRanuraLibre(S, t)); if (!tipos.length) return null;
   const pesos = tipos.map(t => nvAfinidad(S, t)); let q = Math.random() * pesos.reduce((a, b) => a + b, 0), i = 0;   // la facción y el piloto empujan sus armas
   while (i < tipos.length - 1 && (q -= pesos[i]) > 0) i++;
-  const p = tipos[i], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
+  const p = tipos[i], cs = nvCargasDe(p); let c = cs[Math.floor(Math.random() * cs.length)];
   const vs = nvVariantesPool(p), tot = vs.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
   let r = Math.random() * tot, v = vs[0];
   for (const x of vs) { v = x; if ((r -= NOVA_RAREZAS[x.rareza].peso) <= 0) break; }
+  if (v.variante && NV_VAR_ID[v.variante].carga) c = NV_VAR_ID[v.variante].carga;   // las armas de facción tienen su carga propia
   return { tipo: 'arma', portador: p, carga: c, variante: v.variante, rareza: v.rareza, precio: Math.round(NV_PRECIO_TAM[nvTamNuevo(S.nave.rango)] * NOVA_RAREZAS[v.rareza].precio) };
 }
 function nvGeneraSurtido(S) {

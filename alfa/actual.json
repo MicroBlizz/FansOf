@@ -1,8 +1,8 @@
 {
- "build": 193,
- "hash": "6ea5b5f",
- "fecha": "2026-10-18T02:22:31Z",
- "mensaje": "Decks: MechaVaca es la guardaespaldas",
+ "build": 194,
+ "hash": "6bc0893",
+ "fecha": "2026-10-18T02:34:47Z",
+ "mensaje": "Nova: facciones con tres armas propias (insignia, especial por rango, secreta por campaña) y seis naves nuevas con arte provisional",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

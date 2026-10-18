@@ -22,7 +22,7 @@ const NV_MEJORAS_SISTEMA = [
 function nvVariantesPool(portador) {
   const out = [];
   if (nvEnPool('arma:' + portador + ':base')) out.push({ id: 'arma:' + portador + ':base', variante: null, rareza: 'comun' });
-  for (const v of NOVA_VARIANTES) if (v.portador === portador && nvEnPool('arma:' + portador + ':' + v.id)) out.push({ id: 'arma:' + portador + ':' + v.id, variante: v.id, rareza: v.rareza });
+  for (const v of NOVA_VARIANTES) if (v.portador === portador && v.tipoArma !== 'insignia' && nvEnPool('arma:' + portador + ':' + v.id)) out.push({ id: 'arma:' + portador + ':' + v.id, variante: v.id, rareza: v.rareza });
   return out;
 }
 // Cuánto «encaja» un arma nueva con lo que llevas: ×1,5 por portador o carga repetidos, hasta ×4.
@@ -40,6 +40,7 @@ function nvCandidatas(S) {
         const tend = nvPesoTendencia(S, portador, carga);
         for (const v of vars) {
           const R = NOVA_RAREZAS[v.rareza], V = v.variante ? NV_VAR_ID[v.variante] : null;
+          if (V && V.carga && V.carga !== carga) continue;   // las armas de facción tienen su carga propia
           out.push({ tipo: 'arma', cat: 'of', ic: ['arma', v.variante || portador], rareza: v.rareza, peso: tend * nvAfinidad(S, portador) * (n.armas.length ? 0.35 : 1) * (R.peso * nvPesoPool(v.id) / suma) / NV_TIPOS_LIBRES.length / 2, carga, tendencia: tend > 1.4,
             titulo: (V ? tr(V.nombre) : tr(NOVA_ARMAS.portadores[portador].nombre)) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
             detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + nvTamNuevo(n.rango) + '). ' + tr(V ? V.efecto : NOVA_ARMAS.portadores[portador].fuerte),
@@ -132,10 +133,11 @@ function nvOfertasEstacion(S, slotId) {
   const sl = nvRanuras(S.nave.rango, S).find(r => r.id === slotId), tipos = NV_TIPOS_LIBRES.filter(t => nvVariantesPool(t).length), out = [];
   const tam = (S.nave.armas.find(w => w.slot === slotId) || { tam: 'S' }).tam;
   for (let i = 0; i < 40 && out.length < 3; i++) {
-    const p = tipos[Math.floor(Math.random() * tipos.length)], cs = nvCargasDe(p), c = cs[Math.floor(Math.random() * cs.length)];
+    const p = tipos[Math.floor(Math.random() * tipos.length)], cs = nvCargasDe(p); let c = cs[Math.floor(Math.random() * cs.length)];
     const vs = nvVariantesPool(p), tot = vs.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
     let r = Math.random() * tot, v = vs[0];
     for (const x of vs) { v = x; if ((r -= NOVA_RAREZAS[x.rareza].peso) <= 0) break; }
+    if (v.variante && NV_VAR_ID[v.variante].carga) c = NV_VAR_ID[v.variante].carga;
     if (!out.some(o => o.portador === p && o.carga === c && o.variante === v.variante)) out.push({ portador: p, carga: c, variante: v.variante, rareza: v.rareza, precio: Math.round(NV_PRECIO_TAM[tam] * NOVA_RAREZAS[v.rareza].precio), slot: sl });
   }
   return out;

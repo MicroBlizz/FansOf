@@ -60,6 +60,7 @@ function nvPosRanura(S, id) {
 // ---------- disparo ----------
 function nvArmas(S, dt) {
   const n = S.nave;
+  nvRasgoPaso(S, dt);   // facciones.js: la Secuela repite su disparo
   for (const w of n.armas) {
     if (w.portador === 'defensa') continue;
     const p = NOVA_ARMAS.portadores[w.portador], pos = nvPosRanura(S, w.slot);
@@ -84,25 +85,27 @@ function nvArmas(S, dt) {
     if (!obj) { w.ang += (Math.atan2(dy, dx) - w.ang) * Math.min(1, dt * 6); continue; }
     w.ang = Math.atan2(obj.y - w.y, obj.x - w.x);
     if (w.cd > 0) continue;
-    w.cd += 1 / (p.cadencia * nvVar(w).cad * (S.mejoras.cadencia || 1) * (S.hype || 1));
+    w.cd += 1 / (p.cadencia * nvVar(w).cad * (S.mejoras.cadencia || 1) * (S.hype || 1) * nvRasgoCad(S, w));
     nvDispara(S, w, p, obj);
   }
 }
 function nvDispara(S, w, p, obj) {
-  const c = NOVA_ARMAS.cargas[w.carga], dano = nvDanoArma(w), id = w.fusion ? w.fusion.id : '';
+  nvRasgoPre(S, w);   // facciones.js: rasgos de arma propia de facción
+  const c = NOVA_ARMAS.cargas[w.carga], dano = nvDanoArma(w) * nvRasgoMult(S, w, obj), id = w.fusion ? w.fusion.id : '';
   nvSnd({ laser: 'nvLaser', railgun: 'nvRail', flak: 'nvFlak', lanzador: 'nvMisil' }[w.portador] || 'nvLaser', S);
   const base = { x: w.x, y: w.y, w, carga: w.carga, color: c.color, forma: c.forma, dano, golpeados: [] };
   if (w.portador === 'laser') {   // haz instantáneo contra el objetivo
     w.rayo = 0.09; w.rx = obj.x; w.ry = obj.y;
     nvGolpe(S, obj, dano * (id === 'hazEnfocado' ? 1.2 : 1), w, obj.x, obj.y, id === 'hazEnfocado' ? 2 : 1);
+    nvRasgoImpacto(S, w, dano, obj, obj.x, obj.y); nvRasgoDespues(S, w, obj);
     S.fx.push({ t: 0.16, x: w.x, y: w.y, r: 9 * nvZ(S), color: c.color, tipo: 'flash' });
     return;
   }
-  const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) + nvVar(w).n : 1;
+  const kf = nvFactor(S.nave.rango), n = id === 'railgunGemela' ? 2 : w.portador === 'flak' ? (id === 'bateriaFlak' ? 10 : 6) + nvVar(w).n : w.portador === 'lanzador' ? 1 + nvVar(w).n : 1;
   S.fx.push({ t: 0.14, x: w.x, y: w.y, r: 8 * nvZ(S), color: c.color, tipo: 'flash' });   // fogonazo
   for (let i = 0; i < n; i++) {
     let a = Math.atan2(obj.y - w.y, obj.x - w.x);
-    if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - 0.5) * 0.12;
+    if (w.portador === 'flak') a += (Math.random() - 0.5) * 0.9; else if (n > 1) a += (i - (n - 1) / 2) * 0.12;
     const v = (w.portador === 'railgun' ? 900 : w.portador === 'flak' ? 430 : 270) * Math.pow(kf, 0.9);   // las balas también corren más cuanto mayor es la nave
     S.proy.push(Object.assign({}, base, {
       vx: Math.cos(a) * v, vy: Math.sin(a) * v, r: (w.portador === 'railgun' ? 4 : w.portador === 'flak' ? 3 : 4.5) * kf * NV_BALA_TAM[w.tam],
@@ -110,6 +113,7 @@ function nvDispara(S, w, p, obj) {
       guia: w.portador === 'lanzador' ? obj : null, golpeados: []
     }));
   }
+  nvRasgoDespues(S, w, obj);
 }
 // Los drones salen del hueco del arma, trabajan (cazan o reparan) y gastan batería: en órbita duran NV_DRON_ORBITA s, trabajando NV_DRON_TRABAJO s;
 // sin batería se guardan en el hueco y tardan NV_DRON_RECARGA s en volver a salir.
@@ -151,6 +155,7 @@ function nvDrones(S, w, p, dt) {
     for (const e of S.enem) if (!e.muerto && Math.hypot(e.x - d.x, e.y - d.y) < e.r + 14) {
       d.cd = cad;
       nvGolpe(S, e, dano, w, d.x, d.y, 1);
+      nvRasgoImpacto(S, w, dano, e, d.x, d.y);
       if (w.fusion && w.fusion.id === 'dronesKamikaze') nvExplosion(S, d.x, d.y, 45, dano * 0.8, w, e);
       return;   // un golpe por dron y turno
     }
@@ -175,6 +180,7 @@ function nvProyectiles(S, dt) {
       if (e.muerto || b.golpeados.includes(e) || Math.hypot(e.x - b.x, e.y - b.y) > e.r + b.r) continue;
       b.golpeados.push(e);
       nvGolpe(S, e, b.dano, b.w, b.x, b.y, 1);
+      nvRasgoImpacto(S, b.w, b.dano, e, b.x, b.y);
       if (b.carga === 'explosiva' || (b.w.fusion && b.w.fusion.id === 'misilRacimo')) nvExplosion(S, b.x, b.y, 55, b.dano * 0.6, b.w, e);
       if (--b.perf <= 0) { fin = true; break; }
     }

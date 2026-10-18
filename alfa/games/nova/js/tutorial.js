@@ -18,6 +18,11 @@ const NV_TUTO = {
     'Arriba tienes el casco (verde) y la barra de chatarra hasta el siguiente rango (amarilla).',
     'El mapa pequeño de abajo enseña a los enemigos y las estaciones.',
     'Acaba con los capitanes y llegará el jefe del sector. Derrótalo para liberar el sector.'] }],
+  armasFaccion: [{ titulo: 'ARMAS DE FACCIÓN', ic: ['arma', 'railgun'], lineas: [
+    'Cada facción tiene tres armas propias.',
+    'La insignia la lleva su nave desde el principio y solo existe en ella.',
+    'La especial se desbloquea al llegar al rango 15 con esa facción en la campaña.',
+    'La secreta se desbloquea al pasarte la campaña con ella, liberando el núcleo de Microblizz. Desde entonces sale en las cartas de todas tus partidas.'] }],
   cartas: [{ titulo: 'SUBIR DE RANGO', ic: ['cat', 'ofensiva'], lineas: [
     'Al subir de rango eliges una carta: una ofensiva, una defensiva, una de utilidad y otra al azar.',
     'Las armas nuevas ocupan una ranura libre. Al crecer ganas ranuras y las armas salen más grandes.',
@@ -83,7 +88,7 @@ const NV_TUTO = {
     'Energía y térmica: la energía atiza el calor de un enemigo caliente.',
     'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] }]
 };
-const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal'];
+const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal', 'armasFaccion'];
 
 function nvTutoVisto() { try { return JSON.parse(localStorage.getItem(NV_TUTO_CLAVE) || '{}'); } catch (e) { return {}; } }
 function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id] = 1; try { localStorage.setItem(NV_TUTO_CLAVE, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }

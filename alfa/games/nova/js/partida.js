@@ -58,6 +58,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   NVP.S = S;
   const sl = nvRanuras(1, S)[0];
   S.nave.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1]));
+  if (C.arma[2]) S.nave.armas[0].variante = C.arma[2];   // el arma insignia de la facción (facciones.js)
   nvSectorPartida(S);
   nvGeneraMundo(S);
   S.cap = cap; S.ofi = ofi; S.kills = [];

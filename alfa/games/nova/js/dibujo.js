@@ -14,7 +14,7 @@ function nvCargaArte(listo) {
     for (const p of d.piezas) {
       NVA.meta[p.id] = p;
       const im = new Image();
-      im.onload = im.onerror = () => { if (--falta === 0) { NVA.listo = true; listo && listo(); } };
+      im.onload = im.onerror = () => { if (--falta === 0) { NVA.listo = true; nvFacArtePrestado(); listo && listo(); } };
       im.src = NVA.base + p.archivo; NVA.img[p.id] = im;
     }
   }).catch(() => { NVA.listo = true; listo && listo(); });

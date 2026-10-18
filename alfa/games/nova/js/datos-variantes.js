@@ -35,8 +35,8 @@ const NOVA_VARIANTES = [
 const NV_VAR_ID = {};
 for (const v of NOVA_VARIANTES) NV_VAR_ID[v.id] = v;
 // Multiplicadores de la variante de un arma (1 / 0 si es la básica).
-const NV_VAR_BASE = { dano: 1, cad: 1, alc: 1, perf: 0, n: 0, repara: false };
+const NV_VAR_BASE = { dano: 1, cad: 1, alc: 1, perf: 0, n: 0, repara: false, rasgos: [] };
 function nvVar(w) {
   const v = w && w.variante && NV_VAR_ID[w.variante];
-  return v ? { dano: v.dano || 1, cad: v.cad || 1, alc: v.alc || 1, perf: v.perf || 0, n: v.n || 0, repara: !!v.repara } : NV_VAR_BASE;
+  return v ? { dano: v.dano || 1, cad: v.cad || 1, alc: v.alc || 1, perf: v.perf || 0, n: v.n || 0, repara: !!v.repara, rasgos: v.rasgos || [] } : NV_VAR_BASE;
 }

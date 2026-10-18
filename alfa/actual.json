@@ -1,8 +1,8 @@
 {
- "build": 216,
- "hash": "52de748",
- "fecha": "2026-10-18T21:22:11Z",
- "mensaje": "Decks 0.2.0: abierto para todos en fase alfa (tarjeta, novedades y boletín de juego nuevo)",
+ "build": 217,
+ "hash": "6b230f6",
+ "fecha": "2026-10-18T23:15:35Z",
+ "mensaje": "Web: Google Analytics (G-T6C335RWHZ) solo con consentimiento; política de privacidad actualizada",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

@@ -2,7 +2,7 @@
 // El dibujo está en dibujo.js y los menús en interfaz.js. Todo el estado vive en S; no se guarda nada (la partida dura 3-5 min).
 'use strict';
 const NV_ESCALA_NAVE = 0.2;                // tamaño inicial de la nave dibujada (1 = el PNG de arte tal cual); empiezas muy pequeño y creces; el hitbox sale de él
-const NV_ARENA = 4200;                       // radio de la arena
+const NV_ARENA = 4200;                       // radio de la zona donde se reparte el mundo al empezar (el sector no tiene bordes: da la vuelta)
 // Sin rango máximo: chatarra acumulada para pasar del rango k al k+1.
 // Unos 30 rangos con subidas pequeñas: cada rango es un 7 % más grande (tú y las naves enemigas, con la misma regla).
 function nvUmbral(k) { return Math.round(250 * (Math.pow(1.3, k) - 1)); }
@@ -29,6 +29,20 @@ const NV_CASCOS = {
   crucero: { hp: 230, vel: 190, arma: ['laser', 'termica'] },
   fragata: { hp: 330, vel: 160, arma: ['flak', 'explosiva'] }
 };
+// Sector sin bordes: es un toro de lado L que crece con la nave. La nave nunca salta; lo que queda a más de L/2 de ella
+// reaparece por el otro lado (siempre fuera de la pantalla), así que todo se ve, se apunta y se mide en su copia más cercana.
+function nvLado(S) { return Math.max(2 * NV_ARENA, nvVista(S) * 8); }
+function nvEnvuelve(S) {
+  const L = nvLado(S), h = L / 2, n = S.nave;
+  const mueve = o => {
+    let sx = 0, sy = 0; const dx = o.x - n.x, dy = o.y - n.y;
+    if (dx > h || dx < -h) sx = -L * Math.round(dx / L);
+    if (dy > h || dy < -h) sy = -L * Math.round(dy / L);
+    if (!sx && !sy) return;
+    o.x += sx; o.y += sy; if (o.x0 !== undefined) { o.x0 += sx; o.y0 += sy; }
+  };
+  for (const l of [S.enem, S.proy, S.eproy, S.restos, S.pecios, S.estaciones, S.nebulosas, S.saltos, S.trozos || [], S.parts, S.fx, S.nums]) for (const o of l) mueve(o);
+}
 function nvNuevaPartida(casco, cap, ofi) {
   casco = casco || 'caza'; cap = cap || NVP.cap || 'progamer'; ofi = ofi === undefined ? NVP.ofi : ofi;
   const H = NOVA_PIEZAS.cascos[casco], C = NV_CASCOS[casco], alas = NVA.meta[casco + '-alas'];
@@ -66,6 +80,7 @@ function nvPaso(S, dt) {
   if (!fin) nvRestos(S, dt);
   nvPasoTrozos(S, dt);
   if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
+  nvEnvuelve(S);
   if (n.golpeado > 0) n.golpeado -= dt;
   if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
@@ -86,7 +101,6 @@ function nvMueve(S, dt) {
   const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
-  const d = Math.hypot(n.x, n.y); if (d > NV_ARENA) { n.x *= NV_ARENA / d; n.y *= NV_ARENA / d; }
   // la proa mira hacia donde te mueves (parado, se queda como estaba); las armas son las que apuntan a los enemigos
   if (m > 0.1) {
     let df = Math.atan2(n.vx, -n.vy) - n.ang; while (df > Math.PI) df -= 6.283; while (df < -Math.PI) df += 6.283;

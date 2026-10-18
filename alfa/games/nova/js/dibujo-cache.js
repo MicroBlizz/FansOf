@@ -28,11 +28,14 @@ function nvSpriteEscalado(tipo, im, px) {
   if (!s) { s = NV_CACHE.spr[id] = document.createElement('canvas'); s.width = s.height = t; const c = s.getContext('2d'); c.imageSmoothingQuality = 'high'; c.drawImage(im, 0, 0, t, t); }
   return s;
 }
-// Resolución adaptable: si la media de los últimos 90 fotogramas pasa de 22 ms (< 45 fps), baja un escalón (hasta la mitad).
+// Resolución adaptable: si la media de los últimos 90 fotogramas pasa de 22 ms (< 45 fps), baja un escalón (hasta 3/4: más abajo
+// todo se ve borroso); si vuelve a ir holgada (< 13 ms, más de 75 fps), sube otra vez.
 function nvMideFotograma() {
   const ahora = performance.now(), dt = ahora - (NV_CACHE.ult || ahora); NV_CACHE.ult = ahora;
   if (dt <= 0 || dt > 200 || NVP.tuto) return;   // pausas, pestaña oculta o ayuda abierta: no cuentan
   const l = NV_CACHE.dts; l.push(dt); if (l.length < 90) return;
   const media = l.reduce((a, b) => a + b, 0) / l.length; l.length = 0;
-  if (media > 22 && (NVP.calidad || 1) > 0.5) { NVP.calidad = Math.max(0.5, (NVP.calidad || 1) - 0.25); nvAjustaLienzo(); }
+  const q = NVP.calidad || 1;
+  if (media > 22 && q > 0.75) { NVP.calidad = 0.75; nvAjustaLienzo(); }
+  else if (media < 13 && q < 1) { NVP.calidad = 1; nvAjustaLienzo(); }
 }

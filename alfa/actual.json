@@ -1,8 +1,8 @@
 {
- "build": 191,
- "hash": "984daf0",
- "fecha": "2026-10-18T02:14:29Z",
- "mensaje": "Decks: vista del ascenso con confirmación, «Ver mejoradas», Madrugador y tipos de carta nuevos",
+ "build": 192,
+ "hash": "b0f8cf5",
+ "fecha": "2026-10-18T02:20:33Z",
+ "mensaje": "Nova: sector sin bordes que da la vuelta y crece con la nave (minimapa centrado en ti); balas con contorno, drones a escala y la resolución adaptable no baja de 3/4 y se recupera",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

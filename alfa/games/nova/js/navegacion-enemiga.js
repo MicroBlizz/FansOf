@@ -37,8 +37,6 @@ function nvNavegaE(S, e, dt, ang, dist, lento) {
     else if (dist < ideal * 0.75) { obj = ang + Math.PI * 0.9 * st.lado + bamb; vm = 1.1; }   // alejarse: solo girando y huyendo hacia delante
     else { obj = ang + st.lado * 1.2 + bamb; vm = 0.9; }                             // dar vueltas a distancia
   }
-  const d0 = Math.hypot(e.x, e.y);
-  if (d0 > NV_ARENA - 150) obj = Math.atan2(-e.y, -e.x);   // no se salen de la arena
   const giro = 3 / (1 + e.r / 50) * (lento < 1 ? 0.4 : 1);
   const da = Math.atan2(Math.sin(obj - e.proa), Math.cos(obj - e.proa));
   e.proa += Math.max(-giro * dt, Math.min(giro * dt, da));

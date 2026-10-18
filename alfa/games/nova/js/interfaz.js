@@ -51,15 +51,15 @@ function nvHud(c, S, W, H, vs) {
   if (NVP.joy && NVP.joy.px !== undefined) { const j = NVP.joy, r = cvRect(); c.beginPath(); c.arc((j.x - r.left) * W / r.width, (j.y - r.top) * H / r.height, 40 * u, 0, 6.283); c.strokeStyle = 'rgba(255,255,255,.3)'; c.lineWidth = 3; c.stroke(); c.beginPath(); c.arc((j.px - r.left) * W / r.width, (j.py - r.top) * H / r.height, 16 * u, 0, 6.283); c.fillStyle = 'rgba(255,255,255,.35)'; c.fill(); }
   nvPanelesDOM(S);
 }
-// Minimapa: la arena entera con estaciones (azul), nidos (rojo), capitanes (rosa), pecios, el Rey (dorado) y tú.
+// Minimapa: el sector entero centrado en ti (no tiene bordes, da la vuelta) con estaciones (azul), nidos (rojo), capitanes (rosa), pecios y el Rey (dorado).
 function nvMinimapa(c, S, W, H, u) {
-  const R = 52 * u, x = W - R - 10 * u, y = H - R - 10 * u, k = R / NV_ARENA, n = S.nave;
-  c.save(); c.beginPath(); c.arc(x, y, R, 0, 6.283); c.fillStyle = 'rgba(8,12,40,.7)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.stroke(); c.clip();
+  const R = 52 * u, n = S.nave, k = R / (nvLado(S) / 2), x0 = W - R - 10 * u, y0 = H - R - 10 * u, x = x0 - n.x * k, y = y0 - n.y * k;
+  c.save(); c.beginPath(); c.arc(x0, y0, R, 0, 6.283); c.fillStyle = 'rgba(8,12,40,.7)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a0f2e'; c.stroke(); c.clip();
   const punto = (px, py, col, r) => { c.fillStyle = col; c.fillRect(x + px * k - r, y + py * k - r, 2 * r, 2 * r); };
   for (const p of S.pecios) punto(p.x, p.y, p.rara ? '#ffd93d' : '#6fe3ff', 1.2 * u);
   for (const st of S.estaciones) punto(st.x, st.y, '#7aa8ff', 3 * u);
   for (const e of S.enem) { if (e.muerto) continue; if (e.d.nido) punto(e.x, e.y, '#ff5b5b', 2.6 * u); else if (e.d.capitan) punto(e.x, e.y, '#ff4b9a', 3 * u); else if (e.d.jefe) punto(e.x, e.y, '#ffd93d', 4 * u); }
-  c.fillStyle = '#fff'; c.beginPath(); c.arc(x + n.x * k, y + n.y * k, 3 * u, 0, 6.283); c.fill();
+  c.fillStyle = '#fff'; c.beginPath(); c.arc(x0, y0, 3 * u, 0, 6.283); c.fill();
   c.restore();
 }
 function cvRect() { return document.getElementById('nv-canvas').getBoundingClientRect(); }

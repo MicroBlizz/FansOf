@@ -109,8 +109,7 @@ function nvSaltoEntra(S, tipo, rango, f, alLlegar) {
   nvSnd(tipo === 'jefe' ? 'nvJefeLlega' : 'nvSalto', S);
   const n = S.nave, [hw, hh] = nvMediaPantalla(S), a = Math.random() * 6.283, ca = Math.cos(a), sa = Math.sin(a);
   const borde = Math.min(hw / Math.abs(ca || 1e-6), hh / Math.abs(sa || 1e-6));   // distancia al borde de la pantalla en esa dirección
-  let x = n.x + ca * borde * f, y = n.y + sa * borde * f;
-  const d = Math.hypot(x, y), k = d > NV_ARENA - 100 ? (NV_ARENA - 100) / d : 1; x *= k; y *= k;
+  const x = n.x + ca * borde * f, y = n.y + sa * borde * f;
   const lejos = Math.hypot(hw, hh) * 1.6;
   S.saltos.push({ tipo, rango, x0: x + ca * lejos, y0: y + sa * lejos, x, y, ang: a + Math.PI, t: 0, alLlegar });
 }

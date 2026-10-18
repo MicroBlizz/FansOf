@@ -121,7 +121,7 @@ function nvDibujaNave(c, S) {
   if (n.esc && n.esc.hp > 0 && H.escudo) { c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.35 + 0.65 * n.esc.hp / n.esc.cap; c.translate(H.escudo.x, H.escudo.y); c.scale(H.escudo.rx / NOVA_PIEZAS.cascos[S.casco].escudo.rx, H.escudo.ry / NOVA_PIEZAS.cascos[S.casco].escudo.ry); nvPieza(c, S.casco + '-escudo', 0, 0); c.restore(); }
   else if (n.esc && n.esc.hp > 0) { const R = 118 * e; c.beginPath(); c.arc(n.x, n.y, R, 0, 6.283); c.fillStyle = 'rgba(74,168,255,' + 0.10 * n.esc.hp / n.esc.cap + ')'; c.fill(); c.lineWidth = 2; c.strokeStyle = 'rgba(160,220,255,' + (0.25 + 0.5 * n.esc.hp / n.esc.cap) + ')'; c.stroke(); }
   // drones orbitando
-  for (const w of n.armas) if (w.drones) for (const d of w.drones) { if (d.dock) continue; c.beginPath(); c.arc(d.x, d.y, 7, 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2; c.strokeStyle = '#1a0f2e'; c.stroke(); }
+  for (const w of n.armas) if (w.drones) for (const d of w.drones) { if (d.dock) continue; c.beginPath(); c.arc(d.x, d.y, 7 * nvZ(S), 0, 6.283); c.fillStyle = NOVA_ARMAS.cargas[w.carga].color; c.fill(); c.lineWidth = 2 * nvZ(S); c.strokeStyle = '#1a0f2e'; c.stroke(); }
 }
 
 // ---------- enemigos, disparos y efectos ----------
@@ -217,7 +217,6 @@ function nvDibujaMundo(c, S) {
   const cerca = o => Math.abs(o.x - cx) < V && Math.abs(o.y - cy) < V * 1.6;
   for (const st of S.estaciones) if (cerca(st)) nvDibujaEstacion(c, st, S.t);
   for (const p of S.pecios) if (cerca(p)) nvDibujaPecio(c, p, S.t * 2);
-  c.beginPath(); c.arc(0, 0, NV_ARENA, 0, 6.283); c.lineWidth = 10; c.strokeStyle = 'rgba(120,160,255,.35)'; c.stroke();
   c.beginPath();   // restos de nave: chapas retorcidas con el borde dorado, todas en un solo trazo
   for (const r of S.restos) {
     if (!nvVisible(S, r.x, r.y, 20)) continue;
@@ -238,10 +237,11 @@ function nvDibujaMundo(c, S) {
   c.globalAlpha = 0.45; c.lineCap = 'round';   // estelas, todas con el mismo modo de mezcla
   for (const b of bv) { c.strokeStyle = b.color; c.lineWidth = b.r * 1.5; c.beginPath(); c.moveTo(b.x, b.y); c.lineTo(b.x - b.vx * 0.045, b.y - b.vy * 0.045); c.stroke(); }
   c.globalAlpha = 1; c.lineCap = 'butt'; c.globalCompositeOperation = 'source-over';
+  c.strokeStyle = '#1a0f2e'; c.lineWidth = 1.5 * z;   // contorno oscuro: a cualquier tamaño la bala se recorta nítida contra el fondo
   for (const b of bv) {
     c.fillStyle = b.color;
-    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
-    else nvFormaCarga(c, b.forma, b.x, b.y, b.r);
+    if (b.w.portador === 'railgun') { c.save(); c.translate(b.x, b.y); c.rotate(Math.atan2(b.vy, b.vx)); c.fillRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.strokeRect(-b.r * 4, -b.r * 0.6, b.r * 8, b.r * 1.2); c.restore(); }
+    else { nvFormaCarga(c, b.forma, b.x, b.y, b.r); c.stroke(); }
   }
   c.globalCompositeOperation = 'source-over';
   for (const f of S.fx) {

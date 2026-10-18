@@ -1,8 +1,8 @@
 {
- "build": 219,
- "hash": "8ecb5ba",
- "fecha": "2026-10-18T23:28:52Z",
- "mensaje": "Analytics también en los juegos (una propiedad, parámetro «juego»); script movido a core",
+ "build": 220,
+ "hash": "2f4fdf0",
+ "fecha": "2026-10-18T23:36:30Z",
+ "mensaje": "Analytics: texto del aviso más claro y con guiño de Microblizz y Phony",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

@@ -1,8 +1,8 @@
 {
- "build": 212,
- "hash": "67ff264",
- "fecha": "2026-10-18T19:31:23Z",
- "mensaje": "Decks: la pantalla de la reunión no se mueve al quedarte sin cartas",
+ "build": 213,
+ "hash": "364bac6",
+ "fecha": "2026-10-18T20:26:40Z",
+ "mensaje": "Decks: bot que comprueba la pantalla en móviles y PC, y arreglos de lo que encontró",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

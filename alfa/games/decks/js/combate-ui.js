@@ -71,7 +71,7 @@ function dcPintaEquipo(C) {
 }
 function dcPintaCombate() {
   const C = DCC.C, r = DCP.run, L = DC_LIDERES[r.lider], s = document.getElementById('dc-combate');
-  s.textContent = ''; s.classList.toggle('dc-cierre-on', C.turno >= C.cierre); dcPonFondo(s, DCC.fondo);
+  s.textContent = ''; s.classList.toggle('dc-cierre-on', C.turno >= C.cierre);
   // arriba: turno y hora de cierre
   const cab = dcEl('div', 'dc-cabecera');
   const t1 = dcEl('span', 'dc-turno'); t1.append(dcSvg('reloj'), dcEl('span', '', tr('Turno {n}', { n: C.turno })));
@@ -111,7 +111,7 @@ function dcPintaCombate() {
   fin.onclick = () => { DCC.elegida = null; play('select'); dcFinTurno(C); dcTrasJugada(); };
   franja.append(caos, fin, pilas);
   // la mano, en abanico
-  const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(300, s.clientWidth - 16), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
+  const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
   mano.style.setProperty('--wc', wc + 'px'); mano.style.setProperty('--sol', n > 1 ? Math.max(0, (n * wc + (n - 1) * 6 - ancho) / (n - 1)).toFixed(1) + 'px' : '0px');
   C.mano.forEach((c, i) => {
     const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, al: () => dcTocaCarta(i) });
@@ -119,9 +119,11 @@ function dcPintaCombate() {
     mano.append(el);
   });
   const aviso = dcEl('div', 'dc-aviso', DCC.elegida !== null ? tr('¿A quién? Toca un rival o arrastra la carta') : '');
-  s.append(cab, top, med, acc, log, franja, aviso, mano); dcArrastreMano(mano);
+  const z = dcEl('div', 'dc-escala'); z.append(cab, top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);
+  dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
   if (n) DCC.altoMano = Math.max(DCC.altoMano || 0, mano.offsetHeight); if (DCC.altoMano) mano.style.minHeight = DCC.altoMano + 'px';
+  dcEscala(s, z);
   if (DCC.elegida !== null) s.onclick = ev => { if (!ev.target.closest('.dc-rival, .dc-carta')) { DCC.elegida = null; dcPintaCombate(); } }; else s.onclick = null;
   // lo que pasó desde el último dibujo se anima en orden; mientras los rivales actúan no se toca nada
   const dur = dcPintaEventos(C);
@@ -129,6 +131,16 @@ function dcPintaCombate() {
   if (C.turno !== DCC.turnoVisto) { DCC.turnoVisto = C.turno; const t = C.turno; setTimeout(() => { if (DCC.C === C) dcRotulo(t >= C.cierre ? tr('HORA DE CIERRE') : tr('Turno {n}', { n: t }), t >= C.cierre); }, Math.max(0, dur - 350)); }
   return dur;
 }
+// La reunión está pensada para 540×960; en pantallas más bajas (móviles pequeños, PC apaisado) se encoge entera para que quepa sin cortar nada.
+function dcEscala(s, z) {
+  const W = s.clientWidth, H = s.clientHeight; if (!W || !H) return;
+  z.style.transform = ''; z.style.width = W + 'px'; z.style.height = 'auto';
+  const fila = z.querySelector('.dc-rivales'), rv = fila ? [...fila.children].filter(e => e.classList.contains('dc-rival')) : [];
+  const anchoFila = rv.reduce((a, e) => a + e.offsetWidth, 0) + Math.max(0, rv.length - 1) * (parseFloat(getComputedStyle(fila || z).columnGap) || 0) + 20; // con la sala llena, que quepan los cinco
+  const k = Math.min(1, (H - 2) / Math.max(1, z.offsetHeight), W / Math.max(W, anchoFila)); // 2 px de margen por el redondeo
+  z.style.width = (W / k) + 'px'; z.style.height = (H / k) + 'px'; z.style.transform = k < 1 ? 'scale(' + k + ')' : '';
+}
+addEventListener('resize', () => { const s = document.getElementById('dc-combate'), z = s && !s.hidden && s.querySelector(':scope > .dc-escala'); if (z) dcEscala(s, z); });
 // Un rótulo que cruza la pantalla (turno nuevo, hora de cierre).
 function dcRotulo(texto, alarma) {
   const s = document.getElementById('dc-combate'), viejo = s.querySelector('.dc-rotulo'); if (viejo) viejo.remove();

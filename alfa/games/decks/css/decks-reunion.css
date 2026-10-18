@@ -1,5 +1,7 @@
 /* Fans Of Decks · la reunión y las cartas: rivales con su intención, el líder, la franja de CAOS, la mano en abanico, las cifras flotantes y los rótulos. */
-#dc-combate { padding: 8px 8px 4px; gap: 6px; justify-content: flex-end; overflow: hidden; }
+#dc-combate { padding: 0; overflow: hidden; }
+.dc-escala { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 6px; padding: 8px 8px 4px; box-sizing: border-box; transform-origin: 0 0; isolation: isolate; }
+.dc-escala > .dc-fondo { inset: auto; left: 50%; bottom: 0; width: max(540px, 100%); height: auto; aspect-ratio: 9 / 16; transform: translateX(-50%); }
 #dc-combate.dc-cierre-on::before { content: ''; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px rgba(255, 75, 92, .45); animation: dc-late 1s infinite alternate; }
 @keyframes dc-late { from { opacity: .7; } to { opacity: 1; } }
 .dc-cabecera { width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; color: var(--ink-dim); padding: 0 4px; margin-bottom: auto; }
@@ -65,7 +67,7 @@
 .dc-pilas { display: flex; flex-direction: column; gap: 5px; flex: none; }
 .dc-pila { display: inline-flex; align-items: center; gap: 4px; font: 800 12px/1 var(--font-ui); padding: 5px 9px 5px 6px; border-radius: 10px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 34, .7); color: var(--ink); cursor: pointer; } .dc-pila .dc-svg { width: 16px; height: 16px; color: var(--dc-azul); } .dc-pila-desc .dc-svg { color: var(--ink-dim); }
 /* la mano en abanico */
-.dc-mano { --wc: 96px; --sol: 0px; display: flex; justify-content: center; align-items: flex-end; width: 100%; flex: none; padding: 22px 4px 18px; box-sizing: border-box; overflow: visible; }
+.dc-mano { --wc: 96px; --sol: 0px; display: flex; justify-content: center; align-items: flex-end; width: 100%; flex: none; padding: 22px 16px 18px; box-sizing: border-box; overflow: visible; }
 .dc-mano .dc-carta { width: var(--wc); flex: none; margin-left: calc(var(--sol) * -1); transform-origin: 50% 105%; transform: rotate(var(--rot, 0deg)) translateY(var(--ty, 0)); transition: transform .18s cubic-bezier(.2, .8, .3, 1), filter .18s; }
 .dc-mano .dc-carta:first-child { margin-left: 0; }
 .dc-mano .dc-carta:hover, .dc-mano .dc-carta:focus-visible { transform: translateY(-16px) scale(1.06); z-index: 5; }
@@ -91,7 +93,7 @@
 .dc-carta.dc-grande { width: 196px; min-height: 270px; padding: 14px 10px 10px; gap: 6px; cursor: default; border-radius: 16px; }
 .dc-grande::before { inset: 5px; border-radius: 12px; } .dc-grande .dc-arte { height: 92px; border-radius: 10px; } .dc-grande .dc-cnombre { font-size: 18px; } .dc-grande .dc-ctipo { font-size: 10px; } .dc-grande .dc-ctexto { font-size: 15px; padding: 8px; } .dc-grande .dc-coste { width: 38px; height: 38px; font-size: 20px; left: -12px; top: -12px; }
 .dc-rejilla .dc-carta { width: 104px; }
-.dc-oferta .dc-carta.dc-grande { width: 152px; min-height: 216px; padding: 10px 7px 7px; } .dc-oferta .dc-grande .dc-arte { height: 70px; } .dc-oferta .dc-grande .dc-cnombre { font-size: 15px; } .dc-oferta .dc-grande .dc-ctexto { font-size: 12.5px; padding: 6px; } .dc-oferta .dc-grande .dc-coste { width: 32px; height: 32px; font-size: 17px; left: -10px; top: -10px; }
+.dc-oferta .dc-carta.dc-grande { width: min(152px, 38vw); min-height: 216px; padding: 10px 7px 7px; } .dc-oferta .dc-grande .dc-arte { height: 70px; } .dc-oferta .dc-grande .dc-cnombre { font-size: 15px; } .dc-oferta .dc-grande .dc-ctexto { font-size: 12.5px; padding: 6px; } .dc-oferta .dc-grande .dc-coste { width: 32px; height: 32px; font-size: 17px; left: -10px; top: -10px; }
 .dc-oferta .dc-carta.dc-grande { cursor: pointer; transition: transform .15s; } .dc-oferta .dc-carta.dc-grande:active { transform: scale(.97); }
 .dc-carta-vuela { position: absolute; z-index: 60; pointer-events: none; margin: 0; }
 /* cifras flotantes y rótulos */

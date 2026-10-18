@@ -165,7 +165,8 @@ function nvDibujaEnemigo(c, e, S) {
   if (e.est.brecha > 0) { c.strokeStyle = '#ff9a3c'; c.lineWidth = 2; c.beginPath(); c.moveTo(-r * 0.5, -r * 0.6); c.lineTo(0, 0); c.lineTo(r * 0.4, r * 0.5); c.stroke(); }
   if (e.est.marcado > 0) { c.strokeStyle = '#ffd93d'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 9, 0, 6.283); c.moveTo(-r - 14, 0); c.lineTo(r + 14, 0); c.moveTo(0, -r - 14); c.lineTo(0, r + 14); c.stroke(); }
   if (e.calor > 3) { const g = c.createRadialGradient(0, 0, 0, 0, 0, r); const q = Math.min(0.75, e.calor / 130); g.addColorStop(0, 'rgba(255,60,40,' + q + ')'); g.addColorStop(1, 'rgba(255,60,40,' + q * 0.35 + ')'); c.fillStyle = g; c.beginPath(); c.arc(0, 0, r * 0.95, 0, 6.283); c.fill(); }   // brillo rojo del casco según el calor acumulado
-  if (e.est.apagado > 0) { c.fillStyle = 'rgba(180,107,255,.45)'; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); }
+  if (e.est.apagon > 0) { c.fillStyle = 'rgba(180,107,255,.45)'; c.beginPath(); c.arc(0, 0, r, 0, 6.283); c.fill(); }
+  if (e.est.interferido > 0) { c.save(); c.setLineDash([6, 5]); c.lineDashOffset = -(e.fase || 0) * 20; c.strokeStyle = 'rgba(180,107,255,.85)'; c.lineWidth = 2; c.beginPath(); c.arc(0, 0, r + 12, 0, 6.283); c.stroke(); c.restore(); }
   if (d.capitan) { c.fillStyle = '#fff'; c.font = '800 13px Baloo 2, sans-serif'; c.textAlign = 'center'; c.lineWidth = 3; c.strokeText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); c.fillText(tr(d.nombre) + ' ' + e.rango, 0, -r - 20); }
   if (e.hp < e.hpMax || d.jefe || d.capitan) { c.fillStyle = '#1a0f2e'; c.fillRect(-r, -r - 12, 2 * r, 5); c.fillStyle = d.jefe ? '#ff4b9a' : '#ff6b6b'; c.fillRect(-r, -r - 12, 2 * r * Math.max(0, e.hp / e.hpMax), 5); }
   c.restore();

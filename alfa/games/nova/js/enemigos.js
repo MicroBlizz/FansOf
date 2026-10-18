@@ -77,13 +77,15 @@ function nvEnemigos(S, dt) {
     for (const k in e.est) if ((e.est[k] -= dt) <= 0) delete e.est[k];
     if (e.flash > 0) e.flash -= dt;
     if (e.dot) { e.hp -= e.dot.dps * dt; S.stats.dano += e.dot.dps * dt; if ((e.dot.t -= dt) <= 0) e.dot = null; if (e.hp <= 0) { nvMuere(S, e); continue; } }
-    if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
+    if (e.sinEsc > 0) e.sinEsc -= dt;
+    if (e.sis > 0 && !(e.est.interferido > 0)) e.sis = Math.max(0, e.sis - 20 * dt);   // los sistemas se reponen cuando cesa la interferencia
+    if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0) && !(e.est.interferido > 0) && !(e.sinEsc > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
     const dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
     e.vis = nvEnPantalla(S, e.x, e.y);   // fuera de la pantalla no dispara
     if (e.d.nido) { if (dist < 520 && e.vis) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 2.2; nvBalaE(S, e.x, e.y, ux * 210, uy * 210, 9, 7, 3, 'termica'); } } continue; }   // el nido no se mueve y escupe si te acercas
     if (e.d.pasivo) continue;   // las rocas solo estorban: se rompen a tiros
     if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) { if (e.errante) { e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt; } continue; }   // lejos: dormido o a lo suyo
-    const apagado = e.est.apagado > 0, lento = apagado ? 0.3 : 1;
+    const apagado = e.est.apagon > 0, lento = apagado ? 0.3 : 1;
     let vx = 0, vy = 0;
     if (e.armas) {   // la nave orbita a su alcance y cada arma dispara desde su anclaje
       nvNavegaE(S, e, dt, Math.atan2(uy, ux), dist, lento);

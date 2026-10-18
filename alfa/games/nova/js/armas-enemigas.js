@@ -37,7 +37,7 @@ function nvAlcMaxE(S, e) { return e.armas.reduce((m, w) => Math.max(m, nvAlcE(S,
 function nvDisparaE(S, e, w) {
   const A = NV_ARMA_E[w.portador], T = NV_TAM_E[w.tam], n = S.nave, c = NOVA_ARMAS.cargas[w.carga];
   const px = e.x + w.ax * e.r, py = e.y + w.ay * e.r, d = Math.hypot(n.x - px, n.y - py) || 1, ang = Math.atan2(n.y - py, n.x - px);
-  const cada = A.cada * T.cada, dano = A.dps * T.c * cada / A.n;
+  const cada = A.cada * T.cada, dano = A.dps * T.c * cada / A.n * (e.est.interferido > 0 ? NOVA_ARMAS.combos.interferencia.danoEnemigo : 1);   // Interferido: sus armas pegan menos
   w.cd = cada;
   nvSnd(w.portador === 'laser' ? 'nvLaserE' : 'nvDisparoE', S, px, py, 0.8);
   S.fx.push({ t: 0.12, x: px, y: py, r: 6 * T.r * nvZ(S), color: c.color, tipo: 'flash' });

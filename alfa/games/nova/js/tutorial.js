@@ -69,7 +69,19 @@ const NV_TUTO = {
     'Cada arma es un portador (railgun, flak, láser, lanzador o drones) con una carga: cinética, energía, térmica, explosiva o EM.',
     'Cada portador solo admite las cargas que tienen sentido: no hay láseres cinéticos.',
     'Las cargas dejan estados en el enemigo. Si otra carga le da encima, salta una reacción con daño extra.',
-    'Ejemplo: la cinética abre brecha y la térmica la funde.'] }]
+    'Ejemplo: la cinética abre brecha y la térmica la funde.'] },
+  { titulo: 'ESPECIALIDADES', ic: ['arma', 'laser'], lineas: [
+    'Cinética: golpea el casco; contra un escudo rebota y hace solo un 60 %.',
+    'Energía: hace el doble de daño a los escudos y lo normal al casco.',
+    'Térmica: ablanda el casco. Cuanto más calor acumula un enemigo, más daño cinético y explosivo recibe.',
+    'EM: no hace daño. Interfiere: sus armas pegan menos, recibe más daño, no regenera escudo y, a la cuarta, se apaga. Un escudo activo la repele: túmbalo antes con energía.',
+    'Explosiva: daño en área y marca al enemigo: el siguiente impacto de otro tipo es crítico.'] },
+  { titulo: 'COMBOS DE CARGAS', ic: ['sis', 'fusion'], lineas: [
+    'Térmica y cinética o explosiva: Ablandado, el daño sube con el calor.',
+    'EM y térmica: un enemigo interferido se calienta un 50 % más deprisa y, si le das al casco, no regenera escudo durante 8 s.',
+    'Energía y EM: el escudo tumbado tarda el doble en volver.',
+    'Energía y térmica: la energía atiza el calor de un enemigo caliente.',
+    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] }]
 };
 const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal'];
 

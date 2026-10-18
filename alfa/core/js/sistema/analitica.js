@@ -32,8 +32,8 @@
     const d = document.createElement('div'); d.setAttribute('role', 'dialog');
     d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:520px;margin:0 auto;padding:12px 14px;border:3px solid #20102c;border-radius:14px;background:#26143c;color:#fff6ea;font:600 14px/1.35 "Baloo 2",system-ui,sans-serif;box-shadow:0 6px 0 #20102c';
     d.innerHTML = '<div>' + (en
-      ? 'We use Google Analytics cookies to understand how people use our games, so we can improve the experience. The data is statistical: it carries no name, is not linked to your account and is not used for advertising or personal profiles. Phony only wants to know how many of you press the button that says do not press.'
-      : 'Usamos cookies de Google Analytics para entender cómo se usan nuestros juegos y poder mejorar la experiencia. Los datos son estadísticos: no llevan tu nombre, no se unen a tu cuenta y no se usan para publicidad ni para crear perfiles personales. Phony solo quiere saber cuántos pulsáis el botón que dice «no pulsar».')
+      ? 'We use Google Analytics cookies to understand how people use our games, so we can improve the experience. The data is statistical: it carries no name, is not linked to your account and is not used for advertising or personal profiles. We only do it to build better games for you. Phony only wants to know how many of you press the button that says do not press.'
+      : 'Usamos cookies de Google Analytics para entender cómo se usan nuestros juegos y poder mejorar la experiencia. Los datos son estadísticos: no llevan tu nombre, no se unen a tu cuenta y no se usan para publicidad ni para crear perfiles personales. Lo hacemos solo para crear mejores juegos para ti. Phony solo quiere saber cuántos pulsáis el botón que dice «no pulsar».')
       + ' <a href="' + raiz + 'privacidad/" style="color:#ffb347">' + (en ? 'Privacy' : 'Privacidad') + '</a></div>'
       + '<div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end"></div>';
     const fila = d.lastChild;

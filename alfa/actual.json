@@ -1,8 +1,8 @@
 {
- "build": 221,
- "hash": "20a8f8d",
- "fecha": "2026-10-18T23:36:51Z",
- "mensaje": "Analytics: guiño del aviso más inocuo (solo Phony y el botón de no pulsar)",
+ "build": 222,
+ "hash": "87f2ebe",
+ "fecha": "2026-10-18T23:38:58Z",
+ "mensaje": "Analytics: el aviso dice que es para crear mejores juegos",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

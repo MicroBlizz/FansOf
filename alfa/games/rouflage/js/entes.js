@@ -19,7 +19,7 @@ const REGLAS = {
   enfriaFallo: 2.6,      // …y tras un despido improcedente
   ciego: 2.4,            // tras fallar, la linterna alumbra la mitad durante este rato
   alcance: 250,          // hasta dónde llega un disparo
-  aguante: 5, descanso: 2.5, cansado: 0.62,   // el AGUANTE de los colados: segundos de carrera seguida, segundos parado para recuperarlo entero, y a qué parte de su velocidad van agotados (por debajo del becario)
+  aguante: 7, descanso: 2.5, cansado: 0.62,   // el AGUANTE de los colados: segundos de carrera seguida, segundos parado para recuperarlo entero, y a qué parte de su velocidad van agotados (por debajo del becario)
   pintaRapida: 45,       // la pintura rápida (te pinta como un bot): cada cuánto se puede usar
   luzPaso: 0.35,         // la parte de la luz que atraviesa los muebles (lo que no es pared): sombras suaves
   luzLargo: 250, luzAngulo: 0.62, luzCerca: 58,   // el abanico de la linterna (medio ángulo, en radianes) y el círculo de alrededor
@@ -99,7 +99,7 @@ function descongela(e) { e.congelado = false; }
 // Agotado va a paso de tortuga hasta recuperar la mitad: así una carrera saca de un apuro, pero no se puede cruzar el mapa sin que te pillen
 function aguanta(e, dt, corre) {
   if (extraOn('aguante')) { e.aguante = 1; e.cansado = false; return; }      // el extra de la sala: sin cansancio
-  if (e.invis > 0) corre = false;      // con la granada puesta corre sin cansarse: que el humo no se acabe antes de llegar
+  if (e.invis > 0 || J.fase !== 'caza') corre = false;      // sin coste con la granada puesta ni antes de soltar a los cazadores (preparar y cuenta atrás)
   e.aguante = limita(e.aguante + (corre ? -dt / REGLAS.aguante : dt / REGLAS.descanso), 0, 1);
   if (!e.cansado && e.aguante <= 0) { e.cansado = true; if (e.jugador) play('deny'); }
   else if (e.cansado && e.aguante >= 0.5) e.cansado = false;

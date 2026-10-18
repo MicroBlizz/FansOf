@@ -1,8 +1,8 @@
 {
- "build": 207,
- "hash": "66fa66b",
- "fecha": "2026-10-18T17:30:51Z",
- "mensaje": "Biblioteca: tarjeta de Fans Of Decks solo en la alfa (data-alfa) con dos capturas de partida",
+ "build": 208,
+ "hash": "0640b94",
+ "fecha": "2026-10-18T18:40:20Z",
+ "mensaje": "Rouflage: aguante 7 s, sin coste antes de soltar a los cazadores; texto del extra",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

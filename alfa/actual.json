@@ -1,8 +1,8 @@
 {
- "build": 209,
- "hash": "165ea9b",
- "fecha": "2026-10-18T19:01:49Z",
- "mensaje": "Rouflage 0.2.28: aguante 7 s, granada invisible total, pintura sutil (nota y versión)",
+ "build": 210,
+ "hash": "aa23353",
+ "fecha": "2026-10-18T19:08:03Z",
+ "mensaje": "Publicación: Decks solo en la alfa (SOLO_ALFA)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

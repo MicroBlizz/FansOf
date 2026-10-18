@@ -1,8 +1,8 @@
 {
- "build": 211,
- "hash": "a0c1712",
- "fecha": "2026-10-18T19:21:49Z",
- "mensaje": "Decks: arrastrar cartas al rival o a la zona de rivales",
+ "build": 212,
+ "hash": "67ff264",
+ "fecha": "2026-10-18T19:31:23Z",
+ "mensaje": "Decks: la pantalla de la reunión no se mueve al quedarte sin cartas",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

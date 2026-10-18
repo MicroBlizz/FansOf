@@ -2,7 +2,7 @@
 // Toques: con un rival, tocar la carta la juega; con varios, tocar la carta y luego el rival (o arrastrarla: arrastre.js). Mantener pulsada una carta enseña su texto grande.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
-const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false };
+const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0 };
 // Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
 // Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
 const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', companero: 'Compañero', protocolo: 'Protocolo', clausula: 'Cláusula', spam: 'Spam' };
@@ -10,7 +10,7 @@ const DC_NOTA_TIPO = { empleado: 'Empleado: sale, hace su trabajo y vuelve al ma
 const dcEl = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
 
 function dcEmpiezaReunion(encuentro, tramo, alFin) {
-  DCC.C = dcCombateNuevo(encuentro, tramo); DCC.alFin = alFin; DCC.elegida = null; DCC.turnoVisto = 0; DCC.fondo = tramo;
+  DCC.C = dcCombateNuevo(encuentro, tramo); DCC.alFin = alFin; DCC.elegida = null; DCC.turnoVisto = 0; DCC.fondo = tramo; DCC.altoMano = 0;
   DCC.C.eventos.length = 0;
   dcMuestra('dc-combate'); dcPintaCombate();
 }
@@ -120,6 +120,8 @@ function dcPintaCombate() {
   });
   const aviso = dcEl('div', 'dc-aviso', DCC.elegida !== null ? tr('¿A quién? Toca un rival o arrastra la carta') : '');
   s.append(cab, top, med, acc, log, franja, aviso, mano); dcArrastreMano(mano);
+  // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
+  if (n) DCC.altoMano = Math.max(DCC.altoMano || 0, mano.offsetHeight); if (DCC.altoMano) mano.style.minHeight = DCC.altoMano + 'px';
   if (DCC.elegida !== null) s.onclick = ev => { if (!ev.target.closest('.dc-rival, .dc-carta')) { DCC.elegida = null; dcPintaCombate(); } }; else s.onclick = null;
   // lo que pasó desde el último dibujo se anima en orden; mientras los rivales actúan no se toca nada
   const dur = dcPintaEventos(C);

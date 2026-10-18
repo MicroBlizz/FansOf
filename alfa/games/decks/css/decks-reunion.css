@@ -51,7 +51,7 @@
 .dc-boton:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
 .dc-boton:disabled { opacity: .45; cursor: default; }
 .dc-salto { background: linear-gradient(#f3a6ff, #d43cff); color: #2a0a33; } .dc-merienda { background: linear-gradient(#b9712f, #8a4a1c); }
-.dc-log { min-height: 16px; font-size: 12px; font-weight: 700; color: var(--ink-dim); text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dc-log { height: 19px; line-height: 19px; flex: none; font-size: 12px; font-weight: 700; color: var(--ink-dim); text-align: center; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* la franja: CAOS, fin de turno y pilas */
 .dc-franja { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; padding: 0 4px 0 28px; box-sizing: border-box; }
 .dc-caos { position: relative; width: 66px; height: 66px; border-radius: 50%; border: 3px solid var(--outline); background: radial-gradient(circle at 35% 30%, var(--chaos-lite), var(--chaos) 45%, var(--chaos-deep)); display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; box-shadow: 0 0 18px rgba(212, 60, 255, .55), inset 0 -6px 10px rgba(0, 0, 0, .3), inset 0 3px 6px rgba(255, 255, 255, .35); transition: filter .3s; }

@@ -18,6 +18,7 @@ function dcAnuncia(C, r) {
   else { do { k = (Math.random() * J.length) | 0; } while (J.length > 1 && k === r.ultimo); r.ultimo = k; }
   r.jug = J[k];
 }
+const DC_MAX_RIVALES = 5;
 function dcTipoJugada(j) { return j.d ? 'ataque' : j.ref ? 'refuerzo' : j.spam ? 'spam' : j.b ? 'defensa' : j.c ? 'cura' : j.f ? 'fuerza' : 'debil'; }
 // El daño que hará un rival si no cambia nada (para enseñarlo encima).
 function dcDanoRival(C, r, j) { j = j || r.jug; if (!j || !j.d) return 0; let d = j.d + r.fuerza; if (r.debil) d = Math.floor(d * 0.75); if (C.turno >= C.cierre) d = Math.floor(d * 1.5); return d; }
@@ -153,7 +154,13 @@ function dcFinTurno(C) {
     if (j.f) r.fuerza += j.f;
     if (j.debil) C.debil += j.debil;
     if (j.spam) { const ps = dcProtocolo(C, 'spam'); if (ps) dcGolpea(C, r, ps.dano); else for (let k = 0; k < j.spam; k++) C.descartes.push(dcCarta('spam')); }
-    if (j.ref && C.rivales.filter(x => x.hp > 0).length < 4) { const pe = dcProtocolo(C, 'refuerzo'); for (let k = 0; k < (j.refN || 1); k++) { const n = dcRival(j.ref); if (pe) n.hp = Math.ceil(n.hpMax / 2); dcAnuncia(C, n); C.rivales.push(n); } }
+    if (j.ref) { // como mucho DC_MAX_RIVALES en la sala (regla de Arkioner, 18-10-2026): si no cabe nadie más, la invocación falla
+      const pe = C.rivales.filter(x => x.hp > 0).length < DC_MAX_RIVALES ? dcProtocolo(C, 'refuerzo') : null;
+      for (let k = 0; k < (j.refN || 1); k++) {
+        if (C.rivales.filter(x => x.hp > 0).length >= DC_MAX_RIVALES) { C.eventos.push({ t: 'falla', r: C.rivales.indexOf(r) }); C.log.push(tr('{rival} llama a refuerzos, pero la sala está llena', { rival: r.nombre })); break; }
+        const n = dcRival(j.ref); if (pe) n.hp = Math.ceil(n.hpMax / 2); dcAnuncia(C, n); C.rivales.push(n);
+      }
+    }
     if (r.debil) r.debil--; if (r.vulnerable) r.vulnerable--;
     if (DCP.run.hp <= 0) break;
     dcAnuncia(C, r);

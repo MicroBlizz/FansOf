@@ -29,6 +29,25 @@ function dcEstados(o) {
   if (o.aturdido) e.append(dcEstado('dc-est-atu', 'aturdido', tr('Aturdido')));
   return e;
 }
+// Los efectos activos del líder, para que se vea qué tiene encima: los que duran toda la reunión (directivas, fuerza) van lisos;
+// los que se van al acabar el turno (fuerza del turno, racha de empleados, débil, vulnerable) llevan un reloj. Al tocar uno, lo explica.
+const DC_PODER_ICONO = { nido: 'defensa', espinas: 'ataque' };
+function dcPoderCarta(k) { for (const id in DC_CARTAS) if (DC_CARTAS[id].fx && DC_CARTAS[id].fx.poder === k) return DC_CARTAS[id]; return null; }
+function dcEfecto(cls, icono, texto, n, explica, turno) {
+  const e = dcEl('span', 'dc-est dc-efecto ' + cls); e.append(dcSvg(icono), dcEl('span', '', texto), dcEl('b', '', String(n)));
+  if (turno) e.append(dcSvg('reloj'));
+  e.title = explica; e.onclick = ev => { ev.stopPropagation(); toast(explica); }; return e;
+}
+function dcEfectosLider(C) {
+  const e = dcEl('div', 'dc-estados dc-efectos');
+  for (const k in C.poderes) { const D = dcPoderCarta(k); if (!D || !C.poderes[k]) continue; e.append(dcEfecto('dc-est-fijo', DC_PODER_ICONO[k] || 'fuerza', tr(D.nombre), C.poderes[k], tr('Directiva, toda la reunión.') + ' ' + tr(D.texto, { n: C.poderes[k] }))); }
+  if (C.fuerza) e.append(dcEfecto('dc-est-fuerza', 'fuerza', tr('Fuerza'), '+' + C.fuerza, tr('Fuerza: tus golpes pegan {n} más durante toda la reunión.', { n: C.fuerza })));
+  if (C.fuerzaTurno) e.append(dcEfecto('dc-est-turno', 'fuerza', tr('Empleados'), '+' + C.fuerzaTurno, tr('Tus empleados pegan {n} más hasta el fin del turno.', { n: C.fuerzaTurno }), true));
+  if (C.tropasTurno) { const n = Math.min(5, C.tropasTurno); e.append(dcEfecto('dc-est-turno', 'refuerzo', tr('Racha'), '+' + n, tr('Racha: el próximo empleado de este turno pega {n} más (uno por cada empleado ya jugado, hasta 5).', { n }), true)); }
+  if (C.debil) e.append(dcEfecto('dc-est-deb', 'debil', tr('Débil'), C.debil, tr(C.debil === 1 ? 'Débil: pegas un 25 % menos este turno.' : 'Débil: pegas un 25 % menos durante {n} turnos.', { n: C.debil }), true));
+  if (C.vulnerable) e.append(dcEfecto('dc-est-vul', 'ataque', tr('Vulnerable'), C.vulnerable, tr(C.vulnerable === 1 ? 'Vulnerable: recibes un 50 % más de daño este turno.' : 'Vulnerable: recibes un 50 % más de daño durante {n} turnos.', { n: C.vulnerable }), true));
+  return e;
+}
 function dcPintaRival(C, r, i) {
   const D = DC_RIVALES[r.id];
   const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (DCC.elegida !== null && r.hp > 0 ? ' dc-elige' : ''));
@@ -59,14 +78,17 @@ function dcPintaCombate() {
   const t2 = dcEl('span', C.turno >= C.cierre ? 'dc-cierre' : 'dc-cierre-aviso', C.turno >= C.cierre ? tr('HORA DE CIERRE') : tr('Cierre en el turno {n}', { n: C.cierre }));
   cab.append(t1, t2);
   // los rivales
-  const top = dcEl('div', 'dc-rivales' + (C.rivales.filter(x => x.hp > 0).length > 2 ? ' dc-rivales-muchos' : '')); C.rivales.forEach((rv, i) => top.append(dcPintaRival(C, rv, i)));
+  // los derrotados se van de la mesa: solo se pinta (y se desvanece) el que acaba de caer, para que se vea el golpe
+  const golpeados = new Set(C.eventos.filter(e => e.r >= 0 && e.t !== 'accion').map(e => e.r)), vivos = C.rivales.filter(x => x.hp > 0).length;
+  const top = dcEl('div', 'dc-rivales' + (vivos >= 5 ? ' dc-rivales-lleno' : vivos > 2 ? ' dc-rivales-muchos' : ''));
+  C.rivales.forEach((rv, i) => { if (rv.hp > 0) top.append(dcPintaRival(C, rv, i)); else if (golpeados.has(i)) { const d = dcPintaRival(C, rv, i); d.classList.add('dc-sale'); top.append(d); } });
   // en medio: el líder
   const med = dcEl('div', 'dc-lider');
   const lsp = dcEl('div', 'dc-lider-arte'); lsp.append(dcSprite('bunny', 92));
   const inf = dcEl('div', 'dc-lider-info');
-  inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEstados(C));
+  inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEfectosLider(C));
   if (C.companeros.length || C.protocolos.length) inf.append(dcPintaEquipo(C));
-  const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); objs.append(o); }
+  const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); o.onclick = ev => { ev.stopPropagation(); toast(tr(DC_OBJETOS[k].texto)); }; objs.append(o); }
   if (r.objetos.length) inf.append(objs);
   med.append(lsp, inf);
   // acciones: la jugada del líder y las meriendas
@@ -110,51 +132,6 @@ function dcRotulo(texto, alarma) {
   const s = document.getElementById('dc-combate'), viejo = s.querySelector('.dc-rotulo'); if (viejo) viejo.remove();
   const r = dcEl('div', 'dc-rotulo' + (alarma ? ' dc-rotulo-alarma' : '')); r.append(dcEl('b', 'ol', texto)); s.append(r);
   setTimeout(() => r.remove(), 1300);
-}
-// Lo que pasó, animado en orden: cada 'accion' de un rival (o compañero) abre un tramo de medio segundo en el que ese actor se mueve y,
-// un poco después, caen sus cifras (daño, cura, bloqueo) con su icono sobre quien las recibe; el golpeado tiembla. Devuelve lo que dura todo.
-const DC_PASO = 520;
-function dcPintaEventos(C) {
-  const s = document.getElementById('dc-combate'), evs = C.eventos.splice(0);
-  let total = 0, t = 0, enTramo = false, k = 0, lider = false;
-  for (const e of evs) {
-    if (e.t === 'accion') { t = total; total += DC_PASO; enTramo = true; k = 0; dcAnimaAccion(s, e, t + 40); continue; }
-    const retardo = (enTramo ? t + 230 : 140) + k * 110; k++;
-    dcAnimaEvento(s, e, retardo);
-    if (!enTramo && e.t === 'dano' && e.r >= 0 && !lider) { lider = true; dcClase(s.querySelector('.dc-lider-arte'), 'dc-brinca', 60); }
-  }
-  if (!enTramo && evs.length) total = 400 + k * 110;
-  return total ? total + 250 : 0;
-}
-function dcClase(el, cls, retardo, dura) { if (!el) return; setTimeout(() => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); setTimeout(() => el.classList.remove(cls), dura || 700); }, retardo || 0); }
-// El actor se mueve: el rival embiste, se escuda, cura, manda el sobre de Spam, se potencia…; el compañero brinca.
-function dcAnimaAccion(s, e, retardo) {
-  if (e.comp !== undefined) return dcClase(s.querySelectorAll('.dc-comp')[e.comp], 'dc-brinca', retardo);
-  const rv = s.querySelector('.dc-rival[data-rival="' + e.r + '"]'); if (!rv) return;
-  dcClase(rv, 'dc-acto-' + e.tipo, retardo);
-  if (e.tipo === 'spam') setTimeout(() => dcVuela(rv.querySelector('.dc-rival-arte'), s.querySelector('.dc-pila-desc'), 'spam', '#f3a6ff'), retardo + 120);
-  if (e.tipo === 'ataque') setTimeout(() => dcVuela(rv.querySelector('.dc-rival-arte'), s.querySelector('.dc-lider-arte'), 'ataque', '#ff4b5c', 260), retardo + 60);
-  if (e.tipo === 'cura' || e.tipo === 'refuerzo') setTimeout(() => dcImpacto(rv.querySelector('.dc-rival-arte'), e.tipo), retardo + 150);
-}
-// Una cifra flotante con su icono sobre quien la recibe.
-function dcAnimaEvento(s, e, retardo) {
-  const obj = e.r < 0 ? s.querySelector('.dc-lider-arte') : s.querySelector('.dc-rival[data-rival="' + e.r + '"] .dc-rival-arte'); if (!obj) return;
-  setTimeout(() => {
-    const f = dcEl('span', 'dc-flot dc-flot-' + e.t, e.t === 'dano' ? '−' + e.n : e.t === 'cura' ? '+' + e.n : e.t === 'bloqueo' ? '+' + e.n : tr('Bloqueado'));
-    obj.append(f); setTimeout(() => f.remove(), 1300);
-    dcImpacto(obj, e.t === 'dano' ? 'ataque' : e.t === 'cura' ? 'cura' : 'defensa');
-    if (e.t === 'dano') dcClase(obj.parentElement, 'dc-tiembla', 0, 450);
-  }, retardo);
-}
-// Un icono que estalla sobre un objetivo.
-function dcImpacto(obj, icono) { if (!obj) return; const i = dcEl('span', 'dc-impacto dc-impacto-' + icono); i.append(dcSvg(icono)); obj.append(i); setTimeout(() => i.remove(), 700); }
-// Un icono que vuela de un elemento a otro (el sobre de Spam hacia los descartes, el golpe hacia el líder).
-function dcVuela(de, a, icono, color, dura) {
-  if (!de || !a) return; const st = document.getElementById('stage').getBoundingClientRect(), r1 = de.getBoundingClientRect(), r2 = a.getBoundingClientRect();
-  const v = dcEl('span', 'dc-vuelo'); v.append(dcSvg(icono)); v.style.color = color; v.style.left = (r1.left + r1.width / 2 - st.left - 16) + 'px'; v.style.top = (r1.top + r1.height / 2 - st.top - 16) + 'px';
-  document.getElementById('stage').append(v);
-  const dx = (r2.left + r2.width / 2) - (r1.left + r1.width / 2), dy = (r2.top + r2.height / 2) - (r1.top + r1.height / 2);
-  if (v.animate) v.animate([{ transform: 'translate(0,0) scale(.6)', opacity: 0 }, { transform: `translate(${dx * 0.3}px, ${dy * 0.3 - 30}px) scale(1.2)`, opacity: 1, offset: .35 }, { transform: `translate(${dx}px, ${dy}px) scale(.8)`, opacity: 0 }], { duration: dura || 520, easing: 'cubic-bezier(.3,.7,.4,1)' }).onfinish = () => v.remove(); else v.remove();
 }
 // La carta i de la mano vuela al centro y se desvanece (antes de que la mano se vuelva a pintar).
 function dcAnimaCarta(i) {

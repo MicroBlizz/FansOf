@@ -1,8 +1,8 @@
 {
- "build": 201,
- "hash": "fc5d703",
- "fecha": "2026-10-18T02:55:10Z",
- "mensaje": "Limpieza: Skate a EN PAUSA, juegos en pausa congelados en publicar.py, SQL con número único y registro de lo aplicado (sql_aplicadas.py)",
+ "build": 202,
+ "hash": "3f0b840",
+ "fecha": "2026-10-18T02:57:33Z",
+ "mensaje": "Decks: efectos activos del líder, máximo 5 rivales y derrotados fuera de la mesa",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

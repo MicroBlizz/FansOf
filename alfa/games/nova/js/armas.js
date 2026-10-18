@@ -14,8 +14,8 @@ function nvTodasArmas() { return ['railgun', 'flak', 'laser', 'lanzador', 'drone
 // Cuánto encaja un tipo de arma con tu facción y tu piloto (1 = nada; sube por cada uno que lo usa en su plantilla). Solo sesga las ofertas.
 function nvAfinidad(S, portador) {
   const usa = fid => { const F = NOVA_CASCOS.facciones[fid]; if (!F) return false; const ts = new Set([].concat(...F.ranuras.map(r => r.tipos))); return ts.has(portador) && nvTodasArmas().some(t => !ts.has(t)); };
-  const cap = S.cap && NOVA_TRIPULACION.capitanes.find(c => c.id === S.cap);
-  return 1 + (usa(S.faccion) ? 1.5 : 0) + (cap && usa(cap.faccion) ? 1 : 0);
+  const capF = S.capFaccion;
+  return 1 + (usa(S.faccion) ? 1.5 : 0) + (capF && usa(capF) ? 1 : 0);
 }
 function nvRanuras(rango, S) {
   const H = nvHull(S.casco, rango), F = NOVA_CASCOS.facciones[H.faccion], tier = nvTier(rango), N = nvNumSlots(rango);

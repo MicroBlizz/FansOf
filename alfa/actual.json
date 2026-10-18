@@ -1,8 +1,8 @@
 {
- "build": 203,
- "hash": "1b5b8b4",
- "fecha": "2026-10-18T03:08:16Z",
- "mensaje": "Decks: campaña del mundo 1 (semana de 5 días con minijefes, ascenso del lunes, jefe de departamento, segunda semana desde el martes y CEO)",
+ "build": 204,
+ "hash": "399811c",
+ "fecha": "2026-10-18T03:25:27Z",
+ "mensaje": "Nova: en la campaña el capitán es el líder o una unidad de la facción elegida (las unidades dan la faceta de su rol)",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

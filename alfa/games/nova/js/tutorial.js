@@ -66,7 +66,8 @@ const NV_TUTO = {
     'Debajo del nombre pone en qué destaca. La eliges antes de cada misión.'] }],
   capitan: [{ titulo: 'EL CAPITÁN', ic: ['cap', 'bunny'], lineas: [
     'El capitán da una ventaja para toda la misión y casi siempre una pega.',
-    'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.'] }],
+    'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.',
+    'En la campaña, el capitán es el líder o una unidad de la facción que elegiste al empezar. Las unidades dan el bonus de su especialidad.'] }],
   oficial: [{ titulo: 'EL OFICIAL', ic: ['fac', 'fuego'], lineas: [
     'El oficial suma un bonus pequeño para toda la misión.',
     'Elige el que encaje con tu forma de jugar: más daño, más casco, más cartas...'] }],

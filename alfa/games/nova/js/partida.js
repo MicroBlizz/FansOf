@@ -210,6 +210,10 @@ const NV_OFICIALES = {   // faceta de datos-tripulacion.js → efecto en la part
   navegacion: S => { S.mejoras.vel = (S.mejoras.vel || 1) * 1.08; S.mejoras.iman = (S.mejoras.iman || 0) + 1; }
 };
 function nvAplicaTripulacion(S) {
+  const K = NOVA_TRIPULACION.capitanes.find(c => c.id === S.cap);
+  S.capFaccion = K ? K.faccion : NVP.camp && NVP.camp.faccion || null;   // una unidad de comandante es de la facción de la campaña
+  const fc = typeof nvCapFaceta === 'function' ? nvCapFaceta(S.cap) : null;   // comandantes.js: líderes sin pasiva y unidades dan su faceta
+  if (fc && NV_OFICIALES[fc]) NV_OFICIALES[fc](S);
   if (S.ofi && NV_OFICIALES[S.ofi]) NV_OFICIALES[S.ofi](S);
 }
 function nvTripulacionPaso(S) {

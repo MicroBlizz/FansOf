@@ -147,14 +147,17 @@ function nvMenu() {
 function nvMenuCapitan(casco) {
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
   const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE TU CAPITÁN')));
-  for (const id of NV_CAPITANES) {
-    const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id), F = NOVA_CASCOS.facciones[K.faccion];
+  for (const id of nvComandantes()) {   // en campaña: el líder y las unidades de tu facción (comandantes.js)
+    const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id), fc = nvCapFaceta(id), fac = K ? K.faccion : nvFaccionCampana(), F = NOVA_CASCOS.facciones[fac];
     const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', '#ffd93d');
-    b.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
-    b.appendChild(nvEl('nv-cnom', tr(K.nombre)));
-    b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
-    if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
-    nvConIcono(b, 'cap', id, NV_COL_CAP[id], 58);
+    b.appendChild(nvEl('nv-ctipo', tr(F.nombre) + (nvFaccionCampana() ? ' · ' + tr(K ? 'Líder' : 'Unidad') : '')));
+    b.appendChild(nvEl('nv-cnom', tr(nvCapNombre(id))));
+    if (fc) b.appendChild(nvEl('nv-cdet', tr(NOVA_TRIPULACION.facetas[fc].nombre) + ': ' + tr(NV_OFICIAL_TXT[fc])));
+    else {
+      b.appendChild(nvEl('nv-cdet', tr(id === 'progamer' ? 'Sin bonus ni pega: cifras base' : K.ventaja)));
+      if (K.pega && K.pega !== 'Ninguna') b.appendChild(nvEl('nv-cdet', tr('Pega') + ': ' + tr(K.pega)));
+    }
+    nvConIcono(b, 'cap', id, NV_COL_CAP[id] || NV_FAC_COLOR[fac], 58);
     b.onclick = () => nvMenuOficial(casco, id);
     p.appendChild(b);
   }

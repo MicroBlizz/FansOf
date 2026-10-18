@@ -1,6 +1,19 @@
 // Fans Of · Inglés de la tienda de la librería (biblioteca/tienda.js y las etiquetas de cada tarjeta en index.html).
 'use strict';
 IDIOMA.add({
+  // EN PAUSA (index.html, tienda.js y votos.js)
+  "En pausa": "On hold",
+  "EN PAUSA": "ON HOLD",
+  "Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.": "Prototypes we've put on hold. You can play them as they are and, if you want them back, vote on their page: the ones with the most votes are the ones we pick up again.",
+  "Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos.": "On hold while we finish the big games. You can play it as it is: if lots of people want it back, we'll pick it up again.",
+  "Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea.": "Neither the 2D nor the 3D version turned out the way we wanted, so we parked it. You can play it as it is: if lots of people want it back, we'll remake it with a new idea.",
+  "¿QUIERES QUE VUELVA?": "DO YOU WANT IT BACK?",
+  "Quiero que vuelva": "I want it back",
+  "Que siga en pausa": "Keep it on hold",
+  "{p} % quiere que vuelva": "{p} % want it back",
+  "¡Gracias! Hoy has pedido que vuelva.": "Thanks! Today you asked for it to come back.",
+  "¡Gracias! Hoy has votado que siga en pausa.": "Thanks! Today you voted to keep it on hold.",
+  "Un voto al día. Los prototipos con más votos para que vuelvan son los primeros que retomamos.": "One vote a day. The prototypes with the most votes to come back are the first ones we pick up again.",
   "DESTACADO": "FEATURED",
   "Roguelike · Turnos": "Roguelike · Turn-based",
   "Lore": "Lore",
@@ -91,6 +104,9 @@ IDIOMA.add({
   "Acción": "Action",
   "Hordas": "Hordes",
   "Espacial": "Space",
+  "Roguelike": "Roguelike",
+  "Oficina": "Office",
+  "El constructor de mazos de la serie. Sobrevives a la semana en Microblizz con CrazyBunny: cada hora eliges a qué reunión vas, juegas cartas contra rivales que anuncian su jugada, mejoras tu mazo y, a las 17:00, te espera el minijefe del día. Cinco días, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.": "The series' deck builder. You survive the week at Microblizz with CrazyBunny: every hour you pick which meeting to attend, play cards against foes that announce their move, improve your deck and, at 17:00, the day's mini-boss awaits. Five days, a promotion and the department head; then another week that ends before the CEO.",
   "Por turnos": "Turn-based",
   "JRPG": "JRPG",
   "Runner": "Runner",

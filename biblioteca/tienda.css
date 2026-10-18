@@ -8,8 +8,8 @@ section.hero h1 .l2 { font-size: 72px; margin: 6px 0 2px; }
 section.hero p.sub { font-size: 16px; max-width: 520px; }
 
 /* ---------- las tarjetas: una rejilla con la captura arriba ---------- */
-#biblioteca { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; align-items: stretch; }
-#biblioteca > h2.sec, #biblioteca > p.note { grid-column: 1 / -1; justify-self: center; text-align: center; }
+#biblioteca, #en-pausa { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; align-items: stretch; }
+#biblioteca > h2.sec, #biblioteca > p.note, #en-pausa > h2.sec, #en-pausa > p.note { grid-column: 1 / -1; justify-self: center; text-align: center; }
 .game { position: relative; width: 100%; box-sizing: border-box; color: var(--ink); text-align: left; border: 4px solid var(--outline); border-radius: 18px; padding: 0 0 12px; overflow: hidden;
   background: linear-gradient(170deg, var(--wc) 0%, var(--tray) 55%); box-shadow: 0 5px 0 var(--outline); cursor: pointer; transition: transform .12s; }
 .game:hover { transform: translateY(-3px); }
@@ -48,6 +48,12 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 .puntos .punto.on { background: var(--gold); width: 30px; }
 .puntos .flecha { width: 40px; height: 40px; padding: 2px 0 0; border-radius: 12px; border: 3px solid var(--outline); background: var(--panel); color: var(--ink); font-family: var(--font-display); font-size: 24px; line-height: 1; cursor: pointer; }
 .puntos button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+/* EN PAUSA: los prototipos parados se ven apagados, como guardados en un cajón; su ficha dice por qué */
+#en-pausa .game .cap-img { filter: grayscale(.75) brightness(.8); }
+#en-pausa .game:hover .cap-img { filter: grayscale(.2); }
+#en-pausa .game .tipo { color: var(--gold); }
+.fi-pausa { border-style: dashed; }
 
 /* ---------- LA FICHA de un juego (estilo biblioteca) ---------- */
 .ficha { position: fixed; inset: 0; z-index: 15; overflow-y: auto; background: var(--bg); text-align: left; -webkit-overflow-scrolling: touch; }
@@ -99,7 +105,7 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 /* ---------- en el móvil ---------- */
 @media (max-width: 640px) {
   section.hero h1 .l2 { font-size: 56px; }
-  #biblioteca { grid-template-columns: 1fr 1fr; gap: 12px; }
+  #biblioteca, #en-pausa { grid-template-columns: 1fr 1fr; gap: 12px; }
   .game h2 { font-size: 16px; margin: 8px 9px 0; }
   .game .row, .etiq { margin-left: 9px; margin-right: 9px; }
   .game .etiq span:nth-child(n+3) { display: none; }

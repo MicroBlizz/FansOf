@@ -70,12 +70,13 @@ const alguienPasa = (p, r) => J.entes.find(e => !e.fuera && !e.congelado && (e.m
 
 // ¿le toca a este personaje lo que pasa aquí? Solo a los que lleva este navegador: yo y, si soy el anfitrión (o juego solo), la máquina
 const eventoLeToca = e => !e.fuera && !e.remoto && (e.jugador || (e.bot && (!J.pvp || rfpSoyAnfitrion())));
-// quitarle a alguien parte de la pintura (de 0 a 1): manchas blancas grandes, como si se le hubiera corrido
+// el agua estropea la pintura de alguien (de 0 a 1), sin quitársela de golpe: los tonos se le corren y, de vez en cuando, un churrete baja arrastrado
 function lavaPiel(e, cuanto) {
-  const c = e.pctx; if (!c) return;
-  c.save(); c.globalCompositeOperation = 'source-atop'; c.scale(ESC_PIEL, ESC_PIEL); c.fillStyle = BLANCO_PIEL;
-  for (let k = 0; k < 6 + cuanto * 10; k++) { c.beginPath(); c.ellipse(rand(4, CAJA_W - 4), rand(4, CAJA_H - 4), rand(5, 11), rand(6, 14), rand(0, TAU), 0, TAU); c.fill(); }
-  c.restore(); e.pz = null;
+  if (!e.pctx) return;
+  const sem = Math.random() * 1e6, az = k => hash2(sem, k, 3);
+  for (let p = 0; p < 3; p++) desgasta(e, k => az(k + p * 997), 6, 7, 22 * cuanto + 8);
+  arrastraAbajo(e, Math.round(3 + cuanto * 6), az);
+  e.pz = null;
 }
 // un colado al que le ha pasado algo (lavado, empujado): se descongela y tiene que volver a pintarse; los bots lo hacen solos
 function eventoMolesta(e, texto) {

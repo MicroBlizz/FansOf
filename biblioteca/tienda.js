@@ -3,16 +3,18 @@
 //   · DESTACADO, arriba: los juegos nuevos del boletín (novedades/lista.js), uno tras otro;
 //   · al tocar una tarjeta se abre su FICHA: capturas grandes, JUGAR, versión, de qué va, lo último y todas sus novedades.
 // Lo que cada tarjeta necesita se escribe en su <section> de index.html:
-//   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas)
+//   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas; data-alfa si la tarjeta solo va en la alfa)
+//   Un prototipo parado va en <section id="en-pausa"> con data-tipo="En pausa" y data-pausa="por qué está parado" (su inglés en biblioteca/en.js).
 // Las capturas van en biblioteca/capturas/ (partidas de verdad: sin regalo diario, ni novedades, ni menús de opciones).
 // Usa lo que ya tiene la página: esc(), t(), newsLista(), newsHtml(), nuevos(), cerrarNovedades() y la lista ENTRADAS que llena la carga de novedades.
 'use strict';
 const CAPTURAS = 'biblioteca/capturas/';
+document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.alfa) s.remove(); });   // data-alfa: tarjeta que solo existe en la copia de pruebas
 const TARJETAS = [...document.querySelectorAll('section.game')];
 function datosDe(s) {
   return {
     id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'),
-    color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset,
+    color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, pausa: s.dataset.pausa || '',
     etiquetas: (s.dataset.etiquetas || '').split('·').map(x => x.trim()).filter(Boolean),
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
   };
@@ -125,6 +127,8 @@ function abrirFicha(id, desdeHash) {
   document.getElementById('fi-ver').textContent = (e && e.ver) || '—';
   document.getElementById('fi-tipo').textContent = d.tipo || '—';
   document.getElementById('fi-texto').textContent = d.texto;
+  document.getElementById('fi-pausa').hidden = !d.pausa;   // EN PAUSA: por qué está parado (y el voto pasa a ser «¿quieres que vuelva?», en votos.js)
+  document.getElementById('fi-pausa-t').textContent = d.pausa ? t(d.pausa) : '';
   const n = e && e.entries[0];
   document.getElementById('fi-ultimo-t').textContent = n ? t('LO ÚLTIMO') + ' · ' + n.v : t('LO ÚLTIMO');
   document.getElementById('fi-ultimo').innerHTML = n ? newsLista(n.real) + newsLista(n.joke, 'joke') : esc(t('Cargando…'));

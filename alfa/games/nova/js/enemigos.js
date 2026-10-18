@@ -153,6 +153,8 @@ function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);
   if (e.d.jefe || e.d.capitan || e.d.nido) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
   if (e.d.capitan) S.capMuertos++;
+  // un enemigo con calor acumulado revienta y quema en área en proporción a ese calor (la onda no calienta a los vecinos)
+  if (e.calor >= 10 && !e.d.pasivo) { const k = e.calor; e.calor = 0; nvExplosion(S, e.x, e.y, 40 + k * 0.5, k * 1.2, { carga: 'termica', tam: 0 }, e, true); }
   nvChatarra(S, e.x, e.y, e.d.pasivo || e.d.nido || e.d.jefe || e.d.capitan ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
   S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
   const z = nvZ(S);

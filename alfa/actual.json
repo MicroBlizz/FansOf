@@ -1,8 +1,8 @@
 {
- "build": 218,
- "hash": "17d138c",
- "fecha": "2026-10-18T23:20:28Z",
- "mensaje": "Analytics: texto del aviso más preciso (sin afirmar que no hay anuncios)",
+ "build": 219,
+ "hash": "8ecb5ba",
+ "fecha": "2026-10-18T23:28:52Z",
+ "mensaje": "Analytics también en los juegos (una propiedad, parámetro «juego»); script movido a core",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

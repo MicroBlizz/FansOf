@@ -26,7 +26,7 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 <h2>Rendimiento</h2>
 <p>Para que los juegos vayan fluidos, al acabar una partida enviamos un resumen técnico <b>anónimo</b>: los fotogramas por segundo, el tamaño de pantalla y el tipo de aparato. No lleva tu nombre, tu email ni tu cuenta.</p>
 <h2>Estadísticas de la web</h2>
-<p>Si lo aceptas en el aviso, medimos las visitas de la web con <b>Google Analytics</b>, que usa cookies (_ga) y nos dice cuánta gente viene y qué páginas ve. Anonimizamos la IP, no usamos señales de publicidad y no lo unimos a tu cuenta. Si rechazas, no se carga nada de Google. Puedes <a href="#" onclick="analiticaCambiar();return false">cambiar tu elección</a> cuando quieras.</p>
+<p>Si lo aceptas en el aviso, medimos las visitas de la web y de los juegos con <b>Google Analytics</b>, que usa cookies (_ga) y nos dice cuánta gente viene y qué páginas ve. Anonimizamos la IP, no usamos señales de publicidad y no lo unimos a tu cuenta. Si rechazas, no se carga nada de Google. Puedes <a href="#" onclick="analiticaCambiar();return false">cambiar tu elección</a> cuando quieras.</p>
 <h2>Menores</h2>
 <p>Se puede jugar como invitado sin dar ningún dato. Para guardar la cuenta con email o Google hay que tener <b>14 años o más</b>; si eres menor, debe hacerlo contigo tu padre, madre o tutor. No usamos publicidad personalizada.</p>
 <h2>Cuánto tiempo</h2>
@@ -52,7 +52,7 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 <h2>Performance</h2>
 <p>To keep the games running smoothly, when a match ends we send an <b>anonymous</b> technical summary: frames per second, screen size and device type. It carries no name, email or account.</p>
 <h2>Website statistics</h2>
-<p>If you accept in the notice, we measure website visits with <b>Google Analytics</b>, which uses cookies (_ga) and tells us how many people come and which pages they see. We anonymise the IP, use no advertising signals and do not link it to your account. If you reject, nothing from Google is loaded. You can <a href="#" onclick="analiticaCambiar();return false">change your choice</a> at any time.</p>
+<p>If you accept in the notice, we measure visits to the website and the games with <b>Google Analytics</b>, which uses cookies (_ga) and tells us how many people come and which pages they see. We anonymise the IP, use no advertising signals and do not link it to your account. If you reject, nothing from Google is loaded. You can <a href="#" onclick="analiticaCambiar();return false">change your choice</a> at any time.</p>
 <h2>Children</h2>
 <p>You can play as a guest without giving any data. To save your account with email or Google you must be <b>14 or older</b>; if you are younger, a parent or guardian must do it with you. We do not use personalised advertising.</p>
 <h2>How long</h2>
@@ -65,4 +65,4 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
 p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();p(a.dataset.l)}})})();
 </script>
-<script src="../biblioteca/analitica.js"></script></body></html>
+<script src="../core/js/sistema/analitica.js"></script></body></html>

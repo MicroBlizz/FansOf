@@ -1,8 +1,13 @@
-// Fans Of · Google Analytics de la web (G-T6C335RWHZ), solo con permiso del visitante.
+// Fans Of · Google Analytics de la web y los juegos (G-T6C335RWHZ), solo con permiso del visitante.
+// Una sola propiedad: cada página se separa por su ruta y el juego (games/<juego>/) va como parámetro «juego».
+// Lo carga la página principal y NUCLEO.juego(); en localhost (pruebas y app de Android) no hace nada.
 // Sin pulsar «Aceptar» no se carga nada de Google ni se crea ninguna cookie. La respuesta se guarda en este navegador.
 // Se puede cambiar después con el enlace «Cookies» de la política de privacidad (analitica-cambiar).
 'use strict';
 (function () {
+  if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) return;
+  const raiz = (() => { try { return new URL('../../../', document.currentScript.src).href; } catch (e) { return '/'; } })();
+  const juego = (location.pathname.match(/\/games\/([^/]+)\//) || [])[1] || '';
   const ID = 'G-T6C335RWHZ', CLAVE = 'fansof-analitica';
   const leer = () => { try { return localStorage.getItem(CLAVE) || ''; } catch (e) { return ''; } };
   const guardar = v => { try { localStorage.setItem(CLAVE, v); } catch (e) { /* sin guardar */ } };
@@ -14,7 +19,7 @@
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
     gtag('js', new Date());
-    gtag('config', ID, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false });
+    gtag('config', ID, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false, juego: juego || 'web' });
     const s = document.createElement('script'); s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ID;
     document.head.appendChild(s);
   }
@@ -29,7 +34,7 @@
     d.innerHTML = '<div>' + (en
       ? 'May we count visits with Google Analytics? It uses cookies and tells us how many people come and which pages they see. We do not use it for advertising or to build personal profiles.'
       : '¿Podemos contar las visitas con Google Analytics? Usa cookies y nos dice cuánta gente viene y qué páginas ve. No lo usamos para publicidad ni para crear perfiles personales.')
-      + ' <a href="' + ruta() + 'privacidad/" style="color:#ffb347">' + (en ? 'Privacy' : 'Privacidad') + '</a></div>'
+      + ' <a href="' + raiz + 'privacidad/" style="color:#ffb347">' + (en ? 'Privacy' : 'Privacidad') + '</a></div>'
       + '<div style="display:flex;gap:8px;margin-top:10px;justify-content:flex-end"></div>';
     const fila = d.lastChild;
     const boton = (txt, v, fondo) => {
@@ -42,8 +47,6 @@
     boton(en ? 'Accept' : 'Aceptar', 'si', '#ffcb3d');
     document.body.appendChild(d);
   }
-  // los enlaces de las páginas de una carpeta (privacidad/) llegan al raíz con ../
-  function ruta() { return /\/(privacidad|condiciones|lore|energia|android)\//.test(location.pathname) ? '../' : ''; }
 
   window.analiticaCambiar = () => { guardar(''); borrarCookies(); aviso(); };
   const v = leer();

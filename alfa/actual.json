@@ -1,8 +1,8 @@
 {
- "build": 198,
- "hash": "f4da757",
- "fecha": "2026-10-18T02:39:26Z",
- "mensaje": "Nova: el sector no se vacía (asteroides, naves errantes a tu rango, nidos, pecios y estaciones reaparecen fuera de la pantalla) y empieza más compacto",
+ "build": 199,
+ "hash": "3834e0d",
+ "fecha": "2026-10-18T02:41:26Z",
+ "mensaje": "Biblioteca: sección EN PAUSA (Dark e Island) con «¿quieres que vuelva?» sobre el mismo voto SÍ / NO",
  "juegos": {
   "crush": "0.1.18",
   "dark": "0.2.7",

@@ -1,4 +1,5 @@
 // Fans Of · GUARDAR (favoritos, con un marcapáginas) y «¿LO RECOMIENDAS? SÍ / NO» de la librería (index.html de la raíz).
+// En los de EN PAUSA el mismo voto pregunta «¿QUIERES QUE VUELVA?» (SÍ = que lo retomemos).
 // Servidor: servidor/27-votos-de-juegos.sql y 28-recomendaciones.sql. Nada de emojis: los iconos se dibujan aquí (ICONO).
 //   · El marcapáginas en cada tarjeta y en la ficha: tus guardados salen los primeros de la biblioteca. Sin cuenta se guardan solo en este navegador;
 //     con cuenta, también en ella (así te siguen a otros aparatos). Junto a él se ve cuántas cuentas lo tienen guardado.
@@ -13,7 +14,12 @@
   const leer = () => { try { const l = JSON.parse(localStorage.getItem(GUARDADO) || '[]'); return Array.isArray(l) ? l.filter(x => typeof x === 'string') : []; } catch (e) { return []; } };
   let favs = leer(), totales = {}, avisado = false, listo = false;   // listo: el servidor ya tiene las funciones (si no, solo van los guardados de este navegador y no se ve ni cuenta ni voto)
   const guardar = () => { try { localStorage.setItem(GUARDADO, JSON.stringify(favs)); } catch (e) { /* sin almacenamiento: vale mientras la página esté abierta */ } };
-  const original = TARJETAS.slice(), padre = TARJETAS[0].parentNode, cola = TARJETAS[TARJETAS.length - 1].nextSibling;
+  const original = TARJETAS.slice();
+  // las tarjetas viven en dos sitios (BIBLIOTECA y EN PAUSA): cada una se ordena dentro del suyo
+  const colas = new Map(); for (const s of original) colas.set(s.parentNode, s.nextElementSibling && !s.nextElementSibling.matches('section.game') ? s.nextElementSibling : null);
+  // EN PAUSA (data-pausa en index.html): el mismo SÍ / NO, pero la pregunta es si quieres que vuelva
+  const pausado = id => { const s = document.getElementById(id); return !!(s && s.dataset.pausa); };
+  const SI_TXT = id => (pausado(id) ? 'Quiero que vuelva' : 'Lo recomiendo'), NO_TXT = id => (pausado(id) ? 'Que siga en pausa' : 'No lo recomiendo');
   const es = id => favs.includes(id);
   // los iconos, dibujados con el contorno grueso de la serie
   const ICONO = {
@@ -25,7 +31,7 @@
 
   // ---------- el orden: los favoritos primero ----------
   function ordenar() {
-    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))]) padre.insertBefore(s, cola);
+    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))]) s.parentNode.insertBefore(s, colas.get(s.parentNode));
   }
   const cuantos = id => totales[slug(id)] || 0;
   const etiqueta = id => `${ICONO.marca(es(id))}${cuantos(id) ? `<span>${cuantos(id)}</span>` : ''}`;
@@ -88,7 +94,7 @@
   }
   for (const s of original) {
     const box = document.createElement('div'); box.className = 'votos-tarjeta'; box.hidden = true;
-    box.innerHTML = `<button type="button" data-v="1" aria-label="${esc(t('Lo recomiendo'))}">${ICONO.arriba}</button><button type="button" data-v="-1" aria-label="${esc(t('No lo recomiendo'))}">${ICONO.abajo}</button>`;
+    box.innerHTML = `<button type="button" data-v="1" aria-label="${esc(t(SI_TXT(s.id)))}">${ICONO.arriba}</button><button type="button" data-v="-1" aria-label="${esc(t(NO_TXT(s.id)))}">${ICONO.abajo}</button>`;
     box.onclick = async e => {
       e.stopPropagation(); const b = e.target.closest('button'); if (!b) return;
       const v = Number(b.dataset.v), id = s.id, ver = verDe(id);
@@ -113,21 +119,21 @@
   // la barra de «% lo recomienda» (sin votos todavía, no sale)
   function barra(id) {
     const r = recomiendan[slug(id)]; if (!r || !r.total) return '';
-    const pc = Math.round(100 * r.si / r.total);
-    return `<div class="reco-barra" role="img" aria-label="${esc(t('{p} % lo recomienda', { p: pc }))}"><i style="width:${pc}%"></i></div>`
-      + `<div class="reco-datos"><span>${esc(t('{p} % lo recomienda', { p: pc }))}</span><span>${esc(t(r.total === 1 ? '1 voto' : '{n} votos', { n: r.total }))}</span></div>`;
+    const pc = Math.round(100 * r.si / r.total), txt = pausado(id) ? '{p} % quiere que vuelva' : '{p} % lo recomienda';
+    return `<div class="reco-barra" role="img" aria-label="${esc(t(txt, { p: pc }))}"><i style="width:${pc}%"></i></div>`
+      + `<div class="reco-datos"><span>${esc(t(txt, { p: pc }))}</span><span>${esc(t(r.total === 1 ? '1 voto' : '{n} votos', { n: r.total }))}</span></div>`;
   }
   // un voto nuevo se suma al momento (el recuento de verdad llega la próxima vez que se abre la web)
   function sumar(id, v) { const k = slug(id), r = recomiendan[k] || { si: 0, total: 0 }; recomiendan[k] = { si: r.si + (v > 0 ? 1 : 0), total: r.total + 1 }; }
   function pintarVoto() {
-    const cab = `<h4 class="ol">${esc(t('¿LO RECOMIENDAS?'))}</h4>`;
+    const pausa = pausado(voto.id), cab = `<h4 class="ol">${esc(t(pausa ? '¿QUIERES QUE VUELVA?' : '¿LO RECOMIENDAS?'))}</h4>`;
     if (voto.estado === 'cargando') { caja.innerHTML = cab + `<p>${esc(t('Cargando…'))}</p>` + barra(voto.id); return; }
     if (voto.estado === 'hecho') {
-      caja.innerHTML = cab + `<p class="voto-gracias">${esc(t(voto.hecho > 0 ? '¡Gracias! Hoy lo has recomendado.' : '¡Gracias! Hoy no lo has recomendado.'))}</p>` + barra(voto.id) + `<small>${esc(t('Mañana puedes volver a votar, o antes si sale una versión nueva.'))}</small>`;
+      caja.innerHTML = cab + `<p class="voto-gracias">${esc(t(pausa ? (voto.hecho > 0 ? '¡Gracias! Hoy has pedido que vuelva.' : '¡Gracias! Hoy has votado que siga en pausa.') : (voto.hecho > 0 ? '¡Gracias! Hoy lo has recomendado.' : '¡Gracias! Hoy no lo has recomendado.')))}</p>` + barra(voto.id) + `<small>${esc(t('Mañana puedes volver a votar, o antes si sale una versión nueva.'))}</small>`;
       return;
     }
-    const p = v => `aria-pressed="${voto.elegido === v}" aria-label="${esc(t(v > 0 ? 'Lo recomiendo' : 'No lo recomiendo'))}"`;
-    caja.innerHTML = cab + `<p>${esc(t('Un voto al día por juego. Si sale una versión nueva, puedes votar otra vez.'))}</p>`
+    const p = v => `aria-pressed="${voto.elegido === v}" aria-label="${esc(t(v > 0 ? SI_TXT(voto.id) : NO_TXT(voto.id)))}"`;
+    caja.innerHTML = cab + `<p>${esc(t(pausa ? 'Un voto al día. Los prototipos con más votos para que vuelvan son los primeros que retomamos.' : 'Un voto al día por juego. Si sale una versión nueva, puedes votar otra vez.'))}</p>`
       + `<div class="voto-botones"><button type="button" class="voto si ol" data-v="1" ${p(1)}>${ICONO.arriba}${esc(t('SÍ'))}</button><button type="button" class="voto no ol" data-v="-1" ${p(-1)}>${ICONO.abajo}${esc(t('NO'))}</button></div>`
       + (voto.elegido ? `<textarea id="voto-nota" maxlength="500" placeholder="${esc(t('¿Por qué? (opcional)'))}" aria-label="${esc(t('Nota'))}"></textarea>`
         + `<button type="button" class="boton ol voto-enviar">${esc(t('ENVIAR'))}</button><small>${esc(t('Tu nota la leemos solo nosotros: no se enseña a nadie más.'))}</small>`

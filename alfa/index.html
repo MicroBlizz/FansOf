@@ -43,7 +43,7 @@
 </head>
 <body>
 <nav class="menu" aria-label="Menú">
-  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="lore/">Lore</a><a href="#legal">Privacidad y condiciones</a>
+  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="#en-pausa">En pausa</a><a href="lore/">Lore</a><a href="#legal">Privacidad y condiciones</a>
   <a href="#" id="m-cuenta" class="m-cuenta" hidden>Entrar</a>
   <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
 </nav>
@@ -71,6 +71,7 @@
     <div><div class="fi-caja"><h4 class="ol" id="fi-ultimo-t">LO ÚLTIMO</h4><div id="fi-ultimo"></div></div>
       <div id="fi-capturas"><h4 class="ol">CAPTURAS</h4><div class="fi-tira" id="fi-tira"></div></div></div>
     <div><div class="fi-caja"><h4 class="ol">DE QUÉ VA</h4><p id="fi-texto"></p></div>
+      <div class="fi-caja fi-pausa" id="fi-pausa" hidden><h4 class="ol">EN PAUSA</h4><p id="fi-pausa-t"></p></div>
       <div class="fi-caja" id="fi-voto"></div>
       <details class="fi-caja" id="fi-todas"><summary>TODAS LAS NOVEDADES</summary><div id="fi-novedades"></div></details></div>
   </div>
@@ -123,18 +124,6 @@
     <h2 class="ol">FANS OF SKATE</h2>
     <p>El nuevo (prototipo). Carriles horizontales como un runner: CrazyBunny y los líderes sobre sus vehículos, esquivando las olas y los fajos de Microblizz. Con árbol de talentos y campaña de 12 mundos.</p>
     <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-dark" style="--wc: #4a1f7a" data-tipo="Prototipo" data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
-    <h2 class="ol">FANS OF DARK</h2>
-    <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
-    <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-island" style="--wc: #c9741a" data-tipo="Prototipo" data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
-    <h2 class="ol">FANS OF ISLAND</h2>
-    <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
-    <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
   <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Boceto" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
@@ -198,6 +187,22 @@
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
   </section>
+  <section class="sec" id="en-pausa">
+    <h2 class="sec ol">EN PAUSA</h2>
+    <p class="note">Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
+  <section class="game" id="g-dark" style="--wc: #4a1f7a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
+    <h2 class="ol">FANS OF DARK</h2>
+    <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
+    <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  <section class="game" id="g-island" style="--wc: #c9741a" data-tipo="En pausa" data-pausa="Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea." data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
+    <h2 class="ol">FANS OF ISLAND</h2>
+    <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
+    <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
+  </section>
   <section class="sec" id="legal">
     <h2 class="sec ol">LO COMÚN</h2>
     <div class="partes">
@@ -209,7 +214,7 @@
   </section>
   <p class="note">© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a198.f4da757"></script>
+<script src="core/js/nucleo.js?v=0-a199.3834e0d"></script>
 <script src="core/js/novedades.js"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.

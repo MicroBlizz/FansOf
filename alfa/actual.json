@@ -1,8 +1,8 @@
 {
- "build": 240,
- "hash": "f1b61fe",
- "fecha": "2026-10-19T10:45:57Z",
- "mensaje": "Decks: el daño de las cartas en mano muestra la Fuerza como 4(+x)",
+ "build": 241,
+ "hash": "1b56f82",
+ "fecha": "2026-10-19T11:23:08Z",
+ "mensaje": "Decks: sonidos de cartas, golpes y botones, animaciones de jugada y reparto, y mirilla al arrastrar",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

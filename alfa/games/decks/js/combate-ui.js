@@ -64,7 +64,7 @@ function dcPintaRival(C, r, i) {
   it.title = tr(r.aturdido ? 'Pierde el turno' : I[2]);
   const arte = dcEl('div', 'dc-rival-arte'); arte.append(dcSprite(D.arte, D.alto || (D.jefe ? 110 : D.elite ? 92 : 72)));
   d.append(it, arte, dcEl('b', 'dc-nombre', r.nombre), dcBarraVida(r.hp, r.hpMax, r.bloqueo), dcEstados(r));
-  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k); dcJugar(C, k, i); play('card'); dcTrasJugada(); } };
+  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k, i); dcJugar(C, k, i); dcTrasJugada(); } };
   return d;
 }
 // Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
@@ -113,7 +113,7 @@ function dcPintaCombate() {
   const bd = dcEl('button', 'dc-pila dc-pila-desc'); bd.append(dcSvg('mazo'), dcEl('span', '', String(C.descartes.length))); bd.title = tr('Descartes'); bd.onclick = () => dcVerCartas(tr('Descartes'), C.descartes);
   pilas.append(bp, bd);
   const fin = dcEl('button', 'dc-boton dc-fin', tr('FIN DE TURNO')); fin.disabled = C.fase !== 'jugador';
-  fin.onclick = () => { DCC.elegida = null; play('select'); dcFinTurno(C); dcTrasJugada(); };
+  fin.onclick = () => { DCC.elegida = null; play('dcFinTurno'); dcFinTurno(C); dcTrasJugada(); };
   franja.append(caos, fin, pilas);
   // la mano, en abanico
   const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
@@ -126,6 +126,7 @@ function dcPintaCombate() {
   });
   const marcada = DCC.elegida !== null && C.mano[DCC.elegida], aviso = dcEl('div', 'dc-aviso', !marcada ? '' : dcNecesitaObjetivo(C, marcada) ? tr('¿A quién? Toca un rival o arrastra la carta') : tr('Tócala otra vez para jugarla o arrástrala'));
   const z = dcEl('div', 'dc-escala'); z.append(cab, top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);
+  const reparte = C.turno !== DCC.turnoVisto;   // turno nuevo: la mano entra repartida desde el mazo (combate-anim.js)
   dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
   if (n) DCC.altoMano = Math.max(DCC.altoMano || 0, mano.offsetHeight); if (DCC.altoMano) mano.style.minHeight = DCC.altoMano + 'px';
@@ -134,6 +135,7 @@ function dcPintaCombate() {
   // lo que pasó desde el último dibujo se anima en orden; mientras los rivales actúan no se toca nada
   const dur = dcPintaEventos(C);
   if (dur) { s.classList.add('dc-ocupado'); const mio = ++DCC.ocupado; setTimeout(() => { if (DCC.ocupado === mio) s.classList.remove('dc-ocupado'); }, dur); }
+  if (reparte) dcReparteMano(mano, Math.max(0, dur - 200));
   if (C.turno !== DCC.turnoVisto) { DCC.turnoVisto = C.turno; const t = C.turno; setTimeout(() => { if (DCC.C === C) dcRotulo(t >= C.cierre ? tr('HORA DE CIERRE') : tr('Turno {n}', { n: t }), t >= C.cierre); }, Math.max(0, dur - 350)); }
   return dur;
 }
@@ -150,22 +152,6 @@ function dcReescala() { const s = document.getElementById('dc-combate'), z = s &
 addEventListener('resize', dcReescala);
 // si algo cambia de alto después de pintar (una fuente que llega tarde, un texto que crece), se vuelve a escalar
 const DC_VIGIA = typeof ResizeObserver === 'function' ? new ResizeObserver(dcReescala) : null;
-// Un rótulo que cruza la pantalla (turno nuevo, hora de cierre).
-function dcRotulo(texto, alarma) {
-  const s = document.getElementById('dc-combate'), viejo = s.querySelector('.dc-rotulo'); if (viejo) viejo.remove();
-  const r = dcEl('div', 'dc-rotulo' + (alarma ? ' dc-rotulo-alarma' : '')); r.append(dcEl('b', 'ol', texto)); s.append(r);
-  setTimeout(() => r.remove(), 1300);
-}
-// La carta i de la mano vuela al centro y se desvanece (antes de que la mano se vuelva a pintar).
-function dcAnimaCarta(i) {
-  const s = document.getElementById('dc-combate'), el = s.querySelector('.dc-mano .dc-carta[data-mano="' + i + '"]'); if (!el || !el.animate) return;
-  const st = document.getElementById('stage').getBoundingClientRect(), a = el.getBoundingClientRect();
-  const g = dcClonaCarta(el); g.className = 'dc-carta dc-carta-vuela ' + el.className.replace('dc-elegida', ''); g.style.cssText = el.style.cssText;
-  g.style.left = (a.left - st.left) + 'px'; g.style.top = (a.top - st.top) + 'px'; g.style.width = a.width + 'px';
-  document.getElementById('stage').append(g);
-  const dx = (st.width / 2 - a.width / 2) - (a.left - st.left), dy = (st.height * 0.36 - a.height / 2) - (a.top - st.top);
-  g.animate([{ transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 }, { transform: `translate(${dx * 0.7}px, ${dy * 0.7}px) rotate(-4deg) scale(1.15)`, opacity: 1, offset: 0.55 }, { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(0.6)`, opacity: 0 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => g.remove();
-}
 // ¿La carta marcada pide objetivo? Entonces los rivales se pueden tocar para jugarla.
 function dcApunta(C) { const c = DCC.elegida !== null && C.mano[DCC.elegida]; return !!c && dcNecesitaObjetivo(C, c); }
 function dcTocaCarta(i) {
@@ -175,7 +161,7 @@ function dcTocaCarta(i) {
   // un toque solo la marca (o la desmarca si ya lo estaba y no es el segundo de un doble toque)
   if (!doble) { DCC.elegida = DCC.elegida === i ? null : i; play('select'); dcPintaCombate(); return; }
   if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; play('select'); dcPintaCombate(); return; }   // con varios rivales, nunca al azar: se queda marcada y pregunta a quién
-  DCC.elegida = null; dcAnimaCarta(i); dcJugar(C, i, dcPrimerRival(C)); play('card'); dcTrasJugada();
+  DCC.elegida = null; dcAnimaCarta(i, dcPrimerRival(C)); dcJugar(C, i, dcPrimerRival(C)); dcTrasJugada();
 }
 function dcTrasJugada() {
   const C = DCC.C;

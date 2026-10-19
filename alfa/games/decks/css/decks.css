@@ -15,17 +15,27 @@
 .dc-joke { color: var(--chaos-lite); }
 .dc-aviso { min-height: 18px; font-size: 14px; font-weight: 800; color: var(--gold); text-align: center; }
 
-/* portada */
-#dc-portada { justify-content: center; gap: 12px; }
-#dc-portada .logo { display: flex; flex-direction: column; align-items: center; animation: dc-logo 1.2s cubic-bezier(.2, .8, .3, 1) both; }
-@keyframes dc-logo { from { opacity: 0; transform: translateY(-20px) scale(.92); } to { opacity: 1; transform: none; } }
-#dc-portada .l1 { font-size: 32px; letter-spacing: 3px; }
-#dc-portada .l2 { font-size: 82px; color: var(--chaos-lite); line-height: .95; background: linear-gradient(#fff 0%, var(--chaos-lite) 45%, var(--chaos) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 6px 0 var(--outline)) drop-shadow(0 12px 24px rgba(212, 60, 255, .35)); text-shadow: none; }
-#dc-portada-arte { display: block; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .5)); animation: dc-flota-suave 3.2s ease-in-out infinite alternate; }
-@keyframes dc-flota-suave { from { transform: translateY(0); } to { transform: translateY(-6px); } }
-#dc-portada .tagline { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-dim); margin: 0; }
-.dc-col { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.dc-col .btn-big { font-size: 28px; padding: 14px 44px 9px; }
+/* portada: como la de Rumble (logo de la serie, botón grande, fichas con dibujo y «Cómo se juega»), regla de Arkioner 19-10-2026 */
+#dc-portada { justify-content: safe center; gap: 10px; overflow-y: auto; }
+#dc-portada.dc-con-partida #dc-portada-arte { height: 120px; width: auto; } #dc-portada.dc-con-partida .logo .l2 { font-size: 96px; }
+#dc-portada .logo { margin: 0; line-height: .92; }
+#dc-portada .logo .l1 { font-size: 46px; animation: logoBob 3.2s ease-in-out infinite; }
+#dc-portada .logo .l2 { font-size: 112px; animation: logoWob 3.2s ease-in-out infinite; }
+#dc-portada-arte { display: block; max-width: 100%; filter: drop-shadow(0 6px 0 rgba(20, 8, 34, .35)); }
+#dc-portada .tagline { margin: 0; }
+.dc-col { display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; }
+.dc-col .btn-big { font-size: 30px; padding: 14px 52px 9px; }
+#dc-portada .home-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 400px; }
+#dc-portada .home-tile { color: var(--ink); padding: 8px 2px 6px; } #dc-portada .home-tile svg { width: 34px; height: 34px; } #dc-portada .home-tile span { font-size: 13px; }
+.dc-estado { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-dim); }
+.dc-col .btn-big, .dc-col .btn-mode { white-space: nowrap; }
+@media (max-width: 380px) { .dc-col .btn-big { font-size: 26px; padding: 12px 34px 8px; } }
+@media (max-height: 700px) { #dc-portada { gap: 6px; } #dc-portada .logo .l1 { font-size: 34px; } #dc-portada .logo .l2 { font-size: 80px; } #dc-portada-arte { height: 112px; width: auto; } .dc-col { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { #dc-portada .logo .l1, #dc-portada .logo .l2 { animation: none; } }
+/* opciones */
+.dc-ventana .opt-list { max-width: none; } .dc-ventana .opt-row { box-sizing: border-box; width: 100%; }
+.dc-version { margin: 0; font-size: 12px; color: var(--ink-dim); font-weight: 700; }
+.dc-news { width: 100%; text-align: left; } .dc-news h4 { margin: 8px 0 4px; color: var(--gold); font-size: 13px; letter-spacing: 1px; } .dc-news ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.35; } .dc-news li { margin-bottom: 6px; } .dc-news .joke { color: var(--ink-dim); font-style: italic; }
 
 /* cabecera común */
 .dc-cab { width: 100%; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }

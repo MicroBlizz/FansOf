@@ -1,8 +1,8 @@
 {
- "build": 228,
- "hash": "0888163",
- "fecha": "2026-10-19T00:46:05Z",
- "mensaje": "Decks: Racha salvaje de los Animales Locos, Manada a todos, color por tipo y Biblioteca por tipos con filtros",
+ "build": 229,
+ "hash": "37293a7",
+ "fecha": "2026-10-19T01:10:05Z",
+ "mensaje": "Decks: portada con el estilo de Rumble, Opciones y Novedades, sonido y música; el doble toque pregunta el objetivo",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -121,4 +121,12 @@ IDIOMA.add({
   "Roba cartas": "Draws cards",
   "Da CAOS": "Gives CHAOS",
   "Injugable": "Unplayable",
+  "Efectos": "Effects",
+  "Sonido": "Sound",
+  "APAGADO": "OFF",
+  "ENCENDIDO": "ON",
+  "VER": "VIEW",
+  "Lo nuevo de cada versión.": "What's new in each version.",
+  "Fans Of Decks · versión": "Fans Of Decks · version",
+  "Versión {v}": "Version {v}",
 });

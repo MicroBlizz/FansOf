@@ -1,6 +1,6 @@
 // Fans Of Decks · La reunión en pantalla: rivales con su intención arriba, el líder en medio, la franja de CAOS y la mano en abanico abajo. Pinta el estado C de combate.js.
 // Toques (regla de Arkioner, 19-10-2026): un toque nunca juega, solo marca la carta (y, si pide objetivo, luego tocas el rival); dos toques seguidos
-// la juegan (contra el primer rival si pide objetivo); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
+// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
 const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
@@ -174,6 +174,7 @@ function dcTocaCarta(i) {
   const ahora = Date.now(), doble = DCC.toque && DCC.toque.i === i && ahora - DCC.toque.t < 450; DCC.toque = doble ? null : { i, t: ahora };
   // un toque solo la marca (o la desmarca si ya lo estaba y no es el segundo de un doble toque)
   if (!doble) { DCC.elegida = DCC.elegida === i ? null : i; play('select'); dcPintaCombate(); return; }
+  if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; play('select'); dcPintaCombate(); return; }   // con varios rivales, nunca al azar: se queda marcada y pregunta a quién
   DCC.elegida = null; dcAnimaCarta(i); dcJugar(C, i, dcPrimerRival(C)); play('card'); dcTrasJugada();
 }
 function dcTrasJugada() {
@@ -203,53 +204,6 @@ function dcVerCarta(c) {
   const fx = dcFx(c); for (const k in DC_GLOSARIO) if (fx[k]) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
   if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
-}
-// El ascenso de una carta (Becario → Junior): la carta de ahora, la de después con lo que cambia marcado, y la lista de cambios.
-// alConfirmar (si hay) asciende; alOtra vuelve a la lista o a la carta.
-const DC_ETIQUETA_FX = { coste: 'Coste', dano: 'Daño', veces: 'Veces', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba', caos: 'CAOS', vulnerable: 'Vulnerable', debil: 'Débil', aturde: 'Aturde', fuerza: 'Fuerza', fuerzaTurno: 'Fuerza del turno', blindaje: 'Blindaje', n: 'Cifra' };
-const DC_PALABRA_CAMBIO = { despedida: ['Ya no se despide: vuelve al mazo', 'Despedida: se va al jugarla'], indefinido: ['Ya no se queda en la mano', 'Contrato indefinido: si no la juegas, se queda en tu mano'], madrugador: ['Ya no madruga', 'Madrugador: siempre en tu mano inicial'] };
-function dcVerAscenso(c, alConfirmar, alOtra) {
-  const v = dcVentana(tr('Ascenso: {n}', { n: dcNombre(c) })), cambios = dcCambiosAscenso(c), resalta = new Set(cambios.map(x => x.k));
-  const fila = dcEl('div', 'dc-ascenso');
-  const antes = dcEl('div', 'dc-ascenso-col'); antes.append(dcEl('small', '', tr('Ahora')), dcPintaCarta(dcCarta(c.id, false), { grande: true }));
-  const fl = dcEl('div', 'dc-ascenso-flecha'); fl.append(dcSvg('fuerza'));
-  const despues = dcEl('div', 'dc-ascenso-col dc-ascenso-nueva'); despues.append(dcEl('small', '', tr('Junior')), dcPintaCarta(dcCarta(c.id, true), { grande: true, resalta }));
-  fila.append(antes, fl, despues); v.append(fila);
-  const lista = dcEl('div', 'dc-cambios');
-  for (const x of cambios) {
-    const ch = dcEl('span', 'dc-cambio-chip');
-    if (DC_PALABRA_CAMBIO[x.k]) ch.textContent = tr(DC_PALABRA_CAMBIO[x.k][x.despues ? 1 : 0]);
-    else { ch.append(dcEl('span', '', tr(DC_ETIQUETA_FX[x.k] || x.k) + ' '), dcEl('s', '', String(x.antes)), dcEl('b', '', ' ' + String(x.despues))); }
-    lista.append(ch);
-  }
-  v.append(lista);
-  if (alConfirmar) { const b = dcEl('button', 'btn-big ol dc-ascender', tr('ASCENDER')); b.onclick = () => { dcCierraVentana(); alConfirmar(); }; v.append(b); }
-  const o = dcEl('button', 'btn-ghost ol', tr(alConfirmar ? 'OTRA CARTA' : 'CERRAR')); o.onclick = () => { dcCierraVentana(); if (alOtra) alOtra(); }; v.append(o);
-}
-// Elegir qué carta ascender: la lista, y al tocar una, su ascenso para confirmarlo.
-function dcEligeAscenso(alHecho) {
-  const r = DCP.run, cands = r.mazo.filter(c => !c.asc && DC_CARTAS[c.id].asc);
-  dcVerCartas(tr('¿Qué carta asciendes?'), cands, c => dcVerAscenso(c, () => { c.asc = true; alHecho(c); }, () => dcEligeAscenso(alHecho)), { mejoradas: true });
-}
-// o.mejoradas: con el interruptor «Ver mejoradas» cada carta se pinta como quedará ascendida, con los cambios marcados (se recuerda mientras dura la sesión).
-function dcVerCartas(titulo, cartas, alElegir, o = {}) {
-  const v = dcVentana(titulo), g = dcEl('div', 'dc-rejilla');
-  let mejoradas = !!(o.mejoradas && DCC.verMejoradas);
-  const pinta = () => {
-    g.textContent = ''; if (!cartas.length) g.append(dcEl('p', 'dc-nota', tr('No hay cartas aquí')));
-    cartas.forEach(c => {
-      const m = mejoradas && !c.asc && DC_CARTAS[c.id].asc, cc = m ? dcCarta(c.id, true) : c;
-      g.append(dcPintaCarta(cc, { resalta: m ? new Set(dcCambiosAscenso(c).map(x => x.k)) : undefined, al: alElegir ? () => { dcCierraVentana(); alElegir(c); } : () => dcVerCarta(cc) }));
-    });
-  };
-  if (o.mejoradas) {
-    const t = dcEl('button', 'dc-toggle'), caja = dcEl('span', 'dc-toggle-caja'); caja.append(dcSvg('check')); t.append(caja, dcEl('span', '', tr('Ver mejoradas')));
-    const refresca = () => t.classList.toggle('dc-toggle-on', mejoradas); refresca();
-    t.onclick = () => { mejoradas = !mejoradas; DCC.verMejoradas = mejoradas; play('select'); refresca(); pinta(); };
-    v.append(t);
-  }
-  pinta(); v.append(g);
-  const b = dcEl('button', 'btn-ghost ol', tr(alElegir ? 'MEJOR NO' : 'CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
 // Una ventana encima de todo (una sola a la vez).
 function dcVentana(titulo) {

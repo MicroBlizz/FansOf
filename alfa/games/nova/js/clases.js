@@ -12,13 +12,18 @@ function nvRangoInicial() { return NVP.camp ? 1 + nvNivelCapital('academia') : 1
 const NV_H_CACHE = {};
 function nvHull(casco, rango) {
   const B = NOVA_PIEZAS.cascos[casco], k = nvClase(rango), m = NVA.meta;
-  if (!k || !m[casco + '-casco-c' + (k + 1)]) return B;
+  if (k && !m[casco + '-casco-c' + (k + 1)]) return B;
   const clave = casco + k; if (NV_H_CACHE[clave]) return NV_H_CACHE[clave];
-  const h1 = m[casco + '-casco'], hk = m[casco + '-casco-c' + (k + 1)], w1 = m[casco + '-alas'], wk = m[casco + '-alas-c' + (k + 1)];
-  const top1 = -h1.pivote[1] / 2, lon1 = h1.alto / 2, topk = -hk.pivote[1] / 2, lonk = hk.alto / 2, sx = wk.ancho / w1.ancho;
-  const fy = y => topk + (y - top1) / lon1 * lonk, fx = x => x * sx;
-  const H = Object.assign({}, B, { alas: { x: 0, y: fy(B.alas.y) }, motor: Object.assign({}, B.motor, { y: B.motor.y + (hk.alto - hk.pivote[1]) / 2 - (h1.alto - h1.pivote[1]) / 2 }),
-    ranuras: B.ranuras.map(r => Object.assign({}, r, { x: fx(r.x), y: fy(r.y) })), escudo: B.escudo && Object.assign({}, B.escudo, { y: fy(B.escudo.y), rx: B.escudo.rx * sx, ry: B.escudo.ry * lonk / lon1 }) });
+  let H = B;
+  if (k) {
+    const h1 = m[casco + '-casco'], hk = m[casco + '-casco-c' + (k + 1)], w1 = m[casco + '-alas'], wk = m[casco + '-alas-c' + (k + 1)];
+    const top1 = -h1.pivote[1] / 2, lon1 = h1.alto / 2, topk = -hk.pivote[1] / 2, lonk = hk.alto / 2, sx = wk.ancho / w1.ancho;
+    const fy = y => topk + (y - top1) / lon1 * lonk, fx = x => x * sx;
+    H = Object.assign({}, B, { alas: { x: 0, y: fy(B.alas.y) }, motor: Object.assign({}, B.motor, { y: B.motor.y + (hk.alto - hk.pivote[1]) / 2 - (h1.alto - h1.pivote[1]) / 2 }),
+      ranuras: B.ranuras.map(r => Object.assign({}, r, { x: fx(r.x), y: fy(r.y) })), escudo: B.escudo && Object.assign({}, B.escudo, { y: fy(B.escudo.y), rx: B.escudo.rx * sx, ry: B.escudo.ry * lonk / lon1 }) });
+  }
+  const A = B.anclajes && B.anclajes[k + 1];   // naves de facción: ranuras laterales recolocadas por etapa donde su arte no llega
+  if (A) H = Object.assign({}, H, { ranuras: H.ranuras.map(r => { const n = r.id.replace(/^(babor|estribor)/, ''), p = n !== r.id && A[n]; return p ? Object.assign({}, r, { x: r.id[0] === 'b' ? -p[0] : p[0], y: p[1] }) : r; }) });
   return NV_H_CACHE[clave] = H;
 }
 // Pieza de la clase k si hay arte propio; si no, la del casco base.

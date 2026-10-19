@@ -47,7 +47,7 @@ function nvFacCierra(S, c) {
     let id = N.casco;
     if (!id) {
       id = f; const B = NOVA_PIEZAS.cascos[N.base], H = JSON.parse(JSON.stringify(B));
-      H.nombre = N.nombre; H.faccion = f; H.prestado = { base: N.base, matiz: N.matiz || 0 };
+      H.nombre = N.nombre; H.faccion = f; H.prestado = { base: N.base, matiz: N.matiz || 0 }; if (N.anclajes) H.anclajes = N.anclajes;
       NOVA_PIEZAS.cascos[id] = H;
       if (sel) sel[id] = Object.assign({ hp: 230, vel: 190 }, NV_FAC_STATS[f]);
     }

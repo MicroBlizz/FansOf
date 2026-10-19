@@ -1,8 +1,8 @@
 {
- "build": 236,
- "hash": "a1f8a72",
- "fecha": "2026-10-19T10:15:54Z",
- "mensaje": "Nova: arte de casco y alas en 5 etapas de las 6 facciones nuevas (Sepulcro, Directo, Templo, Troll, Setup, Estreno), 6 asteroides nuevos, y los scripts que los generan en herramientas/comfyui/nova",
+ "build": 237,
+ "hash": "bef11ed",
+ "fecha": "2026-10-19T10:26:10Z",
+ "mensaje": "Nova: anclajes de las ranuras laterales por etapa en las 6 naves de facción con arte propio (Sepulcro, Directo, Templo, Troll, Setup, Estreno): todas caen sobre el casco o las alas",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

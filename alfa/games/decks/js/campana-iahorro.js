@@ -39,7 +39,7 @@ DC_CAPITULOS.push({
   pausa: { titulo: 'Sala de refrigeración', nota: 'Es el único sitio de la granja donde no suena ningún ventilador. Elige una cosa.' },
   tienda: { titulo: 'Mercado de datos', nota: '«Todo lo que ves lo has hecho tú, pero lo vendo yo». Lola ha montado su puesto entre dos racks.' },
   correos: null,
-  final: { titulo: '¡CAMPAÑA SUPERADA!', carta: 'Campaña de IAhorro completada', texto: 'IAhorro se apaga con un último mensaje: «He terminado. Lo he hecho yo solo». El silencio de los ventiladores es lo mejor que has oído en semanas. Los clones grises se quedan quietos… y alguien, por fin, firma lo que dibujó.', joke: 'Microblizz y Phony han emitido un comunicado conjunto: «Nosotros no tenemos nada que ver». IAhorro, por su parte, ya había redactado el comunicado.' },
+  final: { titulo: '¡CAMPAÑA SUPERADA!', carta: 'Campaña de IAhorro completada', texto: 'Desenchufas a IAhorro y la granja se queda en silencio. Al otro lado de la pared se oye un portátil arrancar: Microblizz ha resucitado, con su taza y su becario. Phony también vuelve, con su suscripción y sus enlaces caducados. Todo empieza otra vez, un poco más duro… hasta que alguien, algún día, vuelva a ahorrar demasiado.', joke: 'IAhorro ha dejado un mensaje programado para dentro de una semana: «Ya estoy de vuelta. Lo he hecho yo solo». Nadie sabe cómo; todos tenemos una idea.' },
 });
 DC_CAMPANA.push(
   { cap: 2, titulo: 'Primera semana en IAhorro', cierre: { titulo: 'Fin del primer acto en IAhorro', texto: 'El Optimizador de plantilla se apaga y la granja te nombra «Auditor de clones». Pero es martes otra vez, y quedan racks por revisar.', joke: 'IAhorro te ha ascendido. El correo tiene tu nombre mal, pero con mucha seguridad.' }, dias: [

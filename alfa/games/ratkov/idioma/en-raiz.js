@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.10
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
+  "Microblizz ha cambiado la caja de la tienda por una con dos monedas. Phony asegura que las ratas ya cobran por pasar.": "Microblizz has swapped the shop till for one with two currencies. Phony swears the rats now charge a toll.",
   // 0.2.9
   "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
   "Microblizz cuenta ahora cuántas ratas entran por la mochila. Phony ya ha pedido que no cuenten las de la nevera.": "Microblizz now counts how many rats get into the backpack. Phony has already asked them not to count the ones in the fridge.",

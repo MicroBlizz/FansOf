@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.68
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
+  "Microblizz ha puesto dos monedas en la tienda de las torres. Phony dice que la que no se ve es la que se gasta más rápido.": "Microblizz has put two currencies in the tower shop. Phony says the one you can't see is the one that runs out fastest.",
   // 0.13.67
   "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
   "Microblizz cuenta cuántas torres aguantan la oleada. Phony asegura que las suyas aguantan, pero en otra dimensión.": "Microblizz counts how many towers hold the wave. Phony insists his hold, but in another dimension.",

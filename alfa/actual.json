@@ -1,20 +1,20 @@
 {
- "build": 260,
- "hash": "528a931",
- "fecha": "2026-10-19T18:16:23Z",
- "mensaje": "Decks: el bot de campaña elige cartas, compra y descansa como un jugador; Chapman es «her» en inglés",
+ "build": 261,
+ "hash": "8a69294",
+ "fecha": "2026-10-19T18:24:41Z",
+ "mensaje": "Versiones y notas del despliegue con core de dos monedas: crush 0.1.20, decks 0.2.2, nova 0.3.6, ratkov 0.2.10, rouflage 0.2.31, rumble 0.9.139, survivors 0.1.52, tacticas 0.1.36, td 0.13.68",
  "juegos": {
-  "crush": "0.1.19",
+  "crush": "0.1.20",
   "dark": "0.2.7",
-  "decks": "0.2.1",
+  "decks": "0.2.2",
   "island": "0.3.5",
-  "nova": "0.3.5",
-  "ratkov": "0.2.9",
-  "rouflage": "0.2.30",
-  "rumble": "0.9.138",
+  "nova": "0.3.6",
+  "ratkov": "0.2.10",
+  "rouflage": "0.2.31",
+  "rumble": "0.9.139",
   "skate": "0.1.27",
-  "survivors": "0.1.51",
-  "tacticas": "0.1.35",
-  "td": "0.13.67"
+  "survivors": "0.1.52",
+  "tacticas": "0.1.36",
+  "td": "0.13.68"
  }
 }

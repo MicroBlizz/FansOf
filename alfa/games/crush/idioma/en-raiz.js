@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.20
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
+  "Microblizz ha estrenado una tienda con dos monedas y Phony ya ha preguntado cuál de las dos le deja comprarse otro caramelo.": "Microblizz has opened a shop with two currencies and Phony has already asked which one lets him buy another sweet.",
   // 0.1.19
   "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
   "Microblizz ha contado los caramelos que se comen al día. Phony dice que la cifra le parece sospechosamente baja y que él come por tres.": "Microblizz has counted the sweets eaten per day. Phony says the number looks suspiciously low and that he eats for three.",

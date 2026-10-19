@@ -16,8 +16,17 @@ function rfpPaso(dt) {
   rfpConfinaBecario();
   if (RFP.vuelta) { rfpPideEstado(dt); return; }      // volviendo: ni mando ni mando yo hasta tener la foto del anfitrión
   rfpVigilaSilencios();
+  rfpPideRopa(dt);
   rfpLatido(dt);
   rfpEnvia(dt);
+}
+// al entrar, cada uno manda su ropa y pide la de los demás; si algún humano aún no ha contestado, se vuelve a pedir cada 3 s (hasta 20 veces)
+const PIDE_ROPA = { t: 0, n: 0 };
+function rfpPideRopa(dt) {
+  if (J.fase === 'caza' || J.fase === 'fin' || PIDE_ROPA.n >= 20 || (PIDE_ROPA.t -= dt) > 0) return;
+  PIDE_ROPA.t = 3;
+  if (!RFP.slots.some(sl => sl.humano && !sl.yo && !sl.ropaOk)) { PIDE_ROPA.n = 20; return; }
+  PIDE_ROPA.n++; rfpMandaRopa(true);
 }
 // cada 30 s le dice al servidor que sigues aquí (y si juegas o miras): si desapareces vivo más de 3 minutos, cuenta como abandono y resta puntos
 const LATIDO = { cada: 30, t: 0 };
@@ -71,7 +80,7 @@ function rfpRecibe(m) {
     case 'sz': senueloRecibe(m.l); break;
     case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
     case 'gs': rfpGestoRecibido(sl, m); break;
-    case 'rp': if (m.r && sl.ente) vistePartida(sl.ente, m.r); if (m.q) rfpMandaRopa(false); break;
+    case 'rp': if (m.r && sl.ente) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;

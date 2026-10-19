@@ -1,8 +1,8 @@
 {
- "build": 241,
- "hash": "1b56f82",
- "fecha": "2026-10-19T11:23:08Z",
- "mensaje": "Decks: sonidos de cartas, golpes y botones, animaciones de jugada y reparto, y mirilla al arrastrar",
+ "build": 242,
+ "hash": "01d8027",
+ "fecha": "2026-10-19T11:26:21Z",
+ "mensaje": "Rouflage: mascota inicial gratis y siempre puesta, armario sin recorte, despedido cierra el modo pintar, y se pide la ropa de los demás hasta recibirla",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

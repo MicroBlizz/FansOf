@@ -85,6 +85,6 @@
     ['kaiju', 'Kaiju de goma', 'epica', 'tienda', 0], ['recreativa', 'Recreativa en miniatura', 'epica', 'tienda', 0], ['cupido', 'Corazón alado de CupidArcher', 'epica', 'premium', 'Pase premium · nv 32'],
     ['serpiente', 'Serpiente de Medusa', 'epica', 'tienda', 0], ['dron', 'Dron cazador', 'legend', 'tienda', 0],
   ];
-  CATALOGO_AR.push({ id: 'mascotas', nombre: 'Mascotas', corto: 'Mascotas', nota: 'Te siguen mientras te preparas y salen corriendo al empezar. Todos ven su aspecto, pero no cambian cómo se juega', vacio: true, cuerpo: true,
+  CATALOGO_AR.push({ id: 'mascotas', nombre: 'Mascotas', corto: 'Mascotas', nota: 'Te siguen mientras te preparas y salen corriendo al empezar. Todos ven su aspecto, pero no cambian cómo se juega', cuerpo: true,
     items: MASC.map(([id, n, r, de, txt]) => it(id, n, r, de, txt, mascotaIcono(id), id)) });
 })();

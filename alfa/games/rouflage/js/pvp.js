@@ -85,6 +85,7 @@ function rfpEmpieza(info, red, vuelta) {
     if (sl.humano) RFP.rx[sl.s] = RELOJ + RFP_AJ.gracia;      // los humanos están cargando: de margen
   }
   RFP.canal = red.canal(info.sala, rfpRecibe, est => { RFP.redEstado = est; });
+  PIDE_ROPA.n = 0; PIDE_ROPA.t = 3;
   rfpMandaRopa(true);      // lo que llevas del armario, y que los demás te cuenten lo suyo
   if (vuelta) RFP.vuelta = true;
   rfpActualizaAnfitrion();

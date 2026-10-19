@@ -1,6 +1,11 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "De momento lo de los euros es gratis: te invita {quien}.": "For now the euro stuff is free: {quien} is treating you.",
+  "Te invita {quien}": "On the house: {quien}",
+  "Las Gotas se ganan jugando": "Drops are earned by playing",
+  "Te faltan {n} {m}": "You need {n} more {m}",
+  "Te faltan {n} {m}: tienes {t} y hacen falta {h}": "You need {n} more {m}: you have {t} and need {h}",
   "¿BORRAR TODO?": "DELETE EVERYTHING?",
   "Se borra TODO tu progreso y tus compras de Rouflage (armario, Gotas, Acciones, pase, diario…), aquí y en tu cuenta. No se puede deshacer. Solo para probar desde cero.": "ALL your Rouflage progress and purchases (wardrobe, Drops, Shares, pass, diary…) are deleted, here and in your account. This can't be undone. Only for testing from scratch.",
   "BORRAR TODO": "DELETE EVERYTHING",

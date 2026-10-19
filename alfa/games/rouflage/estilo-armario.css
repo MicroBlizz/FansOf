@@ -125,6 +125,16 @@
 .tn-texto { display: grid; gap: 2px; }
 .tn-texto b { font: 400 16px var(--font-display); letter-spacing: 0.02em; }
 .tn-texto small { font-weight: 700; font-size: 12px; color: var(--ink-dim); line-height: 1.15; }
+.tn-tarjeta.cambio { grid-template-columns: auto 1fr auto; }
+.tn-cambio { display: flex; align-items: center; gap: 3px; }
+.tn-boton { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.tn-boton canvas { width: 22px; height: 22px; flex: none; }
+.tn-tarjeta .boton.falta { background: linear-gradient(to bottom, #9aa0b5, #626885); color: #e8eaf4; }
+.tn-falta { color: #ff8a8a !important; }
+.tn-falta.avisa { animation: tn-parpadeo 0.5s 2; }
+.tn-boton.sacude { animation: tn-sacude 0.35s; }
+@keyframes tn-sacude { 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+@keyframes tn-parpadeo { 50% { opacity: 0.25; } }
 .tn-tarjeta .boton { min-width: 86px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
 .tn-tarjeta .boton:disabled { background: linear-gradient(to bottom, #9be07a, #4fa83a); opacity: 1; color: var(--ink); text-shadow: 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 2px 0 var(--outline), 0 -2px 0 var(--outline), 1.5px 1.5px 0 var(--outline), -1.5px -1.5px 0 var(--outline), 1.5px -1.5px 0 var(--outline), -1.5px 1.5px 0 var(--outline), 0 3px 0 var(--outline); }
 

@@ -1,8 +1,8 @@
 {
- "build": 232,
- "hash": "54785ef",
- "fecha": "2026-10-19T09:23:42Z",
- "mensaje": "Rouflage: botón de reinicio total en Opciones, solo rol alfa",
+ "build": 233,
+ "hash": "4093769",
+ "fecha": "2026-10-19T09:38:18Z",
+ "mensaje": "Rouflage: tienda más visual (iconos de moneda, flechas de cambio, aviso de lo que falta, «te invita» al azar)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

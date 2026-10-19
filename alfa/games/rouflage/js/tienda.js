@@ -31,16 +31,49 @@ function cierraTienda() {
   play('select');
   if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else irTitulo();
 }
-function tiendaCompra(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('(pruebas: no se ha cobrado nada)'), 'bueno'); tiendaPinta(); }
+function tiendaCompra(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
+
+// el icono del euro: una moneda dorada con su signo
+function pintaEuro(c, w) {
+  c.save(); c.scale(w / 40, w / 40);
+  c.beginPath(); c.arc(20, 20, 15, 0, TAU); c.fillStyle = '#ffcb3d'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
+  c.beginPath(); c.arc(20, 20, 10.5, 0, TAU); c.lineWidth = 1.6; c.strokeStyle = '#e0a11f'; c.stroke();
+  c.font = '900 17px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = OL; c.strokeText('€', 20, 21.5); c.fillStyle = '#fff6ea'; c.fillText('€', 20, 21.5);
+  c.restore();
+}
+// la flecha de la conversión (de lo que pagas a lo que recibes)
+function pintaFlecha(c, w) {
+  c.save(); c.scale(w / 40, w / 40); c.lineJoin = 'round';
+  c.beginPath(); c.moveTo(4, 15); c.lineTo(22, 15); c.lineTo(22, 7); c.lineTo(36, 20); c.lineTo(22, 33); c.lineTo(22, 25); c.lineTo(4, 25); c.closePath();
+  c.fillStyle = '#7ee04a'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
+  c.restore();
+}
+const ICONO_MONEDA = { euro: pintaEuro, gotas: pintaGotas, acciones: pintaAcciones };
+const iconoPeq = (dibuja, px) => { const k = arLienzo(px, px); arPinta(k, dibuja); return k; };
+// quien invita por ahora (como en el caos primordial ilimitado): a veces uno y a veces el otro
+const INVITA_TIENDA = Math.random() < 0.5 ? 'Arkioner' : 'Pepins';
 
 function tiendaPinta() {
   ecoEstado();
   E('tienda-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
-  const tarjeta = (dibuja, nombre, nota, boton, alTocar, clase = '') => {
-    const d = document.createElement('div'); d.className = 'tn-tarjeta ' + clase;
-    const k = arLienzo(54, 54); arPinta(k, dibuja); d.appendChild(k);
+  const aviso = E('tienda-aviso-euros'); if (aviso) aviso.textContent = tr('De momento lo de los euros es gratis: te invita {quien}.', { quien: INVITA_TIENDA });
+  // una tarjeta: lo que recibes (dibujo y nombre), de dónde viene (icono + flecha si es un cambio) y el botón con el icono de lo que pagas.
+  // `pago` = { moneda: 'euro' | 'gotas' | 'acciones', txt, tengo, hace }: con `tengo` por debajo de `hace`, el botón avisa de lo que falta
+  const tarjeta = (dibuja, nombre, nota, pago, alTocar, clase = '', origen = null) => {
+    const d = document.createElement('div'); d.className = 'tn-tarjeta ' + clase + (origen ? ' cambio' : '');
+    if (origen) { const f = document.createElement('div'); f.className = 'tn-cambio'; f.append(iconoPeq(ICONO_MONEDA[origen], 36), iconoPeq(pintaFlecha, 24), iconoPeq(dibuja, 46)); d.appendChild(f); }
+    else { const k = arLienzo(54, 54); arPinta(k, dibuja); d.appendChild(k); }
     const t = document.createElement('div'); t.className = 'tn-texto'; t.innerHTML = `<b></b><small></small>`; t.querySelector('b').textContent = nombre; t.querySelector('small').textContent = nota; d.appendChild(t);
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq'; b.textContent = boton; if (alTocar) b.onclick = alTocar; else b.disabled = true; d.appendChild(b);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq tn-boton';
+    const falta = pago.hace && pago.tengo < pago.hace ? pago.hace - pago.tengo : 0;
+    if (pago.moneda) { b.appendChild(iconoPeq(ICONO_MONEDA[pago.moneda], 22)); }
+    const sp = document.createElement('span'); sp.textContent = pago.txt; b.appendChild(sp);
+    if (falta) {
+      b.classList.add('falta'); const nm = pago.moneda === 'gotas' ? tr('Gotas') : tr('Acciones');
+      const aviso = document.createElement('small'); aviso.className = 'tn-falta'; aviso.textContent = tr('Te faltan {n} {m}', { n: falta, m: nm }); t.appendChild(aviso);
+      b.onclick = () => { play('deny'); b.classList.remove('sacude'); void b.offsetWidth; b.classList.add('sacude'); aviso.classList.add('avisa'); avisa(tr('Te faltan {n} {m}: tienes {t} y hacen falta {h}', { n: falta, m: nm, t: pago.tengo, h: pago.hace }), 'malo'); };
+    } else if (alTocar) b.onclick = alTocar; else b.disabled = true;
+    d.appendChild(b);
     return d;
   };
   // ofertas
@@ -48,23 +81,22 @@ function tiendaPinta() {
   const ini = TIENDA.inicio, yaInicio = !!(SAVE.tienda && SAVE.tienda.inicio);
   const cosasIni = ini.cosas.map(([cat, id]) => ({ cat, it: arItem(cat, id) })).filter(x => x.it);
   of.appendChild(tarjeta((c, w) => { if (cosasIni[0]) cosasIni[0].it.x(c, w); }, tr('Pack de inicio'), cosasIni.map(x => tr(x.it.n)).join(' + ') + ' + ' + tr('{n} Acciones', { n: ini.acciones }) + ' · ' + tr('una sola vez'),
-    yaInicio ? tr('YA ES TUYO') : eurTexto(ini.eur), yaInicio ? null : () => tiendaCompra(tr('Pack de inicio'), () => {
+    yaInicio ? { txt: tr('YA ES TUYO') } : { moneda: 'euro', txt: eurTexto(ini.eur) }, yaInicio ? null : () => tiendaCompra(tr('Pack de inicio'), () => {
       SAVE.tienda = SAVE.tienda || {}; SAVE.tienda.inicio = true; SAVE.acciones += ini.acciones;
       for (const { cat, it } of cosasIni) { const k = cat + ':' + it.id; if (!armarioEstado().tengo.includes(k)) armarioEstado().tengo.push(k); }
     }), 'oferta'));
   const p = ecoEstado();
   of.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('Pase premium'), tr('Todo lo premium de los 40 niveles del pase de temporada'),
-    p.premium ? tr('YA ES TUYO') : tr('{n} Acciones', { n: ECO.premium }), p.premium ? null : () => { if (SAVE.acciones < ECO.premium) { play('deny'); avisa(tr('No tienes bastantes Acciones'), 'malo'); return; } pasePremium(); tiendaPinta(); }, 'oferta'));
-  // paquetes de Acciones
+    p.premium ? { txt: tr('YA ES TUYO') } : { moneda: 'acciones', txt: String(ECO.premium), tengo: SAVE.acciones, hace: ECO.premium }, p.premium ? null : () => { pasePremium(); tiendaPinta(); }, 'oferta'));
+  // paquetes de Acciones, por euros
   const ac = E('tienda-acciones'); ac.innerHTML = '';
   for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(IDIOMA_RF === 'es' ? 'es-ES' : 'en-GB') }),
-    pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', eurTexto(pk.eur), () => tiendaCompra(tr('{n} Acciones', { n: pk.n }), () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : ''));
+    pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaCompra(tr('{n} Acciones', { n: pk.n }), () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';
-  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n }), '', tr('{n} Gotas', { n: pk.gotas }), () => {
-    if (SAVE.gotas < pk.gotas) { play('deny'); avisa(tr('Te faltan gotas: juega partidas y recoge el premio diario'), 'malo'); return; }
+  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, () => {
     SAVE.gotas -= pk.gotas; SAVE.acciones += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Acciones', { n: pk.n }), 'bueno'); tiendaPinta();
-  }, SAVE.gotas < pk.gotas ? 'falta' : ''));
+  }, '', 'gotas'));
   // el caos primordial ilimitado (el de toda la serie)
   E('tienda-caos').hidden = typeof ENERGIA === 'undefined';
 }

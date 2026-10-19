@@ -111,7 +111,7 @@ function dcOfertaEmpleo(premio) {
 }
 function dcEligeObjeto(ids, titulo) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(titulo, n && n.tipo), g = dcEl('div', 'dc-rejilla');
-  ids.forEach(k => { const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
+  ids.forEach(k => { dcDescubre('o', k); const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
   s.append(g);
 }
 // ---------- la ventaja fiscal: se elige una al empezar la partida ----------
@@ -171,6 +171,7 @@ function dcPintaEconomato() {
   T.cartas.forEach(it => { if (it.vendida) return; const c = dcCarta(it.id), w = dcEl('div', 'dc-producto'); w.append(dcPintaCarta(c, { grande: true, al: () => compra(desc(it.precio), () => { r.mazo.push(c); it.vendida = true; }) }), dcEl('b', 'dc-precio', fmt(desc(it.precio)))); g.append(w); });
   s.append(g);
   const fila = dcEl('div', 'dc-fila');
+  if (T.objeto) dcDescubre('o', T.objeto); if (T.merienda) dcDescubre('o', 'm:' + T.merienda);
   if (T.objeto && !T.objetoVendido) { const O = DC_OBJETOS[T.objeto], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto)), dcEl('b', 'dc-precio', String(desc(120)))); b.onclick = () => compra(desc(120), () => { r.objetos.push(T.objeto); T.objetoVendido = true; }); fila.append(b); }
   if (T.merienda && !T.meriendaVendida) { const M = DC_MERIENDAS[T.merienda], b = dcEl('button', 'dc-objeto dc-rar-common'); b.append(dcEl('b', '', tr(M.nombre)), dcEl('span', '', tr(M.texto)), dcEl('b', 'dc-precio', String(desc(35)))); b.disabled = r.meriendas.length >= 2; b.onclick = () => compra(desc(35), () => { r.meriendas.push(T.merienda); T.meriendaVendida = true; }); fila.append(b); }
   const q = dcEl('button', 'dc-objeto dc-rar-basic'); q.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Lola la pierde «sin querer» en el archivo.')), dcEl('b', 'dc-precio', fmt(desc(r.quitarPrecio))));

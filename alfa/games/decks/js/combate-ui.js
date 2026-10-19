@@ -52,7 +52,7 @@ function dcEfectosLider(C) {
   return e;
 }
 function dcPintaRival(C, r, i) {
-  const D = DC_RIVALES[r.id];
+  const D = DC_RIVALES[r.id]; dcDescubre('r', r.id);
   const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (DCC.elegida !== null && r.hp > 0 ? ' dc-elige' : ''));
   d.dataset.rival = i;
   const j = r.jug, tipo = dcTipoJugada(j), I = DC_INTENCION[tipo];
@@ -177,6 +177,7 @@ function dcTrasJugada() {
 }
 // Una carta pintada: coste, dibujo, nombre y texto. Mantener pulsada la amplía.
 function dcPintaCarta(c, o = {}) {
+  dcDescubre('c', c.id);   // vista una vez, sale en la Biblioteca
   const D = DC_CARTAS[c.id], d = dcEl('button', 'dc-carta dc-rar-' + D.rar + ' dc-tipo-' + D.tipo + (o.jugable === false ? ' dc-nojugable' : '') + (o.elegida ? ' dc-elegida' : '') + (c.asc ? ' dc-asc' : '') + (o.grande ? ' dc-grande' : ''));
   const R = RARITY[D.rar] || RARITY.basic; d.style.setProperty('--rc', R[1]); d.style.setProperty('--ro', R[2]);
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));

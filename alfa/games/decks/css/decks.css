@@ -109,3 +109,21 @@
 .dc-premio:nth-child(2) .dc-svg { color: var(--dc-azul); } .dc-premio:nth-child(3) .dc-svg { color: var(--danger); } .dc-premio:nth-child(4) .dc-svg { color: var(--dc-verde); }
 .dc-chip-ventaja { background: linear-gradient(90deg, #8a6a12, #5a4208); border-color: rgba(255, 203, 61, .6); }
 .dc-ventaja.dc-cerrada { opacity: .5; cursor: default; } .dc-ventaja.dc-cerrada .dc-riesgo { background: #4a3a5a; } .dc-ventaja .dc-riesgo { background: #2f8a1c; }
+/* Biblioteca (js/biblioteca.js): pestañas, filtros y lo tapado con su «?» */
+.dc-bib-pestanas { display: flex; gap: 6px; width: 100%; }
+.dc-bib-pestana { flex: 1; min-height: 40px; padding: 6px 4px; border-radius: 12px; border: 2px solid var(--dc-linea); background: rgba(255, 255, 255, .05); color: var(--ink-dim); font: 400 15px/1 var(--font-display); cursor: pointer; }
+.dc-bib-pestana[aria-pressed="true"] { color: #fff; border-color: var(--gold); background: rgba(255, 203, 61, .14); }
+.dc-bib-filtros { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.dc-bib-filtro { min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--dc-linea); background: transparent; color: var(--ink-dim); font: 800 13px var(--font-ui); cursor: pointer; }
+.dc-bib-filtro[aria-pressed="true"] { color: var(--outline); background: var(--gold); border-color: var(--gold); }
+.dc-bib-tapado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 14px; border: 2px dashed rgba(255, 255, 255, .22); background: rgba(10, 4, 20, .45); color: var(--ink-dim); box-sizing: border-box; }
+.dc-bib-tapado b { font: 400 40px/1 var(--font-display); color: rgba(255, 255, 255, .45); }
+.dc-bib-tapado span { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.dc-bib-tapado-carta { width: 104px; min-height: 150px; }
+.dc-bib-tapado-rival { width: 118px; min-height: 132px; }
+.dc-bib-tapado-fila { width: 100%; min-height: 72px; flex-direction: row; gap: 12px; } .dc-bib-tapado-fila b { font-size: 30px; }
+.dc-bib-rival { width: 118px; min-height: 132px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 14px; border: 1px solid var(--dc-linea); background: rgba(255, 255, 255, .05); box-sizing: border-box; text-align: center; cursor: pointer; }
+.dc-bib-rival b { font-size: 13px; line-height: 1.15; } .dc-bib-rival span { font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.dc-bib-rival.dc-rival-elite { border-color: rgba(208, 140, 255, .55); } .dc-bib-rival.dc-rival-jefe { border-color: rgba(255, 181, 71, .7); }
+.dc-bib-cat { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gold); }
+.dc-objeto.dc-bib-objeto { flex-direction: row; align-items: center; gap: 12px; cursor: default; } .dc-bib-objeto > div:last-child { display: flex; flex-direction: column; gap: 2px; }

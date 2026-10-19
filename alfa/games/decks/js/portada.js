@@ -19,6 +19,7 @@ function dcPortada() {
   };
   document.getElementById('dc-continuar').onclick = () => { play('select'); if (DCP.run.pendiente) dcResuelveNodo(); else dcPintaMapa(); };
   document.getElementById('dc-como').onclick = dcComoSeJuega;
+  document.getElementById('dc-bib').onclick = () => { play('select'); dcBiblioteca(dcPortada); };
   if (/[?&]jugar=1/.test(q)) { dcNuevaPartida('bunny'); const A = /[?&]acto=(\d+)/.exec(q), Dd = /[?&]dia=(\d+)/.exec(q); if (A || Dd) { DCP.run.acto = Math.min(+(A ? A[1] : 0), DC_CAMPANA.length - 1); DCP.run.dia = Math.min(+(Dd ? Dd[1] : 0), dcActo().dias.length - 1); dcEmpiezaDia(); DCP.run.pendiente = null; } const n = /[?&]nodo=(\w+)/.exec(q); if (n) { const m = DCP.run.mapa; for (let p = 0; p < m.pisos.length; p++) { const k = m.pisos[p].findIndex(x => x.tipo === n[1]); if (k >= 0) { dcIrA(p, k); break; } } dcResuelveNodo(); } else dcPintaDia(); }
   else dcPortada();
 })();

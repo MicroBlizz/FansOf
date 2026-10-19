@@ -1,18 +1,18 @@
 // Fans Of Decks · Objetos (del catálogo de la serie, con su efecto en Decks), meriendas y correos internos del acto 1.
-// Un objeto es { nombre, rar, texto, ...efecto }; el combate pregunta dcObjeto('clave') y lee el efecto que le toque.
+// Un objeto es { nombre, rar, mini (su dibujo de la serie), texto, ...efecto }; el combate pregunta dcObjeto('clave') y lee el efecto que le toque.
 'use strict';
 const DC_OBJETOS = {
-  taza: { nombre: 'Taza del becario', rar: 'basic', texto: '+1 CAOS en el primer turno de cada reunión.', caosTurno1: 1 },
-  teclado: { nombre: 'Teclado mecánico RGB', rar: 'epic', texto: 'Tus empleados pegan +1.', tropaDano: 1 },
-  mochila: { nombre: 'Mochila con ruedas', rar: 'common', texto: 'Robas una carta más al empezar cada reunión.', manoInicial: 1 },
-  pausa: { nombre: 'Botón de pausa', rar: 'epic', texto: 'La hora de cierre llega un turno más tarde.', cierre: 1 },
-  almohada: { nombre: 'Almohada de viaje', rar: 'rare', texto: 'Te curas 6 al acabar cada reunión.', trasReunion: 6 },
-  gorra: { nombre: 'Gorra del revés', rar: 'common', texto: 'El primer ataque de cada reunión pega +4.', primerAtaque: 4 },
-  llavero: { nombre: 'Llavero de la suerte', rar: 'common', texto: 'Las ofertas de empleo traen 4 cartas en vez de 3.', oferta: 1 },
-  alfombrilla: { nombre: 'Alfombrilla XXL', rar: 'epic', texto: '8 de bloqueo al empezar cada reunión.', bloqueoInicial: 8 },
+  taza: { nombre: 'Taza del becario', mini: 'taza', rar: 'basic', texto: '+1 CAOS en el primer turno de cada reunión.', caosTurno1: 1 },
+  teclado: { nombre: 'Teclado mecánico RGB', mini: 'teclado_rgb', rar: 'epic', texto: 'Tus empleados pegan +1.', tropaDano: 1 },
+  mochila: { nombre: 'Mochila con ruedas', mini: 'mochila_ruedas', rar: 'common', texto: 'Robas una carta más al empezar cada reunión.', manoInicial: 1 },
+  pausa: { nombre: 'Botón de pausa', mini: 'boton_pausa', rar: 'epic', texto: 'La hora de cierre llega un turno más tarde.', cierre: 1 },
+  almohada: { nombre: 'Almohada de viaje', mini: 'almohada', rar: 'rare', texto: 'Te curas 6 al acabar cada reunión.', trasReunion: 6 },
+  gorra: { nombre: 'Gorra del revés', mini: 'gorra_reves', rar: 'common', texto: 'El primer ataque de cada reunión pega +4.', primerAtaque: 4 },
+  llavero: { nombre: 'Llavero de la suerte', mini: 'llavero_suerte', rar: 'common', texto: 'Las ofertas de empleo traen 4 cartas en vez de 3.', oferta: 1 },
+  alfombrilla: { nombre: 'Alfombrilla XXL', mini: 'alfombrilla', rar: 'epic', texto: '8 de bloqueo al empezar cada reunión.', bloqueoInicial: 8 },
   // legendarios: solo los da el jefe
-  zanahoriaoro: { nombre: 'Zanahoria de oro', rar: 'legendary', texto: 'El Salto del caos se carga con 4 de CAOS en vez de 6.', saltoCarga: 4 },
-  cofre: { nombre: 'Cofre de botín sin abrir', rar: 'legendary', texto: 'Al empezar cada reunión juegas gratis una carta al azar de tu mazo.', cartaGratis: 1 },
+  zanahoriaoro: { nombre: 'Zanahoria de oro', mini: 'zanahoria_oro', rar: 'legendary', texto: 'El Salto del caos se carga con 4 de CAOS en vez de 6.', saltoCarga: 4 },
+  cofre: { nombre: 'Cofre de botín sin abrir', mini: 'cofre', rar: 'legendary', texto: 'Al empezar cada reunión juegas gratis una carta al azar de tu mazo.', cartaGratis: 1 },
 };
 const DC_OBJETOS_POOL = Object.keys(DC_OBJETOS).filter(k => DC_OBJETOS[k].rar !== 'legendary');
 // Ventajas fiscales (idea de Arkioner, 18-10-2026): se desbloquean jugando (hito sobre DCP.meta) y se elige UNA al empezar la partida; vale toda la partida.
@@ -27,8 +27,8 @@ const DC_VENTAJAS = {
 };
 // Meriendas: se usan en tu turno, de un toque. Dos huecos.
 const DC_MERIENDAS = {
-  energetica: { nombre: 'Bebida energética XXL', texto: '+2 CAOS este turno.', caos: 2 },
-  pipas: { nombre: 'Bolsa de pipas', texto: 'Roba 2 cartas.', roba: 2 },
+  energetica: { nombre: 'Bebida energética XXL', mini: 'bebida_xxl', texto: '+2 CAOS este turno.', caos: 2 },
+  pipas: { nombre: 'Bolsa de pipas', mini: 'bolsa_pipas', texto: 'Roba 2 cartas.', roba: 2 },
   botiquin: { nombre: 'Botiquín de oficina', texto: 'Te cura 15.', cura: 15 },
 };
 // Correos internos: título, texto y dos opciones con su riesgo ('seguro' o 'arriesgado') y su efecto.

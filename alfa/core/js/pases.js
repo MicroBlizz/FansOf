@@ -32,11 +32,12 @@ function passRewardBase(track, i) {
 }
 const pRewardBruto = (p, track, i) => (PASES[p].C.premio ? PASES[p].C.premio(track, i) : p === 't' ? passRewardBase(track, i) : { gold: 0 });
 // Con las dos monedas (PLAN-MONEDAS.md) la pista de pago se compra con gemas, así que no puede dar oro ni tiradas (sería comprada → ganada y comprada → azar):
-// el oro pasa a gemas al precio del cambio y cada tirada vale lo que cuesta en oro, también en gemas. El servidor hace la misma cuenta (servidor/48-cambio-oro-gemas.sql).
+// el oro pasa a gemas al precio del cambio y cada tirada vale lo que cuesta en oro, también en gemas, y de eso solo el % de MONEDAS.pasePct (para encadenar un pase tras otro
+// sin que sobren gemas). El servidor hace la misma cuenta (servidor/48-cambio-oro-gemas.sql y 49-pase-ajustado.sql).
 function pReward(p, track, i) {
   const r = pRewardBruto(p, track, i);
   if (track !== 'paid' || !MONEDAS.activo() || !(r.gold || r.tickets)) return r;
-  const c = MONEDAS.conf(), gemas = Math.floor((r.gold || 0) / c.cambio) + (r.tickets || 0) * Math.floor(ECON.pull * c.ratio / c.cambio);
+  const c = MONEDAS.conf(), conv = Math.floor((r.gold || 0) / c.cambio) + (r.tickets || 0) * Math.floor(ECON.pull * c.ratio / c.cambio), gemas = Math.floor(conv * MONEDAS.pasePct(p) / 100);   // % de la fila monedas: la pista se queda cerca del precio
   const o = Object.assign({}, r, { gems: (r.gems || 0) + gemas }); delete o.gold; delete o.tickets; return o;
 }
 const passReward = (track, i) => pRewardBruto('t', track, i);   // herramientas/datos.html la usa para subir el pase al servidor (lo bruto: el servidor convierte igual que pReward)

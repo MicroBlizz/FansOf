@@ -49,7 +49,7 @@ function pullCost(n) { const free = Math.min(SAVE.tickets || 0, n), pago = n - f
 function pull(n) {
   n = n || 1; if (gachaAnim || gachaEsperando) return;
   const c = pullCost(n);
-  if (SAVE.gold < c.gold) { play('deny'); confirmBox('FALTA ORO', `Para girar x${n} te falta <b>${fmt(c.gold - SAVE.gold)} de oro</b>.<small>Se consigue jugando, con las misiones y el pase, o cambiando gemas por oro en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gold')); return; }
+  if (SAVE.gold < c.gold) { play('deny'); confirmBox('FALTA ORO', `Para girar x${n} te falta <b>${fmt(c.gold - SAVE.gold)} de oro</b>.<small>Solo se consigue jugando: partidas, misiones, logros, horas extra y el pase.</small>`, null); return; }
   if (SAVE.gems < c.gems) { play('deny'); confirmBox('FALTAN GEMAS', `Para girar x${n} te faltan <b>${fmt(c.gems - SAVE.gems)} gemas</b>.<small>Las consigues con misiones, la campaña, el pase de batalla o en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
   const kind = gachaTab, X = MAQUINAS[kind];
   if (MONEDAS.activo() && !MONEDAS.azar('gachapon', c)) return;   // la guardia: con las dos monedas nada con azar cobra en gemas
@@ -132,7 +132,7 @@ function buildGachaText() {
     + oddsPity('Legendaria', P[gachaTab + 'L'], pityLegObj())
     + oddsPity('Calidad Director o mejor', P['q' + gachaTab], ECON.pityQ)
     + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
-    + oddsNote(MONEDAS.activo() ? `Cada tirada cuesta ${fmt(pullOro())} de oro. Las gemas nunca entran aquí: se cambian por oro en la tienda.` : `Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
+    + oddsNote(MONEDAS.activo() ? `Cada tirada cuesta ${fmt(pullOro())} de oro. Las gemas nunca entran aquí.` : `Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
     + oddsHead('Tiradas gratis') + oddsNote('Cada 3 horas tienes una tirada x1 gratis (no se acumula: el reloj arranca al reclamarla). Cada domingo (hora de Madrid) tienes una x10 gratis, una vez por domingo: si no la reclamas ese día, caduca. La x50 no tiene bonus de este tipo.', true)
     + oddsNote('Microblizz no se hace responsable de tu afición a las cápsulas.', true);
   if (MAQUINAS[gachaTab]) MAQUINAS[gachaTab].textos();

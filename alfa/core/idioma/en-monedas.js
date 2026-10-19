@@ -1,19 +1,10 @@
 // Fans Of · Inglés de las dos monedas (core/js/sistema/monedas.js, tienda, gashapón y pase con ellas).
 'use strict';
 IDIOMA.add({
-  "Te faltan {m}: se consiguen jugando o en la tienda": "You're short on {m}: you earn them by playing or in the shop",
-  "1 de {p} vale {r} de {j}. El cambio no se deshace.": "1 {p} is worth {r} {j}. The exchange can't be undone.",
   "Eso no se puede pagar con {m}": "That can't be paid with {m}",
-  "CAMBIAR MONEDAS": "EXCHANGE CURRENCY",
   "FALTA ORO": "NOT ENOUGH GOLD",
   "Te faltan": "You need",
   "Para girar x%1 te falta": "To pull x%1 you need",
-  "Se consigue jugando, con las misiones y el pase, o cambiando gemas por oro en la tienda.": "You get it by playing, from missions and the pass, or by exchanging gems for gold in the shop.",
-  "Cada tirada cuesta %1 de oro. Las gemas nunca entran aquí: se cambian por oro en la tienda.": "Each pull costs %1 gold. Gems never come into play here: exchange them for gold in the shop.",
-  "Cambiar gemas por oro": "Exchange gems for gold",
-  "El oro no se vende: se gana jugando o cambiando gemas. El cambio no se deshace.": "Gold isn't for sale: you earn it by playing or by exchanging gems. Exchanges can't be undone.",
-  "Las gemas solo se compran con dinero real (y caen poco a poco jugando). Nunca entran en el azar: el gashapón se paga en oro, y en la pestaña del oro cambias 1 gema por %#1 de oro. Los «% extra» se comparan con el pack más pequeño.": "Gems are only bought with real money (and trickle in as you play). They never enter anything random: the gacha is paid in gold, and in the gold tab you exchange 1 gem for %#1 gold. The «% extra» is compared with the smallest pack.",
-  "El oro paga el gashapón y los niveles de tus cartas. No se vende: se gana jugando o cambiando gemas. La experiencia tampoco se vende: siempre hay que jugar.": "Gold pays for the gacha and your cards' levels. It isn't for sale: you earn it by playing or by exchanging gems. Experience isn't for sale either: you always have to play.",
   "Se paga con gemas y vale para esta temporada. Las gemas se compran en la tienda y caen poco a poco jugando.": "Paid with gems, valid for this season. Gems are bought in the shop and trickle in as you play.",
   "Se paga con gemas. Las gemas se compran en la tienda y caen poco a poco jugando.": "Paid with gems. Gems are bought in the shop and trickle in as you play.",
   "Se compran en la tienda y caen poco a poco jugando.": "They're bought in the shop and trickle in as you play.",
@@ -23,6 +14,17 @@ IDIOMA.add({
   "SOLO CON DINERO REAL": "REAL MONEY ONLY",
   "Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.": "This is paid with real money and isn't on sale yet: it will arrive with the Android app.",
   "Solo se puede comprar una vez.": "It can only be bought once.",
-  "· Las gemas solo se compran con dinero real. El oro se gana jugando o cambiando gemas.": "· Gems are only bought with real money. Gold is earned by playing or by exchanging gems.",
-  "CAMBIAR YA": "EXCHANGE"
+  "El oro no se vende": "Gold isn't for sale",
+  "Te falta {m}: se consigue jugando": "You're short on {m}: you earn it by playing",
+  "CAMBIAR {j} POR {p}": "EXCHANGE {j} FOR {p}",
+  "1 de {p} cuesta {r} de {j}. El cambio no se deshace.": "1 {p} costs {r} {j}. The exchange can't be undone.",
+  "CAMBIAR YA": "EXCHANGE",
+  "Cambiar oro por gemas": "Exchange gold for gems",
+  "Jugando mucho también se llega: sale caro, pero nunca al revés. El cambio no se deshace.": "Playing a lot gets you there too: it's pricey, and never the other way round. Exchanges can't be undone.",
+  "Se gana jugando: partidas, misiones, logros, horas extra y el pase. Con él pagas el gashapón y los niveles de tus cartas.": "You earn it by playing: matches, missions, achievements, overtime and the pass. It pays for the gacha and your cards' levels.",
+  "Solo se consigue jugando: partidas, misiones, logros, horas extra y el pase.": "You only get it by playing: matches, missions, achievements, overtime and the pass.",
+  "Cada tirada cuesta %1 de oro. Las gemas nunca entran aquí.": "Each pull costs %1 gold. Gems never come into play here.",
+  "Las gemas solo se compran con dinero real (y caen poco a poco jugando). Nunca entran en el azar ni se cambian por oro: pagan el pase, los cosméticos y las ventajas. Con oro de sobra puedes cambiarlo por gemas, nunca al revés. Los «% extra» se comparan con el pack más pequeño.": "Gems are only bought with real money (and trickle in as you play). They never enter anything random and can't be exchanged for gold: they pay for the pass, cosmetics and perks. With gold to spare you can exchange it for gems, never the other way round. The «% extra» is compared with the smallest pack.",
+  "El oro paga el gashapón y los niveles de tus cartas. No se vende ni se cambia: solo se gana jugando. La experiencia tampoco se vende.": "Gold pays for the gacha and your cards' levels. It isn't sold or exchanged: you only earn it by playing. Experience isn't for sale either.",
+  "· Las gemas solo se compran con dinero real y nunca entran en el azar. El oro solo se gana jugando.": "· Gems are only bought with real money and never enter anything random. Gold is only earned by playing."
 });

@@ -123,7 +123,7 @@ IDIOMA.add({
   "+5 de vida máxima y −10 de bonus: les cuesta mucho creer que existes.": "+5 max health and −10 bonus: they struggle to believe you exist.",
   "Un clon gris de {c} entra en tu mazo": "A gray clone of {c} enters your deck",
   "¡Eres el nuevo CEO de Phony!": "You are the new CEO of Phony!",
-  "Chapman se desconecta con una última videollamada y tú heredas su cuenta, su sillón virtual y 4.000 suscripciones sin cancelar. Los servidores de Phony empiezan a hacer ruidos raros.": "Chapman logs off with one last video call and you inherit his account, his virtual chair and 4,000 subscriptions nobody cancelled. Phony's servers start making strange noises.",
+  "Chapman se desconecta con una última videollamada y tú heredas su cuenta, su sillón virtual y 4.000 suscripciones sin cancelar. Los servidores de Phony empiezan a hacer ruidos raros.": "Chapman logs off with one last video call and you inherit her account, her virtual chair and 4,000 subscriptions nobody cancelled. Phony's servers start making strange noises.",
   "Antes de tu primera llamada como CEO, IAhorro compra Phony por un euro. Lo hizo sola: redactó el contrato, la oferta y tu carta de despedida. Te contratan igualmente, como «supervisor humano». Es el cargo más corto del organigrama.": "Before your first call as CEO, IAhorro buys Phony for one euro. It did it all by itself: it wrote the contract, the offer and your dismissal letter. They hire you anyway, as \"human supervisor\". It is the shortest job title in the org chart.",
   "IAhorro te ha enviado tu nómina: es una captura de pantalla de una nómina.": "IAhorro has sent you your payslip: it is a screenshot of a payslip."
 });

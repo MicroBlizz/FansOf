@@ -1,8 +1,8 @@
 {
- "build": 259,
- "hash": "21d84af",
- "fecha": "2026-10-19T18:15:53Z",
- "mensaje": "Monedas: la pista de pago del pase y el pack de bienvenida sin oro ni azar (gemas y objeto fijo), con el servidor en el 48",
+ "build": 260,
+ "hash": "528a931",
+ "fecha": "2026-10-19T18:16:23Z",
+ "mensaje": "Decks: el bot de campaña elige cartas, compra y descansa como un jugador; Chapman es «her» en inglés",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

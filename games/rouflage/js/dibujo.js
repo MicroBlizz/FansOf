@@ -84,7 +84,7 @@ function pintaSigno(c, x, y, s, color, t) {
 function pintaMarcas(c, t) {
   const yo = J.yo;
   for (const e of J.entes) {
-    if (e.fuera && e.tFuera > 2.6) continue;
+    if (e.fuera && e.tFuera > 2.6 || idaOculto(e)) continue;
     if (e.clase === 'cazador') {
       if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') {   // las cartas de despido que le quedan a cada becario
         for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
@@ -188,7 +188,8 @@ function dibuja(t) {
   // muebles, puerta y personajes, de atrás adelante
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
-  for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  for (const m of MASC.lista) if (m.x > x0 - 40 && m.x < x0 + vw + 40 && m.y > y0 - 10 && m.y < y0 + vh + 40) cosas.push(m);      // las mascotas del armario (mascotas.js)
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
   if (J.fase === 'paseo') cosas.push(HABITACION.armario);      // el armario de la habitación (habitacion.js)
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
@@ -207,6 +208,7 @@ function dibuja(t) {
     if (k.T) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h);
     else if (k.puerta) pintaPuerta(c, t);
     else if (k.armario) pintaArmarioSala(c, k, t);
+    else if (k.mascota) pintaMascota(c, k);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);
     else if (k.invis > 0) { if (k !== J.yo) continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: nadie lo ve (ni becarios ni otros colados); solo él, como un fantasma
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
@@ -217,7 +219,7 @@ function dibuja(t) {
     for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
     eventosPintaVelo(c, t);
   }
-  ponMundo(c); pintaFx(c); pintaMarcas(c, t); idaPinta(c);
+  ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);
 }

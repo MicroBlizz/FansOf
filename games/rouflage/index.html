@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.29"></script>
+<script src="../../core/js/nucleo.js?v=0.2.30"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
@@ -179,6 +179,7 @@
       <button type="button" class="boton gris" id="b-idioma">English</button>
       <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
       <button type="button" class="boton gris" id="b-tuto-repite" data-tr>Repetir tutorial</button>
+      <button type="button" class="boton gris" id="b-reinicio" data-tr hidden>Borrar todo mi progreso (alfa)</button>
       <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
     </div>
   </div>
@@ -336,11 +337,11 @@
   <div class="caja tienda-caja">
     <h2 class="ol" data-tr>TIENDA</h2>
     <div class="cartera" id="tienda-cartera"></div>
-    <p class="tienda-aviso" data-tr>De momento no se cobra nada: lo que compras se te da.</p>
+    <p class="tienda-aviso" id="tienda-aviso-euros"></p>
     <div class="tienda-lista">
       <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
-      <h3 class="ol" data-tr>GOTAS DE PINTURA</h3><div id="tienda-gotas"></div>
+      <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
       <div id="tienda-caos"><h3 class="ol" data-tr>CAOS PRIMORDIAL</h3><button type="button" class="boton" id="b-tienda-caos" data-tr>Caos primordial ilimitado</button></div>
     </div>
     <button type="button" class="boton peq" id="b-tienda-volver" data-tr>Volver</button>
@@ -410,7 +411,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -448,6 +449,7 @@ NUCLEO.juego({
     'js/senuelos.js',
     'js/espectador.js',
     'js/fantasma-poder.js',
+    'js/baliza.js',
     'js/bot-cazador.js',
     'js/bot-camaleon.js',
     'js/luz.js',
@@ -479,13 +481,20 @@ NUCLEO.juego({
     'js/pvp-energia.js',
     'js/armario-dibujo.js',
     'js/armario-dibujo2.js',
+    'js/armario-dibujo3.js',
+    'js/armario-dibujo4.js',
+    'js/armario-mascotas.js',
     'js/armario-datos.js',
+    'js/armario-datos-rumble.js',
+    'js/armario-precios.js',
     'js/armario.js',
     'js/diario.js',
     'js/economia.js',
     'js/tienda.js',
+    'js/reinicio.js',
     'js/habitacion.js',
     'js/armario-partida.js',
+    'js/mascotas.js',
     'js/principal.js',
   ],
 });

@@ -23,6 +23,7 @@ function poderObjetivo(p) {
 }
 
 function accionPoder() {
+  if (balizaPuedo()) return accionBaliza();      // el becario fantasma avisa a los suyos (baliza.js)
   const p = poderDe(), f = J.fantasma; if (!p || !espectando()) return;
   if (f.enfria > 0) { play('deny'); pista(tr('Poder recargándose: {n} s', { n: Math.ceil(f.enfria) }), 1.5); return; }
   const k = J.fantasma.poder;
@@ -61,11 +62,11 @@ const dirLuz = e => e.manoFria > 0 ? e.dir + Math.sin(J.t * 41) * 0.38 + Math.si
 // cada fotograma: la espera del poder y el botón
 function poderAvanza(dt) { const f = J.fantasma; if (f) f.enfria = Math.max(0, (f.enfria || 0) - dt); }
 function refrescaPoder() {
-  const b = E('b-poder'), p = poderDe(), ver = !!p && espectando();
+  const b = E('b-poder'), p = poderDe(), baliza = balizaPuedo(), ver = (!!p || baliza) && espectando();
   if (b.hidden === ver) b.hidden = !ver;
   if (!ver) return;
-  const f = J.fantasma, carga = f.enfria > 0;
-  if (b.dataset.poder !== J.fantasma.poder) { b.dataset.poder = J.fantasma.poder; ponIcono(b.querySelector('i'), p.icono); b.querySelector('b').textContent = tr(p.nombre); }
+  const f = J.fantasma, clave = baliza ? 'baliza' : f.poder, carga = (baliza ? f.enfriaB : f.enfria) > 0;
+  if (b.dataset.poder !== clave) { b.dataset.poder = clave; ponIcono(b.querySelector('i'), baliza ? 'baliza' : p.icono); b.querySelector('b').textContent = tr(baliza ? 'AVISAR' : p.nombre); }
   b.classList.toggle('cargando', carga);
-  b.querySelector('small').textContent = carga ? Math.ceil(f.enfria) + ' s' : tr('¡Listo!');
+  b.querySelector('small').textContent = carga ? Math.ceil(baliza ? f.enfriaB : f.enfria) + ' s' : tr('¡Listo!');
 }

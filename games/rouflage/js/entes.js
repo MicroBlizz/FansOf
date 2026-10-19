@@ -127,6 +127,7 @@ function silba(e, forzado) {
 // despedir a un camaleón: reaparece su contorno, se le planta el sello y sale de la partida
 function despide(k, por) {
   if (k.fuera) return;
+  if (k.jugador && TALLER.abierto) cierraTaller();      // despedido mientras pintas: se acaba el modo pintar
   k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0; k.tDespido = J.reloj;      // (el bufón mira en qué segundo cayó)
   fxSello(k.x, k.y - 26, por && por.ropa && por.ropa.sello); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
   suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);

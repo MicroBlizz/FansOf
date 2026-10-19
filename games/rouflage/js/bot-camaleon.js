@@ -32,7 +32,7 @@ function piensaCamaleon(e, dt) {
       break;
     case 'pintar':      // un rato salpicando pintura y luego, de golpe, pintado y congelado
       e.vx = e.vy = 0;
-      if (Math.random() < dt * 10) fxGota(e.x + rand(-16, 16), e.y - rand(6, 46), cuentagotas(e.x + rand(-20, 20), e.y - rand(0, 50)));
+      if (!idaOculto(e) && Math.random() < dt * 10) fxGota(e.x + rand(-16, 16), e.y - rand(6, 46), cuentagotas(e.x + rand(-20, 20), e.y - rand(0, 50)));
       if (b.t > b.tPinta) { pintaBotDados(e); e.pintado = true; congela(e); b.estado = 'quieto'; }
       break;
     case 'quieto': {

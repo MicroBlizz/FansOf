@@ -15,7 +15,7 @@ const AJUSTES = {
     'carta-repetida': { vez: { gems: 50 }, dia: { gems: 2000 } },
   },
   servidor: { gachapon: true, economia: true },
-  // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la del juego (paga el gashapón), gemas = la premium (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro; nunca al revés).
+  // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro; nunca al revés).
   // 1 gema «vale» 10 de oro (los packs de antes valían 100 gemas o 1000 de oro por 0,99 €): la tirada pasa de 50 gemas a 500 de oro. La fila `monedas` de flags lo ajusta sin publicar.
   monedas: { ratio: 10, cambio: 20 },   // cambiar oro por gemas cuesta 20 de oro por gema (el doble de lo que valen): jugando mucho se llega, pero sale caro   // lo que ya hace el servidor cuando hay cuenta (PLAN-CUENTAS.md, fase 2): el gashapón de habilidades y equipo
   guardado: 'for-save-1',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario

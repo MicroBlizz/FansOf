@@ -3,7 +3,7 @@
 // Los DATOS son de cada juego (opcionales; sin ellos sale el pase de siempre, de 30 niveles):
 //   RETOS.pase    = { id, name, levels, xpPer, eur, gemas, xpWin, xpLose, xpDaily, xpWeekly, fin: 'AAAA-MM-DD', capitulos: [{ hasta, tit, txt }], premio(pista, nivel) }
 //   RETOS.pasePvp = lo mismo para el PvP (sus puntos solo llegan de partidas PvP en línea).
-// gemas: lo que cuesta la pista de pago con las dos monedas (PLAN-MONEDAS.md: el pase se paga en premium; eur queda para la tienda con dinero real).
+// gemas: lo que cuesta la pista de pago con las dos monedas (PLAN-MONEDAS.md: el pase se paga en moneda comprada; eur queda para la tienda con dinero real).
 // id: cambia en cada temporada; con un id nuevo todos empiezan de cero y la pista de pago se vuelve a comprar (el servidor lleva lo mismo).
 // Un premio es { gold } | { gems } | { tickets } | { item } | { marco } | { titulo } (estos dos van al armario: core/js/armario.js).
 'use strict';

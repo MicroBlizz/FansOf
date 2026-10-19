@@ -1,8 +1,8 @@
 {
- "build": 244,
- "hash": "5d821ee",
- "fecha": "2026-10-19T13:04:23Z",
- "mensaje": "Monedas: core de las dos monedas (MONEDAS), plan y SQL borrador del cambio premium → juego",
+ "build": 245,
+ "hash": "bd69e4f",
+ "fecha": "2026-10-19T13:06:56Z",
+ "mensaje": "Monedas: botón del cambio con su inglés",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

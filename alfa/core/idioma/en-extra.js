@@ -232,5 +232,6 @@ IDIOMA.add({
   "Te faltan {m}: se consiguen jugando o en la tienda": "You're short on {m}: you earn them by playing or in the shop",
   "1 de {p} vale {r} de {j}. El cambio no se deshace.": "1 {p} is worth {r} {j}. The exchange can't be undone.",
   "Eso no se puede pagar con {m}": "That can't be paid with {m}",
-  "CAMBIAR MONEDAS": "EXCHANGE CURRENCY"
+  "CAMBIAR MONEDAS": "EXCHANGE CURRENCY",
+  "CAMBIAR YA": "EXCHANGE"
 });

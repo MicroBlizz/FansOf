@@ -55,7 +55,7 @@ const MONEDAS = (() => {
     if (!pasos.length) { if (typeof toast === 'function') toast(tr('Te faltan {m}: se consiguen jugando o en la tienda', { m: nombre('premium') })); return; }
     let n = pasos[0];
     const filas = pasos.map(p => `<button class="btn-ghost ol" data-cambio="${p}">${chip('premium', p)} → ${chip('juego', p * c.ratio)}</button>`).join('');
-    confirmBox(tr('CAMBIAR MONEDAS'), `<div class="cambio-lista">${filas}</div><small>${tr('1 de {p} vale {r} de {j}. El cambio no se deshace.', { p: nombre('premium'), r: c.ratio, j: nombre('juego') })}</small>`, tr('CAMBIAR'), () => {
+    confirmBox(tr('CAMBIAR MONEDAS'), `<div class="cambio-lista">${filas}</div><small>${tr('1 de {p} vale {r} de {j}. El cambio no se deshace.', { p: nombre('premium'), r: c.ratio, j: nombre('juego') })}</small>`, tr('CAMBIAR YA'), () => {
       cambiar(n).then(r => { if (typeof play === 'function') play('win'); if (typeof updateWallets === 'function') updateWallets(); if (typeof toast === 'function') toast('+' + r.juego + ' ' + nombre('juego')); if (alAcabar) alAcabar(r); })
         .catch(e => { if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(typeof ECO !== 'undefined' && ECO.errorTexto ? ECO.errorTexto(e) : 'No se ha podido'); });
     });

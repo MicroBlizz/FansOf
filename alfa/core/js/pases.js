@@ -30,8 +30,16 @@ function passRewardBase(track, i) {
   if (i % 2 === 0) return { gems: 30 };
   return { gold: 400 };
 }
-const pReward = (p, track, i) => (PASES[p].C.premio ? PASES[p].C.premio(track, i) : p === 't' ? passRewardBase(track, i) : { gold: 0 });
-const passReward = (track, i) => pReward('t', track, i);   // herramientas/datos.html la usa para subir el pase al servidor
+const pRewardBruto = (p, track, i) => (PASES[p].C.premio ? PASES[p].C.premio(track, i) : p === 't' ? passRewardBase(track, i) : { gold: 0 });
+// Con las dos monedas (PLAN-MONEDAS.md) la pista de pago se compra con gemas, así que no puede dar oro ni tiradas (sería comprada → ganada y comprada → azar):
+// el oro pasa a gemas al precio del cambio y cada tirada vale lo que cuesta en oro, también en gemas. El servidor hace la misma cuenta (servidor/48-cambio-oro-gemas.sql).
+function pReward(p, track, i) {
+  const r = pRewardBruto(p, track, i);
+  if (track !== 'paid' || !MONEDAS.activo() || !(r.gold || r.tickets)) return r;
+  const c = MONEDAS.conf(), gemas = Math.floor((r.gold || 0) / c.cambio) + (r.tickets || 0) * Math.floor(ECON.pull * c.ratio / c.cambio);
+  const o = Object.assign({}, r, { gems: (r.gems || 0) + gemas }); delete o.gold; delete o.tickets; return o;
+}
+const passReward = (track, i) => pRewardBruto('t', track, i);   // herramientas/datos.html la usa para subir el pase al servidor (lo bruto: el servidor convierte igual que pReward)
 
 // lo guardado de un pase; si la temporada es otra, se empieza de cero
 function pSave(p) {

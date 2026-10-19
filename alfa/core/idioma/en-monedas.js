@@ -15,6 +15,8 @@ IDIOMA.add({
   "Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.": "This is paid with real money and isn't on sale yet: it will arrive with the Android app.",
   "Solo se puede comprar una vez.": "It can only be bought once.",
   "El oro no se vende": "Gold isn't for sale",
+  "Y %1, un objeto épico de equipo con calidad Excelente.": "And %1, an epic gear item of Excellent quality.",
+  "y %1 (épico, calidad Excelente), por": "and %1 (epic, Excellent quality), for",
   "Te falta {m}: se consigue jugando": "You're short on {m}: you earn it by playing",
   "CAMBIAR {j} POR {p}": "EXCHANGE {j} FOR {p}",
   "1 de {p} cuesta {r} de {j}. El cambio no se deshace.": "1 {p} costs {r} {j}. The exchange can't be undone.",

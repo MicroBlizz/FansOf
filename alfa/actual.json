@@ -1,8 +1,8 @@
 {
- "build": 258,
- "hash": "3a4b3df",
- "fecha": "2026-10-19T18:07:38Z",
- "mensaje": "Monedas: las dos se llaman ganada y comprada en core (antes juego y premium)",
+ "build": 259,
+ "hash": "21d84af",
+ "fecha": "2026-10-19T18:15:53Z",
+ "mensaje": "Monedas: la pista de pago del pase y el pack de bienvenida sin oro ni azar (gemas y objeto fijo), con el servidor en el 48",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -62,7 +62,7 @@ function dcElegidoEn(p) { const m = DCP.run.mapa; if (p > m.piso) return -1; if 
 function dcNodoActual() { const m = DCP.run.mapa; return m.piso >= 0 ? m.pisos[m.piso][m.nodo] : null; }
 // A qué citas se puede ir ahora: a cualquiera de la hora siguiente (cada hora se elige una reunión de la agenda).
 function dcNodosPosibles() { const m = DCP.run.mapa, p = m.piso + 1; return p < m.pisos.length ? m.pisos[p].map((n, i) => [p, i]) : []; }
-function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = DC_TITULOS[n.tipo]; return tr(T[(n.titulo || 0) % T.length]); }
+function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = dcTitulosCap()[n.tipo]; return tr(T[(n.titulo || 0) % T.length]); }
 
 // ---------- partida nueva ----------
 function dcNuevaPartida(lider, ventaja) {
@@ -75,7 +75,7 @@ function dcNuevaPartida(lider, ventaja) {
 // Ir a un nodo: lo apunta como pendiente de resolver y guarda (si se recarga, se vuelve a ese nodo).
 function dcIrA(piso, nodo) { const m = DCP.run.mapa; m.piso = piso; m.nodo = nodo; m.elegidos = m.elegidos || []; m.elegidos[piso] = nodo; DCP.run.pendiente = m.pisos[piso][nodo].tipo; DCP.run.stats.nodos++; dcGuarda(); }
 function dcNodoResuelto() { if (DCP.run) { DCP.run.pendiente = null; dcGuarda(); } }
-function dcFinPartida(victoria) { if (victoria) DCP.meta.victorias++; DCP.meta.ultima = { victoria, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
+function dcFinPartida(victoria) { if (victoria) DCP.meta.victorias++; DCP.meta.ultima = { victoria, cap: dcActo().cap, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
 
 // ---------- ofertas y azar ----------
 function dcRarezaAlAzar(pesos) { let t = 0; for (const k in pesos) t += pesos[k]; let r = Math.random() * t; for (const k in pesos) { r -= pesos[k]; if (r < 0) return k; } return 'basic'; }

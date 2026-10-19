@@ -16,3 +16,5 @@
 .dc-fin-txt em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
 .dc-cita-minijefe { --t: var(--gold); }
 .dc-cita-minijefe, .dc-cita-jefe { border-color: var(--t); }
+.dc-producto { position: relative; }
+.dc-dlc { position: absolute; top: -6px; right: -4px; z-index: 2; padding: 3px 8px 2px; border-radius: 999px; background: var(--chaos-lite); color: #240a3a; font: 800 11px/1 var(--font-ui); letter-spacing: 1px; transform: rotate(6deg); box-shadow: 0 2px 6px rgba(0, 0, 0, .4); }

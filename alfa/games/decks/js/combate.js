@@ -27,7 +27,7 @@ function dcDanoRival(C, r, j) { j = j || r.jug; if (!j || !j.d) return 0; let d 
 function dcCombateNuevo(encuentro, tramo) {
   const r = DCP.run, L = DC_LIDERES[r.lider];
   const C = { tramo, rivales: encuentro.map(dcRival), bloqueo: 0, blindaje: 0, fuerza: 0, fuerzaTurno: 0, debil: 0, vulnerable: 0, caos: 0, poderes: {}, pila: shuffle(r.mazo.map(c => Object.assign({}, c))), mano: [], descartes: [], despedidas: [],
-    turno: 0, tropasTurno: 0, ataques: 0, saltoCarga: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], eventos: [], objetivo: null, meriendasUsadas: [] };
+    turno: 0, tropasTurno: 0, tiposTurno: {}, ataques: 0, saltoCarga: 0, cierre: DC_CIERRE + (dcObjeto('pausa') ? dcObjeto('pausa').cierre : 0), fase: 'jugador', resultado: null, log: [], eventos: [], objetivo: null, meriendasUsadas: [] };
   // C.eventos: lo que pasó desde el último dibujo ({ t: 'dano'|'cura'|'bloqueo'|'esquiva', r: índice del rival o -1 si es el líder, n }); combate-ui los pinta como cifras flotantes y los vacía.
   // los madrugadores van arriba del mazo: salen siempre en la mano inicial
   const mad = C.pila.filter(c => dcFx(c).madrugador); if (mad.length) C.pila = C.pila.filter(c => !dcFx(c).madrugador).concat(mad);
@@ -53,7 +53,7 @@ function dcEmpiezaTurno(C) {
   C.turno++; DCP.run.stats.turnos++;
   // Blindaje (regla de Arkioner, 18-10-2026): mientras quede, el bloqueo no se pierde al empezar el turno; gasta un punto por turno
   if (C.turno > 1) { if (C.blindaje > 0) C.blindaje--; else C.bloqueo = 0; }
-  C.fuerzaTurno = 0; C.tropasTurno = 0;
+  C.fuerzaTurno = 0; C.tropasTurno = 0; C.tiposTurno = {};
   if (C.debil) C.debil--; if (C.vulnerable) C.vulnerable--;
   C.caos = C.turno >= C.cierre ? DC_CAOS * 2 : DC_CAOS;
   if (C.turno === 1 && dcObjeto('taza')) C.caos += dcObjeto('taza').caosTurno1;
@@ -75,8 +75,12 @@ function dcPuedeJugar(C, c) { const fx = dcFx(c); return C.fase === 'jugador' &&
 function dcNecesitaObjetivo(C, c) { const fx = dcFx(c); return (fx.dano || fx.vulnerable || fx.debil || fx.aturde) && !fx.companero && !fx.protocolo && fx.obj !== 'todos' && fx.cond !== 'atacantes' && C.rivales.filter(r => r.hp > 0).length > 1; }
 // Los rivales que van a atacar este turno (para las cartas que defienden embistiendo).
 function dcAtacantes(C) { return C.rivales.filter(r => r.hp > 0 && !r.aturdido && dcTipoJugada(r.jug) === 'ataque'); }
+// La pasiva de la facción del líder. Animales Locos, Racha salvaje (idea de Arkioner, 19-10-2026): cada carta de un tipo jugada
+// en el turno suma +1 a las cifras (daño, bloqueo, cura) de la siguiente de ese mismo tipo, hasta el tope.
+function dcFaccion() { const L = DCP.run && DC_LIDERES[DCP.run.lider]; return L ? DC_FACCIONES[L.faccion] : null; }
+function dcRacha(C, tipo) { const F = dcFaccion(); return F && F.racha ? Math.min(F.tope, (C.tiposTurno[tipo] || 0) * F.racha) : 0; }
 function dcDanoA(C, r, base, esTropa) {
-  let d = base + C.fuerza + (esTropa ? C.fuerzaTurno + Math.min(5, C.tropasTurno) + (dcObjeto('teclado') ? dcObjeto('teclado').tropaDano : 0) : 0);
+  let d = base + C.fuerza + (esTropa ? C.fuerzaTurno + (dcObjeto('teclado') ? dcObjeto('teclado').tropaDano : 0) : 0);
   if (C.ataques === 0 && dcObjeto('gorra')) d += dcObjeto('gorra').primerAtaque;
   if (C.debil) d = Math.floor(d * 0.75);
   if (r.vulnerable) d = Math.floor(d * 1.5);
@@ -97,7 +101,8 @@ function dcJugar(C, i, obj) {
   return true;
 }
 function dcResuelve(C, c, obj, gratis) {
-  const D = DC_CARTAS[c.id], fx = dcFx(c), vivos = C.rivales.filter(r => r.hp > 0);
+  const D = DC_CARTAS[c.id], fx = dcFx(c), vivos = C.rivales.filter(r => r.hp > 0), extra = dcRacha(C, D.tipo);
+  C.tiposTurno[D.tipo] = (C.tiposTurno[D.tipo] || 0) + 1;
   // un compañero se sienta en la mesa y un protocolo se arma: actúan después (dcFinTurno); la carta va a los descartes
   if (fx.companero) { C.companeros.push({ id: c.id, asc: !!c.asc, turnos: fx.turnos }); if (C.companeros.length > 3) C.companeros.shift(); C.descartes.push(c); return; }
   if (fx.protocolo) { C.protocolos.push({ id: c.id, asc: !!c.asc }); if (C.protocolos.length > 3) C.protocolos.shift(); C.descartes.push(c); return; }
@@ -106,15 +111,15 @@ function dcResuelve(C, c, obj, gratis) {
     const veces = fx.cond === 'porTropa' ? C.tropasTurno : (fx.veces || 1);
     for (let k = 0; k < veces; k++) for (const r of objs) {
       if (r.hp <= 0) continue;
-      let d = dcDanoA(C, r, fx.dano, D.tipo === 'empleado');
+      let d = dcDanoA(C, r, fx.dano + extra, D.tipo === 'empleado');
       if (fx.cond === 'primerGolpe' && r.hp === r.hpMax) d *= 3;
       if (fx.cond === 'noMax' && r.hp < Math.max(...vivos.map(v => v.hp))) d *= 2;
       dcGolpea(C, r, d); C.ataques++;
     }
   }
   for (const r of objs) { if (fx.vulnerable) r.vulnerable += fx.vulnerable; if (fx.debil) r.debil += fx.debil; if (fx.aturde) r.aturdido = Math.max(r.aturdido, fx.aturde); }
-  if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
-  if (fx.cura) { dcVida(fx.cura); C.eventos.push({ t: 'cura', r: -1, n: fx.cura }); }
+  if (fx.bloqueo) { C.bloqueo += fx.bloqueo + extra; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo + extra }); }
+  if (fx.cura) { dcVida(fx.cura + extra); C.eventos.push({ t: 'cura', r: -1, n: fx.cura + extra }); }
   if (fx.caos) C.caos += fx.caos;
   if (fx.blindaje) C.blindaje += fx.blindaje;
   if (fx.fuerza) C.fuerza += fx.fuerza;

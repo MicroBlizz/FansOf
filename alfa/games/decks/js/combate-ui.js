@@ -47,7 +47,8 @@ function dcEfectosLider(C) {
   if (C.blindaje) e.append(dcEfecto('dc-est-blindaje', 'defensa', tr('Blindaje'), C.blindaje, tr('Blindaje: tu bloqueo se conserva durante {n} turnos más.', { n: C.blindaje }), true));
   if (C.fuerza) e.append(dcEfecto('dc-est-fuerza', 'fuerza', tr('Fuerza'), '+' + C.fuerza, tr('Fuerza: tus golpes pegan {n} más durante toda la reunión.', { n: C.fuerza })));
   if (C.fuerzaTurno) e.append(dcEfecto('dc-est-turno', 'fuerza', tr('Empleados'), '+' + C.fuerzaTurno, tr('Tus empleados pegan {n} más hasta el fin del turno.', { n: C.fuerzaTurno }), true));
-  if (C.tropasTurno) { const n = Math.min(5, C.tropasTurno); e.append(dcEfecto('dc-est-turno', 'refuerzo', tr('Racha'), '+' + n, tr('Racha: el próximo empleado de este turno pega {n} más (uno por cada empleado ya jugado, hasta 5).', { n }), true)); }
+  const F = dcFaccion();   // la pasiva de la facción: una racha por tipo de carta jugado este turno
+  if (F && F.racha) for (const t in C.tiposTurno) { const n = dcRacha(C, t); if (n) e.append(dcEfecto('dc-est-turno dc-tipo-' + t, 'refuerzo', tr(DC_NOMBRE_TIPO[t]), '+' + n, tr(F.pasiva) + ': ' + tr('la próxima carta de tipo {tipo} de este turno suma {n} a su daño, bloqueo o cura.', { tipo: tr(DC_NOMBRE_TIPO[t]), n }), true)); }
   if (C.debil) e.append(dcEfecto('dc-est-deb', 'debil', tr('Débil'), C.debil, tr(C.debil === 1 ? 'Débil: pegas un 25 % menos este turno.' : 'Débil: pegas un 25 % menos durante {n} turnos.', { n: C.debil }), true));
   if (C.vulnerable) e.append(dcEfecto('dc-est-vul', 'ataque', tr('Vulnerable'), C.vulnerable, tr(C.vulnerable === 1 ? 'Vulnerable: recibes un 50 % más de daño este turno.' : 'Vulnerable: recibes un 50 % más de daño durante {n} turnos.', { n: C.vulnerable }), true));
   return e;
@@ -118,7 +119,8 @@ function dcPintaCombate() {
   const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
   mano.style.setProperty('--wc', wc + 'px'); mano.style.setProperty('--sol', n > 1 ? Math.max(0, (n * wc + (n - 1) * 6 - ancho) / (n - 1)).toFixed(1) + 'px' : '0px');
   C.mano.forEach((c, i) => {
-    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, al: () => dcTocaCarta(i) });
+    const fx = dcFx(c), racha = fx.dano || fx.bloqueo || fx.cura ? dcRacha(C, DC_CARTAS[c.id].tipo) : 0;
+    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, racha, al: () => dcTocaCarta(i) });
     const k = i - (n - 1) / 2; el.style.setProperty('--rot', (k * 3.5) + 'deg'); el.style.setProperty('--ty', (Math.abs(k) * 5) + 'px'); el.dataset.mano = i;
     mano.append(el);
   });
@@ -188,6 +190,7 @@ function dcPintaCarta(c, o = {}) {
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
   const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
   const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c); tx.append(txi); d.append(cab, tx);
+  if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
   let t = null; const abre = () => { t = setTimeout(() => { t = null; if (!DCC.arrastre) dcVerCarta(c); }, 450); }, cierra = () => { if (t) clearTimeout(t); t = null; };

@@ -127,3 +127,15 @@
 .dc-bib-rival.dc-rival-elite { border-color: rgba(208, 140, 255, .55); } .dc-bib-rival.dc-rival-jefe { border-color: rgba(255, 181, 71, .7); }
 .dc-bib-cat { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gold); }
 .dc-objeto.dc-bib-objeto { flex-direction: row; align-items: center; gap: 12px; cursor: default; } .dc-bib-objeto > div:last-child { display: flex; flex-direction: column; gap: 2px; }
+/* Color por tipo de carta (regla de Arkioner, 19-10-2026): el mismo que la intención del rival que representa.
+   Empleado ataca (rojo), Trámite defiende (azul), Directiva potencia (naranja), Compañero refuerza (oro), Spam (magenta), Cláusula debilita (lila). */
+.dc-tipo-empleado { --tc: #ff4b5c; } .dc-tipo-tarea { --tc: #2fc7b3; } .dc-tipo-tramite { --tc: #4aa8f0; } .dc-tipo-directiva { --tc: #ff9a3c; }
+.dc-tipo-companero { --tc: #f2b62a; } .dc-tipo-protocolo { --tc: #8f7bff; } .dc-tipo-clausula { --tc: #b9a6d8; } .dc-tipo-spam { --tc: #d43cff; }
+.dc-carta .dc-ctipo { align-self: center; padding: 1px 7px; border-radius: 999px; background: var(--tc, rgba(0, 0, 0, .3)); color: #fff; opacity: 1; text-shadow: 0 1px 0 var(--outline); box-shadow: 0 0 0 1.5px var(--outline); }
+/* la Racha salvaje que se lleva la carta de la mano */
+.dc-racha { position: absolute; left: -8px; top: 22px; z-index: 2; min-width: 26px; height: 26px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; border-radius: 13px; border: 2px solid var(--outline); background: var(--gold); color: #fff; font: 400 14px/1 var(--font-display); }
+.dc-efecto[class*="dc-tipo-"] { border: 1.5px solid var(--tc); }
+.dc-bib-selects { display: flex; gap: 6px; width: 100%; } .dc-bib-select { flex: 1; min-width: 0; min-height: 34px; padding: 4px 8px; border-radius: 10px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 32, .85); color: var(--ink); font: 800 13px var(--font-ui); }
+.dc-bib-grupos { width: 100%; display: flex; flex-direction: column; gap: 4px; } .dc-bib-grupos .dc-rejilla { padding-top: 4px; }
+.dc-bib-grupo { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 15px; } .dc-bib-grupo small { color: var(--ink-dim); font: 800 12px var(--font-ui); }
+.dc-bib-grupo-tipo { padding: 2px 10px; border-radius: 999px; background: var(--tc); color: #fff; text-shadow: 0 1px 0 var(--outline); box-shadow: 0 0 0 2px var(--outline); }

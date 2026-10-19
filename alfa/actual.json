@@ -1,8 +1,8 @@
 {
- "build": 227,
- "hash": "af05942",
- "fecha": "2026-10-19T00:32:22Z",
- "mensaje": "Decks: un toque solo marca la carta; dos toques la juegan",
+ "build": 228,
+ "hash": "0888163",
+ "fecha": "2026-10-19T00:46:05Z",
+ "mensaje": "Decks: Racha salvaje de los Animales Locos, Manada a todos, color por tipo y Biblioteca por tipos con filtros",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

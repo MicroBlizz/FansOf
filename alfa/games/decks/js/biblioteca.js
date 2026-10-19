@@ -17,11 +17,18 @@ const DC_BIB_TABS = { c: 'Cartas', r: 'Rivales', o: 'Objetos', v: 'Ventajas' };
 const DC_BIB_FILTROS = { todo: 'Todo', visto: 'Descubierto', falta: 'Por descubrir' };
 const DC_RAR_ORDEN = { basic: 0, common: 1, rare: 2, epic: 3, legendary: 4 };
 const DC_TIPO_ORDEN = ['empleado', 'tarea', 'tramite', 'directiva', 'companero', 'protocolo', 'clausula', 'spam'];
-let dcBibTab = 'c', dcBibFiltro = 'todo';
+// las cartas, además: por facción y por palabra clave o efecto (idea de Arkioner, 19-10-2026), y agrupadas por tipo
+const DC_BIB_FACCIONES = { todas: 'Cualquier facción', animales: 'Animales Locos', neutral: 'Neutrales' };
+const DC_BIB_PROPIEDADES = { todas: 'Cualquier efecto', despedida: 'Despedida', indefinido: 'Contrato indefinido', blindaje: 'Blindaje', madrugador: 'Madrugador',
+  area: 'A todos los rivales', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba cartas', caos: 'Da CAOS', aturde: 'Aturde', debil: 'Débil', vulnerable: 'Vulnerable', fuerza: 'Fuerza', injugable: 'Injugable' };
+let dcBibTab = 'c', dcBibFiltro = 'todo', dcBibFac = 'todas', dcBibProp = 'todas';
+function dcBibCartaFac(id) { return DC_CARTAS[id].fac || 'animales'; }
+// una propiedad cuenta si la tiene la carta normal o la ascendida
+function dcBibCartaProp(id, k) { return [dcFx({ id }), dcFx({ id, asc: true })].some(fx => k === 'area' ? fx.obj === 'todos' : k === 'fuerza' ? fx.fuerza || fx.fuerzaTurno : !!fx[k]); }
 function dcNombreRival(id) { const D = DC_RIVALES[id]; return tr(D.nombre || (CFG.enemyCards[id] ? CFG.enemyCards[id].name : id)); }
 // cada pestaña: [{ id, visto }] en su orden
 function dcBibLista(tab) {
-  if (tab === 'c') return Object.keys(DC_CARTAS).sort((a, b) => DC_TIPO_ORDEN.indexOf(DC_CARTAS[a].tipo) - DC_TIPO_ORDEN.indexOf(DC_CARTAS[b].tipo) || DC_RAR_ORDEN[DC_CARTAS[a].rar] - DC_RAR_ORDEN[DC_CARTAS[b].rar]).map(id => ({ id, visto: dcVisto('c', id) }));
+  if (tab === 'c') return Object.keys(DC_CARTAS).filter(id => (dcBibFac === 'todas' || dcBibCartaFac(id) === dcBibFac) && (dcBibProp === 'todas' || dcBibCartaProp(id, dcBibProp))).sort((a, b) => DC_TIPO_ORDEN.indexOf(DC_CARTAS[a].tipo) - DC_TIPO_ORDEN.indexOf(DC_CARTAS[b].tipo) || DC_RAR_ORDEN[DC_CARTAS[a].rar] - DC_RAR_ORDEN[DC_CARTAS[b].rar]).map(id => ({ id, visto: dcVisto('c', id) }));
   if (tab === 'r') { const peso = D => (D.jefe ? 3 : D.mini ? 2 : D.elite ? 1 : 0); return Object.keys(DC_RIVALES).sort((a, b) => peso(DC_RIVALES[a]) - peso(DC_RIVALES[b]) || DC_RIVALES[a].hp - DC_RIVALES[b].hp).map(id => ({ id, visto: dcVisto('r', id) })); }
   if (tab === 'o') return Object.keys(DC_OBJETOS).sort((a, b) => DC_RAR_ORDEN[DC_OBJETOS[a].rar] - DC_RAR_ORDEN[DC_OBJETOS[b].rar]).concat(Object.keys(DC_MERIENDAS).map(k => 'm:' + k)).map(id => ({ id, visto: dcVisto('o', id) }));
   return Object.keys(DC_VENTAJAS).map(id => ({ id, visto: dcVentajaAbierta(id) }));
@@ -58,7 +65,27 @@ function dcBiblioteca(volver) {
   const todos = dcBibLista(dcBibTab), vistos = todos.filter(e => e.visto).length;
   sub.textContent = tr('Has descubierto {a} de {b}.', { a: vistos, b: todos.length }) + ' ' + tr(dcBibTab === 'c' ? 'Toca una carta para verla en grande.' : dcBibTab === 'r' ? 'Toca un rival para ver qué hace.' : dcBibTab === 'v' ? 'Se desbloquean jugando.' : 'Te los ofrecen tras las reuniones, en el Economato y en los correos.');
   const vista = todos.filter(e => dcBibFiltro === 'todo' || (dcBibFiltro === 'visto') === e.visto);
+  let selects = null;
+  if (dcBibTab === 'c') {   // facción y propiedad, en dos desplegables para no llenar la pantalla de botones
+    selects = dcEl('div', 'dc-bib-selects');
+    for (const [opc, val, pon] of [[DC_BIB_FACCIONES, dcBibFac, v => { dcBibFac = v; }], [DC_BIB_PROPIEDADES, dcBibProp, v => { dcBibProp = v; }]]) {
+      const sel = dcEl('select', 'dc-bib-select'); for (const k in opc) { const o = dcEl('option', '', tr(opc[k])); o.value = k; o.selected = val === k; sel.append(o); }
+      sel.onchange = () => { pon(sel.value); play('select'); dcBiblioteca(volver); }; selects.append(sel);
+    }
+  }
   if (!vista.length) g.append(dcEl('p', 'dc-nota', tr(dcBibFiltro === 'falta' ? '¡Lo has descubierto todo!' : 'Aún no has descubierto nada aquí.')));
+  // las cartas, agrupadas por tipo con su color; cada grupo dice cuántas llevas
+  if (dcBibTab === 'c' && vista.length) {
+    g.className = 'dc-bib-grupos';
+    for (const t of DC_TIPO_ORDEN) {
+      const del = vista.filter(e => DC_CARTAS[e.id].tipo === t); if (!del.length) continue;
+      const tit = dcEl('h3', 'dc-bib-grupo dc-tipo-' + t), rej = dcEl('div', 'dc-rejilla');
+      tit.append(dcEl('span', 'dc-bib-grupo-tipo', tr(DC_NOMBRE_TIPO[t])), dcEl('small', '', del.filter(e => e.visto).length + '/' + del.length));
+      for (const e of del) { if (!e.visto) { rej.append(dcBibTapado('dc-bib-tapado-carta')); continue; } const c = { id: e.id }; rej.append(dcPintaCarta(c, { al: () => dcVerCarta(c) })); }
+      g.append(tit, rej);
+    }
+    s.append(pest, filtros, selects, sub, g); return;
+  }
   for (const e of vista) {
     if (!e.visto) { g.append(dcBibTapado(dcBibTab === 'c' ? 'dc-bib-tapado-carta' : dcBibTab === 'r' ? 'dc-bib-tapado-rival' : 'dc-bib-tapado-fila')); continue; }
     if (dcBibTab === 'c') { const c = { id: e.id }, el = dcPintaCarta(c, { al: () => dcVerCarta(c) }); g.append(el); }

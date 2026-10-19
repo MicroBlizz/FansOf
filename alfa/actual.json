@@ -1,8 +1,8 @@
 {
- "build": 252,
- "hash": "ccb4161",
- "fecha": "2026-10-19T17:07:46Z",
- "mensaje": "Decks: prueba de la campaña entera y arreglos que salieron",
+ "build": 253,
+ "hash": "8410c02",
+ "fecha": "2026-10-19T17:28:59Z",
+ "mensaje": "Nova: en cada sector de la campaña los rastreros, fusileros, sepultureros y capitanes son de la facción que lo controla (su nave como arte provisional y las armas de su facción)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

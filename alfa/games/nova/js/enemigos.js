@@ -38,6 +38,7 @@ function nvEnemigo(S, tipo, x, y, rango) {
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
   if (S.peligro > 1) { const kp = 1 + 0.25 * (S.peligro - 1); e.hp = e.hpMax = Math.round(e.hp * kp); }   // sectores peligrosos: enemigos más duros
   e.armas = nvArmasEnemigo(tipo, rango);
+  nvEnemigoFaccion(S, e);   // enemigos-faccion.js: en un sector de otra facción, sus naves y sus armas
   e.kf = nvFactor(rango);   // el alcance y el tamaño de las balas crecen con la nave, igual que las tuyas
     S.enem.push(e);
   return e;

@@ -32,7 +32,8 @@ function nvSpriteEnemigo(c, e, S) {
     const vs = Object.keys(NVE.meta).filter(k => k === 'asteroide' || k.indexOf('asteroide-') === 0);
     if (vs.length) e.spr = vs[Math.floor((e.forma || 0) * vs.length) % vs.length];
   }
-  const im = NVE.img[e.spr || e.tipo], m = NVE.meta[e.spr || e.tipo];
+  if (e.fac && !NVE.meta[e.spr]) nvFacSpriteEnemigo(e.spr);   // enemigos-faccion.js: nave de su facción mientras no tenga arte propio
+  const id = e.spr && NVE.meta[e.spr] ? e.spr : e.tipo, im = NVE.img[id], m = NVE.meta[id];
   if (!im || !im.complete || !im.naturalWidth) return false;
   const redondo = m.proa !== 'derecha', t = e.r * (redondo ? 2.3 : 2.6);   // las naves son alargadas: su largo supera el círculo de choque
   c.save();
@@ -43,7 +44,7 @@ function nvSpriteEnemigo(c, e, S) {
     if (e.rumbo === undefined) e.rumbo = obj;
     e.rumbo += Math.atan2(Math.sin(obj - e.rumbo), Math.cos(obj - e.rumbo)) * 0.15; c.rotate(e.rumbo);
   }
-  const sp = nvSpriteEscalado(e.tipo, im, t * (S.vs || 1));
+  const sp = nvSpriteEscalado(id, im, t * (S.vs || 1));
   c.drawImage(sp, -t / 2, -t / 2, t, t);
   if (e.flash > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.7, e.flash * 6); c.drawImage(sp, -t / 2, -t / 2, t, t); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over'; }
   c.restore();
@@ -184,7 +185,9 @@ function nvDibujaSalto(c, s, S) {
   const g = c.createLinearGradient(-largo, 0, r, 0); g.addColorStop(0, 'rgba(111,227,255,0)'); g.addColorStop(1, 'rgba(191,244,255,.85)');
   c.fillStyle = g; c.fillRect(-largo, -r * 0.35, largo + r, r * 0.7);
   c.globalCompositeOperation = 'source-over';
-  const im = NVE.img[s.tipo];
+  const f = nvFacSector(S), sid = f && s.tipo in NV_ENEM_FAC_ETAPA ? f + '-' + s.tipo : '';
+  if (sid && !NVE.meta[sid]) nvFacSpriteEnemigo(sid);
+  const im = NVE.img[sid && NVE.meta[sid] ? sid : s.tipo];
   if (im && im.complete && im.naturalWidth) { const t = r * 2.6, est = 1 + 2.5 * (1 - k); c.globalAlpha = 0.4 + 0.6 * k; c.drawImage(im, -t * est / 2, -t / 2, t * est, t); c.globalAlpha = 1; }
   c.restore();
 }

@@ -106,4 +106,5 @@ IDIOMA.add({
   "Rival": "Rival",
   "Vida {n}": "Health {n}",
   "Merienda": "Snack",
+  "Tócala otra vez para jugarla o arrástrala": "Tap it again to play it, or drag it",
 });

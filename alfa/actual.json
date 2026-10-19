@@ -1,8 +1,8 @@
 {
- "build": 226,
- "hash": "1ae3304",
- "fecha": "2026-10-19T00:26:18Z",
- "mensaje": "Decks: Biblioteca con lo descubierto (cartas, rivales, objetos y ventajas) y «?» en lo que falta",
+ "build": 227,
+ "hash": "af05942",
+ "fecha": "2026-10-19T00:32:22Z",
+ "mensaje": "Decks: un toque solo marca la carta; dos toques la juegan",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

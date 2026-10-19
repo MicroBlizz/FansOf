@@ -1,8 +1,9 @@
 // Fans Of Decks · La reunión en pantalla: rivales con su intención arriba, el líder en medio, la franja de CAOS y la mano en abanico abajo. Pinta el estado C de combate.js.
-// Toques: con un rival, tocar la carta la juega; con varios, tocar la carta y luego el rival (o arrastrarla: arrastre.js). Mantener pulsada una carta enseña su texto grande.
+// Toques (regla de Arkioner, 19-10-2026): un toque nunca juega, solo marca la carta (y, si pide objetivo, luego tocas el rival); dos toques seguidos
+// la juegan (contra el primer rival si pide objetivo); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
-const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0 };
+const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
 // Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
 // Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
 const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', companero: 'Compañero', protocolo: 'Protocolo', clausula: 'Cláusula', spam: 'Spam' };
@@ -53,7 +54,7 @@ function dcEfectosLider(C) {
 }
 function dcPintaRival(C, r, i) {
   const D = DC_RIVALES[r.id]; dcDescubre('r', r.id);
-  const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (DCC.elegida !== null && r.hp > 0 ? ' dc-elige' : ''));
+  const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (dcApunta(C) && r.hp > 0 ? ' dc-elige' : ''));
   d.dataset.rival = i;
   const j = r.jug, tipo = dcTipoJugada(j), I = DC_INTENCION[tipo];
   const it = dcEl('div', 'dc-intencion dc-int-' + tipo); it.style.setProperty('--ic', I[1]);
@@ -62,7 +63,7 @@ function dcPintaRival(C, r, i) {
   it.title = tr(r.aturdido ? 'Pierde el turno' : I[2]);
   const arte = dcEl('div', 'dc-rival-arte'); arte.append(dcSprite(D.arte, D.alto || (D.jefe ? 110 : D.elite ? 92 : 72)));
   d.append(it, arte, dcEl('b', 'dc-nombre', r.nombre), dcBarraVida(r.hp, r.hpMax, r.bloqueo), dcEstados(r));
-  d.onclick = () => { if (DCC.elegida !== null && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k); dcJugar(C, k, i); play('card'); dcTrasJugada(); } };
+  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k); dcJugar(C, k, i); play('card'); dcTrasJugada(); } };
   return d;
 }
 // Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
@@ -121,7 +122,7 @@ function dcPintaCombate() {
     const k = i - (n - 1) / 2; el.style.setProperty('--rot', (k * 3.5) + 'deg'); el.style.setProperty('--ty', (Math.abs(k) * 5) + 'px'); el.dataset.mano = i;
     mano.append(el);
   });
-  const aviso = dcEl('div', 'dc-aviso', DCC.elegida !== null ? tr('¿A quién? Toca un rival o arrastra la carta') : '');
+  const marcada = DCC.elegida !== null && C.mano[DCC.elegida], aviso = dcEl('div', 'dc-aviso', !marcada ? '' : dcNecesitaObjetivo(C, marcada) ? tr('¿A quién? Toca un rival o arrastra la carta') : tr('Tócala otra vez para jugarla o arrástrala'));
   const z = dcEl('div', 'dc-escala'); z.append(cab, top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);
   dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
@@ -163,11 +164,14 @@ function dcAnimaCarta(i) {
   const dx = (st.width / 2 - a.width / 2) - (a.left - st.left), dy = (st.height * 0.36 - a.height / 2) - (a.top - st.top);
   g.animate([{ transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 }, { transform: `translate(${dx * 0.7}px, ${dy * 0.7}px) rotate(-4deg) scale(1.15)`, opacity: 1, offset: 0.55 }, { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(0.6)`, opacity: 0 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => g.remove();
 }
+// ¿La carta marcada pide objetivo? Entonces los rivales se pueden tocar para jugarla.
+function dcApunta(C) { const c = DCC.elegida !== null && C.mano[DCC.elegida]; return !!c && dcNecesitaObjetivo(C, c); }
 function dcTocaCarta(i) {
   const C = DCC.C, c = C.mano[i];
   if (!dcPuedeJugar(C, c)) { play('deny'); toast(dcFx(c).injugable ? tr('Esa carta no se puede jugar') : tr('No tienes CAOS suficiente')); const el = document.querySelector('.dc-mano .dc-carta[data-mano="' + i + '"]'); if (el) { el.classList.add('dc-niega'); setTimeout(() => el.classList.remove('dc-niega'), 400); } return; }
-  if (DCC.elegida === i) { DCC.elegida = null; dcPintaCombate(); return; }
-  if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; dcPintaCombate(); return; }
+  const ahora = Date.now(), doble = DCC.toque && DCC.toque.i === i && ahora - DCC.toque.t < 450; DCC.toque = doble ? null : { i, t: ahora };
+  // un toque solo la marca (o la desmarca si ya lo estaba y no es el segundo de un doble toque)
+  if (!doble) { DCC.elegida = DCC.elegida === i ? null : i; play('select'); dcPintaCombate(); return; }
   DCC.elegida = null; dcAnimaCarta(i); dcJugar(C, i, dcPrimerRival(C)); play('card'); dcTrasJugada();
 }
 function dcTrasJugada() {

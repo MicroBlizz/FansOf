@@ -1,5 +1,5 @@
-// Fans of Rouflage · LA TIENDA: paquetes de Acciones (con su precio en euros), ofertas (el Pack de inicio y el pase premium), Gotas a cambio
-// de Acciones y el Caos primordial ilimitado (el de toda la serie, ENERGIA). Como en el resto de la serie, de momento es DE PRUEBA: no se cobra
+// Fans of Rouflage · LA TIENDA: paquetes de Acciones (con su precio en euros), ofertas (el Pack de inicio y el pase premium), Acciones a cambio
+// de Gotas (que se ganan jugando) y el Caos primordial ilimitado (el de toda la serie, ENERGIA). Como en el resto de la serie, de momento es DE PRUEBA: no se cobra
 // nada y lo que compras se te da (PLAN-TIENDA.md dice qué falta para cobrar de verdad). Va con el armario: solo en la alfa y en desarrollo.
 // Se abre desde MI PERFIL › TIENDA, o sola cuando te faltan Acciones en el armario o en el pase (y VOLVER te devuelve allí).
 'use strict';
@@ -9,7 +9,7 @@ const TIENDA = {
   acciones: [      // { n: Acciones, eur: precio, extra: % de regalo sobre el pack pequeño }
     { n: 100, eur: 0.99 }, { n: 550, eur: 4.99, extra: 10 }, { n: 1200, eur: 9.99, extra: 20 }, { n: 2600, eur: 19.99, extra: 30 }, { n: 7000, eur: 49.99, extra: 40 },
   ],
-  gotas: [{ n: 500, acciones: 50 }, { n: 1200, acciones: 100 }, { n: 3000, acciones: 220 }],      // Gotas a cambio de Acciones
+  canje: [{ gotas: 250, n: 50 }, { gotas: 600, n: 125 }, { gotas: 1500, n: 330 }],      // Acciones a cambio de Gotas (las Gotas se ganan jugando: 5 Gotas = 1 Acción, un pelín mejor en los paquetes grandes)
   inicio: { eur: 2.99, acciones: 300, cosas: [['cabeza', 'gorra'], ['marcos', 'pixel']] },        // el Pack de inicio: una sola vez
 };
 const eurTexto = v => (IDIOMA_RF === 'es' ? v.toFixed(2).replace('.', ',') + ' €' : '€' + v.toFixed(2));
@@ -59,12 +59,12 @@ function tiendaPinta() {
   const ac = E('tienda-acciones'); ac.innerHTML = '';
   for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(IDIOMA_RF === 'es' ? 'es-ES' : 'en-GB') }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', eurTexto(pk.eur), () => tiendaCompra(tr('{n} Acciones', { n: pk.n }), () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : ''));
-  // Gotas
+  // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';
-  for (const pk of TIENDA.gotas) go.appendChild(tarjeta((c, w) => pintaGotas(c, w), tr('{n} Gotas', { n: pk.n }), '', tr('{n} Acciones', { n: pk.acciones }), () => {
-    if (SAVE.acciones < pk.acciones) { play('deny'); avisa(tr('No tienes bastantes Acciones'), 'malo'); return; }
-    SAVE.acciones -= pk.acciones; SAVE.gotas += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Gotas', { n: pk.n }), 'bueno'); tiendaPinta();
-  }));
+  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n }), '', tr('{n} Gotas', { n: pk.gotas }), () => {
+    if (SAVE.gotas < pk.gotas) { play('deny'); avisa(tr('Te faltan gotas: juega partidas y recoge el premio diario'), 'malo'); return; }
+    SAVE.gotas -= pk.gotas; SAVE.acciones += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Acciones', { n: pk.n }), 'bueno'); tiendaPinta();
+  }, SAVE.gotas < pk.gotas ? 'falta' : ''));
   // el caos primordial ilimitado (el de toda la serie)
   E('tienda-caos').hidden = typeof ENERGIA === 'undefined';
 }

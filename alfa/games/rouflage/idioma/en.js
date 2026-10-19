@@ -1,6 +1,8 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "ACCIONES CON GOTAS": "SHARES FOR DROPS",
+  "+{n} Acciones": "+{n} Shares",
   "Aviso recargándose: {n} s": "Alert recharging: {n} s",
   "{a} avisa: ¡hay un colado por aquí!": "{a} signals: there's an intruder over here!",
   "Tu compañero": "Your teammate",

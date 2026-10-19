@@ -3,7 +3,8 @@
 // - PASE DE TEMPORADA: experiencia por partida (100, +50 si ganas, ×1,5 en línea); cada 1000 es un nivel, hasta el 40 (unas 8 partidas por
 //   nivel). Al subir, las cosas del armario marcadas «Pase gratis · nv N» son tuyas; las «Pase premium · nv N», si tienes el premium
 //   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles.
-// - ACCIONES (de pago): la tienda del armario. Se compran en la TIENDA (tienda.js; de momento de prueba, sin cobrar) y salen también del pase gratis.
+// - ACCIONES: la moneda de la tienda del armario (cosméticos y pase premium). Se canjean por Gotas en la TIENDA (tienda.js), se compran por euros (de momento de prueba, sin cobrar) y salen también del pase gratis.
+//   El flujo: se juega, se ganan Gotas, las Gotas se cambian por Acciones y las Acciones compran cosméticos y el pase premium.
 // En el armario, lo que se compra con Gotas o Acciones lleva un botón COMPRAR. Todo se guarda en la partida: SAVE.gotas, SAVE.acciones,
 // SAVE.pase = { xp, premium, purp: [niveles cobrados] } y SAVE.eco = { dia, gotasHoy }.
 'use strict';

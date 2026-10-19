@@ -39,11 +39,11 @@ function ropaDeIds(p) {
     humo: (h && h.x && h.x.colores) || null, fantasma: arItem('fantasma', p.fantasma) ? p.fantasma : null,
     silbido: arItem('silbido', p.silbido) ? p.silbido : null, congelar: arItem('congelar', p.congelar) ? p.congelar : null, sello: arItem('sello', p.sello) ? p.sello : null,
     linterna: (l && l.x && l.x.color) ? { color: l.x.color, borde: l.x.borde } : null, marco: arItem('marcos', p.marcos) ? p.marcos : null,
-    titulo: (t && t.x && t.x.texto) ? { texto: t.x.texto, color: t.x.color } : null, gesto: arItem('gestos', p.gestos) ? p.gestos : null, ids: p };
+    titulo: (t && t.x && t.x.texto) ? { texto: t.x.texto, color: t.x.color } : null, gesto: arItem('gestos', p.gestos) ? p.gestos : null, mascota: arItem('mascotas', p.mascotas) ? p.mascotas : null, ids: p };
 }
 // EN LA PARTIDA (de momento, como el armario, solo en la alfa y en desarrollo): lo que va en el cuerpo, el humo, el fantasma y el papel (el camaleón lo lleva
 // mientras anda: al congelarse o abrir el pincel vuelve a ser un lienzo en blanco, así que no cambia el camuflaje; el becario lo lleva siempre). Contra bots se lo pone tu personaje; en el PvP viaja a los demás en un aviso `rp` (pvp-sync.js) y cada uno lo dibuja.
-const ROPA_PARTIDA = ['papel', 'ojos', 'bocas', 'cabeza', 'espalda', 'humo', 'fantasma', 'silbido', 'congelar', 'sello', 'linterna', 'marcos', 'titulos', 'gestos'];      // (lo de la tanda 2 se dibuja en armario-partida.js)
+const ROPA_PARTIDA = ['papel', 'ojos', 'bocas', 'cabeza', 'espalda', 'humo', 'fantasma', 'silbido', 'congelar', 'sello', 'linterna', 'marcos', 'titulos', 'gestos', 'mascotas'];      // (lo de la tanda 2 se dibuja en armario-partida.js)
 function ropaPartida() {
   if (!armarioVisible()) return null;
   const p = armarioEstado().puesto, r = {};

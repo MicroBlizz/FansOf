@@ -1,7 +1,7 @@
 // Fans of Rouflage · ARMARIO (datos): el catálogo de la Temporada 1. Primero los CONJUNTOS (un personaje del Rumble entero: cabeza,
 // espalda, cara y papel a la vez) y luego las piezas sueltas por categoría. Cada cosa: id, nombre (n), rareza (r: comun, rara, epica,
 // legend), de dónde sale (de: base, conjunto, gratis, premium, diario, tienda, gotas, subs), el texto de cómo se consigue (txt; en la tienda
-// es su precio en Purpurina, un número) y su dibujo de icono (x). Las piezas del cuerpo llevan además `v`: la clave de ARD con la que se
+// es su precio en Acciones, un número: lo pone la rareza en armario-precios.js) y su dibujo de icono (x). Las piezas del cuerpo llevan además `v`: la clave de ARD con la que se
 // dibujan sobre la galleta (OJOS, BOCAS, PAPEL/COLOR_PAPEL, CABEZAS, ESPALDAS). Todo es cosmético: nada cambia cómo se juega.
 'use strict';
 const CATALOGO_AR = (() => {

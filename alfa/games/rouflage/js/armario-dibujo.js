@@ -39,6 +39,7 @@ const ARD = (() => {
     if (PAPEL[o.papel]) { c.save(); c.beginPath(); traza(c); c.clip(); PAPEL[o.papel](c); c.restore(); }
     if (!o.sinCara) cara(c, o.ojos, o.boca);
     if (o.cabeza && CABEZAS[o.cabeza]) CABEZAS[o.cabeza](c);
+    if (o.mascota && ARD.MASCOTAS && ARD.MASCOTAS[o.mascota]) { c.save(); c.translate(31, 0); c.scale(1.15, 1.15); ARD.MASCOTAS[o.mascota](c, { t: 0.6, mov: 0, susto: false }); c.restore(); }      // su mascota, a un lado (armario-mascotas.js)
     c.restore();
   }
   /* ---------- iconos (gotas, acciones, candado, nada) ---------- */

@@ -9,7 +9,7 @@
 // SAVE.pase = { xp, premium, purp: [niveles cobrados] } y SAVE.eco = { dia, gotasHoy }.
 'use strict';
 
-const ECO = { gotas: 10, gotasGanar: 5, linea: 2, topeDia: 150, xp: 100, xpGanar: 50, xpLinea: 1.5, xpNivel: 1000, niveles: 40, premium: 950,
+const ECO = { gotas: 10, gotasGanar: 5, linea: 2, topeDia: 150, xp: 100, xpGanar: 50, xpLinea: 1.5, xpNivel: 1000, niveles: 40, premium: 600,
   purpGratis: { 5: 50, 10: 50, 15: 50, 20: 50, 30: 50, 40: 50 } };
 
 function ecoEstado() {

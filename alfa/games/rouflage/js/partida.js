@@ -122,6 +122,7 @@ function avanzaPartida(dt) {
     else if (e.bot) e.vx = e.vy = 0;
     avanzaEnte(e, dt);
   }
+  mascotasAvanza(dt);      // las mascotas del armario (mascotas.js)
   miraLosOjos();
   PUERTA.abierta = limita(PUERTA.abierta + (PUERTA.cerrada ? -dt : dt) * 1.5, 0, 1);
   J.oscuro += ((J.fase === 'caza' || (J.fase === 'fin' && J.tFase < 1.2)) && !extraOn('dia') ? 1 - J.oscuro : -J.oscuro) * Math.min(1, dt * 2.2);      // Jugar de día: las luces no se apagan

@@ -1,8 +1,8 @@
 {
- "build": 237,
- "hash": "bef11ed",
- "fecha": "2026-10-19T10:26:10Z",
- "mensaje": "Nova: anclajes de las ranuras laterales por etapa en las 6 naves de facción con arte propio (Sepulcro, Directo, Templo, Troll, Setup, Estreno): todas caen sobre el casco o las alas",
+ "build": 238,
+ "hash": "a2138ca",
+ "fecha": "2026-10-19T10:29:59Z",
+ "mensaje": "Rouflage: 24 conjuntos nuevos inspirados en Rumble, 23 mascotas que te siguen y huyen de los cazadores, más títulos, humo y linternas, y precios más bajos",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

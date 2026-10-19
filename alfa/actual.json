@@ -1,8 +1,8 @@
 {
- "build": 262,
- "hash": "6ee2e0a",
- "fecha": "2026-10-19T18:30:25Z",
- "mensaje": "Nova: el jefe de cada sector es la nave del líder de la facción que lo controla (su nombre; su arte cuando llegue, mientras tanto el Rey de los huesos)",
+ "build": 263,
+ "hash": "11daf32",
+ "fecha": "2026-10-19T18:30:52Z",
+ "mensaje": "Monedas: TD, Survivors y Rouflage declaran las dos monedas; novedades de Survivors sin error de sintaxis",
  "juegos": {
   "crush": "0.1.20",
   "dark": "0.2.7",

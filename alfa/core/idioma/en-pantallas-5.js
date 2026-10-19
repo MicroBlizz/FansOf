@@ -88,7 +88,7 @@ IDIOMA.add({
   "Primera victoria": "First Victory",
   "Que no te lo cierren.": "Don't let them shut it down.",
   "Quita el sonido.": "Turn the sound off.",
-  "Quédate con 0 gemas después de girar el gashapón.": "End up with 0 gems after spinning the gacha.",
+  "Quédate a cero después de girar el gashapón.": "End up broke after spinning the gacha.",
   "Recoge el regalo diario de la tienda.": "Collect the daily gift from the shop.",
   "Recoge las HORAS EXTRA con el almacén lleno (12 h).": "Collect OVERTIME with a full warehouse (12 h).",
   "Recoge lo que gana tu líder en HORAS EXTRA.": "Collect what your leader earns in OVERTIME.",

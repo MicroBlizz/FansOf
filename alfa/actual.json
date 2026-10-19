@@ -1,8 +1,8 @@
 {
- "build": 270,
- "hash": "4d7706b",
- "fecha": "2026-10-19T18:46:11Z",
- "mensaje": "Nova 0.3.8: nota con la nave jefe de rango 50",
+ "build": 271,
+ "hash": "5d4a5c4",
+ "fecha": "2026-10-19T19:00:22Z",
+ "mensaje": "Monedas: fuera el flag del cliente, basta AJUSTES.monedas (publicado en todos los juegos)",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

@@ -20,10 +20,10 @@ const MONEDAS = (() => {
     if (!r || !r.dato) return null;
     try { return JSON.parse(r.dato); } catch (e) { return null; }
   };
-  // ¿este juego ya va con las dos monedas? Lo declara en AJUSTES.monedas y lo abre el flag 'monedas': la misma fila de `flags` que trae el ratio
-  // (valor = abierto, dato = ajustes). El servidor mira esa fila para cobrar el gashapón en oro y el pase en gemas (servidor/47-monedas-rumble.sql).
-  const activo = () => typeof AJUSTES !== 'undefined' && !!AJUSTES.monedas && typeof NUCLEO !== 'undefined' && !!NUCLEO.flag
-    && NUCLEO.flag('monedas', 'Dos monedas: gashapón en la ganada, pase en la comprada, packs solo con dinero', false);
+  // ¿este juego va con las dos monedas? Basta con que lo declare en AJUSTES.monedas (publicado en todos el 19-10-2026; antes iba tras un flag).
+  // La fila `monedas` de `flags` del juego sigue existiendo solo como configuración (dato = ratio y cambio) y el servidor la mira para cobrar
+  // el gashapón en oro y el pase en gemas (servidor/47 y 48): su `valor` tiene que seguir en true mientras el juego declare AJUSTES.monedas.
+  const activo = () => typeof AJUSTES !== 'undefined' && !!AJUSTES.monedas;
   const conf = () => mezcla(mezcla(BASE, typeof AJUSTES !== 'undefined' && AJUSTES.monedas), remota());
   const mon = cual => { const c = conf(); return cual === 'comprada' ? c.comprada : c.ganada; };
   const nombre = cual => { const m = mon(cual); return typeof NUCLEO !== 'undefined' && NUCLEO.idioma === 'en' && m.nombre_en ? m.nombre_en : m.nombre; };

@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.69
+  "<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the two-currency shop is now ready in this game, although it is not open yet.",
+  "Microblizz ha dejado la caja de dos monedas lista y Phony ya ha pedido que la abran el viernes, que es cuando cobra.": "Microblizz has left the two-currency till ready and Phony has already asked for it to open on Friday, which is when he gets paid.",
   // 0.13.68
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
   "Microblizz ha puesto dos monedas en la tienda de las torres. Phony dice que la que no se ve es la que se gasta más rápido.": "Microblizz has put two currencies in the tower shop. Phony says the one you can't see is the one that runs out fastest.",

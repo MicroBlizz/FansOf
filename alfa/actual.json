@@ -1,8 +1,8 @@
 {
- "build": 263,
- "hash": "11daf32",
- "fecha": "2026-10-19T18:30:52Z",
- "mensaje": "Monedas: TD, Survivors y Rouflage declaran las dos monedas; novedades de Survivors sin error de sintaxis",
+ "build": 264,
+ "hash": "c9aa8c4",
+ "fecha": "2026-10-19T18:32:55Z",
+ "mensaje": "TD 0.13.69, Survivors 0.1.53, Rouflage 0.2.32: dos monedas preparadas y novedades de Survivors arregladas",
  "juegos": {
   "crush": "0.1.20",
   "dark": "0.2.7",
@@ -10,11 +10,11 @@
   "island": "0.3.5",
   "nova": "0.3.6",
   "ratkov": "0.2.10",
-  "rouflage": "0.2.31",
+  "rouflage": "0.2.32",
   "rumble": "0.9.139",
   "skate": "0.1.27",
-  "survivors": "0.1.52",
+  "survivors": "0.1.53",
   "tacticas": "0.1.36",
-  "td": "0.13.68"
+  "td": "0.13.69"
  }
 }

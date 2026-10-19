@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.53', real: ["<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre."], joke: ["Microblizz ha arreglado un par de comillas que se habían escapado. Phony dice que eran suyas y que las echaba de menos."] },
   { v: '0.1.52', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota)."], joke: ["Microblizz ha dividido la paga en dos monedas. Phony se ha quedado con la que no existe."] },
   { v: '0.1.51', real: ["<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no."], joke: ["Microblizz cuenta cuántos sobreviven a la oleada. Phony dice que a él lo apuntan siempre como «desaparecido»."] },
   { v: '0.1.50', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando."], joke: ["Microblizz ha reforzado el sótano de los supervivientes. Phony dice que huele mejor, pero no mucho."] },

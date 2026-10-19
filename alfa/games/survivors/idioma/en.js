@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.53
+  "<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the two-currency shop is now ready in this game, although it is not open yet.",
+  "Microblizz ha arreglado un par de comillas que se habían escapado. Phony dice que eran suyas y que las echaba de menos.": "Microblizz has fixed a couple of quotation marks that had escaped. Phony says they were his and he missed them.",
   // 0.1.52
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
   "Microblizz ha dividido la paga en dos monedas. Phony se ha quedado con la que no existe.": "Microblizz has split the pay into two currencies. Phony kept the one that does not exist.",

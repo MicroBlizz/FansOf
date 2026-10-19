@@ -85,6 +85,78 @@
     256
    ],
    "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-2",
+   "nombre": "Asteroide de hielo",
+   "archivo": "asteroide-2.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-3",
+   "nombre": "Asteroide de cristal",
+   "archivo": "asteroide-3.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-4",
+   "nombre": "Asteroide de mena",
+   "archivo": "asteroide-4.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-5",
+   "nombre": "Asteroide de lava",
+   "archivo": "asteroide-5.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-6",
+   "nombre": "Asteroide alargado",
+   "archivo": "asteroide-6.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-7",
+   "nombre": "Asteroide chatarra",
+   "archivo": "asteroide-7.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
   }
  ]
 }

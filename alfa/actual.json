@@ -1,8 +1,8 @@
 {
- "build": 235,
- "hash": "286f3ce",
- "fecha": "2026-10-19T10:08:40Z",
- "mensaje": "Nova: el Rey de los huesos pilota como una persona (reacción con retraso, cambia de lado, apunta con adelanto, cañón y anillos con aviso y hueco) y ya no suelta naves cada pocos segundos",
+ "build": 236,
+ "hash": "a1f8a72",
+ "fecha": "2026-10-19T10:15:54Z",
+ "mensaje": "Nova: arte de casco y alas en 5 etapas de las 6 facciones nuevas (Sepulcro, Directo, Templo, Troll, Setup, Estreno), 6 asteroides nuevos, y los scripts que los generan en herramientas/comfyui/nova",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -554,6 +554,846 @@
    ],
    "archivo": "fragata-alas-c5.png",
    "escala": 2
+  },
+  {
+   "id": "nomuertos-alas",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 1,
+   "ancho": 396,
+   "alto": 295,
+   "pivote": [
+    198,
+    6
+   ],
+   "archivo": "nomuertos-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 1,
+   "ancho": 426,
+   "alto": 273,
+   "pivote": [
+    213,
+    6
+   ],
+   "archivo": "streamers-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 1,
+   "ancho": 484,
+   "alto": 385,
+   "pivote": [
+    242,
+    6
+   ],
+   "archivo": "heroes-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 1,
+   "ancho": 426,
+   "alto": 239,
+   "pivote": [
+    213,
+    6
+   ],
+   "archivo": "memes-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 1,
+   "ancho": 396,
+   "alto": 232,
+   "pivote": [
+    198,
+    6
+   ],
+   "archivo": "gamer-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 1,
+   "ancho": 484,
+   "alto": 280,
+   "pivote": [
+    242,
+    6
+   ],
+   "archivo": "pop-alas.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 1,
+   "ancho": 119,
+   "alto": 463,
+   "pivote": [
+    60,
+    245
+   ],
+   "archivo": "nomuertos-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 1,
+   "ancho": 126,
+   "alto": 479,
+   "pivote": [
+    63,
+    277
+   ],
+   "archivo": "streamers-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 1,
+   "ancho": 108,
+   "alto": 463,
+   "pivote": [
+    54,
+    265
+   ],
+   "archivo": "heroes-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 1,
+   "ancho": 108,
+   "alto": 479,
+   "pivote": [
+    54,
+    277
+   ],
+   "archivo": "memes-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 1,
+   "ancho": 125,
+   "alto": 463,
+   "pivote": [
+    62,
+    245
+   ],
+   "archivo": "gamer-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 1,
+   "ancho": 146,
+   "alto": 463,
+   "pivote": [
+    73,
+    265
+   ],
+   "archivo": "pop-casco.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco-c2",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 2,
+   "ancho": 181,
+   "alto": 519,
+   "pivote": [
+    90,
+    275
+   ],
+   "archivo": "nomuertos-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco-c3",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 3,
+   "ancho": 400,
+   "alto": 579,
+   "pivote": [
+    200,
+    306
+   ],
+   "archivo": "nomuertos-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco-c4",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 4,
+   "ancho": 607,
+   "alto": 648,
+   "pivote": [
+    304,
+    343
+   ],
+   "archivo": "nomuertos-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco-c5",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 5,
+   "ancho": 251,
+   "alto": 741,
+   "pivote": [
+    126,
+    392
+   ],
+   "archivo": "nomuertos-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-alas-c2",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 2,
+   "ancho": 455,
+   "alto": 359,
+   "pivote": [
+    228,
+    6
+   ],
+   "archivo": "nomuertos-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-alas-c3",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 3,
+   "ancho": 515,
+   "alto": 376,
+   "pivote": [
+    258,
+    6
+   ],
+   "archivo": "nomuertos-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-alas-c4",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 4,
+   "ancho": 594,
+   "alto": 491,
+   "pivote": [
+    297,
+    6
+   ],
+   "archivo": "nomuertos-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-alas-c5",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 5,
+   "ancho": 693,
+   "alto": 647,
+   "pivote": [
+    346,
+    6
+   ],
+   "archivo": "nomuertos-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco-c2",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 2,
+   "ancho": 233,
+   "alto": 536,
+   "pivote": [
+    116,
+    310
+   ],
+   "archivo": "streamers-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco-c3",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 3,
+   "ancho": 422,
+   "alto": 599,
+   "pivote": [
+    211,
+    346
+   ],
+   "archivo": "streamers-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco-c4",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 4,
+   "ancho": 622,
+   "alto": 671,
+   "pivote": [
+    311,
+    388
+   ],
+   "archivo": "streamers-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco-c5",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 5,
+   "ancho": 283,
+   "alto": 766,
+   "pivote": [
+    142,
+    443
+   ],
+   "archivo": "streamers-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas-c2",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 2,
+   "ancho": 490,
+   "alto": 314,
+   "pivote": [
+    245,
+    6
+   ],
+   "archivo": "streamers-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas-c3",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 3,
+   "ancho": 554,
+   "alto": 356,
+   "pivote": [
+    277,
+    6
+   ],
+   "archivo": "streamers-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas-c4",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 4,
+   "ancho": 639,
+   "alto": 410,
+   "pivote": [
+    320,
+    6
+   ],
+   "archivo": "streamers-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas-c5",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 5,
+   "ancho": 746,
+   "alto": 437,
+   "pivote": [
+    373,
+    6
+   ],
+   "archivo": "streamers-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco-c2",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 2,
+   "ancho": 212,
+   "alto": 519,
+   "pivote": [
+    106,
+    297
+   ],
+   "archivo": "heroes-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco-c3",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 3,
+   "ancho": 284,
+   "alto": 579,
+   "pivote": [
+    142,
+    331
+   ],
+   "archivo": "heroes-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco-c4",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 4,
+   "ancho": 351,
+   "alto": 648,
+   "pivote": [
+    176,
+    371
+   ],
+   "archivo": "heroes-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco-c5",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 5,
+   "ancho": 202,
+   "alto": 741,
+   "pivote": [
+    101,
+    424
+   ],
+   "archivo": "heroes-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas-c2",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 2,
+   "ancho": 557,
+   "alto": 444,
+   "pivote": [
+    278,
+    6
+   ],
+   "archivo": "heroes-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas-c3",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 3,
+   "ancho": 629,
+   "alto": 500,
+   "pivote": [
+    314,
+    6
+   ],
+   "archivo": "heroes-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas-c4",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 4,
+   "ancho": 726,
+   "alto": 577,
+   "pivote": [
+    363,
+    6
+   ],
+   "archivo": "heroes-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas-c5",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 5,
+   "ancho": 847,
+   "alto": 684,
+   "pivote": [
+    424,
+    6
+   ],
+   "archivo": "heroes-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco-c2",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 2,
+   "ancho": 177,
+   "alto": 536,
+   "pivote": [
+    88,
+    310
+   ],
+   "archivo": "memes-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco-c3",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 3,
+   "ancho": 344,
+   "alto": 599,
+   "pivote": [
+    172,
+    346
+   ],
+   "archivo": "memes-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco-c4",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 4,
+   "ancho": 537,
+   "alto": 671,
+   "pivote": [
+    268,
+    388
+   ],
+   "archivo": "memes-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco-c5",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 5,
+   "ancho": 231,
+   "alto": 766,
+   "pivote": [
+    116,
+    443
+   ],
+   "archivo": "memes-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas-c2",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 2,
+   "ancho": 490,
+   "alto": 288,
+   "pivote": [
+    245,
+    6
+   ],
+   "archivo": "memes-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas-c3",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 3,
+   "ancho": 554,
+   "alto": 438,
+   "pivote": [
+    277,
+    6
+   ],
+   "archivo": "memes-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas-c4",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 4,
+   "ancho": 639,
+   "alto": 419,
+   "pivote": [
+    320,
+    6
+   ],
+   "archivo": "memes-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas-c5",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 5,
+   "ancho": 746,
+   "alto": 553,
+   "pivote": [
+    373,
+    6
+   ],
+   "archivo": "memes-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco-c2",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 2,
+   "ancho": 155,
+   "alto": 519,
+   "pivote": [
+    78,
+    275
+   ],
+   "archivo": "gamer-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco-c3",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 3,
+   "ancho": 408,
+   "alto": 579,
+   "pivote": [
+    204,
+    306
+   ],
+   "archivo": "gamer-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco-c4",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 4,
+   "ancho": 537,
+   "alto": 648,
+   "pivote": [
+    268,
+    343
+   ],
+   "archivo": "gamer-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco-c5",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 5,
+   "ancho": 207,
+   "alto": 741,
+   "pivote": [
+    104,
+    392
+   ],
+   "archivo": "gamer-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas-c2",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 2,
+   "ancho": 455,
+   "alto": 501,
+   "pivote": [
+    228,
+    6
+   ],
+   "archivo": "gamer-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas-c3",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 3,
+   "ancho": 515,
+   "alto": 373,
+   "pivote": [
+    258,
+    6
+   ],
+   "archivo": "gamer-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas-c4",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 4,
+   "ancho": 594,
+   "alto": 558,
+   "pivote": [
+    297,
+    6
+   ],
+   "archivo": "gamer-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas-c5",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 5,
+   "ancho": 693,
+   "alto": 729,
+   "pivote": [
+    346,
+    6
+   ],
+   "archivo": "gamer-alas-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco-c2",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 2,
+   "ancho": 163,
+   "alto": 519,
+   "pivote": [
+    82,
+    297
+   ],
+   "archivo": "pop-casco-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco-c3",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 3,
+   "ancho": 385,
+   "alto": 579,
+   "pivote": [
+    192,
+    331
+   ],
+   "archivo": "pop-casco-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco-c4",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 4,
+   "ancho": 587,
+   "alto": 648,
+   "pivote": [
+    294,
+    371
+   ],
+   "archivo": "pop-casco-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco-c5",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 5,
+   "ancho": 288,
+   "alto": 741,
+   "pivote": [
+    144,
+    424
+   ],
+   "archivo": "pop-casco-c5.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas-c2",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 2,
+   "ancho": 557,
+   "alto": 323,
+   "pivote": [
+    278,
+    6
+   ],
+   "archivo": "pop-alas-c2.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas-c3",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 3,
+   "ancho": 629,
+   "alto": 355,
+   "pivote": [
+    314,
+    6
+   ],
+   "archivo": "pop-alas-c3.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas-c4",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 4,
+   "ancho": 726,
+   "alto": 455,
+   "pivote": [
+    363,
+    6
+   ],
+   "archivo": "pop-alas-c4.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas-c5",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 5,
+   "ancho": 847,
+   "alto": 714,
+   "pivote": [
+    424,
+    6
+   ],
+   "archivo": "pop-alas-c5.png",
+   "escala": 2
   }
  ]
 }

@@ -7,7 +7,7 @@ const DC_OBJETIVOS = { ataque: 'uno' };
 
 function dcRival(id) {
   const D = DC_RIVALES[id];
-  return { id, nombre: D.nombre ? tr(D.nombre) : tr(CFG.enemyCards[id] ? CFG.enemyCards[id].name : id), hp: D.hp, hpMax: D.hp, bloqueo: 0, fuerza: 0, vulnerable: 0, debil: 0, aturdido: 0, idx: 0, ultimo: -1, jug: null };
+  return dcParoEscala({ id, nombre: D.nombre ? tr(D.nombre) : tr(CFG.enemyCards[id] ? CFG.enemyCards[id].name : id), hp: D.hp, hpMax: D.hp, bloqueo: 0, fuerza: 0, vulnerable: 0, debil: 0, aturdido: 0, idx: 0, ultimo: -1, jug: null });   // paro.js: los niveles de paro los endurecen
 }
 // Qué anuncia el rival para su próximo turno.
 function dcAnuncia(C, r) {

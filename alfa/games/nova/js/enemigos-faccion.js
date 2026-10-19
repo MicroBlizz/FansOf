@@ -2,13 +2,15 @@
 // Arte: «<facción>-<tipo>» en arte/enemigos/enemigos.json (como los de No-Muertos). Mientras no llega, se dibuja la nave de esa facción
 // (rastrero = caza, fusilero = corbeta, sepulturero = fragata, capitán = crucero pesado) girada con la proa a la derecha.
 // Armas: llevan los portadores y cargas de las tres armas de su facción (si un portador no lo usa el enemigo, como los drones, se queda el suyo).
-// El nido y el jefe siguen siendo los de No-Muertos. Fuera de la campaña (y en No-Muertos o el núcleo de Microblizz) nada cambia.
+// El nido de la facción solo cambia de arte; el jefe sigue siendo el de No-Muertos. Fuera de la campaña (y en No-Muertos o el núcleo de Microblizz) nada cambia.
 'use strict';
 const NV_ENEM_FAC_ETAPA = { rastrero: 0, fusilero: 1, sepulturero: 2, capitan: 3 };
 function nvFacSector(S) { const f = S.duenoSector; return f && f !== 'nomuertos' && NOVA_FACCIONES[f] ? f : null; }
 // Gancho de nvEnemigo (enemigos.js): marca la facción, el sprite y le cambia las armas.
 function nvEnemigoFaccion(S, e) {
-  const f = nvFacSector(S); if (!f || !(e.tipo in NV_ENEM_FAC_ETAPA)) return;
+  const f = nvFacSector(S); if (!f) return;
+  if (e.tipo === 'nido') { e.fac = f; e.spr = f + '-nido'; return; }   // el nido solo cambia de arte (sin arte propio se queda el de No-Muertos)
+  if (!(e.tipo in NV_ENEM_FAC_ETAPA)) return;
   e.fac = f; e.spr = f + '-' + e.tipo;
   const F = NOVA_FACCIONES[f], ops = ['insignia', 'secreta', 'especial'].map(t => F[t]).filter(a => a && NV_ARMA_E[a.portador]);
   if (!ops.length || !e.armas) return;
@@ -22,6 +24,7 @@ function nvEnemigoFaccion(S, e) {
 function nvFacSpriteEnemigo(id) {
   if (NVE.meta[id] || typeof document === 'undefined' || !NVA.listo) return;
   const i = id.indexOf('-'), f = id.slice(0, i), tipo = id.slice(i + 1), casco = NOVA_FACCIONES[f].nave.casco || f, k = NV_ENEM_FAC_ETAPA[tipo];
+  if (k === undefined) return;
   const ma = NVA.meta[casco + '-alas' + (k ? '-c' + (k + 1) : '')], mc = NVA.meta[casco + '-casco' + (k ? '-c' + (k + 1) : '')];
   if (!ma || !mc) return;
   const H = nvHull(casco, nvRangoClase(k)), ancho = Math.max(ma.ancho, mc.ancho) / 2;

@@ -226,7 +226,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "streamers-rastrero",
@@ -296,7 +296,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "heroes-rastrero",
@@ -366,7 +366,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "ciber-rastrero",
@@ -436,7 +436,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "memes-rastrero",
@@ -506,7 +506,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "gamer-rastrero",
@@ -576,7 +576,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "olvidados-rastrero",
@@ -646,7 +646,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   },
   {
    "id": "pop-rastrero",
@@ -716,7 +716,7 @@
     128,
     128
    ],
-   "proa": "derecha"
+   "proa": "sin orientación"
   }
  ]
 }

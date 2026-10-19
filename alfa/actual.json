@@ -1,8 +1,8 @@
 {
- "build": 254,
- "hash": "00da308",
- "fecha": "2026-10-19T17:38:16Z",
- "mensaje": "Nova: naves enemigas de las 8 facciones (rastrero, fusilero, sepulturero, capitán y nido; 40 sprites) registradas en enemigos.json, y su script enemigos_faccion.py",
+ "build": 255,
+ "hash": "95e656a",
+ "fecha": "2026-10-19T17:39:51Z",
+ "mensaje": "Nova: los nidos de cada sector también son de su facción; el arte nuevo de los 40 enemigos de facción ya se ve en partida (los nidos sin orientación)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

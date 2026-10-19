@@ -1,8 +1,8 @@
 {
- "build": 261,
- "hash": "8a69294",
- "fecha": "2026-10-19T18:24:41Z",
- "mensaje": "Versiones y notas del despliegue con core de dos monedas: crush 0.1.20, decks 0.2.2, nova 0.3.6, ratkov 0.2.10, rouflage 0.2.31, rumble 0.9.139, survivors 0.1.52, tacticas 0.1.36, td 0.13.68",
+ "build": 262,
+ "hash": "6ee2e0a",
+ "fecha": "2026-10-19T18:30:25Z",
+ "mensaje": "Nova: el jefe de cada sector es la nave del líder de la facción que lo controla (su nombre; su arte cuando llegue, mientras tanto el Rey de los huesos)",
  "juegos": {
   "crush": "0.1.20",
   "dark": "0.2.7",

@@ -34,7 +34,8 @@ function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? 
 // Las palabras clave de una carta según sus cifras (se añaden al final del texto).
 const DC_PALABRAS = [['despedida', 'Despedida.'], ['indefinido', 'Contrato indefinido.'], ['madrugador', 'Madrugador.']];
 function dcPalabras(fx) { return DC_PALABRAS.filter(([k]) => fx[k]).map(([, t]) => tr(t)); }
-function dcTextoCarta(carta) { const fx = dcFx(carta), p = dcPalabras(fx); return tr(DC_CARTAS[carta.id].texto, fx) + (p.length ? ' ' + p.join(' ') : ''); }
+// `rabia`: lo que la Fuerza suma ahora al daño de la carta; sale como «4(+x)».
+function dcTextoCarta(carta, rabia) { let fx = dcFx(carta); const p = dcPalabras(fx); if (rabia && fx.dano && !fx.protocolo) fx = Object.assign({}, fx, { dano: fx.dano + '(+' + rabia + ')' }); return tr(DC_CARTAS[carta.id].texto, fx) + (p.length ? ' ' + p.join(' ') : ''); }
 // El mismo texto en HTML, con las cifras y palabras de `resalta` marcadas (para enseñar un ascenso).
 function dcTextoCartaHTML(carta, resalta) {
   const fx = dcFx(carta), esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));

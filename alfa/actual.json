@@ -1,8 +1,8 @@
 {
- "build": 239,
- "hash": "563bba1",
- "fecha": "2026-10-19T10:44:02Z",
- "mensaje": "Decks: capítulo 2 Phony en remoto, cierre de Microblizz y bonus de productividad",
+ "build": 240,
+ "hash": "f1b61fe",
+ "fecha": "2026-10-19T10:45:57Z",
+ "mensaje": "Decks: el daño de las cartas en mano muestra la Fuerza como 4(+x)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -120,7 +120,7 @@ function dcPintaCombate() {
   mano.style.setProperty('--wc', wc + 'px'); mano.style.setProperty('--sol', n > 1 ? Math.max(0, (n * wc + (n - 1) * 6 - ancho) / (n - 1)).toFixed(1) + 'px' : '0px');
   C.mano.forEach((c, i) => {
     const fx = dcFx(c), racha = fx.dano || fx.bloqueo || fx.cura ? dcRacha(C, DC_CARTAS[c.id].tipo) : 0;
-    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, racha, al: () => dcTocaCarta(i) });
+    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, racha, rabia: dcRabiaCarta(C, c), al: () => dcTocaCarta(i) });
     const k = i - (n - 1) / 2; el.style.setProperty('--rot', (k * 3.5) + 'deg'); el.style.setProperty('--ty', (Math.abs(k) * 5) + 'px'); el.dataset.mano = i;
     mano.append(el);
   });
@@ -183,6 +183,8 @@ function dcTrasJugada() {
   if (C.fase === 'fin') setTimeout(() => DCC.alFin(C.resultado, C), Math.max(900, dur + 500));
 }
 // Una carta pintada: coste, dibujo, nombre y texto. Mantener pulsada la amplía.
+// La Fuerza (y la de los empleados del turno) que se suma al daño de la carta en mano.
+function dcRabiaCarta(C, c) { const fx = dcFx(c); return fx.dano && !fx.protocolo ? C.fuerza + (DC_CARTAS[c.id].tipo === 'empleado' ? C.fuerzaTurno : 0) : 0; }
 function dcPintaCarta(c, o = {}) {
   dcDescubre('c', c.id);   // vista una vez, sale en la Biblioteca
   const D = DC_CARTAS[c.id], d = dcEl('button', 'dc-carta dc-rar-' + D.rar + ' dc-tipo-' + D.tipo + (o.jugable === false ? ' dc-nojugable' : '') + (o.elegida ? ' dc-elegida' : '') + (c.asc ? ' dc-asc' : '') + (o.grande ? ' dc-grande' : ''));
@@ -190,7 +192,7 @@ function dcPintaCarta(c, o = {}) {
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
   const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
-  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c); tx.append(txi); d.append(cab, tx);
+  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c, o.rabia); tx.append(txi); d.append(cab, tx);
   if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;

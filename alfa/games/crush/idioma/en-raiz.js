@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.21
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the series' shared systems for the two-currency shop. You won't notice anything.",
+  "Microblizz ha vuelto a tocar la caja de la tienda. Phony dice que sigue sin dar el cambio.": "Microblizz has touched the shop till again. Phony says it still gives no change.",
   // 0.1.20
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
   "Microblizz ha estrenado una tienda con dos monedas y Phony ya ha preguntado cuál de las dos le deja comprarse otro caramelo.": "Microblizz has opened a shop with two currencies and Phony has already asked which one lets him buy another sweet.",

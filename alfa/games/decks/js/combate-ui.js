@@ -93,7 +93,9 @@ function dcPintaCombate() {
   const inf = dcEl('div', 'dc-lider-info');
   inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEfectosLider(C));
   if (C.companeros.length || C.protocolos.length) inf.append(dcPintaEquipo(C));
-  const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); o.onclick = ev => { ev.stopPropagation(); toast(tr(DC_OBJETOS[k].texto)); }; objs.append(o); }
+  // con más de 5 objetos van en dibujos pequeños para no comerse la mesa (tocar uno dice qué es y qué hace)
+  const mini = r.objetos.length > 5, objs = dcEl('div', 'dc-objetos' + (mini ? ' dc-objetos-mini' : ''));
+  for (const k of r.objetos) { const O = DC_OBJETOS[k], o = mini ? dcIcono('+', O.rar, 26, O.mini) : dcEl('span', 'dc-chip dc-chip-' + O.rar, tr(O.nombre)); o.title = tr(O.nombre) + ': ' + tr(O.texto); o.onclick = ev => { ev.stopPropagation(); toast(mini ? tr(O.nombre) + ': ' + tr(O.texto) : tr(O.texto)); }; objs.append(o); }
   if (r.objetos.length) inf.append(objs);
   med.append(lsp, inf);
   // acciones: la jugada del líder y las meriendas

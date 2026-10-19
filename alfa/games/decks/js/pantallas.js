@@ -85,7 +85,10 @@ function dcFinReunion(resultado, C) {
   s.append(dcTarjetaResultado(dcTituloNodo(n), tr(n.sala), [['nominas', '+' + nom, tr('bonus')], ['reloj', String(C.turno), tr('turnos')], ['vida', r.hp + '/' + r.hpMax, tr('vida')]]));
   const pasos = [];
   const ultimo = n.tipo === 'jefe' && dcEsUltimoActo(), finCap = n.tipo === 'jefe' && dcFinDeCapitulo();   // tras el último CEO no hay más premios; tras cualquier CEO, tampoco oferta de empleo
-  if (n.tipo === 'jefe' && !ultimo) pasos.push(() => dcEligeObjeto(['zanahoriaoro', 'cofre'], tr('Un objeto legendario del despacho')));
+  if (n.tipo === 'jefe' && !ultimo) {   // los legendarios que aún no tienes; con los dos ya en el bolsillo, un objeto normal (nunca uno repetido)
+    const leg = ['zanahoriaoro', 'cofre'].filter(k => !r.objetos.includes(k)), otro = leg.length ? null : dcObjetoAlAzar();
+    if (leg.length) pasos.push(() => dcEligeObjeto(leg, tr('Un objeto legendario del despacho'))); else if (otro) pasos.push(() => dcEligeObjeto([otro], tr('Alguien se ha dejado esto en la sala')));
+  }
   else if (n.tipo === 'elite') { const o = dcObjetoAlAzar(); if (o) pasos.push(() => dcEligeObjeto([o], tr('Alguien se ha dejado esto en la sala'))); }
   if (!finCap) pasos.push(() => dcOfertaEmpleo(n.tipo === 'jefe' ? 'legendaria' : n.tipo === 'minijefe' ? 'rara' : null));
   const sig = () => { const p = pasos.shift(); if (p) p(); else if (n.tipo === 'minijefe') dcFinDia(); else if (n.tipo === 'jefe') dcFinActo(); else { dcNodoResuelto(); dcPintaMapa(); } };

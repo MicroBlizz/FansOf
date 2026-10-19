@@ -13,7 +13,7 @@ DC_CAPITULOS.push({
   pausa: { titulo: 'Descanso en el sofá', nota: 'Cinco minutos de paz en el sofá, con el micrófono silenciado. Elige una cosa.' },
   tienda: { titulo: 'Tienda digital de Phony', nota: '«Todo es de alquiler, pero el alquiler lo pongo yo». Lola ha colado su mercadillo en la tienda de Phony.', dlc: true },
   correos: null,   // se rellena abajo con los eventos propios
-  cierre: { titulo: '¡Eres la nueva CEO de Phony!', texto: 'Chapman se desconecta con una última videollamada y tú heredas su cuenta, su sillón virtual y 4.000 suscripciones sin cancelar. Los servidores de Phony empiezan a hacer ruidos raros.',
+  cierre: { titulo: '¡Eres el nuevo CEO de Phony!', texto: 'Chapman se desconecta con una última videollamada y tú heredas su cuenta, su sillón virtual y 4.000 suscripciones sin cancelar. Los servidores de Phony empiezan a hacer ruidos raros.',
     sig: { titulo: 'Al día siguiente…', texto: 'Antes de tu primera llamada como CEO, IAhorro compra Phony por un euro. Lo hizo sola: redactó el contrato, la oferta y tu carta de despedida. Te contratan igualmente, como «supervisor humano». Es el cargo más corto del organigrama.', joke: 'IAhorro te ha enviado tu nómina: es una captura de pantalla de una nómina.', boton: 'EMPEZAR EN IAHORRO' } },
 });
 DC_CAMPANA.push(

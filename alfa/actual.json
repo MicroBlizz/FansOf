@@ -1,8 +1,8 @@
 {
- "build": 251,
- "hash": "f826fcf",
- "fecha": "2026-10-19T16:06:50Z",
- "mensaje": "Monedas en Rumble: gashapón en oro, pase en gemas, packs y sin anuncios solo con dinero real, y el cambio (tras el flag monedas)",
+ "build": 252,
+ "hash": "ccb4161",
+ "fecha": "2026-10-19T17:07:46Z",
+ "mensaje": "Decks: prueba de la campaña entera y arreglos que salieron",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

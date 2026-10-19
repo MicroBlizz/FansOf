@@ -1,8 +1,8 @@
 {
- "build": 243,
- "hash": "00dba45",
- "fecha": "2026-10-19T13:02:38Z",
- "mensaje": "Rouflage 0.2.30: nota y versión (mascotas, conjuntos, tienda con Acciones, baliza del fantasma)",
+ "build": 244,
+ "hash": "5d821ee",
+ "fecha": "2026-10-19T13:04:23Z",
+ "mensaje": "Monedas: core de las dos monedas (MONEDAS), plan y SQL borrador del cambio premium → juego",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

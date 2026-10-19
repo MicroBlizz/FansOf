@@ -60,6 +60,7 @@ const NUCLEO = (() => {
     'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
+    'js/sistema/monedas.js',       // las dos monedas de todo juego (nombres, iconos, ratio y el cambio premium → juego; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
@@ -90,6 +91,7 @@ const NUCLEO = (() => {
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
+    'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma

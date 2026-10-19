@@ -1,8 +1,8 @@
 {
- "build": 269,
- "hash": "d9cc545",
- "fecha": "2026-10-19T18:44:43Z",
- "mensaje": "Nova 0.3.8: naves jefe de facción y etapa 6",
+ "build": 270,
+ "hash": "4d7706b",
+ "fecha": "2026-10-19T18:46:11Z",
+ "mensaje": "Nova 0.3.8: nota con la nave jefe de rango 50",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

@@ -102,5 +102,6 @@ IDIOMA.add({
   "La especial se desbloquea al llegar al rango 15 con esa facción en la campaña.": "The special weapon unlocks when you reach rank 15 with that faction in the campaign.",
   "La secreta se desbloquea al pasarte la campaña con ella, liberando el núcleo de Microblizz. Desde entonces sale en las cartas de todas tus partidas.": "The secret weapon unlocks when you beat the campaign with it by liberating the Microblizz core. From then on it shows up in the cards of all your games.",
   "Se desbloquea al pasarte la campaña con %2": "Unlocks when you beat the campaign with %2",
-  "Se desbloquea al llegar al rango %#1 con %2": "Unlocks when you reach rank %1 with %2"
+  "Se desbloquea al llegar al rango %#1 con %2": "Unlocks when you reach rank %1 with %2",
+  "Nave de %1": "%1's ship"
 });

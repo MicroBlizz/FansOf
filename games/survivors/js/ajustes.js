@@ -13,6 +13,9 @@ const AJUSTES = {
   guardado: 'fosurv-save',   // la partida guardada de este juego: nunca se comparte con los otros
   servidor: { gachapon: true, economia: true },   // lo que hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel; los premios los valida con topes
   topes: { cajas: { vez: {}, dia: {}, calcula: 'cajas' }, recompensa: { vez: { gold: 3000, gems: 100 }, dia: { gold: 200000, gems: 3000 } } },
+  // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro).
+  // Mismo ratio que Rumble (1 gema «vale» 10 de oro: la tirada pasa de 50 gemas a 500 de oro); la fila `monedas` de flags (juego 'survivors') lo ajusta sin publicar.
+  monedas: { ratio: 10, cambio: 20 },   // cambiar oro por gemas cuesta 20 de oro por gema
   // lo que cambia respecto a la economía común (core/js/sistema/progreso.js: ECON)
   econ: {
     xpPerPlay: 0,

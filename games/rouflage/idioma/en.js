@@ -266,6 +266,8 @@ IDIOMA.add({
   "De camaleón": "As a chameleon",
   "De cazador": "As a hunter",
   "ENTENDIDO": "GOT IT",
+  "Hay <b>5 colados</b> pintados por la estación. Busca manchas raras: dibujos torcidos, colores que no casan.": "There are <b>5 intruders</b> painted around the station. Look for odd marks: crooked drawings, colours that don't match.",
+  "<b>Toca</b> donde creas que hay uno para despedirlo. Tiene que estar cerca y sin muros en medio.": "<b>Tap</b> where you think one is to fire it. It has to be close, with no walls in between.",
   "Tienes <b>60 segundos</b>. Busca un sitio: un suelo con dibujo, una pared, detrás de una planta…": "You have <b>60 seconds</b>. Pick a spot: a patterned floor, a wall, behind a plant…",
   "Toca <b>PINTAR</b>. Elige tu <b>postura</b>, toca el suelo para coger su color y píntate con el pincel, líneas, cuadrados o círculos. Con <b>Calco</b> ves el suelo a través de ti.": "Tap <b>PAINT</b>. Pick your <b>pose</b>, tap the floor to grab its colour and paint yourself with the brush, lines, squares or circles. With <b>Trace</b> you see the floor through you.",
   "Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.": "Tap <b>FREEZE</b>: your outline, shadow and ears vanish. Only the paint is left.",

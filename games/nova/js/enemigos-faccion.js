@@ -2,7 +2,7 @@
 // Arte: «<facción>-<tipo>» en arte/enemigos/enemigos.json (como los de No-Muertos). Mientras no llega, se dibuja la nave de esa facción
 // (rastrero = caza, fusilero = corbeta, sepulturero = fragata, capitán = crucero pesado) girada con la proa a la derecha.
 // Armas: llevan los portadores y cargas de las tres armas de su facción (si un portador no lo usa el enemigo, como los drones, se queda el suyo).
-// El nido de la facción solo cambia de arte; el jefe sigue siendo el de No-Muertos. Fuera de la campaña (y en No-Muertos o el núcleo de Microblizz) nada cambia.
+// El nido de la facción solo cambia de arte; el jefe es la nave de su líder (misma IA que el Rey de los huesos, su arte y su nombre). Fuera de la campaña (y en No-Muertos o el núcleo de Microblizz) nada cambia.
 'use strict';
 const NV_ENEM_FAC_ETAPA = { rastrero: 0, fusilero: 1, sepulturero: 2, capitan: 3 };
 function nvFacSector(S) { const f = S.duenoSector; return f && f !== 'nomuertos' && NOVA_FACCIONES[f] ? f : null; }
@@ -10,6 +10,12 @@ function nvFacSector(S) { const f = S.duenoSector; return f && f !== 'nomuertos'
 function nvEnemigoFaccion(S, e) {
   const f = nvFacSector(S); if (!f) return;
   if (e.tipo === 'nido') { e.fac = f; e.spr = f + '-nido'; return; }   // el nido solo cambia de arte (sin arte propio se queda el de No-Muertos)
+  if (e.tipo === 'jefe') {   // el jefe es la nave del líder de la facción: misma IA, su arte (sin arte propio se queda el Rey) y su nombre
+    e.fac = f; e.spr = f + '-jefe';
+    const L = typeof FACTIONS !== 'undefined' && FACTIONS[f] && FACTIONS[f].leader;
+    if (L) e.d = Object.assign({}, e.d, { nombre: 'Nave de ' + nvCapNombre(L) });
+    return;
+  }
   if (!(e.tipo in NV_ENEM_FAC_ETAPA)) return;
   e.fac = f; e.spr = f + '-' + e.tipo;
   const F = NOVA_FACCIONES[f], ops = ['insignia', 'secreta', 'especial'].map(t => F[t]).filter(a => a && NV_ARMA_E[a.portador]);

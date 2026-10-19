@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.140
+  "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the series' shared systems for the two-currency shop. You won't notice anything.",
+  "Microblizz ha repasado el cambio de oro a gemas. Phony sigue convencido de que el redondeo es cosa suya.": "Microblizz has gone over the gold-to-gems exchange. Phony remains convinced the rounding is his.",
   // 0.9.139
   "<b>TIENDA CON DOS MONEDAS</b>: el oro se gana jugando y es lo único con lo que se tira en el gashapón, con las probabilidades a la vista; las gemas se compran y sirven para el pase, los cosméticos y las ventajas, y puedes cambiar oro por gemas (caro). Los packs y quitar los anuncios son solo con dinero real, sin azar. Además, mejoras por dentro en los sistemas de la serie.": "<b>TWO-CURRENCY SHOP</b>: gold is earned by playing and is the only thing used for the gacha, with the odds in plain sight; gems are bought and used for the pass, cosmetics and perks, and you can swap gold for gems (expensive). Packs and removing ads are real money only, with no luck involved. Plus under-the-hood improvements to the series' systems.",
   "Microblizz ha separado la moneda que se gana de la que se compra y Phony ha reclamado la de ganar, que dice que es la única honesta.": "Microblizz has split the currency you earn from the one you buy and Phony has claimed the earned one, which he says is the only honest one.",

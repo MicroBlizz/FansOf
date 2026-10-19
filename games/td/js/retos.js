@@ -167,7 +167,7 @@ const RETOS = {
       ['speed', 'speed2', 1, 20, 'Con prisa', 'Pon la partida a velocidad x2.', 'El tiempo es oro. Y el oro, de Microblizz.', 'Pista: hay un botón para ir más rápido.'],
       ['export', 'export', 1, 20, 'Copia de seguridad', 'Exporta tu progreso en Opciones.', 'Que no te lo cierren.', 'Pista: mira en Opciones.'],
       ['scrapp', 'scrapperf', 1, 60, 'Esto no se tira', 'Despide una copia de calidad CEO (perfecta).', '¿Seguro que no la querías?', 'Pista: despedir algo que no deberías.'],
-      ['broke', 'broke', 1, 30, 'Sin blanca', 'Quédate con 0 gemas después de girar el gashapón.', 'Microblizz te quiere mucho.', 'Pista: gástalo todo.'],
+      ['broke', 'broke', 1, 30, 'Sin blanca', 'Quédate a cero después de girar el gashapón.', 'Microblizz te quiere mucho.', 'Pista: gástalo todo.'],
       ['prem', () => (SAVE.pass && SAVE.pass.prem ? 1 : 0), 1, 30, 'VIP', 'Activa el pase premium.', 'Gratis en esta versión. Que no se entere el CEO.', 'Pista: el pase tiene dos caminos.'],
       ['full', 'idlefull', 1, 30, 'Almacén lleno', 'Recoge las HORAS EXTRA con el almacén lleno (12 h).', 'Tu líder ya estaba durmiendo.', 'Pista: deja trabajar a tu líder mucho, mucho tiempo.'],
       ['swap', 'idleswap', 1, 20, 'Cambio de turno', 'Cambia de líder en las HORAS EXTRA.', 'Turno de día, turno de noche.', 'Pista: cualquiera puede hacer horas extra.'],

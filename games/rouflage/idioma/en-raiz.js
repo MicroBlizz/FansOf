@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.32
+  "<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the two-currency shop is now ready in this game, although it is not open yet.",
+  "Microblizz ha dejado listas las dos monedas en Rouflage. Phony ha pedido que las mascotas cobren comisión.": "Microblizz has got the two currencies ready in Rouflage. Phony has asked that the pets charge a commission.",
   // 0.2.31
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
   "Microblizz ha puesto dos monedas en la tienda de Rouflage. Phony ha pedido que las mascotas cobren por quedarse quietas.": "Microblizz has put two currencies in the Rouflage shop. Phony has asked that the pets charge for standing still.",

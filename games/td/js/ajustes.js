@@ -16,6 +16,9 @@ const AJUSTES = {
   // lo máximo que el servidor deja ganar por motivo (suma a los de core/js/sistema/economia.js); ver PLAN-CUENTAS.md, 15.13
   topes: { recompensa: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 }, calcula: ['camp', 'otro'] } },   // en campaña el servidor calcula el premio; en VS cuenta la xp del pase
   servidor: { gachapon: true, economia: true },   // lo que ya hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel
+  // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro).
+  // Mismo ratio que Rumble (1 gema «vale» 10 de oro: la tirada pasa de 50 gemas a 500 de oro); la fila `monedas` de flags (juego 'td') lo ajusta sin publicar.
+  monedas: { ratio: 10, cambio: 20 },   // cambiar oro por gemas cuesta 20 de oro por gema
   campRegla: 'todos',   // un mundo se abre cuando se han pasado todos los niveles del anterior (en Rumble, el último)
   guardado: 'fortd-save',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // lo que cambia respecto a la economía común (core/js/meta.js: ECON). Lo que no salga aquí vale lo mismo que en el Rumble.

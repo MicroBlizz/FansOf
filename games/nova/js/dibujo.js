@@ -185,7 +185,7 @@ function nvDibujaSalto(c, s, S) {
   const g = c.createLinearGradient(-largo, 0, r, 0); g.addColorStop(0, 'rgba(111,227,255,0)'); g.addColorStop(1, 'rgba(191,244,255,.85)');
   c.fillStyle = g; c.fillRect(-largo, -r * 0.35, largo + r, r * 0.7);
   c.globalCompositeOperation = 'source-over';
-  const f = nvFacSector(S), sid = f && s.tipo in NV_ENEM_FAC_ETAPA ? f + '-' + s.tipo : '';
+  const f = nvFacSector(S), sid = f && (s.tipo in NV_ENEM_FAC_ETAPA || s.tipo === 'jefe') ? f + '-' + s.tipo : '';
   if (sid && !NVE.meta[sid]) nvFacSpriteEnemigo(sid);
   const im = NVE.img[sid && NVE.meta[sid] ? sid : s.tipo];
   if (im && im.complete && im.naturalWidth) { const t = r * 2.6, est = 1 + 2.5 * (1 - k); c.globalAlpha = 0.4 + 0.6 * k; c.drawImage(im, -t * est / 2, -t / 2, t * est, t); c.globalAlpha = 1; }

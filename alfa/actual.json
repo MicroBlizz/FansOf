@@ -1,8 +1,8 @@
 {
- "build": 233,
- "hash": "4093769",
- "fecha": "2026-10-19T09:38:18Z",
- "mensaje": "Rouflage: tienda más visual (iconos de moneda, flechas de cambio, aviso de lo que falta, «te invita» al azar)",
+ "build": 234,
+ "hash": "80fe7d5",
+ "fecha": "2026-10-19T10:02:28Z",
+ "mensaje": "Nova: los asteroides eligen entre varias imágenes (asteroide, asteroide-2…) si las hay",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

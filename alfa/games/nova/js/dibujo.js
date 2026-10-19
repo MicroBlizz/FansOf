@@ -28,7 +28,11 @@ function nvCargaEnemigos() {
 }
 // Dibuja el sprite del enemigo (proa a la derecha) del tamaño de su radio; devuelve false si no hay PNG listo.
 function nvSpriteEnemigo(c, e, S) {
-  const im = NVE.img[e.tipo], m = NVE.meta[e.tipo];
+  if (e.tipo === 'asteroide' && !e.spr) {   // variedad: «asteroide», «asteroide-2», «asteroide-3»… de enemigos.json, una por roca
+    const vs = Object.keys(NVE.meta).filter(k => k === 'asteroide' || k.indexOf('asteroide-') === 0);
+    if (vs.length) e.spr = vs[Math.floor((e.forma || 0) * vs.length) % vs.length];
+  }
+  const im = NVE.img[e.spr || e.tipo], m = NVE.meta[e.spr || e.tipo];
   if (!im || !im.complete || !im.naturalWidth) return false;
   const redondo = m.proa !== 'derecha', t = e.r * (redondo ? 2.3 : 2.6);   // las naves son alargadas: su largo supera el círculo de choque
   c.save();

@@ -1,8 +1,8 @@
 {
- "build": 253,
- "hash": "8410c02",
- "fecha": "2026-10-19T17:28:59Z",
- "mensaje": "Nova: en cada sector de la campaña los rastreros, fusileros, sepultureros y capitanes son de la facción que lo controla (su nave como arte provisional y las armas de su facción)",
+ "build": 254,
+ "hash": "00da308",
+ "fecha": "2026-10-19T17:38:16Z",
+ "mensaje": "Nova: naves enemigas de las 8 facciones (rastrero, fusilero, sepulturero, capitán y nido; 40 sprites) registradas en enemigos.json, y su script enemigos_faccion.py",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

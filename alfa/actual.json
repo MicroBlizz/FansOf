@@ -1,8 +1,8 @@
 {
- "build": 265,
- "hash": "0a25fc7",
- "fecha": "2026-10-19T18:33:53Z",
- "mensaje": "Versiones y notas por el cambio de core: crush 0.1.21, decks 0.2.3, nova 0.3.7, ratkov 0.2.11, rumble 0.9.140, tacticas 0.1.37",
+ "build": 266,
+ "hash": "6d7b818",
+ "fecha": "2026-10-19T18:34:55Z",
+ "mensaje": "Rouflage: inglés de los pasos del cazador en la ayuda",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

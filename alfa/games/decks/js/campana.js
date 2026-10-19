@@ -3,34 +3,34 @@
 // lucha contra el CEO, que cierra el capítulo. DCP.run.acto (la semana, en DC_CAMPANA) y DCP.run.dia dicen dónde vas; el mapa del día se genera al empezarlo.
 // Los capítulos van en DC_CAPITULOS (su lugar, rangos, textos de cierre y adornos); el de Phony y sus semanas están en campana-phony.js.
 'use strict';
-const DC_HORAS = ['9:00', '11:00', '13:00', '17:00'];   // las tres primeras horas se eligen; la de las 17:00 es la cita con el final del día
+const DC_HORAS = ['11:00', '13:00', '17:00'];   // las dos primeras horas se eligen (reunión, correo, pausa o Economato); la de las 17:00 es la cita con el final del día
 // horas: lo que hay a cada hora (se baraja). fin: el rival de las 17:00 (tipo 'minijefe' o 'jefe'). descanso: lo que cura la noche (fracción de la vida máxima).
 const DC_CAMPANA = [
   { cap: 0, titulo: 'Primera semana',
     cierre: { titulo: 'Fin del primer acto', texto: 'El jefe de departamento firma tu traslado y desaparece por el pasillo sin mirarte. Pero el calendario no perdona: es martes otra vez y la agenda ya está llena.', joke: 'Microblizz felicita a la plantilla por «completar la semana». Phony cobra la felicitación.' }, dias: [
-    { dia: 'Lunes', nivel: 1, descanso: 0, horas: [['facil', 'facil', 'correo'], ['facil', 'normal', 'pausa'], ['normal', 'economato', 'correo']],
+    { dia: 'Lunes', nivel: 1, descanso: 0, horas: [['facil', 'facil', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_soporte', cita: 'Ticket urgente de un cliente', sala: 'Sala Becario', sub: 'Soporte de nivel 3 te espera', texto: 'Primer día. Microblizz te ha dado una taza, un portátil sin cargador y una agenda que da miedo.' },
-    { dia: 'Martes', nivel: 1, descanso: 0.25, horas: [['facil', 'normal', 'correo'], ['normal', 'normal', 'pausa'], ['normal', 'economato', 'correo']],
+    { dia: 'Martes', nivel: 1, descanso: 0.25, horas: [['facil', 'normal', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_descarga', cita: 'Actualización obligatoria', sala: 'Sala Ping-Pong', sub: 'Descarga99 te espera', texto: 'Han actualizado el edificio durante la noche. Los ascensores ahora piden contraseña.' },
-    { dia: 'Miércoles', nivel: 2, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['normal', 'pausa', 'correo'], ['elite', 'normal', 'economato']],
+    { dia: 'Miércoles', nivel: 2, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_licencia', cita: 'Reunión de recortes', sala: 'Sala Alineamiento', sub: 'LicenciaBot te espera', texto: 'A mitad de semana huele a recortes. Y a café quemado, pero eso es siempre.' },
-    { dia: 'Jueves', nivel: 2, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['normal', 'elite', 'pausa'], ['normal', 'economato', 'correo']],
+    { dia: 'Jueves', nivel: 2, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_plus', cita: 'Presentación del plan Plus', sala: 'Pecera', sub: 'PayPlus te espera', texto: 'Hoy toca vender la suscripción de la suscripción. Nadie sabe qué incluye.' },
-    { dia: 'Viernes', nivel: 2, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['normal', 'elite', 'pausa'], ['normal', 'economato', 'pausa']],
+    { dia: 'Viernes', nivel: 2, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'survivalbot', cita: 'Evaluación de desempeño', sala: 'Última planta', sub: 'SurvivalBot te espera', texto: 'Viernes de evaluaciones. RR. HH. ha sacado a pasear a su robot.' },
-    { dia: 'Lunes', nivel: 2, descanso: 0.5, ascenso: true, horas: [['normal', 'normal', 'correo'], ['elite', 'normal', 'pausa'], ['normal', 'economato', 'pausa']],
+    { dia: 'Lunes', nivel: 2, descanso: 0.5, ascenso: true, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'jefedpto', tipoFin: 'jefe', cita: 'Reunión con tu jefe de departamento', sala: 'Despacho 3B', sub: 'Jefe de departamento', texto: 'Has sobrevivido a una semana entera. Alguien en el piso de arriba se ha dado cuenta.' },
   ] },
   { cap: 0, titulo: 'Segunda semana', dias: [
-    { dia: 'Martes', nivel: 3, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['normal', 'elite', 'pausa'], ['normal', 'economato', 'correo']],
+    { dia: 'Martes', nivel: 3, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_troll', cita: 'Moderación de la reunión', sala: 'Sala Sinergia', sub: 'TrollBot te espera', texto: 'Ya eres Junior, y los pasillos lo notan. Los de abajo te saludan; los de arriba te vigilan.' },
-    { dia: 'Miércoles', nivel: 3, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['normal', 'elite', 'pausa'], ['normal', 'economato', 'pausa']],
+    { dia: 'Miércoles', nivel: 3, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_stonks', cita: 'Cierre de cifras', sala: 'Sala Hoja de Cálculo', sub: 'Stonks te espera', texto: 'Las cifras del trimestre siempre suben. Lo que baja es la gente que las firma.' },
-    { dia: 'Jueves', nivel: 3, descanso: 0.25, horas: [['normal', 'normal', 'correo'], ['elite', 'normal', 'pausa'], ['normal', 'economato', 'correo']],
+    { dia: 'Jueves', nivel: 3, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_fallen', cita: 'Revisión de proyecto', sala: 'Pecera', sub: 'FallenHero te espera', texto: 'Hoy toca revisar el proyecto con el director. Trae la armadura, la de la empresa, no la de metal.' },
-    { dia: 'Viernes', nivel: 3, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'normal', 'pausa'], ['normal', 'economato', 'pausa']],
+    { dia: 'Viernes', nivel: 3, descanso: 0.25, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'm_prime', cita: 'Auditoría de producto', sala: 'Última planta', sub: 'StarBot Prime te espera', texto: 'Último día antes del fin de semana. Si nada se rompe, será la primera vez.' },
-    { dia: 'Lunes', nivel: 3, descanso: 0.5, rrhh: true, horas: [['normal', 'normal', 'correo'], ['elite', 'normal', 'pausa'], ['normal', 'economato', 'pausa']],
+    { dia: 'Lunes', nivel: 3, descanso: 0.5, rrhh: true, horas: [['normal', 'elite', 'correo'], ['normal', 'economato', 'pausa']],
       fin: 'ceo', tipoFin: 'jefe', cita: 'Reunión con el CEO', sala: 'Última planta', sub: 'El CEO de Microblizz', texto: 'Recursos Humanos te ha llamado a primera hora. «Es solo una charla», dice. Nadie lo cree.' },
   ] },
 ];
@@ -61,7 +61,7 @@ function dcEncuentro(tipo, nivel, usados) {
   const l = DC_ENCUENTROS[tipo][Math.min(nivel, DC_ENCUENTROS[tipo].length) - 1]; let k = (Math.random() * l.length) | 0;
   if (l.length > 1 && usados[tipo] === k) k = (k + 1) % l.length; usados[tipo] = k; return l[k].slice();
 }
-// La agenda del día: tres horas a elegir y, a las 17:00, la cita con el final del día. Los encuentros se fijan al generarla (la partida es reproducible al recargar).
+// La agenda del día: dos horas a elegir y, a las 17:00, la cita con el final del día. Los encuentros se fijan al generarla (la partida es reproducible al recargar).
 function dcGeneraMapa(dia) {
   const usados = {}, T0 = dcTitulosCap(), cap = dcCap(), correos = shuffle(dcCorreosCap().map(c => c.id)), salas = shuffle(dcSalasCap().slice()), vistos = {};
   const pisos = dia.horas.map(h => shuffle(h.slice()).map(tipo => ({ tipo, enc: DC_ENCUENTROS[tipo] ? dcEncuentro(tipo, dia.nivel, usados) : null })));

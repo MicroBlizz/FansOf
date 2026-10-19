@@ -37,7 +37,7 @@ function dcPintaMapa() {
   m.pisos.forEach((piso, p) => {
     const estado = p < m.piso ? 'pasada' : p === m.piso ? 'actual' : p === sig ? 'siguiente' : 'futura';
     const fila = dcEl('div', 'dc-hora dc-hora-' + estado);
-    const eti = dcEl('div', 'dc-hora-eti'); eti.append(dcEl('b', '', DC_HORAS[p]), dcEl('small', '', tr({ pasada: 'Hecho', actual: 'Ahora', siguiente: 'Elige', futura: 'Más tarde' }[estado])));
+    const eti = dcEl('div', 'dc-hora-eti'); eti.append(dcEl('b', '', p === m.pisos.length - 1 ? '17:00' : DC_HORAS[p] || '13:00'), dcEl('small', '', tr({ pasada: 'Hecho', actual: 'Ahora', siguiente: 'Elige', futura: 'Más tarde' }[estado])));
     const citas = dcEl('div', 'dc-citas');
     // la cita elegida va la primera: se lee la hora y debajo lo que se dejó de lado
     const eleg = dcElegidoEn(p), orden = piso.map((n, k) => k); if (eleg >= 0) { orden.splice(orden.indexOf(eleg), 1); orden.unshift(eleg); }

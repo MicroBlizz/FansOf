@@ -1,8 +1,8 @@
 {
- "build": 256,
- "hash": "5b5cee7",
- "fecha": "2026-10-19T17:53:25Z",
- "mensaje": "Monedas: fuera el cambio de gemas a oro; el puente va de oro a gemas (caro) y cosméticos y ventajas solo en gemas",
+ "build": 257,
+ "hash": "d5b94c1",
+ "fecha": "2026-10-19T18:06:48Z",
+ "mensaje": "Decks: dos horas a elegir cada día en vez de tres, para que la campaña dure la mitad",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -14,13 +14,14 @@ function dcSubtituloNodo(n) {
 // Un dato de la cabecera: icono dibujado y cifra.
 function dcDato(icono, texto, cls) { const d = dcEl(cls && cls.includes('dc-dato-mazo') ? 'button' : 'span', 'dc-dato ' + (cls || '')); d.append(dcSvg(icono), dcEl('span', '', texto)); return d; }
 
-// ---------- cabecera común: vida, nóminas, mazo ----------
+// ---------- cabecera común: vida, bonus, mazo ----------
 function dcCabecera(titulo, volver) {
   const r = DCP.run, h = dcEl('header', 'dc-cab');
   if (volver) { const b = dcEl('button', 'dc-volver'); b.append(dcSvg('atras')); b.setAttribute('aria-label', tr('Volver')); b.onclick = volver; h.append(b); }
   h.append(dcEl('h2', 'ol', titulo));
   const d = dcEl('div', 'dc-datos');
-  d.append(dcDato('vida', r.hp + '/' + r.hpMax, 'dc-dato-vida'), dcDato('nominas', fmt(r.nominas), 'dc-dato-nom'));
+  const nom = dcDato('nominas', fmt(r.nominas), 'dc-dato-nom'); nom.title = tr('Bonus de productividad: dinero extra para gastar en el Economato'); nom.onclick = () => toast(nom.title);
+  d.append(dcDato('vida', r.hp + '/' + r.hpMax, 'dc-dato-vida'), nom);
   const m = dcDato('mazo', String(r.mazo.length), 'dc-dato-mazo'); m.title = tr('Tu mazo'); m.onclick = () => dcVerCartas(tr('Tu mazo'), r.mazo); d.append(m);
   h.append(d); return h;
 }
@@ -36,7 +37,7 @@ function dcPintaMapa() {
   m.pisos.forEach((piso, p) => {
     const estado = p < m.piso ? 'pasada' : p === m.piso ? 'actual' : p === sig ? 'siguiente' : 'futura';
     const fila = dcEl('div', 'dc-hora dc-hora-' + estado);
-    const eti = dcEl('div', 'dc-hora-eti'); eti.append(dcEl('b', '', DC_HORAS[p]), dcEl('small', '', tr({ pasada: 'Hecho', actual: 'Ahora', siguiente: 'Elige', futura: 'Más tarde' }[estado])));
+    const eti = dcEl('div', 'dc-hora-eti'); eti.append(dcEl('b', '', p === m.pisos.length - 1 ? '17:00' : DC_HORAS[p] || '13:00'), dcEl('small', '', tr({ pasada: 'Hecho', actual: 'Ahora', siguiente: 'Elige', futura: 'Más tarde' }[estado])));
     const citas = dcEl('div', 'dc-citas');
     // la cita elegida va la primera: se lee la hora y debajo lo que se dejó de lado
     const eleg = dcElegidoEn(p), orden = piso.map((n, k) => k); if (eleg >= 0) { orden.splice(orden.indexOf(eleg), 1); orden.unshift(eleg); }
@@ -69,7 +70,7 @@ function dcResuelveNodo() {
   if (r.pendiente === 'dia') return dcPintaDia();
   if (!n || !r.pendiente) return dcPintaMapa();
   if (n.enc) return dcEmpiezaReunion(n.enc, n.tipo, dcFinReunion);
-  if (n.tipo === 'correo') return dcPintaCorreo(DC_CORREOS.find(c => c.id === n.correo) || DC_CORREOS[0]);
+  if (n.tipo === 'correo') return dcPintaCorreo(dcBuscaCorreo(n.correo));
   if (n.tipo === 'pausa') return dcPintaPausa();
   if (n.tipo === 'economato') return dcPintaEconomato();
   dcNodoResuelto(); dcPintaMapa();
@@ -81,12 +82,15 @@ function dcFinReunion(resultado, C) {
   play('win');
   const [a, b] = DC_NOMINAS[n.tipo]; const nom = a + Math.round(Math.random() * (b - a)) + (dcVentaja() && dcVentaja().nominas ? dcVentaja().nominas : 0); r.nominas += nom;
   const s = dcPanel(tr(n.tipo === 'jefe' ? '¡Despacho conquistado!' : n.tipo === 'minijefe' ? '¡Día superado!' : '¡Reunión ganada!'), n.tipo);
-  s.append(dcTarjetaResultado(dcTituloNodo(n), tr(n.sala), [['nominas', '+' + nom, tr('nóminas')], ['reloj', String(C.turno), tr('turnos')], ['vida', r.hp + '/' + r.hpMax, tr('vida')]]));
+  s.append(dcTarjetaResultado(dcTituloNodo(n), tr(n.sala), [['nominas', '+' + nom, tr('bonus')], ['reloj', String(C.turno), tr('turnos')], ['vida', r.hp + '/' + r.hpMax, tr('vida')]]));
   const pasos = [];
-  const ultimo = n.tipo === 'jefe' && dcEsUltimoActo();   // tras el CEO no hay más premios: se acaba el mundo
-  if (n.tipo === 'jefe' && !ultimo) pasos.push(() => dcEligeObjeto(['zanahoriaoro', 'cofre'], tr('Un objeto legendario del despacho')));
+  const ultimo = n.tipo === 'jefe' && dcEsUltimoActo(), finCap = n.tipo === 'jefe' && dcFinDeCapitulo();   // tras el último CEO no hay más premios; tras cualquier CEO, tampoco oferta de empleo
+  if (n.tipo === 'jefe' && !ultimo) {   // los legendarios que aún no tienes; con los dos ya en el bolsillo, un objeto normal (nunca uno repetido)
+    const leg = ['zanahoriaoro', 'cofre'].filter(k => !r.objetos.includes(k)), otro = leg.length ? null : dcObjetoAlAzar();
+    if (leg.length) pasos.push(() => dcEligeObjeto(leg, tr('Un objeto legendario del despacho'))); else if (otro) pasos.push(() => dcEligeObjeto([otro], tr('Alguien se ha dejado esto en la sala')));
+  }
   else if (n.tipo === 'elite') { const o = dcObjetoAlAzar(); if (o) pasos.push(() => dcEligeObjeto([o], tr('Alguien se ha dejado esto en la sala'))); }
-  if (!ultimo) pasos.push(() => dcOfertaEmpleo(n.tipo === 'jefe' ? 'legendaria' : n.tipo === 'minijefe' ? 'rara' : null));
+  if (!finCap) pasos.push(() => dcOfertaEmpleo(n.tipo === 'jefe' ? 'legendaria' : n.tipo === 'minijefe' ? 'rara' : null));
   const sig = () => { const p = pasos.shift(); if (p) p(); else if (n.tipo === 'minijefe') dcFinDia(); else if (n.tipo === 'jefe') dcFinActo(); else { dcNodoResuelto(); dcPintaMapa(); } };
   DCC.siguiente = sig;
   const bt = dcEl('button', 'btn-big ol', tr('SEGUIR')); bt.onclick = sig; s.append(bt);
@@ -102,16 +106,16 @@ function dcTarjetaResultado(titulo, sub, fichas, derrota) {
 function dcPanel(titulo, fondo) { const s = document.getElementById('dc-panel'); s.textContent = ''; dcMuestra('dc-panel'); dcPonFondo(s, fondo || null); if (DCP.run) s.append(dcCabecera(titulo)); else s.append(dcEl('h2', 'ol', titulo)); return s; }
 function dcOfertaEmpleo(premio) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(tr('Oferta de empleo'), n && n.tipo);
-  s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra 15 nóminas.')));
+  s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra un bonus de 15.')));
   const g = dcEl('div', 'dc-rejilla dc-oferta');
-  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') ids[0] = 'sp_pulgas'; else if (premio === 'rara') ids[0] = dcCartaRara();
+  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') ids[0] = DC_LEGENDARIAS[(Math.random() * DC_LEGENDARIAS.length) | 0]; else if (premio === 'rara') ids[0] = dcCartaRara();
   ids.forEach(id => { const c = dcCarta(id); g.append(dcPintaCarta(c, { grande: true, al: () => { play('card'); r.mazo.push(c); dcGuarda(); DCC.siguiente(); } })); });
   s.append(g);
-  const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 nóminas')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);
+  const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 de bonus')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);
 }
 function dcEligeObjeto(ids, titulo) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(titulo, n && n.tipo), g = dcEl('div', 'dc-rejilla');
-  ids.forEach(k => { const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
+  ids.forEach(k => { dcDescubre('o', k); const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
   s.append(g);
 }
 // ---------- la ventaja fiscal: se elige una al empezar la partida ----------
@@ -141,6 +145,10 @@ function dcAplicaCorreo(fx) {
   if (fx.vida) dcVida(fx.vida);
   if (fx.objeto) { const o = dcObjetoAlAzar(); if (o) { r.objetos.push(o); toast(tr('Objeto nuevo: {n}', { n: tr(DC_OBJETOS[o].nombre) }), true); } }
   if (fx.merienda && r.meriendas.length < 2) r.meriendas.push(pick(Object.keys(DC_MERIENDAS)));
+  if (fx.suscripcion) { r.suscripcion = { cuota: 6, cura: 8 }; toast(tr('Suscrito al Plan Bienestar'), true); }
+  if (fx.perderAzar && r.mazo.length > 5) r.mazo.splice((Math.random() * r.mazo.length) | 0, 1);
+  if (fx.duplicaAzar && r.mazo.length) { const c = pick(r.mazo); r.mazo.push(Object.assign({}, c)); toast(tr('Un clon gris de {c} entra en tu mazo', { c: dcNombre(c) }), true); }
+  if (fx.ascensoAzar) { const c = pick(r.mazo.filter(x => !x.asc && DC_CARTAS[x.id].asc)); if (c) { c.asc = true; toast(tr('{c} asciende', { c: dcNombre(c) }), true); } }
   if (r.hp <= 0) { dcFinPartida(false); return dcPintaFin(false); }
   play('select');
   if (fx.carta === 'quitar') return dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); luego(); });
@@ -151,8 +159,8 @@ function dcAplicaCorreo(fx) {
 }
 // ---------- la pausa para el café ----------
 function dcPintaPausa() {
-  const r = DCP.run, s = dcPanel(tr('Pausa para el café'), 'pausa'), luego = () => { dcNodoResuelto(); dcPintaMapa(); };
-  s.append(dcEl('p', 'dc-nota', tr('Cinco minutos de paz en la cafetería. Elige una cosa.')));
+  const r = DCP.run, P = dcCap().pausa || {}, s = dcPanel(tr(P.titulo || 'Pausa para el café'), 'pausa'), luego = () => { dcNodoResuelto(); dcPintaMapa(); };
+  s.append(dcEl('p', 'dc-nota', tr(P.nota || 'Cinco minutos de paz en la cafetería. Elige una cosa.')));
   const cura = Math.round(r.hpMax * 0.3);
   const b1 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b1.append(dcEl('b', '', tr('Descansar')), dcEl('span', '', tr('Te curas {n}.', { n: cura }))); b1.onclick = () => { dcVida(cura); play('heal'); luego(); };
   const b2 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b2.append(dcEl('b', '', tr('Ascender una carta')), dcEl('span', '', tr('Becario → Junior: la carta mejora sus cifras.')));
@@ -163,34 +171,43 @@ function dcPintaPausa() {
 // ---------- el Economato de Lola ----------
 function dcPintaEconomato() {
   const r = DCP.run, n = dcNodoActual();
-  if (!n.tienda) { n.tienda = { cartas: dcOferta(3).map(id => ({ id, precio: dcPrecioCarta(id) })), objeto: dcObjetoAlAzar(), merienda: pick(Object.keys(DC_MERIENDAS)) }; dcGuarda(); }
-  const T = n.tienda, s = dcPanel(tr('Economato de Lola'), 'economato'), desc = x => Math.round(x * (1 - (dcVentaja() && dcVentaja().descuento ? dcVentaja().descuento : 0)));
-  s.append(dcEl('p', 'dc-nota', tr('«Lo que ves es lo que hay. Y lo que hay, lo he sacado yo del almacén de Microblizz».')));
-  const compra = (precio, fn) => { if (r.nominas < precio) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } r.nominas -= precio; play('levelup'); fn(); dcGuarda(); dcPintaEconomato(); };
+  if (!n.tienda) {
+    n.tienda = { cartas: dcOferta(3).map(id => ({ id, precio: dcPrecioCarta(id) })), objeto: dcObjetoAlAzar(), merienda: pick(Object.keys(DC_MERIENDAS)) };
+    if ((dcCap().tienda || {}).dlc) { const id = dcCartaRara(); n.tienda.cartas[0] = { id, precio: Math.round(dcPrecioCarta(id) * 1.5), dlc: true }; }   // en la tienda de Phony, una carta «DLC»: más cara
+    dcGuarda();
+  }
+  const T = n.tienda, TC = dcCap().tienda || {}, s = dcPanel(tr(TC.titulo || 'Economato de Lola'), 'economato'), desc = x => Math.round(x * (1 - (dcVentaja() && dcVentaja().descuento ? dcVentaja().descuento : 0)));
+  s.append(dcEl('p', 'dc-nota', tr(TC.nota || '«Lo que ves es lo que hay. Y lo que hay, lo he sacado yo del almacén de Microblizz».')));
+  const compra = (precio, fn) => { if (r.nominas < precio) { play('deny'); toast(tr('No tienes bonus suficiente')); return; } r.nominas -= precio; play('levelup'); fn(); dcGuarda(); dcPintaEconomato(); };
   const g = dcEl('div', 'dc-rejilla dc-oferta');
-  T.cartas.forEach(it => { if (it.vendida) return; const c = dcCarta(it.id), w = dcEl('div', 'dc-producto'); w.append(dcPintaCarta(c, { grande: true, al: () => compra(desc(it.precio), () => { r.mazo.push(c); it.vendida = true; }) }), dcEl('b', 'dc-precio', fmt(desc(it.precio)))); g.append(w); });
+  T.cartas.forEach(it => { if (it.vendida) return; const c = dcCarta(it.id), w = dcEl('div', 'dc-producto'); w.append(dcPintaCarta(c, { grande: true, al: () => compra(desc(it.precio), () => { r.mazo.push(c); it.vendida = true; }) }), dcEl('b', 'dc-precio', fmt(desc(it.precio))));
+    if (it.dlc) w.prepend(dcEl('small', 'dc-dlc', tr('DLC'))); g.append(w); });
   s.append(g);
   const fila = dcEl('div', 'dc-fila');
+  if (T.objeto) dcDescubre('o', T.objeto); if (T.merienda) dcDescubre('o', 'm:' + T.merienda);
   if (T.objeto && !T.objetoVendido) { const O = DC_OBJETOS[T.objeto], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto)), dcEl('b', 'dc-precio', String(desc(120)))); b.onclick = () => compra(desc(120), () => { r.objetos.push(T.objeto); T.objetoVendido = true; }); fila.append(b); }
   if (T.merienda && !T.meriendaVendida) { const M = DC_MERIENDAS[T.merienda], b = dcEl('button', 'dc-objeto dc-rar-common'); b.append(dcEl('b', '', tr(M.nombre)), dcEl('span', '', tr(M.texto)), dcEl('b', 'dc-precio', String(desc(35)))); b.disabled = r.meriendas.length >= 2; b.onclick = () => compra(desc(35), () => { r.meriendas.push(T.merienda); T.meriendaVendida = true; }); fila.append(b); }
   const q = dcEl('button', 'dc-objeto dc-rar-basic'); q.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Lola la pierde «sin querer» en el archivo.')), dcEl('b', 'dc-precio', fmt(desc(r.quitarPrecio))));
-  q.onclick = () => { if (r.nominas < desc(r.quitarPrecio)) { play('deny'); toast(tr('No tienes nóminas suficientes')); return; } dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.nominas -= desc(r.quitarPrecio); r.quitarPrecio += 15; r.mazo.splice(r.mazo.indexOf(c), 1); play('levelup'); dcGuarda(); dcPintaEconomato(); }); };
+  q.onclick = () => { if (r.nominas < desc(r.quitarPrecio)) { play('deny'); toast(tr('No tienes bonus suficiente')); return; } dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.nominas -= desc(r.quitarPrecio); r.quitarPrecio += 15; r.mazo.splice(r.mazo.indexOf(c), 1); play('levelup'); dcGuarda(); dcPintaEconomato(); }); };
   fila.append(q); s.append(fila);
   const b = dcEl('button', 'btn-big ol', tr('SALIR')); b.onclick = () => { dcNodoResuelto(); dcPintaMapa(); }; s.append(b);
 }
 // ---------- el final ----------
 function dcPintaFin(victoria) {
-  const s = dcPanel(tr(victoria ? '¡MUNDO 1 SUPERADO!' : 'DESPIDO FULMINANTE'), victoria ? 'jefe' : 'correo'), u = DCP.meta.ultima || {};
-  s.append(dcTarjetaResultado(tr(victoria ? 'Campaña de Microblizz completada' : 'Jornada truncada'), tr('Oficinas de Microblizz'), [['reunion', String(u.dias || 0), tr('días')], ['elite', String(u.nodos || 0), tr('citas')], ['ataque', String(u.reuniones || 0), tr('ganadas')], ['reloj', String(u.turnos || 0), tr('turnos')], ['pausa', String(u.min || 0), tr('min')]], !victoria));
-  s.append(dcEl('p', 'dc-nota', tr(victoria ? 'De becario a la última planta: el CEO ha firmado tu carta de despido… y ha acabado él con la caja de cartón. Lo que hay más arriba llegará en una versión futura.' : 'Microblizz te ha echado del edificio. Lola dice que la puerta de atrás sigue abierta.')));
-  s.append(dcEl('p', 'dc-nota dc-joke', tr(victoria ? 'Microblizz ha emitido un comunicado: el CEO «ha decidido explorar nuevos retos». Phony le ha ofrecido una suscripción.' : 'Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.')));
+  const u = DCP.meta.ultima || {}, CP = DC_CAPITULOS[u.cap || 0], F = CP.final || { titulo: '¡CAMPAÑA SUPERADA!', carta: 'Campaña completada', texto: 'Has llegado hasta el final de lo que hay por ahora.', joke: 'Phony ha enviado una factura por el viaje.' };
+  const s = dcPanel(tr(victoria ? F.titulo : 'DESPIDO FULMINANTE'), victoria ? 'jefe' : 'correo');
+  s.append(dcTarjetaResultado(tr(victoria ? F.carta : 'Jornada truncada'), tr(CP.lugar), [['reunion', String(u.dias || 0), tr('días')], ['elite', String(u.nodos || 0), tr('citas')], ['ataque', String(u.reuniones || 0), tr('ganadas')], ['reloj', String(u.turnos || 0), tr('turnos')], ['pausa', String(u.min || 0), tr('min')]], !victoria));
+  s.append(dcEl('p', 'dc-nota', tr(victoria ? F.texto : 'Microblizz te ha echado del edificio. Lola dice que la puerta de atrás sigue abierta.')));
+  if (victoria && u.paro) s.append(dcEl('p', 'dc-nota', tr('Has aguantado en {n}.', { n: dcParoNombre(u.paro) })));
+  if (victoria && u.abre) s.append(dcEl('p', 'dc-nota', tr('Se abre el paro +{n}: rivales algo más duros.', { n: (DCP.meta.paroMax || 0) })));
+  s.append(dcEl('p', 'dc-nota dc-joke', tr(victoria ? F.joke : 'Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.')));
   const b = dcEl('button', 'btn-big ol', tr('A LA PORTADA')); b.onclick = () => dcPortada(); s.append(b);
 }
 // ---------- cómo se juega ----------
 function dcComoSeJuega() {
   const v = dcVentana(tr('Cómo se juega'));
   const ul = dcEl('ol', 'steps');
-  for (const t of ['Tu semana en Microblizz son días de agenda llena de reuniones: cada hora eliges a cuál vas y a las 17:00 te espera el minijefe del día. Cinco días, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Arrástrala hasta el rival, o tócala y toca después a quién; las de área se sueltan en cualquier sitio de la zona de rivales.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny pega +1 con cada empleado por cada empleado jugado antes en el turno. Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'Las nóminas se gastan en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada cita.', 'Jugando desbloqueas Ventajas fiscales: al empezar una partida eliges una y vale hasta el final.'])
+  for (const t of ['Tu semana en Microblizz son días de agenda llena de reuniones: cada hora eliges a cuál vas y a las 17:00 te espera el minijefe del día. Cinco días, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.', 'En cada reunión robas 5 cartas y tienes 3 de CAOS. Jugar una carta cuesta su CAOS. Tócala dos veces o arrástrala hasta el rival; las de área se sueltan en cualquier sitio de la zona de rivales. Un solo toque solo la marca (y, si pide objetivo, tocas después a quién). Mantenla pulsada para leerla en grande.', 'Cada rival enseña encima lo que hará en su turno: ataque con su daño, defensa, cura, refuerzos o Spam.', 'El bloqueo para daño y desaparece al acabar tu turno. Fuerza suma al daño; Vulnerable recibe +50 %; Débil pega −25 %.', 'CrazyBunny es de los Animales Locos y lleva su pasiva, Racha salvaje: cada carta que juegas suma +1 al daño, el bloqueo o la cura de la siguiente de su mismo tipo en ese turno (hasta +5). Su Salto del caos se carga con el CAOS que gastas en cartas y sale gratis: pega a todos los rivales.', 'A partir del turno 6 es la hora de cierre: CAOS doble y los rivales pegan un 50 % más. Acaba rápido.', 'El bonus de productividad es el dinero extra que cobras al ganar reuniones y se gasta en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada cita.', 'Jugando desbloqueas Ventajas fiscales: al empezar una partida eliges una y vale hasta el final.'])
     ul.append((() => { const li = dcEl('li'); li.append(dcEl('span', 'n', String(ul.children.length + 1)), dcEl('span', '', tr(t))); return li; })());
   v.append(ul); const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }

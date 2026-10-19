@@ -15,21 +15,31 @@
 .dc-joke { color: var(--chaos-lite); }
 .dc-aviso { min-height: 18px; font-size: 14px; font-weight: 800; color: var(--gold); text-align: center; }
 
-/* portada */
-#dc-portada { justify-content: center; gap: 12px; }
-#dc-portada .logo { display: flex; flex-direction: column; align-items: center; animation: dc-logo 1.2s cubic-bezier(.2, .8, .3, 1) both; }
-@keyframes dc-logo { from { opacity: 0; transform: translateY(-20px) scale(.92); } to { opacity: 1; transform: none; } }
-#dc-portada .l1 { font-size: 32px; letter-spacing: 3px; }
-#dc-portada .l2 { font-size: 82px; color: var(--chaos-lite); line-height: .95; background: linear-gradient(#fff 0%, var(--chaos-lite) 45%, var(--chaos) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 6px 0 var(--outline)) drop-shadow(0 12px 24px rgba(212, 60, 255, .35)); text-shadow: none; }
-#dc-portada-arte { display: block; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .5)); animation: dc-flota-suave 3.2s ease-in-out infinite alternate; }
-@keyframes dc-flota-suave { from { transform: translateY(0); } to { transform: translateY(-6px); } }
-#dc-portada .tagline { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-dim); margin: 0; }
-.dc-col { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.dc-col .btn-big { font-size: 28px; padding: 14px 44px 9px; }
+/* portada: como la de Rumble (logo de la serie, botón grande, fichas con dibujo y «Cómo se juega»), regla de Arkioner 19-10-2026 */
+#dc-portada { justify-content: safe center; gap: 10px; overflow-y: auto; }
+#dc-portada.dc-con-partida #dc-portada-arte { height: 120px; width: auto; } #dc-portada.dc-con-partida .logo .l2 { font-size: 96px; }
+#dc-portada .logo { margin: 0; line-height: .92; }
+#dc-portada .logo .l1 { font-size: 46px; animation: logoBob 3.2s ease-in-out infinite; }
+#dc-portada .logo .l2 { font-size: 112px; animation: logoWob 3.2s ease-in-out infinite; }
+#dc-portada-arte { display: block; max-width: 100%; filter: drop-shadow(0 6px 0 rgba(20, 8, 34, .35)); }
+#dc-portada .tagline { margin: 0; }
+.dc-col { display: flex; flex-direction: column; gap: 12px; align-items: center; width: 100%; }
+.dc-col .btn-big { font-size: 30px; padding: 14px 52px 9px; }
+#dc-portada .home-grid { grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 400px; }
+#dc-portada .home-tile { color: var(--ink); padding: 8px 2px 6px; } #dc-portada .home-tile svg { width: 34px; height: 34px; } #dc-portada .home-tile span { font-size: 13px; }
+.dc-estado { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-dim); }
+.dc-col .btn-big, .dc-col .btn-mode { white-space: nowrap; }
+@media (max-width: 380px) { .dc-col .btn-big { font-size: 26px; padding: 12px 34px 8px; } }
+@media (max-height: 700px) { #dc-portada { gap: 6px; } #dc-portada .logo .l1 { font-size: 34px; } #dc-portada .logo .l2 { font-size: 80px; } #dc-portada-arte { height: 112px; width: auto; } .dc-col { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { #dc-portada .logo .l1, #dc-portada .logo .l2 { animation: none; } }
+/* opciones */
+.dc-ventana .opt-list { max-width: none; } .dc-ventana .opt-row { box-sizing: border-box; width: 100%; }
+.dc-version { margin: 0; font-size: 12px; color: var(--ink-dim); font-weight: 700; }
+.dc-news { width: 100%; text-align: left; } .dc-news h4 { margin: 8px 0 4px; color: var(--gold); font-size: 13px; letter-spacing: 1px; } .dc-news ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.35; } .dc-news li { margin-bottom: 6px; } .dc-news .joke { color: var(--ink-dim); font-style: italic; }
 
 /* cabecera común */
 .dc-cab { width: 100%; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.dc-cab h2 { font-size: 24px; margin: 0; flex: 1; text-align: left; letter-spacing: .5px; }
+.dc-cab h2 { font-size: 24px; line-height: 1.1; margin: 0; flex: 1 1 60%; min-width: 60%; text-align: left; letter-spacing: .5px; }   /* un título largo se queda su línea entera y las cifras bajan debajo */
 .dc-volver { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--dc-linea); background: rgba(255, 255, 255, .06); color: var(--ink); cursor: pointer; padding: 0; }
 .dc-volver .dc-svg { width: 24px; height: 24px; } .dc-volver:active { transform: scale(.94); }
 .dc-datos { display: flex; gap: 6px; align-items: center; }
@@ -109,3 +119,34 @@
 .dc-premio:nth-child(2) .dc-svg { color: var(--dc-azul); } .dc-premio:nth-child(3) .dc-svg { color: var(--danger); } .dc-premio:nth-child(4) .dc-svg { color: var(--dc-verde); }
 .dc-chip-ventaja { background: linear-gradient(90deg, #8a6a12, #5a4208); border-color: rgba(255, 203, 61, .6); }
 .dc-ventaja.dc-cerrada { opacity: .5; cursor: default; } .dc-ventaja.dc-cerrada .dc-riesgo { background: #4a3a5a; } .dc-ventaja .dc-riesgo { background: #2f8a1c; }
+/* Biblioteca (js/biblioteca.js): pestañas, filtros y lo tapado con su «?» */
+.dc-bib-pestanas { display: flex; gap: 6px; width: 100%; }
+.dc-bib-pestana { flex: 1; min-height: 40px; padding: 6px 4px; border-radius: 12px; border: 2px solid var(--dc-linea); background: rgba(255, 255, 255, .05); color: var(--ink-dim); font: 400 15px/1 var(--font-display); cursor: pointer; }
+.dc-bib-pestana[aria-pressed="true"] { color: #fff; border-color: var(--gold); background: rgba(255, 203, 61, .14); }
+.dc-bib-filtros { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.dc-bib-filtro { min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--dc-linea); background: transparent; color: var(--ink-dim); font: 800 13px var(--font-ui); cursor: pointer; }
+.dc-bib-filtro[aria-pressed="true"] { color: var(--outline); background: var(--gold); border-color: var(--gold); }
+.dc-bib-tapado { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border-radius: 14px; border: 2px dashed rgba(255, 255, 255, .22); background: rgba(10, 4, 20, .45); color: var(--ink-dim); box-sizing: border-box; }
+.dc-bib-tapado b { font: 400 40px/1 var(--font-display); color: rgba(255, 255, 255, .45); }
+.dc-bib-tapado span { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; }
+.dc-bib-tapado-carta { width: 104px; min-height: 150px; }
+.dc-bib-tapado-rival { width: 118px; min-height: 132px; }
+.dc-bib-tapado-fila { width: 100%; min-height: 72px; flex-direction: row; gap: 12px; } .dc-bib-tapado-fila b { font-size: 30px; }
+.dc-bib-rival { width: 118px; min-height: 132px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 14px; border: 1px solid var(--dc-linea); background: rgba(255, 255, 255, .05); box-sizing: border-box; text-align: center; cursor: pointer; }
+.dc-bib-rival b { font-size: 13px; line-height: 1.15; } .dc-bib-rival span { font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.dc-bib-rival.dc-rival-elite { border-color: rgba(208, 140, 255, .55); } .dc-bib-rival.dc-rival-jefe { border-color: rgba(255, 181, 71, .7); }
+.dc-bib-cat { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--gold); }
+.dc-objeto.dc-bib-objeto { flex-direction: row; align-items: center; gap: 12px; cursor: default; } .dc-bib-objeto > div:last-child { display: flex; flex-direction: column; gap: 2px; }
+/* Color por tipo de carta (regla de Arkioner, 19-10-2026): el mismo que la intención del rival que representa.
+   Empleado ataca (rojo), Trámite defiende (azul), Directiva potencia (naranja), Compañero refuerza (oro), Spam (magenta), Cláusula debilita (lila). */
+.dc-tipo-empleado { --tc: #ff4b5c; } .dc-tipo-tarea { --tc: #2fc7b3; } .dc-tipo-tramite { --tc: #4aa8f0; } .dc-tipo-directiva { --tc: #ff9a3c; }
+.dc-tipo-companero { --tc: #f2b62a; } .dc-tipo-protocolo { --tc: #8f7bff; } .dc-tipo-clausula { --tc: #b9a6d8; } .dc-tipo-spam { --tc: #d43cff; }
+.dc-carta .dc-ctipo { align-self: center; padding: 1px 7px; border-radius: 999px; background: var(--tc, rgba(0, 0, 0, .3)); color: #fff; opacity: 1; text-shadow: 0 1px 0 var(--outline); box-shadow: 0 0 0 1.5px var(--outline); }
+/* la Racha salvaje que se lleva la carta de la mano */
+.dc-racha { position: absolute; left: -8px; top: 22px; z-index: 2; min-width: 26px; height: 26px; padding: 0 4px; box-sizing: border-box; display: grid; place-items: center; border-radius: 13px; border: 2px solid var(--outline); background: var(--gold); color: #fff; font: 400 14px/1 var(--font-display); }
+.dc-efecto[class*="dc-tipo-"] { border: 1.5px solid var(--tc); }
+.dc-bib-selects { display: flex; gap: 6px; width: 100%; } .dc-bib-select { flex: 1; min-width: 0; min-height: 34px; padding: 4px 8px; border-radius: 10px; border: 1px solid var(--dc-linea); background: rgba(20, 10, 32, .85); color: var(--ink); font: 800 13px var(--font-ui); }
+.dc-bib-grupos { width: 100%; display: flex; flex-direction: column; gap: 4px; } .dc-bib-grupos .dc-rejilla { padding-top: 4px; }
+.dc-bib-grupo { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 15px; } .dc-bib-grupo small { color: var(--ink-dim); font: 800 12px var(--font-ui); }
+.dc-bib-grupo-tipo { padding: 2px 10px; border-radius: 999px; background: var(--tc); color: #fff; text-shadow: 0 1px 0 var(--outline); box-shadow: 0 0 0 2px var(--outline); }
+.dc-paro-fila { display: flex; align-items: center; gap: 8px; margin: 10px 0; } .dc-paro-fila .dc-opcion { flex: 1; align-items: center; text-align: center; } .dc-paro-fila button { width: 48px; height: 48px; font-size: 24px; padding: 0; }

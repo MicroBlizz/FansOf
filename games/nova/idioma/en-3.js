@@ -63,6 +63,7 @@ IDIOMA.add({
   "Cada arma es un portador (railgun, flak, láser, lanzador o drones) con una carga: cinética, energía, térmica, explosiva o EM.": "Each weapon is a carrier (railgun, flak, laser, launcher or drones) with a charge: kinetic, energy, thermal, explosive or EM.",
   "Cada portador solo admite las cargas que tienen sentido: no hay láseres cinéticos.": "Each carrier only takes the charges that make sense: there are no kinetic lasers.",
   "Las cargas dejan estados en el enemigo. Si otra carga le da encima, salta una reacción con daño extra.": "Charges leave states on enemies. If another charge hits on top, a reaction fires with extra damage.",
+  "El jefe pilota como una persona y avisa antes de atacar: una línea discontinua marca su cañón y los anillos de balas dejan un hueco. Colócate bien.": "The boss flies like a person and warns before attacking: a dashed line marks its cannon and the bullet rings leave a gap. Position yourself well.",
   "ESPECIALIDADES": "SPECIALTIES",
   "Cinética: golpea el casco; contra un escudo rebota y hace solo un 60 %.": "Kinetic: hits the hull; against a shield it bounces and does only 60 %.",
   "Energía: hace el doble de daño a los escudos y lo normal al casco.": "Energy: double damage to shields and normal damage to the hull.",

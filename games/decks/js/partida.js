@@ -34,7 +34,8 @@ function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? 
 // Las palabras clave de una carta según sus cifras (se añaden al final del texto).
 const DC_PALABRAS = [['despedida', 'Despedida.'], ['indefinido', 'Contrato indefinido.'], ['madrugador', 'Madrugador.']];
 function dcPalabras(fx) { return DC_PALABRAS.filter(([k]) => fx[k]).map(([, t]) => tr(t)); }
-function dcTextoCarta(carta) { const fx = dcFx(carta), p = dcPalabras(fx); return tr(DC_CARTAS[carta.id].texto, fx) + (p.length ? ' ' + p.join(' ') : ''); }
+// `rabia`: lo que la Fuerza suma ahora al daño de la carta; sale como «4(+x)».
+function dcTextoCarta(carta, rabia) { let fx = dcFx(carta); const p = dcPalabras(fx); if (rabia && fx.dano && !fx.protocolo) fx = Object.assign({}, fx, { dano: fx.dano + '(+' + rabia + ')' }); return tr(DC_CARTAS[carta.id].texto, fx) + (p.length ? ' ' + p.join(' ') : ''); }
 // El mismo texto en HTML, con las cifras y palabras de `resalta` marcadas (para enseñar un ascenso).
 function dcTextoCartaHTML(carta, resalta) {
   const fx = dcFx(carta), esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -62,20 +63,20 @@ function dcElegidoEn(p) { const m = DCP.run.mapa; if (p > m.piso) return -1; if 
 function dcNodoActual() { const m = DCP.run.mapa; return m.piso >= 0 ? m.pisos[m.piso][m.nodo] : null; }
 // A qué citas se puede ir ahora: a cualquiera de la hora siguiente (cada hora se elige una reunión de la agenda).
 function dcNodosPosibles() { const m = DCP.run.mapa, p = m.piso + 1; return p < m.pisos.length ? m.pisos[p].map((n, i) => [p, i]) : []; }
-function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = DC_TITULOS[n.tipo]; return tr(T[(n.titulo || 0) % T.length]); }
+function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = dcTitulosCap()[n.tipo]; return tr(T[(n.titulo || 0) % T.length]); }
 
 // ---------- partida nueva ----------
-function dcNuevaPartida(lider, ventaja) {
+function dcNuevaPartida(lider, ventaja, paro) {
   const L = DC_LIDERES[lider], V = ventaja && DC_VENTAJAS[ventaja] ? DC_VENTAJAS[ventaja] : null, hp = L.hp + (V && V.vidaMax ? V.vidaMax : 0);
   DCP.run = { lider, ventaja: V ? ventaja : null, hp, hpMax: hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: null, acto: 0, dia: 0,
-    quitarUsado: false, quitarPrecio: 60, rango: 0, stats: { reuniones: 0, turnos: 0, nodos: 0, dias: 0 }, pendiente: null, empezada: Date.now() };
+    paro: paro || 0, quitarUsado: false, quitarPrecio: 60, rango: 0, stats: { reuniones: 0, turnos: 0, nodos: 0, dias: 0 }, pendiente: null, empezada: Date.now() };
   DCP.meta.partidas++;
   dcEmpiezaDia();
 }
 // Ir a un nodo: lo apunta como pendiente de resolver y guarda (si se recarga, se vuelve a ese nodo).
 function dcIrA(piso, nodo) { const m = DCP.run.mapa; m.piso = piso; m.nodo = nodo; m.elegidos = m.elegidos || []; m.elegidos[piso] = nodo; DCP.run.pendiente = m.pisos[piso][nodo].tipo; DCP.run.stats.nodos++; dcGuarda(); }
 function dcNodoResuelto() { if (DCP.run) { DCP.run.pendiente = null; dcGuarda(); } }
-function dcFinPartida(victoria) { if (victoria) DCP.meta.victorias++; DCP.meta.ultima = { victoria, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
+function dcFinPartida(victoria) { let abre = false; if (victoria) { DCP.meta.victorias++; abre = dcParoGana(); } DCP.meta.ultima = { victoria, paro: dcParo(), abre, cap: dcActo().cap, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
 
 // ---------- ofertas y azar ----------
 function dcRarezaAlAzar(pesos) { let t = 0; for (const k in pesos) t += pesos[k]; let r = Math.random() * t; for (const k in pesos) { r -= pesos[k]; if (r < 0) return k; } return 'basic'; }

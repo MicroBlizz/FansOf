@@ -16,7 +16,7 @@
 .dc-impacto-ataque { color: #fff; background: radial-gradient(circle, rgba(255, 75, 92, .85), rgba(255, 75, 92, 0) 70%); } .dc-impacto-cura { color: #fff; background: radial-gradient(circle, rgba(123, 224, 74, .85), rgba(123, 224, 74, 0) 70%); } .dc-impacto-defensa { color: #fff; background: radial-gradient(circle, rgba(90, 174, 255, .85), rgba(90, 174, 255, 0) 70%); } .dc-impacto-refuerzo { color: #fff; background: radial-gradient(circle, rgba(255, 203, 61, .85), rgba(255, 203, 61, 0) 70%); }
 @keyframes dc-impacto { 0% { transform: scale(.2); opacity: 0; } 35% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
 .dc-vuelo { position: absolute; z-index: 60; width: 32px; height: 32px; pointer-events: none; display: grid; place-items: center; } .dc-vuelo .dc-svg { width: 32px; height: 32px; filter: drop-shadow(0 2px 0 var(--outline)); }
-.dc-rival.dc-sale { animation: dc-sale .45s ease-in .75s both; pointer-events: none; } @keyframes dc-sale { to { opacity: 0; transform: scale(.6) translateY(20px); } }
+.dc-rival.dc-sale { animation: dc-sale .55s ease-in .7s both; pointer-events: none; } @keyframes dc-sale { 0% { filter: none; } 15% { filter: brightness(2.6) saturate(0); transform: scale(1.08); } 100% { opacity: 0; filter: brightness(1.6) saturate(0); transform: scale(.35) rotate(-14deg) translateY(30px); } }
 /* arrastrar cartas: el fantasma que sigue al dedo, el hueco en la mano y el blanco marcado */
 .dc-mano .dc-carta { touch-action: none; }
 .dc-carta-arrastre { position: absolute; z-index: 70; pointer-events: none; margin: 0 !important; transform: rotate(-3deg) scale(.8) !important; transform-origin: 50% 100%; box-shadow: 0 14px 28px rgba(0, 0, 0, .55); transition: box-shadow .15s; }
@@ -25,3 +25,26 @@
 .dc-arrastrando .dc-rivales { outline: 2px dashed rgba(255, 255, 255, .14); outline-offset: -6px; border-radius: 20px; }
 .dc-rivales.dc-apunta { outline: 3px solid var(--gold); background: rgba(255, 203, 61, .07); }
 .dc-rival.dc-apunta { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255, 203, 61, .3), 0 0 24px rgba(255, 203, 61, .35); transform: translateY(-4px); }
+
+/* la mirilla al arrastrar: blanca buscando, roja, girada y latiendo cuando fija un blanco; el cursor del ratón se esconde mientras */
+.dc-mirilla { position: absolute; z-index: 75; width: 46px; height: 46px; margin: -23px 0 0 -23px; pointer-events: none; transition: transform .14s cubic-bezier(.2, .8, .3, 1); filter: drop-shadow(0 3px 0 rgba(20, 8, 34, .5)); }
+.dc-mirilla svg { display: block; width: 100%; height: 100%; } .dc-mir-aro { stroke: #fff6ea; transition: stroke .14s; } .dc-mir-punto { fill: #fff6ea; transition: fill .14s; }
+.dc-mirilla.dc-fijada { transform: rotate(45deg) scale(1.15); } .dc-mirilla.dc-fijada .dc-mir-aro { stroke: #ff4b5c; } .dc-mirilla.dc-fijada .dc-mir-punto { fill: #ffcb3d; }
+.dc-mirilla.dc-fijada svg { animation: dc-late .6s ease-in-out infinite; } @keyframes dc-late { 50% { transform: scale(.86); } }
+.dc-sin-cursor, .dc-sin-cursor * { cursor: none !important; }
+/* con una carta marcada que pide objetivo, el ratón sobre un rival es una mirilla */
+.dc-rival.dc-elige { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Ccircle cx='24' cy='24' r='14' stroke='%2320102c' stroke-width='7'/%3E%3Cpath d='M24 2v11M24 35v11M2 24h11M35 24h11' stroke='%2320102c' stroke-width='7'/%3E%3Ccircle cx='24' cy='24' r='14' stroke='%23ff4b5c' stroke-width='3.5'/%3E%3Cpath d='M24 3v10M24 35v10M3 24h10M35 24h10' stroke='%23ff4b5c' stroke-width='3.5'/%3E%3C/g%3E%3Ccircle cx='24' cy='24' r='3.6' fill='%23ffcb3d' stroke='%2320102c' stroke-width='2'/%3E%3C/svg%3E") 16 16, crosshair; }
+/* la mano se reparte desde el mazo al empezar cada turno (propiedades sueltas para no pisar el abanico) */
+.dc-mano .dc-carta.dc-reparte { animation: dc-reparte .42s cubic-bezier(.2, .9, .3, 1.15) var(--d, 0ms) both; }
+@keyframes dc-reparte { 0% { translate: -160px 120px; rotate: -24deg; scale: .4; opacity: 0; } 70% { opacity: 1; } 100% { translate: 0 0; rotate: 0deg; scale: 1; opacity: 1; } }
+/* donde cae una carta: una onda de su color y chispas */
+.dc-onda { position: absolute; z-index: 61; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; pointer-events: none; border: 5px solid var(--tc); box-shadow: 0 0 22px var(--tc), inset 0 0 18px var(--tc); animation: dc-onda .6s cubic-bezier(.2, .8, .3, 1) both; }
+@keyframes dc-onda { 0% { transform: scale(.15); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; border-width: 1px; } }
+.dc-chispa { position: absolute; z-index: 62; width: 9px; height: 9px; border-radius: 3px; border: 2px solid var(--outline); pointer-events: none; transform: translate(-50%, -50%); }
+/* golpe gordo (10 o más): tiembla toda la sala */
+.dc-temblor { animation: dc-temblor .4s cubic-bezier(.36, .07, .19, .97) both; }
+@keyframes dc-temblor { 10%, 90% { translate: -2px 1px; } 20%, 80% { translate: 5px -2px; } 30%, 50%, 70% { translate: -8px 2px; } 40%, 60% { translate: 8px -1px; } }
+/* los botones de la reunión responden al ratón */
+.dc-boton:not(:disabled):hover { filter: brightness(1.12); transform: translateY(-1px); }
+.dc-fin:not(:disabled) { animation: dc-respira 2.2s ease-in-out infinite; } @keyframes dc-respira { 50% { box-shadow: 0 5px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, .45), 0 0 20px rgba(255, 154, 60, .55); } }
+@media (prefers-reduced-motion: reduce) { .dc-mano .dc-carta.dc-reparte, .dc-temblor, .dc-fin, .dc-mirilla.dc-fijada svg { animation: none; } }

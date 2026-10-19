@@ -8,7 +8,7 @@ const NV_ENEM = {
   asteroide: { nombre: 'Asteroide', hp: 60, vel: 0, r: 30, contacto: 0, chat: 10, tragable: 1, color: '#8a8fa8', pasivo: 1 },
   nido:      { nombre: 'Nido', hp: 700, vel: 0, r: 62, contacto: 14, chat: 90, color: '#7ad06b', pasivo: 0, nido: 1 },
   capitan:   { nombre: 'Capitán', hp: 1100, vel: 78, r: 52, contacto: 22, chat: 140, color: '#b49cff', esc: 200, capitan: 1 },
-  jefe:      { nombre: 'Rey de los huesos', hp: 7000, vel: 56, r: 80, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
+  jefe:      { nombre: 'Rey de los huesos', hp: 7000, vel: 0, r: 80, contacto: 30, chat: 120, color: '#c8b6ff', esc: 700, resiste: 'cinetica', jefe: 1 }
 };
 // Oleadas: a partir de `desde` segundos aparece ese tipo cada `cada` segundos (por tandas de `lote`).
 const NV_OLEADAS = [
@@ -38,6 +38,7 @@ function nvEnemigo(S, tipo, x, y, rango) {
   const e = { tipo, d, rango, x, y, vx: 0, vy: 0, r: d.r, hp: d.hp, hpMax: d.hp, esc: d.esc || 0, escMax: d.esc || 0, resiste: d.resiste || null, est: {}, calor: 0, dot: null, cd: 1 + Math.random(), flash: 0, golpe: 0, fase: Math.random() * 6.28, muerto: false };
   if (S.peligro > 1) { const kp = 1 + 0.25 * (S.peligro - 1); e.hp = e.hpMax = Math.round(e.hp * kp); }   // sectores peligrosos: enemigos más duros
   e.armas = nvArmasEnemigo(tipo, rango);
+  nvEnemigoFaccion(S, e);   // enemigos-faccion.js: en un sector de otra facción, sus naves y sus armas
   e.kf = nvFactor(rango);   // el alcance y el tamaño de las balas crecen con la nave, igual que las tuyas
     S.enem.push(e);
   return e;
@@ -57,7 +58,7 @@ function nvSpawn(S, dt) {
   }
   if (S.capMuertos >= 3 || S.t >= NV_TIEMPO_JEFE) {
     S.jefeSalto = true;
-    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; j.cd = 3; j.cdInv = 7; });
+    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); });
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
   }
 }
@@ -94,7 +95,7 @@ function nvEnemigos(S, dt) {
         nvDisparaE(S, e, w);
       }
     } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
-    else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = ux * (dist > 260 ? 1 : 0.2) - uy * 0.5; vy = uy * (dist > 260 ? 1 : 0.2) + ux * 0.5; }
+    else if (e.d.jefe) nvJefe(S, e, dt, ux, uy, dist, apagado);   // pilota solo (jefe.js)
     else { vx = ux; vy = uy; }
     if (e.armas) continue;   // las armadas ya se han movido solas (navegacion-enemiga.js)
     const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
@@ -138,17 +139,6 @@ function nvCapitan(S, e, dt, ux, uy, dist, apagado) {
 }
 function nvCapitanSube(e) {
   e.rango++; e.r *= 1.1; e.hpMax *= 1.3; e.hp = Math.min(e.hpMax, e.hp + e.hpMax * 0.25); e.d = Object.assign({}, e.d, { contacto: e.d.contacto + 4 });
-}
-function nvJefe(S, e, dt, ux, uy, dist, apagado) {
-  if (apagado) return;
-  const f2 = e.hp < e.hpMax / 2;
-  e.cd -= dt; e.cdInv -= dt;
-  if (e.cd <= 0 && e.vis) {   // salva radial
-    e.cd = f2 ? 2.4 : 3.4;
-    const k = f2 ? 18 : 12, a0 = Math.random() * 6.28;
-    for (let i = 0; i < k; i++) { const a = a0 + i * 6.283 / k; nvBalaE(S, e.x, e.y, Math.cos(a) * 210, Math.sin(a) * 210, 9, 6, 3.2, 'em'); }
-  }
-  if (e.cdInv <= 0) { e.cdInv = f2 ? 5 : 8; for (let i = 0; i < 4; i++) nvEnemigo(S, 'rastrero', e.x + (Math.random() - 0.5) * 80, e.y + (Math.random() - 0.5) * 80); }
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);

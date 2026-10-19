@@ -85,6 +85,638 @@
     256
    ],
    "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-2",
+   "nombre": "Asteroide de hielo",
+   "archivo": "asteroide-2.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-3",
+   "nombre": "Asteroide de cristal",
+   "archivo": "asteroide-3.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-4",
+   "nombre": "Asteroide de mena",
+   "archivo": "asteroide-4.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-5",
+   "nombre": "Asteroide de lava",
+   "archivo": "asteroide-5.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-6",
+   "nombre": "Asteroide alargado",
+   "archivo": "asteroide-6.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "asteroide-7",
+   "nombre": "Asteroide chatarra",
+   "archivo": "asteroide-7.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "animales-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "animales",
+   "tipo": "rastrero",
+   "archivo": "animales-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "animales-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "animales",
+   "tipo": "fusilero",
+   "archivo": "animales-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "animales-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "animales",
+   "tipo": "sepulturero",
+   "archivo": "animales-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "animales-capitan",
+   "nombre": "Capitán",
+   "faccion": "animales",
+   "tipo": "capitan",
+   "archivo": "animales-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "animales-nido",
+   "nombre": "Nido",
+   "faccion": "animales",
+   "tipo": "nido",
+   "archivo": "animales-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "streamers-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "streamers",
+   "tipo": "rastrero",
+   "archivo": "streamers-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "streamers-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "streamers",
+   "tipo": "fusilero",
+   "archivo": "streamers-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "streamers-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "streamers",
+   "tipo": "sepulturero",
+   "archivo": "streamers-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "streamers-capitan",
+   "nombre": "Capitán",
+   "faccion": "streamers",
+   "tipo": "capitan",
+   "archivo": "streamers-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "streamers-nido",
+   "nombre": "Nido",
+   "faccion": "streamers",
+   "tipo": "nido",
+   "archivo": "streamers-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "heroes-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "heroes",
+   "tipo": "rastrero",
+   "archivo": "heroes-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "heroes-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "heroes",
+   "tipo": "fusilero",
+   "archivo": "heroes-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "heroes-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "heroes",
+   "tipo": "sepulturero",
+   "archivo": "heroes-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "heroes-capitan",
+   "nombre": "Capitán",
+   "faccion": "heroes",
+   "tipo": "capitan",
+   "archivo": "heroes-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "heroes-nido",
+   "nombre": "Nido",
+   "faccion": "heroes",
+   "tipo": "nido",
+   "archivo": "heroes-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "ciber-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "ciber",
+   "tipo": "rastrero",
+   "archivo": "ciber-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "ciber-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "ciber",
+   "tipo": "fusilero",
+   "archivo": "ciber-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "ciber-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "ciber",
+   "tipo": "sepulturero",
+   "archivo": "ciber-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "ciber-capitan",
+   "nombre": "Capitán",
+   "faccion": "ciber",
+   "tipo": "capitan",
+   "archivo": "ciber-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "ciber-nido",
+   "nombre": "Nido",
+   "faccion": "ciber",
+   "tipo": "nido",
+   "archivo": "ciber-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "memes-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "memes",
+   "tipo": "rastrero",
+   "archivo": "memes-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "memes-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "memes",
+   "tipo": "fusilero",
+   "archivo": "memes-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "memes-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "memes",
+   "tipo": "sepulturero",
+   "archivo": "memes-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "memes-capitan",
+   "nombre": "Capitán",
+   "faccion": "memes",
+   "tipo": "capitan",
+   "archivo": "memes-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "memes-nido",
+   "nombre": "Nido",
+   "faccion": "memes",
+   "tipo": "nido",
+   "archivo": "memes-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "gamer-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "gamer",
+   "tipo": "rastrero",
+   "archivo": "gamer-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "gamer-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "gamer",
+   "tipo": "fusilero",
+   "archivo": "gamer-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "gamer-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "gamer",
+   "tipo": "sepulturero",
+   "archivo": "gamer-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "gamer-capitan",
+   "nombre": "Capitán",
+   "faccion": "gamer",
+   "tipo": "capitan",
+   "archivo": "gamer-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "gamer-nido",
+   "nombre": "Nido",
+   "faccion": "gamer",
+   "tipo": "nido",
+   "archivo": "gamer-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "olvidados-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "olvidados",
+   "tipo": "rastrero",
+   "archivo": "olvidados-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "olvidados-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "olvidados",
+   "tipo": "fusilero",
+   "archivo": "olvidados-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "olvidados-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "olvidados",
+   "tipo": "sepulturero",
+   "archivo": "olvidados-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "olvidados-capitan",
+   "nombre": "Capitán",
+   "faccion": "olvidados",
+   "tipo": "capitan",
+   "archivo": "olvidados-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "olvidados-nido",
+   "nombre": "Nido",
+   "faccion": "olvidados",
+   "tipo": "nido",
+   "archivo": "olvidados-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
+  },
+  {
+   "id": "pop-rastrero",
+   "nombre": "Rastrero",
+   "faccion": "pop",
+   "tipo": "rastrero",
+   "archivo": "pop-rastrero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "pop-fusilero",
+   "nombre": "Fusilero",
+   "faccion": "pop",
+   "tipo": "fusilero",
+   "archivo": "pop-fusilero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "pop-sepulturero",
+   "nombre": "Sepulturero",
+   "faccion": "pop",
+   "tipo": "sepulturero",
+   "archivo": "pop-sepulturero.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "pop-capitan",
+   "nombre": "Capitán",
+   "faccion": "pop",
+   "tipo": "capitan",
+   "archivo": "pop-capitan.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "pop-nido",
+   "nombre": "Nido",
+   "faccion": "pop",
+   "tipo": "nido",
+   "archivo": "pop-nido.png",
+   "ancho": 256,
+   "alto": 256,
+   "pivote": [
+    128,
+    128
+   ],
+   "proa": "sin orientación"
   }
  ]
 }

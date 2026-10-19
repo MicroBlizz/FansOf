@@ -17,7 +17,8 @@ const NV_TUTO = {
   { titulo: 'TU NAVE', ic: ['sis', 'casco'], lineas: [
     'Arriba tienes el casco (verde) y la barra de chatarra hasta el siguiente rango (amarilla).',
     'El mapa pequeño de abajo enseña a los enemigos y las estaciones.',
-    'Acaba con los capitanes y llegará el jefe del sector. Derrótalo para liberar el sector.'] }],
+    'Acaba con los capitanes y llegará el jefe del sector. Derrótalo para liberar el sector.',
+    'El jefe pilota como una persona y avisa antes de atacar: una línea discontinua marca su cañón y los anillos de balas dejan un hueco. Colócate bien.'] }],
   armasFaccion: [{ titulo: 'ARMAS DE FACCIÓN', ic: ['arma', 'railgun'], lineas: [
     'Cada facción tiene tres armas propias.',
     'La insignia la lleva su nave desde el principio y solo existe en ella.',

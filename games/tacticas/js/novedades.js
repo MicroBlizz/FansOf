@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.36', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota)."], joke: ["Microblizz ha puesto dos monedas en la tienda de las tácticas. Phony usa las dos para cambiar siempre la misma jugada."] },
   { v: '0.1.35', real: ["<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no."], joke: ["Microblizz apunta cuántas jugadas salen bien. Phony ha pedido que cuente también las que casi."] },
   { v: '0.1.34', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando."], joke: ["Microblizz ha reordenado las fichas por dentro. Phony dice que el rey ya no se esconde tras el peón."] },
   { v: '0.1.33', real: ["<b>FEEDBACK CON ESTRELLAS</b>: la pestaña de feedback pide ahora una nota de 1 a 5 y alguna pregunta corta sobre el último cambio. Y por dentro, los sistemas comunes siguen mejorando."], joke: ["Microblizz ha contado tus estrellas dos veces para asegurarse. Phony las cuenta aparte, en su cuenta."] },

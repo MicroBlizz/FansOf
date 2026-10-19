@@ -132,7 +132,12 @@ function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
   $('#gift-row').insertAdjacentHTML('beforeend', A.noAds
     ? `<div class="pack noads"><div class="pk-ic">${TV_SVG}</div><div><div class="pk-name ol">Sin anuncios</div><div class="pk-note">Ya lo tienes: los premios de los anuncios llegan al momento. Hoy: ${A.n} de ${ADS.dayMax}.</div></div></div>`
     : `<div class="pack noads"><span class="joke-flag">PARA SIEMPRE</span><div class="pk-ic">${TV_SVG}</div><div><div class="pk-name ol">Sin anuncios</div><div class="pk-note">Los premios de los anuncios (tirada gratis, premio x2, turbo…) te llegan al momento, sin ver nada. Hasta ${ADS.dayMax} al día.</div></div><button class="btn-price ol" id="btn-noads">${eur(ADS.noAdsEur)}</button></div>`);
-  const b = $('#btn-noads'); if (b) b.onclick = () => { play('select'); confirmBox('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', () => { adsState().noAds = true; stat('noads', 1); saveGame(); play('win'); buildShop(); toast('Sin anuncios: los premios te llegan al momento'); }); };
+  const sinAnuncios = () => { adsState().noAds = true; stat('noads', 1); saveGame(); play('win'); buildShop(); toast('Sin anuncios: los premios te llegan al momento'); };
+  const b = $('#btn-noads'); if (b) b.onclick = () => {
+    play('select');
+    if (MONEDAS.activo()) MONEDAS.compraReal('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b>`, sinAnuncios);   // solo con dinero real
+    else confirmBox('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', sinAnuncios);
+  };
 }
 function adMissionOffer(L, W) {   // cambiar una misión diaria o semanal que no te guste (las fijas no se cambian). W: semanales
   const rows = document.querySelectorAll('#mission-list .mission'), slot = W ? 'swapw' : 'swap';   // diarias: 2 al día · semanales: 6 a la semana

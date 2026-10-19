@@ -39,7 +39,7 @@ const NUCLEO = (() => {
     if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false; // la app de Android también es «localhost»
     return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   })();
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...] } })
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...] } })
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
   const COMUN = [
@@ -60,6 +60,7 @@ const NUCLEO = (() => {
     'js/serie/miniaturas.js', 'js/serie/miniaturas-armas.js', 'js/serie/miniaturas-cabeza-y-accesorios.js',   // los dibujos de sus miniaturas
     'js/sistema/progreso.js',      // economía, catálogo de cada juego, calidades, tienda y partida guardada
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
+    'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
@@ -90,6 +91,7 @@ const NUCLEO = (() => {
   const LIGERO = [
     'js/sistema/utiles.js', 'js/sistema/flags.js', 'js/sistema/sonido.js',
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
+    'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma

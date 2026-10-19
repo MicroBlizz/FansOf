@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.36
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (a new two-currency base for the shops, which is not visible yet).",
+  "Microblizz ha puesto dos monedas en la tienda de las tácticas. Phony usa las dos para cambiar siempre la misma jugada.": "Microblizz has put two currencies in the tactics shop. Phony uses both to swap the same play every time.",
   // 0.1.35
   "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
   "Microblizz apunta cuántas jugadas salen bien. Phony ha pedido que cuente también las que casi.": "Microblizz notes how many plays go well. Phony has asked it to count the near misses too.",

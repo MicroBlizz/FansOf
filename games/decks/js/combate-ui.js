@@ -1,8 +1,9 @@
 // Fans Of Decks · La reunión en pantalla: rivales con su intención arriba, el líder en medio, la franja de CAOS y la mano en abanico abajo. Pinta el estado C de combate.js.
-// Toques: con un rival, tocar la carta la juega; con varios, tocar la carta y luego el rival (o arrastrarla: arrastre.js). Mantener pulsada una carta enseña su texto grande.
+// Toques (regla de Arkioner, 19-10-2026): un toque nunca juega, solo marca la carta (y, si pide objetivo, luego tocas el rival); dos toques seguidos
+// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
-const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0 };
+const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
 // Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
 // Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
 const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', companero: 'Compañero', protocolo: 'Protocolo', clausula: 'Cláusula', spam: 'Spam' };
@@ -46,14 +47,15 @@ function dcEfectosLider(C) {
   if (C.blindaje) e.append(dcEfecto('dc-est-blindaje', 'defensa', tr('Blindaje'), C.blindaje, tr('Blindaje: tu bloqueo se conserva durante {n} turnos más.', { n: C.blindaje }), true));
   if (C.fuerza) e.append(dcEfecto('dc-est-fuerza', 'fuerza', tr('Fuerza'), '+' + C.fuerza, tr('Fuerza: tus golpes pegan {n} más durante toda la reunión.', { n: C.fuerza })));
   if (C.fuerzaTurno) e.append(dcEfecto('dc-est-turno', 'fuerza', tr('Empleados'), '+' + C.fuerzaTurno, tr('Tus empleados pegan {n} más hasta el fin del turno.', { n: C.fuerzaTurno }), true));
-  if (C.tropasTurno) { const n = Math.min(5, C.tropasTurno); e.append(dcEfecto('dc-est-turno', 'refuerzo', tr('Racha'), '+' + n, tr('Racha: el próximo empleado de este turno pega {n} más (uno por cada empleado ya jugado, hasta 5).', { n }), true)); }
+  const F = dcFaccion();   // la pasiva de la facción: una racha por tipo de carta jugado este turno
+  if (F && F.racha) for (const t in C.tiposTurno) { const n = dcRacha(C, t); if (n) e.append(dcEfecto('dc-est-turno dc-tipo-' + t, 'refuerzo', tr(DC_NOMBRE_TIPO[t]), '+' + n, tr(F.pasiva) + ': ' + tr('la próxima carta de tipo {tipo} de este turno suma {n} a su daño, bloqueo o cura.', { tipo: tr(DC_NOMBRE_TIPO[t]), n }), true)); }
   if (C.debil) e.append(dcEfecto('dc-est-deb', 'debil', tr('Débil'), C.debil, tr(C.debil === 1 ? 'Débil: pegas un 25 % menos este turno.' : 'Débil: pegas un 25 % menos durante {n} turnos.', { n: C.debil }), true));
   if (C.vulnerable) e.append(dcEfecto('dc-est-vul', 'ataque', tr('Vulnerable'), C.vulnerable, tr(C.vulnerable === 1 ? 'Vulnerable: recibes un 50 % más de daño este turno.' : 'Vulnerable: recibes un 50 % más de daño durante {n} turnos.', { n: C.vulnerable }), true));
   return e;
 }
 function dcPintaRival(C, r, i) {
-  const D = DC_RIVALES[r.id];
-  const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (DCC.elegida !== null && r.hp > 0 ? ' dc-elige' : ''));
+  const D = DC_RIVALES[r.id]; dcDescubre('r', r.id);
+  const d = dcEl('div', 'dc-rival' + (D.jefe ? ' dc-rival-jefe' : D.elite ? ' dc-rival-elite' : '') + (r.hp <= 0 ? ' dc-ko' : '') + (dcApunta(C) && r.hp > 0 ? ' dc-elige' : ''));
   d.dataset.rival = i;
   const j = r.jug, tipo = dcTipoJugada(j), I = DC_INTENCION[tipo];
   const it = dcEl('div', 'dc-intencion dc-int-' + tipo); it.style.setProperty('--ic', I[1]);
@@ -62,7 +64,7 @@ function dcPintaRival(C, r, i) {
   it.title = tr(r.aturdido ? 'Pierde el turno' : I[2]);
   const arte = dcEl('div', 'dc-rival-arte'); arte.append(dcSprite(D.arte, D.alto || (D.jefe ? 110 : D.elite ? 92 : 72)));
   d.append(it, arte, dcEl('b', 'dc-nombre', r.nombre), dcBarraVida(r.hp, r.hpMax, r.bloqueo), dcEstados(r));
-  d.onclick = () => { if (DCC.elegida !== null && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k); dcJugar(C, k, i); play('card'); dcTrasJugada(); } };
+  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k, i); dcJugar(C, k, i); dcTrasJugada(); } };
   return d;
 }
 // Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
@@ -91,7 +93,9 @@ function dcPintaCombate() {
   const inf = dcEl('div', 'dc-lider-info');
   inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEfectosLider(C));
   if (C.companeros.length || C.protocolos.length) inf.append(dcPintaEquipo(C));
-  const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); o.onclick = ev => { ev.stopPropagation(); toast(tr(DC_OBJETOS[k].texto)); }; objs.append(o); }
+  // con más de 5 objetos van en dibujos pequeños para no comerse la mesa (tocar uno dice qué es y qué hace)
+  const mini = r.objetos.length > 5, objs = dcEl('div', 'dc-objetos' + (mini ? ' dc-objetos-mini' : ''));
+  for (const k of r.objetos) { const O = DC_OBJETOS[k], o = mini ? dcIcono('+', O.rar, 26, O.mini) : dcEl('span', 'dc-chip dc-chip-' + O.rar, tr(O.nombre)); o.title = tr(O.nombre) + ': ' + tr(O.texto); o.onclick = ev => { ev.stopPropagation(); toast(mini ? tr(O.nombre) + ': ' + tr(O.texto) : tr(O.texto)); }; objs.append(o); }
   if (r.objetos.length) inf.append(objs);
   med.append(lsp, inf);
   // acciones: la jugada del líder y las meriendas
@@ -111,18 +115,20 @@ function dcPintaCombate() {
   const bd = dcEl('button', 'dc-pila dc-pila-desc'); bd.append(dcSvg('mazo'), dcEl('span', '', String(C.descartes.length))); bd.title = tr('Descartes'); bd.onclick = () => dcVerCartas(tr('Descartes'), C.descartes);
   pilas.append(bp, bd);
   const fin = dcEl('button', 'dc-boton dc-fin', tr('FIN DE TURNO')); fin.disabled = C.fase !== 'jugador';
-  fin.onclick = () => { DCC.elegida = null; play('select'); dcFinTurno(C); dcTrasJugada(); };
+  fin.onclick = () => { DCC.elegida = null; play('dcFinTurno'); dcFinTurno(C); dcTrasJugada(); };
   franja.append(caos, fin, pilas);
   // la mano, en abanico
   const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
   mano.style.setProperty('--wc', wc + 'px'); mano.style.setProperty('--sol', n > 1 ? Math.max(0, (n * wc + (n - 1) * 6 - ancho) / (n - 1)).toFixed(1) + 'px' : '0px');
   C.mano.forEach((c, i) => {
-    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, al: () => dcTocaCarta(i) });
+    const fx = dcFx(c), racha = fx.dano || fx.bloqueo || fx.cura ? dcRacha(C, DC_CARTAS[c.id].tipo) : 0;
+    const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, racha, rabia: dcRabiaCarta(C, c), al: () => dcTocaCarta(i) });
     const k = i - (n - 1) / 2; el.style.setProperty('--rot', (k * 3.5) + 'deg'); el.style.setProperty('--ty', (Math.abs(k) * 5) + 'px'); el.dataset.mano = i;
     mano.append(el);
   });
-  const aviso = dcEl('div', 'dc-aviso', DCC.elegida !== null ? tr('¿A quién? Toca un rival o arrastra la carta') : '');
+  const marcada = DCC.elegida !== null && C.mano[DCC.elegida], aviso = dcEl('div', 'dc-aviso', !marcada ? '' : dcNecesitaObjetivo(C, marcada) ? tr('¿A quién? Toca un rival o arrastra la carta') : tr('Tócala otra vez para jugarla o arrástrala'));
   const z = dcEl('div', 'dc-escala'); z.append(cab, top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);
+  const reparte = C.turno !== DCC.turnoVisto;   // turno nuevo: la mano entra repartida desde el mazo (combate-anim.js)
   dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
   if (n) DCC.altoMano = Math.max(DCC.altoMano || 0, mano.offsetHeight); if (DCC.altoMano) mano.style.minHeight = DCC.altoMano + 'px';
@@ -131,6 +137,7 @@ function dcPintaCombate() {
   // lo que pasó desde el último dibujo se anima en orden; mientras los rivales actúan no se toca nada
   const dur = dcPintaEventos(C);
   if (dur) { s.classList.add('dc-ocupado'); const mio = ++DCC.ocupado; setTimeout(() => { if (DCC.ocupado === mio) s.classList.remove('dc-ocupado'); }, dur); }
+  if (reparte) dcReparteMano(mano, Math.max(0, dur - 200));
   if (C.turno !== DCC.turnoVisto) { DCC.turnoVisto = C.turno; const t = C.turno; setTimeout(() => { if (DCC.C === C) dcRotulo(t >= C.cierre ? tr('HORA DE CIERRE') : tr('Turno {n}', { n: t }), t >= C.cierre); }, Math.max(0, dur - 350)); }
   return dur;
 }
@@ -147,28 +154,16 @@ function dcReescala() { const s = document.getElementById('dc-combate'), z = s &
 addEventListener('resize', dcReescala);
 // si algo cambia de alto después de pintar (una fuente que llega tarde, un texto que crece), se vuelve a escalar
 const DC_VIGIA = typeof ResizeObserver === 'function' ? new ResizeObserver(dcReescala) : null;
-// Un rótulo que cruza la pantalla (turno nuevo, hora de cierre).
-function dcRotulo(texto, alarma) {
-  const s = document.getElementById('dc-combate'), viejo = s.querySelector('.dc-rotulo'); if (viejo) viejo.remove();
-  const r = dcEl('div', 'dc-rotulo' + (alarma ? ' dc-rotulo-alarma' : '')); r.append(dcEl('b', 'ol', texto)); s.append(r);
-  setTimeout(() => r.remove(), 1300);
-}
-// La carta i de la mano vuela al centro y se desvanece (antes de que la mano se vuelva a pintar).
-function dcAnimaCarta(i) {
-  const s = document.getElementById('dc-combate'), el = s.querySelector('.dc-mano .dc-carta[data-mano="' + i + '"]'); if (!el || !el.animate) return;
-  const st = document.getElementById('stage').getBoundingClientRect(), a = el.getBoundingClientRect();
-  const g = dcClonaCarta(el); g.className = 'dc-carta dc-carta-vuela ' + el.className.replace('dc-elegida', ''); g.style.cssText = el.style.cssText;
-  g.style.left = (a.left - st.left) + 'px'; g.style.top = (a.top - st.top) + 'px'; g.style.width = a.width + 'px';
-  document.getElementById('stage').append(g);
-  const dx = (st.width / 2 - a.width / 2) - (a.left - st.left), dy = (st.height * 0.36 - a.height / 2) - (a.top - st.top);
-  g.animate([{ transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 }, { transform: `translate(${dx * 0.7}px, ${dy * 0.7}px) rotate(-4deg) scale(1.15)`, opacity: 1, offset: 0.55 }, { transform: `translate(${dx}px, ${dy}px) rotate(0deg) scale(0.6)`, opacity: 0 }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => g.remove();
-}
+// ¿La carta marcada pide objetivo? Entonces los rivales se pueden tocar para jugarla.
+function dcApunta(C) { const c = DCC.elegida !== null && C.mano[DCC.elegida]; return !!c && dcNecesitaObjetivo(C, c); }
 function dcTocaCarta(i) {
   const C = DCC.C, c = C.mano[i];
   if (!dcPuedeJugar(C, c)) { play('deny'); toast(dcFx(c).injugable ? tr('Esa carta no se puede jugar') : tr('No tienes CAOS suficiente')); const el = document.querySelector('.dc-mano .dc-carta[data-mano="' + i + '"]'); if (el) { el.classList.add('dc-niega'); setTimeout(() => el.classList.remove('dc-niega'), 400); } return; }
-  if (DCC.elegida === i) { DCC.elegida = null; dcPintaCombate(); return; }
-  if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; dcPintaCombate(); return; }
-  DCC.elegida = null; dcAnimaCarta(i); dcJugar(C, i, dcPrimerRival(C)); play('card'); dcTrasJugada();
+  const ahora = Date.now(), doble = DCC.toque && DCC.toque.i === i && ahora - DCC.toque.t < 450; DCC.toque = doble ? null : { i, t: ahora };
+  // un toque solo la marca (o la desmarca si ya lo estaba y no es el segundo de un doble toque)
+  if (!doble) { DCC.elegida = DCC.elegida === i ? null : i; play('select'); dcPintaCombate(); return; }
+  if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; play('select'); dcPintaCombate(); return; }   // con varios rivales, nunca al azar: se queda marcada y pregunta a quién
+  DCC.elegida = null; dcAnimaCarta(i, dcPrimerRival(C)); dcJugar(C, i, dcPrimerRival(C)); dcTrasJugada();
 }
 function dcTrasJugada() {
   const C = DCC.C;
@@ -176,13 +171,17 @@ function dcTrasJugada() {
   if (C.fase === 'fin') setTimeout(() => DCC.alFin(C.resultado, C), Math.max(900, dur + 500));
 }
 // Una carta pintada: coste, dibujo, nombre y texto. Mantener pulsada la amplía.
+// La Fuerza (y la de los empleados del turno) que se suma al daño de la carta en mano.
+function dcRabiaCarta(C, c) { const fx = dcFx(c); return fx.dano && !fx.protocolo ? C.fuerza + (DC_CARTAS[c.id].tipo === 'empleado' ? C.fuerzaTurno : 0) : 0; }
 function dcPintaCarta(c, o = {}) {
+  dcDescubre('c', c.id);   // vista una vez, sale en la Biblioteca
   const D = DC_CARTAS[c.id], d = dcEl('button', 'dc-carta dc-rar-' + D.rar + ' dc-tipo-' + D.tipo + (o.jugable === false ? ' dc-nojugable' : '') + (o.elegida ? ' dc-elegida' : '') + (c.asc ? ' dc-asc' : '') + (o.grande ? ' dc-grande' : ''));
   const R = RARITY[D.rar] || RARITY.basic; d.style.setProperty('--rc', R[1]); d.style.setProperty('--ro', R[2]);
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
   const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
-  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c); tx.append(txi); d.append(cab, tx);
+  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c, o.rabia); tx.append(txi); d.append(cab, tx);
+  if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
   let t = null; const abre = () => { t = setTimeout(() => { t = null; if (!DCC.arrastre) dcVerCarta(c); }, 450); }, cierra = () => { if (t) clearTimeout(t); t = null; };
@@ -195,53 +194,6 @@ function dcVerCarta(c) {
   const fx = dcFx(c); for (const k in DC_GLOSARIO) if (fx[k]) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
   if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
-}
-// El ascenso de una carta (Becario → Junior): la carta de ahora, la de después con lo que cambia marcado, y la lista de cambios.
-// alConfirmar (si hay) asciende; alOtra vuelve a la lista o a la carta.
-const DC_ETIQUETA_FX = { coste: 'Coste', dano: 'Daño', veces: 'Veces', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba', caos: 'CAOS', vulnerable: 'Vulnerable', debil: 'Débil', aturde: 'Aturde', fuerza: 'Fuerza', fuerzaTurno: 'Fuerza del turno', blindaje: 'Blindaje', n: 'Cifra' };
-const DC_PALABRA_CAMBIO = { despedida: ['Ya no se despide: vuelve al mazo', 'Despedida: se va al jugarla'], indefinido: ['Ya no se queda en la mano', 'Contrato indefinido: si no la juegas, se queda en tu mano'], madrugador: ['Ya no madruga', 'Madrugador: siempre en tu mano inicial'] };
-function dcVerAscenso(c, alConfirmar, alOtra) {
-  const v = dcVentana(tr('Ascenso: {n}', { n: dcNombre(c) })), cambios = dcCambiosAscenso(c), resalta = new Set(cambios.map(x => x.k));
-  const fila = dcEl('div', 'dc-ascenso');
-  const antes = dcEl('div', 'dc-ascenso-col'); antes.append(dcEl('small', '', tr('Ahora')), dcPintaCarta(dcCarta(c.id, false), { grande: true }));
-  const fl = dcEl('div', 'dc-ascenso-flecha'); fl.append(dcSvg('fuerza'));
-  const despues = dcEl('div', 'dc-ascenso-col dc-ascenso-nueva'); despues.append(dcEl('small', '', tr('Junior')), dcPintaCarta(dcCarta(c.id, true), { grande: true, resalta }));
-  fila.append(antes, fl, despues); v.append(fila);
-  const lista = dcEl('div', 'dc-cambios');
-  for (const x of cambios) {
-    const ch = dcEl('span', 'dc-cambio-chip');
-    if (DC_PALABRA_CAMBIO[x.k]) ch.textContent = tr(DC_PALABRA_CAMBIO[x.k][x.despues ? 1 : 0]);
-    else { ch.append(dcEl('span', '', tr(DC_ETIQUETA_FX[x.k] || x.k) + ' '), dcEl('s', '', String(x.antes)), dcEl('b', '', ' ' + String(x.despues))); }
-    lista.append(ch);
-  }
-  v.append(lista);
-  if (alConfirmar) { const b = dcEl('button', 'btn-big ol dc-ascender', tr('ASCENDER')); b.onclick = () => { dcCierraVentana(); alConfirmar(); }; v.append(b); }
-  const o = dcEl('button', 'btn-ghost ol', tr(alConfirmar ? 'OTRA CARTA' : 'CERRAR')); o.onclick = () => { dcCierraVentana(); if (alOtra) alOtra(); }; v.append(o);
-}
-// Elegir qué carta ascender: la lista, y al tocar una, su ascenso para confirmarlo.
-function dcEligeAscenso(alHecho) {
-  const r = DCP.run, cands = r.mazo.filter(c => !c.asc && DC_CARTAS[c.id].asc);
-  dcVerCartas(tr('¿Qué carta asciendes?'), cands, c => dcVerAscenso(c, () => { c.asc = true; alHecho(c); }, () => dcEligeAscenso(alHecho)), { mejoradas: true });
-}
-// o.mejoradas: con el interruptor «Ver mejoradas» cada carta se pinta como quedará ascendida, con los cambios marcados (se recuerda mientras dura la sesión).
-function dcVerCartas(titulo, cartas, alElegir, o = {}) {
-  const v = dcVentana(titulo), g = dcEl('div', 'dc-rejilla');
-  let mejoradas = !!(o.mejoradas && DCC.verMejoradas);
-  const pinta = () => {
-    g.textContent = ''; if (!cartas.length) g.append(dcEl('p', 'dc-nota', tr('No hay cartas aquí')));
-    cartas.forEach(c => {
-      const m = mejoradas && !c.asc && DC_CARTAS[c.id].asc, cc = m ? dcCarta(c.id, true) : c;
-      g.append(dcPintaCarta(cc, { resalta: m ? new Set(dcCambiosAscenso(c).map(x => x.k)) : undefined, al: alElegir ? () => { dcCierraVentana(); alElegir(c); } : () => dcVerCarta(cc) }));
-    });
-  };
-  if (o.mejoradas) {
-    const t = dcEl('button', 'dc-toggle'), caja = dcEl('span', 'dc-toggle-caja'); caja.append(dcSvg('check')); t.append(caja, dcEl('span', '', tr('Ver mejoradas')));
-    const refresca = () => t.classList.toggle('dc-toggle-on', mejoradas); refresca();
-    t.onclick = () => { mejoradas = !mejoradas; DCC.verMejoradas = mejoradas; play('select'); refresca(); pinta(); };
-    v.append(t);
-  }
-  pinta(); v.append(g);
-  const b = dcEl('button', 'btn-ghost ol', tr(alElegir ? 'MEJOR NO' : 'CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
 // Una ventana encima de todo (una sola a la vez).
 function dcVentana(titulo) {

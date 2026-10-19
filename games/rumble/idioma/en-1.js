@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.139
+  "<b>TIENDA CON DOS MONEDAS</b>: el oro se gana jugando y es lo único con lo que se tira en el gashapón, con las probabilidades a la vista; las gemas se compran y sirven para el pase, los cosméticos y las ventajas, y puedes cambiar oro por gemas (caro). Los packs y quitar los anuncios son solo con dinero real, sin azar. Además, mejoras por dentro en los sistemas de la serie.": "<b>TWO-CURRENCY SHOP</b>: gold is earned by playing and is the only thing used for the gacha, with the odds in plain sight; gems are bought and used for the pass, cosmetics and perks, and you can swap gold for gems (expensive). Packs and removing ads are real money only, with no luck involved. Plus under-the-hood improvements to the series' systems.",
+  "Microblizz ha separado la moneda que se gana de la que se compra y Phony ha reclamado la de ganar, que dice que es la única honesta.": "Microblizz has split the currency you earn from the one you buy and Phony has claimed the earned one, which he says is the only honest one.",
   // 0.9.138
   "<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no.": "<b>ANONYMOUS ANALYTICS, ONLY IF YOU WANT</b>: the series gets a new notice to measure how many people play and what gets used most, so we can make better games. Until you press \"Accept\" nothing from Google is loaded and no cookie is stored, and you can say no.",
   "Microblizz ha puesto un contador a las batallas de Rumble. Phony ha pedido que apunte también las que pierde por despiste.": "Microblizz has put a counter on Rumble battles. Phony has asked it to also note the ones he loses by distraction.",

@@ -27,12 +27,17 @@ function applySpeed() {
   b.setAttribute('aria-label', on ? 'Velocidad x2. Pulsa para volver a la normal' : 'Velocidad normal. Pulsa para ir el doble de rápido');
 }
 $('#btn-speed').addEventListener('click', () => { if (G.tutMatch || PVP.on) return; SAVE.speed2 = !SAVE.speed2; if (SAVE.speed2) stat('speed2', 1); saveGame(); applySpeed(); play('select'); toast(SAVE.speed2 ? 'Velocidad x2: todo va el doble de rápido' : 'Velocidad normal', true); });
-// ---- pack de bienvenida
+// ---- pack de bienvenida. Con las dos monedas (PLAN-MONEDAS.md) es un producto de pago: solo gemas (el oro pasa a gemas al precio del cambio,
+// el servidor hace lo mismo) y un objeto épico fijo, sin azar.
+const starterPool = () => Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass && enCatalogo(ITEMS, k));
+function starterPack() { const P = SHOP.starter; if (!MONEDAS.activo()) return P; const c = MONEDAS.conf(); return { gems: P.gems + Math.floor(P.gold / c.cambio), gold: 0, eur: P.eur }; }
 function buyStarter() {
   if (SAVE.starter) return;
-  const P = SHOP.starter, pool = Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass && enCatalogo(ITEMS, k));
-  SAVE.starter = true; ECO.ganar('bienvenida', P);
-  const it = newCopy('eq', pick(pool), 3); const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
+  const P = starterPack(), pool = starterPool();
+  SAVE.starter = true; ECO.ganar('bienvenida', { gold: P.gold, gems: P.gems });
+  // con las dos monedas nada de azar en un producto de pago: siempre el mismo objeto (el primero de los épicos) y la misma calidad (Excelente); si no, como antes
+  const it = MONEDAS.activo() ? addCopy('eq', pool[0], Array.from({ length: Math.max(1, ITEMS[pool[0]].st.length) }, () => PASS_Q)) : newCopy('eq', pick(pool), 3);
+  const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
   saveGame(); play('win'); updateWallets(); buildShop(); toast('¡Pack de bienvenida! Microblizz te da las gracias', true);
   setTimeout(() => openItem(it.u), 450);
 }
@@ -191,9 +196,9 @@ hook('gacha.tirada', () => {   // v0.9.91: tras la primera tirada, la máquina d
 // el pack de bienvenida, en la tienda y en el botón del menú
 hook('tienda', () => {
     if (!SAVE.starter) {
-  const P = SHOP.starter;
-  $('#gift-row').insertAdjacentHTML('beforeend', `<div class="pack starter"><span class="joke-flag">1 VEZ</span><div class="pk-ic">${PILE(5, true)}</div><div><div class="pk-name ol">Pack de bienvenida</div><div class="pk-amt ol">${GEM_SVG}${fmt(P.gems)} <span class="pk-plus">+</span> ${COIN_SVG}${fmt(P.gold)}</div><div class="pk-note">Y un objeto épico de equipo con calidad Director (excelente) o mejor. Vale casi el doble que comprarlo por separado. Microblizz lo llama «regalo».</div></div><button class="btn-price ol" id="btn-starter">${eur(P.eur)}</button></div>`);
-  $('#btn-starter').onclick = () => { play('select'); confirmBox('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)} · ${COIN_SVG} ${fmt(P.gold)}</span>y un objeto épico de calidad Director (excelente) o mejor, por <b>${eur(P.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis. Solo se puede comprar una vez.</small>`, 'COMPRAR', buyStarter); };
+  const P = starterPack(), dos = MONEDAS.activo(), fijo = dos ? ITEMS[starterPool()[0]].name : '';
+  $('#gift-row').insertAdjacentHTML('beforeend', `<div class="pack starter"><span class="joke-flag">1 VEZ</span><div class="pk-ic">${PILE(5, true)}</div><div><div class="pk-name ol">Pack de bienvenida</div><div class="pk-amt ol">${GEM_SVG}${fmt(P.gems)}${dos ? '' : ` <span class="pk-plus">+</span> ${COIN_SVG}${fmt(P.gold)}`}</div><div class="pk-note">${dos ? `Y ${esc(fijo)}, un objeto épico de equipo con calidad Excelente.` : 'Y un objeto épico de equipo con calidad Director (excelente) o mejor.'} Vale casi el doble que comprarlo por separado. Microblizz lo llama «regalo».</div></div><button class="btn-price ol" id="btn-starter">${eur(P.eur)}</button></div>`);
+  $('#btn-starter').onclick = () => { play('select'); if (MONEDAS.activo()) { MONEDAS.compraReal('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)}</span>y ${esc(fijo)} (épico, calidad Excelente), por <b>${eur(P.eur)}</b><br>Solo se puede comprar una vez.`, buyStarter); return; } confirmBox('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)} · ${COIN_SVG} ${fmt(P.gold)}</span>y un objeto épico de calidad Director (excelente) o mejor, por <b>${eur(P.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis. Solo se puede comprar una vez.</small>`, 'COMPRAR', buyStarter); };
 }
 });
 hook('insignias', () => { if (!giftReady() && !SAVE.starter) $('#feat-shop').textContent = '¡Pack de bienvenida!'; });

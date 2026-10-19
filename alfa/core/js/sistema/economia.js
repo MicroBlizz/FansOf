@@ -27,7 +27,7 @@ const ECO = {
   // motivo: para qué es (ahora solo documenta; el servidor lo apuntará en el libro de movimientos)
   // v: { gold, gems, tickets }, cada uno opcional
   ganar(motivo, v, evento) { return ECO.motor.mover(motivo, v, 1, evento); },   // devuelve la clave con la que se manda al servidor (o nada si no se manda)   // evento: lo que ha pasado (el servidor calcula el premio con él si sabe), p. ej. { tipo: 'camp', nivel, dif, estrellas, victoria, jefe }
-  gastar(motivo, v) { ECO.motor.mover(motivo, v, -1); },
+  gastar(motivo, v, evento) { ECO.motor.mover(motivo, v, -1, evento); },   // evento: igual que en ganar (el pase que se paga con gemas lo lleva)
   // ¿esta acción la hace el servidor? Solo si el juego lo pide (AJUSTES.servidor) y hay cuenta activa; si no, se calcula aquí como siempre
   servidor(accion) { return typeof CUENTA !== 'undefined' && CUENTA.activa && typeof ECO_SOMBRA !== 'undefined' && !!(AJUSTES.servidor && AJUSTES.servidor[accion]); },
   ya() { if (typeof ECO_SOMBRA !== 'undefined') ECO_SOMBRA.enviar(); },   // mandar ahora lo pendiente (cuando se espera algo del servidor, como objetos)

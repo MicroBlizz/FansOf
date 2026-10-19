@@ -1,14 +1,15 @@
 // Fans Of · PASES: el pase de temporada (todos los juegos) y el pase PvP (solo el juego que lo trae). Cada uno con dos pistas:
 // la gratis y la de pago (de prueba: no cobra nada). Va después de core/js/retos.js.
 // Los DATOS son de cada juego (opcionales; sin ellos sale el pase de siempre, de 30 niveles):
-//   RETOS.pase    = { id, name, levels, xpPer, eur, xpWin, xpLose, xpDaily, xpWeekly, fin: 'AAAA-MM-DD', capitulos: [{ hasta, tit, txt }], premio(pista, nivel) }
+//   RETOS.pase    = { id, name, levels, xpPer, eur, gemas, xpWin, xpLose, xpDaily, xpWeekly, fin: 'AAAA-MM-DD', capitulos: [{ hasta, tit, txt }], premio(pista, nivel) }
 //   RETOS.pasePvp = lo mismo para el PvP (sus puntos solo llegan de partidas PvP en línea).
+// gemas: lo que cuesta la pista de pago con las dos monedas (PLAN-MONEDAS.md: el pase se paga en premium; eur queda para la tienda con dinero real).
 // id: cambia en cada temporada; con un id nuevo todos empiezan de cero y la pista de pago se vuelve a comprar (el servidor lleva lo mismo).
 // Un premio es { gold } | { gems } | { tickets } | { item } | { marco } | { titulo } (estos dos van al armario: core/js/armario.js).
 'use strict';
-const PASS = Object.assign({ name: 'Temporada 1: La Gran Compra', sub: 'Dura hasta que Microblizz la cierre', levels: 30, xpPer: 400, eur: 4.99, xpWin: 100, xpLose: 40, xpDaily: 60, xpWeekly: 250 }, RETOS.pase || {});
+const PASS = Object.assign({ name: 'Temporada 1: La Gran Compra', sub: 'Dura hasta que Microblizz la cierre', levels: 30, xpPer: 400, eur: 4.99, gemas: 500, xpWin: 100, xpLose: 40, xpDaily: 60, xpWeekly: 250 }, RETOS.pase || {});
 const PASS_Q = 0.9;   // los objetos del pase salen siempre con calidad Excelente
-const PASS_PVP = RETOS.pasePvp ? Object.assign({ name: 'Pase PvP', levels: 30, xpPer: 300, eur: 2.99, xpWin: 100, xpLose: 40 }, RETOS.pasePvp) : null;
+const PASS_PVP = RETOS.pasePvp ? Object.assign({ name: 'Pase PvP', levels: 30, xpPer: 300, eur: 2.99, gemas: 300, xpWin: 100, xpLose: 40 }, RETOS.pasePvp) : null;
 // t: el de temporada · p: el de PvP. k: dónde se guarda · ev: el evento con el que el servidor comprueba el cobro
 const PASES = { t: { C: PASS, k: 'pass', ev: 'pase', compra: 'compra-pase', evCompra: 'pase-premium', pago: 'EJECUTIVO', nombrePago: 'Pase Ejecutivo', corto: 'Ejecutivo', clase: 'pt-t' } };
 if (PASS_PVP) PASES.p = { C: PASS_PVP, k: 'passPvp', ev: 'pase-pvp', compra: 'compra-pase-pvp', evCompra: 'pase-pvp-premium', pago: 'PASE DEL PASE', nombrePago: 'Pase del Pase', corto: 'Pase del Pase', clase: 'pt-p' };
@@ -134,7 +135,7 @@ function buildPass() {
   $('#pass-top').className = 'pass-top pass-hero ' + P.clase;
   $('#pass-top').innerHTML = tabs + `<div class="ph-main"><div class="ph-lvl ol"><small>NIVEL</small>${lv}</div><div class="ph-name"><b class="ol">${esc(C.name)}</b><small>${sub}${S.prem ? ` · <span class="ph-vip">${P.nombrePago} ✓</span>` : ''}</small></div></div>
     <div class="xpbar ph-bar"><i style="width:${maxed ? 100 : (into / C.xpPer) * 100}%"></i><span>${maxed ? '¡PASE COMPLETADO!' : `${fmt(into)} / ${fmt(C.xpPer)} puntos para el nivel ${lv + 1}`}</span></div>${reglas}${prox}
-    <div class="pass-actions"><button class="btn-vip ol" id="btn-buy-pass" ${S.prem ? 'disabled' : ''}>${S.prem ? P.pago + ' ✓' : `${P.pago} <small>${eur(C.eur)}</small>`}</button><button class="btn-up" id="btn-claim-all" ${nClaim ? '' : 'disabled'}>COBRAR TODO${nClaim ? ` (${nClaim})` : ''}</button></div>`;
+    <div class="pass-actions"><button class="btn-vip ol" id="btn-buy-pass" ${S.prem ? 'disabled' : ''}>${S.prem ? P.pago + ' ✓' : `${P.pago} <small>${MONEDAS.activo() ? `${GEM_SVG}${fmt(C.gemas || 0)}` : eur(C.eur)}</small>`}</button><button class="btn-up" id="btn-claim-all" ${nClaim ? '' : 'disabled'}>COBRAR TODO${nClaim ? ` (${nClaim})` : ''}</button></div>`;
   // la lista: encabezado fijo, capítulos y niveles
   let rows = `<div class="pass-head ${P.clase}"><span></span><span class="ol">GRATIS</span><span class="ol">${P.pago}</span></div>`;
   const caps = C.capitulos || []; let desde = 1;
@@ -177,6 +178,15 @@ function buyPass(p = passTab) {
   const txt = p === 'p'
     ? `El <b>Pase del Pase</b>: porque un pase solo no bastaba. ${extra ? `<b>${extra}</b> para presumir en el PvP, ` : ''}más oro y gemas. No da ninguna ventaja en la partida.`
     : `Desbloquea la pista Ejecutiva de la ${esc(C.name)}: más oro, gemas, tiradas gratis${extra ? `, <b>${extra}</b>` : ''} y la <b>Corbata del CEO</b>, exclusiva.`;
+  if (MONEDAS.activo()) {   // con las dos monedas el pase se paga en gemas (el servidor las cobra al apuntar el evento, servidor/47-monedas-rumble.sql)
+    const precio = C.gemas || 0;
+    confirmBox(P.nombrePago.toUpperCase(), `${txt}<span class="big">${GEM_SVG} ${fmt(precio)}</span><small>Se paga con gemas${C.id ? ' y vale para esta temporada' : ''}. Las gemas se compran en la tienda y caen poco a poco jugando.</small>`, 'COMPRAR', () => {
+      if (SAVE.gems < precio) { play('deny'); confirmBox('FALTAN GEMAS', `Te faltan <b>${fmt(precio - SAVE.gems)} gemas</b>.<small>Se compran en la tienda y caen poco a poco jugando.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
+      S.prem = true; ECO.gastar(P.compra, { gems: precio }, { tipo: P.evCompra }); saveGame(); play('win'); updateWallets(); buildPass(); updateBadges();
+      toast(p === 'p' ? '¡Ya tienes el Pase del Pase!' : '¡Ya eres Ejecutivo!', true);
+    });
+    return;
+  }
   confirmBox(P.nombrePago.toUpperCase(), `${txt}<span class="big">${eur(C.eur)}</span><small>Versión de prueba: no se cobra nada.${C.id ? ' Vale para esta temporada.' : ''}</small>`, 'COMPRAR', () => {
     S.prem = true; ECO.ganar(P.compra, {}, { tipo: P.evCompra }); saveGame(); play('win'); updateWallets(); buildPass(); updateBadges();
     toast(p === 'p' ? '¡Ya tienes el Pase del Pase! (sin cobrar nada)' : '¡Ya eres Ejecutivo! (sin cobrar nada)', true);

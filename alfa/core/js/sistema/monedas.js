@@ -18,6 +18,10 @@ const MONEDAS = (() => {
     if (!r || !r.dato) return null;
     try { return JSON.parse(r.dato); } catch (e) { return null; }
   };
+  // ¿este juego ya va con las dos monedas? Lo declara en AJUSTES.monedas y lo abre el flag 'monedas': la misma fila de `flags` que trae el ratio
+  // (valor = abierto, dato = ajustes). El servidor mira esa fila para cobrar el gashapón en oro y el pase en gemas (servidor/47-monedas-rumble.sql).
+  const activo = () => typeof AJUSTES !== 'undefined' && !!AJUSTES.monedas && typeof NUCLEO !== 'undefined' && !!NUCLEO.flag
+    && NUCLEO.flag('monedas', 'Dos monedas: gashapón en la del juego, pase en premium, packs solo con dinero y el cambio', false);
   const conf = () => mezcla(mezcla(BASE, typeof AJUSTES !== 'undefined' && AJUSTES.monedas), remota());
   const mon = cual => { const c = conf(); return cual === 'premium' ? c.premium : c.juego; };
   const nombre = cual => { const m = mon(cual); return typeof NUCLEO !== 'undefined' && NUCLEO.idioma === 'en' && m.nombre_en ? m.nombre_en : m.nombre; };
@@ -61,5 +65,11 @@ const MONEDAS = (() => {
     });
     for (const b of document.querySelectorAll('[data-cambio]')) { b.setAttribute('aria-pressed', String(+b.dataset.cambio === n)); b.onclick = () => { n = +b.dataset.cambio; for (const x of document.querySelectorAll('[data-cambio]')) x.setAttribute('aria-pressed', String(x === b)); }; }
   }
-  return { conf, nombre, icono, chip, saldo, azar, cambiar, ventanaCambio };
+  // lo que solo se compra con dinero real (gemas, pase, sin anuncios…): en desarrollo es una compra de prueba; en la web aún no está a la venta
+  function compraReal(titulo, html, alComprar) {
+    if (typeof confirmBox !== 'function') return;
+    if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), alComprar);
+    else confirmBox(tr('SOLO CON DINERO REAL'), `${html}<small>${tr('Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.')}</small>`, null);
+  }
+  return { conf, activo, nombre, icono, chip, saldo, azar, cambiar, ventanaCambio, compraReal };
 })();

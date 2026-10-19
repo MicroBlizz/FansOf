@@ -43,19 +43,23 @@ function copiaDeServidor(r) {
   SAVE.inv.push(it); if (tierOf(avgQ(it)) === 4) stat('perfect', 1);
   return resultadoTirada(r.k, it, prev, nPrev);
 }
-function pullCost(n) { const free = Math.min(SAVE.tickets || 0, n); return { free, gems: (n - free) * ECON.pull }; }
+// con las dos monedas (PLAN-MONEDAS.md) la tirada se paga en oro: ECON.pull × el ratio de la fila `monedas` (el servidor hace la misma cuenta)
+const pullOro = () => ECON.pull * MONEDAS.conf().ratio;
+function pullCost(n) { const free = Math.min(SAVE.tickets || 0, n), pago = n - free; return MONEDAS.activo() ? { free, gems: 0, gold: pago * pullOro() } : { free, gems: pago * ECON.pull, gold: 0 }; }
 function pull(n) {
   n = n || 1; if (gachaAnim || gachaEsperando) return;
   const c = pullCost(n);
+  if (SAVE.gold < c.gold) { play('deny'); confirmBox('FALTA ORO', `Para girar x${n} te falta <b>${fmt(c.gold - SAVE.gold)} de oro</b>.<small>Se consigue jugando, con las misiones y el pase, o cambiando gemas por oro en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gold')); return; }
   if (SAVE.gems < c.gems) { play('deny'); confirmBox('FALTAN GEMAS', `Para girar x${n} te faltan <b>${fmt(c.gems - SAVE.gems)} gemas</b>.<small>Las consigues con misiones, la campaña, el pase de batalla o en la tienda.</small>`, 'IR A LA TIENDA', () => openShop('gems')); return; }
   const kind = gachaTab, X = MAQUINAS[kind];
+  if (MONEDAS.activo() && !MONEDAS.azar('gachapon', c)) return;   // la guardia: con las dos monedas nada con azar cobra en gemas
   if (ECO.servidor('gachapon') && (!X || X.deServidor)) {   // con cuenta: lo tira el servidor y hace falta conexión
     gachaEsperando = true;
     ECO.tirar(kind, n).then(rs => { gachaEsperando = false; audioInit(); acabarTirada(n, c, kind, X, rs.map(X ? X.deServidor : copiaDeServidor)); })
       .catch(e => { gachaEsperando = false; play('deny'); toast(ECO.errorTexto(e)); });
     return;
   }
-  ECO.gastar('gachapon', { tickets: c.free, gems: c.gems });
+  ECO.gastar('gachapon', { tickets: c.free, gems: c.gems, gold: c.gold });
   audioInit();
   // v0.9.11: cada bloque de 10 tiradas trae al menos una épica (o legendaria)
   const res = []; let gotEpic = false;
@@ -70,7 +74,7 @@ function pull(n) {
 function acabarTirada(n, c, kind, X, res) {
   missionEvent('pull', n); if (n >= 50) stat('x50', 1); if (n === 10) stat('x10', 1);
   for (const r of res) { const rr = rarOfPull(r); if (rr === 'legendary') stat('leg', 1); else if (rr === 'epic') stat('epic', 1); }
-  if (c.gems > 0 && SAVE.gems === 0) stat('broke', 1);
+  if ((c.gems > 0 && SAVE.gems === 0) || (c.gold > 0 && SAVE.gold === 0)) stat('broke', 1);
   saveGame(); updateWallets(); buildGachaText();
   fire('gacha.tirada', n);
   const ensenar = () => { gachaAnim = null; if (X) X.ensenar(res); else if (n === 1) showPull(res[0].it, res[0].tag); else showMulti(res); };
@@ -117,7 +121,7 @@ function buildGachaText() {
   for (const b of document.querySelectorAll('[data-gt]')) b.setAttribute('aria-pressed', String(b.dataset.gt === gachaTab));
   $('#btn-gr-inv').textContent = 'Ver en el inventario';
   $('#gacha-sub').textContent = gachaTab === 'ab' ? 'Habilidades de cualquier facción para tus cartas. Cada copia sale con su propia calidad, de Becario (básica) a CEO (perfecta): búscale la mejor.' : 'Equipo freak solo para los líderes: arma, cabeza y accesorio. Cada objeto sale con su propia calidad y se ve puesto en la partida.';
-  const lab = n => { const c = pullCost(n); return c.gems ? `${fmt(c.gems)} ${GEM_SVG}${c.free ? `<i class="fr">+${c.free} gratis</i>` : ''}` : `${TICKET_SVG} gratis`; };
+  const lab = n => { const c = pullCost(n), extra = c.free ? `<i class="fr">+${c.free} gratis</i>` : ''; return c.gold ? `${fmt(c.gold)} ${COIN_SVG}${extra}` : c.gems ? `${fmt(c.gems)} ${GEM_SVG}${extra}` : `${TICKET_SVG} gratis`; };
   for (const b of document.querySelectorAll('[data-pull]')) { const n = +b.dataset.pull; b.innerHTML = `${n === 10 ? '<span class="tag">FAVORITA DEL CEO</span>' : n === 50 ? '<span class="tag">MODO BALLENA</span>' : ''}x${n}<small>${lab(n)}</small>${n >= 10 ? `<span class="sure">${n === 10 ? '1 épica segura' : n / 10 + ' épicas seguras'}</span>` : ''}`; }
   const P = SAVE.pity, O = ECON.odds;
   const rar = [['Común', O.basic], ['Poco común', O.common], ['Rara', O.rare], ['Épica', O.epic], ['Legendaria', O.legendary]].filter(r => r[1]);
@@ -128,7 +132,7 @@ function buildGachaText() {
     + oddsPity('Legendaria', P[gachaTab + 'L'], pityLegObj())
     + oddsPity('Calidad Director o mejor', P['q' + gachaTab], ECON.pityQ)
     + oddsNote('Las tiradas x10 y x50 traen al menos una épica o legendaria por cada 10.', true)
-    + oddsNote(`Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
+    + oddsNote(MONEDAS.activo() ? `Cada tirada cuesta ${fmt(pullOro())} de oro. Las gemas nunca entran aquí: se cambian por oro en la tienda.` : `Cada tirada cuesta ${ECON.pull} gemas (unos 0,50 € si compras el pack pequeño de gemas).`, true)
     + oddsHead('Tiradas gratis') + oddsNote('Cada 3 horas tienes una tirada x1 gratis (no se acumula: el reloj arranca al reclamarla). Cada domingo (hora de Madrid) tienes una x10 gratis, una vez por domingo: si no la reclamas ese día, caduca. La x50 no tiene bonus de este tipo.', true)
     + oddsNote('Microblizz no se hace responsable de tu afición a las cápsulas.', true);
   if (MAQUINAS[gachaTab]) MAQUINAS[gachaTab].textos();

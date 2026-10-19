@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.8
+  "<b>NAVES JEFE DE FACCIÓN Y ETAPA 6</b>: los jefes de sector tienen su propia nave para cada una de las 8 facciones, y las nueve líneas de naves del jugador estrenan la etapa 6, «Nave jefe» (rango 50), que se desbloquea al ganar la campaña con su facción (y avisa al conseguirla).": "<b>FACTION BOSS SHIPS AND STAGE 6</b>: sector bosses fly their own ship for each of the 8 factions, and the nine player ship lines unlock stage 6, \"Boss ship\" (rank 50), by winning the campaign with their faction (you get notified when you earn it).",
+  "Microblizz ha ascendido a los jefes a nave propia y Phony ha preguntado si la etapa 6 trae asiento con calefacción.": "Microblizz has promoted the bosses to ships of their own and Phony has asked whether stage 6 comes with a heated seat.",
   // 0.3.7
   "<b>JEFES DE SECTOR CON LA NAVE DE SU LÍDER</b>: el jefe de cada sector de la campaña es ahora la nave del líder de la facción que lo controla, con su nombre (su arte llegará más adelante; mientras tanto se usa el Rey de los huesos). Además, ajustes en los sistemas comunes de la serie para la tienda de dos monedas.": "<b>SECTOR BOSSES FLY THEIR LEADER'S SHIP</b>: each campaign sector boss is now the ship of the leader of the faction that controls it, with their name (its art will come later; for now the Bone King is used). Also, tweaks to the series' shared systems for the two-currency shop.",
   "Microblizz ha puesto a cada líder al mando de su propia nave y Phony ha pedido que le dejen al menos un carrito de la compra.": "Microblizz has put each leader in command of their own ship and Phony has asked to be left at least a shopping trolley.",

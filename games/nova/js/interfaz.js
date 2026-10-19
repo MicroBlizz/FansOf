@@ -96,7 +96,7 @@ function nvPanelesDOM(S) {
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
     if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
-    if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Arma desbloqueada!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
+    if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Desbloqueado!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
     const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
     const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
     p.appendChild(b); p.appendChild(s); cont.appendChild(p);
@@ -118,7 +118,7 @@ function nvJugar() {
 // ---------- menú de naves: cada facción empieza con un arma de su clase ----------
 function nvPreview(cv, casco, rango) {
   rango = rango || nvRangoInicial();   // la nave que sale al desplegar: la de tu nivel
-  const c = cv.getContext('2d'), H = nvHull(casco, rango), [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango), e = cv.height / (330 + 80 * k);
+  const c = cv.getContext('2d'), H = nvHull(casco, rango), [tm, tam] = nvMotorRango(casco, rango), k = nvClase(rango, casco), e = cv.height / (330 + 80 * k);
   c.clearRect(0, 0, cv.width, cv.height); c.save(); c.translate(cv.width / 2, cv.height * 0.55); c.scale(e, e);
   nvCuerpo(c, casco, k, 'alas'); nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y); nvCuerpo(c, casco, k, 'casco');
   c.restore();
@@ -135,7 +135,7 @@ function nvMenu() {
     const t = nvEl('nv-ntxt'); t.appendChild(nvEl('nv-ctipo', tr(F.nombre)));
     t.appendChild(nvEl('nv-cnom', tr(H.nombre)));
     t.appendChild(nvEl('nv-cdet', tr(F.casco) + '. ' + tr(F.afinidad)));
-    t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial())].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial()) + 1).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
+    t.appendChild(nvEl('nv-cdet', tr(NV_ETAPAS[nvClase(nvRangoInicial(), id)].nombre) + ' · ' + tr('Evoluciona') + ': ' + NV_ETAPAS.slice(nvClase(nvRangoInicial(), id) + 1).filter(x => !x.jefe || nvJefeLibre(id)).map(x => tr(x.nombre) + ' ' + x.desde).join(' → ')));
     const VI = C.arma[2] && NV_VAR_ID[C.arma[2]];
     t.appendChild(nvEl('nv-cdet', VI ? tr('Arma insignia') + ': ' + tr(VI.nombre) + '. ' + tr(VI.efecto) : tr('Empiezas con') + ': ' + tr(NOVA_ARMAS.portadores[C.arma[0]].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[C.arma[1]].nombre)));
     b.appendChild(t); b.onclick = () => nvMenuCapitan(id);

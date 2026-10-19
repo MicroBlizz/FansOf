@@ -2,16 +2,28 @@
 // Si existe el arte propio de una clase (ids «<casco>-casco-c2», «<casco>-alas-c2»… en arte/piezas.json) se usa; si no, se compone con piezas del casco base (alas más anchas y góndolas).
 'use strict';
 const NV_ETAPAS = [   // rango desde el que la nave es de esa clase (dato de diseño: cambiar aquí mueve todo)
-  { desde: 1, nombre: 'Caza' }, { desde: 10, nombre: 'Corbeta' }, { desde: 20, nombre: 'Fragata' }, { desde: 30, nombre: 'Crucero pesado' }, { desde: 40, nombre: 'Acorazado' }
+  { desde: 1, nombre: 'Caza' }, { desde: 10, nombre: 'Corbeta' }, { desde: 20, nombre: 'Fragata' }, { desde: 30, nombre: 'Crucero pesado' }, { desde: 40, nombre: 'Acorazado' },
+  { desde: 50, nombre: 'Nave jefe', jefe: true }   // la última solo si has ganado la campaña con la facción de esa nave (nvJefeLibre)
 ];
-function nvClase(rango) { let k = 0; while (k + 1 < NV_ETAPAS.length && rango >= NV_ETAPAS[k + 1].desde) k++; return k; }
+// Clase del rango; sin casco, la de la nave de la partida en curso.
+function nvClase(rango, casco) {
+  casco = casco || (NVP.S && NVP.S.casco);
+  const tope = NV_ETAPAS.length - (casco && nvJefeLibre(casco) ? 1 : 2);
+  let k = 0; while (k < tope && rango >= NV_ETAPAS[k + 1].desde) k++; return k;
+}
+// La nave jefe de un casco: con su arte y la campaña ganada con la facción a la que pertenece.
+function nvJefeLibre(casco) {
+  if (!NVP.camp || !NVA.meta[casco + '-casco-c6'] || typeof NOVA_FACCIONES === 'undefined') return false;
+  for (const f in NOVA_FACCIONES) if ((NOVA_FACCIONES[f].nave.casco || f) === casco) return !!(NVP.camp.fac && NVP.camp.fac[f] && NVP.camp.fac[f].campana);
+  return false;
+}
 function nvRangoClase(k) { return NV_ETAPAS[k].desde; }
 // Rango con el que empiezas a desplegar (la campaña podrá subirlo); el menú de naves enseña la nave de ese nivel.
 function nvRangoInicial() { return NVP.camp ? 1 + nvNivelCapital('academia') : 1; }
 // Casco con los anclajes de la clase del rango: el arte de cada clase es más grande, así que ranuras, alas y motor se recolocan a escala (y = proporcional a lo largo del casco, x = según la envergadura de las alas).
 const NV_H_CACHE = {};
 function nvHull(casco, rango) {
-  const B = NOVA_PIEZAS.cascos[casco], k = nvClase(rango), m = NVA.meta;
+  const B = NOVA_PIEZAS.cascos[casco], k = nvClase(rango, casco), m = NVA.meta;
   if (k && !m[casco + '-casco-c' + (k + 1)]) return B;
   const clave = casco + k; if (NV_H_CACHE[clave]) return NV_H_CACHE[clave];
   let H = B;
@@ -23,7 +35,7 @@ function nvHull(casco, rango) {
       ranuras: B.ranuras.map(r => Object.assign({}, r, { x: fx(r.x), y: fy(r.y) })), escudo: B.escudo && Object.assign({}, B.escudo, { y: fy(B.escudo.y), rx: B.escudo.rx * sx, ry: B.escudo.ry * lonk / lon1 }) });
   }
   const A = B.anclajes && B.anclajes[k + 1];   // naves de facción: ranuras laterales recolocadas por etapa donde su arte no llega
-  if (A) H = Object.assign({}, H, { ranuras: H.ranuras.map(r => { const n = r.id.replace(/^(babor|estribor)/, ''), p = n !== r.id && A[n]; return p ? Object.assign({}, r, { x: r.id[0] === 'b' ? -p[0] : p[0], y: p[1] }) : r; }) });
+  if (A) H = Object.assign({}, H, { ranuras: H.ranuras.map(r => { const p = A[r.id.replace(/^(babor|estribor)/, '')]; return p ? Object.assign({}, r, { x: r.id[0] === 'b' ? -p[0] : p[0], y: p[1] }) : r; }) });
   return NV_H_CACHE[clave] = H;
 }
 // Pieza de la clase k si hay arte propio; si no, la del casco base.
@@ -49,4 +61,4 @@ function nvCuerpo(c, casco, k, capa) {
   nvPz(c, casco + '-casco', k, 0, 0);
 }
 // Semienvergadura de la nave según su clase (el hitbox sale de ella).
-function nvRAncho(casco, rango) { const k = nvClase(rango), m = NVA.meta[casco + '-alas' + (k && NVA.meta[casco + '-alas-c' + (k + 1)] ? '-c' + (k + 1) : '')]; return m ? m.ancho / 2 : 200; }
+function nvRAncho(casco, rango) { const k = nvClase(rango, casco), m = NVA.meta[casco + '-alas' + (k && NVA.meta[casco + '-alas-c' + (k + 1)] ? '-c' + (k + 1) : '')]; return m ? m.ancho / 2 : 200; }

@@ -232,6 +232,7 @@ function nvDibujaMundo(c, S) {
   for (const e of S.enem) if (cerca(e)) nvDibujaEnemigo(c, e, S);
   for (const s of S.saltos) nvDibujaSalto(c, s, S);
   nvDibujaBalasE(c, S);
+  nvDibujaJefe(c, S);
   if (!S.nave.destruida) nvDibujaNave(c, S);
   nvDibujaTrozos(c, S);
   const z = nvZ(S);   // los trazos fijos crecen con la cámara para verse igual a cualquier rango

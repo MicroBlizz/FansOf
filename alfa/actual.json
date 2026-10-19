@@ -1,8 +1,8 @@
 {
- "build": 234,
- "hash": "80fe7d5",
- "fecha": "2026-10-19T10:02:28Z",
- "mensaje": "Nova: los asteroides eligen entre varias imágenes (asteroide, asteroide-2…) si las hay",
+ "build": 235,
+ "hash": "286f3ce",
+ "fecha": "2026-10-19T10:08:40Z",
+ "mensaje": "Nova: el Rey de los huesos pilota como una persona (reacción con retraso, cambia de lado, apunta con adelanto, cañón y anillos con aviso y hueco) y ya no suelta naves cada pocos segundos",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

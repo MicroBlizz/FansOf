@@ -8,6 +8,9 @@
 
 const IDA = { balas: 3 };
 
+// mientras se pintan (preparación y cuenta atrás) los colados no se ven entre ellos: cada uno se pinta a solas; a la caza ya salen los becarios y los cuerpos quietos
+const idaOculto = e => modoEs('ida') && (J.fase === 'prep' || J.fase === 'cuenta') && e.clase === 'camaleon' && e !== J.yo;
+
 // al empezar la caza (modoEmpiezaCaza): de cada colado sale su becario
 function idaEmpieza() {
   if (!modoEs('ida')) return;

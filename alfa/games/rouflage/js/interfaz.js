@@ -18,6 +18,7 @@ const ICONOS = {
   senuelo: '<path d="M3 15c3-7 5 3 8-4s4 4 7-3"/><circle cx="19.5" cy="17.5" r="2.2"/>',
   podio: '<path d="M3 20h18M9 20V10h6v10M3 20v-6h6M15 20v-8h6M12 3l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 9l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z"/>',
   apagon: '<path d="M4 7.5h7l5-3v12l-5-3H4zM16 9.5v2M3 3l18 18"/>',
+  baliza: '<path d="M12 21s-6-5.5-6-10a6 6 0 0 1 12 0c0 4.5-6 10-6 10zM12 7.5v4M12 13.6v.4"/>',
   mano: '<path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7.5a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.3-2.4L3.6 14.2a1.4 1.4 0 0 1 2.3-1.6L8 15V12"/>',
   granada: '<circle cx="11" cy="14.5" r="6.2"/><path d="M9 8.4V5.2h4v3.2M13 5.2l4.2-1.8M3.2 4.6l2 1.4M2.4 9.6h2.4M20 10.6l1.6-1.6M20.6 14.6h1.8"/>',
   silbato: '<path d="M3 9.5h11.5M3 9.5V13h6.2"/><circle cx="14.5" cy="14" r="5.6"/><circle cx="14.5" cy="14" r="1.5" fill="currentColor"/><path d="M14.5 2.4v2.4M19 3.8l-1.3 2.1M10 3.8l1.3 2.1"/>',
@@ -73,7 +74,7 @@ function pistaDeAhora() {
   if (espectando()) {      // la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
     if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
     if (J.t - yo.tPistaFant > 9) return '';
-    const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
+    if (balizaPuedo()) return tr('Fantasma: ves todo con luz normal. AVISAR (Espacio o Q) deja una marca para tus compañeros: «aquí hay un colado»'); const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
   if (yo.clase === 'camaleon') {

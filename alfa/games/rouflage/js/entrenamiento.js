@@ -35,6 +35,7 @@ function practicaEmpieza() {
 function practicaCierra() {
   if (PRACTICA.activa) for (const e of PRACTICA.munecos) if (!e.fuera) fxSalpica(e.x, e.y - 24, '#fff6ea', 8);
   if (PRACTICA.activa) FX.suelo = FX.suelo.filter(f => !f.practica);      // los sellos y manchas de las prácticas también se van
+  if (PRACTICA.activa && J.pvp && PRACTICA.extra > 0 && J.yo) rfpManda({ t: 'cg', n: PRACTICA.extra });      // al acabar las prácticas se repite lo ganado, por si el aviso se perdió
   PRACTICA.activa = false; PRACTICA.munecos.length = 0;
 }
 

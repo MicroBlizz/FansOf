@@ -1,6 +1,11 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Aviso recargándose: {n} s": "Alert recharging: {n} s",
+  "{a} avisa: ¡hay un colado por aquí!": "{a} signals: there's an intruder over here!",
+  "Tu compañero": "Your teammate",
+  "AVISAR": "ALERT",
+  "Fantasma: ves todo con luz normal. AVISAR (Espacio o Q) deja una marca para tus compañeros: «aquí hay un colado»": "Ghost: you see everything in normal light. ALERT (Space or Q) leaves a mark for your teammates: \"there's an intruder here\"",
   "Buscar partida o jugar con amigos. De un bot te escondes fácil; de ellos, no tanto.": "Find a match or play with friends. Hiding from a bot is easy; from them, not so much.",
   "MI PERFIL": "MY PROFILE",
   "CONTRA BOTS": "VS BOTS",

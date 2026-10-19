@@ -77,6 +77,7 @@ function rfpRecibe(m) {
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
     case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
     case 'fp': rfpPoderRecibido(m); break;
+    case 'bz': balizaRecibida(m, sl); break;
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
     case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;
@@ -113,7 +114,7 @@ function rfpEstadoIA(m) {
   if (m.cg) contagiaSlots(m.cg);      // Contagio: por si a alguien se le perdió el disparo
   silbatoRecibido(m.sb); boteRecibido(m.bt);
   for (const s of m.fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
-  for (const [s, b] of m.ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = b; }
+  for (const [s, b] of m.ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = (e === J.yo && (J.fase === 'prep' || J.fase === 'cuenta')) ? Math.max(e.balas, b) : b; }      // (tus cartas de las prácticas no se pisan con un aviso viejo del anfitrión)
 }
 // el anfitrión cambia de fase: los demás lo siguen (siempre hacia delante)
 function rfpSigueFase(f, reloj) {
@@ -282,6 +283,6 @@ function rfpSinAnfitrion() {
 
 // un cazador dice cuántas cartas extra ha ganado en las prácticas: el anfitrión se las pone (con tope, y solo antes de la caza)
 function rfpCartasExtra(sl, m) {
-  const h = sl.ente; if (!h || h.clase !== 'cazador' || h.bot || !['prep', 'cuenta'].includes(J.fase)) return;
+  const h = sl.ente; if (!h || h.clase !== 'cazador' || h.bot || !(['prep', 'cuenta'].includes(J.fase) || (J.fase === 'caza' && J.tFase < 8))) return;      // (los primeros segundos de caza también: el anfitrión puede ir un pelo por delante)
   h.balas = Math.max(h.balas, Math.min(REGLAS.balas, REGLAS.balasIni + Math.max(0, Math.min(REGLAS.balasExtra, m.n | 0))));
 }

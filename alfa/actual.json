@@ -1,8 +1,8 @@
 {
- "build": 229,
- "hash": "37293a7",
- "fecha": "2026-10-19T01:10:05Z",
- "mensaje": "Decks: portada con el estilo de Rumble, Opciones y Novedades, sonido y música; el doble toque pregunta el objetivo",
+ "build": 230,
+ "hash": "53e7aff",
+ "fecha": "2026-10-19T07:54:12Z",
+ "mensaje": "Rouflage: cartas de práctica online más robustas, baliza del becario fantasma con luz normal, Ida y vuelta sin verse al pintarse",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

@@ -717,6 +717,118 @@
     128
    ],
    "proa": "sin orientación"
+  },
+  {
+   "id": "animales-jefe",
+   "nombre": "Nave de CrazyBunny",
+   "faccion": "animales",
+   "tipo": "jefe",
+   "archivo": "animales-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "streamers-jefe",
+   "nombre": "Nave de StreamKing",
+   "faccion": "streamers",
+   "tipo": "jefe",
+   "archivo": "streamers-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "heroes-jefe",
+   "nombre": "Nave de EpicChampion",
+   "faccion": "heroes",
+   "tipo": "jefe",
+   "archivo": "heroes-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "ciber-jefe",
+   "nombre": "Nave de CyberMarine",
+   "faccion": "ciber",
+   "tipo": "jefe",
+   "archivo": "ciber-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "memes-jefe",
+   "nombre": "Nave de MemeLord",
+   "faccion": "memes",
+   "tipo": "jefe",
+   "archivo": "memes-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "gamer-jefe",
+   "nombre": "Nave de ProGamer",
+   "faccion": "gamer",
+   "tipo": "jefe",
+   "archivo": "gamer-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "olvidados-jefe",
+   "nombre": "Nave de VikingoPerdido",
+   "faccion": "olvidados",
+   "tipo": "jefe",
+   "archivo": "olvidados-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
+  },
+  {
+   "id": "pop-jefe",
+   "nombre": "Nave de LaDirectora",
+   "faccion": "pop",
+   "tipo": "jefe",
+   "archivo": "pop-jefe.png",
+   "ancho": 512,
+   "alto": 512,
+   "pivote": [
+    256,
+    256
+   ],
+   "proa": "derecha"
   }
  ]
 }

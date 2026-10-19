@@ -1394,6 +1394,258 @@
    ],
    "archivo": "pop-alas-c5.png",
    "escala": 2
+  },
+  {
+   "id": "caza-alas-c6",
+   "tipo": "alas",
+   "nave": "caza",
+   "etapa": 6,
+   "ancho": 858,
+   "alto": 708,
+   "pivote": [
+    429,
+    6
+   ],
+   "archivo": "caza-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-casco-c6",
+   "tipo": "casco",
+   "nave": "crucero",
+   "etapa": 6,
+   "ancho": 369,
+   "alto": 852,
+   "pivote": [
+    184,
+    488
+   ],
+   "archivo": "crucero-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-casco-c6",
+   "tipo": "casco",
+   "nave": "nomuertos",
+   "etapa": 6,
+   "ancho": 489,
+   "alto": 852,
+   "pivote": [
+    244,
+    451
+   ],
+   "archivo": "nomuertos-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "nomuertos-alas-c6",
+   "tipo": "alas",
+   "nave": "nomuertos",
+   "etapa": 6,
+   "ancho": 797,
+   "alto": 742,
+   "pivote": [
+    398,
+    6
+   ],
+   "archivo": "nomuertos-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-casco-c6",
+   "tipo": "casco",
+   "nave": "streamers",
+   "etapa": 6,
+   "ancho": 438,
+   "alto": 881,
+   "pivote": [
+    219,
+    510
+   ],
+   "archivo": "streamers-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "streamers-alas-c6",
+   "tipo": "alas",
+   "nave": "streamers",
+   "etapa": 6,
+   "ancho": 858,
+   "alto": 576,
+   "pivote": [
+    429,
+    6
+   ],
+   "archivo": "streamers-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-casco-c6",
+   "tipo": "casco",
+   "nave": "memes",
+   "etapa": 6,
+   "ancho": 284,
+   "alto": 881,
+   "pivote": [
+    142,
+    510
+   ],
+   "archivo": "memes-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "memes-alas-c6",
+   "tipo": "alas",
+   "nave": "memes",
+   "etapa": 6,
+   "ancho": 858,
+   "alto": 636,
+   "pivote": [
+    429,
+    6
+   ],
+   "archivo": "memes-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-casco-c6",
+   "tipo": "casco",
+   "nave": "gamer",
+   "etapa": 6,
+   "ancho": 610,
+   "alto": 852,
+   "pivote": [
+    305,
+    451
+   ],
+   "archivo": "gamer-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "gamer-alas-c6",
+   "tipo": "alas",
+   "nave": "gamer",
+   "etapa": 6,
+   "ancho": 797,
+   "alto": 838,
+   "pivote": [
+    398,
+    6
+   ],
+   "archivo": "gamer-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-casco-c6",
+   "tipo": "casco",
+   "nave": "pop",
+   "etapa": 6,
+   "ancho": 353,
+   "alto": 852,
+   "pivote": [
+    176,
+    488
+   ],
+   "archivo": "pop-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "pop-alas-c6",
+   "tipo": "alas",
+   "nave": "pop",
+   "etapa": 6,
+   "ancho": 974,
+   "alto": 775,
+   "pivote": [
+    487,
+    6
+   ],
+   "archivo": "pop-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "caza-casco-c6",
+   "tipo": "casco",
+   "nave": "caza",
+   "etapa": 6,
+   "ancho": 361,
+   "alto": 881,
+   "pivote": [
+    180,
+    510
+   ],
+   "archivo": "caza-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-casco-c6",
+   "tipo": "casco",
+   "nave": "fragata",
+   "etapa": 6,
+   "ancho": 417,
+   "alto": 852,
+   "pivote": [
+    208,
+    451
+   ],
+   "archivo": "fragata-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-casco-c6",
+   "tipo": "casco",
+   "nave": "heroes",
+   "etapa": 6,
+   "ancho": 335,
+   "alto": 852,
+   "pivote": [
+    168,
+    488
+   ],
+   "archivo": "heroes-casco-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "crucero-alas-c6",
+   "tipo": "alas",
+   "nave": "crucero",
+   "etapa": 6,
+   "ancho": 974,
+   "alto": 947,
+   "pivote": [
+    487,
+    6
+   ],
+   "archivo": "crucero-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "fragata-alas-c6",
+   "tipo": "alas",
+   "nave": "fragata",
+   "etapa": 6,
+   "ancho": 797,
+   "alto": 807,
+   "pivote": [
+    398,
+    6
+   ],
+   "archivo": "fragata-alas-c6.png",
+   "escala": 2
+  },
+  {
+   "id": "heroes-alas-c6",
+   "tipo": "alas",
+   "nave": "heroes",
+   "etapa": 6,
+   "ancho": 974,
+   "alto": 921,
+   "pivote": [
+    487,
+    6
+   ],
+   "archivo": "heroes-alas-c6.png",
+   "escala": 2
   }
  ]
 }

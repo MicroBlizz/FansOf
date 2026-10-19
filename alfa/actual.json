@@ -1,8 +1,8 @@
 {
- "build": 266,
- "hash": "6d7b818",
- "fecha": "2026-10-19T18:34:55Z",
- "mensaje": "Rouflage: inglés de los pasos del cazador en la ayuda",
+ "build": 267,
+ "hash": "c2749ec",
+ "fecha": "2026-10-19T18:38:33Z",
+ "mensaje": "Nova: naves jefe de las 8 facciones (enemigos <faccion>-jefe) y etapa 6 de las 9 líneas del jugador (casco y alas c6), con su script jefes.py",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

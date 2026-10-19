@@ -1,8 +1,8 @@
 {
- "build": 249,
- "hash": "d197724",
- "fecha": "2026-10-19T15:59:02Z",
- "mensaje": "Decks: el aviso del nuevo nivel de paro cuenta el bucle de IAhorro",
+ "build": 250,
+ "hash": "ee32be6",
+ "fecha": "2026-10-19T16:00:12Z",
+ "mensaje": "Decks: aviso del nuevo paro más corto, la historia ya está en el final",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

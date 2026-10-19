@@ -8,7 +8,7 @@ IDIOMA.add({
   "Rivales con {v} % más de vida y {f} de Fuerza al entrar.": "Rivals with {v}% more health and {f} Strength on entry.",
   "La campaña de siempre.": "The usual campaign.",
   "Has aguantado en {n}.": "You held on at {n}.",
-  "IAhorro está desconectada y el mundo vuelve a empezar: Microblizz y Phony han resucitado. Se abre el paro +{n}, con rivales un poco más duros.": "IAhorro is unplugged and the world starts over: Microblizz and Phony are back. Unemployment +{n} opens, with slightly tougher rivals.",
+  "Se abre el paro +{n}: rivales algo más duros.": "Unemployment +{n} opens: slightly tougher rivals.",
   "Plantilla ajustada": "Trimmed headcount",
   "Reestructuración": "Restructuring",
   "Despidos objetivos": "Targeted layoffs",

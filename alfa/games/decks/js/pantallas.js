@@ -196,7 +196,7 @@ function dcPintaFin(victoria) {
   s.append(dcTarjetaResultado(tr(victoria ? F.carta : 'Jornada truncada'), tr(CP.lugar), [['reunion', String(u.dias || 0), tr('días')], ['elite', String(u.nodos || 0), tr('citas')], ['ataque', String(u.reuniones || 0), tr('ganadas')], ['reloj', String(u.turnos || 0), tr('turnos')], ['pausa', String(u.min || 0), tr('min')]], !victoria));
   s.append(dcEl('p', 'dc-nota', tr(victoria ? F.texto : 'Microblizz te ha echado del edificio. Lola dice que la puerta de atrás sigue abierta.')));
   if (victoria && u.paro) s.append(dcEl('p', 'dc-nota', tr('Has aguantado en {n}.', { n: dcParoNombre(u.paro) })));
-  if (victoria && u.abre) s.append(dcEl('p', 'dc-nota', tr('IAhorro está desconectada y el mundo vuelve a empezar: Microblizz y Phony han resucitado. Se abre el paro +{n}, con rivales un poco más duros.', { n: (DCP.meta.paroMax || 0) })));
+  if (victoria && u.abre) s.append(dcEl('p', 'dc-nota', tr('Se abre el paro +{n}: rivales algo más duros.', { n: (DCP.meta.paroMax || 0) })));
   s.append(dcEl('p', 'dc-nota dc-joke', tr(victoria ? F.joke : 'Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.')));
   const b = dcEl('button', 'btn-big ol', tr('A LA PORTADA')); b.onclick = () => dcPortada(); s.append(b);
 }

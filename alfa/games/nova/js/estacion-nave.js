@@ -2,7 +2,7 @@
 // Usa nvDibujaNave (dibujo.js) con una copia de la nave puesta de frente; las ranuras salen de nvRanuras (armas.js). Lo pinta nvRenderEstacion (interfaz.js).
 'use strict';
 const NV_EST_LADO = 400;   // el lienzo es cuadrado; la nave se dibuja con su escala de estación (cabe entera aunque sea un acorazado), no la de la partida
-function nvEstEsc(n) { return [1.3, 1.25, 1.15, 1.05, 0.95][nvClase(n.rango)]; }
+function nvEstEsc(n) { return [1.3, 1.25, 1.15, 1.05, 0.95, 0.85][nvClase(n.rango)]; }
 
 // Una defensa solo cabe en la popa o en la dorsal; las demás armas, en cualquier anclaje.
 function nvPuedeColocar(w, sl) { return !w || w.portador !== 'defensa' || sl.cara === 'popa' || sl.cara === 'dorsal'; }

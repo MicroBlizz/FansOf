@@ -1,8 +1,8 @@
 {
- "build": 267,
- "hash": "c2749ec",
- "fecha": "2026-10-19T18:38:33Z",
- "mensaje": "Nova: naves jefe de las 8 facciones (enemigos <faccion>-jefe) y etapa 6 de las 9 líneas del jugador (casco y alas c6), con su script jefes.py",
+ "build": 268,
+ "hash": "3c47cb6",
+ "fecha": "2026-10-19T18:44:15Z",
+ "mensaje": "Nova: etapa 6 «Nave jefe» (rango 50) de las 9 líneas, solo si has ganado la campaña con su facción; se avisa al desbloquearla; anclajes de la etapa 6 recolocados donde el arte no llega",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

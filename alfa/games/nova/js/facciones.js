@@ -35,8 +35,11 @@ function nvFacCierra(S, c) {
   if (!c.faccion) return [];
   const p = nvFacProg(c.faccion), antes = NOVA_VARIANTES.filter(v => v.faccion === c.faccion && nvFacArmaLibre(v));
   p.rangoMax = Math.max(p.rangoMax, S.nave.rango);
-  if (S.estado === 'victoria' && S.tipoSector === 'nucleo') p.campana = true;
-  return NOVA_VARIANTES.filter(v => v.faccion === c.faccion && nvFacArmaLibre(v) && !antes.includes(v)).map(v => v.nombre);
+  const nueva = S.estado === 'victoria' && S.tipoSector === 'nucleo' && !p.campana;
+  if (nueva) p.campana = true;
+  const out = NOVA_VARIANTES.filter(v => v.faccion === c.faccion && nvFacArmaLibre(v) && !antes.includes(v)).map(v => v.nombre);
+  if (nueva) out.push('Nave jefe: ' + NOVA_FACCIONES[c.faccion].nave.nombre);   // su última evolución (clases.js, nvJefeLibre)
+  return out;
 }
 
 // ---------- las naves: las tres hechas y las seis nuevas (casco prestado y teñido hasta que llegue su arte) ----------
@@ -47,10 +50,11 @@ function nvFacCierra(S, c) {
     let id = N.casco;
     if (!id) {
       id = f; const B = NOVA_PIEZAS.cascos[N.base], H = JSON.parse(JSON.stringify(B));
-      H.nombre = N.nombre; H.faccion = f; H.prestado = { base: N.base, matiz: N.matiz || 0 }; if (N.anclajes) H.anclajes = N.anclajes;
+      H.nombre = N.nombre; H.faccion = f; H.prestado = { base: N.base, matiz: N.matiz || 0 };
       NOVA_PIEZAS.cascos[id] = H;
       if (sel) sel[id] = Object.assign({ hp: 230, vel: 190 }, NV_FAC_STATS[f]);
     }
+    if (N.anclajes) NOVA_PIEZAS.cascos[id].anclajes = N.anclajes;   // ranuras recolocadas por etapa (clases.js, nvHull)
     if (sel && sel[id]) sel[id].arma = [I.portador, I.carga, I.id];   // la nave sale con su arma insignia montada
   }
 })();

@@ -1,6 +1,10 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "¿BORRAR TODO?": "DELETE EVERYTHING?",
+  "Se borra TODO tu progreso y tus compras de Rouflage (armario, Gotas, Acciones, pase, diario…), aquí y en tu cuenta. No se puede deshacer. Solo para probar desde cero.": "ALL your Rouflage progress and purchases (wardrobe, Drops, Shares, pass, diary…) are deleted, here and in your account. This can't be undone. Only for testing from scratch.",
+  "BORRAR TODO": "DELETE EVERYTHING",
+  "Borrar todo mi progreso (alfa)": "Delete all my progress (alfa)",
   "ACCIONES CON GOTAS": "SHARES FOR DROPS",
   "+{n} Acciones": "+{n} Shares",
   "Aviso recargándose: {n} s": "Alert recharging: {n} s",

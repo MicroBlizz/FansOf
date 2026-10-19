@@ -291,7 +291,7 @@ function preparaInterfaz() {
   E('b-bots-jugar').onclick = () => elige(BOTS.modo);
   E('b-bots-volver').onclick = () => { play('select'); pantalla('p-titulo'); };
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-titulo')); };
-  E('b-opciones').onclick = () => { play('select'); pantalla('p-opciones'); refrescaSonido(); };
+  E('b-opciones').onclick = () => { play('select'); pantalla('p-opciones'); refrescaSonido(); reinicioRevisa(); };
   E('b-opciones-ok').onclick = () => { play('select'); pantalla('p-titulo'); };
   E('b-ayuda2').onclick = () => { play('select'); muestraAyuda(() => pantalla('p-pausa')); };
   E('b-ayuda-ok').onclick = () => { play('select'); const f = _trasAyuda; _trasAyuda = null; if (f) f(); else pantalla('p-titulo'); };

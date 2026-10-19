@@ -1,8 +1,8 @@
 {
- "build": 231,
- "hash": "b47911f",
- "fecha": "2026-10-19T09:22:00Z",
- "mensaje": "Rouflage: la tienda canjea Gotas (se ganan jugando) por Acciones; cosméticos de Gotas pasan a Acciones",
+ "build": 232,
+ "hash": "54785ef",
+ "fecha": "2026-10-19T09:23:42Z",
+ "mensaje": "Rouflage: botón de reinicio total en Opciones, solo rol alfa",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

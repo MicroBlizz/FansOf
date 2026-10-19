@@ -1,8 +1,8 @@
 {
- "build": 242,
- "hash": "01d8027",
- "fecha": "2026-10-19T11:26:21Z",
- "mensaje": "Rouflage: mascota inicial gratis y siempre puesta, armario sin recorte, despedido cierra el modo pintar, y se pide la ropa de los demás hasta recibirla",
+ "build": 243,
+ "hash": "00dba45",
+ "fecha": "2026-10-19T13:02:38Z",
+ "mensaje": "Rouflage 0.2.30: nota y versión (mascotas, conjuntos, tienda con Acciones, baliza del fantasma)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",
@@ -10,7 +10,7 @@
   "island": "0.3.5",
   "nova": "0.3.5",
   "ratkov": "0.2.9",
-  "rouflage": "0.2.29",
+  "rouflage": "0.2.30",
   "rumble": "0.9.138",
   "skate": "0.1.27",
   "survivors": "0.1.51",

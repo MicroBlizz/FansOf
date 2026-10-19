@@ -104,7 +104,7 @@ function dcOfertaEmpleo(premio) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(tr('Oferta de empleo'), n && n.tipo);
   s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra 15 nóminas.')));
   const g = dcEl('div', 'dc-rejilla dc-oferta');
-  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') ids[0] = 'sp_pulgas'; else if (premio === 'rara') ids[0] = dcCartaRara();
+  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') ids[0] = DC_LEGENDARIAS[(Math.random() * DC_LEGENDARIAS.length) | 0]; else if (premio === 'rara') ids[0] = dcCartaRara();
   ids.forEach(id => { const c = dcCarta(id); g.append(dcPintaCarta(c, { grande: true, al: () => { play('card'); r.mazo.push(c); dcGuarda(); DCC.siguiente(); } })); });
   s.append(g);
   const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 nóminas')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);

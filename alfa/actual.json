@@ -1,8 +1,8 @@
 {
- "build": 224,
- "hash": "7118e87",
- "fecha": "2026-10-18T23:48:44Z",
- "mensaje": "Nova 0.3.5: nota y versión (estación, facciones, especialidades, sector sin bordes y Analytics)",
+ "build": 225,
+ "hash": "fa948c7",
+ "fecha": "2026-10-19T00:13:18Z",
+ "mensaje": "Decks: las cartas sin personaje llevan los dibujos de la serie y 8 cartas nuevas de sus objetos y habilidades",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

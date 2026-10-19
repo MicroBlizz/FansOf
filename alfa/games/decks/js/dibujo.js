@@ -16,14 +16,15 @@ function dcSprite(key, alto, ancho) {
 }
 function dcClona(c) { const n = document.createElement('canvas'); n.width = c.width; n.height = c.height; n.style.cssText = c.style.cssText; n.className = c.className; n.getContext('2d').drawImage(c, 0, 0); return n; }
 // El icono de una carta sin dibujo propio: dos letras sobre un redondel del color de la rareza.
-function dcIcono(letras, rar, alto) {
+function dcIcono(letras, rar, alto, mini) {
   const R = RARITY[rar] || RARITY.basic, d = document.createElement('div');
   d.className = 'dc-icono'; d.style.setProperty('--c1', R[1]); d.style.setProperty('--c2', R[2]); d.style.width = d.style.height = alto + 'px'; d.style.fontSize = Math.round(alto * 0.42) + 'px';
-  d.textContent = letras;
+  const dib = mini && typeof miniSvg === 'function' ? miniSvg(mini) : '';   // el dibujo de la serie (core/css/miniaturas.css le pone el fondo de su rareza)
+  if (dib) { d.dataset.mini = rar; d.style.setProperty('--mc', R[1]); d.style.setProperty('--mo', R[2]); d.innerHTML = dib; } else d.textContent = letras;
   return d;
 }
 // El dibujo de una carta: su unidad o su icono.
-function dcArteCarta(carta, alto) { const D = DC_CARTAS[carta.id]; return D.arte && ART[D.arte] ? dcSprite(D.arte, alto) : dcIcono(D.ic || '??', D.rar, alto); }
+function dcArteCarta(carta, alto) { const D = DC_CARTAS[carta.id]; return D.arte && ART[D.arte] ? dcSprite(D.arte, alto) : dcIcono(D.ic || '??', D.rar, alto, D.mini); }
 // La intención de un rival: letra del tipo de jugada y su color.
 const DC_INTENCION = {
   ataque: ['!', '#ff4b5c', 'Va a atacar'], defensa: ['◆', '#6fc4ff', 'Se va a defender'], cura: ['+', '#7be04a', 'Va a curar a los suyos'],

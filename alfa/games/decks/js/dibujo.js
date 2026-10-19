@@ -9,7 +9,9 @@ function dcSprite(key, alto, ancho) {
     const r = Math.min(2, window.devicePixelRatio || 1), c = document.createElement('canvas');
     c.width = Math.round(ancho * r); c.height = Math.round(alto * r); c.style.width = ancho + 'px'; c.style.height = alto + 'px'; c.className = 'dc-sprite';
     const x = c.getContext('2d'); x.scale(r, r);
-    if (ART[key]) drawVector(x, key, ancho / 2, alto * 0.94, alto * 0.86);
+    // «gris:x» es el personaje x en el gris de los clones de IAhorro
+    const gris = key.startsWith('gris:'), k = gris ? key.slice(5) : key; if (gris) x.filter = 'grayscale(1) contrast(.9) brightness(.92)';
+    if (ART[k]) drawVector(x, k, ancho / 2, alto * 0.94, alto * 0.86);
     DC_CACHE[id] = c;
   }
   return DC_CACHE[id].cloneNode ? dcClona(DC_CACHE[id]) : DC_CACHE[id];

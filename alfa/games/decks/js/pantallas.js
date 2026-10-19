@@ -144,6 +144,7 @@ function dcAplicaCorreo(fx) {
   if (fx.merienda && r.meriendas.length < 2) r.meriendas.push(pick(Object.keys(DC_MERIENDAS)));
   if (fx.suscripcion) { r.suscripcion = { cuota: 6, cura: 8 }; toast(tr('Suscrito al Plan Bienestar'), true); }
   if (fx.perderAzar && r.mazo.length > 5) r.mazo.splice((Math.random() * r.mazo.length) | 0, 1);
+  if (fx.duplicaAzar && r.mazo.length) { const c = pick(r.mazo); r.mazo.push(Object.assign({}, c)); toast(tr('Un clon gris de {c} entra en tu mazo', { c: dcNombre(c) }), true); }
   if (fx.ascensoAzar) { const c = pick(r.mazo.filter(x => !x.asc && DC_CARTAS[x.id].asc)); if (c) { c.asc = true; toast(tr('{c} asciende', { c: dcNombre(c) }), true); } }
   if (r.hp <= 0) { dcFinPartida(false); return dcPintaFin(false); }
   play('select');

@@ -1,8 +1,8 @@
 {
- "build": 245,
- "hash": "bd69e4f",
- "fecha": "2026-10-19T13:06:56Z",
- "mensaje": "Monedas: botón del cambio con su inglés",
+ "build": 246,
+ "hash": "b617b1c",
+ "fecha": "2026-10-19T15:39:34Z",
+ "mensaje": "Decks: capítulo 3 de la campaña, IAhorro (clones grises, dos semanas, eventos propios y jefe final)",
  "juegos": {
   "crush": "0.1.19",
   "dark": "0.2.7",

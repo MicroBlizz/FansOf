@@ -52,7 +52,7 @@ function dcRango() { return dcCap().rangos[Math.min(DCP.run.rango || 0, dcCap().
 function dcTitulosCap() { return dcCap().titulos || DC_TITULOS; }
 function dcSalasCap() { return dcCap().salas || DC_SALAS; }
 function dcCorreosCap() { return dcCap().correos ? dcCap().correos.concat(shuffle(DC_CORREOS.slice()).slice(0, 3)) : DC_CORREOS; }
-function dcBuscaCorreo(id) { return DC_CORREOS.concat(DC_CORREOS_PHONY).find(c => c.id === id) || DC_CORREOS[0]; }
+function dcBuscaCorreo(id) { return DC_CORREOS.concat(...DC_CAPITULOS.map(k => k.correos || [])).find(c => c.id === id) || DC_CORREOS[0]; }
 // La última semana de su capítulo (la que acaba en el CEO).
 function dcFinDeCapitulo() { const A = DC_CAMPANA, i = DCP.run.acto; return !A[i + 1] || A[i + 1].cap !== A[i].cap; }
 function dcNombreRival(id) { const D = DC_RIVALES[id]; return D.nombre ? tr(D.nombre) : tr(CFG.enemyCards[id] ? CFG.enemyCards[id].name : id); }

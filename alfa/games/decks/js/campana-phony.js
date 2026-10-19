@@ -13,7 +13,8 @@ DC_CAPITULOS.push({
   pausa: { titulo: 'Descanso en el sofá', nota: 'Cinco minutos de paz en el sofá, con el micrófono silenciado. Elige una cosa.' },
   tienda: { titulo: 'Tienda digital de Phony', nota: '«Todo es de alquiler, pero el alquiler lo pongo yo». Lola ha colado su mercadillo en la tienda de Phony.', dlc: true },
   correos: null,   // se rellena abajo con los eventos propios
-  final: { titulo: '¡CAPÍTULO 2 SUPERADO!', carta: 'Campaña de Phony completada', texto: 'Chapman cierra la sesión y se queda sin conexión para siempre. Los discos vuelven a las estanterías… aunque nadie tiene dónde meterlos. IAhorro ya ha pedido tu currículum.', joke: 'Phony ha emitido un comunicado: Chapman «ha decidido tomarse un tiempo offline». Le han cobrado la desconexión.' },
+  cierre: { titulo: '¡Eres la nueva CEO de Phony!', texto: 'Chapman se desconecta con una última videollamada y tú heredas su cuenta, su sillón virtual y 4.000 suscripciones sin cancelar. Los servidores de Phony empiezan a hacer ruidos raros.',
+    sig: { titulo: 'Al día siguiente…', texto: 'Antes de tu primera llamada como CEO, IAhorro compra Phony por un euro. Lo hizo sola: redactó el contrato, la oferta y tu carta de despedida. Te contratan igualmente, como «supervisor humano». Es el cargo más corto del organigrama.', joke: 'IAhorro te ha enviado tu nómina: es una captura de pantalla de una nómina.', boton: 'EMPEZAR EN IAHORRO' } },
 });
 DC_CAMPANA.push(
   { cap: 1, titulo: 'Primera semana en remoto', cierre: { titulo: 'Fin del primer acto en Phony', texto: 'La gerente de suscripciones cancela tu cuenta de prueba y te mueve a la lista de «clientes premium»: es decir, a la de los que pagan. Pero es martes otra vez, y la agenda sigue llena de enlaces.', joke: 'Phony te cobra la cancelación y te regala un mes gratis… de pagar la cancelación.' }, dias: [

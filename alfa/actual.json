@@ -1,8 +1,8 @@
 {
- "build": 297,
- "hash": "b665ef4",
- "fecha": "2026-10-20T16:27:38Z",
- "mensaje": "Decks: mantener pulsada una carta de la mano la enseña en grande encima (la lupa), sin ventana; al arrastrar se quita",
+ "build": 298,
+ "hash": "fe5da8f",
+ "fecha": "2026-10-20T16:31:41Z",
+ "mensaje": "Novedades de Rumble, TD y Survivors: la nota de economía sin cifras, como ajustes no definitivos",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

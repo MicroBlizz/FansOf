@@ -41,7 +41,7 @@ const PROMO = (() => {
       if (!a.isConnected) { clearInterval(t); return; }
       const l = a.querySelectorAll('.promo-sl'); if (l.length < 2) return;
       let k = [...l].findIndex(x => x.classList.contains('on')); l[k].classList.remove('on'); l[(k + 1) % l.length].classList.add('on');
-    }, 1800);
+    }, 2000);
   };
   // en la app de Android el enlace interno no sirve: se abre en el navegador externo
   const enlaza = raiz => {

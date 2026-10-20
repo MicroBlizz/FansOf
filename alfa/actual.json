@@ -1,8 +1,8 @@
 {
- "build": 328,
- "hash": "46627cd",
- "fecha": "2026-10-20T20:02:55Z",
- "mensaje": "Versiones y notas del despliegue: Jump 0.3.2 (zanahorias de espectáculo) y todos los juegos (core cambió)",
+ "build": 329,
+ "hash": "ef0b4cc",
+ "fecha": "2026-10-20T20:07:59Z",
+ "mensaje": "Promo de juegos: 2 s por imagen",
  "juegos": {
   "crush": "0.1.26",
   "dark": "0.2.7",

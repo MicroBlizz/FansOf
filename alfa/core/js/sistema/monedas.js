@@ -69,9 +69,22 @@ const MONEDAS = (() => {
     for (const b of document.querySelectorAll('[data-cambio]')) { b.setAttribute('aria-pressed', String(+b.dataset.cambio === n)); b.onclick = () => { n = +b.dataset.cambio; for (const x of document.querySelectorAll('[data-cambio]')) x.setAttribute('aria-pressed', String(x === b)); }; }
   }
   // Antes de pagar con dinero real, un invitado ve una RECOMENDACIÓN (no un bloqueo): sin cuenta con email o Google, si pierde la instalación pierde su progreso y sus compras
+  // La primera vez de un invitado lleva además un check obligatorio («soy consciente y me doy por avisado») que se guarda en el servidor (avisos_compra, SQL 55); versión del texto: AVISO_VERSION
+  const AVISO_VERSION = '1';
   function recomiendaCuenta(seguir) {
     if (typeof CUENTA === 'undefined' || !CUENTA.invitado || typeof confirmBox !== 'function') return seguir();
-    confirmBox(tr('CREA UNA CUENTA ANTES DE PAGAR'), tr('Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».'), tr('COMPRAR IGUALMENTE'), seguir);
+    const juego = (location.pathname.match(/games\/([^/]+)/) || [])[1] || 'web', clave = 'fansof-aviso-compra-' + juego + '-' + AVISO_VERSION;
+    let visto = false; try { visto = !!localStorage.getItem(clave); } catch (e) { /* sin almacenamiento: se pide siempre */ }
+    const check = visto ? '' : `<label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;text-align:left"><input type="checkbox" id="aviso-ok" style="margin-top:3px"><span>${tr('Soy consciente y me doy por avisado.')}</span></label>`;
+    confirmBox(tr('CREA UNA CUENTA ANTES DE PAGAR'), tr('Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».') + check, tr('COMPRAR IGUALMENTE'), () => {
+      if (!visto) {
+        try { localStorage.setItem(clave, '1'); } catch (e) { /* no pasa nada */ }
+        try { if (CUENTA.activa) CUENTA.rpc('aviso_compra', { p_juego: juego, p_version: AVISO_VERSION }).catch(() => { /* el 55 aún sin aplicar: se sigue */ }); } catch (e) { /* idem */ }
+      }
+      seguir();
+    });
+    const ok = document.getElementById('cf-ok'), c = document.getElementById('aviso-ok');
+    if (ok && c) { ok.disabled = true; ok.style.opacity = '.45'; c.onchange = () => { ok.disabled = !c.checked; ok.style.opacity = c.checked ? '' : '.45'; }; }
   }
   // lo que solo se compra con dinero real (gemas, pase, sin anuncios…): en desarrollo es una compra de prueba; en la web aún no está a la venta
   function compraReal(titulo, html, alComprar) {

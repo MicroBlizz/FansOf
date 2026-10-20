@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.141
+  "<b>TIENDA DE ORO MÁS CLARA</b>: la pestaña de oro explica por qué el oro no se vende, deja cambiar oro por gemas y recuerda que el juego es limpio: no es pay to win. Además, mejoras por dentro: la tienda ya no dice «sin conexión» cuando el servidor contesta con un error.": "<b>CLEARER GOLD SHOP</b>: the gold tab explains why gold is not sold, lets you swap gold for gems and reminds you the game is fair play: not pay to win. Plus under-the-hood improvements: the shop no longer says \"offline\" when the server answered with an error.",
+  "Microblizz ha puesto un cartel en la tienda de oro y Phony ya intenta pagar con el cartel.": "Microblizz has put a sign up in the gold shop and Phony is already trying to pay with the sign.",
   // 0.9.140
   "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the series' shared systems for the two-currency shop. You won't notice anything.",
   "Microblizz ha repasado el cambio de oro a gemas. Phony sigue convencido de que el redondeo es cosa suya.": "Microblizz has gone over the gold-to-gems exchange. Phony remains convinced the rounding is his.",

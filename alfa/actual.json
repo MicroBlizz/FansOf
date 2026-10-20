@@ -1,20 +1,20 @@
 {
- "build": 277,
- "hash": "de300d9",
- "fecha": "2026-10-20T12:54:18Z",
- "mensaje": "Tienda: la pestaña de oro explica el juego limpio (no es pay to win)",
+ "build": 278,
+ "hash": "310a745",
+ "fecha": "2026-10-20T12:58:10Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.22, decks 0.2.4, nova 0.3.9, ratkov 0.2.12, rouflage 0.2.33, rumble 0.9.141, survivors 0.1.54, tacticas 0.1.38, td 0.13.70",
  "juegos": {
-  "crush": "0.1.21",
+  "crush": "0.1.22",
   "dark": "0.2.7",
-  "decks": "0.2.3",
+  "decks": "0.2.4",
   "island": "0.3.5",
-  "nova": "0.3.8",
-  "ratkov": "0.2.11",
-  "rouflage": "0.2.32",
-  "rumble": "0.9.140",
+  "nova": "0.3.9",
+  "ratkov": "0.2.12",
+  "rouflage": "0.2.33",
+  "rumble": "0.9.141",
   "skate": "0.1.27",
-  "survivors": "0.1.53",
-  "tacticas": "0.1.37",
-  "td": "0.13.69"
+  "survivors": "0.1.54",
+  "tacticas": "0.1.38",
+  "td": "0.13.70"
  }
 }

@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.9
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the two-currency shop is refined and failures are logged better).",
+  "Microblizz ha ordenado los cables de las naves y Phony ha preguntado cuál era el del café.": "Microblizz has tidied the ship cables and Phony has asked which one was for the coffee.",
   // 0.3.8
   "<b>NAVES JEFE DE FACCIÓN Y ETAPA 6</b>: los jefes de sector tienen su propia nave para cada una de las 8 facciones, y las nueve líneas de naves del jugador estrenan la etapa 6, «Nave jefe» (rango 50), que se desbloquea al ganar la campaña con su facción (y avisa al conseguirla).": "<b>FACTION BOSS SHIPS AND STAGE 6</b>: sector bosses fly their own ship for each of the 8 factions, and the nine player ship lines unlock stage 6, \"Boss ship\" (rank 50), by winning the campaign with their faction (you get notified when you earn it).",
   "Microblizz ha ascendido a los jefes a nave propia y Phony ha preguntado si la etapa 6 trae asiento con calefacción.": "Microblizz has promoted the bosses to ships of their own and Phony has asked whether stage 6 comes with a heated seat.",

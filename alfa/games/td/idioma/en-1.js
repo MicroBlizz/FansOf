@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.70
+  "<b>TIENDA CON DOS MONEDAS AFINADA</b>: el cambio de oro por gemas y las compras de la tienda quedan igual que en Rumble, y la tienda ya no dice «sin conexión» cuando el servidor contesta con un error.": "<b>TWO-CURRENCY SHOP REFINED</b>: swapping gold for gems and shop purchases now work like in Rumble, and the shop no longer says \"offline\" when the server answered with an error.",
+  "Microblizz ha repasado la tienda de las torres y Phony ha intentado comprar una torre con el cambio de las gemas.": "Microblizz has gone over the tower shop and Phony tried to buy a tower with the gem change.",
   // 0.13.69
   "<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the two-currency shop is now ready in this game, although it is not open yet.",
   "Microblizz ha dejado la caja de dos monedas lista y Phony ya ha pedido que la abran el viernes, que es cuando cobra.": "Microblizz has left the two-currency till ready and Phony has already asked for it to open on Friday, which is when he gets paid.",

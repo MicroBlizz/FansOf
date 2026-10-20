@@ -23,7 +23,7 @@ function iconoSonido(x, y, on) {
   else { G.beginPath(); G.moveTo(x + 2.5, y - 2); G.lineTo(x + 6, y + 2); G.moveTo(x + 6, y - 2); G.lineTo(x + 2.5, y + 2); G.stroke(); }
 }
 // los del kit de sabotaje: dibujos 3D del estudio (casco_icono, cafe_icono, suerte_icono, mirilla_icono)
-const iconoKit = (id, x, y) => spriteEnCaja(id + '_icono', x - 9, y - 9, 18, 18, 0);
+const iconoKit = (id, x, y) => spriteEnCaja(id + '_icono', x - 12, y - 12, 24, 24, 0);
 function pastillaZanas(x, y) {
   const z = String(GUARDA.zanas), w = anchoLetras(z, 9.5) + 27;
   caja(x, y, w, 15, 5, '#ffe6d2', OLC, 0.8); iconoZana(x + 10, y + 7.5, 13.5); letras(z, x + w - 7 - anchoLetras(z, 9.5) / 2, y + 8, 9.5, PASTEL.melocotonO);

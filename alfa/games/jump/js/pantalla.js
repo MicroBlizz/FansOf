@@ -113,22 +113,23 @@ function pintaPunteria() {
 // para calcular el salto, y al máximo brilla y suelta destellos
 const FUERZA = { x: 0, y: 0, alto: 0 };
 function pintaFuerza(f, max) {
-  const alto = PAN.H * 0.22, x = PAN.W - 13, y = PAN.H * 0.3, t = JUEGO.t, c = ATLAS.cuadros.zanahoria_icono;
-  // el icono va en diagonal: se pone de pie girándolo, y se escala para que de punta a hojas mida «alto»
-  const k = c ? alto / Math.hypot(c[2], c[3]) / 0.92 : 0;
-  const zana = () => c && aqui(x, y + alto / 2, 0.62, 1, 1, () => spriteEnCaja('zanahoria_icono', -c[2] * k / 2, -c[3] * k / 2, c[2] * k, c[3] * k, 0));
+  const alto = PAN.H * 0.2, x = PAN.W - 11, y = PAN.H * 0.29, t = JUEGO.t, c = ATLAS.cuadros.zanahoria_icono;
+  const FINA = 0.5, LARGA = 1.3;   // más fina y más alargada que el icono de siempre
+  // el icono va en diagonal: se pone de pie girándolo, y se escala para que de punta a hojas mida «alto» (por LARGA)
+  const k = c ? alto / Math.hypot(c[2], c[3]) / 0.92 : 0, cy = y + alto * LARGA / 2;
+  const zana = () => { if (!c) return; G.save(); G.translate(x, cy); G.scale(FINA, LARGA); G.rotate(0.62); spriteEnCaja('zanahoria_icono', -c[2] * k / 2, -c[3] * k / 2, c[2] * k, c[3] * k, 0); G.restore(); };
   // dónde va el cuerpo naranja (de la punta, abajo, a donde empiezan las hojas)
-  const punta = y + alto * 0.97, arriba = y + alto * 0.36, lleno = punta - (punta - arriba) * f;
+  const punta = cy + alto * 0.47 * LARGA, arriba = cy - alto * 0.14 * LARGA, lleno = punta - (punta - arriba) * f;
   if (max) { const g = G.createRadialGradient(x, (punta + arriba) / 2, 2, x, (punta + arriba) / 2, alto * 0.5); g.addColorStop(0, `rgba(255,230,140,${0.55 + Math.sin(t * 14) * 0.2})`); g.addColorStop(1, 'rgba(255,230,140,0)'); G.fillStyle = g; G.fillRect(x - alto * 0.5, y, alto, alto); }
   G.save(); G.filter = 'grayscale(1) brightness(1.25)'; G.globalAlpha = 0.55; zana(); G.restore();
   G.save(); G.beginPath(); G.rect(x - alto, lleno, alto * 2, alto * 2); G.clip(); zana(); G.restore();
   // las marcas: rayitas blancas con borde, a la izquierda de la zanahoria
   [0.25, 0.5, 0.75].forEach(k => {
     const yy = punta - (punta - arriba) * k, ya = f >= k;
-    trazo(x - 10, yy, x - 5, yy, 1.1, ya ? '#ffffff' : 'rgba(255,255,255,0.75)', OLC);
-    letras(Math.round(k * 100) + '', x - 15, yy + 0.3, 4.6, ya ? '#ffffff' : 'rgba(255,255,255,0.8)', { alin: 'right', borde: OLC, bw: 1.4 });
+    trazo(x - 8, yy, x - 4, yy, 1.1, ya ? '#ffffff' : 'rgba(255,255,255,0.75)', OLC);
+    letras(Math.round(k * 100) + '', x - 9.5, yy + 0.3, 4.6, ya ? '#ffffff' : 'rgba(255,255,255,0.8)', { alin: 'right', borde: OLC, bw: 1.4 });
   });
-  if (max) for (let i = 0; i < 3; i++) { const k = (t * 1.8 + i / 3) % 1; estrellita(x + Math.cos(i * 2.1 + t) * 7, arriba + (punta - arriba) * (1 - k), 2.2 * Math.sin(k * Math.PI), 0.95); }
+  if (max) for (let i = 0; i < 3; i++) { const k = (t * 1.8 + i / 3) % 1; estrellita(x + Math.cos(i * 2.1 + t) * 4, arriba + (punta - arriba) * (1 - k), 2.2 * Math.sin(k * Math.PI), 0.95); }
 }
 
 function pintaMarcador() {

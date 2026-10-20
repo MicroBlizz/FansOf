@@ -74,11 +74,11 @@ function pintaGuiaTuto(t) {
 
 // la ficha de Lola: pestaña con su nombre, hoja de papel y los puntitos de los pasos
 function pintaTuto(t) {
-  if (!tutoActivo() || PANEL.abierto || JUEGO.modo === 'fin') return;
-  const W = PAN.W, x = 18, w = W - 36, menu = JUEGO.modo === 'menu';
+  if (!tutoActivo() || PANEL.abierto || JUEGO.modo === 'fin' || JUEGO.modo === 'menu') return;
+  const W = PAN.W, x = 18, w = W - 36;
   const ls = envuelve(tr(TUTO_PASOS[TUTO.paso]), w - 18, 7.6), h = 14 + ls.length * 9.5;
   const e = Math.min(1, TUTO.t / 0.25), sale = TUTO.paso === 3 ? Math.min(1, Math.max(0, (4.5 - TUTO.t) / 0.3)) : 1;
-  const y = (menu ? 90 : 56) - (1 - e) * 10;
+  const y = 56 - (1 - e) * 10;
   G.globalAlpha = e * sale;
   const nom = 'LOLA', nw = anchoLetras(nom, 9, { logo: true }) + 14, sub = tr('despedida por Microblizz');
   caja(x + 8, y - 11, nw, 14, [4, 4, 0, 0], PASTEL.melocoton, OLC, 0.9);

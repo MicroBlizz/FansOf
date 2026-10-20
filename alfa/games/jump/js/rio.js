@@ -65,7 +65,8 @@ function generaRio(hasta) {
     for (const f of fila) {
       if (n - RIO.ultimoAmigo >= 3 && Math.random() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
-      } else if (Math.random() < 0.24) f.zanas = 1 + Math.floor(Math.random() * Math.random() * 3);
+      } else if (wy > 500 && Math.random() < 0.04) f.mirilla = true;
+      else if (Math.random() < 0.24) f.zanas = 1 + Math.floor(Math.random() * Math.random() * 3);
     }
   }
 }
@@ -172,6 +173,7 @@ function pintaTroncos(t, bajoConejo) {
     if (y0 < -50 || y0 > PAN.H + 40) continue;
     const y = pintaTronco(tr, y0, tr === bajoConejo);
     for (let i = 0; i < tr.zanas; i++) sprite('zanahoria', tr.x - (tr.zanas - 1) * 5 + i * 10, y + 1 - (i % 2), 7);
+    if (tr.mirilla) { elipse(tr.x, y + 1, 6, 2.4, 'rgba(40,110,120,0.25)', null); iconoMirilla(tr.x, y - 6 + Math.sin(t * 4 + tr.id) * 1.2, 6); }
     if (tr.amigo) {
       // atrapado en un charco de barro, temblando, con su cartelito de SOS clavado en el tronco
       blanda([tr.x - 11, y + 1, tr.x - 4, y - 4, tr.x + 7, y - 3.5, tr.x + 12, y + 2, tr.x + 4, y + 6, tr.x - 7, y + 5.5], COL_RIO.barro, COL_RIO.barroO, 0.8);

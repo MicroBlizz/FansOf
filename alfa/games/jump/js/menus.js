@@ -16,7 +16,7 @@ const PUESTO = {
     ['castor', 800, 'BoomBeaver', 'Al rescatarlo, ¡BUM!: la ola retrocede.']],
   pelaje: [['#ffffff', 0, 'Blanco'], ['#cfd0dc', 150, 'Gris oficina'], ['#b98a66', 400, 'Chocolate'], ['#f4c886', 750, 'Miel'], ['#ffc4dc', 1300, 'Rosa chicle'], ['#d8c0ff', 2500, 'Morado caos']],
   capas: [['#ff7a1a', 0, 'Naranja'], ['#e8343e', 180, 'Roja rebelde'], ['#3a86ff', 450, 'Azul Phony'], ['#3fbf6a', 700, 'Verde bosque'], ['#a04ae0', 1100, 'Morada'], ['#ffc93a', 2600, 'Dorada CEO']],
-  kit: [['casco', 40, 'Casco de obra', 'Te saca del agua una vez en toda la partida.'], ['cafe', 30, 'Pausa del café', 'La ola espera 8 s antes de salir.'], ['suerte', 60, 'Zanahoria de la suerte', 'Empiezas la partida con racha de 3.']],
+  kit: [['casco', 40, 'Casco de obra', 'Te saca del agua una vez en toda la partida.'], ['cafe', 30, 'Pausa del café', 'La ola espera 8 s antes de salir.'], ['suerte', 60, 'Zanahoria de la suerte', 'Empiezas la partida con racha de 3.'], ['mirilla', 50, 'Mirilla', 'Ves dónde caes en tus 8 primeros saltos.']],
 };
 
 /* ---------- iconos dibujados ---------- */
@@ -32,6 +32,7 @@ function iconoSonido(x, y, on) {
 function iconoKit(id, x, y) {
   if (id === 'casco') { blanda([x - 5.5, y + 2, x - 4.5, y - 2.5, x, y - 4.5, x + 4.5, y - 2.5, x + 5.5, y + 2], vol(x, y - 1, 6, 4, '#ffd84a')); caja(x - 6.5, y + 1.5, 13, 2, 1, '#f0b414'); }
   else if (id === 'cafe') { caja(x - 4, y - 3, 7, 7, 1.5, '#ffffff', OLC, 0.7); G.beginPath(); G.arc(x + 3.5, y + 0.5, 2, -1.4, 1.4); G.lineWidth = 0.8; G.strokeStyle = OLC; G.stroke(); caja(x - 3, y - 2, 5, 2, 0.5, '#8a5530', null); }
+  else if (id === 'mirilla') iconoMirilla(x, y, 6.5);
   else iconoZana(x, y, 14);
 }
 function pastillaZanas(x, y) {
@@ -41,14 +42,6 @@ function pastillaZanas(x, y) {
 }
 
 /* ---------- la portada ---------- */
-// una patita de conejo (almohadilla y tres deditos rosas), la que enseña cómo se tira
-function pata(x, y, s = 1) {
-  aqui(x, y, -0.25, s, s, () => {
-    elipse(0, 0, 7, 6.2, '#ffffff', OLC, 1);
-    elipse(0, 1, 3.4, 2.8, '#ffb3c8', null);
-    for (const [dx, dy] of [[-3.8, -3.6], [0, -4.8], [3.8, -3.6]]) elipse(dx, dy, 1.5, 1.4, '#ffb3c8', null);
-  });
-}
 // un cartel: tablilla pastel inclinada con su icono y su nombre
 function cartel(x, y, w, h, color, icono, txt, ang, fn) {
   aqui(x + w / 2, y + h / 2, ang, 1, 1, () => {
@@ -87,22 +80,11 @@ function pintaPortada() {
     const gr = G.createLinearGradient(-50, 0, 50, 0); ARCOIRIS.forEach((c, k) => gr.addColorStop(k / 6, c));
     letras('JUMP', 0, 0, 32, gr, { logo: true, borde: OLC, bw: 5 });
   });
-  if (!GUARDA.partidas && !tutoActivo()) {
+  if (!GUARDA.partidas) {
     const txt = envuelve(tr('Microblizz está arrasando el bosque. ¡Salta por el río y rescata a tus amigos antes de que te pille la ola de barro!'), W - 56, 8.5);
     const ch = txt.length * 10.5 + 12;
     caja(20, 86 + 1.5, W - 40, ch, 4, 'rgba(61,42,92,0.3)', null); caja(20, 86, W - 40, ch, 4, PASTEL.papel, OLC, 1);
     txt.forEach((l, i) => letras(l, W / 2, 97 + i * 10.5, 8.5, PASTEL.texto, { peso: 700 }));
-  }
-  // cómo se empieza: un aro que late alrededor del conejo y una patita que lo toca, tira hacia abajo y suelta (y salen los puntitos)
-  const c = JUEGO.conejo, cy = pantY(c.wy), k = (t / 1.9) % 1;
-  const late = 1 + Math.sin(t * 5) * 0.06;
-  G.setLineDash([3, 2.5]); G.beginPath(); G.ellipse(c.x, cy, 30 * late, 22 * late, 0, 0, Math.PI * 2); G.lineWidth = 1.4; G.strokeStyle = 'rgba(255,255,255,0.9)'; G.stroke(); G.setLineDash([]);
-  const tira = k < 0.18 ? 0 : k < 0.62 ? (k - 0.18) / 0.44 : 1, suelta = k > 0.66;
-  if (k < 0.8) {
-    G.globalAlpha = suelta ? Math.max(0, 1 - (k - 0.66) / 0.14) : Math.min(1, k / 0.08);
-    for (let i = 1; i <= 4; i++) if (tira * 4 >= i - 0.5) elipse(c.x, cy - 12 - i * 7 * (0.4 + tira * 0.6), 1.6, 1.6, '#ffffff', OLC, 0.7);
-    pata(c.x + 6, cy - 2 + tira * 26, k < 0.18 ? 1 - Math.sin(k / 0.18 * Math.PI) * 0.12 : 1);
-    G.globalAlpha = 1;
   }
   // las órdenes de Microblizz (pósits) y los cuatro carteles encima
   const ms = misionesActivas(), pw = (W - 30) / 3, py = H - 54;
@@ -113,10 +95,12 @@ function pintaPortada() {
   cartel(20 + cw, cy2, cw, 15, PASTEL.menta, iconoCarpeta, 'Expedientes', 0.03, () => abrePanel('guia'));
   cartel(10, cy2 + 18, cw, 15, PASTEL.oro, iconoCorona, 'Mis récords', 0.02, () => abrePanel('records'));
   cartel(20 + cw, cy2 + 18, cw, 15, PASTEL.lila, iconoHoja, 'Reclamaciones', -0.02, () => abrePanel('ajustes'));
-  // el cartel de cómo empezar, fijo y bien grande
-  const ct = tr('¡Tira del conejo hacia abajo y suelta!'), ctw = anchoLetras(ct, 8.5) + 20, cby = cy2 - 13 + Math.sin(t * 3) * 1;
-  caja(W / 2 - ctw / 2, cby - 7 + 1.5, ctw, 15, 7.5, OLC, null); caja(W / 2 - ctw / 2, cby - 7, ctw, 15, 7.5, PASTEL.melocoton, OLC, 0.9);
-  letras(ct, W / 2, cby + 0.6, 8.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2.2 });
+  // el botón de empezar: grande, en el centro, botando un poco
+  const bt = tr('¡A JUGAR!'), bw = Math.max(110, anchoLetras(bt, 16, { logo: true }) + 34), bh = 26, bx = W / 2 - bw / 2, by = cy2 - 36 + Math.abs(Math.sin(t * 3)) * -2;
+  caja(bx, by + 2.5, bw, bh, 8, OLC, null); caja(bx, by, bw, bh, 8, PASTEL.melocoton, OLC, 1.1);
+  caja(bx + 4, by + 3, bw - 8, 6, 3, 'rgba(255,255,255,0.35)', null);
+  letras(bt, W / 2, by + 14, 16, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 3.2 });
+  boton(bx - 4, by - 4, bw + 8, bh + 8, aJugar);
 }
 
 /* ---------- lo que se abre encima: fichas de carpeta ---------- */
@@ -259,7 +243,7 @@ function pintaAjustes() {
   const rt = tr('Repetir el tutorial de Lola'), rw = anchoLetras(rt, 7.5) + 18;
   caja(W / 2 - rw / 2, y + 93, rw, 15, 4, OLC, null); caja(W / 2 - rw / 2, y + 91.5, rw, 15, 4, PASTEL.melocoton, OLC, 0.8);
   letras(rt, W / 2, y + 99.5, 7.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2 });
-  boton(W / 2 - rw / 2 - 4, y + 88, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida(); SONIDO.boton(); });
+  boton(W / 2 - rw / 2 - 4, y + 88, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida('listo'); SONIDO.boton(); });
   envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 122 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
   aqui(W / 2, y + h - 14, -0.06, 1, 1, () => { const r = tr('Recibido: Lola'), rw = anchoLetras(r, 7, { logo: true }) + 12; caja(-rw / 2, -5.5, rw, 11, 2, null, PASTEL.lilaO, 0.9); letras(r, 0, 0.6, 7, PASTEL.lilaO, { logo: true }); });
 }

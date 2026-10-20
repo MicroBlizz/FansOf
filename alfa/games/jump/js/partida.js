@@ -22,14 +22,15 @@ const llevo = id => JUEGO.cuestas.includes(id);
 // todos salen atrapados en el río; su poder solo funciona si lo has contratado en el puesto de Lola
 const poder = id => llevo(id) && tengoAmigo(id);
 
-function nuevaPartida() {
+// «modo»: 'menu' (la portada) o 'listo' (directo a saltar, al repetir)
+function nuevaPartida(modo = 'menu') {
   const x = PAN.W / 2;
   CAM.y = -PAN.H * 0.3;
   const t = reiniciaRio(x, preparaTuto());
   Object.assign(JUEGO, {
-    modo: 'menu', t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
+    modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
     racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, mirilla: 0, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
   reiniciaOla(0);
@@ -39,14 +40,16 @@ function nuevaPartida() {
 }
 
 // la partida empieza con el primer salto: se gasta el kit de sabotaje que hubiera comprado (casco de obra: te salva una vez
-// del agua; pausa del café: la ola no sale hasta 8 s después; zanahoria de la suerte: empiezas con racha de 3)
+// del agua; pausa del café: la ola no sale hasta 8 s después; zanahoria de la suerte: empiezas con racha de 3;
+// mirilla: ves dónde caes en los 8 primeros saltos)
 function empieza() {
   const J = JUEGO;
   J.modo = 'juego'; OLA.activa = true; PANEL.abierto = null;
-  for (const k of ['casco', 'cafe', 'suerte']) if (GUARDA.kit[k] > 0) { GUARDA.kit[k]--; J.kit[k] = true; }
+  for (const k of ['casco', 'cafe', 'suerte', 'mirilla']) if (GUARDA.kit[k] > 0) { GUARDA.kit[k]--; J.kit[k] = true; }
   if (J.kit.casco) J.casco = true;
   if (J.kit.cafe) { J.cafe = 8; bandera(tr('¡Pausa del café!'), PASTEL.melocoton); }
   if (J.kit.suerte) { J.racha = 3; J.suerte = true; }
+  if (J.kit.mirilla) J.mirilla = 8;
   salvaGuarda();
 }
 
@@ -63,7 +66,8 @@ function salta() {
   const J = JUEGO, c = J.conejo, s = saltoApuntado();
   APUNTA.activo = false;
   if (!s || c.salto) return;
-  if (J.modo === 'menu') empieza();
+  if (J.mirilla > 0) J.mirilla--;   // antes de empezar: la del kit vale para los saltos de después del primero
+  if (J.modo === 'menu' || J.modo === 'listo') empieza();
   // la racha: saltar enseguida después de caer
   J.racha = J.enTronco < RACHA_SEG && (J.saltos > 0 || J.suerte) ? J.racha + 1 : 0; J.suerte = false;
   J.maxRacha = Math.max(J.maxRacha, J.racha);
@@ -116,6 +120,7 @@ function aterriza() {
     aviso('+' + p, c.x + 16, c.wy + 6, J.fiebre > 0 ? '#ffd0f0' : '#fff8ea', 9);
   }
   if (mejor.zanas) cogeZanas(mejor, c.x, c.wy);
+  if (mejor.mirilla) cogeMirilla(mejor, c.x, c.wy);
   const rescate = mejor.amigo;
   if (mejor.amigo) {
     const id = mejor.amigo;

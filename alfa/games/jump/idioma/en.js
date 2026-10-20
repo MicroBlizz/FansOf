@@ -127,5 +127,9 @@ IDIOMA.add({
  "ANUNCIO": "AD",
  "¡Duplicadas!": "Doubled!",
  "Duplícalas con un anuncio": "Double them with an ad",
- "Mañana más anuncios": "More ads tomorrow"
+ "Mañana más anuncios": "More ads tomorrow",
+ "¡A JUGAR!": "LET'S PLAY!",
+ "Mirilla": "Scope",
+ "Ves dónde caes en tus 8 primeros saltos.": "See where you land on your first 8 jumps.",
+ "¡Mirilla! {n} saltos": "Scope! {n} jumps"
 });

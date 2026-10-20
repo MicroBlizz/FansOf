@@ -91,13 +91,16 @@ function pintaPunteria() {
   const s = APUNTA.activo && saltoApuntado(), c = JUEGO.conejo;
   if (!s) return;
   const x0 = c.x, y0 = pantY(c.wy) - 6, x1 = s.x, y1 = pantY(s.wy), n = Math.max(3, Math.floor(s.d / 7));
+  // al máximo, los puntitos se vuelven arcoíris; con la mirilla se ve el salto entero
+  const max = s.fuerza > 0.97, arco = max || JUEGO.fiebre > 0, mira = JUEGO.mirilla > 0;
   for (let i = 1; i <= n; i++) {
-    const k = i / (n + 1); if (k > 0.5) break;
+    const k = i / (n + 1); if (k > 0.5 && !mira) break;
     const x = x0 + (x1 - x0) * k, y = y0 + (y1 - y0) * k - Math.sin(Math.PI * k) * s.d * 0.14;
-    G.globalAlpha = Math.min(1, (0.55 - k) * 3);
-    elipse(x, y, 1.6, 1.6, JUEGO.fiebre > 0 ? ARCOIRIS[i % 7] : '#ffffff', OLC, 0.7);
+    G.globalAlpha = mira ? 1 : Math.min(1, (0.55 - k) * 3);
+    elipse(x, y, max ? 1.9 : 1.6, max ? 1.9 : 1.6, arco ? ARCOIRIS[(i + Math.floor(JUEGO.t * 12)) % 7] : '#ffffff', OLC, 0.7);
   }
   G.globalAlpha = 1;
+  if (mira) { elipse(x1, y1, 7, 5, null, '#ffffff', 1.6); elipse(x1, y1, 7, 5, null, OLC, 0.5); iconoMirilla(x1, y1, 3); }
   // la fuerza, a la derecha: una zanahoria que se llena de abajo arriba
   const bx = PAN.W - 10, by = PAN.H * 0.3, bh = PAN.H * 0.3, lleno = bh * s.fuerza;
   const zana = () => { G.beginPath(); G.moveTo(bx - 4.5, by); G.lineTo(bx + 4.5, by); G.lineTo(bx + 0.8, by + bh); G.lineTo(bx - 0.8, by + bh); G.closePath(); };
@@ -130,6 +133,7 @@ function pintaMarcador() {
     const w = 60, k = J.fiebre / FIEBRE_SEG, g = G.createLinearGradient(W / 2 - w / 2, 0, W / 2 + w / 2, 0); ARCOIRIS.forEach((c, i) => g.addColorStop(i / 6, c));
     caja(W / 2 - w / 2, 45, w, 5, 2.5, 'rgba(251,244,255,0.85)'); caja(W / 2 - w / 2 + 0.8, 45.8, (w - 1.6) * k, 3.4, 1.7, g, null);
   }
+  if (J.mirilla > 0) { iconoMirilla(W - 22, 44, 4.5); letras('×' + J.mirilla, W - 15, 44.5, 8, PASTEL.texto, { alin: 'left', borde: '#ffffff', bw: 2 }); }
   if (J.cafe > 0) letras(tr('Pausa del café') + ' ' + Math.ceil(J.cafe), W - 8, 30, 7.5, PASTEL.texto, { alin: 'right', borde: '#ffffff', bw: 2 });
 }
 
@@ -202,7 +206,7 @@ function pintaFinal() {
   caja(bx, by, bw, bh, 5, PASTEL.melocoton, OLC, 1);
   letras(tr('¡Más caos!'), W / 2, by + 10.5, 12, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.6 });
   G.globalAlpha = 1;
-  if (e >= 1) boton(bx - 6, by - 6, bw + 12, bh + 12, () => { nuevaPartida(); SONIDO.boton(); });
+  if (e >= 1) boton(bx - 6, by - 6, bw + 12, bh + 12, () => { nuevaPartida('listo'); SONIDO.boton(); });
 }
 
 function pintaTodo() {
@@ -227,6 +231,7 @@ function pintaTodo() {
   pintaPunteria();
   pintaBanderas();
   if (J.modo === 'menu') pintaPortada();
+  else if (J.modo === 'listo') pintaListo(t);
   else pintaMarcador();
   pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
@@ -240,7 +245,7 @@ const DEDO = { boton: null, x0: 0, y0: 0, mueve: false, scroll0: 0 };
 function dedoBaja(x, y) {
   const c = JUEGO.conejo;
   Object.assign(DEDO, { boton: botonEn(x, y), x0: x, y0: y, mueve: false, scroll0: PANEL.scroll });
-  if (PANEL.abierto || DEDO.boton || ANUNCIO.activo || (JUEGO.modo !== 'menu' && JUEGO.modo !== 'juego') || c.salto || !c.tronco) return;
+  if (PANEL.abierto || DEDO.boton || ANUNCIO.activo || (JUEGO.modo !== 'listo' && JUEGO.modo !== 'juego') || c.salto || !c.tronco) return;
   Object.assign(APUNTA, { activo: true, x0: x, y0: y, x, y });
 }
 function dedoMueve(x, y) {

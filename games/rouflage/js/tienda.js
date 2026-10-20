@@ -29,7 +29,7 @@ function pintaAcciones(c, w) {
 function abreTienda(desde) { ecoEstado(); TIENDA.desde = desde || 'titulo'; tiendaPinta(); pantalla('p-tienda'); play('select'); }
 function cierraTienda() {
   play('select');
-  if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else irTitulo();
+  if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else if (TIENDA.desde === 'gacha') abreGacha(); else irTitulo();
 }
 function tiendaCompra(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
 

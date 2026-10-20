@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.33"></script>
+<script src="../../core/js/nucleo.js?v=0.2.34"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
@@ -112,6 +112,7 @@
         <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
         <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
+        <button type="button" class="boton gris" id="b-gacha"><b data-tr>GACHAPÓN</b></button>
         <button type="button" class="boton gris" id="b-tienda"><b data-tr>TIENDA</b></button>
       </div>
     </div>
@@ -348,6 +349,39 @@
   </div>
 </div>
 
+<!-- el gachapón de armario (gacha-pantalla.js) -->
+<div class="pantalla" id="p-gacha" hidden>
+  <div class="caja gacha-caja">
+    <div class="gacha-cab">
+      <button type="button" class="gacha-atras" id="b-gacha-volver" aria-label="Volver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <h2 class="ol" data-tr>GACHAPÓN</h2>
+      <button type="button" class="gacha-info-b" id="b-gacha-info" aria-label="Información"></button>
+    </div>
+    <div class="cartera" id="gacha-cartera"></div>
+    <div class="gacha-info" id="gacha-info" hidden>
+      <p data-tr>Cada cápsula trae una pieza del armario: ojos, bocas, papeles, mascotas, humos, títulos… Si ya la tenías, te devolvemos Gotas.</p>
+      <p data-tr>Salen todos los conjuntos y piezas que no son gratis, y las Épicas también se pueden comprar con Acciones en el armario. Lo del pase solo entra cuando ese pase se cierra.</p>
+      <p data-tr>Hay una tirada gratis cada 12 horas, y los domingos esa tirada es de 10 cápsulas.</p>
+      <p data-tr>Las cápsulas solo se pagan con Gotas. Las Acciones, que se compran con euros, no sirven para tirar: así nunca se paga dinero por azar.</p>
+    </div>
+    <p class="gacha-sub" data-tr>Cosméticos en cápsula, pagados solo con Gotas.</p>
+    <canvas id="gacha-maquina" width="300" height="300"></canvas>
+    <p class="gacha-sub" id="gacha-cuenta"></p>
+    <button type="button" class="boton gacha-gratis" id="b-gacha-gratis"></button>
+    <div class="gacha-botones">
+      <button type="button" class="boton tn-boton" id="b-gacha-1"></button>
+      <button type="button" class="boton tn-boton" id="b-gacha-10"></button>
+    </div>
+    <p class="gacha-pity" id="gacha-pity"></p>
+    <details class="probs" id="gacha-probs"></details>
+    <button type="button" class="boton peq" id="b-gacha-tienda" data-tr>Ir a la tienda</button>
+    <div class="gacha-resultado" id="gacha-resultado" hidden>
+      <div class="gacha-res" id="gacha-res"></div>
+      <button type="button" class="boton" id="b-gacha-vale" data-tr>¡VALE!</button>
+    </div>
+  </div>
+</div>
+
 <!-- el pase de temporada (economia.js) -->
 <div class="pantalla" id="p-pase" hidden>
   <div class="caja pase-caja">
@@ -491,6 +525,8 @@ NUCLEO.juego({
     'js/diario.js',
     'js/economia.js',
     'js/tienda.js',
+    'js/gacha.js',
+    'js/gacha-pantalla.js',
     'js/reinicio.js',
     'js/habitacion.js',
     'js/armario-partida.js',

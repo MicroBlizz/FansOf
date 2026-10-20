@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.34
+  "<b>GACHAPÓN DE COSMÉTICOS</b>: nueva pantalla GACHAPÓN en MI PERFIL con cápsulas de cosméticos que se pagan con Gotas (piezas sueltas hasta épica). Hay una tirada gratis cada 12 horas, y los domingos de 10 cápsulas. Los repetidos se reciclan solos en Gotas (20, 100, 400 o 1000 según la rareza), y con Acciones solo se compran las épicas.": "<b>COSMETICS GACHA</b>: a new GACHA screen in MY PROFILE with cosmetic capsules paid for with Drops (single pieces up to epic). There is a free pull every 12 hours, and on Sundays one of 10 capsules. Duplicates recycle themselves into Drops (20, 100, 400 or 1000 depending on rarity), and with Actions you can only buy the epics.",
+  "Microblizz ha puesto una máquina de cápsulas en el perfil y Phony ya ha tirado tres veces para conseguir el mismo sombrero que lleva puesto.": "Microblizz has put a capsule machine in the profile and Phony has already pulled three times to get the very hat he is wearing.",
   // 0.2.33
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the two-currency shop is refined and failures are logged better).",
   "Microblizz ha repasado la tienda de Rouflage y Phony ha escondido una gota para luego.": "Microblizz has gone over the Rouflage shop and Phony has hidden a drop for later.",

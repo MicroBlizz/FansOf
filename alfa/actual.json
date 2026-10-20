@@ -1,8 +1,8 @@
 {
- "build": 287,
- "hash": "c5acaae",
- "fecha": "2026-10-20T14:31:46Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.23, decks 0.2.5, nova 0.3.10, ratkov 0.2.13, rouflage 0.2.35, rumble 0.9.142, survivors 0.1.55, tacticas 0.1.39, td 0.13.71",
+ "build": 288,
+ "hash": "d4cdc1c",
+ "fecha": "2026-10-20T14:36:45Z",
+ "mensaje": "Decks: en el móvil la carta arrastrada flota encima del dedo y la mirilla ya no cae sobre su texto",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

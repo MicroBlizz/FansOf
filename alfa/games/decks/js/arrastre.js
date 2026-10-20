@@ -36,20 +36,31 @@ function dcMueveArrastre(A, e) {
     A.vivo = true; DCC.arrastre = A; DCC.elegida = null; A.el.dispatchEvent(new Event('pointercancel')); // anula el «mantener pulsada»
     const st = document.getElementById('stage'), r = A.el.getBoundingClientRect(), sr = st.getBoundingClientRect();
     const g = dcClonaCarta(A.el); g.className = A.el.className.replace(/dc-elegida|dc-niega/g, '') + ' dc-carta-arrastre'; g.style.cssText = A.el.style.cssText;
-    g.style.width = r.width + 'px'; A.ox = -r.width / 2; A.oy = -r.height - 14; A.sr = sr; A.r0 = r; // la carta va encima del dedo, para ver a quién apuntas
-    st.append(g); A.fantasma = g; A.el.classList.add('dc-arrastrada');
+    g.style.width = r.width + 'px'; A.sr = sr; A.r0 = r; A.dedo = e.pointerType === 'touch' ? 46 : 28;
+    st.append(g); A.fantasma = g; A.gw = g.offsetWidth; A.gh = g.offsetHeight; A.el.classList.add('dc-arrastrada');
     A.mirilla = dcMirilla(); st.append(A.mirilla); st.classList.add('dc-sin-cursor'); play('dcCoge');
     document.getElementById('dc-combate').classList.add('dc-arrastrando');
     const s = document.getElementById('dc-combate'), av = s.querySelector('.dc-aviso');
     if (av) av.textContent = dcNecesitaObjetivo(DCC.C, DCC.C.mano[A.i]) ? tr('Suéltala sobre un rival') : tr('Suéltala en la zona de rivales');
   }
   e.preventDefault();
-  A.fantasma.style.left = (e.clientX - A.sr.left + A.ox) + 'px'; A.fantasma.style.top = (e.clientY - A.sr.top + A.oy) + 'px';
-  A.mirilla.style.left = (e.clientX - A.sr.left) + 'px'; A.mirilla.style.top = (e.clientY - A.sr.top) + 'px';
+  const x = e.clientX - A.sr.left, y = e.clientY - A.sr.top, p = dcSitioFantasma(A, x, y);
+  A.fantasma.style.left = p.left + 'px'; A.fantasma.style.top = p.top + 'px';
+  A.mirilla.style.left = x + 'px'; A.mirilla.style.top = y + 'px';
   const b = dcBlancoArrastre(A, e.clientX, e.clientY);
   if (b.el !== (A.blanco && A.blanco.el)) { if (A.blanco && A.blanco.el) A.blanco.el.classList.remove('dc-apunta'); if (b.el) b.el.classList.add('dc-apunta'); }
   if (b.ok && !(A.blanco && A.blanco.ok)) play('dcFija');
   A.blanco = b; A.fantasma.classList.toggle('dc-lista', b.ok); A.mirilla.classList.toggle('dc-fijada', b.ok);
+}
+// Dónde va la carta cogida: flotando encima del dedo, para leerla mientras la mirilla marca el blanco (su ask, 20-10-2026: en el móvil la
+// mirilla caía sobre el texto). Se mide la carta de verdad (en el móvil la de la mano puede ir encogida) y se deja más hueco con el dedo
+// que con el ratón. Arriba del todo, sobre los rivales, no cabe encima: se pone al lado del dedo. Se ve al 80 % desde abajo (decks-anim.css).
+function dcSitioFantasma(A, x, y) {
+  const W = A.sr.width, H = A.sr.height, w = A.gw, h = A.gh, v = 0.8, mx = w * (1 - v) / 2, my = h * (1 - v);   // margen invisible por la escala
+  const cabe = y - A.dedo - h * v >= 4;
+  if (cabe) return { left: Math.max(4 - mx, Math.min(W - 4 - w + mx, x - w / 2)), top: y - A.dedo - h };
+  let left = x + A.dedo - mx; if (left + w - mx > W - 4) left = x - A.dedo - w + mx;
+  return { left, top: Math.max(4 - my, Math.min(H - h - 4, y - my - h * v / 2)) };
 }
 // Dónde caería: el rival bajo el dedo, o la zona de rivales entera si la carta no pide objetivo.
 function dcBlancoArrastre(A, x, y) {

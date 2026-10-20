@@ -1,8 +1,8 @@
 {
- "build": 336,
- "hash": "2b0909a",
- "fecha": "2026-10-20T20:45:46Z",
- "mensaje": "Junta main",
+ "build": 338,
+ "hash": "58d8375",
+ "fecha": "2026-10-20T20:55:05Z",
+ "mensaje": "Arreglo: quito marcas de conflicto de publico_excluye.py (conservo sella y _QUITA_BEAMS)",
  "juegos": {
   "crush": "0.1.26",
   "dark": "0.2.7",

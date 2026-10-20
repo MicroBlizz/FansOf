@@ -1,6 +1,6 @@
 // Fans Of Decks · La reunión en pantalla: rivales con su intención arriba, el líder en medio, la franja de CAOS y la mano en abanico abajo. Pinta el estado C de combate.js.
 // Toques (regla de Arkioner, 19-10-2026): un toque nunca juega, solo marca la carta (y, si pide objetivo, luego tocas el rival); dos toques seguidos
-// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
+// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta de la mano la enseña en grande encima (la lupa); fuera de la mano abre su ficha.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
 const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
@@ -186,6 +186,7 @@ function dcPintaCarta(c, o = {}) {
   if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
+  if (o.enMano) return d;   // en la mano, mantenerla pulsada la enseña en grande sobre el dedo (la lupa de arrastre.js), sin ventana
   let t = null; const abre = () => { t = setTimeout(() => { t = null; if (!DCC.arrastre) dcVerCarta(c); }, 450); }, cierra = () => { if (t) clearTimeout(t); t = null; };
   d.addEventListener('pointerdown', abre); d.addEventListener('pointerup', cierra); d.addEventListener('pointerleave', cierra); d.addEventListener('pointercancel', cierra);
   return d;

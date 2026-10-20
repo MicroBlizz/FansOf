@@ -1,8 +1,8 @@
 {
- "build": 296,
- "hash": "2d3a8a8",
- "fecha": "2026-10-20T16:25:12Z",
- "mensaje": "Rouflage: empezar partida sin quedarse pillado; SQL 51 (registro de errores) aplicado",
+ "build": 297,
+ "hash": "b665ef4",
+ "fecha": "2026-10-20T16:27:38Z",
+ "mensaje": "Decks: mantener pulsada una carta de la mano la enseña en grande encima (la lupa), sin ventana; al arrastrar se quita",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

@@ -11,8 +11,27 @@ function dcClonaCarta(el) {
 }
 // Engancha el arrastre a las cartas de la mano recién pintada.
 function dcArrastreMano(mano) {
+  dcCierraLupa();
   mano.addEventListener('click', ev => { if (DCC.trasArrastre) { ev.stopPropagation(); ev.preventDefault(); } }, true);
-  for (const el of mano.querySelectorAll('.dc-carta')) el.addEventListener('pointerdown', ev => dcEmpiezaArrastre(ev, el));
+  for (const el of mano.querySelectorAll('.dc-carta')) {
+    el.addEventListener('pointerdown', ev => { if (ev.pointerType !== 'mouse') dcLupaLuego(el, 220); dcEmpiezaArrastre(ev, el); });
+    el.addEventListener('pointerenter', ev => { if (ev.pointerType === 'mouse' && !DCC.arrastre) dcLupaLuego(el, 380); });
+    for (const t of ['pointerup', 'pointerleave', 'pointercancel']) el.addEventListener(t, dcCierraLupa);
+    el.addEventListener('contextmenu', ev => ev.preventDefault());   // en el móvil, mantener pulsado no saca el menú del navegador
+  }
+}
+// La lupa (su ask, 20-10-2026): con el dedo quieto sobre una carta de la mano (o el ratón encima un momento) sale en grande encima, para
+// leerla sin tapar nada; en cuanto empieza el arrastre se quita y la carta vuelve a su tamaño. No abre ninguna ventana.
+let dcLupaT = null;
+function dcLupaLuego(el, ms) { dcCierraLupa(); dcLupaT = setTimeout(() => { dcLupaT = null; if (!DCC.arrastre && el.isConnected) dcLupa(el); }, ms); }
+function dcCierraLupa() { if (dcLupaT) { clearTimeout(dcLupaT); dcLupaT = null; } const v = document.querySelector('#stage > .dc-lupa'); if (v) v.remove(); }
+function dcLupa(el) {
+  const st = document.getElementById('stage'), sr = st.getBoundingClientRect(), r = el.getBoundingClientRect(), w0 = el.offsetWidth, h0 = el.offsetHeight;
+  if (!w0 || !h0) return;
+  const g = dcClonaCarta(el); g.className = el.className.replace(/dc-elegida|dc-niega|dc-reparte|dc-arrastrada/g, '') + ' dc-lupa'; g.style.cssText = el.style.cssText; g.style.width = w0 + 'px';
+  const k = Math.min(sr.width * 0.4, 190) / w0, w = w0 * k, h = h0 * k;   // se escala entera (letra incluida), sin pasar del 40 % del ancho
+  const left = Math.max(6, Math.min(sr.width - w - 6, r.left - sr.left + r.width / 2 - w / 2)), top = Math.max(6, r.top - sr.top - h - 12);
+  g.style.left = left + 'px'; g.style.top = top + 'px'; g.style.setProperty('--k', k); st.append(g);
 }
 function dcEmpiezaArrastre(ev, el) {
   if (ev.button > 0 || DCC.arrastre) return;
@@ -33,7 +52,7 @@ function dcMirilla() {
 function dcMueveArrastre(A, e) {
   if (!A.vivo) {
     if (Math.hypot(e.clientX - A.x0, e.clientY - A.y0) < DC_UMBRAL_ARRASTRE) return;
-    A.vivo = true; DCC.arrastre = A; DCC.elegida = null; A.el.dispatchEvent(new Event('pointercancel')); // anula el «mantener pulsada»
+    A.vivo = true; DCC.arrastre = A; dcCierraLupa(); DCC.elegida = null; A.el.dispatchEvent(new Event('pointercancel')); // anula el «mantener pulsada»
     const st = document.getElementById('stage'), r = A.el.getBoundingClientRect(), sr = st.getBoundingClientRect();
     const g = dcClonaCarta(A.el); g.className = A.el.className.replace(/dc-elegida|dc-niega/g, '') + ' dc-carta-arrastre'; g.style.cssText = A.el.style.cssText;
     g.style.width = r.width + 'px'; A.sr = sr; A.r0 = r; A.dedo = e.pointerType === 'touch' ? 46 : 28;

@@ -22,6 +22,9 @@
 .dc-carta-arrastre { position: absolute; z-index: 70; pointer-events: none; margin: 0 !important; transform: rotate(-3deg) scale(.8) !important; transform-origin: 50% 100%; box-shadow: 0 14px 28px rgba(0, 0, 0, .55); transition: box-shadow .15s; }
 .dc-carta-arrastre.dc-lista { box-shadow: 0 0 0 3px var(--gold), 0 14px 28px rgba(0, 0, 0, .55); }
 .dc-mano .dc-carta.dc-arrastrada { opacity: .25; }
+/* la lupa: la carta de la mano en grande encima de ella mientras la tienes pulsada (arrastre.js) */
+.dc-lupa { position: absolute; z-index: 72; pointer-events: none; margin: 0 !important; transform-origin: 0 0; transform: scale(var(--k, 1.6)) !important; box-shadow: 0 0 0 2px var(--gold), 0 18px 34px rgba(0, 0, 0, .6); animation: dc-lupa .14s cubic-bezier(.2, .8, .3, 1.2) both; }
+@keyframes dc-lupa { from { opacity: 0; translate: 0 14px; } }
 .dc-arrastrando .dc-rivales { outline: 2px dashed rgba(255, 255, 255, .14); outline-offset: -6px; border-radius: 20px; }
 .dc-rivales.dc-apunta { outline: 3px solid var(--gold); background: rgba(255, 203, 61, .07); }
 .dc-rival.dc-apunta { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255, 203, 61, .3), 0 0 24px rgba(255, 203, 61, .35); transform: translateY(-4px); }

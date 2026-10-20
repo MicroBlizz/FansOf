@@ -1,8 +1,8 @@
 {
- "build": 304,
- "hash": "0efbaf3",
- "fecha": "2026-10-20T17:47:09Z",
- "mensaje": "Página /android/: los APK de Crush, Rouflage, Ratkov, Decks, Nova, Island y Dark (con el tamaño de los dos grandes)",
+ "build": 305,
+ "hash": "f5f53dc",
+ "fecha": "2026-10-20T17:50:50Z",
+ "mensaje": "MAPA.md al día",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

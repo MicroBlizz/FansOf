@@ -1,8 +1,8 @@
 {
- "build": 317,
- "hash": "1db5730",
- "fecha": "2026-10-20T19:10:14Z",
- "mensaje": "Fans of Beams: icono propio y manifest (horizontal, pantalla completa); android_www.py usa su icono",
+ "build": 318,
+ "hash": "542e0c1",
+ "fecha": "2026-10-20T19:25:43Z",
+ "mensaje": "Anuncios de prueba: miniatura de otro de nuestros juegos con enlace a su ficha en la biblioteca",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

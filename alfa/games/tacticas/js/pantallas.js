@@ -78,7 +78,7 @@ function pagar(prod, alPagar) {
 function verAnuncio(motivo, alAcabar) {
   evento('anuncio', { motivo });
   if (SAVE.sinAnuncios) { alAcabar(); return; }
-  const a = $('#anuncio'), n = $('#anuncio-cuenta'); let s = 5; n.textContent = s; a.hidden = false;
+  const a = $('#anuncio'), n = $('#anuncio-cuenta'), pr = $('#anuncio-promo'); let s = 5; pr.innerHTML = PROMO.html(); PROMO.enlaza(pr); n.textContent = s; a.hidden = false;
   const was = M.bus ? M.bus.gain.value : 0; if (M.bus) M.bus.gain.value = 0;
   const iv = setInterval(() => { s--; n.textContent = s; if (s <= 0) { clearInterval(iv); a.hidden = true; if (M.bus) M.bus.gain.value = was || volMusica(); alAcabar(); } }, 1000);
 }

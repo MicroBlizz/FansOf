@@ -1,8 +1,8 @@
 {
- "build": 342,
- "hash": "eedc771",
- "fecha": "2026-10-20T21:20:26Z",
- "mensaje": "Fans of Beams: menos brillo en las naves enemigas y movimiento de la nave casi plano",
+ "build": 343,
+ "hash": "167d6a1",
+ "fecha": "2026-10-20T21:25:18Z",
+ "mensaje": "Fans of Beams: sale como demo (ya no es solo de la alfa); la release la publica publicar.py con el sí del dueño",
  "juegos": {
   "crush": "0.1.26",
   "dark": "0.2.7",

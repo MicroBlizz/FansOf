@@ -1,6 +1,6 @@
 // Fans of Jump · Los menús: la portada (zanahorias, mejor marca, sonido, cuatro carteles y las órdenes de Microblizz en
-// pósits) y lo que se abre encima, como fichas de carpeta: el puesto de Lola (tienda, con pestañas y tarjetas), los
-// expedientes de Lola (guía), la hoja de reclamaciones (ajustes) y mis récords. Los botones se apuntan cada vez que se
+// pósits) y lo que se abre encima, como fichas de carpeta: los expedientes de Lola (guía), la hoja de reclamaciones (ajustes) y mis
+// récords (el puesto de Lola, la tienda, está en puesto.js). Los botones se apuntan cada vez que se
 // pintan (BOTONES) y el dedo los busca ahí; lo largo se mueve arrastrando.
 'use strict';
 
@@ -8,17 +8,6 @@ const PANEL = { abierto: null, scroll: 0, alto: 0, pestana: 'amigos' };
 let BOTONES = [];
 const boton = (x, y, w, h, fn) => BOTONES.push({ x, y, w, h, fn });
 function botonEn(x, y) { for (let i = BOTONES.length - 1; i >= 0; i--) { const b = BOTONES[i]; if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b; } return null; }
-
-// lo que vende Lola: [clave, precio, nombre, qué hace]
-const PUESTO = {
-  amigos: [['ardilla', 0, 'MadSquirrel', 'Va contigo desde el principio. +5 en cada tronco.'], ['zorro', 150, 'SlyFox', 'Esquiva el primer ¡Uy! de cada partida.'],
-    ['mapache', 300, 'JunkCoon', 'Contigo, las zanahorias valen el doble.'], ['suricata', 500, 'MeerCat', 'La enfermera: te saca del agua una vez.'],
-    ['castor', 800, 'BoomBeaver', 'Al rescatarlo, ¡BUM!: la ola retrocede.']],
-  pelaje: [['#ffffff', 0, 'Blanco'], ['#cfd0dc', 150, 'Gris oficina'], ['#b98a66', 400, 'Chocolate'], ['#f4c886', 750, 'Miel'], ['#ffc4dc', 1300, 'Rosa chicle'], ['#d8c0ff', 2500, 'Morado caos']],
-  capas: [['#ff7a1a', 0, 'Naranja'], ['#e8343e', 180, 'Roja rebelde'], ['#3a86ff', 450, 'Azul Phony'], ['#3fbf6a', 700, 'Verde bosque'], ['#a04ae0', 1100, 'Morada'], ['#ffc93a', 2600, 'Dorada CEO']],
-  estelas: [['arcoiris', 0, 'Arcoíris de racha'], ['corazones', 350, 'Corazones'], ['burbujas', 450, 'Burbujas'], ['chispas', 600, 'Chispas'], ['notas', 800, 'Notas musicales']],
-  kit: [['casco', 40, 'Casco de obra', 'Te saca del agua una vez en toda la partida.'], ['cafe', 30, 'Pausa del café', 'La ola espera 8 s antes de salir.'], ['suerte', 60, 'Zanahoria de la suerte', 'Empiezas la partida con racha de 3.'], ['mirilla', 50, 'Mirilla', 'Ves dónde caes en tus 8 primeros saltos.']],
-};
 
 /* ---------- iconos dibujados ---------- */
 function iconoCarpeta(x, y) { caja(x - 5, y - 3.5, 10, 7.5, 1, '#f6c56a', OLC, 0.7); caja(x - 5, y - 5, 4.5, 2.4, 0.8, '#f6c56a', OLC, 0.7); caja(x - 3, y - 1, 6, 1, 0, '#c99316', null); }
@@ -33,12 +22,8 @@ function iconoSonido(x, y, on) {
   if (on) { G.beginPath(); G.arc(x + 1.5, y, 2.4, -0.8, 0.8); G.stroke(); G.beginPath(); G.arc(x + 1.5, y, 4.2, -0.8, 0.8); G.stroke(); }
   else { G.beginPath(); G.moveTo(x + 2.5, y - 2); G.lineTo(x + 6, y + 2); G.moveTo(x + 6, y - 2); G.lineTo(x + 2.5, y + 2); G.stroke(); }
 }
-function iconoKit(id, x, y) {
-  if (id === 'casco') { blanda([x - 5.5, y + 2, x - 4.5, y - 2.5, x, y - 4.5, x + 4.5, y - 2.5, x + 5.5, y + 2], vol(x, y - 1, 6, 4, '#ffd84a')); caja(x - 6.5, y + 1.5, 13, 2, 1, '#f0b414'); }
-  else if (id === 'cafe') { caja(x - 4, y - 3, 7, 7, 1.5, '#ffffff', OLC, 0.7); G.beginPath(); G.arc(x + 3.5, y + 0.5, 2, -1.4, 1.4); G.lineWidth = 0.8; G.strokeStyle = OLC; G.stroke(); caja(x - 3, y - 2, 5, 2, 0.5, '#8a5530', null); }
-  else if (id === 'mirilla') iconoMirilla(x, y, 6.5);
-  else iconoZana(x, y, 14);
-}
+// los del kit de sabotaje: dibujos 3D del estudio (casco_icono, cafe_icono, suerte_icono, mirilla_icono)
+const iconoKit = (id, x, y) => spriteEnCaja(id + '_icono', x - 9, y - 9, 18, 18, 0);
 function pastillaZanas(x, y) {
   const z = String(GUARDA.zanas), w = anchoLetras(z, 9.5) + 27;
   caja(x, y, w, 15, 5, '#ffe6d2', OLC, 0.8); iconoZana(x + 10, y + 7.5, 13.5); letras(z, x + w - 7 - anchoLetras(z, 9.5) / 2, y + 8, 9.5, PASTEL.melocotonO);
@@ -138,78 +123,6 @@ function contenido(x, y, w, h, fn) {
   BOTONES = BOTONES.filter((b, i) => i < n0 || (b.y + b.h > y && b.y < y + h));   // lo que no se ve no se toca
   PANEL.alto = Math.max(0, fin + PANEL.scroll - y - h + 6);
   PANEL.scroll = Math.max(0, Math.min(PANEL.alto, PANEL.scroll));
-}
-// la etiqueta del precio, con forma de zanahoria tumbada; o el estado si ya es tuyo
-function etiqueta(x, y, cuanto, estado) {
-  if (estado === 'puesto') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr('Puesto'), x, y + 0.4, 6.6, PASTEL.texto); return; }
-  if (estado === 'tengo') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.fondo, OLC, 0.6); letras(tr('Ponérselo'), x, y + 0.4, 6.6, PASTEL.suave); return; }
-  if (estado === 'mio') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr('En la pandilla'), x, y + 0.4, 5.6, PASTEL.texto); return; }
-  const da = GUARDA.zanas >= cuanto;
-  caja(x - 17, y - 5, 34, 10, 5, da ? '#ffa45c' : PASTEL.raya, OLC, 0.6);
-  iconoZana(x - 10, y, 10);
-  letras(String(cuanto), x + 4, y + 0.4, 7.2, da ? '#ffffff' : PASTEL.flojo, da ? { borde: PASTEL.melocotonO, bw: 1.8 } : {});
-}
-function compra(clave, cuanto, alComprar) {
-  if (GUARDA.tengo[clave] || cuanto === 0) { alComprar(); salvaGuarda(); SONIDO.boton(); return; }
-  if (GUARDA.zanas < cuanto) { SONIDO.uy(); return; }
-  GUARDA.zanas -= cuanto; GUARDA.tengo[clave] = true; alComprar(); salvaGuarda(); SONIDO.compra();
-  confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 16);
-}
-// una tarjeta del puesto: el dibujo arriba, el nombre, lo que hace y el precio
-function tarjeta(x, y, w, h, dibujo, nombre, desc, cuanto, estado, fn) {
-  caja(x, y, w, h, 4, '#ffffff', OLC, 0.8);
-  caja(x + 3, y + 3, w - 6, 26, 3, PASTEL.fondo, null);
-  dibujo(x + w / 2, y + 16);
-  letras(tr(nombre), x + w / 2, y + 35, 7.6, PASTEL.texto);
-  if (desc) envuelve(tr(desc), w - 8, 5.8).slice(0, 2).forEach((l, i) => letras(l, x + w / 2, y + 43 + i * 6.5, 5.8, PASTEL.suave, { peso: 700 }));
-  etiqueta(x + w / 2, y + h - 8, cuanto, estado);
-  if (fn) boton(x, y, w, h, fn);
-}
-function pintaTienda() {
-  const W = PAN.W, H = PAN.H, x = 8, y = 34, w = W - 16, h = H - 48;
-  marco('El puesto de Lola', x, y, w, h, PASTEL.melocoton);
-  pastillaZanas(x + 6, y + 7);
-  spriteConejo('quieto' + Math.floor(JUEGO.t * 7) % 8, x + w - 18, y + 22, 3.6);
-  // las pestañas
-  const P = [['amigos', 'Amigos'], ['pelaje', 'Pelaje'], ['capas', 'Capas'], ['estelas', 'Estelas'], ['kit', 'Kit']];
-  let px = x + 6;
-  P.forEach(([id, txt]) => {
-    const tw = anchoLetras(tr(txt), 7) + 10, on = PANEL.pestana === id;
-    caja(px, y + 26, tw, 12, 3, on ? PASTEL.melocoton : PASTEL.fondo, OLC, 0.7);
-    letras(tr(txt), px + tw / 2, y + 32.4, 7, on ? '#ffffff' : PASTEL.suave, on ? { borde: PASTEL.melocotonO, bw: 1.6 } : {});
-    boton(px, y + 24, tw, 16, () => { PANEL.pestana = id; PANEL.scroll = 0; SONIDO.boton(); });
-    px += tw + 3;
-  });
-  contenido(x + 4, y + 42, w - 8, h - 46, y0 => {
-    const cw = (w - 20) / 2, ch = PANEL.pestana === 'pelaje' || PANEL.pestana === 'capas' || PANEL.pestana === 'estelas' ? 52 : 66;
-    const lista = PUESTO[PANEL.pestana];
-    lista.forEach((it, i) => {
-      const cx = x + 6 + (i % 2) * (cw + 4), cy = y0 + 2 + Math.floor(i / 2) * (ch + 4);
-      if (PANEL.pestana === 'amigos') {
-        const [id, cuanto, nombre, desc] = it, mio = tengoAmigo(id);
-        tarjeta(cx, cy, cw, ch, (X, Y) => spriteEnCaja(id + '_susto0', X - 13, Y - 12, 26, 25), nombre, desc, cuanto, mio ? 'mio' : 'compra', mio ? null : () => compra(id, cuanto, () => {}));
-      } else if (PANEL.pestana === 'kit') {
-        const [id, cuanto, nombre, desc] = it, n = GUARDA.kit[id] || 0;
-        tarjeta(cx, cy, cw, ch, (X, Y) => { iconoKit(id, X, Y); if (n) letras('×' + n, X + 14, Y - 6, 8, PASTEL.texto); }, nombre, desc, cuanto, 'compra',
-          () => { if (GUARDA.zanas < cuanto) return SONIDO.uy(); GUARDA.zanas -= cuanto; GUARDA.kit[id] = n + 1; salvaGuarda(); SONIDO.compra(); });
-      } else if (PANEL.pestana === 'estelas') {
-        const [id, cuanto, nombre] = it, clave = 'estela' + id, puesto = GUARDA.estela === id, tengo = cuanto === 0 || GUARDA.tengo[clave];
-        tarjeta(cx, cy, cw, ch, (X, Y) => {
-          if (id === 'arcoiris') ARCOIRIS.forEach((c, k) => { G.beginPath(); G.arc(X, Y + 8, 14 - k * 1.5, Math.PI, 0); G.lineWidth = 1.5; G.strokeStyle = c; G.stroke(); });
-          else for (let k = 0; k < 3; k++) pintaMotaEstela(id, X - 10 + k * 10, Y + 2 - Math.sin(k * 1.4) * 4, 3.4, k);
-        }, nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { GUARDA.estela = id; }));
-      } else {
-        const [col, cuanto, nombre] = it, pelo = PANEL.pestana === 'pelaje', clave = (pelo ? 'pelo' : 'capa') + col;
-        const puesto = (pelo ? GUARDA.pelaje : GUARDA.capa) === col, tengo = cuanto === 0 || GUARDA.tengo[clave];
-        tarjeta(cx, cy, cw, ch, (X, Y) => pelo ? spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, col, GUARDA.capa) : spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, GUARDA.pelaje, col),
-          nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { if (pelo) GUARDA.pelaje = col; else GUARDA.capa = col; }));
-      }
-    });
-    const fin = y0 + 2 + Math.ceil(lista.length / 2) * (ch + 4);
-    if (PANEL.pestana === 'kit') letras(tr('Se usa en la siguiente partida.'), x + w / 2, fin + 6, 6.6, PASTEL.flojo, { peso: 700 });
-    if (PANEL.pestana === 'amigos') { const ls = envuelve(tr('Todos salen atrapados en el río; contrátalos y usarán su poder.'), w - 24, 6.6); ls.forEach((l, i) => letras(l, x + w / 2, fin + 6 + i * 8, 6.6, PASTEL.flojo, { peso: 700 })); return fin + 8 + ls.length * 8; }
-    return fin + 14;
-  });
 }
 // los expedientes de Lola: una ficha de personal por cada uno (los que no has visto, clasificados)
 function pintaGuia() {

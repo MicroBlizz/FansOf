@@ -168,5 +168,12 @@ IDIOMA.add({
  "Cargando…": "Loading…",
  "Aún no hay nadie. ¡Juega una partida y sé el primero!": "Nobody here yet. Play a run and be the first!",
  "Tu puesto: {p} de {n}": "Your rank: {p} of {n}",
- "Juega una partida para salir en el ranking.": "Play a run to appear in the ranking."
+ "Juega una partida para salir en el ranking.": "Play a run to appear in the ranking.",
+ "Troncos": "Logs",
+ "Troncos de madera": "Wooden logs",
+ "Nenúfares": "Lily pads",
+ "Galletas": "Cookies",
+ "Sandías": "Watermelons",
+ "Tartas": "Cakes",
+ "Nubes": "Clouds"
 });

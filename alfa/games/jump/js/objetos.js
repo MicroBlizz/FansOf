@@ -17,34 +17,9 @@ const SUPER_LEJOS = 1.45;
 
 const vibra = patron => { if (GUARDA.vibra && navigator.vibrate) try { navigator.vibrate(patron); } catch (e) { /* sin vibración */ } };
 
-/* ---------- los iconos ---------- */
-function iconoMirilla(x, y, r) {
-  elipse(x, y, r, r, vol(x, y, r, r, PASTEL.lila), OLC, Math.max(0.5, r * 0.14));
-  elipse(x, y, r * 0.62, r * 0.62, '#ffffff', null);
-  const l = r * 0.14;
-  for (const [a, b, c, d] of [[x - r * 0.95, y, x - r * 0.3, y], [x + r * 0.3, y, x + r * 0.95, y], [x, y - r * 0.95, x, y - r * 0.3], [x, y + r * 0.3, x, y + r * 0.95]]) trazo(a, b, c, d, l * 1.4, OLC, null);
-  elipse(x, y, r * 0.18, r * 0.18, '#ff7aa8', null);
-}
-// el imán: una U roja con las puntas blancas
-function iconoIman(x, y, r) {
-  const w = r * 0.42;
-  G.beginPath(); G.arc(x, y - r * 0.05, r * 0.72, 0, Math.PI); G.lineWidth = w + Math.max(0.5, r * 0.14) * 2; G.strokeStyle = OLC; G.lineCap = 'butt'; G.stroke();
-  G.beginPath(); G.moveTo(x - r * 0.72, y - r * 0.75); G.lineTo(x - r * 0.72, y - r * 0.05); G.moveTo(x + r * 0.72, y - r * 0.75); G.lineTo(x + r * 0.72, y - r * 0.05); G.stroke();
-  G.beginPath(); G.arc(x, y - r * 0.05, r * 0.72, 0, Math.PI); G.lineWidth = w; G.strokeStyle = '#ff5a6e'; G.stroke();
-  G.beginPath(); G.moveTo(x - r * 0.72, y - r * 0.45); G.lineTo(x - r * 0.72, y - r * 0.05); G.moveTo(x + r * 0.72, y - r * 0.45); G.lineTo(x + r * 0.72, y - r * 0.05); G.stroke();
-  G.beginPath(); G.moveTo(x - r * 0.72, y - r * 0.75); G.lineTo(x - r * 0.72, y - r * 0.45); G.moveTo(x + r * 0.72, y - r * 0.75); G.lineTo(x + r * 0.72, y - r * 0.45); G.strokeStyle = '#ffffff'; G.stroke();
-}
-// el supersalto: una bota con alas, en dorado (dos flechas hacia arriba)
-function iconoSuper(x, y, r) {
-  for (const d of [0.35, -0.35]) forma([x - r * 0.8, y + r * (0.45 + d), x, y + r * (-0.35 + d), x + r * 0.8, y + r * (0.45 + d), x + r * 0.45, y + r * (0.75 + d), x, y + r * (0.25 + d), x - r * 0.45, y + r * (0.75 + d)], vol(x, y, r, r, PASTEL.oro), OLC, Math.max(0.5, r * 0.13));
-}
-// el escudo: verde menta con un corazón
-function iconoEscudo(x, y, r) {
-  forma([x - r * 0.8, y - r * 0.75, x + r * 0.8, y - r * 0.75, x + r * 0.78, y + r * 0.05, x, y + r * 0.95, x - r * 0.78, y + r * 0.05], vol(x, y, r, r, PASTEL.menta), OLC, Math.max(0.5, r * 0.14));
-  corazonForma(x, y - r * 0.05, r * 0.36, '#ff7aa8');
-}
-const ICONOS = { mirilla: iconoMirilla, iman: iconoIman, super: iconoSuper, escudo: iconoEscudo };
-const iconoObjeto = (id, x, y, r) => ICONOS[id](x, y, r);
+/* ---------- los iconos (dibujos 3D del estudio: mirilla_icono, iman_icono, super_icono, escudo_icono) ---------- */
+// el icono del objeto «id», centrado en (x, y) y de radio r (como mucho)
+const iconoObjeto = (id, x, y, r) => spriteEnCaja(id + '_icono', x - r * 1.25, y - r * 1.25, r * 2.5, r * 2.5, 0);
 
 /* ---------- cogerlos y usarlos ---------- */
 function cogeObjeto(t, x, wy) {

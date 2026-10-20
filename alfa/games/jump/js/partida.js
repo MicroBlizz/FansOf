@@ -11,7 +11,7 @@ const CENTRO_PERFECTO = 0.3;
 const GIRO_MAX = 1.1;      // lo más que se gira el conejo hacia un lado (radianes)
 const RACHA_SEG = 1.1;     // si vuelves a saltar antes de esto, la racha sigue
 const FIEBRE_SEG = 6;
-const ROMPE_SEG = 0.85;    // lo que aguanta encima un tronco agrietado
+const ROMPE_SEG = 2;       // lo que aguanta encima un tronco agrietado (generoso: da tiempo a pensar el salto)
 
 const JUEGO = {
   modo: 'menu', t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [],
@@ -35,7 +35,7 @@ function nuevaPartida(modo = 'menu') {
     liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
-  reiniciaOla(0); reiniciaDron(); acabaMuerte();
+  reiniciaOla(0); reiniciaDron(); acabaMuerte(); ROTURA.trozos.length = ROTURA.astillas.length = ROTURA.serrin.length = 0;
   FX.length = 0; LETREROS.length = 0;
   APUNTA.activo = false;
   preparaMetas();
@@ -204,10 +204,11 @@ function avanzaJuego(dt) {
   // el tronco agrietado: se rompe muy rápido; si sigues encima a los ROMPE_SEG, se parte en dos y caes al agua
   if (c.tronco && c.tronco.tipo === 'hunde' && J.modo === 'juego') {
     c.tronco.pisa += dt;
-    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua(); }
+    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua(); }   // rotura.js
   }
   avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
   if (J.modo === 'juego') { avanzaObjetos(dt); avanzaDron(dt); }
+  avanzaRotura(dt);
   avanzaRio(dt);
   if (c.salto) {
     const s = c.salto;

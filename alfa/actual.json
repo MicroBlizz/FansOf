@@ -1,8 +1,8 @@
 {
- "build": 352,
- "hash": "12e29ff",
- "fecha": "2026-10-20T23:19:43Z",
- "mensaje": "Une main (Jump) y el SQL del PvP con talentos pasa a 64 (el 63 es del ranking de Jump)",
+ "build": 353,
+ "hash": "3584aef",
+ "fecha": "2026-10-20T23:36:37Z",
+ "mensaje": "Fans of Jump (a medias, solo en la rama): la zanahoria de la fuerza en 3D con marcas al 25, 50 y 75 %",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

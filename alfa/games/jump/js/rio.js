@@ -187,13 +187,9 @@ function pintaTronco(tr, y, conejo) {
   y += baja + Math.sin(tr.fase * 2) * 0.5;
   const tiembla = k > 0.15 ? Math.sin(tr.fase * 70) * (k - 0.1) * 1.8 : 0, x = tr.x + tiembla;
   elipse(tr.x + 2, y + tr.r * 0.32, tr.r * 1.08, tr.r * 0.6, 'rgba(40,110,120,0.28)', null);
-  sprite('tronco' + (tr.id % 3), x, y, tr.r);
-  if (tr.tipo === 'hunde') {
-    // agrietado: en cuanto lo pisas, la grieta del centro se abre, tiembla y suelta astillas
-    const r = tr.r, c = 'rgba(90,50,25,0.8)', w = 0.9 + k * 1.6;
-    for (const [a, b, e, d] of [[-0.05, -0.75, 0.08, -0.35], [0.08, -0.35, -0.06, 0.05], [-0.06, 0.05, 0.1, 0.45], [0.08, -0.35, 0.45, -0.25], [-0.06, 0.05, -0.5, 0.1]]) trazo(x + a * r, y - 2 + b * r * APLASTA, x + e * r, y - 2 + d * r * APLASTA, w, c, null);
-    if (k > 0.3 && Math.random() < 0.3) FX.push({ t: 'gota', x: x + azar(-3, 3), wy: tr.wy, vx: azar(-20, 20), vy: azar(-5, 5), z: 3, vz: azar(25, 45), r: azar(0.6, 1.1), color: '#c98a4a', v: 1 });
-  } else if (tr.tipo === 'muelle') {
+  if (tr.tipo === 'hunde') pintaTroncoAgrietado(tr, x, y, k);   // agrietado: se va abriendo al pisarlo (rotura.js)
+  else sprite(GUARDA.piel && GUARDA.piel !== 'madera' ? 'piel_' + GUARDA.piel : 'tronco' + (tr.id % 3), x, y, tr.r);   // la piel del puesto de Lola
+  if (tr.tipo === 'muelle') {
     // una gelatina rosa que bota
     const sq = 1 - tr.boing * 0.35 * Math.cos(tr.boing * 18), ry = tr.r * 0.3 * sq;
     elipse(x, y - 2 - ry * 0.4, tr.r * 0.58, ry, vol(x, y - 2, tr.r * 0.58, ry, '#ff9ac8'), OLC, 0.8);

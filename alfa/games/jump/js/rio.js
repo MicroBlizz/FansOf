@@ -85,7 +85,7 @@ function generaRio(hasta) {
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
       if (!f.amigo && !f.objeto) {
         const k = rnd();
-        if (wy > 1000 && k < 0.08 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
+        if (wy > 1500 && k < 0.06 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
         else if (wy > 400 && k > 0.94) { f.tipo = 'muelle'; f.vx = 0; f.boing = 0; }
       }
     }
@@ -182,16 +182,17 @@ function pintaRio(t) {
 
 /* ---------- los troncos y lo que llevan ---------- */
 function pintaTronco(tr, y, conejo) {
-  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6 + (tr.tipo === 'hunde' ? tr.pisa * 1.4 : 0);
+  const k = tr.tipo === 'hunde' ? Math.min(1, tr.pisa / ROMPE_SEG) : 0;   // cuánto le falta para romperse (0..1)
+  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6 + k * 2;
   y += baja + Math.sin(tr.fase * 2) * 0.5;
-  const tiembla = tr.tipo === 'hunde' && tr.pisa > 0.5 ? Math.sin(tr.fase * 60) * (tr.pisa - 0.4) * 1.2 : 0, x = tr.x + tiembla;
+  const tiembla = k > 0.15 ? Math.sin(tr.fase * 70) * (k - 0.1) * 1.8 : 0, x = tr.x + tiembla;
   elipse(tr.x + 2, y + tr.r * 0.32, tr.r * 1.08, tr.r * 0.6, 'rgba(40,110,120,0.28)', null);
   sprite('tronco' + (tr.id % 3), x, y, tr.r);
   if (tr.tipo === 'hunde') {
-    // agrietado: si te quedas encima, tiembla, burbujea y se hunde
-    const r = tr.r, c = 'rgba(90,50,25,0.75)';
-    for (const [a, b, e, d] of [[-0.55, -0.15, -0.05, -0.3], [-0.05, -0.3, 0.2, 0.05], [0.2, 0.05, 0.6, -0.1], [-0.05, -0.3, 0.05, -0.62]]) trazo(x + a * r, y - 2 + b * r * APLASTA, x + e * r, y - 2 + d * r * APLASTA, 0.9, c, null);
-    if (tr.pisa > 0.3) for (let i = 0; i < 3; i++) { const k = (tr.fase * 1.5 + i / 3) % 1; elipse(x + (i - 1) * r * 0.7, y + r * 0.3 - k * 6, 1 + k, 1 + k, 'rgba(255,255,255,0.7)', null); }
+    // agrietado: en cuanto lo pisas, la grieta del centro se abre, tiembla y suelta astillas
+    const r = tr.r, c = 'rgba(90,50,25,0.8)', w = 0.9 + k * 1.6;
+    for (const [a, b, e, d] of [[-0.05, -0.75, 0.08, -0.35], [0.08, -0.35, -0.06, 0.05], [-0.06, 0.05, 0.1, 0.45], [0.08, -0.35, 0.45, -0.25], [-0.06, 0.05, -0.5, 0.1]]) trazo(x + a * r, y - 2 + b * r * APLASTA, x + e * r, y - 2 + d * r * APLASTA, w, c, null);
+    if (k > 0.3 && Math.random() < 0.3) FX.push({ t: 'gota', x: x + azar(-3, 3), wy: tr.wy, vx: azar(-20, 20), vy: azar(-5, 5), z: 3, vz: azar(25, 45), r: azar(0.6, 1.1), color: '#c98a4a', v: 1 });
   } else if (tr.tipo === 'muelle') {
     // una gelatina rosa que bota
     const sq = 1 - tr.boing * 0.35 * Math.cos(tr.boing * 18), ry = tr.r * 0.3 * sq;

@@ -11,6 +11,7 @@ const CENTRO_PERFECTO = 0.3;
 const GIRO_MAX = 1.1;      // lo más que se gira el conejo hacia un lado (radianes)
 const RACHA_SEG = 1.1;     // si vuelves a saltar antes de esto, la racha sigue
 const FIEBRE_SEG = 6;
+const ROMPE_SEG = 0.85;    // lo que aguanta encima un tronco agrietado
 
 const JUEGO = {
   modo: 'menu', t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [],
@@ -180,6 +181,7 @@ function acaba(motivo) {
   J.modo = 'fin'; J.tFin = 0; c.salto = null; c.tronco = null;
   const record = J.puntos > GUARDA.mejor;
   cierraRetoYHuella(record);
+  if (record) { GUARDA.mejorSeg = J.t - FANTASMA.t0; subeMarca(J.puntos, J.metros, GUARDA.mejorSeg); }   // al ranking mundial (ranking.js)
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
   GUARDA.partidas++; GUARDA.rescatados += J.rescatados;
   const premio = cierraMisiones();
@@ -199,10 +201,10 @@ function avanzaJuego(dt) {
   avanzaMuerte(dt);
   J.t += dt; J.temblor = Math.max(0, J.temblor - dt); c.cae = Math.max(0, c.cae - dt * 5);
   if (c.tronco) J.enTronco += dt;
-  // el tronco agrietado: si te quedas encima más de 1,7 s, se hunde contigo
+  // el tronco agrietado: se rompe muy rápido; si sigues encima a los ROMPE_SEG, se parte en dos y caes al agua
   if (c.tronco && c.tronco.tipo === 'hunde' && J.modo === 'juego') {
     c.tronco.pisa += dt;
-    if (c.tronco.pisa > 1.7) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; onda(t.x, t.wy, t.r); salpica(t.x, t.wy, 12, 'rgba(255,255,255,0.95)'); alAgua(); }
+    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua(); }
   }
   avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
   if (J.modo === 'juego') { avanzaObjetos(dt); avanzaDron(dt); }

@@ -152,5 +152,21 @@ IDIOMA.add({
  "hoy": "today",
  "¡Resbala!": "Slippery!",
  "¡CLONK!": "CLONK!",
- "¡Plaf!": "Splash!"
+ "¡Plaf!": "Splash!",
+ "¡Crac!": "Crack!",
+ "Mis marcas": "My bests",
+ "Ranking mundial": "World ranking",
+ "Tu nombre": "Your name",
+ "Cambiar": "Change",
+ "sin nombre": "no name",
+ "Tu nombre en el ranking": "Your name in the ranking",
+ "De 3 a 14 letras. Sin tu nombre real ni datos de contacto: lo verá todo el mundo.": "3 to 14 letters. No real name or contact details: everyone will see it.",
+ "Cancelar": "Cancel",
+ "Guardar": "Save",
+ "El ranking necesita conexión a internet.": "The ranking needs an internet connection.",
+ "Sin conexión: el ranking vuelve cuando haya red.": "Offline: the ranking comes back when you're online.",
+ "Cargando…": "Loading…",
+ "Aún no hay nadie. ¡Juega una partida y sé el primero!": "Nobody here yet. Play a run and be the first!",
+ "Tu puesto: {p} de {n}": "Your rank: {p} of {n}",
+ "Juega una partida para salir en el ranking.": "Play a run to appear in the ranking."
 });

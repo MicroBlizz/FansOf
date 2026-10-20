@@ -272,13 +272,21 @@ function pintaAjustes() {
   aqui(W / 2, y + h - 14, -0.06, 1, 1, () => { const r = tr('Recibido: Lola'), rw = anchoLetras(r, 7, { logo: true }) + 12; caja(-rw / 2, -5.5, rw, 11, 2, null, PASTEL.lilaO, 0.9); letras(r, 0, 0.6, 7, PASTEL.lilaO, { logo: true }); });
 }
 function pintaRecords() {
-  const W = PAN.W, x = 18, y = PAN.H / 2 - 62, w = W - 36, h = 124;
+  const W = PAN.W, mundial = PANEL.pestanaR === 'mundial', x = 14, w = W - 28, h = mundial ? Math.min(PAN.H - 70, 300) : 146, y = PAN.H / 2 - h / 2;
   marco('Mis récords', x, y, w, h, PASTEL.oro);
+  // las dos pestañas: lo tuyo y el ranking mundial (ranking.js)
+  [['mias', 'Mis marcas'], ['mundial', 'Ranking mundial']].forEach(([id, txt], i) => {
+    const on = (PANEL.pestanaR || 'mias') === id, tw = (w - 26) / 2, px = x + 10 + i * (tw + 6);
+    caja(px, y + 8, tw, 13, 4, on ? PASTEL.oro : PASTEL.fondo, OLC, 0.7);
+    letras(tr(txt), px + tw / 2, y + 14.8, 7.2, on ? PASTEL.texto : PASTEL.suave, { peso: 800 });
+    boton(px, y + 6, tw, 17, () => { PANEL.pestanaR = id; PANEL.scroll = 0; SONIDO.boton(); });
+  });
+  if (mundial) return pintaRanking(x + 8, y + 28, w - 16, h - 34);
   const filas = [['Mayores pérdidas', GUARDA.mejor.toLocaleString('es-ES') + ' €'], ['Huida más larga', GUARDA.mejorM + ' m'], ['Partidas', GUARDA.partidas], ['Empleados liberados', GUARDA.rescatados], ['Zanahorias', GUARDA.zanas]];
   filas.forEach(([k, v], i) => {
-    letras(tr(k), x + 12, y + 18 + i * 20, 7.8, PASTEL.suave, { alin: 'left', peso: 700 });
-    letras(String(v), x + w - 12, y + 18 + i * 20, 9, PASTEL.texto, { alin: 'right' });
-    if (i < filas.length - 1) caja(x + 10, y + 27 + i * 20, w - 20, 0.5, 0, PASTEL.raya, null);
+    letras(tr(k), x + 12, y + 40 + i * 20, 7.8, PASTEL.suave, { alin: 'left', peso: 700 });
+    letras(String(v), x + w - 12, y + 40 + i * 20, 9, PASTEL.texto, { alin: 'right' });
+    if (i < filas.length - 1) caja(x + 10, y + 49 + i * 20, w - 20, 0.5, 0, PASTEL.raya, null);
   });
 }
 function pintaPanel() {

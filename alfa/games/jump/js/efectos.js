@@ -7,6 +7,12 @@ function onda(x, wy, r = 10, color = 'rgba(255,255,255,0.8)') { FX.push({ t: 'on
 function salpica(x, wy, n, color) {
   for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = azar(18, 46); FX.push({ t: 'gota', x, wy, vx: Math.cos(a) * s, vy: Math.sin(a) * s * 0.6, z: 0, vz: azar(30, 60), r: azar(0.9, 1.8), color, v: 1 }); }
 }
+// el tronco agrietado se parte en dos mitades que se separan, giran y se van al agua
+function rompeTronco(t) {
+  for (const lado of [-1, 1]) FX.push({ t: 'trozo', x: t.x, wy: t.wy, r: t.r, id: t.id, lado, giro: 0, v: 0.9, v0: 0.9 });
+  onda(t.x, t.wy, t.r); salpica(t.x, t.wy, 14, colorAgua(t.wy, 0.6)); estrellas(t.x, t.wy, 4, '#e8b878');
+  aviso(tr('¡Crac!'), t.x, t.wy + 36, '#ffd8a8', 12); SONIDO.crac(); vibra(50);
+}
 function estrellas(x, wy, n = 6, color = '#ffe066') {
   for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; FX.push({ t: 'estrella', x, wy, vx: Math.cos(a) * 34, vy: Math.sin(a) * 34, r: azar(2, 3.2), giro: Math.random() * 3, color, v: 0.7, v0: 0.7 }); }
 }
@@ -22,6 +28,7 @@ function avanzaFx(dt) {
     if (f.t === 'gota' || f.t === 'gotaG') { f.x += f.vx * dt; f.wy += f.vy * dt; f.z += f.vz * dt; f.vz -= 160 * dt; if (f.z < 0) { f.v = 0; if (f.t === 'gotaG' && Math.random() < 0.4) onda(f.x, f.wy, 2.5, 'rgba(255,255,255,0.6)'); } }
     else if (f.t === 'estrella' || f.t === 'corazon') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92; f.giro = (f.giro || 0) + dt * 5; }
     else if (f.t === 'texto') f.wy += dt * 16;
+    else if (f.t === 'trozo') { f.x += f.lado * dt * 22; f.giro += f.lado * dt * 1.4; }
     else if (f.t === 'petalo') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.94; f.vy = f.vy * 0.94 - 14 * dt; f.giro += dt * 7; }
   }
   for (let i = FX.length - 1; i >= 0; i--) if (FX[i].v <= 0) FX.splice(i, 1);
@@ -48,6 +55,13 @@ function pintaFx(capa) {
       const k = 1 - f.v / f.v0;
       G.globalAlpha = Math.max(0, 1 - k); elipse(f.x, y + 2, f.r + k * 12, (f.r + k * 12) * 0.6, null, f.color, 1.2 * (1 - k) + 0.3); G.globalAlpha = 1;
       continue;
+    }
+    if (f.t === 'trozo') {   // media rodaja: se recorta el dibujo del tronco por la mitad y se hunde
+      const k = 1 - f.v / f.v0, hy = y + k * 8;
+      G.save(); G.globalAlpha = Math.max(0, 1 - k * 1.1);
+      G.beginPath(); G.rect(0, 0, PAN.W, y + 4); G.clip();
+      aqui(f.x, hy, f.giro, 1, 1, () => { G.beginPath(); G.rect(f.lado < 0 ? -f.r * 2 : 0, -f.r * 2, f.r * 2, f.r * 4); G.clip(); sprite('tronco' + (f.id % 3), 0, 0, f.r); });
+      G.restore(); continue;
     }
     if (f.t === 'gota') elipse(f.x, y - f.z, f.r, f.r, f.color, null);
     else if (f.t === 'gotaG') {   // gota grande y brillante, alargada al caer

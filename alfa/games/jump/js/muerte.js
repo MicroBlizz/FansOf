@@ -19,14 +19,15 @@ function empiezaMuerte(motivo) {
   if (M.activa) return;
   const barro = motivo === 'ola';
   Object.assign(M, { activa: true, t: 0, x: c.x, wy: c.wy, barro, burbujas: [], manchas: [], tBurbuja: 0.9 });
-  const agua = barro ? '#9a6a40' : 'rgba(225,248,252,0.92)', brillo = barro ? '#d8a878' : '#ffffff';
+  // las gotas, del color del agua donde cae (más turbia cerca de la ola)
+  const agua = barro ? '#9a6a40' : colorAgua(c.wy), brillo = barro ? '#d8a878' : colorAgua(c.wy, 0.85, 1);
   // la corona de gotas: muchas, hacia fuera y hacia arriba
   for (let i = 0; i < 26; i++) {
     const a = i / 26 * Math.PI * 2 + Math.random() * 0.2, s = azar(16, 42);
     FX.push({ t: 'gotaG', x: c.x, wy: c.wy, vx: Math.cos(a) * s, vy: Math.sin(a) * s * 0.55, z: azar(2, 6), vz: azar(55, 105), r: azar(0.9, 1.9), color: agua, luz: brillo, v: 2 });
   }
   FX.push({ t: 'columna', x: c.x, wy: c.wy, color: agua, v: 0.7, v0: 0.7 });
-  FX.push({ t: 'espuma', x: c.x, wy: c.wy, color: barro ? 'rgba(160,110,70,0.9)' : 'rgba(255,255,255,0.95)', v: 1.1, v0: 1.1 });
+  FX.push({ t: 'espuma', x: c.x, wy: c.wy, color: barro ? 'rgba(160,110,70,0.9)' : colorAgua(c.wy, 0.8, 0.95), v: 1.1, v0: 1.1 });
   const ondaC = barro ? 'rgba(255,230,200,0.7)' : 'rgba(255,255,255,0.85)';
   onda(c.x, c.wy, 10, ondaC);
   // la corona sale disparada de la cabeza
@@ -44,7 +45,7 @@ function avanzaMuerte(dt) {
   const C = M.corona;
   if (C && !C.flota) {
     C.x += C.vx * dt; C.z += C.vz * dt; C.vz -= 170 * dt; C.giro += C.vgiro * dt;
-    if (C.z <= 0) { C.z = 0; C.flota = true; onda(C.x, M.wy, 5); salpica(C.x, M.wy, 5, M.barro ? '#9a6a40' : 'rgba(255,255,255,0.95)'); }
+    if (C.z <= 0) { C.z = 0; C.flota = true; onda(C.x, M.wy, 5); salpica(C.x, M.wy, 5, M.barro ? '#9a6a40' : colorAgua(M.wy, 0.6)); }
   } else if (C) { C.fase += dt; C.giro += (Math.sin(C.fase * 2) * 0.25 - C.giro) * Math.min(1, dt * 3); if (Math.random() < dt * 0.8) onda(C.x, M.wy, 4, 'rgba(255,255,255,0.5)'); }
   // las burbujas, cuando ya se ha hundido
   if (M.t > M.tBurbuja) {

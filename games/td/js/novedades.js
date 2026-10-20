@@ -4,6 +4,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.74', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha colgado fotos de otros juegos en las torres y los enemigos ya hacen cola para verlas."] },
   { v: '0.13.73', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of)."], joke: ["Microblizz ha puesto carteles de otros juegos junto a las torres y Phony ha intentado defender uno."] },
   { v: '0.13.72', real: ["<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie."], joke: ["Microblizz ha puesto una casilla de «estoy avisado» en cada torre. Phony pregunta si la de vigilancia cuenta doble."] },
   { v: '0.13.71', real: ["<b>AJUSTES DE ECONOMÍA</b>: hemos ajustado las recompensas y los precios de las tiendas para mantener una economía sana en el juego. No es definitivo: seguimos trabajando en ello."], joke: ["Microblizz ha ajustado la paga de las torres y Phony ha pedido un adelanto de nómina."] },

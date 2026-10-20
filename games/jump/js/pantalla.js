@@ -240,6 +240,7 @@ function pintaTodo() {
   if (J.modo === 'menu') pintaPortada();
   else if (J.modo === 'listo') pintaListo(t);
   else pintaMarcador();
+  pintaZanasVuelan();
   pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
   pintaCasi();

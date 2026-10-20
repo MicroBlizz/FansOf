@@ -4,7 +4,7 @@
 'use strict';
 
 const ARCOIRIS = ['#ff5a6e', '#ff9a3c', '#ffd84a', '#7ad65a', '#4ac8f0', '#7a7aff', '#c46aff'];
-const BONITO = { mariposas: [], petalos: [], brillos: [], estela: [], confeti: [], arco: 0 };
+const BONITO = { mariposas: [], petalos: [], brillos: [], estela: [], confeti: [], arco: 0, vuelan: [] };
 const LETREROS = [];
 
 function iniciaBonito() {
@@ -33,6 +33,8 @@ function bandera(txt, color) { LETREROS.push({ txt, color, t: 0, v: 1.6 }); whil
 
 function avanzaBonito(dt) {
   const B = BONITO, W = PAN.W, H = PAN.H, J = JUEGO, mueve = GUARDA.suave ? 0.5 : 1;
+  for (const v of B.vuelan) v.t += dt;
+  B.vuelan = B.vuelan.filter(v => v.t < v.d + ZANA_VUELA);
   for (const m of B.mariposas) {
     m.f += dt * 3; m.x += Math.cos(m.f * 0.4) * m.v * dt * mueve; m.y += (Math.sin(m.f * 0.7) * 8 + 6) * dt * mueve;
     if (m.y > H + 10) { m.y = -10; m.x = Math.random() < 0.5 ? azar(4, 30) : azar(W - 30, W - 4); }
@@ -133,3 +135,32 @@ function pintaBanderas() {
     G.globalAlpha = 1;
   });
 }
+
+/* ---------- las zanahorias de los troncos ---------- */
+// grandes, flotando encima del tronco y botando, con un brillo dorado detrás, su sombra y algún destello
+function pintaZanasTronco(tr, y, t) {
+  const n = tr.zanas, sep = 13, gy = y - 10;
+  const g = G.createRadialGradient(tr.x, gy, 1, tr.x, gy, 13 + n * 4);
+  g.addColorStop(0, 'rgba(255,240,170,0.8)'); g.addColorStop(1, 'rgba(255,220,120,0)');
+  G.fillStyle = g; G.fillRect(tr.x - 32, gy - 26, 64, 52);
+  elipse(tr.x, y + 1, 4 + n * 4.5, 2.2, 'rgba(90,50,25,0.25)', null);
+  for (let i = 0; i < n; i++) {
+    const x = tr.x - (n - 1) * sep / 2 + i * sep, b = Math.sin(t * 3.2 + tr.id + i * 0.9) * 1.8;
+    aqui(x, gy + b, Math.sin(t * 2 + i + tr.id) * 0.14, 1, 1, () => iconoZana(0, 0, 20));
+  }
+  const k = (t * 0.9 + tr.id * 0.37) % 1;
+  if (k < 0.35) estrellita(tr.x + Math.cos(tr.id * 2.1) * (6 + n * 4), gy - 7 + Math.sin(tr.id) * 3, 2.6 * Math.sin(k / 0.35 * Math.PI), 0.95);
+}
+// al cogerlas, cada una sale volando hasta el contador de zanahorias del marcador
+const ZANA_VUELA = 0.55;
+function zanasVuelan(x, wy, n) { const y = pantY(wy) - 9; for (let i = 0; i < Math.min(n, 6); i++) BONITO.vuelan.push({ x: x + (i - (n - 1) / 2) * 13, y, t: 0, d: i * 0.07 }); }
+function pintaZanasVuelan() {
+  for (const v of BONITO.vuelan) {
+    const k = Math.max(0, Math.min(1, (v.t - v.d) / ZANA_VUELA)), e = k * k * (3 - 2 * k), tx = 13.5, ty = 32.5;
+    const cx = (v.x + tx) / 2 + 30, cy = Math.min(v.y, ty) - 40;   // por una curva hacia arriba
+    const x = (1 - e) * (1 - e) * v.x + 2 * (1 - e) * e * cx + e * e * tx, y = (1 - e) * (1 - e) * v.y + 2 * (1 - e) * e * cy + e * e * ty;
+    aqui(x, y, e * 6, 1, 1, () => iconoZana(0, 0, 20 - e * 9));
+    if (k > 0.92) estrellita(tx, ty, 4 * (1 - (k - 0.92) / 0.08), 0.9);
+  }
+}
+

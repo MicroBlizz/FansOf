@@ -215,4 +215,6 @@ IDIOMA.add({
   "AGUANTE": "STAMINA",
   "<b>ARMARIO, DIARIO, PASE Y TIENDA PARA TODOS</b>: MI PERFIL con el armario (ojos, bocas, cabezas, espaldas, humos, fantasmas, sellos, linternas, marcos, títulos y gestos), la habitación para probarte la ropa, el diario con su regalo cada día, el pase y la tienda salen ya en la web, no solo en la alfa. De momento no se cobra nada: lo que compras se te da.": "<b>WARDROBE, DIARY, PASS AND SHOP FOR EVERYONE</b>: MY PROFILE with the wardrobe (eyes, mouths, heads, backs, smokes, ghosts, stamps, flashlights, frames, titles and gestures), the room to try clothes on, the diary with its daily gift, the pass and the shop are now on the web, not only in the alpha. For now nothing is charged: whatever you buy is given to you.",
   "ARMARIO, DIARIO, PASE Y TIENDA PARA TODOS": "WARDROBE, DIARY, PASS AND SHOP FOR EVERYONE",
+  "<b>MI ESCENARIO, MÁS A LA VISTA</b>: su botón tiene ahora su propio color rosa. Además, mejoras por dentro en los sistemas de la serie.": "<b>MY SCENE, EASIER TO SPOT</b>: its button now has its own pink colour. Plus behind-the-scenes improvements to the series' systems.",
+  "Microblizz ha pintado de rosa el botón de tu sala y Phony ha pintado de rosa también al becario que pasaba.": "Microblizz painted your room's button pink and Phony painted the passing intern pink too."
 });

@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.1', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha puesto un pase de fotos en la meta y Phony frena para mirarlas."] },
   { v: '0.7.0', real: ["<b>KARTS YA ES UN JUEGO</b>: deja de ser una demo y se une a la lista de juegos de Fans Of, con su app para Android."],
     joke: ["Recursos Humanos ha ascendido a Karts de demo a juego. Microblizz le ha subido el sueldo en monedas de la pista, y Phony ya ha perdido tres."] },
   { v: '0.6.4', real: ["<b>HORIZONTAL CON EL MÓVIL DE PIE</b>: si en Opciones eliges jugar en horizontal, ahora el menú, la tienda, el pase y las salas online también se giran con el juego, y las listas se mueven con el dedo."],

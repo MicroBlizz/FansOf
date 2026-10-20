@@ -1,8 +1,8 @@
 {
- "build": 289,
- "hash": "9515c40",
- "fecha": "2026-10-20T14:38:02Z",
- "mensaje": "Rouflage: cuenta en servidor (Gotas, Acciones, colección, gachapón) con SQL 53 sin aplicar; cápsula 150, gratis 8 h, legendarias también por Acciones",
+ "build": 290,
+ "hash": "bff71e3",
+ "fecha": "2026-10-20T16:07:09Z",
+ "mensaje": "Rouflage: los invitados no usan la cuenta del servidor (siguen en local, regla de menores)",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

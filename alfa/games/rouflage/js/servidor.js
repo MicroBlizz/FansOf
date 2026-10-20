@@ -45,7 +45,7 @@ const RFS = (() => {
     try { const g = await CUENTA.rpc('rf_gacha_gratis_estado', {}); desfase = g.ahora - Date.now(); } catch (_) { /* se queda el de antes */ }
   }
   async function arranca() {
-    if (!nube() || typeof CUENTA.rpc !== 'function') return;
+    if (!nube() || typeof CUENTA.rpc !== 'function' || CUENTA.invitado) return;   // los invitados no guardan nada en el servidor (menores): siguen en local
     const cache = leeCache();
     try {
       let est = await Promise.race([CUENTA.rpc('rf_estado', {}), new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 6000))]);

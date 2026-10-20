@@ -10,6 +10,8 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 /* ---------- las tarjetas: una rejilla con la captura arriba ---------- */
 #biblioteca, #en-pausa { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; align-items: stretch; }
 #biblioteca > h2.sec, #biblioteca > p.note, #en-pausa > h2.sec, #en-pausa > p.note { grid-column: 1 / -1; justify-self: center; text-align: center; }
+#biblioteca > h3.grupo { grid-column: 1 / -1; justify-self: center; font-family: var(--font-display); font-weight: 400; font-size: 24px; color: var(--gold); margin: 14px 0 -6px; }   /* JUEGOS, PROTOTIPOS y DEMOS: los grupos de la biblioteca */
+#biblioteca > p.note.grupo { margin: 0; }
 .game { position: relative; width: 100%; box-sizing: border-box; color: var(--ink); text-align: left; border: 4px solid var(--outline); border-radius: 18px; padding: 0 0 12px; overflow: hidden;
   background: linear-gradient(170deg, var(--wc) 0%, var(--tray) 55%); box-shadow: 0 5px 0 var(--outline); cursor: pointer; transition: transform .12s; }
 .game:hover { transform: translateY(-3px); }

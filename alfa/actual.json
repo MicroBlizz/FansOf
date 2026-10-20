@@ -1,8 +1,8 @@
 {
- "build": 305,
- "hash": "f5f53dc",
- "fecha": "2026-10-20T17:50:50Z",
- "mensaje": "MAPA.md al día",
+ "build": 306,
+ "hash": "ad9e3e2",
+ "fecha": "2026-10-20T17:53:36Z",
+ "mensaje": "Biblioteca: grupos JUEGOS, PROTOTIPOS y DEMOS (además de EN PAUSA)",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

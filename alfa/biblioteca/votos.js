@@ -15,8 +15,11 @@
   let favs = leer(), totales = {}, avisado = false, listo = false;   // listo: el servidor ya tiene las funciones (si no, solo van los guardados de este navegador y no se ve ni cuenta ni voto)
   const guardar = () => { try { localStorage.setItem(GUARDADO, JSON.stringify(favs)); } catch (e) { /* sin almacenamiento: vale mientras la página esté abierta */ } };
   const original = TARJETAS.slice();
-  // las tarjetas viven en dos sitios (BIBLIOTECA y EN PAUSA): cada una se ordena dentro del suyo
-  const colas = new Map(); for (const s of original) colas.set(s.parentNode, s.nextElementSibling && !s.nextElementSibling.matches('section.game') ? s.nextElementSibling : null);
+  // las tarjetas viven en grupos (JUEGOS, PROTOTIPOS y DEMOS de la BIBLIOTECA, y EN PAUSA): cada una se ordena dentro del suyo.
+  // El grupo es lo que tiene justo antes de su tanda de tarjetas (el título o la nota) y su cola, lo que va justo después (null: el final de la sección).
+  const vecino = (s, lado) => { let e = s[lado]; while (e && e.matches('section.game')) e = e[lado]; return e; };
+  const grupo = new Map(), colas = new Map();
+  for (const s of original) { const g = vecino(s, 'previousElementSibling'); grupo.set(s, g); colas.set(g, vecino(s, 'nextElementSibling')); }
   // EN PAUSA (data-pausa en index.html): el mismo SÍ / NO, pero la pregunta es si quieres que vuelva
   const pausado = id => { const s = document.getElementById(id); return !!(s && s.dataset.pausa); };
   const SI_TXT = id => (pausado(id) ? 'Quiero que vuelva' : 'Lo recomiendo'), NO_TXT = id => (pausado(id) ? 'Que siga en pausa' : 'No lo recomiendo');
@@ -31,7 +34,7 @@
 
   // ---------- el orden: los favoritos primero ----------
   function ordenar() {
-    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))]) s.parentNode.insertBefore(s, colas.get(s.parentNode));
+    for (const s of [...original.filter(s => es(s.id)), ...original.filter(s => !es(s.id))]) s.parentNode.insertBefore(s, colas.get(grupo.get(s)));
   }
   const cuantos = id => totales[slug(id)] || 0;
   const etiqueta = id => `${ICONO.marca(es(id))}${cuantos(id) ? `<span>${cuantos(id)}</span>` : ''}`;

@@ -4,6 +4,7 @@
 //   · al tocar una tarjeta se abre su FICHA: capturas grandes, JUGAR, versión, de qué va, lo último y todas sus novedades.
 // Lo que cada tarjeta necesita se escribe en su <section> de index.html:
 //   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas; data-alfa si la tarjeta solo va en la alfa)
+//   Cada tarjeta va bajo su grupo de <section id="biblioteca">: JUEGOS (data-tipo="Juego"), PROTOTIPOS ("Prototipo") o DEMOS ("Demo", "Boceto", "Prueba").
 //   Un prototipo parado va en <section id="en-pausa"> con data-tipo="En pausa" y data-pausa="por qué está parado" (su inglés en biblioteca/en.js).
 // Las capturas van en biblioteca/capturas/ (partidas de verdad: sin regalo diario, ni novedades, ni menús de opciones).
 // Usa lo que ya tiene la página: esc(), t(), newsLista(), newsHtml(), nuevos(), cerrarNovedades() y la lista ENTRADAS que llena la carga de novedades.

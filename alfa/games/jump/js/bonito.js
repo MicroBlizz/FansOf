@@ -1,10 +1,10 @@
 // Fans of Jump · Lo bonito: la luz del sol con destellos suaves (como una foto a contraluz), mariposas por las orillas, pétalos
-// que vuelan, brillitos en el agua, la estela de arcoíris del conejo cuando va de racha, el arcoíris grande de la Fiebre,
+// que vuelan, brillitos en el agua, la estela de arcoíris del conejo cuando va de racha (los arcoíris grandes de la Fiebre, en fiesta.js),
 // el confeti y los letreros que saltan en el centro («¡Meta!», «¡Nuevo récord!», «¡Torre x3!»…).
 'use strict';
 
 const ARCOIRIS = ['#ff5a6e', '#ff9a3c', '#ffd84a', '#7ad65a', '#4ac8f0', '#7a7aff', '#c46aff'];
-const BONITO = { mariposas: [], petalos: [], brillos: [], estela: [], confeti: [], arco: 0, vuelan: [] };
+const BONITO = { mariposas: [], petalos: [], brillos: [], estela: [], confeti: [], vuelan: [] };
 const LETREROS = [];
 
 function iniciaBonito() {
@@ -50,7 +50,6 @@ function avanzaBonito(dt) {
   B.confeti = B.confeti.filter(c => c.v > 0 && c.y < H + 10);
   for (const b of LETREROS) { b.t += dt; b.v -= dt; }
   while (LETREROS.length && LETREROS[0].v <= 0) LETREROS.shift();
-  B.arco += ((J.fiebre > 0 ? 1 : 0) - B.arco) * Math.min(1, dt * 3);
 }
 
 /* ---------- pintar ---------- */
@@ -89,15 +88,6 @@ function pintaBonitoAgua(t) {
     pintaMotaEstela(e.tipo, e.x + Math.sin(e.n) * 3, pantY(e.wy) - e.h - 10 + (1 - k) * 4, 2.2 * (0.5 + k * 0.5), e.n);
   }
   G.globalAlpha = 1;
-}
-// el arcoíris grande de la Fiebre, detrás de todo lo de arriba
-function pintaArco() {
-  const a = BONITO.arco;
-  if (a < 0.02) return;
-  const W = PAN.W, cx = W / 2, cy = PAN.H * 0.55;
-  G.save(); G.globalAlpha = 0.45 * a; G.lineCap = 'butt';
-  ARCOIRIS.forEach((col, i) => { G.beginPath(); G.arc(cx, cy, W * 0.62 - i * 4.2, Math.PI * 1.05, Math.PI * 1.95); G.lineWidth = 4.4; G.strokeStyle = col; G.stroke(); });
-  G.restore();
 }
 function mariposa(m, t) {
   const cols = [['#ffb3cf', '#ff7aa8'], ['#bfe6ff', '#6ab8ff'], ['#fff1a0', '#ffc93a']][m.c], aleteo = 0.25 + Math.abs(Math.sin(m.f * 6)) * 0.75;

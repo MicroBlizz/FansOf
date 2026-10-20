@@ -27,11 +27,11 @@ const poder = id => llevo(id) && tengoAmigo(id);
 function nuevaPartida(modo = 'menu') {
   const x = PAN.W / 2;
   CAM.y = -PAN.H * 0.3;
-  preparaAzar();
+  preparaAzar(); reiniciaFiesta();
   const t = reiniciaRio(x, preparaTuto());
   Object.assign(JUEGO, {
     modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
-    racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
+    racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, cadena: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
     liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
@@ -106,7 +106,7 @@ function aterriza() {
   for (const id of J.cuestas) J.viajes[id] = (J.viajes[id] || 0) + 1;
   // el tronco embarrado por el dron: resbalas (se cae un amigo y adiós racha)
   const resbala = mejor.barro;
-  if (resbala) { J.racha = 0; J.perfSeguidos = 0; aviso(tr('¡Resbala!'), c.x - 20, c.wy + 22, '#c99060', 10); vibra(50); }
+  if (resbala) { J.racha = 0; J.perfSeguidos = 0; J.cadena = 0; aviso(tr('¡Resbala!'), c.x - 20, c.wy + 22, '#c99060', 10); vibra(50); }
   if ((r > BORDE_UY || resbala) && J.cuestas.length) {
     if (poder('zorro') && !J.zorroUsado) { J.zorroUsado = true; aviso(tr('¡SlyFox lo esquiva!'), c.x, c.wy + 14, '#ffb37a', 9); }
     else {
@@ -120,10 +120,11 @@ function aterriza() {
     mejor.pisado = true; J.saltos++;
     let p = puntosPor(10);
     if (r < CENTRO_PERFECTO && !resbala) {
-      p += puntosPor(5); J.perfectos++; J.perfSeguidos++;
+      p += puntosPor(5); J.perfectos++; J.perfSeguidos++; J.cadena++;
+      if (J.fiebre > 0) J.fiebre = FIEBRE_SEG;   // encadenando ¡Perfecto! la Fiebre no se acaba (y la fiesta crece: fiesta.js)
       aviso(tr('¡Perfecto!'), c.x, c.wy + 26, '#ffe066', 11); estrellas(c.x, c.wy); petalos(c.x, c.wy, 10); SONIDO.perfecto(); vibra(25);
       if (J.perfSeguidos >= 3 && J.fiebre <= 0) enciendeFiebre();
-    } else J.perfSeguidos = 0;
+    } else { J.perfSeguidos = 0; J.cadena = 0; }
     if (poder('ardilla')) p += 5;
     J.puntos += p;
     aviso('+' + p, c.x + 16, c.wy + 6, J.fiebre > 0 ? '#ffd0f0' : '#fff8ea', 9);
@@ -238,7 +239,7 @@ function avanzaJuego(dt) {
   const camObj = c.wy - PAN.H * 0.36;
   if (camObj > CAM.y) CAM.y += (camObj - CAM.y) * Math.min(1, dt * 3);
   generaRio(CAM.y + PAN.H + 140);
-  avanzaFx(dt); avanzaHumo(dt); avanzaBonito(dt);
+  avanzaFx(dt); avanzaHumo(dt); avanzaBonito(dt); avanzaFiesta(dt);
   for (const f of J.caen) { f.x += f.vx * dt; f.z += f.vz * dt; f.vz -= 160 * dt; f.giro += dt * 6; f.v -= dt; if (f.z < 0 && !f.chof) { f.chof = true; onda(f.x, f.wy, 5); salpica(f.x, f.wy, 5, 'rgba(255,255,255,0.9)'); } }
   J.caen = J.caen.filter(f => f.v > 0 && f.z > -12);
 }

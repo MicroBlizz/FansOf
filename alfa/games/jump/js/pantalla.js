@@ -242,6 +242,7 @@ function pintaTodo() {
   G.save();
   if (J.temblor > 0) G.translate((Math.random() - 0.5) * 3 * J.temblor / 0.1, (Math.random() - 0.5) * 2 * J.temblor / 0.1);
   pintaRio(t);
+  pintaFans(t);
   pintaFx('agua');
   pintaMuerteAgua();
   pintaBonitoAgua(t);
@@ -257,8 +258,9 @@ function pintaTodo() {
   pintaOla(t);
   pintaFx('aire');
   pintaLuz(t);
-  pintaArco();
+  pintaArcos(t);
   if (!GUARDA.suave) pintaBonitoAire(t);
+  pintaFiestaAire(t);
   G.restore();
   pintaPunteria();
   pintaBanderas();

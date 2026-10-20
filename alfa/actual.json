@@ -1,8 +1,8 @@
 {
- "build": 355,
- "hash": "6ec842b",
- "fecha": "2026-10-20T23:47:45Z",
- "mensaje": "Rouflage: tienda con dos monedas (Gotas o Acciones, lo del gachapón a la venta ×1,5), ventana de confirmar compra con el precio en euros y pase premium con Acciones en sus huecos; SQL 65 y datos v6 aplicados",
+ "build": 356,
+ "hash": "d619ebe",
+ "fecha": "2026-10-20T23:54:04Z",
+ "mensaje": "Fans of Jump: la fiesta de la Fiebre arcoíris por niveles, amigos animando y gelatina 3D",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

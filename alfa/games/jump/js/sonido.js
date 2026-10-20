@@ -1,7 +1,7 @@
 // Fans of Jump · Sonido: el altavoz, el motor de música y las canciones son los de la serie (core/js/sistema/sonido.js y
 // core/js/serie/canciones.js, que core carga antes; todo se crea con código, sin archivos). Aquí está lo que ese motor pide a
 // cada juego (volumen y silencio), los efectos propios del juego (con tone y noise del motor) y qué canción suena:
-// la de los Animales Locos, más deprisa con la racha y a tope en la Fiebre arcoíris; al final, la de ganar o la de perder.
+// la de los Animales Locos, más deprisa con la racha y en la Fiebre arcoíris, más en cada nivel de la fiesta; al final, la de ganar o la de perder.
 'use strict';
 
 // lo que pide el motor de la serie
@@ -28,6 +28,9 @@ const SONIDO = {
   crac: () => { noise(0.18, v(0.18), 1800); tone(240, 90, 0.2, 'sawtooth', v(0.06)); },
   boing: () => [330, 494, 660].forEach((f, i) => tone(f, f * 1.25, 0.09, 'triangle', v(0.07), i * 0.06)),
   dron: () => { tone(140, 180, 0.5, 'sawtooth', v(0.03)); tone(150, 120, 0.5, 'sawtooth', v(0.03), 0.5); },
+  // la fiesta de la Fiebre: una fanfarria que sube más alto en cada nivel y la gente vitoreando (ruido que sube y baja)
+  fiesta: n => { [523, 659, 784, 1046, 1318].slice(0, 2 + n).forEach((f, i) => tone(f * (1 + n * 0.06), f * (1 + n * 0.06), 0.12, 'square', v(0.06), i * 0.06)); for (let i = 0; i < 3; i++) noise(0.25, v(0.05 + n * 0.01), 2600 + i * 500, 'bandpass', i * 0.12); },
+  pum: () => { noise(0.12, v(0.06), 1200); tone(900, 1500, 0.08, 'triangle', v(0.03), 0.05); },
   chof: () => { noise(0.5, v(0.25), 600); tone(200, 50, 0.4, 'sine', v(0.15)); },
 };
 
@@ -43,5 +46,5 @@ function vigilaMusica() {
   finSonado = false;
   if (M.trk && M.trk.once) return;
   if (M.name !== 'animales') musicSet('animales');
-  M.tmT = J.modo === 'menu' ? 0.9 : J.fiebre > 0 ? 1.28 : 1 + Math.min(0.2, J.racha * 0.02);
+  M.tmT = J.modo === 'menu' ? 0.9 : J.fiebre > 0 ? 1.24 + (FIESTA.nivel - 1) * 0.07 : 1 + Math.min(0.2, J.racha * 0.02);   // la fiesta, cada vez más frenética
 }

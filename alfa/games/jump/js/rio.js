@@ -190,10 +190,9 @@ function pintaTronco(tr, y, conejo) {
   if (tr.tipo === 'hunde') pintaTroncoAgrietado(tr, x, y, k);   // agrietado: se va abriendo al pisarlo (rotura.js)
   else sprite(GUARDA.piel && GUARDA.piel !== 'madera' ? 'piel_' + GUARDA.piel : 'tronco' + (tr.id % 3), x, y, tr.r);   // la piel del puesto de Lola
   if (tr.tipo === 'muelle') {
-    // una gelatina rosa que bota
-    const sq = 1 - tr.boing * 0.35 * Math.cos(tr.boing * 18), ry = tr.r * 0.3 * sq;
-    elipse(x, y - 2 - ry * 0.4, tr.r * 0.58, ry, vol(x, y - 2, tr.r * 0.58, ry, '#ff9ac8'), OLC, 0.8);
-    elipse(x - tr.r * 0.2, y - 2 - ry * 0.85, tr.r * 0.16, ry * 0.3, 'rgba(255,255,255,0.75)', null);
+    // la gelatina rosa 3D con su cereza: tiembla siempre un poquito y, al caer encima, se aplasta y se estira
+    const b = tr.boing, sq = 1 - b * 0.35 * Math.cos(b * 18) + Math.sin(tr.fase * 5) * 0.025;
+    sprite('gelatina', x, y - tr.r * 0.08, tr.r * 0.92, 0, 1 + (1 - sq) * 0.6, sq);
   }
   return y;
 }

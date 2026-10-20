@@ -1,8 +1,8 @@
 {
- "build": 281,
- "hash": "c49f1be",
- "fecha": "2026-10-20T14:09:46Z",
- "mensaje": "Rouflage gachapón: pantalla compacta como la del Rumble (cabe en pantalla, resultado en capa aparte) y tirada gratis cada 12 h (domingos de 10)",
+ "build": 282,
+ "hash": "c95bb60",
+ "fecha": "2026-10-20T14:10:42Z",
+ "mensaje": "Rouflage gachapón: los repetidos devuelven 20/100/400/1000 Gotas (10 comunes = 1 cápsula, épica 2, legendaria 5)",
  "juegos": {
   "crush": "0.1.22",
   "dark": "0.2.7",

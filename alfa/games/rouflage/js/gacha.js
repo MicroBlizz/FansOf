@@ -9,7 +9,7 @@
 const GACHA = {
   precio: 200, precio10: 1800,                    // Gotas por 1 y por 10 cápsulas (unas 2 de las 150 Gotas máximas que se ganan al día)
   odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
-  repetida: { comun: 30, rara: 80, epica: 160, legend: 300 },   // Gotas que devuelve una pieza que ya tienes
+  repetida: { comun: 20, rara: 100, epica: 400, legend: 1000 },   // Gotas que devuelve una pieza repetida: 10 comunes = 1 cápsula (200), épica = 2, legendaria = 5 (la rara, a medias: 100)
   pityRara: 10, pityEpica: 40,
   gratisHoras: 12,                                 // una tirada gratis cada tantas horas (no se acumulan); los domingos es de 10 cápsulas
   liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón

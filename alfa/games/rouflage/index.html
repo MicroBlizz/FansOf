@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.34-a283.d83744b"></script>
+<script src="../../core/js/nucleo.js?v=0.2.34-a284.1099651"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
@@ -361,13 +361,14 @@
     <div class="gacha-info" id="gacha-info" hidden>
       <p data-tr>Cada cápsula trae una pieza del armario: ojos, bocas, papeles, mascotas, humos, títulos… Si ya la tenías, te devolvemos Gotas.</p>
       <p data-tr>Salen todos los conjuntos y piezas que no son gratis, y las Épicas también se pueden comprar con Acciones en el armario. Lo del pase solo entra cuando ese pase se cierra.</p>
-      <p data-tr>Hay una tirada gratis cada 12 horas, y los domingos esa tirada es de 10 cápsulas.</p>
+      <p data-tr>Hay una tirada gratis (x1) cada 3 horas y, cada domingo, una x10 gratis que caduca al acabar el día. No se acumulan.</p>
       <p data-tr>Las cápsulas solo se pagan con Gotas. Las Acciones, que se compran con euros, no sirven para tirar: así nunca se paga dinero por azar.</p>
     </div>
     <p class="gacha-sub" data-tr>Cosméticos en cápsula, pagados solo con Gotas.</p>
     <canvas id="gacha-maquina" width="300" height="300"></canvas>
     <p class="gacha-sub" id="gacha-cuenta"></p>
-    <button type="button" class="boton gacha-gratis" id="b-gacha-gratis"></button>
+    <button type="button" class="boton gacha-gratis" id="b-gacha-g1"></button>
+    <button type="button" class="boton gacha-gratis" id="b-gacha-g10"></button>
     <div class="gacha-botones">
       <button type="button" class="boton tn-boton" id="b-gacha-1"></button>
       <button type="button" class="boton tn-boton" id="b-gacha-10"></button>

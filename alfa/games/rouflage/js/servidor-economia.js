@@ -36,6 +36,10 @@ async function arCompraServidor(cat, it) {
 }
 // la tienda: paquetes de Acciones y pack de inicio (de prueba), y Acciones a cambio de Gotas
 async function tiendaServidor(tipo, idx, texto) {
+  if (tipo !== 'canje') return MONEDAS.recomiendaCuenta(() => tiendaServidorHecha(tipo, idx, texto));
+  return tiendaServidorHecha(tipo, idx, texto);
+}
+async function tiendaServidorHecha(tipo, idx, texto) {
   try {
     if (tipo === 'canje') { await RFS.llama('rf_cambiar', { p_idx: idx }); play('crown'); avisa(tr('+{n} Acciones', { n: TIENDA.canje[idx].n }), 'bueno'); }
     else { await RFS.llama('rf_tienda_prueba', { p_tipo: tipo, p_idx: idx }); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); }

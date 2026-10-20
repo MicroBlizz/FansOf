@@ -31,7 +31,8 @@ function cierraTienda() {
   play('select');
   if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else if (TIENDA.desde === 'gacha') abreGacha(); else irTitulo();
 }
-function tiendaCompra(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
+function tiendaCompra(texto, da) { MONEDAS.recomiendaCuenta(() => tiendaCompraHecha(texto, da)); }
+function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
 
 // el icono del euro: una moneda dorada con su signo
 function pintaEuro(c, w) {

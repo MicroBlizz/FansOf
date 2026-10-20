@@ -68,14 +68,19 @@ const MONEDAS = (() => {
     });
     for (const b of document.querySelectorAll('[data-cambio]')) { b.setAttribute('aria-pressed', String(+b.dataset.cambio === n)); b.onclick = () => { n = +b.dataset.cambio; for (const x of document.querySelectorAll('[data-cambio]')) x.setAttribute('aria-pressed', String(x === b)); }; }
   }
+  // Antes de pagar con dinero real, un invitado ve una RECOMENDACIÓN (no un bloqueo): sin cuenta con email o Google, si pierde la instalación pierde su progreso y sus compras
+  function recomiendaCuenta(seguir) {
+    if (typeof CUENTA === 'undefined' || !CUENTA.invitado || typeof confirmBox !== 'function') return seguir();
+    confirmBox(tr('TE RECOMENDAMOS UNA CUENTA'), tr('Ahora juegas como invitado: si pierdes la instalación del juego, pierdes tu progreso y tus compras. Cancela y entra con email o Google desde «Iniciar sesión / crear cuenta» para dejarlo todo a salvo.'), tr('COMPRAR IGUALMENTE'), seguir);
+  }
   // lo que solo se compra con dinero real (gemas, pase, sin anuncios…): en desarrollo es una compra de prueba; en la web aún no está a la venta
   function compraReal(titulo, html, alComprar) {
     if (typeof confirmBox !== 'function') return;
-    if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), alComprar);
+    if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(alComprar));
     else confirmBox(tr('SOLO CON DINERO REAL'), `${html}<small>${tr('Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.')}</small>`, null);
   }
   // Lo que devuelve la pista de pago de un pase, en %: pasePct = { pase: 26, pasepvp: 70 } en la fila `monedas` de flags (dato). Sirve para que lo que da
   // la pista de pago se quede cerca de lo que cuesta el pase (se puede encadenar uno tras otro, sin acumular). Sin dato, 100 (todo). Mismo valor en el servidor (49).
   const pasePct = p => { const v = ((conf().pasePct || {})[p === 'p' ? 'pasepvp' : 'pase']); return typeof v === 'number' && v >= 0 && v <= 100 ? Math.floor(v) : 100; };
-  return { conf, activo, nombre, icono, chip, saldo, azar, cambiar, ventanaCambio, compraReal, pasePct };
+  return { conf, activo, nombre, icono, chip, saldo, azar, cambiar, ventanaCambio, compraReal, recomiendaCuenta, pasePct };
 })();

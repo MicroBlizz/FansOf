@@ -1,8 +1,8 @@
 {
- "build": 278,
- "hash": "310a745",
- "fecha": "2026-10-20T12:58:10Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.22, decks 0.2.4, nova 0.3.9, ratkov 0.2.12, rouflage 0.2.33, rumble 0.9.141, survivors 0.1.54, tacticas 0.1.38, td 0.13.70",
+ "build": 279,
+ "hash": "f73bea6",
+ "fecha": "2026-10-20T13:46:24Z",
+ "mensaje": "Rouflage: gachapón de cosméticos pagado con Gotas (piezas sueltas hasta épica; conjuntos y legendarias siguen en Acciones)",
  "juegos": {
   "crush": "0.1.22",
   "dark": "0.2.7",

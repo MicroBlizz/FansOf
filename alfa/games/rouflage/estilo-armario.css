@@ -146,3 +146,28 @@
 #ranking li span.marco-ar { border-bottom: 3px solid; padding: 0 2px; }
 #fin-ranking li.marco-ar { border: 3px solid; }
 #fin-ranking .titulo-ar { display: block; font-family: var(--font-display); font-weight: 400; font-size: 11px; letter-spacing: 0.03em; }
+
+/* el gachapón de armario (gacha-pantalla.js) */
+.gacha-caja { max-width: 520px; max-height: calc(100vh - 30px); overflow-y: auto; text-align: center; }
+.gacha-cabeza { position: relative; display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px; text-align: left; margin-bottom: 6px; }
+.gacha-cabeza canvas { width: 120px; height: 120px; transform-origin: 50% 90%; }
+.gacha-cabeza canvas.agita { animation: gc-agita 0.65s; }
+@keyframes gc-agita { 15% { transform: rotate(-7deg); } 30% { transform: rotate(7deg); } 45% { transform: rotate(-6deg); } 60% { transform: rotate(5deg); } 80% { transform: rotate(-2deg); } }
+.gacha-sub { margin: 0 0 4px; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.gacha-info-b { position: absolute; top: 0; right: 0; width: 34px; height: 34px; padding: 0; border: 0; background: none; cursor: pointer; }
+.gacha-info { margin: 0 0 8px; padding: 6px 10px; border-radius: 10px; background: rgba(57, 160, 232, 0.14); border: 2px dashed #39a0e8; text-align: left; }
+.gacha-info p { margin: 4px 0; font-weight: 700; font-size: 12.5px; }
+.gacha-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 6px 0; }
+.gacha-botones .boton { background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+.gacha-botones .boton.falta { background: linear-gradient(to bottom, #9aa0b5, #626885); color: #e8eaf4; }
+.gacha-pity { margin: 2px 0 6px; font-weight: 700; font-size: 12px; color: var(--ink-dim); }
+.gacha-res { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; margin: 6px 0 8px; }
+.gc-carta { display: grid; justify-items: center; gap: 2px; padding: 6px 4px; border-radius: 12px; border: 3px solid var(--outline); background: var(--tray-hi); animation: gc-sale 0.35s; }
+.gc-carta b { font: 400 13px var(--font-display); line-height: 1.1; }
+.gc-carta small { font-weight: 700; font-size: 10.5px; color: var(--ink-dim); }
+.gc-carta i { font: normal 800 11px var(--font-ui); color: #ffb08a; }
+.gc-carta.nuevo i { color: #9ff07a; }
+.gc-carta.gc-rara { background: linear-gradient(160deg, #22507a, #173452); }
+.gc-carta.gc-epica { background: linear-gradient(160deg, #5a2f86, #351a52); box-shadow: 0 0 10px rgba(180, 92, 255, 0.6); }
+.gc-carta .boton { margin-top: 2px; }
+@keyframes gc-sale { from { transform: scale(0.4); opacity: 0; } }

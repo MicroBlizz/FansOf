@@ -1,8 +1,8 @@
 {
- "build": 274,
- "hash": "0a6f700",
- "fecha": "2026-10-20T12:31:02Z",
- "mensaje": "Registro de errores: los fallos de código y los errores del servidor se apuntan (SQL 51 pendiente); la tienda ya no dice «sin conexión» cuando el servidor contestó con un error",
+ "build": 275,
+ "hash": "71e42b3",
+ "fecha": "2026-10-20T12:51:23Z",
+ "mensaje": "Tienda: con las dos monedas desaparece la pestaña de oro (no se vende); el oro y su aviso pasan a la de gemas",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

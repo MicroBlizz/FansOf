@@ -60,3 +60,5 @@ function spriteEnCaja(nombre, x, y, w, h, margen = 2) {
   const k = Math.min((w - margen * 2) / c[2], (h - margen * 2) / c[3]), dw = c[2] * k, dh = c[3] * k;
   G.drawImage(LAMINA, c[0], c[1], c[2], c[3], x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
+// la zanahoria de los marcadores y los precios: la de frente, en diagonal, centrada en (x, y) y de «s» de alto como mucho
+const iconoZana = (x, y, s) => spriteEnCaja('zanahoria_icono', x - s / 2, y - s / 2, s, s, 0);

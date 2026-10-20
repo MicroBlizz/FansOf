@@ -1,6 +1,7 @@
 // Fans of Jump · La partida: CrazyBunny salta de tronco en tronco (arrastrar y soltar: hacia dónde y cuánto), rescata a los
 // amigos atrapados y se los lleva a cuestas (cada uno multiplica los puntos), recoge zanahorias y huye de la ola de barro.
 // Si cae lejos del centro de un tronco se le cae un amigo; si no cae en ninguno, al agua. Si la ola lo pilla, también.
+// La primera partida la guía Lola (tutorial.js): mientras, la ola espera y el agua no acaba la partida.
 // Saltar rápido sube la racha; tres ¡Perfecto! seguidos encienden la Fiebre arcoíris. Las metas (récord y misión) cruzan el río.
 'use strict';
 
@@ -18,15 +19,17 @@ const JUEGO = {
 const APUNTA = { activo: false, x0: 0, y0: 0, x: 0, y: 0 };
 const tengoAmigo = id => id === 'ardilla' || !!GUARDA.tengo[id];
 const llevo = id => JUEGO.cuestas.includes(id);
+// todos salen atrapados en el río; su poder solo funciona si lo has contratado en el puesto de Lola
+const poder = id => llevo(id) && tengoAmigo(id);
 
 function nuevaPartida() {
   const x = PAN.W / 2;
   CAM.y = -PAN.H * 0.3;
-  const t = reiniciaRio(x);
+  const t = reiniciaRio(x, preparaTuto());
   Object.assign(JUEGO, {
     modo: 'menu', t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
     racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
   reiniciaOla(0);
@@ -92,7 +95,7 @@ function aterriza() {
   SONIDO.cae();
   for (const id of J.cuestas) J.viajes[id] = (J.viajes[id] || 0) + 1;
   if (r > BORDE_UY && J.cuestas.length) {
-    if (llevo('zorro') && !J.zorroUsado) { J.zorroUsado = true; aviso(tr('¡SlyFox lo esquiva!'), c.x, c.wy + 14, '#ffb37a', 9); }
+    if (poder('zorro') && !J.zorroUsado) { J.zorroUsado = true; aviso(tr('¡SlyFox lo esquiva!'), c.x, c.wy + 14, '#ffb37a', 9); }
     else {
       const id = J.cuestas.pop(); J.cayeron++;
       J.caen.push({ id, x: c.x, wy: c.wy, vx: (c.ox >= 0 ? 1 : -1) * 34, vz: 40, z: 22, giro: 0, v: 1.4 });
@@ -108,11 +111,12 @@ function aterriza() {
       aviso(tr('¡Perfecto!'), c.x, c.wy + 26, '#ffe066', 11); estrellas(c.x, c.wy); petalos(c.x, c.wy, 10); SONIDO.perfecto();
       if (J.perfSeguidos >= 3 && J.fiebre <= 0) enciendeFiebre();
     } else J.perfSeguidos = 0;
-    if (llevo('ardilla')) p += 5;
+    if (poder('ardilla')) p += 5;
     J.puntos += p;
     aviso('+' + p, c.x + 16, c.wy + 6, J.fiebre > 0 ? '#ffd0f0' : '#fff8ea', 9);
   }
   if (mejor.zanas) cogeZanas(mejor, c.x, c.wy);
+  const rescate = mejor.amigo;
   if (mejor.amigo) {
     const id = mejor.amigo;
     J.cuestas.push(id); J.rescatados++; if (!J.liberados.includes(id)) J.liberados.push(id); J.maxCuestas = Math.max(J.maxCuestas, J.cuestas.length);
@@ -121,13 +125,14 @@ function aterriza() {
     corazones(c.x, c.wy + 10); petalos(c.x, c.wy, 8);
     mejor.amigo = null; SONIDO.rescate();
     if (J.cuestas.length >= 3) bandera(tr('¡Rabia x{n}!', { n: 1 + J.cuestas.length }), PASTEL.lila);
-    if (id === 'castor') { OLA.wy -= 60; OLA.pala -= 20; bandera(tr('¡BUM! La ola retrocede'), PASTEL.melocoton); J.temblor = GUARDA.suave ? 0 : 0.25; salpica(PAN.W / 2, OLA.wy + 30, 20, '#9a6a40'); }
+    if (id === 'castor' && tengoAmigo('castor')) { OLA.wy -= 60; OLA.pala -= 20; bandera(tr('¡BUM! La ola retrocede'), PASTEL.melocoton); J.temblor = GUARDA.suave ? 0 : 0.25; salpica(PAN.W / 2, OLA.wy + 30, 20, '#9a6a40'); }
   }
   compruebaMisiones();
+  tutoCae(r < CENTRO_PERFECTO, rescate);
 }
 
 function cogeZanas(tr, x, wy) {
-  const J = JUEGO, n = tr.zanas * (llevo('mapache') ? 2 : 1);
+  const J = JUEGO, n = tr.zanas * (poder('mapache') ? 2 : 1);
   J.zanas += n; aviso('+' + n, x - 16, wy + 4, '#ffb347', 9);
   tr.zanas = 0; SONIDO.zana();
 }
@@ -143,14 +148,15 @@ function enciendeFiebre() {
 // al agua: el casco de obra o MeerCat te salvan una vez (vuelves al último tronco)
 function alAgua() {
   const J = JUEGO, c = J.conejo;
-  if (J.casco || llevo('suricata')) {
+  if (tutoAgua()) return;
+  if (J.casco || poder('suricata')) {
     const quien = J.casco ? tr('¡El casco te salva!') : tr('¡MeerCat te salva!');
     if (J.casco) J.casco = false; else J.cuestas.splice(J.cuestas.indexOf('suricata'), 1);
     onda(c.x, c.wy, 8); salpica(c.x, c.wy, 10, 'rgba(255,255,255,0.95)');
     const t = c.ultimo && RIO.troncos.includes(c.ultimo) ? c.ultimo : RIO.troncos.filter(o => o.wy <= c.wy + 10 && o.wy > OLA.wy + 20).sort((a, b) => b.wy - a.wy)[0];
     if (t) { c.tronco = t; c.ox = 0; c.owy = 0; c.x = t.x; c.wy = t.wy; c.cae = 1; J.enTronco = 0; aviso(quien, c.x, c.wy + 30, '#9fe3ff', 10); SONIDO.rescate(); return; }
   }
-  acaba('barro');
+  muere('barro');
 }
 
 function acaba(motivo) {
@@ -176,6 +182,7 @@ function avanzaJuego(dt) {
   const J = JUEGO, c = J.conejo;
   J.t += dt; J.temblor = Math.max(0, J.temblor - dt); c.cae = Math.max(0, c.cae - dt * 5);
   if (c.tronco) J.enTronco += dt;
+  avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
   avanzaRio(dt);
   if (c.salto) {
     const s = c.salto;
@@ -192,10 +199,10 @@ function avanzaJuego(dt) {
   if (J.modo === 'juego') {
     J.metros = Math.max(J.metros, Math.floor(c.wy / 10));
     J.fiebre = Math.max(0, J.fiebre - dt); J.cafe = Math.max(0, J.cafe - dt);
-    if (J.cafe <= 0) avanzaOla(dt, c.wy, J.metros);
+    if (J.cafe <= 0 && !tutoFrena()) avanzaOla(dt, c.wy, J.metros);
     // en la fiebre, las zanahorias de los troncos cercanos vienen solas
     if (J.fiebre > 0) for (const t of RIO.troncos) if (t.zanas && Math.hypot(t.x - c.x, t.wy - c.wy) < 70) cogeZanas(t, t.x, t.wy);
-    if (OLA.wy >= c.wy - 2) acaba('ola');
+    if (OLA.wy >= c.wy - 2) muere('ola');
     cruzaMetas();
   }
   if (J.modo === 'fin') { J.tFin += dt; c.hunde = Math.min(1, c.hunde + dt * 1.4); }

@@ -35,7 +35,7 @@ function dentroTronco(t, x, wy, margen = 0) {
 
 function nuevoTronco(x, wy, r, dif) {
   const t = { x, wy, r, vx: 0, amigo: null, zanas: 0, pisado: false, id: RIO.cuenta++, fase: Math.random() * 6, hunde: 0 };
-  if (Math.random() < 0.18 + dif * 0.3) t.vx = (Math.random() < 0.5 ? -1 : 1) * azar(6, 10 + dif * 10);
+  if (Math.random() < 0.22 + dif * 0.4) t.vx = (Math.random() < 0.5 ? -1 : 1) * azar(7, 12 + dif * 14);
   RIO.troncos.push(t);
   return t;
 }
@@ -43,28 +43,28 @@ function nuevoTronco(x, wy, r, dif) {
 // pone troncos hasta la altura «hasta»: cada fila queda al alcance de la anterior, a veces con otro al lado
 function generaRio(hasta) {
   while (RIO.ultimo.wy < hasta) {
-    const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 6000);
-    const wy = prev.wy + azar(50, 64) + dif * 10;
+    const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500);
+    const wy = prev.wy + azar(52, 66) + dif * 16;
     const [L, R] = orillas(wy);
-    const r = Math.round(azar(20, 25) - dif * 4);
+    const r = Math.round(azar(19, 24) - dif * 5);
     const lo = L + r + 3, hi = R - r - 3;
-    let x = prev.x + azar(-60, 60);
+    let x = prev.x + azar(-70, 70);
     if (x < lo) x = lo + (lo - x) * 0.5;
     if (x > hi) x = hi - (x - hi) * 0.5;
     x = Math.max(lo, Math.min(hi, x));
     const t = nuevoTronco(x, wy, r, dif);
     RIO.ultimo = t;
     const fila = [t];
-    if (Math.random() < 0.34 - dif * 0.14) {
+    if (Math.random() < 0.3 - dif * 0.15) {
       const r2 = Math.round(azar(18, 22) - dif * 3);
       const lado = x < (lo + hi) / 2 ? 1 : -1, x2 = x + lado * azar(r + r2 + 8, r + r2 + 26);
-      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) fila.push(nuevoTronco(x2, wy + azar(-8, 8), r2, dif));
+      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) { fila.push(nuevoTronco(x2, wy + azar(-8, 8), r2, dif)); for (const f of fila) f.vx = 0; }
     }
     // un amigo atrapado de vez en cuando (nunca dos filas seguidas), y si no, zanahorias
     const n = Math.floor(wy / 40);
     for (const f of fila) {
       if (n - RIO.ultimoAmigo >= 3 && Math.random() < 0.3) {
-        const mios = AMIGOS.filter(a => tengoAmigo(a.id)); f.amigo = mios[RIO.siguienteAmigo % mios.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
+        f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
       } else if (Math.random() < 0.24) f.zanas = 1 + Math.floor(Math.random() * Math.random() * 3);
     }
   }
@@ -82,10 +82,17 @@ function avanzaRio(dt) {
   RIO.troncos = RIO.troncos.filter(t => t.wy > CAM.y - 60 || t === RIO.ultimo);
 }
 
-function reiniciaRio(xSalida) {
+// «guion»: los primeros troncos puestos a mano (el tutorial), quietos: [a un lado, altura, radio, qué lleva]
+function reiniciaRio(xSalida, guion) {
   RIO.troncos = []; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(Math.random() * AMIGOS.length);
   const t = nuevoTronco(xSalida, 0, 27, 0); t.vx = 0; t.pisado = true;
   RIO.ultimo = t;
+  for (const [dx, wy, r, lleva] of guion || []) {
+    const o = nuevoTronco(xSalida + dx, wy, r, 0); o.vx = 0;
+    if (lleva === 'zanas') o.zanas = 1; else if (lleva) { o.amigo = lleva; RIO.ultimoAmigo = Math.floor(wy / 40); }
+    RIO.ultimo = o;
+  }
+  if (guion) TUTO.troncos = RIO.troncos.slice(1);
   generaRio(PAN.H + 200);
   return t;
 }
@@ -164,7 +171,7 @@ function pintaTroncos(t, bajoConejo) {
     const y0 = pantY(tr.wy);
     if (y0 < -50 || y0 > PAN.H + 40) continue;
     const y = pintaTronco(tr, y0, tr === bajoConejo);
-    for (let i = 0; i < tr.zanas; i++) sprite('zanahoria', tr.x - (tr.zanas - 1) * 4.5 + i * 9, y + 1 - (i % 2), 8);
+    for (let i = 0; i < tr.zanas; i++) sprite('zanahoria', tr.x - (tr.zanas - 1) * 5 + i * 10, y + 1 - (i % 2), 7);
     if (tr.amigo) {
       // atrapado en un charco de barro, temblando, con su cartelito de SOS clavado en el tronco
       blanda([tr.x - 11, y + 1, tr.x - 4, y - 4, tr.x + 7, y - 3.5, tr.x + 12, y + 2, tr.x + 4, y + 6, tr.x - 7, y + 5.5], COL_RIO.barro, COL_RIO.barroO, 0.8);

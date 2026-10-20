@@ -32,15 +32,23 @@ function iconoSonido(x, y, on) {
 function iconoKit(id, x, y) {
   if (id === 'casco') { blanda([x - 5.5, y + 2, x - 4.5, y - 2.5, x, y - 4.5, x + 4.5, y - 2.5, x + 5.5, y + 2], vol(x, y - 1, 6, 4, '#ffd84a')); caja(x - 6.5, y + 1.5, 13, 2, 1, '#f0b414'); }
   else if (id === 'cafe') { caja(x - 4, y - 3, 7, 7, 1.5, '#ffffff', OLC, 0.7); G.beginPath(); G.arc(x + 3.5, y + 0.5, 2, -1.4, 1.4); G.lineWidth = 0.8; G.strokeStyle = OLC; G.stroke(); caja(x - 3, y - 2, 5, 2, 0.5, '#8a5530', null); }
-  else sprite('zanahoria', x, y + 5, 4.6);
+  else iconoZana(x, y, 14);
 }
 function pastillaZanas(x, y) {
-  const z = String(GUARDA.zanas), w = anchoLetras(z, 9) + 22;
-  caja(x, y, w, 15, 3, '#ffe6d2', OLC, 0.8); sprite('zanahoria', x + 8, y + 12.5, 5.2); letras(z, x + w - 7 - anchoLetras(z, 9) / 2, y + 8, 9, PASTEL.melocotonO);
+  const z = String(GUARDA.zanas), w = anchoLetras(z, 9.5) + 27;
+  caja(x, y, w, 15, 5, '#ffe6d2', OLC, 0.8); iconoZana(x + 10, y + 7.5, 13.5); letras(z, x + w - 7 - anchoLetras(z, 9.5) / 2, y + 8, 9.5, PASTEL.melocotonO);
   return w;
 }
 
 /* ---------- la portada ---------- */
+// una patita de conejo (almohadilla y tres deditos rosas), la que enseña cómo se tira
+function pata(x, y, s = 1) {
+  aqui(x, y, -0.25, s, s, () => {
+    elipse(0, 0, 7, 6.2, '#ffffff', OLC, 1);
+    elipse(0, 1, 3.4, 2.8, '#ffb3c8', null);
+    for (const [dx, dy] of [[-3.8, -3.6], [0, -4.8], [3.8, -3.6]]) elipse(dx, dy, 1.5, 1.4, '#ffb3c8', null);
+  });
+}
 // un cartel: tablilla pastel inclinada con su icono y su nombre
 function cartel(x, y, w, h, color, icono, txt, ang, fn) {
   aqui(x + w / 2, y + h / 2, ang, 1, 1, () => {
@@ -61,7 +69,7 @@ function posit(x, y, w, h, color, ang, m) {
     const ls = envuelve(m.txt, w - 8, 6.2).slice(0, 3), y0 = -6 - (ls.length - 1) * 3.5;
     ls.forEach((l, i) => letras(l, 0, y0 + i * 7, 6.2, PASTEL.texto, { peso: 700 }));
     const pr = '+' + m.premio, pw = anchoLetras(pr, 7.5) + 8;
-    sprite('zanahoria', -pw / 2 + 1, h / 2 - 3.5, 3.2); letras(pr, 3, h / 2 - 7, 7.5, PASTEL.melocotonO);
+    iconoZana(-pw / 2 + 2, h / 2 - 7.5, 10); letras(pr, 4, h / 2 - 7, 7.5, PASTEL.melocotonO);
   });
 }
 function pintaPortada() {
@@ -79,18 +87,21 @@ function pintaPortada() {
     const gr = G.createLinearGradient(-50, 0, 50, 0); ARCOIRIS.forEach((c, k) => gr.addColorStop(k / 6, c));
     letras('JUMP', 0, 0, 32, gr, { logo: true, borde: OLC, bw: 5 });
   });
-  if (!GUARDA.partidas) {
+  if (!GUARDA.partidas && !tutoActivo()) {
     const txt = envuelve(tr('Microblizz está arrasando el bosque. ¡Salta por el río y rescata a tus amigos antes de que te pille la ola de barro!'), W - 56, 8.5);
     const ch = txt.length * 10.5 + 12;
     caja(20, 86 + 1.5, W - 40, ch, 4, 'rgba(61,42,92,0.3)', null); caja(20, 86, W - 40, ch, 4, PASTEL.papel, OLC, 1);
     txt.forEach((l, i) => letras(l, W / 2, 97 + i * 10.5, 8.5, PASTEL.texto, { peso: 700 }));
   }
-  // cómo se salta: un dedo que tira hacia atrás del conejo
-  const c = JUEGO.conejo, cy = pantY(c.wy), k = (t * 0.8) % 1, tira = Math.min(1, k / 0.6) * 22;
+  // cómo se empieza: un aro que late alrededor del conejo y una patita que lo toca, tira hacia abajo y suelta (y salen los puntitos)
+  const c = JUEGO.conejo, cy = pantY(c.wy), k = (t / 1.9) % 1;
+  const late = 1 + Math.sin(t * 5) * 0.06;
+  G.setLineDash([3, 2.5]); G.beginPath(); G.ellipse(c.x, cy, 30 * late, 22 * late, 0, 0, Math.PI * 2); G.lineWidth = 1.4; G.strokeStyle = 'rgba(255,255,255,0.9)'; G.stroke(); G.setLineDash([]);
+  const tira = k < 0.18 ? 0 : k < 0.62 ? (k - 0.18) / 0.44 : 1, suelta = k > 0.66;
   if (k < 0.8) {
-    G.globalAlpha = 0.85;
-    for (let i = 1; i <= 4; i++) elipse(c.x, cy - 14 - i * tira * 0.5, 1.2, 1.2, '#ffffff', OLC, 0.6);
-    elipse(c.x + 18, cy + 4 + tira, 5, 5, 'rgba(255,255,255,0.8)', OLC, 0.9);
+    G.globalAlpha = suelta ? Math.max(0, 1 - (k - 0.66) / 0.14) : Math.min(1, k / 0.08);
+    for (let i = 1; i <= 4; i++) if (tira * 4 >= i - 0.5) elipse(c.x, cy - 12 - i * 7 * (0.4 + tira * 0.6), 1.6, 1.6, '#ffffff', OLC, 0.7);
+    pata(c.x + 6, cy - 2 + tira * 26, k < 0.18 ? 1 - Math.sin(k / 0.18 * Math.PI) * 0.12 : 1);
     G.globalAlpha = 1;
   }
   // las órdenes de Microblizz (pósits) y los cuatro carteles encima
@@ -98,11 +109,14 @@ function pintaPortada() {
   letras(tr('Órdenes de Microblizz'), W / 2, py - 8, 7.5, '#ffffff', { borde: OLC, bw: 2.4 });
   ms.forEach((m, i) => posit(10 + i * (pw + 5), py, pw, 46, ['#fff4a8', '#ffd6e6', '#d6ecff'][i], (i - 1) * 0.05, m));
   const cw = (W - 30) / 2, cy2 = py - 52;
-  cartel(10, cy2, cw, 15, '#ffe6d2', (x, y) => sprite('zanahoria', x, y + 5, 4.6), 'Puesto de Lola', -0.03, () => abrePanel('tienda'));
+  cartel(10, cy2, cw, 15, '#ffe6d2', (x, y) => iconoZana(x, y, 14), 'Puesto de Lola', -0.03, () => abrePanel('tienda'));
   cartel(20 + cw, cy2, cw, 15, PASTEL.menta, iconoCarpeta, 'Expedientes', 0.03, () => abrePanel('guia'));
   cartel(10, cy2 + 18, cw, 15, PASTEL.oro, iconoCorona, 'Mis récords', 0.02, () => abrePanel('records'));
   cartel(20 + cw, cy2 + 18, cw, 15, PASTEL.lila, iconoHoja, 'Reclamaciones', -0.02, () => abrePanel('ajustes'));
-  if (Math.floor(t * 2) % 2 === 0) letras(tr('Arrastra hacia atrás y suelta para saltar'), W / 2, cy2 - 10, 8, '#ffffff', { borde: OLC, bw: 2.4, peso: 700 });
+  // el cartel de cómo empezar, fijo y bien grande
+  const ct = tr('¡Tira del conejo hacia abajo y suelta!'), ctw = anchoLetras(ct, 8.5) + 20, cby = cy2 - 13 + Math.sin(t * 3) * 1;
+  caja(W / 2 - ctw / 2, cby - 7 + 1.5, ctw, 15, 7.5, OLC, null); caja(W / 2 - ctw / 2, cby - 7, ctw, 15, 7.5, PASTEL.melocoton, OLC, 0.9);
+  letras(ct, W / 2, cby + 0.6, 8.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2.2 });
 }
 
 /* ---------- lo que se abre encima: fichas de carpeta ---------- */
@@ -137,8 +151,8 @@ function etiqueta(x, y, cuanto, estado) {
   if (estado === 'mio') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr('En la pandilla'), x, y + 0.4, 5.6, PASTEL.texto); return; }
   const da = GUARDA.zanas >= cuanto;
   caja(x - 17, y - 5, 34, 10, 5, da ? '#ffa45c' : PASTEL.raya, OLC, 0.6);
-  sprite('zanahoria', x - 10, y + 3.4, 3.2);
-  letras(String(cuanto), x + 3, y + 0.4, 7.2, da ? '#ffffff' : PASTEL.flojo, da ? { borde: PASTEL.melocotonO, bw: 1.8 } : {});
+  iconoZana(x - 10, y, 10);
+  letras(String(cuanto), x + 4, y + 0.4, 7.2, da ? '#ffffff' : PASTEL.flojo, da ? { borde: PASTEL.melocotonO, bw: 1.8 } : {});
 }
 function compra(clave, cuanto, alComprar) {
   if (GUARDA.tengo[clave] || cuanto === 0) { alComprar(); salvaGuarda(); SONIDO.boton(); return; }
@@ -192,7 +206,7 @@ function pintaTienda() {
     });
     const fin = y0 + 2 + Math.ceil(lista.length / 2) * (ch + 4);
     if (PANEL.pestana === 'kit') letras(tr('Se usa en la siguiente partida.'), x + w / 2, fin + 6, 6.6, PASTEL.flojo, { peso: 700 });
-    if (PANEL.pestana === 'amigos') letras(tr('Los de tu pandilla salen atrapados en el río.'), x + w / 2, fin + 6, 6.6, PASTEL.flojo, { peso: 700 });
+    if (PANEL.pestana === 'amigos') { const ls = envuelve(tr('Todos salen atrapados en el río; contrátalos y usarán su poder.'), w - 24, 6.6); ls.forEach((l, i) => letras(l, x + w / 2, fin + 6 + i * 8, 6.6, PASTEL.flojo, { peso: 700 })); return fin + 8 + ls.length * 8; }
     return fin + 14;
   });
 }
@@ -232,7 +246,7 @@ function barra(txt, clave, x, y, w) {
   boton(x - 4, by - 8, w + 8, 16, (px) => { GUARDA[clave] = Math.round(Math.max(0, Math.min(1, (px - x) / w)) * 10) / 10; salvaGuarda(); applyVolume(); SONIDO.boton(); });
 }
 function pintaAjustes() {
-  const W = PAN.W, x = 16, y = PAN.H / 2 - 70, w = W - 32, h = 140;
+  const W = PAN.W, x = 16, y = PAN.H / 2 - 80, w = W - 32, h = 162;
   marco('Hoja de reclamaciones', x, y, w, h, PASTEL.lila);
   barra('Queja n.º 1: los ruiditos', 'efectos', x + 12, y + 16, w - 24);
   barra('Queja n.º 2: la música', 'musica', x + 12, y + 42, w - 24);
@@ -241,7 +255,12 @@ function pintaAjustes() {
   const sx = x + w - 30, on = GUARDA.suave;
   caja(sx, y + 68, 18, 10, 5, on ? PASTEL.menta : PASTEL.raya, OLC, 0.6); elipse(on ? sx + 13 : sx + 5, y + 73, 3.6, 3.6, '#ffffff', OLC, 0.6);
   boton(sx - 4, y + 64, 26, 18, () => { GUARDA.suave = !GUARDA.suave; salvaGuarda(); SONIDO.boton(); });
-  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 100 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
+  // el tutorial de Lola otra vez
+  const rt = tr('Repetir el tutorial de Lola'), rw = anchoLetras(rt, 7.5) + 18;
+  caja(W / 2 - rw / 2, y + 93, rw, 15, 4, OLC, null); caja(W / 2 - rw / 2, y + 91.5, rw, 15, 4, PASTEL.melocoton, OLC, 0.8);
+  letras(rt, W / 2, y + 99.5, 7.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2 });
+  boton(W / 2 - rw / 2 - 4, y + 88, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida(); SONIDO.boton(); });
+  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 122 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
   aqui(W / 2, y + h - 14, -0.06, 1, 1, () => { const r = tr('Recibido: Lola'), rw = anchoLetras(r, 7, { logo: true }) + 12; caja(-rw / 2, -5.5, rw, 11, 2, null, PASTEL.lilaO, 0.9); letras(r, 0, 0.6, 7, PASTEL.lilaO, { logo: true }); });
 }
 function pintaRecords() {

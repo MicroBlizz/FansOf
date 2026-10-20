@@ -92,10 +92,12 @@ function pintaPunteria() {
   if (!s) return;
   const x0 = c.x, y0 = pantY(c.wy) - 6, x1 = s.x, y1 = pantY(s.wy), n = Math.max(3, Math.floor(s.d / 7));
   for (let i = 1; i <= n; i++) {
-    const k = i / (n + 1), x = x0 + (x1 - x0) * k, y = y0 + (y1 - y0) * k - Math.sin(Math.PI * k) * s.d * 0.14;
-    elipse(x, y, 1.5, 1.5, JUEGO.fiebre > 0 ? ARCOIRIS[i % 7] : '#ffffff', OLC, 0.7);
+    const k = i / (n + 1); if (k > 0.5) break;
+    const x = x0 + (x1 - x0) * k, y = y0 + (y1 - y0) * k - Math.sin(Math.PI * k) * s.d * 0.14;
+    G.globalAlpha = Math.min(1, (0.55 - k) * 3);
+    elipse(x, y, 1.6, 1.6, JUEGO.fiebre > 0 ? ARCOIRIS[i % 7] : '#ffffff', OLC, 0.7);
   }
-  elipse(x1, y1, 7, 5, null, '#ffffff', 1.6); elipse(x1, y1, 7, 5, null, OLC, 0.5);
+  G.globalAlpha = 1;
   // la fuerza, a la derecha: una zanahoria que se llena de abajo arriba
   const bx = PAN.W - 10, by = PAN.H * 0.3, bh = PAN.H * 0.3, lleno = bh * s.fuerza;
   const zana = () => { G.beginPath(); G.moveTo(bx - 4.5, by); G.lineTo(bx + 4.5, by); G.lineTo(bx + 0.8, by + bh); G.lineTo(bx - 0.8, by + bh); G.closePath(); };
@@ -121,7 +123,7 @@ function pintaMarcador() {
   letras(r, 12, 15.8, 8.5, PASTEL.texto, { alin: 'left' });
   J.cuestas.slice(-3).forEach((id, i) => spriteEnCaja(id + '_susto0', 12 + anchoLetras(r, 8.5) + 3.5 + i * 7, 9.5, 7, 12, 0.3));
   let yy = 26;
-  if (J.zanas) { const z = String(J.zanas); caja(6, yy, anchoLetras(z, 8.5) + 18, 12, 2, '#ffe6d2', OLC, 0.8); sprite('zanahoria', 12, yy + 11, 4); letras(z, 17, yy + 6.4, 8.5, PASTEL.melocotonO, { alin: 'left' }); }
+  if (J.zanas) { const z = String(J.zanas); caja(6, yy, anchoLetras(z, 8.5) + 22, 13, 4, '#ffe6d2', OLC, 0.8); iconoZana(13.5, yy + 6.5, 12); letras(z, 21, yy + 6.9, 8.5, PASTEL.melocotonO, { alin: 'left' }); }
   // la racha y la fiebre
   if (J.racha >= 2) { const rr = tr('Racha') + ' x' + J.racha; letras(rr, W / 2, 39, 8.5, J.racha >= 10 ? '#ff5a6e' : J.racha >= 5 ? '#ff9a3c' : '#ffffff', { borde: OLC, bw: 2.4 }); }
   if (J.fiebre > 0) {
@@ -146,7 +148,7 @@ function pintaFinal() {
   const e = Math.min(1, (J.tFin - 0.6) / 0.25), sube = (1 - e) * 30;
   G.fillStyle = `rgba(40,25,60,${0.42 * e})`; G.fillRect(0, 0, W, H);
   G.globalAlpha = e;
-  const res = J.resumenMisiones || [], cw = W - 26, chh = 186 + res.length * 10, cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
+  const res = J.resumenMisiones || [], cw = W - 26, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
   // la hoja del parte, con su cinta de arriba
   caja(cx + 2, cy + 3, cw, chh, 4, 'rgba(40,25,60,0.35)', null);
   caja(cx, cy, cw, chh, 4, PASTEL.papel, OLC, 1);
@@ -181,10 +183,18 @@ function pintaFinal() {
     letras(m.hecha ? '+' + m.premio : m.va + '/' + m.n, cx + cw - 10, yy, 7, m.hecha ? PASTEL.melocotonO : PASTEL.flojo, { alin: 'right' });
   });
   y += 12 + res.length * 10;
-  sprite('zanahoria', cx + 14, y + 4, 4.4);
-  letras(tr('Zanahorias') + ': +' + J.ganadas, cx + 21, y, 8.5, PASTEL.melocotonO, { alin: 'left' });
+  iconoZana(cx + 15, y, 12);
+  letras(tr('Zanahorias') + ': +' + J.ganadas, cx + 23, y, 8.5, PASTEL.melocotonO, { alin: 'left' });
+  if (hayAnuncios() && J.ganadas > 0) {
+    // el anuncio con premio (de prueba): duplica las zanahorias de esta partida
+    const ya = J.duplicado, quedan = anunciosQuedan(), t2 = ya ? tr('¡Duplicadas!') : quedan ? tr('Duplícalas con un anuncio') : tr('Mañana más anuncios'), aw = anchoLetras(t2, 6.8) + 14;
+    caja(cx + cw - 10 - aw, y - 7.5, aw, 15, 5, ya || !quedan ? PASTEL.fondo : PASTEL.menta, OLC, 0.7);
+    letras(t2, cx + cw - 10 - aw / 2, y + 0.4, 6.8, ya || !quedan ? PASTEL.suave : '#ffffff', ya || !quedan ? {} : { borde: PASTEL.mentaO, bw: 1.8 });
+    if (!ya && quedan && e >= 1) boton(cx + cw - 14 - aw, y - 10, aw + 8, 20, duplicaZanas);
+    y += 8;
+  }
   // un consejo de alguien de la pandilla
-  const [quien, dice] = CONSEJOS[GUARDA.partidas % CONSEJOS.length];
+  const [quien, dice] = J.tutoHecho ? ['Lola', 'Las zanahorias que ganes, gástalas en mi puesto: tengo amigos que te ayudarán.'] : CONSEJOS[GUARDA.partidas % CONSEJOS.length];
   y += 12;
   envuelve(quien + ': «' + tr(dice) + '»', cw - 24, 6.8).slice(0, 2).forEach((l, i) => letras(l, W / 2, y + i * 8, 6.8, PASTEL.suave, { peso: 700 }));
   const bw = 96, bh = 20, bx = W / 2 - bw / 2, by = cy + chh - 26;
@@ -205,6 +215,7 @@ function pintaTodo() {
   pintaBonitoAgua(t);
   if (J.modo !== 'menu' && !PANEL.abierto) pintaMetas(t);
   pintaTroncos(t, J.conejo.tronco);
+  pintaGuiaTuto(t);
   pintaCaen();
   pintaConejo();
   pintaOla(t);
@@ -217,8 +228,11 @@ function pintaTodo() {
   pintaBanderas();
   if (J.modo === 'menu') pintaPortada();
   else pintaMarcador();
+  pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
+  pintaCasi();
   pintaPanel();
+  pintaAnuncio();
 }
 
 /* ---------- el dedo ---------- */
@@ -226,7 +240,7 @@ const DEDO = { boton: null, x0: 0, y0: 0, mueve: false, scroll0: 0 };
 function dedoBaja(x, y) {
   const c = JUEGO.conejo;
   Object.assign(DEDO, { boton: botonEn(x, y), x0: x, y0: y, mueve: false, scroll0: PANEL.scroll });
-  if (PANEL.abierto || DEDO.boton || JUEGO.modo === 'fin' || c.salto || !c.tronco) return;
+  if (PANEL.abierto || DEDO.boton || ANUNCIO.activo || (JUEGO.modo !== 'menu' && JUEGO.modo !== 'juego') || c.salto || !c.tronco) return;
   Object.assign(APUNTA, { activo: true, x0: x, y0: y, x, y });
 }
 function dedoMueve(x, y) {

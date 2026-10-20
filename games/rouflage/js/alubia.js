@@ -261,7 +261,7 @@ function pintaAlubia(c, e, t, velo = 1) {
   const x = e.hielo > 0 ? Math.round(e.x) : e.x, y = e.hielo > 0 ? Math.round(e.y) : e.y, ad = ADORNOS[e.tipo];
   c.save(); c.translate(x, y);
   if (e.tiembla > 0) c.translate(Math.sin(t * 70) * 1.1, 0);
-  if (a > 0.01) { c.globalAlpha = a * 0.26; c.fillStyle = OL; c.beginPath(); c.ellipse(0, 0, 16, 4.5, 0, 0, TAU); c.fill(); }
+  if (a > 0.01 && graficosAdornos() < 2) { c.globalAlpha = a * 0.26; c.fillStyle = OL; c.beginPath(); c.ellipse(0, 0, 16, 4.5, 0, 0, TAU); c.fill(); }
   // todo el cuerpo: bote, balanceo y estirón (desde los pies)
   c.translate(0, p.salto); c.rotate(p.inclina * e.mira); c.scale(1 + p.aplasta * 0.12, 1 - p.aplasta * 0.12);
   // el cuerpo de un camaleón no se da la vuelta (su pintura y su silueta son fijas: así se mide el camuflaje); el del becario sí

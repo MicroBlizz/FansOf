@@ -9,7 +9,8 @@
   const toca = () => { const e = ENERGIA.estado; return !!(ENERGIA.activa && !ENERGIA.ilimitada && e && e.energia < e.max && (e.anuncios_quedan || 0) > 0); };
   const verAnuncio = alAcabar => {
     let ov = document.getElementById('en-ad');
-    if (!ov) { document.body.insertAdjacentHTML('beforeend', `<section id="en-ad" class="en-ad" role="dialog" aria-label="${tr('Anuncio')}" hidden><div class="en-ad-card"><span class="en-ad-flag">${tr('ANUNCIO')}</span><p>${tr('Un mensaje de nuestros patrocinadores… que somos nosotros.')}</p><div class="en-ad-bar"><i></i></div><button class="btn-big ol" id="en-ad-ok" disabled>…</button><button class="btn-link" id="en-ad-no">${tr('Cerrar sin premio')}</button><small>${tr('Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.')}</small></div></section>`); ov = document.getElementById('en-ad'); }
+    if (!ov) { document.body.insertAdjacentHTML('beforeend', `<section id="en-ad" class="en-ad" role="dialog" aria-label="${tr('Anuncio')}" hidden><div class="en-ad-card"><span class="en-ad-flag">${tr('ANUNCIO')}</span><p>${tr('Un mensaje de nuestros patrocinadores… que somos nosotros.')}</p><div id="en-ad-promo"></div><div class="en-ad-bar"><i></i></div><button class="btn-big ol" id="en-ad-ok" disabled>…</button><button class="btn-link" id="en-ad-no">${tr('Cerrar sin premio')}</button><small>${tr('Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.')}</small></div></section>`); ov = document.getElementById('en-ad'); }
+    const pr = document.getElementById('en-ad-promo'); pr.innerHTML = PROMO.html(); PROMO.enlaza(pr);
     const ok = document.getElementById('en-ad-ok'), barra = ov.querySelector('.en-ad-bar'); let t = SEG;
     ov.hidden = false; play('select');
     const tic = () => {

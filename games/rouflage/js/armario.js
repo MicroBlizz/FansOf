@@ -14,7 +14,7 @@ function armarioEstado() {
   if (p.papel === 'monopoly') p.papel = 'arcoiris';      // el billete de Monopoly se quitó: ahora es el papel arcoíris
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
   if (!p.mascotas) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta y no se puede ir sin ella
-  for (const cat of CATALOGO_AR) if (cat.conjuntos) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
+  for (const cat of CATALOGO_AR) if (cat.conjuntos || cat.sala) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
   return a;
 }
 const arCat = id => CATALOGO_AR.find(c => c.id === id);
@@ -91,10 +91,10 @@ function arPinta(k, f) { const c = k.getContext('2d'); c.setTransform(1, 0, 0, 1
 /* ---------- el armario ---------- */
 function abreArmario(cat, desde) {
   armarioEstado(); if (cat) ARMARIO.cat = cat; ARMARIO.prueba = null; ARMARIO.sel = null; ARMARIO.desde = desde || 'titulo';
-  E('b-ar-volver').textContent = ARMARIO.desde === 'habitacion' ? tr('HABITACIÓN') : tr('VOLVER');
+  E('b-ar-volver').textContent = ARMARIO.desde === 'habitacion' ? tr('HABITACIÓN') : ARMARIO.desde === 'escenario' ? tr('MI ESCENARIO') : tr('VOLVER');
   pantalla('p-armario'); arPintaPestanas(); arPintaTodo();
 }
-function cierraArmario() { play('select'); if (ARMARIO.desde === 'habitacion') habitacionVuelve(); else irTitulo(); }
+function cierraArmario() { play('select'); if (ARMARIO.desde === 'habitacion') habitacionVuelve(); else if (ARMARIO.desde === 'escenario') abreEscenario(); else irTitulo(); }
 function arPintaTodo() { arPintaVista(); arPintaInfo(); arPintaRejilla(); const [t, n] = arCuenta(); E('ar-cuenta').textContent = tr('{t} de {n}', { t, n }); }
 function arPintaPestanas() {
   const fila = E('ar-pestanas'); fila.innerHTML = '';
@@ -111,22 +111,22 @@ function arPintaVista() {
   arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe(cat.cuerpo ? pr : null))));
   // lo que no se lleva en el cuerpo (humo, silbido, fantasma…): en grande, lo puesto o lo que te estás probando
   const ex = E('ar-extra'); ex.hidden = !!cat.cuerpo; E('ar-vista').hidden = !cat.cuerpo;
-  if (!cat.cuerpo) { const it = pr ? pr.it : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); }
+  if (!cat.cuerpo) { const it = pr ? pr.it : cat.sala ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); }
 }
 function arPintaInfo() {
   const cat = arCat(ARMARIO.cat), a = armarioEstado(), sel = ARMARIO.sel;
-  const it = sel === 'nada' ? null : sel || (cat.conjuntos ? cat.items.find(arConjuntoPuesto) || null : arItem(cat.id, a.puesto[cat.id]));
+  const it = sel === 'nada' ? null : sel || (cat.conjuntos ? cat.items.find(arConjuntoPuesto) || null : cat.sala ? (cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, a.puesto[cat.id]));
   const nom = E('ar-nombre'), de = E('ar-de'), est = E('ar-estado');
   E('ar-nota').textContent = tr(cat.nombre) + (cat.nota ? ' · ' + tr(cat.nota) : '');
   if (!it) {
-    nom.textContent = cat.conjuntos ? tr('Piezas mezcladas') : tr('Sin nada'); nom.className = '';
-    de.textContent = cat.conjuntos ? tr('Toca un conjunto para vestirte entero') : cat.vacio ? tr('La galleta sin adornos, como al empezar') : ''; est.textContent = ''; est.className = 'ar-estado'; arPintaCompra(cat, null); return;
+    nom.textContent = cat.conjuntos ? tr('Piezas mezcladas') : cat.sala ? tr('MI ESCENARIO') : tr('Sin nada'); nom.className = '';
+    de.textContent = cat.conjuntos ? tr('Toca un conjunto para vestirte entero') : cat.sala ? tr('Toca uno para verlo en grande') : cat.vacio ? tr('La galleta sin adornos, como al empezar') : ''; est.textContent = ''; est.className = 'ar-estado'; arPintaCompra(cat, null); return;
   }
   nom.textContent = tr(it.n); nom.className = 'r-' + it.r;
   de.textContent = tr(RAREZA_AR[it.r]) + ' · ' + arTextoDe(it);
-  const tuyo = arTiene(cat.id, it), puesto = cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
+  const tuyo = arTiene(cat.id, it), puesto = cat.sala ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
   est.className = 'ar-estado ' + (puesto ? 'puesto' : tuyo ? 'tuyo' : 'bloq');
-  est.textContent = puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
+  est.textContent = cat.sala ? (puesto ? tr('EN TU SALA') : tuyo ? tr('ES TUYO') : tr('AÚN NO ES TUYO')) : puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
   arPintaCompra(cat, it);      // el botón COMPRAR y lo que tienes (economia.js)
 }
 function arPintaRejilla() {
@@ -140,10 +140,11 @@ function arPintaRejilla() {
   };
   if (cat.vacio) casilla('nada', true, a.puesto[cat.id] === null, () => { play('select'); a.puesto[cat.id] = null; ARMARIO.sel = 'nada'; ARMARIO.prueba = null; guardaPartida(); arPintaTodo(); }, (c, w) => ARD.ICONOS.nada(c, w), tr('Nada'), 'comun');
   for (const it of cat.items) {
-    const tuyo = arTiene(cat.id, it), puesto = cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
+    const tuyo = arTiene(cat.id, it), puesto = cat.sala ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
     casilla(it, tuyo, puesto, () => {
       ARMARIO.sel = it;
-      if (tuyo) { play('select'); if (cat.conjuntos) Object.assign(a.puesto, it.piezas); else a.puesto[cat.id] = it.id; ARMARIO.prueba = null; guardaPartida(); }
+      if (tuyo && cat.sala) { play('select'); ARMARIO.prueba = null; }      // lo de MI ESCENARIO no se lleva puesto: solo se mira
+      else if (tuyo) { play('select'); if (cat.conjuntos) Object.assign(a.puesto, it.piezas); else a.puesto[cat.id] = it.id; ARMARIO.prueba = null; guardaPartida(); }
       else { play('tick'); ARMARIO.prueba = { cat: cat.id, it }; }
       arPintaTodo();
     }, (c, w) => it.x(c, w), tr(it.n), it.r);

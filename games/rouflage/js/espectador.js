@@ -75,11 +75,12 @@ function pintaFantasmaEn(c, t, f, yo, alfa, nombre, color) {
   c.restore();
   if (nombre) rotulo(c, nombre, x, y - 78, 10, color, OL, LETRA_UI);
 }
-// el fantasma que elegiste en el armario (sábana, globo, nube…): su dibujo del armario (ARD.fantasma), flotando y medio transparente como el de siempre
+// el fantasma que elegiste en el armario (sábana, globo, nube…), flotando y medio transparente como el de siempre
 function pintaFantasmaArmario(c, t, f, tipo, alfa = 0.85, nombre = tr('TÚ'), color = '#ffcb3d') {
-  const x = f.x, y = f.y + 30 + Math.sin(t * 3.4) * 3, w = 74;
-  c.save(); c.globalAlpha = alfa; c.translate(x, y - w * 0.5); c.rotate(Math.sin(t * 1.7) * 0.06 + (f.mueve ? (f.mira || 1) * 0.1 : 0)); c.translate(-w / 2, -w / 2);
-  ARD.fantasma(c, w, tipo); c.restore();
+  const x = f.x, y = f.y + 30 + Math.sin(t * 3.4) * 3, mira = f.mira || 1;
+  // vivo y al tamaño del de galleta (fantasmas-vivos.js); se inclina al avanzar y mira hacia donde va
+  c.save(); c.globalAlpha = alfa; c.translate(x, y); c.rotate(Math.sin(t * 1.7) * 0.05 + (f.mueve ? mira * 0.1 : 0)); c.scale(mira * 1.1, 1.1);
+  fantasmaVivo(c, tipo, t, { mueve: !!f.mueve }); c.restore();
   if (nombre) rotulo(c, nombre, x, y - 78, 10, color, OL, LETRA_UI);
 }
 

@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "Ya es un juego: 16 pistas, modo copa, PvP de hasta 8 y salas con amigos.": "Now it is a game: 16 tracks, cup mode, PvP for up to 8 and rooms with friends.",
+  "FANS OF JUMP": "FANS OF JUMP",
+  "El prólogo de los Animales Locos: salta con CrazyBunny de tronco en tronco y rescata a su pandilla de la ola de barro de Microblizz.": "The Crazy Animals prologue: jump with CrazyBunny from log to log and rescue his gang from the Microblizz mud wave.",
+  "20 de octubre de 2026": "20 October 2026",
   "FANS OF DECKS": "FANS OF DECKS",
   "El constructor de mazos de la serie, en fase alfa: sobrevive a la semana en Microblizz a golpe de carta. Cuéntanos qué te parece.": "The series' deck builder, in alpha: survive the week at Microblizz one card at a time. Tell us what you think.",
   "18 de octubre de 2026": "18 October 2026",

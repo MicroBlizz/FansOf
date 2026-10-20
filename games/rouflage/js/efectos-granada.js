@@ -8,7 +8,7 @@ function fxGranada(x, y, dura, colores) {
   FX.lista.push({ k: 'destello', x, y: cy, t: 0, dur: 0.55 });
   FX.lista.push({ k: 'choque', x, y: cy, t: 0, dur: 0.9 });
   FX.lista.push({ k: 'choque', x, y: cy, t: -0.16, dur: 0.9, fino: true });
-  for (let i = 0; i < 46; i++) fxGota(x, cy, pick(['#ffffff', '#fff2a8', '#ffcb3d', '#ff9a3d', '#ff5a5a']), rand(-260, 260), rand(-300, 40));
+  for (let i = 0, n = [46, 30, 16][graficosAdornos()]; i < n; i++) fxGota(x, cy, pick(['#ffffff', '#fff2a8', '#ffcb3d', '#ff9a3d', '#ff5a5a']), rand(-260, 260), rand(-300, 40));
   for (let i = 0; i < 26; i++) {
     const a = rand(0, TAU), v = rand(30, 170);
     FX.lista.push({ k: 'bocanada', x: x + rand(-8, 8), y: cy + rand(-8, 8), vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.7, r: rand(14, 30), t: 0, dur: rand(1.6, 3.2), tono: rand(0, 1), col: colores ? pick(colores) : null });

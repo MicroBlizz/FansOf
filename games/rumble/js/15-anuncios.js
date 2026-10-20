@@ -60,6 +60,7 @@ function watchAd(slot, onReward) {
   if (adsFree()) { play('crown'); done(); return; }
   adOverlay(); const ov = $('#ad-screen'), J = pick(AD_JOKES);
   $('#ad-prod').textContent = J[0]; $('#ad-line').textContent = J[1];
+  const pr = $('#ad-promo'); pr.innerHTML = PROMO.html(); PROMO.enlaza(pr);   // la miniatura de otro de nuestros juegos
   ov.hidden = false; play('select');
   let t = ADS.secs; const tick = () => {
     const b = $('#ad-get');
@@ -75,6 +76,7 @@ function adOverlay() {
   $('#ui').insertAdjacentHTML('beforeend', `<section id="ad-screen" class="ad-screen" hidden role="dialog" aria-label="Anuncio">
     <div class="ad-card"><div class="ad-top"><span class="ad-flag">ANUNCIO</span><span>Un mensaje de nuestros patrocinadores… que somos nosotros.</span></div>
       <div class="ad-body"><div class="ad-logo ol">MICROBLIZZ</div><b class="ad-prod ol" id="ad-prod"></b><p class="ad-line" id="ad-line"></p></div>
+      <div id="ad-promo"></div>
       <div class="ad-bar" id="ad-bar"><i></i></div>
       <button class="btn-big ol" id="ad-get" disabled>…</button>
       <button class="btn-link" id="ad-skip">Cerrar sin premio</button>

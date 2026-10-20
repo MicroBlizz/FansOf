@@ -1,10 +1,13 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // sus novedades (js/novedades.js) · 0.7.0
+  "<b>KARTS YA ES UN JUEGO</b>: deja de ser una demo y se une a la lista de juegos de Fans Of, con su app para Android.": "<b>KARTS IS NOW A GAME</b>: it stops being a demo and joins the list of Fans Of games, with its own Android app.",
+  "Recursos Humanos ha ascendido a Karts de demo a juego. Microblizz le ha subido el sueldo en monedas de la pista, y Phony ya ha perdido tres.": "Human Resources has promoted Karts from demo to game. Microblizz has raised its pay in track coins, and Phony has already lost three.",
   "<b>ENTRAR CON GOOGLE, MÁS FÁCIL</b>: ahora hay un solo botón, «Continuar con Google», que sirve tanto para crear la cuenta como para entrar en la que ya tenías. Y si la ventana de cuenta te tapaba la confirmación, ya no pasa.": "<b>SIGNING IN WITH GOOGLE, EASIER</b>: there is now a single \"Continue with Google\" button that both creates your account and signs you in to the one you already had. And the account window no longer hides the confirmation.",
   "Microblizz ha fundido dos botones de Google en uno. Phony pregunta si el otro se ha ido de vacaciones.": "Microblizz has merged two Google buttons into one. Phony asks if the other one went on holiday.",
   "FANS OF KARTS": "FANS OF KARTS",
-  "El prototipo (prueba). Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.": "The prototype (test). Kart racing in handheld-console pixel art: pick one of the six leaders and race 16 tracks in 4 worlds (from the beach to the CEO's Tower), with cup mode, jumps, shortcuts and hazards falling from the sky. Microblizz bought the race: win it back.",
+  "Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.": "Kart racing in handheld-console pixel art: pick one of the six leaders and race 16 tracks in 4 worlds (from the beach to the CEO's Tower), with cup mode, jumps, shortcuts and hazards falling from the sky. Microblizz bought the race: win it back.",
   // sus novedades (js/novedades.js)
   // 0.6.4
   "<b>HORIZONTAL CON EL MÓVIL DE PIE</b>: si en Opciones eliges jugar en horizontal, ahora el menú, la tienda, el pase y las salas online también se giran con el juego, y las listas se mueven con el dedo.": "<b>LANDSCAPE WITH THE PHONE UPRIGHT</b>: if you choose landscape in Options, the menu, shop, pass and online rooms now turn with the game too, and the lists scroll with your finger.",

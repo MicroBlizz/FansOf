@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.36"></script>
+<script src="../../core/js/nucleo.js?v=0.2.37"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -59,6 +59,38 @@
   <button type="button" class="boton azul" id="b-hab-armario" data-tr>ARMARIO</button>
   <button type="button" class="boton gris peq hab-mapa" id="b-hab-mapa"><b data-tr>ESCENARIO</b><small></small></button>
   <button type="button" class="boton gris peq" id="b-hab-salir" data-tr>Salir</button>
+</div>
+
+<!-- MI ESCENARIO (escenario*.js): tu sala para decorar, pintar y pasear -->
+<div class="pantalla escenario" id="p-escenario" hidden>
+  <canvas id="esc-lienzo"></canvas>
+  <div class="esc-arriba" id="esc-arriba">
+    <button type="button" class="boton gris peq" id="b-esc-volver" data-tr>VOLVER</button>
+    <h2 class="ol" data-tr>MI ESCENARIO</h2>
+    <button type="button" class="boton peq esc-pasear" id="b-esc-pasear"><i data-icono="andar"></i><b data-tr>PASEAR</b></button>
+  </div>
+  <div class="esc-burbuja" id="esc-burbuja" hidden>
+    <b id="esc-sel-n"></b>
+    <div>
+      <button type="button" id="b-esc-mover" data-tr-title title="Mover: arrastra desde aquí" data-tr-aria aria-label="Mover"><i data-icono="andar"></i></button>
+      <button type="button" id="b-esc-voltear" data-tr-title title="Voltear" data-tr-aria aria-label="Voltear"><i data-icono="voltear"></i></button>
+      <button type="button" id="b-esc-color" data-tr-title title="Cambiar de color" data-tr-aria aria-label="Cambiar de color"><i data-icono="paleta"></i></button>
+      <button type="button" id="b-esc-quitar" class="malo" data-tr-title title="Quitar" data-tr-aria aria-label="Quitar"><i data-icono="quitar"></i></button>
+    </div>
+  </div>
+  <div class="esc-panel" id="esc-panel">
+    <div class="esc-pestanas" id="esc-pestanas" role="tablist"></div>
+    <div id="esc-decorar">
+      <div class="esc-cab"><span id="esc-cuenta"></span><span id="esc-pista"></span></div>
+      <div class="esc-tira" id="esc-tira"></div>
+    </div>
+    <div id="esc-pintar" hidden>
+      <div class="esc-herr" id="esc-herr"></div>
+      <div class="esc-colores" id="esc-colores"></div>
+    </div>
+    <div id="esc-pasear" hidden><p data-tr>Toca el suelo para ir andando (o usa las flechas). Así te verán tus amigos cuando vengan.</p></div>
+  </div>
+  <div id="esc-aviso" aria-live="polite"></div>
 </div>
 
 <!-- el taller: las herramientas para pintarse -->
@@ -110,7 +142,9 @@
         <button type="button" class="boton gris" id="b-armario"><b data-tr>ARMARIO</b></button>
         <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
         <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
+        <button type="button" class="boton gris" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
+        <button type="button" class="boton gris" id="b-misiones"><b data-tr>MISIONES</b></button>
         <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
         <button type="button" class="boton gris" id="b-gacha"><b data-tr>GACHAPÓN</b></button>
         <button type="button" class="boton gris" id="b-tienda"><b data-tr>TIENDA</b></button>
@@ -169,13 +203,21 @@
   </div>
 </div>
 
-<!-- opciones (desde el título): sonido, idioma y cuenta -->
+<!-- opciones (desde el título): sonido, gráficos y controles del móvil (opciones.js), idioma y cuenta -->
 <div class="pantalla" id="p-opciones" hidden>
   <div class="caja">
     <h2 class="ol" data-tr>OPCIONES</h2>
     <div class="columna">
       <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><span data-tr>Efectos</span><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
       <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><span data-tr>Música</span><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
+      <div class="op-bloque">
+        <div class="op-fila op-ancha"><span data-tr>Gráficos</span><div class="op-seg" id="op-graficos"><button type="button" data-v="auto" data-tr>AUTO</button><button type="button" data-v="alta" data-tr>ALTA</button><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="baja" data-tr>BAJA</button></div></div>
+        <p class="op-nota" id="op-graficos-nota"></p>
+        <div class="op-fila"><span data-tr>Ahorro de batería</span><div class="op-seg" id="op-bateria"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila" id="op-fila-vibracion"><span data-tr>Vibración</span><div class="op-seg" id="op-vibracion"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
+        <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+      </div>
       <button type="button" class="boton gris" id="b-viejo"></button>
       <button type="button" class="boton gris" id="b-idioma">English</button>
       <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
@@ -221,6 +263,7 @@
     <div class="columna">
       <div class="ranking"><h3 class="ol" data-tr>CLASIFICACIÓN</h3><ol id="fin-ranking"></ol></div>
       <div class="filas" id="fin-filas"></div>
+      <button type="button" class="boton foto" id="b-foto" hidden><b data-tr>COMPARTIR MI ESCONDITE</b><small data-tr>Reta a tus amigos: ¿te encuentran?</small></button>
       <div class="fila-botones">
         <button type="button" class="boton" id="b-otra" data-tr>OTRA VEZ</button>
         <button type="button" class="boton gris" id="b-cambia"></button>
@@ -274,6 +317,7 @@
     <h2 class="ol" id="busca-titulo" data-tr>BUSCANDO PARTIDA</h2>
     <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
     <p class="sub" id="busca-sub"></p>
+    <div class="busca-escenario" id="busca-escenario" hidden><canvas id="busca-escenario-cv" data-tr-aria aria-label="El escenario del anfitrión"></canvas><span id="busca-escenario-t"></span></div>
     <p class="error" id="busca-error" hidden></p>
     <div class="modo-sala" id="busca-modo" hidden>
       <div class="modo-fila"><button type="button" class="boton peq flecha" id="b-modo-ant" data-tr-aria aria-label="Modo anterior">&#9664;</button><span class="modo-nombre"><small data-tr>MODO</small><b class="ol" id="busca-modo-n">NORMAL</b></span><button type="button" class="boton peq flecha" id="b-modo-sig" data-tr-aria aria-label="Modo siguiente">&#9654;</button></div>
@@ -399,6 +443,21 @@
   </div>
 </div>
 
+<!-- las misiones diarias y los logros (misiones-pantalla.js) -->
+<div class="pantalla" id="p-misiones" hidden>
+  <div class="caja mis-caja">
+    <h2 class="ol" data-tr>MISIONES</h2>
+    <div class="mis-pestanas" role="tablist">
+      <button type="button" class="ar-pest activa" id="b-mis-hoy" data-tr>MISIONES DE HOY</button>
+      <button type="button" class="ar-pest" id="b-mis-logros" data-tr>LOGROS</button>
+    </div>
+    <p class="mis-sub" id="mis-sub"></p>
+    <div class="mis-lista" id="mis-lista"></div>
+    <p class="diario-gotas"><span data-tr>Tus gotas</span> <b id="mis-gotas">0</b></p>
+    <button type="button" class="boton peq" id="b-mis-volver" data-tr>Volver</button>
+  </div>
+</div>
+
 <!-- el premio diario (diario.js) -->
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">
@@ -447,7 +506,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -505,7 +564,7 @@ NUCLEO.juego({
     'js/modos-bote.js',
     'js/modos-ida.js',
     'js/partida.js',
-    'js/interfaz.js',
+    'js/interfaz.js', 'js/foto.js',
     'js/galeria.js',
     'js/elige-mapa.js',
     'js/pvp-red.js',
@@ -513,18 +572,22 @@ NUCLEO.juego({
     'js/pvp-sync.js',
     'js/pvp-vuelta.js',
     'js/pvp-mapas.js',
-    'js/pvp-pantallas.js',
+    'js/pvp-pantallas.js', 'js/sala-escenario.js',
     'js/pvp-energia.js',
     'js/armario-dibujo.js',
     'js/armario-dibujo2.js',
     'js/armario-dibujo3.js',
     'js/armario-dibujo4.js',
-    'js/armario-mascotas.js',
+    'js/armario-mascotas.js', 'js/fantasmas-vivos.js',
     'js/armario-datos.js',
     'js/armario-datos-rumble.js',
     'js/armario-precios.js',
+    'js/escenario-datos.js',
     'js/armario.js',
     'js/diario.js',
+    'js/misiones-datos.js',
+    'js/misiones.js',
+    'js/misiones-iconos.js', 'js/misiones-pantalla.js',
     'js/economia.js',
     'js/tienda.js',
     'js/gacha.js',
@@ -535,8 +598,13 @@ NUCLEO.juego({
     'js/servidor-economia.js',
     'js/reinicio.js',
     'js/habitacion.js',
+    'js/escenario-pinta.js',
+    'js/escenario.js',
+    'js/escenario-bandeja.js',
+    'js/escenario-pincel.js',
     'js/armario-partida.js',
     'js/mascotas.js',
+    'js/opciones.js',
     'js/principal.js',
   ],
 });

@@ -137,3 +137,7 @@
 /* BUSCAR PARTIDA, con su «×2 recompensas» debajo */
 #b-pvp-buscar { display: grid; justify-items: center; gap: 1px; }
 #b-pvp-buscar .x2 { font-size: 13px; font-weight: 800; letter-spacing: 0.04em; color: #fff2a8; text-shadow: 0 1px 0 var(--outline); }
+/* COMPARTIR MI ESCONDITE (foto.js), en la pantalla del final: verde, a lo ancho, con el reto debajo */
+#b-foto { width: 100%; display: grid; justify-items: center; gap: 1px; margin: 4px 0 8px; padding: 8px 14px 7px; background: linear-gradient(#8ee85a, #4fbf2c); }
+#b-foto b { font-family: var(--font-display); font-weight: 400; font-size: clamp(17px, 4.6vw, 22px); letter-spacing: 0.03em; }
+#b-foto small { font-family: var(--font-ui); font-weight: 700; font-size: 12.5px; text-shadow: 0 1px 0 var(--outline); }

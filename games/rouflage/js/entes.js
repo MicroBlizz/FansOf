@@ -124,6 +124,7 @@ function silba(e, forzado) {
   REGLAS.oido = oido;
   if (!forzado) { e.pts.silbidos++; if (e.jugador) fxTexto(e.x, e.y - 70, '+25', '#ffcb3d'); }
   if (J.pvp) rfpSilbo(e, forzado);      // PvP: los demás también lo ven y lo oyen
+  misionEvento('silba', e, forzado);      // misiones y logros (misiones.js)
   return true;
 }
 
@@ -132,9 +133,10 @@ function despide(k, por) {
   if (k.fuera) return;
   if (k.jugador && TALLER.abierto) cierraTaller();      // despedido mientras pintas: se acaba el modo pintar
   k.fuera = true; k.congelado = false; k.vx = k.vy = 0; k.tFuera = 0; k.tDespido = J.reloj;      // (el bufón mira en qué segundo cayó)
-  fxSello(k.x, k.y - 26, por && por.ropa && por.ropa.sello); fxSalpica(k.x, k.y - 26, '#ff4b5c', 14); CAM.tiembla = 0.35;
+  fxSello(k.x, k.y - 26, por && por.ropa && por.ropa.sello); fxSalpica(k.x, k.y - 26, '#ff4b5c', [14, 10, 6][graficosAdornos()]); CAM.tiembla = 0.35;
   suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
   if (por) por.pts.aciertos++;
+  misionEvento('despide', k, por);      // misiones y logros (misiones.js)
   contagioDespedido(k); chivatoDespido(k, por); idaDespido(k);      // en el modo Contagio pasará al bando de los becarios (modos.js); los fantasmas chivatos miran su apuesta (modos-fantasma.js)
   if (por && por.jugador) { avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno'); }
   else if (k.jugador) { if (por) avisa(tr('{a} te ha despedido').replace('{a}', por.nombre), 'malo'); }      // sin culpable (el silbato) ya lo ha contado su propio aviso

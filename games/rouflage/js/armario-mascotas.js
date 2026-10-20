@@ -5,38 +5,48 @@
 'use strict';
 Object.assign(ARD, (() => {
   const { OL, T, shape, el, rr, poly, line, dot } = ARD;
-  const salto = o => (o.mov ? Math.abs(Math.sin(o.t * 14)) * 1.8 : Math.sin(o.t * 3) * 0.5);
-  const patas = (c, o, col, y = -1.2, sep = 4) => { for (const k of [-1, 1]) { const p = o.mov ? Math.sin(o.t * 14 + k * 1.6) * 2.4 : 0; shape(c, el(k * sep + p, y, 2.6, 1.8), col, 1.5); } };
-  // los ojos: dos puntos con brillo; con susto, grandes y blancos
-  const ojos = (c, o, x = 3.4, y = -9.6, sep = 4.2) => { for (const k of [0, 1]) { const ex = x + k * sep; if (o.susto) { shape(c, el(ex, y, 2.5, 2.8), '#fff', 1.1); dot(c, ex + 0.6, y, 1.1, OL); } else { shape(c, el(ex, y, 1.5, 1.9), OL, 0); dot(c, ex + 0.5, y - 0.7, 0.55, '#fff'); } } };
-  // s: { c cuerpo, p panza, rx, ry, orejas(c), atras(c,o), delante(c,o), cara(c,o), pata }
+  // el bote: corriendo, botecitos (el cuerpo sube y las patas siguen en el suelo); quieto, un vaivén suave
+  const salto = o => (o.mov ? Math.abs(Math.sin(o.t * 11)) * 3.2 : Math.sin(o.t * 3) * 0.5);
+  // estirar y aplastar: corriendo se estira en lo alto del bote y se aplasta al caer; quieto, respira (sy: alto, sx: ancho)
+  const estira = o => { const sy = o.mov ? 0.88 + 0.18 * Math.abs(Math.sin(o.t * 11)) : 1 + Math.sin(o.t * 2.6) * 0.035; return [1 / Math.sqrt(sy), sy]; };
+  const patas = (c, o, col, y = -1.2, sep = 4) => { for (const k of [-1, 1]) { const p = o.mov ? Math.sin(o.t * 11 + k * 1.6) * 2.8 : 0, alto = o.mov ? Math.max(0, Math.sin(o.t * 11 + k * 1.6)) * 1.4 : 0; shape(c, el(k * sep + p, y - alto, 2.6, 1.8), col, 1.5); } };
+  // parpadea cada pocos segundos (cada mascota a su ritmo, con o.sem)
+  const parpadea = o => !o.susto && ((o.t + (o.sem || 0)) % 3.4) < 0.12;
+  // los ojos: dos puntos con brillo; con susto, grandes y blancos; al parpadear, dos rayitas
+  const ojos = (c, o, x = 3.4, y = -9.6, sep = 4.2) => { for (const k of [0, 1]) { const ex = x + k * sep; if (o.susto) { shape(c, el(ex, y, 2.5, 2.8), '#fff', 1.1); dot(c, ex + 0.6, y, 1.1, OL); } else if (parpadea(o)) line(c, [ex - 1.5, y, ex + 1.5, y], OL, 1.2); else { shape(c, el(ex, y, 1.5, 1.9), OL, 0); dot(c, ex + 0.5, y - 0.7, 0.55, '#fff'); } } };
+  // la boquita (sonrisa; con susto, una «o») y un poco de colorete: lo que les da cara de peluche
+  const boca = (c, o, x, y) => { if (o.susto) shape(c, el(x, y + 0.4, 1.1, 1.4), OL, 0); else { c.beginPath(); c.arc(x, y - 0.6, 1.5, 0.35, Math.PI - 0.35); c.strokeStyle = OL; c.lineWidth = 1.1; c.lineCap = 'round'; c.stroke(); } };
+  const colorete = (c, x, y) => shape(c, el(x, y, 1.9, 1.1), 'rgba(255,110,150,.45)', 0);
+  // s: { c cuerpo, p panza, rx, ry, orejas(c), atras(c,o), delante(c,o), cara(c,o), pata, sinBoca }
   function bicho(c, o, s) {
-    const rx = s.rx || 8.6, ry = s.ry || 7.2, b = salto(o);
+    const rx = s.rx || 8.6, ry = s.ry || 7.2, b = salto(o), [sx, sy] = estira(o);
     c.save(); c.translate(0, -b);
     if (s.atras) s.atras(c, o);
     patas(c, o, s.pata || s.c, -1.2 + b, rx * 0.46);
+    c.save(); c.translate(0, -1); c.scale(sx, sy); c.translate(0, 1);      // el cuerpo se estira desde abajo; las patas no
     shape(c, el(0, -1 - ry, rx, ry), s.c, 1.9);
     if (s.p) shape(c, el(1.4, -ry * 0.55 - 1, rx * 0.58, ry * 0.5), s.p, 0);
-    if (s.orejas) s.orejas(c, o, ry);
-    if (s.sinOjos !== true) ojos(c, o, 3.4, -ry - 2.4);
+    // las orejas van con un poco de retraso: se balancean al correr y se mueven de vez en cuando estando quieto
+    if (s.orejas) { const r = o.mov ? Math.sin(o.t * 11 - 0.8) * 0.07 : (((o.t + (o.sem || 0)) % 5) < 0.3 ? Math.sin(o.t * 40) * 0.05 : 0); c.save(); c.translate(3, -1 - ry * 1.6); c.rotate(r); c.translate(-3, 1 + ry * 1.6); s.orejas(c, o, ry); c.restore(); }
+    if (s.sinOjos !== true) { ojos(c, o, 3.4, -ry - 2.4); colorete(c, 2.4, -ry + 0.6); if (!s.sinBoca) boca(c, o, 6.6, -ry + 1.6); }
     if (s.cara) s.cara(c, o, ry);
     if (s.delante) s.delante(c, o, ry);
-    c.restore();
+    c.restore(); c.restore();
   }
   const nariz = (c, x, y, col = '#ff6fb5') => shape(c, el(x, y, 1.3, 1), col, 0.9);
   const tri = (c, x1, y1, x2, y2, x3, y3, col) => shape(c, poly(x1, y1, x2, y2, x3, y3), col, 1.5);
-  const cola = (c, o, x, y, rx, ry, rot, col, mueve = 0.2) => shape(c, el(x, y, rx, ry, rot + Math.sin(o.t * (o.mov ? 12 : 3)) * mueve), col, 1.7);
+  const cola = (c, o, x, y, rx, ry, rot, col, mueve = 0.2) => shape(c, el(x, y, rx, ry, rot + Math.sin(o.t * (o.mov ? 11 : 3)) * mueve * 1.6), col, 1.7);
 
   const MASCOTAS = {
     conejo: (c, o) => bicho(c, o, { c: '#f7f3ff', p: '#fff', atras: (g, q) => dot(g, -8.6, -6, 3, '#fff'), orejas: g => { shape(g, el(-1, -19.6, 2.6, 7.4, -0.1), '#f7f3ff', 1.6); shape(g, el(5.4, -19.2, 2.4, 7, 0.2), '#f7f3ff', 1.6); shape(g, el(-1, -19.4, 1.1, 5, -0.1), '#ffb3cf', 0); }, cara: g => nariz(g, 8.6, -8.4) }),
-    ardilla: (c, o) => bicho(c, o, { c: '#c2641f', p: '#f0a065', atras: (g, q) => { cola(g, q, -9, -12, 4.4, 9, -0.5, '#b14d1c', 0.25); line(g, [-11, -8, -9, -17], '#f0a065', 1.4); }, orejas: g => { tri(g, -1, -14.4, -2.4, -19, 2.4, -15.4, '#c2641f'); tri(g, 5, -14.8, 6.6, -19.4, 8.4, -14, '#c2641f'); }, cara: g => { shape(g, rr(7, -6.6, 1.8, 2.4, 0.5), '#fff', 0.8); } }),
+    ardilla: (c, o) => bicho(c, o, { sinBoca: true, c: '#c2641f', p: '#f0a065', atras: (g, q) => { cola(g, q, -9, -12, 4.4, 9, -0.5, '#b14d1c', 0.25); line(g, [-11, -8, -9, -17], '#f0a065', 1.4); }, orejas: g => { tri(g, -1, -14.4, -2.4, -19, 2.4, -15.4, '#c2641f'); tri(g, 5, -14.8, 6.6, -19.4, 8.4, -14, '#c2641f'); }, cara: g => { shape(g, rr(7, -6.6, 1.8, 2.4, 0.5), '#fff', 0.8); } }),
     zorro: (c, o) => bicho(c, o, { c: '#e8702a', p: '#fff4e6', atras: (g, q) => { cola(g, q, -10, -8, 6, 3.4, -0.5, '#e8702a', 0.25); shape(g, el(-14.4, -10, 2.4, 2, -0.5), '#fff4e6', 1.2); }, orejas: g => { tri(g, -2, -14, -3, -21, 3, -15, '#e8702a'); tri(g, 5, -14.6, 7.4, -21, 9, -13.6, '#e8702a'); tri(g, -2.6, -18, -3, -21, -0.2, -18.4, '#2b1622'); tri(g, 6.6, -18.4, 7.4, -21, 8.6, -17.6, '#2b1622'); }, cara: g => nariz(g, 8.8, -8.4, OL) }),
-    castor: (c, o) => bicho(c, o, { c: '#8b5a2b', p: '#c99a62', atras: (g, q) => { cola(g, q, -10, -3, 5.6, 2.6, -0.2, '#4e3420', 0.12); }, orejas: g => { dot(g, -0.6, -15.2, 2.2, '#8b5a2b'); dot(g, 7.6, -14.8, 2.2, '#8b5a2b'); }, cara: g => { nariz(g, 8.8, -8.6, OL); shape(g, rr(7, -6.4, 2.2, 2.8, 0.5), '#fff', 0.9); } }),
+    castor: (c, o) => bicho(c, o, { sinBoca: true, c: '#8b5a2b', p: '#c99a62', atras: (g, q) => { cola(g, q, -10, -3, 5.6, 2.6, -0.2, '#4e3420', 0.12); }, orejas: g => { dot(g, -0.6, -15.2, 2.2, '#8b5a2b'); dot(g, 7.6, -14.8, 2.2, '#8b5a2b'); }, cara: g => { nariz(g, 8.8, -8.6, OL); shape(g, rr(7, -6.4, 2.2, 2.8, 0.5), '#fff', 0.9); } }),
     suricato: (c, o) => bicho(c, o, { c: '#d9b27c', p: '#f3e2c3', ry: 8.4, rx: 7.2, orejas: g => { dot(g, 0, -17.4, 1.8, '#a8794a'); dot(g, 7, -17.2, 1.8, '#a8794a'); }, cara: (g, q, ry) => { for (const x of [3.4, 7.6]) shape(g, el(x, -ry - 2.4, 2.4, 2.8, 0.3), 'rgba(60,35,15,.55)', 0); nariz(g, 9.2, -ry - 1.6, OL); }, delante: g => ojos(g, { susto: false, t: 0 }, 3.4, -10.4, 4.2) }),
     mapache: (c, o) => bicho(c, o, { c: '#8d8f99', p: '#d4d6dd', atras: (g, q) => { cola(g, q, -10, -7, 6, 3.2, -0.5, '#8d8f99', 0.25); for (const x of [-12, -9, -6]) line(g, [x, -10, x + 1, -5], '#3b3d47', 1.5); }, orejas: g => { dot(g, -0.4, -15, 2.4, '#8d8f99'); dot(g, 7.4, -14.6, 2.4, '#8d8f99'); }, cara: g => { shape(g, el(5.4, -9.6, 7, 2.4), '#2b2d35', 0); ojos(g, { susto: true, t: 0 }, 3.4, -9.6, 4.2); nariz(g, 9, -8, OL); } }),
-    vaca: (c, o) => bicho(c, o, { c: '#fff', p: '#fbcfe8', atras: g => line(g, [-8.6, -8, -11, -3], OL, 1.5), orejas: g => { shape(g, el(-2, -14.6, 3.2, 1.8, 0.3), '#fbcfe8', 1.4); shape(g, el(9.4, -13.4, 3.2, 1.8, -0.3), '#fbcfe8', 1.4); tri(g, 0.4, -15.4, 0.8, -19.6, 3, -15.6, '#fff7ea'); tri(g, 5, -15.6, 6.4, -19.6, 7.8, -15, '#fff7ea'); }, cara: g => { shape(g, el(2, -12.4, 2.6, 2, 0), '#18181b', 0); shape(g, el(-4, -4, 3, 2.4, 0), '#18181b', 0); shape(g, el(8.6, -6.4, 3.4, 2.6), '#fbcfe8', 1.3); dot(g, 8, -6.4, 0.5, OL); dot(g, 9.4, -6.4, 0.5, OL); } }),
-    huron: (c, o) => bicho(c, o, { c: '#b9ad9d', p: '#e7ddcc', rx: 11.4, ry: 5.8, atras: (g, q) => cola(g, q, -13, -6, 5, 2, -0.2, '#6b5d4d', 0.2), orejas: g => { dot(g, 3, -12.6, 1.8, '#b9ad9d'); dot(g, 9, -12.4, 1.8, '#b9ad9d'); }, cara: g => { shape(g, el(6.4, -7.6, 5.6, 2, 0), '#3b3329', 0); ojos(g, { susto: true, t: 0 }, 4.4, -7.6, 3.6); nariz(g, 11.2, -6.4, '#ff6fb5'); shape(g, rr(1.6, -12.8, 10, 2.4, 1), '#ef4444', 1.1); } }),
-    perro: (c, o) => bicho(c, o, { c: '#e8a04a', p: '#fff7ea', atras: (g, q) => { const w = Math.sin(q.t * (q.mov ? 16 : 7)) * 3; line(g, [-8, -8, -12, -13 + w], OL, 3.4); line(g, [-8, -8, -12, -13 + w], '#e8a04a', 1.8); }, orejas: g => { shape(g, el(-1.6, -12.6, 2.6, 4.6, 0.5), '#9a5a1c', 1.5); shape(g, el(8.4, -12, 2.6, 4.6, -0.5), '#9a5a1c', 1.5); }, cara: g => { nariz(g, 9, -8.6, OL); shape(g, el(8.2, -5.2, 1.5, 2.2), '#ff6fb5', 1); } }),
+    vaca: (c, o) => bicho(c, o, { sinBoca: true, c: '#fff', p: '#fbcfe8', atras: g => line(g, [-8.6, -8, -11, -3], OL, 1.5), orejas: g => { shape(g, el(-2, -14.6, 3.2, 1.8, 0.3), '#fbcfe8', 1.4); shape(g, el(9.4, -13.4, 3.2, 1.8, -0.3), '#fbcfe8', 1.4); tri(g, 0.4, -15.4, 0.8, -19.6, 3, -15.6, '#fff7ea'); tri(g, 5, -15.6, 6.4, -19.6, 7.8, -15, '#fff7ea'); }, cara: g => { shape(g, el(2, -12.4, 2.6, 2, 0), '#18181b', 0); shape(g, el(-4, -4, 3, 2.4, 0), '#18181b', 0); shape(g, el(8.6, -6.4, 3.4, 2.6), '#fbcfe8', 1.3); dot(g, 8, -6.4, 0.5, OL); dot(g, 9.4, -6.4, 0.5, OL); } }),
+    huron: (c, o) => bicho(c, o, { sinBoca: true, c: '#b9ad9d', p: '#e7ddcc', rx: 11.4, ry: 5.8, atras: (g, q) => cola(g, q, -13, -6, 5, 2, -0.2, '#6b5d4d', 0.2), orejas: g => { dot(g, 3, -12.6, 1.8, '#b9ad9d'); dot(g, 9, -12.4, 1.8, '#b9ad9d'); }, cara: g => { shape(g, el(6.4, -7.6, 5.6, 2, 0), '#3b3329', 0); ojos(g, { susto: true, t: 0 }, 4.4, -7.6, 3.6); nariz(g, 11.2, -6.4, '#ff6fb5'); shape(g, rr(1.6, -12.8, 10, 2.4, 1), '#ef4444', 1.1); } }),
+    perro: (c, o) => bicho(c, o, { sinBoca: true, c: '#e8a04a', p: '#fff7ea', atras: (g, q) => { const w = Math.sin(q.t * (q.mov ? 16 : 7)) * 3; line(g, [-8, -8, -12, -13 + w], OL, 3.4); line(g, [-8, -8, -12, -13 + w], '#e8a04a', 1.8); }, orejas: g => { shape(g, el(-1.6, -12.6, 2.6, 4.6, 0.5), '#9a5a1c', 1.5); shape(g, el(8.4, -12, 2.6, 4.6, -0.5), '#9a5a1c', 1.5); }, cara: g => { nariz(g, 9, -8.6, OL); shape(g, el(8.2, -5.2, 1.5, 2.2), '#ff6fb5', 1); } }),
     gato: (c, o) => bicho(c, o, { c: '#fb923c', p: '#fff0dc', rx: 9.8, ry: 8, atras: (g, q) => { g.save(); g.beginPath(); g.moveTo(-9, -6); g.bezierCurveTo(-18, -4 + Math.sin(q.t * 4) * 3, -17, -18, -12, -20); g.strokeStyle = OL; g.lineWidth = 5.2; g.lineCap = 'round'; g.stroke(); g.strokeStyle = '#fb923c'; g.lineWidth = 3; g.stroke(); g.restore(); }, orejas: g => { tri(g, -2.4, -15, -3.6, -22, 2.6, -16.4, '#fb923c'); tri(g, 5.4, -16.4, 8.4, -22, 9.6, -14.6, '#fb923c'); }, cara: (g, q, ry) => { for (const x of [-1, 2]) line(g, [x + 1, -ry - 8.6, x, -ry - 5], '#9a3412', 1.4); nariz(g, 9, -8.2); line(g, [9.4, -7.6, 13.6, -8.6], OL, 0.8); line(g, [9.4, -6.8, 13.6, -6.2], OL, 0.8); } }),
     nanobot: (c, o) => bicho(c, o, { c: '#cbd5e1', p: '#e2e8f0', sinOjos: true, pata: '#64748b', atras: g => { line(g, [-3, -15, -4, -19], OL, 3); line(g, [-3, -15, -4, -19], '#cbd5e1', 1.4); dot(g, -4, -20, 1.8, '#ef4444'); }, cara: (g, q) => { shape(g, rr(0.4, -13.4, 11, 6, 2.4), '#0f172a', 1.4); const e = q.susto ? 2.2 : 1.4; dot(g, 4, -10.4, e, '#22e3ff'); dot(g, 8.6, -10.4, e, '#22e3ff'); } }),
     calavera: (c, o) => bicho(c, o, { c: '#f5f5f4', p: null, rx: 8, ry: 7.6, sinOjos: true, pata: '#e7e5e4', cara: (g, q) => { for (const x of [2.4, 7.4]) { shape(g, el(x, -10.4, 2.4, 2.9), OL, 0); if (q.susto) dot(g, x, -10.4, 0.9, '#fff'); } shape(g, poly(5, -7.4, 4, -5.6, 6, -5.6), OL, 0); for (const x of [2, 4, 6.4, 8.6]) line(g, [x, -3.6, x, -1.2], OL, 1.1); } }),
@@ -96,7 +106,7 @@ Object.assign(ARD, (() => {
       shape(c, el(0, 0, 7.6 * g, 5.4), '#374151', 1.9); shape(c, el(3.6, -0.4, 3, 2.6), '#0f172a', 1.2); dot(c, 3.8, -0.4, 1.4, '#ef4444'); line(c, [-3, 4, -3, 7], OL, 1.4); line(c, [3, 4, 3, 7], OL, 1.4);
       c.restore();
     },
-    pollo: (c, o) => bicho(c, o, { c: '#fde047', p: '#fef9c3', rx: 7.4, ry: 7.4, atras: g => tri(g, -7, -9, -13, -12, -9, -5, '#fbbf24'), orejas: g => { tri(g, 0, -15.4, 1.6, -19.6, 3.4, -15, '#ef4444'); tri(g, 2.6, -15, 4.6, -19, 6, -14.6, '#ef4444'); }, cara: g => tri(g, 9.2, -9.4, 13.4, -8.2, 9.2, -6.8, '#f97316'), pata: '#f97316' }),
+    pollo: (c, o) => bicho(c, o, { sinBoca: true, c: '#fde047', p: '#fef9c3', rx: 7.4, ry: 7.4, atras: g => tri(g, -7, -9, -13, -12, -9, -5, '#fbbf24'), orejas: g => { tri(g, 0, -15.4, 1.6, -19.6, 3.4, -15, '#ef4444'); tri(g, 2.6, -15, 4.6, -19, 6, -14.6, '#ef4444'); }, cara: g => tri(g, 9.2, -9.4, 13.4, -8.2, 9.2, -6.8, '#f97316'), pata: '#f97316' }),
   };
   // la pieza del armario: la mascota quieta, en un cuadrado de w×w (para el icono de la casilla y la vista)
   const mascotaIcono = id => (c, w) => { c.save(); c.translate(w * 0.47, w * 0.8); c.scale(w / 38, w / 38); if (MASCOTAS[id]) MASCOTAS[id](c, { t: 0.6, mov: 0, susto: false }); c.restore(); };

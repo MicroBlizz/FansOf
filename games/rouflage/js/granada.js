@@ -11,6 +11,7 @@ function lanzaGranada(e) {
   e.granada = 0; e.invis = GRANADA.dura; e.trasHumo = !e.bot; e.salioDelHumo = false;      // al volver a pararse se camufla solo (ver autoCamuflaje)
   granadaEstalla(e.x, e.y, e);
   if (J.pvp) rfpManda({ t: 'gr', x: Math.round(e.x), y: Math.round(e.y) });
+  misionEvento('granada', e);      // misiones y logros (misiones.js)
   return true;
 }
 // el fogonazo: a todos los becarios cercanos que lleva este navegador los deja a medio ver unos segundos

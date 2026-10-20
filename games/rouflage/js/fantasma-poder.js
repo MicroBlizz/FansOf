@@ -30,7 +30,7 @@ function accionPoder() {
   const h = p.alcance ? poderObjetivo(p) : null;
   if (p.alcance && !h) { play('deny'); pista(tr('Acércate más a un becario'), 1.5); return; }
   f.enfria = PODER.cada; f.usado = (f.usado || 0) + 1;
-  poderAplica(k, h, f.x, f.y, true, J.yo);
+  poderAplica(k, h, f.x, f.y, true, J.yo); misionEvento('poder');      // misiones y logros (misiones.js)
   if (J.pvp) rfpManda({ t: 'fp', p: k, s: h ? h.slot : -1, x: Math.round(f.x), y: Math.round(f.y) });
 }
 // el efecto en sí (aquí y en los demás navegadores): `mio` si lo ha lanzado este fantasma; `quien`, de quién es el fantasma (para el susto)

@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.7
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
+  "Microblizz ha colgado carteles de otros juegos en la sala de reuniones y Phony asegura que son más amenos que las actas.": "Microblizz has hung posters of other games in the meeting room and Phony swears they are more fun than the minutes.",
   // 0.2.6
   "<b>PALABRAS CLAVE Y GLOSARIO</b>: las palabras clave de las cartas (Débil, bloqueo, Despedida…) se pueden tocar y se explican en una burbuja, y la Biblioteca tiene una pestaña Glosario con todas.": "<b>KEYWORDS AND GLOSSARY</b>: card keywords (Weak, block, Fired…) can be tapped and are explained in a bubble, and the Library has a Glossary tab with all of them.",
   "<b>LUPA</b>: mantén pulsada una carta de la mano para verla en grande; al arrastrarla se quita. En el móvil, la carta arrastrada flota encima del dedo y la mirilla ya no tapa su texto.": "<b>MAGNIFIER</b>: press and hold a card in your hand to see it big; it goes away when you drag it. On mobile, the dragged card floats above your finger and the crosshair no longer covers its text.",

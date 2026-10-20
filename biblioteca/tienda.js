@@ -4,6 +4,7 @@
 //   · al tocar una tarjeta se abre su FICHA: capturas grandes, JUGAR, versión, de qué va, lo último y todas sus novedades.
 // Lo que cada tarjeta necesita se escribe en su <section> de index.html:
 //   data-tipo="Prototipo"  data-etiquetas="Acción · Hordas"  data-capturas="survivors-1.jpg survivors-2.jpg"  (y data-horizontal si las capturas son apaisadas; data-alfa si la tarjeta solo va en la alfa)
+//   Cada tarjeta va bajo su grupo de <section id="biblioteca">: JUEGOS (data-tipo="Juego"), PROTOTIPOS ("Prototipo") o DEMOS ("Demo", "Boceto", "Prueba").
 //   Un prototipo parado va en <section id="en-pausa"> con data-tipo="En pausa" y data-pausa="por qué está parado" (su inglés en biblioteca/en.js).
 // Las capturas van en biblioteca/capturas/ (partidas de verdad: sin regalo diario, ni novedades, ni menús de opciones).
 // Usa lo que ya tiene la página: esc(), t(), newsLista(), newsHtml(), nuevos(), cerrarNovedades() y la lista ENTRADAS que llena la carga de novedades.
@@ -13,7 +14,7 @@ document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.
 const TARJETAS = [...document.querySelectorAll('section.game')];
 function datosDe(s) {
   return {
-    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'),
+    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), apk: s.dataset.apk || '',
     color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, pausa: s.dataset.pausa || '',
     etiquetas: (s.dataset.etiquetas || '').split('·').map(x => x.trim()).filter(Boolean),
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
@@ -124,6 +125,9 @@ function abrirFicha(id, desdeHash) {
   document.getElementById('fi-nombre').textContent = d.nombre;
   document.getElementById('fi-etiq').innerHTML = etiquetasHtml(d.etiquetas);
   document.getElementById('fi-jugar').href = d.jugar;
+  const apk = document.getElementById('fi-apk');   // DESCARGAR APK: solo en la alfa y en los juegos que tienen APK de prueba (release apk-latest del repo público)
+  apk.hidden = !(NUCLEO.alfa && d.apk);
+  if (d.apk) apk.href = 'https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-' + d.apk + '.apk';
   document.getElementById('fi-ver').textContent = (e && e.ver) || '—';
   document.getElementById('fi-tipo').textContent = d.tipo || '—';
   document.getElementById('fi-texto').textContent = d.texto;

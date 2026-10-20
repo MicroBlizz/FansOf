@@ -95,6 +95,8 @@ const RFRED = (() => {
     },
     empezar: () => rpc('rouflage_pvp_empezar'),
     modo: m => rpc('rouflage_pvp_modo', { p_modo: m }),
+    escenario: d => rpc('rouflage_pvp_escenario', { p_datos: d }),      // el anfitrión sube su escenario a la sala con amigos (sala-escenario.js)
+    escenarioVer: v => rpc('rouflage_pvp_escenario_ver', { p_v: v | 0 }),
     voto: v => rpc('rouflage_pvp_voto', { p_voto: v }),      // en la sala pública: 'ya' (empezar ya), 'mas' (sumar 60 s) o null (quitar el voto); devuelve la sala      // el anfitrión de una sala con amigos elige el modo (modos.js); el sondeo lo trae a todos
     canal: (sala, alMensaje, alEstado) => canal(sala, alMensaje, alEstado),
     cerrar: (sala, gano) => rpc('rouflage_pvp_cerrar', { p_sala: sala, p_gano: !!gano }),
@@ -165,6 +167,9 @@ const RFRED = (() => {
     empezar: () => { local.arranque = true; return Promise.resolve(); },
     voto: v => local.votar ? local.votar(v) : Promise.resolve(null),
     modo: m => { local.modoSala = m; return Promise.resolve(); },
+    // el escenario del anfitrión, entre pestañas del mismo navegador
+    escenario: d => { try { localStorage.setItem('rf-pruebas-escenario', JSON.stringify({ v: Date.now() % 1e9, d })); } catch (_) { /* sin guardar */ } return Promise.resolve({}); },
+    escenarioVer: v => { let x = null; try { x = JSON.parse(localStorage.getItem('rf-pruebas-escenario') || 'null'); } catch (_) { /* nada */ } return Promise.resolve(!x ? { v: 0 } : x.v === v ? { v } : { v: x.v, datos: x.d }); },
     canal(sala, alMensaje, alEstado) {
       const bc = new BroadcastChannel('rf-pvp-sala-' + sala);
       bc.onmessage = e => alMensaje(e.data);

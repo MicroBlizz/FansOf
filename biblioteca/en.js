@@ -20,6 +20,13 @@ IDIOMA.add({
   "NUEVO": "NEW",
   "¡NUEVO!": "NEW!",
   "VER FICHA": "SEE DETAILS",
+  // los grupos de la biblioteca (index.html)
+  "JUEGOS": "GAMES",
+  "PROTOTIPOS": "PROTOTYPES",
+  "DEMOS": "DEMOS",
+  "Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.": "Half-finished games: you can play them, but they still change a lot.",
+  "Bocetos y pruebas cortas de una idea.": "Sketches and short tests of an idea.",
+  "DESCARGAR APK": "DOWNLOAD APK",
   "‹ VOLVER": "‹ BACK",
   "VERSIÓN": "VERSION",
   "TIPO": "TYPE",
@@ -127,6 +134,7 @@ IDIOMA.add({
   "Terror": "Horror",
   "Cámaras fijas": "Fixed cameras",
   "Puzle": "Puzzle",
+  "Saltos": "Jumping",
   "Tres en raya": "Match-3",
   "ALFA": "ALPHA",
   "Copia de pruebas con lo último de main.": "Test copy with the latest build."

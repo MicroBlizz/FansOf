@@ -10,6 +10,15 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-20b',
+    fecha: '20 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Ya es un juego: 16 pistas, modo copa, PvP de hasta 8 y salas con amigos.' },
+      { nombre: 'FANS OF JUMP', tarjeta: 'g-jump', enlace: 'games/jump/', texto: 'El prólogo de los Animales Locos: salta con CrazyBunny de tronco en tronco y rescata a su pandilla de la ola de barro de Microblizz.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-18a',
     fecha: '18 de octubre de 2026',
     nuevos: [
@@ -88,7 +97,7 @@ const NOVEDADES_WEB = [
       { nombre: 'FANS OF RECRUIT', tarjeta: 'g-recruit', enlace: 'demos/recruit/', texto: 'Corre y dispara como en las recreativas: CrazyBunny, la MechaVaca y SurvivalBot en pixel art.' },
       { nombre: 'FANS OF CRUSH', tarjeta: 'g-crush', enlace: 'games/crush/', texto: 'Tres en raya con los Animales Locos: sube la Escalera Corporativa de Microblizz y despide al jefe de RRHH.' },
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
-      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'demos/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
+      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
       { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
       { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
@@ -104,7 +113,7 @@ const NOVEDADES_WEB = [
     nuevos: [
       { nombre: 'FANS OF CRUSH', tarjeta: 'g-crush', enlace: 'games/crush/', texto: 'Tres en raya con los Animales Locos: sube la Escalera Corporativa de Microblizz y despide al jefe de RRHH.' },
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
-      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'demos/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
+      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
       { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
       { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },
@@ -119,7 +128,7 @@ const NOVEDADES_WEB = [
     fecha: '11 de octubre de 2026',
     nuevos: [
       { nombre: 'FANS OF DARK', tarjeta: 'g-dark', enlace: 'games/dark/', texto: 'Mazmorras en 3D: baja con un Animal Loco, llena la mochila y sal por un portal antes de que la niebla te alcance.' },
-      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'demos/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
+      { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Carreras de karts en pixel art de consola portátil: 3 pistas, 6 pilotos y objetos con mala idea.' },
       { nombre: 'FANS OF ROUFLAGE', tarjeta: 'g-rouflage', enlace: 'games/rouflage/', texto: 'El escondite con pintura: píntate como el suelo y que los becarios no te despidan.' },
       { nombre: 'FANS OF ROGUELITE', tarjeta: 'g-roguelite', enlace: 'demos/roguelite/', texto: 'Roguelite en pixel art, emitido en directo con su chat: 3 mundos de 40 días contra Microblizz.' },
       { nombre: 'FANS OF TACTICS ADVANCE', tarjeta: 'g-tactics-advance', enlace: 'demos/tactics-advance/', texto: 'Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.' },

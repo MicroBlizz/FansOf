@@ -1,13 +1,14 @@
 {
- "build": 302,
- "hash": "ae02e0d",
- "fecha": "2026-10-20T17:30:43Z",
- "mensaje": "Librería: botón DESCARGAR APK junto a JUGAR en la ficha, solo en la alfa",
+ "build": 303,
+ "hash": "e568e01",
+ "fecha": "2026-10-20T17:43:42Z",
+ "mensaje": "Karts 0.7.0: pasa de demo a juego (games/karts) y tiene APK",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",
   "decks": "0.2.6",
   "island": "0.3.5",
+  "karts": "0.7.0",
   "nova": "0.3.11",
   "ratkov": "0.2.14",
   "rouflage": "0.2.36",

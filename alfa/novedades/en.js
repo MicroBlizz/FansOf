@@ -1,6 +1,7 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "Ya es un juego: 16 pistas, modo copa, PvP de hasta 8 y salas con amigos.": "Now it is a game: 16 tracks, cup mode, PvP for up to 8 and rooms with friends.",
   "FANS OF DECKS": "FANS OF DECKS",
   "El constructor de mazos de la serie, en fase alfa: sobrevive a la semana en Microblizz a golpe de carta. Cuéntanos qué te parece.": "The series' deck builder, in alpha: survive the week at Microblizz one card at a time. Tell us what you think.",
   "18 de octubre de 2026": "18 October 2026",

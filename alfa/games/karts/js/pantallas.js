@@ -67,7 +67,7 @@ function pantallaTitulo() {
   });
   escribeB(lx, tr('Microblizz ha comprado la carrera. Gánasela.'), PW / 2, 77, '#ffffff', '#1c1028', 'centro');
   menuPrincipal();      // los botones, en HTML con el estilo de Fans of Rumble (menu-principal.js)
-  mini(lx, tr('PROTOTIPO') + ' ' + VERSION, 4, 152, '#bdb6d6', '#1c1028');
+  mini(lx, 'V' + VERSION, 4, 152, '#bdb6d6', '#1c1028');
   mini(lx, 'ARKIONER Y PEPINS', PW - 4, 152, '#bdb6d6', '#1c1028', 'der');
   PANT.atras = null;
 }

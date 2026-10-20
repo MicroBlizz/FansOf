@@ -1,0 +1,5 @@
+/* Fans Of Decks · elegir líder: cada líder en una fila con su dibujo a la izquierda */
+.dc-lider-op { flex-direction: row; align-items: center; gap: 12px; }
+.dc-lider-op-arte { flex: none; width: 68px; display: grid; place-items: center; }
+.dc-lider-op-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.dc-lider-op-txt small { font-size: 12px; }

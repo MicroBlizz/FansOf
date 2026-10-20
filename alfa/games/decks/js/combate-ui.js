@@ -49,6 +49,8 @@ function dcEfectosLider(C) {
   if (C.fuerzaTurno) e.append(dcEfecto('dc-est-turno', 'fuerza', tr('Empleados'), '+' + C.fuerzaTurno, tr('Tus empleados pegan {n} más hasta el fin del turno.', { n: C.fuerzaTurno }), true));
   const F = dcFaccion();   // la pasiva de la facción: una racha por tipo de carta jugado este turno
   if (F && F.racha) for (const t in C.tiposTurno) { const n = dcRacha(C, t); if (n) e.append(dcEfecto('dc-est-turno dc-tipo-' + t, 'refuerzo', tr(DC_NOMBRE_TIPO[t]), '+' + n, tr(F.pasiva) + ': ' + tr('la próxima carta de tipo {tipo} de este turno suma {n} a su daño, bloqueo o cura.', { tipo: tr(DC_NOMBRE_TIPO[t]), n }), true)); }
+  for (const x of dcGancho('estados', C) || []) e.append(dcEfecto(x.cls, x.icono, x.texto, x.n, x.explica, x.turno));
+  if (F && F.renacer) e.append(dcEfecto('dc-est-fijo', 'cura', tr(F.pasiva), C.renacido ? 0 : 1, tr(F.texto), true));
   if (C.debil) e.append(dcEfecto('dc-est-deb', 'debil', tr('Débil'), C.debil, tr(C.debil === 1 ? 'Débil: pegas un 25 % menos este turno.' : 'Débil: pegas un 25 % menos durante {n} turnos.', { n: C.debil }), true));
   if (C.vulnerable) e.append(dcEfecto('dc-est-vul', 'ataque', tr('Vulnerable'), C.vulnerable, tr(C.vulnerable === 1 ? 'Vulnerable: recibes un 50 % más de daño este turno.' : 'Vulnerable: recibes un 50 % más de daño durante {n} turnos.', { n: C.vulnerable }), true));
   return e;
@@ -89,7 +91,7 @@ function dcPintaCombate() {
   C.rivales.forEach((rv, i) => { if (rv.hp > 0) top.append(dcPintaRival(C, rv, i)); else if (golpeados.has(i)) { const d = dcPintaRival(C, rv, i); d.classList.add('dc-sale'); top.append(d); } });
   // en medio: el líder
   const med = dcEl('div', 'dc-lider');
-  const lsp = dcEl('div', 'dc-lider-arte'); lsp.append(dcSprite('bunny', 92));
+  const lsp = dcEl('div', 'dc-lider-arte'); lsp.append(dcSprite(L.arte, 92));
   const inf = dcEl('div', 'dc-lider-info');
   inf.append(dcEl('b', 'dc-nombre', tr(L.nombre)), dcBarraVida(r.hp, r.hpMax, C.bloqueo), dcEfectosLider(C));
   if (C.companeros.length || C.protocolos.length) inf.append(dcPintaEquipo(C));
@@ -121,7 +123,7 @@ function dcPintaCombate() {
   const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
   mano.style.setProperty('--wc', wc + 'px'); mano.style.setProperty('--sol', n > 1 ? Math.max(0, (n * wc + (n - 1) * 6 - ancho) / (n - 1)).toFixed(1) + 'px' : '0px');
   C.mano.forEach((c, i) => {
-    const fx = dcFx(c), racha = fx.dano || fx.bloqueo || fx.cura ? dcRacha(C, DC_CARTAS[c.id].tipo) : 0;
+    const fx = dcFx(c), racha = fx.dano || fx.bloqueo || fx.cura ? dcRacha(C, DC_CARTAS[c.id].tipo) + (dcGancho('bono', C, DC_CARTAS[c.id]) || 0) : 0;
     const el = dcPintaCarta(c, { enMano: true, jugable: dcPuedeJugar(C, c), elegida: DCC.elegida === i, racha, rabia: dcRabiaCarta(C, c), al: () => dcTocaCarta(i) });
     const k = i - (n - 1) / 2; el.style.setProperty('--rot', (k * 3.5) + 'deg'); el.style.setProperty('--ty', (Math.abs(k) * 5) + 'px'); el.dataset.mano = i;
     mano.append(el);

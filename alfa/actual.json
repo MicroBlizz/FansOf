@@ -1,8 +1,8 @@
 {
- "build": 272,
- "hash": "cbe3c60",
- "fecha": "2026-10-19T19:42:09Z",
- "mensaje": "Monedas: la pista de pago del pase devuelve cerca de lo que cuesta (pasePct de la fila monedas), SQL 49 pendiente",
+ "build": 273,
+ "hash": "3c710c6",
+ "fecha": "2026-10-20T06:28:24Z",
+ "mensaje": "Decks: .bat de equilibrio con las 3 IA, 10 partidas y 48 en paralelo",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

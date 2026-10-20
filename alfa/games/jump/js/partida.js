@@ -92,7 +92,8 @@ function aterriza() {
   const J = JUEGO, c = J.conejo, s = c.salto;
   c.salto = null; c.x = s.x1; c.wy = s.wy1;
   let mejor = null, d = 1;
-  for (const t of RIO.troncos) { const v = dentroTronco(t, c.x, c.wy); if (v <= d) { d = v; mejor = t; } }
+  const margen = 1 + facilidad(c.wy) * 5;   // al caer se perdona un poco el borde (más al principio)
+  for (const t of RIO.troncos) { const v = dentroTronco(t, c.x, c.wy, margen); if (v <= d) { d = v; mejor = t; } }
   if (!mejor) return alAgua();
   const r = Math.sqrt(d);
   c.tronco = mejor; c.ultimo = mejor; c.ox = c.x - mejor.x; c.owy = c.wy - mejor.wy; c.cae = 1;

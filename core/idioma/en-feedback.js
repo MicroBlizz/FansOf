@@ -34,5 +34,6 @@ IDIOMA.add({
   "Hoy has mandado muchos comentarios. Vuelve mañana.": "You've sent a lot of comments today. Come back tomorrow.",
   "No se ha podido enviar. Prueba otra vez.": "Couldn't send it. Try again.",
   "versión": "version",
-  "copia de pruebas": "test copy"
+  "copia de pruebas": "test copy",
+  "El servidor ha dado un error y ya queda apuntado": "The server returned an error and it has been logged"
 });

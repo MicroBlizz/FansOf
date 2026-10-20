@@ -98,7 +98,7 @@ function dcFinReunion(resultado, C) {
 // La tarjeta de resultado: el líder, el título de la cita y las cifras en fichas.
 function dcTarjetaResultado(titulo, sub, fichas, derrota) {
   const t = dcEl('div', 'dc-resultado' + (derrota ? ' dc-resultado-mal' : ''));
-  const a = dcEl('div', 'dc-resultado-arte'); a.append(dcSprite('bunny', 120)); t.append(a);
+  const a = dcEl('div', 'dc-resultado-arte'); a.append(dcSprite(DCP.run ? dcLider().arte : 'bunny', 120)); t.append(a);
   t.append(dcEl('h3', 'ol', titulo)); if (sub) t.append(dcEl('small', 'dc-resultado-sub', sub));
   const g = dcEl('div', 'dc-premios'); for (const [icono, valor, eti] of fichas) { const c = dcEl('div', 'dc-premio'); c.append(dcSvg(icono), dcEl('b', '', valor), dcEl('small', '', eti)); g.append(c); }
   t.append(g); return t;
@@ -108,7 +108,7 @@ function dcOfertaEmpleo(premio) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(tr('Oferta de empleo'), n && n.tipo);
   s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra un bonus de 15.')));
   const g = dcEl('div', 'dc-rejilla dc-oferta');
-  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') ids[0] = DC_LEGENDARIAS[(Math.random() * DC_LEGENDARIAS.length) | 0]; else if (premio === 'rara') ids[0] = dcCartaRara();
+  const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') { const L = dcLegendarias(); ids[0] = L[(Math.random() * L.length) | 0]; } else if (premio === 'rara') ids[0] = dcCartaRara();
   ids.forEach(id => { const c = dcCarta(id); g.append(dcPintaCarta(c, { grande: true, al: () => { play('card'); r.mazo.push(c); dcGuarda(); DCC.siguiente(); } })); });
   s.append(g);
   const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 de bonus')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);

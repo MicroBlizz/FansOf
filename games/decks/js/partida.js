@@ -28,9 +28,12 @@ function dcCarga() {
 // Una copia de carta para el mazo: { id, asc, uid }.
 function dcCarta(id, asc) { return { id, asc: !!asc, uid: DCP.uid++ }; }
 // Las cifras de una carta tal como está (ascendida o no).
-function dcFx(carta) { const D = DC_CARTAS[carta.id]; return carta.asc ? Object.assign({}, D.fx, D.asc) : D.fx; }
+function dcFx(carta) {
+  const D = DC_CARTAS[carta.id], fx = carta.asc ? Object.assign({}, D.fx, D.asc) : D.fx; if (!carta.mitad) return fx;
+  const m = Object.assign({}, fx); for (const k of ['dano', 'bloqueo', 'cura', 'fuerza', 'fuerzaTurno']) if (m[k]) m[k] = Math.max(1, Math.ceil(m[k] / 2)); return m;   // la copia «2» de la Secuela
+}
 function dcCoste(carta) { const D = DC_CARTAS[carta.id]; return carta.asc && D.asc && D.asc.coste !== undefined ? D.asc.coste : D.coste; }
-function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? '+' : ''); }
+function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? '+' : '') + (carta.mitad ? ' 2' : ''); }
 // Las palabras clave de una carta según sus cifras (se añaden al final del texto).
 const DC_PALABRAS = [['despedida', 'Despedida.'], ['indefinido', 'Contrato indefinido.'], ['madrugador', 'Madrugador.']];
 function dcPalabras(fx) { return DC_PALABRAS.filter(([k]) => fx[k]).map(([, t]) => tr(t)); }
@@ -82,14 +85,14 @@ function dcFinPartida(victoria) { let abre = false; if (victoria) { DCP.meta.vic
 function dcRarezaAlAzar(pesos) { let t = 0; for (const k in pesos) t += pesos[k]; let r = Math.random() * t; for (const k in pesos) { r -= pesos[k]; if (r < 0) return k; } return 'basic'; }
 // Una oferta de empleo: n cartas distintas del pool, según la rareza.
 function dcOferta(n) {
-  const out = [], pool = DC_POOL.slice();
+  const out = [], pool = dcPool();
   while (out.length < n && pool.length) {
     const rar = dcRarezaAlAzar(DC_PESOS_RAREZA), cands = pool.filter(k => DC_CARTAS[k].rar === rar), k = cands.length ? pick(cands) : pick(pool);
     pool.splice(pool.indexOf(k), 1); out.push(k);
   }
   return out;
 }
-function dcCartaRara() { return pick(DC_POOL.filter(k => ['rare', 'epic'].includes(DC_CARTAS[k].rar))); }
+function dcCartaRara() { return pick(dcPool().filter(k => ['rare', 'epic'].includes(DC_CARTAS[k].rar))); }
 function dcObjetoAlAzar() { const l = DC_OBJETOS_POOL.filter(k => !DCP.run.objetos.includes(k)); return l.length ? pick(l) : null; }
 function dcVida(n) { const r = DCP.run; r.hp = clamp(r.hp + n, 0, r.hpMax); }
 function dcPrecioCarta(id) { return { basic: 40, common: 55, rare: 80, epic: 110, legendary: 150 }[DC_CARTAS[id].rar] || 50; }

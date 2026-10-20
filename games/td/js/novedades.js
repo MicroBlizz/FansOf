@@ -4,6 +4,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.70', real: ["<b>TIENDA CON DOS MONEDAS AFINADA</b>: el cambio de oro por gemas y las compras de la tienda quedan igual que en Rumble, y la tienda ya no dice «sin conexión» cuando el servidor contesta con un error."], joke: ["Microblizz ha repasado la tienda de las torres y Phony ha intentado comprar una torre con el cambio de las gemas."] },
   { v: '0.13.69', real: ["<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre."], joke: ["Microblizz ha dejado la caja de dos monedas lista y Phony ya ha pedido que la abran el viernes, que es cuando cobra."] },
   { v: '0.13.68', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota)."], joke: ["Microblizz ha puesto dos monedas en la tienda de las torres. Phony dice que la que no se ve es la que se gasta más rápido."] },
   { v: '0.13.67', real: ["<b>ANÁLISIS ANÓNIMO, SOLO SI TÚ QUIERES</b>: la serie estrena un aviso para medir cuánta gente juega y qué se usa más, y así hacer mejores juegos. Hasta que pulses «Aceptar» no se carga nada de Google ni se guarda ninguna cookie, y puedes decir que no."], joke: ["Microblizz cuenta cuántas torres aguantan la oleada. Phony asegura que las suyas aguantan, pero en otra dimensión."] },

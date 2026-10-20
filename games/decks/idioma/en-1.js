@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.4
+  "<b>EQUILIBRIO DE LA CAMPAÑA</b>: las facciones se reajustan para que la campaña sea más pareja: los Animales Locos hacen un 25 % más de daño, bloqueo y cura con sus cartas, Salto del caos pasa de 8 a 10, Pop y NecroLord suben, Héroes y Gamer suben algo, y Streamers, Olvidados y Ciberpunks bajan o se reordenan. Además, mejoras por dentro en los sistemas de la serie.": "<b>CAMPAIGN BALANCE</b>: the factions are readjusted so the campaign is more even: Animales Locos deal, block and heal 25 % more with their cards, Chaos Leap goes from 8 to 10, Pop and NecroLord go up, Heroes and Gamer go up a little, and Streamers, Olvidados and Ciberpunks come down or get reshuffled. Plus under-the-hood improvements to the series' systems.",
+  "Microblizz ha pesado las facciones en una balanza y Phony ha puesto el dedo en el plato de los Animales Locos.": "Microblizz has weighed the factions on a scale and Phony has put a finger on the Animales Locos pan.",
   // 0.2.3
   "<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: tweaks to the series' shared systems for the two-currency shop. You won't notice anything.",
   "Microblizz ha repasado la caja de las reuniones. Phony pide que no cobre por las que se alargan.": "Microblizz has gone over the meeting till. Phony asks that it not charge for the ones that run long.",

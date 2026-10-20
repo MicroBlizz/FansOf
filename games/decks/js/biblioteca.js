@@ -7,7 +7,7 @@ function dcDescubre(tipo, id) { const v = DCP.meta.visto || (DCP.meta.visto = {}
 function dcVisto(tipo, id) { const v = DCP.meta.visto; return !!(v && v[tipo] && v[tipo][id]); }
 // lo de la partida en curso y el mazo inicial cuentan siempre (también para partidas guardadas antes de la Biblioteca)
 function dcDescubreLoDeSiempre() {
-  for (const k of DC_MAZOS.bunny) dcDescubre('c', k);
+  for (const m in DC_MAZOS) if (DCP.run && DCP.run.lider === m || m === 'bunny') for (const k of DC_MAZOS[m]) dcDescubre('c', k);
   const r = DCP.run; if (!r) return;
   for (const c of r.mazo || []) dcDescubre('c', c.id);
   for (const k of r.objetos || []) dcDescubre('o', k);
@@ -18,7 +18,7 @@ const DC_BIB_FILTROS = { todo: 'Todo', visto: 'Descubierto', falta: 'Por descubr
 const DC_RAR_ORDEN = { basic: 0, common: 1, rare: 2, epic: 3, legendary: 4 };
 const DC_TIPO_ORDEN = ['empleado', 'tarea', 'tramite', 'directiva', 'companero', 'protocolo', 'clausula', 'spam'];
 // las cartas, además: por facción y por palabra clave o efecto (idea de Arkioner, 19-10-2026), y agrupadas por tipo
-const DC_BIB_FACCIONES = { todas: 'Cualquier facción', animales: 'Animales Locos', neutral: 'Neutrales' };
+const DC_BIB_FACCIONES = { todas: 'Cualquier facción', animales: 'Animales Locos', neutral: 'Neutrales' };   // facciones.js añade las demás
 const DC_BIB_PROPIEDADES = { todas: 'Cualquier efecto', despedida: 'Despedida', indefinido: 'Contrato indefinido', blindaje: 'Blindaje', madrugador: 'Madrugador',
   area: 'A todos los rivales', bloqueo: 'Bloqueo', cura: 'Cura', roba: 'Roba cartas', caos: 'Da CAOS', aturde: 'Aturde', debil: 'Débil', vulnerable: 'Vulnerable', fuerza: 'Fuerza', injugable: 'Injugable' };
 let dcBibTab = 'c', dcBibFiltro = 'todo', dcBibFac = 'todas', dcBibProp = 'todas';

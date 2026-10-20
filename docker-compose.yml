@@ -1,0 +1,39 @@
+# Fans Of · Docker para las pruebas de equilibrio de Decks (sin instalar nada: Node, Playwright y Chromium vienen en la imagen).
+# Uso, desde la raíz del repo:   docker compose run --rm decks-equilibrio
+#   docker compose run --rm -e PARTIDAS=10 -e PARALELO=24 -e LIDERES=twitchking,directora decks-equilibrio   (todos los -e son opcionales)
+# El informe (informe.md) y el log de cada partida quedan en ./equilibrio-salida. Cada navegador gasta ~1 núcleo y ~700 MB.
+services:
+  decks-equilibrio:
+    image: mcr.microsoft.com/playwright:v1.56.1-jammy
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./equilibrio-salida:/salida
+    shm_size: 2gb
+    environment:
+      NODE_PATH: /pw/node_modules
+      # Parámetros (se cambian con -e NOMBRE=valor en docker compose run):
+      # PARTIDAS: campañas por líder y por IA. Cualquier número (5 = rápido, 10 = fiable). Defecto 10 (con 'todas' son 8 × 3 × 10 = 240 campañas).
+      PARTIDAS: 10
+      # PARALELO: navegadores a la vez. Cualquier número; lo útil es hasta tus hilos de CPU (9900X: 24). Defecto 4.
+      PARALELO: 4
+      # IA: quién juega. Con "todas" (defecto) juega las mismas PARTIDAS con cada IA y cruza los datos en un solo informe.
+      #   optimo = elige el mejor CONJUNTO de cartas para el CAOS que tiene (mochila). Objetivo: cada líder >= 7/10.
+      #   humano = reactiva, carta a carta: mira vida, coste y lo que le viene; se defiende, cura y remata.
+      #   simple = la inicial, más torpe (puntúa cada carta con una fórmula). Objetivo: ningún líder 10/10.
+      #   También vale una lista: optimo,simple
+      IA: todas
+      # PROGRESO: segundos entre líneas de progreso (barra y partidas hechas). 0 = no imprime nada hasta el informe final (defecto).
+      PROGRESO: 0
+      # LIDERES: lista separada por comas, sin espacios. Valores posibles:
+      #   bunny (Animales) · necrolord (No-Muertos) · epicchampion (Héroes) · cybermarine (Ciberpunks)
+      #   twitchking (Streamers) · progamer (Gamer) · directora (Cultura Pop) · vikingo (Olvidados)
+      LIDERES: bunny,necrolord,epicchampion,cybermarine,twitchking,progamer,directora,vikingo
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        mkdir -p /pw && (cd /pw && npm init -y >/dev/null && npm i --silent playwright@1.56.1)
+        command -v python3 >/dev/null || (apt-get update -qq && apt-get install -y -qq python3 >/dev/null)
+        exec node herramientas/pruebas/decks-equilibrio.js --partidas $$PARTIDAS --paralelo $$PARALELO --ia $$IA --progreso $$PROGRESO --lideres $$LIDERES --salida /salida

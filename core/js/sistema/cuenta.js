@@ -204,7 +204,11 @@ const CUENTA = (() => {
   }
   const sesion = () => leer(SESION, null) || {};
   // llamada a una función de la base de datos con la sesión de aquí; cuerpo puede ser una función que se evalúa justo después de tener la sesión
-  const rpc = async (nombre, cuerpo) => { const t = await token(); return pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); };
+  const rpc = async (nombre, cuerpo) => {
+    const t = await token();
+    try { return await pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); }
+    catch (e) { if (typeof ERRORES !== 'undefined') ERRORES.servidor(nombre, e); throw e; }   // los errores del servidor se apuntan (core/js/sistema/errores.js)
+  };
   // PERFIL GLOBAL (servidor/36-perfil.sql): el nombre único de la cuenta para todos los juegos. Sin cuenta, sin red o sin esa función → null / no hace nada.
   const perfil = async () => { if (!activa || sesion().invitado !== false) return null; try { return await rpc('perfil_leer', {}); } catch (e) { return null; } };
   const ponNombre = nombre => rpc('perfil_nombre', { p_nombre: nombre });

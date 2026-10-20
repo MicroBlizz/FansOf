@@ -1,8 +1,8 @@
 {
- "build": 295,
- "hash": "7e0c131",
- "fecha": "2026-10-20T16:22:09Z",
- "mensaje": "Monedas: casilla «soy consciente y me doy por avisado» en la primera compra de un invitado, guardada en avisos_compra (SQL 55 aplicado)",
+ "build": 296,
+ "hash": "2d3a8a8",
+ "fecha": "2026-10-20T16:25:12Z",
+ "mensaje": "Rouflage: empezar partida sin quedarse pillado; SQL 51 (registro de errores) aplicado",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

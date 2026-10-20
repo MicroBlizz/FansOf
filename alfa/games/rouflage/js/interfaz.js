@@ -212,8 +212,17 @@ function pintaBots() {
 function elige(modo) {
   audioInit(); play('select');
   let visto = false; try { visto = localStorage.getItem('rouflage-ayuda') === '1'; } catch (_) { /* sin guardar */ }
-  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => { pantalla(null); empiezaPartida(modo); }); return; }
-  pantalla(null); empiezaPartida(modo);
+  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => empiezaSeguro(modo)); return; }
+  empiezaSeguro(modo);
+}
+// empezar sin quedarse pillado: si algo falla (una partida guardada rara, por ejemplo), se dice, se apunta (errores.js lo manda al servidor) y se vuelve al título
+function empiezaSeguro(modo) {
+  pantalla(null);
+  try { empiezaPartida(modo); }
+  catch (e) {
+    setTimeout(() => { throw e; });      // para el registro de errores
+    irTitulo(); avisa(tr('No se ha podido empezar la partida. Si se repite, prueba OPCIONES › Borrar todo mi progreso (alfa).'), 'malo');
+  }
 }
 // las barras de volumen (título y pausa) enseñan lo que hay; el icono de al lado silencia y recupera
 function refrescaSonido() {

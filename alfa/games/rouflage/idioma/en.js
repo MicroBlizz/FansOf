@@ -557,6 +557,7 @@ IDIOMA.add({
   "Jugar de día": "Play by day",
   "Con las luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.": "With the lights on: the whole office is visible, not just what the flashlight shows.",
   "LUZ": "LIGHT",
+  "No se ha podido empezar la partida. Si se repite, prueba OPCIONES › Borrar todo mi progreso (alfa).": "The match could not start. If it keeps happening, try OPTIONS › Delete all my progress (alpha).",
   "DÍA": "DAY",
   "Luces encendidas: se ve toda la oficina, no solo lo que alumbra la linterna.": "Lights on: the whole office is visible, not just what the flashlight shows.",
   "De noche, como siempre: se ve lo que alumbran las linternas.": "At night, as usual: you see what the flashlights light up.",

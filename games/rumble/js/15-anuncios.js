@@ -20,6 +20,7 @@ const ADS = {
     pull_cd: { max: 3, name: 'Tirada gratis: cartas' },
     gift2: { max: 1, name: 'Regalo diario x2' },
     swap:  { max: 2, name: 'Cambiar una misión diaria' },
+    reroll: { max: 3, name: 'Evaluación al precio de salida' },   // octubre de 2026: la evaluación de desempeño sube un 10 % por copia; el anuncio la devuelve al precio de salida
     swapw: { max: 6, name: 'Cambiar una misión semanal', semana: true },   // v0.9.71: cupo por semana (se pueden gastar todos el último día)
   },
 };

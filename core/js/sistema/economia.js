@@ -34,6 +34,7 @@ const ECO = {
   errorTexto(e) {
     const m = String((e && e.message) || e);
     return /faltan_gemas/.test(m) ? 'Te faltan gemas' : /falta_oro/.test(m) ? 'Te falta oro' : /falta_xp/.test(m) ? 'Todavía te falta experiencia'
+      : /sin_anuncios/.test(m) ? 'Por hoy ya no quedan más anuncios aquí. ¡Mañana más!'
       : /copia_no_existe|nada_que_despedir|no_se_puede/.test(m) ? 'Esa copia no está en tu cuenta (viene de antes de la nube o del modo pruebas)'
       : e && e.estado >= 400 ? 'El servidor ha dado un error y ya queda apuntado' : 'Necesitas conexión para esto';   // con estado HTTP el servidor sí contestó: no es la red
   },
@@ -53,7 +54,8 @@ const ECO = {
     return r.resultados;
   },
   despedir(uids) { return ECO.pedir('despedir', { p_uids: uids }); },            // -> { despedidas, oro_ganado }
-  retirarNumeros(uid) { return ECO.pedir('retirar_numeros', { p_uid: uid }); },   // -> { q: [calidades nuevas] }
+  retirarNumeros(uid) { return ECO.pedir('retirar_numeros', { p_uid: uid }); },   // -> { q: [calidades nuevas], ev: evaluaciones hechas a esa copia }
+  reiniciarEvaluacion(uid) { return ECO.pedir('reiniciar_evaluacion', { p_uid: uid }); },   // tras un anuncio: la copia vuelve al precio de salida (gasta el cupo 'reroll' de anuncios en el servidor) -> { ev: 0 }
   mejorar(carta, xp) { return ECO.pedir('mejorar_carta', { p_carta: carta, p_xp: Math.floor(xp) }); },   // -> { nivel, xp_gastada }
   motor: {
     mover(motivo, v, signo, evento) {

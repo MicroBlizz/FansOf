@@ -17,7 +17,7 @@ const RETOS = {
   /* ---------- misiones diarias: cada día, la fija y 5 al azar de esta lista (v0.9.67) ----------
      tit: el título gracioso · txt: lo que hay que hacer · r: premio propio [oro, gemas, pase] */
   diariasN: 6,
-  fijas: [{ id: 'dmeta5', tit: 'Empleado del día', txt: 'Completa 5 misiones diarias.', goal: 5, ev: 'dailydone', r: [150, 25, 40], alCobrar: 'meta5' }],
+  fijas: [{ id: 'dmeta5', tit: 'Empleado del día', txt: 'Completa 5 misiones diarias.', goal: 5, ev: 'dailydone', r: [150, 10, 40], alCobrar: 'meta5' }],
   diarias: [
   { id: 'win2', tit: 'Doble despido', txt: 'Gana 2 partidas.', goal: 2, ev: 'win' },
   { id: 'cards20', tit: 'Reparto de tareas', txt: 'Juega 20 cartas.', goal: 20, ev: 'card' },
@@ -47,7 +47,7 @@ const RETOS = {
   ],
   /* ---------- misiones semanales: cada lunes, la fija y 5 al azar (v0.9.71). Pensadas para unos 5 días jugando bastante (~10 partidas al día) ---------- */
   semanalesN: 6,
-  fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 80, 400], alCobrar: 'meta7' }],
+  fijasSemana: [{ id: 'wmeta7', tit: 'Empleado del mes (en una semana)', txt: 'Sé Empleado del día 7 veces esta semana.', goal: 7, ev: 'meta5', r: [600, 25, 400], alCobrar: 'meta7' }],
   semanales: [
   { id: 'wwin', tit: 'Semana de resultados', txt: 'Gana 30 partidas.', goal: 30, ev: 'win' },
   { id: 'wkill', tit: 'Reestructuración total', txt: 'Derrota a 2.500 enemigos.', goal: 2500, ev: 'kill' },

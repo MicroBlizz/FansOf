@@ -39,15 +39,17 @@ function openItem(uid, slot) {
   $('#item-body').innerHTML = `<div class="item-head"><span class="ic"${miniFondo(D.rar)}>${miniIcono(it.k, it.id)}</span><div><b class="ol">${D.name}</b><div class="item-note">${R[0]}${it.k === 'eq' ? ' · ' + SLOTS[D.slot] + ' (solo líderes)' : ''}${it.k === 'ab' && D.fac ? ' · de los ' + FACTIONS[D.fac].name : ''}</div></div></div>
     <div>${qBadge(it, true)}</div><div class="inv-desc">${descOf(it)}</div>${bars}
     <div class="item-note">${w ? 'Lo lleva ' + w + '.' : 'No lo lleva nadie.'}${pass ? ' Premio del pase: no se puede despedir ni volver a tirar.' : it.lock ? ' Contrato indefinido: no se puede despedir.' : ''}</div><div class="item-note">${oth}</div>`;
-  const rc = ECON.reroll[D.rar], sv = scrapValue(it);
+  const rc = rerollCost(it), sv = scrapValue(it), ev = it.ev || 0, adR = rerollAd();
   $('#item-actions').innerHTML = `<button class="btn-ghost ol btn-ok" id="ia-equip">${w ? 'CAMBIAR' : 'EQUIPAR'}</button><button class="btn-ghost ol" id="ia-unequip" ${w ? '' : 'disabled'}>QUITAR</button>
     <button class="btn-ghost ol" id="ia-lock" ${pass ? 'disabled' : ''}>${it.lock ? 'RESCINDIR CONTRATO<small>se puede despedir</small>' : 'CONTRATO INDEFINIDO<small>bloquear: no se despide</small>'}</button><button class="btn-ghost ol danger" id="ia-scrap" ${canScrap(it) ? '' : 'disabled'}>DESPEDIR · +${fmt(sv)} ORO<small>indemnización: desaparece</small></button>
-    <button class="btn-ghost ol wide" id="ia-reroll" ${pass ? 'disabled' : ''}>EVALUACIÓN DE DESEMPEÑO · ${fmt(rc)} ORO<small>vuelve a sortear sus números</small></button>`;
+    <button class="btn-ghost ol wide" id="ia-reroll" ${pass ? 'disabled' : ''}>EVALUACIÓN DE DESEMPEÑO · ${fmt(rc)} ORO<small>${ev ? `evaluación nº ${ev + 1} · +${Math.round(ECON.rerollSube * 100)} % por cada una` : 'vuelve a sortear sus números'}</small></button>
+    ${ev && adR && !pass ? adBtn('reroll', 'Ver anuncio: precio de salida', `id="ia-reroll-ad" ${canRerollAd() ? '' : 'disabled'}`) : ''}`;
   $('#ia-equip').onclick = () => { if (itemSlot && w) { $('#scr-item').hidden = true; openPick(itemSlot.kind, itemSlot.key); } else equipFromInv(it); };
   $('#ia-unequip').onclick = () => { unequip(it); saveGame(); play('select'); refreshInv(); };
   $('#ia-lock').onclick = () => { it.lock = !it.lock; saveGame(); play('select'); refreshInv(); toast(it.lock ? 'Contrato indefinido: ya no se puede despedir' : 'Contrato rescindido: ya se puede despedir'); };
   $('#ia-scrap').onclick = () => scrapOne(it);
   $('#ia-reroll').onclick = () => rerollOne(it);
+  const ra = $('#ia-reroll-ad'); if (ra) ra.onclick = () => rerollReset(it);
   $('#scr-item').hidden = false;
 }
 function refreshInv() { if (!$('#scr-inv').hidden) buildInv(); if (!$('#scr-coll').hidden) buildColl(); if (itemCur && !$('#scr-item').hidden) openItem(itemCur, 'keep'); }
@@ -78,19 +80,32 @@ function scrapOne(it) {
       $('#scr-item').hidden = true; itemCur = null; refreshInv(); toast(`Despedida: +${fmt(oro)} de oro`); });
   });
 }
+// EVALUACIÓN DE DESEMPEÑO: cada una sube el precio de esa copia un ECON.rerollSube (lineal) hasta ECON.rerollTope veces el de salida; it.ev cuenta las hechas
+// (vive con la copia y muere al despedirla). Un anuncio (ADS.slots.reroll, si el juego tiene anuncios) la devuelve al precio de salida; Sin anuncios lo da al momento.
+const rerollCost = it => Math.floor(ECON.reroll[defOf(it).rar] * Math.min(ECON.rerollTope || 1, 1 + (ECON.rerollSube || 0) * (it.ev || 0)));
+const rerollAd = () => typeof ADS !== 'undefined' && !!ADS.slots.reroll && typeof watchAd === 'function';
+const canRerollAd = () => rerollAd() && adLeft('reroll') > 0;
+function rerollReset(it) {
+  if (!canRerollAd() || !(it.ev || 0)) return;
+  const listo = () => { it.ev = 0; saveGame(); play('levelup'); toast('Precio de salida: la evaluación vuelve a costar lo de siempre'); refreshInv(); };
+  watchAd('reroll', () => {
+    if (!ECO.servidor('economia')) { listo(); return; }
+    ECO.reiniciarEvaluacion(it.u).then(listo).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
+  });
+}
 function rerollOne(it) {
   const D = defOf(it); if (D.pass) return;
-  const cost = ECON.reroll[D.rar];
+  const cost = rerollCost(it), ev = it.ev || 0;
   if (SAVE.gold < cost) { toast(`Te falta oro: ${fmt(cost - SAVE.gold)} más`); play('deny'); return; }
-  confirmBox('EVALUACIÓN DE DESEMPEÑO', `Se vuelven a sortear todos los números de tu <b>${D.name}</b>.<span class="big">${fmt(cost)} ${COIN_SVG}</span><small>Puede salir mejor… o peor. Ahora es ${QTIERS[tierOf(avgQ(it))].name} (${Math.round(avgQ(it) * 100)} %). Mismas probabilidades que el gashapón, sin garantía.</small>`, 'TIRAR', () => {
+  confirmBox('EVALUACIÓN DE DESEMPEÑO', `Se vuelven a sortear todos los números de tu <b>${D.name}</b>.<span class="big">${fmt(cost)} ${COIN_SVG}</span><small>Puede salir mejor… o peor. Ahora es ${QTIERS[tierOf(avgQ(it))].name} (${Math.round(avgQ(it) * 100)} %). Mismas probabilidades que el gashapón, sin garantía.${ECON.rerollSube ? ` Evaluación nº ${ev + 1} de esta copia: cada una sube el precio un ${Math.round(ECON.rerollSube * 100)} % (hasta el doble).${rerollAd() ? ' Un anuncio lo devuelve al precio de salida.' : ''}` : ''}</small>`, 'TIRAR', () => {
     const before = avgQ(it), listo = () => {
-      stat('reroll', 1); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); saveGame(); updateWallets();
+      it.ev = ev + 1; stat('reroll', 1); if (tierOf(avgQ(it)) === 4) stat('perfect', 1); saveGame(); updateWallets();
       const after = avgQ(it), T = QTIERS[tierOf(after)];
       play(after > before ? 'levelup' : 'sad'); toast(after > before ? `¡Ha salido mejor! Ahora es ${T.name} (${Math.round(after * 100)} %)` : `Ha salido peor: ahora es ${T.name} (${Math.round(after * 100)} %). Mala suerte`);
       refreshInv();
     };
     if (!ECO.servidor('economia')) { ECO.gastar('retirar-numeros', { gold: cost }); it.q = it.q.map(() => rollQ(0)); listo(); return; }
-    ECO.retirarNumeros(it.u).then(r => { it.q = r.q; listo(); }).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
+    ECO.retirarNumeros(it.u).then(r => { it.q = r.q; listo(); if (typeof r.ev === 'number') { it.ev = r.ev; saveGame(); refreshInv(); } }).catch(e => { play('deny'); toast(ECO.errorTexto(e)); });
   });
 }
 function massScrap() {

@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.13', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario)."], joke: ["Microblizz ha puesto orden en el almacén y Phony dice que las ratas lo han desordenado a propósito."] },
   { v: '0.2.12', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor)."], joke: ["Microblizz ha engrasado la maquinaria y Phony dice que las ratas han dejado de pedir propina."] },
   { v: '0.2.11', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada."], joke: ["Microblizz ha repasado la caja de la mochila. Phony dice que las ratas cuentan mejor que él."] },
   { v: '0.2.10', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota)."], joke: ["Microblizz ha cambiado la caja de la tienda por una con dos monedas. Phony asegura que las ratas ya cobran por pasar."] },

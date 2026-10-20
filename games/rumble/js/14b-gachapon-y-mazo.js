@@ -69,14 +69,14 @@ function cardPull(force) {
   if (!C) { SAVE.cards[k] = { n: 1, st: 0 }; cardStartLevel(k); stat('cardnew', 1); return { k, rar, isNew: true, tag: '¡NUEVA!' }; }
   C.n++;
   if (C.st < ECON.maxStars) { C.st++; stat('cardstar', 1); return { k, rar, up: true, tag: `¡SUBE A ${C.st} ★!` }; }
-  ECO.ganar('carta-repetida', { gems: ECON.dupGems }); return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
+  ECO.ganar('carta-repetida', { gold: ECON.dupGold }); return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGold} de oro` };
 }
 // lo que sale de tirar_cartas (servidor): se guarda lo que dice, sin bajar nunca lo que ya había aquí
 function cardDeServidor(r) {
   SAVE.cards = SAVE.cards || {}; const rar = r.rar, k = r.k; let C = SAVE.cards[k];
   if (!C) { C = SAVE.cards[k] = { n: 0, st: 0 }; const us = uSave(k); us.lvl = Math.max(us.lvl, r.nivel || 1); if (r.isNew) { C.n = r.n; C.st = r.st; stat('cardnew', 1); return { k, rar, isNew: true, tag: '¡NUEVA!' }; } }
   C.n = Math.max(C.n, r.n); C.st = Math.max(C.st, r.st);
-  if (r.gems) return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGems} gemas` };
+  if (r.gems) return { k, rar, gems: true, tag: `Ya tenía 5 ★: +${ECON.dupGold} de oro` };
   stat('cardstar', 1); return { k, rar, up: true, tag: `¡SUBE A ${C.st} ★!` };
 }
 let cardsGoFac = null;
@@ -91,7 +91,7 @@ function showCardPulls(res) {
   } else {
     card.classList.add('multi');
     const news = res.filter(r => r.isNew).length, ups = res.filter(r => r.up).length, order = res.slice().sort((a, b) => RAR_ORDER[a.rar] - RAR_ORDER[b.rar]);
-    card.innerHTML = `<div class="gr-rar ol">TIRADA x${res.length}</div><div class="gr-sum">${news ? `<b>${news} ${news > 1 ? 'nuevas' : 'nueva'}</b> · ` : ''}${ups} ${ups === 1 ? 'estrella' : 'estrellas'} más${res.length - news - ups ? ` · ${(res.length - news - ups) * ECON.dupGems} gemas` : ''}</div><div class="gr-grid">${order.map(r => { const c = CFG.cards[r.k], RR = CARD_RAR[r.rar]; return `<div class="gt" data-rar="${r.rar}" style="--rc:${RR[1]};--rc2:${RR[2]}"><canvas data-gk="${r.k}"></canvas><span class="gt-name">${c.name}</span><span class="gt-st">${r.gems ? '+' + ECON.dupGems + ' 💎' : '★'.repeat(cardStars(r.k))}</span>${r.isNew ? '<span class="gt-new">NUEVA</span>' : ''}</div>`; }).join('')}</div><small class="gr-hint">Ponlas en tu mazo desde la Colección.</small>`;
+    card.innerHTML = `<div class="gr-rar ol">TIRADA x${res.length}</div><div class="gr-sum">${news ? `<b>${news} ${news > 1 ? 'nuevas' : 'nueva'}</b> · ` : ''}${ups} ${ups === 1 ? 'estrella' : 'estrellas'} más${res.length - news - ups ? ` · ${(res.length - news - ups) * ECON.dupGold} de oro` : ''}</div><div class="gr-grid">${order.map(r => { const c = CFG.cards[r.k], RR = CARD_RAR[r.rar]; return `<div class="gt" data-rar="${r.rar}" style="--rc:${RR[1]};--rc2:${RR[2]}"><canvas data-gk="${r.k}"></canvas><span class="gt-name">${c.name}</span><span class="gt-st">${r.gems ? '+' + ECON.dupGems + ' 💎' : '★'.repeat(cardStars(r.k))}</span>${r.isNew ? '<span class="gt-new">NUEVA</span>' : ''}</div>`; }).join('')}</div><small class="gr-hint">Ponlas en tu mazo desde la Colección.</small>`;
     for (const cv of card.querySelectorAll('canvas[data-gk]')) drawArt(cv, cv.dataset.gk, 40, 34);
   }
   $('#btn-gr-inv').textContent = 'Ver en la Colección';
@@ -105,7 +105,7 @@ function buildCardGachaText() {
     + oddsHead('Garantías')
     + oddsPity('Épica o mejor', SAVE.pity.cd, ECON.pityEpic)
     + oddsPity('Legendaria', SAVE.pity.cdL, ECON.pityLeg)
-    + oddsNote(`Con 5 estrellas, una repetida da ${ECON.dupGems} gemas.`, true);
+    + oddsNote(`Con 5 estrellas, una repetida da ${ECON.dupGold} de oro.`, true);
 }
 // ---- editar el mazo (v0.9.31: se despliega dentro de la Colección; cada cambio se guarda al momento y GUARDAR lo pliega)
 let deckEdit = null;   // { f, sel, pick, back } mientras el editor está desplegado

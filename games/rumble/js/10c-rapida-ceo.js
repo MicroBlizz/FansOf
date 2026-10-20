@@ -1,7 +1,7 @@
 // Fans of Rumble · Partida rápida «CEO» (v0.9.71): la tercera dificultad de la partida rápida.
 // · La CPU juega 2 niveles por encima de tu nivel medio (hasta 12), piensa más rápido, gana más CAOS y saca a su mata-sanadores.
 // · Antes de CADA partida gira la ruleta de Microblizz: un castigo para ti y una ventaja para la CPU (las listas de la Mítica, en 10b-ruleta.js).
-// · Premio si ganas: ECON.quick.ceo de oro y ECON.quickCeoGems gemas (ajustes.js).
+// · Premio si ganas: ECON.quick.ceo de oro (ajustes.js).
 'use strict';
 const CEO_Q = { lvlAdd: 2, maxLvl: 12 };
 let ceoListo = false;   // true justo después de girar la ruleta: la partida que empieza ya tiene su castigo y su ventaja
@@ -28,6 +28,6 @@ function setupCeoQuick() {
 // el texto de la partida rápida (cambia con la dificultad elegida)
 function quickInfo() {
   const Q = ECON.quick, ceo = G.diff === 'ceo';
-  $('#prep-info').innerHTML = `Contra Microblizz. Tus cartas juegan con su nivel y Microblizz se pone a tu nivel medio.<br><span class="rw">Recompensa: ${Q.easy} de oro en Becario, ${Q.normal} en Ejecutivo o ${Q.ceo} de oro y ${ECON.quickCeoGems} gemas en CEO si ganas (${Q.lose} si pierdes), y experiencia para tus cartas.</span>`
+  $('#prep-info').innerHTML = `Contra Microblizz. Tus cartas juegan con su nivel y Microblizz se pone a tu nivel medio.<br><span class="rw">Recompensa: ${Q.easy} de oro en Becario, ${Q.normal} en Ejecutivo o ${Q.ceo} en CEO si ganas (${Q.lose} si pierdes), y experiencia para tus cartas.</span>`
     + (ceo ? `<div class="ceo-box"><b class="ol">MODO CEO</b><span>La CPU juega ${CEO_Q.lvlAdd} niveles por encima de tu media y antes de cada partida gira la ruleta de Microblizz: un castigo para ti y una ventaja para la CPU.</span></div>` : '');
 }

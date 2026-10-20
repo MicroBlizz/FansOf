@@ -11,13 +11,13 @@ const GACHA = {
   odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
   repetida: { comun: 20, rara: 100, epica: 400, legend: 1000 },   // Gotas que devuelve una pieza repetida: 10 comunes = 1 cápsula (200), épica = 2, legendaria = 5 (la rara, a medias: 100)
   pityRara: 10, pityEpica: 40,
-  gratisHoras: 12,                                 // una tirada gratis cada tantas horas (no se acumulan); los domingos es de 10 cápsulas
+  gratisHoras: 3,                                  // como en el Rumble (core/js/sistema/gachapon-gratis.js): una x1 gratis cada 3 horas, sin acumular, y una x10 cada domingo (hora de Madrid)
   liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón
 };
 
 function gachaEstado() {
   if (!SAVE.gacha) SAVE.gacha = { total: 0, sinRara: 0, sinEpica: 0 };
-  if (typeof SAVE.gacha.gratis !== 'number') SAVE.gacha.gratis = 0;
+  if (typeof SAVE.gacha.gratisT !== 'number') SAVE.gacha.gratisT = 0;
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
   return SAVE.gacha;
 }
@@ -47,17 +47,25 @@ function gachaRareza(g, pool) {
   if (r === 'epica') g.sinEpica = 0;
   return r;
 }
-// la tirada gratis: SAVE.gacha.gratis = la hora (ms) de la última que se cogió
-const gachaGratisEn = () => Math.max(0, gachaEstado().gratis + GACHA.gratisHoras * 3600000 - Date.now());
-const gachaGratisN = () => (new Date().getDay() === 0 ? 10 : 1);
+// las tiradas gratis, como en el Rumble: una x1 cada GACHA.gratisHoras (SAVE.gacha.gratisT = la hora de la última) y una x10 cada domingo, hora de Madrid
+// (SAVE.gacha.gratisD = el día en que se cobró). Ninguna se acumula: la x10 caduca al acabar el domingo.
+const gachaMadrid = () => {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).map(x => [x.type, x.value]));
+  return { fecha: p.year + '-' + p.month + '-' + p.day, dom: p.weekday === 'Sun', dow: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), pasado: ((+p.hour % 24) * 3600 + +p.minute * 60 + +p.second) * 1000 };
+};
+const gachaFalta1 = () => gachaEstado().gratisT + GACHA.gratisHoras * 3600000 - Date.now();   // ms para la x1 (≤ 0: lista)
+function gachaX10() {   // { listo, falta }: lista hasta que acabe el domingo; si no, falta hasta el próximo
+  const m = gachaMadrid(), listo = m.dom && gachaEstado().gratisD !== m.fecha;
+  return { listo, falta: listo ? 86400000 - m.pasado : ((m.dom ? 7 : 7 - m.dow) * 86400000) - m.pasado };
+}
 const gachaCoste = n => (n === 10 ? GACHA.precio10 : n * GACHA.precio);
 // tira n cápsulas (1 o 10). Devuelve [{ cat, it, nuevo, devuelve }] o null si faltan Gotas. Primero pregunta a MONEDAS.azar y luego cobra.
-// gratis: la tirada gratis (no cobra nada; solo si ya toca: se apunta la hora y la tirada es de gachaGratisN() cápsulas)
+// gratis: 'x1' o 'x10' (la tirada gratis: no cobra nada y solo si ya toca; se apunta la hora o el domingo)
 function gachaTira(n, gratis) {
   const g = gachaEstado(), pool = gachaPool(), coste = gratis ? 0 : gachaCoste(n);
-  if (gratis ? gachaGratisEn() > 0 : SAVE.gotas < coste) return null;
+  if (gratis === 'x1' ? gachaFalta1() > 0 : gratis === 'x10' ? !gachaX10().listo : SAVE.gotas < coste) return null;
   if (!gratis && typeof MONEDAS !== 'undefined' && !MONEDAS.azar('gachapón de armario', { ganada: coste })) return null;
-  if (gratis) g.gratis = Date.now(); else SAVE.gotas -= coste;
+  if (gratis === 'x1') g.gratisT = Date.now(); else if (gratis === 'x10') g.gratisD = gachaMadrid().fecha; else SAVE.gotas -= coste;
   const a = armarioEstado(), sale = [];
   for (let i = 0; i < n; i++) {
     const r = gachaRareza(g, pool), lista = pool[r], x = lista[Math.floor(Math.random() * lista.length)];

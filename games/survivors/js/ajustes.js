@@ -12,14 +12,15 @@ const AJUSTES = {
   nombre: 'Fans of Survivors',
   guardado: 'fosurv-save',   // la partida guardada de este juego: nunca se comparte con los otros
   servidor: { gachapon: true, economia: true },   // lo que hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel; los premios los valida con topes
-  topes: { cajas: { vez: {}, dia: {}, calcula: 'cajas' }, recompensa: { vez: { gold: 3000, gems: 100 }, dia: { gold: 200000, gems: 3000 } } },
+  topes: { cajas: { vez: {}, dia: {}, calcula: 'cajas' }, recompensa: { vez: { gold: 3000, gems: 50 }, dia: { gold: 200000, gems: 1000 } } },
   // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro).
   // Mismo ratio que Rumble (1 gema «vale» 10 de oro: la tirada pasa de 50 gemas a 500 de oro); la fila `monedas` de flags (juego 'survivors') lo ajusta sin publicar.
-  monedas: { ratio: 10, cambio: 20 },   // cambiar oro por gemas cuesta 20 de oro por gema
+  monedas: { ratio: 15, cambio: 40, pasePct: { pase: 49 } },   // la tirada cuesta 750 de oro; cambiar oro por gemas, 40 de oro por gema; pasePct: qué % de lo convertido (oro y tiradas de la pista de pago) se da en gemas, para que la pista devuelva justo el precio del pase (493 de 500). La fila `monedas` de flags lo afina sin publicar
   // lo que cambia respecto a la economía común (core/js/sistema/progreso.js: ECON)
   econ: {
     xpPerPlay: 0,
-    mission: [50, 10],
+    logrosGemas: 1 / 3,   // octubre de 2026: los logros dan un tercio de las gemas de antes
+    mission: [50, 0],
     // oro al acabar una partida: por minuto aguantado, por cada 100 bajas, por ganar al jefe; y gemas por ganar
     partida: { porMinuto: 15, por100Bajas: 8, victoria: 150, gemasVictoria: 15, xpPorMinuto: 10 },
   },

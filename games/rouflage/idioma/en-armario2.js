@@ -158,8 +158,5 @@ IDIOMA.add({
   "Repetido: +{n} Gotas": "Duplicate: +{n} Drops",
   "Ponérmelo": "Put it on",
   "Puesto": "Worn",
-  "TIRADA GRATIS en {t}": "FREE PULL in {t}",
-  "TIRADA GRATIS": "FREE PULL",
-  "TIRADA GRATIS · ¡DOMINGO, DE 10!": "FREE PULL · SUNDAY, OF 10!",
-  "Hay una tirada gratis cada 12 horas, y los domingos esa tirada es de 10 cápsulas.": "There's a free pull every 12 hours, and on Sundays that pull is for 10 capsules.",
+  "Hay una tirada gratis (x1) cada 3 horas y, cada domingo, una x10 gratis que caduca al acabar el día. No se acumulan.": "There's a free x1 pull every 3 hours and, every Sunday, a free x10 that expires when the day ends. They don't stack.",
 });

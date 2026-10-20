@@ -7,6 +7,7 @@ IDIOMA.add({
   "Microblizz ha descubierto que existen más idiomas y quiere cobrarte la traducción.": "Microblizz has discovered there are more languages and wants to charge you for the translation.",
   "Phony lo llama «localización premium». Tú, «por fin».": "Phony calls it «premium localisation». You call it «finally».",
   "Cambiar una misión diaria": "Change a daily mission",
+  "Evaluación al precio de salida": "Review at the starting price",
   "Cerrar sin premio": "Close without reward",
   "Curso: despedir con una sonrisa": "Course: Firing With a Smile",
   "El café que se toma solo… porque ya no queda nadie en la oficina.": "The coffee that drinks itself… because there's nobody left in the office.",

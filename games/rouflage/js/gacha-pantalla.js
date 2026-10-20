@@ -57,12 +57,16 @@ function gachaPinta() {
   }
   gachaPintaProbs(); gachaPintaGratis();
 }
-// el botón de la tirada gratis: lista, o cuánto falta (se repinta cada segundo)
+// los botones de las tiradas gratis, con los mismos textos que en el Rumble: lista, o cuánto falta (se repinta cada segundo)
+const gachaCuenta1 = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), p = n => String(n).padStart(2, '0'), d = Math.floor(s / 86400), h = Math.floor(s / 3600) % 24; return (d ? d + ' d ' : '') + p(d ? h : Math.floor(s / 3600)) + ':' + p(Math.floor(s / 60) % 60) + ':' + p(s % 60); };
 function gachaPintaGratis() {
-  const b = E('b-gacha-gratis'); if (!b || E('p-gacha').hidden) return;
-  const falta = gachaGratisEn(), k = gachaGratisN(); b.classList.toggle('falta', falta > 0);
-  if (falta > 0) { const s = Math.ceil(falta / 1000), t = s >= 3600 ? Math.floor(s / 3600) + ' h ' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ' min' : Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); b.textContent = tr('TIRADA GRATIS en {t}', { t }); }
-  else b.textContent = tr(k === 10 ? 'TIRADA GRATIS · ¡DOMINGO, DE 10!' : 'TIRADA GRATIS');
+  if (E('p-gacha').hidden) return;
+  const f1 = gachaFalta1(), x = gachaX10(), pon = (id, listo, titulo, espera, cuenta) => {
+    const b = E(id); b.classList.toggle('lista', listo); b.disabled = !listo;
+    b.innerHTML = `<span>${tr(listo ? titulo : espera)}</span><b>${listo && !cuenta ? tr('¡LISTA!') : cuenta}</b>`;
+  };
+  pon('b-gacha-g1', f1 <= 0, 'TIRADA GRATIS x1', 'PRÓXIMA x1 GRATIS EN', f1 <= 0 ? '' : gachaCuenta1(f1));
+  pon('b-gacha-g10', x.listo, '¡RECLAMA TU x10 GRATIS! CADUCA EN', 'x10 GRATIS EL DOMINGO EN', gachaCuenta1(x.falta));
 }
 // las probabilidades reales de cada rareza y de cada pieza (sin contar las garantías), siempre a la vista
 function gachaPintaProbs() {
@@ -77,7 +81,7 @@ function gachaPintaProbs() {
 // una tirada: la máquina se agita un momento y salen las cápsulas, una a una
 function gachaTirar(k, gratis) {
   if (GACHA_UI.ocupado) return;
-  if (gratis) { if (gachaGratisEn() > 0) { play('deny'); return; } k = gachaGratisN(); }
+  if (gratis) { if (gratis === 'x1' ? gachaFalta1() > 0 : !gachaX10().listo) { play('deny'); return; } k = gratis === 'x10' ? 10 : 1; }
   else if (SAVE.gotas < gachaCoste(k)) { play('deny'); avisa(tr('Te faltan {n} Gotas: juega partidas y recoge el premio diario', { n: gachaCoste(k) - SAVE.gotas }), 'malo'); return; }
   const sale = gachaTira(k, gratis); if (!sale) { play('deny'); return; }
   GACHA_UI.ocupado = true; play('select');
@@ -108,7 +112,8 @@ function preparaGacha() {
   const bi = E('b-gacha-info'); bi.innerHTML = ''; bi.appendChild(iconoPeq(pintaInfoBoton, 34));
   bi.onclick = () => { play('select'); E('gacha-info').hidden = !E('gacha-info').hidden; };
   E('b-gacha').onclick = abreGacha;
-  E('b-gacha-gratis').onclick = () => gachaTirar(1, true);
+  E('b-gacha-g1').onclick = () => gachaTirar(1, 'x1');
+  E('b-gacha-g10').onclick = () => gachaTirar(10, 'x10');
   E('b-gacha-1').onclick = () => gachaTirar(1);
   E('b-gacha-10').onclick = () => gachaTirar(10);
   E('b-gacha-volver').onclick = cierraGacha;

@@ -61,4 +61,6 @@ IDIOMA.add({
   "Microblizz dice que el feedback se lee «con mucho cariño». Lo lee un becario. Con cariño.": "Microblizz says feedback is read «with great care». An intern reads it. With care.",
   "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
   "Microblizz ha instalado una barra de carga. Tarda lo mismo, pero ahora se nota que tarda.": "Microblizz has installed a loading bar. It takes just as long, but now you can see it taking long.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha montado un pase de diapositivas con los caramelos y Phony se ha dormido en la tercera.": "Microblizz put together a slideshow of the sweets and Phony fell asleep on the third one."
 });

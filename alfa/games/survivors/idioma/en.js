@@ -171,4 +171,6 @@ IDIOMA.add({
   "Phony ha añadido un buzón de ideas para sobrevivientes. Las ideas también sobreviven, dice.": "Phony has added an ideas box for survivors. Ideas survive too, it says.",
   "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
   "Phony ha dibujado una barra de carga. Los supervivientes aseguran que ya estaban cargados.": "Phony has drawn a loading bar. The survivors insist they were already loaded.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz enseña fotos de otros juegos entre oleada y oleada y Phony aprovecha para atarse los cordones.": "Microblizz shows photos of other games between waves and Phony uses the break to tie a shoelace."
 });

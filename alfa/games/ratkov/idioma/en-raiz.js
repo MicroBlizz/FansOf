@@ -96,4 +96,6 @@ IDIOMA.add({
   "<b>LO QUE HAY AHÍ FUERA</b>: becarios carroñeros, Seguridad Microblizz con escudo, El Auditor (el jefe de la torre) y El Lag, que va a saltos.": "<b>WHAT'S OUT THERE</b>: scavenger interns, Microblizz Security with shields, The Auditor (the tower's boss) and The Lag, which moves in jumps.",
   "LO QUE HAY AHÍ FUERA": "WHAT'S OUT THERE",
   "Microblizz ha confirmado que la ventisca es una función, no un fallo. Llega a la vez que el mantenimiento de los servidores.": "Microblizz has confirmed the blizzard is a feature, not a bug. It arrives at the same time as server maintenance.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha puesto un pase de fotos en el almacén y las ratas se sientan a verlo con palomitas.": "Microblizz set up a photo slideshow in the warehouse and the rats sit down to watch it with popcorn."
 });

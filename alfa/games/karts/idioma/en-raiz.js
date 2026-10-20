@@ -132,4 +132,6 @@ IDIOMA.add({
   "Phony ha comprobado que ganar sale gratis. Microblizz ha comprobado que Phony ha comprobado.": "Phony has checked that winning is free. Microblizz has checked that Phony has checked.",
   "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
   "Phony ha medido la barra de carga con un cronómetro. Salió un empate.": "Phony timed the loading bar with a stopwatch. It came out a tie.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha puesto un pase de fotos en la meta y Phony frena para mirarlas.": "Microblizz put a photo slideshow at the finish line and Phony brakes to look at them."
 });

@@ -373,4 +373,6 @@ IDIOMA.add({
   "Te pones el chaleco reflectante: {bloqueo} de bloqueo y Blindaje {blindaje}.": "You put on the high-vis vest: {bloqueo} block and Plating {blindaje}.",
   "Mampara de metacrilato": "Acrylic screen",
   "Montas una mampara en tu mesa: {bloqueo} de bloqueo y Blindaje {blindaje}.": "You set up a screen on your desk: {bloqueo} block and Plating {blindaje}.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha hecho una presentación con todas las cartas y Phony ha preguntado si entra en el examen.": "Microblizz made a presentation of every card and Phony asked if it's on the exam."
 });

@@ -3,6 +3,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.145', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha cambiado las vallas de la arena por pantallas con fotos y Phony posa en todas."] },
   { v: '0.9.144', real: ["<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie."], joke: ["Microblizz ha puesto un tablón de anuncios de otros juegos y Phony ya ha pegado su currículum."] },
   { v: '0.9.143', real: ["<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie."], joke: ["Microblizz ha puesto una casilla de «estoy avisado» hasta en la máquina del café. Phony la marca dos veces por si acaso."] },
   { v: '0.9.142', real: ["<b>AJUSTES DE ECONOMÍA</b>: hemos ajustado las recompensas y los precios de las tiendas para mantener una economía sana en el juego. No es definitivo: seguimos trabajando en ello."], joke: ["Microblizz ha subido la tirada a 750 y Phony ha propuesto pagar con cromos."] },

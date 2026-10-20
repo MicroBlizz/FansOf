@@ -1,22 +1,22 @@
 {
- "build": 327,
- "hash": "c2dbd6a",
- "fecha": "2026-10-20T19:57:29Z",
- "mensaje": "Merge branch 'main' of https://github.com/MicroBlizz/fansof-dev",
+ "build": 328,
+ "hash": "46627cd",
+ "fecha": "2026-10-20T20:02:55Z",
+ "mensaje": "Versiones y notas del despliegue: Jump 0.3.2 (zanahorias de espectáculo) y todos los juegos (core cambió)",
  "juegos": {
-  "crush": "0.1.25",
+  "crush": "0.1.26",
   "dark": "0.2.7",
-  "decks": "0.2.7",
+  "decks": "0.2.8",
   "island": "0.3.5",
-  "jump": "0.3.1",
-  "karts": "0.7.0",
-  "nova": "0.3.12",
-  "ratkov": "0.2.15",
-  "rouflage": "0.2.37",
-  "rumble": "0.9.144",
+  "jump": "0.3.2",
+  "karts": "0.7.1",
+  "nova": "0.3.13",
+  "ratkov": "0.2.16",
+  "rouflage": "0.2.38",
+  "rumble": "0.9.145",
   "skate": "0.1.27",
-  "survivors": "0.1.57",
-  "tacticas": "0.1.41",
-  "td": "0.13.73"
+  "survivors": "0.1.58",
+  "tacticas": "0.1.42",
+  "td": "0.13.74"
  }
 }

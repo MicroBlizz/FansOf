@@ -218,4 +218,6 @@ IDIOMA.add({
   "Código copiado. Pégalo en el otro dispositivo.": "Code copied. Paste it on the other device.",
   "Equipo freak solo para los líderes: arma, cabeza y accesorio. Cada objeto sale con su propia calidad.": "Freak gear for leaders only: weapon, head and accessory. Each item comes with its own quality.",
   "Ese código no vale. Cópialo entero desde el otro dispositivo y pégalo en la caja.": "That code isn't valid. Copy it in full from the other device and paste it in the box.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha colgado fotos de otros juegos en las torres y los enemigos ya hacen cola para verlas.": "Microblizz hung photos of other games on the towers and the enemies already queue up to see them."
 });

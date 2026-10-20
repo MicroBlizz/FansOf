@@ -272,4 +272,6 @@ IDIOMA.add({
   "Microblizz ha creado una oficina de reclamaciones. Para reclamar hay que rellenar tres formularios.": "Microblizz has created a complaints office. To complain you must fill in three forms.",
   "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
   "Microblizz ha aprobado la barra de carga tras tres reuniones y un café.": "Microblizz approved the loading bar after three meetings and a coffee.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
+  "Microblizz ha puesto fotos de otros juegos en el marco del tablero y Phony mueve las fichas para verlas mejor.": "Microblizz put photos of other games on the board's frame and Phony moves the pieces to see them better."
 });

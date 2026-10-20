@@ -13,12 +13,13 @@ function dibuja() {
   c.restore();
   // composición final: la escena + bloom (copias pequeñas desenfocadas sumadas encima) + viñeta + destello
   const m = cv.getContext('2d'); m.setTransform(Rk, 0, 0, Rk, 0, 0); m.globalCompositeOperation = 'source-over'; m.globalAlpha = 1; m.imageSmoothingEnabled = true; m.imageSmoothingQuality = 'high'; m.drawImage(esc, 0, 0, W, H);
-  if (Q.bloom > 0) { const g1 = b1.getContext('2d'); g1.clearRect(0, 0, 240, 135); g1.drawImage(esc, 0, 0, 240, 135); const g2 = b2.getContext('2d'); g2.clearRect(0, 0, 96, 54); g2.drawImage(b1, 0, 0, 96, 54); }
-  if (Q.bloom > 0) { const bk = S.rayo && S.rayo.en ? 0.45 : 1; m.globalCompositeOperation = 'lighter'; if (Q.bloom > 1) { m.globalAlpha = 0.34 * bk; m.drawImage(b1, 0, 0, W, H); } m.globalAlpha = 0.46 * bk; m.drawImage(b2, 0, 0, W, H); if (Q.bloom > 1) { m.globalAlpha = 0.26 * bk; m.drawImage(b2, -30, -17, W + 60, H + 34); } }
+  if (Q.bloom > 0) { const g1 = b1.getContext('2d'); g1.clearRect(0, 0, b1.width, b1.height); g1.drawImage(esc, 0, 0, b1.width, b1.height); const g2 = b2.getContext('2d'); g2.clearRect(0, 0, b2.width, b2.height); g2.drawImage(b1, 0, 0, b2.width, b2.height); }
+  if (Q.bloom > 0) { const bk = S.rayo && S.rayo.en ? 0.45 : 1; m.globalCompositeOperation = 'lighter'; if (Q.bloom > 1) { m.globalAlpha = 0.2 * bk; m.drawImage(b1, 0, 0, W, H); } m.globalAlpha = 0.27 * bk; m.drawImage(b2, 0, 0, W, H); if (Q.bloom > 1) { m.globalAlpha = 0.14 * bk; m.drawImage(b2, -30, -17, W + 60, H + 34); } }
   m.globalCompositeOperation = 'source-over'; m.globalAlpha = 1; m.drawImage(VIGNETA, 0, 0, W, H);
-  if (S.flash > 0) { m.globalCompositeOperation = 'lighter'; m.globalAlpha = Math.min(0.8, S.flash) * (OPC.pant.suave ? 0.3 : 1); m.fillStyle = '#fff'; m.fillRect(0, 0, W, H); m.globalCompositeOperation = 'source-over'; m.globalAlpha = 1; }
+  if (S.flash > 0) { m.globalCompositeOperation = 'lighter'; m.globalAlpha = Math.min(0.45, S.flash * 0.6) * (OPC.pant.suave ? 0.3 : 1); m.fillStyle = '#fff'; m.fillRect(0, 0, W, H); m.globalCompositeOperation = 'source-over'; m.globalAlpha = 1; }
   for (const q of TQ) { m.globalAlpha = q[7]; pintaTxt(m, q[0], q[1], q[2], q[3], q[4], q[5], q[6]); } TQ.length = 0; m.globalAlpha = 1;   // el texto de la escena, nítido y encima del brillo
   c = m; if (base !== 'titulo') { dibujaHud(); dibujaTactil(false); }
+  if (S.estado === 'tuto') dibujaTuto();
   if (S.estado === 'opciones') dibujaOpciones(); else if (S.estado === 'editaT') dibujaEditaT();
   if (OPC.pant.fps) txt('FPS ' + Math.round(fpsEma) + ' · ' + Q.n, 10, H - 14, 13, '#9cffb0', 'left', { f: 'mini' });
   if (innerHeight > innerWidth * 1.1) { c.fillStyle = 'rgba(4,7,18,0.94)'; c.fillRect(0, 0, W, H); txt('GIRA EL MÓVIL', W / 2, H / 2 - 20, 56, '#7fe8ff', 'center', { f: 'logo' }); txt('Fans of Beams se juega en horizontal', W / 2, H / 2 + 40, 22, '#ffffff'); }
@@ -129,7 +130,7 @@ function dibujaEscena() {
   for (const f of FX) if (f.t === 'd') { const k = Math.min(1, f.vida / (f.v0 * 0.5)); c.save(); c.translate(f.x, f.y); c.rotate(f.rot); if (f.vuelta) c.scale(-1, 1); c.globalAlpha = k; c.drawImage(f.im, f.sx, f.sy, f.sw, f.sw, -f.tam / 2, -f.tam / 2, f.tam, f.tam); c.globalCompositeOperation = 'lighter'; brillo(0, 0, f.tam * 0.8, '#ff8a3c', k * 0.5); c.restore(); }
   c.globalAlpha = 1;
   // luces del fondo: cada explosión ilumina todo
-  c.save(); c.globalCompositeOperation = 'lighter'; for (let i = 0; i < S.luces.length && i < Q.luces; i++) { const l = S.luces[i], k = l.vida / l.v0; c.globalAlpha = Math.min(1, l.a * k * 0.7); c.drawImage(suave(l.col), l.x - l.r, l.y - l.r, l.r * 2, l.r * 2); } c.restore();
+  c.save(); c.globalCompositeOperation = 'lighter'; for (let i = 0; i < S.luces.length && i < Q.luces; i++) { const l = S.luces[i], k = l.vida / l.v0; c.globalAlpha = Math.min(0.8, l.a * k * 0.45); c.drawImage(suave(l.col), l.x - l.r, l.y - l.r, l.r * 2, l.r * 2); } c.restore();
   for (const t of TX) { c.globalAlpha = Math.min(1, t.vida * 2); txt(t.s, t.x, t.y, 20, t.col); c.globalAlpha = 1; }
 }
 function dibujaJugador() {
@@ -140,9 +141,22 @@ function dibujaJugador() {
   const g = c.createLinearGradient(tx, 0, tx - 46 * f, 0); g.addColorStop(0, 'rgba(255,230,160,0.95)'); g.addColorStop(0.4, 'rgba(255,140,40,0.7)'); g.addColorStop(1, 'rgba(255,60,0,0)'); c.fillStyle = g; c.beginPath(); c.moveTo(tx, P.y - 7); c.lineTo(tx - 46 * f, P.y); c.lineTo(tx, P.y + 7); c.fill();
   brillo(tx - 6, P.y, 34, '#ffa040', 0.65 * f); brillo(P.x, P.y, nv.lw * 0.9, col, 0.14); c.restore();
   c.imageSmoothingQuality = 'high';
-  const fl = Math.sin(S.t * 2.3) * 2.2, ang = P.ang || 0, est = 1 + Math.abs(P.vx || 0) / P.vel * 0.06 - Math.abs(P.vy || 0) / P.vel * 0.04;   // flota, se inclina y se estira con la velocidad
+  const fl = Math.sin(S.t * 2.3) * 1.1, ang = P.ang || 0, est = 1 + Math.abs(P.vx || 0) / P.vel * 0.03 - Math.abs(P.vy || 0) / P.vel * 0.02;   // flota, se inclina y se estira con la velocidad
   c.save(); c.translate(P.x, P.y + fl); c.rotate(ang); c.scale(est, 1 / est); c.drawImage(nv, -nv.lw / 2, -nv.lh / 2, nv.lw, nv.lh); c.restore();
-  if (S.escudo > 0) { c.save(); c.globalCompositeOperation = 'lighter'; const q = S.escudo; c.strokeStyle = '#8fd4ff'; c.lineWidth = 2.5; c.globalAlpha = 0.5 + 0.2 * Math.sin(S.t * 8); c.beginPath(); c.arc(P.x, P.y, nv.lw * 0.62, 0, 6.283); c.stroke(); if (q > 1) { c.beginPath(); c.arc(P.x, P.y, nv.lw * 0.72, 0, 6.283); c.stroke(); } brillo(P.x, P.y, nv.lw * 0.75, '#6fc8ff', 0.18); c.restore(); }
+  if (S.escudo > 0) burbuja(P.x, P.y, nv.lw * 0.62, S.escudo > 1);
   if (S.rayo && S.rayo.t < S.rayo.carga) { c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#fff'; c.globalAlpha = 0.7; c.lineWidth = 3; c.beginPath(); c.arc(P.x + 14, P.y, 40 + (1 - S.rayo.t / S.rayo.carga) * 40, 0, 6.28); c.stroke(); c.restore(); }
   if (ALI.length) { c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(127,232,255,0.3)'; c.lineWidth = 2; c.beginPath(); c.arc(P.x, P.y, 36 + Math.sin(S.t * 5) * 2, 0, 6.28); c.stroke(); c.restore(); }
+}
+
+function burbuja(x, y, r, doble) {   // escudo: burbuja transparente con aro, reflejo fijo y un destello que la cruza de vez en cuando
+  const t = S.t, resp = 1 + Math.sin(t * 2.4) * 0.012, R = r * resp, ph = (t % 3.6) / 0.7, gl = ph < 1 ? Math.sin(ph * Math.PI) : 0;
+  c.save(); c.translate(x, y);
+  const g = c.createRadialGradient(-R * 0.25, -R * 0.3, R * 0.1, 0, 0, R); g.addColorStop(0, 'rgba(150,215,255,0.04)'); g.addColorStop(0.7, 'rgba(110,190,255,0.10)'); g.addColorStop(1, 'rgba(140,215,255,' + (0.30 + gl * 0.2) + ')');
+  c.fillStyle = g; c.beginPath(); c.arc(0, 0, R, 0, 6.283); c.fill();
+  c.lineWidth = 2; c.strokeStyle = 'rgba(190,236,255,' + (0.5 + gl * 0.4) + ')'; c.stroke();
+  if (doble) { c.lineWidth = 1.5; c.strokeStyle = 'rgba(150,215,255,0.4)'; c.beginPath(); c.arc(0, 0, R * 1.13, 0, 6.283); c.stroke(); }
+  c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.arc(0, 0, R * 0.82, Math.PI * 1.08, Math.PI * 1.34); c.stroke();   // reflejo
+  c.lineWidth = 2; c.beginPath(); c.arc(0, 0, R * 0.82, Math.PI * 1.42, Math.PI * 1.48); c.stroke();
+  if (gl > 0) { c.beginPath(); c.arc(0, 0, R, 0, 6.283); c.clip(); c.globalCompositeOperation = 'lighter'; c.rotate(0.6); const bx = -R * 1.6 + ph * R * 3.2, gr = c.createLinearGradient(bx - 16, 0, bx + 16, 0); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(0.5, 'rgba(255,255,255,' + (0.45 * gl) + ')'); gr.addColorStop(1, 'rgba(255,255,255,0)'); c.fillStyle = gr; c.fillRect(bx - 16, -R * 1.2, 32, R * 2.4); }
+  c.restore();
 }

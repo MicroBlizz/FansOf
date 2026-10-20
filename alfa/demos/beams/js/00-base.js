@@ -7,7 +7,7 @@
    a tu lado, dispara a su manera y hace de escudo; y con el botón de rayo se sacrifica y sale un rayo gigante. Como en la serie Darius,
    el fondo está lleno de cosas enormes: planetas, lunas, meteoritos y naves gigantes que cruzan despacio.
    ===================================================================================================================================== */
-const W = 960, H = 540, A = '../../games/nova/arte/';
+const H = 540, W = Math.round(Math.max(960, Math.min(1280, H * Math.max(innerWidth, innerHeight) / Math.max(1, Math.min(innerWidth, innerHeight))))), A = '../../games/nova/arte/';
 const CAPITAN_PROG = 2200, MAX_BOLAS = 3, SECTORES = 3;
 const maxAli = () => 2 + (S.k >= 3 ? 1 : 0);   // la tercera plaza de escolta se abre con la clase Crucero pesado
 const cv = document.getElementById('c');
@@ -21,8 +21,8 @@ function ajusta() {
 }
 // la escena se dibuja en un lienzo aparte para poder darle brillo (bloom) antes de ponerla en pantalla
 const esc = document.createElement('canvas'); esc.width = W; esc.height = H;
-const b1 = document.createElement('canvas'); b1.width = 240; b1.height = 135;
-const b2 = document.createElement('canvas'); b2.width = 96; b2.height = 54;
+const b1 = document.createElement('canvas'); b1.width = Math.round(W / 4); b1.height = 135;
+const b2 = document.createElement('canvas'); b2.width = Math.round(W / 10); b2.height = 54;
 const escC = esc.getContext('2d');
 let c = escC;
 const lienzo = (w, h) => { const o = document.createElement('canvas'); o.width = w; o.height = h; return o; };

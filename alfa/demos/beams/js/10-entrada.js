@@ -7,12 +7,14 @@ const ACCIONES = [['arr', 'Arriba'], ['abj', 'Abajo'], ['izq', 'Izquierda'], ['d
 const DEF = {
   teclas: { arr: ['ArrowUp', 'w'], abj: ['ArrowDown', 's'], izq: ['ArrowLeft', 'a'], der: ['ArrowRight', 'd'], disp: ['z', ' '], capt: ['x', null], rayo: ['c', null], pausa: ['p', 'Escape'] },
   pad: { disp: 0, capt: 2, rayo: 3, pausa: 9 },   // mando estándar: A, X, Y, Start (el movimiento va con el stick y la cruceta)
-  tactil: { modo: 'auto', auto: true, escala: 1, opac: 0.6, vib: true, pos: { stick: [0.13, 0.7], disp: [0.9, 0.74], capt: [0.78, 0.86], rayo: [0.8, 0.6], pausa: [0.3, 0.07] } },
+  tactil: { modo: 'auto', auto: false, escala: 1, opac: 0.6, vib: true, pos: { stick: [0.13, 0.7], disp: [0.9, 0.74], capt: [0.78, 0.86], rayo: [0.8, 0.6], pausa: [0.3, 0.07] } },
+  tuto: { visto: false },
   pant: { cal: 'auto', bloom: true, sacudida: true, suave: false, mus: 0.5, vol: 0.8, fps: false }
 };
 const clona = o => JSON.parse(JSON.stringify(o));
 let OPC = clona(DEF);
-try { const g = JSON.parse(localStorage.getItem(OPC_CLAVE) || 'null'); if (g) { for (const k in DEF) if (g[k]) OPC[k] = Object.assign(OPC[k], g[k]); if (g.tactil && g.tactil.pos) OPC.tactil.pos = Object.assign(clona(DEF.tactil.pos), g.tactil.pos); } } catch (e) { /* sin almacenamiento */ }
+try { const g = JSON.parse(localStorage.getItem(OPC_CLAVE) || 'null'); if (g) { for (const k in DEF) if (g[k]) OPC[k] = Object.assign(OPC[k], g[k]); if (g.tactil && g.tactil.pos) OPC.tactil.pos = Object.assign(clona(DEF.tactil.pos), g.tactil.pos); }
+  if (!g || !(g.ver >= 2)) OPC.tactil.auto = false; OPC.ver = 2;  /* el disparo automático ahora empieza apagado, también para quien ya había guardado opciones */ } catch (e) { /* sin almacenamiento */ }
 function guardaOpc() { try { localStorage.setItem(OPC_CLAVE, JSON.stringify(OPC)); } catch (e) { /* vale hasta cerrar */ } if (typeof AC !== 'undefined' && AC) applyVolume(); fijaCal(); }
 const ENAPP = !!window.Capacitor;
 const NOM_PAD = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'SELECT', 'START', 'L3', 'R3', 'ARRIBA', 'ABAJO', 'IZQ.', 'DCHA.', 'HOME'];

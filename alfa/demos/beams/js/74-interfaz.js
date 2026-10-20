@@ -83,7 +83,7 @@ function dibujaHud() {
 function cambiaFac(d) { ELEG.fac = ORDEN_FAC[(ORDEN_FAC.indexOf(ELEG.fac) + d + 9) % 9]; guardaEleccion(); }
 function cambiaClase(d) { ELEG.k = clamp(ELEG.k + d, 0, 5); guardaEleccion(); }
 function cambiaDif(d) { ELEG.dif = ORDEN_DIF[(ORDEN_DIF.indexOf(ELEG.dif) + d + 3) % 3]; guardaEleccion(); }
-function empieza() { nuevaPartida(); pantallaCompleta(false); pantallaEncendida(); }
+function empieza() { nuevaPartida(); pantallaCompleta(false); pantallaEncendida(); if (!OPC.tuto.visto) empiezaTuto('jugando'); }
 function volverMenu() { S.estado = 'titulo'; S.fac = 'nomuertos'; GIG = [{ fac: 'nomuertos', spr: 'jefe', tam: 1000, x: 700, y: 300, vx: -4, t: 0, fase: 1, fijo: true }]; musicSet('nvMenu'); }
 function bflecha(x, y, w, h, dir, fn) { boton(x, y, w, h, '', fn, { nav: false }); flecha(x + w / 2, y + h / 2, dir, '#ffe9a3', 11); }
 function dibujaTitulo() {
@@ -100,9 +100,10 @@ function dibujaTitulo() {
   const D = DIFS[ELEG.dif]; txt('DIFICULTAD', 253, 448, 12, '#8ab4ff', 'center', { f: 'mini' }); txt(D.nom, 253, 470, 24, ELEG.dif === 'facil' ? '#8dff9a' : ELEG.dif === 'dificil' ? '#ff7a7a' : '#ffe9a3'); bflecha(20, 446, 56, 42, 'i', () => cambiaDif(-1)); bflecha(430, 446, 56, 42, 'd', () => cambiaDif(1));
   txt('clase con la que empiezas · el resto se gana en partida', 253, 504, 11, '#8091b0', 'center', { f: 'mini' });
   const tac = mostrarTactil(), mv = ['arr', 'izq', 'abj', 'der'].map(a => nombreTecla(OPC.teclas[a].filter(Boolean).sort((x, y) => x.length - y.length)[0])), mover = mv.some(x => x.length > 3) ? 'FLECHAS' : mv.join(' ');
-  const l = tac ? [['Palanca izq.', 'mover'], ['Disparo', 'automático'], ['Botón captura', 'bola de captura'], ['Botón rayo', 'super rayo (gasta un aliado)']] : [[mover, 'mover'], [tk('disp'), 'disparar'], [tk('capt'), 'bola de captura'], [tk('rayo'), 'super rayo (gasta un aliado)'], [tk('pausa'), 'pausa']];
+  const l = tac ? [['Palanca izq.', 'mover'], [OPC.tactil.auto ? 'Disparo' : 'Botón disparo', OPC.tactil.auto ? 'automático' : 'disparar'], ['Botón captura', 'bola de captura'], ['Botón rayo', 'super rayo (gasta un aliado)']] : [[mover, 'mover'], [tk('disp'), 'disparar'], [tk('capt'), 'bola de captura'], [tk('rayo'), 'super rayo (gasta un aliado)'], [tk('pausa'), 'pausa']];
   l.forEach((r, i) => { txt(r[0], 520, 322 + i * 26, 15, '#ffd03c', 'left'); txt(r[1], 700, 322 + i * 26, 15, '#ffffff', 'left'); });
   boton(520, 450, 250, 62, 'JUGAR', empieza, { tam: 32, borde: '#ffe9a3', nav: false });
+  boton(784, 404, 152, 40, 'TUTORIAL', () => empiezaTuto('titulo'), { tam: 15, nav: false });
   boton(784, 458, 152, 46, 'OPCIONES', () => abreOpciones('titulo'), { tam: 16, nav: false });
   if (!tac) { c.globalAlpha = 0.65 + 0.35 * Math.sin(t * 4); txt('Pulsa ' + (OPC.teclas.disp[0] ? nombreTecla(OPC.teclas.disp[0]) : 'ENTER') + ' o ENTER para jugar · O opciones', 640, 524, 14, '#ffffff', 'center', { f: 'mini' }); c.globalAlpha = 1; }
 }

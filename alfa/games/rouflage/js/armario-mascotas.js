@@ -109,6 +109,6 @@ Object.assign(ARD, (() => {
     pollo: (c, o) => bicho(c, o, { sinBoca: true, c: '#fde047', p: '#fef9c3', rx: 7.4, ry: 7.4, atras: g => tri(g, -7, -9, -13, -12, -9, -5, '#fbbf24'), orejas: g => { tri(g, 0, -15.4, 1.6, -19.6, 3.4, -15, '#ef4444'); tri(g, 2.6, -15, 4.6, -19, 6, -14.6, '#ef4444'); }, cara: g => tri(g, 9.2, -9.4, 13.4, -8.2, 9.2, -6.8, '#f97316'), pata: '#f97316' }),
   };
   // la pieza del armario: la mascota quieta, en un cuadrado de w×w (para el icono de la casilla y la vista)
-  const mascotaIcono = id => (c, w) => { c.save(); c.translate(w * 0.47, w * 0.8); c.scale(w / 38, w / 38); if (MASCOTAS[id]) MASCOTAS[id](c, { t: 0.6, mov: 0, susto: false }); c.restore(); };
+  const mascotaIcono = id => (c, w, t) => { c.save(); c.translate(w * 0.47, w * 0.8); c.scale(w / 38, w / 38); if (MASCOTAS[id]) MASCOTAS[id](c, { t: t == null ? 0.6 : t, mov: 0, susto: false, sem: 0 }); c.restore(); };      // con t, animada (arPintaVista)
   return { MASCOTAS, mascotaIcono };
 })());

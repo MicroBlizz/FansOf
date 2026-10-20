@@ -111,7 +111,17 @@ function arPintaVista() {
   arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe(cat.cuerpo ? pr : null))));
   // lo que no se lleva en el cuerpo (humo, silbido, fantasma…): en grande, lo puesto o lo que te estás probando
   const ex = E('ar-extra'); ex.hidden = !!cat.cuerpo; E('ar-vista').hidden = !cat.cuerpo;
-  if (!cat.cuerpo) { const it = pr ? pr.it : cat.sala ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); }
+  if (!cat.cuerpo) { const it = pr ? pr.it : cat.sala ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); arAnimaExtra(cat, it); }
+}
+// los fantasmas y las mascotas se ven en grande moviéndose (respiran, parpadean, ondean…), no quietos como en su casilla
+function arAnimaExtra(cat, it) {
+  cancelAnimationFrame(ARMARIO.raf || 0); ARMARIO.raf = 0;
+  if (!it || !['fantasma', 'mascotas'].includes(cat.id)) return;
+  const ex = E('ar-extra'), paso = ahora => {
+    if (E('p-armario').hidden || ex.hidden || arCat(ARMARIO.cat) !== cat) { ARMARIO.raf = 0; return; }
+    arPinta(ex, (c, w) => it.x(c, w, ahora / 1000)); ARMARIO.raf = requestAnimationFrame(paso);
+  };
+  ARMARIO.raf = requestAnimationFrame(paso);
 }
 function arPintaInfo() {
   const cat = arCat(ARMARIO.cat), a = armarioEstado(), sel = ARMARIO.sel;

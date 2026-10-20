@@ -32,7 +32,9 @@ Object.assign(ARD, (() => {
       c.restore();
     }
   }
-  function fantasma(c, w, tipo) {
+  // el fantasma del armario: el de la tienda, con su dibujo vivo de la partida (fantasmas-vivos.js) en el instante t; la galleta, el suyo
+  function fantasma(c, w, tipo, t = 0.6) {
+    if (tipo !== 'galleta' && typeof fantasmaVivo === 'function') { c.save(); c.translate(w / 2, w * 0.93); c.scale(w / 78, w / 78); fantasmaVivo(c, tipo, t, {}); c.restore(); return; }
     if (tipo === 'sabana') return sabana(c, w);
     if (tipo === 'dorado') return sabana(c, w, '#ffe27a');
     if (tipo === 'avion') { shape(c, poly(w * .1, w * .5, w * .9, w * .22, w * .5, w * .82, w * .44, w * .58), '#f4f1fa', w * .05); line(c, [w * .44, w * .58, w * .9, w * .22], OL, w * .05); return; }

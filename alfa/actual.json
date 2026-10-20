@@ -1,8 +1,8 @@
 {
- "build": 343,
- "hash": "167d6a1",
- "fecha": "2026-10-20T21:25:18Z",
- "mensaje": "Fans of Beams: sale como demo (ya no es solo de la alfa); la release la publica publicar.py con el sí del dueño",
+ "build": 344,
+ "hash": "ec2eec2",
+ "fecha": "2026-10-20T21:40:02Z",
+ "mensaje": "Junta main",
  "juegos": {
   "crush": "0.1.26",
   "dark": "0.2.7",

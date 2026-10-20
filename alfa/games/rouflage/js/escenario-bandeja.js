@@ -1,8 +1,8 @@
 // Fans of Rouflage · MI ESCENARIO (la bandeja): el menú de abajo del editor, hecho para el pulgar. Pestañas Muebles, Plantas, Decoración,
 // Escenario y Pintar, cada una con su contador (lo que tienes de lo que hay); tarjetas con el dibujo del objeto y el borde del color de su
-// rareza. Una tarjeta se ARRASTRA hacia arriba hasta el suelo (sale su fantasma con la huella verde si cabe o roja si no) o se toca y luego
-// se toca el suelo. Lo que no tienes sale con candado y te dice cómo se consigue. Al tocar un mueble puesto sale su BURBUJA: mover, voltear,
-// color (si tiene) y quitar. Va después de escenario.js.
+// rareza. Al TOCAR una tarjeta, el mueble sale donde miras (en el hueco libre más cercano) y se puede arrastrar; también se ARRASTRA la
+// tarjeta hacia arriba hasta el suelo (sale su fantasma con la huella verde si cabe o roja si no). Lo que no tienes sale con candado y te dice
+// cómo se consigue. Al tocar un mueble puesto sale su BURBUJA: mover, voltear, color (si tiene) y quitar. Va después de escenario.js.
 'use strict';
 const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['pintar', 'Pintar', 'pincel']];
 // lo de una pestaña: [{ cat, it }]
@@ -11,11 +11,11 @@ function escCosasDe(tab) {
   return arCat('muebles').items.filter(it => MUEBLES_SALA[it.id] && MUEBLES_SALA[it.id].g === tab).map(it => ({ cat: 'muebles', it }));
 }
 function escModo(m, sinSonido) {
-  MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; MIESC.dest = null; if (m !== 'decorar') MIESC.sel = null;
+  MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else MIESC.cam.sigue = true; if (m !== 'decorar') MIESC.sel = null;
   if (m === 'pintar') MIESC.tab = 'pintar'; else if (MIESC.tab === 'pintar') MIESC.tab = 'muebles';
   if (!sinSonido) play('select');
   E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-pasear').hidden = m !== 'pasear';
-  E('b-esc-pasear').classList.toggle('activo', m === 'pasear');
+  E('b-esc-pasear').classList.toggle('activo', m === 'pasear'); E('esc-panel').classList.toggle('paseo', m === 'pasear');
   E('b-esc-pasear').querySelector('b').textContent = m === 'pasear' ? tr('DECORAR') : tr('PASEAR');
   if (m === 'pintar' && typeof escPincelRefresca === 'function') escPincelRefresca();
   escBandeja(); MIESC.sucio = true; requestAnimationFrame(escAjusta);
@@ -35,10 +35,10 @@ function escBandeja() {
   const tienes = lista.filter(x => arTiene(x.cat, x.it)).length;
   E('esc-cuenta').textContent = MIESC.tab === 'escenarios' ? tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr(arItem('escenarios', sala.id).n)
     : tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr('{n} de {t} puestos', { n: sala.muebles.length, t: SALA.MAX_MUEBLES });
-  E('esc-pista').textContent = MIESC.tab === 'escenarios' ? tr('Toca una sala para cambiarla') : MIESC.poner ? tr('Toca el suelo para ponerlo') : tr('Arrastra una tarjeta hasta el suelo');
+  E('esc-pista').textContent = MIESC.tab === 'escenarios' ? tr('Toca uno para cambiar el estilo y la forma del mapa') : tr('Toca una tarjeta: sale donde miras');
   for (const { cat, it } of lista) {
     const tuyo = arTiene(cat, it), puestos = cat === 'muebles' ? sala.muebles.filter(m => m.id === it.id).length : 0;
-    const marcado = cat === 'escenarios' ? sala.id === it.id : MIESC.poner === it;
+    const marcado = cat === 'escenarios' ? sala.id === it.id : false;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-' + it.r + (tuyo ? '' : ' bloq') + (marcado ? ' activa' : '');
     const k = arLienzo(64, 64); arPinta(k, (c, w) => it.x(c, w)); b.appendChild(k);
     const s = document.createElement('small'); s.textContent = tr(it.n); b.appendChild(s);
@@ -51,19 +51,18 @@ function escBandeja() {
   }
   const mas = document.createElement('button'); mas.type = 'button'; mas.className = 'esc-carta mas';
   mas.innerHTML = '<i></i><small></small>'; ponIcono(mas.firstChild, 'bolsa'); mas.lastChild.textContent = tr('CONSEGUIR MÁS');
-  mas.onclick = () => { play('select'); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(MIESC.tab === 'escenarios' ? 'escenarios' : 'muebles', 'escenario'); };
+  mas.onclick = () => { play('select'); escGuarda(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(MIESC.tab === 'escenarios' ? 'escenarios' : 'muebles', 'escenario'); };
   tira.appendChild(mas); tira.scrollLeft = viejo;
 }
 function escTocaCosa(cat, it, tuyo) {
   if (!tuyo) { play('tick'); escAviso(tr('Aún no es tuyo') + ' · ' + tr(it.n) + ': ' + arTextoDe(it)); return; }
-  const sala = escenarioSala();
-  if (cat === 'escenarios') { if (sala.id === it.id) return; sala.id = it.id; play('pop'); escGuarda(); MIESC.sucio = true; escBandeja(); return; }
-  if (MIESC.poner === it) { MIESC.poner = null; play('tick'); escBandeja(); return; }
-  MIESC.poner = it; MIESC.sel = null; play('select'); escAviso(tr('Toca el suelo para ponerlo')); escBandeja(); MIESC.sucio = true;
+  if (cat === 'escenarios') { escCambiaBase(it.id); return; }
+  escPonDondeMiras(it);
 }
 // arrastrar una tarjeta de la bandeja: hacia arriba la coge (de lado mueve la tira); al soltarla en el suelo se pone si cabe
 function escArrastraMueve(e) {
-  const a = MIESC.arrastra; if (!a) { if (MIESC.drag && MIESC.drag.burbuja) escMueve(e); return; }
+  const a = MIESC.arrastra; if (!a) { if (MIESC.drag && MIESC.drag.burbuja) { MIESC.ptCli = { x: e.clientX, y: e.clientY }; escArrastra(escAMundo(e)); } return; }
+  MIESC.ptCli = { x: e.clientX, y: e.clientY };
   const dx = e.clientX - a.x, dy = e.clientY - a.y;
   const haciaSala = MIESC.vista.lado ? dx < -10 && Math.abs(dx) > Math.abs(dy) : dy < -10 && Math.abs(dy) > Math.abs(dx);      // hacia la sala: arriba, o a la izquierda si la bandeja está al lado
   if (!a.ya && haciaSala) { a.ya = true; MIESC.poner = a.it; MIESC.sel = null; a.b.classList.add('cogida'); play('tick'); }
@@ -71,11 +70,11 @@ function escArrastraMueve(e) {
 }
 function escArrastraSuelta(e) {
   const a = MIESC.arrastra; MIESC.arrastra = null;
-  if (!a) { if (MIESC.drag && MIESC.drag.burbuja) escArriba(e); return; }
+  if (!a) { if (MIESC.drag && MIESC.drag.burbuja) escSuelta(); return; }
   if (!a.ya) return;
   MIESC.arrastrado = true; setTimeout(() => { MIESC.arrastrado = false; }, 0); a.b.classList.remove('cogida');
-  const p = MIESC.puntero;
-  if (p && escEnSuelo(p)) escPon(a.it, p); else play('tick');
+  const p = MIESC.puntero, ar = MIESC.area;
+  if (p && e.clientY < ar.y1 && e.clientX < ar.x1 && escEnSuelo(p)) escPon(a.it, p); else play('tick');
   MIESC.poner = null; MIESC.puntero = null; escBandeja(); MIESC.sucio = true;
 }
 // la burbuja del mueble marcado, encima de él (o debajo si no cabe arriba)
@@ -86,15 +85,16 @@ function escColocaBurbuja() {
   if (bu.hidden || bu.dataset.id !== m.id) { E('esc-sel-n').textContent = tr(arItem('muebles', m.id).n); E('b-esc-color').hidden = !(M.vars > 1); bu.dataset.id = m.id; }
   bu.hidden = false;
   const w = bu.offsetWidth, h = bu.offsetHeight, x = ox + m.x * k, arriba = oy + (m.y - (T.tope || T.d + T.h) - 8) * k - h, abajo = oy + (m.y + 10) * k;
-  const tope = E('esc-arriba').getBoundingClientRect().bottom + 4;
-  bu.style.left = limita(x - w / 2, 6, window.innerWidth - w - 6) + 'px'; bu.style.top = (arriba > tope ? arriba : abajo) + 'px';
+  const tope = MIESC.area.y0, fondo = MIESC.area.y1, fuera = x < -20 || x > MIESC.area.x1 + 20 || abajo < tope || arriba > fondo;
+  bu.style.visibility = fuera ? 'hidden' : '';      // el mueble se ha quedado fuera de la vista
+  bu.style.left = limita(x - w / 2, 6, MIESC.area.x1 - w - 6) + 'px'; bu.style.top = limita(arriba > tope ? arriba : abajo, tope, Math.max(tope, fondo - h - 4)) + 'px';
   bu.classList.toggle('abajo', arriba <= tope);
 }
 function escAccionSel(que) {
   const sala = escenarioSala(), m = MIESC.sel; if (!m) return;
   if (que === 'voltear') m.f = m.f ? 0 : 1;
   else if (que === 'color') m.v = ((m.v || 0) + 1) % MUEBLES_SALA[m.id].vars;
-  else if (que === 'quitar') { escChispas(m, true); sala.muebles.splice(sala.muebles.indexOf(m), 1); MIESC.sel = null; }
+  else if (que === 'quitar') { escChispas(m, true); sala.muebles.splice(sala.muebles.indexOf(m), 1); MIESC.sel = null; escCambio(); }
   if (que !== 'quitar') MIESC.pops.push({ m, t0: MIESC.t });
   play(que === 'quitar' ? 'tick' : 'pop'); escGuarda(); MIESC.sucio = true; escBandeja();
 }

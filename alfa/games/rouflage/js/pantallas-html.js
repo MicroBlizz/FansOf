@@ -5,7 +5,7 @@
 (() => {
   const esc = document.getElementById('pantalla-escenario');
   if (esc) esc.outerHTML = `
-<!-- MI ESCENARIO (escenario*.js): tu sala para decorar, pintar y pasear -->
+<!-- MI ESCENARIO (escenario*.js): tu mapa para pasear, decorar y pintar, con el armario dentro -->
 <div class="pantalla escenario" id="p-escenario" hidden>
   <canvas id="esc-lienzo"></canvas>
   <div class="esc-arriba" id="esc-arriba">
@@ -32,7 +32,12 @@
       <div class="esc-herr" id="esc-herr"></div>
       <div class="esc-colores" id="esc-colores"></div>
     </div>
-    <div id="esc-pasear" hidden><p data-tr>Toca el suelo para ir andando (o usa las flechas). Así te verán tus amigos cuando vengan.</p></div>
+    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
+  </div>
+  <div class="esc-zoom" id="esc-zoom">
+    <button type="button" id="b-esc-mas" data-tr-title title="Acercar" data-tr-aria aria-label="Acercar"><i data-icono="mas"></i></button>
+    <button type="button" id="b-esc-menos" data-tr-title title="Alejar" data-tr-aria aria-label="Alejar"><i data-icono="menos"></i></button>
+    <button type="button" id="b-esc-yo" data-tr-title title="Ir a mi galleta" data-tr-aria aria-label="Ir a mi galleta"><i data-icono="centrar"></i></button>
   </div>
   <div id="esc-aviso" aria-live="polite"></div>
 </div>
@@ -84,6 +89,9 @@
     <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
     <p class="sub" id="busca-sub"></p>
     <div class="busca-escenario" id="busca-escenario" hidden><canvas id="busca-escenario-cv" data-tr-aria aria-label="El escenario del anfitrión"></canvas><span id="busca-escenario-t"></span></div>
+    <div class="esc-votos" id="esc-votos" hidden><button type="button" class="ev-b ev-si" id="b-ev-si" aria-pressed="false"><i data-ico="si"></i><span data-tr>ME GUSTA</span><b id="ev-n">0</b></button><button type="button" class="ev-b ev-no" id="b-ev-no" aria-pressed="false"><i data-ico="no"></i><span data-tr>NO ME GUSTA</span></button><button type="button" class="ev-b ev-rep" id="b-ev-rep"><i data-ico="rep"></i><span data-tr>REPORTAR</span></button></div>
+    <div class="esc-mio" id="esc-mio" hidden><i data-ico="si"></i><span id="esc-mio-t"></span></div>
+    <p class="esc-aviso" id="esc-aviso" hidden></p>
     <p class="error" id="busca-error" hidden></p>
     <div class="modo-sala" id="busca-modo" hidden>
       <div class="modo-fila"><button type="button" class="boton peq flecha" id="b-modo-ant" data-tr-aria aria-label="Modo anterior">&#9664;</button><span class="modo-nombre"><small data-tr>MODO</small><b class="ol" id="busca-modo-n">NORMAL</b></span><button type="button" class="boton peq flecha" id="b-modo-sig" data-tr-aria aria-label="Modo siguiente">&#9654;</button></div>
@@ -96,6 +104,13 @@
       <p class="nota-sala" id="voto-nota"></p>
     </div>
     <ul class="sala" id="busca-lista"></ul>
+    <div class="esc-rep" id="esc-rep" hidden role="dialog" aria-modal="true" aria-labelledby="esc-rep-h"><div class="caja esc-rep-caja">
+      <div id="esc-rep-form"><h3 class="ol" id="esc-rep-h" data-tr>REPORTAR ESCENARIO</h3><p class="nota-sala" data-tr>¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.</p>
+        <div class="esc-rep-motivos"><button type="button" class="ev-m" data-m="dibujo" data-tr>Dibujo inapropiado</button><button type="button" class="ev-m" data-m="nombre" data-tr>Nombre ofensivo</button><button type="button" class="ev-m" data-m="otro" data-tr>Otra cosa</button></div>
+        <textarea id="esc-rep-texto" maxlength="200" rows="2" placeholder="Cuéntalo en pocas palabras (opcional)"></textarea><p class="error" id="esc-rep-error" hidden></p>
+        <div class="fila-botones"><button type="button" class="boton gris" id="b-rep-no" data-tr>CANCELAR</button><button type="button" class="boton rojo" id="b-rep-si" disabled data-tr>REPORTAR</button></div></div>
+      <div id="esc-rep-gracias" hidden><i data-ico="sello"></i><b class="ol" data-tr>Gracias, lo revisará Microblizz.</b><p class="nota-sala" data-tr>Mientras, puedes seguir esperando aquí tan tranquilo.</p><button type="button" class="boton" id="b-rep-ok" data-tr>VALE</button></div>
+    </div></div>
     <p class="nota-sala" data-tr>Los huecos que falten los llena la máquina. Los papeles se reparten al azar al empezar.</p>
     <div class="fila-botones">
       <button type="button" class="boton gris" id="b-busca-cancelar" data-tr>CANCELAR</button>
@@ -187,8 +202,12 @@
     <details class="probs" id="gacha-probs"></details>
     <button type="button" class="boton peq" id="b-gacha-tienda" data-tr>Ir a la tienda</button>
     <div class="gacha-resultado" id="gacha-result" hidden>
-      <div class="gacha-res" id="gacha-res"></div>
-      <button type="button" class="boton" id="b-gacha-vale" data-tr>¡VALE!</button>
+      <canvas class="gp-luz" id="gacha-luz" aria-hidden="true"></canvas>
+      <div class="gp-centro">
+        <div class="gp-cab" id="gacha-cab"></div>
+        <div class="gacha-res" id="gacha-res"></div>
+        <div class="gp-botones" id="gacha-botones"><button type="button" class="boton" id="b-gacha-vale" data-tr>¡VALE!</button></div>
+      </div>
     </div>
   </div>
 </div>

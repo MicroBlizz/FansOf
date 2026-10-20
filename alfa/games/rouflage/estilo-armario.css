@@ -68,23 +68,6 @@
   .pf-galleta canvas { width: 130px !important; height: 153px !important; }
 }
 
-/* la habitación: la barra de abajo */
-#hab { position: fixed; left: 0; right: 0; bottom: calc(var(--inf) + 10px); display: flex; justify-content: center; align-items: center; gap: 8px; padding: 0 10px; z-index: 6; pointer-events: none; }
-#hab > * { pointer-events: auto; }
-.hab-roles { display: flex; border: 3px solid var(--outline); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 0 var(--outline); }
-.hab-rol { display: flex; align-items: center; gap: 5px; background: var(--tray); color: var(--ink-dim); border: 0; padding: 8px 10px 6px; font-family: var(--font-display); font-size: 14px; letter-spacing: .03em; cursor: pointer; }
-.hab-rol i { width: 16px; height: 16px; display: inline-block; }
-.hab-rol.activo { background: var(--gold); color: var(--outline); }
-.hab-rol.activo i { color: var(--outline); }
-#b-hab-armario { font-size: 16px; padding: 9px 16px 5px; }
-#b-hab-armario.cerca { animation: hab-late .8s ease-in-out infinite alternate; }
-@keyframes hab-late { from { transform: scale(1); } to { transform: scale(1.08); } }
-@media (max-width: 420px) { .hab-rol b { display: none; } .hab-rol { padding: 8px 12px; } .hab-rol i { width: 20px; height: 20px; } }
-
-/* el botón ESCENARIO de la habitación: el nombre del mapa debajo */
-#hab { flex-wrap: wrap; }
-.hab-mapa { display: grid; justify-items: center; line-height: 1; padding-top: 6px; padding-bottom: 6px; }
-.hab-mapa small { font: 700 11px var(--font-ui); opacity: 0.85; margin-top: 2px; }
 
 /* la economía (economia.js): la cartera, el botón de comprar del armario y el pase */
 .cartera { display: flex; justify-content: center; gap: 14px; font-weight: 800; font-size: 13px; color: var(--ink-dim); margin: 2px 0 6px; }
@@ -194,16 +177,3 @@
 .gacha-info p { margin: 4px 0; font-weight: 700; font-size: 12.5px; }
 .gacha-pity { font-weight: 700; font-size: 11.5px; color: var(--ink-dim); }
 .gacha-caja .probs { margin: 0; max-width: none; text-align: left; }
-.gacha-resultado { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column; gap: 10px; padding: 14px 10px; border-radius: 18px; background: rgba(12, 6, 20, 0.94); }
-.gacha-resultado[hidden] { display: none; }
-.gacha-res { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); align-content: center; gap: 8px; }
-.gc-carta { display: grid; justify-items: center; gap: 2px; padding: 6px 4px; border-radius: 12px; border: 3px solid var(--outline); background: var(--tray-hi); animation: gc-sale 0.35s; }
-.gc-carta b { font: 400 13px var(--font-display); line-height: 1.1; }
-.gc-carta small { font-weight: 700; font-size: 10.5px; color: var(--ink-dim); }
-.gc-carta i { font: normal 800 11px var(--font-ui); color: #ffb08a; }
-.gc-carta.nuevo i { color: #9ff07a; }
-.gc-carta.gc-rara { background: linear-gradient(160deg, #22507a, #173452); }
-.gc-carta.gc-epica { background: linear-gradient(160deg, #5a2f86, #351a52); box-shadow: 0 0 10px rgba(180, 92, 255, 0.6); }
-.gc-carta.gc-legend { background: linear-gradient(160deg, #8a6a1a, #4a3510); box-shadow: 0 0 12px rgba(255, 203, 61, 0.8); }
-.gc-carta .boton { margin-top: 2px; }
-@keyframes gc-sale { from { transform: scale(0.4); opacity: 0; } }

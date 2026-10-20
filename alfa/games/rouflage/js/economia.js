@@ -61,6 +61,7 @@ function paseReparte() {
 
 // al acabar una partida (la llama termina): suma Gotas y experiencia y lo añade a las cifras del final
 function economiaPartida(r) {
+  if (armarioVisible() && J.yo) finPaseApunta(r);      // lo de antes, para que el final anime la barra del pase (fin-pase.js)
   if (RFS.activo()) return economiaPartidaServidor(r);
   if (!armarioVisible() || !J.yo) return;
   ecoEstado();
@@ -73,7 +74,8 @@ function economiaPartida(r) {
   const despues = paseNivel(), nuevo = paseReparte();
   r.filas.push([tr('Gotas'), gotas ? '+' + gotas : tr('tope de hoy')]);
   r.filas.push([tr('Pase de temporada'), tr('nivel {n}', { n: despues }) + ' (+' + xp + ' XP)']);
-  if (despues > antes) setTimeout(() => avisa(tr('¡Pase: nivel {n}!', { n: despues }) + (nuevo.length ? ' ' + nuevo.join(', ') : ''), 'bueno'), 3200);
+  if (r.eco) r.eco.gotas = gotas;      // la subida de nivel y su premio ya se ven en el final, en el tubo del pase (fin-pase.js)
+  else if (despues > antes) setTimeout(() => avisa(tr('¡Pase: nivel {n}!', { n: despues }) + (nuevo.length ? ' ' + nuevo.join(', ') : ''), 'bueno'), 3200);
   guardaPartida();
 }
 

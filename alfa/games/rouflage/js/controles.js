@@ -22,7 +22,7 @@ cv.addEventListener('pointerdown', ev => {
   if (ev.pointerType !== 'mouse') ENTRADA.tactil = true; else if (ENTRADA.tactil && ev.movementX !== undefined) ENTRADA.tactil = false;
   if (TALLER.abierto) { try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* da igual */ } tallerAbajo(ev); return; }
   if (!jugando() && !espectando()) return;
-  if (ev.pointerType === 'mouse') { ENTRADA.raton = [ev.clientX, ev.clientY]; if (ev.button === 0 && (J.yo.clase === 'cazador' || J.fase === 'paseo')) { const [x, y] = aMundo(ev.clientX, ev.clientY); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 4); } return; }
+  if (ev.pointerType === 'mouse') { ENTRADA.raton = [ev.clientX, ev.clientY]; if (ev.button === 0 && J.yo.clase === 'cazador') { const [x, y] = aMundo(ev.clientX, ev.clientY); disparaJugador(x, y, 4); } return; }
   try { cv.setPointerCapture(ev.pointerId); } catch (_) { /* da igual */ }
   ENTRADA.toques.set(ev.pointerId, { x0: ev.clientX, y0: ev.clientY, x: ev.clientX, y: ev.clientY, t0: performance.now(), palanca: false });
   if (ENTRADA.toques.size >= 2 && zoomCazadorPinza(ENTRADA.toques)) { for (const t of ENTRADA.toques.values()) t.gesto = true; ENTRADA.palanca = null; }      // dos dedos de cazador: zoom
@@ -41,8 +41,8 @@ function sueltaPuntero(ev) {
   ENTRADA.toques.delete(ev.pointerId);
   if (t.gesto) { if (ENTRADA.toques.size < 2) ZOOMC.pinza = null; return; }      // el pellizco no dispara
   if (t === ENTRADA.palanca) ENTRADA.palanca = null;
-  else if (ev.type === 'pointerup' && !t.palanca && performance.now() - t.t0 < 380 && Math.hypot(t.x - t.x0, t.y - t.y0) < 12 && jugando() && (J.yo.clase === 'cazador' || J.fase === 'paseo')) {
-    const [x, y] = aMundo(t.x, t.y); if (J.fase === 'paseo') habitacionToca(x, y); else disparaJugador(x, y, 9);
+  else if (ev.type === 'pointerup' && !t.palanca && performance.now() - t.t0 < 380 && Math.hypot(t.x - t.x0, t.y - t.y0) < 12 && jugando() && J.yo.clase === 'cazador') {
+    const [x, y] = aMundo(t.x, t.y); disparaJugador(x, y, 9);
   }
 }
 cv.addEventListener('pointerup', sueltaPuntero);

@@ -1,58 +1,18 @@
-// Fans of Rouflage · MI ESCENARIO (dibujo): la sala vacía de un escenario (el muro, la pared de frente con su papel y el suelo, con los mismos
-// SUELOS y PAPELES de los mapas), la pintura del jugador encima y los muebles, ordenados por su base. Todo en unidades del mundo: la sala mide
-// SALA.W × SALA.H y su interior (pared + suelo) va de SALA.X0,Y0 a SALA.X1,Y1; el suelo empieza en SALA.PY.
-// Para otros (la sala de espera del anfitrión): escenarioDatos() da un JSON compacto (< 4 KB, la pintura en baja resolución) de lo que tiene
-// el jugador, y escenarioPinta(c, datos, op) lo dibuja en c (ya puesto en unidades del mundo de la sala). Lo de dentro guarda en caché el fondo
-// (sala + pintura) por escala: solo se rehace al cambiar algo. El editor está en escenario.js.
+// Fans of Rouflage · MI ESCENARIO (dibujo y datos): la pintura del jugador (una rejilla de celdas de r unidades sobre todo el mapa, con el
+// índice de su color), los muebles (ordenados por su base, con los personajes) y los datos compactos para enseñárselo a otros.
+// escenarioDatos() da un JSON de lo que tiene el jugador (< SALA.MAX_DATOS caracteres: si no cabe, la pintura baja de resolución) y
+// escenarioPinta(c, datos, op) dibuja un TROZO del escenario de unos datos (quizá de otro jugador: la sala de espera, sala-escenario.js) en
+// c, ya puesto en unidades del trozo (0..SALA.W × 0..SALA.H). El fondo del trozo va en caché: solo se rehace si cambian los datos o la escala.
+// Los datos viejos (v 1: la sala pequeña de 520 × 540) se pasan solos al mapa grande: sus muebles y su pintura caen en la primera sala.
 'use strict';
-const SALA = { W: 520, H: 540, X0: 20, Y0: 20, X1: 500, Y1: 520, PY: 100, MAX_MUEBLES: 40, PR: 2, MAX_DATOS: 4000 };
+// SALA: el trozo que se enseña (y las medidas de la sala pequeña de antes, para pasar sus datos); el mapa entero mide ESC_W × ESC_H
+const SALA = { W: 520, H: 540, X0: 20, Y0: 20, X1: 500, Y1: 520, PY: 100, MAX_MUEBLES: 80, PR: 2, MAX_DATOS: 5800 };
+const ESC_W = 1680, ESC_H = 1200;
 const ESC_A64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
-/* ---------- la sala vacía ---------- */
-function escenarioPintaBase(c, id) {
-  const E0 = ESCENARIOS[id] || ESCENARIOS.oficina, R = { x0: 0, y0: 0, x1: SALA.W, y1: SALA.H };
-  const { X0, Y0, X1, Y1, PY } = SALA;
-  c.save(); c.beginPath(); c.rect(0, 0, SALA.W, SALA.H); c.clip();
-  c.fillStyle = E0.muro || COLOR_MURO; c.fillRect(0, 0, SALA.W, SALA.H);      // el muro visto desde arriba, con sus chapas
-  c.strokeStyle = 'rgba(255,255,255,0.035)'; c.lineWidth = 2; c.beginPath();
-  for (let x = 0; x <= SALA.W; x += 60) { c.moveTo(x, 0); c.lineTo(x, SALA.H); }
-  for (let y = 0; y <= SALA.H; y += 60) { c.moveTo(0, y); c.lineTo(SALA.W, y); }
-  c.stroke();
-  c.fillStyle = OL; c.fillRect(X0 - 10, Y0 - 10, X1 - X0 + 20, Y1 - Y0 + 20);
-  c.fillStyle = E0.canto || COLOR_CANTO; c.fillRect(X0 - 7, Y0 - 7, X1 - X0 + 14, Y1 - Y0 + 14);
-  const z = { id: 'sala', nombre: '', suelo: E0.suelo, pared: E0.pared, px: X0, py: PY, pw: X1 - X0, ph: Y1 - PY, x: X0 / CEL, y: PY / CEL, w: (X1 - X0) / CEL, h: (Y1 - PY) / CEL };
-  c.save(); c.beginPath(); c.rect(X0, PY, X1 - X0, Y1 - PY); c.clip();
-  try { SUELOS[z.suelo](c, z, R); pintaPatron(c, z, R); pintaLamparas(c, z); } catch (e) { console.warn('[escenario]', e); }
-  c.restore();
-  const t = { zona: z, x0: X0, x1: X1, y0: Y0, y1: PY };
-  c.save(); c.beginPath(); c.rect(X0, Y0, X1 - X0, PY - Y0); c.clip();
-  try { PAPELES[z.pared](c, t); } catch (e) { console.warn('[escenario]', e); }
-  if (E0.zumbido) for (const x of [110, 260, 410]) { forma(c, caja(x - 34, Y0 + 6, 68, 9, 3), '#fffbd8', 2.5); c.fillStyle = 'rgba(255,250,200,0.25)'; c.fillRect(x - 60, Y0 + 15, 120, 26); }   // los fluorescentes que zumban
-  c.restore();
-  c.restore();
-}
-// lo que va encima de la pintura: la sombra de la pared sobre el suelo, el contorno grueso, el grano y una luz suave
-function escenarioPintaEncima(c) {
-  const { X0, Y0, X1, Y1, PY } = SALA;
-  const g = c.createLinearGradient(0, PY, 0, PY + 16); g.addColorStop(0, 'rgba(24,12,40,0.36)'); g.addColorStop(1, 'rgba(24,12,40,0)');
-  c.fillStyle = g; c.fillRect(X0, PY, X1 - X0, 16);
-  c.fillStyle = 'rgba(24,12,40,0.16)'; c.fillRect(X0, PY, 6, Y1 - PY); c.fillRect(X1 - 6, PY, 6, Y1 - PY);
-  c.fillStyle = 'rgba(24,12,40,0.22)'; c.fillRect(X0, PY - 3, X1 - X0, 3);      // el rodapié
-  c.save(); c.beginPath(); c.rect(X0, Y0, X1 - X0, Y1 - Y0); c.clip(); pintaGrano(c, { x0: X0, y0: Y0, x1: X1, y1: Y1 }); c.restore();
-  c.strokeStyle = OL; c.lineWidth = 3; c.strokeRect(X0, Y0, X1 - X0, Y1 - Y0);
-}
-// el icono de un escenario (armario y editor): la sala en pequeño, de una caché
-const _escIconos = {};
-function escenarioIcono(c, w, id) {
-  if (!_escIconos[id]) { const k = 256 / SALA.H, [cv, g] = lienzo(SALA.W * k, 256); g.scale(k, k); escenarioPintaBase(g, id); escenarioPintaEncima(g); _escIconos[id] = cv; }
-  const s = (w - 6) / Math.max(SALA.W, SALA.H), dw = SALA.W * s, dh = SALA.H * s, x = (w - dw) / 2, y = (w - dh) / 2;
-  c.save(); c.beginPath(); rrPathRF(c, x, y, dw, dh, w * 0.08); c.clip();
-  c.drawImage(_escIconos[id], x, y, dw, dh); c.restore();
-  c.lineWidth = Math.max(2, w * 0.04); c.strokeStyle = OL; c.beginPath(); rrPathRF(c, x, y, dw, dh, w * 0.08); c.stroke();
-}
-
-/* ---------- la pintura: una rejilla de celdas de r unidades con el índice de su color (0 = sin pintar) ---------- */
-function pinturaNueva(r = SALA.PR) { const w = Math.ceil((SALA.X1 - SALA.X0) / r), h = Math.ceil((SALA.Y1 - SALA.Y0) / r); return { r, w, h, pal: [], cel: new Uint8Array(w * h), ver: 0 }; }
+/* ---------- la pintura ---------- */
+function pinturaNueva(r = SALA.PR) { const w = Math.ceil(ESC_W / r), h = Math.ceil(ESC_H / r); return { r, w, h, pal: [], cel: new Uint8Array(w * h), ver: 0 }; }
+function pinturaHay(p) { if (!p || !p.pal.length) return false; if (p._hayV !== p.ver) { p._hay = p.cel.some(v => v); p._hayV = p.ver; } return p._hay; }
 // a texto: «r,w,h,colores,tiradas» (cada tirada: el índice y su largo en base 32 con continuación)
 function pinturaCodifica(p) {
   const usados = new Map(), pal = [];
@@ -68,7 +28,7 @@ function pinturaCodifica(p) {
 }
 function pinturaDecodifica(txt) {
   const q = String(txt || '').split(','); if (q.length < 5) return null;
-  const r = +q[0], w = +q[1], h = +q[2]; if (!(r > 0 && w > 0 && h > 0 && w * h <= 400000)) return null;
+  const r = +q[0], w = +q[1], h = +q[2]; if (!(r > 0 && w > 0 && h > 0 && w * h <= 1100000)) return null;
   const p = { r, w, h, pal: q[3].split('.').filter(x => /^[0-9a-f]{6}$/i.test(x)).map(x => '#' + x.toLowerCase()), cel: new Uint8Array(w * h), ver: 0 }, s = q[4];
   let i = 0, j = 0;
   while (j < s.length && i < p.cel.length) {
@@ -78,12 +38,14 @@ function pinturaDecodifica(txt) {
   }
   return p;
 }
-// la misma pintura en otra rejilla (más fina o más gruesa): cada celda nueva coge lo que más hay debajo
-function pinturaRemuestra(p, r) {
+// la misma pintura en otra rejilla del mapa (más fina o más gruesa), movida (dx, dy) unidades: cada celda nueva coge lo que más hay debajo
+function pinturaRemuestra(p, r, dx = 0, dy = 0) {
   const q = pinturaNueva(r); q.pal = p.pal.slice();
   const cuenta = new Uint16Array(p.pal.length + 1);
   for (let j = 0; j < q.h; j++) for (let i = 0; i < q.w; i++) {
-    const a0 = Math.floor(i * r / p.r), a1 = Math.max(a0 + 1, Math.floor((i + 1) * r / p.r)), b0 = Math.floor(j * r / p.r), b1 = Math.max(b0 + 1, Math.floor((j + 1) * r / p.r));
+    const x0 = i * r - dx, y0 = j * r - dy;
+    if (x0 + r <= 0 || y0 + r <= 0 || x0 >= p.w * p.r || y0 >= p.h * p.r) continue;
+    const a0 = Math.max(0, Math.floor(x0 / p.r)), a1 = Math.max(a0 + 1, Math.floor((x0 + r) / p.r)), b0 = Math.max(0, Math.floor(y0 / p.r)), b1 = Math.max(b0 + 1, Math.floor((y0 + r) / p.r));
     cuenta.fill(0); let mejor = 0, mv = -1;
     for (let b = b0; b < b1 && b < p.h; b++) for (let a = a0; a < a1 && a < p.w; a++) cuenta[p.cel[b * p.w + a]]++;
     for (let v = 0; v < cuenta.length; v++) if (cuenta[v] > mv) { mv = cuenta[v]; mejor = v; }
@@ -91,7 +53,7 @@ function pinturaRemuestra(p, r) {
   }
   return q;
 }
-// la pintura hecha imagen (un lienzo de w × h píxeles, uno por celda)
+// la pintura hecha imagen (un píxel por celda) y su silueta oscura (la sombrita de debajo)
 function pinturaLienzo(p) {
   if (p._cv && p._ver === p.ver) return p._cv;
   if (!p._cv) [p._cv, p._g] = lienzo(p.w, p.h);
@@ -99,30 +61,15 @@ function pinturaLienzo(p) {
   for (let i = 0; i < p.cel.length; i++) { const v = p.cel[i]; if (!v) continue; const [r, g, b] = cols[v - 1], k = i * 4; d.data[k] = r; d.data[k + 1] = g; d.data[k + 2] = b; d.data[k + 3] = 255; }
   p._g.putImageData(d, 0, 0); p._ver = p.ver; return p._cv;
 }
-
-/* ---------- la sala entera ---------- */
-// sala = { id, muebles: [{ id, x, y, v, f }], pint } (lo de dentro; los datos compactos se pasan con salaDeDatos)
-// el fondo (sala vacía + pintura + lo de encima) en caché a la escala k (píxeles por unidad)
-function salaFondo(sala, k) {
-  const ca = sala._fondo || (sala._fondo = {}), pv = sala.pint ? sala.pint.ver : -1;
-  if (ca.cv && ca.k === k && ca.id === sala.id && ca.pv === pv && ca.pint === sala.pint) return ca.cv;
-  if (!ca.base || ca.bk !== k || ca.id !== sala.id) { const [b, g] = lienzo(SALA.W * k, SALA.H * k); g.scale(k, k); escenarioPintaBase(g, sala.id); ca.base = b; ca.bk = k; }
-  if (!ca.cv || ca.k !== k) [ca.cv, ca.g] = lienzo(SALA.W * k, SALA.H * k);
-  const g = ca.g; g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, ca.cv.width, ca.cv.height); g.drawImage(ca.base, 0, 0); g.scale(k, k);
-  if (sala.pint && sala.pint.pal.length) {      // la pintura con cuerpo: una sombrita debajo y un pelín de transparencia, para que se note el suelo por debajo
-    const p = sala.pint, img = pinturaLienzo(p), pw = p.w * p.r, ph = p.h * p.r;
-    if (!p._sombra || p._sver !== p.ver) { if (!p._sombra) [p._sombra, p._sg] = lienzo(p.w, p.h); p._sg.clearRect(0, 0, p.w, p.h); p._sg.globalCompositeOperation = 'source-over'; p._sg.drawImage(img, 0, 0); p._sg.globalCompositeOperation = 'source-in'; p._sg.fillStyle = OL; p._sg.fillRect(0, 0, p.w, p.h); p._sver = p.ver; }
-    g.save(); g.beginPath(); g.rect(SALA.X0, SALA.Y0, SALA.X1 - SALA.X0, SALA.Y1 - SALA.Y0); g.clip();
-    g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high'; if ('filter' in g) g.filter = 'blur(' + (0.9 * k).toFixed(2) + 'px)';      // los bordes de la rejilla, suavizados (donde no hay filtro, salen con escalones)
-    g.globalAlpha = 0.28; g.drawImage(p._sombra, SALA.X0 + 1.2, SALA.Y0 + 2, pw, ph);
-    g.globalAlpha = 0.94; g.drawImage(img, SALA.X0, SALA.Y0, pw, ph);
-    g.globalAlpha = 0.1; g.globalCompositeOperation = 'lighter'; g.drawImage(img, SALA.X0 - 0.8, SALA.Y0 - 1, pw, ph);      // un brillo arriba a la izquierda, como pintura fresca
-    g.restore();
-  }
-  escenarioPintaEncima(g);
-  Object.assign(ca, { k, id: sala.id, pv, pint: sala.pint });
-  return ca.cv;
+function pinturaSombra(p) {
+  if (p._sombra && p._sver === p.ver) return p._sombra;
+  if (!p._sombra) [p._sombra, p._sg] = lienzo(p.w, p.h);
+  const g = p._sg; g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, p.w, p.h); g.drawImage(pinturaLienzo(p), 0, 0);
+  g.globalCompositeOperation = 'source-in'; g.fillStyle = OL; g.fillRect(0, 0, p.w, p.h); g.globalCompositeOperation = 'source-over'; p._sver = p.ver;
+  return p._sombra;
 }
+
+/* ---------- los muebles ---------- */
 // el dibujo de un mueble (tipo y variante), en caché por escala, con su caja de dibujo
 const _escSprites = {};
 function muebleSprite(t, v, k) {
@@ -131,12 +78,15 @@ function muebleSprite(t, v, k) {
   g.scale(k, k); g.translate(ox, oy); try { T.pinta(g, { t, v, x: 0, y: 0, T }); } catch (e) { console.warn('[escenario]', e); }
   return (_escSprites[clave] = { cv, ox, oy, w: ox * 2, h: oy + 8 });
 }
-// pinta la sala en c (ya en unidades de la sala). op: { k (escala de la caché; por defecto la de c), personajes: [{ x, y, pinta(c) }], sel (mueble marcado), t, pops: { índice: escala } }
-function salaPinta(c, sala, op = {}) {
-  const k = op.k || Math.max(0.25, Math.min(3, Math.round(Math.abs(c.getTransform().a) * 4) / 4));
-  c.drawImage(salaFondo(sala, k), 0, 0, SALA.W, SALA.H);
-  const cosas = [];
-  sala.muebles.forEach((m, i) => { const M = MUEBLES_SALA[m.id]; if (M && TIPOS_MUEBLE[M.t]) cosas.push({ y: m.y, m, T: TIPOS_MUEBLE[M.t], M, i }); });
+// los muebles (y los personajes y el armario) que caen en el trozo R, de atrás adelante, en c ya en unidades del mundo.
+// op: { k (escala de los dibujos), personajes: [{ x, y, pinta(c) }], sel (mueble marcado), pops: { índice: escala }, armario: f(c) }
+function salaPintaCosas(c, sala, R, op = {}) {
+  const k = op.k || 1, cosas = [];
+  sala.muebles.forEach((m, i) => {
+    const M = MUEBLES_SALA[m.id], T = M && TIPOS_MUEBLE[M.t]; if (!T) return;
+    if (m.x + T.w / 2 + 20 < R.x0 || m.x - T.w / 2 - 20 > R.x1 || m.y + 20 < R.y0 || m.y - (T.tope || T.d + T.h) - 20 > R.y1) return;
+    cosas.push({ y: m.y, m, T, M, i });
+  });
   c.fillStyle = 'rgba(24,12,40,0.24)';
   for (const o of cosas) { c.beginPath(); rrPathRF(c, o.m.x - o.T.w / 2 - 3, o.m.y - o.T.d + 4, o.T.w + 6, o.T.d + 1, 7); c.fill(); }
   for (const p of op.personajes || []) cosas.push({ y: p.y, p });
@@ -149,41 +99,135 @@ function salaPinta(c, sala, op = {}) {
     if (o.m === op.sel) { c.shadowColor = '#ffcb3d'; c.shadowBlur = 14 * k; }
     c.drawImage(s.cv, -s.ox, -s.oy, s.w, s.h); c.restore();
   }
-  const E0 = ESCENARIOS[sala.id];
-  if (E0 && E0.zumbido && op.t !== undefined) {      // las Backrooms: los fluorescentes parpadean de vez en cuando
-    const f = Math.sin(op.t * 31) > 0.6 && Math.sin(op.t * 1.7) > 0.8 ? 0.1 : 0.03 + Math.sin(op.t * 2.3) * 0.015;
-    c.fillStyle = `rgba(255,236,140,${f})`; c.fillRect(SALA.X0, SALA.Y0, SALA.X1 - SALA.X0, SALA.Y1 - SALA.Y0);
-  }
+}
+// las Backrooms: los fluorescentes parpadean de vez en cuando (sobre el trozo R)
+function salaZumbido(c, sala, R, t) {
+  if (!(ESCENARIOS[sala.id] || {}).zumbido || t === undefined) return;
+  const f = Math.sin(t * 31) > 0.6 && Math.sin(t * 1.7) > 0.8 ? 0.1 : 0.03 + Math.sin(t * 2.3) * 0.015;
+  c.fillStyle = `rgba(255,236,140,${f})`; c.fillRect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0);
 }
 
-/* ---------- los datos compactos (para enseñárselo a otros) ---------- */
-// { v: 1, e: escenario, m: [[mueble, x, y, variante, volteado]], p: pintura en texto (baja resolución) }
+/* ---------- los datos ---------- */
+// sala = { id, muebles: [{ id, x, y, v, f }], pint, ver }. Los datos: { v: 2, e: escenario, m: [[mueble, x, y, variante, volteado]], p: pintura }
 function salaDeDatos(d) {
   if (!d || typeof d !== 'object') return null;
-  const id = ESCENARIOS[d.e] ? d.e : 'oficina', muebles = [];
+  const id = ESCENARIOS[d.e] ? d.e : ESCENARIOS[d.id] ? d.id : 'oficina', M = escMundo(id), viejo = d.v !== 2;
+  const dx = viejo ? M.origen[0] - SALA.X0 : 0, dy = viejo ? M.origen[1] - SALA.PY : 0, muebles = [];
   for (const q of Array.isArray(d.m) ? d.m.slice(0, SALA.MAX_MUEBLES) : []) {
     if (!Array.isArray(q) || !MUEBLES_SALA[q[0]]) continue;
-    muebles.push({ id: q[0], x: limita(+q[1] || 0, SALA.X0, SALA.X1), y: limita(+q[2] || 0, SALA.PY, SALA.Y1), v: (+q[3] | 0) % 8, f: q[4] ? 1 : 0 });
+    muebles.push({ id: q[0], x: limita((+q[1] || 0) + dx, 0, M.W), y: limita((+q[2] || 0) + dy, 0, M.H), v: (+q[3] | 0) % 8, f: q[4] ? 1 : 0 });
   }
-  return { id, muebles, pint: d.p ? pinturaDecodifica(d.p) : null };
+  let pint = null;
+  try { pint = d.p ? pinturaDecodifica(d.p) : null; } catch (_) { pint = null; }
+  if (pint && viejo) pint = pinturaRemuestra(pint, SALA.PR, dx + SALA.X0, dy + SALA.Y0);      // la sala pequeña empezaba en (X0, Y0)
+  else if (pint && (pint.w !== Math.ceil(ESC_W / pint.r) || pint.h !== Math.ceil(ESC_H / pint.r))) pint = null;
+  const sala = { id, muebles, pint, ver: 0 };
+  if (viejo) escRecoloca(sala);
+  return sala;
 }
 function salaADatos(sala, maxBytes = SALA.MAX_DATOS) {
-  const d = { v: 1, e: sala.id, m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
-  const hay = sala.pint && sala.pint.cel.some(v => v);
-  if (hay) for (const r of [8, 10, 12, 15, 20, 30, 40]) {
+  const d = { v: 2, e: sala.id, m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
+  if (pinturaHay(sala.pint)) for (const r of [3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60]) {
     d.p = pinturaCodifica(r === sala.pint.r ? sala.pint : pinturaRemuestra(sala.pint, r));
     if (JSON.stringify(d).length <= maxBytes) break;
   }
   if (JSON.stringify(d).length > maxBytes) delete d.p;
   return d;
 }
+// ¿cabe este mueble aquí? Su base entera en el suelo, sin pisar a otro mueble ni al armario (el que se mueve no cuenta)
+function escCabeEn(sala, m, sin) {
+  const M = escMundo(sala.id), T = TIPOS_MUEBLE[MUEBLES_SALA[m.id].t], x0 = m.x - T.w / 2, x1 = m.x + T.w / 2, y0 = m.y - T.d, y1 = m.y;
+  if (!escSueloCaja(M, x0 + 2, y0 + 2, x1 - 2, y1)) return false;
+  const a = M.armario; if (x0 < a.x + 30 && x1 > a.x - 30 && y0 < a.y + 4 && y1 > a.y - 24) return false;
+  return !sala.muebles.some(o => {
+    if (o === m || o === sin) return false;
+    const U = TIPOS_MUEBLE[MUEBLES_SALA[o.id].t];
+    return x0 < o.x + U.w / 2 - 2 && x1 > o.x - U.w / 2 + 2 && y0 < o.y - 2 && y1 > o.y - U.d + 2;
+  });
+}
+// el hueco libre más cercano a (x, y) para el mueble m (en espiral, de 20 en 20 unidades), o null
+function escHueco(sala, m, x, y, max = 900) {
+  const q = Object.assign({}, m);
+  for (let r = 0; r <= max; r += 20) {
+    const n = r ? Math.max(6, Math.round(TAU * r / 20)) : 1;
+    for (let k = 0; k < n; k++) { const a = k / n * TAU; q.x = Math.round(x + Math.cos(a) * r); q.y = Math.round(y + Math.sin(a) * r * 0.8); if (escCabeEn(sala, q, m)) return [q.x, q.y]; }
+  }
+  return null;
+}
+// los muebles que no caben donde están (al pasar los datos viejos o cambiar de forma) se van al hueco libre más cercano
+function escRecoloca(sala) {
+  let movidos = 0;
+  for (const m of sala.muebles) {
+    if (escCabeEn(sala, m)) continue;
+    const h = escHueco(sala, m, m.x, m.y); if (h) { [m.x, m.y] = h; movidos++; }
+  }
+  if (movidos) sala.ver = (sala.ver || 0) + 1;
+  return movidos;
+}
+// lo que tiene el jugador, en compacto (< SALA.MAX_DATOS caracteres); se recalcula solo si algo ha cambiado
+const _escDatos = { clave: '', d: null };
+function escenarioDatos() {
+  const s = escenarioSala(), clave = [s.id, s.ver, s.pint ? s.pint.ver : 0, s.muebles.length, s.muebles.map(m => m.x + ',' + m.y + ',' + (m.v || 0) + (m.f ? 'f' : '')).join(';')].join('|');
+  if (_escDatos.clave !== clave) { _escDatos.clave = clave; _escDatos.d = salaADatos(s); }
+  return JSON.parse(JSON.stringify(_escDatos.d));
+}
+// el trozo de SALA.W × SALA.H donde más muebles hay (lo que se enseña si no se dice otro centro)
+function salaCentro(sala) {
+  if (sala._centro) return sala._centro;
+  const M = escMundo(sala.id); let mejor = [M.origen[0] + SALA.W / 2 - 20, M.origen[1] + SALA.H / 2 - 100], mv = 0;
+  for (let y = SALA.H / 2; y <= M.H - SALA.H / 2; y += 60) for (let x = SALA.W / 2; x <= M.W - SALA.W / 2; x += 60) {
+    let n = 0; for (const m of sala.muebles) if (Math.abs(m.x - x) < SALA.W / 2 - 30 && Math.abs(m.y - y) < SALA.H / 2 - 30) n++;
+    if (n > mv) { mv = n; mejor = [x, y]; }
+  }
+  return (sala._centro = { x: mejor[0], y: mejor[1] });
+}
 const _escMemo = { txt: null, sala: null };
-// lo que tiene el jugador, en compacto (< 4 KB)
-function escenarioDatos() { return salaADatos(escenarioSala()); }
-// pinta el escenario de unos datos (de escenarioDatos, quizá de otro jugador) en c, ya puesto en unidades de la sala (0..SALA.W × 0..SALA.H).
-// op: { k: escala de la caché (píxeles por unidad; si no, la de c), personajes: [{ x, y, pinta(c) }] (se ordenan con los muebles), t: segundos (animación) }
+// pinta un trozo del escenario de unos datos (de escenarioDatos, quizá de otro jugador) en c, ya puesto en unidades del trozo (0..SALA.W × 0..SALA.H).
+// op: { k: escala de la caché (píxeles por unidad; si no, la de c), personajes: [{ x, y, pinta(c) }] (en unidades del trozo; se ordenan con los
+// muebles), t: segundos (animación), centro: { x, y } del mapa que cae en el centro del trozo (si no, donde más muebles hay) }
 function escenarioPinta(c, datos, op = {}) {
   const txt = typeof datos === 'string' ? datos : JSON.stringify(datos);
   if (_escMemo.txt !== txt) { _escMemo.txt = txt; try { _escMemo.sala = salaDeDatos(typeof datos === 'string' ? JSON.parse(datos) : datos); } catch (_) { _escMemo.sala = null; } }
-  if (_escMemo.sala) salaPinta(c, _escMemo.sala, op);
+  const sala = _escMemo.sala; if (!sala) return;
+  const M = escMundo(sala.id), ce = op.centro || salaCentro(sala), k = op.k || Math.max(0.25, Math.min(3, Math.round(Math.abs(c.getTransform().a) * 4) / 4));
+  const x0 = Math.round(limita(ce.x - SALA.W / 2, 0, M.W - SALA.W)), y0 = Math.round(limita(ce.y - SALA.H / 2, 0, M.H - SALA.H)), R = { x0, y0, x1: x0 + SALA.W, y1: y0 + SALA.H };
+  const f = sala._trozo || (sala._trozo = {}), clave = [x0, y0, k, sala.pint ? sala.pint.ver : 0].join(':');
+  if (f.clave !== clave) {
+    if (!f.cv || f.k !== k) [f.cv, f.g] = lienzo(SALA.W * k, SALA.H * k);
+    const g = f.g; g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, f.cv.width, f.cv.height); g.scale(k, k); g.translate(-x0, -y0);
+    escPintaTrozo(g, M, R, sala.pint, k); f.clave = clave; f.k = k;
+  }
+  c.drawImage(f.cv, 0, 0, SALA.W, SALA.H);
+  c.save(); c.translate(-x0, -y0);
+  const pers = (op.personajes || []).map(p => ({ x: p.x + x0, y: p.y + y0, pinta(g) { g.save(); g.translate(x0, y0); p.pinta(g); g.restore(); } }));
+  pers.push({ y: M.armario.y, pinta: g => escPintaArmario(g, M.armario, op.t || 0, false) });
+  salaPintaCosas(c, sala, R, { k, personajes: pers });
+  salaZumbido(c, sala, R, op.t);
+  c.restore();
+}
+// el icono de un escenario (armario y bandeja): la primera sala vacía, de una caché
+const _escIconos = {};
+function escenarioIcono(c, w, id) {
+  if (!_escIconos[id]) {
+    const M = escMundo(id), k = 256 / SALA.H, [cv, g] = lienzo(SALA.W * k, 256), x0 = M.origen[0] - SALA.X0, y0 = M.origen[1] - SALA.PY;
+    g.scale(k, k); g.translate(-x0, -y0); escPintaTrozo(g, M, { x0, y0, x1: x0 + SALA.W, y1: y0 + SALA.H }, null, k); _escIconos[id] = cv;
+  }
+  const s = (w - 6) / Math.max(SALA.W, SALA.H), dw = SALA.W * s, dh = SALA.H * s, x = (w - dw) / 2, y = (w - dh) / 2;
+  c.save(); c.beginPath(); rrPathRF(c, x, y, dw, dh, w * 0.08); c.clip();
+  c.drawImage(_escIconos[id], x, y, dw, dh); c.restore();
+  c.lineWidth = Math.max(2, w * 0.04); c.strokeStyle = OL; c.beginPath(); rrPathRF(c, x, y, dw, dh, w * 0.08); c.stroke();
+}
+// el armario de tu escenario (los pies en a.x, a.y): ahí te cambias de ropa
+function escPintaArmario(c, a, t, cerca) {
+  const { shape, rr, poly, line, dot } = ARD;
+  c.save(); c.translate(a.x, a.y);
+  shape(c, ARD.el(0, 1, 30, 7), 'rgba(20,10,40,.3)', 0);
+  shape(c, rr(-26, -74, 52, 74, 3), '#b98a4f', 2.6);                      // el mueble
+  shape(c, rr(-30, -78, 60, 7, 2), '#9a6a33', 2.2);                        // la cornisa
+  shape(c, rr(-23, -70, 22, 64, 2), '#c99a62', 2); shape(c, rr(1, -70, 22, 64, 2), '#c99a62', 2);   // las dos puertas
+  for (const x of [-12, 12]) for (let k = -64; k < -10; k += 6) line(c, [x - 8, k, x + 8, k], 'rgba(90,50,10,.25)', 1.2);   // la veta
+  dot(c, -4, -38, 2.4, OL); dot(c, 4, -38, 2.4, OL); dot(c, -4, -38, 1.4, '#ffcb3d'); dot(c, 4, -38, 1.4, '#ffcb3d');   // los tiradores
+  shape(c, poly(-24, -80, -6, -92, 6, -92, 24, -80), '#ff4b5c', 2);        // un gorro de fiesta encima, para que se vea qué es
+  rotulo(c, tr('ARMARIO'), 0, -104 + Math.sin(t * 2) * 1.5, 9, cerca ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
+  c.restore();
 }

@@ -1,7 +1,7 @@
 // Fans of Rouflage · ARMARIO y PERFIL: dos pantallas del menú del título. En el armario se viste la galleta con lo del catálogo
 // (armario-datos.js): tocar una cosa te la prueba; si es tuya, se queda puesta. Un conjunto se pone entero. En el perfil están tu galleta
 // con su marco, tu título y lo que llevas coleccionado, y un botón de pruebas para desbloquearlo todo (se quitará en el juego final).
-// Lo puesto se guarda en SAVE.armario y se ve en la habitación (habitacion.js: `ropaDe()` es lo que se le pone al personaje).
+// Lo puesto se guarda en SAVE.armario y se ve en MI ESCENARIO (escenario.js: `ropaDe()` es lo que se le pone a tu galleta).
 // Desde la 0.2.26 lo ve todo el mundo (antes solo la alfa y desarrollo): armarioVisible lo deja encendido y sigue siendo el interruptor de todo lo que cuelga de él (diario, economía, tienda, habitación, ropa en partida).
 'use strict';
 const ARMARIO = { cat: 'conjuntos', sel: null, prueba: null, desde: 'titulo' };
@@ -58,7 +58,13 @@ function vistePartida(e, ids) {
   e.tipo = 'fan'; e.ropa = ropaDeIds(p);
   if (e.clase === 'cazador' || (!['cuenta', 'caza', 'fin'].includes(J.fase) && !e.congelado && !e.pintado)) ponPapel(e);      // el colado, solo antes de empezar a pintarse
 }
-// el papel como piel: su color y, si tiene, su dibujo (lo mismo que en la habitación)
+// los adornos del «fan» (la galleta vestida con el armario, tipo 'fan'): lo que diga su ropa, en las medidas de la galleta. Los usa pintaAlubia
+// (alubia.js) en la partida, en MI ESCENARIO y en los fantasmas. Antes estaba en habitacion.js, que ya no existe.
+ADORNOS.fan = {
+  detras(c, e) { const r = e.ropa; if (r && r.espalda && ARD.ESPALDAS[r.espalda]) ARD.ESPALDAS[r.espalda](c); },
+  delante(c, e) { const r = e.ropa; if (r && r.cabeza && ARD.CABEZAS[r.cabeza]) ARD.CABEZAS[r.cabeza](c); },
+};
+// el papel como piel: su color y, si tiene, su dibujo
 function ponPapel(e) {
   const papel = (e.ropa && e.ropa.papel) || 'blanco', postura = e.postura || 'firmes';
   if (papel === 'blanco' && e.clase !== 'cazador') { if (e.papelPuesto) lienzoBlanco(e); return; }
@@ -91,10 +97,10 @@ function arPinta(k, f) { const c = k.getContext('2d'); c.setTransform(1, 0, 0, 1
 /* ---------- el armario ---------- */
 function abreArmario(cat, desde) {
   armarioEstado(); if (cat) ARMARIO.cat = cat; ARMARIO.prueba = null; ARMARIO.sel = null; ARMARIO.desde = desde || 'titulo';
-  E('b-ar-volver').textContent = ARMARIO.desde === 'habitacion' ? tr('HABITACIÓN') : ARMARIO.desde === 'escenario' ? tr('MI ESCENARIO') : tr('VOLVER');
+  E('b-ar-volver').textContent = ARMARIO.desde === 'escenario' ? tr('MI ESCENARIO') : tr('VOLVER');
   pantalla('p-armario'); arPintaPestanas(); arPintaTodo();
 }
-function cierraArmario() { play('select'); if (ARMARIO.desde === 'habitacion') habitacionVuelve(); else if (ARMARIO.desde === 'escenario') abreEscenario(); else irTitulo(); }
+function cierraArmario() { play('select'); if (ARMARIO.desde === 'escenario') abreEscenario(); else irTitulo(); }
 function arPintaTodo() { arPintaVista(); arPintaInfo(); arPintaRejilla(); const [t, n] = arCuenta(); E('ar-cuenta').textContent = tr('{t} de {n}', { t, n }); }
 function arPintaPestanas() {
   const fila = E('ar-pestanas'); fila.innerHTML = '';
@@ -193,7 +199,6 @@ function arDesbloqueaTodo() {
 function preparaArmario() {
   PANTALLAS.push('p-armario', 'p-perfil');
   E('fila-armario').hidden = !armarioVisible();
-  E('b-habitacion').onclick = () => { play('select'); empiezaHabitacion('camaleon'); };
   E('b-armario').onclick = () => { play('select'); abreArmario(); };
   E('b-perfil').onclick = () => { play('select'); abrePerfil(); };
   E('b-ar-perfil').onclick = () => { play('select'); abrePerfil(); };

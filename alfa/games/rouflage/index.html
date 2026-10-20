@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.38-a343.167d6a1"></script>
+<script src="../../core/js/nucleo.js?v=0.2.38-a344.ec2eec2"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-fin.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -53,13 +53,6 @@
   </div>
 </div>
 <div id="peligro"></div>
-<!-- la habitación (habitacion.js): elegir papel, abrir el armario y salir -->
-<div id="hab" hidden>
-  <div class="hab-roles"><button type="button" class="hab-rol" id="b-hab-cam"><i data-icono="pincel"></i><b data-tr>CAMALEÓN</b></button><button type="button" class="hab-rol" id="b-hab-caz"><i data-icono="diana"></i><b data-tr>CAZADOR</b></button></div>
-  <button type="button" class="boton azul" id="b-hab-armario" data-tr>ARMARIO</button>
-  <button type="button" class="boton gris peq hab-mapa" id="b-hab-mapa"><b data-tr>ESCENARIO</b><small></small></button>
-  <button type="button" class="boton gris peq" id="b-hab-salir" data-tr>Salir</button>
-</div>
 
 <!-- MI ESCENARIO (escenario*.js): lo pone js/pantallas-html.js aquí al arrancar -->
 <div id="pantalla-escenario" hidden></div>
@@ -112,7 +105,6 @@
       <div class="fila-botones fila-armario">
         <button type="button" class="boton gris" id="b-armario"><b data-tr>ARMARIO</b></button>
         <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
-        <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
         <button type="button" class="boton gris" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
         <button type="button" class="boton gris" id="b-misiones"><b data-tr>MISIONES</b></button>
@@ -257,7 +249,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js'] },
   antes: ['js/ajustes.js', 'js/pantallas-html.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -315,7 +307,7 @@ NUCLEO.juego({
     'js/modos-bote.js',
     'js/modos-ida.js',
     'js/partida.js',
-    'js/interfaz.js', 'js/interfaz-fin.js', 'js/interfaz-taller.js', 'js/foto.js',
+    'js/interfaz.js', 'js/interfaz-fin.js', 'js/fin-pase.js', 'js/interfaz-taller.js', 'js/foto.js',
     'js/galeria.js',
     'js/elige-mapa.js',
     'js/pvp-red.js',
@@ -323,7 +315,7 @@ NUCLEO.juego({
     'js/pvp-sync.js',
     'js/pvp-vuelta.js',
     'js/pvp-mapas.js',
-    'js/pvp-pantallas.js', 'js/sala-escenario.js',
+    'js/pvp-pantallas.js', 'js/sala-escenario.js', 'js/sala-votos.js',
     'js/pvp-energia.js',
     'js/armario-dibujo.js', 'js/armario-espaldas.js',
     'js/armario-dibujo2.js',
@@ -344,13 +336,15 @@ NUCLEO.juego({
     'js/gacha.js',
     '../../core/js/sistema/gachapon-anim.js',      // la máquina animada y la cápsula que se abre, las del Rumble (core)
     '../../core/js/sistema/gachapon-clasica.js',
-    'js/gacha-pantalla.js',
+    'js/gacha-pantalla.js', 'js/gacha-premio.js',
     'js/servidor.js',
     'js/servidor-economia.js',
     'js/reinicio.js',
-    'js/habitacion.js',
+    'js/escenario-formas.js',
+    'js/escenario-mundo.js',
     'js/escenario-pinta.js',
     'js/escenario.js',
+    'js/escenario-camara.js',
     'js/escenario-bandeja.js',
     'js/escenario-pincel.js',
     'js/armario-partida.js',

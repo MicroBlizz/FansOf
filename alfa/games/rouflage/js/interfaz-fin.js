@@ -15,6 +15,7 @@ function muestraFin() {
   E('b-foto').hidden = !fotoHay();      // compartir la foto de tu escondite (foto.js)
   pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
+  finPaseMuestra(r);      // el tubo del pase que se llena y las Gotas (fin-pase.js)
 }
 const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}${marcoColor(f.marco) ? ' marco-ar' : ''}"${marcoColor(f.marco) ? ` style="border-color:${marcoColor(f.marco)}"` : ''}><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}${tituloHtml(f.titulo)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');      // con el marco y el título del armario (armario-partida.js)
 function pintaMapaFinal() {

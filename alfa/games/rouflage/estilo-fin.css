@@ -1,0 +1,35 @@
+/* Fans of Rouflage · EL PASE EN EL FINAL (js/fin-pase.js): la caja con el tubo de cristal que se llena de pintura, las Gotas que cuentan y el cartel
+   «¡NIVEL N!» con su premio. El lienzo sobresale por arriba y por abajo (márgenes negativos) para que las chispas no se corten. */
+.fin-pase { position: relative; display: grid; gap: 2px; padding: 8px 12px 8px; border-radius: 14px; background: rgba(8, 11, 20, 0.5); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06); }
+.fin-pase[hidden] { display: none; }
+.fp-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.fp-tit { font: 400 15px var(--font-display); letter-spacing: 0.05em; color: #fff6ea; }
+.fp-gotas { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px 1px 6px; border-radius: 999px; border: 3px solid #20102c; background: #2a2248; box-shadow: 0 3px 0 #20102c; }
+.fp-gotas b { font: 400 17px var(--font-display); color: var(--gold); min-width: 1.4em; text-align: left; }
+.fp-gotas.lleno { animation: fp-gotas 0.45s cubic-bezier(0.2, 1.8, 0.4, 1); }
+.fp-gotas canvas { margin-top: -3px; }
+.fp-tubo { position: relative; height: 62px; }
+#fp-tubo { position: absolute; left: -12px; right: -12px; top: -34px; width: calc(100% + 24px); height: 130px; pointer-events: none; }
+.fp-pie { display: flex; justify-content: space-between; font: 800 13px var(--font-ui); color: var(--ink-dim); padding: 0 4px; }
+.fp-pie span:first-child { color: #9ff07a; }
+/* el cartel de la subida: encima del tubo, entra con rebote y luego se recoge */
+.fp-nivel { position: absolute; left: 50%; top: 50%; z-index: 2; display: grid; justify-items: center; gap: 4px; padding: 7px 16px 7px; border: 4px solid #20102c; border-radius: 16px; background: linear-gradient(to bottom, #ffe98a, #e0a11f); box-shadow: 0 0 0 3px rgba(255, 246, 234, 0.35), 0 0 30px rgba(255, 203, 61, 0.8), 0 5px 0 #20102c; transform: translate(-50%, -50%); white-space: nowrap; max-width: 92%; }
+.fp-nivel[hidden] { display: none; }
+.fp-nivel b { font: 400 26px/1 var(--font-display); color: #fff6ea; letter-spacing: 0.03em; }
+.fp-nivel.entra { animation: fp-entra 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.fp-nivel.sale { animation: fp-sale 0.3s ease-in both; }
+.fp-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+.fp-premio { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px 1px 4px; border-radius: 999px; border: 2px solid #20102c; background: #fff6ea; color: #20102c; font: 800 12px var(--font-ui); white-space: nowrap; }
+.fp-premio:not(:has(canvas)) { padding-left: 9px; }
+.fp-premios { display: grid; gap: 4px; }
+.fp-premios:empty { display: none; }
+.fp-hecho { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 4px 6px; border-radius: 10px; background: rgba(255, 203, 61, 0.14); box-shadow: inset 0 0 0 2px rgba(255, 203, 61, 0.5); animation: fp-hecho 0.4s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+.fp-hecho b { font: 400 16px var(--font-display); color: var(--gold); }
+@keyframes fp-entra { 0% { transform: translate(-50%, -50%) scale(0.2) rotate(-8deg); opacity: 0; } 60% { transform: translate(-50%, -50%) scale(1.12) rotate(2deg); opacity: 1; } 100% { transform: translate(-50%, -50%); opacity: 1; } }
+@keyframes fp-sale { to { transform: translate(-50%, 10px) scale(0.6); opacity: 0; } }
+@keyframes fp-hecho { from { transform: scale(0.6); opacity: 0; } }
+@keyframes fp-gotas { 50% { transform: scale(1.18); } }
+@media (orientation: landscape) and (max-height: 520px) {
+  .fin-pase { padding: 5px 10px; } .fp-tit { font-size: 13px; } .fp-tubo { height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) { .fp-nivel.entra, .fp-nivel.sale, .fp-hecho, .fp-gotas.lleno { animation: none; } }

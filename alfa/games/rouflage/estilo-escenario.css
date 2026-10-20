@@ -48,7 +48,20 @@
 .esc-carta.mas { border-style: dashed; border-color: var(--gold); background: #18223a; align-content: center; min-height: 112px; cursor: pointer; }
 .esc-carta.mas i[data-icono] { font-size: 30px; color: var(--gold); }
 .esc-carta.mas small { color: var(--gold); font-family: var(--font-display); font-weight: 400; font-size: 13px; }
-#esc-pasear p { margin: 4px 6px 6px; text-align: center; font-weight: 800; color: var(--ink-dim); }
+#esc-pasear p { margin: 0; font-weight: 800; color: var(--ink-dim); font-size: 13px; line-height: 1.25; }
+.esc-paseo { display: flex; align-items: center; gap: 10px; padding: 2px 4px 4px; }
+.esc-paseo p { flex: 1; }
+#b-esc-armario { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; font-size: 16px; padding: 9px 14px 6px; }
+#b-esc-armario i[data-icono] { font-size: 18px; }
+#b-esc-armario.cerca { animation: esc-late .8s ease-in-out infinite alternate; }
+@keyframes esc-late { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+/* los botones de la vista: acercar, alejar e ir a tu galleta */
+.esc-zoom { position: absolute; display: grid; gap: 7px; z-index: 1; }
+.esc-zoom button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #3a4a6e, #1e2a45); color: var(--ink); }
+.esc-zoom button i[data-icono] { font-size: 20px; filter: drop-shadow(0 2px 0 var(--outline)); }
+.esc-zoom #b-esc-yo { background: linear-gradient(to bottom, #ffdf7a, #e0a422); color: #20102c; }
+.esc-zoom button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
 
 /* el pincel */
 .esc-herr { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 5px; touch-action: pan-x; }
@@ -85,6 +98,8 @@
 /* en una pantalla ancha (PC, tableta apaisada) la bandeja va a la derecha, en columna: la sala se ve mucho más grande */
 @media (min-width: 900px) and (min-aspect-ratio: 5/4) {
   .esc-panel { left: auto; right: calc(var(--der) + 10px); top: calc(var(--sup) + 66px); bottom: calc(var(--inf) + 10px); width: min(400px, 34vw); margin: 0; padding: 10px; border: 4px solid var(--outline); border-radius: 22px; align-content: start; grid-template-rows: auto minmax(0, 1fr); box-shadow: 0 6px 0 var(--outline); }
+  .esc-panel.paseo { bottom: auto; }      /* al pasear, la bandeja solo ocupa lo suyo: se ve más mapa */
+  .esc-panel.paseo .esc-paseo { flex-direction: column; align-items: stretch; }
   #esc-decorar { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 6px; min-height: 0; }
   #esc-decorar[hidden] { display: none; }
   .esc-pestanas { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 9px; }

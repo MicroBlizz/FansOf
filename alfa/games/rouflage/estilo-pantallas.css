@@ -156,7 +156,6 @@
 /* el título, a todo color: cada botón con el suyo (nada de lila ni morado). El naranja es del PvP; el dorado y el rojo, del pase y la tienda */
 #b-armario { background: linear-gradient(to bottom, #5fd896, #23955a); }
 #b-perfil { background: linear-gradient(to bottom, #6aaeff, #2f6fd6); }
-#b-habitacion { background: linear-gradient(to bottom, #e3a86a, #a8662a); }
 #b-escenario { background: linear-gradient(to bottom, #ff9fd0, #d6488f); }      /* MI ESCENARIO (escenario.js), rosa: el único que faltaba de color */
 #b-diario { background: linear-gradient(to bottom, #b4e86a, #5fa82a); }
 #b-gacha { background: linear-gradient(to bottom, #c99bff, #7a3fd6); }      /* su color, como los demás (antes gris oscuro) */

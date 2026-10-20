@@ -103,7 +103,11 @@ function gachaTarjeta(x) {
   const n = document.createElement('b'); n.textContent = tr(x.it.n); d.appendChild(n);
   const s = document.createElement('small'); s.textContent = tr(RAREZA_AR[x.it.r]) + ' · ' + tr(arCat(x.cat).corto); d.appendChild(s);
   const e = document.createElement('i'); e.textContent = x.nuevo ? tr('¡NUEVO!') : tr('Repetido: +{n} Gotas', { n: x.devuelve }); d.appendChild(e);
-  if (x.nuevo && !arCat(x.cat).conjuntos) {
+  if (x.nuevo && arCat(x.cat).sala) {      // un mueble o un escenario: a tu sala (escenario.js)
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq'; b.textContent = tr('A MI ESCENARIO');
+    b.onclick = () => { play('select'); clearInterval(_gachaReloj); if (x.cat === 'escenarios') { SAVE.escenario = Object.assign({}, SAVE.escenario || {}, { id: x.it.id }); guardaPartida(); abreEscenario(); } else abreEscenario(x.it.id); };
+    d.appendChild(b);
+  } else if (x.nuevo && !arCat(x.cat).conjuntos) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq'; b.textContent = tr('Ponérmelo');
     b.onclick = () => { armarioEstado().puesto[x.cat] = x.it.id; guardaPartida(); play('crown'); b.disabled = true; b.textContent = tr('Puesto'); };
     d.appendChild(b);

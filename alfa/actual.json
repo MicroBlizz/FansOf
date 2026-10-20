@@ -1,8 +1,8 @@
 {
- "build": 318,
- "hash": "542e0c1",
- "fecha": "2026-10-20T19:25:43Z",
- "mensaje": "Anuncios de prueba: miniatura de otro de nuestros juegos con enlace a su ficha en la biblioteca",
+ "build": 319,
+ "hash": "e0366a3",
+ "fecha": "2026-10-20T19:28:45Z",
+ "mensaje": "Junta main",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

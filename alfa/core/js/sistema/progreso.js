@@ -14,14 +14,17 @@ const ECON = Object.assign({
   xpNeed:   [0, 50, 100, 175, 300, 500, 800, 1300, 2000, 3200],                  // XP para pasar del nivel i al i+1
   goldCost: [0, 50, 100, 200, 400, 750, 1500, 3000, 6000, 12000],                // oro para pasar del nivel i al i+1
   xpPerPlay: 10, winXpMult: 1.3,                                                 // XP por cada carta jugada; +30 % si ganas
-  camp: { first: [100, 10], replay: 30, stars3: [50, 10], boss: [300, 50], lose: 10 },  // [oro, gemas]
+  camp: { first: [100, 5], replay: 30, stars3: [50, 5], boss: [300, 25], lose: 10 },  // [oro, gemas]
   pull: 50,                                                                      // gemas por tirada
   odds: { basic: 30, common: 25, rare: 30, epic: 12, legendary: 3 },            // probabilidades del gashapón (%) · v0.9.63: el 55 % de antes se reparte entre Común y Poco común
   pityEpic: 10, pityLeg: 50,                                                     // garantía: épica o mejor cada 10, legendaria a las 50 (un juego puede cambiar la de habilidades y objetos con pityLegObj)
   // legSegura: false (en AJUSTES.econ) = la épica asegurada de cada 10 tiradas nunca es legendaria; sin ponerlo, a veces sí (por defecto)
   start: { gold: 150, gems: 100 },
   scrap: { basic: 15, common: 25, rare: 60, epic: 150, legendary: 400 },      // oro al despedir una copia (x1 Básica, x1,5 Normal, x2 Buena, x3 Excelente, x5 Perfecta)
-  reroll: { basic: 150, common: 250, rare: 500, epic: 1000, legendary: 2000 }, // oro por volver a tirar los números de una copia
+  reroll: { basic: 150, common: 250, rare: 500, epic: 1000, legendary: 2000 }, // oro por volver a tirar los números de una copia (precio de salida)
+  rerollSube: 0.10, rerollTope: 2,                                 // cada evaluación de la misma copia sube el precio un 10 % (lineal), hasta el doble; un anuncio lo devuelve al de salida (ADS.slots.reroll)
+  dupGold: 0,                                                      // gashapón de cartas: una repetida sin estrellas que subir da oro (lo pone cada juego)
+  logrosGemas: 1,                                                  // las gemas de cada logro se multiplican por esto (un juego pone 1/3 para que den un tercio)
   pityQ: 10,                                                       // garantía: calidad Director (excelente) o mejor como mucho cada 10 tiradas
 }, AJUSTES.econ);
 

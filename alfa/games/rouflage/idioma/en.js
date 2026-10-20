@@ -601,6 +601,7 @@ IDIOMA.add({
   "nivel {n}": "level {n}",
   "¡Pase: nivel {n}!": "Pass: level {n}!",
   "{n} Acciones": "{n} Shares",
+  "{n} Acciones (premium)": "{n} Shares (premium)",
   "Te faltan gotas: juega partidas y recoge el premio diario": "Not enough paint drops: play matches and claim the daily reward",
   "No tienes bastantes Acciones": "Not enough Shares",
   "¡{n} es tuyo!": "{n} is yours!",

@@ -125,6 +125,7 @@ IDIOMA.add({
   "VER EN COLECCIÓN": "SEE IN COLLECTION",
   "SEGUIR": "CONTINUE",
   "Recompensa: %#1 de oro en Becario, %#2 en Ejecutivo o %#3 de oro y %#4 gemas en CEO si ganas (%#5 si pierdes), y experiencia para tus cartas.": "Reward: %1 gold on Intern, %2 on Executive or %3 gold and %4 gems on CEO if you win (%5 if you lose), and experience for your cards.",
+  "Recompensa: %#1 de oro en Becario, %#2 en Ejecutivo o %#3 en CEO si ganas (%#4 si pierdes), y experiencia para tus cartas.": "Reward: %1 gold on Intern, %2 on Executive or %3 on CEO if you win (%4 if you lose), and experience for your cards.",
   "MODO CEO": "CEO MODE",
   "La CPU juega %#1 niveles por encima de tu media y antes de cada partida gira la ruleta de Microblizz: un castigo para ti y una ventaja para la CPU.": "The CPU plays %1 levels above your average, and before every match the Microblizz wheel spins: a punishment for you and an advantage for the CPU.",
   "TU CASTIGO EN ESTA PARTIDA": "YOUR PUNISHMENT THIS MATCH",

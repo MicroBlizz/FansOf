@@ -2,7 +2,8 @@
 // - GOTAS de pintura (gratis): el premio diario (diario.js) y cada partida: 10 (+5 si ganas) contra bots y el doble en línea, con un tope al día.
 // - PASE DE TEMPORADA: experiencia por partida (100, +50 si ganas, ×1,5 en línea); cada 1000 es un nivel, hasta el 40 (unas 8 partidas por
 //   nivel). Al subir, las cosas del armario marcadas «Pase gratis · nv N» son tuyas; las «Pase premium · nv N», si tienes el premium
-//   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles.
+//   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles, y el premium devuelve sus 600 Acciones repartidas en
+//   sus niveles (purpPremium): quien lo completa tiene el siguiente pagado, como en Rumble (PLAN-MONEDAS.md, el pase en bucle).
 // - ACCIONES: la moneda de la tienda del armario (cosméticos y pase premium). Se canjean por Gotas en la TIENDA (tienda.js), se compran por euros (de momento de prueba, sin cobrar) y salen también del pase gratis.
 //   El flujo: se juega, se ganan Gotas, las Gotas se cambian por Acciones y las Acciones compran cosméticos y el pase premium.
 // En el armario, lo que se compra con Gotas o Acciones lleva un botón COMPRAR. Todo se guarda en la partida: SAVE.gotas, SAVE.acciones,
@@ -10,7 +11,8 @@
 'use strict';
 
 const ECO = { gotas: 10, gotasGanar: 5, linea: 2, topeDia: 150, xp: 100, xpGanar: 50, xpLinea: 1.5, xpNivel: 1000, niveles: 40, premium: 600,
-  purpGratis: { 5: 50, 10: 50, 15: 50, 20: 50, 30: 50, 40: 50 } };
+  purpGratis: { 5: 50, 10: 50, 15: 50, 20: 50, 30: 50, 40: 50 },
+  purpPremium: { 4: 50, 8: 50, 12: 50, 16: 50, 20: 50, 24: 50, 28: 50, 32: 50, 36: 100, 40: 100 } };   // 600 en total: lo que cuesta el premium
 
 function ecoEstado() {
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
@@ -37,6 +39,7 @@ function paseReparte() {
     const k = cat + ':' + it.id; if (!a.tengo.includes(k)) { a.tengo.push(k); nuevo.push(tr(it.n)); }
   }
   for (const n in ECO.purpGratis) if (+n <= nv && !p.purp.includes(+n)) { p.purp.push(+n); SAVE.acciones += ECO.purpGratis[n]; nuevo.push(tr('{n} Acciones', { n: ECO.purpGratis[n] })); }
+  if (p.premium) { p.purpP = p.purpP || []; for (const n in ECO.purpPremium) if (+n <= nv && !p.purpP.includes(+n)) { p.purpP.push(+n); SAVE.acciones += ECO.purpPremium[n]; nuevo.push(tr('{n} Acciones (premium)', { n: ECO.purpPremium[n] })); } }
   return nuevo;
 }
 

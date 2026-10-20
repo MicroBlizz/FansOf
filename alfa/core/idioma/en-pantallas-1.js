@@ -23,6 +23,7 @@ IDIOMA.add({
   "%1 días": "%1 days",
   "%1 misiones grandes cada semana. Cada una da %2 de oro, %3 gemas y %4 puntos de pase. Se renuevan en %5.": "%1 big missions every week. Each gives %2 gold, %3 gems and %4 pass points. They refresh in %5.",
   "%1 misiones nuevas cada día. Cada una da %2 de oro, %3 gemas y %4 puntos de pase. Se renuevan en %5.": "%1 new missions every day. Each gives %2 gold, %3 gems and %4 pass points. They refresh in %5.",
+  "%1 misiones nuevas cada día. Cada una da %2 de oro y %3 puntos de pase. Se renuevan en %4.": "%1 new missions every day. Each gives %2 gold and %3 pass points. They refresh in %4.",
   "+ 13  pase": "+ 13  pass",
   "+%1 gemas por %2 logros": "+%1 gems for %2 achievements",
   "+%1 gemas por «%2»": "+%1 gems for «%2»",

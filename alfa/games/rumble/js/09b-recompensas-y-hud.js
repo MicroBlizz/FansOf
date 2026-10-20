@@ -11,7 +11,7 @@ function grantRewards() {
   }
   if (G.mode === 'quick') R.gold = win ? ECON.quick[G.diff] : ECON.quick.lose;
   if (G.mode === 'quick' && G.diff === 'ceo' && win) {   // v0.9.71 · v0.9.112: y sus logros (CEO, sin perder torres, con «Torres de cartón»)
-    R.gems += ECON.quickCeoGems; stat('ceowin', 1);
+    stat('ceowin', 1);   // octubre de 2026: el premio del CEO va todo en oro (ECON.quick.ceo)
     if (S.e.crowns === 0) stat('ceoflaw', 1);
     if (G.mod && G.mod.deb && G.mod.deb.id === 'carton') stat('ceocarton', 1);
   }

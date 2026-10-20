@@ -14,18 +14,19 @@ const AJUSTES = {
   id: 'td',
   nombre: 'Fans of TD',
   // lo máximo que el servidor deja ganar por motivo (suma a los de core/js/sistema/economia.js); ver PLAN-CUENTAS.md, 15.13
-  topes: { recompensa: { vez: { gold: 5000, gems: 200 }, dia: { gold: 300000, gems: 5000 }, calcula: ['camp', 'otro'] } },   // en campaña el servidor calcula el premio; en VS cuenta la xp del pase
+  topes: { recompensa: { vez: { gold: 5000, gems: 100 }, dia: { gold: 300000, gems: 1000 }, calcula: ['camp', 'otro'] } },   // en campaña el servidor calcula el premio; en VS cuenta la xp del pase
   servidor: { gachapon: true, economia: true },   // lo que ya hace el servidor cuando hay cuenta: el gashapón, despedir, volver a tirar los números y subir de nivel
   // las dos monedas (PLAN-MONEDAS.md, core/js/sistema/monedas.js): oro = la ganada (paga el gashapón), gemas = la comprada (pase, cosméticos y ventajas; con dinero real o cambiando mucho oro).
   // Mismo ratio que Rumble (1 gema «vale» 10 de oro: la tirada pasa de 50 gemas a 500 de oro); la fila `monedas` de flags (juego 'td') lo ajusta sin publicar.
-  monedas: { ratio: 10, cambio: 20 },   // cambiar oro por gemas cuesta 20 de oro por gema
+  monedas: { ratio: 15, cambio: 40, pasePct: { pase: 49 } },   // la tirada cuesta 750 de oro; cambiar oro por gemas, 40 de oro por gema; pasePct: qué % de lo convertido (oro y tiradas de la pista de pago) se da en gemas, para que la pista devuelva justo el precio del pase (493 de 500). La fila `monedas` de flags lo afina sin publicar
   campRegla: 'todos',   // un mundo se abre cuando se han pasado todos los niveles del anterior (en Rumble, el último)
   guardado: 'fortd-save',   // la partida guardada de este juego: cada juego tiene la suya, con su oro, sus gemas y su inventario
   // lo que cambia respecto a la economía común (core/js/meta.js: ECON). Lo que no salga aquí vale lo mismo que en el Rumble.
   econ: {
     xpPerPlay: 4, xpCap: 60,                                 // XP por cada torre que pones o unidad que envías, hasta 60 por carta y partida
     vs: { facil: 40, normal: 60, dificil: 90, lose: 10 },    // oro por partida en modo VS
-    mission: [50, 10],                                       // 0.13.1: oro y gemas de cada misión diaria (como el Rumble; sin esto no se abrían las Misiones)
+    logrosGemas: 1 / 3,                                      // octubre de 2026: los logros dan un tercio de las gemas de antes
+    mission: [50, 0],                                       // 0.13.1: oro y gemas de cada misión diaria (como el Rumble; sin esto no se abrían las Misiones)
   },
   facetas: { T: { nombre: 'TORRE', con: 'la TORRE', cls: 'ft' }, U: { nombre: 'UNIDAD', con: 'la UNIDAD', cls: 'fu' } },
   verFacetas: false,        // no se enseñan en los menús: los textos salen seguidos, como en el Rumble

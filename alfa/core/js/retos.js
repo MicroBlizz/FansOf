@@ -22,7 +22,7 @@
    MISIONES (cuatro diarias y cuatro semanales, las mismas para todo el mundo cada día)
    ========================================================= */
 const MISSIONS = RETOS.diarias, WEEKLY = RETOS.semanales, FIJAS = RETOS.fijas || [], FIJAS_W = RETOS.fijasSemana || [], DAILY_N = RETOS.diariasN || 4, WEEKLY_N = RETOS.semanalesN || 4;
-const ECON_W = { gold: 300, gems: 40 };   // lo que da cada misión semanal
+const ECON_W = { gold: 300, gems: 10 };   // lo que da cada misión semanal
 function weekStr() { const d = new Date(), back = (d.getDay() + 6) % 7, m = new Date(d.getFullYear(), d.getMonth(), d.getDate() - back); return `${m.getFullYear()}-${m.getMonth() + 1}-${m.getDate()}`; }
 const seedOf = str => { let h = 7; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
 const mDef = (m, weekly) => (weekly ? [...FIJAS_W, ...WEEKLY] : [...FIJAS, ...MISSIONS]).find(x => x.id === m.id);
@@ -71,11 +71,11 @@ function buildMissions() {
   achScan(); const nA = achReady(); $('[data-mt="a"]').textContent = nA ? `Logros (${nA})` : 'Logros';
   $('#ach-bar').hidden = missionTab !== 'a';
   if (missionTab === 'a') { buildAchs(); return; }
-  $('#mission-sub').textContent = W ? `${WEEKLY_N} misiones grandes cada semana. Cada una da ${ECON_W.gold} de oro, ${ECON_W.gems} gemas y ${PASS.xpWeekly} puntos de pase. Se renuevan en ${untilStr(true)}.` : `${DAILY_N} misiones nuevas cada día. Cada una da ${ECON.mission[0]} de oro, ${ECON.mission[1]} gemas y ${PASS.xpDaily} puntos de pase. Se renuevan en ${untilStr(false)}.`;
+  $('#mission-sub').textContent = W ? `${WEEKLY_N} misiones grandes cada semana. Cada una da ${ECON_W.gold} de oro, ${ECON_W.gems} gemas y ${PASS.xpWeekly} puntos de pase. Se renuevan en ${untilStr(true)}.` : ECON.mission[1] > 0 ? `${DAILY_N} misiones nuevas cada día. Cada una da ${ECON.mission[0]} de oro, ${ECON.mission[1]} gemas y ${PASS.xpDaily} puntos de pase. Se renuevan en ${untilStr(false)}.` : `${DAILY_N} misiones nuevas cada día. Cada una da ${ECON.mission[0]} de oro y ${PASS.xpDaily} puntos de pase. Se renuevan en ${untilStr(false)}.`;
   const rw = W ? [ECON_W.gold, ECON_W.gems, PASS.xpWeekly] : [ECON.mission[0], ECON.mission[1], PASS.xpDaily];
   $('#mission-list').innerHTML = L.map((m, i) => {
     const M = mDef(m, W), done = m.prog >= M.goal, RR = M.r || rw;
-    return `<div class="mission${m.claimed ? ' done' : ''}${mFija(m, W) ? ' fija' : ''}"><div>${M.tit ? `<b>${M.tit}</b><span class="ach-txt">${mText(m, M)}</span>` : `<b>${mText(m, M)}</b>`}<div class="xpbar"><i style="width:${(m.prog / M.goal) * 100}%"></i><span>${fmt(m.prog)} / ${fmt(M.goal)}</span></div></div><button class="btn-up" data-claim="${i}" ${done && !m.claimed ? '' : 'disabled'}>${m.claimed ? 'HECHA' : 'COBRAR'}<small>${COIN_SVG}${RR[0]} ${GEM_SVG}${RR[1]}</small><small>+${RR[2]} pase</small></button></div>`;
+    return `<div class="mission${m.claimed ? ' done' : ''}${mFija(m, W) ? ' fija' : ''}"><div>${M.tit ? `<b>${M.tit}</b><span class="ach-txt">${mText(m, M)}</span>` : `<b>${mText(m, M)}</b>`}<div class="xpbar"><i style="width:${(m.prog / M.goal) * 100}%"></i><span>${fmt(m.prog)} / ${fmt(M.goal)}</span></div></div><button class="btn-up" data-claim="${i}" ${done && !m.claimed ? '' : 'disabled'}>${m.claimed ? 'HECHA' : 'COBRAR'}<small>${COIN_SVG}${RR[0]}${RR[1] > 0 ? ` ${GEM_SVG}${RR[1]}` : ''}</small><small>+${RR[2]} pase</small></button></div>`;
   }).join('');
   if (!W && RETOS.trasMisiones) RETOS.trasMisiones(L);
   if (W && RETOS.trasSemanales) RETOS.trasSemanales(L);
@@ -101,7 +101,7 @@ const ACHF = [];
 // id, categoría, de dónde sale el progreso (una estadística o una función), metas, gemas de cada meta,
 // nombre (o uno por nivel), texto de la meta, broma y pista (logros secretos)
 function fam(id, cat, src, goals, gems, name, txt, joke, hint) {
-  const f = { id, cat, goals, gems, txt, joke, hint };
+  const f = { id, cat, goals, gems: gems.map(g => Math.max(1, Math.round(g * (ECON.logrosGemas == null ? 1 : ECON.logrosGemas)))), txt, joke, hint };   // ECON.logrosGemas (ajustes.js): la fracción que dan de verdad
   if (typeof src === 'function') f.prog = src; else f.ev = src;
   if (Array.isArray(name)) f.names = name; else f.name = name;
   ACHF.push(f); return f;

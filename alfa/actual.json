@@ -1,8 +1,8 @@
 {
- "build": 319,
- "hash": "e0366a3",
- "fecha": "2026-10-20T19:28:45Z",
- "mensaje": "Junta main",
+ "build": 320,
+ "hash": "9c1c140",
+ "fecha": "2026-10-20T19:31:12Z",
+ "mensaje": "Anuncios: imagen promocional de 11 juegos (biblioteca/anuncios/<juego>.jpg, 1280x720) con su script promo.py y la tipografía Luckiest Guy",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

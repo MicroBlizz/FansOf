@@ -54,7 +54,7 @@ function actualiza(rdt) {
   // inercia: acelera y frena con holgura (más rápido al frenar que al arrancar, para que siga siendo preciso); muelle de inclinación que oscila al parar
   const ka = 1 - Math.exp(-(mx || my ? 9 : 6.5) * dt); P.vx += (mx * P.vel - P.vx) * ka; P.vy += (my * P.vel - P.vy) * ka;
   P.ang = P.ang || 0; P.angv = P.angv || 0; P.empuje = P.empuje || 0;
-  P.angv += ((P.vy / P.vel) * 0.2 - P.ang) * 80 * dt - P.angv * 11 * dt; P.ang += P.angv * dt;
+  P.angv += ((P.vy / P.vel) * 0.1 - P.ang) * 80 * dt - P.angv * 19 * dt; P.ang += P.angv * dt;
   P.empuje += (Math.max(0, P.vx / P.vel) - P.empuje) * (1 - Math.exp(-8 * dt));
   P.x = clamp(P.x + P.vx * dt, 50, W - 60); P.y = clamp(P.y + P.vy * dt, 30, H - 30);
   if (P.inv > 0) P.inv -= dt;

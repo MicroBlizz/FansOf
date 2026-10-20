@@ -42,15 +42,15 @@ function dibujaEscena() {
     if (e.hp <= 0 && e.tipo !== 'boss') continue;
     if (e.tipo === 'rock') {
       const im = img('enemigos/' + e.sp + '.png'); dibujaSpr(im, e.x, e.y, e.r * 2.7, false, e.flash, e.rot);
-      if (e.fuego) { c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x + e.r * 0.5, e.y, e.r * 2.4, '#ff7a2a', 0.5); c.restore(); }
+      if (e.fuego) { c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x + e.r * 0.5, e.y, e.r * 2.4, '#ff7a2a', 0.22); c.restore(); }
       continue;
     }
     const im = spriteE(e.fac, e.d.spr), ent = e.tipo === 'boss' && e.estado === 'entra' ? 1 + Math.max(0, e.x - (W - 200)) / 700 : 1;
     if (e.tipo === 'boss' && e.hp <= 0) { dibujaSpr(im, e.x + rnd(-3, 3), e.y + rnd(-3, 3), e.d.tam, true, 0.1); continue; }
     const jx = e.heat > 0 ? rnd(-3, 3) : 0, jy = e.heat > 0 ? rnd(-3, 3) : 0;
     dibujaSpr(im, e.x + jx, e.y + jy, e.d.tam * ent, true, e.heat > 0 ? Math.max(e.flash, 0.05) : e.flash);
-    if (e.heat > 0) { c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x, e.y, e.d.tam * 0.5, e.heatCol, Math.min(0.75, e.heat * 3)); brillo(e.x - e.r * 0.4, e.y, e.r * 1.3, '#ffffff', Math.min(0.5, e.heat * 2)); c.restore(); }
-    c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x - e.r * 0.3, e.y, e.r * 1.6, FACS[e.fac].col, 0.16 + 0.06 * Math.sin(S.t * 5 + e.fase)); if (e.tipo === 'boss') brillo(e.x + e.d.tam * 0.38, e.y, e.d.tam * 0.25, '#ff9a4a', 0.4 + 0.1 * Math.sin(S.t * 9)); c.restore();
+    if (e.heat > 0) { c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x, e.y, e.d.tam * 0.5, e.heatCol, Math.min(0.32, e.heat * 1.4)); brillo(e.x - e.r * 0.4, e.y, e.r * 1.3, '#ffffff', Math.min(0.18, e.heat * 0.8)); c.restore(); }
+    c.save(); c.globalCompositeOperation = 'lighter'; brillo(e.x - e.r * 0.3, e.y, e.r * 1.6, FACS[e.fac].col, 0.045 + 0.015 * Math.sin(S.t * 5 + e.fase)); if (e.tipo === 'boss') brillo(e.x + e.d.tam * 0.38, e.y, e.d.tam * 0.25, '#ff9a4a', 0.16 + 0.04 * Math.sin(S.t * 9)); c.restore();
     if (e.d.cap === 'mitad' && !e.roto) { c.save(); c.strokeStyle = 'rgba(255,208,60,0.6)'; c.lineWidth = 3; c.setLineDash([8, 6]); c.lineDashOffset = -S.t * 20; c.beginPath(); c.arc(e.x, e.y, e.r + 8, 0, 6.28); c.stroke(); c.restore(); }
     if (e.tipo === 'cap' || e.tipo === 'sep' || e.tipo === 'nido' || e.tipo === 'acor') barra(e.x - 50, e.y + e.d.tam * 0.36, 100, e.hp / e.hpMax, e.roto ? '#7fe8ff' : '#ffd03c');
   }
@@ -141,7 +141,7 @@ function dibujaJugador() {
   const g = c.createLinearGradient(tx, 0, tx - 46 * f, 0); g.addColorStop(0, 'rgba(255,230,160,0.95)'); g.addColorStop(0.4, 'rgba(255,140,40,0.7)'); g.addColorStop(1, 'rgba(255,60,0,0)'); c.fillStyle = g; c.beginPath(); c.moveTo(tx, P.y - 7); c.lineTo(tx - 46 * f, P.y); c.lineTo(tx, P.y + 7); c.fill();
   brillo(tx - 6, P.y, 34, '#ffa040', 0.65 * f); brillo(P.x, P.y, nv.lw * 0.9, col, 0.14); c.restore();
   c.imageSmoothingQuality = 'high';
-  const fl = Math.sin(S.t * 2.3) * 1.1, ang = P.ang || 0, est = 1 + Math.abs(P.vx || 0) / P.vel * 0.03 - Math.abs(P.vy || 0) / P.vel * 0.02;   // flota, se inclina y se estira con la velocidad
+  const fl = Math.sin(S.t * 2.3) * 0.5, ang = P.ang || 0, est = 1 + Math.abs(P.vx || 0) / P.vel * 0.012 - Math.abs(P.vy || 0) / P.vel * 0.008;   // flota, se inclina y se estira con la velocidad
   c.save(); c.translate(P.x, P.y + fl); c.rotate(ang); c.scale(est, 1 / est); c.drawImage(nv, -nv.lw / 2, -nv.lh / 2, nv.lw, nv.lh); c.restore();
   if (S.escudo > 0) burbuja(P.x, P.y, nv.lw * 0.62, S.escudo > 1);
   if (S.rayo && S.rayo.t < S.rayo.carga) { c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#fff'; c.globalAlpha = 0.7; c.lineWidth = 3; c.beginPath(); c.arc(P.x + 14, P.y, 40 + (1 - S.rayo.t / S.rayo.carga) * 40, 0, 6.28); c.stroke(); c.restore(); }

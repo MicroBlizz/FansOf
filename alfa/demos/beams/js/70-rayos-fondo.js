@@ -7,7 +7,7 @@
 function dibujaSpr(im, x, y, tam, vuelta, flash, rot) {
   if (!listo(im)) { c.fillStyle = '#c7c'; c.beginPath(); c.arc(x, y, tam / 3, 0, 6.28); c.fill(); return; }
   c.save(); c.translate(x, y); if (rot) c.rotate(rot); if (vuelta) c.scale(-1, 1); c.imageSmoothingQuality = 'high'; c.drawImage(im, -tam / 2, -tam / 2, tam, tam);
-  if (flash) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.85, flash * 10); c.drawImage(im, -tam / 2, -tam / 2, tam, tam); }
+  if (flash) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = Math.min(0.4, flash * 5); c.drawImage(im, -tam / 2, -tam / 2, tam, tam); }
   c.restore();
 }
 // ---------- RAYOS: halo, plasma que corre, anillos de energía, relámpagos, bordes con aberración de color y destello de lente ----------

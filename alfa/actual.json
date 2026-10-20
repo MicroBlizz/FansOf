@@ -1,8 +1,8 @@
 {
- "build": 310,
- "hash": "c0ed51d",
- "fecha": "2026-10-20T18:23:23Z",
- "mensaje": "Fans of Jump: icono nuevo (JUMP con arcoíris, CrazyBunny en su tronco y mariposas); la APK lleva el icono de su juego",
+ "build": 311,
+ "hash": "609cd11",
+ "fecha": "2026-10-20T18:36:14Z",
+ "mensaje": "Rouflage: OPCIONES con gráficos (auto/alta/normal/baja), ahorro de batería, vibración, botones grandes y mano izquierda; botón COMPARTIR MI ESCONDITE con la foto de tu escondite al acabar",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

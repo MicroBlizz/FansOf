@@ -142,3 +142,26 @@
   #taller[data-menu="c"] #t-calco { order: 4; align-self: flex-start; width: 64px; }
 }
 #taller .t-arriba .t-ayuda { display: none; }
+
+/* OPCIONES del móvil (opciones.js): filas con su nombre a la izquierda y un selector de botones pegados a la derecha */
+.op-bloque { display: grid; gap: 7px; padding: 10px 10px 9px; border-radius: 14px; background: rgba(8, 11, 20, 0.45); }
+.op-fila { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.op-fila[hidden] { display: none; }
+.op-fila > span { font-weight: 800; font-size: 14px; color: var(--ink-dim); text-align: left; }
+.op-fila.op-ancha { flex-direction: column; align-items: stretch; gap: 5px; }
+.op-seg { display: flex; border: 3px solid var(--outline); border-radius: 12px; overflow: hidden; box-shadow: 0 3px 0 var(--outline); background: #1c2436; flex: none; }
+.op-ancha .op-seg { width: 100%; }
+.op-fila:not(.op-ancha) .op-seg { width: 156px; }
+.op-seg button { flex: 1 1 0; min-width: 0; min-height: 34px; padding: 6px 4px 3px; white-space: nowrap; border: 0; border-left: 2px solid var(--outline); background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); color: var(--ink-dim); font-family: var(--font-display); font-size: 13.5px; letter-spacing: 0.03em; cursor: pointer; }
+.op-seg button:first-child { border-left: 0; }
+.op-seg button.activo { background: linear-gradient(160deg, #ffe07a, #d9a21f); color: var(--outline); }
+.op-nota { margin: -1px 2px 3px; font-size: 12.5px; font-weight: 700; color: var(--ink-dim); text-align: left; line-height: 1.25; }
+
+/* BOTONES GRANDES: los de la partida, un 22 % más (zoom también agranda sus distancias, así siguen sin pisarse) */
+body.op-grandes #acciones, body.op-grandes .accion.retiro, body.op-grandes .accion.poder, body.op-grandes .accion.gesto, body.op-grandes .accion.chivato { zoom: 1.22; }
+body.op-grandes #esquina .redondo { zoom: 1.15; }
+/* MANO IZQUIERDA: los botones de acción pasan a la izquierda (el más importante, PINTAR, junto al borde) y la pista, a la derecha */
+body.op-zurdo #acciones { right: auto; left: calc(var(--izq) + 12px); flex-direction: row-reverse; }
+body.op-zurdo .accion.retiro, body.op-zurdo .accion.poder, body.op-zurdo .accion.gesto, body.op-zurdo .accion.chivato { right: auto; left: calc(var(--izq) + 12px); }
+body.op-zurdo #hud:has(#b-poder:not([hidden]), #b-chivato:not([hidden])) #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; }
+@media (orientation: landscape) and (max-height: 520px) { body.op-zurdo #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; } }

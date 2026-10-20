@@ -248,6 +248,7 @@ function muestraFin() {
   E('fin-ranking').innerHTML = pintaRankingFin(r.ranking);
   E('b-cambia').textContent = J.modo === 'camaleon' ? tr('Ahora de cazador') : tr('Ahora de camaleón');
   E('b-cambia').hidden = J.pvp; E('b-otra').textContent = J.pvp ? tr('OTRA PARTIDA') : tr('OTRA VEZ');      // por internet los papeles los reparte el servidor al azar
+  E('b-foto').hidden = !fotoHay();      // compartir la foto de tu escondite (foto.js)
   pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
 }
@@ -323,6 +324,7 @@ function preparaInterfaz() {
     play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); irTitulo();
   };      // por internet, salir en plena partida es rendirse
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
+  E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
   E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-gesto').onclick = accionGesto; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;

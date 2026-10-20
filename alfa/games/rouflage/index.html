@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.36-a310.c0ed51d"></script>
+<script src="../../core/js/nucleo.js?v=0.2.36-a311.609cd11"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
@@ -169,13 +169,21 @@
   </div>
 </div>
 
-<!-- opciones (desde el título): sonido, idioma y cuenta -->
+<!-- opciones (desde el título): sonido, gráficos y controles del móvil (opciones.js), idioma y cuenta -->
 <div class="pantalla" id="p-opciones" hidden>
   <div class="caja">
     <h2 class="ol" data-tr>OPCIONES</h2>
     <div class="columna">
       <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><span data-tr>Efectos</span><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
       <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><span data-tr>Música</span><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
+      <div class="op-bloque">
+        <div class="op-fila op-ancha"><span data-tr>Gráficos</span><div class="op-seg" id="op-graficos"><button type="button" data-v="auto" data-tr>AUTO</button><button type="button" data-v="alta" data-tr>ALTA</button><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="baja" data-tr>BAJA</button></div></div>
+        <p class="op-nota" id="op-graficos-nota"></p>
+        <div class="op-fila"><span data-tr>Ahorro de batería</span><div class="op-seg" id="op-bateria"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila" id="op-fila-vibracion"><span data-tr>Vibración</span><div class="op-seg" id="op-vibracion"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
+        <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+      </div>
       <button type="button" class="boton gris" id="b-viejo"></button>
       <button type="button" class="boton gris" id="b-idioma">English</button>
       <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
@@ -221,6 +229,7 @@
     <div class="columna">
       <div class="ranking"><h3 class="ol" data-tr>CLASIFICACIÓN</h3><ol id="fin-ranking"></ol></div>
       <div class="filas" id="fin-filas"></div>
+      <button type="button" class="boton foto" id="b-foto" hidden><b data-tr>COMPARTIR MI ESCONDITE</b><small data-tr>Reta a tus amigos: ¿te encuentran?</small></button>
       <div class="fila-botones">
         <button type="button" class="boton" id="b-otra" data-tr>OTRA VEZ</button>
         <button type="button" class="boton gris" id="b-cambia"></button>
@@ -447,7 +456,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -505,7 +514,7 @@ NUCLEO.juego({
     'js/modos-bote.js',
     'js/modos-ida.js',
     'js/partida.js',
-    'js/interfaz.js',
+    'js/interfaz.js', 'js/foto.js',
     'js/galeria.js',
     'js/elige-mapa.js',
     'js/pvp-red.js',
@@ -537,6 +546,7 @@ NUCLEO.juego({
     'js/habitacion.js',
     'js/armario-partida.js',
     'js/mascotas.js',
+    'js/opciones.js',
     'js/principal.js',
   ],
 });

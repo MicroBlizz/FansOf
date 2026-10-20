@@ -7,7 +7,7 @@ function limpiaPartida() {
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };
-  practicaCierra(); modoPon(null); modoLimpia(); J.fantasma = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
+  practicaCierra(); modoPon(null); modoLimpia(); J.fantasma = null; FOTO.cv = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
   TALLER.herr = 'pincel'; TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
@@ -74,6 +74,7 @@ function cambiaFase(f) {
   } else if (f === 'caza') {
     J.reloj = J.pvp ? REGLAS.cazaPvp : J.modo === 'camaleon' ? REGLAS.caza : REGLAS.cazaCazador;
     J.coladosIni = J.camaleones.length;      // para «más de la mitad» (cazaHecha, modos.js)
+    if (J.modo === 'camaleon') fotoHaz(J.yo);      // la foto de tu escondite, para compartirla al acabar (foto.js)
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
@@ -202,6 +203,7 @@ function termina(victoria, motivo, fin) {
   J.fase = 'fin'; J.tFase = 0; M.tmT = 1;
   if (TALLER.abierto) cierraTaller();
   const yo = J.yo, k = J.cuenta, quedan = escondidos();
+  if (J.modo === 'camaleon' && yo && !yo.fuera) fotoHaz(yo);      // si sigues escondido, la foto de cómo acabaste (antes de que se vea a todos)
   for (const e of quedan) { descongela(e); if (e !== yo) fxTexto(e.x, e.y - 74, e.nombre, '#fff6ea', 12); }   // al acabar, todos los escondidos se dejan ver
   let titulo, sub, filas, puntos, estrellas;
   if (J.modo === 'camaleon') {

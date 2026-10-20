@@ -24,6 +24,7 @@ const SONIDO = {
   meta: () => [784, 988, 1175].forEach((f, i) => tone(f, f, 0.16, 'triangle', v(0.09), i * 0.09)),
   boton: () => tone(700, 900, 0.05, 'triangle', v(0.06)),
   compra: () => [880, 1320].forEach((f, i) => tone(f, f, 0.08, 'square', v(0.06), i * 0.07)),
+  clonk: () => { tone(880, 440, 0.12, 'square', v(0.07)); tone(1320, 660, 0.18, 'triangle', v(0.06), 0.03); },
   glu: () => { const f = azar(420, 620); tone(f, f * 1.8, 0.06, 'sine', v(0.05)); },
   dron: () => { tone(140, 180, 0.5, 'sawtooth', v(0.03)); tone(150, 120, 0.5, 'sawtooth', v(0.03), 0.5); },
   chof: () => { noise(0.5, v(0.25), 600); tone(200, 50, 0.4, 'sine', v(0.15)); },

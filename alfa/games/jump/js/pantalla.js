@@ -41,7 +41,7 @@ function pintaConejo() {
     spriteConejo(cuadroConejo(), c.x, y - h, TAM_CONEJO, c.ang, sx, sy);
     // los amigos rescatados, montados a la espalda: se balancean más cuanto más arriba
     const base = altoModelo(0.95, TAM_CONEJO) * sy, paso = altoModelo(1.15, TAM_JINETE);
-    J.cuestas.slice(-3).forEach((id, i) => {   // a la espalda caben 3; el resto se cuentan en el marcador
+    if (!MUERTE.activa) J.cuestas.slice(-3).forEach((id, i) => {   // a la espalda caben 3 (al caer salen despedidos: muerte.js)
       const mece = Math.sin(t * 3 + i) * (i + 1) * 0.5 - (s ? Math.sin(c.ang) * (i + 1) * 1.2 : 0);
       const dx = Math.sin(c.ang) * (base + i * paso), dy = Math.cos(c.ang) * (base + i * paso);
       sprite(id + '_espalda', c.x + dx + mece, y - h - dy + 6, TAM_JINETE * (sx + 1) / 2, c.ang + mece * 0.03);
@@ -50,7 +50,9 @@ function pintaConejo() {
   if (J.modo === 'fin' || J.modo === 'casi') {
     // se hunde chapoteando (muerte.js): solo se ve lo que queda por encima del agua
     const h = hundeConejo();
+    spriteConejo.sinOro = MUERTE.activa;
     G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(c.x, y + h.baja * 46); G.rotate(h.giro); G.translate(-c.x, -y); dibuja(); G.restore();
+    spriteConejo.sinOro = false;
     return;
   }
   dibuja();
@@ -149,8 +151,8 @@ const CONSEJOS = [
 ];
 function pintaFinal() {
   const J = JUEGO, W = PAN.W, H = PAN.H, F_ = J.fin;
-  if (J.tFin < 1.5) return;   // antes, la escena de la caída (muerte.js)
-  const e = Math.min(1, (J.tFin - 1.5) / 0.25), sube = (1 - e) * 30;
+  if (J.tFin < 2.6) return;   // antes, la escena de la caída (muerte.js), con la capa ya a flote
+  const e = Math.min(1, (J.tFin - 2.6) / 0.25), sube = (1 - e) * 30;
   G.fillStyle = `rgba(40,25,60,${0.42 * e})`; G.fillRect(0, 0, W, H);
   G.globalAlpha = e;
   const res = J.resumenMisiones || [], cw = W - 26, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;

@@ -1,8 +1,8 @@
 {
- "build": 322,
- "hash": "9f06145",
- "fecha": "2026-10-20T19:36:25Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.25, decks 0.2.7, nova 0.3.12, ratkov 0.2.15, rouflage 0.2.37, rumble 0.9.144, survivors 0.1.57, tacticas 0.1.41, td 0.13.73",
+ "build": 323,
+ "hash": "4d2c677",
+ "fecha": "2026-10-20T19:43:31Z",
+ "mensaje": "Portada: ?v= en sus .css y .js al publicar (release y alfa)",
  "juegos": {
   "crush": "0.1.25",
   "dark": "0.2.7",

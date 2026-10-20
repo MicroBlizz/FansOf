@@ -151,5 +151,6 @@ IDIOMA.add({
  "Reto del día": "Daily challenge",
  "hoy": "today",
  "¡Resbala!": "Slippery!",
- "¡CLONK!": "CLONK!"
+ "¡CLONK!": "CLONK!",
+ "¡Plaf!": "Splash!"
 });

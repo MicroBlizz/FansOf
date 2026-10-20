@@ -50,7 +50,7 @@ function spriteTeñido(nombre, color, x, y, tam, ang = 0, sx = 1, sy = 1) {
 // CrazyBunny por capas: el cuerpo (con el color del pelaje), la capa (con el suyo) y el oro (corona, ribete y broche)
 function spriteConejo(cuadro, x, y, tam, ang = 0, sx = 1, sy = 1, pelo = GUARDA.pelaje, capa = GUARDA.capa) {
   spriteTeñido(cuadro + '_cuerpo', pelo, x, y, tam, ang, sx, sy);
-  spriteTeñido(cuadro + '_capa', capa || '#ff7a1a', x, y, tam, ang, sx, sy);
+  if (!spriteConejo.sinCapa) spriteTeñido(cuadro + '_capa', capa || '#ff7a1a', x, y, tam, ang, sx, sy);   // sinCapa: se le ha escurrido al caer
   if (!spriteConejo.sinOro) sprite(cuadro + '_oro', x, y, tam, ang, sx, sy);   // sinOro: se le ha caído la corona (muerte.js)
 }
 // el dibujo entero, encajado y centrado en un recuadro (para fichas y tarjetas): cabe siempre, sin salirse ni quedarse caído

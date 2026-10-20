@@ -48,11 +48,13 @@ function pintaConejo() {
     });
   };
   if (J.modo === 'fin' || J.modo === 'casi') {
-    // se hunde chapoteando (muerte.js): solo se ve lo que queda por encima del agua
+    // en el agua (muerte.js): se zambulle, asoma en su flotador y se mece; sin corona (le ha salido volando) y, al poco, sin capa
     const h = hundeConejo();
-    spriteConejo.sinOro = MUERTE.activa;
+    spriteConejo.sinOro = MUERTE.activa; spriteConejo.sinCapa = MUERTE.activa && MUERTE.t > 0.5;
+    flotadorConejo(false);
     G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(c.x, y + h.baja * 46); G.rotate(h.giro); G.translate(-c.x, -y); dibuja(); G.restore();
-    spriteConejo.sinOro = false;
+    flotadorConejo(true);
+    spriteConejo.sinOro = spriteConejo.sinCapa = false;
     return;
   }
   dibuja();

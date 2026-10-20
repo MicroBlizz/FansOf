@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.39
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the shared economy is tuned and inventory saving is reworked).",
+  "Microblizz ha ordenado la caja de fichas y Phony se ha quedado con la que sobraba.": "Microblizz has sorted the box of pieces and Phony kept the spare one.",
   // 0.1.38
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the two-currency shop is refined and failures are logged better).",
   "Microblizz ha revisado los tableros por dentro y Phony ha movido una ficha cuando nadie miraba.": "Microblizz has checked the boards inside and Phony moved a piece when nobody was looking.",

@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.55
+  "<b>ECONOMÍA MÁS AJUSTADA</b>: la tirada del gashapón cuesta 750 de oro y el cambio de oro a gemas es de 40 de oro por gema. Las misiones diarias ya no dan gemas (sí oro y pase) y las semanales dan 10; los logros dan un tercio de las gemas y la campaña la mitad; ganar al CEO da 250 de oro y una carta repetida con 5 estrellas, 100 de oro. La pista de pago del pase devuelve justo lo que cuesta, y la evaluación de desempeño sube un 10 % por evaluación de la misma copia (hasta el doble). Las horas extra y el regalo diario siguen igual.": "<b>TIGHTER ECONOMY</b>: a gacha pull costs 750 gold and the gold-to-gems exchange is 40 gold per gem. Daily missions no longer give gems (they still give gold and pass) and weekly ones give 10; achievements give a third of the gems and the campaign half; beating the CEO gives 250 gold and a duplicate card with 5 stars gives 100 gold. The paid pass track returns exactly what it costs, and the performance review goes up 10 % per review of the same copy (up to double). Overtime and the daily gift stay the same.",
+  "Microblizz ha ajustado la paga de los supervivientes y Phony sigue cobrando en calcetines.": "Microblizz has tuned the survivors' pay and Phony still gets paid in socks.",
   // 0.1.54
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the two-currency shop is refined and failures are logged better).",
   "Microblizz ha repasado las cuentas de la tienda y Phony ha jurado que su calcetín de monedas sigue intacto.": "Microblizz has gone over the shop books and Phony has sworn his coin sock is still intact.",

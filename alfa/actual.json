@@ -1,20 +1,20 @@
 {
- "build": 286,
- "hash": "8571821",
- "fecha": "2026-10-20T14:16:45Z",
- "mensaje": "Rouflage: la pista premium del pase da 300 Acciones (con las 300 de la gratis, el precio del siguiente)",
+ "build": 287,
+ "hash": "c5acaae",
+ "fecha": "2026-10-20T14:31:46Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.23, decks 0.2.5, nova 0.3.10, ratkov 0.2.13, rouflage 0.2.35, rumble 0.9.142, survivors 0.1.55, tacticas 0.1.39, td 0.13.71",
  "juegos": {
-  "crush": "0.1.22",
+  "crush": "0.1.23",
   "dark": "0.2.7",
-  "decks": "0.2.4",
+  "decks": "0.2.5",
   "island": "0.3.5",
-  "nova": "0.3.9",
-  "ratkov": "0.2.12",
-  "rouflage": "0.2.34",
-  "rumble": "0.9.141",
+  "nova": "0.3.10",
+  "ratkov": "0.2.13",
+  "rouflage": "0.2.35",
+  "rumble": "0.9.142",
   "skate": "0.1.27",
-  "survivors": "0.1.54",
-  "tacticas": "0.1.38",
-  "td": "0.13.70"
+  "survivors": "0.1.55",
+  "tacticas": "0.1.39",
+  "td": "0.13.71"
  }
 }

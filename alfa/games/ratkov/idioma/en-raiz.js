@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.13
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the shared economy is tuned and inventory saving is reworked).",
+  "Microblizz ha puesto orden en el almacén y Phony dice que las ratas lo han desordenado a propósito.": "Microblizz has tidied the warehouse and Phony says the rats messed it up on purpose.",
   // 0.2.12
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the two-currency shop is refined and failures are logged better).",
   "Microblizz ha engrasado la maquinaria y Phony dice que las ratas han dejado de pedir propina.": "Microblizz has oiled the machinery and Phony says the rats have stopped asking for tips.",

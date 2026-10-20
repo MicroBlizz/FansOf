@@ -1,6 +1,7 @@
 // Fans of Rouflage · MAPA 3, EL PARKING: el sótano -2 de Microblizz. Asfalto casi liso (FÁCIL), coches aparcados para esconderse detrás,
 // columnas numeradas, la rampa de rayas y la zona de aceite (DIFÍCILES). Los becarios esperan en la caseta del vigilante, tras la barrera.
-// Gracia propia (EVENTOS.faros, en dibujo-parking.js): la alarma: un coche con alguien moviéndose a su lado enciende los faros de golpe y alumbra un pasillo entero.
+// Gracia propia (EVENTOS.turbo, en dibujo-roaster.js): el Microblizz Roaster, el coche del jefe, suelta cada rato chorros de aire que empujan a quien pase.
+// Además (`siempre: ['faros']`, en dibujo-parking.js) la alarma: un coche con alguien moviéndose a su lado enciende los faros de golpe y alumbra un pasillo entero.
 'use strict';
 
 const PLANO_PARKING = `
@@ -41,7 +42,7 @@ defineMapa({
   musica: { taller: 'rfPkTaller', caza: 'rfPkCaza', recta: 'rfPkRecta' },      // sus temas (musica-mapas.js)
   muro: '#2b2d36', canto: '#595d6a',
   espera: 'V1', plaza: [600, 790],
-  evento: { tipo: 'faros' },
+  evento: { tipo: 'turbo' }, siempre: ['faros'],      // el turbo del coche del jefe y, además, la alarma de los coches
 
   salas: salasDePlano(PLANO_PARKING, {
     '.': { nombre: 'Parking', suelo: 'asfalto', pared: 'hormigonP' },
@@ -61,6 +62,8 @@ defineMapa({
     [[160, 470], [400, 470], [880, 470], [1120, 470], [1360, 470]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 2, arriba: true }));
     [[640, 720], [880, 720], [1360, 720], [160, 720]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 4 }));
     [[520, 1120], [1000, 1120], [1240, 1120], [1480, 1120]].forEach(([x, y], i) => pon('coche', x, y, { v: i + 1, arriba: true }));
+    // el coche del jefe, en su plaza grande (dibujo-roaster.js)
+    pon('roaster', 640, 470);
     // trastos
     pon('cono', 420, 330); pon('cono', 1300, 560); pon('cono', 740, 1000); pon('bidon', 1580, 120, { v: 2 }); pon('bidon', 1610, 150, { v: 0 });
     pon('extintor', 300, 96); pon('extintor', 1100, 96); pon('parquimetro', 700, 100); pon('carretilla', 1560, 980); pon('caja', 1600, 1120, { v: 1 });
@@ -81,7 +84,7 @@ defineMapa({
   pegatinas: [
     // las líneas de las plazas, debajo de cada coche, y flechas y rodadas por el asfalto
     [160, 220, 'plaza'], [400, 220, 'plaza'], [640, 220, 'plaza'], [880, 220, 'plaza'], [1120, 220, 'plaza'], [1360, 220, 'plaza'],
-    [160, 470, 'plaza'], [400, 470, 'plaza'], [640, 470, 'plaza'], [880, 470, 'plaza'], [1120, 470, 'plaza'], [1360, 470, 'plaza'],
+    [160, 470, 'plaza'], [400, 470, 'plaza'], [640, 470, 'plazaJefe'], [880, 470, 'plaza'], [1120, 470, 'plaza'], [1360, 470, 'plaza'],
     [640, 720, 'plaza'], [880, 720, 'plaza'], [1360, 720, 'plaza'], [160, 720, 'plaza'], [400, 720, 'plaza'], [1120, 720, 'plaza'],
     [520, 1120, 'plaza'], [1000, 1120, 'plaza'], [1240, 1120, 'plaza'], [1480, 1120, 'plaza'], [760, 1120, 'plaza'],
     [640, 580, 'flechaSuelo'], [1240, 300, 'flechaSuelo'], [880, 900, 'flechaSuelo'], [400, 900, 'flechaSuelo'],

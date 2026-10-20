@@ -7,6 +7,7 @@ const TUTO_TEXTOS = {
   'cam-senuelo': ['SEÑUELO: pinta garabatos en el suelo, lejos de ti, para que los becarios pierdan el tiempo mirándolos. Gasta tinta.', 8],
   'cam-caza': ['Quieto y callado. Cada cierto tiempo silbas sin querer. Si te ven, corre (el aguante dura unos segundos: parado se recupera) o lanza la granada de humo (una sola vez).', 10],
   'cam-grieta': ['La pintura se seca y se estropea: tu camuflaje baja poco a poco. Si te vas quedando corto, muévete y retoca (con cuidado).', 8],
+  'mapa-turbo': ['El coche del jefe sopla aire cada rato: cuando le parpadeen los faros, apártate de los escapes y de las rejillas de los lados. Si estás congelado, no te mueve.', 9],
   'caz-prep': ['Cazador: solo ves lo que alumbra tu linterna. Practica con los camaleones de prácticas antes de que empiece la caza.', 9],
   'caz-caza': ['Toca donde creas que hay un colado: acertar te devuelve la carta, fallar la gasta. Fíjate en las ondas de los silbidos.', 9],
 };

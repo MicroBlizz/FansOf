@@ -15,7 +15,9 @@ const RFS = (() => {
   const nube = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
   const sinFuncion = e => /Could not find|HTTP 404|PGRST202/i.test(String((e && e.message) || e));
   const clave = nombre => nombre + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-  const oculta = (o, k, v) => Object.defineProperty(o, k, { value: v, writable: true, enumerable: false, configurable: true });   // sigue ahí para el juego, pero no se guarda
+  // lo que manda el servidor se queda también en la partida guardada: la web publicada (más antigua) comparte esa partida con la alfa y, si le
+  // faltaba la colección (armario.tengo), se quedaba pillada al empezar partida. Al entrar con cuenta, el servidor lo vuelve a poner igual
+  const oculta = (o, k, v) => { o[k] = v; };
   function leeCache() { try { return JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (_) { return null; } }
   function aplica(est) {
     if (!est) return;
@@ -49,12 +51,13 @@ const RFS = (() => {
     const cache = leeCache();
     try {
       let est = await Promise.race([CUENTA.rpc('rf_estado', {}), new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 6000))]);
-      if (!est) est = await CUENTA.rpc('rf_migrar', { p_save: SAVE });                  // primera vez de la cuenta: se pasa la partida local
-      else if (!SAVE.rfUnido) { SAVE.rfUnido = true; est = await CUENTA.rpc('rf_migrar', { p_save: { armario: { tengo: armarioEstado().tengo } } }) || est; }   // otro dispositivo: solo piezas
-      SAVE.rfUnido = true; activo = true; aplica(est); relojes(); vaciaCola();
+      const tarda = () => new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 8000));      // ninguna llamada del arranque espera para siempre
+      if (!est) est = await Promise.race([CUENTA.rpc('rf_migrar', { p_save: SAVE }), tarda()]);                  // primera vez de la cuenta: se pasa la partida local
+      else if (!SAVE.rfUnido) { SAVE.rfUnido = true; est = await Promise.race([CUENTA.rpc('rf_migrar', { p_save: { armario: { tengo: armarioEstado().tengo } } }), tarda()]) || est; }   // otro dispositivo: solo piezas
+      SAVE.rfUnido = true; activo = true; aplica(est); guardaPartida(); relojes(); vaciaCola();      // guardado al momento: la web publicada lee esta misma partida
     } catch (e) {
       if (sinFuncion(e)) return;                                                       // el servidor aún no lo tiene: sigue la partida local
-      if (cache) { activo = true; aplica(cache); }                                      // sin conexión: lo último que se supo
+      if (cache) { try { activo = true; aplica(cache); } catch (_) { activo = false; } }      // sin conexión: lo último que se supo (y si la copia está rota, la partida local)
     }
   }
   // lo que llevas puesto se sube un momento después de cambiarlo (guardaPartida avisa)

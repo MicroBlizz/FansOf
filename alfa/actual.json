@@ -1,8 +1,8 @@
 {
- "build": 291,
- "hash": "4dafe7e",
- "fecha": "2026-10-20T16:12:59Z",
- "mensaje": "Monedas: aviso recomendando cuenta (email o Google) antes de pagar con euros siendo invitado; Rouflage vuelve a guardar a los invitados en el servidor",
+ "build": 292,
+ "hash": "c8b35db",
+ "fecha": "2026-10-20T16:13:39Z",
+ "mensaje": "Rouflage: arreglo urgente de la alfa (tres puntos y partida que no empieza)",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

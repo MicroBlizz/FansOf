@@ -1,8 +1,8 @@
 {
- "build": 285,
- "hash": "a12abaa",
- "fecha": "2026-10-20T14:14:15Z",
- "mensaje": "Economía: menos gemas de logros, misiones y campaña; pase que devuelve su precio; tirada a 750; evaluación con +10 % y resets por anuncio",
+ "build": 286,
+ "hash": "8571821",
+ "fecha": "2026-10-20T14:16:45Z",
+ "mensaje": "Rouflage: la pista premium del pase da 300 Acciones (con las 300 de la gratis, el precio del siguiente)",
  "juegos": {
   "crush": "0.1.22",
   "dark": "0.2.7",

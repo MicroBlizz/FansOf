@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.40', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (un aviso más claro antes de comprar como invitado y el guardado en la nube más seguro)."], joke: ["Microblizz ha guardado las fichas con candado y Phony se ha quedado con la del rey en el bolsillo."] },
   { v: '0.1.39', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario)."], joke: ["Microblizz ha ordenado la caja de fichas y Phony se ha quedado con la que sobraba."] },
   { v: '0.1.38', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor)."], joke: ["Microblizz ha revisado los tableros por dentro y Phony ha movido una ficha cuando nadie miraba."] },
   { v: '0.1.37', real: ["<b>MEJORAS POR DENTRO</b>: ajustes en los sistemas comunes de la serie para la tienda de dos monedas. No notarás nada."], joke: ["Microblizz ha vuelto a contar las monedas de las tácticas. Phony dice que le sale una de más."] },

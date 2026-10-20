@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.143
+  "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
+  "Microblizz ha puesto una casilla de «estoy avisado» hasta en la máquina del café. Phony la marca dos veces por si acaso.": "Microblizz has put an \"I've been warned\" box even on the coffee machine. Phony ticks it twice just in case.",
   // 0.9.142
   "<b>AJUSTES DE ECONOMÍA</b>: hemos ajustado las recompensas y los precios de las tiendas para mantener una economía sana en el juego. No es definitivo: seguimos trabajando en ello.": "<b>ECONOMY ADJUSTMENTS</b>: we have adjusted rewards and shop prices to keep a healthy economy in the game. It is not final: we are still working on it.",
   "Microblizz ha subido la tirada a 750 y Phony ha propuesto pagar con cromos.": "Microblizz has raised the pull to 750 and Phony has proposed paying with trading cards.",

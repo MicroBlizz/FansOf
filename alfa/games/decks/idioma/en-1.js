@@ -1,6 +1,11 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.6
+  "<b>PALABRAS CLAVE Y GLOSARIO</b>: las palabras clave de las cartas (Débil, bloqueo, Despedida…) se pueden tocar y se explican en una burbuja, y la Biblioteca tiene una pestaña Glosario con todas.": "<b>KEYWORDS AND GLOSSARY</b>: card keywords (Weak, block, Fired…) can be tapped and are explained in a bubble, and the Library has a Glossary tab with all of them.",
+  "<b>LUPA</b>: mantén pulsada una carta de la mano para verla en grande; al arrastrarla se quita. En el móvil, la carta arrastrada flota encima del dedo y la mirilla ya no tapa su texto.": "<b>MAGNIFIER</b>: press and hold a card in your hand to see it big; it goes away when you drag it. On mobile, the dragged card floats above your finger and the crosshair no longer covers its text.",
+  "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
+  "Microblizz ha escrito un glosario de la oficina y Phony ha buscado «vacaciones»: no viene.": "Microblizz has written an office glossary and Phony looked up \"holidays\": it's not in there.",
   // 0.2.5
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the shared economy is tuned and inventory saving is reworked).",
   "Microblizz ha revisado el archivo de reuniones y Phony ha pedido que cuenten las que se salta.": "Microblizz has checked the meeting archive and Phony has asked that the ones he skips are counted.",

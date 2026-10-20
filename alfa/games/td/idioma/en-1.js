@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.72
+  "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
+  "Microblizz ha puesto una casilla de «estoy avisado» en cada torre. Phony pregunta si la de vigilancia cuenta doble.": "Microblizz has put an \"I've been warned\" box on every tower. Phony asks if the watchtower counts double.",
   // 0.13.71
   "<b>AJUSTES DE ECONOMÍA</b>: hemos ajustado las recompensas y los precios de las tiendas para mantener una economía sana en el juego. No es definitivo: seguimos trabajando en ello.": "<b>ECONOMY ADJUSTMENTS</b>: we have adjusted rewards and shop prices to keep a healthy economy in the game. It is not final: we are still working on it.",
   "Microblizz ha ajustado la paga de las torres y Phony ha pedido un adelanto de nómina.": "Microblizz has tuned the tower pay and Phony has asked for a payroll advance.",

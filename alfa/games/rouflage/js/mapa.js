@@ -14,7 +14,7 @@ function pintaMundo(c, R) {
   pintaMuro(c, R);
   for (const z of ZONAS) {
     if (z.px > R.x1 || z.px + z.pw < R.x0 || z.py > R.y1 || z.py + z.ph < R.y0) continue;
-    c.save(); c.beginPath(); c.rect(z.px, z.py, z.pw, z.ph); c.clip(); SUELOS[z.suelo](c, z, R); pintaLamparas(c, z); c.restore();
+    c.save(); c.beginPath(); c.rect(z.px, z.py, z.pw, z.ph); c.clip(); SUELOS[z.suelo](c, z, R); pintaPatron(c, z, R); pintaLamparas(c, z); c.restore();
   }
   PEGATINAS.forEach(([x, y, t], i) => { if (x > R.x0 - 40 && x < R.x1 + 40 && y > R.y0 - 40 && y < R.y1 + 40) pintaPegatina(c, x, y, t, i); });
   for (const m of MUEBLES) if (cruzan(m.dib, R)) sombraMueble(c, m);
@@ -23,6 +23,25 @@ function pintaMundo(c, R) {
   for (const k of CARTELES) if (k.x > R.x0 - 140 && k.x < R.x1 + 140 && k.y > R.y0 - 40 && k.y < R.y1 + 40) pintaCartel(c, k);
   pintaGrano(c, R);
   c.restore();
+}
+// LOS PATRONES: los suelos fáciles (pensados para el móvil) llevan además un patrón regular y suave de dos tonos (franjas de cortacésped,
+// losetas de moqueta, losas, baldosas): se copia con el cuadrado y un par de colores de la paleta, pero rellenarse con el cubo de un solo
+// color ya no basta. Va alineado a la cuadrícula del mundo (dos salas seguidas del mismo suelo casan). `f` es cuánto cambia el tono alterno:
+// más oscuro o, con `claro` (en los suelos oscuros, donde lo oscuro casi no se nota), más claro.
+const PATRONES = {      // los lados, más pequeños que un colado (48 × 60): siempre pisa los dos tonos
+  cesped: { tipo: 'franjas', lado: 24, f: 0.12 }, gravilla: { tipo: 'franjas', lado: 24, f: 0.12 }, alfombraRoja: { tipo: 'franjas', lado: 20, f: 0.12 },
+  moquetaBk: { tipo: 'losetas', lado: 30, f: 0.1 }, moquetaGris: { tipo: 'losetas', lado: 30, f: 0.1 }, moquetaHab: { tipo: 'losetas', lado: 24, f: 0.1 },
+  pasarela: { tipo: 'losetas', lado: 30, f: 0.1, claro: true }, acera: { tipo: 'losetas', lado: 30, f: 0.12 }, marmol: { tipo: 'losetas', lado: 30, f: 0.1 },
+};
+function pintaPatron(c, z, R) {
+  const P = PATRONES[z.suelo]; if (!P) return;
+  const T = P.lado, [i0, i1, j0, j1] = rango(z, R, T);
+  c.fillStyle = P.claro ? `rgba(255,255,255,${P.f})` : `rgba(32,16,44,${P.f})`; c.beginPath();
+  for (let j = j0; j < j1; j++) {
+    if (P.tipo === 'franjas') { if (j & 1) c.rect(i0 * T, j * T, (i1 - i0) * T, T); continue; }      // franjas: una de cada dos filas
+    for (let i = i0; i < i1; i++) if ((i + j) & 1) c.rect(i * T, j * T, T, T);      // losetas: al tresbolillo, como un damero
+  }
+  c.fill();
 }
 // EL GRANO Y LAS LÁMPARAS: ningún suelo ni pared es de un color plano del todo. Un grano fino (fibras de la moqueta, el poro del asfalto, el
 // césped) por encima de todo, y en cada sala las lámparas del techo: charcos de luz tenue y las esquinas algo más oscuras. Así rellenarse de

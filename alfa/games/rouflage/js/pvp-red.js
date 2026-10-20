@@ -119,7 +119,7 @@ const RFRED = (() => {
       const nombreDe = i => 'Pestaña ' + i.slice(0, 3).toUpperCase();
       let modoVisto = null, hasta = Date.now() + local.espera * 1000, libre = 0, empate = 0, ronda = 0, rondaHost = 0, votoHost = null;
       local.votar = v => { if (v && Date.now() < (votoHost ? votoHost.libre : libre)) return Promise.reject(new Error('voto_en_espera')); local.miVoto = v; paso(); return Promise.resolve(null); };
-      const empieza = m => { para(); aviso({ sala: m.sala, estado: 'jugando', orden: m.ids.indexOf(id), semilla: m.semilla, n: m.ids.length, max: local.total, ncaz: local.ncaz, faltan: 0, modo: m.modo || null,
+      const empieza = m => { para(); aviso({ sala: m.sala, estado: 'jugando', orden: m.ids.indexOf(id), semilla: m.semilla, n: m.ids.length, max: m.max || local.total, ncaz: m.ncaz || local.ncaz, faltan: 0, modo: m.modo || null,
         jugadores: m.ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), animal: m.animales[i], rol: m.roles[i], yo: x === id })) }); };
       bc.onmessage = e => {
         const m = e.data; if (!activo || !m) return;
@@ -152,9 +152,10 @@ const RFRED = (() => {
         if (ids[0] === id && toca) {
           // los papeles al azar: entre 1 y ncaz cazadores humanos, y al menos 1 camaleón humano
           const ord = ids.slice(0, local.total).map((x, i) => [Math.random(), i]).sort((a, b) => a[0] - b[0]).map(x => x[1]), nn = ord.length;
-          const min = Math.max(1, nn - (local.total - local.ncaz)), max = Math.min(local.ncaz, nn - 1), cazs = nn === 1 ? (Math.random() < 0.5 ? 1 : 0) : min + Math.floor(Math.random() * (max - min + 1));      // solo contra la máquina: a cara o cruz
+          const q = codigo ? salaCuantos(local.modoSala, nn) : { ncaz: local.ncaz, total: local.total };      // con amigos, lo que eligió el anfitrión
+          const min = Math.max(1, nn - (q.total - q.ncaz)), max = Math.min(q.ncaz, nn - 1), cazs = nn === 1 ? (Math.random() < 0.5 ? 1 : 0) : min + Math.floor(Math.random() * (max - min + 1));      // solo contra la máquina: a cara o cruz
           const roles = ids.slice(0, local.total).map(() => 'camaleon'); ord.slice(0, cazs).forEach(i => { roles[i] = 'cazador'; });
-          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, local.total), roles, animales: ids.slice(0, local.total).map(() => ['bunny', 'squirrel', 'fox', 'meercat', 'coon'][(Math.random() * 5) | 0]), semilla: (Math.random() * 2147483647) | 0, modo: local.modoSala };
+          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, local.total), roles, animales: ids.slice(0, local.total).map(() => ['bunny', 'squirrel', 'fox', 'meercat', 'coon'][(Math.random() * 5) | 0]), semilla: (Math.random() * 2147483647) | 0, modo: local.modoSala, ncaz: q.ncaz, max: q.total };
           bc.postMessage(m); empieza(m);
         }
       };

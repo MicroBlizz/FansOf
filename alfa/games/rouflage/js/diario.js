@@ -96,7 +96,7 @@ function diarioPinta() {
     const b = document.createElement('b'); b.textContent = cosa ? tr(cosa.it.n) + (p.cosas.length > 1 ? ' +' + (p.cosas.length - 1) : '') : String(p.gotas); cel.appendChild(b);
     caja.appendChild(cel);
   }
-  const bt = E('b-diario-recoger'); bt.disabled = !puede; bt.textContent = puede ? tr('¡RECOGER!') : tr('Vuelve mañana');
+  const bt = E('b-diario-recoger'); bt.disabled = !puede; bt.textContent = puede ? tr('¡RECOGER!') : tr('VUELVE MAÑANA');
 }
 function abreDiario() { diarioEstado(); DIARIO.hoyVisto = true; diarioPinta(); pantalla('p-diario'); play('select'); }
 // el botón del título, con su punto cuando hay premio esperando

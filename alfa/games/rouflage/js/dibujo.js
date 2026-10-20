@@ -103,7 +103,18 @@ function pintaMarcas(c, t) {
       c.globalAlpha = 1;
     }
   }
-  pintaFantasma(c, t);
+  pintaFantasma(c, t); pintaSustos(c, t);
+  // hasta su primer disparo, delante del cazador late un aro con «TOCA AQUÍ»: aquí no hay botón de matar (como en otros juegos), se toca donde está el colado
+  if (yo && yo.clase === 'cazador' && !yo.fuera && yo.balas > 0 && (J.fase === 'caza' || (J.fase === 'prep' && PRACTICA.activa)) && !(SAVE.tuto && SAVE.tuto.disparo)) {
+    // en las prácticas, encima del camaleón de prácticas más cercano (se ve claro: «toco aquí y lo despido»); en la caza, delante de la linterna
+    let px = yo.x + Math.cos(dirLuz(yo)) * 110, py = yo.y - 6 + Math.sin(dirLuz(yo)) * 110, md = 1e9;
+    if (J.fase === 'prep') for (const m of PRACTICA.munecos) { const d = m.fuera ? 1e9 : lejos(yo.x, yo.y, m.x, m.y); if (d < md) { md = d; px = m.x; py = m.y - 26; } }
+    const k = (t * 1.3) % 1;
+    c.save(); c.lineWidth = 3; c.strokeStyle = '#ffcb3d';
+    for (const q of [k, (k + 0.5) % 1]) { c.globalAlpha = 1 - q; c.beginPath(); c.arc(px, py, 10 + q * 26, 0, TAU); c.stroke(); }
+    c.globalAlpha = 1; c.beginPath(); c.arc(px, py, 6, 0, TAU); c.fillStyle = '#ffcb3d'; c.fill(); c.restore();
+    rotulo(c, ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('TOCA AQUÍ') : tr('HAZ CLIC AQUÍ'), px, py - 42, 13, '#ffcb3d', OL, LETRA_UI);
+  }
   pintaGestos(c);      // los bocadillos de los gestos del armario (armario-partida.js)
   if (yo && yo.clase === 'cazador' && J.fase === 'caza') {
     // la ayuda del cazador: SOLO al camaleón que se pasa de listo (100 % de camuflaje, imposible de ver) y está cerca y en la luz le brilla el contorno; al 99 % ya no. Para el resto están los señuelos

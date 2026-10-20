@@ -10,7 +10,8 @@
 'use strict';
 
 const RFS = (() => {
-  const CACHE = 'rouflage-cuenta-cache', CAMPOS = ['gotas', 'acciones', 'pase', 'eco', 'diario', 'tienda', 'gacha'];
+  const CACHE = AJUSTES.guardado.replace('-partida', '-cuenta-cache'),      // rouflage-cuenta-cache (o …-alfa: la alfa guarda aparte, ajustes.js)
+    CAMPOS = ['gotas', 'acciones', 'pase', 'eco', 'diario', 'tienda', 'gacha'];
   let activo = false, desfase = 0, ultimoPuesto = '', temporizador = 0, enviando = false, vaciandoCola = false;
   const nube = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
   const sinFuncion = e => /Could not find|HTTP 404|PGRST202/i.test(String((e && e.message) || e));

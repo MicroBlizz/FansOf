@@ -30,11 +30,11 @@ function accionPoder() {
   const h = p.alcance ? poderObjetivo(p) : null;
   if (p.alcance && !h) { play('deny'); pista(tr('Acércate más a un becario'), 1.5); return; }
   f.enfria = PODER.cada; f.usado = (f.usado || 0) + 1;
-  poderAplica(k, h, f.x, f.y, true);
+  poderAplica(k, h, f.x, f.y, true, J.yo);
   if (J.pvp) rfpManda({ t: 'fp', p: k, s: h ? h.slot : -1, x: Math.round(f.x), y: Math.round(f.y) });
 }
-// el efecto en sí (aquí y en los demás navegadores): `mio` si lo ha lanzado este fantasma
-function poderAplica(k, h, x, y, mio) {
+// el efecto en sí (aquí y en los demás navegadores): `mio` si lo ha lanzado este fantasma; `quien`, de quién es el fantasma (para el susto)
+function poderAplica(k, h, x, y, mio, quien) {
   if (k === 'silbido') {
     ondaSilbido(x, y, null);
     const antes = REGLAS.oido; if (extraOn('apagon')) REGLAS.oido = antes * 2;      // Apagón total: el silbido falso se oye el doble
@@ -47,14 +47,16 @@ function poderAplica(k, h, x, y, mio) {
   if (k === 'apagon') { h.apagada = Math.max(h.apagada, PODERES.apagon.dura); play('apagon'); if (h.jugador) avisa(tr('¡Un fantasma te ha apagado la linterna!'), 'malo'); }
   else if (k === 'mano') { h.manoFria = Math.max(h.manoFria, PODERES.mano.dura); play('manoFria'); if (h.jugador) avisa(tr('¡Una mano fría! Te tiembla la linterna'), 'malo'); }
   fxSalpica(h.x, h.y - 30, '#cfe9ff', 8); fxTexto(h.x, h.y - 70, tr('¡Brrr!'), '#cfe9ff');
+  if (!mio) fantasmaSusto(x, y, quien);      // los demás lo ven un instante (espectador.js); el que lo lanza ya se ve
 }
 // PvP: un fantasma ha usado su poder. Cada navegador se lo aplica a su becario (el suyo, o los de la máquina si es el anfitrión)
 function rfpPoderRecibido(m) {
   if (J.fase !== 'caza' || !(m.p in PODERES)) return;
-  const sl = RFP.slots[m.s], h = sl && sl.ente;
+  const sl = RFP.slots[m.s], h = sl && sl.ente, de = RFP.slots[m.de], quien = de && de.ente;
   if (m.p === 'silbido') { poderAplica('silbido', null, m.x, m.y, false); return; }
-  if (!h || h.clase !== 'cazador' || !(h.jugador || (h.bot && RFP.soyHost) || h.remoto)) return;
-  poderAplica(m.p, h, m.x, m.y, false);
+  if (!h || h.clase !== 'cazador') return;
+  if (!(h.jugador || (h.bot && RFP.soyHost) || h.remoto)) { fantasmaSusto(m.x, m.y, quien); return; }      // no es mío ni de la máquina: solo el susto
+  poderAplica(m.p, h, m.x, m.y, false, quien);
 }
 // hacia dónde apunta de verdad la linterna de un becario: con la mano fría, tiembla
 const dirLuz = e => e.manoFria > 0 ? e.dir + Math.sin(J.t * 41) * 0.38 + Math.sin(J.t * 23) * 0.2 : e.dir;

@@ -107,6 +107,7 @@ function controlaJugador(dt) {
 
 // el jugador dispara (de cazador) a un punto del mundo
 function disparaJugador(x, y, margen) {
+  if (J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'caza') && !(SAVE.tuto && SAVE.tuto.disparo)) { SAVE.tuto = SAVE.tuto || {}; SAVE.tuto.disparo = 1; guardaPartida(); }      // ya sabe disparar: fuera el aro de «TOCA AQUÍ»
   if (J.fase === 'prep') { practicaDispara(x, y, margen); return; }      // en la sala de espera: las prácticas
   const yo = J.yo; if (J.fase !== 'caza' || !yo || yo.clase !== 'cazador' || yo.balas <= 0) return;
   if (yo.enfria > 0) { play('deny'); return; }

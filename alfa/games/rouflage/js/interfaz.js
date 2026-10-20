@@ -42,7 +42,8 @@ function avisa(texto, tipo = 'aviso') {
   const movil = matchMedia('(orientation: portrait) and (max-width: 600px)').matches;
   while (caja.children.length > (movil ? 2 : 4)) caja.firstChild.remove();
   colocaAvisos();
-  setTimeout(() => p.classList.add('adios'), movil ? 2800 : 4200); setTimeout(() => p.remove(), movil ? 3300 : 4800);
+  const dura = Math.max(movil ? 2800 : 4200, tiempoLectura(texto) * 1000);      // los largos, lo que se tarda en leerlos
+  setTimeout(() => p.classList.add('adios'), dura); setTimeout(() => p.remove(), dura + 500);
 }
 // dónde acaba por abajo lo de arriba del marcador (reloj, CARTAS / COLADOS y la tira de retratos)
 function finMarcador() {
@@ -66,14 +67,15 @@ function cartel(titulo, sub = '', numero = false) {
 }
 // una frase de ayuda sobre los botones: la que toca en cada momento o, durante unos segundos, una concreta
 const PISTA = { texto: '', hasta: 0, vista: '' };
-function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t + segundos; }
+const tiempoLectura = texto => 1.2 + String(texto).length / 14;      // segundos para leer un texto con calma (unas 14 letras por segundo)
+function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t + Math.max(segundos, tiempoLectura(texto)); }
 function pistaDeAhora() {
   if (bocadilloActivo()) return '';      // con un bocadillo del tutorial en pantalla, la franja de pistas se calla
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
   if (espectando()) {      // la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
     if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
-    if (J.t - yo.tPistaFant > 9) return '';
+    if (J.t - yo.tPistaFant > 15) return '';
     if (balizaPuedo()) return tr('Fantasma: ves todo con luz normal. AVISAR (Espacio o Q) deja una marca para tus compañeros: «aquí hay un colado»'); const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
@@ -93,7 +95,7 @@ function pistaDeAhora() {
     if (PRACTICA.extra >= REGLAS.balasExtra) return tr('¡Cartas al máximo! Sigue practicando hasta la caza');
     return tr('Cada {n} despidos, una carta extra ({c} de {m} ganadas)', { n: PRACTICA_POR_CARTA, c: PRACTICA.extra, m: REGLAS.balasExtra });
   }
-  else if (J.fase === 'caza' && J.tFase < 9) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
+  else if (J.fase === 'caza' && (J.tFase < 9 || !(SAVE.tuto && SAVE.tuto.disparo))) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
   return '';
 }
 

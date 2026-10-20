@@ -21,10 +21,13 @@ const REGLAS = {
   alcance: 250,          // hasta dónde llega un disparo
   aguante: 7, descanso: 2.5, cansado: 0.62,   // el AGUANTE de los colados: segundos de carrera seguida, segundos parado para recuperarlo entero, y a qué parte de su velocidad van agotados (por debajo del becario)
   pintaRapida: 45,       // la pintura rápida (te pinta como un bot): cada cuánto se puede usar
+  rapidaMeta: 65,        // …y el camuflaje más alto que deja (si sale mejor, se repinta con la mano más suelta: pintaRapida en pintura-bot.js). Pintar a mano debe salir mejor
+  humoMeta: 68,          // tras la granada, al pararte te camuflas solo hasta este camuflaje (autoCamuflaje en granada.js)
+  botPintaMin: 55, botPintaMax: 90, botPintaMana: 1,   // entre qué camuflajes se pintan los colados bot, y cuánto cuenta su maña (0: al azar; 1: solo la maña): los torpes se encuentran, los mañosos cuestan
   luzPaso: 0.35,         // la parte de la luz que atraviesa los muebles (lo que no es pared): sombras suaves
   luzLargo: 250, luzAngulo: 0.62, luzCerca: 58,   // el abanico de la linterna (medio ángulo, en radianes) y el círculo de alrededor
   cazaPvp: 150,          // lo que dura la caza en el PvP (ahí los dos bandos juegan a la vez)
-  vistaCerca: 0.32, vistaLejos: 0.7,   // lo que tienes que «cantar» (de 0 a 1) para que un becario bot te distinga pegado a ti y al final de su luz
+  vistaCerca: 0.42, vistaLejos: 0.85,   // lo que tienes que «cantar» (de 0 a 1) para que un becario bot te distinga pegado a ti y al final de su luz
   oido: 520,             // desde dónde oye un becario bot un silbido
 };
 

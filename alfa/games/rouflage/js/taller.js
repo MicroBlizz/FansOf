@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · EL TALLER: el modo de pintarse. La cámara se acerca a tu galleta y se pinta con el dedo (o el ratón):
 // tocar el suelo coge su color (cuentagotas) y arrastrar sobre el cuerpo lo pinta, con cuatro gordos de pincel. También hay figuras
 // (línea, cuadrado, círculo: se arrastra de un punto a otro), una paleta con los colores del mapa y la postura en la que te
-// congelas (como en el juego original). Con el CALCO puesto la piel se ve medio transparente para seguir el dibujo del suelo. Mientras tanto, el fondo se vuelve a pintar ampliado (dos capas: lo de detrás
+// congelas. Con el CALCO puesto la piel se ve medio transparente para seguir el dibujo del suelo. Mientras tanto, el fondo se vuelve a pintar ampliado (dos capas: lo de detrás
 // y los muebles de delante) para que se vea nítido de cerca.
 'use strict';
 
@@ -145,7 +145,7 @@ function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.c
 function tallerRapida() {
   const yo = J.yo; if (!yo || !TALLER.abierto) return;
   if (yo.rapida > 0) { play('deny'); return; }
-  guardaPaso(yo); pintaBot(yo, 0.8); yo.pintado = true; yo.rapida = REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
+  guardaPaso(yo); pintaRapida(yo); yo.pintado = true; yo.rapida = REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
 }
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }
 function tallerCalco() { TALLER.calco = !TALLER.calco; play('select'); refrescaTaller(); }

@@ -218,9 +218,10 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .papeles.mini .papel b { font-size: clamp(17px, 4.6vw, 22px); margin-top: 0; }
 .papeles.mini .papel span { font-size: 12px; }
 .papeles.mini .papel.elegido { opacity: 1; box-shadow: 0 6px 0 var(--outline), 0 0 0 3px var(--gold); }
-.boton.grande { font-size: 24px; padding: 12px 28px 8px; width: 100%; max-width: 320px; }
-.mapas { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
-.mapa { display: grid; justify-items: center; gap: 1px; min-width: 150px; padding: 5px 14px 7px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: #22304a; color: var(--ink); opacity: 0.78; text-align: center; }
+.boton.grande { font-size: 24px; padding: 12px 28px 8px; width: 100%; }      /* todo el ancho de su caja, como VOLVER (antes 320 px y pegado a la izquierda) */
+.mapas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }      /* dos columnas iguales (antes cada botón medía su texto y salía en escalera) */
+.mapas .mapa:last-child:nth-child(odd) { grid-column: 1 / -1; }      /* si sobra uno, ocupa la fila entera */
+.mapa { display: grid; justify-items: center; align-content: center; gap: 1px; min-width: 0; padding: 5px 14px 7px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: #22304a; color: var(--ink); opacity: 0.78; text-align: center; }
 .mapa b { font-family: var(--font-display); font-weight: 400; font-size: 17px; letter-spacing: 0.03em; }
 .mapa span { font-weight: 700; font-size: 11.5px; line-height: 1.15; color: var(--ink); opacity: 0.9; }
 .mapa.activo { opacity: 1; background: linear-gradient(160deg, #d9b94e, #8f6f1c); border-color: var(--outline); transform: translateY(1px); box-shadow: 0 3px 0 var(--outline), 0 0 0 3px rgba(242, 220, 90, 0.35); }
@@ -314,7 +315,7 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .diario-mes { margin: 12px 0 2px; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
 .diario-gotas { margin: 0 0 10px; font-weight: 800; }
 .diario-gotas b { color: var(--gold); font-size: 18px; }
-#b-diario-recoger:disabled { filter: grayscale(0.8); opacity: 0.7; }
+#b-diario-recoger:disabled { filter: none; opacity: 1; background: #2a3550; color: var(--ink-dim); }      /* ya recogido: oscuro y en mayúsculas (antes gris lavado y en minúsculas, parecía torcido) */
 #b-diario { position: relative; }
 #b-diario.aviso::after { content: ''; position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
 @keyframes diarioLate { 50% { transform: translateY(-3px); } }
@@ -344,5 +345,6 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 #b-perfil { background: linear-gradient(to bottom, #6aaeff, #2f6fd6); }
 #b-habitacion { background: linear-gradient(to bottom, #e3a86a, #a8662a); }
 #b-diario { background: linear-gradient(to bottom, #b4e86a, #5fa82a); }
+#b-gacha { background: linear-gradient(to bottom, #c99bff, #7a3fd6); }      /* su color, como los demás (antes gris oscuro) */
 #b-ayuda { background: linear-gradient(to bottom, #62d8ec, #2a9ac0); }
 #b-opciones { background: linear-gradient(to bottom, #9fb6d6, #56708f); }

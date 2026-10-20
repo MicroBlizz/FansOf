@@ -8,7 +8,8 @@ const nombrePieza = k => { const [c, i] = String(k).split(':'), it = arItem(c, i
 // el final de una partida: enseña lo que dará (con las mismas cuentas que el servidor) y lo manda; la cartera la pone la respuesta del servidor
 function economiaPartidaServidor(r) {
   if (!armarioVisible() || !J.yo) return;
-  const linea = !!J.pvp, e = SAVE.eco || {}, hoyGotas = e.dia === gachaMadrid().fecha ? e.gotasHoy || 0 : 0;
+  // ×2 solo en BUSCAR PARTIDA (las salas con amigos y contra bots se pueden llenar de bots)
+  const linea = J.pvp && !(RFP.info && RFP.info.privada), e = SAVE.eco || {}, hoyGotas = e.dia === gachaMadrid().fecha ? e.gotasHoy || 0 : 0;
   const quiere = (ECO.gotas + (r.victoria ? ECO.gotasGanar : 0)) * (linea ? ECO.linea : 1), gotas = Math.max(0, Math.min(quiere, ECO.topeDia - hoyGotas));
   const xp = Math.round((ECO.xp + (r.victoria ? ECO.xpGanar : 0)) * (linea ? ECO.xpLinea : 1)), nivel = Math.min(ECO.niveles, 1 + Math.floor((ecoEstado().xp + xp) / ECO.xpNivel));
   r.filas.push([tr('Gotas'), gotas ? '+' + gotas : tr('tope de hoy')]);

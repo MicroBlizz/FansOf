@@ -19,7 +19,7 @@ const CUENTA = (() => {
     let apagada = false; try { apagada = new URLSearchParams(location.search).get('nube') === '0'; } catch (e) { /* sin dirección */ }
     return arriba && !apagada && !!AJUSTES.id && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1');
   })();
-  const juego = AJUSTES.id;
+  const juego = AJUSTES.nube || AJUSTES.id;      // la partida de la nube: la del juego, o otra si el juego la separa (Rouflage en la alfa: AJUSTES.nube)
   const aparato = leer(APARATO, null) || (() => { const a = Math.random().toString(36).slice(2, 10); escribir(APARATO, a); return a; })();
   // version: la de la nube con la que coincide lo de aquí · pendiente: hay cambios aquí sin subir. Sin datos: pendiente si ya había partida.
   let meta = leer(META, null) || { version: 0, pendiente: (() => { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) { return false; } })() };

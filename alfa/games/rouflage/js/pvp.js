@@ -73,7 +73,7 @@ function rfpEmpieza(info, red, vuelta) {
   Object.assign(RFP, { activo: true, red, info, sala: info.sala, slots, yo: mio.s, host: 0, soyHost: false, mandoListo: false, rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0, modoMandado: false });
   rfpGuardaSala(info.sala);
   cargaMapa(mapaDeSala(info.modo) || mapaDeSemilla(info.semilla));      // el que eligió el anfitrión o, si no, el de la semilla: el mismo en todos los navegadores
-  modoPon(info.modo);      // el modo de la sala (modos.js); las públicas van en el normal
+  modoPon(info.privada ? info.modo : modoPublico(info.modo, info.semilla));      // el modo de la sala (modos.js): el del anfitrión con amigos; en BUSCAR PARTIDA, todo al azar
   eventosPrepara(info.semilla);                // y los eventos del mapa también
   J.pvp = true; J.modo = mio.clase; J.t = 0;
   let nc = 0, nh = 0;

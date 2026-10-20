@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.35-a299.0c5d450"></script>
+<script src="../../core/js/nucleo.js?v=0.2.35-a300.fd125af"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
 </head>
@@ -155,7 +155,7 @@
         <li data-tr-html>Toca <b>PINTAR</b>. Elige tu <b>postura</b>, toca el suelo para coger su color y píntate con el pincel, líneas, cuadrados o círculos. Con <b>Calco</b> ves el suelo a través de ti.</li>
         <li data-tr-html>Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.</li>
         <li data-tr-html>Aguanta hasta que acabe el turno. Cada cierto tiempo <b>silbarás</b> sin querer y los becarios irán a mirar. Si silbas tú antes (<b>SILBAR</b>), tu cuenta atrás vuelve a empezar: elige un momento sin becarios cerca.</li>
-        <li data-tr-html>Si te van a pillar, tienes <b>una granada cegadora</b> por partida: te vuelve invisible 15 segundos y deja a ciegas un rato a los becarios cercanos.</li>
+        <li data-tr-html>Si te van a pillar, tienes <b>una granada cegadora</b> por partida: te vuelve invisible 7 segundos y deja a ciegas un rato a los becarios cercanos.</li>
       </ol>
       <h3 class="ol azul"><i data-icono="diana"></i><span data-tr>De cazador</span></h3>
       <ol>
@@ -239,7 +239,7 @@
     <p class="aviso-pvp" id="pvp-pendiente" hidden></p>
     <p class="aviso-pvp" id="pvp-consejo" hidden></p>
     <div class="columna">
-      <button type="button" class="boton" id="b-pvp-buscar" data-tr>BUSCAR PARTIDA</button>
+      <button type="button" class="boton" id="b-pvp-buscar"><span id="b-pvp-buscar-t" data-tr>BUSCAR PARTIDA</span><small class="x2" data-tr>×2 recompensas</small></button>
       <button type="button" class="boton gris" id="b-pvp-amigos" data-tr>JUGAR CON AMIGOS</button>
       <button type="button" class="boton gris" id="b-pvp-bots" data-tr>JUGAR CONTRA BOTS</button>
       <button type="button" class="boton gris" id="b-pvp-cuenta" data-tr hidden>VINCULAR CUENTA</button>
@@ -286,7 +286,7 @@
       <p class="nota-sala" id="voto-nota"></p>
     </div>
     <ul class="sala" id="busca-lista"></ul>
-    <p class="nota-sala" data-tr>Los huecos hasta 10 los llena la máquina. Los papeles se reparten al azar al empezar.</p>
+    <p class="nota-sala" data-tr>Los huecos que falten los llena la máquina. Los papeles se reparten al azar al empezar.</p>
     <div class="fila-botones">
       <button type="button" class="boton gris" id="b-busca-cancelar" data-tr>CANCELAR</button>
       <button type="button" class="boton" id="b-busca-empezar" data-tr hidden>EMPEZAR</button>
@@ -351,7 +351,7 @@
 
 <!-- el gachapón de armario (gacha-pantalla.js) -->
 <div class="pantalla" id="p-gacha" hidden>
-  <div class="caja gacha-caja">
+  <div class="caja gacha-caja" id="scr-gacha">
     <div class="gacha-cab">
       <button type="button" class="gacha-atras" id="b-gacha-volver" aria-label="Volver"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <h2 class="ol" data-tr>GACHAPÓN</h2>
@@ -365,18 +365,18 @@
       <p data-tr>Las cápsulas solo se pagan con Gotas. Las Acciones, que se compran con euros, no sirven para tirar: así nunca se paga dinero por azar.</p>
     </div>
     <p class="gacha-sub" data-tr>Cosméticos en cápsula, pagados solo con Gotas.</p>
-    <canvas id="gacha-maquina" width="300" height="300"></canvas>
+    <div class="gacha-wrap"><canvas id="gacha-cv" aria-hidden="true"></canvas></div>
     <p class="gacha-sub" id="gacha-cuenta"></p>
-    <button type="button" class="boton gacha-gratis" id="b-gacha-g1"></button>
-    <button type="button" class="boton gacha-gratis" id="b-gacha-g10"></button>
-    <div class="gacha-botones">
-      <button type="button" class="boton tn-boton" id="b-gacha-1"></button>
-      <button type="button" class="boton tn-boton" id="b-gacha-10"></button>
+    <button type="button" class="btn-gratis ol" id="b-gacha-g1"></button>
+    <button type="button" class="btn-gratis ol" id="b-gacha-g10"></button>
+    <div class="pull-row dos">
+      <button type="button" class="btn-pull ol" id="b-gacha-1"></button>
+      <button type="button" class="btn-pull x10 ol" id="b-gacha-10"></button>
     </div>
     <p class="gacha-pity" id="gacha-pity"></p>
     <details class="probs" id="gacha-probs"></details>
     <button type="button" class="boton peq" id="b-gacha-tienda" data-tr>Ir a la tienda</button>
-    <div class="gacha-resultado" id="gacha-resultado" hidden>
+    <div class="gacha-resultado" id="gacha-result" hidden>
       <div class="gacha-res" id="gacha-res"></div>
       <button type="button" class="boton" id="b-gacha-vale" data-tr>¡VALE!</button>
     </div>
@@ -387,10 +387,11 @@
 <div class="pantalla" id="p-pase" hidden>
   <div class="caja pase-caja">
     <h2 class="ol" data-tr>PASE DE TEMPORADA</h2>
-    <p class="pase-sub"><b id="pase-nivel"></b> · <span data-tr>Sube jugando partidas: más si ganas y más en línea.</span></p>
+    <p class="pase-sub"><b id="pase-nivel"></b> · <span data-tr>Sube jugando partidas: más si ganas y más en BUSCAR PARTIDA.</span></p>
     <div class="pase-barra"><i id="pase-barra"></i></div>
     <p class="pase-xp" id="pase-xp"></p>
     <div class="cartera" id="pase-cartera"></div>
+    <p class="pase-oferta" id="pase-oferta"></p>
     <div class="pase-cols"><span></span><b data-tr>GRATIS</b><b class="premium" data-tr>PREMIUM</b></div>
     <div class="pase-lista" id="pase-lista"></div>
     <button type="button" class="boton grande" id="b-pase-premium"></button>
@@ -527,6 +528,8 @@ NUCLEO.juego({
     'js/economia.js',
     'js/tienda.js',
     'js/gacha.js',
+    '../../core/js/sistema/gachapon-anim.js',      // la máquina animada y la cápsula que se abre, las del Rumble (core)
+    '../../core/js/sistema/gachapon-clasica.js',
     'js/gacha-pantalla.js',
     'js/servidor.js',
     'js/servidor-economia.js',

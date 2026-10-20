@@ -131,6 +131,7 @@ function piensaCazador(e, dt) {
       k.enVista = true;
       let nivel = loQueCanta(k) / (minimoVista(d, b.atento) * (k.hielo < 0.85 ? 1 : ojoPara(b, k)));
       if (k.hielo >= 0.85 && d < 45) nivel = Math.max(nivel, 0.35 + 0.8 * (1 - d / 45));   // pegado a él, hasta el mejor camuflaje se nota (el contorno, la sombra)
+      if (k.hielo >= 0.85 && k.camo >= 100 && d < 110) nivel = Math.max(nivel, 0.5 + 0.8 * (1 - d / 110));   // al 100 % le brilla el contorno, como al cazador de carne y hueso (dibujo.js): se acerca a mirar y, de cerca, lo ve
       if (nivel > s) s = Math.min(1.3, s + (nivel - s) * (k.hielo < 0.85 ? 3 : 1.4) * dt + 0.02 * dt);
       else s = Math.max(nivel, s - 0.2 * dt);
       if (d < 14 && e.moviendo && !b.pisados.has(k)) { b.pisados.add(k); s = Math.max(s, 0.55); }   // se ha tropezado con él: se para a mirar

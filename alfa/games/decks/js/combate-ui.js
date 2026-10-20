@@ -182,7 +182,7 @@ function dcPintaCarta(c, o = {}) {
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
   const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
-  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c, o.rabia); tx.append(txi); d.append(cab, tx);
+  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); txi.innerHTML = dcMarcaClaves(o.resalta ? dcTextoCartaHTML(c, o.resalta) : dcEscHTML(dcTextoCarta(c, o.rabia))); tx.append(txi); d.append(cab, tx);   // claves.js marca las palabras clave
   if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
@@ -194,7 +194,7 @@ function dcPintaCarta(c, o = {}) {
 function dcVerCarta(c) {
   const v = dcVentana(dcNombre(c)); const g = dcPintaCarta(c, { grande: true }); g.onclick = null;
   v.append(g, dcEl('p', 'dc-nota', tr(DC_NOTA_TIPO[DC_CARTAS[c.id].tipo])));
-  const fx = dcFx(c); for (const k in DC_GLOSARIO) if (fx[k]) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
+  for (const k of dcClavesEn(dcTextoCarta(c))) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
   if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }

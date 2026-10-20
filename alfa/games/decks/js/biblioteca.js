@@ -61,6 +61,7 @@ function dcBiblioteca(volver) {
   atras.onclick = () => { play('select'); volver(); }; h.append(atras, dcEl('h2', 'ol', tr('Biblioteca'))); s.append(h);
   const pest = dcEl('div', 'dc-bib-pestanas'), filtros = dcEl('div', 'dc-bib-filtros'), sub = dcEl('p', 'dc-nota'), g = dcEl('div', 'dc-rejilla dc-bib-' + dcBibTab);
   for (const k in DC_BIB_TABS) { const b = dcEl('button', 'dc-bib-pestana ol', tr(DC_BIB_TABS[k])); b.setAttribute('aria-pressed', dcBibTab === k); b.onclick = () => { dcBibTab = k; play('select'); dcBiblioteca(volver); }; pest.append(b); }
+  if (dcBibTab === 'g') { sub.textContent = tr('Toca una palabra marcada en cualquier carta para ver qué significa.'); s.append(pest, sub, dcGlosarioLista()); return; }   // claves.js
   for (const k in DC_BIB_FILTROS) { const b = dcEl('button', 'dc-bib-filtro', tr(DC_BIB_FILTROS[k])); b.setAttribute('aria-pressed', dcBibFiltro === k); b.onclick = () => { dcBibFiltro = k; play('select'); dcBiblioteca(volver); }; filtros.append(b); }
   const todos = dcBibLista(dcBibTab), vistos = todos.filter(e => e.visto).length;
   sub.textContent = tr('Has descubierto {a} de {b}.', { a: vistos, b: todos.length }) + ' ' + tr(dcBibTab === 'c' ? 'Toca una carta para verla en grande.' : dcBibTab === 'r' ? 'Toca un rival para ver qué hace.' : dcBibTab === 'v' ? 'Se desbloquean jugando.' : 'Te los ofrecen tras las reuniones, en el Economato y en los correos.');

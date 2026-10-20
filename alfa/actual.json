@@ -1,8 +1,8 @@
 {
- "build": 293,
- "hash": "869bace",
- "fecha": "2026-10-20T16:14:44Z",
- "mensaje": "Monedas: el aviso a invitados pide encarecidamente crear cuenta antes de pagar y avisa de perder artículos y créditos comprados",
+ "build": 294,
+ "hash": "c51f5fa",
+ "fecha": "2026-10-20T16:20:01Z",
+ "mensaje": "Rouflage: la ropa de los demás en partida online la da el servidor (SQL 54 sin aplicar) y aviso único a invitados al conseguir su primer cosmético",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

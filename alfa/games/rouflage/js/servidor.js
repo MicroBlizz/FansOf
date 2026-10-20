@@ -19,12 +19,24 @@ const RFS = (() => {
   // faltaba la colección (armario.tengo), se quedaba pillada al empezar partida. Al entrar con cuenta, el servidor lo vuelve a poner igual
   const oculta = (o, k, v) => { o[k] = v; };
   function leeCache() { try { return JSON.parse(localStorage.getItem(CACHE) || 'null'); } catch (_) { return null; } }
+  // Un invitado que consigue su primer cosmético recibe, UNA sola vez, la invitación a guardar su cuenta (si desinstala el juego, lo pierde)
+  let nColeccion = null;
+  function avisaCuenta() {
+    try {
+      if (typeof CUENTA === 'undefined' || !CUENTA.invitado || typeof confirmBox !== 'function' || typeof pedirCuenta !== 'function' || localStorage.getItem('rouflage-aviso-cuenta')) return;
+      localStorage.setItem('rouflage-aviso-cuenta', '1');
+      setTimeout(() => confirmBox(tr('GUARDA TU PROGRESO'), tr('¡Ya tienes tu primer cosmético! Ahora juegas como invitado: si pierdes la instalación del juego, lo pierdes todo. Crea una cuenta con email o Google para tenerlo a salvo.'), tr('CREAR CUENTA'),
+        () => pedirCuenta('Con una cuenta guardas tu progreso, juegas en otros aparatos y entras en el PvP.'), tr('MÁS TARDE')), 3500);
+    } catch (_) { /* sin almacenamiento: no se avisa */ }
+  }
   function aplica(est) {
     if (!est) return;
     try { localStorage.setItem(CACHE, JSON.stringify(est)); } catch (_) { /* sin guardar: no pasa nada */ }
     const a = armarioEstado(), e = est.estado || {};
     oculta(SAVE, 'gotas', est.gotas); oculta(SAVE, 'acciones', est.acciones);
     for (const k of ['pase', 'eco', 'diario', 'tienda', 'gacha']) oculta(SAVE, k, e[k]);
+    const antes = nColeccion; nColeccion = (est.coleccion || []).length;
+    if (antes !== null && nColeccion > antes) avisaCuenta();      // el primer cosmético que consigue un invitado
     oculta(a, 'tengo', est.coleccion || []);
     for (const k in e.puesto || {}) a.puesto[k] = e.puesto[k] === '' ? null : e.puesto[k];      // lo puesto en otro dispositivo
     ultimoPuesto = JSON.stringify(a.puesto);
@@ -69,6 +81,13 @@ const RFS = (() => {
       try { const est = await CUENTA.rpc('rf_poner', { p_puesto: Object.fromEntries(Object.entries(armarioEstado().puesto).map(([k, v]) => [k, v || ''])) }); aplica(est); } catch (_) { /* se reintenta en el próximo cambio */ }
     }, 1500);
   }
+  // antes de buscar partida online: lo puesto llega ya al servidor (la ropa que ven los demás sale de ahí)
+  function ponerYa() {
+    if (!activo) return;
+    clearTimeout(temporizador);
+    const p = JSON.stringify(armarioEstado().puesto); if (p === ultimoPuesto) return;
+    CUENTA.rpc('rf_poner', { p_puesto: Object.fromEntries(Object.entries(armarioEstado().puesto).map(([k, v]) => [k, v || ''])) }).then(aplica).catch(() => { /* se reintenta en el próximo cambio */ });
+  }
   // al acabar una partida: Gotas y experiencia (con el margen entre partidas, si no hay red se apuntan y se mandan después)
   function partida(victoria, linea) {
     const cola = SAVE.rfCola = SAVE.rfCola || [];
@@ -95,6 +114,6 @@ const RFS = (() => {
     if (document.hidden || !activo || enviando) return;
     try { aplica(await CUENTA.rpc('rf_estado', {})); relojes(); if (typeof refrescaHud === 'function') refrescaHud(true); } catch (_) { /* sin red */ }
   });
-  return { arranca, llama, error, errorTexto, aplica, alGuardar, partida, vaciaCola, activo: () => activo, desfase: () => desfase, relojes,
+  return { arranca, llama, error, errorTexto, aplica, alGuardar, ponerYa, partida, vaciaCola, activo: () => activo, desfase: () => desfase, relojes,
     reinicia: async () => { if (activo) await CUENTA.rpc('rf_reiniciar', {}); try { localStorage.removeItem(CACHE); } catch (_) { /* nada */ } } };
 })();

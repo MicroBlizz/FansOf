@@ -80,7 +80,7 @@ function rfpRecibe(m) {
     case 'sz': senueloRecibe(m.l); break;
     case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
     case 'gs': rfpGestoRecibido(sl, m); break;
-    case 'rp': if (m.r && sl.ente) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
+    case 'rp': if (m.r && sl.ente && !sl.ropaFiada) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;

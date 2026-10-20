@@ -198,7 +198,7 @@ function pintaTroncos(t, bajoConejo) {
     if (y0 < -50 || y0 > PAN.H + 40) continue;
     const y = pintaTronco(tr, y0, tr === bajoConejo);
     if (tr.barro) pintaBarroTronco(tr, y);
-    for (let i = 0; i < tr.zanas; i++) sprite('zanahoria', tr.x - (tr.zanas - 1) * 5 + i * 10, y + 1 - (i % 2), 7);
+    if (tr.zanas) pintaZanasTronco(tr, y, t);
     if (tr.objeto) { elipse(tr.x, y + 1, 6, 2.4, 'rgba(40,110,120,0.25)', null); iconoObjeto(tr.objeto, tr.x, y - 6 + Math.sin(t * 4 + tr.id) * 1.2, 6); }
     if (tr.amigo) {
       // atrapado en un charco de barro, temblando, con su cartelito de SOS clavado en el tronco

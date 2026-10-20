@@ -149,7 +149,7 @@ function aterriza() {
 function cogeZanas(tr, x, wy) {
   const J = JUEGO, n = tr.zanas * (poder('mapache') ? 2 : 1);
   J.zanas += n; aviso('+' + n, x - 16, wy + 4, '#ffb347', 9);
-  tr.zanas = 0; SONIDO.zana();
+  zanasVuelan(tr.x, tr.wy, tr.zanas); tr.zanas = 0; SONIDO.zana();
 }
 
 function enciendeFiebre() {

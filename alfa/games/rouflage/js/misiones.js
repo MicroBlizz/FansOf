@@ -91,15 +91,16 @@ async function misionCobra(id) {
   if (!x || (logro ? !logroHecho(x) || logroCobrado(x) : !misionHecha(x) || misionCobrada(x))) return;
   if (RFS.activo()) {
     MIS.cobrando = true;
-    try { await RFS.llama('rf_mision', { p_id: id }); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno'); }
+    try { await RFS.llama('rf_mision', { p_id: id }); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno'); MIS.celebra = x.g; }
     catch (e) { RFS.error(e); }
     MIS.cobrando = false;
   } else {
     SAVE.gotas = (SAVE.gotas || 0) + x.g;
     if (logro) logroEstado().cobrados.push(x.id); else misionEstado().cobradas.push(x.id);
-    guardaPartida(); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno');
+    guardaPartida(); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno'); MIS.celebra = x.g;
   }
   misionBoton(); if (typeof misionesPinta === 'function' && !E('p-misiones').hidden) misionesPinta();
+  if (MIS.celebra && typeof misionCelebra === 'function') misionCelebra(MIS.celebra); MIS.celebra = 0;      // las gotas volando (misiones-pantalla.js)
 }
 // el botón del título, con su punto cuando hay algo por cobrar
 function misionBoton() { const b = E('b-misiones'); if (b) b.classList.toggle('aviso', misionesPorCobrar() > 0); }

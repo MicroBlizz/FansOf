@@ -1,27 +1,56 @@
-/* Fans of Rouflage · la pantalla de MISIONES DIARIAS y LOGROS (misiones-pantalla.js) y su botón del título. Mismo aire que el premio diario y el pase. */
+/* Fans of Rouflage · la pantalla de MISIONES DIARIAS y LOGROS (misiones-pantalla.js, insignias en misiones-iconos.js) y su botón del título.
+   Tarjetas con el color de su dificultad (o de su metal), etiqueta con estrellas, barra con brillo, premio en gotas y sello de COBRADA. */
 .mis-caja { max-width: 560px; text-align: center; max-height: calc(100vh - 30px); display: flex; flex-direction: column; gap: 8px; }
 .mis-caja h2 { margin: 0; }
 .mis-pestanas { display: flex; gap: 6px; justify-content: center; }
-.mis-pestanas .ar-pest { position: relative; flex: 1 1 0; min-width: 0; font-size: 14px; padding: 7px 6px 4px; }
-.mis-pestanas .ar-pest.aviso::after, #b-misiones.aviso::after { content: ''; position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
-.mis-sub { margin: 0; font-weight: 700; font-size: 13px; color: var(--gold); }
-.mis-lista { overflow-y: auto; flex: 1; min-height: 120px; display: grid; align-content: start; gap: 7px; padding: 2px 2px 6px; touch-action: pan-y; }
-.mis-fila { display: grid; grid-template-columns: 40px 1fr auto; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); box-shadow: 0 3px 0 var(--outline); text-align: left; }
-.mis-fila.lista { background: linear-gradient(160deg, #3d5a2a, #24361a); }
-.mis-fila.cobrada { opacity: 0.55; }
-.mis-ico { display: block; }
+.mis-pestanas .ar-pest { position: relative; flex: 1 1 0; min-width: 0; font-size: 14px; padding: 8px 6px 5px; }
+.mis-pestanas .ar-pest.aviso::after, #b-misiones.aviso::after { content: ''; position: absolute; top: -6px; right: -6px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); animation: misLate 1.2s ease-in-out infinite; }
+.mis-sub { margin: 0 auto; font-weight: 800; font-size: 13px; color: var(--gold); background: rgba(0, 0, 0, 0.28); border: 2px solid var(--outline); border-radius: 999px; padding: 3px 12px 2px; }
+.mis-lista { overflow-y: auto; flex: 1; min-height: 120px; display: grid; align-content: start; grid-auto-rows: max-content; gap: 9px; padding: 4px 3px 8px; touch-action: pan-y; }
+
+/* la tarjeta */
+.mis-fila { --c1: #3a4a6a; --c2: #26344f; --tag: #ffcb3d; position: relative; display: grid; grid-template-columns: 58px 1fr auto; gap: 9px; align-items: center; padding: 8px 9px 8px 7px;
+  border-radius: 16px; border: 3px solid var(--outline); background: linear-gradient(165deg, var(--c1), var(--c2)); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.12); text-align: left; overflow: hidden; }
+.mis-fila::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--tag); border-right: 2px solid var(--outline); }
+.mis-fila.tono-facil { --tag: #7ee04a; } .mis-fila.tono-media { --tag: #ffa63d; } .mis-fila.tono-dificil { --tag: #c06bff; }
+.mis-fila.tono-bronce { --tag: #d88a4a; } .mis-fila.tono-plata { --tag: #c9d2e2; } .mis-fila.tono-oro { --tag: #ffcb3d; }
+.mis-fila.lista { --c1: #3f6a2c; --c2: #24401a; box-shadow: 0 4px 0 var(--outline), 0 0 0 2px #b6f58a inset, 0 0 18px rgba(160, 255, 110, 0.25); }
+.mis-fila.cobrada { --c1: #2a3346; --c2: #1d2536; }
+.mis-fila.cobrada .mis-txt { opacity: 0.55; }
+.mis-fila.cobrada .mis-lado { visibility: hidden; }
+.mis-ico { display: block; margin-left: 3px; }
 .mis-txt { min-width: 0; display: grid; gap: 3px; }
-.mis-txt b { font-weight: 800; font-size: 13.5px; line-height: 1.15; color: var(--ink); }
+.mis-cab { display: flex; align-items: center; gap: 6px; }
+.mis-tag { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.04em; color: var(--outline); background: var(--tag); border: 2px solid var(--outline); border-radius: 7px; padding: 2px 6px 0; line-height: 1.1; }
+.mis-estrellas { display: inline-flex; gap: 1px; }
+.mis-estrellas i { width: 13px; height: 13px; background: var(--outline); clip-path: polygon(50% 0, 63% 35%, 100% 38%, 71% 61%, 81% 100%, 50% 78%, 19% 100%, 29% 61%, 0 38%, 37% 35%); position: relative; }
+.mis-estrellas i::after { content: ''; position: absolute; inset: 2.5px; background: #4a5677; clip-path: inherit; }
+.mis-estrellas i.si::after { background: #ffcb3d; }
+.mis-txt b { font-weight: 800; font-size: 14px; line-height: 1.15; color: var(--ink); text-shadow: 0 1px 0 var(--outline); }
 .mis-txt small { font-size: 11.5px; font-weight: 700; line-height: 1.1; color: var(--ink-dim); }
-.mis-barra { position: relative; height: 16px; border-radius: 8px; border: 2px solid var(--outline); background: var(--tray); overflow: hidden; }
-.mis-barra i { display: block; height: 100%; background: linear-gradient(to right, #39d5e8, #7ee04a); }
-.mis-barra span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; color: var(--ink); text-shadow: 0 1px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline), 0 -1px 0 var(--outline); }
-.mis-lado { display: grid; justify-items: center; gap: 4px; }
-.mis-premio { display: inline-flex; align-items: center; gap: 3px; font-weight: 800; font-size: 14px; color: var(--gold); }
+
+/* la barra: hueco oscuro, relleno con brillo y rayas que se mueven cuando está completa */
+.mis-barra { position: relative; height: 18px; border-radius: 9px; border: 2.5px solid var(--outline); background: #111a2c; overflow: hidden; margin-top: 2px; box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.45); }
+.mis-barra i { display: block; height: 100%; border-radius: 6px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 55%), linear-gradient(to right, #39d5e8, #7ee04a); transition: width 0.5s ease; }
+.mis-fila.lista .mis-barra i { background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 55%), repeating-linear-gradient(-45deg, #8ff060 0 8px, #6fd842 8px 16px); background-size: auto, 23px 23px; animation: misRayas 0.8s linear infinite; }
+.mis-barra span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: var(--ink); text-shadow: 0 1px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline), 0 -1px 0 var(--outline); }
+
+/* el premio y el botón */
+.mis-lado { display: grid; justify-items: center; gap: 5px; }
+.mis-premio { display: inline-flex; align-items: center; gap: 2px; padding: 2px 8px 1px 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--outline); }
+.mis-premio b { font-family: var(--font-display); font-weight: 400; font-size: 15px; color: #8fe3ff; text-shadow: 0 1px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline); padding-top: 2px; }
 .mis-premio canvas { display: block; }
-.boton.mis-cobrar { font-size: 13px; padding: 6px 9px 3px; border-radius: 10px; box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #a4f070, #4fae2a); min-width: 78px; }
-.boton.mis-cobrar:disabled { filter: none; opacity: 1; background: #2a3550; color: var(--ink-dim); box-shadow: 0 2px 0 var(--outline); }
+.boton.mis-cobrar { font-size: 13px; padding: 7px 10px 4px; border-radius: 11px; box-shadow: 0 4px 0 var(--outline); background: linear-gradient(to bottom, #b6f58a, #4fae2a); min-width: 82px; }
+.boton.mis-cobrar:disabled { filter: none; opacity: 1; background: #2a3550; color: #6f7c99; box-shadow: 0 2px 0 var(--outline); }
 .mis-fila.lista .boton.mis-cobrar { animation: diarioLate 1s ease-in-out infinite; }
+/* el sello de COBRADA, como el de DESPEDIDO */
+.mis-sello { position: absolute; right: 8px; top: 50%; transform: translateY(-50%) rotate(-12deg); font-family: var(--font-display); font-size: 13px; letter-spacing: 0.05em; color: #ff5d6c;
+  border: 3px solid #ff5d6c; border-radius: 8px; padding: 3px 6px 0; background: rgba(255, 75, 92, 0.1); text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4); pointer-events: none; }
+/* las gotas que vuelan al cobrar */
+.mis-vuela { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; }
+#mis-gotas { display: inline-block; margin-left: 5px; }
 #b-misiones { position: relative; background: linear-gradient(to bottom, #7fe0f0, #2a9ab8); }
-@media (prefers-reduced-motion: reduce) { .mis-fila.lista .boton.mis-cobrar { animation: none; } }
-@media (max-width: 380px) { .mis-fila { gap: 6px; padding: 6px; } .boton.mis-cobrar { min-width: 70px; font-size: 12px; padding: 6px 6px 3px; } }
+@keyframes misRayas { to { background-position: 0 0, 23px 0; } }
+@keyframes misLate { 50% { transform: scale(1.25); } }
+@media (prefers-reduced-motion: reduce) { .mis-fila.lista .boton.mis-cobrar, .mis-fila.lista .mis-barra i, .mis-pestanas .ar-pest.aviso::after, #b-misiones.aviso::after { animation: none; } }
+@media (max-width: 380px) { .mis-fila { grid-template-columns: 50px 1fr auto; gap: 6px; padding: 7px 6px 7px 5px; } .mis-ico { width: 50px !important; height: 50px !important; } .boton.mis-cobrar { min-width: 72px; font-size: 12px; padding: 6px 6px 3px; } }

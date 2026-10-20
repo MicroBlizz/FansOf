@@ -1,8 +1,8 @@
 {
- "build": 314,
- "hash": "65a3d7d",
- "fecha": "2026-10-20T18:58:59Z",
- "mensaje": "Junta main",
+ "build": 315,
+ "hash": "ee30bf7",
+ "fecha": "2026-10-20T19:05:32Z",
+ "mensaje": "Rouflage: misiones y logros más bonitos (insignias dibujadas por dificultad y metal, etiquetas con estrellas, barras con brillo, sello de COBRADA y gotas volando al cobrar)",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

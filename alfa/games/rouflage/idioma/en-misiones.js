@@ -71,5 +71,8 @@ IDIOMA.add({
   "Silba 50 veces por gusto": "Whistle 50 times just for fun",
   "Humo para todos": "Smoke for everyone",
   "Usa la granada de humo 20 veces": "Use the smoke grenade 20 times",
-  "Estrella de las redes": "Social media star"
+  "Estrella de las redes": "Social media star",
+  "BRONCE": "BRONZE",
+  "PLATA": "SILVER",
+  "ORO": "GOLD"
 });

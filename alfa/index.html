@@ -121,6 +121,12 @@
     <div class="row"><a class="play ol" href="games/ratkov/">JUGAR</a><span class="ver ol" data-ver></span></div>
     <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
   </section>
+  <section class="game" id="g-jump" data-apk="jump" style="--wc: #8a68d8" data-tipo="Juego" data-etiquetas="Saltos · 3D" data-capturas="jump-1.jpg jump-2.jpg">
+    <h2 class="ol">FANS OF JUMP</h2>
+    <p>El prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco, rescata a su pandilla y llévala a cuestas: así empezó la rebelión.</p>
+    <div class="row"><a class="play ol" href="games/jump/">JUGAR</a><span class="ver ol" data-ver></span></div>
+    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+  </section>
   <h3 class="grupo ol" id="prototipos">PROTOTIPOS</h3>
   <p class="note grupo">Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.</p>
   <section class="game" id="g-crush" data-apk="crush" style="--wc: #c35b9e" data-tipo="Prototipo" data-etiquetas="Puzle · Tres en raya" data-capturas="crush-1.jpg crush-2.jpg">
@@ -224,7 +230,7 @@
   </section>
   <p class="note">© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a306.ad9e3e2"></script>
+<script src="core/js/nucleo.js?v=0-a307.db0a4c3"></script>
 <script src="core/js/novedades.js"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
@@ -235,7 +241,7 @@ function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
 <script src="core/js/sistema/cuenta.js"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).

@@ -1,0 +1,17 @@
+{
+  "name": "Fans of Jump",
+  "short_name": "Fans of Jump",
+  "description": "El prólogo de los Animales Locos: salta con CrazyBunny de tronco en tronco y rescata a su pandilla de la ola de barro de Microblizz.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#cdb6f7",
+  "theme_color": "#cdb6f7",
+  "icons": [
+    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icono-512-mask.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

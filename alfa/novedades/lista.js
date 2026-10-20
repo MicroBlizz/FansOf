@@ -10,10 +10,11 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
-    id: '2026-10-20a',
+    id: '2026-10-20b',
     fecha: '20 de octubre de 2026',
     nuevos: [
       { nombre: 'FANS OF KARTS', tarjeta: 'g-karts', enlace: 'games/karts/', texto: 'Ya es un juego: 16 pistas, modo copa, PvP de hasta 8 y salas con amigos.' },
+      { nombre: 'FANS OF JUMP', tarjeta: 'g-jump', enlace: 'games/jump/', texto: 'El prólogo de los Animales Locos: salta con CrazyBunny de tronco en tronco y rescata a su pandilla de la ola de barro de Microblizz.' },
     ],
     otros: [],
   },

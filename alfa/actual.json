@@ -1,13 +1,14 @@
 {
- "build": 306,
- "hash": "ad9e3e2",
- "fecha": "2026-10-20T17:53:36Z",
- "mensaje": "Biblioteca: grupos JUEGOS, PROTOTIPOS y DEMOS (además de EN PAUSA)",
+ "build": 307,
+ "hash": "db0a4c3",
+ "fecha": "2026-10-20T17:56:35Z",
+ "mensaje": "MAPA.md al día (Fans of Jump en games/)",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",
   "decks": "0.2.6",
   "island": "0.3.5",
+  "jump": "0.3.0",
   "karts": "0.7.0",
   "nova": "0.3.11",
   "ratkov": "0.2.14",

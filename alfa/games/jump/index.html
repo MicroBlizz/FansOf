@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#a8d66b">
+<title>Fans of Jump</title>
+<meta name="description" content="Fans of Jump: el prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco y rescata a su pandilla.">
+<link rel="icon" type="image/png" href="img/icono-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<!-- ?v= es la versión del juego (la misma en la web y en la app): súbela al publicar y pon su entrada en js/novedades.js -->
+<script src="../../core/js/nucleo.js?v=0.3.0-a307.db0a4c3"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Jump: un solo canvas a la resolución real de la pantalla, con los dibujos 3D. El mundo mide unos 200 de ancho y se
+   amplía a lo que mida la caja. La caja respeta la muesca y la barra de los móviles. */
+html, body { height: 100%; margin: 0; background: #7cbf52; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+#juego { display: block; touch-action: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #3d2a5c; font: 800 18px/1 'Baloo 2', system-ui, sans-serif; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Jump"></canvas></div>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Jump lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/dibujo.js', 'js/atlas.js', 'js/sprites.js', 'js/amigos.js', 'js/rio.js', 'js/ola.js', 'js/efectos.js',
+    'js/sonido.js', 'js/bonito.js', 'js/misiones.js', 'js/partida.js', 'js/pantalla.js', 'js/menus.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

@@ -134,6 +134,7 @@ IDIOMA.add({
   "Terror": "Horror",
   "Cámaras fijas": "Fixed cameras",
   "Puzle": "Puzzle",
+  "Saltos": "Jumping",
   "Tres en raya": "Match-3",
   "ALFA": "ALPHA",
   "Copia de pruebas con lo último de main.": "Test copy with the latest build."

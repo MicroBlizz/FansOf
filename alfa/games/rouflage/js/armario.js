@@ -78,11 +78,13 @@ function lienzoBlanco(e) {
   e.papelPuesto = false; [e.piel, e.pctx] = nuevaPiel(BLANCO_PIEL, e.postura || 'firmes'); if (e.pasos) e.pasos.length = 0;
 }
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
+// lo que cuestan N Acciones en euros, al precio del paquete pequeño (solo se enseña en la ventana de confirmar la compra: armario-compra.js)
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
+// cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
 function arTextoDe(it) {
-  const t = it.txt; let m;
-  if (typeof t === 'number' && it.r !== 'epica' && it.r !== 'legend') return tr('Solo en el gachapón, con Gotas');
-  if (typeof t === 'number') return tr('{n} Acciones (≈ {e} €)', { n: t, e: arEuros(t) });
+  const t = it.txt, pr = arPrecio(it); let m;
+  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas });
+  if (typeof t === 'number') return tr('Solo en el gachapón, con Gotas');
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });

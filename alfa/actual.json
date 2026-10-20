@@ -1,8 +1,8 @@
 {
- "build": 354,
- "hash": "4da3913",
- "fecha": "2026-10-20T23:39:09Z",
- "mensaje": "Fans of Jump: troncos que se rompen en 3D, pieles de troncos, cara del conejo en el flotador, iconos 3D y zanahoria de la fuerza",
+ "build": 355,
+ "hash": "6ec842b",
+ "fecha": "2026-10-20T23:47:45Z",
+ "mensaje": "Rouflage: tienda con dos monedas (Gotas o Acciones, lo del gachapón a la venta ×1,5), ventana de confirmar compra con el precio en euros y pase premium con Acciones en sus huecos; SQL 65 y datos v6 aplicados",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

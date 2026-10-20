@@ -24,7 +24,7 @@ function finPremiosNivel(n) {
   for (const c of paseCosas()) if (c.nv === n && (!c.premium || premium)) out.push({ it: c.it });
   const suma = (tabla, f) => { if (tabla && tabla[n]) out.push({ texto: f(tabla[n]) }); };
   suma(ECO.purpGratis, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.gotasGratis, k => '+' + tr('{n} Gotas', { n: k }));
-  if (premium) { suma(ECO.purpPremium, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.gotasPremium, k => '+' + tr('{n} Gotas', { n: k })); }
+  if (premium) { suma(ECO.purpPremium, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.accionesPremium, k => '+' + tr('{n} Acciones', { n: k })); }
   return out;
 }
 function finPremiosHtml(lista) {

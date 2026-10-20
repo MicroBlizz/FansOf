@@ -25,15 +25,19 @@ async function diarioRecogeServidor() {
     play('select'); play('go'); avisa(tr('Premio del día: {p}', { p: texto }), 'bueno'); diarioPinta(); diarioBoton();
   } catch (e) { RFS.error(e); }
 }
-// comprar una pieza en el armario
-async function arCompraServidor(cat, it) {
-  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it)) return;
-  if (SAVE[pr.moneda] < pr.precio) { play('deny'); avisa(pr.moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); if (pr.moneda === 'acciones') abreTienda('armario'); return; }
+// comprar una pieza en el armario con la moneda elegida: rf_comprar_con (servidor/65-*.sql) cobra el precio de los datos del juego, no el del cliente.
+// Devuelve una promesa con true si se ha comprado (la ventana de confirmar se cierra entonces)
+async function arCompraServidor(cat, it, moneda) {
+  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it) || !(moneda in pr)) return false;
+  if (SAVE[moneda] < pr[moneda]) { play('deny'); avisa(moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return false; }
   try {
-    await RFS.llama('rf_comprar', { p_pieza: cat.id + ':' + it.id });
-    if (!cat.conjuntos) armarioEstado().puesto[cat.id] = it.id;
+    const pieza = cat.id + ':' + it.id, deAntes = moneda === 'gotas' ? it.de === 'gotas' : it.de === 'tienda' && !pr.gacha;      // lo que ya vendía rf_comprar
+    try { await RFS.llama('rf_comprar_con', { p_pieza: pieza, p_moneda: moneda }); }
+    catch (e) { if (deAntes && /Could not find|PGRST202/i.test(String((e && e.message) || e))) await RFS.llama('rf_comprar', { p_pieza: pieza }); else throw e; }   // servidor sin el 65 todavía
+    if (!cat.conjuntos && !cat.sala) armarioEstado().puesto[cat.id] = it.id;
     guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno'); arPintaTodo();
-  } catch (e) { RFS.error(e); }
+    return true;
+  } catch (e) { RFS.error(e); return false; }
 }
 // la tienda: paquetes de Acciones y pack de inicio (de prueba), y Acciones a cambio de Gotas
 async function tiendaServidor(tipo, idx, texto) {

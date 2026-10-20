@@ -71,7 +71,7 @@ const MONEDAS = (() => {
   // Antes de pagar con dinero real, un invitado ve una RECOMENDACIÓN (no un bloqueo): sin cuenta con email o Google, si pierde la instalación pierde su progreso y sus compras
   function recomiendaCuenta(seguir) {
     if (typeof CUENTA === 'undefined' || !CUENTA.invitado || typeof confirmBox !== 'function') return seguir();
-    confirmBox(tr('TE RECOMENDAMOS UNA CUENTA'), tr('Ahora juegas como invitado: si pierdes la instalación del juego, pierdes tu progreso y tus compras. Cancela y entra con email o Google desde «Iniciar sesión / crear cuenta» para dejarlo todo a salvo.'), tr('COMPRAR IGUALMENTE'), seguir);
+    confirmBox(tr('CREA UNA CUENTA ANTES DE PAGAR'), tr('Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».'), tr('COMPRAR IGUALMENTE'), seguir);
   }
   // lo que solo se compra con dinero real (gemas, pase, sin anuncios…): en desarrollo es una compra de prueba; en la web aún no está a la venta
   function compraReal(titulo, html, alComprar) {

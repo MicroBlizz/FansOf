@@ -1,8 +1,8 @@
 {
- "build": 292,
- "hash": "c8b35db",
- "fecha": "2026-10-20T16:13:39Z",
- "mensaje": "Rouflage: arreglo urgente de la alfa (tres puntos y partida que no empieza)",
+ "build": 293,
+ "hash": "869bace",
+ "fecha": "2026-10-20T16:14:44Z",
+ "mensaje": "Monedas: el aviso a invitados pide encarecidamente crear cuenta antes de pagar y avisa de perder artículos y créditos comprados",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

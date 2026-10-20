@@ -30,15 +30,19 @@ function orillas(wy) {
 }
 
 /* ---------- los troncos cortados (los «nenúfares») ---------- */
-const APLASTA = 0.8;   // los troncos se ven un poco de lado: más anchos que altos
+const APLASTA = 0.8;
+// el principio es más fácil para que enganche: hasta los 220 m los troncos van más juntos, son más grandes, se mueven menos
+// y perdonan más al caer; luego la dificultad sube poco a poco (medido con robots: herramientas/jump_bots.js)
+const FACIL_HASTA = 2200;
+const facilidad = wy => Math.max(0, 1 - wy / FACIL_HASTA);   // los troncos se ven un poco de lado: más anchos que altos
 function dentroTronco(t, x, wy, margen = 0) {
   const dx = (x - t.x) / (t.r + margen), dy = (wy - t.wy) / ((t.r + margen) * APLASTA);
   return dx * dx + dy * dy;
 }
 
-function nuevoTronco(x, wy, r, dif) {
+function nuevoTronco(x, wy, r, dif, facil = 0) {
   const t = { x, wy, r, vx: 0, amigo: null, zanas: 0, pisado: false, id: RIO.cuenta++, fase: rnd() * 6, hunde: 0 };
-  if (rnd() < 0.22 + dif * 0.4) t.vx = (rnd() < 0.5 ? -1 : 1) * azarR(7, 12 + dif * 14);
+  if (rnd() < (0.22 + dif * 0.4) * (1 - facil)) t.vx = (rnd() < 0.5 ? -1 : 1) * azarR(7, 12 + dif * 14);
   RIO.troncos.push(t);
   return t;
 }
@@ -46,22 +50,22 @@ function nuevoTronco(x, wy, r, dif) {
 // pone troncos hasta la altura «hasta»: cada fila queda al alcance de la anterior, a veces con otro al lado
 function generaRio(hasta) {
   while (RIO.ultimo.wy < hasta) {
-    const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500);
-    const wy = prev.wy + azarR(52, 66) + dif * 16;
+    const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500), facil = facilidad(prev.wy);
+    const wy = prev.wy + azarR(52, 66) + dif * 16 - facil * 12;
     const [L, R] = orillas(wy);
-    const r = Math.round(azarR(19, 24) - dif * 5);
+    const r = Math.round(azarR(19, 24) - dif * 5 + facil * 4);
     const lo = L + r + 3, hi = R - r - 3;
-    let x = prev.x + azarR(-70, 70);
+    let x = prev.x + azarR(-70, 70) * (1 - facil * 0.4);
     if (x < lo) x = lo + (lo - x) * 0.5;
     if (x > hi) x = hi - (x - hi) * 0.5;
     x = Math.max(lo, Math.min(hi, x));
-    const t = nuevoTronco(x, wy, r, dif);
+    const t = nuevoTronco(x, wy, r, dif, facil);
     RIO.ultimo = t;
     const fila = [t];
-    if (rnd() < 0.3 - dif * 0.15) {
+    if (rnd() < 0.3 - dif * 0.15 + facil * 0.25) {
       const r2 = Math.round(azarR(18, 22) - dif * 3);
       const lado = x < (lo + hi) / 2 ? 1 : -1, x2 = x + lado * azarR(r + r2 + 8, r + r2 + 26);
-      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) { fila.push(nuevoTronco(x2, wy + azarR(-8, 8), r2, dif)); for (const f of fila) f.vx = 0; }
+      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) { fila.push(nuevoTronco(x2, wy + azarR(-8, 8), r2, dif, facil)); for (const f of fila) f.vx = 0; }
     }
     // un amigo atrapado de vez en cuando (nunca dos filas seguidas), y si no, zanahorias
     const n = Math.floor(wy / 40);
@@ -73,7 +77,7 @@ function generaRio(hasta) {
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
       if (!f.amigo && !f.objeto) {
         const k = rnd();
-        if (wy > 300 && k < 0.08 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
+        if (wy > 1000 && k < 0.08 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
         else if (wy > 400 && k > 0.94) { f.tipo = 'muelle'; f.vx = 0; f.boing = 0; }
       }
     }

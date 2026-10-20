@@ -219,5 +219,7 @@ IDIOMA.add({
   "Equipo freak solo para los líderes: arma, cabeza y accesorio. Cada objeto sale con su propia calidad.": "Freak gear for leaders only: weapon, head and accessory. Each item comes with its own quality.",
   "Ese código no vale. Cópialo entero desde el otro dispositivo y pégalo en la caja.": "That code isn't valid. Copy it in full from the other device and paste it in the box.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
-  "Microblizz ha colgado fotos de otros juegos en las torres y los enemigos ya hacen cola para verlas.": "Microblizz hung photos of other games on the towers and the enemies already queue up to see them."
+  "Microblizz ha colgado fotos de otros juegos en las torres y los enemigos ya hacen cola para verlas.": "Microblizz hung photos of other games on the towers and the enemies already queue up to see them.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
+  "Microblizz ha tapado el camino con un anuncio enorme y los enemigos han tenido que dar la vuelta.": "Microblizz blocked the path with a huge ad and the enemies had to turn around."
 });

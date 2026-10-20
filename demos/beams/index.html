@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#070d1f">
+<meta name="fo-version" content="0.1.0">   <!-- la versión de la app Android (herramientas/android_www.py la lee de aquí) -->
+<title>Fans of Beams</title>
+<meta name="description" content="Año 30XX: la guerra contra Microblizz ha llegado al espacio. Fans of Beams, matamarcianos horizontal de la serie Fans Of: captura naves enemigas y úsalas de escolta, escudo o rayo gigante. Demo.">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @font-face { font-family: 'FoOrbitron'; src: url('fonts/orbitron-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'FoOrbitron'; src: url('fonts/orbitron-latin-900-normal.woff2') format('woff2'); font-weight: 900; font-display: block; }
+  @font-face { font-family: 'FoAudiowide'; src: url('fonts/audiowide-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'FoMichroma'; src: url('fonts/michroma-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: block; }
+  html, body { margin: 0; height: 100%; background: #05070f; overflow: hidden; }
+  canvas { display: block; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: #070d1f; touch-action: none; }
+</style>
+</head>
+<body>
+<canvas id="c" width="960" height="540"></canvas>
+<!-- Fans of Beams · demo. El juego está troceado en módulos (js/, de menos de 20 KB cada uno). Reutiliza de Fans of Nova TODO el arte (games/nova/arte: naves de las 9 facciones con sus
+     seis clases, enemigos, jefes, asteroides, iconos) y la música y el sonido (motor de core y canciones de games/nova/js/musica.js, creados con código). -->
+<script src="../../core/js/serie/canciones.js"></script>
+<script src="../../core/js/sistema/sonido.js"></script>
+<script src="../../games/nova/js/musica.js"></script>
+<script src="js/00-base.js"></script>
+<script src="js/10-entrada.js"></script>
+<script src="js/20-datos.js"></script>
+<script src="js/30-efectos.js"></script>
+<script src="js/40-enemigos.js"></script>
+<script src="js/50-jugador.js"></script>
+<script src="js/60-bucle.js"></script>
+<script src="js/70-rayos-fondo.js"></script>
+<script src="js/72-escena.js"></script>
+<script src="js/74-interfaz.js"></script>
+<script src="js/76-tutorial.js"></script>
+<script src="js/80-opciones.js"></script>
+<script src="js/90-arranque.js"></script>
+</body>
+</html>

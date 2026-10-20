@@ -31,10 +31,10 @@ function nuevaPartida(modo = 'menu') {
   Object.assign(JUEGO, {
     modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
     racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
-  reiniciaOla(0); reiniciaDron();
+  reiniciaOla(0); reiniciaDron(); acabaMuerte();
   FX.length = 0; LETREROS.length = 0;
   APUNTA.activo = false;
   preparaMetas();
@@ -188,14 +188,15 @@ function acaba(motivo) {
   salvaGuarda();
   J.fin = { motivo, record, llevaba: J.cuestas.length, premio };
   J.temblor = GUARDA.suave ? 0 : 0.3;
-  onda(c.x, c.wy, 8, 'rgba(255,240,220,0.9)'); onda(c.x, c.wy, 4, 'rgba(255,240,220,0.9)');
-  salpica(c.x, c.wy, 14, motivo === 'ola' ? '#9a6a40' : 'rgba(255,255,255,0.95)');
+  empiezaMuerte(motivo);
   SONIDO.chof();
   APUNTA.activo = false;
 }
 
 function avanzaJuego(dt) {
   const J = JUEGO, c = J.conejo;
+  if (J.lento > 0) { J.lento -= dt; dt *= 0.35; }   // al caer, un instante a cámara lenta
+  avanzaMuerte(dt);
   J.t += dt; J.temblor = Math.max(0, J.temblor - dt); c.cae = Math.max(0, c.cae - dt * 5);
   if (c.tronco) J.enTronco += dt;
   // el tronco agrietado: si te quedas encima más de 1,7 s, se hunde contigo

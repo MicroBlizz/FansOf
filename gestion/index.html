@@ -65,6 +65,7 @@ details { min-width: 0; }
 summary { cursor: pointer; color: var(--suave); }
 pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; overflow-x: auto; font: 12px/1.45 var(--mono); }
 .vacio { background: var(--panel); border: 1px dashed var(--linea); border-radius: 6px; padding: 28px 16px; text-align: center; color: var(--suave); }
+canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; border-radius: 6px; border: 1px solid var(--linea); image-rendering: pixelated; }
 .vacio b { display: block; color: var(--texto); font-size: 16px; margin-bottom: 4px; }
 </style>
 </head>
@@ -83,7 +84,7 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
   </section>
 
   <section id="vista-panel" hidden>
-    <div class="filtros"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button></div>
+    <div class="filtros"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -106,6 +107,17 @@ pre { margin: 8px 0 0; padding: 8px 10px; background: var(--bg); border: 1px sol
       </div>
       <div class="aviso" id="v-aviso" role="alert"></div>
       <div class="lista" id="v-lista"></div>
+    </div>
+    <div id="pan-reportes" hidden>
+      <div class="caja cifras" id="rf-resumen"></div>
+      <div class="caja ayuda"><b>Reportes de Rouflage.</b> Escenarios pintados a mano que alguien ha reportado en una sala con amigos. El dibujo es la copia exacta de lo que vio quien reporta. Con reportes pendientes de 3 personas distintas el escenario ya está oculto hasta que se resuelva. <b>Descartar</b> no hace nada al jugador; <b>Borrar escenario</b> retira ese dibujo; <b>Banear</b> impide enseñar su escenario y crear salas con amigos.</div>
+      <div class="filtros">
+        <select id="rf-estado" aria-label="Estado"><option value="pendiente">pendientes</option><option value="todos">resueltos (30 días)</option></select>
+        <button id="rf-recargar" type="button">Actualizar</button>
+      </div>
+      <div class="aviso" id="rf-aviso" role="alert"></div>
+      <div class="lista" id="rf-lista"></div>
+      <div class="lista" id="rf-baneados"></div>
     </div>
     <div id="pan-roles" hidden>
       <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo de una cuenta que ya haya entrado con Google.</div>
@@ -221,5 +233,6 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 </script>
 <script src="votos.js"></script>
 <script src="roles.js"></script>
+<script src="reportes.js"></script>
 </body>
 </html>

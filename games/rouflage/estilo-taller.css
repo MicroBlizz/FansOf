@@ -1,0 +1,87 @@
+/* Fans of Rouflage · el TALLER DE PINTURA (antes en estilo.css; se carga justo después de él). */
+/* ---------- el taller de pintura ---------- */
+#taller { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: min(100%, 560px); box-sizing: border-box; padding: 10px calc(var(--der) + 12px) calc(var(--inf) + 12px) calc(var(--izq) + 12px); display: grid; gap: 8px;
+  background: linear-gradient(to bottom, var(--tray-hi), var(--tray)); border: 4px solid var(--outline); border-bottom: 0; border-radius: 20px 20px 0 0; box-shadow: 0 -6px 30px rgba(0, 0, 0, 0.45); }
+.t-medidor { display: grid; grid-template-columns: auto auto 1fr; align-items: center; gap: 8px; font-weight: 800; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim); }
+.t-medidor b { font-family: var(--font-display); font-weight: 400; font-size: 24px; color: var(--ink); min-width: 62px; }
+.t-medidor .barra { width: auto; height: 14px; border-radius: 8px; border: 2px solid var(--outline); }
+.t-ayuda { margin: 0; font-weight: 700; font-size: 13px; line-height: 1.2; color: var(--ink-dim); }
+.t-herr { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.t-posturas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.t-postura { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 4px; height: 40px; border-radius: 12px; background: var(--tray); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.t-postura canvas { width: 22px; height: 26px; display: block; }
+.t-postura small { font-weight: 800; font-size: 11px; color: var(--ink-dim); }
+.t-postura.puesto { background: linear-gradient(to bottom, #7fe9f5, #22a9c0); }
+.t-postura.puesto small { color: var(--outline); }
+#t-paleta { display: flex; flex-wrap: wrap; gap: 5px; }
+#t-paleta button { width: 26px; height: 26px; border-radius: 8px; border: 3px solid var(--outline); box-sizing: border-box; }
+#t-paleta button.puesto { box-shadow: 0 0 0 2px var(--gold); }
+.t-herr button { display: grid; justify-items: center; align-content: center; gap: 1px; height: 48px; border-radius: 13px; background: var(--tray); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.t-herr button i[data-icono] { font-size: 16px; }
+.t-herr button small { font-weight: 800; font-size: 10px; line-height: 1; color: var(--ink-dim); }
+.t-herr button.puesto { background: linear-gradient(to bottom, var(--player-lite), var(--player)); }
+.t-herr button.puesto small { color: var(--outline); }
+.t-herr button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.pto { display: block; border-radius: 50%; background: var(--ink); border: 2px solid var(--outline); box-sizing: border-box; margin: 2px 0; }
+.pto.p0 { width: 6px; height: 6px; margin: 7px 0; } .pto.p1 { width: 10px; height: 10px; margin: 5px 0; } .pto.p2 { width: 15px; height: 15px; margin: 2.5px 0; } .pto.p3 { width: 20px; height: 20px; margin: 0; }
+.t-colores { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; }
+#t-color { display: block; width: 46px; height: 46px; border-radius: 14px; border: 4px solid var(--outline); box-shadow: 0 0 0 3px var(--gold); box-sizing: border-box; }
+#t-recientes { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; min-height: 34px; }
+#t-recientes button { width: 32px; height: 32px; border-radius: 10px; border: 3px solid var(--outline); box-sizing: border-box; }
+#t-recientes button.puesto { box-shadow: 0 0 0 2px var(--gold); }
+.boton { display: inline-grid; place-items: center; text-decoration: none; font-family: var(--font-display); font-weight: 400; font-size: 19px; letter-spacing: 0.03em; color: var(--ink); padding: 10px 22px 6px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(to bottom, var(--player-lite), var(--player)); text-shadow: 0 2px 0 var(--outline); box-sizing: border-box; }
+.boton.gris { background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); }
+.boton.peq { font-size: 14px; padding: 8px 13px 5px; border-radius: 12px; box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); min-height: 40px; }
+.boton.cuadrado { padding: 6px 9px 4px; font-size: 16px; }
+.boton.apagado { opacity: 0.55; }
+/* barras de volumen: el icono silencia, la barra regula; estilo Fans Of (contorno grueso, pomo redondo) */
+.fila-volumen { gap: 14px; }
+.volumen { display: inline-flex; align-items: center; gap: 8px; }
+.volumen.ancha { display: flex; justify-content: center; }
+.volumen.ancha span { min-width: 64px; font-weight: 800; font-size: 14px; color: var(--ink-dim); text-align: left; }
+.volumen.ancha .deslizador { width: 150px; }
+.deslizador { -webkit-appearance: none; appearance: none; width: 110px; height: 28px; margin: 0; background: transparent; cursor: pointer; touch-action: pan-y; }
+.deslizador::-webkit-slider-runnable-track { height: 12px; border-radius: 7px; background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); border: 3px solid var(--outline); box-shadow: 0 2px 0 var(--outline); box-sizing: border-box; }
+.deslizador::-moz-range-track { height: 12px; border-radius: 7px; background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); border: 3px solid var(--outline); box-shadow: 0 2px 0 var(--outline); box-sizing: border-box; }
+.deslizador::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--player-lite), var(--player)); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); box-sizing: border-box; }
+.deslizador::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--player-lite), var(--player)); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); box-sizing: border-box; }
+.deslizador:active::-webkit-slider-thumb { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+/* plegar el panel: una pestaña sobre él lo encoge a medidor + color + LISTO; en pantallas estrechas el panel ya es más compacto */
+.t-plegar { position: absolute; top: -30px; right: 14px; width: 54px; height: 30px; border-radius: 12px 12px 0 0; background: var(--tray-hi); border: 3px solid var(--outline); border-bottom: 0; display: grid; place-items: center; padding: 0; }
+.t-plegar i { display: block; width: 10px; height: 10px; border-right: 4px solid var(--ink); border-bottom: 4px solid var(--ink); transform: translateY(-3px) rotate(45deg); transition: transform .2s; }
+#taller.plegado .t-plegar i { transform: translateY(2px) rotate(-135deg); }
+#taller.plegado .t-ayuda, #taller.plegado .t-posturas, #taller.plegado .t-herr, #taller.plegado #t-paleta, #taller.plegado .t-tinta { display: none; }
+@media (max-width: 600px) {
+  #taller { gap: 6px; padding-top: 8px; }
+  .t-ayuda { display: none; }
+  .t-medidor b { font-size: 20px; min-width: 52px; } .t-medidor .barra { height: 12px; }
+  .t-herr { gap: 4px; } .t-herr button { height: 38px; border-radius: 11px; } .t-herr button small { font-size: 9px; } .t-herr button i[data-icono] { font-size: 14px; }
+  .t-posturas { gap: 4px; } .t-postura { height: 32px; border-radius: 10px; } .t-postura canvas { width: 18px; height: 22px; } .t-postura small { font-size: 10px; }
+  #t-paleta { gap: 4px; } #t-paleta button { width: 22px; height: 22px; border-radius: 7px; }
+  #t-color { width: 38px; height: 38px; } #t-recientes { min-height: 28px; } #t-recientes button { width: 26px; height: 26px; }
+  .t-colores .boton { padding: 8px 18px 4px; font-size: 17px; }
+}
+/* apaisado y bajito (un móvil tumbado): el taller se pone a la derecha */
+@media (orientation: landscape) and (max-height: 520px) {
+  #taller { left: auto; right: 0; transform: none; top: 0; bottom: 0; width: 300px; gap: 6px; align-content: safe center; overflow-y: auto; border: 4px solid var(--outline); border-right: 0; border-radius: 20px 0 0 20px; padding: calc(var(--sup) + 8px) calc(var(--der) + 10px) calc(var(--inf) + 8px) 10px; }
+  .t-herr { grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .t-herr button { height: 35px; line-height: 1; } .t-herr button small { font-size: 8.5px; } .t-herr button i[data-icono] { font-size: 13px; }
+  .t-medidor b { font-size: 19px; min-width: 50px; } .t-medidor .barra { height: 11px; }
+  #taller.plegado { bottom: auto; border-radius: 0 0 0 20px; }
+  .t-ayuda { display: none; }
+  .t-plegar { position: fixed; top: calc(var(--sup) + 56px); right: 297px; width: 32px; height: 54px; border-radius: 12px 0 0 12px; border: 3px solid var(--outline); border-right: 0; }
+  .t-posturas { gap: 4px; } .t-postura { height: 30px; } .t-postura canvas { width: 16px; height: 20px; } .t-postura small { font-size: 10px; }
+  #t-paleta { gap: 4px; } #t-paleta button { width: 22px; height: 22px; }
+  #t-color { width: 32px; height: 32px; } #t-recientes { min-height: 26px; } #t-recientes button { width: 24px; height: 24px; }
+  .t-colores .boton { padding: 7px 16px 3px; font-size: 16px; }
+  .t-colores { grid-template-columns: auto 1fr; }
+  .t-colores .boton { grid-column: 1 / -1; }
+  #reloj { font-size: 30px; }
+  /* el marcador de cada papel, a la izquierda bajo el nombre; los avisos, debajo; la pista, abajo a la izquierda de los botones */
+  #ranking { top: calc(var(--sup) + 60px); }
+  #estado { top: calc(var(--sup) + 56px); left: calc(var(--izq) + 10px); right: auto; padding: 0; justify-content: flex-start; flex-direction: column; align-items: flex-start; gap: 6px; }
+  #avisos { top: calc(var(--sup) + 132px); max-width: 300px; }
+  #cartel { top: 20%; }
+  #pista { left: calc(var(--izq) + 12px); transform: none; bottom: calc(var(--inf) + 12px); max-width: calc(100% - 300px); text-align: left; }
+  .accion { width: 70px; height: 70px; } .accion.silbar { width: 60px; height: 60px; }
+}

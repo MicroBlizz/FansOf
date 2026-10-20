@@ -10,6 +10,14 @@ const COL_RIO = {
   agua: '#7fd3cf', aguaO: '#68c2c2', aguaL: '#b4ece4', barro: '#9a6a40', barroO: '#7a4e2c',
   corteza: '#9a6038', madera: '#f4d29a', anillo: '#ddb072',
 };
+// el color del agua en ese punto, para las gotas: verde agua claro, que se enturbia de barro cuanto más cerca está la ola
+// (el mismo degradado que se pinta en pintaRio)
+function turbio(wy) { const d = wy - OLA.wy; return d >= 150 ? 0 : d >= 60 ? 0.5 * (150 - d) / 90 : Math.min(0.85, 0.5 + 0.35 * (60 - d) / 60); }
+function colorAgua(wy, claro = 0.45, alfa = 0.92) {
+  const k = turbio(wy), mezcla = (a, b) => Math.round(a + (b - a) * k), lim = (c, b) => Math.round(c + (255 - c) * claro * (1 - k * 0.7));
+  const r = mezcla(127, 154), g = mezcla(211, 106), b = mezcla(207, 64);
+  return `rgba(${lim(r)},${lim(g)},${lim(b)},${alfa})`;
+}
 const pantY = wy => PAN.H - (wy - CAM.y);   // de la altura del mundo a la y de la pantalla
 const azar = (a, b) => a + Math.random() * (b - a);
 // el azar del río va aparte: en el reto del día sale de una semilla y el río es el mismo para todos

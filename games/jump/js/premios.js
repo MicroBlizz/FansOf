@@ -19,7 +19,7 @@ function muere(motivo) {
   if (J.seguido || tutoActivo() || GUARDA.zanas + J.zanas < precioSeguir()) return acaba(motivo);
   const c = J.conejo;
   J.modo = 'casi'; J.casi = { motivo, t: 0 }; c.salto = null; c.tronco = null; APUNTA.activo = false;
-  onda(c.x, c.wy, 8); salpica(c.x, c.wy, 12, motivo === 'ola' ? '#9a6a40' : 'rgba(255,255,255,0.95)');
+  empiezaMuerte(motivo);
   SONIDO.chof(); vibra(120);
 }
 function avanzaCasi(dt) {
@@ -32,7 +32,7 @@ function avanzaCasi(dt) {
 function sigue() {
   const J = JUEGO, c = J.conejo, p = precioSeguir(), deLaPartida = Math.min(J.zanas, p);
   J.zanas -= deLaPartida; GUARDA.zanas -= p - deLaPartida; salvaGuarda();
-  J.seguido = true; J.modo = 'juego'; J.casi = null; c.hunde = 0;
+  J.seguido = true; J.modo = 'juego'; J.casi = null; c.hunde = 0; acabaMuerte();
   const vale = o => o.wy > OLA.wy + 40;
   const t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) ? c.ultimo : RIO.troncos.filter(vale).sort((a, b) => a.wy - b.wy)[0];
   Object.assign(c, { tronco: t, ox: 0, owy: 0, x: t.x, wy: t.wy, cae: 1 }); J.enTronco = 9;

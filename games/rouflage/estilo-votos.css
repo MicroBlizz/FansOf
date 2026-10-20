@@ -1,0 +1,43 @@
+/* Fans of Rouflage · ME GUSTA, NO ME GUSTA y REPORTAR el escenario del anfitrión en la sala con amigos (js/sala-votos.js, HTML en js/pantallas-html.js) */
+.esc-votos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: -2px 0 4px; }
+.ev-b { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 44px; padding: 4px 8px; border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 3px 0 var(--outline);
+  background: linear-gradient(to bottom, #3d4f6e, var(--tray-hi)); color: var(--ink); font: 800 12.5px/1 var(--font-ui); letter-spacing: .02em; cursor: pointer; transition: transform .08s; }
+.ev-b:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.ev-b i { display: grid; place-items: center; flex: none; }
+.ev-b i svg { width: 24px; height: 24px; }
+.ev-b span { white-space: nowrap; }
+.ev-b b { min-width: 20px; padding: 2px 6px 1px; border: 2px solid var(--outline); border-radius: 999px; background: var(--ok); color: var(--outline); font-size: 12px; }
+.ev-si.activo { background: linear-gradient(to bottom, #b6f58a, #4fae2a); color: var(--outline); }
+.ev-no.activo { background: linear-gradient(to bottom, #ff9aa5, #d8344a); color: var(--outline); }
+.ev-si.activo b { background: #fff6ea; }
+.ev-si.activo i, .ev-no.activo i { animation: ev-sello .28s ease-out; }
+.ev-rep { background: linear-gradient(to bottom, #5a4a2a, #3b3020); padding-inline: 10px; }
+@keyframes ev-sello { 0% { transform: scale(1.7) rotate(-14deg); } 70% { transform: scale(.9); } 100% { transform: scale(1); } }
+@media (max-width: 380px) { .ev-b { font-size: 11px; gap: 3px; padding: 4px 5px; } .ev-b i svg { width: 21px; height: 21px; } }
+.esc-mio { display: flex; align-items: center; justify-content: center; gap: 6px; margin: -2px 0 4px; font-weight: 800; font-size: 13px; color: var(--ink); }
+.esc-mio i svg { width: 22px; height: 22px; }
+.caja p.esc-aviso { margin: -2px 0 4px; padding: 6px 10px; border: 2px solid var(--outline); border-radius: 12px; background: rgba(16, 10, 30, .6); color: var(--ink-dim); font-size: 12.5px; font-weight: 700; }
+.caja p.esc-aviso.malo { background: #4a1d27; color: #ffd9de; border-color: var(--danger); }
+/* el cuadro de reportar */
+.esc-rep { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 16px; background: rgba(8, 6, 18, .72); }
+.esc-rep[hidden] { display: none; }
+.caja.esc-rep-caja { max-width: 380px; gap: 8px; }
+.esc-rep-caja h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; color: var(--gold); }
+#esc-rep-form, #esc-rep-gracias { display: grid; gap: 9px; }
+#esc-rep-form[hidden], #esc-rep-gracias[hidden] { display: none; }
+.esc-rep-motivos { display: grid; gap: 6px; }
+.ev-m { min-height: 42px; border: 3px solid var(--outline); border-radius: 12px; background: var(--tray-hi); color: var(--ink); font: 800 14px var(--font-ui); cursor: pointer; box-shadow: 0 3px 0 var(--outline); }
+.ev-m.activo { background: linear-gradient(to bottom, #ffe08a, var(--gold)); color: var(--outline); }
+#esc-rep-texto { width: 100%; box-sizing: border-box; resize: none; border: 3px solid var(--outline); border-radius: 12px; padding: 7px 9px; background: #0d1222; color: var(--ink); font: 600 14px var(--font-ui); -webkit-user-select: text; user-select: text; }
+.boton.rojo { background: linear-gradient(to bottom, #ff7a86, #d8344a); }
+.boton.rojo:disabled { opacity: .5; }
+#esc-rep-gracias i { display: grid; place-items: center; animation: ev-sello .35s ease-out; }
+#esc-rep-gracias b { font-family: var(--font-display); font-weight: 400; font-size: 22px; color: var(--gold); }
+/* en móvil los tres caben siempre: sin desbordar por la derecha (antes REPORTAR se salía a 360 px) */
+.ev-b { min-width: 0; text-align: center; }
+/* en móvil: el dibujo encima y la palabra debajo; el contador de ME GUSTA, en la esquina */
+@media (max-width: 480px) {
+  .ev-b { position: relative; flex-direction: column; gap: 2px; min-height: 58px; padding: 6px 4px 5px; font-size: 11px; }
+  .ev-b i svg { width: 24px; height: 24px; }
+  .ev-b b { position: absolute; top: -9px; right: -6px; font-size: 11px; padding: 1px 6px 0; }
+}

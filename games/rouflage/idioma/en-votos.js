@@ -1,0 +1,28 @@
+// Fans of Rouflage · Inglés de ME GUSTA, NO ME GUSTA y REPORTAR el escenario en la sala con amigos (js/sala-votos.js y su HTML en js/pantallas-html.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ME GUSTA": "LIKE",
+  "NO ME GUSTA": "DISLIKE",
+  "REPORTAR": "REPORT",
+  "REPORTAR ESCENARIO": "REPORT SCENE",
+  "¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.": "What's wrong with this scene? We'll send it to the developers, who'll inspect it with a magnifying glass.",
+  "Dibujo inapropiado": "Inappropriate drawing",
+  "Nombre ofensivo": "Offensive name",
+  "Otra cosa": "Something else",
+  "Cuéntalo en pocas palabras (opcional)": "Tell us in a few words (optional)",
+  "Gracias, lo revisará Microblizz.": "Thanks, Microblizz will review it.",
+  "Mientras, puedes seguir esperando aquí tan tranquilo.": "Meanwhile, you can keep waiting here, nice and calm.",
+  "RECIBIDO": "RECEIVED",
+  "A 1 amigo le gusta tu escenario": "1 friend likes your scene",
+  "A {n} amigos les gusta tu escenario": "{n} friends like your scene",
+  "No se ha podido votar. Prueba otra vez.": "Couldn't vote. Try again.",
+  "Ya has mandado muchos reportes hoy. Mañana más.": "You've sent a lot of reports today. More tomorrow.",
+  "Este escenario ya no está aquí.": "This scene isn't here anymore.",
+  "No se ha podido mandar. Prueba otra vez.": "Couldn't send it. Try again.",
+  "Microblizz te ha quitado lo de crear salas con amigos por un reporte. Puedes unirte a la sala de un amigo con su código.": "Microblizz has taken away your ability to create rooms with friends because of a report. You can join a friend's room with their code.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte, para siempre. Tus amigos ven la sala de serie.": "Microblizz has removed your scene from rooms because of a report, for good. Your friends see the default room.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte hasta el {f}. Tus amigos ven la sala de serie.": "Microblizz has removed your scene from rooms because of a report until {f}. Your friends see the default room.",
+  "Microblizz ha retirado este dibujo por un reporte. Pinta otra cosa en MI ESCENARIO para volver a enseñarlo.": "Microblizz has removed this drawing because of a report. Paint something else in MY SCENE to show it again.",
+  "Tu escenario está en revisión por unos reportes: mientras, tus amigos ven la sala de serie.": "Your scene is under review because of some reports: meanwhile, your friends see the default room.",
+  "Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.": "This scene is hidden while Microblizz reviews it. Here's the default room.",
+});

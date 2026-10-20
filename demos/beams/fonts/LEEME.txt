@@ -1,0 +1,3 @@
+Fuentes de Fans of Beams (se guardan dentro del juego para que funcionen sin conexión y en la app):
+Orbitron (Matt McInerney), Audiowide (Astigmatic) y Michroma (Vernon Adams). Licencia SIL Open Font License 1.1 (ver LICENSE-*.txt).
+Origen: paquetes @fontsource de npm (subconjunto latino).

@@ -92,7 +92,7 @@ const CATALOGO_AR = (() => {
     it('estrellas', 'Estrellas', 'rara', 'tienda', 250, R('estrellas')), it('zzz', 'Zzz', 'comun', 'diario', 'Diario · día 4', R('zzz')),
     it('arcoiris', 'Arcoíris', 'epica', 'tienda', 500, R('arcoiris')), it('bellotas', 'Bellotas de MadSquirrel', 'legend', 'premium', 'Pase premium · nv 33', R('bellotas')), it('chispas', 'Chispas', 'rara', 'gratis', 'Pase gratis · nv 34', R('chispas')),
   ];
-  const F = t => (c, w) => fantasma(c, w, t);
+  const F = tipo => (c, w, t) => fantasma(c, w, tipo, t);      // t: el instante, para verlo animado en grande (arPintaVista)
   const fantasmaR = [
     it('galleta', 'Tu galleta fantasma', 'comun', 'base', 'Al empezar', F('galleta')), it('sabana', 'Sábana', 'comun', 'tienda', 30, F('sabana')),
     it('avion', 'Avión de papel', 'rara', 'diario', 'Diario · 20 días del mes', F('avion')), it('caja', 'Caja de cartón', 'rara', 'gratis', 'Pase gratis · nv 37', F('caja')),

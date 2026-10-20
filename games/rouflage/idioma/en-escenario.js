@@ -87,10 +87,17 @@ IDIOMA.add({
   "Pintura borrada (puedes deshacerlo)": "Paint cleared (you can undo it)",
   "Color libre": "Any colour",
   "Color libre: el que quieras": "Any colour: whichever you like",
-  "Toca el suelo para ir andando (o usa las flechas). Así te verán tus amigos cuando vengan.": "Tap the floor to walk there (or use the arrow keys). This is how your friends will see you when they visit.",
   "A MI ESCENARIO": "TO MY SCENE",
   "Toca uno para verlo en grande": "Tap one to see it up close",
   "Tus amigos esperan en tu escenario": "Your friends are waiting in your scene",
   "Estáis en el escenario de {n}": "You're all in {n}'s scene",
-  "El escenario del anfitrión": "The host's scene"
+  "El escenario del anfitrión": "The host's scene",
+  "Toca una tarjeta: sale donde miras": "Tap a card: it appears where you're looking",
+  "Toca uno para cambiar el estilo y la forma del mapa": "Tap one to change the style and shape of the map",
+  "Arrástralo a donde quieras": "Drag it wherever you like",
+  "{n} muebles no cabían y se han movido al hueco más cercano": "{n} pieces of furniture didn't fit and moved to the nearest free spot",
+  "Toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.": "Tap the floor to walk there (or use the arrow keys). Pinch to zoom.",
+  "Acercar": "Zoom in",
+  "Alejar": "Zoom out",
+  "Ir a mi galleta": "Go to my cookie"
 });

@@ -87,32 +87,11 @@ async function gachaTirar(k, gratis) {
   try { sale = RFS.activo() ? await gachaTiraServidor(k, gratis) : gachaTira(k, gratis); } catch (e) { GACHA_UI.ocupado = false; RFS.error(e); return; }
   if (!sale) { GACHA_UI.ocupado = false; play('deny'); return; }
   play('select');
-  const res = E('gacha-res'); E('gacha-result').hidden = true; res.innerHTML = '';
-  // la animación del Rumble: la manivela gira, sale la bola y se abre; al abrirse, las cartas de lo que ha salido
-  GACHA_FX.tirada(sale.map(x => RAR_FX[x.it.r] || 'common'), GACHA_MAQ, () => {
-    E('gacha-result').hidden = false;
-    sale.forEach((x, i) => setTimeout(() => {
-      res.appendChild(gachaTarjeta(x)); if (x.it.r === 'epica' || x.it.r === 'legend') play('crown');
-      if (i === sale.length - 1) { GACHA_UI.ocupado = false; gachaPinta(); }
-    }, i * 120));
-  });
-}
-function gachaTarjeta(x) {
-  const d = document.createElement('div'); d.className = 'gc-carta gc-' + x.it.r + (x.nuevo ? ' nuevo' : '');
-  const k = arLienzo(54, 54); arPinta(k, (c, w) => x.it.x(c, w)); d.appendChild(k);
-  const n = document.createElement('b'); n.textContent = tr(x.it.n); d.appendChild(n);
-  const s = document.createElement('small'); s.textContent = tr(RAREZA_AR[x.it.r]) + ' · ' + tr(arCat(x.cat).corto); d.appendChild(s);
-  const e = document.createElement('i'); e.textContent = x.nuevo ? tr('¡NUEVO!') : tr('Repetido: +{n} Gotas', { n: x.devuelve }); d.appendChild(e);
-  if (x.nuevo && arCat(x.cat).sala) {      // un mueble o un escenario: a tu sala (escenario.js)
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq'; b.textContent = tr('A MI ESCENARIO');
-    b.onclick = () => { play('select'); clearInterval(_gachaReloj); if (x.cat === 'escenarios') { SAVE.escenario = Object.assign({}, SAVE.escenario || {}, { id: x.it.id }); guardaPartida(); abreEscenario(); } else abreEscenario(x.it.id); };
-    d.appendChild(b);
-  } else if (x.nuevo && !arCat(x.cat).conjuntos) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq'; b.textContent = tr('Ponérmelo');
-    b.onclick = () => { armarioEstado().puesto[x.cat] = x.it.id; guardaPartida(); play('crown'); b.disabled = true; b.textContent = tr('Puesto'); };
-    d.appendChild(b);
-  }
-  return d;
+  E('gacha-result').hidden = true; E('gacha-res').innerHTML = '';
+  // la animación del Rumble: la manivela gira, sale la bola y se abre; al abrirse, el premio a pantalla completa y en el centro (gacha-premio.js)
+  // con diez, core abre una sola cápsula (la de la mejor, que tiembla según su rareza) y las diez se destapan después en la rejilla del premio
+  const rars = sale.map(x => x.it.r), mejor = rars.reduce((a, r) => (RAR_RANGO[r] > RAR_RANGO[a] ? r : a));
+  GACHA_FX.tirada((sale.length > 1 ? [mejor] : rars).map(r => RAR_FX[r] || 'common'), GACHA_MAQ, () => gachaPremio(sale));
 }
 function preparaGacha() {
   const bi = E('b-gacha-info'); bi.innerHTML = ''; bi.appendChild(iconoPeq(pintaInfoBoton, 34));
@@ -125,4 +104,5 @@ function preparaGacha() {
   E('b-gacha-volver').onclick = cierraGacha;
   E('b-gacha-vale').onclick = () => { if (!GACHA_UI.ocupado) { play('select'); E('gacha-result').hidden = true; } };
   E('b-gacha-tienda').onclick = () => { if (!GACHA_UI.ocupado) abreTienda('gacha'); };
+  preparaGachaPremio();
 }

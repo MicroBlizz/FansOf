@@ -150,5 +150,7 @@ IDIOMA.add({
  "Tu récord": "Your record",
  "Reto del día": "Daily challenge",
  "hoy": "today",
- "¡Resbala!": "Slippery!"
+ "¡Resbala!": "Slippery!",
+ "¡CLONK!": "CLONK!",
+ "¡Plaf!": "Splash!"
 });

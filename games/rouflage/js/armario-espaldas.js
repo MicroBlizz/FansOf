@@ -1,0 +1,24 @@
+// Fans of Rouflage · ARMARIO (dibujo): lo que se lleva en la ESPALDA (detrás del cuerpo: alas, colas, mochilas, capas…), con las ayudas de
+// dibujo de ARD (armario-dibujo.js). Antes estaba dentro de armario-dibujo.js; armario-dibujo3.js añade más piezas.
+'use strict';
+Object.assign(ARD.ESPALDAS, (() => {
+  const { OL, T, shape, el, rr, poly, line, dot } = ARD;
+  return {
+    capa(c) { shape(c, poly(-10, -36, 6, -34, -6, -3, -25, -7), '#ff7a1a'); },
+    colaFox(c) { shape(c, g => { g.moveTo(-10, -8); g.bezierCurveTo(-28, -2, -40, -12, -38, -26); g.bezierCurveTo(-30, -20, -20, -22, -10, -20); g.closePath(); }, '#e8702a'); shape(c, g => { g.moveTo(-38, -26); g.bezierCurveTo(-39, -18, -35, -12, -29, -9); g.bezierCurveTo(-31, -15, -32, -20, -30, -22); g.closePath(); }, '#fff4e6', 2); },
+    colaArdilla(c) { shape(c, g => { g.moveTo(-10, -6); g.bezierCurveTo(-34, -2, -40, -30, -28, -44); g.bezierCurveTo(-20, -53, -8, -48, -11, -39); g.bezierCurveTo(-14, -33, -20, -34, -20, -28); g.bezierCurveTo(-20, -20, -12, -16, -10, -6); g.closePath(); }, '#b14d1c'); c.beginPath(); c.moveTo(-17, -12); c.bezierCurveTo(-30, -16, -32, -32, -24, -40); c.strokeStyle = '#f0a065'; c.lineWidth = 3; c.lineCap = 'round'; c.stroke(); },
+    colaCoon(c) { const tail = g => { g.moveTo(-10, -7); g.bezierCurveTo(-24, -5, -34, -16, -30, -30); g.bezierCurveTo(-28, -36, -21, -35, -21.5, -29); g.bezierCurveTo(-23, -21, -18, -14, -9, -14.5); g.closePath(); }; shape(c, tail, '#8d8f99', 0); c.save(); c.beginPath(); tail(c); c.clip(); for (const p of [[-15, -16, -22, -7], [-22, -19, -31, -15], [-23, -25, -32, -24], [-21, -31, -29, -34]]) line(c, p, '#3b3d47', 2.6); c.restore(); shape(c, tail, null, 2.2); },
+    colaBeaver(c) { shape(c, el(-18, -5, 10, 5, -0.35), '#6b4a2e'); c.save(); c.beginPath(); c.ellipse(-18, -5, 10, 5, -0.35, 0, T); c.clip(); for (let i = -3; i <= 3; i++) { line(c, [-24 + i * 3, -11, -14 + i * 3, 1], '#4e3420', .8); line(c, [-24 + i * 3, 1, -14 + i * 3, -11], '#4e3420', .8); } c.restore(); },
+    alasAngel(c) { c.save(); c.translate(0, -8); c.scale(1.35, 1.35); shape(c, g => { g.moveTo(-3, -25); g.quadraticCurveTo(-17, -36, -21, -22); g.quadraticCurveTo(-15, -23, -13, -17); g.quadraticCurveTo(-9, -21, -3, -19); g.closePath(); }, '#ffffff', 1.6); shape(c, g => { g.moveTo(3, -25); g.quadraticCurveTo(17, -36, 21, -22); g.quadraticCurveTo(15, -23, 13, -17); g.quadraticCurveTo(9, -21, 3, -19); g.closePath(); }, '#ffffff', 1.6); line(c, [-15, -28, -11, -22.5], '#d6def0', 1); line(c, [15, -28, 11, -22.5], '#d6def0', 1); c.restore(); },
+    alasMurci(c) { for (const s of [-1, 1]) shape(c, g => { g.moveTo(s * 10, -30); g.lineTo(s * 33, -38); g.quadraticCurveTo(s * 30, -28, s * 34, -20); g.quadraticCurveTo(s * 26, -24, s * 24, -16); g.quadraticCurveTo(s * 18, -22, s * 10, -18); g.closePath(); }, '#4a3a6a'); },
+    alasMariposa(c) { for (const s of [-1, 1]) { shape(c, el(s * 20, -34, 10, 8, s * .5), '#ff6fb5'); shape(c, el(s * 17, -20, 6, 5, -s * .4), '#39d5e8'); dot(c, s * 21, -35, 2.4, '#fff'); } },
+    capaAzul(c) { shape(c, g => { g.moveTo(-11, -34); g.lineTo(11, -34); g.lineTo(22, -2); g.quadraticCurveTo(0, 3, -22, -2); g.closePath(); }, '#2563eb'); },
+    capaNecro(c) { shape(c, g => { g.moveTo(-11, -34); g.lineTo(11, -34); g.lineTo(19, -2); g.quadraticCurveTo(0, 2, -19, -2); g.closePath(); }, '#3b2457'); c.beginPath(); c.moveTo(-18.5, -3.4); c.quadraticCurveTo(0, 0.6, 18.5, -3.4); c.strokeStyle = '#5ef2d0'; c.lineWidth = 1.8; c.stroke(); },
+    katana(c) { c.save(); c.globalAlpha = 0.35; line(c, [9, -22, 30, -50], '#22e3ff', 6); c.restore(); line(c, [9, -22, 30, -50], OL, 3.8); line(c, [9, -22, 30, -50], '#a5f3fc', 2); line(c, [10, -23.4, 29.4, -49.2], '#fff', 0.7); line(c, [5.6, -17.6, 9.6, -22.6], OL, 3.4); line(c, [5.6, -17.6, 9.6, -22.6], '#ff3df0', 1.6); },
+    teclado(c) { c.save(); c.translate(19, -34); c.rotate(0.45); shape(c, rr(-5, -26, 10, 26, 2), '#111827', 1.6); ['#ff3348', '#ffcb3d', '#7be04a', '#22e3ff', '#a855f7', '#ff3df0'].forEach((col, i) => { c.fillStyle = col; c.fillRect(-3.4, -23.6 + i * 4, 2.6, 2.6); c.fillRect(0.6, -23.6 + i * 4, 2.6, 2.6); }); c.restore(); },
+    baston(c) { line(c, [16, -2, 19, -62], OL, 4.2); line(c, [16, -2, 19, -62], '#5a4630', 2.2); shape(c, el(19, -65, 5, 4.6), '#efeadf', 1.5); dot(c, 17.3, -65.6, 1.3, '#5ef2d0'); dot(c, 20.7, -65.6, 1.3, '#5ef2d0'); },
+    mochila(c) { shape(c, rr(8, -31, 12, 18, 4), '#7ee04a'); shape(c, rr(10, -24, 8, 4, 1), '#5cbf2c', 1.4); },
+    propulsor(c) { shape(c, rr(-20, -32, 9, 20, 3), '#c3cbe0'); shape(c, poly(-19, -12, -15.5, -2, -12, -12), '#ff7a1a', 1.4); shape(c, poly(-18, -12, -15.5, -6, -13, -12), '#ffe27a', 0); },
+    colaGato(c) { c.beginPath(); c.moveTo(-9, -10); c.bezierCurveTo(-22, -8, -26, -24, -18, -32); c.strokeStyle = OL; c.lineWidth = 7; c.lineCap = 'round'; c.stroke(); c.strokeStyle = '#444058'; c.lineWidth = 3.6; c.stroke(); },
+  };
+})());

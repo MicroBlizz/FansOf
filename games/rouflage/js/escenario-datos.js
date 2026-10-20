@@ -6,24 +6,25 @@
 // Va después de armario-precios.js (el precio de las Backrooms no lo pisa la rareza). El dibujo de las salas está en escenario-pinta.js.
 'use strict';
 const ESC_PRECIO_BACKROOMS = 1500;
-// cada escenario: el suelo (SUELOS), el papel de la pared (PAPELES), el muro visto desde arriba y su canto, como en su mapa
+// cada escenario: el suelo (SUELOS) y el papel de la pared (PAPELES) de su sala principal, como en su mapa; b y c, los de la segunda sala y
+// los pasillos; la forma del mapa (FORMAS_ESC, escenario-formas.js) y el muro visto desde arriba y su canto
 const ESCENARIOS = {
-  oficina: { suelo: 'moqueta', pared: 'rayas' },
-  cafeteria: { suelo: 'damero', pared: 'azulejo' },
-  rrhh: { suelo: 'rombos', pared: 'madera' },
-  almacen: { suelo: 'hormigon', pared: 'chapa' },
-  parking: { suelo: 'asfalto', pared: 'hormigonP', muro: '#2b2d36', canto: '#595d6a' },
-  terraza: { suelo: 'terraza', pared: 'fachada', muro: '#4a3a3a', canto: '#8a6a5a' },
-  jardin: { suelo: 'cesped', pared: 'seto', muro: '#2f5a2a', canto: '#4f8a3e' },
-  caseta: { suelo: 'tablas', pared: 'valla', muro: '#2f5a2a', canto: '#4f8a3e' },
-  nube: { suelo: 'placas', pared: 'racks' },
-  hotel: { suelo: 'moquetaHab', pared: 'rayasHotel', muro: '#3a1f24', canto: '#7a4a3a' },
-  cloacas: { suelo: 'ladrilloSuelo', pared: 'ladrillo', muro: '#2b2320', canto: '#5a3a30' },
-  vestibulo: { suelo: 'marmol', pared: 'maderaNoble', muro: '#3a1f24', canto: '#7a4a3a' },
-  cumple: { suelo: 'confeti', pared: 'banderines', muro: '#3a2f10', canto: '#6b561e' },
-  bombas: { suelo: 'rejilla', pared: 'tuberias', muro: '#2b2320', canto: '#5a3a30' },
-  archivo: { suelo: 'hexagonos', pared: 'piedra' },
-  backrooms: { suelo: 'moquetaBk', pared: 'amarillo', muro: '#3a2f10', canto: '#6b561e', zumbido: true },
+  oficina: { suelo: 'moqueta', pared: 'rayas', b: ['rombos', 'madera'], c: ['flechas', 'ventanas'], forma: 'oficina' },
+  cafeteria: { suelo: 'damero', pared: 'azulejo', b: ['moqueta', 'rayas'], c: ['flechas', 'ventanas'], forma: 'oficina' },
+  rrhh: { suelo: 'rombos', pared: 'madera', b: ['moqueta', 'rayas'], c: ['flechas', 'ventanas'], forma: 'oficina' },
+  almacen: { suelo: 'hormigon', pared: 'chapa', b: ['placas', 'racks'], c: ['flechas', 'ventanas'], forma: 'nave' },
+  parking: { suelo: 'asfalto', pared: 'hormigonP', b: ['aceite', 'hormigonP'], c: ['rampa', 'hormigonP'], forma: 'nave', muro: '#2b2d36', canto: '#595d6a' },
+  terraza: { suelo: 'terraza', pared: 'fachada', b: ['acera', 'fachada'], c: ['cebra', 'fachada'], forma: 'jardin', muro: '#4a3a3a', canto: '#8a6a5a' },
+  jardin: { suelo: 'cesped', pared: 'seto', b: ['flores', 'seto'], c: ['gravilla', 'seto'], forma: 'jardin', muro: '#2f5a2a', canto: '#4f8a3e' },
+  caseta: { suelo: 'tablas', pared: 'valla', b: ['cesped', 'seto'], c: ['gravilla', 'valla'], forma: 'oficina', muro: '#2f5a2a', canto: '#4f8a3e' },
+  nube: { suelo: 'placas', pared: 'racks', b: ['hormigon', 'chapa'], c: ['flechas', 'ventanas'], forma: 'oficina' },
+  hotel: { suelo: 'moquetaHab', pared: 'rayasHotel', b: ['banoAzulejo', 'azulejo'], c: ['moquetaHotel', 'damasco'], forma: 'hotel', muro: '#3a1f24', canto: '#7a4a3a' },
+  cloacas: { suelo: 'ladrilloSuelo', pared: 'ladrillo', b: ['rejilla', 'tuberias'], c: ['pasarela', 'ladrillo'], forma: 'laberinto', muro: '#2b2320', canto: '#5a3a30' },
+  vestibulo: { suelo: 'marmol', pared: 'maderaNoble', b: ['alfombraRoja', 'maderaNoble'], c: ['moquetaHotel', 'damasco'], forma: 'hotel', muro: '#3a1f24', canto: '#7a4a3a' },
+  cumple: { suelo: 'confeti', pared: 'banderines', b: ['moquetaBk', 'amarillo'], c: ['linoleo', 'amarillo'], forma: 'hotel', muro: '#3a2f10', canto: '#6b561e' },
+  bombas: { suelo: 'rejilla', pared: 'tuberias', b: ['cables', 'tuberias'], c: ['pasarela', 'ladrillo'], forma: 'laberinto', muro: '#2b2320', canto: '#5a3a30' },
+  archivo: { suelo: 'hexagonos', pared: 'piedra', b: ['moquetaGris', 'tabique'], c: ['flechas', 'ventanas'], forma: 'oficina' },
+  backrooms: { suelo: 'moquetaBk', pared: 'amarillo', b: ['moquetaGris', 'tabique'], c: ['moquetaBk', 'amarillo'], forma: 'laberinto', muro: '#3a2f10', canto: '#6b561e', zumbido: true },
 };
 // cada mueble del armario: el tipo de TIPOS_MUEBLE con que se dibuja, cuántas variantes de color tiene (el botón COLOR) y su pestaña
 // en la bandeja del editor (g: muebles, plantas o deco)

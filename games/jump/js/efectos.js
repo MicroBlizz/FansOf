@@ -19,7 +19,7 @@ function aviso(txt, x, wy, color = '#fff8ea', size = 9) { FX.push({ t: 'texto', 
 function avanzaFx(dt) {
   for (const f of FX) {
     f.v -= dt;
-    if (f.t === 'gota') { f.x += f.vx * dt; f.wy += f.vy * dt; f.z += f.vz * dt; f.vz -= 160 * dt; if (f.z < 0) f.v = 0; }
+    if (f.t === 'gota' || f.t === 'gotaG') { f.x += f.vx * dt; f.wy += f.vy * dt; f.z += f.vz * dt; f.vz -= 160 * dt; if (f.z < 0) { f.v = 0; if (f.t === 'gotaG' && Math.random() < 0.4) onda(f.x, f.wy, 2.5, 'rgba(255,255,255,0.6)'); } }
     else if (f.t === 'estrella' || f.t === 'corazon') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92; f.giro = (f.giro || 0) + dt * 5; }
     else if (f.t === 'texto') f.wy += dt * 16;
     else if (f.t === 'petalo') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.94; f.vy = f.vy * 0.94 - 14 * dt; f.giro += dt * 7; }
@@ -50,6 +50,21 @@ function pintaFx(capa) {
       continue;
     }
     if (f.t === 'gota') elipse(f.x, y - f.z, f.r, f.r, f.color, null);
+    else if (f.t === 'gotaG') {   // gota grande y brillante, alargada al caer
+      const st = Math.min(1.6, 1 + Math.abs(f.vz) / 120);
+      elipse(f.x, y - f.z, f.r / Math.sqrt(st), f.r * st, f.color, 'rgba(70,140,160,0.45)', 0.35);
+      elipse(f.x - f.r * 0.3, y - f.z - f.r * 0.4, f.r * 0.32, f.r * 0.32, f.luz, null);
+    } else if (f.t === 'columna') {   // la columna de agua del golpe: sube y se deshace
+      const k = 1 - f.v / f.v0, h = Math.sin(Math.min(1, k * 1.3) * Math.PI) * 26, w = 4 + k * 5;
+      G.globalAlpha = Math.max(0, 1 - k * 0.8);
+      blanda([f.x - w, y, f.x - w * 0.45, y - h * 0.6, f.x, y - h, f.x + w * 0.45, y - h * 0.6, f.x + w, y], f.color, 'rgba(61,42,92,0.3)', 0.5);
+      G.globalAlpha = 1;
+    } else if (f.t === 'espuma') {   // la espuma alrededor, que se abre y se va
+      const k = 1 - f.v / f.v0;
+      G.globalAlpha = Math.max(0, 1 - k);
+      for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2, rr = 8 + k * 14; elipse(f.x + Math.cos(a) * rr, y + 2 + Math.sin(a) * rr * 0.5, 3.2 - k * 2, 2 - k, f.color, null); }
+      G.globalAlpha = 1;
+    }
     else if (f.t === 'estrella') { G.globalAlpha = Math.min(1, f.v / f.v0 * 2); estrellaForma(f.x, y, f.r, f.giro, f.color); G.globalAlpha = 1; }
     else if (f.t === 'petalo') { G.globalAlpha = Math.min(1, f.v * 2); aqui(f.x, y - 8, f.giro, 1, Math.abs(Math.sin(f.giro)) * 0.6 + 0.4, () => elipse(0, 0, f.r, f.r * 0.6, f.color, 'rgba(200,120,150,0.5)', 0.3)); G.globalAlpha = 1; }
     else if (f.t === 'corazon') { G.globalAlpha = Math.min(1, f.v * 2); corazonForma(f.x, y, f.r, '#ff7aa8'); G.globalAlpha = 1; }

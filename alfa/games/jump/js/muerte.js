@@ -77,15 +77,11 @@ function hundeConejo() {
   if (!M.activa) return { baja: JUEGO.conejo.hunde, giro: 0 };
   return { baja: hundido(M.t) + Math.sin(M.t * 3) * 0.02, giro: Math.sin(M.t * (M.t < 0.6 ? 17 : 2.4)) * (M.t < 0.6 ? 0.13 : 0.09) };
 }
-// el flotador rosa con rayas blancas (r: el radio; delante: la mitad de delante, que tapa al que va dentro)
+// el flotador de plástico (dibujo 3D, en dos mitades: la de atrás va detrás del que flota y la de delante lo tapa);
+// r: el radio por fuera, en medidas del mundo
 function flotador(x, y, r, delante, k = 1) {
-  const rx = r * k, ry = r * 0.42 * k, g = r * 0.34 * k;
-  G.save(); G.beginPath(); G.rect(x - rx - 2, delante ? y : y - ry - 4, rx * 2 + 4, ry + 6); G.clip();
-  elipse(x, y, rx, ry, vol(x, y, rx, ry, '#ff8fb8'), OLC, 0.9);
-  for (const a of [0.5, 1.6, 2.7, 3.8, 4.9, 6.0]) { const c = Math.cos(a), s = Math.sin(a); elipse(x + c * (rx - g / 2), y + s * (ry - g * 0.4), g * 0.42, g * 0.36, '#ffffff', null); }
-  elipse(x, y - 0.4, rx - g, Math.max(0.5, ry - g * 0.75), MUERTE.barro ? COL_RIO.barro : COL_RIO.agua, OLC, 0.7);
-  elipse(x - rx * 0.4, y - ry * 0.55, rx * 0.22, ry * 0.18, 'rgba(255,255,255,0.6)', null);
-  G.restore();
+  if (!delante) elipse(x + 1, y + 2, r * 1.05 * k, r * 0.4 * k, 'rgba(30,70,80,0.22)', null);   // su sombra en el agua
+  sprite(delante ? 'flotador_delante' : 'flotador_atras', x, y, r / 1.02 * k);
 }
 // la parte de atrás del flotador (antes del conejo) y la de delante (después)
 function flotadorConejo(delante) {

@@ -1,8 +1,8 @@
 {
- "build": 275,
- "hash": "71e42b3",
- "fecha": "2026-10-20T12:51:23Z",
- "mensaje": "Tienda: con las dos monedas desaparece la pestaña de oro (no se vende); el oro y su aviso pasan a la de gemas",
+ "build": 276,
+ "hash": "6048348",
+ "fecha": "2026-10-20T12:52:30Z",
+ "mensaje": "Tienda: la pestaña de oro vuelve con la broma, el porqué no se vende y el cambio de oro a gemas",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

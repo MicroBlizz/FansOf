@@ -1,8 +1,8 @@
 {
- "build": 280,
- "hash": "3fa5d95",
- "fecha": "2026-10-20T13:56:35Z",
- "mensaje": "Rouflage gachapón: sale todo lo no gratis (conjuntos y legendarias incluidos), lo del pase espera a que cierre; con Acciones solo se compran las épicas",
+ "build": 281,
+ "hash": "c49f1be",
+ "fecha": "2026-10-20T14:09:46Z",
+ "mensaje": "Rouflage gachapón: pantalla compacta como la del Rumble (cabe en pantalla, resultado en capa aparte) y tirada gratis cada 12 h (domingos de 10)",
  "juegos": {
   "crush": "0.1.22",
   "dark": "0.2.7",

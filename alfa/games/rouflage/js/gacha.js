@@ -11,11 +11,13 @@ const GACHA = {
   odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
   repetida: { comun: 30, rara: 80, epica: 160, legend: 300 },   // Gotas que devuelve una pieza que ya tienes
   pityRara: 10, pityEpica: 40,
+  gratisHoras: 12,                                 // una tirada gratis cada tantas horas (no se acumulan); los domingos es de 10 cápsulas
   liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón
 };
 
 function gachaEstado() {
   if (!SAVE.gacha) SAVE.gacha = { total: 0, sinRara: 0, sinEpica: 0 };
+  if (typeof SAVE.gacha.gratis !== 'number') SAVE.gacha.gratis = 0;
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
   return SAVE.gacha;
 }
@@ -45,13 +47,17 @@ function gachaRareza(g, pool) {
   if (r === 'epica') g.sinEpica = 0;
   return r;
 }
+// la tirada gratis: SAVE.gacha.gratis = la hora (ms) de la última que se cogió
+const gachaGratisEn = () => Math.max(0, gachaEstado().gratis + GACHA.gratisHoras * 3600000 - Date.now());
+const gachaGratisN = () => (new Date().getDay() === 0 ? 10 : 1);
 const gachaCoste = n => (n === 10 ? GACHA.precio10 : n * GACHA.precio);
-// tira n cápsulas (1 o 10). Devuelve [{ cat, it, nuevo, devuelve }] o null si faltan Gotas. Primero pregunta a MONEDAS.azar y luego cobra
-function gachaTira(n) {
-  const g = gachaEstado(), pool = gachaPool(), coste = gachaCoste(n);
-  if (SAVE.gotas < coste) return null;
-  if (typeof MONEDAS !== 'undefined' && !MONEDAS.azar('gachapón de armario', { ganada: coste })) return null;
-  SAVE.gotas -= coste;
+// tira n cápsulas (1 o 10). Devuelve [{ cat, it, nuevo, devuelve }] o null si faltan Gotas. Primero pregunta a MONEDAS.azar y luego cobra.
+// gratis: la tirada gratis (no cobra nada; solo si ya toca: se apunta la hora y la tirada es de gachaGratisN() cápsulas)
+function gachaTira(n, gratis) {
+  const g = gachaEstado(), pool = gachaPool(), coste = gratis ? 0 : gachaCoste(n);
+  if (gratis ? gachaGratisEn() > 0 : SAVE.gotas < coste) return null;
+  if (!gratis && typeof MONEDAS !== 'undefined' && !MONEDAS.azar('gachapón de armario', { ganada: coste })) return null;
+  if (gratis) g.gratis = Date.now(); else SAVE.gotas -= coste;
   const a = armarioEstado(), sale = [];
   for (let i = 0; i < n; i++) {
     const r = gachaRareza(g, pool), lista = pool[r], x = lista[Math.floor(Math.random() * lista.length)];

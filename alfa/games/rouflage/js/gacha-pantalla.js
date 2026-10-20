@@ -39,8 +39,9 @@ function pintaInfoBoton(c, w) {
 }
 const pctRF = v => (IDIOMA_RF === 'es' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(Math.round(v * 100) / 100)) + ' %';
 
-function abreGacha() { gachaEstado(); GACHA_UI.ocupado = false; E('gacha-res').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); play('select'); }
-function cierraGacha() { if (GACHA_UI.ocupado) return; play('select'); irTitulo(); }
+let _gachaReloj = 0;
+function abreGacha() { gachaEstado(); GACHA_UI.ocupado = false; E('gacha-resultado').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
+function cierraGacha() { if (GACHA_UI.ocupado) return; play('select'); clearInterval(_gachaReloj); irTitulo(); }
 
 function gachaPinta() {
   const g = gachaEstado(), [t, n] = gachaCuenta();
@@ -54,7 +55,14 @@ function gachaPinta() {
     const s = document.createElement('span'); s.textContent = tr(k === 1 ? '1 CÁPSULA · {n}' : '10 CÁPSULAS · {n}', { n: coste }); b.appendChild(s);
     b.classList.toggle('falta', SAVE.gotas < coste);
   }
-  gachaPintaProbs();
+  gachaPintaProbs(); gachaPintaGratis();
+}
+// el botón de la tirada gratis: lista, o cuánto falta (se repinta cada segundo)
+function gachaPintaGratis() {
+  const b = E('b-gacha-gratis'); if (!b || E('p-gacha').hidden) return;
+  const falta = gachaGratisEn(), k = gachaGratisN(); b.classList.toggle('falta', falta > 0);
+  if (falta > 0) { const s = Math.ceil(falta / 1000), t = s >= 3600 ? Math.floor(s / 3600) + ' h ' + String(Math.floor(s % 3600 / 60)).padStart(2, '0') + ' min' : Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); b.textContent = tr('TIRADA GRATIS en {t}', { t }); }
+  else b.textContent = tr(k === 10 ? 'TIRADA GRATIS · ¡DOMINGO, DE 10!' : 'TIRADA GRATIS');
 }
 // las probabilidades reales de cada rareza y de cada pieza (sin contar las garantías), siempre a la vista
 function gachaPintaProbs() {
@@ -67,15 +75,16 @@ function gachaPintaProbs() {
 }
 
 // una tirada: la máquina se agita un momento y salen las cápsulas, una a una
-function gachaTirar(k) {
+function gachaTirar(k, gratis) {
   if (GACHA_UI.ocupado) return;
-  if (SAVE.gotas < gachaCoste(k)) { play('deny'); avisa(tr('Te faltan {n} Gotas: juega partidas y recoge el premio diario', { n: gachaCoste(k) - SAVE.gotas }), 'malo'); return; }
-  const sale = gachaTira(k); if (!sale) { play('deny'); return; }
+  if (gratis) { if (gachaGratisEn() > 0) { play('deny'); return; } k = gachaGratisN(); }
+  else if (SAVE.gotas < gachaCoste(k)) { play('deny'); avisa(tr('Te faltan {n} Gotas: juega partidas y recoge el premio diario', { n: gachaCoste(k) - SAVE.gotas }), 'malo'); return; }
+  const sale = gachaTira(k, gratis); if (!sale) { play('deny'); return; }
   GACHA_UI.ocupado = true; play('select');
-  const maq = E('gacha-maquina'), res = E('gacha-res'); res.hidden = true; res.innerHTML = '';
+  const maq = E('gacha-maquina'), res = E('gacha-res'); E('gacha-resultado').hidden = true; res.innerHTML = '';
   maq.classList.remove('agita'); void maq.offsetWidth; maq.classList.add('agita');
   setTimeout(() => {
-    maq.classList.remove('agita'); res.hidden = false;
+    maq.classList.remove('agita'); E('gacha-resultado').hidden = false;
     sale.forEach((x, i) => setTimeout(() => {
       res.appendChild(gachaTarjeta(x)); play(x.it.r === 'epica' ? 'crown' : 'select');
       if (i === sale.length - 1) { GACHA_UI.ocupado = false; gachaPinta(); }
@@ -99,8 +108,10 @@ function preparaGacha() {
   const bi = E('b-gacha-info'); bi.innerHTML = ''; bi.appendChild(iconoPeq(pintaInfoBoton, 34));
   bi.onclick = () => { play('select'); E('gacha-info').hidden = !E('gacha-info').hidden; };
   E('b-gacha').onclick = abreGacha;
+  E('b-gacha-gratis').onclick = () => gachaTirar(1, true);
   E('b-gacha-1').onclick = () => gachaTirar(1);
   E('b-gacha-10').onclick = () => gachaTirar(10);
   E('b-gacha-volver').onclick = cierraGacha;
+  E('b-gacha-vale').onclick = () => { if (!GACHA_UI.ocupado) { play('select'); E('gacha-resultado').hidden = true; } };
   E('b-gacha-tienda').onclick = () => { if (!GACHA_UI.ocupado) abreTienda('gacha'); };
 }

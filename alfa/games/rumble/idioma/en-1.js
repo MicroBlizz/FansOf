@@ -227,5 +227,7 @@ IDIOMA.add({
   "el vikingo ha encontrado la salida": "the viking found the exit",
   "en el Sector Neón hay más neón que gente": "there's more neon than people in Neon Sector",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
-  "Microblizz ha cambiado las vallas de la arena por pantallas con fotos y Phony posa en todas.": "Microblizz swapped the arena billboards for screens with photos and Phony poses in every one."
+  "Microblizz ha cambiado las vallas de la arena por pantallas con fotos y Phony posa en todas.": "Microblizz swapped the arena billboards for screens with photos and Phony poses in every one.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
+  "Microblizz ha puesto la pantalla gigante en la arena y Phony ya ensaya su saludo.": "Microblizz put a giant screen in the arena and Phony is already practising his wave."
 });

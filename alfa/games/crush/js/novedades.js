@@ -1,6 +1,7 @@
 // Fans of Crush · Novedades: el registro de versiones (desplegar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.1.27', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo)."], joke: ["Microblizz ha puesto los anuncios a pantalla completa y Phony ya no encuentra los caramelos."] },
   { v: '0.1.26', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha montado un pase de diapositivas con los caramelos y Phony se ha dormido en la tercera."] },
   { v: '0.1.25', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of)."], joke: ["Microblizz ha puesto carteles de otros juegos entre caramelo y caramelo y Phony ya ha pedido comisión."] },
   { v: '0.1.24', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (un aviso más claro antes de comprar como invitado y el guardado en la nube más seguro)."], joke: ["Microblizz ha puesto un candado nuevo al tarro de los caramelos y Phony ya ha perdido la llave."] },

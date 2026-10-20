@@ -133,5 +133,7 @@ IDIOMA.add({
   "<b>CAOS PRIMORDIAL</b>: el contador tiene ahora una barra que se va llenando hasta el siguiente punto, y los números siempre salen enteros. El botón de ver un anuncio es más pequeño.": "<b>PRIMORDIAL CHAOS</b>: the counter now has a bar that fills up to the next point, and numbers always show as whole numbers. The watch-an-ad button is smaller.",
   "Phony ha medido la barra de carga con un cronómetro. Salió un empate.": "Phony timed the loading bar with a stopwatch. It came out a tie.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
-  "Microblizz ha puesto un pase de fotos en la meta y Phony frena para mirarlas.": "Microblizz put a photo slideshow at the finish line and Phony brakes to look at them."
+  "Microblizz ha puesto un pase de fotos en la meta y Phony frena para mirarlas.": "Microblizz put a photo slideshow at the finish line and Phony brakes to look at them.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
+  "Microblizz ha puesto un cartel tan grande en la meta que Phony ha cruzado sin enterarse.": "Microblizz put up a banner so big at the finish line that Phony crossed it without noticing."
 });

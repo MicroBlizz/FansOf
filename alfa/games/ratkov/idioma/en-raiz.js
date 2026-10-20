@@ -97,5 +97,7 @@ IDIOMA.add({
   "LO QUE HAY AHÍ FUERA": "WHAT'S OUT THERE",
   "Microblizz ha confirmado que la ventisca es una función, no un fallo. Llega a la vez que el mantenimiento de los servidores.": "Microblizz has confirmed the blizzard is a feature, not a bug. It arrives at the same time as server maintenance.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
-  "Microblizz ha puesto un pase de fotos en el almacén y las ratas se sientan a verlo con palomitas.": "Microblizz set up a photo slideshow in the warehouse and the rats sit down to watch it with popcorn."
+  "Microblizz ha puesto un pase de fotos en el almacén y las ratas se sientan a verlo con palomitas.": "Microblizz set up a photo slideshow in the warehouse and the rats sit down to watch it with popcorn.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
+  "Microblizz ha colgado un anuncio gigante en el almacén y las ratas se esconden detrás.": "Microblizz hung a giant ad in the warehouse and the rats hide behind it."
 });

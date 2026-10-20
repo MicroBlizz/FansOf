@@ -374,5 +374,7 @@ IDIOMA.add({
   "Mampara de metacrilato": "Acrylic screen",
   "Montas una mampara en tu mesa: {bloqueo} de bloqueo y Blindaje {blindaje}.": "You set up a screen on your desk: {bloqueo} block and Plating {blindaje}.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
-  "Microblizz ha hecho una presentación con todas las cartas y Phony ha preguntado si entra en el examen.": "Microblizz made a presentation of every card and Phony asked if it's on the exam."
+  "Microblizz ha hecho una presentación con todas las cartas y Phony ha preguntado si entra en el examen.": "Microblizz made a presentation of every card and Phony asked if it's on the exam.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
+  "Microblizz ha proyectado los anuncios en la pared de la oficina y Phony ha apagado la luz para verlos mejor.": "Microblizz projected the ads on the office wall and Phony turned off the lights to see them better."
 });

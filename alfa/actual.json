@@ -1,22 +1,22 @@
 {
- "build": 344,
- "hash": "ec2eec2",
- "fecha": "2026-10-20T21:40:02Z",
- "mensaje": "Junta main",
+ "build": 345,
+ "hash": "dd5eee1",
+ "fecha": "2026-10-20T21:42:39Z",
+ "mensaje": "Versiones y notas del despliegue: todos los juegos (core cambió: promo a pantalla completa) y Rouflage 0.2.39 (fantasmas en el armario)",
  "juegos": {
-  "crush": "0.1.26",
+  "crush": "0.1.27",
   "dark": "0.2.7",
-  "decks": "0.2.8",
+  "decks": "0.2.9",
   "island": "0.3.5",
   "jump": "0.3.3",
-  "karts": "0.7.1",
-  "nova": "0.3.13",
-  "ratkov": "0.2.16",
-  "rouflage": "0.2.38",
-  "rumble": "0.9.145",
+  "karts": "0.7.2",
+  "nova": "0.3.14",
+  "ratkov": "0.2.17",
+  "rouflage": "0.2.39",
+  "rumble": "0.9.146",
   "skate": "0.1.27",
-  "survivors": "0.1.58",
-  "tacticas": "0.1.42",
-  "td": "0.13.74"
+  "survivors": "0.1.59",
+  "tacticas": "0.1.43",
+  "td": "0.13.75"
  }
 }

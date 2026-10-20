@@ -78,7 +78,7 @@ window.addEventListener('keydown', ev => {
     case 'KeyF': accionPintar(); break;
     case 'Space': if (!ev.target.closest('button, a')) accionCongelar(); break;
     case 'KeyQ': case 'Digit1': accionSilbar(); break;
-    case 'KeyE': case 'Digit2': accionGranada(); break;
+    case 'KeyE': case 'Digit2': accionHabilidad(); break;      // la habilidad elegida (talentos-partida.js; la granada si es esa)
     case 'Enter': if (!ev.target.closest('button, a')) accionListo(); break;
     case 'Escape': case 'KeyP': accionPausa(); break;
   }
@@ -126,6 +126,7 @@ function disparaJugador(x, y, margen) {
   if (J.camaleones.some(k => !k.fuera && !invisible(k) && k.hielo < 0.85 && (k.moviendo || k.movido > 0) && lejos(k.x, k.y - 24, x, y) < 60)) { yo.enfria = REGLAS.enfria * 0.7; play('gun'); return; }
   yo.balas--; yo.ciego = REGLAS.ciego; yo.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('salpica'); play('deny');
   const m = MUEBLES.find(m => m.T.senuelo && x > m.dib.x0 + 8 && x < m.dib.x0 + m.dib.w - 8 && y > m.dib.y0 && y < m.y + 2);
+  const sd = talSenueloEn(x, y, margen); if (sd) { talSenueloRompe(sd.id, yo); return; }      // un señuelo pintado (talentos)
   if (m) { J.cuenta.senuelos++; avisa(tr('Has despedido a {b}. Despido improcedente.').replace('{b}', tr(NOMBRE_SENUELO[m.t])), 'malo'); }
   else {
     avisa(tr('Ahí no había nadie. Despido improcedente: pierdes una carta.'), 'malo');

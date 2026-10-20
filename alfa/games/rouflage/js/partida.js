@@ -7,7 +7,7 @@ function limpiaPartida() {
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };
-  practicaCierra(); modoPon(null); modoLimpia(); J.fantasma = null; FOTO.cv = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
+  practicaCierra(); talentosLimpia(); modoPon(null); modoLimpia(); J.fantasma = null; FOTO.cv = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
   TALLER.herr = 'pincel'; TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
@@ -59,6 +59,7 @@ function empiezaPartida(modo) {
 function cambiaFase(f) {
   J.fase = f; J.tFase = 0;
   if (f !== 'prep') practicaCierra();
+  if (f === 'prep') talentosReparte();      // las habilidades de cada uno (talentos-partida.js)
   tutoFase(f);
   if (f === 'prep') {
     J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica(temaDe('taller'));
@@ -78,7 +79,7 @@ function cambiaFase(f) {
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
-    modoEmpiezaCaza(); botePrepara();      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
+    modoEmpiezaCaza(); botePrepara(); talentosCaza();      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
     musica(temaDe('caza')); play('comienzaCaza');
     if (!modoEs('ida')) cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
     if (J.pvp && !modoEs('ida') && ajusteSala(MODO.a, 'g') === 1 && J.coladosIni > 1) pista(tr('Los becarios ganan si despiden a más de la mitad: {n} de {t}', { n: Math.floor(J.coladosIni / 2) + 1, t: J.coladosIni }));
@@ -119,7 +120,7 @@ function avanzaPartida(dt) {
   senueloPaso(dt);
   humoPaso(J.yo);
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
-  controlaJugador(dt); poderAvanza(dt); fantasmasAvanza(dt); balizaAvanza(dt); modoAvanza(dt); eventosAvanza(dt); cuarteoAvanza(dt);
+  controlaJugador(dt); talentosAvanza(dt); poderAvanza(dt); fantasmasAvanza(dt); balizaAvanza(dt); modoAvanza(dt); eventosAvanza(dt); cuarteoAvanza(dt);
   for (const e of J.entes) {
     if (e.bot && J.fase !== 'fin') (e.clase === 'cazador' ? piensaCazador : piensaCamaleon)(e, dt);
     else if (e.bot) e.vx = e.vy = 0;
@@ -231,6 +232,7 @@ function termina(victoria, motivo, fin) {
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   modoResultado(J.resultado, victoria); victoria = J.resultado.victoria;      // el bufón, el ojo de halcón y el retrato robot cambian el resultado
   economiaPartida(J.resultado);      // Gotas y experiencia del pase (economia.js; solo en la alfa)
+  talentosFin(J.resultado);      // la experiencia de becario o de colado (talentos-fin.js)
   misionEvento('fin', J.resultado);      // misiones del día y logros (misiones.js)
   musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);

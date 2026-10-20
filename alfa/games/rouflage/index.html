@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.39-a351.549cba4"></script>
+<script src="../../core/js/nucleo.js?v=0.2.39-a352.12e29ff"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-fin.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-fin.css', 'estilo-talentos.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -108,6 +108,7 @@
         <button type="button" class="boton gris" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
         <button type="button" class="boton gris" id="b-misiones"><b data-tr>MISIONES</b></button>
+        <button type="button" class="boton gris" id="b-talentos"><b data-tr>TALENTOS</b></button>
         <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
         <button type="button" class="boton gris" id="b-gacha"><b data-tr>GACHAPÓN</b></button>
         <button type="button" class="boton gris" id="b-tienda"><b data-tr>TIENDA</b></button>
@@ -152,7 +153,7 @@
         <li data-tr-html>Toca <b>PINTAR</b>. Elige tu <b>postura</b>, toca el suelo para coger su color y píntate con el pincel, líneas, cuadrados o círculos. Con <b>Calco</b> ves el suelo a través de ti.</li>
         <li data-tr-html>Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.</li>
         <li data-tr-html>Aguanta hasta que acabe el turno. Cada cierto tiempo <b>silbarás</b> sin querer y los becarios irán a mirar. Si silbas tú antes (<b>SILBAR</b>), tu cuenta atrás vuelve a empezar: elige un momento sin becarios cerca.</li>
-        <li data-tr-html>Si te van a pillar, tienes <b>una granada cegadora</b> por partida: te vuelve invisible 7 segundos y deja a ciegas un rato a los becarios cercanos.</li>
+        <li data-tr-html>Antes de cada partida eliges una <b>habilidad</b> (<b>TALENTOS</b>, en Mi perfil). La primera es la <b>granada de humo</b>: te vuelve invisible 7 segundos y deja medio ciegos a los becarios cercanos. Las demás se desbloquean jugando.</li>
       </ol>
       <h3 class="ol azul"><i data-icono="diana"></i><span data-tr>De cazador</span></h3>
       <ol>
@@ -160,6 +161,7 @@
         <li data-tr-html><b>Toca</b> donde creas que hay uno para despedirlo. Tiene que estar cerca y sin muros en medio.</li>
         <li data-tr-html>Tienes <b>5 cartas de despido</b>. Fallar gasta una y te deja medio a oscuras; acertar te la devuelve.</li>
         <li data-tr-html>Los <b>silbidos</b> te dicen por dónde andan. Si alumbras a uno un buen rato, se pone nervioso y tiembla.</li>
+        <li data-tr-html>Tú también llevas una <b>habilidad</b> (<b>TALENTOS</b>, en Mi perfil): empiezas con el <b>contador de sala</b>, y jugando de becario desbloqueas el dron, el silbato del jefe y más.</li>
       </ol>
     </div>
     <button type="button" class="boton" id="b-ayuda-ok" data-tr>ENTENDIDO</button>
@@ -249,7 +251,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js'] },
   antes: ['js/ajustes.js', 'js/pantallas-html.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -332,6 +334,7 @@ NUCLEO.juego({
     'js/misiones-datos.js',
     'js/misiones.js',
     'js/misiones-iconos.js', 'js/misiones-pantalla.js',
+    'js/talentos-datos.js', 'js/talentos-iconos.js', 'js/talentos-pantalla.js', 'js/talentos-partida.js', 'js/talentos-red.js', 'js/talentos-efectos.js', 'js/talentos-fin.js',
     'js/economia.js',
     'js/tienda.js',
     'js/gacha.js',

@@ -79,9 +79,10 @@ function pintaBotDados(e) {
 }
 // la pintura rápida (el botón del taller): como un bot con maña y, si sale por encima de REGLAS.rapidaMeta, con la mano más suelta
 function pintaRapida(e) {
+  const meta = REGLAS.rapidaMeta + (e.hab === 'rapida' ? TALENTOS.rapidaMeta : 0);      // con la pintura rápida mejorada (talentos), algo más
   pintaBot(e, 0.8);
-  for (let m = 0.68; m > 0.1 && e.camo > REGLAS.rapidaMeta; m -= 0.12) pintaBot(e, m);
-  return tapaHasta(e, REGLAS.rapidaMeta);
+  for (let m = 0.68; m > 0.1 && e.camo > meta; m -= 0.12) pintaBot(e, m);
+  return tapaHasta(e, meta);
 }
 // si un camuflaje aún sale mejor de la cuenta: manos de color liso (el del suelo de debajo) por encima, cada vez más tapadoras, como quien pinta deprisa
 function tapaHasta(e, meta) {

@@ -32,7 +32,7 @@ function pvpBuscar(opc) {
       if (guardada === info.sala) rfpEmpieza(info, red, true);      // vuelves a la tuya
       else setTimeout(() => { if (RFP.info === info) rfpEmpieza(info, red); }, 2200);      // un momento para ver con quién juegas
     }
-  }, opc);
+  }, opc || talColaOpc());      // BUSCAR PARTIDA: con o sin talentos, lo que eligió (talentos-pantalla.js)
 }
 function pvpCancelar() { if (RFP.buscando) { RFP.buscando.cancelar(); RFP.buscando = null; } RFP.info = null; pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); }
 // el anfitrión de una sala con amigos la arranca (el sondeo de la sala recoge el cambio)

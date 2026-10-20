@@ -73,6 +73,7 @@ function pvpPintaBusca() {
   E('busca-modo').classList.toggle('publica', !priv);
   pvpPintaModo((priv || !!i.modo) && !jugando, soyAnf);      // en la pública se ve el modo que ha tocado (sin tocarlo)
   pvpPintaVoto(!priv && !!i.modo && !jugando && i.votos);
+  talPintaSala();      // las habilidades que llevas (talentos-pantalla.js)
 }
 // la votación de la sala pública: EMPEZAR YA o +60 S. Gana el botón con más de la mitad de los votos; con empate se vota otra vez; tras ganar +60 S, 30 s sin votar
 function pvpPintaVoto(ver) {

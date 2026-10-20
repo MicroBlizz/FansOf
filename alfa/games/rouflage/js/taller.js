@@ -26,7 +26,7 @@ function encuadraTaller() {
   const libreW = deLado ? VW - p.width : VW - (h ? h.lados : 0), libreH = deLado ? VH - arriba : VH - p.height - arriba;
   // con el señuelo la cámara se abre para ver todo hasta donde llega el brazo (se pinta lejos de uno, no encima)
   // señuelo: la vista de entrada abarca el área entera del brazo (el panel puede tapar parte del área: se mueve la cámara con el ratón o los dedos)
-  const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, Math.max(libreH, 0.62 * (VH - arriba))) / (SEN.alcance * 2 + 16), 0.3, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
+  const z = TALLER.herr === 'senuelo' ? limita(Math.min(libreW, Math.max(libreH, 0.62 * (VH - arriba))) / (alcanceSen(J.yo) * 2 + 16), 0.3, 2.4) : limita(Math.min(libreW / (CAJA_W + 36), libreH / (CAJA_H + 26)), 2.4, 7.5);
   const sx = deLado ? libreW / 2 : VW / 2, sy = arriba + libreH / 2;
   TALLER.libre = [sx, sy, libreW, libreH]; if (TALLER.herr === 'senuelo') SENCAM.z0 = z;   // la vista de entrada es la del área entera: de ahí solo se acerca
   TALLER.cam = [yo.x - (sx - VW / 2) / z, yo.y - 26 - (sy - VH / 2) / z, z];
@@ -145,7 +145,7 @@ function tallerRellena() { const yo = J.yo; guardaPaso(yo); rellena(yo, TALLER.c
 function tallerRapida() {
   const yo = J.yo; if (!yo || !TALLER.abierto) return;
   if (yo.rapida > 0) { play('deny'); return; }
-  guardaPaso(yo); pintaRapida(yo); yo.pintado = true; yo.rapida = REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
+  guardaPaso(yo); pintaRapida(yo); yo.pintado = true; yo.rapida = yo.hab === 'rapida' ? TALENTOS.rapidaEspera : REGLAS.pintaRapida; play('cubo'); mideTaller(); refrescaTaller();
 }
 function tallerDeshace() { if (deshace(J.yo)) { play('pop'); mideTaller(); } else play('deny'); }
 function tallerCalco() { TALLER.calco = !TALLER.calco; play('select'); refrescaTaller(); }

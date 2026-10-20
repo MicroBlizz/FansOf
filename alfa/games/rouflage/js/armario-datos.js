@@ -128,6 +128,7 @@ const CATALOGO_AR = (() => {
     it('delmes', 'Becario del mes', 'epica', 'premium', 'Pase premium · nv 23', TI('BECARIO DEL MES', '#ffcb3d')), it('mancha', 'Mancha en la pared', 'rara', 'diario', 'Diario · 20 días del mes', TI('MANCHA EN LA PARED', '#39d5e8')),
     it('inhumanos', 'Recursos Inhumanos', 'epica', 'gratis', 'Misión de temporada', TI('RECURSOS INHUMANOS', '#ff4b5c')), it('nimimadre', 'Ni mi madre me encuentra', 'legend', 'premium', 'Pase premium · nv 37', TI('NI MI MADRE ME ENCUENTRA', '#ff6fb5')),
     it('cafe', 'Café con piernas', 'comun', 'tienda', 30, TI('CAFÉ CON PIERNAS', '#d9a25b')), it('despedidor', 'Despedidor', 'rara', 'gratis', 'Misión: despide a 50', TI('DESPEDIDOR', '#2e8bff')),
+    it('jefe', 'Jefe de becarios', 'legend', 'talento', 'Talentos: becario nivel 20', TI('JEFE DE BECARIOS', '#ff7a1a')), it('maestro', 'Maestro del camuflaje', 'legend', 'talento', 'Talentos: colado nivel 20', TI('MAESTRO DEL CAMUFLAJE', '#7ee04a')),      // talentos-datos.js
   ];
   const GE = t => (c, w) => gesto(c, w, t);
   const gestosR = [

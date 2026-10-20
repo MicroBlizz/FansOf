@@ -35,7 +35,7 @@ function senueloMueve(x, y) {
   senueloPunto(yo, p.x, p.y, x, y); p.x = x; p.y = y;
 }
 function senueloArriba() { SEN.pinta = null; senueloFlush(); refrescaTinta(); }
-const senueloDentro = (yo, x, y) => lejos(yo.x, yo.y - 20, x, y) <= SEN.alcance;
+const senueloDentro = (yo, x, y) => lejos(yo.x, yo.y - 20, x, y) <= alcanceSen(yo);      // (con el señuelo pintado de los talentos, más lejos)
 function senueloPunto(yo, x0, y0, x1, y1) {
   const coste = senueloCoste(Math.hypot(x1 - x0, y1 - y0), TALLER.radio); if (coste > yo.tinta) { yo.tinta = 0; refrescaTinta(); return; }
   yo.tinta -= coste; senueloTraza(x0, y0, x1, y1, TALLER.radio, TALLER.color, TALLER.cabezal);

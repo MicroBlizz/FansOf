@@ -69,7 +69,7 @@ function pintaYoEnTaller(c, yo, t) {
   c.lineDashOffset = -t * 6; c.strokeStyle = 'rgba(32,16,44,0.95)'; c.stroke();
   c.lineDashOffset = -t * 6 + 2.5; c.strokeStyle = 'rgba(255,255,255,0.95)'; c.stroke();
   c.setLineDash([]);
-  if (TALLER.herr === 'senuelo') { c.beginPath(); c.arc(0, -20, SEN.alcance, 0, TAU); c.lineWidth = 1.4; c.setLineDash([6, 6]); c.lineDashOffset = -t * 8; c.strokeStyle = 'rgba(255,246,234,0.55)'; c.stroke(); c.setLineDash([]); }      // hasta dónde llega el brazo
+  if (TALLER.herr === 'senuelo') { c.beginPath(); c.arc(0, -20, alcanceSen(J.yo), 0, TAU); c.lineWidth = 1.4; c.setLineDash([6, 6]); c.lineDashOffset = -t * 8; c.strokeStyle = 'rgba(255,246,234,0.55)'; c.stroke(); c.setLineDash([]); }      // hasta dónde llega el brazo
   c.restore();
 }
 
@@ -200,6 +200,7 @@ function dibuja(t) {
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
   for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
+  talentosCosas(cosas, x0, y0, vw, vh);      // los señuelos pintados (talentos-efectos.js)
   for (const m of MASC.lista) if (m.x > x0 - 40 && m.x < x0 + vw + 40 && m.y > y0 - 10 && m.y < y0 + vh + 40) cosas.push(m);      // las mascotas del armario (mascotas.js)
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
@@ -226,9 +227,9 @@ function dibuja(t) {
   if (!TALLER.abierto) {
     ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
     for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
-    eventosPintaVelo(c, t);
+    eventosPintaVelo(c, t); talentosPintaLuz(c, t);
   }
-  ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c);
+  ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c); talentosPinta(c, t);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);
 }

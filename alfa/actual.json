@@ -1,8 +1,8 @@
 {
- "build": 276,
- "hash": "6048348",
- "fecha": "2026-10-20T12:52:30Z",
- "mensaje": "Tienda: la pestaña de oro vuelve con la broma, el porqué no se vende y el cambio de oro a gemas",
+ "build": 277,
+ "hash": "de300d9",
+ "fecha": "2026-10-20T12:54:18Z",
+ "mensaje": "Tienda: la pestaña de oro explica el juego limpio (no es pay to win)",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

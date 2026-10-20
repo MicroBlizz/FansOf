@@ -47,9 +47,10 @@ function pintaConejo() {
       sprite(id + '_espalda', c.x + dx + mece, y - h - dy + 6, TAM_JINETE * (sx + 1) / 2, c.ang + mece * 0.03);
     });
   };
-  if (J.modo === 'fin') {
-    // se hunde: solo se ve lo que queda por encima del agua
-    G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(0, c.hunde * 46); dibuja(); G.restore();
+  if (J.modo === 'fin' || J.modo === 'casi') {
+    // se hunde chapoteando (muerte.js): solo se ve lo que queda por encima del agua
+    const h = hundeConejo();
+    G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(c.x, y + h.baja * 46); G.rotate(h.giro); G.translate(-c.x, -y); dibuja(); G.restore();
     return;
   }
   dibuja();
@@ -148,8 +149,8 @@ const CONSEJOS = [
 ];
 function pintaFinal() {
   const J = JUEGO, W = PAN.W, H = PAN.H, F_ = J.fin;
-  if (J.tFin < 0.6) return;
-  const e = Math.min(1, (J.tFin - 0.6) / 0.25), sube = (1 - e) * 30;
+  if (J.tFin < 1.5) return;   // antes, la escena de la caída (muerte.js)
+  const e = Math.min(1, (J.tFin - 1.5) / 0.25), sube = (1 - e) * 30;
   G.fillStyle = `rgba(40,25,60,${0.42 * e})`; G.fillRect(0, 0, W, H);
   G.globalAlpha = e;
   const res = J.resumenMisiones || [], cw = W - 26, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
@@ -221,6 +222,7 @@ function pintaTodo() {
   if (J.temblor > 0) G.translate((Math.random() - 0.5) * 3 * J.temblor / 0.1, (Math.random() - 0.5) * 2 * J.temblor / 0.1);
   pintaRio(t);
   pintaFx('agua');
+  pintaMuerteAgua();
   pintaBonitoAgua(t);
   if (J.modo !== 'menu' && !PANEL.abierto) pintaMetas(t);
   pintaTroncos(t, J.conejo.tronco);
@@ -228,6 +230,7 @@ function pintaTodo() {
   pintaCaen();
   pintaFantasma();
   pintaConejo();
+  pintaMuerteAire(t);
   pintaDron(t);
   pintaOla(t);
   pintaFx('aire');
@@ -241,6 +244,7 @@ function pintaTodo() {
   else if (J.modo === 'listo') pintaListo(t);
   else pintaMarcador();
   pintaZanasVuelan();
+  pintaManchas();
   pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
   pintaCasi();

@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.36-a313.a13d54b"></script>
+<script src="../../core/js/nucleo.js?v=0.2.36-a314.65a3d7d"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -111,6 +111,7 @@
         <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
         <button type="button" class="boton gris" id="b-habitacion"><b data-tr>HABITACIÓN</b></button>
         <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
+        <button type="button" class="boton gris" id="b-misiones"><b data-tr>MISIONES</b></button>
         <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
         <button type="button" class="boton gris" id="b-gacha"><b data-tr>GACHAPÓN</b></button>
         <button type="button" class="boton gris" id="b-tienda"><b data-tr>TIENDA</b></button>
@@ -408,6 +409,21 @@
   </div>
 </div>
 
+<!-- las misiones diarias y los logros (misiones-pantalla.js) -->
+<div class="pantalla" id="p-misiones" hidden>
+  <div class="caja mis-caja">
+    <h2 class="ol" data-tr>MISIONES</h2>
+    <div class="mis-pestanas" role="tablist">
+      <button type="button" class="ar-pest activa" id="b-mis-hoy" data-tr>MISIONES DE HOY</button>
+      <button type="button" class="ar-pest" id="b-mis-logros" data-tr>LOGROS</button>
+    </div>
+    <p class="mis-sub" id="mis-sub"></p>
+    <div class="mis-lista" id="mis-lista"></div>
+    <p class="diario-gotas"><span data-tr>Tus gotas</span> <b id="mis-gotas">0</b></p>
+    <button type="button" class="boton peq" id="b-mis-volver" data-tr>Volver</button>
+  </div>
+</div>
+
 <!-- el premio diario (diario.js) -->
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">
@@ -456,7 +472,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -534,6 +550,9 @@ NUCLEO.juego({
     'js/armario-precios.js',
     'js/armario.js',
     'js/diario.js',
+    'js/misiones-datos.js',
+    'js/misiones.js',
+    'js/misiones-pantalla.js',
     'js/economia.js',
     'js/tienda.js',
     'js/gacha.js',

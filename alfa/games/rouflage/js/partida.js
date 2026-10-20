@@ -231,6 +231,7 @@ function termina(victoria, motivo, fin) {
   J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   modoResultado(J.resultado, victoria); victoria = J.resultado.victoria;      // el bufón, el ojo de halcón y el retrato robot cambian el resultado
   economiaPartida(J.resultado);      // Gotas y experiencia del pase (economia.js; solo en la alfa)
+  misionEvento('fin', J.resultado);      // misiones del día y logros (misiones.js)
   musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
   refrescaHud(true);
   if (J.pvp) rfpCierra(victoria);      // PvP: se apunta el resultado en el servidor

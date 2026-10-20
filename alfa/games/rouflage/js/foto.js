@@ -44,7 +44,7 @@ function fotoTarjeta() {
 // compartir: con el menú del móvil si deja mandar imágenes; si no, se descarga la imagen
 function fotoComparte() {
   if (!fotoHay()) return;
-  play('select');
+  play('select'); misionEvento('comparte');      // misiones y logros (misiones.js)
   fotoTarjeta().toBlob(blob => {
     if (!blob) return;
     const archivo = new File([blob], 'rouflage-me-encuentras.png', { type: 'image/png' }), texto = tr('¿Me encuentras? Juega gratis en fansof.games');

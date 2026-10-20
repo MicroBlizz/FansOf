@@ -1,0 +1,27 @@
+/* Fans of Rouflage · la pantalla de MISIONES DIARIAS y LOGROS (misiones-pantalla.js) y su botón del título. Mismo aire que el premio diario y el pase. */
+.mis-caja { max-width: 560px; text-align: center; max-height: calc(100vh - 30px); display: flex; flex-direction: column; gap: 8px; }
+.mis-caja h2 { margin: 0; }
+.mis-pestanas { display: flex; gap: 6px; justify-content: center; }
+.mis-pestanas .ar-pest { position: relative; flex: 1 1 0; min-width: 0; font-size: 14px; padding: 7px 6px 4px; }
+.mis-pestanas .ar-pest.aviso::after, #b-misiones.aviso::after { content: ''; position: absolute; top: -5px; right: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
+.mis-sub { margin: 0; font-weight: 700; font-size: 13px; color: var(--gold); }
+.mis-lista { overflow-y: auto; flex: 1; min-height: 120px; display: grid; align-content: start; gap: 7px; padding: 2px 2px 6px; touch-action: pan-y; }
+.mis-fila { display: grid; grid-template-columns: 40px 1fr auto; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray-hi); box-shadow: 0 3px 0 var(--outline); text-align: left; }
+.mis-fila.lista { background: linear-gradient(160deg, #3d5a2a, #24361a); }
+.mis-fila.cobrada { opacity: 0.55; }
+.mis-ico { display: block; }
+.mis-txt { min-width: 0; display: grid; gap: 3px; }
+.mis-txt b { font-weight: 800; font-size: 13.5px; line-height: 1.15; color: var(--ink); }
+.mis-txt small { font-size: 11.5px; font-weight: 700; line-height: 1.1; color: var(--ink-dim); }
+.mis-barra { position: relative; height: 16px; border-radius: 8px; border: 2px solid var(--outline); background: var(--tray); overflow: hidden; }
+.mis-barra i { display: block; height: 100%; background: linear-gradient(to right, #39d5e8, #7ee04a); }
+.mis-barra span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; color: var(--ink); text-shadow: 0 1px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline), 0 -1px 0 var(--outline); }
+.mis-lado { display: grid; justify-items: center; gap: 4px; }
+.mis-premio { display: inline-flex; align-items: center; gap: 3px; font-weight: 800; font-size: 14px; color: var(--gold); }
+.mis-premio canvas { display: block; }
+.boton.mis-cobrar { font-size: 13px; padding: 6px 9px 3px; border-radius: 10px; box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #a4f070, #4fae2a); min-width: 78px; }
+.boton.mis-cobrar:disabled { filter: none; opacity: 1; background: #2a3550; color: var(--ink-dim); box-shadow: 0 2px 0 var(--outline); }
+.mis-fila.lista .boton.mis-cobrar { animation: diarioLate 1s ease-in-out infinite; }
+#b-misiones { position: relative; background: linear-gradient(to bottom, #7fe0f0, #2a9ab8); }
+@media (prefers-reduced-motion: reduce) { .mis-fila.lista .boton.mis-cobrar { animation: none; } }
+@media (max-width: 380px) { .mis-fila { gap: 6px; padding: 6px; } .boton.mis-cobrar { min-width: 70px; font-size: 12px; padding: 6px 6px 3px; } }

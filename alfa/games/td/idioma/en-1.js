@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.73
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
+  "Microblizz ha puesto carteles de otros juegos junto a las torres y Phony ha intentado defender uno.": "Microblizz has put posters of other games next to the towers and Phony tried to defend one.",
   // 0.13.72
   "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
   "Microblizz ha puesto una casilla de «estoy avisado» en cada torre. Phony pregunta si la de vigilancia cuenta doble.": "Microblizz has put an \"I've been warned\" box on every tower. Phony asks if the watchtower counts double.",

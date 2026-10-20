@@ -1,22 +1,22 @@
 {
- "build": 321,
- "hash": "6387f78",
- "fecha": "2026-10-20T19:32:22Z",
- "mensaje": "Promo de juegos: banner algo más grande para que se lea el logo",
+ "build": 322,
+ "hash": "9f06145",
+ "fecha": "2026-10-20T19:36:25Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.25, decks 0.2.7, nova 0.3.12, ratkov 0.2.15, rouflage 0.2.37, rumble 0.9.144, survivors 0.1.57, tacticas 0.1.41, td 0.13.73",
  "juegos": {
-  "crush": "0.1.24",
+  "crush": "0.1.25",
   "dark": "0.2.7",
-  "decks": "0.2.6",
+  "decks": "0.2.7",
   "island": "0.3.5",
   "jump": "0.3.0",
   "karts": "0.7.0",
-  "nova": "0.3.11",
-  "ratkov": "0.2.14",
-  "rouflage": "0.2.36",
-  "rumble": "0.9.143",
+  "nova": "0.3.12",
+  "ratkov": "0.2.15",
+  "rouflage": "0.2.37",
+  "rumble": "0.9.144",
   "skate": "0.1.27",
-  "survivors": "0.1.56",
-  "tacticas": "0.1.40",
-  "td": "0.13.72"
+  "survivors": "0.1.57",
+  "tacticas": "0.1.41",
+  "td": "0.13.73"
  }
 }

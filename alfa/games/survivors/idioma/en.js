@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.57
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
+  "Microblizz ha colgado carteles de otros juegos en el refugio y Phony se ha quedado mirando el de Karts.": "Microblizz has hung posters of other games in the shelter and Phony stood staring at the Karts one.",
   // 0.1.56
   "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
   "Microblizz ha puesto una casilla de «estoy avisado» a la entrada del apocalipsis y Phony la ha marcado sin leer.": "Microblizz has put an \"I've been warned\" box at the entrance to the apocalypse and Phony ticked it without reading.",

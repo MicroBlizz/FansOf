@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.12', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of)."], joke: ["Microblizz ha pegado carteles de otros juegos en el casco de las naves y Phony ha preguntado si cobran alquiler."] },
   { v: '0.3.11', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (un aviso más claro antes de comprar como invitado y el guardado en la nube más seguro)."], joke: ["Microblizz ha revisado los cinturones de seguridad de la nave y Phony se ha atado al asiento equivocado."] },
   { v: '0.3.10', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario)."], joke: ["Microblizz ha repasado el inventario de la nave y Phony ha encontrado un calcetín en la bodega."] },
   { v: '0.3.9', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor)."], joke: ["Microblizz ha ordenado los cables de las naves y Phony ha preguntado cuál era el del café."] },

@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.144
+  "<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie.": "<b>OTHER FANS OF GAMES</b>: ad slots now show another of our games at random, never the one you are playing, and take you to its Library page. Plus under-the-hood improvements to the series' systems.",
+  "Microblizz ha puesto un tablón de anuncios de otros juegos y Phony ya ha pegado su currículum.": "Microblizz has put up a board of ads for other games and Phony has already pinned his CV.",
   // 0.9.143
   "<b>COMPRAS MÁS SEGURAS</b>: si juegas como invitado, antes de pagar con euros te pedimos que marques que lo sabes: sin cuenta (email o Google) podrías perder lo comprado. Además, mejoras por dentro en los sistemas de la serie.": "<b>SAFER PURCHASES</b>: if you play as a guest, before paying with euros we ask you to confirm you understand: without an account (email or Google) you could lose what you bought. Plus behind-the-scenes improvements to the series' systems.",
   "Microblizz ha puesto una casilla de «estoy avisado» hasta en la máquina del café. Phony la marca dos veces por si acaso.": "Microblizz has put an \"I've been warned\" box even on the coffee machine. Phony ticks it twice just in case.",

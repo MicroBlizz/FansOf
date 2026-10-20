@@ -7,4 +7,5 @@ IDIOMA.add({
   "El coche del jefe sopla aire cada rato: cuando le parpadeen los faros, apártate de los escapes y de las rejillas de los lados. Si estás congelado, no te mueve.": "The boss's car blows air every so often: when its headlights blink, get away from the exhausts and the side vents. If you're frozen, it won't move you.",
   "SOLO JEFE": "BOSS ONLY",
   "JEFE 1": "BOSS 1",
+  "¡AL AIRE!": "LIFT-OFF!"
 });

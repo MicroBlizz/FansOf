@@ -7,7 +7,12 @@
 'use strict';
 
 /* ---------- el coche ---------- */
-const ROASTER = { w: 54, d: 78, aviso: 1.2, sopla: 1.3, fuerza: 470, freno: 4.4, largo: 175, lado: 150 };
+const ROASTER = { w: 54, d: 78, aviso: 1.2, sopla: 1.3, fuerza: 470, freno: 4.4, largo: 175, lado: 150, salto: 2.6, alto: 48 };
+// muy de vez en cuando (1 de cada ~12 ráfagas) el coche SALTA: los chorros de abajo lo levantan, se queda un instante en el aire y baja frenando con
+// chorros hasta caer en su plaza. Los chorros del despegue y del aterrizaje empujan como los demás.
+const altoRoaster = t => t < 0.5 ? ROASTER.alto * Math.sin(t / 0.5 * Math.PI / 2) : t < 1.3 ? ROASTER.alto + Math.sin((t - 0.5) * 9) * 2.5 : ROASTER.alto * (1 - (u => u * u * (3 - 2 * u))(Math.min(1, (t - 1.3) / (ROASTER.salto - 1.3))));
+const soplaRoaster = p => p.tipo === 'salto' ? ROASTER.salto : ROASTER.sopla;
+const chorroSalto = (p, t) => p.tipo !== 'salto' || t < 0.55 || t > 1.75;      // en el salto, soplan al despegar y al frenar la caída
 
 Object.assign(TIPOS_MUEBLE, {
   // visto desde arriba con el morro hacia arriba; ocupa 54 × 78 (una plaza grande)
@@ -89,6 +94,7 @@ Object.assign(THROTTLE, { turboAviso: 400, turboSopla: 400 });
 /* ---------- el evento ---------- */
 // por dónde sopla cada chorro, en el mundo: el origen, la dirección (dx, dy) y lo largo que llega
 function chorrosRoaster(m, tipo) {
+  if (tipo === 'salto') tipo = 'todo';
   const atras = { x: m.x, y: m.y + 6, dx: 0, dy: 1, largo: ROASTER.largo, ancho: 22 };
   const lados = [-1, 1].map(s => ({ x: m.x + s * 29, y: m.y - 30, dx: s, dy: 0, largo: ROASTER.lado, ancho: 22 }));
   return tipo === 'atras' ? [atras] : tipo === 'lados' ? lados : [atras, ...lados];
@@ -107,7 +113,7 @@ EVENTOS.turbo = {
     const m = MUEBLES.find(q => q.t === 'roaster'), plan = [];
     const az = azarDe((azar() * 2147483647) | 0);
     // el horario, en segundos que le quedan al reloj de la caza, de 900 hacia abajo: así vale para cualquier duración y al volver a una partida
-    for (let r = 900 - 6; r > 1; r -= 12 + az() * 8) { const k = az(); plan.push({ r: Math.round(r * 10) / 10, tipo: k < 0.4 ? 'atras' : k < 0.75 ? 'lados' : 'todo' }); }
+    for (let r = 900 - 6; r > 1; r -= 12 + az() * 8) { const k = az(); plan.push({ r: Math.round(r * 10) / 10, tipo: k < 0.08 ? 'salto' : k < 0.42 ? 'atras' : k < 0.76 ? 'lados' : 'todo' }); }
     return { m, plan, top: 0, act: null, fase: '', empujes: new Map(), parts: [], primera: true };
   },
   empieza() {},
@@ -116,7 +122,7 @@ EVENTOS.turbo = {
     const r = J.reloj;
     for (const p of est.plan) {
       if (p.r + ROASTER.aviso > est.top - 5) continue;      // ninguna en los primeros segundos de la caza
-      if (r <= p.r + ROASTER.aviso && r > p.r - ROASTER.sopla) return { p, fase: r > p.r ? 'aviso' : 'sopla', t: r > p.r ? p.r + ROASTER.aviso - r : p.r - r };
+      if (r <= p.r + ROASTER.aviso && r > p.r - soplaRoaster(p)) return { p, fase: r > p.r ? 'aviso' : 'sopla', t: r > p.r ? p.r + ROASTER.aviso - r : p.r - r };
       if (p.r + ROASTER.aviso < r) break;
     }
     return null;
@@ -137,7 +143,11 @@ EVENTOS.turbo = {
       }
     }
     // los chorros: empujan a quien pillan (solo a lo que lleva este navegador) y echan aire, vaho y papelitos
-    if (a && a.fase === 'sopla') {
+    if (m) m.vuela = !!(a && a.fase === 'sopla' && a.p.tipo === 'salto' && altoRoaster(a.t) > 0.5);      // en el aire: dibujo.js no pinta el de la plaza
+    if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && est.fase !== antes) fxTexto(m.x, m.y - 110, tr('¡AL AIRE!'), '#ffcb3d', 22);
+    if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && a.t > ROASTER.salto - 0.12 && !est.aterriza) { est.aterriza = true; suenaEn('turboSopla', m.x, m.y - 40); if (J.yo && lejos(J.yo.x, J.yo.y, m.x, m.y) < 360) CAM.tiembla = Math.max(CAM.tiembla, 0.25); for (let k = 0; k < 14; k++) { const ang = k / 14 * TAU; est.parts.push({ k: 'vaho', x: m.x + Math.cos(ang) * 30, y: m.y - 38 + Math.sin(ang) * 40, vx: Math.cos(ang) * 120, vy: Math.sin(ang) * 90, t: 0, dur: 0.7, r: 6 }); } }
+    if (!(a && a.p.tipo === 'salto')) est.aterriza = false;
+    if (a && a.fase === 'sopla' && chorroSalto(a.p, a.t)) {
       const chs = chorrosRoaster(m, a.p.tipo), q = [1, 0.6, 0.3][graficosAdornos()] || 0.3;
       for (const ch of chs) {
         for (const e of J.entes) {
@@ -186,12 +196,32 @@ EVENTOS.turbo = {
       if (est.primera) { est.primera = false; SAVE.tuto = SAVE.tuto || {}; if (!SAVE.tuto['turbo-ay']) { SAVE.tuto['turbo-ay'] = 1; guardaPartida(); avisa(tr('El coche del jefe tiene el turbo puesto. Phony lo aparcó así.'), 'aviso'); } }
     }
   },
+  // el salto: en el suelo, la sombra que se encoge con la altura; encima de todos, el coche en el aire con sus chorros hacia abajo
+  pintaSuelo(c, est) {
+    const a = est.act, m = est.m; if (!m || !a || a.fase !== 'sopla' || a.p.tipo !== 'salto') return;
+    const h = altoRoaster(a.t), k = 1 - h / (ROASTER.alto * 2.2);
+    c.save(); c.globalAlpha = 0.35; forma(c, ovalo(m.x, m.y - 38, 30 * k, 44 * k), 'rgba(24,12,40,1)', 0); c.restore();
+  },
+  pintaSalto(c, est, reloj) {      // lo llama pintaVelo: por encima de la oscuridad, para que el salto se vea aunque no le dé la linterna
+    const a = est.act, m = est.m; if (!m || !a || a.fase !== 'sopla' || a.p.tipo !== 'salto') return;
+    const h = altoRoaster(a.t); if (h <= 0.5) return;
+    if (chorroSalto(a.p, a.t)) for (const [dx, dy] of [[-18, -66], [18, -66], [-18, -12], [18, -12]]) {      // cuatro chorros de aire bajo el coche hasta el suelo
+      const x = m.x + dx, y0 = m.y + dy - h, y1 = m.y + dy, g = c.createLinearGradient(0, y0, 0, y1);
+      g.addColorStop(0, 'rgba(234,246,255,0.85)'); g.addColorStop(1, 'rgba(234,246,255,0)');
+      c.fillStyle = g; c.beginPath(); c.moveTo(x - 4, y0); c.lineTo(x + 4, y0); c.lineTo(x + 11 + Math.sin(reloj * 30 + dx) * 2, y1); c.lineTo(x - 11, y1); c.closePath(); c.fill();
+    }
+    c.save(); c.translate(m.x, m.y - h); c.rotate(Math.sin(a.t * 5) * 0.05); c.scale(1 + h / 320, 1 + h / 320);
+    TIPOS_MUEBLE.roaster.pinta(c);
+    for (const sx of [-13, 13]) { const g = c.createRadialGradient(sx, -75, 1, sx, -75, 22); g.addColorStop(0, 'rgba(255,250,225,.95)'); g.addColorStop(1, 'rgba(255,250,225,0)'); c.fillStyle = g; c.beginPath(); c.arc(sx, -75, 22, 0, TAU); c.fill(); }      // con los faros encendidos
+    c.restore();
+  },
   termina() {},
   focos() { return []; },
   // por encima de todo (también de la oscuridad: el aire se ve aunque no le dé la linterna): faros, flechas, chorros y lo que vuela
   pintaVelo(c, est, t, reloj) {
     if (!est.m || J.fase !== 'caza') return;
     const m = est.m, a = est.act;
+    this.pintaSalto(c, est, reloj);
     if (a && a.fase === 'aviso') {
       const on = (a.t * 7) % 1 < 0.55 ? 1 : 0.25;
       for (const s of [-1, 1]) {      // los faros parpadean (y los pilotos)
@@ -209,8 +239,8 @@ EVENTOS.turbo = {
       }
       c.globalAlpha = 1;
     }
-    if (a && a.fase === 'sopla') {      // las líneas de viento de dibujo animado: rayas onduladas que corren hacia fuera
-      const f = Math.min(1, a.t / 0.15) * Math.min(1, (ROASTER.sopla - a.t) / 0.25);
+    if (a && a.fase === 'sopla' && chorroSalto(a.p, a.t)) {      // las líneas de viento de dibujo animado: rayas onduladas que corren hacia fuera
+      const f = a.p.tipo === 'salto' ? 0.85 : Math.min(1, a.t / 0.15) * Math.min(1, (ROASTER.sopla - a.t) / 0.25);
       for (const ch of chorrosRoaster(m, a.p.tipo)) {
         c.save(); c.translate(ch.x, ch.y - (ch.dy ? 0 : 8)); c.rotate(Math.atan2(ch.dy, ch.dx));
         for (let k = 0; k < 4; k++) {

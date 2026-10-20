@@ -215,7 +215,7 @@ function dibuja(t) {
   }
   cosas.sort((a, b) => a.ordenY - b.ordenY);
   for (const k of cosas) {
-    if (k.T) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h);
+    if (k.T) { if (!k.vuela) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h); }      // vuela: el coche del jefe en pleno salto (dibujo-roaster.js lo pinta en el aire)
     else if (k.puerta) pintaPuerta(c, t);
     else if (k.mascota) pintaMascota(c, k);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);

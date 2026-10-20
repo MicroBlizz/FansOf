@@ -20,7 +20,7 @@ function armarioEstado() {
 const arCat = id => CATALOGO_AR.find(c => c.id === id);
 const arItem = (cat, id) => { const c = arCat(cat); return c && id ? c.items.find(x => x.id === id) || null : null; };
 function arTiene(cat, it) {
-  const a = armarioEstado(); if (a.todo || it.de === 'base' || a.tengo.includes(cat + ':' + it.id)) return true;
+  const a = armarioEstado(); if ((a.todo && arPruebasVisibles()) || it.de === 'base' || a.tengo.includes(cat + ':' + it.id)) return true;
   if (it.de === 'conjunto') { const cj = arCat('conjuntos').items.find(k => Object.values(k.piezas).includes(it.id) && k.piezas[cat] === it.id); return !!cj && arTiene('conjuntos', cj); }   // una pieza de conjunto es tuya si lo es el conjunto
   return false;
 }
@@ -190,9 +190,19 @@ function abrePerfil() {
     col.appendChild(f);
   }
   E('b-pf-todo').textContent = a.todo ? tr('VOLVER A BLOQUEAR') : tr('DESBLOQUEAR TODO');
+  E('b-pf-todo').hidden = !arPruebasVisibles();      // en la web publicada no sale
 }
-function arDesbloqueaTodo() {
+// DESBLOQUEAR TODO (solo en la alfa y en desarrollo, para probar): todo el armario, todos los talentos y muchas Gotas y Acciones
+// (con cuenta las da el servidor, rf_prueba_dar, y solo a quien tiene el rol de alfa: servidor/62-rouflage-prueba.sql)
+const arPruebasVisibles = () => ALFA_RF || !!(typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo);
+async function arDesbloqueaTodo() {
+  if (!arPruebasVisibles()) return;
   const a = armarioEstado(); a.todo = !a.todo;
+  if (typeof talentosDesbloqueaTodo === 'function') talentosDesbloqueaTodo(a.todo);
+  if (a.todo) {
+    if (RFS.activo()) { try { await RFS.llama('rf_prueba_dar', {}); avisa(tr('Modo pruebas: 50 000 Gotas y 50 000 Acciones'), 'bueno'); } catch (e) { RFS.error(e); } }
+    else { SAVE.gotas = Math.max(SAVE.gotas || 0, 50000); SAVE.acciones = Math.max(SAVE.acciones || 0, 50000); avisa(tr('Modo pruebas: 50 000 Gotas y 50 000 Acciones'), 'bueno'); }
+  }
   if (!a.todo) for (const cat of CATALOGO_AR) { if (cat.conjuntos) continue; const it = arItem(cat.id, a.puesto[cat.id]); if (it && !arTiene(cat.id, it)) a.puesto[cat.id] = cat.vacio ? null : cat.items[0].id; }   // lo que ya no es tuyo, fuera
   guardaPartida(); play('pop'); abrePerfil();
 }

@@ -1,8 +1,8 @@
 {
- "build": 348,
- "hash": "4407b10",
- "fecha": "2026-10-20T22:04:38Z",
- "mensaje": "La página /android (APK de prueba) y su enlace, solo en la alfa",
+ "build": 349,
+ "hash": "9d47806",
+ "fecha": "2026-10-20T22:08:33Z",
+ "mensaje": "Merge branch 'main' of https://github.com/MicroBlizz/fansof-dev",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

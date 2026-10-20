@@ -1,8 +1,8 @@
 {
- "build": 315,
- "hash": "ee30bf7",
- "fecha": "2026-10-20T19:05:32Z",
- "mensaje": "Rouflage: misiones y logros más bonitos (insignias dibujadas por dificultad y metal, etiquetas con estrellas, barras con brillo, sello de COBRADA y gotas volando al cobrar)",
+ "build": 317,
+ "hash": "1db5730",
+ "fecha": "2026-10-20T19:10:14Z",
+ "mensaje": "Fans of Beams: icono propio y manifest (horizontal, pantalla completa); android_www.py usa su icono",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

@@ -15,7 +15,7 @@ const PROMO = (() => {
   const estilo = () => {
     if (document.getElementById('promo-css')) return;
     const s = document.createElement('style'); s.id = 'promo-css';
-    s.textContent = '.promo-ad { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 300px; margin: 0 auto; padding: 8px; box-sizing: border-box; border-radius: 14px; border: 3px solid #20102c; background: rgba(8,4,14,.55); color: #fff; text-decoration: none; cursor: pointer; }'
+    s.textContent = '.promo-ad { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; max-width: 360px; margin: 0 auto; padding: 8px; box-sizing: border-box; border-radius: 14px; border: 3px solid #20102c; background: rgba(8,4,14,.55); color: #fff; text-decoration: none; cursor: pointer; }'
       + '.promo-ad img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 9px; border: 2px solid #20102c; background: #20102c; }'
       + '.promo-ad b { font-size: 17px; line-height: 1.1; } .promo-ad span { font-size: 12px; font-weight: 800; color: #7df3ff; }';
     document.head.appendChild(s);

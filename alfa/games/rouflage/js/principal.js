@@ -26,6 +26,7 @@ async function arranca() {
   preparaAlubia(); cargaMapa(mapaElegido());
   ajusta(); window.addEventListener('resize', ajusta);
   preparaInterfaz(); preparaMenusPintar(); preparaEligeMapa(); preparaPvp(); preparaArmario(); preparaHabitacion(); preparaDiario(); preparaEconomia(); preparaTienda(); preparaGacha(); preparaReinicio(); preparaZoomCazador();
+  await RFS.arranca();      // la cuenta del servidor (servidor.js): Gotas, Acciones, colección…
   const modo = new URLSearchParams(location.search).get('modo');   // ?modo=camaleon o ?modo=cazador entra directo (para probar)
   if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else { irTitulo(); pvpEntradaDirecta(); }
   E('carga').hidden = true;

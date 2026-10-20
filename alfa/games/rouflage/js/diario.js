@@ -13,7 +13,7 @@ function diarioEstado() {
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
   return SAVE.diario;
 }
-const diarioPuede = () => diarioEstado().ultimo !== fechaHoy();
+const diarioPuede = () => diarioEstado().ultimo !== (RFS.activo() ? gachaMadrid().fecha : fechaHoy());      // con servidor, el día es el de Madrid
 // las cosas del armario marcadas «Diario», con su categoría (la clave con la que se guardan: 'cat:id')
 function diarioCosas(filtro) {
   const out = [];
@@ -42,6 +42,7 @@ function diarioDa(premio) {
   return dicho.join(' + ');
 }
 function diarioRecoge() {
+  if (RFS.activo()) return diarioRecogeServidor();
   if (!diarioPuede()) return;
   const s = diarioEstado(), hoy = fechaHoy(), mes = hoy.slice(0, 7);
   const texto = diarioDa(diarioPremio(s.dia));

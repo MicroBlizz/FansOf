@@ -40,7 +40,7 @@ function pintaInfoBoton(c, w) {
 const pctRF = v => (IDIOMA_RF === 'es' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(Math.round(v * 100) / 100)) + ' %';
 
 let _gachaReloj = 0;
-function abreGacha() { gachaEstado(); GACHA_UI.ocupado = false; E('gacha-resultado').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
+function abreGacha() { gachaEstado(); if (RFS.activo()) RFS.relojes(); GACHA_UI.ocupado = false; E('gacha-resultado').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
 function cierraGacha() { if (GACHA_UI.ocupado) return; play('select'); clearInterval(_gachaReloj); irTitulo(); }
 
 function gachaPinta() {
@@ -78,13 +78,16 @@ function gachaPintaProbs() {
     + `</div>`;
 }
 
-// una tirada: la máquina se agita un momento y salen las cápsulas, una a una
-function gachaTirar(k, gratis) {
+// una tirada: la máquina se agita un momento y salen las cápsulas, una a una. Con servidor tira él (servidor-economia.js); sin él, gacha.js
+async function gachaTirar(k, gratis) {
   if (GACHA_UI.ocupado) return;
   if (gratis) { if (gratis === 'x1' ? gachaFalta1() > 0 : !gachaX10().listo) { play('deny'); return; } k = gratis === 'x10' ? 10 : 1; }
   else if (SAVE.gotas < gachaCoste(k)) { play('deny'); avisa(tr('Te faltan {n} Gotas: juega partidas y recoge el premio diario', { n: gachaCoste(k) - SAVE.gotas }), 'malo'); return; }
-  const sale = gachaTira(k, gratis); if (!sale) { play('deny'); return; }
-  GACHA_UI.ocupado = true; play('select');
+  GACHA_UI.ocupado = true;
+  let sale;
+  try { sale = RFS.activo() ? await gachaTiraServidor(k, gratis) : gachaTira(k, gratis); } catch (e) { GACHA_UI.ocupado = false; RFS.error(e); return; }
+  if (!sale) { GACHA_UI.ocupado = false; play('deny'); return; }
+  play('select');
   const maq = E('gacha-maquina'), res = E('gacha-res'); E('gacha-resultado').hidden = true; res.innerHTML = '';
   maq.classList.remove('agita'); void maq.offsetWidth; maq.classList.add('agita');
   setTimeout(() => {

@@ -75,7 +75,7 @@ const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Leg
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
 function arTextoDe(it) {
   const t = it.txt; let m;
-  if (typeof t === 'number' && it.r !== 'epica') return tr('Solo en el gachapón, con Gotas');
+  if (typeof t === 'number' && it.r !== 'epica' && it.r !== 'legend') return tr('Solo en el gachapón, con Gotas');
   if (typeof t === 'number') return tr('{n} Acciones (≈ {e} €)', { n: t, e: arEuros(t) });
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });

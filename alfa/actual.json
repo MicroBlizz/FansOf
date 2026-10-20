@@ -1,8 +1,8 @@
 {
- "build": 288,
- "hash": "d4cdc1c",
- "fecha": "2026-10-20T14:36:45Z",
- "mensaje": "Decks: en el móvil la carta arrastrada flota encima del dedo y la mirilla ya no cae sobre su texto",
+ "build": 289,
+ "hash": "9515c40",
+ "fecha": "2026-10-20T14:38:02Z",
+ "mensaje": "Rouflage: cuenta en servidor (Gotas, Acciones, colección, gachapón) con SQL 53 sin aplicar; cápsula 150, gratis 8 h, legendarias también por Acciones",
  "juegos": {
   "crush": "0.1.23",
   "dark": "0.2.7",

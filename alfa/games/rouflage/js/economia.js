@@ -33,6 +33,7 @@ function paseCosas() {
 }
 // da todo lo que toca hasta el nivel actual (se puede llamar siempre: no repite nada). Devuelve lo nuevo, en texto
 function paseReparte() {
+  if (RFS.activo()) return [];      // con servidor lo reparte él (servidor.js)
   const p = ecoEstado(), a = armarioEstado(), nv = paseNivel(), nuevo = [];
   for (const { cat, it, nv: n, premium } of paseCosas()) {
     if (n > nv || (premium && !p.premium)) continue;
@@ -45,6 +46,7 @@ function paseReparte() {
 
 // al acabar una partida (la llama termina): suma Gotas y experiencia y lo añade a las cifras del final
 function economiaPartida(r) {
+  if (RFS.activo()) return economiaPartidaServidor(r);
   if (!armarioVisible() || !J.yo) return;
   ecoEstado();
   const hoy = fechaHoy(), e = SAVE.eco, linea = J.pvp ? ECO.linea : 1;
@@ -64,10 +66,11 @@ function economiaPartida(r) {
 // ¿se puede comprar? Con Acciones solo las ÉPICAS de la tienda (el resto, solo en el gachapón). Devuelve { moneda: 'gotas' | 'acciones', precio } o null
 function arPrecio(it) {
   if (it.de === 'gotas') { const m = /^(\d+) Gotas$/.exec(String(it.txt)); return m ? { moneda: 'gotas', precio: +m[1] } : null; }
-  if (it.de === 'tienda' && typeof it.txt === 'number' && it.r === 'epica') return { moneda: 'acciones', precio: it.txt };
+  if (it.de === 'tienda' && typeof it.txt === 'number' && (it.r === 'epica' || it.r === 'legend')) return { moneda: 'acciones', precio: it.txt };
   return null;
 }
 function arCompra(cat, it) {
+  if (RFS.activo()) return arCompraServidor(cat, it);
   const pr = arPrecio(it); if (!pr || arTiene(cat.id, it)) return;
   ecoEstado();
   if (SAVE[pr.moneda] < pr.precio) { play('deny'); avisa(pr.moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); if (pr.moneda === 'acciones') abreTienda('armario'); return; }
@@ -115,6 +118,7 @@ function pasePinta() {
   }
 }
 function pasePremium() {
+  if (RFS.activo()) return pasePremiumServidor();
   const p = ecoEstado(); if (p.premium) return;
   if (SAVE.acciones < ECO.premium) { play('deny'); avisa(tr('No tienes bastantes Acciones para el pase premium'), 'malo'); abreTienda('pase'); return; }
   SAVE.acciones -= ECO.premium; p.premium = true; const nuevo = paseReparte(); guardaPartida(); play('crown');

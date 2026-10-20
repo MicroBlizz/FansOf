@@ -12,6 +12,6 @@ AJUSTES.monedas = {
   escribir: (cual, n) => { SAVE[cual === 'comprada' ? 'acciones' : 'gotas'] = n; guardaPartida(); },
 };
 const SAVE = Object.assign({ menuMus: null }, (() => { try { return JSON.parse(localStorage.getItem(AJUSTES.guardado) || '{}'); } catch (_) { return {}; } })());
-function guardaPartida() { try { localStorage.setItem(AJUSTES.guardado, JSON.stringify(SAVE)); } catch (_) { /* sin guardar */ } CUENTA.cambio(); }
+function guardaPartida() { try { localStorage.setItem(AJUSTES.guardado, JSON.stringify(SAVE)); } catch (_) { /* sin guardar */ } CUENTA.cambio(); if (typeof RFS !== 'undefined') RFS.alGuardar(); }
 // core pregunta si se está jugando (esconde la pestaña de feedback y los avisos): fuera del título y del final
 function enPartida() { return typeof J !== 'undefined' && J.fase !== 'titulo' && !J.finMostrado; }

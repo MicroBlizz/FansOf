@@ -12,6 +12,9 @@ const COL_RIO = {
 };
 const pantY = wy => PAN.H - (wy - CAM.y);   // de la altura del mundo a la y de la pantalla
 const azar = (a, b) => a + Math.random() * (b - a);
+// el azar del río va aparte: en el reto del día sale de una semilla y el río es el mismo para todos
+let rnd = Math.random;
+const azarR = (a, b) => a + rnd() * (b - a);
 function hash(a, b) {
   let h = (a * 374761393 + b * 668265263) | 0;
   h = Math.imul(h ^ (h >>> 13), 1274126177);
@@ -34,8 +37,8 @@ function dentroTronco(t, x, wy, margen = 0) {
 }
 
 function nuevoTronco(x, wy, r, dif) {
-  const t = { x, wy, r, vx: 0, amigo: null, zanas: 0, pisado: false, id: RIO.cuenta++, fase: Math.random() * 6, hunde: 0 };
-  if (Math.random() < 0.22 + dif * 0.4) t.vx = (Math.random() < 0.5 ? -1 : 1) * azar(7, 12 + dif * 14);
+  const t = { x, wy, r, vx: 0, amigo: null, zanas: 0, pisado: false, id: RIO.cuenta++, fase: rnd() * 6, hunde: 0 };
+  if (rnd() < 0.22 + dif * 0.4) t.vx = (rnd() < 0.5 ? -1 : 1) * azarR(7, 12 + dif * 14);
   RIO.troncos.push(t);
   return t;
 }
@@ -44,36 +47,42 @@ function nuevoTronco(x, wy, r, dif) {
 function generaRio(hasta) {
   while (RIO.ultimo.wy < hasta) {
     const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500);
-    const wy = prev.wy + azar(52, 66) + dif * 16;
+    const wy = prev.wy + azarR(52, 66) + dif * 16;
     const [L, R] = orillas(wy);
-    const r = Math.round(azar(19, 24) - dif * 5);
+    const r = Math.round(azarR(19, 24) - dif * 5);
     const lo = L + r + 3, hi = R - r - 3;
-    let x = prev.x + azar(-70, 70);
+    let x = prev.x + azarR(-70, 70);
     if (x < lo) x = lo + (lo - x) * 0.5;
     if (x > hi) x = hi - (x - hi) * 0.5;
     x = Math.max(lo, Math.min(hi, x));
     const t = nuevoTronco(x, wy, r, dif);
     RIO.ultimo = t;
     const fila = [t];
-    if (Math.random() < 0.3 - dif * 0.15) {
-      const r2 = Math.round(azar(18, 22) - dif * 3);
-      const lado = x < (lo + hi) / 2 ? 1 : -1, x2 = x + lado * azar(r + r2 + 8, r + r2 + 26);
-      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) { fila.push(nuevoTronco(x2, wy + azar(-8, 8), r2, dif)); for (const f of fila) f.vx = 0; }
+    if (rnd() < 0.3 - dif * 0.15) {
+      const r2 = Math.round(azarR(18, 22) - dif * 3);
+      const lado = x < (lo + hi) / 2 ? 1 : -1, x2 = x + lado * azarR(r + r2 + 8, r + r2 + 26);
+      if (x2 > L + r2 + 3 && x2 < R - r2 - 3) { fila.push(nuevoTronco(x2, wy + azarR(-8, 8), r2, dif)); for (const f of fila) f.vx = 0; }
     }
     // un amigo atrapado de vez en cuando (nunca dos filas seguidas), y si no, zanahorias
     const n = Math.floor(wy / 40);
     for (const f of fila) {
-      if (n - RIO.ultimoAmigo >= 3 && Math.random() < 0.3) {
+      if (n - RIO.ultimoAmigo >= 3 && rnd() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
-      } else if (wy > 500 && Math.random() < 0.04) f.mirilla = true;
-      else if (Math.random() < 0.24) f.zanas = 1 + Math.floor(Math.random() * Math.random() * 3);
+      } else if (wy > 500 && rnd() < 0.06) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
+      else if (rnd() < 0.24) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
+      // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
+      if (!f.amigo && !f.objeto) {
+        const k = rnd();
+        if (wy > 300 && k < 0.08 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
+        else if (wy > 400 && k > 0.94) { f.tipo = 'muelle'; f.vx = 0; f.boing = 0; }
+      }
     }
   }
 }
 
 function avanzaRio(dt) {
   for (const t of RIO.troncos) {
-    t.fase += dt; t.hunde = Math.max(0, t.hunde - dt * 4);
+    t.fase += dt; t.hunde = Math.max(0, t.hunde - dt * 4); if (t.boing) t.boing = Math.max(0, t.boing - dt * 1.6);
     if (!t.vx) continue;
     t.x += t.vx * dt;
     const [L, R] = orillas(t.wy);
@@ -85,7 +94,7 @@ function avanzaRio(dt) {
 
 // «guion»: los primeros troncos puestos a mano (el tutorial), quietos: [a un lado, altura, radio, qué lleva]
 function reiniciaRio(xSalida, guion) {
-  RIO.troncos = []; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(Math.random() * AMIGOS.length);
+  RIO.troncos = []; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
   const t = nuevoTronco(xSalida, 0, 27, 0); t.vx = 0; t.pisado = true;
   RIO.ultimo = t;
   for (const [dx, wy, r, lleva] of guion || []) {
@@ -161,10 +170,22 @@ function pintaRio(t) {
 
 /* ---------- los troncos y lo que llevan ---------- */
 function pintaTronco(tr, y, conejo) {
-  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6;
+  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6 + (tr.tipo === 'hunde' ? tr.pisa * 1.4 : 0);
   y += baja + Math.sin(tr.fase * 2) * 0.5;
+  const tiembla = tr.tipo === 'hunde' && tr.pisa > 0.5 ? Math.sin(tr.fase * 60) * (tr.pisa - 0.4) * 1.2 : 0, x = tr.x + tiembla;
   elipse(tr.x + 2, y + tr.r * 0.32, tr.r * 1.08, tr.r * 0.6, 'rgba(40,110,120,0.28)', null);
-  sprite('tronco' + (tr.id % 3), tr.x, y, tr.r);
+  sprite('tronco' + (tr.id % 3), x, y, tr.r);
+  if (tr.tipo === 'hunde') {
+    // agrietado: si te quedas encima, tiembla, burbujea y se hunde
+    const r = tr.r, c = 'rgba(90,50,25,0.75)';
+    for (const [a, b, e, d] of [[-0.55, -0.15, -0.05, -0.3], [-0.05, -0.3, 0.2, 0.05], [0.2, 0.05, 0.6, -0.1], [-0.05, -0.3, 0.05, -0.62]]) trazo(x + a * r, y - 2 + b * r * APLASTA, x + e * r, y - 2 + d * r * APLASTA, 0.9, c, null);
+    if (tr.pisa > 0.3) for (let i = 0; i < 3; i++) { const k = (tr.fase * 1.5 + i / 3) % 1; elipse(x + (i - 1) * r * 0.7, y + r * 0.3 - k * 6, 1 + k, 1 + k, 'rgba(255,255,255,0.7)', null); }
+  } else if (tr.tipo === 'muelle') {
+    // una gelatina rosa que bota
+    const sq = 1 - tr.boing * 0.35 * Math.cos(tr.boing * 18), ry = tr.r * 0.3 * sq;
+    elipse(x, y - 2 - ry * 0.4, tr.r * 0.58, ry, vol(x, y - 2, tr.r * 0.58, ry, '#ff9ac8'), OLC, 0.8);
+    elipse(x - tr.r * 0.2, y - 2 - ry * 0.85, tr.r * 0.16, ry * 0.3, 'rgba(255,255,255,0.75)', null);
+  }
   return y;
 }
 function pintaTroncos(t, bajoConejo) {
@@ -172,8 +193,9 @@ function pintaTroncos(t, bajoConejo) {
     const y0 = pantY(tr.wy);
     if (y0 < -50 || y0 > PAN.H + 40) continue;
     const y = pintaTronco(tr, y0, tr === bajoConejo);
+    if (tr.barro) pintaBarroTronco(tr, y);
     for (let i = 0; i < tr.zanas; i++) sprite('zanahoria', tr.x - (tr.zanas - 1) * 5 + i * 10, y + 1 - (i % 2), 7);
-    if (tr.mirilla) { elipse(tr.x, y + 1, 6, 2.4, 'rgba(40,110,120,0.25)', null); iconoMirilla(tr.x, y - 6 + Math.sin(t * 4 + tr.id) * 1.2, 6); }
+    if (tr.objeto) { elipse(tr.x, y + 1, 6, 2.4, 'rgba(40,110,120,0.25)', null); iconoObjeto(tr.objeto, tr.x, y - 6 + Math.sin(t * 4 + tr.id) * 1.2, 6); }
     if (tr.amigo) {
       // atrapado en un charco de barro, temblando, con su cartelito de SOS clavado en el tronco
       blanda([tr.x - 11, y + 1, tr.x - 4, y - 4, tr.x + 7, y - 3.5, tr.x + 12, y + 2, tr.x + 4, y + 6, tr.x - 7, y + 5.5], COL_RIO.barro, COL_RIO.barroO, 0.8);

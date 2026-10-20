@@ -26,14 +26,15 @@ const poder = id => llevo(id) && tengoAmigo(id);
 function nuevaPartida(modo = 'menu') {
   const x = PAN.W / 2;
   CAM.y = -PAN.H * 0.3;
+  preparaAzar();
   const t = reiniciaRio(x, preparaTuto());
   Object.assign(JUEGO, {
     modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
     racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, mirilla: 0, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
-  reiniciaOla(0);
+  reiniciaOla(0); reiniciaDron();
   FX.length = 0; LETREROS.length = 0;
   APUNTA.activo = false;
   preparaMetas();
@@ -45,6 +46,7 @@ function nuevaPartida(modo = 'menu') {
 function empieza() {
   const J = JUEGO;
   J.modo = 'juego'; OLA.activa = true; PANEL.abierto = null;
+  empiezaHuella();
   for (const k of ['casco', 'cafe', 'suerte', 'mirilla']) if (GUARDA.kit[k] > 0) { GUARDA.kit[k]--; J.kit[k] = true; }
   if (J.kit.casco) J.casco = true;
   if (J.kit.cafe) { J.cafe = 8; bandera(tr('¡Pausa del café!'), PASTEL.melocoton); }
@@ -57,8 +59,8 @@ function empieza() {
 function saltoApuntado() {
   const vx = APUNTA.x0 - APUNTA.x, vy = APUNTA.y0 - APUNTA.y, l = Math.hypot(vx, vy);
   if (l < 6) return null;
-  const d = Math.min(SALTO_MAX, l * 1.25), c = JUEGO.conejo;
-  return { x: c.x + vx / l * d, wy: c.wy - vy / l * d, d, fuerza: d / SALTO_MAX, ang: Math.atan2(vx, -vy) };
+  const lejos = SALTO_MAX * (JUEGO.super > 0 || JUEGO.conejo.muelle ? SUPER_LEJOS : 1), d = Math.min(lejos, l * 1.25 * lejos / SALTO_MAX), c = JUEGO.conejo;
+  return { x: c.x + vx / l * d, wy: c.wy - vy / l * d, d, fuerza: d / lejos, ang: Math.atan2(vx, -vy) };
 }
 const giroDe = a => Math.max(-GIRO_MAX, Math.min(GIRO_MAX, a));
 
@@ -66,6 +68,8 @@ function salta() {
   const J = JUEGO, c = J.conejo, s = saltoApuntado();
   APUNTA.activo = false;
   if (!s || c.salto) return;
+  if (J.super > 0 && !c.muelle) J.super--;
+  c.muelle = false;
   if (J.mirilla > 0) J.mirilla--;   // antes de empezar: la del kit vale para los saltos de después del primero
   if (J.modo === 'menu' || J.modo === 'listo') empieza();
   // la racha: saltar enseguida después de caer
@@ -96,23 +100,26 @@ function aterriza() {
   mejor.hunde = 1;
   onda(mejor.x, mejor.wy, mejor.r); salpica(c.x, c.wy, 5, 'rgba(255,255,255,0.9)');
   J.temblor = GUARDA.suave ? 0 : 0.08;
-  SONIDO.cae();
+  SONIDO.cae(); vibra(12);
   for (const id of J.cuestas) J.viajes[id] = (J.viajes[id] || 0) + 1;
-  if (r > BORDE_UY && J.cuestas.length) {
+  // el tronco embarrado por el dron: resbalas (se cae un amigo y adiós racha)
+  const resbala = mejor.barro;
+  if (resbala) { J.racha = 0; J.perfSeguidos = 0; aviso(tr('¡Resbala!'), c.x - 20, c.wy + 22, '#c99060', 10); vibra(50); }
+  if ((r > BORDE_UY || resbala) && J.cuestas.length) {
     if (poder('zorro') && !J.zorroUsado) { J.zorroUsado = true; aviso(tr('¡SlyFox lo esquiva!'), c.x, c.wy + 14, '#ffb37a', 9); }
     else {
       const id = J.cuestas.pop(); J.cayeron++;
       J.caen.push({ id, x: c.x, wy: c.wy, vx: (c.ox >= 0 ? 1 : -1) * 34, vz: 40, z: 22, giro: 0, v: 1.4 });
       aviso(tr('¡Uy!'), c.x, c.wy + 14, '#ff8a7a', 11);
-      SONIDO.uy();
+      SONIDO.uy(); vibra(60);
     }
   }
   if (!mejor.pisado) {
     mejor.pisado = true; J.saltos++;
     let p = puntosPor(10);
-    if (r < CENTRO_PERFECTO) {
+    if (r < CENTRO_PERFECTO && !resbala) {
       p += puntosPor(5); J.perfectos++; J.perfSeguidos++;
-      aviso(tr('¡Perfecto!'), c.x, c.wy + 26, '#ffe066', 11); estrellas(c.x, c.wy); petalos(c.x, c.wy, 10); SONIDO.perfecto();
+      aviso(tr('¡Perfecto!'), c.x, c.wy + 26, '#ffe066', 11); estrellas(c.x, c.wy); petalos(c.x, c.wy, 10); SONIDO.perfecto(); vibra(25);
       if (J.perfSeguidos >= 3 && J.fiebre <= 0) enciendeFiebre();
     } else J.perfSeguidos = 0;
     if (poder('ardilla')) p += 5;
@@ -120,7 +127,8 @@ function aterriza() {
     aviso('+' + p, c.x + 16, c.wy + 6, J.fiebre > 0 ? '#ffd0f0' : '#fff8ea', 9);
   }
   if (mejor.zanas) cogeZanas(mejor, c.x, c.wy);
-  if (mejor.mirilla) cogeMirilla(mejor, c.x, c.wy);
+  if (mejor.objeto) cogeObjeto(mejor, c.x, c.wy);
+  if (mejor.tipo === 'muelle') { c.muelle = true; mejor.boing = 1; aviso(tr('¡Boing!'), c.x, c.wy + 34, '#ff9ac8', 11); SONIDO.racha(); vibra(30); }
   const rescate = mejor.amigo;
   if (mejor.amigo) {
     const id = mejor.amigo;
@@ -128,11 +136,12 @@ function aterriza() {
     GUARDA.visto[id] = true;
     aviso(tr('¡{n}!', { n: nombreAmigo(id) }), c.x, c.wy + 40, '#9fe3ff', 12);
     corazones(c.x, c.wy + 10); petalos(c.x, c.wy, 8);
-    mejor.amigo = null; SONIDO.rescate();
+    mejor.amigo = null; SONIDO.rescate(); vibra([20, 40, 20]);
     if (J.cuestas.length >= 3) bandera(tr('¡Rabia x{n}!', { n: 1 + J.cuestas.length }), PASTEL.lila);
     if (id === 'castor' && tengoAmigo('castor')) { OLA.wy -= 60; OLA.pala -= 20; bandera(tr('¡BUM! La ola retrocede'), PASTEL.melocoton); J.temblor = GUARDA.suave ? 0 : 0.25; salpica(PAN.W / 2, OLA.wy + 30, 20, '#9a6a40'); }
   }
   compruebaMisiones();
+  apuntaHuella(c.x, c.wy);
   tutoCae(r < CENTRO_PERFECTO, rescate);
 }
 
@@ -169,6 +178,7 @@ function acaba(motivo) {
   if (J.modo === 'fin') return;
   J.modo = 'fin'; J.tFin = 0; c.salto = null; c.tronco = null;
   const record = J.puntos > GUARDA.mejor;
+  cierraRetoYHuella(record);
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
   GUARDA.partidas++; GUARDA.rescatados += J.rescatados;
   const premio = cierraMisiones();
@@ -187,14 +197,22 @@ function avanzaJuego(dt) {
   const J = JUEGO, c = J.conejo;
   J.t += dt; J.temblor = Math.max(0, J.temblor - dt); c.cae = Math.max(0, c.cae - dt * 5);
   if (c.tronco) J.enTronco += dt;
+  // el tronco agrietado: si te quedas encima más de 1,7 s, se hunde contigo
+  if (c.tronco && c.tronco.tipo === 'hunde' && J.modo === 'juego') {
+    c.tronco.pisa += dt;
+    if (c.tronco.pisa > 1.7) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; onda(t.x, t.wy, t.r); salpica(t.x, t.wy, 12, 'rgba(255,255,255,0.95)'); alAgua(); }
+  }
   avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
+  if (J.modo === 'juego') { avanzaObjetos(dt); avanzaDron(dt); }
   avanzaRio(dt);
   if (c.salto) {
     const s = c.salto;
     s.t += dt;
     const k = Math.min(1, s.t / s.T);
     c.x = s.x0 + (s.x1 - s.x0) * k; c.wy = s.wy0 + (s.wy1 - s.wy0) * k;
-    if (J.racha >= 3 || J.fiebre > 0) estela(c.x, c.wy, Math.sin(Math.PI * k) * s.alto);
+    // la estela: la comprada en cada salto; el arcoíris, en la racha y en la Fiebre
+    const tipo = J.fiebre > 0 || (J.racha >= 3 && GUARDA.estela === 'arcoiris') ? 'arcoiris' : GUARDA.estela !== 'arcoiris' ? GUARDA.estela : null;
+    if (tipo) estela(c.x, c.wy, Math.sin(Math.PI * k) * s.alto, tipo);
     if (k >= 1) aterriza();
   } else if (c.tronco) { c.x = c.tronco.x + c.ox; c.wy = c.tronco.wy + c.owy; }
   // al apuntar, el conejo se gira hacia donde va a saltar; quieto, vuelve poco a poco a mirar al frente
@@ -207,7 +225,7 @@ function avanzaJuego(dt) {
     if (J.cafe <= 0 && !tutoFrena()) avanzaOla(dt, c.wy, J.metros);
     // en la fiebre, las zanahorias de los troncos cercanos vienen solas
     if (J.fiebre > 0) for (const t of RIO.troncos) if (t.zanas && Math.hypot(t.x - c.x, t.wy - c.wy) < 70) cogeZanas(t, t.x, t.wy);
-    if (OLA.wy >= c.wy - 2) muere('ola');
+    if (OLA.wy >= c.wy - 2 && !usaEscudo()) muere('ola');
     cruzaMetas();
   }
   if (J.modo === 'fin') { J.tFin += dt; c.hunde = Math.min(1, c.hunde + dt * 1.4); }

@@ -14,7 +14,14 @@ function iniciaBonito() {
 }
 
 /* ---------- lo que pasa en una jugada ---------- */
-function estela(x, wy, h) { BONITO.estela.push({ x, wy, h, v: 0.45 }); }
+function estela(x, wy, h, tipo = 'arcoiris') { BONITO.estela.push({ x, wy, h, v: 0.45, tipo, n: BONITO.n = (BONITO.n || 0) + 1 }); }
+// el dibujito de cada estela (las que se compran en el puesto de Lola)
+function pintaMotaEstela(tipo, x, y, r, i) {
+  if (tipo === 'corazones') corazonForma(x, y, r, i % 2 ? '#ff7aa8' : '#ffb3cf');
+  else if (tipo === 'chispas') estrellaForma(x, y, r * 1.2, i * 0.7, i % 2 ? '#ffd84a' : '#fff1a0');
+  else if (tipo === 'burbujas') { elipse(x, y, r, r, 'rgba(220,250,255,0.35)', '#ffffff', 0.7); elipse(x - r * 0.35, y - r * 0.35, r * 0.25, r * 0.25, '#ffffff', null); }
+  else if (tipo === 'notas') { elipse(x, y + r * 0.5, r * 0.55, r * 0.42, PASTEL.lilaO, null, 0, -0.4); trazo(x + r * 0.45, y + r * 0.4, x + r * 0.45, y - r * 0.9, 0.7, PASTEL.lilaO, null); trazo(x + r * 0.45, y - r * 0.9, x + r * 1.0, y - r * 0.5, 0.7, PASTEL.lilaO, null); }
+}
 function petalos(x, wy, n) {
   for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = azar(20, 50); FX.push({ t: 'petalo', x, wy, vx: Math.cos(a) * s, vy: Math.sin(a) * s * 0.7 + 10, giro: Math.random() * 6, r: azar(1.4, 2.4), color: Math.random() < 0.6 ? '#ffb3cf' : '#ffffff', v: 1.2, v0: 1.2 }); }
 }
@@ -65,7 +72,7 @@ function estrellita(x, y, r, alfa) {
 // encima del agua, debajo de los troncos: brillitos y la estela de arcoíris
 function pintaBonitoAgua(t) {
   for (const b of BONITO.brillos) { const k = b.v / b.v0; estrellita(b.x, pantY(b.wy), 2.4 * Math.sin(k * Math.PI), 0.9 * Math.sin(k * Math.PI)); }
-  const E = BONITO.estela;
+  const E = BONITO.estela.filter(e => e.tipo === 'arcoiris');
   if (E.length > 1) {
     G.lineCap = 'round'; G.lineJoin = 'round';
     ARCOIRIS.forEach((col, i) => {
@@ -75,6 +82,11 @@ function pintaBonitoAgua(t) {
     });
     G.globalAlpha = 1;
   }
+  for (const e of BONITO.estela) if (e.tipo !== 'arcoiris' && e.n % 3 === 0) {
+    const k = e.v / 0.45; G.globalAlpha = Math.min(1, k * 1.6);
+    pintaMotaEstela(e.tipo, e.x + Math.sin(e.n) * 3, pantY(e.wy) - e.h - 10 + (1 - k) * 4, 2.2 * (0.5 + k * 0.5), e.n);
+  }
+  G.globalAlpha = 1;
 }
 // el arcoíris grande de la Fiebre, detrás de todo lo de arriba
 function pintaArco() {

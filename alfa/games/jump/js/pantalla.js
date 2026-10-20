@@ -133,7 +133,7 @@ function pintaMarcador() {
     const w = 60, k = J.fiebre / FIEBRE_SEG, g = G.createLinearGradient(W / 2 - w / 2, 0, W / 2 + w / 2, 0); ARCOIRIS.forEach((c, i) => g.addColorStop(i / 6, c));
     caja(W / 2 - w / 2, 45, w, 5, 2.5, 'rgba(251,244,255,0.85)'); caja(W / 2 - w / 2 + 0.8, 45.8, (w - 1.6) * k, 3.4, 1.7, g, null);
   }
-  if (J.mirilla > 0) { iconoMirilla(W - 22, 44, 4.5); letras('×' + J.mirilla, W - 15, 44.5, 8, PASTEL.texto, { alin: 'left', borde: '#ffffff', bw: 2 }); }
+  pintaObjetosMarcador();
   if (J.cafe > 0) letras(tr('Pausa del café') + ' ' + Math.ceil(J.cafe), W - 8, 30, 7.5, PASTEL.texto, { alin: 'right', borde: '#ffffff', bw: 2 });
 }
 
@@ -161,6 +161,7 @@ function pintaFinal() {
   let y = cy + 26;
   letras(tr('Empleado') + ': CrazyBunny', cx + 10, y, 8, PASTEL.texto, { alin: 'left' });
   letras(tr('Motivo') + ': ' + tr(MOTIVO_FIN[F_.motivo]), cx + 10, y + 10, 7.5, PASTEL.suave, { alin: 'left', peso: 700 });
+  if (RETO.activo) letras(tr('Reto del día') + ': ' + retoDeHoy().mejor.toLocaleString('es-ES') + ' €', cx + 10, y + 19, 6.6, PASTEL.lilaO, { alin: 'left', peso: 800 });
   // el sello
   aqui(cx + cw - 28, y + 4, -0.15, 1, 1, () => {
     const s = F_.record ? tr('¡RÉCORD!') : tr('¡ESCAPÓ!'), col = F_.record ? PASTEL.oroO : '#e0463e', ws = anchoLetras(s, 8, { logo: true }) + 10;
@@ -201,12 +202,16 @@ function pintaFinal() {
   const [quien, dice] = J.tutoHecho ? ['Lola', 'Las zanahorias que ganes, gástalas en mi puesto: tengo amigos que te ayudarán.'] : CONSEJOS[GUARDA.partidas % CONSEJOS.length];
   y += 12;
   envuelve(quien + ': «' + tr(dice) + '»', cw - 24, 6.8).slice(0, 2).forEach((l, i) => letras(l, W / 2, y + i * 8, 6.8, PASTEL.suave, { peso: 700 }));
-  const bw = 96, bh = 20, bx = W / 2 - bw / 2, by = cy + chh - 26;
+  const bw = 96, bh = 20, bx = W / 2 - bw / 2 + 16, by = cy + chh - 26;
   caja(bx, by + 2, bw, bh, 5, OLC, null);
   caja(bx, by, bw, bh, 5, PASTEL.melocoton, OLC, 1);
-  letras(tr('¡Más caos!'), W / 2, by + 10.5, 12, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.6 });
+  letras(tr('¡Más caos!'), bx + bw / 2, by + 10.5, 12, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.6 });
+  // y para volver a la portada
+  const mx = bx - 36, mw = 28;
+  caja(mx, by + 2, mw, bh, 5, OLC, null); caja(mx, by, mw, bh, 5, PASTEL.papel, OLC, 1); iconoCasa(mx + mw / 2, by + 10);
   G.globalAlpha = 1;
   if (e >= 1) boton(bx - 6, by - 6, bw + 12, bh + 12, () => { nuevaPartida('listo'); SONIDO.boton(); });
+  if (e >= 1) boton(mx - 4, by - 4, mw + 8, bh + 8, vuelveAlMenu);
 }
 
 function pintaTodo() {
@@ -221,7 +226,9 @@ function pintaTodo() {
   pintaTroncos(t, J.conejo.tronco);
   pintaGuiaTuto(t);
   pintaCaen();
+  pintaFantasma();
   pintaConejo();
+  pintaDron(t);
   pintaOla(t);
   pintaFx('aire');
   pintaLuz(t);

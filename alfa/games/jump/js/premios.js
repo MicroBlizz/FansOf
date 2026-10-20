@@ -20,7 +20,7 @@ function muere(motivo) {
   const c = J.conejo;
   J.modo = 'casi'; J.casi = { motivo, t: 0 }; c.salto = null; c.tronco = null; APUNTA.activo = false;
   onda(c.x, c.wy, 8); salpica(c.x, c.wy, 12, motivo === 'ola' ? '#9a6a40' : 'rgba(255,255,255,0.95)');
-  SONIDO.chof();
+  SONIDO.chof(); vibra(120);
 }
 function avanzaCasi(dt) {
   const J = JUEGO;

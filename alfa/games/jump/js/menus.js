@@ -16,12 +16,16 @@ const PUESTO = {
     ['castor', 800, 'BoomBeaver', 'Al rescatarlo, ¡BUM!: la ola retrocede.']],
   pelaje: [['#ffffff', 0, 'Blanco'], ['#cfd0dc', 150, 'Gris oficina'], ['#b98a66', 400, 'Chocolate'], ['#f4c886', 750, 'Miel'], ['#ffc4dc', 1300, 'Rosa chicle'], ['#d8c0ff', 2500, 'Morado caos']],
   capas: [['#ff7a1a', 0, 'Naranja'], ['#e8343e', 180, 'Roja rebelde'], ['#3a86ff', 450, 'Azul Phony'], ['#3fbf6a', 700, 'Verde bosque'], ['#a04ae0', 1100, 'Morada'], ['#ffc93a', 2600, 'Dorada CEO']],
+  estelas: [['arcoiris', 0, 'Arcoíris de racha'], ['corazones', 350, 'Corazones'], ['burbujas', 450, 'Burbujas'], ['chispas', 600, 'Chispas'], ['notas', 800, 'Notas musicales']],
   kit: [['casco', 40, 'Casco de obra', 'Te saca del agua una vez en toda la partida.'], ['cafe', 30, 'Pausa del café', 'La ola espera 8 s antes de salir.'], ['suerte', 60, 'Zanahoria de la suerte', 'Empiezas la partida con racha de 3.'], ['mirilla', 50, 'Mirilla', 'Ves dónde caes en tus 8 primeros saltos.']],
 };
 
 /* ---------- iconos dibujados ---------- */
 function iconoCarpeta(x, y) { caja(x - 5, y - 3.5, 10, 7.5, 1, '#f6c56a', OLC, 0.7); caja(x - 5, y - 5, 4.5, 2.4, 0.8, '#f6c56a', OLC, 0.7); caja(x - 3, y - 1, 6, 1, 0, '#c99316', null); }
 function iconoCorona(x, y) { forma([x - 5, y + 3, x + 5, y + 3, x + 5.6, y - 3, x + 2.4, y - 0.6, x, y - 4.4, x - 2.4, y - 0.6, x - 5.6, y - 3], vol(x, y, 6, 5, '#ffd86a'), OLC, 0.7); }
+function iconoCasa(x, y) { forma([x - 5, y - 0.5, x, y - 5.5, x + 5, y - 0.5], PASTEL.melocoton, OLC, 0.8); caja(x - 3.6, y - 1, 7.2, 5.6, 0.8, '#ffffff', OLC, 0.8); caja(x - 1.1, y + 1.4, 2.2, 3.2, 0.5, PASTEL.lilaO, null); }
+// el calendario del reto del día, con el número de hoy
+function iconoCalendario(x, y) { caja(x - 5, y - 4.5, 10, 9.5, 1.5, '#ffffff', OLC, 0.8); caja(x - 5, y - 4.5, 10, 3.2, [1.5, 1.5, 0, 0], '#ff7a8a', OLC, 0.8); letras(String(new Date().getDate()), x, y + 1.8, 5, PASTEL.texto); }
 function iconoHoja(x, y) { caja(x - 4, y - 5, 8, 10, 1, '#ffffff', OLC, 0.7); for (const d of [-2.4, 0, 2.4]) caja(x - 2.4, y + d, 4.8, 0.7, 0, PASTEL.lilaO, null); }
 function iconoSonido(x, y, on) {
   forma([x - 4, y - 1.5, x - 2, y - 1.5, x + 1, y - 4, x + 1, y + 4, x - 2, y + 1.5, x - 4, y + 1.5], PASTEL.texto, null);
@@ -96,11 +100,18 @@ function pintaPortada() {
   cartel(10, cy2 + 18, cw, 15, PASTEL.oro, iconoCorona, 'Mis récords', 0.02, () => abrePanel('records'));
   cartel(20 + cw, cy2 + 18, cw, 15, PASTEL.lila, iconoHoja, 'Reclamaciones', -0.02, () => abrePanel('ajustes'));
   // el botón de empezar: grande, en el centro, botando un poco
-  const bt = tr('¡A JUGAR!'), bw = Math.max(110, anchoLetras(bt, 16, { logo: true }) + 34), bh = 26, bx = W / 2 - bw / 2, by = cy2 - 36 + Math.abs(Math.sin(t * 3)) * -2;
+  // y a su lado, el reto del día (el mismo río para todos hoy)
+  const bt = tr('¡A JUGAR!'), bw = W - 20 - 66 - 6, bh = 26, bx = 10, by = cy2 - 36 + Math.abs(Math.sin(t * 3)) * -2;
   caja(bx, by + 2.5, bw, bh, 8, OLC, null); caja(bx, by, bw, bh, 8, PASTEL.melocoton, OLC, 1.1);
   caja(bx + 4, by + 3, bw - 8, 6, 3, 'rgba(255,255,255,0.35)', null);
-  letras(bt, W / 2, by + 14, 16, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 3.2 });
+  letras(bt, bx + bw / 2, by + 14, 15, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 3.2 });
   boton(bx - 4, by - 4, bw + 8, bh + 8, aJugar);
+  const rx = bx + bw + 6, rw = 66, ry = cy2 - 36, hoyR = retoDeHoy();
+  caja(rx, ry + 2.5, rw, bh, 8, OLC, null); caja(rx, ry, rw, bh, 8, PASTEL.lila, OLC, 1.1);
+  iconoCalendario(rx + 10, ry + 13);
+  letras(tr('Reto del día'), rx + 18, ry + (hoyR ? 9.5 : 13.5), 7, '#ffffff', { alin: 'left', borde: PASTEL.lilaO, bw: 2 });
+  if (hoyR) letras(hoyR.mejor.toLocaleString('es-ES') + ' €', rx + 18, ry + 18.5, 6.4, PASTEL.texto, { alin: 'left', peso: 800 });
+  boton(rx - 3, ry - 4, rw + 6, bh + 8, empiezaReto);
 }
 
 /* ---------- lo que se abre encima: fichas de carpeta ---------- */
@@ -160,7 +171,7 @@ function pintaTienda() {
   pastillaZanas(x + 6, y + 7);
   spriteConejo('quieto' + Math.floor(JUEGO.t * 7) % 8, x + w - 18, y + 22, 3.6);
   // las pestañas
-  const P = [['amigos', 'Amigos'], ['pelaje', 'Pelaje'], ['capas', 'Capas'], ['kit', 'Kit de sabotaje']];
+  const P = [['amigos', 'Amigos'], ['pelaje', 'Pelaje'], ['capas', 'Capas'], ['estelas', 'Estelas'], ['kit', 'Kit']];
   let px = x + 6;
   P.forEach(([id, txt]) => {
     const tw = anchoLetras(tr(txt), 7) + 10, on = PANEL.pestana === id;
@@ -170,7 +181,7 @@ function pintaTienda() {
     px += tw + 3;
   });
   contenido(x + 4, y + 42, w - 8, h - 46, y0 => {
-    const cw = (w - 20) / 2, ch = PANEL.pestana === 'pelaje' || PANEL.pestana === 'capas' ? 52 : 66;
+    const cw = (w - 20) / 2, ch = PANEL.pestana === 'pelaje' || PANEL.pestana === 'capas' || PANEL.pestana === 'estelas' ? 52 : 66;
     const lista = PUESTO[PANEL.pestana];
     lista.forEach((it, i) => {
       const cx = x + 6 + (i % 2) * (cw + 4), cy = y0 + 2 + Math.floor(i / 2) * (ch + 4);
@@ -181,6 +192,12 @@ function pintaTienda() {
         const [id, cuanto, nombre, desc] = it, n = GUARDA.kit[id] || 0;
         tarjeta(cx, cy, cw, ch, (X, Y) => { iconoKit(id, X, Y); if (n) letras('×' + n, X + 14, Y - 6, 8, PASTEL.texto); }, nombre, desc, cuanto, 'compra',
           () => { if (GUARDA.zanas < cuanto) return SONIDO.uy(); GUARDA.zanas -= cuanto; GUARDA.kit[id] = n + 1; salvaGuarda(); SONIDO.compra(); });
+      } else if (PANEL.pestana === 'estelas') {
+        const [id, cuanto, nombre] = it, clave = 'estela' + id, puesto = GUARDA.estela === id, tengo = cuanto === 0 || GUARDA.tengo[clave];
+        tarjeta(cx, cy, cw, ch, (X, Y) => {
+          if (id === 'arcoiris') ARCOIRIS.forEach((c, k) => { G.beginPath(); G.arc(X, Y + 8, 14 - k * 1.5, Math.PI, 0); G.lineWidth = 1.5; G.strokeStyle = c; G.stroke(); });
+          else for (let k = 0; k < 3; k++) pintaMotaEstela(id, X - 10 + k * 10, Y + 2 - Math.sin(k * 1.4) * 4, 3.4, k);
+        }, nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { GUARDA.estela = id; }));
       } else {
         const [col, cuanto, nombre] = it, pelo = PANEL.pestana === 'pelaje', clave = (pelo ? 'pelo' : 'capa') + col;
         const puesto = (pelo ? GUARDA.pelaje : GUARDA.capa) === col, tengo = cuanto === 0 || GUARDA.tengo[clave];
@@ -229,22 +246,29 @@ function barra(txt, clave, x, y, w) {
   elipse(x + w * v, by, 4, 4, PASTEL.melocoton, OLC, 0.8);
   boton(x - 4, by - 8, w + 8, 16, (px) => { GUARDA[clave] = Math.round(Math.max(0, Math.min(1, (px - x) / w)) * 10) / 10; salvaGuarda(); applyVolume(); SONIDO.boton(); });
 }
+// un interruptor de la hoja de reclamaciones (encendido en verde menta)
+function interruptor(sx, sy, clave, alEncender) {
+  const on = GUARDA[clave];
+  caja(sx, sy, 18, 10, 5, on ? PASTEL.menta : PASTEL.raya, OLC, 0.6); elipse(on ? sx + 13 : sx + 5, sy + 5, 3.6, 3.6, '#ffffff', OLC, 0.6);
+  boton(sx - 4, sy - 4, 26, 18, () => { GUARDA[clave] = !GUARDA[clave]; salvaGuarda(); SONIDO.boton(); if (GUARDA[clave] && alEncender) alEncender(); });
+}
 function pintaAjustes() {
-  const W = PAN.W, x = 16, y = PAN.H / 2 - 80, w = W - 32, h = 162;
+  const W = PAN.W, x = 16, y = PAN.H / 2 - 93, w = W - 32, h = 188;
   marco('Hoja de reclamaciones', x, y, w, h, PASTEL.lila);
   barra('Queja n.º 1: los ruiditos', 'efectos', x + 12, y + 16, w - 24);
   barra('Queja n.º 2: la música', 'musica', x + 12, y + 42, w - 24);
   letras(tr('Queja n.º 3: me mareo'), x + 12, y + 72, 8, PASTEL.texto, { alin: 'left' });
   letras(tr('Menos temblores y menos cosas volando.'), x + 12, y + 81, 6.4, PASTEL.suave, { alin: 'left', peso: 700 });
-  const sx = x + w - 30, on = GUARDA.suave;
-  caja(sx, y + 68, 18, 10, 5, on ? PASTEL.menta : PASTEL.raya, OLC, 0.6); elipse(on ? sx + 13 : sx + 5, y + 73, 3.6, 3.6, '#ffffff', OLC, 0.6);
-  boton(sx - 4, y + 64, 26, 18, () => { GUARDA.suave = !GUARDA.suave; salvaGuarda(); SONIDO.boton(); });
+  interruptor(x + w - 30, y + 68, 'suave');
+  letras(tr('Queja n.º 4: el móvil tiembla'), x + 12, y + 98, 8, PASTEL.texto, { alin: 'left' });
+  letras(tr('Vibra al caer, al rescatar y al chocar.'), x + 12, y + 107, 6.4, PASTEL.suave, { alin: 'left', peso: 700 });
+  interruptor(x + w - 30, y + 94, 'vibra', () => vibra(40));
   // el tutorial de Lola otra vez
   const rt = tr('Repetir el tutorial de Lola'), rw = anchoLetras(rt, 7.5) + 18;
-  caja(W / 2 - rw / 2, y + 93, rw, 15, 4, OLC, null); caja(W / 2 - rw / 2, y + 91.5, rw, 15, 4, PASTEL.melocoton, OLC, 0.8);
-  letras(rt, W / 2, y + 99.5, 7.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2 });
-  boton(W / 2 - rw / 2 - 4, y + 88, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida('listo'); SONIDO.boton(); });
-  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 122 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
+  caja(W / 2 - rw / 2, y + 119, rw, 15, 4, OLC, null); caja(W / 2 - rw / 2, y + 117.5, rw, 15, 4, PASTEL.melocoton, OLC, 0.8);
+  letras(rt, W / 2, y + 125.5, 7.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2 });
+  boton(W / 2 - rw / 2 - 4, y + 114, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida('listo'); SONIDO.boton(); });
+  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 148 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
   aqui(W / 2, y + h - 14, -0.06, 1, 1, () => { const r = tr('Recibido: Lola'), rw = anchoLetras(r, 7, { logo: true }) + 12; caja(-rw / 2, -5.5, rw, 11, 2, null, PASTEL.lilaO, 0.9); letras(r, 0, 0.6, 7, PASTEL.lilaO, { logo: true }); });
 }
 function pintaRecords() {

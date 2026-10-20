@@ -19,7 +19,7 @@ const tutoFrena = () => TUTO.paso >= 0 && TUTO.paso < 3;
 
 // al empezar una partida: el tutorial va si aún no lo has hecho
 function preparaTuto() {
-  TUTO.paso = GUARDA.tuto ? -1 : 0; TUTO.t = 0; TUTO.intentos = 0; TUTO.troncos = [];
+  TUTO.paso = GUARDA.tuto || RETO.activo ? -1 : 0; TUTO.t = 0; TUTO.intentos = 0; TUTO.troncos = [];
   return tutoActivo() ? TUTO_RIO : null;
 }
 function pasoTuto(n) {

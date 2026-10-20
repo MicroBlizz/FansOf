@@ -34,7 +34,8 @@ const ECO = {
   errorTexto(e) {
     const m = String((e && e.message) || e);
     return /faltan_gemas/.test(m) ? 'Te faltan gemas' : /falta_oro/.test(m) ? 'Te falta oro' : /falta_xp/.test(m) ? 'Todavía te falta experiencia'
-      : /copia_no_existe|nada_que_despedir|no_se_puede/.test(m) ? 'Esa copia no está en tu cuenta (viene de antes de la nube o del modo pruebas)' : 'Necesitas conexión para esto';
+      : /copia_no_existe|nada_que_despedir|no_se_puede/.test(m) ? 'Esa copia no está en tu cuenta (viene de antes de la nube o del modo pruebas)'
+      : e && e.estado >= 400 ? 'El servidor ha dado un error y ya queda apuntado' : 'Necesitas conexión para esto';   // con estado HTTP el servidor sí contestó: no es la red
   },
   // llamar a una función del servidor: antes se manda lo pendiente (y la cuenta se migra y concilia); después el saldo y las garantías del servidor mandan
   async pedir(rpc, params) {

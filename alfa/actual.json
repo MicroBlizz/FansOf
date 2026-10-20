@@ -1,8 +1,8 @@
 {
- "build": 273,
- "hash": "3c710c6",
- "fecha": "2026-10-20T06:28:24Z",
- "mensaje": "Decks: .bat de equilibrio con las 3 IA, 10 partidas y 48 en paralelo",
+ "build": 274,
+ "hash": "0a6f700",
+ "fecha": "2026-10-20T12:31:02Z",
+ "mensaje": "Registro de errores: los fallos de código y los errores del servidor se apuntan (SQL 51 pendiente); la tienda ya no dice «sin conexión» cuando el servidor contestó con un error",
  "juegos": {
   "crush": "0.1.21",
   "dark": "0.2.7",

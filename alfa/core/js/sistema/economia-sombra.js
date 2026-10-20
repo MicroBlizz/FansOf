@@ -45,11 +45,11 @@ const ECO_SOMBRA = (() => {
   }
   const apunta = r => { est.servidor = { oro: r.oro, gemas: r.gemas, entradas: r.entradas }; est.local = { oro: SAVE.gold, gemas: SAVE.gems, entradas: SAVE.tickets || 0 }; est.cuando = Date.now(); };
 
-  let vuelo = null;
+  let vuelo = null, ultimoError = null;   // ultimoError: por qué falló el último envío (si el servidor contestó con error, vaciar() lo dice en vez de «sin conexión»)
   function enviar() { return vuelo || (vuelo = enviarYa().finally(() => { vuelo = null; })); }   // una sola subida a la vez; quien llama espera a que acabe
   async function vaciar() {   // antes de pedir algo al servidor: que sepa todo lo ganado y que la cuenta esté migrada; falla si no hay conexión
     for (let i = 0; i < 3; i++) { await enviar(); if (est.migrado === CUENTA.usuario && ((est.conciliado === CUENTA.usuario && est.progreso === CUENTA.usuario && est.progreso2 === CUENTA.usuario) || !(AJUSTES.servidor && AJUSTES.servidor.economia)) && !est.cola.length) return; }
-    throw new Error('sin_conexion');
+    throw ultimoError && ultimoError.estado >= 400 ? ultimoError : new Error('sin_conexion');
   }
   // si el juego ya deja el saldo al servidor, lo de aquí pasa a ser lo suyo más lo que aún no se ha mandado (así un tope recortado se nota)
   function adoptar(r) {
@@ -63,6 +63,7 @@ const ECO_SOMBRA = (() => {
   }
   async function enviarYa() {
     if (!activa()) return;
+    ultimoError = null;
     try {
       const usuario = CUENTA.usuario || (await CUENTA.rpc('estado', { p_juego: AJUSTES.id }).then(() => CUENTA.usuario));
       if (est.migrado !== usuario) {
@@ -92,7 +93,7 @@ const ECO_SOMBRA = (() => {
         const r = await CUENTA.rpc('anotar', { p_juego: AJUSTES.id, p_movs: lote });
         est.cola = est.cola.slice(lote.length); copiasDelServidor(r.nuevos); adoptar(r); apunta(r); guardar();
       }
-    } catch (e) { /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
+    } catch (e) { ultimoError = e; /* sin conexión o sin cuenta aún: se intenta en el próximo cambio, al volver la red o al abrir */ }
   }
   // texto para mirar en la consola o en el panel DEV
   const informe = () => {

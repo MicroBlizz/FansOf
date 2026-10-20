@@ -1,8 +1,8 @@
 {
- "build": 303,
- "hash": "e568e01",
- "fecha": "2026-10-20T17:43:42Z",
- "mensaje": "Karts 0.7.0: pasa de demo a juego (games/karts) y tiene APK",
+ "build": 304,
+ "hash": "0efbaf3",
+ "fecha": "2026-10-20T17:47:09Z",
+ "mensaje": "Página /android/: los APK de Crush, Rouflage, Ratkov, Decks, Nova, Island y Dark (con el tamaño de los dos grandes)",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

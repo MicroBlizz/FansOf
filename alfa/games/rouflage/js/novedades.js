@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.34', real: ["<b>GACHAPÓN DE COSMÉTICOS</b>: nueva pantalla GACHAPÓN en MI PERFIL con cápsulas de cosméticos que se pagan con Gotas (piezas sueltas hasta épica). Hay una tirada gratis cada 12 horas, y los domingos de 10 cápsulas. Los repetidos se reciclan solos en Gotas (20, 100, 400 o 1000 según la rareza), y con Acciones solo se compran las épicas."], joke: ["Microblizz ha puesto una máquina de cápsulas en el perfil y Phony ya ha tirado tres veces para conseguir el mismo sombrero que lleva puesto."] },
   { v: '0.2.33', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor)."], joke: ["Microblizz ha repasado la tienda de Rouflage y Phony ha escondido una gota para luego."] },
   { v: '0.2.32', real: ["<b>MEJORAS POR DENTRO</b>: la tienda de dos monedas ya está preparada en este juego, aunque todavía no se abre."], joke: ["Microblizz ha dejado listas las dos monedas en Rouflage. Phony ha pedido que las mascotas cobren comisión."] },
   { v: '0.2.31', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (nueva base de dos monedas para las tiendas, que de momento no se nota)."], joke: ["Microblizz ha puesto dos monedas en la tienda de Rouflage. Phony ha pedido que las mascotas cobren por quedarse quietas."] },

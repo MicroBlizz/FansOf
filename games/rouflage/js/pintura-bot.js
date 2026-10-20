@@ -18,12 +18,28 @@ function _paletaBot(e, n) {
   return pal;
 }
 
+// lo que la alubia tiene detrás, a la escala del fondo: el suelo y la pared (MAPA.fondo, que no lleva muebles) y encima los muebles que
+// quedan por detrás de ella (los de delante la tapan y no cuentan). Es lo que copian el bot y la pintura rápida: delante de una máquina
+// de bebidas, se pinta de máquina de bebidas (como mide el camuflaje, que compara con el mundo con sus muebles: MAPA.px)
+let _DETRAS = null;
+function detrasDe(e) {
+  const M = 8, w = CAJA_W + 2 * M, h = CAJA_H + 2 * M, bx = Math.round(e.x) - PIE_X - M, by = Math.round(e.y) - PIE_Y - M;
+  if (!_DETRAS) _DETRAS = lienzo(w * ESC_FONDO, h * ESC_FONDO);
+  const [cv, g] = _DETRAS;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
+  g.drawImage(MAPA.fondo, bx * ESC_FONDO, by * ESC_FONDO, w * ESC_FONDO, h * ESC_FONDO, 0, 0, w * ESC_FONDO, h * ESC_FONDO);
+  g.scale(ESC_FONDO, ESC_FONDO); g.translate(-bx, -by);
+  const R = { x0: bx, y0: by, x1: bx + w, y1: by + h };
+  for (const m of MAPA.porY) if (m.y <= e.y && cruzan(m.dib, R)) pintaMueble(g, m);
+  return { cv, bx, by };
+}
+
 // Un bot se pinta solo, como lo haría una persona con maña de 0 a 1: COPIA el fondo que tiene detrás, pero a mano. La mano se va: todo el cuerpo
 // queda descuadrado 1 o 2 píxeles, y va por franjas (como quien pinta de arriba abajo) que cada una se desvía un poco más y sale algo más ancha o más
 // estrecha, así las baldosas y las rayas no clavan el ancho. Con poca maña, más descuadre, franjas más torcidas y un tono algo cambiado (pintura de bote).
 function pintaBot(e, mana) {
   mana = limita(mana, 0, 1);
-  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, pal = _paletaBot(e, 1);
+  const bx = Math.round(e.x) - PIE_X, by = Math.round(e.y) - PIE_Y, pal = _paletaBot(e, 1), D = detrasDe(e);
   if (!pal.length) return mideCamuflaje(e);
   rellena(e, rgbHex(pal[0].r, pal[0].g, pal[0].b));      // de base el color que más hay (por si alguna franja deja un hueco)
   const vaiven = 0.5 + (1 - mana) * 2.2;                  // cuánto se le va la mano, en píxeles del mundo
@@ -34,7 +50,7 @@ function pintaBot(e, mana) {
     const alto = Math.min(CAJA_H - y, 5 + Math.round(rand(0, 7)));
     dx = limita(dx + rand(-vaiven, vaiven) * 0.6, -vaiven * 2, vaiven * 2); dy = limita(dy + rand(-vaiven, vaiven) * 0.35, -vaiven * 2, vaiven * 2);
     const ancho = 1 + rand(-1, 1) * (1 - mana) * 0.09, altoF = 1 + rand(-1, 1) * (1 - mana) * 0.09;      // esta franja sale algo más ancha o estrecha
-    c.drawImage(MAPA.fondo, (bx + dx) * ESC_FONDO, (by + y + dy) * ESC_FONDO, CAJA_W / ancho * ESC_FONDO, alto / altoF * ESC_FONDO, 0, y, CAJA_W, alto);
+    c.drawImage(D.cv, (bx + dx - D.bx) * ESC_FONDO, (by + y + dy - D.by) * ESC_FONDO, CAJA_W / ancho * ESC_FONDO, alto / altoF * ESC_FONDO, 0, y, CAJA_W, alto);
     y += alto;
   }
   const tono = (1 - mana) * 0.05; if (tono > 0.005) { c.fillStyle = Math.random() < 0.5 ? `rgba(255,255,255,${tono})` : `rgba(32,16,44,${tono})`; c.fillRect(0, 0, CAJA_W, CAJA_H); }
@@ -55,9 +71,26 @@ function afinaBot(e, parte = 1) {
 // La tirada de dados de la máquina: cada vez que va a pintarse saca una meta entre 80 y 97 (nunca 100) y se pinta con la maña que haga falta
 // para quedarse por debajo: si le sale mejor, repite con la mano más suelta (más descuadre). Si el fondo es tan difícil que no llega, se queda como le salga.
 function pintaBotDados(e) {
-  const meta = 80 + Math.floor(Math.random() * 18);
+  const R = REGLAS, t = R.botPintaMana > 0 && e.bot ? R.botPintaMana * limita(e.bot.mana + rand(-0.1, 0.1), 0, 1) + (1 - R.botPintaMana) * Math.random() : Math.random();
+  const meta = R.botPintaMin + Math.floor(t * (R.botPintaMax - R.botPintaMin));
   let mana = 0.95; pintaBot(e, mana);
   for (let n = 0; n < 8 && e.camo > meta && mana > 0.1; n++) { mana -= 0.12; pintaBot(e, mana); }
+  return e.camo;
+}
+// la pintura rápida (el botón del taller): como un bot con maña y, si sale por encima de REGLAS.rapidaMeta, con la mano más suelta
+function pintaRapida(e) {
+  pintaBot(e, 0.8);
+  for (let m = 0.68; m > 0.1 && e.camo > REGLAS.rapidaMeta; m -= 0.12) pintaBot(e, m);
+  return tapaHasta(e, REGLAS.rapidaMeta);
+}
+// si un camuflaje aún sale mejor de la cuenta: manos de color liso (el del suelo de debajo) por encima, cada vez más tapadoras, como quien pinta deprisa
+function tapaHasta(e, meta) {
+  if (e.camo <= meta) return e.camo;
+  const color = cuentagotas(e.x, e.y - 20), c = e.pctx;
+  for (let n = 0; n < 12 && e.camo > meta; n++) {
+    c.save(); c.globalCompositeOperation = 'source-atop'; c.globalAlpha = 0.15; c.fillStyle = color; c.fillRect(0, 0, PIEL_W, PIEL_H); c.restore();
+    mideCamuflaje(e);
+  }
   return e.camo;
 }
 

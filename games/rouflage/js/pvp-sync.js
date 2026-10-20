@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · PvP, LA SINCRONÍA: lo que se manda por el canal de la sala y qué se hace con lo que llega. Cada jugador lleva su personaje y avisa de dónde está (e);
 // los demás lo ven como una copia que se mueve suave hacia ese punto. La piel pintada se manda una sola vez, al congelarse (p). El ANFITRIÓN manda cómo van los personajes de la máquina,
 // el reloj y la fase (a, fa), decide los disparos (tq → t) y el final (fn). Silbidos (s), «¡listo!» (l) y rendirse (rd) los manda cada uno.
-// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que llevas del armario · gs un gesto.
+// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que lleva · fg dónde está un fantasmas del armario · gs un gesto.
 'use strict';
 
 const rfpManda = m => { if (RFP.canal && RFP.activo) RFP.canal.enviar(Object.assign({ de: RFP.yo }, m)); };
@@ -80,12 +80,13 @@ function rfpRecibe(m) {
     case 'sz': senueloRecibe(m.l); break;
     case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
     case 'gs': rfpGestoRecibido(sl, m); break;
-    case 'rp': if (m.r && sl.ente) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
+    case 'rp': if (m.r && sl.ente && !sl.ropaFiada) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
     case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
     case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
     case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
     case 'fp': rfpPoderRecibido(m); break;
+    case 'fg': fantasmaRecibido(sl, m); break;
     case 'bz': balizaRecibida(m, sl); break;
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
@@ -265,7 +266,7 @@ function rfpAplicaTiro(r) {
 function rfpComprueba() {
   if (J.fase !== 'caza') return;
   if (modoEs('ida')) { if (idaAcaba()) rfpFinHost('cazador', 'ida'); return; }
-  if (!escondidos().length) rfpFinHost('cazador', 'todos');
+  if (cazaHecha()) rfpFinHost('cazador', escondidos().length ? 'mitad' : 'todos');
   else if (!cazadoresVivos().length) rfpFinHost('camaleon', 'cartas');
   else if (boteLleno()) rfpFinHost('camaleon', 'bote');
   else if (J.reloj <= 0) rfpFinHost('camaleon', 'tiempo');
@@ -287,7 +288,7 @@ function rfpAplicaFin(fin) {
 }
 // si no queda anfitrión que cierre la partida (y el tiempo ya pasó), se cierra con lo que se sabe
 function rfpSinAnfitrion() {
-  if (J.fase === 'caza' && J.reloj < -8) { const g = escondidos().length ? 'camaleon' : 'cazador'; termina((J.yo.clase === 'camaleon') === (g === 'camaleon'), 'tiempo'); }
+  if (J.fase === 'caza' && J.reloj < -8) { const g = cazaHecha() ? 'cazador' : 'camaleon'; termina((J.yo.clase === 'camaleon') === (g === 'camaleon'), 'tiempo'); }
 }
 
 // un cazador dice cuántas cartas extra ha ganado en las prácticas: el anfitrión se las pone (con tope, y solo antes de la caza)

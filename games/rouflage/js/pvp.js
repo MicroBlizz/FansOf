@@ -21,6 +21,7 @@ function pvpBuscar(opc) {
   const guardada = rfpSalaGuardada();      // si estabas en una partida abierta, volver no gasta caos primordial
   if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado
   if (RFP.buscando) RFP.buscando.cancelar();
+  if (typeof RFS !== 'undefined') RFS.ponerYa();      // lo que llevas puesto llega al servidor antes de entrar: de ahí sale la ropa que ven los demás
   RFP.info = null; pvpMuestra('p-busca');
   RFP.buscando = red.buscar((info, err) => {
     if (!info) { RFP.buscando = null; RFP.error = energiaError(err) ? '' : RFRED.errorTexto(err); pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); return; }
@@ -47,7 +48,7 @@ const rfpAzar = semilla => { let a = (semilla | 0) + 91; return () => { a = (a +
 function rfpReparte(info) {
   const ida = !!(info.modo && info.modo.m === 'ida');      // Ida y vuelta (modos-ida.js): todos empiezan de colado
   const humanos = (info.jugadores || []).slice().sort((a, b) => a.orden - b.orden), azar = rfpAzar(info.semilla), total = info.max || 10, ncaz = ida ? 0 : info.ncaz || 2;
-  const slots = humanos.map((j, i) => ({ s: i, humano: true, clase: j.rol === 'cazador' && !ida ? 'cazador' : 'camaleon', tipo: j.rol === 'cazador' && !ida ? 'becario' : (NOMBRES[j.animal] ? j.animal : 'bunny'), nombre: j.nombre || ('Fan#' + (i + 1)), mana: 0, yo: !!j.yo }));
+  const slots = humanos.map((j, i) => ({ s: i, humano: true, clase: j.rol === 'cazador' && !ida ? 'cazador' : 'camaleon', tipo: j.rol === 'cazador' && !ida ? 'becario' : (NOMBRES[j.animal] ? j.animal : 'bunny'), nombre: j.nombre || ('Fan#' + (i + 1)), mana: 0, yo: !!j.yo, ropaFiada: 'ropa' in j, ropaSrv: j.ropa || null }));   // ropaFiada: el servidor (SQL 54) dice qué lleva cada uno; si no, vale lo que se manden entre ellos
   const hc = slots.filter(x => x.clase === 'cazador').length, hm = slots.length - hc;
   const iaCaz = Math.max(0, ncaz - hc), iaCam = Math.max(0, total - ncaz - hm), numeros = [7, 12, 3, 9, 5];
   for (let i = 0; i < iaCaz; i++) slots.push({ s: slots.length, humano: false, clase: 'cazador', tipo: 'becario', nombre: tr('Becario {n}', { n: numeros[i % numeros.length] }), mana: 0, yo: false });
@@ -72,7 +73,7 @@ function rfpEmpieza(info, red, vuelta) {
   Object.assign(RFP, { activo: true, red, info, sala: info.sala, slots, yo: mio.s, host: 0, soyHost: false, mandoListo: false, rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0, modoMandado: false });
   rfpGuardaSala(info.sala);
   cargaMapa(mapaDeSala(info.modo) || mapaDeSemilla(info.semilla));      // el que eligió el anfitrión o, si no, el de la semilla: el mismo en todos los navegadores
-  modoPon(info.modo);      // el modo de la sala (modos.js); las públicas van en el normal
+  modoPon(info.privada ? info.modo : modoPublico(info.modo, info.semilla));      // el modo de la sala (modos.js): el del anfitrión con amigos; en BUSCAR PARTIDA, todo al azar
   eventosPrepara(info.semilla);                // y los eventos del mapa también
   J.pvp = true; J.modo = mio.clase; J.t = 0;
   let nc = 0, nh = 0;
@@ -80,7 +81,7 @@ function rfpEmpieza(info, red, vuelta) {
     const [x, y] = rfpSalida(sl, sl.clase === 'cazador' ? nh++ : nc++);
     const e = nuevoEnte(sl.clase, sl.tipo, sl.nombre, x, y);
     e.slot = sl.s; e.humano = sl.humano; sl.ente = e;
-    if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; vistePartida(e, ropaPartida()); } else e.remoto = true;      // lo tuyo del armario (armario.js)
+    if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; vistePartida(e, ropaPartida()); } else { e.remoto = true; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; } }      // lo tuyo del armario (armario.js); lo de los demás, del servidor si lo da
     if (sl.clase === 'cazador') { e.dir = -Math.PI / 2 + (nh % 2 ? -0.5 : 0.5); e.mira = nh % 2 ? 1 : -1; }
     if (sl.humano) RFP.rx[sl.s] = RELOJ + RFP_AJ.gracia;      // los humanos están cargando: de margen
   }

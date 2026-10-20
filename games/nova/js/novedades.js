@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.11', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (un aviso más claro antes de comprar como invitado y el guardado en la nube más seguro)."], joke: ["Microblizz ha revisado los cinturones de seguridad de la nave y Phony se ha atado al asiento equivocado."] },
   { v: '0.3.10', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario)."], joke: ["Microblizz ha repasado el inventario de la nave y Phony ha encontrado un calcetín en la bodega."] },
   { v: '0.3.9', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la tienda de dos monedas se afina y los fallos se apuntan mejor)."], joke: ["Microblizz ha ordenado los cables de las naves y Phony ha preguntado cuál era el del café."] },
   { v: '0.3.8', real: ["<b>NAVES JEFE DE FACCIÓN Y ETAPA 6</b>: los jefes de sector tienen su propia nave para cada una de las 8 facciones, y las nueve líneas de naves del jugador estrenan la etapa 6, «Nave jefe» (rango 50), que se desbloquea al ganar la campaña con su facción (y avisa al conseguirla)."], joke: ["Microblizz ha ascendido a los jefes a nave propia y Phony ha preguntado si la etapa 6 trae asiento con calefacción."] },

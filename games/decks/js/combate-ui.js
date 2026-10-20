@@ -1,6 +1,6 @@
 // Fans Of Decks · La reunión en pantalla: rivales con su intención arriba, el líder en medio, la franja de CAOS y la mano en abanico abajo. Pinta el estado C de combate.js.
 // Toques (regla de Arkioner, 19-10-2026): un toque nunca juega, solo marca la carta (y, si pide objetivo, luego tocas el rival); dos toques seguidos
-// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta enseña su texto grande.
+// la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta de la mano la enseña en grande encima (la lupa); fuera de la mano abre su ficha.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
 const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
@@ -182,10 +182,11 @@ function dcPintaCarta(c, o = {}) {
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
   const cab = dcEl('div', 'dc-ccab'); cab.append(dcEl('b', 'dc-cnombre', dcNombre(c)), dcEl('small', 'dc-ctipo', tr(DC_NOMBRE_TIPO[D.tipo]) + (o.grande ? ' · ' + tr(R[0]) : '')));
-  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); if (o.resalta) txi.innerHTML = dcTextoCartaHTML(c, o.resalta); else txi.textContent = dcTextoCarta(c, o.rabia); tx.append(txi); d.append(cab, tx);
+  const tx = dcEl('span', 'dc-ctexto'), txi = dcEl('span', 'dc-ctexto-in'); txi.innerHTML = dcMarcaClaves(o.resalta ? dcTextoCartaHTML(c, o.resalta) : dcEscHTML(dcTextoCarta(c, o.rabia))); tx.append(txi); d.append(cab, tx);   // claves.js marca las palabras clave
   if (o.racha) { const b = dcEl('span', 'dc-racha ol', '+' + o.racha); b.title = tr('Racha salvaje'); d.append(b); }   // la pasiva le suma esto a sus cifras
   if (o.resalta && o.resalta.has('coste')) { const co = d.querySelector('.dc-coste'); if (co) co.classList.add('dc-cambio'); }
   if (o.al) d.onclick = o.al;
+  if (o.enMano) return d;   // en la mano, mantenerla pulsada la enseña en grande sobre el dedo (la lupa de arrastre.js), sin ventana
   let t = null; const abre = () => { t = setTimeout(() => { t = null; if (!DCC.arrastre) dcVerCarta(c); }, 450); }, cierra = () => { if (t) clearTimeout(t); t = null; };
   d.addEventListener('pointerdown', abre); d.addEventListener('pointerup', cierra); d.addEventListener('pointerleave', cierra); d.addEventListener('pointercancel', cierra);
   return d;
@@ -193,7 +194,7 @@ function dcPintaCarta(c, o = {}) {
 function dcVerCarta(c) {
   const v = dcVentana(dcNombre(c)); const g = dcPintaCarta(c, { grande: true }); g.onclick = null;
   v.append(g, dcEl('p', 'dc-nota', tr(DC_NOTA_TIPO[DC_CARTAS[c.id].tipo])));
-  const fx = dcFx(c); for (const k in DC_GLOSARIO) if (fx[k]) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
+  for (const k of dcClavesEn(dcTextoCarta(c))) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
   if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }

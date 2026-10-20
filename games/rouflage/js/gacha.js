@@ -7,11 +7,11 @@
 'use strict';
 
 const GACHA = {
-  precio: 200, precio10: 1800,                    // Gotas por 1 y por 10 cápsulas (unas 2 de las 150 Gotas máximas que se ganan al día)
+  precio: 150, precio10: 1350,                    // Gotas por 1 y por 10 cápsulas (unas 2 de las 150 Gotas máximas que se ganan al día)
   odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
-  repetida: { comun: 20, rara: 100, epica: 400, legend: 1000 },   // Gotas que devuelve una pieza repetida: 10 comunes = 1 cápsula (200), épica = 2, legendaria = 5 (la rara, a medias: 100)
+  repetida: { comun: 20, rara: 100, epica: 400, legend: 750 },   // Gotas que devuelve una pieza repetida: 10 comunes = 1 cápsula (150 y se ajusta con la rara), épica = 2, legendaria = 5 (la rara, a medias: 100)
   pityRara: 10, pityEpica: 40,
-  gratisHoras: 3,                                  // como en el Rumble (core/js/sistema/gachapon-gratis.js): una x1 gratis cada 3 horas, sin acumular, y una x10 cada domingo (hora de Madrid)
+  gratisHoras: 8,                                  // como en el Rumble (core/js/sistema/gachapon-gratis.js): una x1 gratis cada 8 horas, sin acumular, y una x10 cada domingo (hora de Madrid)
   liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón
 };
 
@@ -53,7 +53,7 @@ const gachaMadrid = () => {
   const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).map(x => [x.type, x.value]));
   return { fecha: p.year + '-' + p.month + '-' + p.day, dom: p.weekday === 'Sun', dow: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(p.weekday), pasado: ((+p.hour % 24) * 3600 + +p.minute * 60 + +p.second) * 1000 };
 };
-const gachaFalta1 = () => gachaEstado().gratisT + GACHA.gratisHoras * 3600000 - Date.now();   // ms para la x1 (≤ 0: lista)
+const gachaFalta1 = () => gachaEstado().gratisT + GACHA.gratisHoras * 3600000 - (Date.now() + RFS.desfase());   // ms para la x1 (≤ 0: lista)
 function gachaX10() {   // { listo, falta }: lista hasta que acabe el domingo; si no, falta hasta el próximo
   const m = gachaMadrid(), listo = m.dom && gachaEstado().gratisD !== m.fecha;
   return { listo, falta: listo ? 86400000 - m.pasado : ((m.dom ? 7 : 7 - m.dow) * 86400000) - m.pasado };

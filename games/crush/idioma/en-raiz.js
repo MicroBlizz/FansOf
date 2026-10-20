@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.24
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (un aviso más claro antes de comprar como invitado y el guardado en la nube más seguro).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (a clearer warning before buying as a guest and safer cloud saving).",
+  "Microblizz ha puesto un candado nuevo al tarro de los caramelos y Phony ya ha perdido la llave.": "Microblizz has put a new lock on the candy jar and Phony has already lost the key.",
   // 0.1.23
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (se ajusta la economía compartida y la forma de guardar el inventario).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the shared economy is tuned and inventory saving is reworked).",
   "Microblizz ha contado los caramelos otra vez y Phony asegura que le salían dos más.": "Microblizz has counted the sweets again and Phony swears he got two more.",

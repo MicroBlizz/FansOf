@@ -17,17 +17,17 @@ function pintaCapsula(c, w, rar) {
   c.beginPath(); c.arc(0, 0, 13, Math.PI * 1.05, Math.PI * 1.95); c.lineWidth = 1.6; c.strokeStyle = oscuro; c.stroke();
   c.restore();
 }
-// la máquina: cúpula con cápsulas, cuerpo rojo con la ranura de las Gotas y la bandeja
-function pintaMaquina(c, w) {
-  c.save(); c.scale(w / 120, w / 120); c.lineJoin = 'round';
-  c.beginPath(); c.arc(60, 46, 38, Math.PI, 0); c.lineTo(98, 66); c.lineTo(22, 66); c.closePath(); c.fillStyle = 'rgba(190,235,255,0.55)'; c.fill(); c.lineWidth = 3.4; c.strokeStyle = OL; c.stroke();
-  [['comun', 38, 56], ['rara', 58, 60], ['epica', 80, 55], ['comun', 48, 38], ['rara', 70, 40], ['comun', 60, 24]].forEach(([r, x, y]) => { c.save(); c.translate(x - 12, y - 12); pintaCapsula(c, 24, r); c.restore(); });
-  c.beginPath(); rrPathRF(c, 18, 64, 84, 46, 8); c.fillStyle = '#e8453c'; c.fill(); c.lineWidth = 3.4; c.strokeStyle = OL; c.stroke();
-  c.beginPath(); rrPathRF(c, 28, 72, 30, 14, 4); c.fillStyle = '#2a1a3a'; c.fill(); c.lineWidth = 2.4; c.stroke();
-  c.beginPath(); c.arc(76, 80, 9, 0, TAU); c.fillStyle = '#ffcb3d'; c.fill(); c.lineWidth = 2.6; c.stroke();
-  c.beginPath(); c.moveTo(76, 73); c.lineTo(76, 87); c.lineWidth = 2.4; c.stroke();
-  c.beginPath(); rrPathRF(c, 38, 94, 44, 14, 5); c.fillStyle = '#2a1a3a'; c.fill(); c.lineWidth = 2.4; c.strokeStyle = OL; c.stroke();
-  c.restore();
+// la máquina: la animada del gashapón del Rumble (core/js/sistema/gachapon-anim.js y gachapon-clasica.js), con su cartel y los colores de
+// las rarezas de Rouflage; al tirar, la misma animación (la cápsula sale, tiembla más cuanto mejor es y se abre con rayos)
+const RAR_FX = { comun: 'common', rara: 'rare', epica: 'epic', legend: 'legendary' };
+const GACHA_MAQ = { nombre: 'COSMÉTICOS', maquina: ['#e8453c', '#8a1d16', '#c22a20'],
+  colores: Object.fromEntries(Object.entries(RAR_FX).map(([r, k]) => [k, [RAREZA_AR[r], ...GACHA_COLOR[r]]])) };
+if (typeof RAR_ORDER === 'undefined') window.RAR_ORDER = { mythic: -1, legendary: 0, epic: 1, rare: 2, common: 3, basic: 4 };      // lo usa la animación (en los otros juegos viene de core/js/sistema/pantallas.js)
+let _gachaRAF = 0;
+function gachaDibuja() {
+  if (E('p-gacha').hidden) { _gachaRAF = 0; return; }
+  GACHA_FX.maquina(E('gacha-cv'), GACHA_MAQ, 'rf');
+  _gachaRAF = requestAnimationFrame(gachaDibuja);
 }
 // el botón de información, dibujado: una «i» blanca en un círculo azul con su contorno
 function pintaInfoBoton(c, w) {
@@ -40,19 +40,18 @@ function pintaInfoBoton(c, w) {
 const pctRF = v => (IDIOMA_RF === 'es' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(Math.round(v * 100) / 100)) + ' %';
 
 let _gachaReloj = 0;
-function abreGacha() { gachaEstado(); GACHA_UI.ocupado = false; E('gacha-resultado').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
+function abreGacha() { gachaEstado(); if (RFS.activo()) RFS.relojes(); GACHA_UI.ocupado = false; E('gacha-result').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); if (!_gachaRAF) _gachaRAF = requestAnimationFrame(gachaDibuja); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
 function cierraGacha() { if (GACHA_UI.ocupado) return; play('select'); clearInterval(_gachaReloj); irTitulo(); }
 
 function gachaPinta() {
   const g = gachaEstado(), [t, n] = gachaCuenta();
   E('gacha-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones || 0}</b></span>`;
-  arPinta(E('gacha-maquina'), (c, w) => pintaMaquina(c, w));
   E('gacha-cuenta').textContent = tr('Tienes {t} de {n} piezas del gachapón', { t, n });
   E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas y una Épica cada {e}. Llevas {a} y {b} desde la última.', { r: GACHA.pityRara, e: GACHA.pityEpica, a: g.sinRara, b: g.sinEpica });
   for (const [id, k] of [['b-gacha-1', 1], ['b-gacha-10', 10]]) {
-    const b = E(id), coste = gachaCoste(k); b.innerHTML = '';
-    b.appendChild(iconoPeq(pintaGotas, 24));
-    const s = document.createElement('span'); s.textContent = tr(k === 1 ? '1 CÁPSULA · {n}' : '10 CÁPSULAS · {n}', { n: coste }); b.appendChild(s);
+    // como los del Rumble: «x1» grande y debajo el precio con su gota; el x10, con su cartelito
+    const b = E(id), coste = gachaCoste(k); b.innerHTML = (k === 10 ? `<span class="tag">${tr('LA FAVORITA')}</span>` : '') + 'x' + k;
+    const s = document.createElement('small'); s.appendChild(iconoPeq(pintaGotas, 18)); s.appendChild(document.createTextNode(' ' + coste)); b.appendChild(s);
     b.classList.toggle('falta', SAVE.gotas < coste);
   }
   gachaPintaProbs(); gachaPintaGratis();
@@ -63,7 +62,7 @@ function gachaPintaGratis() {
   if (E('p-gacha').hidden) return;
   const f1 = gachaFalta1(), x = gachaX10(), pon = (id, listo, titulo, espera, cuenta) => {
     const b = E(id); b.classList.toggle('lista', listo); b.disabled = !listo;
-    b.innerHTML = `<span>${tr(listo ? titulo : espera)}</span><b>${listo && !cuenta ? tr('¡LISTA!') : cuenta}</b>`;
+    b.innerHTML = `<span class="bg-t">${tr(listo ? titulo : espera)}</span><b>${listo && !cuenta ? tr('¡LISTA!') : cuenta}</b>`;
   };
   pon('b-gacha-g1', f1 <= 0, 'TIRADA GRATIS x1', 'PRÓXIMA x1 GRATIS EN', f1 <= 0 ? '' : gachaCuenta1(f1));
   pon('b-gacha-g10', x.listo, '¡RECLAMA TU x10 GRATIS! CADUCA EN', 'x10 GRATIS EL DOMINGO EN', gachaCuenta1(x.falta));
@@ -78,22 +77,25 @@ function gachaPintaProbs() {
     + `</div>`;
 }
 
-// una tirada: la máquina se agita un momento y salen las cápsulas, una a una
-function gachaTirar(k, gratis) {
+// una tirada: la máquina se agita un momento y salen las cápsulas, una a una. Con servidor tira él (servidor-economia.js); sin él, gacha.js
+async function gachaTirar(k, gratis) {
   if (GACHA_UI.ocupado) return;
   if (gratis) { if (gratis === 'x1' ? gachaFalta1() > 0 : !gachaX10().listo) { play('deny'); return; } k = gratis === 'x10' ? 10 : 1; }
   else if (SAVE.gotas < gachaCoste(k)) { play('deny'); avisa(tr('Te faltan {n} Gotas: juega partidas y recoge el premio diario', { n: gachaCoste(k) - SAVE.gotas }), 'malo'); return; }
-  const sale = gachaTira(k, gratis); if (!sale) { play('deny'); return; }
-  GACHA_UI.ocupado = true; play('select');
-  const maq = E('gacha-maquina'), res = E('gacha-res'); E('gacha-resultado').hidden = true; res.innerHTML = '';
-  maq.classList.remove('agita'); void maq.offsetWidth; maq.classList.add('agita');
-  setTimeout(() => {
-    maq.classList.remove('agita'); E('gacha-resultado').hidden = false;
+  GACHA_UI.ocupado = true;
+  let sale;
+  try { sale = RFS.activo() ? await gachaTiraServidor(k, gratis) : gachaTira(k, gratis); } catch (e) { GACHA_UI.ocupado = false; RFS.error(e); return; }
+  if (!sale) { GACHA_UI.ocupado = false; play('deny'); return; }
+  play('select');
+  const res = E('gacha-res'); E('gacha-result').hidden = true; res.innerHTML = '';
+  // la animación del Rumble: la manivela gira, sale la bola y se abre; al abrirse, las cartas de lo que ha salido
+  GACHA_FX.tirada(sale.map(x => RAR_FX[x.it.r] || 'common'), GACHA_MAQ, () => {
+    E('gacha-result').hidden = false;
     sale.forEach((x, i) => setTimeout(() => {
-      res.appendChild(gachaTarjeta(x)); play(x.it.r === 'epica' ? 'crown' : 'select');
+      res.appendChild(gachaTarjeta(x)); if (x.it.r === 'epica' || x.it.r === 'legend') play('crown');
       if (i === sale.length - 1) { GACHA_UI.ocupado = false; gachaPinta(); }
-    }, i * 170));
-  }, 650);
+    }, i * 120));
+  });
 }
 function gachaTarjeta(x) {
   const d = document.createElement('div'); d.className = 'gc-carta gc-' + x.it.r + (x.nuevo ? ' nuevo' : '');
@@ -117,6 +119,6 @@ function preparaGacha() {
   E('b-gacha-1').onclick = () => gachaTirar(1);
   E('b-gacha-10').onclick = () => gachaTirar(10);
   E('b-gacha-volver').onclick = cierraGacha;
-  E('b-gacha-vale').onclick = () => { if (!GACHA_UI.ocupado) { play('select'); E('gacha-resultado').hidden = true; } };
+  E('b-gacha-vale').onclick = () => { if (!GACHA_UI.ocupado) { play('select'); E('gacha-result').hidden = true; } };
   E('b-gacha-tienda').onclick = () => { if (!GACHA_UI.ocupado) abreTienda('gacha'); };
 }

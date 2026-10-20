@@ -1,9 +1,9 @@
-// Fans of Rouflage (prototipo) · LA GRANADA CEGADORA: una vez por partida, un colado a punto de ser pillado la lanza y desaparece 15 s para los becarios (los suyos lo ven como un
+// Fans of Rouflage (prototipo) · LA GRANADA CEGADORA: una vez por partida, un colado a punto de ser pillado la lanza y desaparece 7 s para los becarios (los suyos lo ven como un
 // fantasma) y deja a ciegas un rato a los que tiene cerca. Mientras dura no se le puede despedir. En el PvP, quien la lanza manda `iv` (los segundos que le quedan) en su estado y
 // un aviso `gr` con el sitio para que cada navegador deje ciegos a SUS becarios cercanos (los de la máquina, el anfitrión).
 'use strict';
 
-const GRANADA = { dura: 15, radio: 230, ciego: 4.5 };
+const GRANADA = { dura: 7, radio: 230, ciego: 4.5 };
 const invisible = e => e.invis > 0;      // no lo ven los becarios ni pueden despedirlo
 
 function lanzaGranada(e) {
@@ -24,11 +24,12 @@ function granadaEstalla(x, y, e, colores = e && e.ropa && e.ropa.humo) {      //
 }
 function accionGranada() { const yo = J.yo; if (J.fase === 'caza' && jugando() && yo.clase === 'camaleon' && !TALLER.abierto) { if (!lanzaGranada(yo)) play('deny'); } }
 
-// tras la bomba de humo, el colado que sale corriendo y vuelve a pararse no puede pintarse desde cero: el juego lo camufla al instante a un 80 % (de ahí, a afinar)
+// tras la bomba de humo, el colado que sale corriendo y vuelve a pararse no puede pintarse desde cero: el juego lo camufla al instante (REGLAS.humoMeta; de ahí, a afinar)
 function autoCamuflaje(e) {
-  e.trasHumo = false; pintaBot(e, 0.95); for (let n = 0; n < 3 && e.camo < 80; n++) afinaBot(e);
-  for (let m = 0.8; m > 0.1 && e.camo > 84; m -= 0.15) pintaBot(e, m);      // sin pasarse: si le sale demasiado bien, con la mano más suelta
-  e.pintado = true; avisa(tr('Te camuflas rápido: un 80 %'), 'aviso'); play('pop');
+  e.trasHumo = false; pintaBot(e, 0.95); for (let n = 0; n < 3 && e.camo < REGLAS.humoMeta - 4; n++) afinaBot(e);
+  for (let m = 0.8; m > 0.1 && e.camo > REGLAS.humoMeta; m -= 0.15) pintaBot(e, m);      // sin pasarse: si le sale demasiado bien, con la mano más suelta
+  tapaHasta(e, REGLAS.humoMeta);
+  e.pintado = true; avisa(tr('Te camuflas rápido: un {n} %', { n: e.camo }), 'aviso'); play('pop');
 }
 
 // red de seguridad: pase lo que pase al pararte (también en el PvP, donde el hielo puede llegar por otro camino), si saliste corriendo tras el humo y vuelves a estar quieto, te camufla

@@ -18,6 +18,7 @@ function reinicioPregunta() {
   confirmBox(tr('¿BORRAR TODO?'), tr('Se borra TODO tu progreso y tus compras de Rouflage (armario, Gotas, Acciones, pase, diario…), aquí y en tu cuenta. No se puede deshacer. Solo para probar desde cero.'), tr('BORRAR TODO'), reinicioHaz);
 }
 async function reinicioHaz() {
+  try { await RFS.reinicia(); } catch (_) { /* sin permiso o sin red: se sigue */ }
   for (const k of Object.keys(SAVE)) delete SAVE[k];
   guardaPartida();
   try { if (typeof CUENTA !== 'undefined' && CUENTA.activa) await CUENTA.sincronizar(false); } catch (_) { /* se recarga igual */ }

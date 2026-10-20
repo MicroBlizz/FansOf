@@ -33,7 +33,7 @@ function trazaTronco(c) {
   c.bezierCurveTo(-14, -15, -13, -24, -9, -32); c.closePath();
 }
 function trazaCabeza(c) { c.moveTo(CABEZA.x + CABEZA.r, CABEZA.y); c.arc(CABEZA.x, CABEZA.y, CABEZA.r, 0, Math.PI * 2); c.closePath(); }
-// las posturas fijas para congelarse (como en el juego original): cuánto gira cada brazo y pierna desde la del cortador y si el
+// las posturas fijas para congelarse: cuánto gira cada brazo y pierna desde la del cortador y si el
 // cuerpo baja. «Firmes» es la de siempre: brazos pegados al cuerpo, menos papel que pintar
 const POSTURAS = {
   firmes: { piernaI: -0.1, piernaD: 0.1, brazoI: -1.13, brazoD: 2.07, dy: 0 },

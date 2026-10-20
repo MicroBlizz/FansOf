@@ -23,7 +23,7 @@ function pvpMuestra(id) {
 }
 function pvpPintaMenu() {
   const err = E('pvp-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
-  E('b-pvp-buscar').textContent = rfpSalaGuardada() ? tr('VOLVER A LA PARTIDA') : tr('BUSCAR PARTIDA');      // si te dejaste una partida abierta, buscar te devuelve a ella
+  E('b-pvp-buscar-t').textContent = rfpSalaGuardada() ? tr('VOLVER A LA PARTIDA') : tr('BUSCAR PARTIDA');      // si te dejaste una partida abierta, buscar te devuelve a ella
   E('b-pvp-cuenta').hidden = RFRED.esLocal() || RFRED.vinculada();
   pvpPendientes(); tutoConsejoPvp();
 }
@@ -65,7 +65,7 @@ function pvpPintaBusca() {
   E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
   const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.textContent = i.n < 2 ? tr('RELLENAR CON BOTS') : tr('EMPEZAR');      // solo en la sala: la máquina rellena el resto y se juega ya
   const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
-  const hueco = Math.max(0, (i.max || 10) - jug.length);
+  const hueco = Math.max(0, (priv && !jugando ? salaCuantos(i.modo, jug.length).total : i.max || 10) - jug.length);      // con amigos, los que eligió el anfitrión
   lista.innerHTML = jug.map(j => `<li class="${j.yo ? 'yo' : ''}"><i class="${j.rol === 'cazador' ? 'caz' : j.rol === 'camaleon' ? 'cam' : 'esp'}"></i><span>${esc(j.nombre)}</span>${priv && j.orden === i.anfitrion ? `<em>${tr('ANFITRIÓN')}</em>` : ''}${j.rol ? `<small>${j.rol === 'cazador' ? tr('CAZADOR') : tr('CAMALEÓN')}</small>` : ''}</li>`).join('')
     + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
   E('b-busca-cancelar').hidden = jugando;
@@ -109,20 +109,24 @@ function pvpPintaModo(ver, soyAnf) {
     ex.dataset.anf = String(soyAnf);
     // la luz: tres botones, siempre uno marcado (día, normal o apagón); debajo, los extras que se encienden aparte
     ex.innerHTML = `<div class="luz-sala"><small>${esc(tr('LUZ'))}</small><div class="luz-botones">${LUCES_SALA.map(l => `<button type="button" class="luz-b" data-luz="${l.k}" ${soyAnf ? '' : 'disabled'}>${esc(tr(l.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto" id="luz-texto"></p></div>`
+      // las reglas de la sala (modos.js: AJUSTES_SALA), con los mismos botones que la luz
+      + Object.keys(AJUSTES_SALA).map(k => `<div class="luz-sala"><small>${esc(tr(AJUSTES_SALA[k].nombre))}</small><div class="luz-botones">${AJUSTES_SALA[k].opciones.map(o => `<button type="button" class="luz-b" data-aj="${k}" data-v="${o.v}" ${soyAnf ? '' : 'disabled'}>${esc(tr(o.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto">${esc(tr(AJUSTES_SALA[k].texto))}</p></div>`).join('')
       + otros.map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
     if (soyAnf) {
-      for (const b of ex.querySelectorAll('.luz-b')) b.onclick = () => { play('select'); for (const l of LUCES_SALA) if (l.k) delete MODO_ELEGIDO.x[l.k]; if (b.dataset.luz) MODO_ELEGIDO.x[b.dataset.luz] = 1; pvpMandaModo(); };
+      for (const b of ex.querySelectorAll('.luz-b[data-aj]')) b.onclick = () => { play('select'); MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a[b.dataset.aj] = +b.dataset.v; pvpMandaModo(); };
+      for (const b of ex.querySelectorAll('.luz-b[data-luz]')) b.onclick = () => { play('select'); for (const l of LUCES_SALA) if (l.k) delete MODO_ELEGIDO.x[l.k]; if (b.dataset.luz) MODO_ELEGIDO.x[b.dataset.luz] = 1; pvpMandaModo(); };
       for (const k of otros) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
     }
   }
   const luz = luzDe(d);
-  for (const b of ex.querySelectorAll('.luz-b')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
+  for (const b of ex.querySelectorAll('.luz-b[data-aj]')) { const si = ajusteSala(d.a, b.dataset.aj) === +b.dataset.v; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
+  for (const b of ex.querySelectorAll('.luz-b[data-luz]')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
   E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
   for (const k of otros) { const on = !!(d.x && d.x[k]); E('x-' + k).checked = on; E('x-' + k).closest('label').classList.toggle('on', on); }
 }
 function pvpMandaModo() {
   modoElegidoGuarda();
-  const i = RFP.info; if (i && i.privada) i.modo = { m: MODO_ELEGIDO.m, x: Object.assign({}, MODO_ELEGIDO.x), mapa: MODO_ELEGIDO.mapa || undefined };
+  const i = RFP.info; if (i && i.privada) i.modo = { m: MODO_ELEGIDO.m, x: Object.assign({}, MODO_ELEGIDO.x), a: Object.keys(MODO_ELEGIDO.a || {}).length ? Object.assign({}, MODO_ELEGIDO.a) : undefined, mapa: MODO_ELEGIDO.mapa || undefined };
   if (RFRED.red.modo) Promise.resolve(RFRED.red.modo(RFP.info && RFP.info.modo)).catch(() => { /* se reintenta al cambiarlo otra vez */ });
   if (!E('p-busca').hidden) pvpPintaBusca();
 }
@@ -149,7 +153,7 @@ function preparaPvp() {
   E('b-pvp').onclick = () => { audioInit(); play('select'); RFP.error = ''; pvpMuestra('p-pvp'); };
   E('b-cuenta').onclick = () => { play('select'); abreCuenta(); };
   E('b-pvp-cuenta').onclick = () => { play('select'); abreCuenta(); };
-  E('b-pvp-buscar').onclick = () => { play('select'); pvpBuscar(); };
+  E('b-pvp-buscar').onclick = () => { if (tutoFaltan().length && !rfpSalaGuardada()) { play('deny'); return; } play('select'); pvpBuscar(); };      // cerrado hasta jugar con los dos bandos (tutorial.js)
   // jugar con amigos: crear una sala o entrar con el código (el enlace ?sala=CODIGO abre esta pantalla con el código puesto)
   const caja = E('amigos-codigo');
   const entrar = () => {

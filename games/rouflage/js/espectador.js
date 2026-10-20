@@ -35,8 +35,14 @@ function trazaColaFantasma(c, t, mira, mueve) {
 }
 function pintaFantasma(c, t) {
   const f = J.fantasma; if (!f || !espectando()) return;
-  if (J.yo.ropa && J.yo.ropa.fantasma && J.yo.ropa.fantasma !== 'galleta') return pintaFantasmaArmario(c, t, f, J.yo.ropa.fantasma);
-  const yo = J.yo, L = LIENZO_FANTASMA, mira = f.mira || 1, bote = Math.sin(t * 3.4) * 3;
+  pintaOtrosFantasmas(c, t);
+  pintaFantasmaEn(c, t, f, J.yo, 0.8, tr('TÚ'), '#ffcb3d');
+}
+// un fantasma cualquiera (el tuyo, el de otro jugador o el del susto): `yo` es de quién es (su animal y su ropa), `alfa` lo transparente que
+// se ve y, si hay `nombre`, el rótulo de encima
+function pintaFantasmaEn(c, t, f, yo, alfa, nombre, color) {
+  if (yo.ropa && yo.ropa.fantasma && yo.ropa.fantasma !== 'galleta') return pintaFantasmaArmario(c, t, f, yo.ropa.fantasma, alfa, nombre, color);
+  const L = LIENZO_FANTASMA, mira = f.mira || 1, bote = Math.sin(t * 3.4) * 3;
   if (!L.cv) [L.cv, L.c] = lienzo(L.w * L.esc, L.h * L.esc);
   const g = L.c;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, L.cv.width, L.cv.height);
@@ -64,15 +70,50 @@ function pintaFantasma(c, t) {
   g.restore();
   // al mundo, medio transparente y flotando
   const x = f.x, y = f.y + 30 + bote;
-  c.save(); c.globalAlpha = 0.8;
+  c.save(); c.globalAlpha = alfa;
   c.drawImage(L.cv, x - L.w / 2, y - (L.h - 26), L.w, L.h);
   c.restore();
-  rotulo(c, tr('TÚ'), x, y - 78, 10, '#ffcb3d', OL, LETRA_UI);
+  if (nombre) rotulo(c, nombre, x, y - 78, 10, color, OL, LETRA_UI);
 }
 // el fantasma que elegiste en el armario (sábana, globo, nube…): su dibujo del armario (ARD.fantasma), flotando y medio transparente como el de siempre
-function pintaFantasmaArmario(c, t, f, tipo) {
+function pintaFantasmaArmario(c, t, f, tipo, alfa = 0.85, nombre = tr('TÚ'), color = '#ffcb3d') {
   const x = f.x, y = f.y + 30 + Math.sin(t * 3.4) * 3, w = 74;
-  c.save(); c.globalAlpha = 0.85; c.translate(x, y - w * 0.5); c.rotate(Math.sin(t * 1.7) * 0.06 + (f.mueve ? (f.mira || 1) * 0.1 : 0)); c.translate(-w / 2, -w / 2);
+  c.save(); c.globalAlpha = alfa; c.translate(x, y - w * 0.5); c.rotate(Math.sin(t * 1.7) * 0.06 + (f.mueve ? (f.mira || 1) * 0.1 : 0)); c.translate(-w / 2, -w / 2);
   ARD.fantasma(c, w, tipo); c.restore();
-  rotulo(c, tr('TÚ'), x, y - 78, 10, '#ffcb3d', OL, LETRA_UI);
+  if (nombre) rotulo(c, nombre, x, y - 78, 10, color, OL, LETRA_UI);
+}
+
+// ---------- LOS DEMÁS FANTASMAS (PvP) ----------
+// Cada fantasma manda dónde está (fg) cinco veces por segundo y los que también son fantasmas lo ven, medio transparente y con su nombre:
+// así se hacen compañía, van juntos y se organizan los sustos. Los vivos no los ven (salvo el instante del susto, abajo).
+const FANTASMAS_RED = {}, FG = { cada: 0.2, t: 0 };
+function fantasmaRecibido(sl, m) {
+  if (J.fase !== 'caza' || !sl.ente) return;
+  const g = FANTASMAS_RED[m.de] || (FANTASMAS_RED[m.de] = { x: m.x, y: m.y });
+  g.ax = m.x; g.ay = m.y; g.mira = m.m === -1 ? -1 : 1; g.mueve = !!m.v; g.visto = RELOJ; g.ente = sl.ente;
+}
+// cada fotograma: manda el tuyo, acerca suave los de los demás a donde dicen y olvida los que callan; y los sustos se apagan
+function fantasmasAvanza(dt) {
+  for (let i = SUSTOS.length - 1; i >= 0; i--) if ((SUSTOS[i].t += dt) > SUSTOS[i].dura) SUSTOS.splice(i, 1);
+  if (!J.pvp || J.fase !== 'caza') { for (const k in FANTASMAS_RED) delete FANTASMAS_RED[k]; return; }
+  for (const k in FANTASMAS_RED) {
+    const g = FANTASMAS_RED[k]; if (RELOJ - g.visto > 3) { delete FANTASMAS_RED[k]; continue; }
+    g.x += (g.ax - g.x) * Math.min(1, dt * 10); g.y += (g.ay - g.y) * Math.min(1, dt * 10);
+  }
+  const f = J.fantasma; if (!f || !espectando() || (FG.t -= dt) > 0) return;
+  FG.t = FG.cada; rfpManda({ t: 'fg', x: Math.round(f.x), y: Math.round(f.y), m: f.mira === -1 ? -1 : 1, v: f.mueve ? 1 : 0 });
+}
+function pintaOtrosFantasmas(c, t) { for (const k in FANTASMAS_RED) { const g = FANTASMAS_RED[k]; pintaFantasmaEn(c, t + +k, g, g.ente, 0.6, g.ente.nombre, '#fff6ea'); } }
+
+// ---------- EL SUSTO ----------
+// Cuando un fantasma usa un poder de tocar (Apagón, Mano fría), todos lo ven un instante junto al becario: «¡BUUU!». Da risa y se sabe de
+// dónde viene la broma. El silbido falso no: si se viera al fantasma, se sabría que el silbido es falso.
+const SUSTOS = [];
+function fantasmaSusto(x, y, quien) { if (quien) SUSTOS.push({ x, y, quien, t: 0, dura: 1.4 }); }
+function pintaSustos(c, t) {
+  for (const s of SUSTOS) {
+    const a = s.t < 0.15 ? s.t / 0.15 : 1 - Math.max(0, s.t - 0.9) / (s.dura - 0.9);
+    pintaFantasmaEn(c, t, { x: s.x, y: s.y - s.t * 10, mira: 1, mueve: false }, s.quien, 0.75 * a, null);
+    c.save(); c.globalAlpha = a; rotulo(c, tr('¡BUUU!'), s.x, s.y - 58 - s.t * 10, 16, '#cfe9ff', OL, LETRA_UI); c.restore();
+  }
 }

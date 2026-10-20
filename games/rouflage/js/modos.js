@@ -29,8 +29,31 @@ const LUCES_SALA = [
   { k: 'apagon', nombre: 'APAGÓN', texto: 'Casi a oscuras, linterna corta, sin ranking ni pistas en pantalla: solo el oído.' },
 ];
 const luzDe = d => (d && d.x && d.x.dia) ? 'dia' : (d && d.x && d.x.apagon) ? 'apagon' : '';
-const MODO = { m: 'normal', x: {} };                 // la partida en curso
-const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo };
+// LAS REGLAS DE LA SALA: lo que el anfitrión ajusta además del modo y los extras. Van en el JSON de la sala
+// (a = { s, c, b }: no hace falta tocar el servidor) y las versiones anteriores del juego las ignoran. La primera opción con `def` es la de siempre
+const AJUSTES_SALA = {
+  s: { nombre: 'SILBIDO', texto: 'Cada cuánto silban los colados a la fuerza. Silbar por gusto vuelve a empezar la cuenta.',
+    opciones: [{ v: 28, nombre: 'CADA 28 s', def: true }, { v: 45, nombre: 'CADA 45 s' }, { v: 0, nombre: 'SIN SILBIDO', solo: true }] },
+  c: { nombre: 'CAZA', texto: 'Lo que dura la caza.',
+    opciones: [{ v: 120, nombre: '2:00' }, { v: 150, nombre: '2:30', def: true }, { v: 180, nombre: '3:00' }, { v: 240, nombre: '4:00' }] },
+  b: { nombre: 'CARTAS', texto: 'Cartas de despido de cada becario como máximo: fallar gasta una y acertar la devuelve.',
+    opciones: [{ v: 3, nombre: '3' }, { v: 5, nombre: '5', def: true }, { v: 8, nombre: '8' }] },
+  // solo con amigos (amigos: true; BUSCAR PARTIDA va siempre con lo de siempre): cuántos becarios y colados hay (los que no son amigos, bots;
+  // el servidor los cuenta igual, _rf_arranca en servidor/57-rouflage-sala-cuantos.sql) y cuándo gana el becario
+  h: { nombre: 'BECARIOS', texto: 'Cuántos buscan. Si sois menos amigos, el resto son bots.', amigos: true,
+    opciones: [{ v: 1, nombre: '1' }, { v: 2, nombre: '2', def: true }, { v: 3, nombre: '3' }] },
+  k: { nombre: 'COLADOS', texto: 'Cuántos se esconden, con bots si faltan amigos. Como mucho sois 10: con 3 becarios, 7 colados.', amigos: true,
+    opciones: [{ v: 3, nombre: '3' }, { v: 5, nombre: '5' }, { v: 8, nombre: '8', def: true }] },
+  g: { nombre: 'GANAN LOS BECARIOS', texto: 'Al despedir a más de la mitad de los colados, o solo si los despiden a todos.', amigos: true,
+    opciones: [{ v: 1, nombre: 'MÁS DE LA MITAD', def: true }, { v: 0, nombre: 'DESPEDIR A TODOS', solo: true }] },
+};
+const ajusteSala = (a, k) => { const A = AJUSTES_SALA[k], v = a && a[k]; return A.opciones.some(o => o.v === v) ? v : A.opciones.find(o => o.def).v; };
+// cuántos becarios y cuántos en total tiene una sala con amigos (lo mismo que el servidor): los amigos caben siempre, aunque pasen de la cuenta
+const salaCuantos = (d, n) => { const h = ajusteSala(d && d.a, 'h'); return { ncaz: h, total: Math.max(n, Math.min(10, h + ajusteSala(d && d.a, 'k'))) }; };
+// ¿han ganado los becarios? Si no queda ningún colado o, en el PvP, si han despedido a más de la mitad de los que había al empezar la caza
+const cazaHecha = () => { const q = escondidos().length; return !q || (J.pvp && ajusteSala(MODO.a, 'g') === 1 && q < (J.coladosIni || 0) / 2); };
+const MODO = { m: 'normal', x: {}, a: {} };          // la partida en curso
+const REGLAS_BASE = { luzLargo: REGLAS.luzLargo, luzAngulo: REGLAS.luzAngulo, silbido: REGLAS.silbido, primerSilbido: REGLAS.primerSilbido, balasIni: REGLAS.balasIni };
 
 // deja la partida en un modo (null: el normal). Viene del servidor ({ m, x: { apagon: 1 } }) o de la URL en solitario
 // un modo al azar, como el que pone el servidor a las salas públicas (_rf_modo_azar en servidor/42-rouflage-publica.sql): lo usa la red de pruebas
@@ -47,15 +70,32 @@ function modoPon(d) {
   // la vista de los becarios: corta y estrecha en el apagón; de día ven más lejos y más abierto (con todo encendido)
   REGLAS.luzLargo = REGLAS_BASE.luzLargo * (MODO.x.apagon ? 0.75 : MODO.x.dia ? 1.35 : 1);
   REGLAS.luzAngulo = REGLAS_BASE.luzAngulo * (MODO.x.apagon ? 0.6 : MODO.x.dia ? 1.6 : 1);
+  // las reglas de la sala (solo las que no son las de siempre quedan en MODO.a)
+  MODO.a = {}; for (const k in AJUSTES_SALA) { const v = ajusteSala(d && d.a, k); if (v !== ajusteSala(null, k)) MODO.a[k] = v; }
+  const s = ajusteSala(MODO.a, 's'), b = ajusteSala(MODO.a, 'b');
+  REGLAS.silbido = s || 1e9; REGLAS.primerSilbido = s ? Math.round(REGLAS_BASE.primerSilbido * s / REGLAS_BASE.silbido) : 1e9;      // sin silbido: el reloj no llega nunca
+  REGLAS.cazaPvp = ajusteSala(MODO.a, 'c');
+  REGLAS.balas = b; REGLAS.balasIni = Math.min(REGLAS_BASE.balasIni, b); REGLAS.balasExtra = b - REGLAS.balasIni;
 }
 const modoEs = m => MODO.m === m;
 const extraOn = k => !!MODO.x[k];
-const modoNormal = () => MODO.m === 'normal' && !Object.keys(MODO.x).length;
+const modoNormal = () => MODO.m === 'normal' && !Object.keys(MODO.x).length && !Object.keys(MODO.a).length;
 // el nombre de lo que se juega: «CONTAGIO · Apagón total» (vacío si es el normal sin extras)
 function modoTexto(d) {
   d = d || MODO; const x = Object.keys(d.x || {}).filter(k => EXTRAS[k] && d.x[k]);
   const partes = (d.m && d.m !== 'normal' && MODOS[d.m] ? [tr(MODOS[d.m].nombre)] : []).concat(x.map(k => tr(EXTRAS[k].nombre)));
+  for (const k in AJUSTES_SALA) { const v = ajusteSala(d.a, k); if (v === ajusteSala(null, k)) continue; const o = AJUSTES_SALA[k].opciones.find(o => o.v === v); partes.push(o.solo ? tr(o.nombre) : tr(AJUSTES_SALA[k].nombre) + ' ' + tr(o.nombre)); }      // «SIN SILBIDO» ya se entiende solo
   return partes.join(' · ');
+}
+// BUSCAR PARTIDA: todo al azar. El servidor elige el modo, la luz y a veces un extra (_rf_modo_azar); lo que falte (el modo y la luz, si
+// no vienen, otro extra más y las reglas de la sala) sale de la semilla de la sala: lo mismo en todos los navegadores, sin tocar el servidor
+function modoPublico(d, semilla) {
+  const az = k => hash2(semilla | 0, k, 913), m = { m: d && MODOS[d.m] ? d.m : '', x: Object.assign({}, d && d.x), a: {} };
+  if (!m.m) { const ms = Object.keys(MODOS); m.m = ms[Math.floor(az(1) * ms.length)]; const l = az(2); if (l < 0.2) m.x.apagon = 1; else if (l < 0.4) m.x.dia = 1; }
+  const otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz && !m.x[k]);
+  if (az(3) < 0.5 && otros.length) m.x[otros[Math.floor(az(4) * otros.length)]] = 1;
+  Object.keys(AJUSTES_SALA).forEach((k, i) => { if (AJUSTES_SALA[k].amigos) return; const o = AJUSTES_SALA[k].opciones; m.a[k] = o[Math.floor(az(10 + i) * o.length)].v; });
+  return m;
 }
 // en solitario (y para probar): ?modo=contagio&extras=apagon
 function modoDesdeUrl() {
@@ -65,7 +105,7 @@ function modoDesdeUrl() {
 }
 
 // ---------- lo que el anfitrión elige en la sala de amigos (se recuerda para la próxima) ----------
-const MODO_ELEGIDO = (() => { try { const d = JSON.parse(localStorage.getItem('rouflage-modo') || 'null'); return d && typeof d === 'object' ? { m: MODOS[d.m] ? d.m : 'normal', x: d.x || {}, mapa: typeof d.mapa === 'string' ? d.mapa : '' } : { m: 'normal', x: {}, mapa: '' }; } catch (_) { return { m: 'normal', x: {}, mapa: '' }; } })();
+const MODO_ELEGIDO = (() => { try { const d = JSON.parse(localStorage.getItem('rouflage-modo') || 'null'); return d && typeof d === 'object' ? { m: MODOS[d.m] ? d.m : 'normal', x: d.x || {}, a: d.a && typeof d.a === 'object' ? d.a : {}, mapa: typeof d.mapa === 'string' ? d.mapa : '' } : { m: 'normal', x: {}, a: {}, mapa: '' }; } catch (_) { return { m: 'normal', x: {}, a: {}, mapa: '' }; } })();
 function modoElegidoGuarda() { try { localStorage.setItem('rouflage-modo', JSON.stringify(MODO_ELEGIDO)); } catch (_) { /* sin guardar */ } }
 
 // ---------- CONTAGIO ----------

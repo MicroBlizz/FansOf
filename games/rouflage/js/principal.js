@@ -26,6 +26,7 @@ async function arranca() {
   preparaAlubia(); cargaMapa(mapaElegido());
   ajusta(); window.addEventListener('resize', ajusta);
   preparaInterfaz(); preparaMenusPintar(); preparaEligeMapa(); preparaPvp(); preparaArmario(); preparaHabitacion(); preparaDiario(); preparaEconomia(); preparaTienda(); preparaGacha(); preparaReinicio(); preparaZoomCazador();
+  try { await Promise.race([RFS.arranca(), new Promise(r => setTimeout(r, 12000))]); } catch (_) { /* sin cuenta: la partida local */ }      // la cuenta del servidor (servidor.js): Gotas, Acciones, colección… Si falla o tarda, el juego arranca igual (antes se quedaba en los tres puntos)
   const modo = new URLSearchParams(location.search).get('modo');   // ?modo=camaleon o ?modo=cazador entra directo (para probar)
   if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else { irTitulo(); pvpEntradaDirecta(); }
   E('carga').hidden = true;

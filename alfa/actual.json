@@ -1,8 +1,8 @@
 {
- "build": 338,
- "hash": "58d8375",
- "fecha": "2026-10-20T20:55:05Z",
- "mensaje": "Arreglo: quito marcas de conflicto de publico_excluye.py (conservo sella y _QUITA_BEAMS)",
+ "build": 339,
+ "hash": "76cca49",
+ "fecha": "2026-10-20T21:00:47Z",
+ "mensaje": "Fans of Beams: la nave tiene inercia, se inclina con muelle, flota y estira la llama al acelerar",
  "juegos": {
   "crush": "0.1.26",
   "dark": "0.2.7",

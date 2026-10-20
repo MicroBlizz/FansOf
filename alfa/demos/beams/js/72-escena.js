@@ -135,11 +135,13 @@ function dibujaEscena() {
 function dibujaJugador() {
   let nv = nave(S.nave, S.k); if (nv) S.navePrev = nv; else nv = S.navePrev; if (!nv) return;
   if (P.inv > 0 && Math.floor(S.t * 18) % 2 === 0 && !S.rayo) return;   // parpadea al estar a salvo
-  const f = 0.7 + 0.3 * Math.sin(S.t * 40), tx = P.x - nv.lw / 2 + 8, col = FACS[S.nave].col;
+  const f = (0.7 + 0.3 * Math.sin(S.t * 40)) * (0.8 + 0.7 * (P.empuje || 0)), tx = P.x - nv.lw / 2 + 8, col = FACS[S.nave].col;
   c.save(); c.globalCompositeOperation = 'lighter';
   const g = c.createLinearGradient(tx, 0, tx - 46 * f, 0); g.addColorStop(0, 'rgba(255,230,160,0.95)'); g.addColorStop(0.4, 'rgba(255,140,40,0.7)'); g.addColorStop(1, 'rgba(255,60,0,0)'); c.fillStyle = g; c.beginPath(); c.moveTo(tx, P.y - 7); c.lineTo(tx - 46 * f, P.y); c.lineTo(tx, P.y + 7); c.fill();
   brillo(tx - 6, P.y, 34, '#ffa040', 0.65 * f); brillo(P.x, P.y, nv.lw * 0.9, col, 0.14); c.restore();
-  c.imageSmoothingQuality = 'high'; c.drawImage(nv, P.x - nv.lw / 2, P.y - nv.lh / 2, nv.lw, nv.lh);
+  c.imageSmoothingQuality = 'high';
+  const fl = Math.sin(S.t * 2.3) * 2.2, ang = P.ang || 0, est = 1 + Math.abs(P.vx || 0) / P.vel * 0.06 - Math.abs(P.vy || 0) / P.vel * 0.04;   // flota, se inclina y se estira con la velocidad
+  c.save(); c.translate(P.x, P.y + fl); c.rotate(ang); c.scale(est, 1 / est); c.drawImage(nv, -nv.lw / 2, -nv.lh / 2, nv.lw, nv.lh); c.restore();
   if (S.escudo > 0) { c.save(); c.globalCompositeOperation = 'lighter'; const q = S.escudo; c.strokeStyle = '#8fd4ff'; c.lineWidth = 2.5; c.globalAlpha = 0.5 + 0.2 * Math.sin(S.t * 8); c.beginPath(); c.arc(P.x, P.y, nv.lw * 0.62, 0, 6.283); c.stroke(); if (q > 1) { c.beginPath(); c.arc(P.x, P.y, nv.lw * 0.72, 0, 6.283); c.stroke(); } brillo(P.x, P.y, nv.lw * 0.75, '#6fc8ff', 0.18); c.restore(); }
   if (S.rayo && S.rayo.t < S.rayo.carga) { c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = '#fff'; c.globalAlpha = 0.7; c.lineWidth = 3; c.beginPath(); c.arc(P.x + 14, P.y, 40 + (1 - S.rayo.t / S.rayo.carga) * 40, 0, 6.28); c.stroke(); c.restore(); }
   if (ALI.length) { c.save(); c.globalCompositeOperation = 'lighter'; c.strokeStyle = 'rgba(127,232,255,0.3)'; c.lineWidth = 2; c.beginPath(); c.arc(P.x, P.y, 36 + Math.sin(S.t * 5) * 2, 0, 6.28); c.stroke(); c.restore(); }

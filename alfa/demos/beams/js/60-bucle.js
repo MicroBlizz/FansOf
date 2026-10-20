@@ -50,7 +50,11 @@ function actualiza(rdt) {
   if (S.msgT > 0) S.msgT -= rdt; if (S.banner > 0) S.banner -= rdt;
   // jugador
   let mx = ((KH.der || TH.der) ? 1 : 0) - ((KH.izq || TH.izq) ? 1 : 0) + PAD.mx + TV.x, my = ((KH.abj || TH.abj) ? 1 : 0) - ((KH.arr || TH.arr) ? 1 : 0) + PAD.my + TV.y; const mm = Math.hypot(mx, my); if (mm > 1) { mx /= mm; my /= mm; }
-  P.vx = mx * P.vel; P.vy = my * P.vel;
+  // inercia: acelera y frena con holgura (más rápido al frenar que al arrancar, para que siga siendo preciso); muelle de inclinación que oscila al parar
+  const ka = 1 - Math.exp(-(mx || my ? 9 : 6.5) * dt); P.vx += (mx * P.vel - P.vx) * ka; P.vy += (my * P.vel - P.vy) * ka;
+  P.ang = P.ang || 0; P.angv = P.angv || 0; P.empuje = P.empuje || 0;
+  P.angv += ((P.vy / P.vel) * 0.42 - P.ang) * 90 * dt - P.angv * 7 * dt; P.ang += P.angv * dt;
+  P.empuje += (Math.max(0, P.vx / P.vel) - P.empuje) * (1 - Math.exp(-8 * dt));
   P.x = clamp(P.x + P.vx * dt, 50, W - 60); P.y = clamp(P.y + P.vy * dt, 30, H - 30);
   if (P.inv > 0) P.inv -= dt;
   if (S.rayo) P.inv = Math.max(P.inv, 0.1);

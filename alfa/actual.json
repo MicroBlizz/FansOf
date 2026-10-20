@@ -1,8 +1,8 @@
 {
- "build": 301,
- "hash": "3932411",
- "fecha": "2026-10-20T17:28:36Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.24, decks 0.2.6, nova 0.3.11, ratkov 0.2.14, rouflage 0.2.36, rumble 0.9.143, survivors 0.1.56, tacticas 0.1.40, td 0.13.72",
+ "build": 302,
+ "hash": "ae02e0d",
+ "fecha": "2026-10-20T17:30:43Z",
+ "mensaje": "Librería: botón DESCARGAR APK junto a JUGAR en la ficha, solo en la alfa",
  "juegos": {
   "crush": "0.1.24",
   "dark": "0.2.7",

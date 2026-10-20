@@ -40,6 +40,7 @@ section.hero p.sub { font-size: 16px; max-width: 520px; }
 .boton { display: inline-block; text-decoration: none; cursor: pointer; font-family: var(--font-display); font-size: 18px; padding: 9px 20px 5px; border-radius: 14px; border: 3px solid var(--outline);
   background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); box-shadow: 0 4px 0 var(--outline); }
 .boton.sec { background: var(--panel); font-family: var(--font-ui); font-weight: 800; font-size: 14px; padding: 8px 14px; }
+.boton[hidden] { display: none; }
 .boton:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline); }
 .boton:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 .dest { touch-action: pan-y; }   /* deslizar a los lados lo coge el DESTACADO; arriba y abajo sigue moviendo la página */

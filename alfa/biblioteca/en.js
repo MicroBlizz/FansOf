@@ -20,6 +20,7 @@ IDIOMA.add({
   "NUEVO": "NEW",
   "¡NUEVO!": "NEW!",
   "VER FICHA": "SEE DETAILS",
+  "DESCARGAR APK": "DOWNLOAD APK",
   "‹ VOLVER": "‹ BACK",
   "VERSIÓN": "VERSION",
   "TIPO": "TYPE",

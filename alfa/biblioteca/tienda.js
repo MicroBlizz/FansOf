@@ -13,7 +13,7 @@ document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.
 const TARJETAS = [...document.querySelectorAll('section.game')];
 function datosDe(s) {
   return {
-    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'),
+    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), apk: s.dataset.apk || '',
     color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, pausa: s.dataset.pausa || '',
     etiquetas: (s.dataset.etiquetas || '').split('·').map(x => x.trim()).filter(Boolean),
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
@@ -124,6 +124,9 @@ function abrirFicha(id, desdeHash) {
   document.getElementById('fi-nombre').textContent = d.nombre;
   document.getElementById('fi-etiq').innerHTML = etiquetasHtml(d.etiquetas);
   document.getElementById('fi-jugar').href = d.jugar;
+  const apk = document.getElementById('fi-apk');   // DESCARGAR APK: solo en la alfa y en los juegos que tienen APK de prueba (release apk-latest del repo público)
+  apk.hidden = !(NUCLEO.alfa && d.apk);
+  if (d.apk) apk.href = 'https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-' + d.apk + '.apk';
   document.getElementById('fi-ver').textContent = (e && e.ver) || '—';
   document.getElementById('fi-tipo').textContent = d.tipo || '—';
   document.getElementById('fi-texto').textContent = d.texto;

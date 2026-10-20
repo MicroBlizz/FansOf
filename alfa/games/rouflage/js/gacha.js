@@ -1,15 +1,17 @@
 // Fans of Rouflage · EL GACHAPÓN DE ARMARIO (lógica): cápsulas que se pagan SOLO con Gotas (la moneda ganada jugando) y dan cosméticos. Las Acciones (la
-// comprada) no entran aquí nunca: lo que tiene azar solo se paga con lo ganado (PLAN-MONEDAS.md, MONEDAS.azar). Los conjuntos enteros y las legendarias
-// no salen de las cápsulas: se quedan como ofertas de la tienda, en Acciones. Todo lo demás de la tienda del armario (piezas sueltas, mascotas…) sí.
+// comprada) no entran aquí nunca: lo que tiene azar solo se paga con lo ganado (PLAN-MONEDAS.md, MONEDAS.azar). Sale todo lo del armario que no es gratis
+// ni de otra fuente (de: 'tienda'): piezas, conjuntos y legendarias. Lo del pase (gratis y premium) NO sale mientras su pase siga abierto, para que sea
+// exclusivo: cuando un pase se cierre, sus claves ('cat:id') se añaden a GACHA.liberados y entran. Con Acciones solo se compran las ÉPICAS (arPrecio, economia.js).
 // Una pieza repetida devuelve Gotas. Garantías: una rara o mejor cada GACHA.pityRara tiradas y una épica cada GACHA.pityEpica. Las cifras, aquí.
 // Se guarda en SAVE.gacha = { total, sinRara, sinEpica }. La pantalla es gacha-pantalla.js. Va después de armario.js y economia.js.
 'use strict';
 
 const GACHA = {
   precio: 200, precio10: 1800,                    // Gotas por 1 y por 10 cápsulas (unas 2 de las 150 Gotas máximas que se ganan al día)
-  odds: { comun: 62, rara: 30, epica: 8 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
-  repetida: { comun: 30, rara: 80, epica: 160 },   // Gotas que devuelve una pieza que ya tienes
+  odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
+  repetida: { comun: 30, rara: 80, epica: 160, legend: 300 },   // Gotas que devuelve una pieza que ya tienes
   pityRara: 10, pityEpica: 40,
+  liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón
 };
 
 function gachaEstado() {
@@ -22,8 +24,7 @@ function gachaPool() {
   const pool = {};
   for (const r in GACHA.odds) pool[r] = [];
   for (const c of CATALOGO_AR) {
-    if (c.conjuntos) continue;
-    for (const it of c.items) if (it.de === 'tienda' && pool[it.r]) pool[it.r].push({ cat: c.id, it });
+    for (const it of c.items) if ((it.de === 'tienda' || GACHA.liberados.includes(c.id + ':' + it.id)) && pool[it.r]) pool[it.r].push({ cat: c.id, it });
   }
   return pool;
 }
@@ -39,7 +40,7 @@ function gachaRareza(g, pool) {
   let r;
   if (o.epica && g.sinEpica >= GACHA.pityEpica) r = 'epica';
   else if (g.sinRara >= GACHA.pityRara && (o.rara || o.epica)) r = !o.rara || (o.epica && Math.random() < o.epica / (o.epica + o.rara)) ? 'epica' : 'rara';
-  else { let x = Math.random() * 100; r = 'comun'; for (const k of ['epica', 'rara', 'comun']) { if (!o[k]) continue; if (x < o[k]) { r = k; break; } x -= o[k]; } if (!o[r]) r = Object.keys(o)[0]; }
+  else { let x = Math.random() * 100; r = 'comun'; for (const k of ['legend', 'epica', 'rara', 'comun']) { if (!o[k]) continue; if (x < o[k]) { r = k; break; } x -= o[k]; } if (!o[r]) r = Object.keys(o)[0]; }
   if (r !== 'comun') g.sinRara = 0;
   if (r === 'epica') g.sinEpica = 0;
   return r;

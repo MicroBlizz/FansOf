@@ -58,10 +58,10 @@ function economiaPartida(r) {
 }
 
 /* ---------- comprar en el armario ---------- */
-// ¿se puede comprar? devuelve { moneda: 'gotas' | 'acciones', precio } o null
+// ¿se puede comprar? Con Acciones solo las ÉPICAS de la tienda (el resto, solo en el gachapón). Devuelve { moneda: 'gotas' | 'acciones', precio } o null
 function arPrecio(it) {
   if (it.de === 'gotas') { const m = /^(\d+) Gotas$/.exec(String(it.txt)); return m ? { moneda: 'gotas', precio: +m[1] } : null; }
-  if (it.de === 'tienda' && typeof it.txt === 'number') return { moneda: 'acciones', precio: it.txt };
+  if (it.de === 'tienda' && typeof it.txt === 'number' && it.r === 'epica') return { moneda: 'acciones', precio: it.txt };
   return null;
 }
 function arCompra(cat, it) {

@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-20c',
+    fecha: '20 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF BEAMS', tarjeta: 'g-beams', enlace: 'demos/beams/', texto: 'Demo nueva: el matamarcianos espacial de la serie. Captura naves de Microblizz y conviértelas en tu escolta, tu escudo o tu super rayo.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-20b',
     fecha: '20 de octubre de 2026',
     nuevos: [

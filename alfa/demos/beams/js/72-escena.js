@@ -99,10 +99,10 @@ function dibujaEscena() {
   c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
   for (const b of PB) {
     const v = Math.hypot(b.vx, b.vy) || 1, ux = b.vx / v, uy = b.vy / v, L = b.aliado ? 18 : 28 + b.r * 3, x0 = b.x - ux * L, y0 = b.y - uy * L;
-    c.strokeStyle = b.col; c.globalAlpha = 0.26; c.lineWidth = b.r * 4.4; c.beginPath(); c.moveTo(x0 - ux * 22, y0 - uy * 22); c.lineTo(b.x, b.y); c.stroke();
-    c.globalAlpha = 0.8; c.lineWidth = b.r * 2; c.beginPath(); c.moveTo(x0, y0); c.lineTo(b.x, b.y); c.stroke();
-    c.globalAlpha = 1; c.strokeStyle = '#fff'; c.lineWidth = b.r * 0.9; c.beginPath(); c.moveTo(x0 + ux * L * 0.3, y0 + uy * L * 0.3); c.lineTo(b.x + ux * 4, b.y + uy * 4); c.stroke();
-    brillo(b.x, b.y, b.r * 6.5, b.col, 0.7); brillo(b.x + ux * 3, b.y + uy * 3, b.r * 2.6, '#ffffff', 1);
+    c.strokeStyle = b.col; c.globalAlpha = 0.1; c.lineWidth = b.r * 3.6; c.beginPath(); c.moveTo(x0 - ux * 22, y0 - uy * 22); c.lineTo(b.x, b.y); c.stroke();
+    c.globalAlpha = 0.55; c.lineWidth = b.r * 1.7; c.beginPath(); c.moveTo(x0, y0); c.lineTo(b.x, b.y); c.stroke();
+    c.globalAlpha = 0.8; c.strokeStyle = '#fff'; c.lineWidth = b.r * 0.6; c.beginPath(); c.moveTo(x0 + ux * L * 0.3, y0 + uy * L * 0.3); c.lineTo(b.x + ux * 4, b.y + uy * 4); c.stroke();
+    brillo(b.x, b.y, b.r * 4.5, b.col, 0.2); brillo(b.x + ux * 3, b.y + uy * 3, b.r * 2, '#ffffff', 0.3);
   }
   for (const b of EB) {
     const pul = 1 + 0.18 * Math.sin(S.t * 14 + b.x * 0.05);
@@ -117,7 +117,7 @@ function dibujaEscena() {
     const k = f.vida / f.v0;
     if (f.t === 's') { c.globalAlpha = Math.max(0, k); c.strokeStyle = f.col; c.lineWidth = f.w * (0.4 + k * 0.6); c.beginPath(); c.moveTo(f.x, f.y); c.lineTo(f.x - f.vx * 0.045, f.y - f.vy * 0.045); c.stroke(); }
     else if (f.t === 'e') brillo(f.x, f.y, f.r * (0.5 + k * 0.7), f.col, k);
-    else if (f.t === 'f') { const u = 1 - k, col = FUEGO[Math.min(3, Math.floor(u * 4))], r = f.r * (0.55 + u * 0.8); brillo(f.x, f.y, r * 1.25, col, Math.min(0.62, k * 1.1)); brillo(f.x, f.y, r * 0.5, u < 0.5 ? '#fff0c0' : col, Math.min(0.6, k * 1.1)); }
+    else if (f.t === 'f') { const u = 1 - k, col = FUEGO[Math.min(3, Math.floor(u * 4))], r = f.r * (0.55 + u * 0.8); brillo(f.x, f.y, r * 1.25, col, Math.min(0.42, k * 0.8)); brillo(f.x, f.y, r * 0.5, u < 0.5 ? '#fff0c0' : col, Math.min(0.32, k * 0.6)); }
     else if (f.t === 'fl') { destello(f.x, f.y, f.ww * (0.7 + (1 - k) * 0.9), f.col, k, 1); }
     else if (f.t === 'z') {   // arco eléctrico: línea quebrada que cambia cada cuadro
       const dx = f.x2 - f.x, dy = f.y2 - f.y, L = Math.hypot(dx, dy), n = Math.max(3, Math.floor(L / 24)), nx = -dy / (L || 1), ny = dx / (L || 1);

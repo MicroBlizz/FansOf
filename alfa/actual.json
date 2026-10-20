@@ -1,8 +1,8 @@
 {
- "build": 349,
- "hash": "9d47806",
- "fecha": "2026-10-20T22:08:33Z",
- "mensaje": "Merge branch 'main' of https://github.com/MicroBlizz/fansof-dev",
+ "build": 350,
+ "hash": "2f7c695",
+ "fecha": "2026-10-20T22:13:19Z",
+ "mensaje": "Fans of Beams 0.1.1: disparos, explosiones y fogonazo con mucho menos brillo; novedades de la demo, su línea en la ventana NOVEDADES y boletín de demo nueva",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

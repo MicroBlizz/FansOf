@@ -100,15 +100,13 @@ function pintaFans(t) {
     sprite(f.id + '_anima' + (Math.floor(f.f * 5) % 2), x, y - bote, 11, Math.sin(f.f * 7) * 0.08, f.lado < 0 ? 1 : -1, 1);
   }
 }
+// un globo de látex 3D (globo0_icono…globo6_icono, uno por color del arcoíris) con su cuerda; al explotar, estrellitas
 function pintaGlobo(g) {
-  const k = g.pum ? 1 + g.pum * 6 : 1;
-  if (g.pum) { G.globalAlpha = Math.max(0, 1 - g.pum * 4); for (let i = 0; i < 6; i++) { const a = i * 1.047; estrellita(g.x + Math.cos(a) * g.r * k, g.y + Math.sin(a) * g.r * k, 2, 1); } G.globalAlpha = 1; return; }
+  if (g.pum) { const k = 1 + g.pum * 6; G.globalAlpha = Math.max(0, 1 - g.pum * 4); for (let i = 0; i < 6; i++) { const a = i * 1.047; estrellita(g.x + Math.cos(a) * g.r * k, g.y + Math.sin(a) * g.r * k, 2, 1); } G.globalAlpha = 1; return; }
   const s = Math.sin(g.f * 2) * 3;
-  G.beginPath(); G.moveTo(g.x, g.y + g.r * 1.2); G.quadraticCurveTo(g.x + s, g.y + g.r * 2.2, g.x - s * 0.5, g.y + g.r * 3.4);
+  G.beginPath(); G.moveTo(g.x, g.y + g.r * 1.15); G.quadraticCurveTo(g.x + s, g.y + g.r * 2.2, g.x - s * 0.5, g.y + g.r * 3.4);
   G.lineWidth = 0.6; G.strokeStyle = 'rgba(80,60,100,0.6)'; G.stroke();
-  G.beginPath(); G.moveTo(g.x - 1.3, g.y + g.r * 1.25); G.lineTo(g.x + 1.3, g.y + g.r * 1.25); G.lineTo(g.x, g.y + g.r * 1.05); G.closePath(); G.fillStyle = g.c; G.fill();
-  elipse(g.x, g.y, g.r, g.r * 1.18, vol(g.x, g.y, g.r, g.r * 1.18, g.c), OLC, 0.8);
-  elipse(g.x - g.r * 0.35, g.y - g.r * 0.45, g.r * 0.22, g.r * 0.36, 'rgba(255,255,255,0.7)', null, 0, 0.5);
+  aqui(g.x, g.y, Math.sin(g.f * 1.6) * 0.08, 1, 1, () => spriteEnCaja('globo' + ARCOIRIS.indexOf(g.c) + '_icono', -g.r * 1.2, -g.r * 1.3, g.r * 2.4, g.r * 2.6, 0));
 }
 // encima del mundo: globos, mariposas de fiesta, fuegos artificiales y el borde arcoíris
 function pintaFiestaAire(t) {

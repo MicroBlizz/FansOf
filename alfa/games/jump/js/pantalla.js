@@ -113,23 +113,25 @@ function pintaPunteria() {
 // para calcular el salto, y al máximo brilla y suelta destellos
 const FUERZA = { x: 0, y: 0, alto: 0 };
 function pintaFuerza(f, max) {
-  const alto = PAN.H * 0.2, x = PAN.W - 11, y = PAN.H * 0.29, t = JUEGO.t, c = ATLAS.cuadros.zanahoria_icono;
-  const FINA = 0.5, LARGA = 1.3;   // más fina y más alargada que el icono de siempre
-  // el icono va en diagonal: se pone de pie girándolo, y se escala para que de punta a hojas mida «alto» (por LARGA)
-  const k = c ? alto / Math.hypot(c[2], c[3]) / 0.92 : 0, cy = y + alto * LARGA / 2;
-  const zana = () => { if (!c) return; G.save(); G.translate(x, cy); G.scale(FINA, LARGA); G.rotate(0.62); spriteEnCaja('zanahoria_icono', -c[2] * k / 2, -c[3] * k / 2, c[2] * k, c[3] * k, 0); G.restore(); };
-  // dónde va el cuerpo naranja (de la punta, abajo, a donde empiezan las hojas)
-  const punta = cy + alto * 0.47 * LARGA, arriba = cy - alto * 0.14 * LARGA, lleno = punta - (punta - arriba) * f;
-  if (max) { const g = G.createRadialGradient(x, (punta + arriba) / 2, 2, x, (punta + arriba) / 2, alto * 0.5); g.addColorStop(0, `rgba(255,230,140,${0.55 + Math.sin(t * 14) * 0.2})`); g.addColorStop(1, 'rgba(255,230,140,0)'); G.fillStyle = g; G.fillRect(x - alto * 0.5, y, alto, alto); }
-  G.save(); G.filter = 'grayscale(1) brightness(1.25)'; G.globalAlpha = 0.55; zana(); G.restore();
-  G.save(); G.beginPath(); G.rect(x - alto, lleno, alto * 2, alto * 2); G.clip(); zana(); G.restore();
+  // la zanahoria 3D de la fuerza (fuerza_icono): de pie, larga, con las hojas siempre verdes; el cuerpo se llena de la punta
+  // hacia arriba (lo que falta, en gris) y tiene marcas al 25, 50 y 75 %
+  const c = ATLAS.cuadros.fuerza_icono, t = JUEGO.t, HOJAS = 0.41;   // HOJAS: hasta dónde llegan las hojas (desde arriba)
+  if (!c || !laminaLista) return;
+  const alto = PAN.H * 0.34, w = alto * c[2] / c[3], x = PAN.W - 8 - w / 2, y = PAN.H * 0.22;
+  const arriba = y + alto * HOJAS, punta = y + alto, lleno = punta - (punta - arriba) * f;
+  const dibuja = () => G.drawImage(LAMINA, c[0], c[1], c[2], c[3], x - w / 2, y, w, alto);
+  const trozo = (y0, y1, fn) => { G.save(); G.beginPath(); G.rect(x - w, y0, w * 2, y1 - y0); G.clip(); fn(); G.restore(); };
+  if (max) { const g = G.createRadialGradient(x, (punta + arriba) / 2, 2, x, (punta + arriba) / 2, alto * 0.45); g.addColorStop(0, `rgba(255,230,140,${0.55 + Math.sin(t * 14) * 0.2})`); g.addColorStop(1, 'rgba(255,230,140,0)'); G.fillStyle = g; G.fillRect(x - alto * 0.45, y, alto * 0.9, alto); }
+  trozo(y - 2, arriba, dibuja);                                                                       // las hojas, siempre
+  trozo(arriba, lleno, () => { G.filter = 'grayscale(1) brightness(1.25)'; G.globalAlpha = 0.55; dibuja(); });   // lo que falta
+  trozo(lleno, punta + 4, dibuja);                                                                    // lo cargado
   // las marcas: rayitas blancas con borde, a la izquierda de la zanahoria
   [0.25, 0.5, 0.75].forEach(k => {
     const yy = punta - (punta - arriba) * k, ya = f >= k;
-    trazo(x - 8, yy, x - 4, yy, 1.1, ya ? '#ffffff' : 'rgba(255,255,255,0.75)', OLC);
-    letras(Math.round(k * 100) + '', x - 9.5, yy + 0.3, 4.6, ya ? '#ffffff' : 'rgba(255,255,255,0.8)', { alin: 'right', borde: OLC, bw: 1.4 });
+    trazo(x - w * 0.3 - 5, yy, x - w * 0.3 - 1, yy, 1.1, ya ? '#ffffff' : 'rgba(255,255,255,0.75)', OLC);
+    letras(Math.round(k * 100) + '', x - w * 0.3 - 6.5, yy + 0.3, 4.8, ya ? '#ffffff' : 'rgba(255,255,255,0.8)', { alin: 'right', borde: OLC, bw: 1.4 });
   });
-  if (max) for (let i = 0; i < 3; i++) { const k = (t * 1.8 + i / 3) % 1; estrellita(x + Math.cos(i * 2.1 + t) * 4, arriba + (punta - arriba) * (1 - k), 2.2 * Math.sin(k * Math.PI), 0.95); }
+  if (max) for (let i = 0; i < 3; i++) { const k = (t * 1.8 + i / 3) % 1; estrellita(x + Math.cos(i * 2.1 + t) * 4, arriba + (punta - arriba) * (1 - k), 2.4 * Math.sin(k * Math.PI), 0.95); }
 }
 
 function pintaMarcador() {

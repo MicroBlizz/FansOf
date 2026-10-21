@@ -19,14 +19,8 @@
   window.toast = (m, bien) => window.avisar(m, bien);   // cuenta.js avisa con toast() al volver del enlace del email
 
   const menu = document.getElementById('m-cuenta');
-  function pintarMenu() {
-    menu.textContent = conCuenta() ? t('Mi cuenta') : t('Entrar');
-    menu.classList.toggle('dentro', conCuenta());
-    if (conCuenta() && CUENTA.foto) {   // la foto del perfil público de Google, si entraste con Google (sin referrer: Google no sabe de qué página viene)
-      const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; im.referrerPolicy = 'no-referrer'; im.src = CUENTA.foto; im.onerror = () => im.remove();
-      menu.prepend(im);
-    }
-  }
+  // el botón del menú es de menu.js (el mismo en todas las páginas); aquí solo se le dice si hay cuenta y cuál es su foto de Google (si entraste con Google)
+  function pintarMenu() { window.pintaMenuCuenta(conCuenta(), conCuenta() ? CUENTA.foto : '', conCuenta() ? t('Mi cuenta') : t('Entrar')); }
   const modal = document.createElement('div');
   modal.className = 'cuenta-fondo'; modal.hidden = true;
   modal.innerHTML = '<div class="cuenta-caja" role="dialog" aria-modal="true" aria-labelledby="cuenta-titulo"><button type="button" class="nov-x ol" aria-label="Cerrar" data-x>✕</button><div id="cuenta-cuerpo"></div></div>';
@@ -117,6 +111,7 @@
   };
   menu.onclick = e => { e.preventDefault(); window.abrirCuenta(); };
   pintarMenu();
+  if (location.hash === '#cuenta') { history.replaceState(null, '', location.pathname + location.search); setTimeout(() => window.abrirCuenta(), 300); }   // venías de otra página de la web con «Entrar»
   if (CUENTA.activa) CUENTA.googleListo().then(v => { google = v; });
   // al volver del enlace del email la sesión llega en la dirección: cuenta.js la lee al cargar la página, un momento después
   window.addEventListener('load', () => setTimeout(() => { pintarMenu(); document.dispatchEvent(new CustomEvent('cuenta-cambio')); }, 1500));

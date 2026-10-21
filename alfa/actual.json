@@ -1,8 +1,8 @@
 {
- "build": 389,
- "hash": "970a5dd",
- "fecha": "2026-10-21T22:02:24Z",
- "mensaje": "Decks: niveles de carta Becario/Junior/Senior/CEO tras el flag decks-niveles (recompensas Junior desde el capitulo 2 y La rueda de ascensos); componente de Opciones en core (usado por Decks); plan de migracion de los orquestadores de balance",
+ "build": 390,
+ "hash": "c15a036",
+ "fecha": "2026-10-21T23:11:55Z",
+ "mensaje": "Cabecera de la web igual en todas las paginas, Entrar / Mi cuenta incluido (en las demas paginas lleva a la portada, que abre la cuenta)",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

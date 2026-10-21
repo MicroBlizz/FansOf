@@ -1,8 +1,8 @@
 {
- "build": 385,
- "hash": "f97dcda",
- "fecha": "2026-10-21T19:01:36Z",
- "mensaje": "Flags por plataforma (alfa/web/android) con boton por cada una, config del servidor separada de los flags (servidor/70, pestana Config) y decisiones documentadas",
+ "build": 386,
+ "hash": "84bdf65",
+ "fecha": "2026-10-21T19:31:04Z",
+ "mensaje": "Nova: la estación ya no se rompe con anclajes «universal» (Memes y jefes): se lee como todas las armas",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

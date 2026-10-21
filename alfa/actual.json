@@ -1,8 +1,8 @@
 {
- "build": 370,
- "hash": "2373ca0",
- "fecha": "2026-10-21T11:46:35Z",
- "mensaje": "Portada: Biblioteca en una sola seccion con subsecciones, bandas alternas, pie casi negro y menu compartido en todas las paginas",
+ "build": 371,
+ "hash": "fcae4a5",
+ "fecha": "2026-10-21T12:47:53Z",
+ "mensaje": "Menu de la portada: Entrar ya no se va a la derecha, todo centrado como en el resto de paginas",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

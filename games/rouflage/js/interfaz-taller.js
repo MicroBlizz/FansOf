@@ -3,7 +3,7 @@
 'use strict';
 function muestraTaller(si) { E('taller').hidden = !si; if (si) refrescaTaller(); refrescaHud(true); }
 function pintaMedidor(n) { E('t-camo').textContent = n + ' %'; const b = E('t-barra'); b.style.width = n + '%'; b.style.background = colorCamo(n); }
-function refrescaTinta() { const yo = J.yo; if (!yo) return; const n = Math.max(0, Math.ceil(yo.tinta)); ponTexto('tinta', E('t-tinta-n'), String(n)); E('t-tinta-barra').style.width = Math.max(0, yo.tinta) + '%'; }
+function refrescaTinta() { const yo = J.yo; if (!yo) return; const n = Math.max(0, Math.ceil(yo.tinta)); ponTexto('tinta', E('t-tinta-n'), String(n)); E('t-tinta-barra').style.width = Math.max(0, yo.tinta / tintaSen(yo) * 100) + '%'; }
 // el botón de la pintura rápida: apagado mientras se recarga, con los segundos que faltan en el rótulo (lo llama avanzaTaller cada fotograma)
 const RAPIDA = { seg: -1 };
 function refrescaRapida() {

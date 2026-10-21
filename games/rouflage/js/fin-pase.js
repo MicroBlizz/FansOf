@@ -24,7 +24,7 @@ function finPremiosNivel(n) {
   for (const c of paseCosas()) if (c.nv === n && (!c.premium || premium)) out.push({ it: c.it });
   const suma = (tabla, f) => { if (tabla && tabla[n]) out.push({ texto: f(tabla[n]) }); };
   suma(ECO.purpGratis, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.gotasGratis, k => '+' + tr('{n} Gotas', { n: k }));
-  if (premium) { suma(ECO.purpPremium, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.gotasPremium, k => '+' + tr('{n} Gotas', { n: k })); }
+  if (premium) { suma(ECO.purpPremium, k => '+' + tr('{n} Acciones', { n: k })); suma(ECO.accionesPremium, k => '+' + tr('{n} Acciones', { n: k })); }
   return out;
 }
 function finPremiosHtml(lista) {
@@ -138,8 +138,8 @@ function finSubeNivel() {
 
 /* ---------- el dibujo del tubo ---------- */
 // el lienzo es más grande que su hueco (sobresale por arriba y por abajo) para que las chispas no se corten
-function finMedidas() {
-  const F = FINP, R = 22, cy = F.h / 2, th = 34;
+function finMedidas(F = FINP) {
+  const R = F.R || 22, cy = F.h / 2, th = F.th || 34;
   return { R, cy, th, bx1: R + 3, bx2: F.w - R - 3, x0: 2 * R + 14, x1: F.w - 2 * R - 14 };
 }
 function finCapsula(c, x0, y0, x1, y1) { const r = (y1 - y0) / 2; c.beginPath(); c.moveTo(x0 + r, y0); c.lineTo(x1 - r, y0); c.arc(x1 - r, y0 + r, r, -Math.PI / 2, Math.PI / 2); c.lineTo(x0 + r, y1); c.arc(x0 + r, y0 + r, r, Math.PI / 2, Math.PI * 1.5); c.closePath(); }
@@ -151,18 +151,25 @@ function finInsignia(c, x, y, R, n, oro, brillo) {
   if (oro) { g.addColorStop(0, '#ffe98a'); g.addColorStop(0.55, '#ffcb3d'); g.addColorStop(1, '#d98a12'); } else { g.addColorStop(0, '#7d8bb0'); g.addColorStop(1, '#3d4a6e'); }
   c.beginPath(); c.arc(x, y, R, 0, TAU); c.fillStyle = g; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OL; c.stroke();
   c.beginPath(); c.arc(x, y, R - 5, Math.PI * 1.1, Math.PI * 1.75); c.lineWidth = 2.5; c.strokeStyle = 'rgba(255,255,255,0.6)'; c.lineCap = 'round'; c.stroke();
-  rotulo(c, String(n), x, y + 2, n > 9 ? 17 : 20, '#fff6ea', OL);
+  rotulo(c, String(n), x, y + 2 * R / 22, (n > 9 ? 17 : 20) * R / 22, '#fff6ea', OL);
   c.restore();
 }
 function finPaseDibuja(dt) {
-  const F = FINP, cv = E('fp-tubo'), d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+  const F = FINP;
+  F.lleno = F.nivel >= ECO.niveles; F.cols = FINP_COL;
+  const dentro = F.lleno ? 1 : Math.max(0, Math.min(1, (F.v - (F.nivel - 1) * ECO.xpNivel) / ECO.xpNivel));
+  F.frac = F.fase === 'fiesta' ? 1 : F.fase === 'vacia' ? Math.max(0, F.vacia / 0.4) : dentro;
+  tuboPinta(E('fp-tubo'), F, dt);
+}
+// EL TUBO (también lo usan los talentos: talentos-pantalla.js y talentos-fin.js). F: { t, frac, fase, nivel, lleno, cols, burbujas, parts, flash, vacia, R, th }
+function tuboPinta(cv, F, dt) {
+  const d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
   if (!w || !h) return;
   if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
   F.w = w; F.h = h; F.d = d;
-  const c = cv.getContext('2d'), L = finMedidas(), { cy, th, x0, x1 } = L, y0 = cy - th / 2, y1 = cy + th / 2, t = F.t;
+  const c = cv.getContext('2d'), L = finMedidas(F), { cy, th, x0, x1 } = L, y0 = cy - th / 2, y1 = cy + th / 2, t = F.t, COL = F.cols || FINP_COL;
   c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h); c.lineJoin = 'round';
-  const lleno = F.nivel >= ECO.niveles, dentro = lleno ? 1 : Math.max(0, Math.min(1, (F.v - (F.nivel - 1) * ECO.xpNivel) / ECO.xpNivel));
-  const frac = F.fase === 'fiesta' ? 1 : F.fase === 'vacia' ? Math.max(0, F.vacia / 0.4) : dentro;
+  const lleno = F.lleno, frac = F.frac;
   // la sombra y el fondo del cristal
   finCapsula(c, x0, y0 + 4, x1, y1 + 4); c.fillStyle = OL; c.fill();
   finCapsula(c, x0, y0, x1, y1); const fondo = c.createLinearGradient(0, y0, 0, y1); fondo.addColorStop(0, '#2a2248'); fondo.addColorStop(1, '#120c24'); c.fillStyle = fondo; c.fill();
@@ -174,13 +181,13 @@ function finPaseDibuja(dt) {
     const onda = F.fase === 'llena' ? 3.2 : 2;
     for (let y = iy0 - 2; y <= iy1 + 2; y += 2) c.lineTo(Math.min(ix1 + 4, xf + Math.sin(y * 0.38 + t * 7) * onda * Math.min(1, frac * 8)), y);
     c.lineTo(ix0 - 2, iy1 + 2); c.closePath(); c.save(); c.clip();
-    const sw = 13, paso = sw * FINP_COL.length, mueve = (t * 26) % paso;
+    const sw = th * 0.38, paso = sw * COL.length, mueve = (t * 26) % paso;
     for (let k = -2; ix0 - th + k * sw - mueve < xf + th; k++) {
       const bx = ix0 + k * sw + mueve - th;
       c.beginPath();
       for (let y = iy0 - 2; y <= iy1 + 2; y += 3) c.lineTo(bx + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k) * 2.2, y);
       for (let y = iy1 + 2; y >= iy0 - 2; y -= 3) c.lineTo(bx + sw + 0.6 + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k + 0.6) * 2.2, y);
-      c.closePath(); c.fillStyle = FINP_COL[((k % 7) + 7) % 7]; c.fill();
+      c.closePath(); c.fillStyle = COL[((k % COL.length) + COL.length) % COL.length]; c.fill();
     }
     // volumen: luz arriba y sombra abajo, como un líquido dentro de un tubo
     const vol = c.createLinearGradient(0, iy0, 0, iy1); vol.addColorStop(0, 'rgba(255,255,255,0.42)'); vol.addColorStop(0.35, 'rgba(255,255,255,0.05)'); vol.addColorStop(0.7, 'rgba(32,16,44,0.05)'); vol.addColorStop(1, 'rgba(32,16,44,0.45)');

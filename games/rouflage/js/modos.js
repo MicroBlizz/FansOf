@@ -46,6 +46,10 @@ const AJUSTES_SALA = {
     opciones: [{ v: 3, nombre: '3' }, { v: 5, nombre: '5' }, { v: 8, nombre: '8', def: true }] },
   g: { nombre: 'GANAN LOS BECARIOS', texto: 'Al despedir a más de la mitad de los colados, o solo si los despiden a todos.', amigos: true,
     opciones: [{ v: 1, nombre: 'MÁS DE LA MITAD', def: true }, { v: 0, nombre: 'DESPEDIR A TODOS', solo: true }] },
+  // los TALENTOS (talentos-partida.js): con ellos cada uno lleva su habilidad; sin ellos, nadie (la granada, como siempre). En BUSCAR PARTIDA lo elige
+  // cada jugador y son colas separadas (servidor/64-rouflage-pvp-talentos.sql); el servidor lo pone en el modo de la sala como a.t
+  t: { nombre: 'TALENTOS', texto: 'Con talentos, cada uno lleva la habilidad que eligió (y los bots, una al azar). En el clásico, nadie lleva habilidades.', amigos: true,
+    opciones: [{ v: 0, nombre: 'CLÁSICO', def: true, solo: true }, { v: 1, nombre: 'CON TALENTOS', solo: true }] },
 };
 const ajusteSala = (a, k) => { const A = AJUSTES_SALA[k], v = a && a[k]; return A.opciones.some(o => o.v === v) ? v : A.opciones.find(o => o.def).v; };
 // cuántos becarios y cuántos en total tiene una sala con amigos (lo mismo que el servidor): los amigos caben siempre, aunque pasen de la cuenta
@@ -95,6 +99,7 @@ function modoPublico(d, semilla) {
   const otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz && !m.x[k]);
   if (az(3) < 0.5 && otros.length) m.x[otros[Math.floor(az(4) * otros.length)]] = 1;
   Object.keys(AJUSTES_SALA).forEach((k, i) => { if (AJUSTES_SALA[k].amigos) return; const o = AJUSTES_SALA[k].opciones; m.a[k] = o[Math.floor(az(10 + i) * o.length)].v; });
+  if (d && d.a && d.a.t === 1) m.a.t = 1;      // la cola CON TALENTOS (la elige cada jugador, no el azar)
   return m;
 }
 // en solitario (y para probar): ?modo=contagio&extras=apagon

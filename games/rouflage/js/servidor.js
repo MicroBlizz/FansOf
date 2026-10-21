@@ -36,7 +36,8 @@ const RFS = (() => {
     const a = armarioEstado(), e = est.estado || {};
     oculta(SAVE, 'gotas', est.gotas); oculta(SAVE, 'acciones', est.acciones);
     for (const k of ['pase', 'eco', 'diario', 'tienda', 'gacha']) oculta(SAVE, k, e[k]);
-    if (typeof misionesDelServidor === 'function') misionesDelServidor(e);      // lo cobrado de misiones y logros (misiones.js)
+    if (typeof misionesDelServidor === 'function') misionesDelServidor(e);
+    if (typeof talentosDelServidor === 'function') talentosDelServidor(e);      // la experiencia de los talentos (talentos-datos.js)      // lo cobrado de misiones y logros (misiones.js)
     const antes = nColeccion; nColeccion = (est.coleccion || []).length;
     if (antes !== null && nColeccion > antes) avisaCuenta();      // el primer cosmético que consigue un invitado
     oculta(a, 'tengo', est.coleccion || []);

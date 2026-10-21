@@ -1,5 +1,5 @@
 // Fans of Rouflage · TEXTOS: en el código y en la página van en español; su inglés está en idioma/en.js (lo carga NUCLEO.juego).
-// El idioma se elige como en los demás juegos: el guardado (`fansof-idioma`) o, si no hay, el del navegador. Para probar: ?idioma=en
+// El idioma se elige como en los demás juegos: el guardado (`fansof-idioma`) o, si no hay, el del navegador. Para probar: el botón de idioma de Opciones (cambiaIdioma), el panel DEV o localStorage 'fansof-idioma' = 'en' (no hay ?idioma=).
 'use strict';
 
 

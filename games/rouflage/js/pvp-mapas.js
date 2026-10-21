@@ -34,3 +34,19 @@ function pvpPintaMapas(d, soyAnf) {
   const sel = mapaDeSala(d);
   for (const b of caja.querySelectorAll('.mapa-mini')) { const si = b.dataset.mapa === sel; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
 }
+
+// BUSCAR PARTIDA (la sala pública): lo que se enseña es lo que de verdad se jugará. Con la semilla (al arrancar la sala) se sabe todo: modoPublico
+// (modos.js), y el mapa, el de la semilla. Antes solo se sabe lo que puso el servidor (el modo, la luz y algún extra): las reglas, la luz si no vino
+// el modo y un posible extra más se sortean al empezar, así que no se enseñan. Las filas solo de amigos (BECARIOS, COLADOS, GANAN y TALENTOS) nunca.
+function salaPublicaModo(i) {
+  const d0 = i && i.modo;
+  if (i && i.semilla != null) { const d = modoPublico(d0, i.semilla); d.mapa = mapaDeSala(d0) || mapaDeSemilla(i.semilla); return { d, sabe: true, luz: true }; }
+  const fijo = !!(d0 && MODOS[d0.m]);
+  return { d: { m: fijo ? d0.m : '', x: Object.assign({}, d0 && d0.x), a: {}, mapa: mapaDeSala(d0) || undefined }, sabe: false, luz: fijo };
+}
+// esconde en #busca-extras lo que no toca (vp: lo de salaPublicaModo; null en la sala con amigos, que lo enseña todo)
+function salaPublicaFiltra(ex, vp) {
+  for (const b of ex.querySelectorAll('.luz-b[data-aj]')) b.closest('.luz-sala').hidden = !!vp && (AJUSTES_SALA[b.dataset.aj].amigos || !vp.sabe);
+  const luz = E('luz-texto'); if (luz) luz.closest('.luz-sala').hidden = !!vp && !vp.luz;
+  for (const l of ex.querySelectorAll('label')) l.hidden = !!vp && !vp.sabe && !l.classList.contains('on');      // los extras apagados aún pueden tocar
+}

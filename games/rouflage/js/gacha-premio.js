@@ -24,8 +24,9 @@ function gachaPremio(sale) {
     G.timers.push(setTimeout(gpTermina, 650));
   } else {
     const n = k => sale.filter(x => x.it.r === k).length, nuevos = sale.filter(x => x.nuevo).length;
-    const resumen = ['legend', 'epica', 'rara', 'comun'].filter(n).map(k => `<span class="gp-r-${k}">${n(k)} ${esc(tr(RAREZA_AR[k]))}</span>`);
-    if (nuevos) resumen.push(`<span class="gp-r-nuevo">${esc(tr('{n} nuevas', { n: nuevos }))}</span>`);
+    const PLURAL = { comun: '{n} Comunes', rara: '{n} Raras', epica: '{n} Épicas', legend: '{n} Legendarias' };      // «1 Rara · 3 Comunes»
+    const resumen = ['legend', 'epica', 'rara', 'comun'].filter(n).map(k => `<span class="gp-r-${k}">${esc(n(k) === 1 ? '1 ' + tr(RAREZA_AR[k]) : tr(PLURAL[k], { n: n(k) }))}</span>`);
+    if (nuevos) resumen.push(`<span class="gp-r-nuevo">${esc(nuevos === 1 ? tr('1 nueva') : tr('{n} nuevas', { n: nuevos }))}</span>`);
     cab.innerHTML = `<b class="ol">${esc(tr('TIRADA x{n}', { n: sale.length }))}</b><small>${resumen.join(' · ')}</small>`;
     // arriba, mientras se destapan, una cápsula grande que espera a la mejor; al final, la mejor en su carta
     const foco = document.createElement('div'); foco.className = 'gp-foco'; foco.id = 'gacha-foco'; res.appendChild(foco);

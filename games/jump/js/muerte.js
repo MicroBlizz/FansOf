@@ -24,7 +24,8 @@ function empiezaMuerte(motivo) {
   const barro = motivo === 'ola', lado = c.x > PAN.W / 2 ? -1 : 1;
   Object.assign(M, { activa: true, t: 0, x: c.x, wy: c.wy, barro, lado, burbujas: [], manchas: [], aplasta: 0, plaf: false });
   // los amigos de la espalda salen despedidos, cada uno hacia un lado
-  M.amigos = JUEGO.cuestas.slice(-3).map((id, i, a) => ({ id, x: c.x, wy: c.wy, z: 26 + i * 8, vx: (i - (a.length - 1) / 2) * 30 + azar(-6, 6) || azar(-20, 20), vwy: azar(-8, 14), vz: azar(45, 65), giro: 0, vgiro: azar(-8, 8), flota: false, fase: Math.random() * 6 }));
+  M.amigos = JUEGO.cuestas.slice(-3).map((id, i) => ({ id, x: c.x, wy: c.wy, z: 26 + i * 8, vx: (i % 2 ? 1 : -1) * (32 + Math.floor(i / 2) * 20) + azar(-4, 4), vwy: azar(-4, 10),   // a los lados, nunca delante de su cara
+    vz: azar(45, 65), giro: 0, vgiro: azar(-8, 8), flota: false, fase: Math.random() * 6 }));
   // las gotas, del color del agua donde cae (más turbia cerca de la ola)
   const agua = barro ? '#9a6a40' : colorAgua(c.wy), brillo = barro ? '#d8a878' : colorAgua(c.wy, 0.85, 1);
   for (let i = 0; i < 26; i++) {

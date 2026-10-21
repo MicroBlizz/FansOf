@@ -22,6 +22,7 @@ function avanzaFx(dt) {
     if (f.t === 'gota' || f.t === 'gotaG') { f.x += f.vx * dt; f.wy += f.vy * dt; f.z += f.vz * dt; f.vz -= 160 * dt; if (f.z < 0) { f.v = 0; if (f.t === 'gotaG' && Math.random() < 0.4) onda(f.x, f.wy, 2.5, 'rgba(255,255,255,0.6)'); } }
     else if (f.t === 'estrella' || f.t === 'corazon') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.92; f.vy *= 0.92; f.giro = (f.giro || 0) + dt * 5; }
     else if (f.t === 'texto') f.wy += dt * 16;
+    else if (f.t === 'burbuja') f.wy += dt * 3;
     else if (f.t === 'petalo') { f.x += f.vx * dt; f.wy += f.vy * dt; f.vx *= 0.94; f.vy = f.vy * 0.94 - 14 * dt; f.giro += dt * 7; }
   }
   for (let i = FX.length - 1; i >= 0; i--) if (FX[i].v <= 0) FX.splice(i, 1);
@@ -67,6 +68,7 @@ function pintaFx(capa) {
     }
     else if (f.t === 'estrella') { G.globalAlpha = Math.min(1, f.v / f.v0 * 2); estrellaForma(f.x, y, f.r, f.giro, f.color); G.globalAlpha = 1; }
     else if (f.t === 'petalo') { G.globalAlpha = Math.min(1, f.v * 2); aqui(f.x, y - 8, f.giro, 1, Math.abs(Math.sin(f.giro)) * 0.6 + 0.4, () => elipse(0, 0, f.r, f.r * 0.6, f.color, 'rgba(200,120,150,0.5)', 0.3)); G.globalAlpha = 1; }
+    else if (f.t === 'burbuja') { const k = 1 - f.v / f.v0; G.globalAlpha = 1 - k; elipse(f.x, y - k * 4, 1 + k * 1.6, 1 + k * 1.6, 'rgba(230,255,250,0.5)', '#ffffff', 0.5); G.globalAlpha = 1; }
     else if (f.t === 'corazon') { G.globalAlpha = Math.min(1, f.v * 2); corazonForma(f.x, y, f.r, '#ff7aa8'); G.globalAlpha = 1; }
     else if (f.t === 'texto') {
       const k = 1 - f.v / f.v0, s = k < 0.15 ? 0.6 + k / 0.15 * 0.5 : 1.1 - Math.min(0.1, (k - 0.15));

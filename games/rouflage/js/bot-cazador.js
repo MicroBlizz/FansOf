@@ -77,7 +77,7 @@ function senueloCerca(e, dt) {
   const b = e.bot; b.tSenuelo -= dt;
   if (b.tSenuelo > 0 || b.falsos >= 2 || e.balas <= 2 || e.enfria > 0) return false;
   b.tSenuelo = rand(7, 13);
-  const g = senueloGarabato(e); if (g) { sospecha(e, g); return true; }      // un garabato pintado por un colado
+  const g = senueloGarabato(e) || talSenueloBot(e); if (g) { sospecha(e, g); return true; }      // (y los señuelos pintados: talentos-partida.js)      // un garabato pintado por un colado
   const m = MUEBLES.find(m => m.T.senuelo && lejos(e.x, e.y, m.x, m.y) > 60 && veCazador(e, m.x, m.y - 6));
   if (!m || Math.random() > 0.55) return false;
   sospecha(e, { senuelo: true, x: m.x, y: m.y, hielo: 1, nombre: tr(NOMBRE_SENUELO[m.t]) });
@@ -88,6 +88,7 @@ function disparaBot(e) {
   const b = e.bot, k = b.objetivo; let [x, y] = b.punto;
   e.enfria = REGLAS.enfria; e.alerta = 0;
   if (k.senuelo) {
+    if (k.talSen) talSenueloRompe(k.talSen, e);
     fxDisparo(e, x, y); fxMancha(x, y); e.balas--; b.falsos++; e.pts.fallos++; e.ciego = REGLAS.ciego; e.enfria = REGLAS.enfriaFallo; play('clank');
     if (J.pvp) rfpTiroIA(e, x, y, null, 2);
     avisa(tr('{a} ha despedido a {b}. Despido improcedente.').replace('{a}', e.nombre).replace('{b}', k.nombre), 'bueno');
@@ -129,10 +130,10 @@ function piensaCazador(e, dt) {
     const d = veCazador(e, k.x, k.y - 8); let s = b.sosp.get(k) || 0;
     if (d) {
       k.enVista = true;
-      let nivel = loQueCanta(k) / (minimoVista(d, b.atento) * (k.hielo < 0.85 ? 1 : ojoPara(b, k)));
+      let nivel = loQueCanta(k) / (minimoVista(d, b.atento) * (k.hielo < 0.85 ? 1 : ojoPara(b, k))) * (e.uv > 0 && k.hielo >= 0.85 ? TALENTOS.uvVista : 1);      // la linterna ultravioleta (talentos) ve mejor la pintura
       if (k.hielo >= 0.85 && d < 45) nivel = Math.max(nivel, 0.35 + 0.8 * (1 - d / 45));   // pegado a él, hasta el mejor camuflaje se nota (el contorno, la sombra)
       if (k.hielo >= 0.85 && k.camo >= 100 && d < 110) nivel = Math.max(nivel, 0.5 + 0.8 * (1 - d / 110));   // al 100 % le brilla el contorno, como al cazador de carne y hueso (dibujo.js): se acerca a mirar y, de cerca, lo ve
-      if (nivel > s) s = Math.min(1.3, s + (nivel - s) * (k.hielo < 0.85 ? 3 : 1.4) * dt + 0.02 * dt);
+      if (nivel > s) s = Math.min(1.3, s + (nivel - s) * (k.hielo < 0.85 && !(k.gato > 0) ? 3 : 1.4) * dt + 0.02 * dt);
       else s = Math.max(nivel, s - 0.2 * dt);
       if (d < 14 && e.moviendo && !b.pisados.has(k)) { b.pisados.add(k); s = Math.max(s, 0.55); }   // se ha tropezado con él: se para a mirar
     } else s = Math.max(0, s - 0.14 * dt);

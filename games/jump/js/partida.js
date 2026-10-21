@@ -11,6 +11,7 @@ const CENTRO_PERFECTO = 0.3;
 const GIRO_MAX = 1.1;      // lo más que se gira el conejo hacia un lado (radianes)
 const RACHA_SEG = 1.1;     // si vuelves a saltar antes de esto, la racha sigue
 const FIEBRE_SEG = 6;
+const ROMPE_SEG = 2;       // lo que aguanta encima un tronco agrietado (generoso: da tiempo a pensar el salto)
 
 const JUEGO = {
   modo: 'menu', t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [],
@@ -26,15 +27,15 @@ const poder = id => llevo(id) && tengoAmigo(id);
 function nuevaPartida(modo = 'menu') {
   const x = PAN.W / 2;
   CAM.y = -PAN.H * 0.3;
-  preparaAzar();
+  preparaAzar(); reiniciaFiesta(); reiniciaFauna();
   const t = reiniciaRio(x, preparaTuto());
   Object.assign(JUEGO, {
     modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
-    racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, cadena: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, reloj: 0, cohete: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
-  reiniciaOla(0); reiniciaDron(); acabaMuerte();
+  reiniciaOla(0); reiniciaDron(); acabaMuerte(); ROTURA.trozos.length = ROTURA.astillas.length = ROTURA.serrin.length = 0;
   FX.length = 0; LETREROS.length = 0;
   APUNTA.activo = false;
   preparaMetas();
@@ -93,7 +94,7 @@ function aterriza() {
   c.salto = null; c.x = s.x1; c.wy = s.wy1;
   let mejor = null, d = 1;
   const margen = 1 + facilidad(c.wy) * 5;   // al caer se perdona un poco el borde (más al principio)
-  for (const t of RIO.troncos) { const v = dentroTronco(t, c.x, c.wy, margen); if (v <= d) { d = v; mejor = t; } }
+  for (const t of RIO.troncos) { if (!troncoPisable(t)) continue; const v = dentroTronco(t, c.x, c.wy, margen); if (v <= d) { d = v; mejor = t; } }
   if (!mejor) return alAgua();
   const r = Math.sqrt(d);
   c.tronco = mejor; c.ultimo = mejor; c.ox = c.x - mejor.x; c.owy = c.wy - mejor.wy; c.cae = 1;
@@ -105,7 +106,7 @@ function aterriza() {
   for (const id of J.cuestas) J.viajes[id] = (J.viajes[id] || 0) + 1;
   // el tronco embarrado por el dron: resbalas (se cae un amigo y adiós racha)
   const resbala = mejor.barro;
-  if (resbala) { J.racha = 0; J.perfSeguidos = 0; aviso(tr('¡Resbala!'), c.x - 20, c.wy + 22, '#c99060', 10); vibra(50); }
+  if (resbala) { J.racha = 0; J.perfSeguidos = 0; J.cadena = 0; aviso(tr('¡Resbala!'), c.x - 20, c.wy + 22, '#c99060', 10); vibra(50); }
   if ((r > BORDE_UY || resbala) && J.cuestas.length) {
     if (poder('zorro') && !J.zorroUsado) { J.zorroUsado = true; aviso(tr('¡SlyFox lo esquiva!'), c.x, c.wy + 14, '#ffb37a', 9); }
     else {
@@ -119,16 +120,18 @@ function aterriza() {
     mejor.pisado = true; J.saltos++;
     let p = puntosPor(10);
     if (r < CENTRO_PERFECTO && !resbala) {
-      p += puntosPor(5); J.perfectos++; J.perfSeguidos++;
+      p += puntosPor(5); J.perfectos++; J.perfSeguidos++; J.cadena++;
+      if (J.fiebre > 0) J.fiebre = FIEBRE_SEG;   // encadenando ¡Perfecto! la Fiebre no se acaba (y la fiesta crece: fiesta.js)
       aviso(tr('¡Perfecto!'), c.x, c.wy + 26, '#ffe066', 11); estrellas(c.x, c.wy); petalos(c.x, c.wy, 10); SONIDO.perfecto(); vibra(25);
       if (J.perfSeguidos >= 3 && J.fiebre <= 0) enciendeFiebre();
-    } else J.perfSeguidos = 0;
+    } else { J.perfSeguidos = 0; J.cadena = 0; }
     if (poder('ardilla')) p += 5;
     J.puntos += p;
     aviso('+' + p, c.x + 16, c.wy + 6, J.fiebre > 0 ? '#ffd0f0' : '#fff8ea', 9);
   }
   if (mejor.zanas) cogeZanas(mejor, c.x, c.wy);
   if (mejor.objeto) cogeObjeto(mejor, c.x, c.wy);
+  alCaerEspecial(mejor);   // la peonza (fauna.js)
   if (mejor.tipo === 'muelle') { c.muelle = true; mejor.boing = 1; aviso(tr('¡Boing!'), c.x, c.wy + 34, '#ff9ac8', 11); SONIDO.racha(); vibra(30); }
   const rescate = mejor.amigo;
   if (mejor.amigo) {
@@ -144,6 +147,7 @@ function aterriza() {
   compruebaMisiones();
   apuntaHuella(c.x, c.wy);
   tutoCae(r < CENTRO_PERFECTO, rescate);
+  if (mejor.final) empiezaFinal();   // el último tronco, delante de la madriguera: el final verdadero (final.js)
 }
 
 function cogeZanas(tr, x, wy) {
@@ -178,8 +182,17 @@ function acaba(motivo) {
   const J = JUEGO, c = J.conejo;
   if (J.modo === 'fin') return;
   J.modo = 'fin'; J.tFin = 0; c.salto = null; c.tronco = null;
-  const record = J.puntos > GUARDA.mejor;
+  apuntaPartida(motivo);
+  J.temblor = GUARDA.suave ? 0 : 0.3;
+  empiezaMuerte(motivo);
+  SONIDO.chof();
+  APUNTA.activo = false;
+}
+// lo que se apunta al acabar (al caer o al llegar a la madriguera: final.js): récord, ranking, misiones y zanahorias
+function apuntaPartida(motivo) {
+  const J = JUEGO, record = J.puntos > GUARDA.mejor;
   cierraRetoYHuella(record);
+  if (record) { GUARDA.mejorSeg = J.t - FANTASMA.t0; subeMarca(J.puntos, J.metros, GUARDA.mejorSeg); }   // al ranking mundial (ranking.js)
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
   GUARDA.partidas++; GUARDA.rescatados += J.rescatados;
   const premio = cierraMisiones();
@@ -187,26 +200,26 @@ function acaba(motivo) {
   GUARDA.zanas += J.ganadas;
   salvaGuarda();
   J.fin = { motivo, record, llevaba: J.cuestas.length, premio };
-  J.temblor = GUARDA.suave ? 0 : 0.3;
-  empiezaMuerte(motivo);
-  SONIDO.chof();
-  APUNTA.activo = false;
+  acabaPrueba();   // la piel que probabas con un anuncio se devuelve (anuncios.js)
 }
 
 function avanzaJuego(dt) {
   const J = JUEGO, c = J.conejo;
   if (J.lento > 0) { J.lento -= dt; dt *= 0.35; }   // al caer, un instante a cámara lenta
+  if (J.reloj > 0 && J.modo === 'juego') { J.reloj = Math.max(0, J.reloj - dt); dt *= 0.5; }   // el reloj de arena (objetos.js)
   avanzaMuerte(dt);
   J.t += dt; J.temblor = Math.max(0, J.temblor - dt); c.cae = Math.max(0, c.cae - dt * 5);
   if (c.tronco) J.enTronco += dt;
-  // el tronco agrietado: si te quedas encima más de 1,7 s, se hunde contigo
+  // el tronco agrietado: se rompe muy rápido; si sigues encima a los ROMPE_SEG, se parte en dos y caes al agua
   if (c.tronco && c.tronco.tipo === 'hunde' && J.modo === 'juego') {
     c.tronco.pisa += dt;
-    if (c.tronco.pisa > 1.7) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; onda(t.x, t.wy, t.r); salpica(t.x, t.wy, 12, 'rgba(255,255,255,0.95)'); alAgua(); }
+    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua(); }   // rotura.js
   }
   avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
   if (J.modo === 'juego') { avanzaObjetos(dt); avanzaDron(dt); }
+  avanzaRotura(dt);
   avanzaRio(dt);
+  avanzaFauna(dt);   // la tortuga, la peonza, los animales del río y el paisaje (fauna.js y paisaje.js)
   if (c.salto) {
     const s = c.salto;
     s.t += dt;
@@ -215,7 +228,7 @@ function avanzaJuego(dt) {
     // la estela: la comprada en cada salto; el arcoíris, en la racha y en la Fiebre
     const tipo = J.fiebre > 0 || (J.racha >= 3 && GUARDA.estela === 'arcoiris') ? 'arcoiris' : GUARDA.estela !== 'arcoiris' ? GUARDA.estela : null;
     if (tipo) estela(c.x, c.wy, Math.sin(Math.PI * k) * s.alto, tipo);
-    if (k >= 1) aterriza();
+    if (k >= 1) { if (J.modo === 'final') llegaMadriguera(); else aterriza(); }
   } else if (c.tronco) { c.x = c.tronco.x + c.ox; c.wy = c.tronco.wy + c.owy; }
   // al apuntar, el conejo se gira hacia donde va a saltar; quieto, vuelve poco a poco a mirar al frente
   const s = APUNTA.activo && saltoApuntado();
@@ -231,11 +244,12 @@ function avanzaJuego(dt) {
     cruzaMetas();
   }
   if (J.modo === 'fin') { J.tFin += dt; c.hunde = Math.min(1, c.hunde + dt * 1.4); }
-  // la cámara solo sube: el conejo va por debajo del centro de la pantalla
-  const camObj = c.wy - PAN.H * 0.36;
+  if (J.modo === 'final') J.tFin += dt;
+  // la cámara solo sube: el conejo va por debajo del centro de la pantalla (en el final, la madriguera en lo alto: final.js)
+  const camObj = J.modo === 'final' ? camaraFinal() : c.wy - PAN.H * 0.36;
   if (camObj > CAM.y) CAM.y += (camObj - CAM.y) * Math.min(1, dt * 3);
   generaRio(CAM.y + PAN.H + 140);
-  avanzaFx(dt); avanzaHumo(dt); avanzaBonito(dt);
+  avanzaFx(dt); avanzaHumo(dt); avanzaBonito(dt); avanzaFiesta(dt);
   for (const f of J.caen) { f.x += f.vx * dt; f.z += f.vz * dt; f.vz -= 160 * dt; f.giro += dt * 6; f.v -= dt; if (f.z < 0 && !f.chof) { f.chof = true; onda(f.x, f.wy, 5); salpica(f.x, f.wy, 5, 'rgba(255,255,255,0.9)'); } }
   J.caen = J.caen.filter(f => f.v > 0 && f.z > -12);
 }

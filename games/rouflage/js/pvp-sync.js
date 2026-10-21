@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · PvP, LA SINCRONÍA: lo que se manda por el canal de la sala y qué se hace con lo que llega. Cada jugador lleva su personaje y avisa de dónde está (e);
 // los demás lo ven como una copia que se mueve suave hacia ese punto. La piel pintada se manda una sola vez, al congelarse (p). El ANFITRIÓN manda cómo van los personajes de la máquina,
 // el reloj y la fase (a, fa), decide los disparos (tq → t) y el final (fn). Silbidos (s), «¡listo!» (l) y rendirse (rd) los manda cada uno.
-// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que lleva · fg dónde está un fantasmas del armario · gs un gesto.
+// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que lleva · fg dónde está un fantasmas del armario · gs un gesto · ch una frase rápida del chat.
 'use strict';
 
 const rfpManda = m => { if (RFP.canal && RFP.activo) RFP.canal.enviar(Object.assign({ de: RFP.yo }, m)); };
@@ -86,8 +86,10 @@ function rfpRecibe(m) {
     case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
     case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
     case 'fp': rfpPoderRecibido(m); break;
+    case 'hb': case 'tl': talRecibe(sl, m); break;      // las habilidades (talentos-partida.js)
     case 'fg': fantasmaRecibido(sl, m); break;
     case 'bz': balizaRecibida(m, sl); break;
+    case 'ch': chatRecibido(sl, m); break;      // una frase rápida del chat (chat-partida.js)
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
     case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;
@@ -133,7 +135,7 @@ function rfpSigueFase(f, reloj) {
   if (typeof reloj === 'number') J.reloj = reloj;
 }
 // lo que llevas del armario (armario.js): se manda al entrar (q: que los demás contesten con lo suyo) y al empezar la cuenta atrás. Sin armario, solo se pregunta
-function rfpMandaRopa(q) { const r = ropaPartida(); if (r) rfpManda(q ? { t: 'rp', r, q: 1 } : { t: 'rp', r }); else if (q) rfpManda({ t: 'rp', q: 1 }); }
+function rfpMandaRopa(q) { talMandaHab(); const r = ropaPartida(); if (r) rfpManda(q ? { t: 'rp', r, q: 1 } : { t: 'rp', r }); else if (q) rfpManda({ t: 'rp', q: 1 }); }
 // el anfitrión cambia de fase (lo llama cambiaFase): se lo cuenta a todos y, al salir a la caza, repite las pieles por si alguien no las tenía
 function rfpFase(f) {
   if (!RFP.activo) return;
@@ -231,6 +233,7 @@ function rfpResuelve(h, x, y, margen) {
   else if (J.camaleones.some(c => !c.fuera && !invisible(c) && c.hielo < 0.85 && (c.moviendo || c.movido > 0) && lejos(c.x, c.y - 24, x, y) < 60)) r.cs = 1;
   else {
     h.balas--; h.pts.fallos++;
+    const sd = talSenueloEn(x, y, margen); if (sd) r.sd = sd.id;      // un señuelo pintado (talentos): despido improcedente
     const mi = MUEBLES.findIndex(m => m.T.senuelo && x > m.dib.x0 + 8 && x < m.dib.x0 + m.dib.w - 8 && y > m.dib.y0 && y < m.y + 2);
     if (mi >= 0) { r.cs = 3; r.sn = mi; }
   }
@@ -248,6 +251,7 @@ function rfpAplicaTiro(r) {
     fxDisparo(h, r.x, r.y);
   }
   if (k) { if (!k.fuera) despide(k, h); }
+  else if (r.sd) { talSenueloRompe(r.sd, h, true); if (mio) { h.ciego = REGLAS.ciego; h.enfria = REGLAS.enfriaFallo; J.cuenta.fallos++; CAM.tiembla = 0.18; play('deny'); } else h.ciego = REGLAS.ciego; h.balas = r.b; refrescaHud(true); return; }
   else { fxMancha(r.x, r.y); play(r.cs === 1 ? 'gun' : 'clank'); }
   if (mio) {
     if (r.cs <= 1) h.enfria = REGLAS.enfria * 0.7;

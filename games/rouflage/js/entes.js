@@ -72,7 +72,7 @@ function avanzaEnte(e, dt) {
   const v = Math.hypot(e.vx, e.vy), corre = !e.congelado && v >= 0.05;
   if (e.clase === 'camaleon') aguanta(e, dt, corre);
   if (!corre) { e.moviendo = false; return; }
-  const vel = (e.clase === 'cazador' ? REGLAS.velCazador : REGLAS.velCamaleon) * e.prisa * (e.cansado ? REGLAS.cansado : 1) * dt, ax = e.x, ay = e.y;
+  const vel = (e.clase === 'cazador' ? REGLAS.velCazador : REGLAS.velCamaleon) * e.prisa * (e.cansado ? REGLAS.cansado : 1) * (e.cafe > 0 ? TALENTOS.cafeVel : 1) * dt, ax = e.x, ay = e.y;
   mueve(e, e.vx * vel, e.vy * vel);
   e.moviendo = lejos(ax, ay, e.x, e.y) > vel * 0.2;
   if (Math.abs(e.vx) > 0.2) e.mira = e.vx > 0 ? 1 : -1;
@@ -109,7 +109,7 @@ function aguanta(e, dt, corre) {
   if (e.cansado && corre && e.invis <= 0 && Math.random() < dt * 2) fxSudor(e);
 }
 // lo que «canta» un camaleón ahora mismo, de 0 (no se distingue) a 1 (se le ve entero): sin congelar se le ve el contorno
-const loQueCanta = k => (k.hielo < 0.85 ? (k.moviendo || k.movido > 0 ? 1 : 0.85) : k.vis);
+const loQueCanta = k => (k.hielo < 0.85 ? (k.gato > 0 ? 0.15 : k.moviendo || k.movido > 0 ? 1 : 0.85) : k.vis);      // con pasos de gato (talentos) andar no le delata
 
 // silbar: una onda que se ve y se oye. A los cazadores no les dice el punto exacto, solo la zona.
 function silba(e, forzado) {

@@ -15,7 +15,7 @@ function chispas(x, y, col, n, v = 220) { for (let i = 0; i < n; i++) { const a 
 // Explosión grande de verdad: destello blanco, bolas de fuego, chispas largas, ascuas, humo, ondas, luz en el fondo y restos del propio sprite.
 function explota(x, y, tam, o = {}) {
   const n = tam / 24, col = o.col || '#ff9a3c', vt = Math.min(tam, 110);   // las bolas de fuego no crecen sin límite: si no, las muertes grandes se queman a blanco
-  luz(x, y, vt * 7, '#ffb347', Math.min(0.9, 0.45 + n * 0.1), 0.35 + n * 0.04);
+  luz(x, y, vt * 6, '#ffb347', Math.min(0.55, 0.3 + n * 0.07), 0.35 + n * 0.04);
   bola(x, y, vt * 1.4, 0.18); bola(x, y, vt * 0.8, 0.1);
   for (let i = 0; i < 3 + Math.min(n, 5); i++) bola(x + rnd(-vt, vt) * 0.5, y + rnd(-vt, vt) * 0.5, vt * rnd(0.6, 1.2), rnd(0.45, 0.95), rnd(-40, 40), rnd(-40, 40));
   const cols = ['#fff6c0', '#ffc04a', '#ff6a2a', col];

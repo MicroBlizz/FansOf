@@ -4,7 +4,7 @@
 // el final: título, estrellas, el mapa con dónde estaba cada uno y las cifras
 function muestraFin() {
   const r = J.resultado; if (!r) return;
-  E('fin-titulo').textContent = r.titulo; E('fin-titulo').classList.toggle('mal', !r.victoria); E('fin-sub').textContent = r.sub;
+  E('fin-titulo').textContent = r.titulo; E('fin-titulo').classList.toggle('mal', !r.victoria && !r.bando); E('fin-sub').textContent = r.sub;
   E('fin-estrellas').innerHTML = [0, 1, 2].map(i => ESTRELLA.replace('<svg', i < r.estrellas ? '<svg class="si"' : '<svg')).join('');
   E('fin-filas').innerHTML = r.filas.map(([a, b]) => `<span>${a}</span><b>${b}</b>`).join('') + `<div class="total"><span>${tr('PUNTOS')}</span><b>${r.puntos}</b></div>`;
   // la clasificación: todos (personas y bots) por puntos; tú resaltado
@@ -16,6 +16,7 @@ function muestraFin() {
   pintaMapaFinal(); galeriaPinta();
   pantalla('p-fin');
   finPaseMuestra(r);      // el tubo del pase que se llena y las Gotas (fin-pase.js)
+  talFinMuestra(r);      // y el del nivel de becario o de colado (talentos-fin.js)
 }
 const pintaRankingFin = ranking => ranking.map((f, i) => `<li class="${f.jugador ? 'yo' : ''}${f.fuera ? ' fuera' : ''}${marcoColor(f.marco) ? ' marco-ar' : ''}"${marcoColor(f.marco) ? ` style="border-color:${marcoColor(f.marco)}"` : ''}><span class="pos">${i + 1}</span><i class="${f.clase}"></i><span class="nom">${esc(f.nombre)}${tituloHtml(f.titulo)}<small>${esc(f.detalle)}</small></span><b>${f.puntos}</b></li>`).join('');      // con el marco y el título del armario (armario-partida.js)
 function pintaMapaFinal() {

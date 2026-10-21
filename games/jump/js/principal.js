@@ -34,6 +34,7 @@ async function arranca() {
   await cargaLamina();
   iniciaBonito();
   nuevaPartida();
+  setTimeout(subePendiente, 4000);   // la mejor marca que no esté aún en el ranking mundial
   document.getElementById('carga').hidden = true;
   const punto = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * PAN.W / r.width, (e.clientY - r.top) * PAN.H / r.height]; };
   cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); dedoBaja(...punto(e)); e.preventDefault(); });

@@ -243,6 +243,21 @@
   </div>
 </div>
 
+<!-- TALENTOS (talentos-pantalla.js): el nivel de becario y el de colado, y sus habilidades -->
+<div class="pantalla" id="p-talentos" hidden>
+  <div class="caja tal-caja">
+    <h2 class="ol" data-tr>TALENTOS</h2>
+    <div class="tal-pestanas" role="tablist">
+      <button type="button" class="tal-pest becario activa" id="b-tal-becario"><b data-tr>BECARIO</b><small id="tal-nv-becario"></small></button>
+      <button type="button" class="tal-pest colado" id="b-tal-colado"><b data-tr>COLADO</b><small id="tal-nv-colado"></small></button>
+    </div>
+    <div class="tal-cab"><div class="tal-tubo"><canvas id="tal-tubo" aria-hidden="true"></canvas></div><div class="tal-pie"><span id="tal-xp"></span><span id="tal-sig"></span></div></div>
+    <div class="tal-lista" id="tal-lista"></div>
+    <p class="tal-nota" id="tal-nota"></p>
+    <button type="button" class="boton peq" id="b-tal-volver" data-tr>Volver</button>
+  </div>
+</div>
+
 <!-- el premio diario (diario.js) -->
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">

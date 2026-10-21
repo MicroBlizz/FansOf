@@ -69,6 +69,7 @@ function piensaCamaleon(e, dt) {
 
 // la granada cegadora de la máquina: cuando cree que le van a pillar (nervioso, o un becario sospecha ya de él) la lanza, en vez de sudar y temblar; una por partida
 function botGranada(e, dt) {
+  if (e.hab && e.hab !== 'granada') return habBotPeligro(e, dt);      // con otra habilidad (talentos-partida.js): señuelo, pasos de gato o cambiazo
   if (!(e.granada > 0) || J.fase !== 'caza' || Math.random() > dt * 3) return false;
   if (!lanzaGranada(e)) return false;
   // mientras es invisible hace algo para disimular: o se va a otro sitio, o se queda y se vuelve a pintar (para que no le reconozcan por cómo estaba)

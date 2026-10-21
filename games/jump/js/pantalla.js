@@ -48,13 +48,14 @@ function pintaConejo() {
     });
   };
   if (J.modo === 'fin' || J.modo === 'casi') {
-    // en el agua (muerte.js): se zambulle, asoma en su flotador y se mece; sin corona (le ha salido volando) y, al poco, sin capa
+    // en el agua (muerte.js): se zambulle y asoma en su flotador, mirando a la cámara, mareado (ojos en espiral) y meciéndose;
+    // sin corona (le ha salido volando) ni capa (flota a su lado)
     const h = hundeConejo();
-    spriteConejo.sinOro = MUERTE.activa; spriteConejo.sinCapa = MUERTE.activa && MUERTE.t > 0.5;
     flotadorConejo(false);
-    G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(c.x, y + h.baja * 46); G.rotate(h.giro); G.translate(-c.x, -y); dibuja(); G.restore();
+    G.save(); G.beginPath(); G.rect(0, 0, PAN.W, y + 3); G.clip(); G.translate(c.x, y + h.baja * 46); G.rotate(h.giro); G.translate(-c.x, -y);
+    if (MUERTE.activa) spriteConejo('flota' + Math.floor(t * 5) % 3, c.x, y, TAM_CONEJO); else dibuja();
+    G.restore();
     flotadorConejo(true);
-    spriteConejo.sinOro = spriteConejo.sinCapa = false;
     return;
   }
   dibuja();
@@ -105,14 +106,32 @@ function pintaPunteria() {
     elipse(x, y, max ? 1.9 : 1.6, max ? 1.9 : 1.6, arco ? ARCOIRIS[(i + Math.floor(JUEGO.t * 12)) % 7] : '#ffffff', OLC, 0.7);
   }
   G.globalAlpha = 1;
-  if (mira) { elipse(x1, y1, 7, 5, null, '#ffffff', 1.6); elipse(x1, y1, 7, 5, null, OLC, 0.5); iconoMirilla(x1, y1, 3); }
-  // la fuerza, a la derecha: una zanahoria que se llena de abajo arriba
-  const bx = PAN.W - 10, by = PAN.H * 0.3, bh = PAN.H * 0.3, lleno = bh * s.fuerza;
-  const zana = () => { G.beginPath(); G.moveTo(bx - 4.5, by); G.lineTo(bx + 4.5, by); G.lineTo(bx + 0.8, by + bh); G.lineTo(bx - 0.8, by + bh); G.closePath(); };
-  zana(); pinta('rgba(251,244,255,0.85)', OLC, 0.9);
-  G.save(); zana(); G.clip(); G.fillStyle = s.fuerza > 0.97 ? '#ff5a3a' : '#ff9a3c'; G.fillRect(bx - 5, by + bh - lleno, 10, lleno); G.restore();
-  zana(); pinta(null, OLC, 0.9);
-  for (const d of [-2.4, 0, 2.4]) elipse(bx + d, by - 3, 1.3, 3.2, '#6cc04a', OLC, 0.5, d * 0.2);
+  if (mira) { elipse(x1, y1, 7, 5, null, '#ffffff', 1.6); elipse(x1, y1, 7, 5, null, OLC, 0.5); iconoObjeto('mirilla', x1, y1, 3); }
+  pintaFuerza(s.fuerza, max);
+}
+// la fuerza, a la derecha: la zanahoria 3D de pie, en gris, que se llena de color desde la punta; con marcas al 25, 50 y 75 %
+// para calcular el salto, y al máximo brilla y suelta destellos
+const FUERZA = { x: 0, y: 0, alto: 0 };
+function pintaFuerza(f, max) {
+  // la zanahoria 3D de la fuerza (fuerza_icono): de pie, larga, con las hojas siempre verdes; el cuerpo se llena de la punta
+  // hacia arriba (lo que falta, en gris) y tiene marcas al 25, 50 y 75 %
+  const c = ATLAS.cuadros.fuerza_icono, t = JUEGO.t, HOJAS = 0.41;   // HOJAS: hasta dónde llegan las hojas (desde arriba)
+  if (!c || !laminaLista) return;
+  const alto = PAN.H * 0.34, w = alto * c[2] / c[3], x = PAN.W - 8 - w / 2, y = PAN.H * 0.22;
+  const arriba = y + alto * HOJAS, punta = y + alto, lleno = punta - (punta - arriba) * f;
+  const dibuja = () => G.drawImage(LAMINA, c[0], c[1], c[2], c[3], x - w / 2, y, w, alto);
+  const trozo = (y0, y1, fn) => { G.save(); G.beginPath(); G.rect(x - w, y0, w * 2, y1 - y0); G.clip(); fn(); G.restore(); };
+  if (max) { const g = G.createRadialGradient(x, (punta + arriba) / 2, 2, x, (punta + arriba) / 2, alto * 0.45); g.addColorStop(0, `rgba(255,230,140,${0.55 + Math.sin(t * 14) * 0.2})`); g.addColorStop(1, 'rgba(255,230,140,0)'); G.fillStyle = g; G.fillRect(x - alto * 0.45, y, alto * 0.9, alto); }
+  trozo(y - 2, arriba, dibuja);                                                                       // las hojas, siempre
+  trozo(arriba, lleno, () => { G.filter = 'grayscale(1) brightness(1.25)'; G.globalAlpha = 0.55; dibuja(); });   // lo que falta
+  trozo(lleno, punta + 4, dibuja);                                                                    // lo cargado
+  // las marcas: rayitas blancas con borde, a la izquierda de la zanahoria
+  [0.25, 0.5, 0.75].forEach(k => {
+    const yy = punta - (punta - arriba) * k, ya = f >= k;
+    trazo(x - w * 0.3 - 5, yy, x - w * 0.3 - 1, yy, 1.1, ya ? '#ffffff' : 'rgba(255,255,255,0.75)', OLC);
+    letras(Math.round(k * 100) + '', x - w * 0.3 - 6.5, yy + 0.3, 4.8, ya ? '#ffffff' : 'rgba(255,255,255,0.8)', { alin: 'right', borde: OLC, bw: 1.4 });
+  });
+  if (max) for (let i = 0; i < 3; i++) { const k = (t * 1.8 + i / 3) % 1; estrellita(x + Math.cos(i * 2.1 + t) * 4, arriba + (punta - arriba) * (1 - k), 2.4 * Math.sin(k * Math.PI), 0.95); }
 }
 
 function pintaMarcador() {
@@ -225,32 +244,40 @@ function pintaTodo() {
   G.save();
   if (J.temblor > 0) G.translate((Math.random() - 0.5) * 3 * J.temblor / 0.1, (Math.random() - 0.5) * 2 * J.temblor / 0.1);
   pintaRio(t);
+  pintaPradera(t);
+  pintaFans(t);
   pintaFx('agua');
+  pintaFauna(t);
   pintaMuerteAgua();
   pintaBonitoAgua(t);
   if (J.modo !== 'menu' && !PANEL.abierto) pintaMetas(t);
   pintaTroncos(t, J.conejo.tronco);
+  pintaRotura();
   pintaGuiaTuto(t);
   pintaCaen();
   pintaFantasma();
   pintaConejo();
+  pintaVienen();
   pintaMuerteAire(t);
   pintaDron(t);
   pintaOla(t);
   pintaFx('aire');
+  pintaNoche(t);
   pintaLuz(t);
-  pintaArco();
+  pintaArcos(t);
   if (!GUARDA.suave) pintaBonitoAire(t);
+  pintaFiestaAire(t);
   G.restore();
   pintaPunteria();
   pintaBanderas();
   if (J.modo === 'menu') pintaPortada();
   else if (J.modo === 'listo') pintaListo(t);
-  else pintaMarcador();
+  else if (J.modo !== 'final') pintaMarcador();
   pintaZanasVuelan();
   pintaManchas();
   pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
+  if (J.modo === 'final') pintaFinalVerdadero();
   pintaCasi();
   pintaPanel();
   pintaAnuncio();

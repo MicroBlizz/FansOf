@@ -5,9 +5,9 @@
 //   nivel). Al subir, las cosas del armario marcadas «Pase gratis · nv N» son tuyas; las «Pase premium · nv N», si tienes el premium
 //   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles (300 en total) y el premium otras 300 en los suyos
 //   (purpPremium): gratis + premium = 600, el precio del siguiente. Quien lo completa tiene el siguiente pagado, como en Rumble (PLAN-MONEDAS.md, el pase en bucle).
-// - ACCIONES: la moneda de la tienda del armario (cosméticos y pase premium). Se canjean por Gotas en la TIENDA (tienda.js), se compran por euros (de momento de prueba, sin cobrar) y salen también del pase gratis.
+// - ACCIONES: la moneda de la tienda del armario (cosméticos y pase premium). Se canjean por Gotas en la TIENDA (tienda.js), se compran por euros (de momento de prueba, sin cobrar) y salen también del pase (la pista gratis y la premium).
 //   El flujo: se juega, se ganan Gotas, las Gotas se cambian por Acciones y las Acciones compran cosméticos y el pase premium.
-// En el armario, lo que se compra con Gotas o Acciones lleva un botón COMPRAR. Todo se guarda en la partida: SAVE.gotas, SAVE.acciones,
+// En el armario, lo que se vende lleva un botón COMPRAR que abre la ventana de confirmar (armario-compra.js): se paga con Gotas o con Acciones, a elegir. Todo se guarda en la partida: SAVE.gotas, SAVE.acciones,
 // SAVE.pase = { xp, premium, purp: [niveles cobrados] } y SAVE.eco = { dia, gotasHoy }.
 'use strict';
 
@@ -33,28 +33,38 @@ function paseCosas() {
   return out.sort((a, b) => a.nv - b.nv);
 }
 // da todo lo que toca hasta el nivel actual (se puede llamar siempre: no repite nada). Devuelve lo nuevo, en texto
-// LOS HUECOS DEL PASE: los niveles sin cosmético ni Acciones dan Gotas (como el oro del pase de Rumble): ninguna casilla vacía, en la
-// pista gratis ni en la premium, y la premium da algo nada más comprarla (el nivel 1). Se calcula del catálogo al cargar y queda en ECO
-// (gotasGratis y gotasPremium: { nivel: Gotas }), así herramientas/rouflage_datos.js se lo pasa igual al servidor (servidor/54-*.sql)
-ECO.gotasHueco = { gratis: 50, premium: 100, premiumNv1: 250 };
+// LOS HUECOS DEL PASE: los niveles sin cosmético ni Acciones no se quedan vacíos (como el oro del pase de Rumble): en la pista gratis dan
+// Gotas y en la PREMIUM dan Acciones (lo mismo que antes en Gotas, al cambio de la tienda: 100 Gotas = 20 Acciones, y el nivel 1 da algo nada
+// más comprarla). Se calcula del catálogo al cargar y queda en ECO (gotasGratis: { nivel: Gotas } y accionesPremium: { nivel: Acciones }), así
+// herramientas/rouflage_datos.js se lo pasa igual al servidor (servidor/56-*.sql y 65-*.sql). Un hueco premium se cobra una sola vez (SAVE.pase.purpGP):
+// quien ya lo cobró en Gotas con la versión de antes no cobra además sus Acciones.
+ECO.gotasHueco = { gratis: 50 };
+ECO.accionesHueco = { premium: 20, premiumNv1: 50 };
 (() => {
   const cosas = paseCosas(), hay = (n, premium) => cosas.some(c => c.nv === n && c.premium === premium);
-  ECO.gotasGratis = {}; ECO.gotasPremium = {};
+  ECO.gotasGratis = {}; ECO.accionesPremium = {};
   for (let n = 1; n <= ECO.niveles; n++) {
     if (!hay(n, false) && !ECO.purpGratis[n]) ECO.gotasGratis[n] = ECO.gotasHueco.gratis;
-    if (!hay(n, true) && !ECO.purpPremium[n]) ECO.gotasPremium[n] = n === 1 ? ECO.gotasHueco.premiumNv1 : ECO.gotasHueco.premium;
+    if (!hay(n, true) && !ECO.purpPremium[n]) ECO.accionesPremium[n] = n === 1 ? ECO.accionesHueco.premiumNv1 : ECO.accionesHueco.premium;
   }
 })();
+// lo que da el pase si ya tienes la pieza (no debería pasar: lo del pase no se vende ni sale en el gachapón mientras dura, pero por si acaso):
+// las mismas Gotas que una repetida del gachapón de su rareza. SAVE.pase.dadas = las piezas del pase ya resueltas (dadas o pagadas)
+const paseRepetida = it => (GACHA.repetida && GACHA.repetida[it.r]) || 0;
 function paseReparte() {
   if (RFS.activo()) return [];      // con servidor lo reparte él (servidor.js)
   const p = ecoEstado(), a = armarioEstado(), nv = paseNivel(), nuevo = [];
+  if (!Array.isArray(p.dadas)) p.dadas = paseCosas().map(c => c.cat + ':' + c.it.id).filter(k => a.tengo.includes(k));      // las de antes de apuntarlas: ya estaban dadas
   for (const { cat, it, nv: n, premium } of paseCosas()) {
     if (n > nv || (premium && !p.premium)) continue;
-    const k = cat + ':' + it.id; if (!a.tengo.includes(k)) { a.tengo.push(k); nuevo.push(tr(it.n)); }
+    const k = cat + ':' + it.id; if (p.dadas.includes(k)) continue;
+    p.dadas.push(k);
+    if (!a.tengo.includes(k)) { a.tengo.push(k); nuevo.push(tr(it.n)); }
+    else if (paseRepetida(it)) { SAVE.gotas += paseRepetida(it); nuevo.push(tr('{n} Gotas', { n: paseRepetida(it) }) + ' (' + tr(it.n) + ')'); }
   }
   for (const n in ECO.purpGratis) if (+n <= nv && !p.purp.includes(+n)) { p.purp.push(+n); SAVE.acciones += ECO.purpGratis[n]; nuevo.push(tr('{n} Acciones', { n: ECO.purpGratis[n] })); }
   p.purpG = p.purpG || []; for (const n in ECO.gotasGratis) if (+n <= nv && !p.purpG.includes(+n)) { p.purpG.push(+n); SAVE.gotas += ECO.gotasGratis[n]; nuevo.push(tr('{n} Gotas', { n: ECO.gotasGratis[n] })); }
-  if (p.premium) { p.purpGP = p.purpGP || []; for (const n in ECO.gotasPremium) if (+n <= nv && !p.purpGP.includes(+n)) { p.purpGP.push(+n); SAVE.gotas += ECO.gotasPremium[n]; nuevo.push(tr('{n} Gotas', { n: ECO.gotasPremium[n] })); } }
+  if (p.premium) { p.purpGP = p.purpGP || []; for (const n in ECO.accionesPremium) if (+n <= nv && !p.purpGP.includes(+n)) { p.purpGP.push(+n); SAVE.acciones += ECO.accionesPremium[n]; nuevo.push(tr('{n} Acciones (premium)', { n: ECO.accionesPremium[n] })); } }
   if (p.premium) { p.purpP = p.purpP || []; for (const n in ECO.purpPremium) if (+n <= nv && !p.purpP.includes(+n)) { p.purpP.push(+n); SAVE.acciones += ECO.purpPremium[n]; nuevo.push(tr('{n} Acciones (premium)', { n: ECO.purpPremium[n] })); } }
   return nuevo;
 }
@@ -80,30 +90,42 @@ function economiaPartida(r) {
 }
 
 /* ---------- comprar en el armario ---------- */
-// ¿se puede comprar? Con Acciones solo las ÉPICAS de la tienda (el resto, solo en el gachapón). Devuelve { moneda: 'gotas' | 'acciones', precio } o null
+// Lo que se vende se paga con Gotas O con Acciones, a elegir (al cambio de la tienda, ECO.cambio: 5 Gotas = 1 Acción). Se vende lo que tiene
+// precio: lo de Gotas («N Gotas»), lo de Acciones (épicas y legendarias de la tienda) y lo que antes salía SOLO en el gachapón (comunes y raras
+// de la tienda), esto con el recargo PRECIO_GACHA (armario-precios.js). NO se vende lo del pase, el diario, «Al empezar», los talentos, la
+// suscripción ni el Pack de inicio: eso solo se consigue jugando o esperando. Devuelve { gotas, acciones, gacha } o null.
+// herramientas/rouflage_datos.js lo pasa al servidor (pg y pa de cada pieza), que cobra con eso y no con lo que diga el cliente (rf_comprar_con)
+const ecoCambio = () => { const c = typeof TIENDA !== 'undefined' && TIENDA.canje && TIENDA.canje[0]; return c ? c.gotas / c.n : 5; };
 function arPrecio(it) {
-  if (it.de === 'gotas') { const m = /^(\d+) Gotas$/.exec(String(it.txt)); return m ? { moneda: 'gotas', precio: +m[1] } : null; }
-  if (it.de === 'tienda' && typeof it.txt === 'number' && (it.r === 'epica' || it.r === 'legend')) return { moneda: 'acciones', precio: it.txt };
-  return null;
+  if (!it) return null;
+  const cambio = ecoCambio();
+  if (it.de === 'gotas') { const m = /^(\d+) Gotas$/.exec(String(it.txt)); return m ? { gotas: +m[1], acciones: Math.ceil(+m[1] / cambio), gacha: false } : null; }
+  if (it.de !== 'tienda' || typeof it.txt !== 'number' || it.txt <= 0) return null;
+  const gacha = it.r !== 'epica' && it.r !== 'legend', acciones = gacha ? Math.ceil(it.txt * PRECIO_GACHA / 5) * 5 : it.txt;
+  return { gotas: acciones * cambio, acciones, gacha };
 }
-function arCompra(cat, it) {
-  if (RFS.activo()) return arCompraServidor(cat, it);
-  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it)) return;
+// compra con la moneda elegida ('gotas' o 'acciones'): la llama la ventana de confirmar (armario-compra.js), nunca el botón COMPRAR directamente.
+// Sin moneda, la de siempre de esa pieza (Gotas lo de Gotas, Acciones lo demás). Devuelve true si se ha comprado (con servidor, una promesa)
+function arCompra(cat, it, moneda) {
+  if (moneda !== 'gotas' && moneda !== 'acciones') moneda = it && it.de === 'gotas' ? 'gotas' : 'acciones';
+  if (RFS.activo()) return arCompraServidor(cat, it, moneda);
+  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it) || !(moneda in pr)) return false;
   ecoEstado();
-  if (SAVE[pr.moneda] < pr.precio) { play('deny'); avisa(pr.moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); if (pr.moneda === 'acciones') abreTienda('armario'); return; }
-  SAVE[pr.moneda] -= pr.precio; armarioEstado().tengo.push(cat.id + ':' + it.id);
-  if (!cat.conjuntos) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
+  if (SAVE[moneda] < pr[moneda]) { play('deny'); avisa(moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return false; }
+  SAVE[moneda] -= pr[moneda]; armarioEstado().tengo.push(cat.id + ':' + it.id);
+  if (!cat.conjuntos && !cat.sala) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
   guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno');
   arPintaTodo();
+  return true;
 }
-// el botón COMPRAR del armario y la cartera (lo llama arPintaInfo)
+// el botón COMPRAR del armario y la cartera (lo llama arPintaInfo): abre la ventana de confirmar, con los dos precios
 function arPintaCompra(cat, it) {
   ecoEstado();
   const b = E('b-ar-comprar'), pr = it ? arPrecio(it) : null;
   E('ar-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
   if (!b) return;
   b.hidden = !pr || arTiene(cat.id, it);
-  if (!b.hidden) { b.textContent = tr('COMPRAR · {n} {m}', { n: pr.precio, m: tr(pr.moneda === 'gotas' ? 'Gotas' : 'Acciones') }); b.classList.toggle('falta', SAVE[pr.moneda] < pr.precio); b.onclick = () => arCompra(cat, it); }
+  if (!b.hidden) { b.textContent = tr('COMPRAR'); b.classList.toggle('falta', SAVE.gotas < pr.gotas && SAVE.acciones < pr.acciones); b.onclick = () => arPideCompra(cat, it); }
 }
 
 /* ---------- la pantalla del pase ---------- */
@@ -120,10 +142,10 @@ function pasePinta() {
   const cosas = paseCosas(), purpP = ECO.purpPremium || {}, sumaP = Object.values(purpP).reduce((a, b) => a + b, 0);
   // arriba, lo que da el premium de un vistazo (antes había que ir bajando la lista para adivinarlo)
   E('pase-oferta').textContent = p.premium ? tr('Premium activo: lo de la columna dorada también es tuyo al llegar a su nivel.')
-    : tr('Con PREMIUM consigues además {n} cosas, {g} Gotas y {a} Acciones: con las del pase gratis, el siguiente pase te sale pagado.', { n: cosas.filter(c => c.premium).length, a: sumaP, g: Object.values(ECO.gotasPremium).reduce((a, b) => a + b, 0) });
+    : tr('Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente pase te sale pagado.', { n: cosas.filter(c => c.premium).length, a: sumaP + Object.values(ECO.accionesPremium).reduce((a, b) => a + b, 0) });
   for (let n = 1; n <= ECO.niveles; n++) {
     const g = cosas.filter(c => c.nv === n && !c.premium), pr = cosas.filter(c => c.nv === n && c.premium), purp = ECO.purpGratis[n];
-    const gg = ECO.gotasGratis[n], gp = ECO.gotasPremium[n];
+    const gg = ECO.gotasGratis[n], ap = (purpP[n] || 0) + (ECO.accionesPremium[n] || 0);
     const fila = document.createElement('div'); fila.className = 'pase-fila' + (n <= nv ? ' hecho' : '') + (n === nv + 1 ? ' siguiente' : '');
     fila.innerHTML = `<b class="pase-n">${n}</b>`;
     const casilla = (lista2, premium, extra) => {
@@ -136,7 +158,7 @@ function pasePinta() {
     };
     const extra = (acc, got) => [acc ? '+' + tr('{n} Acciones', { n: acc }) : '', got ? '+' + tr('{n} Gotas', { n: got }) : ''].filter(Boolean).join(' · ');
     fila.appendChild(casilla(g, false, extra(purp, gg)));
-    fila.appendChild(casilla(pr, true, extra(purpP[n], gp)));
+    fila.appendChild(casilla(pr, true, extra(ap, 0)));
     lista.appendChild(fila);
   }
 }

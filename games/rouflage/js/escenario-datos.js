@@ -2,7 +2,7 @@
 // MUEBLES para decorarlas (los mismos dibujos que los muebles de los mapas, TIPOS_MUEBLE). Se añaden al armario como dos categorías más
 // ('escenarios' y 'muebles', con `sala: true`: no se llevan puestas, se usan en MI ESCENARIO, escenario.js) y se consiguen como lo demás:
 // al empezar (de: base), con Gotas (de: gotas, «N Gotas»), en el gachapón (de: tienda, comunes y raras), con Acciones (épicas y legendarias
-// de la tienda, que también salen en el gachapón) o en el pase. Las BACKROOMS son la legendaria más cara (ESC_PRECIO_BACKROOMS Acciones).
+// de la tienda, que también salen en el gachapón) o en el pase. Lo que se vende se paga con Gotas o con Acciones, a elegir (arPrecio, economia.js). Las BACKROOMS son la legendaria más cara (ESC_PRECIO_BACKROOMS Acciones).
 // Va después de armario-precios.js (el precio de las Backrooms no lo pisa la rareza). El dibujo de las salas está en escenario-pinta.js.
 'use strict';
 const ESC_PRECIO_BACKROOMS = 1500;

@@ -15,12 +15,16 @@ function armarioEstado() {
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
   if (!p.mascotas) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta y no se puede ir sin ella
   for (const cat of CATALOGO_AR) if (cat.conjuntos || cat.sala) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
+  if (a.todo && !arPruebasVisibles()) {      // un DESBLOQUEAR TODO que se coló fuera de la alfa (con ?dev=1): ya no vale, y lo puesto que no es tuyo se quita
+    a.todo = false;
+    for (const cat of CATALOGO_AR) { if (cat.conjuntos || cat.sala) continue; const it = arItem(cat.id, p[cat.id]); if (it && !arTiene(cat.id, it)) p[cat.id] = cat.vacio ? null : cat.items[0].id; }
+  }
   return a;
 }
 const arCat = id => CATALOGO_AR.find(c => c.id === id);
 const arItem = (cat, id) => { const c = arCat(cat); return c && id ? c.items.find(x => x.id === id) || null : null; };
 function arTiene(cat, it) {
-  const a = armarioEstado(); if (a.todo || it.de === 'base' || a.tengo.includes(cat + ':' + it.id)) return true;
+  const a = armarioEstado(); if ((a.todo && arPruebasVisibles()) || it.de === 'base' || a.tengo.includes(cat + ':' + it.id)) return true;
   if (it.de === 'conjunto') { const cj = arCat('conjuntos').items.find(k => Object.values(k.piezas).includes(it.id) && k.piezas[cat] === it.id); return !!cj && arTiene('conjuntos', cj); }   // una pieza de conjunto es tuya si lo es el conjunto
   return false;
 }
@@ -78,11 +82,13 @@ function lienzoBlanco(e) {
   e.papelPuesto = false; [e.piel, e.pctx] = nuevaPiel(BLANCO_PIEL, e.postura || 'firmes'); if (e.pasos) e.pasos.length = 0;
 }
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
+// lo que cuestan N Acciones en euros, al precio del paquete pequeño (solo se enseña en la ventana de confirmar la compra: armario-compra.js)
 function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
+// cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
 function arTextoDe(it) {
-  const t = it.txt; let m;
-  if (typeof t === 'number' && it.r !== 'epica' && it.r !== 'legend') return tr('Solo en el gachapón, con Gotas');
-  if (typeof t === 'number') return tr('{n} Acciones (≈ {e} €)', { n: t, e: arEuros(t) });
+  const t = it.txt, pr = arPrecio(it); let m;
+  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas });
+  if (typeof t === 'number') return tr('Solo en el gachapón, con Gotas');
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
@@ -190,9 +196,18 @@ function abrePerfil() {
     col.appendChild(f);
   }
   E('b-pf-todo').textContent = a.todo ? tr('VOLVER A BLOQUEAR') : tr('DESBLOQUEAR TODO');
+  E('b-pf-todo').closest('.pf-pruebas').hidden = !arPruebasVisibles();      // en la web publicada no sale (ni el recuadro con su nota)
 }
-function arDesbloqueaTodo() {
+// DESBLOQUEAR TODO (solo en la alfa y en localhost, para probar: arPruebasVisibles, ajustes.js): todo el armario, todos los talentos y muchas Gotas y Acciones
+// (con cuenta las da el servidor, rf_prueba_dar, y solo a quien tiene el rol de alfa: servidor/62-rouflage-prueba.sql)
+async function arDesbloqueaTodo() {
+  if (!arPruebasVisibles()) return;
   const a = armarioEstado(); a.todo = !a.todo;
+  if (typeof talentosDesbloqueaTodo === 'function') talentosDesbloqueaTodo(a.todo);
+  if (a.todo) {
+    if (RFS.activo()) { try { await RFS.llama('rf_prueba_dar', {}); avisa(tr('Modo pruebas: 50 000 Gotas y 50 000 Acciones'), 'bueno'); } catch (e) { RFS.error(e); } }
+    else { SAVE.gotas = Math.max(SAVE.gotas || 0, 50000); SAVE.acciones = Math.max(SAVE.acciones || 0, 50000); avisa(tr('Modo pruebas: 50 000 Gotas y 50 000 Acciones'), 'bueno'); }
+  }
   if (!a.todo) for (const cat of CATALOGO_AR) { if (cat.conjuntos) continue; const it = arItem(cat.id, a.puesto[cat.id]); if (it && !arTiene(cat.id, it)) a.puesto[cat.id] = cat.vacio ? null : cat.items[0].id; }   // lo que ya no es tuyo, fuera
   guardaPartida(); play('pop'); abrePerfil();
 }

@@ -1,12 +1,13 @@
 // Fans of Jump · Lo que se puede ganar al caer (PLAN-JUMP.md, monetización):
-// · La segunda oportunidad: al caer, 4 s para pagar zanahorias y seguir desde el último tronco (una vez por partida). Se
-//   paga con la moneda ganada, nunca con un anuncio, porque es en mitad de la partida.
-// · El anuncio con premio, solo al terminar y nunca obligatorio: duplica las zanahorias de esa partida (3 al día). Por
-//   ahora es un anuncio de prueba y solo sale en la alfa y en desarrollo; en la app, aquí irá el de AdMob (verAnuncio).
+// · La segunda oportunidad: al caer, 4 s para seguir desde el último tronco (una vez por partida), pagando zanahorias o
+//   viendo un anuncio (lo eliges tú; si no, se acaba). La cuenta atrás se para mientras ves el anuncio.
+// · El anuncio con premio, nunca obligatorio: duplica las zanahorias de esa partida. Con el cofre de Lola y probar una
+//   piel (anuncios.js), hasta 5 anuncios al día entre todos. Por ahora es un anuncio de prueba y solo sale en la alfa y en
+//   desarrollo; en la app, aquí irá el de AdMob (verAnuncio).
 'use strict';
 
 const CASI_SEG = 4;
-const ANUNCIOS_DIA = 3;
+const ANUNCIOS_DIA = 5;
 const precioSeguir = () => 30;
 const hoy = () => new Date().toISOString().slice(0, 10);
 const anunciosQuedan = () => ANUNCIOS_DIA - (GUARDA.anuncios && GUARDA.anuncios.dia === hoy() ? GUARDA.anuncios.n : 0);
@@ -16,7 +17,7 @@ const ANUNCIO = { activo: false, t: 0, alAcabar: null };
 // en vez de acabar: si se puede, se ofrece seguir
 function muere(motivo) {
   const J = JUEGO;
-  if (J.seguido || tutoActivo() || GUARDA.zanas + J.zanas < precioSeguir()) return acaba(motivo);
+  if (J.seguido || tutoActivo() || (GUARDA.zanas + J.zanas < precioSeguir() && !(hayAnuncios() && anunciosQuedan() > 0))) return acaba(motivo);
   const c = J.conejo;
   J.modo = 'casi'; J.casi = { motivo, t: 0 }; c.salto = null; c.tronco = null; APUNTA.activo = false;
   empiezaMuerte(motivo);
@@ -24,13 +25,14 @@ function muere(motivo) {
 }
 function avanzaCasi(dt) {
   const J = JUEGO;
-  if (J.modo !== 'casi') return;
+  if (J.modo !== 'casi' || ANUNCIO.activo) return;   // mientras ves el anuncio, la cuenta atrás espera
   J.casi.t += dt; J.conejo.hunde = Math.min(0.7, J.conejo.hunde + dt * 1.4);
   if (J.casi.t >= CASI_SEG) { J.modo = 'juego'; acaba(J.casi.motivo); }
 }
 // paga y sigue: primero con lo recogido en esta partida y luego con lo guardado; vuelve al último tronco y la ola retrocede
-function sigue() {
-  const J = JUEGO, c = J.conejo, p = precioSeguir(), deLaPartida = Math.min(J.zanas, p);
+function sigue(pagando = true) {
+  const J = JUEGO, c = J.conejo, p = pagando ? precioSeguir() : 0, deLaPartida = Math.min(J.zanas, p);
+  if (pagando && GUARDA.zanas + J.zanas < p) return SONIDO.uy();
   J.zanas -= deLaPartida; GUARDA.zanas -= p - deLaPartida; salvaGuarda();
   J.seguido = true; J.modo = 'juego'; J.casi = null; c.hunde = 0; acabaMuerte();
   const vale = o => o.wy > OLA.wy + 40;
@@ -45,7 +47,8 @@ function pintaCasi() {
   const k = Math.min(1, J.casi.t / 0.2), queda = Math.max(0, CASI_SEG - J.casi.t);
   G.fillStyle = `rgba(40,25,60,${0.35 * k})`; G.fillRect(0, 0, W, H);
   boton(0, 0, W, H, () => {});
-  const w = 150, h = 108, x = W / 2 - w / 2, y = H / 2 - h / 2 - 10;
+  const conAnuncio = hayAnuncios() && anunciosQuedan() > 0, paga = GUARDA.zanas + J.zanas >= precioSeguir();
+  const w = 150, h = conAnuncio ? 130 : 108, x = W / 2 - w / 2, y = H / 2 - h / 2 - 10;
   G.globalAlpha = k;
   caja(x + 2, y + 3, w, h, 6, 'rgba(40,25,60,0.35)', null); caja(x, y, w, h, 6, PASTEL.papel, OLC, 1);
   letras(tr('¡Casi te pilla!'), W / 2, y + 14, 12, PASTEL.texto, { logo: true });
@@ -53,23 +56,34 @@ function pintaCasi() {
   G.beginPath(); G.arc(W / 2, y + 42, 13, 0, Math.PI * 2); G.lineWidth = 4; G.strokeStyle = PASTEL.raya; G.stroke();
   G.beginPath(); G.arc(W / 2, y + 42, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * queda / CASI_SEG); G.strokeStyle = PASTEL.melocoton; G.lineCap = 'round'; G.stroke();
   letras(String(Math.ceil(queda)), W / 2, y + 43, 12, PASTEL.texto);
-  const bw = 112, bh = 20, bx = W / 2 - bw / 2, by = y + 62, txt = tr('¡Sigue!') + ' · ' + precioSeguir(), tw = anchoLetras(txt, 10, { logo: true });
-  caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.menta, OLC, 1);
-  letras(txt, W / 2 - 6, by + 10.5, 10, '#ffffff', { logo: true, borde: PASTEL.mentaO, bw: 2.4 });
+  const bw = 112, bh = 20, bx = W / 2 - bw / 2, txt = tr('¡Sigue!') + ' · ' + precioSeguir(), tw = anchoLetras(txt, 10, { logo: true });
+  let by = y + 62;
+  caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, paga ? PASTEL.menta : PASTEL.raya, OLC, 1);
+  letras(txt, W / 2 - 6, by + 10.5, 10, paga ? '#ffffff' : PASTEL.flojo, paga ? { logo: true, borde: PASTEL.mentaO, bw: 2.4 } : { logo: true });
   iconoZana(W / 2 + tw / 2 + 2, by + 10, 13);
-  boton(bx - 4, by - 4, bw + 8, bh + 8, sigue);
+  boton(bx - 4, by - 4, bw + 8, bh + 8, () => sigue(true));
+  // o con un anuncio (sigues gratis)
+  if (conAnuncio) {
+    by += 24;
+    const ta = tr('Ver anuncio y seguir');
+    caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.oro, OLC, 1);
+    iconoTele(bx + 12, by + 10); letras(ta, W / 2 + 7, by + 10.5, 7.6, PASTEL.texto, { peso: 800 });
+    boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio(); sigue(false); }));
+  }
   letras(tr('No, gracias'), W / 2, by + 32, 7.5, PASTEL.suave, { peso: 700 });
   boton(W / 2 - 30, by + 25, 60, 14, () => { J.modo = 'juego'; acaba(J.casi.motivo); SONIDO.boton(); });
   G.globalAlpha = 1;
 }
 
 /* ---------- el anuncio con premio (de prueba) ---------- */
+// apunta un anuncio visto (los 5 del día son para todo)
+function cuentaAnuncio() { const d = hoy(); GUARDA.anuncios = { dia: d, n: (GUARDA.anuncios && GUARDA.anuncios.dia === d ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
 function verAnuncio(alAcabar) { Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
 function duplicaZanas() {
   const J = JUEGO;
   if (J.duplicado || !anunciosQuedan()) return;
   verAnuncio(() => {
-    const d = hoy(); GUARDA.anuncios = { dia: d, n: (GUARDA.anuncios && GUARDA.anuncios.dia === d ? GUARDA.anuncios.n : 0) + 1 };
+    cuentaAnuncio();
     GUARDA.zanas += J.ganadas; J.ganadas *= 2; J.duplicado = true; salvaGuarda();
     confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 24); SONIDO.compra();
   });

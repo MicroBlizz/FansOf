@@ -1,0 +1,149 @@
+/* Fans of Rouflage · TALENTOS (talentos-pantalla.js, talentos-partida.js, talentos-fin.js): la pantalla con sus dos pestañas (azul de becario, verde de colado),
+   el tubo de pintura del nivel, las fichas de habilidades, la fila para elegir antes de jugar, el botón de la habilidad en la partida y el nivel en el final. */
+#b-talentos { position: relative; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.14)), linear-gradient(110deg, #4f95f5 0%, #4f95f5 38%, #3fc47c 62%, #3fc47c 100%); }      /* azul de becario y verde de colado */
+#b-talentos.aviso::before { content: ''; position: absolute; top: -5px; left: -5px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); animation: misLate 1.2s ease-in-out infinite; z-index: 1; }
+
+.tal-caja { max-width: 560px; text-align: center; max-height: calc(100vh - 30px); display: flex; flex-direction: column; gap: 8px; --pc1: #6aaeff; --pc2: #2f6fd6; --pclaro: #9fd0ff; }
+#p-talentos[data-papel="colado"] .tal-caja { --pc1: #5fd896; --pc2: #23955a; --pclaro: #b6f58a; }
+.tal-caja h2 { margin: 0; }
+.tal-pestanas { display: flex; gap: 8px; }
+.tal-pest { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 8px 4px; border-radius: 14px; border: 3px solid var(--outline); background: var(--tray); color: var(--ink-dim); cursor: pointer; box-shadow: 0 3px 0 var(--outline); transition: transform 0.12s; }
+.tal-pest b { font: 400 17px var(--font-display); letter-spacing: 0.03em; }
+.tal-pest small { font: 400 13px var(--font-display); padding: 2px 7px 0; border-radius: 8px; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--outline); color: var(--ink-dim); }
+.tal-pest.becario.activa { background: linear-gradient(to bottom, #6aaeff, #2f6fd6); }
+.tal-pest.colado.activa { background: linear-gradient(to bottom, #5fd896, #23955a); }
+.tal-pest.activa { color: var(--ink); text-shadow: 0 2px 0 var(--outline); transform: translateY(-1px); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.3); }
+.tal-pest.activa small { color: #fff6ea; background: rgba(32, 16, 44, 0.45); }
+.tal-pest:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+
+/* la cabecera: el tubo de pintura con el nivel, su experiencia y lo siguiente que se desbloquea */
+.tal-cab { position: relative; padding: 8px 12px 7px; border-radius: 16px; border: 3px solid var(--outline); background: linear-gradient(165deg, color-mix(in srgb, var(--pc2) 45%, #1d2536), #151c2c); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.1); }
+.tal-tubo { position: relative; height: 58px; }
+#tal-tubo { position: absolute; left: -12px; right: -12px; top: -36px; width: calc(100% + 24px); height: 130px; pointer-events: none; }
+.tal-pie { display: flex; justify-content: space-between; gap: 10px; font: 800 13px var(--font-ui); color: var(--ink-dim); padding: 0 4px; }
+.tal-pie span:first-child { color: var(--pclaro); white-space: nowrap; }
+.tal-pie span:last-child { text-align: right; min-width: 0; }
+
+/* las fichas de habilidades (como las de las misiones, con el color del papel) */
+.tal-lista { overflow-y: auto; flex: 1; min-height: 120px; display: grid; align-content: start; grid-auto-rows: max-content; gap: 9px; padding: 4px 3px 8px; touch-action: pan-y; }
+.tal-fila { position: relative; display: grid; grid-template-columns: 58px 1fr auto; gap: 9px; align-items: center; padding: 8px 9px 8px 7px; border-radius: 16px; border: 3px solid var(--outline);
+  background: linear-gradient(165deg, #34425f, #222d44); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.12); text-align: left; overflow: hidden; }
+.tal-fila::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 7px; background: var(--pc1); border-right: 2px solid var(--outline); }
+.tal-fila.titulo::before { background: var(--gold); }
+.tal-fila.elegida { background: linear-gradient(165deg, color-mix(in srgb, var(--pc2) 70%, #2a3346), color-mix(in srgb, var(--pc2) 35%, #1a2236)); box-shadow: 0 4px 0 var(--outline), 0 0 0 2px var(--pclaro) inset, 0 0 18px color-mix(in srgb, var(--pclaro) 30%, transparent); }
+.tal-fila.bloq { background: linear-gradient(165deg, #2a3346, #1d2536); }
+.tal-fila.bloq .mis-txt { opacity: 0.6; }
+.tal-fila .mis-txt b { font-size: 15px; }
+.tal-fila .mis-txt small { font-size: 12px; line-height: 1.2; }
+.tal-nv { background: var(--pc1); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); }
+.tal-fila.titulo .tal-nv { background: var(--gold); color: var(--outline); text-shadow: none; }
+.tal-fila.bloq .tal-nv { background: #4a5470; }
+.tal-extra { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 2px; justify-self: start; margin-top: 2px; padding: 2px 8px 1px; border-radius: 8px; background: rgba(180, 92, 255, 0.22); box-shadow: inset 0 0 0 2px rgba(214, 170, 255, 0.55); font-size: 11.5px; line-height: 1.2; }
+.tal-fila .mis-txt .tal-extra b, .tal-extra b { font-size: 11.5px; font-weight: 800; color: #ecd2ff; text-shadow: none; }
+.tal-extra i { font-style: normal; font-weight: 700; color: var(--ink-dim); }
+.tal-info .tal-extra { display: inline; padding: 1px 6px; }
+.tal-usos { font: 800 11px var(--font-ui); color: var(--ink-dim); letter-spacing: 0.02em; }
+.tal-lado { display: grid; justify-items: center; min-width: 78px; }
+.boton.tal-elegir { font-size: 13px; padding: 7px 10px 4px; border-radius: 11px; box-shadow: 0 4px 0 var(--outline); background: linear-gradient(to bottom, var(--pc1), var(--pc2)); min-width: 78px; }
+.tal-tuyo { font: 400 13px var(--font-display); color: var(--pclaro); letter-spacing: 0.04em; padding: 5px 8px 2px; border: 2.5px solid var(--pclaro); border-radius: 10px; transform: rotate(-6deg); text-align: center; line-height: 1.1; max-width: 86px; }
+.tal-fila.titulo .tal-tuyo { color: var(--gold); border-color: var(--gold); }
+.tal-cerrada { font: 400 13px var(--font-display); color: #8d97ad; padding: 5px 8px 2px; border-radius: 10px; background: rgba(0, 0, 0, 0.28); border: 2px solid var(--outline); white-space: nowrap; }
+.tal-nota { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--ink-dim); line-height: 1.25; }
+@media (max-width: 380px) {
+  .tal-fila { grid-template-columns: 50px 1fr auto; gap: 6px; padding: 7px 6px 7px 9px; } .tal-fila .mis-ico { width: 50px !important; height: 50px !important; }
+  .tal-lado { min-width: 66px; } .boton.tal-elegir { min-width: 66px; font-size: 12px; padding: 6px 6px 3px; } .tal-fila .mis-txt small { font-size: 11.5px; }
+  .tal-pest b { font-size: 15px; } .tal-pie { font-size: 12px; }
+}
+
+/* elegir antes de jugar (CONTRA BOTS y la sala del PvP): fichas redondas y la elegida debajo (con aire abajo: el halo y las NV no pisan el texto) */
+.tal-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 4px 0 12px; --pc1: #6aaeff; --pc2: #2f6fd6; }
+.tal-chips.colado { --pc1: #5fd896; --pc2: #23955a; }
+.tal-chip { position: relative; width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--outline); background: radial-gradient(circle at 50% 35%, #3b4866, #232c42); box-shadow: 0 3px 0 var(--outline); display: grid; place-items: center; cursor: pointer; padding: 0; transition: transform 0.12s; }
+.tal-chip canvas { display: block; }
+.tal-chip.elegida { background: radial-gradient(circle at 50% 30%, var(--pc1), var(--pc2)); box-shadow: 0 3px 0 var(--outline), 0 0 0 3px #fff6ea, 0 0 14px 2px color-mix(in srgb, var(--pc1) 70%, transparent); transform: translateY(-2px) scale(1.06); }
+.tal-chip.bloq { background: #1d2536; cursor: default; }
+.tal-chip.bloq small { position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); font: 400 10px var(--font-display); color: var(--ink-dim); background: var(--outline); padding: 1px 5px 0; border-radius: 6px; white-space: nowrap; }
+.tal-chip:not(.bloq):active { transform: translateY(1px) scale(0.96); }
+.tal-info { margin: 12px auto 0; max-width: 420px; font-size: 12.5px; font-weight: 700; color: var(--ink-dim); line-height: 1.25; min-height: 2.5em; }
+.tal-info b { color: var(--ink); font-weight: 800; }
+.tal-sala { padding: 8px 8px 6px; border-radius: 14px; background: rgba(8, 11, 20, 0.45); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06); display: grid; gap: 6px; }
+.tal-sala[hidden] { display: none; }
+.tal-sala h3 { margin: 0; font-size: 15px; }
+.tal-sala-papel { display: grid; gap: 4px; }
+.tal-sala-t { font: 400 12px var(--font-display); letter-spacing: 0.05em; justify-self: center; padding: 2px 9px 0; border-radius: 8px; border: 2px solid var(--outline); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); }
+.tal-sala-t.becario { background: #2f6fd6; } .tal-sala-t.colado { background: #23955a; }
+.tal-sala .tal-info { margin-top: 6px; min-height: 0; font-size: 12px; }
+.tal-sala .tal-chip { width: 44px; height: 44px; }
+@media (prefers-reduced-motion: reduce) { #b-talentos.aviso::before { animation: none; } }
+
+/* PvP CON o SIN TALENTOS: el selector de la cola de BUSCAR PARTIDA, el rótulo de la sala y el del principio de la partida */
+.tal-cola { display: flex; gap: 6px; padding: 4px; border-radius: 14px; background: rgba(8, 11, 20, 0.45); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06); }
+.tal-cola button { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 6px 4px; border-radius: 11px; border: 3px solid var(--outline); background: var(--tray); color: var(--ink-dim); cursor: pointer; }
+.tal-cola button b { font: 400 13px/1.05 var(--font-display); letter-spacing: 0.03em; text-align: left; }
+.tal-cola button canvas { flex: none; filter: grayscale(0.6) brightness(0.8); }
+.tal-cola button.puesto { color: var(--ink); text-shadow: 0 2px 0 var(--outline); box-shadow: 0 3px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.3); }
+.tal-cola button.puesto canvas { filter: none; }
+.tal-cola button[data-v="1"].puesto { background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.12)), linear-gradient(110deg, #4f95f5 0%, #4f95f5 38%, #3fc47c 62%, #3fc47c 100%); }
+.tal-cola button[data-v="0"].puesto { background: linear-gradient(to bottom, #8d97ad, #4a5470); }
+.tal-rotulo { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 6px; border-radius: 999px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline), inset 0 2px 0 rgba(255, 255, 255, 0.3); text-align: left; }
+.tal-rotulo.con { background: linear-gradient(to bottom, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.14)), linear-gradient(110deg, #4f95f5 0%, #4f95f5 38%, #3fc47c 62%, #3fc47c 100%); }
+.tal-rotulo.sin { background: linear-gradient(to bottom, #8d97ad, #4a5470); }
+.tal-rotulo canvas { flex: none; }
+.tal-rotulo-t { display: grid; gap: 0; }
+.tal-rotulo-t b { font: 400 17px/1.05 var(--font-display); letter-spacing: 0.04em; color: #fff6ea; }
+.tal-rotulo-t small { font: 800 11.5px/1.15 var(--font-ui); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); opacity: 0.92; }
+.tal-rotulo.grande .tal-rotulo-t b { font-size: 22px; }
+.tal-rotulo.grande .tal-rotulo-t small { font-size: 12.5px; }
+.tal-sala-modo { display: flex; justify-content: center; }
+.tal-sala-modo[hidden] { display: none; }
+.tal-rotulo-partida { position: absolute; left: 0; right: 0; top: calc(var(--sup) + 128px); display: flex; justify-content: center; pointer-events: none; z-index: 3; }
+.tal-rotulo-partida[hidden] { display: none; }
+.tal-rotulo-partida.entra { animation: talRotulo 5.2s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+@keyframes talRotulo { 0% { transform: translateY(-30px) scale(0.6); opacity: 0; } 8% { transform: none; opacity: 1; } 88% { transform: none; opacity: 1; } 100% { transform: translateY(-14px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tal-rotulo-partida.entra { animation: none; } }
+
+/* el botón de la habilidad en la partida: de colado en la fila (hueco de la granada), de becario abajo a la derecha. Con sus usos, la carga que se vacía y su brillo mientras dura */
+.accion.hab { width: 66px; height: 66px; border-radius: 20px; background: linear-gradient(to bottom, #ead2ff, #9a5ce0); overflow: visible; }
+.accion.hab canvas { width: 38px; height: 38px; margin-top: -2px; }
+.accion.hab b { font-size: 11px; margin-top: -3px; white-space: nowrap; }
+.accion.hab.becario { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 14px); width: 78px; height: 78px; border-radius: 24px; background: linear-gradient(to bottom, #ffd27a, #e8731a); }
+.accion.hab.becario canvas { width: 44px; height: 44px; }
+.accion.hab.becario b { font-size: 12px; }
+.accion.hab::after { content: ''; position: absolute; inset: -3px; border-radius: inherit; background: conic-gradient(rgba(20, 12, 36, 0.62) var(--carga, 0deg), transparent 0); pointer-events: none; }
+.hab-usos { position: absolute; top: -9px; left: -8px; min-width: 22px; padding: 2px 5px 0; border-radius: 9px; background: #fff6ea; color: var(--outline); border: 2.5px solid var(--outline); font: 400 12px/1.15 var(--font-display); box-shadow: 0 2px 0 var(--outline); z-index: 1; }
+.accion.hab.gastada { filter: grayscale(0.85) brightness(0.7); }
+.accion.hab.gastada .hab-usos { background: #4a5470; color: var(--ink-dim); }
+.accion.hab.activa { animation: habLate 0.7s ease-in-out infinite; box-shadow: 0 5px 0 var(--outline), 0 0 0 3px #fff6ea, 0 0 22px 4px rgba(255, 220, 140, 0.55); }
+.accion.hab.activa .hab-usos { background: var(--gold); }
+.accion.hab.cargando canvas, .accion.hab.cargando b { opacity: 0.7; }
+@keyframes habLate { 50% { transform: scale(1.06); } }
+body.op-grandes .accion.hab.becario { zoom: 1.22; }
+
+/* el nivel del papel en el final: un tubo pequeño debajo del pase y, si sube, la tarjeta de lo nuevo */
+.fin-tal { --pc1: #6aaeff; --pc2: #2f6fd6; position: relative; display: grid; gap: 0; padding: 6px 12px 6px; border-radius: 14px; background: rgba(8, 11, 20, 0.5); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06); }
+.fin-tal[data-papel="colado"] { --pc1: #5fd896; --pc2: #23955a; }
+.fin-tal[hidden] { display: none; }
+.ft-cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ft-papel { font: 400 13px var(--font-display); letter-spacing: 0.05em; color: #fff6ea; padding: 3px 9px 1px; border-radius: 9px; border: 2.5px solid var(--outline); background: linear-gradient(to bottom, var(--pc1), var(--pc2)); text-shadow: 0 1px 0 var(--outline); box-shadow: 0 2px 0 var(--outline); }
+.ft-cab b { font: 800 13px var(--font-ui); color: #9ff07a; }
+.ft-tubo { position: relative; height: 40px; }
+#ft-tubo { position: absolute; left: -12px; right: -12px; top: -30px; width: calc(100% + 24px); height: 100px; pointer-events: none; }
+.ft-nueva { display: flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border-radius: 12px; border: 3px solid var(--outline); background: linear-gradient(165deg, var(--pc1), var(--pc2)); box-shadow: 0 3px 0 var(--outline), 0 0 18px rgba(255, 246, 234, 0.25); text-align: left; }
+.ft-nueva[hidden] { display: none; }
+.ft-nueva canvas { flex: none; }
+.ft-nueva-t { display: grid; gap: 1px; min-width: 0; }
+.ft-nueva-t b { font: 400 17px/1.05 var(--font-display); color: #fff6ea; }
+.ft-nueva-t span { font: 800 12.5px/1.15 var(--font-ui); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); }
+.ft-nueva.entra { animation: fp-entra-t 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+@keyframes fp-entra-t { 0% { transform: scale(0.3) rotate(-6deg); opacity: 0; } 60% { transform: scale(1.06) rotate(1deg); opacity: 1; } 100% { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ft-nueva.entra { animation: none; } }
+body.op-zurdo .accion.hab.becario { right: auto; left: calc(var(--izq) + 12px); }
+@media (prefers-reduced-motion: reduce) { .accion.hab.activa { animation: none; } }
+
+/* APAISADO BAJO (el móvil tumbado): la cabecera más baja para que se vean las habilidades sin bajar */
+@media (orientation: landscape) and (max-height: 420px) {
+  .tal-caja { gap: 5px; padding-top: 8px; max-height: calc(100vh - 16px); } .tal-caja h2 { font-size: 26px; }
+  .tal-pest { padding: 4px 8px 2px; } .tal-pest b { font-size: 15px; }
+  .tal-cab { padding: 4px 12px 4px; } .tal-tubo { height: 40px; } #tal-tubo { top: -30px; height: 100px; }
+  .tal-nota { font-size: 11px; line-height: 1.15; }
+}

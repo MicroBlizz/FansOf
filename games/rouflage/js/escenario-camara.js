@@ -11,7 +11,9 @@ function escAjusta() {
   const pr = E('esc-panel').getBoundingClientRect(), lado = pr.left > W / 2;      // la bandeja abajo (móvil) o a la derecha (pantalla ancha)
   const arriba = E('esc-arriba').getBoundingClientRect().bottom + 4, abajo = lado ? H : pr.top, der = lado ? pr.left : W;
   MIESC.area = { x0: 0, y0: arriba, x1: der, y1: abajo }; Object.assign(MIESC.vista, { dpr, lado });
-  const z = E('esc-zoom'); z.style.right = (W - der + 10) + 'px'; z.style.bottom = (H - abajo + 12) + 'px';
+  const z = E('esc-zoom'), hueco = abajo - arriba - 16;      // + − y centrar: en columna; si no caben (apaisado bajo), en fila, y si tampoco, más pequeños
+  z.classList.toggle('fila', hueco < 3 * 44 + 2 * 7); z.classList.toggle('mini', hueco < 44);
+  z.style.right = (W - der + 10) + 'px'; z.style.bottom = (H - abajo + (hueco < 44 ? 6 : 12)) + 'px';
   MIESC.sucio = true;
 }
 // el zoom de partida (se ven unas 520 unidades a lo ancho en el móvil) y los topes: de ver casi todo el mapa a ver muy de cerca

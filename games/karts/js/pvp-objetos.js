@@ -72,7 +72,7 @@ function pvpGolpeNuevo(m, autor) {
     }
   } else if (m.tipo === 'spam') {
     dado = true;
-    if (yo) { SPAM.t = 3.5; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
+    if (yo) { SPAM.t = SPAM.dur; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
     else { v.tResbala = 0.9; v.giroRes = Math.random() < 0.5 ? -1 : 1; }
   } else if (m.tipo === 'lag') {
     if (!(v.tInmune > 0)) { dado = true; v.lag = { n: 3, t: 0.15 }; if (yo) aviso('LAG', 'Ping: 999 ms.', '#ff3348'); }

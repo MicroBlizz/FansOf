@@ -78,17 +78,18 @@ const RFRED = (() => {
   const servidor = {
     nombre: 'Servidor',
     buscar(aviso, opc) {
-      let activo = true, tic = null, primera = false;
+      let activo = true, tic = null, primera = false, viejo = false;
       const sondeo = async () => {
         if (!activo) return;
         try {
-          const r = await rpc(primera ? 'rouflage_pvp_estado' : opc && (opc.crear || opc.codigo) ? 'rouflage_pvp_privada' : 'rouflage_pvp_buscar_modos', !primera && opc && opc.codigo ? { p_codigo: String(opc.codigo).toUpperCase() } : {});
+          const cola = opc && opc.talentos && !viejo ? 'rouflage_pvp_buscar_talentos' : 'rouflage_pvp_buscar_modos';      // las dos colas de BUSCAR PARTIDA: con y sin talentos (servidor/62-*)
+          const r = await rpc(primera ? 'rouflage_pvp_estado' : opc && (opc.crear || opc.codigo) ? 'rouflage_pvp_privada' : cola, !primera && opc && opc.codigo ? { p_codigo: String(opc.codigo).toUpperCase() } : {});
           primera = true;
           if (!activo) return;
           if (r && r.sala) { aviso(r); if (r.estado !== 'espera') { activo = false; return; } }
           else if (r && r.espera === false) { primera = false; }      // la sala se esfumó: se vuelve a buscar
           tic = setTimeout(sondeo, 1500);
-        } catch (e) { activo = false; aviso(null, e); }
+        } catch (e) { if (!viejo && opc && opc.talentos && /Could not find|HTTP 404|PGRST202/i.test(String((e && e.message) || e))) { viejo = true; tic = setTimeout(sondeo, 10); return; } activo = false; aviso(null, e); }      // (servidor sin la cola de talentos: la de siempre)
       };
       sondeo();
       return { cancelar() { if (!activo) return; activo = false; clearTimeout(tic); rpc('rouflage_pvp_salir').catch(() => { /* da igual */ }); } };
@@ -114,7 +115,7 @@ const RFRED = (() => {
     arranque: false, modoSala: null, miVoto: null, votar: null,
     buscar(aviso, opc) {
       const codigo = opc && opc.crear ? 'PRUE' : opc && opc.codigo ? String(opc.codigo).toUpperCase() : null;      // en las pruebas la sala con amigos siempre se llama PRUE
-      local.arranque = false; local.modoSala = codigo ? null : modoAzar(); local.miVoto = null;
+      local.arranque = false; local.privada = !!codigo; local.modoSala = codigo ? null : Object.assign(modoAzar(), opc && opc.talentos ? { a: { t: 1 } } : {}); local.miVoto = null;
       const id = (opc && opc.crear ? '0' : '') + Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas' + (codigo ? '-' + codigo : '')), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
       let activo = true, tic = null;
       const para = () => { activo = false; clearInterval(tic); try { bc.close(); } catch (e) { /* ya cerrado */ } };
@@ -177,7 +178,8 @@ const RFRED = (() => {
       return { enviar: d => bc.postMessage(d), cerrar: () => bc.close(), unido: true };
     },
     puntos: 1000,
-    cerrar: (sala, gano) => { const d = gano ? 12 : -12; local.puntos += d; return Promise.resolve({ estado: 'cerrada', gano: !!gano, puntos: local.puntos, delta: d, energia_premio: 0 }); },
+    // como rouflage_pvp_cerrar (servidor/37-rouflage-amigos.sql): la sala con amigos no da ni quita puntos y lo dice (privada)
+    cerrar: (sala, gano) => { const d = local.privada ? 0 : gano ? 12 : -12; local.puntos += d; return Promise.resolve({ estado: 'cerrada', gano: !!gano, puntos: local.puntos, delta: d, energia_premio: 0, privada: !!local.privada }); },
     rendir: () => Promise.resolve(),
     pendientes: () => Promise.resolve([]),
     latido: () => Promise.resolve(),

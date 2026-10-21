@@ -57,9 +57,11 @@ function nuevoTronco(x, wy, r, dif, facil = 0) {
 
 // pone troncos hasta la altura «hasta»: cada fila queda al alcance de la anterior, a veces con otro al lado
 function generaRio(hasta) {
-  while (RIO.ultimo.wy < hasta) {
+  while (RIO.ultimo.wy < hasta && !RIO.cerrado) {
     const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500), facil = facilidad(prev.wy);
     const wy = prev.wy + azarR(52, 66) + dif * 16 - facil * 12;
+    // a los 9.999 m se acaba el río: un último tronco grande y quieto delante de la madriguera (final.js)
+    if (wy >= FINAL_WY - 70) { const t = nuevoTronco(PAN.W / 2, Math.min(wy, FINAL_WY - 30), 28, 0); t.vx = 0; t.final = true; RIO.ultimo = t; RIO.cerrado = true; break; }
     const [L, R] = orillas(wy);
     const r = Math.round(azarR(19, 24) - dif * 5 + facil * 4);
     const lo = L + r + 3, hi = R - r - 3;
@@ -80,12 +82,14 @@ function generaRio(hasta) {
     for (const f of fila) {
       if (n - RIO.ultimoAmigo >= 3 && rnd() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
-      } else if (wy > 500 && rnd() < 0.06) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
+      } else if (wy > 500 && rnd() < 0.075) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
       else if (rnd() < 0.24) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
       if (!f.amigo && !f.objeto) {
         const k = rnd();
-        if (wy > 1000 && k < 0.08 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
+        if (wy > 1500 && k < 0.06 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
+        else if (wy > 2500 && k < 0.1 + dif * 0.18) { f.tipo = 'tortuga'; f.vx = 0; f.ciclo = rnd() * TORTUGA_CICLO; f.bajo = 0; }   // fauna.js
+        else if (wy > 1200 && k > 0.88 && k <= 0.94) { f.tipo = 'peonza'; f.vx = 0; f.giro = rnd() * 6; }
         else if (wy > 400 && k > 0.94) { f.tipo = 'muelle'; f.vx = 0; f.boing = 0; }
       }
     }
@@ -106,7 +110,7 @@ function avanzaRio(dt) {
 
 // «guion»: los primeros troncos puestos a mano (el tutorial), quietos: [a un lado, altura, radio, qué lleva]
 function reiniciaRio(xSalida, guion) {
-  RIO.troncos = []; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
+  RIO.troncos = []; RIO.cerrado = false; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
   const t = nuevoTronco(xSalida, 0, 27, 0); t.vx = 0; t.pisado = true;
   RIO.ultimo = t;
   for (const [dx, wy, r, lleva] of guion || []) {
@@ -122,14 +126,14 @@ function reiniciaRio(xSalida, guion) {
 /* ---------- las orillas ---------- */
 function pintaRio(t) {
   const W = PAN.W, H = PAN.H, C = COL_RIO;
-  G.fillStyle = C.hierba; G.fillRect(0, 0, W, H);
+  pintaHierba();   // con el color del paisaje de cada altura (paisaje.js)
   // la hierba: manchas suaves más claras y más oscuras
   const paso = 22, k0 = Math.floor(CAM.y / paso) - 2, k1 = Math.ceil((CAM.y + H) / paso) + 3;
   for (let k = k0; k <= k1; k++) {
     const y = pantY(k * paso);
     for (let i = 0; i < 3; i++) {
       const h = hash(k, i + 10), x = h * W;
-      elipse(x, y + i * 7, 6 + hash(k, i + 20) * 8, 2.5 + hash(k, i + 30) * 2, hash(k, i + 70) < 0.5 ? 'rgba(150,200,90,0.5)' : 'rgba(195,230,140,0.5)', null);
+      elipse(x, y + i * 7, 6 + hash(k, i + 20) * 8, 2.5 + hash(k, i + 30) * 2, delPaisaje('manchas', k * paso, hash(k, i + 80))[hash(k, i + 70) < 0.5 ? 0 : 1], null);
     }
   }
   // el río: la arena de la orilla, el agua, y el barro que sube desde la ola
@@ -172,9 +176,11 @@ function pintaRio(t) {
     const h = hash(k, s + 100), wy = k * paso + hash(k, s + 110) * 14, [L, R] = orillas(wy);
     const sitio = s ? W - R : L, x = s ? R + 10 + hash(k, 120 + s) * Math.max(1, sitio - 14) : L - 10 - hash(k, 120 + s) * Math.max(1, sitio - 14);
     if (h < 0.18) cosas.push([hash(k, s + 130) < 0.5 ? 'tocon0' : 'tocon1', x, wy, 6.5 + hash(k, s + 140) * 2]);
-    else if (h < 0.27) cosas.push(['arbol0', s ? W - 4 - hash(k, 150) * 6 : 4 + hash(k, 151) * 6, wy, 9 + hash(k, s + 160) * 2]);
-    else if (h < 0.37) cosas.push(['arbusto0', x, wy, 7 + hash(k, s + 170) * 2]);
+    else if (h < 0.27) cosas.push([delPaisaje('arbol', wy, hash(k, s + 190)), s ? W - 4 - hash(k, 150) * 6 : 4 + hash(k, 151) * 6, wy, 9 + hash(k, s + 160) * 2]);
+    else if (h < 0.37) cosas.push([delPaisaje('arbusto', wy, hash(k, s + 190)), x, wy, 7 + hash(k, s + 170) * 2]);
     else if (h < 0.62) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
+    // la obra de Microblizz: conos, vallas y carteles (desde los 30 m)
+    else if (h < 0.68 && wy > 300) { const o = hash(k, s + 230); cosas.push(o < 0.5 ? ['cono', x, wy, 5] : o < 0.8 ? ['valla', x, wy, 6] : ['cartel', x, wy, 7]); }
   }
   cosas.sort((a, b) => b[2] - a[2]);
   for (const [n, x, wy, tam] of cosas) { const y = pantY(wy); if (y > -40 && y < H + 50) sprite(n, x, y, tam); }
@@ -182,21 +188,18 @@ function pintaRio(t) {
 
 /* ---------- los troncos y lo que llevan ---------- */
 function pintaTronco(tr, y, conejo) {
-  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6 + (tr.tipo === 'hunde' ? tr.pisa * 1.4 : 0);
+  const k = tr.tipo === 'hunde' ? Math.min(1, tr.pisa / ROMPE_SEG) : 0;   // cuánto le falta para romperse (0..1)
+  const baja = (conejo ? 1.2 : 0) + tr.hunde * 1.6 + k * 2;
   y += baja + Math.sin(tr.fase * 2) * 0.5;
-  const tiembla = tr.tipo === 'hunde' && tr.pisa > 0.5 ? Math.sin(tr.fase * 60) * (tr.pisa - 0.4) * 1.2 : 0, x = tr.x + tiembla;
-  elipse(tr.x + 2, y + tr.r * 0.32, tr.r * 1.08, tr.r * 0.6, 'rgba(40,110,120,0.28)', null);
-  sprite('tronco' + (tr.id % 3), x, y, tr.r);
-  if (tr.tipo === 'hunde') {
-    // agrietado: si te quedas encima, tiembla, burbujea y se hunde
-    const r = tr.r, c = 'rgba(90,50,25,0.75)';
-    for (const [a, b, e, d] of [[-0.55, -0.15, -0.05, -0.3], [-0.05, -0.3, 0.2, 0.05], [0.2, 0.05, 0.6, -0.1], [-0.05, -0.3, 0.05, -0.62]]) trazo(x + a * r, y - 2 + b * r * APLASTA, x + e * r, y - 2 + d * r * APLASTA, 0.9, c, null);
-    if (tr.pisa > 0.3) for (let i = 0; i < 3; i++) { const k = (tr.fase * 1.5 + i / 3) % 1; elipse(x + (i - 1) * r * 0.7, y + r * 0.3 - k * 6, 1 + k, 1 + k, 'rgba(255,255,255,0.7)', null); }
-  } else if (tr.tipo === 'muelle') {
-    // una gelatina rosa que bota
-    const sq = 1 - tr.boing * 0.35 * Math.cos(tr.boing * 18), ry = tr.r * 0.3 * sq;
-    elipse(x, y - 2 - ry * 0.4, tr.r * 0.58, ry, vol(x, y - 2, tr.r * 0.58, ry, '#ff9ac8'), OLC, 0.8);
-    elipse(x - tr.r * 0.2, y - 2 - ry * 0.85, tr.r * 0.16, ry * 0.3, 'rgba(255,255,255,0.75)', null);
+  const tiembla = k > 0.15 ? Math.sin(tr.fase * 70) * (k - 0.1) * 1.8 : 0, x = tr.x + tiembla;
+  if (!(tr.bajo > 0.5)) elipse(tr.x + 2, y + tr.r * 0.32, tr.r * 1.08, tr.r * 0.6, 'rgba(40,110,120,0.28)', null);
+  if (tr.tipo === 'hunde') pintaTroncoAgrietado(tr, x, y, k);   // agrietado: se va abriendo al pisarlo (rotura.js)
+  else if (pintaEspecial(tr, x, y)) { /* la tortuga y la peonza: fauna.js */ }
+  else sprite(GUARDA.piel && GUARDA.piel !== 'madera' ? 'piel_' + GUARDA.piel : 'tronco' + (tr.id % 3), x, y, tr.r);   // la piel del puesto de Lola
+  if (tr.tipo === 'muelle') {
+    // la gelatina rosa 3D con su cereza: tiembla siempre un poquito y, al caer encima, se aplasta y se estira
+    const b = tr.boing, sq = 1 - b * 0.35 * Math.cos(b * 18) + Math.sin(tr.fase * 5) * 0.025;
+    sprite('gelatina', x, y - tr.r * 0.08, tr.r * 0.92, 0, 1 + (1 - sq) * 0.6, sq);
   }
   return y;
 }

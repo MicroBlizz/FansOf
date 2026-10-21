@@ -62,7 +62,7 @@ function disparaJugador() {
   const b = (y, vy, r) => PB.push({ x, y, vx: 760, vy, dmg: d, r: r || 3.5, col: '#8ff0ff', px: x, py: y });
   if (nv === 1) b(P.y, 0); else if (nv === 2) { b(P.y - 8, 0); b(P.y + 8, 0); } else if (nv === 3) { b(P.y - 9, 0); b(P.y + 9, 0); b(P.y, -90); b(P.y, 90); }
   else { b(P.y - 12, 0); b(P.y + 12, 0); b(P.y, 0, 4.5); b(P.y - 4, -70); b(P.y + 4, 70); if (nv >= 5) { b(P.y, -150); b(P.y, 150); } }
-  luz(x, P.y, 46, '#8ff0ff', 0.55, 0.06); bola(x + 4, P.y, 15, 0.07); S.disp = (S.disp || 0) + 1; if (S.disp % 3 === 0) sonido('disparo');
+  luz(x, P.y, 40, '#8ff0ff', 0.22, 0.06); bola(x + 4, P.y, 15, 0.07); S.disp = (S.disp || 0) + 1; if (S.disp % 3 === 0) sonido('disparo');
 }
 const armaNivel = () => Math.min(5, (S.puntos >= 5000 ? 3 : S.puntos >= 1500 ? 2 : 1) + Math.ceil(Math.max(0, S.k - S.k0) / 2));
 function lanzaBola() {

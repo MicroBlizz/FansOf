@@ -45,8 +45,8 @@ function nvGalaxia(semilla, faccion) {
     const [x, y] = nvHexXY(h), dist = Math.hypot(x, y), ang = (Math.atan2(y, x) + Math.PI * 2.5) % (Math.PI * 2);   // 0 = arriba
     const rel = (ang % (Math.PI / 5)) - Math.PI / 10;
     if (dist > ap / Math.cos(rel) - 0.4) continue;   // fuera del decágono
-    const dueno = dist < 1.9 ? 'microblizz' : cunas[Math.floor(ang / (Math.PI / 5)) % 10];
-    out[nvHexClave(h)] = { q, r, x, y, dist, dueno, tipo: dueno === 'microblizz' ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)] };
+    const anillo = nvHexDist(h, { q: 0, r: 0 }), dueno = anillo <= 2 ? 'microblizz' : cunas[Math.floor(ang / (Math.PI / 5)) % 10];   // Microblizz: el núcleo y dos anillos alrededor
+    out[nvHexClave(h)] = { q, r, x, y, dist, dueno, tipo: anillo === 0 ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)] };
   }
   // la base: la celda más exterior del enclave, en el eje de su cuña
   const ejeReb = (iReb + 0.5) * Math.PI / 5;

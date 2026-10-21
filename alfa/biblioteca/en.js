@@ -128,6 +128,7 @@ IDIOMA.add({
   "Tácticas": "Tactics",
   "Casillas": "Grid",
   "Carreras": "Racing",
+  "Conducción": "Driving",
   "Corre y dispara": "Run and gun",
   "Escondite": "Hide-and-seek",
   "Pintura": "Paint",

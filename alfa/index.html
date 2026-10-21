@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=0166a7d">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=0166a7d">
-<link rel="stylesheet" href="novedades/ventana.css?v=0166a7d">
-<link rel="stylesheet" href="biblioteca/votos.css?v=0166a7d">
+<link rel="stylesheet" href="core/css/base.css?v=50ec761">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=50ec761">
+<link rel="stylesheet" href="novedades/ventana.css?v=50ec761">
+<link rel="stylesheet" href="biblioteca/votos.css?v=50ec761">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=0166a7d" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=50ec761" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -192,6 +192,12 @@
           <div class="row"><a class="play ol" href="games/nova/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-auto" style="--wc: #b8501a" data-tipo="Demo" data-etiquetas="Acción · Conducción · Pixel art" data-capturas="auto-1.jpg auto-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF AUTO</h2>
+          <p>La demo (prueba). El Distrito Beta Abierta visto desde arriba, como en los clásicos de la primera PlayStation: roba coches, siembra el caos, huye de los Moderadores (los martillos de baneo son tu nivel de buscado) y haz los recados de tres bandas: Los Animales Locos, Granizo Corp. y Los Extractores. Solo se guarda en el Templo del Autoguardado, pagando. Pixel art dibujado con código.</p>
+          <div class="row"><a class="play ol" href="demos/auto/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
         <section class="game" id="g-beams" style="--wc: #0b4a8a" data-tipo="Demo" data-etiquetas="Matamarcianos · Espacial · Pixel art" data-capturas="beams-1.jpg beams-2.jpg beams-3.jpg" data-horizontal>
           <h2 class="ol">FANS OF BEAMS</h2>
           <p>Año 30XX. Microblizz ya no se conforma con cerrar juegos: su guerra ha llegado al espacio y sus flotas de robots arrasan las galaxias. Solo queda tu nave. Dispara a lo grande y lanza la bola de captura: atrapa naves enemigas, hasta los capitanes y los acorazados gigantes, y haz que luchen a tu lado con sus propias armas, como escudo o como rayo gigante que arrasa media pantalla. Recoge núcleos para evolucionar de Caza a Nave jefe, cruza tres sectores y revienta al jefe de cada facción. Rayos de película, planetas de pixel art y explosiones en cadena.</p>
@@ -273,8 +279,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a379.0166a7d"></script>
-<script src="core/js/novedades.js?v=0166a7d"></script>
+<script src="core/js/nucleo.js?v=0-a380.50ec761"></script>
+<script src="core/js/novedades.js?v=50ec761"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -283,8 +289,8 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=0166a7d"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script src="core/js/sistema/cuenta.js?v=50ec761"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -309,12 +315,12 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/ventana.js?v=0166a7d"></script>
-<script src="biblioteca/tienda.js?v=0166a7d"></script>
-<script src="biblioteca/cuenta-web.js?v=0166a7d"></script>
-<script src="biblioteca/votos.js?v=0166a7d"></script>
-<script src="biblioteca/alfa.js?v=0166a7d"></script>
-<script src="core/js/sistema/analitica.js?v=0166a7d"></script>
-<script src="pie.js?v=0166a7d" defer></script>
+<script src="novedades/ventana.js?v=50ec761"></script>
+<script src="biblioteca/tienda.js?v=50ec761"></script>
+<script src="biblioteca/cuenta-web.js?v=50ec761"></script>
+<script src="biblioteca/votos.js?v=50ec761"></script>
+<script src="biblioteca/alfa.js?v=50ec761"></script>
+<script src="core/js/sistema/analitica.js?v=50ec761"></script>
+<script src="pie.js?v=50ec761" defer></script>
 </body>
 </html>

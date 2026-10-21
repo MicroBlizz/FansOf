@@ -1,8 +1,8 @@
 {
- "build": 379,
- "hash": "0166a7d",
- "fecha": "2026-10-21T17:54:42Z",
- "mensaje": "Versiones y notas del despliegue: todos los juegos (core cambió: datos de partida anónimos en Opciones, © y etiqueta de tipo en la promo)",
+ "build": 380,
+ "hash": "50ec761",
+ "fecha": "2026-10-21T18:07:21Z",
+ "mensaje": "Fans of Auto 0.1.0: demo nueva estilo GTA2 de PSX (demos/auto) con tarjeta en la biblioteca",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-21a',
+    fecha: '21 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF AUTO', tarjeta: 'g-auto', enlace: 'demos/auto/', texto: 'Demo nueva: el barrio visto desde arriba como en la primera PlayStation. Roba coches, huye de los Moderadores y haz los recados de las tres bandas.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-20c',
     fecha: '20 de octubre de 2026',
     nuevos: [

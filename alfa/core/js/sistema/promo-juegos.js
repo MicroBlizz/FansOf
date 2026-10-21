@@ -7,7 +7,7 @@ const PROMO = (() => {
   const JUEGOS = [
     ['rumble', 'Fans Of Rumble', 2], ['td', 'Fans Of TD', 2], ['rouflage', 'Fans Of Rouflage', 2], ['karts', 'Fans Of Karts', 3], ['ratkov', 'Fans Of Ratkov', 2],
     ['jump', 'Fans Of Jump', 2], ['crush', 'Fans Of Crush', 2], ['survivors', 'Fans Of Survivors', 2], ['tacticas', 'Fans Of Rumble: Tácticas', 2],
-    ['nova', 'Fans Of Nova', 5], ['decks', 'Fans Of Decks', 2],
+    ['nova', 'Fans Of Nova', 5], ['decks', 'Fans Of Decks', 2], ['beams', 'Fans Of Beams', 3],
   ].map(([id, nombre, caps]) => ({ id, nombre, caps }));
   const nativa = () => !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
   // la biblioteca está dos carpetas por encima del juego (también en /alfa/); en la app de Android, la web de verdad

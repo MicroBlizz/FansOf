@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#06110a">
+<title>Fans of Snakes</title>
+<meta name="description" content="Fans of Snakes: la serpiente de siempre con el Frenesí de Microblizz. Roza tu propia cola para cargar la barra y, cuando explote, córtate la cola a cambio de monedas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0-a378.5fcef48"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Snakes: un solo canvas en vertical, a la resolución real del móvil. El mundo mide 200 de ancho. */
+html, body { height: 100%; margin: 0; background: #06110a; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+#juego { display: block; touch-action: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #9cff6b; font: 800 18px/1 'Baloo 2', system-ui, sans-serif; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Snakes"></canvas></div>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Snakes lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/dibujo.js', 'js/efectos.js', 'js/tablero.js', 'js/frenesi.js', 'js/locuras.js', 'js/sonido.js',
+    'js/partida.js', 'js/entrada.js', 'js/pantalla.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

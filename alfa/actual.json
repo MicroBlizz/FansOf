@@ -1,8 +1,8 @@
 {
- "build": 366,
- "hash": "d6335ad",
- "fecha": "2026-10-21T09:59:10Z",
- "mensaje": "Promo de juegos: entran las demos y prototipos de la biblioteca, con marca PROTOTIPO, DEMO, BOCETO o PRUEBA",
+ "build": 367,
+ "hash": "8d78cfc",
+ "fecha": "2026-10-21T10:02:31Z",
+ "mensaje": "Anuncios: banners de las 6 demos (roguelite, dungeons, recruit, rumble-3d, tactics-advance, terminal-shock); Terminal Shock con su propio logo sin «FANS OF»",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

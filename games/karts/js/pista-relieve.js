@@ -67,8 +67,8 @@ function hitosEn(P, l, ids) {
 const COLINAS = { oficinas: [2, 3, 7], playa: [6, 2, 5], parque: [8, 3, 7], centro: [3, 4, 9], desierto: [11, 3, 5], cementerio: [6, 2, 6], minas: [5, 4, 7],
   estadio: [2, 2, 4], nieve: [11, 2, 6], fosa: [7, 3, 5], volcan: [9, 2, 7], nube: [6, 3, 8], selva: [8, 4, 6], hype: [6, 3, 7], castillo: [7, 2, 5], torre: [4, 3, 6] };
 for (const def of PISTAS) {
-  const C = COLINAS[def.id]; if (C) def.colinas = { a: C[0], n1: C[1], n2: C[2], p1: def.id.length, p2: def.id.charCodeAt(0) / 10 };
-  const R = RELIEVE[def.id]; if (!R) continue;
+  const C = COLINAS[def.base || def.id]; if (C) def.colinas = { a: C[0], n1: C[1], n2: C[2], p1: def.id.length, p2: def.id.charCodeAt(0) / 10 };
+  const R = def.relieve || RELIEVE[def.id]; if (!R) continue;      // las premium traen el suyo (pista-premium-*.js)
   const original = def.cosas;
   def.cosas = P => {
     const l = original ? original(P) : [];

@@ -13,7 +13,7 @@ const KECO = {
 const KTEMP = { n: 1, nombre: 'Despidos masivos', fin: '2026-12-31' };
 
 // lo que falte en la partida se pone a cero
-for (const [k, v] of Object.entries({ oro: 0, gemas: 0, tengo: {}, lleva: {}, xp: 0, premium: false, cobrado: {}, vip: false, logros: {}, copasCeo: {}, crono: {}, liga: 1000 })) if (SAVE[k] === undefined) SAVE[k] = v;
+for (const [k, v] of Object.entries({ oro: 0, gemas: 0, tengo: {}, lleva: {}, xp: 0, premium: false, cobrado: {}, vip: false, logros: {}, copasCeo: {}, crono: {}, liga: 1000, espejo: {} })) if (SAVE[k] === undefined) SAVE[k] = v;
 
 // ---------- el catálogo de cosméticos ----------
 // de: 'tienda' (con oro u gemas), 'ceo' (premio del nivel CEO), 'pase' (pase de temporada), 'vip' (con la licencia), 'logro', 'gratis'
@@ -125,6 +125,9 @@ function premiosCarrera() {
   darXp(xp);
   // los premios de ganar en cada nivel (no en el tutorial, ni en la contrarreloj, ni en el PvP)
   if (!C.pvp && !C.crono && !TUTO.activo && yo.puesto === 1) {
+    // quedar 1.º en una pista abre su espejo (si no lo tenías ya por ganar en CEO)
+    if (!SAVE.espejo[C.def.id] && !SAVE.logros.espejo && dif < 2) { SAVE.espejo[C.def.id] = 1; avisaPremio('¡ESPEJO DESBLOQUEADO!', [{ ico: 'cos', txt: trf('%1: ya puedes correrla del revés. Elige ESPEJO al escoger pista.', tr(C.def.nombre)) }], '#22e3ff'); }
+    SAVE.espejo[C.def.id] = 1;
     if (dif === 1) daCos('titulo-empleado');
     if (dif === 2) {
       daCos('titulo-ceo', '¡ERES CEO!');

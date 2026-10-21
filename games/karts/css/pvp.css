@@ -22,6 +22,8 @@
 .kt-voto img { width: 64px; height: 64px; image-rendering: pixelated; }
 .kt-voto b { font: 400 15px/1.1 var(--font-display); }
 .kt-voto small { font-size: 11px; font-weight: 800; color: var(--ink-dim); }
+.kt-voto.premium { background: linear-gradient(180deg, #4a3410, #2a1840); }
+.kt-voto.premium small, .kt-nota.premium { color: #ffcb3d; }
 .kt-voto span { font: 400 14px/1 var(--font-display); color: var(--gold); }
 .kt-voto.mio { background: #4a2f72; box-shadow: 0 0 0 3px var(--gold), 0 4px 0 var(--outline); }
 .kt-voto.kt-foco, .kt-input.kt-foco { outline: 4px solid var(--gold); outline-offset: 2px; }

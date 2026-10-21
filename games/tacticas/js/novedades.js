@@ -2,6 +2,8 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.44', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],
+    joke: ["Microblizz ha planeado la recogida de datos con tácticas por turnos. Phony aún está en el turno uno."] },
   { v: '0.1.43', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo)."], joke: ["Microblizz ha desplegado un anuncio sobre el tablero y Phony dice que es su turno de mirarlo."] },
   { v: '0.1.42', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha puesto fotos de otros juegos en el marco del tablero y Phony mueve las fichas para verlas mejor."] },
   { v: '0.1.41', real: ["<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie."], joke: ["Microblizz ha colgado carteles de otros juegos junto al tablero y Phony ha movido una ficha hacia ellos."] },

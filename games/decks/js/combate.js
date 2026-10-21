@@ -31,7 +31,7 @@ function dcCombateNuevo(encuentro, tramo) {
   // C.eventos: lo que pasó desde el último dibujo ({ t: 'dano'|'cura'|'bloqueo'|'esquiva', r: índice del rival o -1 si es el líder, n }); combate-ui los pinta como cifras flotantes y los vacía.
   // los madrugadores van arriba del mazo: salen siempre en la mano inicial
   const mad = C.pila.filter(c => dcFx(c).madrugador); if (mad.length) C.pila = C.pila.filter(c => !dcFx(c).madrugador).concat(mad);
-  C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = dcObjeto('zanahoriaoro').saltoCarga;
+  C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = Math.max(2, C.salto.carga - dcObjeto('zanahoriaoro').carga);
   if (dcVentaja() && dcVentaja().carga) C.salto.carga = Math.max(2, C.salto.carga - dcVentaja().carga);
   C.companeros = []; C.protocolos = [];   // los compañeros que se quedan en la mesa y los protocolos armados
   // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.

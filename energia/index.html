@@ -1,12 +1,15 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Caos primordial · Fans Of</title><meta name="robots" content="index"><link rel="icon" href="../core/img/icon-192.png">
-<style>body{margin:0;background:#150b21;color:#f3ecff;font:16px/1.55 system-ui,sans-serif}
-main{max-width:720px;margin:0 auto;padding:24px 18px 60px}
-h1{font-size:28px;margin:.2em 0}h2{font-size:19px;margin:1.6em 0 .3em;color:#ffd75e}
-a{color:#8fd3ff}.bar{display:flex;gap:14px;flex-wrap:wrap;font-weight:700;margin-bottom:8px}
-small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 0}</style></head><body><main>
-<div class="bar"><a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="#" data-l="es">Español</a><a href="#" data-l="en">English</a><a href="../condiciones/">Condiciones / Terms</a><a href="../privacidad/">Privacidad / Privacy</a></div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="../core/css/base.css">
+<link rel="stylesheet" href="../core/css/legal.css">
+<meta name="theme-color" content="#150b21">
+</head><body>
+<script src="../menu.js" data-base="../" data-pagina="energia"></script>
+<main>
 <div lang="es"><h1>Caos primordial: la energía del juego online</h1><small>Fans Of · Actualizada el 11 de octubre de 2026</small>
 <p>Jugar con otras personas por internet (PvP o cooperativo) mantiene conexiones abiertas con nuestro servidor durante toda la partida, y eso cuesta dinero. Por eso el juego online funciona con <b>caos primordial</b>, que es la energía de las partidas online. No es el CAOS que se gasta dentro de una partida para jugar cartas: es otra cosa, y se reconoce por su icono de espiral dorada. Jugar solo o contra la CPU (campaña, entrenamiento…) <b>nunca</b> gasta caos primordial.</p>
 <h2>Para qué sirve</h2>
@@ -57,5 +60,6 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 </main><script>
 (function(){var q=new URLSearchParams(location.search).get('lang'),l=q||(function(){try{return localStorage.getItem('fansof-idioma')}catch(e){}})()||navigator.language||'es';
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
-p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();p(a.dataset.l)}})})();
-</script></body></html>
+p(l);window.pagIdioma=p})();
+</script><script src="../pie.js" defer></script>
+</body></html>

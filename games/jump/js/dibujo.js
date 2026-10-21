@@ -44,8 +44,10 @@ function trazo(x1, y1, x2, y2, w, color, borde = OLC) {
   G.beginPath(); G.moveTo(x1, y1); G.lineTo(x2, y2); G.lineWidth = w; G.strokeStyle = color; G.stroke();
 }
 // texto con la letra redonda; o: { alin, borde (color), bw (grosor del borde), peso, logo, base }
+// o.max: el ancho máximo; si el texto no cabe (por ejemplo, en inglés), se encoge hasta caber
 function letras(s, x, y, size, color, o = {}) {
   G.font = `${o.peso || 800} ${size}px ${o.logo ? FUENTE_LOGO : FUENTE}`;
+  if (o.max) { const a = G.measureText(s).width; if (a > o.max) { const k = o.max / a; size *= k; if (o.bw) o = { ...o, bw: o.bw * k }; G.font = `${o.peso || 800} ${size}px ${o.logo ? FUENTE_LOGO : FUENTE}`; } }
   G.textAlign = o.alin || 'center'; G.textBaseline = o.base || 'middle';
   if (o.borde) { G.lineJoin = 'round'; G.lineWidth = o.bw || size * 0.22; G.strokeStyle = o.borde; G.strokeText(s, x, y); }
   G.fillStyle = color; G.fillText(s, x, y);

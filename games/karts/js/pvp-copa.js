@@ -8,7 +8,7 @@ const KCOPA = { espera: 20, esperaCualquiera: 35, premio: 150 };
 // la pista votada primero y luego las otras de su mundo
 function pvpPistasCopa(id) {
   const d = PISTAS.find(p => p.id === id); if (!d) return [id];
-  return [id, ...pistasDe(d.mundo - 1).map(p => p.id).filter(x => x !== id)].slice(0, 4);
+  return [id, ...pistasDe(d.mundo - 1, !!d.premium).map(p => p.id).filter(x => x !== id)].slice(0, 4);
 }
 const pvpSoyAnfitrionCopa = () => KPVP.orden === Math.min(...KPVP.jugadores.filter(j => j.orden === KPVP.orden || !KPVP.salidos[j.orden]).map(j => j.orden));
 const pvpCopaFin = () => !!KPVP.copa && KPVP.carrera >= KPVP.copa.pistas.length - 1 && !KPVP.activo;

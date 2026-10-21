@@ -103,6 +103,7 @@ const KRED = (() => {
     latido: () => rpc('karts_pvp8_latido').catch(() => { /* da igual */ }),
     pendientes: () => rpc('karts_pvp8_pendientes').catch(() => []),
     votar: pista => rpc('karts_pvp8_votar', { p_pista: pista }),
+    premium: p => rpc('karts_pvp8_premium', { p_premium: !!p }).catch(() => null),      // tengo el pase premium (servidor antiguo: no hace nada)
     empezar: copa => rpc('karts_pvp8_empezar', { p_copa: !!copa }),
     temporada: () => rpc('karts_temporada'),
   };
@@ -121,22 +122,22 @@ const KRED = (() => {
       const empieza = m => { para(); aviso({ sala: m.sala, estado: 'jugando', orden: m.ids.indexOf(id), pista: m.pista, semilla: m.semilla, n: m.ids.length, max: 8, faltan: 0, copa: !!m.copa, codigo: m.codigo, privada: !!m.codigo, jugadores: m.ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), piloto: m.pilotos[i], yo: x === id })) }); };
       bc.onmessage = e => {
         const m = e.data; if (!activo || !m) return;
-        if (m.t === 'busco') vistos.set(m.id, { piloto: m.piloto, t: Date.now(), voto: m.voto, copa: m.copa });
+        if (m.t === 'busco') vistos.set(m.id, { piloto: m.piloto, t: Date.now(), voto: m.voto, copa: m.copa, prem: !!m.prem });
         else if (m.t === 'par' && m.ids.includes(id)) empieza(m);
       };
       const paso = () => {
         if (!activo) return;
-        vistos.get(id).voto = local.voto; vistos.get(id).t = Date.now();
-        bc.postMessage({ t: 'busco', id, piloto, voto: local.voto });
+        vistos.get(id).voto = local.voto; vistos.get(id).prem = !!local.premium; vistos.get(id).t = Date.now();
+        bc.postMessage({ t: 'busco', id, piloto, voto: local.voto, prem: !!local.premium });
         for (const [k, v] of vistos) if (k !== id && Date.now() - v.t > 3000) vistos.delete(k);
         const ids = [...vistos.keys()].sort(), n = ids.length, votos = {};
         for (const x of ids) { const v = vistos.get(x).voto; if (v) votos[v] = (votos[v] || 0) + 1; }
-        aviso({ sala: 'pruebas' + (codigo || ''), estado: 'espera', n, max: 8, orden: ids.indexOf(id), semilla: 777, codigo, privada: !!codigo, anfitrion: 0, votos, faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
+        aviso({ sala: 'pruebas' + (codigo || ''), estado: 'espera', n, max: 8, orden: ids.indexOf(id), semilla: 777, codigo, privada: !!codigo, anfitrion: 0, votos, premium: ids.some(x => vistos.get(x).prem), faltan: codigo ? null : n >= 2 ? Math.max(0, Math.ceil(local.espera - (Date.now() - t0) / 1000)) : null,
           jugadores: ids.map((x, i) => ({ orden: i, nombre: nombreDe(x), piloto: vistos.get(x).piloto, yo: x === id, voto: vistos.get(x).voto })) });
         const toca = codigo ? local.arranque != null : n >= 8 || (n >= 2 && Date.now() - t0 > local.espera * 1000);
         if (ids[0] === id && toca) {
           const masVotada = Object.entries(votos).sort((a, b) => b[1] - a[1])[0];
-          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, 8), pilotos: ids.slice(0, 8).map(x => vistos.get(x).piloto), pista: masVotada ? masVotada[0] : (q => q[(Math.random() * q.length) | 0].id)(PISTAS.filter(p => p.mundo > 0)), semilla: (Math.random() * 2147483647) | 0, copa: !!local.arranque, codigo };
+          const m = { t: 'par', sala: id + Date.now().toString(36), ids: ids.slice(0, 8), pilotos: ids.slice(0, 8).map(x => vistos.get(x).piloto), pista: masVotada ? masVotada[0] : (q => q[(Math.random() * q.length) | 0].id)(PISTAS.filter(p => p.mundo > 0 && !p.premium)), semilla: (Math.random() * 2147483647) | 0, copa: !!local.arranque, codigo };
           bc.postMessage(m); empieza(m);
         }
       };
@@ -152,6 +153,7 @@ const KRED = (() => {
     puntos: 1000,
     retirar: () => Promise.resolve(), latido: () => Promise.resolve(), pendientes: () => Promise.resolve([]),
     votar: pista => { local.voto = pista; return Promise.resolve({}); },
+    premium: p => { local.premium = !!p; return Promise.resolve({}); },
     empezar: copa => { local.arranque = !!copa; return Promise.resolve({}); },
     temporada: () => Promise.resolve({ n: 1, nombre: 'Despidos masivos', premio: null }),
     cerrar: (sala, puesto) => { const d = puesto === 1 ? 16 : puesto === 2 ? 4 : -8; local.puntos += d; return Promise.resolve({ estado: 'cerrada', puesto, puntos: local.puntos, delta: d }); },

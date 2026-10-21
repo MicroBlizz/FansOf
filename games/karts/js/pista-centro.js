@@ -3,7 +3,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'centro', mundo: 1, nombre: 'Centro Comercial de Skins', lema: 'Oferta del −90 %. Solo hoy. Como ayer. Como mañana.', dificultad: 2, musica: 'boss8', color: '#c35cff',
+  id: 'centro', invertida: true, mundo: 1, nombre: 'Centro Comercial de Skins', lema: 'Oferta del −90 %. Solo hoy. Como ayer. Como mañana.', dificultad: 2, musica: 'boss8', color: '#c35cff',
   puntos: [[500, 160], [760, 160], [870, 230], [880, 390], [780, 450], [630, 450], [560, 530], [640, 610], [810, 610], [890, 700], [860, 850], [720, 890], [420, 890], [270, 860],
     [160, 760], [160, 600], [290, 520], [290, 390], [160, 310], [190, 180], [330, 150]],
   ancho: 66, margen: 36, borde: 'muro',

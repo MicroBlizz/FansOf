@@ -96,10 +96,19 @@ pvpEmpezar = (info, red) => {
 
 // ---------- la sala de espera ----------
 // las tres pistas a votar (salen de la semilla: todos ven las mismas)
+// si alguien de la sala tiene el pase premium (info.premium), la tercera es de la Edición Premium
 function pvpOpcionesPista(info) {
-  const ids = PISTAS.filter(p => p.mundo > 0).map(p => p.id), az = azarDe(((info && info.semilla) | 0) + 999), out = [];
-  while (out.length < 3 && ids.length) out.push(ids.splice(Math.floor(az() * ids.length), 1)[0]);
+  const ids = PISTAS.filter(p => p.mundo > 0 && !p.premium).map(p => p.id), az = azarDe(((info && info.semilla) | 0) + 999), out = [];
+  const prem = PISTAS.filter(p => p.premium).map(p => p.id), n = info && info.premium ? 2 : 3;
+  while (out.length < n && ids.length) out.push(ids.splice(Math.floor(az() * ids.length), 1)[0]);
+  if (info && info.premium && prem.length) out.push(prem[Math.floor(az() * prem.length)]);
   return out;
+}
+// al entrar en una sala, el juego dice si tiene el pase premium (una vez por sala)
+function pvpDicePremium(info) {
+  if (!info || !info.sala || SALA.premSala === info.sala || !KRED.red.premium) return;
+  SALA.premSala = info.sala;
+  KRED.red.premium(!!SAVE.premium).then(r => { if (r && r.sala === info.sala && r.estado === 'espera' && KPVP.busca) KPVP.info = r; }).catch(() => { /* servidor antiguo */ });
 }
 function fotoMapa(d) { const k = 'mapa-' + d.id; if (FOTOS[k]) return FOTOS[k]; const m = miniDePista(d); return m ? (FOTOS[k] = aUrl(m)) : null; }
 function votaPista(id) {
@@ -153,9 +162,10 @@ function pintaSalaHtml(arranca) {
       el('div.kt-h3.ol', {}, tr('VOTA LA PISTA')),
       el('div.kt-votos', {}, pvpOpcionesPista(info).map(id => {
         const d = PISTAS.find(p => p.id === id), mapa = fotoMapa(d);
-        return el('button.kt-voto' + (mio === id ? '.mio' : ''), { 'data-k': 1, on: () => votaPista(id), style: '--mundo:' + MUNDOS[d.mundo - 1].color },
-          mapa ? img(mapa) : null, el('b', {}, tr(d.nombre)), el('small', {}, tr(MUNDOS[d.mundo - 1].nombre)), el('span.ol', {}, trf('VOTOS: %1', votos[id] || 0)));
+        return el('button.kt-voto' + (mio === id ? '.mio' : '') + (d.premium ? '.premium' : ''), { 'data-k': 1, on: () => votaPista(id), style: '--mundo:' + (d.premium ? '#ffcb3d' : MUNDOS[d.mundo - 1].color) },
+          mapa ? img(mapa) : null, el('b', {}, tr(d.nombre)), el('small', {}, tr(d.premium ? 'EDICIÓN PREMIUM' : MUNDOS[d.mundo - 1].nombre)), el('span.ol', {}, trf('VOTOS: %1', votos[id] || 0)));
       })),
+      info.premium ? el('p.kt-nota.premium', {}, tr(SAVE.premium ? 'Tienes el pase premium: toda la sala puede votar una pista de la Edición Premium.' : 'Alguien de la sala tiene el pase premium: hoy podéis votar una pista de la Edición Premium.')) : null,
       el('p.kt-nota', {}, tr('Gana la más votada. Si nadie vota, elige el servidor.'))] : null);
   SALA.caja.replaceChildren(el('header.kt-head', {}, el('button.kt-back', { 'data-k': 1, on: pvpCancelar }, tr('SALIR')),
     el('h2.kt-d.ol', {}, tr(priv ? 'SALA CON AMIGOS' : 'CARRERA ONLINE')), el('div.kt-cuantos.kt-d.ol', {}, (info ? info.n : 1) + '/8')), el('main.kt-body', {}, w));
@@ -165,6 +175,7 @@ function pantallaPvpSala(dt) {
   paseo(22, 34); velo(0.4); calmaLienzo();
   KPVP.tBusca += dt;
   const info = KPVP.info;
+  if (info && info.estado === 'espera') pvpDicePremium(info);
   if (info && info.orden != null && !KPVP.activo) KPVP.orden = info.orden;
   const arranca = KPVP.activo && PANT.encontrado > 0;
   if (arranca) { PANT.encontrado -= dt; if (PANT.encontrado <= 0) { SALA.caja.hidden = true; musica('menu'); empiezaCarga(); return; } }

@@ -110,6 +110,7 @@ Promise.allSettled([...JUEGOS.map(([id, dir]) => Promise.all([text(dir + 'index.
     const antes = leerVisto(), ahora = { b: NOV_BOLETIN ? NOV_BOLETIN.id : '', v: {} };
     for (const [id] of JUEGOS) if (ENTRADAS[id] && ENTRADAS[id].ver) ahora.v[id] = ENTRADAS[id].ver;
     try { localStorage.setItem(VISTO, JSON.stringify(ahora)); } catch (e) { /* sin almacenamiento: sale siempre, como antes */ }
+    if (location.hash === '#novedades') { abrirNovedades(); return; }   // desde el menú de otra página (…/#novedades): todas
     if (!antes) { abrirNovedades(); return; }   // primera visita (o sin memoria): todo
     const cambios = Object.keys(ahora.v).filter(id => antes.v && antes.v[id] !== ahora.v[id]);
     if (ahora.b && ahora.b !== antes.b) cambios.push('boletin');

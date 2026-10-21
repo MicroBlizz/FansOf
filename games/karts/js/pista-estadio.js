@@ -3,7 +3,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'estadio', mundo: 2, nombre: 'Estadio de eSports', lema: 'La gran final. Premio: un millón de puntos de experiencia (no canjeables).', dificultad: 2, musica: 'boss10', color: '#22b8f0',
+  id: 'estadio', invertida: true, mundo: 2, nombre: 'Estadio de eSports', lema: 'La gran final. Premio: un millón de puntos de experiencia (no canjeables).', dificultad: 2, musica: 'boss10', color: '#22b8f0',
   puntos: [[512, 175], [760, 175], [885, 260], [905, 420], [860, 560], [885, 720], [800, 855], [620, 885], [500, 800], [380, 880], [220, 865], [130, 720], [140, 560], [230, 470], [160, 370], [160, 260], [300, 175]],
   ancho: 70, margen: 34, borde: 'muro',
   tramos: [{ deU: 7.4, aU: 9.6, ancho: 60, suave: 0.03 }, { deU: 12.4, aU: 14.4, ancho: 62, suave: 0.03 }],

@@ -1,47 +1,16 @@
 // Fans of Jump · Lo de los anuncios (siempre voluntarios y fuera de la partida, 5 al día entre todos: premios.js) y la tienda
 // con euros, que está preparada pero APAGADA:
-// · el cofre de Lola, en la portada: una vez al día, con un anuncio, zanahorias; más cuantos más días seguidos lo abras
+// · el regalo diario de Lola está en regalo.js: es gratis y el anuncio solo lo duplica
 // · probar una piel (pelaje, capa, tronco o estela) que no tienes durante una partida, con un anuncio
-// · los packs con euros (gemas, «Zanahoria doble» y «Sin anuncios»), tras el flag 'jump-tienda-real': no se vende nada
+// · los packs con euros (zanahorias, bienvenida, «Zanahoria doble» y «Sin anuncios»), tras el flag 'jump-tienda-real': no se vende nada
 //   hasta que Arkioner diga sí y esté Google Play Billing; mientras, comprar solo avisa de que aún no está abierta.
 'use strict';
-
-const COFRE_BASE = 20, COFRE_DIA = 10, COFRE_MAX_DIAS = 5;
-const ayer = () => new Date(Date.now() - 864e5).toISOString().slice(0, 10);
-const cofreAbierto = () => GUARDA.cofre && GUARDA.cofre.dia === hoy();
-const premioCofre = () => { const r = GUARDA.cofre && GUARDA.cofre.dia === ayer() ? GUARDA.cofre.racha + 1 : 1; return { racha: r, n: COFRE_BASE + COFRE_DIA * (Math.min(r, COFRE_MAX_DIAS) - 1) }; };
 
 // la tele del botón de los anuncios
 function iconoTele(x, y) {
   caja(x - 6, y - 4.5, 12, 9, 2, '#8fd0ff', OLC, 0.8); caja(x - 4.6, y - 3.2, 9.2, 6.4, 1.2, '#dff4ff', null);
   forma([x - 1.4, y - 2, x + 2.2, y, x - 1.4, y + 2], PASTEL.melocoton, null);
   trazo(x - 2.5, y - 4.5, x - 4.5, y - 7, 0.8, OLC, null); trazo(x + 2.5, y - 4.5, x + 4.5, y - 7, 0.8, OLC, null);
-}
-
-/* ---------- el cofre de Lola (portada) ---------- */
-function pintaCofre(x, y, t) {
-  if (!hayAnuncios() || cofreAbierto()) return;
-  const bote = Math.abs(Math.sin(t * 3)) * 2, k = anunciosQuedan() > 0;
-  aqui(x, y - bote, Math.sin(t * 6) * 0.05, 1, 1, () => {
-    caja(-9, -3, 18, 11, 2, '#c47a3c', OLC, 0.9);                 // la caja
-    caja(-10, -9, 20, 7, [4, 4, 1, 1], '#e0944a', OLC, 0.9);      // la tapa
-    caja(-2, -9, 4, 17, 0, PASTEL.oro, OLC, 0.6);                 // la cinta dorada
-    caja(-2.4, -2.5, 4.8, 4.2, 1, '#fff1a0', OLC, 0.6);          // el cierre
-  });
-  if (k) estrellita(x + 9, y - 10 - bote, 2.6 + Math.sin(t * 7), 0.95);
-  letras(tr('Cofre'), x, y + 13, 6.4, '#ffffff', { borde: OLC, bw: 2 });
-  if (k) boton(x - 13, y - 14, 26, 32, abreCofre);
-}
-function abreCofre() {
-  if (!anunciosQuedan() || cofreAbierto()) return SONIDO.uy();
-  const p = premioCofre();
-  verAnuncio(() => {
-    cuentaAnuncio();
-    GUARDA.cofre = { dia: hoy(), racha: p.racha }; GUARDA.zanas += p.n; salvaGuarda();
-    bandera(tr('¡Cofre de Lola! +{n}', { n: p.n }), PASTEL.oro);
-    if (p.racha > 1) setTimeout(() => bandera(tr('{n} días seguidos', { n: p.racha }), PASTEL.melocoton), 700);
-    confeti(PAN.W / 2, CAM.y + PAN.H * 0.6, 40); SONIDO.compra(); vibra([20, 30, 20]);
-  });
 }
 
 /* ---------- probar una piel durante una partida ---------- */
@@ -64,31 +33,61 @@ function acabaPrueba() {
 }
 
 /* ---------- la tienda con euros (apagada) ---------- */
-const tiendaReal = () => NUCLEO.flag('jump-tienda-real', 'Fans of Jump: packs con euros en el puesto de Lola (gemas, Zanahoria doble y Sin anuncios). Apagado hasta el sí de Arkioner y Google Play Billing', false);
+// Jump no tiene azar: las zanahorias solo compran cosas a precio fijo. Por eso aquí se venden zanahorias con euros (excepción
+// a PLAN-MONEDAS.md pedida a Arkioner en PLAN-JUMP.md, sección 6). Todo cobro pasa por MONEDAS.compraReal (core): en desarrollo es
+// una compra de prueba; en la web dice que aún no está a la venta. Nada se vende hasta el sí de Arkioner y Google Play Billing.
+const tiendaReal = () => NUCLEO.flag('jump-tienda-real', 'Fans of Jump: packs con euros en el puesto de Lola (zanahorias, bienvenida, Zanahoria doble y Sin anuncios). Apagado hasta el sí de Arkioner y Google Play Billing', false);
+// [clave, nombre, qué da, precio en euros, entrega]
 const PACKS = [
-  ['punado', 'Puñado de gemas', '100 gemas', '0,99 €'],
-  ['saco', 'Saco de gemas', '550 gemas', '4,99 €'],
-  ['carro', 'Carro de gemas', '1.200 gemas', '9,99 €'],
-  ['doble', 'Zanahoria doble', 'Para siempre: las zanahorias de cada partida, por dos.', '2,99 €'],
-  ['sinanuncios', 'Sin anuncios', 'Los premios de los anuncios sin verlos, con el mismo tope del día.', '2,99 €'],
-  ['bolsa', 'Bolsa de zanahorias', '1.000 zanahorias por 60 gemas.', '60 gemas'],
+  ['bienvenida', 'Pack de bienvenida', 'Solo una vez: 2.000 zanahorias, 3 cascos de obra y 3 mirillas.', 1.99, () => { GUARDA.zanas += 2000; GUARDA.kit.casco = (GUARDA.kit.casco || 0) + 3; GUARDA.kit.mirilla = (GUARDA.kit.mirilla || 0) + 3; }],
+  ['punado', 'Puñado de zanahorias', '500 zanahorias.', 0.99, () => { GUARDA.zanas += 500; }],
+  ['saco', 'Saco de zanahorias', '3.000 zanahorias (20 % de regalo).', 4.99, () => { GUARDA.zanas += 3000; }],
+  ['carretilla', 'Carretilla de zanahorias', '7.000 zanahorias (40 % de regalo).', 9.99, () => { GUARDA.zanas += 7000; }],
+  ['doble', 'Zanahoria doble', 'Para siempre: las zanahorias que recoges en cada partida, por dos.', 2.99, () => {}],
+  ['sinanuncios', 'Sin anuncios', 'Los premios de los anuncios sin verlos, con el mismo tope del día.', 2.99, () => {}],
 ];
-function pintaGemas(x, y, w, h) {
+// el precio escrito como en cada idioma (tr() no toca textos sin letras): 0,99 € / €0.99
+const euros = v => (NUCLEO.idioma === 'en' ? '€' + v.toFixed(2) : v.toFixed(2).replace('.', ',') + ' €');
+const UNA_VEZ = ['bienvenida', 'doble', 'sinanuncios'];
+const comprado = id => !!(GUARDA.compras && GUARDA.compras[id]);
+function compraPack([id, nombre, desc, precio, entrega]) {
+  if (UNA_VEZ.includes(id) && comprado(id)) return SONIDO.uy();
+  SONIDO.boton();
+  MONEDAS.compraReal(tr(nombre), '<p>' + tr(desc) + '</p><p><b>' + tr(precio) + '</b></p>', () => {
+    GUARDA.compras = GUARDA.compras || {}; GUARDA.compras[id] = (GUARDA.compras[id] || 0) + 1;
+    entrega(); salvaGuarda();
+    bandera(tr('¡Gracias! {pack}', { pack: tr(nombre) }), PASTEL.oro); confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 40); SONIDO.compra();
+  });
+}
+// el dibujo de cada pack
+function iconoPack(id, x, y) {
+  if (id === 'punado') iconoZana(x, y, 18);
+  else if (id === 'saco' || id === 'carretilla') { const n = id === 'saco' ? 3 : 5; for (let k = 0; k < n; k++) iconoZana(x + (k - (n - 1) / 2) * 7, y - (k % 2) * 3, 16); }
+  else if (id === 'doble') { iconoZana(x - 5, y, 17); iconoZana(x + 5, y, 17); letras('×2', x + 11, y - 7, 7, PASTEL.melocotonO, { borde: '#ffffff', bw: 2 }); }
+  else if (id === 'sinanuncios') { iconoTele(x, y); trazo(x - 8, y + 7, x + 8, y - 7, 1.4, '#ff5a6e', null); }
+  else if (id === 'bienvenida') {   // una caja de regalo con lazo
+    caja(x - 9, y - 4, 18, 12, 2, PASTEL.melocoton, OLC, 0.9); caja(x - 10, y - 8, 20, 5, 2, '#ffd0b5', OLC, 0.9);
+    caja(x - 1.8, y - 8, 3.6, 16, 0, PASTEL.oro, OLC, 0.6);
+    elipse(x - 3.5, y - 10, 3.2, 2.2, PASTEL.oro, OLC, 0.6); elipse(x + 3.5, y - 10, 3.2, 2.2, PASTEL.oro, OLC, 0.6);
+  }
+}
+function pintaPacks(x, y, w, h) {
   contenido(x, y, w, h, y0 => {
-    const cw = (w - 12) / 2, ch = 58;
-    PACKS.forEach(([id, nombre, desc, precio], i) => {
+    const cw = (w - 12) / 2, ch = 62;
+    PACKS.forEach((pk, i) => {
+      const [id, nombre, desc, precio] = pk, ya = UNA_VEZ.includes(id) && comprado(id);
       const cx = x + 2 + (i % 2) * (cw + 4), cy = y0 + 2 + Math.floor(i / 2) * (ch + 4);
-      caja(cx, cy, cw, ch, 4, '#ffffff', OLC, 0.8);
-      const gema = (gx, gy, r) => forma([gx, gy - r, gx + r * 0.85, gy - r * 0.2, gx, gy + r, gx - r * 0.85, gy - r * 0.2], '#8fd0ff', OLC, 0.7);
-      if (id === 'doble') { iconoZana(cx + cw / 2 - 5, cy + 13, 16); iconoZana(cx + cw / 2 + 5, cy + 13, 16); }
-      else if (id === 'sinanuncios') { iconoTele(cx + cw / 2, cy + 13); trazo(cx + cw / 2 - 8, cy + 20, cx + cw / 2 + 8, cy + 6, 1.4, '#ff5a6e', null); }
-      else if (id === 'bolsa') iconoZana(cx + cw / 2, cy + 13, 20);
-      else for (let k = 0; k <= i; k++) gema(cx + cw / 2 + (k - i / 2) * 7, cy + 13 - (k % 2) * 3, 5);
-      letras(tr(nombre), cx + cw / 2, cy + 28, 6.8, PASTEL.texto);
-      envuelve(tr(desc), cw - 8, 5.2).slice(0, 2).forEach((l, k) => letras(l, cx + cw / 2, cy + 35 + k * 5.8, 5.2, PASTEL.suave, { peso: 700 }));
-      caja(cx + cw / 2 - 17, cy + ch - 13, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr(precio), cx + cw / 2, cy + ch - 7.6, 6.4, '#ffffff', { borde: PASTEL.mentaO, bw: 1.6 });
-      boton(cx, cy, cw, ch, () => { SONIDO.boton(); toast(tr('La tienda con euros aún no está abierta.')); });
+      caja(cx, cy, cw, ch, 4, id === 'bienvenida' && !ya ? '#fff4c2' : '#ffffff', id === 'bienvenida' && !ya ? PASTEL.oroO : OLC, 0.8);
+      iconoPack(id, cx + cw / 2, cy + 13);
+      letras(tr(nombre), cx + cw / 2, cy + 28, 6.8, PASTEL.texto, { max: cw - 8 });
+      envuelve(tr(desc), cw - 8, 5.2).slice(0, 3).forEach((l, k) => letras(l, cx + cw / 2, cy + 35 + k * 5.8, 5.2, PASTEL.suave, { peso: 700, max: cw - 6 }));
+      const et = ya ? tr('Ya es tuyo') : euros(precio);
+      caja(cx + cw / 2 - 19, cy + ch - 11.5, 38, 10, 5, ya ? PASTEL.fondo : PASTEL.menta, OLC, 0.6);
+      letras(et, cx + cw / 2, cy + ch - 6.1, 6.4, ya ? PASTEL.suave : '#ffffff', ya ? { max: 34 } : { borde: PASTEL.mentaO, bw: 1.6, max: 34 });
+      if (!ya) boton(cx, cy, cw, ch, () => compraPack(pk));
     });
-    return y0 + 4 + Math.ceil(PACKS.length / 2) * (ch + 4);
+    const fin = y0 + 4 + Math.ceil(PACKS.length / 2) * (ch + 4);
+    envuelve(tr('Las compras con dinero real las hace una persona adulta o con su permiso.'), w - 16, 5.6).forEach((l, k) => letras(l, x + w / 2, fin + 6 + k * 7, 5.6, PASTEL.flojo, { peso: 700 }));
+    return fin + 18;
   });
 }

@@ -1,23 +1,26 @@
 // Fans of Jump · Lo que se puede ganar al caer (PLAN-JUMP.md, monetización):
-// · La segunda oportunidad: al caer, 4 s para seguir desde el último tronco (una vez por partida), pagando zanahorias o
-//   viendo un anuncio (lo eliges tú; si no, se acaba). La cuenta atrás se para mientras ves el anuncio.
-// · El anuncio con premio, nunca obligatorio: duplica las zanahorias de esa partida. Con el cofre de Lola y probar una
+// · La segunda oportunidad: al caer, 4 s para seguir desde el último tronco, hasta 3 veces por partida y cada vez más cara
+//   (SEGUIR: 15, 30 y 60 zanahorias), o viendo un anuncio en las 2 primeras (ANUNCIOS_SEGUIR; lo eliges tú; si no, se
+//   acaba). La cuenta atrás se para mientras ves el anuncio. En la partida siguiente vuelve a costar 15. No hay vidas.
+// · El anuncio con premio, nunca obligatorio: duplica las zanahorias de esa partida. Con el regalo de Lola (regalo.js) y probar una
 //   piel (anuncios.js), hasta 5 anuncios al día entre todos. Por ahora es un anuncio de prueba y solo sale en la alfa y en
 //   desarrollo; en la app, aquí irá el de AdMob (verAnuncio).
 'use strict';
 
 const CASI_SEG = 4;
 const ANUNCIOS_DIA = 5;
-const precioSeguir = () => 30;
+const SEGUIR = [15, 30, 60], ANUNCIOS_SEGUIR = 2;
+const precioSeguir = () => SEGUIR[Math.min(JUEGO.seguidos, SEGUIR.length - 1)];
+const anuncioSeguir = () => hayAnuncios() && anunciosQuedan() > 0 && JUEGO.seguidos < ANUNCIOS_SEGUIR;
 const hoy = () => new Date().toISOString().slice(0, 10);
 const anunciosQuedan = () => ANUNCIOS_DIA - (GUARDA.anuncios && GUARDA.anuncios.dia === hoy() ? GUARDA.anuncios.n : 0);
-const hayAnuncios = () => NUCLEO.alfa || NUCLEO.desarrollo;
+const hayAnuncios = () => NUCLEO.alfa || NUCLEO.desarrollo || !!(GUARDA.compras && GUARDA.compras.sinanuncios);   // con «Sin anuncios» (anuncios.js) los premios están siempre
 const ANUNCIO = { activo: false, t: 0, alAcabar: null };
 
 // en vez de acabar: si se puede, se ofrece seguir
 function muere(motivo) {
   const J = JUEGO;
-  if (J.seguido || tutoActivo() || (GUARDA.zanas + J.zanas < precioSeguir() && !(hayAnuncios() && anunciosQuedan() > 0))) return acaba(motivo);
+  if (J.seguidos >= SEGUIR.length || tutoActivo() || (GUARDA.zanas + J.zanas < precioSeguir() && !anuncioSeguir())) return acaba(motivo);
   const c = J.conejo;
   J.modo = 'casi'; J.casi = { motivo, t: 0 }; c.salto = null; c.tronco = null; APUNTA.activo = false;
   empiezaMuerte(motivo);
@@ -34,7 +37,7 @@ function sigue(pagando = true) {
   const J = JUEGO, c = J.conejo, p = pagando ? precioSeguir() : 0, deLaPartida = Math.min(J.zanas, p);
   if (pagando && GUARDA.zanas + J.zanas < p) return SONIDO.uy();
   J.zanas -= deLaPartida; GUARDA.zanas -= p - deLaPartida; salvaGuarda();
-  J.seguido = true; J.modo = 'juego'; J.casi = null; c.hunde = 0; acabaMuerte();
+  J.seguidos++; J.modo = 'juego'; J.casi = null; c.hunde = 0; acabaMuerte();
   const vale = o => o.wy > OLA.wy + 40;
   const t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) ? c.ultimo : RIO.troncos.filter(vale).sort((a, b) => a.wy - b.wy)[0];
   Object.assign(c, { tronco: t, ox: 0, owy: 0, x: t.x, wy: t.wy, cae: 1 }); J.enTronco = 9;
@@ -47,19 +50,20 @@ function pintaCasi() {
   const k = Math.min(1, J.casi.t / 0.2), queda = Math.max(0, CASI_SEG - J.casi.t);
   G.fillStyle = `rgba(40,25,60,${0.35 * k})`; G.fillRect(0, 0, W, H);
   boton(0, 0, W, H, () => {});
-  const conAnuncio = hayAnuncios() && anunciosQuedan() > 0, paga = GUARDA.zanas + J.zanas >= precioSeguir();
-  const w = 150, h = conAnuncio ? 130 : 108, x = W / 2 - w / 2, y = H / 2 - h / 2 - 10;
+  const conAnuncio = anuncioSeguir(), paga = GUARDA.zanas + J.zanas >= precioSeguir();
+  const w = 150, h = conAnuncio ? 138 : 116, x = W / 2 - w / 2, y = H / 2 - h / 2 - 10;
   G.globalAlpha = k;
   caja(x + 2, y + 3, w, h, 6, 'rgba(40,25,60,0.35)', null); caja(x, y, w, h, 6, PASTEL.papel, OLC, 1);
   letras(tr('¡Casi te pilla!'), W / 2, y + 14, 12, PASTEL.texto, { logo: true });
+  letras(tr('Oportunidad {n} de {m}', { n: J.seguidos + 1, m: SEGUIR.length }), W / 2, y + 26, 6.6, PASTEL.suave, { peso: 800, max: w - 16 });
   // la cuenta atrás: un anillo que se vacía
-  G.beginPath(); G.arc(W / 2, y + 42, 13, 0, Math.PI * 2); G.lineWidth = 4; G.strokeStyle = PASTEL.raya; G.stroke();
-  G.beginPath(); G.arc(W / 2, y + 42, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * queda / CASI_SEG); G.strokeStyle = PASTEL.melocoton; G.lineCap = 'round'; G.stroke();
-  letras(String(Math.ceil(queda)), W / 2, y + 43, 12, PASTEL.texto);
-  const bw = 112, bh = 20, bx = W / 2 - bw / 2, txt = tr('¡Sigue!') + ' · ' + precioSeguir(), tw = anchoLetras(txt, 10, { logo: true });
-  let by = y + 62;
+  G.beginPath(); G.arc(W / 2, y + 50, 13, 0, Math.PI * 2); G.lineWidth = 4; G.strokeStyle = PASTEL.raya; G.stroke();
+  G.beginPath(); G.arc(W / 2, y + 50, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * queda / CASI_SEG); G.strokeStyle = PASTEL.melocoton; G.lineCap = 'round'; G.stroke();
+  letras(String(Math.ceil(queda)), W / 2, y + 51, 12, PASTEL.texto);
+  const bw = 112, bh = 20, bx = W / 2 - bw / 2, txt = tr('¡Sigue!') + ' · ' + precioSeguir(), tw = Math.min(bw - 30, anchoLetras(txt, 10, { logo: true }));
+  let by = y + 70;
   caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, paga ? PASTEL.menta : PASTEL.raya, OLC, 1);
-  letras(txt, W / 2 - 6, by + 10.5, 10, paga ? '#ffffff' : PASTEL.flojo, paga ? { logo: true, borde: PASTEL.mentaO, bw: 2.4 } : { logo: true });
+  letras(txt, W / 2 - 6, by + 10.5, 10, paga ? '#ffffff' : PASTEL.flojo, paga ? { logo: true, borde: PASTEL.mentaO, bw: 2.4, max: bw - 30 } : { logo: true, max: bw - 30 });
   iconoZana(W / 2 + tw / 2 + 2, by + 10, 13);
   boton(bx - 4, by - 4, bw + 8, bh + 8, () => sigue(true));
   // o con un anuncio (sigues gratis)
@@ -67,7 +71,7 @@ function pintaCasi() {
     by += 24;
     const ta = tr('Ver anuncio y seguir');
     caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.oro, OLC, 1);
-    iconoTele(bx + 12, by + 10); letras(ta, W / 2 + 7, by + 10.5, 7.6, PASTEL.texto, { peso: 800 });
+    iconoTele(bx + 12, by + 10); letras(ta, W / 2 + 9, by + 10.5, 7.6, PASTEL.texto, { peso: 800, max: bw - 28 });
     boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio(); sigue(false); }));
   }
   letras(tr('No, gracias'), W / 2, by + 32, 7.5, PASTEL.suave, { peso: 700 });
@@ -78,7 +82,8 @@ function pintaCasi() {
 /* ---------- el anuncio con premio (de prueba) ---------- */
 // apunta un anuncio visto (los 5 del día son para todo)
 function cuentaAnuncio() { const d = hoy(); GUARDA.anuncios = { dia: d, n: (GUARDA.anuncios && GUARDA.anuncios.dia === d ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
-function verAnuncio(alAcabar) { Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
+// con «Sin anuncios» comprado, el premio llega al momento (mismo tope del día)
+function verAnuncio(alAcabar) { if (GUARDA.compras && GUARDA.compras.sinanuncios) { SONIDO.boton(); return alAcabar(); } Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
 function duplicaZanas() {
   const J = JUEGO;
   if (J.duplicado || !anunciosQuedan()) return;

@@ -3,7 +3,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'playa', mundo: 1, nombre: 'Playa del Early Access', lema: 'Sol, arena y un juego en acceso anticipado desde 2014. Las olas no se arreglan con un parche.', dificultad: 1, musica: 'animales', color: '#2fb0d8', polvo: '#e8d0a0',
+  id: 'playa', invertida: true, mundo: 1, nombre: 'Playa del Early Access', lema: 'Sol, arena y un juego en acceso anticipado desde 2014. Las olas no se arreglan con un parche.', dificultad: 1, musica: 'animales', color: '#2fb0d8', polvo: '#e8d0a0',
   puntos: [[512, 140], [700, 135], [860, 190], [905, 320], [840, 440], [880, 560], [900, 700], [820, 840], [650, 885], [480, 845], [330, 885], [180, 830], [125, 690], [200, 560], [140, 420], [165, 270], [300, 165]],
   ancho: 74, margen: 42, borde: 'muro',
   tramos: [{ deU: 9.2, aU: 10.6, ancho: 62, suave: 0.03 }],      // el muelle estrecho

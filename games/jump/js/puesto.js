@@ -4,13 +4,13 @@
 
 // lo que vende Lola: [clave, precio, nombre, qué hace]
 const PUESTO = {
-  amigos: [['ardilla', 0, 'MadSquirrel', 'Va contigo desde el principio. +5 en cada tronco.'], ['zorro', 150, 'SlyFox', 'Esquiva el primer ¡Uy! de cada partida.'],
-    ['mapache', 300, 'JunkCoon', 'Contigo, las zanahorias valen el doble.'], ['suricata', 500, 'MeerCat', 'La enfermera: te saca del agua una vez.'],
-    ['castor', 800, 'BoomBeaver', 'Al rescatarlo, ¡BUM!: la ola retrocede.']],
-  pelaje: [['#ffffff', 0, 'Blanco'], ['#cfd0dc', 150, 'Gris oficina'], ['#b98a66', 400, 'Chocolate'], ['#f4c886', 750, 'Miel'], ['#ffc4dc', 1300, 'Rosa chicle'], ['#d8c0ff', 2500, 'Morado caos']],
-  capas: [['#ff7a1a', 0, 'Naranja'], ['#e8343e', 180, 'Roja rebelde'], ['#3a86ff', 450, 'Azul Phony'], ['#3fbf6a', 700, 'Verde bosque'], ['#a04ae0', 1100, 'Morada'], ['#ffc93a', 2600, 'Dorada CEO']],
-  troncos: [['madera', 0, 'Troncos de madera'], ['nenufar', 250, 'Nenúfares'], ['galleta', 500, 'Galletas'], ['sandia', 700, 'Sandías'], ['tarta', 1000, 'Tartas'], ['nube', 1500, 'Nubes']],
-  estelas: [['arcoiris', 0, 'Arcoíris de racha'], ['corazones', 350, 'Corazones'], ['burbujas', 450, 'Burbujas'], ['chispas', 600, 'Chispas'], ['notas', 800, 'Notas musicales']],
+  amigos: [['ardilla', 0, 'MadSquirrel', 'Va contigo desde el principio. +5 en cada tronco.'], ['zorro', 100, 'SlyFox', 'Esquiva el primer ¡Uy! de cada partida.'],
+    ['mapache', 250, 'JunkCoon', 'Contigo, las zanahorias valen el doble.'], ['suricata', 450, 'MeerCat', 'La enfermera: te saca del agua una vez.'],
+    ['castor', 700, 'BoomBeaver', 'Al rescatarlo, ¡BUM!: la ola retrocede.']],
+  pelaje: [['#ffffff', 0, 'Blanco'], ['#cfd0dc', 200, 'Gris oficina'], ['#b98a66', 600, 'Chocolate'], ['#f4c886', 1200, 'Miel'], ['#ffc4dc', 2200, 'Rosa chicle'], ['#d8c0ff', 4000, 'Morado caos']],
+  capas: [['#ff7a1a', 0, 'Naranja'], ['#e8343e', 200, 'Roja rebelde'], ['#3a86ff', 600, 'Azul Phony'], ['#3fbf6a', 1100, 'Verde bosque'], ['#a04ae0', 2000, 'Morada'], ['#ffc93a', 4500, 'Dorada CEO']],
+  troncos: [['madera', 0, 'Troncos de madera'], ['nenufar', 300, 'Nenúfares'], ['galleta', 700, 'Galletas'], ['sandia', 1200, 'Sandías'], ['tarta', 2000, 'Tartas'], ['nube', 3000, 'Nubes']],
+  estelas: [['arcoiris', 0, 'Arcoíris de racha'], ['corazones', 300, 'Corazones'], ['burbujas', 700, 'Burbujas'], ['chispas', 1200, 'Chispas'], ['notas', 2000, 'Notas musicales']],
   kit: [['casco', 40, 'Casco de obra', 'Te saca del agua una vez en toda la partida.'], ['cafe', 30, 'Pausa del café', 'La ola espera 8 s antes de salir.'], ['suerte', 60, 'Zanahoria de la suerte', 'Empiezas la partida con racha de 3.'], ['mirilla', 50, 'Mirilla', 'Ves dónde caes en tus 8 primeros saltos.']],
 };
 
@@ -48,9 +48,9 @@ function pintaTienda() {
   pastillaZanas(x + 6, y + 7);
   spriteConejo('quieto' + Math.floor(JUEGO.t * 7) % 8, x + w - 18, y + 22, 3.6);
   if (tiendaReal()) {   // los packs con euros (anuncios.js), de momento solo con el flag
-    const on = PANEL.pestana === 'gemas';
-    caja(x + w - 64, y + 8, 30, 12, 4, on ? '#8fd0ff' : PASTEL.fondo, OLC, 0.7); letras(tr('Gemas'), x + w - 49, y + 14.4, 6.6, on ? '#ffffff' : PASTEL.suave, on ? { borde: OLC, bw: 1.6 } : {});
-    boton(x + w - 66, y + 6, 34, 16, () => { PANEL.pestana = 'gemas'; PANEL.scroll = 0; SONIDO.boton(); });
+    const on = PANEL.pestana === 'packs';
+    caja(x + w - 64, y + 8, 30, 12, 4, on ? PASTEL.oro : PASTEL.fondo, OLC, 0.7); letras(tr('Packs'), x + w - 49, y + 14.4, 6.6, on ? PASTEL.texto : PASTEL.suave, { max: 26 });
+    boton(x + w - 66, y + 6, 34, 16, () => { PANEL.pestana = 'packs'; PANEL.scroll = 0; SONIDO.boton(); });
   }
   // las pestañas
   // las pestañas, en dos filas de tres
@@ -62,7 +62,7 @@ function pintaTienda() {
     letras(tr(txt), px + tw / 2, py + 6.4, 7, on ? '#ffffff' : PASTEL.suave, on ? { borde: PASTEL.melocotonO, bw: 1.6 } : {});
     boton(px, py - 2, tw, 16, () => { PANEL.pestana = id; PANEL.scroll = 0; SONIDO.boton(); });
   });
-  if (PANEL.pestana === 'gemas') return pintaGemas(x + 4, y + 57, w - 8, h - 61);
+  if (PANEL.pestana === 'packs') { if (!tiendaReal()) PANEL.pestana = 'amigos'; else return pintaPacks(x + 4, y + 57, w - 8, h - 61); }
   contenido(x + 4, y + 57, w - 8, h - 61, y0 => {
     // las tarjetas crecen hasta llenar el panel (con un tope), y el dibujo con ellas
     const base = ['pelaje', 'capas', 'estelas', 'troncos'].includes(PANEL.pestana) ? 52 : 66, filas = Math.ceil(PUESTO[PANEL.pestana].length / 2);

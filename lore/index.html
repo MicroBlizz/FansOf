@@ -14,7 +14,7 @@
 <style>
   /* Fans Of · LORE: la historia de la serie para quien llega nuevo. Textos en español aquí; su inglés en lore/en.js.
      Una facción, un villano o un personaje nuevo de la serie se añade aquí (y su inglés). */
-  body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; }
+  body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; background-repeat: no-repeat; background-attachment: fixed; }
   html { scroll-behavior: smooth; }
   nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
   nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
@@ -74,10 +74,7 @@
 </style>
 </head>
 <body>
-<nav class="menu" aria-label="Menú">
-  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="./" class="on" aria-current="page">Lore</a>
-  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
-</nav>
+<script src="../menu.js" data-base="../" data-core="1" data-pagina="lore"></script>
 <main>
   <section class="hero">
     <h1 class="ol-big">LORE</h1>
@@ -246,7 +243,7 @@
     <p>Ya lo sabes todo. Ahora, a pararle los pies a Microblizz.</p>
     <a class="boton ol" href="../#biblioteca">VER LOS JUEGOS</a>
   </div>
-  <footer>Fans Of es una parodia. Microblizz, Phony e IAhorro son inventados.<br>© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</footer>
+  <footer id="pie-fansof">Fans Of es una parodia. Microblizz, Phony e IAhorro son inventados.<br>© 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</footer>
 </main>
 <script src="../core/js/nucleo.js?v=0"></script>
 <script>NUCLEO.idiomaSolo({ en: ['../core/idioma/en-raiz.js', 'en.js'] })</script>
@@ -254,5 +251,6 @@
 'use strict';
 for (const a of document.querySelectorAll('[data-idioma]')) a.onclick = e => { e.preventDefault(); NUCLEO.elegirIdioma(a.dataset.idioma); };
 </script>
+<script src="../pie.js" defer></script>
 </body>
 </html>

@@ -6,23 +6,24 @@
 const MODOS = ['normal', 'crono', 'espejo'];
 const NOMBRE_MODO = { normal: 'CARRERA', crono: 'CONTRARRELOJ', espejo: 'ESPEJO' };
 PANT.modo = (() => { const m = new URLSearchParams(location.search).get('modo'); return MODOS.includes(m) ? m : 'normal'; })();
-const espejoAbierto = () => !!SAVE.logros.espejo || new URLSearchParams(location.search).get('modo') === 'espejo';
+// el espejo de una pista se abre quedando 1.º en ella; ganar en nivel CEO los abre todos
+const espejoAbierto = d => !!SAVE.logros.espejo || !!(d && SAVE.espejo && SAVE.espejo[d.id]) || new URLSearchParams(location.search).get('modo') === 'espejo';
 function cambiaModo() {
   let i = MODOS.indexOf(PANT.modo);
-  do i = (i + 1) % MODOS.length; while (MODOS[i] === 'espejo' && !espejoAbierto());
+  do i = (i + 1) % MODOS.length; while (MODOS[i] === 'espejo' && !espejoAbierto(PISTAS[PANT.pista]));
   PANT.modo = MODOS[i];
 }
 // ¿qué toca en esta carrera? (se llama al prepararla)
 function modoDeCarrera(C, def, pvp) {
   const tuto = def.mundo === 0;
   C.crono = !pvp && !COPA.activa && !tuto && PANT.modo === 'crono';
-  C.espejo = !pvp && !tuto && PANT.modo === 'espejo' && espejoAbierto();
+  C.espejo = !pvp && !tuto && PANT.modo === 'espejo' && espejoAbierto(def);
   C.fantasmas = []; C.graba = null; C.premiada = false; C.gana = null; C.cronoCerrado = false; C.crono_ = null;
   if (C.crono) {
     const yo = C.karts[C.karts.length - 1]; yo.objeto = 'hotfix'; yo.usos = 3;
     for (const c of PISTA.regalos) c.t = 1e9;        // en la contrarreloj no hay regalos
     C.graba = { pts: [], vueltas: [], ultima: 0, vuelta: 1 };
-    const mio = leeFantasmas()[def.id], dev = fantasmaDev(def.id);
+    const mio = leeFantasmas()[claveCrono(def)], dev = fantasmaDev(claveCrono(def));
     if (dev) C.fantasmas.push(dev);
     if (mio) C.fantasmas.push({ pts: mio.pts, hz: 20, t: mio.t, fig: figuraCon(mio.piloto, Object.fromEntries(Object.entries(mio.lleva || {}).filter(([, v]) => COS[v]).map(([k, v]) => [k, COS[v]]))), nombre: 'TU RÉCORD' });
     comenta(dev ? 'El fantasma del desarrollador lo grabó un becario un viernes a las 18:59.' : 'Contrarreloj: tú, la pista y tres Hotfix.');
@@ -66,13 +67,13 @@ function pintaFantasmas(C) {
 // ---------- al acabar la contrarreloj: el récord (y su fantasma) y el del desarrollador ----------
 function cierraCrono() {
   const C = CARRERA, yo = C.jugador, def = C.def; if (!C.crono || C.cronoCerrado) return; C.cronoCerrado = true;
-  const t = yo.cerrado ? 0 : yo.fin, previo = SAVE.crono[def.id], dev = fantasmaDev(def.id);
+  const t = yo.cerrado ? 0 : yo.fin, previo = SAVE.crono[claveCrono(def)], dev = fantasmaDev(claveCrono(def));
   if (t) C.graba.vueltas.push(t - C.graba.ultima);
   C.crono_ = { t, previo, dev: dev && dev.t, vueltas: C.graba.vueltas.slice(), record: !!t && (!previo || t < previo) };
   if (C.crono_.record) {
-    SAVE.crono[def.id] = Math.round(t * 1000) / 1000;
+    SAVE.crono[claveCrono(def)] = Math.round(t * 1000) / 1000;
     const F = leeFantasmas(), L = llevaPara(yo.piloto.id);
-    F[def.id] = { t, piloto: yo.piloto.id, lleva: Object.fromEntries(Object.entries(L).map(([k, c]) => [k, c.id])), pts: C.graba.pts };
+    F[claveCrono(def)] = { t, piloto: yo.piloto.id, lleva: Object.fromEntries(Object.entries(L).map(([k, c]) => [k, c.id])), pts: C.graba.pts };
     try { localStorage.setItem('fok-fantasmas', JSON.stringify(F)); } catch (_) { /* sin sitio: el tiempo sí queda en la partida */ }
   }
   if (t && dev && t < dev.t) daCos('titulo-fantasma', '¡FANTASMA SUPERADO!');

@@ -3,6 +3,8 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.147', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],
+    joke: ["Microblizz ha creado un departamento para mirar tus partidas sin mirarte a ti. Phony ha pedido el puesto de no mirar."] },
   { v: '0.9.146', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo)."], joke: ["Microblizz ha puesto la pantalla gigante en la arena y Phony ya ensaya su saludo."] },
   { v: '0.9.145', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha cambiado las vallas de la arena por pantallas con fotos y Phony posa en todas."] },
   { v: '0.9.144', real: ["<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie."], joke: ["Microblizz ha puesto un tablón de anuncios de otros juegos y Phony ya ha pegado su currículum."] },

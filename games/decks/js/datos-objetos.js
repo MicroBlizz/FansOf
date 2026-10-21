@@ -11,7 +11,7 @@ const DC_OBJETOS = {
   llavero: { nombre: 'Llavero de la suerte', mini: 'llavero_suerte', rar: 'common', texto: 'Las ofertas de empleo traen 4 cartas en vez de 3.', oferta: 1 },
   alfombrilla: { nombre: 'Alfombrilla XXL', mini: 'alfombrilla', rar: 'epic', texto: '8 de bloqueo al empezar cada reunión.', bloqueoInicial: 8 },
   // legendarios: solo los da el jefe
-  zanahoriaoro: { nombre: 'Zanahoria de oro', mini: 'zanahoria_oro', rar: 'legendary', texto: 'El Salto del caos se carga con 4 de CAOS en vez de 6.', saltoCarga: 4 },
+  zanahoriaoro: { nombre: 'Zanahoria de oro', mini: 'zanahoria_oro', rar: 'legendary', texto: 'La habilidad de tu líder se carga con 2 de CAOS menos.', carga: 2 },
   cofre: { nombre: 'Cofre de botín sin abrir', mini: 'cofre', rar: 'legendary', texto: 'Al empezar cada reunión juegas gratis una carta al azar de tu mazo.', cartaGratis: 1 },
 };
 const DC_OBJETOS_POOL = Object.keys(DC_OBJETOS).filter(k => DC_OBJETOS[k].rar !== 'legendary');
@@ -22,7 +22,7 @@ const DC_VENTAJAS = {
   seguro: { nombre: 'Seguro médico', texto: '+10 de vida máxima.', hito: { partidas: 1 }, vidaMax: 10 },
   deduccion: { nombre: 'Deducción de CAOS', texto: 'Empiezas cada reunión con 1 CAOS extra.', hito: { reuniones: 5 }, caosInicial: 1 },
   pensiones: { nombre: 'Plan de pensiones', texto: 'El Economato te hace un 20 % de descuento.', hito: { partidas: 3 }, descuento: 0.2 },
-  objetivos: { nombre: 'Bonus por objetivos', texto: 'El Salto del caos se carga con 1 de CAOS menos.', hito: { victorias: 1 }, carga: 1 },
+  objetivos: { nombre: 'Bonus por objetivos', texto: 'La habilidad de tu líder se carga con 1 de CAOS menos.', hito: { victorias: 1 }, carga: 1 },
   horasextra: { nombre: 'Horas extra', texto: 'Robas 1 carta más en el primer turno de cada reunión.', hito: { reuniones: 12 }, manoInicial: 1 },
 };
 // Meriendas: se usan en tu turno, de un toque. Dos huecos.

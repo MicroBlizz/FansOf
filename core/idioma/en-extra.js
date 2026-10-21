@@ -1,9 +1,17 @@
 // Fans Of · Inglés de lo común (extra): lo que no cabía en los otros diccionarios.
 'use strict';
 IDIOMA.add({
+  "Datos de partida anónimos": "Anonymous game data",
+  "Ayúdanos a mejorar los juegos con datos anónimos de tus partidas: sin nombre, sin email y sin cuenta. Puedes apagarlo cuando quieras.": "Help us improve the games with anonymous data from your matches: no name, no email and no account. You can turn it off whenever you like.",
+  "ENCENDIDO": "ON",
+  "APAGADO": "OFF",
   "CAOS PRIMORDIAL RECUPERADO": "PRIMORDIAL CHAOS RECOVERED",
   "Quien gana, no paga: el caos primordial de esta partida vuelve a ti.": "Winners don't pay: this match's primordial chaos comes back to you.",
   "Anuncio": "Ad",
+  "PROTOTIPO": "PROTOTYPE",
+  "DEMO": "DEMO",
+  "BOCETO": "SKETCH",
+  "PRUEBA": "TEST BUILD",
   "Pulsa para conocerlo": "Tap to check it out",
   "ANUNCIO": "AD",
   "Un mensaje de nuestros patrocinadores… que somos nosotros.": "A message from our sponsors… which is us.",

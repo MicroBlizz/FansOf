@@ -248,7 +248,7 @@ IDIOMA.add({
   "Bloqueo: para {n} de daño este turno": "Block: stops {n} damage this turn",
   "¡Gratis!": "Free!",
   "Gratis cuando has gastado {carga} de CAOS en cartas: {dano} de daño a todos los rivales.": "Free once you have spent {carga} CHAOS on cards: {dano} damage to every foe.",
-  "El Salto del caos se carga con 4 de CAOS en vez de 6.": "Chaos Leap charges with 4 CHAOS instead of 6.",
+  "La habilidad de tu líder se carga con 2 de CAOS menos.": "Your leader's skill charges with 2 CHAOS less.",
   "Has sobrevivido a la agenda entera de las Oficinas. El acto 2 llegará en la siguiente versión.": "You survived the whole Offices calendar. Act 2 arrives in the next version.",
   "Tu día en Microblizz es una agenda llena de reuniones: cada hora eliges a cuál vas. A las 17:00 te espera SurvivalBot.": "Your day at Microblizz is a calendar packed with meetings: every hour you pick which one to attend. SurvivalBot awaits at 17:00.",
   "turnos": "turns",
@@ -328,7 +328,7 @@ IDIOMA.add({
   "Plan de pensiones": "Pension plan",
   "El Economato te hace un 20 % de descuento.": "The Commissary gives you 20% off.",
   "Bonus por objetivos": "Performance bonus",
-  "El Salto del caos se carga con 1 de CAOS menos.": "Chaos Leap charges with 1 CHAOS less.",
+  "La habilidad de tu líder se carga con 1 de CAOS menos.": "Your leader's skill charges with 1 CHAOS less.",
   "Horas extra": "Overtime",
   "Robas 1 carta más en el primer turno de cada reunión.": "Draw 1 more card on the first turn of every meeting.",
   "El bonus de productividad es el dinero extra que cobras al ganar reuniones y se gasta en el Economato de Lola; la pausa para el café cura o asciende una carta. Se guarda solo en cada cita.": "The productivity bonus is the extra money you earn by winning meetings and is spent at Lola’s Commissary; the coffee break heals or promotes a card. It autosaves at every appointment.",
@@ -376,5 +376,9 @@ IDIOMA.add({
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now shows their screenshots, one after another).",
   "Microblizz ha hecho una presentación con todas las cartas y Phony ha preguntado si entra en el examen.": "Microblizz made a presentation of every card and Phony asked if it's on the exam.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo).": "<b>BEHIND THE SCENES</b>: the series' shared systems keep improving (the promo for our other games now fills the whole screen, with a blurred background and the game's name at the bottom).",
-  "Microblizz ha proyectado los anuncios en la pared de la oficina y Phony ha apagado la luz para verlos mejor.": "Microblizz projected the ads on the office wall and Phony turned off the lights to see them better."
+  "Microblizz ha proyectado los anuncios en la pared de la oficina y Phony ha apagado la luz para verlos mejor.": "Microblizz projected the ads on the office wall and Phony turned off the lights to see them better.",
+  "<b>EQUILIBRIO DE FACCIONES</b>: las cartas de los Streamers bajan un 20 % y su chat ya solo te hace robar cada 4 cartas jugadas en un turno (antes, cada 3). Suben Pop (+25 %), NecroLord (+20 %), Gamer (+15 %), Héroes y Animales (+10 %).": "<b>FACTION BALANCE</b>: Streamers cards go down 20 % and their chat now only makes you draw every 4 cards played in a turn (before, every 3). Pop (+25 %), NecroLord (+20 %), Gamer (+15 %), Heroes and Animals (+10 %) go up.",
+  "<b>OBJETOS PARA CUALQUIER LÍDER</b>: la Zanahoria de oro y el Bonus por objetivos ahora acortan la carga de la habilidad de cualquier líder (la Zanahoria de oro, 2 de CAOS menos).": "<b>ITEMS FOR ANY LEADER</b>: the Golden Carrot and the Objectives bonus now shorten the charge of any leader's skill (the Golden Carrot, 2 CHAOS less).",
+  "<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo.": "<b>BEHIND THE SCENES</b>: Options has a new switch, “Anonymous game data”, to help us improve the games without your name, email or account (you can turn it off whenever you like). And the promo for our other games in the series now says whether it is a prototype or a demo.",
+  "Microblizz ha nerfeado a los Streamers y ellos lo han anunciado en directo. Phony ha dado like sin querer.": "Microblizz nerfed the Streamers and they announced it live. Phony liked the stream by accident.",
 });

@@ -22,6 +22,10 @@
   function pintarMenu() {
     menu.textContent = conCuenta() ? t('Mi cuenta') : t('Entrar');
     menu.classList.toggle('dentro', conCuenta());
+    if (conCuenta() && CUENTA.foto) {   // la foto del perfil público de Google, si entraste con Google (sin referrer: Google no sabe de qué página viene)
+      const im = document.createElement('img'); im.className = 'm-foto'; im.alt = ''; im.referrerPolicy = 'no-referrer'; im.src = CUENTA.foto; im.onerror = () => im.remove();
+      menu.prepend(im);
+    }
   }
   const modal = document.createElement('div');
   modal.className = 'cuenta-fondo'; modal.hidden = true;

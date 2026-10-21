@@ -3,7 +3,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'fosa', mundo: 3, nombre: 'Fosa del Lag', lema: 'Aquí abajo pasan los cables de internet. Por eso tu ping es de 900.', dificultad: 3, musica: 'nomuertos', color: '#1a4a8a', polvo: '#a8c8e0',
+  id: 'fosa', invertida: true, mundo: 3, nombre: 'Fosa del Lag', lema: 'Aquí abajo pasan los cables de internet. Por eso tu ping es de 900.', dificultad: 3, musica: 'nomuertos', color: '#1a4a8a', polvo: '#a8c8e0',
   puntos: [[500, 880], [300, 890], [160, 800], [130, 640], [250, 580], [380, 610], [480, 520], [430, 380], [270, 400], [140, 320], [180, 170], [360, 130], [520, 200], [640, 140],
     [820, 150], [900, 280], [820, 400], [700, 420], [640, 540], [760, 640], [900, 640], [920, 800], [780, 890]],
   ancho: 66, margen: 34, borde: 'muro',

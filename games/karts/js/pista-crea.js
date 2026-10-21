@@ -61,19 +61,29 @@ let PISTA = null;   // la pista en juego
 // Construye la pista `def`. Devuelve { def, via, largo, campoD, campoI, sup, tex, mips, mini, ... }
 function creaPista(def) {
   const t0 = performance.now();
-  const { pts, largo, fp } = curvaCerrada(def.puntos, PASO_VIA), N = pts.length;
+  INV_P = null;
+  // def.invertida: la pista se corre al revés (los mismos puntos, del último al primero). Todo lo que la pista coloca (adornos,
+  // turbos, tramos…) sigue escrito en el sentido de siempre y sale en el mismo sitio del mapa: enVia lo da la vuelta mientras se coloca.
+  const inv = !!def.invertida;
+  const { pts, largo, fp } = curvaCerrada(inv ? [def.puntos[0], ...def.puntos.slice(1).reverse()] : def.puntos, PASO_VIA), N = pts.length;
+  const fpU = inv ? curvaCerrada(def.puntos, PASO_VIA).fp : fp;
   // de «punto de control + trozo hasta el siguiente» (3.5 = a medio camino entre el punto 3 y el 4) a fracción de la vuelta
-  const fU = u => { const n = fp.length, k = Math.floor(u), i = ((k % n) + n) % n, a = fp[i], b = i === n - 1 ? 1 : fp[i + 1]; return (a + (b - a) * (u - k)) % 1; };
+  const fU = u => { const n = fpU.length, k = Math.floor(u), i = ((k % n) + n) % n, a = fpU[i], b = i === n - 1 ? 1 : fpU[i + 1]; return (a + (b - a) * (u - k)) % 1; };
   for (const t of def.tramos || []) if (t.deU !== undefined) { t.de = fU(t.deU); t.a = fU(t.aU); }
+  // al revés, los tramos van de su final a su principio y lo de la izquierda pasa a la derecha
+  const TD = !inv ? def : { tramos: (def.tramos || []).map(t => {
+    const c = {}; for (const k in t) c[k.replace('Izq', '\0').replace('Der', 'Izq').replace('\0', 'Der')] = t[k];
+    c.de = (2 - t.a) % 1; c.a = (2 - t.de) % 1; return c;
+  }) };
   const conBarandilla = def.borde === 'vacio' && dificultad().barandilla;      // en el nivel fácil, las pistas sin borde llevan barandilla
   // la vía: posición, dirección, ancho, márgenes (lo que hay de hierba a cada lado antes del borde) y qué borde hay a cada lado
   const via = pts.map((p, i) => {
     const a = pts[(i + N - 1) % N], b = pts[(i + 1) % N], l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, f = i / N;
-    const mg = enTramo(def, 'margen', f, def.margen === undefined ? 44 : def.margen), bd = conBarandilla ? 'muro' : enTramo(def, 'borde', f, def.borde || 'muro');
+    const mg = enTramo(TD, 'margen', f, def.margen === undefined ? 44 : def.margen), bd = conBarandilla ? 'muro' : enTramo(TD, 'borde', f, def.borde || 'muro');
     return {
-      x: p[0], y: p[1], tx: (b[0] - a[0]) / l, ty: (b[1] - a[1]) / l, f, ancho: enTramo(def, 'ancho', f, def.ancho || 64),
-      mi: enTramo(def, 'margenIzq', f, mg), md: enTramo(def, 'margenDer', f, mg), bi: enTramo(def, 'bordeIzq', f, bd), bdr: enTramo(def, 'bordeDer', f, bd),
-      tipo: enTramo(def, 'tipo', f, ''),
+      x: p[0], y: p[1], tx: (b[0] - a[0]) / l, ty: (b[1] - a[1]) / l, f, ancho: enTramo(TD, 'ancho', f, def.ancho || 64),
+      mi: enTramo(TD, 'margenIzq', f, mg), md: enTramo(TD, 'margenDer', f, mg), bi: enTramo(TD, 'bordeIzq', f, bd), bdr: enTramo(TD, 'bordeDer', f, bd),
+      tipo: enTramo(TD, 'tipo', f, ''),
     };
   });
   for (let i = 0; i < N; i++) { const v = via[i], w = via[(i + 1) % N]; v.ang = Math.atan2(v.ty, v.tx); v.curva = difAng(v.ang, Math.atan2(w.ty, w.tx)) / PASO_VIA; }
@@ -111,13 +121,16 @@ function creaPista(def) {
       : s === S_MURO ? T.muro(x, y, m - mg, i, lado, v) : s === S_VACIO ? T.vacio(x, y, m - mg, i, lado, v) : T.fuera(x, y, m - mg, i, lado, v);
   }
   // ---------- adornos y zonas especiales de cada pista (turbos, charcos, atajos, rayas…), la salida y la parrilla ----------
+  INV_P = inv ? P : null;
   if (def.pinta) def.pinta(P);
   for (const a of def.atajos || []) atajoEn(P, ...a);
+  INV_P = null;
   pintaSalida(P);
   // ---------- versiones a la mitad y a la cuarta parte (para lo lejano, que si no parpadea) ----------
   P.mips = [tex, mitad(tex, TM), null]; P.mips[2] = mitad(P.mips[1], TM / 2);
   P.mini = miniMapa(P);
-  P.cosas = def.cosas ? def.cosas(P) : [];
+  INV_P = inv ? P : null;
+  try { P.cosas = def.cosas ? def.cosas(P) : []; } finally { INV_P = null; }
   const m0 = enVia(P, 0);
   P.cosas.push({ x: m0.x, y: m0.y, fig: figCosa('arco'), r: 0, dmin: CAM_ATRAS + 9 });   // el arco de meta
   creaCielo(P);
@@ -137,7 +150,9 @@ function mitad(src, lado) {
 
 // ---------- ayudas para colocar y pintar cosas sobre la pista ----------
 // un punto de la vía: f = fracción de la vuelta (0 a 1), lado = unidades a la derecha (negativo, a la izquierda), av = unidades hacia delante
+let INV_P = null;      // la pista invertida que se está colocando ahora (ver creaPista)
 function enVia(P, f, lado = 0, av = 0) {
+  if (INV_P === P) { f = 1 - f; lado = -lado; av = -av; }
   const n = P.N, g = (((f % 1) + 1) % 1) * n, i = Math.floor(g) % n, t = g - Math.floor(g), a = P.via[i], b = P.via[(i + 1) % n];
   const tx = a.tx + (b.tx - a.tx) * t, ty = a.ty + (b.ty - a.ty) * t, l = Math.hypot(tx, ty) || 1;
   const x = a.x + (b.x - a.x) * t, y = a.y + (b.y - a.y) * t;

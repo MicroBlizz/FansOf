@@ -64,7 +64,7 @@ function pintaVaca(c, sx, sy, e) {
 // ---------- dónde hay mariposas y MechaVaca (se añade a lo que pone cada pista) ----------
 const BICHOS = { tutorial: { mariposas: 30 }, parque: { mariposas: 18, vaca: [[5.5, -40, ['MECHAVACA', 'NO DAR DE COMER']]] }, selva: { mariposas: 24 }, playa: { mariposas: 0, vaca: [[9.5, 40, ['MECHAVACA', 'DE VACACIONES']]] }, estadio: { vaca: [[2.5, 42, ['MECHAVACA', 'MASCOTA OFICIAL']]] } };
 for (const def of PISTAS) {
-  const B = BICHOS[def.id]; if (!B) continue;
+  const B = BICHOS[def.id] || (def.base && BICHOS[def.base] && BICHOS[def.base].mariposas && { mariposas: BICHOS[def.base].mariposas }); if (!B) continue;      // las premium: solo las mariposas de su pista
   const original = def.cosas;
   def.cosas = P => {
     const l = original ? original(P) : [];

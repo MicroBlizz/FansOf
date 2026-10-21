@@ -136,7 +136,9 @@ IDIOMA.add({
   "Puzle": "Puzzle",
   "Saltos": "Jumping",
   "Tres en raya": "Match-3",
-  // REDES (botones de la portada, index.html)
+  // COMUNIDAD (sección con las redes al final de la portada, index.html)
+  "COMUNIDAD": "COMMUNITY",
+  "Mira cómo hacemos los juegos y dinos qué quieres que vuelva.": "See how we make the games and tell us what you want back.",
   "SÍGUENOS EN X": "FOLLOW US ON X",
   "ÚNETE AL DISCORD": "JOIN THE DISCORD",
   "ALFA": "ALPHA",

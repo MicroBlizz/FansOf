@@ -9,7 +9,7 @@ function ruidoSuave(x, y, celda) {
   return entre(entre(ruido(cx, cy), ruido(cx + 1, cy), fx), entre(ruido(cx, cy + 1), ruido(cx + 1, cy + 1), fx), fy);
 }
 PISTAS.push({
-  id: 'nube', mundo: 3, nombre: 'La Nube de Microblizz', lema: 'Tus partidas guardadas viven aquí arriba. Sin barandillas, como su soporte técnico.', dificultad: 3, musica: 'boss5', color: '#4a9be6',
+  id: 'nube', invertida: true, mundo: 3, nombre: 'La Nube de Microblizz', lema: 'Tus partidas guardadas viven aquí arriba. Sin barandillas, como su soporte técnico.', dificultad: 3, musica: 'boss5', color: '#4a9be6',
   puntos: [[560, 892], [420, 890], [230, 840], [130, 700], [150, 540], [280, 450], [300, 310], [190, 220], [230, 110], [400, 100], [520, 190], [500, 340], [560, 470], [700, 480],
     [760, 360], [700, 220], [790, 120], [900, 200], [910, 400], [880, 600], [800, 740], [690, 870]],
   ancho: 66, margen: 5, borde: 'vacio',
@@ -61,7 +61,7 @@ PISTAS.push({
   },
   pinta(P) {
     turboEn(P, 0.45, 0); turboEn(P, 8.5, 0); turboEn(P, 18.55, 0); turboEn(P, 12.6, 0, 20);
-    rampaEn(P, 17.3, 12); huecoEn(P, 17.52, 34);
+    rampaEn(P, P.def.invertida ? 17.74 : 17.3, 12); huecoEn(P, 17.52, 34);      // la rampa, siempre antes del hueco
     // bugs: baldosas rotas de colores chillones; quien las pisa, resbala
     const bug = ['#ff3df0', '#22e3ff', '#1c1028'];
     manchaEn(P, 1.6, -10, 8, 6, S_CHARCO, bug, 1); manchaEn(P, 5.9, 8, 8, 6, S_CHARCO, bug, 2); manchaEn(P, 9.6, -8, 8, 6, S_CHARCO, bug, 3); manchaEn(P, 13.3, 8, 8, 6, S_CHARCO, bug, 4); manchaEn(P, 19.5, -10, 8, 6, S_CHARCO, bug, 5);

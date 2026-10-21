@@ -8,6 +8,7 @@ function hieloEn(P, u, lado, rx, ry, colores, semilla = 1) { manchaEn(P, u, lado
 // una zona de corriente: un rectángulo de `largo` × `ancho` que empuja `lat` unidades/s hacia la derecha de la marcha (negativo:
 // izquierda) y `av` hacia delante (negativo: hacia atrás). Se pinta con flechas en la dirección del empujón.
 function corrienteEn(P, u, lado, largo, ancho, lat, av, colores) {
+  if (INV_P === P) lat = -lat;      // en una pista invertida empuja hacia el mismo lado del mapa (y hacia delante sigue siendo hacia delante)
   const p = enVia(P, P.f(u), lado), c = Math.cos(p.ang), s = Math.sin(p.ang), vx = -s * lat + c * av, vy = c * lat + s * av, v = Math.hypot(vx, vy) || 1;
   const ux = vx / v, uy = vy / v, [A, B, Cn] = C32(...colores);
   sello(P, x => enPunto(x, p, x => { x.fillStyle = '#fff'; x.fillRect(-largo / 2, -ancho / 2, largo, ancho); }), {

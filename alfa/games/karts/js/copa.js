@@ -10,8 +10,11 @@ const MUNDOS = [
   { nombre: 'REMASTER', lema: 'Las pistas más difíciles. Las de siempre, pero a 69,99 €.', color: '#e63946', oscuro: '#5a1020', fig: 'estatua' },
 ];
 const PUNTOS_COPA = [15, 12, 10, 8, 6, 4, 2, 1];
-const COPA = { activa: false, mundo: 0, n: 0, puntos: {}, ultimos: {} };
-const pistasDe = m => PISTAS.filter(p => p.mundo === m + 1);
+const COPA = { activa: false, mundo: 0, premium: false, n: 0, puntos: {}, ultimos: {} };
+// las cuatro pistas de un mundo: las normales o las de la Edición Premium (la que se está mirando, o la de la copa en juego)
+const pistasDe = (m, premium = COPA.activa ? COPA.premium : PANT.premium) => pistasMundo(m, premium);
+PANT.premium = false;
+const claveCopa = (m, premium) => (premium ? 'p' + m : m);      // dónde se guarda el mejor puesto de cada copa
 let RECORDS = {};
 try { RECORDS = JSON.parse(localStorage.getItem('fok-copas') || '{}'); } catch (_) { RECORDS = {}; }
 function guardaRecord(m, puesto) { if (!RECORDS[m] || puesto < RECORDS[m]) { RECORDS[m] = puesto; try { localStorage.setItem('fok-copas', JSON.stringify(RECORDS)); } catch (_) { /* sin guardar */ } } }
@@ -24,40 +27,54 @@ function trofeo(x, y, puesto) {
   lx.fillStyle = c[1]; lx.fillRect(x + 2, y + 1, 1, 3); lx.fillStyle = c[2]; lx.fillRect(x + 7, y + 1, 1, 4); lx.fillRect(x + 2, y + 9, 5, 1);
 }
 
+// un candado a cuadraditos (las copas de la Edición Premium sin el pase)
+function candadoEn(cx, cy) {
+  const x = Math.round(cx - 7), y = Math.round(cy - 8), bote = Math.sin(RELOJ * 3) > 0.6 ? 1 : 0;
+  lx.fillStyle = '#1c1028'; lx.fillRect(x + 2, y - 1 - bote, 10, 9); lx.fillRect(x - 1, y + 6, 16, 12);
+  lx.fillStyle = '#c3cbe0'; lx.fillRect(x + 3, y - bote, 8, 2); lx.fillRect(x + 3, y - bote, 2, 7); lx.fillRect(x + 9, y - bote, 2, 7);
+  lx.fillStyle = '#ffcb3d'; lx.fillRect(x, y + 7, 14, 10); lx.fillStyle = '#fff3a0'; lx.fillRect(x + 1, y + 8, 12, 1);
+  lx.fillStyle = '#c9841a'; lx.fillRect(x + 1, y + 15, 12, 1); lx.fillStyle = '#1c1028'; lx.fillRect(x + 6, y + 10, 2, 4);
+}
+
 // ---------- elegir mundo ----------
 function pantallaMundo() {
   paseo(14, 34); velo(0.55);
   const n = MUNDOS.length;
   if (UI.tecla === 'izq' || UI.tecla === 'der') { PANT.mundo = (PANT.mundo + (UI.tecla === 'der' ? 1 : n - 1)) % n; play('tick'); UI.tecla = null; }
   if (UI.tecla === 'arr' || UI.tecla === 'aba') UI.tecla = null;
-  escribeB(lx, tr('ELIGE MUNDO'), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro');
+  const prem = PANT.premium, cerrada = prem && !SAVE.premium;
+  escribeB(lx, tr(prem ? 'EDICIÓN PREMIUM' : 'ELIGE MUNDO'), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro');
   MUNDOS.forEach((m, i) => {
     const sel = i === PANT.mundo, x = 5 + i * 58, sube = sel ? Math.round(2 + Math.sin(RELOJ * 4) * 1.5) : 0, y = 17 - sube, w = 54, h = 100;
-    marco(x, y, w, h, m.oscuro, '#1c1028', sel ? (Math.sin(RELOJ * 6) > 0 ? '#ffcb3d' : '#fff3a0') : '#5b3a86');
+    marco(x, y, w, h, m.oscuro, '#1c1028', sel ? (Math.sin(RELOJ * 6) > 0 ? '#ffcb3d' : '#fff3a0') : prem ? '#c9841a' : '#5b3a86');
     // rayas que corren en diagonal, del color del mundo
     lx.save(); lx.beginPath(); lx.rect(x + 2, y + 2, w - 4, h - 4); lx.clip();
     lx.fillStyle = m.color; lx.globalAlpha = sel ? 0.45 : 0.22;
     for (let k = -2; k < 8; k++) { const o = ((RELOJ * (sel ? 14 : 5)) % 14) + k * 14; lx.beginPath(); lx.moveTo(x + o, y); lx.lineTo(x + o + 7, y); lx.lineTo(x + o + 7 - h, y + h); lx.lineTo(x + o - h, y + h); lx.fill(); }
     lx.globalAlpha = 1; lx.restore();
     mini(lx, trf('MUNDO %1', i + 1), x + 5, y + 5, '#ffffff', '#1c1028');      // a la izquierda: a la derecha va el trofeo
-    trofeo(x + w - 13, y + 4, RECORDS[i]);
+    trofeo(x + w - 13, y + 4, RECORDS[claveCopa(i, prem)]);
     // la figura del mundo, botando
     figCosa(m.fig).pinta(lx, x + w / 2, y + 50 + Math.round(sel ? Math.sin(RELOJ * 5) * 1.5 : 0), BASE_COSA * 0.62, BASE_COSA, 0);
     lineas(tr(m.nombre), w - 4).slice(0, 2).forEach((l, j) => escribe(lx, l, x + w / 2, y + 55 + j * 10, sel ? '#ffffff' : '#d8d2ea', '#1c1028', 'centro'));
     // las cuatro pistas del mundo, en pequeño
     pistasDe(i).forEach((d, j) => { const mm = miniDePista(d); if (mm) { lx.fillStyle = '#1c1028'; lx.fillRect(x + 4 + j * 12, y + 80, 11, 11); lx.drawImage(mm, x + 4 + j * 12, y + 80, 11, 11); } });
     for (let s = 0; s < 4; s++) { lx.fillStyle = s <= i ? '#ff5c8a' : '#3a2a52'; lx.fillRect(x + 12 + s * 8, y + 93, 6, 3); }
+    if (prem) { lx.fillStyle = '#ffcb3d'; lx.fillRect(x + 2, y + h - 3, w - 4, 1); }
+    if (cerrada) candadoEn(x + w / 2, y + 30);
     PANT.acciones.push(() => { if (PANT.mundo === i) entraEnMundo(i); else { PANT.mundo = i; play('tick'); } }); PANT.rects.push(x, y, w, h); PANT.directas.push(null);
   });
   const m = MUNDOS[PANT.mundo];
-  escribeLineas(lx, tr(m.lema), PW / 2, 121, 228, '#ffe9a8', '#1c1028', 'centro', 9);
+  escribeLineas(lx, tr(cerrada ? 'Trazados nuevos con cruces, saltos y atajos. Vienen con el pase premium.' : prem ? 'Las mismas pistas con trazados nuevos: cruces, rectas largas, saltos y atajos.' : m.lema), PW / 2, 121, 228, prem ? '#ffcb3d' : '#ffe9a8', '#1c1028', 'centro', 9);
   const n0 = PANT.acciones.length;
   boton('VOLVER', 4, 143, 60, () => ve('piloto'));
-  boton('ELEGIR', 150, 143, 86, () => entraEnMundo(PANT.mundo));
+  boton(prem ? 'EDICIÓN NORMAL' : 'EDICIÓN PREMIUM', 67, 143, 80, () => { PANT.premium = !PANT.premium; play('tick'); }, 14, '#ffcb3d');
+  boton(cerrada ? 'VER PASE' : 'ELEGIR', 150, 143, 86, () => entraEnMundo(PANT.mundo));
   if (PANT.foco < n0) PANT.foco = n0 + 1;
   PANT.atras = () => ve('piloto');
 }
 function entraEnMundo(i) {
+  if (PANT.premium && !SAVE.premium) { play('deny'); ve('pase'); return; }      // la Edición Premium viene con el pase premium
   PANT.mundo = i;
   const ps = pistasDe(i);
   if (!ps.includes(PISTAS[PANT.pista])) PANT.pista = PISTAS.indexOf(ps[0]);
@@ -78,6 +95,7 @@ function pintaVista(d, X, Y) {
 }
 function pantallaPista() {
   const m = MUNDOS[PANT.mundo] || MUNDOS[0], ps = pistasDe(PANT.mundo), d = PISTAS[PANT.pista];
+  if (PANT.modo === 'espejo' && !espejoAbierto(d)) PANT.modo = 'normal';      // el espejo se abre pista a pista
   lx.fillStyle = m.oscuro; lx.fillRect(0, 0, PW, PH);
   if (UI.tecla === 'izq' || UI.tecla === 'der') { const j = (ps.indexOf(d) + (UI.tecla === 'der' ? 1 : ps.length - 1)) % ps.length; PANT.pista = PISTAS.indexOf(ps[j]); play('tick'); UI.tecla = null; }
   // con teclado o mando: a los lados se cambia de pista; arriba y abajo se pasa por los botones de abajo (volver, nivel, copa, a correr)
@@ -86,15 +104,15 @@ function pantallaPista() {
   marco(2, 2, 236, 60, '#1c1028', '#1c1028', m.color);
   pintaVista(d, 4, 14);
   lx.fillStyle = m.color; lx.fillRect(4, 4, 232, 10);
-  escribe(lx, trf('MUNDO %1', PANT.mundo + 1) + ' · ' + tr(m.nombre), 7, 6, '#ffffff', '#1c1028');
-  trofeo(224, 3, RECORDS[PANT.mundo]);
+  escribe(lx, trf('MUNDO %1', PANT.mundo + 1) + ' · ' + tr(d.premium ? 'EDICIÓN PREMIUM' : m.nombre), 7, 6, d.premium ? '#ffcb3d' : '#ffffff', '#1c1028');
+  trofeo(224, 3, RECORDS[claveCopa(PANT.mundo, d.premium)]);
   lx.fillStyle = 'rgba(20,10,34,0.55)'; lx.fillRect(4, 46, 232, 14);
   escribeB(lx, tr(d.nombre), 8, 49, '#ffcb3d', '#1c1028');
   for (let s = 0; s < 3; s++) { lx.fillStyle = '#1c1028'; lx.fillRect(206 + s * 9, 50, 8, 8); lx.fillStyle = s < d.dificultad ? '#ff5c8a' : '#3a2a52'; lx.fillRect(207 + s * 9, 51, 6, 6); }
   // las cuatro pistas del mundo
   ps.forEach((p, i) => {
     const sel = p === d, x = 4 + i * 58, sube = sel ? Math.round(1.5 + Math.sin(RELOJ * 5) * 1.5) : 0, y = 66 - sube;
-    marco(x, y, 56, 52, sel ? '#4a2f72' : '#2a1840', '#1c1028', sel ? '#ffcb3d' : '#5b3a86');
+    marco(x, y, 56, 52, sel ? '#4a2f72' : '#2a1840', '#1c1028', sel ? '#ffcb3d' : p.premium ? '#c9841a' : '#5b3a86');
     lx.fillStyle = p.color; lx.fillRect(x + 3, y + 3, 50, 28);
     const mm = miniDePista(p); if (mm) lx.drawImage(mm, x + 14, y + 3, 28, 28);
     lineasMini(tr(p.nombre), 52).slice(0, 2).forEach((l, j) => mini(lx, l, x + 28, y + 34 + j * 7, sel ? '#ffffff' : '#bdb6d6', '#1c1028', 'centro'));
@@ -103,12 +121,12 @@ function pantallaPista() {
   // el modo (carrera, contrarreloj o espejo: crono.js) y el lema de la pista al lado
   const lema = lineasMini(tr(d.lema), 144);
   lema.slice(0, 3).forEach((l, j) => mini(lx, l, 162, 122 + j * 7 - (lema.length > 2 ? 3 : 0), '#ffe9a8', '#1c1028', 'centro'));
-  if (PANT.modo === 'crono' && SAVE.crono[d.id]) mini(lx, tr('RÉCORD') + ' ' + tiempoTxt(SAVE.crono[d.id]), 44, 136, '#22e3ff', '#1c1028', 'centro');
-  else if (!espejoAbierto()) mini(lx, tr('ESPEJO: GANA EN CEO'), 44, 136, '#8a7aa8', null, 'centro');
+  if (PANT.modo === 'crono' && SAVE.crono[claveCrono(d)]) mini(lx, tr('RÉCORD') + ' ' + tiempoTxt(SAVE.crono[claveCrono(d)]), 44, 136, '#22e3ff', '#1c1028', 'centro');
+  else if (!espejoAbierto(d)) mini(lx, tr('ESPEJO: QUEDA 1.º'), 44, 136, '#8a7aa8', null, 'centro');
   const n0 = PANT.acciones.length;
   boton('VOLVER', 4, 143, 40, () => ve('mundo'));
   boton(trf('NIVEL: %1', tr(dificultad().nombre)), 47, 143, 76, () => { AJUSTES.dificultad = (AJUSTES.dificultad + 1) % 3; guardaAjustes(); }, 14, '#22e3ff');
-  boton('COPA', 126, 143, 44, () => copaEmpieza(PANT.mundo), 14, '#5ef27a');
+  boton('COPA', 126, 143, 44, () => copaEmpieza(PANT.mundo, d.premium), 14, '#5ef27a');
   boton('¡A CORRER!', 173, 143, 63, () => { COPA.activa = false; empiezaCarga(); });
   boton(NOMBRE_MODO[PANT.modo], 4, 121, 80, cambiaModo, 13, PANT.modo === 'crono' ? '#22e3ff' : PANT.modo === 'espejo' ? '#c35cff' : '#ffcb3d');
   if (PANT.foco < n0) PANT.foco = n0 + 3;
@@ -131,8 +149,8 @@ function miniDePista(d) {
 }
 
 // ---------- la copa ----------
-function copaEmpieza(m) {
-  Object.assign(COPA, { activa: true, mundo: m, n: 0, puntos: {}, ultimos: {}, sumada: -1 }); PANT.guardado = false;
+function copaEmpieza(m, premium = false) {
+  Object.assign(COPA, { activa: true, mundo: m, premium: !!premium, n: 0, puntos: {}, ultimos: {}, sumada: -1 }); PANT.guardado = false;
   PANT.pista = PISTAS.indexOf(pistasDe(m)[0]);
   empiezaCarga();
 }
@@ -155,7 +173,7 @@ function siguienteDeCopa() {
 function pantallaCopa() {
   const m = MUNDOS[COPA.mundo], T = clasificacionCopa();
   paseo(16, 34); velo(0.66);
-  escribeB(lx, trf('COPA %1', tr(m.nombre)), PW / 2, 3, m.color, '#1c1028', 'centro');
+  escribeB(lx, trf('COPA %1', tr(m.nombre)) + (COPA.premium ? ' · ' + tr('PREMIUM') : ''), PW / 2, 3, COPA.premium ? '#ffcb3d' : m.color, '#1c1028', 'centro');
   mini(lx, trf('CARRERA %1 DE 4', COPA.n + 1), PW / 2, 14, '#ffffff', '#1c1028', 'centro');
   marco(4, 22, 150, 96);
   T.forEach((t, i) => {
@@ -190,9 +208,9 @@ const FRASES_PODIO = [
 ];
 function pantallaPodio() {
   const m = MUNDOS[COPA.mundo], T = clasificacionCopa(), yo = T.findIndex(t => t.r.jugador) + 1;
-  if (!PANT.guardado) { PANT.guardado = true; guardaRecord(COPA.mundo, yo); premioCopa(COPA.mundo, yo); }
+  if (!PANT.guardado) { PANT.guardado = true; guardaRecord(claveCopa(COPA.mundo, COPA.premium), yo); premioCopa(COPA.mundo, yo); }
   paseo(10, 34); velo(0.5);
-  escribeB(lx, trf('COPA %1', tr(m.nombre)), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro');
+  escribeB(lx, trf('COPA %1', tr(m.nombre)) + (COPA.premium ? ' · ' + tr('PREMIUM') : ''), PW / 2, 4, '#ffcb3d', '#1c1028', 'centro');
   // el podio: 2º a la izquierda, 1º en medio, 3º a la derecha
   for (const [i, x, h] of [[1, 48, 22], [0, 120, 34], [2, 192, 14]]) {
     const t = T[i]; if (!t) continue;

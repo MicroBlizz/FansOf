@@ -1,8 +1,8 @@
 {
- "build": 362,
- "hash": "9868e71",
- "fecha": "2026-10-21T08:02:23Z",
- "mensaje": "Merge remote-tracking branch 'origin/main'",
+ "build": 363,
+ "hash": "dcb2202",
+ "fecha": "2026-10-21T09:13:09Z",
+ "mensaje": "Fans of Karts 0.7.3: notas de la Edición Premium, pistas al revés y espejo por pista (con su inglés), LEEME y mapas",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

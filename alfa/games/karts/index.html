@@ -8,7 +8,7 @@
 <meta name="description" content="Fans of Karts (juego): carreras de karts en pixel art de consola portátil con los líderes de Fans of Rumble. Tres pistas, seis pilotos, objetos con mala idea y Microblizz, que ha comprado la carrera.">
 <link rel="icon" type="image/png" href="img/icon-192.png">
 <link rel="apple-touch-icon" href="img/icon-192.png">
-<script src="../../core/js/nucleo.js?v=0.7.3-a362.9868e71"></script>
+<script src="../../core/js/nucleo.js?v=0.7.3-a363.dcb2202"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', 'css/tienda.css', 'css/pvp.css')</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <style>
@@ -41,7 +41,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // lo ligero de core (cuenta e idioma: NUCLEO.juego con ligero), los ajustes antes y el juego después, en este orden
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-mundos.js', 'idioma/en-objetos.js', 'idioma/en-tienda.js', 'idioma/en-online.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-mundos.js', 'idioma/en-objetos.js', 'idioma/en-tienda.js', 'idioma/en-online.js', 'idioma/en-premium.js'] },
   antes: ['js/ajustes.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -80,6 +80,11 @@ NUCLEO.juego({
     'js/pista-hype.js',
     'js/pista-castillo.js',
     'js/pista-torre.js',
+    'js/pista-premium.js',
+    'js/pista-premium-1.js',
+    'js/pista-premium-2.js',
+    'js/pista-premium-3.js',
+    'js/pista-premium-4.js',
     'js/pista-relieve.js',
     'js/pista-ambiente.js',
     'js/escena.js',
@@ -111,6 +116,7 @@ NUCLEO.juego({
     'js/crono.js',
     'js/fantasmas-dev.js',
     'js/fantasmas-datos.js',
+    'js/fantasmas-datos-2.js',
     'js/pvp-objetos.js',
     'js/pvp-sala.js',
     'js/pvp-copa.js',

@@ -4,7 +4,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'torre', mundo: 4, nombre: 'La Torre del CEO', lema: 'Planta 100. El CEO te espera en el helipuerto con tu despido impreso en papel de oro.', dificultad: 3, musica: 'boss', color: '#e63946',
+  id: 'torre', invertida: true, mundo: 4, nombre: 'La Torre del CEO', lema: 'Planta 100. El CEO te espera en el helipuerto con tu despido impreso en papel de oro.', dificultad: 3, musica: 'boss', color: '#e63946',
   puntos: [[500, 900], [300, 880], [160, 780], [140, 610], [240, 500], [180, 370], [200, 210], [360, 130], [540, 170], [600, 300], [500, 420], [560, 560], [700, 600], [800, 480],
     [760, 330], [700, 200], [820, 120], [930, 230], [900, 420], [920, 600], [880, 780], [720, 880]],
   ancho: 64, margen: 6, borde: 'vacio',
@@ -48,8 +48,8 @@ PISTAS.push({
   atajos: [[13.42, 17.07, 22, 'puente']],
   pinta(P) {
     turboEn(P, 0.5, 0); turboEn(P, 7.6, 0); turboEn(P, 11.6, 0); turboEn(P, 16.9, 0, 20);
-    rampaEn(P, 9.25, 12); huecoEn(P, 9.5, 34);        // de una azotea a otra
-    rampaEn(P, 18.25, 12); huecoEn(P, 18.5, 34);
+    rampaEn(P, P.def.invertida ? 9.75 : 9.25, 12); huecoEn(P, 9.5, 34);        // de una azotea a otra
+    rampaEn(P, P.def.invertida ? 18.75 : 18.25, 12); huecoEn(P, 18.5, 34);
     const papeles = ['#ffffff', '#e8ecf4', '#c3cbe0'];        // despidos impresos: resbalan
     manchaEn(P, 2.6, 10, 9, 6, S_CHARCO, papeles, 1); manchaEn(P, 6.9, -10, 9, 6, S_CHARCO, papeles, 2); manchaEn(P, 13.4, 8, 9, 6, S_CHARCO, papeles, 3); manchaEn(P, 20.6, -8, 9, 6, S_CHARCO, papeles, 4);
   },

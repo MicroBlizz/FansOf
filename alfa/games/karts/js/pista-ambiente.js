@@ -23,7 +23,7 @@ const AMBIENTE = {
   castillo: { ambiente: ['petalos'] },
   torre: { fisica: { viento: 24 }, ambiente: ['viento'] },
 };
-for (const def of PISTAS) { const A = AMBIENTE[def.id]; if (A) { def.fisica = A.fisica; def.ambiente = A.ambiente; } }
+for (const def of PISTAS) { const A = AMBIENTE[def.base || def.id]; if (A) { def.fisica = A.fisica; def.ambiente = A.ambiente; } }
 
 // el viento de la azotea: sopla siempre hacia el mismo lado del mapa, con rachas
 function soplaViento(k, P, fuerza, dt) {

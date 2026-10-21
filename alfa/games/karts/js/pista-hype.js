@@ -3,7 +3,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'hype', mundo: 4, nombre: 'Distrito Hype', lema: 'El tráiler era mejor que el juego. Siempre lo es.', dificultad: 3, musica: 'ciber', color: '#ff3df0',
+  id: 'hype', invertida: true, mundo: 4, nombre: 'Distrito Hype', lema: 'El tráiler era mejor que el juego. Siempre lo es.', dificultad: 3, musica: 'ciber', color: '#ff3df0',
   puntos: [[500, 150], [700, 150], [860, 150], [900, 300], [780, 380], [640, 380], [560, 470], [640, 560], [860, 560], [900, 700], [860, 860], [640, 880], [500, 780], [360, 880],
     [160, 860], [130, 700], [260, 620], [260, 480], [130, 420], [130, 250], [260, 150]],
   ancho: 68, margen: 30, borde: 'muro',

@@ -4,7 +4,7 @@
 'use strict';
 
 PISTAS.push({
-  id: 'cementerio', mundo: 2, nombre: 'Cementerio de juegos', lema: 'Aquí descansan los juegos que Microblizz compró. Conduce con respeto. O no.', dificultad: 2, musica: 'boss6', color: '#3b2457', polvo: '#8a7a6a',
+  id: 'cementerio', invertida: true, mundo: 2, nombre: 'Cementerio de juegos', lema: 'Aquí descansan los juegos que Microblizz compró. Conduce con respeto. O no.', dificultad: 2, musica: 'boss6', color: '#3b2457', polvo: '#8a7a6a',
   puntos: [[440, 154], [560, 150], [790, 190], [890, 320], [850, 470], [700, 500], [600, 420], [480, 400], [420, 520], [520, 640], [700, 660], [860, 720], [880, 850], [740, 900],
     [520, 880], [330, 890], [170, 830], [140, 660], [230, 520], [150, 380], [160, 240], [300, 160]],
   ancho: 62, margen: 36, borde: 'muro',

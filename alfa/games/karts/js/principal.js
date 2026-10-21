@@ -152,7 +152,7 @@ function fotograma(ahora) {
   PISTA = creaPista(PISTAS[Math.max(0, ip)]); PISTA.idioma = IDIOMA_K; PISTA.dif = nivelDif(); preparaIA(PISTA);
   musica('menu');
   if (q.get('auto') === '1') PANT.auto = true;
-  if (ip >= 0) { PANT.pista = ip; PANT.mundo = PISTAS[ip].mundo - 1; empiezaCarga(); }
+  if (ip >= 0) { PANT.pista = ip; PANT.mundo = PISTAS[ip].mundo - 1; PANT.premium = !!PISTAS[ip].premium; empiezaCarga(); }
   ajusta();
   document.getElementById('carga').hidden = true;
   requestAnimationFrame(t => { ULTIMO = t; fotograma(t); });

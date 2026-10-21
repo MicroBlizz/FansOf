@@ -5,6 +5,8 @@
 'use strict';
 
 const PISTAS = [];
+// con qué nombre se guardan los récords y fantasmas de una pista: si se le da la vuelta, los de antes ya no valen
+const claveCrono = d => (d.invertida ? d.id + '-inv' : d.id);
 const C32 = (...h) => h.map(u32);
 
 // ---------- el cielo ----------
@@ -88,14 +90,16 @@ function regalosEn(P, u, n = 4) {
 // un adorno junto a la pista: `fuera` unidades más allá del borde (negativo = a la izquierda de la marcha). Los adornos son sólidos.
 function adorno(P, lista, id, u, fuera, o = {}) {
   const f = P.f(u), lado = Math.sign(fuera) * (enVia(P, f).ancho / 2 + Math.abs(fuera)), p = enVia(P, f, lado);
-  if (estorbaAtajo(P, p)) return;
+  if (estorbaAtajo(P, p) || enOtraPista(P, p)) return;
   lista.push({ x: p.x, y: p.y, fig: figCosa(id), r: o.r === undefined ? 3.4 : o.r, flota: o.flota || 0, fase: (p.x * 0.37 + p.y * 0.11) % TAU });
 }
 function cartelEn(P, lista, lineasTxt, u, fuera, fondo, tinta) {
   const f = P.f(u), lado = Math.sign(fuera) * (enVia(P, f).ancho / 2 + Math.abs(fuera)), p = enVia(P, f, lado);
-  if (estorbaAtajo(P, p)) return;
+  if (estorbaAtajo(P, p) || enOtraPista(P, p)) return;
   lista.push({ x: p.x, y: p.y, cartel: cartelDe(lineasTxt.map(tr), fondo, tinta), r: 1.6 });
 }
+// ¿cae este punto sobre la pista (la de otro tramo, en las pistas que se cruzan o pasan muy cerca)? Ahí no se planta nada
+const enOtraPista = (P, p) => { const s = supEn(P, p.x, p.y); return s === S_PISTA || s === S_BORDILLO || s === S_TURBO || s === S_RAMPA; };
 // ---------- tramas de suelo ----------
 // de una lista de colores, uno al azar pero siempre el mismo en cada punto (para que el suelo tenga grano)
 const grano = (cols, paso = 0) => (x, y) => cols[(ruido(x >> paso, y >> paso) * cols.length) | 0];

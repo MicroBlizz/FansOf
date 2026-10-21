@@ -1,8 +1,8 @@
 {
- "build": 358,
- "hash": "72889c1",
- "fecha": "2026-10-21T00:29:34Z",
- "mensaje": "Fans of Jump: la zanahoria de la fuerza más larga y con las hojas siempre verdes, y globos de látex en 3D",
+ "build": 359,
+ "hash": "c491a55",
+ "fecha": "2026-10-21T00:58:48Z",
+ "mensaje": "Rouflage: CHAT (frases rápidas por bando en partida y chat de sala con filtro, silenciar y reportar); SQL 66 aplicado",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

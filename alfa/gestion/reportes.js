@@ -1,13 +1,26 @@
 // Fans Of · /gestion: la pestaña REPORTES DE ROUFLAGE. Los jugadores reportan el escenario pintado a mano que vieron en una sala con amigos
 // (games/rouflage/js/sala-votos.js); aquí se ve la COPIA EXACTA de lo que vieron, dibujada (una vista sencilla: la sala, la pintura tal cual y
 // los muebles como marcas con su nombre), y se decide: Descartar, Banear 7 días, Banear para siempre o Borrar escenario (retira ese dibujo).
+// También los mensajes del CHAT DE LA SALA (games/rouflage/js/chat-sala.js, motivo 'chat', servidor/66-rouflage-chat.sql): el mensaje tal como se vio,
+// lo que escribió de verdad (sin tapar) y los mensajes de alrededor. Se descarta o se banea (un baneado tampoco puede escribir en el chat).
 // Datos: gestion_reportes(token, estado, días), gestion_reporte_resolver(token, id, acción, días) y gestion_desbanear(token, usuario), servidor/60-rouflage-votos.sql.
 // Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fmt(), fecha(), textoError() y $().
 'use strict';
 (() => {
   let D = null;
   const otras = ['t-cuentas', 't-votos', 't-roles'], paneles = ['pan-cuentas', 'pan-votos', 'pan-roles'];
-  const MOTIVO = { dibujo: 'Dibujo inapropiado', nombre: 'Nombre ofensivo', otro: 'Otra cosa' };
+  const MOTIVO = { dibujo: 'Dibujo inapropiado', nombre: 'Nombre ofensivo', otro: 'Otra cosa', chat: 'Mensaje del chat de la sala' };
+  // las frases rápidas de la sala (games/rouflage/js/chat-frases.js: CHAT_FRASES.s), por si lo reportado es una de ellas
+  const FRASES_SALA = ['¡Hola!', '¡Listo!', '¡Suerte!', 'Un momento', 'Jajaja', '¿Empezamos?', '¡Buena partida!', 'Me voy'];
+  const textoChat = m => m.frase != null ? '[frase rápida] ' + (FRASES_SALA[m.frase] || m.frase) : (m.texto || '');
+  // el mensaje reportado y los de alrededor: lo que se vio y, si el filtro tapó algo, lo que escribió de verdad
+  function chatHtml(c) {
+    if (!c) return '<div class="meta">Sin copia del mensaje</div>';
+    const fila = m => `<div class="meta" style="${m.id === c.id ? 'background:rgba(255,203,61,.18);border-radius:6px;padding:2px 6px;' : 'padding:0 6px;'}"><b>${esc(m.nombre || '?')}:</b> ${esc(textoChat(m))}${m.original ? ` <i>(escribió: «${esc(m.original)}»)</i>` : ''}</div>`;
+    const ctx = Array.isArray(c.contexto) && c.contexto.length ? c.contexto : [c];
+    return `<div class="meta"><b>Mensaje:</b> «${esc(textoChat(c))}»${c.original ? ` · <b>escribió de verdad:</b> «${esc(c.original)}»` : ''} · ${fecha(c.creado)}</div>
+      <details open><summary>La conversación de alrededor</summary>${ctx.map(fila).join('')}</details>`;
+  }
   const ESTADO = { pendiente: 'pendiente', descartado: 'descartado', baneado: 'baneado', borrado: 'escenario borrado' };
   // el color de la pared y del suelo de cada escenario (games/rouflage/js/escenario-datos.js), solo para orientarse
   const COLORES = { oficina: ['#6d7fa8', '#4b5878'], cafeteria: ['#cfd8dc', '#9aa4a8'], rrhh: ['#8a6a4a', '#b9a07a'], almacen: ['#7a7f88', '#8d8a82'], parking: ['#595d6a', '#3a3c44'],
@@ -54,18 +67,18 @@
     g.textAlign = 'start';
   }
   function tarjeta(r) {
-    const pend = r.estado === 'pendiente';
+    const pend = r.estado === 'pendiente', chat = r.motivo === 'chat';
     const quien = r.dueno_email ? esc(r.dueno_email) : 'cuenta ' + esc(r.dueno_corto);
     const ban = r.baneado ? `<span class="estado si">baneado ${r.baneado === 'siempre' ? 'para siempre' : 'hasta ' + fecha(r.baneado)}</span>` : '';
     return `<article class="cuenta${pend ? ' marcada' : ''}" data-id="${r.id}">
       <div class="cab"><span class="codigo">${esc(r.nombre || r.dueno_nombre || '?')}</span><span class="estado${pend ? ' si' : ''}">${esc(ESTADO[r.estado] || r.estado)}</span>${ban}
         <span class="puntos${r.personas >= 3 ? ' alta' : ''}">${fmt(r.personas)} ${r.personas === 1 ? 'persona' : 'personas'}</span></div>
       <div class="meta"><b>${esc(MOTIVO[r.motivo] || r.motivo)}</b>${r.texto ? ' · «' + esc(r.texto) + '»' : ''}</div>
-      <div class="meta">Dueño: ${quien}${r.dueno_nombre && r.dueno_nombre !== r.nombre ? ' (ahora se llama ' + esc(r.dueno_nombre) + ')' : ''} · ${fmt(r.megusta)} me gusta · ${fmt(r.nogusta)} no me gusta${r.oculto ? ' · <b>oculto ahora</b>' : ''}</div>
+      <div class="meta">${chat ? 'Quién lo escribió' : 'Dueño'}: ${quien}${r.dueno_nombre && r.dueno_nombre !== r.nombre ? ' (ahora se llama ' + esc(r.dueno_nombre) + ')' : ''}${chat ? '' : ` · ${fmt(r.megusta)} me gusta · ${fmt(r.nogusta)} no me gusta${r.oculto ? ' · <b>oculto ahora</b>' : ''}`}</div>
       <div class="meta">Reportado ${fecha(r.creado)} por ${r.quien_email ? esc(r.quien_email) : 'cuenta ' + esc(r.quien_corto)}${r.resuelto ? ' · resuelto ' + fecha(r.resuelto) + ' por ' + esc(r.resuelto_por || '') : ''}</div>
-      <canvas class="rf-esc" width="520" height="540" aria-label="Copia del escenario reportado"></canvas>
-      <details><summary>Datos del escenario</summary><pre>${esc(JSON.stringify(r.escenario))}</pre></details>
-      ${pend ? `<div class="accion"><button data-a="descartar">Descartar</button><button class="peligro" data-a="borrar_escenario">Borrar escenario</button>
+      ${chat ? chatHtml(r.chat) : `<canvas class="rf-esc" width="520" height="540" aria-label="Copia del escenario reportado"></canvas>
+      <details><summary>Datos del escenario</summary><pre>${esc(JSON.stringify(r.escenario))}</pre></details>`}
+      ${pend ? `<div class="accion"><button data-a="descartar">Descartar</button>${chat ? '' : '<button class="peligro" data-a="borrar_escenario">Borrar escenario</button>'}
         <button class="peligro" data-a="banear" data-d="7">Banear 7 días</button><button class="peligro" data-a="banear" data-d="0">Banear para siempre</button></div>` : ''}
     </article>`;
   }
@@ -73,8 +86,8 @@
     if (!D) return;
     const L = D.reportes || [], B = D.baneados || [];
     $('rf-resumen').innerHTML = [[D.pendientes, 'reportes pendientes'], [B.length, 'baneados ahora']].map(([n, t]) => `<div><b>${fmt(n)}</b><span>${t}</span></div>`).join('');
-    $('rf-lista').innerHTML = L.length ? L.map(tarjeta).join('') : `<div class="vacio"><b>Nada que revisar</b>Cuando alguien reporte un escenario de Rouflage, aparecerá aquí con la copia de lo que vio.</div>`;
-    $('rf-lista').querySelectorAll('article').forEach((a, i) => dibuja(a.querySelector('canvas'), L[i].escenario));
+    $('rf-lista').innerHTML = L.length ? L.map(tarjeta).join('') : `<div class="vacio"><b>Nada que revisar</b>Cuando alguien reporte un escenario o un mensaje del chat de Rouflage, aparecerá aquí con la copia de lo que vio.</div>`;
+    $('rf-lista').querySelectorAll('article').forEach((a, i) => { const cv = a.querySelector('canvas.rf-esc'); if (cv) dibuja(cv, L[i].escenario); });
     $('rf-baneados').innerHTML = B.length ? '<h2 style="font-size:15px;margin:8px 0 0">Baneados</h2>' + B.map(b => `<article class="cuenta"><div class="cab"><span class="codigo">${esc(b.nombre || b.corto)}</span>
         <span class="estado si">${b.hasta ? 'hasta ' + fecha(b.hasta) : 'para siempre'}</span><span class="meta">${esc(b.email || 'cuenta ' + b.corto)} · ${esc(b.motivo || '')} · ${esc(b.quien || '')} · ${fecha(b.creado)}</span></div>
         <div class="accion"><button data-u="${esc(b.usuario)}">Quitar el baneo</button></div></article>`).join('') : '';
@@ -94,7 +107,7 @@
   $('rf-lista').onclick = async ev => {
     const b = ev.target.closest('button[data-a]'); if (!b) return;
     const a = b.closest('article'), acc = b.dataset.a, dias = b.dataset.d != null ? Number(b.dataset.d) : null;
-    const pregunta = acc === 'banear' ? (dias ? '¿Banear 7 días a este jugador? No podrá enseñar su escenario ni crear salas con amigos.' : '¿Banear PARA SIEMPRE a este jugador?')
+    const pregunta = acc === 'banear' ? (dias ? '¿Banear 7 días a este jugador? No podrá enseñar su escenario, crear salas con amigos ni escribir en el chat.' : '¿Banear PARA SIEMPRE a este jugador?')
       : acc === 'borrar_escenario' ? '¿Retirar este dibujo? No podrá volver a subirlo tal cual.' : '';
     if (pregunta && !confirm(pregunta)) return;
     a.querySelectorAll('button').forEach(x => { x.disabled = true; });

@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.39-a358.72889c1"></script>
+<script src="../../core/js/nucleo.js?v=0.2.39-a359.c491a55"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -181,6 +181,7 @@
         <div class="op-fila"><span data-tr>Ahorro de batería</span><div class="op-seg" id="op-bateria"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila" id="op-fila-vibracion"><span data-tr>Vibración</span><div class="op-seg" id="op-vibracion"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
+        <div class="op-fila"><span data-tr>Chat</span><div class="op-seg" id="op-chat"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
       </div>
       <button type="button" class="boton gris" id="b-viejo"></button>
@@ -251,7 +252,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js'] },
   antes: ['js/ajustes.js', 'js/pantallas-html.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -354,6 +355,7 @@ NUCLEO.juego({
     'js/escenario-pincel.js',
     'js/armario-partida.js',
     'js/mascotas.js',
+    'js/chat-frases.js', 'js/chat-partida.js', 'js/chat-bots.js', 'js/chat-sala-red.js', 'js/chat-sala.js',      // el chat: frases rápidas en partida y el de la sala de espera
     'js/opciones.js',
     'js/principal.js',
   ],

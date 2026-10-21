@@ -54,6 +54,7 @@ function pvpCompartir() {
 // la sala: quién hay y, cuando arranca, el papel de cada uno
 function pvpPintaBusca() {
   const i = RFP.info, lista = E('busca-lista');
+  chatSalaPaso(i);      // el chat de la sala de espera (chat-sala.js)
   if (!i) { E('busca-titulo').textContent = tr('BUSCANDO PARTIDA'); E('busca-sub').textContent = ''; lista.innerHTML = ''; return; }
   const jug = i.jugadores || [], jugando = i.estado !== 'espera', mio = jug.find(j => j.yo), priv = !!i.privada, soyAnf = priv && !!mio && mio.orden === i.anfitrion;
   E('busca-titulo').textContent = jugando ? tr('¡EMPIEZA LA PARTIDA!') : tr('SALA: {n} DE {max}', { n: i.n, max: i.max });

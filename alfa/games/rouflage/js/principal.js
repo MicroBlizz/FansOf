@@ -17,7 +17,7 @@ function fotograma(ahora) {
     // el corazón: late más deprisa cuanto más sospechan de ti
     if (J.fase === 'caza' && J.peligro > 0.3) { _latido -= dt; if (_latido <= 0) { _latido = 1.05 - J.peligro * 0.6; play('latido', 0.4 + J.peligro * 0.6); } }
   }
-  avanzaCamara(dt); if (!escenarioAbierto()) dibuja(RELOJ); refrescaHud(false); vigilaMusica();      // en MI ESCENARIO (escenario.js) no se ve el mapa: no se pinta
+  avanzaCamara(dt); if (!escenarioAbierto()) dibuja(RELOJ); refrescaHud(false); chatAvanza(dt); vigilaMusica();      // en MI ESCENARIO (escenario.js) no se ve el mapa: no se pinta
   requestAnimationFrame(fotograma);
 }
 async function arranca() {

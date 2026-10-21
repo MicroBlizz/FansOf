@@ -1,7 +1,7 @@
 // Fans of Rouflage (prototipo) · PvP, LA SINCRONÍA: lo que se manda por el canal de la sala y qué se hace con lo que llega. Cada jugador lleva su personaje y avisa de dónde está (e);
 // los demás lo ven como una copia que se mueve suave hacia ese punto. La piel pintada se manda una sola vez, al congelarse (p). El ANFITRIÓN manda cómo van los personajes de la máquina,
 // el reloj y la fase (a, fa), decide los disparos (tq → t) y el final (fn). Silbidos (s), «¡listo!» (l) y rendirse (rd) los manda cada uno.
-// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que lleva · fg dónde está un fantasmas del armario · gs un gesto.
+// Todos los avisos llevan `de`: la plaza de quien los manda. Mensajes (t): e estado · a máquina+reloj · fa fase · p piel · s silbido · tq pido disparar · t resultado del disparo · l listo · fn final · rd me voy · rp lo que lleva · fg dónde está un fantasmas del armario · gs un gesto · ch una frase rápida del chat.
 'use strict';
 
 const rfpManda = m => { if (RFP.canal && RFP.activo) RFP.canal.enviar(Object.assign({ de: RFP.yo }, m)); };
@@ -89,6 +89,7 @@ function rfpRecibe(m) {
     case 'hb': case 'tl': talRecibe(sl, m); break;      // las habilidades (talentos-partida.js)
     case 'fg': fantasmaRecibido(sl, m); break;
     case 'bz': balizaRecibida(m, sl); break;
+    case 'ch': chatRecibido(sl, m); break;      // una frase rápida del chat (chat-partida.js)
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
     case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;

@@ -1,8 +1,8 @@
 {
- "build": 371,
- "hash": "fcae4a5",
- "fecha": "2026-10-21T12:47:53Z",
- "mensaje": "Menu de la portada: Entrar ya no se va a la derecha, todo centrado como en el resto de paginas",
+ "build": 372,
+ "hash": "7fe772f",
+ "fecha": "2026-10-21T13:01:21Z",
+ "mensaje": "Menu: separadores a cada lado de Mi cuenta y foto del perfil publico de Google si entraste con Google",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

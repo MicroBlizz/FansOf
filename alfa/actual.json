@@ -1,8 +1,8 @@
 {
- "build": 387,
- "hash": "22027d5",
- "fecha": "2026-10-21T19:34:38Z",
- "mensaje": "Nova: arregla el cuelgue al entrar en la estación con anclajes «universales» (Memes desde rango 30); Microblizz controla el núcleo y dos anillos alrededor (solo el centro es el núcleo final)",
+ "build": 388,
+ "hash": "59a3de1",
+ "fecha": "2026-10-21T19:38:12Z",
+ "mensaje": "Nova: 60 retratos de comandante (las unidades de las 9 facciones) con sus sprites de la serie como referencia",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

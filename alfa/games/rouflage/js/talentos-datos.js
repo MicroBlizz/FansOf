@@ -49,11 +49,12 @@ function talEstado() {
   const t = SAVE.talentos = SAVE.talentos && typeof SAVE.talentos === 'object' ? SAVE.talentos : {};
   if (!t.xp || typeof t.xp !== 'object') t.xp = { becario: 0, colado: 0 };
   if (!t.eleg || typeof t.eleg !== 'object') t.eleg = { becario: 'contador', colado: 'granada' };
+  if (t.todo && !arPruebasVisibles()) t.todo = false;      // los talentos a tope de DESBLOQUEAR TODO solo valen en la alfa y en localhost (ajustes.js)
   return t;
 }
 const talXp = papel => Math.max(0, Math.floor(TAL.srv && typeof TAL.srv[papel] === 'number' ? TAL.srv[papel] : +talEstado().xp[papel] || 0));
 function talNivelDe(xp) { let n = 1; while (n < TALENTOS.max && xp >= TALENTOS.acum[n + 1]) n++; return n; }
-const talNivel = papel => (talEstado().todo ? TALENTOS.max : talNivelDe(talXp(papel)));
+const talNivel = papel => (talEstado().todo && arPruebasVisibles() ? TALENTOS.max : talNivelDe(talXp(papel)));
 const habAbierta = (h, nivel) => !!h && (nivel == null ? talNivel(h.papel) : nivel) >= h.nv;
 // la elegida de ese papel (si ya no vale, la primera: contador o granada)
 function talElegida(papel) {

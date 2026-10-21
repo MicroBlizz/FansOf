@@ -82,6 +82,6 @@ function modoResultado(r, victoria) {
     if (e === yo) { r.titulo = logro ? tr('¡EL BUFÓN GANA!') : fallo ? tr('BUFÓN DESPEDIDO ANTES DE HORA') : r.titulo; if (logro) { r.victoria = true; r.estrellas = Math.max(r.estrellas, 2); } }
   }
   if (extraOn('halcon')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) r.sub += ' ' + tr('Ojo de halcón: gana {a} con {n} puntos.', { a: top.nombre, n: top.puntos }); }
-  if (modoEs('retrato') || modoEs('ida')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) { r.titulo = top.jugador ? tr('¡GANAS TÚ!') : tr('¡GANA {a}!', { a: top.nombre }); r.sub = modoEs('ida') ? tr('Ida y vuelta: solo gana uno, y es quien más puntos suma.') : tr('Retrato robot: solo gana uno, y es quien más puntos suma.') + ' ' + r.sub; r.victoria = !!top.jugador; r.estrellas = top.jugador ? 3 : Math.min(r.estrellas, 1); } }
+  if (modoEs('retrato') || modoEs('ida')) { r.ranking = clasificacion(); const top = r.ranking[0]; if (top) { r.titulo = top.jugador ? tr('¡GANAS TÚ!') : tr('¡GANA {a}!', { a: top.nombre }); r.sub = modoEs('ida') ? tr('Ida y vuelta: solo gana uno, y es quien más puntos suma.') : tr('Retrato robot: solo gana uno, y es quien más puntos suma.') + ' ' + r.sub; r.victoria = !!top.jugador; r.bando = false; r.estrellas = top.jugador ? 3 : Math.min(r.estrellas, 1); } }
   r.ranking = clasificacion(); r.puntos = marcadorDe(yo);
 }

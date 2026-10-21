@@ -3,23 +3,39 @@
 // se acercan a mirar un garabato que les parece sospechoso y, si disparan, fallan y pierden una carta (como con un extintor). En el PvP se mandan los trazos (sz) a los demás.
 'use strict';
 
-const SEN = { cv: null, c: null, puntos: [], pinta: null, pend: [], tPend: 0, max: 100, alcance: 240 };
+const SEN = { teselas: new Map(), puntos: [], pinta: null, pend: [], tPend: 0, max: 100, alcance: 240 };
 const SEN_ESC = 0.5;      // la capa se guarda a la mitad de tamaño
-function olvidaSenuelos() { limpiaSenuelos(); SEN.cv = SEN.c = null; }   // al cambiar de mapa (la capa mide lo que el mapa)
-
-function limpiaSenuelos() { SEN.puntos.length = 0; SEN.pend.length = 0; SEN.pinta = null; if (SEN.c) SEN.c.clearRect(0, 0, SEN.cv.width, SEN.cv.height); }
-function senueloCapa() { if (!SEN.cv) [SEN.cv, SEN.c] = lienzo(Math.ceil(ANCHO * SEN_ESC), Math.ceil(ALTO * SEN_ESC)); return SEN.c; }
+// la capa va en TESELAS (cuadrados de SEN_TES píxeles, cada uno su lienzo, solo donde se ha pintado): con un lienzo del tamaño del mapa, cada trazo
+// nuevo obligaba al navegador a copiarlo entero para dibujarlo, y en el móvil se notaba mucho
+const SEN_TES = 256, SEN_TES_W = SEN_TES / SEN_ESC;      // (en el mundo, 512 de lado)
+function olvidaSenuelos() { limpiaSenuelos(); SEN.teselas.clear(); }   // al cambiar de mapa
+function limpiaSenuelos() { SEN.puntos.length = 0; SEN.pend.length = 0; SEN.pinta = null; for (const t of SEN.teselas.values()) t.c.clearRect(0, 0, SEN_TES, SEN_TES); }
+function senueloTesela(tx, ty) {
+  const k = tx + ',' + ty; let t = SEN.teselas.get(k);
+  if (!t) { const [cv, c] = lienzo(SEN_TES, SEN_TES); t = { cv, c, tx, ty }; SEN.teselas.set(k, t); }
+  return t;
+}
 
 // un trazo entre dos puntos del mundo: se estampa solo donde hay suelo
 function senueloTraza(x0, y0, x1, y1, r, col, cab) {
-  const c = senueloCapa(), n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / Math.max(0.6, r * 0.45)));
-  c.save(); c.scale(SEN_ESC, SEN_ESC); c.fillStyle = col; let ult = null;
+  const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / Math.max(0.6, r * 0.45))), sellos = []; let ult = null;
   for (let k = 0; k <= n; k++) {
     const x = x0 + (x1 - x0) * k / n, y = y0 + (y1 - y0) * k / n; if (celdaEn(x, y) !== SUELO) continue;
-    if (cab === 'cuadrado') c.fillRect(x - r, y - r, r * 2, r * 2); else { c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); }
+    sellos.push(x, y);
     if (!ult || lejos(ult[0], ult[1], x, y) > 22) { ult = [x, y]; SEN.puntos.push({ x, y, r, bots: new Set() }); }
   }
-  c.restore(); if (SEN.puntos.length > 600) SEN.puntos.splice(0, SEN.puntos.length - 600);
+  if (SEN.puntos.length > 600) SEN.puntos.splice(0, SEN.puntos.length - 600);
+  if (!sellos.length) return;
+  let ax = Infinity, ay = Infinity, bx = -Infinity, by = -Infinity;
+  for (let i = 0; i < sellos.length; i += 2) { ax = Math.min(ax, sellos[i]); bx = Math.max(bx, sellos[i]); ay = Math.min(ay, sellos[i + 1]); by = Math.max(by, sellos[i + 1]); }
+  for (let ty = Math.max(0, Math.floor((ay - r - 1) / SEN_TES_W)); ty <= Math.floor((by + r + 1) / SEN_TES_W); ty++) {
+    for (let tx = Math.max(0, Math.floor((ax - r - 1) / SEN_TES_W)); tx <= Math.floor((bx + r + 1) / SEN_TES_W); tx++) {
+      const c = senueloTesela(tx, ty).c;
+      c.save(); c.setTransform(SEN_ESC, 0, 0, SEN_ESC, -tx * SEN_TES, -ty * SEN_TES); c.fillStyle = col;
+      for (let i = 0; i < sellos.length; i += 2) { const x = sellos[i], y = sellos[i + 1]; if (cab === 'cuadrado') c.fillRect(x - r, y - r, r * 2, r * 2); else { c.beginPath(); c.arc(x, y, r, 0, TAU); c.fill(); } }
+      c.restore();
+    }
+  }
 }
 const senueloCoste = (dist, r) => dist * r * 0.05 + 0.12;
 
@@ -60,7 +76,15 @@ function senueloRecibe(l) {
 }
 
 // ---------- verlos (sobre el suelo, por debajo de los personajes) ----------
-function pintaSenuelos(c) { if (SEN.cv && SEN.puntos.length) c.drawImage(SEN.cv, 0, 0, ANCHO, ALTO); }
+// solo las teselas que se ven
+function pintaSenuelos(c) {
+  if (!SEN.teselas.size || !SEN.puntos.length) return;
+  const x0 = -CAM.ox / CAM.esc, y0 = -CAM.oy / CAM.esc, x1 = (cv.width - CAM.ox) / CAM.esc, y1 = (cv.height - CAM.oy) / CAM.esc;
+  for (const t of SEN.teselas.values()) {
+    const wx = t.tx * SEN_TES_W, wy = t.ty * SEN_TES_W;
+    if (wx < x1 && wx + SEN_TES_W > x0 && wy < y1 && wy + SEN_TES_W > y0) c.drawImage(t.cv, wx, wy, SEN_TES_W, SEN_TES_W);
+  }
+}
 
 // ---------- los becarios de la máquina pican: un garabato a la vista les resulta sospechoso ----------
 function senueloGarabato(e) {

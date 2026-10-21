@@ -55,8 +55,8 @@
   .tal-pest b { font-size: 15px; } .tal-pie { font-size: 12px; }
 }
 
-/* elegir antes de jugar (CONTRA BOTS y la sala del PvP): fichas redondas y la elegida debajo */
-.tal-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; --pc1: #6aaeff; --pc2: #2f6fd6; }
+/* elegir antes de jugar (CONTRA BOTS y la sala del PvP): fichas redondas y la elegida debajo (con aire abajo: el halo y las NV no pisan el texto) */
+.tal-chips { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 4px 0 12px; --pc1: #6aaeff; --pc2: #2f6fd6; }
 .tal-chips.colado { --pc1: #5fd896; --pc2: #23955a; }
 .tal-chip { position: relative; width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--outline); background: radial-gradient(circle at 50% 35%, #3b4866, #232c42); box-shadow: 0 3px 0 var(--outline); display: grid; place-items: center; cursor: pointer; padding: 0; transition: transform 0.12s; }
 .tal-chip canvas { display: block; }
@@ -139,3 +139,11 @@ body.op-grandes .accion.hab.becario { zoom: 1.22; }
 @media (prefers-reduced-motion: reduce) { .ft-nueva.entra { animation: none; } }
 body.op-zurdo .accion.hab.becario { right: auto; left: calc(var(--izq) + 12px); }
 @media (prefers-reduced-motion: reduce) { .accion.hab.activa { animation: none; } }
+
+/* APAISADO BAJO (el móvil tumbado): la cabecera más baja para que se vean las habilidades sin bajar */
+@media (orientation: landscape) and (max-height: 420px) {
+  .tal-caja { gap: 5px; padding-top: 8px; max-height: calc(100vh - 16px); } .tal-caja h2 { font-size: 26px; }
+  .tal-pest { padding: 4px 8px 2px; } .tal-pest b { font-size: 15px; }
+  .tal-cab { padding: 4px 12px 4px; } .tal-tubo { height: 40px; } #tal-tubo { top: -30px; height: 100px; }
+  .tal-nota { font-size: 11px; line-height: 1.15; }
+}

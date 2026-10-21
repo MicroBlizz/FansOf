@@ -135,6 +135,7 @@
 @media (prefers-reduced-motion: reduce) { .diario-dia.hoy { animation: none; } }
 /* el texto de encima del reloj en una sola línea: si es largo (el silbato caliente con un nombre largo) se corta el final con «…» en vez de empujar el reloj hacia abajo */
 #fase-txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 44vw; }
+@media (max-width: 380px) { #fase-txt { letter-spacing: 0.03em; font-size: 11px; max-width: 36vw; } }      /* «ENCUÉNTRALOS» no se acerca a la lupa */
 /* la etiqueta del silbato caliente (modos-extra.js): en naranja para que se distinga */
 #e-caliente { background: linear-gradient(to bottom, #ffb347, #ff7a1a); color: var(--ink); }
 #e-caliente b { font-size: 13px; white-space: nowrap; max-width: 58vw; overflow: hidden; text-overflow: ellipsis; }

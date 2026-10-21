@@ -215,17 +215,41 @@ function postura(e, t) {
 function pielConPostura(c, e, p) {
   const P0 = posturaDe(e), d0 = P0.dy || 0;
   if (['piernaI', 'piernaD', 'brazoI', 'brazoD', 'dy'].every(k => Math.abs((p[k] || 0) - (P0[k] || 0)) < 0.002)) { c.drawImage(e.piel, -PIE_X, -PIE_Y, CAJA_W, CAJA_H); return; }
+  const T = trozosPiel(e);
   c.save(); c.translate(0, (p.dy || 0) - d0);
+  const pon = i => { const r = T.r[i]; c.drawImage(T.cv, r[0], r[1], r[2], r[3], r[4], r[5], r[2] / ESC_PIEL, r[3] / ESC_PIEL); };      // solo el rectángulo del trozo: girar una imagen cuesta según lo que ocupa
   const trozo = k => {
     const q = PIEZAS[k], py = q.y + d0;
-    c.save(); c.translate(q.x, py); c.rotate((p[k] || 0) - (P0[k] || 0)); c.translate(-q.x, -py);
-    c.beginPath(); c.save(); c.translate(0, d0); capsula(c, q, P0[k] || 0); c.restore(); c.clip();
-    c.drawImage(e.piel, -PIE_X, -PIE_Y, CAJA_W, CAJA_H); c.restore();
+    c.save(); c.translate(q.x, py); c.rotate((p[k] || 0) - (P0[k] || 0)); c.translate(-q.x, -py); pon(TROZOS.indexOf(k)); c.restore();
   };
-  trozo('piernaI'); trozo('piernaD');
-  c.save(); c.beginPath(); c.save(); c.translate(0, d0); trazaTronco(c); trazaCabeza(c); c.restore(); c.clip(); c.drawImage(e.piel, -PIE_X, -PIE_Y, CAJA_W, CAJA_H); c.restore();
-  trozo('brazoI'); trozo('brazoD');
+  trozo('piernaI'); trozo('piernaD'); pon(TROZOS.indexOf('cuerpo')); trozo('brazoI'); trozo('brazoD');
   c.restore();
+}
+// LOS TROZOS DE LA PIEL, ya recortados (piernas, tronco con cabeza y brazos, uno al lado del otro en un lienzo): recortar y girar la piel entera
+// cinco veces por personaje y fotograma costaba mucho en el móvil; así se recorta de vez en cuando y al girar solo se dibuja el rectángulo de cada
+// trozo. Se rehacen si cambia la piel o la postura y, como la pintura cambia sin avisar (pincel, bots, red…), cada TROZOS_VIDA ms mientras se anda
+// (se pinta quieto, y quieto no se usan los trozos).
+const TROZOS = ['piernaI', 'piernaD', 'cuerpo', 'brazoI', 'brazoD'], TROZOS_VIDA = 400;
+function trozosPiel(e) {
+  const P0 = posturaDe(e), ahora = performance.now();
+  let T = e.trozos;
+  if (T && T.piel === e.piel && T.P0 === P0 && ahora - T.t < TROZOS_VIDA) return T;
+  const W = CAJA_W * ESC_PIEL, H = CAJA_H * ESC_PIEL, d0 = P0.dy || 0;
+  if (!T || T.cv.width !== W * TROZOS.length || T.cv.height !== H) { const [cv, g] = lienzo(W * TROZOS.length, H); T = { cv, g }; }
+  const g = T.g; g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, T.cv.width, H);
+  T.r = TROZOS.map((k, i) => {
+    g.save(); g.setTransform(ESC_PIEL, 0, 0, ESC_PIEL, i * W + PIE_X * ESC_PIEL, PIE_Y * ESC_PIEL + d0 * ESC_PIEL);
+    g.beginPath(); if (k === 'cuerpo') { trazaTronco(g); trazaCabeza(g); } else capsula(g, PIEZAS[k], P0[k] || 0); g.clip();
+    g.drawImage(e.piel, -PIE_X, -PIE_Y - d0, CAJA_W, CAJA_H); g.restore();
+    // el rectángulo que ocupa (en unidades, con los pies en el origen) y su sitio en el lienzo: [sx, sy, sw, sh, x, y]
+    let x0, y0, x1, y1;
+    if (k === 'cuerpo') { x0 = -15; x1 = 15; y0 = CABEZA.y - CABEZA.r - 1; y1 = -5; }
+    else { const q = PIEZAS[k], a = q.ang + (P0[k] || 0), x2 = q.x + Math.cos(a) * q.largo, y2 = q.y + Math.sin(a) * q.largo; x0 = Math.min(q.x, x2) - q.r - 1; x1 = Math.max(q.x, x2) + q.r + 1; y0 = Math.min(q.y, y2) - q.r - 1; y1 = Math.max(q.y, y2) + q.r + 1; }
+    x0 = Math.max(-PIE_X, Math.floor(x0)); x1 = Math.min(CAJA_W - PIE_X, Math.ceil(x1)); y0 = Math.max(-PIE_Y, Math.floor(y0 + d0)); y1 = Math.min(CAJA_H - PIE_Y, Math.ceil(y1 + d0));
+    return [i * W + (x0 + PIE_X) * ESC_PIEL, (y0 + PIE_Y) * ESC_PIEL, (x1 - x0) * ESC_PIEL, (y1 - y0) * ESC_PIEL, x0, y0];
+  });
+  Object.assign(T, { piel: e.piel, P0, t: ahora }); e.trozos = T;
+  return T;
 }
 // la cara: ojos con brillo, mofletes y sonrisa (CrazyBunny lleva un ojo en espiral, como en el resto de la serie)
 function pintaCara(c, e, t, p) {

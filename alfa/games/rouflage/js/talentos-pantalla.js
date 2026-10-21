@@ -13,7 +13,7 @@ function talTuboPon(papel) {
   const xp = talXp(papel), nv = talNivel(papel), lleno = nv >= TALENTOS.max, a = TALENTOS.acum[nv], b = TALENTOS.acum[Math.min(TALENTOS.max, nv + 1)];
   const meta = lleno ? 1 : Math.max(0, Math.min(1, (xp - a) / Math.max(1, b - a)));
   TAL_UI.tubo = { t: 0, frac: 0, meta, fase: 'llena', nivel: nv, lleno, cols: TAL_COL[papel], burbujas: [], parts: [], flash: 0, R: 22, th: 34 };
-  E('tal-xp').textContent = lleno || talEstado().todo ? tr('¡Nivel máximo!') : tr('{a} / {b} XP', { a: xp - a, b: b - a });
+  E('tal-xp').textContent = lleno || (talEstado().todo && arPruebasVisibles()) ? tr('¡Nivel máximo!') : tr('{a} / {b} XP', { a: xp - a, b: b - a });
   const sig = habsDe(papel).find(h => h.nv > nv);
   E('tal-sig').textContent = sig ? tr('Nivel {n}: {h}', { n: sig.nv, h: tr(sig.n) }) : tr('Todo desbloqueado');
 }

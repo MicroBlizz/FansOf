@@ -13,9 +13,9 @@
 .esc-panel { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px calc(var(--der) + 8px) calc(var(--inf) + 8px) calc(var(--izq) + 8px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px;
   background: linear-gradient(to bottom, #26344f, #18223a); border-top: 4px solid var(--outline); border-radius: 22px 22px 0 0; box-shadow: 0 -6px 0 rgba(0,0,0,.25); max-width: 860px; margin: 0 auto; box-sizing: border-box; }
 .esc-pestanas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
-.esc-pest { position: relative; display: grid; justify-items: center; gap: 0; min-height: 52px; padding: 5px 2px 4px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); background: #18223a; color: var(--ink-dim); font-family: var(--font-display); font-size: clamp(10px, 2.75vw, 14px); letter-spacing: 0; }
+.esc-pest { position: relative; display: grid; justify-items: center; gap: 0; min-height: 52px; padding: 5px 1px 4px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); background: #18223a; color: var(--ink-dim); font-family: var(--font-display); font-size: clamp(9px, 2.6vw, 14px); letter-spacing: -0.02em; }
 .esc-pest i[data-icono] { font-size: 17px; }
-.esc-pest b { font-weight: 400; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.esc-pest b { font-weight: 400; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .esc-pest small { position: absolute; top: -8px; right: -3px; font-family: var(--font-ui); font-weight: 800; font-size: 10px; color: var(--ink); background: var(--outline); border-radius: 8px; padding: 1px 5px; }
 .esc-pest.activa { background: linear-gradient(to bottom, var(--player-lite), var(--player)); color: var(--ink); text-shadow: 0 2px 0 var(--outline); transform: translateY(-2px); }
 .esc-pest:active, .esc-carta:active, .esc-h:active, .esc-col:active, .esc-burbuja button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
@@ -61,6 +61,8 @@
 .esc-zoom button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #3a4a6e, #1e2a45); color: var(--ink); }
 .esc-zoom button i[data-icono] { font-size: 20px; filter: drop-shadow(0 2px 0 var(--outline)); }
 .esc-zoom #b-esc-yo { background: linear-gradient(to bottom, #ffdf7a, #e0a422); color: #20102c; }
+.esc-zoom.fila { grid-auto-flow: column; }      /* apaisado bajo: sin sitio para la columna (escAjusta) */
+.esc-zoom.mini button { width: 36px; height: 36px; border-radius: 11px; }
 .esc-zoom button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
 
 /* el pincel */

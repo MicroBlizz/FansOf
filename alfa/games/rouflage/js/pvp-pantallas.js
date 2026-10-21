@@ -72,7 +72,7 @@ function pvpPintaBusca() {
     + (hueco ? `<li class="maquina"><i class="esp"></i><span>${tr('+ {n} de la máquina', { n: hueco })}</span></li>` : '');
   E('b-busca-cancelar').hidden = jugando;
   E('busca-modo').classList.toggle('publica', !priv);
-  pvpPintaModo((priv || !!i.modo) && !jugando, soyAnf);      // en la pública se ve el modo que ha tocado (sin tocarlo)
+  pvpPintaModo(priv ? !jugando : !!i.modo, soyAnf);      // en la pública se ve el modo que ha tocado (sin tocarlo) y, al arrancar, todo lo que se juega
   pvpPintaVoto(!priv && !!i.modo && !jugando && i.votos);
   talPintaSala();      // las habilidades que llevas (talentos-pantalla.js)
 }
@@ -103,9 +103,10 @@ function pvpVota(k) {
 function pvpPintaModo(ver, soyAnf) {
   const caja = E('busca-modo'); caja.hidden = !ver; if (!ver) return;
   if (soyAnf && !RFP.modoMandado) { RFP.modoMandado = true; pvpMandaModo(); }      // recién abierta la sala: el modo de la última vez
-  const d = soyAnf ? MODO_ELEGIDO : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
+  const vp = RFP.info && !RFP.info.privada ? salaPublicaModo(RFP.info) : null, azar = !!vp && !MODOS[vp.d.m];      // BUSCAR PARTIDA: solo lo que de verdad se jugará (pvp-mapas.js)
+  const d = soyAnf ? MODO_ELEGIDO : vp ? vp.d : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
   caja.classList.toggle('mira', !soyAnf);
-  E('busca-modo-n').textContent = tr(MODOS[m].nombre); E('busca-modo-t').textContent = tr(MODOS[m].texto);
+  E('busca-modo-n').textContent = azar ? tr('AL AZAR') : tr(MODOS[m].nombre); E('busca-modo-t').textContent = [azar ? '' : tr(MODOS[m].texto), vp && !vp.sabe ? tr('Las reglas de la sala se sortean al empezar la partida.') : ''].filter(Boolean).join(' ');
   pvpPintaMapas(d, soyAnf);
   const ex = E('busca-extras'), otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz);
   if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
@@ -126,6 +127,7 @@ function pvpPintaModo(ver, soyAnf) {
   for (const b of ex.querySelectorAll('.luz-b[data-luz]')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
   E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
   for (const k of otros) { const on = !!(d.x && d.x[k]); E('x-' + k).checked = on; E('x-' + k).closest('label').classList.toggle('on', on); }
+  salaPublicaFiltra(ex, vp);
 }
 function pvpMandaModo() {
   modoElegidoGuarda();

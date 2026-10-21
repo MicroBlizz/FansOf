@@ -142,7 +142,7 @@ function refrescaHud(todo) {
     const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;
     if (HUD.camo !== n) { HUD.camo = n; E('e-camo-n').textContent = n < 0 ? '—' : n + ' %'; E('e-camo-b').style.width = Math.max(0, n) + '%'; E('e-camo-b').style.background = colorCamo(n); }
     if (HUD.hielo !== yo.congelado) { HUD.hielo = yo.congelado; E('b-congelar-t').textContent = yo.congelado ? tr('MOVERSE') : tr('CONGELAR'); E('b-congelar').classList.toggle('puesto', yo.congelado); ponIcono(E('b-congelar').querySelector('i'), yo.congelado ? 'andar' : 'hielo'); }
-    if (caza) { ponTexto('silbo', E('e-silbo-n'), String(Math.max(0, Math.ceil(yo.silbido)))); const pronto = yo.silbido <= 5; if (HUD.pronto !== pronto) { HUD.pronto = pronto; E('e-silbo').classList.toggle('pronto', pronto); } }
+    if (caza) { ponTexto('silbo', E('e-silbo-n'), yo.silbido > 1e6 ? '—' : String(Math.max(0, Math.ceil(yo.silbido)))); const pronto = yo.silbido <= 5; if (HUD.pronto !== pronto) { HUD.pronto = pronto; E('e-silbo').classList.toggle('pronto', pronto); } }      // (— con SIN SILBIDO)
     E('peligro').style.opacity = caza ? (J.peligro * J.peligro * (0.75 + 0.25 * Math.sin(J.t * 9))).toFixed(3) : 0;
   } else {
     if (HUD.balas !== yo.balas) { HUD.balas = yo.balas; E('e-balas-n').innerHTML = Array.from({ length: REGLAS.balas }, (_, i) => `<i${i < yo.balas ? '' : ' class="gastada"'}></i>`).join(''); }

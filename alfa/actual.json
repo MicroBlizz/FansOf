@@ -1,8 +1,8 @@
 {
- "build": 359,
- "hash": "c491a55",
- "fecha": "2026-10-21T00:58:48Z",
- "mensaje": "Rouflage: CHAT (frases rápidas por bando en partida y chat de sala con filtro, silenciar y reportar); SQL 66 aplicado",
+ "build": 360,
+ "hash": "667c049",
+ "fecha": "2026-10-21T01:56:43Z",
+ "mensaje": "Rouflage: arreglos de la revisión (colado despedido en solitario, DESBLOQUEAR TODO solo en alfa y localhost, Pack de inicio fuera del gachapón, SIN SILBIDO, reglas de la sala pública, zoom del escenario, detalles de pantalla, apaisado) y rendimiento (señuelos en teselas, personajes, humo); datos v7 aplicados",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

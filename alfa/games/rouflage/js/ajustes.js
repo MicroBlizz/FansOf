@@ -6,6 +6,14 @@
 // core/js/sistema/cuenta.js). La web publicada, más antigua, comparte el navegador con la alfa y, si leía una partida de una versión más nueva, se
 // podía romper (le pasó a Daniel el 20-10-2026: la partida no empezaba). La primera vez, la alfa empieza con una copia de la partida de siempre.
 const ALFA_RF = typeof NUCLEO !== 'undefined' && !!NUCLEO.alfa;
+// LAS HERRAMIENTAS DE PRUEBA (DESBLOQUEAR TODO de MI PERFIL: todo el armario, los talentos a tope y 50 000 Gotas y Acciones): solo en la alfa y en
+// este ordenador (localhost o 127.0.0.1; la app de Android también es «localhost» y no cuenta). NUCLEO.desarrollo no basta: ?dev=1 también lo
+// enciende en la web publicada. Fuera de esto, lo desbloqueado para probar no vale (armarioEstado y talEstado lo apagan).
+function arPruebasVisibles() {
+  if (ALFA_RF) return true;
+  if (typeof window !== 'undefined' && window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false;
+  return typeof location !== 'undefined' && ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+}
 const AJUSTES = { id: 'rouflage', guardado: ALFA_RF ? 'rouflage-partida-alfa' : 'rouflage-partida', nube: ALFA_RF ? 'rouflage-alfa' : 'rouflage' };
 if (ALFA_RF) try { if (localStorage.getItem(AJUSTES.guardado) === null && localStorage.getItem('rouflage-partida') !== null) localStorage.setItem(AJUSTES.guardado, localStorage.getItem('rouflage-partida')); } catch (_) { /* sin guardar */ }
 // Las dos monedas de la serie (PLAN-MONEDAS.md, core/js/sistema/monedas.js) con los nombres de aquí: Gotas = la ganada (solo jugando), Acciones = la comprada

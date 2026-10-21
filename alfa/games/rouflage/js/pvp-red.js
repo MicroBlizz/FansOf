@@ -115,7 +115,7 @@ const RFRED = (() => {
     arranque: false, modoSala: null, miVoto: null, votar: null,
     buscar(aviso, opc) {
       const codigo = opc && opc.crear ? 'PRUE' : opc && opc.codigo ? String(opc.codigo).toUpperCase() : null;      // en las pruebas la sala con amigos siempre se llama PRUE
-      local.arranque = false; local.modoSala = codigo ? null : Object.assign(modoAzar(), opc && opc.talentos ? { a: { t: 1 } } : {}); local.miVoto = null;
+      local.arranque = false; local.privada = !!codigo; local.modoSala = codigo ? null : Object.assign(modoAzar(), opc && opc.talentos ? { a: { t: 1 } } : {}); local.miVoto = null;
       const id = (opc && opc.crear ? '0' : '') + Math.random().toString(36).slice(2, 8), bc = new BroadcastChannel('rf-pvp-pruebas' + (codigo ? '-' + codigo : '')), vistos = new Map([[id, { t: Date.now() }]]), t0 = Date.now();
       let activo = true, tic = null;
       const para = () => { activo = false; clearInterval(tic); try { bc.close(); } catch (e) { /* ya cerrado */ } };
@@ -178,7 +178,8 @@ const RFRED = (() => {
       return { enviar: d => bc.postMessage(d), cerrar: () => bc.close(), unido: true };
     },
     puntos: 1000,
-    cerrar: (sala, gano) => { const d = gano ? 12 : -12; local.puntos += d; return Promise.resolve({ estado: 'cerrada', gano: !!gano, puntos: local.puntos, delta: d, energia_premio: 0 }); },
+    // como rouflage_pvp_cerrar (servidor/37-rouflage-amigos.sql): la sala con amigos no da ni quita puntos y lo dice (privada)
+    cerrar: (sala, gano) => { const d = local.privada ? 0 : gano ? 12 : -12; local.puntos += d; return Promise.resolve({ estado: 'cerrada', gano: !!gano, puntos: local.puntos, delta: d, energia_premio: 0, privada: !!local.privada }); },
     rendir: () => Promise.resolve(),
     pendientes: () => Promise.resolve([]),
     latido: () => Promise.resolve(),

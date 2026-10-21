@@ -16,6 +16,7 @@
 .sala li.yo, .clasif li.yo { background: rgba(255, 203, 61, 0.16); color: var(--gold); }
 .sala li span, .clasif li .nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sala li small, .clasif li small { font-size: 11px; color: var(--ink-dim); font-weight: 800; letter-spacing: 0.04em; }
+.clasif:empty { display: none; }      /* sin cuenta (o sin nadie) no queda una barra vacía */
 .clasif li .nom { display: grid; }
 .clasif li b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--gold); }
 .clasif li .pos { width: 1.6em; text-align: center; font-family: var(--font-display); color: var(--ink-dim); }

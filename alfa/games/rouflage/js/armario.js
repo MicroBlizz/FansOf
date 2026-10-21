@@ -15,6 +15,10 @@ function armarioEstado() {
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
   if (!p.mascotas) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta y no se puede ir sin ella
   for (const cat of CATALOGO_AR) if (cat.conjuntos || cat.sala) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
+  if (a.todo && !arPruebasVisibles()) {      // un DESBLOQUEAR TODO que se coló fuera de la alfa (con ?dev=1): ya no vale, y lo puesto que no es tuyo se quita
+    a.todo = false;
+    for (const cat of CATALOGO_AR) { if (cat.conjuntos || cat.sala) continue; const it = arItem(cat.id, p[cat.id]); if (it && !arTiene(cat.id, it)) p[cat.id] = cat.vacio ? null : cat.items[0].id; }
+  }
   return a;
 }
 const arCat = id => CATALOGO_AR.find(c => c.id === id);
@@ -192,11 +196,10 @@ function abrePerfil() {
     col.appendChild(f);
   }
   E('b-pf-todo').textContent = a.todo ? tr('VOLVER A BLOQUEAR') : tr('DESBLOQUEAR TODO');
-  E('b-pf-todo').hidden = !arPruebasVisibles();      // en la web publicada no sale
+  E('b-pf-todo').closest('.pf-pruebas').hidden = !arPruebasVisibles();      // en la web publicada no sale (ni el recuadro con su nota)
 }
-// DESBLOQUEAR TODO (solo en la alfa y en desarrollo, para probar): todo el armario, todos los talentos y muchas Gotas y Acciones
+// DESBLOQUEAR TODO (solo en la alfa y en localhost, para probar: arPruebasVisibles, ajustes.js): todo el armario, todos los talentos y muchas Gotas y Acciones
 // (con cuenta las da el servidor, rf_prueba_dar, y solo a quien tiene el rol de alfa: servidor/62-rouflage-prueba.sql)
-const arPruebasVisibles = () => ALFA_RF || !!(typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo);
 async function arDesbloqueaTodo() {
   if (!arPruebasVisibles()) return;
   const a = armarioEstado(); a.todo = !a.todo;

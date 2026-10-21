@@ -194,6 +194,7 @@ IDIOMA.add({
   "MODO": "MODE",
   "MAPA": "MAP",
   "AL AZAR": "RANDOM",
+  "Las reglas de la sala se sortean al empezar la partida.": "The room rules are drawn at random when the match starts.",
   "Modo anterior": "Previous mode",
   "Modo siguiente": "Next mode",
   "NORMAL": "NORMAL",

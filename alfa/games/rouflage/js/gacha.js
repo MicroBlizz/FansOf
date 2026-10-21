@@ -1,6 +1,6 @@
 // Fans of Rouflage · EL GACHAPÓN DE ARMARIO (lógica): cápsulas que se pagan SOLO con Gotas (la moneda ganada jugando) y dan cosméticos. Las Acciones (la
 // comprada) no entran aquí nunca: lo que tiene azar solo se paga con lo ganado (PLAN-MONEDAS.md, MONEDAS.azar). Sale todo lo del armario que no es gratis
-// ni de otra fuente (de: 'tienda'): piezas, conjuntos y legendarias. Lo del pase (gratis y premium) NO sale mientras su pase siga abierto, para que sea
+// ni de otra fuente (de: 'tienda'; lo del Pack de inicio es de: 'inicio' y no sale): piezas, conjuntos y legendarias. Lo del pase (gratis y premium) NO sale mientras su pase siga abierto, para que sea
 // exclusivo: cuando un pase se cierre, sus claves ('cat:id') se añaden a GACHA.liberados y entran. Lo de aquí también se compra suelto en el armario, con Gotas o Acciones (arPrecio, economia.js; las comunes y raras, con recargo).
 // Una pieza repetida devuelve Gotas. Garantías: una rara o mejor cada GACHA.pityRara tiradas y una épica cada GACHA.pityEpica. Las cifras, aquí.
 // Se guarda en SAVE.gacha = { total, sinRara, sinEpica }. La pantalla es gacha-pantalla.js. Va después de armario.js y economia.js.

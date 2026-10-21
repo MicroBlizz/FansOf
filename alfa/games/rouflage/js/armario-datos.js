@@ -1,6 +1,6 @@
 // Fans of Rouflage · ARMARIO (datos): el catálogo de la Temporada 1. Primero los CONJUNTOS (un personaje del Rumble entero: cabeza,
 // espalda, cara y papel a la vez) y luego las piezas sueltas por categoría. Cada cosa: id, nombre (n), rareza (r: comun, rara, epica,
-// legend), de dónde sale (de: base, conjunto, gratis, premium, diario, tienda, gotas, subs), el texto de cómo se consigue (txt; en la tienda
+// legend), de dónde sale (de: base, conjunto, gratis, premium, diario, tienda, gotas, subs, inicio = solo en el Pack de inicio de la tienda), el texto de cómo se consigue (txt; en la tienda
 // es su precio en Acciones, un número: lo pone la rareza en armario-precios.js) y su dibujo de icono (x). Las piezas del cuerpo llevan además `v`: la clave de ARD con la que se
 // dibujan sobre la galleta (OJOS, BOCAS, PAPEL/COLOR_PAPEL, CABEZAS, ESPALDAS). Todo es cosmético: nada cambia cómo se juega.
 'use strict';
@@ -65,7 +65,7 @@ const CATALOGO_AR = (() => {
     ['cascoBeaver', 'Casco de BoomBeaver', 'rara', 'conjunto', dc('BoomBeaver')], ['meercat', 'Cofia y aureola de MeerCat', 'epica', 'conjunto', dc('MeerCat')], ['orejasCoon', 'Antifaz de JunkCoon', 'epica', 'conjunto', dc('JunkCoon')],
     ['yelmo', 'Yelmo de EpicChampion', 'epica', 'conjunto', dc('EpicChampion')], ['cuernosNecro', 'Cuernos de NecroLord', 'legend', 'conjunto', dc('NecroLord')], ['cascoGamer', 'Cascos de ProGamer', 'epica', 'conjunto', dc('ProGamer')],
     ['orejasDog', 'Orejas de SuchDog', 'rara', 'conjunto', dc('SuchDog')], ['medusa', 'Serpientes de Medusa', 'legend', 'conjunto', dc('Medusa')],
-    ['gorra', 'Gorra de becario', 'rara', 'tienda', 'Pack de inicio'], ['corona', 'Corona', 'epica', 'tienda', 300], ['aureola', 'Aureola', 'rara', 'gratis', 'Pase gratis · nv 10'],
+    ['gorra', 'Gorra de becario', 'rara', 'inicio', 'Pack de inicio'], ['corona', 'Corona', 'epica', 'tienda', 300], ['aureola', 'Aureola', 'rara', 'gratis', 'Pase gratis · nv 10'],
     ['chistera', 'Chistera', 'epica', 'premium', 'Pase premium · nv 15'], ['cuernos', 'Cuernos', 'rara', 'gratis', 'Pase gratis · nv 31'], ['flor', 'Flor', 'comun', 'tienda', 40], ['antena', 'Antena', 'comun', 'diario', 'Diario · día 2'],
     ['fiesta', 'Gorro de fiesta', 'comun', 'gratis', 'Pase gratis · nv 1'], ['lazo', 'Lazo', 'comun', 'tienda', 40], ['hoja', 'Brote', 'comun', 'gratis', 'Pase gratis · nv 16'], ['pulpo', 'Pulpo sombrero', 'legend', 'premium', 'Pase premium · nv 35'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, CA(k), k));
@@ -120,7 +120,7 @@ const CATALOGO_AR = (() => {
   const M = t => (c, w) => marco(c, w, t);
   const marcosR = [
     ['madera', 'Madera', 'comun', 'base', 'Al empezar'], ['corcho', 'Corcho con chinchetas', 'comun', 'tienda', 40], ['cinta', 'Cinta adhesiva', 'rara', 'gratis', 'Pase gratis · nv 30'],
-    ['pixel', 'Píxel', 'rara', 'tienda', 'Pack de inicio'], ['neon', 'Neón', 'epica', 'premium', 'Pase premium · nv 21'], ['oro', 'Oro', 'legend', 'premium', 'Pase premium · nv 39'],
+    ['pixel', 'Píxel', 'rara', 'inicio', 'Pack de inicio'], ['neon', 'Neón', 'epica', 'premium', 'Pase premium · nv 21'], ['oro', 'Oro', 'legend', 'premium', 'Pase premium · nv 39'],
   ].map(([k, n, r, de, t]) => it(k, n, r, de, t, M(k), k));
   const TI = (t, col) => Object.assign((c, w) => titulo(c, w, t, col), { texto: t, color: col });
   const titulosR = [

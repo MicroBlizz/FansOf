@@ -206,16 +206,18 @@ function termina(victoria, motivo, fin) {
   const yo = J.yo, k = J.cuenta, quedan = escondidos();
   if (J.modo === 'camaleon' && yo && !yo.fuera) fotoHaz(yo);      // si sigues escondido, la foto de cómo acabaste (antes de que se vea a todos)
   for (const e of quedan) { descongela(e); if (e !== yo) fxTexto(e.x, e.y - 74, e.nombre, '#fff6ea', 12); }   // al acabar, todos los escondidos se dejan ver
-  let titulo, sub, filas, puntos, estrellas;
+  let titulo, sub, filas, puntos, estrellas, bando = false;      // bando: tu bando gana aunque tú no (solo fuera del PvP)
   if (J.modo === 'camaleon') {
     const vivos = J.camaleones.filter(e => !e.jugador && !e.fuera).length, total = J.camaleones.length - 1;
     puntos = marcadorDe(yo);
     estrellas = victoria ? 1 + (puntos >= 700 ? 1 : 0) + (puntos >= 880 ? 1 : 0) : 0;
     titulo = victoria ? (motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('¡TE HAS LIBRADO!')) : tr('¡DESPEDIDO!');
     sub = victoria ? (motivo === 'cartas' ? tr('Los becarios se han quedado sin cartas de despido.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura antes de tiempo.') : tr('Se acaba el turno de noche y nadie te ha visto.')) : tr('Y eso que ni siquiera trabajabas aquí.');
-    if (J.pvp) {      // en el PvP gana o pierde todo el bando: a ti te pueden haber despedido y ganar igual
-      if (victoria && yo.fuera) { titulo = tr('¡DESPEDIDO, PERO GANÁIS!'); sub = tr('Tus compañeros han aguantado hasta el final.'); }
-      else if (!victoria && motivo === 'mitad') { titulo = tr('¡HAN DESPEDIDO A MÁS DE LA MITAD!'); sub = tr('Microblizz da la noche por buena: con la mitad ya le cuadra el informe.'); }
+    if (victoria && yo.fuera) {      // gana el bando, pero a ti te han despedido: sin estrellas, y fuera del PvP no cuenta como victoria tuya
+      titulo = tr('¡DESPEDIDO, PERO GANÁIS!'); sub = tr('Tus compañeros han aguantado hasta el final.'); estrellas = 0;
+      if (!J.pvp) { victoria = false; bando = true; }      // premio de derrota (sin el extra de ganar), sin misiones ni logros de victoria, y el servidor recibe que no ganaste
+    } else if (J.pvp) {      // en el PvP gana o pierde todo el bando
+      if (!victoria && motivo === 'mitad') { titulo = tr('¡HAN DESPEDIDO A MÁS DE LA MITAD!'); sub = tr('Microblizz da la noche por buena: con la mitad ya le cuadra el informe.'); }
       else if (!victoria) { titulo = tr('¡OS HAN DESPEDIDO A TODOS!'); sub = tr('Microblizz deja la estación limpia de colados.'); }
     }
     filas = [[tr('Camuflaje'), yo.camo + ' %'], [tr('Has aguantado'), mmss(k.aguante)], [tr('Delante de sus narices'), Math.round(k.narices) + ' s'], [tr('Silbidos por gusto'), String(k.silbidos)], [tr('Compañeros en pie'), vivos + ' / ' + total]];
@@ -229,12 +231,12 @@ function termina(victoria, motivo, fin) {
   }
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   galeriaPrepara();      // la galería de disfraces, si está puesta (galeria.js)
-  J.resultado = { victoria, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
+  J.resultado = { victoria, bando, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   modoResultado(J.resultado, victoria); victoria = J.resultado.victoria;      // el bufón, el ojo de halcón y el retrato robot cambian el resultado
   economiaPartida(J.resultado);      // Gotas y experiencia del pase (economia.js; solo en la alfa)
   talentosFin(J.resultado);      // la experiencia de becario o de colado (talentos-fin.js)
   misionEvento('fin', J.resultado);      // misiones del día y logros (misiones.js)
-  musica(victoria ? 'rfWin' : 'rfLose'); play(victoria ? 'crown' : 'sad');
+  const alegre = victoria || J.resultado.bando; musica(alegre ? 'rfWin' : 'rfLose'); play(alegre ? 'crown' : 'sad');
   refrescaHud(true);
   if (J.pvp) rfpCierra(victoria);      // PvP: se apunta el resultado en el servidor
 }

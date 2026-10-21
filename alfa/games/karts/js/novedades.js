@@ -2,6 +2,8 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.3', real: ["<b>LA BURBUJA DEL REEMBOLSO</b>: el escudo ya no es un círculo verde: es una burbuja transparente en pixel art con un brillo que le va dando la vuelta.", "<b>EFECTOS NUEVOS</b>: el Lag hace que el kart se vea a trozos, el Influencer lleva su móvil con aro de luz encima y el Tren del hype deja líneas de velocidad.", "<b>RULETA REPARTIDA</b>: sale menos Spam (y sus ventanas duran menos) y más Mantenimiento; la máquina solo tira el Spam si tiene al menos dos karts cerca delante."],
+    joke: ["Microblizz ha bajado el Spam a petición de los jugadores. Phony ha recibido un correo para confirmarlo, y otros cuarenta."] },
   { v: '0.7.2', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo)."], joke: ["Microblizz ha puesto un cartel tan grande en la meta que Phony ha cruzado sin enterarse."] },
   { v: '0.7.1', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie enseña ahora sus capturas, una tras otra)."], joke: ["Microblizz ha puesto un pase de fotos en la meta y Phony frena para mirarlas."] },
   { v: '0.7.0', real: ["<b>KARTS YA ES UN JUEGO</b>: deja de ser una demo y se une a la lista de juegos de Fans Of, con su app para Android."],

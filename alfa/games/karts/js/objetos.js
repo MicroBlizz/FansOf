@@ -15,7 +15,7 @@ const OBJETOS = {
 };
 const LISTA_OBJETOS = Object.keys(OBJETOS);
 // lo que pesa cada objeto en la ruleta según el puesto: [1º y 2º, 3º a 5º, 6º a 8º]
-const REPARTO = { hotfix: [30, 24, 12], parche: [34, 16, 6], nerf: [24, 26, 16], botin: [12, 16, 12], pase: [0, 10, 24], mantenimiento: [0, 6, 18], cola: [0, 2, 12] };
+const REPARTO = { hotfix: [30, 24, 12], parche: [34, 16, 6], nerf: [24, 26, 16], botin: [12, 16, 12], pase: [0, 10, 24], mantenimiento: [2, 12, 22], cola: [0, 2, 12] };
 function sorteaObjeto(puesto) {
   const col = puesto <= 2 ? 0 : puesto <= 5 ? 1 : 2;
   const vale = () => true;      // online también salen todos (los nuevos van por la red: pvp-objetos.js)

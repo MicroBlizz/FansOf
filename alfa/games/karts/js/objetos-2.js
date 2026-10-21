@@ -81,13 +81,13 @@ function pintaVacaCae(o, sx, sy, e) {
   if (e > 0.3) pintaSombra(sx, sy, 22 * (0.4 + sombra * 0.6) * e);
   figCosa('vacaSuelo').pinta(lx, Math.round(sx), Math.round(sy - o.z * e), e * 1.3, BASE_COSA, RELOJ * 3);
 }
-const SPAM = { t: 0 };
+const SPAM = { t: 0, dur: 2.6 };      // las ventanas tapan tu pantalla 2,6 s
 function usaSpam(k, C, yo, quien) {
   let n = 0;
   for (const o of C.karts) if (o !== k && o.avance > k.avance && !o.fin) {
     n++;
     if (o.remoto) pvpGolpeaRemoto(o, 'spam', k);
-    else if (o.esJugador) { SPAM.t = 3.5; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
+    else if (o.esJugador) { SPAM.t = SPAM.dur; play('deny'); comenta(trf('%1 te ha suscrito a 40 boletines.', quien)); }
     else { o.tResbala = 0.9; o.giroRes = Math.random() < 0.5 ? -1 : 1; }
   }
   if (yo) aviso('¡SPAM!', n ? 'Los de delante, enterrados en ventanas.' : 'No había nadie delante.', '#3a7de0');
@@ -117,6 +117,7 @@ function usaMicro(k, C, yo, quien) {
 
 // ---------- cuándo los usa la máquina ----------
 const iaDelante = max => (k, C) => { const o = delanteDe(k, C, max); return !!o && Math.abs(o.lat - k.lat) < 30; };
+const iaVarios = (n, max) => (k, C) => C.karts.filter(o => o !== k && !o.fin && o.avance > k.avance && (o.avance - k.avance) * PASO_VIA < max).length >= n;
 const iaRecta = k => PISTA.curvaS[(Math.floor(k.idx) + 6) % PISTA.N] < 0.006;
 
 // ---------- la lista (se añade a la ruleta) ----------
@@ -124,7 +125,7 @@ const OBJETOS_2 = {
   martillo: { nombre: 'Martillo de baneo', fig: 'martillo', reparto: [10, 12, 8], usa: usaMartillo, ia: iaDelante(30) },
   bellotas: { nombre: 'Bellotas', fig: 'bellota', reparto: [8, 12, 12], usa: usaBellotas, ia: iaDelante(70) },
   vaca: { nombre: 'MechaVaca', fig: 'vacaSuelo', reparto: [0, 2, 10], usa: usaVaca },
-  spam: { nombre: 'Spam', fig: 'spam', reparto: [0, 8, 10], usa: usaSpam },
+  spam: { nombre: 'Spam', fig: 'spam', reparto: [0, 4, 5], usa: usaSpam, ia: iaVarios(2, 260) },      // la máquina, solo con al menos dos delante y cerca
   lag: { nombre: 'Lag', fig: 'lag', reparto: [4, 8, 8], usa: usaLag, ia: (k, C) => cercaDe(k, C, 60).length > 0 },
   reembolso: { nombre: 'Reembolso', fig: 'reembolso', reparto: [14, 8, 4], usa: usaReembolso },
   bot: { nombre: 'Bot', fig: 'botmini', reparto: [10, 8, 4], usa: usaBot },
@@ -179,22 +180,19 @@ function pasoObjetos2(C, dt) {
   }
 }
 
-// ---------- lo que se ve: el escudo, el bot que da vueltas, el martillazo ----------
+// ---------- lo que se ve: el bot que da vueltas y el martillazo (la burbuja, el lag, el influencer y el tren: efectos-objetos.js) ----------
 const pintaKartSinExtras = pintaKart;
 pintaKart = (k, sx, sy, e) => {
   pintaKartSinExtras(k, sx, sy, e);
-  const arriba = sy - (k.z + 8) * e;
-  if (k.escudo > 0 && ((RELOJ * 8) & 1 || k.escudo > 2)) { lx.strokeStyle = k.escudo > 2 ? 'rgba(94,242,122,0.85)' : '#ffffff'; lx.lineWidth = Math.max(1, e * 0.5); lx.beginPath(); lx.ellipse(Math.round(sx), Math.round(arriba), 10 * e, 8 * e, 0, 0, TAU); lx.stroke(); }
   if (k.tBot > 0) { const a = RELOJ * 4 + k.idx; figCosa('botmini').pinta(lx, Math.round(sx + Math.cos(a) * 11 * e), Math.round(sy - (2 + Math.abs(Math.sin(a * 2))) * e), e * 0.8, BASE_COSA, a); }
   if (k.tMartillo > 0) figCosa('martillo').pinta(lx, Math.round(sx), Math.round(sy - (k.z + 18) * e), e * 1.2, BASE_COSA, (0.45 - k.tMartillo) * 14);
-  if (k.tIman > 0 && ((RELOJ * 6) & 1)) { lx.fillStyle = '#ff5c8a'; lx.fillRect(Math.round(sx - e), Math.round(sy - (k.z + 20) * e), Math.max(2, Math.round(2 * e)), Math.max(2, Math.round(2 * e))); }
 };
 
 // ---------- el spam en tu pantalla (encima del marcador) ----------
 const VENTANAS_SPAM = [['¡OFERTA!', 'Solo hoy: aire.'], ['ACTUALIZA YA', '48 GB. Ahora no.'], ['1 MENSAJE NUEVO', 'Es publicidad.'], ['¡HAS GANADO!', 'Haz clic. O no.']];
 function pintaEfectos(C) {
   if (SPAM.t <= 0) return;
-  const t = 3.5 - SPAM.t;
+  const t = SPAM.dur - SPAM.t;
   VENTANAS_SPAM.forEach(([a, b], i) => {
     if (t < i * 0.35 || SPAM.t < (3 - i) * 0.25) return;
     const x = [26, 120, 40, 132][i], y = [44, 58, 92, 100][i], w = 98, h = 30;

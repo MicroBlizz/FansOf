@@ -55,7 +55,9 @@ function avanzaBonito(dt) {
 /* ---------- pintar ---------- */
 // el sol: un resplandor cálido arriba a la izquierda y círculos de luz que flotan
 function pintaLuz(t) {
-  const W = PAN.W, H = PAN.H;
+  const W = PAN.W, H = PAN.H, dia = 1 - nocheAhora();   // de noche no hay sol (paisaje.js)
+  if (dia < 0.02) return;
+  G.save(); G.globalAlpha = dia;
   const sol = G.createRadialGradient(W * 0.1, -20, 4, W * 0.1, -20, H * 0.75);
   sol.addColorStop(0, 'rgba(255,248,210,0.55)'); sol.addColorStop(0.4, 'rgba(255,240,200,0.18)'); sol.addColorStop(1, 'rgba(255,240,200,0)');
   G.fillStyle = sol; G.fillRect(0, 0, W, H);
@@ -64,6 +66,7 @@ function pintaLuz(t) {
     const g = G.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, 'rgba(255,255,240,0.16)'); g.addColorStop(1, 'rgba(255,255,240,0)');
     G.fillStyle = g; G.fillRect(x - r, y - r, r * 2, r * 2);
   }
+  G.restore();
 }
 function estrellita(x, y, r, alfa) {
   G.globalAlpha = alfa; G.fillStyle = '#ffffff';

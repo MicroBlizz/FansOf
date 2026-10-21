@@ -30,6 +30,9 @@ const SONIDO = {
   dron: () => { tone(140, 180, 0.5, 'sawtooth', v(0.03)); tone(150, 120, 0.5, 'sawtooth', v(0.03), 0.5); },
   // la fiesta de la Fiebre: una fanfarria que sube más alto en cada nivel y la gente vitoreando (ruido que sube y baja)
   fiesta: n => { [523, 659, 784, 1046, 1318].slice(0, 2 + n).forEach((f, i) => tone(f * (1 + n * 0.06), f * (1 + n * 0.06), 0.12, 'square', v(0.06), i * 0.06)); for (let i = 0; i < 3; i++) noise(0.25, v(0.05 + n * 0.01), 2600 + i * 500, 'bandpass', i * 0.12); },
+  silbato: () => { tone(1800, 2200, 0.12, 'square', v(0.05)); tone(1900, 2300, 0.2, 'square', v(0.05), 0.15); },
+  cohete: () => { noise(0.6, v(0.12), 900); tone(200, 900, 0.5, 'sawtooth', v(0.05)); },
+  croac: () => { tone(220, 160, 0.09, 'square', v(0.04)); tone(240, 170, 0.09, 'square', v(0.04), 0.12); },
   pum: () => { noise(0.12, v(0.06), 1200); tone(900, 1500, 0.08, 'triangle', v(0.03), 0.05); },
   chof: () => { noise(0.5, v(0.25), 600); tone(200, 50, 0.4, 'sine', v(0.15)); },
 };
@@ -43,8 +46,9 @@ function vigilaMusica() {
     if (!finSonado && J.tFin > 0.4) { finSonado = true; musicSet(J.fin.record ? 'win' : 'lose'); }
     return;
   }
+  if (J.modo === 'final') { if (!finSonado) { finSonado = true; musicSet('win'); } return; }   // la madriguera (final.js)
   finSonado = false;
   if (M.trk && M.trk.once) return;
   if (M.name !== 'animales') musicSet('animales');
-  M.tmT = J.modo === 'menu' ? 0.9 : J.fiebre > 0 ? 1.24 + (FIESTA.nivel - 1) * 0.07 : 1 + Math.min(0.2, J.racha * 0.02);   // la fiesta, cada vez más frenética
+  M.tmT = J.modo === 'menu' ? 0.9 : J.reloj > 0 ? 0.75 : J.fiebre > 0 ? 1.24 + (FIESTA.nivel - 1) * 0.07 : 1 + Math.min(0.2, J.racha * 0.02);   // la fiesta, cada vez más frenética
 }

@@ -242,8 +242,10 @@ function pintaTodo() {
   G.save();
   if (J.temblor > 0) G.translate((Math.random() - 0.5) * 3 * J.temblor / 0.1, (Math.random() - 0.5) * 2 * J.temblor / 0.1);
   pintaRio(t);
+  pintaPradera(t);
   pintaFans(t);
   pintaFx('agua');
+  pintaFauna(t);
   pintaMuerteAgua();
   pintaBonitoAgua(t);
   if (J.modo !== 'menu' && !PANEL.abierto) pintaMetas(t);
@@ -253,10 +255,12 @@ function pintaTodo() {
   pintaCaen();
   pintaFantasma();
   pintaConejo();
+  pintaVienen();
   pintaMuerteAire(t);
   pintaDron(t);
   pintaOla(t);
   pintaFx('aire');
+  pintaNoche(t);
   pintaLuz(t);
   pintaArcos(t);
   if (!GUARDA.suave) pintaBonitoAire(t);
@@ -266,11 +270,12 @@ function pintaTodo() {
   pintaBanderas();
   if (J.modo === 'menu') pintaPortada();
   else if (J.modo === 'listo') pintaListo(t);
-  else pintaMarcador();
+  else if (J.modo !== 'final') pintaMarcador();
   pintaZanasVuelan();
   pintaManchas();
   pintaTuto(t);
   if (J.modo === 'fin') pintaFinal();
+  if (J.modo === 'final') pintaFinalVerdadero();
   pintaCasi();
   pintaPanel();
   pintaAnuncio();

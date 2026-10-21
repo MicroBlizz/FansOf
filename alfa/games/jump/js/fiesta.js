@@ -12,6 +12,7 @@ const FANS_Y = [0.42, 0.58, 0.72, 0.3, 0.86, 0.47];   // a qué altura de la pan
 
 function nivelFiesta() {
   const J = JUEGO;
+  if (J.modo === 'final') return 5;   // en la madriguera, la fiesta a tope
   if (!(J.fiebre > 0) || J.modo !== 'juego') return 0;
   let n = 0; for (const u of NIVELES_FIESTA) if ((J.cadena || 0) >= u) n++;
   return Math.max(1, n);
@@ -26,8 +27,9 @@ function subeFiesta(n) {
   for (let i = 0; i < n; i++) FIESTA.globos.push(globo(true));
   if (n >= 4) for (let i = 0; i < n - 2; i++) fuego();
   SONIDO.fiesta(n); vibra([20, 30, 20 + n * 10]);
-  // los amigos de la orilla: entran en el nivel 3 y cada nivel trae más
-  const quiere = n >= 3 ? (n - 2) * 2 : 0;
+  llamaFans(n >= 3 ? (n - 2) * 2 : 0);   // los amigos de la orilla: entran en el nivel 3 y cada nivel trae más
+}
+function llamaFans(quiere) {
   while (FIESTA.fans.filter(f => !f.sale).length < quiere) {
     const i = FIESTA.fans.length, lado = i % 2 ? 1 : -1;
     FIESTA.fans.push({ id: FANS_ID[i % FANS_ID.length], lado, y: FANS_Y[i % FANS_Y.length], entra: 0, sale: false, f: Math.random() * 6 });

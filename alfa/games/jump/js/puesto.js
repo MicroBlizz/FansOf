@@ -47,6 +47,11 @@ function pintaTienda() {
   marco('El puesto de Lola', x, y, w, h, PASTEL.melocoton);
   pastillaZanas(x + 6, y + 7);
   spriteConejo('quieto' + Math.floor(JUEGO.t * 7) % 8, x + w - 18, y + 22, 3.6);
+  if (tiendaReal()) {   // los packs con euros (anuncios.js), de momento solo con el flag
+    const on = PANEL.pestana === 'gemas';
+    caja(x + w - 64, y + 8, 30, 12, 4, on ? '#8fd0ff' : PASTEL.fondo, OLC, 0.7); letras(tr('Gemas'), x + w - 49, y + 14.4, 6.6, on ? '#ffffff' : PASTEL.suave, on ? { borde: OLC, bw: 1.6 } : {});
+    boton(x + w - 66, y + 6, 34, 16, () => { PANEL.pestana = 'gemas'; PANEL.scroll = 0; SONIDO.boton(); });
+  }
   // las pestañas
   // las pestañas, en dos filas de tres
   const P = [['amigos', 'Amigos'], ['pelaje', 'Pelaje'], ['capas', 'Capas'], ['troncos', 'Troncos'], ['estelas', 'Estelas'], ['kit', 'Kit']];
@@ -57,6 +62,7 @@ function pintaTienda() {
     letras(tr(txt), px + tw / 2, py + 6.4, 7, on ? '#ffffff' : PASTEL.suave, on ? { borde: PASTEL.melocotonO, bw: 1.6 } : {});
     boton(px, py - 2, tw, 16, () => { PANEL.pestana = id; PANEL.scroll = 0; SONIDO.boton(); });
   });
+  if (PANEL.pestana === 'gemas') return pintaGemas(x + 4, y + 57, w - 8, h - 61);
   contenido(x + 4, y + 57, w - 8, h - 61, y0 => {
     // las tarjetas crecen hasta llenar el panel (con un tope), y el dibujo con ellas
     const base = ['pelaje', 'capas', 'estelas', 'troncos'].includes(PANEL.pestana) ? 52 : 66, filas = Math.ceil(PUESTO[PANEL.pestana].length / 2);
@@ -75,17 +81,20 @@ function pintaTienda() {
       } else if (PANEL.pestana === 'troncos') {
         const [id, cuanto, nombre] = it, clave = 'piel' + id, puesto = (GUARDA.piel || 'madera') === id, tengo = cuanto === 0 || GUARDA.tengo[clave];
         tarjeta(cx, cy, cw, ch, (X, Y) => sprite(id === 'madera' ? 'tronco1' : 'piel_' + id, X, Y + 4, 11), nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { GUARDA.piel = id; }), extra);
+        if (!tengo) chipProbar(cx + cw, cy, 'piel', id);
       } else if (PANEL.pestana === 'estelas') {
         const [id, cuanto, nombre] = it, clave = 'estela' + id, puesto = GUARDA.estela === id, tengo = cuanto === 0 || GUARDA.tengo[clave];
         tarjeta(cx, cy, cw, ch, (X, Y) => {
           if (id === 'arcoiris') ARCOIRIS.forEach((c, k) => { G.beginPath(); G.arc(X, Y + 8, 14 - k * 1.5, Math.PI, 0); G.lineWidth = 1.5; G.strokeStyle = c; G.stroke(); });
           else for (let k = 0; k < 3; k++) pintaMotaEstela(id, X - 10 + k * 10, Y + 2 - Math.sin(k * 1.4) * 4, 3.4, k);
         }, nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { GUARDA.estela = id; }), extra);
+        if (!tengo) chipProbar(cx + cw, cy, 'estela', id);
       } else {
         const [col, cuanto, nombre] = it, pelo = PANEL.pestana === 'pelaje', clave = (pelo ? 'pelo' : 'capa') + col;
         const puesto = (pelo ? GUARDA.pelaje : GUARDA.capa) === col, tengo = cuanto === 0 || GUARDA.tengo[clave];
         tarjeta(cx, cy, cw, ch, (X, Y) => pelo ? spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, col, GUARDA.capa) : spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, GUARDA.pelaje, col),
           nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { if (pelo) GUARDA.pelaje = col; else GUARDA.capa = col; }), extra);
+        if (!tengo) chipProbar(cx + cw, cy, pelo ? 'pelaje' : 'capa', col);
       }
     });
     const fin = y0 + 2 + Math.ceil(lista.length / 2) * (ch + 4);

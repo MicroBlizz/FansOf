@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-21b',
+    fecha: '21 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF SNAKES', tarjeta: 'g-snakes', enlace: 'demos/snakes/', texto: 'Demo nueva: la serpiente de siempre con Frenesí. Roza tu cola para cargarlo y córtatela por monedas; los «?» son locuras.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-21a',
     fecha: '21 de octubre de 2026',
     nuevos: [

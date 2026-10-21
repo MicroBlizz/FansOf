@@ -1,0 +1,20 @@
+/* Fans Of · páginas LEGALES (privacidad/ y condiciones/): el mismo aspecto que Lore (fuentes, colores y barra de menú de core/css/base.css), con un texto largo cómodo de leer.
+   Cada bloque de idioma lleva lang="es" o lang="en"; solo se ve el que tiene la clase «on» (lo pone el script de la propia página). */
+body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; user-select: text; -webkit-user-select: text; }
+nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
+nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
+nav.menu a:hover, nav.menu a:focus-visible, nav.menu a.on { color: var(--gold); outline: none; }
+nav.menu .idiomas { font-size: 13px; font-weight: 700; color: var(--ink-dim); }
+nav.menu .idiomas a { font-family: var(--font-ui); font-size: 13px; }
+main { max-width: 760px; margin: 0 auto; padding: 18px 16px 56px; box-sizing: border-box; font-size: 16px; font-weight: 600; line-height: 1.6; }
+main > [lang] { background: var(--panel); border: 4px solid var(--outline); border-radius: 18px; box-shadow: 0 5px 0 var(--outline); padding: 8px 20px 22px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 40px; line-height: 1; margin: .5em 0 .1em; color: var(--player); }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; line-height: 1.1; margin: 1.5em 0 .3em; color: var(--gold); }
+small { color: var(--ink-dim); font-weight: 700; }
+a { color: #8fd3ff; }
+li { margin: .3em 0; }
+ul { padding-left: 1.2em; }
+b { font-weight: 800; }
+[lang] { display: none; }
+[lang].on { display: block; }
+@media (max-width: 480px) { h1 { font-size: 32px; } main > [lang] { padding: 4px 14px 18px; border-width: 3px; } }

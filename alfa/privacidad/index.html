@@ -1,19 +1,25 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Privacidad · Fans Of</title><meta name="robots" content="index"><link rel="icon" href="../core/img/icon-192.png">
-<style>body{margin:0;background:#150b21;color:#f3ecff;font:16px/1.55 system-ui,sans-serif}
-main{max-width:720px;margin:0 auto;padding:24px 18px 60px}
-h1{font-size:28px;margin:.2em 0}h2{font-size:19px;margin:1.6em 0 .3em;color:#ffd75e}
-a{color:#8fd3ff}.bar{display:flex;gap:14px;flex-wrap:wrap;font-weight:700;margin-bottom:8px}
-small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 0}</style></head><body><main>
-<div class="bar"><a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="#" data-l="es">Español</a><a href="#" data-l="en">English</a><a href="../condiciones/">Condiciones / Terms</a></div>
-<div lang="es"><h1>Política de privacidad</h1><small>Fans Of · Actualizada el 20 de octubre de 2026</small>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<link rel="stylesheet" href="../core/css/base.css">
+<link rel="stylesheet" href="../core/css/legal.css">
+<meta name="theme-color" content="#150b21"></head><body>
+<nav class="menu" aria-label="Menú">
+  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="../lore/">Lore</a><a href="../privacidad/" class="on" aria-current="page">Privacidad</a><a href="../condiciones/">Condiciones</a>
+  <span class="idiomas"><a href="#" data-l="es">ES</a> · <a href="#" data-l="en">EN</a></span>
+</nav>
+<main>
+<div lang="es"><h1>Política de privacidad</h1><small>Fans Of · Actualizada el 21 de octubre de 2026</small>
 <p>Fans Of («Fans of Rumble», «Fans of TD», «Fans of Survivors») lo hacen Arkioner y Pepins, de MicroBlizz. Aquí explicamos qué datos guardamos, para qué y cómo borrarlos. Es un resumen claro, no letra pequeña.</p>
 <h2>Qué guardamos</h2><ul>
 <li><b>Tu partida</b> (progreso, cartas, oro, gemas, objetos, misiones, ajustes del juego). Se guarda en tu aparato y, cuando hay conexión, en nuestra nube.</li>
 <li><b>Una cuenta de invitado anónima</b>, creada sola al jugar: es un identificador al azar. No pide ningún dato tuyo.</li>
 <li><b>Tu correo electrónico</b>, solo si decides guardar tu cuenta con email (o con Google, que nos da tu correo). Lo usamos solo para enviarte el enlace de acceso y reconocer tu cuenta.</li>
 <li><b>Tus comentarios</b>, si nos mandas alguno desde el juego o la web: el texto, el juego y su versión. Solo los leemos nosotros. Si marcas la casilla de contacto, podemos escribirte al email de tu cuenta para preguntarte por él, hablar del juego o pedirte opinión; si no la marcas, no usamos tu email para eso.</li>
+<li><b>Datos anónimos de partida</b>, para mejorar los juegos (ver más abajo «Datos de partida»): sin nombre, sin email y sin cuenta. Todos los juegos tienen un interruptor en Opciones para apagarlo.</li>
 <li><b>Datos técnicos mínimos</b> del servidor (dirección IP, fecha y hora de las peticiones) que los proveedores guardan un tiempo corto por seguridad.</li></ul>
 <h2>Qué no hacemos</h2><ul>
 <li>No pedimos nombre, fecha de nacimiento, teléfono ni dirección.</li>
@@ -23,23 +29,30 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 <p>Para que tu progreso no se pierda y puedas seguir en otro aparato, para que el servidor valide las recompensas y las compras, y para vigilar que no se hagan trampas. Si se detecta juego tramposo, podemos limitar, aislar o cerrar la cuenta (ver las <a href="../condiciones/">condiciones de uso</a>).</p>
 <h2>Dónde y quién</h2>
 <p>La nube es <b>Supabase</b>, en un centro de datos de la <b>Unión Europea</b>. El correo de acceso se envía a través de un servicio de correo. La web se publica con GitHub Pages. Estos proveedores tratan los datos por encargo nuestro y con sus propias medidas de seguridad. Si el juego muestra anuncios o cobra en el futuro, lo diremos aquí antes y sin anuncios personalizados.</p>
-<h2>Rendimiento</h2>
-<p>Para que los juegos vayan fluidos, al acabar una partida enviamos un resumen técnico <b>anónimo</b>: los fotogramas por segundo, el tamaño de pantalla y el tipo de aparato. No lleva tu nombre, tu email ni tu cuenta.</p>
-<h2>Estadísticas de la web</h2>
+<h2>Datos de partida</h2>
+<p>Para que los juegos vayan fluidos y estén equilibrados, algunos juegos mandan datos <b>anónimos</b> de tus partidas: al acabar, un resumen técnico (fotogramas por segundo, tamaño de pantalla y tipo de aparato) y, en Fans Of Decks, el progreso de cada partida (líder, tamaño del mazo, reuniones y pausas superadas, turnos usados, dónde acabas y si ganas o la dejas).</p>
+<ul><li><b>No llevan tu nombre, tu email ni tu cuenta.</b> Cada partida tiene un código al azar que no se une a nada tuyo. Para evitar abusos usamos un código temporal que se borra al día siguiente y no permite reconocerte.</li>
+<li>El detalle de cada partida se guarda <b>7 días</b>; después se suma a las estadísticas de cada juego y versión y se borra.</li>
+<li>Lo hacemos por <b>interés legítimo</b>: mejorar los juegos. Solo usamos estos datos para eso, nunca para publicidad ni para perfiles.</li>
+<li><b>Puedes apagarlo.</b> Todos los juegos tienen en <b>Opciones</b> el interruptor «Datos de partida anónimos» (una sola elección para toda la web). Viene encendido; si lo apagas, no se manda nada.</li></ul>
+<h2>Cookies y estadísticas de la web</h2>
+<p><b>Qué cookies usamos:</b> ninguna, salvo las de Google Analytics (_ga) si aceptas el aviso. No usamos cookies de publicidad ni de seguimiento entre webs. Tu partida y tus ajustes se guardan en el almacenamiento de tu navegador (no son cookies de seguimiento) porque hacen falta para jugar.</p>
 <p>Si lo aceptas en el aviso, medimos las visitas de la web y de los juegos con <b>Google Analytics</b>, que usa cookies (_ga) y nos dice cuánta gente viene y qué páginas ve. Anonimizamos la IP, no usamos señales de publicidad y no lo unimos a tu cuenta. Si rechazas, no se carga nada de Google. Puedes <a href="#" onclick="analiticaCambiar();return false">cambiar tu elección</a> cuando quieras.</p>
 <h2>Menores</h2>
 <p>Se puede jugar como invitado sin dar ningún dato. Para guardar la cuenta con email o Google hay que tener <b>14 años o más</b>; si eres menor, debe hacerlo contigo tu padre, madre o tutor. No usamos publicidad personalizada.</p>
 <h2>Cuánto tiempo</h2>
-<p>Guardamos tu partida mientras exista tu cuenta. Las cuentas de invitado que llevan mucho tiempo sin usarse (60 días) se borran solas. Si borras tu cuenta, se eliminan al momento tu cuenta y tus partidas en la nube.</p>
+<p>Guardamos tu partida mientras exista tu cuenta. Las cuentas de invitado que llevan mucho tiempo sin usarse (60 días) se borran solas. Si borras tu cuenta, se eliminan al momento tu cuenta y tus partidas en la nube. Borrar la cuenta (tú, o la limpieza automática) solo quita lo que tenemos en nuestro servidor: <b>lo que tienes guardado en tu aparato es tuyo y se queda</b>.</p>
+<p>Por eso te recomendamos <b>vincular tu cuenta a un correo (o a Google)</b>: esas cuentas no se borran por inactividad y puedes recuperar tu progreso en otro aparato. Limpiamos las cuentas de invitado abandonadas porque no podemos guardarlo todo para siempre: es un proyecto pequeño y almacenar cuentas que nadie usa tiene un coste que no podemos asumir.</p>
 <h2>Tus derechos</h2>
 <p>Puedes <b>borrar tu cuenta tú mismo</b>: Opciones → Cuenta → BORRAR CUENTA. También puedes pedirnos acceder a tus datos, corregirlos, llevártelos u oponerte a su uso, y reclamar ante la Agencia Española de Protección de Datos (aepd.es). Puedes escribirnos a <a href="mailto:fansofmicroblizz@gmail.com">fansofmicroblizz@gmail.com</a>.</p>
-<h2>Cambios</h2><p>Si esta política cambia de forma importante, lo avisaremos en las novedades del juego.</p></div><div lang="en"><h1>Privacy policy</h1><small>Fans Of · Updated 20 October 2026</small>
+<h2>Cambios</h2><p>Si esta política cambia de forma importante, lo avisaremos en las novedades del juego.</p></div><div lang="en"><h1>Privacy policy</h1><small>Fans Of · Updated 18 October 2026</small>
 <p>Fans Of ("Fans of Rumble", "Fans of TD", "Fans of Survivors") is made by Arkioner and Pepins, of MicroBlizz. This explains what data we keep, why, and how to delete it. A plain summary, not fine print.</p>
 <h2>What we keep</h2><ul>
 <li><b>Your save</b> (progress, cards, gold, gems, items, missions, game settings). It is kept on your device and, when you are online, in our cloud.</li>
 <li><b>An anonymous guest account</b>, created automatically when you play: a random identifier. It asks nothing about you.</li>
 <li><b>Your email address</b>, only if you choose to save your account with email (or with Google, which gives us your email). We use it only to send you the sign-in link and recognise your account.</li>
 <li><b>Your comments</b>, if you send us any from the game or the website: the text, the game and its version. Only we read them. If you tick the contact box, we may email the address of your account to ask about it, talk about the game or ask for your opinion; if you don't, we don't use your email for that.</li>
+<li><b>Anonymous game data</b>, to improve the games (see «Game data» below): no name, no email and no account. Every game has a switch in Options to turn it off.</li>
 <li><b>Minimal technical data</b> (IP address, time of requests) that our providers keep for a short time for security.</li></ul>
 <h2>What we do not do</h2><ul>
 <li>We do not ask for your name, birth date, phone or address.</li>
@@ -49,14 +62,20 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 <p>So your progress is not lost and you can continue on another device, so the server can validate rewards and purchases, and to watch for cheating. If cheating is detected, we may limit, isolate or close the account (see the <a href="../condiciones/">terms of use</a>).</p>
 <h2>Where and who</h2>
 <p>The cloud is <b>Supabase</b>, in a data centre in the <b>European Union</b>. Sign-in emails are sent through an email service. The website is hosted on GitHub Pages. These providers process data on our behalf with their own security measures. If the game ever shows ads or charges money, we will say so here first, with no personalised ads.</p>
-<h2>Performance</h2>
-<p>To keep the games running smoothly, when a match ends we send an <b>anonymous</b> technical summary: frames per second, screen size and device type. It carries no name, email or account.</p>
-<h2>Website statistics</h2>
+<h2>Game data</h2>
+<p>To keep the games smooth and balanced, some games send <b>anonymous</b> data from your matches: when a match ends, a technical summary (frames per second, screen size and device type) and, in Fans Of Decks, the progress of each run (leader, deck size, meetings and breaks cleared, turns used, where you end and whether you win or leave it).</p>
+<ul><li><b>They carry no name, email or account.</b> Each run has a random code that is not linked to anything about you. To prevent abuse we use a temporary code that is deleted the next day and cannot be used to recognise you.</li>
+<li>The detail of each run is kept for <b>7 days</b>; then it is added to the statistics of each game and version and deleted.</li>
+<li>We do this under <b>legitimate interest</b>: improving the games. We only use this data for that, never for advertising or profiles.</li>
+<li><b>You can turn it off.</b> Every game has the «Anonymous game data» switch in <b>Options</b> (one choice for the whole site). It comes on by default; if you turn it off, nothing is sent.</li></ul>
+<h2>Cookies and website statistics</h2>
+<p><b>Which cookies we use:</b> none, except Google Analytics (_ga) if you accept the notice. We use no advertising cookies and no cross-site tracking. Your save and settings are kept in your browser's storage (not tracking cookies) because they are needed to play.</p>
 <p>If you accept in the notice, we measure visits to the website and the games with <b>Google Analytics</b>, which uses cookies (_ga) and tells us how many people come and which pages they see. We anonymise the IP, use no advertising signals and do not link it to your account. If you reject, nothing from Google is loaded. You can <a href="#" onclick="analiticaCambiar();return false">change your choice</a> at any time.</p>
 <h2>Children</h2>
 <p>You can play as a guest without giving any data. To save your account with email or Google you must be <b>14 or older</b>; if you are younger, a parent or guardian must do it with you. We do not use personalised advertising.</p>
 <h2>How long</h2>
-<p>We keep your save while your account exists. Guest accounts unused for a long time (60 days) are deleted automatically. If you delete your account, your account and cloud saves are removed immediately.</p>
+<p>We keep your save while your account exists. Guest accounts unused for a long time (60 days) are deleted automatically. If you delete your account, your account and cloud saves are removed immediately. Deleting the account (by you, or by the automatic cleanup) only removes what we hold on our server: <b>what is saved on your device is yours and stays</b>.</p>
+<p>That is why we recommend <b>linking your account to an email (or to Google)</b>: those accounts are not deleted for inactivity and you can recover your progress on another device. We clean up abandoned guest accounts because we cannot keep everything forever: this is a small project and storing accounts nobody uses has a cost we cannot afford.</p>
 <h2>Your rights</h2>
 <p>You can <b>delete your account yourself</b>: Options → Account → DELETE ACCOUNT. You can also ask us to access, correct or export your data, or object to its use, and complain to your data protection authority (in Spain, aepd.es). You can write to us at <a href="mailto:fansofmicroblizz@gmail.com">fansofmicroblizz@gmail.com</a>.</p>
 <h2>Changes</h2><p>If this policy changes significantly, we will say so in the game's news.</p></div>
@@ -65,4 +84,5 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
 p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();p(a.dataset.l)}})})();
 </script>
-<script src="../core/js/sistema/analitica.js"></script></body></html>
+<script src="../core/js/sistema/analitica.js"></script><script src="../pie.js" defer></script>
+</body></html>

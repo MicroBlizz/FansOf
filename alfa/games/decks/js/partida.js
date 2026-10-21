@@ -70,16 +70,17 @@ function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = dcTitulosCap
 
 // ---------- partida nueva ----------
 function dcNuevaPartida(lider, ventaja, paro) {
+  if (DCP.run) dcTelFin(DCP.run, 'abandonada');   // la que había sin acabar se da por abandonada
   const L = DC_LIDERES[lider], V = ventaja && DC_VENTAJAS[ventaja] ? DC_VENTAJAS[ventaja] : null, hp = L.hp + (V && V.vidaMax ? V.vidaMax : 0);
   DCP.run = { lider, ventaja: V ? ventaja : null, hp, hpMax: hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: null, acto: 0, dia: 0,
     paro: paro || 0, quitarUsado: false, quitarPrecio: 60, rango: 0, stats: { reuniones: 0, turnos: 0, nodos: 0, dias: 0 }, pendiente: null, empezada: Date.now() };
-  DCP.meta.partidas++;
+  DCP.meta.partidas++; dcTelEmpieza(DCP.run);
   dcEmpiezaDia();
 }
 // Ir a un nodo: lo apunta como pendiente de resolver y guarda (si se recarga, se vuelve a ese nodo).
 function dcIrA(piso, nodo) { const m = DCP.run.mapa; m.piso = piso; m.nodo = nodo; m.elegidos = m.elegidos || []; m.elegidos[piso] = nodo; DCP.run.pendiente = m.pisos[piso][nodo].tipo; DCP.run.stats.nodos++; dcGuarda(); }
-function dcNodoResuelto() { if (DCP.run) { DCP.run.pendiente = null; dcGuarda(); } }
-function dcFinPartida(victoria) { let abre = false; if (victoria) { DCP.meta.victorias++; abre = dcParoGana(); } DCP.meta.ultima = { victoria, paro: dcParo(), abre, cap: dcActo().cap, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
+function dcNodoResuelto() { if (DCP.run) { if (DCP.run.pendiente) dcTelNodo(DCP.run, DCP.run.pendiente); DCP.run.pendiente = null; dcGuarda(); } }
+function dcFinPartida(victoria) { dcTelFin(DCP.run, victoria ? 'victoria' : 'derrota'); let abre = false; if (victoria) { DCP.meta.victorias++; abre = dcParoGana(); } DCP.meta.ultima = { victoria, paro: dcParo(), abre, cap: dcActo().cap, dias: DCP.run.stats.dias, nodos: DCP.run.stats.nodos, reuniones: DCP.run.stats.reuniones, turnos: DCP.run.stats.turnos, min: Math.round((Date.now() - DCP.run.empezada) / 60000) }; DCP.run = null; dcGuarda(); }
 
 // ---------- ofertas y azar ----------
 function dcRarezaAlAzar(pesos) { let t = 0; for (const k in pesos) t += pesos[k]; let r = Math.random() * t; for (const k in pesos) { r -= pesos[k]; if (r < 0) return k; } return 'basic'; }

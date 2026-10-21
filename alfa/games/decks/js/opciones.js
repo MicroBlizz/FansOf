@@ -17,7 +17,7 @@ function dcOpciones() {
   if (window.filaCuenta) l.append(window.filaCuenta);
   const news = dcEl('button', 'btn-ghost ol', tr('VER')); news.onclick = dcNovedades;
   fila(tr('Novedades'), tr('Lo nuevo de cada versión.'), news);
-  v.append(l, dcEl('p', 'dc-version', tr('Fans Of Decks · versión') + ' ' + NEWS[0].v));
+  v.append(l, dcEl('p', 'dc-version', tr('Fans Of Decks · versión') + ' ' + NEWS[0].v + ' · © 2026 MicroBlizz'));
   try { pintarBanderas(banderas)(); } catch (e) { /* sin banderas */ }
   const b = dcEl('button', 'btn-big ol', tr('CERRAR')); b.onclick = () => { play('select'); dcCierraVentana(); }; v.append(b);
 }

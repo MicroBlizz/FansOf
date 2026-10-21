@@ -78,9 +78,11 @@ const NUCLEO = (() => {
     'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
+    'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
@@ -98,9 +100,11 @@ const NUCLEO = (() => {
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
+    'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
     'js/sistema/energia-anuncio.js', // el botón «ver un anuncio y ganar caos primordial»
@@ -161,3 +165,5 @@ const NUCLEO = (() => {
   return { version, nativa, alfa, idioma, elegirIdioma, desarrollo, estilos, juego, idiomaSolo };
 })();
 const VERSION = NUCLEO.version;
+// Aviso de derechos en la consola del navegador: el código del navegador se puede leer, pero no es libre; lo que vale es la licencia.
+try { console.info('%cFans Of™%c © 2026 Arkioner y Pepins (MicroBlizz). Todos los derechos reservados: código, textos, personajes, dibujos y música. Licencia: ' + location.origin + location.pathname.replace(/(games|demos)\/[^/]*\/.*$/, '') + 'LICENSE · Permisos: fansofmicroblizz@gmail.com', 'font-weight:800;color:#ffb347', ''); } catch (e) { /* sin consola */ }

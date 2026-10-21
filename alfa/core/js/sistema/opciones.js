@@ -12,7 +12,7 @@ const marcarBanderas = pintarBanderas($('#idioma-banderas'));   // el selector d
 function optComunes() {
   $('#btn-menumus').textContent = menuTrack()[1].toUpperCase() + ' ▸';
   marcarBanderas();
-  $('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION;
+  $('#scr-options .ver').textContent = document.title + ' · versión ' + VERSION + ' · © 2026 MicroBlizz';
 }
 /* ---------- instalar en el móvil como una app ---------- */
 // ---- instalar en el móvil como una app

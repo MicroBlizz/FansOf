@@ -58,4 +58,5 @@ small{color:#bba9d6}[lang]{display:none}[lang].on{display:block}li{margin:.25em 
 (function(){var q=new URLSearchParams(location.search).get('lang'),l=q||(function(){try{return localStorage.getItem('fansof-idioma')}catch(e){}})()||navigator.language||'es';
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
 p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();p(a.dataset.l)}})})();
-</script></body></html>
+</script><script src="../pie.js" defer></script>
+</body></html>

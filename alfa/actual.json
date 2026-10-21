@@ -1,8 +1,8 @@
 {
- "build": 367,
- "hash": "8d78cfc",
- "fecha": "2026-10-21T10:02:31Z",
- "mensaje": "Anuncios: banners de las 6 demos (roguelite, dungeons, recruit, rumble-3d, tactics-advance, terminal-shock); Terminal Shock con su propio logo sin «FANS OF»",
+ "build": 368,
+ "hash": "fb911ed",
+ "fecha": "2026-10-21T11:11:29Z",
+ "mensaje": "Docker interno fuera de lo publicado; pie.js sin pedir build.json en local",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

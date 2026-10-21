@@ -35,7 +35,7 @@ const RENDIMIENTO = (() => {
     };
   }
   async function manda(r) {
-    if (!r || typeof CUENTA === 'undefined' || !CUENTA.activa) return;
+    if (!r || typeof CUENTA === 'undefined' || !CUENTA.activa || (typeof DATOS !== 'undefined' && !DATOS.activo())) return;   // el jugador puede apagarlo en Opciones (datos-partida.js)
     try { await CUENTA.rpc('enviar_rendimiento', { p_datos: r }); } catch (e) { /* sin la función en el servidor: no pasa nada */ }
   }
   function activar(op) {

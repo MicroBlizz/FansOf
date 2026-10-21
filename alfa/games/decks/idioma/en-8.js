@@ -35,7 +35,7 @@ IDIOMA.add({
   "Se queda {turnos} turnos: al acabar cada uno te cura {cura} y te da {bloqueo} de bloqueo.": "Stays {turnos} turns: at the end of each one heals you {cura} and gives you {bloqueo} block.",
   "Streamers": "Streamers",
   "Hype": "Hype",
-  "Streamers: cada 3 cartas que juegas en un turno, el chat se anima y robas 1.": "Streamers: every 3 cards you play in a turn, chat gets hyped and you draw 1.",
+  "Streamers: cada 4 cartas que juegas en un turno, el chat se anima y robas 1.": "Streamers: every 4 cards you play in a turn, chat gets hyped and you draw 1.",
   "StreamKing": "StreamKing",
   "Gratis cuando has gastado {carga} de CAOS en cartas: +{caos} CAOS ahora y robas {roba}. El chat lo agradece.": "Free once you have spent {carga} CHAOS on cards: +{caos} CHAOS now and you draw {roba}. Chat appreciates it.",
   "El patrocinador te da {n} CAOS": "The sponsor gives you {n} CHAOS",

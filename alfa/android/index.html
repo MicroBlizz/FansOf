@@ -42,4 +42,5 @@ h1{font-size:28px;margin:.2em 0}a{color:#8fd3ff}.bar{display:flex;gap:14px;font-
 var L=(navigator.language||'es').slice(0,2)==='en'?'en':'es';
 function set(l){document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.lang===l)});}
 document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();set(a.dataset.l)}});set(L);
-</script></body></html>
+</script><script src="../pie.js" defer></script>
+</body></html>

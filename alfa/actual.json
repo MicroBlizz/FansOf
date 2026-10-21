@@ -1,8 +1,8 @@
 {
- "build": 384,
- "hash": "df87130",
- "fecha": "2026-10-21T18:45:58Z",
- "mensaje": "Gestion > Flags: solo abrir y cerrar; crear y borrar flags es cosa de desarrollo (CLAUDE.md)",
+ "build": 385,
+ "hash": "f97dcda",
+ "fecha": "2026-10-21T19:01:36Z",
+ "mensaje": "Flags por plataforma (alfa/web/android) con boton por cada una, config del servidor separada de los flags (servidor/70, pestana Config) y decisiones documentadas",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

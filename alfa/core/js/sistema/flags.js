@@ -3,10 +3,11 @@
 // · En desarrollo vale true salvo que se apague en el panel DEV (así se prueba todo).
 // · En la web publicada manda la tabla: se lee al arrancar y cada 5 minutos, y se guarda el último valor por si no hay red. Sin fila ni valor guardado vale
 //   `valorEnWeb` (false si no se pone; true para algo ya abierto que se quiere poder cerrar de golpe).
-// · Cada fila vale para un juego o para todos ('*') y para una plataforma ('web', 'android') o todas ('*'); manda la más concreta. `porcentaje` abre el flag solo a ese % de jugadores.
+// · Cada fila vale para un juego o para todos ('*') y para una plataforma ('alfa', 'web', 'android') o todas ('*'); manda la más concreta. `porcentaje` abre el flag solo a ese % de jugadores.
 // · Se pregunta cada vez que se necesita (no se guarda en una constante) para que un cambio llegue sin recargar; NUCLEO.alCambiarFlags(fn) avisa de los cambios.
 // · Dos nombres tienen efecto propio, sin escribir código: 'mantenimiento' (valor true: sale una franja con el mensaje) y 'version-minima' (dato = '0.9.110': a quien tenga una
 //   versión anterior le sale un aviso para recargar).
+// · Los flags SOLO abren o cierran. Los valores que siempre se aplican (hoy, las monedas) son CONFIG DEL SERVIDOR: tabla `config_servidor` (servidor/70), que se lee aquí con NUCLEO.configRemota(clave).
 // Cada flag queda registrado en el panel DEV. Al terminar la tarea, el flag se quita del código y su fila de la tabla (ver CLAUDE.md). El cliente solo oculta: lo que protege algo se comprueba también en el servidor.
 'use strict';
 (() => {
@@ -15,8 +16,8 @@
   const plataforma = NUCLEO.nativa ? 'android' : NUCLEO.alfa ? 'alfa' : 'web';
   const flagsDev = {};      // nombre → descripción de los flags usados en esta página
   const oyentes = [];
-  let remotos = {}, ultimaLectura = 0;   // nombre → { valor, porcentaje, mensaje, dato }
-  try { const g = JSON.parse(localStorage.getItem(GUARDADOS) || 'null'); if (g && g.r) remotos = g.r; } catch (e) { /* sin guardar */ }
+  let remotos = {}, config = {}, ultimaLectura = 0;   // nombre → { valor, porcentaje, mensaje, dato }
+  try { const g = JSON.parse(localStorage.getItem(GUARDADOS) || 'null'); if (g && g.r) remotos = g.r; if (g && g.c) config = g.c; } catch (e) { /* sin guardar */ }
   // el «cubo» de este navegador (0-99): fijo, para que un 10 % sean siempre los mismos jugadores
   const cubo = (() => {
     try { let c = localStorage.getItem('fansof-cubo'); if (c === null) { c = String(Math.floor(Math.random() * 100)); localStorage.setItem('fansof-cubo', c); } return +c; } catch (e) { return Math.floor(Math.random() * 100); }
@@ -28,6 +29,7 @@
     return r ? !!r.valor && cubo < r.porcentaje : enProduccion;
   };
   const flagRemoto = nombre => remotos[nombre];
+  const configRemota = clave => config[clave];   // el JSON de esa clave para este juego (o el de todos), o undefined
   const flagMensaje = nombre => { const r = remotos[nombre]; return r ? ((NUCLEO.idioma === 'en' && r.mensaje_en) || r.mensaje || '') : ''; };
   const alCambiarFlags = fn => { oyentes.push(fn); };
   const comparaVersion = (a, b) => { const x = String(a).split('-')[0].split('.').map(Number), y = String(b).split('-')[0].split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d; } return 0; };
@@ -69,15 +71,20 @@
         const p = (f.juego === '*' ? 0 : 2) + (f.plataforma === '*' ? 0 : 1);
         if (!(f.nombre in puntos) || p > puntos[f.nombre]) { puntos[f.nombre] = p; v[f.nombre] = { valor: f.valor, porcentaje: f.porcentaje, mensaje: f.mensaje, mensaje_en: f.mensaje_en, dato: f.dato }; }
       }
-      const cambio = JSON.stringify(v) !== JSON.stringify(remotos);
-      remotos = v; ultimaLectura = Date.now();
-      try { localStorage.setItem(GUARDADOS, JSON.stringify({ r: v })); } catch (e) { /* sin guardar */ }
+      let c = config;   // la config del servidor: sin la tabla (o sin red) se queda la última
+      try {
+        const rc = await fetch('https://awivkedbmumwnkqlfixm.supabase.co/rest/v1/config_servidor?select=clave,juego,valor', { cache: 'no-store', headers: { apikey: 'sb_publishable_iQ9OrvJmMx87u_uUMQ_uNw_UdBz78gn' } });
+        if (rc.ok) { c = {}; const base = {}; for (const f of await rc.json()) { if (f.juego === '*') base[f.clave] = f.valor; else if (f.juego === juegoActual) c[f.clave] = f.valor; } for (const k in base) if (!(k in c)) c[k] = base[k]; }
+      } catch (e) { /* sin red */ }
+      const cambio = JSON.stringify(v) !== JSON.stringify(remotos) || JSON.stringify(c) !== JSON.stringify(config);
+      remotos = v; config = c; ultimaLectura = Date.now();
+      try { localStorage.setItem(GUARDADOS, JSON.stringify({ r: v, c })); } catch (e) { /* sin guardar */ }
       avisos();
       if (cambio) oyentes.forEach(fn => { try { fn(); } catch (e) { console.error(e); } });
     } catch (e) { /* sin red: se queda el último valor */ }
   }
 
-  Object.assign(NUCLEO, { flag, flagRemoto, flagMensaje, alCambiarFlags, flagsDev, leerFlags });
+  Object.assign(NUCLEO, { flag, flagRemoto, configRemota, flagMensaje, alCambiarFlags, flagsDev, leerFlags });
   if (!/[?&]sinflags\b/.test(location.search)) {   // el comparador de partidas lo apaga para no depender de la red
     window.addEventListener('load', () => { avisos(); leerFlags(); });
     setInterval(leerFlags, 5 * 60 * 1000);

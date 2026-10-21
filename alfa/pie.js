@@ -8,7 +8,7 @@
   let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
   const derechos = 'Fans Of™ · © 2026 ' + (en ? 'Arkioner and Pepins · MicroBlizz · All rights reserved' : 'Arkioner y Pepins · MicroBlizz · Todos los derechos reservados');
-  const HUECO = '56px', FONDO = '#150b21';   // FONDO: el del menú
+  const HUECO = '56px', FONDO = '#0b0613';   // FONDO: casi negro, más oscuro que los dos lilas de las bandas y que el menú, para que contraste siempre
   const poner = txt => {
     let el = document.getElementById('pie-fansof');
     if (el) { const s = document.createElement('span'); s.className = 'pie-build'; s.textContent = ' · ' + txt; el.appendChild(s); }

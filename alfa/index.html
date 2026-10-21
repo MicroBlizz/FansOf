@@ -10,19 +10,26 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=c2cbca7">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=c2cbca7">
-<link rel="stylesheet" href="novedades/ventana.css?v=c2cbca7">
-<link rel="stylesheet" href="biblioteca/votos.css?v=c2cbca7">
+<link rel="stylesheet" href="core/css/base.css?v=2373ca0">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=2373ca0">
+<link rel="stylesheet" href="novedades/ventana.css?v=2373ca0">
+<link rel="stylesheet" href="biblioteca/votos.css?v=2373ca0">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
   html { scroll-behavior: smooth; }
   main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 0; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
   /* Bandas a todo el ancho, de lila oscuro y lila claro, una por sección (y el pie del color del menú). La sombra y el recorte las sacan a los lados sin tocar la maquetación. */
-  main > section.hero, main > section.sec { --banda: #231333; background: var(--banda); box-shadow: 0 0 0 100vmax var(--banda); clip-path: inset(0 -100vmax); box-sizing: border-box; }
+  /* Las bandas alternan solas (impar: lila claro, par: lila oscuro) sin importar cuántas secciones haya ni cuál es la última. El pie lleva su propio color, casi negro, más oscuro que los dos lilas. */
+  main > section.hero, main > section.sec { background: var(--banda); box-shadow: 0 0 0 100vmax var(--banda); clip-path: inset(0 -100vmax); box-sizing: border-box; }
+  main > section:nth-of-type(odd) { --banda: #251538; --sub-a: #1f112f; --sub-b: #2d1a44; }
+  main > section:nth-of-type(even) { --banda: #170b26; --sub-a: #120920; --sub-b: #200f35; }
   main > section.sec { padding: 28px 0 34px; }
-  main > section:nth-of-type(even) { --banda: #160b25; }
+  /* La Biblioteca es UNA sección con subsecciones (Juegos, Prototipos, Demos y En pausa): cada lista con su fondo, alternando dos subtonos del color de la propia Biblioteca */
+  #biblioteca { padding-bottom: 0; gap: 0; }
+  #biblioteca > p.note { margin: 6px 0 20px; }
+  .subsec { width: 100%; box-sizing: border-box; padding: 24px 0 30px; background: var(--sub-a); box-shadow: 0 0 0 100vmax var(--sub-a); clip-path: inset(0 -100vmax); }
+  .subsec:nth-of-type(even) { background: var(--sub-b); box-shadow: 0 0 0 100vmax var(--sub-b); }
   /* menú fijo arriba: secciones de la landing y las partes comunes (privacidad, condiciones) */
   nav.menu { position: fixed; top: 0; left: 0; right: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
   nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
@@ -46,11 +53,7 @@
 </style>
 </head>
 <body>
-<nav class="menu" aria-label="Menú">
-  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="#en-pausa">En pausa</a><a href="lore/">Lore</a><a href="privacidad/">Privacidad</a><a href="condiciones/">Condiciones</a>
-  <a href="#" id="m-cuenta" class="m-cuenta" hidden>Entrar</a>
-  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
-</nav>
+<script src="menu.js?v=2373ca0" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -94,139 +97,153 @@
   <section class="sec" id="biblioteca">
     <h2 class="sec ol">BIBLIOTECA</h2>
     <p class="note">Cada juego es independiente: tiene su propia partida guardada y su propia versión.</p>
-  <h3 class="grupo ol" id="juegos">JUEGOS</h3>
-  <section class="game" id="g-rumble" data-apk="rumble" style="--wc: #8a3a12" data-tipo="Juego" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
-    <h2 class="ol">FANS OF RUMBLE</h2>
-    <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
-    <div class="row"><a class="play ol" href="games/rumble/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-td" data-apk="td" style="--wc: #1d3f8a" data-tipo="Juego" data-etiquetas="Defensa de torres · Campaña" data-capturas="td-1.jpg td-2.jpg">
-    <h2 class="ol">FANS OF TD</h2>
-    <p>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</p>
-    <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-rouflage" data-apk="rouflage" style="--wc: #7a8c1c" data-tipo="Juego" data-etiquetas="Escondite · Pintura" data-capturas="rouflage-1.jpg rouflage-2.jpg">
-    <h2 class="ol">FANS OF ROUFLAGE</h2>
-    <p>El escondite con pintura: cuélate en la estación de Microblizz, píntate como el suelo con el cuentagotas y el pincel, congélate y que los becarios no te despidan. O coge tú la linterna y encuentra a los cinco colados.</p>
-    <div class="row"><a class="play ol" href="games/rouflage/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-karts" data-apk="karts" style="--wc: #b3261e" data-tipo="Juego" data-etiquetas="Carreras · Pixel art" data-capturas="karts-1.jpg karts-2.jpg karts-3.jpg" data-horizontal>
-    <h2 class="ol">FANS OF KARTS</h2>
-    <p>Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.</p>
-    <div class="row"><a class="play ol" href="games/karts/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-ratkov" data-apk="ratkov" style="--wc: #c4581a" data-tipo="Juego" data-etiquetas="Extracción · Acción · Pixel art" data-capturas="ratkov-1.jpg ratkov-2.jpg" data-horizontal>
-    <h2 class="ol">FANS OF RATKOV</h2>
-    <p>Shooter de extracción visto desde arriba en la ciudad nevada y en ruinas de Microblizz: entra con CrazyBunny y su escuadrón, registra, fabrica, monta anomalías bugueadas en tus armas y sal antes de la ventisca. Si caes, lo pierdes todo.</p>
-    <div class="row"><a class="play ol" href="games/ratkov/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-jump" data-apk="jump" style="--wc: #8a68d8" data-tipo="Juego" data-etiquetas="Saltos · 3D" data-capturas="jump-1.jpg jump-2.jpg">
-    <h2 class="ol">FANS OF JUMP</h2>
-    <p>El prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco, rescata a su pandilla y llévala a cuestas: así empezó la rebelión.</p>
-    <div class="row"><a class="play ol" href="games/jump/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <h3 class="grupo ol" id="prototipos">PROTOTIPOS</h3>
-  <p class="note grupo">Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.</p>
-  <section class="game" id="g-crush" data-apk="crush" style="--wc: #c35b9e" data-tipo="Prototipo" data-etiquetas="Puzle · Tres en raya" data-capturas="crush-1.jpg crush-2.jpg">
-    <h2 class="ol">FANS OF CRUSH</h2>
-    <p>El nuevo (prototipo). Un tres en raya con los Animales Locos: junta sus caras, lanza cohetes de CrazyBunny y sube la Escalera Corporativa de Microblizz hasta despedir a SurvivalBot, el jefe de Recursos Humanos.</p>
-    <div class="row"><a class="play ol" href="games/crush/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-survivors" data-apk="survivors" style="--wc: #2f7a2a" data-tipo="Prototipo" data-etiquetas="Acción · Hordas" data-capturas="survivors-1.jpg survivors-2.jpg">
-    <h2 class="ol">FANS OF SURVIVORS</h2>
-    <p>El nuevo (prototipo). CrazyBunny contra toda la plantilla de Microblizz: muévete, tus cartas disparan solas. Aguanta 10 minutos y despide a SurvivalBot.</p>
-    <div class="row"><a class="play ol" href="games/survivors/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-tacticas" data-apk="tacticas" style="--wc: #5b2a9a" data-tipo="Prototipo" data-etiquetas="Por turnos · JRPG" data-capturas="tacticas-1.jpg tacticas-2.jpg">
-    <h2 class="ol">FANS OF RUMBLE: TÁCTICAS</h2>
-    <p>El nuevo (prototipo). Combate por turnos con barras de tiempo, como los JRPG clásicos: CrazyBunny, StreamKing y los demás líderes contra los jefes de Microblizz, hasta llegar al CEO.</p>
-    <div class="row"><a class="play ol" href="games/tacticas/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-roguelite" style="--wc: #9a2f86" data-tipo="Prototipo" data-etiquetas="Roguelite · Pixel art" data-capturas="roguelite-1.jpg roguelite-2.jpg">
-    <h2 class="ol">FANS OF ROGUELITE</h2>
-    <p>Roguelite en pixel art dibujado a mano, emitido «en directo» con su chat. CrazyBunny cruza 3 mundos de 40 días (Oficinas, Cementerio de juegos y Torre de Microblizz): habilidades, objetos, tienda de Lola, ruleta, gashapón, jefes y mejoras para siempre en La Madriguera.</p>
-    <div class="row"><a class="play ol" href="demos/roguelite/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-dungeons" style="--wc: #5a2a9a" data-tipo="Prototipo" data-etiquetas="Roguelike · Turnos" data-capturas="dungeons-1.jpg dungeons-2.jpg">
-    <h2 class="ol">FANS OF DUNGEONS</h2>
-    <p>El prototipo (prueba). Roguelike por turnos: sube la Torre de Microblizz planta a planta por mazmorras que se generan solas, con CrazyBunny, CyberMarine o NecroLord. Cada paso es un turno; si mueres, se acabó, pero los hitos liberan héroes. Pixel art nuevo de 32 bits con explosiones de verdad.</p>
-    <div class="row"><a class="play ol" href="demos/dungeons/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-recruit" style="--wc: #c98a12" data-tipo="Prototipo" data-etiquetas="Acción · Corre y dispara · Pixel art" data-capturas="recruit-1.jpg recruit-2.jpg recruit-3.jpg" data-horizontal>
-    <h2 class="ol">FANS OF RECRUIT</h2>
-    <p>El prototipo (prueba). Corre y dispara como en las recreativas de los 90: CrazyBunny asalta las Oficinas de Microblizz con pistola, metralleta y zanahorias bomba, rescata a los fans, se sube a la MechaVaca y cancela a SurvivalBot. Todo el pixel art está dibujado con código.</p>
-    <div class="row"><a class="play ol" href="demos/recruit/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-nova" data-apk="nova" style="--wc: #1b3a8c" data-tipo="Prototipo" data-etiquetas="Espacial · Acción · Pixel art" data-capturas="nova-1.jpg nova-2.jpg nova-3.jpg nova-4.jpg nova-5.jpg">
-    <h2 class="ol">FANS OF NOVA</h2>
-    <p>El juego espacial de la serie. Mueves tu nave con un pulgar, las armas disparan solas y cada enemigo destruido deja chatarra que tu nave se come para crecer: sube de rango, elige cartas, fusiona armas en combos y devora a los No-Muertos hasta enfrentarte al Rey de los huesos. Es un prototipo: la partida dura unos cinco minutos.</p>
-    <div class="row"><a class="play ol" href="games/nova/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-beams" style="--wc: #0b4a8a" data-tipo="Demo" data-etiquetas="Matamarcianos · Espacial · Pixel art" data-capturas="beams-1.jpg beams-2.jpg beams-3.jpg" data-horizontal>
-    <h2 class="ol">FANS OF BEAMS</h2>
-    <p>Año 30XX. Microblizz ya no se conforma con cerrar juegos: su guerra ha llegado al espacio y sus flotas de robots arrasan las galaxias. Solo queda tu nave. Dispara a lo grande y lanza la bola de captura: atrapa naves enemigas, hasta los capitanes y los acorazados gigantes, y haz que luchen a tu lado con sus propias armas, como escudo o como rayo gigante que arrasa media pantalla. Recoge núcleos para evolucionar de Caza a Nave jefe, cruza tres sectores y revienta al jefe de cada facción. Rayos de película, planetas de pixel art y explosiones en cadena.</p>
-    <div class="row"><a class="play ol" href="demos/beams/">JUGAR</a></div>
-  </section>
-  <section class="game" id="g-decks" data-apk="decks" style="--wc: #5b2a9a" data-tipo="Prototipo" data-etiquetas="Cartas · Roguelike · Oficina" data-capturas="decks-1.jpg decks-2.jpg">
-    <h2 class="ol">FANS OF DECKS</h2>
-    <p>El constructor de mazos de la serie. Sobrevives a la semana en Microblizz con CrazyBunny: cada hora eliges a qué reunión vas, juegas cartas contra rivales que anuncian su jugada, mejoras tu mazo y, a las 17:00, te espera el minijefe del día. Cinco días, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.</p>
-    <div class="row"><a class="play ol" href="games/decks/">JUGAR</a><span class="ver ol" data-ver></span></div>
-  </section>
-  <h3 class="grupo ol" id="demos">DEMOS</h3>
-  <p class="note grupo">Bocetos y pruebas cortas de una idea.</p>
-  <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Boceto" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
-    <h2 class="ol">FANS OF RUMBLE 3D</h2>
-    <p>El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.</p>
-    <div class="row"><a class="play ol" href="demos/rumble-3d/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-tactics-advance" style="--wc: #2f4fae" data-tipo="Prueba" data-etiquetas="Tácticas · Casillas · Pixel art" data-capturas="tactics-advance-1.jpg tactics-advance-2.jpg">
-    <h2 class="ol">FANS OF TACTICS ADVANCE</h2>
-    <p>El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mueve a CrazyBunny y a EpicChampion, aprovecha la altura y el CAOS, y despide a los esbirros de Microblizz en el Cementerio de juegos o en sus oficinas.</p>
-    <div class="row"><a class="play ol" href="demos/tactics-advance/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-terminal-shock" style="--wc: #0f5450" data-tipo="Demo" data-etiquetas="Terror · Cámaras fijas" data-capturas="terminal-shock-1.jpg terminal-shock-2.jpg" data-horizontal>
-    <h2 class="ol">TERMINAL SHOCK</h2>
-    <p>Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999): 13 salas con cámaras fijas y control tanque. Repara la red de fibra, encuentra a Zoe y no pierdas la Lucidez.</p>
-    <div class="row"><a class="play ol" href="demos/terminal-shock/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  </section>
-  <section class="sec" id="en-pausa">
-    <h2 class="sec ol">EN PAUSA</h2>
-    <p class="note">Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
-  <section class="game" id="g-dark" data-apk="dark" style="--wc: #4a1f7a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
-    <h2 class="ol">FANS OF DARK</h2>
-    <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
-    <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-island" data-apk="island" style="--wc: #c9741a" data-tipo="En pausa" data-pausa="Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea." data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
-    <h2 class="ol">FANS OF ISLAND</h2>
-    <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
-    <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
-  <section class="game" id="g-skate" data-apk="skate" style="--wc: #e8731a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Runner · Talentos" data-capturas="skate-1.jpg skate-2.jpg" data-horizontal>
-    <h2 class="ol">FANS OF SKATE</h2>
-    <p>El nuevo (prototipo). Carriles horizontales como un runner: CrazyBunny y los líderes sobre sus vehículos, esquivando las olas y los fajos de Microblizz. Con árbol de talentos y campaña de 12 mundos.</p>
-    <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
-    <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
-  </section>
+    <div class="subsec" id="lista-juegos">
+      <h3 class="grupo ol" id="juegos">JUEGOS</h3>
+      <div class="rejilla">
+        <section class="game" id="g-rumble" data-apk="rumble" style="--wc: #8a3a12" data-tipo="Juego" data-etiquetas="Estrategia · Cartas · PvP" data-capturas="rumble-1.jpg rumble-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE</h2>
+          <p>El original. Saca tus cartas al campo, cruza el río y tira la sede de Microblizz antes de que acabe el tiempo.</p>
+          <div class="row"><a class="play ol" href="games/rumble/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-td" data-apk="td" style="--wc: #1d3f8a" data-tipo="Juego" data-etiquetas="Defensa de torres · Campaña" data-capturas="td-1.jpg td-2.jpg">
+          <h2 class="ol">FANS OF TD</h2>
+          <p>La defensa de torres. Monta un laberinto para que los robots no lleguen a tu base. Con campaña de 12 mundos y modo VS.</p>
+          <div class="row"><a class="play ol" href="games/td/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-rouflage" data-apk="rouflage" style="--wc: #7a8c1c" data-tipo="Juego" data-etiquetas="Escondite · Pintura" data-capturas="rouflage-1.jpg rouflage-2.jpg">
+          <h2 class="ol">FANS OF ROUFLAGE</h2>
+          <p>El escondite con pintura: cuélate en la estación de Microblizz, píntate como el suelo con el cuentagotas y el pincel, congélate y que los becarios no te despidan. O coge tú la linterna y encuentra a los cinco colados.</p>
+          <div class="row"><a class="play ol" href="games/rouflage/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-karts" data-apk="karts" style="--wc: #b3261e" data-tipo="Juego" data-etiquetas="Carreras · Pixel art" data-capturas="karts-1.jpg karts-2.jpg karts-3.jpg" data-horizontal>
+          <h2 class="ol">FANS OF KARTS</h2>
+          <p>Carreras de karts en pixel art de consola portátil: elige a uno de los seis líderes y corre 16 pistas en 4 mundos (de la playa a la Torre del CEO), con modo copa, saltos, atajos y peligros que caen del cielo. Microblizz ha comprado la carrera: gánasela.</p>
+          <div class="row"><a class="play ol" href="games/karts/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-ratkov" data-apk="ratkov" style="--wc: #c4581a" data-tipo="Juego" data-etiquetas="Extracción · Acción · Pixel art" data-capturas="ratkov-1.jpg ratkov-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF RATKOV</h2>
+          <p>Shooter de extracción visto desde arriba en la ciudad nevada y en ruinas de Microblizz: entra con CrazyBunny y su escuadrón, registra, fabrica, monta anomalías bugueadas en tus armas y sal antes de la ventisca. Si caes, lo pierdes todo.</p>
+          <div class="row"><a class="play ol" href="games/ratkov/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-jump" data-apk="jump" style="--wc: #8a68d8" data-tipo="Juego" data-etiquetas="Saltos · 3D" data-capturas="jump-1.jpg jump-2.jpg">
+          <h2 class="ol">FANS OF JUMP</h2>
+          <p>El prólogo de los Animales Locos. Microblizz arrasa el bosque y su topadora gigante empuja una ola de barro río arriba. Salta con CrazyBunny de tronco en tronco, rescata a su pandilla y llévala a cuestas: así empezó la rebelión.</p>
+          <div class="row"><a class="play ol" href="games/jump/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+      </div>
+    </div>
+    <div class="subsec" id="lista-prototipos">
+      <h3 class="grupo ol" id="prototipos">PROTOTIPOS</h3>
+      <p class="note grupo">Juegos a medio hacer: se pueden jugar, pero todavía cambian mucho.</p>
+      <div class="rejilla">
+        <section class="game" id="g-crush" data-apk="crush" style="--wc: #c35b9e" data-tipo="Prototipo" data-etiquetas="Puzle · Tres en raya" data-capturas="crush-1.jpg crush-2.jpg">
+          <h2 class="ol">FANS OF CRUSH</h2>
+          <p>El nuevo (prototipo). Un tres en raya con los Animales Locos: junta sus caras, lanza cohetes de CrazyBunny y sube la Escalera Corporativa de Microblizz hasta despedir a SurvivalBot, el jefe de Recursos Humanos.</p>
+          <div class="row"><a class="play ol" href="games/crush/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-survivors" data-apk="survivors" style="--wc: #2f7a2a" data-tipo="Prototipo" data-etiquetas="Acción · Hordas" data-capturas="survivors-1.jpg survivors-2.jpg">
+          <h2 class="ol">FANS OF SURVIVORS</h2>
+          <p>El nuevo (prototipo). CrazyBunny contra toda la plantilla de Microblizz: muévete, tus cartas disparan solas. Aguanta 10 minutos y despide a SurvivalBot.</p>
+          <div class="row"><a class="play ol" href="games/survivors/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-tacticas" data-apk="tacticas" style="--wc: #5b2a9a" data-tipo="Prototipo" data-etiquetas="Por turnos · JRPG" data-capturas="tacticas-1.jpg tacticas-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE: TÁCTICAS</h2>
+          <p>El nuevo (prototipo). Combate por turnos con barras de tiempo, como los JRPG clásicos: CrazyBunny, StreamKing y los demás líderes contra los jefes de Microblizz, hasta llegar al CEO.</p>
+          <div class="row"><a class="play ol" href="games/tacticas/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-roguelite" style="--wc: #9a2f86" data-tipo="Prototipo" data-etiquetas="Roguelite · Pixel art" data-capturas="roguelite-1.jpg roguelite-2.jpg">
+          <h2 class="ol">FANS OF ROGUELITE</h2>
+          <p>Roguelite en pixel art dibujado a mano, emitido «en directo» con su chat. CrazyBunny cruza 3 mundos de 40 días (Oficinas, Cementerio de juegos y Torre de Microblizz): habilidades, objetos, tienda de Lola, ruleta, gashapón, jefes y mejoras para siempre en La Madriguera.</p>
+          <div class="row"><a class="play ol" href="demos/roguelite/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-dungeons" style="--wc: #5a2a9a" data-tipo="Prototipo" data-etiquetas="Roguelike · Turnos" data-capturas="dungeons-1.jpg dungeons-2.jpg">
+          <h2 class="ol">FANS OF DUNGEONS</h2>
+          <p>El prototipo (prueba). Roguelike por turnos: sube la Torre de Microblizz planta a planta por mazmorras que se generan solas, con CrazyBunny, CyberMarine o NecroLord. Cada paso es un turno; si mueres, se acabó, pero los hitos liberan héroes. Pixel art nuevo de 32 bits con explosiones de verdad.</p>
+          <div class="row"><a class="play ol" href="demos/dungeons/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-recruit" style="--wc: #c98a12" data-tipo="Prototipo" data-etiquetas="Acción · Corre y dispara · Pixel art" data-capturas="recruit-1.jpg recruit-2.jpg recruit-3.jpg" data-horizontal>
+          <h2 class="ol">FANS OF RECRUIT</h2>
+          <p>El prototipo (prueba). Corre y dispara como en las recreativas de los 90: CrazyBunny asalta las Oficinas de Microblizz con pistola, metralleta y zanahorias bomba, rescata a los fans, se sube a la MechaVaca y cancela a SurvivalBot. Todo el pixel art está dibujado con código.</p>
+          <div class="row"><a class="play ol" href="demos/recruit/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-nova" data-apk="nova" style="--wc: #1b3a8c" data-tipo="Prototipo" data-etiquetas="Espacial · Acción · Pixel art" data-capturas="nova-1.jpg nova-2.jpg nova-3.jpg nova-4.jpg nova-5.jpg">
+          <h2 class="ol">FANS OF NOVA</h2>
+          <p>El juego espacial de la serie. Mueves tu nave con un pulgar, las armas disparan solas y cada enemigo destruido deja chatarra que tu nave se come para crecer: sube de rango, elige cartas, fusiona armas en combos y devora a los No-Muertos hasta enfrentarte al Rey de los huesos. Es un prototipo: la partida dura unos cinco minutos.</p>
+          <div class="row"><a class="play ol" href="games/nova/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-beams" style="--wc: #0b4a8a" data-tipo="Demo" data-etiquetas="Matamarcianos · Espacial · Pixel art" data-capturas="beams-1.jpg beams-2.jpg beams-3.jpg" data-horizontal>
+          <h2 class="ol">FANS OF BEAMS</h2>
+          <p>Año 30XX. Microblizz ya no se conforma con cerrar juegos: su guerra ha llegado al espacio y sus flotas de robots arrasan las galaxias. Solo queda tu nave. Dispara a lo grande y lanza la bola de captura: atrapa naves enemigas, hasta los capitanes y los acorazados gigantes, y haz que luchen a tu lado con sus propias armas, como escudo o como rayo gigante que arrasa media pantalla. Recoge núcleos para evolucionar de Caza a Nave jefe, cruza tres sectores y revienta al jefe de cada facción. Rayos de película, planetas de pixel art y explosiones en cadena.</p>
+          <div class="row"><a class="play ol" href="demos/beams/">JUGAR</a></div>
+        </section>
+        <section class="game" id="g-decks" data-apk="decks" style="--wc: #5b2a9a" data-tipo="Prototipo" data-etiquetas="Cartas · Roguelike · Oficina" data-capturas="decks-1.jpg decks-2.jpg">
+          <h2 class="ol">FANS OF DECKS</h2>
+          <p>El constructor de mazos de la serie. Sobrevives a la semana en Microblizz con CrazyBunny: cada hora eliges a qué reunión vas, juegas cartas contra rivales que anuncian su jugada, mejoras tu mazo y, a las 17:00, te espera el minijefe del día. Cinco días, un ascenso y el jefe de departamento; después, otra semana que acaba ante el CEO.</p>
+          <div class="row"><a class="play ol" href="games/decks/">JUGAR</a><span class="ver ol" data-ver></span></div>
+        </section>
+      </div>
+    </div>
+    <div class="subsec" id="lista-demos">
+      <h3 class="grupo ol" id="demos">DEMOS</h3>
+      <p class="note grupo">Bocetos y pruebas cortas de una idea.</p>
+      <div class="rejilla">
+        <section class="game" id="g-rumble-3d" style="--wc: #a3325e" data-tipo="Boceto" data-etiquetas="3D · Misión" data-capturas="rumble-3d-1.jpg rumble-3d-2.jpg">
+          <h2 class="ol">FANS OF RUMBLE 3D</h2>
+          <p>El boceto (prueba). Fans of Rumble en 3D, como un dibujo animado: una misión corta con CrazyBunny, MadSquirrel, MeerCat y MechaVaca contra SurvivalBot, con comentarista, voces y la música del juego. Y un modo libre para ver si tu móvil aguanta.</p>
+          <div class="row"><a class="play ol" href="demos/rumble-3d/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-tactics-advance" style="--wc: #2f4fae" data-tipo="Prueba" data-etiquetas="Tácticas · Casillas · Pixel art" data-capturas="tactics-advance-1.jpg tactics-advance-2.jpg">
+          <h2 class="ol">FANS OF TACTICS ADVANCE</h2>
+          <p>El prototipo (prueba). Tácticas por casillas en pixel art de consola portátil: mueve a CrazyBunny y a EpicChampion, aprovecha la altura y el CAOS, y despide a los esbirros de Microblizz en el Cementerio de juegos o en sus oficinas.</p>
+          <div class="row"><a class="play ol" href="demos/tactics-advance/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-terminal-shock" style="--wc: #0f5450" data-tipo="Demo" data-etiquetas="Terror · Cámaras fijas" data-capturas="terminal-shock-1.jpg terminal-shock-2.jpg" data-horizontal>
+          <h2 class="ol">TERMINAL SHOCK</h2>
+          <p>Demo de otro proyecto nuestro. Survival horror en el Albright Memorial Hospital (Granollers, 1999): 13 salas con cámaras fijas y control tanque. Repara la red de fibra, encuentra a Zoe y no pierdas la Lucidez.</p>
+          <div class="row"><a class="play ol" href="demos/terminal-shock/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+      </div>
+    </div>
+    <div class="subsec" id="en-pausa">
+      <h3 class="grupo ol">EN PAUSA</h3>
+      <p class="note grupo">Prototipos que hemos parado. Se pueden jugar tal cual están y, si quieres que vuelvan, vota en su ficha: los que más votos reúnan, los retomamos.</p>
+      <div class="rejilla">
+        <section class="game" id="g-dark" data-apk="dark" style="--wc: #4a1f7a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Mazmorras · Extracción · Pixel art" data-capturas="dark-1.jpg dark-2.jpg">
+          <h2 class="ol">FANS OF DARK</h2>
+          <p>Mazmorras en primera persona, como los shooters de los 90. Elige a un Animal Loco (cada uno con su habilidad y su arma), baja con una antorcha a la mazmorra de una facción enemiga, abre cofres, pelea con sus unidades y su líder y sal por un portal antes de que la niebla te alcance. Si mueres pierdes la mochila; lo que sacas con vida se vende o se equipa en el alijo.</p>
+          <div class="row"><a class="play ol" href="games/dark/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-island" data-apk="island" style="--wc: #c9741a" data-tipo="En pausa" data-pausa="Ni el 2D ni el 3D quedaron como queríamos y lo dejamos aparcado. Se juega tal cual está: si mucha gente quiere que vuelva, lo rehacemos con otra idea." data-etiquetas="Plataformas · Pixel art · Cooperativo" data-capturas="island-1.jpg island-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF ISLAND</h2>
+          <p>El prototipo (prueba). Plataformas cooperativo en píxel art, al estilo de los Yoshi’s Island, para 1 o 2 jugadores con CrazyBunny y SlyFox: salta, flota con las orejas, come zanahorias de poder, coge y lanza a tu compañero, rescátalo si se cae y colecciona las 60 zanahorias pequeñas, por un paisaje de acuarela. De momento, un nivel.</p>
+          <div class="row"><a class="play ol" href="games/island/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-skate" data-apk="skate" style="--wc: #e8731a" data-tipo="En pausa" data-pausa="Parado mientras terminamos los juegos grandes. Se juega tal cual está: si mucha gente quiere que vuelva, lo retomamos." data-etiquetas="Runner · Talentos" data-capturas="skate-1.jpg skate-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF SKATE</h2>
+          <p>El nuevo (prototipo). Carriles horizontales como un runner: CrazyBunny y los líderes sobre sus vehículos, esquivando las olas y los fajos de Microblizz. Con árbol de talentos y campaña de 12 mundos.</p>
+          <div class="row"><a class="play ol" href="games/skate/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+      </div>
+    </div>
   </section>
   <section class="sec" id="legal">
     <h2 class="sec ol">LO COMÚN</h2>
@@ -239,8 +256,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a369.c2cbca7"></script>
-<script src="core/js/novedades.js?v=c2cbca7"></script>
+<script src="core/js/nucleo.js?v=0-a370.2373ca0"></script>
+<script src="core/js/novedades.js?v=2373ca0"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -249,7 +266,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=c2cbca7"></script>
+<script src="core/js/sistema/cuenta.js?v=2373ca0"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -275,12 +292,12 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/ventana.js?v=c2cbca7"></script>
-<script src="biblioteca/tienda.js?v=c2cbca7"></script>
-<script src="biblioteca/cuenta-web.js?v=c2cbca7"></script>
-<script src="biblioteca/votos.js?v=c2cbca7"></script>
-<script src="biblioteca/alfa.js?v=c2cbca7"></script>
-<script src="core/js/sistema/analitica.js?v=c2cbca7"></script>
-<script src="pie.js?v=c2cbca7" defer></script>
+<script src="novedades/ventana.js?v=2373ca0"></script>
+<script src="biblioteca/tienda.js?v=2373ca0"></script>
+<script src="biblioteca/cuenta-web.js?v=2373ca0"></script>
+<script src="biblioteca/votos.js?v=2373ca0"></script>
+<script src="biblioteca/alfa.js?v=2373ca0"></script>
+<script src="core/js/sistema/analitica.js?v=2373ca0"></script>
+<script src="pie.js?v=2373ca0" defer></script>
 </body>
 </html>

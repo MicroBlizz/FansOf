@@ -7,10 +7,7 @@
 <link rel="stylesheet" href="../core/css/base.css">
 <link rel="stylesheet" href="../core/css/legal.css">
 <meta name="theme-color" content="#150b21"></head><body>
-<nav class="menu" aria-label="Menú">
-  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="../#en-pausa">En pausa</a><a href="../lore/">Lore</a><a href="../privacidad/">Privacidad</a><a href="../condiciones/" class="on" aria-current="page">Condiciones</a>
-  <span class="idiomas"><a href="#" data-l="es">ES</a> · <a href="#" data-l="en">EN</a> · <a href="#" data-l="">Auto</a></span>
-</nav>
+<script src="../menu.js" data-base="../" data-pagina="condiciones"></script>
 <main>
 <div lang="es"><h1>Condiciones de uso</h1><small>Fans Of · Actualizadas el 21 de octubre de 2026</small>
 <p>Al jugar a Fans Of aceptas estas condiciones. Son pocas y sencillas.</p>
@@ -62,6 +59,6 @@
 </main><script>
 (function(){var q=new URLSearchParams(location.search).get('lang'),l=q||(function(){try{return localStorage.getItem('fansof-idioma')}catch(e){}})()||navigator.language||'es';
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
-p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();var v=a.dataset.l;try{if(v)localStorage.setItem('fansof-idioma',v);else localStorage.removeItem('fansof-idioma')}catch(x){}p(v||(/^en/i.test(navigator.language||'')?'en':'es'))}})})();
+p(l);window.pagIdioma=p})();
 </script><script src="../pie.js" defer></script>
 </body></html>

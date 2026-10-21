@@ -1,8 +1,8 @@
 {
- "build": 383,
- "hash": "11b1a47",
- "fecha": "2026-10-21T18:38:16Z",
- "mensaje": "Gestion: pestana Flags (ver, abrir/cerrar, porcentaje, mensaje, crear y borrar) y servidor/69-gestion-flags.sql",
+ "build": 384,
+ "hash": "df87130",
+ "fecha": "2026-10-21T18:45:58Z",
+ "mensaje": "Gestion > Flags: solo abrir y cerrar; crear y borrar flags es cosa de desarrollo (CLAUDE.md)",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

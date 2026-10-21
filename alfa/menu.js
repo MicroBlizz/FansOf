@@ -21,11 +21,11 @@
     + '\n  <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>\n</nav>');
   // el botón de la cuenta: su estilo vive aquí (una sola vez para todas las páginas); la foto y el texto los pone pintaMenuCuenta
   const css = document.createElement('style');
-  css.textContent = 'nav.menu a.m-cuenta { color: var(--gold); }\n'
-    + 'nav.menu a.m-cuenta.dentro { color: var(--player-lite, #9fd8ff); display: inline-flex; align-items: center; gap: 7px; }\n'
-    + 'nav.menu a.m-cuenta.dentro::before, nav.menu a.m-cuenta.dentro::after { content: ""; width: 2px; height: 18px; background: var(--ink-dim); opacity: .55; border-radius: 1px; }\n'
-    + 'nav.menu a.m-cuenta.dentro::before { order: -2; margin-right: 6px; }\n'
-    + 'nav.menu a.m-cuenta.dentro::after { margin-left: 6px; }\n'
+  css.textContent = 'nav.menu a.m-cuenta { color: var(--gold); display: inline-flex; align-items: center; gap: 7px; }\n'
+    + 'nav.menu a.m-cuenta.dentro { color: var(--player-lite, #9fd8ff); }\n'
+    + 'nav.menu a.m-cuenta::before, nav.menu a.m-cuenta::after { content: ""; width: 3px; height: 22px; background: rgba(255, 255, 255, .6); border-radius: 2px; flex: none; }\n'
+    + 'nav.menu a.m-cuenta::before { order: -2; margin-right: 8px; }\n'
+    + 'nav.menu a.m-cuenta::after { margin-left: 8px; }\n'
     + 'nav.menu a.m-cuenta .m-foto { order: -1; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--outline); object-fit: cover; }';
   document.head.append(css);
   const cta = document.getElementById('m-cuenta');

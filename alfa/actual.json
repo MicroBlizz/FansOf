@@ -1,8 +1,8 @@
 {
- "build": 390,
- "hash": "c15a036",
- "fecha": "2026-10-21T23:11:55Z",
- "mensaje": "Cabecera de la web igual en todas las paginas, Entrar / Mi cuenta incluido (en las demas paginas lleva a la portada, que abre la cuenta)",
+ "build": 391,
+ "hash": "dc7ffac",
+ "fecha": "2026-10-21T23:14:34Z",
+ "mensaje": "Menu: separadores a los lados de Entrar / Mi cuenta mas gruesos y claros, tambien sin sesion",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

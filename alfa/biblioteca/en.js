@@ -136,6 +136,9 @@ IDIOMA.add({
   "Puzle": "Puzzle",
   "Saltos": "Jumping",
   "Tres en raya": "Match-3",
+  // REDES (botones de la portada, index.html)
+  "SÍGUENOS EN X": "FOLLOW US ON X",
+  "ÚNETE AL DISCORD": "JOIN THE DISCORD",
   "ALFA": "ALPHA",
   "Copia de pruebas con lo último de main.": "Test copy with the latest build."
 });

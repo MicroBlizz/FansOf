@@ -1,8 +1,8 @@
 {
- "build": 372,
- "hash": "7fe772f",
- "fecha": "2026-10-21T13:01:21Z",
- "mensaje": "Menu: separadores a cada lado de Mi cuenta y foto del perfil publico de Google si entraste con Google",
+ "build": 373,
+ "hash": "167fd7f",
+ "fecha": "2026-10-21T17:17:29Z",
+ "mensaje": "Web: enlaces a X y Discord (botones en la portada y línea en el pie de todas las páginas)",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

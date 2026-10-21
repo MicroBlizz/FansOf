@@ -1,8 +1,8 @@
 {
- "build": 382,
- "hash": "e2d55e0",
- "fecha": "2026-10-21T18:16:03Z",
- "mensaje": "Jump 0.3.6: siete arreglos de la revisión (tutorial sin fin, reloj atrás, seguir en tortuga, órdenes sin pagar, piel de prueba, congelaciones, cobro doble)",
+ "build": 383,
+ "hash": "11b1a47",
+ "fecha": "2026-10-21T18:38:16Z",
+ "mensaje": "Gestion: pestana Flags (ver, abrir/cerrar, porcentaje, mensaje, crear y borrar) y servidor/69-gestion-flags.sql",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

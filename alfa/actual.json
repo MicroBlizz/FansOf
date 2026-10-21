@@ -1,22 +1,22 @@
 {
- "build": 378,
- "hash": "5fcef48",
- "fecha": "2026-10-21T17:54:18Z",
- "mensaje": "Fans of Snakes: prototipo de la demo (Frenesí, Demolición y locuras Retro y Espejo)",
+ "build": 379,
+ "hash": "0166a7d",
+ "fecha": "2026-10-21T17:54:42Z",
+ "mensaje": "Versiones y notas del despliegue: todos los juegos (core cambió: datos de partida anónimos en Opciones, © y etiqueta de tipo en la promo)",
  "juegos": {
-  "crush": "0.1.27",
+  "crush": "0.1.28",
   "dark": "0.2.7",
-  "decks": "0.2.9",
+  "decks": "0.2.10",
   "island": "0.3.5",
-  "jump": "0.3.4",
+  "jump": "0.3.5",
   "karts": "0.7.4",
-  "nova": "0.3.14",
-  "ratkov": "0.2.17",
-  "rouflage": "0.2.40",
-  "rumble": "0.9.146",
+  "nova": "0.3.15",
+  "ratkov": "0.2.18",
+  "rouflage": "0.2.41",
+  "rumble": "0.9.147",
   "skate": "0.1.27",
-  "survivors": "0.1.59",
-  "tacticas": "0.1.43",
-  "td": "0.13.75"
+  "survivors": "0.1.60",
+  "tacticas": "0.1.44",
+  "td": "0.13.76"
  }
 }

@@ -33,7 +33,7 @@ function dcCombateNuevo(encuentro, tramo) {
   const mad = C.pila.filter(c => dcFx(c).madrugador); if (mad.length) C.pila = C.pila.filter(c => !dcFx(c).madrugador).concat(mad);
   C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = Math.max(2, C.salto.carga - dcObjeto('zanahoriaoro').carga);
   if (dcVentaja() && dcVentaja().carga) C.salto.carga = Math.max(2, C.salto.carga - dcVentaja().carga);
-  C.companeros = []; C.protocolos = [];   // los compañeros que se quedan en la mesa y los protocolos armados
+  C.companeros = []; C.protocolos = []; dcGancho('alSalto', C);   // los compañeros que se quedan en la mesa y los protocolos armados
   // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.
   for (const rv of C.rivales) dcAnuncia(C, rv);
   if (dcObjeto('alfombrilla')) C.bloqueo += dcObjeto('alfombrilla').bloqueoInicial;
@@ -133,6 +133,7 @@ function dcResuelve(C, c, obj, gratis) {
   if (fx.blindaje) C.blindaje += fx.blindaje;
   if (fx.fuerza) C.fuerza += fx.fuerza;
   if (fx.fuerzaTurno) C.fuerzaTurno += fx.fuerzaTurno;
+  if (fx.carga) C.saltoCarga += fx.carga;
   if (fx.poder) C.poderes[fx.poder] = (C.poderes[fx.poder] || 0) + fx.n;
   if (fx.roba) dcRoba(C, fx.roba);
   if (D.tipo === 'empleado') C.tropasTurno++;
@@ -150,6 +151,7 @@ function dcUsaSalto(C) {
   if (S.caos) C.caos += S.caos;
   if (S.roba) dcRoba(C, S.roba);
   if (C.salto.invoca) for (let k = 0; k < C.salto.n; k++) { C.companeros.push({ id: C.salto.invoca, asc: false, turnos: dcFx({ id: C.salto.invoca }).turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); } C.log.push(tr('¡{jugada}!', { jugada: tr(C.salto.nombre) }));
+  dcGancho('alSalto', C, true);
   dcCompruebaFin(C); return true;
 }
 function dcUsaMerienda(C, i) {

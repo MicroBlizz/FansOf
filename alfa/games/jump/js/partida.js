@@ -32,7 +32,7 @@ function nuevaPartida(modo = 'menu') {
   Object.assign(JUEGO, {
     modo, t: 0, puntos: 0, metros: 0, zanas: 0, rescatados: 0, cuestas: [], caen: [], fin: null, tFin: 0, temblor: 0,
     racha: 0, maxRacha: 0, enTronco: 0, perfSeguidos: 0, cadena: 0, perfectos: 0, saltos: 0, maxCuestas: 0, fiebre: 0, fiebres: 0,
-    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, reloj: 0, cohete: false, seguido: false, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0,
+    liberados: [], viajes: {}, cayeron: 0, zorroUsado: false, tutoHecho: false, recordReto: false, lento: 0, mirilla: 0, iman: 0, super: 0, escudo: false, reloj: 0, cohete: false, seguidos: 0, casi: null, duplicado: false, metas: [], hechas: [], kit: {}, casco: false, cafe: 0, ganadas: 0, tramo: '',
   });
   JUEGO.conejo = { x, wy: 0, tronco: t, ox: 0, owy: 0, ang: 0, salto: null, hunde: 0, cae: 0, ultimo: t };
   reiniciaOla(0); reiniciaDron(); acabaMuerte(); ROTURA.trozos.length = ROTURA.astillas.length = ROTURA.serrin.length = 0;
@@ -193,8 +193,9 @@ function apuntaPartida(motivo) {
   const J = JUEGO, record = J.puntos > GUARDA.mejor;
   cierraRetoYHuella(record);
   if (record) { GUARDA.mejorSeg = J.t - FANTASMA.t0; subeMarca(J.puntos, J.metros, GUARDA.mejorSeg); }   // al ranking mundial (ranking.js)
+  J.antesM = GUARDA.mejorM;   // para «te faltaron … m» en el parte (pantalla.js)
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
-  GUARDA.partidas++; GUARDA.rescatados += J.rescatados;
+  GUARDA.partidas++; GUARDA.rescatados += J.rescatados; apuntaAyuda(J.metros);
   const premio = cierraMisiones();
   J.ganadas = J.zanas + premio;
   GUARDA.zanas += J.ganadas;
@@ -236,6 +237,7 @@ function avanzaJuego(dt) {
   c.ang += (obj - c.ang) * Math.min(1, dt * (s ? 14 : 2.5));
   if (J.modo === 'juego') {
     J.metros = Math.max(J.metros, Math.floor(c.wy / 10));
+    const tm = tramo(c.wy); if (tm !== J.tramo) { if (tm === 'respiro') bandera(tr('¡Respiro!'), PASTEL.menta); else if (tm === 'apreton') bandera(tr('¡Apretón!'), PASTEL.melocoton); J.tramo = tm; }
     J.fiebre = Math.max(0, J.fiebre - dt); J.cafe = Math.max(0, J.cafe - dt);
     if (J.cafe <= 0 && !tutoFrena()) avanzaOla(dt, c.wy, J.metros);
     // en la fiebre, las zanahorias de los troncos cercanos vienen solas

@@ -39,10 +39,22 @@ function orillas(wy) {
 
 /* ---------- los troncos cortados (los «nenúfares») ---------- */
 const APLASTA = 0.8;
-// el principio es más fácil para que enganche: hasta los 220 m los troncos van más juntos, son más grandes, se mueven menos
-// y perdonan más al caer; luego la dificultad sube poco a poco (medido con robots: herramientas/jump_bots.js)
-const FACIL_HASTA = 2200;
-const facilidad = wy => Math.max(0, 1 - wy / FACIL_HASTA);   // los troncos se ven un poco de lado: más anchos que altos
+// La curva de dificultad (medida con robots: herramientas/jump_bots.js):
+// · el principio es más fácil para que enganche: hasta los 400 m los troncos van más juntos, son más grandes, se mueven menos
+//   y perdonan más al caer (FACIL_HASTA), y la dificultad no llega al máximo hasta los 650 m (DIF_MAX);
+// · desde los 450 m el río va por tramos de 100 m: un trozo normal, un apretón (más difícil) y un respiro (troncos juntos,
+//   quietos y con muchas zanahorias), para que haya tensión y alivio en vez de una cuesta sin fin;
+// · la ayuda invisible (ayuda.js, tras su interruptor): si caes pronto varias partidas seguidas, el principio de la siguiente
+//   es un poco más amable.
+const FACIL_HASTA = 4000, DIF_MAX = 6500, TRAMOS_DESDE = 4500, TRAMO = 1000, APRETON = 650, RESPIRO = 850;
+function tramo(wy) {
+  if (wy < TRAMOS_DESDE) return '';
+  const p = (wy - TRAMOS_DESDE) % TRAMO;
+  return p < APRETON ? '' : p < RESPIRO ? 'apreton' : 'respiro';
+}
+const facilidad = wy => Math.min(1, Math.max(0, 1 - wy / FACIL_HASTA, tramo(wy) === 'respiro' ? 0.7 : 0) + ayudaEn(wy));
+const dificultad = wy => { const k = tramo(wy); return Math.min(1, wy / DIF_MAX + (k === 'apreton' ? 0.12 : 0)) * (k === 'respiro' ? 0.5 : 1); };
+// los troncos se ven un poco de lado: más anchos que altos
 function dentroTronco(t, x, wy, margen = 0) {
   const dx = (x - t.x) / (t.r + margen), dy = (wy - t.wy) / ((t.r + margen) * APLASTA);
   return dx * dx + dy * dy;
@@ -58,7 +70,7 @@ function nuevoTronco(x, wy, r, dif, facil = 0) {
 // pone troncos hasta la altura «hasta»: cada fila queda al alcance de la anterior, a veces con otro al lado
 function generaRio(hasta) {
   while (RIO.ultimo.wy < hasta && !RIO.cerrado) {
-    const prev = RIO.ultimo, dif = Math.min(1, prev.wy / 3500), facil = facilidad(prev.wy);
+    const prev = RIO.ultimo, dif = dificultad(prev.wy), facil = facilidad(prev.wy), respiro = tramo(prev.wy) === 'respiro';
     const wy = prev.wy + azarR(52, 66) + dif * 16 - facil * 12;
     // a los 9.999 m se acaba el río: un último tronco grande y quieto delante de la madriguera (final.js)
     if (wy >= FINAL_WY - 70) { const t = nuevoTronco(PAN.W / 2, Math.min(wy, FINAL_WY - 30), 28, 0); t.vx = 0; t.final = true; RIO.ultimo = t; RIO.cerrado = true; break; }
@@ -83,9 +95,9 @@ function generaRio(hasta) {
       if (n - RIO.ultimoAmigo >= 3 && rnd() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
       } else if (wy > 500 && rnd() < 0.075) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
-      else if (rnd() < 0.24) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
+      else if (rnd() < (respiro ? 0.6 : 0.24)) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
-      if (!f.amigo && !f.objeto) {
+      if (!f.amigo && !f.objeto && !respiro) {
         const k = rnd();
         if (wy > 1500 && k < 0.06 + dif * 0.14) { f.tipo = 'hunde'; f.vx = 0; f.pisa = 0; }
         else if (wy > 2500 && k < 0.1 + dif * 0.18) { f.tipo = 'tortuga'; f.vx = 0; f.ciclo = rnd() * TORTUGA_CICLO; f.bajo = 0; }   // fauna.js

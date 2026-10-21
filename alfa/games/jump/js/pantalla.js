@@ -176,7 +176,7 @@ function pintaFinal() {
   const e = Math.min(1, (J.tFin - 2.6) / 0.25), sube = (1 - e) * 30;
   G.fillStyle = `rgba(40,25,60,${0.42 * e})`; G.fillRect(0, 0, W, H);
   G.globalAlpha = e;
-  const res = J.resumenMisiones || [], cw = W - 26, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
+  const res = J.resumenMisiones || [], cw = W - 26, faltan = (J.antesM || 0) - J.metros, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0) + (faltan > 0 ? 10 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
   // la hoja del parte, con su cinta de arriba
   caja(cx + 2, cy + 3, cw, chh, 4, 'rgba(40,25,60,0.35)', null);
   caja(cx, cy, cw, chh, 4, PASTEL.papel, OLC, 1);
@@ -198,6 +198,8 @@ function pintaFinal() {
   letras(tr('Huida') + ': ' + J.metros + ' m', cx + 10, y, 8, PASTEL.texto, { alin: 'left' });
   letras(tr('Mejor') + ': ' + GUARDA.mejor.toLocaleString('es-ES') + ' €', cx + cw - 10, y, 8, PASTEL.texto, { alin: 'right' });
   y += 12;
+  // si casi bates tu huida más larga, te lo dice: dan ganas de otra
+  if (faltan > 0) { letras(tr('¡Te faltaron {n} m para tu huida más larga!', { n: faltan }), W / 2, y - 1, 7, PASTEL.melocotonO, { peso: 800 }); y += 10; }
   letras(tr('Empleados liberados') + ':', cx + 10, y, 8, PASTEL.texto, { alin: 'left' });
   if (J.liberados.length) J.liberados.forEach((id, i) => spriteEnCaja(id + '_susto0', cx + 86 + i * 13, y - 6.5, 12, 13, 0.3));
   else letras(tr('ninguno'), cx + 92, y, 7.5, PASTEL.flojo, { alin: 'left', peso: 700 });

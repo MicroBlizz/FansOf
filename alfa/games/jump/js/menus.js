@@ -57,7 +57,7 @@ function posit(x, y, w, h, color, ang, m) {
 function pintaPortada() {
   const W = PAN.W, H = PAN.H, t = JUEGO.t;
   pastillaZanas(7, 8);
-  pintaCofre(20, 46, t);   // el cofre de Lola, con anuncio (anuncios.js)
+  pintaCofre(20, 46, t);   // el regalo diario de Lola, gratis (regalo.js)
   if (GUARDA.mejor) {
     const r = tr('Mejor') + ' ' + GUARDA.mejor.toLocaleString('es-ES') + ' €', w = anchoLetras(r, 8.5) + 22;
     caja(W / 2 - w / 2, 8, w, 15, 3, PASTEL.oro, OLC, 0.8); iconoCorona(W / 2 - w / 2 + 9, 15.5); letras(r, W / 2 + 5, 15.8, 8.5, PASTEL.texto);
@@ -208,4 +208,5 @@ function pintaPanel() {
   else if (PANEL.abierto === 'guia') pintaGuia();
   else if (PANEL.abierto === 'ajustes') pintaAjustes();
   else if (PANEL.abierto === 'records') pintaRecords();
+  else if (PANEL.abierto === 'regalo') pintaRegalo();
 }

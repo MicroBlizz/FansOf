@@ -1,8 +1,8 @@
 {
- "build": 368,
- "hash": "fb911ed",
- "fecha": "2026-10-21T11:11:29Z",
- "mensaje": "Docker interno fuera de lo publicado; pie.js sin pedir build.json en local",
+ "build": 369,
+ "hash": "c2cbca7",
+ "fecha": "2026-10-21T11:26:45Z",
+ "mensaje": "Skill balance (para cualquier juego con balanceo) con sus reglas anti-bucle y el registro de juegos; fondo de las paginas sin corte al bajar, bandas lila alternas y pie con el color del menu en la portada, menu con Privacidad y Condiciones directos",
  "juegos": {
   "crush": "0.1.27",
   "dark": "0.2.7",

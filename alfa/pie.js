@@ -8,11 +8,18 @@
   let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
   const derechos = 'Fans Of™ · © 2026 ' + (en ? 'Arkioner and Pepins · MicroBlizz · All rights reserved' : 'Arkioner y Pepins · MicroBlizz · Todos los derechos reservados');
+  const HUECO = '56px', FONDO = '#150b21';   // FONDO: el del menú
   const poner = txt => {
     let el = document.getElementById('pie-fansof');
-    if (el) { const s = document.createElement('span'); s.className = 'pie-build'; s.textContent = ' · ' + txt; el.appendChild(s); return; }
-    el = document.createElement('p'); el.id = 'pie-fansof'; el.style.cssText = 'text-align:center;margin:28px 12px 18px;font:600 12px/1.5 system-ui,sans-serif;opacity:.7';
-    el.textContent = derechos + ' · ' + txt; document.body.appendChild(el);
+    if (el) { const s = document.createElement('span'); s.className = 'pie-build'; s.textContent = ' · ' + txt; el.appendChild(s); }
+    else {
+      // la misma letra que la línea de la portada (p.note)
+      el = document.createElement('p'); el.id = 'pie-fansof'; el.style.cssText = 'text-align:center;margin:40px 0 0;font:600 13px/1.5 var(--font-ui, "Baloo 2", system-ui, sans-serif);color:var(--ink-dim, #cdb9ea)';
+      el.textContent = derechos + ' · ' + txt; document.body.appendChild(el);
+    }
+    // el pie es una banda del color del menú, a todo el ancho; el hueco de abajo (dentro de la banda) deja libre lo que va fijo en la esquina (la franja ALFA, el botón DEV)
+    el.style.background = FONDO; el.style.boxShadow = '0 0 0 100vmax ' + FONDO; el.style.clipPath = 'inset(0 -100vmax)'; el.style.padding = '22px 16px ' + HUECO; el.style.marginBottom = '0'; el.style.maxWidth = 'none';
+    const m = el.closest('main'); if (m) { m.style.paddingBottom = '0'; m.style.marginBottom = '0'; }
   };
   const etiqueta = b => {
     const f = b.fecha ? new Date(b.fecha).toLocaleString(en ? 'en-GB' : 'es-ES', { dateStyle: 'medium', timeStyle: 'short' }) : '';

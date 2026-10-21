@@ -1,6 +1,6 @@
 /* Fans Of · páginas LEGALES (privacidad/ y condiciones/): el mismo aspecto que Lore (fuentes, colores y barra de menú de core/css/base.css), con un texto largo cómodo de leer.
    Cada bloque de idioma lleva lang="es" o lang="en"; solo se ve el que tiene la clase «on» (lo pone el script de la propia página). */
-body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; user-select: text; -webkit-user-select: text; }
+body { overflow: auto; touch-action: auto; align-items: flex-start; display: block; user-select: text; -webkit-user-select: text; background-repeat: no-repeat; background-attachment: fixed; }
 nav.menu { position: sticky; top: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
 nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
 nav.menu a:hover, nav.menu a:focus-visible, nav.menu a.on { color: var(--gold); outline: none; }

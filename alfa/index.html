@@ -10,15 +10,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=fb911ed">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=fb911ed">
-<link rel="stylesheet" href="novedades/ventana.css?v=fb911ed">
-<link rel="stylesheet" href="biblioteca/votos.css?v=fb911ed">
+<link rel="stylesheet" href="core/css/base.css?v=c2cbca7">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=c2cbca7">
+<link rel="stylesheet" href="novedades/ventana.css?v=c2cbca7">
+<link rel="stylesheet" href="biblioteca/votos.css?v=c2cbca7">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
-  body { overflow: auto; touch-action: auto; align-items: flex-start; }
+  body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
   html { scroll-behavior: smooth; }
-  main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 40px; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
+  main { width: 100%; max-width: 640px; box-sizing: border-box; padding: 0 20px 0; display: flex; flex-direction: column; align-items: center; gap: 0; text-align: center; }
+  /* Bandas a todo el ancho, de lila oscuro y lila claro, una por sección (y el pie del color del menú). La sombra y el recorte las sacan a los lados sin tocar la maquetación. */
+  main > section.hero, main > section.sec { --banda: #231333; background: var(--banda); box-shadow: 0 0 0 100vmax var(--banda); clip-path: inset(0 -100vmax); box-sizing: border-box; }
+  main > section.sec { padding: 28px 0 34px; }
+  main > section:nth-of-type(even) { --banda: #160b25; }
   /* menú fijo arriba: secciones de la landing y las partes comunes (privacidad, condiciones) */
   nav.menu { position: fixed; top: 0; left: 0; right: 0; z-index: 5; box-sizing: border-box; background: #150b21; border-bottom: 3px solid var(--outline); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px 18px; padding: 10px 12px; }
   nav.menu a { color: var(--ink); text-decoration: none; font-family: var(--font-display); font-size: 16px; padding: 4px 2px; }
@@ -38,12 +42,12 @@
   h1 .l1 { display: block; font-size: 42px; letter-spacing: 2px; }
   h1 .l2 { display: block; font-size: 96px; color: var(--player); transform: rotate(-4deg); margin: 10px 0 6px; }
   p.sub { font-weight: 800; font-size: 18px; color: var(--ink-dim); margin: 0 0 6px; }
-  p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 6px 0 0; max-width: 460px; }
+  p.note { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin: 0; max-width: 460px; }
 </style>
 </head>
 <body>
 <nav class="menu" aria-label="Menú">
-  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="#en-pausa">En pausa</a><a href="lore/">Lore</a><a href="#legal">Privacidad y condiciones</a>
+  <a href="#inicio">Inicio</a><a href="#novedades" id="abrir-novedades">Novedades</a><a href="#biblioteca">Biblioteca</a><a href="#en-pausa">En pausa</a><a href="lore/">Lore</a><a href="privacidad/">Privacidad</a><a href="condiciones/">Condiciones</a>
   <a href="#" id="m-cuenta" class="m-cuenta" hidden>Entrar</a>
   <span class="idiomas"><a href="#" data-idioma="es">ES</a> · <a href="#" data-idioma="en">EN</a> · <a href="#" data-idioma="">Auto</a></span>
 </nav>
@@ -235,8 +239,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a368.fb911ed"></script>
-<script src="core/js/novedades.js?v=fb911ed"></script>
+<script src="core/js/nucleo.js?v=0-a369.c2cbca7"></script>
+<script src="core/js/novedades.js?v=c2cbca7"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -245,7 +249,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=fb911ed"></script>
+<script src="core/js/sistema/cuenta.js?v=c2cbca7"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -271,12 +275,12 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/ventana.js?v=fb911ed"></script>
-<script src="biblioteca/tienda.js?v=fb911ed"></script>
-<script src="biblioteca/cuenta-web.js?v=fb911ed"></script>
-<script src="biblioteca/votos.js?v=fb911ed"></script>
-<script src="biblioteca/alfa.js?v=fb911ed"></script>
-<script src="core/js/sistema/analitica.js?v=fb911ed"></script>
-<script src="pie.js?v=fb911ed" defer></script>
+<script src="novedades/ventana.js?v=c2cbca7"></script>
+<script src="biblioteca/tienda.js?v=c2cbca7"></script>
+<script src="biblioteca/cuenta-web.js?v=c2cbca7"></script>
+<script src="biblioteca/votos.js?v=c2cbca7"></script>
+<script src="biblioteca/alfa.js?v=c2cbca7"></script>
+<script src="core/js/sistema/analitica.js?v=c2cbca7"></script>
+<script src="pie.js?v=c2cbca7" defer></script>
 </body>
 </html>

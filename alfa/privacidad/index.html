@@ -8,8 +8,8 @@
 <link rel="stylesheet" href="../core/css/legal.css">
 <meta name="theme-color" content="#150b21"></head><body>
 <nav class="menu" aria-label="Menú">
-  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="../lore/">Lore</a><a href="../privacidad/" class="on" aria-current="page">Privacidad</a><a href="../condiciones/">Condiciones</a>
-  <span class="idiomas"><a href="#" data-l="es">ES</a> · <a href="#" data-l="en">EN</a></span>
+  <a href="../">Inicio</a><a href="../#biblioteca">Biblioteca</a><a href="../#en-pausa">En pausa</a><a href="../lore/">Lore</a><a href="../privacidad/" class="on" aria-current="page">Privacidad</a><a href="../condiciones/">Condiciones</a>
+  <span class="idiomas"><a href="#" data-l="es">ES</a> · <a href="#" data-l="en">EN</a> · <a href="#" data-l="">Auto</a></span>
 </nav>
 <main>
 <div lang="es"><h1>Política de privacidad</h1><small>Fans Of · Actualizada el 21 de octubre de 2026</small>
@@ -82,7 +82,7 @@
 </main><script>
 (function(){var q=new URLSearchParams(location.search).get('lang'),l=q||(function(){try{return localStorage.getItem('fansof-idioma')}catch(e){}})()||navigator.language||'es';
 l=/^en/i.test(l)?'en':'es';function p(x){document.documentElement.lang=x;document.querySelectorAll('[lang]').forEach(function(e){e.classList.toggle('on',e.getAttribute('lang')===x)})}
-p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();p(a.dataset.l)}})})();
+p(l);document.querySelectorAll('[data-l]').forEach(function(a){a.onclick=function(e){e.preventDefault();var v=a.dataset.l;try{if(v)localStorage.setItem('fansof-idioma',v);else localStorage.removeItem('fansof-idioma')}catch(x){}p(v||(/^en/i.test(navigator.language||'')?'en':'es'))}})})();
 </script>
 <script src="../core/js/sistema/analitica.js"></script><script src="../pie.js" defer></script>
 </body></html>

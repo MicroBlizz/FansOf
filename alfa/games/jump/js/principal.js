@@ -19,10 +19,9 @@ function ajusta() {
 let ultimo = performance.now();
 function fotograma(ahora) {
   const dt = Math.min(0.05, Math.max(0, (ahora - ultimo) / 1000)); ultimo = ahora;
-  avanzaJuego(dt);
-  vigilaMusica();
-  G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0);
-  pintaTodo();
+  // un error en un fotograma se apunta (core/errores.js lo manda al servidor) y el siguiente fotograma sigue: así nunca se congela la pantalla
+  try { avanzaJuego(dt); vigilaMusica(); G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0); pintaTodo(); }
+  catch (e) { console.error(e); G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0); if (typeof ERRORES !== 'undefined' && ERRORES.registrar) ERRORES.registrar('js', 'jump/fotograma', String(e && e.stack || e)); }
   requestAnimationFrame(fotograma);
 }
 

@@ -21,15 +21,23 @@ function chipProbar(x, y, campo, valor) {
   caja(x - w - 2, y + 2, w, 9, 4, PASTEL.oro, OLC, 0.6); letras(tr('Probar'), x - w / 2 - 2, y + 6.8, 5.6, PASTEL.texto, { peso: 800 });
   boton(x - w - 5, y, w + 6, 13, () => verAnuncio(() => {
     cuentaAnuncio();
-    GUARDA.prueba = { campo, antes: GUARDA[campo] }; GUARDA[campo] = valor; salvaGuarda();
+    GUARDA.prueba = { campo, antes: GUARDA[campo], valor }; GUARDA[campo] = valor; salvaGuarda();
     bandera(tr('¡Pruébalo en tu próxima partida!'), PASTEL.oro); SONIDO.compra();
   }));
 }
 // al acabar la partida, la piel de prueba se devuelve
+// (solo si sigues con ella puesta: si durante la partida te pusiste otra, o compraste la que probabas, eso se queda)
 function acabaPrueba() {
   const p = GUARDA.prueba;
   if (!p) return;
-  GUARDA[p.campo] = p.antes; delete GUARDA.prueba; salvaGuarda();
+  if (GUARDA[p.campo] === p.valor && !tengoPiel(p.campo, p.valor)) GUARDA[p.campo] = p.antes;
+  delete GUARDA.prueba; salvaGuarda();
+}
+// ¿esa piel ya es tuya? (las gratis del puesto, o las compradas)
+function tengoPiel(campo, valor) {
+  const L = { pelaje: ['pelaje', 'pelo'], capa: ['capas', 'capa'], piel: ['troncos', 'piel'], estela: ['estelas', 'estela'] }[campo];
+  const it = L && PUESTO[L[0]].find(x => x[0] === valor);
+  return !!it && (it[1] === 0 || !!GUARDA.tengo[L[1] + valor]);   // las claves de lo comprado: pelo#…, capa#…, pielnube, estelanotas (puesto.js)
 }
 
 /* ---------- la tienda con euros (apagada) ---------- */

@@ -41,6 +41,20 @@ function avanzaEspeciales(dt) {
 }
 // ¿se puede caer en él ahora? (la tortuga sumergida, no)
 const troncoPisable = t => !(t.tipo === 'tortuga' && t.bajo > 0.55);
+// a qué tronco volver cuando te sacan del agua (casco, MeerCat, Lola en el tutorial o la segunda oportunidad): el último que
+// pisaste si sigue ahí y se puede pisar, y si no, el más alto por debajo de ti que no esté hundido ni a punto de hundirse y
+// quede por delante de la ola; si es una tortuga, sale a flote, y si está agrietado, se le cura la grieta. Así nunca pagas
+// una oportunidad para morir en el mismo instante.
+function troncoSeguro(c, margenOla = 20) {
+  const vale = o => o.wy > OLA.wy + margenOla && !(o.tipo === 'tortuga' && (o.bajo > 0.2 || o.ciclo > 2.6)) && !o.final;
+  let t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) ? c.ultimo : null;
+  if (!t) t = RIO.troncos.filter(o => o.wy <= c.wy + 10 && vale(o)).sort((a, b) => b.wy - a.wy)[0];
+  if (!t) t = RIO.troncos.filter(o => o.wy > OLA.wy + margenOla && o.tipo !== 'tortuga').sort((a, b) => a.wy - b.wy)[0];
+  if (!t) t = RIO.troncos[RIO.troncos.length - 1];
+  if (t.tipo === 'tortuga') { t.ciclo = 0; t.bajo = 0; }
+  if (t.tipo === 'hunde') t.pisa = 0;
+  return t;
+}
 function alCaerEspecial(t) {
   const c = JUEGO.conejo;
   if (t.tipo === 'peonza' && Math.hypot(c.ox, c.owy / APLASTA) > t.r * 0.25) { aviso(tr('¡Wiii!'), c.x, c.wy + 34, '#c46aff', 10); SONIDO.boing(); }

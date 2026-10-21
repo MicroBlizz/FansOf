@@ -19,7 +19,8 @@ const tutoFrena = () => TUTO.paso >= 0 && TUTO.paso < 3;
 
 // al empezar una partida: el tutorial va si aún no lo has hecho
 function preparaTuto() {
-  TUTO.paso = GUARDA.tuto || RETO.activo ? -1 : 0; TUTO.t = 0; TUTO.intentos = 0; TUTO.troncos = [];
+  TUTO.paso = GUARDA.tuto || RETO.activo ? -1 : 0; TUTO.t = 0; TUTO.intentos = 0; TUTO.caidas = 0; TUTO.troncos = [];
+  TUTO.repaso = GUARDA.tuto === false && GUARDA.partidas > 0;   // «Repetir el tutorial»: esa partida no cuenta (ni récord, ni ranking, ni zanahorias)
   return tutoActivo() ? TUTO_RIO : null;
 }
 function pasoTuto(n) {
@@ -37,7 +38,7 @@ function tutoCae(perfecto, rescate) {
 // al agua durante el tutorial: Lola te saca y vuelves al último tronco
 function tutoAgua() {
   if (!tutoFrena()) return false;
-  const c = JUEGO.conejo, t = c.ultimo && RIO.troncos.includes(c.ultimo) ? c.ultimo : RIO.troncos[0];
+  const c = JUEGO.conejo, t = troncoSeguro(c, -9999); TUTO.caidas = (TUTO.caidas || 0) + 1;
   onda(c.x, c.wy, 8); salpica(c.x, c.wy, 10, 'rgba(255,255,255,0.95)');
   Object.assign(c, { tronco: t, ox: 0, owy: 0, x: t.x, wy: t.wy, cae: 1 }); JUEGO.enTronco = 0;
   aviso(tr('¡Otra vez!'), c.x, c.wy + 30, '#9fe3ff', 10); SONIDO.uy();
@@ -46,6 +47,8 @@ function tutoAgua() {
 function avanzaTuto(dt) {
   if (!tutoActivo()) return;
   TUTO.t += dt;
+  // sin trucos: en los pasos sin ola no se puede correr sin fin (a los 60 m o a la quinta caída al agua, Lola suelta la ola)
+  if (tutoFrena() && (JUEGO.metros >= 60 || TUTO.caidas >= 5)) pasoTuto(3);
   if (TUTO.paso === 3 && TUTO.t > 4.5) TUTO.paso = -1;
 }
 

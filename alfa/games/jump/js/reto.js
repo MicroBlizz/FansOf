@@ -5,13 +5,13 @@
 //   lila transparente repite tu mejor partida a tu lado (en el reto, tu mejor de hoy).
 'use strict';
 
-const RETO = { activo: false };
+const RETO = { activo: false, dia: '' };   // dia: el del reto que se está jugando (se fija al empezar: si pasa la medianoche, la marca va a ese día)
 const FANTASMA = { huella: [], t0: 0 };
 function semillaDe(txt) { let h = 2166136261; for (const ch of txt) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; }
 function azarFijo(a) { return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 // antes de hacer el río: en el reto, el azar del día
-function preparaAzar() { rnd = RETO.activo ? azarFijo(semillaDe('fansof-jump-' + hoy())) : Math.random; }
-const retoDeHoy = () => GUARDA.reto && GUARDA.reto.dia === hoy() ? GUARDA.reto : null;
+function preparaAzar() { if (RETO.activo) RETO.dia = hoy(); rnd = RETO.activo ? azarFijo(semillaDe('fansof-jump-' + RETO.dia)) : Math.random; }
+const retoDeHoy = () => GUARDA.reto && GUARDA.reto.dia === (RETO.activo ? RETO.dia : hoy()) ? GUARDA.reto : null;
 function empiezaReto() { RETO.activo = true; nuevaPartida('listo'); SONIDO.boton(); }
 function vuelveAlMenu() { RETO.activo = false; nuevaPartida('menu'); SONIDO.boton(); }
 
@@ -23,7 +23,7 @@ function cierraRetoYHuella(record) {
   const J = JUEGO;
   if (RETO.activo) {
     const r = retoDeHoy();
-    if (!r || J.puntos > r.mejor) { GUARDA.reto = { dia: hoy(), mejor: J.puntos, fantasma: FANTASMA.huella }; J.recordReto = true; }
+    if (!r || J.puntos > r.mejor) { GUARDA.reto = { dia: RETO.dia, mejor: J.puntos, fantasma: FANTASMA.huella }; J.recordReto = true; }
   } else if (record) GUARDA.fantasma = FANTASMA.huella;
 }
 const huellaFantasma = () => RETO.activo ? (retoDeHoy() || {}).fantasma : GUARDA.fantasma;

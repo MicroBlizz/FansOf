@@ -187,7 +187,7 @@ function pintaFinal() {
   let y = cy + 26;
   letras(tr('Empleado') + ': CrazyBunny', cx + 10, y, 8, PASTEL.texto, { alin: 'left' });
   letras(tr('Motivo') + ': ' + tr(MOTIVO_FIN[F_.motivo]), cx + 10, y + 10, 7.5, PASTEL.suave, { alin: 'left', peso: 700 });
-  if (RETO.activo) letras(tr('Reto del día') + ': ' + retoDeHoy().mejor.toLocaleString('es-ES') + ' €', cx + 10, y + 19, 6.6, PASTEL.lilaO, { alin: 'left', peso: 800 });
+  if (RETO.activo && retoDeHoy()) letras(tr('Reto del día') + ': ' + retoDeHoy().mejor.toLocaleString('es-ES') + ' €', cx + 10, y + 19, 6.6, PASTEL.lilaO, { alin: 'left', peso: 800 });
   // el sello
   aqui(cx + cw - 28, y + 4, -0.15, 1, 1, () => {
     const s = F_.record ? tr('¡RÉCORD!') : tr('¡ESCAPÓ!'), col = F_.record ? PASTEL.oroO : '#e0463e', ws = anchoLetras(s, 8, { logo: true }) + 10;

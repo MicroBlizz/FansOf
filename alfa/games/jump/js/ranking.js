@@ -12,8 +12,12 @@ function subeMarca(puntos, metros, seg) {
   if (!hayRanking() || puntos <= 0) return;
   CUENTA.rpc('jump_marca', { p_puntos: Math.round(puntos), p_metros: Math.round(metros), p_segundos: Math.max(1, Math.round(seg)) })
     .then(() => { GUARDA.marcaSubida = Math.max(GUARDA.marcaSubida || 0, puntos); salvaGuarda(); RANKING.t = -99; })
-    .catch(() => { /* sin red: se vuelve a intentar al arrancar */ });
+    .catch(e => {
+      // el servidor dice que la marca es imposible: se da por subida (no se reintenta para siempre); sin red, se reintenta al volver la conexión
+      if (/marca_imposible/.test(String(e && (e.message || e)))) { GUARDA.marcaSubida = Math.max(GUARDA.marcaSubida || 0, puntos); salvaGuarda(); }
+    });
 }
+if (window.addEventListener) window.addEventListener('online', () => setTimeout(subePendiente, 1500));
 // al arrancar: la mejor marca que aún no esté en el servidor (las de antes del ranking no tienen su tiempo: se estima por lo alto)
 function subePendiente() {
   if ((GUARDA.marcaSubida || 0) < GUARDA.mejor) subeMarca(GUARDA.mejor, GUARDA.mejorM, GUARDA.mejorSeg || Math.max(10, GUARDA.mejorM / 3));

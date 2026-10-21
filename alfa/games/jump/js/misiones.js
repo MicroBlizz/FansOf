@@ -37,6 +37,7 @@ function compruebaMisiones() {
 }
 // al acabar: el premio de las cumplidas, y cada una cambia por la siguiente (otro tipo que no esté ya)
 function cierraMisiones() {
+  compruebaMisiones();   // lo que se cumplió sin pisar un tronco (imán, Fiebre, silbato) también cuenta
   const J = JUEGO, act = misionesActivas();
   J.resumenMisiones = act.map((m, i) => ({ txt: m.txt, hecha: J.hechas.includes(i), premio: m.premio, va: progresoMision(m, J), n: m.n }));
   let premio = 0;

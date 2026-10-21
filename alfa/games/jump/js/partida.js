@@ -172,7 +172,7 @@ function alAgua() {
     const quien = J.casco ? tr('¡El casco te salva!') : tr('¡MeerCat te salva!');
     if (J.casco) J.casco = false; else J.cuestas.splice(J.cuestas.indexOf('suricata'), 1);
     onda(c.x, c.wy, 8); salpica(c.x, c.wy, 10, 'rgba(255,255,255,0.95)');
-    const t = c.ultimo && RIO.troncos.includes(c.ultimo) ? c.ultimo : RIO.troncos.filter(o => o.wy <= c.wy + 10 && o.wy > OLA.wy + 20).sort((a, b) => b.wy - a.wy)[0];
+    const t = troncoSeguro(c, 20);
     if (t) { c.tronco = t; c.ox = 0; c.owy = 0; c.x = t.x; c.wy = t.wy; c.cae = 1; J.enTronco = 0; aviso(quien, c.x, c.wy + 30, '#9fe3ff', 10); SONIDO.rescate(); return; }
   }
   muere('barro');
@@ -190,7 +190,9 @@ function acaba(motivo) {
 }
 // lo que se apunta al acabar (al caer o al llegar a la madriguera: final.js): récord, ranking, misiones y zanahorias
 function apuntaPartida(motivo) {
-  const J = JUEGO, record = J.puntos > GUARDA.mejor;
+  const J = JUEGO;
+  if (TUTO.repaso) { J.ganadas = 0; J.resumenMisiones = []; J.fin = { motivo, record: false, llevaba: J.cuestas.length, premio: 0 }; GUARDA.tuto = true; salvaGuarda(); acabaPrueba(); return; }   // repetir el tutorial no cuenta
+  const record = J.puntos > GUARDA.mejor;
   cierraRetoYHuella(record);
   if (record) { GUARDA.mejorSeg = J.t - FANTASMA.t0; subeMarca(J.puntos, J.metros, GUARDA.mejorSeg); }   // al ranking mundial (ranking.js)
   J.antesM = GUARDA.mejorM;   // para «te faltaron … m» en el parte (pantalla.js)

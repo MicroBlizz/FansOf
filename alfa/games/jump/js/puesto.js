@@ -48,9 +48,9 @@ function pintaTienda() {
   pastillaZanas(x + 6, y + 7);
   spriteConejo('quieto' + Math.floor(JUEGO.t * 7) % 8, x + w - 18, y + 22, 3.6);
   if (tiendaReal()) {   // los packs con euros (anuncios.js), de momento solo con el flag
-    const on = PANEL.pestana === 'gemas';
-    caja(x + w - 64, y + 8, 30, 12, 4, on ? '#8fd0ff' : PASTEL.fondo, OLC, 0.7); letras(tr('Gemas'), x + w - 49, y + 14.4, 6.6, on ? '#ffffff' : PASTEL.suave, on ? { borde: OLC, bw: 1.6 } : {});
-    boton(x + w - 66, y + 6, 34, 16, () => { PANEL.pestana = 'gemas'; PANEL.scroll = 0; SONIDO.boton(); });
+    const on = PANEL.pestana === 'packs';
+    caja(x + w - 64, y + 8, 30, 12, 4, on ? PASTEL.oro : PASTEL.fondo, OLC, 0.7); letras(tr('Packs'), x + w - 49, y + 14.4, 6.6, on ? PASTEL.texto : PASTEL.suave, { max: 26 });
+    boton(x + w - 66, y + 6, 34, 16, () => { PANEL.pestana = 'packs'; PANEL.scroll = 0; SONIDO.boton(); });
   }
   // las pestañas
   // las pestañas, en dos filas de tres
@@ -62,7 +62,7 @@ function pintaTienda() {
     letras(tr(txt), px + tw / 2, py + 6.4, 7, on ? '#ffffff' : PASTEL.suave, on ? { borde: PASTEL.melocotonO, bw: 1.6 } : {});
     boton(px, py - 2, tw, 16, () => { PANEL.pestana = id; PANEL.scroll = 0; SONIDO.boton(); });
   });
-  if (PANEL.pestana === 'gemas') return pintaGemas(x + 4, y + 57, w - 8, h - 61);
+  if (PANEL.pestana === 'packs') { if (!tiendaReal()) PANEL.pestana = 'amigos'; else return pintaPacks(x + 4, y + 57, w - 8, h - 61); }
   contenido(x + 4, y + 57, w - 8, h - 61, y0 => {
     // las tarjetas crecen hasta llenar el panel (con un tope), y el dibujo con ellas
     const base = ['pelaje', 'capas', 'estelas', 'troncos'].includes(PANEL.pestana) ? 52 : 66, filas = Math.ceil(PUESTO[PANEL.pestana].length / 2);

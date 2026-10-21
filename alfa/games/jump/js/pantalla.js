@@ -145,10 +145,12 @@ function pintaMarcador() {
   const m = J.metros + ' m', wm = anchoLetras(m, 9) + 10;
   caja(W - wm - 6, 9, wm, 13, 2, PASTEL.menta, OLC, 0.8); letras(m, W - 6 - wm / 2, 15.8, 9, PASTEL.texto);
   // la RABIA (el multiplicador): las caras de los que llevas a la espalda
-  const n = J.cuestas.length, r = tr('Rabia') + ' x' + (1 + n), wr = anchoLetras(r, 8.5) + 14 + Math.min(3, n) * 7;
+  // (si no cabe junto a las pérdidas, se quitan las caras y luego se encoge la letra)
+  const n = J.cuestas.length, r = tr('Rabia') + ' x' + (1 + n), hueco = W / 2 - wp / 2 - 10, ar = Math.min(anchoLetras(r, 8.5), hueco - 12);
+  const caras = Math.max(0, Math.min(3, n, Math.floor((hueco - ar - 12) / 7))), wr = ar + 12 + caras * 7;
   caja(6, 9, wr, 13, 2, n ? PASTEL.lila : PASTEL.papel, OLC, 0.8);
-  letras(r, 12, 15.8, 8.5, PASTEL.texto, { alin: 'left' });
-  J.cuestas.slice(-3).forEach((id, i) => spriteEnCaja(id + '_susto0', 12 + anchoLetras(r, 8.5) + 3.5 + i * 7, 9.5, 7, 12, 0.3));
+  letras(r, 12, 15.8, 8.5, PASTEL.texto, { alin: 'left', max: ar });
+  J.cuestas.slice(-caras).forEach((id, i) => { if (caras) spriteEnCaja(id + '_susto0', 12 + ar + 3.5 + i * 7, 9.5, 7, 12, 0.3); });
   let yy = 26;
   if (J.zanas) { const z = String(J.zanas); caja(6, yy, anchoLetras(z, 8.5) + 22, 13, 4, '#ffe6d2', OLC, 0.8); iconoZana(13.5, yy + 6.5, 12); letras(z, 21, yy + 6.9, 8.5, PASTEL.melocotonO, { alin: 'left' }); }
   // la racha y la fiebre
@@ -176,7 +178,7 @@ function pintaFinal() {
   const e = Math.min(1, (J.tFin - 2.6) / 0.25), sube = (1 - e) * 30;
   G.fillStyle = `rgba(40,25,60,${0.42 * e})`; G.fillRect(0, 0, W, H);
   G.globalAlpha = e;
-  const res = J.resumenMisiones || [], cw = W - 26, faltan = (J.antesM || 0) - J.metros, chh = 186 + res.length * 10 + (hayAnuncios() ? 8 : 0) + (faltan > 0 ? 10 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
+  const res = J.resumenMisiones || [], cw = W - 26, faltan = (J.antesM || 0) - J.metros, chh = 186 + res.length * 10 + (hayAnuncios() && J.ganadas > 0 ? 18 : 0) + (faltan > 0 ? 10 : 0), cx = 13, cy = Math.max(22, H / 2 - chh / 2) + sube;
   // la hoja del parte, con su cinta de arriba
   caja(cx + 2, cy + 3, cw, chh, 4, 'rgba(40,25,60,0.35)', null);
   caja(cx, cy, cw, chh, 4, PASTEL.papel, OLC, 1);
@@ -218,11 +220,13 @@ function pintaFinal() {
   letras(tr('Zanahorias') + ': +' + J.ganadas, cx + 23, y, 8.5, PASTEL.melocotonO, { alin: 'left' });
   if (hayAnuncios() && J.ganadas > 0) {
     // el anuncio con premio (de prueba): duplica las zanahorias de esta partida
-    const ya = J.duplicado, quedan = anunciosQuedan(), t2 = ya ? tr('¡Duplicadas!') : quedan ? tr('Duplícalas con un anuncio') : tr('Mañana más anuncios'), aw = anchoLetras(t2, 6.8) + 14;
-    caja(cx + cw - 10 - aw, y - 7.5, aw, 15, 5, ya || !quedan ? PASTEL.fondo : PASTEL.menta, OLC, 0.7);
-    letras(t2, cx + cw - 10 - aw / 2, y + 0.4, 6.8, ya || !quedan ? PASTEL.suave : '#ffffff', ya || !quedan ? {} : { borde: PASTEL.mentaO, bw: 1.8 });
-    if (!ya && quedan && e >= 1) boton(cx + cw - 14 - aw, y - 10, aw + 8, 20, duplicaZanas);
-    y += 8;
+    y += 16;
+    const ya = J.duplicado, quedan = anunciosQuedan(), t2 = ya ? tr('¡Duplicadas!') : quedan ? tr('Duplícalas con un anuncio') : tr('Mañana más anuncios'), aw = Math.min(cw - 20, anchoLetras(t2, 6.8) + 24);
+    caja(W / 2 - aw / 2, y - 7.5, aw, 15, 5, ya || !quedan ? PASTEL.fondo : PASTEL.menta, OLC, 0.7);
+    if (!ya && quedan) iconoTele(W / 2 - aw / 2 + 10, y);
+    letras(t2, W / 2 + (ya || !quedan ? 0 : 5), y + 0.4, 6.8, ya || !quedan ? PASTEL.suave : '#ffffff', ya || !quedan ? { max: aw - 10 } : { borde: PASTEL.mentaO, bw: 1.8, max: aw - 24 });
+    if (!ya && quedan && e >= 1) boton(W / 2 - aw / 2 - 4, y - 10, aw + 8, 20, duplicaZanas);
+    y += 2;
   }
   // un consejo de alguien de la pandilla
   const [quien, dice] = J.tutoHecho ? ['Lola', 'Las zanahorias que ganes, gástalas en mi puesto: tengo amigos que te ayudarán.'] : CONSEJOS[GUARDA.partidas % CONSEJOS.length];

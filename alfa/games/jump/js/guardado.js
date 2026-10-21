@@ -2,7 +2,7 @@
 // Microblizz y los ajustes, todo en un solo objeto (SAVE) que core sube a la nube (cuenta.js). En el código del juego se llama
 // GUARDA (es el mismo objeto). La clave es AJUSTES.guardado (SAVE_KEY, la pone core/js/sistema/ligero.js).
 'use strict';
-const JUMP_NUEVA = () => ({ mejor: 0, mejorM: 0, zanas: 0, partidas: 0, rescatados: 0, pelaje: '#ffffff', capa: '#ff7a1a', tengo: {}, kit: {}, visto: {}, misiones: null, nivelMision: {}, efectos: 1, musica: 0.6, suave: false, menuMus: 'animales', tuto: false, anuncios: null, vibra: true, estela: 'arcoiris', reto: null, fantasma: null, name: '', marcaSubida: 0, mejorSeg: 0, piel: 'madera', finales: 0, ayuda: 0, regalo: null });
+const JUMP_NUEVA = () => ({ mejor: 0, mejorM: 0, zanas: 0, partidas: 0, rescatados: 0, pelaje: '#ffffff', capa: '#ff7a1a', tengo: {}, kit: {}, visto: {}, misiones: null, nivelMision: {}, efectos: 1, musica: 0.6, suave: false, menuMus: 'animales', tuto: false, anuncios: null, vibra: true, estela: 'arcoiris', reto: null, fantasma: null, name: '', marcaSubida: 0, mejorSeg: 0, piel: 'madera', finales: 0, ayuda: 0, regalo: null, compras: {} });
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = JUMP_NUEVA();

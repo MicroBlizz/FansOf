@@ -65,15 +65,15 @@ function pintaRegalo() {
   const bw = 120, bh = 20, bx = W / 2 - bw / 2, by = y + h - 50;
   if (hay) {
     caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.melocoton, OLC, 1);
-    letras(tr('¡Recoger!'), W / 2, by + 10.5, 11, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.4 });
+    letras(tr('¡Recoger!'), W / 2, by + 10.5, 11, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.4, max: bw - 12 });
     boton(bx - 4, by - 4, bw + 8, bh + 8, recogeRegalo);
   } else {
     const r = REGALOS[GUARDA.regalo.n], puede = r.z && !GUARDA.regalo.doble && hayAnuncios() && anunciosQuedan() > 0;
     if (puede) {
       caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.menta, OLC, 1);
-      iconoTele(bx + 12, by + 10); letras(tr('Duplícalo con un anuncio'), W / 2 + 7, by + 10.5, 7.2, PASTEL.texto, { peso: 800 });
+      iconoTele(bx + 12, by + 10); letras(tr('Duplícalo con un anuncio'), W / 2 + 9, by + 10.5, 7.2, PASTEL.texto, { peso: 800, max: bw - 28 });
       boton(bx - 4, by - 4, bw + 8, bh + 8, duplicaRegalo);
-    } else letras(tr('Vuelve mañana: te espera el día {n}', { n: casillaRegalo() + 1 }), W / 2, by + 10, 7.4, PASTEL.texto, { peso: 800 });
+    } else letras(tr('Vuelve mañana: te espera el día {n}', { n: casillaRegalo() + 1 }), W / 2, by + 10, 7.4, PASTEL.texto, { peso: 800, max: w - 20 });
   }
   { letras(tr('Cerrar'), W / 2, by + 34, 7.5, PASTEL.suave, { peso: 700 }); boton(W / 2 - 30, by + 26, 60, 16, () => { PANEL.abierto = null; SONIDO.boton(); }); }
 }

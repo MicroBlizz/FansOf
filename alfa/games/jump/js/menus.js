@@ -95,7 +95,7 @@ function pintaPortada() {
   const rx = bx + bw + 6, rw = 66, ry = cy2 - 36, hoyR = retoDeHoy();
   caja(rx, ry + 2.5, rw, bh, 8, OLC, null); caja(rx, ry, rw, bh, 8, PASTEL.lila, OLC, 1.1);
   iconoCalendario(rx + 10, ry + 13);
-  letras(tr('Reto del día'), rx + 18, ry + (hoyR ? 9.5 : 13.5), 7, '#ffffff', { alin: 'left', borde: PASTEL.lilaO, bw: 2 });
+  letras(tr('Reto del día'), rx + 18, ry + (hoyR ? 9.5 : 13.5), 7, '#ffffff', { alin: 'left', borde: PASTEL.lilaO, bw: 2, max: rw - 22 });
   if (hoyR) letras(hoyR.mejor.toLocaleString('es-ES') + ' €', rx + 18, ry + 18.5, 6.4, PASTEL.texto, { alin: 'left', peso: 800 });
   boton(rx - 3, ry - 4, rw + 6, bh + 8, empiezaReto);
 }
@@ -171,11 +171,11 @@ function pintaAjustes() {
   marco('Hoja de reclamaciones', x, y, w, h, PASTEL.lila);
   barra('Queja n.º 1: los ruiditos', 'efectos', x + 12, y + 16, w - 24);
   barra('Queja n.º 2: la música', 'musica', x + 12, y + 42, w - 24);
-  letras(tr('Queja n.º 3: me mareo'), x + 12, y + 72, 8, PASTEL.texto, { alin: 'left' });
-  letras(tr('Menos temblores y menos cosas volando.'), x + 12, y + 81, 6.4, PASTEL.suave, { alin: 'left', peso: 700 });
+  letras(tr('Queja n.º 3: me mareo'), x + 12, y + 72, 8, PASTEL.texto, { alin: 'left', max: w - 50 });
+  letras(tr('Menos temblores y menos cosas volando.'), x + 12, y + 81, 6.4, PASTEL.suave, { alin: 'left', peso: 700, max: w - 50 });
   interruptor(x + w - 30, y + 68, 'suave');
-  letras(tr('Queja n.º 4: el móvil tiembla'), x + 12, y + 98, 8, PASTEL.texto, { alin: 'left' });
-  letras(tr('Vibra al caer, al rescatar y al chocar.'), x + 12, y + 107, 6.4, PASTEL.suave, { alin: 'left', peso: 700 });
+  letras(tr('Queja n.º 4: el móvil tiembla'), x + 12, y + 98, 8, PASTEL.texto, { alin: 'left', max: w - 50 });
+  letras(tr('Vibra al caer, al rescatar y al chocar.'), x + 12, y + 107, 6.4, PASTEL.suave, { alin: 'left', peso: 700, max: w - 50 });
   interruptor(x + w - 30, y + 94, 'vibra', () => vibra(40));
   // el tutorial de Lola otra vez
   const rt = tr('Repetir el tutorial de Lola'), rw = anchoLetras(rt, 7.5) + 18;

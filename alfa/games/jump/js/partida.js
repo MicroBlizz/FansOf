@@ -197,6 +197,7 @@ function apuntaPartida(motivo) {
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
   GUARDA.partidas++; GUARDA.rescatados += J.rescatados; apuntaAyuda(J.metros);
   const premio = cierraMisiones();
+  if (GUARDA.compras && GUARDA.compras.doble) J.zanas *= 2;   // «Zanahoria doble», comprada con euros (anuncios.js)
   J.ganadas = J.zanas + premio;
   GUARDA.zanas += J.ganadas;
   salvaGuarda();

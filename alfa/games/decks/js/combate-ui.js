@@ -72,8 +72,8 @@ function dcPintaRival(C, r, i) {
 // Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
 function dcPintaEquipo(C) {
   const e = dcEl('div', 'dc-equipo');
-  for (const k of C.companeros) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-comp'); d.append(dcSprite(D.arte, 34), dcEl('b', '', String(k.turnos))); d.title = tr(D.nombre) + ': ' + dcTextoCarta({ id: k.id, asc: k.asc }); e.append(d); }
-  for (const k of C.protocolos) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-prot'); d.append(dcSvg('defensa'), dcEl('span', '', tr(D.nombre))); d.title = dcTextoCarta({ id: k.id, asc: k.asc }); e.append(d); }
+  for (const k of C.companeros) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-comp'); d.append(dcSprite(D.arte, 34), dcEl('b', '', String(k.turnos))); d.title = tr(D.nombre) + ': ' + dcTextoCarta({ id: k.id, asc: k.asc, niv: k.niv }); e.append(d); }
+  for (const k of C.protocolos) { const D = DC_CARTAS[k.id], d = dcEl('span', 'dc-prot'); d.append(dcSvg('defensa'), dcEl('span', '', tr(D.nombre))); d.title = dcTextoCarta({ id: k.id, asc: k.asc, niv: k.niv }); e.append(d); }
   return e;
 }
 function dcPintaCombate() {
@@ -177,7 +177,7 @@ function dcTrasJugada() {
 function dcRabiaCarta(C, c) { const fx = dcFx(c); return fx.dano && !fx.protocolo ? C.fuerza + (DC_CARTAS[c.id].tipo === 'empleado' ? C.fuerzaTurno : 0) : 0; }
 function dcPintaCarta(c, o = {}) {
   dcDescubre('c', c.id);   // vista una vez, sale en la Biblioteca
-  const D = DC_CARTAS[c.id], d = dcEl('button', 'dc-carta dc-rar-' + D.rar + ' dc-tipo-' + D.tipo + (o.jugable === false ? ' dc-nojugable' : '') + (o.elegida ? ' dc-elegida' : '') + (c.asc ? ' dc-asc' : '') + (o.grande ? ' dc-grande' : ''));
+  const D = DC_CARTAS[c.id], d = dcEl('button', 'dc-carta dc-rar-' + D.rar + ' dc-tipo-' + D.tipo + (o.jugable === false ? ' dc-nojugable' : '') + (o.elegida ? ' dc-elegida' : '') + (c.asc ? ' dc-asc dc-niv-' + dcNiv(c) : '') + (o.grande ? ' dc-grande' : ''));
   const R = RARITY[D.rar] || RARITY.basic; d.style.setProperty('--rc', R[1]); d.style.setProperty('--ro', R[2]);
   if (!dcFx(c).injugable) d.append(dcEl('span', 'dc-coste', String(dcCoste(c))));
   const arte = dcEl('div', 'dc-arte'); arte.append(dcArteCarta(c, o.grande ? 72 : 46)); d.append(arte);
@@ -195,7 +195,7 @@ function dcVerCarta(c) {
   const v = dcVentana(dcNombre(c)); const g = dcPintaCarta(c, { grande: true }); g.onclick = null;
   v.append(g, dcEl('p', 'dc-nota', tr(DC_NOTA_TIPO[DC_CARTAS[c.id].tipo])));
   for (const k of dcClavesEn(dcTextoCarta(c))) v.append(dcEl('p', 'dc-nota dc-glosario', tr(DC_GLOSARIO[k])));
-  if (!c.asc && DC_CARTAS[c.id].asc) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
+  if (dcPuedeSubir(c)) { const a = dcEl('button', 'btn-ghost ol dc-ver-ascenso', tr('VER ASCENSO')); a.onclick = () => dcVerAscenso(c, null, () => dcVerCarta(c)); v.append(a); }
   const b = dcEl('button', 'btn-ghost ol', tr('CERRAR')); b.onclick = dcCierraVentana; v.append(b);
 }
 // Una ventana encima de todo (una sola a la vez).

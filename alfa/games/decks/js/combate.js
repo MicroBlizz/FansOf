@@ -111,8 +111,8 @@ function dcResuelve(C, c, obj, gratis) {
   C.tiposTurno[D.tipo] = (C.tiposTurno[D.tipo] || 0) + 1;
   dcGancho('alJugar', C, c, D, fx);
   // un compañero se sienta en la mesa y un protocolo se arma: actúan después (dcFinTurno); la carta va a los descartes
-  if (fx.companero) { C.companeros.push({ id: c.id, asc: !!c.asc, turnos: fx.turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); C.descartes.push(c); return; }
-  if (fx.protocolo) { C.protocolos.push({ id: c.id, asc: !!c.asc }); if (C.protocolos.length > 3) C.protocolos.shift(); C.descartes.push(c); return; }
+  if (fx.companero) { C.companeros.push({ id: c.id, asc: !!c.asc, niv: dcNiv(c), turnos: fx.turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); C.descartes.push(c); return; }
+  if (fx.protocolo) { C.protocolos.push({ id: c.id, asc: !!c.asc, niv: dcNiv(c) }); if (C.protocolos.length > 3) C.protocolos.shift(); C.descartes.push(c); return; }
   let objs = fx.cond === 'atacantes' ? dcAtacantes(C) : fx.obj === 'todos' ? vivos : [C.rivales[obj] && C.rivales[obj].hp > 0 ? C.rivales[obj] : vivos[0]].filter(Boolean);
   if (fx.dano) {
     const veces = fx.cond === 'porTropa' ? C.tropasTurno : (fx.veces || 1);
@@ -196,7 +196,7 @@ function dcFinTurno(C) {
 // Los compañeros actúan al acabar tu turno: pegan al rival con menos vida, te dan bloqueo o te curan; se van cuando se les acaban los turnos.
 function dcActuanCompaneros(C) {
   for (const k of C.companeros.slice()) {
-    const fx = dcFx({ id: k.id, asc: k.asc }), vivos = C.rivales.filter(r => r.hp > 0);
+    const fx = dcFx({ id: k.id, asc: k.asc, niv: k.niv }), vivos = C.rivales.filter(r => r.hp > 0);
     C.eventos.push({ t: 'accion', r: -1, comp: C.companeros.indexOf(k) });
     if (fx.dano && vivos.length) { const r = vivos.reduce((a, b) => b.hp < a.hp ? b : a); dcGolpea(C, r, dcDanoA(C, r, fx.dano, false)); }
     if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
@@ -206,8 +206,8 @@ function dcActuanCompaneros(C) {
 }
 // Si hay un protocolo armado de ese tipo, salta: se gasta y devuelve sus cifras (null si no hay).
 function dcProtocolo(C, tipo) {
-  const i = C.protocolos.findIndex(p => dcFx({ id: p.id, asc: p.asc }).protocolo === tipo); if (i < 0) return null;
-  const p = C.protocolos.splice(i, 1)[0]; C.log.push(tr('Salta {n}', { n: tr(DC_CARTAS[p.id].nombre) })); return dcFx({ id: p.id, asc: p.asc });
+  const i = C.protocolos.findIndex(p => dcFx({ id: p.id, asc: p.asc, niv: p.niv }).protocolo === tipo); if (i < 0) return null;
+  const p = C.protocolos.splice(i, 1)[0]; C.log.push(tr('Salta {n}', { n: tr(DC_CARTAS[p.id].nombre) })); return dcFx({ id: p.id, asc: p.asc, niv: p.niv });
 }
 function dcCompruebaFin(C) {
   if (DCP.run.hp <= 0) { C.fase = 'fin'; C.resultado = 'derrota'; return true; }

@@ -24,7 +24,7 @@ const DC_BIB_PROPIEDADES = { todas: 'Cualquier efecto', despedida: 'Despedida', 
 let dcBibTab = 'c', dcBibFiltro = 'todo', dcBibFac = 'todas', dcBibProp = 'todas';
 function dcBibCartaFac(id) { return DC_CARTAS[id].fac || 'animales'; }
 // una propiedad cuenta si la tiene la carta normal o la ascendida
-function dcBibCartaProp(id, k) { return [dcFx({ id }), dcFx({ id, asc: true })].some(fx => k === 'area' ? fx.obj === 'todos' : k === 'fuerza' ? fx.fuerza || fx.fuerzaTurno : !!fx[k]); }
+function dcBibCartaProp(id, k) { return Array.from({ length: dcMaxNivel() + 1 }, (_, n) => dcFx({ id, asc: n >= 1, niv: n })).some(fx => k === 'area' ? fx.obj === 'todos' : k === 'fuerza' ? fx.fuerza || fx.fuerzaTurno : !!fx[k]); }
 function dcNombreRival(id) { const D = DC_RIVALES[id]; return tr(D.nombre || (CFG.enemyCards[id] ? CFG.enemyCards[id].name : id)); }
 // cada pestaña: [{ id, visto }] en su orden
 function dcBibLista(tab) {

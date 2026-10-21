@@ -1,8 +1,8 @@
 {
- "build": 388,
- "hash": "59a3de1",
- "fecha": "2026-10-21T19:38:12Z",
- "mensaje": "Nova: 60 retratos de comandante (las unidades de las 9 facciones) con sus sprites de la serie como referencia",
+ "build": 389,
+ "hash": "970a5dd",
+ "fecha": "2026-10-21T22:02:24Z",
+ "mensaje": "Decks: niveles de carta Becario/Junior/Senior/CEO tras el flag decks-niveles (recompensas Junior desde el capitulo 2 y La rueda de ascensos); componente de Opciones en core (usado por Decks); plan de migracion de los orquestadores de balance",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

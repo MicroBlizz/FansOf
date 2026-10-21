@@ -25,15 +25,15 @@ function dcCarga() {
   if (d) { DCP.run = d.run && d.run.dia !== undefined ? d.run : null;   // una partida de antes de la campaña (sin días) se descarta
     DCP.meta = Object.assign(DCP.meta, d.meta || {}); DCP.uid = d.uid || 1; }
 }
-// Una copia de carta para el mazo: { id, asc, uid }.
-function dcCarta(id, asc) { return { id, asc: !!asc, uid: DCP.uid++ }; }
+// Una copia de carta para el mazo: { id, asc, niv, uid }. El segundo valor es el nivel (0 a 3; true vale 1, el de antes). Los niveles están en niveles.js.
+function dcCarta(id, nivel) { const n = typeof nivel === 'number' ? nivel : nivel ? 1 : 0; return { id, asc: n >= 1, niv: n, uid: DCP.uid++ }; }
 // Las cifras de una carta tal como está (ascendida o no).
 function dcFx(carta) {
-  const D = DC_CARTAS[carta.id], fx = carta.asc ? Object.assign({}, D.fx, D.asc) : D.fx; if (!carta.mitad) return fx;
+  const D = DC_CARTAS[carta.id], niv = dcNiv(carta), fx = niv ? Object.assign({}, D.fx, dcDelta(carta.id, niv)) : D.fx; if (!carta.mitad) return fx;
   const m = Object.assign({}, fx); for (const k of ['dano', 'bloqueo', 'cura', 'fuerza', 'fuerzaTurno']) if (m[k]) m[k] = Math.max(1, Math.ceil(m[k] / 2)); return m;   // la copia «2» de la Secuela
 }
-function dcCoste(carta) { const D = DC_CARTAS[carta.id]; return carta.asc && D.asc && D.asc.coste !== undefined ? D.asc.coste : D.coste; }
-function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + (carta.asc ? '+' : '') + (carta.mitad ? ' 2' : ''); }
+function dcCoste(carta) { const D = DC_CARTAS[carta.id], niv = dcNiv(carta), d = niv ? dcDelta(carta.id, niv) : null; return d && d.coste !== undefined ? d.coste : D.coste; }
+function dcNombre(carta) { return tr(DC_CARTAS[carta.id].nombre) + '+'.repeat(dcNiv(carta)) + (carta.mitad ? ' 2' : ''); }
 // Las palabras clave de una carta según sus cifras (se añaden al final del texto).
 const DC_PALABRAS = [['despedida', 'Despedida.'], ['indefinido', 'Contrato indefinido.'], ['madrugador', 'Madrugador.']];
 function dcPalabras(fx) { return DC_PALABRAS.filter(([k]) => fx[k]).map(([, t]) => tr(t)); }
@@ -46,10 +46,10 @@ function dcTextoCartaHTML(carta, resalta) {
   for (const [k, p] of DC_PALABRAS) if (fx[k]) t += ' ' + (resalta.has(k) ? '<b class="dc-cambio">' + esc(tr(p)) + '</b>' : esc(tr(p))); else if (resalta.has(k)) t += ' <s class="dc-cambio-fuera">' + esc(tr(p)) + '</s>';
   return t;
 }
-// Lo que cambia al ascender una carta: [{ k, antes, despues }] (coste incluido; una palabra clave que aparece o desaparece lleva antes/despues booleanos).
+// Lo que cambia al subir una carta un nivel: [{ k, antes, despues }] (coste incluido; una palabra clave que aparece o desaparece lleva antes/despues booleanos).
 function dcCambiosAscenso(carta) {
   const D = DC_CARTAS[carta.id]; if (!D.asc) return [];
-  const a = dcCarta(carta.id, false), b = dcCarta(carta.id, true), fa = dcFx(a), fb = dcFx(b), out = [];
+  const n = dcNiv(carta), mk = m => ({ id: carta.id, asc: m >= 1, niv: m }), a = mk(n), b = mk(n + 1), fa = dcFx(a), fb = dcFx(b), out = [];
   if (dcCoste(a) !== dcCoste(b)) out.push({ k: 'coste', antes: dcCoste(a), despues: dcCoste(b) });
   for (const k of new Set([...Object.keys(fa), ...Object.keys(fb)])) if (fa[k] !== fb[k]) out.push({ k, antes: fa[k], despues: fb[k] });
   return out;

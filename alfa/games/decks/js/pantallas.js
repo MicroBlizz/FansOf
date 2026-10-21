@@ -106,10 +106,10 @@ function dcTarjetaResultado(titulo, sub, fichas, derrota) {
 function dcPanel(titulo, fondo) { const s = document.getElementById('dc-panel'); s.textContent = ''; dcMuestra('dc-panel'); dcPonFondo(s, fondo || null); if (DCP.run) s.append(dcCabecera(titulo)); else s.append(dcEl('h2', 'ol', titulo)); return s; }
 function dcOfertaEmpleo(premio) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(tr('Oferta de empleo'), n && n.tipo);
-  s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra un bonus de 15.')));
+  s.append(dcEl('p', 'dc-nota', tr('Elige una carta para tu mazo, o pasa y cobra un bonus de 15.') + (dcMaxNivel() > 1 && dcActo().cap >= 1 ? ' ' + tr('Algunas llegan ya como Junior.') : '')));
   const g = dcEl('div', 'dc-rejilla dc-oferta');
   const ids = dcOferta(3 + (dcObjeto('llavero') ? dcObjeto('llavero').oferta : 0)); if (premio === 'legendaria') { const L = dcLegendarias(); ids[0] = L[(Math.random() * L.length) | 0]; } else if (premio === 'rara') ids[0] = dcCartaRara();
-  ids.forEach(id => { const c = dcCarta(id); g.append(dcPintaCarta(c, { grande: true, al: () => { play('card'); r.mazo.push(c); dcGuarda(); DCC.siguiente(); } })); });
+  ids.forEach(id => { const c = dcCarta(id, dcNivelOferta(id)); g.append(dcPintaCarta(c, { grande: true, al: () => { play('card'); r.mazo.push(c); dcGuarda(); DCC.siguiente(); } })); });
   s.append(g);
   const b = dcEl('button', 'btn-ghost ol', tr('PASAR · +15 de bonus')); b.onclick = () => { r.nominas += 15; dcGuarda(); DCC.siguiente(); }; s.append(b);
 }
@@ -148,7 +148,8 @@ function dcAplicaCorreo(fx) {
   if (fx.suscripcion) { r.suscripcion = { cuota: 6, cura: 8 }; toast(tr('Suscrito al Plan Bienestar'), true); }
   if (fx.perderAzar && r.mazo.length > 5) r.mazo.splice((Math.random() * r.mazo.length) | 0, 1);
   if (fx.duplicaAzar && r.mazo.length) { const c = pick(r.mazo); r.mazo.push(Object.assign({}, c)); toast(tr('Un clon gris de {c} entra en tu mazo', { c: dcNombre(c) }), true); }
-  if (fx.ascensoAzar) { const c = pick(r.mazo.filter(x => !x.asc && DC_CARTAS[x.id].asc)); if (c) { c.asc = true; toast(tr('{c} asciende', { c: dcNombre(c) }), true); } }
+  if (fx.ascensoAzar) { const c = pick(r.mazo.filter(dcPuedeSubir)); if (c) { dcSube(c); toast(tr('{c} asciende', { c: dcNombre(c) }), true); } }
+  if (fx.sube3Baja) { const x = dcSubeTresBajaUna(); x.suben.forEach(c => toast(tr('{c} sube de nivel', { c: dcNombre(c) }), true)); if (x.baja) toast(tr('{c} baja de nivel', { c: dcNombre(x.baja) })); }
   if (r.hp <= 0) { dcFinPartida(false); return dcPintaFin(false); }
   play('select');
   if (fx.carta === 'quitar') return dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); luego(); });
@@ -163,7 +164,7 @@ function dcPintaPausa() {
   s.append(dcEl('p', 'dc-nota', tr(P.nota || 'Cinco minutos de paz en la cafetería. Elige una cosa.')));
   const cura = Math.round(r.hpMax * 0.3);
   const b1 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b1.append(dcEl('b', '', tr('Descansar')), dcEl('span', '', tr('Te curas {n}.', { n: cura }))); b1.onclick = () => { dcVida(cura); play('heal'); luego(); };
-  const b2 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b2.append(dcEl('b', '', tr('Ascender una carta')), dcEl('span', '', tr('Becario → Junior: la carta mejora sus cifras.')));
+  const b2 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b2.append(dcEl('b', '', tr(dcMaxNivel() > 1 ? 'Subir una carta de nivel' : 'Ascender una carta')), dcEl('span', '', tr(dcMaxNivel() > 1 ? 'Becario → Junior → Senior → CEO: la carta mejora sus cifras.' : 'Becario → Junior: la carta mejora sus cifras.')));
   b2.onclick = () => dcEligeAscenso(() => { play('levelup'); luego(); });
   s.append(b1, b2);
   if (!r.quitarUsado) { const b3 = dcEl('button', 'dc-opcion dc-riesgo-seguro'); b3.append(dcEl('b', '', tr('Quitar una carta')), dcEl('span', '', tr('Una vez por jornada: una carta desaparece del mazo.'))); b3.onclick = () => dcVerCartas(tr('¿Qué carta quitas?'), r.mazo, c => { r.mazo.splice(r.mazo.indexOf(c), 1); r.quitarUsado = true; luego(); }); s.append(b3); }

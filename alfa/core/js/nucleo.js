@@ -77,6 +77,7 @@ const NUCLEO = (() => {
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
+    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
@@ -99,6 +100,7 @@ const NUCLEO = (() => {
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
+    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)

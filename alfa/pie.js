@@ -10,7 +10,7 @@
   const derechos = 'Fans Of™ · © 2026 ' + (en ? 'Arkioner and Pepins · MicroBlizz · All rights reserved' : 'Arkioner y Pepins · MicroBlizz · Todos los derechos reservados');
   const HUECO = '56px', FONDO = '#0b0613';   // FONDO: casi negro, más oscuro que los dos lilas de las bandas y que el menú, para que contraste siempre
   // REDES de Fans Of: una línea de enlaces encima del ©, en las páginas que no son la portada (ella los lleva en grande en su sección COMUNIDAD, index.html). Si cambian, en los dos sitios.
-  const REDES = [['X', 'https://x.com/Fans_Of_'], ['Discord', 'https://discord.gg/PztHQhm9c']];
+  const REDES = [['X', 'https://x.com/Fans_Of_'], ['Discord', 'https://discord.gg/PztHQhm9c'], [en ? 'Android beta' : 'Beta en Android', 'https://play.google.com/apps/internaltest/4699431656758562735']];
   const redes = el => {
     if (document.getElementById('pie-redes') || document.getElementById('comunidad')) return;   // la portada ya los tiene en grande (sección COMUNIDAD)
     const p = document.createElement('p'); p.id = 'pie-redes';

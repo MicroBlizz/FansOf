@@ -1,8 +1,8 @@
 {
- "build": 409,
- "hash": "38f740e",
- "fecha": "2026-10-22T18:29:58Z",
- "mensaje": "herramientas ordenado: nova/, jump/ (con el estudio), rouflage/, android/ y la puerta del humo con el vigia; LEEME de la carpeta",
+ "build": 410,
+ "hash": "23e0f18",
+ "fecha": "2026-10-22T23:54:35Z",
+ "mensaje": "Web: enlace a la beta de Android (Prueba interna de Play) junto a X y Discord",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

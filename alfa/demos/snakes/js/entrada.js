@@ -26,6 +26,7 @@ function dedoSube(x, y) {
 function toque(x, y) {
   const J = JUEGO;
   if (J.modo === 'menu') { SONIDO.boton(); nuevaPartida(); return; }
+  if (J.modo === 'cartas') { toqueCartas(x, y); return; }
   if (J.modo === 'fin') { if (J.tFin > 0.8) { SONIDO.boton(); nuevaPartida(); } return; }
   if (dentro(BOTONES.sonido, x, y)) { SAVE.musica = SAVE.musica ? 0 : 1; SAVE.efectos = SAVE.musica; guarda(); applyVolume(); SONIDO.boton(); }
 }
@@ -33,6 +34,8 @@ function toque(x, y) {
 window.addEventListener('keydown', e => {
   const T = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
   const d = T[e.key];
+  if (d && JUEGO.modo === 'cartas') { e.preventDefault(); return; }
   if (d) { audioInit(); e.preventDefault(); if (JUEGO.modo === 'juego') pideDir(espeja(d)); else toque(0, 0); return; }
-  if (e.key === ' ' || e.key === 'Enter') { audioInit(); e.preventDefault(); toque(0, 0); }
+  if (JUEGO.modo === 'cartas' && ['1', '2', '3'].includes(e.key)) { if (JUEGO.tCartas > 0.4) eligeCarta(+e.key - 1); return; }
+  if ((e.key === ' ' || e.key === 'Enter') && JUEGO.modo !== 'cartas') { audioInit(); e.preventDefault(); toque(0, 0); }
 });

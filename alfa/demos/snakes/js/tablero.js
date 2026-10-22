@@ -2,7 +2,7 @@
 // las manzanas y los ítems locos. Las reglas (moverse, comer, morir) están en js/partida.js; esto solo mide y pinta.
 'use strict';
 
-const COLS = 14, ROWS = 22;                 // casillas del tablero
+const COLS = 14, ROWS = 21;                 // casillas del tablero
 const TAB = { x0: 0, y0: 36, c: 14, w: 0, h: 0 };   // dónde cae el tablero en el mundo (c = lado de la casilla)
 
 // el tablero ocupa todo el ancho; arriba queda el marcador (36) y abajo lo que sobre

@@ -6,10 +6,13 @@
 const LOCURAS = {
   retro:  { dur: 8, aviso: 'MODO RETRO', color: '#b9c9a0' },   // blanco y negro de píxeles gordos, como el móvil de 1999
   espejo: { dur: 6, aviso: 'ESPEJO', color: '#7fd7ff' },       // izquierda es derecha y derecha es izquierda
+  gigante: { dur: 6, aviso: 'GIGANTE', color: '#ff8a3d' },     // la cámara se acerca a la cabeza (js/locuras-pinta.js)
+  anuncio: { dur: 6, aviso: 'ANUNCIO', color: '#d36bff' },     // un anuncio de Microblizz tapa medio tablero
+  texto: { dur: 7, aviso: 'MODO TEXTO', color: '#33ff66' },    // el tablero es una terminal de letras
 };
 const RETRO = { fondo: '#8a9a72', tinta: '#1a2214' };   // los dos únicos colores del modo retro
 
-const ITEM_CADA = 11;        // segundos entre un ítem y el siguiente (si no hay ninguno en el tablero)
+const ITEM_CADA = 8;        // segundos entre un ítem y el siguiente (si no hay ninguno en el tablero)
 const ITEM_VIVE = 9;         // cuánto espera un ítem antes de desaparecer
 
 const LOCURA = { tipo: null, t: 0, dur: 0, proximo: ITEM_CADA };
@@ -36,6 +39,8 @@ function avanzaLocuras(dt) {
 function cogeLocura(i) {
   const it = JUEGO.items.splice(i, 1)[0], L = LOCURAS[it.tipo];
   LOCURA.tipo = it.tipo; LOCURA.t = L.dur; LOCURA.dur = L.dur;
+  if (it.tipo === 'anuncio') preparaAnuncio();
+  if (it.tipo === 'gigante') preparaGigante();
   JUEGO.locuras++;
   numero(100, TAB.y0 + 60, tr(L.aviso), L.color, 16);
   chispa(cx(it.c), cy(it.r), L.color, 16, 90); tiembla(2, 0.25);
@@ -48,14 +53,14 @@ const espeja = d => locuraActiva('espejo') ? [-d[0], d[1]] : d;
 // la franja de abajo con la locura en marcha y su cuenta atrás
 function pintaLocura(W, H) {
   if (LOCURA.t <= 0) return;
-  const L = LOCURAS[LOCURA.tipo], retro = esRetro(), y = H - 14, w = 120, x = (W - w) / 2, k = LOCURA.t / LOCURA.dur;
+  const L = LOCURAS[LOCURA.tipo], retro = esRetro(), y = Math.min(H - 8, TAB.y0 + TAB.h + 11), w = 80, x = TAB.x0 + TAB.w - w - 4, k = LOCURA.t / LOCURA.dur;
   if (retro) {
-    letraMono(tr(L.aviso) + ' ' + Math.ceil(LOCURA.t), W / 2, y - 7, 7, RETRO.tinta);
+    letraMono(tr(L.aviso) + ' ' + Math.ceil(LOCURA.t), x + w / 2, y - 6, 7, RETRO.tinta);
     G.fillStyle = RETRO.tinta; G.fillRect(x, y, w, 4); G.fillStyle = RETRO.fondo; G.fillRect(x + 1, y + 1, w - 2, 2); G.fillStyle = RETRO.tinta; G.fillRect(x + 1, y + 1, (w - 2) * k, 2);
     return;
   }
-  letra(tr(L.aviso), W / 2, y - 7, 8, L.color, 'center', '#06110a', 2.5);
-  caja(x, y, w, 4, 2, '#06110a', null); G.fillStyle = L.color; G.fillRect(x + 1, y + 1, (w - 2) * k, 2);
+  letra(tr(L.aviso), x + w / 2, y - 5, 7, L.color, 'center', '#06110a', 2.5);
+  caja(x, y + 1, w, 4, 2, '#06110a', null); G.fillStyle = L.color; G.fillRect(x + 1, y + 2, (w - 2) * k, 2);
 }
 
 function reiniciaLocuras() { LOCURA.tipo = null; LOCURA.t = 0; LOCURA.proximo = ITEM_CADA; }

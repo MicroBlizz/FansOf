@@ -5,7 +5,7 @@
 
 const FRENESI_SEG = 10;        // cuánto dura
 const CARGA_UY = 0.1;          // cuánto llena cada roce
-const CARGA_MANZANA = 0.06;    // y cada manzana
+const CARGA_MANZANA = 0.07;    // y cada manzana (más si vas de racha: js/partida.js)
 const MULT_FRENESI = 10;       // las manzanas valen esto durante el Frenesí
 const PUNTOS_CORTE = 5;        // puntos por casilla cortada (además de la moneda), por el multiplicador
 
@@ -13,12 +13,12 @@ const esFrenesi = () => JUEGO.frenesiT > 0;
 
 function cargaFrenesi(cuanto) {
   if (esFrenesi()) return;
-  JUEGO.frenesi = Math.min(1, JUEGO.frenesi + cuanto);
+  JUEGO.frenesi = Math.min(1, JUEGO.frenesi + cuanto * factorCarga());
   if (JUEGO.frenesi >= 1) activaFrenesi();
 }
 
 function activaFrenesi() {
-  JUEGO.frenesiT = FRENESI_SEG; JUEGO.frenesi = 0; JUEGO.mult = MULT_FRENESI;
+  JUEGO.frenesiT = JUEGO.frenesiDur = segundosFrenesi(); JUEGO.frenesi = 0; JUEGO.mult = MULT_FRENESI;
   JUEGO.frenesis++;
   for (let i = 0; i < 3; i++) { const p = casillaLibre(); if (p) JUEGO.manzanas.push(p); }   // lluvia de manzanas doradas
   const h = JUEGO.serp[0]; chispa(cx(h[0]), cy(h[1]), '#ffd54a', 24, 110); tiembla(3, 0.35);
@@ -31,7 +31,7 @@ function avanzaFrenesi(dt) {
   JUEGO.frenesiT -= dt;
   if (JUEGO.frenesiT <= 0) {
     JUEGO.frenesiT = 0; JUEGO.mult = 1;
-    while (JUEGO.manzanas.length > 1) JUEGO.manzanas.pop();   // se queda una
+    while (JUEGO.manzanas.length > manzanasEnTablero()) JUEGO.manzanas.pop();   // se quedan las de siempre
     SONIDO.fin_frenesi();
   }
 }
@@ -42,7 +42,7 @@ function demolicion(idx) {
   const n = cortadas.length;
   for (const s of cortadas) { monedaVuela(cx(s[0]), cy(s[1])); chispa(cx(s[0]), cy(s[1]), '#ff8a3d', 3, 50); }
   JUEGO.monedasPartida += n; JUEGO.cortes++;
-  const pts = n * PUNTOS_CORTE * JUEGO.mult; JUEGO.puntos += pts;
+  const pts = Math.round(n * PUNTOS_CORTE * multPuntos()); JUEGO.puntos += pts;
   const h = S[0]; numero(cx(h[0]), cy(h[1]) - 8, '+' + pts, '#ffd54a', 11);
   numero(cx(h[0]), cy(h[1]) + 6, tr('¡{n} monedas!', { n }), '#fff2b0', 8);
   tiembla(2 + Math.min(4, n * 0.2), 0.25); SONIDO.corte(n);
@@ -58,7 +58,7 @@ function pintaBarraFrenesi(x, y, w, h, retro) {
   }
   caja(x, y, w, h, 2, '#17331f', '#06110a', 1);
   if (esFrenesi()) {   // en Frenesí la barra es la cuenta atrás, en arcoíris
-    const k = JUEGO.frenesiT / FRENESI_SEG;
+    const k = JUEGO.frenesiT / (JUEGO.frenesiDur || FRENESI_SEG);
     G.fillStyle = arcoiris(0, JUEGO.t * 2, 60); G.fillRect(x + 1, y + 1, (w - 2) * k, h - 2);
   } else {
     const k = JUEGO.frenesi, lleno = k > 0.8 && Math.sin(JUEGO.t * 12) > 0;

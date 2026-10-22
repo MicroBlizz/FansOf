@@ -12,9 +12,18 @@
 const CAPTURAS = 'biblioteca/capturas/';
 document.querySelectorAll('section.game[data-alfa]').forEach(s => { if (!NUCLEO.alfa) s.remove(); });   // data-alfa: tarjeta que solo existe en la copia de pruebas
 const TARJETAS = [...document.querySelectorAll('section.game')];
+// PRÓXIMAMENTE: en la release solo se juegan los juegos abiertos (core/js/proximamente.js). El resto conserva su tarjeta y su ficha, pero sin JUGAR, y pasa a su propia sección.
+const cerrados = TARJETAS.filter(s => !PROXIMAMENTE.jugable((s.querySelector('a.play').getAttribute('href').match(/(?:games|demos)\/([^/]+)/) || [])[1]));
+if (cerrados.length) {
+  const sec = document.createElement('div'); sec.className = 'subsec'; sec.id = 'proximamente';
+  sec.innerHTML = `<h3 class="grupo ol">${esc(t('PRÓXIMAMENTE'))}</h3><p class="note">${esc(t('Estos juegos todavía no están abiertos: por ahora solo se puede jugar a Fans Of Rouflage.'))}</p><div class="rejilla"></div>`;
+  for (const c of cerrados) { c.dataset.proximamente = '1'; sec.querySelector('.rejilla').append(c); }
+  const juegos = document.getElementById('lista-juegos'); juegos.after(sec);
+  document.querySelectorAll('#biblioteca .subsec').forEach(g => { if (!g.querySelector('section.game')) g.remove(); });
+}
 function datosDe(s) {
   return {
-    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), apk: s.dataset.apk || '',
+    id: s.id, nombre: s.querySelector('h2').textContent, texto: s.querySelector('p').textContent, jugar: s.querySelector('a.play').getAttribute('href'), cerrado: 'proximamente' in s.dataset, apk: s.dataset.apk || '',
     color: s.style.getPropertyValue('--wc'), tipo: s.dataset.tipo || '', horizontal: 'horizontal' in s.dataset, pausa: s.dataset.pausa || '',
     etiquetas: (s.dataset.etiquetas || '').split('·').map(x => x.trim()).filter(Boolean),
     capturas: (s.dataset.capturas || '').split(/\s+/).filter(Boolean).map(f => CAPTURAS + f),
@@ -102,7 +111,7 @@ function verDestacado(i, aMano) {
   caja.classList.toggle('horiz', d.horizontal);
   caja.innerHTML = `<div class="fondo" style="${fondo(d.capturas[0])}"></div><div class="cap${d.horizontal ? ' h' : ''}" style="${fondo(d.capturas[0])}"></div>
     <div class="info">${j.texto ? `<span class="dicho ol">${esc(t('¡NUEVO!'))}</span>` : ''}<h3 class="ol">${esc(d.nombre)}</h3><p>${esc(j.texto ? t(j.texto) : d.texto)}</p>${etiquetasHtml(d.etiquetas)}
-    <div class="botones"><a class="boton ol" href="${esc(d.jugar)}">${esc(t('JUGAR'))}</a><button type="button" class="boton sec">${esc(t('VER FICHA'))}</button></div></div>`;
+    <div class="botones">${d.cerrado ? `<span class="boton ol" style="opacity:.6">${esc(t('PRÓXIMAMENTE'))}</span>` : `<a class="boton ol" href="${esc(d.jugar)}">${esc(t('JUGAR'))}</a>`}<button type="button" class="boton sec">${esc(t('VER FICHA'))}</button></div></div>`;
   document.querySelectorAll('#dest-puntos .punto').forEach((p, k) => p.classList.toggle('on', k === dest.i));
   clearTimeout(dest.reloj);
   const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -124,7 +133,8 @@ function abrirFicha(id, desdeHash) {
   ficha.capturas = d.capturas;
   document.getElementById('fi-nombre').textContent = d.nombre;
   document.getElementById('fi-etiq').innerHTML = etiquetasHtml(d.etiquetas);
-  document.getElementById('fi-jugar').href = d.jugar;
+  const fj = document.getElementById('fi-jugar');   // en la release, un juego cerrado no se juega
+  if (d.cerrado) { fj.removeAttribute('href'); fj.textContent = t('PRÓXIMAMENTE'); fj.style.cssText = 'opacity:.6;pointer-events:none'; } else { fj.href = d.jugar; fj.textContent = t('JUGAR'); fj.style.cssText = ''; }
   const apk = document.getElementById('fi-apk');   // DESCARGAR APK: solo en la alfa y en los juegos que tienen APK de prueba (release apk-latest del repo público)
   apk.hidden = !(NUCLEO.alfa && d.apk);
   if (d.apk) apk.href = 'https://github.com/MicroBlizz/FansOf/releases/download/apk-latest/fansof-' + d.apk + '.apk';

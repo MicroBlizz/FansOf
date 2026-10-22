@@ -18,6 +18,8 @@ const NUCLEO = (() => {
   const version = new URL(yo.src).searchParams.get('v') || '0';
   const alfa = /\/alfa\//.test(location.pathname);   // la copia de pruebas (carpeta alfa/ de la web): su versión es «<versión>-a<hash>»
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
+  document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');   // en la release solo se juegan los juegos abiertos (ver proximamente.js)
+  const cerrado = !!(window.PROXIMAMENTE && PROXIMAMENTE.cerrado);   // si lo está, la página ya es la de «Próximamente»: no se carga nada
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
 
   // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es' y
@@ -115,7 +117,7 @@ const NUCLEO = (() => {
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
   const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
-  function estilos(...hojas) { for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
+  function estilos(...hojas) { if (cerrado) return; for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.
   function codigo(src) {
@@ -126,6 +128,7 @@ const NUCLEO = (() => {
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false }) {
+    if (cerrado) return;
     codigo(CORE + 'js/sistema/idioma.js');
     codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }

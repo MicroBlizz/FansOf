@@ -1,8 +1,8 @@
 {
- "build": 401,
- "hash": "c8f3c56",
- "fecha": "2026-10-22T12:29:36Z",
- "mensaje": "Docs: enlaces de PLAN-MIGRACION a docs/",
+ "build": 402,
+ "hash": "9efb6f3",
+ "fecha": "2026-10-22T12:53:59Z",
+ "mensaje": "Rouflage: guion de humo propio (primera entrega oficial) y los guiones de games/*/pruebas no se publican",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

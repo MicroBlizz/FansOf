@@ -53,16 +53,17 @@ const PACKS = [
   ['carretilla', 'Carretilla de zanahorias', '7.000 zanahorias (40 % de regalo).', 9.99, () => { GUARDA.zanas += 7000; }],
   ['doble', 'Zanahoria doble', 'Para siempre: las zanahorias que recoges en cada partida, por dos.', 2.99, () => {}],
   ['sinanuncios', 'Sin anuncios', 'Los premios de los anuncios sin verlos, con el mismo tope del día.', 2.99, () => {}],
+  ['pase', 'Contrato de obra', 'La pista de pago del pase de esta temporada: colores de obra exclusivos y zanahorias.', 2.99, () => { estadoPase().premium = true; }],
 ];
 // el precio escrito como en cada idioma (tr() no toca textos sin letras): 0,99 € / €0.99
 const euros = v => (NUCLEO.idioma === 'en' ? '€' + v.toFixed(2) : v.toFixed(2).replace('.', ',') + ' €');
-const UNA_VEZ = ['bienvenida', 'doble', 'sinanuncios'];
-const comprado = id => !!(GUARDA.compras && GUARDA.compras[id]);
+const UNA_VEZ = ['bienvenida', 'doble', 'sinanuncios', 'pase'];
+const comprado = id => id === 'pase' ? !!estadoPase().premium : !!(GUARDA.compras && GUARDA.compras[id]);   // el pase es por temporada (pase.js)
 function compraPack([id, nombre, desc, precio, entrega]) {
   if (UNA_VEZ.includes(id) && comprado(id)) return SONIDO.uy();
   SONIDO.boton();
   MONEDAS.compraReal(tr(nombre), '<p>' + tr(desc) + '</p><p><b>' + tr(precio) + '</b></p>', () => {
-    GUARDA.compras = GUARDA.compras || {}; GUARDA.compras[id] = (GUARDA.compras[id] || 0) + 1;
+    GUARDA.compras = GUARDA.compras || {}; if (id !== 'pase') GUARDA.compras[id] = (GUARDA.compras[id] || 0) + 1;
     entrega(); salvaGuarda(); JS.pide('pack', { pack: id });
     bandera(tr('¡Gracias! {pack}', { pack: tr(nombre) }), PASTEL.oro); confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 40); SONIDO.compra();
   });
@@ -73,6 +74,10 @@ function iconoPack(id, x, y) {
   else if (id === 'saco' || id === 'carretilla') { const n = id === 'saco' ? 3 : 5; for (let k = 0; k < n; k++) iconoZana(x + (k - (n - 1) / 2) * 7, y - (k % 2) * 3, 16); }
   else if (id === 'doble') { iconoZana(x - 5, y, 17); iconoZana(x + 5, y, 17); letras('×2', x + 11, y - 7, 7, PASTEL.melocotonO, { borde: '#ffffff', bw: 2 }); }
   else if (id === 'sinanuncios') { iconoTele(x, y); trazo(x - 8, y + 7, x + 8, y - 7, 1.4, '#ff5a6e', null); }
+  else if (id === 'pase') {   // un contrato firmado: hoja con líneas y un garabato
+    caja(x - 7, y - 9, 14, 18, 1.5, '#ffffff', OLC, 0.8); for (const d of [-5, -2, 1]) caja(x - 4.5, y + d, 9, 1, 0, PASTEL.raya, null);
+    trazo(x - 4, y + 6, x - 1, y + 3, 1.2, PASTEL.lilaO, null); trazo(x - 1, y + 3, x + 1, y + 6.5, 1.2, PASTEL.lilaO, null); trazo(x + 1, y + 6.5, x + 4.5, y + 2.5, 1.2, PASTEL.lilaO, null);
+  }
   else if (id === 'bienvenida') {   // una caja de regalo con lazo
     caja(x - 9, y - 4, 18, 12, 2, PASTEL.melocoton, OLC, 0.9); caja(x - 10, y - 8, 20, 5, 2, '#ffd0b5', OLC, 0.9);
     caja(x - 1.8, y - 8, 3.6, 16, 0, PASTEL.oro, OLC, 0.6);

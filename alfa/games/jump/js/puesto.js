@@ -19,6 +19,7 @@ function etiqueta(x, y, cuanto, estado) {
   if (estado === 'puesto') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr('Puesto'), x, y + 0.4, 6.6, PASTEL.texto); return; }
   if (estado === 'tengo') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.fondo, OLC, 0.6); letras(tr('Ponérselo'), x, y + 0.4, 6.6, PASTEL.suave); return; }
   if (estado === 'mio') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.menta, OLC, 0.6); letras(tr('En la pandilla'), x, y + 0.4, 5.6, PASTEL.texto); return; }
+  if (estado === 'pase') { caja(x - 17, y - 5, 34, 10, 5, PASTEL.oro, OLC, 0.6); letras(tr('Contrato'), x, y + 0.4, 6, PASTEL.texto, { peso: 800 }); return; }   // del pase (pase.js): no se vende
   const da = GUARDA.zanas >= cuanto;
   caja(x - 17, y - 5, 34, 10, 5, da ? '#ffa45c' : PASTEL.raya, OLC, 0.6);
   iconoZana(x - 10, y, 10);
@@ -31,6 +32,7 @@ function catDe(clave) {
 }
 function compra(clave, cuanto, alComprar) {
   if (GUARDA.tengo[clave] || cuanto === 0) { alComprar(); salvaGuarda(); SONIDO.boton(); return; }
+  if (cuanto < 0) { SONIDO.uy(); abrePanel('pase'); return; }   // solo con el contrato de obra
   if (GUARDA.zanas < cuanto) { SONIDO.uy(); return; }
   GUARDA.zanas -= cuanto; GUARDA.tengo[clave] = true; alComprar(); salvaGuarda(); SONIDO.compra();
   const [cat, id] = catDe(clave); JS.pide('comprar', { cat, id });
@@ -99,8 +101,8 @@ function pintaTienda() {
         const [col, cuanto, nombre] = it, pelo = PANEL.pestana === 'pelaje', clave = (pelo ? 'pelo' : 'capa') + col;
         const puesto = (pelo ? GUARDA.pelaje : GUARDA.capa) === col, tengo = cuanto === 0 || GUARDA.tengo[clave];
         tarjeta(cx, cy, cw, ch, (X, Y) => pelo ? spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, col, GUARDA.capa) : spriteConejo('quieto0', X, Y + 12, 4.2, 0, 1, 1, GUARDA.pelaje, col),
-          nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { if (pelo) GUARDA.pelaje = col; else GUARDA.capa = col; }), extra);
-        if (!tengo) chipProbar(cx + cw, cy, pelo ? 'pelaje' : 'capa', col);
+          nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : cuanto < 0 ? 'pase' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { if (pelo) GUARDA.pelaje = col; else GUARDA.capa = col; }), extra);
+        if (!tengo && cuanto >= 0) chipProbar(cx + cw, cy, pelo ? 'pelaje' : 'capa', col);
       }
     });
     const fin = y0 + 2 + Math.ceil(lista.length / 2) * (ch + 4);

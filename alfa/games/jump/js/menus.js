@@ -88,6 +88,7 @@ function pintaPortada() {
   // el botón de empezar: grande, en el centro, botando un poco
   // y a su lado, el reto del día (el mismo río para todos hoy)
   const bt = tr('¡A JUGAR!'), bw = W - 20 - 66 - 6, bh = 26, bx = 10, by = cy2 - 36 + Math.abs(Math.sin(t * 3)) * -2;
+  pintaFranjaPase(10, cy2 - 58, W - 20, t);   // el contrato de obra (pase.js)
   caja(bx, by + 2.5, bw, bh, 8, OLC, null); caja(bx, by, bw, bh, 8, PASTEL.melocoton, OLC, 1.1);
   caja(bx + 4, by + 3, bw - 8, 6, 3, 'rgba(255,255,255,0.35)', null);
   letras(bt, bx + bw / 2, by + 14, 15, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 3.2 });
@@ -231,4 +232,5 @@ function pintaPanel() {
   else if (PANEL.abierto === 'ajustes') pintaAjustes();
   else if (PANEL.abierto === 'records') pintaRecords();
   else if (PANEL.abierto === 'regalo') pintaRegalo();
+  else if (PANEL.abierto === 'pase') pintaPase();
 }

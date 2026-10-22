@@ -204,6 +204,7 @@ function apuntaPartida(motivo) {
   if (GUARDA.compras && GUARDA.compras.doble) J.zanas *= 2;   // «Zanahoria doble», comprada con euros (anuncios.js)
   J.ganadas = J.zanas + premio;
   GUARDA.zanas += J.ganadas;
+  sumaXpPase(xpPartida(J));   // el contrato de obra (pase.js); con servidor lo cuenta jump_partida
   salvaGuarda();
   JS.pide('partida', { stats });   // el servidor hace la misma cuenta y manda; lo de aquí es para no esperar
   J.fin = { motivo, record, llevaba: J.cuestas.length, premio };

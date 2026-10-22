@@ -13,7 +13,7 @@ const JS = (() => {
   let activo = false, enviando = false, temporizador = 0, ultimoPuesto = '', puestoPendiente = false;   // puestoPendiente: lo puesto aquí aún no está en el servidor
   const nube = () => typeof CUENTA !== 'undefined' && CUENTA.activa && typeof CUENTA.rpc === 'function';
   const sinFuncion = e => /Could not find|HTTP 404|PGRST202/i.test(String((e && e.message) || e));
-  const deNegocio = e => /repetida|faltan_zanas|ya_la_tienes|todavia_no|sin_anuncios|ya_duplicado|tope_kit|no_existe|tienda_cerrada|tipo_no_valido|clave_no_valida/.test(String((e && e.message) || e));
+  const deNegocio = e => /repetida|faltan_zanas|ya_la_tienes|todavia_no|sin_anuncios|ya_duplicado|tope_kit|no_existe|tienda_cerrada|tipo_no_valido|clave_no_valida|sin_contrato|no_se_vende/.test(String((e && e.message) || e));
   const clave = n => n + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   const puestoDe = () => ({ pelaje: GUARDA.pelaje, capa: GUARDA.capa, piel: GUARDA.piel || 'madera', estela: GUARDA.estela });
 
@@ -28,6 +28,7 @@ const JS = (() => {
     GUARDA.anuncios = e.anuncios && e.anuncios.dia ? e.anuncios : null;
     if (Array.isArray(e.misiones) && e.misiones.length === 3) GUARDA.misiones = e.misiones;
     GUARDA.nivelMision = e.nivelMision || {};
+    if (e.pase && typeof e.pase === 'object') GUARDA.pase = Object.assign({ temporada: -1, xp: 0, premium: false, cobrados: [], cobradosP: [] }, e.pase);   // el contrato de obra (75)
     GUARDA.mejor = Math.max(GUARDA.mejor || 0, +m.mejor || 0); GUARDA.mejorM = Math.max(GUARDA.mejorM || 0, +m.mejorM || 0);
     GUARDA.partidas = Math.max(GUARDA.partidas || 0, +m.partidas || 0); GUARDA.rescatados = +m.rescatados || 0;
     if (!puestoPendiente) ultimoPuesto = JSON.stringify(puestoDe());
@@ -64,6 +65,7 @@ const JS = (() => {
     anuncio: a => CUENTA.rpc('jump_anuncio', { p_clave: a.clave, p_tipo: a.t }),
     comprar: a => CUENTA.rpc('jump_comprar', { p_clave: a.clave, p_cat: a.cat, p_id: a.id }),
     pack: a => CUENTA.rpc('jump_pack', { p_clave: a.clave, p_pack: a.pack }),
+    pase: a => CUENTA.rpc('jump_pase_cobrar', { p_clave: a.clave, p_nivel: a.nivel, p_premium: !!a.premium }),
   };
   async function vaciaCola() {
     if (!activo || enviando || !nube()) return; enviando = true;

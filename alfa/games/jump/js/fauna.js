@@ -45,11 +45,13 @@ const troncoPisable = t => !(t.tipo === 'tortuga' && t.bajo > 0.55);
 // pisaste si sigue ahí y se puede pisar, y si no, el más alto por debajo de ti que no esté hundido ni a punto de hundirse y
 // quede por delante de la ola; si es una tortuga, sale a flote, y si está agrietado, se le cura la grieta. Así nunca pagas
 // una oportunidad para morir en el mismo instante.
+// Siempre cerca de donde caíste: los troncos que ya salieron por abajo de la pantalla no existen, así que uno lejano te dejaría sin nada a tiro.
 function troncoSeguro(c, margenOla = 20) {
   const vale = o => o.wy > OLA.wy + margenOla && !(o.tipo === 'tortuga' && (o.bajo > 0.2 || o.ciclo > 2.6)) && !o.final;
-  let t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) ? c.ultimo : null;
-  if (!t) t = RIO.troncos.filter(o => o.wy <= c.wy + 10 && vale(o)).sort((a, b) => b.wy - a.wy)[0];
-  if (!t) t = RIO.troncos.filter(o => o.wy > OLA.wy + margenOla && o.tipo !== 'tortuga').sort((a, b) => a.wy - b.wy)[0];
+  const cerca = o => Math.abs(o.wy - c.wy);
+  let t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) && cerca(c.ultimo) < SALTO_MAX ? c.ultimo : null;
+  if (!t) t = RIO.troncos.filter(o => vale(o) && cerca(o) < SALTO_MAX * 1.5).sort((a, b) => cerca(a) - cerca(b))[0];   // el que vale más cercano
+  if (!t) t = RIO.troncos.filter(o => !o.final).sort((a, b) => cerca(a) - cerca(b))[0];   // si no, el más cercano, y se le cura lo que tenga
   if (!t) t = RIO.troncos[RIO.troncos.length - 1];
   if (t.tipo === 'tortuga') { t.ciclo = 0; t.bajo = 0; }
   if (t.tipo === 'hunde') t.pisa = 0;

@@ -4,7 +4,7 @@
 'use strict';
 
 const CAM = { y: 0 };
-const RIO = { troncos: [], ultimo: null, cuenta: 0, ultimoAmigo: -9, siguienteAmigo: 0 };
+const RIO = { troncos: [], ultimo: null, cuenta: 0, ultimoAmigo: -9, siguienteAmigo: 0, sinObjeto: 0 };   // sinObjeto: troncos seguidos sin objeto
 const COL_RIO = {
   hierba: '#a8d66b', hierbaO: '#93c45a', hierbaL: '#c2e48a', arena: '#f2dea8', arenaO: '#dcc088', piedra: '#cfc8bc',
   agua: '#7fd3cf', aguaO: '#68c2c2', aguaL: '#b4ece4', barro: '#9a6a40', barroO: '#7a4e2c',
@@ -91,10 +91,11 @@ function generaRio(hasta) {
     }
     // un amigo atrapado de vez en cuando (nunca dos filas seguidas), y si no, zanahorias
     const n = Math.floor(wy / 40);
+    RIO.sinObjeto++;
     for (const f of fila) {
       if (n - RIO.ultimoAmigo >= 3 && rnd() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
-      } else if (wy > 500 && rnd() < 0.075) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
+      } else if (wy > 300 && (rnd() < 0.13 || RIO.sinObjeto >= 20)) { f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)]; RIO.sinObjeto = -1; }   // un objeto cada 8 troncos más o menos, y nunca más de 20 sin ninguno
       else if (rnd() < (respiro ? 0.6 : 0.24)) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
       if (!f.amigo && !f.objeto && !respiro) {
@@ -122,7 +123,7 @@ function avanzaRio(dt) {
 
 // «guion»: los primeros troncos puestos a mano (el tutorial), quietos: [a un lado, altura, radio, qué lleva]
 function reiniciaRio(xSalida, guion) {
-  RIO.troncos = []; RIO.cerrado = false; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
+  RIO.troncos = []; RIO.cerrado = false; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.sinObjeto = 0; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
   const t = nuevoTronco(xSalida, 0, 27, 0); t.vx = 0; t.pisado = true;
   RIO.ultimo = t;
   for (const [dx, wy, r, lleva] of guion || []) {

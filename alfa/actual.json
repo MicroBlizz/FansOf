@@ -1,8 +1,8 @@
 {
- "build": 398,
- "hash": "661597a",
- "fecha": "2026-10-22T09:29:48Z",
- "mensaje": "Fans of Snakes: cartas cada 5 manzanas, racha que carga el Frenesí y tres locuras nuevas",
+ "build": 399,
+ "hash": "49d0d59",
+ "fecha": "2026-10-22T09:34:14Z",
+ "mensaje": "Jump: al seguir tras caer, siempre un tronco a tiro cerca de donde caíste; más objetos en el río (uno cada ~8 troncos, nunca más de 20 sin ninguno); 75 aplicado",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

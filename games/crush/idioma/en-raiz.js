@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.29
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha puesto una puerta a cada juego y Phony ha intentado colarse por la de Crush con una bolsa de caramelos.": "Microblizz has put a door on each game and Phony tried to sneak through Crush's with a bag of sweets.",
   // 0.1.25
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
   "Microblizz ha puesto carteles de otros juegos entre caramelo y caramelo y Phony ya ha pedido comisión.": "Microblizz has put up posters of other games between sweets and Phony has already asked for a commission.",

@@ -26,6 +26,12 @@ const SONIDO = {
   boton: () => tone(700, 900, 0.05, 'triangle', v(0.06)),
   locura: tipo => tipo === 'retro' ? [1200, 1200, 1600].forEach((f, i) => pitido(f, 0.08, i * 0.1)) : [600, 450, 600, 450].forEach((f, i) => tone(f, f, 0.08, 'triangle', v(0.06), i * 0.07)),
   locura_fin: () => tone(1000, 1400, 0.1, 'triangle', v(0.05)),
+  cartas: () => [523, 659, 784].forEach((f, i) => tone(f, f, 0.12, 'triangle', v(0.07), i * 0.08)),
+  elige: () => { [784, 988, 1318].forEach((f, i) => tone(f, f, 0.09, 'square', v(0.06), i * 0.05)); noise(0.1, v(0.05), 3000, 'bandpass'); },
+  escudo: () => { tone(200, 600, 0.15, 'square', v(0.08)); noise(0.12, v(0.08), 900); },
+  fantasma: () => tone(900, 300, 0.3, 'sine', v(0.08)),
+  portal: () => tone(300, 1200, 0.12, 'sine', v(0.06)),
+  racha: n => tone(700 + n * 90, 900 + n * 90, 0.06, 'triangle', v(0.05), 0.05),
 };
 
 // cada fotograma: qué canción toca y a qué velocidad (el audio arranca con el primer toque)
@@ -38,5 +44,5 @@ function vigilaMusica() {
   if (M.trk && M.trk.once) return;
   const quiero = J.modo === 'menu' ? 'menu' : 'gamer';
   if (M.name !== quiero) musicSet(quiero);
-  M.tmT = J.modo === 'menu' ? 1 : esFrenesi() ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
+  M.tmT = J.modo === 'menu' ? 1 : J.modo === 'cartas' ? 0.85 : esFrenesi() ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
 }

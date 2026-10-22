@@ -4,7 +4,7 @@
 'use strict';
 
 const CAM = { y: 0 };
-const RIO = { troncos: [], ultimo: null, cuenta: 0, ultimoAmigo: -9, siguienteAmigo: 0 };
+const RIO = { troncos: [], ultimo: null, cuenta: 0, ultimoAmigo: -9, siguienteAmigo: 0, sinObjeto: 0 };   // sinObjeto: troncos seguidos sin objeto
 const COL_RIO = {
   hierba: '#a8d66b', hierbaO: '#93c45a', hierbaL: '#c2e48a', arena: '#f2dea8', arenaO: '#dcc088', piedra: '#cfc8bc',
   agua: '#7fd3cf', aguaO: '#68c2c2', aguaL: '#b4ece4', barro: '#9a6a40', barroO: '#7a4e2c',
@@ -91,10 +91,11 @@ function generaRio(hasta) {
     }
     // un amigo atrapado de vez en cuando (nunca dos filas seguidas), y si no, zanahorias
     const n = Math.floor(wy / 40);
+    RIO.sinObjeto++;
     for (const f of fila) {
       if (n - RIO.ultimoAmigo >= 3 && rnd() < 0.3) {
         f.amigo = AMIGOS[RIO.siguienteAmigo % AMIGOS.length].id; RIO.siguienteAmigo++; RIO.ultimoAmigo = n; f.vx *= 0.5;
-      } else if (wy > 500 && rnd() < 0.075) f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)];
+      } else if (wy > 300 && (rnd() < 0.13 || RIO.sinObjeto >= 20)) { f.objeto = OBJETOS_RIO[Math.floor(rnd() * OBJETOS_RIO.length)]; RIO.sinObjeto = -1; }   // un objeto cada 8 troncos más o menos, y nunca más de 20 sin ninguno
       else if (rnd() < (respiro ? 0.6 : 0.24)) f.zanas = 1 + Math.floor(rnd() * rnd() * 3);
       // troncos especiales: el que se hunde si tardas en saltar y el muelle, que te lanza más lejos
       if (!f.amigo && !f.objeto && !respiro) {
@@ -122,7 +123,7 @@ function avanzaRio(dt) {
 
 // «guion»: los primeros troncos puestos a mano (el tutorial), quietos: [a un lado, altura, radio, qué lleva]
 function reiniciaRio(xSalida, guion) {
-  RIO.troncos = []; RIO.cerrado = false; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
+  RIO.troncos = []; RIO.cerrado = false; RIO.cuenta = 0; RIO.ultimoAmigo = -9; RIO.sinObjeto = 0; RIO.siguienteAmigo = Math.floor(rnd() * AMIGOS.length);
   const t = nuevoTronco(xSalida, 0, 27, 0); t.vx = 0; t.pisado = true;
   RIO.ultimo = t;
   for (const [dx, wy, r, lleva] of guion || []) {
@@ -187,9 +188,12 @@ function pintaRio(t) {
   for (let k = k0; k <= k1; k++) for (const s of [0, 1]) {
     const h = hash(k, s + 100), wy = k * paso + hash(k, s + 110) * 14, [L, R] = orillas(wy);
     const sitio = s ? W - R : L, x = s ? R + 10 + hash(k, 120 + s) * Math.max(1, sitio - 14) : L - 10 - hash(k, 120 + s) * Math.max(1, sitio - 14);
-    if (h < 0.18) cosas.push([hash(k, s + 130) < 0.5 ? 'tocon0' : 'tocon1', x, wy, 6.5 + hash(k, s + 140) * 2]);
+    const grandeArriba = hash(k - 1, s + 100) < 0.37;   // la fila de arriba ya tiene tocón, árbol o arbusto en esta orilla: aquí nada grande, que se montan
+    if (h < 0.18 && !grandeArriba) cosas.push([hash(k, s + 130) < 0.5 ? 'tocon0' : 'tocon1', x, wy, 6.5 + hash(k, s + 140) * 2]);
+    else if (h < 0.18) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     else if (h < 0.27) cosas.push([delPaisaje('arbol', wy, hash(k, s + 190)), s ? W - 4 - hash(k, 150) * 6 : 4 + hash(k, 151) * 6, wy, 9 + hash(k, s + 160) * 2]);
-    else if (h < 0.37) cosas.push([delPaisaje('arbusto', wy, hash(k, s + 190)), x, wy, 7 + hash(k, s + 170) * 2]);
+    else if (h < 0.37 && !grandeArriba) cosas.push([delPaisaje('arbusto', wy, hash(k, s + 190)), x, wy, 7 + hash(k, s + 170) * 2]);
+    else if (h < 0.37) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     else if (h < 0.62) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     // la obra de Microblizz: conos, vallas y carteles (desde los 30 m)
     else if (h < 0.68 && wy > 300) { const o = hash(k, s + 230); cosas.push(o < 0.5 ? ['cono', x, wy, 5] : o < 0.8 ? ['valla', x, wy, 6] : ['cartel', x, wy, 7]); }

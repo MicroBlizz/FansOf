@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<script src="../../core/js/proximamente.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#101418">
+<title>Fans of Auto</title>
+<meta name="description" content="Fans of Auto (demo): roba coches y siembra el caos en el Distrito Beta Abierta, visto desde arriba como en los clásicos de la primera PlayStation. Los Moderadores te buscan y tres bandas quieren que hagas sus recados.">
+<style>
+/* Fans of Auto: todo el juego se dibuja en un lienzo pequeño (como un juego de la primera PlayStation, a lo ancho) y se
+   amplía un número entero de veces para que cada píxel se vea gordo y nítido. No hay nada más en la página. */
+html, body { height: 100%; margin: 0; background: #101418; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+#caja { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+#juego { display: block; image-rendering: crisp-edges; image-rendering: pixelated; touch-action: none; outline: none; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; text-align: center; color: #8c9cac; font: 700 14px/1.5 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.1em; }
+#gira { display: none; position: fixed; left: 0; right: 0; bottom: 12%; text-align: center; color: #ffd23c; font: 700 15px/1.5 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.08em; pointer-events: none; }
+@media (orientation: portrait) and (pointer: coarse) { #gira { display: block; } #caja { align-items: flex-start; padding-top: 14vh; } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Auto"></canvas></div>
+<div id="gira">GIRA EL MÓVIL<br>para jugar a lo ancho</div>
+<div id="carga">…</div>
+<script>
+window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });
+</script>
+<!-- el sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código); no se cambian -->
+<script src="../../core/js/sistema/sonido.js?v=0.1.0"></script>
+<script src="../../core/js/serie/canciones.js?v=0.1.0"></script>
+<!-- ?v= es la versión de la demo: súbela al publicar un cambio para que el navegador no mezcle archivos viejos y nuevos -->
+<script src="js/textos.js?v=0.1.0"></script>
+<script src="js/audio.js?v=0.1.0"></script>
+<script src="js/lona.js?v=0.1.0"></script>
+<script src="js/letras.js?v=0.1.0"></script>
+<script src="js/mapa.js?v=0.1.0"></script>
+<script src="js/arte.js?v=0.1.0"></script>
+<script src="js/arte-2.js?v=0.1.0"></script>
+<script src="js/sim.js?v=0.1.0"></script>
+<script src="js/ia.js?v=0.1.0"></script>
+<script src="js/mision.js?v=0.1.0"></script>
+<script src="js/mandos.js?v=0.1.0"></script>
+<script src="js/dibujo.js?v=0.1.0"></script>
+<script src="js/marcador.js?v=0.1.0"></script>
+<script src="js/pantallas.js?v=0.1.0"></script>
+<script src="js/novedades.js?v=0.1.0"></script>
+<script src="js/principal.js?v=0.1.0"></script>
+</body>
+</html>

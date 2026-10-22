@@ -88,6 +88,7 @@ function pintaPortada() {
   // el botón de empezar: grande, en el centro, botando un poco
   // y a su lado, el reto del día (el mismo río para todos hoy)
   const bt = tr('¡A JUGAR!'), bw = W - 20 - 66 - 6, bh = 26, bx = 10, by = cy2 - 36 + Math.abs(Math.sin(t * 3)) * -2;
+  pintaFranjaPase(10, cy2 - 58, W - 20, t);   // el contrato de obra (pase.js)
   caja(bx, by + 2.5, bw, bh, 8, OLC, null); caja(bx, by, bw, bh, 8, PASTEL.melocoton, OLC, 1.1);
   caja(bx + 4, by + 3, bw - 8, 6, 3, 'rgba(255,255,255,0.35)', null);
   letras(bt, bx + bw / 2, by + 14, 15, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 3.2 });
@@ -167,7 +168,7 @@ function interruptor(sx, sy, clave, alEncender) {
   boton(sx - 4, sy - 4, 26, 18, () => { GUARDA[clave] = !GUARDA[clave]; salvaGuarda(); SONIDO.boton(); if (GUARDA[clave] && alEncender) alEncender(); });
 }
 function pintaAjustes() {
-  const W = PAN.W, x = 16, y = PAN.H / 2 - 93, w = W - 32, h = 188;
+  const W = PAN.W, x = 16, y = PAN.H / 2 - 102, w = W - 32, h = 206;
   marco('Hoja de reclamaciones', x, y, w, h, PASTEL.lila);
   barra('Queja n.º 1: los ruiditos', 'efectos', x + 12, y + 16, w - 24);
   barra('Queja n.º 2: la música', 'musica', x + 12, y + 42, w - 24);
@@ -182,20 +183,27 @@ function pintaAjustes() {
   caja(W / 2 - rw / 2, y + 119, rw, 15, 4, OLC, null); caja(W / 2 - rw / 2, y + 117.5, rw, 15, 4, PASTEL.melocoton, OLC, 0.8);
   letras(rt, W / 2, y + 125.5, 7.5, '#ffffff', { borde: PASTEL.melocotonO, bw: 2 });
   boton(W / 2 - rw / 2 - 4, y + 114, rw + 8, 22, () => { GUARDA.tuto = false; salvaGuarda(); PANEL.abierto = null; nuevaPartida('listo'); SONIDO.boton(); });
-  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 148 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
+  // la cuenta: guardarla con email o Google, o entrar en una (la ventana es la común de core, cuenta-pantalla.js)
+  if (window.filaCuenta) {
+    const invitado = typeof CUENTA === 'undefined' || CUENTA.invitado, ct = invitado ? tr('Guardar mi progreso (cuenta)') : tr('Mi cuenta') + ': ' + (CUENTA.email || ''), cw2 = Math.min(w - 20, anchoLetras(ct, 7.5) + 18);
+    caja(W / 2 - cw2 / 2, y + 140, cw2, 15, 4, OLC, null); caja(W / 2 - cw2 / 2, y + 138.5, cw2, 15, 4, invitado ? PASTEL.oro : PASTEL.menta, OLC, 0.8);
+    letras(ct, W / 2, y + 146.5, 7.5, PASTEL.texto, { peso: 800, max: cw2 - 10 });
+    boton(W / 2 - cw2 / 2 - 4, y + 135, cw2 + 8, 22, abreCuenta);
+  }
+  envuelve(tr('Tus quejas se quedan en este móvil. Microblizz no las leerá.'), w - 30, 6.4).forEach((l, i) => letras(l, W / 2, y + 166 + i * 8, 6.4, PASTEL.flojo, { peso: 700 }));
   aqui(W / 2, y + h - 14, -0.06, 1, 1, () => { const r = tr('Recibido: Lola'), rw = anchoLetras(r, 7, { logo: true }) + 12; caja(-rw / 2, -5.5, rw, 11, 2, null, PASTEL.lilaO, 0.9); letras(r, 0, 0.6, 7, PASTEL.lilaO, { logo: true }); });
 }
 function pintaRecords() {
-  const W = PAN.W, mundial = PANEL.pestanaR === 'mundial', x = 14, w = W - 28, h = mundial ? Math.min(PAN.H - 70, 300) : 146, y = PAN.H / 2 - h / 2;
+  const W = PAN.W, mundial = PANEL.pestanaR === 'mundial' || PANEL.pestanaR === 'reto', x = 14, w = W - 28, h = mundial ? Math.min(PAN.H - 70, 300) : 146, y = PAN.H / 2 - h / 2;
   marco('Mis récords', x, y, w, h, PASTEL.oro);
   // las dos pestañas: lo tuyo y el ranking mundial (ranking.js)
-  [['mias', 'Mis marcas'], ['mundial', 'Ranking mundial']].forEach(([id, txt], i) => {
-    const on = (PANEL.pestanaR || 'mias') === id, tw = (w - 26) / 2, px = x + 10 + i * (tw + 6);
+  [['mias', 'Mis marcas'], ['mundial', 'Mundial'], ['reto', 'Reto del día']].forEach(([id, txt], i) => {
+    const on = (PANEL.pestanaR || 'mias') === id, tw = (w - 32) / 3, px = x + 10 + i * (tw + 6);
     caja(px, y + 8, tw, 13, 4, on ? PASTEL.oro : PASTEL.fondo, OLC, 0.7);
-    letras(tr(txt), px + tw / 2, y + 14.8, 7.2, on ? PASTEL.texto : PASTEL.suave, { peso: 800 });
+    letras(tr(txt), px + tw / 2, y + 14.8, 7.2, on ? PASTEL.texto : PASTEL.suave, { peso: 800, max: tw - 6 });
     boton(px, y + 6, tw, 17, () => { PANEL.pestanaR = id; PANEL.scroll = 0; SONIDO.boton(); });
   });
-  if (mundial) return pintaRanking(x + 8, y + 28, w - 16, h - 34);
+  if (mundial) return pintaRanking(x + 8, y + 28, w - 16, h - 34, PANEL.pestanaR === 'reto' ? RANKING.reto : RANKING);
   const filas = [['Mayores pérdidas', GUARDA.mejor.toLocaleString('es-ES') + ' €'], ['Huida más larga', GUARDA.mejorM + ' m'], ['Partidas', GUARDA.partidas], ['Empleados liberados', GUARDA.rescatados], ['Zanahorias', GUARDA.zanas]];
   filas.forEach(([k, v], i) => {
     letras(tr(k), x + 12, y + 40 + i * 20, 7.8, PASTEL.suave, { alin: 'left', peso: 700 });
@@ -203,10 +211,26 @@ function pintaRecords() {
     if (i < filas.length - 1) caja(x + 10, y + 49 + i * 20, w - 20, 0.5, 0, PASTEL.raya, null);
   });
 }
+// la ventana de la cuenta: la fila común de core (email, Google, cerrar sesión, borrar) dentro de una ventana HTML encima del juego
+function abreCuenta() {
+  if (document.getElementById('jm-cuenta') || !window.filaCuenta) return;
+  SONIDO.boton();
+  const d = document.createElement('div');
+  d.id = 'jm-cuenta';
+  d.style.cssText = 'position:fixed;inset:0;display:grid;place-items:center;background:rgba(40,25,60,.45);z-index:50;font-family:"Baloo 2",system-ui,sans-serif';
+  d.innerHTML = `<div style="background:#fbf4ff;border:3px solid #3d2a5c;border-radius:18px;padding:14px 16px;width:min(88vw,360px);box-shadow:0 5px 0 rgba(40,25,60,.35);color:#4a3070">
+    <div style="font:800 18px/1.1 'Baloo 2',sans-serif;margin-bottom:8px;text-align:center">${tr('Tu cuenta')}</div>
+    <div class="opt-list" id="jm-cuenta-fila" style="font-size:14px"></div>
+    <div style="text-align:center;margin-top:10px"><button type="button" class="btn-ghost ol" id="jm-cuenta-cerrar" style="font-size:16px;padding:8px 16px 5px">${tr('Cerrar')}</button></div></div>`;
+  document.body.appendChild(d);
+  document.getElementById('jm-cuenta-fila').appendChild(window.filaCuenta);
+  document.getElementById('jm-cuenta-cerrar').onclick = () => { d.remove(); SONIDO.boton(); };
+}
 function pintaPanel() {
   if (PANEL.abierto === 'tienda') pintaTienda();
   else if (PANEL.abierto === 'guia') pintaGuia();
   else if (PANEL.abierto === 'ajustes') pintaAjustes();
   else if (PANEL.abierto === 'records') pintaRecords();
   else if (PANEL.abierto === 'regalo') pintaRegalo();
+  else if (PANEL.abierto === 'pase') pintaPase();
 }

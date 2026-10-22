@@ -29,11 +29,11 @@ function nvSectorCara(c, x, y, cara, R, col, vivo) {
 // Qué admite cada anclaje: letras sobre el dibujo y lista de nombres en el texto.
 const NV_LETRA_TIPO = { railgun: 'R', flak: 'F', laser: 'L', lanzador: 'M', drones: 'D', defensa: 'E' };
 function nvAdmite(sl) {   // «Todas las armas» si admite las cinco; si no, sus nombres
-  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = NV_TIPOS_LIBRES.every(t => ar.includes(t));
+  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = ar.includes('universal') || NV_TIPOS_LIBRES.every(t => ar.includes(t));   // «universal» (Memes, jefes) admite cualquiera: no es un portador
   return (todas ? tr('Todas las armas') : ar.map(t => tr(NOVA_ARMAS.portadores[t].nombre)).join(', ')) + (sl.tipos.includes('defensa') ? (ar.length ? ' + ' : '') + tr('Defensa') : '');
 }
 function nvLetrasAnclaje(sl) {
-  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = NV_TIPOS_LIBRES.every(t => ar.includes(t));
+  const ar = sl.tipos.filter(t => t !== 'defensa'), todas = ar.includes('universal') || NV_TIPOS_LIBRES.every(t => ar.includes(t));   // «universal» (Memes, jefes) admite cualquiera: no es un portador
   return (todas ? '★' : ar.map(t => NV_LETRA_TIPO[t]).join('')) + (sl.tipos.includes('defensa') ? 'E' : '');
 }
 // Pinta la nave de frente en el lienzo, con el arco del anclaje elegido y un aro en cada anclaje.

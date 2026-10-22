@@ -42,6 +42,9 @@ const DC_CORREOS = [
     opciones: [{ texto: 'Quitar una carta', riesgo: 'seguro', fx: { carta: 'quitar' }, det: 'Eliges una carta y desaparece del mazo.' }, { texto: 'Ascender una carta', riesgo: 'seguro', fx: { carta: 'ascender' }, det: 'Eliges una carta y la mejoras.' }] },
   { id: 'caja', titulo: 'Caja perdida de material', texto: 'En el almacén hay una caja con la etiqueta «NO ABRIR · RR. HH.». Pesa. Suena.',
     opciones: [{ texto: 'Pagar 15 de bonus al bedel', riesgo: 'seguro', fx: { nominas: -15, objeto: true }, det: 'Un objeto al azar por 15 de bonus.' }, { texto: 'Abrirla a lo bruto', riesgo: 'arriesgado', fx: { vida: -10, objeto: true, carta: 'rara' }, det: 'Un objeto y una carta rara, pero la caja muerde: −10 de vida.' }] },
+  // Solo con el flag de niveles (campana.js: dcCorreosCap). sube3Baja: tres cartas al azar suben un nivel y la de mayor rareza baja uno (niveles.js: dcSubeTresBajaUna).
+  { id: 'ruleta', nivel: true, titulo: 'La rueda de ascensos', texto: 'RR. HH. ha instalado una rueda de la fortuna junto a la fotocopiadora. En cada casilla, un cargo distinto. «Gire sin compromiso», dice el cartel.',
+    opciones: [{ texto: 'Un giro tranquilo', riesgo: 'seguro', fx: { ascensoAzar: true }, det: 'Una carta de tu mazo, al azar, sube un nivel.' }, { texto: 'Apostar fuerte', riesgo: 'arriesgado', fx: { sube3Baja: true }, det: 'Tres cartas al azar suben un nivel, pero la de mayor rareza baja uno (al azar si hay varias).' }] },
   { id: 'encuesta', titulo: 'Encuesta de satisfacción', texto: 'Microblizz quiere saber cómo te sientes. Las respuestas son anónimas (tu nombre va en la primera línea).',
     opciones: [{ texto: 'Responder con sinceridad', riesgo: 'arriesgado', fx: { vidaMax: 8, nominas: -20 }, det: '+8 de vida máxima; te descuentan 20 de bonus por «actitud».' }, { texto: 'Poner un 10 en todo', riesgo: 'seguro', fx: { nominas: 25 }, det: '+25 de bonus por «compromiso».' }] },
 ];

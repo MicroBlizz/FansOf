@@ -2,7 +2,7 @@
 // la COMPRADA entra con dinero (y cae poco a poco jugando) y nunca entra en nada con azar: compra cosas a precio fijo (pase, cosméticos, ventajas).
 // El único puente va de la GANADA a la COMPRADA (oro → gemas, caro: `cambio` de ganada por cada comprada), nunca al revés (decisión de Arkioner, 19-10-2026):
 // así el dinero no llega al gashapón ni en dos pasos, y jugando mucho se abaratan el pase y los cosméticos. El ratio solo pasa precios de una a otra.
-// Nombres, iconos y ratio: valores de core ← AJUSTES.monedas del juego ← fila remota de `flags` (nombre 'monedas', dato = JSON), consultados cada vez.
+// Nombres, iconos y ratio: valores de core ← AJUSTES.monedas del juego ← config remota `monedas` (tabla config_servidor, servidor/70; antes, la fila de `flags`), consultados cada vez.
 // cual es siempre 'ganada' o 'comprada'. Un juego con partida propia (modo ligero) pone AJUSTES.monedas.leer(cual) y escribir(cual, n); con core, SAVE.gold y SAVE.gems.
 // No pinta nada por sí solo: el juego llama a chip(), saldo(), ventanaCambio(), compraReal() desde su tienda o su cartera.
 'use strict';
@@ -15,7 +15,9 @@ const MONEDAS = (() => {
     cambio: 200,   // lo que cuesta 1 comprada en ganada al cambiar (el doble de lo que vale: cambiar sale caro a propósito). 0 = sin puente
   };
   const mezcla = (a, b) => { const o = Object.assign({}, a); for (const k in b || {}) o[k] = b[k] && typeof b[k] === 'object' && !Array.isArray(b[k]) && typeof b[k] !== 'function' ? mezcla(a[k] || {}, b[k]) : b[k]; return o; };
-  const remota = () => {   // la fila `monedas` de flags para este juego: dato es JSON (ratio, nombres…); si está mal escrito, se ignora
+  const remota = () => {   // la config `monedas` del servidor para este juego (ratio, nombres…); si no llega, la fila antigua de flags (dato es JSON); si está mal escrito, se ignora
+    const c = typeof NUCLEO !== 'undefined' && NUCLEO.configRemota && NUCLEO.configRemota('monedas');
+    if (c && typeof c === 'object') return c;
     const r = typeof NUCLEO !== 'undefined' && NUCLEO.flagRemoto && NUCLEO.flagRemoto('monedas');
     if (!r || !r.dato) return null;
     try { return JSON.parse(r.dato); } catch (e) { return null; }

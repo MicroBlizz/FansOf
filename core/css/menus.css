@@ -69,7 +69,7 @@
 .deck-sub { margin: 0; font-size: 14px; font-weight: 700; color: var(--ink-dim); max-width: 440px; text-wrap: balance; }
 .deck-desc { font-size: 12.5px; font-weight: 700; line-height: 1.22; }
 .deck-stats { font-size: 12px; font-weight: 800; color: var(--ink-dim); margin-top: 2px; font-variant-numeric: tabular-nums; }
-#scr-options .ver { margin: 14px 0 0; text-align: center; font-size: 12px; opacity: .55; }
+#scr-options .ver, .opt-ver { margin: 14px 0 0; text-align: center; font-size: 12px; opacity: .55; }
 .screen.top { justify-content: flex-start; padding: 18px 16px 22px; gap: 10px; }
 .screen.modal { background: var(--modal); z-index: 30; }
 #scr-confirm.screen.modal { z-index: 45; }   /* la confirmación va siempre encima de cualquier ventana de juego (p. ej. la de cuenta); si no, los botones de Google/email «no hacen nada» */

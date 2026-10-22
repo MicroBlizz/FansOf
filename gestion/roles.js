@@ -1,4 +1,4 @@
-// Fans Of · /gestion: la pestaña ROLES (dar y quitar roles de cuenta por correo: alfa, admin).
+// Fans Of · /gestion: la pestaña ROLES (dar y quitar roles de cuenta por correo: alfa, beta, admin).
 // Datos: gestion_roles(token), gestion_rol_dar(token, correo, rol) y gestion_rol_quitar(...), servidor/34-alfa-roles.sql. Usa lo de gestion/index.html: rpc(), leerToken(), esc(), fecha(), textoError() y $().
 'use strict';
 (() => {

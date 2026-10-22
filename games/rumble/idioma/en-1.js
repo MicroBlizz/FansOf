@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.148
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha puesto cortinas en la arena y Phony asegura que detrás está la mejor facción.": "Microblizz has hung curtains in the arena and Phony swears the best faction is behind them.",
   // 0.9.144
   "<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie.": "<b>OTHER FANS OF GAMES</b>: ad slots now show another of our games at random, never the one you are playing, and take you to its Library page. Plus under-the-hood improvements to the series' systems.",
   "Microblizz ha puesto un tablón de anuncios de otros juegos y Phony ya ha pegado su currículum.": "Microblizz has put up a board of ads for other games and Phony has already pinned his CV.",

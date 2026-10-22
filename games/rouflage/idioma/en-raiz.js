@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.42
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha afinado la puerta de la web y Phony ha entrado por la del armario.": "Microblizz has tuned the website's door and Phony came in through the wardrobe one.",
   // 0.2.40
   "<b>TALENTOS</b>: nueva pantalla en MI PERFIL con un nivel de becario y otro de colado, del 1 al 20, que suben jugando. Antes de cada partida eliges una habilidad. Becarios: contador de sala, dron de rastreo, silbato del jefe, linterna ultravioleta y café doble. Colados: granada de humo, señuelo pintado (con más pintura cada 5 niveles), pintura rápida mejorada, pasos de gato y cambiazo. En el nivel 20, un título para el armario.": "<b>TALENTS</b>: a new screen in MY PROFILE with an intern level and an intruder level, from 1 to 20, that go up as you play. Before each match you choose an ability. Interns: room counter, tracking drone, boss's whistle, UV flashlight and double coffee. Intruders: smoke grenade, painted decoy (with more paint every 5 levels), better quick paint, cat steps and switcheroo. At level 20, a title for the wardrobe.",
   "<b>PVP CLÁSICO Y CON TALENTOS</b>: BUSCAR PARTIDA tiene dos colas que nunca se mezclan, y en la sala con amigos el anfitrión elige el modo. En CLÁSICO nadie lleva habilidades, solo la granada.": "<b>CLASSIC AND TALENTS PVP</b>: FIND MATCH has two queues that never mix, and in rooms with friends the host picks the mode. In CLASSIC nobody has abilities, only the grenade.",

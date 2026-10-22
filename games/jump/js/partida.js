@@ -47,7 +47,7 @@ function nuevaPartida(modo = 'menu') {
 function empieza() {
   const J = JUEGO;
   J.modo = 'juego'; OLA.activa = true; PANEL.abierto = null;
-  empiezaHuella();
+  empiezaHuella(); telEmpieza();   // datos anónimos (telemetria.js)
   for (const k of ['casco', 'cafe', 'suerte', 'mirilla']) if (GUARDA.kit[k] > 0) { GUARDA.kit[k]--; J.kit[k] = true; }
   if (J.kit.casco) J.casco = true;
   if (J.kit.cafe) { J.cafe = 8; bandera(tr('¡Pausa del café!'), PASTEL.melocoton); }
@@ -165,14 +165,15 @@ function enciendeFiebre() {
 }
 
 // al agua: el casco de obra o MeerCat te salvan una vez (vuelves al último tronco)
-function alAgua() {
+function alAgua(causa = 'barro') {
   const J = JUEGO, c = J.conejo;
   if (tutoAgua()) return;
+  telCaida(causa);
   if (J.casco || poder('suricata')) {
     const quien = J.casco ? tr('¡El casco te salva!') : tr('¡MeerCat te salva!');
     if (J.casco) J.casco = false; else J.cuestas.splice(J.cuestas.indexOf('suricata'), 1);
     onda(c.x, c.wy, 8); salpica(c.x, c.wy, 10, 'rgba(255,255,255,0.95)');
-    const t = c.ultimo && RIO.troncos.includes(c.ultimo) ? c.ultimo : RIO.troncos.filter(o => o.wy <= c.wy + 10 && o.wy > OLA.wy + 20).sort((a, b) => b.wy - a.wy)[0];
+    const t = troncoSeguro(c, 20);
     if (t) { c.tronco = t; c.ox = 0; c.owy = 0; c.x = t.x; c.wy = t.wy; c.cae = 1; J.enTronco = 0; aviso(quien, c.x, c.wy + 30, '#9fe3ff', 10); SONIDO.rescate(); return; }
   }
   muere('barro');
@@ -182,7 +183,7 @@ function acaba(motivo) {
   const J = JUEGO, c = J.conejo;
   if (J.modo === 'fin') return;
   J.modo = 'fin'; J.tFin = 0; c.salto = null; c.tronco = null;
-  apuntaPartida(motivo);
+  apuntaPartida(motivo); telFin(motivo === 'ola' ? 'ola' : 'barro');
   J.temblor = GUARDA.suave ? 0 : 0.3;
   empiezaMuerte(motivo);
   SONIDO.chof();
@@ -190,17 +191,22 @@ function acaba(motivo) {
 }
 // lo que se apunta al acabar (al caer o al llegar a la madriguera: final.js): récord, ranking, misiones y zanahorias
 function apuntaPartida(motivo) {
-  const J = JUEGO, record = J.puntos > GUARDA.mejor;
+  const J = JUEGO;
+  if (TUTO.repaso) { J.ganadas = 0; J.resumenMisiones = []; J.fin = { motivo, record: false, llevaba: J.cuestas.length, premio: 0 }; GUARDA.tuto = true; salvaGuarda(); acabaPrueba(); return; }   // repetir el tutorial no cuenta
+  const record = J.puntos > GUARDA.mejor;
   cierraRetoYHuella(record);
   if (record) { GUARDA.mejorSeg = J.t - FANTASMA.t0; subeMarca(J.puntos, J.metros, GUARDA.mejorSeg); }   // al ranking mundial (ranking.js)
   J.antesM = GUARDA.mejorM;   // para «te faltaron … m» en el parte (pantalla.js)
   GUARDA.mejor = Math.max(GUARDA.mejor, J.puntos); GUARDA.mejorM = Math.max(GUARDA.mejorM, J.metros);
   GUARDA.partidas++; GUARDA.rescatados += J.rescatados; apuntaAyuda(J.metros);
   const premio = cierraMisiones();
+  const stats = { metros: J.metros, segundos: Math.max(1, Math.round(J.t)), zanas: J.zanas, saltos: J.saltos, perfectos: J.perfectos, maxCuestas: J.maxCuestas, maxRacha: J.maxRacha, fiebres: J.fiebres, rescatados: J.rescatados, puntos: J.puntos, seguidos: J.seguidos };   // para el servidor (servidor.js)
   if (GUARDA.compras && GUARDA.compras.doble) J.zanas *= 2;   // «Zanahoria doble», comprada con euros (anuncios.js)
   J.ganadas = J.zanas + premio;
   GUARDA.zanas += J.ganadas;
+  sumaXpPase(xpPartida(J));   // el contrato de obra (pase.js); con servidor lo cuenta jump_partida
   salvaGuarda();
+  JS.pide('partida', { stats });   // el servidor hace la misma cuenta y manda; lo de aquí es para no esperar
   J.fin = { motivo, record, llevaba: J.cuestas.length, premio };
   acabaPrueba();   // la piel que probabas con un anuncio se devuelve (anuncios.js)
 }
@@ -215,7 +221,7 @@ function avanzaJuego(dt) {
   // el tronco agrietado: se rompe muy rápido; si sigues encima a los ROMPE_SEG, se parte en dos y caes al agua
   if (c.tronco && c.tronco.tipo === 'hunde' && J.modo === 'juego') {
     c.tronco.pisa += dt;
-    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua(); }   // rotura.js
+    if (c.tronco.pisa > ROMPE_SEG) { const t = c.tronco; RIO.troncos = RIO.troncos.filter(o => o !== t); c.tronco = null; rompeTronco(t); alAgua('crac'); }   // rotura.js
   }
   avanzaTuto(dt); avanzaCasi(dt); avanzaAnuncio(dt);
   if (J.modo === 'juego') { avanzaObjetos(dt); avanzaDron(dt); }
@@ -243,7 +249,7 @@ function avanzaJuego(dt) {
     if (J.cafe <= 0 && !tutoFrena()) avanzaOla(dt, c.wy, J.metros);
     // en la fiebre, las zanahorias de los troncos cercanos vienen solas
     if (J.fiebre > 0) for (const t of RIO.troncos) if (t.zanas && Math.hypot(t.x - c.x, t.wy - c.wy) < 70) cogeZanas(t, t.x, t.wy);
-    if (OLA.wy >= c.wy - 2 && !usaEscudo()) muere('ola');
+    if (OLA.wy >= c.wy - 2 && !usaEscudo()) { telCaida('ola'); muere('ola'); }
     cruzaMetas();
   }
   if (J.modo === 'fin') { J.tFin += dt; c.hunde = Math.min(1, c.hunde + dt * 1.4); }

@@ -51,7 +51,11 @@ function dcRango() { return dcCap().rangos[Math.min(DCP.run.rango || 0, dcCap().
 // Lo que cambia por capítulo (con lo de Microblizz por defecto).
 function dcTitulosCap() { return dcCap().titulos || DC_TITULOS; }
 function dcSalasCap() { return dcCap().salas || DC_SALAS; }
-function dcCorreosCap() { return dcCap().correos ? dcCap().correos.concat(shuffle(DC_CORREOS.slice()).slice(0, 3)) : DC_CORREOS; }
+// Los correos del capítulo. Con el flag de niveles entra «La rueda de ascensos» (siempre en los capítulos con correos propios, que si no solo traen tres de los de siempre al azar).
+function dcCorreosCap() {
+  const niv = dcMaxNivel() > 1, base = DC_CORREOS.filter(c => !c.nivel), rueda = DC_CORREOS.filter(c => c.nivel && niv);
+  return dcCap().correos ? dcCap().correos.concat(rueda, shuffle(base.slice()).slice(0, 3 - rueda.length)) : base.concat(rueda);
+}
 function dcBuscaCorreo(id) { return DC_CORREOS.concat(...DC_CAPITULOS.map(k => k.correos || [])).find(c => c.id === id) || DC_CORREOS[0]; }
 // La última semana de su capítulo (la que acaba en el CEO).
 function dcFinDeCapitulo() { const A = DC_CAMPANA, i = DCP.run.acto; return !A[i + 1] || A[i + 1].cap !== A[i].cap; }

@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la tienda de la librería (biblioteca/tienda.js y las etiquetas de cada tarjeta en index.html).
 'use strict';
 IDIOMA.add({
+  // PRÓXIMAMENTE (tienda.js)
+  "PRÓXIMAMENTE": "COMING SOON",
+  "JUGAR BETA": "PLAY BETA",
+  "Estos juegos todavía no están abiertos: por ahora solo se puede jugar a Fans Of Rouflage.": "These games are not open yet: for now you can only play Fans Of Rouflage.",
   // EN PAUSA (index.html, tienda.js y votos.js)
   "En pausa": "On hold",
   "EN PAUSA": "ON HOLD",
@@ -128,6 +132,7 @@ IDIOMA.add({
   "Tácticas": "Tactics",
   "Casillas": "Grid",
   "Carreras": "Racing",
+  "Conducción": "Driving",
   "Corre y dispara": "Run and gun",
   "Escondite": "Hide-and-seek",
   "Pintura": "Paint",

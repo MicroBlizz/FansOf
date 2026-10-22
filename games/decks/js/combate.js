@@ -33,7 +33,7 @@ function dcCombateNuevo(encuentro, tramo) {
   const mad = C.pila.filter(c => dcFx(c).madrugador); if (mad.length) C.pila = C.pila.filter(c => !dcFx(c).madrugador).concat(mad);
   C.salto = Object.assign({}, L.jugada); if (dcObjeto('zanahoriaoro')) C.salto.carga = Math.max(2, C.salto.carga - dcObjeto('zanahoriaoro').carga);
   if (dcVentaja() && dcVentaja().carga) C.salto.carga = Math.max(2, C.salto.carga - dcVentaja().carga);
-  C.companeros = []; C.protocolos = [];   // los compañeros que se quedan en la mesa y los protocolos armados
+  C.companeros = []; C.protocolos = []; dcGancho('alSalto', C);   // los compañeros que se quedan en la mesa y los protocolos armados
   // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.
   for (const rv of C.rivales) dcAnuncia(C, rv);
   if (dcObjeto('alfombrilla')) C.bloqueo += dcObjeto('alfombrilla').bloqueoInicial;
@@ -111,8 +111,8 @@ function dcResuelve(C, c, obj, gratis) {
   C.tiposTurno[D.tipo] = (C.tiposTurno[D.tipo] || 0) + 1;
   dcGancho('alJugar', C, c, D, fx);
   // un compañero se sienta en la mesa y un protocolo se arma: actúan después (dcFinTurno); la carta va a los descartes
-  if (fx.companero) { C.companeros.push({ id: c.id, asc: !!c.asc, turnos: fx.turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); C.descartes.push(c); return; }
-  if (fx.protocolo) { C.protocolos.push({ id: c.id, asc: !!c.asc }); if (C.protocolos.length > 3) C.protocolos.shift(); C.descartes.push(c); return; }
+  if (fx.companero) { C.companeros.push({ id: c.id, asc: !!c.asc, niv: dcNiv(c), turnos: fx.turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); C.descartes.push(c); return; }
+  if (fx.protocolo) { C.protocolos.push({ id: c.id, asc: !!c.asc, niv: dcNiv(c) }); if (C.protocolos.length > 3) C.protocolos.shift(); C.descartes.push(c); return; }
   let objs = fx.cond === 'atacantes' ? dcAtacantes(C) : fx.obj === 'todos' ? vivos : [C.rivales[obj] && C.rivales[obj].hp > 0 ? C.rivales[obj] : vivos[0]].filter(Boolean);
   if (fx.dano) {
     const veces = fx.cond === 'porTropa' ? C.tropasTurno : (fx.veces || 1);
@@ -133,6 +133,7 @@ function dcResuelve(C, c, obj, gratis) {
   if (fx.blindaje) C.blindaje += fx.blindaje;
   if (fx.fuerza) C.fuerza += fx.fuerza;
   if (fx.fuerzaTurno) C.fuerzaTurno += fx.fuerzaTurno;
+  if (fx.carga) C.saltoCarga += fx.carga;
   if (fx.poder) C.poderes[fx.poder] = (C.poderes[fx.poder] || 0) + fx.n;
   if (fx.roba) dcRoba(C, fx.roba);
   if (D.tipo === 'empleado') C.tropasTurno++;
@@ -150,6 +151,7 @@ function dcUsaSalto(C) {
   if (S.caos) C.caos += S.caos;
   if (S.roba) dcRoba(C, S.roba);
   if (C.salto.invoca) for (let k = 0; k < C.salto.n; k++) { C.companeros.push({ id: C.salto.invoca, asc: false, turnos: dcFx({ id: C.salto.invoca }).turnos + (C.poderes.retro || 0) }); if (C.companeros.length > 3) C.companeros.shift(); } C.log.push(tr('¡{jugada}!', { jugada: tr(C.salto.nombre) }));
+  dcGancho('alSalto', C, true);
   dcCompruebaFin(C); return true;
 }
 function dcUsaMerienda(C, i) {
@@ -196,7 +198,7 @@ function dcFinTurno(C) {
 // Los compañeros actúan al acabar tu turno: pegan al rival con menos vida, te dan bloqueo o te curan; se van cuando se les acaban los turnos.
 function dcActuanCompaneros(C) {
   for (const k of C.companeros.slice()) {
-    const fx = dcFx({ id: k.id, asc: k.asc }), vivos = C.rivales.filter(r => r.hp > 0);
+    const fx = dcFx({ id: k.id, asc: k.asc, niv: k.niv }), vivos = C.rivales.filter(r => r.hp > 0);
     C.eventos.push({ t: 'accion', r: -1, comp: C.companeros.indexOf(k) });
     if (fx.dano && vivos.length) { const r = vivos.reduce((a, b) => b.hp < a.hp ? b : a); dcGolpea(C, r, dcDanoA(C, r, fx.dano, false)); }
     if (fx.bloqueo) { C.bloqueo += fx.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: fx.bloqueo }); }
@@ -206,8 +208,8 @@ function dcActuanCompaneros(C) {
 }
 // Si hay un protocolo armado de ese tipo, salta: se gasta y devuelve sus cifras (null si no hay).
 function dcProtocolo(C, tipo) {
-  const i = C.protocolos.findIndex(p => dcFx({ id: p.id, asc: p.asc }).protocolo === tipo); if (i < 0) return null;
-  const p = C.protocolos.splice(i, 1)[0]; C.log.push(tr('Salta {n}', { n: tr(DC_CARTAS[p.id].nombre) })); return dcFx({ id: p.id, asc: p.asc });
+  const i = C.protocolos.findIndex(p => dcFx({ id: p.id, asc: p.asc, niv: p.niv }).protocolo === tipo); if (i < 0) return null;
+  const p = C.protocolos.splice(i, 1)[0]; C.log.push(tr('Salta {n}', { n: tr(DC_CARTAS[p.id].nombre) })); return dcFx({ id: p.id, asc: p.asc, niv: p.niv });
 }
 function dcCompruebaFin(C) {
   if (DCP.run.hp <= 0) { C.fase = 'fin'; C.resultado = 'derrota'; return true; }

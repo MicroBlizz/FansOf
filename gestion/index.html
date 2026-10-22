@@ -62,6 +62,12 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .etq.clara { background: var(--clara-fondo); color: var(--clara); }
 .etq.debil { background: var(--debil-fondo); color: var(--debil); }
 .saldos { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.accion button.plat { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border: 3px solid var(--outline, #000); border-radius: 12px; cursor: pointer; font-weight: 700; }
+.accion button.plat svg { width: 26px; height: 26px; flex: none; }
+.accion button.plat span { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; font-size: 13px; }
+.accion button.plat b { font-size: 11px; letter-spacing: .04em; }
+.accion button.plat.abierto { background: #2e7d4b; color: #fff; }
+.accion button.plat.cerrado { background: #3a2d4d; color: var(--ink-dim, #b9a9d4); }
 .accion { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-top: 1px solid var(--linea); padding-top: 10px; }
 .accion input[type=text] { flex: 1 1 200px; width: auto; }
 details { min-width: 0; }
@@ -96,7 +102,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
 
   <section id="vista-panel" hidden>
     <nav class="menu" id="menu" aria-label="Paneles"></nav>
-    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-rend" type="button">Rendimiento</button></div>
+    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-rend" type="button">Rendimiento</button><button id="t-flags" type="button">Flags</button><button id="t-config" type="button">Config</button></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -137,11 +143,21 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="lista" id="rf-lista"></div>
       <div class="lista" id="rf-baneados"></div>
     </div>
+    <div id="pan-flags" hidden>
+      <div class="caja ayuda"><b>Flags.</b> Interruptores para probar funciones nuevas, uno por plataforma: <b>Alfa</b> (la copia de pruebas), <b>Web</b> (la release) y <b>Android</b>. Pulsa el botón de una plataforma para abrirla o cerrarla sin tocar las otras. Los juegos los leen al arrancar y cada 5 minutos. Crearlos y borrarlos es cosa de desarrollo, y al borrar uno desaparece de esta lista. Los valores que siempre se aplican (monedas…) no son flags: están en <b>Config</b>.</div>
+      <div class="aviso" id="fl-aviso" role="alert"></div>
+      <div class="lista" id="fl-lista"></div>
+    </div>
+    <div id="pan-config" hidden>
+      <div class="caja ayuda"><b>Config.</b> Configuración del servidor: valores que se aplican siempre, en todas las plataformas (hoy, las monedas de cada juego: ratio, cambio, porcentaje del pase). Se edita el JSON y se guarda; crear una clave nueva es cosa de desarrollo.</div>
+      <div class="aviso" id="cf-aviso" role="alert"></div>
+      <div class="lista" id="cf-lista"></div>
+    </div>
     <div id="pan-roles" hidden>
       <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo de una cuenta que ya haya entrado con Google.</div>
       <form class="filtros" id="r-form">
         <input type="text" id="r-correo" placeholder="correo@gmail.com" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Correo" required style="flex:1 1 220px;width:auto">
-        <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="admin">admin</option></select>
+        <select id="r-rol" aria-label="Rol"><option value="alfa">alfa</option><option value="beta">beta</option><option value="admin">admin</option></select>
         <button class="fuerte" type="submit">Dar rol</button>
       </form>
       <div class="aviso" id="r-aviso" role="alert"></div>
@@ -251,6 +267,8 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 </script>
 <script src="votos.js"></script>
 <script src="roles.js"></script>
+<script src="flags.js"></script>
+<script src="config.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>
 <script src="../pie.js" defer></script>

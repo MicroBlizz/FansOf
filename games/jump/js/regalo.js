@@ -6,7 +6,7 @@
 
 const REGALOS = [{ z: 50 }, { z: 75 }, { z: 100 }, { kit: 'casco' }, { z: 150 }, { z: 200 }, { z: 400 }];
 let regaloVisto = false;   // ya se abrió solo en esta visita
-const regaloHoy = () => !GUARDA.regalo || GUARDA.regalo.dia !== hoy();                       // ¿queda el de hoy?
+const regaloHoy = () => !GUARDA.regalo || yaPaso(GUARDA.regalo.dia);                       // ¿queda el de hoy?
 const casillaRegalo = () => GUARDA.regalo ? (regaloHoy() ? GUARDA.regalo.n + 1 : GUARDA.regalo.n) % REGALOS.length : 0;   // la de hoy
 
 // el cofre de la portada: bota y brilla si queda el de hoy
@@ -33,15 +33,15 @@ function recogeRegalo() {
   const n = casillaRegalo(), r = REGALOS[n];
   GUARDA.regalo = { dia: hoy(), n, doble: false };
   if (r.kit) GUARDA.kit[r.kit] = (GUARDA.kit[r.kit] || 0) + 1; else GUARDA.zanas += r.z;
-  salvaGuarda();
+  salvaGuarda(); JS.pide('regalo');
   bandera(r.kit ? tr('¡Casco de obra!') : tr('¡Regalo de Lola! +{n}', { n: r.z }), PASTEL.oro);
   confeti(PAN.W / 2, CAM.y + PAN.H * 0.6, 40); SONIDO.compra(); vibra([20, 30, 20]);
 }
 function duplicaRegalo() {
   const g = GUARDA.regalo, r = g && REGALOS[g.n];
-  if (!r || !r.z || g.doble || regaloHoy() || !anunciosQuedan()) return;
+  if (!r || !r.z || g.doble || regaloHoy() || !anunciosQuedan() || !hayAnuncios()) return;
   verAnuncio(() => {
-    cuentaAnuncio(); g.doble = true; GUARDA.zanas += r.z; salvaGuarda();
+    cuentaAnuncio('regalo'); g.doble = true; GUARDA.zanas += r.z; salvaGuarda();
     bandera(tr('¡Duplicado! +{n}', { n: r.z }), PASTEL.menta); confeti(PAN.W / 2, CAM.y + PAN.H * 0.6, 30); SONIDO.compra();
   });
 }

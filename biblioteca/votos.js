@@ -76,7 +76,7 @@
   fetch(SERVIDOR + '/rest/v1/rpc/favoritos_totales', { method: 'POST', headers: { apikey: CLAVE, 'Content-Type': 'application/json' }, body: '{}' })
     .then(r => (r.ok ? r.json() : Promise.reject())).then(d => {
       listo = true; totales = d && typeof d === 'object' ? d : {};
-      document.getElementById('m-cuenta').hidden = false; caja.hidden = false; pintarCorazones(); pintarMinis(); sincronizar();
+      caja.hidden = false; pintarCorazones(); pintarMinis(); sincronizar();
       if (!ficha.caja.hidden && ficha.id) { voto.clave = ''; cargarVoto(ficha.id); }
     }).catch(() => {});
 

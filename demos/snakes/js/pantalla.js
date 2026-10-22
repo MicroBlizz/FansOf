@@ -4,19 +4,28 @@
 
 const BOTONES = { sonido: null };
 
-function pintaTodo(W, H) {
+function pintaTodo(W, H, dt) {
   const retro = esRetro(), fr = esFrenesi() && JUEGO.modo === 'juego';
   // el fondo de toda la pantalla
   if (retro) { G.fillStyle = '#3a3f33'; G.fillRect(0, 0, W, H); }
   else if (fr) { G.fillStyle = `hsl(${(JUEGO.t * 120 + 200) % 360} 60% ${7 + Math.sin(JUEGO.t * 20) * 2}%)`; G.fillRect(0, 0, W, H); }
   else { G.fillStyle = '#06110a'; G.fillRect(0, 0, W, H); }
   G.save(); aplicaTemblor();
-  pintaFondo(retro);
-  if (JUEGO.modo !== 'menu') { pintaManzanas(retro); pintaItems(retro); pintaSerpiente(retro); }
-  pintaEfectos(retro);
+  if (locuraActiva('texto')) pintaTableroTexto();
+  else {
+    const zoom = camaraGigante(dt);
+    pintaFondo(retro);
+    if (JUEGO.modo !== 'menu') { pintaManzanas(retro); pintaItems(retro); pintaSerpiente(retro); }
+    pintaEfectos(retro);
+    if (zoom) G.restore();
+  }
+  pintaAnuncio();
   G.restore();
+  if (JUEGO.modo === 'juego') pintaPalanca(retro);
   pintaMarcador(W, retro, fr);
+  if (JUEGO.modo !== 'menu') pintaMisCartas(retro);
   pintaLocura(W, H);
+  if (JUEGO.modo === 'cartas') pintaCartas(W, H);
   if (JUEGO.modo === 'menu') pintaPortada(W, H);
   if (JUEGO.modo === 'fin') pintaFin(W, H);
 }
@@ -60,8 +69,10 @@ function pintaPortada(W, H) {
   letra('SNAKES', W / 2, y0 + 82, 30, '#3ddc84', 'center', '#06110a', 5);
   letra(tr('Roza tu cola para cargar el Frenesí'), W / 2, y0 + 160, 8, '#fff', 'center', '#06110a', 2.5);
   letra(tr('En Frenesí, córtate la cola por monedas'), W / 2, y0 + 173, 8, '#ffd54a', 'center', '#06110a', 2.5);
-  letra(tr('Los «?» son locuras. Tú verás.'), W / 2, y0 + 186, 8, '#7fd7ff', 'center', '#06110a', 2.5);
-  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar · desliza para girar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
+  letra(tr('Come deprisa para hacer racha'), W / 2, y0 + 186, 8, '#7fd7ff', 'center', '#06110a', 2.5);
+  letra(tr('Cada 5 manzanas, una carta'), W / 2, y0 + 199, 8, '#ff8a3d', 'center', '#06110a', 2.5);
+  letra(tr('Los «?» son locuras. Tú verás.'), W / 2, y0 + 212, 8, '#d36bff', 'center', '#06110a', 2.5);
+  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar · arrastra el dedo para girar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
   if (SAVE.record > 0) letra(tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 262, 8, '#9cff6b', 'center', '#06110a', 2);
   if (SAVE.monedas > 0) letra(tr('Monedas: {n}', { n: SAVE.monedas }), W / 2, y0 + 274, 8, '#ffd54a', 'center', '#06110a', 2);
 }
@@ -71,12 +82,13 @@ function pintaFin(W, H) {
   if (k <= 0) return;
   G.fillStyle = `rgba(6,17,10,${0.6 * k})`; G.fillRect(0, 0, W, H);
   G.save(); G.translate(0, (1 - k) * -30); G.globalAlpha = k;
-  caja(14, y0, W - 28, 150, 10, '#0f2a1b', '#3ddc84', 2);
+  caja(14, y0, W - 28, 160, 10, '#0f2a1b', '#3ddc84', 2);
   letra(J.fin.motivo === 'pared' ? tr('¡Contra la pared!') : tr('¡Te has mordido!'), W / 2, y0 + 20, 13, '#ff4d4d', 'center', '#06110a', 3);
   letra(J.puntos.toLocaleString('es-ES'), W / 2, y0 + 48, 26, '#fff', 'center', '#06110a', 4);
   letra(J.fin.record ? tr('¡Nuevo récord!') : tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 70, 9, J.fin.record ? '#ffd54a' : '#9cff6b', 'center', '#06110a', 2.5);
   letra(tr('Largo: {n}', { n: J.serp.length }) + ' · ' + tr('Frenesís: {n}', { n: J.frenesis }), W / 2, y0 + 90, 8, '#cfe', 'center', '#06110a', 2);
   letra(tr('Monedas: {n}', { n: J.monedasPartida }) + ' · ' + tr('Locuras: {n}', { n: J.locuras }), W / 2, y0 + 103, 8, '#ffd54a', 'center', '#06110a', 2);
-  if (J.tFin > 0.8 && Math.sin(J.t * 4) > -0.3) letra(tr('Toca para jugar otra vez'), W / 2, y0 + 130, 9, '#fff', 'center', '#06110a', 2.5);
+  letra(tr('Cartas: {n}', { n: J.cartasElegidas }) + ' · ' + tr('Mejor racha: x{n}', { n: J.mejorRacha }), W / 2, y0 + 116, 8, '#7fd7ff', 'center', '#06110a', 2);
+  if (J.tFin > 0.8 && Math.sin(J.t * 4) > -0.3) letra(tr('Toca para jugar otra vez'), W / 2, y0 + 140, 9, '#fff', 'center', '#06110a', 2.5);
   G.restore();
 }

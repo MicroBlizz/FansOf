@@ -27,7 +27,7 @@ function avanzaEspeciales(dt) {
       t.ciclo = (t.ciclo + dt) % TORTUGA_CICLO; t.bajo = bajoTortuga(t.ciclo);
       if (t.ciclo > 3.2 && t.ciclo < 4.2 && Math.random() < dt * 14) FX.push({ t: 'burbuja', x: t.x + azar(-t.r, t.r) * 0.7, wy: t.wy + azar(-4, 4), v: 0.7, v0: 0.7 });
       if (c.tronco === t && t.bajo > 0.6 && J.modo === 'juego') {
-        c.tronco = null; aviso(tr('¡Glub!'), c.x, c.wy + 26, '#9fe3ff', 11); onda(t.x, t.wy, t.r); alAgua();
+        c.tronco = null; aviso(tr('¡Glub!'), c.x, c.wy + 26, '#9fe3ff', 11); onda(t.x, t.wy, t.r); alAgua('tortuga');
       }
     } else if (t.tipo === 'peonza') {
       t.giro += PEONZA_VEL * dt;
@@ -41,6 +41,22 @@ function avanzaEspeciales(dt) {
 }
 // ¿se puede caer en él ahora? (la tortuga sumergida, no)
 const troncoPisable = t => !(t.tipo === 'tortuga' && t.bajo > 0.55);
+// a qué tronco volver cuando te sacan del agua (casco, MeerCat, Lola en el tutorial o la segunda oportunidad): el último que
+// pisaste si sigue ahí y se puede pisar, y si no, el más alto por debajo de ti que no esté hundido ni a punto de hundirse y
+// quede por delante de la ola; si es una tortuga, sale a flote, y si está agrietado, se le cura la grieta. Así nunca pagas
+// una oportunidad para morir en el mismo instante.
+// Siempre cerca de donde caíste: los troncos que ya salieron por abajo de la pantalla no existen, así que uno lejano te dejaría sin nada a tiro.
+function troncoSeguro(c, margenOla = 20) {
+  const vale = o => o.wy > OLA.wy + margenOla && !(o.tipo === 'tortuga' && (o.bajo > 0.2 || o.ciclo > 2.6)) && !o.final;
+  const cerca = o => Math.abs(o.wy - c.wy);
+  let t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) && cerca(c.ultimo) < SALTO_MAX ? c.ultimo : null;
+  if (!t) t = RIO.troncos.filter(o => vale(o) && cerca(o) < SALTO_MAX * 1.5).sort((a, b) => cerca(a) - cerca(b))[0];   // el que vale más cercano
+  if (!t) t = RIO.troncos.filter(o => !o.final).sort((a, b) => cerca(a) - cerca(b))[0];   // si no, el más cercano, y se le cura lo que tenga
+  if (!t) t = RIO.troncos[RIO.troncos.length - 1];
+  if (t.tipo === 'tortuga') { t.ciclo = 0; t.bajo = 0; }
+  if (t.tipo === 'hunde') t.pisa = 0;
+  return t;
+}
 function alCaerEspecial(t) {
   const c = JUEGO.conejo;
   if (t.tipo === 'peonza' && Math.hypot(c.ox, c.owy / APLASTA) > t.r * 0.25) { aviso(tr('¡Wiii!'), c.x, c.wy + 34, '#c46aff', 10); SONIDO.boing(); }
@@ -48,7 +64,8 @@ function alCaerEspecial(t) {
 function pintaEspecial(tr_, x, y) {
   if (tr_.tipo === 'peonza') { sprite('peonza' + (Math.floor(tr_.giro / (Math.PI / 8)) % 4), x, y, tr_.r); return true; }
   if (tr_.tipo !== 'tortuga') return false;
-  const b = tr_.bajo, tiembla = tr_.ciclo > 3.2 && tr_.ciclo < 4.1 ? Math.sin(tr_.fase * 60) * 0.8 : 0, linea = y + tr_.r * 0.32;
+  // a flote se ve entera (la línea del agua, por debajo del caparazón); al hundirse, la línea sube y la tapa
+  const b = tr_.bajo, tiembla = tr_.ciclo > 3.2 && tr_.ciclo < 4.1 ? Math.sin(tr_.fase * 60) * 0.8 : 0, linea = y + tr_.r * (0.32 + (1 - Math.min(1, b * 2)) * 0.4);
   if (b > 0.98) { elipse(x, linea - 2, tr_.r * 0.8, tr_.r * 0.3, null, 'rgba(255,255,255,0.55)', 0.8); return true; }   // abajo: solo su onda
   G.save(); G.beginPath(); G.rect(x - tr_.r * 2, y - tr_.r * 3, tr_.r * 4, linea - (y - tr_.r * 3)); G.clip();
   sprite('tortuga', x + tiembla, y + b * tr_.r * 0.7, tr_.r * 1.05, 0, 1, 1, 1 - b * 0.5);

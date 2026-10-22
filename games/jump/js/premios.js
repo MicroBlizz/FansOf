@@ -12,15 +12,18 @@ const ANUNCIOS_DIA = 5;
 const SEGUIR = [15, 30, 60], ANUNCIOS_SEGUIR = 2;
 const precioSeguir = () => SEGUIR[Math.min(JUEGO.seguidos, SEGUIR.length - 1)];
 const anuncioSeguir = () => hayAnuncios() && anunciosQuedan() > 0 && JUEGO.seguidos < ANUNCIOS_SEGUIR;
-const hoy = () => new Date().toISOString().slice(0, 10);
-const anunciosQuedan = () => ANUNCIOS_DIA - (GUARDA.anuncios && GUARDA.anuncios.dia === hoy() ? GUARDA.anuncios.n : 0);
+// el día de hoy en la hora del móvil (AAAA-MM-DD): el regalo, los anuncios y el reto cambian a medianoche, no a las 2
+const hoy = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+// ¿ese día ya pasó? Si el reloj del móvil va hacia atrás (trampa o despiste), el día guardado cuenta como hoy: nada se cobra dos veces
+const yaPaso = dia => !dia || dia < hoy();
+const anunciosQuedan = () => Math.max(0, ANUNCIOS_DIA - (GUARDA.anuncios && !yaPaso(GUARDA.anuncios.dia) ? GUARDA.anuncios.n : 0));
 const hayAnuncios = () => NUCLEO.alfa || NUCLEO.desarrollo || !!(GUARDA.compras && GUARDA.compras.sinanuncios);   // con «Sin anuncios» (anuncios.js) los premios están siempre
 const ANUNCIO = { activo: false, t: 0, alAcabar: null };
 
 // en vez de acabar: si se puede, se ofrece seguir
 function muere(motivo) {
   const J = JUEGO;
-  if (J.seguidos >= SEGUIR.length || tutoActivo() || (GUARDA.zanas + J.zanas < precioSeguir() && !anuncioSeguir())) return acaba(motivo);
+  if (J.seguidos >= SEGUIR.length || tutoFrena() || (GUARDA.zanas + J.zanas < precioSeguir() && !anuncioSeguir())) return acaba(motivo);
   const c = J.conejo;
   J.modo = 'casi'; J.casi = { motivo, t: 0 }; c.salto = null; c.tronco = null; APUNTA.activo = false;
   empiezaMuerte(motivo);
@@ -33,13 +36,14 @@ function avanzaCasi(dt) {
   if (J.casi.t >= CASI_SEG) { J.modo = 'juego'; acaba(J.casi.motivo); }
 }
 // paga y sigue: primero con lo recogido en esta partida y luego con lo guardado; vuelve al último tronco y la ola retrocede
+// (primero de lo guardado y luego de lo recogido en esta partida, para que a quien tenga «Zanahoria doble» no se le cobre el doble)
 function sigue(pagando = true) {
-  const J = JUEGO, c = J.conejo, p = pagando ? precioSeguir() : 0, deLaPartida = Math.min(J.zanas, p);
+  const J = JUEGO, c = J.conejo, p = pagando ? precioSeguir() : 0;
+  if (J.modo !== 'casi') return;   // solo desde la ventana de «¡Casi te pilla!»
   if (pagando && GUARDA.zanas + J.zanas < p) return SONIDO.uy();
-  J.zanas -= deLaPartida; GUARDA.zanas -= p - deLaPartida; salvaGuarda();
+  const deGuardado = Math.min(GUARDA.zanas, p); GUARDA.zanas -= deGuardado; J.zanas -= p - deGuardado; salvaGuarda();
   J.seguidos++; J.modo = 'juego'; J.casi = null; c.hunde = 0; acabaMuerte();
-  const vale = o => o.wy > OLA.wy + 40;
-  const t = c.ultimo && RIO.troncos.includes(c.ultimo) && vale(c.ultimo) ? c.ultimo : RIO.troncos.filter(vale).sort((a, b) => a.wy - b.wy)[0];
+  const t = troncoSeguro(c, 40);
   Object.assign(c, { tronco: t, ox: 0, owy: 0, x: t.x, wy: t.wy, cae: 1 }); J.enTronco = 9;
   OLA.wy = Math.min(OLA.wy, c.wy - 150); OLA.pala = Math.min(OLA.pala, OLA.wy - 20);
   bandera(tr('¡Otra oportunidad!'), PASTEL.menta); corazones(c.x, c.wy + 10); SONIDO.rescate();
@@ -72,7 +76,7 @@ function pintaCasi() {
     const ta = tr('Ver anuncio y seguir');
     caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.oro, OLC, 1);
     iconoTele(bx + 12, by + 10); letras(ta, W / 2 + 9, by + 10.5, 7.6, PASTEL.texto, { peso: 800, max: bw - 28 });
-    boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio(); sigue(false); }));
+    boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio('seguir'); sigue(false); }));
   }
   letras(tr('No, gracias'), W / 2, by + 32, 7.5, PASTEL.suave, { peso: 700 });
   boton(W / 2 - 30, by + 25, 60, 14, () => { J.modo = 'juego'; acaba(J.casi.motivo); SONIDO.boton(); });
@@ -80,15 +84,15 @@ function pintaCasi() {
 }
 
 /* ---------- el anuncio con premio (de prueba) ---------- */
-// apunta un anuncio visto (los 5 del día son para todo)
-function cuentaAnuncio() { const d = hoy(); GUARDA.anuncios = { dia: d, n: (GUARDA.anuncios && GUARDA.anuncios.dia === d ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
+// apunta un anuncio visto (los 5 del día son para todo); tipo: regalo, partida, seguir o prueba (lo mira el servidor)
+function cuentaAnuncio(tipo = 'seguir') { JS.pide('anuncio', { t: tipo }); const sigueHoy = GUARDA.anuncios && !yaPaso(GUARDA.anuncios.dia); GUARDA.anuncios = { dia: sigueHoy ? GUARDA.anuncios.dia : hoy(), n: (sigueHoy ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
 // con «Sin anuncios» comprado, el premio llega al momento (mismo tope del día)
 function verAnuncio(alAcabar) { if (GUARDA.compras && GUARDA.compras.sinanuncios) { SONIDO.boton(); return alAcabar(); } Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
 function duplicaZanas() {
   const J = JUEGO;
-  if (J.duplicado || !anunciosQuedan()) return;
+  if (J.duplicado || !anunciosQuedan() || !hayAnuncios() || J.modo !== 'fin') return;
   verAnuncio(() => {
-    cuentaAnuncio();
+    cuentaAnuncio('partida');
     GUARDA.zanas += J.ganadas; J.ganadas *= 2; J.duplicado = true; salvaGuarda();
     confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 24); SONIDO.compra();
   });

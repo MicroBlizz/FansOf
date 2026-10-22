@@ -18,6 +18,8 @@ const NUCLEO = (() => {
   const version = new URL(yo.src).searchParams.get('v') || '0';
   const alfa = /\/alfa\//.test(location.pathname);   // la copia de pruebas (carpeta alfa/ de la web): su versión es «<versión>-a<hash>»
   const conV = u => u + (u.includes('?') ? '&' : '?') + 'v=' + version;
+  document.write('<script src="' + CORE + 'js/proximamente.js"><\/script>');   // en la release solo se juegan los juegos abiertos (ver proximamente.js)
+  const cerrado = !!(window.PROXIMAMENTE && PROXIMAMENTE.cerrado);   // si lo está, la página ya es la de «Próximamente»: no se carga nada
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
 
   // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es' y
@@ -62,6 +64,7 @@ const NUCLEO = (() => {
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
+    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
@@ -77,6 +80,7 @@ const NUCLEO = (() => {
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú
     'js/sistema/idioma-banderas.js', // el selector de idioma de Opciones
     'js/sistema/opciones.js',      // opciones comunes (música del menú, versión) e instalar como app
+    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» de Opciones (guardar con email, entrar, cerrar sesión, borrar)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo()): lo miran las funciones que mandan datos
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
@@ -97,8 +101,10 @@ const NUCLEO = (() => {
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
+    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
+    'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)
     'js/sistema/cuenta-pantalla.js', // la fila «Cuenta» (el juego la coloca en sus Opciones: window.filaCuenta)
     'js/sistema/datos-partida.js', // el interruptor «Datos de partida anónimos» (DATOS.activo(); window.filaDatos para colocarlo en Opciones)
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
@@ -113,7 +119,7 @@ const NUCLEO = (() => {
 
   // Hojas de estilo, en el orden en que se dan. Se escriben en la cabecera, como si estuvieran en el HTML, para que la página no se pinte sin ellas.
   const ESTILOS_COMUNES = ['../../core/css/menus.css', '../../core/css/menus-tienda.css', '../../core/css/menus-extra.css', '../../core/css/menus-pases.css', '../../core/css/miniaturas.css'];   // las pantallas comunes: un juego pide la primera y se cargan todas, en este orden
-  function estilos(...hojas) { for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
+  function estilos(...hojas) { if (cerrado) return; for (const h of hojas.flatMap(x => (x === ESTILOS_COMUNES[0] ? ESTILOS_COMUNES : [x]))) { pedido.push(conV(h)); document.write(`<link rel="stylesheet" href="${conV(h)}">`); } }
 
   // Un archivo de código. Con async = false se ejecutan en el orden en que se piden, aunque lleguen desordenados.
   function codigo(src) {
@@ -124,6 +130,7 @@ const NUCLEO = (() => {
   // antes: lo que el juego le dice a lo común (sus ajustes) · despues: el juego en sí
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false }) {
+    if (cerrado) return;
     codigo(CORE + 'js/sistema/idioma.js');
     codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }

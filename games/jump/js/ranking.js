@@ -4,7 +4,7 @@
 // que pongas aquí (sin palabrotas ni datos de contacto: lo filtra el servidor) o, si no, «Fan#XXXX».
 'use strict';
 
-const RANKING = { datos: null, cargando: false, error: false, t: -99 };
+const RANKING = { datos: null, cargando: false, error: false, t: -99, reto: { datos: null, cargando: false, error: false, t: -99, dia: '' } };   // reto: la clasificación del reto del día (73)
 const hayRanking = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
 const ahoraS = () => performance.now() / 1000;
 
@@ -12,19 +12,35 @@ function subeMarca(puntos, metros, seg) {
   if (!hayRanking() || puntos <= 0) return;
   CUENTA.rpc('jump_marca', { p_puntos: Math.round(puntos), p_metros: Math.round(metros), p_segundos: Math.max(1, Math.round(seg)) })
     .then(() => { GUARDA.marcaSubida = Math.max(GUARDA.marcaSubida || 0, puntos); salvaGuarda(); RANKING.t = -99; })
-    .catch(() => { /* sin red: se vuelve a intentar al arrancar */ });
+    .catch(e => {
+      // el servidor dice que la marca es imposible: se da por subida (no se reintenta para siempre); sin red, se reintenta al volver la conexión
+      if (/marca_imposible/.test(String(e && (e.message || e)))) { GUARDA.marcaSubida = Math.max(GUARDA.marcaSubida || 0, puntos); salvaGuarda(); }
+    });
+}
+if (window.addEventListener) window.addEventListener('online', () => setTimeout(subePendiente, 1500));
+// la marca del reto del día (servidor/73-jump-reto.sql): se sube al acabar un reto con récord del día; si no hay red, al arrancar o al volver la red
+function subeMarcaReto() {
+  const r = GUARDA.reto;
+  if (!hayRanking() || !r || !r.mejor || r.subida) return;
+  CUENTA.rpc('jump_reto_marca', { p_dia: r.dia, p_puntos: Math.round(r.mejor), p_metros: Math.round(r.metros || 0), p_segundos: Math.max(1, Math.round(r.seg || Math.max(10, (r.metros || 0) / 3))) })
+    .then(() => { if (GUARDA.reto === r) { r.subida = true; salvaGuarda(); } RANKING.reto.t = -99; })
+    .catch(e => { if (/marca_imposible|dia_no_vale/.test(String(e && (e.message || e)))) { r.subida = true; salvaGuarda(); } });
 }
 // al arrancar: la mejor marca que aún no esté en el servidor (las de antes del ranking no tienen su tiempo: se estima por lo alto)
 function subePendiente() {
+  subeMarcaReto();
   if ((GUARDA.marcaSubida || 0) < GUARDA.mejor) subeMarca(GUARDA.mejor, GUARDA.mejorM, GUARDA.mejorSeg || Math.max(10, GUARDA.mejorM / 3));
 }
-function cargaRanking() {
-  if (!hayRanking() || RANKING.cargando || ahoraS() - RANKING.t < 30) return;
-  RANKING.cargando = true;
-  CUENTA.rpc('jump_ranking', {})
-    .then(d => { RANKING.datos = d; RANKING.error = false; RANKING.t = ahoraS(); })
-    .catch(() => { RANKING.error = true; RANKING.t = ahoraS() - 20; })
-    .then(() => { RANKING.cargando = false; });
+// cual: RANKING (mundial) o RANKING.reto (el día de hoy: si cambia el día, se vuelve a pedir)
+function cargaRanking(cual = RANKING) {
+  const reto = cual === RANKING.reto, dia = hoy();
+  if (reto && cual.dia !== dia) { cual.dia = dia; cual.datos = null; cual.t = -99; }
+  if (!hayRanking() || cual.cargando || ahoraS() - cual.t < 30) return;
+  cual.cargando = true;
+  (reto ? CUENTA.rpc('jump_reto_ranking', { p_dia: dia }) : CUENTA.rpc('jump_ranking', {}))
+    .then(d => { cual.datos = d; cual.error = false; cual.t = ahoraS(); })
+    .catch(() => { cual.error = true; cual.t = ahoraS() - 20; })
+    .then(() => { cual.cargando = false; });
 }
 
 /* ---------- tu nombre (una ventanita encima del juego) ---------- */
@@ -51,7 +67,7 @@ function pideNombre() {
     if (n.length < 3) { i.style.borderColor = '#e0703e'; return; }
     GUARDA.name = n; salvaGuarda(); SONIDO.compra();
     if (hayRanking() && CUENTA.invitado === false) CUENTA.ponNombre(n).catch(() => { /* nombre ya cogido o sin red: vale el de la partida */ });
-    RANKING.t = -99; setTimeout(cargaRanking, 1500);
+    RANKING.t = -99; RANKING.reto.t = -99; setTimeout(cargaRanking, 1500);
     cierra();
   };
 }
@@ -66,9 +82,9 @@ function filaRanking(f, x, y, w) {
   letras(f.nombre, x + 16, y + 0.4, 7.2, yo ? PASTEL.lilaO : PASTEL.texto, { alin: 'left', peso: yo ? 800 : 700 });
   letras(f.puntos.toLocaleString('es-ES') + ' €', x + w - 2, y + 0.4, 7.2, PASTEL.texto, { alin: 'right' });
 }
-function pintaRanking(x, y, w, h) {
-  cargaRanking();
-  const D = RANKING.datos, W = PAN.W;
+function pintaRanking(x, y, w, h, cual = RANKING) {
+  cargaRanking(cual);
+  const D = cual.datos, W = PAN.W;
   // tu nombre, arriba
   const nom = (D && D.yo && D.yo.nombre) || GUARDA.name || tr('sin nombre');
   letras(tr('Tu nombre') + ': ' + nom, x + 4, y + 6, 7, PASTEL.texto, { alin: 'left', peso: 800 });
@@ -78,14 +94,14 @@ function pintaRanking(x, y, w, h) {
   const y0 = y + 17;
   const aviso = t => envuelve(t, w - 10, 7).forEach((l, i) => letras(l, W / 2, y0 + 26 + i * 9, 7, PASTEL.suave, { peso: 700 }));
   if (!hayRanking()) return aviso(tr('El ranking necesita conexión a internet.'));
-  if (!D) return aviso(RANKING.error ? tr('Sin conexión: el ranking vuelve cuando haya red.') : tr('Cargando…'));
+  if (!D) return aviso(cual.error ? tr('Sin conexión: el ranking vuelve cuando haya red.') : tr('Cargando…'));
   const lista = D.lista || [], yo = D.yo, fuera = yo && yo.puesto > lista.length;
-  if (!lista.length) return aviso(tr('Aún no hay nadie. ¡Juega una partida y sé el primero!'));
+  if (!lista.length) return aviso(cual === RANKING.reto ? tr('Hoy aún no hay nadie. ¡Juega el reto del día y sé el primero!') : tr('Aún no hay nadie. ¡Juega una partida y sé el primero!'));
   const pie = fuera ? 26 : 12;
   contenido(x, y0, w, h - 17 - pie, z => { lista.forEach((f, i) => filaRanking(f, x + 2, z + 7 + i * 13, w - 4)); return z + 7 + lista.length * 13; });
   // abajo: tu puesto, aunque estés muy abajo, y cuántos hay
   const yp = y + h - pie;
   caja(x, yp - 3, w, 0.6, 0, PASTEL.raya, null);
   if (fuera) filaRanking(yo, x + 2, yp + 6, w - 4);
-  letras(yo ? tr('Tu puesto: {p} de {n}', { p: yo.puesto.toLocaleString('es-ES'), n: D.total.toLocaleString('es-ES') }) : tr('Juega una partida para salir en el ranking.'), W / 2, yp + (fuera ? 18 : 5), 6.6, PASTEL.suave, { peso: 700 });
+  letras(yo ? tr('Tu puesto: {p} de {n}', { p: yo.puesto.toLocaleString('es-ES'), n: (+D.total || 0).toLocaleString('es-ES') }) : cual === RANKING.reto ? tr('Juega el reto del día para salir aquí.') : tr('Juega una partida para salir en el ranking.'), W / 2, yp + (fuera ? 18 : 5), 6.6, PASTEL.suave, { peso: 700 });
 }

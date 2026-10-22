@@ -19,10 +19,9 @@ function ajusta() {
 let ultimo = performance.now();
 function fotograma(ahora) {
   const dt = Math.min(0.05, Math.max(0, (ahora - ultimo) / 1000)); ultimo = ahora;
-  avanzaJuego(dt);
-  vigilaMusica();
-  G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0);
-  pintaTodo();
+  // un error en un fotograma se apunta (core/errores.js lo manda al servidor) y el siguiente fotograma sigue: así nunca se congela la pantalla
+  try { avanzaJuego(dt); vigilaMusica(); G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0); pintaTodo(); }
+  catch (e) { console.error(e); G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0); if (typeof ERRORES !== 'undefined' && ERRORES.registrar) ERRORES.registrar('js', 'jump/fotograma', String(e && e.stack || e)); }
   requestAnimationFrame(fotograma);
 }
 
@@ -33,6 +32,7 @@ async function arranca() {
   try { await Promise.race([Promise.all([document.fonts.load('800 20px "Baloo 2"'), document.fonts.load('20px "Luckiest Guy"')]), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
   await cargaLamina();
   iniciaBonito();
+  JS.arranca();   // la cuenta en el servidor (servidor.js): no se espera, lo que llegue sustituye lo local
   nuevaPartida();
   setTimeout(subePendiente, 4000);   // la mejor marca que no esté aún en el ranking mundial
   document.getElementById('carga').hidden = true;

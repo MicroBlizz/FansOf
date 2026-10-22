@@ -40,7 +40,7 @@ function dcCajaAscenso(s) {
   s.append(caja);
   const b = dcEl('button', 'btn-big ol', tr('ASCENDER UNA CARTA'));
   const listo = () => { r.rango = 1; r.hpMax += 10; r.hp += 10; r.ascensoPend = false; play('levelup'); dcGuarda(); dcPintaDia(); };
-  b.onclick = () => { play('select'); if (r.mazo.some(c => !c.asc && DC_CARTAS[c.id].asc)) dcEligeAscenso(listo); else listo(); };
+  b.onclick = () => { play('select'); if (r.mazo.some(dcPuedeSubir)) dcEligeAscenso(listo); else listo(); };
   s.append(b);
 }
 // Acaba el día (ganado el minijefe y cobrados sus premios): empieza el siguiente.

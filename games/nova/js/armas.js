@@ -22,13 +22,13 @@ function nvRanuras(rango, S) {
   const tamEn = r => { let t = r.tam; for (const k in (r.crece || {})) if (+k <= tier) t = r.crece[k]; return t; };
   const prop = F.ranuras.filter(r => r.cara !== 'popa'), libres = nvTodasArmas();
   // cualquier ranura de arma admite cualquier arma; las de solo defensa siguen siendo solo defensa. La facción no limita: inclina lo que se ofrece (nvAfinidad)
-  const abre = ts => ts.some(t => t !== 'defensa') ? nvTodasArmas().concat(ts.includes('defensa') ? ['defensa'] : []) : ts;
+  const abre = ts => ts.some(t => t !== 'defensa') ? nvTodasArmas().concat(ts.includes('defensa') || ts.includes('universal') ? ['defensa'] : []) : ts;   // «universal»: cualquier arma y la defensa
   const out = [];
   for (const id of NV_ORDEN_SLOTS.filter(i => H.ranuras.some(x => x.id === i)).slice(0, N)) {
     const cara = id.replace(/\d+/, ''), i = +id.slice(cara.length) - 1, fr = prop.filter(r => r.cara === cara)[i], a = H.ranuras.find(x => x.id === id);
     out.push({ id, x: a.x, y: a.y, cara, tam: fr ? tamEn(fr) : rango >= 24 ? 'L' : rango >= 14 ? 'M' : 'S', tipos: fr ? abre(fr.tipos) : libres, arco: NOVA_CASCOS.caras[cara].arco });
   }
-  F.ranuras.filter(r => r.cara === 'popa' && r.desde <= tier).forEach((r, i) => { const id = 'popa' + (i + 1), a = H.ranuras.find(x => x.id === id); out.push({ id, x: a.x, y: a.y, cara: 'popa', tam: tamEn(r), tipos: r.tipos, arco: NOVA_CASCOS.caras.popa.arco }); });
+  F.ranuras.filter(r => r.cara === 'popa' && r.desde <= tier).forEach((r, i) => { const id = 'popa' + (i + 1), a = H.ranuras.find(x => x.id === id); out.push({ id, x: a.x, y: a.y, cara: 'popa', tam: tamEn(r), tipos: abre(r.tipos), arco: NOVA_CASCOS.caras.popa.arco }); });
   return out;
 }
 

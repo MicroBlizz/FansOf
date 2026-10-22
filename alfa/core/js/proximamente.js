@@ -17,7 +17,8 @@ window.PROXIMAMENTE = (() => {
   const CLAVE = 'fansof-beta', HORAS = 6;
   const beta = () => { try { const v = JSON.parse(localStorage.getItem(CLAVE) || 'null'); return !!(v && v.hasta > Date.now()); } catch (e) { return false; } };
   const usadoBeta = beta();   // con lo que se ha pintado esta página
-  const jugable = id => alfa || desarrollo || ABIERTOS.includes(id) || usadoBeta;
+  const abierto = (() => { try { return localStorage.getItem('fansof-abierto') === '1'; } catch (e) { return false; } })();   // lo pone el comparador de pruebas (comparar.js) para ver todos los juegos sin el botón DEV
+  const jugable = id => alfa || desarrollo || abierto || ABIERTOS.includes(id) || usadoBeta;
   const enBeta = id => usadoBeta && !alfa && !desarrollo && !ABIERTOS.includes(id);   // se juega solo por ser beta tester
   async function verificar() {   // lo llaman la librería y cada juego cuando ya hay cuenta; si el veredicto cambia, se recarga para pintar lo que toca
     if (alfa || desarrollo || typeof CUENTA === 'undefined' || !CUENTA.activa) return;

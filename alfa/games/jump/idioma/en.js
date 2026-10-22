@@ -226,5 +226,21 @@ IDIOMA.add({
  "Para siempre: las zanahorias que recoges en cada partida, por dos.": "Forever: the carrots you pick up in every run, doubled.",
  "¡Gracias! {pack}": "Thank you! {pack}",
  "Ya es tuyo": "Yours",
- "Las compras con dinero real las hace una persona adulta o con su permiso.": "Real-money purchases must be made by an adult or with their permission."
+ "Las compras con dinero real las hace una persona adulta o con su permiso.": "Real-money purchases must be made by an adult or with their permission.",
+ "Te faltan zanahorias": "Not enough carrots",
+ "Eso ya es tuyo": "That's already yours",
+ "Hoy ya lo has cogido": "You've already collected it today",
+ "El servidor no lo ha aceptado y se ha corregido": "The server didn't accept it and it has been corrected",
+ "Guardar mi progreso (cuenta)": "Save my progress (account)",
+ "Mi cuenta": "My account",
+ "Tu cuenta": "Your account",
+ "La tienda con euros aún no está abierta.": "The real-money shop isn't open yet.",
+ "{m} m de huida": "{m} m escape",
+ "Reto del día de Fans of Jump: he huido {m} m y Microblizz ha perdido {p} €. Mismo río para todos: ¿me ganas?": "Fans of Jump daily challenge: I escaped {m} m and Microblizz lost €{p}. Same river for everyone: can you beat me?",
+ "He huido {m} m de Microblizz en Fans of Jump y le he costado {p} €. ¿Me ganas?": "I escaped {m} m from Microblizz in Fans of Jump and cost them €{p}. Can you beat me?",
+ "Imagen guardada y texto copiado: mándaselo a tus amigos": "Image saved and text copied: send it to your friends",
+ "Mundial": "World",
+ "Hoy aún no hay nadie. ¡Juega el reto del día y sé el primero!": "Nobody yet today. Play the daily challenge and be the first!",
+ "Juega el reto del día para salir aquí.": "Play the daily challenge to appear here.",
+ "Mandar datos anónimos de cada partida de Fans of Jump (dónde cae la gente y cuánto dura) para afinar la dificultad": "Send anonymous data from each Fans of Jump run (where people fall and how long it lasts) to fine-tune the difficulty"
 });

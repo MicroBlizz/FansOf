@@ -39,6 +39,7 @@ function empiezaFinal() {
   SONIDO.salto();
 }
 function llegaMadriguera() {
+  telFin('final');
   const J = JUEGO, c = J.conejo, s = c.salto;
   c.salto = null; c.x = s.x1; c.wy = s.wy1; c.cae = 1; c.ang = 0;
   confeti(PAN.W / 2, c.wy, 120); for (let i = 0; i < 6; i++) FIESTA.globos.push(globo(true)); for (let i = 0; i < 4; i++) fuego();

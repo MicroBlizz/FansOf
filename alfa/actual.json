@@ -1,8 +1,8 @@
 {
- "build": 394,
- "hash": "dac3d3a",
- "fecha": "2026-10-22T08:22:00Z",
- "mensaje": "Jump 0.3.6: la tortuga a flote se ve entera y los tocones de la orilla no se montan",
+ "build": 395,
+ "hash": "9229437",
+ "fecha": "2026-10-22T09:14:46Z",
+ "mensaje": "Jump: la cuenta en el servidor, compartir, reto del día con clasificación y datos de partida (rama jump-servidor)",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

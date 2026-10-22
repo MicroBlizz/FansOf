@@ -32,6 +32,7 @@ async function arranca() {
   try { await Promise.race([Promise.all([document.fonts.load('800 20px "Baloo 2"'), document.fonts.load('20px "Luckiest Guy"')]), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
   await cargaLamina();
   iniciaBonito();
+  JS.arranca();   // la cuenta en el servidor (servidor.js): no se espera, lo que llegue sustituye lo local
   nuevaPartida();
   setTimeout(subePendiente, 4000);   // la mejor marca que no esté aún en el ranking mundial
   document.getElementById('carga').hidden = true;

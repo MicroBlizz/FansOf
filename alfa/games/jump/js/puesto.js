@@ -24,10 +24,16 @@ function etiqueta(x, y, cuanto, estado) {
   iconoZana(x - 10, y, 10);
   letras(String(cuanto), x + 4, y + 0.4, 7.2, da ? '#ffffff' : PASTEL.flojo, da ? { borde: PASTEL.melocotonO, bw: 1.8 } : {});
 }
+// la categoría y el id del servidor a partir de la clave de lo comprado (pelo#…, capa#…, piel…, estela… o el amigo)
+function catDe(clave) {
+  return clave.startsWith('pelo#') ? ['pelaje', clave.slice(4)] : clave.startsWith('capa#') ? ['capas', clave.slice(4)] : clave.startsWith('piel') ? ['troncos', clave.slice(4)]
+    : clave.startsWith('estela') ? ['estelas', clave.slice(6)] : ['amigos', clave];
+}
 function compra(clave, cuanto, alComprar) {
   if (GUARDA.tengo[clave] || cuanto === 0) { alComprar(); salvaGuarda(); SONIDO.boton(); return; }
   if (GUARDA.zanas < cuanto) { SONIDO.uy(); return; }
   GUARDA.zanas -= cuanto; GUARDA.tengo[clave] = true; alComprar(); salvaGuarda(); SONIDO.compra();
+  const [cat, id] = catDe(clave); JS.pide('comprar', { cat, id });
   confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 16);
 }
 // una tarjeta del puesto: el dibujo arriba, el nombre, lo que hace y el precio
@@ -77,7 +83,7 @@ function pintaTienda() {
       } else if (PANEL.pestana === 'kit') {
         const [id, cuanto, nombre, desc] = it, n = GUARDA.kit[id] || 0;
         tarjeta(cx, cy, cw, ch, (X, Y) => { iconoKit(id, X, Y); if (n) letras('×' + n, X + 14, Y - 6, 8, PASTEL.texto); }, nombre, desc, cuanto, 'compra',
-          () => { if (GUARDA.zanas < cuanto) return SONIDO.uy(); GUARDA.zanas -= cuanto; GUARDA.kit[id] = n + 1; salvaGuarda(); SONIDO.compra(); }, extra);
+          () => { if (GUARDA.zanas < cuanto || n >= 9) return SONIDO.uy(); GUARDA.zanas -= cuanto; GUARDA.kit[id] = n + 1; salvaGuarda(); SONIDO.compra(); JS.pide('comprar', { cat: 'kit', id }); }, extra);
       } else if (PANEL.pestana === 'troncos') {
         const [id, cuanto, nombre] = it, clave = 'piel' + id, puesto = (GUARDA.piel || 'madera') === id, tengo = cuanto === 0 || GUARDA.tengo[clave];
         tarjeta(cx, cy, cw, ch, (X, Y) => sprite(id === 'madera' ? 'tronco1' : 'piel_' + id, X, Y + 4, 11), nombre, '', cuanto, puesto ? 'puesto' : tengo ? 'tengo' : 'compra', puesto ? null : () => compra(clave, cuanto, () => { GUARDA.piel = id; }), extra);

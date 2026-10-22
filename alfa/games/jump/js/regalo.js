@@ -33,7 +33,7 @@ function recogeRegalo() {
   const n = casillaRegalo(), r = REGALOS[n];
   GUARDA.regalo = { dia: hoy(), n, doble: false };
   if (r.kit) GUARDA.kit[r.kit] = (GUARDA.kit[r.kit] || 0) + 1; else GUARDA.zanas += r.z;
-  salvaGuarda();
+  salvaGuarda(); JS.pide('regalo');
   bandera(r.kit ? tr('¡Casco de obra!') : tr('¡Regalo de Lola! +{n}', { n: r.z }), PASTEL.oro);
   confeti(PAN.W / 2, CAM.y + PAN.H * 0.6, 40); SONIDO.compra(); vibra([20, 30, 20]);
 }
@@ -41,7 +41,7 @@ function duplicaRegalo() {
   const g = GUARDA.regalo, r = g && REGALOS[g.n];
   if (!r || !r.z || g.doble || regaloHoy() || !anunciosQuedan() || !hayAnuncios()) return;
   verAnuncio(() => {
-    cuentaAnuncio(); g.doble = true; GUARDA.zanas += r.z; salvaGuarda();
+    cuentaAnuncio('regalo'); g.doble = true; GUARDA.zanas += r.z; salvaGuarda();
     bandera(tr('¡Duplicado! +{n}', { n: r.z }), PASTEL.menta); confeti(PAN.W / 2, CAM.y + PAN.H * 0.6, 30); SONIDO.compra();
   });
 }

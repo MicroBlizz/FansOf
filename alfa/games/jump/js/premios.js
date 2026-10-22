@@ -76,7 +76,7 @@ function pintaCasi() {
     const ta = tr('Ver anuncio y seguir');
     caja(bx, by + 2, bw, bh, 5, OLC, null); caja(bx, by, bw, bh, 5, PASTEL.oro, OLC, 1);
     iconoTele(bx + 12, by + 10); letras(ta, W / 2 + 9, by + 10.5, 7.6, PASTEL.texto, { peso: 800, max: bw - 28 });
-    boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio(); sigue(false); }));
+    boton(bx - 4, by - 2, bw + 8, bh + 6, () => verAnuncio(() => { cuentaAnuncio('seguir'); sigue(false); }));
   }
   letras(tr('No, gracias'), W / 2, by + 32, 7.5, PASTEL.suave, { peso: 700 });
   boton(W / 2 - 30, by + 25, 60, 14, () => { J.modo = 'juego'; acaba(J.casi.motivo); SONIDO.boton(); });
@@ -84,15 +84,15 @@ function pintaCasi() {
 }
 
 /* ---------- el anuncio con premio (de prueba) ---------- */
-// apunta un anuncio visto (los 5 del día son para todo)
-function cuentaAnuncio() { const sigueHoy = GUARDA.anuncios && !yaPaso(GUARDA.anuncios.dia); GUARDA.anuncios = { dia: sigueHoy ? GUARDA.anuncios.dia : hoy(), n: (sigueHoy ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
+// apunta un anuncio visto (los 5 del día son para todo); tipo: regalo, partida, seguir o prueba (lo mira el servidor)
+function cuentaAnuncio(tipo = 'seguir') { JS.pide('anuncio', { t: tipo }); const sigueHoy = GUARDA.anuncios && !yaPaso(GUARDA.anuncios.dia); GUARDA.anuncios = { dia: sigueHoy ? GUARDA.anuncios.dia : hoy(), n: (sigueHoy ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
 // con «Sin anuncios» comprado, el premio llega al momento (mismo tope del día)
 function verAnuncio(alAcabar) { if (GUARDA.compras && GUARDA.compras.sinanuncios) { SONIDO.boton(); return alAcabar(); } Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
 function duplicaZanas() {
   const J = JUEGO;
   if (J.duplicado || !anunciosQuedan() || !hayAnuncios() || J.modo !== 'fin') return;
   verAnuncio(() => {
-    cuentaAnuncio();
+    cuentaAnuncio('partida');
     GUARDA.zanas += J.ganadas; J.ganadas *= 2; J.duplicado = true; salvaGuarda();
     confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 24); SONIDO.compra();
   });

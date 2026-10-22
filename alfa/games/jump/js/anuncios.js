@@ -20,7 +20,7 @@ function chipProbar(x, y, campo, valor) {
   const w = 26;
   caja(x - w - 2, y + 2, w, 9, 4, PASTEL.oro, OLC, 0.6); letras(tr('Probar'), x - w / 2 - 2, y + 6.8, 5.6, PASTEL.texto, { peso: 800 });
   boton(x - w - 5, y, w + 6, 13, () => verAnuncio(() => {
-    cuentaAnuncio();
+    cuentaAnuncio('prueba');
     GUARDA.prueba = { campo, antes: GUARDA[campo], valor }; GUARDA[campo] = valor; salvaGuarda();
     bandera(tr('¡Pruébalo en tu próxima partida!'), PASTEL.oro); SONIDO.compra();
   }));
@@ -63,7 +63,7 @@ function compraPack([id, nombre, desc, precio, entrega]) {
   SONIDO.boton();
   MONEDAS.compraReal(tr(nombre), '<p>' + tr(desc) + '</p><p><b>' + tr(precio) + '</b></p>', () => {
     GUARDA.compras = GUARDA.compras || {}; GUARDA.compras[id] = (GUARDA.compras[id] || 0) + 1;
-    entrega(); salvaGuarda();
+    entrega(); salvaGuarda(); JS.pide('pack', { pack: id });
     bandera(tr('¡Gracias! {pack}', { pack: tr(nombre) }), PASTEL.oro); confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 40); SONIDO.compra();
   });
 }

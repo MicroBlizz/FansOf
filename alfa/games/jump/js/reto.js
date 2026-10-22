@@ -23,7 +23,7 @@ function cierraRetoYHuella(record) {
   const J = JUEGO;
   if (RETO.activo) {
     const r = retoDeHoy();
-    if (!r || J.puntos > r.mejor) { GUARDA.reto = { dia: RETO.dia, mejor: J.puntos, fantasma: FANTASMA.huella }; J.recordReto = true; }
+    if (!r || J.puntos > r.mejor) { GUARDA.reto = { dia: RETO.dia, mejor: J.puntos, metros: J.metros, seg: J.t - FANTASMA.t0, fantasma: FANTASMA.huella, subida: false }; J.recordReto = true; subeMarcaReto(); }   // y a la clasificación del día (ranking.js)
   } else if (record) GUARDA.fantasma = FANTASMA.huella;
 }
 const huellaFantasma = () => RETO.activo ? (retoDeHoy() || {}).fantasma : GUARDA.fantasma;

@@ -232,16 +232,20 @@ function pintaFinal() {
   const [quien, dice] = J.tutoHecho ? ['Lola', 'Las zanahorias que ganes, gástalas en mi puesto: tengo amigos que te ayudarán.'] : CONSEJOS[GUARDA.partidas % CONSEJOS.length];
   y += 12;
   envuelve(quien + ': «' + tr(dice) + '»', cw - 24, 6.8).slice(0, 2).forEach((l, i) => letras(l, W / 2, y + i * 8, 6.8, PASTEL.suave, { peso: 700 }));
-  const bw = 96, bh = 20, bx = W / 2 - bw / 2 + 16, by = cy + chh - 26;
+  const bw = 90, bh = 20, bx = W / 2 - bw / 2 + 32, by = cy + chh - 26;
   caja(bx, by + 2, bw, bh, 5, OLC, null);
   caja(bx, by, bw, bh, 5, PASTEL.melocoton, OLC, 1);
   letras(tr('¡Más caos!'), bx + bw / 2, by + 10.5, 12, '#ffffff', { logo: true, borde: PASTEL.melocotonO, bw: 2.6 });
   // y para volver a la portada
   const mx = bx - 36, mw = 28;
   caja(mx, by + 2, mw, bh, 5, OLC, null); caja(mx, by, mw, bh, 5, PASTEL.papel, OLC, 1); iconoCasa(mx + mw / 2, by + 10);
+  // y compartir la partida (compartir.js)
+  const sx = mx - 32, sw = 28;
+  caja(sx, by + 2, sw, bh, 5, OLC, null); caja(sx, by, sw, bh, 5, PASTEL.menta, OLC, 1); iconoComparte(sx + sw / 2, by + 11);
   G.globalAlpha = 1;
   if (e >= 1) boton(bx - 6, by - 6, bw + 12, bh + 12, () => { nuevaPartida('listo'); SONIDO.boton(); });
   if (e >= 1) boton(mx - 4, by - 4, mw + 8, bh + 8, vuelveAlMenu);
+  if (e >= 1) boton(sx - 4, by - 4, sw + 8, bh + 8, comparte);
 }
 
 function pintaTodo() {

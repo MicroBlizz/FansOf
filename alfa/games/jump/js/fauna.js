@@ -27,7 +27,7 @@ function avanzaEspeciales(dt) {
       t.ciclo = (t.ciclo + dt) % TORTUGA_CICLO; t.bajo = bajoTortuga(t.ciclo);
       if (t.ciclo > 3.2 && t.ciclo < 4.2 && Math.random() < dt * 14) FX.push({ t: 'burbuja', x: t.x + azar(-t.r, t.r) * 0.7, wy: t.wy + azar(-4, 4), v: 0.7, v0: 0.7 });
       if (c.tronco === t && t.bajo > 0.6 && J.modo === 'juego') {
-        c.tronco = null; aviso(tr('¡Glub!'), c.x, c.wy + 26, '#9fe3ff', 11); onda(t.x, t.wy, t.r); alAgua();
+        c.tronco = null; aviso(tr('¡Glub!'), c.x, c.wy + 26, '#9fe3ff', 11); onda(t.x, t.wy, t.r); alAgua('tortuga');
       }
     } else if (t.tipo === 'peonza') {
       t.giro += PEONZA_VEL * dt;

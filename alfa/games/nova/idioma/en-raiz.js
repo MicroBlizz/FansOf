@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.16
+  "<b>ESTACIÓN ARREGLADA Y EL NÚCLEO DE MICROBLIZZ</b>: la estación ya no se cuelga con la nave de Memes (desde rango 30) ni con las naves jefe. Microblizz controla ahora el núcleo de la galaxia y dos anillos a su alrededor. Hay 60 retratos de comandante nuevos, uno por cada unidad de las nueve facciones.": "<b>STATION FIXED AND MICROBLIZZ'S CORE</b>: the station no longer freezes with the Memes ship (from rank 30) or with boss ships. Microblizz now controls the galaxy's core and two rings around it. There are 60 new commander portraits, one for each unit of the nine factions.",
+  "Microblizz ha puesto su bandera en el núcleo de la galaxia y Phony ha preguntado si cuenta como domicilio fiscal.": "Microblizz has planted its flag on the galaxy's core and Phony has asked if it counts as a tax address.",
   // 0.3.12
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
   "Microblizz ha pegado carteles de otros juegos en el casco de las naves y Phony ha preguntado si cobran alquiler.": "Microblizz has stuck posters of other games on the ship hulls and Phony has asked if they pay rent.",

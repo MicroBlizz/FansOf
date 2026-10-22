@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.11
+  "<b>LA NOVENA FACCIÓN: MEMES</b>: el MemeLord llega con 16 cartas y su jugada Viral, que cambia con cada uso. Con ella ya están las nueve facciones. Además, ajuste de equilibrio: Streamers y Olvidados bajan un 10 % y Animales sube un 10 %.": "<b>THE NINTH FACTION: MEMES</b>: the MemeLord arrives with 16 cards and its Viral play, which changes with every use. With it all nine factions are in. Also a balance tweak: Streamers and Olvidados go down 10 % and Animales goes up 10 %.",
+  "Microblizz ha viralizado una reunión y Phony ha jurado que el meme era suyo.": "Microblizz has gone viral in a meeting and Phony has sworn the meme was his.",
   // 0.2.7
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
   "Microblizz ha colgado carteles de otros juegos en la sala de reuniones y Phony asegura que son más amenos que las actas.": "Microblizz has hung posters of other games in the meeting room and Phony swears they are more fun than the minutes.",

@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.61
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha puesto una verja al refugio y Phony ha pedido el sello de beta en la mano.": "Microblizz has put a gate on the shelter and Phony has asked for the beta stamp on his hand.",
   // 0.1.57
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (los huecos de anuncio enseñan ahora otros juegos de Fans Of).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (ad slots now show other Fans Of games).",
   "Microblizz ha colgado carteles de otros juegos en el refugio y Phony se ha quedado mirando el de Karts.": "Microblizz has hung posters of other games in the shelter and Phony stood staring at the Karts one.",

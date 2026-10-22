@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.5
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha puesto un cartel de «próximamente» en la pista y Phony ya ha dado tres vueltas por si acaso.": "Microblizz has put a \"coming soon\" sign on the track and Phony has already driven three laps just in case.",
   // sus novedades (js/novedades.js) · 0.7.0
   "<b>KARTS YA ES UN JUEGO</b>: deja de ser una demo y se une a la lista de juegos de Fans Of, con su app para Android.": "<b>KARTS IS NOW A GAME</b>: it stops being a demo and joins the list of Fans Of games, with its own Android app.",
   "Recursos Humanos ha ascendido a Karts de demo a juego. Microblizz le ha subido el sueldo en monedas de la pista, y Phony ya ha perdido tres.": "Human Resources has promoted Karts from demo to game. Microblizz has raised its pay in track coins, and Phony has already lost three.",

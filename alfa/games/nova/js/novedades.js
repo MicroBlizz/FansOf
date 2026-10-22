@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.16', real: ["<b>ESTACIÓN ARREGLADA Y EL NÚCLEO DE MICROBLIZZ</b>: la estación ya no se cuelga con la nave de Memes (desde rango 30) ni con las naves jefe. Microblizz controla ahora el núcleo de la galaxia y dos anillos a su alrededor. Hay 60 retratos de comandante nuevos, uno por cada unidad de las nueve facciones."], joke: ["Microblizz ha puesto su bandera en el núcleo de la galaxia y Phony ha preguntado si cuenta como domicilio fiscal."] },
   { v: '0.3.15', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],
     joke: ["Microblizz ha mandado una sonda a medir tus partidas. Phony la ha confundido con un asteroide y le ha disparado."] },
   { v: '0.3.14', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la promo de otros juegos de la serie ocupa ahora toda la pantalla, con el fondo difuminado y el nombre del juego abajo)."], joke: ["Microblizz ha tapado todo el radar con un anuncio y Phony dice que así no hay enemigos."] },

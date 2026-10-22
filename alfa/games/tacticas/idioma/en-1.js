@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.45
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
+  "Microblizz ha tapado el tablero con una sábana y Phony ha movido una ficha por debajo.": "Microblizz has covered the board with a sheet and Phony moved a piece underneath.",
   // 0.1.41
   "<b>OTROS JUEGOS DE FANS OF</b>: los huecos de anuncio enseñan al azar otro de nuestros juegos, nunca el que estás jugando, y te llevan a su página de la Biblioteca. Además, mejoras por dentro en los sistemas de la serie.": "<b>OTHER FANS OF GAMES</b>: ad slots now show another of our games at random, never the one you are playing, and take you to its Library page. Plus under-the-hood improvements to the series' systems.",
   "Microblizz ha colgado carteles de otros juegos junto al tablero y Phony ha movido una ficha hacia ellos.": "Microblizz has hung posters of other games next to the board and Phony moved a piece toward them.",

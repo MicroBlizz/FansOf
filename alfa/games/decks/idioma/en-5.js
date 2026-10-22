@@ -1,6 +1,8 @@
 // Fans Of Decks · Inglés de las facciones (elegir líder y No-Muertos). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  "Cada líder trae su facción, su pasiva y su mazo. Superando la campaña en normal se abre el siguiente.": "Each leader brings their faction, passive and deck. Beating the campaign on normal opens the next one.",
+  "Nuevo líder disponible: {n}.": "New leader available: {n}.",
   "Elige tu líder": "Choose your leader",
   "Cada líder trae su facción, su pasiva y su mazo. Por ahora están todos abiertos; más adelante se irán desbloqueando.": "Each leader brings their faction, passive and deck. All are open for now; they will unlock over time.",
   "Vida {n}": "Health {n}",

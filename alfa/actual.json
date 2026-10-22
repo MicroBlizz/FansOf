@@ -1,8 +1,8 @@
 {
- "build": 403,
- "hash": "75e231f",
- "fecha": "2026-10-22T13:05:47Z",
- "mensaje": "Release: solo Rouflage jugable, el resto en Próximamente; vista previa de la release en Docker",
+ "build": 404,
+ "hash": "1a9ec4e",
+ "fecha": "2026-10-22T13:13:49Z",
+ "mensaje": "Biblioteca: el destacado enseña primero los juegos jugables",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

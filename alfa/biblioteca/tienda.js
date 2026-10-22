@@ -90,6 +90,8 @@ async function pintarDestacado() {
     if (!s.querySelector('.marca-nuevo')) s.insertAdjacentHTML('beforeend', `<span class="marca-nuevo ol">${esc(t('NUEVO'))}</span>`);
   }
   dest.lista = porFecha.length ? porFecha : nuevosB.length ? nuevosB : [{ tarjeta: 'g-rumble' }];
+  const abierto = j => !document.getElementById(j.tarjeta).dataset.proximamente;   // el destacado enseña primero lo que se puede jugar
+  dest.lista = [...dest.lista.filter(abierto), ...dest.lista.filter(j => !abierto(j))];
   const puntos = document.getElementById('dest-puntos');
   puntos.innerHTML = dest.lista.length > 1
     ? `<button type="button" class="flecha" data-paso="-1" aria-label="${esc(t('Anterior'))}">‹</button>`

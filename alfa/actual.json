@@ -1,8 +1,8 @@
 {
- "build": 408,
- "hash": "0d1db89",
- "fecha": "2026-10-22T18:01:17Z",
- "mensaje": "herramientas/pruebas ordenado: vigia/ (humo, vigia, idioma) separado de balance/{rumble,rouflage,decks}/, cada uno con su LEEME",
+ "build": 409,
+ "hash": "38f740e",
+ "fecha": "2026-10-22T18:29:58Z",
+ "mensaje": "herramientas ordenado: nova/, jump/ (con el estudio), rouflage/, android/ y la puerta del humo con el vigia; LEEME de la carpeta",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

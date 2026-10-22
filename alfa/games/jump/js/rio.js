@@ -39,7 +39,7 @@ function orillas(wy) {
 
 /* ---------- los troncos cortados (los «nenúfares») ---------- */
 const APLASTA = 0.8;
-// La curva de dificultad (medida con robots: herramientas/jump_bots.js):
+// La curva de dificultad (medida con robots: herramientas/jump/jump_bots.js):
 // · el principio es más fácil para que enganche: hasta los 400 m los troncos van más juntos, son más grandes, se mueven menos
 //   y perdonan más al caer (FACIL_HASTA), y la dificultad no llega al máximo hasta los 650 m (DIF_MAX);
 // · desde los 450 m el río va por tramos de 100 m: un trozo normal, un apretón (más difícil) y un respiro (troncos juntos,

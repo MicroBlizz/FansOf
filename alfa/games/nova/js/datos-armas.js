@@ -1,10 +1,10 @@
 // Fans of Nova · Datos de armas: portadores, cargas, estados, reacciones, modificadores, fusiones estrella y defensas (PLAN-NOVA.md, «Sistema de armas»).
 // Cada portador solo admite las cargas de su lista «admite» (un láser no dispara balas cinéticas).
-// CIFRAS PROVISIONALES de la fase 0. El contenido es JSON estricto a propósito: herramientas/nova-balance.py lo lee de aquí, así hay una sola fuente.
+// CIFRAS PROVISIONALES de la fase 0. El contenido es JSON estricto a propósito: herramientas/nova/nova-balance.py lo lee de aquí, así hay una sola fuente.
 'use strict';
 const NOVA_ARMAS = {
  "version": "provisional-0.1",
- "nota": "Cifras PROVISIONALES de la fase 0 (PLAN-NOVA.md). Lo decidido son las tablas; los números se iteran con herramientas/nova-balance.py y con el prototipo.",
+ "nota": "Cifras PROVISIONALES de la fase 0 (PLAN-NOVA.md). Lo decidido son las tablas; los números se iteran con herramientas/nova/nova-balance.py y con el prototipo.",
  "portadores": {
   "railgun": { "nombre": "Railgun", "dano": 62, "cadencia": 0.72, "proyectiles": 1, "acierto": 1.0, "alcance": 560, "arco": 3, "objetivos": 1.5, "admite": ["cinetica", "energia", "explosiva"], "fuerte": "Un objetivo, largo alcance", "debil": "Grupos" },
   "flak": { "nombre": "Flak", "dano": 14, "cadencia": 1.7, "proyectiles": 6, "acierto": 0.5, "alcance": 230, "arco": 50, "objetivos": 2.5, "admite": ["cinetica", "termica", "explosiva"], "fuerte": "Grupos, corto alcance", "debil": "Blindaje" },

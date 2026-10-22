@@ -1,9 +1,9 @@
 // Fans of Nova · Datos de cascos: plantilla de ranuras por facción (9 + Microblizz) y por rango 1-5, con tamaño S/M/L, tipos admitidos y arco por cara.
-// PROVISIONAL (fase 0). JSON estricto a propósito: herramientas/nova-balance.py lo lee de aquí. Abajo, novaPlantilla() saca las ranuras de una facción en un rango.
+// PROVISIONAL (fase 0). JSON estricto a propósito: herramientas/nova/nova-balance.py lo lee de aquí. Abajo, novaPlantilla() saca las ranuras de una facción en un rango.
 'use strict';
 const NOVA_CASCOS = {
  "version": "provisional-0.1",
- "nota": "Plantillas PROVISIONALES de la fase 0 (PLAN-NOVA.md, «Afinidad arma-facción» y «Ranuras por cara»). Cada ranura se abre en el rango `desde`; `crece` dice a qué tamaño pasa en cada rango. JSON estricto para que herramientas/nova-balance.py lo lea.",
+ "nota": "Plantillas PROVISIONALES de la fase 0 (PLAN-NOVA.md, «Afinidad arma-facción» y «Ranuras por cara»). Cada ranura se abre en el rango `desde`; `crece` dice a qué tamaño pasa en cada rango. JSON estricto para que herramientas/nova/nova-balance.py lo lea.",
  "caras": {
   "proa": { "arco": 90, "dano": 1.2, "nota": "Más daño, 90° al frente" },
   "babor": { "arco": 180, "dano": 1.0, "nota": "Lateral: 180° hacia su lado" },

@@ -1,4 +1,4 @@
-// Fans of Jump · La lista de la lámina de dibujos 3D (img/atlas.webp). La escribe herramientas/estudio-jump/fotos.js: no se edita a mano.
+// Fans of Jump · La lista de la lámina de dibujos 3D (img/atlas.webp). La escribe herramientas/jump/estudio/fotos.js: no se edita a mano.
 // Cada dibujo: [x, y, ancho, alto, ax, ay] en la lámina; (ax, ay) es su punto de apoyo. «unidad»: píxeles de la lámina por cada
 // unidad del modelo 3D (de lado, y de alto en el suelo).
 'use strict';

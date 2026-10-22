@@ -1,9 +1,9 @@
 // Fans of Nova · Datos de tripulación: las 5 facetas, qué ROLES de la serie encajan en cada una y los 9 capitanes con pasiva y pega (PLAN-NOVA.md, «Pilotos» y «Tripulación»).
-// PROVISIONAL (fase 0). JSON estricto a propósito: herramientas/nova-balance.py lo lee y lo comprueba contra core/js/serie.
+// PROVISIONAL (fase 0). JSON estricto a propósito: herramientas/nova/nova-balance.py lo lee y lo comprueba contra core/js/serie.
 'use strict';
 const NOVA_TRIPULACION = {
  "version": "provisional-0.1",
- "nota": "Tripulación PROVISIONAL de la fase 0 (PLAN-NOVA.md, «Pilotos» y «Tripulación»). Las claves de capitán y los roles son los de core/js/serie. JSON estricto: herramientas/nova-balance.py lo lee y comprueba los roles contra core.",
+ "nota": "Tripulación PROVISIONAL de la fase 0 (PLAN-NOVA.md, «Pilotos» y «Tripulación»). Las claves de capitán y los roles son los de core/js/serie. JSON estricto: herramientas/nova/nova-balance.py lo lee y comprueba los roles contra core.",
  "asientos": { "capitan": 1, "oficiales": 2, "cuartoAsiento": "por decidir (nivel de campaña, según pruebas)" },
  "facetas": {
   "fuego": {

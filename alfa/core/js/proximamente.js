@@ -1,6 +1,6 @@
 // Fans Of · PRÓXIMAMENTE: en la release (la web de siempre y la app) solo se juegan los juegos de ABIERTOS; el resto conserva su tarjeta y su ficha
 // en la biblioteca, pero al abrirlo (por la librería o por su dirección) sale esta pantalla en vez del juego. En la alfa (/alfa/) y en desarrollo
-// (localhost o ?dev=1) se juega todo. Para abrir un juego en la release: apúntalo en ABIERTOS y publica.
+// (localhost o ?dev=1) se juega todo, y también con una cuenta con el rol «beta» (se da en /gestion > Roles): el botón pasa a «JUGAR BETA». Para abrir un juego en la release: apúntalo en ABIERTOS y publica.
 // Va aparte y sin depender de nada porque lo cargan la portada, nucleo.js (los juegos) y las demos que no usan nucleo.js. Los textos llevan su inglés aquí mismo.
 'use strict';
 window.PROXIMAMENTE = (() => {
@@ -13,7 +13,19 @@ window.PROXIMAMENTE = (() => {
     if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false;
     return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   })();
-  const jugable = id => alfa || desarrollo || ABIERTOS.includes(id);
+  // el rol «beta»: el veredicto se recuerda 6 horas en este navegador (como el de la alfa, core/js/sistema/alfa.js) y se vuelve a comprobar de fondo en cada carga
+  const CLAVE = 'fansof-beta', HORAS = 6;
+  const beta = () => { try { const v = JSON.parse(localStorage.getItem(CLAVE) || 'null'); return !!(v && v.hasta > Date.now()); } catch (e) { return false; } };
+  const usadoBeta = beta();   // con lo que se ha pintado esta página
+  const jugable = id => alfa || desarrollo || ABIERTOS.includes(id) || usadoBeta;
+  const enBeta = id => usadoBeta && !alfa && !desarrollo && !ABIERTOS.includes(id);   // se juega solo por ser beta tester
+  async function verificar() {   // lo llaman la librería y cada juego cuando ya hay cuenta; si el veredicto cambia, se recarga para pintar lo que toca
+    if (alfa || desarrollo || typeof CUENTA === 'undefined' || !CUENTA.activa) return;
+    let tiene = false;
+    try { tiene = !CUENTA.invitado && !!(await CUENTA.rpc('tiene_rol', { p_rol: 'beta' })); } catch (e) { return; }   // sin red o sin la función: se queda como estaba
+    try { if (tiene) localStorage.setItem(CLAVE, JSON.stringify({ hasta: Date.now() + HORAS * 3600e3 })); else localStorage.removeItem(CLAVE); } catch (e) { /* sin guardar */ }
+    if (tiene !== usadoBeta) location.reload();
+  }
   const m = location.pathname.match(/^(.*?)\/(?:games|demos)\/([^/]+)/);   // la página en la que estamos, si es un juego o una demo
   const base = m ? m[1] + '/' : '', id = m ? m[2] : '';
   const cerrado = !!m && !jugable(id);
@@ -31,5 +43,5 @@ window.PROXIMAMENTE = (() => {
       '<a href="' + base + '" style="font:800 15px system-ui,sans-serif;padding:10px 16px;border-radius:10px;background:#3a2a4a;color:#fff;text-decoration:none">' + (en ? 'BACK TO THE LIBRARY' : 'VOLVER A LA LIBRERÍA') + '</a></p></div></body>';
     window.stop();   // el resto de la página (y sus scripts) no llega a ejecutarse
   }
-  return { jugable, cerrado, ABIERTOS };
+  return { jugable, enBeta, verificar, cerrado, ABIERTOS };
 })();

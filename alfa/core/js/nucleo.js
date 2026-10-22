@@ -64,6 +64,7 @@ const NUCLEO = (() => {
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
+    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
     'js/sistema/pantallas.js',     // lo que usan todas las pantallas: cambiar de una a otra, cartera, niveles, avisos
@@ -100,6 +101,7 @@ const NUCLEO = (() => {
     'js/sistema/ligero.js',        // SAVE_KEY y, si el juego no las tiene, la ventana de confirmación y el aviso
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
+    'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
     'js/sistema/opciones-comunes.js', // el componente de la pantalla de Opciones: filas ya hechas (volumen, interruptor, idioma, cuenta, novedades, instalar, versión)

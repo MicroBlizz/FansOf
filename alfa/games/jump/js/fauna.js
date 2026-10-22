@@ -62,7 +62,8 @@ function alCaerEspecial(t) {
 function pintaEspecial(tr_, x, y) {
   if (tr_.tipo === 'peonza') { sprite('peonza' + (Math.floor(tr_.giro / (Math.PI / 8)) % 4), x, y, tr_.r); return true; }
   if (tr_.tipo !== 'tortuga') return false;
-  const b = tr_.bajo, tiembla = tr_.ciclo > 3.2 && tr_.ciclo < 4.1 ? Math.sin(tr_.fase * 60) * 0.8 : 0, linea = y + tr_.r * 0.32;
+  // a flote se ve entera (la línea del agua, por debajo del caparazón); al hundirse, la línea sube y la tapa
+  const b = tr_.bajo, tiembla = tr_.ciclo > 3.2 && tr_.ciclo < 4.1 ? Math.sin(tr_.fase * 60) * 0.8 : 0, linea = y + tr_.r * (0.32 + (1 - Math.min(1, b * 2)) * 0.4);
   if (b > 0.98) { elipse(x, linea - 2, tr_.r * 0.8, tr_.r * 0.3, null, 'rgba(255,255,255,0.55)', 0.8); return true; }   // abajo: solo su onda
   G.save(); G.beginPath(); G.rect(x - tr_.r * 2, y - tr_.r * 3, tr_.r * 4, linea - (y - tr_.r * 3)); G.clip();
   sprite('tortuga', x + tiembla, y + b * tr_.r * 0.7, tr_.r * 1.05, 0, 1, 1, 1 - b * 0.5);

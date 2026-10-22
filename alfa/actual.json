@@ -1,8 +1,8 @@
 {
- "build": 393,
- "hash": "bc9acdc",
- "fecha": "2026-10-22T00:08:41Z",
- "mensaje": "Decks: desbloqueo de lideres en orden (flag decks-desbloqueo-lideres, apagado)",
+ "build": 394,
+ "hash": "dac3d3a",
+ "fecha": "2026-10-22T08:22:00Z",
+ "mensaje": "Jump 0.3.6: la tortuga a flote se ve entera y los tocones de la orilla no se montan",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

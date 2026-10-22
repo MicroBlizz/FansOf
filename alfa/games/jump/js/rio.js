@@ -187,9 +187,12 @@ function pintaRio(t) {
   for (let k = k0; k <= k1; k++) for (const s of [0, 1]) {
     const h = hash(k, s + 100), wy = k * paso + hash(k, s + 110) * 14, [L, R] = orillas(wy);
     const sitio = s ? W - R : L, x = s ? R + 10 + hash(k, 120 + s) * Math.max(1, sitio - 14) : L - 10 - hash(k, 120 + s) * Math.max(1, sitio - 14);
-    if (h < 0.18) cosas.push([hash(k, s + 130) < 0.5 ? 'tocon0' : 'tocon1', x, wy, 6.5 + hash(k, s + 140) * 2]);
+    const grandeArriba = hash(k - 1, s + 100) < 0.37;   // la fila de arriba ya tiene tocón, árbol o arbusto en esta orilla: aquí nada grande, que se montan
+    if (h < 0.18 && !grandeArriba) cosas.push([hash(k, s + 130) < 0.5 ? 'tocon0' : 'tocon1', x, wy, 6.5 + hash(k, s + 140) * 2]);
+    else if (h < 0.18) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     else if (h < 0.27) cosas.push([delPaisaje('arbol', wy, hash(k, s + 190)), s ? W - 4 - hash(k, 150) * 6 : 4 + hash(k, 151) * 6, wy, 9 + hash(k, s + 160) * 2]);
-    else if (h < 0.37) cosas.push([delPaisaje('arbusto', wy, hash(k, s + 190)), x, wy, 7 + hash(k, s + 170) * 2]);
+    else if (h < 0.37 && !grandeArriba) cosas.push([delPaisaje('arbusto', wy, hash(k, s + 190)), x, wy, 7 + hash(k, s + 170) * 2]);
+    else if (h < 0.37) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     else if (h < 0.62) cosas.push([hash(k, s + 180) < 0.5 ? 'flor0' : 'flor1', x, wy, 7]);
     // la obra de Microblizz: conos, vallas y carteles (desde los 30 m)
     else if (h < 0.68 && wy > 300) { const o = hash(k, s + 230); cosas.push(o < 0.5 ? ['cono', x, wy, 5] : o < 0.8 ? ['valla', x, wy, 6] : ['cartel', x, wy, 7]); }

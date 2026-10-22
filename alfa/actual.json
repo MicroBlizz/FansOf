@@ -1,8 +1,8 @@
 {
- "build": 407,
- "hash": "7234301",
- "fecha": "2026-10-22T16:40:20Z",
- "mensaje": "Check «idioma» como el del humo: el vigia de Yoshi pasa el comparador y marca el commit, publicar.py lo exige (--sin-idioma), Action Idiomas de respaldo, servicio idioma + .bat; el comparador vuelve a ver todos los juegos tras «solo Rouflage»",
+ "build": 408,
+ "hash": "0d1db89",
+ "fecha": "2026-10-22T18:01:17Z",
+ "mensaje": "herramientas/pruebas ordenado: vigia/ (humo, vigia, idioma) separado de balance/{rumble,rouflage,decks}/, cada uno con su LEEME",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

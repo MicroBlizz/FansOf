@@ -1,8 +1,8 @@
 {
- "build": 399,
- "hash": "49d0d59",
- "fecha": "2026-10-22T09:34:14Z",
- "mensaje": "Jump: al seguir tras caer, siempre un tronco a tiro cerca de donde caíste; más objetos en el río (uno cada ~8 troncos, nunca más de 20 sin ninguno); 75 aplicado",
+ "build": 400,
+ "hash": "a604ffe",
+ "fecha": "2026-10-22T11:55:45Z",
+ "mensaje": "Decks: ajuste de equilibrio tanda 5 (Streamers y Olvidados -10 %; Animales +10 %), con humano y optimo2 (vikingo y twitchking 9/10, bunny 6-7/10)",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

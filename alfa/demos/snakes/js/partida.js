@@ -3,9 +3,9 @@
 // cruzarte es la Demolición (js/frenesi.js). Los ítems «?» son las locuras (js/locuras.js).
 'use strict';
 
-const PASO_INICIAL = 0.17;     // segundos por casilla al empezar
-const PASO_MINIMO = 0.085;     // lo más deprisa que va
-const PASO_POR_CASILLA = 0.0014;   // cuánto acelera cada casilla de largo
+const PASO_INICIAL = 0.32;     // segundos por casilla al empezar (despacito)
+const PASO_MINIMO = 0.09;      // lo más deprisa que va (se llega hacia las 35 manzanas)
+const PASO_POR_MANZANA = 0.0065;   // cuánto acelera cada manzana comida
 const LARGO_INICIAL = 4;
 const PUNTOS_MANZANA = 10;
 
@@ -16,7 +16,7 @@ const JUEGO = {
   pend: [],           // giros pedidos por el dedo, en cola (máximo 2)
   manzanas: [], items: [],
   puntos: 0, mult: 1, acum: 0, t: 0, tFin: 0, uyT: 0,
-  frenesi: 0, frenesiT: 0, frenesis: 0, monedasPartida: 0, cortes: 0, locuras: 0,
+  frenesi: 0, frenesiT: 0, frenesis: 0, monedasPartida: 0, cortes: 0, locuras: 0, comidas: 0,
   fin: { motivo: '', record: false },
 };
 
@@ -25,7 +25,7 @@ function nuevaPartida() {
   J.serp = []; for (let i = 0; i < LARGO_INICIAL; i++) J.serp.push([c0 - i, r0]);
   J.dir = [1, 0]; J.pend = []; J.manzanas = []; J.items = [];
   J.puntos = 0; J.mult = 1; J.acum = 0; J.t = 0; J.tFin = 0; J.uyT = 0;
-  J.frenesi = 0; J.frenesiT = 0; J.frenesis = 0; J.monedasPartida = 0; J.cortes = 0; J.locuras = 0;
+  J.frenesi = 0; J.frenesiT = 0; J.frenesis = 0; J.monedasPartida = 0; J.cortes = 0; J.locuras = 0; J.comidas = 0;
   reiniciaLocuras();
   J.manzanas.push(casillaLibre());
   J.modo = 'juego';
@@ -40,7 +40,7 @@ function pideDir(d) {
   if (J.pend.length < 2) { J.pend.push(d); SONIDO.gira(); }
 }
 
-const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - (JUEGO.serp.length - LARGO_INICIAL) * PASO_POR_CASILLA) * (esFrenesi() ? 0.8 : 1);
+const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - JUEGO.comidas * PASO_POR_MANZANA) * (esFrenesi() ? 0.85 : 1);
 
 function avanzaJuego(dt) {
   const J = JUEGO; J.t += dt;
@@ -69,7 +69,7 @@ function mueve() {
   }
   S.unshift(n);
   if (come) {
-    J.manzanas.splice(iMan, 1);
+    J.manzanas.splice(iMan, 1); J.comidas++;
     const pts = PUNTOS_MANZANA * J.mult; J.puntos += pts;
     numero(cx(n[0]), cy(n[1]) - 6, '+' + pts, esFrenesi() ? '#ffd54a' : '#fff', esFrenesi() ? 11 : 9);
     chispa(cx(n[0]), cy(n[1]), esFrenesi() ? '#ffd54a' : '#ff4d4d', 8, 70);

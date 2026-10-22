@@ -23,7 +23,7 @@ function fotograma(ahora) {
   vigilaMusica();
   G.setTransform(PAN.k, 0, 0, PAN.k, 0, 0);
   G.imageSmoothingEnabled = !esRetro();
-  pintaTodo(PAN.W, PAN.H);
+  pintaTodo(PAN.W, PAN.H, dt);
   requestAnimationFrame(fotograma);
 }
 
@@ -36,7 +36,7 @@ async function arranca() {
   cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); dedoBaja(...punto(e)); e.preventDefault(); });
   cv.addEventListener('pointermove', e => { if (DEDO.activo) dedoMueve(...punto(e)); });
   cv.addEventListener('pointerup', e => dedoSube(...punto(e)));
-  cv.addEventListener('pointercancel', () => { DEDO.activo = false; });
+  cv.addEventListener('pointercancel', () => { DEDO.activo = false; sueltaPalanca(); });
   window.addEventListener('resize', ajusta);
   requestAnimationFrame(fotograma);
 }

@@ -10,7 +10,7 @@ IDIOMA.add({
  "Roza tu cola para cargar el Frenesí": "Graze your tail to charge the Frenzy",
  "En Frenesí, córtate la cola por monedas": "In Frenzy, cut your own tail for coins",
  "Los «?» son locuras. Tú verás.": "The “?” are crazy stuff. Your call.",
- "Toca para jugar · desliza para girar": "Tap to play · swipe to turn",
+ "Toca para jugar · arrastra el dedo para girar": "Tap to play · drag your finger to turn",
  "Récord: {n}": "Best: {n}",
  "Monedas: {n}": "Coins: {n}",
  "¡Contra la pared!": "Into the wall!",

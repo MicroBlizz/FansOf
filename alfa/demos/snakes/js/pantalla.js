@@ -4,7 +4,7 @@
 
 const BOTONES = { sonido: null };
 
-function pintaTodo(W, H) {
+function pintaTodo(W, H, dt) {
   const retro = esRetro(), fr = esFrenesi() && JUEGO.modo === 'juego';
   // el fondo de toda la pantalla
   if (retro) { G.fillStyle = '#3a3f33'; G.fillRect(0, 0, W, H); }
@@ -15,6 +15,7 @@ function pintaTodo(W, H) {
   if (JUEGO.modo !== 'menu') { pintaManzanas(retro); pintaItems(retro); pintaSerpiente(retro); }
   pintaEfectos(retro);
   G.restore();
+  if (JUEGO.modo === 'juego') pintaPalanca(retro);
   pintaMarcador(W, retro, fr);
   pintaLocura(W, H);
   if (JUEGO.modo === 'menu') pintaPortada(W, H);
@@ -61,7 +62,7 @@ function pintaPortada(W, H) {
   letra(tr('Roza tu cola para cargar el Frenesí'), W / 2, y0 + 160, 8, '#fff', 'center', '#06110a', 2.5);
   letra(tr('En Frenesí, córtate la cola por monedas'), W / 2, y0 + 173, 8, '#ffd54a', 'center', '#06110a', 2.5);
   letra(tr('Los «?» son locuras. Tú verás.'), W / 2, y0 + 186, 8, '#7fd7ff', 'center', '#06110a', 2.5);
-  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar · desliza para girar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
+  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar · arrastra el dedo para girar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
   if (SAVE.record > 0) letra(tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 262, 8, '#9cff6b', 'center', '#06110a', 2);
   if (SAVE.monedas > 0) letra(tr('Monedas: {n}', { n: SAVE.monedas }), W / 2, y0 + 274, 8, '#ffd54a', 'center', '#06110a', 2);
 }

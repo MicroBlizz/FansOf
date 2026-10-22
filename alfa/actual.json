@@ -1,8 +1,8 @@
 {
- "build": 395,
- "hash": "9229437",
- "fecha": "2026-10-22T09:14:46Z",
- "mensaje": "Jump: la cuenta en el servidor, compartir, reto del día con clasificación y datos de partida (rama jump-servidor)",
+ "build": 396,
+ "hash": "ec16afd",
+ "fecha": "2026-10-22T09:18:20Z",
+ "mensaje": "Fans of Snakes: palanca virtual donde pones el dedo y velocidad que empieza lenta",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

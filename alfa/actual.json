@@ -1,8 +1,8 @@
 {
- "build": 400,
- "hash": "a604ffe",
- "fecha": "2026-10-22T11:55:45Z",
- "mensaje": "Decks: ajuste de equilibrio tanda 5 (Streamers y Olvidados -10 %; Animales +10 %), con humano y optimo2 (vikingo y twitchking 9/10, bunny 6-7/10)",
+ "build": 401,
+ "hash": "c8f3c56",
+ "fecha": "2026-10-22T12:29:36Z",
+ "mensaje": "Docs: enlaces de PLAN-MIGRACION a docs/",
  "juegos": {
   "crush": "0.1.28",
   "dark": "0.2.7",

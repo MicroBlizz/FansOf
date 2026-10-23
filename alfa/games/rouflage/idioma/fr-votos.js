@@ -1,0 +1,28 @@
+// Fans of Rouflage · Francés de ME GUSTA, NO ME GUSTA y REPORTAR el escenario en la sala con amigos (js/sala-votos.js y su HTML en js/pantallas-html.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ME GUSTA": "J'AIME",
+  "NO ME GUSTA": "J'AIME PAS",
+  "REPORTAR": "SIGNALER",
+  "REPORTAR ESCENARIO": "SIGNALER LE DÉCOR",
+  "¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.": "Qu'est-ce qui cloche avec ce décor ? On l'envoie aux développeurs, qui le regardent à la loupe.",
+  "Dibujo inapropiado": "Dessin inapproprié",
+  "Nombre ofensivo": "Nom offensant",
+  "Otra cosa": "Autre chose",
+  "Cuéntalo en pocas palabras (opcional)": "Raconte-le en quelques mots (facultatif)",
+  "Gracias, lo revisará Microblizz.": "Merci, Microblizz va l'examiner.",
+  "Mientras, puedes seguir esperando aquí tan tranquilo.": "En attendant, tu peux continuer à patienter ici tranquillement.",
+  "RECIBIDO": "REÇU",
+  "A 1 amigo le gusta tu escenario": "1 ami aime ton décor",
+  "A {n} amigos les gusta tu escenario": "{n} amis aiment ton décor",
+  "No se ha podido votar. Prueba otra vez.": "Vote impossible. Réessaie.",
+  "Ya has mandado muchos reportes hoy. Mañana más.": "Tu as envoyé beaucoup de signalements aujourd'hui. À demain.",
+  "Este escenario ya no está aquí.": "Ce décor n'est plus là.",
+  "No se ha podido mandar. Prueba otra vez.": "Envoi impossible. Réessaie.",
+  "Microblizz te ha quitado lo de crear salas con amigos por un reporte. Puedes unirte a la sala de un amigo con su código.": "Microblizz t'a retiré la création de salons entre amis à cause d'un signalement. Tu peux rejoindre le salon d'un ami avec son code.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte, para siempre. Tus amigos ven la sala de serie.": "Microblizz a retiré ton décor des salons à cause d'un signalement, pour toujours. Tes amis voient la salle par défaut.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte hasta el {f}. Tus amigos ven la sala de serie.": "Microblizz a retiré ton décor des salons à cause d'un signalement jusqu'au {f}. Tes amis voient la salle par défaut.",
+  "Microblizz ha retirado este dibujo por un reporte. Pinta otra cosa en MI ESCENARIO para volver a enseñarlo.": "Microblizz a retiré ce dessin à cause d'un signalement. Peins autre chose dans MON DÉCOR pour le montrer à nouveau.",
+  "Tu escenario está en revisión por unos reportes: mientras, tus amigos ven la sala de serie.": "Ton décor est en cours d'examen suite à des signalements : en attendant, tes amis voient la salle par défaut.",
+  "Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.": "Ce décor est caché pendant que Microblizz l'examine. Voici la salle par défaut.",
+});

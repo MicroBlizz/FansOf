@@ -1,0 +1,30 @@
+// Fans of Rouflage · Italiano de las frases que el juego toma de los diccionarios COMUNES del inglés (core/idioma/en-*.js: rarezas, la recreativa, el gacha...) y que
+// el core de este idioma no cubre (solo trae lo de los juegos ligeros). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "Colección": "Collezione",
+  "Oro": "Oro",
+  "TUTORIAL": "TUTORIAL",
+  "¡VALE!": "VA BENE!",
+  "El servidor ha dado un error y ya queda apuntado": "Il server ha dato un errore ed è già stato segnato",
+  "Recreativa": "Cabinato",
+  "VikingoPerdido": "VichingoPerduto",
+  "LaDirectora": "LaDirettrice",
+  "MEJORAS POR DENTRO": "MIGLIORIE SOTTO IL COFANO",
+  "oro": "oro",
+  "Cabeza": "Testa",
+  "Común": "Comune",
+  "Legendaria": "Leggendaria",
+  "Rara": "Rara",
+  "Épica": "Epica",
+  "laberinto": "labirinto",
+  "¡LISTA!": "PRONTA!",
+  "Todavía no toca. Aguanta un poco.": "Non è ancora il momento. Resisti un po'.",
+  "TIRADA GRATIS x1": "TIRO GRATIS x1",
+  "PRÓXIMA x1 GRATIS EN": "PROSSIMO x1 GRATIS TRA",
+  "¡RECLAMA TU x10 GRATIS! CADUCA EN": "RITIRA IL TUO x10 GRATIS! SCADE TRA",
+  "x10 GRATIS EL DOMINGO EN": "x10 GRATIS DOMENICA TRA",
+  "TEMPORADA": "STAGIONE",
+  "ARMARIO": "ARMADIO",
+  "PUESTO": "INDOSSATO",
+});

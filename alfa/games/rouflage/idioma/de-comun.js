@@ -1,0 +1,30 @@
+// Fans of Rouflage · Alemán de las frases que el juego toma de los diccionarios COMUNES del inglés (core/idioma/en-*.js: rarezas, la recreativa, el gacha...) y que
+// el core de este idioma no cubre (solo trae lo de los juegos ligeros). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "Colección": "Sammlung",
+  "Oro": "Gold",
+  "TUTORIAL": "TUTORIAL",
+  "¡VALE!": "ALLES KLAR!",
+  "El servidor ha dado un error y ya queda apuntado": "Der Server hat einen Fehler gemeldet, er ist schon notiert",
+  "Recreativa": "Spielautomat",
+  "VikingoPerdido": "VerlorenerWikinger",
+  "LaDirectora": "DieDirektorin",
+  "MEJORAS POR DENTRO": "VERBESSERUNGEN UNTER DER HAUBE",
+  "oro": "Gold",
+  "Cabeza": "Kopf",
+  "Común": "Gewöhnlich",
+  "Legendaria": "Legendär",
+  "Rara": "Selten",
+  "Épica": "Episch",
+  "laberinto": "Labyrinth",
+  "¡LISTA!": "FERTIG!",
+  "Todavía no toca. Aguanta un poco.": "Noch nicht. Halt noch kurz durch.",
+  "TIRADA GRATIS x1": "GRATIS-ZUG x1",
+  "PRÓXIMA x1 GRATIS EN": "NÄCHSTER GRATIS x1 IN",
+  "¡RECLAMA TU x10 GRATIS! CADUCA EN": "HOL DIR DEIN GRATIS x10! LÄUFT AB IN",
+  "x10 GRATIS EL DOMINGO EN": "GRATIS x10 AM SONNTAG IN",
+  "TEMPORADA": "SAISON",
+  "ARMARIO": "SCHRANK",
+  "PUESTO": "ANGELEGT",
+});

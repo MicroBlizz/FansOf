@@ -1,0 +1,28 @@
+// Fans of Rouflage · Alemán de ME GUSTA, NO ME GUSTA y REPORTAR el escenario en la sala con amigos (js/sala-votos.js y su HTML en js/pantallas-html.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ME GUSTA": "GEFÄLLT MIR",
+  "NO ME GUSTA": "GEFÄLLT MIR NICHT",
+  "REPORTAR": "MELDEN",
+  "REPORTAR ESCENARIO": "KULISSE MELDEN",
+  "¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.": "Was stimmt mit dieser Kulisse nicht? Wir schicken es den Entwicklern, die schauen es sich mit der Lupe an.",
+  "Dibujo inapropiado": "Unangemessene Zeichnung",
+  "Nombre ofensivo": "Beleidigender Name",
+  "Otra cosa": "Etwas anderes",
+  "Cuéntalo en pocas palabras (opcional)": "Erzähl es in wenigen Worten (optional)",
+  "Gracias, lo revisará Microblizz.": "Danke, Microblizz schaut es sich an.",
+  "Mientras, puedes seguir esperando aquí tan tranquilo.": "Währenddessen kannst du hier ganz entspannt weiterwarten.",
+  "RECIBIDO": "ERHALTEN",
+  "A 1 amigo le gusta tu escenario": "1 Freund gefällt deine Kulisse",
+  "A {n} amigos les gusta tu escenario": "{n} Freunden gefällt deine Kulisse",
+  "No se ha podido votar. Prueba otra vez.": "Abstimmen hat nicht geklappt. Versuch es noch mal.",
+  "Ya has mandado muchos reportes hoy. Mañana más.": "Du hast heute schon viele Meldungen geschickt. Morgen mehr.",
+  "Este escenario ya no está aquí.": "Diese Kulisse ist nicht mehr hier.",
+  "No se ha podido mandar. Prueba otra vez.": "Konnte nicht gesendet werden. Versuch es noch mal.",
+  "Microblizz te ha quitado lo de crear salas con amigos por un reporte. Puedes unirte a la sala de un amigo con su código.": "Microblizz hat dir wegen einer Meldung das Erstellen von Räumen mit Freunden entzogen. Du kannst dem Raum eines Freundes mit seinem Code beitreten.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte, para siempre. Tus amigos ven la sala de serie.": "Microblizz hat deine Kulisse wegen einer Meldung aus den Räumen entfernt, für immer. Deine Freunde sehen den Standardraum.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte hasta el {f}. Tus amigos ven la sala de serie.": "Microblizz hat deine Kulisse wegen einer Meldung bis zum {f} aus den Räumen entfernt. Deine Freunde sehen den Standardraum.",
+  "Microblizz ha retirado este dibujo por un reporte. Pinta otra cosa en MI ESCENARIO para volver a enseñarlo.": "Microblizz hat diese Zeichnung wegen einer Meldung entfernt. Mal etwas anderes in MEINE KULISSE, um sie wieder zu zeigen.",
+  "Tu escenario está en revisión por unos reportes: mientras, tus amigos ven la sala de serie.": "Deine Kulisse wird wegen einiger Meldungen geprüft: Solange sehen deine Freunde den Standardraum.",
+  "Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.": "Diese Kulisse ist versteckt, während Microblizz sie prüft. Hier habt ihr den Standardraum.",
+});

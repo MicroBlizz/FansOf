@@ -1,8 +1,8 @@
 {
- "build": 442,
- "hash": "db2cf36",
- "fecha": "2026-10-23T21:22:14Z",
- "mensaje": "Core: idiomas pt, fr, de e it (un juego sin ese diccionario se juega en inglés); Rouflage: banderas de idioma en Opciones y números según el idioma",
+ "build": 443,
+ "hash": "4d45f67",
+ "fecha": "2026-10-23T21:33:12Z",
+ "mensaje": "Fans of Rouflage: el juego en portugués (Brasil), francés, alemán e italiano",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

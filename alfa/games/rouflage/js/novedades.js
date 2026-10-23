@@ -3,6 +3,7 @@
 // Aquí quedan las 12 más nuevas; las de antes, tal cual se publicaron, en js/novedades-antiguas.js (archivo: no lo carga nadie). Al pasar de ~25 KB, se mueven allí las del final.
 'use strict';
 const NEWS = [
+  { v: '0.2.43', real: ["<b>CARGA CAMUFLADA E ICONO NUEVO</b>: la pantalla de carga tiene el título camuflado, un becario cazador paseando y un colado que tira una bomba de humo, y acaba en «TOCA PARA JUGAR». El icono de la app estrena la F y la O del logo de Fans Of y una R camuflada. En Android, pantalla completa y acceso con Google que vuelve a la app."], joke: ["Microblizz ha dado linterna al cazador y Phony ha tirado la bomba de humo antes de que empezara la partida."] },
   { v: '0.2.42', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores)."], joke: ["Microblizz ha afinado la puerta de la web y Phony ha entrado por la del armario."] },
   { v: '0.2.41', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],
     joke: ["Microblizz ha puesto un interruptor para que nadie vea tus datos. Phony lo ha pintado del color de la pared y ya no lo encuentra."] },

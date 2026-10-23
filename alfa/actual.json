@@ -1,22 +1,22 @@
 {
- "build": 417,
- "hash": "c03e20a",
- "fecha": "2026-10-23T01:50:19Z",
- "mensaje": "Login con Google en la app de Android: vuelve a la app por esquema propio (página puente app-login/)",
+ "build": 418,
+ "hash": "925e9e1",
+ "fecha": "2026-10-23T01:54:42Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.30, decks 0.2.12, jump 0.3.7, karts 0.7.6, nova 0.3.17, ratkov 0.2.20, rouflage 0.2.43, rumble 0.9.149, survivors 0.1.62, tacticas 0.1.46, td 0.13.78",
  "juegos": {
-  "crush": "0.1.29",
+  "crush": "0.1.30",
   "dark": "0.2.7",
-  "decks": "0.2.11",
+  "decks": "0.2.12",
   "island": "0.3.5",
-  "jump": "0.3.6",
-  "karts": "0.7.5",
-  "nova": "0.3.16",
-  "ratkov": "0.2.19",
-  "rouflage": "0.2.42",
-  "rumble": "0.9.148",
+  "jump": "0.3.7",
+  "karts": "0.7.6",
+  "nova": "0.3.17",
+  "ratkov": "0.2.20",
+  "rouflage": "0.2.43",
+  "rumble": "0.9.149",
   "skate": "0.1.27",
-  "survivors": "0.1.61",
-  "tacticas": "0.1.45",
-  "td": "0.13.77"
+  "survivors": "0.1.62",
+  "tacticas": "0.1.46",
+  "td": "0.13.78"
  }
 }

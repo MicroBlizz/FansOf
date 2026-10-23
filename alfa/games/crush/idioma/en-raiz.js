@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.30
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha ocultado las barras de Android y Phony ha pasado un cuarto de hora buscando la hora.": "Microblizz has hidden Android's bars and Phony spent a quarter of an hour looking for the clock.",
   // 0.1.29
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
   "Microblizz ha puesto una puerta a cada juego y Phony ha intentado colarse por la de Crush con una bolsa de caramelos.": "Microblizz has put a door on each game and Phony tried to sneak through Crush's with a bag of sweets.",

@@ -39,6 +39,7 @@ IDIOMA.add({
   "Pegatinas": "Stickers",
   "Se mandan en el chat de la sala y de fantasma. Un paquete trae todas las suyas": "You send them in the room chat and as a ghost. A pack brings all of its stickers",
   "PEGATINAS": "STICKERS",
+  "Despedíos con una pegatina o una frase.": "Say goodbye with a sticker or a phrase.",
   "FRASES": "PHRASES",
   "Esa pegatina aún no es tuya": "That sticker isn't yours yet"
 });

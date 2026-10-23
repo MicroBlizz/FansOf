@@ -1,8 +1,8 @@
 {
- "build": 435,
- "hash": "85cc66e",
- "fecha": "2026-10-23T18:03:09Z",
- "mensaje": "Fans of Rouflage: lista de amigos (en línea, INVITAR a tu sala, UNIRME a la suya y aviso al recibir invitación) y MI PERFIL más visible",
+ "build": 436,
+ "hash": "4f2fe12",
+ "fecha": "2026-10-23T18:03:44Z",
+ "mensaje": "Fans of Rouflage: chat en el final de la ronda, con pegatinas y frases (chat-fin.js)",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

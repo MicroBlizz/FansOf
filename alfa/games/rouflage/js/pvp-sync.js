@@ -90,6 +90,7 @@ function rfpRecibe(m) {
     case 'fg': fantasmaRecibido(sl, m); break;
     case 'bz': balizaRecibida(m, sl); break;
     case 'ch': chatRecibido(sl, m); break;      // una frase rápida del chat (chat-partida.js)
+    case 'cf': if (typeof chatFinRecibido === 'function') chatFinRecibido(sl, m); break;      // el chat del final de la ronda (chat-fin.js)
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
     case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;

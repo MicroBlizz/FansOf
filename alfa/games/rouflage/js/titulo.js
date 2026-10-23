@@ -22,10 +22,10 @@ function titCorto(n) {
   if (n >= 1e4) return Math.floor(n / 1e3).toLocaleString(LOCALE_RF) + 'K';
   return n.toLocaleString(LOCALE_RF);
 }
-// en el título, el caos primordial va en la barra de arriba, debajo de las monedas (fijo en la esquina las tapaba); en los demás menús, en su esquina
+// en el título, el caos primordial va como etiqueta en la esquina del botón EN LÍNEA (fijo en la esquina de la pantalla tapaba las monedas); en las pantallas del PvP, en su esquina
 function titEnergiaSitio() {
   if (typeof CAJA_ENERGIA === 'undefined') return;
-  const enTitulo = !E('p-titulo').hidden, sitio = enTitulo ? document.querySelector('#p-titulo .tit-monedas') : document.body;
+  const enTitulo = !E('p-titulo').hidden, sitio = enTitulo ? E('tit-pvp-caos') : document.body;
   if (sitio && CAJA_ENERGIA.parentNode !== sitio) sitio.appendChild(CAJA_ENERGIA);
 }
 

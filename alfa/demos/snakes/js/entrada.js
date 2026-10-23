@@ -69,3 +69,6 @@ window.addEventListener('keydown', e => {
   if (d) { e.preventDefault(); if (JUEGO.modo === 'juego') pideDir(espeja(d)); else toque(-99, -99); return; }
   if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toque(-99, -99); }
 });
+
+// si te vas de la app (otra pestaña, una llamada, bloqueas el móvil), la partida se pausa sola con las Opciones abiertas
+document.addEventListener('visibilitychange', () => { if (document.hidden && JUEGO.modo === 'juego' && !OPC.abierto) abreOpciones(); });

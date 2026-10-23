@@ -1,8 +1,8 @@
 {
- "build": 414,
- "hash": "7d598d8",
- "fecha": "2026-10-23T01:10:22Z",
- "mensaje": "Rouflage: la carga acaba en «TOCA PARA JUGAR» (se quita con el toque) y su escena: el cazador ve al colado, que tira la bomba de humo",
+ "build": 415,
+ "hash": "beccbe3",
+ "fecha": "2026-10-23T01:12:54Z",
+ "mensaje": "Rouflage: la luz de la carga sale de la linterna del cazador cuando apunta al colado",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

@@ -1,8 +1,8 @@
 {
- "build": 412,
- "hash": "5a2b50a",
- "fecha": "2026-10-23T01:01:47Z",
- "mensaje": "Rouflage: pantalla de carga con el título camuflado, un becario cazador paseando y un colado en la última E (arte del propio juego)",
+ "build": 413,
+ "hash": "3f5049d",
+ "fecha": "2026-10-23T01:06:38Z",
+ "mensaje": "Rouflage: icono nuevo (F y O del logo de Fans Of, R camuflada de la portada) para la app y el manifiesto",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

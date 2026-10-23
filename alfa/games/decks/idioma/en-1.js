@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.13
+  "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
+  "Microblizz ha ordenado el mazo de traducciones y Phony ha robado una carta repetida.": "Microblizz has tidied the deck of translations and Phony drew a duplicate card.",
   // 0.2.12
   "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
   "Microblizz ha dado pantalla completa al mazo y Phony ha descubierto que el CEO también cabe en vertical.": "Microblizz has made the deck full screen and Phony found out the CEO fits in portrait too.",

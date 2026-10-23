@@ -4,6 +4,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.13.79', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha limpiado las ruinas de textos y Phony ha puesto una torre sobre una errata."] },
   { v: '0.13.78', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha despejado el campo de las torres y Phony ha puesto una torre en la barra de estado."] },
   { v: '0.13.77', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores)."], joke: ["Microblizz ha puesto una cinta de obra junto a las torres y Phony la ha defendido con uñas y dientes."] },
   { v: '0.13.76', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],

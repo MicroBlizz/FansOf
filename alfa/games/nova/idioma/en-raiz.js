@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.18
+  "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
+  "Microblizz ha ordenado el diario de a bordo y Phony ha pedido una traducción al klingon.": "Microblizz has tidied the ship's log and Phony asked for a Klingon translation.",
   // 0.3.17
   "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
   "Microblizz ha dejado la galaxia a pantalla completa y Phony ha pedido un hueco para el aparcamiento de naves.": "Microblizz has left the galaxy full screen and Phony has asked for a spot in the ship parking lot.",

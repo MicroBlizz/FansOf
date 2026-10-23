@@ -1,22 +1,22 @@
 {
- "build": 420,
- "hash": "b08faf3",
- "fecha": "2026-10-23T02:22:24Z",
- "mensaje": "Novedades: el botón de jugar de los juegos nuevos sigue la misma lógica (Próximamente / Jugar beta)",
+ "build": 421,
+ "hash": "74e938b",
+ "fecha": "2026-10-23T02:37:26Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.31, decks 0.2.13, jump 0.3.8, karts 0.7.7, nova 0.3.18, ratkov 0.2.21, rouflage 0.2.44, rumble 0.9.150, survivors 0.1.63, tacticas 0.1.47, td 0.13.79",
  "juegos": {
-  "crush": "0.1.30",
+  "crush": "0.1.31",
   "dark": "0.2.7",
-  "decks": "0.2.12",
+  "decks": "0.2.13",
   "island": "0.3.5",
-  "jump": "0.3.7",
-  "karts": "0.7.6",
-  "nova": "0.3.17",
-  "ratkov": "0.2.20",
-  "rouflage": "0.2.43",
-  "rumble": "0.9.149",
+  "jump": "0.3.8",
+  "karts": "0.7.7",
+  "nova": "0.3.18",
+  "ratkov": "0.2.21",
+  "rouflage": "0.2.44",
+  "rumble": "0.9.150",
   "skate": "0.1.27",
-  "survivors": "0.1.62",
-  "tacticas": "0.1.46",
-  "td": "0.13.78"
+  "survivors": "0.1.63",
+  "tacticas": "0.1.47",
+  "td": "0.13.79"
  }
 }

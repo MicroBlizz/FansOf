@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!-- Página puente del login de las apps de Android: Google/Supabase vuelve aquí (con la sesión en #…) y esta página reabre la app con su esquema (games.fansof.<juego>://login#…). Sin ella el navegador se quedaba en la web. -->
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Volver a la app · Fans Of</title>
+<style>
+  html,body{margin:0;height:100%;background:#0e0b1e;color:#fff;font-family:system-ui,sans-serif}
+  main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}
+  h1{font-size:22px;margin:0}
+  a{display:inline-block;padding:14px 26px;border:4px solid #000;border-radius:14px;background:#ffd23f;color:#000;font-weight:900;font-size:18px;text-decoration:none;box-shadow:0 5px 0 #000}
+  p{margin:0;opacity:.8;max-width:320px}
+</style></head><body><main>
+  <h1 id="t">Volviendo a la app…</h1>
+  <p id="p">Si no se abre sola, toca el botón.</p>
+  <a id="b" href="#">VOLVER A LA APP</a>
+</main>
+<script>
+'use strict';
+(function () {
+  const en = /^en/i.test(navigator.language || '');
+  const app = new URLSearchParams(location.search).get('app') || '';
+  const q = id => document.getElementById(id);
+  if (en) { q('t').textContent = 'Going back to the app…'; q('p').textContent = "If it doesn't open by itself, tap the button."; q('b').textContent = 'BACK TO THE APP'; document.documentElement.lang = 'en'; }
+  if (!/^games\.fansof\.[a-z]+$/.test(app)) { q('t').textContent = en ? 'Invalid link' : 'Enlace no válido'; q('p').textContent = ''; q('b').style.display = 'none'; return; }
+  const destino = app + '://login' + location.hash;   // la sesión (tokens) viaja en el # y solo hasta la app
+  q('b').href = destino;
+  location.replace(destino);
+})();
+</script></body></html>

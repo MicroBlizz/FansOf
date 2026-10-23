@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.43
+  "<b>CARGA CAMUFLADA E ICONO NUEVO</b>: la pantalla de carga tiene el título camuflado, un becario cazador paseando y un colado que tira una bomba de humo, y acaba en «TOCA PARA JUGAR». El icono de la app estrena la F y la O del logo de Fans Of y una R camuflada. En Android, pantalla completa y acceso con Google que vuelve a la app.": "<b>CAMOUFLAGED LOADING AND NEW ICON</b>: the loading screen has a camouflaged title, a hunter intern strolling around and a sneak who throws a smoke bomb, and ends in \"TAP TO PLAY\". The app icon debuts the F and O of the Fans Of logo and a camouflaged R. On Android, full screen and Google sign-in that returns to the app.",
+  "Microblizz ha dado linterna al cazador y Phony ha tirado la bomba de humo antes de que empezara la partida.": "Microblizz has handed the hunter a flashlight and Phony threw the smoke bomb before the match began.",
   // 0.2.42
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
   "Microblizz ha afinado la puerta de la web y Phony ha entrado por la del armario.": "Microblizz has tuned the website's door and Phony came in through the wardrobe one.",

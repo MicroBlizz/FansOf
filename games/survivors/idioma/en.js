@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.62
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha quitado las barras del refugio y Phony ha jurado que no era una trampa.": "Microblizz has taken the bars off the shelter and Phony swore it was not a trap.",
   // 0.1.61
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
   "Microblizz ha puesto una verja al refugio y Phony ha pedido el sello de beta en la mano.": "Microblizz has put a gate on the shelter and Phony has asked for the beta stamp on his hand.",

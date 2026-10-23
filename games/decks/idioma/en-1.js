@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.12
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha dado pantalla completa al mazo y Phony ha descubierto que el CEO también cabe en vertical.": "Microblizz has made the deck full screen and Phony found out the CEO fits in portrait too.",
   // 0.2.11
   "<b>LA NOVENA FACCIÓN: MEMES</b>: el MemeLord llega con 16 cartas y su jugada Viral, que cambia con cada uso. Con ella ya están las nueve facciones. Además, ajuste de equilibrio: Streamers y Olvidados bajan un 10 % y Animales sube un 10 %.": "<b>THE NINTH FACTION: MEMES</b>: the MemeLord arrives with 16 cards and its Viral play, which changes with every use. With it all nine factions are in. Also a balance tweak: Streamers and Olvidados go down 10 % and Animales goes up 10 %.",
   "Microblizz ha viralizado una reunión y Phony ha jurado que el meme era suyo.": "Microblizz has gone viral in a meeting and Phony has sworn the meme was his.",

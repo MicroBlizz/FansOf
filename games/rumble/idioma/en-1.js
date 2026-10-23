@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.149
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha ampliado la arena a pantalla completa y Phony ha vendido entradas de pie.": "Microblizz has widened the arena to full screen and Phony has sold standing tickets.",
   // 0.9.148
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
   "Microblizz ha puesto cortinas en la arena y Phony asegura que detrás está la mejor facción.": "Microblizz has hung curtains in the arena and Phony swears the best faction is behind them.",

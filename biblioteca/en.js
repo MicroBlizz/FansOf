@@ -146,6 +146,7 @@ IDIOMA.add({
   "Mira cómo hacemos los juegos y dinos qué quieres que vuelva.": "See how we make the games and tell us what you want back.",
   "SÍGUENOS EN X": "FOLLOW US ON X",
   "ÚNETE AL DISCORD": "JOIN THE DISCORD",
+  "BETA EN ANDROID": "ANDROID BETA",
   "ALFA": "ALPHA",
   "Copia de pruebas con lo último de main.": "Test copy with the latest build."
 });

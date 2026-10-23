@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.78
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha despejado el campo de las torres y Phony ha puesto una torre en la barra de estado.": "Microblizz has cleared the towers' field and Phony put a tower on the status bar.",
   // 0.13.77
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems keep getting better (the website can now open each game in phases and run a beta for testers).",
   "Microblizz ha puesto una cinta de obra junto a las torres y Phony la ha defendido con uñas y dientes.": "Microblizz has put construction tape by the towers and Phony defended it tooth and nail.",

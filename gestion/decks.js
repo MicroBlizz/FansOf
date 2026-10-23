@@ -1,5 +1,5 @@
 // Fans Of · /gestion: la sección de DECKS dentro de su panel (menú de arriba → Decks). Telemetría anónima de las partidas de personas, para compararla con los bots
-// (herramientas/pruebas/decks-equilibrio.js): partidas, victorias, turnos por reunión y dónde caen, por versión y líder. Datos: gestion_decks(token), servidor/68-decks-telemetria.sql.
+// (herramientas/pruebas/balance/decks/decks-equilibrio.js): partidas, victorias, turnos por reunión y dónde caen, por versión y líder. Datos: gestion_decks(token), servidor/68-decks-telemetria.sql.
 // Une las estadísticas ya consolidadas (más de 7 días) con el resumen vivo de la última semana. Usa lo de gestion/index.html y juegos.js: rpc(), leerToken(), esc(), fmt(), textoError() y $().
 'use strict';
 GESTION_JUEGOS.decks = async cont => {
@@ -30,7 +30,7 @@ GESTION_JUEGOS.decks = async cont => {
     const acab = x => x.vic + x.der;   // las abandonadas no cuentan para el porcentaje de victorias
     $('d-tabla').innerHTML = L.length ? `<div class="tabla-caja"><table class="tabla"><thead><tr><th>Líder</th><th>Partidas</th><th>Victorias</th><th>% de las acabadas</th><th>Abandonadas</th><th>Turnos</th><th>Reuniones</th><th>Turnos por reunión</th><th>Min</th><th>Mazo</th><th>Ascendidas</th><th>Caen en cap 0 / 1 / 2</th></tr></thead><tbody>`
       + L.map(x => `<tr><td>${esc(x.lider)}</td><td>${fmt(x.p)}</td><td>${fmt(x.vic)}</td><td>${pct(x.vic, acab(x))}</td><td>${fmt(x.aba)}</td><td>${med(x.tu, x.p)}</td><td>${med(x.re, x.p)}</td><td>${x.re ? (x.tu / x.re).toFixed(1) : '—'}</td><td>${med(x.mi, x.p)}</td><td>${med(x.mz, x.p)}</td><td>${med(x.as, x.p)}</td><td>${[0, 1, 2].map(c => x.cap[c] || 0).join(' / ')}</td></tr>`).join('')
-      + '</tbody></table></div><div class="meta" style="margin-top:6px">Mismas columnas que el informe de los bots (herramientas/pruebas/decks-equilibrio.js), para compararlos.</div>'
+      + '</tbody></table></div><div class="meta" style="margin-top:6px">Mismas columnas que el informe de los bots (herramientas/pruebas/balance/decks/decks-equilibrio.js), para compararlos.</div>'
       : '<div class="vacio"><b>Aún no hay partidas</b>El flag «decks-telemetria» tiene que estar abierto y el jugador, haber aceptado las estadísticas.</div>';
   };
   $('d-ver').onchange = pinta; pinta();

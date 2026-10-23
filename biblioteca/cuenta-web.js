@@ -47,15 +47,16 @@
       window.avisar(/nombre_no_vale/.test(m) ? t('Ese nombre no está permitido. Prueba con otro.') : /nombre_corto/.test(m) ? t('Tiene que tener al menos 3 letras o números.') : /perfil_nombre|404|PGRST/.test(m) ? t('Esto todavía no está disponible. Vuelve a probar en un rato.') : t('No ha salido bien: {m}', { m: m || '?' }));
     }
   }
-  // enlaces directos para quien tiene el rol: «alfa» → la copia de pruebas, «admin» → el panel /gestion (sin rol, sin función o sin red no se enseña nada)
+  // enlaces directos para quien tiene el rol: «alfa» → la copia de pruebas, «admin» → el panel /gestion, «alfa», «beta» o «admin» → la beta de Android en Play (sin rol, sin función o sin red no se enseña nada)
   async function rolEnlaces(donde) {
     const tiene = async rol => { try { return !!(await CUENTA.rpc('tiene_rol', { p_rol: rol })); } catch (e) { return false; } };
-    const [alfa, admin] = await Promise.all([NUCLEO.alfa ? false : tiene('alfa'), tiene('admin')]);
-    if (!donde.isConnected || donde.querySelector('.cuenta-roles') || !(alfa || admin)) return;
+    const [alfa, admin, beta] = await Promise.all([NUCLEO.alfa ? false : tiene('alfa'), tiene('admin'), tiene('beta')]);
+    if (!donde.isConnected || donde.querySelector('.cuenta-roles') || !(alfa || admin || beta)) return;
     const fila = document.createElement('div'); fila.className = 'cuenta-botones cuenta-roles';
     const enlace = (txt, href) => { const a = document.createElement('a'); a.className = 'boton sec'; a.href = href; a.textContent = txt; fila.append(a); };
     if (alfa) enlace(t('IR A LA ALFA'), base + 'alfa/');
     if (admin) enlace(t('IR A GESTIÓN'), base + 'gestion/');
+    if (alfa || beta || admin) { enlace(t('BETA EN ANDROID'), 'https://play.google.com/apps/internaltest/4699431656758562735'); fila.lastChild.target = '_blank'; fila.lastChild.rel = 'noopener'; }   // Prueba interna de Play: solo la ven los de la lista de testers
     const leyesEl = donde.querySelector('.cuenta-leyes'); leyesEl ? leyesEl.before(fila) : donde.append(fila);
   }
 

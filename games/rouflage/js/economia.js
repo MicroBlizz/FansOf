@@ -36,7 +36,7 @@ function paseCosas() {
 // LOS HUECOS DEL PASE: los niveles sin cosmético ni Acciones no se quedan vacíos (como el oro del pase de Rumble): en la pista gratis dan
 // Gotas y en la PREMIUM dan Acciones (lo mismo que antes en Gotas, al cambio de la tienda: 100 Gotas = 20 Acciones, y el nivel 1 da algo nada
 // más comprarla). Se calcula del catálogo al cargar y queda en ECO (gotasGratis: { nivel: Gotas } y accionesPremium: { nivel: Acciones }), así
-// herramientas/rouflage_datos.js se lo pasa igual al servidor (servidor/56-*.sql y 65-*.sql). Un hueco premium se cobra una sola vez (SAVE.pase.purpGP):
+// herramientas/rouflage/rouflage_datos.js se lo pasa igual al servidor (servidor/56-*.sql y 65-*.sql). Un hueco premium se cobra una sola vez (SAVE.pase.purpGP):
 // quien ya lo cobró en Gotas con la versión de antes no cobra además sus Acciones.
 ECO.gotasHueco = { gratis: 50 };
 ECO.accionesHueco = { premium: 20, premiumNv1: 50 };
@@ -94,7 +94,7 @@ function economiaPartida(r) {
 // precio: lo de Gotas («N Gotas»), lo de Acciones (épicas y legendarias de la tienda) y lo que antes salía SOLO en el gachapón (comunes y raras
 // de la tienda), esto con el recargo PRECIO_GACHA (armario-precios.js). NO se vende lo del pase, el diario, «Al empezar», los talentos, la
 // suscripción ni el Pack de inicio: eso solo se consigue jugando o esperando. Devuelve { gotas, acciones, gacha } o null.
-// herramientas/rouflage_datos.js lo pasa al servidor (pg y pa de cada pieza), que cobra con eso y no con lo que diga el cliente (rf_comprar_con)
+// herramientas/rouflage/rouflage_datos.js lo pasa al servidor (pg y pa de cada pieza), que cobra con eso y no con lo que diga el cliente (rf_comprar_con)
 const ecoCambio = () => { const c = typeof TIENDA !== 'undefined' && TIENDA.canje && TIENDA.canje[0]; return c ? c.gotas / c.n : 5; };
 function arPrecio(it) {
   if (!it) return null;

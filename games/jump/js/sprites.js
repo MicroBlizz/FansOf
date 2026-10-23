@@ -1,4 +1,4 @@
-// Fans of Jump · Los dibujos 3D (pelo, corona, capita, troncos, árboles…): fotos del estudio 3D (herramientas/estudio-jump)
+// Fans of Jump · Los dibujos 3D (pelo, corona, capita, troncos, árboles…): fotos del estudio 3D (herramientas/jump/estudio)
 // juntas en una lámina (img/atlas.webp, con su lista en atlas.js). Se pintan con su punto de apoyo en (x, y) y a la escala
 // «tam»: cuántas medidas del mundo mide una unidad del modelo 3D.
 'use strict';

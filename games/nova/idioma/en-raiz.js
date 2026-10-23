@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.17
+  "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
+  "Microblizz ha dejado la galaxia a pantalla completa y Phony ha pedido un hueco para el aparcamiento de naves.": "Microblizz has left the galaxy full screen and Phony has asked for a spot in the ship parking lot.",
   // 0.3.16
   "<b>ESTACIÓN ARREGLADA Y EL NÚCLEO DE MICROBLIZZ</b>: la estación ya no se cuelga con la nave de Memes (desde rango 30) ni con las naves jefe. Microblizz controla ahora el núcleo de la galaxia y dos anillos a su alrededor. Hay 60 retratos de comandante nuevos, uno por cada unidad de las nueve facciones.": "<b>STATION FIXED AND MICROBLIZZ'S CORE</b>: the station no longer freezes with the Memes ship (from rank 30) or with boss ships. Microblizz now controls the galaxy's core and two rings around it. There are 60 new commander portraits, one for each unit of the nine factions.",
   "Microblizz ha puesto su bandera en el núcleo de la galaxia y Phony ha preguntado si cuenta como domicilio fiscal.": "Microblizz has planted its flag on the galaxy's core and Phony has asked if it counts as a tax address.",

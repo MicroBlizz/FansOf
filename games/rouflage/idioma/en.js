@@ -25,7 +25,6 @@ IDIOMA.add({
   "Píntate, congélate y que no te encuentren.": "Paint yourself, freeze and don't get found.",
   "Linterna en mano: encuentra a los colados.": "Flashlight in hand: find the intruders.",
   "2 · EL MAPA": "2 · THE MAP",
-  "Papel": "Role",
   "¡JUGAR!": "PLAY!",
   "JUGAR CON AMIGOS": "PLAY WITH FRIENDS",
   "CREAR SALA": "CREATE ROOM",

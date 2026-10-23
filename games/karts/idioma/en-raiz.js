@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.7
+  "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
+  "Microblizz ha repasado los carteles de la pista y Phony ha derrapado sobre un acento.": "Microblizz has gone over the track signs and Phony skidded on an accent.",
   // 0.7.6
   "<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: in the Android app, Google sign-in now returns to the app, and every game runs full screen.",
   "Microblizz ha despejado la pista de barras y Phony ha tomado la curva por la barra de estado.": "Microblizz has cleared the track of bars and Phony took the corner through the status bar.",

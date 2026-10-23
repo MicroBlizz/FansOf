@@ -1,6 +1,7 @@
 // Fans of Crush · Novedades: el registro de versiones (desplegar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.1.31', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha barrido las traducciones viejas y Phony ha encontrado un caramelo debajo de la alfombra."] },
   { v: '0.1.30', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha ocultado las barras de Android y Phony ha pasado un cuarto de hora buscando la hora."] },
   { v: '0.1.29', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores)."], joke: ["Microblizz ha puesto una puerta a cada juego y Phony ha intentado colarse por la de Crush con una bolsa de caramelos."] },
   { v: '0.1.28', real: ["<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo."],

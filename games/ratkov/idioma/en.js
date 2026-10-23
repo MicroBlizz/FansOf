@@ -393,7 +393,6 @@ IDIOMA.add({
   "EMPEZAR DE CERO": "START OVER",
   "¿EMPEZAR DE CERO?": "START OVER?",
   "Se borra tu alijo, tus chapas, tu escuadrón y tus encargos. Queda una copia de seguridad en Opciones, por si acaso.": "Your stash, caps, squad and jobs are wiped. A backup stays in Options, just in case.",
-  "BORRAR": "ERASE",
   "La cuenta no está disponible ahora.": "The account is not available right now.",
   "APUNTADO AUTOMÁTICO: SÍ": "AUTO-AIM: ON",
   "APUNTADO AUTOMÁTICO: NO": "AUTO-AIM: OFF",

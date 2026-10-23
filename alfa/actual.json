@@ -1,8 +1,8 @@
 {
- "build": 410,
- "hash": "23e0f18",
- "fecha": "2026-10-22T23:54:35Z",
- "mensaje": "Web: enlace a la beta de Android (Prueba interna de Play) junto a X y Discord",
+ "build": 411,
+ "hash": "9656bdc",
+ "fecha": "2026-10-23T00:00:57Z",
+ "mensaje": "Web: el enlace de la beta de Android solo lo ven las cuentas con rol alfa, beta o admin (en TU CUENTA)",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

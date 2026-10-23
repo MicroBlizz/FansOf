@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=23e0f18">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=23e0f18">
-<link rel="stylesheet" href="novedades/ventana.css?v=23e0f18">
-<link rel="stylesheet" href="biblioteca/votos.css?v=23e0f18">
+<link rel="stylesheet" href="core/css/base.css?v=9656bdc">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=9656bdc">
+<link rel="stylesheet" href="novedades/ventana.css?v=9656bdc">
+<link rel="stylesheet" href="biblioteca/votos.css?v=9656bdc">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -45,7 +45,6 @@
   .redes a.red:hover, .redes a.red:focus-visible { transform: translateY(-2px); box-shadow: 0 6px 0 var(--outline); outline: none; }
   .redes a.red:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
   .redes a.red-x { background: linear-gradient(to bottom, #2b2b2b, #000); }
-  .redes a.red-android { background: linear-gradient(to bottom, #3ddc84, #1f9e57); }
   .redes a.red-discord { background: linear-gradient(to bottom, #6f7cf5, #4752c4); }
   section.hero a.play:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
   h2.sec { font-family: var(--font-display); font-weight: 400; font-size: 34px; margin: 18px 0 0; scroll-margin-top: 80px; }
@@ -62,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=23e0f18" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=9656bdc" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -276,19 +275,18 @@
     </div>
   </section>
   <section class="sec" id="comunidad">
-    <!-- COMUNIDAD: los mismos enlaces que el pie de las demás páginas (pie.js, REDES; el de la beta de Android es la Prueba interna de Play, solo para testers invitados). Si cambian, se cambian en los dos sitios. -->
+    <!-- COMUNIDAD: los mismos enlaces que el pie de las demás páginas (pie.js, REDES). Si cambian, se cambian en los dos sitios. -->
     <h2 class="sec ol">COMUNIDAD</h2>
     <p class="note">Mira cómo hacemos los juegos y dinos qué quieres que vuelva.</p>
     <div class="redes">
       <a class="red red-x" href="https://x.com/Fans_Of_" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span>SÍGUENOS EN X</span></a>
       <a class="red red-discord" href="https://discord.gg/PztHQhm9c" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.028C.533 9.046-.32 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.1 14.1 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03ZM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z"/></svg><span>ÚNETE AL DISCORD</span></a>
-      <a class="red red-android" href="https://play.google.com/apps/internaltest/4699431656758562735" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2.5v19a1 1 0 0 0 1.5.9l15-9.5a1 1 0 0 0 0-1.8l-15-9.5A1 1 0 0 0 5 2.5Z"/></svg><span>BETA EN ANDROID</span></a>
     </div>
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a410.23e0f18"></script>
-<script src="core/js/novedades.js?v=23e0f18"></script>
+<script src="core/js/nucleo.js?v=0-a411.9656bdc"></script>
+<script src="core/js/novedades.js?v=9656bdc"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -297,7 +295,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=23e0f18"></script>
+<script src="core/js/sistema/cuenta.js?v=9656bdc"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -323,14 +321,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="novedades/ventana.js?v=23e0f18"></script>
-<script src="core/js/proximamente.js?v=23e0f18"></script>
-<script src="biblioteca/tienda.js?v=23e0f18"></script>
-<script src="core/js/sistema/beta.js?v=23e0f18"></script>
-<script src="biblioteca/cuenta-web.js?v=23e0f18"></script>
-<script src="biblioteca/votos.js?v=23e0f18"></script>
-<script src="biblioteca/alfa.js?v=23e0f18"></script>
-<script src="core/js/sistema/analitica.js?v=23e0f18"></script>
-<script src="pie.js?v=23e0f18" defer></script>
+<script src="novedades/ventana.js?v=9656bdc"></script>
+<script src="core/js/proximamente.js?v=9656bdc"></script>
+<script src="biblioteca/tienda.js?v=9656bdc"></script>
+<script src="core/js/sistema/beta.js?v=9656bdc"></script>
+<script src="biblioteca/cuenta-web.js?v=9656bdc"></script>
+<script src="biblioteca/votos.js?v=9656bdc"></script>
+<script src="biblioteca/alfa.js?v=9656bdc"></script>
+<script src="core/js/sistema/analitica.js?v=9656bdc"></script>
+<script src="pie.js?v=9656bdc" defer></script>
 </body>
 </html>

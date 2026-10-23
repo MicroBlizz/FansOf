@@ -142,7 +142,17 @@ const CUENTA = (() => {
   }
 
   // ---------- la cuenta de verdad: email (y Google cuando esté configurado) ----------
-  const volver = () => location.origin + location.pathname;   // los enlaces del email vuelven a esta misma página
+  // En la app de Android el login sale al navegador: vuelve por una página puente de la web (app-login/) que reabre la app con su esquema (games.fansof.<juego>://login#…)
+  const nativa = () => !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+  const volver = () => nativa() ? 'https://fansof.games/app-login/?app=games.fansof.' + AJUSTES.id : location.origin + location.pathname;   // los enlaces del email vuelven a esta misma página
+  if (nativa()) {   // la app se reabre con la sesión en la dirección: se pasa a deLaDireccion() igual que en la web
+    try {
+      Capacitor.Plugins.App.addListener('appUrlOpen', e => {
+        const i = (e.url || '').indexOf('#');
+        if (i >= 0) { location.hash = e.url.slice(i); location.reload(); }
+      });
+    } catch (err) { /* sin el plugin: el login sigue funcionando por la web */ }
+  }
   // Al volver de un enlace del email, la sesión llega en la dirección (#access_token=…). Si es otra cuenta (entrar en otro aparato),
   // lo de aquí aún no está en ella: se compara con la nube al abrir y, si las dos tienen partida, se pregunta.
   let aviso = '';

@@ -101,11 +101,17 @@ function diarioPinta() {
 function abreDiario() { diarioEstado(); DIARIO.hoyVisto = true; diarioPinta(); pantalla('p-diario'); play('select'); }
 // el botón del título, con su punto cuando hay premio esperando
 function diarioBoton() { const b = E('b-diario'); if (b) b.classList.toggle('aviso', diarioPuede()); }
-// al volver al título: la primera vez del día se abre sola
+// al volver al título: ya no se abre sola (antes tapaba el juego nada más entrar). La tira del título (titulo.js) avisa de que hay premio esperando
 function diarioAlTitulo() {
   if (!armarioVisible()) return;
   diarioBoton();
-  if (diarioPuede() && !DIARIO.hoyVisto) setTimeout(() => { if (!E('p-titulo').hidden && diarioPuede()) abreDiario(); }, 700);
+}
+// lo que dice la tira del premio diario en el título: { t: título, s: debajo, b: el botón (vacío si hoy ya está) }
+function diarioTira() {
+  const s = diarioEstado(), puede = diarioPuede();
+  if (!puede) return { t: tr('PREMIO DIARIO'), s: tr('Mañana, más. Vuelve para seguir el calendario.'), b: '' };
+  const p = diarioPremio(s.dia), cosa = p.cosas && p.cosas[0];
+  return { t: tr('PREMIO DIARIO · DÍA {n}', { n: (s.dia % 7) + 1 }), s: cosa ? tr('Hoy toca: {c}', { c: tr(cosa.it.n) }) : tr('Hoy toca: {n} gotas', { n: p.gotas }), b: tr('RECOGER') };
 }
 function preparaDiario() {
   E('b-diario').onclick = abreDiario;

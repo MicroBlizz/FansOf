@@ -26,10 +26,11 @@ async function arranca() {
   try { await Promise.race([Promise.all([document.fonts.load('20px "Luckiest Guy"'), document.fonts.load('800 12px "Baloo 2"')]), new Promise(r => setTimeout(r, 2500))]); } catch (_) { /* sin letras: salen las del sistema */ }
   preparaAlubia(); cargaMapa(mapaElegido());
   ajusta(); window.addEventListener('resize', ajusta);
-  preparaInterfaz(); preparaOpciones(); preparaMenusPintar(); preparaEligeMapa(); preparaPvp(); preparaArmario(); preparaEscenario(); preparaDiario(); preparaEconomia(); preparaTienda(); preparaGacha(); preparaReinicio(); preparaZoomCazador(); preparaMisiones(); preparaTalentos();
+  preparaInterfaz(); preparaOpciones(); preparaMenusPintar(); preparaEligeMapa(); preparaPvp(); preparaArmario(); preparaEscenario(); preparaDiario(); preparaEconomia(); preparaTienda(); preparaGacha(); preparaReinicio(); preparaZoomCazador(); preparaMisiones(); preparaTalentos(); preparaTitulo(); preparaReto(); preparaReferidos();
   try { await Promise.race([RFS.arranca(), new Promise(r => setTimeout(r, 12000))]); } catch (_) { /* sin cuenta: la partida local */ }      // la cuenta del servidor (servidor.js): Gotas, Acciones, colección… Si falla o tarda, el juego arranca igual (antes se quedaba en los tres puntos)
+  refEntrada();      // un enlace ?inv= de un amigo (referidos.js)
   const modo = new URLSearchParams(location.search).get('modo');   // ?modo=camaleon o ?modo=cazador entra directo (para probar)
-  if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else { irTitulo(); pvpEntradaDirecta(); }
+  if (modo === 'camaleon' || modo === 'cazador') { pantalla(null); empiezaPartida(modo); } else if (!retoEntrada()) { irTitulo(); pvpEntradaDirecta(); }      // un enlace ?reto= abre el reto (reto.js) en vez del título
   E('carga').hidden = true;
   requestAnimationFrame(t => { _ultimo = t; fotograma(t); });
 }

@@ -17,7 +17,7 @@ const RFP_AJ = { envioHz: 15, avisosSala: 40, iaHz: 10, sinRed: 8, sinAnfitrion:
 function pvpBuscar(opc) {
   const red = RFRED.red;
   RFP.error = ''; RFP.resultado = null; RFP.amigos = !!(opc && (opc.crear || opc.codigo));
-  if (!RFRED.esLocal() && !RFRED.vinculada()) { RFP.error = RFRED.errorTexto(new Error('cuenta_no_vinculada')); pvpMuestra('p-pvp'); return; }
+  if (!RFRED.esLocal() && !RFRED.conSesion()) { RFP.error = RFRED.errorTexto(new Error('cuenta_no_vinculada')); pvpMuestra('p-pvp'); return; }
   const guardada = rfpSalaGuardada();      // si estabas en una partida abierta, volver no gasta caos primordial
   if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado
   if (RFP.buscando) RFP.buscando.cancelar();

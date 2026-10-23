@@ -22,35 +22,61 @@ function fotoHaz(yo) {
     const t = J.t || 0;
     for (const q of cosas) { if (q.T) c.drawImage(q.dibujo.cv, q.dib.x0, q.dib.y0, q.dib.w, q.dib.h); else { pintaAlubia(c, q, t); c.globalAlpha = 1; } }
     FOTO.camo = yo.camo || 0;
+    // lo que hace falta para el reto compartido (reto.js): el sitio, la postura y la pintura de este momento
+    let png = ''; try { png = yo.piel.toDataURL('image/png'); png = png.slice(png.indexOf(',') + 1); } catch (_) { png = ''; }
+    FOTO.reto = png ? { mapa: MAPA.id, x: Math.round(yo.x), y: Math.round(yo.y), postura: yo.postura || 'firmes', animal: yo.tipo, camo: Math.round(yo.camo || 0), piel: png } : null;
+    if (typeof RETO !== 'undefined') RETO.creando = null;
+    fotoOlvida();
   } catch (err) { console.warn('[foto]', err); FOTO.cv = null; }
 }
 const fotoHay = () => !!FOTO.cv && J.modo === 'camaleon';
 
-// la tarjeta para compartir: título, la foto y el pie con el juego
-function fotoTarjeta() {
+// la tarjeta para compartir: título, la foto y el pie con el juego y el código del reto (si lo hay)
+function fotoTarjeta(codigo) {
   const W = 1080, H = 1350, cv2 = document.createElement('canvas'); cv2.width = W; cv2.height = H;
   const c = cv2.getContext('2d');
-  c.fillStyle = '#241640'; c.fillRect(0, 0, W, H);
+  c.fillStyle = '#18223a'; c.fillRect(0, 0, W, H);
   for (let i = 0; i < 18; i++) { c.fillStyle = i % 2 ? 'rgba(255,255,255,.03)' : 'rgba(0,0,0,.06)'; c.fillRect(0, i * 75, W, 75); }
   rotulo(c, tr('¿ME ENCUENTRAS?'), W / 2, 120, 96, '#ffcb3d', OL);
-  rotulo(c, tr('Estoy escondido en esta foto'), W / 2, 205, 44, '#fff6ea', OL, LETRA_UI);
+  rotulo(c, codigo ? tr('Tienes 20 segundos y 3 disparos') : tr('Estoy escondido en esta foto'), W / 2, 205, 44, '#fff6ea', OL, LETRA_UI);
   const lado = 880, m = (W - lado) / 2, y = 255;
   c.fillStyle = OL; c.fillRect(m - 12, y - 12, lado + 24, lado + 24);
   c.drawImage(FOTO.cv, m, y, lado, lado);
   rotulo(c, tr('Camuflaje: {n} %', { n: FOTO.camo }), W / 2, y + lado + 85, 50, '#7ee04a', OL, LETRA_UI);
-  rotulo(c, 'Fans of Rouflage · fansof.games', W / 2, H - 55, 40, '#fff6ea', OL, LETRA_UI);
+  rotulo(c, codigo ? 'Fans of Rouflage · ' + tr('reto {c}', { c: codigo }) : 'Fans of Rouflage', W / 2, H - 55, 40, '#fff6ea', OL, LETRA_UI);
   return cv2;
 }
-// compartir: con el menú del móvil si deja mandar imágenes; si no, se descarga la imagen
-function fotoComparte() {
+// compartir: primero se guarda el reto (para que la foto lleve su enlace) y luego el menú del móvil con la imagen y el enlace.
+// Si el móvil no deja mandar imágenes, el enlace y la imagen por separado; si nada de eso, se copia el enlace y se descarga la imagen.
+// El menú de compartir solo se abre poco después de tocar: si el servidor tarda y el móvil lo rechaza, el botón queda listo para un segundo toque al momento
+const FOTO_LISTA = { blob: null, url: '', codigo: '' };
+async function fotoComparte() {
   if (!fotoHay()) return;
-  play('select'); misionEvento('comparte');      // misiones y logros (misiones.js)
-  fotoTarjeta().toBlob(blob => {
-    if (!blob) return;
-    const archivo = new File([blob], 'rouflage-me-encuentras.png', { type: 'image/png' }), texto = tr('¿Me encuentras? Juega gratis en fansof.games');
-    if (navigator.canShare && navigator.canShare({ files: [archivo] })) { navigator.share({ files: [archivo], title: 'Fans of Rouflage', text: texto }).catch(() => { /* cancelado */ }); return; }
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    avisa(tr('Imagen guardada: mándasela a tus amigos'), 'bueno');
-  }, 'image/png');
+  play('select');
+  const b = E('b-foto');
+  if (!FOTO_LISTA.blob) {
+    b.disabled = true; b.classList.add('cargando');
+    const codigo = await retoCrear();
+    b.disabled = false; b.classList.remove('cargando');
+    FOTO_LISTA.codigo = codigo || ''; FOTO_LISTA.url = codigo ? retoUrl(codigo) : location.origin + location.pathname;
+    FOTO_LISTA.blob = await new Promise(r => fotoTarjeta(codigo).toBlob(r, 'image/png'));
+    if (!FOTO_LISTA.blob) return;
+  }
+  misionEvento('comparte');      // misiones y logros (misiones.js)
+  const { blob, url, codigo } = FOTO_LISTA;
+  const archivo = new File([blob], 'rouflage-me-encuentras.png', { type: 'image/png' });
+  const texto = codigo ? tr('Me he escondido. Tienes 20 segundos y 3 disparos. ¿Me encuentras?') : tr('¿Me encuentras? Juega gratis a Fans of Rouflage');
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [archivo], url })) { await navigator.share({ files: [archivo], title: 'Fans of Rouflage', text: texto, url }); return; }
+    if (navigator.share) { await navigator.share({ title: 'Fans of Rouflage', text: texto, url }); return; }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;      // lo ha cancelado él
+    if (e && e.name === 'NotAllowedError') { b.querySelector('b').textContent = tr('TOCA OTRA VEZ PARA ENVIAR'); return; }      // tardó el servidor: el segundo toque ya va al momento
+  }
+  try { await navigator.clipboard.writeText(texto + ' ' + url); } catch (_) { /* sin portapapeles */ }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  avisa(tr('Enlace copiado e imagen guardada: mándaselos a tus amigos'), 'bueno');
 }
+// cada partida nueva empieza sin foto preparada (lo llama fotoHaz al hacer una foto nueva)
+function fotoOlvida() { FOTO_LISTA.blob = null; FOTO_LISTA.url = ''; FOTO_LISTA.codigo = ''; const b = E('b-foto'); if (b && b.querySelector('b')) b.querySelector('b').textContent = tr('COMPARTIR MI ESCONDITE'); }

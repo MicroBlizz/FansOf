@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.44-a430.0c999fa"></script>
+<script src="../../core/js/nucleo.js?v=0.2.44-a431.ac15808"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -90,35 +90,39 @@
   <div class="t-colores"><i id="t-color"></i><div id="t-recientes"></div><button type="button" class="boton" id="t-listo" data-tr>LISTO</button></div>
 </div>
 
-<!-- título -->
+<!-- título (titulo.js): arriba tu perfil y tus monedas, la racha del premio diario, JUGAR (contra bots), EN LÍNEA, misiones y talentos, y abajo ARMARIO, PASE, TIENDA y AMIGOS.
+     El gachapón está dentro de la TIENDA; MI ESCENARIO, CÓMO SE JUEGA y OPCIONES, dentro del PERFIL (pantallas-html.js). Las tarjetas antiguas de papel siguen aquí escondidas: las usan los talentos y el dibujo del título. -->
 <div class="pantalla" id="p-titulo" hidden>
-  <div class="titulo-caja">
+  <div class="titulo-caja nuevo">
+    <div class="tit-barra">
+      <button type="button" class="tit-yo" id="b-perfil" data-tr-aria aria-label="Mi perfil"><canvas id="tit-yo-dib" width="72" height="72" aria-hidden="true"></canvas><span><b id="tit-nombre"></b><small id="tit-nivel"></small></span></button>
+      <div class="tit-monedas"><span class="tit-moneda gotas" id="tit-gotas"></span><span class="tit-moneda acciones" id="tit-acciones"></span></div>
+    </div>
     <h1 class="logo" aria-label="Fans of Rouflage"><span class="ol">FANS OF</span><b aria-hidden="true"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b></h1>
     <p class="lema" data-tr>El escondite con pintura</p>
-    <div class="papeles">
-      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
-      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
+    <div class="tit-guarda" id="tit-guarda" hidden>
+      <b class="ol" data-tr>GUARDA LO QUE HAS GANADO</b>
+      <span id="tit-guarda-t"></span>
+      <div class="tit-guarda-b"><button type="button" class="boton" id="b-guarda-si" data-tr>GUARDAR MI PROGRESO</button><button type="button" class="boton gris" id="b-guarda-no" data-tr>LUEGO</button></div>
     </div>
-    <button type="button" class="boton pvp-boton" id="b-pvp"><b class="ol" data-tr>JUGAR EN LÍNEA · PvP</b><span data-tr>Buscar partida o jugar con amigos. De un bot te escondes fácil; de ellos, no tanto.</span></button>
-    <div class="grupo-titulo" id="fila-armario" hidden>
-      <h3 class="ol" data-tr>MI PERFIL</h3>
-      <div class="fila-botones fila-armario">
-        <button type="button" class="boton gris" id="b-armario"><b data-tr>ARMARIO</b></button>
-        <button type="button" class="boton gris" id="b-perfil"><b data-tr>PERFIL</b></button>
-        <button type="button" class="boton gris" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
-        <button type="button" class="boton gris" id="b-diario"><b data-tr>DIARIO</b></button>
-        <button type="button" class="boton gris" id="b-misiones"><b data-tr>MISIONES</b></button>
-        <button type="button" class="boton gris" id="b-talentos"><b data-tr>TALENTOS</b></button>
-        <button type="button" class="boton gris" id="b-pase"><b data-tr>PASE</b></button>
-        <button type="button" class="boton gris" id="b-gacha"><b data-tr>GACHAPÓN</b></button>
-        <button type="button" class="boton gris" id="b-tienda"><b data-tr>TIENDA</b></button>
-      </div>
+    <button type="button" class="tit-racha" id="b-diario"><span class="tit-racha-txt"><b id="tit-racha-t"></b><small id="tit-racha-s"></small></span><i class="tit-racha-b" id="tit-racha-b"></i></button>
+    <button type="button" class="boton tit-jugar" id="b-jugar"><b class="ol" data-tr>JUGAR</b><span data-tr>Camaleón o cazador, contra bots</span></button>
+    <button type="button" class="boton tit-pvp pvp-boton" id="b-pvp"><span class="tit-pvp-txt"><b class="ol" data-tr>EN LÍNEA · PvP</b><span data-tr>Buscar partida o sala con amigos</span></span><i class="tit-pvp-amigos" id="tit-pvp-amigos" hidden></i></button>
+    <div class="tit-tarjetas">
+      <button type="button" class="tit-tarjeta mis" id="b-misiones"><b data-tr>MISIONES DE HOY</b><span id="tit-mis-t"></span><i class="barra"><i id="tit-mis-b"></i></i></button>
+      <button type="button" class="tit-tarjeta tal" id="b-talentos"><b data-tr>TALENTOS</b><span id="tit-tal-t"></span><i class="barra"><i id="tit-tal-b"></i></i></button>
     </div>
-    <div class="fila-botones">
-      <button type="button" class="boton peq" id="b-ayuda" data-tr>Cómo se juega</button>
-      <button type="button" class="boton peq" id="b-opciones" data-tr>Opciones</button>
+    <div class="tit-abajo" id="fila-armario">
+      <button type="button" class="boton tit-ab armario" id="b-armario"><i data-icono="percha"></i><b class="ol" data-tr>ARMARIO</b></button>
+      <button type="button" class="boton tit-ab pase" id="b-pase"><i data-icono="pase"></i><b class="ol" data-tr>PASE</b></button>
+      <button type="button" class="boton tit-ab tienda" id="b-tienda"><i data-icono="bolsa"></i><b class="ol" data-tr>TIENDA</b><em class="tit-oferta" id="tit-oferta" data-tr hidden>OFERTA</em></button>
+      <button type="button" class="boton tit-ab amigos" id="b-social"><i data-icono="amigos"></i><b class="ol" data-tr>AMIGOS</b></button>
     </div>
     <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
+    <div class="papeles tit-viejas" hidden>
+      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b></button>
+      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b></button>
+    </div>
   </div>
 </div>
 
@@ -305,7 +309,7 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js', 'idioma/en-pegatinas.js'] },
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js', 'idioma/en-viral.js', 'idioma/en-pegatinas.js'] },
   antes: ['js/ajustes.js', 'js/pantallas-html.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -411,6 +415,9 @@ NUCLEO.juego({
     'js/mascotas.js',
     'js/chat-frases.js', 'js/chat-partida.js', 'js/chat-pegatinas.js', 'js/chat-bots.js', 'js/chat-sala-red.js', 'js/chat-sala.js',      // el chat: frases rápidas en partida y el de la sala de espera
     'js/opciones.js',
+    'js/titulo.js',
+    'js/referidos.js',
+    'js/reto.js',
     'js/principal.js',
   ],
 });

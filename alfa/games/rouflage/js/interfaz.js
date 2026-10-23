@@ -6,6 +6,11 @@
 
 const E = id => document.getElementById(id);
 const ICONOS = {
+  // los del título nuevo (titulo.js): percha del ARMARIO, entrada del PASE, bolsa de la TIENDA y dos galletas de AMIGOS
+  percha: '<path d="M12 7.2a2.2 2.2 0 1 1 2.2-2.2c0 1.1-.9 1.5-2.2 2.4L3.4 13.6c-1 .8-.5 2.4.8 2.4h15.6c1.3 0 1.8-1.6.8-2.4L12 7.6"/>',
+  pase: '<path d="M3.5 7.5h17v3a1.8 1.8 0 0 0 0 3.6v3.4h-17v-3.4a1.8 1.8 0 0 0 0-3.6z"/><path d="M9 8v8.5" stroke-dasharray="1.6 1.8"/><path d="M14.6 9.6l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z" fill="currentColor" stroke-width="1"/>',
+  bolsa: '<path d="M5 8.5h14l-1.2 11.5H6.2z"/><path d="M8.8 8.5V7a3.2 3.2 0 0 1 6.4 0v1.5"/>',
+  amigos: '<circle cx="8.5" cy="7.5" r="3"/><path d="M3 19.5c0-3.4 2.4-5.6 5.5-5.6s5.5 2.2 5.5 5.6"/><circle cx="16.6" cy="8.6" r="2.5"/><path d="M15.4 13.9c3.2-.5 5.6 1.6 5.6 5"/>',
   pincel: '<path d="M20 4l-7.6 7.6"/><path d="M12.7 11.3l2 2c-1 3.4-3.7 6.1-9.7 6.6 1.6-1.9 1.4-3 1.8-4.6.5-2 2.5-3.6 5.9-4z" fill="currentColor"/>',
   gota: '<path d="M13.4 6.6l4 4"/><path d="M15 8.2 6.2 17l-1.6 3.4L8 18.8l8.8-8.8"/><path d="M16.2 4.2a2.5 2.5 0 0 1 3.6 3.6l-2 2-3.6-3.6z" fill="currentColor"/>',
   cubo: '<path d="M5 11.6 12 4.6l7 7-6.4 6.4a1.5 1.5 0 0 1-2.1 0L5 12.6z"/><path d="M8.6 8 5.2 4.6"/><path d="M19.6 15.4c1 1.4 1.6 2.3 1.6 3.1a1.6 1.6 0 0 1-3.2 0c0-.8.6-1.7 1.6-3.1z" fill="currentColor"/>',
@@ -157,7 +162,7 @@ function refrescaHud(todo) {
 const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info', 'p-diario', 'p-pase', 'p-tienda', 'p-gacha'];
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(id && id !== 'p-pausa'); }
 let _trasAyuda = null;
-function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); }
+function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
 function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); }
 function muestraPausa(si) {
   E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno

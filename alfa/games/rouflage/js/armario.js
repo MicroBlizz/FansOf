@@ -13,7 +13,7 @@ function armarioEstado() {
   if (typeof SAVE.purpurina === 'number') { SAVE.acciones = (SAVE.acciones || 0) + SAVE.purpurina; delete SAVE.purpurina; }
   if (p.papel === 'monopoly') p.papel = 'arcoiris';      // el billete de Monopoly se quitó: ahora es el papel arcoíris
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
-  if (!p.mascotas) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta y no se puede ir sin ella
+  if (p.mascotas === undefined) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta; desde el 23-10-2026 se puede quitar (NADA, como en la cabeza: queda null)
   for (const cat of CATALOGO_AR) if (cat.conjuntos || arMira(cat)) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
   if (a.todo && !arPruebasVisibles()) {      // un DESBLOQUEAR TODO que se coló fuera de la alfa (con ?dev=1): ya no vale, y lo puesto que no es tuyo se quita
     a.todo = false;
@@ -95,6 +95,7 @@ function arTextoDe(it) {
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
   if ((m = /^Diario · día (\d+)$/.exec(t))) return tr('Diario · día {n}', { n: m[1] });
   if ((m = /^Conjunto (.+)$/.exec(t))) return tr('Conjunto {n}', { n: m[1] });
+  if ((m = /^Trae amigos · (\d+)$/.exec(t))) return +m[1] === 1 ? tr('Trae a 1 amigo') : tr('Trae a {n} amigos', { n: m[1] });      // referidos.js
   return tr(t);
 }
 // un lienzo nítido (al doble) de w×h en pantalla

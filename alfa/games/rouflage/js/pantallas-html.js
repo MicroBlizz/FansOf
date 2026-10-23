@@ -165,6 +165,7 @@
     <div class="cartera" id="tienda-cartera"></div>
     <p class="tienda-aviso" id="tienda-aviso-euros"></p>
     <div class="tienda-lista">
+      <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
       <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
       <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
@@ -271,6 +272,38 @@
   </div>
 </div>
 
+<!-- TRAE A UN COLADO (referidos.js) -->
+<div class="pantalla" id="p-invita" hidden>
+  <div class="caja invita-caja">
+    <h2 class="ol" data-tr>TRAE A UN COLADO</h2>
+    <p class="inv-sub" data-tr>Cuando tu amigo juegue su segunda partida, ganáis los dos.</p>
+    <div class="inv-dos">
+      <div class="inv-tu"><small data-tr>TÚ</small><b class="ol" data-tr>200 GOTAS</b></div>
+      <div class="inv-el"><small data-tr>TU AMIGO</small><b class="ol" data-tr>300 GOTAS</b></div>
+    </div>
+    <div class="inv-cod"><small data-tr>TU CÓDIGO</small><b class="ol" id="inv-codigo"></b></div>
+    <p class="inv-nota" id="inv-nota"></p>
+    <button type="button" class="boton grande" id="b-inv-compartir" data-tr>COMPARTIR ENLACE</button>
+    <div class="inv-escalera-caja"><b id="inv-escalera-t"></b><i class="barra"><i id="inv-barra"></i></i><div class="inv-escalera" id="inv-escalera"></div></div>
+    <div class="inv-lista" id="inv-lista" hidden></div>
+    <button type="button" class="boton gris peq" id="b-inv-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+
+<!-- el reto «¿ME ENCUENTRAS?» (reto.js): la presentación al abrir un enlace ?reto= y el resultado (abajo, para ver el mapa detrás) -->
+<div class="pantalla reto" id="p-reto" hidden>
+  <div class="caja reto-caja" id="reto-caja">
+    <h2 class="ol" id="reto-titulo"></h2>
+    <p class="reto-sub" id="reto-sub"></p>
+    <p class="reto-datos" id="reto-datos"></p>
+    <button type="button" class="boton grande" id="b-reto-ir" data-tr hidden>¡A BUSCAR!</button>
+    <button type="button" class="boton grande" id="b-reto-devolver" data-tr hidden>DEVOLVERLE EL RETO</button>
+    <button type="button" class="boton verde" id="b-reto-jugar" data-tr hidden>JUGAR UNA PARTIDA ENTERA</button>
+    <button type="button" class="boton gris peq" id="b-reto-titulo" data-tr>Ir al menú</button>
+    <small class="reto-nota" data-tr>Sin cuenta y sin descargar nada. Juegas en el navegador.</small>
+  </div>
+</div>
+
 <div class="pantalla" id="p-perfil" hidden>
   <div class="caja perfil">
     <h2 class="ol" data-tr>PERFIL</h2>
@@ -288,6 +321,12 @@
     <div class="pf-pruebas">
       <button type="button" class="boton" id="b-pf-todo"></button>
       <small data-tr>Solo para probar cómo queda: este botón no estará en el juego final.</small>
+    </div>
+    <div class="pf-menu">
+      <button type="button" class="boton pf-m escenario" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
+      <button type="button" class="boton pf-m diario" id="b-pf-diario"><b data-tr>PREMIO DIARIO</b></button>
+      <button type="button" class="boton pf-m ayuda" id="b-ayuda"><b data-tr>CÓMO SE JUEGA</b></button>
+      <button type="button" class="boton pf-m opciones" id="b-opciones"><b data-tr>OPCIONES</b></button>
     </div>
     <div class="fila-botones">
       <button type="button" class="boton azul" id="b-pf-armario" data-tr>ARMARIO</button>

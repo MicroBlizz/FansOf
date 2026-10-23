@@ -15,7 +15,7 @@ const CHAT = { pausa: 2, dura: 5, max: 3, durMarca: 6, durDicho: 3.2,
 const chatCanalDe = e => !e ? '' : e.clase === 'cazador' ? 'b' : e.fuera ? 'f' : 'c';
 // ¿lo que se dice en ese canal me llega? Los fantasmas también leen a sus colados vivos
 const chatMeLlega = canal => { const m = chatCanalDe(J.yo); return !!m && (canal === m || (m === 'f' && canal === 'c')); };
-const chatPuede = () => !!J.yo && ['prep', 'cuenta', 'caza'].includes(J.fase) && !TALLER.abierto && !E('hud').hidden && !(J.yo.fuera && !espectando());
+const chatPuede = () => !!J.yo && !(typeof RETO !== 'undefined' && RETO.activo) && ['prep', 'cuenta', 'caza'].includes(J.fase) && !TALLER.abierto && !E('hud').hidden && !(J.yo.fuera && !espectando());
 
 // ---------- el botón, el panel y la columna de mensajes (se crean la primera vez que hacen falta) ----------
 function chatPrepara() {

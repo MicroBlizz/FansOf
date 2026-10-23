@@ -38,6 +38,7 @@ async function arranca() {
   cv.addEventListener('pointerup', e => dedoSube(...punto(e)));
   cv.addEventListener('pointercancel', () => { DEDO.activo = false; sueltaPalanca(); });
   window.addEventListener('resize', ajusta);
+  setTimeout(subePendiente, 4000);   // lo que no esté aún en el ranking mundial (js/ranking.js)
   requestAnimationFrame(fotograma);
 }
 arranca();

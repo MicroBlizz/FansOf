@@ -40,7 +40,7 @@ const fusionLista = k => CARTAS[k].fusion && !nivel(k) && CARTAS[k].fusion.every
 // el Portal siempre está (es la que más gusta al empezar)
 function ofertaCartas() {
   const libres = Object.keys(CARTAS).filter(k => !CARTAS[k].fusion && nivel(k) < CARTAS[k].max && !(k === 'portal' && nivel('gusano')));
-  for (let i = libres.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [libres[i], libres[j]] = [libres[j], libres[i]]; }
+  for (let i = libres.length - 1; i > 0; i--) { const j = azarEntero(i + 1); [libres[i], libres[j]] = [libres[j], libres[i]]; }
   const fusiones = Object.keys(CARTAS).filter(fusionLista);
   let oferta = [...fusiones.slice(0, 1), ...libres];
   if (JUEGO.cartasElegidas === 0) oferta = ['portal', ...libres.filter(k => k !== 'portal')];
@@ -84,10 +84,10 @@ function aplicaIman() {
 // el Escudo: al chocar con la pared gasta una carga y gira hacia un lado libre en vez de morir
 function rebotaEscudo() {
   const J = JUEGO, h = J.serp[0], d = J.dir;
-  const libre = n => n[0] >= 0 && n[0] < COLS && n[1] >= 0 && n[1] < ROWS && !J.serp.some(s => mismaCasilla(s, n));
+  const libre = n => n[0] >= 0 && n[0] < COLS && n[1] >= 0 && n[1] < ROWS && !esMuro(n) && !J.serp.some(s => mismaCasilla(s, n));
   const lados = [[d[1], d[0]], [-d[1], -d[0]]].filter(l => libre([h[0] + l[0], h[1] + l[1]]));
   if (!lados.length) return false;
-  J.cartas.escudo--; J.dir = lados[Math.floor(Math.random() * lados.length)]; J.pend = [];
+  J.cartas.escudo--; J.dir = lados[azarEntero(lados.length)]; J.pend = [];
   chispa(cx(h[0]), cy(h[1]), '#3ddc84', 14, 90); tiembla(2.5, 0.2);
   numero(cx(h[0]), cy(h[1]) - 8, tr('¡Escudo!'), '#3ddc84', 9);
   SONIDO.escudo();

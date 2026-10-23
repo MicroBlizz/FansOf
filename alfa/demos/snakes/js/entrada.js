@@ -18,7 +18,7 @@ function zonaToque(x, y) {
 
 function dedoBaja(x, y) {
   DEDO.x = DEDO.ox = x; DEDO.y = DEDO.oy = y; DEDO.activo = true; DEDO.movido = false; DEDO.mando = false;
-  if (JUEGO.modo !== 'juego' || OPC.abierto || dentro(rectRueda(), x, y)) return;
+  if (JUEGO.modo !== 'juego' || OPC.abierto || PUBLI.activo || dentro(rectRueda(), x, y)) return;
   DEDO.mando = true;
   if (SAVE.control === 'palanca') ponPalanca(x, y);
   else if (SAVE.control === 'toques') { const d = zonaToque(x, y); TOQUE.dir = d; TOQUE.t = 0.25; pideDir(espeja(d)); }
@@ -45,29 +45,33 @@ function dedoSube(x, y) {
   if (!DEDO.movido) toque(x, y);   // un toque sin arrastrar
 }
 
-// un toque fuera de la partida (o en la ruedecita)
+// un toque fuera de la partida (o en la ruedecita): el anuncio de prueba, las Opciones, las cartas o los botones de la pantalla
 function toque(x, y) {
   const J = JUEGO;
+  if (PUBLI.activo) { toqueAnuncio(); return; }
   if (OPC.abierto) { toqueOpciones(x, y); return; }
-  if ((J.modo === 'menu' || J.modo === 'juego') && dentro(rectRueda(), x, y)) { abreOpciones(); return; }
-  if (J.modo === 'menu') { SONIDO.boton(); nuevaPartida(); return; }
   if (J.modo === 'cartas') { toqueCartas(x, y); return; }
-  if (J.modo === 'fin' && J.tFin > 0.8) { SONIDO.boton(); nuevaPartida(); }
+  if (J.modo === 'fin' && J.tFin < 0.6) return;   // que no se pulse sin querer al morir
+  toqueUI(x, y);
 }
 
 window.addEventListener('keydown', e => {
   const T = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
   const d = T[e.key];
   audioInit();
-  if (e.key === 'Escape' || e.key === 'p') { e.preventDefault(); if (OPC.abierto) cierraOpciones(); else if (JUEGO.modo === 'juego' || JUEGO.modo === 'menu') abreOpciones(); return; }
+  if (e.key === 'Escape' || e.key === 'p') { e.preventDefault(); if (OPC.abierto) cierraOpciones(); else if (JUEGO.modo === 'juego' || JUEGO.modo === 'menu') abreOpciones(); else if (UI.atras) UI.atras(); return; }
   if (OPC.abierto) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cierraOpciones(); } return; }
   if (JUEGO.modo === 'cartas') {
     if (d) e.preventDefault();
     if (['1', '2', '3'].includes(e.key) && JUEGO.tCartas > 0.4) eligeCarta(+e.key - 1);
     return;
   }
-  if (d) { e.preventDefault(); if (JUEGO.modo === 'juego') pideDir(espeja(d)); else toque(-99, -99); return; }
-  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toque(-99, -99); }
+  if (d && JUEGO.modo === 'juego') { e.preventDefault(); pideDir(espeja(d)); return; }
+  if (e.key === ' ' || e.key === 'Enter') {   // el botón principal de la pantalla (lo marca cada pantalla en UI.enter)
+    e.preventDefault();
+    if (PUBLI.activo) toqueAnuncio(); else if (UI.enter && !(JUEGO.modo === 'fin' && JUEGO.tFin < 0.6)) { SONIDO.boton(); UI.enter(); }
+  }
+  if (e.key === 'Backspace' && UI.atras) { e.preventDefault(); UI.atras(); }
 });
 
 // si te vas de la app (otra pestaña, una llamada, bloqueas el móvil), la partida se pausa sola con las Opciones abiertas

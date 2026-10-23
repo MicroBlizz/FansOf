@@ -1,34 +1,48 @@
-// Fans of Snakes · Pantalla: el marcador de arriba (barra de Frenesí, puntos, monedas), la portada y la tarjeta del final.
-// El tablero lo pinta js/tablero.js; aquí se decide el orden y lo que va encima.
+// Fans of Snakes · Pantalla: el orden de todo lo que se pinta (tablero, marcador, y encima la pantalla en la que estés: portada,
+// mapa, tienda, ranking, cartas o final) y el marcador de arriba de la partida (barra de Frenesí, cartas, puntos y monedas).
 'use strict';
 
+const enPartida = () => ['juego', 'cartas', 'pausa', 'fin'].includes(JUEGO.modo);
+
 function pintaTodo(W, H, dt) {
-  const retro = esRetro(), fr = esFrenesi() && JUEGO.modo === 'juego';
+  UI.length = 0; UI.enter = null; UI.atras = null;   // los botones de este fotograma (js/dibujo.js)
+  const retro = esRetro() && enPartida(), fr = esFrenesi() && JUEGO.modo === 'juego', jugando = enPartida();
   // el fondo de toda la pantalla
   if (retro) { G.fillStyle = '#3a3f33'; G.fillRect(0, 0, W, H); }
   else if (fr) { G.fillStyle = `hsl(${(JUEGO.t * 120 + 200) % 360} 60% ${7 + Math.sin(JUEGO.t * 20) * 2}%)`; G.fillRect(0, 0, W, H); }
   else { G.fillStyle = '#06110a'; G.fillRect(0, 0, W, H); }
   G.save(); aplicaTemblor();
-  if (locuraActiva('texto')) pintaTableroTexto();
+  if (jugando && locuraActiva('texto')) pintaTableroTexto();
   else {
-    const zoom = camaraGigante(dt);
+    const zoom = jugando && camaraGigante(dt);
     pintaFondo(retro);
-    if (JUEGO.modo !== 'menu') { pintaManzanas(retro); pintaItems(retro); pintaSerpiente(retro); }
+    if (jugando) { pintaMuros(retro); pintaManzanas(retro); pintaItems(retro); pintaSerpiente(retro); }
     pintaEfectos(retro);
     if (zoom) G.restore();
   }
-  pintaApagon();
-  pintaAnuncio();
+  if (jugando) { pintaApagon(); pintaAnuncio(); }
   G.restore();
   if (JUEGO.modo === 'juego') pintaMandos(retro, dt);
-  pintaMarcador(W, retro, fr);
-  if (JUEGO.modo !== 'menu') pintaMisCartas(retro);
-  pintaLocura(W, H);
+  if (jugando) { pintaMarcador(W, retro, fr); pintaMisCartas(retro); pintaObjetivo(W, H); pintaVS(); pintaLocura(W, H); pintaTutorial(W, dt); }
+  else pintaMarcadorMenu(W);
   if (JUEGO.modo === 'cartas') pintaCartas(W, H);
   if (JUEGO.modo === 'menu') pintaPortada(W, H);
+  if (JUEGO.modo === 'mapa') pintaMapa(W, H);
+  if (JUEGO.modo === 'tienda') pintaTienda(W, H);
+  if (JUEGO.modo === 'ranking') pintaRanking(W, H);
   if (JUEGO.modo === 'fin') pintaFin(W, H);
   if (JUEGO.modo === 'menu' || JUEGO.modo === 'juego') pintaRueda(retro);
   if (OPC.abierto) { OPC.t += dt; pintaOpciones(W, H); }
+  pintaAnuncioPremio(W, H, dt);
+}
+
+// en los Mundos, el objetivo de la fase y cuánto llevas, bajo el tablero
+function pintaObjetivo(W, H) {
+  if (PARTIDA.tipo !== 'mundo') return;
+  const F = MUNDOS[PARTIDA.mundo].fases[PARTIDA.fase], v = Math.min(F.obj[1], OBJETIVOS[F.obj[0]].valor(JUEGO)), y = Math.min(H - 26, TAB.y0 + TAB.h + 10), x = TAB.x0 + 34, w = TAB.w - 40;
+  letra(textoObjetivo(F), x, y, 7, '#ffd54a', 'left', '#06110a', 2);
+  letra(v.toLocaleString('es-ES') + '/' + F.obj[1].toLocaleString('es-ES'), x + w, y, 7, '#fff', 'right', '#06110a', 2);
+  caja(x, y + 5, w, 4, 2, '#06110a', null); G.fillStyle = '#ffd54a'; G.fillRect(x + 0.5, y + 5.5, (w - 1) * progresoObjetivo(), 3);
 }
 
 function pintaMarcador(W, retro, fr) {
@@ -51,38 +65,4 @@ function pintaMarcador(W, retro, fr) {
   letra(String(J.monedasPartida), TAB.x0 + TAB.w - 4, y + 18.5, 8, '#ffd54a', 'right', '#06110a', 2);
 }
 
-function pintaPortada(W, H) {
-  const t = JUEGO.t, y0 = TAB.y0;
-  G.fillStyle = 'rgba(6,17,10,0.55)'; G.fillRect(0, 0, W, H);
-  // una serpiente de adorno ondulando bajo el título
-  for (let i = 0; i < 12; i++) {
-    const x = 28 + i * 12, y = y0 + 120 + Math.sin(t * 3 + i * 0.6) * 6, lat = 10 - i * 0.3;
-    caja(x - lat / 2, y - lat / 2, lat, lat, 3, i === 0 ? '#9cff6b' : `hsl(140 70% ${45 - i * 1.5}%)`, '#06110a', 1);
-  }
-  letra('FANS OF', W / 2, y0 + 56, 13, '#9cff6b', 'center', '#06110a', 3);
-  letra('SNAKES', W / 2, y0 + 82, 30, '#3ddc84', 'center', '#06110a', 5);
-  letra(tr('Roza tu cola para cargar el Frenesí'), W / 2, y0 + 160, 8, '#fff', 'center', '#06110a', 2.5);
-  letra(tr('En Frenesí, córtate la cola por monedas'), W / 2, y0 + 173, 8, '#ffd54a', 'center', '#06110a', 2.5);
-  letra(tr('Come deprisa para hacer racha'), W / 2, y0 + 186, 8, '#7fd7ff', 'center', '#06110a', 2.5);
-  letra(tr('Cada 5 manzanas, una carta'), W / 2, y0 + 199, 8, '#ff8a3d', 'center', '#06110a', 2.5);
-  letra(tr('Los «?» son locuras. Tú verás.'), W / 2, y0 + 212, 8, '#d36bff', 'center', '#06110a', 2.5);
-  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
-  if (SAVE.record > 0) letra(tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 262, 8, '#9cff6b', 'center', '#06110a', 2);
-  if (SAVE.monedas > 0) letra(tr('Monedas: {n}', { n: SAVE.monedas }), W / 2, y0 + 274, 8, '#ffd54a', 'center', '#06110a', 2);
-}
 
-function pintaFin(W, H) {
-  const J = JUEGO, k = Math.min(1, J.tFin / 0.5), y0 = TAB.y0 + 40;
-  if (k <= 0) return;
-  G.fillStyle = `rgba(6,17,10,${0.6 * k})`; G.fillRect(0, 0, W, H);
-  G.save(); G.translate(0, (1 - k) * -30); G.globalAlpha = k;
-  caja(14, y0, W - 28, 160, 10, '#0f2a1b', '#3ddc84', 2);
-  letra(J.fin.motivo === 'pared' ? tr('¡Contra la pared!') : tr('¡Te has mordido!'), W / 2, y0 + 20, 13, '#ff4d4d', 'center', '#06110a', 3);
-  letra(J.puntos.toLocaleString('es-ES'), W / 2, y0 + 48, 26, '#fff', 'center', '#06110a', 4);
-  letra(J.fin.record ? tr('¡Nuevo récord!') : tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 70, 9, J.fin.record ? '#ffd54a' : '#9cff6b', 'center', '#06110a', 2.5);
-  letra(tr('Largo: {n}', { n: J.serp.length }) + ' · ' + tr('Frenesís: {n}', { n: J.frenesis }), W / 2, y0 + 90, 8, '#cfe', 'center', '#06110a', 2);
-  letra(tr('Monedas: {n}', { n: J.monedasPartida }) + ' · ' + tr('Locuras: {n}', { n: J.locuras }), W / 2, y0 + 103, 8, '#ffd54a', 'center', '#06110a', 2);
-  letra(tr('Cartas: {n}', { n: J.cartasElegidas }) + ' · ' + tr('Mejor racha: x{n}', { n: J.mejorRacha }), W / 2, y0 + 116, 8, '#7fd7ff', 'center', '#06110a', 2);
-  if (J.tFin > 0.8 && Math.sin(J.t * 4) > -0.3) letra(tr('Toca para jugar otra vez'), W / 2, y0 + 140, 9, '#fff', 'center', '#06110a', 2.5);
-  G.restore();
-}

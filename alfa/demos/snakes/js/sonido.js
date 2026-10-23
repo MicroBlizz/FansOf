@@ -39,10 +39,10 @@ let finSonado = false;
 function vigilaMusica() {
   if (!AC || !M.bus) return;
   const J = JUEGO;
-  if (J.modo === 'fin') { if (!finSonado && J.tFin > 0.3) { finSonado = true; musicSet('lose'); } return; }
+  if (J.modo === 'fin') { if (!finSonado && J.tFin > 0.3) { finSonado = true; musicSet(J.fin.gana ? 'win' : 'lose'); } return; }
   finSonado = false;
   if (M.trk && M.trk.once) return;
-  const quiero = J.modo === 'menu' ? 'menu' : 'gamer';
+  const menu = !enPartida(), quiero = menu ? 'menu' : 'gamer';
   if (M.name !== quiero) musicSet(quiero);
-  M.tmT = J.modo === 'menu' ? 1 : J.modo === 'cartas' ? 0.85 : esFrenesi() || locuraActiva('turbo') ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
+  M.tmT = menu ? 1 : J.modo === 'cartas' ? 0.85 : esFrenesi() || locuraActiva('turbo') ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
 }

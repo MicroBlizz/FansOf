@@ -24,9 +24,10 @@ function casillaLibre() {
   for (const s of JUEGO.serp) ocupadas.add(s[0] + ',' + s[1]);
   for (const m of JUEGO.manzanas) ocupadas.add(m[0] + ',' + m[1]);
   for (const it of JUEGO.items) ocupadas.add(it.c + ',' + it.r);
+  for (const k of JUEGO.muros) ocupadas.add(k);
   if (ocupadas.size >= COLS * ROWS - 2) return null;
   for (let i = 0; i < 200; i++) {
-    const c = Math.floor(Math.random() * COLS), r = Math.floor(Math.random() * ROWS);
+    const c = azarEntero(COLS), r = azarEntero(ROWS);
     if (!ocupadas.has(c + ',' + r)) return [c, r];
   }
   return null;
@@ -43,8 +44,8 @@ function pintaFondo(retro) {
     return;
   }
   const fr = esFrenesi(), t = JUEGO.t;
-  caja(x0 - 3, y0 - 3, w + 6, h + 6, 5, fr ? `hsl(${(t * 120) % 360} 70% 10%)` : '#0b1f14', fr ? arcoiris(0, t, 60) : '#2a4a36', 2);
-  G.strokeStyle = fr ? `hsl(${(t * 120 + 180) % 360} 80% 28%)` : '#153a24'; G.lineWidth = 0.6;
+  caja(x0 - 3, y0 - 3, w + 6, h + 6, 5, fr ? `hsl(${(t * 120) % 360} 70% 10%)` : TEMA.fondo, fr ? arcoiris(0, t, 60) : TEMA.borde, 2);
+  G.strokeStyle = fr ? `hsl(${(t * 120 + 180) % 360} 80% 28%)` : TEMA.rejilla; G.lineWidth = 0.6;
   G.beginPath();
   for (let i = 1; i < COLS; i++) { G.moveTo(x0 + i * c, y0); G.lineTo(x0 + i * c, y0 + h); }
   for (let j = 1; j < ROWS; j++) { G.moveTo(x0, y0 + j * c); G.lineTo(x0 + w, y0 + j * c); }
@@ -62,8 +63,8 @@ function pintaManzanas(retro) {
       continue;
     }
     const oro = esFrenesi(), r = c * 0.36 + Math.sin(JUEGO.t * 6 + m[0]) * 0.4;
-    circulo(x, y + 0.5, r, oro ? '#ffd54a' : '#ff4d4d', '#06110a', 1.2);
-    circulo(x - r * 0.35, y - r * 0.25, r * 0.25, oro ? '#fff2b0' : '#ff9d9d', null);
+    circulo(x, y + 0.5, r, oro ? '#ffd54a' : SAVE.daltonico ? '#2f8cff' : '#ff4d4d', '#06110a', 1.2);
+    circulo(x - r * 0.35, y - r * 0.25, r * 0.25, oro ? '#fff2b0' : SAVE.daltonico ? '#a8d0ff' : '#ff9d9d', null);
     G.fillStyle = '#3ddc84'; G.fillRect(x - 0.8, y - r - 2.5, 1.6, 2.5);
   }
 }
@@ -87,12 +88,12 @@ function pintaSerpiente(retro) {
   }
   for (let i = S.length - 1; i >= 1; i--) {
     const s = S[i], k = 1 - i / S.length * 0.35, lat = c * (0.86 - (i / S.length) * 0.18);
-    const col = fr ? arcoiris(i, t) : `hsl(140 70% ${28 + k * 22}%)`;
+    const col = fr ? arcoiris(i, t) : colorPiel(i, S.length, t, false);
     caja(cx(s[0]) - lat / 2, cy(s[1]) - lat / 2, lat, lat, 3, col, '#06110a', 1);
   }
   // la cabeza: más grande, con ojos que miran hacia donde va
   const h = S[0], lat = c * 0.96, x = cx(h[0]), y = cy(h[1]), [dx, dy] = JUEGO.dir;
-  caja(x - lat / 2, y - lat / 2, lat, lat, 4, fr ? '#ffffff' : '#9cff6b', '#06110a', 1.4);
+  caja(x - lat / 2, y - lat / 2, lat, lat, 4, fr ? '#ffffff' : colorPiel(0, S.length, t, true), '#06110a', 1.4);
   const ox = dy !== 0 ? 2.6 : 0, oy = dx !== 0 ? 2.6 : 0, ax = dx * 1.8, ay = dy * 1.8;
   for (const sg of [1, -1]) {
     circulo(x + ax + ox * sg, y + ay + oy * sg, 1.9, '#fff', '#06110a', 0.8);

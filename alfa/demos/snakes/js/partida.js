@@ -16,6 +16,7 @@ const JUEGO = {
   modo: 'menu',       // 'menu' | 'juego' | 'cartas' | 'fin'
   serp: [],           // casillas [c, r], la cabeza la primera
   dir: [1, 0],        // hacia dónde va
+  muros: new Set(),   // casillas de muro 'c,r' (js/muros.js)
   pend: [],           // giros pedidos por el dedo, en cola (máximo 2)
   manzanas: [], items: [],
   puntos: 0, mult: 1, acum: 0, t: 0, tFin: 0, uyT: 0,
@@ -28,7 +29,7 @@ const JUEGO = {
 function nuevaPartida() {
   const J = JUEGO, c0 = Math.floor(COLS / 2) - 2, r0 = Math.floor(ROWS / 2);
   J.serp = []; for (let i = 0; i < LARGO_INICIAL; i++) J.serp.push([c0 - i, r0]);
-  J.dir = [1, 0]; J.pend = []; J.manzanas = []; J.items = [];
+  J.dir = [1, 0]; J.pend = []; J.manzanas = []; J.items = []; J.muros = new Set(); J.monedasCobradas = 0;
   J.puntos = 0; J.mult = 1; J.acum = 0; J.t = 0; J.tFin = 0; J.uyT = 0;
   J.frenesi = 0; J.frenesiT = 0; J.frenesiDur = 0; J.frenesis = 0; J.monedasPartida = 0; J.cortes = 0; J.locuras = 0; J.comidas = 0;
   J.racha = 0; J.pasosRacha = 0; J.mejorRacha = 0;
@@ -54,10 +55,12 @@ function avanzaJuego(dt) {
   avanzaEfectos(dt);
   if (J.modo === 'fin') { J.tFin += dt; return; }
   if (J.modo === 'cartas') { J.tCartas += dt; return; }
+  if (PUBLI.activo) return;
   if (J.modo !== 'juego') return;
   J.tVivo += dt;
   if (J.uyT > 0) J.uyT -= dt;
   avanzaFrenesi(dt); avanzaLocuras(dt);
+  if (PARTIDA.tipo === 'vs') avanzaVS(dt);
   if (J.cartasPend && !esFrenesi()) { abreCartas(); return; }   // en Frenesí espera a que acabe
   J.acum += dt;
   while (J.acum >= pasoActual() && J.modo === 'juego') { J.acum -= pasoActual(); mueve(); }
@@ -77,6 +80,10 @@ function mueve() {
     else if (nivel('escudo') && rebotaEscudo()) return;   // este paso no avanza: gira
     else { muere('pared'); return; }
   }
+  if (esMuro(n)) {
+    if (nivel('escudo') && rebotaEscudo()) return;
+    muere('muro'); return;
+  }
   const iCuerpo = S.findIndex(s => mismaCasilla(s, n));
   const iMan = J.manzanas.findIndex(m => mismaCasilla(m, n));
   const come = iMan >= 0;
@@ -94,6 +101,8 @@ function mueve() {
   const iItem = J.items.findIndex(it => it.c === n[0] && it.r === n[1]);
   if (iItem >= 0) cogeLocura(iItem);
   compruebaRoce(n);
+  compruebaObjetivo();
+  if (J.serp.length >= 15) mision('largo', J.serp.length, true);
 }
 
 // se come la manzana i (que está en la casilla m): puntos, racha, Frenesí, la siguiente manzana y, cada tanto, cartas
@@ -106,10 +115,12 @@ function comeManzana(i, m) {
   numero(cx(m[0]), cy(m[1]) - 6, '+' + pts, esFrenesi() ? '#ffd54a' : '#fff', esFrenesi() ? 11 : 9);
   chispa(cx(m[0]), cy(m[1]), esFrenesi() ? '#ffd54a' : '#ff4d4d', 8, 70);
   cargaFrenesi(CARGA_MANZANA + RACHA_CARGA * Math.min(6, J.racha - 1));
+  mision('manzanas', 1); mision('racha', J.racha, true); ataqueRacha(J.racha);
   if (J.racha >= 2 && !esFrenesi()) { numero(cx(m[0]), cy(m[1]) + 7, tr('RACHA x{n}', { n: J.racha }), '#7fd7ff', 7 + Math.min(4, J.racha)); SONIDO.racha(J.racha); }
   if (esFrenesi()) SONIDO.come_oro(); else SONIDO.come();
   while (J.manzanas.length < manzanasEnTablero()) { const p = casillaLibre(); if (!p) break; J.manzanas.push(p); }
   if (J.comidas % CARTAS_CADA === 0) J.cartasPend = true;
+  tutoAviso('racha', J.racha >= 2);
 }
 
 // ¡Uy!: la cabeza pasa pegada a su propio cuerpo (una casilla al lado, no la que acaba de dejar)
@@ -129,11 +140,4 @@ function compruebaRoce(n) {
   SONIDO.uy();
 }
 
-function muere(motivo) {
-  const J = JUEGO; J.modo = 'fin'; J.tFin = 0; J.frenesiT = 0; J.mult = 1;
-  J.fin = { motivo, record: J.puntos > SAVE.record };
-  if (J.fin.record) SAVE.record = J.puntos;
-  SAVE.monedas += J.monedasPartida; SAVE.partidas++; guarda();
-  const h = J.serp[0]; chispa(cx(h[0]), cy(h[1]), '#ff4d4d', 18, 90); tiembla(4, 0.4);
-  SONIDO.muere();
-}
+function muere(motivo) { acaba(false, motivo); }   // el reparto de lo ganado y lo de cada modo: js/modos.js

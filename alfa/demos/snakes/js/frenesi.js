@@ -19,7 +19,7 @@ function cargaFrenesi(cuanto) {
 
 function activaFrenesi() {
   JUEGO.frenesiT = JUEGO.frenesiDur = segundosFrenesi(); JUEGO.frenesi = 0; JUEGO.mult = MULT_FRENESI;
-  JUEGO.frenesis++;
+  JUEGO.frenesis++; mision('frenesi', 1); ataqueFrenesi(); tutoAviso('frenesi', true);
   for (let i = 0; i < 3; i++) { const p = casillaLibre(); if (p) JUEGO.manzanas.push(p); }   // lluvia de manzanas doradas
   const h = JUEGO.serp[0]; chispa(cx(h[0]), cy(h[1]), '#ffd54a', 24, 110); tiembla(3, 0.35);
   numero(100, TAB.y0 + 60, tr('¡FRENESÍ!'), '#ffd54a', 18);
@@ -42,7 +42,7 @@ function demolicion(idx) {
   const S = JUEGO.serp, cortadas = S.splice(idx);   // quita idx..final (idx >= 1 siempre)
   const n = cortadas.length;
   for (const s of cortadas) { monedaVuela(cx(s[0]), cy(s[1])); chispa(cx(s[0]), cy(s[1]), '#ff8a3d', 3, 50); }
-  JUEGO.monedasPartida += n; JUEGO.cortes++;
+  JUEGO.monedasPartida += n; JUEGO.cortes++; mision('trozos', n); ataqueCorte(n);
   const pts = Math.round(n * PUNTOS_CORTE * multPuntos()); JUEGO.puntos += pts;
   const h = S[0]; numero(cx(h[0]), cy(h[1]) - 8, '+' + pts, '#ffd54a', 11);
   numero(cx(h[0]), cy(h[1]) + 6, tr('¡{n} monedas!', { n }), '#fff2b0', 8);

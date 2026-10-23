@@ -66,6 +66,7 @@ function pintaTableroTexto() {
   G.fillStyle = '#000'; G.fillRect(x0 - 3, y0 - 3, w + 6, h + 6);
   G.strokeStyle = verde; G.lineWidth = 1; G.strokeRect(x0 - 2.5, y0 - 2.5, w + 5, h + 5);
   G.globalAlpha = 0.07; G.fillStyle = verde; for (let y = y0; y < y0 + h; y += 3) G.fillRect(x0, y, w, 1); G.globalAlpha = 1;   // las rayas del monitor
+  for (const k of JUEGO.muros) { const [mc, mr] = k.split(',').map(Number); letraMono('#', cx(mc), cy(mr) + 0.5, c * 0.95, '#888', 'center', 800); }
   for (const m of JUEGO.manzanas) letraMono('@', cx(m[0]), cy(m[1]) + 0.5, c * 0.95, '#ff5a5a', 'center', 800);
   for (const it of JUEGO.items) letraMono('?', cx(it.c), cy(it.r) + 0.5, c * 0.95, '#ffd54a', 'center', 800);
   JUEGO.serp.forEach((s, i) => letraMono(i === 0 ? '>' : LETRAS_SERPIENTE[(i - 1) % LETRAS_SERPIENTE.length], cx(s[0]), cy(s[1]) + 0.5, c * 0.95, i === 0 ? '#ffffff' : verde, 'center', 800));

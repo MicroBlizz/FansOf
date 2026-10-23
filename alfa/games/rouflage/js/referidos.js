@@ -33,6 +33,7 @@ function refApunta() {
   Promise.resolve(RFRED.rpc('rouflage_ref_apuntar', { p_codigo: c })).then(r => {
     refPon('rouflage-inv', ''); refPon('rouflage-inv-hecho', '1');
     if (r && r.ok) avisa(tr('Te ha invitado {n}: al jugar tu segunda partida, ganáis los dos', { n: r.nombre || tr('un amigo') }), 'bueno');
+    if (r && (r.ok || r.ya)) Promise.resolve(RFRED.rpc('rouflage_amigo_anadir', { p_codigo: c })).then(() => { if (typeof amgLatido === 'function') amgLatido(); }).catch(() => {});      // y quedáis de amigos (amigos.js)
   }).catch(e => {
     const m = String((e && e.message) || e);
     if (/codigo_no_valido|es_tuyo|cuenta_antigua/.test(m)) { refPon('rouflage-inv', ''); refPon('rouflage-inv-hecho', '1'); }      // no vale: se olvida. Sin red: se intenta la próxima vez

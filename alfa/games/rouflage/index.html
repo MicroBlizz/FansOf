@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.44-a434.4b4fed4"></script>
+<script src="../../core/js/nucleo.js?v=0.2.44-a435.85cc66e"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css')</script>
 </head>
@@ -95,7 +95,7 @@
 <div class="pantalla" id="p-titulo" hidden>
   <div class="titulo-caja nuevo">
     <div class="tit-barra">
-      <button type="button" class="tit-yo" id="b-perfil" data-tr-aria aria-label="Mi perfil"><canvas id="tit-yo-dib" width="72" height="72" aria-hidden="true"></canvas><span><b id="tit-nombre"></b><small id="tit-nivel"></small></span></button>
+      <button type="button" class="tit-yo" id="b-perfil" data-tr-aria aria-label="Mi perfil"><canvas id="tit-yo-dib" width="72" height="72" aria-hidden="true"></canvas><span><b id="tit-nombre"></b><small id="tit-nivel"></small><em class="tit-yo-ir"><i data-icono="casa"></i><i data-icono="engranaje"></i><b data-tr>MI PERFIL</b><i data-icono="flecha"></i></em></span></button>
       <div class="tit-monedas"><span class="tit-moneda gotas" id="tit-gotas"></span><span class="tit-moneda acciones" id="tit-acciones"></span></div>
     </div>
     <h1 class="logo" aria-label="Fans of Rouflage"><span class="ol">FANS OF</span><b aria-hidden="true"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b></h1>
@@ -419,6 +419,7 @@ NUCLEO.juego({
     'js/titulo.js',
     'js/avisos.js',
     'js/guia.js',
+    'js/amigos.js',
     'js/referidos.js',
     'js/reto.js',
     'js/principal.js',

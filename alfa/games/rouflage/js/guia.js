@@ -28,7 +28,8 @@ const GUIAS = [
     { en: 'p-escenario', a: null, t: 'Esta es tu habitación. Coloca muebles, pinta el suelo y las paredes y pasea con tu galleta. Tus amigos la verán en vuestras salas.', seg: 10 },
   ] },
   { id: 'amigos', desde: 4, pasos: [
-    { en: 'p-titulo', a: '#b-social', t: '<b>AMIGOS</b>: comparte tu código y, cuando tu amigo juegue dos partidas, <b>ganáis los dos</b>.', hecho: () => visible('p-invita') },
+    { en: 'p-titulo', a: '#b-social', t: '<b>AMIGOS</b>: mira quién está en línea e invítale a jugar contigo.', hecho: () => visible('p-amigoslista') },
+    { en: 'p-amigoslista', a: '#b-amg-traer', t: 'Aquí está tu código. Si un amigo nuevo juega dos partidas con tu enlace, <b>ganáis los dos</b>.', hecho: () => visible('p-invita') },
     { en: 'p-invita', a: '#b-inv-compartir', t: 'Mándale el enlace por WhatsApp o donde quieras. Trayendo amigos ganas premios que no se venden.', seg: 10 },
   ] },
   { id: 'talentos', desde: 5, pasos: [

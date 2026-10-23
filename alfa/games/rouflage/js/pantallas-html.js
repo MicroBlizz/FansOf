@@ -86,7 +86,7 @@
 <div class="pantalla" id="p-busca" hidden>
   <div class="caja pvp">
     <h2 class="ol" id="busca-titulo" data-tr>BUSCANDO PARTIDA</h2>
-    <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
+    <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button><button type="button" class="boton peq azul" id="b-busca-amigos" data-tr>INVITAR AMIGOS</button></div>
     <p class="sub" id="busca-sub"></p>
     <div class="busca-escenario" id="busca-escenario" hidden><canvas id="busca-escenario-cv" data-tr-aria aria-label="El escenario del anfitrión"></canvas><span id="busca-escenario-t"></span></div>
     <div class="esc-votos" id="esc-votos" hidden><button type="button" class="ev-b ev-si" id="b-ev-si" aria-pressed="false"><i data-ico="si"></i><span data-tr>ME GUSTA</span><b id="ev-n">0</b></button><button type="button" class="ev-b ev-no" id="b-ev-no" aria-pressed="false"><i data-ico="no"></i><span data-tr>NO ME GUSTA</span></button><button type="button" class="ev-b ev-rep" id="b-ev-rep"><i data-ico="rep"></i><span data-tr>REPORTAR</span></button></div>
@@ -292,6 +292,19 @@
     <p class="racha-sub" data-tr>Te mando un aviso por la tarde si tu racha está a punto de secarse. Como mucho dos al día y nunca de noche.</p>
     <button type="button" class="boton grande" id="b-avisos-si" data-tr>SÍ, AVÍSAME</button>
     <button type="button" class="boton gris" id="b-avisos-no" data-tr>NO, GRACIAS</button>
+  </div>
+</div>
+
+<!-- AMIGOS (amigos.js): tu código, añadir, quién está en línea, INVITAR y UNIRME -->
+<div class="pantalla" id="p-amigoslista" hidden>
+  <div class="caja amg-caja">
+    <h2 class="ol" data-tr>AMIGOS</h2>
+    <div class="amg-cod"><span><small data-tr>TU CÓDIGO</small><b class="ol" id="amg-codigo"></b></span><button type="button" class="boton peq" id="b-amg-traer" data-tr>TRAE A UN COLADO</button></div>
+    <div class="amg-anadir"><label><span data-tr>Código de tu amigo</span><input type="text" id="amg-nuevo" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC123"></label><button type="button" class="boton" id="b-amg-anadir" data-tr>AÑADIR</button></div>
+    <p class="amg-vacio" id="amg-vacio" data-tr>Aún no tienes amigos aquí. Pásales tu código o tu enlace de TRAE A UN COLADO.</p>
+    <h3 class="amg-sec" id="amg-en-t"></h3><div class="amg-lista" id="amg-en"></div>
+    <h3 class="amg-sec" id="amg-fuera-t"></h3><div class="amg-lista" id="amg-fuera"></div>
+    <button type="button" class="boton gris peq" id="b-amg-volver" data-tr>VOLVER</button>
   </div>
 </div>
 

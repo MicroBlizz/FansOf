@@ -154,3 +154,41 @@
 .titulo-caja.nuevo .tit-papeles .papel canvas { max-width: 200px; }
 .titulo-caja.nuevo .tit-papeles .papel span { font-size: 12.5px; }
 @media (max-height: 760px) and (orientation: portrait) { .titulo-caja.nuevo .tit-papeles .papel canvas { max-width: 150px; } .titulo-caja.nuevo .logo b { font-size: clamp(40px, 12vw, 70px); } }
+
+/* AMIGOS (amigos.js) */
+.amg-caja { max-width: 460px; gap: 8px; }
+.amg-cod { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); text-align: left; }
+.amg-cod > span { display: grid; line-height: 1.05; }
+.amg-cod small { font-weight: 800; font-size: 11px; letter-spacing: 0.08em; color: var(--ink-dim); }
+.amg-cod b { font-family: var(--font-display); font-weight: 400; font-size: 26px; letter-spacing: 0.1em; }
+.amg-anadir { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; text-align: left; }
+.amg-anadir label { display: grid; gap: 3px; font-weight: 800; font-size: 12px; color: var(--ink-dim); }
+.amg-anadir input { padding: 9px 10px; border-radius: 12px; border: 3px solid var(--outline); background: var(--bg); color: var(--ink); font: 800 17px var(--font-ui); letter-spacing: 0.12em; text-transform: uppercase; -webkit-user-select: text; user-select: text; }
+.amg-anadir .boton { min-height: 44px; }
+.amg-vacio { margin: 4px 0; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.amg-vacio[hidden], .amg-sec[hidden] { display: none; }
+.amg-sec { margin: 4px 0 0; text-align: left; font-weight: 800; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim); font-family: var(--font-ui); }
+.amg-lista { display: grid; gap: 6px; max-height: 34vh; overflow-y: auto; }
+.amg-fila { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); text-align: left; }
+.amg-fila canvas { border-radius: 10px; background: #2f8f6f; border: 2px solid var(--outline); }
+.amg-fila.fuera { opacity: 0.8; } .amg-fila.fuera canvas { background: #3b4a6a; }
+.amg-fila span { display: grid; line-height: 1.15; min-width: 0; }
+.amg-fila b { font-weight: 800; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.amg-fila small { font-weight: 700; font-size: 12px; color: var(--ok); }
+.amg-fila.fuera small { color: var(--ink-dim); }
+.amg-fila .boton { min-height: 38px; padding: 6px 10px 4px; font-size: 14px; }
+.boton.azul { background: linear-gradient(to bottom, #4f95f5, #1d3f8a); }
+.amg-aviso { position: fixed; z-index: 950; left: 50%; top: calc(var(--sup, 0px) + 10px); transform: translateX(-50%); width: min(440px, calc(100vw - 20px)); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(160deg, #2c5f8a, #1b3a60); color: var(--ink); font-weight: 800; font-size: 14px; animation: bocadilloEntra 0.25s ease-out; }
+.amg-aviso .boton { min-height: 38px; padding: 6px 10px 4px; font-size: 14px; }
+
+/* MI PERFIL más visible (Daniel, 23-10-2026): borde dorado, «MI PERFIL ›» con los iconos de lo que hay dentro, y brillo + punto hasta abrirlo la primera vez */
+#p-titulo .tit-yo { border-color: var(--gold); box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline); padding-right: 10px; position: relative; }
+#p-titulo .tit-yo canvas { width: 46px; height: 46px; }
+.tit-yo-ir { display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; font-style: normal; color: var(--gold); }
+.tit-yo-ir i[data-icono] { width: 15px; height: 15px; }
+.tit-yo-ir b { font-family: var(--font-display); font-weight: 400; font-size: 13px; letter-spacing: 0.04em; margin: 0 1px 0 3px; max-width: none; }
+#p-titulo .tit-yo.nuevo { animation: tit-brillo 1.4s ease-in-out infinite alternate; }
+#p-titulo .tit-yo.nuevo::after { content: ''; position: absolute; top: -6px; right: -6px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
+@keyframes tit-brillo { from { box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline); } to { box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline), 0 0 14px 2px rgba(255, 203, 61, 0.7); } }
+@media (prefers-reduced-motion: reduce) { #p-titulo .tit-yo.nuevo { animation: none; } }
+.amg-fila .boton:not(.gris):not(.azul):not(:disabled) { background: linear-gradient(to bottom, #ffb347, #ff7a1a); }

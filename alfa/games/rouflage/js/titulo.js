@@ -22,7 +22,10 @@ function refrescaTitulo() {
   // tu galleta vestida, tu nombre y el nivel del pase
   arPinta(E('tit-yo-dib'), (c, w, h) => ARD.vestida(c, w, h * 0.94, Object.assign({ esc: h / 96 }, ropaDe(null))));
   E('tit-nombre').textContent = TIT.nombre || tr('Fan sin nombre');
-  E('tit-nivel').textContent = tr('Perfil · nivel {n}', { n: paseNivel() });
+  E('tit-nivel').textContent = tr('Nivel {n}', { n: paseNivel() });
+  // MI PERFIL brilla y lleva su punto hasta que lo abres por primera vez (dentro están MI ESCENARIO, OPCIONES…)
+  let visto = false; try { visto = localStorage.getItem('rouflage-perfil-visto') === '1'; } catch (_) { /* sin guardar */ }
+  E('b-perfil').classList.toggle('nuevo', !visto);
   if (!TIT.pedido && typeof CUENTA !== 'undefined' && CUENTA.perfil) {
     TIT.pedido = true;
     Promise.resolve(CUENTA.perfil()).then(p => { if (p && p.nombre) { TIT.nombre = p.nombre; E('tit-nombre').textContent = p.nombre; } }).catch(() => {});
@@ -68,6 +71,7 @@ function preparaTitulo() {
   E('b-bots-jugar').onclick = ev => { papel = BOTS.modo; try { localStorage.setItem('rouflage-papel', papel); } catch (_) { /* sin guardar */ } jugar(ev); };
   // AMIGOS (amigos.js; mientras no esté, invitar a un amigo: referidos.js)
   E('b-social').onclick = () => { play('select'); if (typeof abreAmigos === 'function') abreAmigos(); else if (typeof abreInvita === 'function') abreInvita(); };
+  E('b-perfil').addEventListener('click', () => { try { localStorage.setItem('rouflage-perfil-visto', '1'); } catch (_) { /* sin guardar */ } E('b-perfil').classList.remove('nuevo'); });
   // lo que ahora está dentro del PERFIL vuelve al PERFIL, no al título
   E('b-pf-diario').onclick = abreDiario;
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(abrePerfil); };

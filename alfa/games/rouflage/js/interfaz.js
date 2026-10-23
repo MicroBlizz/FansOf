@@ -7,6 +7,9 @@
 const E = id => document.getElementById(id);
 const ICONOS = {
   // los del título nuevo (titulo.js): percha del ARMARIO, entrada del PASE, bolsa de la TIENDA y dos galletas de AMIGOS
+  casa: '<path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10v9h11v-9"/><path d="M10.5 19v-4.5h3V19"/>',
+  engranaje: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/>',
+  flecha: '<path d="M9 5l7 7-7 7" stroke-width="3"/>',
   percha: '<path d="M12 7.2a2.2 2.2 0 1 1 2.2-2.2c0 1.1-.9 1.5-2.2 2.4L3.4 13.6c-1 .8-.5 2.4.8 2.4h15.6c1.3 0 1.8-1.6.8-2.4L12 7.6"/>',
   pase: '<path d="M3.5 7.5h17v3a1.8 1.8 0 0 0 0 3.6v3.4h-17v-3.4a1.8 1.8 0 0 0 0-3.6z"/><path d="M9 8v8.5" stroke-dasharray="1.6 1.8"/><path d="M14.6 9.6l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2-1.5-1.4 2-.3z" fill="currentColor" stroke-width="1"/>',
   bolsa: '<path d="M5 8.5h14l-1.2 11.5H6.2z"/><path d="M8.8 8.5V7a3.2 3.2 0 0 1 6.4 0v1.5"/>',

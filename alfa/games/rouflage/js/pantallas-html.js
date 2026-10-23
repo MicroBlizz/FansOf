@@ -166,6 +166,7 @@
     <p class="tienda-aviso" id="tienda-aviso-euros"></p>
     <div class="tienda-lista">
       <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
+      <div class="tienda-hoy" id="tienda-hoy" hidden><h3 class="ol" data-tr>OFERTAS DE HOY</h3><small id="tienda-hoy-t"></small><div id="tienda-hoy-lista"></div></div>
       <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
       <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
@@ -308,6 +309,32 @@
   </div>
 </div>
 
+<!-- TEMPORADA Y LIGA (temporada.js) -->
+<div class="pantalla" id="p-temporada" hidden>
+  <div class="caja tem-caja">
+    <small class="tem-cab" id="tem-cab"></small>
+    <h2 class="ol" id="tem-nombre"></h2>
+    <div class="tem-ligas" id="tem-ligas"></div>
+    <div class="tem-prog"><div><b id="tem-puntos"></b><span id="tem-falta"></span></div><i class="barra"><i id="tem-barra"></i></i></div>
+    <h3 class="tem-sec" id="tem-tabla-t"></h3>
+    <div class="tem-tabla" id="tem-tabla"></div>
+    <div class="tem-dos">
+      <div class="tem-ev"><small data-tr>ESTA SEMANA</small><b id="tem-ev-t"></b><span id="tem-ev-s"></span></div>
+      <div class="tem-premio"><small data-tr>AL ACABAR</small><b data-tr>PREMIO DE LIGA</b><span id="tem-premio-s"></span></div>
+    </div>
+    <button type="button" class="tem-ofertas" id="b-tem-ofertas"><b class="ol" data-tr>3 OFERTAS DE HOY</b><span data-tr>En la tienda, solo hoy</span></button>
+    <button type="button" class="boton gris peq" id="b-tem-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+<div class="pantalla" id="p-ligapremio" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol" id="lp-titulo"></h2>
+    <p class="racha-sub" id="lp-sub"></p>
+    <b class="lp-premio ol" id="lp-premio"></b>
+    <button type="button" class="boton grande" id="b-lp-cobrar" data-tr>¡COBRAR!</button>
+  </div>
+</div>
+
 <!-- TRAE A UN COLADO (referidos.js) -->
 <div class="pantalla" id="p-invita" hidden>
   <div class="caja invita-caja">
@@ -361,6 +388,8 @@
     <div class="pf-menu">
       <button type="button" class="boton pf-m escenario" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
       <button type="button" class="boton pf-m diario" id="b-pf-diario"><b data-tr>PREMIO DIARIO</b></button>
+      <button type="button" class="boton pf-m talentos" id="b-talentos"><b data-tr>TALENTOS</b></button>
+      <button type="button" class="boton pf-m misiones" id="b-pf-misiones"><b data-tr>MISIONES</b></button>
       <button type="button" class="boton pf-m ayuda" id="b-ayuda"><b data-tr>CÓMO SE JUEGA</b></button>
       <button type="button" class="boton pf-m opciones" id="b-opciones"><b data-tr>OPCIONES</b></button>
     </div>

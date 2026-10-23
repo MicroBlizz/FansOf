@@ -32,8 +32,12 @@ const GUIAS = [
     { en: 'p-amigoslista', a: '#b-amg-traer', t: 'Aquí está tu código. Si un amigo nuevo juega dos partidas con tu enlace, <b>ganáis los dos</b>.', hecho: () => visible('p-invita') },
     { en: 'p-invita', a: '#b-inv-compartir', t: 'Mándale el enlace por WhatsApp o donde quieras. Trayendo amigos ganas premios que no se venden.', seg: 10 },
   ] },
+  { id: 'temporada', desde: 2, pasos: [
+    { en: 'p-titulo', a: '#b-temporada', t: 'La <b>TEMPORADA</b>: en BUSCAR PARTIDA ganas puntos de liga. Al acabar, premio según tu liga.', hecho: () => visible('p-temporada') },
+  ] },
   { id: 'talentos', desde: 5, pasos: [
-    { en: 'p-titulo', a: '#b-talentos', t: '<b>TALENTOS</b>: jugando subes de nivel y desbloqueas habilidades para cada papel.', hecho: () => visible('p-talentos') },
+    { en: 'p-titulo', a: '#b-perfil', t: 'En tu <b>PERFIL</b> están también tus <b>TALENTOS</b>.', hecho: () => visible('p-perfil') },
+    { en: 'p-perfil', a: '#b-talentos', t: '<b>TALENTOS</b>: jugando subes de nivel y desbloqueas habilidades para cada papel.', hecho: () => visible('p-talentos') },
   ] },
   { id: 'pase', desde: 6, pasos: [
     { en: 'p-titulo', a: '#b-pase', t: 'El <b>PASE</b>: cada partida te da experiencia y cada nivel, un premio.', hecho: () => visible('p-pase') },

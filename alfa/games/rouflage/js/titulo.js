@@ -39,10 +39,8 @@ function refrescaTitulo() {
   const mis = misionesDeHoy(), hechas = mis.filter(m => misionHecha(m) || misionCobrada(m)).length, cobrar = mis.some(m => misionHecha(m) && !misionCobrada(m));
   E('tit-mis-t').textContent = cobrar ? tr('¡Premio por cobrar!') : tr('{n} de {t} hechas', { n: hechas, t: mis.length });
   E('tit-mis-b').style.width = Math.round(hechas / Math.max(1, mis.length) * 100) + '%';
-  // talentos: el nivel de becario y el de colado
-  const nb = talNivel('becario'), nc = talNivel('colado');
-  E('tit-tal-t').textContent = tr('Becario {b} · Colado {c}', { b: nb, c: nc });
-  E('tit-tal-b').style.width = Math.round((nb + nc) / (2 * TALENTOS.max) * 100) + '%';
+  // la temporada y tu liga (temporada.js)
+  if (typeof tempTarjeta === 'function') tempTarjeta();
   // la TIENDA lleva su cartel de OFERTA mientras no hayas cogido el Pack de inicio
   E('tit-oferta').hidden = !!(SAVE.tienda && SAVE.tienda.inicio);
   if (typeof titAmigosEnLinea === 'function') titAmigosEnLinea();
@@ -74,6 +72,7 @@ function preparaTitulo() {
   E('b-perfil').addEventListener('click', () => { try { localStorage.setItem('rouflage-perfil-visto', '1'); } catch (_) { /* sin guardar */ } E('b-perfil').classList.remove('nuevo'); });
   // lo que ahora está dentro del PERFIL vuelve al PERFIL, no al título
   E('b-pf-diario').onclick = abreDiario;
+  E('b-pf-misiones').onclick = () => E('b-misiones').click();
   E('b-ayuda').onclick = () => { play('select'); muestraAyuda(abrePerfil); };
   E('b-opciones-ok').onclick = () => { play('select'); abrePerfil(); };
   // cuántas partidas llevas en este navegador (para el aviso de guardar el progreso): se cuenta al acabar cada una

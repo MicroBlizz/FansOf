@@ -1,6 +1,7 @@
 // Fans of Rouflage · PEG_CHAT (datos, 2 de 2): las pegatinas del chat (PEG_CHAT; sustituyen al chat escrito: 23-10-2026) y sus PAQUETES, que son lo que se
 // consigue: el Básico al empezar, Becarios y Colados en la tienda (250 Acciones), Fantasmas en el pase gratis y los de los conjuntos del Rumble en la
-// tienda (400). En el armario salen en la pestaña «Pegatinas» (album: no se llevan puestas; las de tus paquetes salen todas en el chat).
+// tienda (320). Un paquete puede llevar `conj: { id, txt }`: más barato si tienes ese conjunto del Rumble (lo cobra así también el servidor,
+// 83-rouflage-pegatinas-conjunto.sql); CrazyBunny y SlyFox no lo llevan porque sus conjuntos los tiene todo el mundo al empezar. En el armario salen en la pestaña «Pegatinas» (album: no se llevan puestas; las de tus paquetes salen todas en el chat).
 // Cada pegatina tiene un NÚMERO fijo (n) que es lo que viaja por la red (como las frases rápidas): NUNCA se cambia ni se reutiliza el de otra. El
 // servidor sabe de qué paquete es cada número (tablas_juego, «pegatinas»: herramientas/rouflage/rouflage_datos.js) y no deja mandar una que no tienes.
 // pegLienzo(n, lado) da la pegatina dibujada (se dibuja una vez y se guarda); pegMias() las tuyas, por paquetes.
@@ -46,13 +47,13 @@ const PEG_PAQUETES = (() => {
       { n: 132, tag: 'NI FINIQUITO', col: '#8fe3ff', especial: (c, A) => A.fantasma(c, c => { A.gota(c, -6, -34, 1.1); A.gota(c, 10, -32, 1); A.shape(c, A.rr(14, -22, 12, 8, 1.5), '#c99a62', 1.4); A.line(c, [16, -18, 24, -18], A.OL, 1); A.signo(c, '0', 20, -30, 7, '#ffcb3d'); }) },
       { n: 133, tag: '¡ÁNIMO, VIVOS!', col: '#7ee04a', especial: (c, A) => A.fantasma(c, c => { A.confeti(c, [[-22, -56, 0.4], [24, -60, -0.5], [-26, -32, 1], [26, -30, 0.3]]); A.estrella(c, -16, -66, 3); A.estrella(c, 18, -70, 2.4, '#39d5e8'); }) },
     ] },
-    { id: 'bunny', n: 'Pegatinas de CrazyBunny', r: 'epica', de: 'tienda', txt: 400, peg: [
+    { id: 'bunny', n: 'Pegatinas de CrazyBunny', r: 'epica', de: 'tienda', txt: 320, peg: [
       { n: 140, tag: '¡ZANAHORIAAA!', col: '#ff9f80', g: g({ brazoI: 0.9, brazoD: -1.1 }, null, BUNNY), mas: (c, p, A) => { const [x, y] = A.mano(p, 'brazoD'); A.zanahoria(c, x + 2, y - 6, 0.5); A.estrella(c, -22, -60, 3); } },
       { n: 141, tag: '¡LOCURAAA!', col: '#ff6fb5', giro: -0.08, g: g({ brazoI: 1.0, brazoD: -0.9, piernaI: 0.4, piernaD: -0.4 }, 'loca', { cabeza: 'bunny', espalda: 'capa' }), mas: (c, p, A) => { A.estrella(c, -24, -40, 3.4); A.estrella(c, 26, -46, 3, '#39d5e8'); A.estrella(c, 14, -70, 2.6, '#ff6fb5'); } },
       { n: 142, tag: 'JIJIJI', col: '#ffcb3d', g: g({ brazoI: -1.5, brazoD: 1.9 }, 'risa', { cabeza: 'bunny', espalda: 'capa' }), mas: (c, p, A) => { A.otxt(c, 'JI', -22, -50, 8, '#ff9f80'); A.otxt(c, 'JI', 24, -58, 8, '#ff9f80'); } },
       { n: 143, tag: '¡AL ATAQUE!', col: '#ff4b5c', giro: 0.1, g: g({ piernaI: 0.8, piernaD: -0.8, brazoD: -0.5, brazoI: 0.9 }, 'decidido', { cabeza: 'bunny', espalda: 'capa' }), mas: (c, p, A) => { const [x, y] = A.mano(p, 'brazoD'); A.zanahoria(c, x + 5, y - 1, -1.2); A.nube(c, -22, -4, 0.9); } },
     ] },
-    { id: 'fox', n: 'Pegatinas de SlyFox', r: 'epica', de: 'tienda', txt: 400, peg: [
+    { id: 'fox', n: 'Pegatinas de SlyFox', r: 'epica', de: 'tienda', txt: 320, peg: [
       { n: 150, tag: 'DEMASIADO LISTO', col: '#ff9f80', g: g({ brazoI: -1.13, brazoD: 1.6 }, null, FOX), mas: (c, p, A) => A.estrella(c, 20, -62, 3) },
       { n: 151, tag: 'PLAN PERFECTO', col: '#ffcb3d', g: g({ brazoI: -1.75, brazoD: 2.3 }, null, Object.assign({ boca: 'sonrisa' }, FOX)), mas: (c, p, A) => { A.estrella(c, -22, -60, 3); A.estrella(c, 22, -62, 2.6, '#39d5e8'); A.rayitas(c, 0, -20, Math.PI / 2, 3, '#ffcb3d'); } },
       { n: 152, tag: '¡TE PILLÉ!', col: '#ff4b5c', g: g({ brazoD: -0.35, piernaI: 0.2 }, null, Object.assign({ boca: 'o' }, FOX)), mas: (c, p, A) => { const [x, y] = A.mano(p, 'brazoD'); A.rayitas(c, x + 3, y, 0, 3, '#ffcb3d'); A.signo(c, '!', -20, -60, 11, '#ff4b5c'); } },
@@ -88,6 +89,6 @@ const pegTengo = n => { const p = PEG_CHAT[n]; return !!p && pegTienePaquete(peg
     if (w < 110) { const cv = pegLienzo(ns[0], 128); if (cv) c.drawImage(cv, 0, 0, w, w); return; }
     ns.slice(0, 4).forEach((n, i) => { const cv = pegLienzo(n, 160); if (cv) c.drawImage(cv, (i % 2) * w / 2, Math.floor(i / 2) * w / 2, w / 2, w / 2); });
   };
-  const items = PEG_PAQUETES.map(pq => ({ id: pq.id, n: pq.n, r: pq.r, de: pq.de, txt: pq.txt, x: icono(pq) }));
+  const items = PEG_PAQUETES.map(pq => ({ id: pq.id, n: pq.n, r: pq.r, de: pq.de, txt: pq.txt, conj: pq.conj || null, x: icono(pq) }));      // conj: con ese conjunto del Rumble, a mitad de precio (arPrecio)
   CATALOGO_AR.push({ id: 'pegatinas', nombre: 'Pegatinas del chat', corto: 'Pegatinas', nota: 'Se mandan en el chat de la sala y de fantasma. Un paquete trae todas las suyas', album: true, items });
 })();

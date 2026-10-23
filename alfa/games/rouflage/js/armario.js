@@ -88,7 +88,7 @@ function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF ==
 // cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
 function arTextoDe(it) {
   const t = it.txt, pr = arPrecio(it); let m;
-  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas });
+  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas }) + (pr.rebaja ? ' · ' + tr('rebajado por tener el conjunto') : it.conj ? ' · ' + tr('{n} con su conjunto', { n: it.conj.txt }) : '');
   if (typeof t === 'number') return tr('Solo en el gachapón, con Gotas');
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });

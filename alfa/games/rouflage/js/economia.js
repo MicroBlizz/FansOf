@@ -101,8 +101,9 @@ function arPrecio(it) {
   const cambio = ecoCambio();
   if (it.de === 'gotas') { const m = /^(\d+) Gotas$/.exec(String(it.txt)); return m ? { gotas: +m[1], acciones: Math.ceil(+m[1] / cambio), gacha: false } : null; }
   if (it.de !== 'tienda' || typeof it.txt !== 'number' || it.txt <= 0) return null;
-  const gacha = it.r !== 'epica' && it.r !== 'legend', acciones = gacha ? Math.ceil(it.txt * PRECIO_GACHA / 5) * 5 : it.txt;
-  return { gotas: acciones * cambio, acciones, gacha };
+  const gacha = it.r !== 'epica' && it.r !== 'legend'; let acciones = gacha ? Math.ceil(it.txt * PRECIO_GACHA / 5) * 5 : it.txt, rebaja = false;
+  if (it.conj && typeof it.conj.txt === 'number') { const cj = arItem('conjuntos', it.conj.id); if (cj && arTiene('conjuntos', cj)) { acciones = it.conj.txt; rebaja = true; } }      // las pegatinas de un conjunto del Rumble que ya tienes: más baratas
+  return { gotas: acciones * cambio, acciones, gacha, rebaja };
 }
 // compra con la moneda elegida ('gotas' o 'acciones'): la llama la ventana de confirmar (armario-compra.js), nunca el botón COMPRAR directamente.
 // Sin moneda, la de siempre de esa pieza (Gotas lo de Gotas, Acciones lo demás). Devuelve true si se ha comprado (con servidor, una promesa)

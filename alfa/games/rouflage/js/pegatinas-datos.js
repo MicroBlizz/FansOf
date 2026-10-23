@@ -1,7 +1,7 @@
 // Fans of Rouflage · PEG_CHAT (datos, 2 de 2): las pegatinas del chat (PEG_CHAT; sustituyen al chat escrito: 23-10-2026) y sus PAQUETES, que son lo que se
 // consigue: el Básico al empezar, Becarios y Colados en la tienda (250 Acciones), Fantasmas en el pase gratis y los de los conjuntos del Rumble en la
 // tienda (320). Un paquete puede llevar `conj: { id, txt }`: más barato si tienes ese conjunto del Rumble (lo cobra así también el servidor,
-// 83-rouflage-pegatinas-conjunto.sql); CrazyBunny y SlyFox no lo llevan porque sus conjuntos los tiene todo el mundo al empezar. En el armario salen en la pestaña «Pegatinas» (album: no se llevan puestas; las de tus paquetes salen todas en el chat).
+// 84-rouflage-pegatinas-conjunto.sql); CrazyBunny y SlyFox no lo llevan porque sus conjuntos los tiene todo el mundo al empezar. En el armario salen en la pestaña «Pegatinas» (album: no se llevan puestas; las de tus paquetes salen todas en el chat).
 // Cada pegatina tiene un NÚMERO fijo (n) que es lo que viaja por la red (como las frases rápidas): NUNCA se cambia ni se reutiliza el de otra. El
 // servidor sabe de qué paquete es cada número (tablas_juego, «pegatinas»: herramientas/rouflage/rouflage_datos.js) y no deja mandar una que no tienes.
 // pegLienzo(n, lado) da la pegatina dibujada (se dibuja una vez y se guarda); pegMias() las tuyas, por paquetes.

@@ -1,8 +1,8 @@
 {
- "build": 438,
- "hash": "f8ebb62",
- "fecha": "2026-10-23T18:21:09Z",
- "mensaje": "Fans of Rouflage: pegatinas de CrazyBunny y SlyFox a 320 Acciones, y rebaja por conjunto preparada",
+ "build": 439,
+ "hash": "1709849",
+ "fecha": "2026-10-23T18:21:48Z",
+ "mensaje": "Servidor: el SQL de la rebaja de pegatinas pasa a ser el 84 (el 83 ya era el de temporadas)",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

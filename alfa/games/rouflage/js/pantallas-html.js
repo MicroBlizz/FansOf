@@ -263,12 +263,35 @@
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">
     <h2 class="ol" data-tr>PREMIO DIARIO</h2>
-    <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>Si un día no entras, no pierdes nada: sigues por donde ibas.</span></p>
+    <div class="diario-racha" id="diario-racha"><canvas id="diario-racha-dib" width="92" height="104" aria-hidden="true"></canvas><span><b class="ol" id="diario-racha-t"></b><small id="diario-racha-s"></small></span></div>
+    <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>El calendario no se pierde nunca; la racha, sí.</span></p>
     <div class="diario-dias" id="diario-dias"></div>
+    <div class="diario-premios"><b data-tr>PREMIOS DE RACHA</b><div id="diario-premios"></div></div>
+    <p class="diario-escudo" id="diario-escudo"></p>
     <p class="diario-mes" id="diario-mes"></p>
     <p class="diario-gotas"><span data-tr>Tus gotas</span> <b id="diario-gotas">0</b></p>
     <button type="button" class="boton grande" id="b-diario-recoger"></button>
     <button type="button" class="boton peq" id="b-diario-volver" data-tr>Volver</button>
+  </div>
+</div>
+
+<!-- se te secó la racha: rescatarla (diario.js) -->
+<div class="pantalla" id="p-racha" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol mal" data-tr>¡SE TE SECÓ LA RACHA!</h2>
+    <p class="racha-sub" id="racha-sub"></p>
+    <button type="button" class="boton grande" id="b-racha-rescatar"></button>
+    <button type="button" class="boton gris" id="b-racha-no" data-tr>EMPEZAR DE NUEVO</button>
+  </div>
+</div>
+
+<!-- ¿te aviso? (avisos.js, solo en la app de Android) -->
+<div class="pantalla" id="p-avisos" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol" data-tr>¿TE AVISO?</h2>
+    <p class="racha-sub" data-tr>Te mando un aviso por la tarde si tu racha está a punto de secarse. Como mucho dos al día y nunca de noche.</p>
+    <button type="button" class="boton grande" id="b-avisos-si" data-tr>SÍ, AVÍSAME</button>
+    <button type="button" class="boton gris" id="b-avisos-no" data-tr>NO, GRACIAS</button>
   </div>
 </div>
 

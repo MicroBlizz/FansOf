@@ -1,8 +1,8 @@
 {
- "build": 433,
- "hash": "3664d94",
- "fecha": "2026-10-23T17:50:13Z",
- "mensaje": "Fans of Snakes: salir al menú desde la pausa (con aviso) y cartas de acción: Nitro, Salto, Tiempo bala y Dieta, con fusiones Ninja, Cohete y Muda",
+ "build": 434,
+ "hash": "4b4fed4",
+ "fecha": "2026-10-23T17:52:58Z",
+ "mensaje": "Fans of Rouflage: guía del título (te lleva paso a paso a Mi escenario, armario, misiones, amigos, pase, tienda/gachapón y el reto) y vuelven las tarjetas de CAMALEÓN y CAZADOR al menú",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

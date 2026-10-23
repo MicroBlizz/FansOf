@@ -131,6 +131,9 @@ const CATALOGO_AR = (() => {
     it('jefe', 'Jefe de becarios', 'legend', 'talento', 'Talentos: becario nivel 20', TI('JEFE DE BECARIOS', '#ff7a1a')), it('maestro', 'Maestro del camuflaje', 'legend', 'talento', 'Talentos: colado nivel 20', TI('MAESTRO DEL CAMUFLAJE', '#7ee04a')),      // talentos-datos.js
     // los de TRAE A UN COLADO (referidos.js): solo se consiguen trayendo amigos que juegan dos partidas
     it('reclutador', 'Reclutador', 'rara', 'amigos', 'Trae amigos · 1', TI('RECLUTADOR', '#7fe0f0')), it('jeferrhh', 'Jefe de RRHH', 'epica', 'amigos', 'Trae amigos · 5', TI('JEFE DE RRHH', '#ff4b5c')),
+    // los de la RACHA del premio diario (diario.js; el servidor los da en rf_diario, servidor/81-rouflage-racha.sql)
+    it('puntual', 'Puntual', 'rara', 'racha', 'Racha · 7 días', TI('PUNTUAL', '#b4e86a')), it('fichaje', 'Ficha a su hora', 'epica', 'racha', 'Racha · 14 días', TI('FICHA A SU HORA', '#ffb347')),
+    it('empleado', 'Empleado del mes', 'legend', 'racha', 'Racha · 30 días', TI('EMPLEADO DEL MES', '#ffcb3d')),
   ];
   const GE = t => (c, w) => gesto(c, w, t);
   const gestosR = [

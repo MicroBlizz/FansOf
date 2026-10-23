@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.44-a433.3664d94"></script>
+<script src="../../core/js/nucleo.js?v=0.2.44-a434.4b4fed4"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css')</script>
 </head>
@@ -106,7 +106,11 @@
       <div class="tit-guarda-b"><button type="button" class="boton" id="b-guarda-si" data-tr>GUARDAR MI PROGRESO</button><button type="button" class="boton gris" id="b-guarda-no" data-tr>LUEGO</button></div>
     </div>
     <button type="button" class="tit-racha" id="b-diario"><span class="tit-racha-txt"><b id="tit-racha-t"></b><small id="tit-racha-s"></small></span><i class="tit-racha-b" id="tit-racha-b"></i></button>
-    <button type="button" class="boton tit-jugar" id="b-jugar"><b class="ol" data-tr>JUGAR</b><span data-tr>Camaleón o cazador, contra bots</span></button>
+    <div class="papeles tit-papeles">
+      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
+      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
+    </div>
+    <button type="button" class="boton tit-jugar" id="b-jugar" hidden><b class="ol" data-tr>JUGAR</b><span data-tr>Camaleón o cazador, contra bots</span></button>
     <button type="button" class="boton tit-pvp pvp-boton" id="b-pvp"><span class="tit-pvp-txt"><b class="ol" data-tr>EN LÍNEA · PvP</b><span data-tr>Buscar partida o sala con amigos</span></span><i class="tit-pvp-amigos" id="tit-pvp-amigos" hidden></i></button>
     <div class="tit-tarjetas">
       <button type="button" class="tit-tarjeta mis" id="b-misiones"><b data-tr>MISIONES DE HOY</b><span id="tit-mis-t"></span><i class="barra"><i id="tit-mis-b"></i></i></button>
@@ -119,10 +123,6 @@
       <button type="button" class="boton tit-ab amigos" id="b-social"><i data-icono="amigos"></i><b class="ol" data-tr>AMIGOS</b></button>
     </div>
     <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
-    <div class="papeles tit-viejas" hidden>
-      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b></button>
-      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b></button>
-    </div>
   </div>
 </div>
 
@@ -186,6 +186,7 @@
         <div class="op-fila" id="op-fila-vibracion"><span data-tr>Vibración</span><div class="op-seg" id="op-vibracion"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
         <div class="op-fila"><span data-tr>Chat</span><div class="op-seg" id="op-chat"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila" id="op-fila-avisos" hidden><span data-tr>Avisos al móvil</span><div class="op-seg" id="op-avisos"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
       </div>
       <button type="button" class="boton gris" id="b-viejo"></button>
@@ -416,6 +417,8 @@ NUCLEO.juego({
     'js/chat-frases.js', 'js/chat-partida.js', 'js/chat-pegatinas.js', 'js/chat-bots.js', 'js/chat-sala-red.js', 'js/chat-sala.js',      // el chat: frases rápidas en partida y el de la sala de espera
     'js/opciones.js',
     'js/titulo.js',
+    'js/avisos.js',
+    'js/guia.js',
     'js/referidos.js',
     'js/reto.js',
     'js/principal.js',

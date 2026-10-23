@@ -95,6 +95,7 @@ function arTextoDe(it) {
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
   if ((m = /^Diario · día (\d+)$/.exec(t))) return tr('Diario · día {n}', { n: m[1] });
   if ((m = /^Conjunto (.+)$/.exec(t))) return tr('Conjunto {n}', { n: m[1] });
+  if ((m = /^Racha · (\d+) días$/.exec(t))) return tr('Racha de {n} días', { n: m[1] });      // diario.js
   if ((m = /^Trae amigos · (\d+)$/.exec(t))) return +m[1] === 1 ? tr('Trae a 1 amigo') : tr('Trae a {n} amigos', { n: m[1] });      // referidos.js
   return tr(t);
 }

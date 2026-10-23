@@ -54,9 +54,6 @@ IDIOMA.add({
   // la sala
   "CHAT DE LA SALA": "ROOM CHAT",
   "Plegar o desplegar el chat": "Fold or unfold the chat",
-  "Escribe algo (máx. 80)…": "Write something (max. 80)…",
-  "Mensaje para la sala": "Message for the room",
-  "Enviar": "Send",
   "Chat apagado: ni lees ni te leen. Enciéndelo para hablar con la sala.": "Chat off: you don't read and nobody reads you. Turn it on to talk to the room.",
   "Habla con la sala mientras esperáis. Toca un nombre para silenciarlo o reportarlo.": "Talk to the room while you wait. Tap a name to mute or report them.",
   "Estás en la sala. Sé majo: al otro lado hay personas de verdad.": "You're in the room. Be nice: there are real people on the other side.",

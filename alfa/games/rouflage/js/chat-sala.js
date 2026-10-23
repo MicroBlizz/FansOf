@@ -1,9 +1,9 @@
 // Fans of Rouflage · EL CHAT (5 de 5): EL CHAT DE LA SALA DE ESPERA del PvP (p-busca: sala con amigos y BUSCAR PARTIDA mientras se espera). Un panel abajo,
-// «CHAT DE LA SALA», que se pliega para ver la sala: los mensajes, frases rápidas de sala (van como número: cada uno las lee en su idioma) y una caja de texto
-// de 80 letras. Las palabrotas y los datos de contacto los tapa el servidor con ★ (chat-sala-red.js). Los mensajes del sistema van en cursiva («X ha entrado
-// en la sala»: salen de comparar quién hay en la sala). Tocando un nombre: SILENCIAR (solo para ti, en este navegador, por cuenta o por nombre) o REPORTAR
-// (queda en el servidor con el mensaje, para revisarlo en /gestion). Lee lo nuevo cada 3 s (5 s plegado), al ritmo de la sala; lo llama pvpPintaBusca.
-// Con el teclado del móvil abierto, el panel sube con él (visualViewport). Con el chat apagado (interruptor «Chat», chat-frases.js) no se lee nada.
+// «CHAT DE LA SALA», que se pliega para ver la sala: los mensajes y las frases rápidas de sala (van como número: cada uno las lee en su idioma).
+// SIN TEXTO ESCRITO (decisión de Arkioner, 23-10-2026, para evitar problemas): solo frases rápidas; el servidor ya no admite texto (76-rouflage-chat-sin-texto.sql)
+// y los mensajes viejos con texto no se enseñan. Los mensajes del sistema van en cursiva («X ha entrado en la sala»: salen de comparar quién hay en la sala).
+// Tocando un nombre: SILENCIAR (solo para ti, en este navegador, por cuenta o por nombre) o REPORTAR (queda en el servidor con el mensaje, para revisarlo en
+// /gestion). Lee lo nuevo cada 3 s (5 s plegado), al ritmo de la sala; lo llama pvpPintaBusca. Con el chat apagado (interruptor «Chat», chat-frases.js) no se lee nada.
 'use strict';
 
 const CHATS = { dock: null, menu: null, clave: '', desde: 0, msgs: [], gente: null, leyendo: false, tLee: 0, nuevos: 0, sinServidor: false, mandando: false,
@@ -18,28 +18,19 @@ function chatSalaPrepara() {
   d.id = 'chat-sala'; d.className = 'chat-sala'; d.hidden = true;
   d.innerHTML = `<div class="cs-cab"><button type="button" class="cs-plegar" aria-expanded="true"><i class="cs-tira"></i>${chatIcono('#ffcb3d', false, 22)}<b></b><i class="chat-n" hidden></i><i class="cs-flecha"></i></button><span class="cs-tog"></span></div>
     <div class="cs-cuerpo"><div class="cs-lista" role="log" aria-live="polite"></div><p class="cs-apagado" hidden></p><div class="cs-rapidas"></div>
-    <form class="cs-entra" autocomplete="off"><input type="text" maxlength="80" enterkeyhint="send" autocapitalize="sentences" spellcheck="false"><button type="submit" class="cs-env"><svg width="22" height="20" viewBox="0 0 22 20" aria-hidden="true"><path d="M2 10L20 2l-5 16-4-6z" fill="#fff6ea" stroke="#0b0f1c" stroke-width="2.5" stroke-linejoin="round"/></svg></button></form>
     <p class="cs-aviso" hidden></p></div>`;
   E('p-busca').appendChild(d);
   const m = CHATS.menu = document.createElement('div');
   m.className = 'cs-menu'; m.hidden = true; m.setAttribute('role', 'menu');
   d.appendChild(m);
   d.querySelector('.cs-plegar').onclick = () => { play('select'); chatSalaPliega(!CHATS.plegado); };
-  d.querySelector('.cs-entra').onsubmit = ev => { ev.preventDefault(); const inp = d.querySelector('.cs-entra input'); chatSalaManda(inp.value, null, inp); };
-  d.querySelector('.cs-rapidas').onclick = ev => { const b = ev.target.closest('button[data-f]'); if (b) chatSalaManda(null, +b.dataset.f); };
+  d.querySelector('.cs-rapidas').onclick = ev => { const b = ev.target.closest('button[data-f]'); if (b) chatSalaManda(+b.dataset.f); };
   d.querySelector('.cs-lista').onclick = ev => {
     const q = ev.target.closest('.cs-q[data-id]'); if (q) { chatSalaMenu(q); return; }
     const u = ev.target.closest('[data-deshace]'); if (u) { chatSalaSilencia(u.dataset.deshace, u.dataset.n, false); }
   };
   m.onclick = ev => { const b = ev.target.closest('button[data-a]'); if (b) chatSalaAccion(b.dataset.a); };
   document.addEventListener('pointerdown', ev => { if (!m.hidden && !ev.target.closest('.cs-menu, .cs-q')) m.hidden = true; }, true);
-  // el teclado del móvil: el panel sube con él y la lista se encoge para que quepa todo
-  const vv = window.visualViewport;
-  const sube = () => { if (d.hidden || !vv) return; const abajo = Math.max(0, innerHeight - vv.height - vv.offsetTop); d.style.bottom = abajo + 'px'; d.style.setProperty('--cs-vh', Math.round(vv.height) + 'px'); };
-  if (vv) { vv.addEventListener('resize', sube); vv.addEventListener('scroll', sube); }
-  d.querySelector('.cs-entra input').addEventListener('focus', () => { d.classList.add('escribiendo'); setTimeout(sube, 300); });
-  d.querySelector('.cs-entra input').addEventListener('blur', () => { d.classList.remove('escribiendo'); setTimeout(sube, 300); });
-  d.querySelector('.cs-entra input').addEventListener('keydown', ev => { if (ev.key === 'Escape') ev.target.blur(); ev.stopPropagation(); });
   if (window.ResizeObserver) new ResizeObserver(() => chatSalaHueco()).observe(d);
   chatSalaTextos();
 }
@@ -50,8 +41,6 @@ function chatSalaTextos() {
   d.querySelector('.cs-plegar').setAttribute('aria-label', tr('Plegar o desplegar el chat'));
   d.querySelector('.cs-tog').innerHTML = chatTogHtml();
   d.querySelector('.cs-rapidas').innerHTML = CHAT_FRASES.s.map((x, i) => `<button type="button" data-f="${i}">${esc(tr(x))}</button>`).join('');
-  const inp = d.querySelector('.cs-entra input'); inp.placeholder = tr('Escribe algo (máx. 80)…'); inp.setAttribute('aria-label', tr('Mensaje para la sala'));
-  d.querySelector('.cs-env').setAttribute('aria-label', tr('Enviar'));
   d.querySelector('.cs-apagado').textContent = tr('Chat apagado: ni lees ni te leen. Enciéndelo para hablar con la sala.');
 }
 // deja sitio abajo en la pantalla de la sala para que el panel no tape nada (con scroll)
@@ -107,23 +96,22 @@ function chatSalaLee(ya) {
       if (!(m.id > CHATS.desde)) continue;
       CHATS.desde = m.id;
       if (CHATS.msgs.some(x => x.id === m.id)) continue;
+      if (m.frase == null) continue;      // un mensaje viejo con texto escrito: ya no se enseña
       CHATS.msgs.push(m); if (!m.yo && !chatSalaCallado(m)) nuevos++;
     }
     if (nuevos) { chatSalaRecorta(); if (CHATS.plegado) CHATS.nuevos += nuevos; play('pop', 0.4); chatSalaPinta(); }
   }).catch(e => { if (/could not find|PGRST202|HTTP 404|schema cache/i.test(String((e && e.message) || e))) { CHATS.sinServidor = true; CHATS.dock.hidden = true; chatSalaHueco(); } })      // servidor sin el chat (66): no se enseña
     .finally(() => { CHATS.leyendo = false; });
 }
-// mandar un texto o una frase rápida de sala
-function chatSalaManda(texto, frase, inp) {
-  if (!chatOn() || CHATS.mandando) return;
-  if (frase == null && !String(texto || '').trim()) return;
+// mandar una frase rápida de sala (solo frases: el texto escrito se quitó)
+function chatSalaManda(frase) {
+  if (!chatOn() || CHATS.mandando || !(frase >= 0)) return;
   CHATS.mandando = true;
-  Promise.resolve(CHATRED.red.mandar(frase == null ? String(texto).slice(0, 80) : null, frase)).then(r => {
-    if (inp) inp.value = '';
+  Promise.resolve(CHATRED.red.mandar(null, frase)).then(r => {
     play('pop');
     if (r && r.id && !CHATS.msgs.some(x => x.id === r.id)) {
       const v = CHATS.gente && [...CHATS.gente.values()].find(x => x.j.yo), yo = v && v.j;
-      CHATS.msgs.push({ id: r.id, yo: true, nombre: yo ? yo.nombre : '', texto: r.texto, frase: r.frase }); chatSalaRecorta(); chatSalaPintaLista();
+      CHATS.msgs.push({ id: r.id, yo: true, nombre: yo ? yo.nombre : '', frase: r.frase }); chatSalaRecorta(); chatSalaPintaLista();
     }
     chatSalaLee(true);
   }).catch(e => {
@@ -148,19 +136,19 @@ function chatSalaPinta() {
   const n = d.querySelector('.chat-n'), ver = on && CHATS.plegado && CHATS.nuevos > 0;
   n.hidden = !ver; if (ver) n.textContent = CHATS.nuevos > 9 ? '9+' : String(CHATS.nuevos);
   d.querySelector('.cs-apagado').hidden = on;
-  for (const el of d.querySelectorAll('.cs-entra input, .cs-entra button, .cs-rapidas button')) el.disabled = !on;
+  for (const el of d.querySelectorAll('.cs-rapidas button')) el.disabled = !on;
   chatTogPinta(); chatSalaPintaLista(); chatSalaHueco();
 }
 const chatSalaCallado = m => !m.sis && !m.yo && CHATS.silencio.some(s => (m.q && s.q === m.q) || (m.nombre && s.n === m.nombre));
 function chatSalaPintaLista() {
   const l = CHATS.dock && CHATS.dock.querySelector('.cs-lista'); if (!l) return;
   const abajo = l.scrollHeight - l.scrollTop - l.clientHeight < 30;
-  l.innerHTML = !chatOn() ? '' : CHATS.msgs.filter(m => !chatSalaCallado(m)).map(m => {
+  l.innerHTML = !chatOn() ? '' : CHATS.msgs.filter(m => (m.sis || m.frase != null) && !chatSalaCallado(m)).map(m => {
     if (m.sis) return `<div class="cs-m sis">${esc(m.texto)}${m.extra ? ` <button type="button" class="cs-deshace" data-deshace="${esc(m.extra.q)}" data-n="${esc(m.extra.n)}">${tr('Deshacer')}</button>` : ''}</div>`;
-    const txt = m.frase != null ? tr(CHAT_FRASES.s[m.frase] || '') : m.texto || '';
+    const txt = tr(CHAT_FRASES.s[m.frase] || '');
     const color = CHATS.colores[(m.orden | 0) % CHATS.colores.length];
     const nombre = m.yo ? `<span class="cs-q yo">${tr('Tú')}:</span>` : `<button type="button" class="cs-q" data-id="${m.id}" style="color:${color}">${esc(m.nombre || '?')}:</button>`;
-    return `<div class="cs-m${m.frase != null ? ' rapida' : ''}">${nombre}<span>${esc(txt).replace(/(★+)/g, '<i class="tapado">$1</i>')}</span></div>`;
+    return `<div class="cs-m rapida">${nombre}<span>${esc(txt)}</span></div>`;
   }).join('');
   if (abajo) l.scrollTop = l.scrollHeight;
 }

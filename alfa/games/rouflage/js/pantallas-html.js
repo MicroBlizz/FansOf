@@ -32,7 +32,7 @@
       <div class="esc-herr" id="esc-herr"></div>
       <div class="esc-colores" id="esc-colores"></div>
     </div>
-    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
+    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Arrastra el dedo para llevar tu galleta o toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
   </div>
   <div class="esc-zoom" id="esc-zoom">
     <button type="button" id="b-esc-mas" data-tr-title title="Acercar" data-tr-aria aria-label="Acercar"><i data-icono="mas"></i></button>

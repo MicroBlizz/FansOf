@@ -96,7 +96,7 @@ IDIOMA.add({
   "Toca uno para cambiar el estilo y la forma del mapa": "Tap one to change the style and shape of the map",
   "Arrástralo a donde quieras": "Drag it wherever you like",
   "{n} muebles no cabían y se han movido al hueco más cercano": "{n} pieces of furniture didn't fit and moved to the nearest free spot",
-  "Toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.": "Tap the floor to walk there (or use the arrow keys). Pinch to zoom.",
+  "Arrastra el dedo para llevar tu galleta o toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.": "Drag your finger to move your cookie or tap the floor to walk there (or use the arrow keys). Pinch to zoom.",
   "Acercar": "Zoom in",
   "Alejar": "Zoom out",
   "Ir a mi galleta": "Go to my cookie"

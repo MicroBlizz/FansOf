@@ -199,7 +199,10 @@ function escAnda(dt) {
   const yo = MIESC.yo; if (!yo) return false;
   const sala = escenarioSala(), M = escMundo(sala.id), K = MIESC.teclas;
   let vx = 0, vy = 0;
-  if (MIESC.modo === 'pasear') { if (K.has('ArrowLeft') || K.has('a')) vx--; if (K.has('ArrowRight') || K.has('d')) vx++; if (K.has('ArrowUp') || K.has('w')) vy--; if (K.has('ArrowDown') || K.has('s')) vy++; }
+  if (MIESC.modo === 'pasear') {
+    if (K.has('ArrowLeft') || K.has('a')) vx--; if (K.has('ArrowRight') || K.has('d')) vx++; if (K.has('ArrowUp') || K.has('w')) vy--; if (K.has('ArrowDown') || K.has('s')) vy++;
+    const pv = escPalancaVector(); if (pv) [vx, vy] = pv;      // la palanca del dedo (escenario-palanca.js)
+  }
   if (vx || vy) { MIESC.camino = null; MIESC.alArmario = false; MIESC.cam.sigue = true; }
   else if (MIESC.camino) {
     const [tx, ty] = MIESC.camino[0], dx = tx - yo.x, dy = ty - yo.y, d = Math.hypot(dx, dy);
@@ -216,12 +219,7 @@ function escAnda(dt) {
   yo.anda = Math.min(1, yo.anda + dt * 6); yo.paso = (yo.paso || 0) + dt * 11;
   return true;
 }
-function escPintaYo(c) {
-  const yo = MIESC.yo, bote = Math.abs(Math.sin(yo.paso || 0)) * 4 * yo.anda, respira = 1 + Math.sin(MIESC.t * 2.4) * 0.012;
-  c.save(); c.translate(yo.x, yo.y); c.fillStyle = 'rgba(20,10,40,0.25)'; c.beginPath(); c.ellipse(0, 1, 16, 4.5, 0, 0, TAU); c.fill();
-  c.translate(0, -bote); c.rotate(Math.sin((yo.paso || 0)) * 0.06 * yo.anda); c.scale(yo.dir, respira);
-  ARD.vestida(c, 0, 0, Object.assign({ esc: 0.9 }, MIESC.ropa || {})); c.restore();
-}
+// escPintaYo (la galleta, con el cuerpo de la partida): escenario-palanca.js
 
 function preparaEscenario() {
   PANTALLAS.push('p-escenario');

@@ -1,8 +1,8 @@
 {
- "build": 415,
- "hash": "beccbe3",
- "fecha": "2026-10-23T01:12:54Z",
- "mensaje": "Rouflage: la luz de la carga sale de la linterna del cazador cuando apunta al colado",
+ "build": 416,
+ "hash": "d060ab0",
+ "fecha": "2026-10-23T01:32:03Z",
+ "mensaje": "Alfa: corre en el runner de Yoshi (sin gastar minutos de GitHub)",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

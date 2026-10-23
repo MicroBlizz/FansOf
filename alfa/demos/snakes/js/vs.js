@@ -10,10 +10,10 @@
 const RC = 10, RR = 14, PREMIO_VS = 40;
 const RIVALES = ['Becario de Microblizz', 'IAhorro Bot', 'Phony Jr.', 'Clippy 3000', 'Becaria de Phony'];
 const ATAQUES_RIVAL = ['espejo', 'apagon', 'anuncio', 'gigante', 'texto'];
-const VS = { rival: null, proy: [], t: 0 };
+const VS = { rival: null, proy: [], t: 0, ver: false, pos: null, esquina: undefined, aparte: 0 };   // ver: su tablero a la vista (js/vs-pantalla.js)
 
 function empiezaVS() {
-  VS.t = 0; VS.proy = [];
+  VS.t = 0; VS.proy = []; VS.ver = false; VS.pos = null; VS.esquina = undefined;
   VS.rival = { nombre: RIVALES[Math.floor(Math.random() * RIVALES.length)], serp: [[4, 7], [3, 7], [2, 7]], dir: [1, 0], manzana: null, muros: new Set(),
     paso: 0.3, acum: -1, vivo: true, frenesi: 0, puntos: 0, choque: 0 };
   manzanaRival();

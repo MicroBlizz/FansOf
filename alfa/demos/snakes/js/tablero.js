@@ -2,16 +2,23 @@
 // las manzanas y los ítems locos. Las reglas (moverse, comer, morir) están en js/partida.js; esto solo mide y pinta.
 'use strict';
 
-const COLS = 14, ROWS = 20;                 // casillas del tablero
-const TAB = { x0: 0, y0: 36, c: 14, w: 0, h: 0 };   // dónde cae el tablero en el mundo (c = lado de la casilla)
+const COLS = 14;
+let ROWS = 20;                              // las filas dependen del alto del móvil (de 20 a 34): el tablero llega hasta abajo
+const ALTO_HUD = 44;                        // arriba: el marcador y la franja de la locura, el objetivo o el rival (js/hud.js)
+const TAB = { x0: 0, y0: ALTO_HUD, c: 14, w: 0, h: 0 };   // dónde cae el tablero en el mundo (c = lado de la casilla)
 
-// el tablero ocupa todo el ancho; arriba queda el marcador (36) y abajo, todo lo que sobre
+// el tablero ocupa todo el ancho y, de alto, todo lo que queda bajo el marcador. Las filas solo cambian fuera de la partida
+// (si el móvil gira a mitad de partida, la casilla se encoge para que quepa)
 function calculaTablero(W, H) {
-  TAB.c = Math.floor((W - 6) / COLS * 10) / 10;
+  const c = Math.floor((W - 6) / COLS * 10) / 10;
+  if (typeof enPartida !== 'function' || !enPartida()) ROWS = Math.max(20, Math.min(34, Math.floor((H - ALTO_HUD - 4) / c)));
+  TAB.c = Math.min(c, (H - ALTO_HUD - 4) / ROWS);
   TAB.w = TAB.c * COLS; TAB.h = TAB.c * ROWS;
   TAB.x0 = (W - TAB.w) / 2;
-  TAB.y0 = 36;   // pegado al marcador: lo que sobra queda abajo, para la rueda de Opciones, la locura y los dedos
+  TAB.y0 = ALTO_HUD;
 }
+// la fila donde sale la serpiente (los dibujos de muros dejan libre esa fila)
+const filaSalida = () => Math.floor(10 * ROWS / 20);
 
 // centro de una casilla en el mundo
 const cx = c => TAB.x0 + (c + 0.5) * TAB.c;

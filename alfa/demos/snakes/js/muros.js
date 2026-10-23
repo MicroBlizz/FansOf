@@ -8,27 +8,36 @@ let TEMA = TEMA_BASE;
 
 const esMuro = n => JUEGO.muros.has(n[0] + ',' + n[1]);
 function ponMuro(c, r) { if (c >= 0 && c < COLS && r >= 0 && r < ROWS) JUEGO.muros.add(c + ',' + r); }
+// los dibujos están hechos para 20 filas; en un tablero más alto cada fila del dibujo se estira a las que le tocan
+let ESTIRA = false;
+function ponMuroDibujo(c, r) {
+  if (!ESTIRA) { ponMuro(c, r); return; }
+  const k = ROWS / 20, a = Math.floor(r * k), b = Math.max(a, Math.floor((r + 1) * k) - 1);
+  for (let rr = a; rr <= b; rr++) if (rr !== filaSalida()) ponMuro(c, rr);
+}
+function ponDibujo(nombre) { ESTIRA = true; DIBUJOS_MUROS[nombre](); ESTIRA = false; }
 
-// los dibujos de muros (COLS = 14, ROWS = 20; la serpiente sale en la fila 10, columnas 2 a 5, hacia la derecha: se deja libre)
+// los dibujos de muros, para 14 x 20 (se estiran si hay más filas; la serpiente sale en la fila 10, columnas 2 a 5, hacia la
+// derecha: se deja libre)
 const DIBUJOS_MUROS = {
   ninguno: () => {},
-  esquinas: () => { for (const [c, r] of [[1, 1], [12, 1], [1, 18], [12, 18]]) for (let i = 0; i < 3; i++) { ponMuro(c + (c < 7 ? i : -i), r); ponMuro(c, r + (r < 10 ? i : -i)); } },
-  barras: () => { for (let c = 3; c <= 10; c++) { ponMuro(c, 5); ponMuro(c, 15); } },
-  escritorios: () => { for (const [c, r] of [[2, 3], [9, 3], [2, 15], [9, 15], [5, 6], [6, 13]]) for (let i = 0; i < 3; i++) ponMuro(c + i, r); },
-  cruz: () => { for (let r = 2; r <= 17; r++) if (r < 8 || r > 12) ponMuro(7, r); for (let c = 1; c <= 12; c++) if (c < 5 || c > 9) ponMuro(c, 4), ponMuro(c, 16); },
-  columnas: () => { for (const c of [3, 7, 11]) for (let r = 2; r <= 17; r++) if (r !== 9 && r !== 10 && r !== 11 && r % 5 !== 0) ponMuro(c, r); },
-  marco: () => { for (let c = 2; c <= 11; c++) { if (c < 6 || c > 8) { ponMuro(c, 2); ponMuro(c, 17); } } for (let r = 2; r <= 17; r++) { if (r < 8 || r > 12) { ponMuro(1, r); ponMuro(12, r); } } },
-  zigzag: () => { for (let i = 0; i < 6; i++) { ponMuro(2 + i, 3 + i); ponMuro(11 - i, 13 + i); } for (let c = 9; c <= 12; c++) ponMuro(c, 6); for (let c = 1; c <= 4; c++) ponMuro(c, 15); },
-  laberinto: () => { for (let c = 0; c <= 9; c++) ponMuro(c, 4); for (let c = 4; c <= 13; c++) ponMuro(c, 15); for (let r = 6; r <= 8; r++) ponMuro(10, r); for (let r = 12; r <= 13; r++) ponMuro(3, r); },
+  esquinas: () => { for (const [c, r] of [[1, 1], [12, 1], [1, 18], [12, 18]]) for (let i = 0; i < 3; i++) { ponMuroDibujo(c + (c < 7 ? i : -i), r); ponMuroDibujo(c, r + (r < 10 ? i : -i)); } },
+  barras: () => { for (let c = 3; c <= 10; c++) { ponMuroDibujo(c, 5); ponMuroDibujo(c, 15); } },
+  escritorios: () => { for (const [c, r] of [[2, 3], [9, 3], [2, 15], [9, 15], [5, 6], [6, 13]]) for (let i = 0; i < 3; i++) ponMuroDibujo(c + i, r); },
+  cruz: () => { for (let r = 2; r <= 17; r++) if (r < 8 || r > 12) ponMuroDibujo(7, r); for (let c = 1; c <= 12; c++) if (c < 5 || c > 9) ponMuroDibujo(c, 4), ponMuroDibujo(c, 16); },
+  columnas: () => { for (const c of [3, 7, 11]) for (let r = 2; r <= 17; r++) if (r !== 9 && r !== 10 && r !== 11 && r % 5 !== 0) ponMuroDibujo(c, r); },
+  marco: () => { for (let c = 2; c <= 11; c++) { if (c < 6 || c > 8) { ponMuroDibujo(c, 2); ponMuroDibujo(c, 17); } } for (let r = 2; r <= 17; r++) { if (r < 8 || r > 12) { ponMuroDibujo(1, r); ponMuroDibujo(12, r); } } },
+  zigzag: () => { for (let i = 0; i < 6; i++) { ponMuroDibujo(2 + i, 3 + i); ponMuroDibujo(11 - i, 13 + i); } for (let c = 9; c <= 12; c++) ponMuroDibujo(c, 6); for (let c = 1; c <= 4; c++) ponMuroDibujo(c, 15); },
+  laberinto: () => { for (let c = 0; c <= 9; c++) ponMuroDibujo(c, 4); for (let c = 4; c <= 13; c++) ponMuroDibujo(c, 15); for (let r = 6; r <= 8; r++) ponMuroDibujo(10, r); for (let r = 12; r <= 13; r++) ponMuroDibujo(3, r); },
 };
 
 // muros al azar (Reto diario): unos cuantos tramos sueltos lejos de la salida
 function murosAlAzar(n) {
   for (let i = 0; i < n; i++) {
     const largo = 2 + azarEntero(3), vert = azar() < 0.5;
-    let c = azarEntero(COLS), r = azarEntero(ROWS);
+    let c = azarEntero(COLS), r = azarEntero(20);   // en el espacio de 20 filas de los dibujos
     if (Math.abs(r - 10) <= 1) r = r < 10 ? r - 3 : r + 3;
-    for (let k = 0; k < largo; k++) { const rr = vert ? r + k : r; if (Math.abs(rr - 10) > 1) ponMuro(vert ? c : c + k, rr); }   // la fila de salida, libre
+    for (let k = 0; k < largo; k++) { const rr = vert ? r + k : r; if (Math.abs(rr - 10) > 1) ponMuroDibujo(vert ? c : c + k, rr); }   // la fila de salida, libre
   }
 }
 

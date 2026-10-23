@@ -18,7 +18,7 @@ function zonaToque(x, y) {
 
 function dedoBaja(x, y) {
   DEDO.x = DEDO.ox = x; DEDO.y = DEDO.oy = y; DEDO.activo = true; DEDO.movido = false; DEDO.mando = false;
-  if (JUEGO.modo !== 'juego' || OPC.abierto || PUBLI.activo || dentro(rectRueda(), x, y)) return;
+  if (JUEGO.modo !== 'juego' || OPC.abierto || PUBLI.activo || y < TAB.y0) return;   // lo de arriba del tablero es el marcador
   DEDO.mando = true;
   if (SAVE.control === 'palanca') ponPalanca(x, y);
   else if (SAVE.control === 'toques') { const d = zonaToque(x, y); TOQUE.dir = d; TOQUE.t = 0.25; pideDir(espeja(d)); }
@@ -45,7 +45,7 @@ function dedoSube(x, y) {
   if (!DEDO.movido) toque(x, y);   // un toque sin arrastrar
 }
 
-// un toque fuera de la partida (o en la ruedecita): el anuncio de prueba, las Opciones, las cartas o los botones de la pantalla
+// un toque fuera de la partida (o en el marcador): el anuncio de prueba, las Opciones, las cartas o los botones de la pantalla
 function toque(x, y) {
   const J = JUEGO;
   if (PUBLI.activo) { toqueAnuncio(); return; }

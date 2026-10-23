@@ -27,7 +27,7 @@ const JUEGO = {
 };
 
 function nuevaPartida() {
-  const J = JUEGO, c0 = Math.floor(COLS / 2) - 2, r0 = Math.floor(ROWS / 2);
+  const J = JUEGO, c0 = Math.floor(COLS / 2) - 2, r0 = filaSalida();
   J.serp = []; for (let i = 0; i < LARGO_INICIAL; i++) J.serp.push([c0 - i, r0]);
   J.dir = [1, 0]; J.pend = []; J.manzanas = []; J.items = []; J.muros = new Set(); J.monedasCobradas = 0;
   J.puntos = 0; J.mult = 1; J.acum = 0; J.t = 0; J.tFin = 0; J.uyT = 0;

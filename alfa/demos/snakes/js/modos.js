@@ -12,8 +12,8 @@ function empieza(tipo, m = 0, f = 0) {
   TEMA = tipo === 'mundo' ? MUNDOS[m].tema : TEMA_BASE;
   nuevaPartida();
   const J = JUEGO;
-  if (tipo === 'mundo') DIBUJOS_MUROS[MUNDOS[m].fases[f].muros]();
-  if (tipo === 'reto') murosAlAzar(5 + azarEntero(4));
+  if (tipo === 'mundo') ponDibujo(MUNDOS[m].fases[f].muros);
+  if (tipo === 'reto') { ESTIRA = true; murosAlAzar(5 + azarEntero(4)); ESTIRA = false; }
   J.manzanas = []; const p = casillaLibre(); if (p) J.manzanas.push(p);   // con los muros ya puestos
   if (tipo === 'vs') empiezaVS();
   if (tipo === 'reto') mision('reto', 1);

@@ -19,7 +19,8 @@ function pintaPortada(W, H) {
   botonUI(tr('RETO DIARIO'), x0 + mitad + 6, y0 + 108, mitad, 22, () => empieza('reto'), '#7fd7ff');
   botonUI(tr('VS'), x0, y0 + 136, mitad, 22, () => empieza('vs'), '#ff6b6b');
   botonUI(tr('TIENDA'), x0 + mitad + 6, y0 + 136, mitad, 22, () => alMenu('tienda'), '#ffd54a');
-  botonUI(tr('RANKING MUNDIAL'), x0, y0 + 164, w, 20, () => abreRanking(), '#d36bff', '#06110a', 8.5);
+  botonUI(tr('RANKING MUNDIAL'), x0, y0 + 164, mitad, 20, () => abreRanking(), '#d36bff', '#06110a', 8);
+  botonUI(tr('OPCIONES'), x0 + mitad + 6, y0 + 164, mitad, 20, abreOpciones, '#9fb3a6', '#06110a', 8);
   // las estrellas de los mundos y el reto de hoy, pequeñito encima de sus botones
   const est = totalEstrellas(); if (est) { estrella(x0 + mitad - 22, y0 + 110, 3.5); letra(String(est), x0 + mitad - 4, y0 + 110.5, 6.5, '#ffd54a', 'right', '#06110a', 2); }
   if (SAVE.reto && SAVE.reto.dia === hoy() && SAVE.reto.mejor) letra(String(SAVE.reto.mejor), x0 + w - 4, y0 + 110, 6.5, '#fff', 'right', '#06110a', 2);

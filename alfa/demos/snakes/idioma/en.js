@@ -168,4 +168,7 @@ IDIOMA.add({
  "¡{n} ha chocado!": "{n} crashed!",
  "¿Sigues? Una vez por partida": "Continue? Once per run",
  "Colores para daltónicos": "Colour-blind colours",
+ "OCULTAR": "HIDE",
+ "RIVAL": "RIVAL",
+ "{n} pts": "{n} pts",
 });

@@ -1,6 +1,6 @@
 // Fans of Snakes · Opciones: la ventana con la música, los efectos, los colores para daltónicos (manzanas azules) y el control
 // del dedo (Toques, Palanca o Deslizar).
-// Se abre con la ruedecita de abajo (en la partida, la pausa) o desde la portada. Lo elegido se guarda en SAVE.
+// Se abre con el botón de pausa del marcador (js/hud.js) o con el botón OPCIONES de la portada. Lo elegido se guarda en SAVE.
 'use strict';
 
 const CONTROLES = [
@@ -20,18 +20,6 @@ function cierraOpciones() {
   guarda(); SONIDO.boton();
 }
 
-// la ruedecita de abajo a la izquierda (en la portada y en la partida)
-function rectRueda() { const y = Math.min(PAN.H - 16, TAB.y0 + TAB.h + 22); return { x: TAB.x0 + 2, y: y - 12, w: 24, h: 24 }; }
-function pintaRueda(retro) {
-  const r = rectRueda(), x = r.x + 12, y = r.y + 12;
-  zonaUI(r.x, r.y, r.w, r.h, abreOpciones);
-  if (retro) { G.strokeStyle = RETRO.tinta; G.lineWidth = 2; G.strokeRect(r.x + 3, r.y + 3, 18, 18); letraMono('=', x, y, 10, RETRO.tinta); return; }
-  G.fillStyle = '#9cff6b'; G.strokeStyle = '#06110a'; G.lineWidth = 1.5;
-  G.beginPath();
-  for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2, rr = i % 2 ? 7 : 9.5; G.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
-  G.closePath(); G.fill(); G.stroke();
-  circulo(x, y, 3.2, '#06110a', null);
-}
 
 function pintaOpciones(W, H) {
   if (!OPC.abierto) return;

@@ -87,10 +87,10 @@ function toqueCartas(x, y) {
 function pintaMisCartas(retro) {
   const tengo = Object.keys(CARTAS).filter(k => nivel(k) > 0 && !(k === 'portal' && nivel('gusano')));
   if (!tengo.length) return;
-  const x0 = TAB.x0 + 82, ancho = 66, porFila = tengo.length > 5 ? Math.ceil(tengo.length / 2) : tengo.length;
+  const x0 = TAB.x0 + 86, ancho = 60, porFila = tengo.length > 5 ? Math.ceil(tengo.length / 2) : tengo.length;
   const paso = Math.min(13.5, ancho / porFila), s = tengo.length > 5 ? 9 : 12;
   tengo.forEach((k, i) => {
-    const fila = Math.floor(i / porFila), x = x0 + (i % porFila) * paso + paso / 2, y = tengo.length > 5 ? 12 + fila * 12 : 18, n = nivel(k);
+    const fila = Math.floor(i / porFila), x = x0 + (i % porFila) * paso + paso / 2, y = tengo.length > 5 ? 10 + fila * 12 : 16, n = nivel(k);
     if (retro) { letraMono(CARTAS[k].nombre[0] + (CARTAS[k].cargas || n > 1 ? n : ''), x, y, 6, RETRO.tinta); return; }
     iconoCarta(k, x, y, s);
     if (CARTAS[k].cargas || n > 1) letra(String(n), x + s * 0.4, y + s * 0.35, 5.5, '#fff', 'center', '#06110a', 2);

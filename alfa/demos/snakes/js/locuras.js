@@ -66,17 +66,5 @@ function activaLocura(tipo) {
 // el Espejo cambia izquierda por derecha en lo que pide el dedo (js/entrada.js lo pasa por aquí)
 const espeja = d => locuraActiva('espejo') ? [-d[0], d[1]] : d;
 
-// la franja de abajo con la locura en marcha y su cuenta atrás
-function pintaLocura(W, H) {
-  if (LOCURA.t <= 0) return;
-  const L = LOCURAS[LOCURA.tipo], retro = esRetro(), y = Math.min(H - 10, TAB.y0 + TAB.h + (PARTIDA.tipo === 'mundo' ? 32 : 22)), w = TAB.w - 44 - (PARTIDA.tipo === 'vs' && !panelVS().dentroTab ? panelVS().w + 6 : 0), x = TAB.x0 + 36, k = LOCURA.t / LOCURA.dur;
-  if (retro) {
-    letraMono(tr(L.aviso) + ' ' + Math.ceil(LOCURA.t), x + w / 2, y - 6, 7, RETRO.tinta);
-    G.fillStyle = RETRO.tinta; G.fillRect(x, y, w, 4); G.fillStyle = RETRO.fondo; G.fillRect(x + 1, y + 1, w - 2, 2); G.fillStyle = RETRO.tinta; G.fillRect(x + 1, y + 1, (w - 2) * k, 2);
-    return;
-  }
-  letra(tr(L.aviso) + ' · ' + Math.ceil(LOCURA.t), x + w / 2, y - 5, 9, L.color, 'center', '#06110a', 2.5);
-  caja(x, y + 3, w, 5, 2, '#06110a', null); G.fillStyle = L.color; G.fillRect(x + 1, y + 4, (w - 2) * k, 3);
-}
 
 function reiniciaLocuras() { LOCURA.tipo = null; LOCURA.t = 0; LOCURA.proximo = ITEM_CADA; }

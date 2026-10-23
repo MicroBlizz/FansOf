@@ -1,8 +1,8 @@
 {
- "build": 448,
- "hash": "9631b00",
- "fecha": "2026-10-23T22:11:19Z",
- "mensaje": "Fans of Rouflage: el caos primordial solo sale donde se gasta (dentro del botón EN LÍNEA y en las pantallas del PvP), no en todos los menús (decidido por Daniel)",
+ "build": 449,
+ "hash": "e494bb0",
+ "fecha": "2026-10-23T22:26:35Z",
+ "mensaje": "Fans of Rouflage: los niveles premium sin premio dan 150 Gotas (2-7, 19, 28 y 34; catálogo v15 en el servidor) y la ficha del perfil no se sale del marco con datos largos",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

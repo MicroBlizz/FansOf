@@ -57,13 +57,13 @@
 .ar-casilla.sel { border-color: var(--gold); }
 #ar-nombre.r-rara { color: #8fe3ff; } #ar-nombre.r-epica { color: #d7a8ff; } #ar-nombre.r-legend { color: var(--gold); }
 
-.pf-ficha { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px; background: radial-gradient(circle at 30% 40%, #2f4060 0%, #18223a 70%); }
+.pf-ficha { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px; background: radial-gradient(circle at 30% 40%, #2f4060 0%, #18223a 70%); }
 .pf-galleta canvas, #pf-titulo-sitio canvas { display: block; }
 .pf-datos { display: grid; gap: 4px; text-align: left; min-width: 0; }
 .pf-nombre { font-family: var(--font-display); font-weight: 400; font-size: 24px; color: var(--ink); overflow-wrap: anywhere; }
 #pf-titulo-sitio canvas { max-width: 100%; height: auto !important; }
 .pf-datos p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 6px; font-size: 13px; color: var(--ink-dim); border-top: 2px dashed rgba(185, 198, 220, .25); padding-top: 3px; }
-.pf-datos p b { color: var(--ink); text-align: right; white-space: nowrap; margin-left: auto; }      /* si no cabe, la cifra baja entera a la derecha */
+.pf-datos p b { color: var(--ink); text-align: right; margin-left: auto; overflow-wrap: anywhere; }      /* si no cabe, la cifra baja a la derecha (y se parte si ni así cabe: nunca se sale del marco) */
 .pf-coleccion { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
 .pf-fila { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; color: var(--ink); font-family: var(--font-ui); font-weight: 700; font-size: 12px; text-align: left; cursor: pointer; }
 .pf-fila .barra { width: auto; height: 10px; }

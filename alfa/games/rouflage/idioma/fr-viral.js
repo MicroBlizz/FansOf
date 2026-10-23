@@ -2,6 +2,8 @@
 // TRAE A UN COLADO (referidos.js) y jugar en línea sin cuenta. Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  // el pase: lo que da el premium (24-10-2026, con las Gotas de los huecos)
+  "Con PREMIUM consigues además {n} cosas, {a} Acciones y {g} Gotas: con las del pase gratis, el siguiente te sale a mitad de precio.": "Avec PREMIUM, tu obtiens aussi {n} objets, {a} Actions et {g} Gouttes : avec celles du pass gratuit, le suivant te coûte moitié prix.",
   // el título
   "Camaleón o cazador, contra bots": "Caméléon ou chasseur, contre des bots",
   "Buscar partida o sala con amigos": "Chercher une partie ou un salon entre amis",

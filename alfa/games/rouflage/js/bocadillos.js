@@ -82,7 +82,7 @@ function bocadilloAvanza(dt) {
     const b = el.getBoundingClientRect();
     Object.assign(BOC.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); BOC.foco.hidden = false;
     const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
-    BOC.caja.style.left = x + 'px'; BOC.caja.style.top = (arriba ? b.y - r.height - 26 : b.y + b.height + 26) + 'px';
+    BOC.caja.style.left = x + 'px'; BOC.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
     BOC.caja.classList.toggle('abajo', !arriba); BOC.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
   } else {
     BOC.foco.hidden = true; BOC.caja.classList.remove('abajo'); BOC.caja.classList.add('centro');

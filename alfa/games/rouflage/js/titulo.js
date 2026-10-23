@@ -12,7 +12,21 @@ function titMoneda(id, n, dibuja) {
   const el = E(id); if (!el) return;
   el.innerHTML = '';
   const k = arLienzo(22, 22); arPinta(k, (c, w) => dibuja(c, w)); el.appendChild(k);
-  const b = document.createElement('b'); b.textContent = Number(n || 0).toLocaleString(LOCALE_RF); el.appendChild(b);
+  const b = document.createElement('b'); b.textContent = titCorto(n); el.appendChild(b);
+  el.title = Number(n || 0).toLocaleString(LOCALE_RF);      // el número entero, al dejar el dedo o el ratón encima
+}
+// los números grandes, cortos para que quepan en móviles estrechos: 50.000 → 50K, 1.250.000 → 1,2M
+function titCorto(n) {
+  n = Math.floor(Number(n) || 0);
+  if (n >= 1e6) return (Math.floor(n / 1e5) / 10).toLocaleString(LOCALE_RF) + 'M';
+  if (n >= 1e4) return Math.floor(n / 1e3).toLocaleString(LOCALE_RF) + 'K';
+  return n.toLocaleString(LOCALE_RF);
+}
+// en el título, el caos primordial va en la barra de arriba, debajo de las monedas (fijo en la esquina las tapaba); en los demás menús, en su esquina
+function titEnergiaSitio() {
+  if (typeof CAJA_ENERGIA === 'undefined') return;
+  const enTitulo = !E('p-titulo').hidden, sitio = enTitulo ? document.querySelector('#p-titulo .tit-monedas') : document.body;
+  if (sitio && CAJA_ENERGIA.parentNode !== sitio) sitio.appendChild(CAJA_ENERGIA);
 }
 
 function refrescaTitulo() {
@@ -62,6 +76,7 @@ function titGuarda() {
 }
 
 function preparaTitulo() {
+  if (typeof energiaMenu === 'function') { const em = energiaMenu; energiaMenu = hay => { em(hay); titEnergiaSitio(); }; }
   // JUGAR: la pantalla de papel y mapa, con el último papel que elegiste marcado
   let papel = 'camaleon'; try { papel = localStorage.getItem('rouflage-papel') === 'cazador' ? 'cazador' : 'camaleon'; } catch (_) { /* sin guardar */ }
   E('b-jugar').onclick = () => abreBots(papel);

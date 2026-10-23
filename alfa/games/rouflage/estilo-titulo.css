@@ -235,3 +235,39 @@
 .tn-tarjeta.hoy { grid-template-columns: 54px 1fr auto; background: linear-gradient(160deg, #8a2a2a, #4a1414); }
 .tn-dos { display: grid; gap: 4px; }
 .tn-dos .boton { min-height: 34px; padding: 4px 8px 2px; display: inline-flex; gap: 4px; align-items: center; }
+
+/* MÓVILES ESTRECHOS (24-10-2026: en algunos Samsung con la pantalla «grande» el juego mide unos 300 px y todo se salía por la derecha).
+   Las pantallas y las cajas se encogen en vez de ensancharse con su contenido, y el caos primordial va en la barra del título, bajo las monedas. */
+.pantalla { grid-template-columns: minmax(0, 1fr); }
+.caja { grid-template-columns: minmax(0, 1fr); }
+.caja > * { min-width: 0; }
+#p-titulo .tit-barra { align-items: flex-start; }
+#p-titulo .tit-yo { flex: 0 1 auto; }
+#p-titulo .tit-monedas { flex: 0 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; row-gap: 5px; }
+.tit-monedas #rf-energia { position: static; z-index: auto; }
+@media (max-width: 359px) {
+  #p-titulo .tit-yo { gap: 6px; padding-right: 7px; }
+  #p-titulo .tit-yo canvas { width: 36px; height: 36px; }
+  #p-titulo .tit-yo-ir i[data-icono="casa"], #p-titulo .tit-yo-ir i[data-icono="engranaje"] { display: none; }
+  .tit-yo-ir b { font-size: 12px; margin-left: 0; }
+  .tit-moneda { font-size: 12px; padding: 3px 6px 2px 4px; gap: 3px; }
+  .tit-moneda canvas { width: 18px !important; height: 18px !important; }
+  #p-titulo .tit-monedas { gap: 4px; }
+}
+.tn-tarjeta { grid-template-columns: 54px minmax(0, 1fr) auto; }
+.tn-tarjeta.cambio { grid-template-columns: auto minmax(0, 1fr) auto; }
+.tn-texto { min-width: 0; }
+.volumen.ancha .deslizador { width: auto; flex: 1 1 150px; min-width: 0; max-width: 150px; }
+@media (max-width: 359px) {
+  .tn-tarjeta { gap: 7px; padding: 7px 8px; }
+  .tn-tarjeta .boton { min-width: 64px; }
+  .tn-texto b { font-size: 14.5px; }
+  .op-fila:not(.op-ancha) .op-seg { width: 132px; }
+  .op-fila > span { font-size: 13px; }
+}
+.amg-anadir label, .amg-anadir input { min-width: 0; }
+.amg-anadir input { width: 100%; box-sizing: border-box; }
+.amg-anadir label, .amg-anadir input { min-width: 0; }
+.amg-anadir input { width: 100%; box-sizing: border-box; }
+/* la red de seguridad (js/escala.js): por debajo de 360 px de ancho, los menús se reducen enteros en la misma proporción en vez de salirse */
+.pantalla > * { zoom: var(--escala-menu, 1); }

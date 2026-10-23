@@ -87,7 +87,7 @@ function guiaPaso(dt) {
     const b = el.getBoundingClientRect();
     Object.assign(GUIA.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); GUIA.foco.hidden = false;
     const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
-    GUIA.caja.style.left = x + 'px'; GUIA.caja.style.top = (arriba ? b.y - r.height - 26 : b.y + b.height + 26) + 'px';
+    GUIA.caja.style.left = x + 'px'; GUIA.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
     GUIA.caja.classList.toggle('abajo', !arriba); GUIA.caja.classList.remove('centro'); GUIA.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
   } else {
     GUIA.foco.hidden = true; GUIA.caja.classList.remove('abajo'); GUIA.caja.classList.add('centro');

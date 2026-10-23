@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.19
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
+  "Microblizz ha enseñado francés a la nave y Phony solo ha aprendido a pedir cruasanes.": "Microblizz has taught the ship French and Phony only learned how to order croissants.",
   // 0.3.18
   "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
   "Microblizz ha ordenado el diario de a bordo y Phony ha pedido una traducción al klingon.": "Microblizz has tidied the ship's log and Phony asked for a Klingon translation.",

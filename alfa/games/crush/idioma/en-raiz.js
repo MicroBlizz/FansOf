@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.32
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
+  "Microblizz ha aprendido a decir «caramelo» en cuatro idiomas. Phony solo sabe decir «más» en todos.": "Microblizz has learned to say “sweet” in four languages. Phony only knows how to say “more” in all of them.",
   // 0.1.31
   "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
   "Microblizz ha barrido las traducciones viejas y Phony ha encontrado un caramelo debajo de la alfombra.": "Microblizz has swept out the old translations and Phony found a sweet under the rug.",

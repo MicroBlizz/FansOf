@@ -1,22 +1,22 @@
 {
- "build": 444,
- "hash": "6884d1f",
- "fecha": "2026-10-23T21:41:32Z",
- "mensaje": "Fans of Rouflage: la prueba de humo entra por MI PERFIL y la TIENDA (ayuda, opciones, escenario, talentos y gachapón ya no están en el título)",
+ "build": 445,
+ "hash": "ddc3f86",
+ "fecha": "2026-10-23T21:43:46Z",
+ "mensaje": "Release preparada: versiones y novedades de todos los juegos (core cambia por los idiomas); Rouflage 0.2.45 con todo lo nuevo",
  "juegos": {
-  "crush": "0.1.31",
+  "crush": "0.1.32",
   "dark": "0.2.7",
-  "decks": "0.2.13",
+  "decks": "0.2.14",
   "island": "0.3.5",
-  "jump": "0.3.8",
-  "karts": "0.7.7",
-  "nova": "0.3.18",
-  "ratkov": "0.2.21",
-  "rouflage": "0.2.44",
-  "rumble": "0.9.150",
+  "jump": "0.3.9",
+  "karts": "0.7.8",
+  "nova": "0.3.19",
+  "ratkov": "0.2.22",
+  "rouflage": "0.2.45",
+  "rumble": "0.9.151",
   "skate": "0.1.27",
-  "survivors": "0.1.63",
-  "tacticas": "0.1.47",
-  "td": "0.13.79"
+  "survivors": "0.1.64",
+  "tacticas": "0.1.48",
+  "td": "0.13.80"
  }
 }

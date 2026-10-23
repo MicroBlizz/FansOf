@@ -1,8 +1,8 @@
 {
- "build": 445,
- "hash": "ddc3f86",
- "fecha": "2026-10-23T21:43:46Z",
- "mensaje": "Release preparada: versiones y novedades de todos los juegos (core cambia por los idiomas); Rouflage 0.2.45 con todo lo nuevo",
+ "build": 446,
+ "hash": "53e89a2",
+ "fecha": "2026-10-23T22:02:32Z",
+ "mensaje": "Rouflage: fuera la migración de la partida local (SQL 86: rf_estado crea el perfil)",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

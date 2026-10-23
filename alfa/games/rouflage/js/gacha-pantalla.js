@@ -47,7 +47,7 @@ function gachaPinta() {
   const g = gachaEstado(), [t, n] = gachaCuenta();
   E('gacha-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones || 0}</b></span>`;
   E('gacha-cuenta').textContent = tr('Tienes {t} de {n} piezas del gachapón', { t, n });
-  E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas y una Épica cada {e}. Llevas {a} y {b} desde la última.', { r: GACHA.pityRara, e: GACHA.pityEpica, a: g.sinRara, b: g.sinEpica });
+  E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.', { r: GACHA.pityRara, e: GACHA.pityEpica, l: GACHA.pityLegend, a: g.sinRara, b: g.sinEpica, c: g.sinLegend || 0 });
   for (const [id, k] of [['b-gacha-1', 1], ['b-gacha-10', 10]]) {
     // como los del Rumble: «x1» grande y debajo el precio con su gota; el x10, con su cartelito
     const b = E(id), coste = gachaCoste(k); b.innerHTML = (k === 10 ? `<span class="tag">${tr('LA FAVORITA')}</span>` : '') + 'x' + k;

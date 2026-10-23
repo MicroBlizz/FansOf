@@ -1,8 +1,8 @@
 {
- "build": 439,
- "hash": "1709849",
- "fecha": "2026-10-23T18:21:48Z",
- "mensaje": "Servidor: el SQL de la rebaja de pegatinas pasa a ser el 84 (el 83 ya era el de temporadas)",
+ "build": 440,
+ "hash": "5520dd2",
+ "fecha": "2026-10-23T18:26:56Z",
+ "mensaje": "Fans of Rouflage: economía (decidido por Daniel): 20 Gotas = 1 Acción (lo de tienda cuesta x4 en Gotas), el pase premium devuelve 300 Acciones en total en vez de 830 y el gachapón asegura una legendaria cada 90 cápsulas",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

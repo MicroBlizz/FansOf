@@ -207,4 +207,7 @@ IDIOMA.add({
   "OFERTAS DE HOY": "TODAY'S DEALS",
   "La <b>TEMPORADA</b>: en BUSCAR PARTIDA ganas puntos de liga. Al acabar, premio según tu liga.": "The <b>SEASON</b>: in FIND MATCH you earn league points. At the end, a reward based on your league.",
   "En tu <b>PERFIL</b> están también tus <b>TALENTOS</b>.": "Your <b>TALENTS</b> are in your <b>PROFILE</b> too.",
+  // economía (23-10-2026)
+  "Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.": "Guarantees: a Rare or better every {r} capsules, an Epic every {e} and a Legendary every {l}. You're at {a}, {b} and {c} since the last one.",
+  "Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.": "With PREMIUM you also get {n} items and {a} Shares: with the free track's, the next pass is half price.",
 });

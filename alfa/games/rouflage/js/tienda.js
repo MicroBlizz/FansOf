@@ -9,7 +9,7 @@ const TIENDA = {
   acciones: [      // { n: Acciones, eur: precio, extra: % de regalo sobre el pack pequeño }
     { n: 100, eur: 0.99 }, { n: 550, eur: 4.99, extra: 10 }, { n: 1200, eur: 9.99, extra: 20 }, { n: 2600, eur: 19.99, extra: 30 }, { n: 7000, eur: 49.99, extra: 40 },
   ],
-  canje: [{ gotas: 250, n: 50 }, { gotas: 600, n: 125 }, { gotas: 1500, n: 330 }],      // Acciones a cambio de Gotas (las Gotas se ganan jugando: 5 Gotas = 1 Acción, un pelín mejor en los paquetes grandes)
+  canje: [{ gotas: 1000, n: 50 }, { gotas: 2400, n: 125 }, { gotas: 6000, n: 330 }],      // Acciones a cambio de Gotas: 20 Gotas = 1 Acción desde el 23-10-2026 (antes 5: pagar no daba ninguna ventaja), un pelín mejor en los paquetes grandes
   inicio: { eur: 2.99, acciones: 300, cosas: [['cabeza', 'gorra'], ['marcos', 'pixel']] },        // el Pack de inicio: una sola vez
 };
 const eurTexto = v => (IDIOMA_RF === 'es' ? v.toFixed(2).replace('.', ',') + ' €' : '€' + v.toFixed(2));

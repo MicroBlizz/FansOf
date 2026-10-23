@@ -20,7 +20,7 @@ if (ALFA_RF) try { if (localStorage.getItem(AJUSTES.guardado) === null && localS
 // (con euros o cambiando Gotas, 5 por Acción, nunca al revés). La tienda y el armario son propios (tienda.js, armario-precios.js): esto solo da nombres, ratio y saldos a core.
 AJUSTES.monedas = {
   ganada: { id: 'gotas', nombre: 'Gotas', nombre_en: 'Drops', icono: () => '' }, comprada: { id: 'acciones', nombre: 'Acciones', nombre_en: 'Shares', icono: () => '' },
-  ratio: 5, cambio: 5,   // 5 Gotas = 1 Acción (TIENDA.canje, un pelín mejor en los paquetes grandes); aquí no hay azar pagado, así que el cambio no sale caro a propósito
+  ratio: 20, cambio: 20,   // 20 Gotas = 1 Acción (TIENDA.canje, un pelín mejor en los paquetes grandes). Desde el 23-10-2026: con 5 todo lo de pago salía gratis jugando al mismo cambio
   leer: cual => (cual === 'comprada' ? SAVE.acciones : SAVE.gotas) || 0,
   escribir: (cual, n) => { SAVE[cual === 'comprada' ? 'acciones' : 'gotas'] = n; guardaPartida(); },
 };

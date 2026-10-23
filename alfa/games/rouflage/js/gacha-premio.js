@@ -101,7 +101,7 @@ function gpPonFoco(i) {
 function gpBotones() {
   const G = GPREMIO, caja = E('gacha-botones'), x = G.sale && G.sale[G.sel];
   const viejo = caja.querySelector('.gp-accion'); if (viejo) viejo.remove();
-  if (!x || !x.nuevo || (arCat(x.cat).conjuntos && !arCat(x.cat).sala)) return;
+  if (!x || !x.nuevo || (arCat(x.cat).conjuntos && !arCat(x.cat).sala) || arCat(x.cat).album) return;      // un paquete de pegatinas no se pone: ya sale en el chat
   const b = document.createElement('button'); b.type = 'button'; b.className = 'boton gp-accion';
   if (arCat(x.cat).sala) {      // un mueble o un escenario: a tu sala (escenario.js)
     b.textContent = tr('A MI ESCENARIO');

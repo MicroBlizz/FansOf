@@ -113,7 +113,7 @@ function arCompra(cat, it, moneda) {
   ecoEstado();
   if (SAVE[moneda] < pr[moneda]) { play('deny'); avisa(moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return false; }
   SAVE[moneda] -= pr[moneda]; armarioEstado().tengo.push(cat.id + ':' + it.id);
-  if (!cat.conjuntos && !cat.sala) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
+  if (!cat.conjuntos && !arMira(cat)) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
   guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno');
   arPintaTodo();
   return true;

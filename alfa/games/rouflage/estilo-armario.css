@@ -18,6 +18,16 @@
 .ar-vista canvas { display: block; }
 .ar-vista canvas[hidden] { display: none; }
 .ar-vista .ar-extra { align-self: center; }
+/* MOVER y COLADO/BECARIO sobre la vista (armario-mueve.js) */
+.ar-mueve { position: absolute; left: 0; top: 0; z-index: 1; display: grid; gap: 4px; justify-items: start; }
+.ar-mueve[hidden], .ar-mueve-b[hidden] { display: none; }
+.ar-mueve-b { padding: 4px 9px 1px; border-radius: 99px; border: 2px solid var(--outline); box-shadow: 0 2px 0 var(--outline); background: linear-gradient(to bottom, #ffb36b, #ff7a1a);
+  color: var(--outline); font: 400 11px var(--font-display); letter-spacing: 0.04em; cursor: pointer; touch-action: manipulation; }
+.ar-mueve-b.on { background: linear-gradient(to bottom, #fff2a8, #ffcb3d); }
+.ar-mueve-b.colado { background: linear-gradient(to bottom, #b6f58a, #4fae2a); }
+.ar-mueve-b.becario { background: linear-gradient(to bottom, #9fd0ff, #3a7de0); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); }
+.ar-mueve-b:active { transform: translateY(2px); box-shadow: none; }
+#ar-vista { cursor: pointer; touch-action: manipulation; }
 .ar-info { display: grid; gap: 4px; text-align: left; min-width: 0; }
 .ar-info b { font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1.05; color: var(--ink); text-shadow: 0 2px 0 var(--outline); }
 .ar-info span { font-size: 13px; font-weight: 700; color: var(--ink-dim); line-height: 1.2; }

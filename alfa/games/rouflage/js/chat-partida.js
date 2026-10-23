@@ -27,7 +27,10 @@ function chatPrepara() {
   b.onclick = () => { play('select'); chatAbre(!CHAT.abierto); };
   const p = CHAT.panel = document.createElement('div');
   p.id = 'chat-panel'; p.className = 'chat-panel'; p.hidden = true; p.setAttribute('role', 'dialog');
-  p.addEventListener('click', ev => { const f = ev.target.closest('.chat-fr'); if (f && !f.disabled) chatManda(+f.dataset.i); });
+  p.addEventListener('click', ev => {
+    const f = ev.target.closest('.chat-fr'); if (f && !f.disabled) { chatManda(+f.dataset.i); return; }
+    const g = ev.target.closest('.chat-pg'); if (g && !g.disabled) chatPegManda(+g.dataset.n);      // una pegatina (chat-pegatinas.js)
+  });
   const f = CHAT.feed = document.createElement('div');
   f.id = 'chat-filas'; f.className = 'chat-filas'; f.setAttribute('aria-live', 'polite');
   hud.append(f, p, b);
@@ -42,9 +45,12 @@ function chatPintaPanel() {
     <div class="chat-frases">${CHAT_FRASES[canal].map((x, i) => `<button type="button" class="chat-fr${CHAT_MARCA[canal] && CHAT_MARCA[canal][i] ? ' marca m' + i : ''}" data-i="${i}"${on ? '' : ' disabled'}>`
       + (CHAT_MARCA[canal] && CHAT_MARCA[canal][i] ? '<svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="#0b0f1c" stroke-width="3"/><circle cx="8" cy="8" r="2" fill="#0b0f1c"/></svg>' : '')
       + `<span>${esc(tr(x))}</span><kbd>${i + 1}</kbd></button>`).join('')}</div>
+    ${chatPegHtml(on)}
     <div class="chat-pie"><span>${on ? tr(d.pie) : tr('Chat apagado: no llega nada')}</span>${chatTogHtml()}</div>`;
-  CHAT.panelDe = canal + (on ? 1 : 0);
+  CHAT.panelDe = chatPanelClave();
 }
+// cuándo hay que rehacer el panel: otro canal, chat encendido o apagado, o se abren o cierran las pegatinas
+const chatPanelClave = () => chatCanalDe(J.yo) + (chatOn() ? 1 : 0) + (chatPegPuede() ? 'p' : '');
 function chatPintaBoton() {
   const canal = chatCanalDe(J.yo), on = chatOn(), b = CHAT.btn;
   const k = 'chat-boton ' + ({ b: 'bec', c: 'col', f: 'fan' }[canal] || '') + (on ? '' : ' off') + (CHAT.abierto ? ' abierto' : '');
@@ -91,7 +97,9 @@ function chatRecibido(sl, m) {
     const bs = RFP.slots[m.b | 0]; if (m.de !== RFP.host || !bs || bs.humano) return;
     sl = bs;
   }
-  const e = sl && sl.ente, i = m.f | 0; if (!e || !(i >= 0 && i < 8)) return;
+  const e = sl && sl.ente, i = m.f | 0;
+  if (e && i >= 100 && m.b == null) { chatPegRecibido(sl, e, i, m); return; }      // una pegatina (chat-pegatinas.js)
+  if (!e || !(i >= 0 && i < 8)) return;
   const canal = chatCanalDe(e);
   if (!chatOn() || !chatMeLlega(canal)) return;
   chatMuestra(e, canal, i, +m.x || e.x, +m.y || e.y, false, sl.s);
@@ -134,7 +142,7 @@ function chatAvanza(dt) {
   if (CHAT.btn.hidden === ver) { CHAT.btn.hidden = !ver; if (!ver) chatAbre(false); }
   const canal = chatCanalDe(J.yo);
   if (canal !== CHAT.canal) { CHAT.canal = canal; chatPintaBoton(); if (CHAT.abierto) chatPintaPanel(); }
-  if (CHAT.abierto && CHAT.panelDe !== canal + (chatOn() ? 1 : 0)) chatPintaPanel();
+  if (CHAT.abierto && CHAT.panelDe !== chatPanelClave()) chatPintaPanel();
   if (ver) {
     CHAT.btn.classList.toggle('cargando', RELOJ < CHAT.espera);
     if (!CHAT.consejoVisto && !(typeof bocadilloActivo === 'function' && bocadilloActivo()) && !J.pausa) {
@@ -174,6 +182,7 @@ function pintaChat(c, t) {
   }
   for (const d of CHAT.dichos) {
     const p = chatSitioDe(d); if (!p) continue;
+    if (d.peg) { pintaPegDicho(c, d, p, s); continue; }      // una pegatina en vez de bocadillo (chat-pegatinas.js)
     const edad = RELOJ - d.t, al = Math.min(1, (CHAT.durDicho - edad) * 3), pop = 1 + Math.max(0, 1 - edad * 7) * 0.22;
     const alto = d.e && d.e.gesto && d.e.gesto.hasta > RELOJ ? 180 : p.fan ? 58 : 122;      // por encima del rótulo «TÚ» (y del gesto, si hace uno)
     const sx = (p.x - CAM.x) * CAM.z, sy = (p.y - CAM.y) * CAM.z - alto * CAM.z;      // en píxeles de pantalla, desde el centro

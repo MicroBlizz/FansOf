@@ -34,7 +34,7 @@ async function arCompraServidor(cat, it, moneda) {
     const pieza = cat.id + ':' + it.id, deAntes = moneda === 'gotas' ? it.de === 'gotas' : it.de === 'tienda' && !pr.gacha;      // lo que ya vendía rf_comprar
     try { await RFS.llama('rf_comprar_con', { p_pieza: pieza, p_moneda: moneda }); }
     catch (e) { if (deAntes && /Could not find|PGRST202/i.test(String((e && e.message) || e))) await RFS.llama('rf_comprar', { p_pieza: pieza }); else throw e; }   // servidor sin el 65 todavía
-    if (!cat.conjuntos && !cat.sala) armarioEstado().puesto[cat.id] = it.id;
+    if (!cat.conjuntos && !arMira(cat)) armarioEstado().puesto[cat.id] = it.id;
     guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno'); arPintaTodo();
     return true;
   } catch (e) { RFS.error(e); return false; }

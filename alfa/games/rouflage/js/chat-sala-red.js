@@ -28,7 +28,7 @@ const CHATRED = (() => {
       const ahora = Date.now(); L.mios = L.mios.filter(t => ahora - t < 60000);
       if (L.mios.length && ahora - L.mios[L.mios.length - 1] < 1500) return Promise.reject(new Error('chat_espera'));
       if (L.mios.length >= 20) return Promise.reject(new Error('chat_tope'));
-      if (!(frase >= 0 && frase <= 15)) return Promise.reject(new Error('chat_no_valido'));
+      if (!((frase >= 0 && frase <= 15) || (frase >= 100 && typeof PEG_CHAT !== 'undefined' && PEG_CHAT[frase]))) return Promise.reject(new Error('chat_no_valido'));
       L.mios.push(ahora);
       const yo = yoDe(), m = { id: ahora * 100 + Math.floor(Math.random() * 100), orden: yo.orden, nombre: yo.nombre, q: yo.nombre, frase };
       L.lista.push(Object.assign({ yo: true }, m)); L.bc.postMessage(m);

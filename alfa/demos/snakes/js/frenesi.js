@@ -31,6 +31,7 @@ function avanzaFrenesi(dt) {
   JUEGO.frenesiT -= dt;
   if (JUEGO.frenesiT <= 0) {
     JUEGO.frenesiT = 0; JUEGO.mult = 1;
+    if (nivel('tormenta')) JUEGO.frenesi = 0.5;   // la fusión Tormenta
     while (JUEGO.manzanas.length > manzanasEnTablero()) JUEGO.manzanas.pop();   // se quedan las de siempre
     SONIDO.fin_frenesi();
   }

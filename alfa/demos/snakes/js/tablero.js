@@ -2,15 +2,15 @@
 // las manzanas y los ítems locos. Las reglas (moverse, comer, morir) están en js/partida.js; esto solo mide y pinta.
 'use strict';
 
-const COLS = 14, ROWS = 21;                 // casillas del tablero
+const COLS = 14, ROWS = 20;                 // casillas del tablero
 const TAB = { x0: 0, y0: 36, c: 14, w: 0, h: 0 };   // dónde cae el tablero en el mundo (c = lado de la casilla)
 
-// el tablero ocupa todo el ancho; arriba queda el marcador (36) y abajo lo que sobre
+// el tablero ocupa todo el ancho; arriba queda el marcador (36) y abajo, todo lo que sobre
 function calculaTablero(W, H) {
   TAB.c = Math.floor((W - 6) / COLS * 10) / 10;
   TAB.w = TAB.c * COLS; TAB.h = TAB.c * ROWS;
   TAB.x0 = (W - TAB.w) / 2;
-  TAB.y0 = 36 + Math.max(0, (H - 36 - 22 - TAB.h) / 2);
+  TAB.y0 = 36;   // pegado al marcador: lo que sobra queda abajo, para la rueda de Opciones, la locura y los dedos
 }
 
 // centro de una casilla en el mundo

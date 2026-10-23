@@ -2,8 +2,6 @@
 // El tablero lo pinta js/tablero.js; aquí se decide el orden y lo que va encima.
 'use strict';
 
-const BOTONES = { sonido: null };
-
 function pintaTodo(W, H, dt) {
   const retro = esRetro(), fr = esFrenesi() && JUEGO.modo === 'juego';
   // el fondo de toda la pantalla
@@ -19,15 +17,18 @@ function pintaTodo(W, H, dt) {
     pintaEfectos(retro);
     if (zoom) G.restore();
   }
+  pintaApagon();
   pintaAnuncio();
   G.restore();
-  if (JUEGO.modo === 'juego') pintaPalanca(retro);
+  if (JUEGO.modo === 'juego') pintaMandos(retro, dt);
   pintaMarcador(W, retro, fr);
   if (JUEGO.modo !== 'menu') pintaMisCartas(retro);
   pintaLocura(W, H);
   if (JUEGO.modo === 'cartas') pintaCartas(W, H);
   if (JUEGO.modo === 'menu') pintaPortada(W, H);
   if (JUEGO.modo === 'fin') pintaFin(W, H);
+  if (JUEGO.modo === 'menu' || JUEGO.modo === 'juego') pintaRueda(retro);
+  if (OPC.abierto) { OPC.t += dt; pintaOpciones(W, H); }
 }
 
 function pintaMarcador(W, retro, fr) {
@@ -38,23 +39,16 @@ function pintaMarcador(W, retro, fr) {
     letraMono(tr('FRENESÍ'), W / 2 - 4, y + 12, 7, RETRO.tinta, 'right');
     pintaBarraFrenesi(W / 2, y + 8, 48, 8, true);
     letraMono('$' + J.monedasPartida, TAB.x0 + TAB.w - 2, y + 12, 10, RETRO.tinta, 'right');
-    BOTONES.sonido = null;
     return;
   }
   caja(TAB.x0 - 3, y, TAB.w + 6, h, 5, fr ? '#1a0f2a' : '#0f2a1b', fr ? arcoiris(3, J.t, 55) : '#2a4a36', 1.5);
   // la barra de Frenesí con su nombre
-  letra(fr ? tr('¡FRENESÍ!') : tr('FRENESÍ'), TAB.x0 + 4, y + 8, 7, fr ? '#ffd54a' : '#9cff6b', 'left', '#06110a', 2);
+  letra(fr ? tr('¡FRENESÍ!') + ' x' + J.mult + ' · ' + Math.ceil(J.frenesiT) : tr('FRENESÍ'), TAB.x0 + 4, y + 8, 7, fr ? '#ffd54a' : '#9cff6b', 'left', '#06110a', 2);
   pintaBarraFrenesi(TAB.x0 + 4, y + 13, 70, 7, false);
-  if (fr) letra('x' + J.mult + ' · ' + Math.ceil(J.frenesiT), TAB.x0 + 78, y + 16, 7, '#ffd54a', 'left', '#06110a', 2);
   // puntos y monedas
   letra(J.puntos.toLocaleString('es-ES'), TAB.x0 + TAB.w - 4, y + 9, 11, '#fff', 'right', '#06110a', 2.5);
   circulo(TAB.x0 + TAB.w - 26, y + 18.5, 3, '#ffd54a', '#8a5a00', 0.8);
   letra(String(J.monedasPartida), TAB.x0 + TAB.w - 4, y + 18.5, 8, '#ffd54a', 'right', '#06110a', 2);
-  // el altavoz (toca para silenciar)
-  const bx = W / 2 + 6, by = y + 3; BOTONES.sonido = { x: bx - 6, y: by - 2, w: 20, h: 20 };
-  const on = SAVE.musica === 1; G.strokeStyle = on ? '#9cff6b' : '#5a7a66'; G.lineWidth = 1.2; G.fillStyle = G.strokeStyle;
-  G.beginPath(); G.moveTo(bx, by + 6); G.lineTo(bx + 3, by + 6); G.lineTo(bx + 7, by + 2); G.lineTo(bx + 7, by + 14); G.lineTo(bx + 3, by + 10); G.lineTo(bx, by + 10); G.closePath(); G.fill();
-  if (on) { G.beginPath(); G.arc(bx + 8, by + 8, 4, -0.9, 0.9); G.stroke(); } else { G.beginPath(); G.moveTo(bx + 9, by + 5); G.lineTo(bx + 14, by + 11); G.moveTo(bx + 14, by + 5); G.lineTo(bx + 9, by + 11); G.stroke(); }
 }
 
 function pintaPortada(W, H) {
@@ -72,7 +66,7 @@ function pintaPortada(W, H) {
   letra(tr('Come deprisa para hacer racha'), W / 2, y0 + 186, 8, '#7fd7ff', 'center', '#06110a', 2.5);
   letra(tr('Cada 5 manzanas, una carta'), W / 2, y0 + 199, 8, '#ff8a3d', 'center', '#06110a', 2.5);
   letra(tr('Los «?» son locuras. Tú verás.'), W / 2, y0 + 212, 8, '#d36bff', 'center', '#06110a', 2.5);
-  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar · arrastra el dedo para girar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
+  if (Math.sin(t * 4) > -0.3) letra(tr('Toca para jugar'), W / 2, y0 + 232, 9, '#fff', 'center', '#06110a', 2.5);
   if (SAVE.record > 0) letra(tr('Récord: {n}', { n: SAVE.record.toLocaleString('es-ES') }), W / 2, y0 + 262, 8, '#9cff6b', 'center', '#06110a', 2);
   if (SAVE.monedas > 0) letra(tr('Monedas: {n}', { n: SAVE.monedas }), W / 2, y0 + 274, 8, '#ffd54a', 'center', '#06110a', 2);
 }

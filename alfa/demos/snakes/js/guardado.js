@@ -1,4 +1,4 @@
-// Fans of Snakes · Guardado: el récord, las monedas y los ajustes de sonido, en localStorage (clave SAVE_KEY, de js/ajustes.js).
+// Fans of Snakes · Guardado: el récord, las monedas, el sonido y el control elegido, en localStorage (clave SAVE_KEY, de js/ajustes.js).
 'use strict';
 
 const SAVE = {
@@ -7,6 +7,7 @@ const SAVE = {
   partidas: 0,
   musica: 1,       // 0 o 1
   efectos: 1,      // 0 o 1
+  control: 'toques',   // cómo se gira con el dedo: 'toques' | 'palanca' | 'deslizar' (se elige en Opciones)
   menuMus: 'menu', // la canción a la que vuelve el motor de la serie al acabar una corta (ganar o perder)
 };
 

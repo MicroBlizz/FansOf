@@ -6,6 +6,11 @@ const RECT_CARTAS = [];
 
 // los dibujos de las cartas (contorno grueso, sin emojis), centrados en x, y, de tamaño s
 function iconoCarta(k, x, y, s) {
+  if (CARTAS[k].fusion) {   // una fusión: sus dos cartas juntas dentro de un aro brillante
+    G.save(); G.globalAlpha = 0.5 + Math.sin(JUEGO.t * 6) * 0.2; circulo(x, y, s * 0.46, null, CARTAS[k].col, Math.max(1, s * 0.08)); G.restore();
+    const [a, b] = CARTAS[k].fusion; iconoCarta(a, x - s * 0.18, y - s * 0.08, s * 0.62); iconoCarta(b, x + s * 0.18, y + s * 0.1, s * 0.62);
+    return;
+  }
   const c = CARTAS[k].col, o = '#06110a', lw = Math.max(1, s * 0.09);
   G.lineJoin = 'round'; G.lineCap = 'round';
   if (k === 'iman') {
@@ -48,7 +53,7 @@ function pintaCartas(W, H) {
   const J = JUEGO, k = Math.min(1, J.tCartas / 0.25);
   G.fillStyle = `rgba(6,17,10,${0.72 * k})`; G.fillRect(0, 0, W, H);
   const cw = 60, ch = 104, gap = 5, x0 = (W - (3 * cw + 2 * gap)) / 2, y0 = H / 2 - ch / 2 + 10;
-  letra(tr('¡MANZANA {n}!', { n: J.comidas }), W / 2, y0 - 34, 11, '#ff6b6b', 'center', '#06110a', 3);
+  letra(J.comidas ? tr('¡MANZANA {n}!', { n: J.comidas }) : tr('¡CARTA DE SALIDA!'), W / 2, y0 - 34, 11, '#ff6b6b', 'center', '#06110a', 3);
   letra(tr('Elige una carta'), W / 2, y0 - 18, 10, '#fff', 'center', '#06110a', 3);
   RECT_CARTAS.length = 0;
   J.oferta.forEach((key, i) => {
@@ -57,8 +62,11 @@ function pintaCartas(W, H) {
     caja(x, y, cw, ch, 7, '#10251a', C.col, 2.5);
     caja(x + 4, y + 4, cw - 8, 34, 5, '#1b3a28', null);
     iconoCarta(key, x + cw / 2, y + 21, 28);
-    letra(tr(C.nombre), x + cw / 2, y + 47, C.nombre.length > 8 ? 6.5 : 7.5, C.col, 'center', '#06110a', 2);
-    if (C.max > 1) letra(key === 'fantasma' || key === 'escudo' ? tr('Cargas: {n}', { n: nv }) : tr('Nivel {n}', { n: nv }), x + cw / 2, y + 57, 5.5, '#cfe', 'center', null, 0, 700);
+    letra(tr(C.nombre), x + cw / 2, y + 47, C.nombre.length > 14 ? 5.2 : C.nombre.length > 8 ? 6.5 : 7.5, C.col, 'center', '#06110a', 2);
+    if (C.fusion) letra(tr(CARTAS[C.fusion[0]].nombre) + ' + ' + tr(CARTAS[C.fusion[1]].nombre), x + cw / 2, y + 57, 4.8, '#ffd54a', 'center', null, 0, 700);
+    else if (C.cargas) letra(tr('Usos: {n}', { n: nivel(key) + C.cargas }), x + cw / 2, y + 57, 5.5, '#cfe', 'center', null, 0, 700);
+    else if (C.max > 1) letra(tr('Nivel {n}', { n: nv }), x + cw / 2, y + 57, 5.5, '#cfe', 'center', null, 0, 700);
+    if (C.fusion) { caja(x + cw / 2 - 17, y - 6, 34, 10, 4, '#ffd54a', '#06110a', 1); letra(tr('FUSIÓN'), x + cw / 2, y - 0.5, 6, '#06110a', 'center', null, 0); }
     G.font = `700 6px "Baloo 2", system-ui, sans-serif`;
     lineas(C.texto(nv), cw - 8).slice(0, 3).forEach((l, j) => letra(l, x + cw / 2, y + 67 + j * 7, 6, '#fff', 'center', null, 0, 700));
     caja(x + 8, y + ch - 14, cw - 16, 10, 4, C.col, '#06110a', 1);
@@ -75,13 +83,16 @@ function toqueCartas(x, y) {
 }
 
 // la fila de cartas conseguidas, abajo a la izquierda
+// la fila de cartas conseguidas, en el marcador (entre la barra de Frenesí y los puntos); en dos filas si no caben
 function pintaMisCartas(retro) {
-  const y = Math.min(PAN.H - 8, TAB.y0 + TAB.h + 11); let x = TAB.x0 + 6;
-  for (const k in CARTAS) {
-    const n = nivel(k); if (!n) continue;
-    if (retro) { letraMono(CARTAS[k].nombre[0] + n, x + 2, y, 7, RETRO.tinta); x += 14; continue; }
-    iconoCarta(k, x, y, 13);
-    if (n > 1 || k === 'fantasma' || k === 'escudo') letra(String(n), x + 6, y + 4, 6, '#fff', 'center', '#06110a', 2);
-    x += 15;
-  }
+  const tengo = Object.keys(CARTAS).filter(k => nivel(k) > 0 && !(k === 'portal' && nivel('gusano')));
+  if (!tengo.length) return;
+  const x0 = TAB.x0 + 82, ancho = 66, porFila = tengo.length > 5 ? Math.ceil(tengo.length / 2) : tengo.length;
+  const paso = Math.min(13.5, ancho / porFila), s = tengo.length > 5 ? 9 : 12;
+  tengo.forEach((k, i) => {
+    const fila = Math.floor(i / porFila), x = x0 + (i % porFila) * paso + paso / 2, y = tengo.length > 5 ? 12 + fila * 12 : 18, n = nivel(k);
+    if (retro) { letraMono(CARTAS[k].nombre[0] + (CARTAS[k].cargas || n > 1 ? n : ''), x, y, 6, RETRO.tinta); return; }
+    iconoCarta(k, x, y, s);
+    if (CARTAS[k].cargas || n > 1) letra(String(n), x + s * 0.4, y + s * 0.35, 5.5, '#fff', 'center', '#06110a', 2);
+  });
 }

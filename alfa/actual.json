@@ -1,8 +1,8 @@
 {
- "build": 421,
- "hash": "74e938b",
- "fecha": "2026-10-23T02:37:26Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.31, decks 0.2.13, jump 0.3.8, karts 0.7.7, nova 0.3.18, ratkov 0.2.21, rouflage 0.2.44, rumble 0.9.150, survivors 0.1.63, tacticas 0.1.47, td 0.13.79",
+ "build": 422,
+ "hash": "6646cc0",
+ "fecha": "2026-10-23T16:34:53Z",
+ "mensaje": "Fans of Snakes: Opciones con 3 controles (Toques de fábrica), cartas en el marcador, Portal por usos, fusiones y 3 locuras más",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

@@ -9,7 +9,11 @@ const LOCURAS = {
   gigante: { dur: 6, aviso: 'GIGANTE', color: '#ff8a3d' },     // la cámara se acerca a la cabeza (js/locuras-pinta.js)
   anuncio: { dur: 6, aviso: 'ANUNCIO', color: '#d36bff' },     // un anuncio de Microblizz tapa medio tablero
   texto: { dur: 7, aviso: 'MODO TEXTO', color: '#33ff66' },    // el tablero es una terminal de letras
+  apagon: { dur: 7, aviso: 'APAGÓN', color: '#ffe082' },        // todo a oscuras salvo una linterna en la cabeza
+  lluvia: { dur: 7, aviso: 'LLUVIA DE MANZANAS', color: '#ff5a5a' },   // ocho manzanas de golpe
+  turbo: { dur: 5, aviso: 'TURBO x2', color: '#ff3d71' },       // el doble de rápido y el doble de puntos
 };
+const LLUVIA_MANZANAS = 8;
 const RETRO = { fondo: '#8a9a72', tinta: '#1a2214' };   // los dos únicos colores del modo retro
 
 const ITEM_CADA = 8;        // segundos entre un ítem y el siguiente (si no hay ninguno en el tablero)
@@ -22,7 +26,13 @@ const esRetro = () => locuraActiva('retro');
 
 // cada fotograma: cuenta atrás de la locura en marcha y aparición de ítems nuevos
 function avanzaLocuras(dt) {
-  if (LOCURA.t > 0) { LOCURA.t -= dt; if (LOCURA.t <= 0) { LOCURA.t = 0; LOCURA.tipo = null; SONIDO.locura_fin(); } }
+  if (LOCURA.t > 0) {
+    LOCURA.t -= dt;
+    if (LOCURA.t <= 0) {
+      if (LOCURA.tipo === 'lluvia' && !esFrenesi()) while (JUEGO.manzanas.length > manzanasEnTablero()) JUEGO.manzanas.pop();   // escampa
+      LOCURA.t = 0; LOCURA.tipo = null; SONIDO.locura_fin();
+    }
+  }
   for (let i = JUEGO.items.length - 1; i >= 0; i--) { const it = JUEGO.items[i]; it.vive -= dt; if (it.vive <= 0) JUEGO.items.splice(i, 1); }
   if (JUEGO.items.length === 0 && LOCURA.t <= 0) {
     LOCURA.proximo -= dt;
@@ -41,6 +51,7 @@ function cogeLocura(i) {
   LOCURA.tipo = it.tipo; LOCURA.t = L.dur; LOCURA.dur = L.dur;
   if (it.tipo === 'anuncio') preparaAnuncio();
   if (it.tipo === 'gigante') preparaGigante();
+  if (it.tipo === 'lluvia') for (let i = 0; i < LLUVIA_MANZANAS; i++) { const p = casillaLibre(); if (p) JUEGO.manzanas.push(p); }
   JUEGO.locuras++;
   numero(100, TAB.y0 + 60, tr(L.aviso), L.color, 16);
   chispa(cx(it.c), cy(it.r), L.color, 16, 90); tiembla(2, 0.25);
@@ -53,14 +64,14 @@ const espeja = d => locuraActiva('espejo') ? [-d[0], d[1]] : d;
 // la franja de abajo con la locura en marcha y su cuenta atrás
 function pintaLocura(W, H) {
   if (LOCURA.t <= 0) return;
-  const L = LOCURAS[LOCURA.tipo], retro = esRetro(), y = Math.min(H - 8, TAB.y0 + TAB.h + 11), w = 80, x = TAB.x0 + TAB.w - w - 4, k = LOCURA.t / LOCURA.dur;
+  const L = LOCURAS[LOCURA.tipo], retro = esRetro(), y = Math.min(H - 14, TAB.y0 + TAB.h + 22), w = TAB.w - 44, x = TAB.x0 + 36, k = LOCURA.t / LOCURA.dur;
   if (retro) {
     letraMono(tr(L.aviso) + ' ' + Math.ceil(LOCURA.t), x + w / 2, y - 6, 7, RETRO.tinta);
     G.fillStyle = RETRO.tinta; G.fillRect(x, y, w, 4); G.fillStyle = RETRO.fondo; G.fillRect(x + 1, y + 1, w - 2, 2); G.fillStyle = RETRO.tinta; G.fillRect(x + 1, y + 1, (w - 2) * k, 2);
     return;
   }
-  letra(tr(L.aviso), x + w / 2, y - 5, 7, L.color, 'center', '#06110a', 2.5);
-  caja(x, y + 1, w, 4, 2, '#06110a', null); G.fillStyle = L.color; G.fillRect(x + 1, y + 2, (w - 2) * k, 2);
+  letra(tr(L.aviso) + ' · ' + Math.ceil(LOCURA.t), x + w / 2, y - 5, 9, L.color, 'center', '#06110a', 2.5);
+  caja(x, y + 3, w, 5, 2, '#06110a', null); G.fillStyle = L.color; G.fillRect(x + 1, y + 4, (w - 2) * k, 3);
 }
 
 function reiniciaLocuras() { LOCURA.tipo = null; LOCURA.t = 0; LOCURA.proximo = ITEM_CADA; }

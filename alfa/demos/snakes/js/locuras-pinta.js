@@ -71,3 +71,18 @@ function pintaTableroTexto() {
   JUEGO.serp.forEach((s, i) => letraMono(i === 0 ? '>' : LETRAS_SERPIENTE[(i - 1) % LETRAS_SERPIENTE.length], cx(s[0]), cy(s[1]) + 0.5, c * 0.95, i === 0 ? '#ffffff' : verde, 'center', 800));
   if (Math.sin(t * 6) > 0) { const hd = JUEGO.serp[0]; G.fillStyle = verde; G.fillRect(cx(hd[0]) + c * 0.35, cy(hd[1]) + c * 0.3, c * 0.4, 1.5); }   // el cursor
 }
+
+// el Apagón: todo negro salvo una linterna alrededor de la cabeza (y un brillito en cada manzana, para no ir del todo a ciegas)
+function pintaApagon() {
+  if (!locuraActiva('apagon')) return;
+  const h = JUEGO.serp[0], x = cx(h[0]), y = cy(h[1]), r = TAB.c * (3.2 + Math.sin(JUEGO.t * 9) * 0.15);
+  const entra = Math.min(1, (LOCURA.dur - LOCURA.t) * 4, LOCURA.t * 4);
+  G.save();
+  G.beginPath(); G.rect(TAB.x0 - 3, TAB.y0 - 3, TAB.w + 6, TAB.h + 6); G.clip();
+  const g = G.createRadialGradient(x, y, r * 0.4, x, y, r);
+  g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${0.97 * entra})`);
+  G.fillStyle = g; G.fillRect(TAB.x0 - 3, TAB.y0 - 3, TAB.w + 6, TAB.h + 6);
+  G.restore();
+  for (const m of JUEGO.manzanas) { G.globalAlpha = 0.35 + Math.sin(JUEGO.t * 5 + m[0]) * 0.2; circulo(cx(m[0]), cy(m[1]), 1.6, '#ff5a5a', null); }
+  G.globalAlpha = 1;
+}

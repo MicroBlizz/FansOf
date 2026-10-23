@@ -4,7 +4,7 @@
 // cartas (js/cartas.js). Los ítems «?» son las locuras (js/locuras.js).
 'use strict';
 
-const PASO_INICIAL = 0.32;     // segundos por casilla al empezar (despacito)
+const PASO_INICIAL = 0.36;     // segundos por casilla al empezar (despacito)
 const PASO_MINIMO = 0.09;      // lo más deprisa que va (se llega hacia las 35 manzanas)
 const PASO_POR_MANZANA = 0.0065;   // cuánto acelera cada manzana comida
 const LARGO_INICIAL = 4;
@@ -32,7 +32,7 @@ function nuevaPartida() {
   J.puntos = 0; J.mult = 1; J.acum = 0; J.t = 0; J.tFin = 0; J.uyT = 0;
   J.frenesi = 0; J.frenesiT = 0; J.frenesiDur = 0; J.frenesis = 0; J.monedasPartida = 0; J.cortes = 0; J.locuras = 0; J.comidas = 0;
   J.racha = 0; J.pasosRacha = 0; J.mejorRacha = 0;
-  J.cartas = {}; J.oferta = []; J.cartasPend = false; J.tCartas = 0; J.cartasElegidas = 0;
+  J.cartas = {}; J.oferta = []; J.cartasPend = true; J.tCartas = 0; J.cartasElegidas = 0; J.tVivo = 0;   // la primera carta, al empezar
   reiniciaLocuras();
   J.manzanas.push(casillaLibre());
   J.modo = 'juego';
@@ -47,7 +47,7 @@ function pideDir(d) {
   if (J.pend.length < 2) { J.pend.push(d); SONIDO.gira(); }
 }
 
-const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - JUEGO.comidas * PASO_POR_MANZANA) * (esFrenesi() ? 0.85 : 1) * factorVelocidad();
+const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - JUEGO.comidas * PASO_POR_MANZANA) * (esFrenesi() ? 0.85 : 1) * factorVelocidad() * (locuraActiva('turbo') ? 0.55 : 1);
 
 function avanzaJuego(dt) {
   const J = JUEGO; J.t += dt;
@@ -55,6 +55,7 @@ function avanzaJuego(dt) {
   if (J.modo === 'fin') { J.tFin += dt; return; }
   if (J.modo === 'cartas') { J.tCartas += dt; return; }
   if (J.modo !== 'juego') return;
+  J.tVivo += dt;
   if (J.uyT > 0) J.uyT -= dt;
   avanzaFrenesi(dt); avanzaLocuras(dt);
   if (J.cartasPend && !esFrenesi()) { abreCartas(); return; }   // en Frenesí espera a que acabe
@@ -69,7 +70,10 @@ function mueve() {
   const h = S[0];
   let n = [h[0] + J.dir[0], h[1] + J.dir[1]];
   if (n[0] < 0 || n[0] >= COLS || n[1] < 0 || n[1] >= ROWS) {
-    if (nivel('portal')) { n = [(n[0] + COLS) % COLS, (n[1] + ROWS) % ROWS]; chispa(cx(h[0]), cy(h[1]), '#b388ff', 6, 50); SONIDO.portal(); }
+    if (usaPortal()) {
+      if (!nivel('gusano')) J.cartas.portal--;   // el Agujero de gusano no gasta
+      n = [(n[0] + COLS) % COLS, (n[1] + ROWS) % ROWS]; chispa(cx(h[0]), cy(h[1]), '#b388ff', 6, 50); SONIDO.portal();
+    }
     else if (nivel('escudo') && rebotaEscudo()) return;   // este paso no avanza: gira
     else { muere('pared'); return; }
   }

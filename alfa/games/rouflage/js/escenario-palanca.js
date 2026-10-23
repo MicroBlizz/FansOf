@@ -1,7 +1,7 @@
 // Fans of Rouflage · MI ESCENARIO (la palanca): en PASEAR llevas tu galleta como en la partida. Un dedo arrastrado (o el ratón) saca una palanca
 // bajo el dedo y la galleta va hacia donde la empujas, con la cámara detrás; tocar sin arrastrar sigue yendo andando a ese sitio; dos dedos, zoom.
 // La galleta se dibuja con el mismo cuerpo que en la partida (pintaAlubia: anda moviendo brazos y piernas, respira y parpadea), vestida con lo del
-// armario y con su mascota detrás. Lo usan escenario-camara.js (los dedos), escenario.js (escAnda y escPintaYo). Va después de escenario-camara.js.
+// armario y con su mascota detrás; al DECORAR o PINTAR, casi transparente para que no estorbe. Lo usan escenario-camara.js (los dedos), escenario.js (escAnda y escPintaYo). Va después de escenario-camara.js.
 'use strict';
 const ESCPAL = { el: null, radio: 46 };
 
@@ -51,9 +51,28 @@ function escYoEnte() {
 function escPintaYo(c) {
   const yo = MIESC.yo, e = escYoEnte(), ropa = MIESC.ropa || {};
   c.save(); c.translate(yo.x, yo.y); c.scale(0.9, 0.9);
+  const tenue = MIESC.modo !== 'pasear' && escTenue(c, 0.35);      // al decorar o pintar, casi transparente: no tapa los muebles
   if (ropa.mascota && ARD.MASCOTAS && ARD.MASCOTAS[ropa.mascota]) {      // su mascota, detrás
     c.save(); c.translate(-e.mira * 24, 0); c.scale(e.mira, 1); ARD.MASCOTAS[ropa.mascota](c, { t: MIESC.t, mov: e.moviendo ? 1 : 0, susto: false, sem: 0 }); c.restore();
   }
   pintaAlubia(c, e, MIESC.t);
+  if (tenue) delete c.globalAlpha;
   c.restore();
+}
+// pintaAlubia pone su propia transparencia: mientras dura, cada globalAlpha que ponga se multiplica por k (se quita con delete c.globalAlpha)
+function escTenue(c, k) {
+  const d = Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype, 'globalAlpha'); if (!d || !d.set) return false;
+  Object.defineProperty(c, 'globalAlpha', { configurable: true, get() { return d.get.call(c) / k; }, set(v) { d.set.call(c, v * k); } });
+  c.globalAlpha = 1; return true;
+}
+
+// al volver a PASEAR: si al decorar le has puesto un mueble encima, la galleta sale al sitio libre más cercano
+function escSacaYo() {
+  const yo = MIESC.yo; if (!yo) return;
+  const sala = escenarioSala(), M = escMundo(sala.id);
+  if (escLibre(sala, M, yo.x, yo.y)) return;
+  for (let r = 16; r < 400; r += 16) for (let a = 0; a < 16; a++) {
+    const x = yo.x + Math.cos(a / 16 * TAU) * r, y = yo.y + Math.sin(a / 16 * TAU) * r;
+    if (escLibre(sala, M, x, y)) { yo.x = x; yo.y = y; MIESC.sucio = true; return; }
+  }
 }

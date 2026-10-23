@@ -142,9 +142,14 @@ function escAviso(txt) { const a = E('esc-aviso'); a.textContent = txt; a.classL
 const escEnSuelo = p => escTipoEn(escMundoAct(), p.x, p.y) === SUELO;
 // el mueble dentro del mapa (si cabe o no lo dice la huella)
 function escLimita(m) { const M = escMundoAct(); m.x = limita(m.x, 30, M.W - 30); m.y = limita(m.y, 40, M.H - 10); return m; }
+// qué mueble hay bajo el dedo: con margen (unos 22 px de pantalla, para el pulgar) y, si no hay ninguno, el más cercano a menos de 40 px
 function escMuebleEn(p) {
-  const lista = escenarioSala().muebles.slice().sort((a, b) => b.y - a.y);
-  return lista.find(m => { const T = TIPOS_MUEBLE[MUEBLES_SALA[m.id].t]; return p.x > m.x - T.w / 2 - 6 && p.x < m.x + T.w / 2 + 6 && p.y > m.y - (T.tope || T.d + T.h) - 6 && p.y < m.y + 8; }) || null;
+  const lista = escenarioSala().muebles.slice().sort((a, b) => b.y - a.y), z = MIESC.cam.z || 1, mg = Math.max(6, 22 / z);
+  const dentro = lista.find(m => { const T = TIPOS_MUEBLE[MUEBLES_SALA[m.id].t]; return p.x > m.x - T.w / 2 - mg && p.x < m.x + T.w / 2 + mg && p.y > m.y - (T.tope || T.d + T.h) - mg && p.y < m.y + mg; });
+  if (dentro) return dentro;
+  let mejor = null, dm = 40 / z;
+  for (const m of lista) { const T = TIPOS_MUEBLE[MUEBLES_SALA[m.id].t], d = Math.hypot(p.x - m.x, p.y - (m.y - (T.tope || T.d + T.h) / 2)); if (d < dm) { dm = d; mejor = m; } }
+  return mejor;
 }
 const escEnArmario = p => { const a = escMundoAct().armario; return Math.abs(p.x - a.x) < 34 && p.y > a.y - 96 && p.y < a.y + 8; };
 // pone un mueble nuevo en p (o en el hueco libre más cercano, si está a mano): con su «pop», sus chispas y marcado
@@ -158,7 +163,9 @@ function escPon(it, p, lejos = 90) {
 }
 // tocar una tarjeta: el mueble sale donde miras (en el hueco libre más cercano al centro de la pantalla)
 function escPonDondeMiras(it) {
-  const c = MIESC.cam, m = escPon(it, { x: c.x, y: c.y + 20 }, 700);
+  const c = MIESC.cam, yo = MIESC.yo, p = { x: c.x, y: c.y + 20 };
+  if (yo && Math.hypot(p.x - yo.x, p.y - yo.y) < 60) p.x = yo.x + (yo.x + 70 < escMundoAct().W - 40 ? 70 : -70);      // nunca encima de tu galleta: a su lado
+  const m = escPon(it, p, 700);
   if (m && MIESC.modo === 'decorar') escAviso(tr('Arrástralo a donde quieras'));
   return m;
 }
@@ -166,7 +173,7 @@ function escEmpiezaArrastre(m, p) { MIESC.sel = m; MIESC.drag = { m, dx: m.x - p
 function escArrastra(p) {
   const d = MIESC.drag; if (!d) return;
   const nx = p.x + d.dx, ny = p.y + d.dy;
-  if (d.movido || Math.hypot(nx - d.x0, ny - d.y0) > 4) { d.m.x = Math.round(nx); d.m.y = Math.round(ny); escLimita(d.m); d.movido = true; }
+  if (d.movido || Math.hypot(nx - d.x0, ny - d.y0) > 4) { d.m.x = Math.round(nx); d.m.y = Math.round(ny - (d.levanta || 0)); escLimita(d.m); d.movido = true; }      // con el dedo, un poco por encima para verlo
   MIESC.sucio = true;
 }
 function escSuelta() {

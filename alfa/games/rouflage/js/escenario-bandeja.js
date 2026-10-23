@@ -11,7 +11,7 @@ function escCosasDe(tab) {
   return arCat('muebles').items.filter(it => MUEBLES_SALA[it.id] && MUEBLES_SALA[it.id].g === tab).map(it => ({ cat: 'muebles', it }));
 }
 function escModo(m, sinSonido) {
-  MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else MIESC.cam.sigue = true; if (m !== 'decorar') MIESC.sel = null;
+  MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else { MIESC.cam.sigue = true; escSacaYo(); } if (m !== 'decorar') MIESC.sel = null;
   if (m === 'pintar') MIESC.tab = 'pintar'; else if (MIESC.tab === 'pintar') MIESC.tab = 'muebles';
   if (!sinSonido) play('select');
   E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-pasear').hidden = m !== 'pasear';

@@ -92,7 +92,7 @@ function escAbajo(e) {
   const t = MIESC.toques.get(e.pointerId), p = escAMundo(e); MIESC.puntero = p; MIESC.sucio = true;
   if (e.button === 1 || e.button === 2) { t.pan = true; t.movido = true; return; }      // la rueda o el botón derecho: siempre mueven la vista
   if (MIESC.modo === 'pintar') { t.pinta = true; escPincelAbajo(p); return; }
-  if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); t.mueble = true; play('tick'); return; } }
+  if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); if (e.pointerType !== 'mouse') MIESC.drag.levanta = 34 / (MIESC.cam.z || 1); t.mueble = true; play('tick'); return; } }
   if (MIESC.modo === 'pasear') { t.palanca = true; return; }      // PASEAR: arrastrar lleva la galleta (escenario-palanca.js)
   t.pan = true;
 }

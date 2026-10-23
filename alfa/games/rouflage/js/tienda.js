@@ -12,7 +12,7 @@ const TIENDA = {
   canje: [{ gotas: 1000, n: 50 }, { gotas: 2400, n: 125 }, { gotas: 6000, n: 330 }],      // Acciones a cambio de Gotas: 20 Gotas = 1 Acción desde el 23-10-2026 (antes 5: pagar no daba ninguna ventaja), un pelín mejor en los paquetes grandes
   inicio: { eur: 2.99, acciones: 300, cosas: [['cabeza', 'gorra'], ['marcos', 'pixel']] },        // el Pack de inicio: una sola vez
 };
-const eurTexto = v => (IDIOMA_RF === 'es' ? v.toFixed(2).replace('.', ',') + ' €' : '€' + v.toFixed(2));
+const eurTexto = v => (IDIOMA_RF === 'en' ? '€' + v.toFixed(2) : v.toFixed(2).replace('.', ',') + ' €');
 
 // el icono de las Acciones: un título de acciones con su flecha verde que sube y el sello dorado
 function pintaAcciones(c, w) {
@@ -91,7 +91,7 @@ function tiendaPinta() {
     p.premium ? { txt: tr('YA ES TUYO') } : { moneda: 'acciones', txt: String(ECO.premium), tengo: SAVE.acciones, hace: ECO.premium }, p.premium ? null : () => { pasePremium(); tiendaPinta(); }, 'oferta'));
   // paquetes de Acciones, por euros
   const ac = E('tienda-acciones'); ac.innerHTML = '';
-  for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(IDIOMA_RF === 'es' ? 'es-ES' : 'en-GB') }),
+  for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, RFS.activo() ? () => tiendaServidor('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n })) : () => tiendaCompra(tr('{n} Acciones', { n: pk.n }), () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';

@@ -37,7 +37,7 @@ function pintaInfoBoton(c, w) {
   c.beginPath(); rrPathRF(c, 17, 16.5, 6, 14, 2.4); c.fill(); c.lineWidth = 1.6; c.stroke();
   c.restore();
 }
-const pctRF = v => (IDIOMA_RF === 'es' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(Math.round(v * 100) / 100)) + ' %';
+const pctRF = v => (IDIOMA_RF === 'en' ? String(Math.round(v * 100) / 100) : String(Math.round(v * 100) / 100).replace('.', ',')) + ' %';
 
 let _gachaReloj = 0;
 function abreGacha() { gachaEstado(); if (RFS.activo()) RFS.relojes(); GACHA_UI.ocupado = false; E('gacha-result').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); if (!_gachaRAF) _gachaRAF = requestAnimationFrame(gachaDibuja); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }

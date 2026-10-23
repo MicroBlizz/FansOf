@@ -165,3 +165,6 @@ body.op-zurdo #acciones { right: auto; left: calc(var(--izq) + 12px); flex-direc
 body.op-zurdo .accion.retiro, body.op-zurdo .accion.poder, body.op-zurdo .accion.gesto, body.op-zurdo .accion.chivato { right: auto; left: calc(var(--izq) + 12px); }
 body.op-zurdo #hud:has(#b-poder:not([hidden]), #b-chivato:not([hidden])) #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; }
 @media (orientation: landscape) and (max-height: 520px) { body.op-zurdo #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; } }
+#p-opciones .idioma-fl { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+#p-opciones .idioma-fl button { padding: 3px; }
+#p-opciones .idioma-fl button svg { width: 30px; height: 20px; }

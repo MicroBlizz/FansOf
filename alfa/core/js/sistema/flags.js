@@ -30,7 +30,7 @@
   };
   const flagRemoto = nombre => remotos[nombre];
   const configRemota = clave => config[clave];   // el JSON de esa clave para este juego (o el de todos), o undefined
-  const flagMensaje = nombre => { const r = remotos[nombre]; return r ? ((NUCLEO.idioma === 'en' && r.mensaje_en) || r.mensaje || '') : ''; };
+  const flagMensaje = nombre => { const r = remotos[nombre]; return r ? ((NUCLEO.idioma !== 'es' && r.mensaje_en) || r.mensaje || '') : ''; };
   const alCambiarFlags = fn => { oyentes.push(fn); };
   const comparaVersion = (a, b) => { const x = String(a).split('-')[0].split('.').map(Number), y = String(b).split('-')[0].split('.').map(Number); for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d; } return 0; };
 

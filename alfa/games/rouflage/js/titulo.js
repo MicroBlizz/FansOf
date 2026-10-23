@@ -12,7 +12,7 @@ function titMoneda(id, n, dibuja) {
   const el = E(id); if (!el) return;
   el.innerHTML = '';
   const k = arLienzo(22, 22); arPinta(k, (c, w) => dibuja(c, w)); el.appendChild(k);
-  const b = document.createElement('b'); b.textContent = Number(n || 0).toLocaleString(IDIOMA_RF === 'en' ? 'en-US' : 'es-ES'); el.appendChild(b);
+  const b = document.createElement('b'); b.textContent = Number(n || 0).toLocaleString(LOCALE_RF); el.appendChild(b);
 }
 
 function refrescaTitulo() {

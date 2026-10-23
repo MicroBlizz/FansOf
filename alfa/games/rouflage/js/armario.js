@@ -84,7 +84,7 @@ function lienzoBlanco(e) {
 }
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
 // lo que cuestan N Acciones en euros, al precio del paquete pequeño (solo se enseña en la ventana de confirmar la compra: armario-compra.js)
-function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
+function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'en' ? e : e.replace('.', ','); }
 // cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
 function arTextoDe(it) {
   const t = it.txt, pr = arPrecio(it); let m;

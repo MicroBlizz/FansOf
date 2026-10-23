@@ -22,13 +22,19 @@ const NUCLEO = (() => {
   const cerrado = !!(window.PROXIMAMENTE && PROXIMAMENTE.cerrado);   // si lo está, la página ya es la de «Próximamente»: no se carga nada
   const pedido = [];   // todo lo que carga la página: es lo que se guarda para jugar sin conexión
 
-  // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es' y
-  // cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
-  const IDIOMAS = ['es', 'en'];
+  // EL IDIOMA: el que el jugador elija en Opciones (se guarda en este navegador) o, si no ha elegido, el del navegador: español → 'es', uno de
+  // IDIOMAS → ese, y cualquier otro → 'en'. Cambiarlo recarga la página. Los diccionarios solo se cargan si no es español (ver core/js/sistema/idioma.js).
+  // Un juego que no tenga diccionario de ese idioma (no lo pasa en juego({ idioma })) se juega en inglés; NUCLEO.idiomas dice cuáles ofrece.
+  const IDIOMAS = ['es', 'en', 'pt', 'fr', 'de', 'it'];
   const idiomaElegido = () => { try { return localStorage.getItem('fansof-idioma') || ''; } catch (e) { return ''; } };
   const idiomaDelNavegador = () => { for (const l of (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es'])) { const c = String(l).slice(0, 2).toLowerCase(); if (IDIOMAS.includes(c)) return c; } return 'en'; };
-  const idioma = IDIOMAS.includes(idiomaElegido()) ? idiomaElegido() : idiomaDelNavegador();
+  let idioma = IDIOMAS.includes(idiomaElegido()) ? idiomaElegido() : idiomaDelNavegador();
   document.documentElement.lang = idioma;
+  const nucleo = {};   // lo que se devuelve (NUCLEO): se rellena al final; el idioma puede cambiar al registrar el juego
+  function ajustaIdioma(dic) {
+    if (idioma !== 'es' && idioma !== 'en' && !dic[idioma]) { idioma = 'en'; document.documentElement.lang = idioma; }
+    nucleo.idioma = idioma; nucleo.idiomas = ['es', 'en'].concat(Object.keys(dic).filter(i => i !== 'es' && i !== 'en' && IDIOMAS.includes(i)));
+  }
   function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
   // EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se carga core/js/sistema/desarrollo.js,
   // un botón «DEV» con utilidades para quien trabaja en el juego. En la web publicada no se carga ni se ve. El comparador lo apaga a propósito.
@@ -41,7 +47,8 @@ const NUCLEO = (() => {
     if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) return false; // la app de Android también es «localhost»
     return ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   })();
-  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...] } })
+  const DICCIONARIOS = { en: ['idioma/en-serie-1.js', 'idioma/en-serie-2.js', 'idioma/en-serie-3.js', 'idioma/en-pantallas-1.js', 'idioma/en-pantallas-2.js', 'idioma/en-pantallas-3.js', 'idioma/en-pantallas-4.js', 'idioma/en-pantallas-5.js', 'idioma/en-plantillas.js', 'idioma/en-plantillas-2.js', 'idioma/en-extra.js', 'idioma/en-monedas.js', 'idioma/en-pases.js', 'idioma/en-salon.js', 'idioma/en-frases.js', 'idioma/en-feedback.js'],
+    pt: ['idioma/pt-ligero.js'], fr: ['idioma/fr-ligero.js'], de: ['idioma/de-ligero.js'], it: ['idioma/it-ligero.js'] };   // los de lo común, por idioma; cada juego añade los suyos en juego({ idioma: { en: [...], pt: [...] } }). De momento solo el inglés cubre todo lo común: los demás idiomas llevan lo que usan los juegos ligeros (*-ligero.js) y un juego solo los ofrece si tiene su diccionario
 
   // LO COMÚN, en el orden en que se carga. Un archivo nuevo de core se apunta aquí y lo reciben todos los juegos.
   const COMUN = [
@@ -131,6 +138,7 @@ const NUCLEO = (() => {
   // idioma: los diccionarios de cada idioma del juego, por ejemplo { en: ['idioma/en.js'] }
   function juego({ antes = [], despues = [], idioma: dic = {}, ligero = false }) {
     if (cerrado) return;
+    ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
     codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
@@ -146,6 +154,7 @@ const NUCLEO = (() => {
 
   // Una página que no es un juego (la de la raíz) también se traduce: carga idioma.js y los diccionarios de lo común y los que se le den
   function idiomaSolo(dic = {}) {
+    ajustaIdioma(dic);
     codigo(CORE + 'js/sistema/idioma.js');
     if (idioma !== 'es') {
       (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo);
@@ -169,7 +178,8 @@ const NUCLEO = (() => {
     } catch (e) { /* el navegador no lo permite aquí */ }
   }
 
-  return { version, nativa, alfa, idioma, elegirIdioma, desarrollo, estilos, juego, idiomaSolo };
+  Object.assign(nucleo, { version, nativa, alfa, idioma, idiomas: ['es', 'en'], elegirIdioma, desarrollo, estilos, juego, idiomaSolo });
+  return nucleo;
 })();
 const VERSION = NUCLEO.version;
 // Aviso de derechos en la consola del navegador: el código del navegador se puede leer, pero no es libre; lo que vale es la licencia.

@@ -108,6 +108,7 @@ IDIOMA.add({
   "EMPLEADO DEL MES": "EMPLOYEE OF THE MONTH",
   // los avisos al móvil
   "Avisos al móvil": "Phone notifications",
+  "Idioma": "Language",
   "¿TE AVISO?": "SHALL I REMIND YOU?",
   "Te mando un aviso por la tarde si tu racha está a punto de secarse. Como mucho dos al día y nunca de noche.": "I'll send you a reminder in the evening if your streak is about to dry up. Two a day at most, never at night.",
   "SÍ, AVÍSAME": "YES, REMIND ME",

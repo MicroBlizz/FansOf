@@ -1,8 +1,8 @@
 {
- "build": 419,
- "hash": "79abfab",
- "fecha": "2026-10-23T02:13:44Z",
- "mensaje": "Idioma: sin avisos del comprobador (quita traducciones pisadas, un juego puede sobrescribir lo común)",
+ "build": 420,
+ "hash": "b08faf3",
+ "fecha": "2026-10-23T02:22:24Z",
+ "mensaje": "Novedades: el botón de jugar de los juegos nuevos sigue la misma lógica (Próximamente / Jugar beta)",
  "juegos": {
   "crush": "0.1.30",
   "dark": "0.2.7",

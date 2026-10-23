@@ -11,6 +11,12 @@ const t = (s, datos) => (typeof tr === 'function' ? tr(s, datos) : s);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const nov = { fondo: document.getElementById('novedades'), volver: null };
 const ENTRADAS = {};   // id de tarjeta → { ver, entries }: los informes de cada juego, para su ficha (biblioteca/tienda.js)
+// el botón de jugar sigue la misma lógica que los de la biblioteca (core/js/proximamente.js): cerrado en la release → PRÓXIMAMENTE; abierto solo por el rol beta → JUGAR BETA
+function botonJugar(enlace) {
+  const id = (String(enlace).match(/(?:games|demos)\/([^/]+)/) || [])[1];
+  if (id && !PROXIMAMENTE.jugable(id)) return `<span class="ol" style="opacity:.6">${esc(t('PRÓXIMAMENTE'))}</span>`;
+  return `<a class="ol" href="${esc(enlace)}">${esc(t(id && PROXIMAMENTE.enBeta(id) ? 'JUGAR BETA' : 'JUGAR'))}</a>`;
+}
 // JUEGOS NUEVOS: del boletín de novedades/lista.js (solo el primero), con el color de su tarjeta en la librería
 function pintarNuevos(b) {
   const caja = document.getElementById('nov-nuevos');
@@ -18,7 +24,7 @@ function pintarNuevos(b) {
   caja.innerHTML = b && b.nuevos && b.nuevos.length ? `<h3 class="ol">${esc(t('JUEGOS NUEVOS'))}</h3>` + b.nuevos.map(j => {
     const tarjeta = document.getElementById(j.tarjeta), color = tarjeta ? tarjeta.style.getPropertyValue('--wc') : '';
     return `<div class="nov-nuevo"${color ? ` style="--wc: ${esc(color)}"` : ''}><div><b class="ol">${esc(t(j.nombre))}</b><span>${esc(t(j.texto))}</span></div>`
-      + `<a class="ol" href="${esc(j.enlace)}">${esc(t('JUGAR'))}</a></div>`;
+      + botonJugar(j.enlace) + '</div>';
   }).join('') : '';
   // las demos sin informe propio; las que ya tienen js/novedades.js salen solas en su línea
   for (const o of (b && b.otros) || []) if (!JUEGOS.some(j => j[0] === o.tarjeta)) fila(o.tarjeta, o.nombre, '', t(o.texto));

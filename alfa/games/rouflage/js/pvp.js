@@ -2,7 +2,7 @@
 // abierta o abres una; arranca con 10 o a los 10 s de ser dos, y solo corre la espera con 2 o más), reparte los PAPELES al azar (al menos un cazador y un camaleón de verdad, y
 // como mucho 2 cazadores y 8 camaleones en total: un cazador por cada 4 camaleones o más) y cobra el caos primordial. Los huecos hasta 10 los llena la máquina (becarios y
 // camaleones bot) y los mueve el ANFITRIÓN: el humano de menor número de sala que siga conectado; manda cómo van todos, lleva el reloj y las fases, decide los disparos y quién gana.
-// Si se cae, el siguiente recoge a la máquina donde estaba. Cada uno lleva su personaje y manda 5 a 10 veces por segundo dónde está (pvp-sync.js). Gana un BANDO: los camaleones si
+// Si se cae, el siguiente recoge a la máquina donde estaba. Cada uno lleva su personaje y manda dónde está hasta 8 veces por segundo si se mueve y 1 si está quieto (pvp-sync.js). Gana un BANDO: los camaleones si
 // aguantan el tiempo o los becarios se quedan sin cartas; los cazadores si despiden a todos. El servidor apunta el resultado (rouflage_pvp_cerrar) y paga los puntos.
 // Este archivo: el estado, el reparto de plazas, el comienzo de la partida, el anfitrión, el final y el abandono. Las pantallas están en pvp-pantallas.js.
 // Abierto para todos (sin flags). ?pvp=local: pruebas entre pestañas del mismo navegador, sin servidor ni cuenta.
@@ -10,7 +10,7 @@
 
 const RFP = { activo: false, red: null, canal: null, info: null, sala: null, buscando: null, slots: [], yo: -1, host: 0, soyHost: false, mandoListo: false,
   rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', mensajes: 0, ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0 };
-const RFP_AJ = { envioHz: 15, avisosSala: 40, iaHz: 10, sinRed: 8, sinAnfitrion: 3.5, gracia: 12, entreMensajes: 0 };      // avisos por segundo de cada jugador como mucho (con muchos baja para que toda la sala sume unos 40) · segundos sin noticias de alguien antes de darlo por ido o de pasar el mando · segundos de gracia al empezar (todos están cargando)
+const RFP_AJ = { envioHz: 8, quietoHz: 1, avisosSala: 24, iaHz: 10, iaQuietoHz: 2, sinRed: 8, sinAnfitrion: 3.5, gracia: 12, entreMensajes: 0 };      // desde el 23-10-2026 (red más ligera): moviéndote 8 avisos/s, quieto o congelado 1/s; el anfitrión manda los bots a 10/s si alguno se mueve y a 2/s si están todos quietos. Antes 15/s siempre y 10/s siempre: una sala llena gastaba ~50 mensajes/s y el plan de Supabase da 100 en total      // avisos por segundo de cada jugador como mucho (con muchos baja para que toda la sala sume unos 40) · segundos sin noticias de alguien antes de darlo por ido o de pasar el mando · segundos de gracia al empezar (todos están cargando)
 
 // ---------- buscar partida ----------
 // opc: nada (partida pública), { crear: true } (sala con amigos nueva) o { codigo } (entrar en la de un amigo). Las salas con amigos no gastan caos primordial

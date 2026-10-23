@@ -1,8 +1,8 @@
 {
- "build": 411,
- "hash": "9656bdc",
- "fecha": "2026-10-23T00:00:57Z",
- "mensaje": "Web: el enlace de la beta de Android solo lo ven las cuentas con rol alfa, beta o admin (en TU CUENTA)",
+ "build": 412,
+ "hash": "5a2b50a",
+ "fecha": "2026-10-23T01:01:47Z",
+ "mensaje": "Rouflage: pantalla de carga con el título camuflado, un becario cazador paseando y un colado en la última E (arte del propio juego)",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

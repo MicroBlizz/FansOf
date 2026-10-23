@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.42-a411.9656bdc"></script>
+<script src="../../core/js/nucleo.js?v=0.2.42-a412.5a2b50a"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css')</script>
 </head>
@@ -242,7 +242,30 @@
 <!-- las pantallas de los menús (PvP, armario, tienda, gachapón, pase, misiones, diario, perfil) las pone js/pantallas-html.js aquí al arrancar -->
 <div id="pantallas-menus" hidden></div>
 
-<div id="carga">…</div>
+<div id="carga"><style>
+/* pantalla de carga: el título de Rouflage (las mismas letras camufladas que el menú) con un becario cazador paseando por encima y un colado camuflado en la última E */
+#carga .cg { display: grid; justify-items: center; gap: 0; width: 100%; }
+#carga .cg-fans { font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(22px, 6.4vw, 38px); letter-spacing: 0.08em; line-height: 0.9; color: var(--ink, #f4efff); }
+#carga .cg b { position: relative; display: flex; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(50px, 15.5vw, 104px); letter-spacing: 0.01em; line-height: 0.9; transform: rotate(-3deg); margin-top: 0.62em;
+  filter: drop-shadow(3px 0 0 #1a1030) drop-shadow(-3px 0 0 #1a1030) drop-shadow(0 3px 0 #1a1030) drop-shadow(0 -3px 0 #1a1030) drop-shadow(0 6px 0 #1a1030); }
+#carga .cg i { font-style: normal; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0.08em 0.01em 0; }
+#carga .cg i:nth-child(4n+1) { background-image: conic-gradient(#5fb7a6 25%, #f1e6cc 0 50%, #5fb7a6 0 75%, #f1e6cc 0); background-size: 0.36em 0.36em; }
+#carga .cg i:nth-child(4n+2) { background-image: repeating-linear-gradient(-45deg, #f2c230 0 0.13em, #3a3f66 0.13em 0.26em); }
+#carga .cg i:nth-child(4n+3) { background-image: conic-gradient(from 45deg, #6f84d6 25%, #44548a 0 50%, #6f84d6 0 75%, #44548a 0); background-size: 0.3em 0.3em; }
+#carga .cg i:nth-child(4n) { background-image: repeating-linear-gradient(90deg, #eadfc8 0 0.11em, #d9937c 0.11em 0.22em); }
+#carga .cg-pista { position: absolute; left: 0; right: 0; bottom: 78%; height: 0; }
+#carga .cg-ida { position: absolute; left: 0; bottom: 0; width: 0.62em; height: 0.82em; animation: cg-ir 4.6s linear infinite alternate; }
+#carga .cg-giro { display: block; width: 100%; height: 100%; animation: cg-gira 9.2s step-end infinite; position: relative; }
+#carga .cg-caz { position: absolute; inset: 0; background: url(img/carga-cazador.png) 0 0 / 400% 100% no-repeat; animation: cg-paso 0.56s steps(4) infinite; }
+#carga .cg-haz { position: absolute; left: 70%; bottom: 30%; width: 1.3em; height: 0.7em; background: linear-gradient(to right, rgba(255, 226, 122, 0.55), rgba(255, 226, 122, 0)); clip-path: polygon(0 42%, 100% 0, 100% 100%, 0 58%); animation: cg-luz 1.3s ease-in-out infinite alternate; }
+#carga .cg-zorro { position: absolute; right: 0.02em; bottom: 78%; width: 0.78em; height: 0.7em; background: url(img/carga-zorro.png) 0 0 / 200% 100% no-repeat; animation: cg-parpadeo 3.4s steps(1) infinite; }
+#carga .cg-cargando { margin: 22px 0 0; font: 800 14px 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.3em; color: var(--ink-dim, #cdb9ea); }
+@keyframes cg-ir { from { left: 0; } to { left: calc(100% - 0.62em - 0.9em); } }
+@keyframes cg-gira { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
+@keyframes cg-paso { to { background-position: 133.33% 0; } }
+@keyframes cg-luz { from { opacity: 0.45; } to { opacity: 1; } }
+@keyframes cg-parpadeo { 0%, 90% { background-position: 0 0; } 94%, 100% { background-position: 100% 0; } }
+</style><div class="cg"><span class="cg-fans">FANS OF</span><b aria-label="Rouflage"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i><span class="cg-pista"><span class="cg-ida"><span class="cg-giro"><span class="cg-haz"></span><span class="cg-caz"></span></span></span></span><span class="cg-zorro"></span></b><p class="cg-cargando">CARGANDO…</p></div></div>
 <script>
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
 window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });

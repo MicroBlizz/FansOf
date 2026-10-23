@@ -3,6 +3,7 @@
 'use strict';
 
 const PAN = { W: 200, H: 400, k: 1 };
+const DEDOS = new Set(); let PRIMARIO = null;   // los dedos que hay en la pantalla y el que manda
 const cv = document.getElementById('juego');
 G = cv.getContext('2d');
 
@@ -33,10 +34,16 @@ async function arranca() {
   try { await Promise.race([document.fonts.load('800 20px "Baloo 2"'), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
   document.getElementById('carga').hidden = true;
   const punto = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * PAN.W / r.width, (e.clientY - r.top) * PAN.H / r.height]; };
-  cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); dedoBaja(...punto(e)); e.preventDefault(); });
-  cv.addEventListener('pointermove', e => { if (DEDO.activo) dedoMueve(...punto(e)); });
-  cv.addEventListener('pointerup', e => dedoSube(...punto(e)));
-  cv.addEventListener('pointercancel', () => { DEDO.activo = false; sueltaPalanca(); });
+  // varios dedos: el primero manda (con Toques, cada toque nuevo manda); los demás, con Palanca, son el nitro
+  cv.addEventListener('pointerdown', e => {
+    audioInit(); try { cv.setPointerCapture(e.pointerId); } catch (_) { /* da igual */ } e.preventDefault();
+    DEDOS.add(e.pointerId);
+    if (PRIMARIO === null || (SAVE.control === 'toques' && JUEGO.modo === 'juego')) { PRIMARIO = e.pointerId; dedoBaja(...punto(e)); }
+  });
+  cv.addEventListener('pointermove', e => { if (e.pointerId === PRIMARIO && DEDO.activo) dedoMueve(...punto(e)); });
+  const suelta = (e, cancela) => { DEDOS.delete(e.pointerId); if (e.pointerId !== PRIMARIO) return; PRIMARIO = null; if (cancela) { DEDO.activo = false; sueltaPalanca(); } else dedoSube(...punto(e)); };
+  cv.addEventListener('pointerup', e => suelta(e, false));
+  cv.addEventListener('pointercancel', e => suelta(e, true));
   window.addEventListener('resize', ajusta);
   setTimeout(subePendiente, 4000);   // lo que no esté aún en el ranking mundial (js/ranking.js)
   requestAnimationFrame(fotograma);

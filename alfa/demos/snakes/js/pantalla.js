@@ -20,7 +20,7 @@ function pintaTodo(W, H, dt) {
     pintaEfectos(retro);
     if (zoom) G.restore();
   }
-  if (jugando) { pintaApagon(); pintaAnuncio(); }
+  if (jugando) { pintaAcciones(W, H); pintaApagon(); pintaAnuncio(); }
   G.restore();
   if (JUEGO.modo === 'juego') pintaMandos(retro, dt);
   if (jugando) { pintaVS(dt); pintaMarcador(W, retro, fr); pintaMisCartas(retro); pintaFranja(W, retro); pintaTutorial(W, dt); }

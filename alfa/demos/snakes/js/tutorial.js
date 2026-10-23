@@ -16,6 +16,8 @@ function tutoAviso(clave, si) {
   if (!TUTO.activo || !si || TUTO.visto[clave]) return;
   TUTO.visto[clave] = true; TUTO.txt = CONSEJOS[clave]; TUTO.t = 4.5;
 }
+// un consejo suelto, fuera del tutorial (cómo se usa una carta de acción)
+function consejo(txt) { TUTO.txt = txt; TUTO.t = 4.5; }
 function terminaTutorial() { if (TUTO.activo) { SAVE.tutorial = 1; TUTO.activo = false; TUTO.t = 0; } }
 
 function pintaTutorial(W, dt) {

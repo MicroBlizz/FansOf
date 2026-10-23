@@ -35,6 +35,23 @@ function iconoCarta(k, x, y, s) {
   } else if (k === 'pila') {
     caja(x - s * 0.18, y - s * 0.32, s * 0.36, s * 0.66, s * 0.06, '#17331f', o, lw); G.fillStyle = o; G.fillRect(x - s * 0.08, y - s * 0.4, s * 0.16, s * 0.08);
     G.fillStyle = c; for (let i = 0; i < 3; i++) G.fillRect(x - s * 0.12, y + s * 0.18 - i * s * 0.18, s * 0.24, s * 0.12);
+  } else if (k === 'nitro') {   // una llama
+    G.beginPath(); G.moveTo(x, y - s * 0.42); G.quadraticCurveTo(x + s * 0.34, y - s * 0.05, x + s * 0.22, y + s * 0.26); G.quadraticCurveTo(x, y + s * 0.44, x - s * 0.22, y + s * 0.26); G.quadraticCurveTo(x - s * 0.34, y - s * 0.05, x, y - s * 0.42); G.closePath();
+    G.fillStyle = c; G.fill(); G.strokeStyle = o; G.lineWidth = lw; G.stroke();
+    G.beginPath(); G.moveTo(x, y - s * 0.12); G.quadraticCurveTo(x + s * 0.14, y + s * 0.1, x, y + s * 0.28); G.quadraticCurveTo(x - s * 0.14, y + s * 0.1, x, y - s * 0.12); G.fillStyle = '#ffd54a'; G.fill();
+  } else if (k === 'salto') {   // un arco con su flecha, por encima de un cuadradito (tu cola)
+    caja(x - s * 0.1, y + s * 0.12, s * 0.2, s * 0.2, s * 0.04, '#3ddc84', o, lw * 0.8);
+    G.strokeStyle = o; G.lineWidth = lw * 2.6; G.beginPath(); G.arc(x, y + s * 0.2, s * 0.32, Math.PI, 0); G.stroke();
+    G.strokeStyle = c; G.lineWidth = lw * 1.4; G.beginPath(); G.arc(x, y + s * 0.2, s * 0.32, Math.PI, 0); G.stroke();
+    G.fillStyle = c; G.beginPath(); G.moveTo(x + s * 0.32, y + s * 0.36); G.lineTo(x + s * 0.2, y + s * 0.18); G.lineTo(x + s * 0.44, y + s * 0.18); G.closePath(); G.fill(); G.strokeStyle = o; G.lineWidth = lw * 0.7; G.stroke();
+  } else if (k === 'bala') {   // un reloj de arena
+    G.beginPath(); G.moveTo(x - s * 0.24, y - s * 0.36); G.lineTo(x + s * 0.24, y - s * 0.36); G.lineTo(x + s * 0.03, y); G.lineTo(x + s * 0.24, y + s * 0.36); G.lineTo(x - s * 0.24, y + s * 0.36); G.lineTo(x - s * 0.03, y); G.closePath();
+    G.fillStyle = '#eaf8ff'; G.fill(); G.strokeStyle = o; G.lineWidth = lw; G.stroke();
+    G.fillStyle = c; G.beginPath(); G.moveTo(x - s * 0.15, y + s * 0.32); G.lineTo(x + s * 0.15, y + s * 0.32); G.lineTo(x, y + s * 0.12); G.closePath(); G.fill();
+    G.fillStyle = o; G.fillRect(x - s * 0.3, y - s * 0.42, s * 0.6, s * 0.07); G.fillRect(x - s * 0.3, y + s * 0.35, s * 0.6, s * 0.07);
+  } else if (k === 'dieta') {   // tres trozos de cola y unas tijeras de raya
+    for (let i = 0; i < 3; i++) caja(x - s * 0.36 + i * s * 0.25, y - s * 0.08, s * 0.2, s * 0.2, s * 0.04, i < 2 ? '#3ddc84' : c, o, lw * 0.8);
+    G.strokeStyle = '#ff6b6b'; G.lineWidth = lw * 1.3; G.setLineDash([s * 0.07, s * 0.05]); G.beginPath(); G.moveTo(x + s * 0.1, y - s * 0.3); G.lineTo(x + s * 0.1, y + s * 0.3); G.stroke(); G.setLineDash([]);
   } else if (k === 'escudo') {
     G.beginPath(); G.moveTo(x, y - s * 0.38); G.lineTo(x + s * 0.3, y - s * 0.26); G.quadraticCurveTo(x + s * 0.3, y + s * 0.2, x, y + s * 0.4); G.quadraticCurveTo(x - s * 0.3, y + s * 0.2, x - s * 0.3, y - s * 0.26); G.closePath();
     G.fillStyle = c; G.fill(); G.strokeStyle = o; G.lineWidth = lw; G.stroke();

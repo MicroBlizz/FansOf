@@ -7,7 +7,7 @@
 'use strict';
 
 const DESLIZ_MIN = 10;
-const DEDO = { x: 0, y: 0, ox: 0, oy: 0, activo: false, movido: false, mando: false };
+const DEDO = { x: 0, y: 0, ox: 0, oy: 0, activo: false, movido: false, mando: false, t0: 0, ultima: 0 };   // t0: cuándo bajó (nitro); ultima: el toque anterior (salto)
 const TOQUE = { dir: null, t: 0 };   // el último toque, para el destello de la zona
 
 // la zona que toca el dedo con el control Toques
@@ -20,6 +20,11 @@ function dedoBaja(x, y) {
   DEDO.x = DEDO.ox = x; DEDO.y = DEDO.oy = y; DEDO.activo = true; DEDO.movido = false; DEDO.mando = false;
   if (JUEGO.modo !== 'juego' || OPC.abierto || PUBLI.activo || y < TAB.y0) return;   // lo de arriba del tablero es el marcador
   DEDO.mando = true;
+  // dos toques seguidos = salto (si tienes la carta). Con Toques, en la misma zona (dos giros rápidos distintos no saltan);
+  // con Palanca y Deslizar, dos toques sin arrastrar
+  const ahora = performance.now(), zona = SAVE.control === 'toques' ? zonaToque(x, y).join(',') : 'toque';
+  if (ahora - DEDO.ultima < 300 && zona === DEDO.ultimaZona && (SAVE.control === 'toques' || DEDO.antesToque)) pideSalto();
+  DEDO.ultima = ahora; DEDO.ultimaZona = zona; DEDO.t0 = ahora;
   if (SAVE.control === 'palanca') ponPalanca(x, y);
   else if (SAVE.control === 'toques') { const d = zonaToque(x, y); TOQUE.dir = d; TOQUE.t = 0.25; pideDir(espeja(d)); }
 }
@@ -41,6 +46,7 @@ function dedoSube(x, y) {
   if (!DEDO.activo) return;
   DEDO.activo = false;
   sueltaPalanca();
+  DEDO.antesToque = !DEDO.movido;   // para el doble toque del salto
   if (DEDO.mando) return;          // era un giro, no un toque
   if (!DEDO.movido) toque(x, y);   // un toque sin arrastrar
 }
@@ -67,12 +73,16 @@ window.addEventListener('keydown', e => {
     return;
   }
   if (d && JUEGO.modo === 'juego') { e.preventDefault(); pideDir(espeja(d)); return; }
+  if (e.key === ' ' && JUEGO.modo === 'juego') { e.preventDefault(); pideSalto(); return; }
+  if (e.key === 'Shift') { TECLA_NITRO = true; return; }
   if (e.key === ' ' || e.key === 'Enter') {   // el botón principal de la pantalla (lo marca cada pantalla en UI.enter)
     e.preventDefault();
     if (PUBLI.activo) toqueAnuncio(); else if (UI.enter && !(JUEGO.modo === 'fin' && JUEGO.tFin < 0.6)) { SONIDO.boton(); UI.enter(); }
   }
   if (e.key === 'Backspace' && UI.atras) { e.preventDefault(); UI.atras(); }
 });
+
+window.addEventListener('keyup', e => { if (e.key === 'Shift') TECLA_NITRO = false; });
 
 // si te vas de la app (otra pestaña, una llamada, bloqueas el móvil), la partida se pausa sola con las Opciones abiertas
 document.addEventListener('visibilitychange', () => { if (document.hidden && JUEGO.modo === 'juego' && !OPC.abierto) abreOpciones(); });

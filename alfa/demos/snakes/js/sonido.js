@@ -31,6 +31,9 @@ const SONIDO = {
   escudo: () => { tone(200, 600, 0.15, 'square', v(0.08)); noise(0.12, v(0.08), 900); },
   fantasma: () => tone(900, 300, 0.3, 'sine', v(0.08)),
   portal: () => tone(300, 1200, 0.12, 'sine', v(0.06)),
+  nitro: () => { noise(0.35, v(0.08), 700); tone(150, 600, 0.3, 'sawtooth', v(0.04)); },
+  salto: () => tone(300, 1100, 0.18, 'triangle', v(0.07)),
+  bala: () => { tone(900, 200, 0.6, 'sine', v(0.08)); },
   racha: n => tone(700 + n * 90, 900 + n * 90, 0.06, 'triangle', v(0.05), 0.05),
 };
 
@@ -44,5 +47,5 @@ function vigilaMusica() {
   if (M.trk && M.trk.once) return;
   const menu = !enPartida(), quiero = menu ? 'menu' : 'gamer';
   if (M.name !== quiero) musicSet(quiero);
-  M.tmT = menu ? 1 : J.modo === 'cartas' ? 0.85 : esFrenesi() || locuraActiva('turbo') ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
+  M.tmT = menu ? 1 : J.modo === 'cartas' ? 0.85 : JUEGO.balaT > 0 ? 0.6 : esFrenesi() || locuraActiva('turbo') || JUEGO.nitro ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
 }

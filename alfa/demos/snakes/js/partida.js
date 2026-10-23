@@ -33,6 +33,7 @@ function nuevaPartida() {
   J.puntos = 0; J.mult = 1; J.acum = 0; J.t = 0; J.tFin = 0; J.uyT = 0;
   J.frenesi = 0; J.frenesiT = 0; J.frenesiDur = 0; J.frenesis = 0; J.monedasPartida = 0; J.cortes = 0; J.locuras = 0; J.comidas = 0;
   J.racha = 0; J.pasosRacha = 0; J.mejorRacha = 0;
+  J.nitro = false; J.saltoPend = false; J.saltoT = 0; J.balaT = 0; J.ninjaT = 0;
   J.cartas = {}; J.oferta = []; J.cartasPend = true; J.tCartas = 0; J.cartasElegidas = 0; J.tVivo = 0;   // la primera carta, al empezar
   reiniciaLocuras();
   J.manzanas.push(casillaLibre());
@@ -48,7 +49,7 @@ function pideDir(d) {
   if (J.pend.length < 2) { J.pend.push(d); SONIDO.gira(); }
 }
 
-const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - JUEGO.comidas * PASO_POR_MANZANA) * (esFrenesi() ? 0.85 : 1) * factorVelocidad() * (locuraActiva('turbo') ? 0.55 : 1);
+const pasoActual = () => Math.max(PASO_MINIMO, PASO_INICIAL - JUEGO.comidas * PASO_POR_MANZANA) * (esFrenesi() ? 0.85 : 1) * factorVelocidad() * (locuraActiva('turbo') ? 0.55 : 1) * (JUEGO.nitro ? 0.5 : 1);
 
 function avanzaJuego(dt) {
   const J = JUEGO; J.t += dt;
@@ -57,6 +58,7 @@ function avanzaJuego(dt) {
   if (J.modo === 'cartas') { J.tCartas += dt; return; }
   if (PUBLI.activo) return;
   if (J.modo !== 'juego') return;
+  dt = avanzaAcciones(dt);   // el nitro, el salto y el Tiempo bala (que frena el tiempo de juego)
   J.tVivo += dt;
   if (J.uyT > 0) J.uyT -= dt;
   avanzaFrenesi(dt); avanzaLocuras(dt);
@@ -70,8 +72,8 @@ function avanzaJuego(dt) {
 function mueve() {
   const J = JUEGO, S = J.serp;
   if (J.pend.length) J.dir = J.pend.shift();
-  const h = S[0];
-  let n = [h[0] + J.dir[0], h[1] + J.dir[1]];
+  const h = S[0], k = largoDelPaso();   // 2 si salta (js/acciones.js): lo de en medio no cuenta
+  let n = [h[0] + J.dir[0] * k, h[1] + J.dir[1] * k];
   if (n[0] < 0 || n[0] >= COLS || n[1] < 0 || n[1] >= ROWS) {
     if (usaPortal()) {
       if (!nivel('gusano')) J.cartas.portal--;   // el Agujero de gusano no gasta
@@ -91,9 +93,11 @@ function mueve() {
   if (!come) S.pop();
   if (iCuerpo >= 0 && iCuerpo < S.length) {
     if (esFrenesi()) demolicion(iCuerpo);
+    else if (nivel('muda')) cortaMuda(iCuerpo);
     else if (!atraviesaFantasma(n)) { muere('cola'); return; }
   }
   S.unshift(n);
+  if (J.nitro && nivel('cohete')) cargaFrenesi(0.012);   // la fusión Cohete
   J.pasosRacha++;
   if (J.racha && J.pasosRacha > RACHA_CASILLAS) J.racha = 0;
   if (come) comeManzana(iMan, n);
@@ -120,6 +124,7 @@ function comeManzana(i, m) {
   if (esFrenesi()) SONIDO.come_oro(); else SONIDO.come();
   while (J.manzanas.length < manzanasEnTablero()) { const p = casillaLibre(); if (!p) break; J.manzanas.push(p); }
   if (J.comidas % CARTAS_CADA === 0) J.cartasPend = true;
+  aplicaDieta();
   tutoAviso('racha', J.racha >= 2);
 }
 

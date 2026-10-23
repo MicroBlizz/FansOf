@@ -1,8 +1,8 @@
 {
- "build": 432,
- "hash": "69ef4f2",
- "fecha": "2026-10-23T17:49:36Z",
- "mensaje": "Fans of Rouflage: en MI ESCENARIO no sale el caos primordial (tapaba el botón PASEAR)",
+ "build": 433,
+ "hash": "3664d94",
+ "fecha": "2026-10-23T17:50:13Z",
+ "mensaje": "Fans of Snakes: salir al menú desde la pausa (con aviso) y cartas de acción: Nitro, Salto, Tiempo bala y Dieta, con fusiones Ninja, Cohete y Muda",
  "juegos": {
   "crush": "0.1.31",
   "dark": "0.2.7",

@@ -17,16 +17,24 @@ const CARTAS = {
   reloj:    { nombre: 'PRÓRROGA', max: 3, col: '#7fd7ff', texto: () => tr('El Frenesí dura 3 s más') },
   pila:     { nombre: 'TURBOCARGA', max: 3, col: '#9cff6b', texto: () => tr('La barra de Frenesí carga un 50 % más') },
   escudo:   { nombre: 'ESCUDO', max: 99, cargas: 1, col: '#3ddc84', texto: () => tr('Rebota una vez en la pared') },
+  // las de acción (js/acciones.js): se usan con el dedo
+  nitro:    { nombre: 'NITRO', max: 1, col: '#ff3d71', texto: () => tr('Mantén pulsado: el doble de rápido y de puntos'), consejo: 'NITRO: mantén el dedo pulsado (con Palanca, pon un segundo dedo; en el PC, Mayúsculas)' },
+  salto:    { nombre: 'SALTO', max: 99, cargas: 3, col: '#40c4ff', texto: () => tr('Toca dos veces: saltas por encima'), consejo: 'SALTO: toca dos veces rápido y saltas por encima de lo que tengas delante (en el PC, Espacio)' },
+  bala:     { nombre: 'TIEMPO BALA', max: 99, cargas: 2, col: '#b2ebf2', texto: () => tr('Si vas a chocar, el tiempo se frena') },
+  dieta:    { nombre: 'DIETA', max: 2, col: '#c5e1a5', texto: n => tr('Cada 4 manzanas, tu cola pierde {n} trozos', { n: n * 2 }) },
   // las fusiones: salen cuando tienes las dos cartas de `fusion`
   gusano:   { nombre: 'AGUJERO DE GUSANO', max: 1, fusion: ['portal', 'escudo'], col: '#e040fb', texto: () => tr('Portal infinito: las paredes ya no te matan') },
   aspiradora: { nombre: 'ASPIRADORA', max: 1, fusion: ['iman', 'doble'], col: '#ff7043', texto: () => tr('Te comes las manzanas a 4 casillas') },
   tormenta: { nombre: 'TORMENTA', max: 1, fusion: ['reloj', 'pila'], col: '#40c4ff', texto: () => tr('Al acabar el Frenesí, la barra se queda a la mitad') },
+  ninja:    { nombre: 'NINJA', max: 1, fusion: ['salto', 'bala'], col: '#26c6da', texto: () => tr('Saltos sin límite: se recargan cada 3 s') },
+  cohete:   { nombre: 'COHETE', max: 1, fusion: ['nitro', 'dash'], col: '#ff6e40', texto: () => tr('Con el nitro, el Frenesí se carga solo') },
+  muda:     { nombre: 'MUDA', max: 1, fusion: ['dieta', 'fantasma'], col: '#aed581', texto: () => tr('Tu cola ya no te mata: al morderla, se corta') },
 };
 
 const nivel = k => JUEGO.cartas[k] || 0;
 
 // lo que piden la partida y el Frenesí
-const multPuntos = () => JUEGO.mult * Math.pow(1.3, nivel('dash')) * (locuraActiva('turbo') ? 2 : 1);
+const multPuntos = () => JUEGO.mult * Math.pow(1.3, nivel('dash')) * (locuraActiva('turbo') ? 2 : 1) * (JUEGO.nitro ? 2 : 1);
 const factorVelocidad = () => 1 / (1 + 0.12 * nivel('dash'));
 const segundosFrenesi = () => FRENESI_SEG + 3 * nivel('reloj');
 const factorCarga = () => 1 + 0.5 * nivel('pila');
@@ -59,6 +67,7 @@ function eligeCarta(i) {
   const J = JUEGO, k = J.oferta[i]; if (!k) return;
   J.cartas[k] = nivel(k) + (CARTAS[k].cargas || 1); J.cartasElegidas++;
   if (CARTAS[k].fusion) { SONIDO.frenesi(); tiembla(3, 0.3); }
+  if (CARTAS[k].consejo && nivel(k) === (CARTAS[k].cargas || 1)) consejo(CARTAS[k].consejo);   // la primera vez, cómo se usa
   if (k === 'doble') while (J.manzanas.length < manzanasEnTablero()) { const p = casillaLibre(); if (!p) break; J.manzanas.push(p); }
   J.modo = 'juego'; J.oferta = []; J.pend = [];
   J.acum = -0.45;   // un respiro antes de que vuelva a moverse

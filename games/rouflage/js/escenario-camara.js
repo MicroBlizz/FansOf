@@ -1,5 +1,5 @@
 // Fans of Rouflage · MI ESCENARIO (la cámara y los dedos): la cámara mira a un punto del mapa con un zoom (MIESC.cam); al pasear sigue a tu
-// galleta, como en la partida. Un dedo en el suelo arrastra la vista (o el mueble que tocas, o pinta en PINTAR); dos dedos (o la rueda, o
+// galleta, como en la partida. Al pasear, un dedo arrastrado lleva la galleta con una palanca (escenario-palanca.js); si no, un dedo en el suelo arrastra la vista (o el mueble que tocas, o pinta en PINTAR); dos dedos (o la rueda, o
 // los botones + y −) hacen zoom; tocar sin arrastrar va andando (PASEAR), suelta el mueble marcado o abre el armario. Al llevar un mueble
 // cerca del borde, la vista se mueve sola. Va después de escenario.js.
 'use strict';
@@ -71,8 +71,9 @@ function escPinzaEmpieza() {
   for (const t of MIESC.toques.values()) {      // lo que hacía el primer dedo se deshace
     if (t.pinta) { escPincelCancela(); t.pinta = false; }
     if (t.mueble && MIESC.drag) { const d = MIESC.drag; d.m.x = d.x0; d.m.y = d.y0; MIESC.drag = null; t.mueble = false; }
-    t.pan = false;
+    t.pan = false; t.palanca = false;
   }
+  if (MIESC.palanca) escPalancaSuelta();
   const q = escPinzaDatos(); MIESC.pinza = { d0: q.d, z0: MIESC.cam.z || escZoomBase(), w: escAMundo({ clientX: q.x, clientY: q.y }) };
   MIESC.puntero = null; MIESC.sucio = true;
 }
@@ -91,7 +92,8 @@ function escAbajo(e) {
   const t = MIESC.toques.get(e.pointerId), p = escAMundo(e); MIESC.puntero = p; MIESC.sucio = true;
   if (e.button === 1 || e.button === 2) { t.pan = true; t.movido = true; return; }      // la rueda o el botón derecho: siempre mueven la vista
   if (MIESC.modo === 'pintar') { t.pinta = true; escPincelAbajo(p); return; }
-  if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); t.mueble = true; play('tick'); return; } }
+  if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); if (e.pointerType !== 'mouse') MIESC.drag.levanta = 34 / (MIESC.cam.z || 1); t.mueble = true; play('tick'); return; } }
+  if (MIESC.modo === 'pasear') { t.palanca = true; return; }      // PASEAR: arrastrar lleva la galleta (escenario-palanca.js)
   t.pan = true;
 }
 function escMueve(e) {
@@ -103,6 +105,7 @@ function escMueve(e) {
   MIESC.puntero = p;
   if (t.pinta) { escPincelMueve(p); MIESC.sucio = true; return; }
   if (t.mueble) { escArrastra(p); return; }
+  if (t.palanca) { if (!t.movido && Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 10) return; t.movido = true; escPalancaMueve(t, e.clientX, e.clientY); return; }
   if (t.pan) {
     if (!t.movido && Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 9) return;
     t.movido = true;
@@ -118,7 +121,8 @@ function escArriba(e) {
   if (!t) return;
   if (t.pinta) escPincelArriba();
   if (t.mueble) escSuelta();
-  if (t.pan && !t.movido && e.type === 'pointerup') escToca(escAMundo(e));
+  if (t.palanca && MIESC.palanca) escPalancaSuelta();
+  if ((t.pan || t.palanca) && !t.movido && e.type === 'pointerup') escToca(escAMundo(e));
   if (e.pointerType !== 'mouse') MIESC.puntero = null;
   MIESC.sucio = true;
 }

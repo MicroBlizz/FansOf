@@ -138,7 +138,7 @@ IDIOMA.add({
   "Tus compañeros han aguantado hasta el final.": "Your teammates held out until the end.",
   "¡OS HAN DESPEDIDO A TODOS!": "YOU HAVE ALL BEEN FIRED!",
   "Microblizz deja la estación limpia de colados.": "Microblizz leaves the station free of intruders.",
-  "Para jugar PvP necesitas una cuenta vinculada: botón CUENTA del título.": "To play PvP you need a linked account: ACCOUNT button on the title screen.",
+  "Para jugar en línea hace falta conexión. Vuelve a abrir el juego.": "You need a connection to play online. Open the game again.",
   "El PvP de Rouflage todavía no está abierto en el servidor. Pronto.": "Rouflage PvP is not open on the server yet. Soon.",
   "Tu sesión ha caducado: vuelve a abrir el juego.": "Your session has expired: reopen the game.",
   "La sala ya no existe.": "The room no longer exists.",

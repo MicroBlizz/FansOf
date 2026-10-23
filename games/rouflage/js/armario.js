@@ -13,15 +13,16 @@ function armarioEstado() {
   if (typeof SAVE.purpurina === 'number') { SAVE.acciones = (SAVE.acciones || 0) + SAVE.purpurina; delete SAVE.purpurina; }
   if (p.papel === 'monopoly') p.papel = 'arcoiris';      // el billete de Monopoly se quitó: ahora es el papel arcoíris
   { const i = a.tengo.indexOf('papel:monopoly'); if (i >= 0) a.tengo[i] = 'papel:arcoiris'; }
-  if (!p.mascotas) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta y no se puede ir sin ella
-  for (const cat of CATALOGO_AR) if (cat.conjuntos || cat.sala) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
+  if (p.mascotas === undefined) p.mascotas = 'conejo';      // todos empiezan con su mascota puesta; desde el 23-10-2026 se puede quitar (NADA, como en la cabeza: queda null)
+  for (const cat of CATALOGO_AR) if (cat.conjuntos || arMira(cat)) continue; else if (!(cat.id in p)) p[cat.id] = cat.vacio ? null : cat.items[0].id;   // la galleta empieza con la cara de la campaña y sin adornos
   if (a.todo && !arPruebasVisibles()) {      // un DESBLOQUEAR TODO que se coló fuera de la alfa (con ?dev=1): ya no vale, y lo puesto que no es tuyo se quita
     a.todo = false;
-    for (const cat of CATALOGO_AR) { if (cat.conjuntos || cat.sala) continue; const it = arItem(cat.id, p[cat.id]); if (it && !arTiene(cat.id, it)) p[cat.id] = cat.vacio ? null : cat.items[0].id; }
+    for (const cat of CATALOGO_AR) { if (cat.conjuntos || arMira(cat)) continue; const it = arItem(cat.id, p[cat.id]); if (it && !arTiene(cat.id, it)) p[cat.id] = cat.vacio ? null : cat.items[0].id; }
   }
   return a;
 }
 const arCat = id => CATALOGO_AR.find(c => c.id === id);
+const arMira = cat => !!(cat && (cat.sala || cat.album));      // lo que no se lleva puesto: los escenarios y muebles (sala) y los paquetes de pegatinas (album)
 const arItem = (cat, id) => { const c = arCat(cat); return c && id ? c.items.find(x => x.id === id) || null : null; };
 function arTiene(cat, it) {
   const a = armarioEstado(); if ((a.todo && arPruebasVisibles()) || it.de === 'base' || a.tengo.includes(cat + ':' + it.id)) return true;
@@ -83,17 +84,19 @@ function lienzoBlanco(e) {
 }
 const RAREZA_AR = { comun: 'Común', rara: 'Rara', epica: 'Épica', legend: 'Legendaria' };
 // lo que cuestan N Acciones en euros, al precio del paquete pequeño (solo se enseña en la ventana de confirmar la compra: armario-compra.js)
-function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'es' ? e.replace('.', ',') : e; }
+function arEuros(n) { const e = (n / 100 * 0.99).toFixed(2); return IDIOMA_RF === 'en' ? e : e.replace('.', ','); }
 // cómo se consigue, en la ficha: lo que se vende, con sus dos precios (sin euros: esos salen al confirmar la compra)
 function arTextoDe(it) {
   const t = it.txt, pr = arPrecio(it); let m;
-  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas });
+  if (pr) return tr('{a} Acciones o {g} Gotas', { a: pr.acciones, g: pr.gotas }) + (pr.rebaja ? ' · ' + tr('rebajado por tener el conjunto') : it.conj ? ' · ' + tr('{n} con su conjunto', { n: it.conj.txt }) : '');
   if (typeof t === 'number') return tr('Solo en el gachapón, con Gotas');
   if ((m = /^Pase (gratis|premium) · nv (\d+)$/.exec(t))) return tr(m[1] === 'gratis' ? 'Pase gratis · nv {n}' : 'Pase premium · nv {n}', { n: m[2] });
   if ((m = /^(\d+) Gotas$/.exec(t))) return tr('{n} Gotas', { n: m[1] });
   if ((m = /^Diario · día 7 \(semana (\d)\)$/.exec(t))) return tr('Diario · día 7 (semana {n})', { n: m[1] });
   if ((m = /^Diario · día (\d+)$/.exec(t))) return tr('Diario · día {n}', { n: m[1] });
   if ((m = /^Conjunto (.+)$/.exec(t))) return tr('Conjunto {n}', { n: m[1] });
+  if ((m = /^Racha · (\d+) días$/.exec(t))) return tr('Racha de {n} días', { n: m[1] });      // diario.js
+  if ((m = /^Trae amigos · (\d+)$/.exec(t))) return +m[1] === 1 ? tr('Trae a 1 amigo') : tr('Trae a {n} amigos', { n: m[1] });      // referidos.js
   return tr(t);
 }
 // un lienzo nítido (al doble) de w×h en pantalla
@@ -120,10 +123,10 @@ function arPintaPestanas() {
 }
 function arPintaVista() {
   const cat = arCat(ARMARIO.cat), pr = ARMARIO.prueba;
-  arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe(cat.cuerpo ? pr : null))));
+  if (!arMueveVista(cat, pr)) arPinta(E('ar-vista'), (c, w, h) => ARD.vestida(c, w, h * .93, Object.assign({ esc: h / 92 }, ropaDe(cat.cuerpo ? pr : null))));
   // lo que no se lleva en el cuerpo (humo, silbido, fantasma…): en grande, lo puesto o lo que te estás probando
   const ex = E('ar-extra'); ex.hidden = !!cat.cuerpo; E('ar-vista').hidden = !cat.cuerpo;
-  if (!cat.cuerpo) { const it = pr ? pr.it : cat.sala ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); arAnimaExtra(cat, it); }
+  if (!cat.cuerpo) { const it = pr ? pr.it : arMira(cat) ? (ARMARIO.sel && ARMARIO.sel !== 'nada' ? ARMARIO.sel : cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : cat.album ? cat.items[0] : null) : arItem(cat.id, armarioEstado().puesto[cat.id]); arPinta(ex, (c, w) => { if (it) it.x(c, w); }); arAnimaExtra(cat, it); }
 }
 // los fantasmas y las mascotas se ven en grande moviéndose (respiran, parpadean, ondean…), no quietos como en su casilla
 function arAnimaExtra(cat, it) {
@@ -137,7 +140,7 @@ function arAnimaExtra(cat, it) {
 }
 function arPintaInfo() {
   const cat = arCat(ARMARIO.cat), a = armarioEstado(), sel = ARMARIO.sel;
-  const it = sel === 'nada' ? null : sel || (cat.conjuntos ? cat.items.find(arConjuntoPuesto) || null : cat.sala ? (cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : null) : arItem(cat.id, a.puesto[cat.id]));
+  const it = sel === 'nada' ? null : sel || (cat.conjuntos ? cat.items.find(arConjuntoPuesto) || null : arMira(cat) ? (cat.id === 'escenarios' ? arItem('escenarios', escenarioActual()) : cat.album ? cat.items[0] : null) : arItem(cat.id, a.puesto[cat.id]));
   const nom = E('ar-nombre'), de = E('ar-de'), est = E('ar-estado');
   E('ar-nota').textContent = tr(cat.nombre) + (cat.nota ? ' · ' + tr(cat.nota) : '');
   if (!it) {
@@ -146,9 +149,9 @@ function arPintaInfo() {
   }
   nom.textContent = tr(it.n); nom.className = 'r-' + it.r;
   de.textContent = tr(RAREZA_AR[it.r]) + ' · ' + arTextoDe(it);
-  const tuyo = arTiene(cat.id, it), puesto = cat.sala ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
+  const tuyo = arTiene(cat.id, it), puesto = arMira(cat) ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
   est.className = 'ar-estado ' + (puesto ? 'puesto' : tuyo ? 'tuyo' : 'bloq');
-  est.textContent = cat.sala ? (puesto ? tr('EN TU SALA') : tuyo ? tr('ES TUYO') : tr('AÚN NO ES TUYO')) : puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
+  est.textContent = arMira(cat) ? (puesto ? tr('EN TU SALA') : tuyo ? tr('ES TUYO') : tr('AÚN NO ES TUYO')) : puesto ? tr('PUESTO') : tuyo ? tr('ES TUYO') : tr('TE LO ESTÁS PROBANDO');
   arPintaCompra(cat, it);      // el botón COMPRAR y lo que tienes (economia.js)
 }
 function arPintaRejilla() {
@@ -162,10 +165,10 @@ function arPintaRejilla() {
   };
   if (cat.vacio) casilla('nada', true, a.puesto[cat.id] === null, () => { play('select'); a.puesto[cat.id] = null; ARMARIO.sel = 'nada'; ARMARIO.prueba = null; guardaPartida(); arPintaTodo(); }, (c, w) => ARD.ICONOS.nada(c, w), tr('Nada'), 'comun');
   for (const it of cat.items) {
-    const tuyo = arTiene(cat.id, it), puesto = cat.sala ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
+    const tuyo = arTiene(cat.id, it), puesto = arMira(cat) ? cat.id === 'escenarios' && escenarioActual() === it.id : cat.conjuntos ? arConjuntoPuesto(it) : a.puesto[cat.id] === it.id;
     casilla(it, tuyo, puesto, () => {
       ARMARIO.sel = it;
-      if (tuyo && cat.sala) { play('select'); ARMARIO.prueba = null; }      // lo de MI ESCENARIO no se lleva puesto: solo se mira
+      if (tuyo && arMira(cat)) { play('select'); ARMARIO.prueba = null; }      // lo de MI ESCENARIO y los paquetes de pegatinas no se llevan puestos: solo se miran
       else if (tuyo) { play('select'); if (cat.conjuntos) Object.assign(a.puesto, it.piezas); else a.puesto[cat.id] = it.id; ARMARIO.prueba = null; guardaPartida(); }
       else { play('tick'); ARMARIO.prueba = { cat: cat.id, it }; }
       arPintaTodo();
@@ -225,4 +228,5 @@ function preparaArmario() {
   const ex = arLienzo(150, 150, 'ar-extra'); ex.id = 'ar-extra'; E('ar-vista-sitio').appendChild(ex);
   const pg = arLienzo(170, 200); pg.id = 'pf-galleta'; E('pf-galleta-sitio').appendChild(pg);
   const pt = arLienzo(190, 64); pt.id = 'pf-titulo'; E('pf-titulo-sitio').appendChild(pt);
+  arMuevePrepara();      // los botones MOVER y COLADO/BECARIO de la vista (armario-mueve.js)
 }

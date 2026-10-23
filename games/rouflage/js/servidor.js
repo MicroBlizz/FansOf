@@ -5,8 +5,7 @@
 //   la partida local ni en la que sube core), y la última respuesta del servidor se guarda aparte (CACHE) para poder mirar sin conexión. Sin conexión no se compra, no se cobra
 //   ni se tira; las partidas se apuntan en SAVE.rfCola y se mandan al volver (una cada 46 s: el servidor pide ese margen entre partidas).
 // - Sin cuenta, con ?nube=0 o si el servidor aún no tiene las funciones: todo sigue como antes, en la partida local (RFS.activo() es false).
-// - La primera vez que un dispositivo entra, pasa su partida local al servidor (rf_migrar, con topes y solo hasta la fecha de servidor/datos/rouflage.sql): el primero crea la
-//   cuenta con sus monedas; los siguientes solo suman las piezas que les falten. Las acciones concretas están en servidor-economia.js.
+// - La primera vez que una cuenta entra, rf_estado le crea el perfil vacío: no se pasa ninguna partida local (la migración se cerró). Las acciones concretas están en servidor-economia.js.
 'use strict';
 
 const RFS = (() => {
@@ -66,10 +65,7 @@ const RFS = (() => {
     const cache = leeCache();
     try {
       let est = await Promise.race([CUENTA.rpc('rf_estado', {}), new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 6000))]);
-      const tarda = () => new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 8000));      // ninguna llamada del arranque espera para siempre
-      if (!est) est = await Promise.race([CUENTA.rpc('rf_migrar', { p_save: SAVE }), tarda()]);                  // primera vez de la cuenta: se pasa la partida local
-      else if (!SAVE.rfUnido) { SAVE.rfUnido = true; est = await Promise.race([CUENTA.rpc('rf_migrar', { p_save: { armario: { tengo: armarioEstado().tengo } } }), tarda()]) || est; }   // otro dispositivo: solo piezas
-      SAVE.rfUnido = true; activo = true; aplica(est); guardaPartida(); relojes(); vaciaCola();      // guardado al momento: la web publicada lee esta misma partida
+      activo = true; aplica(est); guardaPartida(); relojes(); vaciaCola();      // guardado al momento: la web publicada lee esta misma partida
     } catch (e) {
       if (sinFuncion(e)) return;                                                       // el servidor aún no lo tiene: sigue la partida local
       if (cache) { try { activo = true; aplica(cache); } catch (_) { activo = false; } }      // sin conexión: lo último que se supo (y si la copia está rota, la partida local)

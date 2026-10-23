@@ -47,3 +47,33 @@ function pintaPalanca(retro) {
   circulo(bx, by, 11, '#3ddc84', '#06110a', 2);
   circulo(bx - 3, by - 3, 3.5, '#9cff6b', null);
 }
+
+// los mandos en pantalla según el control elegido: la palanca, o con Toques una flechita un instante al tocar y, solo en
+// las 3 primeras partidas y durante 2,5 s, la guía con las cuatro zonas (después no se ve nada: no tapa el tablero)
+function pintaMandos(retro, dt) {
+  if (SAVE.control === 'palanca') { pintaPalanca(retro); return; }
+  if (SAVE.control !== 'toques') return;
+  const mx = TAB.x0 + TAB.w / 2, my = TAB.y0 + TAB.h / 2, W = PAN.W, H = PAN.H;
+  const flecha = (d, a, col) => {   // una flecha gorda en el centro de la zona
+    const x = mx + d[0] * TAB.w * 0.36, y = my + d[1] * TAB.h * 0.38, f = 9;
+    G.globalAlpha = a; G.fillStyle = col; G.strokeStyle = '#06110a'; G.lineWidth = 1.5;
+    G.beginPath(); G.moveTo(x + d[0] * f, y + d[1] * f); G.lineTo(x - d[0] * f * 0.4 + d[1] * f, y - d[1] * f * 0.4 + d[0] * f); G.lineTo(x - d[0] * f * 0.4 - d[1] * f, y - d[1] * f * 0.4 - d[0] * f); G.closePath(); G.fill(); G.stroke();
+    G.globalAlpha = 1;
+  };
+  // la guía: los 3 primeros segundos
+  const guia = SAVE.partidas < 3 && JUEGO.tVivo < 2.5 ? Math.min(1, (2.5 - JUEGO.tVivo) * 1.5) : 0;
+  if (guia > 0 && !retro) {
+    G.globalAlpha = 0.25 * guia; G.strokeStyle = '#9cff6b'; G.lineWidth = 1; G.setLineDash([3, 3]);
+    G.beginPath(); G.moveTo(mx - TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx + TAB.w * 1.5, my + TAB.h * 1.5);
+    G.moveTo(mx + TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx - TAB.w * 1.5, my + TAB.h * 1.5); G.stroke(); G.setLineDash([]);
+    G.globalAlpha = 1;
+    for (const d of [[0, -1], [0, 1], [-1, 0], [1, 0]]) flecha(d, 0.55 * guia, '#9cff6b');
+    letra(tr('Toca la zona hacia donde quieres ir'), W / 2, my - TAB.h * 0.2, 8, '#fff', 'center', '#06110a', 2.5);
+  }
+  if (TOQUE.t > 0) {
+    TOQUE.t -= dt * 1.6;
+    if (retro) return;
+    const d = TOQUE.dir, k = Math.max(0, TOQUE.t / 0.25);
+    flecha(d, 0.6 * k, '#ffd54a');   // solo la flechita, un instante
+  }
+}

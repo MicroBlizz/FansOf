@@ -10,13 +10,14 @@ const GACHA = {
   precio: 150, precio10: 1350,                    // Gotas por 1 y por 10 cápsulas (unas 2 de las 150 Gotas máximas que se ganan al día)
   odds: { comun: 60, rara: 28, epica: 10, legend: 2 },         // % por rareza (si una rareza se queda sin piezas, su parte se reparte entre las demás)
   repetida: { comun: 20, rara: 100, epica: 400, legend: 750 },   // Gotas que devuelve una pieza repetida: 10 comunes = 1 cápsula (150 y se ajusta con la rara), épica = 2, legendaria = 5 (la rara, a medias: 100)
-  pityRara: 10, pityEpica: 40,
+  pityRara: 10, pityEpica: 40, pityLegend: 90,      // y una legendaria asegurada cada 90 (desde el 23-10-2026; antes solo el 2 % puro)
   gratisHoras: 8,                                  // como en el Rumble (core/js/sistema/gachapon-gratis.js): una x1 gratis cada 8 horas, sin acumular, y una x10 cada domingo (hora de Madrid)
   liberados: [],                                   // piezas de pases ya cerrados ('cat:id'): desde entonces salen en el gachapón
 };
 
 function gachaEstado() {
-  if (!SAVE.gacha) SAVE.gacha = { total: 0, sinRara: 0, sinEpica: 0 };
+  if (!SAVE.gacha) SAVE.gacha = { total: 0, sinRara: 0, sinEpica: 0, sinLegend: 0 };
+  if (typeof SAVE.gacha.sinLegend !== 'number') SAVE.gacha.sinLegend = 0;
   if (typeof SAVE.gacha.gratisT !== 'number') SAVE.gacha.gratisT = 0;
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
   return SAVE.gacha;
@@ -37,14 +38,16 @@ function gachaOdds(pool) {
   return o;
 }
 function gachaRareza(g, pool) {
-  g.sinRara++; g.sinEpica++;
+  g.sinRara++; g.sinEpica++; g.sinLegend++;
   const o = gachaOdds(pool);
   let r;
-  if (o.epica && g.sinEpica >= GACHA.pityEpica) r = 'epica';
+  if (o.legend && g.sinLegend >= GACHA.pityLegend) r = 'legend';
+  else if (o.epica && g.sinEpica >= GACHA.pityEpica) r = 'epica';
   else if (g.sinRara >= GACHA.pityRara && (o.rara || o.epica)) r = !o.rara || (o.epica && Math.random() < o.epica / (o.epica + o.rara)) ? 'epica' : 'rara';
   else { let x = Math.random() * 100; r = 'comun'; for (const k of ['legend', 'epica', 'rara', 'comun']) { if (!o[k]) continue; if (x < o[k]) { r = k; break; } x -= o[k]; } if (!o[r]) r = Object.keys(o)[0]; }
   if (r !== 'comun') g.sinRara = 0;
   if (r === 'epica') g.sinEpica = 0;
+  if (r === 'legend') { g.sinLegend = 0; g.sinEpica = 0; }
   return r;
 }
 // las tiradas gratis, como en el Rumble: una x1 cada GACHA.gratisHoras (SAVE.gacha.gratisT = la hora de la última) y una x10 cada domingo, hora de Madrid

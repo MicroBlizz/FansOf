@@ -168,5 +168,10 @@ IDIOMA.add({
   "Hay una tirada gratis (x1) cada 3 horas y, cada domingo, una x10 gratis que caduca al acabar el día. No se acumulan.": "There's a free x1 pull every 3 hours and, every Sunday, a free x10 that expires when the day ends. They don't stack.",
   "Polvo de oro": "Gold dust",
   "Escarcha": "Frost",
-  "Modo pruebas: 50 000 Gotas y 50 000 Acciones": "Test mode: 50,000 Drops and 50,000 Shares"
+  "Modo pruebas: 50 000 Gotas y 50 000 Acciones": "Test mode: 50,000 Drops and 50,000 Shares",
+  "MOVER": "MOVE",
+  "QUIETO": "STILL",
+  "Dejar la galleta quieta": "Make the cookie stand still",
+  "Ver la galleta en movimiento": "See the cookie moving",
+  "Cambiar entre colado y becario": "Switch between intruder and intern"
 });

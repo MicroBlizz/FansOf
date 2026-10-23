@@ -1,7 +1,7 @@
 // Fans of Rouflage · EL CHAT (1 de 5): las frases rápidas de cada canal, el interruptor «Chat» (OPC.chat, se guarda en las opciones del jugador:
 // opciones.js), el bocadillo dibujado de los botones y el consejo de la primera vez. En partida (chat-partida.js) cada bando tiene su canal:
 // becarios (b), colados vivos (c) y colados despedidos (f, los fantasmas: leen a los suyos vivos, pero los vivos no los oyen). Las frases viajan como
-// número (su sitio en la lista) y cada uno las lee en su idioma. La sala de espera del PvP (chat-sala.js) tiene sus frases (s) y además se escribe.
+// número (su sitio en la lista) y cada uno las lee en su idioma. La sala de espera del PvP (chat-sala.js) tiene sus frases (s) (sin texto escrito: se quitó el 23-10-2026).
 'use strict';
 
 const CHAT_FRASES = {

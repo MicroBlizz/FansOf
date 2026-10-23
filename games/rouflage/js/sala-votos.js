@@ -85,7 +85,7 @@ function salaVotosAviso(soyAnf) {
   if (!soyAnf && SALA_VOTOS.oculto) return tr('Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.');
   return '';
 }
-function salaVotosFecha(iso) { try { return new Date(iso + 'T12:00:00Z').toLocaleDateString(IDIOMA.actual === 'en' ? 'en-GB' : 'es-ES', { day: 'numeric', month: 'long' }); } catch (_) { return iso; } }
+function salaVotosFecha(iso) { try { return new Date(iso + 'T12:00:00Z').toLocaleDateString(LOCALE_RF, { day: 'numeric', month: 'long' }); } catch (_) { return iso; } }
 
 /* ---------- la barra de votos ---------- */
 function salaVotosPaso(i, soyAnf) {

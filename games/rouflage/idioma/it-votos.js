@@ -1,0 +1,28 @@
+// Fans of Rouflage · Italiano de ME GUSTA, NO ME GUSTA y REPORTAR el escenario en la sala con amigos (js/sala-votos.js y su HTML en js/pantallas-html.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ME GUSTA": "MI PIACE",
+  "NO ME GUSTA": "NON MI PIACE",
+  "REPORTAR": "SEGNALA",
+  "REPORTAR ESCENARIO": "SEGNALA SCENARIO",
+  "¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.": "Cosa c'è che non va in questo scenario? Lo mandiamo agli sviluppatori, che lo guardano con la lente d'ingrandimento.",
+  "Dibujo inapropiado": "Disegno inappropriato",
+  "Nombre ofensivo": "Nome offensivo",
+  "Otra cosa": "Altro",
+  "Cuéntalo en pocas palabras (opcional)": "Raccontalo in poche parole (facoltativo)",
+  "Gracias, lo revisará Microblizz.": "Grazie, lo controllerà Microblizz.",
+  "Mientras, puedes seguir esperando aquí tan tranquilo.": "Nel frattempo, puoi continuare ad aspettare qui tranquillamente.",
+  "RECIBIDO": "RICEVUTO",
+  "A 1 amigo le gusta tu escenario": "A 1 amico piace il tuo scenario",
+  "A {n} amigos les gusta tu escenario": "A {n} amici piace il tuo scenario",
+  "No se ha podido votar. Prueba otra vez.": "Impossibile votare. Riprova.",
+  "Ya has mandado muchos reportes hoy. Mañana más.": "Hai già mandato molte segnalazioni oggi. Domani ancora.",
+  "Este escenario ya no está aquí.": "Questo scenario non è più qui.",
+  "No se ha podido mandar. Prueba otra vez.": "Impossibile inviare. Riprova.",
+  "Microblizz te ha quitado lo de crear salas con amigos por un reporte. Puedes unirte a la sala de un amigo con su código.": "Microblizz ti ha tolto la possibilità di creare stanze con amici per una segnalazione. Puoi unirti alla stanza di un amico con il suo codice.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte, para siempre. Tus amigos ven la sala de serie.": "Microblizz ha ritirato il tuo scenario dalle stanze per una segnalazione, per sempre. I tuoi amici vedono la stanza di serie.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte hasta el {f}. Tus amigos ven la sala de serie.": "Microblizz ha ritirato il tuo scenario dalle stanze per una segnalazione fino al {f}. I tuoi amici vedono la stanza di serie.",
+  "Microblizz ha retirado este dibujo por un reporte. Pinta otra cosa en MI ESCENARIO para volver a enseñarlo.": "Microblizz ha ritirato questo disegno per una segnalazione. Dipingi qualcos'altro ne IL MIO SCENARIO per mostrarlo di nuovo.",
+  "Tu escenario está en revisión por unos reportes: mientras, tus amigos ven la sala de serie.": "Il tuo scenario è in revisione per alcune segnalazioni: nel frattempo, i tuoi amici vedono la stanza di serie.",
+  "Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.": "Questo scenario è nascosto mentre Microblizz lo controlla. Ecco a voi la stanza di serie.",
+});

@@ -32,7 +32,7 @@
       <div class="esc-herr" id="esc-herr"></div>
       <div class="esc-colores" id="esc-colores"></div>
     </div>
-    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
+    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Arrastra el dedo para llevar tu galleta o toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
   </div>
   <div class="esc-zoom" id="esc-zoom">
     <button type="button" id="b-esc-mas" data-tr-title title="Acercar" data-tr-aria aria-label="Acercar"><i data-icono="mas"></i></button>
@@ -86,7 +86,7 @@
 <div class="pantalla" id="p-busca" hidden>
   <div class="caja pvp">
     <h2 class="ol" id="busca-titulo" data-tr>BUSCANDO PARTIDA</h2>
-    <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button></div>
+    <div class="codigo" id="busca-codigo" hidden><span data-tr>CÓDIGO DE LA SALA</span><b class="ol" id="busca-codigo-n">----</b><button type="button" class="boton peq" id="b-busca-compartir" data-tr>COMPARTIR ENLACE</button><button type="button" class="boton peq azul" id="b-busca-amigos" data-tr>INVITAR AMIGOS</button></div>
     <p class="sub" id="busca-sub"></p>
     <div class="busca-escenario" id="busca-escenario" hidden><canvas id="busca-escenario-cv" data-tr-aria aria-label="El escenario del anfitrión"></canvas><span id="busca-escenario-t"></span></div>
     <div class="esc-votos" id="esc-votos" hidden><button type="button" class="ev-b ev-si" id="b-ev-si" aria-pressed="false"><i data-ico="si"></i><span data-tr>ME GUSTA</span><b id="ev-n">0</b></button><button type="button" class="ev-b ev-no" id="b-ev-no" aria-pressed="false"><i data-ico="no"></i><span data-tr>NO ME GUSTA</span></button><button type="button" class="ev-b ev-rep" id="b-ev-rep"><i data-ico="rep"></i><span data-tr>REPORTAR</span></button></div>
@@ -165,6 +165,8 @@
     <div class="cartera" id="tienda-cartera"></div>
     <p class="tienda-aviso" id="tienda-aviso-euros"></p>
     <div class="tienda-lista">
+      <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
+      <div class="tienda-hoy" id="tienda-hoy" hidden><h3 class="ol" data-tr>OFERTAS DE HOY</h3><small id="tienda-hoy-t"></small><div id="tienda-hoy-lista"></div></div>
       <h3 class="ol" data-tr>OFERTAS</h3><div id="tienda-ofertas"></div>
       <h3 class="ol" data-tr>ACCIONES</h3><div id="tienda-acciones"></div>
       <h3 class="ol" data-tr>ACCIONES CON GOTAS</h3><div id="tienda-gotas"></div>
@@ -262,12 +264,106 @@
 <div class="pantalla" id="p-diario" hidden>
   <div class="caja diario-caja">
     <h2 class="ol" data-tr>PREMIO DIARIO</h2>
-    <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>Si un día no entras, no pierdes nada: sigues por donde ibas.</span></p>
+    <div class="diario-racha" id="diario-racha"><canvas id="diario-racha-dib" width="92" height="104" aria-hidden="true"></canvas><span><b class="ol" id="diario-racha-t"></b><small id="diario-racha-s"></small></span></div>
+    <p class="diario-sub"><b id="diario-semana"></b> · <span data-tr>El calendario no se pierde nunca; la racha, sí.</span></p>
     <div class="diario-dias" id="diario-dias"></div>
+    <div class="diario-premios"><b data-tr>PREMIOS DE RACHA</b><div id="diario-premios"></div></div>
+    <p class="diario-escudo" id="diario-escudo"></p>
     <p class="diario-mes" id="diario-mes"></p>
     <p class="diario-gotas"><span data-tr>Tus gotas</span> <b id="diario-gotas">0</b></p>
     <button type="button" class="boton grande" id="b-diario-recoger"></button>
     <button type="button" class="boton peq" id="b-diario-volver" data-tr>Volver</button>
+  </div>
+</div>
+
+<!-- se te secó la racha: rescatarla (diario.js) -->
+<div class="pantalla" id="p-racha" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol mal" data-tr>¡SE TE SECÓ LA RACHA!</h2>
+    <p class="racha-sub" id="racha-sub"></p>
+    <button type="button" class="boton grande" id="b-racha-rescatar"></button>
+    <button type="button" class="boton gris" id="b-racha-no" data-tr>EMPEZAR DE NUEVO</button>
+  </div>
+</div>
+
+<!-- ¿te aviso? (avisos.js, solo en la app de Android) -->
+<div class="pantalla" id="p-avisos" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol" data-tr>¿TE AVISO?</h2>
+    <p class="racha-sub" data-tr>Te mando un aviso por la tarde si tu racha está a punto de secarse. Como mucho dos al día y nunca de noche.</p>
+    <button type="button" class="boton grande" id="b-avisos-si" data-tr>SÍ, AVÍSAME</button>
+    <button type="button" class="boton gris" id="b-avisos-no" data-tr>NO, GRACIAS</button>
+  </div>
+</div>
+
+<!-- AMIGOS (amigos.js): tu código, añadir, quién está en línea, INVITAR y UNIRME -->
+<div class="pantalla" id="p-amigoslista" hidden>
+  <div class="caja amg-caja">
+    <h2 class="ol" data-tr>AMIGOS</h2>
+    <div class="amg-cod"><span><small data-tr>TU CÓDIGO</small><b class="ol" id="amg-codigo"></b></span><button type="button" class="boton peq" id="b-amg-traer" data-tr>TRAE A UN COLADO</button></div>
+    <div class="amg-anadir"><label><span data-tr>Código de tu amigo</span><input type="text" id="amg-nuevo" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABC123"></label><button type="button" class="boton" id="b-amg-anadir" data-tr>AÑADIR</button></div>
+    <p class="amg-vacio" id="amg-vacio" data-tr>Aún no tienes amigos aquí. Pásales tu código o tu enlace de TRAE A UN COLADO.</p>
+    <h3 class="amg-sec" id="amg-en-t"></h3><div class="amg-lista" id="amg-en"></div>
+    <h3 class="amg-sec" id="amg-fuera-t"></h3><div class="amg-lista" id="amg-fuera"></div>
+    <button type="button" class="boton gris peq" id="b-amg-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+
+<!-- TEMPORADA Y LIGA (temporada.js) -->
+<div class="pantalla" id="p-temporada" hidden>
+  <div class="caja tem-caja">
+    <small class="tem-cab" id="tem-cab"></small>
+    <h2 class="ol" id="tem-nombre"></h2>
+    <div class="tem-ligas" id="tem-ligas"></div>
+    <div class="tem-prog"><div><b id="tem-puntos"></b><span id="tem-falta"></span></div><i class="barra"><i id="tem-barra"></i></i></div>
+    <h3 class="tem-sec" id="tem-tabla-t"></h3>
+    <div class="tem-tabla" id="tem-tabla"></div>
+    <div class="tem-dos">
+      <div class="tem-ev"><small data-tr>ESTA SEMANA</small><b id="tem-ev-t"></b><span id="tem-ev-s"></span></div>
+      <div class="tem-premio"><small data-tr>AL ACABAR</small><b data-tr>PREMIO DE LIGA</b><span id="tem-premio-s"></span></div>
+    </div>
+    <button type="button" class="tem-ofertas" id="b-tem-ofertas"><b class="ol" data-tr>3 OFERTAS DE HOY</b><span data-tr>En la tienda, solo hoy</span></button>
+    <button type="button" class="boton gris peq" id="b-tem-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+<div class="pantalla" id="p-ligapremio" hidden>
+  <div class="caja racha-caja">
+    <h2 class="ol" id="lp-titulo"></h2>
+    <p class="racha-sub" id="lp-sub"></p>
+    <b class="lp-premio ol" id="lp-premio"></b>
+    <button type="button" class="boton grande" id="b-lp-cobrar" data-tr>¡COBRAR!</button>
+  </div>
+</div>
+
+<!-- TRAE A UN COLADO (referidos.js) -->
+<div class="pantalla" id="p-invita" hidden>
+  <div class="caja invita-caja">
+    <h2 class="ol" data-tr>TRAE A UN COLADO</h2>
+    <p class="inv-sub" data-tr>Cuando tu amigo juegue su segunda partida, ganáis los dos.</p>
+    <div class="inv-dos">
+      <div class="inv-tu"><small data-tr>TÚ</small><b class="ol" data-tr>200 GOTAS</b></div>
+      <div class="inv-el"><small data-tr>TU AMIGO</small><b class="ol" data-tr>300 GOTAS</b></div>
+    </div>
+    <div class="inv-cod"><small data-tr>TU CÓDIGO</small><b class="ol" id="inv-codigo"></b></div>
+    <p class="inv-nota" id="inv-nota"></p>
+    <button type="button" class="boton grande" id="b-inv-compartir" data-tr>COMPARTIR ENLACE</button>
+    <div class="inv-escalera-caja"><b id="inv-escalera-t"></b><i class="barra"><i id="inv-barra"></i></i><div class="inv-escalera" id="inv-escalera"></div></div>
+    <div class="inv-lista" id="inv-lista" hidden></div>
+    <button type="button" class="boton gris peq" id="b-inv-volver" data-tr>VOLVER</button>
+  </div>
+</div>
+
+<!-- el reto «¿ME ENCUENTRAS?» (reto.js): la presentación al abrir un enlace ?reto= y el resultado (abajo, para ver el mapa detrás) -->
+<div class="pantalla reto" id="p-reto" hidden>
+  <div class="caja reto-caja" id="reto-caja">
+    <h2 class="ol" id="reto-titulo"></h2>
+    <p class="reto-sub" id="reto-sub"></p>
+    <p class="reto-datos" id="reto-datos"></p>
+    <button type="button" class="boton grande" id="b-reto-ir" data-tr hidden>¡A BUSCAR!</button>
+    <button type="button" class="boton grande" id="b-reto-devolver" data-tr hidden>DEVOLVERLE EL RETO</button>
+    <button type="button" class="boton verde" id="b-reto-jugar" data-tr hidden>JUGAR UNA PARTIDA ENTERA</button>
+    <button type="button" class="boton gris peq" id="b-reto-titulo" data-tr>Ir al menú</button>
+    <small class="reto-nota" data-tr>Sin cuenta y sin descargar nada. Juegas en el navegador.</small>
   </div>
 </div>
 
@@ -288,6 +384,14 @@
     <div class="pf-pruebas">
       <button type="button" class="boton" id="b-pf-todo"></button>
       <small data-tr>Solo para probar cómo queda: este botón no estará en el juego final.</small>
+    </div>
+    <div class="pf-menu">
+      <button type="button" class="boton pf-m escenario" id="b-escenario"><b data-tr>MI ESCENARIO</b></button>
+      <button type="button" class="boton pf-m diario" id="b-pf-diario"><b data-tr>PREMIO DIARIO</b></button>
+      <button type="button" class="boton pf-m talentos" id="b-talentos"><b data-tr>TALENTOS</b></button>
+      <button type="button" class="boton pf-m misiones" id="b-pf-misiones"><b data-tr>MISIONES</b></button>
+      <button type="button" class="boton pf-m ayuda" id="b-ayuda"><b data-tr>CÓMO SE JUEGA</b></button>
+      <button type="button" class="boton pf-m opciones" id="b-opciones"><b data-tr>OPCIONES</b></button>
     </div>
     <div class="fila-botones">
       <button type="button" class="boton azul" id="b-pf-armario" data-tr>ARMARIO</button>

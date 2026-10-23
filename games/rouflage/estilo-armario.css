@@ -18,6 +18,16 @@
 .ar-vista canvas { display: block; }
 .ar-vista canvas[hidden] { display: none; }
 .ar-vista .ar-extra { align-self: center; }
+/* MOVER y COLADO/BECARIO sobre la vista (armario-mueve.js) */
+.ar-mueve { position: absolute; left: 0; top: 0; z-index: 1; display: grid; gap: 4px; justify-items: start; }
+.ar-mueve[hidden], .ar-mueve-b[hidden] { display: none; }
+.ar-mueve-b { padding: 4px 9px 1px; border-radius: 99px; border: 2px solid var(--outline); box-shadow: 0 2px 0 var(--outline); background: linear-gradient(to bottom, #ffb36b, #ff7a1a);
+  color: var(--outline); font: 400 11px var(--font-display); letter-spacing: 0.04em; cursor: pointer; touch-action: manipulation; }
+.ar-mueve-b.on { background: linear-gradient(to bottom, #fff2a8, #ffcb3d); }
+.ar-mueve-b.colado { background: linear-gradient(to bottom, #b6f58a, #4fae2a); }
+.ar-mueve-b.becario { background: linear-gradient(to bottom, #9fd0ff, #3a7de0); color: #fff6ea; text-shadow: 0 1px 0 var(--outline); }
+.ar-mueve-b:active { transform: translateY(2px); box-shadow: none; }
+#ar-vista { cursor: pointer; touch-action: manipulation; }
 .ar-info { display: grid; gap: 4px; text-align: left; min-width: 0; }
 .ar-info b { font-family: var(--font-display); font-weight: 400; font-size: 20px; line-height: 1.05; color: var(--ink); text-shadow: 0 2px 0 var(--outline); }
 .ar-info span { font-size: 13px; font-weight: 700; color: var(--ink-dim); line-height: 1.2; }
@@ -47,13 +57,13 @@
 .ar-casilla.sel { border-color: var(--gold); }
 #ar-nombre.r-rara { color: #8fe3ff; } #ar-nombre.r-epica { color: #d7a8ff; } #ar-nombre.r-legend { color: var(--gold); }
 
-.pf-ficha { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px; background: radial-gradient(circle at 30% 40%, #2f4060 0%, #18223a 70%); }
+.pf-ficha { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; border: 3px solid var(--outline); border-radius: 16px; padding: 8px; background: radial-gradient(circle at 30% 40%, #2f4060 0%, #18223a 70%); }
 .pf-galleta canvas, #pf-titulo-sitio canvas { display: block; }
 .pf-datos { display: grid; gap: 4px; text-align: left; min-width: 0; }
 .pf-nombre { font-family: var(--font-display); font-weight: 400; font-size: 24px; color: var(--ink); overflow-wrap: anywhere; }
 #pf-titulo-sitio canvas { max-width: 100%; height: auto !important; }
 .pf-datos p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 6px; font-size: 13px; color: var(--ink-dim); border-top: 2px dashed rgba(185, 198, 220, .25); padding-top: 3px; }
-.pf-datos p b { color: var(--ink); text-align: right; white-space: nowrap; margin-left: auto; }      /* si no cabe, la cifra baja entera a la derecha */
+.pf-datos p b { color: var(--ink); text-align: right; margin-left: auto; overflow-wrap: anywhere; }      /* si no cabe, la cifra baja a la derecha (y se parte si ni así cabe: nunca se sale del marco) */
 .pf-coleccion { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 10px; }
 .pf-fila { display: grid; grid-template-columns: 62px 1fr auto; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; color: var(--ink); font-family: var(--font-ui); font-weight: 700; font-size: 12px; text-align: left; cursor: pointer; }
 .pf-fila .barra { width: auto; height: 10px; }

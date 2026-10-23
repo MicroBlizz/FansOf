@@ -37,7 +37,7 @@ const RFRED = (() => {
   const vinculada = () => { if (conCuenta()) return !CUENTA.invitado; const s = leer(); return !!(s && s.refresh && s.invitado === false); };
   const errorTexto = e => {
     const m = String((e && e.message) || e);
-    return /cuenta_no_vinculada|sin_sesion/.test(m) ? 'Para jugar PvP necesitas una cuenta vinculada: botón CUENTA del título.'
+    return /cuenta_no_vinculada|sin_sesion/.test(m) ? 'Para jugar en línea hace falta conexión. Vuelve a abrir el juego.'
       : /could not find|schema cache|PGRST202|HTTP 404/i.test(m) ? 'El PvP de Rouflage todavía no está abierto en el servidor. Pronto.' : /refresh|jwt|token/i.test(m) ? 'Tu sesión ha caducado: vuelve a abrir el juego.'
       : /sala_no_valida/.test(m) ? 'La sala ya no existe.' : /codigo_no_valido/.test(m) ? 'Ese código no existe o la sala ya empezó.' : /sala_llena/.test(m) ? 'La sala está llena.'
       : /voto_en_espera/.test(m) ? 'Aún no se puede volver a votar.' : /faltan_jugadores/.test(m) ? 'Hacen falta al menos dos personas para empezar.' : /no_eres_anfitrion/.test(m) ? 'Solo el anfitrión puede empezar.' : 'Necesitas conexión para jugar PvP.';
@@ -187,5 +187,10 @@ const RFRED = (() => {
   };
 
   const esLocal = () => { try { return new URLSearchParams(location.search).get('pvp') === 'local'; } catch (e) { return false; } };
-  return { rpc, vinculada, errorTexto, servidor, local, get red() { return esLocal() ? local : servidor; }, esLocal };
+  // ¿se puede jugar en línea? Con cualquier sesión, también la de invitado (desde el 23-10-2026: quien llega por un enlace juega sin crear cuenta;
+  // la tienda, el ranking y la liga sí piden cuenta). Con core cargado (CUENTA.activa) la sesión de invitado se crea sola en la primera llamada
+  const conSesion = () => conCuenta() || !!(leer() && leer().refresh);
+  // sin sesión (rol anon): lo que puede hacer cualquiera que llega por un enlace, como abrir un reto (reto.js)
+  const rpcAnon = (nombre, cuerpo = {}) => pedir('/rest/v1/rpc/' + nombre, cuerpo);
+  return { rpc, rpcAnon, vinculada, conSesion, errorTexto, servidor, local, get red() { return esLocal() ? local : servidor; }, esLocal };
 })();

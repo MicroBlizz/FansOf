@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.8
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
+  "Microblizz ha puesto el GPS en alemán y Phony ha acabado en otra carrera.": "Microblizz switched the GPS to German and Phony ended up in another race.",
   // 0.7.7
   "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
   "Microblizz ha repasado los carteles de la pista y Phony ha derrapado sobre un acento.": "Microblizz has gone over the track signs and Phony skidded on an accent.",

@@ -1,0 +1,28 @@
+// Fans of Rouflage · Portugués (Brasil) de ME GUSTA, NO ME GUSTA y REPORTAR el escenario en la sala con amigos (js/sala-votos.js y su HTML en js/pantallas-html.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ME GUSTA": "CURTI",
+  "NO ME GUSTA": "NÃO CURTI",
+  "REPORTAR": "DENUNCIAR",
+  "REPORTAR ESCENARIO": "DENUNCIAR CENÁRIO",
+  "¿Qué tiene de malo este escenario? Se lo mandamos a los desarrolladores, que lo miran con lupa.": "O que há de errado com este cenário? Mandamos para os desenvolvedores, que olham com lupa.",
+  "Dibujo inapropiado": "Desenho impróprio",
+  "Nombre ofensivo": "Nome ofensivo",
+  "Otra cosa": "Outra coisa",
+  "Cuéntalo en pocas palabras (opcional)": "Conte em poucas palavras (opcional)",
+  "Gracias, lo revisará Microblizz.": "Obrigado, a Microblizz vai analisar.",
+  "Mientras, puedes seguir esperando aquí tan tranquilo.": "Enquanto isso, você pode continuar esperando aqui numa boa.",
+  "RECIBIDO": "RECEBIDO",
+  "A 1 amigo le gusta tu escenario": "1 amigo curtiu seu cenário",
+  "A {n} amigos les gusta tu escenario": "{n} amigos curtiram seu cenário",
+  "No se ha podido votar. Prueba otra vez.": "Não foi possível votar. Tente de novo.",
+  "Ya has mandado muchos reportes hoy. Mañana más.": "Você já mandou muitas denúncias hoje. Amanhã tem mais.",
+  "Este escenario ya no está aquí.": "Este cenário não está mais aqui.",
+  "No se ha podido mandar. Prueba otra vez.": "Não foi possível enviar. Tente de novo.",
+  "Microblizz te ha quitado lo de crear salas con amigos por un reporte. Puedes unirte a la sala de un amigo con su código.": "A Microblizz tirou sua permissão de criar salas com amigos por causa de uma denúncia. Você pode entrar na sala de um amigo com o código dele.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte, para siempre. Tus amigos ven la sala de serie.": "A Microblizz retirou seu cenário das salas por causa de uma denúncia, para sempre. Seus amigos veem a sala padrão.",
+  "Microblizz ha retirado tu escenario de las salas por un reporte hasta el {f}. Tus amigos ven la sala de serie.": "A Microblizz retirou seu cenário das salas por causa de uma denúncia até {f}. Seus amigos veem a sala padrão.",
+  "Microblizz ha retirado este dibujo por un reporte. Pinta otra cosa en MI ESCENARIO para volver a enseñarlo.": "A Microblizz retirou este desenho por causa de uma denúncia. Pinte outra coisa em MEU CENÁRIO para mostrar de novo.",
+  "Tu escenario está en revisión por unos reportes: mientras, tus amigos ven la sala de serie.": "Seu cenário está em análise por causa de algumas denúncias: enquanto isso, seus amigos veem a sala padrão.",
+  "Este escenario está escondido mientras lo revisa Microblizz. Aquí tenéis la sala de serie.": "Este cenário está escondido enquanto a Microblizz analisa. Aqui está a sala padrão.",
+});

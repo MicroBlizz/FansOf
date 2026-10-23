@@ -24,13 +24,16 @@ const SONIDO = {
   corte: n => { for (let i = 0; i < Math.min(12, n); i++) tone(900 + i * 90, 1400 + i * 90, 0.05, 'square', v(0.05), i * 0.035); noise(0.15, v(0.1), 1500); },
   muere: () => { if (esRetro()) { [900, 700, 500, 300].forEach((f, i) => pitido(f, 0.12, i * 0.14)); return; } tone(220, 60, 0.5, 'sawtooth', v(0.12)); noise(0.3, v(0.12), 700); },
   boton: () => tone(700, 900, 0.05, 'triangle', v(0.06)),
-  locura: tipo => tipo === 'retro' ? [1200, 1200, 1600].forEach((f, i) => pitido(f, 0.08, i * 0.1)) : [600, 450, 600, 450].forEach((f, i) => tone(f, f, 0.08, 'triangle', v(0.06), i * 0.07)),
+  locura: tipo => tipo === 'turbo' ? [400, 800, 1600].forEach((f, i) => tone(f, f * 1.5, 0.1, 'sawtooth', v(0.05), i * 0.06)) : tipo === 'retro' ? [1200, 1200, 1600].forEach((f, i) => pitido(f, 0.08, i * 0.1)) : [600, 450, 600, 450].forEach((f, i) => tone(f, f, 0.08, 'triangle', v(0.06), i * 0.07)),
   locura_fin: () => tone(1000, 1400, 0.1, 'triangle', v(0.05)),
   cartas: () => [523, 659, 784].forEach((f, i) => tone(f, f, 0.12, 'triangle', v(0.07), i * 0.08)),
   elige: () => { [784, 988, 1318].forEach((f, i) => tone(f, f, 0.09, 'square', v(0.06), i * 0.05)); noise(0.1, v(0.05), 3000, 'bandpass'); },
   escudo: () => { tone(200, 600, 0.15, 'square', v(0.08)); noise(0.12, v(0.08), 900); },
   fantasma: () => tone(900, 300, 0.3, 'sine', v(0.08)),
   portal: () => tone(300, 1200, 0.12, 'sine', v(0.06)),
+  nitro: () => { noise(0.35, v(0.08), 700); tone(150, 600, 0.3, 'sawtooth', v(0.04)); },
+  salto: () => tone(300, 1100, 0.18, 'triangle', v(0.07)),
+  bala: () => { tone(900, 200, 0.6, 'sine', v(0.08)); },
   racha: n => tone(700 + n * 90, 900 + n * 90, 0.06, 'triangle', v(0.05), 0.05),
 };
 
@@ -39,10 +42,10 @@ let finSonado = false;
 function vigilaMusica() {
   if (!AC || !M.bus) return;
   const J = JUEGO;
-  if (J.modo === 'fin') { if (!finSonado && J.tFin > 0.3) { finSonado = true; musicSet('lose'); } return; }
+  if (J.modo === 'fin') { if (!finSonado && J.tFin > 0.3) { finSonado = true; musicSet(J.fin.gana ? 'win' : 'lose'); } return; }
   finSonado = false;
   if (M.trk && M.trk.once) return;
-  const quiero = J.modo === 'menu' ? 'menu' : 'gamer';
+  const menu = !enPartida(), quiero = menu ? 'menu' : 'gamer';
   if (M.name !== quiero) musicSet(quiero);
-  M.tmT = J.modo === 'menu' ? 1 : J.modo === 'cartas' ? 0.85 : esFrenesi() ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
+  M.tmT = menu ? 1 : J.modo === 'cartas' ? 0.85 : JUEGO.balaT > 0 ? 0.6 : esFrenesi() || locuraActiva('turbo') || JUEGO.nitro ? 1.35 : 1 + Math.min(0.15, (J.serp.length - 4) * 0.004);
 }

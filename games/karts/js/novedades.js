@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.7.8', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha puesto el GPS en alemán y Phony ha acabado en otra carrera."] },
   { v: '0.7.7', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha repasado los carteles de la pista y Phony ha derrapado sobre un acento."] },
   { v: '0.7.6', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha despejado la pista de barras y Phony ha tomado la curva por la barra de estado."] },
   { v: '0.7.5', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores)."], joke: ["Microblizz ha puesto un cartel de «próximamente» en la pista y Phony ya ha dado tres vueltas por si acaso."] },

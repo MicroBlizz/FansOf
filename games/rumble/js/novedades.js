@@ -3,6 +3,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.9.151', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha traducido el grito de guerra al portugués y Phony lo ha convertido en samba."] },
   { v: '0.9.150', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha lijado las traducciones de la arena y Phony ha jurado que no hizo nada."] },
   { v: '0.9.149', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha ampliado la arena a pantalla completa y Phony ha vendido entradas de pie."] },
   { v: '0.9.148', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie siguen mejorando (la web puede abrir cada juego por fases y tener una beta para probadores)."], joke: ["Microblizz ha puesto cortinas en la arena y Phony asegura que detrás está la mejor facción."] },

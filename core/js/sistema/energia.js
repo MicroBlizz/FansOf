@@ -9,7 +9,7 @@ const ENERGIA = (() => {
   const INVITA = Math.random() < 0.5 ? 'Arkioner' : 'Pepins';   // quien paga por ahora: a veces uno y a veces el otro (de verdad)
   let est = null, cuando = 0, tic = null, tic2 = null, caja = null;
   const dosd = n => String(n).padStart(2, '0'), reloj = s => `${Math.floor(s / 60)}:${dosd(s % 60)}`;
-  const hasta = f => { try { return new Date(f).toLocaleDateString(NUCLEO.idioma === 'en' ? 'en-GB' : 'es-ES'); } catch (e) { return ''; } };
+  const hasta = f => { try { return new Date(f).toLocaleDateString(NUCLEO.idioma === 'en' ? 'en-GB' : NUCLEO.idioma); } catch (e) { return ''; } };
   const resta = () => (est && est.proxima_seg != null ? Math.max(0, est.proxima_seg - Math.floor((Date.now() - cuando) / 1000)) : null);
   // cuánto falta para el siguiente punto, de 0 a 100 (la barra de fondo del contador); sin recarga pendiente = 100
   const prog = () => { const r = resta(); return r == null || !est ? 100 : Math.max(0, Math.min(100, Math.round((1 - r / (est.recarga_min * 60)) * 100))); };

@@ -19,7 +19,11 @@ function monedaVuela(x, y) {
   PART.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0, dur: 0.7 + Math.random() * 0.3, r: 3, col: '#ffd54a', g: 220, forma: 'moneda' });
 }
 
-function numero(x, y, txt, col = '#fff', tam = 9) { NUMS.push({ x, y, txt, t: 0, col, tam }); }
+function numero(x, y, txt, col = '#fff', tam = 9) {
+  const medio = String(txt).length * tam * 0.3;   // que no se salga por los lados
+  x = Math.max(medio + 4, Math.min(PAN.W - medio - 4, x));
+  NUMS.push({ x, y, txt, t: 0, col, tam });
+}
 
 function tiembla(fuerza = 2, t = 0.2) { TEMBLOR.fuerza = Math.max(TEMBLOR.fuerza, fuerza); TEMBLOR.t = Math.max(TEMBLOR.t, t); }
 

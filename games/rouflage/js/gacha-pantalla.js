@@ -37,7 +37,7 @@ function pintaInfoBoton(c, w) {
   c.beginPath(); rrPathRF(c, 17, 16.5, 6, 14, 2.4); c.fill(); c.lineWidth = 1.6; c.stroke();
   c.restore();
 }
-const pctRF = v => (IDIOMA_RF === 'es' ? String(Math.round(v * 100) / 100).replace('.', ',') : String(Math.round(v * 100) / 100)) + ' %';
+const pctRF = v => (IDIOMA_RF === 'en' ? String(Math.round(v * 100) / 100) : String(Math.round(v * 100) / 100).replace('.', ',')) + ' %';
 
 let _gachaReloj = 0;
 function abreGacha() { gachaEstado(); if (RFS.activo()) RFS.relojes(); GACHA_UI.ocupado = false; E('gacha-result').hidden = true; E('gacha-res').innerHTML = ''; gachaPinta(); pantalla('p-gacha'); if (!_gachaRAF) _gachaRAF = requestAnimationFrame(gachaDibuja); gachaPintaGratis(); play('select'); clearInterval(_gachaReloj); _gachaReloj = setInterval(gachaPintaGratis, 1000); }
@@ -47,7 +47,7 @@ function gachaPinta() {
   const g = gachaEstado(), [t, n] = gachaCuenta();
   E('gacha-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones || 0}</b></span>`;
   E('gacha-cuenta').textContent = tr('Tienes {t} de {n} piezas del gachapón', { t, n });
-  E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas y una Épica cada {e}. Llevas {a} y {b} desde la última.', { r: GACHA.pityRara, e: GACHA.pityEpica, a: g.sinRara, b: g.sinEpica });
+  E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.', { r: GACHA.pityRara, e: GACHA.pityEpica, l: GACHA.pityLegend, a: g.sinRara, b: g.sinEpica, c: g.sinLegend || 0 });
   for (const [id, k] of [['b-gacha-1', 1], ['b-gacha-10', 10]]) {
     // como los del Rumble: «x1» grande y debajo el precio con su gota; el x10, con su cartelito
     const b = E(id), coste = gachaCoste(k); b.innerHTML = (k === 10 ? `<span class="tag">${tr('LA FAVORITA')}</span>` : '') + 'x' + k;

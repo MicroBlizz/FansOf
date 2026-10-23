@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.80
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
+  "Microblizz ha puesto carteles en cuatro idiomas en la torre y Phony los ha usado de escudo.": "Microblizz has put up signs in four languages on the tower and Phony used them as a shield.",
   // 0.13.79
   "<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: translation clean-up in the series' shared systems and tweaks to the website's play button.",
   "Microblizz ha limpiado las ruinas de textos y Phony ha puesto una torre sobre una errata.": "Microblizz has cleaned the ruins of texts and Phony put a tower on a typo.",

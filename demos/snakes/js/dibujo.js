@@ -47,3 +47,26 @@ function circulo(x, y, r, fill, stroke, lw = 1.5) {
 
 // el tono del arcoíris del Frenesí, según el segmento y el tiempo
 const arcoiris = (i, t, l = 55) => `hsl(${(i * 18 + t * 240) % 360} 95% ${l}%)`;
+
+// ---------- botones de las pantallas (portada, mapa, tienda, ranking, final…) ----------
+// Cada fotograma se vacía la lista (js/pantalla.js) y cada botón dibujado se apunta con su acción; un toque (js/entrada.js)
+// busca el último botón que esté debajo del dedo. Así cada pantalla solo dibuja sus botones y ya responden.
+const UI = [];
+function botonUI(txt, x, y, w, h, accion, col = '#3ddc84', colTxt = '#06110a', tam = 9) {
+  caja(x, y + 2.5, w, h, 7, '#06110a', null);
+  caja(x, y, w, h, 7, col, '#06110a', 1.8);
+  letra(txt, x + w / 2, y + h / 2 + 0.5, tam, colTxt, 'center', null, 0);
+  UI.push({ x, y, w, h, accion });
+}
+function zonaUI(x, y, w, h, accion) { UI.push({ x, y, w, h, accion }); }
+function toqueUI(px, py) {
+  for (let i = UI.length - 1; i >= 0; i--) if (dentro(UI[i], px, py)) { SONIDO.boton(); UI[i].accion(); return true; }
+  return false;
+}
+
+// una estrella de cinco puntas (las de las fases), llena o vacía
+function estrella(x, y, r, llena = true) {
+  G.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; G.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+  G.closePath(); G.fillStyle = llena ? '#ffd54a' : '#1b3a28'; G.fill(); G.strokeStyle = '#06110a'; G.lineWidth = Math.max(0.8, r * 0.22); G.lineJoin = 'round'; G.stroke();
+}

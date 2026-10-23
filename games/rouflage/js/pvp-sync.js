@@ -45,14 +45,18 @@ function rfpEnvia(dt) {
   if (!yo.congelado && yo.listo) { yo.listo = false; RFP.listos.delete(RFP.yo); }      // si rompes el hielo ya no estás listo
   RFP.tEnvio -= dt;
   if (RFP.tEnvio <= 0) {
-    const nh = RFP.slots.filter(s => s.humano).length, hz = Math.min(RFP_AJ.envioHz, Math.max(4, RFP_AJ.avisosSala / Math.max(1, nh)));
+    // quieto o congelado, un latido por segundo basta (los demás no ven nada cambiar); al moverte, hasta envioHz (menos si la sala está llena de humanos)
+    const nh = RFP.slots.filter(s => s.humano).length, quieto = yo.congelado || (!yo.moviendo && Math.abs(yo.vx) < 1 && Math.abs(yo.vy) < 1);
+    const hz = quieto ? RFP_AJ.quietoHz : Math.min(RFP_AJ.envioHz, Math.max(4, RFP_AJ.avisosSala / Math.max(1, nh)));
     RFP.tEnvio = 1 / hz;
     rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: Math.round(yo.dir * 100) / 100, ci: yo.ciego > 0 ? 1 : 0, f: yo.fuera ? 1 : 0, iv: Math.ceil(yo.invis) });
   }
   if (!RFP.soyHost) return;
   RFP.tIA -= dt;
   if (RFP.tIA > 0) return;
-  RFP.tIA = 1 / RFP_AJ.iaHz;
+  // si ningún bot se mueve (todos congelados o quietos), el aviso del anfitrión puede ir mucho más lento: solo lleva el reloj
+  const botsQuietos = J.entes.every(e => e.humano || e.remoto || e.fuera || e.congelado || (!e.moviendo && Math.abs(e.vx) < 1 && Math.abs(e.vy) < 1));
+  RFP.tIA = 1 / (botsQuietos ? RFP_AJ.iaQuietoHz : RFP_AJ.iaHz);
   const ks = [], fu = [], ba = [];
   for (const e of J.entes) {
     if (e.fuera) fu.push(e.slot);
@@ -90,6 +94,7 @@ function rfpRecibe(m) {
     case 'fg': fantasmaRecibido(sl, m); break;
     case 'bz': balizaRecibida(m, sl); break;
     case 'ch': chatRecibido(sl, m); break;      // una frase rápida del chat (chat-partida.js)
+    case 'cf': if (typeof chatFinRecibido === 'function') chatFinRecibido(sl, m); break;      // el chat del final de la ronda (chat-fin.js)
     case 'vt': rfpVotoRecibido(m); break;
     case 'cv': rfpChivatoRecibido(m, sl); break;
     case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;

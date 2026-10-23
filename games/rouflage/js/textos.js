@@ -6,6 +6,7 @@
 // El idioma lo decide core (NUCLEO.idioma: el elegido o el del navegador; cambiarlo recarga la página) y tr() es el de core
 // (core/js/sistema/idioma.js), que traduce con idioma/en.js.
 const IDIOMA_RF = NUCLEO.idioma;
+const LOCALE_RF = { es: 'es-ES', en: 'en-GB', pt: 'pt-BR' }[IDIOMA_RF] || IDIOMA_RF;      // para números y fechas (toLocaleString): fr, de e it valen tal cual
 
 // la página: data-tr traduce el texto de un elemento; data-tr-html, su contenido con negritas; data-tr-aria y data-tr-title, sus descripciones.
 // Cada elemento se guarda su español la primera vez, así que se puede llamar otra vez al cambiar de idioma.

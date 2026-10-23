@@ -41,12 +41,12 @@ const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 // jugar con amigos: solo hay que enseñar el error, si lo hay (sin cuenta vinculada, código malo, sala llena…)
 function pvpPintaAmigos() {
   const err = E('amigos-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';
-  if (!RFRED.esLocal() && !RFRED.vinculada()) { err.hidden = false; err.textContent = tr(RFRED.errorTexto(new Error('cuenta_no_vinculada'))); }
+  if (!RFRED.esLocal() && !RFRED.conSesion()) { err.hidden = false; err.textContent = tr(RFRED.errorTexto(new Error('cuenta_no_vinculada'))); }
 }
 // compartir la sala con amigos: el enlace abre el juego con el código puesto (con la hoja de compartir del móvil, o copiado)
 function pvpCompartir() {
   const i = RFP.info; if (!i || !i.codigo) return;
-  const url = location.origin + location.pathname + '?sala=' + i.codigo, txt = tr('¡Únete a mi sala de Fans of Rouflage! Código: {c}', { c: i.codigo });
+  const url = (typeof refEnlace === 'function' ? refEnlace : x => x)(location.origin + location.pathname + '?sala=' + i.codigo), txt = tr('¡Únete a mi sala de Fans of Rouflage! Código: {c}', { c: i.codigo });
   if (navigator.share) { navigator.share({ title: 'Fans of Rouflage', text: txt, url }).catch(() => { /* cancelado */ }); return; }
   const listo = () => { E('busca-sub').textContent = tr('Enlace copiado: pégaselo a tus amigos.'); };
   try { navigator.clipboard.writeText(txt + ' ' + url).then(listo, () => { E('busca-sub').textContent = url; }); } catch (_) { E('busca-sub').textContent = url; }

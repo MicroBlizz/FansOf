@@ -81,10 +81,10 @@
     ['zorro', 'Zorrito de SlyFox', 'rara', 'tienda', 0], ['castor', 'Castorcito de BoomBeaver', 'rara', 'tienda', 0], ['suricato', 'Suricato de MeerCat', 'rara', 'tienda', 0],
     ['mapache', 'Mapachito de JunkCoon', 'rara', 'tienda', 0], ['vaca', 'Vaquita de MechaVaca', 'rara', 'tienda', 0], ['gato', 'Gatito de ChonkCat', 'rara', 'tienda', 0],
     ['calavera', 'Calavera saltarina', 'rara', 'tienda', 0], ['murcielago', 'Murciélago de oficina', 'rara', 'tienda', 0], ['pulpo', 'Pulpito', 'rara', 'tienda', 0],
-    ['huron', 'Hurón ninja', 'epica', 'tienda', 0], ['zombi', 'Zombi en miniatura', 'epica', 'tienda', 0], ['fantasma', 'Fantasmita de GhostMage', 'epica', 'premium', 'Pase premium · nv 13'],
+    ['huron', 'Hurón ninja', 'epica', 'amigos', 'Trae amigos · 3'], ['zombi', 'Zombi en miniatura', 'epica', 'tienda', 0], ['fantasma', 'Fantasmita de GhostMage', 'epica', 'premium', 'Pase premium · nv 13'],
     ['kaiju', 'Kaiju de goma', 'epica', 'tienda', 0], ['recreativa', 'Recreativa en miniatura', 'epica', 'tienda', 0], ['cupido', 'Corazón alado de CupidArcher', 'epica', 'premium', 'Pase premium · nv 32'],
-    ['serpiente', 'Serpiente de Medusa', 'epica', 'tienda', 0], ['dron', 'Dron cazador', 'legend', 'tienda', 0],
+    ['serpiente', 'Serpiente de Medusa', 'epica', 'tienda', 0], ['dron', 'Dron cazador', 'legend', 'amigos', 'Trae amigos · 10'],
   ];
-  CATALOGO_AR.push({ id: 'mascotas', nombre: 'Mascotas', corto: 'Mascotas', nota: 'Te siguen mientras te preparas y salen corriendo al empezar. Todos ven su aspecto, pero no cambian cómo se juega', cuerpo: true,
+  CATALOGO_AR.push({ id: 'mascotas', nombre: 'Mascotas', corto: 'Mascotas', nota: 'Te siguen mientras te preparas y salen corriendo al empezar. Todos ven su aspecto, pero no cambian cómo se juega', vacio: true, cuerpo: true,
     items: MASC.map(([id, n, r, de, txt]) => it(id, n, r, de, txt, mascotaIcono(id), id)) });
 })();

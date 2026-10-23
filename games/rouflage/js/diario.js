@@ -13,7 +13,27 @@ function diarioEstado() {
   if (typeof SAVE.gotas !== 'number') SAVE.gotas = 0;
   return SAVE.diario;
 }
-const diarioPuede = () => diarioEstado().ultimo !== (RFS.activo() ? gachaMadrid().fecha : fechaHoy());      // con servidor, el día es el de Madrid
+const diaHoy = () => (RFS.activo() ? gachaMadrid().fecha : fechaHoy());      // con servidor, el día es el de Madrid
+const diarioPuede = () => diarioEstado().ultimo !== diaHoy();
+
+/* ---------- LA RACHA (bocetos 2 y 3, 23-10-2026): días seguidos recogiendo. La misma cuenta que el servidor (rf_diario, servidor/81-rouflage-racha.sql) ---------- */
+const RACHA = { porDia: 10, tope: 10, rescate: 50, hitos: [[7, 'titulos', 'puntual'], [14, 'titulos', 'fichaje'], [30, 'titulos', 'empleado']] };
+const diaMas = (f, n) => { const d = new Date(f + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+// la semana ISO ('2026-43'), como to_char(fecha, 'IYYY-IW') del servidor: el escudo es uno por semana
+function semanaDe(f) {
+  const d = new Date(f + 'T12:00:00Z'), dia = (d.getUTCDay() + 6) % 7; d.setUTCDate(d.getUTCDate() - dia + 3);
+  const ano = d.getUTCFullYear(), primero = new Date(Date.UTC(ano, 0, 4)), sem = 1 + Math.round(((d - primero) / 864e5 - 3 + ((primero.getUTCDay() + 6) % 7)) / 7);
+  return ano + '-' + String(sem).padStart(2, '0');
+}
+const rachaExtra = r => Math.min(Math.max(r - 1, 0), RACHA.tope) * RACHA.porDia;
+// cómo queda la racha si recoges hoy: { r, escudo (lo gasta), perdida (la que se pierde, si llevabas 3 o más) }. Si hoy ya recogiste, la que tienes
+function rachaHoy() {
+  const s = diarioEstado(), hoy = diaHoy(), r = s.racha || 0;
+  if (s.ultimo === hoy) return { r, hecha: true };
+  if (s.ultimo === diaMas(hoy, -1)) return { r: r + 1 };
+  if (s.ultimo === diaMas(hoy, -2) && r > 0 && s.escudo !== semanaDe(hoy)) return { r: r + 1, escudo: true };
+  return { r: 1, perdida: r >= 3 ? r : 0 };
+}
 // las cosas del armario marcadas «Diario», con su categoría (la clave con la que se guardan: 'cat:id')
 function diarioCosas(filtro) {
   const out = [];
@@ -45,7 +65,15 @@ function diarioRecoge() {
   if (RFS.activo()) return diarioRecogeServidor();
   if (!diarioPuede()) return;
   const s = diarioEstado(), hoy = fechaHoy(), mes = hoy.slice(0, 7);
-  const texto = diarioDa(diarioPremio(s.dia));
+  // la racha, como en el servidor
+  const rh = rachaHoy(), extras = [];
+  if (rh.escudo) s.escudo = semanaDe(hoy);
+  if (rh.perdida) { s.perdida = rh.perdida; s.perdidaDia = hoy; }
+  s.racha = rh.r;
+  if (rachaExtra(rh.r)) { SAVE.gotas += rachaExtra(rh.r); extras.push(tr('{n} Gotas de racha', { n: rachaExtra(rh.r) })); }
+  const hitoR = RACHA.hitos.find(h => h[0] === rh.r);
+  if (hitoR) { const it = arItem(hitoR[1], hitoR[2]); if (it) extras.push(diarioDa({ cosas: [{ cat: hitoR[1], it }] })); }
+  const texto = [diarioDa(diarioPremio(s.dia))].concat(extras).join(' + ');
   s.dia = (s.dia + 1) % (DIARIO.semanas * 7); s.ultimo = hoy;
   if (s.mes !== mes) { s.mes = mes; s.delMes = 0; }
   s.delMes++;
@@ -58,6 +86,24 @@ function diarioRecoge() {
   guardaPartida(); play('select'); play('go');
   avisa(tr('Premio del día: {p}', { p: texto + (extra ? ' + ' + extra : '') }), 'bueno');
   diarioPinta(); diarioBoton();
+  if (rh.perdida) setTimeout(() => abreRescate(rh.perdida), 900); else if (rh.r >= 2) avisosOfrece();
+}
+
+/* ---------- se te secó la racha: rescatarla (solo el día que la pierdes) ---------- */
+function abreRescate(n) {
+  E('racha-sub').textContent = tr('Llevabas {n} días. Puedes rescatarla hoy, solo hoy.', { n });
+  E('b-racha-rescatar').textContent = tr('RESCATAR · {a} ACCIONES', { a: RACHA.rescate });
+  pantalla('p-racha'); play('deny');
+}
+async function rachaRescata() {
+  const s = diarioEstado();
+  if (RFS.activo()) {
+    try { await RFS.llama('rf_racha_rescatar'); } catch (e) { if (/sin_acciones/.test(String(e && e.message))) { abreTienda('titulo'); return; } RFS.error(e); return; }
+  } else {
+    if ((SAVE.acciones || 0) < RACHA.rescate) { play('deny'); abreTienda('titulo'); return; }
+    SAVE.acciones -= RACHA.rescate; s.racha = (s.perdida || 0) + 1; s.perdida = 0; s.perdidaDia = ''; guardaPartida();
+  }
+  play('crown'); avisa(tr('¡Racha rescatada! Llevas {n} días', { n: diarioEstado().racha }), 'bueno'); abreDiario();
 }
 
 /* ---------- la ventana ---------- */
@@ -97,17 +143,57 @@ function diarioPinta() {
     caja.appendChild(cel);
   }
   const bt = E('b-diario-recoger'); bt.disabled = !puede; bt.textContent = puede ? tr('¡RECOGER!') : tr('VUELVE MAÑANA');
+  // la racha: cuántos días, lo que da hoy (o mañana) y sus premios
+  const rh = rachaHoy(), r = rh.r, ex = puede ? rachaExtra(r) : rachaExtra(r + 1);
+  E('diario-racha-t').textContent = r >= 2 || !puede ? tr('RACHA DE {n}', { n: r }) : tr('EMPIEZA TU RACHA');
+  E('diario-racha-s').textContent = puede ? (ex ? tr('+{n} gotas extra al recoger hoy', { n: ex }) : tr('Recoge cada día para que crezca')) : tr('Mañana: +{n} gotas extra', { n: ex });
+  arPinta(E('diario-racha-dib'), (c, w, h) => pintaBote(c, w, h, Math.min(1, r / 30)));
+  const pr = E('diario-premios'); pr.innerHTML = '';
+  for (const [n, cat, id] of RACHA.hitos) {
+    const it = arItem(cat, id); if (!it) continue;
+    const f = document.createElement('div'); f.className = 'diario-premio' + ((s.racha || 0) >= n ? ' hecho' : '');
+    f.innerHTML = '<span></span><b></b>'; f.children[0].textContent = tr('{n} días', { n }); f.children[1].textContent = tr(it.n); pr.appendChild(f);
+  }
+  const usado = s.escudo === semanaDe(diaHoy());
+  E('diario-escudo').textContent = usado ? tr('Escudo gastado esta semana: el lunes tienes otro.') : tr('Tienes 1 escudo esta semana: si un día no entras, salva tu racha solo.');
+}
+// el bote de pintura de la racha: se llena según los días (lleno a los 30), con su chorrete por fuera
+function pintaBote(c, w, h, lleno) {
+  c.save(); c.scale(w / 92, h / 104);
+  const cuerpo = g => { g.beginPath(); g.moveTo(16, 34); g.lineTo(76, 34); g.lineTo(70, 96); g.quadraticCurveTo(46, 102, 22, 96); g.closePath(); };
+  c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = OL;
+  cuerpo(c); c.fillStyle = '#fff6ea'; c.fill();
+  c.save(); cuerpo(c); c.clip();
+  const y = 96 - 60 * Math.max(0.12, lleno), g = c.createLinearGradient(0, y, 0, 100); g.addColorStop(0, '#ff7a1a'); g.addColorStop(1, '#ff4b5c');
+  c.fillStyle = g; c.beginPath(); c.moveTo(0, y); for (let x = 0; x <= 92; x += 8) c.quadraticCurveTo(x + 4, y + (x % 16 ? 4 : -4), x + 8, y); c.lineTo(92, 104); c.lineTo(0, 104); c.fill();
+  c.restore();
+  cuerpo(c); c.stroke();
+  c.beginPath(); c.ellipse(46, 34, 30, 8, 0, 0, TAU); c.fillStyle = '#ff7a1a'; c.fill(); c.stroke();      // la boca, llena de pintura
+  c.beginPath(); c.moveTo(70, 36); c.quadraticCurveTo(80, 44, 76, 58); c.quadraticCurveTo(73, 64, 71, 56); c.quadraticCurveTo(70, 46, 64, 40); c.fillStyle = '#ff7a1a'; c.fill(); c.stroke();      // el chorrete
+  c.beginPath(); c.moveTo(18, 30); c.quadraticCurveTo(46, -2, 74, 30); c.lineWidth = 4; c.stroke();      // el asa
+  c.restore();
 }
 function abreDiario() { diarioEstado(); DIARIO.hoyVisto = true; diarioPinta(); pantalla('p-diario'); play('select'); }
 // el botón del título, con su punto cuando hay premio esperando
 function diarioBoton() { const b = E('b-diario'); if (b) b.classList.toggle('aviso', diarioPuede()); }
-// al volver al título: la primera vez del día se abre sola
+// al volver al título: ya no se abre sola (antes tapaba el juego nada más entrar). La tira del título (titulo.js) avisa de que hay premio esperando
 function diarioAlTitulo() {
   if (!armarioVisible()) return;
   diarioBoton();
-  if (diarioPuede() && !DIARIO.hoyVisto) setTimeout(() => { if (!E('p-titulo').hidden && diarioPuede()) abreDiario(); }, 700);
+}
+// lo que dice la tira del premio diario en el título: { t: título, s: debajo, b: el botón (vacío si hoy ya está) }
+function diarioTira() {
+  const s = diarioEstado(), puede = diarioPuede(), rh = rachaHoy();
+  if (!puede) return { t: rh.r >= 2 ? tr('RACHA DE {n} DÍAS', { n: rh.r }) : tr('PREMIO DIARIO'), s: tr('Vuelve mañana para que siga creciendo.'), b: '' };
+  const p = diarioPremio(s.dia), cosa = p.cosas && p.cosas[0], ex = rachaExtra(rh.r);
+  const hoy = cosa ? tr('Hoy toca: {c}', { c: tr(cosa.it.n) }) : tr('Hoy toca: {n} gotas', { n: p.gotas });
+  if (rh.perdida) return { t: tr('SE TE SECÓ LA RACHA'), s: hoy, b: tr('RECOGER') };
+  return { t: rh.r >= 2 ? tr('RACHA DE {n} DÍAS', { n: rh.r }) : tr('PREMIO DIARIO · DÍA {n}', { n: (s.dia % 7) + 1 }), s: hoy + (ex ? ' ' + tr('+ {n} de racha', { n: ex }) : ''), b: tr('RECOGER') };
 }
 function preparaDiario() {
+  if (!PANTALLAS.includes('p-racha')) PANTALLAS.push('p-racha');
+  E('b-racha-rescatar').onclick = rachaRescata;
+  E('b-racha-no').onclick = () => { play('select'); abreDiario(); };
   E('b-diario').onclick = abreDiario;
   E('b-diario-recoger').onclick = diarioRecoge;
   E('b-diario-volver').onclick = () => { play('select'); irTitulo(); };

@@ -1,0 +1,278 @@
+/* Fans of Rouflage · EL TÍTULO NUEVO (titulo.js): barra de perfil y monedas, tira del premio diario, JUGAR, EN LÍNEA, dos tarjetas y los cuatro botones de abajo.
+   Mismos colores de siempre (naranja principal, azul PvP, verde armario, oro pase, rojo tienda, azul amigos) y nada de lila. Pensado primero para el móvil en vertical. */
+.titulo-caja.nuevo { max-width: 520px; gap: 10px; }
+.titulo-caja.nuevo .logo b { font-size: clamp(46px, 14vw, 92px); }
+.titulo-caja.nuevo .lema { font-size: 15px; margin-top: -2px; }
+
+.tit-barra { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+#p-titulo .tit-yo { display: flex; align-items: center; gap: 8px; padding: 3px 12px 3px 3px; border-radius: 14px; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); min-width: 0; text-align: left; }
+.tit-yo canvas { width: 40px; height: 40px; border-radius: 10px; background: #2f8f6f; border: 2px solid var(--outline); flex: none; }
+.tit-yo span { display: grid; line-height: 1.05; min-width: 0; }
+.tit-yo b { font-weight: 800; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 38vw; }
+.tit-yo small { font-weight: 700; font-size: 11px; color: var(--ink-dim); white-space: nowrap; }
+.tit-monedas { display: flex; gap: 6px; flex: none; }
+.tit-moneda { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px 3px 5px; border-radius: 12px; background: var(--panel); border: 3px solid var(--outline); font-weight: 800; font-size: 13px; font-variant-numeric: tabular-nums; }
+.tit-moneda canvas { display: block; }
+
+/* la tira del premio diario: oro, con su botón naranja de RECOGER (si hoy ya está, más apagada) */
+#p-titulo .tit-racha { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 14px; border-radius: 16px; background: linear-gradient(to bottom, #ffcb3d, #f0a01f); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); color: var(--outline); text-align: left; position: relative; }
+.tit-racha-txt { display: grid; line-height: 1.1; min-width: 0; }
+.tit-racha-txt b { font-weight: 800; font-size: 13px; letter-spacing: 0.06em; }
+.tit-racha-txt small { font-weight: 700; font-size: 12.5px; }
+.tit-racha-b { font-style: normal; font-family: var(--font-display); font-size: 15px; padding: 6px 10px 4px; border-radius: 10px; background: #ff7a1a; color: var(--ink); border: 2px solid var(--outline); white-space: nowrap; animation: tit-late 1.1s ease-in-out infinite alternate; }
+.tit-racha-b[hidden] { display: none; }
+#p-titulo .tit-racha.hecho { background: linear-gradient(to bottom, #3b4a6a, #26344f); color: var(--ink); }
+.tit-racha.hecho .tit-racha-txt small { color: var(--ink-dim); }
+.tit-racha.aviso::after { content: none; }
+@keyframes tit-late { from { transform: scale(1); } to { transform: scale(1.07); } }
+
+/* JUGAR: el grande, naranja */
+.boton.tit-jugar { width: 100%; display: grid; justify-items: center; gap: 0; padding: 12px 14px 9px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+.tit-jugar b { font-family: var(--font-display); font-weight: 400; font-size: clamp(34px, 10vw, 44px); line-height: 1; letter-spacing: 0.03em; }
+.tit-jugar span { font-family: var(--font-ui); letter-spacing: 0; font-weight: 700; font-size: 13.5px; text-shadow: 0 1px 0 var(--outline); }
+
+/* EN LÍNEA: azul, con cuántos amigos hay conectados */
+.boton.tit-pvp { width: 100%; max-width: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px 8px; background: linear-gradient(to bottom, #4f95f5, #1d3f8a); text-align: left; }
+.tit-pvp-txt { display: grid; gap: 1px; justify-items: start; }
+.tit-pvp-txt b { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 6vw, 25px); letter-spacing: 0.03em; line-height: 1; }
+.tit-pvp-txt span { font-family: var(--font-ui); font-weight: 700; font-size: 12.5px; text-shadow: 0 1px 0 var(--outline); }
+.tit-pvp-amigos { font-style: normal; font-family: var(--font-ui); font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 10px; background: var(--ok); color: var(--outline); border: 2px solid var(--outline); white-space: nowrap; text-shadow: none; }
+.tit-pvp-amigos[hidden] { display: none; }
+
+/* las dos tarjetas: misiones de hoy y talentos */
+.tit-tarjetas { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+#p-titulo .tit-tarjeta { position: relative; display: grid; gap: 3px; padding: 7px 10px 9px; border-radius: 14px; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); text-align: left; color: var(--ink); }
+.tit-tarjeta b { font-size: 11.5px; letter-spacing: 0.06em; font-weight: 800; }
+.tit-tarjeta.mis b { color: #7fe0f0; }
+.tit-tarjeta.tal b { color: var(--ok); }
+.tit-tarjeta span { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tit-tarjeta .barra { display: block; height: 8px; border-radius: 6px; background: var(--bg); border: 2px solid var(--outline); overflow: hidden; }
+.tit-tarjeta .barra i { display: block; height: 100%; width: 0; background: #39d5e8; transition: width 0.4s; }
+.tit-tarjeta.tal .barra i { background: var(--ok); }
+#p-titulo #b-misiones.aviso::after { top: -6px; right: -6px; }
+
+/* los cuatro de abajo */
+.tit-abajo { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+.tit-abajo[hidden] { display: none; }
+.boton.tit-ab { position: relative; display: grid; justify-items: center; gap: 1px; padding: 9px 2px 6px; min-width: 0; }
+.tit-ab i[data-icono] { width: 28px; height: 28px; color: var(--ink); filter: drop-shadow(0 2px 0 var(--outline)); }
+.tit-ab b { font-family: var(--font-display); font-weight: 400; font-size: clamp(11px, 3.2vw, 14px); letter-spacing: 0.02em; }
+#p-titulo .tit-ab.armario { background: linear-gradient(to bottom, #5fd896, #23955a); }
+#p-titulo .tit-ab.pase { background: linear-gradient(to bottom, #ffe07a, #e0a11f); }
+#p-titulo .tit-ab.tienda { background: linear-gradient(to bottom, #ff7a5c, #e0362a); }
+#p-titulo .tit-ab.amigos { background: linear-gradient(to bottom, #6aaeff, #2f6fd6); }
+.tit-oferta { position: absolute; top: 3px; right: 3px; line-height: 1.2; font-style: normal; font-family: var(--font-ui); font-weight: 800; font-size: 9px; padding: 0 4px; border-radius: 8px; background: var(--gold); color: var(--outline); border: 2px solid var(--outline); text-shadow: none; }
+.tit-oferta[hidden] { display: none; }
+.titulo-caja.nuevo .nota { font-size: 11px; opacity: 0.8; }
+
+/* el GACHAPÓN, dentro de la TIENDA: una tarjeta grande arriba (oro y naranja, nada de lila) */
+#p-tienda .tienda-gacha { position: relative; width: 100%; display: grid; gap: 2px; padding: 10px 12px 9px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(160deg, #ffb347, #e0661a); color: var(--ink); text-align: left; margin-bottom: 4px; }
+.tienda-gacha b { font-family: var(--font-display); font-weight: 400; font-size: 24px; letter-spacing: 0.03em; }
+.tienda-gacha span { font-weight: 700; font-size: 13px; text-shadow: 0 1px 0 var(--outline); }
+
+/* el menú del PERFIL: lo que antes estaba suelto en el título */
+.pf-menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pf-menu .boton { min-height: 44px; padding: 8px 6px 5px; font-size: clamp(14px, 4vw, 17px); }
+#p-perfil .pf-m.escenario { background: linear-gradient(to bottom, #ff9fd0, #d6488f); }
+#p-perfil .pf-m.diario { background: linear-gradient(to bottom, #b4e86a, #5fa82a); }
+#p-perfil .pf-m.ayuda { background: linear-gradient(to bottom, #7fe0f0, #2a9ab8); }
+#p-perfil .pf-m.opciones { background: linear-gradient(to bottom, #6aaeff, #2f6fd6); }
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .titulo-caja.nuevo { max-width: 760px; gap: 6px; }
+  .titulo-caja.nuevo .logo b { font-size: clamp(36px, 13vh, 64px); }
+  .boton.tit-jugar { padding: 8px 14px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .tit-racha-b { animation: none; } }
+
+/* GUARDA LO QUE HAS GANADO: solo a los invitados, desde la tercera partida (titulo.js) */
+.tit-guarda { width: 100%; box-sizing: border-box; display: grid; gap: 6px; padding: 10px 12px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(160deg, #2f6a4a, #1c3f2c); text-align: left; }
+.tit-guarda[hidden] { display: none; }
+.tit-guarda > b { font-family: var(--font-display); font-weight: 400; font-size: 19px; color: var(--gold); }
+.tit-guarda > span { font-weight: 700; font-size: 13px; line-height: 1.25; }
+.tit-guarda-b { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.tit-guarda-b .boton { min-height: 40px; font-size: 15px; padding: 6px 10px 4px; }
+
+/* EL RETO (reto.js): presentación centrada; el resultado, abajo, para ver detrás dónde estaba escondido */
+#p-reto .reto-caja { max-width: 460px; gap: 10px; }
+#p-reto .reto-caja h2 { font-size: clamp(26px, 8vw, 38px); }
+.reto-sub { margin: 0; font-weight: 700; font-size: 15px; line-height: 1.3; }
+.reto-datos { margin: 0; font-weight: 800; font-size: 13px; color: var(--gold); }
+.reto-datos:empty { display: none; }
+.reto-nota { font-weight: 700; font-size: 12px; color: var(--ink-dim); }
+#p-reto.abajo { place-items: end center; background: linear-gradient(to bottom, transparent 40%, rgba(14, 20, 36, 0.7)); }
+#p-reto .reto-caja[data-estado="fin"] .reto-nota { display: none; }
+#p-reto .boton.verde { background: linear-gradient(to bottom, #5fd896, #23955a); }
+#b-foto.cargando { opacity: 0.7; }
+
+/* TRAE A UN COLADO (referidos.js) */
+.invita-caja { max-width: 460px; gap: 10px; }
+.inv-sub { margin: 0; font-weight: 700; font-size: 14px; color: var(--ink-dim); }
+.inv-dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.inv-dos > div { display: grid; gap: 0; padding: 8px; border-radius: 14px; border: 3px solid var(--outline); }
+.inv-tu { background: #2f6a4a; } .inv-el { background: #2c5f8a; }
+.inv-dos small, .inv-cod small { font-weight: 800; font-size: 12px; letter-spacing: 0.06em; }
+.inv-dos b { font-family: var(--font-display); font-weight: 400; font-size: 22px; }
+.inv-cod { display: grid; gap: 2px; padding: 8px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); }
+.inv-cod small { color: var(--ink-dim); }
+.inv-cod b { font-family: var(--font-display); font-weight: 400; font-size: 40px; letter-spacing: 0.12em; }
+.inv-nota { margin: 0; font-size: 13px; font-weight: 700; color: var(--gold); }
+.inv-nota:empty { display: none; }
+.inv-escalera-caja { display: grid; gap: 6px; text-align: left; }
+.inv-escalera-caja > b { font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim); font-weight: 800; }
+.inv-escalera-caja > .barra { display: block; height: 10px; border-radius: 8px; background: var(--bg); border: 2px solid var(--outline); overflow: hidden; }
+.inv-escalera-caja > .barra > i { display: block; height: 100%; width: 0; background: var(--ok); }
+.inv-escalera { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.inv-esc { display: grid; justify-items: center; gap: 1px; padding: 6px 2px; border-radius: 12px; border: 3px solid var(--outline); background: var(--tray-hi); text-align: center; line-height: 1.1; }
+.inv-esc small { font-weight: 800; font-size: 11px; }
+.inv-esc b { font-weight: 800; font-size: 10.5px; color: var(--gold); }
+.inv-esc.hecho { opacity: 0.6; } .inv-esc.hecho b { color: var(--ok); }
+.inv-esc.siguiente { background: linear-gradient(to bottom, #ffb347, #ff7a1a); } .inv-esc.siguiente b { color: var(--outline); }
+.inv-lista { display: grid; gap: 4px; }
+.inv-lista[hidden] { display: none; }
+.inv-fila { display: flex; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 10px; background: var(--bg); font-size: 13px; font-weight: 700; }
+.inv-fila b { color: var(--ink-dim); } .inv-fila b.si { color: var(--ok); }
+
+/* LA RACHA en el premio diario (diario.js) y la ventana de rescatarla */
+.diario-racha { display: flex; align-items: center; gap: 12px; padding: 8px 12px; margin-bottom: 8px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(to bottom, #ffb347, #ff7a1a); text-align: left; }
+.diario-racha canvas { width: 46px; height: 52px; flex: none; }
+.diario-racha span { display: grid; line-height: 1.05; }
+.diario-racha b { font-family: var(--font-display); font-weight: 400; font-size: 28px; }
+.diario-racha small { font-weight: 800; font-size: 13px; color: var(--outline); }
+.diario-premios { display: grid; gap: 4px; margin-top: 10px; padding: 8px 10px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); text-align: left; }
+.diario-premios > b { font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim); font-weight: 800; }
+.diario-premio { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 700; }
+.diario-premio b { color: var(--gold); }
+.diario-premio.hecho { opacity: 0.6; } .diario-premio.hecho b { color: var(--ok); }
+.diario-escudo { margin: 8px 0 0; font-weight: 700; font-size: 12.5px; color: #9fe7ff; }
+.racha-caja { max-width: 420px; gap: 10px; }
+.racha-sub { margin: 0; font-weight: 700; font-size: 15px; }
+
+/* las dos tarjetas de papel vuelven al título (Daniel, 23-10-2026): hacen de JUGAR contra bots con ese papel */
+.titulo-caja.nuevo .tit-papeles { margin-top: 0; gap: 10px; }
+.titulo-caja.nuevo .tit-papeles .papel { padding: 6px 8px 9px; }
+.titulo-caja.nuevo .tit-papeles .papel canvas { max-width: 200px; }
+.titulo-caja.nuevo .tit-papeles .papel span { font-size: 12.5px; }
+@media (max-height: 760px) and (orientation: portrait) { .titulo-caja.nuevo .tit-papeles .papel canvas { max-width: 150px; } .titulo-caja.nuevo .logo b { font-size: clamp(40px, 12vw, 70px); } }
+
+/* AMIGOS (amigos.js) */
+.amg-caja { max-width: 460px; gap: 8px; }
+.amg-cod { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); text-align: left; }
+.amg-cod > span { display: grid; line-height: 1.05; }
+.amg-cod small { font-weight: 800; font-size: 11px; letter-spacing: 0.08em; color: var(--ink-dim); }
+.amg-cod b { font-family: var(--font-display); font-weight: 400; font-size: 26px; letter-spacing: 0.1em; }
+.amg-anadir { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; text-align: left; }
+.amg-anadir label { display: grid; gap: 3px; font-weight: 800; font-size: 12px; color: var(--ink-dim); }
+.amg-anadir input { padding: 9px 10px; border-radius: 12px; border: 3px solid var(--outline); background: var(--bg); color: var(--ink); font: 800 17px var(--font-ui); letter-spacing: 0.12em; text-transform: uppercase; -webkit-user-select: text; user-select: text; }
+.amg-anadir .boton { min-height: 44px; }
+.amg-vacio { margin: 4px 0; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.amg-vacio[hidden], .amg-sec[hidden] { display: none; }
+.amg-sec { margin: 4px 0 0; text-align: left; font-weight: 800; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim); font-family: var(--font-ui); }
+.amg-lista { display: grid; gap: 6px; max-height: 34vh; overflow-y: auto; }
+.amg-fila { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 14px; background: var(--bg); border: 3px solid var(--outline); text-align: left; }
+.amg-fila canvas { border-radius: 10px; background: #2f8f6f; border: 2px solid var(--outline); }
+.amg-fila.fuera { opacity: 0.8; } .amg-fila.fuera canvas { background: #3b4a6a; }
+.amg-fila span { display: grid; line-height: 1.15; min-width: 0; }
+.amg-fila b { font-weight: 800; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.amg-fila small { font-weight: 700; font-size: 12px; color: var(--ok); }
+.amg-fila.fuera small { color: var(--ink-dim); }
+.amg-fila .boton { min-height: 38px; padding: 6px 10px 4px; font-size: 14px; }
+.boton.azul { background: linear-gradient(to bottom, #4f95f5, #1d3f8a); }
+.amg-aviso { position: fixed; z-index: 950; left: 50%; top: calc(var(--sup, 0px) + 10px); transform: translateX(-50%); width: min(440px, calc(100vw - 20px)); box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: linear-gradient(160deg, #2c5f8a, #1b3a60); color: var(--ink); font-weight: 800; font-size: 14px; animation: bocadilloEntra 0.25s ease-out; }
+.amg-aviso .boton { min-height: 38px; padding: 6px 10px 4px; font-size: 14px; }
+
+/* MI PERFIL más visible (Daniel, 23-10-2026): borde dorado, «MI PERFIL ›» con los iconos de lo que hay dentro, y brillo + punto hasta abrirlo la primera vez */
+#p-titulo .tit-yo { border-color: var(--gold); box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline); padding-right: 10px; position: relative; }
+#p-titulo .tit-yo canvas { width: 46px; height: 46px; }
+.tit-yo-ir { display: inline-flex; align-items: center; gap: 2px; margin-top: 2px; font-style: normal; color: var(--gold); }
+.tit-yo-ir i[data-icono] { width: 15px; height: 15px; }
+.tit-yo-ir b { font-family: var(--font-display); font-weight: 400; font-size: 13px; letter-spacing: 0.04em; margin: 0 1px 0 3px; max-width: none; }
+#p-titulo .tit-yo.nuevo { animation: tit-brillo 1.4s ease-in-out infinite alternate; }
+#p-titulo .tit-yo.nuevo::after { content: ''; position: absolute; top: -6px; right: -6px; width: 14px; height: 14px; border-radius: 50%; background: var(--danger); border: 3px solid var(--outline); }
+@keyframes tit-brillo { from { box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline); } to { box-shadow: 0 3px 0 var(--outline), 0 0 0 2px var(--outline), 0 0 14px 2px rgba(255, 203, 61, 0.7); } }
+@media (prefers-reduced-motion: reduce) { #p-titulo .tit-yo.nuevo { animation: none; } }
+.amg-fila .boton:not(.gris):not(.azul):not(:disabled) { background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+
+/* TEMPORADA Y LIGA (temporada.js) */
+.tit-tarjeta.tem b { color: var(--gold); }
+#p-perfil .pf-m.misiones { background: linear-gradient(to bottom, #7fe0f0, #2a9ab8); }
+.tem-caja { max-width: 460px; gap: 8px; }
+.tem-cab { font-weight: 800; font-size: 12px; letter-spacing: 0.1em; color: var(--ink-dim); }
+.tem-caja h2 { font-size: clamp(24px, 7.4vw, 34px); margin-top: -4px; }
+.tem-ligas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.tem-liga { display: grid; justify-items: center; gap: 1px; padding: 6px 2px; border-radius: 12px; border: 3px solid var(--outline); background: color-mix(in srgb, var(--col) 45%, #18223a); font-weight: 800; font-size: 9.5px; line-height: 1.05; text-align: center; }
+.tem-liga small { font-size: 10px; opacity: 0.85; }
+.tem-liga.pasada { opacity: 0.55; }
+.tem-liga.tuya { background: var(--col); color: var(--outline); box-shadow: 0 0 0 3px var(--gold); }
+.tem-prog { display: grid; gap: 4px; text-align: left; }
+.tem-prog > div { display: flex; justify-content: space-between; font-weight: 800; font-size: 13px; }
+.tem-prog > div span { color: var(--ink-dim); }
+.tem-prog .barra { display: block; height: 10px; border-radius: 8px; background: var(--bg); border: 2px solid var(--outline); overflow: hidden; }
+.tem-prog .barra i { display: block; height: 100%; width: 0; }
+.tem-sec { margin: 4px 0 0; text-align: left; font: 800 12px var(--font-ui); letter-spacing: 0.08em; color: var(--ink-dim); }
+.tem-tabla { display: grid; gap: 4px; max-height: 26vh; overflow-y: auto; }
+.tem-pos { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 4px 8px; border-radius: 10px; background: var(--bg); font-size: 13px; font-weight: 700; text-align: left; }
+.tem-pos span { color: var(--gold); font-weight: 800; }
+.tem-pos b { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tem-pos.yo { background: #2f6a4a; border: 2px solid var(--outline); }
+.tem-vacia { margin: 4px 0; font-weight: 700; font-size: 13px; color: var(--ink-dim); }
+.tem-dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; text-align: left; }
+.tem-dos > div { display: grid; gap: 2px; padding: 8px; border-radius: 14px; border: 3px solid var(--outline); }
+.tem-ev { background: linear-gradient(160deg, #2c5f8a, #1b3a60); } .tem-premio { background: linear-gradient(160deg, #2f6a4a, #1c3f2c); }
+.tem-dos small { font-weight: 800; font-size: 11px; letter-spacing: 0.08em; color: #9fe7ff; }
+.tem-premio small { color: var(--ok); }
+.tem-dos b { font-weight: 800; font-size: 13.5px; line-height: 1.1; }
+.tem-dos span { font-weight: 700; font-size: 12px; color: var(--ink-dim); line-height: 1.2; }
+.tem-ofertas { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); background: linear-gradient(to bottom, #ff7a5c, #e0362a); color: var(--ink); text-align: left; }
+.tem-ofertas b { font-family: var(--font-display); font-weight: 400; font-size: 17px; }
+.tem-ofertas span { font-weight: 800; font-size: 12px; }
+.lp-premio { font-family: var(--font-display); font-weight: 400; font-size: 30px; }
+/* las ofertas de hoy, en la tienda */
+.tienda-hoy { display: grid; gap: 6px; margin-bottom: 6px; }
+.tienda-hoy[hidden] { display: none; }
+.tienda-hoy > small { font-weight: 800; font-size: 12px; color: var(--gold); text-align: left; }
+#tienda-hoy-lista { display: grid; gap: 8px; }
+.tn-tarjeta.hoy { grid-template-columns: 54px 1fr auto; background: linear-gradient(160deg, #8a2a2a, #4a1414); }
+.tn-dos { display: grid; gap: 4px; }
+.tn-dos .boton { min-height: 34px; padding: 4px 8px 2px; display: inline-flex; gap: 4px; align-items: center; }
+
+/* MÓVILES ESTRECHOS (24-10-2026: en algunos Samsung con la pantalla «grande» el juego mide unos 300 px y todo se salía por la derecha).
+   Las pantallas y las cajas se encogen en vez de ensancharse con su contenido, y el caos primordial va en la barra del título, bajo las monedas. */
+.pantalla { grid-template-columns: minmax(0, 1fr); }
+.caja { grid-template-columns: minmax(0, 1fr); }
+.caja > * { min-width: 0; }
+#p-titulo .tit-barra { align-items: flex-start; }
+#p-titulo .tit-yo { flex: 0 1 auto; }
+#p-titulo .tit-monedas { flex: 0 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; row-gap: 5px; }
+@media (max-width: 359px) {
+  #p-titulo .tit-yo { gap: 6px; padding-right: 7px; }
+  #p-titulo .tit-yo canvas { width: 36px; height: 36px; }
+  #p-titulo .tit-yo-ir i[data-icono="casa"], #p-titulo .tit-yo-ir i[data-icono="engranaje"] { display: none; }
+  .tit-yo-ir b { font-size: 12px; margin-left: 0; }
+  .tit-moneda { font-size: 12px; padding: 3px 6px 2px 4px; gap: 3px; }
+  .tit-moneda canvas { width: 18px !important; height: 18px !important; }
+  #p-titulo .tit-monedas { gap: 4px; }
+}
+.tn-tarjeta { grid-template-columns: 54px minmax(0, 1fr) auto; }
+.tn-tarjeta.cambio { grid-template-columns: auto minmax(0, 1fr) auto; }
+.tn-texto { min-width: 0; }
+.volumen.ancha .deslizador { width: auto; flex: 1 1 150px; min-width: 0; max-width: 150px; }
+@media (max-width: 359px) {
+  .tn-tarjeta { gap: 7px; padding: 7px 8px; }
+  .tn-tarjeta .boton { min-width: 64px; }
+  .tn-texto b { font-size: 14.5px; }
+  .op-fila:not(.op-ancha) .op-seg { width: 132px; }
+  .op-fila > span { font-size: 13px; }
+}
+.amg-anadir label, .amg-anadir input { min-width: 0; }
+.amg-anadir input { width: 100%; box-sizing: border-box; }
+.amg-anadir label, .amg-anadir input { min-width: 0; }
+.amg-anadir input { width: 100%; box-sizing: border-box; }
+/* la red de seguridad (js/escala.js): por debajo de 360 px de ancho, los menús se reducen enteros en la misma proporción en vez de salirse */
+.pantalla > * { zoom: var(--escala-menu, 1); }
+/* el caos primordial, dentro del botón EN LÍNEA, a la derecha (js/titulo.js, titEnergiaSitio) */
+.tit-pvp-caja { position: relative; width: 100%; }
+.tit-pvp-caos { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); z-index: 2; }
+.tit-pvp-caos:empty { display: none; }
+.tit-pvp-caos #rf-energia { position: static; z-index: auto; }
+.tit-pvp-caja:has(.tit-pvp-caos:not(:empty)) .boton.tit-pvp { padding-right: 100px; }

@@ -28,7 +28,7 @@ const MONEDAS = (() => {
   const activo = () => typeof AJUSTES !== 'undefined' && !!AJUSTES.monedas;
   const conf = () => mezcla(mezcla(BASE, typeof AJUSTES !== 'undefined' && AJUSTES.monedas), remota());
   const mon = cual => { const c = conf(); return cual === 'comprada' ? c.comprada : c.ganada; };
-  const nombre = cual => { const m = mon(cual); return typeof NUCLEO !== 'undefined' && NUCLEO.idioma === 'en' && m.nombre_en ? m.nombre_en : m.nombre; };
+  const nombre = cual => { const m = mon(cual); return typeof NUCLEO !== 'undefined' && NUCLEO.idioma !== 'es' && m.nombre_en ? m.nombre_en : m.nombre; };
   const icono = cual => { const i = mon(cual).icono; return typeof i === 'function' ? i() : i || ''; };
   const chip = (cual, n) => `<span class="moneda-chip moneda-${cual}">${icono(cual)}${typeof n === 'number' ? (typeof fmt === 'function' ? fmt(n) : n) : ''}</span>`;
   const propio = () => typeof AJUSTES !== 'undefined' && AJUSTES.monedas && typeof AJUSTES.monedas.leer === 'function';

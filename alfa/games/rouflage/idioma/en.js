@@ -1,6 +1,7 @@
 // Fans of Rouflage · Inglés del juego (los textos van en español en el código y en la página; aquí está su traducción). Lo carga NUCLEO.juego({ idioma }) de index.html. (1/3: sigue en en-2.js y en-3.js)
 'use strict';
 IDIOMA.add({
+  "TOCA PARA JUGAR": "TAP TO PLAY",
   "De momento lo de los euros es gratis: te invita {quien}.": "For now the euro stuff is free: {quien} is treating you.",
   "Te invita {quien}": "On the house: {quien}",
   "Las Gotas se ganan jugando": "Drops are earned by playing",

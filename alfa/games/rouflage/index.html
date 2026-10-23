@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.42-a413.3f5049d"></script>
+<script src="../../core/js/nucleo.js?v=0.2.42-a414.7d598d8"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css')</script>
 </head>
@@ -254,18 +254,48 @@
 #carga .cg i:nth-child(4n+3) { background-image: conic-gradient(from 45deg, #6f84d6 25%, #44548a 0 50%, #6f84d6 0 75%, #44548a 0); background-size: 0.3em 0.3em; }
 #carga .cg i:nth-child(4n) { background-image: repeating-linear-gradient(90deg, #eadfc8 0 0.11em, #d9937c 0.11em 0.22em); }
 #carga .cg-pista { position: absolute; left: 0; right: 0; bottom: 78%; height: 0; }
-#carga .cg-ida { position: absolute; left: 0; bottom: 0; width: 0.62em; height: 0.82em; animation: cg-ir 4.6s linear infinite alternate; }
-#carga .cg-giro { display: block; width: 100%; height: 100%; animation: cg-gira 9.2s step-end infinite; position: relative; }
-#carga .cg-caz { position: absolute; inset: 0; background: url(img/carga-cazador.png) 0 0 / 400% 100% no-repeat; animation: cg-paso 0.56s steps(4) infinite; }
+#carga .cg-ida { position: absolute; left: 0; bottom: 0; width: 0.62em; height: 0.82em; animation: cg-ir 5s linear infinite; }
+#carga .cg-caz, #carga .cg-pa { position: absolute; inset: 0; background: url(img/carga-cazador.png) 0 0 / 400% 100% no-repeat; }
+#carga .cg-caz { animation: cg-paso 0.56s steps(4) infinite, cg-anda 5s step-end infinite; }
+#carga .cg-pa { background-position: 100% 0; animation: cg-para 5s step-end infinite; }
 #carga .cg-haz { position: absolute; left: 70%; bottom: 30%; width: 1.3em; height: 0.7em; background: linear-gradient(to right, rgba(255, 226, 122, 0.55), rgba(255, 226, 122, 0)); clip-path: polygon(0 42%, 100% 0, 100% 100%, 0 58%); animation: cg-luz 1.3s ease-in-out infinite alternate; }
-#carga .cg-zorro { position: absolute; right: 0.02em; bottom: 78%; width: 0.78em; height: 0.7em; background: url(img/carga-zorro.png) 0 0 / 200% 100% no-repeat; animation: cg-parpadeo 3.4s steps(1) infinite; }
+#carga .cg-excl { position: absolute; left: 38%; bottom: 104%; font: 400 0.36em var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em #1a1030; paint-order: stroke fill; opacity: 0; animation: cg-excl 5s linear infinite; }
+#carga .cg-zw { position: absolute; right: 0.02em; bottom: 78%; width: 0.78em; height: 0.7em; animation: cg-zorro 5s linear infinite; }
+#carga .cg-zorro { display: block; width: 100%; height: 100%; background: url(img/carga-zorro.png) 0 0 / 200% 100% no-repeat; animation: cg-parpadeo 3.4s steps(1) infinite; }
+#carga .cg-humo { position: absolute; right: -0.05em; bottom: 74%; width: 1em; height: 0.9em; opacity: 0; transform-origin: 50% 80%;
+  background: radial-gradient(circle at 30% 60%, #e6e2f2 0 26%, transparent 27%), radial-gradient(circle at 62% 42%, #f4f1fb 0 30%, transparent 31%), radial-gradient(circle at 50% 72%, #cfc9e3 0 28%, transparent 29%), radial-gradient(circle at 78% 70%, #e6e2f2 0 22%, transparent 23%), radial-gradient(circle at 45% 28%, #f4f1fb 0 22%, transparent 23%);
+  filter: drop-shadow(0 0 2px #1a1030); animation: cg-humo 5s ease-out infinite; }
+#carga .cg-cargando.toca { color: #ffcb3d; animation: cg-toca 0.9s ease-in-out infinite alternate; }
 #carga .cg-cargando { margin: 22px 0 0; font: 800 14px 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.3em; color: var(--ink-dim, #cdb9ea); }
-@keyframes cg-ir { from { left: 0; } to { left: calc(100% - 0.62em - 0.9em); } }
-@keyframes cg-gira { 0% { transform: scaleX(1); } 50% { transform: scaleX(-1); } }
+@keyframes cg-ir { 0% { left: 0; opacity: 0; } 4% { opacity: 1; } 50%, 90% { left: calc(100% - 1.5em); opacity: 1; } 100% { left: calc(100% - 1.5em); opacity: 0; } }
+@keyframes cg-anda { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes cg-para { 0% { opacity: 0; } 50% { opacity: 1; } }
 @keyframes cg-paso { to { background-position: 133.33% 0; } }
+@keyframes cg-toca { from { opacity: 0.45; transform: scale(1); } to { opacity: 1; transform: scale(1.08); } }
 @keyframes cg-luz { from { opacity: 0.45; } to { opacity: 1; } }
+@keyframes cg-excl { 0%, 49% { opacity: 0; transform: translateY(0.1em) scale(0.6); } 53% { opacity: 1; transform: translateY(0) scale(1.15); } 60%, 66% { opacity: 1; transform: scale(1); } 68%, 100% { opacity: 0; } }
+@keyframes cg-zorro { 0%, 60% { opacity: 1; } 62%, 84% { opacity: 0; } 90%, 100% { opacity: 1; } }
+@keyframes cg-humo { 0%, 58% { opacity: 0; transform: scale(0.2); } 64% { opacity: 1; transform: scale(1); } 74% { opacity: 0.95; transform: scale(1.25) translateY(-0.04em); } 88% { opacity: 0; transform: scale(1.6) translateY(-0.12em); } 100% { opacity: 0; } }
 @keyframes cg-parpadeo { 0%, 90% { background-position: 0 0; } 94%, 100% { background-position: 100% 0; } }
-</style><div class="cg"><span class="cg-fans">FANS OF</span><b aria-label="Rouflage"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i><span class="cg-pista"><span class="cg-ida"><span class="cg-giro"><span class="cg-haz"></span><span class="cg-caz"></span></span></span></span><span class="cg-zorro"></span></b><p class="cg-cargando">CARGANDO…</p></div></div>
+</style><div class="cg"><span class="cg-fans">FANS OF</span><b aria-label="Rouflage"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i><span class="cg-pista"><span class="cg-ida"><span class="cg-haz"></span><span class="cg-caz"></span><span class="cg-pa"></span><span class="cg-excl">!</span></span></span><span class="cg-zw"><span class="cg-zorro"></span></span><span class="cg-humo"></span></b><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div></div>
+<script>
+// cuando el juego está listo, la pantalla de carga no se va sola: pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
+(function () {
+  const c = document.getElementById('carga'), t = document.getElementById('cg-txt'), real = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'hidden');
+  if (!c || !t || !real || navigator.webdriver) return;
+  let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
+  const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
+  if (en) t.textContent = 'LOADING…';
+  let esperando = false;
+  Object.defineProperty(c, 'hidden', { configurable: true, get() { return real.get.call(c); }, set(v) {
+    if (!v) { real.set.call(c, false); return; }
+    if (esperando) return;
+    esperando = true; t.textContent = en ? 'TAP TO PLAY' : 'TOCA PARA JUGAR'; t.classList.add('toca');
+    const va = e => { if (e) e.preventDefault(); c.removeEventListener('click', va); removeEventListener('keydown', va); real.set.call(c, true); };
+    c.addEventListener('click', va); addEventListener('keydown', va);
+  } });
+})();
+</script>
 <script>
 // si algo falla al cargar, se dice en pantalla en vez de quedarse en los tres puntos (y recargar suele arreglarlo)
 window.addEventListener('error', e => { const c = document.getElementById('carga'); if (c && !c.hidden) c.innerHTML = 'No se ha podido cargar. Recarga la página.<br><small>' + String(e.message || '').slice(0, 140) + '</small>'; });

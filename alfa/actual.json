@@ -1,8 +1,8 @@
 {
- "build": 413,
- "hash": "3f5049d",
- "fecha": "2026-10-23T01:06:38Z",
- "mensaje": "Rouflage: icono nuevo (F y O del logo de Fans Of, R camuflada de la portada) para la app y el manifiesto",
+ "build": 414,
+ "hash": "7d598d8",
+ "fecha": "2026-10-23T01:10:22Z",
+ "mensaje": "Rouflage: la carga acaba en «TOCA PARA JUGAR» (se quita con el toque) y su escena: el cazador ve al colado, que tira la bomba de humo",
  "juegos": {
   "crush": "0.1.29",
   "dark": "0.2.7",

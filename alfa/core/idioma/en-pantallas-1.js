@@ -49,7 +49,6 @@ IDIOMA.add({
   "Secretos": "Secrets",
   "Temporada 1: La Gran Compra": "Season 1: The Big Buyout",
   "Todos": "All",
-  "Versión de prueba: no se cobra nada.": "Trial version: nothing is charged.",
   "¡%1 logros nuevos! Cóbralos en Misiones": "%1 new achievements! Claim them in Missions",
   "¡%1 recompensas cobradas!": "%1 rewards claimed!",
   "¡Logro: %1! Cóbralo en Misiones": "Achievement: %1! Claim it in Missions",

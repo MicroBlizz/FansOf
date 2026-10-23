@@ -146,7 +146,6 @@ IDIOMA.add({
   "Aquí no hay nada que reseñar": "Nothing to review here",
   "VERSIÓN REMAKE · 70 €": "REMAKE VERSION · 70 €",
   "¡A POR EL SANADOR!": "GO FOR THE HEALER!",
-  "¡A POR ÉL!": "GET HIM!",
   "¡FLASH!": "FLASH!",
   "¡UNO GORDO!": "A BIG ONE!",
   "%2: toca una de tus tropas para ponerla.": "%2: tap one of your troops to equip it.",

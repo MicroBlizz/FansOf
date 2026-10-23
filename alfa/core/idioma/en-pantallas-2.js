@@ -2,7 +2,6 @@
 'use strict';
 IDIOMA.add({
   "DLC gratis": "Free DLC",
-  "IR AL GASHAPÓN": "GO TO THE GACHA",
   "NV MÁX": "MAX LV",
   "Nv %4": "Lv %4",
   "PONER A TODOS": "EQUIP ALL",

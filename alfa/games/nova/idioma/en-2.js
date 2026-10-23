@@ -201,7 +201,6 @@ IDIOMA.add({
   "Tu base rebelde": "Your rebel base",
   "Victorias": "Victories",
   "Volver a la galaxia": "Back to the galaxy",
-  "de aleación": "alloy",
   "Aleación ganada": "Alloy earned",
   "Sector liberado: se abren sus vecinos en la galaxia": "Sector freed: its neighbours open up in the galaxy",
   "Planeta": "Planet",

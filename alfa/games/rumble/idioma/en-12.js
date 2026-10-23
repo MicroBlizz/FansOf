@@ -43,7 +43,6 @@ IDIOMA.add({
   "ESTÁNDAR": "STANDARD",
   "SALVAJE": "WILD",
   "%1 partidas": "%1 matches",
-  "Todavía no hay nadie en la clasificación.": "Nobody is on the leaderboard yet.",
   "Esperando al servidor…": "Waiting for the server…",
   "%1 PUNTOS": "%1 POINTS",
   "Esperando a que el rival confirme el resultado…": "Waiting for the rival to confirm the result…",

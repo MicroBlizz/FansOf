@@ -64,7 +64,7 @@
 .mis-broma { font-style: italic; color: #8fe3ff !important; }
 .mis-seccion { font-family: var(--font-display); font-size: 15px; letter-spacing: 0.04em; color: var(--ink); text-shadow: 0 2px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline);
   text-align: center; padding: 10px 0 2px; border-top: 3px dashed rgba(255, 255, 255, 0.18); margin-top: 6px; }
-.mis-pestanas .ar-pest { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mis-pestanas .ar-pest { white-space: nowrap; overflow: visible; }      /* sin recortar: el punto rojo de «hay algo por cobrar» se sale por la esquina */
 .mis-caja { width: min(560px, calc(100vw - 24px)); margin: 0 auto; box-sizing: border-box; max-height: calc(100dvh - 24px); }
 .mis-lista { overscroll-behavior: contain; }
-.mis-pestanas .ar-pest { font-size: clamp(10px, 3vw, 14px); padding: 8px 3px 5px; letter-spacing: 0; }
+.mis-pestanas .ar-pest { font-size: clamp(10px, 2.8vw, 14px); padding: 8px 8px 5px 3px; letter-spacing: 0; }

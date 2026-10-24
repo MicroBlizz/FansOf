@@ -1,8 +1,8 @@
 {
- "build": 464,
- "hash": "fe5ef9c",
- "fecha": "2026-10-24T16:51:43Z",
- "mensaje": "Rouflage: 6 misiones diarias, misiones semanales, 24 logros nuevos y 13 secretos; tope de Gotas a 300",
+ "build": 465,
+ "hash": "5973ac2",
+ "fecha": "2026-10-24T16:58:16Z",
+ "mensaje": "Rouflage: el punto rojo de las pestañas de Misiones se ve entero",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

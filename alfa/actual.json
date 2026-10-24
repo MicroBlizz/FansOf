@@ -1,8 +1,8 @@
 {
- "build": 470,
- "hash": "ce70ef0",
- "fecha": "2026-10-24T19:54:17Z",
- "mensaje": "Snakes: Opciones más compactas para que quepan los cuatro controles con margen en la pausa",
+ "build": 471,
+ "hash": "cdd7bce",
+ "fecha": "2026-10-24T22:41:09Z",
+ "mensaje": "MAPA: regenerados",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

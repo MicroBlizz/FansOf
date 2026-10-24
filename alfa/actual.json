@@ -1,8 +1,8 @@
 {
- "build": 466,
- "hash": "de723c2",
- "fecha": "2026-10-24T17:06:36Z",
- "mensaje": "Rouflage: flecha de volver arriba en todos los menús, atrás del móvil y título sin desplazarse",
+ "build": 467,
+ "hash": "2fd327c",
+ "fecha": "2026-10-24T17:12:46Z",
+ "mensaje": "Rouflage 0.2.47: novedades de misiones, logros y menús (con inglés)",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

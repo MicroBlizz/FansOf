@@ -1,8 +1,8 @@
 {
- "build": 462,
- "hash": "a93f623",
- "fecha": "2026-10-24T16:16:42Z",
- "mensaje": "Rouflage: icono nuevo de la app (diseño de Daniel: FOR con rayas, peligro y rombos y el muñeco camuflado asomando sobre el damero)",
+ "build": 463,
+ "hash": "baa4f09",
+ "fecha": "2026-10-24T16:19:46Z",
+ "mensaje": "Rouflage 0.2.47: icono nuevo (novedades e inglés)",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",
@@ -12,7 +12,7 @@
   "karts": "0.7.9",
   "nova": "0.3.20",
   "ratkov": "0.2.23",
-  "rouflage": "0.2.46",
+  "rouflage": "0.2.47",
   "rumble": "0.9.152",
   "skate": "0.1.27",
   "survivors": "0.1.65",

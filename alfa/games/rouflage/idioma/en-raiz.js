@@ -2,6 +2,8 @@
 'use strict';
 IDIOMA.add({
   // 0.2.46
+  "<b>ICONO NUEVO</b>: la app estrena icono: las letras FOR con rayas naranjas, rayas de peligro y rombos, y un colado medio camuflado asomándose sobre el suelo de cuadros. ¿Lo ves?": "<b>NEW ICON</b>: the app has a brand-new icon: the letters FOR with orange stripes, hazard stripes and diamonds, and a half-camouflaged gatecrasher peeking out over the checkered floor. Can you spot it?",
+  "Microblizz encargó un icono nuevo y tardó una tarde en encontrar al colado. Phony dice que él también sale, pero camuflado del todo.": "Microblizz ordered a new icon and spent a whole afternoon finding the gatecrasher. Phony says he's in it too, just fully camouflaged.",
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha mirado a ver si el camuflaje gasta fotogramas y Phony ha dicho que él pasa desapercibido hasta para el contador.": "Microblizz checked whether camouflage burns frames and Phony said he goes unnoticed even by the counter.",
   // 0.2.45

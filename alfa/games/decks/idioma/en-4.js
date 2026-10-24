@@ -131,5 +131,13 @@ IDIOMA.add({
   "Repost": "Repost",
   "Tendencia del día": "Trending today",
   "Plantilla de meme": "Meme template",
-  "Mil likes": "A thousand likes"
+  "Mil likes": "A thousand likes",
+  "Logro «{l}»": "Achievement «{l}»",
+  "Niveles de paro superados: {n}": "Unemployment levels cleared: {n}",
+  "Siguiente: {v} ({h})": "Next: {v} ({h})",
+  "Sin paro todavía": "No unemployment yet",
+  "Supera el paro +{n}": "Clear Unemployment +{n}",
+  "Ventaja: {v}": "Perk: {v}",
+  "Ventajas generales abiertas: {a} de {b}": "General perks open: {a} of {b}",
+  "Trofeos": "Trophies"
 });

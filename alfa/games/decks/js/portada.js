@@ -1,4 +1,4 @@
-// Fans Of Decks · Portada, con el aire del menú de Rumble: continuar o elegir líder y empezar una partida, y las fichas de Biblioteca, Ventajas, Novedades y Opciones. Abierta para todos; los atajos de prueba, solo en dev y en la alfa.
+// Fans Of Decks · Portada, con el aire del menú de Rumble: continuar o elegir líder y empezar una partida, y las fichas de Biblioteca, Ventajas, Logros, Novedades y Opciones. Abierta para todos; los atajos de prueba, solo en dev y en la alfa.
 // Para pruebas: ?jugar=1 empieza una partida nueva; ?paro=3 juega en ese nivel de paro; ?ventajas=ticket,gimnasio lleva esas ventajas fiscales; ?acto=1&dia=4 salta a ese día de la campaña (desde 0); ?nodo=minijefe|jefe|elite salta a esa cita del día.
 'use strict';
 function dcPortada() {
@@ -26,6 +26,7 @@ function dcPortada() {
   document.getElementById('dc-como').onclick = () => { play('select'); dcComoSeJuega(); };
   document.getElementById('dc-bib').onclick = () => { play('select'); dcBibTab = 'c'; dcBiblioteca(dcPortada); };
   document.getElementById('dc-ventajas').onclick = () => { play('select'); dcBibTab = 'v'; dcBiblioteca(dcPortada); };
+  document.getElementById('dc-logros').onclick = () => { play('select'); dcLogros(dcPortada); };
   document.getElementById('dc-novedades').onclick = dcNovedades;
   document.getElementById('dc-opciones').onclick = dcOpciones;
   if (/[?&]jugar=1/.test(q)) { const P = /[?&]paro=(\d+)/.exec(q); const Li = /[?&]lider=(\w+)/.exec(q); const Vs = /[?&]ventajas=([\w,]+)/.exec(q); dcNuevaPartida(Li && DC_LIDERES[Li[1]] ? Li[1] : 'bunny', Vs ? Vs[1].split(',') : null, P ? Math.min(+P[1], DC_PARO_MAX) : 0); const A = /[?&]acto=(\d+)/.exec(q), Dd = /[?&]dia=(\d+)/.exec(q); if (A || Dd) { DCP.run.acto = Math.min(+(A ? A[1] : 0), DC_CAMPANA.length - 1); DCP.run.dia = Math.min(+(Dd ? Dd[1] : 0), dcActo().dias.length - 1); dcEmpiezaDia(); DCP.run.pendiente = null; } const n = /[?&]nodo=(\w+)/.exec(q); if (n) { const m = DCP.run.mapa; for (let p = 0; p < m.pisos.length; p++) { const k = m.pisos[p].findIndex(x => x.tipo === n[1]); if (k >= 0) { dcIrA(p, k); break; } } dcResuelveNodo(); } else dcPintaDia(); }

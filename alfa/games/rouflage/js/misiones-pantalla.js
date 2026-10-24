@@ -42,17 +42,7 @@ function misionFila(o) {
   if (o.cobrada) fila.appendChild(elem('div', 'mis-sello', tr('COBRADA')));
   return fila;
 }
-// al cobrar: las gotas salen del botón y vuelan hasta «Tus gotas», que da un saltito
-function misionCelebra(n) {
-  const de = MIS_UI.desde, a = E('mis-gotas'); if (!de || !a || E('p-misiones').hidden || !Element.prototype.animate) return;
-  const fin = a.getBoundingClientRect(), x0 = de.left + de.width / 2, y0 = de.top + de.height / 2, x1 = fin.left + fin.width / 2, y1 = fin.top + fin.height / 2;
-  for (let i = 0; i < Math.min(10, 4 + Math.round(n / 5)); i++) {
-    const g = arLienzo(26, 26); arPinta(g, (c, w) => pintaGotas(c, w)); g.className = 'mis-vuela'; document.body.appendChild(g);
-    const ax = x0 + (Math.random() - 0.5) * 90, ay = y0 - 30 - Math.random() * 60;
-    g.animate([{ transform: `translate(${x0 - 13}px,${y0 - 13}px) scale(.4)`, opacity: 0 }, { transform: `translate(${ax - 13}px,${ay - 13}px) scale(1.15)`, opacity: 1, offset: 0.35 }, { transform: `translate(${x1 - 13}px,${y1 - 13}px) scale(.6)`, opacity: 0.9 }],
-      { duration: 750 + i * 60, easing: 'cubic-bezier(.3,.7,.4,1)' }).onfinish = () => { g.remove(); a.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.35)' }, { transform: 'scale(1)' }], { duration: 220 }); };
-  }
-}
+// al cobrar: la mancha de pintura con el premio que vuela a «Tus gotas» está en misiones-celebra.js (misionCelebra)
 const misSeccion = t => elem('div', 'mis-seccion', t);
 function misionesPinta() {
   const caja = E('mis-lista'), p = MIS_UI.pest;

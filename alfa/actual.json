@@ -1,8 +1,8 @@
 {
- "build": 476,
- "hash": "0d41395",
- "fecha": "2026-10-24T23:27:51Z",
- "mensaje": "Boom: eventos de mapa y objetos (Doble, Botiquín, Teletransporte, Bungee)",
+ "build": 477,
+ "hash": "183c39f",
+ "fecha": "2026-10-24T23:33:45Z",
+ "mensaje": "Rouflage: al cobrar una misión o un logro, una mancha de pintura con el premio que vuela a «Tus gotas»",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

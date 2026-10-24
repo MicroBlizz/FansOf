@@ -2,6 +2,10 @@
 // logros-datos.js, misiones.js y misiones-pantalla.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Misión completada: {m} (+{n} Gotas)": "Missione completata: {m} (+{n} Gocce)",
+  "Misión semanal completada: {m} (+{n} Gotas)": "Missione settimanale completata: {m} (+{n} Gocce)",
+  "¡Logro conseguido: {t}! (+{n} Gotas)": "Traguardo raggiunto: {t}! (+{n} Gocce)",
+  "¡Logro secreto descubierto: {t}! (+{n} Gotas)": "Traguardo segreto scoperto: {t}! (+{n} Gocce)",
   "Congélate en 2 posturas distintas": "Congelati in 2 pose diverse",
   "Recoge el premio diario": "Ritira il premio giornaliero",
   "Juega 2 partidas de colado": "Gioca 2 partite da imbucato",
@@ -132,8 +136,6 @@ IDIOMA.add({
   "Misiones nuevas el lunes: faltan {d} d {h} h": "Nuove missioni lunedì: mancano {d} g {h} h",
   "Pista: {p}": "Indizio: {p}",
   "SECRETO": "SEGRETO",
-  "Misión semanal completada: {m}": "Missione settimanale completata: {m}",
-  "¡Logro secreto descubierto: {t}!": "Traguardo segreto scoperto: {t}!",
   "Cada día hay 6 <b>MISIONES</b> nuevas y cada lunes, las de la semana. Dan gotas.": "Ogni giorno ci sono 6 nuove <b>MISSIONI</b> e ogni lunedì quelle della settimana. Danno gocce.",
   "Gana 15 partidas": "Vinci 15 partite",
   "Turno de noche": "Turno di notte",

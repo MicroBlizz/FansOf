@@ -56,8 +56,9 @@ function dcCambiosAscenso(carta) {
 }
 function dcObjeto(clave) { return DCP.run && DCP.run.objetos.includes(clave) ? DC_OBJETOS[clave] : null; }
 // Si una ventaja fiscal está desbloqueada por lo jugado hasta ahora (las de la partida, sumadas, las da dcVentaja() de ventajas.js).
-function dcVentajaAbierta(k) { const h = DC_VENTAJAS[k].hito; if (!h) return true; for (const q in h) if ((DCP.meta[q] || 0) < h[q]) return false; return true; }
-function dcTextoHito(k) { const h = DC_VENTAJAS[k].hito; if (!h) return ''; if (h.paroTope) return tr('Abre el paro +{n} con cualquier líder', { n: h.paroTope }); if (h.reuniones) return tr('Gana {n} reuniones', { n: h.reuniones }); if (h.victorias) return tr(h.victorias === 1 ? 'Gana una partida' : 'Gana {n} partidas', { n: h.victorias }); return tr(h.partidas === 1 ? 'Juega una partida' : 'Juega {n} partidas', { n: h.partidas }); }
+function dcVentajaAbierta(k) { const h = DC_VENTAJAS[k].hito; if (!h) return true; if (h.paroSuma || h.paroLider || h.logro) return dcHitoCumplido(h);   // logros.js
+  for (const q in h) if ((DCP.meta[q] || 0) < h[q]) return false; return true; }
+function dcTextoHito(k) { const h = DC_VENTAJAS[k].hito; if (!h) return ''; if (h.paroSuma || h.paroLider || h.logro) return dcHitoTexto(h); if (h.reuniones) return tr('Gana {n} reuniones', { n: h.reuniones }); if (h.victorias) return tr(h.victorias === 1 ? 'Gana una partida' : 'Gana {n} partidas', { n: h.victorias }); return tr(h.partidas === 1 ? 'Juega una partida' : 'Juega {n} partidas', { n: h.partidas }); }
 
 // ---------- la agenda (la del día la genera campana.js) ----------
 // La cita elegida en una hora ya pasada (o la actual); -1 si todavía no se ha ido a ninguna.

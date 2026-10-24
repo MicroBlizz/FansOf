@@ -1,6 +1,7 @@
 // Fans Of Decks · Niveles de paro, por líder: tras superar la campaña en normal se abre el paro +1 con ese líder, y cada victoria en su nivel más alto abre el siguiente.
 // Cada nivel sube la vida de los rivales un 8 % y, cada tres niveles, les da 1 de Fuerza al entrar; cuesta cada vez más mantener el puesto.
-// Premios (idea de Arkioner, 24-10-2026): cada nivel abierto da una ventaja fiscal nueva (ventajas.js) y los huecos de ventajas siguen a Fibonacci: con el paro +3 abierto se llevan 2, con el +5, 3, con el +8, 4 y con el +13, 5.
+// Premios (Arkioner, 24-10-2026): los niveles superados sumando todos los líderes abren ventajas genéricas (ventajas.js) y los de cada líder, las suyas (logros.js).
+// Los huecos de ventajas siguen a Fibonacci con el paro de ese líder: al ganar el +2 se llevan 2, al ganar el +4, 3, el +7, 4 y el +12, 5.
 // DCP.run.paro es el nivel de la partida (0 = normal); DCP.meta.paro[líder], el más alto abierto con ese líder; DCP.meta.paroTope, el más alto con cualquiera.
 'use strict';
 const DC_PARO_MAX = 15, DC_PARO_VIDA = 0.08, DC_PARO_HUECOS = [3, 5, 8, 13], DC_PARO_NOMBRES = ['Plantilla ajustada', 'Reestructuración', 'Despidos objetivos', 'ERE encubierto', 'Austeridad creativa', 'Auditoría externa', 'Fusión hostil', 'Consultora de recortes', 'Dividendos primero', 'Cierre patronal'];
@@ -14,6 +15,8 @@ function dcParoTabla() {
   M.paroTope = Math.max(0, ...Object.values(M.paro));
   return M.paro;
 }
+// Los niveles de paro superados, sumando todos los líderes (abren las ventajas genéricas).
+function dcParoSuma() { return Object.values(dcParoTabla()).reduce((a, n) => a + n, 0); }
 function dcParoAbierto(lider) { return dcParoTabla()[lider] || 0; }
 // Cuántas ventajas fiscales se llevan a la vez con ese líder: 1, y una más al abrir el paro +3, +5, +8 y +13.
 function dcHuecosVentaja(lider) { const n = dcParoAbierto(lider); return 1 + DC_PARO_HUECOS.filter(h => n >= h).length; }
@@ -28,6 +31,7 @@ function dcParoEscala(r) {
 }
 // Al ganar la partida: ganar en el nivel más alto abierto con ese líder abre el siguiente. Devuelve el nivel abierto (o 0).
 function dcParoGana() {
+  dcLogrosPartida();   // logros.js
   const T = dcParoTabla(), k = DCP.run.lider, n = dcParo();
   if (n < (T[k] || 0) || n >= DC_PARO_MAX) return 0;
   T[k] = n + 1; DCP.meta.paroTope = Math.max(DCP.meta.paroTope || 0, n + 1); return n + 1;
@@ -35,7 +39,7 @@ function dcParoGana() {
 // Elegir el nivel con el líder ya elegido: normal y los paros abiertos (el más alto arriba), y el siguiente, cerrado, con lo que pide.
 function dcEligeParo(lider, alElegir, volver) {
   const tope = dcParoAbierto(lider), s = dcPanel(tr('Nivel de paro'));
-  s.append(dcEl('p', 'dc-nota', tr('Cada nivel de paro hace a los rivales más duros: cada vez cuesta más mantener el puesto. Ganando en el más alto se abre el siguiente, con una ventaja fiscal nueva.')));
+  s.append(dcEl('p', 'dc-nota', tr('Cada nivel de paro hace a los rivales más duros: cada vez cuesta más mantener el puesto. Ganando en el más alto se abre el siguiente, y los niveles superados abren ventajas fiscales nuevas.')));
   const huecos = dcHuecosVentaja(lider), sig = dcSiguienteHueco(lider);
   s.append(dcEl('p', 'dc-nota', tr(huecos === 1 ? 'Con este líder llevas 1 ventaja fiscal.' : 'Con este líder llevas {n} ventajas fiscales a la vez.', { n: huecos }) + (sig ? ' ' + tr('Al abrir el paro +{n}, una más.', { n: sig }) : '')));
   const opcion = (n, abierto) => {

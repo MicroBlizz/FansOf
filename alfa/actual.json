@@ -1,8 +1,8 @@
 {
- "build": 467,
- "hash": "2fd327c",
- "fecha": "2026-10-24T17:12:46Z",
- "mensaje": "Rouflage 0.2.47: novedades de misiones, logros y menús (con inglés)",
+ "build": 468,
+ "hash": "1db601a",
+ "fecha": "2026-10-24T18:51:55Z",
+ "mensaje": "Decks: ventajas genéricas por suma de paros, 4 ventajas propias por líder y logros por líder que las abren",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

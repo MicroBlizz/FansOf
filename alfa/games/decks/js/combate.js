@@ -214,6 +214,6 @@ function dcProtocolo(C, tipo) {
 }
 function dcCompruebaFin(C) {
   if (DCP.run.hp <= 0) { C.fase = 'fin'; C.resultado = 'derrota'; return true; }
-  if (!C.rivales.some(r => r.hp > 0)) { C.fase = 'fin'; C.resultado = 'victoria'; DCP.run.stats.reuniones++; DCP.meta.reuniones = (DCP.meta.reuniones || 0) + 1; if (dcObjeto('almohada')) dcVida(dcObjeto('almohada').trasReunion); dcVentajaTrasReunion(); return true; }
+  if (!C.rivales.some(r => r.hp > 0)) { C.fase = 'fin'; C.resultado = 'victoria'; DCP.run.stats.reuniones++; DCP.meta.reuniones = (DCP.meta.reuniones || 0) + 1; dcLogrosReunion(C); if (dcObjeto('almohada')) dcVida(dcObjeto('almohada').trasReunion); dcVentajaTrasReunion(); return true; }
   return false;
 }

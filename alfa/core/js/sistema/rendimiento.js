@@ -31,7 +31,7 @@ const RENDIMIENTO = (() => {
       juego: (typeof AJUSTES !== 'undefined' && AJUSTES.id) || 'desconocido', version: String(NUCLEO.version || '').slice(0, 24), alfa: !!NUCLEO.alfa,
       plataforma: /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) ? 'movil' : 'pc',
       ancho: innerWidth, alto: innerHeight, dpr: r2(devicePixelRatio || 1), nucleos: navigator.hardwareConcurrency || null, memoria: navigator.deviceMemory || null,
-      fps_medio: r2(ses.frames * 1000 / ses.suma), fps_p1: r2(1000 / ms), fps_min: r2(1000 / ses.peor), frames: ses.frames, segundos: Math.round(ses.suma / 1000), hist: ses.hist, extra: ses.extra
+      fps_medio: r2(ses.frames * 1000 / ses.suma), fps_p1: r2(1000 / ms), fps_min: r2(1000 / ses.peor), frames: ses.frames, segundos: Math.round(ses.suma / 1000), hist: ses.hist, extra: Object.assign({}, ses.extra, window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() ? { app: 1 } : {})   // app: viene de la app de Android
     };
   }
   async function manda(r) {

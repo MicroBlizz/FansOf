@@ -9,7 +9,7 @@ const GESTION_JUEGOS = {};
   const PANES = ['pan-cuentas', 'pan-votos', 'pan-roles', 'pan-reportes', 'pan-rend', 'pan-juego'], TABS = ['t-cuentas', 't-votos', 't-roles', 't-reportes', 't-rend'];
   let actual = 'global', R = null;
   const tabla = (cab, filas) => `<div class="tabla-caja"><table class="tabla"><thead><tr>${cab.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>${filas.map(f => `<tr>${f.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  const filaRend = x => [esc(x.juego || ''), esc(x.version), esc(x.plataforma) + (x.alfa ? ' · alfa' : ''), fmt(x.partidas), x.fps_medio, x.fps_p1_medio, x.p10_fps_medio, x.fps_min_peor, fmt(Math.round((x.segundos || 0) / 60)) + ' min'];
+  const filaRend = x => [esc(x.juego || ''), esc(x.version), (x.app ? 'app Android' : esc(x.plataforma)) + (x.alfa ? ' · alfa' : ''), fmt(x.partidas), x.fps_medio, x.fps_p1_medio, x.p10_fps_medio, x.fps_min_peor, fmt(Math.round((x.segundos || 0) / 60)) + ' min'];
   const CAB_REND = ['Juego', 'Versión', 'Plataforma', 'Partidas', 'fps medio', 'fps 1 % peor', 'fps (10 % peores)', 'fps mínimo', 'Tiempo'];
   async function cargaRend() {
     if (!R) { try { R = (await rpc('gestion_rendimiento', { p_token: leerToken() })).filas || []; } catch (e) { return { error: /Could not find the function|PGRST202/.test(String(e.message)) ? 'La función de rendimiento aún no está aplicada en el servidor.' : textoError(e) }; } }

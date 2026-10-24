@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.152
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha puesto sordina a los informes de la arena y Phony ha cobrado la entrada igualmente.": "Microblizz has muted the arena's reports and Phony still collected the entrance fee.",
   // 0.9.151
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ha traducido el grito de guerra al portugués y Phony lo ha convertido en samba.": "Microblizz translated the battle cry into Portuguese and Phony turned it into a samba.",

@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.49', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha ocultado las estadísticas del tablero y Phony ha movido una ficha sin dejar rastro."] },
   { v: '0.1.48', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha planeado la estrategia en alemán y Phony ha atacado en italiano sin avisar."] },
   { v: '0.1.47', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha repasado el reglamento y Phony ha movido una coma en diagonal."] },
   { v: '0.1.46', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha agrandado el tablero a pantalla completa y Phony ha movido una ficha al borde, por si cae."] },

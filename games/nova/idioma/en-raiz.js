@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.20
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha silenciado la telemetría de la flota y Phony ha dicho que sus naves ya iban a máxima potencia.": "Microblizz has muted the fleet's telemetry and Phony said his ships were already at full power.",
   // 0.3.19
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ha enseñado francés a la nave y Phony solo ha aprendido a pedir cruasanes.": "Microblizz has taught the ship French and Phony only learned how to order croissants.",

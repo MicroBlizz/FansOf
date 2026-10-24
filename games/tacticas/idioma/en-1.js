@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.49
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha ocultado las estadísticas del tablero y Phony ha movido una ficha sin dejar rastro.": "Microblizz has hidden the board's statistics and Phony moved a piece without a trace.",
   // 0.1.48
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ha planeado la estrategia en alemán y Phony ha atacado en italiano sin avisar.": "Microblizz planned the strategy in German and Phony attacked in Italian without warning.",

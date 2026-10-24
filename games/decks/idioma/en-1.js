@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.15
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha guardado los informes bajo llave y Phony ha pedido ver su propia carta de rendimiento.": "Microblizz has locked the reports away and Phony asked to see his own performance card.",
   // 0.2.14
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ha traducido las reglas a cuatro idiomas y Phony sigue haciendo trampas en el suyo.": "Microblizz has translated the rules into four languages and Phony still cheats in his own.",

@@ -9,6 +9,7 @@ const ERRORES = (() => {
   const recorta = (t, n) => String(t == null ? '' : t).replace(/\s+/g, ' ').slice(0, n);
   function registrar(tipo, donde, mensaje, codigo) {
     if (enviados >= TOPE || typeof CUENTA === 'undefined' || !CUENTA.activa || donde === 'enviar_error') return;
+    if (typeof DATOS !== 'undefined' && !DATOS.activo()) return;   // el interruptor de «Datos de partida anónimos» manda: apagado, no sale nada
     const msg = recorta(mensaje, 300), clave = tipo + '|' + donde + '|' + msg;
     if (!msg || vistos.has(clave)) return;
     vistos.add(clave); enviados++;

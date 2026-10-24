@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.46
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha mirado a ver si el camuflaje gasta fotogramas y Phony ha dicho que él pasa desapercibido hasta para el contador.": "Microblizz checked whether camouflage burns frames and Phony said he goes unnoticed even by the counter.",
   // 0.2.45
   "<b>MENÚ NUEVO</b>: arriba tu perfil y tus monedas, la racha del premio diario, las tarjetas de CAMALEÓN y CAZADOR, EN LÍNEA, misiones y temporada, y abajo armario, pase, tienda y amigos. MI PERFIL brilla hasta que entras y una guía te lleva paso a paso a cada sitio.": "<b>NEW MENU</b>: your profile and coins at the top, your daily reward streak, the CHAMELEON and HUNTER cards, ONLINE, missions and season, and wardrobe, pass, shop and friends at the bottom. MY PROFILE glows until you open it and a guide walks you step by step to every place.",
   "<b>EN LÍNEA SIN CUENTA Y AMIGOS</b>: ya puedes jugar contra personas sin crearte una cuenta, y la lista de AMIGOS te dice quién está en línea para invitarle a tu sala o unirte a la suya.": "<b>ONLINE WITHOUT AN ACCOUNT, AND FRIENDS</b>: you can now play against people without creating an account, and the FRIENDS list shows who's online so you can invite them to your room or join theirs.",

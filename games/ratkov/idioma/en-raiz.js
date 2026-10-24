@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.23
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha tapado los agujeros por donde se contaba todo y las ratas han recuperado su privacidad.": "Microblizz has plugged the holes where everything got reported and the rats got their privacy back.",
   // 0.2.22
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ha traducido el mapa a cuatro idiomas y Phony sigue sin encontrar la salida en ninguno.": "Microblizz has translated the map into four languages and Phony still can't find the exit in any of them.",

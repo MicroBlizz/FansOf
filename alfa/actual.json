@@ -1,8 +1,8 @@
 {
- "build": 478,
- "hash": "051b8c5",
- "fecha": "2026-10-24T23:34:43Z",
- "mensaje": "Decks: pantalla de Trofeos en la portada con el paro, los logros y las ventajas de cada líder",
+ "build": 479,
+ "hash": "7c69331",
+ "fecha": "2026-10-24T23:40:16Z",
+ "mensaje": "Rouflage: la mancha de cobrar sale de un color al azar cada vez y el vuelo a «Tus gotas» va más fluido",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

@@ -70,11 +70,12 @@
 .mis-pestanas .ar-pest { font-size: clamp(10px, 2.8vw, 14px); padding: 8px 8px 5px 3px; letter-spacing: 0; }
 
 /* (25-10-2026) al COBRAR: la mancha de pintura con el premio y el número que vuela a «Tus gotas» (misiones-celebra.js) */
-.celeb-caja { position: fixed; left: 0; top: 0; width: 190px; height: 190px; z-index: 61; pointer-events: none; }
+.celeb-caja { position: fixed; left: 0; top: 0; will-change: transform; width: 190px; height: 190px; z-index: 61; pointer-events: none; }
 .celeb-mancha { display: block; width: 190px; height: 190px; transform-origin: 50% 44%; }
 .celeb-num { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 2px; white-space: nowrap;
   font-family: var(--font-display); font-size: 40px; line-height: 1; color: #fff6ea; padding-top: 4px; pointer-events: none;
   text-shadow: 3px 0 0 var(--outline), -3px 0 0 var(--outline), 0 3px 0 var(--outline), 0 -3px 0 var(--outline), 2px 2px 0 var(--outline), -2px -2px 0 var(--outline), 2px -2px 0 var(--outline), -2px 2px 0 var(--outline), 0 5px 0 var(--outline); }
 .celeb-num canvas { width: 30px; height: 30px; margin-top: -4px; filter: drop-shadow(0 2px 0 var(--outline)); }
-.celeb-num.vuela { position: fixed; z-index: 62; }
-.celeb-chispa { position: fixed; z-index: 62; width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--outline); pointer-events: none; }
+.celeb-num.vuela { position: fixed; left: 0; top: 0; z-index: 62; will-change: transform, opacity; transform-origin: 50% 50%; }
+.celeb-gota { will-change: transform, opacity; opacity: 0; }
+.celeb-chispa { position: fixed; left: 0; top: 0; z-index: 62; will-change: transform, opacity; width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--outline); pointer-events: none; }

@@ -1,8 +1,8 @@
 {
- "build": 481,
- "hash": "8bf082f",
- "fecha": "2026-10-24T23:52:21Z",
- "mensaje": "Rouflage: intro a pantalla completa (título en dos filas, letras que estallan con manchas de pintura, personajes grandes, damero en movimiento)",
+ "build": 482,
+ "hash": "9fcf822",
+ "fecha": "2026-10-24T23:55:58Z",
+ "mensaje": "Rouflage: la máquina del gachapón ya no se corta en móviles bajos",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

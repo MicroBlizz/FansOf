@@ -40,6 +40,12 @@
   "capturas": [
    "biblioteca/capturas/rouflage-1.jpg",
    "biblioteca/capturas/rouflage-2.jpg"
+  ],
+  "capturas_tablet": [
+   "biblioteca/capturas/tablet/rouflage-1.jpg",
+   "biblioteca/capturas/tablet/rouflage-2.jpg",
+   "biblioteca/capturas/tablet/rouflage-3.jpg",
+   "biblioteca/capturas/tablet/rouflage-4.jpg"
   ]
  }
 }

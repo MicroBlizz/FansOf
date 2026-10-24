@@ -70,3 +70,9 @@
 .bm-estrecho .bm-logo b { font-size: 110px; }
 .bm-estrecho .bm-nota { max-width: 90%; }
 .bm-estrecho .bm-mapas i { width: 120px; }
+#bm-objetos { position: absolute; left: 12px; top: 150px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; pointer-events: auto; }
+#bm-objetos[hidden] { display: none; }
+#bm-objetos.bm-quieto * { pointer-events: none; opacity: .6; }
+.bm-obj { font: 800 14px var(--font-ui); color: #fff; background: #5b3d8a; border: 3px solid var(--outline); border-radius: 10px; padding: 3px 10px; cursor: pointer; }
+.bm-act { font: 800 12px var(--font-ui); color: var(--gold); text-shadow: 1px 1px 0 var(--outline); }
+.bm-estrecho #bm-objetos { top: 140px; }

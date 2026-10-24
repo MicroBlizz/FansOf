@@ -12,7 +12,7 @@ const IA = (() => {
     let mejor = null;
     const evalua = (ang, pot, tiro) => {
       prueba.ang = ang; prueba.pot = pot; prueba.tiro = tiro;
-      const p = FISICA.simula(prueba, P.viento, P.moviles), R = m.def.tiros[tiro].radio;
+      const p = FISICA.simula(prueba, P.viento, P.moviles, P.evento), R = m.def.tiros[tiro].radio;
       let coste = 1e9;
       for (const e of enemigos) coste = Math.min(coste, Math.max(0, Math.hypot(p.x - e.x, p.y - (e.y - BOOM.movil.centro)) - R * 0.5));
       for (const a of amigos) if (Math.hypot(p.x - a.x, p.y - a.y) < R + BOOM.movil.radio + 10) coste += 400;
@@ -37,6 +37,7 @@ const IA = (() => {
     const err = A.error[clamp(m.nivel, 0, 2)];
     if (pl.etapa === 'piensa') {
       pl.t -= dt; if (pl.t > 0) return false;
+      if (!pl.objetos) { pl.objetos = true; if (m.vida < m.vidaMax * 0.5) PARTIDA.usaObjeto('botiquin'); PARTIDA.usaObjeto('bungee'); if (P.az() < 0.4) PARTIDA.usaObjeto('doble'); }
       const t = mejorTiro(P, m);
       if (t && t.coste > 260 && !pl.andado && m.energia > 40) { pl.andado = true; pl.camino = Math.min(m.energia, 170); pl.etapa = 'camina'; return false; }
       if (!t) { pl.etapa = 'tira'; pl.tiro = { ang: m.ang, pot: m.pot, tiro: m.tiro }; return false; }

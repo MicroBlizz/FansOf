@@ -50,6 +50,13 @@ const HUD = (() => {
     c.save(); c.globalAlpha = k > 0.8 ? (1 - k) / 0.2 : 1; c.translate(V.w / 2, V.h * 0.3); c.scale(esc, esc); c.rotate(-0.05);
     PINTAR_TXT(c, b.s + '!', 0, 0, 56, '#ffcb3d', 'center', FONT_D); PINTAR_TXT(c, b.frase, 0, 42, 18, '#fff'); c.restore();
   }
-  function frame(c, P) { viento(c, P); tiempo(c, P); orden(c, P); minimapa(c, P); bono(c); }
+  function evento(c, P) {   // el evento de mapa en curso: un cartel bajo la barra de turnos, con lo que hace y cuánto dura
+    const e = P.evento; if (!e || P.fase === 'cartel') return;
+    const txt = tr(e.def.nombre) + ' · ' + tr(e.def.nota);
+    c.font = '800 15px "Baloo 2", system-ui, sans-serif'; const w = c.measureText(txt).width + 28;
+    c.fillStyle = 'rgba(176,50,224,.9)'; c.strokeStyle = OL; c.lineWidth = 3; c.beginPath(); rrPath(c, V.w / 2 - w / 2, 56, w, 28, 14); c.fill(); c.stroke();
+    PINTAR_TXT(c, txt, V.w / 2, 70, 15, '#fff');
+  }
+  function frame(c, P) { evento(c, P); viento(c, P); tiempo(c, P); orden(c, P); minimapa(c, P); bono(c); }
   return { frame, toca, MM };
 })();

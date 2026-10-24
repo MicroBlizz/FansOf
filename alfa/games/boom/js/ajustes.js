@@ -35,6 +35,21 @@ const BOOM = {
     { id: 'chonkcat', nombre: 'ChonkCat', nota: 'Su segundo tiro lanza tres a la vez.', vida: 1050, velocidad: 72, acento: '#ffd24a',
       tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 250, retraso: 60 }, { nombre: 'Tiro 2', radio: 38, dano: 170, retraso: 140, multi: { n: 3, abanico: 6 } }, { nombre: 'Lluvia de bolas', radio: 38, dano: 150, retraso: 250, multi: { n: 5, abanico: 6 } }] },
   ],
+  // Eventos de mapa: uno cada 3-5 turnos, dura `duracion` turnos y se ve antes de tirar. Cambian la física del proyectil o el daño.
+  eventos: { cada: [3, 5], duracion: 2, lista: [
+    { id: 'confusion', nombre: 'Confusión', nota: 'El tiro se va de lado a lado.', onda: 150 },
+    { id: 'hype', nombre: 'Tren del Hype', nota: 'Empuja los tiros hacia arriba.', ay: -300 },
+    { id: 'donaciones', nombre: 'Lluvia de donaciones', nota: 'Empuja los tiros de lado.', ax: 170 },
+    { id: 'review', nombre: 'Review bombing', nota: 'Todo el daño vale más.', danoMult: 1.3 },
+    { id: 'actualizacion', nombre: 'Actualización obligatoria', nota: 'Durante dos turnos no hay viento.', sinViento: true },
+  ] },
+  // Objetos: gratis, uno de cada por partida y móvil. Se usan antes de tirar (menos Doble, que cuenta en el siguiente tiro) y cuestan retraso.
+  objetos: { inicial: ['doble', 'botiquin', 'teletransporte', 'bungee'], lista: {
+    doble: { nombre: 'Doble', nota: 'Tu próximo tiro sale dos veces.', retraso: 40 },
+    botiquin: { nombre: 'Botiquín', nota: 'Recuperas vida.', cura: 300, retraso: 60 },
+    teletransporte: { nombre: 'Teletransporte', nota: 'Saltas a otro punto cercano del suelo.', alcance: 650, retraso: 110 },
+    bungee: { nombre: 'Bungee', nota: 'Te salva una vez de caer al vacío.', retraso: 30 },
+  } },
   salida: [0, 25, 50, 75],   // retraso con el que sale cada jugador: abre el 1, luego el 2, el 3 y el 4
   equipos: [{ nombre: 'NARANJA', color: '#ff7a1a', claro: '#ffb347' }, { nombre: 'AZUL', color: '#2e8bff', claro: '#7cb8ff' }],
   modos: { '1v1': { equipos: [0, 1], x: [[0.14], [0.86]] }, '2v2': { equipos: [0, 1, 0, 1], x: [[0.09, 0.22], [0.91, 0.78]] } },   // de quién es cada plaza y dónde sale cada equipo (fracción del ancho)

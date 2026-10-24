@@ -1,8 +1,8 @@
 {
- "build": 475,
- "hash": "bff8869",
- "fecha": "2026-10-24T23:24:29Z",
- "mensaje": "Boom: cuatro móviles (MechaVaca, SkeletonCrew, NeonSniper, ChonkCat) con Tiro 1, Tiro 2 y Tiro Especial, medidor de CAOS y elección de móvil",
+ "build": 476,
+ "hash": "0d41395",
+ "fecha": "2026-10-24T23:27:51Z",
+ "mensaje": "Boom: eventos de mapa y objetos (Doble, Botiquín, Teletransporte, Bungee)",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

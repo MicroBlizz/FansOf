@@ -23,6 +23,7 @@ const CONTROLES = (() => {
     });
     $p().querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => { PARTIDA.eligeTiro(+b.dataset.t); play('select'); }));
     $('#bm-fuego').addEventListener('click', () => PARTIDA.dispara());
+    $('#bm-objetos').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (b && PARTIDA.get().actual && !PARTIDA.get().actual.ia && PARTIDA.get().fase === 'apunta') { if (PARTIDA.usaObjeto(b.dataset.o)) play('heal'); } });
     const barra = $('#bm-barra'), pon = e => { const r = barra.getBoundingClientRect(); PARTIDA.fija(PARTIDA.get().actual.ang, Math.round(5 + clamp((e.clientX - r.left) / r.width, 0, 1) * 95)); };
     barra.addEventListener('pointerdown', e => { barra.setPointerCapture(e.pointerId); barra.dataset.on = 1; pon(e); });
     barra.addEventListener('pointermove', e => { if (barra.dataset.on) pon(e); });
@@ -43,6 +44,12 @@ const CONTROLES = (() => {
     const m = P.actual, humano = m && !m.ia && P.fase === 'apunta';
     $p().hidden = !(P.fase === 'apunta' || P.fase === 'vuelo' || P.fase === 'despues') || !m || m.ia;
     $p().classList.toggle('bm-quieto', !humano);
+    const ob = $('#bm-objetos'); ob.hidden = $p().hidden || !m || m.ia;
+    if (!ob.hidden) {
+      const clave = m.id + ':' + m.objetos.join(',') + (m.doble ? 'D' : '') + (m.bungee ? 'B' : '');
+      if (ob.dataset.k !== clave) { ob.dataset.k = clave; ob.innerHTML = m.objetos.map(o => `<button class="bm-obj" data-o="${o}" title="${tr(BOOM.objetos.lista[o].nota)}">${tr(BOOM.objetos.lista[o].nombre)}</button>`).join('') + (m.doble ? `<i class="bm-act">${tr('Doble listo')}</i>` : '') + (m.bungee ? `<i class="bm-act">${tr('Bungee puesto')}</i>` : ''); }
+      ob.classList.toggle('bm-quieto', !humano);
+    }
     if (m) {
       $('#bm-ang').textContent = Math.round(m.ang) + '°'; $('#bm-potn').textContent = Math.round(m.pot);
       $('#bm-pot').style.width = ((m.pot - 5) / 95 * 100) + '%'; $('#bm-en').style.width = (m.energia / BOOM.movil.energia * 100) + '%';

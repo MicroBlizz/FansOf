@@ -5,7 +5,7 @@ const MOVIL = (() => {
   const C = BOOM.movil, W = BOOM.mundo.ancho, H = BOOM.mundo.alto, DT = BOOM.paso;
   function crea(id, plaza, equipo, x, dir, defId) {
     const def = BOOM.moviles.find(d => d.id === defId) || BOOM.moviles[0];
-    const m = { id, plaza, equipo, def, nombre: '', ia: false, nivel: 1, x, y: 0, dir, ang: 45, pot: 55, tiro: 0, vida: def.vida, vidaMax: def.vida, caos: 0,
+    const m = { id, plaza, equipo, def, nombre: '', ia: false, nivel: 1, x, y: 0, dir, ang: 45, pot: 55, tiro: 0, vida: def.vida, vidaMax: def.vida, caos: 0, objetos: BOOM.objetos.inicial.slice(), doble: false, bungee: false, extra: 0,
       retraso: BOOM.salida[plaza] || 0, vivo: true, energia: C.energia, cayendo: false, vy: 0, y0: 0, marca: null };
     m.y = TERRENO.suelo(x, 0);
     return m;

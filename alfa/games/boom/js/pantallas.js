@@ -109,7 +109,7 @@ const PANT = (() => {
         <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div></section>
       <section id="bm-prepara" class="bm-pantalla" hidden></section>
       <button id="bm-pausa" class="bm-pausa" aria-label="${tr('Pausa')}" hidden><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="#fff" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/></svg></button>
-      <div id="bm-panel" hidden></div>
+      <div id="bm-panel" hidden></div><div id="bm-objetos" hidden></div>
       <section id="bm-cartel" class="bm-velo" hidden></section>
       <section id="bm-modal" class="bm-velo" hidden></section>`;
     CONTROLES.construye();

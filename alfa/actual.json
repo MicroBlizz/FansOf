@@ -1,8 +1,8 @@
 {
- "build": 450,
- "hash": "09a61de",
- "fecha": "2026-10-24T00:27:27Z",
- "mensaje": "Nota de Play en todos los idiomas del juego: pt, fr, de e it desde play-notas.json (Rouflage 0.2.45)",
+ "build": 451,
+ "hash": "c14b34e",
+ "fecha": "2026-10-24T00:35:52Z",
+ "mensaje": "Ficha de Play por script: textos de Rouflage en 6 idiomas, subir_ficha.py y workflow manual «Ficha de Play»",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

@@ -1,22 +1,22 @@
 {
- "build": 455,
- "hash": "974fbf5",
- "fecha": "2026-10-24T01:21:58Z",
- "mensaje": "Rendimiento en Rouflage y errores.js respeta el interruptor de datos anónimos",
+ "build": 456,
+ "hash": "7493a76",
+ "fecha": "2026-10-24T01:35:47Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.33, decks 0.2.15, jump 0.3.10, karts 0.7.9, nova 0.3.20, ratkov 0.2.23, rouflage 0.2.46, rumble 0.9.152, survivors 0.1.65, tacticas 0.1.49, td 0.13.81",
  "juegos": {
-  "crush": "0.1.32",
+  "crush": "0.1.33",
   "dark": "0.2.7",
-  "decks": "0.2.14",
+  "decks": "0.2.15",
   "island": "0.3.5",
-  "jump": "0.3.9",
-  "karts": "0.7.8",
-  "nova": "0.3.19",
-  "ratkov": "0.2.22",
-  "rouflage": "0.2.45",
-  "rumble": "0.9.151",
+  "jump": "0.3.10",
+  "karts": "0.7.9",
+  "nova": "0.3.20",
+  "ratkov": "0.2.23",
+  "rouflage": "0.2.46",
+  "rumble": "0.9.152",
   "skate": "0.1.27",
-  "survivors": "0.1.64",
-  "tacticas": "0.1.48",
-  "td": "0.13.80"
+  "survivors": "0.1.65",
+  "tacticas": "0.1.49",
+  "td": "0.13.81"
  }
 }

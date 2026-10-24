@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.10
+  "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
+  "Microblizz ha callado los chivatos del río y Phony ha saltado sin que nadie lo midiera.": "Microblizz has silenced the river's snitches and Phony jumped without anyone measuring him.",
   // 0.3.9
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage).": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems now speak more languages (Portuguese, French, German and Italian; Fans of Rouflage is the first to use them).",
   "Microblizz ya sabe gritar «¡salta!» en italiano. CrazyBunny ha saltado antes de oírlo.": "Microblizz can now shout “jump!” in Italian. CrazyBunny jumped before hearing it.",

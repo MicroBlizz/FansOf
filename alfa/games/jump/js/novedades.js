@@ -2,6 +2,7 @@
 // lo lee para su tarjeta de la Biblioteca; el juego no lo carga.
 'use strict';
 const NEWS = [
+  { v: '0.3.10', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha callado los chivatos del río y Phony ha saltado sin que nadie lo midiera."] },
   { v: '0.3.9', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ya sabe gritar «¡salta!» en italiano. CrazyBunny ha saltado antes de oírlo."] },
   { v: '0.3.8', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha limpiado el diccionario y Phony ha saltado por encima de las erratas."] },
   { v: '0.3.7', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha quitado las barras de Android y Phony ha saltado al río para ver si había más pantalla debajo."] },

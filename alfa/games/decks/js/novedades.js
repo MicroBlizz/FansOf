@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.15', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha guardado los informes bajo llave y Phony ha pedido ver su propia carta de rendimiento."] },
   { v: '0.2.14', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha traducido las reglas a cuatro idiomas y Phony sigue haciendo trampas en el suyo."] },
   { v: '0.2.13', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha ordenado el mazo de traducciones y Phony ha robado una carta repetida."] },
   { v: '0.2.12', real: ["<b>MEJORAS POR DENTRO</b>: en la app de Android el acceso con Google vuelve ya a la app, y todos los juegos van a pantalla completa."], joke: ["Microblizz ha dado pantalla completa al mazo y Phony ha descubierto que el CEO también cabe en vertical."] },

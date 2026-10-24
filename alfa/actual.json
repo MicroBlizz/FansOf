@@ -1,8 +1,8 @@
 {
- "build": 465,
- "hash": "5973ac2",
- "fecha": "2026-10-24T16:58:16Z",
- "mensaje": "Rouflage: el punto rojo de las pestañas de Misiones se ve entero",
+ "build": 466,
+ "hash": "de723c2",
+ "fecha": "2026-10-24T17:06:36Z",
+ "mensaje": "Rouflage: flecha de volver arriba en todos los menús, atrás del móvil y título sin desplazarse",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

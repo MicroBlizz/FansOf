@@ -1,0 +1,44 @@
+/* Fans of Rouflage · LA BARRA DE ARRIBA DE LOS MENÚS (js/menu-barra.js) y EL TÍTULO SIN DESPLAZARSE (24-10-2026, Daniel: «tengo que tirar para abajo y para
+   arriba y buscar dónde volver»). Todos los menús con flecha empiezan arriba, ocupan como mucho la pantalla y solo se desplaza lo de dentro; la flecha y el
+   título del menú no se mueven nunca. Se carga la última. */
+
+/* ---------- los menús con flecha ---------- */
+.pantalla.con-barra { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow: hidden; touch-action: auto; }
+.pantalla.con-barra > .caja {
+  flex: 0 1 auto; min-height: 0; align-content: start;
+  max-height: calc((100dvh - var(--sup) - var(--inf) - 24px) / var(--escala-menu, 1));
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y;
+  padding-top: 0; scrollbar-width: thin;
+}
+.mb-barra {
+  position: sticky; top: 0; z-index: 6;
+  display: grid; grid-template-columns: 50px minmax(0, 1fr) 50px; align-items: center; gap: 6px;
+  margin: 0 -16px; padding: 12px 12px 8px;
+  background: linear-gradient(180deg, var(--tray-hi) 0%, var(--tray-hi) 82%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 18px 18px 0 0;
+}
+.mb-barra .mb-titulo { min-width: 0; margin: 0 !important; grid-column: 2; }
+.mb-barra h2.mb-titulo, .mb-barra .mb-titulo h2 { margin: 0; font-size: clamp(22px, 7vw, 34px); line-height: 1.05; overflow-wrap: anywhere; }
+.mb-atras {
+  grid-column: 1; width: 48px; height: 48px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  border-radius: 14px; border: 3px solid var(--outline); background: linear-gradient(to bottom, #ffa04a, #f07a1c); color: var(--outline);
+  box-shadow: 0 4px 0 var(--outline);
+}
+.mb-atras svg { width: 28px; height: 28px; display: block; }
+.mb-atras:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }
+.mb-escondido { display: none !important; }
+
+/* las cabeceras propias (armario y gachapón) dentro de la barra */
+.mb-barra .ar-cabeza.mb-titulo, .mb-barra .gacha-cab.mb-titulo { padding: 0; }
+.caja.armario > .mb-barra { grid-column: 1 / -1; }
+.mb-barra .mb-titulo.mb-ancho { grid-column: 2 / 4; }
+
+/* las cajas con otro relleno se quedan pegadas a los lados de la barra */
+.caja.armario > .mb-barra, .caja.perfil > .mb-barra { margin: 0 -12px; }
+
+/* los avisos y menús sin flecha (pausa, final, racha…): centrados, y si son más altos que la pantalla, empiezan arriba sin cortarse */
+.pantalla:not(.con-barra):not(#p-titulo):not(.escenario) { align-items: safe center; }
+
+/* ---------- el título: cabe entero, sin desplazarse ---------- */
+#p-titulo { overflow: hidden; touch-action: none; align-items: safe center; }
+#p-titulo > .titulo-caja { zoom: calc(var(--escala-menu, 1) * var(--escala-titulo, 1)); }

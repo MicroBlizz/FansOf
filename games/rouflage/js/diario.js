@@ -83,7 +83,7 @@ function diarioRecoge() {
     const esp = diarioCosas(t => t === 'Diario · 20 días del mes').find(({ cat, it }) => !arTieneId(cat, it));
     extra = esp ? diarioDa({ cosas: [esp] }) : diarioDa({ gotas: DIARIO.porHito });
   }
-  guardaPartida(); play('select'); play('go');
+  misionEvento('diario'); guardaPartida(); play('select'); play('go');
   avisa(tr('Premio del día: {p}', { p: texto + (extra ? ' + ' + extra : '') }), 'bueno');
   diarioPinta(); diarioBoton();
   if (rh.perdida) setTimeout(() => abreRescate(rh.perdida), 900); else if (rh.r >= 2) avisosOfrece();

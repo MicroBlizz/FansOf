@@ -22,6 +22,7 @@ function chatPegManda(n) {
   chatPegMuestra(J.yo, canal, n, s.x, s.y, true);
   if (J.pvp) rfpManda({ t: 'ch', f: n, x: Math.round(s.x), y: Math.round(s.y) });
   chatAbre(false); play('pop');
+  misionEvento('pegatina');      // misiones semanales y logros (misiones.js)
 }
 function chatPegRecibido(sl, e, n, m) {
   if (!PEG_CHAT[n] || !chatPegPuedeEl(e)) return;

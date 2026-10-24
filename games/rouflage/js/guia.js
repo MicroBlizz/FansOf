@@ -20,7 +20,7 @@ const GUIAS = [
     { en: 'p-armario', a: '#ar-pestanas', t: 'Cada pestaña es una parte de tu galleta. Toca una casilla para probártela.', seg: 9 },
   ] },
   { id: 'misiones', desde: 2, pasos: [
-    { en: 'p-titulo', a: '#b-misiones', t: 'Cada día hay 3 <b>MISIONES</b> nuevas: una fácil, una media y una difícil. Dan gotas.', hecho: () => visible('p-misiones') },
+    { en: 'p-titulo', a: '#b-misiones', t: 'Cada día hay 6 <b>MISIONES</b> nuevas y cada lunes, las de la semana. Dan gotas.', hecho: () => visible('p-misiones') },
   ] },
   { id: 'escenario', desde: 3, pasos: [
     { en: 'p-titulo', a: '#b-perfil', t: 'Toca tu <b>PERFIL</b>: ahí dentro está tu habitación.', hecho: () => visible('p-perfil') },

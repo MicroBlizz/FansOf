@@ -96,8 +96,9 @@ function congela(e) {
   if (e.trasHumo && e.jugador) autoCamuflaje(e);      // el humo ya se acabó para él: se pintó de cero y no puede
   mideCamuflaje(e);
   if (J.pvp) rfpCongela(e);      // PvP: los demás reciben tu piel
+  if (e.jugador) misionEvento('congela', e);      // la postura cuenta para misiones y logros (misiones.js)
 }
-function descongela(e) { e.congelado = false; }
+function descongela(e) { e.congelado = false; misionDescongela(e); }      // (moverse en la caza quita «Estatua de sal», misiones.js)
 // el aguante de un colado: corriendo se gasta (REGLAS.aguante segundos seguidos); parado o congelado se recupera (REGLAS.descanso segundos para entero).
 // Agotado va a paso de tortuga hasta recuperar la mitad: así una carrera saca de un apuro, pero no se puede cruzar el mapa sin que te pillen
 function aguanta(e, dt, corre) {

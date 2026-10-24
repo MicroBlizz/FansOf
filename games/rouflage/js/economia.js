@@ -1,6 +1,6 @@
 // Fans of Rouflage · LA ECONOMÍA: lo que se gana jugando y en qué se gasta. Va con el armario: solo en la alfa y en desarrollo (armarioVisible).
 // - GOTAS de pintura (gratis): el premio diario (diario.js) y cada partida: 10 (+5 si ganas), el doble en BUSCAR PARTIDA (no en las salas con
-//   amigos ni contra bots, que se pueden llenar de bots a voluntad), con un tope al día.
+//   amigos ni contra bots, que se pueden llenar de bots a voluntad), con un tope al día (300 desde el 24-10-2026, decidido por Daniel; antes 150).
 // - PASE DE TEMPORADA: experiencia por partida (100, +50 si ganas, ×1,5 en BUSCAR PARTIDA); cada 1000 es un nivel, hasta el 40 (unas 8 partidas por
 //   nivel). Al subir, las cosas del armario marcadas «Pase gratis · nv N» son tuyas; las «Pase premium · nv N», si tienes el premium
 //   (se compra con Acciones). El pase gratis da además 50 Acciones en algunos niveles (300 en total) y el premium otras 300 en los suyos
@@ -11,7 +11,7 @@
 // SAVE.pase = { xp, premium, purp: [niveles cobrados] } y SAVE.eco = { dia, gotasHoy }.
 'use strict';
 
-const ECO = { gotas: 10, gotasGanar: 5, linea: 2, topeDia: 150, xp: 100, xpGanar: 50, xpLinea: 1.5, xpNivel: 1000, niveles: 40, premium: 600,
+const ECO = { gotas: 10, gotasGanar: 5, linea: 2, topeDia: 300, xp: 100, xpGanar: 50, xpLinea: 1.5, xpNivel: 1000, niveles: 40, premium: 600,
   purpGratis: { 10: 50, 20: 50, 30: 50 },
   purpPremium: { 16: 50, 32: 50, 40: 50 } };   // desde el 23-10-2026: 150 + 150 = 300, la mitad del premium (600). Antes devolvía 830 y quien lo compraba una vez no pagaba nunca más
 

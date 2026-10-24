@@ -4,5 +4,11 @@
     "fr-FR": "Nouveautés : nouveau menu, en ligne sans compte et amis, Tu me trouves ? et amène un intrus, séries, saisons et offres, économie et gachapon, chat, autocollants et plus, 4 nouvelles langues.\n\nMicroblizz a traduit le jeu en quatre langues pour qu'on te cherche partout dans le monde. Phony s'est camouflé en dictionnaire.",
     "de-DE": "Neu: neues Menü, online ohne Konto und Freunde, Findest du mich? und bring einen Eindringling mit, Serien, Saisons und Angebote, Wirtschaft und Gachapon, Chat, Sticker und mehr, 4 neue Sprachen.\n\nMicroblizz hat das Spiel in vier Sprachen übersetzt, damit man dich auf der ganzen Welt sucht. Phony hat sich als Wörterbuch getarnt.",
     "it-IT": "Novità: nuovo menu, online senza account e amici, Mi trovi? e porta un imbucato, serie, stagioni e offerte, economia e gachapon, chat, adesivi e altro, 4 nuove lingue.\n\nMicroblizz ha tradotto il gioco in quattro lingue perché ti cerchino in tutto il mondo. Phony si è mimetizzato da dizionario."
+  },
+  "0.2.46": {
+    "pt-BR": "Novidades: melhorias internas: os avisos de erros e de desempenho agora respeitam o interruptor de dados anônimos das Opções.\n\nA Microblizz foi ver se o camuflagem gasta quadros e o Phony disse que passa despercebido até para o contador.",
+    "fr-FR": "Nouveautés : améliorations internes : les avis d'erreurs et de performances respectent désormais l'interrupteur de données anonymes des Options.\n\nMicroblizz a vérifié si le camouflage consomme des images et Phony a dit qu'il passe inaperçu même pour le compteur.",
+    "de-DE": "Neu: Verbesserungen im Inneren: Fehler- und Leistungsmeldungen beachten jetzt den Schalter für anonyme Daten in den Optionen.\n\nMicroblizz hat nachgesehen, ob die Tarnung Bilder frisst, und Phony sagt, er bleibe sogar für den Zähler unbemerkt.",
+    "it-IT": "Novità: miglioramenti interni: gli avvisi di errori e prestazioni ora rispettano l'interruttore dei dati anonimi nelle Opzioni.\n\nMicroblizz ha controllato se il camuffamento consuma fotogrammi e Phony ha detto che passa inosservato anche al contatore."
   }
 }

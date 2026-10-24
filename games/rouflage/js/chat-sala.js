@@ -127,7 +127,7 @@ function chatSalaManda(frase) {
   if (!chatOn() || CHATS.mandando || !(frase >= 0) || (frase >= 100 && !(typeof pegTengo === 'function' && pegTengo(frase)))) return;
   CHATS.mandando = true;
   Promise.resolve(CHATRED.red.mandar(null, frase)).then(r => {
-    play('pop');
+    play('pop'); if (frase >= 100) misionEvento('pegatina');      // misiones semanales y logros (misiones.js)
     if (r && r.id && !CHATS.msgs.some(x => x.id === r.id)) {
       const v = CHATS.gente && [...CHATS.gente.values()].find(x => x.j.yo), yo = v && v.j;
       CHATS.msgs.push({ id: r.id, yo: true, nombre: yo ? yo.nombre : '', frase: r.frase }); chatSalaRecorta(); chatSalaPintaLista();

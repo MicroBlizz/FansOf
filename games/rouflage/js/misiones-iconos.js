@@ -5,9 +5,10 @@
 const TONOS_MIS = {
   facil: ['#9df07a', '#3fae2a'], media: ['#ffd37a', '#f08a1a'], dificil: ['#e29bff', '#8a3ad8'],
   bronce: ['#f3b67a', '#a8602a'], plata: ['#f1f4fa', '#9aa6bc'], oro: ['#ffe58a', '#e0a11f'],
+  fija: ['#fff09a', '#f0a81a'], semana: ['#9ff0ff', '#2a9ab8'], secreto: ['#7d8aa8', '#2f3750'],
 };
 function pintaInsignia(c, w, ico, tono, estado) {
-  const [claro, oscuro] = TONOS_MIS[tono] || TONOS_MIS.media, R = 29, logro = ['bronce', 'plata', 'oro'].includes(tono);
+  const [claro, oscuro] = TONOS_MIS[tono] || TONOS_MIS.media, R = 29, logro = ['bronce', 'plata', 'oro', 'secreto'].includes(tono);
   c.save(); c.scale(w / 64, w / 64); c.lineJoin = 'round'; c.lineCap = 'round';
   if (estado === 'lista') {      // un halo detrás, para que se vea que se puede cobrar
     const g = c.createRadialGradient(32, 32, 20, 32, 32, 34); g.addColorStop(0, 'rgba(255,240,150,.9)'); g.addColorStop(1, 'rgba(255,240,150,0)');
@@ -124,6 +125,68 @@ const DIBUJOS_MIS = (() => {
       if (!S) { for (let k = 0; k < 12; k++) { const a = k * Math.PI / 6; c.beginPath(); c.moveTo(Math.cos(a) * 8, 2 + Math.sin(a) * 8); c.lineTo(Math.cos(a) * 9.4, 2 + Math.sin(a) * 9.4); c.lineWidth = 1.2; c.strokeStyle = OL; c.stroke(); }
         c.beginPath(); c.moveTo(0, 2); c.lineTo(0, -5); c.moveTo(0, 2); c.lineTo(5, 4); c.lineWidth = 2.2; c.strokeStyle = OL; c.stroke(); c.beginPath(); c.moveTo(0, 2); c.arc(0, 2, 9, -Math.PI / 2, -Math.PI / 2 + 1.1); c.closePath(); c.fillStyle = 'rgba(255,75,92,.3)'; c.fill(); }
       brillo(c, [-9, -6, -5, -9]);
+    },
+    // ---- los nuevos (24-10-2026): misiones semanales, logros nuevos y secretos ----
+    postura(c) {      // la galleta en estrella, con su escarcha de congelada
+      c.beginPath(); c.arc(0, -10, 7.5, 0, TAU); c.moveTo(-5, -3); c.lineTo(5, -3); c.lineTo(7, 9); c.lineTo(-7, 9); c.closePath(); f(c, '#f4e3c8');
+      for (const [x0, y0, x1, y1] of [[-5, -1, -15, -9], [5, -1, 15, -9], [-4, 8, -11, 16], [4, 8, 11, 16]]) { c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); st(c, OL, 6.2); c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); st(c, '#f4e3c8', 3.4); }
+      if (!S) { c.fillStyle = OL; circ(c, -2.6, -11, 1.3); c.fill(); circ(c, 2.6, -11, 1.3); c.fill(); for (const [x, y, r] of [[13, -14, 3.2], [-13, 13, 2.6]]) chispa(c, x, y, r); c.fillStyle = 'rgba(159,232,255,.45)'; c.beginPath(); c.arc(0, -10, 7.5, Math.PI, TAU); c.fill(); }
+    },
+    regalo(c) {      // la caja del premio diario con su lazo
+      rr(c, -14, -4, 28, 19, 3); f(c, '#ff4b5c'); rr(c, -16, -10, 32, 8, 2.5); f(c, '#ff6f7c');
+      rr(c, -3.5, -10, 7, 25, 1); f(c, '#ffcb3d', 2.2);
+      c.beginPath(); c.moveTo(0, -10); c.bezierCurveTo(-14, -22, -16, -8, 0, -10); c.moveTo(0, -10); c.bezierCurveTo(14, -22, 16, -8, 0, -10); f(c, '#ffcb3d', 2.4);
+      brillo(c, [-12, -7, -6, -7]);
+    },
+    linterna(c) {      // la linterna del becario con su haz
+      if (!S) { c.beginPath(); c.moveTo(6, -6); c.lineTo(18, -16); c.lineTo(18, 6); c.closePath(); c.fillStyle = 'rgba(255,240,150,.55)'; c.fill(); }
+      c.save(); c.rotate(-0.35); rr(c, -16, -4, 20, 9, 3); f(c, '#3a7de0'); rr(c, 3, -7, 7, 15, 2); f(c, '#c9cfdc', 2.4); if (!S) { c.fillStyle = '#fff6a0'; c.fillRect(8, -5, 2, 11); } brillo(c, [-13, -2, -2, -2]); c.restore();
+    },
+    rayo(c) {      // el rayo de los talentos
+      c.beginPath(); c.moveTo(4, -17); c.lineTo(-10, 2); c.lineTo(-1, 2); c.lineTo(-5, 17); c.lineTo(10, -3); c.lineTo(1, -3); c.closePath(); f(c, '#ffcb3d', 2.8);
+      brillo(c, [2, -12, -5, -1]);
+    },
+    estrella(c) {      // la estrella del Empleado del día / del mes
+      c.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 7.5 : 17; c.lineTo(Math.cos(a) * r, 1 + Math.sin(a) * r); } c.closePath(); f(c, '#ffcb3d', 3);
+      brillo(c, [-6, -4, -1, -10]); if (!S) { c.fillStyle = OL; circ(c, -3.5, 1, 1.4); c.fill(); circ(c, 3.5, 1, 1.4); c.fill(); c.beginPath(); c.arc(0, 3.5, 3, 0.2, Math.PI - 0.2); c.lineWidth = 1.6; c.strokeStyle = OL; c.stroke(); }
+    },
+    amigos(c) {      // dos galletas juntas
+      c.save(); c.translate(-7, 2); c.scale(0.78, 0.78); galleta(c, '#cfe8ff'); c.restore();
+      c.save(); c.translate(7, 1); c.scale(0.82, 0.82); galleta(c, '#f4e3c8'); c.restore();
+    },
+    calendario(c) {      // la hoja del calendario con la marca
+      rr(c, -14, -12, 28, 27, 4); f(c, '#fff6ea'); rr(c, -14, -12, 28, 8, 3); f(c, '#ff4b5c');
+      for (const x of [-7, 7]) { rr(c, x - 1.6, -16, 3.2, 7, 1.5); f(c, '#c9cfdc', 1.8); }
+      if (!S) { c.fillStyle = 'rgba(29,37,54,.25)'; for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) c.fillRect(-10 + i * 6, -1 + j * 5, 3.4, 3); }
+      c.beginPath(); c.moveTo(-3, 6); c.lineTo(1, 10); c.lineTo(10, -1); st(c, OL, 5); c.beginPath(); c.moveTo(-3, 6); c.lineTo(1, 10); c.lineTo(10, -1); st(c, '#7ee04a', 2.8);
+    },
+    pegatina(c) {      // una pegatina con la esquina levantada
+      c.beginPath(); c.moveTo(-14, -14); c.lineTo(14, -14); c.lineTo(14, 5); c.lineTo(5, 14); c.lineTo(-14, 14); c.closePath(); f(c, '#fff6ea', 3);
+      c.beginPath(); c.moveTo(14, 5); c.lineTo(5, 5); c.lineTo(5, 14); c.closePath(); f(c, '#c9cfdc', 2.4);
+      if (!S) { c.fillStyle = '#ff6fb5'; circ(c, -3, -3, 7); c.fill(); c.fillStyle = OL; circ(c, -5.5, -4.5, 1.3); c.fill(); circ(c, -0.5, -4.5, 1.3); c.fill(); c.beginPath(); c.arc(-3, -2, 2.6, 0.2, Math.PI - 0.2); c.lineWidth = 1.5; c.strokeStyle = OL; c.stroke(); }
+    },
+    percha(c) {      // la percha del armario con una camiseta
+      c.beginPath(); c.moveTo(0, -9); c.lineTo(0, -12); c.arc(3, -12, 3, Math.PI, Math.PI * 1.9); st(c, OL, 2.8);
+      c.beginPath(); c.moveTo(-15, -2); c.lineTo(-7, -9); c.lineTo(7, -9); c.lineTo(15, -2); c.lineTo(11, 3); c.lineTo(8, 1); c.lineTo(8, 15); c.lineTo(-8, 15); c.lineTo(-8, 1); c.lineTo(-11, 3); c.closePath(); f(c, '#39d5e8');
+      if (!S) { c.beginPath(); c.moveTo(-3, -9); c.quadraticCurveTo(0, -5, 3, -9); c.lineWidth = 2; c.strokeStyle = OL; c.stroke(); } brillo(c, [-5, -5, -5, 9]);
+    },
+    pase(c) {      // el ticket del pase de temporada
+      c.beginPath(); c.moveTo(-16, -10); c.lineTo(16, -10); c.lineTo(16, -3); c.arc(16, 1, 4, -Math.PI / 2, Math.PI / 2, true); c.lineTo(16, 10); c.lineTo(-16, 10); c.lineTo(-16, 5); c.arc(-16, 1, 4, Math.PI / 2, -Math.PI / 2, true); c.closePath(); f(c, '#ffcb3d');
+      if (!S) { c.setLineDash([2.5, 2.5]); c.beginPath(); c.moveTo(7, -8); c.lineTo(7, 8); c.lineWidth = 1.6; c.strokeStyle = OL; c.stroke(); c.setLineDash([]); c.font = '11px "Luckiest Guy", "Arial Black", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = OL; c.fillText('40', -4, 1); }
+      brillo(c, [-12, -6, 3, -6]);
+    },
+    luna(c) {      // la luna del turno de noche, con sus Z
+      c.beginPath(); c.arc(-2, 2, 14, 0.9, Math.PI * 1.75); c.arc(5, -3, 10, Math.PI * 1.6, 0.95, true); c.closePath(); f(c, '#ffe58a');
+      brillo(c, [-10, -4, -8, 6]); if (!S) { c.font = '900 9px sans-serif'; c.fillStyle = '#fff6ea'; c.fillText('z', 9, -9); c.font = '900 7px sans-serif'; c.fillText('z', 14, -14); }
+    },
+    coche(c) {      // el coche del jefe en el aire, con los chorros de abajo
+      if (!S) for (const x of [-9, 9]) { c.beginPath(); c.moveTo(x - 3, 9); c.lineTo(x, 17); c.lineTo(x + 3, 9); c.fillStyle = '#bff3ff'; c.fill(); }
+      c.beginPath(); c.moveTo(-17, 4); c.lineTo(-15, -3); c.lineTo(-8, -5); c.lineTo(-4, -12); c.lineTo(7, -12); c.lineTo(11, -5); c.lineTo(16, -3); c.lineTo(17, 4); c.quadraticCurveTo(17, 8, 13, 8); c.lineTo(-13, 8); c.quadraticCurveTo(-17, 8, -17, 4); c.closePath(); f(c, '#ff4b5c');
+      rr(c, -2.5, -10, 8, 5, 1.5); f(c, '#9fe8ff', 2); circ(c, -10, 8, 4); f(c, '#20283c', 2.2); circ(c, 10, 8, 4); f(c, '#20283c', 2.2); brillo(c, [-13, -1, -6, -3]);
+    },
+    secreto(c) {      // el interrogante de un logro secreto aún sin descubrir
+      if (!S) { c.font = '30px "Luckiest Guy", "Arial Black", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 5; c.strokeStyle = OL; c.strokeText('?', 0, 2); c.fillStyle = '#fff6ea'; c.fillText('?', 0, 2); }
+      else { c.font = '30px "Luckiest Guy", "Arial Black", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = OL; c.fillText('?', 0, 2); }
     },
   };
   const out = {};

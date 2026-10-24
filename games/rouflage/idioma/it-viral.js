@@ -130,7 +130,6 @@ IDIOMA.add({
   "Toca <b>RECOGER</b>. Mañana, más.": "Tocca <b>RITIRA</b>. Domani, altro ancora.",
   "Tu <b>ARMARIO</b>: ropa, caras, mascotas y colores para tu galleta. Lo que llevas lo ven todos.": "Il tuo <b>ARMADIO</b>: vestiti, facce, mascotte e colori per il tuo biscotto. Quello che indossi lo vedono tutti.",
   "Cada pestaña es una parte de tu galleta. Toca una casilla para probártela.": "Ogni scheda è una parte del tuo biscotto. Tocca una casella per provarla.",
-  "Cada día hay 3 <b>MISIONES</b> nuevas: una fácil, una media y una difícil. Dan gotas.": "Ogni giorno ci sono 3 <b>MISSIONI</b> nuove: una facile, una media e una difficile. Danno gocce.",
   "Toca tu <b>PERFIL</b>: ahí dentro está tu habitación.": "Tocca il tuo <b>PROFILO</b>: lì dentro c'è la tua stanza.",
   "<b>MI ESCENARIO</b>: tu propia habitación para decorar con muebles y pintar a tu gusto.": "<b>IL MIO SCENARIO</b>: la tua stanza da decorare con i mobili e dipingere come ti pare.",
   "Esta es tu habitación. Coloca muebles, pinta el suelo y las paredes y pasea con tu galleta. Tus amigos la verán en vuestras salas.": "Questa è la tua stanza. Sistema i mobili, dipingi il pavimento e le pareti e passeggia con il tuo biscotto. I tuoi amici la vedranno nelle vostre stanze.",

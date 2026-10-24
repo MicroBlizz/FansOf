@@ -1,8 +1,8 @@
 {
- "build": 449,
- "hash": "e494bb0",
- "fecha": "2026-10-23T22:26:35Z",
- "mensaje": "Fans of Rouflage: los niveles premium sin premio dan 150 Gotas (2-7, 19, 28 y 34; catálogo v15 en el servidor) y la ficha del perfil no se sale del marco con datos largos",
+ "build": 450,
+ "hash": "09a61de",
+ "fecha": "2026-10-24T00:27:27Z",
+ "mensaje": "Nota de Play en todos los idiomas del juego: pt, fr, de e it desde play-notas.json (Rouflage 0.2.45)",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

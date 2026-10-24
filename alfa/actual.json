@@ -1,8 +1,8 @@
 {
- "build": 482,
- "hash": "9fcf822",
- "fecha": "2026-10-24T23:55:58Z",
- "mensaje": "Rouflage: la máquina del gachapón ya no se corta en móviles bajos",
+ "build": 483,
+ "hash": "8bd806e",
+ "fecha": "2026-10-24T23:59:44Z",
+ "mensaje": "Rouflage: intro con los dibujos de Yoshi (colado liso y becario gris); el colado empieza camuflado en el damero, aparece de golpe, huye y después entra el becario",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

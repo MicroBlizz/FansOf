@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.48-a482.9fcf822"></script>
+<script src="../../core/js/nucleo.js?v=0.2.48-a483.8bd806e"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css')</script>
 </head>
@@ -251,8 +251,7 @@
 /* pantalla de carga (intro, 25-10-2026): a pantalla completa y con el arte del icono de la app. Damero turquesa y crema que se desliza despacio; «FANS OF» cae con rebote (0,5 s) y sacude la pantalla;
    «ROUFLAGE» en dos filas (ROU / FLAGE) ocupando todo el ancho, cada letra estalla por orden (1,5–2 s) con los estampados del icono (rombos azules, diagonales amarillas, rayas naranja) y manchas de pintura detrás;
    a los 2 s el colado sale corriendo por abajo soltando gotas turquesa y el becario le persigue con la linterna (img/intro-camaleon.png e img/intro-cazador.png); a los 3,5 s «TOCA PARA JUGAR» en fundido. Solo transform y opacity: va fino en móvil. */
-#carga { background: #f3ebd6; overflow: hidden; padding: 0; --tinta: #1f1538; --u: min(1vw, 0.62vh); }
-#carga .cg-fondo { position: absolute; inset: -50% 0 0 -50%; width: 200%; height: 200%; background: conic-gradient(#6fd0c8 25%, #f3ebd6 0 50%, #6fd0c8 0 75%, #f3ebd6 0); background-size: calc(var(--u) * 50) calc(var(--u) * 50); animation: cg-damero 24s linear infinite; }
+#carga { overflow: hidden; padding: 0; --tinta: #1f1538; --u: min(1vw, 0.62vh); --damero: conic-gradient(#6fd0c8 25%, #f3ebd6 0 50%, #6fd0c8 0 75%, #f3ebd6 0); background: #f3ebd6 var(--damero) 0 0 / calc(var(--u) * 50) calc(var(--u) * 50); }
 #carga .cg { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; gap: calc(var(--u) * 5); }
 #carga .cg-arriba { display: grid; justify-items: center; }
 #carga .cg-fans { font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: calc(var(--u) * 14); letter-spacing: 0.08em; line-height: 1; color: #fff7e8; -webkit-text-stroke: 0.1em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.1em 0 var(--tinta)); transform: translateY(-130vh) rotate(-4deg); animation: cg-cae 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
@@ -275,20 +274,22 @@
 #carga .cg-mancha.m3 { left: 18%; bottom: -16%; background: #f3c53a; font-size: calc(var(--u) * 18); animation-delay: 1.65s; }
 #carga .cg-mancha.m4 { right: 14%; bottom: -10%; background: #ff6b8a; font-size: calc(var(--u) * 16); animation-delay: 1.72s; }
 #carga .cg-mancha.m5 { left: 40%; top: -22%; background: #7a8fe0; font-size: calc(var(--u) * 14); animation-delay: 1.8s; }
-#carga .cg-pista { position: relative; width: 100%; height: calc(var(--u) * 46); font-size: calc(var(--u) * 40); pointer-events: none; }
-#carga .cg-cam, #carga .cg-caz { position: absolute; bottom: 0; width: 1.15em; height: 1em; background: center bottom / contain no-repeat; opacity: 0; }
-#carga .cg-cam { left: 36%; background-image: url(img/intro-camaleon.png); animation: cg-huye 6s linear 2s infinite; }
-#carga .cg-cam::before { content: ''; position: absolute; inset: 0; background: inherit; animation: cg-bote 0.2s ease-in-out infinite alternate; }
-#carga .cg-caz { left: -40%; width: 1.05em; height: 0.92em; background-image: url(img/intro-cazador.png); animation: cg-caza 6s linear 2.3s infinite; }
-#carga .cg-caz::before { content: ''; position: absolute; inset: 0; background: inherit; animation: cg-bote 0.24s ease-in-out infinite alternate; }
-#carga .cg-haz { position: absolute; left: 88%; top: 30%; width: 2.6em; height: 0.7em; background: linear-gradient(to right, rgba(255, 240, 150, 0.95), rgba(255, 240, 150, 0)); clip-path: polygon(0 44%, 100% 0, 100% 100%, 0 56%); animation: cg-luz 0.4s ease-in-out infinite alternate; }
-#carga .cg-gota { position: absolute; left: 0.1em; bottom: 0.5em; width: 0.14em; height: 0.14em; border-radius: 50% 50% 50% 0; background: #6fd0c8; border: 0.03em solid var(--tinta); transform: rotate(-45deg); animation: cg-gota 0.5s ease-out infinite; }
-#carga .cg-gota.g2 { bottom: 0.3em; width: 0.1em; height: 0.1em; animation-delay: 0.17s; } #carga .cg-gota.g3 { bottom: 0.7em; width: 0.09em; height: 0.09em; animation-delay: 0.33s; }
-#carga .cg-excl { position: absolute; left: 0.3em; bottom: 100%; font: 400 0.5em var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em var(--tinta); paint-order: stroke fill; opacity: 0; animation: cg-excl 6s linear 2s infinite; }
+#carga .cg-pista { position: relative; z-index: 2; width: 100%; height: calc(var(--u) * 52); font-size: calc(var(--u) * 46); pointer-events: none; }
+#carga .cg-oculto, #carga .cg-cam, #carga .cg-caz { position: absolute; bottom: 0; width: 1.1em; height: 1em; }
+#carga .cg-oculto { left: 28%; -webkit-mask: url(img/intro-camaleon.png) center bottom / contain no-repeat; mask: url(img/intro-camaleon.png) center bottom / contain no-repeat; background: var(--damero) 0 0 / calc(var(--u) * 50) calc(var(--u) * 50); animation: cg-oculto 7s linear infinite; }
+#carga .cg-oculto::after { content: ''; position: absolute; inset: 0; background: url(img/intro-camaleon.png) center bottom / contain no-repeat; opacity: 0.16; animation: cg-respira 1.2s ease-in-out infinite alternate; }
+#carga .cg-cam, #carga .cg-caz { background: center bottom / contain no-repeat; opacity: 0; }
+#carga .cg-cam { left: 28%; background-image: url(img/intro-camaleon.png); animation: cg-huye 7s linear infinite; }
+#carga .cg-cam::before { content: ''; position: absolute; inset: 0; background: inherit; animation: cg-bote 0.18s ease-in-out infinite alternate; }
+#carga .cg-caz { left: -45%; width: 1.02em; height: 1.05em; background-image: url(img/intro-cazador.png); animation: cg-caza 7s linear infinite; }
+#carga .cg-caz::before { content: ''; position: absolute; inset: 0; background: inherit; animation: cg-bote 0.22s ease-in-out infinite alternate; }
+#carga .cg-haz { position: absolute; left: 92%; top: 24%; width: 2.8em; height: 0.8em; background: linear-gradient(to right, rgba(255, 240, 150, 0.95), rgba(255, 240, 150, 0)); clip-path: polygon(0 44%, 100% 0, 100% 100%, 0 56%); animation: cg-luz 0.4s ease-in-out infinite alternate; }
+#carga .cg-gota { position: absolute; left: 0.08em; bottom: 0.5em; width: 0.12em; height: 0.12em; border-radius: 50% 50% 50% 0; background: #6fd0c8; border: 0.03em solid var(--tinta); transform: rotate(-45deg); animation: cg-gota 0.5s ease-out infinite; }
+#carga .cg-gota.g2 { bottom: 0.3em; width: 0.09em; height: 0.09em; animation-delay: 0.17s; } #carga .cg-gota.g3 { bottom: 0.68em; width: 0.08em; height: 0.08em; animation-delay: 0.33s; }
+#carga .cg-excl { position: absolute; left: 40%; bottom: 88%; font: 400 0.55em var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em var(--tinta); paint-order: stroke fill; opacity: 0; animation: cg-excl 7s linear infinite; }
 #carga .cg-cargando { margin: calc(var(--u) * 4) 0 0; font: 800 calc(var(--u) * 6.5) 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.22em; color: var(--tinta); opacity: 0; animation: cg-fade 0.8s ease-out 3.5s forwards; }
 #carga .cg-cargando.toca { color: #f28c28; -webkit-text-stroke: 0.07em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.08em 0 var(--tinta)); animation: cg-fade 0.8s ease-out 3.5s forwards, cg-toca 0.9s ease-in-out 0.8s infinite alternate; }
 #carga.cg-sacude .cg { animation: cg-sacude 0.4s linear 1.35s; }
-@keyframes cg-damero { to { transform: translate(calc(var(--u) * 50), calc(var(--u) * 50)); } }
 @keyframes cg-cae { to { transform: translateY(0) rotate(-4deg); } }
 @keyframes cg-sacude { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1.5vw, 1vh); } 40% { transform: translate(1.5vw, -0.8vh); } 60% { transform: translate(-1vw, 0.6vh); } 80% { transform: translate(0.8vw, -0.4vh); } }
 @keyframes cg-pop { 0% { transform: scale(0) var(--giro); } 100% { transform: scale(1) var(--giro); } }
@@ -298,11 +299,13 @@
 @keyframes cg-luz { from { opacity: 0.5; } to { opacity: 1; } }
 @keyframes cg-bote { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-0.07em) rotate(3deg); } }
 @keyframes cg-gota { 0% { opacity: 1; transform: translate(0, 0) rotate(-45deg) scale(1); } 100% { opacity: 0; transform: translate(-0.6em, 0.25em) rotate(-45deg) scale(0.4); } }
-@keyframes cg-huye { 0% { left: 36%; opacity: 0; transform: scale(1.6); } 2% { opacity: 1; transform: scale(1.6); } 6% { transform: scale(1); } 40% { left: 115%; opacity: 1; } 41%, 100% { left: 115%; opacity: 0; } }
-@keyframes cg-caza { 0% { left: -40%; opacity: 1; } 42% { left: 115%; opacity: 1; } 43%, 100% { left: 115%; opacity: 0; } }
-@keyframes cg-excl { 0%, 1% { opacity: 0; transform: translateY(0.1em) scale(0.6); } 3% { opacity: 1; transform: translateY(0) scale(1.2); } 7% { opacity: 1; transform: scale(1); } 11%, 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { #carga * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl { animation: none !important; opacity: 0; } }
-</style><div class="cg-fondo"></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div><div class="cg-pista"><span class="cg-cam"><span class="cg-excl">!</span><span class="cg-gota"></span><span class="cg-gota g2"></span><span class="cg-gota g3"></span></span><span class="cg-caz"><span class="cg-haz"></span></span></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div></div>
+@keyframes cg-oculto { 0%, 28% { opacity: 1; } 28.6%, 92% { opacity: 0; } 100% { opacity: 1; } }
+@keyframes cg-respira { from { transform: translateY(0); } to { transform: translateY(-0.03em); } }
+@keyframes cg-huye { 0%, 28% { left: 28%; opacity: 0; transform: scale(1); } 28.6% { opacity: 1; transform: scale(1.45); } 31.4% { left: 28%; transform: scale(1); } 44.3% { left: 120%; opacity: 1; } 44.4%, 100% { left: 120%; opacity: 0; } }
+@keyframes cg-caza { 0%, 45.6% { left: -45%; opacity: 0; } 45.7% { left: -45%; opacity: 1; } 62.9% { left: 120%; opacity: 1; } 63%, 100% { left: 120%; opacity: 0; } }
+@keyframes cg-excl { 0%, 28% { opacity: 0; transform: translateY(0.15em) scale(0.5); } 29.5% { opacity: 1; transform: translateY(0) scale(1.3); } 32% { transform: scale(1); } 36%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #carga * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl, #carga .cg-oculto { animation: none !important; opacity: 0; } }
+</style><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div><div class="cg-pista"><span class="cg-oculto" id="cg-oculto"></span><span class="cg-excl">!</span><span class="cg-cam"><span class="cg-gota"></span><span class="cg-gota g2"></span><span class="cg-gota g3"></span></span><span class="cg-caz"><span class="cg-haz"></span></span></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div></div>
 <script>
 // cuando el juego está listo, la pantalla de carga no se va sola: pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
 (function () {
@@ -312,6 +315,9 @@
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
   if (en) t.textContent = 'LOADING…';
   let esperando = false; const t0 = performance.now(); c.classList.add('cg-sacude');
+  // el colado escondido lleva el mismo damero que el fondo: se le mueve el estampado para que encaje con la rejilla de la pantalla
+  const oc = document.getElementById('cg-oculto'), alinea = () => { if (!oc) return; const r = oc.getBoundingClientRect(); oc.style.backgroundPosition = (-r.left) + 'px ' + (-r.top) + 'px'; };
+  alinea(); addEventListener('resize', alinea); if (document.fonts && document.fonts.ready) document.fonts.ready.then(alinea); setTimeout(alinea, 1600);
   Object.defineProperty(c, 'hidden', { configurable: true, get() { return real.get.call(c); }, set(v) {
     if (!v) { real.set.call(c, false); return; }
     if (esperando) return;

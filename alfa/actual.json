@@ -1,8 +1,8 @@
 {
- "build": 451,
- "hash": "c14b34e",
- "fecha": "2026-10-24T00:35:52Z",
- "mensaje": "Ficha de Play por script: textos de Rouflage en 6 idiomas, subir_ficha.py y workflow manual «Ficha de Play»",
+ "build": 452,
+ "hash": "ea89d21",
+ "fecha": "2026-10-24T01:02:18Z",
+ "mensaje": "Página de borrado de cuenta (privacidad/borrar-cuenta/) para la ficha de Google Play, enlazada desde la política",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

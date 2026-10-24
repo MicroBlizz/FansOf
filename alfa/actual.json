@@ -1,8 +1,8 @@
 {
- "build": 454,
- "hash": "cfc46c8",
- "fecha": "2026-10-24T01:14:22Z",
- "mensaje": "Rendimiento: marca lo que viene de la app de Android (extra.app) y /gestion lo separa (SQL 87, pendiente de aplicar)",
+ "build": 455,
+ "hash": "974fbf5",
+ "fecha": "2026-10-24T01:21:58Z",
+ "mensaje": "Rendimiento en Rouflage y errores.js respeta el interruptor de datos anónimos",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

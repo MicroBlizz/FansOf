@@ -1,9 +1,10 @@
 {
- "build": 471,
- "hash": "cdd7bce",
- "fecha": "2026-10-24T22:41:09Z",
- "mensaje": "MAPA: regenerados",
+ "build": 472,
+ "hash": "6c6997e",
+ "fecha": "2026-10-24T23:02:53Z",
+ "mensaje": "Boom: primer prototipo jugable (hot seat 1 contra 1 y dobles, IA, terreno que se rompe, viento, retraso); solo en la alfa",
  "juegos": {
+  "boom": "0.1.0",
   "crush": "0.1.33",
   "dark": "0.2.7",
   "decks": "0.2.15",

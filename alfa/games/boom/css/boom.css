@@ -1,0 +1,70 @@
+/* Fans of Boom · estilos: la capa de interfaz sobre el lienzo (960 de ancho lógico), la portada, preparar, el panel de control y las ventanas. */
+#bm-ui { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; font-family: var(--font-ui); }
+#bm-ui button, #bm-ui input, #bm-ui .bm-velo, #bm-ui .bm-pantalla, #bm-panel { pointer-events: auto; }
+#bm-ui .bm-pantalla { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
+.bm-logo { font-family: var(--font-display); line-height: .9; transform: rotate(-3deg); }
+.bm-logo span { display: block; font-size: 54px; color: #fff; text-shadow: 0 4px 0 var(--outline), 4px 0 0 var(--outline), -4px 0 0 var(--outline), 0 -4px 0 var(--outline); }
+.bm-logo b { display: block; font-size: 150px; font-weight: 400; color: #ff7a1a; text-shadow: 0 8px 0 var(--outline), 6px 0 0 var(--outline), -6px 0 0 var(--outline), 0 -6px 0 var(--outline), 6px 6px 0 var(--outline), -6px 6px 0 var(--outline); }
+.bm-lema { margin: 0; font-size: 22px; font-weight: 800; text-shadow: 0 2px 0 var(--outline); }
+.bm-col { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.bm-fila-b { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.bm-btn { font: 400 24px var(--font-display); letter-spacing: .02em; color: #fff; background: linear-gradient(#ff9a3d, #ff6a10); border: 4px solid var(--outline); border-radius: 16px; padding: 8px 28px; cursor: pointer; box-shadow: 0 5px 0 var(--outline); text-shadow: 2px 2px 0 var(--outline); }
+.bm-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); }
+.bm-btn.bm-sec { background: linear-gradient(#5b3d8a, #3e2363); font-size: 20px; }
+.bm-btn.bm-enorme { font-size: 40px; padding: 10px 56px; }
+.bm-h2 { margin: 0; font: 400 38px var(--font-display); text-shadow: 3px 3px 0 var(--outline); }
+.bm-nota { margin: 0; max-width: 560px; font-size: 16px; font-weight: 700; color: var(--ink-dim); }
+/* preparar */
+.bm-tabs { display: flex; gap: 10px; }
+.bm-tabs button, .bm-mapas button { font: 800 18px var(--font-ui); color: #fff; background: #3e2363; border: 3px solid var(--outline); border-radius: 12px; padding: 6px 18px; cursor: pointer; }
+.bm-tabs button.bm-on, .bm-mapas button.bm-on { background: #ff7a1a; box-shadow: 0 0 0 3px var(--gold); }
+.bm-slots { display: flex; flex-direction: column; gap: 8px; }
+.bm-slot { display: flex; align-items: center; gap: 10px; background: rgba(38, 20, 60, .9); border: 3px solid var(--outline); border-radius: 14px; padding: 6px 12px; min-width: 460px; }
+.bm-punto { width: 22px; height: 22px; border-radius: 50%; background: var(--eq); border: 3px solid var(--outline); flex: none; }
+.bm-nombre { flex: 1; min-width: 0; font: 800 18px var(--font-ui); color: #fff; background: rgba(0, 0, 0, .3); border: 2px solid var(--outline); border-radius: 8px; padding: 4px 8px; }
+.bm-nombre:disabled { opacity: .45; }
+.bm-chip { font: 800 15px var(--font-ui); color: #fff; background: #5b3d8a; border: 3px solid var(--outline); border-radius: 10px; padding: 4px 12px; cursor: pointer; min-width: 92px; }
+.bm-mapas { display: flex; gap: 12px; }
+.bm-mapas button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 12px; }
+.bm-mapas i { width: 150px; height: 44px; border-radius: 8px; border: 2px solid var(--outline); background: linear-gradient(var(--c1) 55%, var(--c2) 55%); display: block; }
+/* ventanas */
+.bm-velo { position: absolute; inset: 0; background: rgba(12, 6, 20, .82); display: flex; align-items: center; justify-content: center; }
+.bm-velo[hidden] { display: none; }
+.bm-tarjeta { background: var(--panel); border: 5px solid var(--eq, var(--outline)); box-shadow: 0 0 0 4px var(--outline); border-radius: 22px; padding: 22px 34px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; max-width: 620px; max-height: 92%; overflow: auto; }
+.bm-tarjeta h2 { margin: 0; font: 400 38px var(--font-display); text-shadow: 3px 3px 0 var(--outline); }
+.bm-eq { margin: 0; font: 800 16px var(--font-ui); color: var(--eq); letter-spacing: .1em; }
+.bm-quien { margin: 0; font: 400 56px var(--font-display); color: var(--eq); text-shadow: 3px 3px 0 var(--outline); }
+.bm-pausa { position: absolute; left: 12px; top: 12px; width: 44px; height: 44px; border-radius: 50%; background: #3e2363; border: 4px solid var(--outline); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.bm-pausa[hidden] { display: none; }
+/* panel de control */
+#bm-panel { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; justify-content: center; gap: 14px; padding: 18px 14px 10px; background: linear-gradient(transparent, rgba(20, 10, 34, .9) 40%); }
+#bm-panel[hidden] { display: none; }
+#bm-panel.bm-quieto { opacity: .45; }
+#bm-panel.bm-quieto * { pointer-events: none; }
+.bm-grupo { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.bm-fila { display: flex; align-items: center; gap: 6px; }
+.bm-et { font: 800 13px var(--font-ui); color: var(--ink-dim); letter-spacing: .08em; }
+.bm-et b { color: #fff; font-size: 15px; }
+.bm-rd { width: 56px; height: 56px; border-radius: 50%; background: #5b3d8a; border: 4px solid var(--outline); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; touch-action: none; }
+.bm-mini { width: 40px; height: 40px; border-radius: 50%; background: #5b3d8a; border: 3px solid var(--outline); color: #fff; font: 400 26px var(--font-display); cursor: pointer; padding: 0; line-height: 1; touch-action: none; }
+.bm-num { font: 400 30px var(--font-display); min-width: 66px; text-align: center; text-shadow: 2px 2px 0 var(--outline); }
+.bm-energia { width: 118px; height: 9px; border-radius: 5px; background: rgba(0, 0, 0, .45); border: 2px solid var(--outline); overflow: hidden; }
+.bm-energia i { display: block; height: 100%; background: #9be58a; }
+.bm-gpot { width: 230px; }
+#bm-barra { width: 100%; height: 30px; border-radius: 15px; background: rgba(0, 0, 0, .5); border: 3px solid var(--outline); overflow: hidden; cursor: pointer; touch-action: none; }
+#bm-pot { display: block; height: 100%; background: linear-gradient(90deg, #ffcb3d, #ff4b5c); }
+.bm-tiros { flex-direction: row; gap: 6px; }
+.bm-tiro { font: 400 17px var(--font-display); color: #fff; background: #3e2363; border: 3px solid var(--outline); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.bm-tiro.bm-on { background: #ff7a1a; box-shadow: 0 0 0 3px var(--gold); }
+.bm-fuego { font: 400 24px var(--font-display); color: #fff; background: radial-gradient(circle at 35% 30%, #ff9a3d, var(--eq, #ff6a10) 70%); border: 5px solid var(--outline); border-radius: 50%; width: 84px; height: 84px; cursor: pointer; text-shadow: 2px 2px 0 var(--outline); box-shadow: 0 5px 0 var(--outline); padding: 0; line-height: 1; }
+.bm-fuego:active { transform: translateY(3px); }
+/* en vertical (ancho lógico 600) el panel pasa a dos filas: mover, ángulo y ¡BOOM! arriba; potencia y tiros abajo */
+.bm-estrecho #bm-panel { flex-wrap: wrap; align-items: center; gap: 10px 14px; padding-top: 22px; }
+.bm-estrecho .bm-mueve { order: 1; } .bm-estrecho .bm-grupo:nth-child(2) { order: 2; } .bm-estrecho .bm-fuego { order: 3; } .bm-estrecho .bm-gpot { order: 4; } .bm-estrecho .bm-tiros { order: 5; }
+.bm-estrecho .bm-slots { width: 92%; }
+.bm-estrecho .bm-slot { min-width: 0; width: 100%; box-sizing: border-box; }
+.bm-estrecho .bm-tarjeta { max-width: 90%; box-sizing: border-box; padding: 18px 20px; }
+.bm-estrecho .bm-quien { font-size: 44px; }
+.bm-estrecho .bm-logo b { font-size: 110px; }
+.bm-estrecho .bm-nota { max-width: 90%; }
+.bm-estrecho .bm-mapas i { width: 120px; }

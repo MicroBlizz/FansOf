@@ -55,10 +55,9 @@ function dcCambiosAscenso(carta) {
   return out;
 }
 function dcObjeto(clave) { return DCP.run && DCP.run.objetos.includes(clave) ? DC_OBJETOS[clave] : null; }
-// La ventaja fiscal de la partida (o null) y si una está desbloqueada por lo jugado hasta ahora.
-function dcVentaja() { return DCP.run && DCP.run.ventaja ? DC_VENTAJAS[DCP.run.ventaja] || null : null; }
+// Si una ventaja fiscal está desbloqueada por lo jugado hasta ahora (las de la partida, sumadas, las da dcVentaja() de ventajas.js).
 function dcVentajaAbierta(k) { const h = DC_VENTAJAS[k].hito; if (!h) return true; for (const q in h) if ((DCP.meta[q] || 0) < h[q]) return false; return true; }
-function dcTextoHito(k) { const h = DC_VENTAJAS[k].hito; if (!h) return ''; if (h.reuniones) return tr('Gana {n} reuniones', { n: h.reuniones }); if (h.victorias) return tr(h.victorias === 1 ? 'Gana una partida' : 'Gana {n} partidas', { n: h.victorias }); return tr(h.partidas === 1 ? 'Juega una partida' : 'Juega {n} partidas', { n: h.partidas }); }
+function dcTextoHito(k) { const h = DC_VENTAJAS[k].hito; if (!h) return ''; if (h.paroTope) return tr('Abre el paro +{n} con cualquier líder', { n: h.paroTope }); if (h.reuniones) return tr('Gana {n} reuniones', { n: h.reuniones }); if (h.victorias) return tr(h.victorias === 1 ? 'Gana una partida' : 'Gana {n} partidas', { n: h.victorias }); return tr(h.partidas === 1 ? 'Juega una partida' : 'Juega {n} partidas', { n: h.partidas }); }
 
 // ---------- la agenda (la del día la genera campana.js) ----------
 // La cita elegida en una hora ya pasada (o la actual); -1 si todavía no se ha ido a ninguna.
@@ -71,9 +70,10 @@ function dcTituloNodo(n) { if (n.cita) return tr(n.cita); const T = dcTitulosCap
 // ---------- partida nueva ----------
 function dcNuevaPartida(lider, ventaja, paro) {
   if (DCP.run) dcTelFin(DCP.run, 'abandonada');   // la que había sin acabar se da por abandonada
-  const L = DC_LIDERES[lider], V = ventaja && DC_VENTAJAS[ventaja] ? DC_VENTAJAS[ventaja] : null, hp = L.hp + (V && V.vidaMax ? V.vidaMax : 0);
-  DCP.run = { lider, ventaja: V ? ventaja : null, hp, hpMax: hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: null, acto: 0, dia: 0,
+  const L = DC_LIDERES[lider], vs = (Array.isArray(ventaja) ? ventaja : ventaja ? [ventaja] : []).filter(k => DC_VENTAJAS[k]);   // una clave o varias (con los huecos del paro)
+  DCP.run = { lider, ventaja: vs[0] || null, ventajas: vs, hp: L.hp, hpMax: L.hp, nominas: 30, mazo: DC_MAZOS[lider].map(id => dcCarta(id)), objetos: [], meriendas: [], mapa: null, acto: 0, dia: 0,
     paro: paro || 0, quitarUsado: false, quitarPrecio: 60, rango: 0, stats: { reuniones: 0, turnos: 0, nodos: 0, dias: 0 }, pendiente: null, empezada: Date.now() };
+  const V = dcVentaja(); if (V && V.vidaMax) DCP.run.hp = DCP.run.hpMax = L.hp + V.vidaMax; dcVentajaPartida(DCP.run);
   DCP.meta.partidas++; dcTelEmpieza(DCP.run);
   dcEmpiezaDia();
 }

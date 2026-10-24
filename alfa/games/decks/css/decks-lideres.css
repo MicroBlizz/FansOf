@@ -3,3 +3,9 @@
 .dc-lider-op-arte { flex: none; width: 68px; display: grid; place-items: center; }
 .dc-lider-op-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .dc-lider-op-txt small { font-size: 12px; }
+.dc-lider-estado { font-size: 12px; font-weight: 800; color: var(--gold, #ffd166); } .dc-lider-candado { color: var(--ink-dim); }
+.dc-lider-op.dc-cerrada { opacity: .5; filter: grayscale(1); cursor: default; }
+.dc-nivel-paro.dc-cerrada { filter: grayscale(1); }
+.dc-ventaja.dc-elegida { border-color: var(--gold, #ffd166); box-shadow: 0 0 0 2px var(--gold, #ffd166), 0 6px 16px rgba(0, 0, 0, .3); }
+.dc-ventaja.dc-elegida::after { content: ''; position: absolute; top: 12px; right: 14px; width: 18px; height: 18px; border-radius: 50%; background: var(--gold, #ffd166); border: 3px solid #1a1026; box-sizing: border-box; }
+.dc-ventaja.dc-varias:disabled:not(.dc-cerrada) { opacity: .55; }

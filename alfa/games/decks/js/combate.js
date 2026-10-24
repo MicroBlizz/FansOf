@@ -37,6 +37,7 @@ function dcCombateNuevo(encuentro, tramo) {
   // La jugada del líder es gratis: se carga con el CAOS gastado en cartas (C.saltoCarga) y se dispara cuando llega a C.salto.carga.
   for (const rv of C.rivales) dcAnuncia(C, rv);
   if (dcObjeto('alfombrilla')) C.bloqueo += dcObjeto('alfombrilla').bloqueoInicial;
+  dcVentajaReunion(C);   // ventajas.js: bloqueo y Fuerza de salida
   dcEmpiezaTurno(C);
   if (dcObjeto('cofre') && C.pila.length) { const c = C.pila.pop(); C.log.push(tr('El cofre juega {carta} gratis', { carta: dcNombre(c) })); dcResuelve(C, c, dcPrimerRival(C), true); }
   return C;
@@ -213,6 +214,6 @@ function dcProtocolo(C, tipo) {
 }
 function dcCompruebaFin(C) {
   if (DCP.run.hp <= 0) { C.fase = 'fin'; C.resultado = 'derrota'; return true; }
-  if (!C.rivales.some(r => r.hp > 0)) { C.fase = 'fin'; C.resultado = 'victoria'; DCP.run.stats.reuniones++; DCP.meta.reuniones = (DCP.meta.reuniones || 0) + 1; if (dcObjeto('almohada')) dcVida(dcObjeto('almohada').trasReunion); return true; }
+  if (!C.rivales.some(r => r.hp > 0)) { C.fase = 'fin'; C.resultado = 'victoria'; DCP.run.stats.reuniones++; DCP.meta.reuniones = (DCP.meta.reuniones || 0) + 1; if (dcObjeto('almohada')) dcVida(dcObjeto('almohada').trasReunion); dcVentajaTrasReunion(); return true; }
   return false;
 }

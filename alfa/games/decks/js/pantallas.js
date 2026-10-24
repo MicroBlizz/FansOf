@@ -59,7 +59,7 @@ function dcPintaMapa() {
   const pie = dcEl('div', 'dc-pie');
   const objs = dcEl('div', 'dc-objetos'); for (const k of r.objetos) { const o = dcEl('span', 'dc-chip dc-chip-' + DC_OBJETOS[k].rar, tr(DC_OBJETOS[k].nombre)); o.title = tr(DC_OBJETOS[k].texto); o.onclick = () => toast(tr(DC_OBJETOS[k].texto)); objs.append(o); }
   for (const k of r.meriendas) { const o = dcEl('span', 'dc-chip dc-chip-merienda', tr(DC_MERIENDAS[k].nombre)); o.title = tr(DC_MERIENDAS[k].texto); objs.append(o); }
-  if (dcVentaja()) { const o = dcEl('span', 'dc-chip dc-chip-ventaja', tr(dcVentaja().nombre)); o.title = tr(dcVentaja().texto); o.onclick = () => toast(tr(dcVentaja().texto)); objs.prepend(o); }
+  objs.prepend(...dcFichasVentaja());
   pie.append(objs, dcEl('p', 'dc-nota', tr(m.piso < 0 ? 'Cada hora eliges a qué reunión vas. A las 17:00: {b}.' : 'Elige la reunión de las {h}.', { b: dcNombreRival(D.fin), h: DC_HORAS[sig] || '17:00' })));
   s.append(pie);
   requestAnimationFrame(() => { const a = s.querySelector('.dc-hora-siguiente'); if (a && a.scrollIntoView) a.scrollIntoView({ block: 'center' }); });
@@ -117,17 +117,6 @@ function dcEligeObjeto(ids, titulo) {
   const r = DCP.run, n = dcNodoActual(), s = dcPanel(titulo, n && n.tipo), g = dcEl('div', 'dc-rejilla');
   ids.forEach(k => { dcDescubre('o', k); const O = DC_OBJETOS[k], b = dcEl('button', 'dc-objeto dc-rar-' + O.rar); b.append(dcEl('b', '', tr(O.nombre)), dcEl('span', '', tr(O.texto))); b.onclick = () => { play('levelup'); r.objetos.push(k); dcGuarda(); DCC.siguiente(); }; g.append(b); });
   s.append(g);
-}
-// ---------- la ventaja fiscal: se elige una al empezar la partida ----------
-function dcEligeVentaja(alElegir) {
-  const s = dcPanel(tr('Ventaja fiscal'));
-  s.append(dcEl('p', 'dc-nota', tr('Elige una ventaja para toda la partida. Jugando se desbloquean las demás.')));
-  for (const k in DC_VENTAJAS) {
-    const V = DC_VENTAJAS[k], abierta = dcVentajaAbierta(k), b = dcEl('button', 'dc-opcion dc-ventaja' + (abierta ? '' : ' dc-cerrada'));
-    b.append(dcEl('b', '', tr(V.nombre)), dcEl('small', 'dc-riesgo', abierta ? tr('Desbloqueada') : tr('Se desbloquea: {h}', { h: dcTextoHito(k) })), dcEl('span', '', tr(V.texto)));
-    b.disabled = !abierta; b.onclick = () => { play('levelup'); alElegir(k); }; s.append(b);
-  }
-  const n = dcEl('button', 'btn-ghost ol', tr('SIN VENTAJA')); n.onclick = () => alElegir(null); s.append(n);
 }
 // ---------- correos ----------
 function dcPintaCorreo(E) {
@@ -200,7 +189,7 @@ function dcPintaFin(victoria) {
   s.append(dcTarjetaResultado(tr(victoria ? F.carta : 'Jornada truncada'), tr(CP.lugar), [['reunion', String(u.dias || 0), tr('días')], ['elite', String(u.nodos || 0), tr('citas')], ['ataque', String(u.reuniones || 0), tr('ganadas')], ['reloj', String(u.turnos || 0), tr('turnos')], ['pausa', String(u.min || 0), tr('min')]], !victoria));
   s.append(dcEl('p', 'dc-nota', tr(victoria ? F.texto : 'Microblizz te ha echado del edificio. Lola dice que la puerta de atrás sigue abierta.')));
   if (victoria && u.paro) s.append(dcEl('p', 'dc-nota', tr('Has aguantado en {n}.', { n: dcParoNombre(u.paro) })));
-  if (victoria && u.abre) s.append(dcEl('p', 'dc-nota', tr('Se abre el paro +{n}: rivales algo más duros.', { n: (DCP.meta.paroMax || 0) })));
+  if (victoria && u.abre) s.append(dcEl('p', 'dc-nota', tr('Se abre el paro +{n}: rivales algo más duros.', { n: u.abre })));
   if (victoria && u.lider && DC_LIDERES[u.lider]) s.append(dcEl('p', 'dc-nota', tr('Nuevo líder disponible: {n}.', { n: tr(DC_LIDERES[u.lider].nombre) })));
   s.append(dcEl('p', 'dc-nota dc-joke', tr(victoria ? F.joke : 'Microblizz asegura que el despido fue «por motivos de rendimiento». Phony ha cobrado por la caja de cartón.')));
   const b = dcEl('button', 'btn-big ol', tr('A LA PORTADA')); b.onclick = () => dcPortada(); s.append(b);

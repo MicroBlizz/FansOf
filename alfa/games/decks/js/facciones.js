@@ -27,15 +27,23 @@ DC_PALABRAS.push(['perfora', 'Perfora el bloqueo.']);
 Object.assign(DC_GLOSARIO, { perfora: 'Perfora el bloqueo: su daño se salta el bloqueo del rival.' });
 Object.assign(DC_BIB_PROPIEDADES, { perfora: 'Perfora el bloqueo', resucita: 'Recupera cartas', pierde: 'Cuesta vida' });
 // ---------- elegir líder ----------
+// Lo que pide un líder cerrado: van en orden, y cada victoria en normal abre el siguiente.
+function dcCandadoLider(k) {
+  const i = DC_LIDERES_ORDEN.indexOf(k), prev = DC_LIDERES_ORDEN[i - 1];
+  return prev && !dcLiderAbierto(prev) ? tr('Se abre después de {l}', { l: tr(DC_LIDERES[prev].nombre) }) : tr('Se abre superando la campaña en normal');
+}
 function dcEligeLider(alElegir) {
   const s = dcPanel(tr('Elige tu líder'));
   s.append(dcEl('p', 'dc-nota', tr(dcDesbloqueoLideres() ? 'Cada líder trae su facción, su pasiva y su mazo. Superando la campaña en normal se abre el siguiente.' : 'Cada líder trae su facción, su pasiva y su mazo. Por ahora están todos abiertos; más adelante se irán desbloqueando.')));
-  for (const k in DC_LIDERES) {
+  for (const k of DC_LIDERES_ORDEN.filter(x => DC_LIDERES[x]).concat(Object.keys(DC_LIDERES).filter(x => !DC_LIDERES_ORDEN.includes(x)))) {   // en el orden en que se abren
     const L = DC_LIDERES[k], F = DC_FACCIONES[L.faccion], abierto = dcLiderAbierto(k), b = dcEl('button', 'dc-opcion dc-lider-op' + (abierto ? '' : ' dc-cerrada'));
     const arte = dcEl('span', 'dc-lider-op-arte'); arte.append(dcSprite(L.arte, 64));
     const txt = dcEl('span', 'dc-lider-op-txt');
-    txt.append(dcEl('b', '', tr(L.nombre)), dcEl('small', 'dc-riesgo', tr(F.nombre) + ' · ' + tr('Vida {n}', { n: L.hp })), dcEl('span', '', tr(F.pasiva) + ': ' + tr(F.texto)), dcEl('span', '', tr(L.jugada.nombre) + ': ' + tr(L.jugada.texto, L.jugada)));
-    b.append(arte, txt); b.disabled = !abierto; b.onclick = () => { play('levelup'); alElegir(k); }; s.append(b);
+    const paro = dcParoAbierto(k), estado = !abierto ? dcCandadoLider(k) : paro ? tr('Abierto hasta el paro +{n}', { n: paro }) : '';
+    txt.append(dcEl('b', '', tr(L.nombre)), dcEl('small', 'dc-riesgo', tr(F.nombre) + ' · ' + tr('Vida {n}', { n: L.hp })));
+    if (estado) txt.append(dcEl('small', 'dc-lider-estado' + (abierto ? '' : ' dc-lider-candado'), estado));
+    txt.append( dcEl('span', '', tr(F.pasiva) + ': ' + tr(F.texto)), dcEl('span', '', tr(L.jugada.nombre) + ': ' + tr(L.jugada.texto, L.jugada)));
+    b.append(arte, txt); b.dataset.lider = k; b.disabled = !abierto; b.onclick = () => { play('levelup'); alElegir(k); }; s.append(b);
   }
   const v = dcEl('button', 'btn-ghost ol', tr('VOLVER')); v.onclick = () => { play('select'); dcPortada(); }; s.append(v);
 }

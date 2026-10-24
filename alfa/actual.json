@@ -1,8 +1,8 @@
 {
- "build": 460,
- "hash": "8f72581",
- "fecha": "2026-10-24T13:18:53Z",
- "mensaje": "Ficha de Play: capturas de tablet de Rouflage (7 y 10 pulgadas) y subida por partes «tablet»",
+ "build": 461,
+ "hash": "e55d780",
+ "fecha": "2026-10-24T16:14:34Z",
+ "mensaje": "Decks: paro por líder, elegir líder, nivel y ventajas; huecos de ventajas por Fibonacci y una ventaja nueva por nivel de paro",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

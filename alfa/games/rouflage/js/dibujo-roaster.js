@@ -144,7 +144,7 @@ EVENTOS.turbo = {
     }
     // los chorros: empujan a quien pillan (solo a lo que lleva este navegador) y echan aire, vaho y papelitos
     if (m) m.vuela = !!(a && a.fase === 'sopla' && a.p.tipo === 'salto' && altoRoaster(a.t) > 0.5);      // en el aire: dibujo.js no pinta el de la plaza
-    if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && est.fase !== antes) fxTexto(m.x, m.y - 110, tr('¡AL AIRE!'), '#ffcb3d', 22);
+    if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && est.fase !== antes) { fxTexto(m.x, m.y - 110, tr('¡AL AIRE!'), '#ffcb3d', 22); if (J.yo && lejos(J.yo.x, J.yo.y, m.x, m.y) < 650) misionEvento('coche'); }      // logro secreto (misiones.js)
     if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && a.t > ROASTER.salto - 0.12 && !est.aterriza) { est.aterriza = true; suenaEn('turboSopla', m.x, m.y - 40); if (J.yo && lejos(J.yo.x, J.yo.y, m.x, m.y) < 360) CAM.tiembla = Math.max(CAM.tiembla, 0.25); for (let k = 0; k < 14; k++) { const ang = k / 14 * TAU; est.parts.push({ k: 'vaho', x: m.x + Math.cos(ang) * 30, y: m.y - 38 + Math.sin(ang) * 40, vx: Math.cos(ang) * 120, vy: Math.sin(ang) * 90, t: 0, dur: 0.7, r: 6 }); } }
     if (!(a && a.p.tipo === 'salto')) est.aterriza = false;
     if (a && a.fase === 'sopla' && chorroSalto(a.p, a.t)) {

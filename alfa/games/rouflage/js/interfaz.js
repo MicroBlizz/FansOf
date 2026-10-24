@@ -168,7 +168,7 @@ const PANTALLAS_CAOS = ['p-titulo', 'p-pvp', 'p-amigos', 'p-busca', 'p-pvp-info'
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(PANTALLAS_CAOS.includes(id)); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
-function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); }
+function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); misionEvento('ayuda'); }
 function muestraPausa(si) {
   E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
   pantalla(si ? 'p-pausa' : null); refrescaSonido();

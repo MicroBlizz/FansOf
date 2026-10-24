@@ -23,7 +23,7 @@ async function diarioRecogeServidor() {
     const est = await RFS.llama('rf_diario');
     const pr = est.premio || [], perdida = (pr.find(h => h.perdida) || {}).perdida;      // la racha (servidor/81-rouflage-racha.sql): sus apuntes no son premio
     const texto = pr.filter(h => h.gotas || h.pieza).map(h => h.deRacha && h.gotas ? tr('{n} Gotas de racha', { n: h.gotas }) : h.gotas && !h.repetida && !h.pieza ? tr('{n} Gotas', { n: h.gotas }) : h.pieza ? nombrePieza(h.pieza) : tr('{n} Gotas', { n: h.gotas }) + ' (' + nombrePieza(h.repetida) + ')').join(' + ');
-    play('select'); play('go'); avisa(tr('Premio del día: {p}', { p: texto }), 'bueno'); diarioPinta(); diarioBoton();
+    misionEvento('diario'); play('select'); play('go'); avisa(tr('Premio del día: {p}', { p: texto }), 'bueno'); diarioPinta(); diarioBoton();
     if (perdida) setTimeout(() => abreRescate(perdida), 900); else if ((diarioEstado().racha || 0) >= 2) avisosOfrece();
   } catch (e) { RFS.error(e); }
 }

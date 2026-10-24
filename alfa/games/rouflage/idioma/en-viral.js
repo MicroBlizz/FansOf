@@ -130,7 +130,6 @@ IDIOMA.add({
   "Toca <b>RECOGER</b>. Mañana, más.": "Tap <b>CLAIM</b>. More tomorrow.",
   "Tu <b>ARMARIO</b>: ropa, caras, mascotas y colores para tu galleta. Lo que llevas lo ven todos.": "Your <b>WARDROBE</b>: clothes, faces, pets and colours for your cookie. Everyone sees what you wear.",
   "Cada pestaña es una parte de tu galleta. Toca una casilla para probártela.": "Each tab is a part of your cookie. Tap a slot to try it on.",
-  "Cada día hay 3 <b>MISIONES</b> nuevas: una fácil, una media y una difícil. Dan gotas.": "Every day there are 3 new <b>MISSIONS</b>: an easy, a medium and a hard one. They give drops.",
   "Toca tu <b>PERFIL</b>: ahí dentro está tu habitación.": "Tap your <b>PROFILE</b>: your room is in there.",
   "<b>MI ESCENARIO</b>: tu propia habitación para decorar con muebles y pintar a tu gusto.": "<b>MY STAGE</b>: your own room to decorate with furniture and paint however you like.",
   "Esta es tu habitación. Coloca muebles, pinta el suelo y las paredes y pasea con tu galleta. Tus amigos la verán en vuestras salas.": "This is your room. Place furniture, paint the floor and walls, and walk around with your cookie. Your friends will see it in your rooms.",

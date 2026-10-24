@@ -230,12 +230,13 @@
   </div>
 </div>
 
-<!-- las misiones diarias y los logros (misiones-pantalla.js) -->
+<!-- las misiones diarias, las semanales y los logros (misiones-pantalla.js) -->
 <div class="pantalla" id="p-misiones" hidden>
   <div class="caja mis-caja">
     <h2 class="ol" data-tr>MISIONES</h2>
     <div class="mis-pestanas" role="tablist">
-      <button type="button" class="ar-pest activa" id="b-mis-hoy" data-tr>MISIONES DE HOY</button>
+      <button type="button" class="ar-pest activa" id="b-mis-hoy" data-tr>HOY</button>
+      <button type="button" class="ar-pest" id="b-mis-semana" data-tr>SEMANA</button>
       <button type="button" class="ar-pest" id="b-mis-logros" data-tr>LOGROS</button>
     </div>
     <p class="mis-sub" id="mis-sub"></p>

@@ -49,7 +49,7 @@ function chatFinManda(f) {
   CHATF.espera = ahora + 1500;
   chatFinPon(tr('Tú'), f, true);
   if (J.pvp) rfpManda({ t: 'cf', f });
-  play('pop');
+  play('pop'); if (f >= 100) misionEvento('pegatina');      // misiones semanales y logros (misiones.js)
 }
 // llega un `cf` por la red (pvp-sync.js): lo dice un jugador humano de la partida
 function chatFinRecibido(sl, m) {

@@ -54,3 +54,17 @@
 @keyframes misLate { 50% { transform: scale(1.25); } }
 @media (prefers-reduced-motion: reduce) { .mis-fila.lista .boton.mis-cobrar, .mis-fila.lista .mis-barra i, .mis-pestanas .ar-pest.aviso::after, #b-misiones.aviso::after { animation: none; } }
 @media (max-width: 380px) { .mis-fila { grid-template-columns: 50px 1fr auto; gap: 6px; padding: 7px 6px 7px 5px; } .mis-ico { width: 50px !important; height: 50px !important; } .boton.mis-cobrar { min-width: 72px; font-size: 12px; padding: 6px 6px 3px; } }
+/* (24-10-2026) tres pestañas, la fija de cada día y de cada semana, las semanales y los logros SECRETOS (tapados con su pista hasta descubrirlos) */
+.mis-fila.tono-fija { --tag: #ffcb3d; --c1: #4d4a2a; --c2: #2e2c18; box-shadow: 0 4px 0 var(--outline), 0 0 0 2px rgba(255, 203, 61, 0.55) inset; }
+.mis-fila.tono-semana { --tag: #39d5e8; --c1: #2c4d63; --c2: #1a2f40; }
+.mis-fila.tono-secreto { --tag: #9aa6bc; --c1: #2c3348; --c2: #1a1f30; }
+.mis-fila.tono-fija.lista, .mis-fila.tono-semana.lista, .mis-fila.tono-secreto.lista { --c1: #3f6a2c; --c2: #24401a; }
+.mis-fila.oculta .mis-txt b { color: #c9d2e2; }
+.mis-pista { font-style: italic; color: #ffcb3d !important; }
+.mis-broma { font-style: italic; color: #8fe3ff !important; }
+.mis-seccion { font-family: var(--font-display); font-size: 15px; letter-spacing: 0.04em; color: var(--ink); text-shadow: 0 2px 0 var(--outline), 1px 0 0 var(--outline), -1px 0 0 var(--outline);
+  text-align: center; padding: 10px 0 2px; border-top: 3px dashed rgba(255, 255, 255, 0.18); margin-top: 6px; }
+.mis-pestanas .ar-pest { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mis-caja { width: min(560px, calc(100vw - 24px)); margin: 0 auto; box-sizing: border-box; max-height: calc(100dvh - 24px); }
+.mis-lista { overscroll-behavior: contain; }
+.mis-pestanas .ar-pest { font-size: clamp(10px, 3vw, 14px); padding: 8px 3px 5px; letter-spacing: 0; }

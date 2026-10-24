@@ -1,8 +1,8 @@
 {
- "build": 463,
- "hash": "baa4f09",
- "fecha": "2026-10-24T16:19:46Z",
- "mensaje": "Rouflage 0.2.47: icono nuevo (novedades e inglés)",
+ "build": 464,
+ "hash": "fe5ef9c",
+ "fecha": "2026-10-24T16:51:43Z",
+ "mensaje": "Rouflage: 6 misiones diarias, misiones semanales, 24 logros nuevos y 13 secretos; tope de Gotas a 300",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

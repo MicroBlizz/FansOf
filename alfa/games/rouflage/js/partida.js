@@ -79,7 +79,7 @@ function cambiaFase(f) {
     for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
     PUERTA.cerrada = false;
     for (const h of J.cazadores) if (h.bot) ronda(h);
-    modoEmpiezaCaza(); botePrepara(); talentosCaza();      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
+    modoEmpiezaCaza(); botePrepara(); talentosCaza(); misionEvento('caza');      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
     musica(temaDe('caza')); play('comienzaCaza');
     if (!modoEs('ida')) cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
     if (J.pvp && !modoEs('ida') && ajusteSala(MODO.a, 'g') === 1 && J.coladosIni > 1) pista(tr('Los becarios ganan si despiden a más de la mitad: {n} de {t}', { n: Math.floor(J.coladosIni / 2) + 1, t: J.coladosIni }));

@@ -1,8 +1,8 @@
 {
- "build": 456,
- "hash": "7493a76",
- "fecha": "2026-10-24T01:35:47Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.33, decks 0.2.15, jump 0.3.10, karts 0.7.9, nova 0.3.20, ratkov 0.2.23, rouflage 0.2.46, rumble 0.9.152, survivors 0.1.65, tacticas 0.1.49, td 0.13.81",
+ "build": 457,
+ "hash": "c471435",
+ "fecha": "2026-10-24T01:41:56Z",
+ "mensaje": "Notas de Play de Rouflage 0.2.46 en pt, fr, de e it",
  "juegos": {
   "crush": "0.1.33",
   "dark": "0.2.7",

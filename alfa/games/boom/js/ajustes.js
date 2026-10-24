@@ -22,9 +22,18 @@ const BOOM = {
     retraso: 100,                         // retraso base que suma cada turno, más el del tiro y el tiempo que tardas
     segundoDeRetraso: 2,                  // retraso por cada segundo gastado antes de tirar
   },
-  tiros: [   // Tiro 1 y Tiro 2 (el Tiro Especial llega con los móviles propios, en la fase 2)
-    { id: 1, nombre: 'Tiro 1', radio: 44, dano: 240, retraso: 60 },
-    { id: 2, nombre: 'Tiro 2', radio: 66, dano: 330, retraso: 140 },
+  caos: { max: 100, porTiro: 12, porDano: 0.05 },   // el medidor de CAOS: sube con cada tiro propio y con el daño recibido; lleno, se puede lanzar el Tiro Especial (SS)
+  // Los móviles: cada uno con su vida, velocidad y tres tiros (Tiro 1, Tiro 2 y SS). Un tiro tiene radio y daño del agujero, retraso extra y,
+  // si quiere, ignoraViento (no le afecta) o multi: { n, abanico } (n proyectiles abiertos en abanico de ese número de grados).
+  moviles: [
+    { id: 'mechavaca', nombre: 'MechaVaca', nota: 'Tanque pesado: aguanta y pega fuerte.', vida: 1200, velocidad: 60, acento: '#f4f4f4',
+      tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 250, retraso: 70 }, { nombre: 'Tiro 2', radio: 70, dano: 350, retraso: 150 }, { nombre: 'Leche Fría', radio: 115, dano: 430, retraso: 260 }] },
+    { id: 'skeletoncrew', nombre: 'SkeletonCrew', nota: 'Cava: sus agujeros son enormes, el daño es justo.', vida: 1000, velocidad: 78, acento: '#e8e0c8',
+      tiros: [{ nombre: 'Tiro 1', radio: 52, dano: 160, retraso: 60 }, { nombre: 'Tiro 2', radio: 74, dano: 210, retraso: 130 }, { nombre: 'Fosa Común', radio: 70, dano: 190, retraso: 240, multi: { n: 3, abanico: 9 } }] },
+    { id: 'neonsniper', nombre: 'NeonSniper', nota: 'Frágil, pero el viento no le afecta.', vida: 860, velocidad: 82, acento: '#7cf0ff',
+      tiros: [{ nombre: 'Tiro 1', radio: 32, dano: 340, retraso: 70, ignoraViento: true }, { nombre: 'Tiro 2', radio: 42, dano: 430, retraso: 170, ignoraViento: true }, { nombre: 'Láser', radio: 56, dano: 560, retraso: 260, ignoraViento: true }] },
+    { id: 'chonkcat', nombre: 'ChonkCat', nota: 'Su segundo tiro lanza tres a la vez.', vida: 1050, velocidad: 72, acento: '#ffd24a',
+      tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 250, retraso: 60 }, { nombre: 'Tiro 2', radio: 38, dano: 170, retraso: 140, multi: { n: 3, abanico: 6 } }, { nombre: 'Lluvia de bolas', radio: 38, dano: 150, retraso: 250, multi: { n: 5, abanico: 6 } }] },
   ],
   salida: [0, 25, 50, 75],   // retraso con el que sale cada jugador: abre el 1, luego el 2, el 3 y el 4
   equipos: [{ nombre: 'NARANJA', color: '#ff7a1a', claro: '#ffb347' }, { nombre: 'AZUL', color: '#2e8bff', claro: '#7cb8ff' }],

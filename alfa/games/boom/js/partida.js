@@ -13,12 +13,12 @@ const PARTIDA = (() => {
     const cuenta = [0, 0], salidas = modo.equipos.map(e => W * modo.x[e][cuenta[e]++]);
     TERRENO.crea(cfg.mapa, semilla, salidas);
     const moviles = modo.equipos.map((e, i) => {
-      const m = MOVIL.crea(i, i, e, salidas[i], e === 0 ? 1 : -1), s = cfg.slots[i] || {};
+      const s = cfg.slots[i] || {}, m = MOVIL.crea(i, i, e, salidas[i], e === 0 ? 1 : -1, s.movil);
       m.ia = !!s.ia; m.nivel = s.nivel == null ? 1 : s.nivel; m.nombre = s.nombre || (m.ia ? BOOM.nombresIA[i % BOOM.nombresIA.length] : 'Jugador ' + (i + 1));
       return m;
     });
     const personas = moviles.filter(m => !m.ia).length;
-    P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proy: null, plan: null, espera: 0,
+    P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
       sucesos: [], pausa: false, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false };
     P.viento = Math.round((P.az() * 2 - 1) * BOOM.viento.max);
     empiezaTurno(true);
@@ -36,6 +36,7 @@ const PARTIDA = (() => {
     const base = m.retraso; v.forEach(x => { x.retraso -= base; });
     if (!primero) cambiaViento();
     P.actual = m; m.energia = C.energia; P.t = BOOM.turno.segundos; P.usado = 0; P.tiroUsado = false; P.turnos++;
+    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
     P.plan = m.ia ? IA.plan(P, m) : null;
     P.fase = P.hotSeat && !m.ia ? 'cartel' : 'apunta';
     aviso('turno', { m });
@@ -52,12 +53,14 @@ const PARTIDA = (() => {
   function mueve(dir, dt) { if (puede()) MOVIL.mueve(P.actual, dir, dt); }
   function apunta(dAng, dPot) { if (puede()) { P.actual.ang = clamp(P.actual.ang + dAng, 0, 90); P.actual.pot = clamp(P.actual.pot + dPot, 5, 100); } }
   function fija(ang, pot, dir) { if (puede()) { const m = P.actual; m.ang = clamp(ang, 0, 90); m.pot = clamp(pot, 5, 100); if (dir) m.dir = dir; } }
-  function eligeTiro(i) { if (puede() && BOOM.tiros[i]) P.actual.tiro = i; }
+  function eligeTiro(i) { if (puede() && P.actual.def.tiros[i] && (i < 2 || P.actual.caos >= BOOM.caos.max)) P.actual.tiro = i; }
   function dispara() {
     const m = P && P.actual;
     if (!m || P.fase !== 'apunta' || m.cayendo) return false;
     m.ang = Math.round(m.ang); m.pot = Math.round(m.pot);   // el tiro siempre sale con grados y potencia enteros
-    P.proy = FISICA.lanza(m, P.viento); P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
+    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
+    P.proys = FISICA.lanza(m, P.viento); P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
+    m.caos = m.tiro === 2 ? 0 : Math.min(BOOM.caos.max, m.caos + BOOM.caos.porTiro);
     aviso('disparo', { m });
     return true;
   }
@@ -74,9 +77,12 @@ const PARTIDA = (() => {
       if (m.ia && IA.paso(P, m, DT)) dispara();
       else if (P.t <= 0) pierdeTurno();
     } else if (P.fase === 'vuelo') {
-      const p = P.proy;
-      if (FISICA.paso(p, P.moviles)) explota(p);
-      else if (P.sucesos.length < 400 && Math.round(p.t / DT) % 3 === 0) p.traza.push([p.x, p.y]);
+      for (const p of P.proys) {
+        if (p.hecho) continue;
+        if (FISICA.paso(p, P.moviles)) { p.hecho = true; explota(p); }
+        else if (Math.round(p.t / DT) % 3 === 0) p.traza.push([p.x, p.y]);
+      }
+      if (P.proys.every(p => p.hecho)) { P.proys = []; P.fase = 'despues'; P.espera = 0.8; }
     } else if (P.fase === 'despues') {
       const quietos = caidas();
       P.espera -= DT;
@@ -86,7 +92,7 @@ const PARTIDA = (() => {
   function pierdeTurno() { P.tiroUsado = false; P.usado = BOOM.turno.segundos; aviso('tiempo', { m: P.actual }); cierraTurno(); }
 
   function explota(p) {
-    const dueno = P.moviles[p.dueno], T = BOOM.tiros[p.tiro], fin = p.fin || { tipo: 'vacio' };
+    const dueno = P.moviles[p.dueno], T = p.def, fin = p.fin || { tipo: 'vacio' };
     dueno.marca = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(p.y, 0, BOOM.mundo.alto) };
     if (fin.tipo === 'terreno' || fin.tipo === 'movil') {
       TERRENO.cava(p.x, p.y, T.radio);
@@ -102,10 +108,9 @@ const PARTIDA = (() => {
         herido(mv, Math.round(n), bono, p);
       }
     } else aviso('fuera', { x: p.x, y: p.y });
-    P.proy = null; P.fase = 'despues'; P.espera = 0.8;
   }
   function herido(m, n, bono, p) {
-    m.vida -= n; aviso('dano', { m, n, bono });
+    m.vida -= n; m.caos = Math.min(BOOM.caos.max, m.caos + n * BOOM.caos.porDano); aviso('dano', { m, n, bono });
     if (bono && !P.bono) { P.bono = true; aviso('bono', { bono, frase: BOOM.frases[bono === 'cielo' ? 'cielo' : 'alto'][Math.floor(P.az() * 2)] || '', x: m.x, y: m.y }); }
     if (m.vida <= 0) { m.vida = 0; muere(m, 'golpe'); }
   }
@@ -128,7 +133,7 @@ const PARTIDA = (() => {
   }
   function cierraTurno() {
     const m = P.actual;
-    if (m.vivo) m.retraso += C.retraso + (P.tiroUsado ? BOOM.tiros[m.tiro].retraso : BOOM.turno.penalizacion) + P.usado * C.segundoDeRetraso;
+    if (m.vivo) m.retraso += C.retraso + (P.tiroUsado ? m.def.tiros[m.tiro].retraso : BOOM.turno.penalizacion) + P.usado * C.segundoDeRetraso;
     empiezaTurno(false);
   }
   // el orden de los próximos turnos para la barra: los vivos por retraso (el que va ahora, primero)

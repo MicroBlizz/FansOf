@@ -7,11 +7,12 @@ const IA = (() => {
 
   function mejorTiro(P, m) {   // simula candidatos y se queda con el que cae más cerca de un rival sin hacer daño a los suyos
     const enemigos = vivosDe(P, true, m), amigos = P.moviles.filter(v => v.vivo && v.equipo === m.equipo);
-    const prueba = { id: m.id, x: m.x, y: m.y, dir: m.dir, ang: 45, pot: 50, tiro: 0, vivo: true };
+    const prueba = { id: m.id, x: m.x, y: m.y, dir: m.dir, ang: 45, pot: 50, tiro: 0, vivo: true, def: m.def };
+    const ss = m.caos >= BOOM.caos.max;
     let mejor = null;
     const evalua = (ang, pot, tiro) => {
       prueba.ang = ang; prueba.pot = pot; prueba.tiro = tiro;
-      const p = FISICA.simula(prueba, P.viento, P.moviles), R = BOOM.tiros[tiro].radio;
+      const p = FISICA.simula(prueba, P.viento, P.moviles), R = m.def.tiros[tiro].radio;
       let coste = 1e9;
       for (const e of enemigos) coste = Math.min(coste, Math.max(0, Math.hypot(p.x - e.x, p.y - (e.y - BOOM.movil.centro)) - R * 0.5));
       for (const a of amigos) if (Math.hypot(p.x - a.x, p.y - a.y) < R + BOOM.movil.radio + 10) coste += 400;
@@ -22,7 +23,7 @@ const IA = (() => {
     const az = P.az;
     const objetivo = enemigos.reduce((a, e) => (!a || Math.abs(e.x - m.x) < Math.abs(a.x - m.x) ? e : a), null);
     if (objetivo) prueba.dir = m.dir = objetivo.x >= m.x ? 1 : -1;
-    for (let i = 0; i < A.candidatos; i++) evalua(Math.round(15 + az() * 75), Math.round(25 + az() * 75), az() < 0.35 ? 1 : 0);
+    for (let i = 0; i < A.candidatos; i++) evalua(Math.round(15 + az() * 75), Math.round(25 + az() * 75), ss ? 2 : az() < 0.35 ? 1 : 0);
     if (mejor) for (let i = 0; i < 30; i++) evalua(clamp(mejor.ang + Math.round((az() - 0.5) * 6), 0, 90), clamp(mejor.pot + Math.round((az() - 0.5) * 6), 5, 100), mejor.tiro);
     return mejor;
   }

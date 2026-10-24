@@ -55,6 +55,8 @@
 #bm-pot { display: block; height: 100%; background: linear-gradient(90deg, #ffcb3d, #ff4b5c); }
 .bm-tiros { flex-direction: row; gap: 6px; }
 .bm-tiro { font: 400 17px var(--font-display); color: #fff; background: #3e2363; border: 3px solid var(--outline); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.bm-tiro:disabled { opacity: .55; cursor: default; }
+.bm-ss:not(:disabled) { background: #b032e0; }
 .bm-tiro.bm-on { background: #ff7a1a; box-shadow: 0 0 0 3px var(--gold); }
 .bm-fuego { font: 400 24px var(--font-display); color: #fff; background: radial-gradient(circle at 35% 30%, #ff9a3d, var(--eq, #ff6a10) 70%); border: 5px solid var(--outline); border-radius: 50%; width: 84px; height: 84px; cursor: pointer; text-shadow: 2px 2px 0 var(--outline); box-shadow: 0 5px 0 var(--outline); padding: 0; line-height: 1; }
 .bm-fuego:active { transform: translateY(3px); }

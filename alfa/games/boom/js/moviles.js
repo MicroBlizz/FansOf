@@ -3,8 +3,9 @@
 'use strict';
 const MOVIL = (() => {
   const C = BOOM.movil, W = BOOM.mundo.ancho, H = BOOM.mundo.alto, DT = BOOM.paso;
-  function crea(id, plaza, equipo, x, dir) {
-    const m = { id, plaza, equipo, nombre: '', ia: false, nivel: 1, x, y: 0, dir, ang: 45, pot: 55, tiro: 0, vida: C.vida, vidaMax: C.vida,
+  function crea(id, plaza, equipo, x, dir, defId) {
+    const def = BOOM.moviles.find(d => d.id === defId) || BOOM.moviles[0];
+    const m = { id, plaza, equipo, def, nombre: '', ia: false, nivel: 1, x, y: 0, dir, ang: 45, pot: 55, tiro: 0, vida: def.vida, vidaMax: def.vida, caos: 0,
       retraso: BOOM.salida[plaza] || 0, vivo: true, energia: C.energia, cayendo: false, vy: 0, y0: 0, marca: null };
     m.y = TERRENO.suelo(x, 0);
     return m;
@@ -13,7 +14,7 @@ const MOVIL = (() => {
   function mueve(m, dir, dt) {
     m.dir = dir;
     if (m.energia <= 0 || m.cayendo || !m.vivo) return 0;
-    const paso = Math.min(C.velocidad * dt, m.energia), nx = m.x + dir * paso, sube = paso * C.trepa + 1.5;
+    const paso = Math.min(m.def.velocidad * dt, m.energia), nx = m.x + dir * paso, sube = paso * C.trepa + 1.5;
     if (nx < 14 || nx > W - 14) return 0;
     if (TERRENO.solido(nx, m.y - sube)) return 0;   // pared demasiado alta
     let gy = -1;

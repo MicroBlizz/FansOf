@@ -7,9 +7,14 @@ const FISICA = (() => {
     const a = m.ang * Math.PI / 180, dx = m.dir * Math.cos(a), dy = -Math.sin(a);
     return { x: m.x + dx * C.boca, y: m.y - C.centro + dy * C.boca, dx, dy };
   }
+  // los proyectiles de un tiro: uno, o varios abiertos en abanico (multi). Devuelve una lista.
   function lanza(m, viento) {
-    const b = boca(m), v = BOOM.velocidadMax * m.pot / 100;
-    return { x: b.x, y: b.y, vx: b.dx * v, vy: b.dy * v, viento, alto: false, t: 0, fin: null, ang: m.ang, dueno: m.id, tiro: m.tiro, traza: [] };
+    const t = m.def.tiros[m.tiro], n = t.multi ? t.multi.n : 1, lista = [];
+    for (let i = 0; i < n; i++) {
+      const a = m.ang + (t.multi ? (i - (n - 1) / 2) * t.multi.abanico : 0), b = boca(Object.assign({}, m, { ang: clamp(a, 0, 90) })), v = BOOM.velocidadMax * m.pot / 100;
+      lista.push({ x: b.x, y: b.y, vx: b.dx * v, vy: b.dy * v, viento: t.ignoraViento ? 0 : viento, alto: false, t: 0, fin: null, ang: m.ang, dueno: m.id, def: t, traza: [] });
+    }
+    return lista;
   }
   // un paso: devuelve true cuando el proyectil ya ha terminado (p.fin dice cómo: terreno, movil, borde o vacio)
   function paso(p, moviles) {
@@ -31,7 +36,7 @@ const FISICA = (() => {
   }
   // simula un tiro entero de golpe (lo usa la IA): dónde acaba y si salió por arriba
   function simula(m, viento, moviles) {
-    const p = lanza(m, viento);
+    const l = lanza(m, viento), p = l[Math.floor(l.length / 2)];   // con varios, se mide el del centro
     while (!paso(p, moviles)) { /* sigue */ }
     return p;
   }

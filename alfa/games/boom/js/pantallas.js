@@ -7,7 +7,8 @@ const PANT = (() => {
   const PREP = Object.assign({ modo: '1v1', mapa: 'oficina', slots: [] }, SAVE.ultima || {});
   const asegura = () => {   // una plaza por jugador del modo; las que faltan son personas, salvo la segunda del 1 contra 1, que arranca como IA
     const n = BOOM.modos[PREP.modo].equipos.length;
-    for (let i = 0; i < n; i++) if (!PREP.slots[i]) PREP.slots[i] = { ia: i === 1, nivel: 1, nombre: '' };
+    for (let i = 0; i < n; i++) if (!PREP.slots[i]) PREP.slots[i] = { ia: i === 1, nivel: 1, nombre: '', movil: BOOM.moviles[i % BOOM.moviles.length].id };
+    for (const s of PREP.slots) if (!s.movil || !BOOM.moviles.some(d => d.id === s.movil)) s.movil = BOOM.moviles[0].id;
     PREP.slots.length = Math.max(PREP.slots.length, n);
   };
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -26,6 +27,7 @@ const PANT = (() => {
         <span class="bm-punto"></span>
         <input class="bm-nombre" data-i="${i}" maxlength="12" value="${esc(s.nombre)}" placeholder="${tr('Jugador {n}', { n: i + 1 })}" ${s.ia ? 'disabled' : ''}>
         <button class="bm-chip" data-ia="${i}">${tr(s.ia ? 'IA' : 'PERSONA')}</button>
+        <button class="bm-chip bm-movil" data-movil="${i}">${esc(BOOM.moviles.find(d => d.id === s.movil).nombre)}</button>
         <button class="bm-chip bm-nivel" data-nivel="${i}" ${s.ia ? '' : 'style="visibility:hidden"'}>${tr(NIVELES[s.nivel])}</button>
       </div>`).join('');
     const personas = PREP.slots.slice(0, equipos.length).filter(s => !s.ia).length;
@@ -41,6 +43,7 @@ const PANT = (() => {
     q('[data-modo]', b => { b.onclick = () => { play('select'); PREP.modo = b.dataset.modo; prepara(); }; });
     q('[data-mapa]', b => { b.onclick = () => { play('select'); PREP.mapa = b.dataset.mapa; prepara(); }; });
     q('[data-ia]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.ia]; s.ia = !s.ia; prepara(); }; });
+    q('[data-movil]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.movil], k = BOOM.moviles.findIndex(d => d.id === s.movil); s.movil = BOOM.moviles[(k + 1) % BOOM.moviles.length].id; prepara(); }; });
     q('[data-nivel]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.nivel]; s.nivel = (s.nivel + 1) % 3; prepara(); }; });
     q('.bm-nombre', inp => { inp.oninput = () => { PREP.slots[+inp.dataset.i].nombre = inp.value.trim().slice(0, 12); }; });
     $('#bm-atras').onclick = () => { play('select'); portada(); };
@@ -48,7 +51,7 @@ const PANT = (() => {
   }
   function juega(n, semilla) {
     cierraTodo(); escena = 'partida';
-    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: s.nivel, nombre: s.nombre })) });
+    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: s.nivel, nombre: s.nombre, movil: s.movil })) });
     EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
     $('#bm-pausa').hidden = false; revisa();
   }

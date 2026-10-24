@@ -17,7 +17,7 @@ const PINTAR = (() => {
   }
   function sigue(P, dt) {
     if (CAM.libre > 0) CAM.libre -= dt;
-    else if (P.fase === 'vuelo' && P.proy) enfoca(P.proy.x, P.proy.y - 40);
+    else if (P.fase === 'vuelo' && P.proys.some(p => !p.hecho)) { const p = P.proys.find(q => !q.hecho); enfoca(p.x, p.y - 40); }
     else if (P.actual && P.fase !== 'despues' && P.fase !== 'fin') enfoca(P.actual.x, P.actual.y - 100);
     const k = Math.min(1, dt * (P.fase === 'vuelo' ? 9 : 4.5));
     CAM.x += (CAM.ox - CAM.x) * k; CAM.y += (CAM.oy - CAM.y) * k;
@@ -53,6 +53,7 @@ const PINTAR = (() => {
     c.fillStyle = '#3a2a4a'; c.beginPath(); rrPath(c, -25, -10, 50, 11, 5.5); c.fill(); c.stroke();
     c.fillStyle = '#a99ac4'; for (let i = -16; i <= 16; i += 11) { c.beginPath(); c.arc(i, -4.5, 3.4, 0, 6.2832); c.fill(); }
     c.fillStyle = E.color; c.beginPath(); rrPath(c, -20, -25, 40, 17, 7); c.fill(); c.stroke();
+    c.fillStyle = m.def.acento; c.fillRect(6, -20, 12, 4);
     c.fillStyle = E.claro; c.beginPath(); rrPath(c, -14, -22, 18, 5, 2.5); c.fill();
     c.save(); c.translate(0, -C.centro); c.rotate(-m.ang * Math.PI / 180);   // el cañón, desde el centro del móvil
     c.fillStyle = '#5b4b6e'; c.beginPath(); rrPath(c, -2, -4, C.boca + 2, 8, 3); c.fill(); c.stroke(); c.restore();
@@ -61,6 +62,7 @@ const PINTAR = (() => {
     const ancho = 54, vida = clamp(m.vida / m.vidaMax, 0, 1), by = sy - 54 - (activo ? Math.sin(t * 6) * 2 : 0);
     c.fillStyle = OL; c.beginPath(); rrPath(c, sx - ancho / 2 - 2, by - 2, ancho + 4, 11, 5); c.fill();
     c.fillStyle = vida > 0.5 ? '#6fd04a' : vida > 0.25 ? '#ffcb3d' : '#ff4b5c'; c.beginPath(); rrPath(c, sx - ancho / 2, by, Math.max(2, ancho * vida), 7, 3.5); c.fill();
+    c.fillStyle = OL; c.fillRect(sx - ancho / 2, by + 11, ancho, 5); c.fillStyle = m.caos >= BOOM.caos.max ? '#ff4bd8' : '#b86bff'; c.fillRect(sx - ancho / 2 + 1, by + 12, (ancho - 2) * m.caos / BOOM.caos.max, 3);
     PINTAR_TXT(c, m.nombre, sx, by - 12, 15, activo ? '#ffffff' : E.claro);
     if (activo && (P.fase === 'apunta' || P.fase === 'cartel')) {   // flecha que bota sobre quien tira
       const ay = by - 34 + Math.sin(t * 7) * 4; c.fillStyle = E.color; c.strokeStyle = OL; c.lineWidth = 3; c.beginPath(); c.moveTo(sx, ay + 12); c.lineTo(sx - 9, ay); c.lineTo(sx + 9, ay); c.closePath(); c.fill(); c.stroke();
@@ -98,7 +100,7 @@ const PINTAR = (() => {
     vacio(c); marca(c, P);
     for (const m of P.moviles) if (m.vivo) movil(c, m, P, t);
     guia(c, P);
-    if (P.proy) proyectil(c, P.proy);
+    for (const p of P.proys || []) if (!p.hecho) proyectil(c, p);
     EFECTOS.pinta(c, CAM.x, CAM.y);
     c.restore();
   }

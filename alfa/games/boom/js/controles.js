@@ -15,7 +15,7 @@ const CONTROLES = (() => {
         <div class="bm-energia" title="${tr('Camino que te queda')}"><i id="bm-en"></i></div></div>
       <div class="bm-grupo"><span class="bm-et">${tr('ÁNGULO')}</span><div class="bm-fila"><button class="bm-mini" data-m="aMenos">−</button><b id="bm-ang" class="bm-num">45°</b><button class="bm-mini" data-m="aMas">+</button></div></div>
       <div class="bm-grupo bm-gpot"><span class="bm-et">${tr('POTENCIA')} <b id="bm-potn">55</b></span><div id="bm-barra"><i id="bm-pot"></i></div></div>
-      <div class="bm-grupo bm-tiros"><button class="bm-tiro" data-t="0">${tr('TIRO 1')}</button><button class="bm-tiro" data-t="1">${tr('TIRO 2')}</button></div>
+      <div class="bm-grupo bm-tiros"><button class="bm-tiro" data-t="0">${tr('TIRO 1')}</button><button class="bm-tiro" data-t="1">${tr('TIRO 2')}</button><button class="bm-tiro bm-ss" data-t="2">SS</button></div>
       <button id="bm-fuego" class="bm-fuego">${tr('¡BOOM!')}</button>`;
     $p().querySelectorAll('[data-m]').forEach(b => {
       b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); mantenido[b.dataset.m] = 0; toque(b.dataset.m); });
@@ -46,7 +46,7 @@ const CONTROLES = (() => {
     if (m) {
       $('#bm-ang').textContent = Math.round(m.ang) + '°'; $('#bm-potn').textContent = Math.round(m.pot);
       $('#bm-pot').style.width = ((m.pot - 5) / 95 * 100) + '%'; $('#bm-en').style.width = (m.energia / BOOM.movil.energia * 100) + '%';
-      $p().querySelectorAll('[data-t]').forEach(b => b.classList.toggle('bm-on', +b.dataset.t === m.tiro));
+      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
       $p().style.setProperty('--eq', BOOM.equipos[m.equipo].color);
     }
   }
@@ -56,7 +56,7 @@ const CONTROLES = (() => {
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
     const P = PARTIDA.get(); if (!P || P.fase !== 'apunta') { if (e.key === 'Enter' && P && P.fase === 'cartel') PARTIDA.listo(); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); PARTIDA.dispara(); }
-    else if (e.key === '1' || e.key === '2') PARTIDA.eligeTiro(+e.key - 1);
+    else if (e.key === '1' || e.key === '2' || e.key === '3') PARTIDA.eligeTiro(+e.key - 1);
     else if (TECLAS[e.key]) { e.preventDefault(); teclas.add(TECLAS[e.key]); }
   });
   addEventListener('keyup', e => { const t = TECLAS[e.key]; if (t) { teclas.delete(t); delete mantenido[t]; } });

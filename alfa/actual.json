@@ -1,8 +1,8 @@
 {
- "build": 479,
- "hash": "7c69331",
- "fecha": "2026-10-24T23:40:16Z",
- "mensaje": "Rouflage: la mancha de cobrar sale de un color al azar cada vez y el vuelo a «Tus gotas» va más fluido",
+ "build": 480,
+ "hash": "861166c",
+ "fecha": "2026-10-24T23:47:14Z",
+ "mensaje": "Rouflage: intro nueva en la pantalla de carga (damero del icono, FANS OF cae, ROUFLAGE pop, persecución y TOCA PARA JUGAR); dibujos provisionales hasta que lleguen los de Yoshi",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

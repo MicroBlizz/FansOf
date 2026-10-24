@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.48-a479.7c69331"></script>
+<script src="../../core/js/nucleo.js?v=0.2.48-a480.861166c"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
 <script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css')</script>
 </head>
@@ -248,41 +248,38 @@
 <div id="pantallas-menus" hidden></div>
 
 <div id="carga"><style>
-/* pantalla de carga: el título de Rouflage (las mismas letras camufladas que el menú) con un becario cazador paseando por encima y un colado camuflado en la última E */
-#carga .cg { display: grid; justify-items: center; gap: 0; width: 100%; }
-#carga .cg-fans { font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(22px, 6.4vw, 38px); letter-spacing: 0.08em; line-height: 0.9; color: var(--ink, #f4efff); }
-#carga .cg b { position: relative; display: flex; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(50px, 15.5vw, 104px); letter-spacing: 0.01em; line-height: 0.9; transform: rotate(-3deg); margin-top: 0.62em;
-  filter: drop-shadow(3px 0 0 #1a1030) drop-shadow(-3px 0 0 #1a1030) drop-shadow(0 3px 0 #1a1030) drop-shadow(0 -3px 0 #1a1030) drop-shadow(0 6px 0 #1a1030); }
-#carga .cg i { font-style: normal; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0.08em 0.01em 0; }
-#carga .cg i:nth-child(4n+1) { background-image: conic-gradient(#5fb7a6 25%, #f1e6cc 0 50%, #5fb7a6 0 75%, #f1e6cc 0); background-size: 0.36em 0.36em; }
-#carga .cg i:nth-child(4n+2) { background-image: repeating-linear-gradient(-45deg, #f2c230 0 0.13em, #3a3f66 0.13em 0.26em); }
-#carga .cg i:nth-child(4n+3) { background-image: conic-gradient(from 45deg, #6f84d6 25%, #44548a 0 50%, #6f84d6 0 75%, #44548a 0); background-size: 0.3em 0.3em; }
-#carga .cg i:nth-child(4n) { background-image: repeating-linear-gradient(90deg, #eadfc8 0 0.11em, #d9937c 0.11em 0.22em); }
-#carga .cg-pista { position: absolute; left: 0; right: 0; bottom: 78%; height: 0; }
-#carga .cg-ida { position: absolute; left: 0; bottom: 0; width: 0.62em; height: 0.82em; animation: cg-ir 5s linear infinite; }
-#carga .cg-caz, #carga .cg-pa { position: absolute; inset: 0; background: url(img/carga-cazador.png) 0 0 / 400% 100% no-repeat; }
-#carga .cg-caz { animation: cg-paso 0.56s steps(4) infinite, cg-anda 5s step-end infinite; }
-#carga .cg-pa { background-position: 100% 0; animation: cg-para 5s step-end infinite; }
-#carga .cg-haz { position: absolute; left: 86%; bottom: 40%; width: 1.3em; height: 0.5em; transform: translateY(50%); background: linear-gradient(to right, rgba(255, 226, 122, 0.85), rgba(255, 226, 122, 0.05)); clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 60%); animation: cg-luz 1.3s ease-in-out infinite alternate; }
-#carga .cg-excl { position: absolute; left: 38%; bottom: 104%; font: 400 0.36em var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em #1a1030; paint-order: stroke fill; opacity: 0; animation: cg-excl 5s linear infinite; }
-#carga .cg-zw { position: absolute; right: 0.02em; bottom: 78%; width: 0.78em; height: 0.7em; animation: cg-zorro 5s linear infinite; }
-#carga .cg-zorro { display: block; width: 100%; height: 100%; background: url(img/carga-zorro.png) 0 0 / 200% 100% no-repeat; animation: cg-parpadeo 3.4s steps(1) infinite; }
-#carga .cg-humo { position: absolute; right: -0.05em; bottom: 74%; width: 1em; height: 0.9em; opacity: 0; transform-origin: 50% 80%;
-  background: radial-gradient(circle at 30% 60%, #e6e2f2 0 26%, transparent 27%), radial-gradient(circle at 62% 42%, #f4f1fb 0 30%, transparent 31%), radial-gradient(circle at 50% 72%, #cfc9e3 0 28%, transparent 29%), radial-gradient(circle at 78% 70%, #e6e2f2 0 22%, transparent 23%), radial-gradient(circle at 45% 28%, #f4f1fb 0 22%, transparent 23%);
-  filter: drop-shadow(0 0 2px #1a1030); animation: cg-humo 5s ease-out infinite; }
-#carga .cg-cargando.toca { color: #ffcb3d; animation: cg-toca 0.9s ease-in-out infinite alternate; }
-#carga .cg-cargando { margin: 22px 0 0; font: 800 14px 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.3em; color: var(--ink-dim, #cdb9ea); }
-@keyframes cg-ir { 0% { left: 0; opacity: 0; } 4% { opacity: 1; } 50%, 90% { left: calc(100% - 1.5em); opacity: 1; } 100% { left: calc(100% - 1.5em); opacity: 0; } }
-@keyframes cg-anda { 0% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes cg-para { 0% { opacity: 0; } 50% { opacity: 1; } }
-@keyframes cg-paso { to { background-position: 133.33% 0; } }
-@keyframes cg-toca { from { opacity: 0.45; transform: scale(1); } to { opacity: 1; transform: scale(1.08); } }
-@keyframes cg-luz { from { opacity: 0.45; } to { opacity: 1; } }
-@keyframes cg-excl { 0%, 49% { opacity: 0; transform: translateY(0.1em) scale(0.6); } 53% { opacity: 1; transform: translateY(0) scale(1.15); } 60%, 66% { opacity: 1; transform: scale(1); } 68%, 100% { opacity: 0; } }
-@keyframes cg-zorro { 0%, 60% { opacity: 1; } 62%, 84% { opacity: 0; } 90%, 100% { opacity: 1; } }
-@keyframes cg-humo { 0%, 58% { opacity: 0; transform: scale(0.2); } 64% { opacity: 1; transform: scale(1); } 74% { opacity: 0.95; transform: scale(1.25) translateY(-0.04em); } 88% { opacity: 0; transform: scale(1.6) translateY(-0.12em); } 100% { opacity: 0; } }
-@keyframes cg-parpadeo { 0%, 90% { background-position: 0 0; } 94%, 100% { background-position: 100% 0; } }
-</style><div class="cg"><span class="cg-fans">FANS OF</span><b aria-label="Rouflage"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i><span class="cg-pista"><span class="cg-ida"><span class="cg-caz"></span><span class="cg-pa"><span class="cg-haz"></span></span><span class="cg-excl">!</span></span></span><span class="cg-zw"><span class="cg-zorro"></span></span><span class="cg-humo"></span></b><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div></div>
+/* pantalla de carga (intro, 25-10-2026): damero turquesa y crema como el icono de la app, «FANS OF» cae con rebote, «ROUFLAGE» aparece de golpe con los estampados del icono (rayas naranja, diagonales amarillas, rombos azules),
+   un colado sale corriendo perseguido por el becario con su linterna (img/intro-camaleon.png e img/intro-cazador.png, dibujados con el arte del icono) y al final «TOCA PARA JUGAR» en fundido. Los tiempos siguen el guion: 0,5 s / 1,5 s / 2 s / 3,5 s. */
+#carga { background: #f3ebd6 conic-gradient(#6fd0c8 25%, #f3ebd6 0 50%, #6fd0c8 0 75%, #f3ebd6 0); background-size: 44vmin 44vmin; background-position: 0 0; overflow: hidden; }
+#carga .cg { position: relative; display: grid; justify-items: center; gap: 0; width: 100%; max-width: 560px; }
+#carga .cg-fans { font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(28px, 9vw, 52px); letter-spacing: 0.1em; line-height: 0.9; color: #fff7e8; -webkit-text-stroke: 0.09em #1f1538; paint-order: stroke fill; filter: drop-shadow(0 0.12em 0 #1f1538); transform: translateY(-120vh) rotate(-4deg); animation: cg-cae 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
+#carga .cg b { position: relative; display: flex; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: clamp(50px, 17vw, 112px); letter-spacing: 0.02em; line-height: 0.9; margin-top: 0.42em; transform: scale(0); animation: cg-pop 0.45s cubic-bezier(0.34, 1.8, 0.64, 1) 1.5s forwards; }
+#carga .cg i { font-style: normal; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0.1em 0.02em 0.04em;
+  filter: drop-shadow(0.05em 0 0 #1f1538) drop-shadow(-0.05em 0 0 #1f1538) drop-shadow(0 0.05em 0 #1f1538) drop-shadow(0 -0.05em 0 #1f1538) drop-shadow(0 0.08em 0 #1f1538); }
+#carga .cg i:nth-child(odd) { transform: rotate(-5deg) translateY(0.04em); }
+#carga .cg i:nth-child(even) { transform: rotate(4deg) translateY(-0.04em); }
+#carga .cg i:nth-child(3n+1) { background-image: conic-gradient(from 45deg, #7a8fe0 25%, #4a5a9a 0 50%, #7a8fe0 0 75%, #4a5a9a 0); background-size: 0.3em 0.3em; }
+#carga .cg i:nth-child(3n+2) { background-image: repeating-linear-gradient(-50deg, #f3c53a 0 0.13em, #2e3560 0.13em 0.26em); }
+#carga .cg i:nth-child(3n) { background-image: repeating-linear-gradient(90deg, #f28c28 0 0.12em, #f6ebd5 0.12em 0.24em); }
+#carga .cg-pista { position: absolute; left: -10%; right: -10%; top: 100%; height: 1.5em; font-size: clamp(50px, 17vw, 112px); pointer-events: none; }
+#carga .cg-cam, #carga .cg-caz { position: absolute; bottom: 0; width: 1.2em; height: 1.2em; background: center bottom / contain no-repeat; opacity: 0; }
+#carga .cg-cam { left: 38%; background-image: url(img/intro-camaleon.png); animation: cg-huye 6s linear 2s infinite, cg-bote 0.22s ease-in-out 2s infinite alternate; }
+#carga .cg-caz { left: -22%; width: 1.1em; height: 1.1em; background-image: url(img/intro-cazador.png); animation: cg-caza 6s linear 2.25s infinite, cg-bote 0.26s ease-in-out 2.25s infinite alternate; }
+#carga .cg-haz { position: absolute; left: 90%; top: 36%; width: 2em; height: 0.6em; background: linear-gradient(to right, rgba(255, 236, 140, 0.9), rgba(255, 236, 140, 0)); clip-path: polygon(0 42%, 100% 0, 100% 100%, 0 58%); animation: cg-luz 0.5s ease-in-out infinite alternate; }
+#carga .cg-excl { position: absolute; left: 40%; bottom: 100%; font: 400 0.45em var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em #1f1538; paint-order: stroke fill; opacity: 0; animation: cg-excl 6s linear 2s infinite; }
+#carga .cg-cargando { position: absolute; left: 0; right: 0; top: calc(100% + 1.6em); margin: 0; font: 800 clamp(14px, 4vw, 18px) 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.3em; color: #1f1538; opacity: 0; animation: cg-fade 0.8s ease-out 3.5s forwards; }
+#carga .cg-cargando.toca { color: #f28c28; -webkit-text-stroke: 0.04em #1f1538; paint-order: stroke fill; animation: cg-fade 0.8s ease-out 3.5s forwards, cg-toca 1s ease-in-out 0.8s infinite alternate; }
+@keyframes cg-cae { to { transform: translateY(0) rotate(-4deg); } }
+@keyframes cg-pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@keyframes cg-fade { to { opacity: 1; } }
+@keyframes cg-toca { from { opacity: 0.55; transform: scale(1); } to { opacity: 1; transform: scale(1.06); } }
+@keyframes cg-luz { from { opacity: 0.5; } to { opacity: 1; } }
+@keyframes cg-bote { from { transform: translateY(0); } to { transform: translateY(-0.08em); } }
+@keyframes cg-huye { 0% { left: 38%; opacity: 0; } 2% { opacity: 1; transform: scale(1.3); } 6% { transform: scale(1); } 40% { left: 110%; opacity: 1; } 41%, 100% { left: 110%; opacity: 0; } }
+@keyframes cg-caza { 0% { left: -22%; opacity: 1; } 42% { left: 110%; opacity: 1; } 43%, 100% { left: 110%; opacity: 0; } }
+@keyframes cg-excl { 0%, 1% { opacity: 0; transform: translateY(0.1em) scale(0.6); } 3% { opacity: 1; transform: translateY(0) scale(1.15); } 7% { opacity: 1; transform: scale(1); } 11%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #carga .cg-fans, #carga .cg b, #carga .cg-cargando { animation-duration: 0.01s; animation-delay: 0s; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl { animation: none; opacity: 0; } }
+</style><div class="cg"><span class="cg-fans">FANS OF</span><b aria-label="Rouflage"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b><span class="cg-pista"><span class="cg-excl">!</span><span class="cg-cam"></span><span class="cg-caz"><span class="cg-haz"></span></span></span><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div></div>
 <script>
 // cuando el juego está listo, la pantalla de carga no se va sola: pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
 (function () {
@@ -291,11 +288,13 @@
   let idioma = ''; try { idioma = localStorage.getItem('fansof-idioma') || ''; } catch (e) { /* sin guardar */ }
   const en = (idioma || new URLSearchParams(location.search).get('lang') || navigator.language || 'es').slice(0, 2) === 'en';
   if (en) t.textContent = 'LOADING…';
-  let esperando = false;
+  let esperando = false; const t0 = performance.now();
   Object.defineProperty(c, 'hidden', { configurable: true, get() { return real.get.call(c); }, set(v) {
     if (!v) { real.set.call(c, false); return; }
     if (esperando) return;
-    esperando = true; t.textContent = en ? 'TAP TO PLAY' : 'TOCA PARA JUGAR'; t.classList.add('toca');
+    esperando = true;
+    // el «TOCA PARA JUGAR» no sale antes del segundo 3,5 (deja ver la intro entera: letras, colado y becario)
+    setTimeout(() => { t.textContent = en ? 'TAP TO PLAY' : 'TOCA PARA JUGAR'; t.classList.add('toca'); }, Math.max(0, 3500 - (performance.now() - t0)));
     const va = e => { if (e) e.preventDefault(); c.removeEventListener('click', va); removeEventListener('keydown', va); real.set.call(c, true); };
     c.addEventListener('click', va); addEventListener('keydown', va);
   } });

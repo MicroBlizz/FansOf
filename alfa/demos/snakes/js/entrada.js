@@ -1,6 +1,9 @@
 // Fans of Snakes · Entrada: el dedo según el control elegido en Opciones (SAVE.control) y el teclado (flechas o WASD).
 //   · Toques: tocar arriba, abajo, a la izquierda o a la derecha de la pantalla (las diagonales desde el centro del
 //     tablero parten la pantalla en cuatro zonas). Responde al bajar el dedo.
+//   · Cruz: la pantalla partida por una cruz en cuatro cuadrados. La serpiente siempre va en horizontal o en vertical, así
+//     que el cuadrado solo dice la otra mitad: yendo en horizontal importa si tocas arriba o abajo del centro, y yendo
+//     en vertical, si tocas a la izquierda o a la derecha. Responde al bajar el dedo.
 //   · Palanca: la palanca redonda que sale donde pones el dedo (js/palanca.js).
 //   · Deslizar: arrastrar el dedo hacia donde quieres girar; sin levantarlo se encadenan giros.
 // El Espejo (js/locuras.js) da la vuelta a izquierda y derecha antes de pedir el giro.
@@ -16,17 +19,26 @@ function zonaToque(x, y) {
   return Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy) || 1];
 }
 
+// con el control Cruz: el eje contrario al que lleva la serpiente (contando el giro que ya está en cola)
+function zonaCruz(x, y) {
+  const J = JUEGO, ult = J.pend.length ? J.pend[J.pend.length - 1] : J.dir;
+  const dx = x - (TAB.x0 + TAB.w / 2), dy = y - (TAB.y0 + TAB.h / 2);
+  return ult[0] !== 0 ? [0, dy < 0 ? -1 : 1] : [dx < 0 ? -1 : 1, 0];
+}
+const zonaDe = (x, y) => SAVE.control === 'cruz' ? zonaCruz(x, y) : zonaToque(x, y);
+const conZonas = () => SAVE.control === 'toques' || SAVE.control === 'cruz';
+
 function dedoBaja(x, y) {
   DEDO.x = DEDO.ox = x; DEDO.y = DEDO.oy = y; DEDO.activo = true; DEDO.movido = false; DEDO.mando = false;
   if (JUEGO.modo !== 'juego' || OPC.abierto || PUBLI.activo || y < TAB.y0) return;   // lo de arriba del tablero es el marcador
   DEDO.mando = true;
   // dos toques seguidos = salto (si tienes la carta). Con Toques, en la misma zona (dos giros rápidos distintos no saltan);
   // con Palanca y Deslizar, dos toques sin arrastrar
-  const ahora = performance.now(), zona = SAVE.control === 'toques' ? zonaToque(x, y).join(',') : 'toque';
-  if (ahora - DEDO.ultima < 300 && zona === DEDO.ultimaZona && (SAVE.control === 'toques' || DEDO.antesToque)) pideSalto();
+  const ahora = performance.now(), zona = conZonas() ? zonaDe(x, y).join(',') : 'toque';
+  if (ahora - DEDO.ultima < 300 && zona === DEDO.ultimaZona && (conZonas() || DEDO.antesToque)) pideSalto();
   DEDO.ultima = ahora; DEDO.ultimaZona = zona; DEDO.t0 = ahora;
   if (SAVE.control === 'palanca') ponPalanca(x, y);
-  else if (SAVE.control === 'toques') { const d = zonaToque(x, y); TOQUE.dir = d; TOQUE.t = 0.25; pideDir(espeja(d)); }
+  else if (conZonas()) { const d = zonaDe(x, y); TOQUE.dir = d; TOQUE.t = 0.25; pideDir(espeja(d)); }
 }
 
 function dedoMueve(x, y) {

@@ -15,7 +15,7 @@ const SAVE = {
   marcaSubida: 0,  // la mejor marca de Infinito que ya está en el ranking mundial
   tutorial: 0,     // 1 cuando ya se ha jugado la primera partida con consejos
   vsGanados: 0,
-  control: 'toques',   // cómo se gira con el dedo: 'toques' | 'palanca' | 'deslizar' (se elige en Opciones)
+  control: 'toques',   // cómo se gira con el dedo: 'toques' | 'cruz' | 'palanca' | 'deslizar' (se elige en Opciones)
   menuMus: 'menu', // la canción a la que vuelve el motor de la serie al acabar una corta (ganar o perder)
 };
 

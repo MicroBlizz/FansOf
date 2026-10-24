@@ -1,10 +1,11 @@
 // Fans of Snakes · Opciones: la ventana con la música, los efectos, los colores para daltónicos (manzanas azules) y el control
-// del dedo (Toques, Palanca o Deslizar).
+// del dedo (Toques, Cruz, Palanca o Deslizar).
 // Se abre con el botón de pausa del marcador (js/hud.js) o con el botón OPCIONES de la portada. Lo elegido se guarda en SAVE.
 'use strict';
 
 const CONTROLES = [
   { id: 'toques', nombre: 'TOQUES', texto: 'Toca arriba, abajo, a la izquierda o a la derecha de la pantalla' },
+  { id: 'cruz', nombre: 'CRUZ', texto: 'Cuatro cuadrados: yendo en horizontal toca arriba o abajo; en vertical, izquierda o derecha' },
   { id: 'palanca', nombre: 'PALANCA', texto: 'Sale una palanca donde pones el dedo; arrastra hacia donde quieras ir' },
   { id: 'deslizar', nombre: 'DESLIZAR', texto: 'Desliza el dedo hacia donde quieras girar' },
 ];
@@ -25,7 +26,7 @@ function pintaOpciones(W, H) {
   if (!OPC.abierto) return;
   if (OPC.confirma) { pintaConfirmaSalir(W, H); return; }
   const enJuego = JUEGO.modo === 'pausa';
-  const k = Math.min(1, OPC.t / 0.2), x = 10, w = W - 20, h = enJuego ? 318 : 292, y = (H - h) / 2 + (1 - k) * 20;
+  const k = Math.min(1, OPC.t / 0.2), x = 10, w = W - 20, h = enJuego ? 358 : 332, y = (H - h) / 2 + (1 - k) * 20;
   G.fillStyle = `rgba(6,17,10,${0.75 * k})`; G.fillRect(0, 0, W, H);
   caja(x, y + 3, w, h, 10, '#06110a', null);
   caja(x, y, w, h, 10, '#0f2a1b', '#3ddc84', 2);

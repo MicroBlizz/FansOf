@@ -1,8 +1,8 @@
 {
- "build": 452,
- "hash": "ea89d21",
- "fecha": "2026-10-24T01:02:18Z",
- "mensaje": "Página de borrado de cuenta (privacidad/borrar-cuenta/) para la ficha de Google Play, enlazada desde la política",
+ "build": 453,
+ "hash": "b958456",
+ "fecha": "2026-10-24T01:03:02Z",
+ "mensaje": "Privacidad: nombra Rouflage y las apps de Android (lo pide la ficha de Play)",
  "juegos": {
   "crush": "0.1.32",
   "dark": "0.2.7",

@@ -1,8 +1,8 @@
 {
- "build": 508,
- "hash": "b5ba94a",
- "fecha": "2026-10-25T17:14:43Z",
- "mensaje": "Tienda con dinero real: Rouflage es el primero (Google Play Billing 8)",
+ "build": 509,
+ "hash": "4c51eb8",
+ "fecha": "2026-10-25T17:29:36Z",
+ "mensaje": "Rouflage: el pase premium ya no da Gotas; sus huecos dan 10 Acciones",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

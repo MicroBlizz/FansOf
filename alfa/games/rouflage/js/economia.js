@@ -38,15 +38,14 @@ function paseCosas() {
 // más comprarla). Se calcula del catálogo al cargar y queda en ECO (gotasGratis: { nivel: Gotas } y accionesPremium: { nivel: Acciones }), así
 // herramientas/rouflage/rouflage_datos.js se lo pasa igual al servidor (servidor/56-*.sql y 65-*.sql). Un hueco premium se cobra una sola vez (SAVE.pase.purpGP):
 // quien ya lo cobró en Gotas con la versión de antes no cobra además sus Acciones.
-ECO.gotasHueco = { gratis: 50, premium: 150 };      // desde el 24-10-2026 los huecos premium dan 150 Gotas (eco.gotasPremium, que el servidor ya sabe pagar: servidor/65)
-ECO.accionesHueco = { premium: 0, premiumNv1: 50 };      // los huecos premium ya no dan Acciones (desde el 23-10-2026), solo el nivel 1 su regalo de bienvenida
+ECO.gotasHueco = { gratis: 50 };      // la pista gratis da Gotas; la premium, NUNCA (lo pagado con dinero no da la moneda del gachapón: 25-10-2026, decidido por Daniel)
+ECO.accionesHueco = { premium: 10, premiumNv1: 50 };      // los huecos premium dan 10 Acciones (lo que eran 150 Gotas al canje de 20 = 1, redondeado) y el nivel 1, 50 de bienvenida
 (() => {
   const cosas = paseCosas(), hay = (n, premium) => cosas.some(c => c.nv === n && c.premium === premium);
   ECO.gotasGratis = {}; ECO.accionesPremium = {}; ECO.gotasPremium = {};
   for (let n = 1; n <= ECO.niveles; n++) {
     if (!hay(n, false) && !ECO.purpGratis[n]) ECO.gotasGratis[n] = ECO.gotasHueco.gratis;
     if (!hay(n, true) && !ECO.purpPremium[n] && (n === 1 ? ECO.accionesHueco.premiumNv1 : ECO.accionesHueco.premium)) ECO.accionesPremium[n] = n === 1 ? ECO.accionesHueco.premiumNv1 : ECO.accionesHueco.premium;
-    else if (!hay(n, true) && !ECO.purpPremium[n] && n > 1) ECO.gotasPremium[n] = ECO.gotasHueco.premium;      // ningún nivel premium se queda vacío
   }
 })();
 // lo que da el pase si ya tienes la pieza (no debería pasar: lo del pase no se vende ni sale en el gachapón mientras dura, pero por si acaso):
@@ -145,7 +144,7 @@ function pasePinta() {
   const cosas = paseCosas(), purpP = ECO.purpPremium || {}, sumaP = Object.values(purpP).reduce((a, b) => a + b, 0);
   // arriba, lo que da el premium de un vistazo (antes había que ir bajando la lista para adivinarlo)
   E('pase-oferta').textContent = p.premium ? tr('Premium activo: lo de la columna dorada también es tuyo al llegar a su nivel.')
-    : tr('Con PREMIUM consigues además {n} cosas, {a} Acciones y {g} Gotas: con las del pase gratis, el siguiente te sale a mitad de precio.', { n: cosas.filter(c => c.premium).length, a: sumaP + Object.values(ECO.accionesPremium).reduce((a, b) => a + b, 0), g: Object.values(ECO.gotasPremium || {}).reduce((a, b) => a + b, 0).toLocaleString(LOCALE_RF) });
+    : tr('Con PREMIUM consigues además {n} cosas y {a} Acciones: con las del pase gratis, el siguiente te sale a mitad de precio.', { n: cosas.filter(c => c.premium).length, a: sumaP + Object.values(ECO.accionesPremium).reduce((a, b) => a + b, 0) });
   for (let n = 1; n <= ECO.niveles; n++) {
     const g = cosas.filter(c => c.nv === n && !c.premium), pr = cosas.filter(c => c.nv === n && c.premium), purp = ECO.purpGratis[n];
     const gg = ECO.gotasGratis[n], ap = (purpP[n] || 0) + (ECO.accionesPremium[n] || 0);

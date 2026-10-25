@@ -299,4 +299,6 @@ IDIOMA.add({
   "Microblizz ha desplegado un anuncio sobre el tablero y Phony dice que es su turno de mirarlo.": "Microblizz spread an ad over the board and Phony says it's his turn to look at it.",
   "<b>MEJORAS POR DENTRO</b>: en Opciones hay un interruptor nuevo, «Datos de partida anónimos», para ayudarnos a mejorar los juegos sin tu nombre, sin email y sin cuenta (lo puedes apagar cuando quieras). Y la promo de otros juegos de la serie dice si es un prototipo o una demo.": "<b>BEHIND THE SCENES</b>: Options has a new switch, “Anonymous game data”, to help us improve the games without your name, email or account (you can turn it off whenever you like). And the promo for our other games in the series now says whether it is a prototype or a demo.",
   "Microblizz ha planeado la recogida de datos con tácticas por turnos. Phony aún está en el turno uno.": "Microblizz planned the data collection with turn-based tactics. Phony is still on turn one.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
+  "Microblizz ha puesto una caja en el campo de batalla. Phony la usa de trinchera.": "Microblizz put a till on the battlefield. Phony is using it as a trench.",
 });

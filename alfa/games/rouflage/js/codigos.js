@@ -68,6 +68,9 @@ function codPremio(lista) {
     if (k) {
       const [c, i] = String(k).split(':'), it = arItem(c, i), cat = arCat(c);
       if (it) tarjeta((cv, w) => it.x(cv, w), tr(it.n), h.repetida ? tr('Ya la tenías: +{n} Gotas', { n: h.gotas }) : cat ? tr(cat.corto) : '');
+    } else if (h.todo != null) {      // el código de desarrollo (servidor/95): todas las piezas y, aquí, todos los mapas abiertos
+      SAVE.mapasDev = true; guardaPartida();
+      tarjeta((cv, w) => ARD.ICONOS.candado(cv, w), tr('¡TODO DESBLOQUEADO!'), tr('{n} cosas nuevas y todos los mapas', { n: h.todo }));
     } else if (h.acciones) tarjeta((cv, w) => pintaAcciones(cv, w), '+' + h.acciones, tr('Acciones'));
     else if (h.gotas) tarjeta((cv, w) => pintaGotas(cv, w), '+' + h.gotas, tr('Gotas'));
   }

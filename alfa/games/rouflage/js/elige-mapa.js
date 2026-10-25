@@ -12,6 +12,7 @@ const ORDEN_ABRIR = ['estacion', 'parking', 'cloacas', 'jardines', 'residencial'
 // cuántos mapas de ORDEN_ABRIR tienes abiertos (DESBLOQUEAR TODO de las pruebas los abre todos)
 function mapasAbiertos() {
   if (typeof armarioEstado === 'function' && armarioEstado().todo && arPruebasVisibles()) return ORDEN_ABRIR.length;
+  if (SAVE.mapasDev) return ORDEN_ABRIR.length;     // el código regalo de desarrollo (codigos.js, servidor/95)
   if (tutoFaltan().length) return 1;
   return Math.min(ORDEN_ABRIR.length, 1 + (SAVE.mapasGana | 0));
 }

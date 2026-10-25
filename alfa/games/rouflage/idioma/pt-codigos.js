@@ -14,5 +14,7 @@ IDIOMA.add({
   "Este código ya ha caducado.": "Este código já expirou.",
   "Este código ya se ha agotado.": "Este código já se esgotou.",
   "Demasiados intentos. Prueba otra vez dentro de un rato.": "Tentativas demais. Tente de novo daqui a pouco.",
-  "Para canjear códigos necesitas una cuenta.": "Para resgatar códigos você precisa de uma conta."
+  "Para canjear códigos necesitas una cuenta.": "Para resgatar códigos você precisa de uma conta.",
+  "¡TODO DESBLOQUEADO!": "TUDO DESBLOQUEADO!",
+  "{n} cosas nuevas y todos los mapas": "{n} coisas novas e todos os mapas",
 });

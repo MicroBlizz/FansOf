@@ -1,6 +1,7 @@
 // Fans of Crush · Novedades: el registro de versiones (desplegar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.1.36', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha montado una caja registradora y Phony ha intentado pagar con caramelos."] },
   { v: '0.1.35', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha bajado el volumen a cero y Phony ha seguido pulsando botones en silencio absoluto."] },
   { v: '0.1.34', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz ha preparado salas para jugar con amigos y Phony ya ha reservado la de los caramelos."] },
   { v: '0.1.33', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha puesto un candado a los informes y Phony ha jurado que no contó los caramelos."] },

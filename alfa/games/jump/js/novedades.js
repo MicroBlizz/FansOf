@@ -2,6 +2,7 @@
 // lo lee para su tarjeta de la Biblioteca; el juego no lo carga.
 'use strict';
 const NEWS = [
+  { v: '0.3.13', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha puesto una caja junto al río y Phony ha saltado por encima sin pagar."] },
   { v: '0.3.12', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha apagado los efectos y Phony ha saltado al río sin chapoteo."] },
   { v: '0.3.11', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz ha abierto salas para jugar con amigos y CrazyBunny ha saltado dentro antes de que terminaran."] },
   { v: '0.3.10', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha callado los chivatos del río y Phony ha saltado sin que nadie lo midiera."] },

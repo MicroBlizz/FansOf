@@ -14,5 +14,7 @@ IDIOMA.add({
   "Este código ya ha caducado.": "Ce code a expiré.",
   "Este código ya se ha agotado.": "Ce code est épuisé.",
   "Demasiados intentos. Prueba otra vez dentro de un rato.": "Trop d’essais. Réessaie dans un moment.",
-  "Para canjear códigos necesitas una cuenta.": "Il te faut un compte pour utiliser des codes."
+  "Para canjear códigos necesitas una cuenta.": "Il te faut un compte pour utiliser des codes.",
+  "¡TODO DESBLOQUEADO!": "TOUT EST DÉBLOQUÉ !",
+  "{n} cosas nuevas y todos los mapas": "{n} nouveautés et toutes les cartes",
 });

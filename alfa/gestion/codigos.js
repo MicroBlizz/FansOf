@@ -17,6 +17,7 @@
   }
   function textoPremio(p) {
     const t = [];
+    if (p.todo) t.push('<span><b>TODO</b> (desarrollo)</span>');
     if (p.gotas) t.push(`<span>${p.gotas} Gotas</span>`);
     if (p.acciones) t.push(`<span>${p.acciones} Acciones</span>`);
     for (const k of p.piezas || []) t.push(`<span class="codigo" style="font-size:13px">${esc(k)}</span>`);
@@ -46,12 +47,13 @@
   }
   function vaciar() {
     for (const id of ['cd-codigo', 'cd-gotas', 'cd-acciones', 'cd-max', 'cd-caduca', 'cd-nota', 'cd-pieza']) $(id).value = '';
+    $('cd-todo').checked = false;
     chips = []; pintaChips(); $('cd-codigo').readOnly = false;
   }
   function editar(c) {
     vaciar();
     $('cd-codigo').value = c.codigo; $('cd-codigo').readOnly = true;
-    $('cd-gotas').value = c.premio.gotas || ''; $('cd-acciones').value = c.premio.acciones || '';
+    $('cd-gotas').value = c.premio.gotas || ''; $('cd-acciones').value = c.premio.acciones || ''; $('cd-todo').checked = !!c.premio.todo;
     $('cd-max').value = c.max_usos || ''; $('cd-nota').value = c.nota || '';
     if (c.caduca) { const d = new Date(new Date(c.caduca).getTime() - 1000); $('cd-caduca').value = d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' }); }
     chips = (c.premio.piezas || []).slice(); pintaChips();
@@ -75,6 +77,7 @@
     if ($('cd-pieza').value.trim()) anadePieza();
     const cod = limpio($('cd-codigo').value); $('cd-codigo').value = cod;
     const premio = { gotas: Math.max(0, parseInt($('cd-gotas').value, 10) || 0), acciones: Math.max(0, parseInt($('cd-acciones').value, 10) || 0), piezas: chips };
+    if ($('cd-todo').checked) premio.todo = true;
     const b = $('cd-guardar'); b.disabled = true;
     try {
       await rpc('gestion_codigo_guardar', { p_token: leerToken(), p_codigo: cod, p_premio: premio, p_max_usos: parseInt($('cd-max').value, 10) || 0, p_caduca: caducaDe($('cd-caduca').value), p_nota: $('cd-nota').value });

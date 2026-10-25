@@ -14,10 +14,10 @@ const PARTIDA = (() => {
     TERRENO.crea(cfg.mapa, semilla, salidas);
     const moviles = modo.equipos.map((e, i) => {
       const s = cfg.slots[i] || {}, m = MOVIL.crea(i, i, e, salidas[i], e === 0 ? 1 : -1, s.movil);
-      m.ia = !!s.ia; m.nivel = s.nivel == null ? 1 : s.nivel; m.nombre = s.nombre || (m.ia ? BOOM.nombresIA[i % BOOM.nombresIA.length] : 'Jugador ' + (i + 1));
+      m.ia = !!s.ia; m.diana = !!s.diana; m.facil = !!s.facil && !m.ia; m.nivel = s.nivel == null ? 1 : s.nivel; m.nombre = s.nombre || (m.ia ? BOOM.nombresIA[i % BOOM.nombresIA.length] : 'Jugador ' + (i + 1));
       return m;
     });
-    if (cfg.entrena) { moviles[1].diana = true; moviles[1].ia = true; moviles[1].nombre = 'Diana'; }   // el rival no tira: es un blanco que cambia de sitio al acertarle
+    if (cfg.entrena) { moviles[1].diana = true; moviles[1].ia = true; moviles[1].nombre = (cfg.slots[1] && cfg.slots[1].nombre) || 'Diana'; }   // el rival no tira: es un blanco que cambia de sitio al acertarle
     const personas = moviles.filter(m => !m.ia).length;
     P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
       sucesos: [], satelite: { carga: 0 }, minas: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2 && !cfg.entrena, bono: false, entrena: !!cfg.entrena, aciertos: 0, mueveDiana: false };

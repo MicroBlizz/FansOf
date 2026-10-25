@@ -56,16 +56,12 @@ const FISICA = (() => {
     while (!paso(p, moviles)) { /* sigue */ }
     return p;
   }
-  // la trayectoria de un tiro (para el modo entrenamiento): puntos del vuelo del proyectil central y dónde acaba. Con racimo se corta en lo más alto,
-  // que es donde se abre. No toca la partida: simula con una copia del móvil.
-  function trayectoria(m, viento, moviles, ev) {
-    const l = lanza(Object.assign({}, m, { doble: false }), viento, ev), p = l[Math.floor(l.length / 2)], pts = [], ef = p.def.efecto;
-    for (let i = 0; i < 1800; i++) {
-      const fin = paso(p, moviles);
-      pts.push([p.x, p.y]);
-      if (fin || (p.cima && ef && ef.tipo === 'racimo')) break;
-    }
-    return { pts, x: p.x, y: p.y, fin: p.fin };
+  // la trayectoria que seguirá el tiro (para el modo Entrenamiento): un punto cada dos pasos y dónde acaba
+  function traza(m, viento, moviles, ev) {
+    const l = lanza(Object.assign({}, m, { doble: false }), viento, ev), p = l[Math.floor(l.length / 2)], puntos = [];
+    for (let i = 0; !paso(p, moviles); i++) if (i % 2 === 0) puntos.push(p.x, p.y);
+    puntos.push(p.x, p.y);
+    return { puntos, p };
   }
-  return { boca, lanza, paso, simula, nuevo, trayectoria };
+  return { boca, lanza, paso, simula, traza, nuevo };
 })();

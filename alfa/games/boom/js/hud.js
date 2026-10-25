@@ -16,14 +16,6 @@ const HUD = (() => {
     }
     PINTAR_TXT(c, String(n), x, y + 50, 22, '#fff');
   }
-  function entrena(c, P) {   // el cartel del entrenamiento: qué es la línea y cuántas dianas llevas
-    if (!P.entrena) return;
-    const x = V.w - 228, y = 124;
-    c.fillStyle = 'rgba(32,16,44,.78)'; c.strokeStyle = OL; c.lineWidth = 4; c.beginPath(); rrPath(c, x, y, 216, 74, 10); c.fill(); c.stroke();
-    PINTAR_TXT(c, tr('ENTRENAMIENTO'), x + 108, y + 15, 15, '#ffcb3d');
-    PINTAR_TXT(c, tr('Dianas: {n}', { n: P.aciertos }), x + 108, y + 38, 18, '#fff');
-    PINTAR_TXT(c, tr('La línea es por donde irá el tiro'), x + 108, y + 60, 11, '#cdb9ea');
-  }
   function tiempo(c, P) {
     if (P.fase !== 'apunta' || P.entrena) return;
     const s = Math.max(0, Math.ceil(P.t)), x = V.w - 120, y = 56, poco = s <= 5;
@@ -75,6 +67,6 @@ const HUD = (() => {
     for (let i = 0; i < max; i++) { c.fillStyle = i < n ? '#7cf0ff' : 'rgba(32,16,44,.8)'; c.beginPath(); c.arc((i - (max - 1) / 2) * 13, 20, 5, 0, 6.2832); c.fill(); c.stroke(); }
     c.restore();
   }
-  function frame(c, P, t) { evento(c, P); viento(c, P); tiempo(c, P); entrena(c, P); orden(c, P); minimapa(c, P); satelite(c, P, t || 0); bono(c); }
+  function frame(c, P, t) { evento(c, P); viento(c, P); tiempo(c, P); orden(c, P); minimapa(c, P); ENTRENO.mini(c, P, MM); satelite(c, P, t || 0); bono(c); }
   return { frame, toca, MM };
 })();

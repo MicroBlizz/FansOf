@@ -1,8 +1,8 @@
 {
- "build": 503,
- "hash": "5db877a",
- "fecha": "2026-10-25T04:37:18Z",
- "mensaje": "Cooking: mapas e índice de docs regenerados",
+ "build": 504,
+ "hash": "4b35f28",
+ "fecha": "2026-10-25T04:38:48Z",
+ "mensaje": "Boom: el Entrenamiento enseña dos líneas (sin viento y con el viento de ahora, también en el minimapa), un consejo por turno y elige tu móvil en el Garaje; nueva ayuda FÁCIL por jugador al preparar la partida (solo la línea sin viento)",
  "juegos": {
   "boom": "0.2.0",
   "cooking": "0.2.0",

@@ -30,6 +30,7 @@ const PANT = (() => {
         <span class="bm-punto"></span>
         <input class="bm-nombre" data-i="${i}" maxlength="12" value="${esc(s.nombre)}" placeholder="${tr('Jugador {n}', { n: i + 1 })}" ${s.ia ? 'disabled' : ''}>
         <button class="bm-chip" data-ia="${i}">${tr(s.ia ? 'IA' : 'PERSONA')}</button>
+        <button class="bm-chip bm-ayuda${s.facil ? ' bm-on' : ''}" data-facil="${i}" ${s.ia ? 'style="visibility:hidden"' : ''} title="${tr('Ayuda fácil: ves por dónde iría el tiro sin viento')}">${tr(s.facil ? 'FÁCIL' : 'SIN AYUDA')}</button>
         <button class="bm-chip bm-movil" data-movil="${i}" style="--c1:${BOOM.moviles.find(d => d.id === s.movil).colores[0]}">${esc(tr(BOOM.moviles.find(d => d.id === s.movil).nombre))}</button>
         <button class="bm-chip bm-nivel" data-nivel="${i}" ${s.ia && !(conRango()) ? '' : 'style="visibility:hidden"'}>${tr(NIVELES[s.nivel])}</button>
       </div>`).join('');
@@ -47,23 +48,16 @@ const PANT = (() => {
     q('[data-mapa]', b => { b.onclick = () => { play('select'); PREP.mapa = b.dataset.mapa; prepara(); }; });
     q('[data-ia]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.ia]; s.ia = !s.ia; prepara(); }; });
     q('[data-movil]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.movil]; GARAJE.abre(s.movil, id => { s.movil = id; $('#bm-modal').hidden = true; prepara(); }); }; });
+    q('[data-facil]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.facil]; s.facil = !s.facil; prepara(); }; });
     q('[data-nivel]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.nivel]; s.nivel = (s.nivel + 1) % 3; prepara(); }; });
     q('.bm-nombre', inp => { inp.oninput = () => { PREP.slots[+inp.dataset.i].nombre = inp.value.trim().slice(0, 12); }; });
     $('#bm-atras').onclick = () => { play('select'); portada(); };
     $('#bm-empezar').onclick = () => { play('select'); const n = equipos.length; SAVE.ultima = JSON.parse(JSON.stringify({ modo: PREP.modo, mapa: PREP.mapa, slots: PREP.slots })); bmGuarda(); juega(n); };
   }
-  // modo entrenamiento: tú contra una diana que no dispara; la línea de puntos enseña por dónde irá el tiro. Sin rango, sin tiempo y sin morir.
-  function entrena() {
-    cierraTodo(); escena = 'partida'; asegura();
-    const s0 = PREP.slots[0];
-    PARTIDA.nueva({ modo: '1v1', mapa: PREP.mapa, entrena: true, slots: [{ ia: false, nivel: 1, nombre: s0.nombre, movil: s0.movil }, { ia: true, nivel: 0, nombre: 'Diana', movil: PREP.slots[1].movil }] });
-    EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
-    $('#bm-pausa').hidden = false; revisa();
-  }
   function juega(n, semilla) {
     cierraTodo(); escena = 'partida';
     const rango = conRango() && PREP.modo === '1v1';
-    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, rango, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: rango && s.ia ? RANGO.nivelIA() : s.nivel, nombre: s.nombre, movil: s.movil })) });
+    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, rango, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: rango && s.ia ? RANGO.nivelIA() : s.nivel, nombre: s.nombre, movil: s.movil, facil: s.facil })) });
     EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
     $('#bm-pausa').hidden = false; revisa();
   }
@@ -94,8 +88,8 @@ const PANT = (() => {
       <p class="bm-nota">${tr('Turnos jugados: {n}', { n: P.turnos })}</p>${rg}
       <div class="bm-fila-b"><button class="bm-btn" id="bm-otra">${tr('REVANCHA')}</button><button class="bm-btn bm-sec" id="bm-cambia">${tr('PREPARAR')}</button><button class="bm-btn bm-sec" id="bm-inicio">${tr('SALIR')}</button></div></div>`;
     $('#bm-modal').hidden = false;
-    $('#bm-otra').onclick = () => { play('select'); ultimaFase = ''; juega(P.moviles.length); };
-    $('#bm-cambia').onclick = () => { play('select'); prepara(); };
+    $('#bm-otra').onclick = () => { play('select'); ultimaFase = ''; if (P.entrena) ENTRENO.empieza(P.cfg.slots[0].movil); else juega(P.moviles.length); };
+    $('#bm-cambia').onclick = () => { play('select'); if (P.entrena) ENTRENO.abre(); else prepara(); };
     $('#bm-inicio').onclick = () => { play('select'); portada(); };
   }
   function pausa() {
@@ -130,7 +124,7 @@ const PANT = (() => {
     ui().innerHTML = `
       <section id="bm-portada" class="bm-pantalla"><div class="bm-logo"><span>FANS OF</span><b>BOOM</b></div>
         <p class="bm-lema">${tr('Apunta bien. El viento ya hará el resto.')}</p>
-        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn" id="bm-entrena">${tr('ENTRENAMIENTO')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div><p id="bm-rg"></p></section>
+        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn" id="bm-entreno">${tr('ENTRENAMIENTO')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div><p id="bm-rg"></p></section>
       <section id="bm-prepara" class="bm-pantalla" hidden></section>
       <button id="bm-pausa" class="bm-pausa" aria-label="${tr('Pausa')}" hidden><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="#fff" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/></svg></button>
       <div id="bm-panel" hidden></div><div id="bm-objetos" hidden></div>
@@ -138,11 +132,17 @@ const PANT = (() => {
       <section id="bm-modal" class="bm-velo" hidden></section>`;
     CONTROLES.construye();
     $('#bm-jugar').onclick = () => { audioInit(); play('select'); prepara(); };
-    $('#bm-entrena').onclick = () => { audioInit(); play('select'); entrena(); };
+    $('#bm-entreno').onclick = () => { audioInit(); play('select'); ENTRENO.abre(); };
     $('#bm-opciones').onclick = () => { audioInit(); play('select'); opciones(() => { $('#bm-modal').hidden = true; }); };
     $('#bm-pausa').onclick = () => { audioInit(); play('select'); pausa(); };
     addEventListener('keydown', e => { if (e.key === 'Escape') { if (!$('#bm-modal').hidden && PARTIDA.get() && PARTIDA.get().pausa) $('#bm-seguir') && $('#bm-seguir').click(); else pausa(); } });
     portada();
   }
-  return { inicia, revisa, enPartida: () => escena === 'partida' };
+  // el Entrenamiento (entreno.js) arranca su partida por aquí, para que la pantalla quede igual que en una normal
+  function juegaCon(cfg) {
+    cierraTodo(); escena = 'partida'; ultimaFase = '';
+    PARTIDA.nueva(cfg); EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
+    $('#bm-pausa').hidden = false; revisa();
+  }
+  return { inicia, revisa, juegaCon, mapa: () => PREP.mapa, movil: () => (PREP.slots[0] || {}).movil, enPartida: () => escena === 'partida' };
 })();

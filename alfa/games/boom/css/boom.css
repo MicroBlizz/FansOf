@@ -99,3 +99,5 @@
 .bm-g-txt li b { display: block; color: var(--c2); }
 .bm-g-txt li span { display: block; }
 .bm-g-txt li em { display: block; color: #ffe9c6; font-style: normal; }
+.bm-chip.bm-ayuda { min-width: 0; background: #3a2a5a; } .bm-chip.bm-ayuda.bm-on { background: #2e8bff; }
+.bm-estrecho .bm-slot { flex-wrap: wrap; gap: 6px; }

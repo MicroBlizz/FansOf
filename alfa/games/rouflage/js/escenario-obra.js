@@ -31,24 +31,25 @@ function lzNuevo(t = 0) {
   for (let j = 0; j < LIENZO.H; j++) for (let i = 0; i < LIENZO.W; i++) g.push(i >= R.x0 && i < R.x1 && j >= R.y0 && j < R.y1 ? 'a' : '#');
   return { t, g, L: { a: LIENZO.DEF.slice() } };
 }
-const lzCopia = lz => ({ t: lz.t, g: lz.g.slice(), L: JSON.parse(JSON.stringify(lz.L)), b: lz.b });
+const lzCopia = lz => ({ t: lz.t, g: lz.g.slice(), L: JSON.parse(JSON.stringify(lz.L)), b: lz.b, c: lz.c });
 const lzCentro = k => [(k % LIENZO.W) * 40 + 20, ((k / LIENZO.W) | 0) * 40 + 20];
 // a texto, corto: «t|a:suelo.pared,b:…|rejilla en tiradas (número y carácter)». Las letras que ya no se usan no viajan
 function lzCodifica(lz) {
   const usadas = new Set(lz.g), L = Object.keys(lz.L).filter(k => usadas.has(k)).map(k => k + ':' + lz.L[k].join('.')).join(',');
   let r = '', i = 0; while (i < lz.g.length) { const ch = lz.g[i]; let n = 1; while (i + n < lz.g.length && lz.g[i + n] === ch) n++; r += (n > 1 ? n : '') + ch; i += n; }
-  return lz.t + '|' + L + '|' + r + (lz.b != null ? '|' + lz.b : '');      // la marca de BECARIOS (casilla), si hay
+  return lz.t + '|' + L + '|' + r + (lz.b != null || lz.c != null ? '|' + (lz.b != null ? lz.b : '') : '') + (lz.c != null ? '|' + lz.c : '');      // las marcas de BECARIOS y COLADOS (casillas), si hay
 }
 function lzDecodifica(txt) {
   if (typeof txt !== 'string') return null;
-  const [t, Ls, r, bs] = txt.split('|'); if (r === undefined) return null;
+  const [t, Ls, r, bs, cs] = txt.split('|'); if (r === undefined) return null;
   const L = {};
   for (const par of Ls ? Ls.split(',') : []) { const [k, v] = par.split(':'), [s, p] = (v || '').split('.'); if (k && k.length === 1 && SUELOS[s] && PAPELES[p]) L[k] = [s, p]; }
   const g = []; for (const m of r.matchAll(/(\d*)([^\d])/g)) { const n = Math.min(LIENZO.W * LIENZO.H, +m[1] || 1); for (let k = 0; k < n; k++) g.push(m[2]); }
   if (g.length !== LIENZO.W * LIENZO.H) return null;
   const lz = { t: Math.max(0, Math.min(LIENZO.TAM.length - 1, +t || 0)), g, L };
   for (let k = 0; k < g.length; k++) { const ch = g[k]; if (ch !== '#' && ch !== '+' && !L[ch]) g[k] = '#'; if (g[k] !== '#' && !lzDentro(lz, k % LIENZO.W, (k / LIENZO.W) | 0)) g[k] = '#'; }      // nada fuera de su tamaño
-  const b = +bs; if (bs !== undefined && Number.isInteger(b) && b >= 0 && b < g.length && g[b] !== '#' && g[b] !== '+') lz.b = b;
+  const b = +bs; if (bs !== undefined && bs !== '' && Number.isInteger(b) && b >= 0 && b < g.length && g[b] !== '#' && g[b] !== '+') lz.b = b;
+  const c = +cs; if (cs !== undefined && cs !== '' && Number.isInteger(c) && c >= 0 && c < g.length && g[c] !== '#' && g[c] !== '+') lz.c = c;
   return lz;
 }
 // el mundo de un lienzo: su plano en letras para escConstruye (escenario-mundo.js); el armario, en la primera casilla de suelo; apareces en la del medio
@@ -62,7 +63,8 @@ function lzMundo(id) {
   const medio = suelo.reduce((a, q) => (!a || Math.hypot(q[0] - cx, q[1] - cy) < Math.hypot(a[0] - cx, a[1] - cy) ? q : a), null) || [R.x0, R.y0];
   const primera = suelo.find(q => lz.g[(q[1]) * LIENZO.W + q[0]] !== '+') || medio;
   let sal = medio;
-  if (lz.b != null) {      // con la sala de los becarios marcada, los colados salen lo más lejos de ella
+  if (lz.c != null && lz.g[lz.c] !== '#') sal = [lz.c % LIENZO.W, (lz.c / LIENZO.W) | 0];      // marcada con COLADOS
+  else if (lz.b != null) {      // con la sala de los becarios marcada, los colados salen lo más lejos de ella
     const [bx, by] = lzCentro(lz.b); sal = suelo.filter(q => lz.g[q[1] * LIENZO.W + q[0]] !== '+').reduce((a, q) => (!a || Math.hypot(q[0] * 40 + 20 - bx, q[1] * 40 + 20 - by) > Math.hypot(a[0] * 40 + 20 - bx, a[1] * 40 + 20 - by) ? q : a), null) || medio;
   }
   const F = { armario: [primera[0] * 40 + 20, primera[1] * 40 + 36], salida: [sal[0] * 40 + 20, sal[1] * 40 + 30] };
@@ -112,6 +114,7 @@ const lzSala = () => escenarioSala();
 const lzAct = () => ESC_LZ[lzSala().id];
 function obraAbajo(p) {
   const lz = lzAct(); if (!lz) return;
+  if (OBRA.herr === 'colados') { obraColados(lz, p); return; }      // un toque: ahí empiezan los colados (escenario-obra3.js)
   if (OBRA.herr === 'becarios') {      // un toque: esa sala es la de los becarios
     const i = Math.floor(p.x / 40), j = Math.floor(p.y / 40), k = j * LIENZO.W + i;
     if (!lzDentro(lz, i, j) || lz.g[k] === '#' || lz.g[k] === '+') { play('deny'); escAviso(tr('Toca el suelo de una sala')); return; }
@@ -141,6 +144,7 @@ function obraCasilla(i, j) {
   if (ch === antes) return;
   lz.g[k] = ch; OBRA.cambio = true; OBRA.uso[OBRA.herr] = 1; play('tick');
   if (lz.b === k && (ch === '#' || ch === '+')) delete lz.b;      // la marca de los becarios se va si le pones una pared encima
+  if (lz.c === k && (ch === '#' || ch === '+')) delete lz.c;
   obraRehace();
 }
 // el mundo nuevo: se rehace el plano y se vuelve a pintar el fondo
@@ -210,6 +214,7 @@ function lzProblema(lz) {
   // (Daniel, 25-10-2026: con una sola sala grande, los becarios no tenían adónde ir y la partida se rompía)
   const M = escMundo(lzSala().id), z = M.esperaZona;
   if (M.zonas.filter(q => q.w * q.h >= 24).length < 2) { marca(k => todo.id[k] >= 0); return tr('Solo hay una sala: levanta una PARED con una PUERTA para hacer otra (una es para los becarios)'); }
+  if (typeof lzProblemaColados === 'function') { const mal = lzProblemaColados(lz, M, z, marca); if (mal) return mal; }      // (escenario-obra3.js)
   if (z && z.w * z.h < 16) { marca(k => { const [x, y] = lzCentro(k); return x >= z.px && x < z.px + z.pw && y >= z.py && y < z.py + z.ph; }); return tr('La sala de los becarios es muy pequeña: hazla más grande o marca otra'); }
   return '';
 }
@@ -219,7 +224,7 @@ function obraComprueba() {
   if (mal) { play('deny'); escAviso(mal); return false; }
   if (lz.b == null) {      // sin sala de becarios: se pone sola, y se dice dónde
     const k = lzAutoBecarios(lz, escMundo(lzSala().id));
-    if (k != null) { lz.b = k; obraRehace(); escGuarda(); OBRA.azulHasta = MIESC.t + 4; play('pop'); escAviso(tr('He marcado en azul la sala de los becarios: cámbiala con BECARIOS si quieres')); return true; }
+    if (k != null) { lz.b = k; obraRehace(); escGuarda(); OBRA.azulHasta = MIESC.t + 4; const mal2 = lzProblema(lz); if (mal2) { play('deny'); escAviso(mal2); return false; } play('pop'); escAviso(tr('He marcado en azul la sala de los becarios: cámbiala con BECARIOS si quieres')); return true; }
   }
   play('levelup'); escAviso(tr('¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO')); OBRA.uso.comprobar = 1;
   return true;
@@ -236,9 +241,10 @@ function obraPintaEncima(c, pt) {
     c.strokeStyle = '#4f95f5'; c.lineWidth = 4; c.setLineDash([12, 8]); c.strokeRect(z.px + 2, z.py + 2, z.pw - 4, z.ph - 4); c.setLineDash([]);
     rotulo(c, tr('BECARIOS'), z.px + z.pw / 2, z.py + 22, 15, '#cfe3ff', OL, LETRA_UI);
   }
+  if (MIESC.modo === 'obra' && typeof obraPintaColados === 'function') obraPintaColados(c, M0);
   if (pt && MIESC.modo === 'obra') {
     const i = Math.floor(pt.x / 40), j = Math.floor(pt.y / 40), lz = lzAct(); if (!lz || !lzDentro(lz, i, j)) return;
-    c.strokeStyle = OBRA.herr === 'pared' ? '#ff9f80' : OBRA.herr === 'puerta' ? '#ffcb3d' : OBRA.herr === 'becarios' ? '#4f95f5' : '#7ee04a'; c.lineWidth = 3;
+    c.strokeStyle = OBRA.herr === 'pared' ? '#ff9f80' : OBRA.herr === 'puerta' ? '#ffcb3d' : OBRA.herr === 'becarios' ? '#4f95f5' : OBRA.herr === 'colados' ? '#2fd6a0' : '#7ee04a'; c.lineWidth = 3;
     c.strokeRect(i * 40 + 1.5, j * 40 + 1.5, 37, 37);
   }
 }
@@ -252,7 +258,7 @@ Object.assign(ICONOS, {
   ampliar: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
   jugar: '<path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/>',
 });
-const OBRA_HERR = [['suelo', 'Suelo', 'baldosa'], ['pared', 'Pared', 'ladrillo'], ['puerta', 'Puerta', 'puerta'], ['becarios', 'Becarios', 'diana']];
+const OBRA_HERR = [['suelo', 'Suelo', 'baldosa'], ['pared', 'Pared', 'ladrillo'], ['puerta', 'Puerta', 'puerta'], ['becarios', 'Becarios', 'diana'], ['colados', 'Colados', 'pincel']];
 function obraTarjetaSuelo(c, w, s) {
   const z = { px: 0, py: 0, pw: 120, ph: 120, x: 0, y: 0, w: 6, h: 6, suelo: s, pared: 'rayas', id: 'x' }, R = { x0: 0, y0: 0, x1: 120, y1: 120 };
   c.save(); c.scale(w / 120, w / 120); try { SUELOS[s](c, z, R); } catch (_) { c.fillStyle = '#556'; c.fillRect(0, 0, 120, 120); } c.restore();
@@ -286,7 +292,7 @@ function obraRefresca() {
   const { suelos, paredes } = lzMateriales();
   const lista = OBRA.herr === 'suelo' ? suelos : OBRA.herr === 'pared' ? paredes : null;
   E('obra-cuenta').textContent = lz ? tr('Tamaño: {t}', { t: tr(LIENZO.NOMBRE[lz.t]) }) : '';
-  E('obra-pista').textContent = OBRA.herr === 'becarios' ? tr('Toca la sala donde esperan los becarios al empezar') : OBRA.herr === 'puerta' ? tr('Arrastra el dedo sobre una pared para abrir un paso') : OBRA.herr === 'pared' ? tr('Arrastra el dedo para levantar paredes') : tr('Arrastra el dedo para poner suelo');
+  E('obra-pista').textContent = OBRA.herr === 'colados' ? tr('Toca la sala donde empiezan los colados') : OBRA.herr === 'becarios' ? tr('Toca la sala donde esperan los becarios al empezar') : OBRA.herr === 'puerta' ? tr('Arrastra el dedo sobre una pared para abrir un paso') : OBRA.herr === 'pared' ? tr('Arrastra el dedo para levantar paredes') : tr('Arrastra el dedo para poner suelo');
   if (!lista) return;
   const elegido = OBRA.herr === 'suelo' ? OBRA.suelo : OBRA.pared;
   for (const [nombre, q] of [...lista].sort((a, b) => (a[1].tuyo ? 0 : 1) - (b[1].tuyo ? 0 : 1))) {

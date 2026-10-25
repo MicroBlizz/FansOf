@@ -65,6 +65,7 @@ const GUIAS = [
     { en: 'p-escenario', a: '#obra-b-ladrillo', t: '<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.', hecho: () => !!OBRA.uso.pared, seg: 40 },
     { en: 'p-escenario', a: '#obra-b-puerta', t: '<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.', hecho: () => !!OBRA.uso.puerta, seg: 40 },
     { en: 'p-escenario', a: '#obra-b-diana', t: '<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.', hecho: () => !!OBRA.uso.becarios, seg: 40 },
+    { en: 'p-escenario', a: '#obra-b-pincel', t: '<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.', hecho: () => !!OBRA.uso.colados, seg: 40 },
     { en: 'p-escenario', a: '#obra-b-comprobar', t: '<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.', hecho: () => !!OBRA.uso.comprobar, seg: 40 },
     { en: 'p-escenario', a: '#obra-b-jugar', t: '<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.', seg: 12 },
   ] },

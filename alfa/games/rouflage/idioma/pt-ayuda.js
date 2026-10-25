@@ -36,4 +36,10 @@ IDIOMA.add({
   "MENOS REGLAS": "MENOS REGRAS",
   "MÁS REGLAS ({n} puestas)": "MAIS REGRAS ({n} ativas)",
   "MÁS REGLAS": "MAIS REGRAS",
+  "Colados": "Penetras",
+  "Toca la sala donde empiezan los colados": "Toque a sala onde os penetras começam",
+  "Aquí empiezan los colados (en verde)": "Os penetras começam aqui (em verde)",
+  "Los colados no pueden empezar en la sala de los becarios": "Os penetras não podem começar na sala dos estagiários",
+  "Los colados empiezan en la sala de los becarios: marca otra sala con COLADOS": "Os penetras começam na sala dos estagiários: marque outra sala com PENETRAS",
+  "<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.": "<b>PENETRAS</b>: toque a sala onde os penetras começam. A dos estagiários fica fechada até a caçada começar.",
 });

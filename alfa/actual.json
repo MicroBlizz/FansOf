@@ -1,8 +1,8 @@
 {
- "build": 530,
- "hash": "886edbe",
- "fecha": "2026-10-25T21:55:17Z",
- "mensaje": "Rouflage: CONFIGURAR PARTIDA en media pantalla en la sala con amigos: sin repetir lo de arriba, CLÁSICO / CON TALENTOS el primer ajuste, las reglas especiales plegadas en MÁS REGLAS, INVITAR solo con lo de invitar y un solo RELLENAR CON BOTS (el de abajo)",
+ "build": 531,
+ "hash": "3ed700f",
+ "fecha": "2026-10-25T22:23:54Z",
+ "mensaje": "Rouflage: en Mi escenario la sala de los becarios se cierra con barreras hasta la caza y la herramienta COLADOS marca dónde empiezan; CONFIGURAR PARTIDA otra vez a pantalla completa (sin tapar la barra de arriba) y sin el cartel de CLÁSICO en cada cambio de la sala",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

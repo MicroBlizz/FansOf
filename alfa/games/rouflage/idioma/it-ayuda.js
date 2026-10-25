@@ -36,4 +36,10 @@ IDIOMA.add({
   "MENOS REGLAS": "MENO REGOLE",
   "MÁS REGLAS ({n} puestas)": "PIÙ REGOLE ({n} attive)",
   "MÁS REGLAS": "PIÙ REGOLE",
+  "Colados": "Imbucati",
+  "Toca la sala donde empiezan los colados": "Tocca la stanza dove iniziano gli imbucati",
+  "Aquí empiezan los colados (en verde)": "Gli imbucati iniziano qui (in verde)",
+  "Los colados no pueden empezar en la sala de los becarios": "Gli imbucati non possono iniziare nella stanza degli stagisti",
+  "Los colados empiezan en la sala de los becarios: marca otra sala con COLADOS": "Gli imbucati iniziano nella stanza degli stagisti: segna un'altra stanza con IMBUCATI",
+  "<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.": "<b>IMBUCATI</b>: tocca la stanza dove iniziano gli imbucati. Quella degli stagisti resta chiusa finché non inizia la caccia.",
 });

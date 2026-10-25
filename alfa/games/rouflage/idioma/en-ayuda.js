@@ -36,4 +36,10 @@ IDIOMA.add({
   "MENOS REGLAS": "FEWER RULES",
   "MÁS REGLAS ({n} puestas)": "MORE RULES ({n} on)",
   "MÁS REGLAS": "MORE RULES",
+  "Colados": "Intruders",
+  "Toca la sala donde empiezan los colados": "Tap the room where the intruders start",
+  "Aquí empiezan los colados (en verde)": "The intruders start here (in green)",
+  "Los colados no pueden empezar en la sala de los becarios": "Intruders can't start in the interns' room",
+  "Los colados empiezan en la sala de los becarios: marca otra sala con COLADOS": "The intruders start in the interns' room: mark another room with INTRUDERS",
+  "<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.": "<b>INTRUDERS</b>: tap the room where the intruders start. The interns' room stays closed until the hunt begins.",
 });

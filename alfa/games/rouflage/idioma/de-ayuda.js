@@ -36,4 +36,10 @@ IDIOMA.add({
   "MENOS REGLAS": "WENIGER REGELN",
   "MÁS REGLAS ({n} puestas)": "MEHR REGELN ({n} an)",
   "MÁS REGLAS": "MEHR REGELN",
+  "Colados": "Eindringlinge",
+  "Toca la sala donde empiezan los colados": "Tippe auf den Raum, in dem die Eindringlinge starten",
+  "Aquí empiezan los colados (en verde)": "Hier starten die Eindringlinge (in Grün)",
+  "Los colados no pueden empezar en la sala de los becarios": "Die Eindringlinge dürfen nicht im Raum der Praktikanten starten",
+  "Los colados empiezan en la sala de los becarios: marca otra sala con COLADOS": "Die Eindringlinge starten im Raum der Praktikanten: Markiere mit EINDRINGLINGE einen anderen Raum",
+  "<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.": "<b>EINDRINGLINGE</b>: Tippe auf den Raum, in dem die Eindringlinge starten. Der Raum der Praktikanten bleibt zu, bis die Jagd beginnt.",
 });

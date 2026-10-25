@@ -36,4 +36,10 @@ IDIOMA.add({
   "MENOS REGLAS": "MOINS DE RÈGLES",
   "MÁS REGLAS ({n} puestas)": "PLUS DE RÈGLES ({n} activées)",
   "MÁS REGLAS": "PLUS DE RÈGLES",
+  "Colados": "Intrus",
+  "Toca la sala donde empiezan los colados": "Touche la salle où commencent les intrus",
+  "Aquí empiezan los colados (en verde)": "Les intrus commencent ici (en vert)",
+  "Los colados no pueden empezar en la sala de los becarios": "Les intrus ne peuvent pas commencer dans la salle des stagiaires",
+  "Los colados empiezan en la sala de los becarios: marca otra sala con COLADOS": "Les intrus commencent dans la salle des stagiaires : marque une autre salle avec INTRUS",
+  "<b>COLADOS</b>: toca la sala donde empiezan los colados. La de los becarios se cierra hasta que empieza la caza.": "<b>INTRUS</b> : touche la salle où commencent les intrus. Celle des stagiaires reste fermée jusqu'au début de la chasse.",
 });

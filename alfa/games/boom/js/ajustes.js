@@ -24,16 +24,20 @@ const BOOM = {
   },
   caos: { max: 100, porTiro: 12, porDano: 0.05 },   // el medidor de CAOS: sube con cada tiro propio y con el daño recibido; lleno, se puede lanzar el Tiro Especial (SS)
   // Los móviles: cada uno con su vida, velocidad y tres tiros (Tiro 1, Tiro 2 y SS). Un tiro tiene radio y daño del agujero, retraso extra y,
-  // si quiere, ignoraViento (no le afecta) o multi: { n, abanico } (n proyectiles abiertos en abanico de ese número de grados).
+  // si quiere, ignoraViento (no le afecta), viento (cuánto le afecta: 2 = el doble), gravedad (1 = normal) o multi: { n, abanico } (n proyectiles abiertos en abanico de ese número de grados).
   moviles: [
     { id: 'mechavaca', nombre: 'MechaVaca', nota: 'Tanque pesado: aguanta y pega fuerte.', vida: 1120, velocidad: 60, acento: '#f4f4f4',
       tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 250, retraso: 70 }, { nombre: 'Tiro 2', radio: 70, dano: 350, retraso: 150 }, { nombre: 'Leche Fría', radio: 115, dano: 430, retraso: 260 }] },
     { id: 'skeletoncrew', nombre: 'SkeletonCrew', nota: 'Cava: sus agujeros son enormes, el daño es justo.', vida: 1000, velocidad: 78, acento: '#e8e0c8',
-      tiros: [{ nombre: 'Tiro 1', radio: 52, dano: 160, retraso: 60 }, { nombre: 'Tiro 2', radio: 74, dano: 210, retraso: 130 }, { nombre: 'Fosa Común', radio: 70, dano: 190, retraso: 240, multi: { n: 3, abanico: 9 } }] },
+      tiros: [{ nombre: 'Tiro 1', radio: 52, dano: 175, retraso: 60 }, { nombre: 'Tiro 2', radio: 74, dano: 210, retraso: 130 }, { nombre: 'Fosa Común', radio: 70, dano: 190, retraso: 240, multi: { n: 3, abanico: 9 } }] },
     { id: 'neonsniper', nombre: 'NeonSniper', nota: 'Frágil, pero el viento no le afecta.', vida: 930, velocidad: 82, acento: '#7cf0ff',
       tiros: [{ nombre: 'Tiro 1', radio: 32, dano: 340, retraso: 70, ignoraViento: true }, { nombre: 'Tiro 2', radio: 42, dano: 430, retraso: 170, ignoraViento: true }, { nombre: 'Láser', radio: 56, dano: 560, retraso: 260, ignoraViento: true }] },
     { id: 'chonkcat', nombre: 'ChonkCat', nota: 'Su segundo tiro lanza tres a la vez.', vida: 1050, velocidad: 72, acento: '#ffd24a',
-      tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 250, retraso: 60 }, { nombre: 'Tiro 2', radio: 38, dano: 170, retraso: 140, multi: { n: 3, abanico: 6 } }, { nombre: 'Lluvia de bolas', radio: 38, dano: 150, retraso: 250, multi: { n: 5, abanico: 6 } }] },
+      tiros: [{ nombre: 'Tiro 1', radio: 48, dano: 280, retraso: 60 }, { nombre: 'Tiro 2', radio: 40, dano: 190, retraso: 140, multi: { n: 3, abanico: 6 } }, { nombre: 'Lluvia de bolas', radio: 38, dano: 150, retraso: 250, multi: { n: 5, abanico: 6 } }] },
+    { id: 'junkcoon', nombre: 'JunkCoon', nota: 'Vive del viento: le afecta el doble, para bien o para mal.', vida: 1000, velocidad: 80, acento: '#9aa0a8',
+      tiros: [{ nombre: 'Tiro 1', radio: 46, dano: 270, retraso: 60, viento: 2 }, { nombre: 'Tiro 2', radio: 60, dano: 360, retraso: 140, viento: 2.4 }, { nombre: 'Bumerán de chatarra', radio: 50, dano: 220, retraso: 240, viento: 2, multi: { n: 3, abanico: 4 } }] },
+    { id: 'boombeaver', nombre: 'BoomBeaver', nota: 'Misiles que caen menos: tiros rectos y largos.', vida: 920, velocidad: 76, acento: '#c87a3a',
+      tiros: [{ nombre: 'Tiro 1', radio: 40, dano: 190, retraso: 60, gravedad: 0.85 }, { nombre: 'Tiro 2', radio: 50, dano: 270, retraso: 140, gravedad: 0.75 }, { nombre: 'Presa reventada', radio: 100, dano: 400, retraso: 260, gravedad: 0.75 }] },
   ],
   // Eventos de mapa: uno cada 3-5 turnos, dura `duracion` turnos y se ve antes de tirar. Cambian la física del proyectil o el daño.
   eventos: { cada: [3, 5], duracion: 2, lista: [

@@ -12,7 +12,7 @@ const FISICA = (() => {
     const t = m.def.tiros[m.tiro], n = t.multi ? t.multi.n : 1, lista = [];
     for (let i = 0; i < n; i++) {
       const a = m.ang + (t.multi ? (i - (n - 1) / 2) * t.multi.abanico : 0), b = boca(Object.assign({}, m, { ang: clamp(a, 0, 90) })), v = BOOM.velocidadMax * m.pot / 100;
-      lista.push({ x: b.x, y: b.y, vx: b.dx * v, vy: b.dy * v, viento: t.ignoraViento || (ev && ev.def.sinViento) ? 0 : viento, ev: ev || null, demora: 0, alto: false, t: 0, fin: null, ang: m.ang, dueno: m.id, def: t, traza: [] });
+      lista.push({ x: b.x, y: b.y, vx: b.dx * v, vy: b.dy * v, viento: t.ignoraViento || (ev && ev.def.sinViento) ? 0 : viento * (t.viento || 1), ev: ev || null, demora: 0, alto: false, t: 0, fin: null, ang: m.ang, dueno: m.id, def: t, traza: [] });
     }
     if (m.doble) lista.push(...lista.map(p => Object.assign({}, p, { demora: 0.45, traza: [] })));
     return lista;
@@ -20,7 +20,7 @@ const FISICA = (() => {
   // un paso: devuelve true cuando el proyectil ya ha terminado (p.fin dice cómo: terreno, movil, borde o vacio)
   function paso(p, moviles) {
     const ed = p.ev && p.ev.def;
-    p.vx += (p.viento * BOOM.viento.aceleracion + (ed && ed.ax ? ed.ax * p.ev.dir : 0) + (ed && ed.onda ? ed.onda * Math.sin(p.t * 9) : 0)) * DT; p.vy += (BOOM.gravedad + (ed && ed.ay || 0)) * DT;
+    p.vx += (p.viento * BOOM.viento.aceleracion + (ed && ed.ax ? ed.ax * p.ev.dir : 0) + (ed && ed.onda ? ed.onda * Math.sin(p.t * 9) : 0)) * DT; p.vy += (BOOM.gravedad * (p.def.gravedad || 1) + (ed && ed.ay || 0)) * DT;
     const n = Math.max(1, Math.ceil(Math.hypot(p.vx, p.vy) * DT / 4)), sx = p.vx * DT / n, sy = p.vy * DT / n;
     for (let i = 0; i < n; i++) {
       p.x += sx; p.y += sy;

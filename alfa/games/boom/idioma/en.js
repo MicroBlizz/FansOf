@@ -1,7 +1,7 @@
 // Fans of Boom · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
-  "<b>PRIMER PROTOTIPO</b>: artillería por turnos con viento, terreno que se rompe y cuatro móviles con su Tiro Especial. Se juega pasándose el aparato (1 contra 1 o dobles) o contra la IA.": "<b>FIRST PROTOTYPE</b>: turn-based artillery with wind, destructible terrain and four vehicles with their Special Shot, map events and items. Play by passing the device around (1 vs 1 or doubles) or against the AI.",
+  "<b>PRIMER PROTOTIPO</b>: artillería por turnos con viento, terreno que se rompe y seis móviles con su Tiro Especial. Se juega pasándose el aparato (1 contra 1 o dobles) o contra la IA.": "<b>FIRST PROTOTYPE</b>: turn-based artillery with wind, destructible terrain and six vehicles with their Special Shot, map events and items. Play by passing the device around (1 vs 1 or doubles) or against the AI.",
   "Microblizz ha medido el viento con el dedo mojado. Phony ha pedido que el viento tribute.": "Microblizz measured the wind with a wet finger. Phony asked for the wind to pay taxes.",
   "Apunta bien. El viento ya hará el resto.": "Aim well. The wind will do the rest.",
   "JUGAR": "PLAY",
@@ -107,4 +107,6 @@ IDIOMA.add({
   "Director": "Director",
   "Vicepresidente": "Vice President",
   "CEO": "CEO",
+  "Bumerán de chatarra": "Junk Boomerang",
+  "Presa reventada": "Burst Dam",
 });

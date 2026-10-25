@@ -263,5 +263,27 @@ IDIOMA.add({
   "Tamaño: {t}": "Size: {t}",
   "Viene con el escenario {e}: {c}": "Comes with the {e} stage: {c}",
   "Ya es el tamaño más grande": "It is already the biggest size",
-  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Ready to play! Your friends will see it in MY SCENE"
+  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Ready to play! Your friends will see it in MY SCENE",
+  // el lienzo: plantillas, becarios, probar y su tutorial (escenario-obra.js, guia.js)
+  "Aquí esperan los becarios al empezar (en azul)": "The interns wait here at the start (in blue)",
+  "EMPEZAR UN LIENZO": "START A CANVAS",
+  "En blanco": "Blank",
+  "En blanco o desde una plantilla. Luego cambias paredes, suelos y puertas a tu gusto.": "Blank or from a template. Then change walls, floors and doors as you like.",
+  "He marcado en azul la sala de los becarios: cámbiala con BECARIOS si quieres": "I marked the interns' room in blue: change it with INTERNS if you like",
+  "La sala de los becarios es muy pequeña: hazla más grande o marca otra": "The interns' room is too small: make it bigger or mark another",
+  "PROBAR": "TRY IT",
+  "Probar": "Try it",
+  "Nuevo": "New",
+  "Becarios": "Interns",
+  "Seguir con el mío": "Keep mine",
+  "Toca el suelo de una sala": "Tap the floor of a room",
+  "Toca la sala donde esperan los becarios al empezar": "Tap the room where the interns wait at the start",
+  "VOLVER A MI ESCENARIO": "BACK TO MY SCENE",
+  "<b>CONSTRUIR</b>: aquí haces tu escenario a tu gusto, con suelos, paredes y puertas.": "<b>BUILD</b>: here you make your stage your way, with floors, walls and doors.",
+  "<b>SUELO</b>: elige uno abajo y arrastra el dedo por el escenario para ponerlo.": "<b>FLOOR</b>: pick one below and drag your finger over the stage to lay it.",
+  "<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.": "<b>WALL</b>: drag your finger to build walls and make rooms.",
+  "<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.": "<b>DOOR</b>: run your finger over a wall to open a way between rooms.",
+  "<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.": "<b>INTERNS</b>: tap the room where the hunters wait when the match starts. It turns blue.",
+  "<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.": "<b>CHECK</b> tells you if it can be played. Whatever is wrong shows in red.",
+  "<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.": "<b>TRY IT</b>: play a match against bots on your stage. Then invite your friends."
 });

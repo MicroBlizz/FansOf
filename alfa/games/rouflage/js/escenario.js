@@ -78,7 +78,7 @@ function escBucle(ahora) {
   for (const q of MIESC.chispas) { q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 260 * dt; q.vida -= dt; }
   MIESC.chispas = MIESC.chispas.filter(q => q.vida > 0);
   const anda = escAnda(dt), mueve = escCamaraAvanza(dt);
-  const anima = anda || mueve || MIESC.pops.length || MIESC.chispas.length || (ESCENARIOS[escBase(escenarioSala().id)] || {}).zumbido || MIESC.modo === 'pasear';
+  const anima = anda || mueve || MIESC.pops.length || MIESC.chispas.length || (ESCENARIOS[escBase(escenarioSala().id)] || {}).zumbido || MIESC.modo === 'pasear' || (typeof OBRA !== 'undefined' && !!OBRA.malas);
   if (MIESC.sucio || anima) { MIESC.sucio = escDibuja() > 0; }
   if (MIESC.avisoT && ahora > MIESC.avisoT) { MIESC.avisoT = 0; E('esc-aviso').classList.remove('ve'); }
   MIESC.raf = requestAnimationFrame(escBucle);
@@ -116,6 +116,7 @@ function escDibuja() {
     c.globalAlpha = 0.7; c.drawImage(sp.cv, m.x - sp.ox, m.y - sp.oy, sp.w, sp.h); c.globalAlpha = 1;
   }
   if (MIESC.modo === 'pintar' && pt && typeof escPintaCursor === 'function') escPintaCursor(c, pt);
+  if (typeof obraPintaEncima === 'function' && (MIESC.modo === 'obra' || OBRA.malas)) obraPintaEncima(c, pt);      // CONSTRUIR (escenario-obra.js)
   const fin = MIESC.camino && MIESC.camino[MIESC.camino.length - 1];
   if (fin) { c.strokeStyle = 'rgba(255,246,234,0.85)'; c.lineWidth = 2.5; c.beginPath(); c.ellipse(fin[0], fin[1], 11 + Math.sin(MIESC.t * 6), 5, 0, 0, TAU); c.stroke(); }
   escColocaBurbuja();

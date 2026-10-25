@@ -1,8 +1,8 @@
 {
- "build": 518,
- "hash": "0bb9d69",
- "fecha": "2026-10-25T19:21:35Z",
- "mensaje": "Rouflage: mapas con candado. El tutorial se juega en la estación y cada victoria abre el siguiente mapa (las Backrooms, el último); con amigos el anfitrión solo elige entre los suyos",
+ "build": 519,
+ "hash": "b8960f2",
+ "fecha": "2026-10-25T19:28:55Z",
+ "mensaje": "Rouflage: plantillas para el lienzo, sala de BECARIOS, PROBAR y tutorial de CONSTRUIR",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

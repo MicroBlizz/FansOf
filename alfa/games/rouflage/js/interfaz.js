@@ -170,7 +170,7 @@ let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
 function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); misionEvento('ayuda'); }
 function muestraPausa(si) {
-  E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
+  E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : typeof ESC_PRUEBA !== 'undefined' && ESC_PRUEBA.activa ? tr('VOLVER A MI ESCENARIO') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
 }
 // al elegir papel: la primera vez se enseña antes cómo se juega
@@ -254,12 +254,12 @@ function preparaInterfaz() {
   E('b-salir').onclick = () => {
     // en PvP, irse estando en juego deja a los tuyos con un jugador menos: el primer toque avisa y el segundo se va (más adelante, con penalización si se repite)
     if (J.pvp && J.fase === 'caza' && J.yo && !sinJuego(J.yo) && !J.avisoRetiro) { play('deny'); J.avisoRetiro = true; E('b-salir').textContent = tr('¿SEGURO? PIERDES PUNTOS Y DEJAS A TU EQUIPO SIN TI'); return; }
-    play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); irTitulo();
+    play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); if (escPruebaVuelve()) return; irTitulo();      // (la partida de prueba de Mi escenario vuelve al editor)
   };      // por internet, salir en plena partida es rendirse
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
-  E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
+  E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); if (escPruebaVuelve()) return; irTitulo(); };
   E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-gesto').onclick = accionGesto; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);

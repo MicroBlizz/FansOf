@@ -263,5 +263,27 @@ IDIOMA.add({
   "Tamaño: {t}": "Tamanho: {t}",
   "Viene con el escenario {e}: {c}": "Vem com o cenário {e}: {c}",
   "Ya es el tamaño más grande": "Já é o maior tamanho",
-  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Pronto para jogar! Seus amigos vão ver em MEU CENÁRIO"
+  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Pronto para jogar! Seus amigos vão ver em MEU CENÁRIO",
+  // el lienzo: plantillas, becarios, probar y su tutorial (escenario-obra.js, guia.js)
+  "Aquí esperan los becarios al empezar (en azul)": "Aqui os estagiários esperam no começo (em azul)",
+  "EMPEZAR UN LIENZO": "COMEÇAR UMA TELA",
+  "En blanco": "Em branco",
+  "En blanco o desde una plantilla. Luego cambias paredes, suelos y puertas a tu gusto.": "Em branco ou a partir de um modelo. Depois mude paredes, pisos e portas do seu jeito.",
+  "He marcado en azul la sala de los becarios: cámbiala con BECARIOS si quieres": "Marquei em azul a sala dos estagiários: mude com ESTAGIÁRIOS se quiser",
+  "La sala de los becarios es muy pequeña: hazla más grande o marca otra": "A sala dos estagiários é muito pequena: aumente ou marque outra",
+  "PROBAR": "TESTAR",
+  "Probar": "Testar",
+  "Nuevo": "Novo",
+  "Becarios": "Estagiários",
+  "Seguir con el mío": "Continuar com o meu",
+  "Toca el suelo de una sala": "Toque no piso de uma sala",
+  "Toca la sala donde esperan los becarios al empezar": "Toque na sala onde os estagiários esperam no começo",
+  "VOLVER A MI ESCENARIO": "VOLTAR AO MEU CENÁRIO",
+  "<b>CONSTRUIR</b>: aquí haces tu escenario a tu gusto, con suelos, paredes y puertas.": "<b>CONSTRUIR</b>: aqui você faz o seu cenário do seu jeito, com pisos, paredes e portas.",
+  "<b>SUELO</b>: elige uno abajo y arrastra el dedo por el escenario para ponerlo.": "<b>PISO</b>: escolha um embaixo e arraste o dedo pelo cenário para colocá-lo.",
+  "<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.": "<b>PAREDE</b>: arraste o dedo para levantar paredes e fazer salas.",
+  "<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.": "<b>PORTA</b>: passe o dedo por uma parede para abrir uma passagem entre salas.",
+  "<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.": "<b>ESTAGIÁRIOS</b>: toque na sala onde os caçadores esperam ao começar a partida. Fica azul.",
+  "<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.": "<b>VERIFICAR</b> diz se dá para jogar. O que estiver errado aparece em vermelho.",
+  "<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.": "<b>TESTAR</b>: jogue uma partida contra bots no seu cenário. Depois, convide seus amigos."
 });

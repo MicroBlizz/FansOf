@@ -263,5 +263,27 @@ IDIOMA.add({
   "Tamaño: {t}": "Größe: {t}",
   "Viene con el escenario {e}: {c}": "Kommt mit der Bühne {e}: {c}",
   "Ya es el tamaño más grande": "Das ist schon die größte Größe",
-  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Bereit zum Spielen! Deine Freunde sehen es in MEINE KULISSE"
+  "¡Listo para jugar! Tus amigos lo verán en MI ESCENARIO": "Bereit zum Spielen! Deine Freunde sehen es in MEINE KULISSE",
+  // el lienzo: plantillas, becarios, probar y su tutorial (escenario-obra.js, guia.js)
+  "Aquí esperan los becarios al empezar (en azul)": "Hier warten die Praktikanten am Anfang (in Blau)",
+  "EMPEZAR UN LIENZO": "EINE LEINWAND BEGINNEN",
+  "En blanco": "Leer",
+  "En blanco o desde una plantilla. Luego cambias paredes, suelos y puertas a tu gusto.": "Leer oder aus einer Vorlage. Dann änderst du Wände, Böden und Türen, wie du willst.",
+  "He marcado en azul la sala de los becarios: cámbiala con BECARIOS si quieres": "Ich habe den Raum der Praktikanten blau markiert: ändere ihn mit PRAKTIKANTEN, wenn du willst",
+  "La sala de los becarios es muy pequeña: hazla más grande o marca otra": "Der Raum der Praktikanten ist zu klein: mach ihn größer oder markiere einen anderen",
+  "PROBAR": "TESTEN",
+  "Probar": "Testen",
+  "Nuevo": "Neu",
+  "Becarios": "Praktikanten",
+  "Seguir con el mío": "Meins behalten",
+  "Toca el suelo de una sala": "Tippe auf den Boden eines Raums",
+  "Toca la sala donde esperan los becarios al empezar": "Tippe auf den Raum, in dem die Praktikanten am Anfang warten",
+  "VOLVER A MI ESCENARIO": "ZURÜCK ZU MEINER KULISSE",
+  "<b>CONSTRUIR</b>: aquí haces tu escenario a tu gusto, con suelos, paredes y puertas.": "<b>BAUEN</b>: hier baust du deine Kulisse nach deinem Geschmack, mit Böden, Wänden und Türen.",
+  "<b>SUELO</b>: elige uno abajo y arrastra el dedo por el escenario para ponerlo.": "<b>BODEN</b>: wähle unten einen aus und zieh den Finger über die Kulisse, um ihn zu legen.",
+  "<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.": "<b>WAND</b>: zieh den Finger, um Wände zu bauen und Räume zu machen.",
+  "<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.": "<b>TÜR</b>: fahr mit dem Finger über eine Wand, um einen Durchgang zwischen Räumen zu öffnen.",
+  "<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.": "<b>PRAKTIKANTEN</b>: tippe auf den Raum, in dem die Jäger zu Spielbeginn warten. Er wird blau.",
+  "<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.": "<b>PRÜFEN</b> sagt dir, ob man darauf spielen kann. Was nicht passt, erscheint rot.",
+  "<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.": "<b>TESTEN</b>: spiel eine Partie gegen Bots in deiner Kulisse. Dann lade deine Freunde ein."
 });

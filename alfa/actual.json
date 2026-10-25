@@ -1,8 +1,8 @@
 {
- "build": 486,
- "hash": "abcaec1",
- "fecha": "2026-10-25T00:14:05Z",
- "mensaje": "MAPA: tamaños al día tras las salas de Decks",
+ "build": 487,
+ "hash": "41237a1",
+ "fecha": "2026-10-25T00:22:10Z",
+ "mensaje": "Rouflage: la intro se hace con el juego de verdad: suelo real de la cafetería, colado con la pintura rápida sobre ese sitio, se apagan las luces, el becario lo encuentra con la linterna y sale huyendo",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

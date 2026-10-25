@@ -16,6 +16,7 @@ function defineMapa(d) { MAPAS[d.id] = d; ORDEN_MAPAS.push(d.id); }
 // lo que ve todo el juego del mapa actual (lo rellena cargaMapa)
 let MAPA_ACT = null;
 let MW = 84, MH = 60, ANCHO = MW * CEL, ALTO = MH * CEL;
+let BARRERAS = [];      // Mi escenario: los tramos que cierran la sala de los becarios (barreras.js)
 let SALAS = [], PASOS = [], ZONAS = [], GRID = new Uint8Array(MW * MH), ZONA_DE = new Int16Array(MW * MH), CARAS = [];
 let MUEBLES = [], CARTELES = [], PEGATINAS = [], EPITAFIOS = [];
 let SALIDA_CAMALEONES = [[0, 0]], SALIDA_CAZADORES = [[0, 0]];
@@ -39,6 +40,7 @@ function cargaDatosMapa(id) {
   for (const z of ZONAS) { z.px = z.x * CEL; z.py = z.y * CEL; z.pw = z.w * CEL; z.ph = z.h * CEL; }
   MUEBLES = d.muebles.map(m => ({ ...m })); CARTELES = d.carteles; PEGATINAS = d.pegatinas || []; EPITAFIOS = d.epitafios || [];
   SALIDA_CAMALEONES = d.salidaCamaleones; SALIDA_CAZADORES = d.salidaCazadores;
+  BARRERAS = (d.barreras || []).map(b => ({ ...b }));
   Object.assign(PUERTA, { estilo: 'barrera' }, d.puerta, { cerrada: true, abierta: 0 });
 
   // la rejilla: qué hay en cada casilla y de qué zona es

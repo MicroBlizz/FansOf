@@ -15,7 +15,7 @@ function habPon(e, id, nivel) {
 // al empezar (cambiaFase('prep')): la tuya, la que avisó cada persona del PvP, y al azar la de los bots (en el PvP, la misma en todos los navegadores)
 function talentosReparte() {
   talentosLimpia();
-  if (J.pvp) talRotuloPartida(talOn());      // el rótulo CON TALENTOS o CLÁSICO al empezar (talentos-pantalla.js)
+  if (J.pvp && J.fase !== 'sala') talRotuloPartida(talOn());      // el rótulo CON TALENTOS o CLÁSICO al empezar (talentos-pantalla.js); en la sala con amigos no, que salía en cada cambio
   if (!talOn()) { for (const e of J.entes) { e.hab = null; if (e.clase === 'camaleon') { e.granada = 1; e.tinta = SEN.max; } } return; }      // SIN TALENTOS: como siempre, la granada para todos los colados
   for (const e of J.entes) {
     if (e.dueno) continue;

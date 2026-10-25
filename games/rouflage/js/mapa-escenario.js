@@ -25,6 +25,7 @@ function mapaDeEscenario(datos) {
     muebles: sala.muebles.map(m => { const S = MUEBLES_SALA[m.id]; return S && TIPOS_MUEBLE[S.t] ? { t: S.t, x: m.x, y: m.y, v: (m.v || 0) % Math.max(1, S.vars || 1), f: m.f ? 1 : 0 } : null; }).filter(Boolean),
     puerta: { x: -2000, y: -2000, w: 40, h: 80 },      // sin puerta de Recursos Humanos: aquí nadie espera encerrado
     salidaCamaleones: corro, salidaCazadores: becarios, espera: espera ? espera.id : '', plaza: [sx, sy],
+    barreras: typeof barrerasDe === 'function' ? barrerasDe(M, espera) : [],      // la sala de los becarios, cerrada hasta la caza (barreras.js)
     esc: { sala, M },
   };
   MAPA_ESC.clave = clave;

@@ -204,6 +204,7 @@ function dibuja(t) {
   for (const m of MASC.lista) if (m.x > x0 - 40 && m.x < x0 + vw + 40 && m.y > y0 - 10 && m.y < y0 + vh + 40) cosas.push(m);      // las mascotas del armario (mascotas.js)
   for (const e of PRACTICA.munecos) cosas.push(e);      // los camaleones de prácticas de la sala de espera
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
+  if (BARRERAS.length && PUERTA.abierta < 1 && J.fase !== 'sala') for (const b of BARRERAS) cosas.push({ y: b.y + b.h, puerta: true, barrera: b });      // Mi escenario (barreras.js)
   // un camaleón congelado es «parte del suelo»: quien pase por detrás de él se pinta ENCIMA, no debajo. Si no, su pintura
   // de suelo quedaría sobre el becario y dejaría ver su silueta recortada (y sería facilísimo encontrarlo).
   for (const k of cosas) k.ordenY = k.y;
@@ -217,7 +218,7 @@ function dibuja(t) {
   cosas.sort((a, b) => a.ordenY - b.ordenY);
   for (const k of cosas) {
     if (k.T) { if (!k.vuela) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h); }      // vuela: el coche del jefe en pleno salto (dibujo-roaster.js lo pinta en el aire)
-    else if (k.puerta) pintaPuerta(c, t);
+    else if (k.puerta) { if (k.barrera) pintaBarrera(c, t, k.barrera); else pintaPuerta(c, t); }
     else if (k.mascota) pintaMascota(c, k);
     else if (k === J.yo && TALLER.abierto) pintaYoEnTaller(c, k, t);
     else if (k.invis > 0) { if (k !== J.yo) continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: nadie lo ve (ni becarios ni otros colados); solo él, como un fantasma

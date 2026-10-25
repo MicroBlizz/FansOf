@@ -39,7 +39,8 @@ function empiezaPartida(modo) {
       cambiaPostura(e, posturaBot()); cerebroCamaleon(e, mana); e.sitio = eligeSitio(e, ocupados); ocupados.push(e.sitio);
     });
     if (modoEs('ida')) { const e = nuevoEnte('camaleon', 'coon', NOMBRES.coon, ...SALIDA_CAMALEONES[4 % SALIDA_CAMALEONES.length]); cambiaPostura(e, posturaBot()); cerebroCamaleon(e, 0.4); e.sitio = eligeSitio(e, ocupados); ocupados.push(e.sitio); }
-    else SALIDA_CAZADORES.forEach(([x, y], i) => { const h = nuevoEnte('cazador', 'becario', tr('Becario {n}').replace('{n}', [7, 12][i]), x, y); cerebroCazador(h); h.dir = -Math.PI / 2 + (i ? 0.5 : -0.5); h.mira = i ? -1 : 1; });
+    else SALIDA_CAZADORES.slice(0, 2).forEach(([x, y], i) => { const h = nuevoEnte('cazador', 'becario', tr('Becario {n}').replace('{n}', [7, 12][i]), x, y);      // contra bots, siempre dos becarios (un escenario propio puede traer más salidas)
+      cerebroCazador(h); h.dir = -Math.PI / 2 + (i ? 0.5 : -0.5); h.mira = i ? -1 : 1; });
     cambiaFase('prep');
   } else {
     // tú eres el becario; cinco colados ya están escondidos y pintados, cada uno con su maña

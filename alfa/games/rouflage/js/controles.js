@@ -4,7 +4,7 @@
 'use strict';
 
 const ENTRADA = { teclas: new Set(), toques: new Map(), palanca: null, raton: null, tactil: false };
-const jugando = () => (J.fase === 'prep' || J.fase === 'caza' || J.fase === 'paseo') && !J.pausa && J.yo && !J.yo.fuera;
+const jugando = () => (J.fase === 'prep' || J.fase === 'caza' || J.fase === 'paseo' || J.fase === 'sala') && !J.pausa && J.yo && !J.yo.fuera;
 
 // hacia dónde quiere andar el jugador: [x, y] entre -1 y 1
 function vectorMueve() {

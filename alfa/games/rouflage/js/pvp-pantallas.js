@@ -64,6 +64,7 @@ function pvpPintaBusca() {
     : i.faltan != null ? tr('Empieza en {t} s, o en cuanto se llene', { t: i.faltan }) : tr('Esperando a otro jugador. Mientras estás solo, el reloj no corre.');
   // la sala con amigos: el código grande para compartir y el botón EMPEZAR del anfitrión
   salaEspPaso(i, soyAnf);      // con amigos: la sala de espera es el escenario del anfitrión (sala-escenario.js)
+  salaVivaPaso(i, soyAnf);      // …y se juega dentro de él a pantalla completa (sala-viva.js)
   E('busca-codigo').hidden = !priv || jugando; E('busca-codigo-n').textContent = i.codigo || '----';
   const be = E('b-busca-empezar'); be.hidden = !soyAnf || jugando; be.textContent = i.n < 2 ? tr('RELLENAR CON BOTS') : tr('EMPEZAR');      // solo en la sala: la máquina rellena el resto y se juega ya
   const err = E('busca-error'); err.hidden = !RFP.error; err.textContent = RFP.error ? tr(RFP.error) : '';

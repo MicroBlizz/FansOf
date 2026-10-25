@@ -228,5 +228,11 @@ IDIOMA.add({
   "Microblizz da la noche por buena: con la mitad ya le cuadra el informe.": "Microblizz calls it a night: half is enough to make the report add up.",
   "¡MÁS DE LA MITAD!": "MORE THAN HALF!",
   "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "The interns win if they fire more than half: {n} of {t}",
-  "Las compras con euros solo están en la app de Android": "Purchases with euros are only in the Android app"
+  "Las compras con euros solo están en la app de Android": "Purchases with euros are only in the Android app",
+  // la sala viva con amigos (sala-viva.js)
+  "SALA": "ROOM",
+  "ESPERANDO": "WAITING",
+  "El resto, bots: {n}": "The rest, bots: {n}",
+  "Lo empieza {n}": "{n} starts it",
+  "Salir de la sala": "Leave the room"
 });

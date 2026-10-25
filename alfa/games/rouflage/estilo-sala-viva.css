@@ -1,0 +1,68 @@
+/* Fans of Rouflage · LA SALA VIVA (sala-viva.js): la sala con amigos dentro del escenario del anfitrión, a pantalla completa. La pantalla de la sala
+   (#p-busca) se vuelve transparente y deja pasar los dedos al juego; encima solo quedan la barra de arriba (salir, código, cuántos, invitar),
+   las etiquetas de lo que se juega y la barra de abajo (OPCIONES, chat, EMPEZAR). La caja de siempre de la sala sale como un cajón con OPCIONES. */
+#p-busca.viva { background: transparent; pointer-events: none; padding: 0; display: block; overflow: hidden; }
+#p-busca.viva > .caja { display: none; }
+.sv-ui { display: none; }
+#p-busca.viva .sv-ui { display: block; }
+.sv-ui button, .sv-ui .sv-chip { pointer-events: auto; }
+
+/* arriba */
+.sv-arriba { position: absolute; top: calc(var(--sup) + 10px); left: calc(var(--izq) + 10px); right: calc(var(--der) + 10px); display: flex; gap: 8px; align-items: center; z-index: 2; }
+.sv-hueco { flex: 1; }
+.sv-atras { width: 46px; height: 46px; flex: none; border-radius: 13px; border: 3px solid var(--outline); background: linear-gradient(#ffa34d, #f0731a); color: #fff6ea; box-shadow: 0 3px 0 var(--outline); display: grid; place-items: center; cursor: pointer; padding: 0; }
+.sv-atras svg { width: 24px; height: 24px; filter: drop-shadow(0 2px 0 var(--outline)); }
+.sv-atras:active, .sv-chip:active, .sv-b:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.sv-chip { display: flex; align-items: center; gap: 6px; height: 40px; box-sizing: border-box; padding: 3px 11px 0; border-radius: 14px; border: 3px solid var(--outline); background: rgba(29, 37, 54, 0.92);
+  box-shadow: 0 3px 0 var(--outline); font: 800 13px var(--font-ui); color: var(--ink); white-space: nowrap; }
+.sv-cod b { font: 400 21px var(--font-display); color: #ffcb3d; letter-spacing: 0.12em; }
+.sv-invitar { font: 400 15px var(--font-display); letter-spacing: 0.03em; background: linear-gradient(#5a9cff, #2f6fd6); text-shadow: 0 2px 0 var(--outline); cursor: pointer; }
+.sv-etq { position: absolute; top: calc(var(--sup) + 64px); left: calc(var(--izq) + 10px); right: calc(var(--der) + 10px); display: flex; gap: 6px; flex-wrap: wrap; }
+.sv-e { font: 800 11px var(--font-ui); padding: 2px 8px 1px; border-radius: 9px; border: 2.5px solid var(--outline); background: rgba(29, 37, 54, 0.88); color: var(--ink); }
+.sv-e.tal { background: linear-gradient(90deg, #4f95f5 50%, #3fc47c 50%); text-shadow: 0 1px 0 var(--outline); }
+
+/* abajo */
+.sv-abajo { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px calc(var(--der) + 12px) calc(var(--inf) + 14px) calc(var(--izq) + 12px); display: flex; gap: 8px; align-items: stretch;
+  background: linear-gradient(transparent, rgba(12, 15, 24, 0.85) 45%); }
+.sv-b { border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 4px 0 var(--outline); display: grid; place-items: center; cursor: pointer; color: var(--ink); padding: 4px 6px 2px; position: relative; }
+.sv-opc { width: 92px; background: linear-gradient(#5a6787, #36415c); gap: 1px; }
+.sv-opc svg { width: 24px; height: 24px; }
+.sv-opc span { font: 400 13px var(--font-display); letter-spacing: 0.03em; text-shadow: 0 2px 0 var(--outline); }
+.sv-chat { width: 60px; background: linear-gradient(#ffe07a, #ffbd2e); }
+.sv-chat svg, .sv-chat canvas { width: 30px; height: 30px; }
+.sv-chat-n { position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--danger, #ff4b5c); border: 2.5px solid var(--outline); font: 800 11px/18px var(--font-ui); font-style: normal; color: #fff; }
+.sv-emp { flex: 1; min-height: 62px; background: linear-gradient(#ffa34d, #f0731a); }
+.sv-emp b { font: 400 24px var(--font-display); letter-spacing: 0.03em; padding-top: 3px; }
+.sv-emp small { font: 800 11px var(--font-ui); color: #fff3d8; margin-top: -3px; text-shadow: 0 1px 0 var(--outline); }
+.sv-emp small:empty { display: none; }
+.sv-emp.espera { background: linear-gradient(#5a6787, #36415c); cursor: default; }
+.sv-emp.espera b { font-size: 18px; }
+
+/* los botones del colado (congelar, pintar, la habilidad y la granada): encima de la barra de abajo */
+body.sala-viva #acciones { bottom: calc(var(--inf) + 96px); }
+body.sala-viva #arriba { display: none; }
+body.sala-viva .hab-usos:empty { display: none; }
+body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, debajo de las etiquetas */
+#p-busca.viva.taller .sv-ui { display: none; }      /* pintándote, el taller ocupa la pantalla */
+
+/* el cajón de OPCIONES: la caja de la sala desde abajo */
+.sv-cerrar { display: none; }
+#p-busca.viva.cajon > .caja { display: block; position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; width: min(100%, 600px); max-height: 78vh; overflow-y: auto; box-sizing: border-box;
+  border-radius: 22px 22px 0 0; pointer-events: auto; padding-bottom: calc(var(--inf) + 16px); animation: svSube 0.22s ease-out; z-index: 3; }
+#p-busca.viva.cajon > .caja .sv-cerrar { display: grid; place-items: center; position: sticky; top: 0; margin: -4px -4px 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 3px solid var(--outline);
+  background: var(--tray); color: var(--ink); cursor: pointer; z-index: 2; padding: 0; }
+.sv-cerrar svg { width: 20px; height: 20px; }
+#p-busca.viva.cajon > .caja #busca-escenario, #p-busca.viva.cajon > .caja .fila-botones, #p-busca.viva.cajon > .caja > .nota-sala:last-of-type { display: none; }
+#p-busca.viva.cajon::before { content: ''; position: absolute; inset: 0; background: rgba(8, 6, 16, 0.45); pointer-events: auto; }
+@keyframes svSube { from { transform: translateY(40px); opacity: 0.4; } }
+
+/* el chat: recogido no se ve (su botón está abajo); abierto, como siempre */
+#p-busca.viva .chat-sala { display: none; }
+#p-busca.viva.charla .chat-sala { display: block; pointer-events: auto; }
+#p-busca.viva.charla .sv-abajo { visibility: hidden; }
+#p-busca.viva.charla .chat-sala .cs-cab { pointer-events: auto; }
+
+@media (max-width: 380px) {
+  .sv-chip { padding: 3px 8px 0; font-size: 12px; } .sv-cod b { font-size: 18px; } .sv-invitar { font-size: 13px; }
+  .sv-opc { width: 80px; } .sv-emp b { font-size: 21px; }
+}

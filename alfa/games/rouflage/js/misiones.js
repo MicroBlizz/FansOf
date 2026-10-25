@@ -95,6 +95,7 @@ function logroSuma(c, n) {
   for (const x of LOGROS) if (x.c === c && antes < x.n && ahora >= x.n) avisa(x.secreto ? tr('¡Logro secreto descubierto: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }) : tr('¡Logro conseguido: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }), 'bueno');
 }
 function misionEvento(tipo, a, b) {
+  if (J.fase === 'sala') return;      // en la sala viva con amigos (sala-viva.js) no cuenta nada: ahí la habilidad y la granada no se gastan
   try {
     const yo = J.yo;
     if (tipo === 'despide') {      // a: el despedido, b: quien despide

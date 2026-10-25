@@ -173,7 +173,7 @@ function starPath(c, x, y, r1, r2, n = 5) { c.moveTo(x, y - r1); for (let i = 1;
 function preparaMuebles() {
   for (const m of MUEBLES) {
     const T = TIPOS_MUEBLE[m.t]; if (!T) throw new Error('Mueble desconocido: ' + m.t);
-    m.T = T; m.clave = m.t + ':' + (m.v || 0);
+    m.T = T; m.clave = m.t + ':' + (m.v || 0) + (m.f ? ':f' : '');
     m.pisa = { x0: m.x - T.w / 2, y0: m.y - T.d, x1: m.x + T.w / 2, y1: m.y };            // donde no se puede andar
     m.ox = T.w / 2 + 14; m.oy = (T.tope || T.d + T.h) + 6;                                  // del origen a la esquina de su dibujo
     m.dib = { x0: m.x - m.ox, y0: m.y - m.oy, w: m.ox * 2, h: m.oy + 8 };                   // la caja de su dibujo
@@ -181,4 +181,4 @@ function preparaMuebles() {
 }
 // la sombra que un mueble deja en el suelo (se pinta con el suelo, no con el mueble)
 function sombraMueble(c, m) { c.fillStyle = 'rgba(24,12,40,0.24)'; c.beginPath(); rrPathRF(c, m.pisa.x0 - 3, m.pisa.y0 + 4, m.T.w + 6, m.T.d + 1, 7); c.fill(); }
-function pintaMueble(c, m) { c.save(); c.translate(m.x, m.y); m.T.pinta(c, m); c.restore(); }
+function pintaMueble(c, m) { c.save(); c.translate(m.x, m.y); if (m.f) c.scale(-1, 1); m.T.pinta(c, m); c.restore(); }

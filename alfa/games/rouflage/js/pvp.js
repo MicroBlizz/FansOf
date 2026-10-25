@@ -96,6 +96,7 @@ function rfpEmpieza(info, red, vuelta) {
 // la partida se acaba (o se sale de ella): se cierra el canal; el servidor ya tiene el resultado
 function rfpTermina() {
   if (RFP.canal) { RFP.canal.cerrar(); RFP.canal = null; }
+  if (RFP.lobby) salaVivaApaga();      // la sala viva (sala-viva.js)
   RFP.activo = false; RFP.soyHost = false; RFP.mandoListo = false;
 }
 // salir del final de una partida: el resultado ya está apuntado

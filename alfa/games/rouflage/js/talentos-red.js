@@ -7,7 +7,7 @@ function talMandaHab() { if (J.pvp) rfpManda({ t: 'hb', b: talElegida('becario')
 function talRecibe(sl, m) {
   if (m.t === 'hb') {
     sl.habs = { b: habDef(m.b) ? m.b : 'contador', c: habDef(m.c) ? m.c : 'granada' };
-    const e = sl.ente; if (e && J.fase === 'prep' && talOn()) habPon(e, sl.habs[e.clase === 'cazador' ? 'b' : 'c']);
+    const e = sl.ente; if (e && (J.fase === 'prep' || J.fase === 'sala') && talOn()) habPon(e, sl.habs[e.clase === 'cazador' ? 'b' : 'c']);
     return;
   }
   if (!talOn()) return;      // en una sala CLÁSICO (sin talentos) no vale ninguna

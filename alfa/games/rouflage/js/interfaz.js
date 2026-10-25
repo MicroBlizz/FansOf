@@ -128,7 +128,7 @@ function colorCamo(n) { return n < 50 ? '#ff4b5c' : n < 70 ? '#ffcb3d' : '#7ee04
 // lo que le espera a un camaleón con ese camuflaje, en una frase
 function veredicto(n) { return n < 50 ? tr('Se te ve mucho: mejor píntate un poco más') : n < 65 ? tr('Regular: de lejos cuelas, de cerca no') : n < 80 ? tr('Bien pintado. De cerca aún te la juegas') : tr('¡Casi no se te ve!'); }
 function refrescaHud(todo) {
-  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado;
+  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden);      // la sala viva, solo con su pantalla delante
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
   if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
@@ -143,8 +143,8 @@ function refrescaHud(todo) {
   refrescaPoder(); refrescaChivato(); refrescaGesto(); refrescaHab();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
-  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
-    'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
+  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza || J.fase === 'sala') && !TALLER.abierto && !yo.fuera,
+    'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && (caza || J.fase === 'sala') && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
   if (cam) {
     const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;

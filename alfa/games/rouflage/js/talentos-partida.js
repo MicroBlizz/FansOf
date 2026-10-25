@@ -31,7 +31,7 @@ const habActiva = e => e.uv > 0 || e.cafe > 0 || e.gato > 0;
 // ¿se puede usar ahora? Devuelve '' o el motivo
 function habPuede(e) {
   const h = habDef(e && e.hab); if (!h || h.pasiva || h.titulo) return 'no';
-  if (J.fase !== 'caza' || e.fuera || (e.clase === 'cazador' && e.balas <= 0)) return tr('Solo durante la caza');
+  if ((J.fase !== 'caza' && J.fase !== 'sala') || e.fuera || (e.clase === 'cazador' && e.balas <= 0)) return tr('Solo durante la caza');
   if (h.id === 'granada') return e.granada > 0 ? '' : tr('Ya la has usado');
   if (e.habUsos <= 0) return tr('Ya la has usado');
   if (e.habEspera > 0) return tr('Espera {n} s', { n: Math.ceil(e.habEspera) });
@@ -265,7 +265,7 @@ function talBotonCrea(id, dentro) {
 // lo pinta refrescaHud: de colado va en la fila de botones, en el hueco de la granada; de becario, abajo a la derecha. Con su carga y sus usos
 function refrescaHab(todo) {
   const yo = J.yo, b1 = E('b-hab'), b2 = E('b-hab-b'); if (!b1) return;
-  const h = yo && habDef(yo.hab), ver = !!h && !h.pasiva && h.id !== 'granada' && J.fase === 'caza' && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
+  const h = yo && habDef(yo.hab), ver = !!h && !h.pasiva && h.id !== 'granada' && (J.fase === 'caza' || J.fase === 'sala') && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
   const b = yo && yo.clase === 'cazador' ? b2 : b1, otro = b === b1 ? b2 : b1;
   if (!otro.hidden) otro.hidden = true;
   if (b.hidden === ver) b.hidden = !ver;
@@ -280,7 +280,7 @@ function refrescaHab(todo) {
   const carga = activo ? 0 : yo.habEspera > 0 && usos > 0 ? yo.habEspera / (h.espera || 1) : 0;
   b.style.setProperty('--carga', (carga * 360).toFixed(0) + 'deg');
   b.classList.toggle('gastada', usos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
-  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : '×' + usos; if (u.textContent !== txt) u.textContent = txt;
+  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + usos;      // en la sala viva no se gasta: sin contador if (u.textContent !== txt) u.textContent = txt;
 }
 const TAL_CORTO = { contador: 'CONTAR', dron: 'DRON', silbato: 'SILBATO', uv: 'UV', cafe: 'CAFÉ', senuelo: 'SEÑUELO', gato: 'GATO', cambiazo: 'CAMBIAZO' };
 function preparaHab() { talBotonCrea('b-hab', E('acciones')); E('acciones').insertBefore(E('b-hab'), E('b-silbar')); talBotonCrea('b-hab-b', E('hud')); E('b-hab-b').classList.add('becario'); }

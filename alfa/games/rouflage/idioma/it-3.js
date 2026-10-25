@@ -228,5 +228,11 @@ IDIOMA.add({
   "Microblizz da la noche por buena: con la mitad ya le cuadra el informe.": "Microblizz dà la notte per buona: con la metà il rapporto già gli torna.",
   "¡MÁS DE LA MITAD!": "PIÙ DELLA METÀ!",
   "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "Gli stagisti vincono se licenziano più della metà: {n} di {t}",
-  "Las compras con euros solo están en la app de Android": "Gli acquisti in euro ci sono solo nell'app Android"
+  "Las compras con euros solo están en la app de Android": "Gli acquisti in euro ci sono solo nell'app Android",
+  // la sala viva con amigos (sala-viva.js)
+  "SALA": "STANZA",
+  "ESPERANDO": "IN ATTESA",
+  "El resto, bots: {n}": "Il resto, bot: {n}",
+  "Lo empieza {n}": "La avvia {n}",
+  "Salir de la sala": "Esci dalla stanza"
 });

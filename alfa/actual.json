@@ -1,8 +1,8 @@
 {
- "build": 534,
- "hash": "9156c3c",
- "fecha": "2026-10-25T22:52:56Z",
- "mensaje": "Rouflage: JUGAR CONTRA BOTS vuelve a ser el menú de opciones, sin pasear por Mi escenario",
+ "build": 535,
+ "hash": "b159d00",
+ "fecha": "2026-10-25T22:56:55Z",
+ "mensaje": "Rouflage 0.2.54: versión y nota para la release (poderes de fantasma que cambian y JUGAR CONTRA BOTS como antes)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.53",
+  "rouflage": "0.2.54",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

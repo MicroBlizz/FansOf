@@ -1,8 +1,8 @@
 {
- "build": 509,
- "hash": "4c51eb8",
- "fecha": "2026-10-25T17:29:36Z",
- "mensaje": "Rouflage: el pase premium ya no da Gotas; sus huecos dan 10 Acciones",
+ "build": 510,
+ "hash": "fa5511a",
+ "fecha": "2026-10-25T17:36:14Z",
+ "mensaje": "Play: los productos integrados se crean por script (Productos de Play, desde games/<juego>/play-productos.json); los 6 de Rouflage en 6 idiomas",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

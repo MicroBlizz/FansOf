@@ -234,5 +234,10 @@ IDIOMA.add({
   "ESPERANDO": "ESPERANDO",
   "El resto, bots: {n}": "O resto, bots: {n}",
   "Lo empieza {n}": "{n} começa",
-  "Salir de la sala": "Sair da sala"
+  "Salir de la sala": "Sair da sala",
+  "ESTE ESCENARIO": "ESTE CENÁRIO",
+  "SER CAZADOR": "SER CAÇADOR",
+  "SER CAMALEÓN": "SER CAMALEÃO",
+  "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Toque num penetra para demiti-lo. Aqui as cartas não se gastam.",
+  "Vuelves a ser colado: píntate y congélate": "Você volta a ser penetra: pinte-se e congele"
 });

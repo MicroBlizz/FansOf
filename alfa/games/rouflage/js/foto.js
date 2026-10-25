@@ -24,7 +24,8 @@ function fotoHaz(yo) {
     FOTO.camo = yo.camo || 0;
     // lo que hace falta para el reto compartido (reto.js): el sitio, la postura y la pintura de este momento
     let png = ''; try { png = yo.piel.toDataURL('image/png'); png = png.slice(png.indexOf(',') + 1); } catch (_) { png = ''; }
-    FOTO.reto = png ? { mapa: MAPA.id, x: Math.round(yo.x), y: Math.round(yo.y), postura: yo.postura || 'firmes', animal: yo.tipo, camo: Math.round(yo.camo || 0), piel: png } : null;
+    FOTO.reto = png && !MAPA_ACT.esc ? {      // (en un escenario de Mi escenario no hay reto: los demás no tienen ese mapa)
+       mapa: MAPA.id, x: Math.round(yo.x), y: Math.round(yo.y), postura: yo.postura || 'firmes', animal: yo.tipo, camo: Math.round(yo.camo || 0), piel: png } : null;
     if (typeof RETO !== 'undefined') RETO.creando = null;
     fotoOlvida();
   } catch (err) { console.warn('[foto]', err); FOTO.cv = null; }

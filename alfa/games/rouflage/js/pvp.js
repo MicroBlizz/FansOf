@@ -72,13 +72,15 @@ function rfpEmpieza(info, red, vuelta) {
   if (!mio) { RFP.error = RFRED.errorTexto(new Error('sala_no_valida')); pvpMuestra('p-pvp'); return; }
   Object.assign(RFP, { activo: true, red, info, sala: info.sala, slots, yo: mio.s, host: 0, soyHost: false, mandoListo: false, rx: {}, ido: {}, listos: new Set(), n: 0, tEnvio: 0, tIA: 0, cerrado: false, resultado: null, error: '', redEstado: '', ultimoFin: null, vuelta: false, sinPiel: false, tHv: 0, nHv: 0, modoMandado: false });
   rfpGuardaSala(info.sala);
+  if (info.privada && info.modo && info.modo.mapa === MAPA_ESC.id) mapaDeEscenario(SALA_ESP.datos || SALA_ESP_VACIA);      // ESTE ESCENARIO: el del anfitrión, el que se veía en la sala (mapa-escenario.js)
   cargaMapa(mapaDeSala(info.modo) || mapaDeSemilla(info.semilla));      // el que eligió el anfitrión o, si no, el de la semilla: el mismo en todos los navegadores
   modoPon(info.privada ? info.modo : modoPublico(info.modo, info.semilla));      // el modo de la sala (modos.js): el del anfitrión con amigos; en BUSCAR PARTIDA, todo al azar
   eventosPrepara(info.semilla);                // y los eventos del mapa también
   J.pvp = true; J.modo = mio.clase; J.t = 0;
   let nc = 0, nh = 0;
   for (const sl of slots) {
-    const [x, y] = rfpSalida(sl, sl.clase === 'cazador' ? nh++ : nc++);
+    let [x, y] = rfpSalida(sl, sl.clase === 'cazador' ? nh++ : nc++);
+    if (MAPA_ACT.esc) [x, y] = sitioLibreCerca(x, y);      // en un escenario de Mi escenario puede haber un mueble justo ahí
     const e = nuevoEnte(sl.clase, sl.tipo, sl.nombre, x, y);
     e.slot = sl.s; e.humano = sl.humano; sl.ente = e;
     if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; vistePartida(e, ropaPartida()); } else { e.remoto = true; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; } }      // lo tuyo del armario (armario.js); lo de los demás, del servidor si lo da

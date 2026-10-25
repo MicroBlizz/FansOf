@@ -234,5 +234,10 @@ IDIOMA.add({
   "ESPERANDO": "WAITING",
   "El resto, bots: {n}": "The rest, bots: {n}",
   "Lo empieza {n}": "{n} starts it",
-  "Salir de la sala": "Leave the room"
+  "Salir de la sala": "Leave the room",
+  "ESTE ESCENARIO": "THIS STAGE",
+  "SER CAZADOR": "BE HUNTER",
+  "SER CAMALEÓN": "BE CHAMELEON",
+  "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Tap an intruder to fire them. Slips are not used up here.",
+  "Vuelves a ser colado: píntate y congélate": "You are an intruder again: paint yourself and freeze"
 });

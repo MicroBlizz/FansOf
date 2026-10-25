@@ -234,5 +234,10 @@ IDIOMA.add({
   "ESPERANDO": "EN ATTENTE",
   "El resto, bots: {n}": "Le reste, des bots : {n}",
   "Lo empieza {n}": "{n} la lance",
-  "Salir de la sala": "Quitter la salle"
+  "Salir de la sala": "Quitter la salle",
+  "ESTE ESCENARIO": "CE DÉCOR",
+  "SER CAZADOR": "ÊTRE CHASSEUR",
+  "SER CAMALEÓN": "ÊTRE CAMÉLÉON",
+  "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Touche un intrus pour le licencier. Ici, les lettres ne s'épuisent pas.",
+  "Vuelves a ser colado: píntate y congélate": "Tu redeviens intrus : peins-toi et fige-toi"
 });

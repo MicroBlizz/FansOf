@@ -25,12 +25,14 @@ const mapaDeSala = d => (d && d.mapa && MAPAS[d.mapa] ? d.mapa : '');      // ''
 // el selector dentro de #busca-modo: una tira de miniaturas, la marcada resaltada; solo el anfitrión puede tocar
 function pvpPintaMapas(d, soyAnf) {
   const caja = E('busca-mapas'); if (!caja) return;
-  if (caja.dataset.anf !== String(soyAnf) || !caja.children.length) {
-    caja.dataset.anf = String(soyAnf); miniaturasMapas();
+  const conEsc = !!(RFP.info && RFP.info.privada && MAPAS[MAPA_ESC.id]);      // con amigos, también ESTE ESCENARIO: el del anfitrión (mapa-escenario.js)
+  if (caja.dataset.anf !== String(soyAnf) || caja.dataset.esc !== String(conEsc) || !caja.children.length) {
+    caja.dataset.anf = String(soyAnf); caja.dataset.esc = String(conEsc); miniaturasMapas();
     const celda = (id, nombre, img) => `<button type="button" class="mapa-mini" data-mapa="${id}" ${soyAnf ? '' : 'disabled'}>${img ? `<img src="${img}" alt="">` : '<i class="azar ol">?</i>'}<span>${esc(tr(nombre))}</span></button>`;
-    caja.innerHTML = `<small>${esc(tr('MAPA'))}</small><div class="mapas-mini">${celda('', 'AL AZAR', '')}${ORDEN_MAPAS.map(id => celda(id, MAPAS[id].nombre, MINIS_MAPA[id])).join('')}</div>`;
+    caja.innerHTML = `<small>${esc(tr('MAPA'))}</small><div class="mapas-mini">${celda('', 'AL AZAR', '')}${conEsc ? celda(MAPA_ESC.id, 'ESTE ESCENARIO', MINIS_MAPA[MAPA_ESC.id] || '') : ''}${ORDEN_MAPAS.map(id => celda(id, MAPAS[id].nombre, MINIS_MAPA[id])).join('')}</div>`;
     if (soyAnf) for (const b of caja.querySelectorAll('.mapa-mini')) b.onclick = () => { play('select'); MODO_ELEGIDO.mapa = b.dataset.mapa; pvpMandaModo(); };
   }
+  const im = conEsc && caja.querySelector(`.mapa-mini[data-mapa="${MAPA_ESC.id}"] img`); if (im && MINIS_MAPA[MAPA_ESC.id] && im.getAttribute('src') !== MINIS_MAPA[MAPA_ESC.id]) im.src = MINIS_MAPA[MAPA_ESC.id];      // si el anfitrión cambia su escenario
   const sel = mapaDeSala(d);
   for (const b of caja.querySelectorAll('.mapa-mini')) { const si = b.dataset.mapa === sel; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
 }

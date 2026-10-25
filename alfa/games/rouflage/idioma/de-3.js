@@ -234,5 +234,10 @@ IDIOMA.add({
   "ESPERANDO": "WARTEN",
   "El resto, bots: {n}": "Der Rest Bots: {n}",
   "Lo empieza {n}": "{n} startet",
-  "Salir de la sala": "Raum verlassen"
+  "Salir de la sala": "Raum verlassen",
+  "ESTE ESCENARIO": "DIESE BÜHNE",
+  "SER CAZADOR": "JÄGER SEIN",
+  "SER CAMALEÓN": "CHAMÄLEON SEIN",
+  "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Tippe einen Eindringling an, um ihn zu feuern. Hier gehen die Karten nicht aus.",
+  "Vuelves a ser colado: píntate y congélate": "Du bist wieder Eindringling: bemal dich und erstarre"
 });

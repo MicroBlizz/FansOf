@@ -7,8 +7,8 @@
 // cuántos sois e INVITAR; abajo, OPCIONES (la caja de siempre de la sala, como un cajón), el chat y EMPEZAR. Lo llama pvpPintaBusca.
 'use strict';
 
-const SV = { activo: false, codigo: '', datosTxt: '', modoTxt: '', jugTxt: '', tGr: 0, ui: null, n: 0 };
-const SV_MSG = new Set(['e', 'p', 'gr', 'gs', 'rp', 'hb', 'tl', 'sz']);      // lo que se escucha en la sala (el resto es de la partida)
+const SV = { activo: false, codigo: '', datosTxt: '', modoTxt: '', jugTxt: '', tGr: 0, ui: null, n: 0, vuelve: 0 };
+const SV_MSG = new Set(['e', 'p', 'gr', 'gs', 'rp', 'hb', 'tl', 'sz', 'sc', 'st']);      // lo que se escucha en la sala (el resto es de la partida); sc y st son solo de aquí: cambio de papel y disparo
 const SV_ESPERA = 3;      // segundos, como mucho, entre usos de la habilidad
 const enSalaViva = () => J.fase === 'sala';
 
@@ -33,7 +33,7 @@ function salaVivaPaso(i, soyAnf) {
 // entrar: el escenario como mapa, mi colado, los de la sala y el canal
 function salaVivaEntra(i, datos) {
   limpiaPartida();
-  Object.assign(SV, { activo: true, codigo: i.codigo, jugTxt: '', modoTxt: '', tGr: 0, n: 0 });
+  Object.assign(SV, { activo: true, codigo: i.codigo, jugTxt: '', modoTxt: '', tGr: 0, n: 0, vuelve: 0 });
   salaVivaMapa(datos, true);
   J.pvp = true; J.fase = 'sala'; J.tFase = 0; J.modo = 'camaleon'; J.t = 0; J.reloj = 0;
   const red = RFRED.red;
@@ -53,6 +53,7 @@ function salaVivaEntra(i, datos) {
 function salaVivaMapa(datos, inicial) {
   SV.datosTxt = JSON.stringify(datos);
   cargaMapa(mapaDeEscenario(datos));
+  try { const f = MAPA.fondo, [cv, c] = lienzo(MINI_ANCHO, Math.round(MINI_ANCHO * f.height / f.width)); c.imageSmoothingQuality = 'high'; c.drawImage(f, 0, 0, cv.width, cv.height); MINIS_MAPA[MAPA_ESC.id] = cv.toDataURL('image/jpeg', 0.75); } catch (_) { /* sin miniatura */ }      // para el selector de mapas (pvp-mapas.js)
   if (inicial) return;
   for (const e of J.entes) { const [x, y] = sitioLibreCerca(e.x, e.y); e.x = x; e.y = y; }
 }
@@ -102,9 +103,11 @@ function salaVivaAvanza(dt) {
   if (RFP.tEnvio <= 0) {
     const quieto = yo.congelado || (!yo.moviendo && Math.abs(yo.vx) < 1 && Math.abs(yo.vy) < 1);
     RFP.tEnvio = quieto ? 1 / RFP_AJ.quietoHz : 1 / RFP_AJ.envioHz;
-    rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: 0, ci: 0, f: 0, iv: Math.ceil(yo.invis || 0) });
+    rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: Math.round(yo.dir * 100) / 100, ci: 0, f: 0, iv: Math.ceil(yo.invis || 0), k: yo.clase === 'cazador' ? 1 : 0 });      // k: soy becario (para quien acaba de llegar)
   }
   rfpPideRopa(dt);
+  if (yo.clase === 'cazador') yo.balas = REGLAS.balas;      // las cartas de despido tampoco se gastan
+  if (SV.vuelve > 0 && (SV.vuelve -= dt) <= 0) salaVivaVuelve();
   if (yo.hab) { if (yo.habUsos < 50) yo.habUsos = 99; if (yo.habEspera > SV_ESPERA) yo.habEspera = SV_ESPERA; }
   if ((!yo.hab || yo.hab === 'granada') && !(yo.granada > 0) && !(yo.invis > 0)) { SV.tGr += dt; if (SV.tGr > 1.5) { yo.granada = 1; SV.tGr = 0; } } else SV.tGr = 0;
   // el chat: si se ha recogido con su propia barra, el botón de abajo vuelve a mandar
@@ -138,7 +141,7 @@ function salaVivaUI() {
   const d = document.createElement('div'); d.className = 'sv-ui'; d.id = 'sv-ui';
   d.innerHTML = `<div class="sv-arriba"><button type="button" class="sv-atras" id="sv-atras">${SV_ICO.atras}</button><div class="sv-chip sv-cod"><span></span><b class="ol" id="sv-codigo"></b></div>`
     + `<span class="sv-hueco"></span><div class="sv-chip" id="sv-n"></div><button type="button" class="sv-chip sv-invitar" id="sv-invitar"></button></div>`
-    + `<div class="sv-etq" id="sv-etq"></div>`
+    + `<div class="sv-fila2"><div class="sv-etq" id="sv-etq"></div><button type="button" class="sv-papel" id="sv-papel"><i></i><b></b></button></div>`
     + `<div class="sv-abajo"><button type="button" class="sv-b sv-opc" id="sv-opciones">${SV_ICO.opciones}<span></span></button>`
     + `<button type="button" class="sv-b sv-chat" id="sv-chat"></button><button type="button" class="sv-b sv-emp" id="sv-empezar"><b class="ol"></b><small></small></button></div>`;
   E('p-busca').appendChild(d);
@@ -152,6 +155,7 @@ function salaVivaUI() {
   E('sv-opciones').onclick = () => cajon(!E('p-busca').classList.contains('cajon'));
   x.onclick = () => cajon(false);
   E('sv-chat').onclick = () => { play('select'); const p = E('p-busca'), abre = !p.classList.contains('charla'); p.classList.toggle('charla', abre); p.classList.remove('cajon'); if (typeof chatSalaPliega === 'function') chatSalaPliega(!abre); };
+  E('sv-papel').onclick = salaVivaCambia;
   E('sv-empezar').onclick = () => { const b = E('b-busca-empezar'); if (!b.hidden && !b.disabled) b.click(); };
   SV.ui = { chatN: d.querySelector('.sv-chat-n') };
   return SV.ui;
@@ -168,8 +172,12 @@ function salaVivaPintaUI(i, soyAnf) {
   const d = soyAnf ? MODO_ELEGIDO : (i.modo || {}), etq = [], m = MODOS[d.m] ? d.m : 'normal';
   etq.push(['', tr(MODOS[m].nombre)]);
   const mapa = typeof mapaDeSala === 'function' && mapaDeSala(d), def = mapa && MAPAS[mapa];
-  if (def) etq.push(['', tr(def.nombre)]);
+  if (def) etq.push(['', mapa === MAPA_ESC.id ? tr('ESTE ESCENARIO') : tr(def.nombre)]);
   etq.push([ajusteSala(d.a, 't') === 1 ? 'tal' : '', ajusteSala(d.a, 't') === 1 ? tr('CON TALENTOS') : tr('CLÁSICO')]);
+  // el botón de cambiar de papel: dice a cuál pasas
+  const caz = !!(J.yo && J.yo.clase === 'cazador'), bp = E('sv-papel');
+  if (bp.dataset.caz !== String(caz)) { bp.dataset.caz = String(caz); bp.classList.toggle('caz', !caz); ponIcono(bp.querySelector('i'), caz ? 'pincel' : 'diana'); }
+  bp.querySelector('b').textContent = caz ? tr('SER CAMALEÓN') : tr('SER CAZADOR');
   const html = etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
   const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
   // EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
@@ -184,7 +192,76 @@ function salaVivaNombres(c) {
   if (!enSalaViva() || !RFP.info || TALLER.abierto) return;
   const anf = RFP.info.anfitrion;
   for (const sl of RFP.slots) {
-    const e = sl && sl.humano && sl.ente; if (!e || (e !== J.yo && (e.invis > 0 || e.congelado))) continue;
+    const e = sl && sl.humano && sl.ente; if (!e || e.clase === 'cazador' || (e !== J.yo && (e.invis > 0 || e.congelado))) continue;      // (el becario ya lleva su nombre)
     rotulo(c, e.nombre || '', e.x, e.y - 74, 12, sl.s === anf ? '#ffcb3d' : e === J.yo ? '#9fd0ff' : '#fff6ea', OL, LETRA_UI);
   }
+}
+
+/* ---------- ser becario en la sala: un botón para cambiar de papel; los disparos despiden y el colado vuelve a salir enseguida ---------- */
+// cambia el personaje de una plaza (el mío o el de otro) por uno del otro papel, en el mismo sitio y con su ropa
+function salaVivaPapel(e, clase) {
+  const sl = e && RFP.slots[e.slot]; if (!sl || e.clase === clase) return e;
+  for (const L of [J.entes, J.camaleones, J.cazadores]) { const k = L.indexOf(e); if (k >= 0) L.splice(k, 1); }
+  const n = nuevoEnte(clase, clase === 'cazador' ? 'becario' : sl.tipo, e.nombre, e.x, e.y);
+  Object.assign(n, { slot: e.slot, humano: true, jugador: e.jugador, remoto: e.remoto, red: e.red, mira: e.mira });
+  if (clase === 'cazador') { n.balas = REGLAS.balas; n.dir = e.mira < 0 ? Math.PI : 0; }
+  sl.ente = n; sl.clase = clase;
+  if (n.jugador) { J.yo = n; J.cuenta = n.pts; J.modo = clase; if (TALLER.abierto) cierraTaller(); }
+  vistePartida(n, n.jugador ? ropaPartida() : (sl.ropaIds || sl.ropaSrv || {}));
+  const papel = papelDe(clase);
+  if (talOn()) habPon(n, n.jugador ? talElegida(papel) : ((sl.habs && sl.habs[clase === 'cazador' ? 'b' : 'c']) || habsDe(papel)[0].id), n.jugador ? talNivel(papel) : 1);
+  if (n.jugador) { salaVivaInfinito(); refrescaHud(true); }
+  return n;
+}
+function salaVivaCambia() {
+  const yo = J.yo; if (!yo || !enSalaViva()) return;
+  play('select');
+  const n = salaVivaPapel(yo, yo.clase === 'cazador' ? 'camaleon' : 'cazador');
+  rfpManda({ t: 'sc', c: n.clase });
+  RFP.tEnvio = 0;
+  pista(n.clase === 'cazador' ? tr('Toca a un colado para despedirlo. Aquí no se gastan las cartas.') : tr('Vuelves a ser colado: píntate y congélate'), 3);
+}
+// lo de la sala que llega de los demás (antes que lo de siempre, pvp-sync.js). Devuelve true si ya está hecho
+function salaVivaRecibe(sl, m) {
+  if (m.t === 'rp' && m.r) sl.ropaIds = m.r;      // (para vestirle igual si cambia de papel)
+  if (m.t === 'e' && m.k !== undefined && sl.ente && (sl.ente.clase === 'cazador') !== !!m.k) salaVivaPapel(sl.ente, m.k ? 'cazador' : 'camaleon');
+  if (m.t === 'sc') { if (sl.ente && (m.c === 'cazador' || m.c === 'camaleon')) salaVivaPapel(sl.ente, m.c); return true; }
+  if (m.t === 'st') {
+    const h = sl.ente; if (!h || h.clase !== 'cazador') return true;
+    const x = +m.x || 0, y = +m.y || 0; h.dir = Math.atan2(y - h.y + 6, x - h.x); h.mira = Math.cos(h.dir) >= 0 ? 1 : -1; h.tApunta = 0.7;
+    fxDisparo(h, x, y);
+    const v = m.k >= 0 && RFP.slots[m.k] && RFP.slots[m.k].ente;
+    if (v && v.clase === 'camaleon') salaVivaDespedido(v, h); else fxMancha(x, y);
+    return true;
+  }
+  return false;
+}
+// el disparo del becario en la sala: lo decide quien dispara (aquí no hay anfitrión) y se lo cuenta a todos
+function salaVivaDispara(x, y, margen) {
+  const yo = J.yo; if (!yo || yo.clase !== 'cazador' || TALLER.abierto) return;
+  if (yo.enfria > 0) { play('deny'); return; }
+  const ox = yo.x, oy = yo.y - 6;
+  if (lejos(ox, oy, x, y) > REGLAS.alcance) { pista(tr('Demasiado lejos: acércate más'), 1.6); play('deny'); return; }
+  let sy = y; while (celdaEn(x, sy) === CARA) sy += CEL;
+  if (celdaEn(x, sy) !== SUELO || !seVen(ox, oy, x, Math.min(sy, Math.max(y, Math.floor(sy / CEL) * CEL + 3)))) { pista(tr('Ahí no llegas: hay un muro en medio'), 1.6); play('deny'); return; }
+  yo.dir = Math.atan2(y - oy, x - ox); yo.mira = Math.cos(yo.dir) >= 0 ? 1 : -1; yo.tApunta = 0.7; yo.enfria = REGLAS.enfria * 0.7;
+  fxDisparo(yo, x, y);
+  const k = J.camaleones.find(c => !c.fuera && !invisible(c) && dentroDeAlubia(c, x, y, margen));
+  rfpManda({ t: 'st', x: Math.round(x), y: Math.round(y), k: k ? k.slot : -1 });
+  if (k) salaVivaDespedido(k, yo); else { fxMancha(x, y); play('clank'); }
+}
+// el sello de despedido (como en la partida), pero nadie queda fuera: el despedido vuelve a salir enseguida en blanco
+function salaVivaDespedido(k, por) {
+  fxSello(k.x, k.y - 26, por && por.ropa && por.ropa.sello); fxSalpica(k.x, k.y - 26, '#ff4b5c', [14, 10, 6][graficosAdornos()]);
+  suenaEn('sello', k.x, k.y, k.jugador || (por && por.jugador) ? 1.3 : 1);
+  if (por && por.jugador) avisa(tr('Has despedido a {b}').replace('{b}', k.nombre), 'bueno');
+  else if (k.jugador) { avisa(tr('{a} te ha despedido').replace('{a}', por ? por.nombre : ''), 'malo'); CAM.tiembla = 0.35; }
+  if (k.jugador && !SV.vuelve) { if (TALLER.abierto) cierraTaller(); if (k.congelado) descongela(k); k.vx = k.vy = 0; SV.vuelve = 1.2; }
+}
+// el despedido sale otra vez, en blanco y en otro sitio del corro
+function salaVivaVuelve() {
+  const yo = J.yo; if (!yo || yo.clase !== 'camaleon') return;
+  [yo.piel, yo.pctx] = nuevaPiel(BLANCO_PIEL, yo.postura || 'firmes'); yo.pintado = false; yo.camo = 0; if (yo.pasos) yo.pasos.length = 0;
+  const p = SALIDA_CAMALEONES[Math.floor(Math.random() * SALIDA_CAMALEONES.length)], [x, y] = sitioLibreCerca(p[0] + rand(-20, 20), p[1] + rand(-20, 20));
+  yo.x = x; yo.y = y; vistePartida(yo, ropaPartida()); fxAro(x, y - 20, '#7ee04a'); play('select'); RFP.tEnvio = 0;
 }

@@ -72,7 +72,7 @@ function rfpEnvia(dt) {
 function rfpRecibe(m) {
   if (!RFP.activo || !m || typeof m.de !== 'number') return;
   const sl = RFP.slots[m.de]; if (!sl || !sl.humano || m.de === RFP.yo) return;
-  if (RFP.lobby && !SV_MSG.has(m.t)) return;      // en la sala viva solo vale lo de los colados (sala-viva.js)
+  if (RFP.lobby && (!SV_MSG.has(m.t) || salaVivaRecibe(sl, m))) return;      // en la sala viva solo vale lo de los personajes, y algo es solo de allí (sala-viva.js)
   RFP.rx[m.de] = m.t === 'hv' ? RELOJ - 99 : RELOJ;      // «ponme al día»: perdió la partida, no manda aunque fuera el anfitrión (otro le contesta)
   if (RFP.ido[m.de]) return;
   if (sl.ausente && m.t !== 'hv') rfpVuelve(sl);      // si hablaba, no se había ido

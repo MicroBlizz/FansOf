@@ -1,8 +1,8 @@
 {
- "build": 511,
- "hash": "673cd7e",
- "fecha": "2026-10-25T18:00:06Z",
- "mensaje": "Rouflage: la sala con amigos se juega dentro del escenario del anfitrión (opción A)",
+ "build": 512,
+ "hash": "8abcb0c",
+ "fecha": "2026-10-25T18:25:36Z",
+ "mensaje": "Rouflage: ser cazador en la sala con amigos y jugar la partida en ESTE ESCENARIO",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

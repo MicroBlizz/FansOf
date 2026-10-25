@@ -71,6 +71,7 @@ const NUCLEO = (() => {
     'js/sistema/economia.js',      // el oro, las gemas y las entradas pasan siempre por ECO
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
+    'js/sistema/pagos.js',         // compras con dinero real dentro de la app de Android (Google Play Billing); en la web no hace nada
     'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)

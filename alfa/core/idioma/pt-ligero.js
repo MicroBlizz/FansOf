@@ -218,4 +218,6 @@ IDIOMA.add({
   "cuesta %1": "custa %1",
   "de los %1": "dos %1",
   "Español": "Español",
+  "Pago seguro con Google Play. Lo comprado queda en tu cuenta.": "Pagamento seguro com o Google Play. O que comprar fica na sua conta.",
+  "Abriendo Google Play…": "Abrindo o Google Play…",
 });

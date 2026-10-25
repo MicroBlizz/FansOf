@@ -36,7 +36,13 @@ function buildShop() {
   const list = $('#shop-list'); list.innerHTML = h;
   list.querySelectorAll('[data-buy]').forEach(b => { b.onclick = () => {
     const p = L.find(x => x.id === b.dataset.buy); play('select');
-    if (dos) { MONEDAS.compraReal('¿COMPRAR?', `${p.name}<span class="big">${GEM_SVG} ${fmt(p.amt)}</span>por <b>${eur(p.eur)}</b>`, () => { ECO.ganar('compra', { gems: p.amt }); saveGame(); play('win'); updateWallets(); toast(`+${fmt(p.amt)} gemas · Microblizz te da las gracias`); }); return; }
+    if (dos) {   // con la app de Android cobra Google y el servidor entrega (r.real); en desarrollo es de prueba y se da aquí
+      MONEDAS.compraReal('¿COMPRAR?', `${p.name}<span class="big">${GEM_SVG} ${fmt(p.amt)}</span>por <b>${eur(p.eur)}</b>`, r => {
+        if (!(r && r.real)) { ECO.ganar('compra', { gems: p.amt }); saveGame(); }
+        play('win'); updateWallets(); toast(`+${fmt(r && r.real ? r.gemas || p.amt : p.amt)} gemas · Microblizz te da las gracias`);
+      }, `${AJUSTES.id}_gemas_${p.amt}`);
+      return;
+    }
     confirmBox('¿COMPRAR?', `${p.name}<span class="big">${gem ? GEM_SVG : COIN_SVG} ${fmt(p.amt)}</span>por <b>${eur(p.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', () => {
       ECO.ganar('compra', gem ? { gems: p.amt } : { gold: p.amt });
       saveGame(); play('win'); updateWallets(); toast(`+${fmt(p.amt)} ${gem ? 'gemas' : 'de oro'} · Microblizz te da las gracias`);

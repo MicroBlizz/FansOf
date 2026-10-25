@@ -31,15 +31,20 @@ $('#btn-speed').addEventListener('click', () => { if (G.tutMatch || PVP.on) retu
 // el servidor hace lo mismo) y un objeto épico fijo, sin azar.
 const starterPool = () => Object.keys(ITEMS).filter(k => ITEMS[k].rar === 'epic' && !ITEMS[k].pass && enCatalogo(ITEMS, k));
 function starterPack() { const P = SHOP.starter; if (!MONEDAS.activo()) return P; const c = MONEDAS.conf(); return { gems: P.gems + Math.floor(P.gold / c.cambio), gold: 0, eur: P.eur }; }
-function buyStarter() {
+function buyStarter(r) {
   if (SAVE.starter) return;
   const P = starterPack(), pool = starterPool();
-  SAVE.starter = true; ECO.ganar('bienvenida', { gold: P.gold, gems: P.gems });
-  // con las dos monedas nada de azar en un producto de pago: siempre el mismo objeto (el primero de los épicos) y la misma calidad (Excelente); si no, como antes
-  const it = MONEDAS.activo() ? addCopy('eq', pool[0], Array.from({ length: Math.max(1, ITEMS[pool[0]].st.length) }, () => PASS_Q)) : newCopy('eq', pick(pool), 3);
-  const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
+  SAVE.starter = true;
+  let it;
+  if (r && r.real) it = r.objeto && SAVE.inv.find(x => x.u === r.objeto.u);   // la app de Android: Google cobró y el servidor ya dio las gemas y el objeto (servidor/90, rumble_bienvenida)
+  else {
+    ECO.ganar('bienvenida', { gold: P.gold, gems: P.gems });
+    // con las dos monedas nada de azar en un producto de pago: siempre el mismo objeto (el primero de los épicos) y la misma calidad (Excelente); si no, como antes
+    it = MONEDAS.activo() ? addCopy('eq', pool[0], Array.from({ length: Math.max(1, ITEMS[pool[0]].st.length) }, () => PASS_Q)) : newCopy('eq', pick(pool), 3);
+    const clv = ECO.ganar('objeto', {}, { tipo: 'objeto', regalo: 'starter', id: it.id, q: it.q }); if (clv) it.pend = clv;
+  }
   saveGame(); play('win'); updateWallets(); buildShop(); toast('¡Pack de bienvenida! Microblizz te da las gracias', true);
-  setTimeout(() => openItem(it.u), 450);
+  if (it) setTimeout(() => openItem(it.u), 450);
 }
 // ---- partida guiada. Pasos: 0 = ganar una partida · 1 = ponerle una habilidad a una carta · 2 = girar el gashapón
 // v0.9.91: 3 = girar la máquina de cartas · 4 = meter la carta nueva en el mazo · 5 = misiones · 6 = horas extra · 7 = opciones
@@ -198,7 +203,7 @@ hook('tienda', () => {
     if (!SAVE.starter) {
   const P = starterPack(), dos = MONEDAS.activo(), fijo = dos ? ITEMS[starterPool()[0]].name : '';
   $('#gift-row').insertAdjacentHTML('beforeend', `<div class="pack starter"><span class="joke-flag">1 VEZ</span><div class="pk-ic">${PILE(5, true)}</div><div><div class="pk-name ol">Pack de bienvenida</div><div class="pk-amt ol">${GEM_SVG}${fmt(P.gems)}${dos ? '' : ` <span class="pk-plus">+</span> ${COIN_SVG}${fmt(P.gold)}`}</div><div class="pk-note">${dos ? `Y ${esc(fijo)}, un objeto épico de equipo con calidad Excelente.` : 'Y un objeto épico de equipo con calidad Director (excelente) o mejor.'} Vale casi el doble que comprarlo por separado. Microblizz lo llama «regalo».</div></div><button class="btn-price ol" id="btn-starter">${eur(P.eur)}</button></div>`);
-  $('#btn-starter').onclick = () => { play('select'); if (MONEDAS.activo()) { MONEDAS.compraReal('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)}</span>y ${esc(fijo)} (épico, calidad Excelente), por <b>${eur(P.eur)}</b><br>Solo se puede comprar una vez.`, buyStarter); return; } confirmBox('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)} · ${COIN_SVG} ${fmt(P.gold)}</span>y un objeto épico de calidad Director (excelente) o mejor, por <b>${eur(P.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis. Solo se puede comprar una vez.</small>`, 'COMPRAR', buyStarter); };
+  $('#btn-starter').onclick = () => { play('select'); if (MONEDAS.activo()) { MONEDAS.compraReal('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)}</span>y ${esc(fijo)} (épico, calidad Excelente), por <b>${eur(P.eur)}</b><br>Solo se puede comprar una vez.`, buyStarter, 'rumble_bienvenida'); return; } confirmBox('¿COMPRAR?', `Pack de bienvenida<span class="big">${GEM_SVG} ${fmt(P.gems)} · ${COIN_SVG} ${fmt(P.gold)}</span>y un objeto épico de calidad Director (excelente) o mejor, por <b>${eur(P.eur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis. Solo se puede comprar una vez.</small>`, 'COMPRAR', buyStarter); };
 }
 });
 hook('insignias', () => { if (!giftReady() && !SAVE.starter) $('#feat-shop').textContent = '¡Pack de bienvenida!'; });

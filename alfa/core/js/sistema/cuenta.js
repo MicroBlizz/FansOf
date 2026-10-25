@@ -219,10 +219,16 @@ const CUENTA = (() => {
     try { return await pedir('/rest/v1/rpc/' + nombre, { method: 'POST', body: JSON.stringify(typeof cuerpo === 'function' ? cuerpo() : cuerpo) }, t); }
     catch (e) { if (typeof ERRORES !== 'undefined') ERRORES.servidor(nombre, e); throw e; }   // los errores del servidor se apuntan (core/js/sistema/errores.js)
   };
+  // llamada a una Edge Function (servidor/funciones/<nombre>) con la sesión de aquí; devuelve lo que conteste (JSON)
+  const funcion = async (nombre, cuerpo) => {
+    const t = await token();
+    try { return await pedir('/functions/v1/' + nombre, { method: 'POST', body: JSON.stringify(cuerpo || {}) }, t); }
+    catch (e) { if (typeof ERRORES !== 'undefined') ERRORES.servidor('fn:' + nombre, e); throw e; }
+  };
   // PERFIL GLOBAL (servidor/36-perfil.sql): el nombre único de la cuenta para todos los juegos. Sin cuenta, sin red o sin esa función → null / no hace nada.
   const perfil = async () => { if (!activa || sesion().invitado !== false) return null; try { return await rpc('perfil_leer', {}); } catch (e) { return null; } };
   const ponNombre = nombre => rpc('perfil_nombre', { p_nombre: nombre });
-  return { activa, cambio, sincronizar, rpc, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
+  return { activa, cambio, sincronizar, rpc, funcion, perfil, ponNombre, get usuario() { return sesion().usuario || ''; }, guardarConEmail, entrarConEmail, googleListo, guardarConGoogle, entrarConGoogle, cerrarSesion, borrarCuenta,
     get estado() { return estado; }, get version() { return meta.version; }, get pendiente() { return meta.pendiente; },
     get invitado() { return sesion().invitado !== false; }, get email() { return sesion().email || ''; }, get emailPendiente() { return sesion().emailPendiente || ''; }, get foto() { return sesion().foto || ''; } };
 })();

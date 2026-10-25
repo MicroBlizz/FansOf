@@ -1,8 +1,8 @@
 {
- "build": 504,
- "hash": "4b35f28",
- "fecha": "2026-10-25T04:38:48Z",
- "mensaje": "Boom: el Entrenamiento enseña dos líneas (sin viento y con el viento de ahora, también en el minimapa), un consejo por turno y elige tu móvil en el Garaje; nueva ayuda FÁCIL por jugador al preparar la partida (solo la línea sin viento)",
+ "build": 505,
+ "hash": "5627c79",
+ "fecha": "2026-10-25T12:28:38Z",
+ "mensaje": "Tienda con dinero real: Google Play Billing (apagada hasta abrirla)",
  "juegos": {
   "boom": "0.2.0",
   "cooking": "0.2.0",

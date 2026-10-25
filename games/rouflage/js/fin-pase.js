@@ -243,3 +243,22 @@ function tuboPinta(cv, F, dt) {
   c.globalAlpha = 1; F.parts = F.parts.filter(p => p.vida > 0);
   F.flash = Math.max(0, F.flash - dt * 2.4);
 }
+
+/* ---------- la pestaña PASE (#p-pase, pasePinta de economia.js): el mismo tubo, que se llena desde 0 hasta tu experiencia al abrirla ---------- */
+const PASEUI = { raf: 0, ultimo: 0, tubo: null };
+function paseTuboPon(nv, dentro) {
+  const lleno = nv >= ECO.niveles, meta = lleno ? 1 : Math.max(0, Math.min(1, dentro / ECO.xpNivel)), viejo = PASEUI.tubo;
+  // si ya estaba abierta (por ejemplo, al comprar el premium) no vuelve a empezar desde 0
+  const sigue = viejo && viejo.nivel === nv && !E('p-pase').hidden;
+  PASEUI.tubo = { t: sigue ? viejo.t : 0, frac: sigue ? Math.min(viejo.frac, meta) : 0, meta, fase: 'llena', nivel: nv, lleno, cols: FINP_COL, burbujas: sigue ? viejo.burbujas : [], parts: [], flash: 0, R: 22, th: 34 };
+  PASEUI.ultimo = performance.now();
+  if (!PASEUI.raf) PASEUI.raf = requestAnimationFrame(paseTuboFotograma);
+}
+function paseTuboFotograma(now) {
+  if (E('p-pase').hidden || !PASEUI.tubo) { PASEUI.raf = 0; return; }
+  const F = PASEUI.tubo, dt = Math.min(0.05, (now - PASEUI.ultimo) / 1000); PASEUI.ultimo = now;
+  F.t += dt;
+  if (F.frac < F.meta) { F.frac = Math.min(F.meta, F.frac + dt * Math.max(0.25, (F.meta - F.frac) * 2.6)); if (F.frac >= F.meta) F.fase = 'fin'; }
+  tuboPinta(E('pase-tubo'), F, dt);
+  PASEUI.raf = requestAnimationFrame(paseTuboFotograma);
+}

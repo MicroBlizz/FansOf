@@ -46,6 +46,16 @@ const GUIAS = [
     { en: 'p-titulo', a: '#b-tienda', t: 'En la <b>TIENDA</b> está también el <b>GACHAPÓN</b>, con tiradas gratis cada día.', hecho: () => visible('p-tienda') },
     { en: 'p-tienda', a: '#b-gacha', t: 'Toca aquí para abrir el <b>GACHAPÓN</b>.', hecho: () => visible('p-gacha') },
   ] },
+  // EL LIENZO de Mi escenario (escenario-obra.js): la primera vez que tienes uno, paso a paso por CONSTRUIR (pedido por Daniel el 25-10-2026)
+  { id: 'construir', desde: 0, si: () => typeof MIESC !== 'undefined' && MIESC.abierto && escBase(escenarioSala().id) === 'lienzo', pasos: [
+    { en: 'p-escenario', a: '#esc-pest-obra', t: '<b>CONSTRUIR</b>: aquí haces tu escenario a tu gusto, con suelos, paredes y puertas.', hecho: () => MIESC.modo === 'obra' },
+    { en: 'p-escenario', a: '#obra-b-baldosa', t: '<b>SUELO</b>: elige uno abajo y arrastra el dedo por el escenario para ponerlo.', hecho: () => !!OBRA.uso.suelo },
+    { en: 'p-escenario', a: '#obra-b-ladrillo', t: '<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.', hecho: () => !!OBRA.uso.pared },
+    { en: 'p-escenario', a: '#obra-b-puerta', t: '<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.', hecho: () => !!OBRA.uso.puerta },
+    { en: 'p-escenario', a: '#obra-b-diana', t: '<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.', hecho: () => !!OBRA.uso.becarios },
+    { en: 'p-escenario', a: '#obra-b-comprobar', t: '<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.', hecho: () => !!OBRA.uso.comprobar },
+    { en: 'p-escenario', a: '#obra-b-jugar', t: '<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.', seg: 12 },
+  ] },
   // al acabar una partida de colado en la que sobrevives: el reto (reto.js)
   { id: 'reto', desde: 0, si: () => typeof fotoHay === 'function' && fotoHay(), pasos: [
     { en: 'p-fin', a: '#b-foto', t: '<b>¡RETA A UN AMIGO!</b> Manda la foto de tu escondite: tendrá 20 segundos para encontrarte, sin descargar nada.', seg: 12 },
@@ -67,12 +77,13 @@ function guiaPaso(dt) {
   if (!GUIA.caja) return;
   const ocultar = () => { GUIA.caja.hidden = GUIA.foco.hidden = true; };
   if (J.pvp || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) { ocultar(); return; }
+  if (['ar-compra', 'obra-elige', 'esc-rep'].some(id => visible(id))) { ocultar(); return; }      // con una ventana encima (comprar, empezar un lienzo, reportar), la guía espera
   if (!GUIA.g) { GUIA.g = guiaBusca(); GUIA.i = 0; GUIA.t = 0; if (!GUIA.g) { ocultar(); return; } }
   const p = GUIA.g.pasos[GUIA.i];
   if (p.hecho && p.hecho()) { play('select'); guiaSigue(); return; }      // primero si ya está hecho (al tocar el botón se cambia de pantalla)
   if (!visible(p.en)) {
     // te has ido a otra pantalla: al volver al título, la guía empieza otra vez (o la siguiente que toque)
-    if (visible('p-titulo') && GUIA.i > 0) { GUIA.g = null; }
+    if ((visible('p-titulo') && GUIA.i > 0) || GUIA.i === 0) { GUIA.g = null; }      // (sin empezar: se suelta, y así otra pantalla puede tener la suya, como CONSTRUIR)
     ocultar(); return;
   }
   GUIA.t += dt;

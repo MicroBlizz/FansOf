@@ -101,7 +101,7 @@ function dcSueltaArrastre(A, e, soltada) {
   if (b.ok && C.mano[A.i] && dcPuedeJugar(C, C.mano[A.i])) {
     if (g.animate) g.animate([{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(1.15)', opacity: 1, offset: .3 }, { transform: 'scale(.5)', opacity: 0 }], { duration: 300, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => g.remove(); else g.remove();
     dcEfectoJugada(C.mano[A.i], dcDestinoJugada(C, C.mano[A.i], b.obj));
-    dcJugar(C, A.i, b.obj); dcTrasJugada();
+    dcHaz(C, { a: 'carta', i: A.i, obj: b.obj }); dcTrasJugada();
     return;
   }
   A.el.classList.remove('dc-arrastrada');

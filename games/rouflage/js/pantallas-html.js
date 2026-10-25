@@ -219,7 +219,7 @@
   <div class="caja pase-caja">
     <h2 class="ol" data-tr>PASE DE TEMPORADA</h2>
     <p class="pase-sub"><b id="pase-nivel"></b> · <span data-tr>Sube jugando partidas: más si ganas y más en BUSCAR PARTIDA.</span></p>
-    <div class="pase-barra"><i id="pase-barra"></i></div>
+    <div class="pase-tubo"><canvas id="pase-tubo" aria-hidden="true"></canvas></div>
     <p class="pase-xp" id="pase-xp"></p>
     <div class="cartera" id="pase-cartera"></div>
     <p class="pase-oferta" id="pase-oferta"></p>

@@ -16,7 +16,7 @@ function defineMapa(d) { MAPAS[d.id] = d; ORDEN_MAPAS.push(d.id); }
 // lo que ve todo el juego del mapa actual (lo rellena cargaMapa)
 let MAPA_ACT = null;
 let MW = 84, MH = 60, ANCHO = MW * CEL, ALTO = MH * CEL;
-let SALAS = [], PASOS = [], ZONAS = [], GRID = new Uint8Array(MW * MH), ZONA_DE = new Int8Array(MW * MH), CARAS = [];
+let SALAS = [], PASOS = [], ZONAS = [], GRID = new Uint8Array(MW * MH), ZONA_DE = new Int16Array(MW * MH), CARAS = [];
 let MUEBLES = [], CARTELES = [], PEGATINAS = [], EPITAFIOS = [];
 let SALIDA_CAMALEONES = [[0, 0]], SALIDA_CAZADORES = [[0, 0]];
 // la barrera de la sala de espera de los cazadores: cerrada mientras los camaleones se pintan; `abierta` va de 0 a 1 al levantarse
@@ -42,7 +42,7 @@ function cargaDatosMapa(id) {
   Object.assign(PUERTA, { estilo: 'barrera' }, d.puerta, { cerrada: true, abierta: 0 });
 
   // la rejilla: qué hay en cada casilla y de qué zona es
-  GRID = new Uint8Array(MW * MH); ZONA_DE = new Int8Array(MW * MH).fill(-1);
+  GRID = new Uint8Array(MW * MH); ZONA_DE = new Int16Array(MW * MH).fill(-1);      // (Int16: un escenario dibujado por el jugador puede tener más de 127 trozos)
   ZONAS.forEach((z, i) => { for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) { GRID[y * MW + x] = SUELO; ZONA_DE[y * MW + x] = i; } });
   // encima de cada suelo que acaba por arriba, la pared de frente (hasta 3 casillas de muro)
   for (let y = 1; y < MH; y++) for (let x = 0; x < MW; x++) {

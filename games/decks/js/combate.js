@@ -7,7 +7,7 @@ const DC_OBJETIVOS = { ataque: 'uno' };
 
 function dcRival(id) {
   const D = DC_RIVALES[id];
-  return dcParoEscala({ id, nombre: D.nombre ? tr(D.nombre) : tr(CFG.enemyCards[id] ? CFG.enemyCards[id].name : id), hp: D.hp, hpMax: D.hp, bloqueo: 0, fuerza: 0, vulnerable: 0, debil: 0, aturdido: 0, idx: 0, ultimo: -1, jug: null });   // paro.js: los niveles de paro los endurecen
+  return dcEqEscala(dcParoEscala({ id, nombre: D.nombre ? tr(D.nombre) : tr(CFG.enemyCards[id] ? CFG.enemyCards[id].name : id), hp: D.hp, hpMax: D.hp, bloqueo: 0, fuerza: 0, vulnerable: 0, debil: 0, aturdido: 0, idx: 0, ultimo: -1, jug: null }));   // paro.js: los niveles de paro los endurecen; equipo.js, los que sois
 }
 // Qué anuncia el rival para su próximo turno.
 function dcAnuncia(C, r) {
@@ -164,37 +164,42 @@ function dcUsaMerienda(C, i) {
 // ---------- fin de turno y turno de los rivales ----------
 function dcFinTurno(C) {
   if (C.fase !== 'jugador') return;
+  if (dcCierraTurno(C)) return;
+  for (const r of C.rivales) { if (r.hp <= 0) continue; dcActuaRival(C, r); if (DCP.run.hp <= 0) break; }
+  if (!dcCompruebaFin(C)) dcEmpiezaTurno(C);
+}
+// Tu parte del fin de turno: la mano se va (menos los indefinidos) y actúan los compañeros. Devuelve true si con eso acaba la reunión.
+function dcCierraTurno(C) {
   C.fase = 'rival';
   C.mano = C.mano.filter(c => { const fx = dcFx(c); if (fx.indefinido) return true; if (DC_CARTAS[c.id].tipo === 'spam') C.despedidas.push(c); else C.descartes.push(c); return false; });
-  dcActuanCompaneros(C); if (dcCompruebaFin(C)) return;
-  for (const r of C.rivales) {
-    if (r.hp <= 0) continue;
-    if (r.aturdido) { C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: 'aturdido' }); r.aturdido--; C.log.push(tr('{rival} está rascándose', { rival: r.nombre })); r.bloqueo = 0; dcAnuncia(C, r); continue; }
-    const j = r.jug; r.bloqueo = 0; C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: dcTipoJugada(j) });
-    if (j.d && dcDanoRival(C, r, j) > 0) { const pg = dcProtocolo(C, 'golpe'); if (pg) { C.bloqueo += pg.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: pg.bloqueo }); } }
-    if (j.d) for (let k = 0; k < (j.n || 1); k++) {
-      let d = dcDanoRival(C, r, j); if (C.vulnerable) d = Math.floor(d * 1.5);
-      const b = Math.min(C.bloqueo, d); C.bloqueo -= b; d -= b; if (d > 0) C.golpeado = true; dcVida(-d); C.eventos.push({ t: d > 0 ? 'dano' : 'esquiva', r: -1, n: d });
-      if (C.poderes.espinas) dcGolpea(C, r, C.poderes.espinas);
-      if (DCP.run.hp <= 0) break;
-    }
-    if (j.b) r.bloqueo += j.b;
-    if (j.c) for (const o of C.rivales) if (o.hp > 0) o.hp = Math.min(o.hpMax, o.hp + j.c);
-    if (j.f) r.fuerza += j.f;
-    if (j.debil) C.debil += j.debil;
-    if (j.spam) { const ps = dcProtocolo(C, 'spam'); if (ps) dcGolpea(C, r, ps.dano); else for (let k = 0; k < j.spam; k++) C.descartes.push(dcCarta('spam')); }
-    if (j.ref) { // como mucho DC_MAX_RIVALES en la sala (regla de Arkioner, 18-10-2026): si no cabe nadie más, la invocación falla
-      const pe = C.rivales.filter(x => x.hp > 0).length < DC_MAX_RIVALES ? dcProtocolo(C, 'refuerzo') : null;
-      for (let k = 0; k < (j.refN || 1); k++) {
-        if (C.rivales.filter(x => x.hp > 0).length >= DC_MAX_RIVALES) { C.eventos.push({ t: 'falla', r: C.rivales.indexOf(r) }); C.log.push(tr('{rival} llama a refuerzos, pero la sala está llena', { rival: r.nombre })); break; }
-        const n = dcRival(j.ref); if (pe) n.hp = Math.ceil(n.hpMax / 2); dcAnuncia(C, n); C.rivales.push(n);
-      }
-    }
-    if (r.debil) r.debil--; if (r.vulnerable) r.vulnerable--;
+  dcActuanCompaneros(C); return dcCompruebaFin(C);
+}
+// Un rival hace lo que anunciaba contra el líder de C (en equipo, equipo.js elige contra quién).
+function dcActuaRival(C, r) {
+  if (r.aturdido) { C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: 'aturdido' }); r.aturdido--; C.log.push(tr('{rival} está rascándose', { rival: r.nombre })); r.bloqueo = 0; dcAnuncia(C, r); return; }
+  const j = r.jug; r.bloqueo = 0; C.eventos.push({ t: 'accion', r: C.rivales.indexOf(r), tipo: dcTipoJugada(j) });
+  if (j.d && dcDanoRival(C, r, j) > 0) { const pg = dcProtocolo(C, 'golpe'); if (pg) { C.bloqueo += pg.bloqueo; C.eventos.push({ t: 'bloqueo', r: -1, n: pg.bloqueo }); } }
+  if (j.d) for (let k = 0; k < (j.n || 1); k++) {
+    let d = dcDanoRival(C, r, j); if (C.vulnerable) d = Math.floor(d * 1.5);
+    const b = Math.min(C.bloqueo, d); C.bloqueo -= b; d -= b; if (d > 0) C.golpeado = true; dcVida(-d); C.eventos.push({ t: d > 0 ? 'dano' : 'esquiva', r: -1, n: d });
+    if (C.poderes.espinas) dcGolpea(C, r, C.poderes.espinas);
     if (DCP.run.hp <= 0) break;
-    dcAnuncia(C, r);
   }
-  if (!dcCompruebaFin(C)) dcEmpiezaTurno(C);
+  if (j.b) r.bloqueo += j.b;
+  if (j.c) for (const o of C.rivales) if (o.hp > 0) o.hp = Math.min(o.hpMax, o.hp + j.c);
+  if (j.f) r.fuerza += j.f;
+  if (j.debil) C.debil += j.debil;
+  if (j.spam) { const ps = dcProtocolo(C, 'spam'); if (ps) dcGolpea(C, r, ps.dano); else for (let k = 0; k < j.spam; k++) C.descartes.push(dcCarta('spam')); }
+  if (j.ref) { // como mucho DC_MAX_RIVALES en la sala (regla de Arkioner, 18-10-2026): si no cabe nadie más, la invocación falla
+    const pe = C.rivales.filter(x => x.hp > 0).length < DC_MAX_RIVALES ? dcProtocolo(C, 'refuerzo') : null;
+    for (let k = 0; k < (j.refN || 1); k++) {
+      if (C.rivales.filter(x => x.hp > 0).length >= DC_MAX_RIVALES) { C.eventos.push({ t: 'falla', r: C.rivales.indexOf(r) }); C.log.push(tr('{rival} llama a refuerzos, pero la sala está llena', { rival: r.nombre })); break; }
+      const n = dcRival(j.ref); if (pe) n.hp = Math.ceil(n.hpMax / 2); dcAnuncia(C, n); C.rivales.push(n);
+    }
+  }
+  if (r.debil) r.debil--; if (r.vulnerable) r.vulnerable--;
+  if (DCP.run.hp <= 0) return;
+  dcAnuncia(C, r);
 }
 // Los compañeros actúan al acabar tu turno: pegan al rival con menos vida, te dan bloqueo o te curan; se van cuando se les acaban los turnos.
 function dcActuanCompaneros(C) {

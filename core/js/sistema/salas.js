@@ -80,8 +80,7 @@ const SALAS = (() => {
 
   // ---------- pruebas: pestañas del mismo navegador (BroadcastChannel). Cada pestaña anuncia sus datos; la que entró antes y sigue es el anfitrión y anuncia los de la sala ----------
   function redLocal(juego) {
-    const id = Math.random().toString(36).slice(2, 8);
-    let t0 = Date.now();
+    let id = Math.random().toString(36).slice(2, 8), t0 = Date.now();
     let bc = null, codigo = null, max = 2, mios = {}, datos = {}, estado = 'espera', aviso = null, tic = null, sala = null, host = null;
     const vistos = new Map();   // id → { t0, datos, visto }
     const calcula = () => {
@@ -89,12 +88,15 @@ const SALAS = (() => {
       vistos.set(id, { t0, datos: mios, visto: Date.now() });
       const lista = [...vistos.entries()].sort((a, b) => a[1].t0 - b[1].t0 || (a[0] < b[0] ? -1 : 1)); host = lista[0][0];
       sala = { sala: 'local-' + codigo, juego, codigo, max, estado, datos, anfitrion: lista[0][0] === id,
-        jugadores: lista.map(([k, v], i) => ({ orden: i, nombre: 'Pestaña ' + k.slice(0, 3).toUpperCase(), datos: v.datos, vivo: true, yo: k === id })) };
+        jugadores: lista.map(([k, v]) => ({ orden: v.t0, nombre: 'Pestaña ' + k.slice(0, 3).toUpperCase(), datos: v.datos, vivo: true, yo: k === id })) };
       return sala;
     };
     const anuncia = () => { if (!bc) return; const s = calcula(); bc.postMessage({ t: 'yo', id, t0, datos: mios }); if (s.anfitrion) bc.postMessage({ t: 'sala', id, datos, estado, max }); if (aviso) aviso(s); };
     const abre = (c, d) => {
-      codigo = c; mios = d || {}; t0 = Date.now(); bc = new BroadcastChannel('fansof-salas-' + juego + '-' + c);
+      codigo = c; mios = d || {}; t0 = Date.now();
+      // al recargar la pestaña se vuelve con el mismo sitio (como en el servidor, donde manda la cuenta)
+      const k = 'fansof-salas-' + juego + '-' + c; try { const g = JSON.parse(sessionStorage.getItem(k) || 'null'); if (g) { id = g.id; t0 = g.t0; } else sessionStorage.setItem(k, JSON.stringify({ id, t0 })); } catch (e) { /* sin guardar */ }
+      bc = new BroadcastChannel('fansof-salas-' + juego + '-' + c);
       bc.onmessage = e => {
         const m = e.data; if (!m) return;
         if (m.t === 'yo') vistos.set(m.id, { t0: m.t0, datos: m.datos, visto: Date.now() });
@@ -110,7 +112,7 @@ const SALAS = (() => {
         abre(String(c).toUpperCase(), d);
         return new Promise((ok, mal) => setTimeout(() => {
           const s = calcula(), yo = s.jugadores.find(j => j.yo);
-          if (s.jugadores.length < 2) { this.salir(); mal(new Error('codigo_no_valido')); } else if (yo.orden >= max) { this.salir(); mal(new Error('sala_llena')); } else ok(s);
+          if (s.jugadores.length < 2) { this.salir(); mal(new Error('codigo_no_valido')); } else if (s.jugadores.indexOf(yo) >= max) { this.salir(); mal(new Error('sala_llena')); } else ok(s);
         }, 1600));
       },
       seguir(f) { aviso = f; if (sala) f(sala); },

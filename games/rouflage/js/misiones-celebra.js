@@ -60,6 +60,10 @@ function celebMancha(c, w, col, col2, semilla, t) {
 
 function misionCelebra(n) {
   const de = MIS_UI.desde, a = E('mis-gotas'); if (!de || !a || E('p-misiones').hidden) return;
+  celebraGotas(n, de, a);
+}
+// la mancha con el número sobre el rectángulo `de` (un botón) y el vuelo hasta el contador `a`: la usan las misiones y los códigos regalo (codigos.js)
+function celebraGotas(n, de, a) {
   const total = SAVE.gotas || 0, antes = Math.max(0, total - n);
   const quieto = !Element.prototype.animate || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   if (quieto) { celebCuenta(a, antes, total, 500); return; }

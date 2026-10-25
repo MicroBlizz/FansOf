@@ -1,0 +1,185 @@
+{
+ "_": "Productos integrados de Google Play de Fans of Rouflage: los mismos ids y precios que public.productos (servidor/91). Los crea o actualiza herramientas/android/productos_play.py (workflow «Productos de Play»). El tipo (consumible o no) no se declara aquí: lo decide el servidor al confirmar la compra (consume los repetibles, reconoce los únicos).",
+ "productos": [
+  {
+   "id": "rouflage_acciones_100",
+   "eur": 0.99,
+   "textos": {
+    "es-ES": {
+     "title": "100 Acciones",
+     "description": "100 Acciones para el armario y el pase premium de Fans of Rouflage."
+    },
+    "en-US": {
+     "title": "100 Shares",
+     "description": "100 Shares for the wardrobe and the premium pass in Fans of Rouflage."
+    },
+    "pt-BR": {
+     "title": "100 Ações",
+     "description": "100 Ações para o guarda-roupa e o passe premium do Fans of Rouflage."
+    },
+    "fr-FR": {
+     "title": "100 Actions",
+     "description": "100 Actions pour la garde-robe et le pass premium de Fans of Rouflage."
+    },
+    "de-DE": {
+     "title": "100 Aktien",
+     "description": "100 Aktien für den Kleiderschrank und den Premium-Pass in Fans of Rouflage."
+    },
+    "it-IT": {
+     "title": "100 Azioni",
+     "description": "100 Azioni per il guardaroba e il pass premium di Fans of Rouflage."
+    }
+   }
+  },
+  {
+   "id": "rouflage_acciones_550",
+   "eur": 4.99,
+   "textos": {
+    "es-ES": {
+     "title": "550 Acciones",
+     "description": "550 Acciones para el armario y el pase premium de Fans of Rouflage."
+    },
+    "en-US": {
+     "title": "550 Shares",
+     "description": "550 Shares for the wardrobe and the premium pass in Fans of Rouflage."
+    },
+    "pt-BR": {
+     "title": "550 Ações",
+     "description": "550 Ações para o guarda-roupa e o passe premium do Fans of Rouflage."
+    },
+    "fr-FR": {
+     "title": "550 Actions",
+     "description": "550 Actions pour la garde-robe et le pass premium de Fans of Rouflage."
+    },
+    "de-DE": {
+     "title": "550 Aktien",
+     "description": "550 Aktien für den Kleiderschrank und den Premium-Pass in Fans of Rouflage."
+    },
+    "it-IT": {
+     "title": "550 Azioni",
+     "description": "550 Azioni per il guardaroba e il pass premium di Fans of Rouflage."
+    }
+   }
+  },
+  {
+   "id": "rouflage_acciones_1200",
+   "eur": 9.99,
+   "textos": {
+    "es-ES": {
+     "title": "1200 Acciones",
+     "description": "1200 Acciones para el armario y el pase premium de Fans of Rouflage."
+    },
+    "en-US": {
+     "title": "1200 Shares",
+     "description": "1200 Shares for the wardrobe and the premium pass in Fans of Rouflage."
+    },
+    "pt-BR": {
+     "title": "1200 Ações",
+     "description": "1200 Ações para o guarda-roupa e o passe premium do Fans of Rouflage."
+    },
+    "fr-FR": {
+     "title": "1200 Actions",
+     "description": "1200 Actions pour la garde-robe et le pass premium de Fans of Rouflage."
+    },
+    "de-DE": {
+     "title": "1200 Aktien",
+     "description": "1200 Aktien für den Kleiderschrank und den Premium-Pass in Fans of Rouflage."
+    },
+    "it-IT": {
+     "title": "1200 Azioni",
+     "description": "1200 Azioni per il guardaroba e il pass premium di Fans of Rouflage."
+    }
+   }
+  },
+  {
+   "id": "rouflage_acciones_2600",
+   "eur": 19.99,
+   "textos": {
+    "es-ES": {
+     "title": "2600 Acciones",
+     "description": "2600 Acciones para el armario y el pase premium de Fans of Rouflage."
+    },
+    "en-US": {
+     "title": "2600 Shares",
+     "description": "2600 Shares for the wardrobe and the premium pass in Fans of Rouflage."
+    },
+    "pt-BR": {
+     "title": "2600 Ações",
+     "description": "2600 Ações para o guarda-roupa e o passe premium do Fans of Rouflage."
+    },
+    "fr-FR": {
+     "title": "2600 Actions",
+     "description": "2600 Actions pour la garde-robe et le pass premium de Fans of Rouflage."
+    },
+    "de-DE": {
+     "title": "2600 Aktien",
+     "description": "2600 Aktien für den Kleiderschrank und den Premium-Pass in Fans of Rouflage."
+    },
+    "it-IT": {
+     "title": "2600 Azioni",
+     "description": "2600 Azioni per il guardaroba e il pass premium di Fans of Rouflage."
+    }
+   }
+  },
+  {
+   "id": "rouflage_acciones_7000",
+   "eur": 49.99,
+   "textos": {
+    "es-ES": {
+     "title": "7000 Acciones",
+     "description": "7000 Acciones para el armario y el pase premium de Fans of Rouflage."
+    },
+    "en-US": {
+     "title": "7000 Shares",
+     "description": "7000 Shares for the wardrobe and the premium pass in Fans of Rouflage."
+    },
+    "pt-BR": {
+     "title": "7000 Ações",
+     "description": "7000 Ações para o guarda-roupa e o passe premium do Fans of Rouflage."
+    },
+    "fr-FR": {
+     "title": "7000 Actions",
+     "description": "7000 Actions pour la garde-robe et le pass premium de Fans of Rouflage."
+    },
+    "de-DE": {
+     "title": "7000 Aktien",
+     "description": "7000 Aktien für den Kleiderschrank und den Premium-Pass in Fans of Rouflage."
+    },
+    "it-IT": {
+     "title": "7000 Azioni",
+     "description": "7000 Azioni per il guardaroba e il pass premium di Fans of Rouflage."
+    }
+   }
+  },
+  {
+   "id": "rouflage_inicio",
+   "eur": 2.99,
+   "textos": {
+    "es-ES": {
+     "title": "Pack de inicio",
+     "description": "300 Acciones, la gorra y el marco píxel. Una sola vez por cuenta."
+    },
+    "en-US": {
+     "title": "Starter pack",
+     "description": "300 Shares, the cap and the pixel frame. Once per account."
+    },
+    "pt-BR": {
+     "title": "Pacote inicial",
+     "description": "300 Ações, o boné e a moldura pixel. Uma vez por conta."
+    },
+    "fr-FR": {
+     "title": "Pack de départ",
+     "description": "300 Actions, la casquette et le cadre pixel. Une seule fois par compte."
+    },
+    "de-DE": {
+     "title": "Starterpaket",
+     "description": "300 Aktien, die Mütze und der Pixelrahmen. Einmal pro Konto."
+    },
+    "it-IT": {
+     "title": "Pacchetto iniziale",
+     "description": "300 Azioni, il cappellino e la cornice pixel. Una sola volta per account."
+    }
+   }
+  }
+ ]
+}

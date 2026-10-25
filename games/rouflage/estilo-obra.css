@@ -1,0 +1,20 @@
+/* Fans of Rouflage · MI ESCENARIO, EL LIENZO (escenario-obra.js): la ventana EMPEZAR UN LIENZO (en blanco, plantillas o seguir con el tuyo). */
+.obra-elige { position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: calc(var(--sup) + 14px) 14px calc(var(--inf) + 14px); background: rgba(8, 6, 16, 0.6); }
+.obra-elige[hidden] { display: none; }
+.obra-elige-caja { width: min(100%, 520px); max-height: 100%; overflow-y: auto; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.obra-elige-caja h3 { margin: 0; font-size: 24px; }
+.obra-elige-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 6px 0; }
+.obra-elige-lista .esc-carta { flex: none; }
+.obra-elige-lista .obra-mio { box-shadow: 0 0 0 3px #ffcb3d, 0 4px 0 var(--outline); }
+/* PROBAR: una partida contra bots en tu escenario (junto a ARMARIO, al pasear) */
+.esc-probar { background: linear-gradient(#7ee04a, #2fa85a); display: flex; align-items: center; gap: 6px; }
+.esc-probar i { width: 22px; height: 22px; display: grid; place-items: center; }
+/* CONSTRUIR: las herramientas en dos filas (no caben en una en el móvil) */
+#obra-herr { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; overflow: visible; }
+#obra-herr .esc-h { width: auto; min-width: 0; }
+#obra-herr .esc-h small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+#obra-herr .esc-h.bien { background: linear-gradient(#7ee04a, #2fa85a); color: var(--ink); }
+/* con 7 pestañas (el lienzo, con CONSTRUIR y PEGATINAS) van en dos filas de 4 */
+.esc-pestanas:has(> :nth-child(7)) { grid-auto-flow: row; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 9px; }
+#peg-tira .esc-carta img { width: 60px; height: 60px; object-fit: contain; }
+.peg-quitar.activa { background: linear-gradient(#ff8a8a, #e0414f); }

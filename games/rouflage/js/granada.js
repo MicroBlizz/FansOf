@@ -7,7 +7,7 @@ const GRANADA = { dura: 7, radio: 230, ciego: 4.5 };
 const invisible = e => e.invis > 0;      // no lo ven los becarios ni pueden despedirlo
 
 function lanzaGranada(e) {
-  if (!e || e.fuera || !(e.granada > 0) || J.fase !== 'caza') return false;
+  if (!e || e.fuera || !(e.granada > 0) || (J.fase !== 'caza' && J.fase !== 'sala')) return false;      // (sala: la sala viva con amigos)
   e.granada = 0; e.invis = GRANADA.dura; e.trasHumo = !e.bot; e.salioDelHumo = false;      // al volver a pararse se camufla solo (ver autoCamuflaje)
   granadaEstalla(e.x, e.y, e);
   if (J.pvp) rfpManda({ t: 'gr', x: Math.round(e.x), y: Math.round(e.y) });
@@ -23,7 +23,7 @@ function granadaEstalla(x, y, e, colores = e && e.ropa && e.ropa.humo) {      //
   }
   if (e && e.jugador) avisa(tr('Granada cegadora: los becarios no te ven {n} s', { n: GRANADA.dura }), 'bueno');
 }
-function accionGranada() { const yo = J.yo; if (J.fase === 'caza' && jugando() && yo.clase === 'camaleon' && !TALLER.abierto) { if (!lanzaGranada(yo)) play('deny'); } }
+function accionGranada() { const yo = J.yo; if ((J.fase === 'caza' || J.fase === 'sala') && jugando() && yo.clase === 'camaleon' && !TALLER.abierto) { if (!lanzaGranada(yo)) play('deny'); } }
 
 // tras la bomba de humo, el colado que sale corriendo y vuelve a pararse no puede pintarse desde cero: el juego lo camufla al instante (REGLAS.humoMeta; de ahí, a afinar)
 function autoCamuflaje(e) {

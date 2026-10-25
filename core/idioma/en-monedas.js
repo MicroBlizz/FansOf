@@ -32,5 +32,14 @@ IDIOMA.add({
   "Cada tirada cuesta %1 de oro. Las gemas nunca entran aquí.": "Each pull costs %1 gold. Gems never come into play here.",
   "Las gemas solo se compran con dinero real (y caen poco a poco jugando). Nunca entran en el azar ni se cambian por oro: pagan el pase, los cosméticos y las ventajas. Con oro de sobra puedes cambiarlo por gemas, nunca al revés. Los «% extra» se comparan con el pack más pequeño.": "Gems are only bought with real money (and trickle in as you play). They never enter anything random and can't be exchanged for gold: they pay for the pass, cosmetics and perks. With gold to spare you can exchange it for gems, never the other way round. The «% extra» is compared with the smallest pack.",
   "Juego limpio: esto no es un pay to win. El oro solo se gana jugando y es lo único que paga el gashapón y los niveles de tus cartas, así que el dinero real nunca compra tiradas del gashapón. Lo que se compra con dinero (las gemas) paga el pase, los cosméticos y las ventajas, y nunca entra en el azar. Con oro de sobra puedes cambiarlo por gemas, nunca al revés. La experiencia tampoco se vende.": "Fair play: this is not pay to win. Gold is only earned by playing and it is the only thing that pays for the gacha and your cards' levels, so real money never buys gacha pulls. What you buy with money (gems) pays for the pass, cosmetics and perks, and never enters chance. With spare gold you can exchange it for gems, never the other way around. Experience is not for sale either.",
-  "· Las gemas solo se compran con dinero real y nunca entran en el azar. El oro solo se gana jugando.": "· Gems are only bought with real money and never enter anything random. Gold is only earned by playing."
+  "· Las gemas solo se compran con dinero real y nunca entran en el azar. El oro solo se gana jugando.": "· Gems are only bought with real money and never enter anything random. Gold is only earned by playing.",
+  "Pago seguro con Google Play. Lo comprado queda en tu cuenta.": "Secure payment through Google Play. Your purchase stays on your account.",
+  "Abriendo Google Play…": "Opening Google Play…",
+  "Ya lo tienes": "You already have it",
+  "Google todavía no ha confirmado el pago: lo recibirás en cuanto lo haga": "Google hasn't confirmed the payment yet: you'll get it as soon as it does",
+  "No se vende en tu país": "Not sold in your country",
+  "Esa compra se hizo con otra cuenta": "That purchase was made with another account",
+  "Necesitas conexión para comprar": "You need a connection to buy",
+  "Google Play no está disponible en este aparato": "Google Play isn't available on this device",
+  "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "The purchase couldn't be completed. If Google charged you, you'll receive it in a few minutes.",
 });

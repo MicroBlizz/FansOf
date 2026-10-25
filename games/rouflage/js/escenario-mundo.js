@@ -8,11 +8,16 @@
 const ESC_MUNDO = { TILE: 256, MAX_PX: 11e6, PRESUPUESTO: 7 };
 const _escMundos = {};
 function escMundo(id) {
+  if (typeof id === 'string' && id.startsWith('lienzo')) return _escMundos[id] || (_escMundos[id] = lzMundo(id));      // el LIENZO: la forma la dibuja el jugador (escenario-obra.js)
   id = ESCENARIOS[id] ? id : 'oficina';
   if (_escMundos[id]) return _escMundos[id];
   const E0 = ESCENARIOS[id], F = FORMAS_ESC[E0.forma] || FORMAS_ESC.oficina, b = E0.b || [E0.suelo, E0.pared], cc = E0.c || b;
-  const filas = F.plano.split('\n').filter(f => f.length), MW = filas[0].length * 2, MH = filas.length * 2;
-  const zonas = salasDePlano(F.plano, { A: { nombre: '', suelo: E0.suelo, pared: E0.pared }, B: { nombre: '', suelo: b[0], pared: b[1] }, C: { nombre: '', suelo: cc[0], pared: cc[1] } }, 2);
+  return (_escMundos[id] = escConstruye(id, E0, F, F.plano, { A: { nombre: '', suelo: E0.suelo, pared: E0.pared }, B: { nombre: '', suelo: b[0], pared: b[1] }, C: { nombre: '', suelo: cc[0], pared: cc[1] } }));
+}
+// un mundo a partir de su plano (letras de 2 × 2 casillas) y de qué suelo y pared lleva cada letra
+function escConstruye(id, E0, F, plano, letras) {
+  const filas = plano.split('\n').filter(f => f.length), MW = filas[0].length * 2, MH = filas.length * 2;
+  const zonas = salasDePlano(plano, letras, 2);
   for (const z of zonas) { z.px = z.x * CEL; z.py = z.y * CEL; z.pw = z.w * CEL; z.ph = z.h * CEL; }
   const grid = new Uint8Array(MW * MH), zonaDe = new Int16Array(MW * MH).fill(-1);
   zonas.forEach((z, i) => { for (let y = z.y; y < z.y + z.h; y++) for (let x = z.x; x < z.x + z.w; x++) { grid[y * MW + x] = SUELO; zonaDe[y * MW + x] = i; } });
@@ -28,8 +33,8 @@ function escMundo(id) {
     if (tramo && (!base || tramo.zi !== z || tramo.alto !== alto)) { tramo.x1 = x * CEL; caras.push(tramo); tramo = null; }
     if (base && !tramo) tramo = { zi: z, zona: zonas[z], alto, x0: x * CEL, y0: (y - alto) * CEL, y1: y * CEL };
   }
-  return (_escMundos[id] = { id, E0, F, MW, MH, W: MW * CEL, H: MH * CEL, grid, zonaDe, zonas, caras, muro: E0.muro || COLOR_MURO, canto: E0.canto || COLOR_CANTO,
-    armario: { x: F.armario[0], y: F.armario[1], armario: true }, salida: F.salida, origen: ESC_ORIGEN });
+  return { id, E0, F, MW, MH, W: MW * CEL, H: MH * CEL, grid, zonaDe, zonas, caras, muro: E0.muro || COLOR_MURO, canto: E0.canto || COLOR_CANTO,
+    armario: { x: F.armario[0], y: F.armario[1], armario: true }, salida: F.salida, origen: ESC_ORIGEN };
 }
 const escTipoEn = (M, x, y) => (x < 0 || y < 0 || x >= M.W || y >= M.H ? VACIO : M.grid[((y / CEL) | 0) * M.MW + ((x / CEL) | 0)]);
 // ¿es suelo todo el rectángulo?

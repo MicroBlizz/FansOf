@@ -10,6 +10,7 @@ const cruzan = (a, R) => a.x0 < R.x1 && a.x0 + a.w > R.x0 && a.y0 < R.y1 && a.y0
 
 // pinta el suelo, los muros, las paredes y los carteles del trozo R (el lienzo ya está puesto en unidades del mundo)
 function pintaMundo(c, R) {
+  if (MAPA_ACT && MAPA_ACT.esc) { pintaMundoEsc(c, R); return; }      // un escenario de «Mi escenario» hecho mapa (mapa-escenario.js)
   c.save(); c.beginPath(); c.rect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0); c.clip();
   pintaMuro(c, R);
   for (const z of ZONAS) {
@@ -99,9 +100,9 @@ function construyeMapa() {
   for (const m of MUEBLES) {
     if (!MAPA.dibujos[m.clave]) {
       const [cv, g] = lienzo(m.dib.w * ESC_FONDO, m.dib.h * ESC_FONDO);
-      g.scale(ESC_FONDO, ESC_FONDO); g.translate(m.ox, m.oy); m.T.pinta(g, m);
+      g.scale(ESC_FONDO, ESC_FONDO); g.translate(m.ox, m.oy); if (m.f) g.scale(-1, 1); m.T.pinta(g, m);      // (m.f: volteado, en Mi escenario)
       const [, g1] = lienzo(m.dib.w, m.dib.h, true);
-      g1.translate(m.ox, m.oy); m.T.pinta(g1, m);
+      g1.translate(m.ox, m.oy); if (m.f) g1.scale(-1, 1); m.T.pinta(g1, m);
       const d = g1.getImageData(0, 0, m.dib.w, m.dib.h).data, alfa = new Uint8Array(m.dib.w * m.dib.h);
       for (let i = 0; i < alfa.length; i++) alfa[i] = d[i * 4 + 3];
       MAPA.dibujos[m.clave] = { cv, alfa };

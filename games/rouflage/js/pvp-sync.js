@@ -12,6 +12,7 @@ const FASES = { prep: 0, cuenta: 1, caza: 2, fin: 3 };
 // ---------- cada fotograma ----------
 function rfpPaso(dt) {
   if (!RFP.activo) return;
+  if (RFP.lobby) { salaVivaAvanza(dt); return; }      // la sala viva con amigos (sala-viva.js): solo lo mío, sin anfitrión ni reloj
   rfpActualizaAnfitrion();
   rfpConfinaBecario();
   if (RFP.vuelta) { rfpPideEstado(dt); return; }      // volviendo: ni mando ni mando yo hasta tener la foto del anfitrión
@@ -71,6 +72,7 @@ function rfpEnvia(dt) {
 function rfpRecibe(m) {
   if (!RFP.activo || !m || typeof m.de !== 'number') return;
   const sl = RFP.slots[m.de]; if (!sl || !sl.humano || m.de === RFP.yo) return;
+  if (RFP.lobby && (!SV_MSG.has(m.t) || salaVivaRecibe(sl, m))) return;      // en la sala viva solo vale lo de los personajes, y algo es solo de allí (sala-viva.js)
   RFP.rx[m.de] = m.t === 'hv' ? RELOJ - 99 : RELOJ;      // «ponme al día»: perdió la partida, no manda aunque fuera el anfitrión (otro le contesta)
   if (RFP.ido[m.de]) return;
   if (sl.ausente && m.t !== 'hv') rfpVuelve(sl);      // si hablaba, no se había ido

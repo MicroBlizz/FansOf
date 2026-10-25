@@ -10,7 +10,11 @@
 const INTRO_MUSICA = (() => {
   const CICLO = 7;
   const nota = n => 440 * Math.pow(2, (n - 69) / 12);      // número MIDI → hercios
-  let ctx = null, sal = null, prox = 0, ciclos = 0, activa = false, parada = false;
+  let ctx = null, sal = null, activa = false, parada = false, visto = 0;
+  const T0 = performance.now();
+  // la ventana (en el reloj del audio) de lo que se programa en esta vuelta: lo de fuera no se crea (así se programa poco a poco, a la par de la escena)
+  const VEN = { a: -Infinity, b: Infinity };
+  const fuera = t => t < VEN.a || t >= VEN.b || (VEN.a > -Infinity && t < ctx.currentTime - 0.12);      // (lo que ya pasó hace rato tampoco: sonaría todo de golpe)
   // el volumen de las opciones del juego (rouflage-vol × rouflage-vol-musica); por defecto 1 × 0,5
   function volumen() {
     try {
@@ -21,8 +25,8 @@ const INTRO_MUSICA = (() => {
     } catch (_) { return 0.5; }
   }
   // ---------- los instrumentos ----------
-  function env(t, ata, cae, vol) { const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + ata); g.gain.exponentialRampToValueAtTime(0.0001, t + ata + cae); g.connect(sal); return g; }
-  function osc(tipo, f, t, dura, destino) { const o = ctx.createOscillator(); o.type = tipo; o.frequency.setValueAtTime(f, t); o.connect(destino); o.start(t); o.stop(t + dura + 0.05); return o; }
+  function env(t, ata, cae, vol) { const g = ctx.createGain(); if (fuera(t)) return g; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + ata); g.gain.exponentialRampToValueAtTime(0.0001, t + ata + cae); g.connect(sal); return g; }
+  function osc(tipo, f, t, dura, destino) { const o = ctx.createOscillator(); if (fuera(t)) return o; o.type = tipo; o.frequency.setValueAtTime(f, t); o.connect(destino); o.start(t); o.stop(t + dura + 0.05); return o; }
   const punteo = (t, n, vol = 0.18, cae = 0.16) => osc('triangle', nota(n), t, cae + 0.01, env(t, 0.004, cae, vol));
   function campana(t, n, vol = 0.14, cae = 0.9) {      // como la «bell» del motor de la serie: seno con un armónico metálico que se apaga antes
     osc('sine', nota(n), t, cae, env(t, 0.003, cae, vol));
@@ -35,7 +39,8 @@ const INTRO_MUSICA = (() => {
   let _ruido = null;
   function ruido(t, dura, tipo, frec, vol, q = 1) {
     if (!_ruido) { const n = ctx.sampleRate; _ruido = ctx.createBuffer(1, n, n); const d = _ruido.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; }
-    const s = ctx.createBufferSource(); s.buffer = _ruido; const f = ctx.createBiquadFilter(); f.type = tipo; f.frequency.value = frec; f.Q.value = q;
+    const f0 = ctx.createBiquadFilter(); if (fuera(t)) return f0;
+    const s = ctx.createBufferSource(); s.buffer = _ruido; const f = f0; f.type = tipo; f.frequency.value = frec; f.Q.value = q;
     s.connect(f); f.connect(env(t, 0.002, dura, vol)); s.start(t); s.stop(t + dura + 0.05); return f;
   }
   const platillo = (t, vol = 0.05) => ruido(t, 0.04, 'highpass', 7000, vol);
@@ -89,30 +94,37 @@ const INTRO_MUSICA = (() => {
     // 6,45 s: el colado vuelve a su sitio: «plop»
     const g = env(t0 + 6.45, 0.004, 0.14, 0.14), o = osc('sine', 900, t0 + 6.45, 0.15, g); o.frequency.exponentialRampToValueAtTime(260, t0 + 6.58);
   }
-  // programa los ciclos con un poco de antelación (así no se corta si el móvil va justo)
-  function programa() {
-    if (!activa) return;
-    while (prox < ctx.currentTime + 2) { ciclo(prox, ciclos++); prox += CICLO; }
-    setTimeout(programa, 500);
+  // el reloj de la escena: el tiempo que lleva en marcha la animación del colado (empieza con la pantalla y nunca para); si no se puede leer, desde que cargó esto
+  function tiempoIntro() {
+    try { const el = document.querySelector('#carga .cg-oculto'), an = el && el.getAnimations && el.getAnimations()[0]; if (an && an.currentTime != null) return an.currentTime / 1000; } catch (_) { /* sin animaciones */ }
+    return (performance.now() - T0) / 1000;
   }
-  // t0: el instante (en el reloj del audio) que corresponde al segundo 0 de la intro
-  function suena(c, destino, t0, conLetras = true) {
-    ctx = c; sal = destino; prox = t0; ciclos = 0; activa = true;
-    if (conLetras) letras(t0);
-    programa();
+  // cada 0,2 s programa lo que toca en los próximos 0,6 s de la escena, contado con el reloj de la animación: si el móvil va justo o Android
+  // pausa el audio un momento, la música sigue a la par de lo que se ve (lo que se perdió no suena tarde: se salta)
+  function tic() {
+    if (!activa) return;
+    if (ctx.state !== 'running') { ctx.resume().catch(() => {}); setTimeout(tic, 200); return; }
+    const V = tiempoIntro(), hasta = V + 0.6, desde = Math.max(visto, V - 0.1), base = ctx.currentTime - V;      // base: el segundo 0 de la escena en el reloj del audio
+    if (hasta > desde) {
+      VEN.a = base + desde; VEN.b = base + hasta;
+      if (desde < 2.6) letras(base);
+      for (let k = Math.max(0, Math.floor(desde / CICLO)); k * CICLO < hasta; k++) ciclo(base + k * CICLO, k);
+      visto = hasta;
+    }
+    setTimeout(tic, 200);
   }
   return {
-    CICLO, suena,
+    CICLO,
     // para grabarla sin tiempo real (OfflineAudioContext): las letras y n ciclos seguidos desde el segundo 0
-    partitura(c, destino, n) { ctx = c; sal = destino; letras(0); for (let k = 0; k < n; k++) ciclo(k * CICLO, k); },
-    // en la página: intenta sonar ya; `retraso` = segundos que lleva la intro en pantalla (para ir a la par que las animaciones)
-    empieza(retraso = 0) {
+    partitura(c, destino, n) { ctx = c; sal = destino; VEN.a = -Infinity; VEN.b = Infinity; letras(0); for (let k = 0; k < n; k++) ciclo(k * CICLO, k); },
+    // en la página: intenta sonar ya (va siempre a la par de la escena: lee el reloj de sus animaciones)
+    empieza() {
       const v = volumen(); if (v <= 0 || activa || parada) return;
       try {
         const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
         const c = new AC(), m = c.createGain(), comp = c.createDynamicsCompressor();
         m.gain.value = Math.min(1, v * 1.6); comp.connect(m); m.connect(c.destination);
-        const va = () => { if (parada || c.state !== 'running') { try { c.close(); } catch (_) { /* nada */ } return; } INTRO_MUSICA._m = m; INTRO_MUSICA._c = c; suena(c, comp, c.currentTime - retraso); };
+        const va = () => { if (parada || c.state !== 'running') { try { c.close(); } catch (_) { /* nada */ } return; } INTRO_MUSICA._m = m; INTRO_MUSICA._c = c; ctx = c; sal = comp; activa = true; tic(); };
         if (c.state === 'running') va(); else c.resume().then(va, () => c.close());
         setTimeout(() => { if (c.state !== 'running' && !activa) try { c.close(); } catch (_) { /* nada */ } }, 600);
       } catch (_) { /* sin sonido */ }

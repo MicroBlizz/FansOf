@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.18', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha instalado un datáfono en la sala de reuniones. Phony ha preguntado si acepta cartas."] },
   { v: '0.2.17', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha enmudecido las cartas y Phony las sigue jugando con cara de póquer."] },
   { v: '0.2.16', real: ["<b>LÍDERES, PARO Y VENTAJAS FISCALES</b>: cada líder sube su propio nivel de paro (en cada nivel, rivales algo más duros) y gana ventajas fiscales: unas generales al sumar paros con cualquier líder y cuatro propias de cada líder, que se abren con sus logros. Y en la portada, una pantalla nueva de TROFEOS con el paro, los logros y las ventajas de cada líder."], joke: ["Microblizz ha subido el paro y lo llama progresión. Phony ya ha pedido su ventaja fiscal."] },
   { v: '0.2.15', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha guardado los informes bajo llave y Phony ha pedido ver su propia carta de rendimiento."] },

@@ -70,6 +70,7 @@ function escPinzaDatos() { const [a, b] = [...MIESC.toques.values()]; return { d
 function escPinzaEmpieza() {
   for (const t of MIESC.toques.values()) {      // lo que hacía el primer dedo se deshace
     if (t.pinta) { escPincelCancela(); t.pinta = false; }
+    if (t.obra) { obraCancela(); t.obra = false; }
     if (t.mueble && MIESC.drag) { const d = MIESC.drag; d.m.x = d.x0; d.m.y = d.y0; MIESC.drag = null; t.mueble = false; }
     t.pan = false; t.palanca = false;
   }
@@ -92,6 +93,8 @@ function escAbajo(e) {
   const t = MIESC.toques.get(e.pointerId), p = escAMundo(e); MIESC.puntero = p; MIESC.sucio = true;
   if (e.button === 1 || e.button === 2) { t.pan = true; t.movido = true; return; }      // la rueda o el botón derecho: siempre mueven la vista
   if (MIESC.modo === 'pintar') { t.pinta = true; escPincelAbajo(p); return; }
+  if (MIESC.modo === 'obra') { t.obra = true; obraAbajo(p); return; }      // CONSTRUIR (escenario-obra.js)
+  if (MIESC.modo === 'pegar') { t.pan = true; t.pegar = true; return; }      // PEGATINAS: al soltar sin arrastrar se pega (escenario-pegatinas.js)
   if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); if (e.pointerType !== 'mouse') MIESC.drag.levanta = 34 / (MIESC.cam.z || 1); t.mueble = true; play('tick'); return; } }
   if (MIESC.modo === 'pasear') { t.palanca = true; return; }      // PASEAR: arrastrar lleva la galleta (escenario-palanca.js)
   t.pan = true;
@@ -104,6 +107,7 @@ function escMueve(e) {
   if (MIESC.pinza) { escPinzaMueve(); return; }
   MIESC.puntero = p;
   if (t.pinta) { escPincelMueve(p); MIESC.sucio = true; return; }
+  if (t.obra) { obraMueve(p); return; }
   if (t.mueble) { escArrastra(p); return; }
   if (t.palanca) { if (!t.movido && Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 10) return; t.movido = true; escPalancaMueve(t, e.clientX, e.clientY); return; }
   if (t.pan) {
@@ -120,8 +124,10 @@ function escArriba(e) {
   }
   if (!t) return;
   if (t.pinta) escPincelArriba();
+  if (t.obra) obraArriba();
   if (t.mueble) escSuelta();
   if (t.palanca && MIESC.palanca) escPalancaSuelta();
+  if (t.pegar && !t.movido && e.type === 'pointerup') { pegToca(escAMundo(e)); MIESC.sucio = true; return; }
   if ((t.pan || t.palanca) && !t.movido && e.type === 'pointerup') escToca(escAMundo(e));
   if (e.pointerType !== 'mouse') MIESC.puntero = null;
   MIESC.sucio = true;

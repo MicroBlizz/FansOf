@@ -22,3 +22,23 @@
 .dc-sala-niveles { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
 .dc-sala-niveles .dc-chip { cursor: pointer; font-size: 13px; padding: 6px 12px; color: var(--ink); }
 .dc-sala-niveles .dc-chip.dc-elegida { background: var(--gold, #ffd166); color: #1a1026; }
+/* la reunión en equipo (equipo-ui.js): los compañeros arriba, a quién va cada rival */
+.dc-eq-banda { display: flex; gap: 6px; width: 100%; align-items: stretch; }
+.dc-eq-jug { position: relative; flex: 1 1 0; min-width: 0; display: flex; gap: 6px; align-items: flex-start; padding: 5px 6px; border-radius: 12px; border: 1px solid var(--dc-linea); background: rgba(255, 255, 255, .06); box-sizing: border-box; }
+.dc-eq-jug.dc-eq-listo { border-color: #7be04a; box-shadow: 0 0 0 1px #7be04a inset; }
+.dc-eq-jug.dc-eq-ko { opacity: .45; filter: grayscale(1); }
+.dc-eq-arte { position: relative; flex: none; width: 46px; height: 46px; display: grid; place-items: center; }
+.dc-eq-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.dc-eq-info b { font-size: 12px; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dc-eq-info small { font-size: 10px; font-weight: 800; color: var(--ink-dim); line-height: 1.1; }
+.dc-eq-info .dc-vida { height: 14px; font-size: 10px; }
+.dc-eq-info .dc-estados { gap: 2px; flex-wrap: wrap; }
+.dc-eq-info .dc-est { font-size: 9px; padding: 1px 4px; }
+.dc-eq-info .dc-est svg { width: 10px; height: 10px; }
+.dc-eq-info .dc-equipo { gap: 2px; } .dc-eq-info .dc-comp .dc-sprite { transform: scale(.7); }
+.dc-eq-van { color: #ff8a8a !important; }
+.dc-eq-salir { flex: none; align-self: center; font: 800 11px var(--font-ui); padding: 6px 8px; border-radius: 10px; border: 1px solid var(--dc-linea); background: rgba(0, 0, 0, .3); color: var(--ink); cursor: pointer; }
+.dc-eq-blanco { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 800; padding: 1px 6px 1px 2px; border-radius: 999px; background: rgba(0, 0, 0, .45); border: 1px solid rgba(255, 255, 255, .2); max-width: 100%; overflow: hidden; white-space: nowrap; }
+.dc-eq-blanco.dc-eq-a-ti { background: #a8202c; border-color: #ff8a8a; }
+.dc-fin.dc-eq-esperando { filter: saturate(.4); }
+.dc-eq-jug.dc-eq-fuera { opacity: .6; border-style: dashed; }

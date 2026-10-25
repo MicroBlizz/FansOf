@@ -1,6 +1,6 @@
 // Fans Of Decks · JUGAR CON AMIGOS: la sala de hasta 4 (salas de core, core/js/sistema/salas.js). En obras: solo con NUCLEO.desarrollo (o ?salas=local para probar con pestañas).
 // Se crea una sala o se entra con su código (o con el enlace ?sala=CODIGO); cada persona elige un líder distinto, el anfitrión elige el nivel
-// (solo los que tienen abiertos todos los líderes elegidos) y la arranca. El combate en equipo aún no está: al empezar se ve quién va y con qué (docs/decks/PLAN-DUO.md).
+// (solo los que tienen abiertos todos los líderes elegidos) y la arranca. Al empezar, la reunión en equipo (equipo.js; docs/decks/PLAN-DUO.md).
 // Mis datos en la sala: { lider, paro } (paro = el más alto abierto con ese líder). Los de la sala: { paro } (el nivel elegido) y, al empezar, { semilla }.
 'use strict';
 const DC_SALA_MAX = 4;
@@ -8,7 +8,7 @@ let dcRed = null;
 const dcAmigosAbierto = () => typeof SALAS !== 'undefined' && (NUCLEO.desarrollo || SALAS.local());
 // el nivel más alto que pueden jugar todos: el menor de los paros abiertos de los líderes elegidos
 const dcSalaTope = s => Math.min(DC_PARO_MAX, ...s.jugadores.filter(j => j.datos && j.datos.lider).map(j => j.datos.paro | 0));
-function dcSalaSale() { if (dcRed) dcRed.salir(); dcRed = null; }
+function dcSalaSale() { dcEqSale(); if (dcRed) dcRed.salir(); dcRed = null; }
 function dcAmigos(codigo) {
   const s = dcPanel(tr('Jugar con amigos'));
   s.append(dcEl('p', 'dc-nota', tr('Hasta 4 personas en la misma sala, cada una con un líder distinto. Crea la sala y comparte el código o el enlace.')));
@@ -77,7 +77,7 @@ function dcSalaEspera() {
       const vivos = sala.jugadores.filter(j => j.vivo || j.yo), lideres = vivos.map(j => j.datos && j.datos.lider);
       const falta = vivos.length < 2 ? tr('Hacen falta al menos dos personas para empezar.') : lideres.some(x => !x) ? tr('Falta que todos elijan líder.') : new Set(lideres).size < lideres.length ? tr('Cada persona lleva un líder distinto.') : '';
       const ok = dcEl('button', 'btn-big ol', tr('EMPEZAR')); ok.disabled = !!falta;
-      ok.onclick = () => { play('levelup'); red.poner({ paro: nivel, semilla: Math.floor(Math.random() * 1e9) }, true).catch(e => toast(tr(SALAS.errorTexto(e)), true)); };
+      ok.onclick = () => { play('levelup'); red.poner({ paro: nivel, semilla: Math.floor(Math.random() * 1e9), equipo: vivos.map(j => ({ orden: j.orden, nombre: j.nombre, lider: j.datos.lider })) }, true).catch(e => toast(tr(SALAS.errorTexto(e)), true)); };
       if (falta) s.append(dcEl('p', 'dc-nota', falta));
       s.append(ok);
     } else s.append(dcEl('p', 'dc-nota', tr('Esperando a que el anfitrión empiece.')));
@@ -100,15 +100,5 @@ function dcSalaLider(sala, alElegir) {
   }
   const v = dcEl('button', 'btn-ghost ol', tr('VOLVER')); v.onclick = () => { play('select'); alElegir(null); }; s.append(v);
 }
-// ---------- al empezar: el combate en equipo aún está en obras ----------
-function dcSalaEmpieza(sala) {
-  const s = dcPanel(tr('Partida en equipo'));
-  s.append(dcEl('p', 'dc-nota', tr('Nivel: {n}', { n: dcParoNombre(sala.datos.paro | 0) })));
-  for (const j of sala.jugadores) {
-    const L = j.datos && DC_LIDERES[j.datos.lider], caja = dcEl('div', 'dc-opcion dc-lider-op dc-sala-jugador');
-    const arte = dcEl('span', 'dc-lider-op-arte'); if (L) arte.append(dcSprite(L.arte, 48));
-    const txt = dcEl('span', 'dc-lider-op-txt'); txt.append(dcEl('b', '', j.nombre + (j.yo ? ' ' + tr('(tú)') : '')), dcEl('small', 'dc-riesgo', L ? tr(L.nombre) : '')); caja.append(arte, txt); s.append(caja);
-  }
-  s.append(dcEl('p', 'dc-nota', tr('El combate en equipo todavía está en obras: de momento la sala junta al equipo, los líderes y el nivel.')));
-  const sal = dcEl('button', 'btn-ghost ol', tr('SALIR DE LA SALA')); sal.onclick = () => { play('select'); dcSalaSale(); dcPortada(); }; s.append(sal);
-}
+// ---------- al empezar: a la reunión en equipo (equipo.js y equipo-ui.js) ----------
+function dcSalaEmpieza(sala) { dcEqEntra(dcRed, sala); }

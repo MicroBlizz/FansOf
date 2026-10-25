@@ -218,4 +218,14 @@ IDIOMA.add({
   "cuesta %1": "kostet %1",
   "de los %1": "von den %1",
   "Español": "Español",
+  "Pago seguro con Google Play. Lo comprado queda en tu cuenta.": "Sichere Zahlung über Google Play. Gekauftes bleibt in deinem Konto.",
+  "Abriendo Google Play…": "Google Play wird geöffnet…",
+  // pagos.js (Google Play, en lo ligero desde el 25-10-2026)
+  "Esa compra se hizo con otra cuenta": "Dieser Kauf wurde mit einem anderen Konto gemacht",
+  "Google Play no está disponible en este aparato": "Google Play ist auf diesem Gerät nicht verfügbar",
+  "Google todavía no ha confirmado el pago: lo recibirás en cuanto lo haga": "Google hat die Zahlung noch nicht bestätigt: du bekommst es, sobald das passiert",
+  "Necesitas conexión para comprar": "Zum Kaufen brauchst du eine Verbindung",
+  "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "Der Kauf konnte nicht abgeschlossen werden. Falls Google abgebucht hat, bekommst du es in ein paar Minuten.",
+  "No se vende en tu país": "In deinem Land nicht erhältlich",
+  "Ya lo tienes": "Hast du schon"
 });

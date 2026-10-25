@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.26', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha montado un mercado en el búnker. Phony ha intentado pagar con queso."] },
   { v: '0.2.25', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha callado los chillidos y las ratas han seguido pulsando botones con mucha dignidad."] },
   { v: '0.2.24', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz está construyendo salas para jugar con amigos y Phony ya ha saqueado la primera."] },
   { v: '0.2.23', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha tapado los agujeros por donde se contaba todo y las ratas han recuperado su privacidad."] },

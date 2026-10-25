@@ -32,6 +32,12 @@ function cierraTienda() {
   if (TIENDA.desde === 'armario') abreArmario(ARMARIO.cat, ARMARIO.desde); else if (TIENDA.desde === 'pase') abrePase(); else if (TIENDA.desde === 'gacha') abreGacha(); else irTitulo();
 }
 function tiendaCompra(texto, da) { MONEDAS.recomiendaCuenta(() => tiendaCompraHecha(texto, da)); }
+// lo que cuesta euros: en la app de Android, Google Play (core/js/sistema/pagos.js: el servidor entrega, servidor/91, y el estado vuelve por el gancho 'compra'
+// de servidor-economia.js); si no, como hasta ahora, la compra de prueba del servidor o de la partida local. `producto` = el id en Play Console y en `productos`
+function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
+  if (typeof PAGOS !== 'undefined' && PAGOS.disponible()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
+  return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
+}
 function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
 
 // el icono del euro: una moneda dorada con su signo
@@ -57,7 +63,7 @@ const INVITA_TIENDA = Math.random() < 0.5 ? 'Arkioner' : 'Pepins';
 function tiendaPinta() {
   ecoEstado();
   E('tienda-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
-  const aviso = E('tienda-aviso-euros'); if (aviso) aviso.textContent = tr('De momento lo de los euros es gratis: te invita {quien}.', { quien: INVITA_TIENDA });
+  const aviso = E('tienda-aviso-euros'); if (aviso) aviso.textContent = typeof PAGOS !== 'undefined' && PAGOS.disponible() ? '' : tr('De momento lo de los euros es gratis: te invita {quien}.', { quien: INVITA_TIENDA });
   // una tarjeta: lo que recibes (dibujo y nombre), de dónde viene (icono + flecha si es un cambio) y el botón con el icono de lo que pagas.
   // `pago` = { moneda: 'euro' | 'gotas' | 'acciones', txt, tengo, hace }: con `tengo` por debajo de `hace`, el botón avisa de lo que falta
   const tarjeta = (dibuja, nombre, nota, pago, alTocar, clase = '', origen = null) => {
@@ -82,7 +88,7 @@ function tiendaPinta() {
   const ini = TIENDA.inicio, yaInicio = !!(SAVE.tienda && SAVE.tienda.inicio);
   const cosasIni = ini.cosas.map(([cat, id]) => ({ cat, it: arItem(cat, id) })).filter(x => x.it);
   of.appendChild(tarjeta((c, w) => { if (cosasIni[0]) cosasIni[0].it.x(c, w); }, tr('Pack de inicio'), cosasIni.map(x => tr(x.it.n)).join(' + ') + ' + ' + tr('{n} Acciones', { n: ini.acciones }) + ' · ' + tr('una sola vez'),
-    yaInicio ? { txt: tr('YA ES TUYO') } : { moneda: 'euro', txt: eurTexto(ini.eur) }, yaInicio ? null : RFS.activo() ? () => tiendaServidor('inicio', 0, tr('Pack de inicio')) : () => tiendaCompra(tr('Pack de inicio'), () => {
+    yaInicio ? { txt: tr('YA ES TUYO') } : { moneda: 'euro', txt: eurTexto(ini.eur) }, yaInicio ? null : () => tiendaEuros('inicio', 0, tr('Pack de inicio'), eurTexto(ini.eur), 'rouflage_inicio', () => {
       SAVE.tienda = SAVE.tienda || {}; SAVE.tienda.inicio = true; SAVE.acciones += ini.acciones;
       for (const { cat, it } of cosasIni) { const k = cat + ':' + it.id; if (!armarioEstado().tengo.includes(k)) armarioEstado().tengo.push(k); }
     }), 'oferta'));
@@ -92,7 +98,7 @@ function tiendaPinta() {
   // paquetes de Acciones, por euros
   const ac = E('tienda-acciones'); ac.innerHTML = '';
   for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
-    pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, RFS.activo() ? () => tiendaServidor('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n })) : () => tiendaCompra(tr('{n} Acciones', { n: pk.n }), () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
+    pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaEuros('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n }), eurTexto(pk.eur), 'rouflage_acciones_' + pk.n, () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';
   for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, RFS.activo() ? () => tiendaServidor('canje', TIENDA.canje.indexOf(pk)) : () => {

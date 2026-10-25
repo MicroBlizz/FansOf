@@ -26,12 +26,12 @@ function dcAnimaAccion(s, e, retardo) {
   dcClase(rv, 'dc-acto-' + e.tipo, retardo);
   setTimeout(() => play({ ataque: 'dcEmbiste', spam: 'dcPapel', defensa: 'dcEscudo', cura: 'heal', refuerzo: 'dcPoder', fuerza: 'dcPoder', debil: 'dcDebil', aturdido: 'deny' }[e.tipo] || 'pop'), retardo);
   if (e.tipo === 'spam') setTimeout(() => dcVuela(rv.querySelector('.dc-rival-arte'), s.querySelector('.dc-pila-desc'), 'spam', '#f3a6ff'), retardo + 120);
-  if (e.tipo === 'ataque') setTimeout(() => dcVuela(rv.querySelector('.dc-rival-arte'), s.querySelector('.dc-lider-arte'), 'ataque', '#ff4b5c', 260), retardo + 60);
+  if (e.tipo === 'ataque') setTimeout(() => dcVuela(rv.querySelector('.dc-rival-arte'), s.querySelector(e.blanco !== undefined ? '.dc-eq-jug[data-j="' + e.blanco + '"] .dc-eq-arte' : '.dc-lider-arte'), 'ataque', '#ff4b5c', 260), retardo + 60);
   if (e.tipo === 'cura' || e.tipo === 'refuerzo') setTimeout(() => dcImpacto(rv.querySelector('.dc-rival-arte'), e.tipo), retardo + 150);
 }
 // Una cifra flotante con su icono sobre quien la recibe.
 function dcAnimaEvento(s, e, retardo) {
-  const obj = e.r < 0 ? s.querySelector('.dc-lider-arte') : s.querySelector('.dc-rival[data-rival="' + e.r + '"] .dc-rival-arte'); if (!obj) return;
+  const obj = e.j !== undefined ? s.querySelector('.dc-eq-jug[data-j="' + e.j + '"] .dc-eq-arte') : e.r < 0 ? s.querySelector('.dc-lider-arte') : s.querySelector('.dc-rival[data-rival="' + e.r + '"] .dc-rival-arte'); if (!obj) return;
   setTimeout(() => {
     const f = dcEl('span', 'dc-flot dc-flot-' + (e.t === 'falla' ? 'esquiva' : e.t), e.t === 'dano' ? '−' + e.n : e.t === 'cura' ? '+' + e.n : e.t === 'bloqueo' ? '+' + e.n : e.t === 'falla' ? tr('Sala llena') : tr('Bloqueado'));
     obj.append(f); setTimeout(() => f.remove(), 1300);

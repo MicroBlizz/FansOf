@@ -47,7 +47,7 @@ const RFS = (() => {
   const errorTexto = e => {
     const m = String((e && e.message) || e);
     return /faltan_gotas/.test(m) ? tr('Te faltan Gotas') : /faltan_acciones/.test(m) ? tr('No tienes bastantes Acciones') : /todavia_no/.test(m) ? tr('Todavía no toca. Aguanta un poco.')
-      : /ya_la_tienes/.test(m) ? tr('Eso ya es tuyo') : e && e.estado >= 400 ? tr('El servidor ha dado un error y ya queda apuntado') : tr('Necesitas conexión para esto');
+      : /ya_la_tienes/.test(m) ? tr('Eso ya es tuyo') : /compras_cerradas/.test(m) ? tr('Las compras con euros solo están en la app de Android') : e && e.estado >= 400 ? tr('El servidor ha dado un error y ya queda apuntado') : tr('Necesitas conexión para esto');
   };
   // una acción del servidor: manda la petición con su clave y aplica el estado que contesta
   async function llama(nombre, args) {
@@ -111,8 +111,13 @@ const RFS = (() => {
   window.addEventListener('online', () => { vaciaCola(); });
   document.addEventListener('visibilitychange', async () => {      // al volver a la pestaña: lo que hiciste en otro dispositivo
     if (document.hidden || !activo || enviando) return;
-    try { aplica(await CUENTA.rpc('rf_estado', {})); relojes(); if (typeof refrescaHud === 'function') refrescaHud(true); } catch (_) { /* sin red */ }
+    refresca();
   });
-  return { arranca, llama, error, errorTexto, aplica, alGuardar, ponerYa, partida, vaciaCola, activo: () => activo, desfase: () => desfase, relojes,
+  // vuelve a pedir el estado al servidor (al volver a la pestaña; tras una compra de Google Play, servidor-economia.js)
+  async function refresca() {
+    if (!activo || enviando) return;
+    try { aplica(await CUENTA.rpc('rf_estado', {})); relojes(); if (typeof refrescaHud === 'function') refrescaHud(true); } catch (_) { /* sin red */ }
+  }
+  return { arranca, llama, error, errorTexto, aplica, alGuardar, ponerYa, partida, vaciaCola, refresca, activo: () => activo, desfase: () => desfase, relojes,
     reinicia: async () => { if (activo) await CUENTA.rpc('rf_reiniciar', {}); try { localStorage.removeItem(CACHE); } catch (_) { /* nada */ } } };
 })();

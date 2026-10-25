@@ -4,41 +4,47 @@
 // tarjeta hacia arriba hasta el suelo (sale su fantasma con la huella verde si cabe o roja si no). Lo que no tienes sale con candado y te dice
 // cómo se consigue. Al tocar un mueble puesto sale su BURBUJA: mover, voltear, color (si tiene) y quitar. Va después de escenario.js.
 'use strict';
-const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['pintar', 'Pintar', 'pincel']];
+const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['obra', 'Construir', 'ladrillo'], ['pegar', 'Pegatinas', 'deco'], ['pintar', 'Pintar', 'pincel']];      // PEGATINAS: escenario-pegatinas.js      // CONSTRUIR: solo con el lienzo (escenario-obra.js)
 // lo de una pestaña: [{ cat, it }]
 function escCosasDe(tab) {
-  if (tab === 'escenarios') return arCat('escenarios').items.map(it => ({ cat: 'escenarios', it }));
+  if (tab === 'escenarios') return arCat('escenarios').items.filter(it => !it.lz).map(it => ({ cat: 'escenarios', it }));      // (los tamaños del lienzo no son escenarios: escenario-obra2.js)
   return arCat('muebles').items.filter(it => MUEBLES_SALA[it.id] && MUEBLES_SALA[it.id].g === tab).map(it => ({ cat: 'muebles', it }));
 }
 function escModo(m, sinSonido) {
   MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else { MIESC.cam.sigue = true; escSacaYo(); } if (m !== 'decorar') MIESC.sel = null;
-  if (m === 'pintar') MIESC.tab = 'pintar'; else if (MIESC.tab === 'pintar') MIESC.tab = 'muebles';
+  const panel = ['pintar', 'obra', 'pegar'];      // las pestañas que son un modo con su propio panel
+  if (panel.includes(m)) MIESC.tab = m; else if (panel.includes(MIESC.tab)) MIESC.tab = 'muebles';
+  if (m !== 'obra') obraArriba();
   if (!sinSonido) play('select');
-  E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-pasear').hidden = m !== 'pasear';
+  preparaObra(); preparaPeg(); E('esc-pegar').hidden = m !== 'pegar'; preparaProbar(); E('b-esc-probar').querySelector('b').textContent = tr('PROBAR'); E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-obra').hidden = m !== 'obra'; E('esc-pasear').hidden = m !== 'pasear';
   E('b-esc-pasear').classList.toggle('activo', m === 'pasear'); E('esc-panel').classList.toggle('paseo', m === 'pasear');
   E('b-esc-pasear').querySelector('b').textContent = m === 'pasear' ? tr('DECORAR') : tr('PASEAR');
   if (m === 'pintar' && typeof escPincelRefresca === 'function') escPincelRefresca();
+  if (m === 'obra') obraRefresca();
+  if (m === 'pegar') pegRefresca();
   escBandeja(); MIESC.sucio = true; requestAnimationFrame(escAjusta);
 }
 function escBandeja() {
   const sala = escenarioSala(), fila = E('esc-pestanas'); fila.innerHTML = '';
   for (const [id, nombre, icono] of ESC_PESTANAS) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-pest' + (MIESC.modo !== 'pasear' && MIESC.tab === id ? ' activa' : '');
+    if (id === 'obra' && escBase(sala.id) !== 'lienzo') continue;
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'esc-pest-' + id; b.className = 'esc-pest' + (MIESC.modo !== 'pasear' && MIESC.tab === id ? ' activa' : '');
     b.innerHTML = '<i></i><b></b><small></small>'; ponIcono(b.children[0], icono); b.children[1].textContent = tr(nombre);
-    if (id !== 'pintar') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
-    b.onclick = () => { if (id === 'pintar') { if (MIESC.modo !== 'pintar') escModo('pintar'); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
+    if (id === 'pegar') b.children[2].textContent = (sala.peg || []).length + '/' + ESC_PEG.MAX;
+    else if (id !== 'pintar' && id !== 'obra') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
+    b.onclick = () => { if (id === 'pintar' || id === 'obra' || id === 'pegar') { if (MIESC.modo !== id) escModo(id); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
     fila.appendChild(b);
   }
   if (MIESC.modo !== 'decorar') return;
   const lista = escCosasDe(MIESC.tab), tira = E('esc-tira'), viejo = tira.scrollLeft; tira.innerHTML = '';
   lista.sort((a, b) => (arTiene(b.cat, b.it) ? 1 : 0) - (arTiene(a.cat, a.it) ? 1 : 0));
   const tienes = lista.filter(x => arTiene(x.cat, x.it)).length;
-  E('esc-cuenta').textContent = MIESC.tab === 'escenarios' ? tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr(arItem('escenarios', sala.id).n)
+  E('esc-cuenta').textContent = MIESC.tab === 'escenarios' ? tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr(arItem('escenarios', escBase(sala.id)).n)
     : tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr('{n} de {t} puestos', { n: sala.muebles.length, t: SALA.MAX_MUEBLES });
   E('esc-pista').textContent = MIESC.tab === 'escenarios' ? tr('Toca uno para cambiar el estilo y la forma del mapa') : tr('Toca una tarjeta: sale donde miras');
   for (const { cat, it } of lista) {
     const tuyo = arTiene(cat, it), puestos = cat === 'muebles' ? sala.muebles.filter(m => m.id === it.id).length : 0;
-    const marcado = cat === 'escenarios' ? sala.id === it.id : false;
+    const marcado = cat === 'escenarios' ? escBase(sala.id) === it.id : false;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-' + it.r + (tuyo ? '' : ' bloq') + (marcado ? ' activa' : '');
     const k = arLienzo(64, 64); arPinta(k, (c, w) => it.x(c, w)); b.appendChild(k);
     const s = document.createElement('small'); s.textContent = tr(it.n); b.appendChild(s);
@@ -56,6 +62,7 @@ function escBandeja() {
 }
 function escTocaCosa(cat, it, tuyo) {
   if (!tuyo) { play('tick'); escAviso(tr('Aún no es tuyo') + ' · ' + tr(it.n) + ': ' + arTextoDe(it)); return; }
+  if (cat === 'escenarios' && it.id === 'lienzo') { play('select'); obraElige(); return; }      // en blanco, desde una plantilla o seguir con el tuyo (escenario-obra.js)
   if (cat === 'escenarios') { escCambiaBase(it.id); return; }
   escPonDondeMiras(it);
 }

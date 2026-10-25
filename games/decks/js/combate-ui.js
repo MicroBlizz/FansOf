@@ -3,7 +3,7 @@
 // la juegan (si pide objetivo y hay varios rivales, se queda marcada y pregunta a quién: nunca al azar); arrastrarla también (arrastre.js). Mantener pulsada una carta de la mano la enseña en grande encima (la lupa); fuera de la mano abre su ficha.
 // Lo que se mueve: la carta jugada vuela al centro, las cifras de daño flotan sobre quien las recibe (C.eventos), el golpeado tiembla y cada turno entra con su rótulo.
 'use strict';
-const DCC = { C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
+const DCC = { equipo: null, C: null, alFin: null, elegida: null, turnoVisto: 0, fondo: null, ocupado: 0, arrastre: null, trasArrastre: false, altoMano: 0, toque: null };
 // Los tipos de carta (nombres de Arkioner, 18-10-2026): Empleado (sale, pega y vuelve), Tarea (efecto inmediato), Trámite (lo puntual del líder: bloqueo, robar, curar),
 // Directiva (poder que dura la reunión), Cláusula (estorba) y Spam (basura del rival). Para la fase 1: Compañero (se queda varios turnos) y Protocolo (reacción armada).
 const DC_NOMBRE_TIPO = { empleado: 'Empleado', tarea: 'Tarea', tramite: 'Trámite', directiva: 'Directiva', companero: 'Compañero', protocolo: 'Protocolo', clausula: 'Cláusula', spam: 'Spam' };
@@ -66,7 +66,8 @@ function dcPintaRival(C, r, i) {
   it.title = tr(r.aturdido ? 'Pierde el turno' : I[2]);
   const arte = dcEl('div', 'dc-rival-arte'); arte.append(dcSprite(D.arte, D.alto || (D.jefe ? 110 : D.elite ? 92 : 72)));
   d.append(it, arte, dcEl('b', 'dc-nombre', r.nombre), dcBarraVida(r.hp, r.hpMax, r.bloqueo), dcEstados(r));
-  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k, i); dcJugar(C, k, i); dcTrasJugada(); } };
+  if (DCC.equipo && r.hp > 0) d.append(dcEqBlanco(r));   // en equipo: a quién va
+  d.onclick = () => { if (dcApunta(C) && r.hp > 0) { const k = DCC.elegida; DCC.elegida = null; dcAnimaCarta(k, i); dcHaz(C, { a: 'carta', i: k, obj: i }); dcTrasJugada(); } };
   return d;
 }
 // Los compañeros sentados en la mesa (con los turnos que les quedan) y los protocolos armados.
@@ -105,7 +106,7 @@ function dcPintaCombate() {
   const listo = C.saltoCarga >= C.salto.carga, salto = dcEl('button', 'dc-boton dc-salto' + (listo ? ' dc-salto-listo' : ''));
   salto.style.setProperty('--carga', Math.min(1, C.saltoCarga / C.salto.carga)); salto.append(dcSvg('salto'), dcEl('span', '', tr(C.salto.nombre)), dcEl('small', '', listo ? tr('¡Gratis!') : Math.min(C.saltoCarga, C.salto.carga) + '/' + C.salto.carga + ' CAOS'));
   salto.disabled = C.fase !== 'jugador' || !listo; salto.title = tr(C.salto.texto, C.salto);
-  salto.onclick = () => { if (dcUsaSalto(C)) { play('zap'); dcTrasJugada(); } };
+  salto.onclick = () => { if (dcHaz(C, { a: 'salto' })) { play('zap'); dcTrasJugada(); } };
   acc.append(salto);
   r.meriendas.forEach((k, i) => { const b = dcEl('button', 'dc-boton dc-merienda'); b.append(dcSvg('merienda'), dcEl('span', '', tr(DC_MERIENDAS[k].nombre))); b.title = tr(DC_MERIENDAS[k].texto); b.disabled = C.fase !== 'jugador'; b.onclick = () => { if (dcUsaMerienda(C, i)) { play('heal'); dcTrasJugada(); } }; acc.append(b); });
   const log = dcEl('div', 'dc-log', C.log.slice(-2).join(' · '));
@@ -117,7 +118,8 @@ function dcPintaCombate() {
   const bd = dcEl('button', 'dc-pila dc-pila-desc'); bd.append(dcSvg('mazo'), dcEl('span', '', String(C.descartes.length))); bd.title = tr('Descartes'); bd.onclick = () => dcVerCartas(tr('Descartes'), C.descartes);
   pilas.append(bp, bd);
   const fin = dcEl('button', 'dc-boton dc-fin', tr('FIN DE TURNO')); fin.disabled = C.fase !== 'jugador';
-  fin.onclick = () => { DCC.elegida = null; play('dcFinTurno'); dcFinTurno(C); dcTrasJugada(); };
+  fin.onclick = () => { DCC.elegida = null; play('dcFinTurno'); dcHaz(C, { a: 'fin' }); dcTrasJugada(); };
+  if (DCC.equipo) dcEqBotonFin(fin);   // equipo-ui.js: en equipo, «listo» hasta que acaban todos
   franja.append(caos, fin, pilas);
   // la mano, en abanico
   const mano = dcEl('div', 'dc-mano'); const n = C.mano.length, ancho = Math.max(280, s.clientWidth - 40), wc = ancho < 400 ? 84 : ancho < 500 ? 96 : 104;
@@ -129,7 +131,7 @@ function dcPintaCombate() {
     mano.append(el);
   });
   const marcada = DCC.elegida !== null && C.mano[DCC.elegida], aviso = dcEl('div', 'dc-aviso', !marcada ? '' : dcNecesitaObjetivo(C, marcada) ? tr('¿A quién? Toca un rival o arrastra la carta') : tr('Tócala otra vez para jugarla o arrástrala'));
-  const z = dcEl('div', 'dc-escala'); z.append(cab, top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);
+  const z = dcEl('div', 'dc-escala'); z.append(cab); if (DCC.equipo) z.append(dcEqBanda()); z.append(top, med, acc, log, franja, aviso, mano); s.append(z); dcArrastreMano(mano);   // en equipo, los demás arriba (equipo-ui.js)
   const reparte = C.turno !== DCC.turnoVisto;   // turno nuevo: la mano entra repartida desde el mazo (combate-anim.js)
   dcPonFondo(z, DCC.fondo); // el fondo va dentro de lo que se escala, pegado abajo, para que la mesa quede bajo los rivales en cualquier pantalla
   // la mano guarda su alto aunque se quede vacía, para que no se mueva nada de la pantalla (regla de Arkioner, 18-10-2026)
@@ -165,12 +167,19 @@ function dcTocaCarta(i) {
   // un toque solo la marca (o la desmarca si ya lo estaba y no es el segundo de un doble toque)
   if (!doble) { DCC.elegida = DCC.elegida === i ? null : i; play('select'); dcPintaCombate(); return; }
   if (dcNecesitaObjetivo(C, c)) { DCC.elegida = i; play('select'); dcPintaCombate(); return; }   // con varios rivales, nunca al azar: se queda marcada y pregunta a quién
-  DCC.elegida = null; dcAnimaCarta(i, dcPrimerRival(C)); dcJugar(C, i, dcPrimerRival(C)); dcTrasJugada();
+  DCC.elegida = null; dcAnimaCarta(i, dcPrimerRival(C)); dcHaz(C, { a: 'carta', i, obj: dcPrimerRival(C) }); dcTrasJugada();
+}
+// Lo que hace el jugador: en solitario se aplica ya; en equipo se manda a la sala y se aplica cuando llega en orden (equipo.js).
+function dcHaz(C, a) {
+  if (DCC.equipo) return dcEqManda(a);
+  if (a.a === 'carta') return dcJugar(C, a.i, a.obj);
+  if (a.a === 'salto') return dcUsaSalto(C);
+  if (a.a === 'fin') dcFinTurno(C); return true;
 }
 function dcTrasJugada() {
   const C = DCC.C;
   const dur = dcPintaCombate() || 0;
-  if (C.fase === 'fin') setTimeout(() => DCC.alFin(C.resultado, C), Math.max(900, dur + 500));
+  if (C.fase === 'fin' && !DCC.equipo) setTimeout(() => DCC.alFin(C.resultado, C), Math.max(900, dur + 500));
 }
 // Una carta pintada: coste, dibujo, nombre y texto. Mantener pulsada la amplía.
 // La Fuerza (y la de los empleados del turno) que se suma al daño de la carta en mano.

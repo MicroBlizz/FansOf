@@ -66,3 +66,5 @@ async function gachaTiraServidor(n, gratis) {
   const est = gratis ? await RFS.llama('rf_gacha_gratis', { p_tipo: gratis }) : await RFS.llama('rf_gacha_tirar', { p_n: n });
   return est.sale.map(s => { const [cat, id] = s.pieza.split(':'); return { cat, it: arItem(cat, id), nuevo: s.nuevo, devuelve: s.devuelve }; });
 }
+// una compra con dinero real (Google Play, core/js/sistema/pagos.js) la entrega el servidor (servidor/91): aquí solo se vuelve a pedir el estado y se repinta la tienda
+if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden) tiendaPinta(); }); });

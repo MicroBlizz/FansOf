@@ -138,7 +138,7 @@ function adShopOffer() {   // regalo diario x2 y el pack «Sin anuncios»
   const sinAnuncios = () => { adsState().noAds = true; stat('noads', 1); saveGame(); play('win'); buildShop(); toast('Sin anuncios: los premios te llegan al momento'); };
   const b = $('#btn-noads'); if (b) b.onclick = () => {
     play('select');
-    if (MONEDAS.activo()) MONEDAS.compraReal('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b>`, sinAnuncios);   // solo con dinero real
+    if (MONEDAS.activo()) MONEDAS.compraReal('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b>`, sinAnuncios, 'rumble_sin_anuncios');   // solo con dinero real (en la app cobra Google y el servidor lo apunta en reclamos)
     else confirmBox('¿COMPRAR?', `Sin anuncios<span class="big">PARA SIEMPRE</span>por <b>${eur(ADS.noAdsEur)}</b><small>Versión de prueba: no se cobra nada y te lo llevas gratis.</small>`, 'COMPRAR', sinAnuncios);
   };
 }
@@ -157,5 +157,8 @@ function adMissionOffer(L, W) {   // cambiar una misión diaria o semanal que no
     saveGame(); buildMissions(); toast('Misión cambiada', true);
   });
 }
+// «Sin anuncios» vive en el servidor (reclamos 'sin-anuncios', servidor/90): al comprarlo en la app o al entrar en otro aparato se aplica aquí
+hook('compra', r => { if (r && r.derecho === 'sin-anuncios' && !adsState().noAds) { adsState().noAds = true; saveGame(); } });
+hook('derechos', lista => { if (lista.includes('sin-anuncios') && !adsState().noAds) { adsState().noAds = true; saveGame(); } });
 hook('gacha.textos', adGachaOffer);   // tirada gratis con anuncio
 hook('tienda', adShopOffer);         // regalo x2 y «Sin anuncios»

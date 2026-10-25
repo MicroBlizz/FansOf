@@ -11,6 +11,7 @@ function muestraFin() {
   const esc = x => String(x).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   E('fin-ranking').innerHTML = pintaRankingFin(r.ranking);
   E('b-cambia').textContent = J.modo === 'camaleon' ? tr('Ahora de cazador') : tr('Ahora de camaleón');
+  E('b-menu').textContent = typeof ESC_PRUEBA !== 'undefined' && ESC_PRUEBA.activa ? tr('VOLVER A MI ESCENARIO') : tr('Menú');      // la partida de prueba de Mi escenario (escenario-obra.js)
   E('b-cambia').hidden = J.pvp; E('b-otra').textContent = J.pvp ? tr('OTRA PARTIDA') : tr('OTRA VEZ');      // por internet los papeles los reparte el servidor al azar
   E('b-foto').hidden = !fotoHay();      // compartir la foto de tu escondite (foto.js)
   pintaMapaFinal(); galeriaPinta();

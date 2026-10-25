@@ -128,7 +128,7 @@ function colorCamo(n) { return n < 50 ? '#ff4b5c' : n < 70 ? '#ffcb3d' : '#7ee04
 // lo que le espera a un camaleón con ese camuflaje, en una frase
 function veredicto(n) { return n < 50 ? tr('Se te ve mucho: mejor píntate un poco más') : n < 65 ? tr('Regular: de lejos cuelas, de cerca no') : n < 80 ? tr('Bien pintado. De cerca aún te la juegas') : tr('¡Casi no se te ve!'); }
 function refrescaHud(todo) {
-  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado;
+  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden && !(typeof VISITA !== 'undefined' && VISITA.activa));      // la sala viva, solo con su pantalla delante
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
   if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
@@ -143,8 +143,8 @@ function refrescaHud(todo) {
   refrescaPoder(); refrescaChivato(); refrescaGesto(); refrescaHab();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
-  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo, 'e-quedan': !cam && !paseo, 'acciones': cam && (J.fase === 'prep' || caza) && !TALLER.abierto && !yo.fuera,
-    'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && caza && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
+  const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo && J.fase !== 'sala', 'e-quedan': !cam && !paseo && J.fase !== 'sala', 'acciones': cam && (J.fase === 'prep' || caza || J.fase === 'sala') && !TALLER.abierto && !yo.fuera,
+    'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && (caza || J.fase === 'sala') && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
   if (cam) {
     const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;
@@ -170,13 +170,13 @@ let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
 function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); misionEvento('ayuda'); }
 function muestraPausa(si) {
-  E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
+  E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : typeof ESC_PRUEBA !== 'undefined' && ESC_PRUEBA.activa ? tr('VOLVER A MI ESCENARIO') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
 }
 // al elegir papel: la primera vez se enseña antes cómo se juega
 // la pantalla CONTRA BOTS: el papel (viene marcado desde la tarjeta del título) y el mapa, y luego ¡JUGAR!
 const BOTS = { modo: 'camaleon' };
-function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); pantalla('p-bots'); }
+function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); if (MAPA.id !== mapaElegido()) { cargaMapa(mapaElegido()); escenaTitulo(); } pintaBotonesMapa(); pantalla('p-bots'); }      // los candados de los mapas, al día (elige-mapa.js)
 function pintaBots() {
   E('b-bots-camaleon').classList.toggle('elegido', BOTS.modo === 'camaleon');
   E('b-bots-cazador').classList.toggle('elegido', BOTS.modo === 'cazador');
@@ -254,12 +254,12 @@ function preparaInterfaz() {
   E('b-salir').onclick = () => {
     // en PvP, irse estando en juego deja a los tuyos con un jugador menos: el primer toque avisa y el segundo se va (más adelante, con penalización si se repite)
     if (J.pvp && J.fase === 'caza' && J.yo && !sinJuego(J.yo) && !J.avisoRetiro) { play('deny'); J.avisoRetiro = true; E('b-salir').textContent = tr('¿SEGURO? PIERDES PUNTOS Y DEJAS A TU EQUIPO SIN TI'); return; }
-    play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); irTitulo();
+    play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); if (escPruebaVuelve()) return; irTitulo();      // (la partida de prueba de Mi escenario vuelve al editor)
   };      // por internet, salir en plena partida es rendirse
   E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
   E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
-  E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); irTitulo(); };
+  E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); if (escPruebaVuelve()) return; irTitulo(); };
   E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-gesto').onclick = accionGesto; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);

@@ -55,13 +55,14 @@ function amgPinta() {
     else if (enLinea && a.estado !== 'partida') { b.textContent = tr('INVITAR'); b.onclick = () => amgInvita(a, b); }
     else if (enLinea) { b.textContent = tr('JUGANDO'); b.disabled = true; }
     else { b.textContent = tr('QUITAR'); b.classList.add('gris'); b.onclick = () => amgQuita(a, b); }
-    f.appendChild(b); return f;
+    f.appendChild(b); if (typeof visitaBotonAmigo === 'function') visitaBotonAmigo(f, a); return f;      // VER su escenario (visita.js)
   };
   const le = E('amg-en'); le.innerHTML = ''; for (const a of en) le.appendChild(fila(a, true));
   const lf = E('amg-fuera'); lf.innerHTML = ''; for (const a of fuera) lf.appendChild(fila(a, false));
   E('amg-vacio').hidden = AMG.lista.length > 0;
   E('amg-en-t').hidden = !en.length; E('amg-fuera-t').hidden = !fuera.length;
   // si estás en tu sala con amigos, VOLVER te devuelve a ella
+  if (typeof visitaAmigos === 'function') visitaAmigos();      // el ESCENARIO DE LA SEMANA (visita.js)
   const i = RFP.info; E('b-amg-volver').textContent = i && i.privada && i.estado === 'espera' ? tr('VOLVER A LA SALA') : tr('VOLVER');
 }
 async function amgAnade() {

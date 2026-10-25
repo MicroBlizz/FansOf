@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.50"></script>
+<script src="../../core/js/nucleo.js?v=0.2.51"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css')</script>
+<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css', 'estilo-sala-viva.css', 'estilo-obra.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -192,6 +192,7 @@
       <button type="button" class="boton gris" id="b-viejo"></button>
       <div class="op-fila"><span data-tr>Idioma</span><span class="idioma-fl" id="idioma-banderas"></span></div>
       <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
+      <button type="button" class="boton cod-boton" id="b-op-codigo"><i data-icono="regalo"></i><span data-tr>CÓDIGO REGALO</span></button>
       <button type="button" class="boton gris" id="b-tuto-repite" data-tr>Repetir tutorial</button>
       <button type="button" class="boton gris" id="b-reinicio" data-tr hidden>Borrar todo mi progreso (alfa)</button>
       <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
@@ -200,6 +201,20 @@
 </div>
 
 <!-- pausa -->
+<div class="pantalla" id="p-codigo" hidden>
+  <div class="caja">
+    <h2 class="ol" data-tr>CÓDIGO REGALO</h2>
+    <div class="columna cod-columna">
+      <p class="cod-texto" data-tr>Busca códigos en nuestras redes sociales y canjéalos aquí. Cada código vale una vez por jugador.</p>
+      <input type="text" class="cod-campo" id="cod-campo" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="done" placeholder="HALLOWEEN26" data-tr-aria aria-label="Código regalo">
+      <p class="cod-aviso" id="cod-aviso" role="status"></p>
+      <button type="button" class="boton grande cod-canjear" id="b-cod-canjear" data-tr>CANJEAR</button>
+      <div class="cod-premio" id="cod-premio" hidden></div>
+      <div class="cod-tus"><span data-tr>Tus gotas</span><b id="cod-gotas">0</b></div>
+      <button type="button" class="boton" id="b-cod-volver" data-tr>VOLVER</button>
+    </div>
+  </div>
+</div>
 <div class="pantalla" id="p-pausa" hidden>
   <div class="caja">
     <h2 class="ol" data-tr>PAUSA</h2>
@@ -274,7 +289,7 @@
   clip-path: polygon(0 47%, 100% 0, 100% 100%, 0 53%); animation: cg-busca 7s ease-in-out infinite; }
 #carga .cg-excl { position: absolute; left: 62%; top: 44%; font: 400 calc(var(--ew) * 0.15) var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em var(--tinta); paint-order: stroke fill; opacity: 0; animation: cg-excl 7s linear infinite; z-index: 4; }
 #carga .cg { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; width: 100%; padding-top: max(calc(var(--u) * 8), calc(var(--ey) + var(--eh) * 0.04)); z-index: 5; pointer-events: none; }
-#carga .cg-arriba { display: grid; justify-items: center; }
+#carga .cg-arriba { display: grid; justify-items: center; transform-origin: 50% 0; }
 #carga .cg-fans { position: relative; z-index: 2; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: calc(var(--u) * 14); letter-spacing: 0.08em; line-height: 1; color: #fff7e8; -webkit-text-stroke: 0.1em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.1em 0 var(--tinta)); transform: translateY(-130vh) rotate(-4deg); animation: cg-cae 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
 #carga .cg-titulo { position: relative; isolation: isolate; display: grid; justify-items: center; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; line-height: 0.86; margin-top: calc(var(--u) * 2); }
 #carga .cg-fila { display: flex; font-size: calc(var(--u) * 31); letter-spacing: 0.01em; }
@@ -319,6 +334,20 @@
 </style><div class="cg-escena"><span class="cg-oculto"></span><span class="cg-susto"></span><span class="cg-cam"></span><span class="cg-excl">!</span><span class="cg-caz"><span class="cg-haz"></span></span></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila f1"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila f2"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div>
 <script src="js/intro-musica.js?v=0.2.49"></script>
 <script>
+// el título de la intro cabe siempre a lo ancho y no tapa la escena: en la app de Android el texto puede salir más grande (el tamaño de letra del móvil),
+// así que se mide y, si hace falta, se encoge entero (FANS OF y ROUFLAGE a la vez)
+(function () {
+  const a = document.querySelector('#carga .cg-arriba'); if (!a) return;
+  const ajusta = () => {
+    a.style.transform = ''; let w = 0;
+    for (const f of a.querySelectorAll('.cg-fila, .cg-fans')) w = Math.max(w, f.scrollWidth);
+    const k = Math.min(1, innerWidth * 0.92 / (w || 1), innerHeight * 0.42 / (a.offsetHeight || 1));
+    a.style.transform = k < 0.999 ? 'scale(' + k.toFixed(3) + ')' : '';
+  };
+  ajusta(); addEventListener('resize', ajusta); if (document.fonts && document.fonts.ready) document.fonts.ready.then(ajusta);
+})();
+</script>
+<script>
 // cuando el juego está listo, la pantalla de carga no se va sola: pone «TOCA PARA JUGAR» y se quita con el toque (que además deja sonar la música en el móvil). Las pruebas automáticas la quitan como siempre.
 (function () {
   const c = document.getElementById('carga'), t = document.getElementById('cg-txt'), real = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'hidden');
@@ -328,7 +357,7 @@
   if (en) t.textContent = 'LOADING…';
   let esperando = false; const t0 = performance.now(); c.classList.add('cg-sacude');
   // la música de la intro (js/intro-musica.js): intenta sonar ya, a la par que las animaciones (en la app de Android sí; en el navegador del móvil, no hasta tocar)
-  if (typeof INTRO_MUSICA !== 'undefined') INTRO_MUSICA.empieza(performance.now() / 1000);
+  if (typeof INTRO_MUSICA !== 'undefined') INTRO_MUSICA.empieza();
   Object.defineProperty(c, 'hidden', { configurable: true, get() { return real.get.call(c); }, set(v) {
     if (!v) { real.set.call(c, false); return; }
     if (esperando) return;
@@ -349,11 +378,11 @@ window.addEventListener('error', e => { const c = document.getElementById('carga
 // El sonido y las canciones de la serie (los mismos que Fans of Rumble, hechos con código) no se cambian.
 NUCLEO.juego({
   ligero: true,
-  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-misiones2.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js', 'idioma/en-viral.js', 'idioma/en-pegatinas.js'],
-    pt: ['idioma/pt.js', 'idioma/pt-2.js', 'idioma/pt-3.js', 'idioma/pt-armario.js', 'idioma/pt-armario2.js', 'idioma/pt-opciones.js', 'idioma/pt-foto.js', 'idioma/pt-misiones.js', 'idioma/pt-misiones2.js', 'idioma/pt-escenario.js', 'idioma/pt-votos.js', 'idioma/pt-premios.js', 'idioma/pt-mapas.js', 'idioma/pt-talentos.js', 'idioma/pt-chat.js', 'idioma/pt-viral.js', 'idioma/pt-pegatinas.js', 'idioma/pt-comun.js'],
-    fr: ['idioma/fr.js', 'idioma/fr-2.js', 'idioma/fr-3.js', 'idioma/fr-armario.js', 'idioma/fr-armario2.js', 'idioma/fr-opciones.js', 'idioma/fr-foto.js', 'idioma/fr-misiones.js', 'idioma/fr-misiones2.js', 'idioma/fr-escenario.js', 'idioma/fr-votos.js', 'idioma/fr-premios.js', 'idioma/fr-mapas.js', 'idioma/fr-talentos.js', 'idioma/fr-chat.js', 'idioma/fr-viral.js', 'idioma/fr-pegatinas.js', 'idioma/fr-comun.js'],
-    de: ['idioma/de.js', 'idioma/de-2.js', 'idioma/de-3.js', 'idioma/de-armario.js', 'idioma/de-armario2.js', 'idioma/de-opciones.js', 'idioma/de-foto.js', 'idioma/de-misiones.js', 'idioma/de-misiones2.js', 'idioma/de-escenario.js', 'idioma/de-votos.js', 'idioma/de-premios.js', 'idioma/de-mapas.js', 'idioma/de-talentos.js', 'idioma/de-chat.js', 'idioma/de-viral.js', 'idioma/de-pegatinas.js', 'idioma/de-comun.js'],
-    it: ['idioma/it.js', 'idioma/it-2.js', 'idioma/it-3.js', 'idioma/it-armario.js', 'idioma/it-armario2.js', 'idioma/it-opciones.js', 'idioma/it-foto.js', 'idioma/it-misiones.js', 'idioma/it-misiones2.js', 'idioma/it-escenario.js', 'idioma/it-votos.js', 'idioma/it-premios.js', 'idioma/it-mapas.js', 'idioma/it-talentos.js', 'idioma/it-chat.js', 'idioma/it-viral.js', 'idioma/it-pegatinas.js', 'idioma/it-comun.js'] },   // pt, fr, de, it: los mismos diccionarios, traducidos (24-10-2026); lo común lo cubre core/idioma/<idioma>-ligero.js
+  idioma: { en: ['idioma/en.js', 'idioma/en-2.js', 'idioma/en-3.js', 'idioma/en-armario.js', 'idioma/en-armario2.js', 'idioma/en-opciones.js', 'idioma/en-foto.js', 'idioma/en-misiones.js', 'idioma/en-misiones2.js', 'idioma/en-escenario.js', 'idioma/en-votos.js', 'idioma/en-premios.js', 'idioma/en-mapas.js', 'idioma/en-talentos.js', 'idioma/en-chat.js', 'idioma/en-viral.js', 'idioma/en-pegatinas.js', 'idioma/en-codigos.js'],
+    pt: ['idioma/pt.js', 'idioma/pt-2.js', 'idioma/pt-3.js', 'idioma/pt-armario.js', 'idioma/pt-armario2.js', 'idioma/pt-opciones.js', 'idioma/pt-foto.js', 'idioma/pt-misiones.js', 'idioma/pt-misiones2.js', 'idioma/pt-escenario.js', 'idioma/pt-votos.js', 'idioma/pt-premios.js', 'idioma/pt-mapas.js', 'idioma/pt-talentos.js', 'idioma/pt-chat.js', 'idioma/pt-viral.js', 'idioma/pt-pegatinas.js', 'idioma/pt-codigos.js', 'idioma/pt-comun.js'],
+    fr: ['idioma/fr.js', 'idioma/fr-2.js', 'idioma/fr-3.js', 'idioma/fr-armario.js', 'idioma/fr-armario2.js', 'idioma/fr-opciones.js', 'idioma/fr-foto.js', 'idioma/fr-misiones.js', 'idioma/fr-misiones2.js', 'idioma/fr-escenario.js', 'idioma/fr-votos.js', 'idioma/fr-premios.js', 'idioma/fr-mapas.js', 'idioma/fr-talentos.js', 'idioma/fr-chat.js', 'idioma/fr-viral.js', 'idioma/fr-pegatinas.js', 'idioma/fr-codigos.js', 'idioma/fr-comun.js'],
+    de: ['idioma/de.js', 'idioma/de-2.js', 'idioma/de-3.js', 'idioma/de-armario.js', 'idioma/de-armario2.js', 'idioma/de-opciones.js', 'idioma/de-foto.js', 'idioma/de-misiones.js', 'idioma/de-misiones2.js', 'idioma/de-escenario.js', 'idioma/de-votos.js', 'idioma/de-premios.js', 'idioma/de-mapas.js', 'idioma/de-talentos.js', 'idioma/de-chat.js', 'idioma/de-viral.js', 'idioma/de-pegatinas.js', 'idioma/de-codigos.js', 'idioma/de-comun.js'],
+    it: ['idioma/it.js', 'idioma/it-2.js', 'idioma/it-3.js', 'idioma/it-armario.js', 'idioma/it-armario2.js', 'idioma/it-opciones.js', 'idioma/it-foto.js', 'idioma/it-misiones.js', 'idioma/it-misiones2.js', 'idioma/it-escenario.js', 'idioma/it-votos.js', 'idioma/it-premios.js', 'idioma/it-mapas.js', 'idioma/it-talentos.js', 'idioma/it-chat.js', 'idioma/it-viral.js', 'idioma/it-pegatinas.js', 'idioma/it-codigos.js', 'idioma/it-comun.js'] },   // pt, fr, de, it: los mismos diccionarios, traducidos (24-10-2026); lo común lo cubre core/idioma/<idioma>-ligero.js
   antes: ['js/ajustes.js', 'js/pantallas-html.js'],
   despues: [
     '../../core/js/serie/canciones.js',
@@ -456,6 +485,9 @@ NUCLEO.juego({
     'js/escenario-camara.js', 'js/escenario-palanca.js',
     'js/escenario-bandeja.js',
     'js/escenario-pincel.js',
+    'js/escenario-obra.js', 'js/escenario-obra2.js',      // el lienzo: construir tu escenario (suelos, paredes y puertas), plantillas y PROBAR
+    'js/escenario-pegatinas.js',      // pegatinas en el suelo y las paredes de tu escenario
+    'js/mapa-escenario.js', 'js/sala-viva.js', 'js/visita.js',      // la sala con amigos dentro del escenario del anfitrión
     'js/armario-partida.js',
     'js/mascotas.js',
     'js/chat-frases.js', 'js/chat-partida.js', 'js/chat-pegatinas.js', 'js/chat-fin.js', 'js/chat-bots.js', 'js/chat-sala-red.js', 'js/chat-sala.js',      // el chat: frases rápidas en partida y el de la sala de espera
@@ -468,6 +500,7 @@ NUCLEO.juego({
     'js/referidos.js',
     'js/reto.js',
     'js/menu-barra.js',          // la flecha de volver arriba en los menús, el atrás del móvil y el título que cabe entero
+    'js/codigos.js',             // OPCIONES › CÓDIGO REGALO: canjear los códigos de las redes (servidor/94)
     'js/rendimiento-partida.js',
     'js/principal.js',
   ],

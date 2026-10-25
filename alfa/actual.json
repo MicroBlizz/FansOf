@@ -1,8 +1,8 @@
 {
- "build": 521,
- "hash": "ca19625",
- "fecha": "2026-10-25T19:52:42Z",
- "mensaje": "Rouflage: códigos regalo. OPCIONES › CÓDIGO REGALO para canjear los códigos de las redes (uno por jugador, con cuenta), servidor 94 y pestaña Códigos en /gestion",
+ "build": 522,
+ "hash": "9de21f1",
+ "fecha": "2026-10-25T20:00:26Z",
+ "mensaje": "Rouflage: la intro en Android: el título se encoge hasta caber (letra grande del móvil) y la música se programa poco a poco con el reloj de la animación (se reanuda sola si Android la pausa)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

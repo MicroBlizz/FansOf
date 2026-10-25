@@ -1,8 +1,8 @@
 {
- "build": 484,
- "hash": "9e9133b",
- "fecha": "2026-10-25T00:04:22Z",
- "mensaje": "Boom: rangos de Pollito a CEO contra la IA, tarjeta en Prototipos de la librería (solo alfa) y capturas",
+ "build": 485,
+ "hash": "9d0bc80",
+ "fecha": "2026-10-25T00:04:58Z",
+ "mensaje": "Rouflage: la intro usa el arte del propio juego (colado liso y becario sacados del dibujo del juego, con sus pasos); fuera los dibujos de Yoshi",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

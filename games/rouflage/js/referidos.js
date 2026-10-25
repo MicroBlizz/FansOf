@@ -5,7 +5,7 @@
 'use strict';
 
 const REF = { codigo: '', datos: null, pidiendo: null };
-const refUrl = c => location.origin + location.pathname + '?inv=' + c;
+const refUrl = c => urlJuego() + '?inv=' + c;      // (dentro de la app, la dirección de la web: util.js)
 const refLee = k => { try { return localStorage.getItem(k) || ''; } catch (_) { return ''; } };
 const refPon = (k, v) => { try { if (v) localStorage.setItem(k, v); else localStorage.removeItem(k); } catch (_) { /* sin guardar */ } };
 // añade tu código a un enlace que vas a compartir (si ya lo sabes)
@@ -90,10 +90,11 @@ function refPinta() {
   }
   lista.hidden = !(d.amigos || []).length;
 }
-function refComparte() {
+async function refComparte() {
   if (!REF.codigo) return;
   play('select');
   const url = refUrl(REF.codigo), texto = tr('Juega conmigo a Fans of Rouflage, el escondite con pintura. Con mi código {c} ganamos los dos.', { c: REF.codigo });
+  if (await appCompartir(texto, url)) return;      // dentro de la app: el menú de Android (util.js)
   if (navigator.share) { navigator.share({ title: 'Fans of Rouflage', text: texto, url }).catch(() => { /* cancelado */ }); return; }
   Promise.resolve(navigator.clipboard && navigator.clipboard.writeText(texto + ' ' + url)).then(() => avisa(tr('Enlace copiado: pégaselo a tus amigos'), 'bueno')).catch(() => avisa(url, 'bueno'));
 }

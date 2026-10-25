@@ -44,9 +44,10 @@ function pvpPintaAmigos() {
   if (!RFRED.esLocal() && !RFRED.conSesion()) { err.hidden = false; err.textContent = tr(RFRED.errorTexto(new Error('cuenta_no_vinculada'))); }
 }
 // compartir la sala con amigos: el enlace abre el juego con el código puesto (con la hoja de compartir del móvil, o copiado)
-function pvpCompartir() {
+async function pvpCompartir() {
   const i = RFP.info; if (!i || !i.codigo) return;
-  const url = (typeof refEnlace === 'function' ? refEnlace : x => x)(location.origin + location.pathname + '?sala=' + i.codigo), txt = tr('¡Únete a mi sala de Fans of Rouflage! Código: {c}', { c: i.codigo });
+  const url = (typeof refEnlace === 'function' ? refEnlace : x => x)(urlJuego() + '?sala=' + i.codigo), txt = tr('¡Únete a mi sala de Fans of Rouflage! Código: {c}', { c: i.codigo });
+  if (await appCompartir(txt, url)) return;      // dentro de la app: el menú de Android (util.js)
   if (navigator.share) { navigator.share({ title: 'Fans of Rouflage', text: txt, url }).catch(() => { /* cancelado */ }); return; }
   const listo = () => { E('busca-sub').textContent = tr('Enlace copiado: pégaselo a tus amigos.'); };
   try { navigator.clipboard.writeText(txt + ' ' + url).then(listo, () => { E('busca-sub').textContent = url; }); } catch (_) { E('busca-sub').textContent = url; }

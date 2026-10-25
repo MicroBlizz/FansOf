@@ -6,7 +6,7 @@
 'use strict';
 
 const RETO = { activo: false, d: null, tiempo: 20, cartas: 3, creando: null, codigo: '' };
-const retoUrl = c => refEnlace(location.origin + location.pathname + '?reto=' + c);      // con tu código de amigo, si lo tienes (referidos.js)
+const retoUrl = c => refEnlace(urlJuego() + '?reto=' + c);      // con tu código de amigo, si lo tienes (referidos.js)
 
 // crear el reto con lo que guardó la foto (FOTO.reto): una vez por foto. Devuelve el código, o null si no hay red (entonces se comparte sin enlace de reto)
 function retoCrear() {

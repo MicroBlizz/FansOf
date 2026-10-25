@@ -72,3 +72,19 @@ function rotulo(c, s, x, y, tam, color, borde, letra = LETRA_GORDA) {
   if (borde) { c.lineJoin = 'round'; c.lineWidth = Math.max(2, tam * 0.28); c.strokeStyle = borde; c.strokeText(s, x, y); }
   c.fillStyle = color; c.fillText(s, x, y);
 }
+
+// ---------- compartir ----------
+// ¿estamos dentro de la app de Android (Capacitor)?
+const enApp = () => !!(window.Capacitor && typeof Capacitor.isNativePlatform === 'function' && Capacitor.isNativePlatform());
+// la dirección del juego para mandar a otros: dentro de la app la página vive en https://localhost/…, que no le sirve a nadie, así que va la de la web
+const urlJuego = () => enApp() ? 'https://fansof.games' + location.pathname.replace(/index\.html$/, '') : location.origin + location.pathname;
+// el menú de compartir de Android (plugin Compartir.java de la app): el WebView no tiene navigator.share. Con `blob`, manda también la imagen.
+// Devuelve true si lo ha abierto; false si no hay plugin (la web, o una app antigua) y toca el camino de siempre
+async function appCompartir(texto, url, blob, nombre) {
+  const C = window.Capacitor;
+  if (!enApp() || typeof C.isPluginAvailable !== 'function' || !C.isPluginAvailable('Compartir')) return false;
+  const P = typeof C.registerPlugin === 'function' ? C.registerPlugin('Compartir') : C.Plugins && C.Plugins.Compartir; if (!P) return false;
+  let imagen = null;
+  if (blob) imagen = await new Promise(r => { const f = new FileReader(); f.onload = () => r(String(f.result).split(',')[1] || null); f.onerror = () => r(null); f.readAsDataURL(blob); });
+  try { await P.compartir({ texto, url, imagen, nombre: nombre || 'fansof.png' }); return true; } catch (e) { console.warn('[compartir]', e); return false; }
+}

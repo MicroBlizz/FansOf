@@ -239,5 +239,6 @@ IDIOMA.add({
   "SER CAZADOR": "ÊTRE CHASSEUR",
   "SER CAMALEÓN": "ÊTRE CAMÉLÉON",
   "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Touche un intrus pour le licencier. Ici, les lettres ne s'épuisent pas.",
-  "Vuelves a ser colado: píntate y congélate": "Tu redeviens intrus : peins-toi et fige-toi"
+  "Vuelves a ser colado: píntate y congélate": "Tu redeviens intrus : peins-toi et fige-toi",
+  "CONFIGURAR PARTIDA": "RÉGLER LA PARTIE"
 });

@@ -239,5 +239,6 @@ IDIOMA.add({
   "SER CAZADOR": "JÄGER SEIN",
   "SER CAMALEÓN": "CHAMÄLEON SEIN",
   "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Tippe einen Eindringling an, um ihn zu feuern. Hier gehen die Karten nicht aus.",
-  "Vuelves a ser colado: píntate y congélate": "Du bist wieder Eindringling: bemal dich und erstarre"
+  "Vuelves a ser colado: píntate y congélate": "Du bist wieder Eindringling: bemal dich und erstarre",
+  "CONFIGURAR PARTIDA": "SPIEL EINSTELLEN"
 });

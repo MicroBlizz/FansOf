@@ -33,9 +33,9 @@
 .sv-abajo { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px calc(var(--der) + 12px) calc(var(--inf) + 14px) calc(var(--izq) + 12px); display: flex; gap: 8px; align-items: stretch;
   background: linear-gradient(transparent, rgba(12, 15, 24, 0.85) 45%); }
 .sv-b { border: 3px solid var(--outline); border-radius: 14px; box-shadow: 0 4px 0 var(--outline); display: grid; place-items: center; cursor: pointer; color: var(--ink); padding: 4px 6px 2px; position: relative; }
-.sv-opc { width: 92px; background: linear-gradient(#5a6787, #36415c); gap: 1px; }
+.sv-opc { width: 108px; background: linear-gradient(#5a6787, #36415c); gap: 1px; }
 .sv-opc svg { width: 24px; height: 24px; }
-.sv-opc span { font: 400 13px var(--font-display); letter-spacing: 0.03em; text-shadow: 0 2px 0 var(--outline); }
+.sv-opc span { font: 400 12px/1.05 var(--font-display); letter-spacing: 0.02em; text-shadow: 0 2px 0 var(--outline); text-align: center; }
 .sv-chat { width: 60px; background: linear-gradient(#ffe07a, #ffbd2e); }
 .sv-chat svg, .sv-chat canvas { width: 30px; height: 30px; }
 .sv-chat-n { position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; border-radius: 10px; background: var(--danger, #ff4b5c); border: 2.5px solid var(--outline); font: 800 11px/18px var(--font-ui); font-style: normal; color: #fff; }
@@ -49,6 +49,7 @@
 /* los botones del colado (congelar, pintar, la habilidad y la granada): encima de la barra de abajo */
 body.sala-viva #acciones { bottom: calc(var(--inf) + 96px); }
 body.sala-viva #arriba { display: none; }
+body.sala-viva #rf-energia { display: none !important; }      /* el caos primordial tapaba INVITAR: en la sala no hace falta (las salas con amigos no lo gastan) */
 body.sala-viva .hab-usos:empty { display: none; }
 body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, debajo de las etiquetas */
 #p-busca.viva.taller .sv-ui { display: none; }      /* pintándote, el taller ocupa la pantalla */

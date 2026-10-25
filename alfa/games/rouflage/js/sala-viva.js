@@ -166,8 +166,8 @@ function salaVivaPintaUI(i, soyAnf) {
   E('p-busca').querySelector('.sv-cod span').textContent = tr('SALA');
   E('sv-n').textContent = (i.n || 0) + ' / ' + (i.max || 10);
   E('sv-invitar').textContent = tr('INVITAR');
-  E('sv-opciones').querySelector('span').textContent = tr('OPCIONES');
-  E('sv-opciones').setAttribute('aria-label', tr('OPCIONES')); E('sv-chat').setAttribute('aria-label', tr('Chat')); E('sv-atras').setAttribute('aria-label', tr('Salir de la sala')); E('sv-cerrar').setAttribute('aria-label', tr('Cerrar'));
+  E('sv-opciones').querySelector('span').textContent = tr('CONFIGURAR PARTIDA');
+  E('sv-opciones').setAttribute('aria-label', tr('CONFIGURAR PARTIDA')); E('sv-chat').setAttribute('aria-label', tr('Chat')); E('sv-atras').setAttribute('aria-label', tr('Salir de la sala')); E('sv-cerrar').setAttribute('aria-label', tr('Cerrar'));
   // lo que se va a jugar, en pequeño: el modo, el mapa y con o sin talentos
   const d = soyAnf ? MODO_ELEGIDO : (i.modo || {}), etq = [], m = MODOS[d.m] ? d.m : 'normal';
   etq.push(['', tr(MODOS[m].nombre)]);

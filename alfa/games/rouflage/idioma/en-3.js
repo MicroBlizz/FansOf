@@ -239,5 +239,6 @@ IDIOMA.add({
   "SER CAZADOR": "BE HUNTER",
   "SER CAMALEÓN": "BE CHAMELEON",
   "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Tap an intruder to fire them. Slips are not used up here.",
-  "Vuelves a ser colado: píntate y congélate": "You are an intruder again: paint yourself and freeze"
+  "Vuelves a ser colado: píntate y congélate": "You are an intruder again: paint yourself and freeze",
+  "CONFIGURAR PARTIDA": "SET UP MATCH"
 });

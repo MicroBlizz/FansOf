@@ -239,5 +239,6 @@ IDIOMA.add({
   "SER CAZADOR": "FAI IL CACCIATORE",
   "SER CAMALEÓN": "FAI IL CAMALEONTE",
   "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Tocca un imbucato per licenziarlo. Qui le lettere non si consumano.",
-  "Vuelves a ser colado: píntate y congélate": "Torni imbucato: dipingiti e congelati"
+  "Vuelves a ser colado: píntate y congélate": "Torni imbucato: dipingiti e congelati",
+  "CONFIGURAR PARTIDA": "IMPOSTA PARTITA"
 });

@@ -239,5 +239,6 @@ IDIOMA.add({
   "SER CAZADOR": "SER CAÇADOR",
   "SER CAMALEÓN": "SER CAMALEÃO",
   "Toca a un colado para despedirlo. Aquí no se gastan las cartas.": "Toque num penetra para demiti-lo. Aqui as cartas não se gastam.",
-  "Vuelves a ser colado: píntate y congélate": "Você volta a ser penetra: pinte-se e congele"
+  "Vuelves a ser colado: píntate y congélate": "Você volta a ser penetra: pinte-se e congele",
+  "CONFIGURAR PARTIDA": "CONFIGURAR PARTIDA"
 });

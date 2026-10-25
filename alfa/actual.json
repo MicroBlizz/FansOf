@@ -1,8 +1,8 @@
 {
- "build": 514,
- "hash": "2fb190d",
- "fecha": "2026-10-25T18:44:41Z",
- "mensaje": "Rouflage: CANCELAR y RELLENAR CON BOTS otra vez al final de OPCIONES; nadie sale encima de un mueble",
+ "build": 515,
+ "hash": "21e1456",
+ "fecha": "2026-10-25T18:46:26Z",
+ "mensaje": "Rouflage: en la sala viva, sin el caos primordial arriba y OPCIONES pasa a CONFIGURAR PARTIDA",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

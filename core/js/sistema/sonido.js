@@ -25,13 +25,15 @@ function audioInit() {
   } catch (e) { AC = null; }
 }
 function tone(f0, f1, dur, type = 'sine', vol = 0.3, delay = 0) {
-  if (!AC) return; const t = AC.currentTime + delay; const o = AC.createOscillator(), g = AC.createGain();
+  if (!AC || !(vol > 0)) return;   // con los efectos a 0 no suena nada: la rampa exponencial no admite el 0 y rompía el toque de los botones
+  const t = AC.currentTime + delay; const o = AC.createOscillator(), g = AC.createGain();
   o.type = type; o.frequency.setValueAtTime(f0, t); if (f1 && f1 !== f0) o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
   g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
 }
 function noise(dur, vol, freq = 1200, ftype = 'lowpass', delay = 0) {
-  if (!AC) return; const t = AC.currentTime + delay; const s = AC.createBufferSource(); s.buffer = noiseBuf;
+  if (!AC || !(vol > 0)) return;
+  const t = AC.currentTime + delay; const s = AC.createBufferSource(); s.buffer = noiseBuf;
   const f = AC.createBiquadFilter(); f.type = ftype; f.frequency.value = freq; const g = AC.createGain();
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + dur + 0.05);

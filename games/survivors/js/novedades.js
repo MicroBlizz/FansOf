@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.67', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha silenciado el refugio y Phony ha jurado que no se oía nada sospechoso."] },
   { v: '0.1.66', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz prepara salas para sobrevivir con amigos y Phony ya ha cerrado la puerta por dentro."] },
   { v: '0.1.65', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha cerrado el buzón de informes y Phony ha dejado una nota que dice solo «estoy bien»."] },
   { v: '0.1.64', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ya sabe pedir ayuda en cuatro idiomas. Phony ha contestado «no» en los cuatro."] },

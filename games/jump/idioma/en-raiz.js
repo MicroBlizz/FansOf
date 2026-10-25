@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.12
+  "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
+  "Microblizz ha apagado los efectos y Phony ha saltado al río sin chapoteo.": "Microblizz switched off the effects and Phony jumped into the river without a splash.",
   // 0.3.11
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
   "Microblizz ha abierto salas para jugar con amigos y CrazyBunny ha saltado dentro antes de que terminaran.": "Microblizz has opened rooms to play with friends and CrazyBunny jumped in before they were finished.",

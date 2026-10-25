@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.50
+  "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
+  "Microblizz ha puesto sordina al camuflaje y Phony ha seguido sin hacer ni ruido ni caso.": "Microblizz has muffled the camouflage and Phony carried on making neither noise nor sense.",
   "<b>INTRO NUEVA</b>: al abrir el juego, el título cae y estalla letra a letra sobre el suelo de cuadros, y abajo un colado escondido con pintura rápida… hasta que el becario le pilla con la linterna y sale corriendo. Con su propia música, al ritmo de cada letra y de cada paso.": "<b>NEW INTRO</b>: when you open the game, the title drops in and pops letter by letter over the checkered floor, and below a colado hides with quick paint… until the intern catches him with the flashlight and he runs off. With its own music, in time with every letter and every step.",
   "Microblizz quería una intro de película y Phony se ha escondido en ella. ¿Lo ves?": "Microblizz wanted a movie-style intro and Phony hid in it. Can you spot him?",
   "<b>MÁS MISIONES Y LOGROS</b>: 6 misiones al día, misiones de la SEMANA que cambian cada lunes, 24 logros nuevos y 13 secretos con pista. Jugando ganas hasta 300 Gotas al día.": "<b>MORE MISSIONS AND ACHIEVEMENTS</b>: 6 missions a day, WEEKLY missions that change every Monday, 24 new achievements and 13 secret ones with hints. Playing now earns you up to 300 Drops a day.",

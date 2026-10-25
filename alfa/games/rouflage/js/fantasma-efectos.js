@@ -2,18 +2,20 @@
 //  · VAHO: una nube fría donde está el fantasma; quien esté dentro se queda sin linterna y lo de dentro no se ve (veCazador, bot-cazador.js).
 //  · CHARCO: un charco de pintura en el suelo; el becario que lo pisa va más lento un rato (entes.js multiplica por FPZ.charcoVel).
 //  · FOCO: un foco redondo que alumbra la zona para todos (se suma a los focos del mapa: eventoFocos, eventos.js).
-//  · PORTAZO: un «¡PAM!» que se oye lejos; los becarios bot van a mirar.
+//  · PORTAZO: un «¡PAM!» que se oye lejos (los becarios bot van a mirar) y CIERRA DE VERDAD el paso más cercano (un hueco en un muro, de 2 a 6
+//    casillas) unos segundos: nadie pasa, la linterna no lo cruza y los bots buscan otro camino. Se abre sola. La calcula quien la lanza y la manda.
 //  · RETOQUE y SOPLO: un brochazo que copia el fondo en la piel de un colado (mejor camuflaje) o un soplido que le desgasta la pintura.
 // En el PvP todos los navegadores ponen la zona; el efecto en cada personaje lo aplica quien lo lleva (poderMio) y la piel se vuelve a mandar.
 'use strict';
 
-const FPZ = { vaho: { r: 95 }, charco: { r: 34, dura: 12, lento: 2.5 }, charcoVel: 0.5, foco: { r: 140 }, portazo: { oido: 1.8 }, retoque: 0.25, soplo: { manchas: 3, radio: 6, fuerza: 70 }, lista: [] };
+const FPZ = { portazo: { oido: 1.8, dura: 4, busca: 220, abre: 0.5 }, vaho: { r: 95 }, charco: { r: 34, dura: 12, lento: 2.5 }, charcoVel: 0.5, foco: { r: 140 }, retoque: 0.25, soplo: { manchas: 3, radio: 6, fuerza: 70 }, lista: [] };
 const FPZ_COL = ['#39d5e8', '#ff7a1a', '#7ee04a', '#ff5fa8'];      // los charcos, de un color que sale del sitio (igual en todos los navegadores)
 
 function fpZonasLimpia() { FPZ.lista.length = 0; }
 // pone lo que se queda en el mapa (aquí y en los demás navegadores)
-function fpZonaPon(k, x, y) {
+function fpZonaPon(k, x, y, puerta) {
   if (k === 'portazo') {
+    if (puerta && puerta.w > 0 && puerta.h > 0) FPZ.lista.push({ k, x, y, t: 0, dura: FPZ.portazo.dura, p: puerta });
     fxTexto(x, y - 40, tr('¡PAM!'), '#ffcb3d', 24); suenaEn('fpPortazo', x, y, 1.3);
     for (let i = 0; i < 8; i++) fxGota(x + rand(-20, 20), y - rand(0, 30), '#c9b48a', rand(-90, 90), rand(-120, -30));
     if (!J.pvp || RFP.soyHost) {      // los bots del navegador que los lleva van corriendo a mirar, desde más lejos que a un silbido
@@ -29,6 +31,53 @@ function fpZonaPon(k, x, y) {
   else if (k === 'charco') { suenaEn('fpCharco', x, y); fxSalpica(x, y, FPZ_COL[(Math.round(x) + Math.round(y)) % FPZ_COL.length], 10); }
   else if (k === 'foco') { suenaEn('fpFoco', x, y); }
 }
+// EL PORTAZO: el hueco de muro más cercano a (x, y) que se puede cerrar: una fila (o columna) de 2 a 6 casillas de suelo con muro a los dos
+// lados y paso libre por delante y por detrás. Sin nadie dentro (ni muebles). Devuelve { x, y, w, h, hor } en el mundo, o null si no hay ninguno cerca
+function fpPuertaCerca(x, y) {
+  const S = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && GRID[j * MW + i] === SUELO, R = Math.ceil(FPZ.portazo.busca / CEL);
+  const ci = Math.floor(x / CEL), cj = Math.floor(y / CEL), cand = [];
+  for (let j = cj - R; j <= cj + R; j++) for (let i = ci - R; i <= ci + R; i++) {
+    if (!S(i, j)) continue;
+    // hueco en un muro horizontal (se cruza de arriba abajo): el tramo de suelo de la fila j, cerrado por muro a izquierda y derecha
+    if (!S(i - 1, j)) { let i1 = i; while (i1 - i < 7 && S(i1 + 1, j)) i1++; const w = i1 - i + 1;
+      if (w >= 2 && w <= 6 && !S(i1 + 1, j) && S(i, j - 1) && S(i, j + 1) && S(i1, j - 1) && S(i1, j + 1) && !S(i - 1, j + 1) && !S(i1 + 1, j + 1)) cand.push({ x: i * CEL, y: j * CEL, w: w * CEL, h: CEL, hor: true }); }
+    // hueco en un muro vertical (se cruza de lado a lado)
+    if (!S(i, j - 1)) { let j1 = j; while (j1 - j < 7 && S(i, j1 + 1)) j1++; const h = j1 - j + 1;
+      if (h >= 2 && h <= 6 && !S(i, j1 + 1) && S(i - 1, j) && S(i + 1, j) && S(i - 1, j1) && S(i + 1, j1) && !S(i + 1, j - 1) && !S(i + 1, j1 + 1)) cand.push({ x: i * CEL, y: j * CEL, w: CEL, h: h * CEL, hor: false }); }
+  }
+  const libre = q => !(PUERTA.cerrada && q.x < PUERTA.x + PUERTA.w && q.x + q.w > PUERTA.x && q.y < PUERTA.y + PUERTA.h && q.y + q.h > PUERTA.y)
+    && !J.entes.some(e => !e.fuera && e.x + MEDIO_PIE > q.x - 4 && e.x - MEDIO_PIE < q.x + q.w + 4 && e.y > q.y - 4 && e.y - FONDO_PIE < q.y + q.h + 4)
+    && !MUEBLES.some(m => m.pisa && q.x < m.pisa.x1 && q.x + q.w > m.pisa.x0 && q.y < m.pisa.y1 && q.y + q.h > m.pisa.y0)
+    && !FPZ.lista.some(z => z.k === 'portazo' && z.p.x === q.x && z.p.y === q.y);
+  cand.sort((a, b) => lejos(x, y, a.x + a.w / 2, a.y + a.h / 2) - lejos(x, y, b.x + b.w / 2, b.y + b.h / 2));
+  return cand.find(q => lejos(x, y, q.x + q.w / 2, q.y + q.h / 2) <= FPZ.portazo.busca && libre(q)) || null;
+}
+// ¿hay una puerta cerrada de un portazo en esa caja (mapa.js: chocaCaja) o en esa casilla (celdaLibre, rayoMapa)?
+const portazoCaja = (x0, y0, x1, y1) => FPZ.lista.length > 0 && FPZ.lista.some(z => z.k === 'portazo' && x0 < z.p.x + z.p.w && x1 > z.p.x && y0 < z.p.y + z.p.h && y1 > z.p.y);
+const portazoCelda = (i, j) => FPZ.lista.length > 0 && portazoCaja(i * CEL + CEL / 2 - 0.5, j * CEL + CEL / 2 - 0.5, i * CEL + CEL / 2 + 0.5, j * CEL + CEL / 2 + 0.5);
+// la puerta en sí, ordenada con los demás (dibujo.js): una hoja de madera con su marco que se cierra de golpe y, al final, se abre sola
+function pintaPortazo(c, t, z) {
+  const q = z.p, cierra = Math.min(1, z.t / 0.12), abre = Math.max(0, (z.t - (z.dura - FPZ.portazo.abre)) / FPZ.portazo.abre), k = cierra * (1 - abre);
+  if (k <= 0.01) return;
+  const tiembla = z.t < 0.3 ? Math.sin(z.t * 70) * 2 * (1 - z.t / 0.3) : 0;
+  c.save();
+  if (q.hor) {      // de frente: la hoja levantada delante del hueco del muro
+    const alto = ALTO_CARA * CEL, x = q.x + tiembla, w = q.w * k, y = q.y + q.h - alto;
+    forma(c, caja(x, y, w, alto, 2), '#b9783f', 3);
+    if (w > 14) {
+      forma(c, caja(x + 5, y + 6, w - 10, alto / 2 - 9, 2), '#a5672f', 2); forma(c, caja(x + 5, y + alto / 2 + 3, w - 10, alto / 2 - 9, 2), '#a5672f', 2);
+      forma(c, ovalo(x + w - 9, y + alto / 2, 2.6, 2.6), '#ffcb3d', 1.5);
+      c.fillStyle = 'rgba(255,255,255,0.25)'; c.fillRect(x + 7, y + 8, 3, alto - 16);
+    }
+  } else {      // de lado: la hoja vista desde arriba, de punta a punta del hueco, con el canto que asoma
+    const h = q.h * k, x = q.x + q.w / 2 - 5 + tiembla, y = q.y;
+    forma(c, caja(x, y - 18, 10, h + 18, 2), '#a5672f', 3);
+    forma(c, caja(x, y - 18, 10, 10, 2), '#c98a4a', 2);
+    if (h > 14) forma(c, ovalo(x + 10, y + h / 2, 2.6, 2.6), '#ffcb3d', 1.5);
+  }
+  c.restore();
+}
+
 // los focos de los fantasmas, para la oscuridad y para la vista de los bots (eventoFocos los suma a los del mapa)
 const fpFocos = () => FPZ.lista.filter(z => z.k === 'foco').map(z => ({ x: z.x, y: z.y, dir: 0, ang: Math.PI, largo: FPZ.foco.r * Math.min(1, z.t / 0.15, (z.dura - z.t) / 0.3 + 0.3) }));
 // ¿tapa el vaho el punto (x, y)?

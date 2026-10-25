@@ -15,7 +15,7 @@ const PODERES = {
   vaho: { papel: 'colado', nombre: 'VAHO', n: 'Vaho', alcance: 0, dura: 3, d: 'Una nube fría tapa las linternas 3 s.', pista: 'Vaho: echas una nube fría donde estás que tapa las linternas 3 segundos' },
   charco: { papel: 'colado', nombre: 'CHARCO', n: 'Charco', alcance: 0, d: 'El becario que lo pisa va más lento.', pista: 'Charco: dejas un charco de pintura y el becario que lo pise irá más lento' },
   susto: { papel: 'colado', nombre: 'SUSTO', n: 'Susto', alcance: 120, a: 'becario', dura: 1.6, d: 'Un becario se da la vuelta de golpe.', pista: 'Susto: sopla en la nuca a un becario y se dará la vuelta de golpe' },
-  portazo: { papel: 'colado', nombre: 'PORTAZO', n: 'Portazo', alcance: 0, d: 'Un golpe fuerte: los becarios van a mirar.', pista: 'Portazo: un golpe fuerte donde estás y los becarios irán corriendo a mirar' },
+  portazo: { papel: 'colado', nombre: 'PORTAZO', n: 'Portazo', alcance: 0, d: 'Cierras de golpe la puerta más cercana 4 s.', pista: 'Portazo: cierras de golpe la puerta más cercana unos segundos y los becarios irán a mirar' },
   avisar: { papel: 'becario', nombre: 'AVISAR', n: 'Avisar', alcance: 0, cada: 6, d: 'Dejas una marca: «aquí hay un colado».', pista: 'Avisar: deja una marca para tus compañeros donde creas que hay un colado' },
   soplo: { papel: 'becario', nombre: 'SOPLO', n: 'Soplo', alcance: 130, a: 'colado', d: 'Le quitas un poco de pintura a un colado.', pista: 'Soplo: acércate a un colado y sóplale: se le irá un poco la pintura' },
   foco: { papel: 'becario', nombre: 'FOCO', n: 'Foco', alcance: 0, dura: 2.5, d: 'Alumbras una zona 2 s para todos los becarios.', pista: 'Foco: alumbras la zona donde estás para todos los becarios' },
@@ -47,7 +47,7 @@ function poderObjetivo(p) {
 function accionPoder() {
   const p = poderDe(), f = J.fantasma; if (!p || !espectando()) return;
   if (f.enfria > 0) { play('deny'); pista(tr('Poder recargándose: {n} s', { n: Math.ceil(f.enfria) }), 1.5); return; }
-  const k = f.poder, h = p.alcance ? poderObjetivo(p) : null;
+  const k = f.poder, h = p.alcance ? poderObjetivo(p) : k === 'portazo' ? fpPuertaCerca(f.x, f.y) : null;      // el portazo cierra el paso más cercano, si hay
   if (p.alcance && !h) { play('deny'); pista(tr(p.a === 'colado' ? (k === 'retoque' ? 'Acércate más a un colado escondido' : 'Acércate más a un colado') : 'Acércate más a un becario'), 1.5); return; }
   f.enfria = f.espera = p.cada || PODER.cada; f.usado = (f.usado || 0) + 1;
   f.poder = f.sig || poderAzar(p.papel, k); f.sig = poderAzar(p.papel, f.poder);      // cambia: el siguiente nunca es el que acabas de usar
@@ -55,14 +55,14 @@ function accionPoder() {
   if (k === 'avisar') { balizaPon(f.x, f.y, J.yo.nombre, true); if (J.pvp) rfpManda({ t: 'bz', x: Math.round(f.x), y: Math.round(f.y) }); }
   else {
     poderAplica(k, h, f.x, f.y, true, J.yo);
-    if (J.pvp) rfpManda({ t: 'fp', p: k, s: h ? h.slot : -1, x: Math.round(f.x), y: Math.round(f.y) });
+    if (J.pvp) rfpManda(Object.assign({ t: 'fp', p: k, s: h && h.slot != null ? h.slot : -1, x: Math.round(f.x), y: Math.round(f.y) }, k === 'portazo' && h ? { pu: [h.x, h.y, h.w, h.h, h.hor ? 1 : 0] } : {}));
   }
   refrescaPoder();
 }
 // ¿lleva este navegador a ese personaje? (el suyo, o los de la máquina si juega solo o es el anfitrión)
 const poderMio = e => !!e && (e.jugador || (e.bot && (!J.pvp || RFP.soyHost)));
 // el efecto en sí (aquí y en los demás navegadores): `mio` si lo ha lanzado este fantasma; `quien`, de quién es el fantasma (para el susto)
-function poderAplica(k, h, x, y, mio, quien) {
+function poderAplica(k, h, x, y, mio, quien) {      // (en el PORTAZO, `h` es la puerta que se cierra: { x, y, w, h, hor })
   if (k === 'silbido') {
     ondaSilbido(x, y, null);
     const antes = REGLAS.oido; if (extraOn('apagon')) REGLAS.oido = antes * 2;      // Apagón total: el silbido falso se oye el doble
@@ -71,7 +71,7 @@ function poderAplica(k, h, x, y, mio, quien) {
     if (mio) { fxTexto(x, y - 60, tr('¡Fiuuu!'), '#fff6ea'); play('silbido'); }
     return;
   }
-  if (k === 'vaho' || k === 'charco' || k === 'foco' || k === 'portazo') { fpZonaPon(k, x, y); return; }      // lo que se queda en el mapa (fantasma-efectos.js)
+  if (k === 'vaho' || k === 'charco' || k === 'foco' || k === 'portazo') { fpZonaPon(k, x, y, h); return; }      // lo que se queda en el mapa (fantasma-efectos.js); en el portazo, `h` es la puerta
   if (!h) return;
   if (k === 'retoque' || k === 'soplo') { fpPiel(k, h, x, y, mio, quien); return; }
   if (k === 'apagon') { h.apagada = Math.max(h.apagada, PODERES.apagon.dura); play('apagon'); if (h.jugador) avisa(tr('¡Un fantasma te ha apagado la linterna!'), 'malo'); }
@@ -84,7 +84,7 @@ function poderAplica(k, h, x, y, mio, quien) {
 function rfpPoderRecibido(m) {
   if (J.fase !== 'caza' || !(m.p in PODERES)) return;
   const sl = RFP.slots[m.s], h = sl && sl.ente, de = RFP.slots[m.de], quien = de && de.ente, p = PODERES[m.p];
-  if (!p.alcance) { poderAplica(m.p, null, m.x, m.y, false, quien); return; }
+  if (!p.alcance) { const pu = m.p === 'portazo' && Array.isArray(m.pu) && m.pu.length === 5 ? { x: +m.pu[0], y: +m.pu[1], w: Math.min(+m.pu[2], 6 * CEL), h: Math.min(+m.pu[3], 6 * CEL), hor: !!m.pu[4] } : null; poderAplica(m.p, pu, m.x, m.y, false, quien); return; }
   if (!h || h.clase !== (p.a === 'colado' ? 'camaleon' : 'cazador')) return;
   if (!(poderMio(h) || h.remoto)) { fantasmaSusto(m.x, m.y, quien); return; }      // no es mío ni de la máquina: solo el susto
   poderAplica(m.p, h, m.x, m.y, false, quien);

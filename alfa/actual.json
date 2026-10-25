@@ -1,8 +1,8 @@
 {
- "build": 538,
- "hash": "ddb9085",
- "fecha": "2026-10-25T23:31:08Z",
- "mensaje": "Rouflage 0.2.56: el coche del jefe sopla y salta en Mi escenario (y alarma de coches), y la linterna pasa por encima de los objetos pequeños",
+ "build": 539,
+ "hash": "3534ded",
+ "fecha": "2026-10-25T23:40:30Z",
+ "mensaje": "Rouflage 0.2.56: el Portazo del fantasma cierra de verdad la puerta más cercana 4 s",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

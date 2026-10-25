@@ -162,6 +162,7 @@ function chocaCaja(x0, y0, x1, y1) {
   for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (i < 0 || j < 0 || i >= MW || j >= MH || GRID[j * MW + i] !== SUELO) return true;
   if (PUERTA.cerrada && x0 < PUERTA.x + PUERTA.w && x1 > PUERTA.x && y0 < PUERTA.y + PUERTA.h && y1 > PUERTA.y) return true;
   if (barreraCerrada() && enBarreraCaja(x0, y0, x1, y1)) return true;      // Mi escenario (barreras.js)
+  if (portazoCaja(x0, y0, x1, y1)) return true;      // la puerta cerrada de un portazo de fantasma (fantasma-efectos.js)
   for (const m of MUEBLES) if (x0 < m.pisa.x1 && x1 > m.pisa.x0 && y0 < m.pisa.y1 && y1 > m.pisa.y0) return true;
   return false;
 }
@@ -216,6 +217,7 @@ function rayoMapa(x, y, dx, dy, max) {
     if (g !== SUELO) { RAYO.cara = g === CARA; return t; }
     if (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) return t;
     if (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) return t;
+    if (portazoCelda(i, j)) return t;
   }
 }
 function seVen(ax, ay, bx, by) {
@@ -224,7 +226,7 @@ function seVen(ax, ay, bx, by) {
 }
 
 /* ---------- caminos (A* sobre las casillas libres) ---------- */
-const celdaLibre = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && MAPA.libre[j * MW + i] === 1 && !(PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) && !(BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j));
+const celdaLibre = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && MAPA.libre[j * MW + i] === 1 && !(PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) && !(BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) && !portazoCelda(i, j);
 // la casilla libre más cercana a un punto
 function casillaCerca(x, y) {
   const i0 = limita(Math.floor(x / CEL), 0, MW - 1), j0 = limita(Math.floor(y / CEL), 0, MH - 1);

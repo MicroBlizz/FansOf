@@ -83,6 +83,7 @@ const NUCLEO = (() => {
     'js/sistema/gachapon-gratis.js', // gashapón: la tirada gratis cada 2 horas, con cuenta atrás
     'js/sistema/gachapon-anim.js', // gashapón: la animación nueva al tirar y el marco de las máquinas animadas (flag 'gashapon-nuevo')
     'js/sistema/gachapon-clasica.js', // gashapón: la máquina clásica animada (bolas, manivela, trampilla)
+    'js/sistema/gachapon-garra.js', // gashapón: la máquina de gancho (Cartas de Rumble, CASA de Rouflage)
     'js/sistema/probabilidades.js', // tablas de probabilidades del gashapón (las enseña la tienda)
     'js/sistema/tienda.js',        // tienda
     'js/sistema/horas-extra.js', 'js/sistema/horas-extra-escena.js',   // horas extra: el minijuego del menú

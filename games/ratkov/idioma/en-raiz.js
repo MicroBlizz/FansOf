@@ -125,4 +125,6 @@ IDIOMA.add({
   "Microblizz quiere datos anónimos de tus incursiones. Phony ya los guarda en su mochila, por si acaso salen caros.": "Microblizz wants anonymous data from your raids. Phony already keeps it in his backpack, in case it turns out to be valuable.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha montado un mercado en el búnker. Phony ha intentado pagar con queso.": "Microblizz set up a market in the bunker. Phony tried to pay with cheese.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Phony ha usado la garra para buscar botín. Solo ha sacado ratas.": "Phony used the claw to look for loot. All he pulled out was rats.",
 });

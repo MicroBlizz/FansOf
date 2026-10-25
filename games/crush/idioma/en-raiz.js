@@ -90,4 +90,6 @@ IDIOMA.add({
   "Microblizz quería saber cuántos caramelos te comes. Phony se ha ofrecido a contarlos uno a uno, y a comérselos después.": "Microblizz wanted to know how many sweets you eat. Phony offered to count them one by one, and eat them afterwards.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha montado una caja registradora y Phony ha intentado pagar con caramelos.": "Microblizz has set up a cash register and Phony tried to pay with sweets.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Microblizz ha metido una garra en la oficina y Phony ya ha intentado pescar caramelos con ella.": "Microblizz put a claw machine in the office and Phony has already tried to fish for sweets with it.",
 });

@@ -51,6 +51,8 @@
 #esc-pasear p { margin: 0; font-weight: 800; color: var(--ink-dim); font-size: 13px; line-height: 1.25; }
 .esc-paseo { display: flex; align-items: center; gap: 10px; padding: 2px 4px 4px; }
 .esc-paseo p { flex: 1; }
+/* en el móvil: el texto arriba, a todo lo ancho, y PROBAR y ARMARIO debajo, a medias */
+@media (max-width: 899px), (max-aspect-ratio: 5/4) { .esc-paseo { flex-wrap: wrap; gap: 8px; } .esc-paseo p { flex: 1 1 100%; } .esc-paseo .boton { flex: 1 1 0; min-width: 0; justify-content: center; } }
 #b-esc-armario { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; font-size: 16px; padding: 9px 14px 6px; }
 #b-esc-armario i[data-icono] { font-size: 18px; }
 #b-esc-armario.cerca { animation: esc-late .8s ease-in-out infinite alternate; }
@@ -120,3 +122,6 @@
 .esc-palanca { position: fixed; z-index: 5; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; border: 3px solid rgba(255, 246, 234, 0.55); background: rgba(11, 15, 28, 0.35); pointer-events: none; }
 .esc-palanca[hidden] { display: none; }
 .esc-palanca i { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: linear-gradient(to bottom, #fff2a8, #ffcb3d); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+/* sin unidades de ese mueble (muebles-unidades.js): la tarjeta apagada y el contador en rojo; al tocarla, a por más */
+.esc-carta.agotada canvas:first-child { opacity: .45; filter: saturate(.3); }
+.esc-carta.agotada em { color: var(--danger); }

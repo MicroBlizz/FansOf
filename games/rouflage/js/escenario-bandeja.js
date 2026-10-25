@@ -43,15 +43,17 @@ function escBandeja() {
     : tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr('{n} de {t} puestos', { n: sala.muebles.length, t: SALA.MAX_MUEBLES });
   E('esc-pista').textContent = MIESC.tab === 'escenarios' ? tr('Toca uno para cambiar el estilo y la forma del mapa') : tr('Toca una tarjeta: sale donde miras');
   for (const { cat, it } of lista) {
-    const tuyo = arTiene(cat, it), puestos = cat === 'muebles' ? sala.muebles.filter(m => m.id === it.id).length : 0;
+    const tuyo = arTiene(cat, it);
     const marcado = cat === 'escenarios' ? escBase(sala.id) === it.id : false;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-' + it.r + (tuyo ? '' : ' bloq') + (marcado ? ' activa' : '');
     const k = arLienzo(64, 64); arPinta(k, (c, w) => it.x(c, w)); b.appendChild(k);
     const s = document.createElement('small'); s.textContent = tr(it.n); b.appendChild(s);
     const r = document.createElement('i'); r.className = 'esc-rar'; r.textContent = tr(RAREZA_AR[it.r]); b.appendChild(r);
-    if (puestos) { const n = document.createElement('em'); n.textContent = '×' + puestos; b.appendChild(n); }
+    const cuenta = cat === 'muebles' && tuyo ? muebleCuentaTexto(sala, it.id) : '', agotado = cat === 'muebles' && tuyo && muebleQuedan(sala, it.id) <= 0;      // unidades (muebles-unidades.js)
+    if (cuenta) { const n = document.createElement('em'); n.textContent = cuenta; b.appendChild(n); }
+    if (agotado) b.classList.add('agotada');
     if (!tuyo) { const cd = arLienzo(22, 22, 'ar-candado'); arPinta(cd, (c, w) => ARD.ICONOS.candado(c, w)); b.appendChild(cd); }
-    b.addEventListener('pointerdown', e => { if (cat === 'muebles' && tuyo) MIESC.arrastra = { it, x: e.clientX, y: e.clientY, ya: false, b, toque: e.pointerType !== 'mouse' }; });
+    b.addEventListener('pointerdown', e => { if (cat === 'muebles' && tuyo && !agotado) MIESC.arrastra = { it, x: e.clientX, y: e.clientY, ya: false, b, toque: e.pointerType !== 'mouse' }; });
     b.onclick = () => { if (MIESC.arrastrado) { MIESC.arrastrado = false; return; } escTocaCosa(cat, it, tuyo); };
     tira.appendChild(b);
   }
@@ -64,6 +66,7 @@ function escTocaCosa(cat, it, tuyo) {
   if (!tuyo) { play('tick'); escAviso(tr('Aún no es tuyo') + ' · ' + tr(it.n) + ': ' + arTextoDe(it)); return; }
   if (cat === 'escenarios' && it.id === 'lienzo') { play('select'); obraElige(); return; }      // en blanco, desde una plantilla o seguir con el tuyo (escenario-obra.js)
   if (cat === 'escenarios') { escCambiaBase(it.id); return; }
+  if (cat === 'muebles' && muebleQuedan(escenarioSala(), it.id) <= 0) { muebleSinUnidades(it); return; }      // sin unidades: a por más
   escPonDondeMiras(it);
 }
 // arrastrar una tarjeta de la bandeja: hacia arriba la coge (de lado mueve la tira); al soltarla en el suelo se pone si cabe

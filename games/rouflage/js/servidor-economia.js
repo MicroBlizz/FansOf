@@ -30,14 +30,14 @@ async function diarioRecogeServidor() {
 // comprar una pieza en el armario con la moneda elegida: rf_comprar_con (servidor/65-*.sql) cobra el precio de los datos del juego, no el del cliente.
 // Devuelve una promesa con true si se ha comprado (la ventana de confirmar se cierra entonces)
 async function arCompraServidor(cat, it, moneda) {
-  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it) || !(moneda in pr)) return false;
+  const otra = muebleOtraMas(cat, it), pr = arPrecio(it); if (!pr || (arTiene(cat.id, it) && !otra) || !(moneda in pr)) return false;
   if (SAVE[moneda] < pr[moneda]) { play('deny'); avisa(moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return false; }
   try {
     const pieza = cat.id + ':' + it.id, deAntes = moneda === 'gotas' ? it.de === 'gotas' : it.de === 'tienda' && !pr.gacha;      // lo que ya vendía rf_comprar
     try { await RFS.llama('rf_comprar_con', { p_pieza: pieza, p_moneda: moneda }); }
     catch (e) { if (deAntes && /Could not find|PGRST202/i.test(String((e && e.message) || e))) await RFS.llama('rf_comprar', { p_pieza: pieza }); else throw e; }   // servidor sin el 65 todavía
     if (!cat.conjuntos && !arMira(cat)) armarioEstado().puesto[cat.id] = it.id;
-    guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno'); arPintaTodo();
+    guardaPartida(); play('crown'); avisa(otra ? tr('{n}: ya tienes {u}', { n: tr(it.n), u: muebleUnidades(it.id) }) : tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno'); arPintaTodo();
     return true;
   } catch (e) { RFS.error(e); return false; }
 }
@@ -62,9 +62,10 @@ async function pasePremiumServidor() {
   } catch (e) { RFS.error(e); }
 }
 // el gachapón: tira el servidor. Devuelve una promesa con lo mismo que gachaTira
-async function gachaTiraServidor(n, gratis) {
-  const est = gratis ? await RFS.llama('rf_gacha_gratis', { p_tipo: gratis }) : await RFS.llama('rf_gacha_tirar', { p_n: n });
-  return est.sale.map(s => { const [cat, id] = s.pieza.split(':'); return { cat, it: arItem(cat, id), nuevo: s.nuevo, devuelve: s.devuelve }; });
+// las dos máquinas (servidor/96): rf_gacha_tirar2 y rf_gacha_gratis2 (solo la de ropa). Lo que el juego no conozca (una pieza más nueva) no se enseña
+async function gachaTiraServidor(n, gratis, maq = 'ropa') {
+  const est = gratis ? await RFS.llama('rf_gacha_gratis2', { p_tipo: gratis }) : await RFS.llama('rf_gacha_tirar2', { p_n: n, p_maq: maq });
+  return est.sale.map(s => { const [cat, id] = s.pieza.split(':'); return { cat, it: arItem(cat, id), nuevo: s.nuevo, devuelve: s.devuelve, unidades: s.unidades }; }).filter(x => x.it);
 }
 // una compra con dinero real (Google Play, core/js/sistema/pagos.js) la entrega el servidor (servidor/91): aquí solo se vuelve a pedir el estado y se repinta la tienda
 if (typeof hook === 'function') hook('compra', () => { if (!RFS.activo()) return; RFS.refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden) tiendaPinta(); }); });

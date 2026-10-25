@@ -169,4 +169,6 @@ IDIOMA.add({
   "Microblizz ha puesto un cartel tan grande en la meta que Phony ha cruzado sin enterarse.": "Microblizz put up a banner so big at the finish line that Phony crossed it without noticing.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha puesto un peaje en la meta. Phony ha preguntado si se paga en gasolina.": "Microblizz has put a toll at the finish line. Phony asked if you can pay in petrol.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Phony quería aparcar el kart con la garra. Microblizz le ha quitado los mandos.": "Phony wanted to park the kart with the claw. Microblizz took the controls away.",
 });

@@ -35,11 +35,14 @@ const RFS = (() => {
     const a = armarioEstado(), e = est.estado || {};
     oculta(SAVE, 'gotas', est.gotas); oculta(SAVE, 'acciones', est.acciones);
     for (const k of ['pase', 'eco', 'diario', 'tienda', 'gacha']) oculta(SAVE, k, e[k]);
+    if (e.gachaCasa) oculta(SAVE, 'gachaCasa', e.gachaCasa);      // la máquina CASA (servidor/96): su pity
     if (typeof misionesDelServidor === 'function') misionesDelServidor(e);
     if (typeof talentosDelServidor === 'function') talentosDelServidor(e);      // la experiencia de los talentos (talentos-datos.js)      // lo cobrado de misiones y logros (misiones.js)
     const antes = nColeccion; nColeccion = (est.coleccion || []).length;
     if (antes !== null && nColeccion > antes) avisaCuenta();      // el primer cosmético que consigue un invitado
     oculta(a, 'tengo', est.coleccion || []);
+    oculta(a, 'unidades', est.unidades || {});      // los muebles que tienes más de una vez (servidor/96)
+    if (typeof unidadesDelServidor === 'function') unidadesDelServidor(est);
     for (const k in e.puesto || {}) a.puesto[k] = e.puesto[k] === '' ? null : e.puesto[k];      // lo puesto en otro dispositivo
     ultimoPuesto = JSON.stringify(a.puesto);
     if (typeof ecoEstado === 'function') ecoEstado();

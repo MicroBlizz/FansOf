@@ -29,8 +29,9 @@ const ESCENARIOS = {
 // cada mueble del armario: el tipo de TIPOS_MUEBLE con que se dibuja, cuántas variantes de color tiene (el botón COLOR) y su pestaña
 // en la bandeja del editor (g: muebles, plantas o deco)
 const MUEBLES_SALA = {};
-const ESC_PLANTAS = ['planta', 'arbol', 'fuenteJardin', 'gnomo', 'farola'];
-const ESC_DECO = ['caja', 'papelera', 'extintor', 'cono', 'fuente', 'bidon', 'maleta', 'cubo', 'pilar', 'maniqui', 'globos', 'flotador', 'vater', 'tarta', 'coche'];
+const ESC_PLANTAS = ['planta', 'arbol', 'fuenteJardin', 'gnomo', 'farola', 'aspersor'];
+const ESC_DECO = ['caja', 'papelera', 'extintor', 'cono', 'fuente', 'bidon', 'maleta', 'cubo', 'pilar', 'maniqui', 'globos', 'flotador', 'vater', 'tarta', 'coche',
+  'bobina', 'buzon', 'carretilla', 'cocheH', 'fluorescente', 'lapida', 'parquimetro', 'roaster', 'tubo'];
 (() => {
   const it = (id, n, r, de, txt, x) => ({ id, n, r, de, txt, x });
   const escenariosR = [
@@ -65,11 +66,22 @@ const ESC_DECO = ['caja', 'papelera', 'extintor', 'cono', 'fuente', 'bidon', 'ma
     ['tarta', 'Tarta gigante', 'epica', 'tienda', 0, 'tarta', 1], ['fuenteJardin', 'Fuente del jardín', 'epica', 'tienda', 0, 'fuenteJardin', 1],
     ['barra', 'Barra de bar', 'epica', 'tienda', 0, 'barra', 1],
     ['piano', 'Piano de cola', 'epica', 'premium', 'Pase premium · nv 35', 'piano', 1], ['coche', 'Coche aparcado', 'legend', 'tienda', 0, 'coche', 6],
-  ].filter(m => TIPOS_MUEBLE[m[5]]).map(([id, n, r, de, txt, t, vars]) => { MUEBLES_SALA[id] = { t, vars, g: ESC_PLANTAS.includes(id) ? 'plantas' : ESC_DECO.includes(id) ? 'deco' : 'muebles' }; return it(id, n, r, de, txt, (c, w) => muebleIcono(c, w, t)); });
+    // LAS COSAS DE LOS MAPAS (25-10-2026): el mismo dibujo que en su mapa. Solo salen en la máquina CASA (sc: la versión antigua del juego no las conoce,
+    // servidor/96-rouflage-gacha-casa.sql) y se venden en el armario como lo demás de la tienda
+    ['aspersor', 'Aspersor', 'comun', 'tienda', 0, 'aspersor', 1, 1], ['bobina', 'Bobina de cable', 'comun', 'tienda', 0, 'bobina', 1, 1],
+    ['buzon', 'Buzón', 'comun', 'tienda', 0, 'buzon', 1, 1], ['carretilla', 'Carretilla', 'comun', 'tienda', 0, 'carretilla', 1, 1],
+    ['columna', 'Columna del parking', 'comun', 'tienda', 0, 'columna', 1, 1], ['fluorescente', 'Fluorescente', 'comun', 'tienda', 0, 'fluorescente', 1, 1],
+    ['separador', 'Biombo de oficina', 'comun', 'tienda', 0, 'separador', 1, 1],
+    ['bomba', 'Bomba de agua', 'rara', 'tienda', 0, 'bomba', 1, 1], ['escalera', 'Escalera de mano', 'rara', 'tienda', 0, 'escalera', 1, 1],
+    ['lapida', 'Lápida', 'rara', 'tienda', 0, 'lapida', 1, 1], ['parquimetro', 'Parquímetro', 'rara', 'tienda', 0, 'parquimetro', 1, 1],
+    ['servidor', 'Servidor', 'rara', 'tienda', 0, 'servidor', 1, 1], ['tubo', 'Tubería', 'rara', 'tienda', 0, 'tubo', 1, 1],
+    ['cocheH', 'Coche en batería', 'epica', 'tienda', 0, 'cocheH', 1, 1], ['mostrador', 'Mostrador de recepción', 'epica', 'tienda', 0, 'mostrador', 1, 1],
+    ['roaster', 'El coche del jefe', 'legend', 'tienda', 0, 'roaster', 1, 1],
+  ].filter(m => TIPOS_MUEBLE[m[5]]).map(([id, n, r, de, txt, t, vars, sc]) => { MUEBLES_SALA[id] = { t, vars, g: ESC_PLANTAS.includes(id) ? 'plantas' : ESC_DECO.includes(id) ? 'deco' : 'muebles' }; const x = it(id, n, r, de, txt, (c, w) => muebleIcono(c, w, t)); if (sc) x.sc = 1; return x; });
   for (const x of [...escenariosR, ...mueblesR]) if (x.de === 'tienda' && x.txt === 0) x.txt = PRECIO_AR[x.r];      // el precio por rareza (armario-precios.js ya pasó)
   CATALOGO_AR.push(
     { id: 'escenarios', nombre: 'Escenarios (tu sala vacía)', corto: 'Escenarios', nota: 'Se usan en MI ESCENARIO: decóralo y píntalo a tu gusto', sala: true, items: escenariosR },
-    { id: 'muebles', nombre: 'Muebles para tu escenario', corto: 'Muebles', nota: 'Se usan en MI ESCENARIO: pon todos los que quieras', sala: true, items: mueblesR },
+    { id: 'muebles', nombre: 'Muebles para tu escenario', corto: 'Muebles', nota: 'Se usan en MI ESCENARIO: pon tantos como unidades tengas (los de serie, sin límite)', sala: true, items: mueblesR },
   );
 })();
 // el icono de un mueble: su dibujo entero, centrado y lo más grande que quepa

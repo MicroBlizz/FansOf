@@ -255,4 +255,6 @@ IDIOMA.add({
   "Microblizz ha creado un departamento para mirar tus partidas sin mirarte a ti. Phony ha pedido el puesto de no mirar.": "Microblizz created a department to look at your matches without looking at you. Phony applied for the not-looking job.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha enchufado la caja registradora y Phony ya ha pedido un descuento de empleado.": "Microblizz has plugged in the cash register and Phony has already asked for an employee discount.",
+  "<b>MEJORAS POR DENTRO</b>: la máquina de gancho de las Cartas se muda a los sistemas comunes de la serie. Al jugar, todo sigue igual.": "<b>BEHIND THE SCENES</b>: the claw machine for Cards moves into the series' shared systems. Playing it works exactly the same.",
+  "La garra del CEO se ha mudado de despacho. Phony ha ayudado con las cajas y ha perdido tres.": "The CEO's claw has moved offices. Phony helped with the boxes and lost three.",
 });

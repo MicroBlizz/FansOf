@@ -111,10 +111,12 @@ function arPrecio(it) {
 function arCompra(cat, it, moneda) {
   if (moneda !== 'gotas' && moneda !== 'acciones') moneda = it && it.de === 'gotas' ? 'gotas' : 'acciones';
   if (RFS.activo()) return arCompraServidor(cat, it, moneda);
-  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it) || !(moneda in pr)) return false;
+  const otra = muebleOtraMas(cat, it), pr = arPrecio(it); if (!pr || (arTiene(cat.id, it) && !otra) || !(moneda in pr)) return false;
   ecoEstado();
   if (SAVE[moneda] < pr[moneda]) { play('deny'); avisa(moneda === 'gotas' ? tr('Te faltan gotas: juega partidas y recoge el premio diario') : tr('No tienes bastantes Acciones'), 'malo'); return false; }
-  SAVE[moneda] -= pr[moneda]; armarioEstado().tengo.push(cat.id + ':' + it.id);
+  SAVE[moneda] -= pr[moneda];
+  if (otra) { const n = muebleSumaUnidad(it.id); guardaPartida(); play('crown'); avisa(tr('{n}: ya tienes {u}', { n: tr(it.n), u: n }), 'bueno'); arPintaTodo(); return true; }
+  armarioEstado().tengo.push(cat.id + ':' + it.id);
   if (!cat.conjuntos && !arMira(cat)) armarioEstado().puesto[cat.id] = it.id;      // lo compras y te lo pones
   guardaPartida(); play('crown'); avisa(tr('¡{n} es tuyo!', { n: tr(it.n) }), 'bueno');
   arPintaTodo();
@@ -126,8 +128,9 @@ function arPintaCompra(cat, it) {
   const b = E('b-ar-comprar'), pr = it ? arPrecio(it) : null;
   E('ar-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
   if (!b) return;
-  b.hidden = !pr || arTiene(cat.id, it);
-  if (!b.hidden) { b.textContent = tr('COMPRAR'); b.classList.toggle('falta', SAVE.gotas < pr.gotas && SAVE.acciones < pr.acciones); b.onclick = () => arPideCompra(cat, it); }
+  const otra = muebleOtraMas(cat, it);      // un mueble que ya es tuyo: se compra otra unidad (muebles-unidades.js)
+  b.hidden = !pr || (arTiene(cat.id, it) && !otra);
+  if (!b.hidden) { b.textContent = otra ? tr('COMPRAR OTRA · tienes {n}', { n: muebleUnidades(it.id) }) : tr('COMPRAR'); b.classList.toggle('falta', SAVE.gotas < pr.gotas && SAVE.acciones < pr.acciones); b.onclick = () => arPideCompra(cat, it); }
 }
 
 /* ---------- la pantalla del pase ---------- */

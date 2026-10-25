@@ -1,4 +1,4 @@
-// Fans of Rumble · Inglés: la garra del CEO (la máquina de Cartas del gashapón animado, js/14e-garra.js)
+// Fans of Rumble · Inglés: la garra del CEO (la máquina de Cartas del gashapón animado, core/js/sistema/gachapon-garra.js)
 'use strict';
 IDIOMA.add({
   "LA GARRA DEL CEO": "THE CEO'S CLAW",

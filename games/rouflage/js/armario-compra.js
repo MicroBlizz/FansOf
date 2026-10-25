@@ -29,7 +29,7 @@ function arCompraCaja() {
 }
 // abre la ventana para comprar esta pieza (la llama el botón COMPRAR del armario: arPintaCompra)
 function arPideCompra(cat, it) {
-  const pr = arPrecio(it); if (!pr || arTiene(cat.id, it)) return;
+  const pr = arPrecio(it); if (!pr || (arTiene(cat.id, it) && !muebleOtraMas(cat, it))) return;
   ecoEstado();
   const v = arCompraCaja();
   Object.assign(AR_COMPRA, { cat, it, ocupado: false, moneda: SAVE.gotas >= pr.gotas ? 'gotas' : SAVE.acciones >= pr.acciones ? 'acciones' : null });      // de entrada, lo ganado jugando
@@ -80,7 +80,7 @@ async function arCompraConfirma() {
   let hecho = false;
   try { hecho = await arCompra(cat, it, moneda); } finally { AR_COMPRA.ocupado = false; }
   if (hecho) arCompraCierra(true);
-  else if (!E('ar-compra').hidden) { if (!arPrecio(it) || arTiene(cat.id, it)) arCompraCierra(true); else { if (SAVE[moneda] < arPrecio(it)[moneda]) AR_COMPRA.moneda = null; arCompraPinta(); } }
+  else if (!E('ar-compra').hidden) { if (!arPrecio(it) || (arTiene(cat.id, it) && !muebleOtraMas(cat, it))) arCompraCierra(true); else { if (SAVE[moneda] < arPrecio(it)[moneda]) AR_COMPRA.moneda = null; arCompraPinta(); } }
 }
 function arCompraCierra(callado) {
   const v = E('ar-compra'); if (!v || v.hidden || AR_COMPRA.ocupado) return;

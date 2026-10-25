@@ -1,0 +1,33 @@
+// Fans of Rouflage · Inglés de la máquina CASA del gachapón, las unidades de los muebles y las cosas de los mapas como muebles (25-10-2026). Lo carga NUCLEO.juego({ idioma }) de index.html.
+'use strict';
+IDIOMA.add({
+  "ROPA": "CLOTHES",
+  "CASA": "HOME",
+  "LA GARRA DE LA CASA": "THE HOME CLAW",
+  "¡QUE SE CAE!": "IT'S SLIPPING!",
+  "Muebles, escenarios y cosas de los mapas con la máquina de gancho. Solo con Gotas.": "Furniture, scenes and things from the maps in the claw machine. Drops only.",
+  "La máquina CASA es una máquina de gancho con muebles, escenarios y cosas de los mapas, y es más barata. Un mueble repetido es una unidad más para poner en tu escenario; un escenario repetido te devuelve Gotas.": "The HOME machine is a claw machine with furniture, scenes and things from the maps, and it costs less. A repeated piece of furniture is one more unit to place in your scene; a repeated scene gives you Drops back.",
+  "+1 UNIDAD · TIENES {n}": "+1 UNIT · YOU HAVE {n}",
+  "COMPRAR OTRA · tienes {n}": "BUY ANOTHER · you have {n}",
+  "{n}: ya tienes {u}": "{n}: you now have {u}",
+  "NO TE QUEDAN MÁS": "NONE LEFT",
+  "Ya has puesto todas tus unidades de {n}. Consigue más en la máquina CASA del gachapón o cómpralas en el armario.": "You've placed all your units of {n}. Get more from the HOME machine in the gachapon or buy them in the wardrobe.",
+  "IR A LA GARRA": "GO TO THE CLAW",
+  "Se usan en MI ESCENARIO: pon tantos como unidades tengas (los de serie, sin límite)": "Used in MY SCENE: place as many as units you have (the starter ones, unlimited)",
+  "Aspersor": "Sprinkler",
+  "Bobina de cable": "Cable reel",
+  "Buzón": "Mailbox",
+  "Carretilla": "Wheelbarrow",
+  "Columna del parking": "Car park pillar",
+  "Fluorescente": "Fluorescent light",
+  "Biombo de oficina": "Office divider",
+  "Bomba de agua": "Water pump",
+  "Escalera de mano": "Stepladder",
+  "Lápida": "Gravestone",
+  "Parquímetro": "Parking meter",
+  "Servidor": "Server",
+  "Tubería": "Pipe",
+  "Coche en batería": "Parked car (side)",
+  "Mostrador de recepción": "Reception desk",
+  "El coche del jefe": "The boss's car"
+});

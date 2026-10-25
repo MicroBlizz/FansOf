@@ -58,6 +58,7 @@ function refrescaTitulo() {
   // la TIENDA lleva su cartel de OFERTA mientras no hayas cogido el Pack de inicio
   E('tit-oferta').hidden = !!(SAVE.tienda && SAVE.tienda.inicio);
   if (typeof titAmigosEnLinea === 'function') titAmigosEnLinea();
+  if (typeof titEscPinta === 'function') titEscPinta();      // la tarjeta MI ESCENARIO (titulo-escenario.js)
   titGuarda();
 }
 

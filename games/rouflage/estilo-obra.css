@@ -1,8 +1,10 @@
 /* Fans of Rouflage · MI ESCENARIO, EL LIENZO (escenario-obra.js): la ventana EMPEZAR UN LIENZO (en blanco, plantillas o seguir con el tuyo). */
-.obra-elige { position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: calc(var(--sup) + 14px) 14px calc(var(--inf) + 14px); background: rgba(8, 6, 16, 0.6); }
+.obra-elige { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: calc(var(--sup) + 14px) 14px calc(var(--inf) + 14px); background: rgba(8, 6, 16, 0.6); }
 .obra-elige[hidden] { display: none; }
-.obra-elige-caja { width: min(100%, 520px); max-height: 100%; overflow-y: auto; text-align: center; display: flex; flex-direction: column; gap: 8px; }
-.obra-elige-caja h3 { margin: 0; font-size: 24px; }
+.obra-elige-caja { width: min(100%, 520px); max-height: 100%; min-height: 0; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+.obra-elige-caja h3 { margin: 0; font-family: var(--font-display); font-weight: 400; font-size: 26px; color: var(--gold); }
+.obra-elige-lista .esc-carta, .obra-elige-lista .esc-carta * { touch-action: pan-y; }
+.obra-elige-lista .esc-carta small { font-family: var(--font-display); font-weight: 400; letter-spacing: 0.02em; }
 .obra-elige-lista { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding: 6px 0; }
 .obra-elige-lista .esc-carta { flex: none; }
 .obra-elige-lista .obra-mio { box-shadow: 0 0 0 3px #ffcb3d, 0 4px 0 var(--outline); }

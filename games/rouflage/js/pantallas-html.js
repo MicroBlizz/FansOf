@@ -185,13 +185,15 @@
       <button type="button" class="gacha-info-b" id="b-gacha-info" aria-label="Información"></button>
     </div>
     <div class="cartera" id="gacha-cartera"></div>
+    <div class="gacha-maqs" role="tablist" data-tr-aria aria-label="Máquina"><button type="button" class="gm ol" id="b-gm-ropa" role="tab" data-tr>ROPA</button><button type="button" class="gm ol" id="b-gm-casa" role="tab" data-tr>CASA</button></div>
     <div class="gacha-info" id="gacha-info" hidden>
       <p data-tr>Cada cápsula trae una pieza del armario: ojos, bocas, papeles, mascotas, humos, títulos… Si ya la tenías, te devolvemos Gotas.</p>
       <p data-tr>Salen todos los conjuntos y piezas que no son gratis, y las Épicas y Legendarias también se pueden comprar con Acciones en el armario. Lo del pase solo entra cuando ese pase se cierra.</p>
       <p data-tr>Hay una tirada gratis (x1) cada 3 horas y, cada domingo, una x10 gratis que caduca al acabar el día. No se acumulan.</p>
       <p data-tr>Las cápsulas solo se pagan con Gotas. Las Acciones, que se compran con euros, no sirven para tirar: así nunca se paga dinero por azar.</p>
+      <p data-tr>La máquina CASA es una máquina de gancho con muebles, escenarios y cosas de los mapas, y es más barata. Un mueble repetido es una unidad más para poner en tu escenario; un escenario repetido te devuelve Gotas.</p>
     </div>
-    <p class="gacha-sub" data-tr>Cosméticos en cápsula, pagados solo con Gotas.</p>
+    <p class="gacha-sub" id="gacha-sub1"></p>
     <div class="gacha-wrap"><canvas id="gacha-cv" aria-hidden="true"></canvas></div>
     <p class="gacha-sub" id="gacha-cuenta"></p>
     <button type="button" class="btn-gratis ol" id="b-gacha-g1"></button>

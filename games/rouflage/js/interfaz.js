@@ -25,7 +25,7 @@ const ICONOS = {
   cabezaCuadrada: '<rect x="5.5" y="5.5" width="13" height="13" fill="currentColor"/>',
   rapida: '<path d="M13 3 6 13h5l-1 8 7-10h-5z" fill="currentColor" stroke-linejoin="round"/><path d="M3 8h2M2.5 12h2M3 16h2"/>',
   senuelo: '<path d="M3 15c3-7 5 3 8-4s4 4 7-3"/><circle cx="19.5" cy="17.5" r="2.2"/>',
-  podio: '<path d="M3 20h18M9 20V10h6v10M3 20v-6h6M15 20v-8h6M12 3l1.2 2.4 2.6.4-1.9 1.8.5 2.6L12 9l-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z"/>',
+  podio: '<path d="M2.5 20.5h19M9 20.5V11.5h6v9M3.5 20.5V15H9M15 13.5h5.5v7M12 2.8l1 2.1 2.3.3-1.65 1.6.4 2.3L12 8l-2.05 1.1.4-2.3L8.7 5.2l2.3-.3z"/>',
   apagon: '<path d="M4 7.5h7l5-3v12l-5-3H4zM16 9.5v2M3 3l18 18"/>',
   baliza: '<path d="M12 21s-6-5.5-6-10a6 6 0 0 1 12 0c0 4.5-6 10-6 10zM12 7.5v4M12 13.6v.4"/>',
   mano: '<path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7.5a6 6 0 0 1-6 6h-1a5 5 0 0 1-4.3-2.4L3.6 14.2a1.4 1.4 0 0 1 2.3-1.6L8 15V12"/>',
@@ -168,7 +168,7 @@ const PANTALLAS_CAOS = ['p-titulo', 'p-pvp', 'p-amigos', 'p-busca', 'p-pvp-info'
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(PANTALLAS_CAOS.includes(id)); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
-function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); misionEvento('ayuda'); }
+function muestraAyuda(luego, modo) { _trasAyuda = luego || null; if (typeof ayudaPinta === 'function') ayudaPinta(modo); pantalla('p-ayuda'); misionEvento('ayuda'); }      // ayuda.js: las tarjetas
 function muestraPausa(si) {
   E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : typeof ESC_PRUEBA !== 'undefined' && ESC_PRUEBA.activa ? tr('VOLVER A MI ESCENARIO') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
@@ -184,7 +184,7 @@ function pintaBots() {
 function elige(modo) {
   audioInit(); play('select');
   let visto = false; try { visto = localStorage.getItem('rouflage-ayuda') === '1'; } catch (_) { /* sin guardar */ }
-  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => empiezaSeguro(modo)); return; }
+  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => empiezaSeguro(modo), modo); return; }
   empiezaSeguro(modo);
 }
 // empezar sin quedarse pillado: si algo falla (una partida guardada rara, por ejemplo), se dice, se apunta (errores.js lo manda al servidor) y se vuelve al título
@@ -226,6 +226,7 @@ function pintaTarjetas() {
   c.fillStyle = 'rgba(255,236,170,0.1)'; c.beginPath(); c.moveTo(126, 496); c.lineTo(230, 438); c.lineTo(230, 548); c.closePath(); c.fill();
   pintaAlubia(c, h, 1);
   pintaSigno(c, 112, 436, '?', '#e8731a', 0);
+  if (typeof ayudaDibuja === 'function') ayudaDibuja();      // los dibujos de CÓMO SE JUEGA, con el mismo mapa
 }
 
 function preparaInterfaz() {

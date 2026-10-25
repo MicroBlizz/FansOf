@@ -59,7 +59,7 @@ async function fotoComparte() {
     b.disabled = true; b.classList.add('cargando');
     const codigo = await retoCrear();
     b.disabled = false; b.classList.remove('cargando');
-    FOTO_LISTA.codigo = codigo || ''; FOTO_LISTA.url = codigo ? retoUrl(codigo) : location.origin + location.pathname;
+    FOTO_LISTA.codigo = codigo || ''; FOTO_LISTA.url = codigo ? retoUrl(codigo) : refEnlace(urlJuego());
     FOTO_LISTA.blob = await new Promise(r => fotoTarjeta(codigo).toBlob(r, 'image/png'));
     if (!FOTO_LISTA.blob) return;
   }
@@ -67,6 +67,7 @@ async function fotoComparte() {
   const { blob, url, codigo } = FOTO_LISTA;
   const archivo = new File([blob], 'rouflage-me-encuentras.png', { type: 'image/png' });
   const texto = codigo ? tr('Me he escondido. Tienes 20 segundos y 3 disparos. ¿Me encuentras?') : tr('¿Me encuentras? Juega gratis a Fans of Rouflage');
+  if (await appCompartir(texto, url, blob, archivo.name)) return;      // dentro de la app: el menú de Android con la foto (util.js)
   try {
     if (navigator.canShare && navigator.canShare({ files: [archivo], url })) { await navigator.share({ files: [archivo], title: 'Fans of Rouflage', text: texto, url }); return; }
     if (navigator.share) { await navigator.share({ title: 'Fans of Rouflage', text: texto, url }); return; }

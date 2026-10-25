@@ -128,7 +128,7 @@ function colorCamo(n) { return n < 50 ? '#ff4b5c' : n < 70 ? '#ffcb3d' : '#7ee04
 // lo que le espera a un camaleón con ese camuflaje, en una frase
 function veredicto(n) { return n < 50 ? tr('Se te ve mucho: mejor píntate un poco más') : n < 65 ? tr('Regular: de lejos cuelas, de cerca no') : n < 80 ? tr('Bien pintado. De cerca aún te la juegas') : tr('¡Casi no se te ve!'); }
 function refrescaHud(todo) {
-  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden);      // la sala viva, solo con su pantalla delante
+  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden && !(typeof VISITA !== 'undefined' && VISITA.activa));      // la sala viva, solo con su pantalla delante
   if (todo) for (const k in HUD) delete HUD[k];
   if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
   if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }

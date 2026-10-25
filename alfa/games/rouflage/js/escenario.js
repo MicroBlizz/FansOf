@@ -32,7 +32,7 @@ function escenarioActual() { const s = SAVE.escenario; return s && ESCENARIOS[s.
 function escenarioSala() {
   if (MIESC.sala) return MIESC.sala;
   const s = SAVE.escenario || {}, viejo = s.v !== 2 && ((s.m && s.m.length) || s.p);
-  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, lz: s.lz }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
+  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, lz: s.lz, g: s.g }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
   if (escBase(d.id) === 'lienzo') d.id = lzMio();      // el lienzo propio se edita como 'lienzo~mio' (escenario-obra.js)
   d.muebles = d.muebles.filter(m => escTiene('muebles', m.id));
   d.pint = !d.pint ? pinturaNueva() : d.pint.r === SALA.PR ? d.pint : pinturaRemuestra(d.pint, SALA.PR);
@@ -46,7 +46,8 @@ function escGuarda() {
   let p = pinturaCodifica(sala.pint);
   for (const r of [4, 8, 12]) if (p.length > 30000) p = pinturaCodifica(pinturaRemuestra(sala.pint, r));      // la partida no engorda: como mucho ~30 KB de pintura
   SAVE.escenario = { v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]), p };
-  const lz = lzMioTexto(); if (lz) SAVE.escenario.lz = lz;      // la forma de tu lienzo se guarda aunque ahora uses otro escenario
+  const lz = lzMioTexto(); if (lz) SAVE.escenario.lz = lz;
+  if (sala.peg && sala.peg.length) SAVE.escenario.g = pegADatos(sala.peg);      // las pegatinas (escenario-pegatinas.js)      // la forma de tu lienzo se guarda aunque ahora uses otro escenario
   if (yo) SAVE.escenario.yo = [Math.round(yo.x), Math.round(yo.y)];
   guardaPartida();
 }
@@ -68,9 +69,10 @@ function abreEscenario(conMueble) {
   if (conMueble) { const it = arItem('muebles', conMueble); if (it && arTiene('muebles', it)) { MIESC.tab = MUEBLES_SALA[it.id].g; escModo('decorar', true); escPonDondeMiras(it); } }
   cancelAnimationFrame(MIESC.raf); MIESC.ult = performance.now(); MIESC.raf = requestAnimationFrame(escBucle);
 }
-function cierraEscenario() { if (MIESC.yo) escGuarda(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; play('select'); irTitulo(); }
+function cierraEscenario() { if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
+  MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; play('select'); irTitulo(); }
 const escenarioAbierto = () => MIESC.abierto;
-function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escGuarda(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(null, 'escenario'); }
+function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escGuarda(); if (typeof escPublica === 'function') escPublica(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(null, 'escenario'); }
 function escBucle(ahora) {
   if (!MIESC.abierto) return;
   const dt = Math.min(0.05, (ahora - MIESC.ult) / 1000 || 0); MIESC.ult = ahora; MIESC.t += dt;
@@ -102,6 +104,7 @@ function escDibuja() {
   const faltan = escPintaFondo(c, sala, M, { s, ox, oy, w: cv.width, h: cv.height });
   c.setTransform(s, 0, 0, s, ox, oy);
   const R = { x0: -ox / s - 60, y0: -oy / s - 60, x1: (cv.width - ox) / s + 60, y1: (cv.height - oy) / s + 140 }, kc = escKs(s), d = MIESC.drag;
+  pegPintaSala(c, sala, R);      // las pegatinas, pegadas al suelo y a las paredes (escenario-pegatinas.js)
   if (d && d.movido) escPintaHuella(c, d.m, escCabeEn(sala, d.m));
   const pops = {}; for (const p of MIESC.pops) { const q = (MIESC.t - p.t0) / 0.35; pops[sala.muebles.indexOf(p.m)] = 1 + Math.sin(q * Math.PI) * 0.22 * (1 - q); }
   const pers = [{ y: M.armario.y, pinta: g => escPintaArmario(g, M.armario, MIESC.t, MIESC.cerca) }];

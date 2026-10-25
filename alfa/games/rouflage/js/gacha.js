@@ -27,7 +27,7 @@ function gachaPool() {
   const pool = {};
   for (const r in GACHA.odds) pool[r] = [];
   for (const c of CATALOGO_AR) {
-    for (const it of c.items) if ((it.de === 'tienda' || GACHA.liberados.includes(c.id + ':' + it.id)) && pool[it.r]) pool[it.r].push({ cat: c.id, it });
+    for (const it of c.items) if ((it.de === 'tienda' || GACHA.liberados.includes(c.id + ':' + it.id)) && pool[it.r] && !it.sg) pool[it.r].push({ cat: c.id, it });      // sg: no sale (los tamaños del lienzo)
   }
   return pool;
 }

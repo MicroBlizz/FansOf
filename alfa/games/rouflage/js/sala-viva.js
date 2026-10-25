@@ -10,6 +10,7 @@
 const SV = { activo: false, codigo: '', datosTxt: '', modoTxt: '', jugTxt: '', tGr: 0, ui: null, n: 0, vuelve: 0 };
 const SV_MSG = new Set(['e', 'p', 'gr', 'gs', 'rp', 'hb', 'tl', 'sz', 'sc', 'st']);      // lo que se escucha en la sala (el resto es de la partida); sc y st son solo de aquí: cambio de papel y disparo
 const SV_ESPERA = 3;      // segundos, como mucho, entre usos de la habilidad
+const SV_MAX_CAZ = 2;      // cazadores a la vez en la sala (con más, no queda a quién buscar)
 const enSalaViva = () => J.fase === 'sala';
 
 // ¿toca sala viva? Sala con amigos esperando a empezar
@@ -178,6 +179,7 @@ function salaVivaPintaUI(i, soyAnf) {
   const caz = !!(J.yo && J.yo.clase === 'cazador'), bp = E('sv-papel');
   if (bp.dataset.caz !== String(caz)) { bp.dataset.caz = String(caz); bp.classList.toggle('caz', !caz); ponIcono(bp.querySelector('i'), caz ? 'pincel' : 'diana'); }
   bp.querySelector('b').textContent = caz ? tr('SER CAMALEÓN') : tr('SER CAZADOR');
+  bp.classList.toggle('lleno', !caz && J.cazadores.length >= SV_MAX_CAZ);      // ya hay bastantes cazadores
   const html = etq.map(([c, t]) => `<span class="sv-e ${c}">${esc(t)}</span>`).join('');
   const caja = E('sv-etq'); if (caja.innerHTML !== html) caja.innerHTML = html;
   // EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
@@ -216,6 +218,7 @@ function salaVivaPapel(e, clase) {
 }
 function salaVivaCambia() {
   const yo = J.yo; if (!yo || !enSalaViva()) return;
+  if (yo.clase !== 'cazador' && J.cazadores.length >= SV_MAX_CAZ) { play('deny'); pista(tr('Ya hay {n} cazadores: espera a que uno vuelva a ser camaleón', { n: SV_MAX_CAZ }), 2.5); return; }
   play('select');
   const n = salaVivaPapel(yo, yo.clase === 'cazador' ? 'camaleon' : 'cazador');
   rfpManda({ t: 'sc', c: n.clase });
@@ -226,7 +229,7 @@ function salaVivaCambia() {
 function salaVivaRecibe(sl, m) {
   if (m.t === 'rp' && m.r) sl.ropaIds = m.r;      // (para vestirle igual si cambia de papel)
   if (m.t === 'e' && m.k !== undefined && sl.ente && (sl.ente.clase === 'cazador') !== !!m.k) salaVivaPapel(sl.ente, m.k ? 'cazador' : 'camaleon');
-  if (m.t === 'sc') { if (sl.ente && (m.c === 'cazador' || m.c === 'camaleon')) salaVivaPapel(sl.ente, m.c); return true; }
+  if (m.t === 'sc') { if (sl.ente && (m.c === 'cazador' || m.c === 'camaleon') && sl.ente.clase !== m.c) { salaVivaPapel(sl.ente, m.c); avisa(m.c === 'cazador' ? tr('{n} ahora es cazador', { n: sl.nombre }) : tr('{n} vuelve a ser camaleón', { n: sl.nombre }), m.c === 'cazador' ? 'aviso' : 'bueno'); } return true; }
   if (m.t === 'st') {
     const h = sl.ente; if (!h || h.clase !== 'cazador') return true;
     const x = +m.x || 0, y = +m.y || 0; h.dir = Math.atan2(y - h.y + 6, x - h.x); h.mira = Math.cos(h.dir) >= 0 ? 1 : -1; h.tApunta = 0.7;

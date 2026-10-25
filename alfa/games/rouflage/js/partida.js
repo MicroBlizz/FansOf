@@ -120,6 +120,7 @@ function avanzaPartida(dt) {
   for (const k of J.camaleones) k.enVista = false;
   senueloPaso(dt);
   humoPaso(J.yo);
+  if (!J.pvp && typeof VISITA !== 'undefined' && VISITA.activa) visitaAvanza(dt);      // de visita en un escenario (visita.js)
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
   controlaJugador(dt); talentosAvanza(dt); poderAvanza(dt); fantasmasAvanza(dt); balizaAvanza(dt); modoAvanza(dt); eventosAvanza(dt); cuarteoAvanza(dt);
   for (const e of J.entes) {

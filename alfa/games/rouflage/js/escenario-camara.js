@@ -94,6 +94,7 @@ function escAbajo(e) {
   if (e.button === 1 || e.button === 2) { t.pan = true; t.movido = true; return; }      // la rueda o el botón derecho: siempre mueven la vista
   if (MIESC.modo === 'pintar') { t.pinta = true; escPincelAbajo(p); return; }
   if (MIESC.modo === 'obra') { t.obra = true; obraAbajo(p); return; }      // CONSTRUIR (escenario-obra.js)
+  if (MIESC.modo === 'pegar') { t.pan = true; t.pegar = true; return; }      // PEGATINAS: al soltar sin arrastrar se pega (escenario-pegatinas.js)
   if (MIESC.modo === 'decorar') { const m = escMuebleEn(p); if (m) { escEmpiezaArrastre(m, p); if (e.pointerType !== 'mouse') MIESC.drag.levanta = 34 / (MIESC.cam.z || 1); t.mueble = true; play('tick'); return; } }
   if (MIESC.modo === 'pasear') { t.palanca = true; return; }      // PASEAR: arrastrar lleva la galleta (escenario-palanca.js)
   t.pan = true;
@@ -126,6 +127,7 @@ function escArriba(e) {
   if (t.obra) obraArriba();
   if (t.mueble) escSuelta();
   if (t.palanca && MIESC.palanca) escPalancaSuelta();
+  if (t.pegar && !t.movido && e.type === 'pointerup') { pegToca(escAMundo(e)); MIESC.sucio = true; return; }
   if ((t.pan || t.palanca) && !t.movido && e.type === 'pointerup') escToca(escAMundo(e));
   if (e.pointerType !== 'mouse') MIESC.puntero = null;
   MIESC.sucio = true;

@@ -76,3 +76,22 @@ body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, d
   .sv-chip { padding: 3px 8px 0; font-size: 12px; } .sv-cod b { font-size: 18px; } .sv-invitar { font-size: 13px; }
   .sv-opc { width: 80px; } .sv-emp b { font-size: 21px; }
 }
+.sv-papel.lleno { filter: grayscale(0.7) brightness(0.8); }
+
+/* DE VISITA en el escenario de otro (visita.js): arriba volver y de quién es; abajo ME GUSTA y REPORTAR (los botones de sala-votos) */
+.visita-ui { position: fixed; inset: 0; pointer-events: none; z-index: 11; }
+.visita-ui[hidden] { display: none; }
+.visita-ui button, .visita-ui .esc-rep { pointer-events: auto; }
+.visita-ui .vis-de b { font: 400 16px var(--font-display); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw; padding-top: 2px; }
+.vis-abajo { position: absolute; left: calc(var(--izq) + 12px); bottom: calc(var(--inf) + 14px); display: flex; gap: 8px; }
+.vis-abajo[hidden] { display: none; }
+body.visita #acciones { bottom: calc(var(--inf) + 14px); }
+.visita-ui .esc-rep { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; background: rgba(8, 6, 16, 0.6); padding: 16px; }
+.visita-ui .esc-rep[hidden] { display: none; }
+/* el ESCENARIO DE LA SEMANA y el botón VER, en la lista de amigos */
+.vis-semana { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 16px; border: 3px solid var(--outline); background: linear-gradient(110deg, #3a2a5e, #24304a); box-shadow: 0 3px 0 var(--outline); }
+.vis-semana[hidden] { display: none; }
+.vis-semana span { flex: 1; min-width: 0; text-align: left; display: grid; }
+.vis-semana small { font: 400 13px var(--font-display); color: #ffcb3d; letter-spacing: 0.04em; }
+.vis-semana b { font: 800 12px var(--font-ui); color: var(--ink); }
+.amg-fila .vis-ver { margin-right: 4px; }

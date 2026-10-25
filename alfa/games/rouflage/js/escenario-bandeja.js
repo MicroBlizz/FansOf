@@ -4,22 +4,24 @@
 // tarjeta hacia arriba hasta el suelo (sale su fantasma con la huella verde si cabe o roja si no). Lo que no tienes sale con candado y te dice
 // cómo se consigue. Al tocar un mueble puesto sale su BURBUJA: mover, voltear, color (si tiene) y quitar. Va después de escenario.js.
 'use strict';
-const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['obra', 'Construir', 'ladrillo'], ['pintar', 'Pintar', 'pincel']];      // CONSTRUIR: solo con el lienzo (escenario-obra.js)
+const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['obra', 'Construir', 'ladrillo'], ['pegar', 'Pegatinas', 'deco'], ['pintar', 'Pintar', 'pincel']];      // PEGATINAS: escenario-pegatinas.js      // CONSTRUIR: solo con el lienzo (escenario-obra.js)
 // lo de una pestaña: [{ cat, it }]
 function escCosasDe(tab) {
-  if (tab === 'escenarios') return arCat('escenarios').items.map(it => ({ cat: 'escenarios', it }));
+  if (tab === 'escenarios') return arCat('escenarios').items.filter(it => !it.lz).map(it => ({ cat: 'escenarios', it }));      // (los tamaños del lienzo no son escenarios: escenario-obra2.js)
   return arCat('muebles').items.filter(it => MUEBLES_SALA[it.id] && MUEBLES_SALA[it.id].g === tab).map(it => ({ cat: 'muebles', it }));
 }
 function escModo(m, sinSonido) {
   MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else { MIESC.cam.sigue = true; escSacaYo(); } if (m !== 'decorar') MIESC.sel = null;
-  if (m === 'pintar' || m === 'obra') MIESC.tab = m; else if (MIESC.tab === 'pintar' || MIESC.tab === 'obra') MIESC.tab = 'muebles';
+  const panel = ['pintar', 'obra', 'pegar'];      // las pestañas que son un modo con su propio panel
+  if (panel.includes(m)) MIESC.tab = m; else if (panel.includes(MIESC.tab)) MIESC.tab = 'muebles';
   if (m !== 'obra') obraArriba();
   if (!sinSonido) play('select');
-  preparaObra(); preparaProbar(); E('b-esc-probar').querySelector('b').textContent = tr('PROBAR'); E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-obra').hidden = m !== 'obra'; E('esc-pasear').hidden = m !== 'pasear';
+  preparaObra(); preparaPeg(); E('esc-pegar').hidden = m !== 'pegar'; preparaProbar(); E('b-esc-probar').querySelector('b').textContent = tr('PROBAR'); E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-obra').hidden = m !== 'obra'; E('esc-pasear').hidden = m !== 'pasear';
   E('b-esc-pasear').classList.toggle('activo', m === 'pasear'); E('esc-panel').classList.toggle('paseo', m === 'pasear');
   E('b-esc-pasear').querySelector('b').textContent = m === 'pasear' ? tr('DECORAR') : tr('PASEAR');
   if (m === 'pintar' && typeof escPincelRefresca === 'function') escPincelRefresca();
   if (m === 'obra') obraRefresca();
+  if (m === 'pegar') pegRefresca();
   escBandeja(); MIESC.sucio = true; requestAnimationFrame(escAjusta);
 }
 function escBandeja() {
@@ -28,8 +30,9 @@ function escBandeja() {
     if (id === 'obra' && escBase(sala.id) !== 'lienzo') continue;
     const b = document.createElement('button'); b.type = 'button'; b.id = 'esc-pest-' + id; b.className = 'esc-pest' + (MIESC.modo !== 'pasear' && MIESC.tab === id ? ' activa' : '');
     b.innerHTML = '<i></i><b></b><small></small>'; ponIcono(b.children[0], icono); b.children[1].textContent = tr(nombre);
-    if (id !== 'pintar' && id !== 'obra') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
-    b.onclick = () => { if (id === 'pintar' || id === 'obra') { if (MIESC.modo !== id) escModo(id); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
+    if (id === 'pegar') b.children[2].textContent = (sala.peg || []).length + '/' + ESC_PEG.MAX;
+    else if (id !== 'pintar' && id !== 'obra') { const l = escCosasDe(id); b.children[2].textContent = l.filter(x => arTiene(x.cat, x.it)).length + '/' + l.length; } else b.children[2].remove();
+    b.onclick = () => { if (id === 'pintar' || id === 'obra' || id === 'pegar') { if (MIESC.modo !== id) escModo(id); return; } MIESC.tab = id; play('select'); if (MIESC.modo !== 'decorar') escModo('decorar', true); else escBandeja(); };
     fila.appendChild(b);
   }
   if (MIESC.modo !== 'decorar') return;

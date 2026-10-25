@@ -35,6 +35,7 @@ function pintaMundoEsc(c, R) {
   const { sala, M } = MAPA_ACT.esc, ks = Math.max(0.5, Math.abs(c.getTransform().a) || 1);
   c.save(); c.beginPath(); c.rect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0); c.clip();
   escPintaTrozo(c, M, R, sala.pint, ks);
+  pegPintaSala(c, sala, R);      // las pegatinas (escenario-pegatinas.js)
   for (const m of MUEBLES) if (cruzan(m.dib, R)) sombraMueble(c, m);
   c.restore();
 }

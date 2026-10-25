@@ -123,13 +123,14 @@ function salaDeDatos(d) {
   try { pint = d.p ? pinturaDecodifica(d.p) : null; } catch (_) { pint = null; }
   if (pint && viejo) pint = pinturaRemuestra(pint, SALA.PR, dx + SALA.X0, dy + SALA.Y0);      // la sala pequeña empezaba en (X0, Y0)
   else if (pint && (pint.w !== Math.ceil(ESC_W / pint.r) || pint.h !== Math.ceil(ESC_H / pint.r))) pint = null;
-  const sala = { id, muebles, pint, ver: 0 };
+  const sala = { id, muebles, pint, ver: 0, peg: typeof pegDeDatos === 'function' ? pegDeDatos(d.g) : [] };      // (las pegatinas: escenario-pegatinas.js)
   if (viejo) escRecoloca(sala);
   return sala;
 }
 function salaADatos(sala, maxBytes = SALA.MAX_DATOS) {
   const d = { v: 2, e: escBase(sala.id), m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
-  if (escBase(sala.id) === 'lienzo' && ESC_LZ[sala.id]) d.lz = lzCodifica(ESC_LZ[sala.id]);      // la forma del lienzo viaja con él
+  if (escBase(sala.id) === 'lienzo' && ESC_LZ[sala.id]) d.lz = lzCodifica(ESC_LZ[sala.id]);
+  if (sala.peg && sala.peg.length) d.g = pegADatos(sala.peg);      // las pegatinas      // la forma del lienzo viaja con él
   if (pinturaHay(sala.pint)) for (const r of [3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60]) {
     d.p = pinturaCodifica(r === sala.pint.r ? sala.pint : pinturaRemuestra(sala.pint, r));
     if (JSON.stringify(d).length <= maxBytes) break;
@@ -170,7 +171,7 @@ function escRecoloca(sala) {
 // lo que tiene el jugador, en compacto (< SALA.MAX_DATOS caracteres); se recalcula solo si algo ha cambiado
 const _escDatos = { clave: '', d: null };
 function escenarioDatos() {
-  const s = escenarioSala(), clave = [s.id, s.ver, s.pint ? s.pint.ver : 0, s.muebles.length, s.muebles.map(m => m.x + ',' + m.y + ',' + (m.v || 0) + (m.f ? 'f' : '')).join(';')].join('|');
+  const s = escenarioSala(), clave = [s.id, s.ver, s.pint ? s.pint.ver : 0, s.muebles.length, s.muebles.map(m => m.x + ',' + m.y + ',' + (m.v || 0) + (m.f ? 'f' : '')).join(';'), JSON.stringify(s.peg || [])].join('|');
   if (_escDatos.clave !== clave) { _escDatos.clave = clave; _escDatos.d = salaADatos(s); }
   return JSON.parse(JSON.stringify(_escDatos.d));
 }

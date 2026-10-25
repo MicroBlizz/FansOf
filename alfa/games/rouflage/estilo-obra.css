@@ -14,3 +14,7 @@
 #obra-herr .esc-h { width: auto; min-width: 0; }
 #obra-herr .esc-h small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 #obra-herr .esc-h.bien { background: linear-gradient(#7ee04a, #2fa85a); color: var(--ink); }
+/* con 7 pestañas (el lienzo, con CONSTRUIR y PEGATINAS) van en dos filas de 4 */
+.esc-pestanas:has(> :nth-child(7)) { grid-auto-flow: row; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: 9px; }
+#peg-tira .esc-carta img { width: 60px; height: 60px; object-fit: contain; }
+.peg-quitar.activa { background: linear-gradient(#ff8a8a, #e0414f); }

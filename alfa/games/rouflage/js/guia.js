@@ -77,6 +77,7 @@ function guiaPaso(dt) {
   if (!GUIA.caja) return;
   const ocultar = () => { GUIA.caja.hidden = GUIA.foco.hidden = true; };
   if (J.pvp || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) { ocultar(); return; }
+  if (['ar-compra', 'obra-elige', 'esc-rep'].some(id => visible(id))) { ocultar(); return; }      // con una ventana encima (comprar, empezar un lienzo, reportar), la guía espera
   if (!GUIA.g) { GUIA.g = guiaBusca(); GUIA.i = 0; GUIA.t = 0; if (!GUIA.g) { ocultar(); return; } }
   const p = GUIA.g.pasos[GUIA.i];
   if (p.hecho && p.hecho()) { play('select'); guiaSigue(); return; }      // primero si ya está hecho (al tocar el botón se cambia de pantalla)

@@ -1,8 +1,8 @@
 {
- "build": 525,
- "hash": "2ba354c",
- "fecha": "2026-10-25T20:37:42Z",
- "mensaje": "Rouflage: CÓMO SE JUEGA en tarjetas con dibujos (3 pasos por papel), MI ESCENARIO en el título con la foto de tu escenario, y guías nuevas: PvP, tubo del pase, gachapón, decorar, visitar, sala con amigos y visita",
+ "build": 526,
+ "hash": "3af2cbc",
+ "fecha": "2026-10-25T20:55:18Z",
+ "mensaje": "Rouflage: la máquina CASA (de gancho) en el gachapón, unidades de muebles en Mi escenario y 16 cosas de los mapas como muebles; la garra pasa a core; servidor 96",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

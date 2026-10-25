@@ -64,8 +64,9 @@ function gpCarta(x, compacta) {
   const px = compacta ? 92 : 150, k = arLienzo(px, px); arPinta(k, (c, w) => x.it.x(c, w)); peana.appendChild(k); d.appendChild(peana);
   const n = document.createElement('b'); n.className = 'gp-nombre ol'; n.textContent = tr(x.it.n); d.appendChild(n);
   const s = document.createElement('small'); s.className = 'gp-cat'; s.textContent = tr(arCat(x.cat).corto); d.appendChild(s);
-  const sello = document.createElement('div'); sello.className = 'gp-sello ol ' + (x.nuevo ? 'nuevo' : 'repe');
+  const sello = document.createElement('div'); sello.className = 'gp-sello ol ' + (x.nuevo || x.unidades ? 'nuevo' : 'repe');
   if (x.nuevo) sello.textContent = tr('¡NUEVO!');
+  else if (x.unidades) sello.textContent = tr('+1 UNIDAD · TIENES {n}', { n: x.unidades });      // un mueble repetido de la CASA (muebles-unidades.js)
   else { sello.textContent = tr('REPETIDA +{n}', { n: x.devuelve }); sello.appendChild(iconoPeq(pintaGotas, 18)); }
   d.appendChild(sello);
   return d;
@@ -79,6 +80,7 @@ function gpCasilla(x, i) {
   const k = arLienzo(46, 46); arPinta(k, (c, w) => x.it.x(c, w)); cara.appendChild(k);
   const n = document.createElement('small'); n.textContent = tr(x.it.n); cara.appendChild(n);
   if (x.nuevo) { const t = document.createElement('i'); t.className = 'ol'; t.textContent = tr('¡NUEVO!'); cara.appendChild(t); }
+  else if (x.unidades) { const t = document.createElement('i'); t.className = 'ol'; t.textContent = '+1'; cara.appendChild(t); }
   b.appendChild(cara);
   b.onclick = () => { if (!b.classList.contains('abierta')) return; play('select'); gpPonFoco(i); };
   return b;
@@ -101,7 +103,7 @@ function gpPonFoco(i) {
 function gpBotones() {
   const G = GPREMIO, caja = E('gacha-botones'), x = G.sale && G.sale[G.sel];
   const viejo = caja.querySelector('.gp-accion'); if (viejo) viejo.remove();
-  if (!x || !x.nuevo || (arCat(x.cat).conjuntos && !arCat(x.cat).sala) || arCat(x.cat).album) return;      // un paquete de pegatinas no se pone: ya sale en el chat
+  if (!x || !(x.nuevo || x.unidades) || (arCat(x.cat).conjuntos && !arCat(x.cat).sala) || arCat(x.cat).album) return;      // un paquete de pegatinas no se pone: ya sale en el chat
   const b = document.createElement('button'); b.type = 'button'; b.className = 'boton gp-accion';
   if (arCat(x.cat).sala) {      // un mueble o un escenario: a tu sala (escenario.js)
     b.textContent = tr('A MI ESCENARIO');

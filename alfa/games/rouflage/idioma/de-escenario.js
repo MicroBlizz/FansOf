@@ -7,7 +7,6 @@ IDIOMA.add({
   "Muebles para tu escenario": "Möbel für deine Kulisse",
   "Muebles": "Möbel",
   "Se usan en MI ESCENARIO: decóralo y píntalo a tu gusto": "Für MEINE KULISSE: Richte sie ein und bemal sie nach deinem Geschmack",
-  "Se usan en MI ESCENARIO: pon todos los que quieras": "Für MEINE KULISSE: Stell so viele hin, wie du willst",
   "La oficina": "Das Büro",
   "La cafetería": "Die Cafeteria",
   "Recursos Humanos": "Personalabteilung",

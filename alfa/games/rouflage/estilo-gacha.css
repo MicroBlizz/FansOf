@@ -96,3 +96,10 @@
 @media (prefers-reduced-motion: reduce) {
   .gp-carta, .gp-cinta, .gp-peana canvas, .gp-sello, .gp-casilla.abierta, .gp-casilla.tiembla, .gp-casilla.mejor.abierta::after { animation: none !important; }
 }
+/* las dos máquinas: ROPA (la roja de siempre) y CASA (la de gancho, azul), gacha-pantalla.js */
+.gacha-maqs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 480px; justify-self: center; margin: 0 0 4px; }
+.gacha-maqs .gm { padding: 8px 6px 5px; border-radius: 14px; border: 4px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: #26344f; color: var(--ink-dim); font-family: var(--font-display); font-size: 18px; letter-spacing: 0.03em; cursor: pointer; }
+.gacha-maqs .gm.activa { color: #fff; transform: translateY(1px); box-shadow: 0 3px 0 var(--outline); }
+#b-gm-ropa.activa { background: linear-gradient(to bottom, #ff6a5c, #c22a20); }
+#b-gm-casa.activa { background: linear-gradient(to bottom, #5aa2ff, #1d4f9a); }
+.gacha-maqs .gm:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--outline); }

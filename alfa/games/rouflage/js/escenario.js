@@ -162,6 +162,7 @@ const escEnArmario = p => { const a = escMundoAct().armario; return Math.abs(p.x
 function escPon(it, p, lejos = 90) {
   const sala = escenarioSala();
   if (sala.muebles.length >= SALA.MAX_MUEBLES) { play('deny'); escAviso(tr('Ya no caben más muebles: quita alguno')); return null; }
+  if (muebleQuedan(sala, it.id) <= 0) { muebleSinUnidades(it); return null; }      // sin unidades (muebles-unidades.js)
   const m = escLimita({ id: it.id, x: Math.round(p.x), y: Math.round(p.y), v: 0, f: 0 });
   if (!escCabeEn(sala, m)) { const h = escHueco(sala, m, m.x, m.y, lejos); if (!h) { play('deny'); escAviso(tr('Ahí no cabe: busca un hueco libre')); return null; } [m.x, m.y] = h; }
   sala.muebles.push(m); MIESC.pops.push({ m, t0: MIESC.t }); escChispas(m); MIESC.sel = m; play('pop'); escCambio(); escGuarda(); escBandeja();

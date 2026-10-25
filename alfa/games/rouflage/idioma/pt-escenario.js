@@ -7,7 +7,6 @@ IDIOMA.add({
   "Muebles para tu escenario": "Móveis para o seu cenário",
   "Muebles": "Móveis",
   "Se usan en MI ESCENARIO: decóralo y píntalo a tu gusto": "Usados em MEU CENÁRIO: decore e pinte do seu jeito",
-  "Se usan en MI ESCENARIO: pon todos los que quieras": "Usados em MEU CENÁRIO: coloque quantos quiser",
   "La oficina": "O escritório",
   "La cafetería": "O refeitório",
   "Recursos Humanos": "Recursos Humanos",

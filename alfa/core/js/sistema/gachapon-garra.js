@@ -1,4 +1,5 @@
-// Fans of Rumble · La garra del CEO: el estilo de la máquina de Cartas en el gashapón animado (core/js/sistema/gachapon-anim.js, flag 'gashapon-nuevo').
+// Fans Of · LA MÁQUINA DE GANCHO, un estilo del gashapón animado (gachapon-anim.js): la usan las Cartas de Rumble («LA GARRA DEL CEO») y la máquina CASA
+// de Rouflage (muebles y escenarios). El cartel de arriba sale de la máquina (X.cartel; sin él, el del Rumble). Se pasó a core el 25-10-2026 desde games/rumble/js/14e-garra.js.
 // Una máquina de gancho: la garra va hasta una cápsula, baja, la coge, la sube y la lleva a la salida. Si viene algo bueno (o de farol), por el camino tiembla
 // y «¡QUE SE CAE!». Se dibuja en un espacio de 360 de ancho. Fases: mueve → baja → coge → sube1 → (tensa) → sube2 → vuelve → suelta → cae → trampilla → fuera.
 'use strict';
@@ -51,7 +52,7 @@
       // el cartel, con bombillas que parpadean (deprisa al tirar)
       fs(c, rec(34, 22, 292, 64, 16), MC[2], 4);
       for (let i = 0; i < 16; i++) { const on = (Math.floor(t * (S ? 10 : 3)) + i) % 2 === 0, x = 46 + i * 17.8; fs(c, cir(x, 29, 3.4), on ? '#fff6a8' : 'rgba(0,0,0,.3)', 1.6); fs(c, cir(x, 79, 3.4), on ? 'rgba(0,0,0,.3)' : '#fff6a8', 1.6); }
-      c.save(); c.shadowColor = '#ff5fa8'; c.shadowBlur = 14 + 6 * Math.sin(t * 6); texto(c, 'LA GARRA DEL CEO', 180, 55, 22, '#ffe14d', 6); c.restore();
+      c.save(); c.shadowColor = '#ff5fa8'; c.shadowBlur = 14 + 6 * Math.sin(t * 6); texto(c, (X && X.cartel) || 'LA GARRA DEL CEO', 180, 55, 22, '#ffe14d', 6); c.restore();
       // la vitrina: el montón de cápsulas, la salida y la garra
       fs(c, rec(58, 100, 244, 274, 12), '#160b2e', 3.5);
       fs(c, rec(62, 104, 236, 8, 3), '#c9d2e3', 2.5);

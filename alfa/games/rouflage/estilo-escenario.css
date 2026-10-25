@@ -122,3 +122,6 @@
 .esc-palanca { position: fixed; z-index: 5; width: 92px; height: 92px; margin: -46px 0 0 -46px; border-radius: 50%; border: 3px solid rgba(255, 246, 234, 0.55); background: rgba(11, 15, 28, 0.35); pointer-events: none; }
 .esc-palanca[hidden] { display: none; }
 .esc-palanca i { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; background: linear-gradient(to bottom, #fff2a8, #ffcb3d); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+/* sin unidades de ese mueble (muebles-unidades.js): la tarjeta apagada y el contador en rojo; al tocarla, a por más */
+.esc-carta.agotada canvas:first-child { opacity: .45; filter: saturate(.3); }
+.esc-carta.agotada em { color: var(--danger); }

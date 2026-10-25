@@ -149,4 +149,7 @@ IDIOMA.add({
   "BETA EN ANDROID": "ANDROID BETA",
   "ALFA": "ALPHA",
   "Copia de pruebas con lo último de main.": "Test copy with the latest build."
+  "El nuevo (prototipo). Artillería por turnos con viento: apunta en grados y potencia, tira alto para que duela más y cava bajo tu rival. Se juega pasándose el aparato, en dobles o contra la IA.": "The new one (prototype). Turn-based artillery with wind: set angle and power, shoot high to hurt more and dig under your rival. Play by passing the device around, in doubles or against the AI.",
+  "Artillería": "Artillery",
+  "Hot seat": "Hot seat",
 });

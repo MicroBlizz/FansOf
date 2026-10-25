@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.50
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz planea salas para jugar con amigos y Phony ya ha dibujado el plan de ataque en la pizarra.": "Microblizz is planning rooms to play with friends and Phony has already drawn the attack plan on the whiteboard.",
   // 0.1.49
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha ocultado las estadísticas del tablero y Phony ha movido una ficha sin dejar rastro.": "Microblizz has hidden the board's statistics and Phony moved a piece without a trace.",

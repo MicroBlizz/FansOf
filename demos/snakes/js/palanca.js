@@ -52,7 +52,8 @@ function pintaPalanca(retro) {
 // las 3 primeras partidas y durante 2,5 s, la guía con las cuatro zonas (después no se ve nada: no tapa el tablero)
 function pintaMandos(retro, dt) {
   if (SAVE.control === 'palanca') { pintaPalanca(retro); return; }
-  if (SAVE.control !== 'toques') return;
+  if (!conZonas()) return;
+  const cruz = SAVE.control === 'cruz';
   const mx = TAB.x0 + TAB.w / 2, my = TAB.y0 + TAB.h / 2, W = PAN.W, H = PAN.H;
   const flecha = (d, a, col) => {   // una flecha gorda en el centro de la zona
     const x = mx + d[0] * TAB.w * 0.36, y = my + d[1] * TAB.h * 0.38, f = 9;
@@ -64,11 +65,14 @@ function pintaMandos(retro, dt) {
   const guia = SAVE.partidas < 3 && JUEGO.tVivo < 2.5 ? Math.min(1, (2.5 - JUEGO.tVivo) * 1.5) : 0;
   if (guia > 0 && !retro) {
     G.globalAlpha = 0.25 * guia; G.strokeStyle = '#9cff6b'; G.lineWidth = 1; G.setLineDash([3, 3]);
-    G.beginPath(); G.moveTo(mx - TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx + TAB.w * 1.5, my + TAB.h * 1.5);
-    G.moveTo(mx + TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx - TAB.w * 1.5, my + TAB.h * 1.5); G.stroke(); G.setLineDash([]);
+    G.beginPath();
+    if (cruz) { G.moveTo(mx - TAB.w * 1.5, my); G.lineTo(mx + TAB.w * 1.5, my); G.moveTo(mx, my - TAB.h * 1.5); G.lineTo(mx, my + TAB.h * 1.5); }
+    else { G.moveTo(mx - TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx + TAB.w * 1.5, my + TAB.h * 1.5); G.moveTo(mx + TAB.w * 1.5, my - TAB.h * 1.5); G.lineTo(mx - TAB.w * 1.5, my + TAB.h * 1.5); }
+    G.stroke(); G.setLineDash([]);
     G.globalAlpha = 1;
-    for (const d of [[0, -1], [0, 1], [-1, 0], [1, 0]]) flecha(d, 0.55 * guia, '#9cff6b');
-    letra(tr('Toca la zona hacia donde quieres ir'), W / 2, my - TAB.h * 0.2, 8, '#fff', 'center', '#06110a', 2.5);
+    if (cruz) { const h = JUEGO.dir[0] !== 0; for (const d of (h ? [[0, -1], [0, 1]] : [[-1, 0], [1, 0]])) { flecha(d, 0.55 * guia, '#9cff6b'); } }
+    else for (const d of [[0, -1], [0, 1], [-1, 0], [1, 0]]) flecha(d, 0.55 * guia, '#9cff6b');
+    letra(tr(cruz ? 'Toca arriba o abajo si vas de lado; izquierda o derecha si vas arriba o abajo' : 'Toca la zona hacia donde quieres ir'), W / 2, my - TAB.h * 0.2, 8, '#fff', 'center', '#06110a', 2.5);
   }
   if (TOQUE.t > 0) {
     TOQUE.t -= dt * 1.6;

@@ -73,26 +73,26 @@ function misionSuma(id, n) {
   const m = misionesDeHoy().find(x => x.id === id); if (!m || m.fija) return;
   const s = misionEstado(), antes = s.prog[id] || 0; if (antes >= m.n) return;
   s.prog[id] = Math.min(m.n, antes + n);
-  if (s.prog[id] >= m.n) { avisa(tr('Misión completada: {m}', { m: tr(m.t) }), 'bueno'); play('pop'); }
+  if (s.prog[id] >= m.n) { avisa(tr('Misión completada: {m} (+{n} Gotas)', { m: tr(m.t), n: m.g }), 'bueno'); play('pop'); }
 }
 function misionPon(id, n) { const s = misionEstado(), antes = s.prog[id] || 0; if (n > antes) misionSuma(id, n - antes); }
 function semanaSuma(id, n) {
   const m = semanalesDeEsta().find(x => x.id === id); if (!m || m.fija) return;
   const s = semanaEstado(), antes = semanalProgreso(m); if (antes >= m.n) return;
   s.prog[id] = Math.min(m.n, (s.prog[id] || 0) + n);
-  if (semanalProgreso(m) >= m.n) { avisa(tr('Misión semanal completada: {m}', { m: tr(m.t) }), 'bueno'); play('pop'); }
+  if (semanalProgreso(m) >= m.n) { avisa(tr('Misión semanal completada: {m} (+{n} Gotas)', { m: tr(m.t), n: m.g }), 'bueno'); play('pop'); }
 }
 // las listas de la semana (mapas, modos): se apunta lo nuevo y se avisa al completarla
 function semanaApunta(lista, id, valor) {
   const m = semanalesDeEsta().find(x => x.id === id), s = semanaEstado(); if (!m || s[lista].includes(valor)) return;
   const antes = semanalProgreso(m); s[lista].push(valor);
-  if (antes < m.n && semanalProgreso(m) >= m.n) { avisa(tr('Misión semanal completada: {m}', { m: tr(m.t) }), 'bueno'); play('pop'); }
+  if (antes < m.n && semanalProgreso(m) >= m.n) { avisa(tr('Misión semanal completada: {m} (+{n} Gotas)', { m: tr(m.t), n: m.g }), 'bueno'); play('pop'); }
 }
 function logroSuma(c, n) {
   const l = logroEstado(), antes = logroValor({ c });
   if (Array.isArray(l.c[c])) { if (!l.c[c].includes(n)) l.c[c].push(n); } else l.c[c] = (l.c[c] || 0) + n;
   const ahora = logroValor({ c });
-  for (const x of LOGROS) if (x.c === c && antes < x.n && ahora >= x.n) avisa(x.secreto ? tr('¡Logro secreto descubierto: {t}!', { t: tr(x.t) }) : tr('¡Logro conseguido: {t}!', { t: tr(x.t) }), 'bueno');
+  for (const x of LOGROS) if (x.c === c && antes < x.n && ahora >= x.n) avisa(x.secreto ? tr('¡Logro secreto descubierto: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }) : tr('¡Logro conseguido: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }), 'bueno');
 }
 function misionEvento(tipo, a, b) {
   try {
@@ -205,13 +205,13 @@ async function misionCobra(id) {
   };
   if (RFS.activo()) {
     MIS.cobrando = true;
-    try { await RFS.llama('rf_mision', { p_id: id }); trasCobrar(); guardaPartida(); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno'); MIS.celebra = x.g; }
+    try { await RFS.llama('rf_mision', { p_id: id }); trasCobrar(); guardaPartida(); play('select'); MIS.celebra = x.g; }
     catch (e) { RFS.error(e); }
     MIS.cobrando = false;
   } else {
     SAVE.gotas = (SAVE.gotas || 0) + x.g;
     if (logro) logroEstado().cobrados.push(x.id); else if (sem) semanaEstado().cobradas.push(x.id); else misionEstado().cobradas.push(x.id);
-    trasCobrar(); guardaPartida(); play('select'); play('go'); avisa(tr('+{n} Gotas', { n: x.g }), 'bueno'); MIS.celebra = x.g;
+    trasCobrar(); guardaPartida(); play('select'); MIS.celebra = x.g;
   }
   misionBoton(); if (typeof misionesPinta === 'function' && !E('p-misiones').hidden) misionesPinta();
   if (MIS.celebra && typeof misionCelebra === 'function') misionCelebra(MIS.celebra); MIS.celebra = 0;      // las gotas volando (misiones-pantalla.js)

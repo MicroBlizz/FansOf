@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.10
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz está montando salas para correr con amigos y Phony ya ha aparcado en doble fila.": "Microblizz is building rooms to race with friends and Phony has already double-parked.",
   // 0.7.9
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha apagado el cronómetro espía y Phony ha dado la vuelta rápida de todos modos.": "Microblizz has switched off the spy stopwatch and Phony set the fastest lap anyway.",

@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.153
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz ha preparado salas para jugar con amigos y Phony ha puesto un cartel de «Reservado para el CEO».": "Microblizz has set up rooms to play with friends and Phony put up a «Reserved for the CEO» sign.",
   // 0.9.152
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha puesto sordina a los informes de la arena y Phony ha cobrado la entrada igualmente.": "Microblizz has muted the arena's reports and Phony still collected the entrance fee.",

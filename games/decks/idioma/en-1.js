@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.16
+  "<b>LÍDERES, PARO Y VENTAJAS FISCALES</b>: cada líder sube su propio nivel de paro (en cada nivel, rivales algo más duros) y gana ventajas fiscales: unas generales al sumar paros con cualquier líder y cuatro propias de cada líder, que se abren con sus logros. Y en la portada, una pantalla nueva de TROFEOS con el paro, los logros y las ventajas de cada líder.": "<b>LEADERS, UNEMPLOYMENT AND TAX PERKS</b>: each leader climbs their own Unemployment level (slightly tougher rivals at each level) and earns tax perks: general ones as you add up Unemployment levels with any leader, plus four of each leader's own, unlocked with their achievements. And on the title screen, a new TROPHIES screen with each leader's Unemployment, achievements and perks.",
+  "Microblizz ha subido el paro y lo llama progresión. Phony ya ha pedido su ventaja fiscal.": "Microblizz raised Unemployment and calls it progression. Phony has already asked for his tax perk.",
   // 0.2.15
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha guardado los informes bajo llave y Phony ha pedido ver su propia carta de rendimiento.": "Microblizz has locked the reports away and Phony asked to see his own performance card.",

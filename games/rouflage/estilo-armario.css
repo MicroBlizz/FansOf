@@ -178,7 +178,7 @@
 @media (prefers-reduced-motion: reduce) { .btn-gratis.lista { animation: none; } }
 .pull-row.dos { grid-template-columns: 1fr 1.15fr; justify-self: center; margin-top: 14px; }
 .btn-pull.falta { filter: grayscale(0.7); opacity: 0.8; }
-.gacha-caja .gacha-wrap { justify-self: center; overflow: hidden; }
+.gacha-caja .gacha-wrap { justify-self: center; overflow: hidden; overflow: clip; }      /* (25-10-2026) clip y no hidden: con hidden la fila se podía encoger en móviles bajos y cortaba la máquina por donde sale la bola */
 .gacha-caja .gacha-wrap::before { width: 300px; height: 300px; margin: -150px 0 0 -150px; }
 .gacha-caja #gacha-cv.nueva { width: min(260px, 64vw, 34vh); height: auto; aspect-ratio: 300 / 350; }
 .gacha-caja .btn-gratis { justify-self: center; margin-top: 2px; }

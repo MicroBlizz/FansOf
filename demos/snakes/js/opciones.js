@@ -1,10 +1,11 @@
 // Fans of Snakes · Opciones: la ventana con la música, los efectos, los colores para daltónicos (manzanas azules) y el control
-// del dedo (Toques, Palanca o Deslizar).
+// del dedo (Toques, Cruz, Palanca o Deslizar).
 // Se abre con el botón de pausa del marcador (js/hud.js) o con el botón OPCIONES de la portada. Lo elegido se guarda en SAVE.
 'use strict';
 
 const CONTROLES = [
   { id: 'toques', nombre: 'TOQUES', texto: 'Toca arriba, abajo, a la izquierda o a la derecha de la pantalla' },
+  { id: 'cruz', nombre: 'CRUZ', texto: 'Cuatro cuadrados: yendo en horizontal toca arriba o abajo; en vertical, izquierda o derecha' },
   { id: 'palanca', nombre: 'PALANCA', texto: 'Sale una palanca donde pones el dedo; arrastra hacia donde quieras ir' },
   { id: 'deslizar', nombre: 'DESLIZAR', texto: 'Desliza el dedo hacia donde quieras girar' },
 ];
@@ -25,7 +26,7 @@ function pintaOpciones(W, H) {
   if (!OPC.abierto) return;
   if (OPC.confirma) { pintaConfirmaSalir(W, H); return; }
   const enJuego = JUEGO.modo === 'pausa';
-  const k = Math.min(1, OPC.t / 0.2), x = 10, w = W - 20, h = enJuego ? 318 : 292, y = (H - h) / 2 + (1 - k) * 20;
+  const k = Math.min(1, OPC.t / 0.2), x = 10, w = W - 20, h = enJuego ? 338 : 312, y = (H - h) / 2 + (1 - k) * 20;
   G.fillStyle = `rgba(6,17,10,${0.75 * k})`; G.fillRect(0, 0, W, H);
   caja(x, y + 3, w, h, 10, '#06110a', null);
   caja(x, y, w, h, 10, '#0f2a1b', '#3ddc84', 2);
@@ -40,13 +41,13 @@ function pintaOpciones(W, H) {
     letra(on ? tr('SÍ') : tr('NO'), on ? bx + 13 : bx + 27, yy + 0.5, 6.5, on ? '#06110a' : '#9fb3a6', 'center', null, 0);
     OPC.botones.push({ ...r, id });
   };
-  fila('Música', SAVE.musica === 1, y + 42, 'musica');
-  fila('Efectos', SAVE.efectos === 1, y + 66, 'efectos');
-  fila('Colores para daltónicos', SAVE.daltonico === 1, y + 90, 'daltonico');
+  fila('Música', SAVE.musica === 1, y + 40, 'musica');
+  fila('Efectos', SAVE.efectos === 1, y + 62, 'efectos');
+  fila('Colores para daltónicos', SAVE.daltonico === 1, y + 84, 'daltonico');
   // los controles
-  letra(tr('Controles'), x + 14, y + 116, 10, '#fff', 'left', '#06110a', 2.5);
+  letra(tr('Controles'), x + 14, y + 108, 10, '#fff', 'left', '#06110a', 2.5);
   CONTROLES.forEach((c, i) => {
-    const yy = y + 128 + i * 40, on = SAVE.control === c.id, r = { x: x + 10, y: yy, w: w - 20, h: 35 };
+    const yy = y + 119 + i * 37, on = SAVE.control === c.id, r = { x: x + 10, y: yy, w: w - 20, h: 34 };
     caja(r.x, r.y, r.w, r.h, 7, on ? '#1f5a36' : '#10251a', on ? '#9cff6b' : '#2a4a36', on ? 2 : 1.2);
     circulo(r.x + 11, yy + 11, 5, on ? '#9cff6b' : null, '#9cff6b', 1.5);
     letra(tr(c.nombre), r.x + 21, yy + 11, 9, on ? '#9cff6b' : '#cfe', 'left', '#06110a', 2);

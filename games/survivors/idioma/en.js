@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.66
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz prepara salas para sobrevivir con amigos y Phony ya ha cerrado la puerta por dentro.": "Microblizz is preparing rooms to survive with friends and Phony has already locked the door from inside.",
   // 0.1.65
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha cerrado el buzón de informes y Phony ha dejado una nota que dice solo «estoy bien».": "Microblizz has closed the report mailbox and Phony left a note that just says \"I am fine\".",

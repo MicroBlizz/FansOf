@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.21', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz prepara salas para volar con amigos y Phony ha pedido la que tiene ventana al espacio."] },
   { v: '0.3.20', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha silenciado la telemetría de la flota y Phony ha dicho que sus naves ya iban a máxima potencia."] },
   { v: '0.3.19', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha enseñado francés a la nave y Phony solo ha aprendido a pedir cruasanes."] },
   { v: '0.3.18', real: ["<b>MEJORAS POR DENTRO</b>: limpieza de traducciones en los sistemas comunes de la serie y ajustes en el botón de jugar de la web."], joke: ["Microblizz ha ordenado el diario de a bordo y Phony ha pedido una traducción al klingon."] },

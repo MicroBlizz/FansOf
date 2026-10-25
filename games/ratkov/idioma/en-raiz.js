@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.24
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz está construyendo salas para jugar con amigos y Phony ya ha saqueado la primera.": "Microblizz is building rooms to play with friends and Phony has already looted the first one.",
   // 0.2.23
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha tapado los agujeros por donde se contaba todo y las ratas han recuperado su privacidad.": "Microblizz has plugged the holes where everything got reported and the rats got their privacy back.",

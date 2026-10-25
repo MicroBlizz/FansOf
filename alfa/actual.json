@@ -1,8 +1,8 @@
 {
- "build": 491,
- "hash": "9490c86",
- "fecha": "2026-10-25T01:32:48Z",
- "mensaje": "Boom: guion de balance con bots en el repo y primer ajuste (MechaVaca menos vida, NeonSniper más)",
+ "build": 492,
+ "hash": "a625214",
+ "fecha": "2026-10-25T01:39:19Z",
+ "mensaje": "Sonido: tone() y noise() no suenan con el volumen a 0 (la rampa exponencial rompía el toque de los botones con los efectos apagados); el humo de Snakes lo cubre",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.34",

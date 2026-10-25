@@ -31,4 +31,5 @@ IDIOMA.add({
   "Mientras esperáis, toca aquí para ser <b>CAZADOR</b> y buscar a tus amigos. Como mucho, dos cazadores.": "Mentre aspettate, tocca qui per essere <b>CACCIATORE</b> e cercare i tuoi amici. Al massimo due cacciatori.",
   "Cuando estéis todos, toca aquí para <b>EMPEZAR</b> la partida en este escenario.": "Quando ci siete tutti, tocca qui per <b>INIZIARE</b> la partita in questo scenario.",
   "Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.": "Se ti piace questo scenario, metti <b>MI PIACE</b>. Per uscire, la freccia in alto.",
+  "<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.": "<b>PAVIMENTO</b>: scegline uno dalla lista in basso, poi trascina il dito sullo scenario, in alto, per metterlo.",
 });

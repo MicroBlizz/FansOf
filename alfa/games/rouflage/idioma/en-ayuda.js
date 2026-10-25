@@ -31,4 +31,5 @@ IDIOMA.add({
   "Mientras esperáis, toca aquí para ser <b>CAZADOR</b> y buscar a tus amigos. Como mucho, dos cazadores.": "While you wait, tap here to be a <b>HUNTER</b> and look for your friends. Two hunters at most.",
   "Cuando estéis todos, toca aquí para <b>EMPEZAR</b> la partida en este escenario.": "When everyone is here, tap here to <b>START</b> the match on this scene.",
   "Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.": "If you like this scene, give it a <b>LIKE</b>. To leave, use the arrow at the top.",
+  "<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.": "<b>FLOOR</b>: pick one from the list below, then drag your finger across the scene up top to lay it.",
 });

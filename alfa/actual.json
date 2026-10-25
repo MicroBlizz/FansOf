@@ -1,8 +1,8 @@
 {
- "build": 527,
- "hash": "62851d1",
- "fecha": "2026-10-25T21:00:48Z",
- "mensaje": "Versiones con su nota para la release (core cambió: salen todos). Rouflage 0.2.52: máquina CASA, unidades de muebles, 16 muebles de los mapas y CÓMO SE JUEGA con dibujos",
+ "build": 528,
+ "hash": "87be0ac",
+ "fecha": "2026-10-25T21:18:52Z",
+ "mensaje": "Rouflage: el tutorial de CONSTRUIR nunca se queda atascado (VALE en cada paso) y el paso SUELO explica que se arrastra el dedo por el escenario de arriba",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

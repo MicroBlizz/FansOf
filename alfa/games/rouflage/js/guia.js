@@ -57,14 +57,15 @@ const GUIAS = [
     { en: 'p-tienda', a: '#b-gacha', t: 'Toca aquí para abrir el <b>GACHAPÓN</b>.', hecho: () => visible('p-gacha') },
     { en: 'p-gacha', a: '#b-gacha-1', t: 'Toca para sacar una cápsula con <b>Gotas</b>. Traen ropa y cosas para tu escenario. Cada día hay tiradas gratis.', seg: 10 },
   ] },
-  // EL LIENZO de Mi escenario (escenario-obra.js): la primera vez que tienes uno, paso a paso por CONSTRUIR (pedido por Daniel el 25-10-2026)
+  // EL LIENZO de Mi escenario (escenario-obra.js): la primera vez que tienes uno, paso a paso por CONSTRUIR (pedido por Daniel el 25-10-2026).
+  // Cada paso sigue solo al hacerlo, y además lleva VALE (seg) para que nunca te quedes atascado (Daniel, 25-10-2026: «nos quedamos bloqueados»)
   { id: 'construir', desde: 0, si: () => typeof MIESC !== 'undefined' && MIESC.abierto && escBase(escenarioSala().id) === 'lienzo', pasos: [
     { en: 'p-escenario', a: '#esc-pest-obra', t: '<b>CONSTRUIR</b>: aquí haces tu escenario a tu gusto, con suelos, paredes y puertas.', hecho: () => MIESC.modo === 'obra' },
-    { en: 'p-escenario', a: '#obra-b-baldosa', t: '<b>SUELO</b>: elige uno abajo y arrastra el dedo por el escenario para ponerlo.', hecho: () => !!OBRA.uso.suelo },
-    { en: 'p-escenario', a: '#obra-b-ladrillo', t: '<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.', hecho: () => !!OBRA.uso.pared },
-    { en: 'p-escenario', a: '#obra-b-puerta', t: '<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.', hecho: () => !!OBRA.uso.puerta },
-    { en: 'p-escenario', a: '#obra-b-diana', t: '<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.', hecho: () => !!OBRA.uso.becarios },
-    { en: 'p-escenario', a: '#obra-b-comprobar', t: '<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.', hecho: () => !!OBRA.uso.comprobar },
+    { en: 'p-escenario', a: '#obra-b-baldosa', t: '<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.', hecho: () => !!OBRA.uso.suelo, seg: 40 },
+    { en: 'p-escenario', a: '#obra-b-ladrillo', t: '<b>PARED</b>: arrastra el dedo para levantar paredes y hacer salas.', hecho: () => !!OBRA.uso.pared, seg: 40 },
+    { en: 'p-escenario', a: '#obra-b-puerta', t: '<b>PUERTA</b>: pasa el dedo por una pared para abrir un paso entre salas.', hecho: () => !!OBRA.uso.puerta, seg: 40 },
+    { en: 'p-escenario', a: '#obra-b-diana', t: '<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.', hecho: () => !!OBRA.uso.becarios, seg: 40 },
+    { en: 'p-escenario', a: '#obra-b-comprobar', t: '<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.', hecho: () => !!OBRA.uso.comprobar, seg: 40 },
     { en: 'p-escenario', a: '#obra-b-jugar', t: '<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.', seg: 12 },
   ] },
   // más cosas de Mi escenario, cuando ya conoces lo básico

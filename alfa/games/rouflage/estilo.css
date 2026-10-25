@@ -89,8 +89,16 @@ i[data-icono] svg { width: 100%; height: 100%; display: block; fill: none; strok
 .accion.granada { background: linear-gradient(to bottom, #fff6ea, #ffb0c8); width: 66px; height: 66px; border-radius: 20px; }
 .accion.retiro { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 14px); width: auto; height: auto; padding: 10px 16px 7px; border-radius: 18px; background: linear-gradient(to bottom, #ffb0a4, #d94c3a); }
 .accion.poder { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 70px); width: 84px; height: 84px; border-radius: 24px; background: linear-gradient(to bottom, #e6f4ff, #8fb8e8); }
-.accion.poder small { font-weight: 800; font-size: 11px; color: var(--outline); }
-.accion.poder.cargando { opacity: 0.6; }
+.accion.poder small { font-weight: 800; font-size: 11px; color: var(--outline); margin-bottom: 6px; }
+.accion.poder.cargando { opacity: 1; }
+/* los poderes del fantasma (fantasma-poder.js): su dibujo, la espera en forma de tarta oscura y, colgando del borde de abajo, el poder que viene */
+.accion.poder { overflow: visible; }
+.accion.poder canvas { width: 44px; height: 44px; margin-top: -4px; }
+.accion.poder b { font-size: 12px; margin-top: -3px; white-space: nowrap; }
+.accion.poder[data-papel="becario"] { background: linear-gradient(to bottom, #bfe6ff, #4f95f5); }
+.accion.poder::after { content: ''; position: absolute; inset: -3px; border-radius: inherit; background: conic-gradient(rgba(20, 12, 36, 0.62) var(--carga, 0deg), transparent 0); pointer-events: none; }
+.accion.poder .fp-sig { position: absolute; top: calc(100% - 9px); left: 50%; transform: translateX(-50%); white-space: nowrap; font: 800 10.5px var(--font-ui); color: var(--ink); background: #18223a; border: 2px solid var(--outline); border-radius: 9px; padding: 1px 7px 0; pointer-events: none; z-index: 1; }
+.accion.poder .fp-sig:empty { display: none; }
 .accion.listo { width: auto; height: auto; padding: 9px 16px 6px; border-radius: 18px; background: linear-gradient(to bottom, #a4f070, #4fae2a); animation: late 0.9s ease-in-out infinite; }
 .accion.listo b { font-size: 18px; }
 .accion.listo small { font-weight: 800; font-size: 11px; color: var(--outline); }

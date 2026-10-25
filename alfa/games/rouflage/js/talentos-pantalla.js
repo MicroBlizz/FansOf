@@ -57,10 +57,33 @@ function talPantallaPinta() {
   E('p-talentos').dataset.papel = papel;
   const lista = E('tal-lista'); lista.innerHTML = '';
   for (const h of habsDe(papel)) lista.appendChild(talFila(h));
+  talFantasmas(lista, papel);
   E('tal-nota').textContent = papel === 'becario' ? tr('Sube jugando de becario: cada partida da experiencia, y más si despides a colados sin despidos improcedentes.') : tr('Sube jugando de colado: cada partida da experiencia, y más si aguantas sin que te despidan y con buen camuflaje.');
   talTuboPon(papel);
 }
+// LOS PODERES DE FANTASMA, al final de cada pestaña: no se desbloquean (los tiene todo el mundo), solo se explican. Los nuevos llevan NUEVO hasta verlos
+const FP_NUEVOS = ['retoque', 'vaho', 'charco', 'susto', 'portazo', 'soplo', 'foco'];
+function talFantasmas(lista, papel) {
+  const cab = elem('div', 'tal-fp-cab');
+  cab.appendChild(elem('b', 'ol', tr('PODERES DE FANTASMA')));
+  cab.appendChild(elem('small', '', tr('Siempre abiertos. Cuando te quedas sin jugar eres un fantasma: llevas uno y cambia a otro cada vez que lo usas.')));
+  lista.appendChild(cab);
+  const nuevo = !!TAL_UI.fpNuevo;
+  for (const k of Object.keys(PODERES)) {
+    const p = PODERES[k]; if (p.papel !== papel) continue;
+    const fila = elem('div', 'tal-fila tal-fp');
+    const ic = arLienzo(58, 58, 'mis-ico'); arPinta(ic, (c, w) => pintaInsignia(c, w, 'fp_' + k, 'fantasma', '')); fila.appendChild(ic);
+    const txt = elem('div', 'mis-txt'), cb = elem('div', 'mis-cab');
+    cb.appendChild(elem('span', 'mis-tag tal-fp-tag', tr('FANTASMA')));
+    cb.appendChild(elem('span', 'tal-usos', tr('Espera {n} s', { n: p.cada || PODER.cada })));
+    if (nuevo && FP_NUEVOS.includes(k)) cb.appendChild(elem('span', 'mis-tag tal-fp-nuevo', tr('NUEVO')));
+    txt.appendChild(cb); txt.appendChild(elem('b', '', tr(p.n))); txt.appendChild(elem('small', '', tr(p.d)));
+    fila.appendChild(txt); lista.appendChild(fila);
+  }
+}
 function abreTalentos() {
+  SAVE.tuto = SAVE.tuto || {}; TAL_UI.fpNuevo = !SAVE.tuto['fp-vistos'];      // el NUEVO de los poderes de fantasma: solo la primera vez que abres TALENTOS
+  if (TAL_UI.fpNuevo) { SAVE.tuto['fp-vistos'] = 1; guardaPartida(); }
   play('select'); pantalla('p-talentos'); talPantallaPinta();
   cancelAnimationFrame(TAL_UI.raf); TAL_UI.ultimo = performance.now(); TAL_UI.raf = requestAnimationFrame(talTuboFotograma);
 }

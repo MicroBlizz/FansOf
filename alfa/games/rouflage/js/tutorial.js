@@ -9,6 +9,8 @@ const TUTO_TEXTOS = {
   'cam-grieta': ['La pintura se seca y se estropea: tu camuflaje baja poco a poco. Si te vas quedando corto, muévete y retoca (con cuidado).', 8],
   'mapa-turbo': ['El coche del jefe sopla aire cada rato: cuando le parpadeen los faros, apártate de los escapes y de las rejillas de los lados. Si estás congelado, no te mueve.', 9],
   'caz-prep': ['Cazador: solo ves lo que alumbra tu linterna. Practica con los camaleones de prácticas antes de que empiece la caza.', 9],
+  'fantasma-col': ['Eres un fantasma: no te ven, pero puedes ayudar a los tuyos con el botón de abajo a la derecha. Cada vez que lo usas, cambia a otro poder.', 10],
+  'fantasma-bec': ['Eres un fantasma: ayuda a tus compañeros becarios con el botón de abajo a la derecha. Cada vez que lo usas, cambia a otro poder.', 10],
   'caz-caza': ['Toca donde creas que hay un colado: acertar te devuelve la carta, fallar la gasta. Fíjate en las ondas de los silbidos.', 9],
 };
 

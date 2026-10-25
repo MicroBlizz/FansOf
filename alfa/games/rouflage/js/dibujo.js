@@ -216,6 +216,7 @@ function dibuja(t) {
     }
   }
   cosas.sort((a, b) => a.ordenY - b.ordenY);
+  fpPintaSuelo(c, t);      // los charcos de los fantasmas, en el suelo (fantasma-efectos.js)
   for (const k of cosas) {
     if (k.T) { if (!k.vuela) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h); }      // vuela: el coche del jefe en pleno salto (dibujo-roaster.js lo pinta en el aire)
     else if (k.puerta) { if (k.barrera) pintaBarrera(c, t, k.barrera); else pintaPuerta(c, t); }
@@ -225,6 +226,7 @@ function dibuja(t) {
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
   }
   if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
+  fpPintaNubes(c, t);      // el vaho de los fantasmas, encima de los personajes y debajo de la oscuridad
   if (!TALLER.abierto) {
     ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
     for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono

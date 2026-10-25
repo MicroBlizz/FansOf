@@ -1,8 +1,8 @@
 {
- "build": 532,
- "hash": "0da6156",
- "fecha": "2026-10-25T22:24:35Z",
- "mensaje": "Rouflage 0.2.53: versión y nota para la release (la barrera de los becarios, COLADOS, escenarios jugables y CONFIGURAR PARTIDA)",
+ "build": 533,
+ "hash": "7b10b31",
+ "fecha": "2026-10-25T22:39:59Z",
+ "mensaje": "Rouflage: poderes de fantasma que cambian al usarse (15 s de espera) y 7 nuevos",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

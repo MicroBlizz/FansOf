@@ -1,8 +1,8 @@
 {
- "build": 494,
- "hash": "6b063c9",
- "fecha": "2026-10-25T02:53:56Z",
- "mensaje": "Snakes 0.2.1: novedades del control Cruz y del arreglo de los efectos apagados (con inglés)",
+ "build": 495,
+ "hash": "fdfcbe1",
+ "fecha": "2026-10-25T02:55:23Z",
+ "mensaje": "Boom: el cañón ya no se inclina con la cuesta y apunta justo por donde sale el tiro",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.34",

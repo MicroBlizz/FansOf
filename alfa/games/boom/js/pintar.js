@@ -55,9 +55,11 @@ const PINTAR = (() => {
     c.fillStyle = E.color; c.beginPath(); rrPath(c, -20, -25, 40, 17, 7); c.fill(); c.stroke();
     c.fillStyle = m.def.acento; c.fillRect(6, -20, 12, 4);
     c.fillStyle = E.claro; c.beginPath(); rrPath(c, -14, -22, 18, 5, 2.5); c.fill();
-    c.save(); c.translate(0, -C.centro); c.rotate(-m.ang * Math.PI / 180);   // el cañón, desde el centro del móvil
-    c.fillStyle = '#5b4b6e'; c.beginPath(); rrPath(c, -2, -4, C.boca + 2, 8, 3); c.fill(); c.stroke(); c.restore();
-    c.fillStyle = E.claro; c.beginPath(); c.arc(0, -C.centro - 1, 8, 0, 6.2832); c.fill(); c.stroke();
+    c.restore();
+    // el cañón NO se inclina con la cuesta: el ángulo del tiro se mide siempre desde el horizonte, desde el mismo punto que usa la física (FISICA.boca)
+    c.save(); c.translate(sx, sy - C.centro); c.scale(m.dir, 1); c.lineJoin = 'round'; c.lineWidth = 3; c.strokeStyle = OL;
+    c.save(); c.rotate(-m.ang * Math.PI / 180); c.fillStyle = '#5b4b6e'; c.beginPath(); rrPath(c, -2, -4, C.boca + 2, 8, 3); c.fill(); c.stroke(); c.restore();
+    c.fillStyle = E.claro; c.beginPath(); c.arc(0, -1, 8, 0, 6.2832); c.fill(); c.stroke();
     c.restore();
     const ancho = 54, vida = clamp(m.vida / m.vidaMax, 0, 1), by = sy - 54 - (activo ? Math.sin(t * 6) * 2 : 0);
     c.fillStyle = OL; c.beginPath(); rrPath(c, sx - ancho / 2 - 2, by - 2, ancho + 4, 11, 5); c.fill();

@@ -1,10 +1,11 @@
 {
- "build": 498,
- "hash": "f126f0b",
- "fecha": "2026-10-25T03:31:05Z",
- "mensaje": "Decks: reunión en equipo de 2 a 4 (en dev): tu líder grande, los demás arriba con su vida y sus efectos, a quién va cada rival",
+ "build": 499,
+ "hash": "a58668c",
+ "fecha": "2026-10-25T03:43:46Z",
+ "mensaje": "Cooking: primer prototipo jugable de Fans of Cooking (solo alfa)",
  "juegos": {
   "boom": "0.1.0",
+  "cooking": "0.1.0",
   "crush": "0.1.35",
   "dark": "0.2.7",
   "decks": "0.2.17",

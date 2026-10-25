@@ -1,8 +1,8 @@
 {
- "build": 536,
- "hash": "25ce5e5",
- "fecha": "2026-10-25T23:15:26Z",
- "mensaje": "Rouflage: compartir desde la app de Android con la foto y el enlace de la web",
+ "build": 537,
+ "hash": "519281c",
+ "fecha": "2026-10-25T23:18:45Z",
+ "mensaje": "Rouflage 0.2.55: versión y nota para la release (compartir desde la app con foto y enlace de la web)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.54",
+  "rouflage": "0.2.55",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

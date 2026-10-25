@@ -1,8 +1,8 @@
 {
- "build": 488,
- "hash": "c189746",
- "fecha": "2026-10-25T00:43:31Z",
- "mensaje": "Rouflage: intro con damero claro, colado pintado con la pintura rápida del juego sobre ese damero; el becario lo pilla con la linterna, susto, huye y el becario sale detrás (la versión elegida por Daniel)",
+ "build": 489,
+ "hash": "6287e7f",
+ "fecha": "2026-10-25T01:04:40Z",
+ "mensaje": "Rouflage 0.2.49: música de la intro hecha con código y sincronizada con la escena (caída, letras, puntillas, susto, persecución); novedades",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",
@@ -13,7 +13,7 @@
   "karts": "0.7.9",
   "nova": "0.3.20",
   "ratkov": "0.2.23",
-  "rouflage": "0.2.48",
+  "rouflage": "0.2.49",
   "rumble": "0.9.152",
   "skate": "0.1.27",
   "survivors": "0.1.65",

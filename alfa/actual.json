@@ -1,8 +1,8 @@
 {
- "build": 513,
- "hash": "1452e4e",
- "fecha": "2026-10-25T18:40:21Z",
- "mensaje": "Rouflage: en la sala viva, RELLENAR CON BOTS / EMPEZAR siempre a la vista",
+ "build": 514,
+ "hash": "2fb190d",
+ "fecha": "2026-10-25T18:44:41Z",
+ "mensaje": "Rouflage: CANCELAR y RELLENAR CON BOTS otra vez al final de OPCIONES; nadie sale encima de un mueble",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

@@ -80,7 +80,7 @@ function rfpEmpieza(info, red, vuelta) {
   let nc = 0, nh = 0;
   for (const sl of slots) {
     let [x, y] = rfpSalida(sl, sl.clase === 'cazador' ? nh++ : nc++);
-    if (MAPA_ACT.esc) [x, y] = sitioLibreCerca(x, y);      // en un escenario de Mi escenario puede haber un mueble justo ahí
+    [x, y] = sitioLibreCerca(x, y);      // si la salida cae encima de un mueble (pasa con muchos jugadores, o en Mi escenario), al hueco libre más cercano: igual en todos los navegadores
     const e = nuevoEnte(sl.clase, sl.tipo, sl.nombre, x, y);
     e.slot = sl.s; e.humano = sl.humano; sl.ente = e;
     if (sl.yo) { e.jugador = true; J.yo = e; J.cuenta = e.pts; vistePartida(e, ropaPartida()); } else { e.remoto = true; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; } }      // lo tuyo del armario (armario.js); lo de los demás, del servidor si lo da

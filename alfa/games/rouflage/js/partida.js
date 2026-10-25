@@ -52,6 +52,7 @@ function empiezaPartida(modo) {
     });
     cambiaFase('prep');      // en solitario la preparación son solo las prácticas en la sala de espera (REGLAS.prepCazador)
   }
+  for (const e of J.entes) if (!e.sitio && !cabe(e.x, e.y)) [e.x, e.y] = sitioLibreCerca(e.x, e.y);      // nadie empieza encima de un mueble (se quedaría atascado)
   avanzaCamara(0, true);
   refrescaHud(true);
 }

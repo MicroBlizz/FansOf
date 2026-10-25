@@ -200,4 +200,6 @@ IDIOMA.add({
   "Microblizz quiere saber cuánto aguantas. Phony ha aguantado tres minutos leyendo el aviso de privacidad, todo un récord.": "Microblizz wants to know how long you last. Phony lasted three minutes reading the privacy notice, a new record.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha abierto una tienda en pleno apocalipsis y Phony hace cola desde la primera oleada.": "Microblizz opened a shop in the middle of the apocalypse and Phony has been queuing since the first wave.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Microblizz ha guardado la garra en el almacén común. Phony la sigue buscando con una linterna.": "Microblizz stored the claw in the shared warehouse. Phony is still looking for it with a torch.",
 });

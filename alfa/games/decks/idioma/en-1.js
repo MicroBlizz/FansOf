@@ -404,4 +404,6 @@ IDIOMA.add({
   "Microblizz ha nerfeado a los Streamers y ellos lo han anunciado en directo. Phony ha dado like sin querer.": "Microblizz nerfed the Streamers and they announced it live. Phony liked the stream by accident.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha instalado un datáfono en la sala de reuniones. Phony ha preguntado si acepta cartas.": "Microblizz has installed a card reader in the meeting room. Phony asked if it takes cards.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Phony ha intentado coger una carta con la garra. Ha cogido la grapadora.": "Phony tried to grab a card with the claw. He grabbed the stapler.",
 });

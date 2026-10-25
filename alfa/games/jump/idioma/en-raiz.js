@@ -54,4 +54,6 @@ IDIOMA.add({
   "<b>Y MÁS</b>: la tortuga se ve entera cuando está a flote (solo se hunde cuando avisa), los tocones de la orilla ya no se montan unos sobre otros, al seguir tras caer siempre tienes un tronco a tiro y hay más objetos en el río.": "<b>AND MORE</b>: the turtle shows whole while afloat (it only sinks after warning you), the stumps on the bank no longer pile up, when you carry on after a fall there is always a log within reach, and there are more items in the river.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha puesto una caja junto al río y Phony ha saltado por encima sin pagar.": "Microblizz put a till by the river and Phony jumped right over it without paying.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Microblizz ha probado la garra con CrazyBunny. CrazyBunny ha saltado antes.": "Microblizz tested the claw on CrazyBunny. CrazyBunny jumped first.",
 });

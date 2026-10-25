@@ -69,4 +69,6 @@ IDIOMA.add({
   "Microblizz ha mandado una sonda a medir tus partidas. Phony la ha confundido con un asteroide y le ha disparado.": "Microblizz sent a probe to measure your matches. Phony mistook it for an asteroid and shot it.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha abierto una tienda en órbita y Phony sigue buscando el carrito en gravedad cero.": "Microblizz opened a shop in orbit and Phony is still chasing the trolley in zero gravity.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Microblizz ha mandado la garra al espacio a pescar estrellas. Phony sigue esperando a que vuelva.": "Microblizz sent the claw into space to fish for stars. Phony is still waiting for it to come back.",
 });

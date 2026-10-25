@@ -301,4 +301,6 @@ IDIOMA.add({
   "Microblizz ha planeado la recogida de datos con tácticas por turnos. Phony aún está en el turno uno.": "Microblizz planned the data collection with turn-based tactics. Phony is still on turn one.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha puesto una caja en el campo de batalla. Phony la usa de trinchera.": "Microblizz put a till on the battlefield. Phony is using it as a trench.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Phony propuso usar la garra como táctica secreta. Microblizz la ha clasificado como alto secreto.": "Phony suggested using the claw as a secret tactic. Microblizz has classified it top secret.",
 });

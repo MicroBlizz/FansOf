@@ -247,4 +247,6 @@ IDIOMA.add({
   "Microblizz ha puesto una torre nueva que solo cuenta cosas. Phony le pregunta cada mañana cuántos días le quedan de vacaciones.": "Microblizz built a new tower that only counts things. Phony asks it every morning how many holiday days he has left.",
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android.": "<b>BEHIND THE SCENES</b>: the series' shared systems are getting ready for in-app purchases in the Android app.",
   "Microblizz ha construido una torre nueva: la de cobrar. Phony dice que no dispara a nadie.": "Microblizz has built a new tower: the checkout. Phony says it doesn't shoot anyone.",
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos.": "<b>BEHIND THE SCENES</b>: the series' shared systems get tidied up so the gachapon claw machine can work in more games.",
+  "Microblizz ha probado la garra como torre de defensa. No ha funcionado, pero ha quedado muy mona.": "Microblizz tried the claw as a defence tower. It didn't work, but it looks very cute.",
 });

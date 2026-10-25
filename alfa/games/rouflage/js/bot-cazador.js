@@ -55,6 +55,8 @@ function nuevaSala(e) {
   // la más cercana de las que le quedan, con algo de azar para que no haga siempre el mismo recorrido
   let mejor = cand[0], md = 1e9;
   for (const z of cand) { const d = lejos(e.x, e.y, z.px + z.pw / 2, z.py + z.ph / 2) + rand(0, 380) + (z === salaEspera() ? 500 : 0); if (d < md) { md = d; mejor = z; } }
+  if (!mejor) mejor = aqui || SALAS[0];      // un escenario con una sola sala (Mi escenario): se queda rondando la suya
+  if (!mejor) { b.sala = null; b.puntos = []; return; }
   b.sala = mejor; b.visitadas.push(mejor.id); b.puntos = puntosDe(mejor, mejor.pw * mejor.ph > 150000 ? 3 : 2);
 }
 function ronda(e) { const b = e.bot; b.estado = 'ronda'; b.t = 0; b.objetivo = null; b.camino = null; b.atento = 1; e.marca = ''; e.alerta = 0; e.prisa = 1; }

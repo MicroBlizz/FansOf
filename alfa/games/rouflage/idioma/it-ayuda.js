@@ -32,4 +32,5 @@ IDIOMA.add({
   "Cuando estéis todos, toca aquí para <b>EMPEZAR</b> la partida en este escenario.": "Quando ci siete tutti, tocca qui per <b>INIZIARE</b> la partita in questo scenario.",
   "Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.": "Se ti piace questo scenario, metti <b>MI PIACE</b>. Per uscire, la freccia in alto.",
   "<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.": "<b>PAVIMENTO</b>: scegline uno dalla lista in basso, poi trascina il dito sullo scenario, in alto, per metterlo.",
+  "Solo hay una sala: levanta una PARED con una PUERTA para hacer otra (una es para los becarios)": "C'è una sola stanza: alza un MURO con una PORTA per farne un'altra (una è per gli stagisti)",
 });

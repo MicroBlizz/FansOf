@@ -206,7 +206,10 @@ function lzProblema(lz) {
   const marca = cond => { OBRA.malas = []; for (let k = 0; k < lz.g.length; k++) if (cond(k)) OBRA.malas.push(k); OBRA.malasHasta = MIESC.t + 4; MIESC.sucio = true; };
   if (!todo.n) return tr('No hay suelo: pinta alguno con SUELO');
   if (todo.n > 1) { const grande = todo.tam.indexOf(Math.max(...todo.tam)); marca(k => todo.id[k] >= 0 && todo.id[k] !== grande); return tr('Hay zonas cerradas: ábreles una PUERTA'); }
+  // al menos dos salas de verdad (las zonas que usa la partida, de 24 casillas o más): una para los becarios al empezar y otra para esconderse
+  // (Daniel, 25-10-2026: con una sola sala grande, los becarios no tenían adónde ir y la partida se rompía)
   const M = escMundo(lzSala().id), z = M.esperaZona;
+  if (M.zonas.filter(q => q.w * q.h >= 24).length < 2) { marca(k => todo.id[k] >= 0); return tr('Solo hay una sala: levanta una PARED con una PUERTA para hacer otra (una es para los becarios)'); }
   if (z && z.w * z.h < 16) { marca(k => { const [x, y] = lzCentro(k); return x >= z.px && x < z.px + z.pw && y >= z.py && y < z.py + z.ph; }); return tr('La sala de los becarios es muy pequeña: hazla más grande o marca otra'); }
   return '';
 }

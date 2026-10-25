@@ -1,8 +1,8 @@
 {
- "build": 528,
- "hash": "87be0ac",
- "fecha": "2026-10-25T21:18:52Z",
- "mensaje": "Rouflage: el tutorial de CONSTRUIR nunca se queda atascado (VALE en cada paso) y el paso SUELO explica que se arrastra el dedo por el escenario de arriba",
+ "build": 529,
+ "hash": "f018ee7",
+ "fecha": "2026-10-25T21:36:45Z",
+ "mensaje": "Rouflage: un escenario de una sola sala ya no se puede jugar (COMPROBAR lo dice y PROBAR no empieza); los becarios bot no se rompen sin otra sala adonde ir y contra bots siempre son dos (adiós al «Becario undefined»)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

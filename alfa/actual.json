@@ -1,8 +1,8 @@
 {
- "build": 531,
- "hash": "3ed700f",
- "fecha": "2026-10-25T22:23:54Z",
- "mensaje": "Rouflage: en Mi escenario la sala de los becarios se cierra con barreras hasta la caza y la herramienta COLADOS marca dónde empiezan; CONFIGURAR PARTIDA otra vez a pantalla completa (sin tapar la barra de arriba) y sin el cartel de CLÁSICO en cada cambio de la sala",
+ "build": 532,
+ "hash": "0da6156",
+ "fecha": "2026-10-25T22:24:35Z",
+ "mensaje": "Rouflage 0.2.53: versión y nota para la release (la barrera de los becarios, COLADOS, escenarios jugables y CONFIGURAR PARTIDA)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.52",
+  "rouflage": "0.2.53",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

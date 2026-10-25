@@ -102,7 +102,7 @@ function salaPintaCosas(c, sala, R, op = {}) {
 }
 // las Backrooms: los fluorescentes parpadean de vez en cuando (sobre el trozo R)
 function salaZumbido(c, sala, R, t) {
-  if (!(ESCENARIOS[sala.id] || {}).zumbido || t === undefined) return;
+  if (!(ESCENARIOS[escBase(sala.id)] || {}).zumbido || t === undefined) return;
   const f = Math.sin(t * 31) > 0.6 && Math.sin(t * 1.7) > 0.8 ? 0.1 : 0.03 + Math.sin(t * 2.3) * 0.015;
   c.fillStyle = `rgba(255,236,140,${f})`; c.fillRect(R.x0, R.y0, R.x1 - R.x0, R.y1 - R.y0);
 }
@@ -111,7 +111,9 @@ function salaZumbido(c, sala, R, t) {
 // sala = { id, muebles: [{ id, x, y, v, f }], pint, ver }. Los datos: { v: 2, e: escenario, m: [[mueble, x, y, variante, volteado]], p: pintura }
 function salaDeDatos(d) {
   if (!d || typeof d !== 'object') return null;
-  const id = ESCENARIOS[d.e] ? d.e : ESCENARIOS[d.id] ? d.id : 'oficina', M = escMundo(id), viejo = d.v !== 2;
+  let id = ESCENARIOS[d.e] ? d.e : ESCENARIOS[d.id] ? d.id : 'oficina';
+  if (id === 'lienzo') id = lzDeDatos(d.lz);      // un lienzo: su forma viene en d.lz (escenario-obra.js)
+  const M = escMundo(id), viejo = d.v !== 2;
   const dx = viejo ? M.origen[0] - SALA.X0 : 0, dy = viejo ? M.origen[1] - SALA.PY : 0, muebles = [];
   for (const q of Array.isArray(d.m) ? d.m.slice(0, SALA.MAX_MUEBLES) : []) {
     if (!Array.isArray(q) || !MUEBLES_SALA[q[0]]) continue;
@@ -126,7 +128,8 @@ function salaDeDatos(d) {
   return sala;
 }
 function salaADatos(sala, maxBytes = SALA.MAX_DATOS) {
-  const d = { v: 2, e: sala.id, m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
+  const d = { v: 2, e: escBase(sala.id), m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
+  if (escBase(sala.id) === 'lienzo' && ESC_LZ[sala.id]) d.lz = lzCodifica(ESC_LZ[sala.id]);      // la forma del lienzo viaja con él
   if (pinturaHay(sala.pint)) for (const r of [3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60]) {
     d.p = pinturaCodifica(r === sala.pint.r ? sala.pint : pinturaRemuestra(sala.pint, r));
     if (JSON.stringify(d).length <= maxBytes) break;

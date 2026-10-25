@@ -32,7 +32,8 @@ function escenarioActual() { const s = SAVE.escenario; return s && ESCENARIOS[s.
 function escenarioSala() {
   if (MIESC.sala) return MIESC.sala;
   const s = SAVE.escenario || {}, viejo = s.v !== 2 && ((s.m && s.m.length) || s.p);
-  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
+  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, lz: s.lz }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
+  if (escBase(d.id) === 'lienzo') d.id = lzMio();      // el lienzo propio se edita como 'lienzo~mio' (escenario-obra.js)
   d.muebles = d.muebles.filter(m => escTiene('muebles', m.id));
   d.pint = !d.pint ? pinturaNueva() : d.pint.r === SALA.PR ? d.pint : pinturaRemuestra(d.pint, SALA.PR);
   MIESC.sala = d;
@@ -44,7 +45,8 @@ function escGuarda() {
   const sala = escenarioSala(), yo = MIESC.yo;
   let p = pinturaCodifica(sala.pint);
   for (const r of [4, 8, 12]) if (p.length > 30000) p = pinturaCodifica(pinturaRemuestra(sala.pint, r));      // la partida no engorda: como mucho ~30 KB de pintura
-  SAVE.escenario = { v: 2, id: sala.id, m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]), p };
+  SAVE.escenario = { v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]), p };
+  const lz = lzMioTexto(); if (lz) SAVE.escenario.lz = lz;      // la forma de tu lienzo se guarda aunque ahora uses otro escenario
   if (yo) SAVE.escenario.yo = [Math.round(yo.x), Math.round(yo.y)];
   guardaPartida();
 }
@@ -53,7 +55,7 @@ function escCambio() { const s = escenarioSala(); s.ver = (s.ver || 0) + 1; s._c
 
 /* ---------- abrir, cerrar y el bucle ---------- */
 function abreEscenario(conMueble) {
-  if (MIESC.sala && MIESC.sala.id !== escenarioActual()) MIESC.sala = null;      // volviendo del armario o del gachapón con otro escenario
+  if (MIESC.sala && escBase(MIESC.sala.id) !== escenarioActual()) MIESC.sala = null;      // volviendo del armario o del gachapón con otro escenario
   const sala = escenarioSala(), M = escMundo(sala.id);
   MIESC.abierto = true; MIESC.sel = null; MIESC.poner = null; MIESC.drag = null; MIESC.camino = null; MIESC.alArmario = false; MIESC.toques && MIESC.toques.clear();
   MIESC.ropa = ropaDe();
@@ -76,7 +78,7 @@ function escBucle(ahora) {
   for (const q of MIESC.chispas) { q.x += q.vx * dt; q.y += q.vy * dt; q.vy += 260 * dt; q.vida -= dt; }
   MIESC.chispas = MIESC.chispas.filter(q => q.vida > 0);
   const anda = escAnda(dt), mueve = escCamaraAvanza(dt);
-  const anima = anda || mueve || MIESC.pops.length || MIESC.chispas.length || (ESCENARIOS[escenarioSala().id] || {}).zumbido || MIESC.modo === 'pasear';
+  const anima = anda || mueve || MIESC.pops.length || MIESC.chispas.length || (ESCENARIOS[escBase(escenarioSala().id)] || {}).zumbido || MIESC.modo === 'pasear';
   if (MIESC.sucio || anima) { MIESC.sucio = escDibuja() > 0; }
   if (MIESC.avisoT && ahora > MIESC.avisoT) { MIESC.avisoT = 0; E('esc-aviso').classList.remove('ve'); }
   MIESC.raf = requestAnimationFrame(escBucle);
@@ -187,7 +189,8 @@ function escSuelta() {
 }
 // cambiar el escenario base: el estilo y la forma del mapa; lo que no quepa en la forma nueva se va al hueco más cercano
 function escCambiaBase(id) {
-  const sala = escenarioSala(); if (sala.id === id) return;
+  const sala = escenarioSala(); if (escBase(sala.id) === id) return;
+  if (id === 'lienzo') id = lzMio();      // tu lienzo, como lo dejaste (escenario-obra.js)
   sala.id = id; const M = escMundo(id), n = escRecoloca(sala); escCambio(); escTilesFuera(sala);
   const yo = MIESC.yo; if (yo && !escLibre(sala, M, yo.x, yo.y)) { [yo.x, yo.y] = M.salida; Object.assign(MIESC.cam, { x: yo.x, y: yo.y - 30 }); }
   if (yo) yo.mundo = M.id; MIESC.camino = null;

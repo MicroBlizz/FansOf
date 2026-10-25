@@ -1,8 +1,8 @@
 {
- "build": 485,
- "hash": "9d0bc80",
- "fecha": "2026-10-25T00:04:58Z",
- "mensaje": "Rouflage: la intro usa el arte del propio juego (colado liso y becario sacados del dibujo del juego, con sus pasos); fuera los dibujos de Yoshi",
+ "build": 486,
+ "hash": "abcaec1",
+ "fecha": "2026-10-25T00:14:05Z",
+ "mensaje": "MAPA: tamaños al día tras las salas de Decks",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.33",

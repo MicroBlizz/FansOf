@@ -61,20 +61,14 @@ Object.assign(PAPELES, {
   },
 });
 
-// el coche visto desde arriba, centrado en (cx, cy) y girado `giro` (0 = mirando hacia arriba); la sombra va aparte, sin girar (sx, sy)
+// el coche visto desde arriba, centrado en (cx, cy) y girado `giro` (0 = mirando hacia arriba); la sombra va aparte, sin girar (sx, sy).
+// El modelo y el color salen de la variante (m.v): cada plaza un coche distinto (los dibujos, en coches.js)
+const MODELOS_COCHE = ['compacto', 'berlina', 'suv', 'pickup', 'mono', 'mini'];
 function pintaCoche(c, m, cx, cy, giro, sx, sy) {
-  const col = COCHES[(m.v || 0) % COCHES.length];
+  const v = Math.abs(m.v | 0), col = COCHES[(v * 5 + 2) % COCHES.length], mod = MODELOS_COCHE[v % MODELOS_COCHE.length];
   forma(c, ovalo(sx, sy, giro % Math.PI ? 27 : 25, giro % Math.PI ? 25 : 27), 'rgba(24,12,40,0.28)', 0);
-  c.save(); c.translate(cx, cy); c.rotate(giro);
-  for (const sx2 of [-20, 20]) for (const sy2 of [-14, 14]) forma(c, caja(sx2 - 3.5, sy2 - 6, 7, 12, 2), '#20102c', 1.5);      // las ruedas asoman por los lados
-  forma(c, caja(-19, -23, 38, 46, 10), col);                                                                                  // la carrocería
-  forma(c, caja(-15, -21, 30, 11, 5), tono(col, 0.15), 2);                                                                    // el capó
-  forma(c, c2 => { c2.moveTo(-13, -9); c2.lineTo(13, -9); c2.lineTo(11, -2); c2.lineTo(-11, -2); c2.closePath(); }, '#9fd6e8', 2.5);   // el parabrisas
-  c.fillStyle = 'rgba(255,255,255,0.45)'; c.beginPath(); c.moveTo(-9, -8); c.lineTo(-3, -8); c.lineTo(-5, -3); c.lineTo(-10, -3); c.closePath(); c.fill();
-  forma(c, caja(-12, -2, 24, 14, 4), tono(col, -0.12), 2.5);                                                                  // el techo
-  forma(c, c2 => { c2.moveTo(-11, 12); c2.lineTo(11, 12); c2.lineTo(13, 17); c2.lineTo(-13, 17); c2.closePath(); }, '#9fd6e8', 2.5);     // la luna de atrás
-  for (const dx of [-14, 14]) { forma(c, ovalo(dx, -21, 4.5, 2.6), '#fff6ea', 2); forma(c, ovalo(dx, 21, 4.5, 2.6), '#ff4b5c', 2); }         // faros y pilotos
-  for (const dx of [-22, 22]) forma(c, ovalo(dx, -4, 3, 4.5), tono(col, -0.12), 2);                                           // los retrovisores
+  c.save(); c.translate(cx, cy); c.rotate(giro); c.lineJoin = 'round'; c.lineCap = 'round';
+  CB[mod](c, col);
   c.restore();
 }
 

@@ -172,7 +172,7 @@ function salaVivaPintaUI(i, soyAnf) {
   const d = soyAnf ? MODO_ELEGIDO : (i.modo || {}), etq = [], m = MODOS[d.m] ? d.m : 'normal';
   etq.push(['', tr(MODOS[m].nombre)]);
   const mapa = typeof mapaDeSala === 'function' && mapaDeSala(d), def = mapa && MAPAS[mapa];
-  if (def) etq.push(['', mapa === MAPA_ESC.id ? tr('ESTE ESCENARIO') : tr(def.nombre)]);
+  if (def) etq.push(['', mapa === MAPA_ESC.id ? tr(soyAnf ? 'MI ESCENARIO' : 'ESTE ESCENARIO') : tr(def.nombre)]);
   etq.push([ajusteSala(d.a, 't') === 1 ? 'tal' : '', ajusteSala(d.a, 't') === 1 ? tr('CON TALENTOS') : tr('CLÁSICO')]);
   // el botón de cambiar de papel: dice a cuál pasas
   const caz = !!(J.yo && J.yo.clase === 'cazador'), bp = E('sv-papel');

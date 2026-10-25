@@ -1,8 +1,8 @@
 {
- "build": 515,
- "hash": "21e1456",
- "fecha": "2026-10-25T18:46:26Z",
- "mensaje": "Rouflage: en la sala viva, sin el caos primordial arriba y OPCIONES pasa a CONFIGURAR PARTIDA",
+ "build": 516,
+ "hash": "eaae002",
+ "fecha": "2026-10-25T18:50:33Z",
+ "mensaje": "Rouflage: en la sala con amigos, MI ESCENARIO en lugar de AL AZAR en los mapas",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

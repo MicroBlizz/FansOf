@@ -51,6 +51,8 @@
 #esc-pasear p { margin: 0; font-weight: 800; color: var(--ink-dim); font-size: 13px; line-height: 1.25; }
 .esc-paseo { display: flex; align-items: center; gap: 10px; padding: 2px 4px 4px; }
 .esc-paseo p { flex: 1; }
+/* en el móvil: el texto arriba, a todo lo ancho, y PROBAR y ARMARIO debajo, a medias */
+@media (max-width: 899px), (max-aspect-ratio: 5/4) { .esc-paseo { flex-wrap: wrap; gap: 8px; } .esc-paseo p { flex: 1 1 100%; } .esc-paseo .boton { flex: 1 1 0; min-width: 0; justify-content: center; } }
 #b-esc-armario { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; font-size: 16px; padding: 9px 14px 6px; }
 #b-esc-armario i[data-icono] { font-size: 18px; }
 #b-esc-armario.cerca { animation: esc-late .8s ease-in-out infinite alternate; }

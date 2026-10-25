@@ -179,7 +179,7 @@
 .cod-campo:focus { outline: 3px solid rgba(255, 203, 61, 0.45); outline-offset: 2px; }
 .cod-aviso { min-height: 1.3em; margin: 0; text-align: center; font-weight: 700; font-size: 13px; color: var(--ok); }
 .cod-aviso.malo { color: #ff9c8a; }
-.cod-canjear { background: linear-gradient(to bottom, #9ff06d, #3fb54a); color: var(--outline); }
+.cod-canjear { background: linear-gradient(to bottom, #9ff06d, #3fb54a); color: var(--ink); }
 .cod-premio { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .cod-cosa { display: grid; justify-items: center; gap: 2px; padding: 8px 6px; border-radius: 14px; border: 3px solid var(--outline); background: #2a3550; text-align: center; animation: cod-sale 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4) both; }
 .cod-cosa:nth-child(2) { animation-delay: 0.08s; } .cod-cosa:nth-child(3) { animation-delay: 0.16s; } .cod-cosa:nth-child(4) { animation-delay: 0.24s; }

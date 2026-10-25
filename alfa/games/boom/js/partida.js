@@ -19,7 +19,7 @@ const PARTIDA = (() => {
     });
     const personas = moviles.filter(m => !m.ia).length;
     P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
-      sucesos: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false, sat: { carga: 0, obj: null } };
+      sucesos: [], satelite: { carga: 0 }, minas: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false };
     P.viento = Math.round((P.az() * 2 - 1) * BOOM.viento.max); P.proximoEvento = pideEvento();
     empiezaTurno(true);
     return P;
@@ -44,16 +44,24 @@ const PARTIDA = (() => {
     if (!primero) { cambiaViento(); eventos(); }
     m.xSeguro = m.x;
     m.extra = 0; P.actual = m; m.energia = C.energia; P.t = BOOM.turno.segundos; P.usado = 0; P.tiroUsado = false; P.turnos++;
-    if (!puedeTiro(m, m.tiro)) m.tiro = 0;
-    P.plan = m.ia ? IA.plan(P, m) : null;
-    P.fase = P.hotSeat && !m.ia ? 'cartel' : 'apunta';
+    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
     aviso('turno', { m });
+    if (andanMinas(m)) return;
+    abre(m);
   }
-  // el satélite es uno solo por partida: se carga con los dardos de cualquier CyberMarine y lo gasta quien dispare primero
-  function puedeTiro(m, i) {
-    const t = m.def.tiros[i]; if (!t) return false;
-    if (i === 2 && m.caos < BOOM.caos.max) return false;
-    return !t.satelite || (P.sat.carga > 0 && !!P.sat.obj);
+  function abre(m) { P.plan = m.ia ? IA.plan(P, m) : null; P.fase = P.hotSeat && !m.ia ? 'cartel' : 'apunta'; }
+  // las minas de quien empieza turno andan hacia el rival más cercano y explotan, antes de que apunte
+  function andanMinas(m) {
+    const mias = P.minas.filter(n => n.dueno === m.id); if (!mias.length) return false;
+    P.minas = P.minas.filter(n => n.dueno !== m.id);
+    P.proys = mias.map(n => rueda(n.x, n.y, m, n.def, n.def.efecto.anda, 210, 'extra'));
+    P.fase = 'minas'; aviso('minas', { m });
+    return true;
+  }
+  const masCerca = (x, dueno) => vivos().filter(v => v.equipo !== dueno.equipo).reduce((a, e) => (!a || Math.abs(e.x - x) < Math.abs(a.x - x) ? e : a), null);
+  function rueda(x, y, dueno, def, alcance, vel, forma) {   // algo que rueda por el suelo (el tren, las minas que andan) hacia el rival más cercano
+    const e = masCerca(x, dueno), dir = e ? (e.x >= x ? 1 : -1) : dueno.dir;
+    return { tipo: 'rueda', x, y: TERRENO.suelo(x, y - 30), dir, queda: alcance, vel, def: { forma, radio: def.radio, crater: def.crater, dano: def.dano }, dueno: dueno.id, alto: false, ang: 0, t: 0, traza: [], demora: 0 };
   }
   function listo() { if (P.fase === 'cartel') P.fase = 'apunta'; }   // la persona ya tiene el aparato: se ve el viento y corre el tiempo
 
@@ -67,14 +75,17 @@ const PARTIDA = (() => {
   function mueve(dir, dt) { if (puede()) MOVIL.mueve(P.actual, dir, dt); }
   function apunta(dAng, dPot) { if (puede()) { P.actual.ang = clamp(P.actual.ang + dAng, 0, 90); P.actual.pot = clamp(P.actual.pot + dPot, 5, 100); } }
   function fija(ang, pot, dir) { if (puede()) { const m = P.actual; m.ang = clamp(ang, 0, 90); m.pot = clamp(pot, 5, 100); if (dir) m.dir = dir; } }
-  function eligeTiro(i) { if (puede() && puedeTiro(P.actual, i)) P.actual.tiro = i; }
+  function eligeTiro(i) { if (puede() && P.actual.def.tiros[i] && (i < 2 || P.actual.caos >= BOOM.caos.max)) P.actual.tiro = i; }
   function dispara() {
+    if (P && P.fase === 'vuelo' && P.actual && !P.actual.ia) return parte();
     const m = P && P.actual;
     if (!m || P.fase !== 'apunta' || m.cayendo) return false;
     m.ang = Math.round(m.ang); m.pot = Math.round(m.pot);   // el tiro siempre sale con grados y potencia enteros
-    if (!puedeTiro(m, m.tiro)) m.tiro = 0;
-    const gasta = m.def.tiros[m.tiro].satelite;
-    P.proys = FISICA.lanza(m, P.viento, P.evento, P.sat); if (gasta) P.sat.carga--; m.doble = false; P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
+    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
+    const t = m.def.tiros[m.tiro];
+    P.proys = FISICA.lanza(m, P.viento, P.evento); m.doble = false;
+    if (t.carga) { P.satelite.carga = Math.min(BOOM.satelite.max, P.satelite.carga + t.carga); aviso('satelite', { carga: P.satelite.carga }); }
+    if (t.efecto && t.efecto.porCarga) { const c = P.satelite.carga; P.proys.forEach(p => { p.carga = c; }); P.satelite.carga = 0; aviso('satelite', { carga: 0, gasta: c }); } P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
     m.caos = m.tiro === 2 ? 0 : Math.min(BOOM.caos.max, m.caos + BOOM.caos.porTiro);
     aviso('disparo', { m });
     return true;
@@ -96,6 +107,8 @@ const PARTIDA = (() => {
     return true;
   }
   function pasa() { if (puede()) pierdeTurno(); }
+  // ¿se puede partir ahora el tiro en el aire (el Rage quit)? Solo quien lo ha tirado, si es persona
+  const puedePartir = () => !!(P && P.fase === 'vuelo' && !P.pausa && P.actual && !P.actual.ia && P.proys.some(q => !q.hecho && q.demora <= 0 && q.def.efecto && q.def.efecto.tipo === 'parte'));
 
   // ---- el paso de la simulación (siempre BOOM.paso segundos) ----
   function paso() {
@@ -107,14 +120,12 @@ const PARTIDA = (() => {
       P.t -= DT; P.usado += DT;
       if (m.ia && IA.paso(P, m, DT)) dispara();
       else if (P.t <= 0) pierdeTurno();
-    } else if (P.fase === 'vuelo') {
-      for (const p of P.proys) {
-        if (p.hecho) continue;
-        if (p.demora > 0) { p.demora -= DT; continue; }
-        if (FISICA.paso(p, P.moviles)) { p.hecho = true; explota(p); }
-        else if (Math.round(p.t / DT) % 3 === 0) p.traza.push([p.x, p.y]);
-      }
-      if (P.proys.every(p => p.hecho)) { P.proys = []; P.fase = 'despues'; P.espera = 0.8; }
+    } else if (P.fase === 'vuelo' || P.fase === 'minas') {
+      vuela();
+      if (P.proys.every(p => p.hecho)) { P.proys = []; P.fase = P.fase === 'minas' ? 'trasMinas' : 'despues'; P.espera = 0.8; }
+    } else if (P.fase === 'trasMinas') {   // ya han explotado las minas: si sigue la partida, quien empezaba turno apunta
+      const quietos = caidas(); P.espera -= DT;
+      if (quietos && P.espera <= 0) { if (new Set(vivos().map(x => x.equipo)).size < 2) termina(); else if (!m.vivo) empiezaTurno(false); else abre(m); }
     } else if (P.fase === 'despues') {
       const quietos = caidas();
       P.espera -= DT;
@@ -123,24 +134,91 @@ const PARTIDA = (() => {
   }
   function pierdeTurno() { P.tiroUsado = false; P.usado = BOOM.turno.segundos; aviso('tiempo', { m: P.actual }); cierraTurno(); }
 
-  function explota(p) {
-    const dueno = P.moviles[p.dueno], T = p.def, fin = p.fin || { tipo: 'vacio' };
-    if (!p.def.satelite && dueno.def.tiros.some(t => t.satelite)) { P.sat.carga = Math.min(BOOM.satelite.max, P.sat.carga + 1); P.sat.obj = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(Math.min(p.y, BOOM.mundo.alto - 1), 0, BOOM.mundo.alto) }; aviso('satelite', { carga: P.sat.carga, obj: P.sat.obj }); }
-    dueno.marca = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(p.y, 0, BOOM.mundo.alto) };
-    if (fin.tipo === 'terreno' || fin.tipo === 'movil') {
-      TERRENO.cava(p.x, p.y, T.radio);
-      aviso('explosion', { x: p.x, y: p.y, r: T.radio, alto: p.alto, forma: T.forma });
-      for (const mv of vivos()) {
-        const d = Math.hypot(p.x - mv.x, p.y - (mv.y - C.centro));
-        if (d > T.radio + C.radio) continue;
-        const f = clamp(1 - Math.max(0, d - C.radio) / T.radio, 0.15, 1), enemigo = mv.equipo !== dueno.equipo;
-        let n = T.dano * f * (P.evento && P.evento.def.danoMult || 1), bono = null;
-        if (!enemigo) n *= BOOM.fuegoAmigo;
-        else if (p.alto) { n *= BOOM.altura.cielo; bono = 'cielo'; }
-        else if (p.ang >= BOOM.altura.alto) { n *= BOOM.altura.altoMult; bono = 'alto'; }
-        herido(mv, Math.round(n), bono, p);
+  // ---- lo que está en el aire: proyectiles, golpes desde el cielo y lo que rueda ----
+  function vuela() {
+    for (const p of P.proys.slice()) {
+      if (p.hecho) continue;
+      if (p.demora > 0) { p.demora -= DT; continue; }
+      if (p.tipo === 'golpe') { p.hecho = true; golpea(p); continue; }
+      if (p.tipo === 'rueda') { if (rueda1(p)) p.hecho = true; continue; }
+      if (FISICA.paso(p, P.moviles)) impacto(p);
+      else {
+        const ef = p.def.efecto;
+        if (p.cima && ef && ef.tipo === 'racimo' && !p.partido) racimo(p, ef);
+        if (p.glitch && !p.glitch.visto) { p.glitch.visto = true; aviso('glitch', { x0: p.glitch.x, y0: p.glitch.y, x: p.x, y: p.y }); }
+        if (ef && ef.tipo === 'parte' && P.moviles[p.dueno].ia && P.plan && P.plan.blanco != null && p.vy > 0 && Math.abs(p.x - P.plan.blanco) < 70) parte();
+        if (Math.round(p.t / DT) % 3 === 0) p.traza.push([p.x, p.y]);
       }
-    } else aviso('fuera', { x: p.x, y: p.y });
+    }
+  }
+  function racimo(p, ef) {   // en lo más alto se abre en n trozos que se separan
+    const vx = p.vx; p.partido = true;
+    for (let i = 1; i < ef.n; i++) P.proys.push(Object.assign({}, p, { vx: vx + (i / (ef.n - 1) - 0.5) * ef.abre, traza: [] }));
+    p.vx = vx - 0.5 * ef.abre;
+    aviso('racimo', { x: p.x, y: p.y, m: P.moviles[p.dueno] });
+  }
+  function parte() {   // el Tiro Especial que se parte en el aire al volver a pulsar
+    const p = P.proys.find(q => !q.hecho && q.demora <= 0 && q.def.efecto && q.def.efecto.tipo === 'parte');
+    if (!p) return false;
+    const ef = p.def.efecto; p.hecho = true;
+    for (let i = 0; i < ef.n; i++) {
+      const q = FISICA.nuevo(p.x, p.y, p.vx * 0.25 + (i - (ef.n - 1) / 2) * 75, Math.max(0, p.vy) * 0.3 + 160, p.viento, p.ev, p.dueno, p.ang, ef.trozo);
+      q.alto = p.alto; q.t = 0.5; P.proys.push(q);
+    }
+    aviso('parte', { x: p.x, y: p.y, m: P.moviles[p.dueno] });
+    return true;
+  }
+  function impacto(p) {   // el proyectil ha tocado algo: según su efecto explota, rebota, sigue, suelta un tren o se queda como mina
+    const ef = p.def.efecto || {}, fin = p.fin || { tipo: 'vacio' }, dueno = P.moviles[p.dueno];
+    dueno.marca = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(p.y, 0, BOOM.mundo.alto) };
+    if (fin.tipo !== 'terreno' && fin.tipo !== 'movil') { p.hecho = true; aviso('fuera', { x: p.x, y: p.y }); return; }
+    const sigue = (vx, vy, t) => { p.vx = vx; p.vy = vy; p.y -= 3; p.atraviesa = t; p.fin = null; p.veces++; };
+    if (ef.tipo === 'rebota' && fin.tipo === 'terreno' && p.veces < ef.veces) { estalla(p.x, p.y, p.def, p); return sigue(p.vx * 0.75, -Math.abs(p.vy) * 0.55, 0.05); }
+    if (ef.tipo === 'combo' && p.veces < ef.veces - 1) { estalla(p.x, p.y, p.def, p); return sigue(p.vx * 0.8, p.vy * 0.8, 0.08); }
+    if (ef.tipo === 'vuelve' && !p.veces) { estalla(p.x, p.y, p.def, p); return sigue(-p.vx * 0.55, -Math.abs(p.vy) * 0.45 - 260, 0.08); }
+    p.hecho = true;
+    if (ef.tipo === 'tren' && fin.tipo === 'terreno') { P.proys.push(rueda(p.x, p.y, dueno, p.def, ef.alcance, ef.velocidad, 'tren')); aviso('tren', { x: p.x, y: p.y }); return; }
+    if (ef.tipo === 'minas' && fin.tipo === 'terreno') { P.minas.push({ x: p.x, y: TERRENO.suelo(p.x, p.y - 30), dueno: p.dueno, def: p.def }); aviso('mina', { x: p.x, y: p.y }); return; }
+    estalla(p.x, p.y, p.def, p);
+    if (ef.tipo === 'cielo') ef.x.forEach((dx, i) => P.proys.push({ tipo: 'golpe', x: clamp(p.x + dx, 4, BOOM.mundo.ancho - 4), demora: 0.4 + i * 0.3, demora0: 0.4 + i * 0.3, estilo: ef.estilo,
+      def: { forma: ef.estilo, radio: ef.radio, crater: ef.crater, dano: ef.dano + (ef.porCarga || 0) * (p.carga || 0) }, dueno: p.dueno, alto: p.alto, ang: p.ang, t: 0, traza: [], hecho: false }));
+  }
+  function golpea(p) {   // un golpe desde el cielo cae recto en su columna: en el primer móvil o suelo que encuentre
+    let y = TERRENO.suelo(p.x, 0);
+    for (const m of vivos()) if (Math.abs(m.x - p.x) < C.radio && m.y - C.centro - C.radio * 0.6 < y) y = m.y - C.centro - C.radio * 0.6;
+    if (y >= BOOM.mundo.alto) { aviso('fuera', { x: p.x, y: BOOM.mundo.alto - 30 }); return; }
+    p.y = y; estalla(p.x, y, p.def, p);
+  }
+  function rueda1(p) {   // un paso de lo que rueda; devuelve true al acabar
+    let d = p.vel * DT; p.t += DT;
+    while (d > 0) {
+      const s = Math.min(1, d); d -= s; p.queda -= s; p.x += p.dir * s;
+      if (p.x < 2 || p.x > BOOM.mundo.ancho - 2) { aviso('fuera', { x: p.x, y: p.y }); return true; }
+      if (TERRENO.solido(p.x, p.y - 30)) { estalla(p.x, p.y - 12, p.def, p); return true; }   // pared: explota ahí
+      const y = TERRENO.suelo(p.x, p.y - 29);
+      if (y >= BOOM.mundo.alto) { aviso('fuera', { x: p.x, y: BOOM.mundo.alto - 30 }); return true; }
+      p.y = y;
+      if (vivos().some(m => m.equipo !== P.moviles[p.dueno].equipo && Math.abs(m.x - p.x) < C.radio && Math.abs(m.y - p.y) < 50) || p.queda <= 0) { estalla(p.x, p.y - 12, p.def, p); return true; }
+    }
+    if (Math.round(p.t / DT) % 4 === 0) p.traza.push([p.x, p.y - 8]);
+    return false;
+  }
+  // una explosión: agujero del tamaño del cráter, daño en su radio, y rompe las minas que pille
+  function estalla(x, y, T, p) {
+    const dueno = P.moviles[p.dueno];
+    TERRENO.cava(x, y, T.crater == null ? T.radio : T.crater);
+    aviso('explosion', { x, y, r: T.radio, c: T.crater == null ? T.radio : T.crater, alto: p.alto, movil: dueno.def.id, forma: T.forma });
+    P.minas = P.minas.filter(n => { const rota = Math.hypot(n.x - x, n.y - y) < T.radio + 10; if (rota) aviso('minaRota', { x: n.x, y: n.y }); return !rota; });
+    for (const mv of vivos()) {
+      const d = Math.hypot(x - mv.x, y - (mv.y - C.centro));
+      if (d > T.radio + C.radio) continue;
+      const f = clamp(1 - Math.max(0, d - C.radio) / T.radio, 0.15, 1), enemigo = mv.equipo !== dueno.equipo;
+      let n = T.dano * f * (P.evento && P.evento.def.danoMult || 1), bono = null;
+      if (!enemigo) n *= BOOM.fuegoAmigo;
+      else if (p.alto) { n *= BOOM.altura.cielo; bono = 'cielo'; }
+      else if (p.ang >= BOOM.altura.alto) { n *= BOOM.altura.altoMult; bono = 'alto'; }
+      herido(mv, Math.round(n), bono, p);
+    }
   }
   function herido(m, n, bono, p) {
     m.vida -= n; m.caos = Math.min(BOOM.caos.max, m.caos + n * BOOM.caos.porDano); aviso('dano', { m, n, bono });
@@ -151,7 +229,7 @@ const PARTIDA = (() => {
     if (!m.vivo) return;
     if (como === 'vacio' && m.bungee) {   // el bungee: vuelve a donde estaba al empezar el turno
       m.bungee = false; m.x = m.xSeguro; m.y = TERRENO.suelo(m.x, 0); m.cayendo = false; m.vy = 0; aviso('bungee', { m }); return;
-    } m.vivo = false; aviso('muerte', { m, como }); }
+    } m.vivo = false; P.minas = P.minas.filter(n => n.dueno !== m.id); aviso('muerte', { m, como }); }
 
   // los móviles sin suelo caen; devuelve true cuando ya está todo quieto
   function caidas() {
@@ -176,5 +254,5 @@ const PARTIDA = (() => {
   // el orden de los próximos turnos para la barra: los vivos por retraso (el que va ahora, primero)
   function orden() { return vivos().sort((a, b) => a.retraso - b.retraso || a.id - b.id); }
 
-  return { puedeTiro, usaObjeto, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
+  return { usaObjeto, puedePartir, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
 })();

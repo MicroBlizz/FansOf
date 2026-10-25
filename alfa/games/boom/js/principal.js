@@ -24,6 +24,7 @@ const bmLogico = e => { const r = BM_CV.getBoundingClientRect(); return [(e.clie
 BM_CV.addEventListener('pointerdown', e => {
   audioInit(); const [x, y] = bmLogico(e), P = PARTIDA.get(); if (!P) return;
   if (HUD.toca(x, y)) return;
+  if (PARTIDA.puedePartir()) { PARTIDA.dispara(); return; }   // el Rage quit se parte tocando en cualquier sitio
   if (CONTROLES.empieza(x, y)) BM_CV.setPointerCapture(e.pointerId);
 });
 BM_CV.addEventListener('pointermove', e => { const [x, y] = bmLogico(e); CONTROLES.mueve(x, y); });
@@ -41,7 +42,7 @@ function bmFotograma(ahora) {
     const suc = PARTIDA.sucesos(); EFECTOS.procesa(suc);
     for (const s of suc) if (s.t === 'turno' && !P.hotSeat) EFECTOS.texto(tr('Turno de {n}', { n: s.m.nombre }), s.m.x, s.m.y - 96, BOOM.equipos[s.m.equipo].claro, 24, 1.6);
     if (!P.pausa) EFECTOS.avanza(dt);
-    PINTAR.frame(c, P, dt, bmT); HUD.frame(c, P);
+    PINTAR.frame(c, P, dt, bmT); HUD.frame(c, P, bmT);
     if (P.actual && P.actual.ia && P.fase === 'apunta') PINTAR_TXT(c, tr('Piensa {n}…', { n: P.actual.nombre }), PINTAR.V.w / 2, 84, 18, '#fff');
     CONTROLES.pinta(c); CONTROLES.frame(dt); PANT.revisa();
   } else {   // en la portada y en preparar: el mapa de fondo, despacio de un lado a otro

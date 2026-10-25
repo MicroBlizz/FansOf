@@ -30,7 +30,7 @@ const PANT = (() => {
         <span class="bm-punto"></span>
         <input class="bm-nombre" data-i="${i}" maxlength="12" value="${esc(s.nombre)}" placeholder="${tr('Jugador {n}', { n: i + 1 })}" ${s.ia ? 'disabled' : ''}>
         <button class="bm-chip" data-ia="${i}">${tr(s.ia ? 'IA' : 'PERSONA')}</button>
-        <button class="bm-chip bm-movil" data-movil="${i}">${esc(BOOM.moviles.find(d => d.id === s.movil).nombre)}</button>
+        <button class="bm-chip bm-movil" data-movil="${i}" style="--c1:${BOOM.moviles.find(d => d.id === s.movil).colores[0]}">${esc(tr(BOOM.moviles.find(d => d.id === s.movil).nombre))}</button>
         <button class="bm-chip bm-nivel" data-nivel="${i}" ${s.ia && !(conRango()) ? '' : 'style="visibility:hidden"'}>${tr(NIVELES[s.nivel])}</button>
       </div>`).join('');
     const personas = PREP.slots.slice(0, equipos.length).filter(s => !s.ia).length;
@@ -46,7 +46,7 @@ const PANT = (() => {
     q('[data-modo]', b => { b.onclick = () => { play('select'); PREP.modo = b.dataset.modo; prepara(); }; });
     q('[data-mapa]', b => { b.onclick = () => { play('select'); PREP.mapa = b.dataset.mapa; prepara(); }; });
     q('[data-ia]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.ia]; s.ia = !s.ia; prepara(); }; });
-    q('[data-movil]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.movil], k = BOOM.moviles.findIndex(d => d.id === s.movil); s.movil = BOOM.moviles[(k + 1) % BOOM.moviles.length].id; prepara(); }; });
+    q('[data-movil]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.movil]; GARAJE.abre(s.movil, id => { s.movil = id; $('#bm-modal').hidden = true; prepara(); }); }; });
     q('[data-nivel]', b => { b.onclick = () => { play('select'); const s = PREP.slots[+b.dataset.nivel]; s.nivel = (s.nivel + 1) % 3; prepara(); }; });
     q('.bm-nombre', inp => { inp.oninput = () => { PREP.slots[+inp.dataset.i].nombre = inp.value.trim().slice(0, 12); }; });
     $('#bm-atras').onclick = () => { play('select'); portada(); };

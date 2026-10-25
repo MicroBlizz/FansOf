@@ -12,7 +12,7 @@ const IA = (() => {
     let mejor = null;
     const evalua = (ang, pot, tiro) => {
       prueba.ang = ang; prueba.pot = pot; prueba.tiro = tiro;
-      const p = FISICA.simula(prueba, P.viento, P.moviles, P.evento, P.sat), R = m.def.tiros[tiro].radio;
+      const p = FISICA.simula(prueba, P.viento, P.moviles, P.evento), T = m.def.tiros[tiro], R = Math.max(T.radio, T.efecto && T.efecto.radio || 0);
       let coste = 1e9;
       for (const e of enemigos) coste = Math.min(coste, Math.max(0, Math.hypot(p.x - e.x, p.y - (e.y - BOOM.movil.centro)) - R * 0.5));
       for (const a of amigos) if (Math.hypot(p.x - a.x, p.y - a.y) < R + BOOM.movil.radio + 10) coste += 400;
@@ -23,9 +23,11 @@ const IA = (() => {
     const az = P.az;
     const objetivo = enemigos.reduce((a, e) => (!a || Math.abs(e.x - m.x) < Math.abs(a.x - m.x) ? e : a), null);
     if (objetivo) prueba.dir = m.dir = objetivo.x >= m.x ? 1 : -1;
-    const elige = () => { const t = ss ? 2 : az() < 0.35 ? 1 : 0; return PARTIDA.puedeTiro(m, t) ? t : 0; };
+    const satelite = m.def.tiros[1].efecto && m.def.tiros[1].efecto.porCarga;   // con la Antena: gasta el rayo cuando el satélite ya va cargado
+    const elige = () => ss ? 2 : satelite ? (P.satelite.carga >= 2 ? 1 : 0) : az() < 0.35 ? 1 : 0;
     for (let i = 0; i < A.candidatos; i++) evalua(Math.round(15 + az() * 75), Math.round(25 + az() * 75), elige());
     if (mejor) for (let i = 0; i < 30; i++) evalua(clamp(mejor.ang + Math.round((az() - 0.5) * 6), 0, 90), clamp(mejor.pot + Math.round((az() - 0.5) * 6), 5, 100), mejor.tiro);
+    if (mejor && objetivo) mejor.blanco = objetivo.x;
     return mejor;
   }
   // el plan de un turno: primero piensa, si está lejos camina y vuelve a pensar, luego apunta poco a poco y dispara
@@ -42,7 +44,7 @@ const IA = (() => {
       const t = mejorTiro(P, m);
       if (t && t.coste > 260 && !pl.andado && m.energia > 40) { pl.andado = true; pl.camino = Math.min(m.energia, 170); pl.etapa = 'camina'; return false; }
       if (!t) { pl.etapa = 'tira'; pl.tiro = { ang: m.ang, pot: m.pot, tiro: m.tiro }; return false; }
-      pl.tiro = { ang: clamp(t.ang + (P.az() * 2 - 1) * err / 20, 0, 90), pot: clamp(t.pot + (P.az() * 2 - 1) * err / 11, 5, 100), tiro: t.tiro };
+      pl.blanco = t.blanco; pl.tiro = { ang: clamp(t.ang + (P.az() * 2 - 1) * err / 20, 0, 90), pot: clamp(t.pot + (P.az() * 2 - 1) * err / 11, 5, 100), tiro: t.tiro };
       pl.etapa = 'apunta'; pl.t = 0.4; return false;
     }
     if (pl.etapa === 'camina') {

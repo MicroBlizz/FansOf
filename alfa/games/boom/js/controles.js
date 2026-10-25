@@ -43,7 +43,9 @@ const CONTROLES = (() => {
     }
     const m = P.actual, humano = m && !m.ia && P.fase === 'apunta';
     $p().hidden = !(P.fase === 'apunta' || P.fase === 'vuelo' || P.fase === 'despues') || !m || m.ia;
-    $p().classList.toggle('bm-quieto', !humano);
+    const partir = PARTIDA.puedePartir();
+    $p().classList.toggle('bm-quieto', !humano && !partir);
+    const fu = $('#bm-fuego'), ft = tr(partir ? '¡PARTE!' : '¡BOOM!'); if (fu.textContent !== ft) fu.textContent = ft;
     const ob = $('#bm-objetos'); ob.hidden = $p().hidden || !m || m.ia;
     if (!ob.hidden) {
       const clave = m.id + ':' + m.objetos.join(',') + (m.doble ? 'D' : '') + (m.bungee ? 'B' : '');
@@ -53,7 +55,9 @@ const CONTROLES = (() => {
     if (m) {
       $('#bm-ang').textContent = Math.round(m.ang) + '°'; $('#bm-potn').textContent = Math.round(m.pot);
       $('#bm-pot').style.width = ((m.pot - 5) / 95 * 100) + '%'; $('#bm-en').style.width = (m.energia / BOOM.movil.energia * 100) + '%';
-      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); const i = +b.dataset.t; if (i < 2) { b.disabled = !PARTIDA.puedeTiro(m, i); b.title = tr(m.def.tiros[i].nombre); b.textContent = m.def.tiros[i].satelite ? tr('SATÉLITE') + ' ' + P.sat.carga : tr(i ? 'TIRO 2' : 'TIRO 1'); } if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
+      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); const tt = m.def.tiros[+b.dataset.t]; if (tt) b.title = tr(tt.nombre);
+        if (b.dataset.t === '1') { const sat = tt && tt.efecto && tt.efecto.porCarga, txt = tr('TIRO 2') + (sat ? ' ·' + P.satelite.carga : ''); if (b.textContent !== txt) b.textContent = txt; }
+        if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
       $p().style.setProperty('--eq', BOOM.equipos[m.equipo].color);
     }
   }
@@ -61,7 +65,9 @@ const CONTROLES = (() => {
   // ---- teclado ----
   addEventListener('keydown', e => {
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-    const P = PARTIDA.get(); if (!P || P.fase !== 'apunta') { if (e.key === 'Enter' && P && P.fase === 'cartel') PARTIDA.listo(); return; }
+    const P = PARTIDA.get();
+    if (P && P.fase === 'vuelo' && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); PARTIDA.dispara(); return; }   // partir el Rage quit en el aire
+    if (!P || P.fase !== 'apunta') { if (e.key === 'Enter' && P && P.fase === 'cartel') PARTIDA.listo(); return; }
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); PARTIDA.dispara(); }
     else if (e.key === '1' || e.key === '2' || e.key === '3') PARTIDA.eligeTiro(+e.key - 1);
     else if (TECLAS[e.key]) { e.preventDefault(); teclas.add(TECLAS[e.key]); }

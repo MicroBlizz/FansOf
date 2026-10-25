@@ -1,10 +1,10 @@
 {
- "build": 500,
- "hash": "f82b264",
- "fecha": "2026-10-25T03:55:28Z",
- "mensaje": "Boom: siete móviles únicos (cuerpo, proyectil, estela y explosión propios), tiros principal/secundario con el viento distinto y CyberMarine con satélite compartido",
+ "build": 501,
+ "hash": "3d668b1",
+ "fecha": "2026-10-25T04:10:44Z",
+ "mensaje": "Boom 0.2.0: un móvil por facción (nueve), cada uno con su cuerpo, proyectil, estela, explosión y sonido; daño y cráter separados (lo que más pega, menos agujero hace); tiros nuevos (racimo, rebote, fantasma, taladro, combo, partir en el aire, glitch, bumerán, golpes desde el cielo, Hype Train, minas que andan); satélite compartido de la Antena orbital; Garaje para elegir móvil",
  "juegos": {
-  "boom": "0.1.0",
+  "boom": "0.2.0",
   "cooking": "0.1.0",
   "crush": "0.1.35",
   "dark": "0.2.7",

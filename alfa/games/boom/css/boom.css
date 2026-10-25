@@ -83,3 +83,19 @@
 .bm-news-txt h4 { margin: 8px 0 4px; color: var(--gold); }
 .bm-news-txt ul { margin: 0; padding-left: 20px; }
 .bm-tarjeta .opt-list { width: 100%; text-align: left; }
+/* el garaje: una ficha por móvil */
+.bm-chip.bm-movil { background: linear-gradient(90deg, var(--c1, #5b3d8a) 0 10px, #5b3d8a 10px); padding-left: 18px; }
+.bm-garaje { max-width: 900px; width: 92%; }
+.bm-g-lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; width: 100%; }
+.bm-g-ficha { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: left; color: #fff; font: 600 13px var(--font-ui); background: linear-gradient(160deg, color-mix(in srgb, var(--c1) 45%, #26143c), #26143c 60%); border: 3px solid var(--outline); border-radius: 14px; padding: 8px 10px; cursor: pointer; }
+.bm-g-ficha.bm-on { border-color: var(--gold, #ffcb3d); box-shadow: 0 0 0 3px var(--outline); }
+.bm-g-cv { width: 140px; height: 84px; }
+.bm-g-txt { width: 100%; }
+.bm-g-txt h3 { margin: 0; font: 400 20px var(--font-display); text-shadow: 2px 2px 0 var(--outline); }
+.bm-g-txt small { color: #cdb9ea; }
+.bm-g-txt p { margin: 4px 0; }
+.bm-g-txt ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.bm-g-txt li { background: rgba(0, 0, 0, .25); border-radius: 8px; padding: 3px 6px; }
+.bm-g-txt li b { display: block; color: var(--c2); }
+.bm-g-txt li span { display: block; }
+.bm-g-txt li em { display: block; color: #ffe9c6; font-style: normal; }

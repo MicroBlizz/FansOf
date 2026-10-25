@@ -23,26 +23,60 @@ const BOOM = {
     segundoDeRetraso: 2,                  // retraso por cada segundo gastado antes de tirar
   },
   caos: { max: 100, porTiro: 12, porDano: 0.05 },   // el medidor de CAOS: sube con cada tiro propio y con el daño recibido; lleno, se puede lanzar el Tiro Especial (SS)
-  // Los móviles: cada uno con su vida, velocidad y tres tiros (Tiro 1, Tiro 2 y SS). Un tiro tiene radio y daño del agujero, retraso extra y,
-  // si quiere, ignoraViento (no le afecta), viento (cuánto le afecta: 2 = el doble), gravedad (1 = normal) o multi: { n, abanico } (n proyectiles abiertos en abanico de ese número de grados).
-  // Cada móvil tiene su proyectil (forma) y su trato con el viento: los que el viento zarandea pegan mucho más; los que casi no lo notan, mucho menos.
+  // Los móviles: uno por facción, con su piloto, su vida, su velocidad, sus colores (cuerpo, segundo, brillo) y tres tiros (Tiro 1, Tiro 2 y SS).
+  // Regla de la casa: LO QUE MÁS PEGA, MENOS AGUJERO HACE, y cuanto más le afecta el viento, más pega. Cada tiro lleva:
+  //   forma (cómo se ve, proyectiles.js), radio (alcance del daño), crater (el agujero), dano, retraso, y si quiere viento (1 = normal, 2 = el doble),
+  //   gravedad (1 = normal), multi: { n, abanico } (n a la vez abiertos en abanico de esos grados), carga (cuánto carga el satélite) y efecto:
+  //   racimo { n, abre }       se abre en n trozos al llegar a lo más alto (abre = px/s de separación entre el primero y el último)
+  //   rebota { veces }         explota y rebota esas veces antes de acabar
+  //   fantasma { dura }        atraviesa el terreno esos segundos y explota dentro
+  //   taladro { hondo }        entra en el suelo esos píxeles y explota debajo
+  //   combo { veces }          explota varias veces seguidas mientras avanza
+  //   parte { n, trozo }       en vuelo, al volver a pulsar, se parte en n que caen (trozo = radio, crater y daño de cada uno)
+  //   glitch { salto }         en lo más alto se teletransporta esos píxeles hacia delante
+  //   vuelve {}                al primer golpe rebota hacia quien lo tiró y vuelve a explotar
+  //   cielo { estilo, x, dano, porCarga, radio, crater }   donde cae, golpes desde el cielo (uno por cada x, relativo); porCarga gasta el satélite
+  //   tren { velocidad, alcance }   sale un tren que rueda por el suelo hacia el rival más cercano y explota al llegar
+  //   minas { anda }           se queda en el suelo; al empezar tu siguiente turno anda hacia el rival más cercano y explota
+  satelite: { max: 3 },      // el satélite de la Antena orbital: UNO por partida para todos los que la lleven (de los dos equipos); cada dardo lo carga y el rayo lo gasta
   moviles: [
-    { id: 'mechavaca', nombre: 'MechaVaca', nota: 'Tanque pesado: aguanta mucho. Bala normal.', vida: 1010, velocidad: 60, acento: '#f4f4f4',
-      tiros: [{ nombre: 'Obús', forma: 'bola', radio: 46, dano: 265, retraso: 70, viento: 1.5 }, { nombre: 'Racimo', forma: 'racimo', radio: 38, dano: 170, retraso: 150, viento: 0.5, multi: { n: 3, abanico: 8 } }, { nombre: 'Leche Fría', forma: 'bola', radio: 115, dano: 420, retraso: 260 }] },
-    { id: 'skeletoncrew', nombre: 'SkeletonCrew', nota: 'Cava: sus huesos abren agujeros enormes, el daño es justo.', vida: 1030, velocidad: 78, acento: '#e8e0c8',
-      tiros: [{ nombre: 'Hueso largo', forma: 'hueso', radio: 56, dano: 245, retraso: 60, viento: 1.5 }, { nombre: 'Costillar', forma: 'hueso', radio: 44, dano: 170, retraso: 130, viento: 0.5, multi: { n: 3, abanico: 10 } }, { nombre: 'Fosa Común', forma: 'hueso', radio: 70, dano: 200, retraso: 240, multi: { n: 3, abanico: 9 } }] },
-    { id: 'neonsniper', nombre: 'NeonSniper', nota: 'Láser: el viento casi no le afecta, pero pega poco.', vida: 1040, velocidad: 82, acento: '#7cf0ff',
-      tiros: [{ nombre: 'Rayo corto', forma: 'laser', radio: 32, dano: 270, retraso: 60, viento: 0.3 }, { nombre: 'Rayo largo', forma: 'laser', radio: 40, dano: 350, retraso: 150, viento: 0.3 }, { nombre: 'Láser', forma: 'laser', radio: 56, dano: 420, retraso: 260, ignoraViento: true }] },
-    { id: 'chonkcat', nombre: 'ChonkCat', nota: 'Bolas de pelo: su segundo tiro lanza tres a la vez.', vida: 1050, velocidad: 72, acento: '#ffd24a',
-      tiros: [{ nombre: 'Bola de pelo', forma: 'pelo', radio: 48, dano: 280, retraso: 60, viento: 1.4 }, { nombre: 'Maullido', forma: 'pelo', radio: 40, dano: 170, retraso: 140, viento: 0.5, multi: { n: 3, abanico: 6 } }, { nombre: 'Lluvia de bolas', forma: 'pelo', radio: 38, dano: 160, retraso: 250, multi: { n: 5, abanico: 6 } }] },
-    { id: 'junkcoon', nombre: 'JunkCoon', nota: 'Disco de chatarra: el viento lo zarandea muchísimo, pero pega muchísimo.', vida: 1000, velocidad: 80, acento: '#9aa0a8',
-      tiros: [{ nombre: 'Disco', forma: 'disco', radio: 46, dano: 270, retraso: 70, viento: 2.4 }, { nombre: 'Disco grande', forma: 'disco', radio: 58, dano: 345, retraso: 150, viento: 2.8 }, { nombre: 'Bumerán de chatarra', forma: 'disco', radio: 52, dano: 260, retraso: 250, viento: 2.4, multi: { n: 3, abanico: 4 } }] },
-    { id: 'boombeaver', nombre: 'BoomBeaver', nota: 'Misiles: caen menos y el viento les afecta poco, pero pegan menos.', vida: 920, velocidad: 76, acento: '#c87a3a',
-      tiros: [{ nombre: 'Misil', forma: 'misil', radio: 40, dano: 245, retraso: 60, gravedad: 0.85, viento: 0.6 }, { nombre: 'Misil grande', forma: 'misil', radio: 50, dano: 320, retraso: 140, gravedad: 0.75, viento: 0.6 }, { nombre: 'Presa reventada', forma: 'misil', radio: 100, dano: 380, retraso: 260, gravedad: 0.75, viento: 0.6 }] },
-    { id: 'cybermarine', nombre: 'CyberMarine', nota: 'Dardo láser que marca el blanco y un satélite COMPARTIDO que dispara donde cayó el último dardo. Cada dardo lo carga, cada disparo lo gasta: si hay más de un CyberMarine, se lo disputan.', vida: 980, velocidad: 70, acento: '#58e0a0',
-      tiros: [{ nombre: 'Dardo láser', forma: 'dardo', radio: 26, dano: 120, retraso: 60, viento: 0.4 }, { nombre: 'Satélite', forma: 'satelite', radio: 84, dano: 400, retraso: 170, satelite: true }, { nombre: 'Órbita baja', forma: 'satelite', radio: 120, dano: 480, retraso: 260, satelite: true }] },
+    { id: 'tapacubos', nombre: 'Tapacubos', piloto: 'JunkCoon', faccion: 'Animales Locos', nota: 'Tapacubos-bumerán: el viento lo lleva muchísimo, pero pega muchísimo.', vida: 1000, velocidad: 80, colores: ['#8f6a4a', '#9aa0a8', '#ff9a2a'],
+      tiros: [{ nombre: 'Tapacubos', forma: 'tapacubos', radio: 34, crater: 26, dano: 400, retraso: 70, viento: 2.6 },
+        { nombre: 'Lluvia de chatarra', forma: 'chatarra', radio: 40, crater: 50, dano: 105, retraso: 130, efecto: { tipo: 'racimo', n: 4, abre: 240 } },
+        { nombre: 'Tapacubos gigante', forma: 'tapacubos', grande: true, radio: 50, crater: 40, dano: 380, retraso: 250, viento: 2.2, efecto: { tipo: 'vuelve' } }] },
+    { id: 'ataud', nombre: 'Ataúd con ruedas', piloto: 'SkullKnight', faccion: 'No-Muertos', nota: 'Calaveras pesadas y huesos que rebotan.', vida: 1080, velocidad: 70, colores: ['#4a3a5a', '#e8e0c8', '#7dff8a'],
+      tiros: [{ nombre: 'Calavera pesada', forma: 'calavera', radio: 40, crater: 34, dano: 340, retraso: 65, viento: 1.2 },
+        { nombre: 'Huesos saltarines', forma: 'hueso', radio: 42, crater: 44, dano: 105, retraso: 130, multi: { n: 3, abanico: 5 }, efecto: { tipo: 'rebota', veces: 2 } },
+        { nombre: 'Calavera fantasma', forma: 'fantasma', radio: 62, crater: 60, dano: 400, retraso: 250, efecto: { tipo: 'fantasma', dura: 0.5 } }] },
+    { id: 'antena', nombre: 'Antena orbital', piloto: 'TechDroid', faccion: 'Ciberpunks', nota: 'Dardo láser casi sin viento. Cada dardo carga el satélite; el rayo lo gasta.', vida: 1000, velocidad: 82, colores: ['#2a3550', '#7cf0ff', '#ff4bd8'],
+      tiros: [{ nombre: 'Dardo láser', forma: 'dardo', radio: 30, crater: 18, dano: 225, retraso: 60, viento: 0.2, carga: 1 },
+        { nombre: 'Rayo del satélite', forma: 'dardo', radio: 24, crater: 12, dano: 40, retraso: 140, viento: 0.2, efecto: { tipo: 'cielo', estilo: 'rayo', x: [0], dano: 120, porCarga: 130, radio: 44, crater: 26 } },
+        { nombre: 'Bombardeo orbital', forma: 'dardo', radio: 24, crater: 12, dano: 40, retraso: 250, viento: 0.2, efecto: { tipo: 'cielo', estilo: 'rayo', x: [-90, 0, 90], dano: 110, porCarga: 60, radio: 48, crater: 30 } }] },
+    { id: 'gatotanque', nombre: 'Gato-tanque', piloto: 'ChonkCat', faccion: 'Memes', nota: 'Bolas de pelo que caen como piedras y lluvia de gatitos.', vida: 1080, velocidad: 66, colores: ['#ffd24a', '#ff8fb8', '#5b3d8a'],
+      tiros: [{ nombre: 'Bola de pelo', forma: 'pelo', radio: 40, crater: 30, dano: 310, retraso: 65, viento: 1.3, gravedad: 1.2 },
+        { nombre: 'Lluvia de gatitos', forma: 'gatito', radio: 38, crater: 44, dano: 85, retraso: 130, efecto: { tipo: 'racimo', n: 5, abre: 300 } },
+        { nombre: 'Gato gigante', forma: 'pelo', radio: 24, crater: 12, dano: 30, retraso: 250, viento: 1.3, gravedad: 1.2, efecto: { tipo: 'cielo', estilo: 'gato', x: [0], dano: 430, radio: 80, crater: 60 } }] },
+    { id: 'carroza', nombre: 'Carroza de directo', piloto: 'HypeBeast', faccion: 'Streamers', nota: 'Micros de oro, lluvia de subs y el Hype Train.', vida: 1000, velocidad: 80, colores: ['#7a3ad8', '#ff4bd8', '#ffcb3d'],
+      tiros: [{ nombre: 'Micro de oro', forma: 'micro', radio: 42, crater: 34, dano: 290, retraso: 65, viento: 1.1 },
+        { nombre: 'Lluvia de subs', forma: 'sub', radio: 38, crater: 40, dano: 90, retraso: 130, viento: 0.4, efecto: { tipo: 'racimo', n: 4, abre: 200 } },
+        { nombre: 'Hype Train', forma: 'micro', radio: 54, crater: 50, dano: 360, retraso: 250, viento: 1.1, efecto: { tipo: 'tren', velocidad: 330, alcance: 950 } }] },
+    { id: 'carro', nombre: 'Carro de guerra', piloto: 'ThunderGod', faccion: 'Héroes', nota: 'Martillo y rayos que caen del cielo sin viento.', vida: 1020, velocidad: 76, colores: ['#c9a43a', '#3a6ad8', '#fff3b0'],
+      tiros: [{ nombre: 'Martillo', forma: 'martillo', radio: 44, crater: 40, dano: 280, retraso: 65, viento: 0.8 },
+        { nombre: 'Rayo', forma: 'runa', radio: 28, crater: 18, dano: 50, retraso: 140, viento: 0.8, efecto: { tipo: 'cielo', estilo: 'trueno', x: [0, 0], dano: 135, radio: 40, crater: 22 } },
+        { nombre: 'Tormenta', forma: 'martillo', radio: 44, crater: 40, dano: 120, retraso: 250, viento: 0.8, efecto: { tipo: 'cielo', estilo: 'trueno', x: [-80, 0, 80], dano: 170, radio: 46, crater: 26 } }] },
+    { id: 'silla', nombre: 'Silla gamer', piloto: 'RageQuitter', faccion: 'Comunidad Gamer', nota: 'Teclas rotas, combos y un mando que se parte en el aire.', vida: 1000, velocidad: 80, colores: ['#2a2a3a', '#ff3a5a', '#3aff9a'],
+      tiros: [{ nombre: 'Tecla rota', forma: 'tecla', radio: 42, crater: 34, dano: 300, retraso: 65 },
+        { nombre: 'Combo', forma: 'tecla', radio: 36, crater: 32, dano: 120, retraso: 135, viento: 0.9, efecto: { tipo: 'combo', veces: 3 } },
+        { nombre: 'Rage quit', forma: 'mando', radio: 50, crater: 44, dano: 340, retraso: 250, efecto: { tipo: 'parte', n: 5, trozo: { forma: 'tecla', radio: 40, crater: 34, dano: 150 } } }] },
+    { id: 'drakkar', nombre: 'Drakkar beta', piloto: 'VikingoPerdido', faccion: 'Olvidados', nota: 'Hachas que el viento lleva y un taladro que abre el suelo.', vida: 1000, velocidad: 76, colores: ['#8a5a3c', '#d84a3a', '#e8e0c8'],
+      tiros: [{ nombre: 'Hacha', forma: 'hacha', radio: 36, crater: 28, dano: 360, retraso: 70, viento: 1.6 },
+        { nombre: 'Taladro', forma: 'taladro', radio: 70, crater: 90, dano: 150, retraso: 140, viento: 0.8, efecto: { tipo: 'taladro', hondo: 90 } },
+        { nombre: 'Glitch', forma: 'hacha', radio: 56, crater: 48, dano: 400, retraso: 250, viento: 1.2, efecto: { tipo: 'glitch', salto: 380 } }] },
+    { id: 'grua', nombre: 'Grúa de rodaje', piloto: 'LaDirectora', faccion: 'Cultura Pop', nota: 'Claquetas, extras que andan hacia el rival y un kaiju.', vida: 1000, velocidad: 74, colores: ['#3a3a44', '#ffcb3d', '#ff4b5c'],
+      tiros: [{ nombre: 'Claqueta', forma: 'claqueta', radio: 42, crater: 34, dano: 275, retraso: 65 },
+        { nombre: 'Extras', forma: 'extra', radio: 40, crater: 34, dano: 105, retraso: 135, multi: { n: 3, abanico: 7 }, efecto: { tipo: 'minas', anda: 260 } },
+        { nombre: 'Kaiju', forma: 'claqueta', radio: 24, crater: 12, dano: 30, retraso: 250, efecto: { tipo: 'cielo', estilo: 'pie', x: [0], dano: 440, radio: 90, crater: 70 } }] },
   ],
-  satelite: { max: 3, demora: 0.9 },   // carga que aguanta el satélite (único por partida, de quien lo use) y segundos que tarda el rayo en bajar
   // Eventos de mapa: uno cada 3-5 turnos, dura `duracion` turnos y se ve antes de tirar. Cambian la física del proyectil o el daño.
   eventos: { cada: [3, 5], duracion: 2, lista: [
     { id: 'confusion', nombre: 'Confusión', nota: 'El tiro se va de lado a lado.', onda: 150 },

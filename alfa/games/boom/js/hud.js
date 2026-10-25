@@ -57,6 +57,16 @@ const HUD = (() => {
     c.fillStyle = 'rgba(176,50,224,.9)'; c.strokeStyle = OL; c.lineWidth = 3; c.beginPath(); rrPath(c, V.w / 2 - w / 2, 56, w, 28, 14); c.fill(); c.stroke();
     PINTAR_TXT(c, txt, V.w / 2, 70, 15, '#fff');
   }
-  function frame(c, P) { evento(c, P); viento(c, P); tiempo(c, P); orden(c, P); minimapa(c, P); bono(c); }
+  function satelite(c, P, t) {   // el satélite de la Antena orbital (uno para todos los que la llevan) y su carga
+    if (!P.satelite || !P.moviles.some(m => m.def.tiros.some(x => x.carga))) return;
+    const x = V.w - 150, y = 108, n = P.satelite.carga, max = BOOM.satelite.max, lleno = n >= max;
+    c.save(); c.translate(x, y + Math.sin(t * 2) * 2); c.lineWidth = 3; c.strokeStyle = OL;
+    c.fillStyle = '#2e8bff'; c.fillRect(-26, -6, 14, 12); c.strokeRect(-26, -6, 14, 12); c.fillRect(12, -6, 14, 12); c.strokeRect(12, -6, 14, 12);   // las placas
+    c.fillStyle = '#d8e4f0'; c.beginPath(); rrPath(c, -10, -9, 20, 18, 5); c.fill(); c.stroke();
+    c.fillStyle = lleno && Math.sin(t * 10) > 0 ? '#ffffff' : '#7cf0ff'; c.beginPath(); c.arc(0, 0, 4, 0, 6.2832); c.fill();
+    for (let i = 0; i < max; i++) { c.fillStyle = i < n ? '#7cf0ff' : 'rgba(32,16,44,.8)'; c.beginPath(); c.arc((i - (max - 1) / 2) * 13, 20, 5, 0, 6.2832); c.fill(); c.stroke(); }
+    c.restore();
+  }
+  function frame(c, P, t) { evento(c, P); viento(c, P); tiempo(c, P); orden(c, P); minimapa(c, P); satelite(c, P, t || 0); bono(c); }
   return { frame, toca, MM };
 })();

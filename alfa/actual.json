@@ -1,8 +1,8 @@
 {
- "build": 517,
- "hash": "bd1ea79",
- "fecha": "2026-10-25T19:09:04Z",
- "mensaje": "Rouflage: el LIENZO EN BLANCO de Mi escenario (construir con suelos, paredes y puertas)",
+ "build": 518,
+ "hash": "0bb9d69",
+ "fecha": "2026-10-25T19:21:35Z",
+ "mensaje": "Rouflage: mapas con candado. El tutorial se juega en la estación y cada victoria abre el siguiente mapa (las Backrooms, el último); con amigos el anfitrión solo elige entre los suyos",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

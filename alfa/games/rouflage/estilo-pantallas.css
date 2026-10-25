@@ -39,6 +39,13 @@
 .mapa span { font-weight: 700; font-size: 11.5px; line-height: 1.15; color: var(--ink); opacity: 0.9; }
 .mapa.activo { opacity: 1; background: linear-gradient(160deg, #d9b94e, #8f6f1c); border-color: var(--outline); transform: translateY(1px); box-shadow: 0 3px 0 var(--outline), 0 0 0 3px rgba(242, 220, 90, 0.35); }
 .mapa:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--outline); }
+.mapa { position: relative; }
+.mapa .candado { display: none; position: absolute; top: -9px; right: -7px; width: 26px; height: 26px; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35)); }
+.mapa.cerrado { background: #1a2236; opacity: 1; }
+.mapa.cerrado b { opacity: 0.55; }
+.mapa.cerrado span { color: #f2c94c; opacity: 1; }
+.mapa.cerrado .candado { display: block; }
+.mapa.cerrado:active { transform: none; box-shadow: 0 4px 0 var(--outline); }
 .nota { margin: 0; font-weight: 700; font-size: 12px; color: var(--ink-dim); max-width: 420px; text-shadow: 0 1px 0 var(--outline); }
 
 .caja { position: relative; width: 100%; max-width: 520px; box-sizing: border-box; padding: 16px 16px 14px; display: grid; gap: 10px; text-align: center; border: 4px solid var(--outline); border-radius: 22px; background: linear-gradient(170deg, var(--tray-hi) 0%, var(--tray) 45%, var(--bg) 100%); box-shadow: 0 6px 0 var(--outline); }

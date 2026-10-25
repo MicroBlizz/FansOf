@@ -176,7 +176,7 @@ function muestraPausa(si) {
 // al elegir papel: la primera vez se enseña antes cómo se juega
 // la pantalla CONTRA BOTS: el papel (viene marcado desde la tarjeta del título) y el mapa, y luego ¡JUGAR!
 const BOTS = { modo: 'camaleon' };
-function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); pantalla('p-bots'); }
+function abreBots(modo) { audioInit(); play('select'); BOTS.modo = modo; pintaBots(); if (MAPA.id !== mapaElegido()) { cargaMapa(mapaElegido()); escenaTitulo(); } pintaBotonesMapa(); pantalla('p-bots'); }      // los candados de los mapas, al día (elige-mapa.js)
 function pintaBots() {
   E('b-bots-camaleon').classList.toggle('elegido', BOTS.modo === 'camaleon');
   E('b-bots-cazador').classList.toggle('elegido', BOTS.modo === 'cazador');

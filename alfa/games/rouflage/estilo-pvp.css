@@ -133,6 +133,9 @@
 .mapa-mini span { text-align: center; overflow-wrap: anywhere; }
 .mapa-mini.puesto { background: var(--gold); color: var(--outline); }
 .mapa-mini:disabled { cursor: default; }
+.mapa-mini { position: relative; }
+.mapa-mini.cerrado img { filter: grayscale(1) brightness(0.55); }
+.mapa-mini .candado { position: absolute; top: 18%; left: 50%; width: 28px; height: 28px; transform: translateX(-50%); }
 .modo-sala.publica .mapa-sala { display: none; }
 
 /* BUSCAR PARTIDA, con su «×2 recompensas» debajo */

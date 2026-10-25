@@ -230,10 +230,12 @@ function termina(victoria, motivo, fin) {
     sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura delante de tus narices.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
     filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
   }
+  const enTutorial = tutoFaltan().length > 0;      // la victoria que acaba el tutorial aún no abre mapa
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   galeriaPrepara();      // la galería de disfraces, si está puesta (galeria.js)
   J.resultado = { victoria, bando, motivo, titulo, sub, filas, puntos, estrellas, ranking: clasificacion() };
   modoResultado(J.resultado, victoria); victoria = J.resultado.victoria;      // el bufón, el ojo de halcón y el retrato robot cambian el resultado
+  { const nuevo = mapasFin(victoria && !enTutorial); if (nuevo) J.resultado.sub += ' ' + nuevo; }      // cada victoria (también en línea) abre el mapa siguiente (elige-mapa.js)
   economiaPartida(J.resultado);      // Gotas y experiencia del pase (economia.js; solo en la alfa)
   talentosFin(J.resultado);      // la experiencia de becario o de colado (talentos-fin.js)
   misionEvento('fin', J.resultado);      // misiones del día y logros (misiones.js)

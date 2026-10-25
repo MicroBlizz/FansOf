@@ -50,11 +50,7 @@ const PINTAR = (() => {
     const incl = m.cayendo ? 0 : MOVIL.inclinacion(m); m.rot = (m.rot || 0) + (clamp(incl, -0.9, 0.9) - (m.rot || 0)) * 0.25;
     c.save(); c.translate(sx, sy); c.fillStyle = 'rgba(0,0,0,.22)'; c.beginPath(); c.ellipse(0, 1, 26, 5, 0, 0, 6.2832); c.fill();
     c.rotate(m.rot); c.scale(m.dir, 1); c.lineJoin = 'round'; c.lineWidth = 3; c.strokeStyle = OL;
-    c.fillStyle = '#3a2a4a'; c.beginPath(); rrPath(c, -25, -10, 50, 11, 5.5); c.fill(); c.stroke();
-    c.fillStyle = '#a99ac4'; for (let i = -16; i <= 16; i += 11) { c.beginPath(); c.arc(i, -4.5, 3.4, 0, 6.2832); c.fill(); }
-    c.fillStyle = E.color; c.beginPath(); rrPath(c, -20, -25, 40, 17, 7); c.fill(); c.stroke();
-    c.fillStyle = m.def.acento; c.fillRect(6, -20, 12, 4);
-    c.fillStyle = E.claro; c.beginPath(); rrPath(c, -14, -22, 18, 5, 2.5); c.fill();
+    VEHICULOS.dibuja(c, m, E, t);
     c.restore();
     // el cañón NO se inclina con la cuesta: el ángulo del tiro se mide siempre desde el horizonte, desde el mismo punto que usa la física (FISICA.boca)
     c.save(); c.translate(sx, sy - C.centro); c.scale(m.dir, 1); c.lineJoin = 'round'; c.lineWidth = 3; c.strokeStyle = OL;
@@ -83,7 +79,7 @@ const PINTAR = (() => {
     c.beginPath(); c.moveTo(b.x - CAM.x, b.y - CAM.y); c.lineTo(b.x - CAM.x + b.dx * l, b.y - CAM.y + b.dy * l); c.stroke(); c.setLineDash([]);
   }
   function proyectil(c, p) {
-    c.fillStyle = 'rgba(255,255,255,.55)'; for (const [x, y] of p.traza) { c.beginPath(); c.arc(x - CAM.x, y - CAM.y, 2.5, 0, 6.2832); c.fill(); }
+    PROYECTIL_FORMAS.estela(c, p, CAM.x, CAM.y);
     const x = p.x - CAM.x, y = p.y - CAM.y;
     if (y < -6) {   // fuera de pantalla por arriba: una flechita en el borde que dice dónde va
       c.fillStyle = '#fff'; c.strokeStyle = OL; c.lineWidth = 3; c.beginPath(); c.moveTo(x, 8); c.lineTo(x - 9, 26); c.lineTo(x + 9, 26); c.closePath(); c.fill(); c.stroke();
@@ -92,6 +88,17 @@ const PINTAR = (() => {
     PROYECTIL_FORMAS[p.def.forma || 'bola'](c, x, y, Math.atan2(p.vy, p.vx), p.t);
   }
 
+  function satelite(c, P, t) {   // el satélite compartido de los CyberMarine: arriba a la izquierda, con su carga; y un aro donde cayó el último dardo
+    if (!P.sat || !P.moviles.some(m => m.vivo && m.def.tiros.some(q => q.satelite))) return;
+    const x = 238, y = 100 + Math.sin(t * 2) * 3;
+    c.save(); c.translate(x, y); c.rotate(-0.3); c.lineJoin = 'round'; c.lineWidth = 3; c.strokeStyle = OL;
+    c.fillStyle = '#58e0a0'; c.beginPath(); rrPath(c, -22, -5, 14, 10, 2); rrPath(c, 8, -5, 14, 10, 2); c.fill(); c.stroke();
+    c.fillStyle = '#e8f4ff'; c.beginPath(); rrPath(c, -8, -8, 16, 16, 4); c.fill(); c.stroke(); c.restore();
+    for (let i = 0; i < BOOM.satelite.max; i++) { c.fillStyle = i < P.sat.carga ? '#58e0a0' : 'rgba(32,16,44,.7)'; c.strokeStyle = OL; c.lineWidth = 2; c.beginPath(); c.arc(x - 14 + i * 14, y + 20, 5, 0, 6.2832); c.fill(); c.stroke(); }
+    const o = P.sat.obj; if (o && P.sat.carga > 0) {
+      const ox = o.x - CAM.x, oy = o.y - CAM.y; if (ox > -20 && ox < V.w + 20) { c.strokeStyle = '#58e0a0'; c.lineWidth = 3; c.setLineDash([5, 5]); c.beginPath(); c.arc(ox, oy, 18 + Math.sin(t * 6) * 2, 0, 6.2832); c.stroke(); c.setLineDash([]); }
+    }
+  }
   function frame(c, P, dt, t) {
     sigue(P, dt);
     const sh = EFECTOS.FX.temblor, sx = sh ? (Math.random() - 0.5) * sh : 0, sy = sh ? (Math.random() - 0.5) * sh : 0;
@@ -105,6 +112,7 @@ const PINTAR = (() => {
     for (const p of P.proys || []) if (!p.hecho) proyectil(c, p);
     EFECTOS.pinta(c, CAM.x, CAM.y);
     c.restore();
+    satelite(c, P, t);
   }
   return { V, CAM, frame, enfoca, tamano };
 })();

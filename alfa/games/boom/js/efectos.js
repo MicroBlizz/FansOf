@@ -5,11 +5,12 @@ const EFECTOS = (() => {
   const FX = { bolas: [], chispas: [], textos: [], temblor: 0, cartel: null };
   const color = m => BOOM.equipos[m.equipo].color;
   function reinicia() { FX.bolas.length = FX.chispas.length = FX.textos.length = 0; FX.temblor = 0; FX.cartel = null; }
-  function boom(x, y, r, tono) {
-    FX.bolas.push({ x, y, r, t: 0, dur: 0.55 });
+  function boom(x, y, r, tono, forma) {
+    const ex = PROYECTIL_FORMAS.explosion[forma];
+    FX.bolas.push({ x, y, r, t: 0, dur: 0.55, a: ex && ex[0], b: ex && ex[1] }); if (ex && !tono) tono = ex[2];
     for (let i = 0; i < 18 + r / 4; i++) {
       const a = Math.random() * 6.2832, v = 80 + Math.random() * 320;
-      FX.chispas.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 120, t: 0, dur: 0.5 + Math.random() * 0.7, c: tono || (Math.random() < 0.5 ? '#ffcb3d' : '#ff7a1a'), s: 2 + Math.random() * 4 });
+      FX.chispas.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 120, t: 0, dur: 0.5 + Math.random() * 0.7, c: Array.isArray(tono) ? tono[Math.random() < 0.5 ? 0 : 1] : tono || (Math.random() < 0.5 ? '#ffcb3d' : '#ff7a1a'), s: 2 + Math.random() * 4 });
     }
     FX.temblor = Math.max(FX.temblor, Math.min(14, 3 + r / 8));
   }
@@ -19,7 +20,7 @@ const EFECTOS = (() => {
   function procesa(sucesos) {
     for (const s of sucesos) {
       if (s.t === 'disparo') { play('gun'); play('boom', 0.4); }
-      else if (s.t === 'explosion') { boom(s.x, s.y, s.r); play('boom'); }
+      else if (s.t === 'explosion') { boom(s.x, s.y, s.r, null, s.forma); play('boom'); }
       else if (s.t === 'fuera') { texto(tr('Fuera'), clamp(s.x, 40, BOOM.mundo.ancho - 40), clamp(s.y, 30, BOOM.mundo.alto - 40), '#cdb9ea', 22); play('womp'); }
       else if (s.t === 'dano') texto('-' + s.n, s.m.x, s.m.y - 60, s.bono ? '#ffcb3d' : '#ff4b5c', s.bono ? 34 : 26, 1.5);
       else if (s.t === 'bono') {
@@ -47,8 +48,8 @@ const EFECTOS = (() => {
   function pinta(c, cx, cy) {
     for (const b of FX.bolas) {
       const k = b.t / b.dur, r = b.r * (0.5 + 0.7 * Math.sqrt(k));
-      c.globalAlpha = 1 - k; c.fillStyle = '#fff3b0'; c.beginPath(); c.arc(b.x - cx, b.y - cy, r, 0, 6.2832); c.fill();
-      c.fillStyle = '#ff9a2a'; c.beginPath(); c.arc(b.x - cx, b.y - cy, r * 0.72, 0, 6.2832); c.fill();
+      c.globalAlpha = 1 - k; c.fillStyle = b.a || '#fff3b0'; c.beginPath(); c.arc(b.x - cx, b.y - cy, r, 0, 6.2832); c.fill();
+      c.fillStyle = b.b || '#ff9a2a'; c.beginPath(); c.arc(b.x - cx, b.y - cy, r * 0.72, 0, 6.2832); c.fill();
       c.lineWidth = 4; c.strokeStyle = OL; c.beginPath(); c.arc(b.x - cx, b.y - cy, r, 0, 6.2832); c.stroke();
     }
     for (const s of FX.chispas) { c.globalAlpha = 1 - s.t / s.dur; c.fillStyle = s.c; c.fillRect(s.x - cx - s.s / 2, s.y - cy - s.s / 2, s.s, s.s); }

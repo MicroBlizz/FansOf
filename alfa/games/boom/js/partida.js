@@ -19,7 +19,7 @@ const PARTIDA = (() => {
     });
     const personas = moviles.filter(m => !m.ia).length;
     P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
-      sucesos: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false };
+      sucesos: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false, sat: { carga: 0, obj: null } };
     P.viento = Math.round((P.az() * 2 - 1) * BOOM.viento.max); P.proximoEvento = pideEvento();
     empiezaTurno(true);
     return P;
@@ -44,10 +44,16 @@ const PARTIDA = (() => {
     if (!primero) { cambiaViento(); eventos(); }
     m.xSeguro = m.x;
     m.extra = 0; P.actual = m; m.energia = C.energia; P.t = BOOM.turno.segundos; P.usado = 0; P.tiroUsado = false; P.turnos++;
-    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
+    if (!puedeTiro(m, m.tiro)) m.tiro = 0;
     P.plan = m.ia ? IA.plan(P, m) : null;
     P.fase = P.hotSeat && !m.ia ? 'cartel' : 'apunta';
     aviso('turno', { m });
+  }
+  // el satélite es uno solo por partida: se carga con los dardos de cualquier CyberMarine y lo gasta quien dispare primero
+  function puedeTiro(m, i) {
+    const t = m.def.tiros[i]; if (!t) return false;
+    if (i === 2 && m.caos < BOOM.caos.max) return false;
+    return !t.satelite || (P.sat.carga > 0 && !!P.sat.obj);
   }
   function listo() { if (P.fase === 'cartel') P.fase = 'apunta'; }   // la persona ya tiene el aparato: se ve el viento y corre el tiempo
 
@@ -61,13 +67,14 @@ const PARTIDA = (() => {
   function mueve(dir, dt) { if (puede()) MOVIL.mueve(P.actual, dir, dt); }
   function apunta(dAng, dPot) { if (puede()) { P.actual.ang = clamp(P.actual.ang + dAng, 0, 90); P.actual.pot = clamp(P.actual.pot + dPot, 5, 100); } }
   function fija(ang, pot, dir) { if (puede()) { const m = P.actual; m.ang = clamp(ang, 0, 90); m.pot = clamp(pot, 5, 100); if (dir) m.dir = dir; } }
-  function eligeTiro(i) { if (puede() && P.actual.def.tiros[i] && (i < 2 || P.actual.caos >= BOOM.caos.max)) P.actual.tiro = i; }
+  function eligeTiro(i) { if (puede() && puedeTiro(P.actual, i)) P.actual.tiro = i; }
   function dispara() {
     const m = P && P.actual;
     if (!m || P.fase !== 'apunta' || m.cayendo) return false;
     m.ang = Math.round(m.ang); m.pot = Math.round(m.pot);   // el tiro siempre sale con grados y potencia enteros
-    if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
-    P.proys = FISICA.lanza(m, P.viento, P.evento); m.doble = false; P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
+    if (!puedeTiro(m, m.tiro)) m.tiro = 0;
+    const gasta = m.def.tiros[m.tiro].satelite;
+    P.proys = FISICA.lanza(m, P.viento, P.evento, P.sat); if (gasta) P.sat.carga--; m.doble = false; P.tiroUsado = true; P.fase = 'vuelo'; P.bono = false;
     m.caos = m.tiro === 2 ? 0 : Math.min(BOOM.caos.max, m.caos + BOOM.caos.porTiro);
     aviso('disparo', { m });
     return true;
@@ -118,10 +125,11 @@ const PARTIDA = (() => {
 
   function explota(p) {
     const dueno = P.moviles[p.dueno], T = p.def, fin = p.fin || { tipo: 'vacio' };
+    if (!p.def.satelite && dueno.def.tiros.some(t => t.satelite)) { P.sat.carga = Math.min(BOOM.satelite.max, P.sat.carga + 1); P.sat.obj = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(Math.min(p.y, BOOM.mundo.alto - 1), 0, BOOM.mundo.alto) }; aviso('satelite', { carga: P.sat.carga, obj: P.sat.obj }); }
     dueno.marca = { x: clamp(p.x, 0, BOOM.mundo.ancho), y: clamp(p.y, 0, BOOM.mundo.alto) };
     if (fin.tipo === 'terreno' || fin.tipo === 'movil') {
       TERRENO.cava(p.x, p.y, T.radio);
-      aviso('explosion', { x: p.x, y: p.y, r: T.radio, alto: p.alto });
+      aviso('explosion', { x: p.x, y: p.y, r: T.radio, alto: p.alto, forma: T.forma });
       for (const mv of vivos()) {
         const d = Math.hypot(p.x - mv.x, p.y - (mv.y - C.centro));
         if (d > T.radio + C.radio) continue;
@@ -168,5 +176,5 @@ const PARTIDA = (() => {
   // el orden de los próximos turnos para la barra: los vivos por retraso (el que va ahora, primero)
   function orden() { return vivos().sort((a, b) => a.retraso - b.retraso || a.id - b.id); }
 
-  return { usaObjeto, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
+  return { puedeTiro, usaObjeto, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
 })();

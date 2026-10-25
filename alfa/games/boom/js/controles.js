@@ -53,7 +53,7 @@ const CONTROLES = (() => {
     if (m) {
       $('#bm-ang').textContent = Math.round(m.ang) + '°'; $('#bm-potn').textContent = Math.round(m.pot);
       $('#bm-pot').style.width = ((m.pot - 5) / 95 * 100) + '%'; $('#bm-en').style.width = (m.energia / BOOM.movil.energia * 100) + '%';
-      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
+      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); const i = +b.dataset.t; if (i < 2) { b.disabled = !PARTIDA.puedeTiro(m, i); b.title = tr(m.def.tiros[i].nombre); b.textContent = m.def.tiros[i].satelite ? tr('SATÉLITE') + ' ' + P.sat.carga : tr(i ? 'TIRO 2' : 'TIRO 1'); } if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
       $p().style.setProperty('--eq', BOOM.equipos[m.equipo].color);
     }
   }

@@ -1,8 +1,8 @@
 {
- "build": 499,
- "hash": "a58668c",
- "fecha": "2026-10-25T03:43:46Z",
- "mensaje": "Cooking: primer prototipo jugable de Fans of Cooking (solo alfa)",
+ "build": 500,
+ "hash": "f82b264",
+ "fecha": "2026-10-25T03:55:28Z",
+ "mensaje": "Boom: siete móviles únicos (cuerpo, proyectil, estela y explosión propios), tiros principal/secundario con el viento distinto y CyberMarine con satélite compartido",
  "juegos": {
   "boom": "0.1.0",
   "cooking": "0.1.0",

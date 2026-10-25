@@ -1,23 +1,23 @@
 {
- "build": 489,
- "hash": "6287e7f",
- "fecha": "2026-10-25T01:04:40Z",
- "mensaje": "Rouflage 0.2.49: música de la intro hecha con código y sincronizada con la escena (caída, letras, puntillas, susto, persecución); novedades",
+ "build": 490,
+ "hash": "8f4f9dd",
+ "fecha": "2026-10-25T01:09:26Z",
+ "mensaje": "Publicación: core cambió (salas de core), suben todos los juegos con su nota; Decks con líderes, paro, ventajas fiscales y trofeos",
  "juegos": {
   "boom": "0.1.0",
-  "crush": "0.1.33",
+  "crush": "0.1.34",
   "dark": "0.2.7",
-  "decks": "0.2.15",
+  "decks": "0.2.16",
   "island": "0.3.5",
-  "jump": "0.3.10",
-  "karts": "0.7.9",
-  "nova": "0.3.20",
-  "ratkov": "0.2.23",
+  "jump": "0.3.11",
+  "karts": "0.7.10",
+  "nova": "0.3.21",
+  "ratkov": "0.2.24",
   "rouflage": "0.2.49",
-  "rumble": "0.9.152",
+  "rumble": "0.9.153",
   "skate": "0.1.27",
-  "survivors": "0.1.65",
-  "tacticas": "0.1.49",
-  "td": "0.13.81"
+  "survivors": "0.1.66",
+  "tacticas": "0.1.50",
+  "td": "0.13.82"
  }
 }

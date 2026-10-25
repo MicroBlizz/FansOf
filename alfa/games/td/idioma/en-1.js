@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.82
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz está levantando salas para jugar con amigos y Phony ya ha puesto una torre en la entrada.": "Microblizz is putting up rooms to play with friends and Phony has already placed a tower at the entrance.",
   // 0.13.81
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha puesto una verja a los informes de las torres y Phony ha tirado la llave a la zanja.": "Microblizz has fenced off the towers' reports and Phony threw the key into the ditch.",

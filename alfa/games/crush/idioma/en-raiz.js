@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js (el título en negrita y el resto de cada línea van por separado, como los corta el traductor).
 'use strict';
 IDIOMA.add({
+  // 0.1.34
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
+  "Microblizz ha preparado salas para jugar con amigos y Phony ya ha reservado la de los caramelos.": "Microblizz has set up rooms to play with friends and Phony has already booked the candy one.",
   // 0.1.33
   "<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: error and performance reports now respect the anonymous data switch in Options.",
   "Microblizz ha puesto un candado a los informes y Phony ha jurado que no contó los caramelos.": "Microblizz has put a lock on the reports and Phony swore he did not count the sweets.",

@@ -18,11 +18,16 @@ function mapaDeEscenario(datos) {
   const centro = z => [(z.x + z.w / 2) * CEL, (z.y + z.h / 2) * CEL], grandes = M.zonas.filter(z => z.w * z.h >= 24);
   const espera = M.esperaZona || (grandes.length ? grandes : M.zonas).reduce((a, z) => (!a || lejos(...centro(z), sx, sy) > lejos(...centro(a), sx, sy) ? z : a), null);      // en un lienzo, la que marcó el jugador (BECARIOS, escenario-obra.js)
   const [ex, ey] = M.becarios || (espera ? centro(espera) : [sx, sy]), becarios = [[ex - 40, ey + 20], [ex + 40, ey + 20], [ex, ey - 20]];
+  const muebles = sala.muebles.map(m => { const S = MUEBLES_SALA[m.id]; return S && TIPOS_MUEBLE[S.t] ? { t: S.t, x: m.x, y: m.y, v: (m.v || 0) % Math.max(1, S.vars || 1), f: m.f ? 1 : 0 } : null; }).filter(Boolean);
+  // las gracias de los muebles que las traen, como en sus mapas: el coche del jefe sopla y salta (EVENTOS.turbo, dibujo-roaster.js) y los coches
+  // aparcados saltan como alarma (EVENTOS.faros, dibujo-parking.js). Antes el escenario no llevaba ninguna y el coche del gachapón se quedaba quieto
+  const hay = t => muebles.some(m => m.t === t);
   MAPAS[MAPA_ESC.id] = {
+    evento: hay('roaster') ? { tipo: 'turbo' } : null, siempre: hay('coche') || hay('cocheH') ? ['faros'] : [],
     id: MAPA_ESC.id, nombre: 'Mi escenario', lema: '', ancho: M.MW, alto: M.MH, muro: M.muro, canto: M.canto,
     salas: M.zonas.map(z => ({ id: z.id, nombre: z.nombre, x: z.x, y: z.y, w: z.w, h: z.h, suelo: z.suelo, pared: z.pared })),
     pasos: [], carteles: [], pegatinas: [], epitafios: [],
-    muebles: sala.muebles.map(m => { const S = MUEBLES_SALA[m.id]; return S && TIPOS_MUEBLE[S.t] ? { t: S.t, x: m.x, y: m.y, v: (m.v || 0) % Math.max(1, S.vars || 1), f: m.f ? 1 : 0 } : null; }).filter(Boolean),
+    muebles,
     puerta: { x: -2000, y: -2000, w: 40, h: 80 },      // sin puerta de Recursos Humanos: aquí nadie espera encerrado
     salidaCamaleones: corro, salidaCazadores: becarios, espera: espera ? espera.id : '', plaza: [sx, sy],
     barreras: typeof barrerasDe === 'function' ? barrerasDe(M, espera) : [],      // la sala de los becarios, cerrada hasta la caza (barreras.js)

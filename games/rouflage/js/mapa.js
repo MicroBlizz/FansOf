@@ -162,6 +162,7 @@ function chocaCaja(x0, y0, x1, y1) {
   for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) if (i < 0 || j < 0 || i >= MW || j >= MH || GRID[j * MW + i] !== SUELO) return true;
   if (PUERTA.cerrada && x0 < PUERTA.x + PUERTA.w && x1 > PUERTA.x && y0 < PUERTA.y + PUERTA.h && y1 > PUERTA.y) return true;
   if (barreraCerrada() && enBarreraCaja(x0, y0, x1, y1)) return true;      // Mi escenario (barreras.js)
+  if (portazoCaja(x0, y0, x1, y1)) return true;      // la puerta cerrada de un portazo de fantasma (fantasma-efectos.js)
   for (const m of MUEBLES) if (x0 < m.pisa.x1 && x1 > m.pisa.x0 && y0 < m.pisa.y1 && y1 > m.pisa.y0) return true;
   return false;
 }
@@ -186,11 +187,15 @@ function rayo(x, y, dx, dy, max, hol = 0) {
   if (m < t - hol) { RAYO.cara = false; return m; }
   return t;
 }
-// los muebles (lo que no se puede cruzar andando) también paran la luz y la vista: el rayo se corta donde entra en la caja de su base
+// los muebles (lo que no se puede cruzar andando) también paran la luz y la vista: el rayo se corta donde entra en la caja de su base.
+// Los PEQUEÑOS no (un cono, una papelera, un extintor, una silla…: base de 400 o menos y no muy altos): la linterna pasa por encima y no dejan
+// sombras enormes detrás (pedido por Daniel el 26-10-2026). Los altos y finos (farolas, pilares, árboles) sí siguen tapando
+const _chico = {};
+const muebleChico = t => (t in _chico ? _chico[t] : (_chico[t] = !!(TIPOS_MUEBLE[t] && TIPOS_MUEBLE[t].w * TIPOS_MUEBLE[t].d <= 400 && TIPOS_MUEBLE[t].h < 60)));
 function rayoMueble(x, y, dx, dy, max) {
   let mejor = max;
   for (const m of MUEBLES) {
-    const q = m.pisa; if (!q) continue;
+    const q = m.pisa; if (!q || muebleChico(m.t)) continue;
     if (x > q.x0 && x < q.x1 && y > q.y0 && y < q.y1) continue;   // quien está dentro de la caja (pegado al mueble) no se tapa a sí mismo
     let t0 = 0, t1 = mejor;
     if (dx) { const a = (q.x0 - x) / dx, b = (q.x1 - x) / dx; t0 = Math.max(t0, Math.min(a, b)); t1 = Math.min(t1, Math.max(a, b)); } else if (x <= q.x0 || x >= q.x1) continue;
@@ -212,6 +217,7 @@ function rayoMapa(x, y, dx, dy, max) {
     if (g !== SUELO) { RAYO.cara = g === CARA; return t; }
     if (PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) return t;
     if (BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) return t;
+    if (portazoCelda(i, j)) return t;
   }
 }
 function seVen(ax, ay, bx, by) {
@@ -220,7 +226,7 @@ function seVen(ax, ay, bx, by) {
 }
 
 /* ---------- caminos (A* sobre las casillas libres) ---------- */
-const celdaLibre = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && MAPA.libre[j * MW + i] === 1 && !(PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) && !(BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j));
+const celdaLibre = (i, j) => i >= 0 && j >= 0 && i < MW && j < MH && MAPA.libre[j * MW + i] === 1 && !(PUERTA.cerrada && i >= 16 && i < 20 && j >= 35 && j < 39) && !(BARRERAS.length && barreraCerrada() && enBarreraCelda(i, j)) && !portazoCelda(i, j);
 // la casilla libre más cercana a un punto
 function casillaCerca(x, y) {
   const i0 = limita(Math.floor(x / CEL), 0, MW - 1), j0 = limita(Math.floor(y / CEL), 0, MH - 1);

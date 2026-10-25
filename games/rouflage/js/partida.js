@@ -7,7 +7,7 @@ function limpiaPartida() {
   if (J.pvp) rfpTermina();      // si era una partida por internet, se cierra el canal
   J.entes.length = 0; J.camaleones.length = 0; J.cazadores.length = 0; J.yo = null; J.resultado = null;
   J.cuenta = { narices: 0, silbidos: 0, aciertos: 0, fallos: 0, senuelos: 0, aguante: 0 };
-  practicaCierra(); talentosLimpia(); modoPon(null); modoLimpia(); J.fantasma = null; FOTO.cv = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
+  practicaCierra(); talentosLimpia(); modoPon(null); modoLimpia(); fpZonasLimpia(); J.fantasma = null; FOTO.cv = null; J.oscuro = 0; J.pings = 0; J.recta = false; J.peligro = 0; J.pausa = false; J.finMostrado = false; J.pvp = false;
   PUERTA.cerrada = true; PUERTA.abierta = 0;
   if (TALLER.abierto) cierraTaller();
   TALLER.herr = 'pincel'; TALLER.color = BLANCO_PIEL; TALLER.recientes = [BLANCO_PIEL]; TALLER.calco = true; TALLER.radio = RADIOS[2];
@@ -123,7 +123,7 @@ function avanzaPartida(dt) {
   humoPaso(J.yo);
   if (!J.pvp && typeof VISITA !== 'undefined' && VISITA.activa) visitaAvanza(dt);      // de visita en un escenario (visita.js)
   if (J.pvp) rfpPaso(dt);      // PvP: recibe lo de los demás, manda lo tuyo y, si eres el anfitrión, lleva a la máquina
-  controlaJugador(dt); talentosAvanza(dt); poderAvanza(dt); fantasmasAvanza(dt); balizaAvanza(dt); modoAvanza(dt); eventosAvanza(dt); cuarteoAvanza(dt);
+  controlaJugador(dt); talentosAvanza(dt); poderAvanza(dt); fpZonasAvanza(dt); fantasmasAvanza(dt); balizaAvanza(dt); modoAvanza(dt); eventosAvanza(dt); cuarteoAvanza(dt);
   for (const e of J.entes) {
     if (e.bot && J.fase !== 'fin') (e.clase === 'cazador' ? piensaCazador : piensaCamaleon)(e, dt);
     else if (e.bot) e.vx = e.vy = 0;

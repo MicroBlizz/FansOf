@@ -14,6 +14,7 @@ function cerebroCazador(e) {
 function veCazador(e, x, y) {
   const ox = e.x, oy = e.y - 6, d = lejos(ox, oy, x, y), largo = REGLAS.luzLargo * (e.ciego > 0 ? 0.5 : 1) * eventoVisibilidad();
   if (e.apagada > 0) return 0;      // con la linterna apagada por un fantasma no ve nada
+  if (vahoTapa(x, y)) return 0;      // ni a través del vaho de un fantasma (fantasma-efectos.js)
   if (d <= largo * 1.6 && focoAlumbra(x, y) && seVen(ox, oy, x, y)) return Math.max(d, 0.01);      // alumbrado por un foco del mapa (los faros de un coche, una ventana): se le ve sin linterna
   if (d > largo) return 0;
   if (d > REGLAS.luzCerca && Math.abs(giro(dirLuz(e), Math.atan2(y - oy, x - ox))) > REGLAS.luzAngulo) return 0;

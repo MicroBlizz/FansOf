@@ -12,8 +12,9 @@ function mueveFantasma(dt) {
   const yo = J.yo;
   if (!J.fantasma) {
     J.fantasma = { x: yo.x, y: yo.y - 20, t: 0, poder: null, enfria: 0, usado: 0 };
-    if (yo.clase === 'camaleon') poderElige(J.fantasma);      // a un colado despedido le toca un poder (fantasma-poder.js)
-    avisa(yo.clase === 'cazador' ? (yo.cuerpo && yo.cuerpo.fuera ? tr('Estás fuera: pasea por el mapa para ver qué pasa') : tr('Sin cartas: pasea por el mapa para ver qué pasa')) : tr('Estás despedido: ayuda a los tuyos con tu poder de fantasma'), 'aviso'); refrescaHud(true);
+    poderElige(J.fantasma);      // le toca un poder de fantasma (fantasma-poder.js), que irá cambiando al usarlo
+    avisa(yo.clase === 'cazador' ? (yo.cuerpo && yo.cuerpo.fuera ? tr('Estás fuera: ayuda a los tuyos con tu poder de fantasma') : tr('Sin cartas: ayuda a los tuyos con tu poder de fantasma')) : tr('Estás despedido: ayuda a los tuyos con tu poder de fantasma'), 'aviso'); refrescaHud(true);
+    tutoDi(yo.clase === 'cazador' ? 'fantasma-bec' : 'fantasma-col');      // la primera vez, la explicación (tutorial.js)
   }
   const f = J.fantasma, [mx, my] = vectorMueve();
   f.t += dt; f.mueve = Math.hypot(mx, my) > 0.1; if (Math.abs(mx) > 0.15) f.mira = mx > 0 ? 1 : -1;

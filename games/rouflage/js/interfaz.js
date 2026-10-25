@@ -85,7 +85,7 @@ function pistaDeAhora() {
   if (espectando()) {      // la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
     if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
     if (J.t - yo.tPistaFant > 15) return '';
-    if (balizaPuedo()) return tr('Fantasma: ves todo con luz normal. AVISAR (Espacio o Q) deja una marca para tus compañeros: «aquí hay un colado»'); const p = poderDe(); return p && !J.fantasma.usado ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }
+    const p = poderDe(); return p ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }      // la pista del poder que llevas (cambia al usarlo)
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
   if (yo.clase === 'camaleon') {
@@ -257,7 +257,8 @@ function preparaInterfaz() {
     if (J.pvp && J.fase === 'caza' && J.yo && !sinJuego(J.yo) && !J.avisoRetiro) { play('deny'); J.avisoRetiro = true; E('b-salir').textContent = tr('¿SEGURO? PIERDES PUNTOS Y DEJAS A TU EQUIPO SIN TI'); return; }
     play('select'); if (J.pvp) rfpRendirse(!(J.yo && sinJuego(J.yo))); if (escPruebaVuelve()) return; irTitulo();      // (la partida de prueba de Mi escenario vuelve al editor)
   };      // por internet, salir en plena partida es rendirse
-  E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(); return; } pantalla(null); empiezaPartida(J.modo); };
+  E('b-otra').onclick = () => { play('select'); if (J.pvp) { pvpBuscar(RFP.soloBots ? { crear: true, soloBots: true } : undefined); return; }      // contra bots: otra sala tuya con el menú, no BUSCAR PARTIDA
+   pantalla(null); empiezaPartida(J.modo); };
   E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); if (escPruebaVuelve()) return; irTitulo(); };

@@ -16,7 +16,8 @@ const RFP_AJ = { envioHz: 8, quietoHz: 1, avisosSala: 24, iaHz: 10, iaQuietoHz: 
 // opc: nada (partida pública), { crear: true } (sala con amigos nueva) o { codigo } (entrar en la de un amigo). Las salas con amigos no gastan caos primordial
 function pvpBuscar(opc) {
   const red = RFRED.red;
-  RFP.error = ''; RFP.resultado = null; RFP.amigos = !!(opc && (opc.crear || opc.codigo));
+  RFP.error = ''; RFP.resultado = null; RFP.amigos = !!(opc && (opc.crear || opc.codigo)); RFP.soloBots = !!(opc && opc.soloBots);      // JUGAR CONTRA BOTS (b-pvp-bots): el menú, sin pasear por tu escenario
+  if (opc && opc.crear) RFP.modoMandado = false;      // una sala nueva tuya: se le manda el modo (y el mapa) al abrirla
   if (!RFRED.esLocal() && !RFRED.conSesion()) { RFP.error = RFRED.errorTexto(new Error('cuenta_no_vinculada')); pvpMuestra('p-pvp'); return; }
   const guardada = rfpSalaGuardada();      // si estabas en una partida abierta, volver no gasta caos primordial
   if (!guardada && !RFP.amigos && !energiaPermite()) return;      // sin caos primordial: aviso con la oferta del ilimitado

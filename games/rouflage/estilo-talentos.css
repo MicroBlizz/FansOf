@@ -147,3 +147,12 @@ body.op-zurdo .accion.hab.becario { right: auto; left: calc(var(--izq) + 12px); 
   .tal-cab { padding: 4px 12px 4px; } .tal-tubo { height: 40px; } #tal-tubo { top: -30px; height: 100px; }
   .tal-nota { font-size: 11px; line-height: 1.15; }
 }
+
+/* LOS PODERES DE FANTASMA (talFantasmas, talentos-pantalla.js): al final de la lista, en azul de fantasma, sin botón (no se eligen ni se desbloquean) */
+.tal-fp-cab { text-align: left; padding: 8px 4px 0; }
+.tal-fp-cab b { display: block; font: 400 18px var(--font-display); letter-spacing: 0.03em; color: #cfe9ff; }
+.tal-fp-cab small { display: block; margin-top: 2px; font-size: 12px; font-weight: 700; line-height: 1.25; color: var(--ink-dim); }
+.tal-fila.tal-fp { grid-template-columns: 58px 1fr; background: linear-gradient(165deg, #2f4366, #1f2b45); }
+.tal-fila.tal-fp::before { background: #cfe9ff; }
+.mis-tag.tal-fp-tag { background: #cfe9ff; }
+.mis-tag.tal-fp-nuevo { background: var(--gold); }

@@ -1,19 +1,12 @@
-// Fans of Rouflage · LA BALIZA DEL BECARIO FANTASMA: un cazador sin cartas (o fuera) no solo mira: ve todo con luz normal (luz.js) y puede dejar una marca especial donde
-// quiera (botón AVISAR, Espacio o Q) para decirle a sus compañeros «aquí hay un colado». Solo la ven los cazadores (los colados no); los bots del anfitrión van a mirar.
-// En el PvP se avisa con `bz` y cada navegador la dibuja. Las balizas duran BALIZA.dura segundos y entre una y otra pasan BALIZA.cada.
+// Fans of Rouflage · LA BALIZA DEL BECARIO FANTASMA: un cazador sin cartas (o fuera) no solo mira: ve todo con luz normal (luz.js) y, cuando le toca el poder
+// AVISAR (uno de los tres del becario fantasma, que se van turnando: fantasma-poder.js), deja una marca especial donde está para decirle a sus compañeros
+// «aquí hay un colado». Solo la ven los cazadores (los colados no); los bots del anfitrión van a mirar.
+// En el PvP se avisa con `bz` y cada navegador la dibuja. Las balizas duran BALIZA.dura segundos (la espera entre usos es la de PODERES.avisar).
 'use strict';
 
-const BALIZA = { cada: 6, dura: 14, max: 3 };
+const BALIZA = { dura: 14, max: 3 };
 const BALIZAS = [];      // { x, y, t, de } (t: segundos que lleva puesta)
-const balizaPuedo = () => espectando() && !!J.yo && J.yo.clase === 'cazador' && !!J.fantasma;
 
-function accionBaliza() {
-  const f = J.fantasma; if (!balizaPuedo()) return;
-  if ((f.enfriaB || 0) > 0) { play('deny'); pista(tr('Aviso recargándose: {n} s', { n: Math.ceil(f.enfriaB) }), 1.5); return; }
-  f.enfriaB = BALIZA.cada; f.usado = (f.usado || 0) + 1;
-  balizaPon(f.x, f.y, J.yo.nombre, true);
-  if (J.pvp) rfpManda({ t: 'bz', x: Math.round(f.x), y: Math.round(f.y) });
-}
 // la baliza en sí (aquí y en los demás navegadores). Los bots solo la atienden en el navegador que los lleva (solo o anfitrión)
 function balizaPon(x, y, nombre, mio) {
   BALIZAS.push({ x, y, t: 0, de: nombre || '' }); while (BALIZAS.length > BALIZA.max) BALIZAS.shift();
@@ -31,7 +24,6 @@ function balizaBot(e, x, y) {
 function balizaRecibida(m, sl) { if (J.fase !== 'caza' || !sl || !sl.ente || sl.ente.clase !== 'cazador') return; balizaPon(+m.x || 0, +m.y || 0, sl.ente.nombre, false); }
 
 function balizaAvanza(dt) {
-  const f = J.fantasma; if (f && f.enfriaB > 0) f.enfriaB = Math.max(0, f.enfriaB - dt);
   for (const z of BALIZAS) z.t += dt;
   while (BALIZAS.length && BALIZAS[0].t > BALIZA.dura) BALIZAS.shift();
   if (J.fase !== 'caza' && BALIZAS.length) BALIZAS.length = 0;

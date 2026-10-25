@@ -34,7 +34,7 @@ function eventosAvanza(dt) {
     if (EV.tEn >= EV.def.dura) { EV.en = false; if (EV.def.termina) EV.def.termina(EV.est); EV.prox = EV.t + EV.def.cada; }
   }
 }
-const eventoFocos = () => [].concat(...EV.sie.map(x => x.def.focos(x.est, 0)), EV.def && EV.en && EV.def.focos ? EV.def.focos(EV.est, EV.tEn) : []);
+const eventoFocos = () => [].concat(...EV.sie.map(x => x.def.focos(x.est, 0)), EV.def && EV.en && EV.def.focos ? EV.def.focos(EV.est, EV.tEn) : [], fpFocos());      // (y el FOCO del becario fantasma: fantasma-efectos.js)
 const eventoVisibilidad = () => (EV.def && EV.en && EV.def.visibilidad ? EV.def.visibilidad(EV.est, EV.tEn) : 1);
 function eventosPintaSuelo(c, t) { if (EV.def && EV.def.pintaSuelo) EV.def.pintaSuelo(c, EV.est, EV.en ? EV.tEn : -1, t); }
 function eventosPintaEncima(c, t) { for (const x of EV.sie) x.def.pintaEncima(c, x.est, 0, t); if (EV.def && EV.def.pintaEncima) EV.def.pintaEncima(c, EV.est, EV.en ? EV.tEn : -1, t); }

@@ -1,5 +1,5 @@
 // Fans of Rouflage · CÓMO SE JUEGA EN TARJETAS (pedido por Daniel el 25-10-2026: «que sea fácil, es para niños de 13 años»). En vez del muro de texto,
-// dos pestañas (CAMALEÓN y CAZADOR) con 3 pasos cortos cada una y su dibujo, hecho con las piezas del propio juego (como las tarjetas del título,
+// dos pestañas (CAMALEÓN y CAZADOR) con 4 pasos cortos cada una (el cuarto: qué pasa cuando te quedas sin jugar, los poderes de fantasma) y su dibujo, hecho con las piezas del propio juego (como las tarjetas del título,
 // pintaTarjetas en interfaz.js, y en el mismo trozo de mapa). La explicación larga de siempre sigue debajo, en MÁS DETALLES.
 // muestraAyuda(luego, modo) (interfaz.js) abre la pestaña del papel que vas a jugar. Los dibujos se hacen una vez, al arrancar (ayudaDibuja).
 'use strict';
@@ -10,11 +10,13 @@ const AYUDA_PASOS = {
     ['ESCÓNDETE', 'Tienes 60 segundos para buscar un sitio con dibujo: un suelo, una pared, una planta.'],
     ['PÍNTATE', 'Toca PINTAR y cópiale los colores al suelo que tienes debajo.'],
     ['CONGÉLATE', 'Toca CONGELAR y no te muevas. ¡Si no te encuentran, ganas!'],
+    ['SI TE DESPIDEN', 'Te haces fantasma y sigues ayudando con el botón de tu poder. Cada vez que lo usas, cambia a otro.'],
   ],
   cazador: [
     ['BUSCA', 'Hay 5 colados pintados por el mapa. Busca manchas raras con tu linterna.'],
     ['TOCA', 'Toca donde creas que hay uno para despedirlo. Tiene que estar cerca.'],
     ['NO FALLES', 'Tienes 5 cartas. Si fallas, pierdes una; si aciertas, la recuperas.'],
+    ['SIN CARTAS', 'Te haces fantasma y ayudas a los tuyos con el botón de tu poder. Cada vez que lo usas, cambia a otro.'],
   ],
 };
 const AYUDA_TRUCO = {
@@ -22,7 +24,7 @@ const AYUDA_TRUCO = {
   cazador: 'Truco: escucha los silbidos, te dicen por dónde andan los colados.',
 };
 
-/* ---------- los 6 dibujos, con las piezas del juego ---------- */
+/* ---------- los 8 dibujos, con las piezas del juego ---------- */
 function ayudaDibuja() {
   if (typeof MAPA === 'undefined' || !MAPA.fondo) return;
   AYUDA.cv = {};
@@ -58,6 +60,15 @@ function ayudaDibuja() {
       if (mala) { c.lineWidth = 5; c.strokeStyle = OL; c.beginPath(); c.moveTo(-14, -24); c.lineTo(14, 24); c.moveTo(14, -24); c.lineTo(-14, 24); c.stroke(); c.lineWidth = 3; c.strokeStyle = '#ff4b5c'; c.stroke(); }
       c.restore();
     }
+    // CAMALEÓN · 4 si te despiden: tu fantasma le da un susto a un becario
+    c = lienzo('camaleon3', 86, 462); const h2 = falsa('becario', 152, 522, 'cazador'); h2.mira = -1; pintaAlubia(c, h2, 1);
+    pintaFantasmaEn(c, 1.2, { x: 108, y: 500, mira: 1, mueve: false }, falsa('fox', 0, 0), 0.85, null);
+    rotulo(c, tr('¡BUUU!'), 140, 470, 8, '#cfe9ff', OL, LETRA_UI);
+    // CAZADOR · 4 sin cartas: tu fantasma de becario deja un aviso donde hay un colado
+    c = lienzo('cazador3', 120, 462); const q2 = falsa('squirrel', 176, 506); pintaBot(q2, 0.6); q2.hielo = 1; pintaAlubia(c, q2, 1);
+    pintaFantasmaEn(c, 2.1, { x: 138, y: 500, mira: 1, mueve: false }, falsa('becario', 0, 0, 'cazador'), 0.85, null);
+    c.save(); c.translate(176, 506); c.beginPath(); c.moveTo(0, -46); c.lineTo(10, -34); c.lineTo(0, -22); c.lineTo(-10, -34); c.closePath(); c.fillStyle = '#7fe8ff'; c.strokeStyle = OL; c.lineWidth = 2.4; c.lineJoin = 'round'; c.stroke(); c.fill();
+    c.fillStyle = OL; c.fillRect(-1.3, -41, 2.6, 6.5); c.fillRect(-1.3, -32, 2.6, 2.6); c.restore();
   } catch (e) { AYUDA.cv = null; }
 }
 

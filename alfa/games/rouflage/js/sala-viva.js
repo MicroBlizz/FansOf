@@ -183,7 +183,8 @@ function salaVivaPintaUI(i, soyAnf) {
   // EMPEZAR: el anfitrión lo pulsa; los demás ven a quién esperan
   const b = E('sv-empezar'), faltan = Math.max(0, (salaCuantos(i.modo, (i.jugadores || []).length).total) - (i.jugadores || []).length);
   b.classList.toggle('espera', !soyAnf); b.disabled = !soyAnf;
-  b.querySelector('b').textContent = soyAnf ? tr('EMPEZAR') : tr('ESPERANDO');
+  const solo = soyAnf && (i.n || 0) < 2; b.classList.toggle('largo', solo);
+  b.querySelector('b').textContent = soyAnf ? (solo ? tr('RELLENAR CON BOTS') : tr('EMPEZAR')) : tr('ESPERANDO');      // como siempre: solo, se juega ya con la máquina
   const anf = (i.jugadores || []).find(j => j.orden === i.anfitrion);
   b.querySelector('small').textContent = soyAnf ? (faltan ? tr('El resto, bots: {n}', { n: faltan }) : '') : tr('Lo empieza {n}', { n: anf ? anf.nombre : '' });
 }

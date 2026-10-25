@@ -1,8 +1,8 @@
 {
- "build": 512,
- "hash": "8abcb0c",
- "fecha": "2026-10-25T18:25:36Z",
- "mensaje": "Rouflage: ser cazador en la sala con amigos y jugar la partida en ESTE ESCENARIO",
+ "build": 513,
+ "hash": "1452e4e",
+ "fecha": "2026-10-25T18:40:21Z",
+ "mensaje": "Rouflage: en la sala viva, RELLENAR CON BOTS / EMPEZAR siempre a la vista",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

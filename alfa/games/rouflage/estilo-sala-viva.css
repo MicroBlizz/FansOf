@@ -44,7 +44,7 @@
 .sv-emp small { font: 800 11px var(--font-ui); color: #fff3d8; margin-top: -3px; text-shadow: 0 1px 0 var(--outline); }
 .sv-emp small:empty { display: none; }
 .sv-emp.espera { background: linear-gradient(#5a6787, #36415c); cursor: default; }
-.sv-emp.espera b { font-size: 18px; }
+.sv-emp.espera b, .sv-emp.largo b { font-size: 18px; }
 
 /* los botones del colado (congelar, pintar, la habilidad y la granada): encima de la barra de abajo */
 body.sala-viva #acciones { bottom: calc(var(--inf) + 96px); }
@@ -55,8 +55,9 @@ body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, d
 
 /* el cajón de OPCIONES: la caja de la sala desde abajo */
 .sv-cerrar { display: none; }
-#p-busca.viva.cajon > .caja { display: block; position: absolute; left: 0; right: 0; bottom: 0; margin: 0 auto; width: min(100%, 600px); max-height: 78vh; overflow-y: auto; box-sizing: border-box;
-  border-radius: 22px 22px 0 0; pointer-events: auto; padding-bottom: calc(var(--inf) + 16px); animation: svSube 0.22s ease-out; z-index: 3; }
+#p-busca.viva.cajon > .caja { display: block; position: absolute; left: 0; right: 0; bottom: calc(var(--inf) + 92px); margin: 0 auto; width: min(100%, 600px); max-height: calc(100% - var(--inf) - var(--sup) - 180px); overflow-y: auto; box-sizing: border-box;
+  border-radius: 22px; pointer-events: auto; padding-bottom: 16px; animation: svSube 0.22s ease-out; z-index: 3; }      /* encima de la barra de abajo: EMPEZAR se ve siempre */
+.sv-abajo { z-index: 4; }
 #p-busca.viva.cajon > .caja .sv-cerrar { display: grid; place-items: center; position: sticky; top: 0; margin: -4px -4px 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 3px solid var(--outline);
   background: var(--tray); color: var(--ink); cursor: pointer; z-index: 2; padding: 0; }
 .sv-cerrar svg { width: 20px; height: 20px; }

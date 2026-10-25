@@ -1,8 +1,8 @@
 {
- "build": 529,
- "hash": "f018ee7",
- "fecha": "2026-10-25T21:36:45Z",
- "mensaje": "Rouflage: un escenario de una sola sala ya no se puede jugar (COMPROBAR lo dice y PROBAR no empieza); los becarios bot no se rompen sin otra sala adonde ir y contra bots siempre son dos (adiós al «Becario undefined»)",
+ "build": 530,
+ "hash": "886edbe",
+ "fecha": "2026-10-25T21:55:17Z",
+ "mensaje": "Rouflage: CONFIGURAR PARTIDA en media pantalla en la sala con amigos: sin repetir lo de arriba, CLÁSICO / CON TALENTOS el primer ajuste, las reglas especiales plegadas en MÁS REGLAS, INVITAR solo con lo de invitar y un solo RELLENAR CON BOTS (el de abajo)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

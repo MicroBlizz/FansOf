@@ -33,4 +33,7 @@ IDIOMA.add({
   "Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.": "Wenn dir diese Kulisse gefällt, gib ihr ein <b>GEFÄLLT MIR</b>. Zum Verlassen: der Pfeil oben.",
   "<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.": "<b>BODEN</b>: Wähl unten einen aus und zieh dann den Finger oben über die Kulisse, um ihn zu verlegen.",
   "Solo hay una sala: levanta una PARED con una PUERTA para hacer otra (una es para los becarios)": "Es gibt nur einen Raum: Bau eine WAND mit einer TÜR, um einen zweiten zu machen (einer ist für die Praktikanten)",
+  "MENOS REGLAS": "WENIGER REGELN",
+  "MÁS REGLAS ({n} puestas)": "MEHR REGELN ({n} an)",
+  "MÁS REGLAS": "MEHR REGELN",
 });

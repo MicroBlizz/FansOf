@@ -56,7 +56,7 @@ body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, d
 
 /* el cajón de OPCIONES: la caja de la sala desde abajo */
 .sv-cerrar { display: none; }
-#p-busca.viva.cajon > .caja { display: block; position: absolute; left: 0; right: 0; bottom: calc(var(--inf) + 92px); margin: 0 auto; width: min(100%, 600px); max-height: calc(100% - var(--inf) - var(--sup) - 180px); overflow-y: auto; box-sizing: border-box;
+#p-busca.viva.cajon > .caja { display: block; position: absolute; left: 0; right: 0; bottom: calc(var(--inf) + 92px); margin: 0 auto; width: min(100%, 600px); max-height: min(calc(100% - var(--inf) - var(--sup) - 180px), 52vh); overflow-y: auto; box-sizing: border-box;
   border-radius: 22px; pointer-events: auto; padding-bottom: 16px; animation: svSube 0.22s ease-out; z-index: 3; }      /* encima de la barra de abajo: EMPEZAR se ve siempre */
 .sv-abajo { z-index: 4; }
 #p-busca.viva.cajon > .caja .sv-cerrar { display: grid; place-items: center; position: sticky; top: 0; margin: -4px -4px 0 auto; width: 40px; height: 40px; border-radius: 12px; border: 3px solid var(--outline);
@@ -95,3 +95,17 @@ body.visita #acciones { bottom: calc(var(--inf) + 14px); }
 .vis-semana small { font: 400 13px var(--font-display); color: #ffcb3d; letter-spacing: 0.04em; }
 .vis-semana b { font: 800 12px var(--font-ui); color: var(--ink); }
 .amg-fila .vis-ver { margin-right: 4px; }
+/* CONFIGURAR PARTIDA en media pantalla (Daniel, 25-10-2026: «que el menú no ocupe todo»): sin repetir lo que ya está arriba (el código, el título, cuántos
+   sois) y con las reglas especiales plegadas en MÁS REGLAS; desde INVITAR, solo el código y los botones de invitar */
+.sv-mas-reglas { display: none; }
+#p-busca.viva.cajon:not(.invita) .sv-mas-reglas { display: block; margin: 8px auto 4px; }
+#p-busca.viva.cajon:not(.invita) :is(#busca-titulo, #busca-codigo, #busca-sub, #esc-mio) { display: none; }
+#p-busca.viva.cajon:not(.reglas) #busca-extras > label { display: none; }
+#p-busca.viva.cajon.invita :is(#busca-modo, #busca-sub, #esc-mio, #busca-voto, #busca-lista, .nota-sala, .fila-botones) { display: none; }
+#p-busca.viva.cajon::before { background: rgba(8, 6, 16, 0.25); }
+/* CLÁSICO o CON TALENTOS (Daniel, 25-10-2026: «dentro de configurar partida»): el rótulo suelto se quita y su ajuste va el primero de la lista */
+#p-busca.viva.cajon #busca-tal { display: none; }
+#p-busca.viva.cajon #busca-extras { display: flex; flex-direction: column; }
+#p-busca.viva.cajon #busca-extras > .luz-sala:has([data-aj="t"]) { order: -1; }
+/* en el panel solo CANCELAR: RELLENAR CON BOTS / EMPEZAR ya está siempre abajo (Daniel, 25-10-2026: «que no se vean los 2 botones»; sv-empezar lo pulsa por código) */
+#p-busca.viva.cajon #b-busca-empezar { display: none; }

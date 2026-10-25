@@ -33,4 +33,7 @@ IDIOMA.add({
   "Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.": "Se gostar deste cenário, dê <b>CURTI</b>. Para sair, a seta de cima.",
   "<b>SUELO</b>: elige uno en la lista de abajo y luego arrastra el dedo por el escenario, arriba, para ponerlo.": "<b>PISO</b>: escolha um na lista de baixo e depois arraste o dedo pelo cenário, lá em cima, para colocá-lo.",
   "Solo hay una sala: levanta una PARED con una PUERTA para hacer otra (una es para los becarios)": "Só há uma sala: levante uma PAREDE com uma PORTA para fazer outra (uma é para os estagiários)",
+  "MENOS REGLAS": "MENOS REGRAS",
+  "MÁS REGLAS ({n} puestas)": "MAIS REGRAS ({n} ativas)",
+  "MÁS REGLAS": "MAIS REGRAS",
 });

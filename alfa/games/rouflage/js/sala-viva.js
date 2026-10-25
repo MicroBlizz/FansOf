@@ -150,9 +150,14 @@ function salaVivaUI() {
   // el cajón de OPCIONES: la caja de siempre de la sala, con su cruz para cerrarla
   const caja = E('p-busca').querySelector(':scope > .caja'), x = document.createElement('button');
   x.type = 'button'; x.className = 'sv-cerrar'; x.id = 'sv-cerrar'; x.innerHTML = SV_ICO.cerrar; caja.prepend(x);
-  const cajon = si => { play('select'); E('p-busca').classList.toggle('cajon', si); if (si) E('p-busca').classList.remove('charla'); };
+  // invita: abierto desde INVITAR (solo el código y los botones de invitar); si no, CONFIGURAR PARTIDA (modo, mapa y reglas, sin repetir lo de arriba)
+  const cajon = (si, invita) => { play('select'); const p = E('p-busca'); p.classList.toggle('cajon', si); p.classList.toggle('invita', !!(si && invita)); if (si) { p.classList.remove('charla'); p.classList.remove('reglas'); svReglasTexto(); } };
+  // las reglas especiales (El bufón, Silbato caliente…), plegadas en MÁS REGLAS para que el panel quepa en media pantalla (Daniel, 25-10-2026)
+  const mas = document.createElement('button'); mas.type = 'button'; mas.className = 'boton gris peq sv-mas-reglas'; mas.id = 'sv-mas-reglas';
+  mas.onclick = () => { play('select'); E('p-busca').classList.toggle('reglas'); svReglasTexto(); };
+  E('busca-extras').after(mas); E('busca-extras').addEventListener('change', svReglasTexto);
   E('sv-atras').onclick = () => E('b-busca-cancelar').click();
-  E('sv-invitar').onclick = () => cajon(true);      // dentro están COMPARTIR ENLACE e INVITAR AMIGOS
+  E('sv-invitar').onclick = () => cajon(true, true);      // dentro están COMPARTIR ENLACE e INVITAR AMIGOS
   E('sv-opciones').onclick = () => cajon(!E('p-busca').classList.contains('cajon'));
   x.onclick = () => cajon(false);
   E('sv-chat').onclick = () => { play('select'); const p = E('p-busca'), abre = !p.classList.contains('charla'); p.classList.toggle('charla', abre); p.classList.remove('cajon'); if (typeof chatSalaPliega === 'function') chatSalaPliega(!abre); };
@@ -160,6 +165,11 @@ function salaVivaUI() {
   E('sv-empezar').onclick = () => { const b = E('b-busca-empezar'); if (!b.hidden && !b.disabled) b.click(); };
   SV.ui = { chatN: d.querySelector('.sv-chat-n') };
   return SV.ui;
+}
+function svReglasTexto() {
+  const b = E('sv-mas-reglas'); if (!b) return;
+  const n = E('busca-extras').querySelectorAll('label input:checked').length, abiertas = E('p-busca').classList.contains('reglas');
+  b.textContent = abiertas ? tr('MENOS REGLAS') : n ? tr('MÁS REGLAS ({n} puestas)', { n }) : tr('MÁS REGLAS');
 }
 function salaVivaPintaUI(i, soyAnf) {
   salaVivaUI();

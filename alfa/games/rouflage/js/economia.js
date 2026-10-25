@@ -136,7 +136,7 @@ function abrePase() { ecoEstado(); paseReparte(); guardaPartida(); pasePinta(); 
 function pasePinta() {
   const p = ecoEstado(), nv = paseNivel(), dentro = p.xp % ECO.xpNivel, lista = E('pase-lista');
   E('pase-nivel').textContent = tr('Nivel {n} de {t}', { n: nv, t: ECO.niveles });
-  E('pase-barra').style.width = (nv >= ECO.niveles ? 100 : dentro / ECO.xpNivel * 100) + '%';
+  paseTuboPon(nv, dentro);      // el tubo de pintura, como el del final de la partida (fin-pase.js)
   E('pase-xp').textContent = nv >= ECO.niveles ? tr('¡Pase completo!') : tr('{a} / {b} XP para el siguiente', { a: dentro, b: ECO.xpNivel });
   E('pase-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
   const bp = E('b-pase-premium'); bp.disabled = p.premium;

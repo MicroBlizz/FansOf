@@ -168,7 +168,7 @@ function preparaTalentos() {
   const cola = elem('div', 'tal-cola'); cola.setAttribute('role', 'group'); cola.setAttribute('aria-label', tr('TALENTOS'));
   for (const v of ['1', '0']) {
     const b = elem('button'); b.type = 'button'; b.dataset.v = v; const k = arLienzo(26, 26); arPinta(k, (c, w) => pintaMedallaTal(c, w, v === '1')); b.appendChild(k); b.appendChild(elem('b', '', v === '1' ? tr('CON TALENTOS') : tr('CLÁSICO')));
-    b.onclick = () => { play('select'); talEstado().pvp = v === '1'; guardaPartida(); talPintaCola(); }; cola.appendChild(b);
+    b.onclick = () => { play('select'); talEstado().pvp = v === '1'; MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a.t = +v; modoElegidoGuarda(); guardaPartida(); talPintaCola(); }; cola.appendChild(b);      // vale para las tres: BUSCAR PARTIDA, AMIGOS y BOTS
   }
   E('b-pvp-buscar').before(cola); talPintaCola();
   preparaHab();      // los botones de la partida (talentos-partida.js)

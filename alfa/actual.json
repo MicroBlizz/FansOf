@@ -1,8 +1,8 @@
 {
- "build": 490,
- "hash": "8f4f9dd",
- "fecha": "2026-10-25T01:09:26Z",
- "mensaje": "Publicación: core cambió (salas de core), suben todos los juegos con su nota; Decks con líderes, paro, ventajas fiscales y trofeos",
+ "build": 491,
+ "hash": "9490c86",
+ "fecha": "2026-10-25T01:32:48Z",
+ "mensaje": "Boom: guion de balance con bots en el repo y primer ajuste (MechaVaca menos vida, NeonSniper más)",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.34",

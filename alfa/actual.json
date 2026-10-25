@@ -1,8 +1,8 @@
 {
- "build": 520,
- "hash": "40e5f87",
- "fecha": "2026-10-25T19:47:50Z",
- "mensaje": "Rouflage: Mi escenario con lienzo para construir, plantillas, PROBAR, sala de los cazadores, tutorial, pegatinas, visitas a amigos, escenario de la semana y tamaños del lienzo",
+ "build": 521,
+ "hash": "ca19625",
+ "fecha": "2026-10-25T19:52:42Z",
+ "mensaje": "Rouflage: códigos regalo. OPCIONES › CÓDIGO REGALO para canjear los códigos de las redes (uno por jugador, con cuenta), servidor 94 y pestaña Códigos en /gestion",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

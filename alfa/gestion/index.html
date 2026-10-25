@@ -63,6 +63,15 @@ input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-v
 .etq.debil { background: var(--debil-fondo); color: var(--debil); }
 .saldos { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
 .accion button.plat { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border: 3px solid var(--outline, #000); border-radius: 12px; cursor: pointer; font-weight: 700; }
+.cod-filas { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.cod-form { display: grid; gap: 10px; }
+.cod-form input[type=number], .cod-form input[type=date] { color: var(--texto); background: var(--bg); border: 1px solid var(--linea); border-radius: 5px; padding: 7px 9px; width: 100%; box-sizing: border-box; }
+#cd-codigo { font-family: var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.cod-pieza-fila { display: flex; gap: 8px; }
+.cod-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cod-chips button { font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+.cod-premio { display: flex; flex-wrap: wrap; gap: 4px 14px; font-variant-numeric: tabular-nums; }
+.cuenta.apagado { opacity: .6; }
 .accion button.plat svg { width: 26px; height: 26px; flex: none; }
 .accion button.plat span { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.15; font-size: 13px; }
 .accion button.plat b { font-size: 11px; letter-spacing: .04em; }
@@ -102,7 +111,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
 
   <section id="vista-panel" hidden>
     <nav class="menu" id="menu" aria-label="Paneles"></nav>
-    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-rend" type="button">Rendimiento</button><button id="t-flags" type="button">Flags</button><button id="t-config" type="button">Config</button></div>
+    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-rend" type="button">Rendimiento</button><button id="t-flags" type="button">Flags</button><button id="t-config" type="button">Config</button><button id="t-codigos" type="button">Códigos de Rouflage</button></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -152,6 +161,25 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="caja ayuda"><b>Config.</b> Configuración del servidor: valores que se aplican siempre, en todas las plataformas (hoy, las monedas de cada juego: ratio, cambio, porcentaje del pase). Se edita el JSON y se guarda; crear una clave nueva es cosa de desarrollo.</div>
       <div class="aviso" id="cf-aviso" role="alert"></div>
       <div class="lista" id="cf-lista"></div>
+    </div>
+    <div id="pan-codigos" hidden>
+      <div class="caja ayuda"><b>Códigos regalo de Rouflage.</b> Los códigos que dais en redes sociales. Cada jugador puede canjear cada código <b>una vez</b> (en el juego: OPCIONES › CÓDIGO REGALO) y hace falta cuenta. El premio puede llevar Gotas, Acciones y piezas (ropa del armario o paquetes de pegatinas). <b>Tope</b>: cuántas personas pueden usarlo en total (vacío = sin tope). <b>Desactivar</b> lo deja como si no existiera; se puede volver a activar. Para cambiar un código, pulsa <b>Editar</b>: se cambia el premio, el tope o la fecha, y quien ya lo canjeó se queda con lo que le tocó.</div>
+      <form class="caja cod-form" id="cd-form">
+        <div class="cod-filas">
+          <label>Código <input type="text" id="cd-codigo" placeholder="HALLOWEEN26" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
+          <label>Gotas <input type="number" id="cd-gotas" min="0" max="100000" step="1" placeholder="0"></label>
+          <label>Acciones <input type="number" id="cd-acciones" min="0" max="10000" step="1" placeholder="0"></label>
+          <label>Tope de usos <input type="number" id="cd-max" min="0" step="1" placeholder="sin tope"></label>
+          <label>Caduca (incluido) <input type="date" id="cd-caduca"></label>
+          <label>Nota (solo para vosotros) <input type="text" id="cd-nota" maxlength="200" placeholder="post de Halloween en X"></label>
+        </div>
+        <label>Piezas y pegatinas <span class="cod-pieza-fila"><input type="text" id="cd-pieza" list="cd-piezas" placeholder="escribe para buscar: gorros:…, pegatinas:…" autocomplete="off"><button type="button" id="cd-anadir">Añadir</button></span></label>
+        <datalist id="cd-piezas"></datalist>
+        <div class="cod-chips" id="cd-chips"></div>
+        <div class="filtros"><button class="fuerte" type="submit" id="cd-guardar">Guardar código</button><button type="button" id="cd-limpiar">Vaciar</button></div>
+      </form>
+      <div class="aviso" id="cd-aviso" role="alert"></div>
+      <div class="lista" id="cd-lista"></div>
     </div>
     <div id="pan-roles" hidden>
       <div class="caja ayuda"><b>Roles.</b> <b>alfa</b>: puede jugar la alfa. <b>admin</b>: puede entrar en esta página. Se dan por correo de una cuenta que ya haya entrado con Google.</div>
@@ -268,6 +296,7 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="votos.js"></script>
 <script src="roles.js"></script>
 <script src="flags.js"></script>
+<script src="codigos.js"></script>
 <script src="config.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>

@@ -1,8 +1,8 @@
 {
- "build": 497,
- "hash": "6fc6672",
- "fecha": "2026-10-25T03:06:08Z",
- "mensaje": "Boom: más potencia (a tope cruza el mapa con el viento en contra), proyectil propio por móvil con su trato del viento, Opciones con todo lo de core y partida en la nube",
+ "build": 498,
+ "hash": "f126f0b",
+ "fecha": "2026-10-25T03:31:05Z",
+ "mensaje": "Decks: reunión en equipo de 2 a 4 (en dev): tu líder grande, los demás arriba con su vida y sus efectos, a quién va cada rival",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.35",

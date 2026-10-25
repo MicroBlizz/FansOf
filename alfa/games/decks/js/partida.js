@@ -1,7 +1,7 @@
 // Fans Of Decks · La partida: estado, agenda del día (el mapa: cada hora, varias citas), guardado por cita y las operaciones sobre el mazo.
 // DCP.run es la partida en curso (null si no hay); DCP.meta, lo que persiste entre partidas. Se guarda en este navegador y, con cuenta, en la nube (CUENTA.cambio).
 'use strict';
-const DCP = { run: null, meta: { partidas: 0, victorias: 0 }, uid: 1 };
+const DCP = { equipo: null, run: null, meta: { partidas: 0, victorias: 0 }, uid: 1 };
 // Los títulos con que Microblizz disfraza cada cita (la agenda de cada día se genera en campana.js).
 const DC_TITULOS = {
   facil: ['Daily de los becarios', 'Sincronización de equipo', 'Onboarding express', 'Revisión de tickets'],
@@ -16,7 +16,7 @@ const DC_TITULOS = {
 const DC_SALAS = ['Sala Becario', 'Sala Sinergia', 'Sala Hoja de Cálculo', 'Sala Ping-Pong', 'Despacho 3B', 'Pecera', 'Sala Alineamiento', 'Cafetería', 'Almacén', 'Última planta'];
 
 function dcGuarda() {
-  try { localStorage.setItem(AJUSTES.guardado, JSON.stringify({ run: DCP.run, meta: DCP.meta, uid: DCP.uid })); } catch (e) { /* sin almacenamiento: la partida dura lo que la pestaña */ }
+  try { localStorage.setItem(AJUSTES.guardado, JSON.stringify({ run: DCP.equipo ? DCP.equipo.solo : DCP.run, meta: DCP.meta, uid: DCP.uid })); } catch (e) { /* sin almacenamiento: la partida dura lo que la pestaña */ }
   if (typeof CUENTA !== 'undefined' && CUENTA.cambio) CUENTA.cambio();
 }
 function dcCarga() {

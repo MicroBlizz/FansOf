@@ -1,23 +1,23 @@
 {
- "build": 495,
- "hash": "fdfcbe1",
- "fecha": "2026-10-25T02:55:23Z",
- "mensaje": "Boom: el cañón ya no se inclina con la cuesta y apunta justo por donde sale el tiro",
+ "build": 496,
+ "hash": "121b5ab",
+ "fecha": "2026-10-25T02:56:10Z",
+ "mensaje": "Versiones y notas del despliegue: crush 0.1.35, decks 0.2.17, jump 0.3.12, karts 0.7.11, nova 0.3.22, ratkov 0.2.25, rouflage 0.2.50, rumble 0.9.154, survivors 0.1.67, tacticas 0.1.51, td 0.13.83",
  "juegos": {
   "boom": "0.1.0",
-  "crush": "0.1.34",
+  "crush": "0.1.35",
   "dark": "0.2.7",
-  "decks": "0.2.16",
+  "decks": "0.2.17",
   "island": "0.3.5",
-  "jump": "0.3.11",
-  "karts": "0.7.10",
-  "nova": "0.3.21",
-  "ratkov": "0.2.24",
-  "rouflage": "0.2.49",
-  "rumble": "0.9.153",
+  "jump": "0.3.12",
+  "karts": "0.7.11",
+  "nova": "0.3.22",
+  "ratkov": "0.2.25",
+  "rouflage": "0.2.50",
+  "rumble": "0.9.154",
   "skate": "0.1.27",
-  "survivors": "0.1.66",
-  "tacticas": "0.1.50",
-  "td": "0.13.82"
+  "survivors": "0.1.67",
+  "tacticas": "0.1.51",
+  "td": "0.13.83"
  }
 }

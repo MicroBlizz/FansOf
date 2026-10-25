@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.25
+  "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
+  "Microblizz ha callado los chillidos y las ratas han seguido pulsando botones con mucha dignidad.": "Microblizz hushed the squeaks and the rats kept pressing buttons with great dignity.",
   // 0.2.24
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
   "Microblizz está construyendo salas para jugar con amigos y Phony ya ha saqueado la primera.": "Microblizz is building rooms to play with friends and Phony has already looted the first one.",

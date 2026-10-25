@@ -2,6 +2,7 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.2.25', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha callado los chillidos y las ratas han seguido pulsando botones con mucha dignidad."] },
   { v: '0.2.24', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas."], joke: ["Microblizz está construyendo salas para jugar con amigos y Phony ya ha saqueado la primera."] },
   { v: '0.2.23', real: ["<b>MEJORAS POR DENTRO</b>: los avisos de errores y de rendimiento respetan ahora el interruptor de datos anónimos de Opciones."], joke: ["Microblizz ha tapado los agujeros por donde se contaba todo y las ratas han recuperado su privacidad."] },
   { v: '0.2.22', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie ya hablan más idiomas (portugués, francés, alemán e italiano; de momento los estrena Fans of Rouflage)."], joke: ["Microblizz ha traducido el mapa a cuatro idiomas y Phony sigue sin encontrar la salida en ninguno."] },

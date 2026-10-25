@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.154
+  "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
+  "Microblizz ha apagado el estruendo de la arena y Phony ha vendido tapones para los oídos.": "Microblizz has switched off the arena's roar and Phony sold earplugs.",
   // 0.9.153
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
   "Microblizz ha preparado salas para jugar con amigos y Phony ha puesto un cartel de «Reservado para el CEO».": "Microblizz has set up rooms to play with friends and Phony put up a «Reserved for the CEO» sign.",

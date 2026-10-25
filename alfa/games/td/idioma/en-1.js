@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.83
+  "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
+  "Microblizz ha callado las torres y Phony ha pedido que al menos disparen con educación.": "Microblizz has silenced the towers and Phony asked them to at least shoot politely.",
   // 0.13.82
   "<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para jugar con amigos en salas.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the series' shared systems are getting ready for playing with friends in rooms.",
   "Microblizz está levantando salas para jugar con amigos y Phony ya ha puesto una torre en la entrada.": "Microblizz is putting up rooms to play with friends and Phony has already placed a tower at the entrance.",

@@ -168,7 +168,7 @@ const PANTALLAS_CAOS = ['p-titulo', 'p-pvp', 'p-amigos', 'p-busca', 'p-pvp-info'
 function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(PANTALLAS_CAOS.includes(id)); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
-function muestraAyuda(luego) { _trasAyuda = luego || null; pantalla('p-ayuda'); misionEvento('ayuda'); }
+function muestraAyuda(luego, modo) { _trasAyuda = luego || null; if (typeof ayudaPinta === 'function') ayudaPinta(modo); pantalla('p-ayuda'); misionEvento('ayuda'); }      // ayuda.js: las tarjetas
 function muestraPausa(si) {
   E('b-reiniciar').hidden = J.pvp; J.avisoRetiro = false; E('b-salir').textContent = J.pvp ? tr('Rendirse') : typeof ESC_PRUEBA !== 'undefined' && ESC_PRUEBA.activa ? tr('VOLVER A MI ESCENARIO') : tr('Salir al menú');      // por internet no se reinicia: solo se sigue o se rinde uno
   pantalla(si ? 'p-pausa' : null); refrescaSonido();
@@ -184,7 +184,7 @@ function pintaBots() {
 function elige(modo) {
   audioInit(); play('select');
   let visto = false; try { visto = localStorage.getItem('rouflage-ayuda') === '1'; } catch (_) { /* sin guardar */ }
-  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => empiezaSeguro(modo)); return; }
+  if (!visto) { try { localStorage.setItem('rouflage-ayuda', '1'); } catch (_) { /* sin guardar */ } muestraAyuda(() => empiezaSeguro(modo), modo); return; }
   empiezaSeguro(modo);
 }
 // empezar sin quedarse pillado: si algo falla (una partida guardada rara, por ejemplo), se dice, se apunta (errores.js lo manda al servidor) y se vuelve al título
@@ -226,6 +226,7 @@ function pintaTarjetas() {
   c.fillStyle = 'rgba(255,236,170,0.1)'; c.beginPath(); c.moveTo(126, 496); c.lineTo(230, 438); c.lineTo(230, 548); c.closePath(); c.fill();
   pintaAlubia(c, h, 1);
   pintaSigno(c, 112, 436, '?', '#e8731a', 0);
+  if (typeof ayudaDibuja === 'function') ayudaDibuja();      // los dibujos de CÓMO SE JUEGA, con el mismo mapa
 }
 
 function preparaInterfaz() {

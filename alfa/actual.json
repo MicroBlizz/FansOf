@@ -1,8 +1,8 @@
 {
- "build": 524,
- "hash": "c1a6059",
- "fecha": "2026-10-25T20:20:51Z",
- "mensaje": "Rouflage: la lista de EMPEZAR UN LIENZO se desliza con el dedo y usa la letra del juego; al pasear, el texto arriba y PROBAR y ARMARIO debajo; CANJEAR en blanco; el podio de la clasificación completo",
+ "build": 525,
+ "hash": "2ba354c",
+ "fecha": "2026-10-25T20:37:42Z",
+ "mensaje": "Rouflage: CÓMO SE JUEGA en tarjetas con dibujos (3 pasos por papel), MI ESCENARIO en el título con la foto de tu escenario, y guías nuevas: PvP, tubo del pase, gachapón, decorar, visitar, sala con amigos y visita",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

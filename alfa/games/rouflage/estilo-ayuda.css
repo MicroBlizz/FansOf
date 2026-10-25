@@ -1,0 +1,26 @@
+/* Fans of Rouflage · CÓMO SE JUEGA en tarjetas (js/ayuda.js) y la tarjeta MI ESCENARIO del título (js/titulo-escenario.js). */
+.ay-nueva { display: flex; flex-direction: column; gap: 10px; }
+.ay-pest { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ay-tab { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 6px 6px; border-radius: 14px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: #18223a; color: var(--ink-dim); font: 400 18px var(--font-display); cursor: pointer; }
+.ay-tab i { width: 20px; height: 20px; display: grid; place-items: center; }
+.ay-tab.activa.camaleon { background: linear-gradient(160deg, #36a37e, #1c5d4a); color: var(--ink); }
+.ay-tab.activa.cazador { background: linear-gradient(160deg, #3a7de0, #1b3a80); color: var(--ink); }
+.ay-tab:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline); }
+.ay-tarjetas { display: flex; flex-direction: column; gap: 8px; }
+.ay-tarjeta { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: center; padding: 7px; border-radius: 16px; border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); background: #1b2540; text-align: left; }
+.ay-tarjetas.camaleon .ay-tarjeta { background: linear-gradient(160deg, #24584a, #17302c); }
+.ay-tarjetas.cazador .ay-tarjeta { background: linear-gradient(160deg, #233f78, #172340); }
+.ay-tarjeta canvas { width: 112px; height: 81px; border-radius: 11px; border: 3px solid var(--outline); display: block; }
+.ay-tarjeta b { display: flex; align-items: center; gap: 7px; font: 400 21px var(--font-display); color: var(--ink); line-height: 1; }
+.ay-tarjeta b em { font-style: normal; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 3px solid var(--outline); background: var(--gold); color: var(--outline); font-size: 15px; text-shadow: none; flex: none; }
+.ay-tarjeta p { margin: 4px 0 0; font-weight: 700; font-size: 14px; line-height: 1.25; color: var(--ink); }
+.ay-truco { margin: 0; text-align: center; font-weight: 800; font-size: 13px; line-height: 1.3; color: var(--gold); }
+.ay-mas { align-self: center; }
+
+/* la tarjeta MI ESCENARIO del título */
+.tit-esc { display: grid; grid-template-columns: 104px 1fr auto; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; padding: 7px 10px 7px 7px; border-radius: 18px; border: 4px solid var(--outline); box-shadow: 0 5px 0 var(--outline), inset 0 3px 0 rgba(255, 255, 255, 0.25); background: linear-gradient(160deg, #ff7bc2, #c2368a); color: var(--ink); text-align: left; cursor: pointer; font-family: var(--font-ui); }
+.tit-esc:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--outline); }
+.tit-esc canvas { width: 104px; height: 66px; border-radius: 11px; border: 3px solid var(--outline); background: #0b0f1c; display: block; }
+.tit-esc b { display: block; font: 400 21px var(--font-display); line-height: 1; }
+.tit-esc span { display: block; margin-top: 3px; font-weight: 700; font-size: 12.5px; line-height: 1.2; }
+.tit-esc i[data-icono] { width: 30px; height: 30px; display: grid; place-items: center; }

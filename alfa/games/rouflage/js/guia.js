@@ -6,7 +6,11 @@
 // · Se guarda en SAVE.guia = { hechas: [ids] }. «Saltar» salta solo esa guía. OPCIONES › Repetir tutorial también las repite.
 'use strict';
 
-const visible = id => { const e = E(id); return !!(e && !e.hidden); };
+const visible = id => {
+  if (id === 'sala') return J.fase === 'sala' && document.body.classList.contains('sala-viva') && !document.body.classList.contains('visita');
+  if (id === 'visita') return J.fase === 'sala' && document.body.classList.contains('visita');
+  const e = E(id); return !!(e && !e.hidden);
+};
 const GUIAS = [
   { id: 'jugar', desde: 0, pasos: [
     { en: 'p-titulo', a: '.tit-papeles', t: '<b>¡EMPIEZA AQUÍ!</b> Elige papel y juega contra bots para aprender: de camaleón te escondes, de cazador buscas.', hecho: () => visible('p-bots') },
@@ -23,14 +27,19 @@ const GUIAS = [
     { en: 'p-titulo', a: '#b-misiones', t: 'Cada día hay 6 <b>MISIONES</b> nuevas y cada lunes, las de la semana. Dan gotas.', hecho: () => visible('p-misiones') },
   ] },
   { id: 'escenario', desde: 3, pasos: [
-    { en: 'p-titulo', a: '#b-perfil', t: 'Toca tu <b>PERFIL</b>: ahí dentro está tu habitación.', hecho: () => visible('p-perfil') },
-    { en: 'p-perfil', a: '#b-escenario', t: '<b>MI ESCENARIO</b>: tu propia habitación para decorar con muebles y pintar a tu gusto.', hecho: () => visible('p-escenario') },
+    { en: 'p-titulo', a: '#b-tit-esc', t: '<b>MI ESCENARIO</b>: tu propia habitación. Decórala, constrúyela a tu gusto y juega ahí con tus amigos.', hecho: () => visible('p-escenario') },
     { en: 'p-escenario', a: null, t: 'Esta es tu habitación. Coloca muebles, pinta el suelo y las paredes y pasea con tu galleta. Tus amigos la verán en vuestras salas.', seg: 10 },
   ] },
   { id: 'amigos', desde: 4, pasos: [
     { en: 'p-titulo', a: '#b-social', t: '<b>AMIGOS</b>: mira quién está en línea e invítale a jugar contigo.', hecho: () => visible('p-amigoslista') },
     { en: 'p-amigoslista', a: '#b-amg-traer', t: 'Aquí está tu código. Si un amigo nuevo juega dos partidas con tu enlace, <b>ganáis los dos</b>.', hecho: () => visible('p-invita') },
     { en: 'p-invita', a: '#b-inv-compartir', t: 'Mándale el enlace por WhatsApp o donde quieras. Trayendo amigos ganas premios que no se venden.', seg: 10 },
+  ] },
+  // las guías de «que sea fácil para niños de 13 años» (Daniel, 25-10-2026): PvP, pase, gachapón, decorar, visitar y la sala con amigos
+  { id: 'pvp', desde: 2, pasos: [
+    { en: 'p-titulo', a: '#b-pvp', t: '<b>EN LÍNEA</b>: juega contra otras personas de verdad o con tus amigos.', hecho: () => visible('p-pvp') },
+    { en: 'p-pvp', a: '#b-pvp-buscar', t: '<b>BUSCAR PARTIDA</b>: te junta con otros jugadores. Da el doble de premios.', seg: 9 },
+    { en: 'p-pvp', a: '#b-pvp-amigos', t: '<b>JUGAR CON AMIGOS</b>: entras en una sala dentro de tu escenario y les mandas el código para que vengan.', seg: 10 },
   ] },
   { id: 'temporada', desde: 2, pasos: [
     { en: 'p-titulo', a: '#b-temporada', t: 'La <b>TEMPORADA</b>: en BUSCAR PARTIDA ganas puntos de liga. Al acabar, premio según tu liga.', hecho: () => visible('p-temporada') },
@@ -41,10 +50,12 @@ const GUIAS = [
   ] },
   { id: 'pase', desde: 6, pasos: [
     { en: 'p-titulo', a: '#b-pase', t: 'El <b>PASE</b>: cada partida te da experiencia y cada nivel, un premio.', hecho: () => visible('p-pase') },
+    { en: 'p-pase', a: '.pase-tubo', t: 'Cada partida llena este <b>tubo de pintura</b>. Cuando se llena, subes de nivel y te llevas el premio de la lista.', seg: 10 },
   ] },
   { id: 'tienda', desde: 7, pasos: [
     { en: 'p-titulo', a: '#b-tienda', t: 'En la <b>TIENDA</b> está también el <b>GACHAPÓN</b>, con tiradas gratis cada día.', hecho: () => visible('p-tienda') },
     { en: 'p-tienda', a: '#b-gacha', t: 'Toca aquí para abrir el <b>GACHAPÓN</b>.', hecho: () => visible('p-gacha') },
+    { en: 'p-gacha', a: '#b-gacha-1', t: 'Toca para sacar una cápsula con <b>Gotas</b>. Traen ropa y cosas para tu escenario. Cada día hay tiradas gratis.', seg: 10 },
   ] },
   // EL LIENZO de Mi escenario (escenario-obra.js): la primera vez que tienes uno, paso a paso por CONSTRUIR (pedido por Daniel el 25-10-2026)
   { id: 'construir', desde: 0, si: () => typeof MIESC !== 'undefined' && MIESC.abierto && escBase(escenarioSala().id) === 'lienzo', pasos: [
@@ -55,6 +66,22 @@ const GUIAS = [
     { en: 'p-escenario', a: '#obra-b-diana', t: '<b>BECARIOS</b>: toca la sala donde esperan los cazadores al empezar la partida. Se pone en azul.', hecho: () => !!OBRA.uso.becarios },
     { en: 'p-escenario', a: '#obra-b-comprobar', t: '<b>COMPROBAR</b> te dice si se puede jugar. Lo que falla sale en rojo.', hecho: () => !!OBRA.uso.comprobar },
     { en: 'p-escenario', a: '#obra-b-jugar', t: '<b>PROBAR</b>: juega una partida contra bots en tu escenario. Luego, invita a tus amigos.', seg: 12 },
+  ] },
+  // más cosas de Mi escenario, cuando ya conoces lo básico
+  { id: 'decorar', desde: 0, si: () => guiaHechas().includes('escenario') && typeof MIESC !== 'undefined' && MIESC.abierto, pasos: [
+    { en: 'p-escenario', a: '#esc-pest-pegar', t: '<b>PEGATINAS</b>: pega tus pegatinas en el suelo y en las paredes.', seg: 8 },
+    { en: 'p-escenario', a: '#esc-pest-pintar', t: '<b>PINTAR</b>: pinta el suelo y las paredes con el pincel, como cuando te escondes.', seg: 8 },
+    { en: 'p-escenario', a: '#b-esc-pasear', t: '<b>PASEAR</b>: camina por tu escenario. Desde ahí lo puedes <b>PROBAR</b> en una partida contra bots.', seg: 9 },
+  ] },
+  { id: 'visitar', desde: 0, si: () => !!document.querySelector('#vis-semana:not([hidden]), #p-amigoslista .vis-ver'), pasos: [
+    { en: 'p-amigoslista', a: '#vis-semana:not([hidden]), #p-amigoslista .vis-ver', t: '<b>VISITA</b> los escenarios de tus amigos: pasea por ellos y dales <b>ME GUSTA</b>.', seg: 10 },
+  ] },
+  { id: 'sala', desde: 0, pasos: [
+    { en: 'sala', a: '#sv-papel', t: 'Mientras esperáis, toca aquí para ser <b>CAZADOR</b> y buscar a tus amigos. Como mucho, dos cazadores.', seg: 10 },
+    { en: 'sala', a: '#sv-empezar', t: 'Cuando estéis todos, toca aquí para <b>EMPEZAR</b> la partida en este escenario.', seg: 10 },
+  ] },
+  { id: 'visita', desde: 0, pasos: [
+    { en: 'visita', a: '#vis-si', t: 'Si te gusta este escenario, dale <b>ME GUSTA</b>. Para salir, la flecha de arriba.', seg: 9 },
   ] },
   // al acabar una partida de colado en la que sobrevives: el reto (reto.js)
   { id: 'reto', desde: 0, si: () => typeof fotoHay === 'function' && fotoHay(), pasos: [
@@ -76,7 +103,7 @@ function guiaBusca() {
 function guiaPaso(dt) {
   if (!GUIA.caja) return;
   const ocultar = () => { GUIA.caja.hidden = GUIA.foco.hidden = true; };
-  if (J.pvp || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) { ocultar(); return; }
+  if ((J.pvp && J.fase !== 'sala') || !E('carga').hidden || (typeof bocadilloActivo === 'function' && bocadilloActivo()) || (typeof RETO !== 'undefined' && RETO.activo)) { ocultar(); return; }
   if (['ar-compra', 'obra-elige', 'esc-rep'].some(id => visible(id))) { ocultar(); return; }      // con una ventana encima (comprar, empezar un lienzo, reportar), la guía espera
   if (!GUIA.g) { GUIA.g = guiaBusca(); GUIA.i = 0; GUIA.t = 0; if (!GUIA.g) { ocultar(); return; } }
   const p = GUIA.g.pasos[GUIA.i];

@@ -35,12 +35,14 @@ const TERRENO = (() => {
     const g = cx.createLinearGradient(0, 250, 0, H); g.addColorStop(0, mapa.roca[0]); g.addColorStop(1, mapa.roca[1]);
     cx.fillStyle = g; traza(); cx.lineTo(W, H); cx.lineTo(0, H); cx.closePath(); cx.fill();
     cx.globalCompositeOperation = 'source-atop';
-    for (let i = 0; i < 700; i++) {   // piedrecitas y manchas para que no sea un color plano
+    if (!ESCENARIO.suelo(cx, az, sup)) for (let i = 0; i < 700; i++) {   // piedrecitas y manchas para que no sea un color plano
       const x = az() * W, y = 260 + az() * (H - 260), r = 3 + az() * 16;
       cx.fillStyle = az() < 0.5 ? 'rgba(0,0,0,.10)' : 'rgba(255,255,255,.07)'; cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill();
     }
-    cx.strokeStyle = mapa.hierba; cx.lineWidth = 12; cx.lineCap = 'butt'; traza(); cx.stroke();
-    cx.strokeStyle = 'rgba(255,255,255,.28)'; cx.lineWidth = 3; cx.save(); cx.translate(0, -3); traza(); cx.stroke(); cx.restore();
+    if (!ESCENARIO.capa(cx, az, sup)) {
+      cx.strokeStyle = mapa.hierba; cx.lineWidth = 12; cx.lineCap = 'butt'; traza(); cx.stroke();
+      cx.strokeStyle = 'rgba(255,255,255,.28)'; cx.lineWidth = 3; cx.save(); cx.translate(0, -3); traza(); cx.stroke(); cx.restore();
+    }
     cx.globalCompositeOperation = 'source-over';
   }
 
@@ -55,6 +57,7 @@ const TERRENO = (() => {
     if (!cx) return;
     cx.save(); cx.globalCompositeOperation = 'source-atop'; cx.fillStyle = mapa.borde; cx.beginPath(); cx.arc(x, y, r + 5, 0, 6.2832); cx.fill();
     cx.globalCompositeOperation = 'destination-out'; cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill(); cx.restore();
+    ESCENARIO.rompe(x, y, r);
   }
 
   function crea(id, semilla, salidas) {   // salidas: columnas (en píxeles) donde sale cada móvil
@@ -62,7 +65,7 @@ const TERRENO = (() => {
     const az = mulberry32(semilla);
     if (typeof document !== 'undefined') { if (!cv) { cv = document.createElement('canvas'); cv.width = W; cv.height = H; cx = cv.getContext('2d'); } }
     altura(az); salidas.forEach(allana); huecos(); rellena();
-    if (cx) pinta(az);
+    if (cx) { const deco = mulberry32((semilla * 31 + 7) >>> 0); ESCENARIO.crea(mapa, semilla, salidas, sup); pinta(deco); }   // el dibujo lleva su propio azar: así el mapa sale igual con o sin pantalla
     for (let i = 0; i < mapa.cuevas; i++) {
       const x = W * (0.12 + az() * 0.76), y = sup[Math.floor(x)] + 100 + az() * 150, r = 36 + az() * 40;
       if (salidas.some(s => Math.abs(s - x) < 140) || sup[Math.floor(x)] >= H) continue;

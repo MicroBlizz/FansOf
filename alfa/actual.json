@@ -1,10 +1,10 @@
 {
- "build": 505,
- "hash": "5627c79",
- "fecha": "2026-10-25T12:28:38Z",
- "mensaje": "Tienda con dinero real: Google Play Billing (apagada hasta abrirla)",
+ "build": 506,
+ "hash": "ebba718",
+ "fecha": "2026-10-25T12:40:58Z",
+ "mensaje": "Boom: ocho mapas con carácter, uno por cada mundo de las campañas de Rumble (fondo por capas, suelo temático con cosas enterradas, objetos que se rompen y caen, ambiente que va con el viento) y miniaturas con «Al azar» al preparar; v0.3.0",
  "juegos": {
-  "boom": "0.2.0",
+  "boom": "0.3.0",
   "cooking": "0.2.0",
   "crush": "0.1.35",
   "dark": "0.2.7",

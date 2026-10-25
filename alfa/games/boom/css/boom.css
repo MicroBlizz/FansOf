@@ -24,9 +24,12 @@
 .bm-nombre { flex: 1; min-width: 0; font: 800 18px var(--font-ui); color: #fff; background: rgba(0, 0, 0, .3); border: 2px solid var(--outline); border-radius: 8px; padding: 4px 8px; }
 .bm-nombre:disabled { opacity: .45; }
 .bm-chip { font: 800 15px var(--font-ui); color: #fff; background: #5b3d8a; border: 3px solid var(--outline); border-radius: 10px; padding: 4px 12px; cursor: pointer; min-width: 92px; }
-.bm-mapas { display: flex; gap: 12px; }
-.bm-mapas button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 12px; }
-.bm-mapas i { width: 150px; height: 44px; border-radius: 8px; border: 2px solid var(--outline); background: linear-gradient(var(--c1) 55%, var(--c2) 55%); display: block; }
+.bm-mapas { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; max-width: 940px; }
+.bm-mapas button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px; font-size: 11px; width: 96px; }
+.bm-mapas span { line-height: 1.1; min-height: 2.2em; display: flex; align-items: center; }
+.bm-mapas i { width: 88px; height: 34px; border-radius: 8px; border: 2px solid var(--outline); background: #2a1a40 center / cover no-repeat; display: block; }
+.bm-mapas i.bm-azar { font: 400 26px var(--font-display); font-style: normal; line-height: 32px; color: var(--gold); text-shadow: 2px 2px 0 var(--outline); background: repeating-linear-gradient(45deg, #5b3d8a 0 10px, #3e2363 10px 20px); }
+.bm-mapa-nota { min-height: 1.3em; }
 /* ventanas */
 .bm-velo { position: absolute; inset: 0; background: rgba(12, 6, 20, .82); display: flex; align-items: center; justify-content: center; }
 .bm-velo[hidden] { display: none; }
@@ -69,7 +72,7 @@
 .bm-estrecho .bm-quien { font-size: 44px; }
 .bm-estrecho .bm-logo b { font-size: 110px; }
 .bm-estrecho .bm-nota { max-width: 90%; }
-.bm-estrecho .bm-mapas i { width: 120px; }
+.bm-estrecho .bm-mapas button { width: 96px; }
 #bm-objetos { position: absolute; left: 12px; top: 150px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; pointer-events: auto; }
 #bm-objetos[hidden] { display: none; }
 #bm-objetos.bm-quieto * { pointer-events: none; opacity: .6; }

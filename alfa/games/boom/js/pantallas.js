@@ -39,7 +39,8 @@ const PANT = (() => {
       <h2 class="bm-h2">${tr('PREPARA LA PARTIDA')}</h2>
       <div class="bm-tabs"><button data-modo="1v1" class="${PREP.modo === '1v1' ? 'bm-on' : ''}">${tr('1 CONTRA 1')}</button><button data-modo="2v2" class="${PREP.modo === '2v2' ? 'bm-on' : ''}">${tr('DOBLES')}</button></div>
       <div class="bm-slots">${filas}</div>
-      <div class="bm-mapas">${BOOM.mapas.map(m => `<button data-mapa="${m.id}" class="${PREP.mapa === m.id ? 'bm-on' : ''}" style="--c1:${m.cielo[0]};--c2:${m.roca[0]}"><i></i><span>${tr(m.nombre)}</span></button>`).join('')}</div>
+      <div class="bm-mapas">${BOOM.mapas.map(m => `<button data-mapa="${m.id}" class="${PREP.mapa === m.id ? 'bm-on' : ''}"><i style="background-image:url(${ESCENARIO.miniatura(m)})"></i><span>${tr(m.nombre)}</span></button>`).join('')}<button data-mapa="azar" class="${PREP.mapa === 'azar' ? 'bm-on' : ''}"><i class="bm-azar">?</i><span>${tr('Al azar')}</span></button></div>
+      <p class="bm-nota bm-mapa-nota">${tr((BOOM.mapas.find(m => m.id === PREP.mapa) || { nota: 'Un mapa distinto cada partida.' }).nota)}</p>
       <p class="bm-nota">${conRango() ? tr('Partida con rango: la IA se ajusta a tu rango y ganas o pierdes puntos.') + ' ' : ''}${personas >= 2 ? tr('Se juega pasándose el aparato: antes de cada turno sale un cartel y el viento no se ve hasta que lo coge quien tira.') : tr('Cada plaza puede ser una persona o la IA.')}</p>
       <div class="bm-fila-b"><button class="bm-btn bm-sec" id="bm-atras">${tr('VOLVER')}</button><button class="bm-btn" id="bm-empezar">${tr('EMPEZAR')}</button></div>`;
     $('#bm-prepara').hidden = false;
@@ -54,10 +55,11 @@ const PANT = (() => {
     $('#bm-atras').onclick = () => { play('select'); portada(); };
     $('#bm-empezar').onclick = () => { play('select'); const n = equipos.length; SAVE.ultima = JSON.parse(JSON.stringify({ modo: PREP.modo, mapa: PREP.mapa, slots: PREP.slots })); bmGuarda(); juega(n); };
   }
+  const elige = id => id === 'azar' ? BOOM.mapas[Math.floor(Math.random() * BOOM.mapas.length)].id : id;   // «Al azar»: uno distinto cada partida
   function juega(n, semilla) {
     cierraTodo(); escena = 'partida';
     const rango = conRango() && PREP.modo === '1v1';
-    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, rango, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: rango && s.ia ? RANGO.nivelIA() : s.nivel, nombre: s.nombre, movil: s.movil, facil: s.facil })) });
+    PARTIDA.nueva({ modo: PREP.modo, mapa: elige(PREP.mapa), semilla, rango, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: rango && s.ia ? RANGO.nivelIA() : s.nivel, nombre: s.nombre, movil: s.movil, facil: s.facil })) });
     EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
     $('#bm-pausa').hidden = false; revisa();
   }
@@ -144,5 +146,5 @@ const PANT = (() => {
     PARTIDA.nueva(cfg); EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
     $('#bm-pausa').hidden = false; revisa();
   }
-  return { inicia, revisa, juegaCon, mapa: () => PREP.mapa, movil: () => (PREP.slots[0] || {}).movil, enPartida: () => escena === 'partida' };
+  return { inicia, revisa, juegaCon, mapa: () => elige(PREP.mapa), movil: () => (PREP.slots[0] || {}).movil, enPartida: () => escena === 'partida' };
 })();

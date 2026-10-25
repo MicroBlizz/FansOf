@@ -101,11 +101,25 @@ const BOOM = {
   modos: { '1v1': { equipos: [0, 1], x: [[0.14], [0.86]] }, '2v2': { equipos: [0, 1, 0, 1], x: [[0.09, 0.22], [0.91, 0.78]] } },   // de quién es cada plaza y dónde sale cada equipo (fracción del ancho)
   ia: { candidatos: 70, error: [44, 26, 12], pausa: 0.9 },   // tiros que simula, error en píxeles según el nivel (0 fácil, 1 normal, 2 difícil) y pausa de pensar
   nombresIA: ['Phony', 'IAhorro', 'Lola', 'Microblizz'],
+  // Los mapas: uno por cada mundo de las campañas de Rumble. Aquí, lo que cambia la partida (forma del suelo, huecos, cuevas) y sus colores;
+  // su fondo, la textura del suelo, los objetos y el ambiente se dibujan en escenarios-*.js con el mismo id.
   mapas: [
-    { id: 'oficina', nombre: 'La Oficina de Microblizz', cielo: ['#7ad8ff', '#d8f4ff'], roca: ['#8a5a3c', '#4a2d24'], hierba: '#6fd04a', borde: '#2a1a14', base: 0.6,
+    { id: 'oficina', nombre: 'Oficinas de Microblizz', nota: 'Moqueta, mesas y una fuente de agua que nadie cambia desde 2009.', cielo: ['#9fdcff', '#e6f6ff'], roca: ['#cdb89a', '#5e4a66'], hierba: '#5a6fa8', borde: '#2a1a30', base: 0.6,
       olas: [[150, 2.1], [90, 5.3], [45, 11.7]], huecos: [], cuevas: 0 },
-    { id: 'madriguera', nombre: 'La Madriguera', cielo: ['#ffb36b', '#ffe9c6'], roca: ['#b0763f', '#5e3a22'], hierba: '#c9d84a', borde: '#3a2010', base: 0.66,
+    { id: 'madriguera', nombre: 'La Madriguera', nota: 'Donde los Animales Locos guardan todo lo que encuentran. Todo.', cielo: ['#ff8f5a', '#ffe2b0'], roca: ['#b0763f', '#4e2e1c'], hierba: '#a8c83a', borde: '#3a2010', base: 0.66,
       olas: [[190, 1.6], [110, 4.1], [60, 9.3]], huecos: [[0.5, 110]], cuevas: 7 },
+    { id: 'cementerio', nombre: 'Cementerio de juegos', nota: 'Aquí descansan los juegos cancelados. No del todo.', cielo: ['#1a1038', '#3e6a78'], roca: ['#544258', '#1c1222'], hierba: '#5a8a3e', borde: '#120a18', base: 0.62,
+      olas: [[170, 1.8], [80, 4.7], [40, 12.3]], huecos: [[0.36, 70]], cuevas: 4 },
+    { id: 'plato', nombre: 'Plató abandonado', nota: 'El plató de una serie que no vio nadie. Los focos siguen encendidos.', cielo: ['#1e1426', '#4e3036'], roca: ['#8e8078', '#2e2430'], hierba: '#c47c3e', borde: '#1a1016', base: 0.62,
+      olas: [[70, 1.3], [60, 3.2], [22, 8.1]], huecos: [[0.62, 90]], cuevas: 3 },
+    { id: 'olimpo', nombre: 'Olimpo abandonado', nota: 'Los dioses se fueron de vacaciones y dejaron las columnas sin barrer.', cielo: ['#4fb2ff', '#fff0bc'], roca: ['#f4eee2', '#a49686'], hierba: '#7ac24a', borde: '#3a2e3a', base: 0.64,
+      olas: [[220, 1.4], [90, 3.9], [30, 10.1]], huecos: [[0.3, 90], [0.7, 90]], cuevas: 2 },
+    { id: 'neon', nombre: 'Sector Neón', nota: 'Lluvia, carteles que parpadean y una máquina que solo vende cables.', cielo: ['#0c0826', '#4a1858'], roca: ['#3e4460', '#131424'], hierba: '#5a6074', borde: '#0a0814', base: 0.6,
+      olas: [[120, 2.6], [70, 6.1], [25, 14]], huecos: [[0.5, 80]], cuevas: 3 },
+    { id: 'lan', nombre: 'La LAN Party', nota: 'Cables, pizza fría y cuatrocientos ordenadores con lucecitas.', cielo: ['#100a1e', '#2e1846'], roca: ['#b07a44', '#4a2e22'], hierba: '#2c2c3a', borde: '#140c18', base: 0.63,
+      olas: [[140, 2.2], [80, 4.4], [40, 10.6]], huecos: [], cuevas: 5 },
+    { id: 'sotano', nombre: 'El Sótano de Microblizz', nota: 'Las cajas de lo que Microblizz no quiere que veas. Y una rata.', cielo: ['#241c24', '#4e3a30'], roca: ['#8e6c5a', '#36261f'], hierba: '#8c8a88', borde: '#1a1012', base: 0.58,
+      olas: [[160, 1.9], [100, 4.8], [50, 9.9]], huecos: [[0.44, 80]], cuevas: 6 },
   ],
   frases: {
     alto: ['Eso ha subido más que las acciones de Phony.', 'Microblizz ha medido el ángulo con el dedo.', 'Ese tiro ha visto la nube de verdad.'],

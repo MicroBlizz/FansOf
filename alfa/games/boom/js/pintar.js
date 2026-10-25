@@ -109,11 +109,12 @@ const PINTAR = (() => {
   function frame(c, P, dt, t) {
     sigue(P, dt);
     const sh = EFECTOS.FX.temblor, sx = sh ? (Math.random() - 0.5) * sh : 0, sy = sh ? (Math.random() - 0.5) * sh : 0;
-    fondo(c, TERRENO.mapa());
+    if (!ESCENARIO.fondo(c, V, CAM, t)) fondo(c, TERRENO.mapa());
     c.save(); c.translate(sx, sy);
+    ESCENARIO.objetos(c, CAM, t, dt, true);   // lo medio enterrado, detrás del suelo
     const cv = TERRENO.canvas();
     if (cv) c.drawImage(cv, CAM.x, CAM.y, V.w, V.h, 0, 0, V.w, V.h);
-    vacio(c); marca(c, P);
+    vacio(c); ESCENARIO.objetos(c, CAM, t, dt, false); marca(c, P);
     for (const m of P.moviles) if (m.vivo) movil(c, m, P, t);
     guia(c, P);
     if (P.cfg) ENTRENO.pinta(c, P, CAM);   // Entrenamiento o ayuda fácil: por dónde irá el tiro
@@ -121,6 +122,7 @@ const PINTAR = (() => {
     for (const p of P.proys || []) if (!p.hecho) proyectil(c, p, P, t);
     EFECTOS.pinta(c, CAM.x, CAM.y);
     c.restore();
+    ESCENARIO.ambiente(c, V, CAM, t, dt, P.viento || 0);   // hojas, papeles, lluvia… con el viento del turno
   }
   return { V, CAM, frame, enfoca, tamano };
 })();

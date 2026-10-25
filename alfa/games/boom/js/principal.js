@@ -46,7 +46,7 @@ function bmFotograma(ahora) {
     if (P.actual && P.actual.ia && P.fase === 'apunta') PINTAR_TXT(c, tr('Piensa {n}…', { n: P.actual.nombre }), PINTAR.V.w / 2, 84, 18, '#fff');
     CONTROLES.pinta(c); CONTROLES.frame(dt); PANT.revisa();
   } else {   // en la portada y en preparar: el mapa de fondo, despacio de un lado a otro
-    if (!bmFondo) { TERRENO.crea('oficina', 4242, []); bmFondo = true; }
+    if (!bmFondo) { TERRENO.crea(BOOM.mapas[Math.floor(Math.random() * BOOM.mapas.length)].id, 4242, []); bmFondo = true; }   // un mapa distinto cada vez
     PINTAR.enfoca(960 + Math.sin(bmT * 0.12) * 800, 560, true); PINTAR.frame(c, { moviles: [], actual: null, fase: 'fin', proy: null }, dt, bmT);
     c.fillStyle = 'rgba(21,11,33,.45)'; c.fillRect(0, 0, PINTAR.V.w, 1000); $('#bm-panel').hidden = true;
   }

@@ -50,6 +50,10 @@ const BOOM = {
     teletransporte: { nombre: 'Teletransporte', nota: 'Saltas a otro punto cercano del suelo.', alcance: 650, retraso: 110 },
     bungee: { nombre: 'Bungee', nota: 'Te salva una vez de caer al vacío.', retraso: 30 },
   } },
+  // Rangos: puntos desde 1.000 (Pollito). Solo en partidas con rango (una persona contra una IA, 1 contra 1): la IA se ajusta al rango del jugador.
+  rangos: { inicial: 1000, gana: 30, pierde: 20, dificultad: [0.7, 1, 1.4],   // puntos por ganar/perder, multiplicados por la dificultad de la IA (fácil, normal, difícil)
+    lista: [['Pollito', 0], ['Becario', 1100], ['Becario con contrato', 1250], ['Junior', 1450], ['Senior', 1700], ['Lead', 2000], ['Director', 2400], ['Vicepresidente', 2900], ['CEO', 3500]],
+    nivelIA: [[0, 0], [3, 1], [6, 2]] },   // desde qué posición de rango la IA sube de nivel
   salida: [0, 25, 50, 75],   // retraso con el que sale cada jugador: abre el 1, luego el 2, el 3 y el 4
   equipos: [{ nombre: 'NARANJA', color: '#ff7a1a', claro: '#ffb347' }, { nombre: 'AZUL', color: '#2e8bff', claro: '#7cb8ff' }],
   modos: { '1v1': { equipos: [0, 1], x: [[0.14], [0.86]] }, '2v2': { equipos: [0, 1, 0, 1], x: [[0.09, 0.22], [0.91, 0.78]] } },   // de quién es cada plaza y dónde sale cada equipo (fracción del ancho)

@@ -1,7 +1,7 @@
 // Fans of Boom · GUARDADO: lo poco que se recuerda en este navegador (sonido, tipo de control y la última partida preparada) y los
 // volúmenes que pide el motor de sonido de core. De momento no se sube a la nube: la fase 0 es solo jugar en el aparato.
 'use strict';
-const BM_NUEVA = () => ({ v: 1, muted: false, musica: true, control: 'botones', ultima: null });
+const BM_NUEVA = () => ({ v: 1, muted: false, musica: true, control: 'botones', ultima: null, puntos: 1000 });
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = BM_NUEVA();

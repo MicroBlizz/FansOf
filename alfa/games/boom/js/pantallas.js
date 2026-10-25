@@ -14,10 +14,13 @@ const PANT = (() => {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   let escena = 'portada';
 
+  // partida con rango: una persona contra una IA en 1 contra 1 (la IA se ajusta al rango)
+  const conRango = () => { const s = PREP.slots; return PREP.modo === '1v1' && s[0] && s[1] && s[0].ia !== s[1].ia; };
+  const insignia = () => `<span class="bm-rango"><b>${tr(RANGO.nombre(RANGO.puntos()))}</b> · ${RANGO.puntos()}</span>`;
   function cierraTodo() { for (const id of ['#bm-portada', '#bm-prepara', '#bm-cartel', '#bm-modal', '#bm-pausa']) $(id).hidden = true; }
   function portada() {
     escena = 'portada'; cierraTodo(); PARTIDA.parar(); $('#bm-pausa').hidden = true;
-    $('#bm-portada').hidden = false;
+    $('#bm-portada').hidden = false; $('#bm-rg').innerHTML = insignia();
   }
   function prepara() {
     escena = 'prepara'; cierraTodo(); asegura();
@@ -28,7 +31,7 @@ const PANT = (() => {
         <input class="bm-nombre" data-i="${i}" maxlength="12" value="${esc(s.nombre)}" placeholder="${tr('Jugador {n}', { n: i + 1 })}" ${s.ia ? 'disabled' : ''}>
         <button class="bm-chip" data-ia="${i}">${tr(s.ia ? 'IA' : 'PERSONA')}</button>
         <button class="bm-chip bm-movil" data-movil="${i}">${esc(BOOM.moviles.find(d => d.id === s.movil).nombre)}</button>
-        <button class="bm-chip bm-nivel" data-nivel="${i}" ${s.ia ? '' : 'style="visibility:hidden"'}>${tr(NIVELES[s.nivel])}</button>
+        <button class="bm-chip bm-nivel" data-nivel="${i}" ${s.ia && !(conRango()) ? '' : 'style="visibility:hidden"'}>${tr(NIVELES[s.nivel])}</button>
       </div>`).join('');
     const personas = PREP.slots.slice(0, equipos.length).filter(s => !s.ia).length;
     $('#bm-prepara').innerHTML = `
@@ -36,7 +39,7 @@ const PANT = (() => {
       <div class="bm-tabs"><button data-modo="1v1" class="${PREP.modo === '1v1' ? 'bm-on' : ''}">${tr('1 CONTRA 1')}</button><button data-modo="2v2" class="${PREP.modo === '2v2' ? 'bm-on' : ''}">${tr('DOBLES')}</button></div>
       <div class="bm-slots">${filas}</div>
       <div class="bm-mapas">${BOOM.mapas.map(m => `<button data-mapa="${m.id}" class="${PREP.mapa === m.id ? 'bm-on' : ''}" style="--c1:${m.cielo[0]};--c2:${m.roca[0]}"><i></i><span>${tr(m.nombre)}</span></button>`).join('')}</div>
-      <p class="bm-nota">${personas >= 2 ? tr('Se juega pasándose el aparato: antes de cada turno sale un cartel y el viento no se ve hasta que lo coge quien tira.') : tr('Cada plaza puede ser una persona o la IA.')}</p>
+      <p class="bm-nota">${conRango() ? tr('Partida con rango: la IA se ajusta a tu rango y ganas o pierdes puntos.') + ' ' : ''}${personas >= 2 ? tr('Se juega pasándose el aparato: antes de cada turno sale un cartel y el viento no se ve hasta que lo coge quien tira.') : tr('Cada plaza puede ser una persona o la IA.')}</p>
       <div class="bm-fila-b"><button class="bm-btn bm-sec" id="bm-atras">${tr('VOLVER')}</button><button class="bm-btn" id="bm-empezar">${tr('EMPEZAR')}</button></div>`;
     $('#bm-prepara').hidden = false;
     const q = (s, f) => $('#bm-prepara').querySelectorAll(s).forEach(f);
@@ -51,7 +54,8 @@ const PANT = (() => {
   }
   function juega(n, semilla) {
     cierraTodo(); escena = 'partida';
-    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: s.nivel, nombre: s.nombre, movil: s.movil })) });
+    const rango = conRango() && PREP.modo === '1v1';
+    PARTIDA.nueva({ modo: PREP.modo, mapa: PREP.mapa, semilla, rango, slots: PREP.slots.slice(0, n).map(s => ({ ia: s.ia, nivel: rango && s.ia ? RANGO.nivelIA() : s.nivel, nombre: s.nombre, movil: s.movil })) });
     EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
     $('#bm-pausa').hidden = false; revisa();
   }
@@ -70,10 +74,16 @@ const PANT = (() => {
     $('#bm-cartel').hidden = false; $('#bm-listo').onclick = () => { play('select'); $('#bm-cartel').hidden = true; PARTIDA.listo(); };
   }
   function fin(P) {
+    let rg = '';
+    if (P.cfg.rango && !P.rangoHecho) {   // los puntos se cuentan una sola vez por partida
+      P.rangoHecho = true; const hum = P.moviles.find(m => !m.ia), ia = P.moviles.find(m => m.ia);
+      P.rangoRes = P.ganador < 0 ? null : RANGO.aplica(P.ganador === hum.equipo, ia.nivel);
+    }
+    if (P.rangoRes) { const r = P.rangoRes; rg = `<p class="bm-nota"><b>${r.delta > 0 ? '+' : ''}${r.delta}</b> ${tr('puntos')} · ${insignia()}${r.subio ? ' · <b>' + tr('¡Subes de rango!') + '</b>' : ''}</p>`; }
     const E = BOOM.equipos, g = P.ganador, nombres = P.moviles.filter(m => m.equipo === g).map(m => esc(m.nombre)).join(' y ');
     $('#bm-modal').innerHTML = `<div class="bm-tarjeta" style="--eq:${g < 0 ? '#cdb9ea' : E[g].color}"><h2>${g < 0 ? tr('EMPATE') : tr('GANA EL EQUIPO ' + E[g].nombre)}</h2>
       <p class="bm-quien">${g < 0 ? tr('Nadie queda en pie. Phony pide recuento.') : nombres}</p>
-      <p class="bm-nota">${tr('Turnos jugados: {n}', { n: P.turnos })}</p>
+      <p class="bm-nota">${tr('Turnos jugados: {n}', { n: P.turnos })}</p>${rg}
       <div class="bm-fila-b"><button class="bm-btn" id="bm-otra">${tr('REVANCHA')}</button><button class="bm-btn bm-sec" id="bm-cambia">${tr('PREPARAR')}</button><button class="bm-btn bm-sec" id="bm-inicio">${tr('SALIR')}</button></div></div>`;
     $('#bm-modal').hidden = false;
     $('#bm-otra').onclick = () => { play('select'); ultimaFase = ''; juega(P.moviles.length); };
@@ -106,7 +116,7 @@ const PANT = (() => {
     ui().innerHTML = `
       <section id="bm-portada" class="bm-pantalla"><div class="bm-logo"><span>FANS OF</span><b>BOOM</b></div>
         <p class="bm-lema">${tr('Apunta bien. El viento ya hará el resto.')}</p>
-        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div></section>
+        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div><p id="bm-rg"></p></section>
       <section id="bm-prepara" class="bm-pantalla" hidden></section>
       <button id="bm-pausa" class="bm-pausa" aria-label="${tr('Pausa')}" hidden><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="#fff" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/></svg></button>
       <div id="bm-panel" hidden></div><div id="bm-objetos" hidden></div>

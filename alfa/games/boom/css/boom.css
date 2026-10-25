@@ -76,3 +76,6 @@
 .bm-obj { font: 800 14px var(--font-ui); color: #fff; background: #5b3d8a; border: 3px solid var(--outline); border-radius: 10px; padding: 3px 10px; cursor: pointer; }
 .bm-act { font: 800 12px var(--font-ui); color: var(--gold); text-shadow: 1px 1px 0 var(--outline); }
 .bm-estrecho #bm-objetos { top: 140px; }
+.bm-rango { font: 800 16px var(--font-ui); color: var(--gold); text-shadow: 1px 1px 0 var(--outline); }
+.bm-rango b { color: #fff; }
+#bm-rg { margin: 0; }

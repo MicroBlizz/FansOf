@@ -89,7 +89,7 @@ const PINTAR = (() => {
       c.fillStyle = '#fff'; c.strokeStyle = OL; c.lineWidth = 3; c.beginPath(); c.moveTo(x, 8); c.lineTo(x - 9, 26); c.lineTo(x + 9, 26); c.closePath(); c.fill(); c.stroke();
       PINTAR_TXT(c, Math.round(-p.y) + ' m', x, 40, 15, '#fff'); return;
     }
-    c.fillStyle = '#20102c'; c.beginPath(); c.arc(x, y, 7.5, 0, 6.2832); c.fill(); c.fillStyle = '#ffcb3d'; c.beginPath(); c.arc(x - 1, y - 1, 5, 0, 6.2832); c.fill();
+    PROYECTIL_FORMAS[p.def.forma || 'bola'](c, x, y, Math.atan2(p.vy, p.vx), p.t);
   }
 
   function frame(c, P, dt, t) {

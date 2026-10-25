@@ -41,7 +41,7 @@ const IA = (() => {
       const t = mejorTiro(P, m);
       if (t && t.coste > 260 && !pl.andado && m.energia > 40) { pl.andado = true; pl.camino = Math.min(m.energia, 170); pl.etapa = 'camina'; return false; }
       if (!t) { pl.etapa = 'tira'; pl.tiro = { ang: m.ang, pot: m.pot, tiro: m.tiro }; return false; }
-      pl.tiro = { ang: clamp(t.ang + (P.az() * 2 - 1) * err / 20, 0, 90), pot: clamp(t.pot + (P.az() * 2 - 1) * err / 8, 5, 100), tiro: t.tiro };
+      pl.tiro = { ang: clamp(t.ang + (P.az() * 2 - 1) * err / 20, 0, 90), pot: clamp(t.pot + (P.az() * 2 - 1) * err / 11, 5, 100), tiro: t.tiro };
       pl.etapa = 'apunta'; pl.t = 0.4; return false;
     }
     if (pl.etapa === 'camina') {

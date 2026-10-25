@@ -109,4 +109,5 @@ IDIOMA.add({
   "CEO": "CEO",
   "Bumerán de chatarra": "Junk Boomerang",
   "Presa reventada": "Burst Dam",
+  "VERSIÓN": "VERSION",
 });

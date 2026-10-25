@@ -1,8 +1,8 @@
 {
- "build": 496,
- "hash": "121b5ab",
- "fecha": "2026-10-25T02:56:10Z",
- "mensaje": "Versiones y notas del despliegue: crush 0.1.35, decks 0.2.17, jump 0.3.12, karts 0.7.11, nova 0.3.22, ratkov 0.2.25, rouflage 0.2.50, rumble 0.9.154, survivors 0.1.67, tacticas 0.1.51, td 0.13.83",
+ "build": 497,
+ "hash": "6fc6672",
+ "fecha": "2026-10-25T03:06:08Z",
+ "mensaje": "Boom: más potencia (a tope cruza el mapa con el viento en contra), proyectil propio por móvil con su trato del viento, Opciones con todo lo de core y partida en la nube",
  "juegos": {
   "boom": "0.1.0",
   "crush": "0.1.35",

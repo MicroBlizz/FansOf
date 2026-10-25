@@ -105,12 +105,18 @@ const PANT = (() => {
       filas: [
         OPCIONES.interruptor(tr('Sonido'), '', () => !SAVE.muted, v => { SAVE.muted = !v; applyVolume(); bmGuarda(); }),
         OPCIONES.interruptor(tr('Control'), tr('Botones: ángulo y potencia a mano. Tirachinas: arrastra hacia atrás desde cualquier punto y suelta.'), () => SAVE.control === 'tirachinas', v => { SAVE.control = v ? 'tirachinas' : 'botones'; bmGuarda(); }, ['TIRACHINAS', 'BOTONES']),
-        'idioma', 'instalar',
+        'idioma', 'cuenta', OPCIONES.novedades(() => novedades(() => opciones(volver))), 'instalar',
       ],
       versionTexto: tr('Fans of Boom · versión ' + VERSION), alCerrar: () => { if (volver) volver(); else { $('#bm-modal').hidden = true; } },
     });
     const t = document.createElement('div'); t.className = 'bm-tarjeta'; const h = document.createElement('h2'); h.textContent = tr('OPCIONES');
     t.append(h, filas.lista, filas.version, filas.cerrar); $('#bm-modal').replaceChildren(t); $('#bm-modal').hidden = false;
+  }
+  function novedades(volver) {   // las novedades del juego (js/novedades.js), con el mismo texto que la librería
+    const lista = l => (l && l.length ? `<ul>${l.map(x => `<li>${tr(x)}</li>`).join('')}</ul>` : '');
+    const cuerpo = NEWS.map((n, i) => `<h4>${i ? tr('VERSIÓN') + ' ' + n.v : tr('LO NUEVO')}</h4>${lista(n.real)}${i ? '' : '<h4>' + tr('NOTAS DE MICROBLIZZ Y PHONY') + '</h4>'}${lista(n.joke)}`).join('');
+    $('#bm-modal').innerHTML = `<div class="bm-tarjeta bm-news"><h2>${tr('NOVEDADES')} · ${NEWS[0].v}</h2><div class="bm-news-txt">${cuerpo}</div><button class="bm-btn" id="bm-news-ok">${tr('CERRAR')}</button></div>`;
+    $('#bm-modal').hidden = false; $('#bm-news-ok').onclick = () => { play('select'); volver(); };
   }
   function inicia() {
     ui().innerHTML = `

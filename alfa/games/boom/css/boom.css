@@ -79,3 +79,7 @@
 .bm-rango { font: 800 16px var(--font-ui); color: var(--gold); text-shadow: 1px 1px 0 var(--outline); }
 .bm-rango b { color: #fff; }
 #bm-rg { margin: 0; }
+.bm-news-txt { text-align: left; max-height: 300px; overflow: auto; font-size: 15px; }
+.bm-news-txt h4 { margin: 8px 0 4px; color: var(--gold); }
+.bm-news-txt ul { margin: 0; padding-left: 20px; }
+.bm-tarjeta .opt-list { width: 100%; text-align: left; }

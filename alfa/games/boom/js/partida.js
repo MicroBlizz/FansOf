@@ -17,9 +17,10 @@ const PARTIDA = (() => {
       m.ia = !!s.ia; m.nivel = s.nivel == null ? 1 : s.nivel; m.nombre = s.nombre || (m.ia ? BOOM.nombresIA[i % BOOM.nombresIA.length] : 'Jugador ' + (i + 1));
       return m;
     });
+    if (cfg.entrena) { moviles[1].diana = true; moviles[1].ia = true; moviles[1].nombre = 'Diana'; }   // el rival no tira: es un blanco que cambia de sitio al acertarle
     const personas = moviles.filter(m => !m.ia).length;
     P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
-      sucesos: [], satelite: { carga: 0 }, minas: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2, bono: false };
+      sucesos: [], satelite: { carga: 0 }, minas: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2 && !cfg.entrena, bono: false, entrena: !!cfg.entrena, aciertos: 0, mueveDiana: false };
     P.viento = Math.round((P.az() * 2 - 1) * BOOM.viento.max); P.proximoEvento = pideEvento();
     empiezaTurno(true);
     return P;
@@ -37,17 +38,25 @@ const PARTIDA = (() => {
     P.viento = P.az() < 0.15 ? Math.round((P.az() * 2 - 1) * V.max) : clamp(P.viento + Math.round((P.az() * 2 - 1) * V.cambio), -V.max, V.max);
   }
   function empiezaTurno(primero) {
-    const v = vivos();
-    if (new Set(v.map(m => m.equipo)).size < 2) return termina();
+    const v = vivos().filter(x => !(P.entrena && x.diana));
+    if (!P.entrena && new Set(v.map(m => m.equipo)).size < 2) return termina();
     const m = v.reduce((a, b) => (b.retraso < a.retraso ? b : a));
     const base = m.retraso; v.forEach(x => { x.retraso -= base; });
     if (!primero) { cambiaViento(); eventos(); }
     m.xSeguro = m.x;
     m.extra = 0; P.actual = m; m.energia = C.energia; P.t = BOOM.turno.segundos; P.usado = 0; P.tiroUsado = false; P.turnos++;
+    if (P.entrena) { m.caos = BOOM.caos.max; P.satelite.carga = BOOM.satelite.max; colocaDiana(); }   // entrenando: todo cargado y sin prisa
     if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
     aviso('turno', { m });
     if (andanMinas(m)) return;
     abre(m);
+  }
+  // entrenamiento: al acertar a la diana, en el turno siguiente se pone en otro punto del mapa (cerca o lejos) frente a quien tira
+  function colocaDiana() {
+    const d = P.moviles.find(x => x.diana), m = P.actual; if (!d || !P.mueveDiana) return;
+    P.mueveDiana = false;
+    const W = BOOM.mundo.ancho, dist = 300 + P.az() * 2200, dir = m.x + dist < W - 80 ? 1 : -1, dir2 = m.x - dist > 80 ? -1 : 1, sentido = P.az() < 0.5 ? dir : dir2;
+    d.x = clamp(m.x + sentido * dist, 80, W - 80); d.y = TERRENO.suelo(d.x, 0); d.cayendo = false; d.vy = 0; d.vivo = true; d.vida = d.vidaMax; d.dir = -sentido; m.dir = sentido;
   }
   function abre(m) { P.plan = m.ia ? IA.plan(P, m) : null; P.fase = P.hotSeat && !m.ia ? 'cartel' : 'apunta'; }
   // las minas de quien empieza turno andan hacia el rival más cercano y explotan, antes de que apunte
@@ -117,7 +126,8 @@ const PARTIDA = (() => {
     if (P.fase === 'apunta') {
       caidas();
       if (!m.vivo) return cierraTurno();
-      P.t -= DT; P.usado += DT;
+      if (!P.entrena) P.t -= DT;   // entrenando no hay prisa
+      P.usado += DT;
       if (m.ia && IA.paso(P, m, DT)) dispara();
       else if (P.t <= 0) pierdeTurno();
     } else if (P.fase === 'vuelo' || P.fase === 'minas') {
@@ -222,11 +232,15 @@ const PARTIDA = (() => {
   }
   function herido(m, n, bono, p) {
     m.vida -= n; m.caos = Math.min(BOOM.caos.max, m.caos + n * BOOM.caos.porDano); aviso('dano', { m, n, bono });
+    if (P.entrena) { m.vida = m.vidaMax; if (m.diana) { P.aciertos++; P.mueveDiana = true; aviso('acierto', { m, n: P.aciertos }); } return; }   // en el entrenamiento nadie muere
     if (bono && !P.bono) { P.bono = true; aviso('bono', { bono, frase: BOOM.frases[bono === 'cielo' ? 'cielo' : 'alto'][Math.floor(P.az() * 2)] || '', x: m.x, y: m.y }); }
     if (m.vida <= 0) { m.vida = 0; muere(m, 'golpe'); }
   }
   function muere(m, como) {
     if (!m.vivo) return;
+    if (P.entrena) {   // entrenando, caer al vacío no cuesta la partida: se vuelve al sitio de salida (la diana, a otro punto)
+      m.cayendo = false; m.vy = 0; m.x = m.diana ? BOOM.mundo.ancho * 0.8 : m.xSeguro; m.y = TERRENO.suelo(m.x, 0); if (m.diana) P.mueveDiana = true; aviso('bungee', { m }); return;
+    }
     if (como === 'vacio' && m.bungee) {   // el bungee: vuelve a donde estaba al empezar el turno
       m.bungee = false; m.x = m.xSeguro; m.y = TERRENO.suelo(m.x, 0); m.cayendo = false; m.vy = 0; aviso('bungee', { m }); return;
     } m.vivo = false; P.minas = P.minas.filter(n => n.dueno !== m.id); aviso('muerte', { m, como }); }

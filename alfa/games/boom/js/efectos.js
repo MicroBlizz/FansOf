@@ -41,6 +41,7 @@ const EFECTOS = (() => {
       else if (s.t === 'tiempo') { play('womp'); texto(tr('Se acabó el tiempo'), s.m.x, s.m.y - 70, '#ffe9c6', 24, 1.6); }
       else if (s.t === 'evento') { play('summon'); texto(tr(s.ev.def.nombre) + '!', PINTAR.CAM.x + PINTAR.V.w / 2, PINTAR.CAM.y + 140, '#e9a6ff', 34, 2.4); }
       else if (s.t === 'objeto') { play('heal'); texto(tr(BOOM.objetos.lista[s.id].nombre), s.m.x, s.m.y - 80, '#9be58a', 22, 1.4); }
+      else if (s.t === 'acierto') { play('levelup'); texto(tr('¡Diana!'), s.m.x, s.m.y - 100, '#ffcb3d', 30, 1.6); }
       else if (s.t === 'bungee') { play('blink'); texto(tr('¡Bungee!'), s.m.x, s.m.y - 80, '#9be58a', 26, 1.6); }
       else if (s.t === 'aterriza' && s.caida > 40) play('land');
     }

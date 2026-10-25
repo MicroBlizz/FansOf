@@ -52,6 +52,14 @@ const PANT = (() => {
     $('#bm-atras').onclick = () => { play('select'); portada(); };
     $('#bm-empezar').onclick = () => { play('select'); const n = equipos.length; SAVE.ultima = JSON.parse(JSON.stringify({ modo: PREP.modo, mapa: PREP.mapa, slots: PREP.slots })); bmGuarda(); juega(n); };
   }
+  // modo entrenamiento: tú contra una diana que no dispara; la línea de puntos enseña por dónde irá el tiro. Sin rango, sin tiempo y sin morir.
+  function entrena() {
+    cierraTodo(); escena = 'partida'; asegura();
+    const s0 = PREP.slots[0];
+    PARTIDA.nueva({ modo: '1v1', mapa: PREP.mapa, entrena: true, slots: [{ ia: false, nivel: 1, nombre: s0.nombre, movil: s0.movil }, { ia: true, nivel: 0, nombre: 'Diana', movil: PREP.slots[1].movil }] });
+    EFECTOS.reinicia(); const P = PARTIDA.get(); PINTAR.enfoca(P.actual.x, P.actual.y - 100, true);
+    $('#bm-pausa').hidden = false; revisa();
+  }
   function juega(n, semilla) {
     cierraTodo(); escena = 'partida';
     const rango = conRango() && PREP.modo === '1v1';
@@ -122,7 +130,7 @@ const PANT = (() => {
     ui().innerHTML = `
       <section id="bm-portada" class="bm-pantalla"><div class="bm-logo"><span>FANS OF</span><b>BOOM</b></div>
         <p class="bm-lema">${tr('Apunta bien. El viento ya hará el resto.')}</p>
-        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div><p id="bm-rg"></p></section>
+        <div class="bm-col"><button class="bm-btn bm-enorme" id="bm-jugar">${tr('JUGAR')}</button><button class="bm-btn" id="bm-entrena">${tr('ENTRENAMIENTO')}</button><button class="bm-btn bm-sec" id="bm-opciones">${tr('OPCIONES')}</button></div><p id="bm-rg"></p></section>
       <section id="bm-prepara" class="bm-pantalla" hidden></section>
       <button id="bm-pausa" class="bm-pausa" aria-label="${tr('Pausa')}" hidden><svg viewBox="0 0 24 24" width="22" height="22"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="#fff" stroke="#20102c" stroke-width="2" stroke-linejoin="round"/></svg></button>
       <div id="bm-panel" hidden></div><div id="bm-objetos" hidden></div>
@@ -130,6 +138,7 @@ const PANT = (() => {
       <section id="bm-modal" class="bm-velo" hidden></section>`;
     CONTROLES.construye();
     $('#bm-jugar').onclick = () => { audioInit(); play('select'); prepara(); };
+    $('#bm-entrena').onclick = () => { audioInit(); play('select'); entrena(); };
     $('#bm-opciones').onclick = () => { audioInit(); play('select'); opciones(() => { $('#bm-modal').hidden = true; }); };
     $('#bm-pausa').onclick = () => { audioInit(); play('select'); pausa(); };
     addEventListener('keydown', e => { if (e.key === 'Escape') { if (!$('#bm-modal').hidden && PARTIDA.get() && PARTIDA.get().pausa) $('#bm-seguir') && $('#bm-seguir').click(); else pausa(); } });

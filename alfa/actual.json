@@ -1,8 +1,8 @@
 {
- "build": 501,
- "hash": "3d668b1",
- "fecha": "2026-10-25T04:10:44Z",
- "mensaje": "Boom 0.2.0: un móvil por facción (nueve), cada uno con su cuerpo, proyectil, estela, explosión y sonido; daño y cráter separados (lo que más pega, menos agujero hace); tiros nuevos (racimo, rebote, fantasma, taladro, combo, partir en el aire, glitch, bumerán, golpes desde el cielo, Hype Train, minas que andan); satélite compartido de la Antena orbital; Garaje para elegir móvil",
+ "build": 502,
+ "hash": "3bb5205",
+ "fecha": "2026-10-25T04:35:08Z",
+ "mensaje": "Boom: modo ENTRENAMIENTO con la trayectoria del proyectil dibujada (diana que cambia de sitio, sin tiempo ni muertes)",
  "juegos": {
   "boom": "0.2.0",
   "cooking": "0.1.0",

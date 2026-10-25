@@ -78,6 +78,23 @@ const PINTAR = (() => {
     c.setLineDash([2, 7]); c.lineCap = 'round'; c.lineWidth = 5; c.strokeStyle = 'rgba(255,255,255,.85)';
     c.beginPath(); c.moveTo(b.x - CAM.x, b.y - CAM.y); c.lineTo(b.x - CAM.x + b.dx * l, b.y - CAM.y + b.dy * l); c.stroke(); c.setLineDash([]);
   }
+  function trayectoria(c, P, t) {   // entrenamiento: por dónde irá el tiro con el ángulo, la potencia, el viento y el evento de ahora, y dónde caería
+    const m = P.actual; if (!P.entrena || !m || P.fase !== 'apunta' || m.ia || m.cayendo) return;
+    const T = FISICA.trayectoria(m, P.viento, P.moviles, P.evento);
+    c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+    let ux = -99, uy = -99;
+    T.pts.forEach(([x, y], i) => {
+      if (Math.hypot(x - ux, y - uy) < 22) return; ux = x; uy = y; const a = 0.9 - 0.5 * i / T.pts.length;   // un punto cada ~22 píxeles
+      c.fillStyle = `rgba(32,16,44,${a})`; c.beginPath(); c.arc(x - CAM.x, y - CAM.y, 4.4, 0, 6.2832); c.fill();
+      c.fillStyle = `rgba(255,255,255,${a})`; c.beginPath(); c.arc(x - CAM.x, y - CAM.y, 2.8, 0, 6.2832); c.fill();
+    });
+    const x = T.x - CAM.x, y = T.y - CAM.y;
+    if (y > 0 && y < V.h + 40 && x > -30 && x < V.w + 30) {   // dónde acabaría: una diana que late
+      const r = 14 + Math.sin(t * 7) * 2.5; c.lineWidth = 5; c.strokeStyle = OL; c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.stroke();
+      c.lineWidth = 2.5; c.strokeStyle = '#ffcb3d'; c.stroke(); c.beginPath(); c.moveTo(x - r - 6, y); c.lineTo(x + r + 6, y); c.moveTo(x, y - r - 6); c.lineTo(x, y + r + 6); c.stroke();
+    }
+    c.restore();
+  }
   function proyectil(c, p, P, t) {
     if (p.tipo === 'golpe') return golpe(c, p);
     if (p.demora > 0) return;
@@ -115,7 +132,7 @@ const PINTAR = (() => {
     if (cv) c.drawImage(cv, CAM.x, CAM.y, V.w, V.h, 0, 0, V.w, V.h);
     vacio(c); marca(c, P);
     for (const m of P.moviles) if (m.vivo) movil(c, m, P, t);
-    guia(c, P);
+    guia(c, P); trayectoria(c, P, t);
     minas(c, P, t);
     for (const p of P.proys || []) if (!p.hecho) proyectil(c, p, P, t);
     EFECTOS.pinta(c, CAM.x, CAM.y);

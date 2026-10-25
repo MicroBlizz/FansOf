@@ -186,4 +186,8 @@ IDIOMA.add({
   "¡Corten!": "Cut!",
   "<b>UN MÓVIL POR FACCIÓN</b>: nueve móviles nuevos (de Animales Locos a Cultura Pop), cada uno con su dibujo, su proyectil, su estela y su explosión. Lo que más pega, menos agujero hace. Tiros nuevos: racimos, rebotes, rayos desde el cielo, un tren, minas que andan y un satélite que comparten todos los que llevan la Antena orbital. Elige móvil en el nuevo Garaje.": "<b>ONE VEHICLE PER FACTION</b>: nine new vehicles (from Crazy Animals to Pop Culture), each with its own look, projectile, trail and explosion. The harder it hits, the smaller the hole. New shots: clusters, bounces, strikes from the sky, a train, walking mines and a satellite shared by everyone driving the Orbital Dish. Pick your vehicle in the new Garage.",
   "Phony ha intentado cobrar alquiler por el satélite. Microblizz dice que los nueve móviles son el mismo con otra pegatina.": "Phony tried to charge rent for the satellite. Microblizz says the nine vehicles are the same one with a different sticker.",
+  "ENTRENAMIENTO": "TRAINING",
+  "Dianas: {n}": "Targets: {n}",
+  "La línea es por donde irá el tiro": "The line is where the shot will go",
+  "¡Diana!": "Bullseye!",
 });

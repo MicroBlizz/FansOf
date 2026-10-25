@@ -1,11 +1,11 @@
 {
- "build": 502,
- "hash": "3bb5205",
- "fecha": "2026-10-25T04:35:08Z",
- "mensaje": "Boom: modo ENTRENAMIENTO con la trayectoria del proyectil dibujada (diana que cambia de sitio, sin tiempo ni muertes)",
+ "build": 503,
+ "hash": "5db877a",
+ "fecha": "2026-10-25T04:37:18Z",
+ "mensaje": "Cooking: mapas e índice de docs regenerados",
  "juegos": {
   "boom": "0.2.0",
-  "cooking": "0.1.0",
+  "cooking": "0.2.0",
   "crush": "0.1.35",
   "dark": "0.2.7",
   "decks": "0.2.17",

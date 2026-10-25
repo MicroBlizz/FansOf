@@ -117,12 +117,41 @@ const PINTAR = (() => {
     for (let i = 0; i < 3; i++) { const f = ((tiempo * 0.7 + i * 0.33) % 1); c.globalAlpha = (1 - f) * 0.55 * k; c.beginPath(); c.arc(cx + Math.sin(tiempo * 2 + i) * 8, y + 10 - f * 40, 7 + f * 10, 0, Math.PI * 2); c.fillStyle = '#9aa0b4'; c.fill(); }
     c.globalAlpha = 1;
   }
+  // el cliente de la planta (su jefe) come al otro lado de la ventanilla y reacciona a lo que le sirves
+  let reac = null;
+  function reaccion(texto, color) { reac = { texto, color, t: 0 }; }
+  function cliente(c, P, dt, tiempo) {
+    const sp = SPR[P.rango.jefe]; if (!sp) return;
+    if (reac) { reac.t += dt; if (reac.t > 1.8) reac = null; }
+    for (const f of P.tiles) for (const t of f) if (t.t === 'ventanilla') {
+      const [x, y] = px(t.x + 1, t.y), cx = x + T / 2, pie = y + T - 4, esc = Math.min(58 / sp.wd, 68 / sp.ht), bob = Math.sin(tiempo * 3) * 2;
+      c.save(); c.translate(cx, pie + bob); c.scale(-esc, esc); c.drawImage(sp.c, -sp.ax, -sp.ay, sp.wd, sp.ht); c.restore();
+      if (reac) {   // el bocadillo
+        const u = reac.t / 1.8; c.save(); c.globalAlpha = 1 - Math.max(0, u - 0.7) / 0.3; c.font = '800 13px "Baloo 2", system-ui, sans-serif';
+        const w = c.measureText(reac.texto).width + 18, bx = Math.min(V.w - w - 4, cx - w / 2), by = y - 30 - u * 8;
+        rr(c, bx, by, w, 24, 8); c.fillStyle = '#fff'; c.fill(); trazo(c, 2.5);
+        c.fillStyle = reac.color || '#20102c'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(reac.texto, bx + w / 2, by + 12); c.restore();
+      }
+    }
+  }
+  // el hueco del ascensor: la cabina sube por un pozo oscuro con cables y marcas de planta que bajan
+  function pozo(c, P, tiempo) {
+    const x0 = V.ox + 3 * T, x1 = V.ox + 10 * T, y0 = V.oy - 8, h = P.alto * T + 20;
+    c.fillStyle = '#0d0a16'; c.fillRect(0, y0, V.w, h);
+    c.strokeStyle = '#2a2240'; c.lineWidth = 6; for (const x of [x0 - 22, x1 + 22]) { c.beginPath(); c.moveTo(x, y0); c.lineTo(x, y0 + h); c.stroke(); }
+    const des = (tiempo * 90) % 160; c.fillStyle = '#1e1830';
+    for (let y = y0 - 160 + des; y < y0 + h; y += 160) { c.fillRect(0, Math.max(y0, y), x0 - 40, Math.min(6, y0 + h - Math.max(y0, y))); c.fillRect(x1 + 40, Math.max(y0, y), V.w - x1 - 40, Math.min(6, y0 + h - Math.max(y0, y))); }
+    c.strokeStyle = '#555'; c.lineWidth = 3; for (const x of [x0 + 2 * T, x1 - 2 * T]) { c.beginPath(); c.moveTo(x, y0); c.lineTo(x, V.oy); c.stroke(); }
+  }
   function frame(c, P, dt, tiempo) {
     c.fillStyle = '#1b1130'; c.fillRect(0, 0, V.w, V.h);
     const fondo = c.createLinearGradient(0, V.oy, 0, V.oy + P.alto * T); fondo.addColorStop(0, '#2a1e3c'); fondo.addColorStop(1, '#1b1130'); c.fillStyle = fondo; c.fillRect(0, V.oy - 8, V.w, P.alto * T + 20);
+    if (P.nivel.ascensor) pozo(c, P, tiempo);
     for (const f of P.tiles) for (const t of f) casilla(c, t, tiempo);
+    cliente(c, P, dt, tiempo);
+    if (P.nivel.ascensor) otxt(c, tr('PLANTA {n}', { n: P.nivel.ri + 1 }), V.ox + 1.5 * T, V.oy + 30, 16, '#7fd0ff');
     // la casilla que tiene delante cada cocinero
-    for (const k of P.cocineros) { if (P.modo === 'solo' && k.i !== P.activo) continue; const t = PARTIDA.delante(k); if (!t) continue; const [x, y] = px(t.x, t.y); c.save(); c.strokeStyle = k.color; c.lineWidth = 3; c.globalAlpha = 0.9; rr(c, x + 3, y + 3, T - 6, T - 6, 7); c.stroke(); c.restore(); }
+    for (const k of P.cocineros) { if (P.modo !== 'dobles' && k.i !== P.activo) continue; const t = PARTIDA.delante(k); if (!t) continue; const [x, y] = px(t.x, t.y); c.save(); c.strokeStyle = k.color; c.lineWidth = 3; c.globalAlpha = 0.9; rr(c, x + 3, y + 3, T - 6, T - 6, 7); c.stroke(); c.restore(); }
     // lo que hay encima de cada casilla, los cocineros y lo que vuela, de arriba abajo
     const capas = [];
     for (const f of P.tiles) for (const t of f) if (t.item && t.t !== 'extintor' && t.t !== 'cajon') capas.push({ y: t.y * T + (t.t === 'suelo' ? 40 : 10), f: () => { const [x, y] = px(t.x, t.y); item(c, t.item, x + T / 2, y + (t.t === 'suelo' ? 38 : 20), t.t === 'suelo' ? 0.8 : 0.95); } });
@@ -144,5 +173,5 @@ const PINTAR = (() => {
     for (const f of fondoTiles) for (const t of f) casilla(c, t, tiempo);
     c.fillStyle = 'rgba(21,11,33,.72)'; c.fillRect(0, 0, V.w, V.h);
   }
-  return { frame, fondo, tamano, item, ingrediente, V };
+  return { frame, fondo, tamano, item, ingrediente, V , reaccion };
 })();

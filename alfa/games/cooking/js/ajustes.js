@@ -16,7 +16,7 @@ const COOK = {
     lanzar: 4,                  // casillas que vuela lo que se lanza
   },
   // tiempos en segundos: cortar (manteniendo USAR), cocinar en sartén, horno y olla, cuánto más tarda en quemarse, lavar un plato, apagar un fuego
-  tiempos: { cortar: 1.6, sarten: 5, horno: 7, olla: 6, quemar: 5, lavar: 1.4, apagar: 1.6, platoVuelve: 7 },
+  tiempos: { cortar: 1.6, sarten: 5, horno: 7, olla: 6, quemar: 8, lavar: 1.4, apagar: 1.6, platoVuelve: 7 },
   // los pedidos: cuántos se ven como mucho, cada cuánto llega uno, cuánto dura, los puntos y el combo
   pedidos: { max: 4, primero: 1, cadencia: 11, dura: 48, base: 20, propinaMax: 12, caduca: -10, comboMax: 4 },
   tirar: -3,                    // puntos por tirar un plato con comida (castigo pequeño: no te quedes bloqueado)

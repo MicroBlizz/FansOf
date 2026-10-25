@@ -18,6 +18,7 @@ const CONTROLES = (() => {
   function volcar(P) {
     for (const c of P.cocineros) {
       const e = c.entrada; e.mx = 0; e.my = 0;
+      if (c.ia) continue;   // al compañero IA no le llegan teclas
       const juegos = P.modo === 'dobles' ? [c.i ? 'j2' : 'j1'] : (c.i === P.activo ? ['j1', 'j2'] : []);
       for (const j of juegos) {
         const K = COOK.teclas[j];
@@ -28,7 +29,7 @@ const CONTROLES = (() => {
         if (alguna(K.usar, abajo)) e.usar = true; else if (!alguna(K.usar, abajo) && juegos.length === 1) e.usar = false;
         if (alguna(K.cambiar, pulsadas) && P.modo === 'solo') e.cambiar = true;
       }
-      if (P.modo === 'solo' && c.i === P.activo) e.usar = ['j1', 'j2'].some(j => alguna(COOK.teclas[j].usar, abajo));
+      if (P.modo !== 'dobles' && c.i === P.activo) e.usar = ['j1', 'j2'].some(j => alguna(COOK.teclas[j].usar, abajo));
       if (P.modo === 'dobles') e.usar = alguna(COOK.teclas[c.i ? 'j2' : 'j1'].usar, abajo);
     }
     pulsadas.clear();

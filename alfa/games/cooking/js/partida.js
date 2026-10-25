@@ -26,6 +26,7 @@ const PARTIDA = (() => {
     const N = cfg.nivel, R = RANGOS[N.ri], rnd = mulberry32(cfg.semilla || (Date.now() & 0xffff));
     const { tiles, inicio } = construye(N.mapa);
     const cocineros = cfg.cocineros.map((c, i) => ({ i, x: (inicio[i][0] + 0.5) * TILE, y: (inicio[i][1] + 0.5) * TILE, fx: 0, fy: 1, item: null, accion: null, key: c.key, nombre: c.nombre, color: COOK.colores[i ? 'j2' : 'j1'], anda: 0, entrada: { mx: 0, my: 0, coger: false, usar: false, cambiar: false, lanzar: false } }));
+    if (cfg.modo === 'ia') cocineros[1].ia = {};   // el segundo lo lleva el compañero IA (ia.js)
     P = { nivel: N, rango: R, modo: cfg.modo, tiles, ancho: N.mapa[0].length, alto: N.mapa.length, cocineros, activo: 0, rnd,
       pedidos: [], siguientePedido: COOK.pedidos.primero, pedidoId: 0, tiempo: N.tiempo, t: 0, puntos: 0, combo: 0, servidos: 0, caducados: 0, fallos: 0,
       vuelven: [], vuelos: [], sucesos: [], fase: 'juego', pausa: false, apagon: 18 + rnd() * 10, cinta: 0, mensajes: [] };
@@ -115,7 +116,8 @@ const PARTIDA = (() => {
         else if (it.estado === fin) { t.prog += dt; if (t.prog >= T.quemar) { it.estado = 'quemado'; if (it.tipo === 'monton') it.ings = it.ings.map(([n]) => [n, 'quemado']); t.prog = 0; t.humo = 0.01; suceso('quema', { x: t.x, y: t.y }); } }
         else if (it.estado === 'quemado') { t.humo += dt; if (t.humo > COOK.fuego.aviso) { t.fuego = 0.01; t.humo = 0; suceso('fuego', { x: t.x, y: t.y }); } }
       }
-      if (t.t === 'olla' && t.ings.length && !t.item) { t.prog += dt; if (t.prog >= T.olla) { const nombres = t.ings.map(([n]) => n).sort(); t.item = { tipo: 'ing', ing: 'sopa', estado: nombres.join('+'), raro: !RECETAS.some(r => r.olla && r.olla.slice().sort().join('+') === nombres.join('+')) }; t.ings = []; t.prog = 0; suceso('listo', { x: t.x, y: t.y }); } }
+      // la olla solo arranca cuando lo que lleva es una receta completa (así da tiempo a echar el resto)
+      if (t.t === 'olla' && t.ings.length && !t.item) { const nombres = t.ings.map(([n]) => n).sort().join('+'); if (!RECETAS.some(r => r.olla && r.olla.slice().sort().join('+') === nombres)) { t.prog = 0; continue; } t.prog += dt; if (t.prog >= T.olla) { const nombres = t.ings.map(([n]) => n).sort(); t.item = { tipo: 'ing', ing: 'sopa', estado: nombres.join('+'), raro: !RECETAS.some(r => r.olla && r.olla.slice().sort().join('+') === nombres.join('+')) }; t.ings = []; t.prog = 0; suceso('listo', { x: t.x, y: t.y }); } }
       else if (t.t === 'olla' && t.item && t.item.ing === 'sopa' && t.item.estado !== 'quemado') { t.prog += dt; if (t.prog >= T.quemar * 1.6) { t.item.estado = 'quemado'; t.prog = 0; t.humo = 0.01; suceso('quema', { x: t.x, y: t.y }); } }
       else if (t.t === 'olla' && t.item && t.item.estado === 'quemado') { t.humo += dt; if (t.humo > COOK.fuego.aviso * 2) { t.fuego = 0.01; t.humo = 0; suceso('fuego', { x: t.x, y: t.y }); } }
     }
@@ -136,8 +138,9 @@ const PARTIDA = (() => {
     if (!P || P.fase !== 'juego') return;
     const dt = COOK.paso; P.t += dt; P.tiempo -= dt;
     for (const c of P.cocineros) {
-      const e = c.entrada, propio = P.modo === 'dobles' || c.i === P.activo;
+      const e = c.entrada, propio = P.modo === 'dobles' || c.i === P.activo || !!c.ia;
       if (P.modo === 'solo' && e.cambiar && c.i === P.activo) { P.activo = 1 - P.activo; suceso('cambio'); }
+      if (c.ia && typeof IA !== 'undefined') IA.paso(P, c, dt);   // el compañero IA decide y «pulsa» sus teclas
       if (propio) { mueve(c, dt); ACCIONES.aplica(c, dt); }
       else { c.anda = 0; ACCIONES.sigue(c, dt); }   // el cocinero que no llevas termina lo que estaba haciendo (cortar, lavar)
       e.coger = false; e.cambiar = false; e.lanzar = false;

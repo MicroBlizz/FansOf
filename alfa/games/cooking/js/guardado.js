@@ -1,7 +1,7 @@
 // Fans of Cooking · GUARDADO: lo que se recuerda en este navegador: estrellas y mejor puntuación por nivel, cocineros elegidos, modo, sonido.
 // Con cuenta, core la sube a la nube (CUENTA.cambio). Los volúmenes que pide el motor de sonido de core están abajo.
 'use strict';
-const CK_NUEVA = () => ({ v: 1, muted: false, musica: true, niveles: {}, cocineros: ['bunny', 'skeleton'], modo: 'solo', nombres: ['', ''], visto: false });
+const CK_NUEVA = () => ({ v: 1, muted: false, musica: true, niveles: {}, cocineros: ['bunny', 'skeleton'], modo: 'ia', nombres: ['', ''], visto: false });
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = CK_NUEVA();

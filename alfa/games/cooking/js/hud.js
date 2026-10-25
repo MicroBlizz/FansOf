@@ -41,9 +41,9 @@ const HUD = (() => {
     c.font = '800 14px "Baloo 2", system-ui, sans-serif'; c.textBaseline = 'middle';
     P.cocineros.forEach((k, i) => {
       const x = i ? V.w - 20 : 20; c.textAlign = i ? 'right' : 'left';
-      const activo = P.modo === 'dobles' || P.activo === i;
+      const activo = P.modo === 'dobles' || P.activo === i || !!k.ia;
       c.fillStyle = activo ? k.color : '#5a4a74';
-      const teclas = P.modo === 'dobles' ? (i ? tr('FLECHAS · INTRO coge · MAYÚS der. usa') : tr('WASD · ESPACIO coge · Q usa')) : (activo ? tr('WASD o FLECHAS · ESPACIO coge · Q usa · TAB cambia') : tr('esperando (TAB para cambiar)'));
+      const teclas = k.ia ? tr('compañero IA') : P.modo === 'dobles' ? (i ? tr('FLECHAS · INTRO coge · MAYÚS der. usa') : tr('WASD · ESPACIO coge · Q usa')) : P.modo === 'ia' ? tr('WASD o FLECHAS · ESPACIO coge · Q usa') : (activo ? tr('WASD o FLECHAS · ESPACIO coge · Q usa · TAB cambia') : tr('esperando (TAB para cambiar)'));
       c.fillText((k.nombre || tr('Jugador {n}', { n: i + 1 })) + ' · ' + teclas, x, by + 24);
     });
     // los avisos flotantes
@@ -56,9 +56,9 @@ const HUD = (() => {
     for (const s of sucesos) {
       const [x, y] = pos(s);
       switch (s.t) {
-        case 'sirve': play('crown'); aviso('+' + s.puntos + (s.combo > 1 ? '  x' + Math.min(s.combo, COOK.pedidos.comboMax) : ''), x, y - 60, '#ffcb3d', 24); break;
-        case 'caduca': play('womp'); aviso(tr('¡Se ha ido sin comer!') + ' ' + COOK.pedidos.caduca, V.w / 2, 140, '#ff5a1a', 20); break;
-        case 'rechazo': play('deny'); aviso(tr('Nadie ha pedido eso'), x, y - 60, '#ff5a1a', 16); break;
+        case 'sirve': play('crown'); aviso('+' + s.puntos + (s.combo > 1 ? '  x' + Math.min(s.combo, COOK.pedidos.comboMax) : ''), x, y - 60, '#ffcb3d', 24); PINTAR.reaccion(tr(pick(['¡Ñam!', 'Aceptable.', 'Sin propina.', '¿Lleva gluten?', 'Otro.'])), '#2a7a3a'); break;
+        case 'caduca': play('womp'); aviso(tr('¡Se ha ido sin comer!') + ' ' + COOK.pedidos.caduca, V.w / 2, 140, '#ff5a1a', 20); PINTAR.reaccion(tr(pick(['Me voy.', 'Reseña de una estrella.', 'Llamo a IAhorro.'])), '#c0392b'); break;
+        case 'rechazo': play('deny'); aviso(tr('Nadie ha pedido eso'), x, y - 60, '#ff5a1a', 16); PINTAR.reaccion(tr('Eso no lo he pedido'), '#c0392b'); break;
         case 'falta': play('deny'); aviso(tr('Le falta algo'), x, y - 20, '#cdb9ea', 14); break;
         case 'corta': play('clank'); break;
         case 'lava': play('blip'); break;

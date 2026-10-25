@@ -31,20 +31,29 @@ const PANT = (() => {
     $('#ck-total').innerHTML = `${tr('Estrellas')}: <b>${estrellasTotal()}</b> / ${RANGOS.reduce((s, r) => s + r.niveles.length * 3, 0)}`;
     if (typeof musicSet === 'function') musicSet('menu'); prepFoco('#ck-jugar');
   }
-  /* ---------- la campaña: los rangos y sus niveles ---------- */
+  /* ---------- la campaña: el edificio de cada campaña, sus plantas (de abajo arriba) y los niveles de la planta elegida ---------- */
   function campana(ri) {
     escena = 'campana'; cierraTodo(); if (ri !== undefined) rangoSel = ri;
-    const R = RANGOS[rangoSel], abierto = r => nivelAbierto(r.niveles[0]);
+    const R = RANGOS[rangoSel], C = CAMPANA(R.campana), plantas = plantasDe(C.id), abierto = r => nivelAbierto(r.niveles[0]), campAbierta = cc => abierto(plantasDe(cc.id)[0]);
     $('#ck-campana').innerHTML = `
-      <h2 class="ck-h2">${tr('DE BECARIO A CEO')}</h2>
-      <div class="ck-rangos">${RANGOS.map((r, i) => `<button class="ck-rango ${i === rangoSel ? 'ck-on' : ''} ${abierto(r) ? '' : 'ck-cerrado'}" data-rango="${i}" style="--c:${r.color}" ${abierto(r) ? '' : 'disabled'}>
-        <canvas class="ck-jefe" data-jefe="${r.jefe}" width="64" height="64"></canvas><b>${tr(r.nombre)}</b><small>${estrellasRango(i)} / ${r.niveles.length * 3}</small></button>`).join('')}</div>
-      <div class="ck-rango-info" style="--c:${R.color}"><h3>${tr(R.cocina)}</h3><p class="ck-nota">${tr(R.historia)}</p></div>
-      <div class="ck-niveles">${R.niveles.map(n => { const ab = nivelAbierto(n), g = SAVE.niveles[n.id]; return `<button class="ck-nivel ${ab ? '' : 'ck-cerrado'}" data-nivel="${n.id}" ${ab ? '' : 'disabled'}>
-        <span class="ck-nid">${n.id}</span><b>${tr(n.nombre)}</b><small>${n.recetas.map(id => tr(RECETA[id].nombre)).join(' · ')}</small>${estrellasHtml(estrellasDe(n.id))}${g && g.p ? `<em>${tr('Mejor')}: ${g.p}</em>` : ''}</button>`; }).join('')}</div>
-      <p class="ck-nota">${tr('Un nivel se abre con una estrella en el anterior; un rango nuevo, con la mitad de las estrellas del anterior.')}</p>
+      <h2 class="ck-h2">${tr(C.nombre)}</h2>
+      <div class="ck-campanas">${CAMPANAS.map(cc => `<button data-camp="${cc.id}" class="${cc === C ? 'ck-on' : ''} ${campAbierta(cc) ? '' : 'ck-cerrado'}" style="--c:${cc.color}" ${campAbierta(cc) ? '' : 'disabled'}>${tr(cc.nombre)}</button>`).join('')}</div>
+      <div class="ck-edificio-fila">
+        <div class="ck-edificio" style="--c:${C.color}">
+          ${plantas.map((r, k) => { const i = RANGOS.indexOf(r); return `<button class="ck-planta ${r === R ? 'ck-on' : ''} ${abierto(r) ? '' : 'ck-cerrado'}" data-rango="${i}" style="--c:${r.color}" ${abierto(r) ? '' : 'disabled'}>
+            <span class="ck-num">${k + 1}</span><canvas class="ck-jefe" data-jefe="${r.jefe}" width="64" height="64"></canvas><span><b>${tr(r.nombre)}</b><small>${estrellasRango(i)} / ${r.niveles.length * 3}</small></span></button>`; }).join('')}
+          <div class="ck-tejado"></div>
+        </div>
+        <div class="ck-col">
+          <div class="ck-rango-info" style="--c:${R.color}"><h3>${tr(R.cocina)}</h3><p class="ck-nota">${tr(R.historia)}</p></div>
+          <div class="ck-niveles">${R.niveles.map(n => { const ab = nivelAbierto(n), g = SAVE.niveles[n.id]; return `<button class="ck-nivel ${n.ascensor ? 'ck-ascensor' : ''} ${ab ? '' : 'ck-cerrado'}" data-nivel="${n.id}" ${ab ? '' : 'disabled'}>
+            <span class="ck-nid">${n.ascensor ? tr('ASCENSOR') : n.id}</span><b>${tr(n.nombre)}</b><small>${n.recetas.map(id => tr(RECETA[id].nombre)).join(' · ')}</small>${estrellasHtml(estrellasDe(n.id))}${g && g.p ? `<em>${tr('Mejor')}: ${g.p}</em>` : ''}</button>`; }).join('')}</div>
+        </div>
+      </div>
+      <p class="ck-nota">${tr(C.historia)} ${tr('Un nivel se abre con una estrella en el anterior; una planta nueva, con la mitad de las estrellas de la anterior.')}</p>
       <div class="ck-fila-b"><button class="ck-btn ck-sec" data-atras id="ck-volver">${tr('VOLVER')}</button></div>`;
     $('#ck-campana').hidden = false;
+    $('#ck-campana').querySelectorAll('[data-camp]').forEach(b => { b.onclick = () => { play('select'); campana(RANGOS.indexOf(plantasDe(b.dataset.camp)[0])); }; });
     $('#ck-campana').querySelectorAll('[data-rango]').forEach(b => { b.onclick = () => { play('select'); campana(+b.dataset.rango); }; });
     $('#ck-campana').querySelectorAll('[data-nivel]').forEach(b => { b.onclick = () => { play('select'); nivelSel = NIVEL(b.dataset.nivel); prepara(); }; });
     $('#ck-volver').onclick = () => { play('select'); portada(); };
@@ -69,13 +78,13 @@ const PANT = (() => {
         <canvas class="ck-cara" data-cara="${c.key}" width="72" height="72"></canvas>
         <div class="ck-slot-col"><input class="ck-nombre" data-i="${i}" maxlength="12" value="${esc(PREP.nombres[i])}" placeholder="${tr(i ? 'Jugador 2' : 'Jugador 1')}">
         <button class="ck-chip" data-coc="${i}">${esc(c.nombre)} ▸</button></div>
-        <small class="ck-teclas">${PREP.modo === 'dobles' ? (i ? tr('Flechas · INTRO coge · MAYÚS derecha usa') : tr('WASD · ESPACIO coge · Q usa')) : (i ? tr('Se cambia con TAB') : tr('WASD o flechas · ESPACIO coge · Q usa · TAB cambia de cocinero'))}</small></div>`; };
+        <small class="ck-teclas">${PREP.modo === 'dobles' ? (i ? tr('Flechas · INTRO coge · MAYÚS derecha usa') : tr('WASD · ESPACIO coge · Q usa')) : PREP.modo === 'ia' ? (i ? tr('Lo lleva el compañero IA') : tr('WASD o flechas · ESPACIO coge · Q usa')) : (i ? tr('Se cambia con TAB') : tr('WASD o flechas · ESPACIO coge · Q usa · TAB cambia de cocinero'))}</small></div>`; };
     $('#ck-prepara').innerHTML = `
-      <h2 class="ck-h2">${tr(N.nombre)} <small>${N.id} · ${tr(R.cocina)}</small></h2>
-      <div class="ck-tabs"><button data-modo="solo" class="${PREP.modo === 'solo' ? 'ck-on' : ''}">${tr('EN SOLITARIO')}</button><button data-modo="dobles" class="${PREP.modo === 'dobles' ? 'ck-on' : ''}">${tr('A DOBLES')}</button></div>
+      <h2 class="ck-h2">${tr(N.nombre)} <small>${N.ascensor ? tr('ASCENSOR') : N.id} · ${tr(R.cocina)}</small></h2>
+      <div class="ck-tabs"><button data-modo="ia" class="${PREP.modo === 'ia' ? 'ck-on' : ''}">${tr('CON COMPAÑERO IA')}</button><button data-modo="solo" class="${PREP.modo === 'solo' ? 'ck-on' : ''}">${tr('SOLO (CAMBIO CON TAB)')}</button><button data-modo="dobles" class="${PREP.modo === 'dobles' ? 'ck-on' : ''}">${tr('A DOBLES')}</button></div>
       <div class="ck-slots">${fila(0)}${fila(1)}</div>
       <div class="ck-recetas">${N.recetas.map(id => { const r = RECETA[id]; return `<div class="ck-receta"><canvas data-receta="${id}" width="110" height="40"></canvas><b>${tr(r.nombre)}</b><small>${r.olla ? tr('OLLA') + ': ' + r.olla.map(i => tr(INGREDIENTES[i].nombre)).join(' + ') : r.horno ? tr('MONTAR Y AL HORNO') : r.ings.map(([i, e]) => tr(INGREDIENTES[i].nombre) + (e === 'cortado' ? ' (' + tr('cortado') + ')' : e === 'cocinado' ? ' (' + tr('a la sartén') + ')' : '')).join(' + ')}</small></div>`; }).join('')}</div>
-      <p class="ck-nota">${tr('Tiempo: {t} s · Estrellas con {a}, {b} y {c} puntos.', { t: N.tiempo, a: N.estrellas[0], b: N.estrellas[1], c: N.estrellas[2] })} ${PREP.modo === 'solo' ? tr('En solitario llevas a los dos: el que dejas sigue cortando o lavando hasta terminar.') : tr('Dos personas en el mismo teclado, cada una con sus teclas.')}</p>
+      <p class="ck-nota">${tr('Tiempo: {t} s · Estrellas con {a}, {b} y {c} puntos.', { t: N.tiempo, a: N.estrellas[0], b: N.estrellas[1], c: N.estrellas[2] })} ${PREP.modo === 'solo' ? tr('En solitario llevas a los dos: el que dejas sigue cortando o lavando hasta terminar.') : PREP.modo === 'ia' ? tr('Tú llevas a uno y el compañero IA al otro: se reparte el trabajo solo y recoge lo que dejes en las encimeras.') : tr('Dos personas en el mismo teclado, cada una con sus teclas.')} ${N.ascensor ? tr('Es el ascensor: cocina diminuta, el jefe de la planta come al otro lado y los pedidos duran menos.') : ''}</p>
       <div class="ck-fila-b"><button class="ck-btn ck-sec" data-atras id="ck-atras">${tr('VOLVER')}</button><button class="ck-btn" id="ck-empezar">${tr('A COCINAR')}</button></div>`;
     $('#ck-prepara').hidden = false;
     const q = (s, f) => $('#ck-prepara').querySelectorAll(s).forEach(f);

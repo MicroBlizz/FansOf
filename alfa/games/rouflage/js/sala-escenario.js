@@ -7,6 +7,7 @@ const SALA_ESP = { datos: null, v: 0, codigo: '', mandado: '', tManda: 0, tPide:
 const SALA_ESP_VACIA = { v: 1, e: 'oficina', m: [] };
 
 function salaEspPaso(i, soyAnf) {
+  if (RFP.soloBots) { salaEspBots(i, soyAnf); E('busca-escenario').hidden = true; if (typeof salaVotosPaso === 'function') salaVotosPaso(null); return; }
   const caja = E('busca-escenario'), ver = !!(i && i.privada && i.estado === 'espera' && typeof escenarioPinta === 'function');
   caja.hidden = !ver; if (!ver) { if (typeof salaVotosPaso === 'function') salaVotosPaso(null); return; }
   if (SALA_ESP.codigo !== i.codigo) Object.assign(SALA_ESP, { datos: null, v: 0, codigo: i.codigo, mandado: '', tManda: 0 });
@@ -49,4 +50,16 @@ function salaEspPinta(ahora) {
     } };
   });
   escenarioPinta(c, SALA_ESP.datos || SALA_ESP_VACIA, { k: Math.max(0.25, Math.round(k * 4) / 4), personajes, t });
+}
+
+// JUGAR CONTRA BOTS: no se pasea por el escenario ni se sube a ningún sitio, pero MI ESCENARIO sigue en la lista de mapas (con su foto) por si lo eliges
+function salaEspBots(i, soyAnf) {
+  if (!i || !i.privada || i.estado !== 'espera' || !soyAnf || SALA_ESP.codigo === i.codigo || typeof escenarioDatos !== 'function') return;
+  Object.assign(SALA_ESP, { datos: escenarioDatos(), v: 0, codigo: i.codigo, mandado: '', tManda: 0 });
+  try {
+    mapaDeEscenario(SALA_ESP.datos);
+    const cv = document.createElement('canvas'); cv.width = MINI_ANCHO; cv.height = Math.round(MINI_ANCHO * 0.62);
+    const antes = TIT_ESC.clave; TIT_ESC.clave = ''; titEscFoto(cv); TIT_ESC.clave = antes;      // la misma foto que la tarjeta del título (titulo-escenario.js)
+    MINIS_MAPA[MAPA_ESC.id] = cv.toDataURL('image/jpeg', 0.75);
+  } catch (_) { /* sin escenario: la lista de mapas de siempre */ }
 }

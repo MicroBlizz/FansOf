@@ -33,11 +33,11 @@ const mapaDeSala = d => (d && d.mapa && MAPAS[d.mapa] ? d.mapa : '');      // ''
 function pvpPintaMapas(d, soyAnf) {
   const caja = E('busca-mapas'); if (!caja) return;
   const conEsc = !!(RFP.info && RFP.info.privada && MAPAS[MAPA_ESC.id]);      // con amigos, también ESTE ESCENARIO: el del anfitrión (mapa-escenario.js)
-  if (caja.dataset.anf !== String(soyAnf) || caja.dataset.esc !== String(conEsc) || caja.dataset.abiertos !== String(mapasAbiertos()) || !caja.children.length) {
-    caja.dataset.anf = String(soyAnf); caja.dataset.esc = String(conEsc); caja.dataset.abiertos = String(mapasAbiertos()); miniaturasMapas();
+  if (caja.dataset.anf !== String(soyAnf) || caja.dataset.esc !== String(conEsc) || caja.dataset.bots !== String(!!RFP.soloBots) || caja.dataset.abiertos !== String(mapasAbiertos()) || !caja.children.length) {
+    caja.dataset.anf = String(soyAnf); caja.dataset.esc = String(conEsc); caja.dataset.bots = String(!!RFP.soloBots); caja.dataset.abiertos = String(mapasAbiertos()); miniaturasMapas();
     const celda = (id, nombre, img) => { const cerrado = soyAnf && id && !mapaAbierto(id);      // el anfitrión solo elige entre los mapas que tiene abiertos (elige-mapa.js)
       return `<button type="button" class="mapa-mini${cerrado ? ' cerrado' : ''}" data-mapa="${id}" ${soyAnf && !cerrado ? '' : 'disabled'}>${img ? `<img src="${img}" alt="">` : '<i class="azar ol">?</i>'}${cerrado ? SVG_CANDADO : ''}<span>${esc(tr(nombre))}</span></button>`; };
-    caja.innerHTML = `<small>${esc(tr('MAPA'))}</small><div class="mapas-mini">${conEsc ? celda(MAPA_ESC.id, soyAnf ? 'MI ESCENARIO' : 'ESTE ESCENARIO', MINIS_MAPA[MAPA_ESC.id] || '') : celda('', 'AL AZAR', '')}${(soyAnf ? ORDEN_ABRIR.filter(id => MAPAS[id]).concat(ORDEN_MAPAS.filter(id => !ORDEN_ABRIR.includes(id))) : ORDEN_MAPAS).map(id => celda(id, MAPAS[id].nombre, MINIS_MAPA[id])).join('')}</div>`;
+    caja.innerHTML = `<small>${esc(tr('MAPA'))}</small><div class="mapas-mini">${RFP.soloBots ? celda('', 'AL AZAR', '') : ''}${conEsc ? celda(MAPA_ESC.id, soyAnf ? 'MI ESCENARIO' : 'ESTE ESCENARIO', MINIS_MAPA[MAPA_ESC.id] || '') : RFP.soloBots ? '' : celda('', 'AL AZAR', '')}${(soyAnf ? ORDEN_ABRIR.filter(id => MAPAS[id]).concat(ORDEN_MAPAS.filter(id => !ORDEN_ABRIR.includes(id))) : ORDEN_MAPAS).map(id => celda(id, MAPAS[id].nombre, MINIS_MAPA[id])).join('')}</div>`;
     if (soyAnf) for (const b of caja.querySelectorAll('.mapa-mini')) b.onclick = () => { play('select'); MODO_ELEGIDO.mapa = mapaSalaAnf(b.dataset.mapa); pvpMandaModo(); };
   }
   const im = conEsc && caja.querySelector(`.mapa-mini[data-mapa="${MAPA_ESC.id}"] img`); if (im && MINIS_MAPA[MAPA_ESC.id] && im.getAttribute('src') !== MINIS_MAPA[MAPA_ESC.id]) im.src = MINIS_MAPA[MAPA_ESC.id];      // si el anfitrión cambia su escenario

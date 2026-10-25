@@ -103,7 +103,7 @@ function pvpVota(k) {
 // el modo de la sala con amigos (modos.js): el anfitrión lo cambia con las flechas y los interruptores y el servidor se lo enseña a los demás
 function pvpPintaModo(ver, soyAnf) {
   const caja = E('busca-modo'); caja.hidden = !ver; if (!ver) return;
-  if (soyAnf && !RFP.modoMandado) { RFP.modoMandado = true; MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a.t = talEstado().pvp ? 1 : 0; if (!MODO_ELEGIDO.mapa && typeof MAPA_ESC !== 'undefined' && MAPAS[MAPA_ESC.id]) MODO_ELEGIDO.mapa = MAPA_ESC.id; MODO_ELEGIDO.mapa = mapaSalaAnf(MODO_ELEGIDO.mapa); pvpMandaModo(); }      // sin mapa elegido (antes, AL AZAR): MI ESCENARIO      // recién abierta la sala: el modo de la última vez, con o sin talentos según el selector del PvP (talentos-pantalla.js)
+  if (soyAnf && !RFP.modoMandado) { RFP.modoMandado = true; MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a.t = talEstado().pvp ? 1 : 0; if (RFP.soloBots && MODO_ELEGIDO.mapa === MAPA_ESC.id) MODO_ELEGIDO.mapa = ''; if (!RFP.soloBots && !MODO_ELEGIDO.mapa && typeof MAPA_ESC !== 'undefined' && MAPAS[MAPA_ESC.id]) MODO_ELEGIDO.mapa = MAPA_ESC.id; MODO_ELEGIDO.mapa = mapaSalaAnf(MODO_ELEGIDO.mapa); pvpMandaModo(); }      // sin mapa elegido (antes, AL AZAR): MI ESCENARIO      // recién abierta la sala: el modo de la última vez, con o sin talentos según el selector del PvP (talentos-pantalla.js)
   const vp = RFP.info && !RFP.info.privada ? salaPublicaModo(RFP.info) : null, azar = !!vp && !MODOS[vp.d.m];      // BUSCAR PARTIDA: solo lo que de verdad se jugará (pvp-mapas.js)
   const d = soyAnf ? MODO_ELEGIDO : vp ? vp.d : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
   caja.classList.toggle('mira', !soyAnf);
@@ -177,7 +177,7 @@ function preparaPvp() {
   E('b-busca-empezar').onclick = () => { play('select'); pvpEmpezar(); };
   E('b-voto-ya').onclick = () => pvpVota('ya'); E('b-voto-mas').onclick = () => pvpVota('mas');
   E('b-busca-compartir').onclick = () => { play('select'); pvpCompartir(); };
-  E('b-pvp-bots').onclick = () => { play('select'); pvpBuscar({ crear: true }); };      // jugar contra bots: tu propia sala, para elegir modo y rellenar con la máquina
+  E('b-pvp-bots').onclick = () => { play('select'); pvpBuscar({ crear: true, soloBots: true }); };      // jugar contra bots: tu propia sala con el menú de opciones (modo, mapa, reglas) y RELLENAR CON BOTS; sin pasear por tu escenario (eso es de JUGAR CON AMIGOS, decidido por Daniel el 25-10-2026)
   E('b-modo-ant').onclick = () => pvpCambiaModo(-1); E('b-modo-sig').onclick = () => pvpCambiaModo(1);
 
   E('b-pvp-clasif').onclick = () => { play('select'); pvpClasificacion(); };

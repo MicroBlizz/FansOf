@@ -14,7 +14,7 @@ const SV_MAX_CAZ = 2;      // cazadores a la vez en la sala (con más, no queda 
 const enSalaViva = () => J.fase === 'sala';
 
 // ¿toca sala viva? Sala con amigos esperando a empezar
-const salaVivaVale = i => !!(i && i.privada && i.estado === 'espera' && i.sala);
+const salaVivaVale = i => !!(i && i.privada && i.estado === 'espera' && i.sala && !RFP.soloBots);      // JUGAR CONTRA BOTS no pasea: es el menú de siempre (pvp-pantallas.js)
 
 function salaVivaPaso(i, soyAnf) {
   const p = E('p-busca');

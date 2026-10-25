@@ -227,5 +227,6 @@ IDIOMA.add({
   "¡HAN DESPEDIDO A MÁS DE LA MITAD!": "MEHR ALS DIE HÄLFTE IST GEFEUERT!",
   "Microblizz da la noche por buena: con la mitad ya le cuadra el informe.": "Microblizz nennt die Nacht einen Erfolg: mit der Hälfte geht der Bericht schon auf.",
   "¡MÁS DE LA MITAD!": "MEHR ALS DIE HÄLFTE!",
-  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "Die Praktikanten gewinnen, wenn sie mehr als die Hälfte feuern: {n} von {t}"
+  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "Die Praktikanten gewinnen, wenn sie mehr als die Hälfte feuern: {n} von {t}",
+  "Las compras con euros solo están en la app de Android": "Käufe mit Euro gibt es nur in der Android-App"
 });

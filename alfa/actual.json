@@ -1,8 +1,8 @@
 {
- "build": 507,
- "hash": "a716ddc",
- "fecha": "2026-10-25T17:10:14Z",
- "mensaje": "Rouflage: el selector de talentos vale para amigos y bots, y el tubo de pintura en la pestaña PASE",
+ "build": 508,
+ "hash": "b5ba94a",
+ "fecha": "2026-10-25T17:14:43Z",
+ "mensaje": "Tienda con dinero real: Rouflage es el primero (Google Play Billing 8)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

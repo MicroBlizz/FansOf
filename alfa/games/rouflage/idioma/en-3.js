@@ -227,5 +227,6 @@ IDIOMA.add({
   "¡HAN DESPEDIDO A MÁS DE LA MITAD!": "MORE THAN HALF OF YOU GOT FIRED!",
   "Microblizz da la noche por buena: con la mitad ya le cuadra el informe.": "Microblizz calls it a night: half is enough to make the report add up.",
   "¡MÁS DE LA MITAD!": "MORE THAN HALF!",
-  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "The interns win if they fire more than half: {n} of {t}"
+  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "The interns win if they fire more than half: {n} of {t}",
+  "Las compras con euros solo están en la app de Android": "Purchases with euros are only in the Android app"
 });

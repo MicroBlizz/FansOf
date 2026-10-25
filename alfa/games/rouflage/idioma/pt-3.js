@@ -227,5 +227,6 @@ IDIOMA.add({
   "¡HAN DESPEDIDO A MÁS DE LA MITAD!": "DEMITIRAM MAIS DA METADE!",
   "Microblizz da la noche por buena: con la mitad ya le cuadra el informe.": "A Microblizz dá a noite por encerrada: com a metade o relatório já fecha.",
   "¡MÁS DE LA MITAD!": "MAIS DA METADE!",
-  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "Os estagiários vencem se demitirem mais da metade: {n} de {t}"
+  "Los becarios ganan si despiden a más de la mitad: {n} de {t}": "Os estagiários vencem se demitirem mais da metade: {n} de {t}",
+  "Las compras con euros solo están en la app de Android": "As compras com euros só estão no app de Android"
 });

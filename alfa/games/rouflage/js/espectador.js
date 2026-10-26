@@ -36,7 +36,6 @@ function trazaColaFantasma(c, t, mira, mueve) {
 }
 function pintaFantasma(c, t) {
   const f = J.fantasma; if (!f || !espectando()) return;
-  pintaOtrosFantasmas(c, t);
   pintaFantasmaEn(c, t, f, J.yo, 0.8, tr('TÚ'), '#ffcb3d');
 }
 // un fantasma cualquiera (el tuyo, el de otro jugador o el del susto): `yo` es de quién es (su animal y su ropa), `alfa` lo transparente que
@@ -105,7 +104,8 @@ function fantasmasAvanza(dt) {
   const f = J.fantasma; if (!f || !espectando() || (FG.t -= dt) > 0) return;
   FG.t = FG.cada; rfpManda({ t: 'fg', x: Math.round(f.x), y: Math.round(f.y), m: f.mira === -1 ? -1 : 1, v: f.mueve ? 1 : 0 });
 }
-function pintaOtrosFantasmas(c, t) { for (const k in FANTASMAS_RED) { const g = FANTASMAS_RED[k]; pintaFantasmaEn(c, t + +k, g, g.ente, 0.6, g.ente.nombre, '#fff6ea'); } }
+// los demás fantasmas se pintan encima de la oscuridad (dibujo.js, tras pintaLuces): los del mismo bando se tienen que ver siempre
+function pintaOtrosFantasmas(c, t) { if (!J.fantasma || !espectando()) return; for (const k in FANTASMAS_RED) { const g = FANTASMAS_RED[k]; pintaFantasmaEn(c, t + +k, g, g.ente, 0.6, g.ente.nombre, '#fff6ea'); } }
 
 // ---------- EL SUSTO ----------
 // Cuando un fantasma usa un poder de tocar (Apagón, Mano fría), todos lo ven un instante junto al becario: «¡BUUU!». Da risa y se sabe de

@@ -41,6 +41,13 @@ const ESCENA = (() => {
   }
   const caja = (color, p, [w, h, d], r) => ({ geo: new T.BoxGeometry(w, h, d), color, p, r });
   const cil = (color, p, radio, alto, r, lados = 10) => ({ geo: new T.CylinderGeometry(radio, radio, alto, lados), color, p, r });
+  // una caja sin algunas caras (túneles abiertos por donde entra la carretera): `caras` dice cuáles quedan, en el orden px nx py ny pz nz
+  function cajaAbierta(color, p, [w, h, d], r, caras) {
+    const g = new T.BoxGeometry(w, h, d).toNonIndexed(), P = g.attributes.position.array, N = g.attributes.normal.array, pos = [], nor = [];
+    for (let f = 0; f < 6; f++) if (caras[f]) for (let i = f * 18; i < f * 18 + 18; i++) { pos.push(P[i]); nor.push(N[i]); }
+    const geo = new T.BufferGeometry(); geo.setAttribute('position', new T.BufferAttribute(new Float32Array(pos), 3)); geo.setAttribute('normal', new T.BufferAttribute(new Float32Array(nor), 3));
+    return { geo, color, p, r };
+  }
 
   // --- los coches: taxi, tráfico, policía, rival. Geometría por tipo y color (se reutiliza)
   function geoCoche(tipo, color) {
@@ -85,12 +92,12 @@ const ESCENA = (() => {
   function iniciar(canvas) {
     T = window.THREE; lienzo = canvas;
     render = new T.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
-    render.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+    resMax = Math.min(devicePixelRatio || 1, 1.5); res = resMax; render.setPixelRatio(res);
     escena = new T.Scene(); FONDO.montar(T, escena, toon, CONTORNO);   // cielo, mar, montañas y la niebla del horizonte
-    camara = new T.PerspectiveCamera(TAXI.camara.fov[0], 1, 0.5, 1000);
+    camara = new T.PerspectiveCamera(TAXI.camara.fov[0], 1, 0.5, 2600);
     escena.add(new T.HemisphereLight(0xcdb9ea, 0x4a3a6a, 2.2));
     const sol = new T.DirectionalLight(0xfff1e0, 1.6); sol.position.set(60, 120, 40); escena.add(sol);
-    TROZOS.iniciar(T, escena, { toon, unir, mallaConBorde, caja, cil, CONTORNO });
+    TROZOS.iniciar(T, escena, { toon, unir, mallaConBorde, caja, cajaAbierta, cil, CONTORNO });
     montaEventos();
     jugadorMalla = mallaCoche('taxi', 0xffcb3d);
     tamaño(); window.addEventListener('resize', tamaño);
@@ -142,8 +149,17 @@ const ESCENA = (() => {
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();
     if (estado.temblor > 0) { camara.position.x += (Math.random() - 0.5) * estado.temblor; camara.position.y += (Math.random() - 0.5) * estado.temblor; }
-    TROZOS.actualizar(j.x, j.z); FONDO.sigue(camara); render.render(escena, camara);
+    ajustaResolucion(dt); TROZOS.actualizar(j.x, j.z); FONDO.sigue(camara); render.render(escena, camara);
   }
-  const info = () => (render ? { calls: render.info.render.calls, tris: render.info.render.triangles } : { calls: 0, tris: 0 });
+  const info = () => (render ? { calls: render.info.render.calls, tris: render.info.render.triangles, res } : { calls: 0, tris: 0, res: 1 });
+  // resolución adaptativa: si no llega a 45 fps baja la resolución un escalón (hasta la mitad); si sobra, la sube. Cada 3 s
+  let res = 1, resMax = 1, fpsAcum = 0, fpsN = 0, resT = 0;
+  function ajustaResolucion(dt) {
+    fpsAcum += dt; fpsN++; resT += dt; if (resT < 3) return;
+    const fps = fpsN / fpsAcum; fpsAcum = fpsN = resT = 0;
+    const antes = res;
+    if (fps < 45 && res > 0.5) res = Math.max(0.5, res - 0.25); else if (fps > 57 && res < resMax) res = Math.min(resMax, res + 0.25);
+    if (res !== antes) render.setPixelRatio(res);
+  }
   return { iniciar, sincroniza, info };
 })();

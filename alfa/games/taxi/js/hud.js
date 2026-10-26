@@ -5,7 +5,7 @@
 'use strict';
 const HUD = (() => {
   const $ = id => document.getElementById(id);
-  let avisos = [], radioT = 0, fpsMuestras = [], ultimoFps = 0;
+  let avisos = [], radioT = 0, fpsMuestras = [], msMuestras = [], ultimoFps = 0;
   function montar() {
     $('capa').innerHTML = `
       <div id="arriba">
@@ -45,7 +45,7 @@ const HUD = (() => {
   function centro(html) { const el = $('centro'); el.hidden = !html; el.innerHTML = html || ''; }
   function accion(texto) { const b = $('b-accion'); b.hidden = !texto; if (texto) b.textContent = texto; }
   let nivelPintado = -1, teVenPintado = null;
-  function pinta(estado, dt) {
+  function pinta(estado, dt, t0) {
     const ev = estado.eventos, pol = estado.policia, j = estado.jugador;
     $('dinero-n').textContent = fmt(ev.dinero) + ' €';
     $('combo').textContent = ev.combo > 1 ? 'x' + ev.combo + ' ' + tr('combo') : (ev.activo ? tr('ganado') + ' ' + fmt(ev.ganado) : '');
@@ -66,7 +66,8 @@ const HUD = (() => {
     if (radioT > 0) { radioT -= dt; if (radioT <= 0) $('radio').hidden = true; }
     // fluidez
     fpsMuestras.push(dt); if (fpsMuestras.length > 40) fpsMuestras.shift();
-    ultimoFps += dt; if (ultimoFps > 0.5) { ultimoFps = 0; const f = fpsMuestras.length / fpsMuestras.reduce((a, b) => a + b, 0); $('fps').textContent = Math.round(f); $('medidor').className = f >= 50 ? 'bien' : f >= 28 ? 'justo' : 'mal'; const i = ESCENA.info(), tz = TROZOS.estado(); $('dibujo').textContent = i.calls + ' ' + tr('dibujos') + ' · ' + (i.tris / 1000).toFixed(0) + 'k · ' + tz.cargados + ' ' + tr('trozos'); }
+    if (t0 !== undefined) { msMuestras.push(performance.now() - t0); if (msMuestras.length > 40) msMuestras.shift(); }   // cuánto JS lleva cada fotograma (sin la GPU)
+    ultimoFps += dt; if (ultimoFps > 0.5) { ultimoFps = 0; const f = fpsMuestras.length / fpsMuestras.reduce((a, b) => a + b, 0); $('fps').textContent = Math.round(f); $('medidor').className = f >= 50 ? 'bien' : f >= 28 ? 'justo' : 'mal'; const i = ESCENA.info(), tz = TROZOS.estado(), ms = msMuestras.length ? msMuestras.reduce((a, b) => a + b, 0) / msMuestras.length : 0; $('dibujo').textContent = i.calls + ' ' + tr('dibujos') + ' · ' + (i.tris / 1000).toFixed(0) + 'k · ' + tz.cargados + ' ' + tr('trozos') + ' · JS ' + ms.toFixed(1) + ' ms · ×' + i.res.toFixed(2); }
   }
   return { montar, pinta, aviso, radio, centro, accion };
 })();

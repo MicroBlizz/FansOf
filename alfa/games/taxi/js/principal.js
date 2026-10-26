@@ -95,7 +95,7 @@
     const camino = dentro ? dentro.camino : activo && activo.tipo === 'sprint' ? activo.ruta.slice(activo.siguiente - 1).map(id => CIUDAD.nodos[id]) : null;
     const destino = dentro ? { x: dentro.destino.x, z: dentro.destino.z, y: dentro.destino.y, color: dentro.tramo.color } : activo && activo.tipo === 'sprint' ? { x: activo.meta.x, z: activo.meta.z, y: activo.meta.y, color: 0x7ee04a } : null;
     const estado = { jugador, conductores: TRAFICO.coches.concat(POLICIA.patrullas, EVENTOS.rivales), caidas: POLICIA.caidas, pasajeros: PASAJEROS.esperando, camino, destino, temblor, eventos: EVENTOS.estado(), policia: POLICIA.estado(), pasajero: dentro, salidas: EVENTOS.salidas };
-    ESCENA.sincroniza(estado, dt); HUD.pinta(estado, dt);
+    ESCENA.sincroniza(estado, dt); HUD.pinta(estado, dt, t);
   }
   const listo = () => (window.THREE ? iniciar() : window.addEventListener('three-listo', iniciar, { once: true }));
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', listo); else listo();

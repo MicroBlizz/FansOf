@@ -26,10 +26,11 @@ const TAXI = {
     derrapeMin: 12,           // velocidad mínima para derrapar
     derrapeGiro: 1.5,         // cuánto más gira derrapando
     pendiente: 0.85,          // cuánto tira la gravedad por la pendiente (parte de g · pendiente)
-    suelos: { asfalto: [1, 0], acera: [0.92, 0.3], hierba: [0.55, 1.4], tierra: [0.6, 1.1], nieve: [0.5, 1.6] },   // por suelo: parte de la velocidad máxima y frenado extra por segundo
+    suelos: { asfalto: [1, 0, 1], acera: [0.95, 0.2, 0.9], hierba: [0.85, 0.5, 0.42], tierra: [0.85, 0.4, 0.5], nieve: [0.75, 0.6, 0.3] },   // [velocidad máxima, freno extra, agarre]: fuera del asfalto se corre casi igual pero se va de lado,   // por suelo: parte de la velocidad máxima y frenado extra por segundo
     radio: 1.5,               // radio del coche para los choques (es una caja de 2 x 4, se simplifica a un círculo)
     choqueFrena: 0.45,        // parte de la velocidad que se pierde contra un muro
     choqueFuerte: 12,         // a partir de esta velocidad un golpe es «choque» (corta el combo)
+    escalon: 1.1,             // si el suelo sube más que esto de un paso a otro es un muro (taludes, trincheras): no se sube
     gravedad: 24,
     salto: 0.38,              // velocidad vertical = velocidad * esto al pasar una rampa
     nitroCarga: { derrape: 0.12, roce: 0.18, derribo: 0.6, salto: 0.25 },   // cuánto nitro da cada cosa (de 0 a 1)

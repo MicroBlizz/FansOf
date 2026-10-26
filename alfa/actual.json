@@ -1,8 +1,8 @@
 {
- "build": 554,
- "hash": "7191590",
- "fecha": "2026-10-26T18:37:18Z",
- "mensaje": "Taxi: túneles sin paredes en los cruces, cámara pegada a velocidad y suelo lejano bajo el detalle",
+ "build": 555,
+ "hash": "9256d57",
+ "fecha": "2026-10-26T19:08:17Z",
+ "mensaje": "Taxi: mundo cerrado y sin popping: lejos simplificado, bocas de túnel en trinchera, esquinas curvas, enlaces en S, quitamiedos",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

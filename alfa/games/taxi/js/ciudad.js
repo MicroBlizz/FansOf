@@ -18,8 +18,7 @@ const CIUDAD = (() => {
   const ciudades = TERRENO.ciudades.map((c, indice) => {
     const r = MANZANAS.generar({ ...c, indice }, azar, g);
     const anillo = nodos.filter(n => n.ciudad === indice && n.tipo === 'anillo');
-    const esquinas = [[0, 0], [r.NX - 1, 0], [0, r.NZ - 1], [r.NX - 1, r.NZ - 1]].map(([i, j]) => r.nodos[i][j]).filter(Boolean);
-    return { ...c, indice, ...r, anillo, esquinas, nodo: (i, j) => r.nodos[i] && r.nodos[i][j] };
+    return { ...c, indice, ...r, anillo, nodo: (i, j) => r.nodos[i] && r.nodos[i][j] };
   });
   const celdas = ciudades.flatMap(c => c.celdas);
   // --- lo de fuera
@@ -104,9 +103,11 @@ const CIUDAD = (() => {
     return m && x >= m.x0 && x <= m.x1 && z >= m.z0 && z <= m.z1 ? m : null;
   }
   const aristaDe = new Map(); for (const e of aristas) { aristaDe.set(e.a + ',' + e.b, e); aristaDe.set(e.b + ',' + e.a, e); }
-  // --- obstáculos: edificios (cajas), árboles y rocas (círculos), pretiles de puentes y paredes de túneles (cajas con altura)
+  // --- obstáculos: edificios (cajas), árboles y rocas (círculos), y tramos (un segmento con grosor y altura: pretiles de puentes,
+  // paredes de túneles y trincheras, quitamiedos). Los tramos van orientados: valen para carreteras en diagonal
   const obstaculos = [];
   const caja = (x0, z0, x1, z1, extra) => { const o = { x0, z0, x1, z1, ...extra }; obstaculos.push(o); mete(iObst, x0 - 3, z0 - 3, x1 + 3, z1 + 3, o); };
+  const tramo = (ax, az, bx, bz, radio, y0, y1, extra) => { const o = { ax, az, bx, bz, radio, y0, y1, ...extra }; obstaculos.push(o); mete(iObst, Math.min(ax, bx) - radio - 3, Math.min(az, bz) - radio - 3, Math.max(ax, bx) + radio + 3, Math.max(az, bz) + radio + 3, o); return o; };
   const circulo = (x, z, radio, extra) => { const o = { x, z, radio, ...extra }; obstaculos.push(o); mete(iObst, x - radio - 3, z - radio - 3, x + radio + 3, z + radio + 3, o); };
   for (const m of celdas) { for (const e of m.edificios) caja(e.x - e.w / 2, e.z - e.d / 2, e.x + e.w / 2, e.z + e.d / 2, { edificio: true }); for (const a of m.arboles) circulo(a.x, a.z, a.radio * 0.6); }
   const campo = CARRETERAS.campo(azar, distCarretera, enRio);
@@ -114,7 +115,9 @@ const CIUDAD = (() => {
   // paredes de los túneles y de las rampas, a los lados de cada tramo (solo cuentan a su altura). En un cruce (con otro túnel o con la
   // circunvalación) la pared se recorta para no cortar el paso
   const paredes = [];
-  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(o.tipo === e.tipo && n.vecinos.length === 2)) r = Math.max(r, o.ancho / 2 + 1.5); } return r; };
+  const subt = t => t === 'tunel' || t === 'rampa';
+  const giroEn = (n, e, o) => { const a = nodos[e.a === n.id ? e.b : e.a], b = nodos[o.a === n.id ? o.b : o.a]; return Math.abs(Math.PI - Math.abs(Math.atan2(a.x - n.x, a.z - n.z) - Math.atan2(b.x - n.x, b.z - n.z))) % (Math.PI * 2); };   // cuánto dobla la carretera en n
+  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(subt(o.tipo) === subt(e.tipo) && n.vecinos.length === 2 && !n.boca && giroEn(n, e, o) < 0.3)) r = Math.max(r, o.ancho / 2 + (e.tipo === 'rampa' && !subt(o.tipo) ? 8 : 1.5)); } return r; };   // en la boca, más holgura para el giro
   for (const e of aristas) if (e.tipo === 'tunel' || e.tipo === 'rampa') {
     const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, nx = -uz, nz = ux, y = Math.min(a.y, b.y);
     const ra = recorte(a, e), rb = recorte(b, e); if (ra + rb >= L - 1) continue;
@@ -122,10 +125,58 @@ const CIUDAD = (() => {
     const ax = a.x + ux * ra, az = a.z + uz * ra, bx = b.x - ux * rb, bz = b.z - uz * rb;
     for (const lado of [-1, 1]) {
       const ox = nx * lado * (e.ancho / 2 + 0.6), oz = nz * lado * (e.ancho / 2 + 0.6);
-      const x0 = ax + ox, x1 = bx + ox, z0 = az + oz, z1 = bz + oz;
-      const p = { x0: Math.min(x0, x1) - 0.6, z0: Math.min(z0, z1) - 0.6, x1: Math.max(x0, x1) + 0.6, z1: Math.max(z0, z1) + 0.6, y0: y - 2, y1: Math.max(a.y, b.y) + 7, pared: true };
-      obstaculos.push(p); mete(iObst, p.x0 - 3, p.z0 - 3, p.x1 + 3, p.z1 + 3, p); paredes.push({ ...p, arista: e });
+      // la pared de una trinchera (rampa) llega hasta la superficie; la de un túnel nunca asoma a la calle de encima
+      const y1 = e.tipo === 'rampa' ? Math.max(natural(a.x, a.z), natural(b.x, b.z)) + 2 : Math.min(Math.max(a.y, b.y) + 6, Math.min(natural(a.x, a.z), natural(b.x, b.z)) - 2);
+      paredes.push({ ...tramo(ax + ox, az + oz, bx + ox, bz + oz, 0.6, y - 2, y1, { pared: true }), arista: e });
     }
+  }
+  // --- quitamiedos: a los dos lados de las carreteras de fuera (tras el margen de tierra) y por fuera de la circunvalación. Así el
+  // mapa queda cerrado: de la carretera solo se sale al margen. Cada carretera es una cadena de nodos: el quitamiedos es su polilínea
+  // desplazada (en las curvas se desplaza por la bisectriz, así nunca cruza la calzada), recortada donde sale otra carretera o hay puente
+  const quitamiedos = [];
+  const anchoDe = (a, b) => aristaDe.get(a.id + ',' + b.id);
+  function vallaCadena(cadena, lados, cerrada) {
+    const n = cadena.length; if (n < 2) return;
+    const e0 = anchoDe(cadena[0], cadena[1]); if (!e0) return;
+    const sep = e0.ancho / 2 + e0.margen + (e0.tipo === 'anillo' ? 4 : 1);   // en la circunvalación queda un arcén de 4 m
+    for (const lado of lados) {
+      const puntos = [];
+      for (let k = 0; k < n; k++) {
+        const p = cadena[k], a = cerrada ? cadena[(k - 1 + n) % n] : cadena[Math.max(0, k - 1)], b = cerrada ? cadena[(k + 1) % n] : cadena[Math.min(n - 1, k + 1)];
+        let dx = b.x - a.x, dz = b.z - a.z; const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;   // la tangente en p (bisectriz)
+        const d1x = p.x - a.x, d1z = p.z - a.z, d2x = b.x - p.x, d2z = b.z - p.z, l1 = Math.hypot(d1x, d1z) || 1, l2 = Math.hypot(d2x, d2z) || 1;
+        const cosMed = Math.max(0.5, Math.abs((d1x * d2x + d1z * d2z) / (l1 * l2) + 1) / 2);   // cuanto más cerrada la curva, más lejos queda la esquina del desplazamiento
+        puntos.push({ x: p.x - dz * lado * sep / Math.sqrt(cosMed), z: p.z + dx * lado * sep / Math.sqrt(cosMed), nodo: p });
+      }
+      const m = cerrada ? n : n - 1;
+      for (let k = 0; k < m; k++) {
+        const A = puntos[k], B = puntos[(k + 1) % n], e = anchoDe(A.nodo, B.nodo); if (!e) continue;
+        if (rio.length && CARRETERAS.cauce(rio, (A.x + B.x) / 2, (A.z + B.z) / 2).d < 40) continue;   // en el puente ya hay pretil
+        // recortar alrededor de los cruces de este lado: donde sale otra carretera por aquí no hay valla
+        let tramos = [[0, 1]];
+        for (const P of [A.nodo, B.nodo]) for (const v of P.vecinos) {
+          const o = nodos[v], oe = aristaDe.get(P.id + ',' + v); if (!oe || o === A.nodo || o === B.nodo || cadena.includes(o)) continue;
+          const sx = -(B.z - A.z), sz = B.x - A.x; if ((o.x - P.x) * sx + (o.z - P.z) * sz < 0) continue;   // sale por el otro lado
+          const r = sep + oe.ancho / 2 + oe.margen + 3, dx = B.x - A.x, dz = B.z - A.z, L2 = dx * dx + dz * dz || 1;   // la valla va a `sep` de su eje: el hueco cuenta desde ahí
+          const t0 = ((P.x - A.x) * dx + (P.z - A.z) * dz) / L2, h = Math.hypot(P.x - A.x - dx * t0, P.z - A.z - dz * t0);
+          if (h >= r) continue; const w = Math.sqrt(r * r - h * h) / Math.sqrt(L2), ta = t0 - w, tb = t0 + w;
+          tramos = tramos.flatMap(([u0, u1]) => u1 <= ta || u0 >= tb ? [[u0, u1]] : [[u0, Math.min(u1, ta)], [Math.max(u0, tb), u1]].filter(([q0, q1]) => q1 - q0 > 0.02));
+        }
+        for (const [u0, u1] of tramos) {
+          const q = { ax: lerp(A.x, B.x, u0), az: lerp(A.z, B.z, u0), bx: lerp(A.x, B.x, u1), bz: lerp(A.z, B.z, u1), ya: lerp(A.nodo.y, B.nodo.y, u0), yb: lerp(A.nodo.y, B.nodo.y, u1), arista: e };
+          tramo(q.ax, q.az, q.bx, q.bz, 0.3, Math.min(A.nodo.y, B.nodo.y) - 3, Math.max(A.nodo.y, B.nodo.y) + 3, { quitamiedos: true }); quitamiedos.push(q);
+        }
+      }
+    }
+  }
+  for (const en of enlaces) vallaCadena(en, [-1, 1], false);
+  for (const su of monte.subidas) vallaCadena(su, [-1, 1], false);
+  vallaCadena(monte.vuelta, [-1, 1], true);
+  for (const c of ciudades) {   // la circunvalación en orden, y solo el lado de fuera
+    const inicio = c.anillo[0], orden = [inicio]; let prev = null, cur = inicio;
+    for (let k = 0; k < c.anillo.length; k++) { const sig = cur.vecinos.map(v => nodos[v]).find(o => o !== prev && o.tipo === 'anillo' && o.ciudad === c.indice && o !== inicio); if (!sig) break; orden.push(sig); prev = cur; cur = sig; }
+    const m = orden[1], lado = Math.sign(-(m.z - inicio.z) * (inicio.x - c.cx) + (m.x - inicio.x) * (inicio.z - c.cz)) || 1;
+    vallaCadena(orden, [lado], true);
   }
   // --- los puentes: donde una carretera de superficie cruza el río
   const puentes = [];
@@ -142,11 +193,12 @@ const CIUDAD = (() => {
       puentes.push(pu);
       // pretiles a los lados
       const s = Math.sin(ang), co = Math.cos(ang), nx = co, nz = -s;
-      for (const lado of [-1, 1]) { const cx = x + nx * lado * (e.ancho / 2 + 0.5), cz = z + nz * lado * (e.ancho / 2 + 0.5), hx = Math.abs(s) * pu.largo / 2 + Math.abs(co) * 0.5, hz = Math.abs(co) * pu.largo / 2 + Math.abs(s) * 0.5; caja(cx - hx, cz - hz, cx + hx, cz + hz, { y0: pu.y - 2, y1: pu.y + 2, pretil: true }); }
+      for (const lado of [-1, 1]) { const cx = x + nx * lado * (e.ancho / 2 + 0.5), cz = z + nz * lado * (e.ancho / 2 + 0.5); tramo(cx - s * pu.largo / 2, cz - co * pu.largo / 2, cx + s * pu.largo / 2, cz + co * pu.largo / 2, 0.4, pu.y - 2, pu.y + 2, { pretil: true }); }
     }
   }
   const cerca = (x, z) => iObst[celda(x, z)] || [];
-  const libre = (x, z, y) => !cerca(x, z).some(o => o.x0 !== undefined && x > o.x0 && x < o.x1 && z > o.z0 && z < o.z1 && (o.y0 === undefined || (y > o.y0 && y < o.y1)));
+  const libre = (x, z, y) => !cerca(x, z).some(o => (o.y0 === undefined || (y > o.y0 && y < o.y1)) && (o.x0 !== undefined ? x > o.x0 && x < o.x1 && z > o.z0 && z < o.z1 : o.ax !== undefined && distTramo(o, x, z) < o.radio + 1));
+  function distTramo(o, x, z) { const dx = o.bx - o.ax, dz = o.bz - o.az, L2 = dx * dx + dz * dz || 1, t = clamp(((x - o.ax) * dx + (z - o.az) * dz) / L2, 0, 1); return Math.hypot(x - o.ax - dx * t, z - o.az - dz * t); }
   // --- consultas del grafo
   function nodosEn(x, z, rMin, rMax) {
     const lista = [], c = Math.ceil(rMax / CEL);
@@ -209,11 +261,11 @@ const CIUDAD = (() => {
   const trozos = [];
   for (let i = 0; i < NTX; i++) for (let j = 0; j < NTZ; j++) {
     const x0 = i * TR, z0 = j * TR, x1 = x0 + TR, z1 = z0 + TR, dentro = (x, z, m = 0) => x >= x0 - m && x < x1 + m && z >= z0 - m && z < z1 + m;
-    const t = { i, j, x0, z0, x1, z1, celdas: celdas.filter(m => m.x1 > x0 && m.x0 < x1 && m.z1 > z0 && m.z0 < z1), aristas: [], campo: campo.filter(o => dentro(o.x, o.z)), puentes: puentes.filter(p => dentro(p.x, p.z)), rampas: rampas.filter(r => dentro(r.x, r.z)), escondites: escondites.filter(e => dentro(e.x, e.z)), miradores: miradores.filter(m => dentro(m.x, m.z)), rio: rio.filter(p => dentro(p.x, p.z, 80)) };
+    const t = { i, j, x0, z0, x1, z1, celdas: celdas.filter(m => m.x1 > x0 && m.x0 < x1 && m.z1 > z0 && m.z0 < z1), aristas: [], campo: campo.filter(o => dentro(o.x, o.z)), puentes: puentes.filter(p => dentro(p.x, p.z)), quitamiedos: quitamiedos.filter(q => dentro(q.ax, q.az)), rampas: rampas.filter(r => dentro(r.x, r.z)), escondites: escondites.filter(e => dentro(e.x, e.z)), miradores: miradores.filter(m => dentro(m.x, m.z)), rio: rio.filter(p => dentro(p.x, p.z, 80)) };
     for (const e of aristas) { const a = nodos[e.a], b = nodos[e.b]; if (Math.max(a.x, b.x) + e.alcance > x0 && Math.min(a.x, b.x) - e.alcance < x1 && Math.max(a.z, b.z) + e.alcance > z0 && Math.min(a.z, b.z) - e.alcance < z1) t.aristas.push(e); }
     trozos.push(t);
   }
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
-  return { ancho: M.ancho, largo: M.largo, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
+  return { ancho: M.ancho, largo: M.largo, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
     altura, alturaSuelo, natural, suelo, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
 })();

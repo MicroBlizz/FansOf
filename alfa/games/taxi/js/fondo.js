@@ -27,7 +27,7 @@ const FONDO = (() => {
 
   function montar(T, escena, toon, contorno) {
     const M = TAXI.mundo, cx = M.ancho / 2, cz = M.largo / 2;
-    escena.background = new T.Color(HORIZONTE); escena.fog = new T.Fog(HORIZONTE, 170, 460);
+    escena.background = new T.Color(HORIZONTE); escena.fog = new T.Fog(HORIZONTE, 500, 1700);   // lejos se ve el mundo entero (lo lejano de TROZOS); la niebla solo funde el horizonte
     // cielo: una esfera por dentro que sigue a la cámara
     cielo = new T.Mesh(new T.SphereGeometry(900, 24, 12), new T.MeshBasicMaterial({ map: texturaCielo(T), side: T.BackSide, fog: false, depthWrite: false }));
     cielo.renderOrder = -1; escena.add(cielo);

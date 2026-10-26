@@ -40,15 +40,19 @@ const COCHE = (() => {
     // al girar, parte de la velocidad se queda «de lado»; el agarre se la come
     const cambio = c.ang - angAntes;
     c.vl += -cambio * c.v * (c.derrapando ? K.deslizaDerrape : K.desliza);
-    const agarre = c.aire ? 0.4 : c.derrapando ? K.agarreDerrape : K.agarre;
+    const agarre = (c.aire ? 0.4 : c.derrapando ? K.agarreDerrape : K.agarre) * (S[2] === undefined ? 1 : S[2]);   // cada suelo agarra lo suyo
     c.vl -= c.vl * Math.min(1, agarre * dt);
     if (c.derrapando) { c.nitro = Math.min(1, c.nitro + K.nitroCarga.derrape * dt); c.derrapeT = (c.derrapeT || 0) + dt; } else c.derrapeT = 0;
     // moverse
-    const f = adelante(c), d = derecha(c);
+    const f = adelante(c), d = derecha(c), xAntes = c.x, zAntes = c.z;
     c.x += (f.x * c.v + d.x * c.vl) * dt;
     c.z += (f.z * c.v + d.z * c.vl) * dt;
     // el suelo: su altura (las carreteras, los túneles si vas dentro), su pendiente a lo largo del coche y qué es
-    const hSuelo = mundo && mundo.altura ? mundo.altura(c.x, c.z, c.y) : 0;
+    let hSuelo = mundo && mundo.altura ? mundo.altura(c.x, c.z, c.y) : 0;
+    if (mundo && mundo.altura && !c.aire && hSuelo - c.y > K.escalon) {   // el suelo sube de golpe (un talud, el lado de una trinchera): es un muro
+      c.x = xAntes; c.z = zAntes; hSuelo = c.y; const antes = Math.abs(c.v); c.v *= -0.15; c.vl = 0;
+      if (antes > K.choqueFuerte && (c.choqueT || 0) <= 0) { c.choqueT = 0.8; sucesos.push('choque'); } else sucesos.push('roce-muro');
+    }
     if (mundo && mundo.altura && !c.aire) {
       const atrasH = mundo.altura(c.x - f.x * 2, c.z - f.z * 2, c.y), delanteH = mundo.altura(c.x + f.x * 2, c.z + f.z * 2, c.y);
       c.pendiente = (delanteH - atrasH) / 4;
@@ -71,7 +75,7 @@ const COCHE = (() => {
       let choca = false;
       for (const o of mundo.cerca(c.x, c.z)) {
         if (o.y0 !== undefined && (c.y < o.y0 || c.y > o.y1)) continue;
-        choca = (o.radio !== undefined ? resuelveCirculo(c, o.x, o.z, o.radio) : resuelveCaja(c, o)) || choca;
+        choca = (o.ax !== undefined ? resuelveTramo(c, o) : o.radio !== undefined ? resuelveCirculo(c, o.x, o.z, o.radio) : resuelveCaja(c, o)) || choca;
       }
       if (c.x < c.radio) { c.x = c.radio; c.vl = 0; choca = true; } if (c.z < c.radio) { c.z = c.radio; c.vl = 0; choca = true; }
       if (c.x > mundo.ancho - c.radio) { c.x = mundo.ancho - c.radio; c.vl = 0; choca = true; } if (c.z > mundo.largo - c.radio) { c.z = mundo.largo - c.radio; c.vl = 0; choca = true; }
@@ -98,6 +102,11 @@ const COCHE = (() => {
       d = 0;
     } else { dx /= d; dz /= d; }
     return empuja(c, dx, dz, c.radio - d);
+  }
+  // contra un tramo (segmento con grosor): como un círculo en el punto más cercano del segmento
+  function resuelveTramo(c, o) {
+    const dx = o.bx - o.ax, dz = o.bz - o.az, L2 = dx * dx + dz * dz || 1, t = clamp(((c.x - o.ax) * dx + (c.z - o.az) * dz) / L2, 0, 1);
+    return resuelveCirculo(c, o.ax + dx * t, o.az + dz * t, o.radio);
   }
   function resuelveCirculo(c, x, z, radio) {
     let dx = c.x - x, dz = c.z - z; const d = Math.hypot(dx, dz), min = c.radio + radio;

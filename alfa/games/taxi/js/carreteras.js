@@ -42,13 +42,17 @@ const CARRETERAS = (() => {
       for (const ca of A.esquinas) for (const cb of B.esquinas) {
         const dx = cb.x - ca.x, dz = cb.z - ca.z, L = Math.hypot(dx, dz);
         const dM = Math.abs((MO.x - ca.x) * dz - (MO.z - ca.z) * dx) / L;   // distancia del centro de la montaña a la recta
-        if (dM < MO.radio + 80) continue;
+        if (dM < MO.radio + 140) continue;   // la S se acerca hasta 60 m más
         if (!mejor || L < mejor.L) mejor = { ca, cb, L };
       }
       if (!mejor) continue;
-      const n = Math.max(2, Math.round(mejor.L / 50)), cadena = [mejor.ca];
-      for (let k = 1; k < n; k++) cadena.push(g.nodo(lerp(mejor.ca.x, mejor.cb.x, k / n), lerp(mejor.ca.z, mejor.cb.z, k / n), { tipo: 'enlace' }));
-      cadena.push(mejor.cb);
+      // sale de cada esquina en perpendicular (hacia fuera de la ciudad), y entre medias hace una S suave
+      const salida = (c, C) => { const dx = c.x - C.cx, dz = c.z - C.cz, d = Math.hypot(dx, dz); return g.nodo(c.x + dx / d * 70, c.z + dz / d * 70, { tipo: 'enlace' }); };
+      const sa = salida(mejor.ca, A), sb = salida(mejor.cb, B);
+      const L = Math.hypot(sb.x - sa.x, sb.z - sa.z), ux = (sb.x - sa.x) / L, uz = (sb.z - sa.z) / L, n = Math.max(2, Math.round(L / 50)), cadena = [mejor.ca, sa];
+      const amp = Math.min(60, L * 0.08) * ((a + b) % 2 ? -1 : 1);
+      for (let k = 1; k < n; k++) { const t = k / n, s = amp * Math.sin(t * Math.PI * 2) * Math.sin(t * Math.PI); cadena.push(g.nodo(lerp(sa.x, sb.x, t) - uz * s, lerp(sa.z, sb.z, t) + ux * s, { tipo: 'enlace' })); }
+      cadena.push(sb, mejor.cb);
       suaviza(cadena, 2);
       for (let k = 0; k < cadena.length - 1; k++) g.une(cadena[k], cadena[k + 1], M.anchoEnlace, 'enlace');
       lista.push(cadena);

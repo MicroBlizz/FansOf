@@ -103,6 +103,7 @@ const CIUDAD = (() => {
     const m = C.celdas.find(q => q.i === i && q.j === j);
     return m && x >= m.x0 && x <= m.x1 && z >= m.z0 && z <= m.z1 ? m : null;
   }
+  const aristaDe = new Map(); for (const e of aristas) { aristaDe.set(e.a + ',' + e.b, e); aristaDe.set(e.b + ',' + e.a, e); }
   // --- obstáculos: edificios (cajas), árboles y rocas (círculos), pretiles de puentes y paredes de túneles (cajas con altura)
   const obstaculos = [];
   const caja = (x0, z0, x1, z1, extra) => { const o = { x0, z0, x1, z1, ...extra }; obstaculos.push(o); mete(iObst, x0 - 3, z0 - 3, x1 + 3, z1 + 3, o); };
@@ -110,13 +111,18 @@ const CIUDAD = (() => {
   for (const m of celdas) { for (const e of m.edificios) caja(e.x - e.w / 2, e.z - e.d / 2, e.x + e.w / 2, e.z + e.d / 2, { edificio: true }); for (const a of m.arboles) circulo(a.x, a.z, a.radio * 0.6); }
   const campo = CARRETERAS.campo(azar, distCarretera, enRio);
   for (const o of campo) circulo(o.x, o.z, o.tipo === 'roca' ? o.radio * 0.9 : o.radio * 0.5);
-  // paredes de los túneles y de las rampas, a los lados de cada tramo (solo cuentan a su altura)
+  // paredes de los túneles y de las rampas, a los lados de cada tramo (solo cuentan a su altura). En un cruce (con otro túnel o con la
+  // circunvalación) la pared se recorta para no cortar el paso
   const paredes = [];
+  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(o.tipo === e.tipo && n.vecinos.length === 2)) r = Math.max(r, o.ancho / 2 + 1.5); } return r; };
   for (const e of aristas) if (e.tipo === 'tunel' || e.tipo === 'rampa') {
-    const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz), nx = -dz / L, nz = dx / L, y = Math.min(a.y, b.y);
+    const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, nx = -uz, nz = ux, y = Math.min(a.y, b.y);
+    const ra = recorte(a, e), rb = recorte(b, e); if (ra + rb >= L - 1) continue;
+    e.recorte = [ra, rb];
+    const ax = a.x + ux * ra, az = a.z + uz * ra, bx = b.x - ux * rb, bz = b.z - uz * rb;
     for (const lado of [-1, 1]) {
       const ox = nx * lado * (e.ancho / 2 + 0.6), oz = nz * lado * (e.ancho / 2 + 0.6);
-      const x0 = Math.min(a.x, b.x) + ox, x1 = Math.max(a.x, b.x) + ox, z0 = Math.min(a.z, b.z) + oz, z1 = Math.max(a.z, b.z) + oz;
+      const x0 = ax + ox, x1 = bx + ox, z0 = az + oz, z1 = bz + oz;
       const p = { x0: Math.min(x0, x1) - 0.6, z0: Math.min(z0, z1) - 0.6, x1: Math.max(x0, x1) + 0.6, z1: Math.max(z0, z1) + 0.6, y0: y - 2, y1: Math.max(a.y, b.y) + 7, pared: true };
       obstaculos.push(p); mete(iObst, p.x0 - 3, p.z0 - 3, p.x1 + 3, p.z1 + 3, p); paredes.push({ ...p, arista: e });
     }
@@ -157,7 +163,6 @@ const CIUDAD = (() => {
     }
     return nodos[0];
   }
-  const aristaDe = new Map(); for (const e of aristas) { aristaDe.set(e.a + ',' + e.b, e); aristaDe.set(e.b + ',' + e.a, e); }
   // camino más corto (Dijkstra con una cola sencilla: el grafo es pequeño)
   function camino(desde, hasta) {
     if (desde === hasta) return [desde];

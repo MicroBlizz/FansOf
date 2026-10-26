@@ -1,8 +1,8 @@
 {
- "build": 553,
- "hash": "3054455",
- "fecha": "2026-10-26T17:53:54Z",
- "mensaje": "Taxi: el mundo entero (tres ciudades con cuestas, montaña con miradores, río, túneles), carga por trozos, minimapa y gas",
+ "build": 554,
+ "hash": "7191590",
+ "fecha": "2026-10-26T18:37:18Z",
+ "mensaje": "Taxi: túneles sin paredes en los cruces, cámara pegada a velocidad y suelo lejano bajo el detalle",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

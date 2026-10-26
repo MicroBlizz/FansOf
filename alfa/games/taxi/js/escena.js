@@ -137,7 +137,7 @@ const ESCENA = (() => {
     while (atras > 3 && !CIUDAD.libre(j.x - f.x * atras, j.z - f.z * atras, j.y + 2)) atras -= 1;   // que la cámara no se meta en un edificio
     const cx = j.x - f.x * atras, cz = j.z - f.z * atras;
     const objetivo = _v().set(cx, j.y + K.alto + (K.atras - atras) * 0.5, cz);
-    camara.position.lerp(objetivo, Math.min(1, K.suave * dt));
+    camara.position.lerp(objetivo, Math.min(1, (K.suave + Math.abs(j.v) * 0.25) * dt));   // a más velocidad, menos retraso: el coche no se aleja
     const suelo = CIUDAD.altura(camara.position.x, camara.position.z, j.y) + 1.6; if (camara.position.y < suelo) camara.position.y = suelo;   // ni bajo el suelo (cuestas)
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();

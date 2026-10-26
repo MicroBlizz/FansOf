@@ -18,7 +18,9 @@ const TROZOS = (() => {
     const pos = geo.attributes.position, col = new Float32Array(pos.count * 3), c = new T.Color();
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i) + M.ancho / 2, z = pos.getZ(i) + M.largo / 2;
-      pos.setY(i, CIUDAD.alturaSuelo(x, z));
+      // siempre por debajo del suelo con detalle (que asomara entre sus vértices): el mínimo de la celda, y un poco más abajo
+      let h = CIUDAD.alturaSuelo(x, z); for (const [dx, dz] of [[-R / 2, 0], [R / 2, 0], [0, -R / 2], [0, R / 2], [-R / 2, -R / 2], [R / 2, R / 2]]) h = Math.min(h, CIUDAD.alturaSuelo(x + dx, z + dz));
+      pos.setY(i, h - 1.2);
       let s = CIUDAD.suelo(x, z); if (s === 'tierra' && TERRENO.natural(x, z) > M.roca) s = 'roca';
       c.set(colorSuelo(s)); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
     }
@@ -101,15 +103,22 @@ const TROZOS = (() => {
     for (const e of t.escondites) piezas.push(U.caja(0x4fc3d9, [e.x, al(e.x, e.z) + 2.5, e.z - e.radio + 1], [0.3, 5, 0.3]), U.caja(0x4fc3d9, [e.x, al(e.x, e.z) + 5.4, e.z - e.radio + 1], [2.4, 1.4, 0.3]));
     // túneles: un tubo por tramo (se ve por dentro); rampas: paredes a los lados
     const n = CIUDAD.nodos;
+    const cruces = new Set();
     for (const e of t.aristas) {
       if (e.tipo !== 'tunel' && e.tipo !== 'rampa') continue;
       const a = n[e.a], b = n[e.b]; if (a.x < t.x0 - 1 || a.x >= t.x1 + 1 || a.z < t.z0 - 1 || a.z >= t.z1 + 1) continue;   // cada tramo lo monta el trozo de su primer nodo
-      const ang = Math.atan2(b.x - a.x, b.z - a.z), cx = (a.x + b.x) / 2, cz = (a.z + b.z) / 2, cy = (a.y + b.y) / 2, inclina = Math.atan2(b.y - a.y, e.largo);
+      const [ra, rb] = e.recorte || [0, 0], L = e.largo - ra - rb; if (L < 2) continue;
+      const ux = (b.x - a.x) / e.largo, uz = (b.z - a.z) / e.largo, uy = (b.y - a.y) / e.largo;
+      const ax = a.x + ux * ra, az = a.z + uz * ra, ay = a.y + uy * ra, bx = b.x - ux * rb, bz = b.z - uz * rb, by = b.y - uy * rb;
+      const ang = Math.atan2(b.x - a.x, b.z - a.z), cx = (ax + bx) / 2, cz = (az + bz) / 2, cy = (ay + by) / 2, inclina = Math.atan2(by - ay, L);
       if (e.tipo === 'tunel') {
-        tubos.push(U.caja(0x4a3f66, [cx, cy + 4, cz], [e.ancho + 2.4, 8, e.largo + 0.5], [-inclina, ang, 0]));
-        for (let k = 10; k < e.largo - 5; k += 20) { const q = k / e.largo; piezas.push(U.caja(0xfff1a8, [lerp(a.x, b.x, q), lerp(a.y, b.y, q) + 7.6, lerp(a.z, b.z, q)], [2.4, 0.3, 1], [0, ang, 0])); }   // luces del techo
+        tubos.push(U.caja(0x4a3f66, [cx, cy + 4, cz], [e.ancho + 2.4, 8, L + 0.5], [-inclina, ang, 0]));
+        for (let k = 10; k < L - 5; k += 20) { const q = k / L; piezas.push(U.caja(0xfff1a8, [lerp(ax, bx, q), lerp(ay, by, q) + 7.6, lerp(az, bz, q)], [2.4, 0.3, 1], [0, ang, 0])); }   // luces del techo
+        for (const [m, r] of [[a, ra], [b, rb]]) if (r > 0 && m.tipo === 'tunel' && !cruces.has(m.id)) { cruces.add(m.id); tubos.push(U.caja(0x4a3f66, [m.x, m.y + 4, m.z], [r * 2, 8, r * 2])); piezas.push(U.caja(0xfff1a8, [m.x, m.y + 7.6, m.z], [2.4, 0.3, 2.4])); }   // el cruce de túneles: una sala
+      } else {
+        const alto = Math.max(CIUDAD.natural(a.x, a.z), CIUDAD.natural(b.x, b.z)) + 1.2, bajo = Math.min(ay, by) - 1.5;
+        for (const lado of [-1, 1]) piezas.push(U.caja(0x5b5668, [cx + Math.cos(ang) * lado * (e.ancho / 2 + 0.9), (alto + bajo) / 2, cz - Math.sin(ang) * lado * (e.ancho / 2 + 0.9)], [0.8, alto - bajo, L + 0.5], [0, ang, 0]));
       }
-      else for (const lado of [-1, 1]) piezas.push(U.caja(0x5b5668, [cx + Math.cos(ang) * lado * (e.ancho / 2 + 0.9), cy + 3, cz - Math.sin(ang) * lado * (e.ancho / 2 + 0.9)], [0.8, 10, e.largo + 0.5], [-inclina, ang, 0]));
     }
     const mallas = [];
     if (piezas.length) { const g = U.mallaConBorde(U.unir(piezas), 0.12); g.position.set(0, 0, 0); escena.add(g); mallas.push(g.children[0], g.children[1]); g.userData.grupo = true; mallas.push(g); }

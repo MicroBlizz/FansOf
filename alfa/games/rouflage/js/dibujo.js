@@ -183,6 +183,21 @@ function tapaFueraDeSala(c, x0, y0, vw, vh) {
   const r = 10;      // lo que sobresale el contorno del canto (paredes.js); por arriba más: carteles y máquinas asoman sobre la pared
   ponMundo(c); c.fillStyle = '#0b0718'; c.beginPath(); c.rect(x0 - 60, y0 - 60, vw + 120, vh + 120); c.rect(z.px - r, arriba - 28, z.pw + 2 * r, z.py + z.ph - arriba + r + 28); c.fill('evenodd');
 }
+// el becario con linterna se repinta encima de la oscuridad: los muebles que tiene DELANTE (columnas, pilares, coches…) se vuelven a
+// pintar encima de él, solo dentro de su caja, para que pase por detrás igual que los colados
+function repintaDelante(c, e, cosas) {
+  const bx = e.x - 46, by = e.y - 124, bw = 92, bh = 140;
+  const oy = e.ordenY ?? e.y; let hay = false;
+  for (const k of cosas) {
+    if (!k.T || k.vuela || k.ordenY <= oy) continue;
+    const d = k.dib;
+    if (d.x0 > bx + bw || d.x0 + d.w < bx || d.y0 > by + bh || d.y0 + d.h < by) continue;
+    if (!hay) { c.save(); c.beginPath(); c.rect(bx, by, bw, bh); c.clip(); hay = true; }
+    c.drawImage(k.dibujo.cv, d.x0, d.y0, d.w, d.h);
+  }
+  if (hay) c.restore();
+}
+
 function dibuja(t) {
   const c = ctx; calculaVista();
   c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
@@ -230,7 +245,7 @@ function dibuja(t) {
   fpPintaNubes(c, t);      // el vaho de los fantasmas, encima de los personajes y debajo de la oscuridad
   if (!TALLER.abierto) {
     ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
-    for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
+    for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; repintaDelante(c, e, cosas); }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
     eventosPintaVelo(c, t); talentosPintaLuz(c, t);
   }
   ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c); talentosPinta(c, t); pintaChat(c, t); salaVivaNombres(c);

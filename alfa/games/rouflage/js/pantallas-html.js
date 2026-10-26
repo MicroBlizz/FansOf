@@ -11,6 +11,7 @@
   <div class="esc-arriba" id="esc-arriba">
     <button type="button" class="boton gris peq" id="b-esc-volver" data-tr>VOLVER</button>
     <h2 class="ol" data-tr>MI ESCENARIO</h2>
+    <button type="button" class="boton peq esc-clase colado" id="b-esc-clase" hidden><canvas width="44" height="56"></canvas><b>COLADO</b></button>
     <button type="button" class="boton peq esc-pasear" id="b-esc-pasear"><i data-icono="andar"></i><b data-tr>PASEAR</b></button>
   </div>
   <div class="esc-burbuja" id="esc-burbuja" hidden>
@@ -163,7 +164,6 @@
   <div class="caja tienda-caja">
     <h2 class="ol" data-tr>TIENDA</h2>
     <div class="cartera" id="tienda-cartera"></div>
-    <p class="tienda-aviso" id="tienda-aviso-euros"></p>
     <div class="tienda-lista">
       <button type="button" class="tienda-gacha" id="b-gacha"><b class="ol" data-tr>GACHAPÓN</b><span data-tr>Cápsulas con piezas del armario. Tiradas gratis cada día.</span><i class="tienda-gacha-aviso" id="tienda-gacha-aviso" hidden></i></button>
       <div class="tienda-hoy" id="tienda-hoy" hidden><h3 class="ol" data-tr>OFERTAS DE HOY</h3><small id="tienda-hoy-t"></small><div id="tienda-hoy-lista"></div></div>

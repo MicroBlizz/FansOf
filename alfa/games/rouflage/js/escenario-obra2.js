@@ -81,8 +81,8 @@ function preparaProbar() {
   if (E('b-esc-probar')) return;
   const b = document.createElement('button'); b.type = 'button'; b.className = 'boton esc-probar'; b.id = 'b-esc-probar';
   b.innerHTML = '<i></i><b></b>'; ponIcono(b.firstChild, 'jugar');
-  b.onclick = () => escProbar('camaleon');
-  E('b-esc-armario').before(b);
+  b.onclick = () => escProbar(typeof escClase === 'function' ? escClase() : 'camaleon');      // con el papel que llevas al pasear
+  E('p-escenario').appendChild(b);      // al pasear no hay bandeja: PROBAR flota abajo a la derecha
 }
 
 // el lienzo, en la pestaña ESCENARIO y en el armario: el primero, gratis desde el principio. Detrás, los TAMAÑOS (lz: el tamaño que da): el

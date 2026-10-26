@@ -125,3 +125,13 @@
 /* sin unidades de ese mueble (muebles-unidades.js): la tarjeta apagada y el contador en rojo; al tocarla, a por más */
 .esc-carta.agotada canvas:first-child { opacity: .45; filter: saturate(.3); }
 .esc-carta.agotada em { color: var(--danger); }
+/* PASEAR: sin bandeja ni zoom (todo el mapa a la vista); en el centro de arriba, COLADO / BECARIO para cambiar de papel mientras paseas */
+.pantalla.escenario.paseando #esc-panel, .pantalla.escenario.paseando #esc-zoom, .pantalla.escenario.paseando .esc-arriba h2 { display: none; }
+.esc-clase { justify-self: center; display: inline-flex; align-items: center; gap: 4px; padding-left: 6px; max-width: 100%; }
+.esc-clase[hidden] { display: none; }
+.esc-clase canvas { width: 22px; height: 28px; flex: none; }
+.esc-clase b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.esc-clase.colado { background: linear-gradient(to bottom, #b6f58a, #4fae2a); }
+.esc-clase.becario { background: linear-gradient(to bottom, #9fd0ff, #3a7de0); color: #fff6ea; }
+.pantalla.escenario #b-esc-probar { display: none; }
+.pantalla.escenario.paseando #b-esc-probar { display: flex; position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 14px); z-index: 3; }

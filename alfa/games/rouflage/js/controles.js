@@ -17,6 +17,15 @@ function vectorMueve() {
   return [0, 0];
 }
 
+// los botones de acción (PINTAR, CONGELAR, SILBAR, la habilidad…) responden al TOCAR, no al soltar: con otro dedo en la palanca el
+// móvil no siempre manda el «click» del segundo dedo, y así se puede andar y usar una habilidad a la vez
+function botonAccion(b, fn) {
+  if (!b) return;
+  let tocado = -1e9;
+  b.addEventListener('pointerdown', ev => { if (ev.pointerType === 'mouse') return; ev.preventDefault(); tocado = performance.now(); fn(); });
+  b.onclick = () => { if (performance.now() - tocado > 700) fn(); };      // ratón y teclado (y el click que llega detrás del toque, que no repite)
+}
+
 cv.addEventListener('pointerdown', ev => {
   ev.preventDefault();
   if (ev.pointerType !== 'mouse') ENTRADA.tactil = true; else if (ENTRADA.tactil && ev.movementX !== undefined) ENTRADA.tactil = false;

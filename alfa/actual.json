@@ -1,8 +1,8 @@
 {
- "build": 543,
- "hash": "4dc1a9f",
- "fecha": "2026-10-26T02:56:17Z",
- "mensaje": "Boom: icono por tiro (Garaje y botones; el SS con marca de agua y su botón), Tiro 2 con un turno de recarga, tiros bajo tierra que flotan en curva y explotan al salir, ningún tiro sin viento; triángulo de poder y propuesta de habilidades únicas en el plan; v0.3.1",
+ "build": 544,
+ "hash": "51aa081",
+ "fecha": "2026-10-26T08:57:43Z",
+ "mensaje": "Rouflage: los becarios pasan por detrás de columnas y pilares, moverse y usar habilidad a la vez, PASEAR sin menú con COLADO / BECARIO, y la tienda con la cartera dibujada",
  "juegos": {
   "boom": "0.3.1",
   "cooking": "0.2.0",

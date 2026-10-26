@@ -2,8 +2,6 @@
 'use strict';
 IDIOMA.add({
   "TOCA PARA JUGAR": "TOCCA PER GIOCARE",
-  "De momento lo de los euros es gratis: te invita {quien}.": "Per ora la roba in euro è gratis: offre {quien}.",
-  "Te invita {quien}": "Offre {quien}",
   "Las Gotas se ganan jugando": "Le Gocce si guadagnano giocando",
   "Te faltan {n} {m}": "Ti mancano {n} {m}",
   "Te faltan {n} {m}: tienes {t} y hacen falta {h}": "Ti mancano {n} {m}: ne hai {t} e ne servono {h}",

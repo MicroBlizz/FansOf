@@ -18,6 +18,10 @@ function escModo(m, sinSonido) {
   if (!sinSonido) play('select');
   preparaObra(); preparaPeg(); E('esc-pegar').hidden = m !== 'pegar'; preparaProbar(); E('b-esc-probar').querySelector('b').textContent = tr('PROBAR'); E('esc-decorar').hidden = m !== 'decorar'; E('esc-pintar').hidden = m !== 'pintar'; E('esc-obra').hidden = m !== 'obra'; E('esc-pasear').hidden = m !== 'pasear';
   E('b-esc-pasear').classList.toggle('activo', m === 'pasear'); E('esc-panel').classList.toggle('paseo', m === 'pasear');
+  // al PASEAR se esconde todo el menú (la bandeja y el zoom): arriba quedan VOLVER, COLADO / BECARIO y DECORAR
+  const antes = E('p-escenario').classList.contains('paseando');
+  E('p-escenario').classList.toggle('paseando', m === 'pasear'); E('b-esc-clase').hidden = m !== 'pasear'; escClaseBoton();
+  if (m === 'pasear' && !antes && !sinSonido) escAviso(tr('Arrastra el dedo para llevar tu galleta o toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.'));
   E('b-esc-pasear').querySelector('b').textContent = m === 'pasear' ? tr('DECORAR') : tr('PASEAR');
   if (m === 'pintar' && typeof escPincelRefresca === 'function') escPincelRefresca();
   if (m === 'obra') obraRefresca();

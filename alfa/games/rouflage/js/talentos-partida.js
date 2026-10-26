@@ -260,7 +260,7 @@ function accionHabilidad() {
 function talBotonCrea(id, dentro) {
   const b = document.createElement('button'); b.type = 'button'; b.id = id; b.className = 'accion hab'; b.hidden = true;
   b.innerHTML = '<canvas width="88" height="88"></canvas><b></b><span class="hab-usos"></span><kbd>E</kbd>';
-  b.onclick = accionHabilidad; dentro.appendChild(b); return b;
+  botonAccion(b, accionHabilidad); dentro.appendChild(b); return b;
 }
 // lo pinta refrescaHud: de colado va en la fila de botones, en el hueco de la granada; de becario, abajo a la derecha. Con su carga y sus usos
 function refrescaHab(todo) {
@@ -280,7 +280,8 @@ function refrescaHab(todo) {
   const carga = activo ? 0 : yo.habEspera > 0 && usos > 0 ? yo.habEspera / (h.espera || 1) : 0;
   b.style.setProperty('--carga', (carga * 360).toFixed(0) + 'deg');
   b.classList.toggle('gastada', usos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
-  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + usos;      // en la sala viva no se gasta: sin contador if (u.textContent !== txt) u.textContent = txt;
+  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + usos;      // en la sala viva no se gasta: sin contador
+  if (u.textContent !== txt) u.textContent = txt;
 }
 const TAL_CORTO = { contador: 'CONTAR', dron: 'DRON', silbato: 'SILBATO', uv: 'UV', cafe: 'CAFÉ', senuelo: 'SEÑUELO', gato: 'GATO', cambiazo: 'CAMBIAZO' };
 function preparaHab() { talBotonCrea('b-hab', E('acciones')); E('acciones').insertBefore(E('b-hab'), E('b-silbar')); talBotonCrea('b-hab-b', E('hud')); E('b-hab-b').classList.add('becario'); }

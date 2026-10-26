@@ -80,8 +80,11 @@
 
 
 /* la economía (economia.js): la cartera, el botón de comprar del armario y el pase */
-.cartera { display: flex; justify-content: center; gap: 14px; font-weight: 800; font-size: 13px; color: var(--ink-dim); margin: 2px 0 6px; }
-.cartera b { color: var(--gold); font-size: 15px; }
+.cartera { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 2px 0 8px; }
+/* cada moneda, una chapa con su dibujo (como las del título): la gota arcoíris y la acción */
+.cartera-chapa { display: inline-flex; align-items: center; gap: 5px; padding: 3px 11px 2px 5px; border-radius: 13px; background: var(--panel); border: 3px solid var(--outline); box-shadow: 0 3px 0 var(--outline); }
+.cartera-chapa canvas { display: block; width: 24px; height: 24px; flex: none; }
+.cartera-chapa b { color: var(--gold); font: 400 17px var(--font-display); line-height: 1; padding-top: 2px; font-variant-numeric: tabular-nums; text-shadow: 0 2px 0 var(--outline); }
 .cartera b.deuda { color: #ff5a5a; }   /* Acciones en negativo: deuda tras un reembolso */
 #b-ar-comprar { margin-top: 6px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
 #b-ar-comprar.falta { filter: grayscale(0.7); opacity: 0.8; }
@@ -112,7 +115,6 @@
 
 /* la tienda (tienda.js) */
 .tienda-caja { max-width: 520px; max-height: calc(100vh - 30px); display: flex; flex-direction: column; text-align: center; }
-.tienda-aviso { margin: 0 0 8px; padding: 6px 10px; border-radius: 10px; background: rgba(255, 203, 61, 0.14); border: 2px dashed var(--gold); font-weight: 700; font-size: 12.5px; color: var(--ink); }
 .tienda-lista { overflow-y: auto; flex: 1; min-height: 140px; text-align: left; padding: 0 2px 8px; margin-bottom: 8px; }
 .tienda-lista h3 { font: 400 16px var(--font-display); color: var(--gold); margin: 10px 2px 6px; letter-spacing: 0.03em; }
 .tienda-lista > div { display: grid; gap: 8px; }
@@ -123,18 +125,19 @@
 .tn-texto { display: grid; gap: 2px; }
 .tn-texto b { font: 400 16px var(--font-display); letter-spacing: 0.02em; }
 .tn-texto small { font-weight: 700; font-size: 12px; color: var(--ink-dim); line-height: 1.15; }
-.tn-tarjeta.cambio { grid-template-columns: auto 1fr auto; }
-.tn-cambio { display: flex; align-items: center; gap: 3px; }
 .tn-boton { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
 .tn-boton canvas { width: 22px; height: 22px; flex: none; }
 .tn-boton span { white-space: nowrap; }      /* «0,99 €» en una línea */
-.tn-tarjeta .boton.falta { background: linear-gradient(to bottom, #9aa0b5, #626885); color: #e8eaf4; }
+.tn-eur { font: 900 0.95em var(--font-ui); font-style: normal; margin-left: 3px; }      /* el €, en letra normal (la gorda no lo tiene) */
+.tn-texto { min-width: 0; }
+.tn-texto b { overflow-wrap: anywhere; }
+.tn-tarjeta .boton.falta { background: linear-gradient(to bottom, #ff9a7a, #c4483a); color: #fff6ea; }      /* te falta moneda: rojizo (nada de gris) */
 .tn-falta { color: #ff8a8a !important; }
 .tn-falta.avisa { animation: tn-parpadeo 0.5s 2; }
 .tn-boton.sacude { animation: tn-sacude 0.35s; }
 @keyframes tn-sacude { 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
 @keyframes tn-parpadeo { 50% { opacity: 0.25; } }
-.tn-tarjeta .boton { min-width: 86px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
+.tn-tarjeta .boton { min-width: 78px; padding-left: 10px; padding-right: 10px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
 .tn-tarjeta .boton:disabled { background: linear-gradient(to bottom, #9be07a, #4fa83a); opacity: 1; color: var(--ink); text-shadow: 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 2px 0 var(--outline), 0 -2px 0 var(--outline), 1.5px 1.5px 0 var(--outline), -1.5px -1.5px 0 var(--outline), 1.5px -1.5px 0 var(--outline), -1.5px 1.5px 0 var(--outline), 0 3px 0 var(--outline); }
 
 /* el armario en la partida (armario-partida.js): el botón GESTO, y el marco y el título en la clasificación */

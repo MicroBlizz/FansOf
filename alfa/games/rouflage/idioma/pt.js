@@ -2,8 +2,6 @@
 'use strict';
 IDIOMA.add({
   "TOCA PARA JUGAR": "TOQUE PARA JOGAR",
-  "De momento lo de los euros es gratis: te invita {quien}.": "Por enquanto a parte dos euros é de graça: {quien} paga pra você.",
-  "Te invita {quien}": "Por conta de {quien}",
   "Las Gotas se ganan jugando": "As Gotas se ganham jogando",
   "Te faltan {n} {m}": "Faltam {n} {m}",
   "Te faltan {n} {m}: tienes {t} y hacen falta {h}": "Faltam {n} {m}: você tem {t} e precisa de {h}",

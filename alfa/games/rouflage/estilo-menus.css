@@ -158,11 +158,11 @@
 .op-nota { margin: -1px 2px 3px; font-size: 12.5px; font-weight: 700; color: var(--ink-dim); text-align: left; line-height: 1.25; }
 
 /* BOTONES GRANDES: los de la partida, un 22 % más (zoom también agranda sus distancias, así siguen sin pisarse) */
-body.op-grandes #acciones, body.op-grandes .accion.retiro, body.op-grandes .accion.poder, body.op-grandes .accion.gesto, body.op-grandes .accion.chivato { zoom: 1.22; }
+body.op-grandes #acciones, body.op-grandes .accion.retiro, body.op-grandes .accion.poder, body.op-grandes .accion.chivato { zoom: 1.22; }
 body.op-grandes #esquina .redondo { zoom: 1.15; }
 /* MANO IZQUIERDA: los botones de acción pasan a la izquierda (el más importante, PINTAR, junto al borde) y la pista, a la derecha */
 body.op-zurdo #acciones { right: auto; left: calc(var(--izq) + 12px); flex-direction: row-reverse; }
-body.op-zurdo .accion.retiro, body.op-zurdo .accion.poder, body.op-zurdo .accion.gesto, body.op-zurdo .accion.chivato { right: auto; left: calc(var(--izq) + 12px); }
+body.op-zurdo .accion.retiro, body.op-zurdo .accion.poder, body.op-zurdo .accion.chivato { right: auto; left: calc(var(--izq) + 12px); }
 body.op-zurdo #hud:has(#b-poder:not([hidden]), #b-chivato:not([hidden])) #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; }
 @media (orientation: landscape) and (max-height: 520px) { body.op-zurdo #pista { left: auto; right: calc(var(--der) + 12px); text-align: right; } }
 #p-opciones .idioma-fl { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }

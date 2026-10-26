@@ -76,16 +76,3 @@ function pintaGestos(c) {
     pintaBocadillo(c, e.x, e.y - 104, e.gesto.tipo, GESTO.dura - (e.gesto.hasta - RELOJ));
   }
 }
-// el botón: su dibujo es el gesto que llevas
-function refrescaGesto() {
-  const b = E('b-gesto'); if (!b) return;
-  const ver = gestoPuede();
-  if (b.hidden === ver) b.hidden = !ver;
-  if (!ver) return;
-  const tipo = J.yo.ropa.gesto;
-  if (b.dataset.gesto !== tipo) {
-    b.dataset.gesto = tipo;
-    const cv = b.querySelector('canvas'), g = cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); ARD.gesto(g, cv.width, tipo);
-  }
-  b.classList.toggle('cargando', RELOJ < GESTO.t);
-}

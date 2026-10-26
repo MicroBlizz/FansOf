@@ -1,8 +1,8 @@
 {
- "build": 551,
- "hash": "2f86d55",
- "fecha": "2026-10-26T17:38:39Z",
- "mensaje": "Rouflage: fuera el botón de gesto del fantasma (era un resto: ya hay chat y pegatinas de fantasma)",
+ "build": 552,
+ "hash": "dbacc5b",
+ "fecha": "2026-10-26T17:40:59Z",
+ "mensaje": "Rouflage: fuera el botón de gesto (queda en el chat) y el botón del chat responde al tocar, para abrirlo corriendo",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

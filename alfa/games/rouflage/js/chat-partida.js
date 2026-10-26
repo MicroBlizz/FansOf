@@ -24,7 +24,7 @@ function chatPrepara() {
   const b = CHAT.btn = document.createElement('button');
   b.type = 'button'; b.id = 'b-chat'; b.className = 'chat-boton'; b.hidden = true;
   b.innerHTML = `<span class="chat-ico"></span><i class="chat-n" hidden></i><kbd>T</kbd>`;
-  b.onclick = () => { play('select'); chatAbre(!CHAT.abierto); };
+  botonAccion(b, () => { play('select'); chatAbre(!CHAT.abierto); });      // al tocar, no al soltar: se puede abrir mientras corres con el otro dedo
   const p = CHAT.panel = document.createElement('div');
   p.id = 'chat-panel'; p.className = 'chat-panel'; p.hidden = true; p.setAttribute('role', 'dialog');
   p.addEventListener('click', ev => {

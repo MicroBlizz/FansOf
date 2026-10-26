@@ -140,7 +140,7 @@ function refrescaHud(todo) {
   if (caliente) ponTexto('caliente', E('e-caliente-n'), caliente);
   ponTexto('reloj', E('reloj'), J.fase === 'cuenta' || J.fase === 'fin' || paseo ? '' : mmss(J.reloj));
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
-  refrescaPoder(); refrescaChivato(); refrescaGesto(); refrescaHab();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
+  refrescaPoder(); refrescaChivato(); refrescaHab();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
   // lo de cada papel
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo && J.fase !== 'sala', 'e-quedan': !cam && !paseo && J.fase !== 'sala', 'acciones': cam && (J.fase === 'prep' || caza || J.fase === 'sala') && !TALLER.abierto && !yo.fuera,
@@ -262,7 +262,7 @@ function preparaInterfaz() {
   E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); if (escPruebaVuelve()) return; irTitulo(); };
-  botonAccion(E('b-pintar'), accionPintar); botonAccion(E('b-congelar'), accionCongelar); E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); botonAccion(E('b-silbar'), accionSilbar); botonAccion(E('b-granada'), accionGranada); botonAccion(E('b-poder'), accionPoder); botonAccion(E('b-chivato'), accionChivato); botonAccion(E('b-gesto'), accionGesto); E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; botonAccion(E('b-listo'), accionListo);
+  botonAccion(E('b-pintar'), accionPintar); botonAccion(E('b-congelar'), accionCongelar); E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); botonAccion(E('b-silbar'), accionSilbar); botonAccion(E('b-granada'), accionGranada); botonAccion(E('b-poder'), accionPoder); botonAccion(E('b-chivato'), accionChivato); E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; botonAccion(E('b-listo'), accionListo);
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

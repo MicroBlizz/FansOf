@@ -14,7 +14,7 @@ const FISICA = (() => {
     const t = m.def.tiros[m.tiro], n = t.multi ? t.multi.n : 1, lista = [];
     for (let i = 0; i < n; i++) {
       const a = m.ang + (t.multi ? (i - (n - 1) / 2) * t.multi.abanico : 0), b = boca(Object.assign({}, m, { ang: clamp(a, 0, 90) })), v = BOOM.velocidadMax * m.pot / 100;
-      lista.push(nuevo(b.x, b.y, b.dx * v, b.dy * v, t.ignoraViento || (ev && ev.def.sinViento) ? 0 : viento * (t.viento || 1), ev, m.id, m.ang, t));
+      lista.push(nuevo(b.x, b.y, b.dx * v, b.dy * v, t.ignoraViento || (ev && ev.def.sinViento) ? 0 : viento * (t.viento == null ? 1 : t.viento), ev, m.id, m.ang, t));
     }
     if (m.doble) lista.push(...lista.map(p => Object.assign({}, p, { demora: 0.45, traza: [] })));
     return lista;
@@ -23,7 +23,11 @@ const FISICA = (() => {
   function paso(p, moviles) {
     const ed = p.ev && p.ev.def, ef = p.def.efecto;
     const subia = p.vy < 0;
-    p.vx += (p.viento * BOOM.viento.aceleracion + (ed && ed.ax ? ed.ax * p.ev.dir : 0) + (ed && ed.onda ? ed.onda * Math.sin(p.t * 9) : 0)) * DT; p.vy += (BOOM.gravedad * (p.def.gravedad || 1) + (ed && ed.ay || 0)) * DT;
+    if (p.bajo) {   // bajo tierra: sin viento, flota hacia arriba y se frena; con mucha velocidad baja más antes de dar la vuelta
+      p.vy += BOOM.gravedad * (1 - ef.flota) * DT; p.vx *= 1 - ef.freno * DT; p.vy *= 1 - ef.freno * DT;
+    } else {
+      p.vx += (p.viento * BOOM.viento.aceleracion + (ed && ed.ax ? ed.ax * p.ev.dir : 0) + (ed && ed.onda ? ed.onda * Math.sin(p.t * 9) : 0)) * DT; p.vy += (BOOM.gravedad * (p.def.gravedad || 1) + (ed && ed.ay || 0)) * DT;
+    }
     p.cima = subia && p.vy >= 0;   // justo ahora llega a lo más alto (ahí se abre el racimo o salta el glitch)
     if (p.cima && ef && ef.tipo === 'glitch' && !p.glitch) {   // se teletransporta hacia delante; si cae dentro del suelo, explota ahí
       p.glitch = { x: p.x, y: p.y }; p.x = clamp(p.x + Math.sign(p.vx || 1) * ef.salto, 1, W - 1); p.traza = [];
@@ -34,18 +38,17 @@ const FISICA = (() => {
       if (p.y < 0) p.alto = true;
       if (p.x < 0 || p.x >= W) { p.fin = { tipo: 'borde' }; return true; }
       if (p.y >= H + 40) { p.fin = { tipo: 'vacio' }; return true; }
-      if (p.atraviesa <= 0 && TERRENO.solido(p.x, p.y)) {
-        if (ef && ef.tipo === 'fantasma') { if (p.dentro == null) p.dentro = p.t; }   // el fantasma sigue: explota al pasar su tiempo
-        else if (ef && ef.tipo === 'taladro') { if (!p.entrada) p.entrada = { x: p.x, y: p.y }; }   // el taladro sigue hasta su hondura
+      const suelo = p.atraviesa <= 0 && TERRENO.solido(p.x, p.y);
+      if (p.bajo && !suelo) { p.fin = { tipo: 'terreno' }; return true; }   // vuelve a salir del terreno, por donde sea: explota ahí
+      if (suelo) {
+        if (ef && (ef.tipo === 'fantasma' || ef.tipo === 'taladro')) p.bajo = true;   // estos siguen por dentro del suelo
         else { p.fin = { tipo: 'terreno' }; return true; }
       }
-      if (p.entrada && Math.hypot(p.x - p.entrada.x, p.y - p.entrada.y) >= ef.hondo) { p.fin = { tipo: 'terreno' }; return true; }
       for (const m of moviles) {
         if (!m.vivo || p.atraviesa > 0 || (m.id === p.dueno && p.t < 0.35)) continue;   // no se golpea a sí mismo nada más disparar
         if (Math.hypot(p.x - m.x, p.y - (m.y - C.centro)) < C.radio) { p.fin = { tipo: 'movil', movil: m.id }; return true; }
       }
     }
-    if (p.dentro != null && p.t - p.dentro >= ef.dura) { p.fin = { tipo: 'terreno' }; return true; }
     if (p.atraviesa > 0) p.atraviesa -= DT;
     p.t += DT;
     return p.t > 14;   // por si acaso: nunca dura para siempre

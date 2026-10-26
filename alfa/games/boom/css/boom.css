@@ -57,9 +57,12 @@
 #bm-barra { width: 100%; height: 30px; border-radius: 15px; background: rgba(0, 0, 0, .5); border: 3px solid var(--outline); overflow: hidden; cursor: pointer; touch-action: none; }
 #bm-pot { display: block; height: 100%; background: linear-gradient(90deg, #ffcb3d, #ff4b5c); }
 .bm-tiros { flex-direction: row; gap: 6px; }
-.bm-tiro { font: 400 17px var(--font-display); color: #fff; background: #3e2363; border: 3px solid var(--outline); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.bm-tiro { font: 400 15px var(--font-display); color: #fff; background: #3e2363; border: 3px solid var(--outline); border-radius: 12px; padding: 4px 8px 4px 4px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+.bm-tiro .bm-ico { width: 34px; height: 34px; }
+.bm-tiro span { min-width: 3.2em; white-space: nowrap; }
 .bm-tiro:disabled { opacity: .55; cursor: default; }
-.bm-ss:not(:disabled) { background: #b032e0; }
+.bm-ss { background: linear-gradient(135deg, #7a1e9a, #b032e0); border-color: var(--gold); }
+.bm-ss:not(:disabled) { background: linear-gradient(135deg, #d8408a, #b032e0 55%, #ffcb3d); color: #fff8d8; text-shadow: 2px 2px 0 var(--outline); }
 .bm-tiro.bm-on { background: #ff7a1a; box-shadow: 0 0 0 3px var(--gold); }
 .bm-fuego { font: 400 24px var(--font-display); color: #fff; background: radial-gradient(circle at 35% 30%, #ff9a3d, var(--eq, #ff6a10) 70%); border: 5px solid var(--outline); border-radius: 50%; width: 84px; height: 84px; cursor: pointer; text-shadow: 2px 2px 0 var(--outline); box-shadow: 0 5px 0 var(--outline); padding: 0; line-height: 1; }
 .bm-fuego:active { transform: translateY(3px); }
@@ -98,7 +101,10 @@
 .bm-g-txt small { color: #cdb9ea; }
 .bm-g-txt p { margin: 4px 0; }
 .bm-g-txt ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
-.bm-g-txt li { background: rgba(0, 0, 0, .25); border-radius: 8px; padding: 3px 6px; }
+.bm-g-txt li { background: rgba(0, 0, 0, .25); border-radius: 8px; padding: 4px 6px; display: flex; gap: 8px; align-items: center; text-align: left; }
+.bm-g-txt li.bm-g-ss { background: linear-gradient(90deg, rgba(176, 50, 224, .45), rgba(255, 203, 61, .18)); }
+.bm-g-txt .bm-ico { width: 48px; height: 48px; flex: none; }
+.bm-g-txt li em.bm-g-cd { color: #cdb9ea; font-size: .9em; }
 .bm-g-txt li b { display: block; color: var(--c2); }
 .bm-g-txt li span { display: block; }
 .bm-g-txt li em { display: block; color: #ffe9c6; font-style: normal; }

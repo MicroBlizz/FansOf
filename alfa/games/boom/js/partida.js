@@ -37,6 +37,8 @@ const PARTIDA = (() => {
     const V = BOOM.viento;
     P.viento = P.az() < 0.15 ? Math.round((P.az() * 2 - 1) * V.max) : clamp(P.viento + Math.round((P.az() * 2 - 1) * V.cambio), -V.max, V.max);
   }
+  // el Tiro 2 pega mejor, así que no se puede repetir: después de usarlo, el turno siguiente de ese móvil no está
+  const t2Listo = m => (m.propios || 0) - (m.t2Usado == null ? -9 : m.t2Usado) >= 2;
   function empiezaTurno(primero) {
     const v = vivos().filter(x => !(P.entrena && x.diana));
     if (!P.entrena && new Set(v.map(m => m.equipo)).size < 2) return termina();
@@ -46,7 +48,9 @@ const PARTIDA = (() => {
     m.xSeguro = m.x;
     m.extra = 0; P.actual = m; m.energia = C.energia; P.t = BOOM.turno.segundos; P.usado = 0; P.tiroUsado = false; P.turnos++;
     if (P.entrena) { m.caos = BOOM.caos.max; P.satelite.carga = BOOM.satelite.max; colocaDiana(); }   // entrenando: todo cargado y sin prisa
+    m.propios = (m.propios || 0) + 1;
     if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
+    if (m.tiro === 1 && !t2Listo(m)) m.tiro = 0;
     aviso('turno', { m });
     if (andanMinas(m)) return;
     abre(m);
@@ -84,13 +88,15 @@ const PARTIDA = (() => {
   function mueve(dir, dt) { if (puede()) MOVIL.mueve(P.actual, dir, dt); }
   function apunta(dAng, dPot) { if (puede()) { P.actual.ang = clamp(P.actual.ang + dAng, 0, 90); P.actual.pot = clamp(P.actual.pot + dPot, 5, 100); } }
   function fija(ang, pot, dir) { if (puede()) { const m = P.actual; m.ang = clamp(ang, 0, 90); m.pot = clamp(pot, 5, 100); if (dir) m.dir = dir; } }
-  function eligeTiro(i) { if (puede() && P.actual.def.tiros[i] && (i < 2 || P.actual.caos >= BOOM.caos.max)) P.actual.tiro = i; }
+  function eligeTiro(i) { if (puede() && P.actual.def.tiros[i] && (i !== 1 || t2Listo(P.actual)) && (i < 2 || P.actual.caos >= BOOM.caos.max)) P.actual.tiro = i; }
   function dispara() {
     if (P && P.fase === 'vuelo' && P.actual && !P.actual.ia) return parte();
     const m = P && P.actual;
     if (!m || P.fase !== 'apunta' || m.cayendo) return false;
     m.ang = Math.round(m.ang); m.pot = Math.round(m.pot);   // el tiro siempre sale con grados y potencia enteros
     if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
+    if (m.tiro === 1 && !t2Listo(m)) m.tiro = 0;
+    if (m.tiro === 1) m.t2Usado = m.propios;
     const t = m.def.tiros[m.tiro];
     P.proys = FISICA.lanza(m, P.viento, P.evento); m.doble = false;
     if (t.carga) { P.satelite.carga = Math.min(BOOM.satelite.max, P.satelite.carga + t.carga); aviso('satelite', { carga: P.satelite.carga }); }
@@ -268,5 +274,5 @@ const PARTIDA = (() => {
   // el orden de los próximos turnos para la barra: los vivos por retraso (el que va ahora, primero)
   function orden() { return vivos().sort((a, b) => a.retraso - b.retraso || a.id - b.id); }
 
-  return { usaObjeto, puedePartir, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
+  return { usaObjeto, puedePartir, t2Listo, nueva, parar: () => { P = null; }, listo, mueve, apunta, fija, eligeTiro, dispara, pasa, paso, orden, get: () => P, sucesos: () => { const s = P.sucesos; P.sucesos = []; return s; } };
 })();

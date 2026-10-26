@@ -29,8 +29,9 @@ const BOOM = {
   //   gravedad (1 = normal), multi: { n, abanico } (n a la vez abiertos en abanico de esos grados), carga (cuánto carga el satélite) y efecto:
   //   racimo { n, abre }       se abre en n trozos al llegar a lo más alto (abre = px/s de separación entre el primero y el último)
   //   rebota { veces }         explota y rebota esas veces antes de acabar
-  //   fantasma { dura }        atraviesa el terreno esos segundos y explota dentro
-  //   taladro { hondo }        entra en el suelo esos píxeles y explota debajo
+  //   fantasma { flota, freno } y taladro { flota, freno }   entran en el suelo y siguen por dentro: allí flotan (flota = empuje hacia arriba,
+  //                            en gravedades) y se frenan (freno = cuánta velocidad pierden por segundo), así que hacen una curva y explotan
+  //                            al volver a salir del terreno, por donde sea. Cuanto más rápido entran, más hondo bajan y más lejos salen.
   //   combo { veces }          explota varias veces seguidas mientras avanza
   //   parte { n, trozo }       en vuelo, al volver a pulsar, se parte en n que caen (trozo = radio, crater y daño de cada uno)
   //   glitch { salto }         en lo más alto se teletransporta esos píxeles hacia delante
@@ -47,7 +48,7 @@ const BOOM = {
     { id: 'ataud', nombre: 'Ataúd con ruedas', piloto: 'SkullKnight', faccion: 'No-Muertos', nota: 'Calaveras pesadas y huesos que rebotan.', vida: 1080, velocidad: 70, colores: ['#4a3a5a', '#e8e0c8', '#7dff8a'],
       tiros: [{ nombre: 'Calavera pesada', forma: 'calavera', radio: 40, crater: 34, dano: 340, retraso: 65, viento: 1.2 },
         { nombre: 'Huesos saltarines', forma: 'hueso', radio: 42, crater: 44, dano: 105, retraso: 130, multi: { n: 3, abanico: 5 }, efecto: { tipo: 'rebota', veces: 2 } },
-        { nombre: 'Calavera fantasma', forma: 'fantasma', radio: 62, crater: 60, dano: 400, retraso: 250, efecto: { tipo: 'fantasma', dura: 0.5 } }] },
+        { nombre: 'Calavera fantasma', forma: 'fantasma', radio: 62, crater: 60, dano: 400, retraso: 250, efecto: { tipo: 'fantasma', flota: 2.4, freno: 2.5 } }] },
     { id: 'antena', nombre: 'Antena orbital', piloto: 'TechDroid', faccion: 'Ciberpunks', nota: 'Dardo láser casi sin viento. Cada dardo carga el satélite; el rayo lo gasta.', vida: 1000, velocidad: 82, colores: ['#2a3550', '#7cf0ff', '#ff4bd8'],
       tiros: [{ nombre: 'Dardo láser', forma: 'dardo', radio: 30, crater: 18, dano: 225, retraso: 60, viento: 0.2, carga: 1 },
         { nombre: 'Rayo del satélite', forma: 'dardo', radio: 24, crater: 12, dano: 40, retraso: 140, viento: 0.2, efecto: { tipo: 'cielo', estilo: 'rayo', x: [0], dano: 120, porCarga: 130, radio: 44, crater: 26 } },
@@ -60,7 +61,7 @@ const BOOM = {
       tiros: [{ nombre: 'Micro de oro', forma: 'micro', radio: 42, crater: 34, dano: 290, retraso: 65, viento: 1.1 },
         { nombre: 'Lluvia de subs', forma: 'sub', radio: 38, crater: 40, dano: 90, retraso: 130, viento: 0.4, efecto: { tipo: 'racimo', n: 4, abre: 200 } },
         { nombre: 'Hype Train', forma: 'micro', radio: 54, crater: 50, dano: 360, retraso: 250, viento: 1.1, efecto: { tipo: 'tren', velocidad: 330, alcance: 950 } }] },
-    { id: 'carro', nombre: 'Carro de guerra', piloto: 'ThunderGod', faccion: 'Héroes', nota: 'Martillo y rayos que caen del cielo sin viento.', vida: 1020, velocidad: 76, colores: ['#c9a43a', '#3a6ad8', '#fff3b0'],
+    { id: 'carro', nombre: 'Carro de guerra', piloto: 'ThunderGod', faccion: 'Héroes', nota: 'Martillo y rayos que caen del cielo.', vida: 1020, velocidad: 76, colores: ['#c9a43a', '#3a6ad8', '#fff3b0'],
       tiros: [{ nombre: 'Martillo', forma: 'martillo', radio: 44, crater: 40, dano: 280, retraso: 65, viento: 0.8 },
         { nombre: 'Rayo', forma: 'runa', radio: 28, crater: 18, dano: 50, retraso: 140, viento: 0.8, efecto: { tipo: 'cielo', estilo: 'trueno', x: [0, 0], dano: 135, radio: 40, crater: 22 } },
         { nombre: 'Tormenta', forma: 'martillo', radio: 44, crater: 40, dano: 120, retraso: 250, viento: 0.8, efecto: { tipo: 'cielo', estilo: 'trueno', x: [-80, 0, 80], dano: 170, radio: 46, crater: 26 } }] },
@@ -70,7 +71,7 @@ const BOOM = {
         { nombre: 'Rage quit', forma: 'mando', radio: 50, crater: 44, dano: 340, retraso: 250, efecto: { tipo: 'parte', n: 5, trozo: { forma: 'tecla', radio: 40, crater: 34, dano: 150 } } }] },
     { id: 'drakkar', nombre: 'Drakkar beta', piloto: 'VikingoPerdido', faccion: 'Olvidados', nota: 'Hachas que el viento lleva y un taladro que abre el suelo.', vida: 1000, velocidad: 76, colores: ['#8a5a3c', '#d84a3a', '#e8e0c8'],
       tiros: [{ nombre: 'Hacha', forma: 'hacha', radio: 36, crater: 28, dano: 360, retraso: 70, viento: 1.6 },
-        { nombre: 'Taladro', forma: 'taladro', radio: 70, crater: 90, dano: 150, retraso: 140, viento: 0.8, efecto: { tipo: 'taladro', hondo: 90 } },
+        { nombre: 'Taladro', forma: 'taladro', radio: 70, crater: 90, dano: 150, retraso: 140, viento: 0.8, efecto: { tipo: 'taladro', flota: 3, freno: 4 } },
         { nombre: 'Glitch', forma: 'hacha', radio: 56, crater: 48, dano: 400, retraso: 250, viento: 1.2, efecto: { tipo: 'glitch', salto: 380 } }] },
     { id: 'grua', nombre: 'Grúa de rodaje', piloto: 'LaDirectora', faccion: 'Cultura Pop', nota: 'Claquetas, extras que andan hacia el rival y un kaiju.', vida: 1000, velocidad: 74, colores: ['#3a3a44', '#ffcb3d', '#ff4b5c'],
       tiros: [{ nombre: 'Claqueta', forma: 'claqueta', radio: 42, crater: 34, dano: 275, retraso: 65 },

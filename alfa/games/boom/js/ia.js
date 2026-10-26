@@ -24,7 +24,7 @@ const IA = (() => {
     const objetivo = enemigos.reduce((a, e) => (!a || Math.abs(e.x - m.x) < Math.abs(a.x - m.x) ? e : a), null);
     if (objetivo) prueba.dir = m.dir = objetivo.x >= m.x ? 1 : -1;
     const satelite = m.def.tiros[1].efecto && m.def.tiros[1].efecto.porCarga;   // con la Antena: gasta el rayo cuando el satélite ya va cargado
-    const elige = () => ss ? 2 : satelite ? (P.satelite.carga >= 2 ? 1 : 0) : az() < 0.35 ? 1 : 0;
+    const t2 = PARTIDA.t2Listo(m), elige = () => ss ? 2 : !t2 ? 0 : satelite ? (P.satelite.carga >= 2 ? 1 : 0) : az() < 0.35 ? 1 : 0;   // el Tiro 2 no se repite dos turnos seguidos
     for (let i = 0; i < A.candidatos; i++) evalua(Math.round(15 + az() * 75), Math.round(25 + az() * 75), elige());
     if (mejor) for (let i = 0; i < 30; i++) evalua(clamp(mejor.ang + Math.round((az() - 0.5) * 6), 0, 90), clamp(mejor.pot + Math.round((az() - 0.5) * 6), 5, 100), mejor.tiro);
     if (mejor && objetivo) mejor.blanco = objetivo.x;

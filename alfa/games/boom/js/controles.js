@@ -15,7 +15,7 @@ const CONTROLES = (() => {
         <div class="bm-energia" title="${tr('Camino que te queda')}"><i id="bm-en"></i></div></div>
       <div class="bm-grupo"><span class="bm-et">${tr('ÁNGULO')}</span><div class="bm-fila"><button class="bm-mini" data-m="aMenos">−</button><b id="bm-ang" class="bm-num">45°</b><button class="bm-mini" data-m="aMas">+</button></div></div>
       <div class="bm-grupo bm-gpot"><span class="bm-et">${tr('POTENCIA')} <b id="bm-potn">55</b></span><div id="bm-barra"><i id="bm-pot"></i></div></div>
-      <div class="bm-grupo bm-tiros"><button class="bm-tiro" data-t="0">${tr('TIRO 1')}</button><button class="bm-tiro" data-t="1">${tr('TIRO 2')}</button><button class="bm-tiro bm-ss" data-t="2">SS</button></div>
+      <div class="bm-grupo bm-tiros"><button class="bm-tiro" data-t="0"><img class="bm-ico" alt=""><span>${tr('TIRO 1')}</span></button><button class="bm-tiro" data-t="1"><img class="bm-ico" alt=""><span>${tr('TIRO 2')}</span></button><button class="bm-tiro bm-ss" data-t="2"><img class="bm-ico" alt=""><span>SS</span></button></div>
       <button id="bm-fuego" class="bm-fuego">${tr('¡BOOM!')}</button>`;
     $p().querySelectorAll('[data-m]').forEach(b => {
       b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); mantenido[b.dataset.m] = 0; toque(b.dataset.m); });
@@ -55,9 +55,15 @@ const CONTROLES = (() => {
     if (m) {
       $('#bm-ang').textContent = Math.round(m.ang) + '°'; $('#bm-potn').textContent = Math.round(m.pot);
       $('#bm-pot').style.width = ((m.pot - 5) / 95 * 100) + '%'; $('#bm-en').style.width = (m.energia / BOOM.movil.energia * 100) + '%';
-      $p().querySelectorAll('[data-t]').forEach(b => { b.classList.toggle('bm-on', +b.dataset.t === m.tiro); const tt = m.def.tiros[+b.dataset.t]; if (tt) b.title = tr(tt.nombre);
-        if (b.dataset.t === '1') { const sat = tt && tt.efecto && tt.efecto.porCarga, txt = tr('TIRO 2') + (sat ? ' ·' + P.satelite.carga : ''); if (b.textContent !== txt) b.textContent = txt; }
-        if (b.dataset.t === '2') { b.disabled = m.caos < BOOM.caos.max; b.title = tr(m.def.tiros[2].nombre); b.textContent = m.caos >= BOOM.caos.max ? 'SS' : Math.floor(m.caos) + '%'; } });
+      $p().querySelectorAll('[data-t]').forEach(b => {   // cada botón con el icono de su tiro (dice qué hace), su nombre y si se puede usar
+        const i = +b.dataset.t, tt = m.def.tiros[i], img = b.firstChild, sp = b.lastChild; b.classList.toggle('bm-on', i === m.tiro); if (!tt) return;
+        const src = ICONOS.tiro(m.def, i); if (img.getAttribute('src') !== src) img.src = src;
+        let txt = tr(i === 0 ? 'TIRO 1' : 'TIRO 2'), off = false;
+        if (i === 1) { off = !PARTIDA.t2Listo(m); txt = off ? tr('RECARGA') : txt + (tt.efecto && tt.efecto.porCarga ? ' ·' + P.satelite.carga : ''); }
+        if (i === 2) { off = m.caos < BOOM.caos.max; txt = off ? Math.floor(m.caos) + '%' : 'SS'; }
+        b.disabled = off; b.title = tr(tt.nombre) + (i === 1 && off ? ' · ' + tr('El Tiro 2 no se puede usar dos turnos seguidos.') : '');
+        if (sp.textContent !== txt) sp.textContent = txt;
+      });
       $p().style.setProperty('--eq', BOOM.equipos[m.equipo].color);
     }
   }

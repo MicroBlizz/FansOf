@@ -1,8 +1,8 @@
 {
- "build": 548,
- "hash": "19412a5",
- "fecha": "2026-10-26T14:09:54Z",
- "mensaje": "Boom 0.4.0: una habilidad distinta por móvil y vídeos de cada tiro en el Garaje",
+ "build": 549,
+ "hash": "f5a6de5",
+ "fecha": "2026-10-26T15:25:47Z",
+ "mensaje": "Taxi: dirección al derecho y fondo (cielo, mar, montañas, ciudades lejanas)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -126,8 +126,8 @@ const ESCENA = (() => {
     T = window.THREE; lienzo = canvas;
     render = new T.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
     render.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
-    escena = new T.Scene(); escena.background = new T.Color(0x150b21); escena.fog = new T.Fog(0x150b21, 90, 220);
-    camara = new T.PerspectiveCamera(TAXI.camara.fov[0], 1, 0.5, 400);
+    escena = new T.Scene(); FONDO.montar(T, escena, toon, CONTORNO);   // cielo, mar, montañas y la niebla del horizonte
+    camara = new T.PerspectiveCamera(TAXI.camara.fov[0], 1, 0.5, 1000);
     escena.add(new T.HemisphereLight(0xcdb9ea, 0x4a3a6a, 2.2));
     const sol = new T.DirectionalLight(0xfff1e0, 1.6); sol.position.set(60, 120, 40); escena.add(sol);
     suelo = pintaSuelo(); montaCiudad();
@@ -178,7 +178,7 @@ const ESCENA = (() => {
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();
     if (estado.temblor > 0) { camara.position.x += (Math.random() - 0.5) * estado.temblor; camara.position.y += (Math.random() - 0.5) * estado.temblor; }
-    render.render(escena, camara);
+    FONDO.sigue(camara); render.render(escena, camara);
   }
   const info = () => (render ? { calls: render.info.render.calls, tris: render.info.render.triangles } : { calls: 0, tris: 0 });
   return { iniciar, sincroniza, info };

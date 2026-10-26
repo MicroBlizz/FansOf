@@ -23,7 +23,7 @@ const CONTROLES = (() => {
     for (const [id, n] of [['b-izq', 'izq'], ['b-der', 'der'], ['b-freno', 'freno'], ['b-nitro', 'nitro']]) { const el = document.getElementById(id); if (el) boton(el, n); }
   }
   function leer() {
-    const giro = (tecla(T.der) || botones.der ? 1 : 0) - (tecla(T.izq) || botones.izq ? 1 : 0);
+    const giro = (tecla(T.izq) || botones.izq ? 1 : 0) - (tecla(T.der) || botones.der ? 1 : 0);   // en el mundo, girar a la derecha de la pantalla es bajar el ángulo
     const freno = tecla(T.freno) || botones.freno ? 1 : 0;
     // en el móvil el gas va solo (salvo frenando); con teclado, flecha arriba, y también solo hasta que se toque el gas por primera vez
     const gas = tecla(T.gas) ? 1 : (tactil || autoGas) && !freno ? 1 : 0;

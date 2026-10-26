@@ -1,8 +1,8 @@
 {
- "build": 557,
- "hash": "15cf314",
- "fecha": "2026-10-26T21:04:04Z",
- "mensaje": "Reportes de prueba: lo que se teclea en la ventana no llega al juego (Taxi tampoco escucha teclas en cajas de texto)",
+ "build": 558,
+ "hash": "379539d",
+ "fecha": "2026-10-26T21:05:47Z",
+ "mensaje": "Taxi: el medidor de fps sube 26 px para no tapar la franja ALFA",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

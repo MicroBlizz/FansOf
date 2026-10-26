@@ -23,7 +23,7 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
 #centro { position: absolute; inset: 0; display: grid; place-items: center; background: var(--scrim, rgba(16, 8, 26, 0.5)); text-align: center; }
 #centro b { font-family: var(--font-display); font-size: 42px; display: grid; } #centro small { font-family: var(--font-ui); font-size: 18px; font-weight: 800; color: var(--ink-dim); margin-top: 8px; }
 #abajo { position: absolute; left: 12px; right: 12px; bottom: calc(var(--inf) + 12px); display: flex; justify-content: space-between; align-items: flex-end; pointer-events: none; }
-#medidor { display: grid; padding: 4px 8px; border-radius: 10px; background: var(--panel); border: 2px solid var(--outline); font-variant-numeric: tabular-nums; }
+#medidor { display: grid; margin-bottom: 26px; padding: 4px 8px; border-radius: 10px; background: var(--panel); border: 2px solid var(--outline); font-variant-numeric: tabular-nums; }
 #medidor b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--ok); } #medidor small { font-size: 10px; font-weight: 700; color: var(--ink-dim); }
 #medidor.justo b { color: var(--gold); } #medidor.mal b { color: var(--danger); }
 #velo { display: grid; justify-items: end; } #velo small { white-space: nowrap; }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#150b21">
+<title>Fans Of Taxi</title>
+<meta name="description" content="Fans Of Taxi: el último taxi con conductor de Bahía Microblizz. Pasajeros contra el reloj, carreras por la calle y la policía de Microblizz detrás.">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<script src="../../core/js/nucleo.js?v=0.2.0-a547.10202e5"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/taxi.css')</script>
+</head>
+<body>
+<canvas id="lienzo"></canvas>
+<div id="capa"></div>
+<!-- three.js es un módulo (la copia recortada del boceto 3D de Rumble); el juego son archivos normales de core, así que se deja en window y se avisa -->
+<script type="module">import * as THREE from './js/three.min.js'; window.THREE = THREE; window.dispatchEvent(new Event('three-listo'));</script>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta y el idioma de core: el prototipo lleva su propia partida y su HUD
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: ['js/guardado.js', 'js/ciudad.js', 'js/coche.js', 'js/trafico.js', 'js/policia.js', 'js/pasajeros.js', 'js/eventos.js', 'js/controles.js', 'js/escena.js', 'js/hud.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

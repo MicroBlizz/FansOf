@@ -58,7 +58,11 @@ const RFS = (() => {
     const est = await CUENTA.rpc(nombre, Object.assign({ p_clave: clave(nombre) }, args || {}));
     aplica(est); return est;
   }
-  function error(e) { play('deny'); avisa(errorTexto(e), 'malo'); }
+  function error(e) {
+    play('deny'); avisa(errorTexto(e), 'malo');
+    // si el servidor dice que falta saldo, el de aquí estaba viejo (un reembolso, otra sesión…): se recarga para que el contador lo enseñe
+    if (/faltan_(gotas|acciones)/.test(String((e && e.message) || e))) refresca().then(() => { const t = E('p-tienda'); if (t && !t.hidden && typeof tiendaPinta === 'function') tiendaPinta(); }).catch(() => {});
+  }
   // el reloj del servidor frente al de aquí (para las tiradas gratis)
   async function relojes() {
     try { const g = await CUENTA.rpc('rf_gacha_gratis_estado', {}); desfase = g.ahora - Date.now(); } catch (_) { /* se queda el de antes */ }

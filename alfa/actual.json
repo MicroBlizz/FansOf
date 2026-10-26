@@ -1,8 +1,8 @@
 {
- "build": 540,
- "hash": "83e2c39",
- "fecha": "2026-10-25T23:44:22Z",
- "mensaje": "Rouflage 0.2.56: coches nuevos (seis modelos modernos inventados) en el parking, la urbanización y Mi escenario",
+ "build": 541,
+ "hash": "9b01caf",
+ "fecha": "2026-10-26T01:57:30Z",
+ "mensaje": "Rouflage: si el servidor rechaza una compra por falta de saldo, se recarga el saldo (el contador podía enseñar el de antes de un reembolso)",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

@@ -17,7 +17,7 @@ const PINTAR = (() => {
   }
   function sigue(P, dt) {
     if (CAM.libre > 0) CAM.libre -= dt;
-    else if ((P.fase === 'vuelo' || P.fase === 'minas') && P.proys.some(p => !p.hecho)) { const p = P.proys.find(q => !q.hecho && q.tipo !== 'golpe') || P.proys.find(q => !q.hecho); enfoca(p.x, (p.tipo === 'golpe' ? TERRENO.suelo(p.x, 0) : p.y) - 40); }
+    else if ((P.fase === 'vuelo' || P.fase === 'minas') && P.proys.some(p => !p.hecho)) { const p = P.proys.find(q => !q.hecho && q.tipo !== 'golpe') || P.proys.find(q => !q.hecho); if (p.tipo === 'avion') enfoca(p.blanco, p.y + 170); else enfoca(p.x, (p.tipo === 'golpe' ? TERRENO.suelo(p.x, 0) : p.y) - 40); }
     else if (P.actual && P.fase !== 'despues' && P.fase !== 'fin') enfoca(P.actual.x, P.actual.y - 100);
     const k = Math.min(1, dt * (P.fase === 'vuelo' ? 9 : 4.5));
     CAM.x += (CAM.ox - CAM.x) * k; CAM.y += (CAM.oy - CAM.y) * k;
@@ -80,6 +80,7 @@ const PINTAR = (() => {
   }
   function proyectil(c, p, P, t) {
     if (p.tipo === 'golpe') return golpe(c, p);
+    if (HAB_PINTA.proy(c, p, CAM, t)) return;   // el avión de la raid, el barrido del satélite, el gatito pegado…
     if (p.demora > 0) return;
     p.movil = p.movil || P.moviles[p.dueno].def.id;
     ESTELAS.estela(c, p, CAM.x, CAM.y, t);
@@ -118,7 +119,7 @@ const PINTAR = (() => {
     for (const m of P.moviles) if (m.vivo) movil(c, m, P, t);
     guia(c, P);
     if (P.cfg) ENTRENO.pinta(c, P, CAM);   // Entrenamiento o ayuda fácil: por dónde irá el tiro
-    minas(c, P, t);
+    minas(c, P, t); HAB_PINTA.pendientes(c, P, CAM, t);
     for (const p of P.proys || []) if (!p.hecho) proyectil(c, p, P, t);
     EFECTOS.pinta(c, CAM.x, CAM.y);
     c.restore();

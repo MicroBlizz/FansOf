@@ -60,6 +60,17 @@ const TERRENO = (() => {
     ESCENARIO.rompe(x, y, r);
   }
 
+  // Un trozo nuevo de suelo con forma de elipse (el muro del Gato gordo). El dibujo lo pone TERRENO_DIBUJOS[dibujo] si hay pantalla.
+  function pon(x, y, rx, ry, dibujo) {
+    x = Math.round(x); y = Math.round(y);
+    for (let dy = -ry; dy <= ry; dy++) {
+      const yy = y + dy; if (yy < 0 || yy >= H) continue;
+      const m = Math.floor(rx * Math.sqrt(1 - (dy / ry) * (dy / ry)));
+      for (let xx = Math.max(0, x - m); xx <= Math.min(W - 1, x + m); xx++) { bits[yy * W + xx] = 1; if (yy < sup[xx]) sup[xx] = yy; }
+    }
+    if (cx && typeof TERRENO_DIBUJOS !== 'undefined' && TERRENO_DIBUJOS[dibujo]) { cx.save(); TERRENO_DIBUJOS[dibujo](cx, x, y, rx, ry); cx.restore(); }
+  }
+
   function crea(id, semilla, salidas) {   // salidas: columnas (en píxeles) donde sale cada móvil
     mapa = BOOM.mapas.find(m => m.id === id) || BOOM.mapas[0];
     const az = mulberry32(semilla);
@@ -72,5 +83,5 @@ const TERRENO = (() => {
       cava(x, y, Math.floor(r));
     }
   }
-  return { crea, solido, suelo, cava, ancho: W, alto: H, canvas: () => cv, mapa: () => mapa, superficie: x => sup[Math.max(0, Math.min(W - 1, Math.floor(x)))] };
+  return { crea, solido, suelo, cava, pon, ancho: W, alto: H, canvas: () => cv, mapa: () => mapa, superficie: x => sup[Math.max(0, Math.min(W - 1, Math.floor(x)))] };
 })();

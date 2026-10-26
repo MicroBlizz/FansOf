@@ -12,7 +12,7 @@ const IA = (() => {
     let mejor = null;
     const evalua = (ang, pot, tiro) => {
       prueba.ang = ang; prueba.pot = pot; prueba.tiro = tiro;
-      const p = FISICA.simula(prueba, P.viento, P.moviles, P.evento), T = m.def.tiros[tiro], R = Math.max(T.radio, T.efecto && T.efecto.radio || 0);
+      const p = FISICA.simula(prueba, P.viento, P.moviles, P.evento), T = m.def.tiros[tiro], R = Math.max(T.radio, T.efecto && (T.efecto.zona || T.efecto.radio) || 0);
       let coste = 1e9;
       for (const e of enemigos) coste = Math.min(coste, Math.max(0, Math.hypot(p.x - e.x, p.y - (e.y - BOOM.movil.centro)) - R * 0.5));
       for (const a of amigos) if (Math.hypot(p.x - a.x, p.y - a.y) < R + BOOM.movil.radio + 10) coste += 400;

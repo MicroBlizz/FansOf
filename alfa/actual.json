@@ -1,10 +1,10 @@
 {
- "build": 547,
- "hash": "10202e5",
- "fecha": "2026-10-26T14:03:27Z",
- "mensaje": "Taxi: primer prototipo low poly en 3D (solo alfa) y decisiones de diseño",
+ "build": 548,
+ "hash": "19412a5",
+ "fecha": "2026-10-26T14:09:54Z",
+ "mensaje": "Boom 0.4.0: una habilidad distinta por móvil y vídeos de cada tiro en el Garaje",
  "juegos": {
-  "boom": "0.3.1",
+  "boom": "0.4.0",
   "cooking": "0.2.0",
   "crush": "0.1.37",
   "dark": "0.2.7",

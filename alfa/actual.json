@@ -1,8 +1,8 @@
 {
- "build": 556,
- "hash": "91fa06c",
- "fecha": "2026-10-26T19:16:07Z",
- "mensaje": "Reportes de prueba: botón «!» para probadores con nota, datos del juego, recorrido y captura; pestaña en /gestion; SQL 98 (sin aplicar)",
+ "build": 557,
+ "hash": "15cf314",
+ "fecha": "2026-10-26T21:04:04Z",
+ "mensaje": "Reportes de prueba: lo que se teclea en la ventana no llega al juego (Taxi tampoco escucha teclas en cajas de texto)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

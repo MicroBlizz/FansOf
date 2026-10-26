@@ -36,6 +36,7 @@ const REPORTE = (() => {
       ${datosOk ? '' : `<div class="rp-aviso">${esc(T('Para reportar, activa «Datos de partida anónimos» en Opciones.'))}</div>`}
       <div class="rp-fila"><button type="button" id="rp-no">${esc(T('Cancelar'))}</button><button type="button" id="rp-si" class="rp-ok" ${datosOk ? '' : 'disabled'}>${esc(T('Enviar'))}</button></div></div>`;
     document.body.appendChild(ventana);
+    for (const ev of ['keydown', 'keyup', 'keypress']) ventana.addEventListener(ev, e => e.stopPropagation());   // lo que se teclea aquí no llega al juego
     ventana.querySelector('#rp-no').onclick = cierra;
     ventana.querySelector('#rp-si').onclick = () => envia(ventana.querySelector('#rp-texto').value, captura);
     setTimeout(() => { const t = ventana && ventana.querySelector('#rp-texto'); if (t) t.focus(); }, 50);

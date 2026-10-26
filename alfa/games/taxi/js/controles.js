@@ -6,7 +6,8 @@ const CONTROLES = (() => {
   let accion = false, tactil = false;
   const tecla = lista => lista.some(k => teclas.has(k));
   window.addEventListener('keydown', e => {
-    if (e.repeat) return; teclas.add(e.code);
+    if (e.repeat || (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))) return;   // escribiendo en una caja de texto (un reporte) el juego no escucha
+    teclas.add(e.code);
     if (T.accion.includes(e.code)) accion = true;
     if ([...T.izq, ...T.der, ...T.gas, ...T.freno, 'Space'].includes(e.code)) e.preventDefault();
   });

@@ -1,8 +1,8 @@
 {
- "build": 545,
- "hash": "8dacd8a",
- "fecha": "2026-10-26T09:27:15Z",
- "mensaje": "Versión y nota del despliegue: rouflage 0.2.57 (becarios por detrás de columnas, botones que responden, pasear más limpio, tienda con cartera dibujada)",
+ "build": 546,
+ "hash": "29d11d2",
+ "fecha": "2026-10-26T09:40:35Z",
+ "mensaje": "Boom y Cooking salen en la release: tarjeta en la librería, cerrados en Próximamente y jugables solo con el rol beta",
  "juegos": {
   "boom": "0.3.1",
   "cooking": "0.2.0",

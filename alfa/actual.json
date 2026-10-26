@@ -1,8 +1,8 @@
 {
- "build": 544,
- "hash": "51aa081",
- "fecha": "2026-10-26T08:57:43Z",
- "mensaje": "Rouflage: los becarios pasan por detrás de columnas y pilares, moverse y usar habilidad a la vez, PASEAR sin menú con COLADO / BECARIO, y la tienda con la cartera dibujada",
+ "build": 545,
+ "hash": "8dacd8a",
+ "fecha": "2026-10-26T09:27:15Z",
+ "mensaje": "Versión y nota del despliegue: rouflage 0.2.57 (becarios por detrás de columnas, botones que responden, pasear más limpio, tienda con cartera dibujada)",
  "juegos": {
   "boom": "0.3.1",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.56",
+  "rouflage": "0.2.57",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

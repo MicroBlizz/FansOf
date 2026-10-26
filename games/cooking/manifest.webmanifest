@@ -1,0 +1,16 @@
+{
+  "name": "Fans of Cooking",
+  "short_name": "Fans of Cooking",
+  "description": "La cafetería de Microblizz: cocina a dobles en el mismo teclado.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#150b21",
+  "theme_color": "#150b21",
+  "icons": [
+    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

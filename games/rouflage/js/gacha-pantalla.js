@@ -53,7 +53,7 @@ function gachaPinta() {
   for (const [id, m] of [['b-gm-ropa', 'ropa'], ['b-gm-casa', 'casa']]) { const b = E(id); b.classList.toggle('activa', m === maq); b.setAttribute('aria-selected', String(m === maq)); }
   E('gacha-sub1').textContent = casa ? tr('Muebles, escenarios y cosas de los mapas con la máquina de gancho. Solo con Gotas.') : tr('Cosméticos en cápsula, pagados solo con Gotas.');
   E('b-gacha-g1').hidden = E('b-gacha-g10').hidden = casa;      // la CASA no tiene tiradas gratis
-  E('gacha-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones || 0}</b></span>`;
+  pintaCartera('gacha-cartera');
   E('gacha-cuenta').textContent = tr('Tienes {t} de {n} piezas del gachapón', { t, n });
   E('gacha-pity').textContent = tr('Garantías: una Rara o mejor cada {r} cápsulas, una Épica cada {e} y una Legendaria cada {l}. Llevas {a}, {b} y {c} desde la última.', { r: C.pityRara, e: C.pityEpica, l: C.pityLegend, a: g.sinRara, b: g.sinEpica, c: g.sinLegend || 0 });
   for (const [id, k] of [['b-gacha-1', 1], ['b-gacha-10', 10]]) {

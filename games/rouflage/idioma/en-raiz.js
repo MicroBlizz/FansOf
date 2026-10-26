@@ -1,6 +1,12 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.57
+  "<b>BECARIOS POR DETRÁS</b>: los becarios pasan por detrás de columnas y pilares, y la linterna ya no los repinta por encima de todo.": "<b>INTERNS BEHIND THE PILLARS</b>: interns walk behind columns and pillars, and the flashlight no longer repaints them on top of everything.",
+  "<b>BOTONES QUE RESPONDEN</b>: PINTAR, CONGELAR, SILBAR, GRANADA, la habilidad, los poderes y el zoom responden al tocar aunque tengas otro dedo en la palanca; moverte y usar una habilidad a la vez ya funciona. Y el contador de usos de la habilidad vuelve a verse.": "<b>BUTTONS THAT RESPOND</b>: PAINT, FREEZE, WHISTLE, GRENADE, the ability, powers and zoom respond to taps even with another finger on the joystick; moving and using an ability at once now works. And the ability's use counter shows again.",
+  "<b>PASEAR MÁS LIMPIO</b>: en Mi escenario, pasear esconde la bandeja y el zoom, y arriba cambias de papel entre COLADO y BECARIO.": "<b>CLEANER STROLLING</b>: in My stage, strolling hides the tray and the zoom, and at the top you switch role between SNEAK and INTERN.",
+  "<b>TIENDA CON CARTERA DIBUJADA</b>: gotas y acciones con sus chapas en la tienda, el armario, el pase y el gachapón; tarjetas con todo el texto a la vista; y si una compra se rechaza por falta de saldo, el saldo se recarga al momento.": "<b>SHOP WITH A DRAWN WALLET</b>: drops and actions with their badges in the shop, the wardrobe, the pass and the gachapon; cards with all their text in view; and if a purchase is rejected for lack of balance, the balance reloads at once.",
+  "Microblizz ha enseñado a los becarios a mirar detrás de las columnas. Phony ha dejado de esconderse allí y ahora se esconde en la cartera.": "Microblizz has taught the interns to look behind the pillars. Phony stopped hiding there and now hides in the wallet.",
   // 0.2.50
   "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
   "Microblizz ha puesto sordina al camuflaje y Phony ha seguido sin hacer ni ruido ni caso.": "Microblizz has muffled the camouflage and Phony carried on making neither noise nor sense.",

@@ -2,8 +2,6 @@
 'use strict';
 IDIOMA.add({
   "TOCA PARA JUGAR": "TAP TO PLAY",
-  "De momento lo de los euros es gratis: te invita {quien}.": "For now the euro stuff is free: {quien} is treating you.",
-  "Te invita {quien}": "On the house: {quien}",
   "Las Gotas se ganan jugando": "Drops are earned by playing",
   "Te faltan {n} {m}": "You need {n} more {m}",
   "Te faltan {n} {m}: tienes {t} y hacen falta {h}": "You need {n} more {m}: you have {t} and need {h}",

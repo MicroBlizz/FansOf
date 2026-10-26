@@ -37,15 +37,30 @@ function escPalancaVector() {
 }
 
 // ---------- la galleta, con el cuerpo de la partida ----------
+// al pasear se puede ir de COLADO o de BECARIO (el botón de arriba): se recuerda para la próxima vez
+function escClase() { if (!MIESC.clase) MIESC.clase = opLee('esc-clase', 'camaleon') === 'cazador' ? 'cazador' : 'camaleon'; return MIESC.clase; }
+function escCambiaClase() {
+  MIESC.clase = escClase() === 'cazador' ? 'camaleon' : 'cazador'; opGuarda('esc-clase', MIESC.clase); play('select');
+  escClaseBoton(); MIESC.sucio = true;
+}
+function escClaseBoton() {
+  const b = E('b-esc-clase'); if (!b) return;
+  const caz = escClase() === 'cazador';
+  b.className = 'boton peq esc-clase ' + (caz ? 'becario' : 'colado');
+  b.querySelector('b').textContent = caz ? tr('BECARIO') : tr('COLADO');
+  const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 44, 56);
+  c.setTransform(0.82, 0, 0, 0.82, 22, 53); c.beginPath(); trazaAlubia(c, null, 'firmes');
+  c.fillStyle = caz ? '#aab4c4' : '#f4f1fa'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.lineJoin = 'round'; c.stroke();
+}
 function escYoEnte() {
-  const yo = MIESC.yo, ropa = MIESC.ropa || ropaDe(), clave = JSON.stringify(ropa.ids || {});
+  const yo = MIESC.yo, ropa = MIESC.ropa || ropaDe(), clase = escClase(), clave = clase + JSON.stringify(ropa.ids || {});
   let e = MIESC.ente;
   if (!e || e._clave !== clave) {
-    const [piel, pctx] = nuevaPiel(BLANCO_PIEL);
-    e = MIESC.ente = { clase: 'camaleon', tipo: 'fan', x: 0, y: 0, mira: 1, dir: 0, hielo: 0, piel, pctx, pasos: [], semilla: 3, anda: 0, alerta: 0, ciego: 0, balas: 5, moviendo: false, _clave: clave };
+    const [piel, pctx] = nuevaPiel(clase === 'cazador' ? '#aab4c4' : BLANCO_PIEL);
+    e = MIESC.ente = { clase, tipo: 'fan', x: 0, y: 0, mira: 1, dir: 0, hielo: 0, piel, pctx, pasos: [], semilla: 3, anda: 0, alerta: 0, ciego: 0, balas: 5, moviendo: false, _clave: clave };
     e.ropa = ropa; ponPapel(e);
   }
-  e.mira = yo.dir || 1; e.moviendo = yo.anda > 0.35; if (e.moviendo) e.anda = (yo.paso || 0) / 12;
+  e.mira = yo.dir || 1; e.dir = e.mira > 0 ? 0 : Math.PI; e.moviendo = yo.anda > 0.35; if (e.moviendo) e.anda = (yo.paso || 0) / 12;
   return e;
 }
 function escPintaYo(c) {

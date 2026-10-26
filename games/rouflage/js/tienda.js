@@ -38,7 +38,22 @@ function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
   if (typeof PAGOS !== 'undefined' && PAGOS.disponible()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
   return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
 }
-function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }) + ' · ' + tr('Te invita {quien}', { quien: INVITA_TIENDA }), 'bueno'); tiendaPinta(); }
+function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
+
+// un montón de títulos de Acciones (1 a 5): cuanto más grande el paquete, más alto el montón; el de arriba, el icono de siempre
+function pintaMontonAcciones(c, w, n) {
+  n = Math.max(1, Math.min(5, n));
+  if (n === 1) { pintaAcciones(c, w); return; }
+  const k = w / 40, s = 0.62 + 0.06 * (5 - n);      // los de abajo, un poco más pequeños si hay muchos
+  c.save(); c.scale(k, k); c.lineJoin = 'round';
+  for (let i = 0; i < n - 1; i++) {      // los de debajo: papeles apilados y un poco torcidos
+    c.save(); c.translate(20, 31 - i * 3.2); c.rotate((i % 2 ? 1 : -1) * (0.08 + i * 0.03));
+    c.beginPath(); rrPathRF(c, -15, -6, 30, 12, 2.5); c.fillStyle = i % 2 ? '#e8dcb6' : '#f4ecd2'; c.fill(); c.lineWidth = 2.4; c.strokeStyle = OL; c.stroke();
+    c.restore();
+  }
+  c.restore();
+  c.save(); c.translate(w * (1 - s) / 2, w * (1 - s) / 2 - w * 0.05 * (n - 1) * 0.6); pintaAcciones(c, w * s); c.restore();
+}
 
 // el icono del euro: una moneda dorada con su signo
 function pintaEuro(c, w) {
@@ -48,33 +63,25 @@ function pintaEuro(c, w) {
   c.font = '900 17px system-ui, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 3; c.strokeStyle = OL; c.strokeText('€', 20, 21.5); c.fillStyle = '#fff6ea'; c.fillText('€', 20, 21.5);
   c.restore();
 }
-// la flecha de la conversión (de lo que pagas a lo que recibes)
-function pintaFlecha(c, w) {
-  c.save(); c.scale(w / 40, w / 40); c.lineJoin = 'round';
-  c.beginPath(); c.moveTo(4, 15); c.lineTo(22, 15); c.lineTo(22, 7); c.lineTo(36, 20); c.lineTo(22, 33); c.lineTo(22, 25); c.lineTo(4, 25); c.closePath();
-  c.fillStyle = '#7ee04a'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
-  c.restore();
-}
 const ICONO_MONEDA = { euro: pintaEuro, gotas: pintaGotas, acciones: pintaAcciones };
 const iconoPeq = (dibuja, px) => { const k = arLienzo(px, px); arPinta(k, dibuja); return k; };
-// quien invita por ahora (como en el caos primordial ilimitado): a veces uno y a veces el otro
-const INVITA_TIENDA = Math.random() < 0.5 ? 'Arkioner' : 'Pepins';
 
 function tiendaPinta() {
   ecoEstado();
-  E('tienda-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
-  const aviso = E('tienda-aviso-euros'); if (aviso) aviso.textContent = typeof PAGOS !== 'undefined' && PAGOS.disponible() ? '' : tr('De momento lo de los euros es gratis: te invita {quien}.', { quien: INVITA_TIENDA });
+  pintaCartera('tienda-cartera');
   // una tarjeta: lo que recibes (dibujo y nombre), de dónde viene (icono + flecha si es un cambio) y el botón con el icono de lo que pagas.
   // `pago` = { moneda: 'euro' | 'gotas' | 'acciones', txt, tengo, hace }: con `tengo` por debajo de `hace`, el botón avisa de lo que falta
   const tarjeta = (dibuja, nombre, nota, pago, alTocar, clase = '', origen = null) => {
-    const d = document.createElement('div'); d.className = 'tn-tarjeta ' + clase + (origen ? ' cambio' : '');
-    if (origen) { const f = document.createElement('div'); f.className = 'tn-cambio'; f.append(iconoPeq(ICONO_MONEDA[origen], 36), iconoPeq(pintaFlecha, 24), iconoPeq(dibuja, 46)); d.appendChild(f); }
-    else { const k = arLienzo(54, 54); arPinta(k, dibuja); d.appendChild(k); }
+    const d = document.createElement('div'); d.className = 'tn-tarjeta ' + clase; void origen;
+    const k = arLienzo(54, 54); arPinta(k, dibuja); d.appendChild(k);      // lo que recibes; con qué pagas lo dice el botón (su moneda)
     const t = document.createElement('div'); t.className = 'tn-texto'; t.innerHTML = `<b></b><small></small>`; t.querySelector('b').textContent = nombre; t.querySelector('small').textContent = nota; d.appendChild(t);
     const b = document.createElement('button'); b.type = 'button'; b.className = 'boton peq tn-boton';
     const falta = pago.hace && pago.tengo < pago.hace ? pago.hace - pago.tengo : 0;
     if (pago.moneda) { b.appendChild(iconoPeq(ICONO_MONEDA[pago.moneda], 22)); }
-    const sp = document.createElement('span'); sp.textContent = pago.txt; b.appendChild(sp);
+    const sp = document.createElement('span'); b.appendChild(sp);
+    const eur = pago.moneda === 'euro' && /€/.test(pago.txt);      // el € en letra normal: la letra gorda del juego no lo tiene y salía mordido
+    if (eur) { const [a, z] = pago.txt.split('€'); if (a) sp.append(a.trim()); const i = document.createElement('i'); i.className = 'tn-eur'; i.textContent = '€'; sp.appendChild(i); if (z) sp.append(z.trim()); }
+    else sp.textContent = pago.txt;
     if (falta) {
       b.classList.add('falta'); const nm = pago.moneda === 'gotas' ? tr('Gotas') : tr('Acciones');
       const aviso = document.createElement('small'); aviso.className = 'tn-falta'; aviso.textContent = tr('Te faltan {n} {m}', { n: falta, m: nm }); t.appendChild(aviso);
@@ -97,11 +104,11 @@ function tiendaPinta() {
     p.premium ? { txt: tr('YA ES TUYO') } : { moneda: 'acciones', txt: String(ECO.premium), tengo: SAVE.acciones, hace: ECO.premium }, p.premium ? null : () => { pasePremium(); tiendaPinta(); }, 'oferta'));
   // paquetes de Acciones, por euros
   const ac = E('tienda-acciones'); ac.innerHTML = '';
-  for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
+  for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.acciones.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaEuros('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n }), eurTexto(pk.eur), 'rouflage_acciones_' + pk.n, () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';
-  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaAcciones(c, w), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, RFS.activo() ? () => tiendaServidor('canje', TIENDA.canje.indexOf(pk)) : () => {
+  for (const pk of TIENDA.canje) go.appendChild(tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.canje.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n }), tr('Las Gotas se ganan jugando'), { moneda: 'gotas', txt: String(pk.gotas), tengo: SAVE.gotas, hace: pk.gotas }, RFS.activo() ? () => tiendaServidor('canje', TIENDA.canje.indexOf(pk)) : () => {
     SAVE.gotas -= pk.gotas; SAVE.acciones += pk.n; guardaPartida(); play('crown'); avisa(tr('+{n} Acciones', { n: pk.n }), 'bueno'); tiendaPinta();
   }, '', 'gotas'));
   // el caos primordial ilimitado (el de toda la serie)

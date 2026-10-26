@@ -262,7 +262,7 @@ function preparaInterfaz() {
   E('b-foto').onclick = fotoComparte;
   E('b-cambia').onclick = () => { play('select'); pantalla(null); empiezaPartida(J.modo === 'camaleon' ? 'cazador' : 'camaleon'); };
   E('b-menu').onclick = () => { play('select'); if (J.pvp) rfpSale(); if (escPruebaVuelve()) return; irTitulo(); };
-  E('b-pintar').onclick = accionPintar; E('b-congelar').onclick = accionCongelar; E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); E('b-silbar').onclick = accionSilbar; E('b-granada').onclick = accionGranada; E('b-poder').onclick = accionPoder; E('b-chivato').onclick = accionChivato; E('b-gesto').onclick = accionGesto; E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; E('b-listo').onclick = accionListo;
+  botonAccion(E('b-pintar'), accionPintar); botonAccion(E('b-congelar'), accionCongelar); E('t-senuelo').onclick = () => tallerHerramienta('senuelo'); botonAccion(E('b-silbar'), accionSilbar); botonAccion(E('b-granada'), accionGranada); botonAccion(E('b-poder'), accionPoder); botonAccion(E('b-chivato'), accionChivato); botonAccion(E('b-gesto'), accionGesto); E('b-retiro').onclick = () => { play('select'); if (J.pvp) rfpRendirse(false); irTitulo(); }; botonAccion(E('b-listo'), accionListo);
   E('t-gota').onclick = () => tallerHerramienta('gota');
   for (const b of document.querySelectorAll('.t-radio')) b.onclick = () => tallerRadio(+b.dataset.radio);
   for (const b of document.querySelectorAll('.t-cabezal')) b.onclick = () => tallerCabezal(b.dataset.cabezal);

@@ -31,4 +31,4 @@ window.addEventListener('keydown', ev => {
   if (ev.code === 'Equal' || ev.code === 'NumpadAdd' || ev.key === '+') zoomCazadorPon(ZOOMC.f * 1.15);
   else if (ev.code === 'Minus' || ev.code === 'NumpadSubtract' || ev.key === '-') zoomCazadorPon(ZOOMC.f / 1.15);
 });
-function preparaZoomCazador() { E('b-zoom').onclick = zoomCazadorBoton; zoomCazadorPon(ZOOMC.f); }
+function preparaZoomCazador() { botonAccion(E('b-zoom'), zoomCazadorBoton); zoomCazadorPon(ZOOMC.f); }

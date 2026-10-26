@@ -241,6 +241,7 @@ function preparaEscenario() {
   E('b-escenario').onclick = () => { play('select'); abreEscenario(); };
   E('b-esc-volver').onclick = cierraEscenario;
   E('b-esc-pasear').onclick = () => escModo(MIESC.modo === 'pasear' ? 'decorar' : 'pasear');
+  E('b-esc-clase').onclick = escCambiaClase;
   E('b-esc-armario').onclick = escAbreArmario;
   preparaCamaraEsc(); preparaBandejaEsc(); preparaPincelEsc();
 }

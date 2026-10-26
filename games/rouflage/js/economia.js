@@ -122,11 +122,24 @@ function arCompra(cat, it, moneda) {
   arPintaTodo();
   return true;
 }
+// la cartera de las pantallas de compra (tienda, armario, pase y gachapón): dos chapas con su dibujo (la gota arcoíris y la acción), como las del título
+function pintaCartera(id) {
+  const el = E(id); if (!el) return;
+  el.innerHTML = '';
+  const chapa = (clase, dibuja, n, nombre) => {
+    const s = document.createElement('span'); s.className = 'cartera-chapa ' + clase;
+    const k = arLienzo(24, 24); arPinta(k, dibuja); s.appendChild(k);
+    const b = document.createElement('b'); n = Math.floor(Number(n) || 0); b.textContent = n.toLocaleString(LOCALE_RF); if (n < 0) b.className = 'deuda'; s.appendChild(b);
+    s.title = nombre; s.setAttribute('aria-label', nombre + ': ' + b.textContent); el.appendChild(s);
+  };
+  chapa('gotas', pintaGotas, SAVE.gotas, tr('Gotas'));
+  chapa('acciones', pintaAcciones, SAVE.acciones, tr('Acciones'));
+}
 // el botón COMPRAR del armario y la cartera (lo llama arPintaInfo): abre la ventana de confirmar, con los dos precios
 function arPintaCompra(cat, it) {
   ecoEstado();
   const b = E('b-ar-comprar'), pr = it ? arPrecio(it) : null;
-  E('ar-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
+  pintaCartera('ar-cartera');
   if (!b) return;
   const otra = muebleOtraMas(cat, it);      // un mueble que ya es tuyo: se compra otra unidad (muebles-unidades.js)
   b.hidden = !pr || (arTiene(cat.id, it) && !otra);
@@ -140,7 +153,7 @@ function pasePinta() {
   E('pase-nivel').textContent = tr('Nivel {n} de {t}', { n: nv, t: ECO.niveles });
   paseTuboPon(nv, dentro);      // el tubo de pintura, como el del final de la partida (fin-pase.js)
   E('pase-xp').textContent = nv >= ECO.niveles ? tr('¡Pase completo!') : tr('{a} / {b} XP para el siguiente', { a: dentro, b: ECO.xpNivel });
-  E('pase-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
+  pintaCartera('pase-cartera');
   const bp = E('b-pase-premium'); bp.disabled = p.premium;
   bp.textContent = p.premium ? tr('PREMIUM ACTIVO') : tr('PREMIUM · {n} Acciones', { n: ECO.premium });
   lista.innerHTML = '';

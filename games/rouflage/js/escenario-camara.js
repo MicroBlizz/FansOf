@@ -8,8 +8,9 @@ function escAjusta() {
   if (!MIESC.abierto) return;
   const cv = E('esc-lienzo'), W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, typeof dprGraficos === 'function' ? dprGraficos() : (window.devicePixelRatio || 1));
   cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-  const pr = E('esc-panel').getBoundingClientRect(), lado = pr.left > W / 2;      // la bandeja abajo (móvil) o a la derecha (pantalla ancha)
-  const arriba = E('esc-arriba').getBoundingClientRect().bottom + 4, abajo = lado ? H : pr.top, der = lado ? pr.left : W;
+  const paseo = E('p-escenario').classList.contains('paseando');      // al pasear no hay bandeja: todo el mapa
+  const pr = E('esc-panel').getBoundingClientRect(), lado = !paseo && pr.left > W / 2;      // la bandeja abajo (móvil) o a la derecha (pantalla ancha)
+  const arriba = E('esc-arriba').getBoundingClientRect().bottom + 4, abajo = paseo ? H : lado ? H : pr.top, der = lado ? pr.left : W;
   MIESC.area = { x0: 0, y0: arriba, x1: der, y1: abajo }; Object.assign(MIESC.vista, { dpr, lado });
   const z = E('esc-zoom'), hueco = abajo - arriba - 16;      // + − y centrar: en columna; si no caben (apaisado bajo), en fila, y si tampoco, más pequeños
   z.classList.toggle('fila', hueco < 3 * 44 + 2 * 7); z.classList.toggle('mini', hueco < 44);

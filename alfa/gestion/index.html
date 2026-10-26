@@ -111,7 +111,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
 
   <section id="vista-panel" hidden>
     <nav class="menu" id="menu" aria-label="Paneles"></nav>
-    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-pruebas" type="button">Reportes de prueba</button><button id="t-rend" type="button">Rendimiento</button><button id="t-flags" type="button">Flags</button><button id="t-config" type="button">Config</button><button id="t-codigos" type="button">Códigos de Rouflage</button></div>
+    <div class="filtros" id="tabs"></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -154,7 +154,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
     <div id="pan-pruebas" hidden>
       <div class="caja ayuda"><b>Reportes de prueba.</b> Lo que mandan los probadores con el botón <b>!</b> mientras juegan (en la alfa o en localhost): su nota, dónde estaban y cómo iba el juego (fps, resolución, trozos cargados…), los últimos 60 s de recorrido y una captura. Sirven para encontrar y corregir situaciones concretas. <b>Visto</b> lo deja en la lista; <b>Hecho</b> y <b>Descartar</b> lo cierran.</div>
-      <div class="filtros"><label>Juego <select id="rp-juego"><option value="">todos</option></select></label><label>Estado <select id="rp-estado"><option value="pendiente">pendientes</option><option value="visto">vistos</option><option value="hecho">hechos</option><option value="descartado">descartados</option><option value="">todos</option></select></label><button type="button" id="rp-recargar">Recargar</button></div>
+      <div class="filtros"><label>Estado <select id="rp-estado"><option value="pendiente">pendientes</option><option value="visto">vistos</option><option value="hecho">hechos</option><option value="descartado">descartados</option><option value="">todos</option></select></label><button type="button" id="rp-recargar">Recargar</button></div>
       <div class="aviso" id="rp-aviso" role="alert"></div>
       <div class="lista" id="rp-lista"></div>
     </div>
@@ -200,6 +200,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
   </section>
 </main>
+<script src="nav.js"></script>
 <script>
 'use strict';
 const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
@@ -300,6 +301,7 @@ async function volverDeGoogle() {
 
 volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vista(false); } });
 </script>
+<script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>
 <script src="roles.js"></script>
 <script src="flags.js"></script>
@@ -310,5 +312,6 @@ volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vi
 <script src="../pie.js" defer></script>
 <script src="reportes.js"></script>
 <script src="reportes-prueba.js"></script>
+<script>GESTION_NAV.arranca();</script>
 </body>
 </html>

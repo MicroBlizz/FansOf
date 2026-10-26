@@ -5,6 +5,7 @@
 'use strict';
 (() => {
   let L = [];
+  const JUEGO = 'taxi';   // el único juego que activa hoy el botón «!» (games/taxi/js/principal.js); sus reportes viven en su pestaña
   const sinFuncion = e => /does not exist|PGRST202|404/.test(String(e.message));
   const ESTADO = { pendiente: 'pendiente', visto: 'visto', hecho: 'hecho', descartado: 'descartado' };
   const num = v => (typeof v === 'number' ? v : v == null ? '-' : String(v));
@@ -44,12 +45,10 @@
   async function cargar() {
     $('rp-aviso').textContent = '';
     try {
-      const r = await rpc('gestion_reportes_prueba', { p_token: leerToken(), p_juego: $('rp-juego').value || null, p_estado: $('rp-estado').value || null, p_dias: 90 });
+      const r = await rpc('gestion_reportes_prueba', { p_token: leerToken(), p_juego: JUEGO, p_estado: $('rp-estado').value || null, p_dias: 90 });
       L = r.reportes || [];
-      const juegos = [...new Set(L.map(x => x.juego))].sort(), sel = $('rp-juego'), actual = sel.value;
-      for (const j of juegos) if (![...sel.options].some(o => o.value === j)) { const o = document.createElement('option'); o.value = j; o.textContent = j; sel.appendChild(o); }
-      sel.value = actual; pinta();
-      $('t-pruebas').textContent = 'Reportes de prueba' + (r.pendientes ? ' (' + r.pendientes + ')' : '');
+      pinta();
+      GESTION_NAV.etiqueta('pruebas', 'Reportes de prueba' + (r.pendientes ? ' (' + r.pendientes + ')' : ''), JUEGO);
     } catch (e) { $('rp-aviso').textContent = sinFuncion(e) ? 'Falta aplicar servidor/98-reportes-prueba.sql en Supabase.' : textoError(e); }
   }
   $('rp-lista').addEventListener('click', async ev => {
@@ -65,13 +64,6 @@
       catch (e) { $('rp-aviso').textContent = textoError(e); }
     }
   });
-  $('rp-recargar').onclick = cargar; $('rp-juego').onchange = cargar; $('rp-estado').onchange = cargar;
-  const tabs = () => [...document.querySelectorAll('#tabs button')].map(b => b.id).filter(id => id !== 't-pruebas');
-  function mostrar(si) {
-    $('pan-pruebas').hidden = !si; $('t-pruebas').classList.toggle('activa', si);
-    if (si) { document.querySelectorAll('#vista-panel > div[id^="pan-"]').forEach(p => { if (p.id !== 'pan-pruebas') p.hidden = true; }); tabs().forEach(t => $(t).classList.remove('activa')); cargar(); }
-  }
-  $('t-pruebas').onclick = () => mostrar(true);
-  tabs().forEach(t => $(t).addEventListener('click', () => { $('pan-pruebas').hidden = true; $('t-pruebas').classList.remove('activa'); }));
-  $('menu').addEventListener('click', () => { $('pan-pruebas').hidden = true; $('t-pruebas').classList.remove('activa'); });
+  $('rp-recargar').onclick = cargar; $('rp-estado').onchange = cargar;
+  GESTION_NAV.seccion({ id: 'pruebas', pan: 'pan-pruebas', juego: JUEGO, etiqueta: 'Reportes de prueba', orden: 1, cargar });
 })();

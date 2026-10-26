@@ -32,15 +32,7 @@
     try { G = agrupa((await rpc('gestion_flags', { p_token: leerToken() })).flags || []); pinta(); }
     catch (e) { $('fl-aviso').textContent = sinFuncion(e) ? 'Los flags aún no están en el panel (servidor/70-config-y-flags-por-plataforma.sql).' : textoError(e); }
   }
-  const tabs = () => [...document.querySelectorAll('#tabs button')].map(b => b.id).filter(id => id !== 't-flags');
-  function mostrar(si) {
-    $('pan-flags').hidden = !si; $('t-flags').classList.toggle('activa', si);
-    if (si) { document.querySelectorAll('#vista-panel > div[id^="pan-"]').forEach(p => { if (p.id !== 'pan-flags') p.hidden = true; }); tabs().forEach(t => $(t).classList.remove('activa')); cargar(); }
-  }
-  $('t-flags').onclick = () => mostrar(true);
-  tabs().forEach(t => $(t).addEventListener('click', () => { $('pan-flags').hidden = true; $('t-flags').classList.remove('activa'); }));
-  $('menu').addEventListener('click', () => { $('pan-flags').hidden = true; $('t-flags').classList.remove('activa'); });
-  $('salir').addEventListener('click', () => mostrar(false));
+  GESTION_NAV.seccion({ id: 'flags', pan: 'pan-flags', etiqueta: 'Flags', orden: 5, cargar });
   $('fl-lista').onclick = async ev => {
     const b = ev.target.closest('button[data-p]'); if (!b) return;
     const g = G[+b.dataset.i], p = b.dataset.p; $('fl-aviso').textContent = ''; b.disabled = true;

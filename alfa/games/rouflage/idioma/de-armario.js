@@ -103,7 +103,7 @@ IDIOMA.add({
   "Dura 1 segundo y luego no queda nada": "Dauert 1 Sekunde, danach bleibt nichts",
   "Lo que dejas en el suelo cuando despides a alguien (de becario)": "Was du auf dem Boden hinterlässt, wenn du jemanden feuerst (als Praktikant)",
   "Solo cambia el color del borde: el haz alumbra igual": "Nur die Randfarbe ändert sich: der Strahl leuchtet gleich",
-  "Solo en la sala de espera, al final de la ronda o de fantasma": "Nur im Warteraum, am Ende der Runde oder als Geist",
+  "Solo en la sala de espera y al final de la ronda": "Nur im Warteraum und am Ende der Runde",
   // ojos
   "Puntos": "Punkte", "Grandes": "Groß", "Dormido": "Verschlafen", "Gafas redondas": "Runde Brille", "Estrellas": "Sterne", "Guiño": "Zwinkern", "Bizco": "Schielend",
   "Gafas de sol": "Sonnenbrille", "Monóculo": "Monokel", "Láser de jefe": "Chef-Laser", "Corazones": "Herzen", "Espiral (CrazyBunny)": "Spirale (CrazyBunny)",

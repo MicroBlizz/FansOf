@@ -1,8 +1,8 @@
 {
- "build": 550,
- "hash": "980d09b",
- "fecha": "2026-10-26T17:34:44Z",
- "mensaje": "Rouflage: los fantasmas se ven entre sí también en la oscuridad (se pintan encima del velo)",
+ "build": 551,
+ "hash": "2f86d55",
+ "fecha": "2026-10-26T17:38:39Z",
+ "mensaje": "Rouflage: fuera el botón de gesto del fantasma (era un resto: ya hay chat y pegatinas de fantasma)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -51,12 +51,12 @@ const marcoColor = id => (id && ARD.COLOR_MARCO[id]) || '';
 function tituloHtml(t) { return t ? `<small class="titulo-ar" style="color:${t.color}">${esc(tr(t.texto))}</small>` : ''; }
 
 // ---------- los gestos: un bocadillo con tu galleta haciendo el gesto, encima de ti ----------
-const gestoPuede = () => { const yo = J.yo; return !!(yo && yo.ropa && yo.ropa.gesto) && !J.pausa && ((yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta')) || espectando()); };
+const gestoPuede = () => { const yo = J.yo; return !!(yo && yo.ropa && yo.ropa.gesto) && !J.pausa && yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta'); };
 function accionGesto() {
   if (!gestoPuede() || RELOJ < GESTO.t) return;
   const yo = J.yo; GESTO.t = RELOJ + GESTO.espera;
   yo.gesto = { tipo: yo.ropa.gesto, hasta: RELOJ + GESTO.dura }; play('pop');
-  if (J.pvp && !espectando()) rfpManda({ t: 'gs', g: yo.ropa.gesto });      // el fantasma solo lo ve quien lo lleva: su gesto, también
+  if (J.pvp) rfpManda({ t: 'gs', g: yo.ropa.gesto });
 }
 function rfpGestoRecibido(sl, m) {
   const e = sl.ente; if (!e || e.fuera || typeof m.g !== 'string' || !arItem('gestos', m.g)) return;
@@ -75,8 +75,6 @@ function pintaGestos(c) {
     if (e.gesto.hasta < RELOJ || e.fuera) { e.gesto = null; continue; }
     pintaBocadillo(c, e.x, e.y - 104, e.gesto.tipo, GESTO.dura - (e.gesto.hasta - RELOJ));
   }
-  const yo = J.yo, f = J.fantasma;      // el del fantasma, encima del fantasma
-  if (yo && f && espectando() && yo.gesto && yo.gesto.hasta > RELOJ) pintaBocadillo(c, f.x, f.y - 52, yo.gesto.tipo, GESTO.dura - (yo.gesto.hasta - RELOJ));
 }
 // el botón: su dibujo es el gesto que llevas
 function refrescaGesto() {

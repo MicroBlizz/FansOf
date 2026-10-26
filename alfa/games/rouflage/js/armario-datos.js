@@ -158,6 +158,6 @@ const CATALOGO_AR = (() => {
     { id: 'linterna', nombre: 'Linterna del becario', corto: 'Linterna', nota: 'Solo cambia el color del borde: el haz alumbra igual', items: linternaR },
     { id: 'marcos', nombre: 'Marcos de la clasificación', corto: 'Marco', items: marcosR },
     { id: 'titulos', nombre: 'Títulos (salen bajo tu nombre)', corto: 'Título', items: titulosR },
-    { id: 'gestos', nombre: 'Gestos', corto: 'Gestos', nota: 'Solo en la sala de espera, al final de la ronda o de fantasma', items: gestosR },
+    { id: 'gestos', nombre: 'Gestos', corto: 'Gestos', nota: 'Solo en la sala de espera y al final de la ronda', items: gestosR },
   ];
 })();

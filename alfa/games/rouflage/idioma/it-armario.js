@@ -132,7 +132,7 @@ IDIOMA.add({
   "Dura 1 segundo y luego no queda nada": "Dura 1 secondo e poi non resta niente",
   "Lo que dejas en el suelo cuando despides a alguien (de becario)": "Quello che lasci per terra quando licenzi qualcuno (da stagista)",
   "Solo cambia el color del borde: el haz alumbra igual": "Cambia solo il colore del bordo: il fascio illumina uguale",
-  "Solo en la sala de espera, al final de la ronda o de fantasma": "Solo nella sala d'attesa, a fine round o da fantasma",
+  "Solo en la sala de espera y al final de la ronda": "Solo nella sala d'attesa e a fine round",
   // ojos
   "Puntos": "Puntini",
   "Grandes": "Grandi",

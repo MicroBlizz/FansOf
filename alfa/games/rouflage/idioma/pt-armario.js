@@ -103,7 +103,7 @@ IDIOMA.add({
   "Dura 1 segundo y luego no queda nada": "Dura 1 segundo e depois não sobra nada",
   "Lo que dejas en el suelo cuando despides a alguien (de becario)": "O que você deixa no chão quando demite alguém (de estagiário)",
   "Solo cambia el color del borde: el haz alumbra igual": "Só muda a cor da borda: o feixe ilumina igual",
-  "Solo en la sala de espera, al final de la ronda o de fantasma": "Só na sala de espera, no final da rodada ou de fantasma",
+  "Solo en la sala de espera y al final de la ronda": "Só na sala de espera e no final da rodada",
   // ojos
   "Puntos": "Pontinhos", "Grandes": "Grandes", "Dormido": "Sonolento", "Gafas redondas": "Óculos redondos", "Estrellas": "Estrelas", "Guiño": "Piscadela", "Bizco": "Vesgo",
   "Gafas de sol": "Óculos de sol", "Monóculo": "Monóculo", "Láser de jefe": "Laser de chefe", "Corazones": "Corações", "Espiral (CrazyBunny)": "Espiral (CrazyBunny)",

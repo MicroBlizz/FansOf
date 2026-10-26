@@ -76,14 +76,25 @@ const CIUDAD = (() => {
     return h;
   }
   // altura para pintar el suelo: como la de un coche sin túneles, pero el río gana a la carretera (ahí hay un puente encima)
+  // Sin túneles (van por debajo, con su propio suelo) y sin el último trozo de la trinchera, el que queda bajo el portal de la boca:
+  // ahí arriba sigue el monte y el suelo del túnel lo pone su malla.
   function alturaSuelo(x, z) {
     const r = CARRETERAS.cauce(rio, x, z);
     if (r.d < r.ancho / 2) return natural(x, z);
-    return altura(x, z, undefined);
+    const c = carreteraEn(x, z, undefined, true), nat = natural(x, z);
+    if (!c || bajoPortal(c)) return nat;
+    return lerp(nat, c.y, 1 - suave(c.e.ancho / 2 + c.e.margen, c.e.alcance, c.d));
+  }
+  // un punto de una rampa que ya está dentro de la boca (más allá del portal)
+  function bajoPortal(c) {
+    if (c.e.tipo !== 'rampa' || !c.e.recorte) return false;
+    const a = nodos[c.e.a], b = nodos[c.e.b], [ra, rb] = c.e.recorte;
+    return (b.boca && (1 - c.t) * c.e.largo <= rb) || (a.boca && c.t * c.e.largo <= ra);
   }
   // qué suelo hay: asfalto, acera, hierba, tierra, nieve, agua
   function suelo(x, z, yRef) {
-    const c = carreteraEn(x, z, yRef, false);
+    let c = carreteraEn(x, z, yRef, yRef === undefined);   // sin coche (pintar el suelo), lo de encima de los túneles
+    if (c && yRef === undefined && bajoPortal(c)) c = null;
     if (c && c.d <= c.e.ancho / 2) return c.e.tipo === 'tunel' || c.e.tipo === 'rampa' ? 'tunel' : 'asfalto';
     if (enRio(x, z) || TERRENO.tierra(x, z) < 0.5) return 'agua';
     if (c && c.d <= c.e.ancho / 2 + c.e.margen) return 'tierra';
@@ -109,7 +120,12 @@ const CIUDAD = (() => {
   const caja = (x0, z0, x1, z1, extra) => { const o = { x0, z0, x1, z1, ...extra }; obstaculos.push(o); mete(iObst, x0 - 3, z0 - 3, x1 + 3, z1 + 3, o); };
   const tramo = (ax, az, bx, bz, radio, y0, y1, extra) => { const o = { ax, az, bx, bz, radio, y0, y1, ...extra }; obstaculos.push(o); mete(iObst, Math.min(ax, bx) - radio - 3, Math.min(az, bz) - radio - 3, Math.max(ax, bx) + radio + 3, Math.max(az, bz) + radio + 3, o); return o; };
   const circulo = (x, z, radio, extra) => { const o = { x, z, radio, ...extra }; obstaculos.push(o); mete(iObst, x - radio - 3, z - radio - 3, x + radio + 3, z + radio + 3, o); };
-  for (const m of celdas) { for (const e of m.edificios) caja(e.x - e.w / 2, e.z - e.d / 2, e.x + e.w / 2, e.z + e.d / 2, { edificio: true }); for (const a of m.arboles) circulo(a.x, a.z, a.radio * 0.6); }
+  // edificios y árboles: desde un poco por debajo del suelo hacia arriba (los túneles pasan por debajo sin chocar)
+  const pie = (...p) => Math.min(...p.map(([x, z]) => natural(x, z))) - 4;
+  for (const m of celdas) {
+    for (const e of m.edificios) { const x0 = e.x - e.w / 2, z0 = e.z - e.d / 2, x1 = e.x + e.w / 2, z1 = e.z + e.d / 2; caja(x0, z0, x1, z1, { edificio: true, y0: pie([x0, z0], [x1, z0], [x0, z1], [x1, z1], [e.x, e.z]), y1: 1e4 }); }
+    for (const a of m.arboles) circulo(a.x, a.z, a.radio * 0.6, { y0: pie([a.x, a.z]), y1: 1e4 });
+  }
   const campo = CARRETERAS.campo(azar, distCarretera, enRio);
   for (const o of campo) circulo(o.x, o.z, o.tipo === 'roca' ? o.radio * 0.9 : o.radio * 0.5);
   // paredes de los túneles y de las rampas, a los lados de cada tramo (solo cuentan a su altura). En un cruce (con otro túnel o con la
@@ -117,7 +133,7 @@ const CIUDAD = (() => {
   const paredes = [];
   const subt = t => t === 'tunel' || t === 'rampa';
   const giroEn = (n, e, o) => { const a = nodos[e.a === n.id ? e.b : e.a], b = nodos[o.a === n.id ? o.b : o.a]; return Math.abs(Math.PI - Math.abs(Math.atan2(a.x - n.x, a.z - n.z) - Math.atan2(b.x - n.x, b.z - n.z))) % (Math.PI * 2); };   // cuánto dobla la carretera en n
-  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(subt(o.tipo) === subt(e.tipo) && n.vecinos.length === 2 && !n.boca && giroEn(n, e, o) < 0.3)) r = Math.max(r, o.ancho / 2 + (e.tipo === 'rampa' && !subt(o.tipo) ? 8 : 1.5)); } return r; };   // en la boca, más holgura para el giro
+  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(subt(o.tipo) === subt(e.tipo) && n.vecinos.length === 2 && giroEn(n, e, o) < 0.3)) r = Math.max(r, o.ancho / 2 + (e.tipo === 'rampa' && !subt(o.tipo) ? 8 : 1.5)); } return r; };   // en la boca, más holgura para el giro
   for (const e of aristas) if (e.tipo === 'tunel' || e.tipo === 'rampa') {
     const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, nx = -uz, nz = ux, y = Math.min(a.y, b.y);
     const ra = recorte(a, e), rb = recorte(b, e); if (ra + rb >= L - 1) continue;

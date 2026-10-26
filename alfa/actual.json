@@ -1,8 +1,8 @@
 {
- "build": 559,
- "hash": "bda6cdc",
- "fecha": "2026-10-26T21:18:17Z",
- "mensaje": "Gestión: las pestañas exclusivas de un juego pasan dentro de ese juego (Rouflage: Reportes y Códigos; Taxi: Reportes de prueba); navegación en nav.js",
+ "build": 560,
+ "hash": "69c3fe3",
+ "fecha": "2026-10-26T21:31:21Z",
+ "mensaje": "Taxi: bocas de túnel que parecen túnel (primer reporte de prueba)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

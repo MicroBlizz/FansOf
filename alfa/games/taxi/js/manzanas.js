@@ -118,9 +118,9 @@ const MANZANAS = (() => {
     const lado = ANCHO.avenida / 2 + M.acera + 8;   // la trinchera va a este lado del eje de la avenida
     function tunel(horizontal, idx) {
       const L = horizontal ? lx : lz, pos = (horizontal ? lz : lx)[idx].pos;
-      // el fondo de cada trinchera queda dentro de su celda (antes de la primera calle); el eje del túnel empieza a 45° de ahí
+      // el fondo de cada trinchera queda dentro de su celda (antes de la primera calle); de ahí al eje del túnel, una S suave bajo tierra
       const sB0 = L[1].pos - L[1].ancho / 2 - 4, sB1 = L[L.length - 2].pos + L[L.length - 2].ancho / 2 + 4;
-      const s0 = sB0 + lado, s1 = sB1 - lado, puntos = [s0];
+      const s0 = sB0 + 2 * lado, s1 = sB1 - 2 * lado, puntos = [s0];
       for (let s = s0 + 60; s < s1 - 30; s += 60) puntos.push(s);
       puntos.push(s1);
       const otra = L.findIndex(q => q.tipo === 'avenida');   // el cruce con el otro túnel: bajo la avenida de este eje
@@ -138,12 +138,15 @@ const MANZANAS = (() => {
       // las bocas: una trinchera por extremo, a un lado de la avenida, que sube hasta la circunvalación
       for (const [u, dir] of [[cadena[0], -1], [cadena[cadena.length - 1], 1]]) {
         const P = horizontal ? nodos[dir < 0 ? 0 : NX - 1][idx] : nodos[idx][dir < 0 ? 0 : NZ - 1];   // el cruce de la avenida con la circunvalación
-        const sP = L[dir < 0 ? 0 : L.length - 1].pos, sU = dir < 0 ? s0 : s1, linea = L[dir < 0 ? 1 : L.length - 2];   // sB queda a 45° de u (lado 22 = 22 a lo largo)
-        const sT = sP - dir * (ANCHO.anillo / 2 + 16), sB = sU + dir * lado;   // de la boca (arriba) al fondo (abajo), hacia dentro de la ciudad
+        const sP = L[dir < 0 ? 0 : L.length - 1].pos, sU = dir < 0 ? s0 : s1, linea = L[dir < 0 ? 1 : L.length - 2];   // de sB a u, una S de 2 × lado a lo largo
+        const sT = sP - dir * (ANCHO.anillo / 2 + 16), sB = sU + dir * 2 * lado;   // de la boca (arriba) al fondo (abajo), hacia dentro de la ciudad
         const [tx, tz] = punto(sT, lado), T = g.nodo(tx, tz, { ciudad: c.indice, tipo: 'rampa', bajo: 0 });
         g.une(P, T, ANCHO.calle, 'calle');   // el ramal del cruce a la boca
         let q = T; const n = 3, tramo = [T];
         for (let k = 1; k <= n; k++) { const [x, z] = punto(lerp(sT, sB, k / n), lado); const m = g.nodo(x, z, { ciudad: c.indice, tipo: 'rampa', bajo: bajo() * k / n, boca: k === n }); g.une(q, m, 12, 'rampa'); q = m; tramo.push(m); }
+        // la S: tramos cortos que giran poco en cada nudo (sin salas: el tubo sigue entero, sin paredes cruzadas)
+        const N = 12;
+        for (let k = 1; k < N; k++) { const [x, z] = punto(lerp(sB, sU, k / N), lado * (1 + Math.cos(Math.PI * k / N)) / 2); const m = g.nodo(x, z, { ciudad: c.indice, tipo: 'tunel', bajo: bajo() }); g.une(q, m, 12, 'tunel'); q = m; tramo.push(m); }
         g.une(q, u, 12, 'tunel');
         if (dir < 0) cadena.unshift(...tramo); else cadena.push(...tramo.reverse());
       }

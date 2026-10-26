@@ -27,6 +27,7 @@
     HUD.montar(); CONTROLES.montar();
     document.getElementById('b-accion').addEventListener('click', CONTROLES.pulsaAccion);
     if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.activar({ juego: 'taxi' });
+    if (typeof REPORTE !== 'undefined') REPORTE.activar({ datos: datosReporte, captura: ESCENA.captura });
     HUD.radio(tr(LOLA.bienvenida[0]), 7); setTimeout(() => HUD.radio(tr(LOLA.bienvenida[1]), 7), 7500);
     requestAnimationFrame(cuadro);
   }
@@ -86,9 +87,14 @@
     HUD.centro('<b class="ol">' + texto + '</b>'); setTimeout(() => HUD.centro(''), 3500);
     SAVE.dinero = EVENTOS.dinero; txGuarda(); play(s.como === 'parado' ? 'despido' : 'summon');
   }
+  // para los reportes de prueba (core/js/sistema/reporte-prueba.js): dónde está el jugador y cómo va, y una traza por segundo
+  let trazaT = 0, fpsReporte = 0;
+  const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro }; };
   function cuadro(t) {
     requestAnimationFrame(cuadro);
     const dt = Math.min(0.1, (t - ultimo) / 1000 || 0); ultimo = t; acumulado += dt;
+    fpsReporte = Math.round(fpsReporte * 0.95 + (dt > 0 ? 1 / dt : 0) * 0.05); trazaT += dt;
+    if (trazaT >= 1 && typeof REPORTE !== 'undefined') { trazaT = 0; REPORTE.traza({ t: Math.round(t / 1000), x: Math.round(jugador.x), z: Math.round(jugador.z), y: Math.round(jugador.y), v: Math.round(jugador.v), fps: fpsReporte, suelo: jugador.suelo }); }
     let pasos = 0; while (acumulado >= DT && pasos < 4) { pasoLogica(); acumulado -= DT; pasos++; }
     if (pasos === 4) acumulado = 0;   // el navegador se ha atascado: no intentar recuperar el tiempo
     const dentro = PASAJEROS.dentro, activo = EVENTOS.activo;

@@ -151,6 +151,12 @@ const ESCENA = (() => {
     if (estado.temblor > 0) { camara.position.x += (Math.random() - 0.5) * estado.temblor; camara.position.y += (Math.random() - 0.5) * estado.temblor; }
     ajustaResolucion(dt); TROZOS.actualizar(j.x, j.z); FONDO.sigue(camara); render.render(escena, camara);
   }
+  // una captura pequeña (jpeg) para los reportes de prueba: se vuelve a dibujar y se copia reducida (el lienzo WebGL no conserva el fotograma)
+  function captura() {
+    if (!render) return null; render.render(escena, camara);
+    const c = document.createElement('canvas'), w = 720, h = Math.round(720 * render.domElement.height / render.domElement.width); c.width = w; c.height = h;
+    c.getContext('2d').drawImage(render.domElement, 0, 0, w, h); return c.toDataURL('image/jpeg', 0.6);
+  }
   const info = () => (render ? { calls: render.info.render.calls, tris: render.info.render.triangles, res } : { calls: 0, tris: 0, res: 1 });
   // resolución adaptativa: si no llega a 45 fps baja la resolución un escalón (hasta la mitad); si sobra, la sube. Cada 3 s
   let res = 1, resMax = 1, fpsAcum = 0, fpsN = 0, resT = 0;
@@ -161,5 +167,5 @@ const ESCENA = (() => {
     if (fps < 45 && res > 0.5) res = Math.max(0.5, res - 0.25); else if (fps > 57 && res < resMax) res = Math.min(resMax, res + 0.25);
     if (res !== antes) render.setPixelRatio(res);
   }
-  return { iniciar, sincroniza, info };
+  return { iniciar, sincroniza, info, captura };
 })();

@@ -1,8 +1,8 @@
 {
- "build": 555,
- "hash": "9256d57",
- "fecha": "2026-10-26T19:08:17Z",
- "mensaje": "Taxi: mundo cerrado y sin popping: lejos simplificado, bocas de túnel en trinchera, esquinas curvas, enlaces en S, quitamiedos",
+ "build": 556,
+ "hash": "91fa06c",
+ "fecha": "2026-10-26T19:16:07Z",
+ "mensaje": "Reportes de prueba: botón «!» para probadores con nota, datos del juego, recorrido y captura; pestaña en /gestion; SQL 98 (sin aplicar)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

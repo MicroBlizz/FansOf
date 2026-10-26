@@ -1,6 +1,13 @@
 // Fans Of · Inglés del feedback de los juegos (core/js/sistema/feedback.js).
 'use strict';
 IDIOMA.add({
+  "Reportar una situación": "Report a situation",
+  "Qué pasa aquí: qué esperabas y qué ves": "What happens here: what you expected and what you see",
+  "Se manda con tu nota: dónde estás, cómo va el juego, los últimos 60 s de recorrido y la captura.": "Sent with your note: where you are, how the game runs, the last 60 s of your route and the screenshot.",
+  "Para reportar, activa «Datos de partida anónimos» en Opciones.": "To report, turn on \"Anonymous game data\" in Options.",
+  "Reporte enviado. ¡Gracias!": "Report sent. Thanks!",
+  "No se ha podido enviar": "Could not send",
+  "Enviar": "Send",
   "¿Qué nota le das al juego?": "What score do you give the game?",
   "Nota de 1 a 5 estrellas": "Score from 1 to 5 stars",
   "Pon una nota de 1 a 5 estrellas.": "Give it a score from 1 to 5 stars.",

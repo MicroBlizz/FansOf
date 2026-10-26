@@ -1,8 +1,8 @@
 {
- "build": 560,
- "hash": "69c3fe3",
- "fecha": "2026-10-26T21:31:21Z",
- "mensaje": "Taxi: bocas de túnel que parecen túnel (primer reporte de prueba)",
+ "build": 561,
+ "hash": "b8e4c16",
+ "fecha": "2026-10-26T23:41:51Z",
+ "mensaje": "Reportes de prueba: incluyen qué gráfica usa el navegador (integrada o dedicada)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -11,6 +11,13 @@ const REPORTE = (() => {
   let op = null, boton = null, ventana = null, traza = [];
   const probador = () => (typeof NUCLEO !== 'undefined' && NUCLEO.alfa) || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   const plataforma = () => (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) ? 'app' : /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) ? 'movil' : 'pc';
+  // qué gráfica usa el navegador (en un PC con integrada y dedicada, a veces la integrada)
+  let gpuNombre;
+  function gpu() {
+    if (gpuNombre !== undefined) return gpuNombre;
+    try { const g = document.createElement('canvas').getContext('webgl'), ext = g && g.getExtension('WEBGL_debug_renderer_info'); gpuNombre = g ? String(ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER)).slice(0, 120) : null; } catch (e) { gpuNombre = null; }
+    return gpuNombre;
+  }
   function estilo() {
     if (document.getElementById('rp-estilo')) return;
     const s = document.createElement('style'); s.id = 'rp-estilo';
@@ -46,7 +53,7 @@ const REPORTE = (() => {
     texto = String(texto || '').trim(); if (!texto) texto = '(sin nota)';
     const b = ventana.querySelector('#rp-si'); b.disabled = true; b.textContent = '…';
     let datos = {}; try { datos = op.datos ? op.datos() || {} : {}; } catch (e) { datos = { error: String(e && e.message) }; }
-    datos.traza = traza.slice(-60); datos.aparato = { ua: navigator.userAgent.slice(0, 160), ancho: innerWidth, alto: innerHeight, dpr: devicePixelRatio || 1, nucleos: navigator.hardwareConcurrency || null, memoria: navigator.deviceMemory || null, idioma: navigator.language };
+    datos.traza = traza.slice(-60); datos.aparato = { ua: navigator.userAgent.slice(0, 160), ancho: innerWidth, alto: innerHeight, dpr: devicePixelRatio || 1, nucleos: navigator.hardwareConcurrency || null, memoria: navigator.deviceMemory || null, idioma: navigator.language, gpu: gpu() };
     let nombre = null; try { nombre = op.nombre ? op.nombre() : null; } catch (e) { nombre = null; }
     const cuerpo = { juego: (typeof AJUSTES !== 'undefined' && AJUSTES.id) || 'desconocido', version: String(typeof NUCLEO !== 'undefined' ? NUCLEO.version || '' : '').slice(0, 32), alfa: !!(typeof NUCLEO !== 'undefined' && NUCLEO.alfa), plataforma: plataforma(), nombre, texto, datos, captura };
     let r = null;

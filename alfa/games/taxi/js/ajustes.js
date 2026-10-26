@@ -8,19 +8,25 @@ const AJUSTES = {
 const TAXI = {
   paso: 1 / 60,               // segundos de cada paso de la simulación (fijo y determinista: misma entrada, misma partida)
   coche: {
-    acel: 14,                 // m/s² a fondo
+    acel: 16,                 // m/s² a fondo
     nitroAcel: 22,            // m/s² extra con el nitro
-    freno: 26,                // m/s² frenando
+    freno: 28,                // m/s² frenando
+    retencion: 3,             // m/s² que frena el motor al soltar el gas
     marchaAtras: 9,           // velocidad máxima hacia atrás
-    vmax: 42,                 // m/s (unos 150 km/h en el velocímetro)
-    vmaxNitro: 52,
-    rozamiento: 0.35,         // frenado natural por segundo (parte de la velocidad)
-    giro: 2.3,                // radianes por segundo a plena velocidad de giro
-    giroVel: 12,              // velocidad a la que el giro ya es pleno (parado casi no gira)
-    agarre: 7,                // cuánto se come el deslizamiento lateral por segundo (alto = de raíles)
-    agarreDerrape: 1.6,       // con el derrape, el coche patina
-    derrapeMin: 11,           // velocidad mínima para derrapar
-    derrapeGiro: 1.45,        // cuánto más gira derrapando
+    vmax: 44,                 // m/s (unos 160 km/h en el velocímetro)
+    vmaxNitro: 54,
+    rozamiento: 0.45,         // frenado natural por segundo (parte de la velocidad)
+    giro: 2.4,                // radianes por segundo a plena velocidad de giro
+    giroVel: 10,              // velocidad a la que el giro ya es pleno (parado casi no gira)
+    giroRapido: 0.9,          // a tope de velocidad el giro se reduce a 1/(1+esto): el coche no «pivota»
+    agarre: 13,               // cuánto se come el deslizamiento lateral por segundo (alto = de raíles)
+    agarreDerrape: 2.4,       // con el derrape, el coche patina
+    desliza: 0.35,            // parte del giro que se convierte en deslizamiento lateral (derrapando, deslizaDerrape)
+    deslizaDerrape: 1.1,
+    derrapeMin: 12,           // velocidad mínima para derrapar
+    derrapeGiro: 1.5,         // cuánto más gira derrapando
+    pendiente: 0.85,          // cuánto tira la gravedad por la pendiente (parte de g · pendiente)
+    suelos: { asfalto: [1, 0], acera: [0.92, 0.3], hierba: [0.55, 1.4], tierra: [0.6, 1.1], nieve: [0.5, 1.6] },   // por suelo: parte de la velocidad máxima y frenado extra por segundo
     radio: 1.5,               // radio del coche para los choques (es una caja de 2 x 4, se simplifica a un círculo)
     choqueFrena: 0.45,        // parte de la velocidad que se pierde contra un muro
     choqueFuerte: 12,         // a partir de esta velocidad un golpe es «choque» (corta el combo)
@@ -29,17 +35,39 @@ const TAXI = {
     nitroCarga: { derrape: 0.12, roce: 0.18, derribo: 0.6, salto: 0.25 },   // cuánto nitro da cada cosa (de 0 a 1)
     nitroGasto: 0.4,          // nitro que se gasta por segundo
   },
-  ciudad: {
-    nx: 7, nz: 7,             // manzanas
+  mundo: {
+    ancho: 3100, largo: 2500, // metros del mundo entero (fuera, mar)
+    nivelMar: -4,
+    semilla: 7,               // el mundo se genera igual cada vez
     manzana: 48,              // lado de una manzana (fachada a fachada)
     calle: 14,                // ancho de calle (acera a acera)
     acera: 3,                 // acera a cada lado, dentro de la manzana
     carril: 3.4,              // separación del carril respecto al centro de la calle
-    semilla: 7,               // la ciudad se genera igual cada vez
-    texturaPxPorMetro: 4,     // nitidez del suelo pintado
+    anchoMontaña: 11,         // ancho de las carreteras de montaña y de los enlaces
+    anchoEnlace: 14,
+    margen: 8,                // metros de tierra a cada lado de una carretera de montaña (se puede ir, pero mal)
+    fundido: 30,              // metros en los que el terreno se funde con la altura de la carretera (taludes)
+    ondas: 7,                 // metros de ondulación del suelo dentro de las ciudades (cuestas)
+    colinas: 6,               // metros de las colinas fuera de las ciudades
+    roca: 110, nieve: 170,    // alturas a partir de las que el suelo es roca y nieve
+    distancia: 1000,          // del centro de la montaña al centro de cada ciudad
+    montaña: { x: 1550, z: 1450, radio: 620, alto: 220, cima: 130, cimaAlto: 195, zigzag: 0.45, legs: 3, paso: 35, mirador: 26 },   // radio del pie, altura, radio y altura de la vuelta de la cima, amplitud (radianes) y vaivenes del zigzag, metros entre cruces, tamaño del mirador
+    ciudades: [               // tres capítulos: cada una en una dirección desde la montaña (dx, dz), con su altura base y su falda (metros en los que baja al terreno)
+      { id: 'bahia', nombre: 'Bahía Microblizz', dir: [-0.866, 0.5], nx: 10, nz: 10, base: 13, falda: 120 },
+      { id: 'puerto', nombre: 'Puerto de Phony', dir: [0.866, 0.5], nx: 10, nz: 10, base: 11, falda: 120 },
+      { id: 'iahorro', nombre: 'Ciudad IAhorro', dir: [0, -1], nx: 10, nz: 10, base: 26, falda: 160 },
+    ],
+    objetos: { celda: 64, porCelda: 3, lejosDeCarretera: 16 },   // árboles y rocas fuera de las ciudades: por celda de terreno
+    trozo: 256,               // lado de un trozo del mundo (se cargan los cercanos)
+    radioCarga: 330,          // metros a los que se cargan los trozos con detalle
+    resSuelo: 48,             // divisiones del suelo de un trozo (alturas)
+    resLejos: 16,             // metros entre vértices del suelo lejano (todo el mundo, sin detalle)
+    texturaPxPorMetro: 3,     // nitidez del suelo pintado de un trozo
   },
   trafico: {
-    coches: 34,
+    coches: 40,
+    lejos: 380,               // a esta distancia del jugador un coche se recicla y aparece cerca (entre `cercaMin` y `cercaMax`)
+    cercaMin: 140, cercaMax: 320,
     vel: [11, 16],            // velocidad de crucero de cada coche, al azar entre estas
     frenaA: 16,               // metros a los que frena si tiene algo delante
     roce: 2.4,                // metros de margen para contar un «casi» (pasar rozando sin tocar)
@@ -47,7 +75,7 @@ const TAXI = {
     tumbado: 3,               // segundos que un coche del tráfico se queda parado tras un golpe
   },
   policia: {
-    patrullas: 3,             // coches patrulla dando vueltas sin búsqueda
+    patrullas: 4,             // coches patrulla dando vueltas sin búsqueda
     porNivel: [0, 1, 3, 5],   // coches que persiguen según el nivel de búsqueda (0 a 3 en el prototipo)
     vel: [0, 24, 30, 35],     // su velocidad punta por nivel
     ver: 55,                  // distancia a la que te ven
@@ -62,6 +90,8 @@ const TAXI = {
   },
   pasajeros: {
     cuantos: 7,               // pasajeros esperando a la vez en el turno
+    cerca: 320,               // metros del jugador a los que aparecen
+    viaje: [90, 520],         // metros mínimos y máximos de un viaje
     recoger: 5.5,             // metros para que suba (y casi parado)
     dejar: 6,                 // metros del destino
     paradoVel: 2.5,
@@ -84,6 +114,6 @@ const TAXI = {
     huida: { dura: 60, nivel: 2, premio: 350 },                                 // sobrevive a la persecución
     radio: 6,                 // metros de la salida de un evento para arrancarlo
   },
-  camara: { atras: 11, alto: 5.5, mira: 6, suave: 4, fov: [62, 78] },   // detrás del coche, altura, cuánto mira por delante, suavizado, campo de visión de parado a tope
+  camara: { atras: 11, alto: 5, mira: 7, suave: 4, fov: [62, 78] },   // detrás del coche, altura, cuánto mira por delante, suavizado, campo de visión de parado a tope
   teclas: { izq: ['ArrowLeft', 'KeyA'], der: ['ArrowRight', 'KeyD'], gas: ['ArrowUp', 'KeyW'], freno: ['ArrowDown', 'KeyS', 'Space'], nitro: ['ShiftLeft', 'ShiftRight', 'KeyX'], accion: ['Enter', 'KeyE'] },
 };

@@ -1,8 +1,8 @@
-// Fans Of Taxi · CONTROLES: teclado (flechas o WASD, espacio o abajo frena y derrapa, mayúsculas nitro, intro acción) y los botones en
-// pantalla del móvil (izquierda: girar; derecha: freno y nitro; el acelerador va solo). Se lee cada paso con CONTROLES.leer().
+// Fans Of Taxi · CONTROLES: teclado (flechas o WASD: arriba acelera; espacio o abajo frena y derrapa; mayúsculas nitro; intro acción) y
+// los botones en pantalla del móvil (izquierda: girar; derecha: gas, freno y nitro). Se lee cada paso con CONTROLES.leer().
 'use strict';
 const CONTROLES = (() => {
-  const T = TAXI.teclas, teclas = new Set(), botones = { izq: false, der: false, freno: false, nitro: false };
+  const T = TAXI.teclas, teclas = new Set(), botones = { izq: false, der: false, gas: false, freno: false, nitro: false };
   let accion = false, tactil = false;
   const tecla = lista => lista.some(k => teclas.has(k));
   window.addEventListener('keydown', e => {
@@ -20,18 +20,15 @@ const CONTROLES = (() => {
     el.addEventListener('contextmenu', e => e.preventDefault());
   }
   function montar() {
-    for (const [id, n] of [['b-izq', 'izq'], ['b-der', 'der'], ['b-freno', 'freno'], ['b-nitro', 'nitro']]) { const el = document.getElementById(id); if (el) boton(el, n); }
+    for (const [id, n] of [['b-izq', 'izq'], ['b-der', 'der'], ['b-gas', 'gas'], ['b-freno', 'freno'], ['b-nitro', 'nitro']]) { const el = document.getElementById(id); if (el) boton(el, n); }
   }
   function leer() {
     const giro = (tecla(T.izq) || botones.izq ? 1 : 0) - (tecla(T.der) || botones.der ? 1 : 0);   // en el mundo, girar a la derecha de la pantalla es bajar el ángulo
     const freno = tecla(T.freno) || botones.freno ? 1 : 0;
-    // en el móvil el gas va solo (salvo frenando); con teclado, flecha arriba, y también solo hasta que se toque el gas por primera vez
-    const gas = tecla(T.gas) ? 1 : (tactil || autoGas) && !freno ? 1 : 0;
+    const gas = tecla(T.gas) || botones.gas ? 1 : 0;
     const r = { giro, gas, freno, nitro: tecla(T.nitro) || botones.nitro, accion };
     accion = false; return r;
   }
-  let autoGas = true;   // hasta que el jugador toque el gas del teclado, el coche acelera solo (así el móvil y el PC se juegan igual al principio)
-  window.addEventListener('keydown', e => { if (T.gas.includes(e.code)) autoGas = false; }, { once: true });
   const pulsaAccion = () => { accion = true; };
   return { montar, leer, pulsaAccion, get tactil() { return tactil; } };
 })();

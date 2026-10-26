@@ -1,6 +1,19 @@
 // Fans Of Taxi · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  "GAS": "GAS",
+  "CHAPUZÓN": "SPLASH",
+  "Bahía Microblizz": "Microblizz Bay",
+  "Puerto de Phony": "Phony Harbour",
+  "Ciudad IAhorro": "IAhorro City",
+  "La Montaña": "The Mountain",
+  "Mirador de": "Viewpoint of",
+  "SPRINT: AL MIRADOR": "SPRINT: TO THE VIEWPOINT",
+  "trozos": "chunks",
+  "Bajo las avenidas hay túneles. Se entra por la circunvalación. Cruzan la ciudad sin semáforos ni poli.": "There are tunnels under the avenues. You get in from the ring road. They cross the city with no lights and no cops.",
+  "Desde los miradores de la montaña se ve cada ciudad. Y se cae uno si se despista.": "From the mountain viewpoints you can see each city. And you fall off if you get distracted.",
+  "El río baja de la montaña hasta la bahía. No es un atajo. Lo digo por experiencia.": "The river runs from the mountain down to the bay. It is not a shortcut. I speak from experience.",
+  "Bienvenido a {zona}.": "Welcome to {zona}.",
   "Izquierda": "Left",
   "Derecha": "Right",
   "NITRO": "NITRO",

@@ -1,11 +1,11 @@
 // Fans Of Taxi · ESCENA: lo que se ve, con three.js (la copia recortada del boceto 3D de Rumble) y el mismo estilo de dibujo animado: tres
-// tonos de luz, contorno oscuro. La ciudad es un suelo pintado en un lienzo (calles, aceras, parques) más los edificios y los árboles como
-// mallas instanciadas (pocas llamadas de dibujo). Cada coche es UNA malla (sus cajas unidas, con el color en los vértices) más su contorno.
-// La cámara va detrás del coche y abre el campo de visión con la velocidad. La lógica no toca nada de aquí: `sincroniza` lee el estado.
+// tonos de luz, contorno oscuro. El mundo lo montan TROZOS (suelo lejano y trozos con detalle) y FONDO (cielo y mar); aquí van los
+// coches (cada uno UNA malla con el color en los vértices más su contorno), los pasajeros, las salidas de los eventos, el camino de puntos
+// y la cámara, que va detrás del coche, sigue las cuestas y abre el campo de visión con la velocidad. La lógica no toca nada de aquí.
 'use strict';
 const ESCENA = (() => {
   const CONTORNO = 0x20102c;
-  let T, render, escena, camara, suelo, jugadorMalla, puntos, destinoMalla, anillos = [], coches = new Map(), caidas = [], pasajeroMallas = new Map(), cache = {}, lienzo;
+  let T, render, escena, camara, jugadorMalla, puntos, destinoMalla, anillos = [], coches = new Map(), caidas = [], pasajeroMallas = new Map(), cache = {}, lienzo;
   const _m = () => new T.Matrix4(), _v = () => new T.Vector3();
 
   function gradiente() {
@@ -22,7 +22,7 @@ const ESCENA = (() => {
   function unir(piezas) {
     const pos = [], nor = [], col = [];
     for (const pz of piezas) {
-      const g = pz.geo.toNonIndexed(); const m = _m();
+      const g = pz.geo.index ? pz.geo.toNonIndexed() : pz.geo; const m = _m();
       if (pz.r) m.makeRotationFromEuler(new T.Euler(...pz.r)); if (pz.p) m.setPosition(...pz.p);
       g.applyMatrix4(m);
       const c = new T.Color(pz.color), p = g.attributes.position.array, n = g.attributes.normal.array;
@@ -58,7 +58,7 @@ const ESCENA = (() => {
     if (tipo === 'rival') piezas.push(caja(0x20102c, [0, 1.05, -2.0], [1.9, 0.08, 0.5]), caja(0x20102c, [-0.8, 0.95, -2.0], [0.1, 0.25, 0.3]), caja(0x20102c, [0.8, 0.95, -2.0], [0.1, 0.25, 0.3]));   // alerón
     return (cache[k] = unir(piezas));
   }
-  function mallaCoche(tipo, color) { const g = mallaConBorde(geoCoche(tipo, color), 0.07); escena.add(g); return g; }
+  function mallaCoche(tipo, color) { const g = mallaConBorde(geoCoche(tipo, color), 0.07); g.rotation.order = 'YXZ'; escena.add(g); return g; }
   // --- un pasajero: cuerpo de color de su personaje, cabeza, y su anillo en el suelo
   function geoPasajero(color) {
     const k = 'p' + color; if (cache[k]) return cache[k];
@@ -66,55 +66,15 @@ const ESCENA = (() => {
   }
   function anillo(color, radio = 2.4) { const m = new T.Mesh(new T.RingGeometry(radio * 0.7, radio, 28), new T.MeshBasicMaterial({ color, transparent: true, opacity: 0.85, side: T.DoubleSide })); m.rotation.x = -Math.PI / 2; m.position.y = 0.06; escena.add(m); return m; }
 
-  // --- el suelo pintado: la ciudad entera en un lienzo
-  function pintaSuelo() {
-    const ppm = TAXI.ciudad.texturaPxPorMetro, c = document.createElement('canvas'); c.width = Math.ceil(CIUDAD.ancho * ppm); c.height = Math.ceil(CIUDAD.largo * ppm);
-    const g = c.getContext('2d'); g.scale(ppm, ppm);
-    g.fillStyle = '#2a2438'; g.fillRect(0, 0, CIUDAD.ancho, CIUDAD.largo);
-    // carriles: línea discontinua por el centro de cada calle
-    g.strokeStyle = '#ffcb3d'; g.lineWidth = 0.25; g.setLineDash([3, 3]);
-    for (const n of CIUDAD.nodos) { if (n.i === 0) { g.beginPath(); g.moveTo(0, n.z); g.lineTo(CIUDAD.ancho, n.z); g.stroke(); } if (n.j === 0) { g.beginPath(); g.moveTo(n.x, 0); g.lineTo(n.x, CIUDAD.largo); g.stroke(); } }
-    g.setLineDash([]);
-    for (const m of CIUDAD.manzanas) {
-      g.fillStyle = '#8a8399'; g.fillRect(m.x0, m.z0, m.x1 - m.x0, m.z1 - m.z0);   // la acera
-      g.fillStyle = m.parque ? '#3c7a3a' : CIUDAD.BARRIOS[m.barrio].suelo; g.fillRect(m.muro.x0, m.muro.z0, m.muro.x1 - m.muro.x0, m.muro.z1 - m.muro.z0);
-      g.strokeStyle = '#20102c'; g.lineWidth = 0.35; g.strokeRect(m.x0, m.z0, m.x1 - m.x0, m.z1 - m.z0);
-    }
-    g.fillStyle = '#ff7a1a'; for (const r of CIUDAD.rampas) { g.save(); g.translate(r.x, r.z); g.rotate(-r.ang); g.fillRect(-r.ancho / 2, 0, r.ancho, r.largo * 0.6); g.restore(); }
-    g.strokeStyle = '#4fc3d9'; g.lineWidth = 0.6; for (const e of CIUDAD.escondites) { g.beginPath(); g.arc(e.x, e.z, e.radio, 0, Math.PI * 2); g.stroke(); }
-    const tex = new T.CanvasTexture(c); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4;
-    const s = new T.Mesh(new T.PlaneGeometry(CIUDAD.ancho, CIUDAD.largo), new T.MeshLambertMaterial({ map: tex }));
-    s.rotation.x = -Math.PI / 2; s.position.set(CIUDAD.ancho / 2, 0, CIUDAD.largo / 2); s.scale.y = -1;   // el lienzo crece hacia abajo; el mundo hacia +z
-    escena.add(s); return s;
-  }
-  // --- edificios y árboles instanciados (un cuerpo y un contorno cada tipo)
-  function instancia(geo, lista, color, escalaBorde) {
-    const cuerpo = new T.InstancedMesh(geo, toon({ color: 0xffffff }), lista.length), borde = new T.InstancedMesh(geo, new T.MeshBasicMaterial({ color: CONTORNO, side: T.BackSide }), lista.length);
-    const m = _m(), q = new T.Quaternion(), p = _v(), s = _v(), col = new T.Color();
-    lista.forEach((e, i) => {
-      p.set(e.x, e.y || 0, e.z); s.set(e.sx, e.sy, e.sz); m.compose(p, q, s); cuerpo.setMatrixAt(i, m); cuerpo.setColorAt(i, col.set(color(e)));
-      s.multiplyScalar(escalaBorde); p.y -= (escalaBorde - 1) * e.sy / 2; m.compose(p, q, s); borde.setMatrixAt(i, m);
-    });
-    cuerpo.instanceColor.needsUpdate = true; escena.add(cuerpo); escena.add(borde);
-  }
-  function montaCiudad() {
-    const cajaBase = new T.BoxGeometry(1, 1, 1); cajaBase.translate(0, 0.5, 0);
-    const ed = CIUDAD.manzanas.flatMap(m => m.edificios.map(e => ({ x: e.x, z: e.z, sx: e.w, sy: e.h, sz: e.d, color: e.color })));
-    instancia(cajaBase, ed, e => e.color, 1.03);
-    const tronco = new T.CylinderGeometry(0.35, 0.45, 1, 7); tronco.translate(0, 0.5, 0);
-    instancia(tronco, CIUDAD.arboles.map(a => ({ x: a.x, z: a.z, sx: 1, sy: a.alto * 0.5, sz: 1 })), () => 0x7a4a2a, 1.25);
-    const copa = new T.DodecahedronGeometry(1, 0); copa.translate(0, 0.6, 0);
-    instancia(copa, CIUDAD.arboles.map(a => ({ x: a.x, z: a.z, y: a.alto * 0.5, sx: a.radio, sy: a.radio * 0.9, sz: a.radio })), () => 0x3f9a3a, 1.06);
-    // las rampas (una cuña: caja inclinada) y los escondites
-    for (const r of CIUDAD.rampas) { const g = mallaConBorde(unir([caja(0xff7a1a, [0, 0.5, r.largo * 0.3], [r.ancho, 0.5, r.largo * 0.62], [-0.32, 0, 0])]), 0.06); g.position.set(r.x, 0, r.z); g.rotation.y = r.ang; escena.add(g); }
-    for (const e of CIUDAD.escondites) { const g = mallaConBorde(unir([caja(0x4fc3d9, [0, 2.5, 0], [0.3, 5, 0.3]), caja(0x4fc3d9, [0, 5.4, 0], [2.4, 1.4, 0.3])]), 0.06); g.position.set(e.x, 0, e.z - e.radio + 1); escena.add(g); }
+  // --- las salidas de los eventos (letrero y coches aparcados), el camino de puntos y el destino
+  function montaEventos() {
     // las salidas de los eventos: letrero y, si hace falta, coches aparcados
     for (const s of EVENTOS.salidas) {
       const col = s.tipo === 'turno' ? 0xffcb3d : s.tipo === 'sprint' ? 0x7ee04a : 0x2e8bff;
-      anillo(col, 5).position.set(s.x, 0.06, s.z);
-      const poste = mallaConBorde(unir([caja(0xcdb9ea, [0, 1.6, 0], [0.2, 3.2, 0.2]), caja(col, [0, 3.4, 0], [1.8, 1, 0.2])]), 0.05); poste.position.set(s.x + (s.tipo === 'turno' ? 4 : -4), 0, s.z); escena.add(poste);
-      if (s.tipo === 'sprint') for (let i = 0; i < 3; i++) { const m = mallaCoche('rival', [0xff4b5c, 0x7ee04a, 0x8a6fe0][i]); m.position.set(s.nodo.x - 4 + i * 4, 0, s.nodo.z - 12 - (i % 2) * 5); m.rotation.y = 0.2; m.userData.fijo = true; }
-      if (s.tipo === 'huida') { const m = mallaCoche('policia', 0xb8b4c4); m.position.set(s.nodo.x - 5, 0, s.nodo.z - 8); m.rotation.y = -0.6; }
+      anillo(col, 5).position.set(s.x, s.y + 0.06, s.z);
+      const poste = mallaConBorde(unir([caja(0xcdb9ea, [0, 1.6, 0], [0.2, 3.2, 0.2]), caja(col, [0, 3.4, 0], [1.8, 1, 0.2])]), 0.05); poste.position.set(s.x + (s.tipo === 'turno' ? 4 : -4), s.y, s.z); escena.add(poste);
+      if (s.tipo === 'sprint') for (let i = 0; i < 3; i++) { const m = mallaCoche('rival', [0xff4b5c, 0x7ee04a, 0x8a6fe0][i]); const x = s.nodo.x - 4 + i * 4, z = s.nodo.z - 12 - (i % 2) * 5; m.position.set(x, CIUDAD.altura(x, z, s.y), z); m.rotation.y = 0.2; m.userData.fijo = true; }
+      if (s.tipo === 'huida') { const m = mallaCoche('policia', 0xb8b4c4); const x = s.nodo.x - 5, z = s.nodo.z - 8; m.position.set(x, CIUDAD.altura(x, z, s.y), z); m.rotation.y = -0.6; }
     }
     // los puntos del camino y el destino
     const pg = new T.CylinderGeometry(0.6, 0.6, 0.15, 10);
@@ -130,7 +90,8 @@ const ESCENA = (() => {
     camara = new T.PerspectiveCamera(TAXI.camara.fov[0], 1, 0.5, 1000);
     escena.add(new T.HemisphereLight(0xcdb9ea, 0x4a3a6a, 2.2));
     const sol = new T.DirectionalLight(0xfff1e0, 1.6); sol.position.set(60, 120, 40); escena.add(sol);
-    suelo = pintaSuelo(); montaCiudad();
+    TROZOS.iniciar(T, escena, { toon, unir, mallaConBorde, caja, cil, CONTORNO });
+    montaEventos();
     jugadorMalla = mallaCoche('taxi', 0xffcb3d);
     tamaño(); window.addEventListener('resize', tamaño);
   }
@@ -138,7 +99,8 @@ const ESCENA = (() => {
   // coloca una malla de coche en su estado
   function pon(m, c, dt) {
     m.position.set(c.x, c.y, c.z); m.rotation.y = c.ang + (c.derrapando ? clamp(c.vl * 0.04, -0.5, 0.5) : 0);
-    m.rotation.z = lerp(m.rotation.z, -c.giro * 0.08 - c.vl * 0.012, Math.min(1, 10 * dt)); m.rotation.x = c.aire ? clamp(-c.vy * 0.03, -0.4, 0.4) : 0;
+    m.rotation.z = lerp(m.rotation.z, -c.giro * 0.08 - c.vl * 0.012, Math.min(1, 10 * dt));
+    m.rotation.x = lerp(m.rotation.x, c.aire ? clamp(-c.vy * 0.03, -0.4, 0.4) : -Math.atan(c.pendiente || 0), Math.min(1, 8 * dt));   // morro arriba en las cuestas
   }
   function sincroniza(estado, dt) {
     const j = estado.jugador; pon(jugadorMalla, j, dt);
@@ -156,8 +118,8 @@ const ESCENA = (() => {
     const esp = new Set();
     for (const p of estado.pasajeros) {
       esp.add(p); let m = pasajeroMallas.get(p);
-      if (!m) { m = mallaConBorde(geoPasajero(p.tipo.color), 0.05); m.position.set(p.x, 0, p.z); m.rotation.y = p.mira; escena.add(m); m.userData.anillo = anillo(p.tramo.color); m.userData.anillo.position.set(p.x, 0.06, p.z); pasajeroMallas.set(p, m); }
-      m.position.y = p.subiendo > 0 ? Math.sin(p.subiendo * 12) * 0.15 : Math.abs(Math.sin(p.t * 3)) * 0.12;
+      if (!m) { m = mallaConBorde(geoPasajero(p.tipo.color), 0.05); m.position.set(p.x, p.y, p.z); m.rotation.y = p.mira; escena.add(m); m.userData.anillo = anillo(p.tramo.color); m.userData.anillo.position.set(p.x, p.y + 0.06, p.z); pasajeroMallas.set(p, m); }
+      m.position.y = p.y + (p.subiendo > 0 ? Math.sin(p.subiendo * 12) * 0.15 : Math.abs(Math.sin(p.t * 3)) * 0.12);
     }
     for (const [p, m] of pasajeroMallas) if (!esp.has(p)) { escena.remove(m); escena.remove(m.userData.anillo); pasajeroMallas.delete(p); }
     // el camino de puntos y el destino
@@ -165,20 +127,22 @@ const ESCENA = (() => {
     const mm = _m(), q = new T.Quaternion(), s = _v().set(1, 1, 1), p = _v(); let n = 0;
     for (let i = 0; i < cam.length - 1 && n < puntos.count + 80; i++) {
       const a = cam[i], b = cam[i + 1], d = Math.hypot(b.x - a.x, b.z - a.z), pasos = Math.max(1, Math.floor(d / 8));
-      for (let k = 0; k < pasos && n < 80; k++) { const t = k / pasos; p.set(lerp(a.x, b.x, t), 0.08, lerp(a.z, b.z, t)); mm.compose(p, q, s); puntos.setMatrixAt(n++, mm); }
+      for (let k = 0; k < pasos && n < 80; k++) { const t = k / pasos; const x = lerp(a.x, b.x, t), z = lerp(a.z, b.z, t); p.set(x, lerp(a.y, b.y, t) + 0.12, z); mm.compose(p, q, s); puntos.setMatrixAt(n++, mm); }
     }
     puntos.count = n; puntos.instanceMatrix.needsUpdate = true;
-    if (estado.destino) { destinoMalla.visible = true; destinoMalla.position.set(estado.destino.x, 0, estado.destino.z); destinoMalla.children[1].material.color.set(estado.destino.color || 0xffcb3d); } else destinoMalla.visible = false;
+    if (estado.destino) { destinoMalla.visible = true; destinoMalla.position.set(estado.destino.x, estado.destino.y || CIUDAD.altura(estado.destino.x, estado.destino.z), estado.destino.z); destinoMalla.children[1].material.color.set(estado.destino.color || 0xffcb3d); } else destinoMalla.visible = false;
     // la cámara: detrás y arriba, mirando por delante; abre con la velocidad
     const K = TAXI.camara, f = COCHE.adelante(j), vel = clamp(Math.abs(j.v) / TAXI.coche.vmax, 0, 1);
     let atras = K.atras + vel * 3;
-    while (atras > 3 && !CIUDAD.enCalle(j.x - f.x * atras, j.z - f.z * atras)) atras -= 1;   // que la cámara no se meta en un edificio
-    const objetivo = _v().set(j.x - f.x * atras, K.alto + j.y * 0.5 + (K.atras - atras) * 0.5, j.z - f.z * atras);
-    camara.position.lerp(objetivo, Math.min(1, K.suave * dt)); if (camara.position.y < 1.5) camara.position.y = 1.5;
+    while (atras > 3 && !CIUDAD.libre(j.x - f.x * atras, j.z - f.z * atras, j.y + 2)) atras -= 1;   // que la cámara no se meta en un edificio
+    const cx = j.x - f.x * atras, cz = j.z - f.z * atras;
+    const objetivo = _v().set(cx, j.y + K.alto + (K.atras - atras) * 0.5, cz);
+    camara.position.lerp(objetivo, Math.min(1, K.suave * dt));
+    const suelo = CIUDAD.altura(camara.position.x, camara.position.z, j.y) + 1.6; if (camara.position.y < suelo) camara.position.y = suelo;   // ni bajo el suelo (cuestas)
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();
     if (estado.temblor > 0) { camara.position.x += (Math.random() - 0.5) * estado.temblor; camara.position.y += (Math.random() - 0.5) * estado.temblor; }
-    FONDO.sigue(camara); render.render(escena, camara);
+    TROZOS.actualizar(j.x, j.z); FONDO.sigue(camara); render.render(escena, camara);
   }
   const info = () => (render ? { calls: render.info.render.calls, tris: render.info.render.triangles } : { calls: 0, tris: 0 });
   return { iniciar, sincroniza, info };

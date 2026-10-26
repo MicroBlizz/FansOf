@@ -8,30 +8,33 @@ const EVENTOS = (() => {
   let salidas = [], activo = null, dinero = 0, combo = 1, comboN = 0, rivales = [], azar = mulberry32(11), ganado = 0;
   function crear(semilla) {
     azar = mulberry32((semilla || 0) + 11); activo = null; rivales = []; combo = 1; comboN = 0; ganado = 0;
-    // las salidas del prototipo, en cruces concretos de la rejilla
-    const n = (i, j) => CIUDAD.nodos[CIUDAD.nodoId(i, j)];
+    // las salidas del prototipo: en cruces de cada ciudad (el cruce (i, j) más cercano que exista) y una subida al mirador
+    const n = (c, i, j) => { const C = CIUDAD.ciudades[c]; for (let r = 0; r < 6; r++) for (let a = -r; a <= r; a++) for (let b = -r; b <= r; b++) { const q = C.nodo(i + a, j + b); if (q && q.tipo !== 'tunel') return q; } return C.anillo[0]; };
     salidas = [
-      { tipo: 'turno', nodo: n(4, 4), nombre: 'PARADA DE TAXI' },
-      { tipo: 'turno', nodo: n(1, 2), nombre: 'PARADA DE TAXI' },
-      { tipo: 'sprint', nodo: n(5, 1), meta: n(1, 6), nombre: 'SPRINT: DEL CENTRO A LA MADRIGUERA' },
-      { tipo: 'sprint', nodo: n(2, 6), meta: n(6, 2), nombre: 'SPRINT: LA VUELTA AL CENTRO' },
-      { tipo: 'huida', nodo: n(6, 5), nombre: 'HUIDA: AGUANTA 60 SEGUNDOS' },
+      { tipo: 'turno', nodo: n(0, 4, 4), nombre: 'PARADA DE TAXI' },
+      { tipo: 'turno', nodo: n(0, 1, 2), nombre: 'PARADA DE TAXI' },
+      { tipo: 'turno', nodo: n(1, 5, 5), nombre: 'PARADA DE TAXI' },
+      { tipo: 'turno', nodo: n(2, 5, 6), nombre: 'PARADA DE TAXI' },
+      { tipo: 'sprint', nodo: n(0, 5, 1), meta: n(0, 1, 6), nombre: 'SPRINT: DEL CENTRO A LA MADRIGUERA' },
+      { tipo: 'sprint', nodo: n(0, 2, 6), meta: n(0, 6, 2), nombre: 'SPRINT: LA VUELTA AL CENTRO' },
+      { tipo: 'sprint', nodo: CIUDAD.monte.subidas[0][0], meta: CIUDAD.miradores[0].nodo, nombre: 'SPRINT: AL MIRADOR' },
+      { tipo: 'huida', nodo: n(0, 6, 5), nombre: 'HUIDA: AGUANTA 60 SEGUNDOS' },
     ];
-    for (const s of salidas) { s.x = s.nodo.x + (s.tipo === 'turno' ? 0 : 5); s.z = s.nodo.z - 5; }
+    for (const s of salidas) { s.x = s.nodo.x + (s.tipo === 'turno' ? 0 : 5); s.z = s.nodo.z - 5; s.y = s.nodo.y; }
   }
   const cerca = jugador => salidas.find(s => Math.hypot(s.x - jugador.x, s.z - jugador.z) < K.radio);
 
   function arrancar(s, jugador) {
     if (activo) return null;
     ganado = 0; combo = 1; comboN = 0;
-    if (s.tipo === 'turno') { activo = { tipo: 'turno', reloj: TAXI.turno.inicio, viajes: 0 }; PASAJEROS.llenar(); }
+    if (s.tipo === 'turno') { activo = { tipo: 'turno', reloj: TAXI.turno.inicio, viajes: 0 }; PASAJEROS.llenar(undefined, jugador); }
     else if (s.tipo === 'sprint') {
       const ruta = CIUDAD.camino(s.nodo.id, s.meta.id);
       activo = { tipo: 'sprint', ruta, meta: s.meta, siguiente: 1, cuenta: 3, t: 0 };
       rivales = [];
       for (let i = 0; i < K.sprint.rivales; i++) {
         const r = CONDUCTOR.nuevo(ruta[0], ruta[1], lerp(K.sprint.vel[0], K.sprint.vel[1], azar()), { tipo: 'rival', color: [0xff4b5c, 0x7ee04a, 0x8a6fe0][i], siguiente: 1, llegado: 0, lado: [1.1, 0.55, -0.2][i] });
-        r.ruta = ruta; r.ruta_i = 1; r.coche.x = s.nodo.x - 4 + i * 4; r.coche.z = s.nodo.z - 10 - (i % 2) * 5; r.coche.ang = jugador.ang;
+        r.ruta = ruta; r.ruta_i = 1; r.prox = ruta[2] === undefined ? null : ruta[2]; r.coche.x = s.nodo.x - 4 + i * 4; r.coche.z = s.nodo.z - 10 - (i % 2) * 5; r.coche.y = s.nodo.y; r.coche.ang = jugador.ang;
         rivales.push(r);
       }
     } else if (s.tipo === 'huida') { activo = { tipo: 'huida', t: K.huida.dura }; POLICIA.poner(K.huida.nivel); }

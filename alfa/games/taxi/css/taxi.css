@@ -26,7 +26,8 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
 #medidor { display: grid; padding: 4px 8px; border-radius: 10px; background: var(--panel); border: 2px solid var(--outline); font-variant-numeric: tabular-nums; }
 #medidor b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--ok); } #medidor small { font-size: 10px; font-weight: 700; color: var(--ink-dim); }
 #medidor.justo b { color: var(--gold); } #medidor.mal b { color: var(--danger); }
-#velo { display: grid; justify-items: end; } #velo b { font-family: var(--font-display); font-size: 36px; } #velo small { font-weight: 800; font-size: 12px; color: var(--ink-dim); }
+#velo { display: grid; justify-items: end; } #velo small { white-space: nowrap; }
+#mapa { position: absolute; right: 12px; top: calc(var(--sup) + 74px); width: 150px; height: 150px; border-radius: 50%; box-shadow: 0 4px 0 var(--outline); opacity: 0.92; } #velo b { font-family: var(--font-display); font-size: 36px; } #velo small { font-weight: 800; font-size: 12px; color: var(--ink-dim); }
 #nitro { width: 120px; height: 12px; border-radius: 8px; border: 3px solid var(--outline); background: var(--outline); overflow: hidden; margin-top: 4px; }
 #nitro i { display: block; height: 100%; background: linear-gradient(to right, #4fc3d9, #9be7ff); transition: width 0.1s linear; } #nitro.usando i { background: linear-gradient(to right, #ff7a1a, #ffcb3d); }
 #mandos { position: absolute; left: 0; right: 0; bottom: calc(var(--inf) + 70px); display: flex; justify-content: space-between; padding: 0 16px; }
@@ -34,12 +35,12 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
 #mandos .lado { display: flex; gap: 12px; align-items: flex-end; }
 #mandos button { width: 76px; height: 76px; border-radius: 50%; background: var(--tray, #26143c); border: 4px solid var(--outline); box-shadow: 0 5px 0 var(--outline); font-family: var(--font-display); font-size: 16px; color: var(--ink); opacity: 0.85; }
 #mandos button.on { transform: translateY(3px); box-shadow: 0 2px 0 var(--outline); background: var(--tray-hi, #3e2363); }
-#b-freno { background: #7a2a3a; } #b-nitro { background: #1f5f8a; }
+#b-freno { background: #7a2a3a; } #b-nitro { background: #1f5f8a; } #b-gas { background: #2f7a3a; width: 88px; height: 88px; }
 #b-accion { position: absolute; left: 50%; bottom: calc(var(--inf) + 160px); transform: translateX(-50%); padding: 10px 18px 8px; border-radius: 14px; background: var(--gold); color: var(--outline); border: 3px solid var(--outline); box-shadow: 0 4px 0 var(--outline); font-family: var(--font-display); font-size: 18px; text-shadow: none; animation: late 1s ease-in-out infinite alternate; }
 @keyframes entra { from { opacity: 0; transform: translateY(-6px); } }
 @keyframes late { to { transform: translateX(-50%) scale(1.05); } }
 #reloj.poco b { animation-name: parpadea; } @keyframes parpadea { to { opacity: 0.5; } }
-@media (max-width: 700px) { .caja b { font-size: 18px; } #reloj b { font-size: 26px; } #velo b { font-size: 26px; } .aviso { font-size: 18px; } #mandos button { width: 64px; height: 64px; font-size: 13px; } }
+@media (max-width: 700px) { .caja b { font-size: 18px; } #reloj b { font-size: 26px; } #velo b { font-size: 26px; } .aviso { font-size: 18px; } #mandos button { width: 64px; height: 64px; font-size: 13px; } #b-gas { width: 76px; height: 76px; } #mapa { width: 110px; height: 110px; } }
 /* móvil apaisado (pantalla baja): la radio arriba en el centro y el velocímetro abajo en el centro, lejos de los botones */
 @media (max-height: 480px) {
   #radio { top: calc(var(--sup) + 64px); bottom: auto; left: 50%; transform: translateX(-50%); max-width: 70vw; padding: 4px 10px; }
@@ -47,4 +48,6 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
   #velo { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); justify-items: center; }
   #pasajero { top: calc(var(--sup) + 56px); }
   #mandos { bottom: calc(var(--inf) + 14px); }
+  #mapa { top: auto; bottom: calc(var(--inf) + 100px); right: 12px; width: 100px; height: 100px; }
+  #busqueda { margin-right: 0; }
 }

@@ -4,22 +4,25 @@
 'use strict';
 (() => {
   const DT = TAXI.paso;
-  let jugador, mundo, acumulado = 0, ultimo = 0, temblor = 0, lolaT = 0, salidaCerca = null, parado = 0;
+  let jugador, mundo, acumulado = 0, ultimo = 0, temblor = 0, lolaT = 0, salidaCerca = null, parado = 0, zonaT = 0, zonaVista = null;
+  const nombreZona = z => z && z.startsWith('Mirador de ') ? tr('Mirador de') + ' ' + tr(z.slice(11)) : tr(z);
   const LOLA = {
     bienvenida: ['Hola, soy Lola, desde la emisora. Microblizz quiere cambiar los taxis por robots. Tú eres el último con conductor.', 'Párate en una parada de taxi para empezar el turno. Los corredores aparcados son una carrera; la patrulla, una huida.'],
     turno: ['Los pasajeros rojos van lejos y pagan bien. Los verdes, al lado. Tú verás.', 'Frena y gira: derrapar carga el nitro.', 'Pasa rozando a los coches: propina. Chócalos: adiós combo.'],
-    distrae: ['¿Sabías que la Torre Microblizz tiene 90 plantas y ningún ascensor que funcione?', 'Hoy el CEO ha despedido a alguien por respirar. Era yo. Otra vez.', 'Por el parque se llega antes. O no. Prueba.', 'Hay una rampa en el Centro. No digo dónde. Bueno, al norte.'],
+    distrae: ['¿Sabías que la Torre Microblizz tiene 90 plantas y ningún ascensor que funcione?', 'Hoy el CEO ha despedido a alguien por respirar. Era yo. Otra vez.', 'Por el parque se llega antes. O no. Prueba.', 'Hay una rampa en el Centro. No digo dónde. Bueno, al norte.', 'Bajo las avenidas hay túneles. Se entra por la circunvalación. Cruzan la ciudad sin semáforos ni poli.', 'Desde los miradores de la montaña se ve cada ciudad. Y se cae uno si se despista.', 'El río baja de la montaña hasta la bahía. No es un atajo. Lo digo por experiencia.'],
+    zona: ['Bienvenido a {zona}.'],
     poli: ['Patrulla de Microblizz detrás. Son becarios: pierden el norte en la primera curva.', 'Si te ven, te siguen. Escóndete en un parking y espera.', 'Empújalos contra un muro. Se les cae el servidor.'],
     escapado: ['Limpio. Ya no te buscan.'], parado: ['Te han parado. Lo del evento se lo queda Microblizz, claro.'],
   };
   const frase = lista => HUD.radio(tr(lista[(Math.random() * lista.length) | 0]));
 
   function iniciar() {
-    mundo = { muros: CIUDAD.muros, arboles: CIUDAD.arboles, rampas: CIUDAD.rampas, ancho: CIUDAD.ancho, largo: CIUDAD.largo, semilla: TAXI.ciudad.semilla };
-    const n = CIUDAD.nodos[CIUDAD.nodoId(4, 4)];
-    jugador = COCHE.nuevo(n.x + TAXI.ciudad.carril, n.z - 20, 0, { masa: 1.1 });
+    mundo = { altura: CIUDAD.altura, suelo: CIUDAD.suelo, cerca: CIUDAD.cerca, nodoCercano: CIUDAD.nodoCercano, nodos: CIUDAD.nodos, rampas: CIUDAD.rampas, ancho: CIUDAD.ancho, largo: CIUDAD.largo, semilla: TAXI.mundo.semilla };
+    const n = CIUDAD.ciudades[0].nodo(4, 4) || CIUDAD.ciudades[0].anillo[0], v = CIUDAD.nodos[n.vecinos[0]];
+    const ang = Math.atan2(v.x - n.x, v.z - n.z), of = CIUDAD.carril(n, v);
+    jugador = COCHE.nuevo(n.x + Math.sin(ang) * 22 + of.ox, n.z + Math.cos(ang) * 22 + of.oz, ang, { masa: 1.1 }); jugador.y = CIUDAD.altura(jugador.x, jugador.z); zonaVista = CIUDAD.zona(n.x, n.z);
     EVENTOS.crear(mundo.semilla); EVENTOS.dinero = SAVE.dinero;
-    TRAFICO.crear(mundo); POLICIA.crear(mundo); PASAJEROS.crear(mundo.semilla);
+    TRAFICO.crear(mundo, jugador); POLICIA.crear(mundo, jugador); PASAJEROS.crear(mundo.semilla);
     ESCENA.iniciar(document.getElementById('lienzo'));
     HUD.montar(); CONTROLES.montar();
     document.getElementById('b-accion').addEventListener('click', CONTROLES.pulsaAccion);
@@ -39,8 +42,12 @@
     for (const s of COCHE.paso(jugador, e, DT, mundo)) {
       if (s === 'choque') { EVENTOS.corta(); temblor = 0.6; play('slam'); HUD.aviso(tr('CHOQUE'), 'mal'); }
       else if (s === 'salta') { play('jump'); }
-      else if (s === 'aterriza') { if (jugador.golpe === 0) { HUD.aviso(tr('SPEEDRUN') + ' +' + Math.round(TAXI.propinas.salto * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('salto'); } }
+      else if (s === 'aterriza') { if (jugador.golpe === 0 && jugador.vueloT > 0.35) { HUD.aviso(tr('SPEEDRUN') + ' +' + Math.round(TAXI.propinas.salto * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('salto'); } jugador.vueloT = 0; }
+      else if (s === 'agua') { COCHE.rescata(jugador, mundo); EVENTOS.corta(); HUD.aviso(tr('CHAPUZÓN'), 'mal grande'); play('womp'); temblor = 0.5; }
     }
+    jugador.vueloT = jugador.aire ? (jugador.vueloT || 0) + DT : 0;
+    // el letrero de la zona al entrar (ciudad, montaña, mirador)
+    zonaT += DT; if (zonaT > 0.5) { zonaT = 0; const z = CIUDAD.zona(jugador.x, jugador.z); if (z && z !== zonaVista) { zonaVista = z; HUD.aviso(nombreZona(z), 'grande tiempo'); HUD.radio(tr(LOLA.zona[0]).replace('{zona}', nombreZona(z)), 4); if (z.startsWith('Mirador')) play('summon'); } }
     if (jugador.derrapando && jugador.derrapeT > TAXI.propinas.derrapeMin && !jugador.derrapePagado) { jugador.derrapePagado = true; HUD.aviso(tr('CLIP VIRAL') + ' +' + Math.round(TAXI.propinas.derrape * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('derrape'); }
     if (!jugador.derrapando) jugador.derrapePagado = false;
     // el tráfico
@@ -86,8 +93,8 @@
     if (pasos === 4) acumulado = 0;   // el navegador se ha atascado: no intentar recuperar el tiempo
     const dentro = PASAJEROS.dentro, activo = EVENTOS.activo;
     const camino = dentro ? dentro.camino : activo && activo.tipo === 'sprint' ? activo.ruta.slice(activo.siguiente - 1).map(id => CIUDAD.nodos[id]) : null;
-    const destino = dentro ? { x: dentro.destino.x, z: dentro.destino.z, color: dentro.tramo.color } : activo && activo.tipo === 'sprint' ? { x: activo.meta.x, z: activo.meta.z, color: 0x7ee04a } : null;
-    const estado = { jugador, conductores: TRAFICO.coches.concat(POLICIA.patrullas, EVENTOS.rivales), caidas: POLICIA.caidas, pasajeros: PASAJEROS.esperando, camino, destino, temblor, eventos: EVENTOS.estado(), policia: POLICIA.estado(), pasajero: dentro };
+    const destino = dentro ? { x: dentro.destino.x, z: dentro.destino.z, y: dentro.destino.y, color: dentro.tramo.color } : activo && activo.tipo === 'sprint' ? { x: activo.meta.x, z: activo.meta.z, y: activo.meta.y, color: 0x7ee04a } : null;
+    const estado = { jugador, conductores: TRAFICO.coches.concat(POLICIA.patrullas, EVENTOS.rivales), caidas: POLICIA.caidas, pasajeros: PASAJEROS.esperando, camino, destino, temblor, eventos: EVENTOS.estado(), policia: POLICIA.estado(), pasajero: dentro, salidas: EVENTOS.salidas };
     ESCENA.sincroniza(estado, dt); HUD.pinta(estado, dt);
   }
   const listo = () => (window.THREE ? iniciar() : window.addEventListener('three-listo', iniciar, { once: true }));

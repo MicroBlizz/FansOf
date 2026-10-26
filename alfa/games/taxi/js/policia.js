@@ -6,17 +6,17 @@
 const POLICIA = (() => {
   const K = TAXI.policia;
   let patrullas = [], nivel = 0, visto = 0, enfriando = 0, paradoT = 0, azar = mulberry32(5), caidas = [];
-  function crear(mundo) {
+  function crear(mundo, jugador) {
     patrullas = []; nivel = 0; visto = 0; enfriando = 0; paradoT = 0; caidas = []; azar = mulberry32((mundo.semilla || 0) + 5);
-    for (let i = 0; i < K.patrullas; i++) patrullas.push(nueva());
+    for (let i = 0; i < K.patrullas; i++) patrullas.push(nueva(jugador, 140, 320));
   }
-  function nueva(cerca) {
-    let a;
-    if (cerca) {   // aparece a unos cruces del jugador, fuera de su vista
-      const n = CIUDAD.nodoCercano(cerca.x, cerca.z); const lejos = CIUDAD.nodos.filter(m => Math.abs(m.i - n.i) + Math.abs(m.j - n.j) === 2); a = (lejos.length ? lejos[(azar() * lejos.length) | 0] : n).id;
-    } else a = (azar() * CIUDAD.nodos.length) | 0;
-    const vec = CIUDAD.nodos[a].vecinos, b = vec[(azar() * vec.length) | 0];
-    return CONDUCTOR.nuevo(a, b, 13, { tipo: 'policia', persigue: false, vida: K.vida, empujada: 0, replan: 0, sirena: 0 });
+  // una patrulla nueva en un cruce a cierta distancia del jugador (persiguiendo, cerca y fuera de su vista)
+  function nueva(cerca, rMin = 90, rMax = 200) {
+    const l = CIUDAD.nodosEn(cerca.x, cerca.z, rMin, rMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.vecinos.length);
+    const n = l.length ? l[(azar() * l.length) | 0] : CIUDAD.nodoCercano(cerca.x, cerca.z);
+    const b = n.vecinos[(azar() * n.vecinos.length) | 0];
+    const p = CONDUCTOR.nuevo(n.id, b, 13, { tipo: 'policia', persigue: false, vida: K.vida, empujada: 0, replan: 0, sirena: 0 });
+    p.coche.y = n.y; return p;
   }
   const teVe = (p, j) => {
     const dx = j.x - p.coche.x, dz = j.z - p.coche.z, d = Math.hypot(dx, dz); if (d > K.ver) return false;
@@ -36,9 +36,12 @@ const POLICIA = (() => {
     while (persiguen.length < deben && nivel > 0) { const p = nueva(jugador); p.persigue = true; patrullas.push(p); persiguen.push(p); }
     const todos = patrullas.map(p => p.coche).concat(otros, [jugador]);
     let alguienVe = false;
-    for (const p of patrullas) {
+    for (let i = 0; i < patrullas.length; i++) {
+      let p = patrullas[i];
+      if (!p.persigue && Math.hypot(p.coche.x - jugador.x, p.coche.z - jugador.z) > TAXI.trafico.lejos) p = patrullas[i] = nueva(jugador, 140, 320);   // las que dan vueltas, siempre cerca
       const k = p.coche;
-      const ve = teVe(p, jugador) && !escondido(jugador);
+      if (k.suelo === 'agua') COCHE.rescata(k, mundo);
+      const ve = teVe(p, jugador) && !escondido(jugador) && Math.abs(k.y - jugador.y) < 6;
       if (ve && nivel > 0 && !p.persigue) { p.persigue = true; }
       if (ve && p.persigue) alguienVe = true;
       if (p.persigue) {
@@ -46,12 +49,12 @@ const POLICIA = (() => {
         // cada medio segundo, ruta hacia el cruce del jugador; cerca y a la vista, va directa
         p.replan -= dt;
         const d = Math.hypot(jugador.x - k.x, jugador.z - k.z);
-        if (p.replan <= 0) { p.replan = 0.5; const mio = CIUDAD.nodoCercano(k.x, k.z).id, suyo = CIUDAD.nodoCercano(jugador.x, jugador.z).id; p.ruta = CIUDAD.camino(p.hasta, suyo); p.ruta_i = 0; if (p.ruta.length < 2 && mio !== suyo) p.ruta = null; }
+        if (p.replan <= 0) { p.replan = 0.5; const mio = CIUDAD.nodoCercano(k.x, k.z, k.y).id, suyo = CIUDAD.nodoCercano(jugador.x, jugador.z, jugador.y).id; p.ruta = CIUDAD.camino(p.hasta, suyo); p.ruta_i = 0; p.prox = p.ruta[1] === undefined ? null : p.ruta[1]; if (p.ruta.length < 2 && mio !== suyo) p.ruta = null; }
         if (d < 28 && ve) {
           const px = jugador.x + Math.sin(jugador.ang) * jugador.v * 0.5, pz = jugador.z + Math.cos(jugador.ang) * jugador.v * 0.5;   // adonde va a estar
           const quiere = Math.atan2(px - k.x, pz - k.z); let dif = quiere - k.ang; while (dif > Math.PI) dif -= 2 * Math.PI; while (dif < -Math.PI) dif += 2 * Math.PI;
           COCHE.paso(k, { giro: clamp(dif * 2.5, -1, 1), gas: 1, freno: 0 }, dt, mundo, { vmax: K.vel[nivel] || 24, acel: 12 });
-          const n = CIUDAD.nodoCercano(k.x, k.z); p.desde = p.hasta = n.id; p.objetivo = { x: n.x, z: n.z }; p.ruta = null;   // al volver al carril, desde el cruce más cercano
+          const n = CIUDAD.nodoCercano(k.x, k.z, k.y); p.desde = p.hasta = n.id; p.objetivo = { x: n.x, z: n.z }; p.ruta = null;   // al volver al carril, desde el cruce más cercano
         } else CONDUCTOR.paso(p, dt, mundo, todos.filter(o => o !== jugador), azar, { vmax: K.vel[nivel] || 24, acel: 12 });
       } else { p.vel = 13; CONDUCTOR.paso(p, dt, mundo, todos, azar, { vmax: 13, acel: 8 }); }
       // golpes con el jugador: te sube la búsqueda; si la empujas fuerte, la dejas tocada

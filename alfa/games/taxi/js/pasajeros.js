@@ -16,14 +16,15 @@ const PASAJEROS = (() => {
   ];
   let esperando = [], dentro = null, azar = mulberry32(3), vistoDestino = null;
   function crear(semilla) { esperando = []; dentro = null; azar = mulberry32(semilla || 3); }
+  let cercaDe = null;
   const nuevo = () => {
-    const sitio = CIUDAD.puntoAcera(azar);
+    const sitio = CIUDAD.puntoAcera(azar, cercaDe, K.cerca);
     let destino, d = 0, intentos = 0;
-    do { destino = CIUDAD.puntoAcera(azar); d = Math.hypot(destino.x - sitio.x, destino.z - sitio.z); } while ((d < 50 || destino.manzana === sitio.manzana) && ++intentos < 20);
+    do { destino = CIUDAD.puntoAcera(azar, sitio, K.viaje[1]); d = Math.hypot(destino.x - sitio.x, destino.z - sitio.z); } while ((d < K.viaje[0] || destino.manzana === sitio.manzana) && ++intentos < 20);
     const tramo = K.colores.find(c => d <= c.hasta);
     return { ...sitio, tipo: TIPOS[(azar() * TIPOS.length) | 0], destino, distancia: d, tramo, paciencia: K.paciencia * d / K.velPar, t: 0, subiendo: 0 };
   };
-  function llenar(n = K.cuantos) { while (esperando.length < n) esperando.push(nuevo()); }
+  function llenar(n = K.cuantos, cerca) { if (cerca) cercaDe = cerca; while (esperando.length < n) esperando.push(nuevo()); }
   function vaciar() { esperando = []; dentro = null; }
 
   // sucesos: { tipo: 'sube' | 'baja' | 'harto', ... }
@@ -31,14 +32,16 @@ const PASAJEROS = (() => {
     const sucesos = [];
     if (!enTurno) return sucesos;
     const quieto = COCHE.rapidez(jugador) < K.paradoVel && !jugador.aire;
+    cercaDe = jugador;
     if (!dentro) {
+      esperando = esperando.filter(p => Math.hypot(p.x - jugador.x, p.z - jugador.z) < K.cerca * 2.2);   // los que se quedan muy lejos se van
       for (const p of esperando) {
         p.t += dt;
         if (quieto && Math.hypot(p.x - jugador.x, p.z - jugador.z) < K.recoger) {
           p.subiendo += dt;
           if (p.subiendo >= K.subir) {
             dentro = p; dentro.viaje = 0; esperando = esperando.filter(q => q !== p);
-            const desde = CIUDAD.nodoCercano(jugador.x, jugador.z).id, hasta = CIUDAD.nodoCercano(p.destino.x, p.destino.z).id;
+            const desde = CIUDAD.nodoCercano(jugador.x, jugador.z, jugador.y).id, hasta = CIUDAD.nodoCercano(p.destino.x, p.destino.z).id;
             dentro.camino = CIUDAD.camino(desde, hasta).map(id => CIUDAD.nodos[id]);
             sucesos.push({ tipo: 'sube', pasajero: p }); break;
           }

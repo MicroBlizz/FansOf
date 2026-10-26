@@ -126,7 +126,7 @@ function arCompra(cat, it, moneda) {
 function arPintaCompra(cat, it) {
   ecoEstado();
   const b = E('b-ar-comprar'), pr = it ? arPrecio(it) : null;
-  E('ar-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
+  E('ar-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b${SAVE.acciones < 0 ? ' class="deuda"' : ''}>${SAVE.acciones}</b></span>`;
   if (!b) return;
   const otra = muebleOtraMas(cat, it);      // un mueble que ya es tuyo: se compra otra unidad (muebles-unidades.js)
   b.hidden = !pr || (arTiene(cat.id, it) && !otra);
@@ -140,7 +140,7 @@ function pasePinta() {
   E('pase-nivel').textContent = tr('Nivel {n} de {t}', { n: nv, t: ECO.niveles });
   paseTuboPon(nv, dentro);      // el tubo de pintura, como el del final de la partida (fin-pase.js)
   E('pase-xp').textContent = nv >= ECO.niveles ? tr('¡Pase completo!') : tr('{a} / {b} XP para el siguiente', { a: dentro, b: ECO.xpNivel });
-  E('pase-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
+  E('pase-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b${SAVE.acciones < 0 ? ' class="deuda"' : ''}>${SAVE.acciones}</b></span>`;
   const bp = E('b-pase-premium'); bp.disabled = p.premium;
   bp.textContent = p.premium ? tr('PREMIUM ACTIVO') : tr('PREMIUM · {n} Acciones', { n: ECO.premium });
   lista.innerHTML = '';

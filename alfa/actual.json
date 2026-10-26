@@ -1,8 +1,8 @@
 {
- "build": 541,
- "hash": "9b01caf",
- "fecha": "2026-10-26T01:57:30Z",
- "mensaje": "Rouflage: si el servidor rechaza una compra por falta de saldo, se recarga el saldo (el contador podía enseñar el de antes de un reembolso)",
+ "build": 542,
+ "hash": "bbb86b0",
+ "fecha": "2026-10-26T02:01:20Z",
+ "mensaje": "Rouflage: deuda de Acciones al reembolsar un pack ya gastado (servidor 97, pendiente de aplicar) y el saldo negativo en rojo en las carteras",
  "juegos": {
   "boom": "0.3.0",
   "cooking": "0.2.0",

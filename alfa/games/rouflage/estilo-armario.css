@@ -82,6 +82,7 @@
 /* la economía (economia.js): la cartera, el botón de comprar del armario y el pase */
 .cartera { display: flex; justify-content: center; gap: 14px; font-weight: 800; font-size: 13px; color: var(--ink-dim); margin: 2px 0 6px; }
 .cartera b { color: var(--gold); font-size: 15px; }
+.cartera b.deuda { color: #ff5a5a; }   /* Acciones en negativo: deuda tras un reembolso */
 #b-ar-comprar { margin-top: 6px; background: linear-gradient(to bottom, #ffb347, #ff7a1a); }
 #b-ar-comprar.falta { filter: grayscale(0.7); opacity: 0.8; }
 .pase-caja { max-width: 560px; text-align: center; max-height: calc(100vh - 30px); display: flex; flex-direction: column; }

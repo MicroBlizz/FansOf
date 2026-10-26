@@ -62,7 +62,7 @@ const INVITA_TIENDA = Math.random() < 0.5 ? 'Arkioner' : 'Pepins';
 
 function tiendaPinta() {
   ecoEstado();
-  E('tienda-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b>${SAVE.acciones}</b></span>`;
+  E('tienda-cartera').innerHTML = `<span>${tr('Gotas')} <b>${SAVE.gotas}</b></span><span>${tr('Acciones')} <b${SAVE.acciones < 0 ? ' class="deuda"' : ''}>${SAVE.acciones}</b></span>`;
   const aviso = E('tienda-aviso-euros'); if (aviso) aviso.textContent = typeof PAGOS !== 'undefined' && PAGOS.disponible() ? '' : tr('De momento lo de los euros es gratis: te invita {quien}.', { quien: INVITA_TIENDA });
   // una tarjeta: lo que recibes (dibujo y nombre), de dónde viene (icono + flecha si es un cambio) y el botón con el icono de lo que pagas.
   // `pago` = { moneda: 'euro' | 'gotas' | 'acciones', txt, tengo, hace }: con `tengo` por debajo de `hace`, el botón avisa de lo que falta

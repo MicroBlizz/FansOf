@@ -48,7 +48,7 @@ CINTAS.tramo = (() => {
     if (tramo.tipo === 'mirador') return;
     const a = CIUDAD.nodos[tramo.a], b = CIUDAD.nodos[tramo.b];
     const { ux, uz } = secciones[0], desde = secciones[0].s, hasta = secciones[secciones.length - 1].s;
-    const punto = (s, d) => [a.x + ux * s - uz * d, lerp(a.y, b.y, s / tramo.largo) + M.rayaSobreSuelo, a.z + uz * s + ux * d];
+    const punto = (s, d) => [a.x + ux * s - uz * d, CIUDAD.alturaArista(tramo, s / tramo.largo) + M.rayaSobreSuelo, a.z + uz * s + ux * d];
     const banda = (s0, s1, ancho, color) => lista.cuadrilatero(punto(s0, -ancho / 2), punto(s1, -ancho / 2), punto(s1, ancho / 2), punto(s0, ancho / 2), color);
     if (tramo.tipo === 'avenida') { banda(desde, hasta, M.anchoRayaBlanca, C.rayaBlanca); return; }
     if (tramo.ancho < 11) return;

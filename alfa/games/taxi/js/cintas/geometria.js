@@ -78,8 +78,8 @@ CINTAS.geometria = (() => {
       const s = lerp(corteA, largo - corteB, i / pasos);
       lista.push({
         x: a.x + ux * s, z: a.z + uz * s,
-        y: lerp(a.y, b.y, s / largo),
-        yCarcasa: lerp(a.y, b.y, i / pasos),
+        y: CIUDAD.alturaArista(tramo, s / largo),
+        yCarcasa: CIUDAD.alturaArista(tramo, i / pasos),
         lateral: i === 0 ? lateralA : i === pasos ? lateralB : recto,
         s, ux, uz,
       });

@@ -38,11 +38,35 @@ const CIUDAD = (() => {
     const a = nodos[e.a], b = nodos[e.b], [mg, fu] = BANDA[e.tipo]; e.margen = mg; e.fundido = fu; e.alcance = e.ancho / 2 + mg + fu;
     mete(iAristas, Math.min(a.x, b.x) - e.alcance, Math.min(a.z, b.z) - e.alcance, Math.max(a.x, b.x) + e.alcance, Math.max(a.z, b.z) + e.alcance, e);
   }
+  // --- el perfil de cada carretera: los cruces son PLANOS. Cerca de un cruce (tres calles o más) la calzada va a la altura del nudo,
+  // y la cuesta queda en el medio del tramo. Si cada calle llegase con su pendiente, el cruce sería una silla de montar torcida y se
+  // doblaría en pliegues (reportes 9 y 10 de Arkioner, 27-10-2026). Las curvas de dos tramos (horquillas del monte) siguen en cuesta.
+  const LLANO_ANTES = 4;        // metros llanos más allá del borde del cruce
+  const CUESTA_MINIMA = 0.4;    // la cuesta ocupa al menos esta parte del tramo
+  const esCruce = n => n.vecinos.length >= 3;
+  function llanoEn(n, e) {
+    if (!esCruce(n)) return 0;
+    let mitad = 0;
+    for (const o of aristas) if (o !== e && (o.a === n.id || o.b === n.id)) mitad = Math.max(mitad, o.ancho / 2);
+    return mitad + LLANO_ANTES;
+  }
+  for (const e of aristas) {
+    let la = llanoEn(nodos[e.a], e), lb = llanoEn(nodos[e.b], e);
+    const sobra = la + lb - e.largo * (1 - CUESTA_MINIMA);
+    if (sobra > 0) { const k = (la + lb - sobra) / (la + lb); la *= k; lb *= k; }
+    e.llano = [la, lb];
+  }
+  // la altura de la calzada a una fracción t (0 en a, 1 en b) del tramo
+  function alturaArista(e, t) {
+    const a = nodos[e.a], b = nodos[e.b], [la, lb] = e.llano || [0, 0];
+    const cuesta = clamp((t * e.largo - la) / (e.largo - la - lb), 0, 1);
+    return lerp(a.y, b.y, cuesta);
+  }
   // distancia de (x, z) a una arista y la altura de la carretera en ese punto
   function sobreArista(e, x, z) {
     const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L2 = dx * dx + dz * dz || 1;
     const t = clamp(((x - a.x) * dx + (z - a.z) * dz) / L2, 0, 1);
-    return { d: Math.hypot(x - a.x - dx * t, z - a.z - dz * t), y: lerp(a.y, b.y, t), t };
+    return { d: Math.hypot(x - a.x - dx * t, z - a.z - dz * t), y: alturaArista(e, t), t };
   }
   // la carretera que manda en un punto: la más cercana dentro de su alcance; con `yRef` (un coche), la de altura parecida (túneles)
   function carreteraEn(x, z, yRef, sinTuneles) {
@@ -60,6 +84,9 @@ const CIUDAD = (() => {
   const enRio = (x, z) => { const r = CARRETERAS.cauce(rio, x, z); return r.d < r.ancho / 2; };
   // altura para un coche (las carreteras y los puentes mandan; los túneles, para quien va dentro)
   function altura(x, z, yRef) {
+    // sobre una trinchera no hay terreno: el único suelo es su calzada (si no, se pisaría un suelo invisible por encima del hueco)
+    const trinchera = trincheraEn(x, z);
+    if (trinchera) return trinchera.y;
     const c = carreteraEn(x, z, yRef, false);
     const nat = natural(x, z);
     if (!c) return nat;
@@ -100,14 +127,15 @@ const CIUDAD = (() => {
   }
   // ¿está el punto sobre una trinchera (entre sus muros, sin contar más allá de sus extremos)? Ahí el terreno no se dibuja
   const ANCHO_EXTRA_TRINCHERA = 1.3;   // de la calzada a la cara de fuera del muro
-  function enTrinchera(x, z) {
+  function trincheraEn(x, z) {
     for (const e of iAristas[celda(x, z)] || []) {
       if (e.tipo !== 'rampa') continue;
       const s = sobreArista(e, x, z);
-      if (s.t > 0 && s.t < 1 && s.d <= e.ancho / 2 + ANCHO_EXTRA_TRINCHERA) return true;
+      if (s.t > 0 && s.t < 1 && s.d <= e.ancho / 2 + ANCHO_EXTRA_TRINCHERA) return { e, ...s };
     }
-    return false;
+    return null;
   }
+  const enTrinchera = (x, z) => trincheraEn(x, z) !== null;
   // un punto de una rampa que ya está dentro de la boca (más allá del portal)
   function bajoPortal(c) {
     if (c.e.tipo !== 'rampa' || !c.e.recorte) return false;
@@ -235,7 +263,7 @@ const CIUDAD = (() => {
       const t = ((p.x - a.x) * (q.z - p.z) - (p.z - a.z) * (q.x - p.x)) / d, u = ((p.x - a.x) * (b.z - a.z) - (p.z - a.z) * (b.x - a.x)) / d;
       if (t < 0 || t > 1 || u < 0 || u > 1) continue;
       const x = lerp(a.x, b.x, t), z = lerp(a.z, b.z, t), ancho = lerp(p.ancho, q.ancho, u), ang = Math.atan2(b.x - a.x, b.z - a.z);
-      const pu = { x, z, y: lerp(a.y, b.y, t), ang, largo: ancho + 36, ancho: e.ancho, arista: e };
+      const pu = { x, z, y: alturaArista(e, t), ang, largo: ancho + 36, ancho: e.ancho, arista: e };
       puentes.push(pu);
       // pretiles a los lados
       const s = Math.sin(ang), co = Math.cos(ang), nx = co, nz = -s;
@@ -313,5 +341,5 @@ const CIUDAD = (() => {
   }
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
   return { ancho: M.ancho, largo: M.largo, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
-    altura, alturaSuelo, natural, suelo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
+    altura, alturaArista, alturaSuelo, natural, suelo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
 })();

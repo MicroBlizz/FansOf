@@ -134,7 +134,7 @@ const ESCENA = (() => {
     const mm = _m(), q = new T.Quaternion(), s = _v().set(1, 1, 1), p = _v(); let n = 0;
     for (let i = 0; i < cam.length - 1 && n < puntos.count + 80; i++) {
       const a = cam[i], b = cam[i + 1], d = Math.hypot(b.x - a.x, b.z - a.z), pasos = Math.max(1, Math.floor(d / 8));
-      for (let k = 0; k < pasos && n < 80; k++) { const t = k / pasos; const x = lerp(a.x, b.x, t), z = lerp(a.z, b.z, t); p.set(x, lerp(a.y, b.y, t) + 0.12, z); mm.compose(p, q, s); puntos.setMatrixAt(n++, mm); }
+      for (let k = 0; k < pasos && n < 80; k++) { const t = k / pasos; const x = lerp(a.x, b.x, t), z = lerp(a.z, b.z, t); p.set(x, CIUDAD.altura(x, z, lerp(a.y, b.y, t)) + 0.12, z); mm.compose(p, q, s); puntos.setMatrixAt(n++, mm); }
     }
     puntos.count = n; puntos.instanceMatrix.needsUpdate = true;
     if (estado.destino) { destinoMalla.visible = true; destinoMalla.position.set(estado.destino.x, estado.destino.y || CIUDAD.altura(estado.destino.x, estado.destino.z), estado.destino.z); destinoMalla.children[1].material.color.set(estado.destino.color || 0xffcb3d); } else destinoMalla.visible = false;

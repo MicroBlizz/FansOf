@@ -164,7 +164,7 @@ const TROZOS = (() => {
       const a = CIUDAD.nodos[e.a], b = CIUDAD.nodos[e.b];
       if (a.x < t.x0 || a.x >= t.x1 || a.z < t.z0 || a.z >= t.z1) continue;   // cada tramo lo pone el trozo de su primer nudo
       const ang = Math.atan2(b.x - a.x, b.z - a.z);
-      for (let k = 10; k < e.largo - 5; k += 20) { const q = k / e.largo; piezas.push(U.caja(0xfff1a8, [lerp(a.x, b.x, q), lerp(a.y, b.y, q) + 7.6, lerp(a.z, b.z, q)], [2.4, 0.3, 1], [0, ang, 0])); }
+      for (let k = 10; k < e.largo - 5; k += 20) { const q = k / e.largo; piezas.push(U.caja(0xfff1a8, [lerp(a.x, b.x, q), CIUDAD.alturaArista(e, q) + 7.6, lerp(a.z, b.z, q)], [2.4, 0.3, 1], [0, ang, 0])); }
     }
     const mallas = [];
     if (piezas.length) { const g = U.mallaConBorde(U.unir(piezas), 0.12); g.position.set(0, 0, 0); escena.add(g); mallas.push(g.children[0], g.children[1]); g.userData.grupo = true; mallas.push(g); }

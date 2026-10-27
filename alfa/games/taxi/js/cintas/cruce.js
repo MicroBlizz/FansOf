@@ -14,7 +14,7 @@ CINTAS.cruce = (() => {
     return G.tramosDe(nodo)
       .map(tramo => {
         const [dx, dz] = G.direccionDesde(nodo, tramo), corte = G.corteDe(tramo, nodo), mitad = tramo.ancho / 2;
-        const y = lerp(nodo.y, G.otroExtremo(tramo, nodo).y, corte / tramo.largo);
+        const y = CIUDAD.alturaArista(tramo, tramo.a === nodo.id ? corte / tramo.largo : 1 - corte / tramo.largo);
         const cx = nodo.x + dx * corte, cz = nodo.z + dz * corte;
         return { tramo, dx, dz, angulo: Math.atan2(dz, dx), derecha: [cx + dz * mitad, y, cz - dx * mitad], izquierda: [cx - dz * mitad, y, cz + dx * mitad] };
       })

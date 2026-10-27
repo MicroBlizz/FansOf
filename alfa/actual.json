@@ -1,8 +1,8 @@
 {
- "build": 564,
- "hash": "df64ed8",
- "fecha": "2026-10-27T00:28:03Z",
- "mensaje": "Taxi: rampas de salto como cuña en cada carril (se salta en los dos sentidos)",
+ "build": 565,
+ "hash": "90c8013",
+ "fecha": "2026-10-27T00:43:19Z",
+ "mensaje": "Taxi: cruces planos (sin pliegues) y sin suelo invisible sobre las trincheras",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -42,6 +42,7 @@ function escBandeja() {
   }
   if (MIESC.modo !== 'decorar') return;
   const lista = escCosasDe(MIESC.tab), tira = E('esc-tira'), viejo = tira.scrollLeft; tira.innerHTML = '';
+  if (MIESC.tab === 'escenarios') escHuecoCarta(tira);      // la primera: MIS ESCENARIOS (escenario-huecos.js)
   lista.sort((a, b) => (arTiene(b.cat, b.it) ? 1 : 0) - (arTiene(a.cat, a.it) ? 1 : 0));
   const tienes = lista.filter(x => arTiene(x.cat, x.it)).length;
   E('esc-cuenta').textContent = MIESC.tab === 'escenarios' ? tr('Tienes {n} de {t}', { n: tienes, t: lista.length }) + ' · ' + tr(arItem('escenarios', escBase(sala.id)).n)

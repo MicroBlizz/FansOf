@@ -64,5 +64,11 @@
     "fr-FR": "Corrections : toucher PEINDRE ne referme plus l'atelier tout seul, et dans le décor d'un ami le bouton du haut ouvre un MENU (continuer, signaler et sortir, avec confirmation).\n\nMicroblizz a mis le bouton FINI juste sous PEINDRE pour gagner de la place. Phony se peignait en une demi-seconde et personne ne savait pourquoi.",
     "de-DE": "Korrekturen: MALEN schließt die Werkstatt nicht mehr von selbst, und in der Szene eines Freundes öffnet der Knopf oben ein MENÜ (weiter, melden und gehen, mit Nachfrage).\n\nMicroblizz hat den FERTIG-Knopf direkt unter MALEN gesetzt, um Platz zu sparen. Phony hat sich in einer halben Sekunde angemalt, und keiner wusste warum.",
     "it-IT": "Correzioni: toccare DIPINGI non chiude più il laboratorio da solo, e nello scenario di un amico il pulsante in alto apre un MENU (continua, segnala ed esci, con conferma).\n\nMicroblizz ha messo il pulsante FATTO proprio sotto DIPINGI per risparmiare spazio. Phony si dipingeva in mezzo secondo e nessuno sapeva perché."
+  },
+  "0.2.62": {
+    "pt-BR": "Correção: Meus cenários sai do topo (no celular empurrava PASSEAR para fora da tela) e agora abre pela primeira carta da aba CENÁRIO e por CONSTRUIR.\n\nA Microblizz pôs a casinha lá em cima e empurrou o PASSEAR para fora do celular. O Phony está há uma hora procurando.",
+    "fr-FR": "Correction : Mes décors quitte le haut de l'écran (sur mobile il poussait PROMENADE dehors) et s'ouvre depuis la première carte de l'onglet DÉCOR et depuis CONSTRUIRE.\n\nMicroblizz a mis la petite maison tout en haut et a poussé PROMENADE hors du téléphone. Phony la cherche depuis une heure.",
+    "de-DE": "Korrektur: Meine Szenen ist nicht mehr oben (auf dem Handy schob es SPAZIEREN aus dem Bildschirm) und öffnet sich über die erste Karte im Tab SZENE und über BAUEN.\n\nMicroblizz hat das Häuschen ganz nach oben gesetzt und SPAZIEREN aus dem Handy geschoben. Phony sucht es seit einer Stunde.",
+    "it-IT": "Correzione: I miei scenari non sta più in alto (sul telefono spingeva PASSEGGIA fuori dallo schermo) e si apre dalla prima carta della scheda SCENARIO e da COSTRUISCI.\n\nMicroblizz ha messo la casetta in cima e ha spinto PASSEGGIA fuori dal telefono. Phony la cerca da un'ora."
   }
 }

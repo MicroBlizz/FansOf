@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.62
+  "<b>MIS ESCENARIOS, EN SU SITIO</b>: ya no hay botón arriba (en el móvil echaba PASEAR fuera de la pantalla). Tus 3 escenarios se abren desde la primera tarjeta de la pestaña ESCENARIO y desde CONSTRUIR, donde estaba NUEVO; empezar de nuevo está dentro.": "<b>MY SCENES, IN ITS PLACE</b>: there's no top button any more (on phones it pushed WALK off the screen). Your 3 scenes open from the first card of the SCENE tab and from BUILD, where NEW used to be; starting over is inside.",
+  "Microblizz puso la casita arriba del todo y empujó a PASEAR fuera del móvil. Phony lleva una hora buscándolo.": "Microblizz put the little house at the very top and pushed WALK off the phone. Phony has been looking for it for an hour.",
   // 0.2.61
   "<b>PINTAR YA NO SE CIERRA SOLO</b>: al tocar PINTAR en el móvil, el taller ya no se cerraba de golpe por pulsar sin querer el LISTO que sale debajo del dedo.": "<b>PAINT NO LONGER CLOSES BY ITSELF</b>: tapping PAINT on mobile no longer closed the workshop right away by accidentally pressing the DONE button that appears under your finger.",
   "<b>VISITAR, MÁS CÓMODO</b>: en el escenario de un amigo, el botón de arriba a la izquierda abre un MENÚ (seguir, reportar y salir, que pregunta antes) y el botón de atrás del móvil hace lo mismo. Abajo solo queda ME GUSTA, que se esconde mientras te pintas.": "<b>VISITING, EASIER</b>: in a friend's scene, the top-left button opens a MENU (continue, report and leave, which asks first) and the phone's back button does the same. Only LIKE stays at the bottom, and it hides while you paint.",

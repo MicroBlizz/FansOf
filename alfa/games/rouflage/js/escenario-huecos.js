@@ -87,19 +87,24 @@ function escHuecosAbre() {
     };
     lista.appendChild(b);
   }
+  const nuevo = document.createElement('button'); nuevo.type = 'button'; nuevo.className = 'boton peq esc-huecos-nuevo';
+  nuevo.textContent = tr('EMPEZAR DE NUEVO EL {n}', { n: H.act + 1 });
+  nuevo.onclick = () => { play('select'); v.hidden = true; obraElige(); };      // en blanco o desde una plantilla, con su «¿seguro?»
+  lista.appendChild(nuevo);
   v.hidden = false;
 }
-// el botón de arriba (junto a MI ESCENARIO): qué hueco usas
-function escHuecoBoton() {
-  let b = E('b-esc-huecos');
-  if (!b) {
-    b = document.createElement('button'); b.type = 'button'; b.id = 'b-esc-huecos'; b.className = 'boton peq esc-huecos-b';
-    b.innerHTML = '<i></i><b></b>'; ponIcono(b.firstChild, 'casa');
-    b.onclick = () => { play('select'); escHuecosAbre(); };
-    const h2 = E('esc-arriba').querySelector('h2'); h2.after(b);
-  }
-  b.title = tr('MIS ESCENARIOS'); b.setAttribute('aria-label', tr('MIS ESCENARIOS'));
-  b.lastChild.textContent = (escHuecos().act + 1) + '/' + HUECOS_ESC;
+// MIS ESCENARIOS se abre desde el botón ESCENARIO {n} de CONSTRUIR (donde estaba NUEVO, escenario-obra.js) y desde la primera tarjeta de la
+// pestaña ESCENARIO (escenario-bandeja.js). Arriba ya no hay botón: en el móvil empujaba PASEAR fuera de la pantalla (27-10-2026, Daniel).
+const escHuecoTexto = () => tr('Escenario {n}', { n: escHuecos().act + 1 });
+function escHuecoBoton() { const b = E('b-esc-huecos'); if (b) b.remove(); }
+// la tarjeta de la pestaña ESCENARIO: la casita con el número del que usas
+function escHuecoCarta(tira) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-carta r-epica esc-huecos-carta';
+  const k = arLienzo(64, 64); arPinta(k, (c, w) => escHuecoDibujo(c, w, escHuecos().act + 1)); b.appendChild(k);
+  const s = document.createElement('small'); s.textContent = tr('MIS ESCENARIOS'); b.appendChild(s);
+  const r = document.createElement('i'); r.className = 'esc-rar'; r.textContent = (escHuecos().act + 1) + '/' + HUECOS_ESC; b.appendChild(r);
+  b.onclick = () => { play('select'); escHuecosAbre(); };
+  tira.appendChild(b);
 }
 
 /* ---------- la ventana de «¿SEGURO?» ---------- */

@@ -82,12 +82,8 @@
 .esc-h.grosor.cuadro span { border-radius: 2px; }
 .esc-h.muestra canvas.esc-muestra { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--outline); image-rendering: pixelated; }
 .esc-sep { flex: 0 0 3px; align-self: stretch; margin: 6px 2px; border-radius: 3px; background: rgba(255, 246, 234, 0.25); }
-/* MIS ESCENARIOS (escenario-huecos.js): el botón de arriba y la ventana; la de «¿seguro?» */
-.esc-arriba { grid-template-columns: auto 1fr auto auto; }
-.esc-huecos-b { display: flex; align-items: center; gap: 5px; padding: 0 10px; background: linear-gradient(to bottom, #9fd0ff, var(--enemy)); color: #fff6ea; }
-.esc-huecos-b i[data-icono] { font-size: 18px; filter: drop-shadow(0 2px 0 var(--outline)); }
-.esc-huecos-b b { font-size: 15px; }
-.pantalla.escenario.paseando .esc-huecos-b { display: none; }
+/* MIS ESCENARIOS (escenario-huecos.js): la ventana y su tarjeta; la de «¿seguro?» */
+.esc-huecos-nuevo { flex-basis: 100%; margin-top: 4px; }
 .esc-huecos-lista .esc-carta { width: 104px; }
 .esc-huecos-lista .esc-rar { white-space: normal; line-height: 1.1; }
 .esc-seguro-caja { width: min(100%, 420px); }

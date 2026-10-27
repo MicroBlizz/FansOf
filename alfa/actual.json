@@ -1,8 +1,8 @@
 {
- "build": 581,
- "hash": "0cd7638",
- "fecha": "2026-10-27T12:34:43Z",
- "mensaje": "Rouflage 0.2.61: PINTAR no se cierra solo y menú al visitar escenarios",
+ "build": 582,
+ "hash": "ce7e04a",
+ "fecha": "2026-10-27T12:57:48Z",
+ "mensaje": "Rouflage 0.2.62: Mis escenarios sale de arriba (echaba PASEAR fuera en el móvil)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.61",
+  "rouflage": "0.2.62",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

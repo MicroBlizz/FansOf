@@ -1,6 +1,8 @@
 // Fans of Rouflage · Francés de MI ESCENARIO › PINTAR (las herramientas de Paint: escenario-pincel2.js y 3) y de MIS ESCENARIOS (escenario-huecos.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Mis escenarios": "Mes décors",
+  "EMPEZAR DE NUEVO EL {n}": "RECOMMENCER LE {n}",
   "¿QUIERES SALIR?": "TU VEUX SORTIR ?",
   "Vuelves a donde estabas.": "Tu reviens là où tu étais.",
   "SALIR": "SORTIR",

@@ -1,8 +1,8 @@
 {
- "build": 576,
- "hash": "d69df81",
- "fecha": "2026-10-27T11:35:18Z",
- "mensaje": "Rouflage: la música de la intro ya no falla al arrancar (tiempos negativos del reloj de audio) y roundRect para navegadores viejos",
+ "build": 577,
+ "hash": "a29a38a",
+ "fecha": "2026-10-27T11:40:56Z",
+ "mensaje": "Reporte de prueba cabe en el móvil; Taxi: DEV y medidor de fluidez sin tapar los mandos",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

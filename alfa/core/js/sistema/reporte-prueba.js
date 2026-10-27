@@ -97,7 +97,8 @@ const REPORTE = (() => {
     for (const ev of ['keydown', 'keyup', 'keypress']) ventana.addEventListener(ev, e => e.stopPropagation());   // lo que se teclea no llega al juego
     ventana.querySelector('#rp-no').onclick = cierra;
     ventana.querySelector('#rp-si').onclick = () => envia(ventana.querySelector('#rp-texto').value, imagen);
-    setTimeout(() => { const t = ventana && ventana.querySelector('#rp-texto'); if (t) t.focus(); }, 50);
+    // en pantallas táctiles no se enfoca solo: el teclado taparía media ventana antes de ver la captura
+    if (!matchMedia('(pointer: coarse)').matches) setTimeout(() => { const t = ventana && ventana.querySelector('#rp-texto'); if (t) t.focus(); }, 50);
   }
   function cierra() { if (ventana) { ventana.remove(); ventana = null; } }
   function cuerpo(texto, imagen) {
@@ -127,12 +128,13 @@ const REPORTE = (() => {
     const s = document.createElement('style'); s.id = 'rp-estilo';
     s.textContent = `#rp-boton{position:fixed;left:8px;top:50%;transform:translateY(-50%);z-index:99990;width:38px;height:38px;border-radius:50%;border:3px solid #20102c;background:#ffcb3d;color:#20102c;font:800 22px/1 "Baloo 2",sans-serif;box-shadow:0 3px 0 #20102c;cursor:pointer;opacity:.85}
 #rp-boton:active{transform:translateY(calc(-50% + 2px));box-shadow:0 1px 0 #20102c}
-#rp-fondo{position:fixed;inset:0;z-index:99991;background:rgba(10,8,28,.6);display:grid;place-items:center;padding:16px}
-#rp-caja{width:min(480px,100%);background:#fff6ea;color:#20102c;border:3px solid #20102c;border-radius:14px;box-shadow:0 5px 0 #20102c;padding:14px 16px;display:grid;gap:10px;font:600 15px "Baloo 2",sans-serif}
+#rp-fondo{position:fixed;inset:0;z-index:99991;background:rgba(10,8,28,.6);display:grid;place-items:center;padding:16px;overflow:auto}
+#rp-caja{width:min(480px,100%);background:#fff6ea;color:#20102c;border:3px solid #20102c;border-radius:14px;box-shadow:0 5px 0 #20102c;padding:14px 16px;display:grid;gap:10px;font:600 15px "Baloo 2",sans-serif;box-sizing:border-box;max-height:calc(100dvh - 32px);overflow-y:auto}
 #rp-caja h3{margin:0;font-size:20px}#rp-caja textarea{width:100%;min-height:90px;box-sizing:border-box;border:2px solid #20102c;border-radius:8px;padding:8px;font:inherit;resize:vertical;background:#fff;color:#20102c}
-#rp-caja img{width:100%;border-radius:8px;border:2px solid #20102c}#rp-caja .rp-fila{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+#rp-caja img{width:100%;max-height:34vh;object-fit:contain;background:#20102c;border-radius:8px;border:2px solid #20102c}#rp-caja .rp-fila{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 #rp-caja button{border:3px solid #20102c;border-radius:10px;padding:6px 14px;font:800 15px "Baloo 2",sans-serif;background:#cdb9ea;color:#20102c;box-shadow:0 3px 0 #20102c;cursor:pointer}
 #rp-caja button.rp-ok{background:#7ee04a}#rp-caja small{color:#5b5668}#rp-caja .rp-aviso{color:#b8202c}
+@media (orientation:landscape) and (max-height:520px){#rp-fondo{padding:8px}#rp-caja{width:min(760px,100%);max-height:calc(100dvh - 16px);grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-content:start;padding:10px 12px;gap:8px}#rp-caja h3{grid-column:1/-1;font-size:17px}#rp-caja img{grid-column:1;grid-row:2/span 4;max-height:calc(100dvh - 90px);align-self:start}#rp-caja>:not(h3):not(img){grid-column:2}#rp-caja textarea{min-height:70px}}
 .rp-breve{position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:99992;background:#7ee04a;color:#20102c;border:3px solid #20102c;border-radius:12px;padding:8px 16px;font:800 18px "Baloo 2",sans-serif;box-shadow:0 3px 0 #20102c}`;
     document.head.appendChild(s);
   }

@@ -120,8 +120,13 @@ const CIUDAD = (() => {
     let c = carreteraEn(x, z, yRef, yRef === undefined);   // sin coche (pintar el suelo), lo de encima de los túneles
     if (c && yRef === undefined && bajoPortal(c)) c = null;
     if (c && c.d <= c.e.ancho / 2) return c.e.tipo === 'tunel' || c.e.tipo === 'rampa' ? 'tunel' : 'asfalto';
+    const f = fondo(x, z);
+    if (f !== 'agua' && c && c.d <= c.e.ancho / 2 + c.e.margen) return 'tierra';
+    return f;
+  }
+  // el suelo sin carreteras: el fondo sobre el que se pintan (con su forma exacta) las carreteras y sus márgenes
+  function fondo(x, z) {
     if (enRio(x, z) || TE.tierra(x, z) < 0.5) return 'agua';
-    if (c && c.d <= c.e.ancho / 2 + c.e.margen) return 'tierra';
     const m = manzanaEn(x, z);
     if (m) return m.parque ? 'hierba' : m.barrio === 'aeropuerto' ? 'asfalto' : 'acera';
     const h = TE.natural(x, z);
@@ -271,6 +276,6 @@ const CIUDAD = (() => {
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
   const salida = () => FUENTE.salida(mundo);
   const mundo = { mapa: FUENTE.nombre, estaciones: FUENTE.estaciones || [], salida, tierra: TE.tierra, ancho: ANCHO, largo: LARGO, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
-    altura, alturaArista, alturaTramo: perfil.alturaEn, alturaCruce: perfil.enPlano, alturaSuelo, natural, suelo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
+    altura, alturaArista, alturaTramo: perfil.alturaEn, alturaCruce: perfil.enPlano, alturaSuelo, natural, suelo, fondo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
   return mundo;
 })();

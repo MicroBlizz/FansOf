@@ -27,7 +27,7 @@ const COCHE_RAPIER = (() => {
     // la inercia de una caja de esa masa, algo mayor de lado y de frente: el coche cabecea y se balancea, pero cuesta volcarlo
     const [a, b, l] = F.caja.map(m => m * 2), m = F.masa;
     const inercia = punto(m * (b * b + l * l) / 12 * 1.6, m * (a * a + l * l) / 12, m * (a * a + b * b) / 12 * 1.6);
-    mundo.createCollider(R.ColliderDesc.cuboid(...F.caja).setTranslation(0, F.cajaAlto, 0).setMassProperties(m, punto(0, 0, 0), inercia, { x: 0, y: 0, z: 0, w: 1 }).setFriction(0.2).setRestitution(0.05), cuerpo);
+    mundo.createCollider(R.ColliderDesc.cuboid(...F.caja).setTranslation(0, F.cajaAlto, 0).setMassProperties(m, punto(0, F.centroMasas, 0), inercia, { x: 0, y: 0, z: 0, w: 1 }).setFriction(0.2).setRestitution(0.05), cuerpo);
     const control = mundo.createVehicleController(cuerpo);
     control.indexUpAxis = 1; control.setIndexForwardAxis = 2;   // arriba es +y y adelante +z, como en el resto del juego
     const [ax, az] = F.ruedas;

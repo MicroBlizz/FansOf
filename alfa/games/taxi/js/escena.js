@@ -102,6 +102,20 @@ const ESCENA = (() => {
     jugadorMalla = mallaCoche('taxi', 0xffcb3d);
     tamaño(); window.addEventListener('resize', tamaño);
   }
+  // --- la cámara dentro de un túnel: alrededor solo hay roca, así que no puede salirse del tubo (ni a los lados ni por arriba)
+  const TECHO_CAMARA = CINTAS.estilo.medidas.techoTunel - 2.5;
+  // el túnel (o la trinchera de su boca) por el que va el coche, o null
+  function tuboDe(j) {
+    const c = CIUDAD.carreteraEn(j.x, j.z, j.y, false);
+    return c && (c.e.tipo === 'tunel' || c.e.tipo === 'rampa') && c.d <= c.e.ancho / 2 + 1 ? c.e : null;
+  }
+  // ¿puede ir la cámara en (x, z)? fuera de los edificios y, si el coche va por un túnel, entre sus paredes
+  function cabeCamara(x, z, j, tubo) {
+    if (!CIUDAD.libre(x, z, j.y + 2)) return false;
+    if (!tubo) return true;
+    const c = CIUDAD.carreteraEn(x, z, j.y, false);
+    return !!c && (c.e.tipo === 'tunel' || c.e.tipo === 'rampa') && c.d < c.e.ancho / 2 - 1;
+  }
   function tamaño() { const w = innerWidth, h = innerHeight; render.setSize(w, h, false); camara.aspect = w / h; camara.updateProjectionMatrix(); }
   // coloca una malla de coche en su estado
   function pon(m, c, dt) {
@@ -141,11 +155,14 @@ const ESCENA = (() => {
     if (estado.destino) { destinoMalla.visible = true; destinoMalla.position.set(estado.destino.x, estado.destino.y || CIUDAD.altura(estado.destino.x, estado.destino.z), estado.destino.z); destinoMalla.children[1].material.color.set(estado.destino.color || 0xffcb3d); } else destinoMalla.visible = false;
     // la cámara: detrás y arriba, mirando por delante; abre con la velocidad
     const K = TAXI.camara, f = COCHE.adelante(j), vel = clamp(Math.abs(j.v) / TAXI.coche.vmax, 0, 1);
+    const tubo = tuboDe(j);
     let atras = K.atras + vel * 3;
-    while (atras > 3 && !CIUDAD.libre(j.x - f.x * atras, j.z - f.z * atras, j.y + 2)) atras -= 1;   // que la cámara no se meta en un edificio
+    while (atras > 3 && !cabeCamara(j.x - f.x * atras, j.z - f.z * atras, j, tubo)) atras -= 1;   // que no se meta en un edificio ni en la roca
     const cx = j.x - f.x * atras, cz = j.z - f.z * atras;
     const objetivo = _v().set(cx, j.y + K.alto + (K.atras - atras) * 0.5, cz);
+    if (tubo) objetivo.y = Math.min(objetivo.y, j.y + TECHO_CAMARA);
     camara.position.lerp(objetivo, Math.min(1, (K.suave + Math.abs(j.v) * 0.25) * dt));   // a más velocidad, menos retraso: el coche no se aleja
+    if (tubo && !cabeCamara(camara.position.x, camara.position.z, j, tubo)) camara.position.copy(objetivo);   // el retraso no la saca del túnel
     const suelo = CIUDAD.altura(camara.position.x, camara.position.z, j.y) + 1.6; if (camara.position.y < suelo) camara.position.y = suelo;   // ni bajo el suelo (cuestas)
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();

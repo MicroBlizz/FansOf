@@ -44,12 +44,13 @@ const TAXI = {
     masa: 1200,               // kg
     caja: [0.9, 0.45, 2.0],   // medio ancho, medio alto y medio largo de la carrocería
     cajaAlto: 0.25,           // la carrocería va un poco por encima del centro de masas (así vuelca menos)
+    centroMasas: -0.5,        // el centro de masas, bajo (casi a ras de suelo): al acelerar y frenar apenas cabecea, y la carrocería no roza el suelo
     ruedas: [0.82, 1.3],      // a qué distancia del centro van las ruedas: a lo ancho y a lo largo
     ruedaY: -0.2,             // altura del anclaje de las ruedas respecto al centro
     radioRueda: 0.36,
     suspension: 0.32,         // largo de la suspensión en reposo
     recorrido: 0.25,          // lo que puede comprimirse
-    dureza: 34,               // dureza del muelle (sube = más seca)
+    dureza: 50,               // dureza del muelle (sube = más seca)
     amortigua: [2.8, 3.6],    // amortiguación al comprimir y al estirarse
     agarre: 2.6,              // agarre de las ruedas (cuánto aguantan de lado antes de deslizar)
     agarreDerrape: 1.1,       // el agarre de las traseras con el derrape

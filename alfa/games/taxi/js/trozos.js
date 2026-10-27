@@ -93,8 +93,8 @@ const TROZOS = (() => {
   function pinta(t) {
     const ppm = M.texturaPxPorMetro, c = document.createElement('canvas'); c.width = c.height = Math.ceil(TR * ppm);
     const g = c.getContext('2d'); g.scale(ppm, ppm); g.translate(-t.x0, -t.z0);
-    // la base: qué suelo hay cada 8 m
-    for (let x = t.x0; x < t.x1; x += 8) for (let z = t.z0; z < t.z1; z += 8) { let s = CIUDAD.suelo(x + 4, z + 4); if (s === 'tierra' && CIUDAD.natural(x + 4, z + 4) > M.roca) s = 'roca'; g.fillStyle = colorSuelo(s); g.fillRect(x - 0.5, z - 0.5, 9, 9); }
+    // la base: qué suelo hay cada 8 m, sin las carreteras (pintadas aquí a cuadros de 8 m asomaban dientes de asfalto por los lados)
+    for (let x = t.x0; x < t.x1; x += 8) for (let z = t.z0; z < t.z1; z += 8) { let s = CIUDAD.fondo(x + 4, z + 4); if (s === 'tierra' && CIUDAD.natural(x + 4, z + 4) > M.roca) s = 'roca'; g.fillStyle = colorSuelo(s); g.fillRect(x - 0.5, z - 0.5, 9, 9); }
     // el río
     g.strokeStyle = COLOR.agua; g.lineCap = 'round'; g.lineJoin = 'round';
     for (let i = 0; i < t.rio.length - 1; i++) { const a = t.rio[i], b = t.rio[i + 1]; if (Math.abs(a.z - b.z) > 45) continue; g.lineWidth = (a.ancho + b.ancho) / 2; g.beginPath(); g.moveTo(a.x, a.z); g.lineTo(b.x, b.z); g.stroke(); }

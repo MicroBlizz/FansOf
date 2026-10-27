@@ -1,8 +1,8 @@
 {
- "build": 578,
- "hash": "6172f5c",
- "fecha": "2026-10-27T12:03:14Z",
- "mensaje": "Taxi: el coche ya no arrastra la carrocería (giros solos y vuelcos), la cámara no se sale del túnel y sin dientes de asfalto junto a las carreteras",
+ "build": 579,
+ "hash": "439ffc1",
+ "fecha": "2026-10-27T12:03:57Z",
+ "mensaje": "MAPA.md al día",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

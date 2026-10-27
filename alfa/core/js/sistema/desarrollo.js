@@ -12,6 +12,16 @@
   const aviso = txt => { const t = document.getElementById('dev-aviso'); if (t) { t.textContent = txt; clearTimeout(aviso.t); aviso.t = setTimeout(() => { t.textContent = ''; }, 3500); } };
   const copiar = async txt => { try { await navigator.clipboard.writeText(txt); aviso('Copiado al portapapeles'); } catch (e) { aviso('No se ha podido copiar: usa el recuadro'); } };
 
+  // el contador de fps (#rend-fps de core y #medidor de Taxi) se puede ocultar desde aquí; lo recuerda este navegador. Solo existe en la alfa y en localhost.
+  const CLAVE_FPS = 'fansof-fps-oculto';
+  const fpsVisibles = () => { try { return localStorage.getItem(CLAVE_FPS) !== '1'; } catch (e) { return true; } };
+  function poneFps(visible) {
+    try { localStorage.setItem(CLAVE_FPS, visible ? '0' : '1'); } catch (e) { /* sin guardar */ }
+    let st = document.getElementById('dev-fps-estilo');
+    if (!st) { st = el('style', { id: 'dev-fps-estilo' }); document.head.appendChild(st); }
+    st.textContent = visible ? '' : '#rend-fps,#medidor{display:none !important}';
+  }
+  poneFps(fpsVisibles());
   const UTILIDADES = [
     { titulo: 'Este juego', pinta(c) {
       const filas = [['Juego', (typeof AJUSTES !== 'undefined' && AJUSTES.nombre) || document.title], ['Versión', typeof VERSION !== 'undefined' ? VERSION : '?'], ['Idioma', NUCLEO.idioma],
@@ -70,6 +80,12 @@
       };
       pintaFlags();
       c.append(el('div', { className: 'fila' }, boton('Leer la base de datos ahora', async () => { await NUCLEO.leerFlags(); pintaFlags(); })));
+    } },
+    { titulo: 'Contador de fps', pinta(c) {
+      c.append(el('p', { textContent: 'Muestra u oculta los fps en pantalla (el de core y el medidor de Taxi). Visible por defecto; se recuerda en este navegador.' }));
+      const b = boton('', () => { poneFps(!fpsVisibles()); pintaB(); });
+      const pintaB = () => { b.textContent = fpsVisibles() ? 'Ocultar los fps' : 'Mostrar los fps'; };
+      pintaB(); c.append(el('div', { className: 'fila' }, b));
     } },
     { titulo: 'Modo desarrollo', pinta(c) {
       c.append(el('p', { textContent: 'Se activa solo en localhost, o con ?dev=1 en la dirección (se recuerda en este navegador).' }));

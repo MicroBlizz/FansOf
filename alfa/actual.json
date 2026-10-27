@@ -1,8 +1,8 @@
 {
- "build": 587,
- "hash": "e5b4fc7",
- "fecha": "2026-10-27T22:34:31Z",
- "mensaje": "Rouflage: más sucesos para la caja negra (partida, resultado, reto, compras, gacha, PvP)",
+ "build": 588,
+ "hash": "b71c39a",
+ "fecha": "2026-10-27T22:38:24Z",
+ "mensaje": "GLOSARIO.md en la raíz (lenguaje común) y panel DEV: interruptor del contador de fps",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

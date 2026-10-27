@@ -1,8 +1,8 @@
 {
- "build": 582,
- "hash": "ce7e04a",
- "fecha": "2026-10-27T12:57:48Z",
- "mensaje": "Rouflage 0.2.62: Mis escenarios sale de arriba (echaba PASEAR fuera en el móvil)",
+ "build": 583,
+ "hash": "14d74d4",
+ "fecha": "2026-10-27T13:14:12Z",
+ "mensaje": "Rouflage: la música de la intro ya no da error con tiempos negativos (bombo, boing, golpe y plop fuera de su ventana)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

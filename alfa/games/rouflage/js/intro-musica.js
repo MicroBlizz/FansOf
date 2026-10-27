@@ -45,14 +45,15 @@ const INTRO_MUSICA = (() => {
   }
   const platillo = (t, vol = 0.05) => ruido(t, 0.04, 'highpass', 7000, vol);
   const caja = (t, vol = 0.12) => ruido(t, 0.09, 'bandpass', 1800, vol, 0.8);
-  function bombo(t, vol = 0.35) { const g = env(t, 0.003, 0.16, vol), o = osc('sine', 120, t, 0.18, g); o.frequency.exponentialRampToValueAtTime(42, t + 0.15); }
+  function bombo(t, vol = 0.35) { if (fuera(t)) return; const g = env(t, 0.003, 0.16, vol), o = osc('sine', 120, t, 0.18, g); o.frequency.exponentialRampToValueAtTime(42, t + 0.15); }
   function silbato(t, dura, f0, f1, vol = 0.09) {      // silbato de dibujos animados, con un poco de vibrato
     if (fuera(t)) return;
     const g = env(t, 0.02, dura, vol), o = osc('sine', f0, t, dura, g), lfo = ctx.createOscillator(), lg = ctx.createGain();
     o.frequency.exponentialRampToValueAtTime(f1, t + dura); lfo.frequency.value = 9; lg.gain.value = f0 * 0.03; lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t + dura + 0.05);
   }
-  function boing(t) { const g = env(t, 0.004, 0.45, 0.16), o = osc('triangle', 180, t, 0.45, g); o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(420, t + 0.06); o.frequency.exponentialRampToValueAtTime(140, t + 0.4); }
+  function boing(t) { if (fuera(t)) return; const g = env(t, 0.004, 0.45, 0.16), o = osc('triangle', 180, t, 0.45, g); o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(420, t + 0.06); o.frequency.exponentialRampToValueAtTime(140, t + 0.4); }
   function golpe(t) {      // el susto: acorde corto de cuadrada brillante + platillo abierto
+    if (fuera(t)) return;      // fuera de la ventana (o ya pasado): nada (los cambios de frecuencia con tiempo negativo daban error)
     for (const n of [69, 72, 76, 81]) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.setValueAtTime(5000, t); f.frequency.exponentialRampToValueAtTime(900, t + 0.3); f.connect(env(t, 0.004, 0.32, 0.06)); osc('square', nota(n), t, 0.32, f); }
     ruido(t, 0.5, 'highpass', 5000, 0.08); bombo(t, 0.4);
   }
@@ -93,7 +94,7 @@ const INTRO_MUSICA = (() => {
     [[5.1, 72], [5.4, 76], [5.7, 79], [6.0, 77], [6.6, 76], [6.85, 74]].forEach(([t, m]) => campana(t0 + t, m, 0.1, 0.8));
     for (const t of [5.1, 5.7, 6.3]) bajo(t0 + t, 48, 0.16, 0.3, 'sine');
     // 6,45 s: el colado vuelve a su sitio: «plop»
-    const g = env(t0 + 6.45, 0.004, 0.14, 0.14), o = osc('sine', 900, t0 + 6.45, 0.15, g); o.frequency.exponentialRampToValueAtTime(260, t0 + 6.58);
+    if (!fuera(t0 + 6.45)) { const g = env(t0 + 6.45, 0.004, 0.14, 0.14), o = osc('sine', 900, t0 + 6.45, 0.15, g); o.frequency.exponentialRampToValueAtTime(260, t0 + 6.58); }
   }
   // el reloj de la escena: el tiempo que lleva en marcha la animación del colado (empieza con la pantalla y nunca para); si no se puede leer, desde que cargó esto
   function tiempoIntro() {

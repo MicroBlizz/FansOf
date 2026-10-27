@@ -14,7 +14,7 @@ const INTRO_MUSICA = (() => {
   const T0 = performance.now();
   // la ventana (en el reloj del audio) de lo que se programa en esta vuelta: lo de fuera no se crea (así se programa poco a poco, a la par de la escena)
   const VEN = { a: -Infinity, b: Infinity };
-  const fuera = t => t < VEN.a || t >= VEN.b || (VEN.a > -Infinity && t < ctx.currentTime - 0.12);      // (lo que ya pasó hace rato tampoco: sonaría todo de golpe)
+  const fuera = t => t < 0 || t < VEN.a || t >= VEN.b || (VEN.a > -Infinity && t < ctx.currentTime - 0.12);      // (lo que ya pasó hace rato tampoco: sonaría todo de golpe)
   // el volumen de las opciones del juego (rouflage-vol × rouflage-vol-musica); por defecto 1 × 0,5
   function volumen() {
     try {
@@ -47,6 +47,7 @@ const INTRO_MUSICA = (() => {
   const caja = (t, vol = 0.12) => ruido(t, 0.09, 'bandpass', 1800, vol, 0.8);
   function bombo(t, vol = 0.35) { const g = env(t, 0.003, 0.16, vol), o = osc('sine', 120, t, 0.18, g); o.frequency.exponentialRampToValueAtTime(42, t + 0.15); }
   function silbato(t, dura, f0, f1, vol = 0.09) {      // silbato de dibujos animados, con un poco de vibrato
+    if (fuera(t)) return;
     const g = env(t, 0.02, dura, vol), o = osc('sine', f0, t, dura, g), lfo = ctx.createOscillator(), lg = ctx.createGain();
     o.frequency.exponentialRampToValueAtTime(f1, t + dura); lfo.frequency.value = 9; lg.gain.value = f0 * 0.03; lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t + dura + 0.05);
   }
@@ -104,6 +105,10 @@ const INTRO_MUSICA = (() => {
   function tic() {
     if (!activa) return;
     if (ctx.state !== 'running') { ctx.resume().catch(() => {}); setTimeout(tic, 200); return; }
+    try { programa(); } catch (_) { /* un fallo de audio no debe parar la música ni el juego */ }
+    setTimeout(tic, 200);
+  }
+  function programa() {
     const V = tiempoIntro(), hasta = V + 0.6, desde = Math.max(visto, V - 0.1), base = ctx.currentTime - V;      // base: el segundo 0 de la escena en el reloj del audio
     if (hasta > desde) {
       VEN.a = base + desde; VEN.b = base + hasta;
@@ -111,7 +116,6 @@ const INTRO_MUSICA = (() => {
       for (let k = Math.max(0, Math.floor(desde / CICLO)); k * CICLO < hasta; k++) ciclo(base + k * CICLO, k);
       visto = hasta;
     }
-    setTimeout(tic, 200);
   }
   return {
     CICLO,

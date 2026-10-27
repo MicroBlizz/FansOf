@@ -3,6 +3,13 @@
 // no chocar con las de util.js). Medidas de la galleta en «Firmes»: pies en 0,0; cabeza con el centro en 0,-41.5 y radio 11.5 (CABEZA).
 // Cada pieza tiene `detras(c)` (bajo el cuerpo) o `delante(c)` (sobre él); los ojos y bocas dibujan sobre la cara (x,y = centro de los ojos).
 'use strict';
+// los móviles con navegador viejo no tienen roundRect (da «c.roundRect is not a function» al dibujar el armario y los iconos): la hacemos con arcos
+if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    const q = Math.max(0, Math.min(Array.isArray(r) ? +r[0] || 0 : +r || 0, Math.abs(w) / 2, Math.abs(h) / 2));
+    this.moveTo(x + q, y); this.arcTo(x + w, y, x + w, y + h, q); this.arcTo(x + w, y + h, x, y + h, q); this.arcTo(x, y + h, x, y, q); this.arcTo(x, y, x + w, y, q); this.closePath();
+  };
+}
 const ARD = (() => {
   const OL = '#20102c', T = Math.PI * 2;
   function shape(c, build, fill, lw = 2.2) { c.beginPath(); build(c); if (fill) { c.fillStyle = fill; c.fill(); } if (lw) { c.lineWidth = lw; c.strokeStyle = OL; c.lineJoin = 'round'; c.stroke(); } }

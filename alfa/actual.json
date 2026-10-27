@@ -1,8 +1,8 @@
 {
- "build": 570,
- "hash": "d3b3526",
- "fecha": "2026-10-27T10:36:33Z",
- "mensaje": "Rouflage 0.2.58: nota de novedades y archivos de menos de 25 KB",
+ "build": 571,
+ "hash": "a97d4c8",
+ "fecha": "2026-10-27T10:41:18Z",
+ "mensaje": "Rouflage: nota de Google Play de la 0.2.58 (pt, fr, de, it)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

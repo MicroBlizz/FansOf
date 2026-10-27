@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.61
+  "<b>PINTAR YA NO SE CIERRA SOLO</b>: al tocar PINTAR en el móvil, el taller ya no se cerraba de golpe por pulsar sin querer el LISTO que sale debajo del dedo.": "<b>PAINT NO LONGER CLOSES BY ITSELF</b>: tapping PAINT on mobile no longer closed the workshop right away by accidentally pressing the DONE button that appears under your finger.",
+  "<b>VISITAR, MÁS CÓMODO</b>: en el escenario de un amigo, el botón de arriba a la izquierda abre un MENÚ (seguir, reportar y salir, que pregunta antes) y el botón de atrás del móvil hace lo mismo. Abajo solo queda ME GUSTA, que se esconde mientras te pintas.": "<b>VISITING, EASIER</b>: in a friend's scene, the top-left button opens a MENU (continue, report and leave, which asks first) and the phone's back button does the same. Only LIKE stays at the bottom, and it hides while you paint.",
+  "Microblizz puso el botón de LISTO justo debajo del de PINTAR para ahorrar espacio. Phony se pintaba en medio segundo y nadie sabía por qué.": "Microblizz put the DONE button right under PAINT to save space. Phony painted himself in half a second and nobody knew why.",
   // 0.2.60
   "<b>INTRO ARREGLADA</b>: la pantalla de carga vuelve a tener su suelo de cuadros turquesa y crema (se veía con el fondo oscuro).": "<b>INTRO FIXED</b>: the loading screen has its turquoise and cream checkered floor again (it showed a dark background).",
   "Microblizz apagó la luz de la intro para ahorrar en la factura. Phony ya la ha vuelto a encender.": "Microblizz turned off the intro lights to save on the bill. Phony has switched them back on.",

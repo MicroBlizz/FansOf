@@ -85,6 +85,11 @@ body.sala-viva #estado { top: calc(var(--sup) + 96px); }      /* el camuflaje, d
 .visita-ui .vis-de b { font: 400 16px var(--font-display); letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw; padding-top: 2px; }
 .vis-abajo { position: absolute; left: calc(var(--izq) + 12px); bottom: calc(var(--inf) + 14px); display: flex; gap: 8px; }
 .vis-abajo[hidden] { display: none; }
+.vis-menu { position: fixed; inset: 0; z-index: 3; display: grid; place-items: center; padding: 16px; background: rgba(8, 6, 16, 0.6); pointer-events: auto; }
+.vis-menu[hidden] { display: none; }
+.vis-menu .caja { width: min(100%, 360px); text-align: center; }
+.vis-menu .columna { display: grid; gap: 10px; margin-top: 8px; }
+.visita-ui .sv-atras i[data-icono] { font-size: 22px; }
 body.visita #acciones { bottom: calc(var(--inf) + 14px); }
 .visita-ui .esc-rep { position: fixed; inset: 0; z-index: 2; display: grid; place-items: center; background: rgba(8, 6, 16, 0.6); padding: 16px; }
 .visita-ui .esc-rep[hidden] { display: none; }

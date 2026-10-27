@@ -19,10 +19,14 @@ function vectorMueve() {
 
 // los botones de acción (PINTAR, CONGELAR, SILBAR, la habilidad…) responden al TOCAR, no al soltar: con otro dedo en la palanca el
 // móvil no siempre manda el «click» del segundo dedo, y así se puede andar y usar una habilidad a la vez
+// el «click» que el móvil manda detrás de un toque cae en lo que haya ahora bajo el dedo: si el botón ya actuó al tocar (PINTAR abre el taller y
+// su LISTO sale justo ahí) ese click no debe pulsar otra cosa. Se tira si llega antes de 450 ms y no es del mismo botón.
+const _toqueAccion = { t: -1e9, b: null };
+window.addEventListener('click', e => { if (performance.now() - _toqueAccion.t < 450 && _toqueAccion.b && !_toqueAccion.b.contains(e.target)) { e.stopPropagation(); e.preventDefault(); _toqueAccion.t = -1e9; } }, true);
 function botonAccion(b, fn) {
   if (!b) return;
   let tocado = -1e9;
-  b.addEventListener('pointerdown', ev => { if (ev.pointerType === 'mouse') return; ev.preventDefault(); tocado = performance.now(); fn(); });
+  b.addEventListener('pointerdown', ev => { if (ev.pointerType === 'mouse') return; ev.preventDefault(); tocado = performance.now(); _toqueAccion.t = tocado; _toqueAccion.b = b; fn(); });
   b.onclick = () => { if (performance.now() - tocado > 700) fn(); };      // ratón y teclado (y el click que llega detrás del toque, que no repite)
 }
 

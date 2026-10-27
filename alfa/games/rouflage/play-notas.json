@@ -58,5 +58,11 @@
     "fr-FR": "Correction : l'écran de chargement retrouve son sol en damier turquoise et crème.\n\nMicroblizz a éteint la lumière de l'intro pour économiser sur la facture. Phony l'a déjà rallumée.",
     "de-DE": "Korrektur: Der Ladebildschirm hat wieder seinen türkis-cremefarbenen Karoboden.\n\nMicroblizz hat das Licht im Intro ausgemacht, um Strom zu sparen. Phony hat es schon wieder angeschaltet.",
     "it-IT": "Correzione: la schermata di caricamento torna ad avere il pavimento a scacchi turchese e crema.\n\nMicroblizz ha spento la luce dell'intro per risparmiare sulla bolletta. Phony l'ha già riaccesa."
+  },
+  "0.2.61": {
+    "pt-BR": "Correções: tocar em PINTAR já não fecha a oficina sozinha, e no cenário de um amigo o botão de cima abre um MENU (continuar, denunciar e sair, com confirmação).\n\nA Microblizz pôs o botão PRONTO bem embaixo do PINTAR para economizar espaço. O Phony se pintava em meio segundo e ninguém sabia por quê.",
+    "fr-FR": "Corrections : toucher PEINDRE ne referme plus l'atelier tout seul, et dans le décor d'un ami le bouton du haut ouvre un MENU (continuer, signaler et sortir, avec confirmation).\n\nMicroblizz a mis le bouton FINI juste sous PEINDRE pour gagner de la place. Phony se peignait en une demi-seconde et personne ne savait pourquoi.",
+    "de-DE": "Korrekturen: MALEN schließt die Werkstatt nicht mehr von selbst, und in der Szene eines Freundes öffnet der Knopf oben ein MENÜ (weiter, melden und gehen, mit Nachfrage).\n\nMicroblizz hat den FERTIG-Knopf direkt unter MALEN gesetzt, um Platz zu sparen. Phony hat sich in einer halben Sekunde angemalt, und keiner wusste warum.",
+    "it-IT": "Correzioni: toccare DIPINGI non chiude più il laboratorio da solo, e nello scenario di un amico il pulsante in alto apre un MENU (continua, segnala ed esci, con conferma).\n\nMicroblizz ha messo il pulsante FATTO proprio sotto DIPINGI per risparmiare spazio. Phony si dipingeva in mezzo secondo e nessuno sapeva perché."
   }
 }

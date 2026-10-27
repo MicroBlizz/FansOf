@@ -1,6 +1,10 @@
 // Fans of Rouflage · Alemán de MI ESCENARIO › PINTAR (las herramientas de Paint: escenario-pincel2.js y 3) y de MIS ESCENARIOS (escenario-huecos.js). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "¿QUIERES SALIR?": "WILLST DU GEHEN?",
+  "Vuelves a donde estabas.": "Du kehrst dorthin zurück, wo du warst.",
+  "SALIR": "GEHEN",
+  "MENÚ": "MENÜ",
   "Píxel": "Pixel",
   "Espray": "Spray",
   "Rectángulo": "Rechteck",

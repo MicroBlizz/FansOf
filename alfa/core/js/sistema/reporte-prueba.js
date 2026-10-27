@@ -10,6 +10,7 @@
 // Para los juegos (todo opcional; sin nada, el botón sale solo y manda captura del lienzo y fps):
 //   REPORTE.activar({ datos: () => ({ x, z, zona… }), captura: () => 'data:image/jpeg;base64,…' | null })
 //   REPORTE.traza({ … }) una vez por segundo, con lo que interese seguir (si no, se apuntan los fps).
+//   REPORTE.suceso('habilidad', { id: 'dron' }) apunta lo que ha pasado, en orden (los últimos 100; ver caja-negra.js): viaja en datos.sucesos.
 'use strict';
 const REPORTE = (() => {
   const tr_ = typeof tr === 'function' ? tr : s => s;
@@ -106,6 +107,7 @@ const REPORTE = (() => {
     try { datos = (juego.datos && juego.datos()) || {}; } catch (e) { datos = { error: String(e && e.message) }; }
     datos.traza = (trazaJuego.length ? trazaJuego : trazaFps).slice(-MUESTRAS);
     datos.aparato = aparato();
+    if (typeof CAJA !== 'undefined') datos.sucesos = CAJA.sucesos();
     return { juego: idJuego(), version: String(NUCLEO.version || '').slice(0, 32), alfa: !!NUCLEO.alfa, plataforma: plataforma(),
       nombre: null, texto: String(texto || '').trim() || '(sin nota)', datos, captura: imagen };
   }
@@ -167,5 +169,5 @@ const REPORTE = (() => {
   if (typeof hook === 'function') hook('cuenta', () => { compruebaAdmin(); });
   if (typeof window !== 'undefined') window.addEventListener('load', () => setTimeout(compruebaAdmin, 1500));
 
-  return { activar, parar, traza };
+  return { activar, parar, traza, suceso: (tipo, datos) => { if (typeof CAJA !== 'undefined') CAJA.suceso(tipo, datos); } };
 })();

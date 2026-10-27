@@ -107,12 +107,18 @@
   }
   // para los reportes de prueba (core/js/sistema/reporte-prueba.js): dónde está el jugador y cómo va, y una traza por segundo
   let trazaT = 0, fpsReporte = 0;
+  // la caja negra: lo que cambia en la partida (evento, búsqueda de la policía, pasajero, física), una vez por cambio y no por segundo
+  const visto = {};
+  function apuntaCambios() {
+    const ahora = { evento: EVENTOS.activo ? EVENTOS.activo.tipo : 'ninguno', busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, zona: CIUDAD.zona(jugador.x, jugador.z) };
+    for (const k of Object.keys(ahora)) if (visto[k] !== ahora[k]) { visto[k] = ahora[k]; REPORTE.suceso('cambio', { que: k, a: ahora[k] }); }
+  }
   const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, fisica: fisico ? 'rapier' : 'arcade' }; };
   function cuadro(t) {
     requestAnimationFrame(cuadro);
     const dt = Math.min(0.1, (t - ultimo) / 1000 || 0); ultimo = t; acumulado += dt;
     fpsReporte = Math.round(fpsReporte * 0.95 + (dt > 0 ? 1 / dt : 0) * 0.05); trazaT += dt;
-    if (trazaT >= 1 && typeof REPORTE !== 'undefined') { trazaT = 0; REPORTE.traza({ t: Math.round(t / 1000), x: Math.round(jugador.x), z: Math.round(jugador.z), y: Math.round(jugador.y), v: Math.round(jugador.v), fps: fpsReporte, suelo: jugador.suelo }); }
+    if (trazaT >= 1 && typeof REPORTE !== 'undefined') { trazaT = 0; apuntaCambios(); REPORTE.traza({ t: Math.round(t / 1000), x: Math.round(jugador.x), z: Math.round(jugador.z), y: Math.round(jugador.y), v: Math.round(jugador.v), fps: fpsReporte, suelo: jugador.suelo }); }
     let pasos = 0; while (acumulado >= DT && pasos < 4) { pasoLogica(); acumulado -= DT; pasos++; }
     if (pasos === 4) acumulado = 0;   // el navegador se ha atascado: no intentar recuperar el tiempo
     const dentro = PASAJEROS.dentro, activo = EVENTOS.activo;

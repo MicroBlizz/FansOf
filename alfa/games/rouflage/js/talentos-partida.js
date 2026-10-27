@@ -48,6 +48,7 @@ const talOtroColado = e => { const v = J.camaleones.filter(k => k !== e && !k.fu
 function habUsa(e) {
   if (habPuede(e)) return false;
   const h = habDef(e.hab);
+  REPORTE.suceso('habilidad', { id: h.id, slot: e.slot });
   if (h.id === 'granada') return lanzaGranada(e);
   const d = { t: 'tl', h: h.id, s: e.slot };
   if (h.id === 'dron') { const k = talObjetivoDron(e); d.o = k.slot; d.oi = J.entes.indexOf(k); }

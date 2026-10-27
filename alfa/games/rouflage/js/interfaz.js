@@ -131,7 +131,7 @@ function refrescaHud(todo) {
 const PANTALLAS = ['p-titulo', 'p-bots', 'p-ayuda', 'p-opciones', 'p-pausa', 'p-fin', 'p-pvp', 'p-amigos', 'p-busca', 'p-clasif', 'p-pvp-info', 'p-diario', 'p-pase', 'p-tienda', 'p-gacha'];
 // el caos primordial (lo que gasta jugar en línea) solo se ve donde se gasta: en el botón EN LÍNEA del título y en las pantallas del PvP (decidido por Daniel el 24-10-2026: en todos los menús molestaba)
 const PANTALLAS_CAOS = ['p-titulo', 'p-pvp', 'p-amigos', 'p-busca', 'p-pvp-info'];
-function pantalla(id) { for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(PANTALLAS_CAOS.includes(id)); }
+function pantalla(id) { REPORTE.suceso('pantalla', { id }); for (const p of PANTALLAS) E(p).hidden = p !== id; if (typeof energiaMenu === 'function') energiaMenu(PANTALLAS_CAOS.includes(id)); }
 let _trasAyuda = null;
 function irTitulo() { escenaTitulo(); pantalla('p-titulo'); refrescaHud(true); refrescaSonido(); diarioAlTitulo(); misionBoton(); if (typeof refrescaTitulo === 'function') refrescaTitulo(); }
 function muestraAyuda(luego, modo) { _trasAyuda = luego || null; if (typeof ayudaPinta === 'function') ayudaPinta(modo); pantalla('p-ayuda'); misionEvento('ayuda'); }      // ayuda.js: las tarjetas

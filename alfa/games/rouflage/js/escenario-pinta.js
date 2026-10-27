@@ -120,7 +120,7 @@ function salaDeDatos(d) {
     muebles.push({ id: q[0], x: limita((+q[1] || 0) + dx, 0, M.W), y: limita((+q[2] || 0) + dy, 0, M.H), v: (+q[3] | 0) % 8, f: q[4] ? 1 : 0 });
   }
   let pint = null;
-  try { pint = d.p ? pinturaDecodifica(d.p) : null; } catch (_) { pint = null; }
+  try { const t = escPinturaTexto(d); pint = t ? pinturaDecodifica(t) : null; } catch (_) { pint = null; }      // comprimida (pz) o como antes (p): escenario-comprime.js
   if (pint && viejo) pint = pinturaRemuestra(pint, SALA.PR, dx + SALA.X0, dy + SALA.Y0);      // la sala pequeña empezaba en (X0, Y0)
   else if (pint && (pint.w !== Math.ceil(ESC_W / pint.r) || pint.h !== Math.ceil(ESC_H / pint.r))) pint = null;
   const sala = { id, muebles, pint, ver: 0, peg: typeof pegDeDatos === 'function' ? pegDeDatos(d.g) : [] };      // (las pegatinas: escenario-pegatinas.js)
@@ -131,11 +131,12 @@ function salaADatos(sala, maxBytes = SALA.MAX_DATOS) {
   const d = { v: 2, e: escBase(sala.id), m: sala.muebles.slice(0, SALA.MAX_MUEBLES).map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) };
   if (escBase(sala.id) === 'lienzo' && ESC_LZ[sala.id]) d.lz = lzCodifica(ESC_LZ[sala.id]);
   if (sala.peg && sala.peg.length) d.g = pegADatos(sala.peg);      // las pegatinas      // la forma del lienzo viaja con él
-  if (pinturaHay(sala.pint)) for (const r of [3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60]) {
-    d.p = pinturaCodifica(r === sala.pint.r ? sala.pint : pinturaRemuestra(sala.pint, r));
+  if (pinturaHay(sala.pint)) for (const r of [SALA.PR, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60]) {      // con todo su detalle si cabe (comprimida: escenario-comprime.js)
+    const t = pinturaCodifica(r === sala.pint.r ? sala.pint : pinturaRemuestra(sala.pint, r)), z = escComprime(t);
+    if (z && z.length < t.length) { d.pz = z; delete d.p; } else { d.p = t; delete d.pz; }
     if (JSON.stringify(d).length <= maxBytes) break;
   }
-  if (JSON.stringify(d).length > maxBytes) delete d.p;
+  if (JSON.stringify(d).length > maxBytes) { delete d.p; delete d.pz; }
   return d;
 }
 // ¿cabe este mueble aquí? Su base entera en el suelo, sin pisar a otro mueble ni al armario (el que se mueve no cuenta)

@@ -32,7 +32,7 @@ function escenarioActual() { const s = SAVE.escenario; return s && ESCENARIOS[s.
 function escenarioSala() {
   if (MIESC.sala) return MIESC.sala;
   const s = SAVE.escenario || {}, viejo = s.v !== 2 && ((s.m && s.m.length) || s.p);
-  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, lz: s.lz, g: s.g }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
+  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, pz: s.pz, lz: s.lz, g: s.g }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
   if (escBase(d.id) === 'lienzo') d.id = lzMio();      // el lienzo propio se edita como 'lienzo~mio' (escenario-obra.js)
   d.muebles = d.muebles.filter(m => escTiene('muebles', m.id));
   d.pint = !d.pint ? pinturaNueva() : d.pint.r === SALA.PR ? d.pint : pinturaRemuestra(d.pint, SALA.PR);
@@ -43,9 +43,11 @@ function escenarioSala() {
 const escMundoAct = () => escMundo(escenarioSala().id);
 function escGuarda() {
   const sala = escenarioSala(), yo = MIESC.yo;
-  let p = pinturaCodifica(sala.pint);
-  for (const r of [4, 8, 12]) if (p.length > 30000) p = pinturaCodifica(pinturaRemuestra(sala.pint, r));      // la partida no engorda: como mucho ~30 KB de pintura
-  SAVE.escenario = { v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]), p };
+  // la pintura, comprimida si así ocupa menos (escenario-comprime.js); la partida no engorda: como mucho ~30 KB de pintura
+  const pinta = r => { const t = pinturaCodifica(r ? pinturaRemuestra(sala.pint, r) : sala.pint), z = escComprime(t); return z && z.length < t.length ? { pz: z } : { p: t }; };
+  let p = pinta(0);
+  for (const r of [4, 8, 12]) if ((p.pz || p.p).length > 30000) p = pinta(r);
+  SAVE.escenario = Object.assign({ v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) }, p);
   const lz = lzMioTexto(); if (lz) SAVE.escenario.lz = lz;
   if (sala.peg && sala.peg.length) SAVE.escenario.g = pegADatos(sala.peg);      // las pegatinas (escenario-pegatinas.js)      // la forma de tu lienzo se guarda aunque ahora uses otro escenario
   if (yo) SAVE.escenario.yo = [Math.round(yo.x), Math.round(yo.y)];

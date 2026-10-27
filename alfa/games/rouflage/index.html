@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<script src="../../core/js/nucleo.js?v=0.2.57-a569.d26267e"></script>
+<script src="../../core/js/nucleo.js?v=0.2.58-a570.d3b3526"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', '../../core/css/menus-extra.css')</script>
-<script>NUCLEO.estilos('estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css', 'estilo-sala-viva.css', 'estilo-obra.css', 'estilo-ayuda.css')</script>
+<script>NUCLEO.estilos('estilo-carga.css', 'estilo.css', 'estilo-taller.css', 'estilo-pantallas.css', 'estilo-pvp.css', 'estilo-armario.css', 'estilo-menus.css', 'estilo-misiones.css', 'estilo-escenario.css', 'estilo-votos.css', 'estilo-gacha.css', 'estilo-compra.css', 'estilo-fin.css', 'estilo-talentos.css', 'estilo-chat.css', 'estilo-titulo.css', 'estilo-barra.css', 'estilo-sala-viva.css', 'estilo-obra.css', 'estilo-ayuda.css')</script>
 </head>
 <body>
 <canvas id="cv" data-tr-aria aria-label="Fans of Rouflage"></canvas>
@@ -53,284 +53,16 @@
 </div>
 <div id="peligro"></div>
 
-<!-- MI ESCENARIO (escenario*.js): lo pone js/pantallas-html.js aquí al arrancar -->
+<!-- MI ESCENARIO (escenario*.js): lo pone js/pantallas-html2.js aquí al arrancar -->
 <div id="pantalla-escenario" hidden></div>
 
-<!-- el taller: las herramientas para pintarse -->
-<div id="taller" hidden>
-  <button type="button" id="t-plegar" class="t-plegar" aria-label="Ocultar las herramientas" data-tr-aria aria-expanded="true"><i></i></button>
-  <div class="t-medidor"><span data-tr>CAMUFLAJE</span><b id="t-camo">0 %</b><i class="barra"><i id="t-barra"></i></i></div>
-  <div class="t-medidor t-tinta"><span data-tr>TINTA</span><b id="t-tinta-n">100</b><i class="barra"><i id="t-tinta-barra"></i></i></div>
-  <p class="t-ayuda" id="t-ayuda"></p>
-  <div class="t-posturas" role="group" data-tr-aria aria-label="Postura al congelarte">
-    <button type="button" class="t-postura" data-postura="firmes" data-tr-title title="Firmes: brazos pegados al cuerpo, menos que pintar"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Firmes</small></button>
-    <button type="button" class="t-postura" data-postura="saludo" data-tr-title title="Saludo: un brazo arriba"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Saludo</small></button>
-    <button type="button" class="t-postura" data-postura="estrella" data-tr-title title="Estrella: brazos arriba y piernas abiertas"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Estrella</small></button>
-    <button type="button" class="t-postura" data-postura="bolita" data-tr-title title="Bolita: sentado y recogido, la más pequeña"><canvas width="66" height="78" aria-hidden="true"></canvas><small data-tr>Bolita</small></button>
-  </div>
-  <div class="t-herr">
-    <button type="button" id="t-gota" data-tr-title title="Cuentagotas: coge el color que toques (I)"><i data-icono="gota"></i><small data-tr>Color</small></button>
-    <button type="button" class="t-radio" data-radio="0" data-tr-title title="Pincel muy fino, para detalles (1)"><i class="pto p0"></i><small data-tr>Muy fino</small></button>
-    <button type="button" class="t-radio" data-radio="1" data-tr-title title="Pincel fino (2)"><i class="pto p1"></i><small data-tr>Fino</small></button>
-    <button type="button" class="t-radio" data-radio="2" data-tr-title title="Pincel medio (3)"><i class="pto p2"></i><small data-tr>Medio</small></button>
-    <button type="button" class="t-radio" data-radio="3" data-tr-title title="Pincel gordo (4)"><i class="pto p3"></i><small data-tr>Gordo</small></button>
-    <button type="button" class="t-cabezal" data-cabezal="redondo" data-tr-title title="Cabezal redondo: el pincel y las líneas con el borde redondo (X)"><i data-icono="cabezaRedonda"></i><small data-tr>Punta redonda</small></button>
-    <button type="button" class="t-cabezal" data-cabezal="cuadrado" data-tr-title title="Cabezal cuadrado: el pincel y las líneas con el borde cuadrado (X)"><i data-icono="cabezaCuadrada"></i><small data-tr>Punta cuadrada</small></button>
-    <button type="button" id="t-cubo" data-tr-title title="Rellenar todo el cuerpo con el color (R)"><i data-icono="cubo"></i><small data-tr>Rellenar</small></button>
-    <button type="button" id="t-rapida" data-tr-title title="Pintura rápida: te pinta de golpe copiando el fondo, como un bot (con sus fallos). Una vez cada 45 s (Q)"><i data-icono="rapida"></i><small data-tr>Rápida</small></button>
-    <button type="button" class="t-figura" data-figura="linea" data-tr-title title="Línea: arrastra de un punto a otro; usa el gordo del pincel (L)"><i data-icono="linea"></i><small data-tr>Línea</small></button>
-    <button type="button" class="t-figura" data-figura="cuadro" data-tr-title title="Cuadrado: arrastra de una esquina a la otra (B)"><i data-icono="cuadro"></i><small data-tr>Cuadrado</small></button>
-    <button type="button" class="t-figura" data-figura="circulo" data-tr-title title="Círculo: arrastra para darle tamaño (O)"><i data-icono="circulo"></i><small data-tr>Círculo</small></button>
-    <button type="button" id="t-senuelo" data-tr-title title="Señuelo: pinta en el suelo, fuera de tu cuerpo, con tinta limitada. Los becarios pueden picar"><i data-icono="senuelo"></i><small data-tr>Señuelo</small></button>
-    <button type="button" id="t-deshacer" data-tr-title title="Deshacer (Z)"><i data-icono="deshacer"></i><small data-tr>Deshacer</small></button>
-    <button type="button" id="t-calco" data-tr-title title="Calco: ver el suelo a través de tu cuerpo (C)"><i data-icono="ojo"></i><small data-tr>Calco</small></button>
-  </div>
-  <div id="t-paleta" role="group" data-tr-aria aria-label="Colores del mapa"></div>
-  <div class="t-colores"><i id="t-color"></i><div id="t-recientes"></div><button type="button" class="boton" id="t-listo" data-tr>LISTO</button></div>
-</div>
-
-<!-- título (titulo.js): arriba tu perfil y tus monedas, la racha del premio diario, JUGAR (contra bots), EN LÍNEA, misiones y talentos, y abajo ARMARIO, PASE, TIENDA y AMIGOS.
-     El gachapón está dentro de la TIENDA; MI ESCENARIO, CÓMO SE JUEGA y OPCIONES, dentro del PERFIL (pantallas-html.js). Las tarjetas antiguas de papel siguen aquí escondidas: las usan los talentos y el dibujo del título. -->
-<div class="pantalla" id="p-titulo" hidden>
-  <div class="titulo-caja nuevo">
-    <div class="tit-barra">
-      <button type="button" class="tit-yo" id="b-perfil" data-tr-aria aria-label="Mi perfil"><canvas id="tit-yo-dib" width="72" height="72" aria-hidden="true"></canvas><span><b id="tit-nombre"></b><small id="tit-nivel"></small><em class="tit-yo-ir"><i data-icono="casa"></i><i data-icono="engranaje"></i><b data-tr>MI PERFIL</b><i data-icono="flecha"></i></em></span></button>
-      <div class="tit-monedas"><span class="tit-moneda gotas" id="tit-gotas"></span><span class="tit-moneda acciones" id="tit-acciones"></span></div>
-    </div>
-    <h1 class="logo" aria-label="Fans of Rouflage"><span class="ol">FANS OF</span><b aria-hidden="true"><i>R</i><i>O</i><i>U</i><i>F</i><i>L</i><i>A</i><i>G</i><i>E</i></b></h1>
-    <p class="lema" data-tr>El escondite con pintura</p>
-    <div class="tit-guarda" id="tit-guarda" hidden>
-      <b class="ol" data-tr>GUARDA LO QUE HAS GANADO</b>
-      <span id="tit-guarda-t"></span>
-      <div class="tit-guarda-b"><button type="button" class="boton" id="b-guarda-si" data-tr>GUARDAR MI PROGRESO</button><button type="button" class="boton gris" id="b-guarda-no" data-tr>LUEGO</button></div>
-    </div>
-    <button type="button" class="tit-racha" id="b-diario"><span class="tit-racha-txt"><b id="tit-racha-t"></b><small id="tit-racha-s"></small></span><i class="tit-racha-b" id="tit-racha-b"></i></button>
-    <div class="papeles tit-papeles">
-      <button type="button" class="papel camaleon" id="b-camaleon"><canvas id="dib-camaleon" width="330" height="240"></canvas><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate como el suelo, congélate y que no te encuentren.</span></button>
-      <button type="button" class="papel cazador" id="b-cazador"><canvas id="dib-cazador" width="330" height="240"></canvas><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los cinco colados.</span></button>
-    </div>
-    <button type="button" class="boton tit-jugar" id="b-jugar" hidden><b class="ol" data-tr>JUGAR</b><span data-tr>Camaleón o cazador, contra bots</span></button>
-    <div class="tit-pvp-caja"><button type="button" class="boton tit-pvp pvp-boton" id="b-pvp"><span class="tit-pvp-txt"><b class="ol" data-tr>EN LÍNEA · PvP</b><span data-tr>Buscar partida o sala con amigos</span></span><i class="tit-pvp-amigos" id="tit-pvp-amigos" hidden></i></button><div class="tit-pvp-caos" id="tit-pvp-caos"></div></div>
-    <div class="tit-tarjetas">
-      <button type="button" class="tit-tarjeta mis" id="b-misiones"><b data-tr>MISIONES DE HOY</b><span id="tit-mis-t"></span><i class="barra"><i id="tit-mis-b"></i></i></button>
-      <button type="button" class="tit-tarjeta tem" id="b-temporada"><b id="tit-tem-n"></b><span id="tit-tem-t"></span><i class="barra"><i id="tit-tem-b"></i></i></button>
-    </div>
-    <div class="tit-abajo" id="fila-armario">
-      <button type="button" class="boton tit-ab armario" id="b-armario"><i data-icono="percha"></i><b class="ol" data-tr>ARMARIO</b></button>
-      <button type="button" class="boton tit-ab pase" id="b-pase"><i data-icono="pase"></i><b class="ol" data-tr>PASE</b></button>
-      <button type="button" class="boton tit-ab tienda" id="b-tienda"><i data-icono="bolsa"></i><b class="ol" data-tr>TIENDA</b><em class="tit-oferta" id="tit-oferta" data-tr hidden>OFERTA</em></button>
-      <button type="button" class="boton tit-ab amigos" id="b-social"><i data-icono="amigos"></i><b class="ol" data-tr>AMIGOS</b></button>
-    </div>
-    <p class="nota" data-tr>Juego de la serie Fans Of. Es una parodia hecha por fans: Microblizz no existe (por suerte).</p>
-  </div>
-</div>
-
-<!-- contra bots: papel y mapa antes de empezar -->
-<div class="pantalla" id="p-bots" hidden>
-  <div class="caja bots">
-    <h2 class="ol" data-tr>CONTRA BOTS</h2>
-    <div class="grupo-titulo">
-      <h3 class="ol" data-tr>1 · TU PAPEL</h3>
-      <div class="papeles mini" role="group" data-tr-aria aria-label="Papel">
-        <button type="button" class="papel camaleon" id="b-bots-camaleon"><b class="ol" data-tr>CAMALEÓN</b><span data-tr>Píntate, congélate y que no te encuentren.</span></button>
-        <button type="button" class="papel cazador" id="b-bots-cazador"><b class="ol" data-tr>CAZADOR</b><span data-tr>Linterna en mano: encuentra a los colados.</span></button>
-      </div>
-    </div>
-    <div class="grupo-titulo">
-      <h3 class="ol" data-tr>2 · EL MAPA</h3>
-      <div class="mapas" id="mapas" role="group" data-tr-aria aria-label="Mapa"></div>
-    </div>
-    <button type="button" class="boton grande" id="b-bots-jugar" data-tr>¡JUGAR!</button>
-    <button type="button" class="boton peq" id="b-bots-volver" data-tr>Volver</button>
-  </div>
-</div>
-
-<!-- cómo se juega -->
-<div class="pantalla" id="p-ayuda" hidden>
-  <div class="caja">
-    <h2 class="ol" data-tr>CÓMO SE JUEGA</h2>
-    <div class="pasos">
-      <h3 class="ol"><i data-icono="pincel"></i><span data-tr>De camaleón</span></h3>
-      <ol>
-        <li data-tr-html>Tienes <b>60 segundos</b>. Busca un sitio: un suelo con dibujo, una pared, detrás de una planta…</li>
-        <li data-tr-html>Toca <b>PINTAR</b>. Elige tu <b>postura</b>, toca el suelo para coger su color y píntate con el pincel, líneas, cuadrados o círculos. Con <b>Calco</b> ves el suelo a través de ti.</li>
-        <li data-tr-html>Toca <b>CONGELAR</b>: desaparecen tu contorno, tu sombra y tus orejas. Solo queda la pintura.</li>
-        <li data-tr-html>Aguanta hasta que acabe el turno. Cada cierto tiempo <b>silbarás</b> sin querer y los becarios irán a mirar. Si silbas tú antes (<b>SILBAR</b>), tu cuenta atrás vuelve a empezar: elige un momento sin becarios cerca.</li>
-        <li data-tr-html>Antes de cada partida eliges una <b>habilidad</b> (<b>TALENTOS</b>, en Mi perfil). La primera es la <b>granada de humo</b>: te vuelve invisible 7 segundos y deja medio ciegos a los becarios cercanos. Las demás se desbloquean jugando.</li>
-      </ol>
-      <h3 class="ol azul"><i data-icono="diana"></i><span data-tr>De cazador</span></h3>
-      <ol>
-        <li data-tr-html>Hay <b>5 colados</b> pintados por la estación. Busca manchas raras: dibujos torcidos, colores que no casan.</li>
-        <li data-tr-html><b>Toca</b> donde creas que hay uno para despedirlo. Tiene que estar cerca y sin muros en medio.</li>
-        <li data-tr-html>Tienes <b>5 cartas de despido</b>. Fallar gasta una y te deja medio a oscuras; acertar te la devuelve.</li>
-        <li data-tr-html>Los <b>silbidos</b> te dicen por dónde andan. Si alumbras a uno un buen rato, se pone nervioso y tiembla.</li>
-        <li data-tr-html>Tú también llevas una <b>habilidad</b> (<b>TALENTOS</b>, en Mi perfil): empiezas con el <b>contador de sala</b>, y jugando de becario desbloqueas el dron, el silbato del jefe y más.</li>
-      </ol>
-    </div>
-    <button type="button" class="boton" id="b-ayuda-ok" data-tr>ENTENDIDO</button>
-  </div>
-</div>
-
-<!-- opciones (desde el título): sonido, gráficos y controles del móvil (opciones.js), idioma y cuenta -->
-<div class="pantalla" id="p-opciones" hidden>
-  <div class="caja">
-    <h2 class="ol" data-tr>OPCIONES</h2>
-    <div class="columna">
-      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-sonido" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><span data-tr>Efectos</span><input type="range" class="deslizador" id="v-sonido" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
-      <div class="volumen ancha"><button type="button" class="boton peq cuadrado" id="b-musica" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><span data-tr>Música</span><input type="range" class="deslizador" id="v-musica" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
-      <div class="op-bloque">
-        <div class="op-fila op-ancha"><span data-tr>Gráficos</span><div class="op-seg" id="op-graficos"><button type="button" data-v="auto" data-tr>AUTO</button><button type="button" data-v="alta" data-tr>ALTA</button><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="baja" data-tr>BAJA</button></div></div>
-        <p class="op-nota" id="op-graficos-nota"></p>
-        <div class="op-fila"><span data-tr>Ahorro de batería</span><div class="op-seg" id="op-bateria"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
-        <div class="op-fila" id="op-fila-vibracion"><span data-tr>Vibración</span><div class="op-seg" id="op-vibracion"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
-        <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
-        <div class="op-fila"><span data-tr>Chat</span><div class="op-seg" id="op-chat"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
-        <div class="op-fila" id="op-fila-avisos" hidden><span data-tr>Avisos al móvil</span><div class="op-seg" id="op-avisos"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
-        <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
-      </div>
-      <button type="button" class="boton gris" id="b-viejo"></button>
-      <div class="op-fila"><span data-tr>Idioma</span><span class="idioma-fl" id="idioma-banderas"></span></div>
-      <button type="button" class="boton gris" id="b-cuenta" data-tr>Cuenta</button>
-      <button type="button" class="boton cod-boton" id="b-op-codigo"><i data-icono="regalo"></i><span data-tr>CÓDIGO REGALO</span></button>
-      <button type="button" class="boton gris" id="b-tuto-repite" data-tr>Repetir tutorial</button>
-      <button type="button" class="boton gris" id="b-reinicio" data-tr hidden>Borrar todo mi progreso (alfa)</button>
-      <button type="button" class="boton" id="b-opciones-ok" data-tr>VOLVER</button>
-    </div>
-  </div>
-</div>
-
-<!-- pausa -->
-<div class="pantalla" id="p-codigo" hidden>
-  <div class="caja">
-    <h2 class="ol" data-tr>CÓDIGO REGALO</h2>
-    <div class="columna cod-columna">
-      <p class="cod-texto" data-tr>Busca códigos en nuestras redes sociales y canjéalos aquí. Cada código vale una vez por jugador.</p>
-      <input type="text" class="cod-campo" id="cod-campo" maxlength="24" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="done" placeholder="HALLOWEEN26" data-tr-aria aria-label="Código regalo">
-      <p class="cod-aviso" id="cod-aviso" role="status"></p>
-      <button type="button" class="boton grande cod-canjear" id="b-cod-canjear" data-tr>CANJEAR</button>
-      <div class="cod-premio" id="cod-premio" hidden></div>
-      <div class="cod-tus"><span data-tr>Tus gotas</span><b id="cod-gotas">0</b></div>
-      <button type="button" class="boton" id="b-cod-volver" data-tr>VOLVER</button>
-    </div>
-  </div>
-</div>
-<div class="pantalla" id="p-pausa" hidden>
-  <div class="caja">
-    <h2 class="ol" data-tr>PAUSA</h2>
-    <div class="columna">
-      <button type="button" class="boton" id="b-seguir" data-tr>SEGUIR</button>
-      <button type="button" class="boton gris" id="b-reiniciar" data-tr>Empezar de nuevo</button>
-      <button type="button" class="boton gris" id="b-ayuda2" data-tr>Cómo se juega</button>
-      <div class="fila-botones fila-volumen">
-        <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-sonido2" data-tr-aria aria-label="Sonido"><i data-icono="sonido"></i></button><input type="range" class="deslizador" id="v-sonido2" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de los efectos"></div>
-        <div class="volumen"><button type="button" class="boton peq cuadrado" id="b-musica2" data-tr-aria aria-label="Música"><i data-icono="musica"></i></button><input type="range" class="deslizador" id="v-musica2" min="0" max="100" step="5" data-tr-aria aria-label="Volumen de la música"></div>
-        <button type="button" class="boton peq" id="b-viejo2"></button>
-      </div>
-      <div class="fila-botones">
-        <button type="button" class="boton peq" id="b-salir" data-tr>Salir al menú</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- final -->
-<div class="pantalla" id="p-fin" hidden>
-  <div class="caja fin">
-    <div class="columna">
-      <h2 class="ol" id="fin-titulo"></h2>
-      <p class="sub" id="fin-sub"></p>
-      <p class="pvp-puntos" id="fin-pvp" hidden></p>
-      <div class="estrellas" id="fin-estrellas"></div>
-      <canvas id="fin-mapa" width="560" height="400" data-tr-aria aria-label="Dónde estaba cada uno"></canvas>
-      <div class="leyenda" id="fin-leyenda"></div>
-      <div class="galeria" id="fin-galeria" hidden></div>
-    </div>
-    <div class="columna">
-      <div class="ranking"><h3 class="ol" data-tr>CLASIFICACIÓN</h3><ol id="fin-ranking"></ol></div>
-      <div class="filas" id="fin-filas"></div>
-      <button type="button" class="boton foto" id="b-foto" hidden><b data-tr>COMPARTIR MI ESCONDITE</b><small data-tr>Reta a tus amigos: ¿te encuentran?</small></button>
-      <div class="fila-botones">
-        <button type="button" class="boton" id="b-otra" data-tr>OTRA VEZ</button>
-        <button type="button" class="boton gris" id="b-cambia"></button>
-        <button type="button" class="boton peq" id="b-menu" data-tr>Menú</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- el taller y las pantallas de siempre (título, contra bots, ayuda, opciones, código, pausa y final): las pone js/pantallas-html2.js aquí al arrancar -->
+<div id="pantallas-base" hidden></div>
 
 <!-- las pantallas de los menús (PvP, armario, tienda, gachapón, pase, misiones, diario, perfil) las pone js/pantallas-html.js aquí al arrancar -->
 <div id="pantallas-menus" hidden></div>
 
-<div id="carga"><style>
-/* pantalla de carga (intro, 25-10-2026). Damero turquesa y crema del icono a pantalla completa. Guion: «FANS OF» cae con rebote (0,5 s); «ROUFLAGE» estalla letra a letra
-   con manchas de pintura (1,5–2 s); abajo hay un colado escondido, pintado con la PINTURA RÁPIDA del juego sobre este mismo damero (se nota si te fijas); a los 2 s entra
-   el becario con la linterna, el haz lo pilla (3,3 s): «!», susto, huye corriendo y el becario sale detrás. Ciclo de 7 s. «TOCA PARA JUGAR» a los 3,5 s.
-   Los dibujos (img/intro-*.png) salen del propio juego con herramientas/intro_rouflage_sprites.js. La escena mide 150 x 300 unidades del juego (casilla de 32) y el damero
-   del fondo está alineado con ella. Solo transform y opacity: va fino en móvil. */
-#carga { overflow: hidden; padding: 0; --tinta: #1f1538; --u: min(1vw, 0.62vh);
-  --ew: min(100vw, 50vh); --eh: calc(var(--ew) * 2); --ex: calc(50vw - var(--ew) / 2); --ey: calc(50vh - var(--eh) / 2); --cas: calc(var(--ew) * 64 / 150);
-  background: #f3ebd6 conic-gradient(#6fd0c8 25%, #f3ebd6 0 50%, #6fd0c8 0 75%, #f3ebd6 0) var(--ex) var(--ey) / var(--cas) var(--cas); }
-#carga .cg-escena { position: absolute; left: var(--ex); top: var(--ey); width: var(--ew); height: var(--eh); pointer-events: none; }
-/* cada dibujo es una caja de 84 x 80 unidades con los pies en (42, 72); el colado tiene los pies en (100, 225) y el becario se para con los suyos en (38, 225) */
-#carga .cg-oculto, #carga .cg-susto, #carga .cg-cam, #carga .cg-caz { position: absolute; top: 51%; width: 56%; height: 26.667%; background: 0 0 / 100% 100% no-repeat; }
-#carga .cg-oculto, #carga .cg-susto, #carga .cg-cam { left: 38.667%; }
-#carga .cg-oculto { background-image: url(img/intro-colado.png); animation: cg-oculto 7s linear infinite; }
-#carga .cg-susto { background-image: url(img/intro-colado-susto.png); opacity: 0; animation: cg-susto 7s linear infinite; z-index: 2; }
-#carga .cg-cam { opacity: 0; animation: cg-huye 7s linear infinite; z-index: 2; }
-#carga .cg-caz { left: -70%; opacity: 0; animation: cg-caza 7s linear infinite; z-index: 3; }
-#carga .cg-cam::before, #carga .cg-caz::before, #carga .cg-caz::after { content: ''; position: absolute; inset: 0; background: 0 0 / 800% 100% no-repeat; }
-#carga .cg-cam::before { background-image: url(img/intro-colado-corre.png); animation: cg-pasos 0.45s steps(8) infinite; }
-#carga .cg-caz::before { background-image: url(img/intro-becario.png); animation: cg-pasos 0.6s steps(8) infinite, cg-anda 7s step-end infinite; }
-#carga .cg-caz::after { background: url(img/intro-becario-quieto.png) 0 0 / 100% 100% no-repeat; opacity: 0; animation: cg-para 7s step-end infinite; }
-/* el haz de la linterna: nace en la punta (90 % x 57 % de la caja del becario), se balancea buscando y se queda clavado en el colado */
-#carga .cg-haz { position: absolute; left: 90%; top: 57.5%; width: 190%; height: 160%; transform-origin: 0 50%; transform: translateY(-50%); z-index: -1;
-  background: radial-gradient(ellipse 100% 70% at 0 50%, rgba(255, 228, 120, 0.7), rgba(255, 236, 170, 0.35) 55%, rgba(255, 236, 170, 0) 100%);
-  clip-path: polygon(0 47%, 100% 0, 100% 100%, 0 53%); animation: cg-busca 7s ease-in-out infinite; }
-#carga .cg-excl { position: absolute; left: 62%; top: 44%; font: 400 calc(var(--ew) * 0.15) var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em var(--tinta); paint-order: stroke fill; opacity: 0; animation: cg-excl 7s linear infinite; z-index: 4; }
-#carga .cg { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; width: 100%; padding-top: max(calc(var(--u) * 8), calc(var(--ey) + var(--eh) * 0.04)); z-index: 5; pointer-events: none; }
-#carga .cg-arriba { display: grid; justify-items: center; transform-origin: 50% 0; }
-#carga .cg-fans { position: relative; z-index: 2; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: calc(var(--u) * 14); letter-spacing: 0.08em; line-height: 1; color: #fff7e8; -webkit-text-stroke: 0.1em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.1em 0 var(--tinta)); transform: translateY(-130vh) rotate(-4deg); animation: cg-cae 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
-#carga .cg-titulo { position: relative; isolation: isolate; display: grid; justify-items: center; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; line-height: 0.86; margin-top: calc(var(--u) * 2); }
-#carga .cg-fila { display: flex; font-size: calc(var(--u) * 31); letter-spacing: 0.01em; }
-#carga .cg-fila + .cg-fila { margin-top: calc(var(--u) * -2); }
-#carga .cg-titulo i { font-style: normal; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0.1em 0.03em 0.05em; transform: scale(0); animation: cg-pop 0.5s cubic-bezier(0.34, 1.9, 0.64, 1) forwards;
-  filter: drop-shadow(0.05em 0 0 var(--tinta)) drop-shadow(-0.05em 0 0 var(--tinta)) drop-shadow(0 0.05em 0 var(--tinta)) drop-shadow(0 -0.05em 0 var(--tinta)) drop-shadow(0 0.1em 0 var(--tinta)); }
-#carga .cg-titulo i:nth-child(odd) { --giro: rotate(-6deg) translateY(0.05em); }
-#carga .cg-titulo i:nth-child(even) { --giro: rotate(5deg) translateY(-0.05em); }
-#carga .cg-titulo .p1 { background-image: conic-gradient(from 45deg, #7a8fe0 25%, #4a5a9a 0 50%, #7a8fe0 0 75%, #4a5a9a 0); background-size: 0.3em 0.3em; }
-#carga .cg-titulo .p2 { background-image: repeating-linear-gradient(-50deg, #f3c53a 0 0.13em, #2e3560 0.13em 0.26em); }
-#carga .cg-titulo .p3 { background-image: repeating-linear-gradient(90deg, #f28c28 0 0.12em, #f6ebd5 0.12em 0.24em); }
-#carga .f1 i:nth-child(1) { animation-delay: 1.5s; } #carga .f1 i:nth-child(2) { animation-delay: 1.56s; } #carga .f1 i:nth-child(3) { animation-delay: 1.62s; }
-#carga .f2 i:nth-child(1) { animation-delay: 1.68s; } #carga .f2 i:nth-child(2) { animation-delay: 1.74s; } #carga .f2 i:nth-child(3) { animation-delay: 1.8s; } #carga .f2 i:nth-child(4) { animation-delay: 1.86s; } #carga .f2 i:nth-child(5) { animation-delay: 1.92s; }
-#carga .cg-mancha { position: absolute; width: 1em; height: 1em; font-size: calc(var(--u) * 22); border-radius: 46% 54% 48% 52% / 55% 45% 55% 45%; transform: scale(0); animation: cg-mancha 0.6s cubic-bezier(0.2, 1.4, 0.5, 1) forwards; z-index: -1; opacity: 0.95; }
-#carga .cg-mancha::before, #carga .cg-mancha::after { content: ''; position: absolute; width: 0.34em; height: 0.34em; border-radius: 50%; background: inherit; }
-#carga .cg-mancha::before { left: -0.14em; top: 0.4em; } #carga .cg-mancha::after { right: -0.1em; top: -0.12em; width: 0.26em; height: 0.26em; }
-#carga .cg-mancha.m1 { left: -8%; top: 2%; background: #f28c28; animation-delay: 1.45s; }
-#carga .cg-mancha.m2 { right: -10%; top: 14%; background: #6fd0c8; filter: brightness(0.88); font-size: calc(var(--u) * 28); animation-delay: 1.55s; }
-#carga .cg-mancha.m3 { left: 16%; bottom: -14%; background: #f3c53a; font-size: calc(var(--u) * 18); animation-delay: 1.65s; }
-#carga .cg-mancha.m4 { right: 12%; bottom: -10%; background: #ff6b8a; font-size: calc(var(--u) * 16); animation-delay: 1.72s; }
-#carga .cg-mancha.m5 { right: 26%; top: 34%; background: #7a8fe0; font-size: calc(var(--u) * 12); animation-delay: 1.8s; }
-#carga .cg-cargando { position: absolute; left: 0; right: 0; bottom: max(calc(var(--u) * 10), calc(100vh - var(--ey) - var(--eh) + var(--eh) * 0.06)); margin: 0; font: 800 calc(var(--u) * 6.5) 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.22em; color: #fff7e8; -webkit-text-stroke: 0.07em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.08em 0 var(--tinta)); opacity: 0; animation: cg-fade 0.8s ease-out 3.5s forwards; z-index: 5; }
-#carga .cg-cargando.toca { color: #f28c28; animation: cg-fade 0.8s ease-out 3.5s forwards, cg-toca 0.9s ease-in-out 0.8s infinite alternate; }
-#carga.cg-sacude .cg { animation: cg-sacude 0.4s linear 1.35s; }
-@keyframes cg-cae { to { transform: translateY(0) rotate(-4deg); } }
-@keyframes cg-sacude { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1.5vw, 1vh); } 40% { transform: translate(1.5vw, -0.8vh); } 60% { transform: translate(-1vw, 0.6vh); } 80% { transform: translate(0.8vw, -0.4vh); } }
-@keyframes cg-pop { 0% { transform: scale(0) var(--giro); } 100% { transform: scale(1) var(--giro); } }
-@keyframes cg-mancha { to { transform: scale(1) rotate(12deg); } }
-@keyframes cg-fade { to { opacity: 1; } }
-@keyframes cg-toca { from { opacity: 0.6; transform: scale(1); } to { opacity: 1; transform: scale(1.08); } }
-@keyframes cg-pasos { to { background-position-x: 114.2857%; } }      /* 8 fotogramas: cada paso avanza 1/7 (así cae justo en cada uno) */
-/* el ciclo de 7 s (1 % = 0,07 s): becario entra 2,0 s · se para 3,1 s · el haz lo pilla y «!» 3,3 s · el colado huye 3,5–4,4 s · el becario arranca 3,6 s y sale 4,8 s · el colado vuelve a esconderse 6,2–6,7 s */
-@keyframes cg-oculto { 0%, 47% { opacity: 1; } 47.1%, 88% { opacity: 0; } 96%, 100% { opacity: 1; } }
-@keyframes cg-susto { 0%, 47% { opacity: 0; transform: scale(1); } 47.1% { opacity: 1; transform: scale(1.3) translateY(-4%); } 48.6% { transform: scale(1); } 50% { opacity: 1; } 50.1%, 100% { opacity: 0; } }
-@keyframes cg-huye { 0%, 50% { left: 38.667%; opacity: 0; } 50.1% { opacity: 1; } 62.5% { left: 115%; opacity: 1; } 62.6%, 100% { left: 115%; opacity: 0; } }
-@keyframes cg-caza { 0%, 28.5% { left: -70%; opacity: 0; } 28.6% { opacity: 1; } 44% { left: -2.667%; } 51.5% { left: -2.667%; } 68.5% { left: 115%; opacity: 1; } 68.6%, 100% { left: 115%; opacity: 0; } }
-@keyframes cg-anda { 0% { opacity: 1; } 44% { opacity: 0; } 51.5% { opacity: 1; } }
-@keyframes cg-para { 0% { opacity: 0; } 44% { opacity: 1; } 51.5% { opacity: 0; } }
-@keyframes cg-busca { 0%, 28.5% { transform: translateY(-50%) rotate(-10deg); } 33% { transform: translateY(-50%) rotate(8deg); } 38% { transform: translateY(-50%) rotate(-9deg); } 43% { transform: translateY(-50%) rotate(5deg); } 46.5%, 100% { transform: translateY(-50%) rotate(0deg); } }
-@keyframes cg-excl { 0%, 46.5% { opacity: 0; transform: translateY(0.15em) scale(0.5); } 48% { opacity: 1; transform: translateY(0) scale(1.3); } 50% { transform: scale(1); } 55%, 100% { opacity: 0; } }
-@media (prefers-reduced-motion: reduce) { #carga * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl, #carga .cg-susto { animation: none !important; opacity: 0; } #carga .cg-oculto { animation: none !important; opacity: 1; } }
-</style><div class="cg-escena"><span class="cg-oculto"></span><span class="cg-susto"></span><span class="cg-cam"></span><span class="cg-excl">!</span><span class="cg-caz"><span class="cg-haz"></span></span></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila f1"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila f2"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div>
+<div id="carga"><div class="cg-escena"><span class="cg-oculto"></span><span class="cg-susto"></span><span class="cg-cam"></span><span class="cg-excl">!</span><span class="cg-caz"><span class="cg-haz"></span></span></div><div class="cg"><div class="cg-arriba"><span class="cg-fans">FANS OF</span><div class="cg-titulo" aria-label="Rouflage"><span class="cg-mancha m1"></span><span class="cg-mancha m2"></span><span class="cg-mancha m3"></span><span class="cg-mancha m4"></span><span class="cg-mancha m5"></span><span class="cg-fila f1"><i class="p1">R</i><i class="p2">O</i><i class="p3">U</i></span><span class="cg-fila f2"><i class="p2">F</i><i class="p1">L</i><i class="p3">A</i><i class="p2">G</i><i class="p1">E</i></span></div></div></div><p class="cg-cargando" id="cg-txt">CARGANDO…</p></div>
 <script src="js/intro-musica.js?v=0.2.49"></script>
 <script>
 // el título de la intro cabe siempre a lo ancho y no tapa la escena: en la app de Android el texto puede salir más grande (el tamaño de letra del móvil),
@@ -382,7 +114,7 @@ NUCLEO.juego({
     fr: ['idioma/fr.js', 'idioma/fr-2.js', 'idioma/fr-3.js', 'idioma/fr-armario.js', 'idioma/fr-armario2.js', 'idioma/fr-opciones.js', 'idioma/fr-foto.js', 'idioma/fr-misiones.js', 'idioma/fr-misiones2.js', 'idioma/fr-escenario.js', 'idioma/fr-pintar.js', 'idioma/fr-votos.js', 'idioma/fr-premios.js', 'idioma/fr-mapas.js', 'idioma/fr-talentos.js', 'idioma/fr-chat.js', 'idioma/fr-viral.js', 'idioma/fr-pegatinas.js', 'idioma/fr-codigos.js', 'idioma/fr-casa.js', 'idioma/fr-ayuda.js', 'idioma/fr-fantasma.js', 'idioma/fr-comun.js'],
     de: ['idioma/de.js', 'idioma/de-2.js', 'idioma/de-3.js', 'idioma/de-armario.js', 'idioma/de-armario2.js', 'idioma/de-opciones.js', 'idioma/de-foto.js', 'idioma/de-misiones.js', 'idioma/de-misiones2.js', 'idioma/de-escenario.js', 'idioma/de-pintar.js', 'idioma/de-votos.js', 'idioma/de-premios.js', 'idioma/de-mapas.js', 'idioma/de-talentos.js', 'idioma/de-chat.js', 'idioma/de-viral.js', 'idioma/de-pegatinas.js', 'idioma/de-codigos.js', 'idioma/de-casa.js', 'idioma/de-ayuda.js', 'idioma/de-fantasma.js', 'idioma/de-comun.js'],
     it: ['idioma/it.js', 'idioma/it-2.js', 'idioma/it-3.js', 'idioma/it-armario.js', 'idioma/it-armario2.js', 'idioma/it-opciones.js', 'idioma/it-foto.js', 'idioma/it-misiones.js', 'idioma/it-misiones2.js', 'idioma/it-escenario.js', 'idioma/it-pintar.js', 'idioma/it-votos.js', 'idioma/it-premios.js', 'idioma/it-mapas.js', 'idioma/it-talentos.js', 'idioma/it-chat.js', 'idioma/it-viral.js', 'idioma/it-pegatinas.js', 'idioma/it-codigos.js', 'idioma/it-casa.js', 'idioma/it-ayuda.js', 'idioma/it-fantasma.js', 'idioma/it-comun.js'] },   // pt, fr, de, it: los mismos diccionarios, traducidos (24-10-2026); lo común lo cubre core/idioma/<idioma>-ligero.js
-  antes: ['js/ajustes.js', 'js/pantallas-html.js'],
+  antes: ['js/ajustes.js', 'js/pantallas-html.js', 'js/pantallas-html2.js'],
   despues: [
     '../../core/js/serie/canciones.js',
     'js/textos.js',
@@ -442,7 +174,7 @@ NUCLEO.juego({
     'js/modos-bote.js',
     'js/modos-ida.js',
     'js/partida.js',
-    'js/interfaz.js', 'js/ayuda.js', 'js/interfaz-fin.js', 'js/fin-pase.js', 'js/interfaz-taller.js', 'js/foto.js',
+    'js/iconos.js', 'js/interfaz.js', 'js/ayuda.js', 'js/interfaz-fin.js', 'js/fin-pase.js', 'js/interfaz-taller.js', 'js/foto.js',
     'js/galeria.js',
     'js/elige-mapa.js',
     'js/pvp-red.js',

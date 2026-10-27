@@ -30,7 +30,7 @@ const TROZOS = (() => {
     lejos = new T.Mesh(geo, recorta(new T.MeshLambertMaterial({ vertexColors: true }))); lejos.position.set(M.ancho / 2, 0, M.largo / 2); escena.add(lejos);
     // los edificios de todo el mundo, un poco más pequeños y más bajos que los de verdad (quedan dentro cuando llega el detalle)
     const cajas = [];
-    for (const m of CIUDAD.celdas) for (const e of m.edificios) { const y = CIUDAD.alturaSuelo(e.x, e.z) - 4; cajas.push(U.caja(e.color, [e.x, y + (e.h + 3) / 2, e.z], [e.w - 0.8, e.h + 3, e.d - 0.8])); }
+    for (const m of CIUDAD.celdas) for (const e of m.edificios) { const y = basePlanta(e) - 1, alto = CIUDAD.alturaSuelo(e.x, e.z) + e.h - 1 - y; cajas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w - 0.8, alto, e.d - 0.8])); }
     for (const p of CIUDAD.puentes) cajas.push(U.caja(0x4a4060, [p.x, p.y - 0.8, p.z], [p.ancho, 1, p.largo - 1], [0, p.ang, 0]));
     lejosMalla(cajas);
     // el campo: pinos y rocas, más pequeños que los de verdad
@@ -109,42 +109,39 @@ const TROZOS = (() => {
     const traza = (e, ancho, color, cap) => { const a = n[e.a], b = n[e.b]; g.strokeStyle = color; g.lineWidth = ancho; g.lineCap = cap; g.beginPath(); g.moveTo(a.x, a.z); g.lineTo(b.x, b.z); g.stroke(); };
     for (const e of t.aristas) if (e.margen > 0) traza(e, e.ancho + e.margen * 2, COLOR.tierra, 'round');
     for (const e of t.aristas) { if (e.tipo === 'tunel') continue; if (e.tipo === 'mirador') { const b = n[e.b]; g.fillStyle = '#9a93a8'; g.beginPath(); g.arc(b.x, b.z, e.ancho / 2, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#20102c'; g.lineWidth = 0.6; g.stroke(); continue; } traza(e, e.ancho, e.tipo === 'rampa' ? COLOR.tunel : COLOR.asfalto, e.margen > 0 ? 'round' : 'square'); }
-    g.setLineDash([3, 3]);
-    for (const e of t.aristas) if (e.ancho >= 11 && e.tipo !== 'tunel' && e.tipo !== 'mirador') traza(e, 0.25, '#ffcb3d', 'butt');
-    g.setLineDash([]);
-    for (const e of t.aristas) if (e.tipo === 'avenida') { traza(e, 0.3, '#fff6ea', 'butt'); }
     // rampas de salto y escondites
     g.fillStyle = '#ff7a1a'; for (const r of t.rampas) { g.save(); g.translate(r.x, r.z); g.rotate(-r.ang); g.fillRect(-r.ancho / 2, 0, r.ancho, r.largo * 0.6); g.restore(); }
     g.strokeStyle = '#4fc3d9'; g.lineWidth = 0.6; for (const e of t.escondites) { g.beginPath(); g.arc(e.x, e.z, e.radio, 0, Math.PI * 2); g.stroke(); }
     const tex = new T.CanvasTexture(c); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4; tex.flipY = false; return tex;
   }
   function suelo(t) {
-    const R = M.resSuelo, geo = new T.PlaneGeometry(TR, TR, R, R); geo.rotateX(-Math.PI / 2);
+    // donde hay bocas de túnel la rejilla es más fina, para que el hueco que se quita encaje con las paredes de la trinchera
+    const conTrinchera = t.aristas.some(e => e.tipo === 'rampa');
+    const R = conTrinchera ? M.resSueloTrinchera : M.resSuelo, geo = new T.PlaneGeometry(TR, TR, R, R); geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position, uv = geo.attributes.uv;
-    const hondo = new Uint8Array(pos.count);
-    for (let i = 0; i < pos.count; i++) { const x = pos.getX(i) + TR / 2, z = pos.getZ(i) + TR / 2; pos.setY(i, CIUDAD.alturaSuelo(t.x0 + x, t.z0 + z)); uv.setXY(i, x / TR, z / TR); hondo[i] = CIUDAD.suelo(t.x0 + x, t.z0 + z) === 'tunel'; }
-    // en las trincheras de las bocas el suelo no hace rampas hacia arriba: los triángulos que suben desde el fondo se quitan (los tapan
-    // las paredes y el portal; el fondo lo pone la calzada de la trinchera)
-    if (t.aristas.some(e => e.tipo === 'rampa')) {
+    const hueco = new Uint8Array(pos.count);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i) + TR / 2, z = pos.getZ(i) + TR / 2;
+      pos.setY(i, CIUDAD.alturaSuelo(t.x0 + x, t.z0 + z)); uv.setXY(i, x / TR, z / TR);
+      if (conTrinchera) hueco[i] = CIUDAD.enTrinchera(t.x0 + x, t.z0 + z);
+    }
+    // sobre la trinchera no hay terreno: el fondo es la calzada y los lados, sus muros (con su franja de suelo por fuera)
+    if (conTrinchera) {
       const idx = geo.index.array, sigue = [];
-      for (let k = 0; k < idx.length; k += 3) {
-        const a = idx[k], b = idx[k + 1], c = idx[k + 2], ya = pos.getY(a), yb = pos.getY(b), yc = pos.getY(c);
-        if ((hondo[a] || hondo[b] || hondo[c]) && Math.max(ya, yb, yc) - Math.min(ya, yb, yc) > 2.5) continue;
-        sigue.push(a, b, c);
-      }
+      for (let k = 0; k < idx.length; k += 3) if (!hueco[idx[k]] && !hueco[idx[k + 1]] && !hueco[idx[k + 2]]) sigue.push(idx[k], idx[k + 1], idx[k + 2]);
       geo.setIndex(sigue);
     }
     geo.computeVertexNormals();
-    const m = new T.Mesh(geo, new T.MeshLambertMaterial({ map: pinta(t), polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }));
+    const m = new T.Mesh(geo, new T.MeshLambertMaterial({ map: pinta(t) }));
     m.position.set(t.x0 + TR / 2, 0, t.z0 + TR / 2); return m;
   }
 
   // --- todo lo fijo del trozo en una malla con color por vértice, más su contorno
   function fijo(t) {
-    const piezas = [], tubos = [], calzadas = [], cruces = new Set();
+    const piezas = [], cruces = new Set();
     const al = (x, z) => CIUDAD.alturaSuelo(x, z);
     for (const m of t.celdas) {
-      for (const e of m.edificios) { const y = al(e.x, e.z) - 5; piezas.push(U.caja(e.color, [e.x, y + (e.h + 5) / 2, e.z], [e.w, e.h + 5, e.d])); }
+      for (const e of m.edificios) { const y = basePlanta(e) - 1, alto = al(e.x, e.z) + e.h - y; piezas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w, alto, e.d])); }
       for (const a of m.arboles) arbol(piezas, a.x, al(a.x, a.z), a.z, a.radio, a.alto, false);
     }
     for (const o of t.campo) { const y = al(o.x, o.z); if (o.tipo === 'roca') piezas.push({ geo: new T.DodecahedronGeometry(o.radio, 0), color: 0x6e6478, p: [o.x, y + o.alto * 0.3, o.z], r: [0, o.x, 0] }); else arbol(piezas, o.x, y, o.z, o.radio, o.alto, true); }
@@ -163,48 +160,24 @@ const TROZOS = (() => {
     // el portal de cada boca de túnel: un dintel sobre el fondo de la trinchera
     for (const e of t.aristas) if (e.tipo === 'rampa') for (const id of [e.a, e.b]) { const m = CIUDAD.nodos[id]; if (!m.boca || m.x < t.x0 || m.x >= t.x1 || m.z < t.z0 || m.z >= t.z1 || cruces.has('portal' + id)) continue; cruces.add('portal' + id); const o = CIUDAD.nodos[e.a === id ? e.b : e.a], ang = Math.atan2(o.x - m.x, o.z - m.z); const r = (e.a === id ? e.recorte[0] : e.recorte[1]) || 0, ux = Math.sin(ang), uz = Math.cos(ang), px = m.x + ux * r, pz = m.z + uz * r, techo = m.y + 8, cima = Math.max(techo + 1, CIUDAD.natural(px, pz) + 1.5, CIUDAD.natural(m.x, m.z) + 1.5), fondo = Math.max(2 * r + 1, 9); piezas.push(U.caja(0x5b5668, [px - ux * fondo / 2, (techo + cima) / 2, pz - uz * fondo / 2], [Math.max(e.ancho + 4, 2 * r + 2), cima - techo, fondo], [0, ang, 0]), U.caja(0xffcb3d, [px + ux * 0.1, techo + 0.4, pz + uz * 0.1], [e.ancho + 2, 0.8, 0.4], [0, ang, 0])); }
     for (const e of t.escondites) piezas.push(U.caja(0x4fc3d9, [e.x, al(e.x, e.z) + 2.5, e.z - e.radio + 1], [0.3, 5, 0.3]), U.caja(0x4fc3d9, [e.x, al(e.x, e.z) + 5.4, e.z - e.radio + 1], [2.4, 1.4, 0.3]));
-    // túneles: un tubo por tramo (se ve por dentro); rampas: paredes a los lados
-    const n = CIUDAD.nodos;
+    // las luces del techo de los túneles (el túnel en sí es una cinta, ver js/cintas/)
     for (const e of t.aristas) {
-      if (e.tipo !== 'tunel' && e.tipo !== 'rampa') continue;
-      const a = n[e.a], b = n[e.b]; if (a.x < t.x0 - 1 || a.x >= t.x1 + 1 || a.z < t.z0 - 1 || a.z >= t.z1 + 1) continue;   // cada tramo lo monta el trozo de su primer nodo
-      const [ra, rb] = e.recorte || [0, 0], L = e.largo - ra - rb; if (L < 2) continue;
-      const ux = (b.x - a.x) / e.largo, uz = (b.z - a.z) / e.largo, uy = (b.y - a.y) / e.largo;
-      const ax = a.x + ux * ra, az = a.z + uz * ra, ay = a.y + uy * ra, bx = b.x - ux * rb, bz = b.z - uz * rb, by = b.y - uy * rb;
-      const ang = Math.atan2(b.x - a.x, b.z - a.z), cx = (ax + bx) / 2, cz = (az + bz) / 2, cy = (ay + by) / 2, inclina = Math.atan2(by - ay, L);
-      // la calzada: asfalto con la línea del centro, de nudo a nudo (en el túnel el suelo pintado está arriba, en la calle)
-      { const largo = e.largo, angE = Math.atan2(b.x - a.x, b.z - a.z), inc = Math.atan2(b.y - a.y, largo);
-        calzadas.push(U.caja(0x2a2438, [(a.x + b.x) / 2, (a.y + b.y) / 2 - 0.07, (a.z + b.z) / 2], [e.ancho + (e.tipo === 'tunel' ? 2.2 : 1.8), 0.3, largo + 0.5], [-inc, angE, 0, 'YXZ']));
-        for (let k = 3; k < largo - 2; k += 9) { const q = k / largo; calzadas.push(U.caja(0xffcb3d, [lerp(a.x, b.x, q), lerp(a.y, b.y, q) + 0.1, lerp(a.z, b.z, q)], [0.3, 0.06, 4], [-inc, angE, 0, 'YXZ'])); } }
-      if (e.tipo === 'tunel') {
-        // sin tapas: por los extremos se sigue; donde dobla un poco sin sala, el tubo se alarga para no dejar rendija por fuera de la curva
-        const ea = ra ? 0.25 : sobra(a, b, e), eb = rb ? 0.25 : sobra(b, a, e), Lt = L + ea + eb, q0 = -ea / L, q1 = 1 + eb / L, qm = (q0 + q1) / 2;
-        tubos.push(U.cajaAbierta(0x4a3f66, [lerp(ax, bx, qm), lerp(ay, by, qm) + 4, lerp(az, bz, qm)], [e.ancho + 2.4, 8, Lt], [-inclina, ang, 0, 'YXZ'], [1, 1, 1, 1, 0, 0]));
-        for (let k = 10; k < L - 5; k += 20) { const q = k / L; piezas.push(U.caja(0xfff1a8, [lerp(ax, bx, q), lerp(ay, by, q) + 7.6, lerp(az, bz, q)], [2.4, 0.3, 1], [0, ang, 0])); }   // luces del techo
-        // en un cruce (o en el fondo de una boca) una sala: techo, suelo y pared solo por donde no entra ninguna carretera
-        for (const [m, r] of [[a, ra], [b, rb]]) if (r > 0 && (m.tipo === 'tunel' || m.boca) && !cruces.has(m.id)) {
-          cruces.add(m.id);
-          const caras = [1, 1, 1, !m.boca, 1, 1];
-          for (const v of m.vecinos) { const o = n[v], dx = o.x - m.x, dz = o.z - m.z, d = Math.hypot(dx, dz) || 1; if (dx / d > 0.5) caras[0] = 0; if (dx / d < -0.5) caras[1] = 0; if (dz / d > 0.5) caras[4] = 0; if (dz / d < -0.5) caras[5] = 0; }
-          tubos.push(U.cajaAbierta(0x4a3f66, [m.x, m.y + 4, m.z], [r * 2, 8, r * 2], null, caras)); calzadas.push(U.caja(0x2a2438, [m.x, m.y - 0.08, m.z], [r * 2, 0.3, r * 2])); piezas.push(U.caja(0xfff1a8, [m.x, m.y + 7.6, m.z], [2.4, 0.3, 2.4]));
-        }
-      } else {
-        const alto = Math.max(CIUDAD.natural(a.x, a.z), CIUDAD.natural(b.x, b.z)) + 1.2, bajo = Math.min(ay, by) - 1.5;
-        for (const lado of [-1, 1]) piezas.push(U.caja(0x5b5668, [cx + Math.cos(ang) * lado * (e.ancho / 2 + 0.9), (alto + bajo) / 2, cz - Math.sin(ang) * lado * (e.ancho / 2 + 0.9)], [0.8, alto - bajo, L + 0.5], [0, ang, 0]));
-      }
+      if (e.tipo !== 'tunel') continue;
+      const a = CIUDAD.nodos[e.a], b = CIUDAD.nodos[e.b];
+      if (a.x < t.x0 || a.x >= t.x1 || a.z < t.z0 || a.z >= t.z1) continue;   // cada tramo lo pone el trozo de su primer nudo
+      const ang = Math.atan2(b.x - a.x, b.z - a.z);
+      for (let k = 10; k < e.largo - 5; k += 20) { const q = k / e.largo; piezas.push(U.caja(0xfff1a8, [lerp(a.x, b.x, q), lerp(a.y, b.y, q) + 7.6, lerp(a.z, b.z, q)], [2.4, 0.3, 1], [0, ang, 0])); }
     }
     const mallas = [];
     if (piezas.length) { const g = U.mallaConBorde(U.unir(piezas), 0.12); g.position.set(0, 0, 0); escena.add(g); mallas.push(g.children[0], g.children[1]); g.userData.grupo = true; mallas.push(g); }
-    if (calzadas.length) { const m = new T.Mesh(U.unir(calzadas), new T.MeshLambertMaterial({ vertexColors: true })); escena.add(m); mallas.push(m); }
-    if (tubos.length) { const m = new T.Mesh(U.unir(tubos), new T.MeshLambertMaterial({ vertexColors: true, side: T.BackSide, emissive: 0x2a2440 })); m.userData.tubo = tubos.length; escena.add(m); mallas.push(m); }
+    for (const m of CINTAS_MALLA.deTrozo(T, t)) { escena.add(m); mallas.push(m); }
     return mallas;
   }
-  // cuánto alargar un tubo en el nudo m (viene de `otro`) para tapar la rendija por fuera del giro
-  function sobra(m, otro, e) {
-    if (m.vecinos.length !== 2) return 0.25;
-    const w = CIUDAD.nodos[m.vecinos.find(id => id !== otro.id)];
-    let d = Math.abs(Math.atan2(w.x - m.x, w.z - m.z) - Math.atan2(m.x - otro.x, m.z - otro.z)) % (Math.PI * 2); if (d > Math.PI) d = Math.PI * 2 - d;
-    return (e.ancho / 2 + 1.2) * Math.tan(Math.min(d, 1) / 2) + 0.25;
+  // la altura del suelo en la esquina más baja de un edificio (en cuesta, que no quede colgando)
+  function basePlanta(e) {
+    let y = Infinity;
+    for (const sx of [-0.5, 0.5]) for (const sz of [-0.5, 0.5]) y = Math.min(y, CIUDAD.alturaSuelo(e.x + sx * e.w, e.z + sz * e.d));
+    return y;
   }
   function arbol(piezas, x, y, z, radio, alto, pino) {
     piezas.push(U.cil(0x7a4a2a, [x, y + alto * 0.25, z], 0.4, alto * 0.5, null, 6));

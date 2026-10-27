@@ -76,14 +76,37 @@ const CIUDAD = (() => {
     return h;
   }
   // altura para pintar el suelo: como la de un coche sin túneles, pero el río gana a la carretera (ahí hay un puente encima)
-  // Sin túneles (van por debajo, con su propio suelo) y sin el último trozo de la trinchera, el que queda bajo el portal de la boca:
-  // ahí arriba sigue el monte y el suelo del túnel lo pone su malla.
+  // La altura del terreno que se dibuja: el natural con las carreteras de superficie encima. Túneles y trincheras no cuentan: tienen
+  // su propia malla (CINTAS) y el terreno sigue por encima (sobre la trinchera se recorta, ver enTrinchera). Bajo la calzada queda
+  // un poco hundido para que nunca asome a través de la cinta de asfalto.
+  const BAJO_CALZADA = 0.15;
   function alturaSuelo(x, z) {
-    const r = CARRETERAS.cauce(rio, x, z);
-    if (r.d < r.ancho / 2) return natural(x, z);
-    const c = carreteraEn(x, z, undefined, true), nat = natural(x, z);
-    if (!c || bajoPortal(c)) return nat;
-    return lerp(nat, c.y, 1 - suave(c.e.ancho / 2 + c.e.margen, c.e.alcance, c.d));
+    const nat = natural(x, z);
+    if (enRio(x, z)) return nat;
+    const c = carreteraDeSuperficie(x, z);
+    if (!c) return nat;
+    const y = lerp(nat, c.y, 1 - suave(c.e.ancho / 2 + c.e.margen, c.e.alcance, c.d));
+    return c.d < c.e.ancho / 2 + 0.3 ? y - BAJO_CALZADA : y;
+  }
+  // la carretera de superficie más cercana dentro de su alcance (ni túneles ni trincheras)
+  function carreteraDeSuperficie(x, z) {
+    let mejor = null;
+    for (const e of iAristas[celda(x, z)] || []) {
+      if (e.tipo === 'tunel' || e.tipo === 'rampa') continue;
+      const s = sobreArista(e, x, z);
+      if (s.d <= e.alcance && (!mejor || s.d < mejor.d)) mejor = { e, ...s };
+    }
+    return mejor;
+  }
+  // ¿está el punto sobre una trinchera (entre sus muros, sin contar más allá de sus extremos)? Ahí el terreno no se dibuja
+  const ANCHO_EXTRA_TRINCHERA = 1.3;   // de la calzada a la cara de fuera del muro
+  function enTrinchera(x, z) {
+    for (const e of iAristas[celda(x, z)] || []) {
+      if (e.tipo !== 'rampa') continue;
+      const s = sobreArista(e, x, z);
+      if (s.t > 0 && s.t < 1 && s.d <= e.ancho / 2 + ANCHO_EXTRA_TRINCHERA) return true;
+    }
+    return false;
   }
   // un punto de una rampa que ya está dentro de la boca (más allá del portal)
   function bajoPortal(c) {
@@ -133,7 +156,14 @@ const CIUDAD = (() => {
   const paredes = [];
   const subt = t => t === 'tunel' || t === 'rampa';
   const giroEn = (n, e, o) => { const a = nodos[e.a === n.id ? e.b : e.a], b = nodos[o.a === n.id ? o.b : o.a]; return Math.abs(Math.PI - Math.abs(Math.atan2(a.x - n.x, a.z - n.z) - Math.atan2(b.x - n.x, b.z - n.z))) % (Math.PI * 2); };   // cuánto dobla la carretera en n
-  const recorte = (n, e) => { let r = 0; for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e && !(subt(o.tipo) === subt(e.tipo) && n.vecinos.length === 2 && giroEn(n, e, o) < 0.3)) r = Math.max(r, o.ancho / 2 + (e.tipo === 'rampa' && !subt(o.tipo) ? 8 : 1.5)); } return r; };   // en la boca, más holgura para el giro
+  // dónde se corta la pared de e en el nudo n: en un cruce o un giro cerrado, en el borde de los otros; si solo sigue otro tramo y
+  // gira poco, la pared sigue (igual que las cintas, ver CINTAS.geometria)
+  const recorte = (n, e) => {
+    if (n.vecinos.length === 2) { const o = aristaDe.get(n.id + ',' + n.vecinos.find(v => v !== (e.a === n.id ? e.b : e.a))); if (o && giroEn(n, e, o) < 1.2) return 0; }
+    let r = 0;
+    for (const v of n.vecinos) { const o = aristaDe.get(n.id + ',' + v); if (o && o !== e) r = Math.max(r, o.ancho / 2 + 0.5); }
+    return r;
+  };
   for (const e of aristas) if (e.tipo === 'tunel' || e.tipo === 'rampa') {
     const a = nodos[e.a], b = nodos[e.b], dx = b.x - a.x, dz = b.z - a.z, L = Math.hypot(dx, dz), ux = dx / L, uz = dz / L, nx = -uz, nz = ux, y = Math.min(a.y, b.y);
     const ra = recorte(a, e), rb = recorte(b, e); if (ra + rb >= L - 1) continue;
@@ -283,5 +313,5 @@ const CIUDAD = (() => {
   }
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
   return { ancho: M.ancho, largo: M.largo, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
-    altura, alturaSuelo, natural, suelo, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
+    altura, alturaSuelo, natural, suelo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
 })();

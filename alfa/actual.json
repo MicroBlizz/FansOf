@@ -1,8 +1,8 @@
 {
- "build": 562,
- "hash": "52e92ee",
- "fecha": "2026-10-27T00:10:56Z",
- "mensaje": "Reportes de prueba en core para todos los juegos, con conversación y borrado a los 3 días",
+ "build": 563,
+ "hash": "c335ba1",
+ "fecha": "2026-10-27T00:25:22Z",
+ "mensaje": "Taxi: carreteras como cintas continuas (dominio por capas) y tráfico sin culebreo en las eses",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

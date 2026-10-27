@@ -62,6 +62,7 @@ const TAXI = {
     trozo: 256,               // lado de un trozo del mundo (se cargan los cercanos)
     radioCarga: 330,          // metros a los que se cargan los trozos con detalle
     resSuelo: 48,             // divisiones del suelo de un trozo (alturas)
+    resSueloTrinchera: 96,    // lo mismo en los trozos con bocas de túnel (celda de 2,7 m: el hueco no pasa de la franja de 4 m)
     resLejos: 16,             // metros entre vértices del suelo lejano (todo el mundo, sin detalle)
     texturaPxPorMetro: 3,     // nitidez del suelo pintado de un trozo
   },

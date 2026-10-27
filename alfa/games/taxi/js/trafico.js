@@ -31,11 +31,28 @@ const CONDUCTOR = (() => {
     else c.desde = c.hasta = n.id;
     const m = CIUDAD.nodos[c.hasta]; c.objetivo = { x: m.x, z: m.z }; c.prox = elige(c, c.desde, c.hasta, () => 0); c.atasco = 0;
   }
+  // hacia dónde mira el conductor: su objetivo, y si lo que sigue es una curva suave de tramos cortos (las eses de los túneles), al
+  // acercarse mira cada vez más al siguiente. Sin esto el objetivo salta de lado a lado cada pocos metros y el coche culebrea.
+  // En las curvas cerradas (horquillas, esquinas) no: ahí atajar lo llevaría contra el muro de dentro.
+  const MIRA_ANTES = 9, GIRO_SUAVE = 0.6;
+  function apunta(c, d) {
+    if (d >= MIRA_ANTES || c.prox === undefined || c.prox === null || c.prox === c.desde) return c.objetivo;
+    const a = CIUDAD.nodos[c.desde], h = CIUDAD.nodos[c.hasta], p = CIUDAD.nodos[c.prox];
+    if (Math.hypot(p.x - h.x, p.z - h.z) > MIRA_ANTES * 2 || Math.abs(giro(a, h, p)) > GIRO_SUAVE) return c.objetivo;
+    const luego = punto(c.hasta, c.prox, c.lado), t = 1 - d / MIRA_ANTES;
+    return { x: lerp(c.objetivo.x, luego.x, t), z: lerp(c.objetivo.z, luego.z, t) };
+  }
+  // cuánto tuerce el camino a → h → p (radianes, de -π a π)
+  function giro(a, h, p) {
+    let g = Math.atan2(p.x - h.x, p.z - h.z) - Math.atan2(h.x - a.x, h.z - a.z);
+    while (g > Math.PI) g -= 2 * Math.PI; while (g < -Math.PI) g += 2 * Math.PI;
+    return g;
+  }
   // un paso: apunta al objetivo, frena en las curvas y ante obstáculos; `obstaculos` son coches a esquivar (frena si están delante)
   function paso(c, dt, mundo, obstaculos, azar, limites) {
     const k = c.coche;
     if (c.parado > 0) { c.parado -= dt; COCHE.paso(k, { giro: 0, gas: 0, freno: 1 }, dt, mundo, limites); return; }
-    const dx = c.objetivo.x - k.x, dz = c.objetivo.z - k.z, d = Math.hypot(dx, dz);
+    const d = Math.hypot(c.objetivo.x - k.x, c.objetivo.z - k.z), mira = apunta(c, d), dx = mira.x - k.x, dz = mira.z - k.z;
     // encajado contra un muro (quieto y tocándolo): marcha atrás un momento girando al otro lado, y a por el cruce más cercano
     if (c.retro > 0) { c.retro -= dt; COCHE.paso(k, { giro: -c.retroGiro, gas: 0, freno: 1 }, dt, mundo, limites); if (c.retro <= 0) resincroniza(c, k); return; }
     if (Math.abs(k.v) < 1.5 && k.golpe > 0) { c.pared = (c.pared || 0) + dt; if (c.pared > 1) { c.pared = 0; c.retro = 1.3; c.retroGiro = Math.sign(Math.sin(Math.atan2(dx, dz) - k.ang) || 1); } } else c.pared = 0;

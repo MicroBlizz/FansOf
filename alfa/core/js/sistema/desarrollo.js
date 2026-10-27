@@ -1,6 +1,7 @@
 // Fans Of · DESARROLLO: un botón «DEV» con utilidades para quien trabaja en el juego. Solo existe en modo desarrollo (NUCLEO.desarrollo:
 // localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga). En la web publicada nunca se carga. Es común: los dos juegos lo tienen igual.
 // Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja) } y pinta lo suyo dentro de `caja`.
+// Las de un solo juego van en ese juego: que defina UTILIDADES_JUEGO (una lista igual) y salen aquí, detrás de «Este juego».
 'use strict';
 (() => {
   let pintaFlags = () => {};
@@ -75,6 +76,7 @@
       c.append(el('div', { className: 'fila' }, boton('Apagarlo en este navegador', () => { try { localStorage.setItem('fansof-dev', '0'); } catch (e) { /* sin guardar */ } location.reload(); })));
     } },
   ];
+  if (typeof UTILIDADES_JUEGO !== 'undefined') UTILIDADES.splice(1, 0, ...UTILIDADES_JUEGO);   // las propias del juego (ver arriba)
 
   const estilo = el('style', { textContent: `
     #dev-boton { position: fixed; left: 6px; bottom: 6px; z-index: 99998; font: 800 11px/1 system-ui, sans-serif; letter-spacing: 1px; padding: 6px 8px; border-radius: 8px; border: 2px solid #20102c; background: #ffcb3d; color: #20102c; opacity: 0.55; cursor: pointer; }

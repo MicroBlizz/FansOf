@@ -148,12 +148,14 @@ IDIOMA.add({
   "ÚNETE AL DISCORD": "JOIN THE DISCORD",
   "BETA EN ANDROID": "ANDROID BETA",
   "ALFA": "ALPHA",
-  "Copia de pruebas con lo último de main.": "Test copy with the latest build."
+  "Copia de pruebas con lo último de main.": "Test copy with the latest build.",
   "El nuevo (prototipo). Artillería por turnos con viento: apunta en grados y potencia, tira alto para que duela más y cava bajo tu rival. Se juega pasándose el aparato, en dobles o contra la IA.": "The new one (prototype). Turn-based artillery with wind: set angle and power, shoot high to hurt more and dig under your rival. Play by passing the device around, in doubles or against the AI.",
   "Artillería": "Artillery",
   "El nuevo (prototipo). La cafetería de Microblizz: corta, cocina, sirve y asciende de becario a CEO sin quemar la cocina. En solitario o a dobles en el mismo teclado, sin ratón.": "The new one (prototype). Microblizz's cafeteria: chop, cook, serve and climb from intern to CEO without burning the kitchen down. Solo or as a duo on the same keyboard, no mouse.",
+  "El nuevo (prototipo). El último taxi con conductor de Bahía Microblizz: lleva pasajeros contra el reloj, corre carreras por la calle y dale esquinazo a la policía. En 3D, con ciudad, montaña, río y túneles.": "The new one (prototype). The last taxi with a human driver in Microblizz Bay: take passengers against the clock, race in the streets and give the police the slip. In 3D, with a city, a mountain, a river and tunnels.",
   "Cocina": "Cooking",
   "Cooperativo": "Co-op",
+  "Persecuciones": "Chases",
   "Teclado compartido": "Shared keyboard",
   "Hot seat": "Hot seat",
 });

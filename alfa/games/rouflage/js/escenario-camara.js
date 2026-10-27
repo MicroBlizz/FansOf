@@ -19,7 +19,7 @@ function escAjusta() {
 }
 // el zoom de partida (se ven unas 520 unidades a lo ancho en el móvil) y los topes: de ver casi todo el mapa a ver muy de cerca
 function escZoomBase() { const a = MIESC.area, w = a.x1 - a.x0, h = a.y1 - a.y0; return limita(Math.min(w / 520, h / 440), 0.6, 1.25); }
-function escZoomTopes() { const a = MIESC.area, M = escMundoAct(); return [Math.max(0.18, Math.min((a.x1 - a.x0) / M.W, (a.y1 - a.y0) / M.H) * 0.92), 3]; }
+function escZoomTopes() { const a = MIESC.area, M = escMundoAct(); return [Math.max(0.18, Math.min((a.x1 - a.x0) / M.W, (a.y1 - a.y0) / M.H) * 0.92), MIESC.modo === 'pintar' ? 7 : 3]; }      // al pintar, mucho más cerca (el píxel a píxel)
 function escVista() {
   const a = MIESC.area, c = MIESC.cam, v = MIESC.vista, k = c.z || escZoomBase(), d = v.dpr || 1;
   v.k = k; v.ox = Math.round(((a.x0 + a.x1) / 2 - c.x * k) * d) / d; v.oy = Math.round(((a.y0 + a.y1) / 2 - c.y * k) * d) / d;

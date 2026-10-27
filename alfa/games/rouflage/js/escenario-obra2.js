@@ -47,13 +47,13 @@ function obraElige() {
   const guardado = (SAVE.escenario || {}).lz || ESC_LZ['lienzo~mio'];
   if (guardado) { delete _escIconos[lzMio()]; delete _escMundos[lzMio()]; }      // su dibujo, al día
   if (guardado) carta(tr('Seguir con el mío'), (c, w) => escenarioIcono(c, w, lzMio()), 'r-epica obra-mio', () => { play('select'); lzEmpieza(ESC_LZ[lzMio()]); });
-  carta(tr('En blanco'), (c, w) => obraTarjetaSuelo(c, w, LIENZO.DEF[0]), 'r-comun', () => { play('select'); lzEmpieza(lzNuevo()); });
+  carta(tr('En blanco'), (c, w) => obraTarjetaSuelo(c, w, LIENZO.DEF[0]), 'r-comun', () => { play('select'); obraEmpiezaSeguro(lzNuevo()); });      // con «¿seguro?» (escenario-huecos.js)
   for (const it of arCat('escenarios').items) {
     if (it.id === 'lienzo' || !ESCENARIOS[it.id]) continue;
     const tuyo = arTiene('escenarios', it);
     carta(tr(it.n), (c, w) => it.x(c, w), 'r-' + it.r, () => {
       if (!tuyo) { play('tick'); escAviso(tr('Aún no es tuyo') + ' · ' + tr(it.n) + ': ' + arTextoDe(it)); return; }
-      play('select'); lzEmpieza(lzDePlantilla(it.id));
+      play('select'); obraEmpiezaSeguro(lzDePlantilla(it.id));
     }, !tuyo);
   }
   v.hidden = false;

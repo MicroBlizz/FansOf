@@ -65,11 +65,11 @@ function abreEscenario(conMueble) {
     MIESC.yo = { x, y, dir: 1, anda: 0, paso: 0, mundo: M.id };
     Object.assign(MIESC.cam, { x, y: y - 30, sigue: true, z: 0 });
   }
-  pantalla('p-escenario'); escAjusta(); escModo(MIESC.modo, true); musica('rfTitulo');
+  pantalla('p-escenario'); escHuecoBoton(); escAjusta(); escModo(MIESC.modo, true); musica('rfTitulo');      // (MIS ESCENARIOS: escenario-huecos.js)
   if (conMueble) { const it = arItem('muebles', conMueble); if (it && arTiene('muebles', it)) { MIESC.tab = MUEBLES_SALA[it.id].g; escModo('decorar', true); escPonDondeMiras(it); } }
   cancelAnimationFrame(MIESC.raf); MIESC.ult = performance.now(); MIESC.raf = requestAnimationFrame(escBucle);
 }
-function cierraEscenario() { if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
+function cierraEscenario() { if (SEL_ESC.s) escSelSuelta(); if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
   MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; play('select'); irTitulo(); }
 const escenarioAbierto = () => MIESC.abierto;
 function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escGuarda(); if (typeof escPublica === 'function') escPublica(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(null, 'escenario'); }
@@ -118,7 +118,7 @@ function escDibuja() {
     escPintaHuella(c, m, escCabeEn(sala, m));
     c.globalAlpha = 0.7; c.drawImage(sp.cv, m.x - sp.ox, m.y - sp.oy, sp.w, sp.h); c.globalAlpha = 1;
   }
-  if (MIESC.modo === 'pintar' && pt && typeof escPintaCursor === 'function') escPintaCursor(c, pt);
+  if (MIESC.modo === 'pintar' && typeof escPintaCursor === 'function') escPintaCursor(c, pt);      // (sin dedo encima también: la rejilla, el espejo y lo seleccionado)
   if (typeof obraPintaEncima === 'function' && (MIESC.modo === 'obra' || OBRA.malas)) obraPintaEncima(c, pt);      // CONSTRUIR (escenario-obra.js)
   const fin = MIESC.camino && MIESC.camino[MIESC.camino.length - 1];
   if (fin) { c.strokeStyle = 'rgba(255,246,234,0.85)'; c.lineWidth = 2.5; c.beginPath(); c.ellipse(fin[0], fin[1], 11 + Math.sin(MIESC.t * 6), 5, 0, 0, TAU); c.stroke(); }

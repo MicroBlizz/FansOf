@@ -115,6 +115,7 @@ function escPintaPintura(c, M, R, p, ks) {
   c.clip();
   c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; if ('filter' in c) c.filter = 'blur(' + (0.45 * r * ks).toFixed(2) + 'px)';
   c.globalAlpha = 0.28; c.drawImage(sombra, i0, j0, sw, sh, dx + 1.2, dy + 2, dw, dh);
+  c.filter = 'none'; c.imageSmoothingEnabled = false;      // la pintura, nítida: cada celda es un cuadradito (el píxel a píxel de escenario-pincel2.js); la sombra sí va suave
   c.globalAlpha = 0.94; c.drawImage(img, i0, j0, sw, sh, dx, dy, dw, dh);
   c.globalAlpha = 0.1; c.globalCompositeOperation = 'lighter'; c.drawImage(img, i0, j0, sw, sh, dx - 0.8, dy - 1, dw, dh);
   c.restore();
@@ -160,6 +161,7 @@ function escPintaFondo(c, sala, M, v) {
   const x0 = Math.max(0, -v.ox / v.s), y0 = Math.max(0, -v.oy / v.s), x1 = Math.min(M.W, (v.w - v.ox) / v.s), y1 = Math.min(M.H, (v.h - v.oy) / v.s);
   const i0 = Math.floor(x0 / T), i1 = Math.ceil(x1 / T), j0 = Math.floor(y0 / T), j1 = Math.ceil(y1 / T), t0 = performance.now();
   let faltan = 0, hechas = 0; f.uso++;
+  const suave = c.imageSmoothingEnabled; if (v.s > ks * 1.15) c.imageSmoothingEnabled = false;      // muy de cerca (al pintar píxel a píxel): las baldosas se agrandan sin emborronar
   const orden = [];
   for (let j = j0; j < j1; j++) for (let i = i0; i < i1; i++) orden.push([i, j, Math.hypot((i + 0.5) * T - (x0 + x1) / 2, (j + 0.5) * T - (y0 + y1) / 2)]);
   orden.sort((a, b) => a[2] - b[2]);      // primero las del centro
@@ -173,6 +175,7 @@ function escPintaFondo(c, sala, M, v) {
     if (t && t.cv) { t.uso = f.uso; const sw = (Math.min(M.W, (i + 1) * T) - i * T) * ks, sh = (Math.min(M.H, (j + 1) * T) - j * T) * ks; c.drawImage(t.cv, 0, 0, sw, sh, dx0, dy0, dx1 - dx0, dy1 - dy0); }
     else { const vg = escVistaGeneral(sala, M), k = 0.25; c.drawImage(vg, i * T * k, j * T * k, (Math.min(M.W, (i + 1) * T) - i * T) * k, (Math.min(M.H, (j + 1) * T) - j * T) * k, dx0, dy0, dx1 - dx0, dy1 - dy0); }
   }
+  c.imageSmoothingEnabled = suave;
   if (f.px > ESC_MUNDO.MAX_PX) {      // demasiadas en memoria: fuera las que hace más que no se ven
     const lista = [...f.tiles.entries()].sort((a, b) => (a[1].uso || 0) - (b[1].uso || 0));
     for (const [k, t] of lista) { if (f.px <= ESC_MUNDO.MAX_PX * 0.7 || t.uso === f.uso) break; f.px -= (t.cv ? t.cv.width * t.cv.height : 0) + (t.crudo ? t.crudo.width * t.crudo.height : 0); f.tiles.delete(k); }

@@ -7,10 +7,11 @@
 const ESC_PESTANAS = [['muebles', 'Muebles', 'mueble'], ['plantas', 'Plantas', 'planta'], ['deco', 'Decoración', 'deco'], ['escenarios', 'Escenario', 'sala'], ['obra', 'Construir', 'ladrillo'], ['pegar', 'Pegatinas', 'deco'], ['pintar', 'Pintar', 'pincel']];      // PEGATINAS: escenario-pegatinas.js      // CONSTRUIR: solo con el lienzo (escenario-obra.js)
 // lo de una pestaña: [{ cat, it }]
 function escCosasDe(tab) {
-  if (tab === 'escenarios') return arCat('escenarios').items.filter(it => !it.lz).map(it => ({ cat: 'escenarios', it }));      // (los tamaños del lienzo no son escenarios: escenario-obra2.js)
+  if (tab === 'escenarios') return arCat('escenarios').items.filter(it => !it.lz && !it.hueco).map(it => ({ cat: 'escenarios', it }));      // (los tamaños del lienzo y los huecos no son escenarios: escenario-obra2.js, escenario-huecos.js)
   return arCat('muebles').items.filter(it => MUEBLES_SALA[it.id] && MUEBLES_SALA[it.id].g === tab).map(it => ({ cat: 'muebles', it }));
 }
 function escModo(m, sinSonido) {
+  if (m !== 'pintar' && typeof SEL_ESC !== 'undefined' && SEL_ESC.s) escSelSuelta();      // lo seleccionado que flotaba se queda donde está (escenario-pincel3.js)
   MIESC.modo = m; MIESC.poner = null; MIESC.drag = null; if (m !== 'pasear') { MIESC.camino = null; MIESC.alArmario = false; } else { MIESC.cam.sigue = true; escSacaYo(); } if (m !== 'decorar') MIESC.sel = null;
   const panel = ['pintar', 'obra', 'pegar'];      // las pestañas que son un modo con su propio panel
   if (panel.includes(m)) MIESC.tab = m; else if (panel.includes(MIESC.tab)) MIESC.tab = 'muebles';

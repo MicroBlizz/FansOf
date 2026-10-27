@@ -4,7 +4,7 @@
 'use strict';
 (() => {
   const DT = TAXI.paso;
-  let jugador, mundo, acumulado = 0, ultimo = 0, temblor = 0, lolaT = 0, salidaCerca = null, parado = 0, zonaT = 0, zonaVista = null;
+  let jugador, fisico = null, mundo, acumulado = 0, ultimo = 0, temblor = 0, lolaT = 0, salidaCerca = null, parado = 0, zonaT = 0, zonaVista = null;
   const nombreZona = z => z && z.startsWith('Mirador de ') ? tr('Mirador de') + ' ' + tr(z.slice(11)) : tr(z);
   const LOLA = {
     bienvenida: ['Hola, soy Lola, desde la emisora. Microblizz quiere cambiar los taxis por robots. Tú eres el último con conductor.', 'Párate en una parada de taxi para empezar el turno. Los corredores aparcados son una carrera; la patrulla, una huida.'],
@@ -20,6 +20,8 @@
     mundo = { altura: CIUDAD.altura, suelo: CIUDAD.suelo, cerca: CIUDAD.cerca, nodoCercano: CIUDAD.nodoCercano, nodos: CIUDAD.nodos, rampas: CIUDAD.rampas, ancho: CIUDAD.ancho, largo: CIUDAD.largo, semilla: TAXI.mundo.semilla };
     const sale = CIUDAD.salida();
     jugador = COCHE.nuevo(sale.x, sale.z, sale.ang, { masa: 1.1 }); jugador.y = CIUDAD.altura(jugador.x, jugador.z); zonaVista = CIUDAD.zona(sale.x, sale.z);
+    // la física de verdad (Rapier) si se ha cargado (ver index.html); si no, el coche arcade de siempre
+    if (FISICA_RAPIER.disponible()) fisico = COCHE_RAPIER.crear(FISICA_RAPIER.crear(), jugador);
     EVENTOS.crear(mundo.semilla); EVENTOS.dinero = SAVE.dinero;
     TRAFICO.crear(mundo, jugador); POLICIA.crear(mundo, jugador); PASAJEROS.crear(mundo.semilla);
     ESCENA.iniciar(document.getElementById('lienzo'));
@@ -36,6 +38,7 @@
   function coloca(e) {
     Object.assign(jugador, { x: e.x, z: e.z, ang: e.ang, v: 0, vl: 0, vy: 0, aire: false });
     jugador.y = CIUDAD.altura(e.x, e.z);
+    if (fisico) COCHE_RAPIER.recoloca(fisico, jugador);   // de pie aunque estuviera volcado
     ultimaEstacion = e;
     HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'grande tiempo');
   }
@@ -55,7 +58,7 @@
     if (salidaCerca && COCHE.rapidez(jugador) < 2) { parado += DT; if (e.accion || parado > 1) { const a = EVENTOS.arrancar(salidaCerca, jugador); if (a) { HUD.aviso(tr(a.nombre), 'grande'); play('select'); if (a.tipo === 'turno') frase(LOLA.turno); if (a.tipo === 'huida') frase(LOLA.poli); } parado = 0; } } else parado = 0;
     HUD.accion(salidaCerca && !EVENTOS.activo ? tr('EMPEZAR') + ': ' + tr(salidaCerca.nombre) : '');
     // el coche
-    for (const s of COCHE.paso(jugador, e, DT, mundo)) {
+    for (const s of fisico ? COCHE_RAPIER.paso(fisico, jugador, e, DT, mundo) : COCHE.paso(jugador, e, DT, mundo)) {
       if (s === 'choque') { EVENTOS.corta(); temblor = 0.6; play('slam'); HUD.aviso(tr('CHOQUE'), 'mal'); }
       else if (s === 'salta') { play('jump'); }
       else if (s === 'aterriza') { if (jugador.golpe === 0 && jugador.vueloT > 0.35) { HUD.aviso(tr('SPEEDRUN') + ' +' + Math.round(TAXI.propinas.salto * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('salto'); } jugador.vueloT = 0; }
@@ -104,7 +107,7 @@
   }
   // para los reportes de prueba (core/js/sistema/reporte-prueba.js): dónde está el jugador y cómo va, y una traza por segundo
   let trazaT = 0, fpsReporte = 0;
-  const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro }; };
+  const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, fisica: fisico ? 'rapier' : 'arcade' }; };
   function cuadro(t) {
     requestAnimationFrame(cuadro);
     const dt = Math.min(0.1, (t - ultimo) / 1000 || 0); ultimo = t; acumulado += dt;

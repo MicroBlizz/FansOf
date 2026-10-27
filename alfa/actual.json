@@ -1,8 +1,8 @@
 {
- "build": 567,
- "hash": "eb38503",
- "fecha": "2026-10-27T00:56:22Z",
- "mensaje": "Taxi: circuito de pruebas (?mapa=pruebas) con 7 estaciones, botonera y reaparición",
+ "build": 568,
+ "hash": "0dc3a19",
+ "fecha": "2026-10-27T01:36:29Z",
+ "mensaje": "Taxi: física de verdad del coche con Rapier (circuito de pruebas) y arreglos que ha destapado",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

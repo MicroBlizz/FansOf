@@ -177,54 +177,10 @@ const CIUDAD = (() => {
       paredes.push({ ...tramo(ax + ox, az + oz, bx + ox, bz + oz, 0.6, y - 2, y1, { pared: true }), arista: e });
     }
   }
-  // --- quitamiedos: a los dos lados de las carreteras de fuera (tras el margen de tierra) y por fuera de la circunvalación. Así el
-  // mapa queda cerrado: de la carretera solo se sale al margen. Cada carretera es una cadena de nodos: el quitamiedos es su polilínea
-  // desplazada (en las curvas se desplaza por la bisectriz, así nunca cruza la calzada), recortada donde sale otra carretera o hay puente
-  const quitamiedos = [];
-  const anchoDe = (a, b) => aristaDe.get(a.id + ',' + b.id);
-  function vallaCadena(cadena, lados, cerrada) {
-    const n = cadena.length; if (n < 2) return;
-    const e0 = anchoDe(cadena[0], cadena[1]); if (!e0) return;
-    const sep = e0.ancho / 2 + e0.margen + (e0.tipo === 'anillo' ? 4 : 1);   // en la circunvalación queda un arcén de 4 m
-    for (const lado of lados) {
-      const puntos = [];
-      for (let k = 0; k < n; k++) {
-        const p = cadena[k], a = cerrada ? cadena[(k - 1 + n) % n] : cadena[Math.max(0, k - 1)], b = cerrada ? cadena[(k + 1) % n] : cadena[Math.min(n - 1, k + 1)];
-        let dx = b.x - a.x, dz = b.z - a.z; const L = Math.hypot(dx, dz) || 1; dx /= L; dz /= L;   // la tangente en p (bisectriz)
-        const d1x = p.x - a.x, d1z = p.z - a.z, d2x = b.x - p.x, d2z = b.z - p.z, l1 = Math.hypot(d1x, d1z) || 1, l2 = Math.hypot(d2x, d2z) || 1;
-        const cosMed = Math.max(0.5, Math.abs((d1x * d2x + d1z * d2z) / (l1 * l2) + 1) / 2);   // cuanto más cerrada la curva, más lejos queda la esquina del desplazamiento
-        puntos.push({ x: p.x - dz * lado * sep / Math.sqrt(cosMed), z: p.z + dx * lado * sep / Math.sqrt(cosMed), nodo: p });
-      }
-      const m = cerrada ? n : n - 1;
-      for (let k = 0; k < m; k++) {
-        const A = puntos[k], B = puntos[(k + 1) % n], e = anchoDe(A.nodo, B.nodo); if (!e) continue;
-        if (rio.length && CARRETERAS.cauce(rio, (A.x + B.x) / 2, (A.z + B.z) / 2).d < 40) continue;   // en el puente ya hay pretil
-        // recortar alrededor de los cruces de este lado: donde sale otra carretera por aquí no hay valla
-        let tramos = [[0, 1]];
-        for (const P of [A.nodo, B.nodo]) for (const v of P.vecinos) {
-          const o = nodos[v], oe = aristaDe.get(P.id + ',' + v); if (!oe || o === A.nodo || o === B.nodo || cadena.includes(o)) continue;
-          const sx = -(B.z - A.z), sz = B.x - A.x; if ((o.x - P.x) * sx + (o.z - P.z) * sz < 0) continue;   // sale por el otro lado
-          const r = sep + oe.ancho / 2 + oe.margen + 3, dx = B.x - A.x, dz = B.z - A.z, L2 = dx * dx + dz * dz || 1;   // la valla va a `sep` de su eje: el hueco cuenta desde ahí
-          const t0 = ((P.x - A.x) * dx + (P.z - A.z) * dz) / L2, h = Math.hypot(P.x - A.x - dx * t0, P.z - A.z - dz * t0);
-          if (h >= r) continue; const w = Math.sqrt(r * r - h * h) / Math.sqrt(L2), ta = t0 - w, tb = t0 + w;
-          tramos = tramos.flatMap(([u0, u1]) => u1 <= ta || u0 >= tb ? [[u0, u1]] : [[u0, Math.min(u1, ta)], [Math.max(u0, tb), u1]].filter(([q0, q1]) => q1 - q0 > 0.02));
-        }
-        for (const [u0, u1] of tramos) {
-          const q = { ax: lerp(A.x, B.x, u0), az: lerp(A.z, B.z, u0), bx: lerp(A.x, B.x, u1), bz: lerp(A.z, B.z, u1), ya: lerp(A.nodo.y, B.nodo.y, u0), yb: lerp(A.nodo.y, B.nodo.y, u1), arista: e };
-          tramo(q.ax, q.az, q.bx, q.bz, 0.3, Math.min(A.nodo.y, B.nodo.y) - 3, Math.max(A.nodo.y, B.nodo.y) + 3, { quitamiedos: true }); quitamiedos.push(q);
-        }
-      }
-    }
-  }
-  for (const en of enlaces) vallaCadena(en, [-1, 1], false);
-  for (const su of monte.subidas) vallaCadena(su, [-1, 1], false);
-  if (monte.vuelta.length) vallaCadena(monte.vuelta, [-1, 1], true);
-  for (const c of ciudades) {   // la circunvalación en orden, y solo el lado de fuera
-    const inicio = c.anillo[0], orden = [inicio]; let prev = null, cur = inicio;
-    for (let k = 0; k < c.anillo.length; k++) { const sig = cur.vecinos.map(v => nodos[v]).find(o => o !== prev && o.tipo === 'anillo' && o.ciudad === c.indice && o !== inicio); if (!sig) break; orden.push(sig); prev = cur; cur = sig; }
-    const m = orden[1], lado = Math.sign(-(m.z - inicio.z) * (inicio.x - c.cx) + (m.x - inicio.x) * (inicio.z - c.cz)) || 1;
-    vallaCadena(orden, [lado], true);
-  }
+  // --- quitamiedos (vallas.js): cada uno es también un obstáculo, que solo cuenta a su altura
+  const pisaCalzada = (x, z, y) => (iAristas[celda(x, z)] || []).some(e => { if (e.tipo === 'tunel' || e.tipo === 'rampa') return false; const s = sobreArista(e, x, z); return s.d < e.ancho / 2 + 0.8 && Math.abs(s.y - y) < 4; });
+  const quitamiedos = VALLAS.crear({ nodos, aristaDe, rio, enlaces, monte, ciudades }, pisaCalzada);
+  for (const q of quitamiedos) tramo(q.ax, q.az, q.bx, q.bz, 0.3, q.y0, q.y1, { quitamiedos: true });
   // --- los puentes: donde una carretera de superficie cruza el río
   const puentes = [];
   for (const e of aristas) {

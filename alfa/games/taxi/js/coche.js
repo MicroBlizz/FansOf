@@ -149,5 +149,5 @@ const COCHE = (() => {
   function velocidad(c) { const f = adelante(c), d = derecha(c); return { x: f.x * c.v + d.x * c.vl, z: f.z * c.v + d.z * c.vl }; }
   function ponVelocidad(c, vx, vz) { const f = adelante(c), d = derecha(c); c.v = vx * f.x + vz * f.z; c.vl = vx * d.x + vz * d.z; }
   const rapidez = c => Math.hypot(c.v, c.vl);
-  return { nuevo, paso, chocan, rescata, adelante, derecha, velocidad, ponVelocidad, rapidez };
+  return { nuevo, paso, chocan, rescata, enRampa, adelante, derecha, velocidad, ponVelocidad, rapidez };
 })();

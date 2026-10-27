@@ -38,6 +38,37 @@ const TAXI = {
     nitroGasto: 0.2,          // nitro que se gasta por segundo (lleno dura 5 s; Arkioner pidió el doble, 27-10-2026)
     nitroVelocidad: { desde: 0.75, carga: 0.04 },   // a más del 75 % de la velocidad máxima se recarga solo, despacio (por segundo)
   },
+  // la física de verdad del coche (Rapier: carrocería con cuatro ruedas y suspensión). Las cifras de arriba (aceleración, velocidad
+  // máxima, nitro, suelos) siguen mandando; estas son las del chasis y las ruedas
+  fisica: {
+    masa: 1200,               // kg
+    caja: [0.9, 0.45, 2.0],   // medio ancho, medio alto y medio largo de la carrocería
+    cajaAlto: 0.25,           // la carrocería va un poco por encima del centro de masas (así vuelca menos)
+    ruedas: [0.82, 1.3],      // a qué distancia del centro van las ruedas: a lo ancho y a lo largo
+    ruedaY: -0.2,             // altura del anclaje de las ruedas respecto al centro
+    radioRueda: 0.36,
+    suspension: 0.32,         // largo de la suspensión en reposo
+    recorrido: 0.25,          // lo que puede comprimirse
+    dureza: 34,               // dureza del muelle (sube = más seca)
+    amortigua: [2.8, 3.6],    // amortiguación al comprimir y al estirarse
+    agarre: 2.6,              // agarre de las ruedas (cuánto aguantan de lado antes de deslizar)
+    agarreDerrape: 1.1,       // el agarre de las traseras con el derrape
+    agarreLado: 1.0,          // rigidez del agarre lateral
+    giroMax: 0.55,            // radianes de giro de las ruedas parado
+    giroCae: 16,              // a esta velocidad el giro ya es la mitad
+    frenoFuerza: 70,          // fuerza de freno por rueda (unidades de Rapier)
+    frenoDerrape: 0,          // derrapando, las ruedas frenan solo esto (el freno sirve para cruzar el coche)
+    derrapeConserva: 0.9,     // derrapando, parte de la velocidad perdida en cada paso que se devuelve
+    apoyo: 0.6,               // carga aerodinámica: empuja hacia el suelo según la velocidad (kg por (m/s)²)
+    giroTope: 2.2,            // radianes por segundo que puede girar el coche sobre sí mismo (sin esto, los trompos)
+    giroDerrape: 1.9,         // derrapando, a cuánto gira el coche sobre sí mismo con el volante a tope
+    derrapeMando: 10,         // lo rápido que el volante manda en el derrape
+    estabiliza: 6,            // cuánto se frena el balanceo (vuelco) con las ruedas en el suelo
+    nivela: 3,                // en el aire, cuánto se endereza solo
+    volcado: 2,               // segundos volcado y parado antes de ponerse de pie solo
+    golpe: 4,                 // m/s que se pierden de golpe en un paso para contar como choque
+    radioCarga: 200,          // metros a los que se cargan los trozos sólidos
+  },
   mundo: {
     ancho: 3100, largo: 2500, // metros del mundo entero (fuera, mar)
     nivelMar: -4,

@@ -105,6 +105,7 @@ const ESCENA = (() => {
   function tamaño() { const w = innerWidth, h = innerHeight; render.setSize(w, h, false); camara.aspect = w / h; camara.updateProjectionMatrix(); }
   // coloca una malla de coche en su estado
   function pon(m, c, dt) {
+    if (c.rot) { m.position.set(c.x, c.y, c.z); m.quaternion.set(c.rot.x, c.rot.y, c.rot.z, c.rot.w); return; }   // coche con física de verdad: su giro, tal cual
     m.position.set(c.x, c.y, c.z); m.rotation.y = c.ang + (c.derrapando ? clamp(c.vl * 0.04, -0.5, 0.5) : 0);
     m.rotation.z = lerp(m.rotation.z, -c.giro * 0.08 - c.vl * 0.012, Math.min(1, 10 * dt));
     m.rotation.x = lerp(m.rotation.x, c.aire ? clamp(-c.vy * 0.03, -0.4, 0.4) : -Math.atan(c.pendiente || 0), Math.min(1, 8 * dt));   // morro arriba en las cuestas

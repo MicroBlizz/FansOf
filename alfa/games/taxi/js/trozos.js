@@ -114,22 +114,11 @@ const TROZOS = (() => {
     const tex = new T.CanvasTexture(c); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4; tex.flipY = false; return tex;
   }
   function suelo(t) {
-    // donde hay bocas de túnel la rejilla es más fina, para que el hueco que se quita encaje con las paredes de la trinchera
-    const conTrinchera = t.aristas.some(e => e.tipo === 'rampa');
-    const R = conTrinchera ? M.resSueloTrinchera : M.resSuelo, geo = new T.PlaneGeometry(TR, TR, R, R); geo.rotateX(-Math.PI / 2);
+    // las alturas y el hueco de las trincheras salen de REJILLA (las mismas que pisa la física)
+    const r = REJILLA.deTrozo(t), geo = new T.PlaneGeometry(TR, TR, r.divisiones, r.divisiones); geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position, uv = geo.attributes.uv;
-    const hueco = new Uint8Array(pos.count);
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i) + TR / 2, z = pos.getZ(i) + TR / 2;
-      pos.setY(i, CIUDAD.alturaSuelo(t.x0 + x, t.z0 + z)); uv.setXY(i, x / TR, z / TR);
-      if (conTrinchera) hueco[i] = CIUDAD.enTrinchera(t.x0 + x, t.z0 + z);
-    }
-    // sobre la trinchera no hay terreno: el fondo es la calzada y los lados, sus muros (con su franja de suelo por fuera)
-    if (conTrinchera) {
-      const idx = geo.index.array, sigue = [];
-      for (let k = 0; k < idx.length; k += 3) if (!hueco[idx[k]] && !hueco[idx[k + 1]] && !hueco[idx[k + 2]]) sigue.push(idx[k], idx[k + 1], idx[k + 2]);
-      geo.setIndex(sigue);
-    }
+    for (let i = 0; i < pos.count; i++) { const x = pos.getX(i) + TR / 2, z = pos.getZ(i) + TR / 2; pos.setY(i, r.alto[i]); uv.setXY(i, x / TR, z / TR); }
+    if (r.conTrinchera) { const quedan = []; REJILLA.triangulos(t, (a, b, c) => quedan.push(a, b, c)); geo.setIndex(quedan); }
     geo.computeVertexNormals();
     const m = new T.Mesh(geo, new T.MeshLambertMaterial({ map: pinta(t) }));
     m.position.set(t.x0 + TR / 2, 0, t.z0 + TR / 2); return m;

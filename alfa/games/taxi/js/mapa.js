@@ -7,11 +7,11 @@ const MAPA = (() => {
   let fondo, lienzo, g, lado = 150, metros = 320;
   function montar(canvas) {
     lienzo = canvas; g = canvas.getContext('2d'); lado = canvas.width;
-    const M = TAXI.mundo; fondo = document.createElement('canvas'); fondo.width = Math.ceil(M.ancho / ESC); fondo.height = Math.ceil(M.largo / ESC);
+    const M = CIUDAD; fondo = document.createElement('canvas'); fondo.width = Math.ceil(M.ancho / ESC); fondo.height = Math.ceil(M.largo / ESC);
     const f = fondo.getContext('2d'); f.scale(1 / ESC, 1 / ESC);
     f.fillStyle = '#1d3a6e'; f.fillRect(0, 0, M.ancho, M.largo);
     // tierra: por celdas de 16 m
-    for (let x = 0; x < M.ancho; x += 16) for (let z = 0; z < M.largo; z += 16) { const t = TERRENO.tierra(x + 8, z + 8); if (t < 0.5) continue; const h = TERRENO.natural(x + 8, z + 8); f.fillStyle = h > M.nieve ? '#efe9f6' : h > M.roca ? '#c9bfd6' : '#e8e4da'; f.fillRect(x, z, 17, 17); }
+    for (let x = 0; x < M.ancho; x += 16) for (let z = 0; z < M.largo; z += 16) { const t = CIUDAD.tierra(x + 8, z + 8); if (t < 0.5) continue; const h = CIUDAD.natural(x + 8, z + 8); f.fillStyle = h > M.nieve ? '#efe9f6' : h > M.roca ? '#c9bfd6' : '#e8e4da'; f.fillRect(x, z, 17, 17); }
     for (const m of CIUDAD.celdas) { f.fillStyle = m.parque ? '#bfe3a6' : '#d9d3e3'; f.fillRect(m.x0, m.z0, m.x1 - m.x0, m.z1 - m.z0); }
     f.lineCap = 'round'; f.lineJoin = 'round'; f.strokeStyle = '#5aa0e0';
     for (let i = 0; i < CIUDAD.rio.length - 1; i++) { const a = CIUDAD.rio[i], b = CIUDAD.rio[i + 1]; f.lineWidth = (a.ancho + b.ancho) / 2; f.beginPath(); f.moveTo(a.x, a.z); f.lineTo(b.x, b.z); f.stroke(); }

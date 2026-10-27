@@ -51,3 +51,9 @@ body { background: var(--bg, #150b21); -webkit-user-select: none; user-select: n
   #mapa { top: auto; bottom: calc(var(--inf) + 100px); right: 12px; width: 100px; height: 100px; }
   #busqueda { margin-right: 0; }
 }
+/* circuito de pruebas: la botonera de estaciones (arriba a la izquierda, bajo el dinero) */
+#estaciones { position: absolute; left: 12px; top: 96px; display: grid; gap: 6px; justify-items: start; pointer-events: auto; }
+#capa .est-boton { background: var(--tray, #26143c); border: 3px solid var(--outline); border-radius: 10px; box-shadow: 0 3px 0 var(--outline); padding: 4px 10px; font-family: var(--font-display); font-size: 15px; color: var(--ink); }
+#capa .est-boton.fuerte { background: var(--gold, #ffcb3d); color: #20102c; }
+.est-panel { display: none; gap: 4px; max-height: 60vh; overflow: auto; }
+.est-panel.abierto { display: grid; }

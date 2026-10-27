@@ -1,8 +1,8 @@
 {
- "build": 566,
- "hash": "ed62444",
- "fecha": "2026-10-27T00:47:51Z",
- "mensaje": "Taxi: cruces como plano inclinado (perfil.js) y turbo que dura el doble y se recarga yendo rápido",
+ "build": 567,
+ "hash": "eb38503",
+ "fecha": "2026-10-27T00:56:22Z",
+ "mensaje": "Taxi: circuito de pruebas (?mapa=pruebas) con 7 estaciones, botonera y reaparición",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

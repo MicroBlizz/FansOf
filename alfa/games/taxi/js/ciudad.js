@@ -6,29 +6,23 @@
 'use strict';
 const CIUDAD = (() => {
   const M = TAXI.mundo, MO = M.montaña, azar = mulberry32(M.semilla);
+  const FUENTE = FUENTES.elegida(), TE = FUENTE.terreno, ANCHO = FUENTE.ancho, LARGO = FUENTE.largo;   // de dónde sale el mapa
   const suave = TERRENO.suave;
   // --- el grafo
   const nodos = [], aristas = [], compartidos = {};
   const g = {
-    nodo: (x, z, extra = {}) => { const n = { id: nodos.length, x, z, y: TERRENO.natural(x, z) + (extra.bajo || 0), vecinos: [], ...extra }; nodos.push(n); return n; },
+    nodo: (x, z, extra = {}) => { const n = { id: nodos.length, x, z, y: TE.natural(x, z) + (extra.bajo || 0), vecinos: [], ...extra }; nodos.push(n); return n; },
+    nodos, aristas,
     une: (a, b, ancho, tipo) => { a.vecinos.push(b.id); b.vecinos.push(a.id); aristas.push({ a: a.id, b: b.id, ancho, tipo, largo: Math.hypot(a.x - b.x, a.z - b.z) }); },
     compartido: (k, n) => { if (n) compartidos[k] = n; return compartidos[k]; },
   };
-  // --- las ciudades
-  const ciudades = TERRENO.ciudades.map((c, indice) => {
-    const r = MANZANAS.generar({ ...c, indice }, azar, g);
-    const anillo = nodos.filter(n => n.ciudad === indice && n.tipo === 'anillo');
-    return { ...c, indice, ...r, anillo, nodo: (i, j) => r.nodos[i] && r.nodos[i][j] };
-  });
+  // --- las ciudades y lo de fuera (o lo que traiga la fuente)
+  const { ciudades, rio, enlaces, monte } = FUENTE.construir(g, azar);
   const celdas = ciudades.flatMap(c => c.celdas);
-  // --- lo de fuera
-  const rio = CARRETERAS.rio();
-  const enlaces = CARRETERAS.enlaces(ciudades, g);
-  const monte = CARRETERAS.montaña(ciudades, g);
   const miradores = monte.miradores;
 
   // --- índices por celdas de 64 m: nodos, aristas (con su banda de influencia) y obstáculos
-  const CEL = 64, NCX = Math.ceil(M.ancho / CEL) + 1, NCZ = Math.ceil(M.largo / CEL) + 1;
+  const CEL = 64, NCX = Math.ceil(ANCHO / CEL) + 1, NCZ = Math.ceil(LARGO / CEL) + 1;
   const celda = (x, z) => clamp(Math.floor(x / CEL), 0, NCX - 1) * NCZ + clamp(Math.floor(z / CEL), 0, NCZ - 1);
   const iNodos = new Array(NCX * NCZ), iAristas = new Array(NCX * NCZ), iObst = new Array(NCX * NCZ);
   const mete = (indice, x0, z0, x1, z1, cosa) => { for (let i = clamp(Math.floor(x0 / CEL), 0, NCX - 1); i <= clamp(Math.floor(x1 / CEL), 0, NCX - 1); i++) for (let j = clamp(Math.floor(z0 / CEL), 0, NCZ - 1); j <= clamp(Math.floor(z1 / CEL), 0, NCZ - 1); j++) (indice[i * NCZ + j] || (indice[i * NCZ + j] = [])).push(cosa); };
@@ -75,8 +69,8 @@ const CIUDAD = (() => {
   }
   // altura del terreno natural con el mar y el río (sin carreteras)
   function natural(x, z) {
-    let h = TERRENO.natural(x, z);
-    const t = TERRENO.tierra(x, z); if (t < 1) h = lerp(M.nivelMar - 2 - (1 - t) * 6, h, t);
+    let h = TE.natural(x, z);
+    const t = TE.tierra(x, z); if (t < 1) h = lerp(M.nivelMar - 2 - (1 - t) * 6, h, t);
     const r = CARRETERAS.cauce(rio, x, z);
     if (r.d < r.ancho / 2 + 22) { const w = 1 - suave(r.ancho / 2 - 4, r.ancho / 2 + 22, r.d); h = lerp(h, Math.min(h, r.y), w); }
     return h;
@@ -126,17 +120,17 @@ const CIUDAD = (() => {
     let c = carreteraEn(x, z, yRef, yRef === undefined);   // sin coche (pintar el suelo), lo de encima de los túneles
     if (c && yRef === undefined && bajoPortal(c)) c = null;
     if (c && c.d <= c.e.ancho / 2) return c.e.tipo === 'tunel' || c.e.tipo === 'rampa' ? 'tunel' : 'asfalto';
-    if (enRio(x, z) || TERRENO.tierra(x, z) < 0.5) return 'agua';
+    if (enRio(x, z) || TE.tierra(x, z) < 0.5) return 'agua';
     if (c && c.d <= c.e.ancho / 2 + c.e.margen) return 'tierra';
     const m = manzanaEn(x, z);
     if (m) return m.parque ? 'hierba' : m.barrio === 'aeropuerto' ? 'asfalto' : 'acera';
-    const h = TERRENO.natural(x, z);
+    const h = TE.natural(x, z);
     return h > M.nieve ? 'nieve' : h > M.roca ? 'tierra' : 'hierba';
   }
   // --- las celdas de las ciudades
   function manzanaEn(x, z) {
-    const c = TERRENO.ciudadEn(x, z); if (!c) return null;
-    const C = ciudades[TERRENO.ciudades.indexOf(c)];
+    const c = TE.ciudadEn(x, z); if (!c) return null;
+    const C = ciudades[TE.ciudades.indexOf(c)];
     let i = -1; while (i + 1 < C.lx.length && C.lx[i + 1].pos + c.x0 <= x) i++;
     let j = -1; while (j + 1 < C.lz.length && C.lz[j + 1].pos + c.z0 <= z) j++;
     if (i < 0 || j < 0 || i >= C.lx.length - 1 || j >= C.lz.length - 1) return null;
@@ -156,7 +150,7 @@ const CIUDAD = (() => {
     for (const e of m.edificios) { const x0 = e.x - e.w / 2, z0 = e.z - e.d / 2, x1 = e.x + e.w / 2, z1 = e.z + e.d / 2; caja(x0, z0, x1, z1, { edificio: true, y0: pie([x0, z0], [x1, z0], [x0, z1], [x1, z1], [e.x, e.z]), y1: 1e4 }); }
     for (const a of m.arboles) circulo(a.x, a.z, a.radio * 0.6, { y0: pie([a.x, a.z]), y1: 1e4 });
   }
-  const campo = CARRETERAS.campo(azar, distCarretera, enRio);
+  const campo = FUENTE.campo(azar, distCarretera, enRio);
   for (const o of campo) circulo(o.x, o.z, o.tipo === 'roca' ? o.radio * 0.9 : o.radio * 0.5);
   // paredes de los túneles y de las rampas, a los lados de cada tramo (solo cuentan a su altura). En un cruce (con otro túnel o con la
   // circunvalación) la pared se recorta para no cortar el paso
@@ -224,7 +218,7 @@ const CIUDAD = (() => {
   }
   for (const en of enlaces) vallaCadena(en, [-1, 1], false);
   for (const su of monte.subidas) vallaCadena(su, [-1, 1], false);
-  vallaCadena(monte.vuelta, [-1, 1], true);
+  if (monte.vuelta.length) vallaCadena(monte.vuelta, [-1, 1], true);
   for (const c of ciudades) {   // la circunvalación en orden, y solo el lado de fuera
     const inicio = c.anillo[0], orden = [inicio]; let prev = null, cur = inicio;
     for (let k = 0; k < c.anillo.length; k++) { const sig = cur.vecinos.map(v => nodos[v]).find(o => o !== prev && o.tipo === 'anillo' && o.ciudad === c.indice && o !== inicio); if (!sig) break; orden.push(sig); prev = cur; cur = sig; }
@@ -301,16 +295,16 @@ const CIUDAD = (() => {
   // en qué zona estás (para el letrero al entrar)
   function zona(x, z) {
     for (const m of miradores) if (Math.hypot(m.x - x, m.z - z) < m.radio + 6) return m.nombre;
-    const c = TERRENO.ciudadEn(x, z); if (c) return c.nombre;
+    const c = TE.ciudadEn(x, z); if (c) return c.nombre;
     if (Math.hypot(x - MO.x, z - MO.z) < MO.radio) return 'La Montaña';
     return null;
   }
   // --- rampas de salto (en la primera ciudad) y escondites (parques)
   const rampas = [];
-  for (const e of aristas) { if (rampas.length >= 6) break; const a = nodos[e.a], b = nodos[e.b]; if (a.ciudad !== 0 || e.tipo !== 'calle' || e.largo < 40 || rampas.some(r => Math.hypot(r.x - a.x, r.z - a.z) < 150)) continue; for (const lado of [1, -1]) { const of = carril(a, b, lado), ang = Math.atan2(b.x - a.x, b.z - a.z) + (lado < 0 ? Math.PI : 0); rampas.push({ x: (a.x + b.x) / 2 + of.ox, z: (a.z + b.z) / 2 + of.oz, ang, largo: 7, ancho: 4 }); } }   // una en cada carril: se salta en los dos sentidos
+  for (const e of aristas) { if (rampas.length >= 6) break; const a = nodos[e.a], b = nodos[e.b]; if (!(e.salto || (a.ciudad === 0 && e.tipo === 'calle')) || e.largo < 40 || rampas.some(r => Math.hypot(r.x - a.x, r.z - a.z) < 150)) continue; for (const lado of [1, -1]) { const of = carril(a, b, lado), ang = Math.atan2(b.x - a.x, b.z - a.z) + (lado < 0 ? Math.PI : 0); rampas.push({ x: (a.x + b.x) / 2 + of.ox, z: (a.z + b.z) / 2 + of.oz, ang, largo: 7, ancho: 4 }); } }   // una en cada carril: se salta en los dos sentidos
   const escondites = ciudades.flatMap(c => c.celdas.filter(m => m.parque).slice(0, 3).map(m => ({ x: (m.x0 + m.x1) / 2, z: (m.z0 + m.z1) / 2, radio: Math.min(12, (m.x1 - m.x0) / 2) })));
   // --- los trozos: qué hay en cada uno (para montar la pantalla por partes)
-  const TR = M.trozo, NTX = Math.ceil(M.ancho / TR), NTZ = Math.ceil(M.largo / TR);
+  const TR = M.trozo, NTX = Math.ceil(ANCHO / TR), NTZ = Math.ceil(LARGO / TR);
   const trozos = [];
   for (let i = 0; i < NTX; i++) for (let j = 0; j < NTZ; j++) {
     const x0 = i * TR, z0 = j * TR, x1 = x0 + TR, z1 = z0 + TR, dentro = (x, z, m = 0) => x >= x0 - m && x < x1 + m && z >= z0 - m && z < z1 + m;
@@ -319,6 +313,8 @@ const CIUDAD = (() => {
     trozos.push(t);
   }
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
-  return { ancho: M.ancho, largo: M.largo, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
+  const salida = () => FUENTE.salida(mundo);
+  const mundo = { mapa: FUENTE.nombre, estaciones: FUENTE.estaciones || [], salida, tierra: TE.tierra, ancho: ANCHO, largo: LARGO, ciudades, celdas, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
     altura, alturaArista, alturaTramo: perfil.alturaEn, alturaCruce: perfil.enPlano, alturaSuelo, natural, suelo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
+  return mundo;
 })();

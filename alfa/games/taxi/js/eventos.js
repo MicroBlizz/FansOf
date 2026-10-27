@@ -8,6 +8,7 @@ const EVENTOS = (() => {
   let salidas = [], activo = null, dinero = 0, combo = 1, comboN = 0, rivales = [], azar = mulberry32(11), ganado = 0;
   function crear(semilla) {
     azar = mulberry32((semilla || 0) + 11); activo = null; rivales = []; combo = 1; comboN = 0; ganado = 0;
+    if (CIUDAD.mapa !== 'ciudad') { salidas = []; return; }   // en el circuito de pruebas no hay eventos
     // las salidas del prototipo: en cruces de cada ciudad (el cruce (i, j) más cercano que exista) y una subida al mirador
     const n = (c, i, j) => { const C = CIUDAD.ciudades[c]; for (let r = 0; r < 6; r++) for (let a = -r; a <= r; a++) for (let b = -r; b <= r; b++) { const q = C.nodo(i + a, j + b); if (q && q.tipo !== 'tunel') return q; } return C.anillo[0]; };
     salidas = [

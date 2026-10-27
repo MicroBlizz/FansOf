@@ -15,19 +15,19 @@ const TROZOS = (() => {
 
   // --- el suelo lejano: todo el mundo, sin detalle, con el color de cada suelo en los vértices
   function montaLejos() {
-    const R = M.resLejos, nx = Math.ceil(M.ancho / R), nz = Math.ceil(M.largo / R);
-    const geo = new T.PlaneGeometry(M.ancho, M.largo, nx, nz); geo.rotateX(-Math.PI / 2);
+    const R = M.resLejos, A = CIUDAD.ancho, L = CIUDAD.largo, nx = Math.ceil(A / R), nz = Math.ceil(L / R);
+    const geo = new T.PlaneGeometry(A, L, nx, nz); geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position, col = new Float32Array(pos.count * 3), c = new T.Color();
     for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i) + M.ancho / 2, z = pos.getZ(i) + M.largo / 2;
+      const x = pos.getX(i) + A / 2, z = pos.getZ(i) + L / 2;
       // siempre por debajo del suelo con detalle (que asomara entre sus vértices): el mínimo de la celda, y un poco más abajo
       let h = CIUDAD.alturaSuelo(x, z); for (const [dx, dz] of [[-R / 2, 0], [R / 2, 0], [0, -R / 2], [0, R / 2], [-R / 2, -R / 2], [R / 2, R / 2]]) h = Math.min(h, CIUDAD.alturaSuelo(x + dx, z + dz));
       pos.setY(i, h - 1.2);
-      let s = CIUDAD.suelo(x, z); if (s === 'tierra' && TERRENO.natural(x, z) > M.roca) s = 'roca';
+      let s = CIUDAD.suelo(x, z); if (s === 'tierra' && CIUDAD.natural(x, z) > M.roca) s = 'roca';
       c.set(colorSuelo(s)); col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
     }
     geo.setAttribute('color', new T.BufferAttribute(col, 3)); geo.computeVertexNormals();
-    lejos = new T.Mesh(geo, recorta(new T.MeshLambertMaterial({ vertexColors: true }))); lejos.position.set(M.ancho / 2, 0, M.largo / 2); escena.add(lejos);
+    lejos = new T.Mesh(geo, recorta(new T.MeshLambertMaterial({ vertexColors: true }))); lejos.position.set(A / 2, 0, L / 2); escena.add(lejos);
     // los edificios de todo el mundo, un poco más pequeños y más bajos que los de verdad (quedan dentro cuando llega el detalle)
     const cajas = [];
     for (const m of CIUDAD.celdas) for (const e of m.edificios) { const y = basePlanta(e) - 1, alto = CIUDAD.alturaSuelo(e.x, e.z) + e.h - 1 - y; cajas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w - 0.8, alto, e.d - 0.8])); }
@@ -94,7 +94,7 @@ const TROZOS = (() => {
     const ppm = M.texturaPxPorMetro, c = document.createElement('canvas'); c.width = c.height = Math.ceil(TR * ppm);
     const g = c.getContext('2d'); g.scale(ppm, ppm); g.translate(-t.x0, -t.z0);
     // la base: qué suelo hay cada 8 m
-    for (let x = t.x0; x < t.x1; x += 8) for (let z = t.z0; z < t.z1; z += 8) { let s = CIUDAD.suelo(x + 4, z + 4); if (s === 'tierra' && TERRENO.natural(x + 4, z + 4) > M.roca) s = 'roca'; g.fillStyle = colorSuelo(s); g.fillRect(x - 0.5, z - 0.5, 9, 9); }
+    for (let x = t.x0; x < t.x1; x += 8) for (let z = t.z0; z < t.z1; z += 8) { let s = CIUDAD.suelo(x + 4, z + 4); if (s === 'tierra' && CIUDAD.natural(x + 4, z + 4) > M.roca) s = 'roca'; g.fillStyle = colorSuelo(s); g.fillRect(x - 0.5, z - 0.5, 9, 9); }
     // el río
     g.strokeStyle = COLOR.agua; g.lineCap = 'round'; g.lineJoin = 'round';
     for (let i = 0; i < t.rio.length - 1; i++) { const a = t.rio[i], b = t.rio[i + 1]; if (Math.abs(a.z - b.z) > 45) continue; g.lineWidth = (a.ancho + b.ancho) / 2; g.beginPath(); g.moveTo(a.x, a.z); g.lineTo(b.x, b.z); g.stroke(); }

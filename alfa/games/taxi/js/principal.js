@@ -18,18 +18,33 @@
 
   function iniciar() {
     mundo = { altura: CIUDAD.altura, suelo: CIUDAD.suelo, cerca: CIUDAD.cerca, nodoCercano: CIUDAD.nodoCercano, nodos: CIUDAD.nodos, rampas: CIUDAD.rampas, ancho: CIUDAD.ancho, largo: CIUDAD.largo, semilla: TAXI.mundo.semilla };
-    const n = CIUDAD.ciudades[0].nodo(4, 4) || CIUDAD.ciudades[0].anillo[0], v = CIUDAD.nodos[n.vecinos[0]];
-    const ang = Math.atan2(v.x - n.x, v.z - n.z), of = CIUDAD.carril(n, v);
-    jugador = COCHE.nuevo(n.x + Math.sin(ang) * 22 + of.ox, n.z + Math.cos(ang) * 22 + of.oz, ang, { masa: 1.1 }); jugador.y = CIUDAD.altura(jugador.x, jugador.z); zonaVista = CIUDAD.zona(n.x, n.z);
+    const sale = CIUDAD.salida();
+    jugador = COCHE.nuevo(sale.x, sale.z, sale.ang, { masa: 1.1 }); jugador.y = CIUDAD.altura(jugador.x, jugador.z); zonaVista = CIUDAD.zona(sale.x, sale.z);
     EVENTOS.crear(mundo.semilla); EVENTOS.dinero = SAVE.dinero;
     TRAFICO.crear(mundo, jugador); POLICIA.crear(mundo, jugador); PASAJEROS.crear(mundo.semilla);
     ESCENA.iniciar(document.getElementById('lienzo'));
     HUD.montar(); CONTROLES.montar();
+    if (CIUDAD.estaciones.length) montaEstaciones();
     document.getElementById('b-accion').addEventListener('click', CONTROLES.pulsaAccion);
     if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.activar({ juego: 'taxi' });
     if (typeof REPORTE !== 'undefined') REPORTE.activar({ datos: datosReporte, captura: ESCENA.captura });
-    HUD.radio(tr(LOLA.bienvenida[0]), 7); setTimeout(() => HUD.radio(tr(LOLA.bienvenida[1]), 7), 7500);
+    if (CIUDAD.mapa === 'ciudad') { HUD.radio(tr(LOLA.bienvenida[0]), 7); setTimeout(() => HUD.radio(tr(LOLA.bienvenida[1]), 7), 7500); }
     requestAnimationFrame(cuadro);
+  }
+  // --- circuito de pruebas: ir a una estación, y reaparecer en la última por la que se ha pasado
+  let ultimaEstacion = null;
+  function coloca(e) {
+    Object.assign(jugador, { x: e.x, z: e.z, ang: e.ang, v: 0, vl: 0, vy: 0, aire: false });
+    jugador.y = CIUDAD.altura(e.x, e.z);
+    ultimaEstacion = e;
+    HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'grande tiempo');
+  }
+  function montaEstaciones() {
+    ultimaEstacion = CIUDAD.estaciones[0];
+    ESTACIONES_MENU.montar({ estaciones: CIUDAD.estaciones, ir: coloca, reaparecer: () => coloca(ultimaEstacion) });
+  }
+  function apuntaEstacion() {   // al pasar cerca de una estación, esa es el punto de reaparición
+    for (const e of CIUDAD.estaciones) if (e !== ultimaEstacion && Math.hypot(e.x - jugador.x, e.z - jugador.z) < 12) { ultimaEstacion = e; HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'tiempo'); }
   }
   const otrosCoches = () => TRAFICO.coches.map(c => c.coche).concat(POLICIA.patrullas.map(p => p.coche), EVENTOS.rivales.map(r => r.coche));
 
@@ -48,7 +63,7 @@
     }
     jugador.vueloT = jugador.aire ? (jugador.vueloT || 0) + DT : 0;
     // el letrero de la zona al entrar (ciudad, montaña, mirador)
-    zonaT += DT; if (zonaT > 0.5) { zonaT = 0; const z = CIUDAD.zona(jugador.x, jugador.z); if (z && z !== zonaVista) { zonaVista = z; HUD.aviso(nombreZona(z), 'grande tiempo'); HUD.radio(tr(LOLA.zona[0]).replace('{zona}', nombreZona(z)), 4); if (z.startsWith('Mirador')) play('summon'); } }
+    zonaT += DT; if (zonaT > 0.5) { zonaT = 0; if (CIUDAD.estaciones.length) apuntaEstacion(); const z = CIUDAD.zona(jugador.x, jugador.z); if (z && z !== zonaVista) { zonaVista = z; HUD.aviso(nombreZona(z), 'grande tiempo'); HUD.radio(tr(LOLA.zona[0]).replace('{zona}', nombreZona(z)), 4); if (z.startsWith('Mirador')) play('summon'); } }
     if (jugador.derrapando && jugador.derrapeT > TAXI.propinas.derrapeMin && !jugador.derrapePagado) { jugador.derrapePagado = true; HUD.aviso(tr('CLIP VIRAL') + ' +' + Math.round(TAXI.propinas.derrape * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('derrape'); }
     if (!jugador.derrapando) jugador.derrapePagado = false;
     // el tráfico

@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=ed62444">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=ed62444">
-<link rel="stylesheet" href="novedades/ventana.css?v=ed62444">
-<link rel="stylesheet" href="biblioteca/votos.css?v=ed62444">
+<link rel="stylesheet" href="core/css/base.css?v=eb38503">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=eb38503">
+<link rel="stylesheet" href="novedades/ventana.css?v=eb38503">
+<link rel="stylesheet" href="biblioteca/votos.css?v=eb38503">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=ed62444" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=eb38503" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -297,8 +297,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a566.ed62444"></script>
-<script src="core/js/novedades.js?v=ed62444"></script>
+<script src="core/js/nucleo.js?v=0-a567.eb38503"></script>
+<script src="core/js/novedades.js?v=eb38503"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -307,7 +307,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=ed62444"></script>
+<script src="core/js/sistema/cuenta.js?v=eb38503"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -333,14 +333,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=ed62444"></script>
-<script src="novedades/ventana.js?v=ed62444"></script>
-<script src="biblioteca/tienda.js?v=ed62444"></script>
-<script src="core/js/sistema/beta.js?v=ed62444"></script>
-<script src="biblioteca/cuenta-web.js?v=ed62444"></script>
-<script src="biblioteca/votos.js?v=ed62444"></script>
-<script src="biblioteca/alfa.js?v=ed62444"></script>
-<script src="core/js/sistema/analitica.js?v=ed62444"></script>
-<script src="pie.js?v=ed62444" defer></script>
+<script src="core/js/proximamente.js?v=eb38503"></script>
+<script src="novedades/ventana.js?v=eb38503"></script>
+<script src="biblioteca/tienda.js?v=eb38503"></script>
+<script src="core/js/sistema/beta.js?v=eb38503"></script>
+<script src="biblioteca/cuenta-web.js?v=eb38503"></script>
+<script src="biblioteca/votos.js?v=eb38503"></script>
+<script src="biblioteca/alfa.js?v=eb38503"></script>
+<script src="core/js/sistema/analitica.js?v=eb38503"></script>
+<script src="pie.js?v=eb38503" defer></script>
 </body>
 </html>

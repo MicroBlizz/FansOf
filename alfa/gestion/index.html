@@ -153,7 +153,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="lista" id="rf-baneados"></div>
     </div>
     <div id="pan-pruebas" hidden>
-      <div class="caja ayuda"><b>Reportes de prueba.</b> Lo que mandan los probadores con el botón <b>!</b> mientras juegan (en la alfa o en localhost): su nota, dónde estaban y cómo iba el juego (fps, resolución, trozos cargados…), los últimos 60 s de recorrido y una captura. Sirven para encontrar y corregir situaciones concretas. <b>Visto</b> lo deja en la lista; <b>Hecho</b> y <b>Descartar</b> lo cierran.</div>
+      <div class="caja ayuda"><b>Reportes de prueba.</b> Lo que mandan los probadores con el botón <b>!</b> mientras juegan (en la alfa o con <b>?dev=1</b>): su nota, dónde estaban y cómo iba el juego, los últimos 60 s y una captura. Cada reporte tiene su conversación: quien lo arregla cuenta qué hizo y lo marca <b>Visto</b>; quien lo prueba lo confirma con <b>Hecho</b> o lo <b>reabre</b> con un comentario. Hecho y <b>Descartar</b> se borran solos a los 3 días.</div>
       <div class="filtros"><label>Estado <select id="rp-estado"><option value="pendiente">pendientes</option><option value="visto">vistos</option><option value="hecho">hechos</option><option value="descartado">descartados</option><option value="">todos</option></select></label><button type="button" id="rp-recargar">Recargar</button></div>
       <div class="aviso" id="rp-aviso" role="alert"></div>
       <div class="lista" id="rp-lista"></div>

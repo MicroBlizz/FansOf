@@ -5,6 +5,7 @@ IDIOMA.add({
   "Qué pasa aquí: qué esperabas y qué ves": "What happens here: what you expected and what you see",
   "Se manda con tu nota: dónde estás, cómo va el juego, los últimos 60 s de recorrido y la captura.": "Sent with your note: where you are, how the game runs, the last 60 s of your route and the screenshot.",
   "Para reportar, activa «Datos de partida anónimos» en Opciones.": "To report, turn on \"Anonymous game data\" in Options.",
+  "Para reportar, inicia sesión.": "To report, sign in.",
   "Reporte enviado. ¡Gracias!": "Report sent. Thanks!",
   "No se ha podido enviar": "Could not send",
   "Enviar": "Send",

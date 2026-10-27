@@ -1,8 +1,8 @@
 {
- "build": 561,
- "hash": "b8e4c16",
- "fecha": "2026-10-26T23:41:51Z",
- "mensaje": "Reportes de prueba: incluyen qué gráfica usa el navegador (integrada o dedicada)",
+ "build": 562,
+ "hash": "52e92ee",
+ "fecha": "2026-10-27T00:10:56Z",
+ "mensaje": "Reportes de prueba en core para todos los juegos, con conversación y borrado a los 3 días",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

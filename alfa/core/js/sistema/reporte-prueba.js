@@ -1,22 +1,126 @@
-// Fans Of · REPORTE DE PRUEBA: un botón pequeño «!» en pantalla, solo para probadores (en /alfa/ o en localhost), para mandarnos una
-// situación mientras se juega: una nota, dónde estaba el jugador y cómo iba (lo que el juego quiera contar), los últimos 60 s de
-// recorrido y una captura de pantalla pequeña. Lo manda el probador a propósito, con su cuenta: no es telemetría, pero igualmente
-// solo sale si tiene encendido «Datos de partida anónimos» (DATOS.activo()). Servidor: enviar_reporte_prueba (servidor/98-reportes-prueba.sql);
-// se lee en /gestion → Reportes de prueba. Un juego lo activa con REPORTE.activar({ datos: () => ({...}), captura: () => dataUrlJpeg|null, nombre: () => 'quien' }):
-// `datos` se llama al enviar y devuelve lo que quiera guardar (posición, zona, fps…); además el juego puede llamar a REPORTE.traza({...}) una vez
-// por segundo con lo que quiera apuntar, y se mandan los últimos 60. Tiene su propio estilo (no depende del CSS de cada juego).
+// Fans Of · REPORTE DE PRUEBA: un botón «!» para mandarnos una situación mientras se juega, en CUALQUIER juego.
+//
+// Cuándo sale: en el modo desarrollo (localhost o ?dev=1, ver NUCLEO.desarrollo) y en la alfa. Nunca en la release.
+// Qué manda: la nota del probador, una captura pequeña, los últimos 60 s de recorrido (una muestra por segundo) y lo que el juego
+// quiera contar (dónde está, qué pasa…), más el aparato (pantalla, núcleos, gráfica). Va con su cuenta; no es telemetría, pero
+// igualmente solo sale si tiene encendido «Datos de partida anónimos» (DATOS.activo()).
+// Servidor: enviar_reporte_prueba (servidor/98-reportes-prueba.sql). Se lee y se comenta en /gestion → <juego> → Reportes de prueba.
+//
+// Para los juegos (todo opcional; sin nada, el botón sale solo y manda captura del lienzo y fps):
+//   REPORTE.activar({ datos: () => ({ x, z, zona… }), captura: () => 'data:image/jpeg;base64,…' | null })
+//   REPORTE.traza({ … }) una vez por segundo, con lo que interese seguir (si no, se apuntan los fps).
 'use strict';
 const REPORTE = (() => {
-  const T = typeof tr === 'function' ? tr : s => s;
-  let op = null, boton = null, ventana = null, traza = [];
-  const probador = () => (typeof NUCLEO !== 'undefined' && NUCLEO.alfa) || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const plataforma = () => (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) ? 'app' : /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) ? 'movil' : 'pc';
-  // qué gráfica usa el navegador (en un PC con integrada y dedicada, a veces la integrada)
+  const tr_ = typeof tr === 'function' ? tr : s => s;
+  const MUESTRAS = 60;
+  const ANCHO_CAPTURA = 720;
+
+  let juego = {};            // lo que aporta el juego: { datos, captura }
+  let boton = null, ventana = null;
+  const trazaJuego = [], trazaFps = [];
+
+  // --- cuándo y dónde
+  const esProbador = () => typeof NUCLEO !== 'undefined' && (NUCLEO.desarrollo || NUCLEO.alfa);
+  const hayCuenta = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
+  const datosPermitidos = () => typeof DATOS === 'undefined' || DATOS.activo();
+  function plataforma() {
+    if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) return 'app';
+    return /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent) ? 'movil' : 'pc';
+  }
+  const idJuego = () => (typeof AJUSTES !== 'undefined' && AJUSTES.id) || location.pathname.split('/').filter(Boolean).pop() || 'desconocido';
+
+  // --- lo que se mide sin ayuda del juego
   let gpuNombre;
-  function gpu() {
+  function gpu() {   // qué gráfica usa el navegador (en un PC con integrada y dedicada, a veces la integrada)
     if (gpuNombre !== undefined) return gpuNombre;
-    try { const g = document.createElement('canvas').getContext('webgl'), ext = g && g.getExtension('WEBGL_debug_renderer_info'); gpuNombre = g ? String(ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER)).slice(0, 120) : null; } catch (e) { gpuNombre = null; }
+    try {
+      const g = document.createElement('canvas').getContext('webgl'), ext = g && g.getExtension('WEBGL_debug_renderer_info');
+      gpuNombre = g ? String(ext ? g.getParameter(ext.UNMASKED_RENDERER_WEBGL) : g.getParameter(g.RENDERER)).slice(0, 120) : null;
+    } catch (e) { gpuNombre = null; }
     return gpuNombre;
+  }
+  function aparato() {
+    return { ua: navigator.userAgent.slice(0, 160), ancho: innerWidth, alto: innerHeight, dpr: devicePixelRatio || 1,
+      nucleos: navigator.hardwareConcurrency || null, memoria: navigator.deviceMemory || null, idioma: navigator.language, gpu: gpu() };
+  }
+  // fps por segundo, siempre (sirve a cualquier juego)
+  function midiendoFps() {
+    let fotos = 0, inicio = performance.now();
+    const paso = ahora => {
+      fotos++;
+      if (ahora - inicio >= 1000) {
+        guarda(trazaFps, { t: Math.round(ahora / 1000), fps: Math.round((fotos * 1000) / (ahora - inicio)) });
+        fotos = 0; inicio = ahora;
+      }
+      requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  }
+  function guarda(lista, muestra) { lista.push(muestra); if (lista.length > MUESTRAS) lista.shift(); }
+  // la captura por defecto: el lienzo más grande de la página, reducido (un lienzo WebGL sin preserveDrawingBuffer puede salir negro:
+  // esos juegos pasan su propia captura)
+  function capturaLienzo() {
+    const lienzos = [...document.querySelectorAll('canvas')].filter(c => c.width > 0 && c.height > 0);
+    if (!lienzos.length) return null;
+    const mayor = lienzos.reduce((a, b) => (a.width * a.height >= b.width * b.height ? a : b));
+    const escala = Math.min(1, ANCHO_CAPTURA / mayor.width), c = document.createElement('canvas');
+    c.width = Math.round(mayor.width * escala); c.height = Math.round(mayor.height * escala);
+    c.getContext('2d').drawImage(mayor, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.6);
+  }
+  function captura() {
+    try { return juego.captura ? juego.captura() : capturaLienzo(); } catch (e) { return null; }
+  }
+
+  // --- la ventana
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function aviso() {
+    if (!hayCuenta()) return tr_('Para reportar, inicia sesión.');
+    if (!datosPermitidos()) return tr_('Para reportar, activa «Datos de partida anónimos» en Opciones.');
+    return '';
+  }
+  function abre() {
+    if (ventana) return;
+    const imagen = captura(), bloqueo = aviso();
+    ventana = document.createElement('div'); ventana.id = 'rp-fondo';
+    ventana.innerHTML = `<div id="rp-caja" role="dialog">
+      <h3>${esc(tr_('Reportar una situación'))}</h3>
+      ${imagen ? `<img src="${imagen}" alt="">` : ''}
+      <textarea id="rp-texto" maxlength="1000" placeholder="${esc(tr_('Qué pasa aquí: qué esperabas y qué ves'))}"></textarea>
+      <small>${esc(tr_('Se manda con tu nota: dónde estás, cómo va el juego, los últimos 60 s de recorrido y la captura.'))}</small>
+      ${bloqueo ? `<div class="rp-aviso">${esc(bloqueo)}</div>` : ''}
+      <div class="rp-fila">
+        <button type="button" id="rp-no">${esc(tr_('Cancelar'))}</button>
+        <button type="button" id="rp-si" class="rp-ok" ${bloqueo ? 'disabled' : ''}>${esc(tr_('Enviar'))}</button>
+      </div></div>`;
+    document.body.appendChild(ventana);
+    for (const ev of ['keydown', 'keyup', 'keypress']) ventana.addEventListener(ev, e => e.stopPropagation());   // lo que se teclea no llega al juego
+    ventana.querySelector('#rp-no').onclick = cierra;
+    ventana.querySelector('#rp-si').onclick = () => envia(ventana.querySelector('#rp-texto').value, imagen);
+    setTimeout(() => { const t = ventana && ventana.querySelector('#rp-texto'); if (t) t.focus(); }, 50);
+  }
+  function cierra() { if (ventana) { ventana.remove(); ventana = null; } }
+  function cuerpo(texto, imagen) {
+    let datos = {};
+    try { datos = (juego.datos && juego.datos()) || {}; } catch (e) { datos = { error: String(e && e.message) }; }
+    datos.traza = (trazaJuego.length ? trazaJuego : trazaFps).slice(-MUESTRAS);
+    datos.aparato = aparato();
+    return { juego: idJuego(), version: String(NUCLEO.version || '').slice(0, 32), alfa: !!NUCLEO.alfa, plataforma: plataforma(),
+      nombre: null, texto: String(texto || '').trim() || '(sin nota)', datos, captura: imagen };
+  }
+  async function envia(texto, imagen) {
+    const b = ventana.querySelector('#rp-si'); b.disabled = true; b.textContent = '…';
+    let r;
+    try { r = await CUENTA.rpc('enviar_reporte_prueba', { p_datos: cuerpo(texto, imagen) }); } catch (e) { r = { ok: false, motivo: String(e && e.message) }; }
+    if (r && r.ok) { cierra(); avisoBreve(tr_('Reporte enviado. ¡Gracias!')); return; }
+    b.disabled = false; b.textContent = tr_('Enviar');
+    let m = ventana.querySelector('.rp-aviso');
+    if (!m) { m = document.createElement('div'); m.className = 'rp-aviso'; b.parentNode.before(m); }
+    m.textContent = tr_('No se ha podido enviar') + (r && r.motivo ? ' (' + r.motivo + ')' : '');
+  }
+  function avisoBreve(texto) {
+    const d = document.createElement('div'); d.className = 'rp-breve'; d.textContent = texto;
+    document.body.appendChild(d); setTimeout(() => d.remove(), 2200);
   }
   function estilo() {
     if (document.getElementById('rp-estilo')) return;
@@ -28,49 +132,27 @@ const REPORTE = (() => {
 #rp-caja h3{margin:0;font-size:20px}#rp-caja textarea{width:100%;min-height:90px;box-sizing:border-box;border:2px solid #20102c;border-radius:8px;padding:8px;font:inherit;resize:vertical;background:#fff;color:#20102c}
 #rp-caja img{width:100%;border-radius:8px;border:2px solid #20102c}#rp-caja .rp-fila{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 #rp-caja button{border:3px solid #20102c;border-radius:10px;padding:6px 14px;font:800 15px "Baloo 2",sans-serif;background:#cdb9ea;color:#20102c;box-shadow:0 3px 0 #20102c;cursor:pointer}
-#rp-caja button.rp-ok{background:#7ee04a}#rp-caja small{color:#5b5668}#rp-caja .rp-aviso{color:#b8202c}`;
+#rp-caja button.rp-ok{background:#7ee04a}#rp-caja small{color:#5b5668}#rp-caja .rp-aviso{color:#b8202c}
+.rp-breve{position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:99992;background:#7ee04a;color:#20102c;border:3px solid #20102c;border-radius:12px;padding:8px 16px;font:800 18px "Baloo 2",sans-serif;box-shadow:0 3px 0 #20102c}`;
     document.head.appendChild(s);
   }
-  function abre() {
-    if (ventana) return;
-    const datosOk = typeof DATOS === 'undefined' || DATOS.activo();
-    let captura = null; try { captura = op.captura ? op.captura() : null; } catch (e) { captura = null; }
-    ventana = document.createElement('div'); ventana.id = 'rp-fondo';
-    ventana.innerHTML = `<div id="rp-caja" role="dialog"><h3>${esc(T('Reportar una situación'))}</h3>
-      ${captura ? `<img src="${captura}" alt="">` : ''}
-      <textarea id="rp-texto" maxlength="1000" placeholder="${esc(T('Qué pasa aquí: qué esperabas y qué ves'))}"></textarea>
-      <small>${esc(T('Se manda con tu nota: dónde estás, cómo va el juego, los últimos 60 s de recorrido y la captura.'))}</small>
-      ${datosOk ? '' : `<div class="rp-aviso">${esc(T('Para reportar, activa «Datos de partida anónimos» en Opciones.'))}</div>`}
-      <div class="rp-fila"><button type="button" id="rp-no">${esc(T('Cancelar'))}</button><button type="button" id="rp-si" class="rp-ok" ${datosOk ? '' : 'disabled'}>${esc(T('Enviar'))}</button></div></div>`;
-    document.body.appendChild(ventana);
-    for (const ev of ['keydown', 'keyup', 'keypress']) ventana.addEventListener(ev, e => e.stopPropagation());   // lo que se teclea aquí no llega al juego
-    ventana.querySelector('#rp-no').onclick = cierra;
-    ventana.querySelector('#rp-si').onclick = () => envia(ventana.querySelector('#rp-texto').value, captura);
-    setTimeout(() => { const t = ventana && ventana.querySelector('#rp-texto'); if (t) t.focus(); }, 50);
-  }
-  function cierra() { if (ventana) { ventana.remove(); ventana = null; } }
-  async function envia(texto, captura) {
-    texto = String(texto || '').trim(); if (!texto) texto = '(sin nota)';
-    const b = ventana.querySelector('#rp-si'); b.disabled = true; b.textContent = '…';
-    let datos = {}; try { datos = op.datos ? op.datos() || {} : {}; } catch (e) { datos = { error: String(e && e.message) }; }
-    datos.traza = traza.slice(-60); datos.aparato = { ua: navigator.userAgent.slice(0, 160), ancho: innerWidth, alto: innerHeight, dpr: devicePixelRatio || 1, nucleos: navigator.hardwareConcurrency || null, memoria: navigator.deviceMemory || null, idioma: navigator.language, gpu: gpu() };
-    let nombre = null; try { nombre = op.nombre ? op.nombre() : null; } catch (e) { nombre = null; }
-    const cuerpo = { juego: (typeof AJUSTES !== 'undefined' && AJUSTES.id) || 'desconocido', version: String(typeof NUCLEO !== 'undefined' ? NUCLEO.version || '' : '').slice(0, 32), alfa: !!(typeof NUCLEO !== 'undefined' && NUCLEO.alfa), plataforma: plataforma(), nombre, texto, datos, captura };
-    let r = null;
-    try { r = await CUENTA.rpc('enviar_reporte_prueba', { p_datos: cuerpo }); } catch (e) { r = { ok: false, motivo: String(e && e.message) }; }
-    if (r && r.ok) { cierra(); aviso(T('Reporte enviado. ¡Gracias!')); }
-    else { b.disabled = false; b.textContent = T('Enviar'); let m = ventana.querySelector('.rp-aviso'); if (!m) { m = document.createElement('div'); m.className = 'rp-aviso'; b.parentNode.before(m); } m.textContent = T('No se ha podido enviar') + (r && r.motivo ? ' (' + r.motivo + ')' : ''); }
-  }
-  function aviso(texto) { const d = document.createElement('div'); d.textContent = texto; d.style.cssText = 'position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:99992;background:#7ee04a;color:#20102c;border:3px solid #20102c;border-radius:12px;padding:8px 16px;font:800 18px "Baloo 2",sans-serif;box-shadow:0 3px 0 #20102c'; document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
-  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  // el juego: lo activa al empezar la partida
-  function activar(opciones) {
-    op = opciones || {};
-    if (!probador() || typeof CUENTA === 'undefined' || !CUENTA.activa || boton) return;
+  function ponBoton() {
+    if (boton || !esProbador()) return;
     estilo();
-    boton = document.createElement('button'); boton.id = 'rp-boton'; boton.type = 'button'; boton.textContent = '!'; boton.title = T('Reportar una situación'); boton.setAttribute('aria-label', T('Reportar una situación'));
-    boton.onclick = abre; document.body.appendChild(boton);
+    boton = document.createElement('button');
+    Object.assign(boton, { id: 'rp-boton', type: 'button', textContent: '!', title: tr_('Reportar una situación'), onclick: abre });
+    boton.setAttribute('aria-label', tr_('Reportar una situación'));
+    document.body.appendChild(boton);
+    midiendoFps();
   }
+
+  // --- para los juegos
+  function activar(opciones) { juego = opciones || {}; ponBoton(); }
   function parar() { if (boton) { boton.remove(); boton = null; } cierra(); }
-  return { activar, parar, traza: p => { traza.push(p); if (traza.length > 60) traza.shift(); } };
+  function traza(muestra) { guarda(trazaJuego, muestra); }
+
+  // sin que el juego haga nada, el botón sale al terminar de cargar
+  if (typeof window !== 'undefined') window.addEventListener('load', () => setTimeout(ponBoton, 1000));
+
+  return { activar, parar, traza };
 })();

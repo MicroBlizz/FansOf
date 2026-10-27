@@ -1,6 +1,7 @@
 // Fans of Rouflage · Inglés de las OPCIONES del móvil (opciones.js y su parte de index.html). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Salir en el escenario de la semana": "Appear in Stage of the Week",
   "Gráficos": "Graphics",
   "AUTO": "AUTO",
   "ALTA": "HIGH",

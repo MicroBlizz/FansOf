@@ -175,6 +175,7 @@
         <div class="op-fila"><span data-tr>Botones</span><div class="op-seg" id="op-botones"><button type="button" data-v="normal" data-tr>NORMAL</button><button type="button" data-v="grande" data-tr>GRANDES</button></div></div>
         <div class="op-fila"><span data-tr>Chat</span><div class="op-seg" id="op-chat"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila" id="op-fila-avisos" hidden><span data-tr>Avisos al móvil</span><div class="op-seg" id="op-avisos"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
+        <div class="op-fila"><span data-tr>Salir en el escenario de la semana</span><div class="op-seg" id="op-semana"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
         <div class="op-fila"><span data-tr>Mano izquierda</span><div class="op-seg" id="op-zurdo"><button type="button" data-v="0" data-tr>NO</button><button type="button" data-v="1" data-tr>SÍ</button></div></div>
       </div>
       <button type="button" class="boton gris" id="b-viejo"></button>

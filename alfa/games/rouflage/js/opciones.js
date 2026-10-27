@@ -1,5 +1,5 @@
 // Fans of Rouflage · OPCIONES DEL MÓVIL (pantalla OPCIONES): gráficos (AUTO, ALTA, NORMAL, BAJA), ahorro de batería (30 FPS),
-// vibración, tamaño de los botones de la partida, el chat (chat-frases.js) y mano izquierda. Se guardan en el navegador (claves 'rouflage-op-…') y se aplican
+// vibración, tamaño de los botones de la partida, el chat (chat-frases.js), salir en el escenario de la semana (en SAVE) y mano izquierda. Se guardan en el navegador (claves 'rouflage-op-…') y se aplican
 // al momento. Los gráficos solo cambian la nitidez (DPR del lienzo, principal.js) y unos pocos adornos (graficosAdornos): la
 // pintura de los personajes, el suelo, la luz y todo lo que cuenta para jugar se ven igual en todas las calidades.
 'use strict';
@@ -82,6 +82,7 @@ function opPinta() {
   const marca = (id, v) => { for (const b of document.querySelectorAll('#' + id + ' button')) { const si = b.dataset.v === String(v); b.classList.toggle('activo', si); b.setAttribute('aria-pressed', si ? 'true' : 'false'); } };
   marca('op-graficos', OPC.graficos); marca('op-bateria', OPC.bateria ? 1 : 0); marca('op-vibracion', OPC.vibra ? 1 : 0);
   marca('op-botones', OPC.botones); marca('op-zurdo', OPC.zurdo ? 1 : 0); marca('op-chat', OPC.chat ? 1 : 0);
+  marca('op-semana', SAVE.escNoSemana ? 0 : 1);      // salir o no en el ESCENARIO DE LA SEMANA (visita.js): va en la partida guardada
   const q = calidadGraficos();
   E('op-graficos-nota').textContent = OPC.graficos === 'auto' ? tr('Elige sola según lo rápido que vaya la partida. Ahora: {q}.', { q: OPC_NOMBRE[q]() }) : OPC_NOTA[q]();
   document.body.classList.toggle('op-grandes', OPC.botones === 'grande');
@@ -94,6 +95,7 @@ function preparaOpciones() {
   elige('op-vibracion', v => { OPC.vibra = v === '1'; opGuarda('vibracion', v); if (OPC.vibra) vibra(40); });
   elige('op-botones', v => { OPC.botones = v; opGuarda('botones', v); });
   elige('op-zurdo', v => { OPC.zurdo = v === '1'; opGuarda('zurdo', v); });
+  elige('op-semana', v => { SAVE.escNoSemana = v === '0'; guardaPartida(); if (typeof escPublica === 'function') escPublica(); });      // se vuelve a publicar con la marca (ns)
   for (const b of document.querySelectorAll('#op-chat button')) b.onclick = () => { if ((b.dataset.v === '1') !== OPC.chat) chatPon(b.dataset.v === '1'); };      // chat-frases.js: lo guarda y repinta los paneles
   E('op-fila-vibracion').hidden = !navigator.vibrate;      // en el iPhone el navegador no deja vibrar: mejor no enseñarlo
   opPinta();

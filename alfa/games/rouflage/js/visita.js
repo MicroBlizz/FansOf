@@ -24,6 +24,7 @@ const VISITA = { activa: false, nombre: '', megusta: 0, mivoto: 0, vuelve: null,
 function escPublica() {
   const red = RFRED.red; if (!red.escPublicar || (!RFRED.esLocal() && !RFRED.conSesion())) return;
   let d; try { d = escenarioDatos(); } catch (_) { return; }
+  if (SAVE.escNoSemana) d.ns = 1;      // no quiere salir en el ESCENARIO DE LA SEMANA (OPCIONES; servidor/101-rouflage-semana-privada.sql)
   const txt = JSON.stringify(d), h = hashTexto(txt);
   let antes = ''; try { antes = localStorage.getItem('rouflage-esc-publicado') || ''; } catch (_) { /* nada */ }
   if (antes === h) return;

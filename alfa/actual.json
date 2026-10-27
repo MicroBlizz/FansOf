@@ -1,8 +1,8 @@
 {
- "build": 573,
- "hash": "7f630e9",
- "fecha": "2026-10-27T11:22:41Z",
- "mensaje": "Taxi: tarjeta en la biblioteca (Próximamente en la release) y mapa y física en el panel DEV",
+ "build": 574,
+ "hash": "de091fb",
+ "fecha": "2026-10-27T11:33:06Z",
+ "mensaje": "Rouflage: escenario de la semana con 10 me gusta y opción para no salir",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -1,6 +1,7 @@
 // Fans of Rouflage · Alemán de las OPCIONES del móvil (opciones.js y su parte de index.html). Lo carga NUCLEO.juego({ idioma }) de index.html.
 'use strict';
 IDIOMA.add({
+  "Salir en el escenario de la semana": "In der Kulisse der Woche erscheinen",
   "Gráficos": "Grafik",
   "AUTO": "AUTO",
   "ALTA": "HOCH",

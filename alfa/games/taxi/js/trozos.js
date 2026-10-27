@@ -109,8 +109,7 @@ const TROZOS = (() => {
     const traza = (e, ancho, color, cap) => { const a = n[e.a], b = n[e.b]; g.strokeStyle = color; g.lineWidth = ancho; g.lineCap = cap; g.beginPath(); g.moveTo(a.x, a.z); g.lineTo(b.x, b.z); g.stroke(); };
     for (const e of t.aristas) if (e.margen > 0) traza(e, e.ancho + e.margen * 2, COLOR.tierra, 'round');
     for (const e of t.aristas) { if (e.tipo === 'tunel') continue; if (e.tipo === 'mirador') { const b = n[e.b]; g.fillStyle = '#9a93a8'; g.beginPath(); g.arc(b.x, b.z, e.ancho / 2, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#20102c'; g.lineWidth = 0.6; g.stroke(); continue; } traza(e, e.ancho, e.tipo === 'rampa' ? COLOR.tunel : COLOR.asfalto, e.margen > 0 ? 'round' : 'square'); }
-    // rampas de salto y escondites
-    g.fillStyle = '#ff7a1a'; for (const r of t.rampas) { g.save(); g.translate(r.x, r.z); g.rotate(-r.ang); g.fillRect(-r.ancho / 2, 0, r.ancho, r.largo * 0.6); g.restore(); }
+    // escondites
     g.strokeStyle = '#4fc3d9'; g.lineWidth = 0.6; for (const e of t.escondites) { g.beginPath(); g.arc(e.x, e.z, e.radio, 0, Math.PI * 2); g.stroke(); }
     const tex = new T.CanvasTexture(c); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4; tex.flipY = false; return tex;
   }
@@ -150,7 +149,6 @@ const TROZOS = (() => {
       for (const lado of [-1, 1]) { const s = Math.sin(p.ang), co = Math.cos(p.ang); piezas.push(U.caja(0xffcb3d, [p.x + co * lado * (p.ancho / 2 + 0.5), p.y + 0.6, p.z - s * lado * (p.ancho / 2 + 0.5)], [0.6, 1.2, p.largo], [0, p.ang, 0])); }
     }
     for (const mi of t.miradores) { piezas.push(U.caja(0xffcb3d, [mi.x, mi.y + 1.6, mi.z], [0.3, 3.2, 0.3]), U.caja(0xff4b5c, [mi.x, mi.y + 3.3, mi.z], [2.2, 1, 0.2], [0, mi.ang + Math.PI / 2, 0])); for (let k = 0; k < 10; k++) { const a = mi.ang - 0.9 + k * 0.2, x = mi.x + Math.cos(a) * mi.radio, z = mi.z + Math.sin(a) * mi.radio; piezas.push(U.caja(0xcdb9ea, [x, mi.y + 0.5, z], [0.3, 1, 0.3])); } }
-    for (const r of t.rampas) piezas.push(U.caja(0xff7a1a, [r.x + Math.cos(r.ang) * 0 + Math.sin(r.ang) * r.largo * 0.3, al(r.x, r.z) + 0.5, r.z + Math.cos(r.ang) * r.largo * 0.3], [r.ancho, 0.5, r.largo * 0.62], [-0.32, r.ang, 0]));
     // quitamiedos: una barra blanca con postes cada 8 m
     for (const q of t.quitamiedos) {
       const dx = q.bx - q.ax, dz = q.bz - q.az, L = Math.hypot(dx, dz); if (L < 1) continue; const ang = Math.atan2(dx, dz), incl = Math.atan2(q.yb - q.ya, L);

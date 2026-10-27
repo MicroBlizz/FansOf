@@ -88,7 +88,8 @@ const COCHE = (() => {
   function enRampa(c, rp) {
     const dx = c.x - rp.x, dz = c.z - rp.z, s = Math.sin(rp.ang), co = Math.cos(rp.ang);
     const a = dx * s + dz * co, l = dx * co - dz * s;   // a lo largo y a lo ancho de la rampa
-    if (Math.abs(l) > rp.ancho / 2 || a < rp.largo * 0.3 || a > rp.largo * 0.55) return false;
+    const cuna = rp.largo * K.rampaSube;   // la cuña (cintas/rampa-salto.js): salta al pasar por su parte alta
+    if (Math.abs(l) > rp.ancho / 2 || a < cuna * 0.6 || a > cuna) return false;
     const f = adelante(c); return f.x * s + f.z * co > 0.5;   // solo en el sentido de subida
   }
   // el coche es un círculo; contra una caja: se saca por el lado más corto y pierde velocidad

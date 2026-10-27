@@ -300,7 +300,7 @@ const CIUDAD = (() => {
   }
   // --- rampas de salto (en la primera ciudad) y escondites (parques)
   const rampas = [];
-  for (const e of aristas) { if (rampas.length >= 3) break; const a = nodos[e.a], b = nodos[e.b]; if (a.ciudad !== 0 || e.tipo !== 'calle' || e.largo < 40 || rampas.some(r => Math.hypot(r.x - a.x, r.z - a.z) < 150)) continue; const of = carril(a, b); rampas.push({ x: (a.x + b.x) / 2 + of.ox, z: (a.z + b.z) / 2 + of.oz, ang: Math.atan2(b.x - a.x, b.z - a.z), largo: 7, ancho: 4 }); }
+  for (const e of aristas) { if (rampas.length >= 6) break; const a = nodos[e.a], b = nodos[e.b]; if (a.ciudad !== 0 || e.tipo !== 'calle' || e.largo < 40 || rampas.some(r => Math.hypot(r.x - a.x, r.z - a.z) < 150)) continue; for (const lado of [1, -1]) { const of = carril(a, b, lado), ang = Math.atan2(b.x - a.x, b.z - a.z) + (lado < 0 ? Math.PI : 0); rampas.push({ x: (a.x + b.x) / 2 + of.ox, z: (a.z + b.z) / 2 + of.oz, ang, largo: 7, ancho: 4 }); } }   // una en cada carril: se salta en los dos sentidos
   const escondites = ciudades.flatMap(c => c.celdas.filter(m => m.parque).slice(0, 3).map(m => ({ x: (m.x0 + m.x1) / 2, z: (m.z0 + m.z1) / 2, radio: Math.min(12, (m.x1 - m.x0) / 2) })));
   // --- los trozos: qué hay en cada uno (para montar la pantalla por partes)
   const TR = M.trozo, NTX = Math.ceil(M.ancho / TR), NTZ = Math.ceil(M.largo / TR);

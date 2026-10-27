@@ -1,8 +1,8 @@
 {
- "build": 563,
- "hash": "c335ba1",
- "fecha": "2026-10-27T00:25:22Z",
- "mensaje": "Taxi: carreteras como cintas continuas (dominio por capas) y tráfico sin culebreo en las eses",
+ "build": 564,
+ "hash": "df64ed8",
+ "fecha": "2026-10-27T00:28:03Z",
+ "mensaje": "Taxi: rampas de salto como cuña en cada carril (se salta en los dos sentidos)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

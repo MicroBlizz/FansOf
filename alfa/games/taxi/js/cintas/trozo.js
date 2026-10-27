@@ -21,6 +21,7 @@ CINTAS.trozo = (() => {
         CINTAS.cruce.construir(nodo, listas);
       }
     }
+    for (const rampa of trozo.rampas) CINTAS.rampaSalto.construir(rampa, listas.muros);
     return listas;
   }
 

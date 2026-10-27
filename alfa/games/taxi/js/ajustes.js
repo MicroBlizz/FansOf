@@ -33,6 +33,7 @@ const TAXI = {
     escalon: 1.1,             // si el suelo sube más que esto de un paso a otro es un muro (taludes, trincheras): no se sube
     gravedad: 24,
     salto: 0.38,              // velocidad vertical = velocidad * esto al pasar una rampa
+    rampaSube: 0.55,          // qué parte del largo de una rampa es la cuña (se salta al pasar por ella hacia arriba)
     nitroCarga: { derrape: 0.12, roce: 0.18, derribo: 0.6, salto: 0.25 },   // cuánto nitro da cada cosa (de 0 a 1)
     nitroGasto: 0.4,          // nitro que se gasta por segundo
   },

@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.60
+  "<b>INTRO ARREGLADA</b>: la pantalla de carga vuelve a tener su suelo de cuadros turquesa y crema (se veía con el fondo oscuro).": "<b>INTRO FIXED</b>: the loading screen has its turquoise and cream checkered floor again (it showed a dark background).",
+  "Microblizz apagó la luz de la intro para ahorrar en la factura. Phony ya la ha vuelto a encender.": "Microblizz turned off the intro lights to save on the bill. Phony has switched them back on.",
   // 0.2.59
   "<b>TU PINTURA, CON TODO SU DETALLE</b>: lo que pintas en Mi escenario les llega a tus amigos tal cual, también el píxel a píxel y los estampados, y tu partida guarda la pintura sin perder detalle.": "<b>YOUR PAINT, IN FULL DETAIL</b>: what you paint in My Scene reaches your friends exactly as it is, pixel art and patterns too, and your save keeps the paint without losing detail.",
   "<b>ESCENARIO DE LA SEMANA</b>: ahora hacen falta 10 «me gusta» para salir, y en OPCIONES puedes elegir no salir nunca (tus amigos lo siguen viendo).": "<b>STAGE OF THE WEEK</b>: you now need 10 likes to appear, and in OPTIONS you can choose to never appear (your friends can still see it).",

@@ -19,6 +19,7 @@ const COCHE = (() => {
     // acelerar y frenar; sin gas, el motor retiene; cada suelo frena lo suyo; la cuesta tira hacia abajo
     c.usandoNitro = !!(e.nitro && c.nitro > 0 && c.v > 1);
     if (c.usandoNitro) { c.nitro = Math.max(0, c.nitro - K.nitroGasto * dt); c.v += K.nitroAcel * dt; }
+    else if (c.v > K.vmax * K.nitroVelocidad.desde) c.nitro = Math.min(1, c.nitro + K.nitroVelocidad.carga * dt);   // ir rápido lo recarga poco a poco
     if (e.gas > 0) c.v += (lim.acel || K.acel) * e.gas * dt;
     else if (!c.aire && Math.abs(c.v) > 0.2) c.v -= Math.sign(c.v) * Math.min(Math.abs(c.v), K.retencion * dt);
     if (e.freno > 0) {

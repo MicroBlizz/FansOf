@@ -89,6 +89,11 @@ CINTAS.geometria = (() => {
 
   // un punto desplazado `d` metros hacia la izquierda de la sección (negativo: derecha), a la altura y
   const aLado = (seccion, d, y) => [seccion.x + seccion.lateral[0] * d, y, seccion.z + seccion.lateral[1] * d];
+  // lo mismo, pero sobre la calzada del tramo (que junto a un cruce puede ir inclinada de lado), más `encima` metros
+  function sobreCalzada(tramo, seccion, d, encima) {
+    const x = seccion.x + seccion.lateral[0] * d, z = seccion.z + seccion.lateral[1] * d;
+    return [x, CIUDAD.alturaTramo(tramo, x, z) + encima, z];
+  }
 
-  return { HOLGURA, tramosDe, otroExtremo, esSubterraneo, direccionDesde, corteDe, esCruce, secciones, aLado };
+  return { HOLGURA, tramosDe, otroExtremo, esSubterraneo, direccionDesde, corteDe, esCruce, secciones, aLado, sobreCalzada };
 })();

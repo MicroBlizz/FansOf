@@ -35,7 +35,8 @@ const TAXI = {
     salto: 0.38,              // velocidad vertical = velocidad * esto al pasar una rampa
     rampaSube: 0.55,          // qué parte del largo de una rampa es la cuña (se salta al pasar por ella hacia arriba)
     nitroCarga: { derrape: 0.12, roce: 0.18, derribo: 0.6, salto: 0.25 },   // cuánto nitro da cada cosa (de 0 a 1)
-    nitroGasto: 0.4,          // nitro que se gasta por segundo
+    nitroGasto: 0.2,          // nitro que se gasta por segundo (lleno dura 5 s; Arkioner pidió el doble, 27-10-2026)
+    nitroVelocidad: { desde: 0.75, carga: 0.04 },   // a más del 75 % de la velocidad máxima se recarga solo, despacio (por segundo)
   },
   mundo: {
     ancho: 3100, largo: 2500, // metros del mundo entero (fuera, mar)

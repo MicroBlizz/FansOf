@@ -10,13 +10,13 @@ CINTAS.tramo = (() => {
   const G = CINTAS.geometria;
   const natural = (seccion, d) => CIUDAD.natural(seccion.x + seccion.lateral[0] * d, seccion.z + seccion.lateral[1] * d);
 
-  function calzada(a, b, mitad, lista, conBordillo) {
-    const y = s => s.y + M.sobreSuelo;
-    lista.cuadrilatero(G.aLado(a, -mitad, y(a)), G.aLado(b, -mitad, y(b)), G.aLado(b, mitad, y(b)), G.aLado(a, mitad, y(a)), C.asfalto);
+  function calzada(tramo, a, b, mitad, lista, conBordillo) {
+    const punto = (s, d, encima) => G.sobreCalzada(tramo, s, d, encima);
+    lista.cuadrilatero(punto(a, -mitad, M.sobreSuelo), punto(b, -mitad, M.sobreSuelo), punto(b, mitad, M.sobreSuelo), punto(a, mitad, M.sobreSuelo), C.asfalto);
     if (!conBordillo) return;
     for (const lado of [-1, 1]) {
       const d = lado * mitad;
-      lista.cuadrilatero(G.aLado(a, d, y(a)), G.aLado(a, d, a.y - M.bordillo), G.aLado(b, d, b.y - M.bordillo), G.aLado(b, d, y(b)), C.bordillo);
+      lista.cuadrilatero(punto(a, d, M.sobreSuelo), punto(a, d, -M.bordillo), punto(b, d, -M.bordillo), punto(b, d, M.sobreSuelo), C.bordillo);
     }
   }
 
@@ -46,9 +46,12 @@ CINTAS.tramo = (() => {
 
   function rayas(tramo, secciones, lista) {
     if (tramo.tipo === 'mirador') return;
-    const a = CIUDAD.nodos[tramo.a], b = CIUDAD.nodos[tramo.b];
+    const a = CIUDAD.nodos[tramo.a];
     const { ux, uz } = secciones[0], desde = secciones[0].s, hasta = secciones[secciones.length - 1].s;
-    const punto = (s, d) => [a.x + ux * s - uz * d, CIUDAD.alturaArista(tramo, s / tramo.largo) + M.rayaSobreSuelo, a.z + uz * s + ux * d];
+    const punto = (s, d) => {
+      const x = a.x + ux * s - uz * d, z = a.z + uz * s + ux * d;
+      return [x, CIUDAD.alturaTramo(tramo, x, z) + M.rayaSobreSuelo, z];
+    };
     const banda = (s0, s1, ancho, color) => lista.cuadrilatero(punto(s0, -ancho / 2), punto(s1, -ancho / 2), punto(s1, ancho / 2), punto(s0, ancho / 2), color);
     if (tramo.tipo === 'avenida') { banda(desde, hasta, M.anchoRayaBlanca, C.rayaBlanca); return; }
     if (tramo.ancho < 11) return;
@@ -62,7 +65,7 @@ CINTAS.tramo = (() => {
     const mitad = tramo.ancho / 2, enSuperficie = !G.esSubterraneo(tramo);
     for (let i = 0; i < secciones.length - 1; i++) {
       const a = secciones[i], b = secciones[i + 1];
-      calzada(a, b, mitad, listas.calzada, enSuperficie);
+      calzada(tramo, a, b, mitad, listas.calzada, enSuperficie);
       if (tramo.tipo === 'rampa') murosTrinchera(a, b, mitad, listas.muros);
       if (tramo.tipo === 'tunel') carcasaTunel(a, b, mitad, listas.tunel);
     }

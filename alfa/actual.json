@@ -1,8 +1,8 @@
 {
- "build": 565,
- "hash": "90c8013",
- "fecha": "2026-10-27T00:43:19Z",
- "mensaje": "Taxi: cruces planos (sin pliegues) y sin suelo invisible sobre las trincheras",
+ "build": 566,
+ "hash": "ed62444",
+ "fecha": "2026-10-27T00:47:51Z",
+ "mensaje": "Taxi: cruces como plano inclinado (perfil.js) y turbo que dura el doble y se recarga yendo rápido",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

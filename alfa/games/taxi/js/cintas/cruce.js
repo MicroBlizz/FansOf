@@ -14,9 +14,9 @@ CINTAS.cruce = (() => {
     return G.tramosDe(nodo)
       .map(tramo => {
         const [dx, dz] = G.direccionDesde(nodo, tramo), corte = G.corteDe(tramo, nodo), mitad = tramo.ancho / 2;
-        const y = CIUDAD.alturaArista(tramo, tramo.a === nodo.id ? corte / tramo.largo : 1 - corte / tramo.largo);
         const cx = nodo.x + dx * corte, cz = nodo.z + dz * corte;
-        return { tramo, dx, dz, angulo: Math.atan2(dz, dx), derecha: [cx + dz * mitad, y, cz - dx * mitad], izquierda: [cx - dz * mitad, y, cz + dx * mitad] };
+        const enCalzada = (x, z) => [x, CIUDAD.alturaTramo(tramo, x, z), z];
+        return { tramo, dx, dz, angulo: Math.atan2(dz, dx), derecha: enCalzada(cx + dz * mitad, cz - dx * mitad), izquierda: enCalzada(cx - dz * mitad, cz + dx * mitad) };
       })
       .sort((p, q) => p.angulo - q.angulo);
   }
@@ -27,7 +27,7 @@ CINTAS.cruce = (() => {
     if (Math.abs(denominador) < 0.15) return null;
     const qx = q.derecha[0] - p.izquierda[0], qz = q.derecha[2] - p.izquierda[2], t = (qx * q.dz - qz * q.dx) / denominador;
     const x = p.izquierda[0] + p.dx * t, z = p.izquierda[2] + p.dz * t;
-    return Math.hypot(x - nodo.x, z - nodo.z) < DISTANCIA_MAXIMA_ESQUINA ? [x, nodo.y, z] : null;
+    return Math.hypot(x - nodo.x, z - nodo.z) < DISTANCIA_MAXIMA_ESQUINA ? [x, CIUDAD.alturaCruce(nodo, x, z), z] : null;
   }
 
   // el contorno del cruce: [{ punto, esBoca }], donde esBoca marca que del punto al siguiente se entra en un tramo

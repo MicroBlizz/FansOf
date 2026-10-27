@@ -1,4 +1,4 @@
-// Fans Of · DESARROLLO: un botón «DEV» con utilidades para quien trabaja en el juego. Solo existe en modo desarrollo (NUCLEO.desarrollo:
+// Fans Of · DESARROLLO: un botón «DEV» con utilidades para quien trabaja en el juego. Existe en la alfa y en modo desarrollo (NUCLEO.desarrollo:
 // localhost, o ?dev=1 en la dirección; ?dev=0 lo apaga). En la web publicada nunca se carga. Es común: los dos juegos lo tienen igual.
 // Para añadir una utilidad, apúntala en UTILIDADES: { titulo, pinta(caja) } y pinta lo suyo dentro de `caja`.
 // Las de un solo juego van en ese juego: que defina UTILIDADES_JUEGO (una lista igual) y salen aquí, detrás de «Este juego».

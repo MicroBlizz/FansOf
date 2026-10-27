@@ -1,8 +1,8 @@
 {
- "build": 585,
- "hash": "cd0429c",
- "fecha": "2026-10-27T21:11:43Z",
- "mensaje": "Caja negra (fase 1): lista de sucesos en core (REPORTE.suceso) tras el flag caja-negra, con sucesos de Rouflage y Taxi",
+ "build": 586,
+ "hash": "33ceff2",
+ "fecha": "2026-10-27T21:20:32Z",
+ "mensaje": "Panel DEV solo en la alfa y en localhost: en la release no existe ni con ?dev=1; acuerdos de la caja negra en REPORTES.md",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

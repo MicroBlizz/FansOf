@@ -37,8 +37,11 @@ const NUCLEO = (() => {
   }
   function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
   // EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se carga core/js/sistema/desarrollo.js,
-  // un botón «DEV» con utilidades para quien trabaja en el juego. En la web publicada no se carga ni se ve. El comparador lo apaga a propósito.
+  // un botón «DEV» con utilidades para quien trabaja en el juego. El panel DEV sale también en la alfa; en la release no se carga ni se ve, ni con ?dev=1. El comparador lo apaga a propósito.
+  // Fuera de localhost y de la alfa (la release) NUNCA vale: ni ?dev=1 ni lo guardado en el navegador, con rol o sin él.
+  const lugarDev = alfa || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   const desarrollo = (() => {
+    if (!lugarDev) return false;
     try {
       const q = new URLSearchParams(location.search).get('dev');
       if (q === '1' || q === '0') localStorage.setItem('fansof-dev', q);
@@ -150,7 +153,7 @@ const NUCLEO = (() => {
     codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
-    if (desarrollo) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado
+    if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
     if (idioma !== 'es') {   // la página espera, tapada, a que se traduzca lo que ya hay; después se traduce también lo que el juego escriba
       const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
       const listo = () => { IDIOMA.pantalla(); velo.remove(); };

@@ -1,6 +1,7 @@
 // Fans Of · REPORTE DE PRUEBA: un botón «!» para mandarnos una situación mientras se juega, en CUALQUIER juego.
 //
-// Cuándo sale: en el modo desarrollo (localhost o ?dev=1, ver NUCLEO.desarrollo) y en la alfa. Nunca en la release.
+// Quién lo ve: solo las cuentas con el rol «admin» (tabla roles), en todos los juegos y en cualquier copia (release, alfa o desarrollo).
+// El servidor lo vuelve a comprobar al recibir el reporte (servidor/102-reportes-prueba-solo-admin.sql).
 // Qué manda: la nota del probador, una captura pequeña, los últimos 60 s de recorrido (una muestra por segundo) y lo que el juego
 // quiera contar (dónde está, qué pasa…), más el aparato (pantalla, núcleos, gráfica). Va con su cuenta; no es telemetría, pero
 // igualmente solo sale si tiene encendido «Datos de partida anónimos» (DATOS.activo()).
@@ -20,7 +21,6 @@ const REPORTE = (() => {
   const trazaJuego = [], trazaFps = [];
 
   // --- cuándo y dónde
-  const esProbador = () => typeof NUCLEO !== 'undefined' && (NUCLEO.desarrollo || NUCLEO.alfa);
   const hayCuenta = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
   const datosPermitidos = () => typeof DATOS === 'undefined' || DATOS.activo();
   function plataforma() {
@@ -138,8 +138,17 @@ const REPORTE = (() => {
 .rp-breve{position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:99992;background:#7ee04a;color:#20102c;border:3px solid #20102c;border-radius:12px;padding:8px 16px;font:800 18px "Baloo 2",sans-serif;box-shadow:0 3px 0 #20102c}`;
     document.head.appendChild(s);
   }
+  // --- quién: se pregunta al servidor si la cuenta es admin al arrancar y cada vez que cambia la cuenta (entrar, salir)
+  let esAdmin = false, parado = false;
+  async function compruebaAdmin() {
+    let admin = false;
+    if (hayCuenta() && !CUENTA.invitado) { try { admin = (await CUENTA.rpc('tiene_rol', { p_rol: 'admin' })) === true; } catch (e) { admin = false; } }
+    esAdmin = admin;
+    if (esAdmin) ponBoton(); else quitaBoton();
+  }
+
   function ponBoton() {
-    if (boton || !esProbador()) return;
+    if (boton || !esAdmin || parado) return;
     estilo();
     boton = document.createElement('button');
     Object.assign(boton, { id: 'rp-boton', type: 'button', textContent: '!', title: tr_('Reportar una situación'), onclick: abre });
@@ -149,12 +158,14 @@ const REPORTE = (() => {
   }
 
   // --- para los juegos
-  function activar(opciones) { juego = opciones || {}; ponBoton(); }
-  function parar() { if (boton) { boton.remove(); boton = null; } cierra(); }
+  function activar(opciones) { juego = opciones || {}; parado = false; ponBoton(); }
+  function quitaBoton() { if (boton) { boton.remove(); boton = null; } cierra(); }
+  function parar() { parado = true; quitaBoton(); }
   function traza(muestra) { guarda(trazaJuego, muestra); }
 
-  // sin que el juego haga nada, el botón sale al terminar de cargar
-  if (typeof window !== 'undefined') window.addEventListener('load', () => setTimeout(ponBoton, 1000));
+  // sin que el juego haga nada, el botón sale solo (si la cuenta es admin) al terminar de cargar y al cambiar de cuenta
+  if (typeof hook === 'function') hook('cuenta', () => { compruebaAdmin(); });
+  if (typeof window !== 'undefined') window.addEventListener('load', () => setTimeout(compruebaAdmin, 1500));
 
   return { activar, parar, traza };
 })();

@@ -95,7 +95,7 @@ const NUCLEO = (() => {
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
-    'js/sistema/reporte-prueba.js', // botón «!» para probadores (alfa o localhost): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
+    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
@@ -121,7 +121,7 @@ const NUCLEO = (() => {
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
-    'js/sistema/reporte-prueba.js', // botón «!» para probadores (alfa o localhost): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
+    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba

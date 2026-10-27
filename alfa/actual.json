@@ -1,8 +1,8 @@
 {
- "build": 583,
- "hash": "14d74d4",
- "fecha": "2026-10-27T13:14:12Z",
- "mensaje": "Rouflage: la música de la intro ya no da error con tiempos negativos (bombo, boing, golpe y plop fuera de su ventana)",
+ "build": 584,
+ "hash": "20ef6ba",
+ "fecha": "2026-10-27T16:45:09Z",
+ "mensaje": "Reportes de prueba: el botón «!» solo para cuentas admin, en todos los juegos y también en la release",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

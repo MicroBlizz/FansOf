@@ -38,7 +38,7 @@ function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
   if (typeof PAGOS !== 'undefined' && PAGOS.disponible()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
   return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
 }
-function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
+function tiendaCompraHecha(texto, da) { REPORTE.suceso('compra', { donde: 'tienda' }); da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
 
 // un montón de títulos de Acciones (1 a 5): cuanto más grande el paquete, más alto el montón; el de arriba, el icono de siempre
 function pintaMontonAcciones(c, w, n) {

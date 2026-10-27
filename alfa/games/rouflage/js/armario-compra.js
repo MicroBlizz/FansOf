@@ -31,6 +31,7 @@ function arCompraCaja() {
 function arPideCompra(cat, it) {
   const pr = arPrecio(it); if (!pr || (arTiene(cat.id, it) && !muebleOtraMas(cat, it))) return;
   ecoEstado();
+  REPORTE.suceso('compra', { donde: 'armario', cat: cat.id, item: it.id });
   const v = arCompraCaja();
   Object.assign(AR_COMPRA, { cat, it, ocupado: false, moneda: SAVE.gotas >= pr.gotas ? 'gotas' : SAVE.acciones >= pr.acciones ? 'acciones' : null });      // de entrada, lo ganado jugando
   v.dataset.rar = it.r;

@@ -74,6 +74,7 @@ const gachaCoste = (n, maq) => { const C = gachaCfg(maq); return n === 10 ? C.pr
 // tira n cápsulas (1 o 10). Devuelve [{ cat, it, nuevo, devuelve }] o null si faltan Gotas. Primero pregunta a MONEDAS.azar y luego cobra.
 // gratis: 'x1' o 'x10' (la tirada gratis: no cobra nada y solo si ya toca; se apunta la hora o el domingo)
 function gachaTira(n, gratis, maq = 'ropa') {
+  REPORTE.suceso('gacha', { maq, n, gratis: !!gratis });
   if (maq === 'casa') gratis = null;      // la CASA no tiene tiradas gratis
   const g = gachaEstado(maq), gr = gachaEstado(), pool = gachaPool(maq), coste = gratis ? 0 : gachaCoste(n, maq), C = gachaCfg(maq);
   if (gratis === 'x1' ? gachaFalta1() > 0 : gratis === 'x10' ? !gachaX10().listo : SAVE.gotas < coste) return null;

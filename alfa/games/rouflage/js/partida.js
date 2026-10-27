@@ -29,6 +29,7 @@ function escenaTitulo() {
 // la postura de un colado bot: casi siempre firmes; a veces otra, para que no todos tengan la misma silueta
 const posturaBot = () => pick(['firmes', 'firmes', 'firmes', 'bolita', 'estrella', 'saludo']);
 function empiezaPartida(modo) {
+  REPORTE.suceso('partida', { modo });
   limpiaPartida(); modoDesdeUrl(); if (modoEs('ida')) modo = 'camaleon'; J.modo = modo; J.t = 0; eventosPrepara();      // en solitario el modo sale de la URL (modos.js); en Ida y vuelta todos empiezan de colado
   if (modo === 'camaleon') {
     // tú eres CrazyBunny; tres compañeros se esconden por su cuenta y dos becarios esperan encerrados en Recursos Humanos
@@ -203,6 +204,7 @@ const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + '
 // `fin` solo en el PvP: lo que cuenta el anfitrión (los puntos y las cifras de cada uno), que es lo que vale
 function termina(victoria, motivo, fin) {
   if (J.fase === 'fin') return;
+  REPORTE.suceso('resultado', { victoria: !!victoria, motivo, modo: J.modo, pvp: !!fin });
   if (fin) rfpAplicaFin(fin);
   J.fase = 'fin'; J.tFase = 0; M.tmT = 1;
   if (TALLER.abierto) cierraTaller();

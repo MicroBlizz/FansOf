@@ -96,6 +96,7 @@ function retoEmpieza() {
 }
 // el final del reto: en vez de la pantalla de siempre, el resultado (y se apunta en el servidor)
 function retoAcaba(victoria) {
+  REPORTE.suceso('reto', { victoria: !!victoria });
   J.fase = 'fin'; J.tFase = 0; J.finMostrado = true; RETO.activo = false;
   const k = J.camaleones.find(e => e.reto), segundos = RETO.tiempo - Math.max(0, J.reloj);
   if (k && !k.fuera) { descongela(k); fxTexto(k.x, k.y - 74, k.nombre, '#fff6ea', 14); }

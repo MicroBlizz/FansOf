@@ -1,8 +1,8 @@
 {
- "build": 574,
- "hash": "de091fb",
- "fecha": "2026-10-27T11:33:06Z",
- "mensaje": "Rouflage: escenario de la semana con 10 me gusta y opción para no salir",
+ "build": 575,
+ "hash": "8eb606f",
+ "fecha": "2026-10-27T11:34:36Z",
+ "mensaje": "Rouflage 0.2.59: nota de novedades y de Google Play (pintura con todo su detalle, escenario de la semana)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",
@@ -14,7 +14,7 @@
   "karts": "0.7.13",
   "nova": "0.3.24",
   "ratkov": "0.2.27",
-  "rouflage": "0.2.58",
+  "rouflage": "0.2.59",
   "rumble": "0.9.156",
   "skate": "0.1.27",
   "survivors": "0.1.69",

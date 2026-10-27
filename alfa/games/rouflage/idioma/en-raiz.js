@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.59
+  "<b>TU PINTURA, CON TODO SU DETALLE</b>: lo que pintas en Mi escenario les llega a tus amigos tal cual, también el píxel a píxel y los estampados, y tu partida guarda la pintura sin perder detalle.": "<b>YOUR PAINT, IN FULL DETAIL</b>: what you paint in My Scene reaches your friends exactly as it is, pixel art and patterns too, and your save keeps the paint without losing detail.",
+  "<b>ESCENARIO DE LA SEMANA</b>: ahora hacen falta 10 «me gusta» para salir, y en OPCIONES puedes elegir no salir nunca (tus amigos lo siguen viendo).": "<b>STAGE OF THE WEEK</b>: you now need 10 likes to appear, and in OPTIONS you can choose to never appear (your friends can still see it).",
+  "Microblizz ha metido tu escenario en una caja de zapatos para mandarlo más rápido. Phony venía dentro.": "Microblizz packed your scene in a shoebox to send it faster. Phony was inside.",
   // 0.2.58
   "<b>PINTA COMO EN PAINT</b>: en Mi escenario estrenas píxel a píxel (con rejilla y mucho más zoom), espray, línea, rectángulo y círculo, estampados (cuadros, rayas, barras, diagonal y lunares), seleccionar para mover, copiar y voltear, espejo y rehacer. Y la pintura se ve nítida.": "<b>PAINT LIKE IN PAINT</b>: My Scene gets pixel by pixel (with a grid and much more zoom), spray, line, rectangle and circle, patterns (checks, stripes, bars, diagonal and dots), select to move, copy and flip, mirror and redo. And the paint looks sharp.",
   "<b>TRES ESCENARIOS</b>: en MIS ESCENARIOS (la casita de arriba) guardas hasta 3 escenarios distintos y eliges cuál usas. El primero es gratis; los otros dos, en la tienda.": "<b>THREE SCENES</b>: in MY SCENES (the little house at the top) you save up to 3 different scenes and choose which one to use. The first is free; the other two are in the shop.",

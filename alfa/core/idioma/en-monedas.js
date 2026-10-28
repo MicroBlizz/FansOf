@@ -42,4 +42,9 @@ IDIOMA.add({
   "Necesitas conexión para comprar": "You need a connection to buy",
   "Google Play no está disponible en este aparato": "Google Play isn't available on this device",
   "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "The purchase couldn't be completed. If Google charged you, you'll receive it in a few minutes.",
+  "Pago seguro con Paddle. Lo comprado queda en tu cuenta.": "Secure payment with Paddle. What you buy stays in your account.",
+  "Abriendo el pago…": "Opening the payment…",
+  "El pago todavía no está confirmado: lo recibirás en cuanto lo esté": "The payment isn't confirmed yet: you'll get it as soon as it is",
+  "No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.": "The purchase couldn't be completed. If you were charged, you'll get it in a few minutes.",
+  "Las compras con euros solo están en la app de Android": "Purchases with euros are only in the Android app"
 });

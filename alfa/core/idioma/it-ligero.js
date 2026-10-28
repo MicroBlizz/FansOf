@@ -227,5 +227,10 @@ IDIOMA.add({
   "Necesitas conexión para comprar": "Ti serve la connessione per comprare",
   "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "Non è stato possibile completare l'acquisto. Se Google ti ha addebitato, lo riceverai tra qualche minuto.",
   "No se vende en tu país": "Non si vende nel tuo paese",
-  "Ya lo tienes": "Ce l'hai già"
+  "Ya lo tienes": "Ce l'hai già",
+  "Pago seguro con Paddle. Lo comprado queda en tu cuenta.": "Pagamento sicuro con Paddle. Ciò che compri resta nel tuo account.",
+  "Abriendo el pago…": "Apertura del pagamento…",
+  "El pago todavía no está confirmado: lo recibirás en cuanto lo esté": "Il pagamento non è ancora confermato: lo riceverai appena lo sarà",
+  "No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.": "Non è stato possibile completare l'acquisto. Se ti è stato addebitato, lo riceverai tra pochi minuti.",
+  "Las compras con euros solo están en la app de Android": "Gli acquisti in euro sono solo nell'app Android"
 });

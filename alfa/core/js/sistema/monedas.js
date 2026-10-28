@@ -102,6 +102,13 @@ const MONEDAS = (() => {
           .catch(e => { const t = PAGOS.errorTexto(e); if (!t) return; if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(t); });
       }));
     }
+    else if (producto && typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible()) {   // en la web, la ventana de pago de Paddle (pagos-web.js)
+      confirmBox(titulo, `${html}<small>${tr('Pago seguro con Paddle. Lo comprado queda en tu cuenta.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => {
+        if (typeof toast === 'function') toast(tr('Abriendo el pago…'), true);
+        PAGOS_WEB.comprar(producto).then(r => { if (alComprar) alComprar(r); })
+          .catch(e => { const t = PAGOS_WEB.errorTexto(e); if (!t) return; if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(t); });
+      }));
+    }
     else if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => alComprar({ prueba: true })));
     else confirmBox(tr('SOLO CON DINERO REAL'), `${html}<small>${tr('Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.')}</small>`, null);
   }

@@ -12,7 +12,7 @@ const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo'
 const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'charca', 'rana', 'lapida', 'cruz', 'vela', 'huesos', 'calavera', 'antorcha', 'cadena', 'barril', 'farol', 'carro', 'pozo', 'armadura', 'estandarte', 'estatua'];
 const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado'];
 const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo'];
-const HEROE_PNG = ['c-farol', ...['c-cuerpo', 'c-paso', 'c-golpe'].flatMap(n => [n, n + '-verde', n + '-azul', n + '-amarillo'])];   // el héroe en capas (js/personajes.js)
+const HEROE_PNG = ['c-farol', ...['c-cuerpo', 'c-paso', 'c-golpe'].flatMap(n => [n, n + '-verde', n + '-azul', n + '-amarillo']).flatMap(n => [n, n + '-izq'])];   // el héroe en capas (js/personajes.js)
 // los fotogramas de los enemigos (Yoshi): cada ciclo es la lista de sprites que se van turnando
 const CICLOS = {
   oca: ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-oca-2'],

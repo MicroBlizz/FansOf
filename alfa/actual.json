@@ -1,8 +1,8 @@
 {
- "build": 600,
- "hash": "5e6b81a",
- "fecha": "2026-10-28T10:57:26Z",
- "mensaje": "Goose 0.2.1: sube la versión para que los móviles carguen el selector de personajes y no la copia guardada",
+ "build": 601,
+ "hash": "a1b9baf",
+ "fecha": "2026-10-28T11:07:28Z",
+ "mensaje": "Goose 0.2.2: al mirar a la izquierda el farolillo sigue en la misma mano (cuerpo con el puño en esa mano, el farol nunca se voltea)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

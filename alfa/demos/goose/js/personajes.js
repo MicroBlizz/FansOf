@@ -1,6 +1,7 @@
 // Fans of Goose · Los cuatro personajes (el mismo viajero con la capa de otro color, cada uno con su arma de salida y su poder) y
-// cómo se dibuja el héroe EN CAPAS: el cuerpo (con la capa) es un dibujo que se voltea al mirar a la izquierda; el farolillo es
-// otro dibujo aparte que NUNCA se voltea: solo se cambia de lado su posición (la de la mano), así sigue en la misma mano física.
+// cómo se dibuja el héroe EN CAPAS: el cuerpo (con la capa) tiene su dibujo mirando a cada lado (el de la izquierda lleva el puño
+// en la misma mano que el de la derecha: img/c-*-izq.png); el farolillo es otro dibujo aparte que NUNCA se voltea y va colgado
+// de ese puño (MANOS). Así el farol no cambia de mano al girarse.
 'use strict';
 
 const PERSONAJES = [
@@ -24,20 +25,20 @@ const plumasDado = () => CFG.impulso.lleno * ((JUEGO.st && JUEGO.st.barra) || 1)
 
 // --- el héroe en capas ---
 // la mano (donde va el asa del farolillo) en cada pose, en píxeles desde el centro del dibujo mirando a la derecha
-const MANOS = { 'c-cuerpo': [17.8, 1.9], 'c-paso': [18.2, 3.5], 'c-golpe': [19.5, 1.4] };
+const MANOS = { 'c-cuerpo': [17.8, 1.9], 'c-paso': [18.2, 3.5], 'c-golpe': [19.5, 1.4], 'c-cuerpo-izq': [7.8, 7.9], 'c-paso-izq': [3.2, 6.5], 'c-golpe-izq': [5.5, 7.4] };
 const capasListas = () => !!(SPR['c-cuerpo'] && SPR['c-farol']);
 
 // dibuja al héroe: pose = 'c-cuerpo' | 'c-paso' | 'c-golpe'; dir = 1 (derecha) o -1 (izquierda); balanceo del farolillo en radianes
 function pintaHeroeCapas(x, y, pose, dir, capa, esc, alfa, blanco, balanceo) {
-  const nombre = capa ? pose + '-' + capa : pose, body = SPR[nombre] || SPR[pose];
+  const lado = dir < 0 ? '-izq' : '', nombre = (capa ? pose + '-' + capa : pose) + lado, body = SPR[nombre] || SPR[pose + lado] || SPR[pose];
   if (!body) return;
-  const k = PAN.k, m = MANOS[pose] || MANOS['c-cuerpo'];
-  // 1. el cuerpo: este sí se voltea
+  const k = PAN.k, m = MANOS[pose + lado] || MANOS[pose] || MANOS['c-cuerpo'];
+  // 1. el cuerpo: su dibujo de cada lado (nunca se voltea por código)
   if (alfa !== 1) G.globalAlpha = alfa;
   const w = body.w * esc, h = body.h * esc;
-  G.drawImage(blanco ? body.b : dir < 0 ? body.f : body.n, x - w / 2, y - h / 2, w, h);
-  // 2. el farolillo: su textura nunca se voltea; su sitio (la mano) cambia de lado con dir
-  const f = SPR['c-farol'], hx = x + (m[0] / k) * dir * esc, hy = y + (m[1] / k) * esc;
+  G.drawImage(blanco ? body.b : body.n, x - w / 2, y - h / 2, w, h);
+  // 2. el farolillo: colgado del puño de ese dibujo, que está siempre en la misma mano
+  const f = SPR['c-farol'], hx = x + (m[0] / k) * esc, hy = y + (m[1] / k) * esc;
   G.save(); G.translate(hx, hy); G.rotate(balanceo || 0);
   const fw = f.w * esc, fh = f.h * esc;
   G.drawImage(blanco ? f.b : f.n, -fw / 2, -1, fw, fh);

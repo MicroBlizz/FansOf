@@ -99,7 +99,7 @@ function pintaJugador() {
   if (capasListas()) {
     const pose = J.golpeT > 0 && SPR['c-golpe'] ? 'c-golpe' : yo.moviendo && Math.sin(yo.anda) > 0 ? 'c-paso' : 'c-cuerpo';
     // el farolillo se balancea al andar y se va un poco hacia atrás al correr
-    const balanceo = (yo.moviendo ? Math.sin(yo.anda * 0.5) * 0.35 - dir * 0.15 : Math.sin(J.t * 2) * 0.06) + (J.golpeT > 0 ? -dir * 0.5 : 0);
+    const balanceo = (yo.moviendo ? Math.sin(yo.anda * 0.5) * 0.35 - dir * 0.12 : Math.sin(J.t * 2) * 0.06) + (J.golpeT > 0 ? -dir * 0.5 : 0);
     const fp = pintaHeroeCapas(x, y, pose, dir, (J.pers || personaje()).capa, esc, alfa, J.golpeT > 0.18, balanceo);
     if (fp) { G.globalAlpha = 0.5 + Math.sin(J.t * 9) * 0.1; pinta('luz', fp[0], fp[1], false, false, 0.5); G.globalAlpha = 1; }
   } else pinta('heroe', x, y, false, J.golpeT > 0.18, esc, alfa);

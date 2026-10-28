@@ -10,7 +10,7 @@ function creaEnemigo(tipo, x, y) {
   const e = ENE.saca(); if (!e) return null;
   const D = CFG.enemigos[tipo], f = tipo === 'jefe' ? 1 + JUEGO.t * 0.0012 : escalaVida();
   e.tipo = tipo; e.x = x; e.y = y; e.vx = 0; e.vy = 0; e.kx = 0; e.ky = 0; e.hpMax = e.hp = D.vida * f; e.r = D.r; e.vel = D.vel * (0.9 + Math.random() * 0.2);
-  e.dano = D.dano * (1 + JUEGO.casilla * 0.015); e.xp = D.xp; e.flash = 0; e.cd = D.disparo ? D.disparo * Math.random() + 1 : 0; e.cdPl = 0; e.t = Math.random() * 6; e.fase = 0; e.f2 = 0; e.id = SIG_ID++; e.pozo = false; e.sx = 0; e.sy = 0; e.cx = 0; e.cy = 0; e.furia = false;
+  e.dano = D.dano * (1 + JUEGO.casilla * 0.015); e.xp = D.xp; e.flash = 0; e.cd = D.disparo ? D.disparo * Math.random() + 1 : 0; e.cdPl = 0; e.t = Math.random() * 6; e.fase = 0; e.f2 = 0; e.id = SIG_ID++; e.pozo = false; e.caida = 0; e.sx = 0; e.sy = 0; e.cx = 0; e.cy = 0; e.furia = false;
   return e;
 }
 
@@ -25,9 +25,14 @@ function puntoBorde() {
 function avanzaOleadas(dt) {
   const J = JUEGO, O = CFG.oleada;
   if (J.jefe || J.fin || (J.carrera && J.carrera.llegada !== null)) return;
-  let quiero = Math.min(CFG.maxEnemigos - 14, O.base + O.porCasilla * J.casilla + O.porSegundo * J.t);
-  if (J.dado.efecto === 1) quiero = Math.min(CFG.maxEnemigos - 6, quiero * 1.8);
-  if (J.posadaT > 0) quiero *= 0.25;
+  const esc = J.escena;
+  if (esc && esc.tipo !== 'puente') return;   // el Pozo y la Cárcel traen sus ocas; la Posada, ninguna
+  // parado: cuanto más tardas en tirar, más ocas (la presión de la Oca). En el tramo, la horda te sale al paso
+  let quiero = O.base + O.porCasilla * J.casilla * 0.55 + O.porSegundo * J.t * 0.5;
+  if (J.fase === 'parado') quiero += J.quieto * 1.0;
+  else quiero *= 1.25;
+  quiero = Math.min(CFG.maxEnemigos - 14, quiero);
+  if (J.dado.efecto === 1 && J.dado.quedan > 0) quiero = Math.min(CFG.maxEnemigos - 6, quiero * 1.8);
   J.tOla -= dt;
   if (J.tOla <= 0) {
     J.tOla = 0.2;
@@ -68,6 +73,7 @@ function avanzaEnemigos(dt) {
   llenaRejilla(J.camY);
   for (let i = 0; i < ENE.n; i++) {
     const e = l[i]; e.t += dt; if (e.flash > 0) e.flash -= dt; if (e.cdPl > 0) e.cdPl -= dt;
+    if (e.caida > 0) { e.caida -= dt; if (e.caida <= 0) { estallido(e.x, e.y + 4, 4, '#c9b98a', 30, 0.3, 2, 0); } continue; }   // cayendo del cielo (el Pozo): todavía no toca el suelo
     const dx = yo.x - e.x, dy = yo.y - e.y, d = Math.hypot(dx, dy) || 1;
     let qx = 0, qy = 0;
     if (e.tipo === 'bandada') {
@@ -87,7 +93,7 @@ function avanzaEnemigos(dt) {
         for (let k = 0; k < n && c < 6; k++) { const o = l[CERCA[k]]; if (o === e) continue; const ox = e.x - o.x, oy = e.y - o.y, dd = ox * ox + oy * oy, rr = (e.r + o.r) * 0.9; if (dd < rr * rr && dd > 0.01) { const di = Math.sqrt(dd); sx += ox / di * (rr - di); sy += oy / di * (rr - di); c++; } }
         e.sx = sx * 7; e.sy = sy * 7;
       }
-      const vel = e.vel * (J.posadaT > 0 && enCasilla(e.y, CFG.posada) ? -1.2 : 1);
+      const vel = e.vel;
       e.vx += (qx * vel - e.vx) * Math.min(1, dt * 4); e.vy += (qy * vel - e.vy) * Math.min(1, dt * 4);
       e.x += (e.vx + e.kx + (e.sx || 0)) * dt; e.y += (e.vy + e.ky + (e.sy || 0)) * dt;
       const fr = Math.max(0, 1 - dt * 7); e.kx *= fr; e.ky *= fr;
@@ -133,6 +139,7 @@ function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
 function mata(e) {
   const J = JUEGO;
   J.bajas++; J.combo++; J.comboT = 2.2;
+  bajaEncierro(e);
   estallido(e.x, e.y, e.tipo === 'gorda' ? 22 : 7, e.tipo === 'albatros' ? '#b9c4b0' : '#ece6d6', 70, 0.7, 2.4, 1, 30);
   estallido(e.x, e.y, 3, '#c21b1b', 50, 0.4, 1.8, 0, 60);
   const xp = e.xp * (e.pozo ? 2 : 1);

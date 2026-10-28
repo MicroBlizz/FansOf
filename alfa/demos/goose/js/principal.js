@@ -1,7 +1,7 @@
 // Fans of Goose · Arranque y bucle: el mundo mide 200 de ancho y TODO se dibuja en un canvas pequeño (2 píxeles por unidad,
 // 400 de ancho) que el navegador amplía sin suavizar (image-rendering: pixelated): así todo es pixel art del mismo tamaño
 // (personajes, iconos, casillas, efectos y letras) y el móvil pinta pocos píxeles. Recoge el dedo (palanca flotante, dos
-// toques = Impulso), el ratón y el teclado (flechas o WASD, espacio = Impulso, P o Esc = pausa).
+// toques = tirar el dado), el ratón y el teclado (flechas o WASD, espacio = dado, P o Esc = pausa).
 'use strict';
 
 const PIXELES = 2;   // píxeles de verdad por unidad del mundo (el tamaño del pixel art)
@@ -29,9 +29,9 @@ function bajaDedo(e) {
   const [x, y] = punto(e), E = ENTRADA, J = JUEGO;
   E.botonDown = true; E.bx = x; E.by = y; E.bBoton = botonEn(x, y);
   if (J.modo === 'juego') {
-    // dos toques seguidos: Impulso
+    // dos toques seguidos: tirar el dado
     const ahora = performance.now();
-    if (ahora - E.ultimoToque < 300 && Math.hypot(x - E.ux, y - E.uy) < 40 && usaImpulso()) { E.ultimoToque = 0; return; }
+    if (ahora - E.ultimoToque < 300 && Math.hypot(x - E.ux, y - E.uy) < 40 && tirarDado()) { E.ultimoToque = 0; return; }
     E.ultimoToque = ahora; E.ux = x; E.uy = y;
     if (!E.bBoton && E.id === null) { E.id = e.pointerId; E.palanca = true; E.px = x; E.py = y; E.mx = 0; E.my = 0; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* da igual */ } }
   }
@@ -62,7 +62,7 @@ cv.addEventListener('pointercancel', e => { if (e.pointerId === ENTRADA.id) { EN
 // --- el teclado (para probar en el ordenador) ---
 addEventListener('keydown', e => {
   ENTRADA.teclas[e.code] = true; audioInit();
-  if (e.code === 'Space') { e.preventDefault(); if (JUEGO.modo === 'juego') usaImpulso(); else if (JUEGO.modo === 'cofre') cierraCofre(); }
+  if (e.code === 'Space') { e.preventDefault(); if (JUEGO.modo === 'juego') tirarDado(); else if (JUEGO.modo === 'cofre') cierraCofre(); }
   if (e.code === 'KeyP' || e.code === 'Escape') { if (JUEGO.modo === 'juego') pausa(); else if (JUEGO.modo === 'pausa') JUEGO.modo = 'juego'; }
   if (JUEGO.modo === 'cartas' && /^Digit[1-4]$/.test(e.code)) eligeCarta(+e.code.slice(5) - 1);
 });

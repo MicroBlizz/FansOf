@@ -52,7 +52,7 @@ function pintaOpciones() {
   fila(132, tr('Vibración'), SAVE.vibrar, () => { SAVE.vibrar = SAVE.vibrar ? 0 : 1; });
   boton(20, 172, W - 40, 26, tr('CUENTA'), '#2f74c0', () => { SONIDO.boton(); if (window.filaCuenta) abreCuenta(); else toast(tr('La cuenta llegará pronto')); }, 9, tr('Guarda tu progreso en la nube'));
   texto2(tr('Cómo se juega'), W / 2, 214, 8, '#ffd34d');
-  parrafo(tr('Arrastra el dedo por cualquier sitio para moverte: tus armas atacan solas. Sube por el tablero antes de que se derrumbe, recoge plumas doradas para subir de nivel y llenar el Impulso (dos toques para saltar hacia delante). Llega a la casilla 63 y vence a la Oca Madre.'), 22, 228, W - 44, 7, '#e8dcc0');
+  parrafo(tr('Como en el Juego de la Oca: tira el dado (dos toques o su botón) y avanzas esas casillas a toda prisa; tus armas atacan solas. En cada casilla te defiendes y recoges plumas, pero cuanto más tardes en tirar, más ocas y más cerca el derrumbe. Pares, bendición; impares, maldición. Cuidado con el Puente, el Pozo, la Cárcel y la Muerte; descansa en la Posada. Llega a la casilla 63 y vence a la Oca Madre.'), 22, 228, W - 44, 7, '#e8dcc0');
   boton(30, H - 40, W - 60, 26, tr('VOLVER'), '#e8742a', () => { SONIDO.boton(); J.modo = J.opcionesDe || 'portada'; }, 10);
 }
 // la cuenta de core se abre en su ventana (la fila de Opciones comunes, dentro de un cuadro)

@@ -5,12 +5,12 @@
 'use strict';
 
 const BIOMAS = [
-  { desde: 1,  nombre: 'EL BOSQUE MUSTIO',    suelo: ['#5d4128', '#6b4a2c'], veta: '#3a2414', fondo: '#0d1410', niebla: '#8fb39a', adornos: ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza'] },
-  { desde: 11, nombre: 'EL PANTANO',          suelo: ['#3f4a2a', '#4a5530'], veta: '#232b14', fondo: '#0a140e', niebla: '#7dbf6b', adornos: ['junco', 'charca', 'seta', 'tocon', 'rana'] },
-  { desde: 21, nombre: 'EL CEMENTERIO',       suelo: ['#4b4a50', '#55545a'], veta: '#2a292e', fondo: '#0e0c14', niebla: '#a8a0c9', adornos: ['lapida', 'cruz', 'vela', 'huesos', 'cuervo'] },
-  { desde: 31, nombre: 'LA ALDEA MALDITA',    suelo: ['#6e5a44', '#7a6449'], veta: '#3d2f20', fondo: '#140e0a', niebla: '#d9b38a', adornos: ['barril', 'farol', 'carro', 'calabaza', 'pozo'] },
-  { desde: 41, nombre: 'LAS CATACUMBAS',      suelo: ['#5a3a2e', '#653f31'], veta: '#2c1a13', fondo: '#120808', niebla: '#c98a6b', adornos: ['huesos', 'vela', 'calavera', 'antorcha', 'cadena'] },
-  { desde: 51, nombre: 'EL CASTILLO DE LA OCA', suelo: ['#3a2a3a', '#432f42'], veta: '#1f141f', fondo: '#100810', niebla: '#d98aa8', adornos: ['armadura', 'estandarte', 'antorcha', 'estatua', 'vela'] },
+  { desde: 1,  id: 'bosque', nombre: 'EL BOSQUE MUSTIO',    suelo: ['#5d4128', '#6b4a2c'], veta: '#3a2414', fondo: '#0d1410', niebla: '#8fb39a', adornos: ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza'] },
+  { desde: 11, id: 'pantano', nombre: 'EL PANTANO',          suelo: ['#3f4a2a', '#4a5530'], veta: '#232b14', fondo: '#0a140e', niebla: '#7dbf6b', adornos: ['junco', 'charca', 'seta', 'tocon', 'rana'] },
+  { desde: 21, id: 'cementerio', nombre: 'EL CEMENTERIO',       suelo: ['#4b4a50', '#55545a'], veta: '#2a292e', fondo: '#0e0c14', niebla: '#a8a0c9', adornos: ['lapida', 'cruz', 'vela', 'huesos', 'cuervo'] },
+  { desde: 31, id: 'aldea', nombre: 'LA ALDEA MALDITA',    suelo: ['#6e5a44', '#7a6449'], veta: '#3d2f20', fondo: '#140e0a', niebla: '#d9b38a', adornos: ['barril', 'farol', 'carro', 'calabaza', 'pozo'] },
+  { desde: 41, id: 'catacumbas', nombre: 'LAS CATACUMBAS',      suelo: ['#5a3a2e', '#653f31'], veta: '#2c1a13', fondo: '#120808', niebla: '#c98a6b', adornos: ['huesos', 'vela', 'calavera', 'antorcha', 'cadena'] },
+  { desde: 51, id: 'castillo', nombre: 'EL CASTILLO DE LA OCA', suelo: ['#3a2a3a', '#432f42'], veta: '#1f141f', fondo: '#100810', niebla: '#d98aa8', adornos: ['armadura', 'estandarte', 'antorcha', 'estatua', 'vela'] },
 ];
 const biomaDe = t => { let b = BIOMAS[0]; for (const x of BIOMAS) if (t >= x.desde) b = x; return b; };
 const indiceBioma = t => BIOMAS.indexOf(biomaDe(t));
@@ -26,7 +26,12 @@ function preparaSuelos() {
       const c = lienzo(w * k, h * k), x = c.getContext('2d'); x.scale(k, k);
       const r = azarSemilla(31 + bi * 17 + v * 7);
       x.fillStyle = B.veta; x.fillRect(0, 0, w, h);
-      if (bi === 0 || bi === 3) {   // tablones
+      const tex = IMG['t-' + B.id];
+      if (tex) {   // el suelo pintado por Yoshi, repetido (1 píxel del dibujo = 1 píxel de la pantalla pequeña)
+        x.setTransform(1, 0, 0, 1, 0, 0);
+        for (let ty = 0; ty < c.height; ty += tex.height) for (let tx = 0; tx < c.width; tx += tex.width) x.drawImage(tex, tx + (v ? tex.width / 2 : 0) - tex.width, ty, tex.width, tex.height), x.drawImage(tex, tx + (v ? tex.width / 2 : 0), ty, tex.width, tex.height);
+        x.scale(k, k);
+      } else if (bi === 0 || bi === 3) {   // tablones
         const n = 6, tw = w / n;
         for (let i = 0; i < n; i++) { x.fillStyle = B.suelo[(i + v) % 2]; x.fillRect(i * tw + 0.6, 0, tw - 1.2, h); x.fillStyle = 'rgba(0,0,0,.18)'; for (let j = 0; j < 4; j++) x.fillRect(i * tw + 2 + r() * (tw - 6), r() * h, 0.8, 6 + r() * 16); x.fillStyle = B.veta; x.beginPath(); x.arc(i * tw + tw / 2, 4, 0.9, 0, 7); x.arc(i * tw + tw / 2, h - 4, 0.9, 0, 7); x.fill(); }
       } else if (bi === 1) {        // tablas sobre el barro, con musgo

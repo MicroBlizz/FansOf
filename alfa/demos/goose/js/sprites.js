@@ -10,7 +10,10 @@ const IMG = {};           // los PNG cargados
 const PNG_DE = { xp1: 'i-pluma', xp2: 'i-pluma-azul', xp3: 'i-pluma-roja', moneda: 'i-moneda', cuchilla: 'i-cuchilla', tornado: 'i-cuchilla-fuego', huevo: 'i-huevo', huevojefe: 'i-huevo-rojo', cofre: 'i-cofre', pollo: 'i-asada', iman: 'i-iman' };
 const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo', dado6: 'i-dado', fuerza: 'i-espada', prisa: 'i-bota', area: 'i-circulo', suerte: 'i-trebol', iman: 'i-iman', vida: 'i-corazon', plumon: 'i-pluma-azul', cadencia: 'i-reloj', moneda: 'i-moneda', pollo: 'i-asada', bolsa: 'i-bolsa' };
 const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'charca', 'rana', 'lapida', 'cruz', 'vela', 'huesos', 'calavera', 'antorcha', 'cadena', 'barril', 'farol', 'carro', 'pozo', 'armadura', 'estandarte', 'estatua'];
-const PNGS = [...new Set(['heroe', 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
+const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado'];
+const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo'];
+const HEROE_PNG = ['heroe-paso', 'heroe-izq', 'heroe-izq-paso', 'heroe-golpe', 'heroe-latigo'];
+const PNGS = [...new Set(['heroe', ...HEROE_PNG, 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
   return Promise.all(PNGS.map(n => new Promise(ok => {
@@ -98,6 +101,8 @@ function preparaSprites() {
   });
   hazSprite('pollo', 12, 10, (x, w, h) => { x.beginPath(); x.ellipse(w * 0.45, h * 0.55, w * 0.34, h * 0.36, 0, 0, 7); trazo(x, '#c9702a'); x.beginPath(); x.moveTo(w * 0.72, h * 0.45); x.lineTo(w * 0.95, h * 0.2); x.lineWidth = 2; x.strokeStyle = '#f1e6c8'; x.stroke(); });
   hazSprite('iman', 10, 8, (x, w, h) => { x.lineWidth = 2.4; x.strokeStyle = '#e0303a'; x.beginPath(); x.arc(w / 2, h * 0.55, w * 0.34, Math.PI, 0); x.stroke(); });
+  for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
+  for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const id in ICONO_PNG) if (IMG[ICONO_PNG[id]]) hazSprite('ic-' + id, IMG[ICONO_PNG[id]].width / PAN.k, IMG[ICONO_PNG[id]].height / PAN.k, dePng(ICONO_PNG[id]), true);
   for (let n = 1; n <= 6; n++) hazSprite('dado' + n, 12, 12, (x, w, h) => caraDado(x, w, h, n));
   for (let n = 1; n <= 6; n++) hazSprite('dadogrande' + n, 34, 34, (x, w, h) => caraDado(x, w, h, n, n % 2 ? '#3a1416' : '#f6e7b8', n % 2 ? '#ff4d4d' : '#8a1010'));

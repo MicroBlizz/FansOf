@@ -13,7 +13,7 @@ function nuevaPartida() {
     modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, dado: nuevoDado(), avisos: [], aviso2: null,
     nivel: 1, xp: 0, xpNecesita: xpPara(1), pendientes: 0, cartas: null, tiradas: 1 + nivelMejora('retiro'),
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
-    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, pozoT: 0, posadaT: 0,
+    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0,
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
     impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
@@ -60,7 +60,6 @@ function avanzaPartida(dt) {
   avanzaJugador(dt);
   avanzaSalto(dt);
   avanzaDerrumbe(dt);
-  avanzaEspeciales(dt);
   vigilaBioma();
   avanzaDado(dt);
   avanzaOleadas(dt);
@@ -70,12 +69,11 @@ function avanzaPartida(dt) {
   avanzaEfectos(dt);
   avanzaCamara(dt);
   if (J.comboT > 0) { J.comboT -= dt; if (J.comboT <= 0) { J.mejorCombo = Math.max(J.mejorCombo, J.combo); J.combo = 0; J.hito = 0; } }
-  if (J.posadaT > 0) J.posadaT -= dt;
   // el jardín: aparece la Oca Madre
   if (J.carrera) avanzaCarrera(dt);
   if ((!J.carrera || esCoop()) && !J.jefe && !J.victoria && J.casilla >= CFG.jardin && J.yo.y < yCentro(CFG.jardin) + TH) apareceJefe();
   // subir de nivel: las cartas salen cuando no estás en el aire
-  if (J.pendientes > 0 && J.salto <= 0 && J.caida <= 0 && J.modo === 'juego') abreCartas();
+  if (J.pendientes > 0 && J.salto <= 0 && J.caida <= 0 && J.fase !== 'tramo' && J.modo === 'juego') abreCartas();
 }
 
 function avanzaCamara(dt) {
@@ -93,35 +91,28 @@ function avanzaCamara(dt) {
 function avanzaJugador(dt) {
   const J = JUEGO, yo = J.yo;
   if (J.invul > 0) J.invul -= dt;
+  if (J.golpeT > 0) J.golpeT -= dt; if (J.latigoT > 0) J.latigoT -= dt;
   J.vida = Math.min(J.st.vidaMax, J.vida + J.st.regen * dt);
   if (J.caida > 0) {   // cayendo al vacío
     J.caida -= dt;
     if (J.caida <= 0) {
       if (J.caidaAbismo) { matarJugador(); return; }
       J.vida -= J.st.vidaMax * CFG.jugador.caida; J.invul = 1.5;
-      yo.x = centroX(J.casilla); yo.y = Math.min(yo.y, J.yD - 30);
+      const E = J.escena; yo.x = E && E.tipo === 'puente' ? xPuente(yo.y) : E && E.cx !== undefined ? E.cx : centroX(J.casilla); yo.y = Math.min(yo.y, J.yD - 30);
       anillo(yo.x, yo.y, 30, '#fff', 0.4, 3); SONIDO.vuelve();
       if (J.vida <= 0) matarJugador();
     }
     return;
   }
   if (J.salto > 0) return;
-  let mx = ENTRADA.mx, my = ENTRADA.my;
-  if (invertido()) { mx = -mx; my = -my; }
-  const m = Math.hypot(mx, my);
-  yo.moviendo = m > 0.12 && J.pozoT <= 0;
-  if (J.pozoT > 0) { J.pozoT -= dt; if (J.pozoT <= 0) { anillo(yo.x, yo.y, 90, '#7dff6b', 0.5, 6); estallidoPozo(); } }
-  if (yo.moviendo) {
-    const v = J.st.vel * multiVel() * Math.min(1, m);
-    yo.x += mx / Math.max(1, m) * v * dt; yo.y += my / Math.max(1, m) * v * dt;
-    yo.miraX = mx / m; yo.miraY = my / m; yo.anda += dt * 10;
-  }
+  // el ritmo de la Oca: parado en la casilla, en el tramo o en una escena (js/escenas.js)
+  if (J.fase === 'tramo') avanzaTramo(dt);
+  else if (J.fase === 'escena' && J.escena && J.escena.tipo === 'puente') avanzaPuente(dt);
+  else avanzaParado(dt);
   yo.x = clamp(yo.x, 4, CFG.W - 4);
   if (yo.y < yTecho() + 8) yo.y = yTecho() + 8;
-  J.casilla = Math.max(1, casillaDe(yo.y));
-  if (J.casilla > J.mejorCasilla) { J.mejorCasilla = J.casilla; if (J.casilla % 10 === 0) { texto(yo.x, yo.y - 16, tr('¡CASILLA {n}!', { n: J.casilla }), '#ffd34d', 9, 1); SONIDO.casilla(); } }
-  // ¿se sale del tablero?
-  if (!hayCamino(yo.x, yo.y)) {
+  // ¿se sale del tablero? (solo corriendo: parado no te caes)
+  if (J.fase !== 'parado' && !hayCamino(yo.x, yo.y)) {
     J.caida = 0.55; J.caidaAbismo = yo.y > J.yD - 1;
     aviso(J.caidaAbismo ? tr('¡EL ABISMO!') : tr('¡AL VACÍO!'), '#ff4d4d', 1); SONIDO.cae(); vibra(120);
   }
@@ -134,8 +125,8 @@ function estallidoPozo() {   // al salir del Pozo, una onda que barre todo lo ce
 
 function heridaJugador(dano, ox, oy) {
   const J = JUEGO, yo = J.yo;
-  if (J.posadaT > 0 && enCasilla(yo.y, CFG.posada)) return;
-  J.vida -= dano; J.invul = CFG.jugador.invulnerable;
+  if (J.escena && J.escena.tipo === 'posada') return;
+  J.vida -= dano; J.invul = CFG.jugador.invulnerable; J.golpeT = 0.25;
   const d = Math.hypot(yo.x - ox, yo.y - oy) || 1; yo.x += (yo.x - ox) / d * 6; yo.y += (yo.y - oy) / d * 6;   // las hordas te empujan
   texto(yo.x, yo.y - 12, '-' + Math.round(dano), '#ff4d4d', 8, 0.6);
   destella('#ff0000', 0.22); tiembla(2.5); SONIDO.herido(); vibra(25);
@@ -172,28 +163,11 @@ function recoge(p) {
     const ahora = J.t; cadena = ahora - cadenaT < 0.35 ? Math.min(cadena + 1, 24) : 0; cadenaT = ahora;
     SONIDO.pluma(cadena);
     while (J.xp >= J.xpNecesita) { J.xp -= J.xpNecesita; J.nivel++; J.xpNecesita = xpPara(J.nivel); J.pendientes++; }
-    if (J.impulso >= CFG.impulso.lleno && !J.avisoImpulso) { J.avisoImpulso = true; texto(J.yo.x, J.yo.y - 20, tr('¡IMPULSO LISTO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
+    if (J.impulso >= CFG.impulso.lleno && !J.avisoImpulso) { J.avisoImpulso = true; J.dado.bendito = true; texto(J.yo.x, J.yo.y - 20, tr('¡DADO BENDITO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
   } else if (p.tipo === 'moneda') { J.monedasPartida++; SONIDO.moneda(); texto(p.x, p.y - 6, '+1', '#ffcf33', 6, 0.5); }
   else if (p.tipo === 'pollo') { J.vida = Math.min(J.st.vidaMax, J.vida + 40); texto(p.x, p.y - 6, '+40', '#7dff6b', 8, 0.8); SONIDO.cura(); }
   else if (p.tipo === 'iman') { for (let i = 0; i < PLUMAS.n; i++) if (PLUMAS.lista[i].tipo === 'xp') PLUMAS.lista[i].atraida = true; aviso(tr('¡IMÁN!'), '#6bf2ff', 1); SONIDO.iman(); }
   else if (p.tipo === 'cofre') abreCofre();
-}
-
-// --- el Impulso: dos toques con la barra llena te lanzan hacia delante (en el jardín, una onda que castiga a la Oca Madre) ---
-function usaImpulso() {
-  const J = JUEGO;
-  if (J.modo !== 'juego' || J.impulso < CFG.impulso.lleno || J.salto > 0 || J.caida > 0 || J.muerto > 0 || J.pozoT > 0) return false;
-  J.impulso = 0; J.avisoImpulso = false;
-  if (J.jefe || J.casilla >= CFG.jardin - 1) {
-    const yo = J.yo; anillo(yo.x, yo.y, 140, '#ffd34d', 0.6, 7); destella('#ffd34d', 0.5); tiembla(6); SONIDO.oca();
-    for (let i = 0; i < ENE.n; i++) { const e = ENE.lista[i]; if (e.hp > 0) danar(e, e.tipo === 'jefe' ? e.hpMax * 0.07 : 9999, 0, -1, 200, false, true); }
-    BALAS.vacia(); return true;
-  }
-  const destino = Math.min(CFG.jardin - 1, J.casilla + CFG.impulso.casillas);
-  J.salto = 0.85; J.saltoT = 0; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(destino), y: yCentro(destino) };
-  if (J.carrera) mandaCarrera({ t: 'e' });
-  aviso(tr('¡IMPULSO!'), '#ffd34d', 1.1); destella('#ffd34d', 0.45); tiembla(4); SONIDO.oca(); vibra(50);
-  return true;
 }
 
 // --- combo ---

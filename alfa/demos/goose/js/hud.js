@@ -1,4 +1,4 @@
-// Fans of Goose · El marcador: todo arriba (vida, experiencia, Impulso, casilla, monedas, combo y el dado), el mapa de las 63
+// Fans of Goose · El marcador: todo arriba (vida, experiencia, plumas para el dado bendito, casilla, monedas, combo y el dado), el mapa de las 63
 // casillas en el borde derecho, los avisos grandes del centro y el jefe. La parte de abajo queda libre para jugar.
 'use strict';
 
@@ -49,10 +49,9 @@ function pintaHud() {
   barra(25, 16, W - 64, 5, J.xp / J.xpNecesita, '#6bd4ff');
   texto2(tr('NV {n}', { n: J.nivel }), W - 36, 18.6, 6, '#6bd4ff', 'left');
   // impulso
-  const ki = J.impulso / CFG.impulso.lleno, listo = ki >= 1;
-  barra(25, 24, W - 64, 6, ki, listo ? (((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d') : '#d9a520');
-  texto2(listo ? tr('¡DOS TOQUES!') : tr('IMPULSO'), 25 + (W - 64) / 2, 27.3, 5, listo ? '#3a1d00' : '#fff1c2', 'center', FUENTE, 800, listo ? 0 : 0.3);
-  if (listo) BOTONES.push({ x: 20, y: 21, w: W - 54, h: 12, accion: () => usaImpulso() });
+  const ki = J.impulso / CFG.impulso.lleno, listo = J.dado.bendito;
+  barra(25, 24, W - 64, 6, listo ? 1 : ki, listo ? (((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d') : '#d9a520');
+  texto2(listo ? tr('¡DADO BENDITO!') : tr('PLUMAS PARA EL DADO BENDITO'), 25 + (W - 64) / 2, 27.3, 5, listo ? '#3a1d00' : '#fff1c2', 'center', FUENTE, 800, listo ? 0 : 0.3);
   // casilla o jefe
   if (J.jefe) {
     texto2(tr('LA OCA MADRE'), W / 2, 42, 11, '#ff4d6b', 'center', FUENTE_G, 400, 0.25);
@@ -71,6 +70,7 @@ function pintaHud() {
     G.fillStyle = '#ffd34d'; G.fillRect(8, 57, 28 * k, 1.5);
   }
   pintaDado();
+  pintaEscenasHud();
   pintaMapa();
   if (J.modo === 'juego') pintaAvisos();
 }

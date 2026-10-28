@@ -37,7 +37,9 @@ function azote(ang, abre, r, dano, evo) {
     if (abre < 3 && (dx * cx + dy * cy) / d < lim) continue;
     danar(e, dano, dx / d, dy / d, 190); golpes++;
   }
-  if (LATIGAZOS.length < 8) LATIGAZOS.push({ x: yo.x, y: yo.y, ang, abre, r, t: 0, dur: 0.2, evo });
+  if (LATIGAZOS.length < 8) LATIGAZOS.push({ x: yo.x, y: yo.y, ang, abre, r, t: 0, dur: 0.22, evo, chispa: golpes > 0 });
+  JUEGO.latigoT = 0.18;
+  if (golpes >= 4) congela(0.03);
   if (golpes) SONIDO.latigo(golpes);
   else SONIDO.zas();
 }
@@ -50,14 +52,14 @@ function armaLatigo(a) {
     a.doble = 0.14; a.t = 0.75 * JUEGO.st.cd; tiembla(1.5);
     return;
   }
-  azote(ang, 1.05, r, dano, false);
+  azote(ang, 1.25, r, dano, false);
   if (a.nivel >= 3) a.atras = 0.16;
   a.t = nv('latigo', 'cd') * JUEGO.st.cd;
 }
 function latigoPendiente(dt) {   // el segundo latigazo (atrás, o el doble de la evolución), un poco después
   const a = JUEGO.armas.latigo; if (!a) return;
   const yo = JUEGO.yo, area = multiArea(), ang = Math.atan2(yo.miraY, yo.miraX);
-  if (a.atras > 0) { a.atras -= dt; if (a.atras <= 0) azote(ang + Math.PI, 1.05, nv('latigo', 'alcance') * area, nv('latigo', 'dano') * JUEGO.st.dano * multiDado(), false); }
+  if (a.atras > 0) { a.atras -= dt; if (a.atras <= 0) azote(ang + Math.PI, 1.25, nv('latigo', 'alcance') * area, nv('latigo', 'dano') * JUEGO.st.dano * multiDado(), false); }
   if (a.doble > 0) { a.doble -= dt; if (a.doble <= 0) azote(ang + 1.5, 3.3, 70 * area, 40 * JUEGO.st.dano * multiDado(), true); }
 }
 
@@ -201,16 +203,7 @@ function pintaArmas() {
   }
   G.globalAlpha = 1;
   // latigazos
-  for (const l of LATIGAZOS) {
-    const k = l.t / l.dur;
-    G.globalAlpha = 1 - k; G.lineCap = 'round';
-    G.strokeStyle = l.evo ? '#ff5a3d' : '#e8c27a'; G.lineWidth = (l.evo ? 7 : 5) * (1 - k * 0.5);
-    G.beginPath();
-    if (l.abre > 3) G.arc(l.x, l.y, l.r * (0.55 + k * 0.45), 0, 6.283);
-    else G.arc(l.x, l.y, l.r * (0.6 + k * 0.4), l.ang - l.abre * (1 - k * 0.2), l.ang - l.abre + l.abre * 2 * Math.min(1, k * 2.2));
-    G.stroke();
-    G.strokeStyle = '#fff4d6'; G.lineWidth = 1.5; G.stroke();
-  }
+  for (const l of LATIGAZOS) pintaLatigazo(l);
   G.globalAlpha = 1;
   // plumas giratorias
   const a = J.armas.plumas;
@@ -229,4 +222,29 @@ function pintaArmas() {
     } else if (o.tipo === 'dado') pintaGirado('dado' + (1 + ((o.gira * 0.5) | 0) % 6), o.x, o.y, o.gira, o.evo ? 1.2 : 0.9);
     else { G.fillStyle = '#ffe9a8'; G.fillRect(o.x - 1.2, o.y - 1.2, 2.4, 2.4); }
   }
+}
+
+// el latigazo: la tira de junco barre el arco de delante hacia atrás; gruesa en el mango, afilada en la punta, con el chasquido al final
+function pintaLatigazo(l) {
+  const k = l.t / l.dur, barrido = Math.min(1, k * 1.8), col = l.evo ? '#ff5a3d' : '#c98a3d', luz = l.evo ? '#ffd0a8' : '#f6e7b8';
+  const r = l.r * (0.7 + k * 0.3), ang0 = l.abre > 3 ? barrido * 6.283 - 3.2 : l.ang - l.abre, ang1 = l.abre > 3 ? ang0 + 2.4 : ang0 + l.abre * 2 * barrido;
+  // la estela (lo que ya barrió)
+  G.globalAlpha = (1 - k) * 0.35; G.fillStyle = col; G.beginPath(); G.moveTo(l.x, l.y); G.arc(l.x, l.y, r, ang0, ang1); G.closePath(); G.fill();
+  // la tira: varios segmentos del mango a la punta, cada vez más finos
+  G.globalAlpha = 1 - k * k; G.lineCap = 'round';
+  const n = 7;
+  for (let i = 0; i < n; i++) {
+    const a = ang1 - (i / n) * 0.9 * (l.abre > 3 ? 1 : 0.6), rr0 = r * (i / n), rr1 = r * ((i + 1) / n);
+    const ang = a - Math.sin(i * 0.9 + k * 6) * 0.08;
+    G.strokeStyle = i < 2 ? '#5a3418' : col; G.lineWidth = 4.5 - i * 0.55;
+    G.beginPath(); G.moveTo(l.x + Math.cos(ang) * rr0, l.y + Math.sin(ang) * rr0); G.lineTo(l.x + Math.cos(ang1) * rr1, l.y + Math.sin(ang1) * rr1); G.stroke();
+  }
+  // el chasquido en la punta
+  if (l.chispa && k > 0.25 && k < 0.7) {
+    const px = l.x + Math.cos(ang1) * r, py = l.y + Math.sin(ang1) * r, s = (0.7 - k) / 0.45;
+    G.globalAlpha = s; G.fillStyle = luz;
+    for (let i = 0; i < 4; i++) { const a = i * 1.571 + k * 10; G.beginPath(); G.moveTo(px, py); G.lineTo(px + Math.cos(a) * 7 * s, py + Math.sin(a) * 7 * s); G.lineTo(px + Math.cos(a + 0.5) * 2.5, py + Math.sin(a + 0.5) * 2.5); G.closePath(); G.fill(); }
+    G.fillStyle = '#fff'; G.beginPath(); G.arc(px, py, 2.2 * s, 0, 6.283); G.fill();
+  }
+  G.globalAlpha = 1;
 }

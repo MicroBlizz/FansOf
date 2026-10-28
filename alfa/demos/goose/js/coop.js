@@ -62,8 +62,7 @@ function terminaCoop(gana) {
 // los mensajes propios del cooperativo (los demás los lleva mensajeCarrera)
 function mensajeCoop(m, r) {
   const J = JUEGO, C = J.carrera;
-  if (m.t === 'd') { if (!C.anfitrion) tiraDado(false, m.c); }
-  else if (m.t === 'y') { C.yRemota = m.y; }
+  if (m.t === 'y') { C.yRemota = m.y; }
   else if (m.t === 'j') { if (J.jefe) { J.jefe.hp -= m.d; J.jefe.flash = 0.05; if (J.jefe.hp <= 0) mata(J.jefe); } else C.danoPendiente = (C.danoPendiente || 0) + m.d; }
   else if (m.t === 'v') { if (J.jefe) { J.jefe.hp = 0; mata(J.jefe); } else if (!J.victoria) { J.victoria = true; J.tVictoria = 3; J.muerto = 0; SONIDO.victoria(); aviso(tr('¡LA OCA MADRE HA CAÍDO!'), '#ffd34d', 2.5); } }
   else if (m.t === 'm') { r.muerto = true; r.c = m.c; r.abismo = !!m.ab; r.tumba = { x: m.x, y: m.y }; r.revT = 0; aviso(tr('¡{n} ha caído!', { n: r.nombre }), r.color, 1.6); }

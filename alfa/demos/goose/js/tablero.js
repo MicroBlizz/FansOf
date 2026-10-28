@@ -14,6 +14,8 @@ const enCasilla = (y, t) => casillaDe(y) === t;
 // ¿se puede pisar el punto (x, y)?
 function hayCamino(x, y) {
   if (y > 0 || y < yTecho() || y > JUEGO.yD) return false;
+  const E = JUEGO.escena;
+  if (E && E.tipo === 'puente' && y < E.y0 + TH / 2 && y > E.y1 - TH / 2) return Math.abs(x - xPuente(y)) <= ESC.puenteAncho / 2;
   const t = casillaDe(y);
   return Math.abs(x - centroX(t)) <= anchoDe(t) / 2;
 }
@@ -23,39 +25,19 @@ const ESPECIALES = [];
 function preparaEspeciales() {
   ESPECIALES.length = 0;
   const lado = t => (t % 2 ? 1 : -1) * anchoDe(t) * 0.22;
-  for (const t in CFG.ocaSalta) ESPECIALES.push({ t: +t, tipo: 'oca', x: centroX(+t) + lado(+t), y: yCentro(+t), r: 12, usado: false, a: CFG.ocaSalta[t] });
-  for (const t in CFG.puente) ESPECIALES.push({ t: +t, tipo: 'puente', x: centroX(+t) - lado(+t), y: yCentro(+t), r: 12, usado: false, a: CFG.puente[t] });
-  ESPECIALES.push({ t: CFG.pozo, tipo: 'pozo', x: centroX(CFG.pozo) - lado(CFG.pozo), y: yCentro(CFG.pozo), r: 13, usado: false });
-  for (const t of CFG.dadoDado) ESPECIALES.push({ t, tipo: 'dadodado', x: centroX(t) + lado(t), y: yCentro(t), r: 11, usado: false });
+  for (const t in CFG.ocaSalta) ESPECIALES.push({ t: +t, tipo: 'oca', x: centroX(+t), y: yCentro(+t) - 22, r: 12, usado: false, a: CFG.ocaSalta[t] });
+  for (const t in CFG.puente) ESPECIALES.push({ t: +t, tipo: 'puente', x: centroX(+t), y: yCentro(+t) - 22, r: 12, usado: false, a: CFG.puente[t] });
+  ESPECIALES.push({ t: CFG.pozo, tipo: 'pozo', x: centroX(CFG.pozo), y: yCentro(CFG.pozo) - 22, r: 13, usado: false });
+  for (const t of CFG.dadoDado) ESPECIALES.push({ t, tipo: 'dadodado', x: centroX(t), y: yCentro(t) - 22, r: 11, usado: false });
   ESPECIALES.push({ t: CFG.posada, tipo: 'posada', x: centroX(CFG.posada), y: yCentro(CFG.posada), r: 0, usado: false });
   const m = CFG.muerte, wM = anchoDe(m) * 0.6;
-  ESPECIALES.push({ t: m, tipo: 'muerte', x: centroX(m) + (anchoDe(m) / 2 - wM / 2) * (m % 2 ? -1 : 1), y: yCentro(m), w: wM, h: TH * 0.55, usado: false, cd: 0 });
-}
-
-function avanzaEspeciales(dt) {
-  const J = JUEGO, yo = J.yo;
-  if (J.salto > 0 || J.caida > 0) return;
-  for (const e of ESPECIALES) {
-    if (e.tipo === 'posada') { if (!e.usado && J.casilla === e.t) { e.usado = true; entraPosada(); } continue; }
-    if (e.tipo === 'muerte') {
-      e.cd -= dt;
-      if (e.cd <= 0 && Math.abs(yo.x - e.x) < e.w / 2 && Math.abs(yo.y - e.y) < e.h / 2) { e.cd = 2; casillaMuerte(); }
-      continue;
-    }
-    if (e.usado) continue;
-    if ((yo.x - e.x) ** 2 + (yo.y - e.y) ** 2 < (e.r + 3) ** 2) {
-      e.usado = true;
-      if (e.tipo === 'oca' || e.tipo === 'puente') saltoOca(e);
-      else if (e.tipo === 'pozo') entraPozo(e);
-      else if (e.tipo === 'dadodado') tiradaSuerte();
-    }
-  }
+  ESPECIALES.push({ t: m, tipo: 'muerte', x: centroX(m), y: yCentro(m), w: anchoDe(m) - 12, h: TH - 12, usado: false, cd: 0 });
 }
 
 // de oca a oca y tiro porque me toca: vuela hasta la siguiente oca y lo que haya en medio, frito
 function saltoOca(e) {
   const J = JUEGO;
-  J.salto = 0.85; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(e.a), y: yCentro(e.a) }; J.saltoT = 0;
+  J.salto = 0.85; J.fase = 'escena'; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(e.a), y: yCentro(e.a) }; J.saltoT = 0;
   if (e.tipo === 'puente') { aviso(tr('¡DE PUENTE A PUENTE!'), '#9fe0ff', 1.6); aviso2(tr('y tiro porque me lleva la corriente')); }
   else { aviso(tr('¡DE OCA A OCA!'), '#ffd34d', 1.6); aviso2(tr('y tiro porque me toca')); }
   destella('#ffd34d', 0.6); tiembla(5); SONIDO.oca(); vibra(60);
@@ -71,27 +53,13 @@ function avanzaSalto(dt) {
   for (let i = 0; i < n; i++) { const o = ENE.lista[CERCA[i]]; if (o.hp > 0 && Math.abs(o.x - J.yo.x) < 30 && o.tipo !== 'jefe') danar(o, 9999, (o.x - J.yo.x) > 0 ? 1 : -1, 0, 200); }
   for (let i = 0; i < 3; i++) particula(px + (Math.random() - 0.5) * 22, py + (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 40, 20, 0.6, 3, i ? '#ffd34d' : '#fff6c2', 0, 2);
   J.salto -= dt;
-  if (J.salto <= 0) { J.invul = 1; anillo(J.yo.x, J.yo.y, 70, '#ffd34d', 0.5, 5); tiembla(4); SONIDO.aterriza(); }
+  if (J.salto <= 0) { J.invul = 1; anillo(J.yo.x, J.yo.y, 70, '#ffd34d', 0.5, 5); tiembla(4); SONIDO.aterriza(); J.casilla = casillaDe(J.yo.y); J.mejorCasilla = Math.max(J.mejorCasilla, J.casilla); J.fase = 'parado'; J.quieto = 0; J.mejorY = Math.min(J.mejorY, J.yo.y); aviso(tr('¡Y TIRO PORQUE ME TOCA!'), '#ffd34d', 1.4); }
 }
 
-// el Pozo: te quedas clavado unos segundos y te rodean, pero cada oca da el doble de plumas
-function entraPozo(e) {
-  const J = JUEGO;
-  J.pozoT = CFG.pozoSeg; J.yo.x = e.x; J.yo.y = e.y;
-  aviso(tr('¡EL POZO!'), '#7dff6b', 1.6); aviso2(tr('Aguanta: cada oca da el doble'));
-  for (let i = 0; i < 32; i++) { const a = i * 6.283 / 32, oc = creaEnemigo(i % 5 ? 'oca' : 'albatros', e.x + Math.cos(a) * 95, e.y + Math.sin(a) * 95); if (oc) oc.pozo = true; }
-  tiembla(5); SONIDO.pozo(); vibra(80);
-}
-function entraPosada() {
-  const J = JUEGO;
-  J.posadaT = CFG.posadaSeg; J.vida = Math.min(J.st.vidaMax, J.vida + J.st.vidaMax * 0.5);
-  aviso(tr('LA POSADA'), '#ffb86b', 1.6); aviso2(tr('Te curas y el tablero espera'));
-  anillo(J.yo.x, J.yo.y, 90, '#ffb86b', 0.8, 5); SONIDO.posada();
-}
 function casillaMuerte() {
   const J = JUEGO, atras = CFG.muerte - CFG.muerteAtras;
   J.vida -= J.vida * 0.4; J.invul = 1.4;
-  J.yo.x = centroX(atras); J.yo.y = yCentro(atras);
+  J.yo.x = centroX(atras); J.yo.y = yCentro(atras); J.casilla = atras; J.fase = 'parado'; J.quieto = 0;
   J.yD = Math.max(J.yD, yCentro(atras) + TH * 1.6);   // el tablero se recompone detrás de ti
   aviso(tr('¡LA MUERTE!'), '#ff2d2d', 1.6); aviso2(tr('Pierdes vida y vuelves tres casillas'));
   destella('#ff0000', 0.7); tiembla(8); SONIDO.muerte(); vibra([100, 50, 100]);
@@ -103,9 +71,11 @@ function avanzaDerrumbe(dt) {
   const J = JUEGO, D = CFG.derrumbe, yo = J.yo;
   if (yo.y < J.mejorY - 2) { J.mejorY = yo.y; J.sinAvanzar = 0; } else J.sinAvanzar += dt;
   let v = D.base + D.crece * J.t;
-  J.impaciente = J.sinAvanzar > D.sinAvanzar && !J.jefe;
+  const E = J.escena;
+  J.impaciente = J.fase === 'parado' && J.quieto > D.sinAvanzar && !J.jefe && !E;
   if (J.impaciente) v *= D.impaciencia;
-  if (J.posadaT > 0 || J.pozoT > 0 || J.salto > 0) v = 0;
+  if (E && E.tipo === 'puente') v = velTramo() * 0.72;                 // las tablas se caen justo detrás de ti
+  if ((E && E.tipo !== 'puente') || J.salto > 0 || J.dado.rodando > 0) v = 0;   // en el Pozo, la Cárcel y la Posada el tablero espera
   const antes = J.yD;
   if (esCoop() && !anfitrionCoop()) derrumbeRemoto(dt);      // la línea es la del anfitrión
   else {
@@ -138,7 +108,9 @@ function pintaTablero() {
   const J = JUEGO, arriba = J.camY - 20, abajo = J.camY + PAN.H + 20;
   const t0 = Math.max(1, casillaDe(abajo)), t1 = Math.min(CFG.jardin, casillaDe(arriba));
   G.textAlign = 'center'; G.textBaseline = 'middle';
+  const P = J.escena && J.escena.tipo === 'puente' ? J.escena : null;
   for (let t = t0; t <= t1; t++) {
+    if (P && t > P.de && t < P.a) continue;   // en el Puente, entre una orilla y otra solo hay vacío y tablas
     const top = t >= CFG.jardin ? yTecho() : -t * TH, alto = t >= CFG.jardin ? TH * 3 : TH;
     let bottom = top + alto;
     if (top >= J.yD) continue;               // ya se ha caído entera
@@ -175,6 +147,7 @@ function pintaNumero(t, x, y, top, bottom) {
 function nombreCasilla(t) {
   if (CFG.ocaSalta[t] || CFG.ocasAdorno.includes(t)) return tr('OCA');
   if (CFG.puente[t] || t === 12) return tr('PUENTE');
+  if (t === CFG.jardin) return tr('JARDÍN DE LA OCA');
   if (t === CFG.pozo) return tr('EL POZO'); if (t === CFG.posada) return tr('LA POSADA'); if (t === CFG.laberinto) return tr('EL LABERINTO');
   if (t === CFG.carcel) return tr('LA CÁRCEL'); if (t === CFG.muerte) return tr('LA MUERTE'); if (CFG.dadoDado.includes(t)) return tr('DADO'); if (t === 1) return tr('SALIDA');
   return '';
@@ -188,25 +161,22 @@ function pintaEspeciales(arriba, abajo) {
     if (e.y < arriba - 30 || e.y > abajo + 30 || e.y > J.yD) continue;
     if (e.tipo === 'oca') {
       const b = Math.sin(J.t * 4) * 2;
-      G.globalAlpha = e.usado ? 0.25 : 0.4 + Math.sin(J.t * 6) * 0.15; G.fillStyle = '#ffd34d'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
+      G.globalAlpha = 0.4 + Math.sin(J.t * 6) * 0.15; G.fillStyle = '#ffd34d'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
       G.strokeStyle = '#ffd34d'; G.lineWidth = 1.5; G.beginPath(); G.arc(e.x, e.y, e.r, 0, 6.283); G.stroke();
-      pinta('oca-dorada', e.x, e.y - 4 + (e.usado ? 0 : b), false, false, 0.9, e.usado ? 0.4 : 1);
-      if (!e.usado) etiqueta(tr('SALTA'), e.x, e.y + e.r + 6, '#ffd34d');
+      pinta('oca-dorada', e.x, e.y - 4 + b, false, false, 0.9, 1);
+      etiqueta(tr('OCA'), e.x, e.y + e.r + 6, '#ffd34d');
     } else if (e.tipo === 'puente') {
       // un puentecillo de cuerda que brilla
-      G.globalAlpha = e.usado ? 0.3 : 0.35 + Math.sin(JUEGO.t * 6) * 0.15; G.fillStyle = '#9fe0ff'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
+      G.globalAlpha = 0.35 + Math.sin(JUEGO.t * 6) * 0.15; G.fillStyle = '#9fe0ff'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
       G.fillStyle = '#120808'; G.fillRect(e.x - 11, e.y - 5, 22, 10);
       for (let i = 0; i < 5; i++) { G.fillStyle = i % 2 ? '#8a5a30' : '#a06a3a'; G.fillRect(e.x - 10 + i * 4.2, e.y - 4, 3.4, 8); }
       G.fillStyle = '#d9c08a'; G.fillRect(e.x - 11, e.y - 6, 22, 1.2); G.fillRect(e.x - 11, e.y + 4.8, 22, 1.2);
-      if (!e.usado) etiqueta(tr('SALTA'), e.x, e.y + e.r + 6, '#9fe0ff');
+      etiqueta(tr('PUENTE'), e.x, e.y + e.r + 6, '#9fe0ff');
     } else if (e.tipo === 'pozo') {
-      G.fillStyle = '#05060a'; G.beginPath(); G.ellipse(e.x, e.y, e.r, e.r * 0.75, 0, 0, 6.283); G.fill();
-      G.strokeStyle = '#5c6b72'; G.lineWidth = 3; G.stroke(); G.strokeStyle = '#7dff6b'; G.lineWidth = 1; G.globalAlpha = 0.5 + Math.sin(J.t * 5) * 0.3; G.stroke(); G.globalAlpha = 1;
-      if (!e.usado) etiqueta(tr('PLUMAS x2'), e.x, e.y + e.r + 5, '#7dff6b');
+      if (!J.escena) { G.fillStyle = '#05060a'; G.beginPath(); G.ellipse(e.x, e.y, 14, 10, 0, 0, 6.283); G.fill(); G.strokeStyle = '#5c6b72'; G.lineWidth = 3; G.stroke(); }
     } else if (e.tipo === 'dadodado') {
-      if (!e.usado) { pintaGirado('dado' + (1 + ((J.t * 6) | 0) % 6), e.x, e.y + Math.sin(J.t * 3) * 2, Math.sin(J.t * 2) * 0.4, 1.6); etiqueta(tr('SUERTE'), e.x, e.y + e.r + 5, '#ffe9a8'); }
+      pintaGirado('dado' + (1 + ((J.t * 6) | 0) % 6), e.x, e.y + Math.sin(J.t * 3) * 2, Math.sin(J.t * 2) * 0.4, 1.6); etiqueta(tr('SUERTE'), e.x, e.y + e.r + 5, '#ffe9a8');
     } else if (e.tipo === 'posada') {
-      if (J.posadaT > 0) { G.globalAlpha = 0.18 + Math.sin(J.t * 4) * 0.06; G.fillStyle = '#ffb86b'; G.fillRect(centroX(e.t) - anchoDe(e.t) / 2, -e.t * TH, anchoDe(e.t), TH); G.globalAlpha = 1; }
       dibujaFarol(e.x - anchoDe(e.t) * 0.36, e.y - 18); dibujaFarol(e.x + anchoDe(e.t) * 0.36, e.y - 18);
     } else if (e.tipo === 'muerte') {
       G.globalAlpha = 0.55 + Math.sin(J.t * 3) * 0.15; G.fillStyle = '#3a0006'; G.fillRect(e.x - e.w / 2, e.y - e.h / 2, e.w, e.h); G.globalAlpha = 1;

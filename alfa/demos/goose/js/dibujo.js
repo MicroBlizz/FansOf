@@ -41,6 +41,7 @@ function pintaMundo() {
   const tx = (Math.random() - 0.5) * FX.temblor, ty = (Math.random() - 0.5) * FX.temblor;
   G.setTransform(k, 0, 0, k, tx * k, (ty - J.camY) * k);
   pintaTablero();
+  pintaEscenas();
   pintaArmasSuelo();
   // las plumas y cosas del suelo
   const pl = PLUMAS.lista;
@@ -57,7 +58,7 @@ function pintaMundo() {
   for (let i = 0; i < ENE.n; i++) { const e = l[i]; if (e.hp > 0) pinta('sombra', e.x, e.y + e.r * 0.9, false, false, e.r / 6); }
   for (let i = 0; i < ENE.n; i++) {
     const e = l[i]; if (e.hp <= 0) continue;
-    const bob = e.tipo === 'albatros' || e.tipo === 'bandada' ? Math.sin(e.t * 9) * 2 - 3 : Math.abs(Math.sin(e.t * 10)) * -1.5;
+    const bob = e.caida > 0 ? -e.caida * 110 : e.tipo === 'albatros' || e.tipo === 'bandada' ? Math.sin(e.t * 9) * 2 - 3 : Math.abs(Math.sin(e.t * 10)) * -1.5;
     const spr = e.tipo === 'bandada' ? 'oca' : e.tipo;
     const esc = e.tipo === 'bandada' ? 0.8 : e.tipo === 'jefe' ? 1 + Math.sin(e.t * 3) * 0.03 : 1;
     pinta(spr, e.x, e.y + bob, e.vx < 0, e.flash > 0, esc);
@@ -70,6 +71,7 @@ function pintaMundo() {
   // balas enemigas
   const bl = BALAS.lista;
   for (let i = 0; i < BALAS.n; i++) { const b = bl[i]; pinta(b.spr, b.x, b.y, false, false, b.r / 3); }
+  pintaEscenasEncima();
   pintaParticulas();
   pintaTextos();
   G.setTransform(k, 0, 0, k, 0, 0);
@@ -86,9 +88,18 @@ function pintaJugador() {
   if (J.caida <= 0) pinta('sombra', yo.x, yo.y + 8, false, false, 1.1 * (J.salto > 0 ? 0.6 : 1));
   if (J.invul > 0 && J.salto <= 0 && ((J.t * 18) | 0) % 2) alfa *= 0.35;
   const paso = yo.moviendo ? Math.abs(Math.sin(yo.anda)) * -1.6 : 0;
-  pinta('heroe', yo.x, yo.y + dy + paso, yo.miraX < -0.1, false, esc, alfa);
+  // la pose: nunca se voltea el dibujo (el farol no cambia de mano); si no hay dibujo mirando a la izquierda, mira a la derecha
+  const izq = yo.miraX < -0.1 && SPR['heroe-izq'];
+  let spr = izq ? 'heroe-izq' : 'heroe';
+  if (J.golpeT > 0 && SPR['heroe-golpe']) spr = 'heroe-golpe';
+  else if (J.latigoT > 0 && SPR['heroe-latigo'] && !izq) spr = 'heroe-latigo';
+  else if (yo.moviendo && Math.sin(yo.anda) > 0) { const p = izq ? 'heroe-izq-paso' : 'heroe-paso'; if (SPR[p]) spr = p; }
+  // el latigazo empuja un poco el cuerpo hacia donde pega; el golpe, hacia atrás
+  const lunge = J.latigoT > 0 ? Math.sin(J.latigoT / 0.18 * Math.PI) * 3 : 0, retro = J.golpeT > 0 ? -Math.sin(J.golpeT / 0.25 * Math.PI) * 2 : 0;
+  const inclina = yo.moviendo ? Math.sin(yo.anda) * 0.06 : 0;
+  G.save(); G.translate(yo.x + yo.miraX * (lunge + retro), yo.y + dy + paso); G.rotate(inclina + (J.latigoT > 0 ? yo.miraX * 0.12 : 0));
+  pinta(spr, 0, 0, false, J.golpeT > 0.18, esc, alfa); G.restore();
   // aura del Pozo y de la Posada
-  if (J.pozoT > 0) { G.strokeStyle = '#7dff6b'; G.globalAlpha = 0.6; G.lineWidth = 2; G.beginPath(); G.arc(yo.x, yo.y, 14 + Math.sin(J.t * 10) * 2, 0, 6.283); G.stroke(); G.globalAlpha = 1; }
   if (invertido()) { G.strokeStyle = '#c9a0ff'; G.globalAlpha = 0.7; G.lineWidth = 1.5; G.setLineDash([2, 2]); G.beginPath(); G.arc(yo.x, yo.y, 13, J.t * 4, J.t * 4 + 6.283); G.stroke(); G.setLineDash([]); G.globalAlpha = 1; }
 }
 

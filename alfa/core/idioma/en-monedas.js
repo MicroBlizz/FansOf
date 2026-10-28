@@ -13,6 +13,7 @@ IDIOMA.add({
   "CREA UNA CUENTA ANTES DE PAGAR": "CREATE AN ACCOUNT BEFORE PAYING",
   "Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».": "We strongly urge you to create an account with email or Google before paying. You are playing as a guest: if you lose the game installation, you lose all your progress, including items and credits bought with real money. Cancel and sign in from \"Sign in / create account\".",
   "Soy consciente y me doy por avisado.": "I am aware and I acknowledge this warning.",
+  "Quiero recibirlo ya y acepto que, al ser contenido digital que se entrega al momento, pierdo mi derecho a devolverlo.": "I want it now and I accept that, as digital content delivered immediately, I lose my right to return it.",
   "COMPRAR IGUALMENTE": "BUY ANYWAY",
   "Compra de prueba (solo en desarrollo): no se cobra nada.": "Test purchase (development only): nothing is charged.",
   "SOLO CON DINERO REAL": "REAL MONEY ONLY",

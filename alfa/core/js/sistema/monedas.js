@@ -88,6 +88,13 @@ const MONEDAS = (() => {
     const ok = document.getElementById('cf-ok'), c = document.getElementById('aviso-ok');
     if (ok && c) { ok.disabled = true; ok.style.opacity = '.45'; c.onchange = () => { ok.disabled = !c.checked; ok.style.opacity = c.checked ? '' : '.45'; }; }
   }
+  // Renuncia a la devolución (docs/decisiones/008-renuncia-devolucion.md): en TODA compra con dinero real, en web y app, una casilla sin marcar
+  // que el jugador marca antes de pagar; sin ella no se puede comprar. Es la que pide la ley para el contenido digital que se entrega al momento.
+  const casillaRenuncia = () => `<label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;text-align:left"><input type="checkbox" id="renuncia-ok" style="margin-top:3px"><span>${tr('Quiero recibirlo ya y acepto que, al ser contenido digital que se entrega al momento, pierdo mi derecho a devolverlo.')}</span></label>`;
+  function exigeRenuncia() {
+    const ok = document.getElementById('cf-ok'), c = document.getElementById('renuncia-ok');
+    if (ok && c) { ok.disabled = true; ok.style.opacity = '.45'; c.onchange = () => { ok.disabled = !c.checked; ok.style.opacity = c.checked ? '' : '.45'; }; }
+  }
   // lo que solo se compra con dinero real (gemas, pack de bienvenida, sin anuncios…). producto: su id en Play Console y en servidor/90 (p. ej. rumble_gemas_550).
   // · En la app de Android con ese id: cobra Google (core/js/sistema/pagos.js) y el servidor entrega; alComprar recibe { real: true, gemas, entradas, derecho, objeto }
   //   y NO debe dar nada por su cuenta (el saldo ya viene del servidor).
@@ -96,18 +103,20 @@ const MONEDAS = (() => {
   function compraReal(titulo, html, alComprar, producto) {
     if (typeof confirmBox !== 'function') return;
     if (producto && typeof PAGOS !== 'undefined' && PAGOS.disponible()) {
-      confirmBox(titulo, `${html}<small>${tr('Pago seguro con Google Play. Lo comprado queda en tu cuenta.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => {
+      confirmBox(titulo, `${html}<small>${tr('Pago seguro con Google Play. Lo comprado queda en tu cuenta.')}</small>${casillaRenuncia()}`, tr('COMPRAR'), () => recomiendaCuenta(() => {
         if (typeof toast === 'function') toast(tr('Abriendo Google Play…'), true);
         PAGOS.comprar(producto).then(r => { if (alComprar) alComprar(r); })
           .catch(e => { const t = PAGOS.errorTexto(e); if (!t) return; if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(t); });
       }));
+      exigeRenuncia();
     }
     else if (producto && typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible()) {   // en la web, la ventana de pago de Paddle (pagos-web.js)
-      confirmBox(titulo, `${html}<small>${tr('Pago seguro con Paddle. Lo comprado queda en tu cuenta.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => {
+      confirmBox(titulo, `${html}<small>${tr('Pago seguro con Paddle. Lo comprado queda en tu cuenta.')}</small>${casillaRenuncia()}`, tr('COMPRAR'), () => recomiendaCuenta(() => {
         if (typeof toast === 'function') toast(tr('Abriendo el pago…'), true);
         PAGOS_WEB.comprar(producto).then(r => { if (alComprar) alComprar(r); })
           .catch(e => { const t = PAGOS_WEB.errorTexto(e); if (!t) return; if (typeof play === 'function') play('deny'); if (typeof toast === 'function') toast(t); });
       }));
+      exigeRenuncia();
     }
     else if (typeof NUCLEO !== 'undefined' && NUCLEO.desarrollo) confirmBox(titulo, `${html}<small>${tr('Compra de prueba (solo en desarrollo): no se cobra nada.')}</small>`, tr('COMPRAR'), () => recomiendaCuenta(() => alComprar({ prueba: true })));
     else confirmBox(tr('SOLO CON DINERO REAL'), `${html}<small>${tr('Esto se paga con dinero de verdad y todavía no está a la venta: llegará con la app de Android.')}</small>`, null);

@@ -165,6 +165,7 @@ IDIOMA.add({
   "CREA UNA CUENTA ANTES DE PAGAR": "CRIE UMA CONTA ANTES DE PAGAR",
   "Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».": "Pedimos encarecidamente que você crie uma conta com e-mail ou Google antes de pagar. Agora você joga como convidado: se perder a instalação do jogo, perde todo o seu progresso, incluindo os itens e créditos comprados com dinheiro real. Cancele e entre por «Entrar / criar conta».",
   "Soy consciente y me doy por avisado.": "Estou ciente e me dou por avisado.",
+  "Quiero recibirlo ya y acepto que, al ser contenido digital que se entrega al momento, pierdo mi derecho a devolverlo.": "Quero recebê-lo já e aceito que, por ser conteúdo digital entregue de imediato, perco o meu direito de devolução.",
   "COMPRAR IGUALMENTE": "COMPRAR MESMO ASSIM",
   "Compra de prueba (solo en desarrollo): no se cobra nada.": "Compra de teste (só em desenvolvimento): não se cobra nada.",
   "SOLO CON DINERO REAL": "SÓ COM DINHEIRO REAL",

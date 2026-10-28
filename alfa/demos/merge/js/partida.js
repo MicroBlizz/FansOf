@@ -4,15 +4,20 @@
 'use strict';
 const MG_P = { estado: 'nada' };
 
-function mgEmpieza(carta) {
+// carta: la elegida (o null) · nivelId: el nivel de la Aventura (o null para el Modo libre)
+function mgEmpieza(carta, nivelId) {
+  const N = nivelId ? mgNivel(nivelId) : null;
+  MG_CFG.lado = N ? N.lado : 6; mgMide();
   const huecos = carta === 'bolsillo' ? 2 : 1;
   Object.assign(MG_P, {
     estado: 'jugando', B: mgTableroNuevo(), cartas: carta ? [carta] : [], reserva: Array(huecos).fill(null),
     actual: null, cola: null, turno: 0, pts: 0, fusiones: 0, carga: 0, cargas: 0, tirachinas: carta === 'tirachinas' ? 1 : 0,
     modo: null, evento: null, regalo: false, mejor: 0, record: false, sel: null, objetivoHecho: 0, reservaEspera: 0, racha: 0,
+    nivel: N, movs: N ? N.movs : 0, guion: N && N.guion ? N.guion : null, paso: 0, creadas: {}, dormidos: 0, pesos: (N && N.pesos) || MG_CFG.pesos,
   });
   // el tablero empieza con unas pocas piezas sueltas, sin grupos ya hechos
-  const iniciales = ['brote', 'brote', 'brote', 'brote', 'zanahoria', 'zanahoria', 'brote', 'piedra'];
+  if (N) for (const [x, y, t] of N.inicio || []) MG_P.B[y][x] = mgPieza(t);
+  const iniciales = N ? [] : ['brote', 'brote', 'brote', 'brote', 'zanahoria', 'zanahoria', 'brote', 'piedra'];
   for (const t of iniciales) {
     for (let i = 0; i < 30; i++) {
       const [x, y] = pick(mgVacias(MG_P.B));
@@ -20,7 +25,7 @@ function mgEmpieza(carta) {
       MG_P.B[y][x] = mgPieza(t); break;
     }
   }
-  MG_P.cola = mgSorteo(MG_P.cartas);
+  MG_P.cola = mgSorteo(MG_P.cartas, MG_P.pesos);
   mgSiguiente();
   MG_P.camino = mgCaminoNuevo();
   mgConejosNuevos();
@@ -37,9 +42,10 @@ function mgCaminoNuevo() {
 }
 const mgTiene = id => MG_P.cartas && MG_P.cartas.includes(id);
 function mgSiguiente() {
+  const G = mgPaso(); if (G) { MG_P.actual = G.p; return; }   // el tutorial manda
   if (MG_P.regalo) { MG_P.regalo = false; MG_P.actual = 'semilla'; return; }
   if (mgTiene('abono') && MG_P.turno > 0 && MG_P.turno % 12 === 0) { MG_P.actual = 'semilla'; return; }
-  MG_P.actual = MG_P.cola; MG_P.cola = mgSorteo(MG_P.cartas);
+  MG_P.actual = MG_P.cola; MG_P.cola = mgSorteo(MG_P.cartas, MG_P.pesos);
 }
 // multiplicador de puntos de una casilla
 // la racha: turnos seguidos juntando algo; cada uno suma un 25 % (hasta x2)
@@ -57,7 +63,7 @@ function mgSuma(pts, x, y) {
 // apunta los pasos de una fusión: puntos, carga del rayo, efectos y piezas nuevas en la colección
 function mgTrasJuntar(r) {
   r.pasos.forEach((p, i) => {
-    MG_P.fusiones++; MG_P.carga++;
+    MG_P.fusiones++; MG_P.carga++; MG_P.creadas[p.nuevo] = (MG_P.creadas[p.nuevo] || 0) + 1;
     if (MG_P.carga >= MG_CFG.cargaHabilidad) { MG_P.carga = 0; if (MG_P.cargas < MG_CFG.cargasMax) { MG_P.cargas++; mgFxAviso(tr('¡Rayo zanahoria listo!')); play('mgCarga'); } }
     mgFxJunta(p, i);
     setTimeout(() => play('mgJunta', i), i * 180);
@@ -88,7 +94,8 @@ function mgJuntaDormidos(dormidos) {
 
 // ¿Se puede hacer algo con la pieza actual en (x, y)?
 function mgPuedePoner(x, y) {
-  const c = MG_P.B[y][x], T = mgTipoDe(MG_P.actual);
+  const c = MG_P.B[y][x], T = mgTipoDe(MG_P.actual), G = mgPaso();
+  if (G && (G.reserva || (G.c && (G.c[0] !== x || G.c[1] !== y)))) return false;   // el tutorial dice dónde
   if (T === 'topo') return !!c;
   return !c;
 }
@@ -114,7 +121,7 @@ function mgPon(x, y) {
 function mgQuita(x, y, con) {
   const c = MG_P.B[y][x]; if (!c) return false;
   mgFxQuita(x, y, con); play(con === 'topo' ? 'mgTopo' : 'mgRayo');
-  if (c.t === 'zorro' || c.t === 'cuervo') { MG_P.B[y][x] = mgPieza('dormido'); mgFxNace(x, y); mgJuntaDormidos([[x, y]]); }
+  if (c.t === 'zorro' || c.t === 'cuervo') { MG_P.dormidos++; MG_P.B[y][x] = mgPieza('dormido'); mgFxNace(x, y); mgJuntaDormidos([[x, y]]); }
   else if (c.t === 'roca') { MG_P.B[y][x] = mgPieza('cofre'); mgFxNace(x, y); }
   else { MG_P.B[y][x] = null; mgFxRompe(x, y, c.t); }
   return true;
@@ -137,26 +144,32 @@ function mgAbreCofre(x, y) {
 // La reserva: guarda la pieza actual; si el hueco tenía otra, se cambian
 function mgReserva(i) {
   if (MG_P.estado !== 'jugando' || i >= MG_P.reserva.length) return;
-  if (MG_P.reservaEspera > 0) { play('mgNoVale'); mgFxAviso(tr('La reserva estará lista en {n} turnos', { n: MG_P.reservaEspera })); return; }
-  MG_P.reservaEspera = mgTiene('mercader') ? 0 : MG_CFG.reservaEspera;
+  const G = mgPaso();
+  if (G && !G.reserva) { play('mgNoVale'); return; }
+  if (G) MG_P.paso++;   // el paso del tutorial que pedía usar la reserva
+  else if (MG_P.reservaEspera > 0) { play('mgNoVale'); mgFxAviso(tr('La reserva estará lista en {n} turnos', { n: MG_P.reservaEspera })); return; }
+  MG_P.reservaEspera = mgTiene('mercader') || G ? 0 : MG_CFG.reservaEspera;
   const guardada = MG_P.reserva[i];
   MG_P.reserva[i] = MG_P.actual;
-  if (guardada) MG_P.actual = guardada; else mgSiguiente();
+  if (guardada) MG_P.actual = guardada; else if (G && G.despues) MG_P.actual = G.despues; else mgSiguiente();
   MG_P.sel = null; play('mgReserva');
 }
 
 function mgFinTurno() {
   MG_P.turno++; MG_P.sel = null;
+  if (mgPaso()) MG_P.paso++;
+  if (MG_P.nivel) MG_P.movs--;
   if (MG_P.reservaEspera > 0) MG_P.reservaEspera--;
   const E = MG_P.evento;
   if (E && E.id === 'tormenta') mgRelampago();
   const quietos = (E && E.id === 'siesta') || (mgTiene('encantador') && MG_P.turno % 2 === 1);
   const m = mgMueveBichos(MG_P.B, quietos);
   if (m.movidos.length) mgFxMueve(m.movidos);
+  MG_P.dormidos += m.dormidos.length;
   if (m.dormidos.length) { setTimeout(() => play('mgDuerme'), 260); m.dormidos.forEach(([x, y]) => mgFxNace(x, y, 0.28)); mgJuntaDormidos(m.dormidos); }
   // los eventos
   if (E) { E.quedan--; if (E.quedan <= 0) MG_P.evento = null; }
-  if (!MG_P.evento && MG_P.turno % MG_CFG.eventoCada === 0) mgEvento();
+  if (!MG_P.evento && MG_P.turno % MG_CFG.eventoCada === 0 && (!MG_P.nivel || MG_P.nivel.eventos)) mgEvento();
   mgSiguiente();
   mgCompruebaFin();
 }
@@ -175,13 +188,14 @@ function mgEvento() {
 }
 // La partida acaba cuando no queda ninguna casilla libre y no hay nada con lo que hacer sitio
 function mgCompruebaFin() {
-  if (MG_P.estado !== 'jugando') return;
+  if (MG_P.estado !== 'jugando' || mgNivelComprueba()) return;
   if (mgVacias(MG_P.B).length) return;
   const hayCofre = MG_P.B.some(f => f.some(c => c && c.t === 'cofre'));
   if (hayCofre || mgTipoDe(MG_P.actual) === 'topo' || MG_P.cargas > 0 || MG_P.tirachinas > 0 || MG_P.reserva.some(t => mgTipoDe(t) === 'topo')) { mgFxAviso(tr('¡Tablero lleno! Haz sitio como puedas.')); return; }
   mgTermina();
 }
 function mgTermina() {
+  if (MG_P.nivel) { mgNivelFin(false); return; }
   MG_P.estado = 'fin';
   let mejor = 'brote'; for (const f of MG_P.B) for (const c of f) if (c && MG_CADENA.indexOf(c.t) > MG_CADENA.indexOf(mejor)) mejor = c.t;
   MG_P.mejor = mejor;

@@ -108,8 +108,8 @@ function mgMueveBichos(B, quietos) {
 }
 
 // La pieza siguiente, por sorteo con pesos (las cartas cambian algunos)
-function mgSorteo(cartas) {
-  const pesos = { ...MG_CFG.pesos };
+function mgSorteo(cartas, base = MG_CFG.pesos) {
+  const pesos = { ...base };
   if (cartas.includes('espanta')) delete pesos.cuervo;
   let total = 0; for (const k in pesos) total += pesos[k];
   let r = Math.random() * total;

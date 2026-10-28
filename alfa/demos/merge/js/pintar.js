@@ -6,7 +6,7 @@
 const MG_V = { sc: 1, dpr: 1, H: 960, cs: 86, bx: 12, by: 250 };
 const MG_HUD = { botones: [] };
 const MG_TAU = Math.PI * 2;
-function mgMide() { MG_V.bx = (540 - MG_V.cs * MG_CFG.lado) / 2; MG_V.by = 246 + Math.round((MG_V.H - 960) * 0.45); }   // el tablero, debajo del marcador; si la pantalla es más alta, el hueco se reparte
+function mgMide() { MG_V.cs = Math.min(104, Math.floor(516 / MG_CFG.lado)); MG_V.bx = (540 - MG_V.cs * MG_CFG.lado) / 2; MG_V.by = 246 + Math.round((MG_V.H - 960) * 0.45); }   // el tablero, debajo del marcador; si la pantalla es más alta, el hueco se reparte
 const mgCx = x => MG_V.bx + (x + 0.5) * MG_V.cs, mgCy = y => MG_V.by + (y + 0.5) * MG_V.cs;
 function mgCasillaEn(lx, ly) { const x = Math.floor((lx - MG_V.bx) / MG_V.cs), y = Math.floor((ly - MG_V.by) / MG_V.cs); return mgDentro(x, y) ? [x, y] : null; }
 const mgK = () => MG_V.sc * MG_V.dpr;
@@ -34,21 +34,24 @@ const MG_PILDORA = 'rgba(28,40,18,.72)';
 function mgPintaMarcador(c, t) {
   const P = MG_P, k = mgK();
   // puntos y objetivo
-  mgPanel(c, 120, 10, 300, 52, 18, MG_PILDORA, null);
+  mgPanel(c, 130, 10, 280, 52, 18, MG_PILDORA, null);
   mgTexto(c, fmt(P.pts), 270, 37, 36, '#fff6c8', 'center', null);
+  if (P.nivel) mgPintaTurnos(c, t);
   if (P.racha >= 2) {   // la racha: una llama con su multiplicador, que late
     const e = MG_FX.t - MG_FX.racha, s = 1 + Math.max(0, 0.4 - e) + Math.sin(t * 8) * 0.04, m = mgMultRacha();
-    c.save(); c.translate(70, 40); c.scale(s, s);
+    c.save(); c.translate(436, 38); c.scale(s * 0.72, s * 0.72);
     c.beginPath(); c.moveTo(0, -30); c.quadraticCurveTo(26, -4, 16, 18); c.quadraticCurveTo(0, 30, -16, 18); c.quadraticCurveTo(-26, -4, 0, -30);
     c.fillStyle = m >= 2 ? '#ff4f2e' : '#ff8a2a'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OL; c.stroke();
     mgTexto(c, 'x' + fmtV(m), 0, 6, 17, '#fff', 'center', OL); c.restore();
-    mgTexto(c, tr('RACHA'), 70, 82, 12, '#fff', 'center', OL);
   }
+  if (P.nivel) mgPintaObjNivel(c, t);
+  else {
   const O = mgObjetivo(), ok = O.de ? clamp((P.pts - O.desde) / (O.de - O.desde), 0, 1) : 1;
   mgPanel(c, 120, 68, 300, 34, 14, MG_PILDORA, null);
   mgTexto(c, O.de ? tr('Consigue {n} puntos', { n: fmt(O.de) }) : tr('¡Todos los objetivos!'), 232, 86, 15, '#fff', 'center', null, MG_FB);
   mgPanel(c, 350, 76, 60, 18, 9, 'rgba(255,255,255,.18)', null); if (ok > 0.25) mgPanel(c, 350, 76, 60 * ok, 18, 9, '#9be35a', null);
   mgTexto(c, Math.floor(ok * 100) + '%', 380, 86, 12, '#fff', 'center', 'rgba(0,0,0,.5)', MG_FB);
+  }
   // pausa (rueda dentada)
   mgPanel(c, 466, 12, 62, 62, 18, '#ff9a3c', OL, 4);
   c.save(); c.translate(497, 43); c.fillStyle = '#fff'; c.strokeStyle = OL; c.lineWidth = 3;
@@ -170,7 +173,9 @@ function mgPintaTablero(c, t) {
     mgDibujaPieza(c, prev.real, mgCx(x), mgCy(y) - 6 + sube, cs * 0.98, k);
     if (prev.final !== prev.real) { const w = 120; mgPanel(c, mgCx(x) - w / 2, mgCy(y) - cs * 0.82, w, 24, 12, '#fff8e6', OL, 3); mgTexto(c, '→ ' + tr(MG_PIEZAS[prev.final].nombre), mgCx(x), mgCy(y) - cs * 0.82 + 12, 12, '#c96a1e', 'center', null, MG_FB); }
   }
-  if (!P.sel && !P.modo && P.turno < 5 && P.estado === 'jugando') {   // pista de los primeros turnos: una flecha que salta
+  const G = mgPaso();
+  if (G && G.c && !P.sel) mgFlecha(c, mgCx(G.c[0]), mgCy(G.c[1]) - cs * 0.55 - Math.abs(Math.sin(t * 4)) * 10);
+  else if (!G && !P.sel && !P.modo && P.turno < 5 && P.estado === 'jugando' && (!P.nivel || P.nivel.id <= 4)) {   // pista de los primeros turnos: una flecha que salta
     const q = mgPista(); if (q) mgFlecha(c, mgCx(q[0]), mgCy(q[1]) - cs * 0.55 - Math.abs(Math.sin(t * 4)) * 10);
   }
   for (const f of MG_FX.fantasmas) {   // las que vuelan a juntarse
@@ -264,6 +269,7 @@ function mgPintaPartida(c, t, dt) {
   mgPintaMarcador(c, t);
   mgPintaAbajo(c, t);
   mgPintaAvisos(c);
+  mgPintaGuion(c, t);
   mgPintaEstreno(c, t);
   mgConejosAvanza(dt);
 }

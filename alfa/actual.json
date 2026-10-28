@@ -1,8 +1,8 @@
 {
- "build": 605,
- "hash": "4ada60d",
- "fecha": "2026-10-28T23:37:18Z",
- "mensaje": "Fans of Merge: plantar con un solo gesto (apoyar, arrastrar, soltar), racha, cadenas, celebración de pieza nueva y senderos fijos",
+ "build": 606,
+ "hash": "4f200a9",
+ "fecha": "2026-10-28T23:54:38Z",
+ "mensaje": "Fans of Merge: Aventura de 15 niveles con tutorial guiado, turnos, objetivos y estrellas; el Modo libre se abre al pasar el nivel 3",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

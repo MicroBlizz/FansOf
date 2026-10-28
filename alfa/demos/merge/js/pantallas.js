@@ -7,7 +7,7 @@ function mgIrA(p) {
   MG_PANT.actual = p; MG_PANT.pausa = false;
   $('#mg-titulo').hidden = p !== 'titulo';
   mgCierraModal();
-  if (p === 'titulo') mgMusica('menu');
+  if (p === 'titulo') { mgMusica('menu'); if (typeof mgBotonLibre === 'function') mgBotonLibre(); }
 }
 function mgModal(html, clase = '') {
   const m = $('#mg-modal'), t = $('#mg-tarjeta');
@@ -26,8 +26,11 @@ function mgMiniatura(tipo, lado = 72, oculta = false) {
 }
 
 /* ---------- empezar: elegir una carta ---------- */
-function mgNuevaPartida() {
+// nivelId: el nivel de la Aventura (o nada para el Modo libre). En la Aventura solo se eligen cartas desde el nivel que las trae.
+function mgNuevaPartida(nivelId) {
   play('go');
+  MG_PANT.nivelId = nivelId || null;
+  if (nivelId && !mgNivel(nivelId).cartas) { mgArranca(null); return; }
   const tres = shuffle(MG_CARTAS.slice()).slice(0, 3);
   const t = mgModal(`<h2>${tr('Elige tu carta')}</h2><p class="mg-sub">${tr('Te acompaña toda la partida.')}</p>
     <div class="mg-cartas">${tres.map(C => `<button class="mg-carta" type="button" data-id="${C.id}" style="--c:${C.col}"><b>${mgH(tr(C.nombre))}</b><span>${mgH(tr(C.texto))}</span></button>`).join('')}</div>
@@ -38,9 +41,9 @@ function mgNuevaPartida() {
 }
 function mgArranca(carta) {
   mgCierraModal(); mgFxLimpia();
-  mgEmpieza(carta);
-  MG_PANT.actual = 'partida'; MG_PANT.pausa = false;
-  if (!SAVE.ayuda) { SAVE.ayuda = true; mgGuarda(); mgAyuda(true); }
+  mgEmpieza(carta, MG_PANT.nivelId);
+  MG_PANT.actual = 'partida'; MG_PANT.pausa = false; $('#mg-titulo').hidden = true;
+  if (!MG_PANT.nivelId && !SAVE.ayuda) { SAVE.ayuda = true; mgGuarda(); mgAyuda(true); }
 }
 /* ---------- cómo se juega ---------- */
 function mgAyuda(enPartida) {
@@ -68,8 +71,8 @@ function mgAbrePausa() {
   $('#mg-seguir').onclick = () => { play('select'); mgCierraModal(); MG_PANT.pausa = false; };
   $('#mg-ayuda2').onclick = () => { play('select'); mgAyuda(true); };
   $('#mg-opc2').onclick = () => { play('select'); mgAbreOpciones(true); };
-  $('#mg-reinicia').onclick = () => { play('select'); mgNuevaPartida(); };
-  $('#mg-salir').onclick = () => { play('select'); MG_P.estado = 'nada'; mgIrA('titulo'); };
+  $('#mg-reinicia').onclick = () => { play('select'); if (MG_PANT.nivelId) mgAbreNivel(MG_PANT.nivelId); else mgNuevaPartida(); };
+  $('#mg-salir').onclick = () => { play('select'); MG_P.estado = 'nada'; mgIrA('titulo'); if (MG_PANT.nivelId) mgAbreNiveles(); };
 }
 /* ---------- el final ---------- */
 const MG_FRASES_FIN = ['Los zorros se han quedado con tu huerto. Por ahora.', 'CrazyBunny dice que ha sido una gran cosecha.', 'Microblizz quiere comprar tu palacio para hacer oficinas.', 'Ni un hueco libre: eso es aprovechar el terreno.'];

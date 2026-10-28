@@ -82,8 +82,7 @@ function mgFotograma(ahora) {
 function mgArranque() {
   mgAjusta();
   window.addEventListener('resize', mgAjusta);
-  $('#mg-jugar').onclick = () => mgNuevaPartida();
-  $('#mg-ayuda').onclick = () => { play('select'); mgAyuda(false); };
+  $('#mg-jugar').onclick = () => { play('select'); if (mgEstrellasDe(1)) mgAbreNiveles(); else mgAbreNivel(1); };   // la primera vez, directo al nivel 1
   $('#mg-col').onclick = () => { play('select'); mgColeccion(); };
   $('#mg-opc').onclick = () => { play('select'); mgAbreOpciones(false); };
   mgIrA('titulo');

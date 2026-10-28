@@ -1,7 +1,7 @@
 // Fans of Merge · la partida guardada: el récord, las piezas descubiertas (la colección), el sonido y si ya vio la ayuda,
 // todo en un solo objeto (SAVE) que core sube a la nube (cuenta.js). Aquí están también los volúmenes que pide sonido.js.
 'use strict';
-const MG_NUEVA = () => ({ v: 1, record: 0, partidas: 0, coleccion: {}, muted: false, musica: true, ayuda: false });
+const MG_NUEVA = () => ({ v: 1, record: 0, partidas: 0, coleccion: {}, niveles: {}, muted: false, musica: true, ayuda: false });
 const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = MG_NUEVA();

@@ -8,6 +8,7 @@ function mgObjetivo() {
   return { desde: i > 0 ? MG_OBJETIVOS[i - 1] : 0, de: i >= 0 ? MG_OBJETIVOS[i] : null };
 }
 function mgCompruebaObjetivo() {
+  if (MG_P.nivel) return;   // en la Aventura manda el objetivo del nivel
   const O = mgObjetivo(); if (!O.de || MG_P.pts < O.de) return;
   MG_P.objetivoHecho = O.de;
   if (MG_P.cargas < MG_CFG.cargasMax) MG_P.cargas++;

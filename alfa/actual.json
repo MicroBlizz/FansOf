@@ -1,8 +1,8 @@
 {
- "build": 599,
- "hash": "6cb7fa2",
- "fecha": "2026-10-28T10:53:58Z",
- "mensaje": "Goose: héroe en capas (el farolillo nunca se voltea, va siempre en la misma mano), selector de 4 personajes con su capa y su poder, y caídas al salirse de la casilla o si el derrumbe se la come",
+ "build": 600,
+ "hash": "5e6b81a",
+ "fecha": "2026-10-28T10:57:26Z",
+ "mensaje": "Goose 0.2.1: sube la versión para que los móviles carguen el selector de personajes y no la copia guardada",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

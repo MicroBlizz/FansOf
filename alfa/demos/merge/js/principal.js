@@ -63,7 +63,7 @@ function mgFotograma(ahora) {
   const t = ahora / 1000, c = MG_CTX;
   mgMusicaBucle();
   c.setTransform(MG_V.sc * MG_V.dpr, 0, 0, MG_V.sc * MG_V.dpr, 0, 0);
-  if (MG_PANT.actual === 'partida' && MG_P.estado !== 'nada') { if (!MG_PANT.pausa) mgFxAvanza(dt); mgPintaPartida(c, t); }
+  if (MG_PANT.actual === 'partida' && MG_P.estado !== 'nada') { if (!MG_PANT.pausa) mgFxAvanza(dt); mgPintaPartida(c, t, MG_PANT.pausa ? 0 : dt); }
   else mgPintaPortada(c, t, dt);
 }
 function mgArranque() {

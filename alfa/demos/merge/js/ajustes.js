@@ -41,7 +41,8 @@ const MG_CFG = {
   cargasMax: 2,
   eventoCada: 14,       // cada cuántos turnos llega un evento
   eventoDura: 3,        // cuántos turnos dura
-  lluviaCasillas: 4,    // casillas mojadas (x2) en la lluvia
+  lluviaCasillas: 4,    // casillas mojadas (x2) en la lluvia y la tormenta
+  reservaEspera: 2,     // turnos que hay que esperar tras usar la reserva (con la carta Mercader, 0)
 };
 
 // Las cartas de habilidad: al empezar salen 3 al azar y el jugador se queda con una.
@@ -52,12 +53,14 @@ const MG_CARTAS = [
   { id: 'abono',      nombre: 'Abono', texto: 'Cada 12 turnos te llega una semilla mágica.', col: '#ff6fb1' },
   { id: 'espanta',    nombre: 'Espantapájaros', texto: 'No salen cuervos.', col: '#e6b52e' },
   { id: 'cosecha',    nombre: 'Gran cosecha', texto: '+25 % de puntos en todas las fusiones.', col: '#ffb02e' },
+  { id: 'mercader',   nombre: 'Mercader', texto: 'Usa la reserva sin esperar turnos.', col: '#3fb07a' },
   { id: 'lince',      nombre: 'Vista de lince', texto: 'Ves también la pieza que viene después.', col: '#3fd1c4' },
 ];
 
 // Los eventos del tablero: cada MG_CFG.eventoCada turnos llega uno al azar.
 const MG_EVENTOS = [
   { id: 'lluvia', nombre: 'Lluvia', texto: 'Las casillas mojadas dan el doble de puntos.' },
+  { id: 'tormenta', nombre: 'Tormenta', texto: 'Casillas x2 y un relámpago por turno sobre una pieza pequeña.' },
   { id: 'siesta', nombre: 'Siesta', texto: 'Los zorros y cuervos no se mueven.' },
   { id: 'regalo', nombre: 'Regalo de CrazyBunny', texto: 'Tu próxima pieza es una semilla mágica.' },
 ];

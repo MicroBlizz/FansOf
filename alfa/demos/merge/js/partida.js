@@ -9,7 +9,7 @@ function mgEmpieza(carta) {
   Object.assign(MG_P, {
     estado: 'jugando', B: mgTableroNuevo(), cartas: carta ? [carta] : [], reserva: Array(huecos).fill(null),
     actual: null, cola: null, turno: 0, pts: 0, fusiones: 0, carga: 0, cargas: 0, tirachinas: carta === 'tirachinas' ? 1 : 0,
-    modo: null, evento: null, regalo: false, mejor: 0, record: false, sel: null,
+    modo: null, evento: null, regalo: false, mejor: 0, record: false, sel: null, objetivoHecho: 0, reservaEspera: 0,
   });
   // el tablero empieza con unas pocas piezas sueltas, sin grupos ya hechos
   const iniciales = ['brote', 'brote', 'brote', 'brote', 'zanahoria', 'zanahoria', 'brote', 'piedra'];
@@ -22,6 +22,7 @@ function mgEmpieza(carta) {
   }
   MG_P.cola = mgSorteo(MG_P.cartas);
   mgSiguiente();
+  mgConejosNuevos();
   SAVE.partidas = (SAVE.partidas || 0) + 1; mgGuarda();
   mgMusica('animales');
 }
@@ -34,12 +35,12 @@ function mgSiguiente() {
 // multiplicador de puntos de una casilla
 function mgMult(x, y) {
   let m = mgTiene('cosecha') ? 1.25 : 1;
-  const E = MG_P.evento; if (E && E.id === 'lluvia' && E.casillas.has(y * 8 + x)) m *= 2;
+  const E = MG_P.evento; if (E && E.casillas.has(y * 8 + x)) m *= 2;
   return m;
 }
 function mgSuma(pts, x, y) {
   if (!pts) return;
-  MG_P.pts += pts; mgFxTexto(x, y, '+' + fmt(pts));
+  MG_P.pts += pts; if (pts >= 10) mgFxTexto(x, y, '+' + fmt(pts)); mgCompruebaObjetivo();
   if (MG_P.pts > SAVE.record && !MG_P.record && SAVE.record > 0) { MG_P.record = true; mgFxAviso(tr('¡Nuevo récord!')); play('mgRecord'); }
 }
 // apunta los pasos de una fusión: puntos, carga del rayo, efectos y piezas nuevas en la colección
@@ -110,6 +111,8 @@ function mgAbreCofre(x, y) {
 // La reserva: guarda la pieza actual; si el hueco tenía otra, se cambian
 function mgReserva(i) {
   if (MG_P.estado !== 'jugando' || i >= MG_P.reserva.length) return;
+  if (MG_P.reservaEspera > 0) { play('mgNoVale'); mgFxAviso(tr('La reserva estará lista en {n} turnos', { n: MG_P.reservaEspera })); return; }
+  MG_P.reservaEspera = mgTiene('mercader') ? 0 : MG_CFG.reservaEspera;
   const guardada = MG_P.reserva[i];
   MG_P.reserva[i] = MG_P.actual;
   if (guardada) MG_P.actual = guardada; else mgSiguiente();
@@ -118,7 +121,9 @@ function mgReserva(i) {
 
 function mgFinTurno() {
   MG_P.turno++; MG_P.sel = null;
+  if (MG_P.reservaEspera > 0) MG_P.reservaEspera--;
   const E = MG_P.evento;
+  if (E && E.id === 'tormenta') mgRelampago();
   const quietos = (E && E.id === 'siesta') || (mgTiene('encantador') && MG_P.turno % 2 === 1);
   const m = mgMueveBichos(MG_P.B, quietos);
   if (m.movidos.length) mgFxMueve(m.movidos);
@@ -129,9 +134,15 @@ function mgFinTurno() {
   mgSiguiente();
   mgCompruebaFin();
 }
+// la tormenta: un relámpago cae sobre una pieza pequeña o un bicho al azar (los bichos se duermen; lo demás se quita)
+function mgRelampago() {
+  const blancos = []; MG_P.B.forEach((f, y) => f.forEach((c, x) => { if (c && ['brote', 'zanahoria', 'piedra', 'zorro', 'cuervo'].includes(c.t)) blancos.push([x, y]); }));
+  if (!blancos.length) return;
+  const [x, y] = pick(blancos); MG_FX.relampago = { x, y, t0: mgAhora() }; mgQuita(x, y, 'rayo');
+}
 function mgEvento() {
   const E = { ...pick(MG_EVENTOS), quedan: MG_CFG.eventoDura, casillas: new Set() };
-  if (E.id === 'lluvia') { const todas = []; for (let y = 0; y < MG_CFG.lado; y++) for (let x = 0; x < MG_CFG.lado; x++) todas.push(y * 8 + x); shuffle(todas).slice(0, MG_CFG.lluviaCasillas).forEach(k => E.casillas.add(k)); }
+  if (E.id === 'lluvia' || E.id === 'tormenta') { const todas = []; for (let y = 0; y < MG_CFG.lado; y++) for (let x = 0; x < MG_CFG.lado; x++) todas.push(y * 8 + x); shuffle(todas).slice(0, MG_CFG.lluviaCasillas).forEach(k => E.casillas.add(k)); }
   if (E.id === 'regalo') { MG_P.regalo = true; E.quedan = 1; }
   MG_P.evento = E;
   mgFxEvento(E); play('mgEvento');

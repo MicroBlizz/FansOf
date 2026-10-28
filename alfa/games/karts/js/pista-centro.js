@@ -60,7 +60,7 @@ PISTAS.push({
     movilEn(P, l, 'carrito', 3.6, 22, 4.6, 0); movilEn(P, l, 'carrito', 10.4, 20, 5.2, 2); movilEn(P, l, 'carrito', 17.6, 22, 4.2, 4);
     cartelesPor(P, l, [[['REBAJAS', '−90 %'], 0.8, 24, '#e63946', '#ffffff'], [['SUELO', 'MOJADO'], 2.9, -22, '#ffcb3d', '#22212c'], [['SKIN DORADA', '49,99 €'], 5.5, 22, '#22212c', '#ffcb3d'],
       [['SOLO HOY'], 8.6, -22, '#c35cff', '#ffffff'], [['ESCALERA', 'DE PAGO'], 11.2, -24, '#22212c', '#5ef2d0'], [['SIN', 'DEVOLUCIONES'], 14.0, -22, '#e63946', '#ffffff'],
-      [['CAJA 1 DE 40', 'ABIERTA'], 17.0, 22, '#2f4fae', '#ffffff'], [['SOON™'], 19.8, -22, '#22212c', '#ffcb3d'], [['ATAJO POR', 'LA TIENDA'], 1.0, -22, '#c35cff', '#ffffff']]);
+      [['BLOQUE 1 DE 40', 'ABIERTA'], 17.0, 22, '#2f4fae', '#ffffff'], [['SOON™'], 19.8, -22, '#22212c', '#ffcb3d'], [['ATAJO POR', 'LA TIENDA'], 1.0, -22, '#c35cff', '#ffffff']]);
     return l;
   },
 });

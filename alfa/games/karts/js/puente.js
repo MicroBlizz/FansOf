@@ -11,17 +11,17 @@
 // la estructura que se ve desde abajo: dos pilares de piedra, el tablero de madera con su barandilla y una franja naranja
 function modeloPuente(m) {
   const p = [], mats = { piedra: { c: '#a8a0b8', s: '#6e6680', l: '#d0c8e0' }, madera: { c: '#c98a4b', s: '#8b5530', l: '#e0a868' }, oscuro: '#5a3a20', naranja: { c: '#ff8a1f', plano: true }, blanco: { c: '#f4f4f8', plano: true } };
-  for (const s of [-1, 1]) p.push(CAJA([s * m, 0, 11], [3.4, 3.4, 11], 'piedra'), CAJA([s * m, 0, 0.8], [4.4, 4.4, 0.8], 'piedra', { parte: 2 }), CAJA([s * m, 0, 21], [4.2, 4.2, 1], 'piedra', { parte: 2 }));
-  p.push(CAJA([0, 0, 24], [m + 5, 5.5, 2.2], 'madera', { parte: 3 }), CAJA([0, 0, 21.6], [m + 5, 5, 0.5], 'oscuro', { parte: 3 }));
-  for (let x = -m - 3; x <= m + 3; x += 5) p.push(CAJA([x, -5, 27.8], [0.4, 0.4, 1.8], 'blanco', { parte: 4 }));
-  p.push(CAJA([0, -5, 29.4], [m + 4, 0.35, 0.4], 'madera', { parte: 4 }), PL([0, -5.6, 24], [m + 4.5, 0.1, 0.7], 'naranja'));
+  for (const s of [-1, 1]) p.push(BLOQUE([s * m, 0, 11], [3.4, 3.4, 11], 'piedra'), BLOQUE([s * m, 0, 0.8], [4.4, 4.4, 0.8], 'piedra', { parte: 2 }), BLOQUE([s * m, 0, 21], [4.2, 4.2, 1], 'piedra', { parte: 2 }));
+  p.push(BLOQUE([0, 0, 24], [m + 5, 5.5, 2.2], 'madera', { parte: 3 }), BLOQUE([0, 0, 21.6], [m + 5, 5, 0.5], 'oscuro', { parte: 3 }));
+  for (let x = -m - 3; x <= m + 3; x += 5) p.push(BLOQUE([x, -5, 27.8], [0.4, 0.4, 1.8], 'blanco', { parte: 4 }));
+  p.push(BLOQUE([0, -5, 29.4], [m + 4, 0.35, 0.4], 'madera', { parte: 4 }), PL([0, -5.6, 24], [m + 4.5, 0.1, 0.7], 'naranja'));
   return { medio: m + 9, alto: 31, mats, piezas: p };
 }
 COSAS.puenteTutorial = modeloPuente(54);
 // las rampas de tierra que suben al puente (vistas desde abajo): un talud con hierba arriba y la franja naranja, de varias alturas
 function modeloTalud(h) {
   const mats = { tierra: { c: '#a8784a', s: '#6e4a2a', l: '#c99a68' }, hierba: { c: '#5cbf4a', s: '#3f8a32', l: '#8ad870' }, naranja: { c: '#ff8a1f', plano: true } };
-  return { medio: 36, alto: h + 3, mats, piezas: [CAJA([0, 0, h / 2], [32, 6, h / 2], 'tierra'), CAJA([0, 0, h + 0.8], [33, 6.5, 0.9], 'hierba', { parte: 2 }), PL([0, -6.6, h - 1.2], [32.5, 0.1, 0.6], 'naranja')] };
+  return { medio: 36, alto: h + 3, mats, piezas: [BLOQUE([0, 0, h / 2], [32, 6, h / 2], 'tierra'), BLOQUE([0, 0, h + 0.8], [33, 6.5, 0.9], 'hierba', { parte: 2 }), PL([0, -6.6, h - 1.2], [32.5, 0.1, 0.6], 'naranja')] };
 }
 const ALTOS_TALUD = [4, 8, 12, 16, 20, 23];
 for (const h of ALTOS_TALUD) COSAS['talud' + h] = modeloTalud(h);

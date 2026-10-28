@@ -7,24 +7,24 @@
 // la silla de oficina dorada: base de cinco patas con ruedecitas, columna, asiento, respaldo y brazos (y un volante, por si acaso)
 function chasisSilla() {
   const p = [];
-  for (let i = 0; i < 5; i++) { const a = (i / 5) * TAU + 0.3, x = Math.cos(a) * 4.2, y = Math.sin(a) * 4.2; p.push(CAJA([x / 2, y / 2, 1.2], [Math.abs(x) / 2 + 0.4, Math.abs(y) / 2 + 0.4, 0.35], 'sillaPata', { parte: 1 }), ESF([x, y, 0.7], [0.75, 0.75, 0.7], 'rueda', { parte: 1 })); }
+  for (let i = 0; i < 5; i++) { const a = (i / 5) * TAU + 0.3, x = Math.cos(a) * 4.2, y = Math.sin(a) * 4.2; p.push(BLOQUE([x / 2, y / 2, 1.2], [Math.abs(x) / 2 + 0.4, Math.abs(y) / 2 + 0.4, 0.35], 'sillaPata', { parte: 1 }), ESF([x, y, 0.7], [0.75, 0.75, 0.7], 'rueda', { parte: 1 })); }
   p.push(CONO([0, 0, 2.6], [0.55, 0.55, 1.3], 'sillaPata', { parte: 2 }));
-  p.push(CAJA([0, -0.4, 4.0], [2.9, 2.9, 0.55], 'sillaOro', { parte: 3 }), CAJA([0, -0.4, 4.45], [2.6, 2.6, 0.2], 'sillaCuero', { parte: 3 }));
-  p.push(CAJA([0, -3.2, 6.4], [2.5, 0.55, 2.0], 'sillaOro', { parte: 5 }), CAJA([0, -2.75, 6.5], [2.1, 0.15, 1.6], 'sillaCuero', { parte: 5 }));
-  for (const s of [-1, 1]) p.push(CAJA([s * 3.0, -0.6, 5.6], [0.35, 1.9, 0.3], 'sillaOro', { parte: 4 }), CAJA([s * 3.0, -1.8, 4.9], [0.25, 0.25, 0.8], 'sillaPata', { parte: 4 }));
+  p.push(BLOQUE([0, -0.4, 4.0], [2.9, 2.9, 0.55], 'sillaOro', { parte: 3 }), BLOQUE([0, -0.4, 4.45], [2.6, 2.6, 0.2], 'sillaCuero', { parte: 3 }));
+  p.push(BLOQUE([0, -3.2, 6.4], [2.5, 0.55, 2.0], 'sillaOro', { parte: 5 }), BLOQUE([0, -2.75, 6.5], [2.1, 0.15, 1.6], 'sillaCuero', { parte: 5 }));
+  for (const s of [-1, 1]) p.push(BLOQUE([s * 3.0, -0.6, 5.6], [0.35, 1.9, 0.3], 'sillaOro', { parte: 4 }), BLOQUE([s * 3.0, -1.8, 4.9], [0.25, 0.25, 0.8], 'sillaPata', { parte: 4 }));
   p.push(CONO([0, 2.15, 3.75], [0.95, 0.95, 0.16], 'rueda', { g: [0, 62, 0], parte: 6 }), CONO([0, 1.5, 2.9], [0.15, 0.15, 1.0], 'sillaPata', { g: [-35, 0, 0], parte: 6 }));
   return p;
 }
 // el carrito de la compra de los micropagos: la cesta de rejilla, el asa roja y cuatro ruedecitas
 function chasisCarrito() {
   const p = [];
-  for (const [x, y] of [[-2.9, -3.9], [2.9, -3.9], [-2.6, 4.2], [2.6, 4.2]]) p.push(ESF([x, y, 0.8], [0.8, 0.8, 0.8], 'rueda', { parte: 1 }), CAJA([x, y, 1.6], [0.2, 0.2, 0.6], 'rejilla', { parte: 1 }));
-  p.push(CAJA([0, 0.2, 2.3], [3.1, 4.6, 0.2], 'rejilla', { parte: 2 }));
-  for (const s of [-1, 1]) { p.push(CAJA([s * 3.1, 0.2, 4.0], [0.12, 4.6, 1.7], 'cesta', { parte: 3 })); for (let y = -3.5; y <= 4; y += 1.5) p.push(CAJA([s * 3.15, y, 4.0], [0.1, 0.12, 1.7], 'rejilla', { parte: 3 })); p.push(CAJA([s * 3.15, 0.2, 5.6], [0.14, 4.7, 0.14], 'rejilla', { parte: 3 })); }
-  p.push(CAJA([0, 4.8, 4.0], [3.1, 0.12, 1.7], 'cesta', { parte: 3 }), CAJA([0, 4.85, 5.6], [3.2, 0.14, 0.14], 'rejilla', { parte: 3 }));
-  p.push(CAJA([0, -4.4, 4.0], [3.1, 0.12, 1.7], 'cesta', { parte: 3 }), CAJA([0, -5.4, 6.4], [3.0, 0.35, 0.35], 'asa', { parte: 4 }));
-  for (const s of [-1, 1]) p.push(CAJA([s * 2.8, -4.9, 5.4], [0.15, 0.6, 1.2], 'rejilla', { g: [30, 0, 0], parte: 4 }));
-  p.push(CAJA([0, 4.95, 3.6], [1.5, 0.08, 0.6], 'precio', { parte: 3 }));       // la etiqueta del precio, delante
+  for (const [x, y] of [[-2.9, -3.9], [2.9, -3.9], [-2.6, 4.2], [2.6, 4.2]]) p.push(ESF([x, y, 0.8], [0.8, 0.8, 0.8], 'rueda', { parte: 1 }), BLOQUE([x, y, 1.6], [0.2, 0.2, 0.6], 'rejilla', { parte: 1 }));
+  p.push(BLOQUE([0, 0.2, 2.3], [3.1, 4.6, 0.2], 'rejilla', { parte: 2 }));
+  for (const s of [-1, 1]) { p.push(BLOQUE([s * 3.1, 0.2, 4.0], [0.12, 4.6, 1.7], 'cesta', { parte: 3 })); for (let y = -3.5; y <= 4; y += 1.5) p.push(BLOQUE([s * 3.15, y, 4.0], [0.1, 0.12, 1.7], 'rejilla', { parte: 3 })); p.push(BLOQUE([s * 3.15, 0.2, 5.6], [0.14, 4.7, 0.14], 'rejilla', { parte: 3 })); }
+  p.push(BLOQUE([0, 4.8, 4.0], [3.1, 0.12, 1.7], 'cesta', { parte: 3 }), BLOQUE([0, 4.85, 5.6], [3.2, 0.14, 0.14], 'rejilla', { parte: 3 }));
+  p.push(BLOQUE([0, -4.4, 4.0], [3.1, 0.12, 1.7], 'cesta', { parte: 3 }), BLOQUE([0, -5.4, 6.4], [3.0, 0.35, 0.35], 'asa', { parte: 4 }));
+  for (const s of [-1, 1]) p.push(BLOQUE([s * 2.8, -4.9, 5.4], [0.15, 0.6, 1.2], 'rejilla', { g: [30, 0, 0], parte: 4 }));
+  p.push(BLOQUE([0, 4.95, 3.6], [1.5, 0.08, 0.6], 'precio', { parte: 3 }));       // la etiqueta del precio, delante
   p.push(CONO([0, 2.15, 3.75], [0.95, 0.95, 0.16], 'rueda', { g: [0, 62, 0], parte: 6 }));
   return p;
 }
@@ -32,9 +32,9 @@ const MATS_CHASIS = { sillaOro: { c: '#ffcb3d', brillo: true }, sillaCuero: '#c9
 // CrazyBunny CEO: traje con corbata, gafas de sol, sin capa y con su maletín de billetes al lado
 function aspectoCeo(piezas) {
   const p = piezas.filter(q => q.parte !== 12).map(q => (q.m === 'pelo' && (q.parte === 10 || (q.parte === 11 && q.r[1] > 1)) ? Object.assign({}, q, { m: 'traje' }) : q));
-  p.push(CAJA([0, 0.38, 5.6], [0.75, 0.2, 1.0], 'camisa', { parte: 10 }), CAJA([0, 0.56, 5.4], [0.3, 0.1, 0.95], 'corbata', { parte: 10 }));
-  p.push(CAJA([-1.28, 2.05, 9.05], [1.0, 0.2, 0.55], 'gafas', { parte: 24 }), CAJA([1.32, 2.05, 9.1], [1.0, 0.2, 0.55], 'gafas', { parte: 24 }), CAJA([0, 2.05, 9.2], [2.6, 0.16, 0.13], 'gafas', { parte: 24 }));
-  p.push(CAJA([3.6, -1.2, 4.3], [0.55, 1.5, 1.05], 'maletin', { parte: 14 }), CAJA([3.66, -1.2, 4.3], [0.55, 0.5, 0.18], 'dinero', { parte: 14 }), CAJA([3.6, -1.2, 5.5], [0.2, 0.6, 0.18], 'gafas', { parte: 14 }));
+  p.push(BLOQUE([0, 0.38, 5.6], [0.75, 0.2, 1.0], 'camisa', { parte: 10 }), BLOQUE([0, 0.56, 5.4], [0.3, 0.1, 0.95], 'corbata', { parte: 10 }));
+  p.push(BLOQUE([-1.28, 2.05, 9.05], [1.0, 0.2, 0.55], 'gafas', { parte: 24 }), BLOQUE([1.32, 2.05, 9.1], [1.0, 0.2, 0.55], 'gafas', { parte: 24 }), BLOQUE([0, 2.05, 9.2], [2.6, 0.16, 0.13], 'gafas', { parte: 24 }));
+  p.push(BLOQUE([3.6, -1.2, 4.3], [0.55, 1.5, 1.05], 'maletin', { parte: 14 }), BLOQUE([3.66, -1.2, 4.3], [0.55, 0.5, 0.18], 'dinero', { parte: 14 }), BLOQUE([3.6, -1.2, 5.5], [0.2, 0.6, 0.18], 'gafas', { parte: 14 }));
   return p;
 }
 const MATS_CEO = { traje: '#2b2d3a', camisa: '#ffffff', corbata: '#ff3348', gafas: { c: '#1c1028', brillo: true }, maletin: '#5b3a26', dinero: '#5ef27a' };

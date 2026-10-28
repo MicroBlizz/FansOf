@@ -1,8 +1,8 @@
 {
- "build": 601,
- "hash": "a1b9baf",
- "fecha": "2026-10-28T11:07:28Z",
- "mensaje": "Goose 0.2.2: al mirar a la izquierda el farolillo sigue en la misma mano (cuerpo con el puño en esa mano, el farol nunca se voltea)",
+ "build": 602,
+ "hash": "1a53b64",
+ "fecha": "2026-10-28T11:26:47Z",
+ "mensaje": "Fans of Karts: CAJA (piezas de los modelos) pasa a llamarse BLOQUE, porque core ya tiene un CAJA (la caja negra) y el juego no arrancaba en la alfa",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

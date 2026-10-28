@@ -1,8 +1,8 @@
 {
- "build": 591,
- "hash": "3e7592e",
- "fecha": "2026-10-28T08:59:19Z",
- "mensaje": "Fans of Goose 0.1.0: prototipo jugable (survivors con el Juego de la Oca)",
+ "build": 592,
+ "hash": "fd20073",
+ "fecha": "2026-10-28T09:11:41Z",
+ "mensaje": "Goose: los botones vuelven a responder al toque; iconos y primeros adornos en pixel art de Yoshi",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

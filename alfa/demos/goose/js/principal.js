@@ -47,7 +47,9 @@ function sueltaDedo(e) {
   if (e.pointerId === E.id) { E.id = null; E.palanca = false; E.mx = 0; E.my = 0; }
   if (E.botonDown) {
     const b = botonEn(x, y);
-    if (b && b === E.bBoton) b.accion();
+    // los botones se rehacen en cada fotograma: vale si se suelta en el mismo sitio donde se tocó
+    const mismo = b && E.bBoton && b.x === E.bBoton.x && b.y === E.bBoton.y && b.w === E.bBoton.w && b.h === E.bBoton.h;
+    if (mismo) b.accion();
     else if (JUEGO.modo === 'cofre') cierraCofre();
   }
   E.botonDown = false;

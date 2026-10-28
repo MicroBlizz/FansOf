@@ -1,8 +1,8 @@
 {
- "build": 594,
- "hash": "7b6fec8",
- "fecha": "2026-10-28T09:51:16Z",
- "mensaje": "Goose 0.2.0: se juega como la Oca (tiras el dado y avanzas), casillas con su escena (Puente, Pozo, Posada, Cárcel, Muerte), suelos y escenas de Yoshi, héroe sin volteo",
+ "build": 595,
+ "hash": "eabd071",
+ "fecha": "2026-10-28T10:02:40Z",
+ "mensaje": "Goose: poses del héroe (paso, golpe y mirando a la izquierda con el farol en la misma mano, detrás del cuerpo)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -1,8 +1,8 @@
 {
- "build": 595,
- "hash": "eabd071",
- "fecha": "2026-10-28T10:02:40Z",
- "mensaje": "Goose: poses del héroe (paso, golpe y mirando a la izquierda con el farol en la misma mano, detrás del cuerpo)",
+ "build": 596,
+ "hash": "d1b6b33",
+ "fecha": "2026-10-28T10:09:45Z",
+ "mensaje": "Goose: el héroe lleva el farol siempre en la misma mano, mire a donde mire",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

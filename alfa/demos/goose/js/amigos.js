@@ -12,11 +12,12 @@ function pintaAmigos() {
   if (SALAS.puede()) {
     boton(30, y, W - 60, 32, tr('CREAR SALA'), '#e8742a', () => { SONIDO.boton(); creaSala(); }, 12);
     boton(30, y + 42, W - 60, 28, tr('ENTRAR CON CÓDIGO'), '#3f9a3a', () => { SONIDO.boton(); pideCodigo(); }, 10);
+    boton(30, y + 78, W - 60, 24, tr('PERSONAJE: {n}', { n: tr(personaje().nombre) }), '#8a5a1e', () => { SONIDO.boton(); abreSelector(() => { JUEGO.modo = 'amigos'; }); }, 8);
   } else {
     boton(30, y, W - 60, 30, tr('ENTRAR CON TU CUENTA'), '#2f74c0', () => { SONIDO.boton(); if (window.filaCuenta) abreCuenta(); else toast(tr('La cuenta llegará pronto')); }, 10);
   }
-  if (AMIGOS.cargando) texto2(tr('Conectando…'), W / 2, y + 90, 8, '#9fe0ff');
-  if (AMIGOS.error) parrafo(AMIGOS.error, 24, y + 92, W - 48, 7.5, '#ff8a6b');
+  if (AMIGOS.cargando) texto2(tr('Conectando…'), W / 2, y + 114, 8, '#9fe0ff');
+  if (AMIGOS.error) parrafo(AMIGOS.error, 24, y + 116, W - 48, 7.5, '#ff8a6b');
   boton(30, H - 46, W - 60, 26, tr('VOLVER'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'portada'; }, 10);
 }
 
@@ -34,7 +35,7 @@ function pintaSala() {
     const j = lista[i], y = 140 + i * 30;
     caja(30, y, W - 60, 24, 6, j ? '#2a1610' : '#160b08', j ? COLORES[i] : '#3a2016', 1.5);
     if (j) {
-      pinta('heroe', 44, y + 12, false, false, 0.8);
+      pintaHeroeQuieto(44, y + 12, (PERSONAJES.find(p => p.id === (j.datos && j.datos.p)) || PERSONAJES[0]).capa, 0.5);
       texto2((j.nombre || tr('Rival')) + (j.yo ? ' (' + tr('tú') + ')' : ''), 58, y + 12.5, 8, '#fff4dc', 'left');
       if (i === 0) texto2(tr('ANFITRIÓN'), W - 36, y + 12.5, 6, '#ffd34d', 'right');
     } else texto2(tr('Libre'), W / 2, y + 12.5, 7, '#6e4426', 'center', FUENTE, 700, 0);

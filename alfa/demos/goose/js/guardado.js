@@ -10,6 +10,7 @@ const SAVE = {
   mejoras: {},       // { vida: 2, fuerza: 1, ... } las de la tienda
   musica: 1, efectos: 1,
   vibrar: 1,
+  personaje: 'rojo',   // el elegido en el selector (js/personajes.js)
   menuMus: 'nomuertos',   // la canción a la que vuelve el motor tras un jingle
 };
 

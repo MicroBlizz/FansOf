@@ -91,6 +91,7 @@ function fotograma(ahora) {
   else if (J.modo === 'tienda') { pintaTienda(); }
   else if (J.modo === 'opciones' && J.opcionesDe === 'portada') { pintaOpciones(); }
   else if (J.modo === 'amigos') { pintaAmigos(); }
+  else if (J.modo === 'elige') { pintaSelector(dt); }
   else if (J.modo === 'sala') { pintaSala(); }
   else {
     if (J.modo === 'juego') avanzaPartida(dt);

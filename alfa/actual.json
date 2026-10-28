@@ -1,8 +1,8 @@
 {
- "build": 598,
- "hash": "a4cc036",
- "fecha": "2026-10-28T10:34:45Z",
- "mensaje": "Goose: fotogramas de Yoshi para los enemigos (oca andando, albatros aleteando, oca gorda, Oca Madre) y tablas del Puente del ancho del camino",
+ "build": 599,
+ "hash": "6cb7fa2",
+ "fecha": "2026-10-28T10:53:58Z",
+ "mensaje": "Goose: héroe en capas (el farolillo nunca se voltea, va siempre en la misma mano), selector de 4 personajes con su capa y su poder, y caídas al salirse de la casilla o si el derrumbe se la come",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

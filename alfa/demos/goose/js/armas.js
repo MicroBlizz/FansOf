@@ -120,7 +120,7 @@ function explotaHuevo(p) {
   estallido(p.x, p.y, 6, '#fff7c2', 50, 0.3, 2, 2);
   anillo(p.x, p.y, p.r, '#d9ff6b', 0.3, 3);
   if (p.tipo === 'huevo') {
-    const c = CHARCOS.saca(); if (c) { c.x = p.x; c.y = p.y; c.r = p.r * 0.85; c.vida = p.evo ? 4 : NIV.huevo.charco[Math.min(5, p.nivel) - 1]; c.dps = (p.evo ? 16 : NIV.huevo.dps[Math.min(5, p.nivel) - 1]) * JUEGO.st.dano; c.tic = 0; }
+    const c = CHARCOS.saca(); if (c) { c.x = p.x; c.y = p.y; c.r = p.r * 0.85; c.vida = (p.evo ? 4 : NIV.huevo.charco[Math.min(5, p.nivel) - 1]) * (JUEGO.st.charco || 1); c.dps = (p.evo ? 16 : NIV.huevo.dps[Math.min(5, p.nivel) - 1]) * JUEGO.st.dano; c.tic = 0; }
     if (p.evo) for (let i = 0; i < 4; i++) { const an = i * 1.57 + Math.random() * 0.6; lanzaHuevo(p.x, p.y, p.x + Math.cos(an) * 40, p.y + Math.sin(an) * 40, p.dano * 0.45, 16 * multiArea(), p.nivel, false, true); }
     tiembla(1.2); SONIDO.explota();
   } else SONIDO.explotita();

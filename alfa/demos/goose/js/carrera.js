@@ -8,7 +8,7 @@ const COLORES = ['#e8742a', '#3fbf4a', '#3f8ee8', '#ff4d6b'];
 const AMIGOS = { red: null, sala: null, error: '', cargando: false, empezada: false };
 
 function redAmigos() { if (!AMIGOS.red) AMIGOS.red = SALAS.red('goose'); return AMIGOS.red; }
-function misDatosSala() { return { v: 1 }; }
+function misDatosSala() { return { v: 1, p: SAVE.personaje }; }
 
 function abreAmigos() {
   JUEGO.modo = 'amigos'; AMIGOS.error = '';
@@ -68,7 +68,7 @@ function empiezaCarrera(s) {
   const J = JUEGO;
   J.avisos = [];
   J.carrera = { modo: s.datos.modo === 'coop' ? 'coop' : 'carrera', anfitrion: !!s.anfitrion, danoJefe: 0, yo: yo.orden, color: COLORES[lista.indexOf(yo) % 4], rivales: new Map(), cuenta: Math.max(0.5, (s.datos.t0 - Date.now()) / 1000), tEnvio: 0, llegada: null, fin: false, tFin: 0, puesto: 0 };
-  for (const j of lista) if (!j.yo) J.carrera.rivales.set(j.orden, { nombre: j.nombre || tr('Rival'), color: COLORES[lista.indexOf(j) % 4], x: CFG.W / 2, y: -40, tx: CFG.W / 2, ty: -40, c: 1, n: 1, v: 1, muerto: false, llega: null, tumba: null, abismo: false, revT: 0, visto: performance.now() });
+  for (const j of lista) if (!j.yo) J.carrera.rivales.set(j.orden, { nombre: j.nombre || tr('Rival'), color: COLORES[lista.indexOf(j) % 4], x: CFG.W / 2, y: -40, tx: CFG.W / 2, ty: -40, c: 1, n: 1, v: 1, capa: (PERSONAJES.find(p => p.id === (j.datos && j.datos.p)) || PERSONAJES[0]).capa, muerto: false, llega: null, tumba: null, abismo: false, revT: 0, visto: performance.now() });
   J.carrera.canal = AMIGOS.red.canal(mensajeCarrera, () => { /* los cortes se reintentan solos */ });
   SONIDO.dadoRueda();
 }
@@ -134,7 +134,7 @@ function pintaRivales() {
   for (const r of C.rivales.values()) {
     if (r.muerto || r.llega !== null) continue;
     G.globalAlpha = 0.35; G.fillStyle = r.color; G.beginPath(); G.ellipse(r.x, r.y + 8, 9, 3.5, 0, 0, 6.283); G.fill();
-    pinta('heroe', r.x, r.y, false, false, 1, 0.55);
+    G.globalAlpha = 0.6; pintaHeroeQuieto(r.x, r.y, r.capa || '', 1); G.globalAlpha = 1;
     G.globalAlpha = 1; etiqueta(r.nombre, r.x, r.y - 15, r.color);
   }
 }

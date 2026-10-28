@@ -42,6 +42,7 @@ function calculaStats() {
     cd: 1 / (1 + p('cadencia') * 0.08),
     monedas: 1 + m('codicia') * 0.15,
   };
+  poderPersonaje(J.st);
 }
 
 // --- las cartas ---

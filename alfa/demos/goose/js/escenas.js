@@ -64,10 +64,10 @@ function avanzaParado(dt) {
     avanzaEncierro(dt);
     return;
   }
-  // en la casilla: no te sales (la cruel caída es cosa del tramo y del Puente)
-  const t = J.casilla, w = anchoDe(t), cx = centroX(t);
-  const top = t >= CFG.jardin ? yTecho() + 10 : -t * TH + 8, bottom = -(t - 1) * TH - 8;
-  yo.x = clamp(yo.x, cx - w / 2 + 6, cx + w / 2 - 6); yo.y = clamp(yo.y, top, bottom);
+  // en la casilla: por delante y por detrás no se pasa (se avanza con el dado), pero por los lados está el vacío: si te sales, te caes
+  const t = J.casilla;
+  const top = t >= CFG.jardin ? yTecho() + 10 : -t * TH + 6, bottom = -(t - 1) * TH - 6;
+  yo.y = clamp(yo.y, top, bottom);
 }
 
 // --- el Puente: de puente a puente y tiro porque me lleva la corriente ---

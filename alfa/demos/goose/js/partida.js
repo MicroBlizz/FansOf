@@ -19,8 +19,9 @@ function nuevaPartida() {
     camY: -40 - PAN.H * 0.62,
   });
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
+  J.pers = personaje(); J.yo.dir = 1;
   calculaStats(); J.vida = J.st.vidaMax;
-  aplicaCarta(cartaArma('latigo'));
+  aplicaCarta(cartaArma(J.pers.arma));
   preparaEspeciales();
   SAVE.partidas++; guarda();
   aviso(tr('¡LLEGA A LA CASILLA 63!'), '#ffd34d', 2.2); aviso2(tr('El tablero se derrumba detrás de ti'));
@@ -112,7 +113,8 @@ function avanzaJugador(dt) {
   yo.x = clamp(yo.x, 4, CFG.W - 4);
   if (yo.y < yTecho() + 8) yo.y = yTecho() + 8;
   // ¿se sale del tablero? (solo corriendo: parado no te caes)
-  if (J.fase !== 'parado' && !hayCamino(yo.x, yo.y)) {
+  const encerrado = J.escena && (J.escena.tipo === 'pozo' || J.escena.tipo === 'carcel');
+  if (!encerrado && !hayCamino(yo.x, yo.y)) {
     J.caida = 0.55; J.caidaAbismo = yo.y > J.yD - 1;
     aviso(J.caidaAbismo ? tr('¡EL ABISMO!') : tr('¡AL VACÍO!'), '#ff4d4d', 1); SONIDO.cae(); vibra(120);
   }
@@ -159,11 +161,11 @@ let cadenaT = 0, cadena = 0;
 function recoge(p) {
   const J = JUEGO;
   if (p.tipo === 'xp') {
-    J.xp += p.valor; J.impulso = Math.min(CFG.impulso.lleno, J.impulso + p.valor);
+    J.xp += p.valor; J.impulso = Math.min(plumasDado(), J.impulso + p.valor);
     const ahora = J.t; cadena = ahora - cadenaT < 0.35 ? Math.min(cadena + 1, 24) : 0; cadenaT = ahora;
     SONIDO.pluma(cadena);
     while (J.xp >= J.xpNecesita) { J.xp -= J.xpNecesita; J.nivel++; J.xpNecesita = xpPara(J.nivel); J.pendientes++; }
-    if (J.impulso >= CFG.impulso.lleno && !J.avisoImpulso) { J.avisoImpulso = true; J.dado.bendito = true; texto(J.yo.x, J.yo.y - 20, tr('¡DADO BENDITO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
+    if (J.impulso >= plumasDado() && !J.avisoImpulso) { J.avisoImpulso = true; J.dado.bendito = true; texto(J.yo.x, J.yo.y - 20, tr('¡DADO BENDITO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
   } else if (p.tipo === 'moneda') { J.monedasPartida++; SONIDO.moneda(); texto(p.x, p.y - 6, '+1', '#ffcf33', 6, 0.5); }
   else if (p.tipo === 'pollo') { J.vida = Math.min(J.st.vidaMax, J.vida + 40); texto(p.x, p.y - 6, '+40', '#7dff6b', 8, 0.8); SONIDO.cura(); }
   else if (p.tipo === 'iman') { for (let i = 0; i < PLUMAS.n; i++) if (PLUMAS.lista[i].tipo === 'xp') PLUMAS.lista[i].atraida = true; aviso(tr('¡IMÁN!'), '#6bf2ff', 1); SONIDO.iman(); }

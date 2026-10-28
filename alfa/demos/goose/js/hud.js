@@ -49,7 +49,7 @@ function pintaHud() {
   barra(25, 16, W - 64, 5, J.xp / J.xpNecesita, '#6bd4ff');
   texto2(tr('NV {n}', { n: J.nivel }), W - 36, 18.6, 6, '#6bd4ff', 'left');
   // impulso
-  const ki = J.impulso / CFG.impulso.lleno, listo = J.dado.bendito;
+  const ki = J.impulso / plumasDado(), listo = J.dado.bendito;
   barra(25, 24, W - 64, 6, listo ? 1 : ki, listo ? (((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d') : '#d9a520');
   texto2(listo ? tr('¡DADO BENDITO!') : tr('PLUMAS PARA EL DADO BENDITO'), 25 + (W - 64) / 2, 27.3, 5, listo ? '#3a1d00' : '#fff1c2', 'center', FUENTE, 800, listo ? 0 : 0.3);
   // casilla o jefe

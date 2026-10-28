@@ -91,17 +91,18 @@ function pintaJugador() {
   if (J.caida <= 0) pinta('sombra', yo.x, yo.y + 8, false, false, 1.1 * (J.salto > 0 ? 0.6 : 1));
   if (J.invul > 0 && J.salto <= 0 && ((J.t * 18) | 0) % 2) alfa *= 0.35;
   const paso = yo.moviendo ? Math.abs(Math.sin(yo.anda)) * -1.6 : 0;
-  // la pose: nunca se voltea el dibujo (el farol no cambia de mano); si no hay dibujo mirando a la izquierda, mira a la derecha
-  const izq = yo.miraX < -0.1 && SPR['heroe-izq'];
-  let spr = izq ? 'heroe-izq' : 'heroe';
-  if (J.golpeT > 0 && SPR['heroe-golpe']) spr = 'heroe-golpe';
-  else if (J.latigoT > 0 && SPR['heroe-latigo'] && !izq) spr = 'heroe-latigo';
-  else if (yo.moviendo && Math.sin(yo.anda) > 0) { const p = izq ? 'heroe-izq-paso' : 'heroe-paso'; if (SPR[p]) spr = p; }
-  // el latigazo empuja un poco el cuerpo hacia donde pega; el golpe, hacia atrás
+  // hacia dónde mira (con un margen, para que no tiemble al ir recto)
+  if (yo.miraX > 0.25) yo.dir = 1; else if (yo.miraX < -0.25) yo.dir = -1;
+  const dir = yo.dir || 1;
   const lunge = J.latigoT > 0 ? Math.sin(J.latigoT / 0.18 * Math.PI) * 3 : 0, retro = J.golpeT > 0 ? -Math.sin(J.golpeT / 0.25 * Math.PI) * 2 : 0;
-  const inclina = yo.moviendo ? Math.sin(yo.anda) * 0.06 : 0;
-  G.save(); G.translate(yo.x + yo.miraX * (lunge + retro), yo.y + dy + paso); G.rotate(inclina + (J.latigoT > 0 ? yo.miraX * 0.12 : 0));
-  pinta(spr, 0, 0, false, J.golpeT > 0.18, esc, alfa); G.restore();
+  const x = yo.x + dir * (lunge + retro), y = yo.y + dy + paso;
+  if (capasListas()) {
+    const pose = J.golpeT > 0 && SPR['c-golpe'] ? 'c-golpe' : yo.moviendo && Math.sin(yo.anda) > 0 ? 'c-paso' : 'c-cuerpo';
+    // el farolillo se balancea al andar y se va un poco hacia atrás al correr
+    const balanceo = (yo.moviendo ? Math.sin(yo.anda * 0.5) * 0.35 - dir * 0.15 : Math.sin(J.t * 2) * 0.06) + (J.golpeT > 0 ? -dir * 0.5 : 0);
+    const fp = pintaHeroeCapas(x, y, pose, dir, (J.pers || personaje()).capa, esc, alfa, J.golpeT > 0.18, balanceo);
+    if (fp) { G.globalAlpha = 0.5 + Math.sin(J.t * 9) * 0.1; pinta('luz', fp[0], fp[1], false, false, 0.5); G.globalAlpha = 1; }
+  } else pinta('heroe', x, y, false, J.golpeT > 0.18, esc, alfa);
   // aura del Pozo y de la Posada
   if (invertido()) { G.strokeStyle = '#c9a0ff'; G.globalAlpha = 0.7; G.lineWidth = 1.5; G.setLineDash([2, 2]); G.beginPath(); G.arc(yo.x, yo.y, 13, J.t * 4, J.t * 4 + 6.283); G.stroke(); G.setLineDash([]); G.globalAlpha = 1; }
 }

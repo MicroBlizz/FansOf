@@ -37,9 +37,7 @@ IDIOMA.add({
  "Tablero lleno": "Board full",
  "Toca la pieza que quieras quitar con el rayo.": "Tap the piece you want to zap with the ray.",
  "Toca la pieza que quieras quitar con el tirachinas.": "Tap the piece you want to knock off with the slingshot.",
- "Toca otra vez para plantar.": "Tap again to plant.",
  "{n} de {t} piezas descubiertas": "{n} of {t} pieces discovered",
- "¡Nueva pieza: {n}!": "New piece: {n}!",
  "¡Rayo zanahoria listo!": "Carrot ray ready!",
  "¡Tablero lleno! Haz sitio como puedas.": "Board full! Make room however you can.",
  "¡Ábreme!": "Open me!",
@@ -98,6 +96,11 @@ IDIOMA.add({
  "Salta a cualquier hueco. Solo se duerme si no queda sitio.": "Hops to any free spot. Only sleeps when there's no room left.",
  "Se convierte en lo que mejor te venga.": "Turns into whatever suits you best.",
  "Toca una pieza del tablero para quitarla.": "Tap a piece on the board to remove it.",
- "Toca una casilla para verla; tócala otra vez para plantar.": "Tap a tile to preview; tap it again to plant.",
- "Junta tres que se toquen y crecerá.": "Match three that touch and it will grow."
+ "Junta tres que se toquen y crecerá.": "Match three that touch and it will grow.",
+ "RACHA": "STREAK",
+ "¡CADENA x{n}!": "CHAIN x{n}!",
+ "Racha perdida": "Streak lost",
+ "¡NUEVA PIEZA!": "NEW PIECE!",
+ "Suelta para plantar aquí. Arrastra para cambiar de casilla.": "Release to plant here. Drag to change tile.",
+ "Toca una casilla para plantar. Mantén y arrastra para ver antes qué pasa.": "Tap a tile to plant. Hold and drag to preview first."
 });

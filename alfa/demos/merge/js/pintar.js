@@ -36,6 +36,14 @@ function mgPintaMarcador(c, t) {
   // puntos y objetivo
   mgPanel(c, 120, 10, 300, 52, 18, MG_PILDORA, null);
   mgTexto(c, fmt(P.pts), 270, 37, 36, '#fff6c8', 'center', null);
+  if (P.racha >= 2) {   // la racha: una llama con su multiplicador, que late
+    const e = MG_FX.t - MG_FX.racha, s = 1 + Math.max(0, 0.4 - e) + Math.sin(t * 8) * 0.04, m = mgMultRacha();
+    c.save(); c.translate(70, 40); c.scale(s, s);
+    c.beginPath(); c.moveTo(0, -30); c.quadraticCurveTo(26, -4, 16, 18); c.quadraticCurveTo(0, 30, -16, 18); c.quadraticCurveTo(-26, -4, 0, -30);
+    c.fillStyle = m >= 2 ? '#ff4f2e' : '#ff8a2a'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OL; c.stroke();
+    mgTexto(c, 'x' + fmtV(m), 0, 6, 17, '#fff', 'center', OL); c.restore();
+    mgTexto(c, tr('RACHA'), 70, 82, 12, '#fff', 'center', OL);
+  }
   const O = mgObjetivo(), ok = O.de ? clamp((P.pts - O.desde) / (O.de - O.desde), 0, 1) : 1;
   mgPanel(c, 120, 68, 300, 34, 14, MG_PILDORA, null);
   mgTexto(c, O.de ? tr('Consigue {n} puntos', { n: fmt(O.de) }) : tr('¡Todos los objetivos!'), 232, 86, 15, '#fff', 'center', null, MG_FB);
@@ -97,7 +105,7 @@ function mgTirachinasIcono(c, x, y) {
 /* ---------- el tablero: caminos de tierra, piezas, previsión ---------- */
 function mgPintaCaminos(c, t) {
   const P = MG_P, cs = MG_V.cs, n = MG_CFG.lado, B = P.B, r = cs * 0.38, E = P.evento;
-  const libre = (x, y) => mgDentro(x, y) && !B[y][x];
+  const libre = (x, y) => mgDentro(x, y) && P.camino.has(y * 8 + x);   // el camino es fijo en cada partida: no cambia al poner piezas
   const forma = (pad) => {   // cada casilla libre es una mancha redonda, unida a las libres de al lado
     c.beginPath();
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
@@ -153,6 +161,7 @@ function mgPintaTablero(c, t) {
     if (p.t === 'zorro' || p.t === 'cuervo') cy += Math.sin(t * 4 + p.id) * 2;
     c.beginPath(); c.ellipse(cx, mgCy(y) + cs * 0.34, cs * 0.32 * sc, cs * 0.09, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();
     if (P.modo) { c.beginPath(); c.arc(cx, cy, cs * 0.46, 0, MG_TAU); c.strokeStyle = `rgba(255,${P.modo === 'rayo' ? 120 : 200},40,${0.5 + Math.sin(t * 8) * 0.4})`; c.lineWidth = 4; c.stroke(); }
+    if (!A) sc *= 1 + Math.sin(t * 2.2 + p.id * 1.7) * 0.025;   // respiran un poco: el tablero está vivo
     mgDibujaPieza(c, p.t, cx, cy, cs * 1.04 * sc, k, p.s);
     if (p.t === 'cofre') mgTexto(c, tr('¡Ábreme!'), cx, cy - cs * 0.46 + Math.sin(t * 5) * 2, 12, '#fff', 'center', OL);
   }
@@ -170,6 +179,11 @@ function mgPintaTablero(c, t) {
     mgDibujaPieza(c, f.tipo, lerp(mgCx(f.fx), mgCx(f.tx), e), lerp(mgCy(f.fy), mgCy(f.ty), e), cs * (1 - e * 0.4), k, f.s);
   }
   for (const p of MG_FX.parts) { c.globalAlpha = clamp(1 - (MG_FX.t - p.t0) / p.vida, 0, 1); c.beginPath(); c.arc(mgCx(p.x), mgCy(p.y), p.r * cs, 0, MG_TAU); c.fillStyle = p.col; c.fill(); }
+  c.globalAlpha = 1;
+  for (const o of MG_FX.ondas) {   // el anillo de luz de cada fusión
+    const e = (MG_FX.t - o.t0) / 0.5; if (e < 0) continue;
+    c.globalAlpha = 1 - e; c.beginPath(); c.arc(mgCx(o.x), mgCy(o.y), cs * (0.3 + e * (0.7 + o.grande * 0.25)), 0, MG_TAU); c.strokeStyle = o.col; c.lineWidth = 8 * (1 - e) + 2; c.stroke();
+  }
   c.globalAlpha = 1;
   const RL = MG_FX.relampago;
   if (RL && MG_FX.t - RL.t0 < 0.35) {   // el relámpago de la tormenta
@@ -213,8 +227,8 @@ function mgDescripcion(tipo) {
   if (T === 'cuervo') return 'Salta a cualquier hueco. Solo se duerme si no queda sitio.';
   if (T === 'semilla') return 'Se convierte en lo que mejor te venga.';
   if (T === 'topo') return 'Toca una pieza del tablero para quitarla.';
-  if (MG_P.sel) return 'Toca otra vez para plantar.';
-  if (MG_P.turno < 4) return 'Toca una casilla para verla; tócala otra vez para plantar.';
+  if (MG_P.sel) return 'Suelta para plantar aquí. Arrastra para cambiar de casilla.';
+  if (MG_P.turno < 4) return 'Toca una casilla para plantar. Mantén y arrastra para ver antes qué pasa.';
   return 'Junta tres que se toquen y crecerá.';
 }
 function mgPintaAvisos(c) {
@@ -230,6 +244,19 @@ function mgPintaAvisos(c) {
     c.restore(); c.globalAlpha = 1;
   }
 }
+function mgPintaEstreno(c, t) {
+  const S = MG_FX.estreno; if (!S) return;
+  const e = MG_FX.t - S.t0, al = clamp(e < 0.2 ? e / 0.2 : (2.2 - e) / 0.4, 0, 1), cy = MG_V.by + MG_V.cs * 2.6;
+  c.globalAlpha = al * 0.55; c.fillStyle = '#10200a'; c.fillRect(0, 0, 540, MG_V.H); c.globalAlpha = al;
+  c.save(); c.translate(270, cy); c.rotate(t * 0.6);   // rayos de luz que giran
+  for (let i = 0; i < 12; i++) { c.rotate(MG_TAU / 12); c.beginPath(); c.moveTo(0, 0); c.lineTo(-26, -260); c.lineTo(26, -260); c.closePath(); c.fillStyle = i % 2 ? 'rgba(255,230,120,.35)' : 'rgba(255,255,255,.18)'; c.fill(); }
+  c.restore();
+  const s = e < 0.35 ? 0.3 + (e / 0.35) * 0.85 : 1.15 - Math.min(0.15, (e - 0.35) * 0.6);
+  mgDibujaPieza(c, S.tipo, 270, cy + Math.sin(t * 3) * 4, 230 * s, mgK(), true);
+  mgTexto(c, tr('¡NUEVA PIEZA!'), 270, cy - 150, 34, '#ffe14d');
+  mgTexto(c, tr(MG_PIEZAS[S.tipo].nombre), 270, cy + 140, 40, '#fff');
+  c.globalAlpha = 1;
+}
 function mgPintaPartida(c, t, dt) {
   MG_HUD.botones.length = 0;
   mgFondo(c);
@@ -237,5 +264,6 @@ function mgPintaPartida(c, t, dt) {
   mgPintaMarcador(c, t);
   mgPintaAbajo(c, t);
   mgPintaAvisos(c);
+  mgPintaEstreno(c, t);
   mgConejosAvanza(dt);
 }

@@ -20,6 +20,8 @@ Object.assign(SFX, {
   mgEvento: () => { tone(392, 392, 0.12, 'triangle', 0.08); tone(523, 523, 0.18, 'triangle', 0.08, 0.12); },
   mgRecord: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, f, 0.14, 'triangle', 0.08, i * 0.07)),
   mgFin: () => { tone(392, 196, 0.6, 'triangle', 0.1); },
+  mgCadena: (n = 2) => { for (let i = 0; i < n + 1; i++) { const f = mgNota(i + 3); tone(f, f, 0.12, 'square', 0.05, i * 0.07); } noise(0.3, 0.08, 4000, 'highpass', 0.1); },
+  mgEstreno: () => { [523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f, 0.22, 'triangle', 0.09, i * 0.09)); noise(0.6, 0.06, 8000, 'highpass', 0.3); },
   mgCarta: () => { noise(0.08, 0.06, 3000, 'bandpass'); tone(600, 900, 0.1, 'triangle', 0.06); },
 });
 Object.assign(THROTTLE, { mgPon: 40, mgJunta: 30, mgZorro: 60, mgDuerme: 120 });

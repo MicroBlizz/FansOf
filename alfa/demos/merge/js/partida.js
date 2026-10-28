@@ -9,7 +9,7 @@ function mgEmpieza(carta) {
   Object.assign(MG_P, {
     estado: 'jugando', B: mgTableroNuevo(), cartas: carta ? [carta] : [], reserva: Array(huecos).fill(null),
     actual: null, cola: null, turno: 0, pts: 0, fusiones: 0, carga: 0, cargas: 0, tirachinas: carta === 'tirachinas' ? 1 : 0,
-    modo: null, evento: null, regalo: false, mejor: 0, record: false, sel: null, objetivoHecho: 0, reservaEspera: 0,
+    modo: null, evento: null, regalo: false, mejor: 0, record: false, sel: null, objetivoHecho: 0, reservaEspera: 0, racha: 0,
   });
   // el tablero empieza con unas pocas piezas sueltas, sin grupos ya hechos
   const iniciales = ['brote', 'brote', 'brote', 'brote', 'zanahoria', 'zanahoria', 'brote', 'piedra'];
@@ -22,9 +22,18 @@ function mgEmpieza(carta) {
   }
   MG_P.cola = mgSorteo(MG_P.cartas);
   mgSiguiente();
+  MG_P.camino = mgCaminoNuevo();
   mgConejosNuevos();
   SAVE.partidas = (SAVE.partidas || 0) + 1; mgGuarda();
   mgMusica('animales');
+}
+// el camino de tierra del tablero: un par de senderos que se cruzan, distinto en cada partida (solo de adorno)
+function mgCaminoNuevo() {
+  const n = MG_CFG.lado, s = new Set(), fila = 1 + ((Math.random() * (n - 2)) | 0), col = 1 + ((Math.random() * (n - 2)) | 0);
+  for (let i = 0; i < n; i++) { s.add(fila * 8 + i); s.add(i * 8 + col); }
+  let x = (Math.random() * n) | 0, y = 0;   // y un sendero que baja serpenteando
+  while (y < n) { s.add(y * 8 + x); if (Math.random() < 0.45) { x = clamp(x + (Math.random() < 0.5 ? -1 : 1), 0, n - 1); s.add(y * 8 + x); } y++; }
+  return s;
 }
 const mgTiene = id => MG_P.cartas && MG_P.cartas.includes(id);
 function mgSiguiente() {
@@ -33,8 +42,10 @@ function mgSiguiente() {
   MG_P.actual = MG_P.cola; MG_P.cola = mgSorteo(MG_P.cartas);
 }
 // multiplicador de puntos de una casilla
+// la racha: turnos seguidos juntando algo; cada uno suma un 25 % (hasta x2)
+const mgMultRacha = () => 1 + 0.25 * Math.min(MG_P.racha || 0, 4);
 function mgMult(x, y) {
-  let m = mgTiene('cosecha') ? 1.25 : 1;
+  let m = (mgTiene('cosecha') ? 1.25 : 1) * mgMultRacha();
   const E = MG_P.evento; if (E && E.casillas.has(y * 8 + x)) m *= 2;
   return m;
 }
@@ -50,9 +61,21 @@ function mgTrasJuntar(r) {
     if (MG_P.carga >= MG_CFG.cargaHabilidad) { MG_P.carga = 0; if (MG_P.cargas < MG_CFG.cargasMax) { MG_P.cargas++; mgFxAviso(tr('¡Rayo zanahoria listo!')); play('mgCarga'); } }
     mgFxJunta(p, i);
     setTimeout(() => play('mgJunta', i), i * 180);
-    if (mgDescubre(p.nuevo)) setTimeout(() => mgFxAviso(tr('¡Nueva pieza: {n}!', { n: tr(MG_PIEZAS[p.nuevo].nombre) })), 200 + i * 180);
+    mgDescubre(p.nuevo);
     mgSuma(p.pts, p.x, p.y);
+    if (mgDescubreGrande(p.nuevo)) setTimeout(() => mgFxEstreno(p.nuevo), 380 + i * 180);
   });
+  if (r.pasos.length >= 2) {   // cadena: varias fusiones de golpe, premio extra y mucho ruido
+    const n = r.pasos.length, ult = r.pasos[n - 1], extra = Math.round(r.pts * 0.15 * (n - 1));
+    setTimeout(() => { mgFxAviso(tr('¡CADENA x{n}!', { n })); MG_FX.temblor = Math.max(MG_FX.temblor, 0.2 + n * 0.05); mgSuma(extra, ult.x, ult.y); play('mgCadena', n); }, 200 + n * 180);
+  }
+  if (navigator.vibrate) try { navigator.vibrate(r.pasos.length >= 2 ? [20, 40, 30] : 15); } catch (e) { /* sin vibración */ }
+}
+// la primera vez que se crea una pieza importante, se celebra a lo grande (una vez por jugador, guardado en la colección)
+function mgDescubreGrande(tipo) {
+  if (tipo === 'brote' || tipo === 'dormido' || tipo === 'piedra') return false;
+  const k = 'estreno-' + tipo; if (SAVE.coleccion[k]) return false;
+  SAVE.coleccion[k] = 1; mgGuarda(); return true;
 }
 // los zorros que se acaban de dormir se juntan (en la casilla del último que se durmió)
 function mgJuntaDormidos(dormidos) {
@@ -80,7 +103,10 @@ function mgPon(x, y) {
   play(real === 'zorro' ? 'mgZorro' : real === 'cuervo' ? 'mgCuervo' : 'mgPon');
   mgDescubre(real);
   const r = mgResuelve(MG_P.B, x, y, mgMult);
+  const antes = MG_P.racha;
   if (r.pasos.length) mgTrasJuntar(r); else mgSuma(Math.round(MG_PIEZAS[real].pts * mgMult(x, y)), x, y);
+  if (r.pasos.length) { MG_P.racha++; if (MG_P.racha >= 2) mgFxRacha(); }
+  else if (!mgTipoDe(real)) { MG_P.racha = 0; if (antes >= 2) mgFxAviso(tr('Racha perdida')); }
   mgFinTurno();
   return true;
 }

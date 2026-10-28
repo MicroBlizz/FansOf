@@ -41,16 +41,29 @@ function mgToque(lx, ly, raton) {
   const c = P.B[y][x];
   if (c && c.t === 'cofre' && mgTipoDe(P.actual) !== 'topo') { mgAbreCofre(x, y); return; }
   if (!mgPuedePoner(x, y)) { play('mgNoVale'); P.sel = null; return; }
-  if (raton || (P.sel && P.sel[0] === x && P.sel[1] === y)) { mgPon(x, y); return; }
-  P.sel = [x, y]; play('mgPon');
+  if (raton) { mgPon(x, y); return; }
+  P.sel = [x, y]; MG_ARRASTRA.activo = true;   // con el dedo: se ve dónde cae mientras lo tienes apoyado y se planta al soltar
+}
+const MG_ARRASTRA = { activo: false };
+function mgArrastra(lx, ly) {
+  if (!MG_ARRASTRA.activo || MG_P.estado !== 'jugando') return;
+  const cas = mgCasillaEn(lx, ly);
+  MG_P.sel = cas && mgPuedePoner(cas[0], cas[1]) ? cas : null;
+}
+function mgSuelta() {
+  if (!MG_ARRASTRA.activo) return; MG_ARRASTRA.activo = false;
+  const P = MG_P; if (P.estado !== 'jugando' || MG_PANT.pausa || !P.sel) { P.sel = null; return; }
+  const [x, y] = P.sel; P.sel = null; mgPon(x, y);
 }
 function mgPasa(lx, ly) {   // con el ratón: la previsión sigue al puntero
   if (MG_PANT.actual !== 'partida' || MG_PANT.pausa || MG_P.estado !== 'jugando' || MG_P.modo) return;
   const cas = mgCasillaEn(lx, ly);
   MG_P.sel = cas && mgPuedePoner(cas[0], cas[1]) ? cas : null;
 }
-MG_CV.addEventListener('pointerdown', e => { e.preventDefault(); mgToque(...mgLogico(e), e.pointerType === 'mouse'); });
-MG_CV.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') mgPasa(...mgLogico(e)); });
+MG_CV.addEventListener('pointerdown', e => { e.preventDefault(); try { MG_CV.setPointerCapture(e.pointerId); } catch (er) { /* sin captura */ } mgToque(...mgLogico(e), e.pointerType === 'mouse'); });
+MG_CV.addEventListener('pointermove', e => { if (e.pointerType === 'mouse') mgPasa(...mgLogico(e)); else mgArrastra(...mgLogico(e)); });
+MG_CV.addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') mgSuelta(); });
+MG_CV.addEventListener('pointercancel', () => { MG_ARRASTRA.activo = false; MG_P.sel = null; });
 MG_CV.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && MG_P.estado === 'jugando') MG_P.sel = null; });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && MG_PANT.actual === 'partida') { if (MG_PANT.pausa) { mgCierraModal(); MG_PANT.pausa = false; } else mgAbrePausa(); }

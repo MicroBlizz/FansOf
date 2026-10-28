@@ -13,7 +13,15 @@ const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'c
 const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado'];
 const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo'];
 const HEROE_PNG = ['heroe-paso', 'heroe-izq', 'heroe-izq-paso', 'heroe-golpe', 'heroe-latigo'];
-const PNGS = [...new Set(['heroe', ...HEROE_PNG, 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
+// los fotogramas de los enemigos (Yoshi): cada ciclo es la lista de sprites que se van turnando
+const CICLOS = {
+  oca: ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-oca-2'],
+  albatros: ['e-alb-1', 'albatros', 'e-alb-2', 'albatros'],
+  gorda: ['e-gorda-1', 'gorda', 'e-gorda-2', 'gorda'],
+  jefe: ['jefe', 'e-jefe-1'],
+};
+const ENEMIGOS_PNG = ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-alb-1', 'e-alb-2', 'e-gorda-1', 'e-gorda-2', 'e-jefe-1', 'e-jefe-2'];
+const PNGS = [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
   return Promise.all(PNGS.map(n => new Promise(ok => {
@@ -101,6 +109,7 @@ function preparaSprites() {
   });
   hazSprite('pollo', 12, 10, (x, w, h) => { x.beginPath(); x.ellipse(w * 0.45, h * 0.55, w * 0.34, h * 0.36, 0, 0, 7); trazo(x, '#c9702a'); x.beginPath(); x.moveTo(w * 0.72, h * 0.45); x.lineTo(w * 0.95, h * 0.2); x.lineWidth = 2; x.strokeStyle = '#f1e6c8'; x.stroke(); });
   hazSprite('iman', 10, 8, (x, w, h) => { x.lineWidth = 2.4; x.strokeStyle = '#e0303a'; x.beginPath(); x.arc(w / 2, h * 0.55, w * 0.34, Math.PI, 0); x.stroke(); });
+  for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const id in ICONO_PNG) if (IMG[ICONO_PNG[id]]) hazSprite('ic-' + id, IMG[ICONO_PNG[id]].width / PAN.k, IMG[ICONO_PNG[id]].height / PAN.k, dePng(ICONO_PNG[id]), true);

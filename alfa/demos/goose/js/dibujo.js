@@ -59,9 +59,12 @@ function pintaMundo() {
   for (let i = 0; i < ENE.n; i++) {
     const e = l[i]; if (e.hp <= 0) continue;
     const bob = e.caida > 0 ? -e.caida * 110 : e.tipo === 'albatros' || e.tipo === 'bandada' ? Math.sin(e.t * 9) * 2 - 3 : Math.abs(Math.sin(e.t * 10)) * -1.5;
-    const spr = e.tipo === 'bandada' ? 'oca' : e.tipo;
+    const spr = fotogramaEnemigo(e);
     const esc = e.tipo === 'bandada' ? 0.8 : e.tipo === 'jefe' ? 1 + Math.sin(e.t * 3) * 0.03 : 1;
-    pinta(spr, e.x, e.y + bob, e.vx < 0, e.flash > 0, esc);
+    // un poco de estirar y encoger al andar (squash & stretch) y el golpe que los aplasta
+    const sx = esc * (1 + (e.flash > 0 ? 0.18 : Math.sin(e.t * 12) * 0.03)), sy = esc * (1 - (e.flash > 0 ? 0.14 : Math.sin(e.t * 12) * 0.03));
+    if (sx !== sy) { G.save(); G.translate(e.x, e.y + bob); G.scale(sx / esc, sy / esc); pinta(spr, 0, 0, e.vx < 0, e.flash > 0, esc); G.restore(); }
+    else pinta(spr, e.x, e.y + bob, e.vx < 0, e.flash > 0, esc);
     if (e.tipo === 'gorda') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
   }
   // los rivales de la Carrera y el jugador
@@ -121,4 +124,14 @@ function pintaEncima() {
     if (J.impaciente && ((J.t * 3) | 0) % 2) { G.font = '800 9px "Pixelify Sans", system-ui'; G.textAlign = 'center'; G.lineWidth = 3; G.strokeStyle = '#120808'; G.strokeText(tr('¡AVANZA!'), W / 2, H - 22); G.fillStyle = '#ff7a4d'; G.fillText(tr('¡AVANZA!'), W / 2, H - 22); }
   }
   if (FX.destello > 0) { G.globalAlpha = Math.min(0.6, FX.destello); G.fillStyle = FX.colorDestello; G.fillRect(0, 0, W, H); G.globalAlpha = 1; }
+}
+
+// el fotograma de cada enemigo: su ciclo al ritmo de su velocidad (cada oca desfasada para que no anden todas a la vez)
+function fotogramaEnemigo(e) {
+  const tipo = e.tipo === 'bandada' ? 'oca' : e.tipo;
+  if (tipo === 'jefe' && (e.fase === 1 || e.fase === 2) && SPR['e-jefe-2']) return 'e-jefe-2';
+  const c = CICLOS[tipo]; if (!c) return tipo;
+  const ritmo = tipo === 'albatros' ? 9 : tipo === 'gorda' ? 5 : tipo === 'jefe' ? 2.5 : 9;
+  const n = c[Math.floor((e.t + e.id * 0.37) * ritmo) % c.length];
+  return SPR[n] ? n : tipo;
 }

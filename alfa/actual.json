@@ -1,8 +1,8 @@
 {
- "build": 596,
- "hash": "d1b6b33",
- "fecha": "2026-10-28T10:09:45Z",
- "mensaje": "Goose: el héroe lleva el farol siempre en la misma mano, mire a donde mire",
+ "build": 597,
+ "hash": "7bd7f39",
+ "fecha": "2026-10-28T10:32:51Z",
+ "mensaje": "Goose: héroe redibujado en Yoshi (izquierda con el farol en la mano, paso a los dos lados, golpe) y ciclos de animación para los enemigos",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

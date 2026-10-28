@@ -90,6 +90,8 @@ function fotograma(ahora) {
   if (J.modo === 'portada') { pintaPortada(dt); }
   else if (J.modo === 'tienda') { pintaTienda(); }
   else if (J.modo === 'opciones' && J.opcionesDe === 'portada') { pintaOpciones(); }
+  else if (J.modo === 'amigos') { pintaAmigos(); }
+  else if (J.modo === 'sala') { pintaSala(); }
   else {
     if (J.modo === 'juego') avanzaPartida(dt);
     else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
@@ -113,6 +115,7 @@ async function arranca() {
   try { await Promise.race([Promise.all([document.fonts.load('700 20px "Pixelify Sans"'), document.fonts.load('400 20px "Pirata One"')]), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
   ajusta();   // otra vez, ya con las letras cargadas
   document.getElementById('carga').hidden = true;
+  miraEnlaceSala();
   requestAnimationFrame(fotograma);
 }
 arranca();

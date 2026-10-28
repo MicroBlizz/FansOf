@@ -59,6 +59,7 @@ function saltoOca(e) {
   if (e.tipo === 'puente') { aviso(tr('¡DE PUENTE A PUENTE!'), '#9fe0ff', 1.6); aviso2(tr('y tiro porque me lleva la corriente')); }
   else { aviso(tr('¡DE OCA A OCA!'), '#ffd34d', 1.6); aviso2(tr('y tiro porque me toca')); }
   destella('#ffd34d', 0.6); tiembla(5); SONIDO.oca(); vibra(60);
+  if (J.carrera) mandaCarrera({ t: 'e' });
 }
 function avanzaSalto(dt) {
   const J = JUEGO; if (J.salto <= 0) return;
@@ -106,8 +107,11 @@ function avanzaDerrumbe(dt) {
   if (J.impaciente) v *= D.impaciencia;
   if (J.posadaT > 0 || J.pozoT > 0 || J.salto > 0) v = 0;
   const antes = J.yD;
-  J.yD -= v * dt;
-  J.yD = Math.min(J.yD, yo.y + PAN.H * D.maxDetras);         // nunca muy lejos por detrás
+  if (esCoop() && !anfitrionCoop()) derrumbeRemoto(dt);      // la línea es la del anfitrión
+  else {
+    J.yD -= v * dt;
+    J.yD = Math.min(J.yD, (esCoop() ? yReferenciaCoop() : yo.y) + PAN.H * D.maxDetras);         // nunca muy lejos por detrás (del más atrasado, en el cooperativo)
+  }
   J.yD = Math.max(J.yD, -(D.ultima - 1) * TH);               // el jardín y sus casillas de antes no se caen
   // astillas que caen al vacío por donde pasa la línea
   if (antes - J.yD > 0.01 || (J.cuadro & 3) === 0) {

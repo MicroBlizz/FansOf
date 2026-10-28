@@ -63,7 +63,8 @@ function pintaMundo() {
     pinta(spr, e.x, e.y + bob, e.vx < 0, e.flash > 0, esc);
     if (e.tipo === 'gorda') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
   }
-  // el jugador
+  // los rivales de la Carrera y el jugador
+  pintaRivales();
   pintaJugador();
   pintaArmas();
   // balas enemigas

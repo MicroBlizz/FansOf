@@ -60,7 +60,9 @@ function pintaHud() {
   } else {
     texto2(tr('CASILLA'), W / 2, 39, 6, '#c9b98a', 'center', FUENTE, 700);
     texto2(J.casilla + ' / ' + CFG.jardin, W / 2, 48, 12, '#f6e7b8', 'center', FUENTE_G, 400, 0.25);
+    if (J.carrera) texto2(tr('{n}º', { n: J.carrera.llegada !== null ? J.carrera.puesto : puestoActual() }), W / 2 + 34, 46, 10, J.carrera.color, 'left', FUENTE_G, 400, 0.25);
   }
+  if (J.carrera && J.carrera.cuenta > 0) texto2(String(Math.ceil(J.carrera.cuenta)), W / 2, PAN.H * 0.42, 44 * (1 + (J.carrera.cuenta % 1) * 0.4), '#ffd34d', 'center', FUENTE_G, 400, 0.15);
   // combo
   if (J.combo >= 5) {
     const k = J.comboT / 2.2, pop = 1 + Math.max(0, (J.comboT - 2) * 2);
@@ -85,6 +87,7 @@ function pintaMapa() {
   G.fillStyle = '#ffb86b'; G.fillRect(x - 2, yDe(CFG.posada) - 1, 4, 2);
   G.fillStyle = '#ff2d2d'; G.fillRect(x - 2, yDe(CFG.muerte) - 1, 4, 2);
   G.fillStyle = '#3c7030'; G.fillRect(x - 2.5, y1 - 3, 5, 4);
+  pintaRivalesMapa(yDe);
   const yy = yDe(Math.min(N, -J.yo.y / TH + 1));
   G.fillStyle = '#fff'; G.beginPath(); G.arc(x, yy, 2.6, 0, 6.283); G.fill(); G.strokeStyle = '#8a1e22'; G.lineWidth = 1; G.stroke();
 }

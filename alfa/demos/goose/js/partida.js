@@ -15,7 +15,7 @@ function nuevaPartida() {
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
     invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, pozoT: 0, posadaT: 0,
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
-    impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null,
+    impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
   });
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
@@ -43,8 +43,19 @@ function avanzaPartida(dt) {
   for (const a of J.avisos) a.t += dt;
   if (J.avisos.length && J.avisos[0].t > J.avisos[0].dur) { J.avisos.length = 0; J.aviso2 = null; }
 
-  if (J.muerto > 0) { J.muerto -= dt; avanzaEfectos(dt); avanzaCamara(dt); if (J.muerto <= 0) terminaPartida(false); return; }
-  if (J.victoria) { J.tVictoria -= dt; avanzaPlumas(dt, true); avanzaEfectos(dt); if (J.tVictoria <= 0) terminaPartida(true); return; }
+  // la Carrera: la cuenta atrás de la salida
+  if (J.carrera && J.carrera.cuenta > 0) { const antes = Math.ceil(J.carrera.cuenta); J.carrera.cuenta -= dt; if (Math.ceil(J.carrera.cuenta) !== antes) SONIDO.dadoTic(); if (J.carrera.cuenta <= 0) { aviso(tr('¡YA!'), '#ffd34d', 1); SONIDO.empieza(); } avanzaCamara(dt); return; }
+  if (J.victoria) { J.muerto = 0; J.tVictoria -= dt; avanzaPlumas(dt, true); avanzaEfectos(dt); if (J.tVictoria <= 0) { if (esCoop()) terminaCoop(true); else terminaPartida(true); } return; }
+  if (J.muerto > 0) {
+    J.muerto -= dt; avanzaEfectos(dt); avanzaCamara(dt);
+    if (J.muerto <= 0) {
+      if (esCoop()) { if (!J.carrera.caido) caidoCoop(); J.muerto = 0.001; }
+      else if (J.carrera) { if (!J.carrera.caido) { J.carrera.caido = true; mandaCarrera({ t: 'm', c: J.mejorCasilla }); aviso(tr('Has caído: mira cómo acaba la carrera'), '#ff4d4d', 2.5); } J.muerto = 0.001; }
+      else terminaPartida(false);
+    }
+    if (J.carrera) avanzaCarrera(dt);
+    return;
+  }
 
   avanzaJugador(dt);
   avanzaSalto(dt);
@@ -61,13 +72,20 @@ function avanzaPartida(dt) {
   if (J.comboT > 0) { J.comboT -= dt; if (J.comboT <= 0) { J.mejorCombo = Math.max(J.mejorCombo, J.combo); J.combo = 0; J.hito = 0; } }
   if (J.posadaT > 0) J.posadaT -= dt;
   // el jardín: aparece la Oca Madre
-  if (!J.jefe && !J.victoria && J.casilla >= CFG.jardin && J.yo.y < yCentro(CFG.jardin) + TH) apareceJefe();
+  if (J.carrera) avanzaCarrera(dt);
+  if ((!J.carrera || esCoop()) && !J.jefe && !J.victoria && J.casilla >= CFG.jardin && J.yo.y < yCentro(CFG.jardin) + TH) apareceJefe();
   // subir de nivel: las cartas salen cuando no estás en el aire
   if (J.pendientes > 0 && J.salto <= 0 && J.caida <= 0 && J.modo === 'juego') abreCartas();
 }
 
 function avanzaCamara(dt) {
-  const J = JUEGO, quiero = J.yo.y - PAN.H * 0.6;
+  const J = JUEGO;
+  let ref = J.yo.y;
+  if (J.muerto > 0 && J.carrera) {   // caído: miras al compañero que va delante
+    let mejor = null; for (const r of J.carrera.rivales.values()) if (!r.muerto && r.llega === null && (mejor === null || r.y < mejor)) mejor = r.y;
+    if (mejor !== null) ref = mejor;
+  }
+  const quiero = ref - PAN.H * 0.6;
   J.camY += (quiero - J.camY) * Math.min(1, dt * (J.salto > 0 ? 10 : 6));
   if (J.jefe || J.casilla >= CFG.jardin - 1) J.camY = Math.max(J.camY, yTecho() - 10);
 }
@@ -173,6 +191,7 @@ function usaImpulso() {
   }
   const destino = Math.min(CFG.jardin - 1, J.casilla + CFG.impulso.casillas);
   J.salto = 0.85; J.saltoT = 0; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(destino), y: yCentro(destino) };
+  if (J.carrera) mandaCarrera({ t: 'e' });
   aviso(tr('¡IMPULSO!'), '#ffd34d', 1.1); destella('#ffd34d', 0.45); tiembla(4); SONIDO.oca(); vibra(50);
   return true;
 }
@@ -186,6 +205,7 @@ function hitosCombo() {
     const frases = ['¡MATANZA!', '¡MASACRE!', '¡FESTÍN!', '¡PLUMAGEDÓN!', '¡LEYENDA DE LA OCA!'];
     texto(CFG.W / 2, J.camY + PAN.H * 0.32, tr(frases[Math.min(frases.length - 1, J.hito - 1)]) + ' x' + n, '#ffd34d', 11, 1.3, -14);
     SONIDO.hito(J.hito); tiembla(2);
+    if (enCarrera()) { mandaCarrera({ t: 'a' }); texto(J.yo.x, J.yo.y - 22, tr('¡Bandada enviada a tus rivales!'), '#9fe0ff', 7, 1.3); }
   }
 }
 

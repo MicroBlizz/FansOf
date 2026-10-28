@@ -1,8 +1,8 @@
 {
- "build": 592,
- "hash": "fd20073",
- "fecha": "2026-10-28T09:11:41Z",
- "mensaje": "Goose: los botones vuelven a responder al toque; iconos y primeros adornos en pixel art de Yoshi",
+ "build": 593,
+ "hash": "82d2ca7",
+ "fecha": "2026-10-28T09:30:17Z",
+ "mensaje": "Goose: jugar con amigos (Carrera de la Oca y Cooperativo ligero, de 2 a 4) y adornos de Yoshi en las seis tierras",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

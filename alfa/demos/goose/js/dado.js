@@ -14,9 +14,11 @@ const CARAS = {
 
 function nuevoDado() { return { t: CFG.dado.primero, rodando: 0, cara: 1, efecto: 0, quedan: 0, viento: 0, mostrar: 0 }; }
 
-function tiraDado(soloPares) {
+function tiraDado(soloPares, cara) {
   const D = JUEGO.dado;
-  D.rodando = 1.3; D.cara = 0; D.soloPares = !!soloPares;
+  D.rodando = 1.3; D.cara = 0; D.soloPares = !!soloPares; D.forzada = cara || 0;
+  // en el cooperativo el dado lo tira el anfitrión para todos
+  if (anfitrionCoop() && !soloPares) { D.forzada = 1 + ((Math.random() * 6) | 0); mandaCarrera({ t: 'd', c: D.forzada }); }
   SONIDO.dadoRueda();
 }
 function tiradaSuerte() { aviso(tr('¡TIRADA DE LA SUERTE!'), '#ffe9a8', 1.3); tiraDado(true); }
@@ -32,6 +34,7 @@ function avanzaDado(dt) {
     if (D.rodando <= 0) {
       let c = 1 + ((Math.random() * 6) | 0);
       if (D.soloPares) c = 2 * (1 + ((Math.random() * 3) | 0));
+      if (D.forzada) c = D.forzada;
       D.cara = c; D.efecto = c; D.quedan = c === 5 ? CFG.dado.invertido : CFG.dado.dura; D.mostrar = 2.2; D.viento = 0;
       const F = CARAS[c];
       aviso(tr(F.nombre), F.color, 1.8); aviso2(tr(F.desc));
@@ -41,6 +44,7 @@ function avanzaDado(dt) {
     }
     return;
   }
+  if (esCoop() && !anfitrionCoop()) return;   // espera el dado del anfitrión
   D.t -= dt;
   if (D.t <= 0) { D.t = CFG.dado.cada; tiraDado(false); }
 }

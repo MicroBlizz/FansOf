@@ -24,7 +24,7 @@ function puntoBorde() {
 
 function avanzaOleadas(dt) {
   const J = JUEGO, O = CFG.oleada;
-  if (J.jefe || J.fin) return;
+  if (J.jefe || J.fin || (J.carrera && J.carrera.llegada !== null)) return;
   let quiero = Math.min(CFG.maxEnemigos - 14, O.base + O.porCasilla * J.casilla + O.porSegundo * J.t);
   if (J.dado.efecto === 1) quiero = Math.min(CFG.maxEnemigos - 6, quiero * 1.8);
   if (J.posadaT > 0) quiero *= 0.25;
@@ -46,14 +46,19 @@ function avanzaOleadas(dt) {
   J.tBandada -= dt;
   if (J.tBandada <= 0 && J.casilla >= 5) {
     J.tBandada = O.bandadaCada * (0.8 + Math.random() * 0.4);
-    const izq = Math.random() < 0.5, y0 = J.yo.y - 40 - Math.random() * 60, n = 7 + Math.min(8, Math.floor(J.casilla / 6));
-    for (let i = 0; i < n; i++) {
-      const fila = Math.ceil(i / 2), lado = i % 2 ? 1 : -1;
-      const e = creaEnemigo('bandada', izq ? -20 - fila * 12 : CFG.W + 20 + fila * 12, y0 + lado * fila * 9);
-      if (e) { e.vx = (izq ? 1 : -1) * e.vel; e.vy = 8; }
-    }
-    aviso(tr('¡BANDADA!'), '#9fe0ff'); SONIDO.bandada();
+    lanzaBandada(false);
   }
+}
+// una bandada en V que cruza la pantalla (también la que te manda un rival en la Carrera: más larga)
+function lanzaBandada(rival) {
+  const J = JUEGO, izq = Math.random() < 0.5, y0 = J.yo.y - 40 - Math.random() * 60, n = 7 + Math.min(8, Math.floor(J.casilla / 6)) + (rival ? 4 : 0);
+  for (let i = 0; i < n; i++) {
+    const fila = Math.ceil(i / 2), lado = i % 2 ? 1 : -1;
+    const e = creaEnemigo('bandada', izq ? -20 - fila * 12 : CFG.W + 20 + fila * 12, y0 + lado * fila * 9);
+    if (e) { e.vx = (izq ? 1 : -1) * e.vel; e.vy = 8; }
+  }
+  if (!rival) aviso(tr('¡BANDADA!'), '#9fe0ff');
+  SONIDO.bandada();
 }
 
 function avanzaEnemigos(dt) {
@@ -116,6 +121,7 @@ function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
   const crit = critSeguro || Math.random() < JUEGO.st.crit;
   if (crit) d *= 2.2;
   e.hp -= d; e.flash = 0.09;
+  if (e.tipo === 'jefe' && esCoop()) JUEGO.carrera.danoJefe += d;   // la vida de la Oca Madre es de todos
   const kb = e.tipo === 'jefe' ? empuje * 0.05 : e.tipo === 'gorda' ? empuje * 0.35 : empuje;
   e.kx += nx * kb; e.ky += ny * kb;
   JUEGO.danoTotal += d;
@@ -156,6 +162,7 @@ function apareceJefe() {
   const J = JUEGO, yc = yCentro(CFG.jardin) - CFG.altoCasilla * 0.6;
   const e = creaEnemigo('jefe', CFG.W / 2, yc - 30);
   J.jefe = e; e.fase = 0; e.f2 = 2.5;
+  if (esCoop()) { e.hpMax = e.hp = e.hpMax * (1 + 0.8 * J.carrera.rivales.size); e.hp -= J.carrera.danoPendiente || 0; J.carrera.danoPendiente = 0; }
   aviso(tr('¡LA OCA MADRE!'), '#ff4d6b', 3); SONIDO.jefe(); tiembla(8); destella('#ff2d4d', 0.5); vibra(200);
   for (let i = ENE.n - 1; i >= 0; i--) { const o = ENE.lista[i]; if (o !== e) { o.hp = 0; estallido(o.x, o.y, 4, '#ece6d6', 40, 0.4, 2, 1); } }
 }
@@ -192,6 +199,7 @@ function avanzaJefe(e, dt, ux, uy, d) {
 function jefeMuere(e) {
   const J = JUEGO;
   J.jefe = null; J.victoria = true;
+  if (esCoop()) mandaCarrera({ t: 'v' });
   for (let i = 0; i < 6; i++) estallido(e.x + (Math.random() - 0.5) * 50, e.y + (Math.random() - 0.5) * 50, 20, i % 2 ? '#ffd34d' : '#ece6d6', 160, 1.4, 3, 1, 20);
   for (let i = 0; i < 40; i++) suelta('moneda', e.x + (Math.random() - 0.5) * 60, e.y + (Math.random() - 0.5) * 40, 1);
   for (let i = ENE.n - 1; i >= 0; i--) ENE.lista[i].hp = 0;

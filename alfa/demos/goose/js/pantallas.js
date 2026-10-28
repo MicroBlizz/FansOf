@@ -39,13 +39,14 @@ function pintaPortada(dt) {
   texto2('GOOSE', W / 2, y + 6, 42, '#ffd34d', 'center', FUENTE_G, 400, 0.14);
   texto2(tr('El Juego de la Oca... maldito'), W / 2, y + 30, 8, '#f1e6c8', 'center', FUENTE, 700, 0.35);
   // récords
-  const yb = H - 150;
+  const yb = H - 140;
   if (SAVE.partidas) {
-    texto2(SAVE.victorias ? tr('Has escapado {n} veces', { n: SAVE.victorias }) : tr('Tu mejor casilla: {n} de 63', { n: SAVE.mejorCasilla }), W / 2, yb - 14, 7, '#ffd34d', 'center', FUENTE, 800);
+    texto2(SAVE.victorias ? tr('Has escapado {n} veces', { n: SAVE.victorias }) : tr('Tu mejor casilla: {n} de 63', { n: SAVE.mejorCasilla }), W / 2, yb - 20, 7, '#ffd34d', 'center', FUENTE, 800);
   }
-  boton(30, yb, W - 60, 34, tr('JUGAR'), '#e8742a', () => { SONIDO.boton(); nuevaPartida(); }, 15);
-  boton(30, yb + 44, W - 60, 26, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 10, tr('{n} monedas', { n: SAVE.monedas }));
-  boton(30, yb + 78, W - 60, 22, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 9);
+  boton(30, yb - 8, W - 60, 32, tr('JUGAR'), '#e8742a', () => { SONIDO.boton(); nuevaPartida(); }, 15);
+  boton(30, yb + 30, W - 60, 26, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 10, tr('Carrera o cooperativo, de 2 a 4'));
+  boton(30, yb + 62, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
+  boton(W - 76, yb + 62, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
   texto2(tr('Microblizz no se hace responsable de las ocas'), W / 2, H - 12, 5.5, 'rgba(241,230,200,.55)', 'center', FUENTE, 700, 0);
 }
 
@@ -137,7 +138,7 @@ function pintaPausa() {
   boton(30, yb + 42, W - 60, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); J.modo = 'opciones'; J.opcionesDe = 'pausa'; }, 9);
   boton(30, yb + 74, W - 60, 24, tr('SALIR AL MENÚ'), '#c0402f', () => {
     SONIDO.boton();
-    confirmBox(tr('¿Salir al menú?'), tr('Perderás esta partida (las monedas recogidas no se guardan).'), tr('SALIR'), () => { if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.parar(); } catch (e) { /* nada */ } J.modo = 'portada'; });
+    confirmBox(tr('¿Salir al menú?'), tr('Perderás esta partida (las monedas recogidas no se guardan).'), tr('SALIR'), () => { if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.parar(); } catch (e) { /* nada */ } if (J.carrera) saleSala(); J.modo = 'portada'; });
   }, 9);
 }
 
@@ -146,7 +147,16 @@ function pintaFin(dt) {
   const J = JUEGO, F = J.fin, W = PAN.W, H = PAN.H; F.t += dt;
   oscurece(Math.min(0.85, F.t * 2));
   const k = Math.min(1, F.t * 3);
-  if (F.gana) texto2(tr('¡HAS ESCAPADO!'), W / 2, 58, 20 * (0.6 + k * 0.4), '#ffd34d', 'center', FUENTE_G, 400, 0.2);
+  if (J.carrera && J.carrera.clasificacion) {
+    const p = J.carrera.puesto;
+    texto2(p === 1 ? tr('¡GANAS LA CARRERA!') : tr('LLEGAS {n}º', { n: p }), W / 2, 58, 18 * (0.6 + k * 0.4), p === 1 ? '#ffd34d' : '#f6e7b8', 'center', FUENTE_G, 400, 0.2);
+    texto2(tr('La Carrera de la Oca'), W / 2, 78, 7, '#f1e6c8');
+    pintaClasificacion(92, F.t);
+    finBotones(F, W, H, 92 + J.carrera.clasificacion.length * 24 + 6);
+    return;
+  }
+  if (esCoop()) texto2(F.gana ? tr('¡HABÉIS ESCAPADO!') : tr('OS COMIÓ LA OCA'), W / 2, 58, 18 * (0.6 + k * 0.4), F.gana ? '#ffd34d' : '#ff4d4d', 'center', FUENTE_G, 400, 0.2);
+  else if (F.gana) texto2(tr('¡HAS ESCAPADO!'), W / 2, 58, 20 * (0.6 + k * 0.4), '#ffd34d', 'center', FUENTE_G, 400, 0.2);
   else texto2(tr('TE COMIÓ LA OCA'), W / 2, 58, 20 * (0.6 + k * 0.4), '#ff4d4d', 'center', FUENTE_G, 400, 0.2);
   texto2(F.gana ? tr('La Oca Madre ha caído. El jardín es tuyo.') : tr('El tablero siempre gana... esta vez.'), W / 2, 78, 7, '#f1e6c8');
   const filas = [
@@ -160,15 +170,17 @@ function pintaFin(dt) {
     const y = 100 + i * 17, ki = Math.max(0, Math.min(1, F.t * 4 - 1 - i * 0.4)); if (!ki) return;
     G.globalAlpha = ki; texto2(a, 30, y, 8, '#c9b98a', 'left', FUENTE, 700); texto2(b, W - 30, y, 9, '#fff4dc', 'right'); G.globalAlpha = 1;
   });
-  const ym = 100 + filas.length * 17 + 8;
+  finBotones(F, W, H, 100 + filas.length * 17 + 8);
+}
+function finBotones(F, W, H, ym) {
   if (F.t > 2.4) {
     caja(30, ym, W - 60, 28, 8, '#2a1610', '#ffcf33', 1.5);
     pinta('moneda', W / 2 - 26, ym + 14, false, false, 1.6); texto2('+' + F.monedas, W / 2 - 14, ym + 14.5, 13, '#ffcf33', 'left');
     if (F.record) texto2(tr('¡NUEVO RÉCORD!'), W / 2, ym + 40, 9, '#7dff6b');
   }
   if (F.t > 2.8) {
-    boton(30, H - 110, W - 60, 32, tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); nuevaPartida(); }, 13);
+    boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else nuevaPartida(); }, 13);
     boton(30, H - 70, W - 60, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
-    boton(30, H - 40, W - 60, 22, tr('MENÚ'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'portada'; }, 9);
+    boton(30, H - 40, W - 60, 22, tr('MENÚ'), '#2f74c0', () => { SONIDO.boton(); JUEGO.carrera = null; JUEGO.modo = 'portada'; }, 9);
   }
 }

@@ -1,8 +1,8 @@
 {
- "build": 597,
- "hash": "7bd7f39",
- "fecha": "2026-10-28T10:32:51Z",
- "mensaje": "Goose: héroe redibujado en Yoshi (izquierda con el farol en la mano, paso a los dos lados, golpe) y ciclos de animación para los enemigos",
+ "build": 598,
+ "hash": "a4cc036",
+ "fecha": "2026-10-28T10:34:45Z",
+ "mensaje": "Goose: fotogramas de Yoshi para los enemigos (oca andando, albatros aleteando, oca gorda, Oca Madre) y tablas del Puente del ancho del camino",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

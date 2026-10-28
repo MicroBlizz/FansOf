@@ -164,7 +164,7 @@ function pintaEscenas() {
     for (let y = E.y0 + TH / 2; y > E.y1 - TH / 2; y -= paso) {
       if (y > J.yD) continue;
       const x = xPuente(y), w = ESC.puenteAncho;
-      if (SPR['s-tabla']) pinta('s-tabla', x, y, (Math.round(y / paso) & 1) === 1, false, 1);
+      if (SPR['s-tabla']) pinta('s-tabla', x, y, (Math.round(y / paso) & 1) === 1, false, (w + 4) / SPR['s-tabla'].w);   // la tabla ocupa todo el ancho por el que se puede pisar
       else { G.fillStyle = (Math.round(y / paso) & 1) ? '#8a5a30' : '#a06a3a'; G.fillRect(x - w / 2, y - paso / 2 + 0.6, w, paso - 1.2); G.fillStyle = '#120808'; G.fillRect(x - w / 2, y - paso / 2, w, 0.8); }
     }
     G.strokeStyle = '#d9c08a'; G.lineWidth = 1.5; G.beginPath(); G.moveTo(E.x0 - ESC.puenteAncho / 2 - 2, E.y0 + TH / 2); G.lineTo(E.x1 - ESC.puenteAncho / 2 - 2, E.y1 - TH / 2); G.moveTo(E.x0 + ESC.puenteAncho / 2 + 2, E.y0 + TH / 2); G.lineTo(E.x1 + ESC.puenteAncho / 2 + 2, E.y1 - TH / 2); G.stroke();

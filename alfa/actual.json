@@ -1,8 +1,8 @@
 {
- "build": 590,
- "hash": "b7bbfab",
- "fecha": "2026-10-28T08:52:34Z",
- "mensaje": "Compras con dinero real: casilla obligatoria de renuncia a la devolución antes de pagar (web y app, todos los juegos)",
+ "build": 591,
+ "hash": "3e7592e",
+ "fecha": "2026-10-28T08:59:19Z",
+ "mensaje": "Fans of Goose 0.1.0: prototipo jugable (survivors con el Juego de la Oca)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -1,8 +1,8 @@
 {
- "build": 618,
- "hash": "af0b582",
- "fecha": "2026-10-29T07:37:01Z",
- "mensaje": "Fans of Asalto 0.1.0: prototipo jugable de autobatalla en pixel art (tienda, clases, mapa, reliquias y jefes)",
+ "build": 619,
+ "hash": "248888e",
+ "fecha": "2026-10-29T07:41:12Z",
+ "mensaje": "Fans of Vikings: prototipo nuevo de aldea vikinga con combate por turnos (tipo Pixel Tribe)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

@@ -1,0 +1,19 @@
+/* Fans of Vikings · estilos: el marco del lienzo (pixel art ampliado sin suavizar) y las ventanas HTML de opciones y ayuda,
+   con los colores de la aldea: madera, zanahoria (el botón principal), hierba y cielo, y el contorno oscuro de la serie. */
+:root { --vk-tinta: #20142a; --vk-crema: #fff4d6; --vk-madera: #6b4428; --vk-naranja: #ff8a2a; --vk-verde: #4fb848; --vk-azul: #3f8fe0; color-scheme: light; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
+body { background: #2f5a24; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; font-family: 'Pixelify Sans', monospace; }
+#stage { position: relative; overflow: hidden; background: #5aa63e; }
+#cv { display: block; width: 100%; height: 100%; touch-action: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+@media (min-width: 600px) { #stage { box-shadow: 0 0 0 4px var(--vk-crema), 0 0 0 8px var(--vk-tinta), 0 30px 80px rgba(0, 0, 0, 0.45); } }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 700 20px/1 'Pixelify Sans', monospace; }
+[hidden] { display: none !important; }
+.vk-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 14px; box-sizing: border-box; background: rgba(20, 12, 28, 0.6); z-index: 30; }
+.vk-tarjeta { width: 100%; max-width: 420px; max-height: 92%; overflow: auto; background: var(--vk-madera); color: var(--vk-crema); border: 4px solid var(--vk-tinta); box-shadow: inset 0 4px 0 #b9844f, 0 6px 0 var(--vk-tinta); padding: 14px 16px; box-sizing: border-box; font-size: 16px; line-height: 1.35; }
+.vk-tarjeta h2 { margin: 0 0 10px; color: #ffd34d; font-size: 24px; text-shadow: 2px 2px 0 var(--vk-tinta); }
+.vk-tarjeta p { margin: 0 0 10px; }
+.vk-tarjeta b { color: #ffd34d; }
+.vk-fila { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
+.vk-btn { font: 700 18px/1 'Pixelify Sans', monospace; color: #fff; background: var(--vk-naranja); border: 3px solid var(--vk-tinta); box-shadow: inset 0 3px 0 #ffc07a, 0 4px 0 var(--vk-tinta); padding: 10px 18px 8px; cursor: pointer; text-shadow: 2px 2px 0 var(--vk-tinta); }
+.vk-btn.vk-azul { background: var(--vk-azul); box-shadow: inset 0 3px 0 #9fd0ff, 0 4px 0 var(--vk-tinta); }
+.vk-btn:active { transform: translateY(3px); box-shadow: inset 0 3px 0 #ffc07a, 0 1px 0 var(--vk-tinta); }

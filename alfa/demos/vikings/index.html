@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#5aa63e">
+<title>Fans of Vikings</title>
+<meta name="description" content="Fans of Vikings: la aldea de los Animales Locos contra Microblizz. Planta, cocina y forja con tus cuatro fans, y súbelos al autobús para asaltar la sede en combates por turnos. Todo en pixel art.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0-a619.248888e"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/vikings.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="216" height="420" aria-label="Fans of Vikings"></canvas>
+  <section id="vk-modal" class="vk-modal" hidden><div class="vk-tarjeta" id="vk-tarjeta"></div></section>
+</div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Vikings lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/fotos.js', 'js/sprites.js', 'js/aldea.js', 'js/sonidos.js', 'js/combate.js',
+    'js/pintar.js', 'js/paneles.js', 'js/pintar-combate.js', 'js/novedades.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

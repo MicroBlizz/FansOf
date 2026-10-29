@@ -1,6 +1,6 @@
 // Fans Of · /gestion: la pestaña COLA. La cola de GitHub Actions de FansOf-dev con el tiempo estimado de cada trabajo, en tres vistas (lista, carriles por runner y resumen).
 // La estimación usa la duración media de ejecución de cada workflow (los últimos 20 runs correctos, de que el job arranca en el runner a que acaba: sin la espera), así que si un runner está apagado
-// su cola no corre: se enseña como «+X al encender». Debajo, lo que habrían costado con Claude los recursos de Generar recurso ya terminados (tokens y euros, a ojo, por el tamaño del artefacto).
+// su cola no corre: se enseña como «+X al encender». Debajo, lo que habría costado generar con una API de pago los recursos de Generar recurso ya terminados, por tipo (imagen, canción, efecto, vídeo, 3D) y en euros.
 // No usa el servidor: lee la API de GitHub desde el navegador con un token fino de solo lectura que cada admin pega una vez (queda en el localStorage de ese navegador). Gemelo del mod de Claude herramientas/cola-actions/ (docs/guia/herramientas/cola-actions.md).
 // Usa lo de gestion/index.html: esc() y $(); y GESTION_NAV (nav.js).
 'use strict';
@@ -8,7 +8,19 @@
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
   const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones', RECS = 'fansof.gestion.cola.recursos';
   const MUESTRAS = 20, MAX_NUEVAS = 60, CADA = 5 * 60e3, ENFRIA = 30e3;
-  const BYTES_POR_TOKEN = 1000, PRECIO = 30, CAMBIO = 1;   // a ojo, con la tarifa de una API de imágenes: ~1.056 tokens de salida por una imagen de 1024×1024 (~1 MB comprimida) a ~30 USD el millón; 1 € = 1 $
+  const CAMBIO = 1;   // 1 € = 1 $
+  // Lo que costaría generar cada tipo con una API de pago (USD por recurso): tabla de referencia que dio Gemini el 29-10-2026, sin verificar (se corrige aquí). Gemelo de herramientas/cola-actions/hooks/precios.ts.
+  const USD = { imagen: 0.04, cancion: 0.08, efecto: 0.002 * 4, video: 0.03 * 5, modelo3d: 0.2 };
+  const ETIQUETA = { imagen: 'imagen', cancion: 'canción', efecto: 'efecto de sonido', video: 'vídeo', modelo3d: 'modelo 3D' };
+  const EFECTO_MAX_BYTES = 400 * 1024;   // un MP3 V0 de ~4 s pesa ~120 KB y una canción de 30 s ~900 KB
+  function tipoDe(exts, bytes) {   // por las extensiones de la salida; la extensión solo da cuatro familias (no separa texto/edición de imagen ni los tres vídeos)
+    if (!exts || !exts.length) return null;
+    const tiene = (...e) => exts.some(x => e.includes(x));
+    if (tiene('mp4', 'webm', 'mov', 'mkv')) return 'video';
+    if (tiene('glb', 'gltf', 'obj', 'fbx', 'blend')) return 'modelo3d';
+    if (tiene('mp3', 'wav', 'ogg', 'flac')) return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
+    return 'imagen';
+  }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0;
   const pan = document.createElement('div'); pan.id = 'pan-cola'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
@@ -50,14 +62,25 @@
     Object.keys(cache).forEach(k => { if (!vivos.has(k)) delete cache[k]; }); guardar(DURS, cache);
     const medias = {};
     for (const runs of Object.values(porWf)) { const d = runs.map(r => cache[r.id]).filter(x => x > 0); if (d.length) medias[etiquetaWf(runs[0])] = { seg: Math.round(d.reduce((a, b) => a + b, 0) / d.length), n: d.length }; }
-    // Recursos terminados: el tamaño del artefacto se guarda porque GitHub lo borra al día.
+    // Recursos terminados: el tamaño del artefacto se guarda porque GitHub lo borra al día; el tipo sale de la extensión de lo que el pedido dejó en la rama `recursos` (un commit «Pedido <id>: salida y modelos»).
     const gs = leer(RECS, {});
     await enLotes(hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && gs[r.id] === undefined).slice(0, 10), 5, async r => {
       const a = (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts;
       gs[r.id] = { titulo: String(r.display_title || 'recurso').replace(/^Generar:\s*/, ''), bytes: a.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), fin: ms(r.updated_at) };
     });
+    const sinTipo = Object.entries(gs).filter(([, v]) => v.exts === undefined).slice(0, 10);
+    if (sinTipo.length) {
+      try {
+        const sha = {};
+        for (const c of await gh('/commits?sha=recursos&per_page=100')) { const m = /^Pedido (\d+):/.exec(c.commit.message); if (m) sha[m[1]] = c.sha; }
+        await enLotes(sinTipo, 5, async ([id, v]) => {
+          if (!sha[id]) return;
+          v.exts = ((await gh('/commits/' + sha[id])).files || []).filter(x => String(x.filename).startsWith('salida/')).map(x => String(x.filename).split('.').pop().toLowerCase());
+        });
+      } catch (e) { /* sin permiso de Contents o sin la rama: se queda sin tipo y usa el precio de imagen */ }
+    }
     guardar(RECS, gs);
-    const recursos = Object.entries(gs).map(([id, v]) => ({ id, ...v, tokens: Math.round(v.bytes / BYTES_POR_TOKEN) })).sort((a, b) => b.fin - a.fin);
+    const recursos = Object.entries(gs).map(([id, v]) => { const t = tipoDe(v.exts, v.bytes); return { id, ...v, tipo: t ? ETIQUETA[t] : '?', usd: USD[t || 'imagen'] }; }).sort((a, b) => b.fin - a.fin);
     // Cola: en curso y en cola, con sus jobs para saber el runner.
     const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
     const trabajos = []; let extra = 0;
@@ -117,10 +140,10 @@
   }
   function pieRecursos() {
     if (!snap.recursos.length) return '';
-    const usd = t => t * PRECIO / 1e6, total = snap.recursos.reduce((a, r) => a + r.tokens, 0);
+    const total = snap.recursos.reduce((a, r) => a + r.usd, 0);
     return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
-      + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">${r.bytes ? '~' + ktok(r.tokens) + ' tokens · ~' + eur(usd(r.tokens)) : '—'}</span></div>`).join('')
-      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(total)} tokens · ~${eur(usd(total))}. Cálculo: bytes del artefacto ÷ ${BYTES_POR_TOKEN} (≈1.056 tokens por imagen de ~1 MB) por ${PRECIO} $ el millón de tokens de salida, tarifa de una API de imágenes (1 € = ${CAMBIO} $). Claude no genera imágenes: es una referencia, no un coste real.</div></div>`;
+      + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${eur(r.usd)}</span></div>`).join('')
+      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${eur(total)}. Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale de la extensión de la salida: no distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
   }
 
   // ----- pantalla -----
@@ -136,7 +159,7 @@
     const t = token(), ahora = Date.now();
     const cab = `<div class="caja ayuda"><b>Cola de Actions.</b> Lo que espera y corre en GitHub Actions de FansOf-dev, con el tiempo que le queda según la media de cada workflow (sin contar la espera). Si un runner está apagado, su cola no corre. Se refresca solo cada 5 minutos mientras está abierta.</div>`;
     const clave = t ? '' : `<form class="caja" id="cl-clave"><label>Token de GitHub (solo lectura)<input type="password" id="cl-tok" autocomplete="off" placeholder="github_pat_…"></label>
-      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b> y <b>Administration</b> (este para saber si yoshi está encendido). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
+      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b>, <b>Administration</b> (para saber si yoshi está encendido) y <b>Contents</b> (para saber de qué tipo es cada recurso). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
       <div class="accion"><button type="submit" class="fuerte">Guardar token</button></div></form>`;
     let cuerpo = '';
     if (t && snap) {

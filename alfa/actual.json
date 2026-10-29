@@ -1,8 +1,8 @@
 {
- "build": 642,
- "hash": "5c442be",
- "fecha": "2026-10-29T22:04:58Z",
- "mensaje": "Cola: el coste de un recurso se estima con la tarifa de una API de imágenes (~1.056 tokens por imagen de 1 MB, 30 USD/M)",
+ "build": 643,
+ "hash": "8ea580f",
+ "fecha": "2026-10-29T22:12:58Z",
+ "mensaje": "Cola: el coste de un recurso se calcula por tipo (imagen, canción, efecto, vídeo, 3D) con la tabla de precios de referencia",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

@@ -26,7 +26,7 @@ function mgFxJunta(p, i) {
 function mgFxMueve(movidos) {
   for (const m of movidos) {
     const c = MG_P.B[m.a[1]][m.a[0]]; if (!c) continue;
-    MG_FX.anim.set(c.id, { tipo: m.salto ? 'salta' : 'anda', fx: m.de[0], fy: m.de[1], t0: mgAhora() + 0.12, dur: m.salto ? 0.4 : 0.22 });
+    MG_FX.anim.set(c.id, { tipo: m.salto ? 'salta' : 'anda', fx: m.de[0], fy: m.de[1], t0: mgAhora() + 0.15, dur: m.salto ? 0.6 : 0.5, dx: Math.sign(m.a[0] - m.de[0]) });
   }
 }
 function mgFxBrillo(x, y) { mgParte(x, y, '#ff8ae0', 14, 2.6); mgParte(x, y, '#9be7ff', 8, 2); }
@@ -50,8 +50,9 @@ function mgAnimDe(c) {
   }
   const k = clamp(t / A.dur, 0, 1);
   if (t > A.dur) { MG_FX.anim.delete(c.id); return null; }
-  const e = k * k * (3 - 2 * k), alto = A.tipo === 'salta' ? Math.sin(k * Math.PI) * 0.6 : Math.sin(k * Math.PI) * 0.12;
-  return { mueve: true, fx: A.fx, fy: A.fy, e, dy: -alto, sc: 1 };
+  const salto = A.tipo === 'salta', e = k * k * (3 - 2 * k);
+  const alto = salto ? Math.sin(k * Math.PI) * 0.75 : Math.abs(Math.sin(k * Math.PI * 2)) * 0.16;   // el zorro, dos saltitos; el cuervo, un vuelo
+  return { mueve: true, fx: A.fx, fy: A.fy, e, k, dy: -alto, sc: 1, dx: A.dx, salto };
 }
 // avanza lo que se mueve solo (chispas, textos); borra lo que ya acabó
 function mgFxAvanza(dt) {

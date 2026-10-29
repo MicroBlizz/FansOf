@@ -172,11 +172,11 @@ function mgPintaTablero(c, t) {
     if (A && A.mueve) { cx = lerp(mgCx(A.fx), cx, A.e); cy = lerp(mgCy(A.fy), cy, A.e) + A.dy * cs; }
     else if (A) { cy += A.dy * cs; sc = A.sc; }
     if (rebota.has(y * 8 + x)) cy -= Math.abs(Math.sin(t * 9)) * 9;
-    if (p.t === 'zorro' || p.t === 'cuervo') cy += Math.sin(t * 4 + p.id) * 2;
     c.beginPath(); c.ellipse(cx, mgCy(y) + cs * 0.34, cs * 0.32 * sc, cs * 0.09, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();
     if (P.modo) { c.beginPath(); c.arc(cx, cy, cs * 0.46, 0, MG_TAU); c.strokeStyle = `rgba(255,${P.modo === 'rayo' ? 120 : 200},40,${0.5 + Math.sin(t * 8) * 0.4})`; c.lineWidth = 4; c.stroke(); }
     if (!A) sc *= 1 + Math.sin(t * 2.2 + p.id * 1.7) * 0.025;   // respiran un poco: el tablero está vivo
-    mgDibujaPieza(c, p.t, cx, cy, cs * 1.04 * sc, k, p.s);
+    if (p.t === 'zorro' || p.t === 'cuervo') mgPintaBicho(c, p, A, cx, cy, cs * 1.04, t);
+    else mgDibujaPieza(c, p.t, cx, cy, cs * 1.04 * sc, k, p.s);
     if (p.t === 'cofre') mgTexto(c, tr('¡Ábreme!'), cx, cy - cs * 0.46 + Math.sin(t * 5) * 2, 12, '#fff', 'center', OL);
   }
   if (P.sel && prev) {   // la pieza, en la casilla, a punto de soltarla

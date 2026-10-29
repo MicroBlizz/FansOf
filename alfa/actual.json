@@ -1,8 +1,8 @@
 {
- "build": 614,
- "hash": "92f7fd3",
- "fecha": "2026-10-29T00:17:30Z",
- "mensaje": "Goose 0.3.0: cada tierra se juega distinto (reglas y enemigos propios), minijefes de puerta, la Muerte es la Oca Parca (hoces, cosecha, trato y guadaña), casillas barajadas, maldición de partida, casillas más grandes y ritmo más largo",
+ "build": 615,
+ "hash": "58bddc0",
+ "fecha": "2026-10-29T00:18:29Z",
+ "mensaje": "Fans of Merge: zorros y cuervos más fluidos (saltitos, estirar y encoger, mirar a donde van, respirar) y preparados para sus fotogramas de Yoshi",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

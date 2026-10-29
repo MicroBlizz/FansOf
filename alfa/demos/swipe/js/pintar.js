@@ -55,11 +55,13 @@ function swBarra(c, x, y, w, h, v, max, col, fantasma = 0, t = 0) {
 /* ---------- medidas que dependen del alto ---------- */
 function swMide() {
   const H = SW_V.H, extra = H - 960;
-  SW_V.cartaY = 486 + extra * 0.55;              // arriba de la carta
-  SW_V.cartaCY = SW_V.cartaY + 180;
-  SW_V.pieE = SW_V.cartaY + 70;                  // dónde apoya los pies el enemigo (la carta le tapa las piernas, como en primera persona)
   SW_V.hud = H - 96;
-  SW_POS.enemigo = [270, SW_V.pieE - 200];
+  SW_V.kc = 0.84;                                // la carta, algo más pequeña, abajo del todo (encima del marcador)
+  SW_V.cartaCY = SW_V.hud - 38 - 180 * SW_V.kc;
+  SW_V.cartaY = SW_V.cartaCY - 180 * SW_V.kc;    // arriba de la carta
+  SW_V.barraE = 158 + extra * 0.25;              // nombre y vida del enemigo
+  SW_V.pieE = SW_V.cartaY - 4;                   // el enemigo, entero, de pie justo encima de la carta
+  SW_POS.enemigo = [270, SW_V.pieE - 140];
   SW_POS.vida = [96, SW_V.hud + 30]; SW_POS.escudo = [250, SW_V.hud + 30]; SW_POS.caos = [370, SW_V.hud + 30]; SW_POS.oro = [470, 28];
 }
 
@@ -85,7 +87,7 @@ function swPintaManos(c, t) {
   c.save(); c.translate(mitad * s + der * -40, base - resp - der * 120); c.translate(mitad * s / 2, h * s); c.rotate(-der * 0.5); c.translate(-mitad * s / 2, -h * s);
   c.drawImage(im, mitad, 0, w - mitad, h, 0, 0, (w - mitad) * s, h * s); c.restore();
 }
-function swEscalaEnemigo(id) { const [w, h] = swTam(id); return clamp(Math.floor((SW_ENEMIGOS[id].tipo === 'jefe' ? 440 : 400) / Math.max(w, h)), 4, 7); }
+function swEscalaEnemigo(id) { const [w, h] = swTam(id), alto = SW_V.pieE - SW_V.barraE - 40; return clamp(Math.min(Math.floor(alto / h), Math.floor(460 / w)), 3, 7); }
 function swPintaEnemigo(c, t, prev) {
   const P = SW_P, C = P && P.C; if (!C) return;
   const id = C.en, s = swEscalaEnemigo(id), [w, h] = swTam(id, s), cx = 270, base = SW_V.pieE;
@@ -93,7 +95,8 @@ function swPintaEnemigo(c, t, prev) {
   const tx = cx + (SW_FX.temblor > 0 ? rand(-1, 1) * SW_FX.temblor * 0.6 : 0);
   // sombra en el suelo
   c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(cx - w * 0.35, base - 6, w * 0.7, 12);
-  c.save(); c.translate(tx, base - empuje * 14); const k = 1 + lunge * 0.12; c.scale(k, k);
+  // al recibir: se encoge y salta hacia atrás; al atacar: se abalanza hacia la cámara
+  c.save(); c.translate(tx, base - empuje * 22 + lunge * 60); const k = 1 + lunge * 0.4; c.scale(k * (1 + empuje * 0.16), k * (1 - empuje * 0.13)); c.rotate((empuje * 0.08) * (Math.sin(t * 50) > 0 ? 1 : -1));
   if (SW_FX.flashE > 0.5) c.filter = 'brightness(3) saturate(0)';
   else if (C.congelado > 0) c.filter = 'hue-rotate(160deg) saturate(.6) brightness(1.25)';
   swDibuja(c, id, -w / 2, -h + bob, s);
@@ -101,7 +104,7 @@ function swPintaEnemigo(c, t, prev) {
   if (C.veneno > 0) for (let i = 0; i < 3; i++) { c.fillStyle = '#9cff57'; c.fillRect(Math.round(cx - w / 3 + ((t * 40 + i * 50) % (w * 0.66))), Math.round(base - h * 0.3 - ((t * 60 + i * 37) % 80)), 6, 6); }
   // nombre, vida y lo que va a hacer (la intención va en un globo a la izquierda de la barra)
   const top = base - h - 14 + bob, E = SW_ENEMIGOS[id];
-  const yb = Math.max(160, top - 10), bx = 214;
+  const yb = SW_V.barraE, bx = 214;
   swTexto(c, tr(E.nombre), bx + 105, yb - 22, 24, E.tipo === 'normal' ? '#ffffff' : E.tipo === 'elite' ? '#ffb13d' : '#ff5a4f');
   const fantasma = prev && prev.enemigo > 0 ? prev.enemigo : 0;
   swBarra(c, bx, yb - 6, 210, 26, C.vida, C.vidaMax, '#e8413a', fantasma, t);
@@ -203,7 +206,13 @@ function swPintaMarcador(c, t, prev) {
 function swPintaEfectos(c, t) {
   for (const p of SW_FX.parts) { c.globalAlpha = 1 - p.t / p.vida; c.fillStyle = p.col; c.fillRect(Math.round(p.x), Math.round(p.y), p.lado, p.lado); }
   c.globalAlpha = 1;
-  for (const n of SW_FX.nums) { const k = n.t / n.vida; c.globalAlpha = 1 - k * k; swTexto(c, n.txt, n.x, n.y - k * 70, n.grande ? 40 : 28, n.col, 'center', 6); }
+  swPintaGolpes(c, t);
+  // los números: revientan grandes, rebotan y suben
+  for (const n of SW_FX.nums) {
+    const k = n.t / n.vida, pop = n.grande ? 1 + Math.max(0, 1 - n.t * 7) * (n.enorme ? 1.6 : 1) : 1;
+    c.save(); c.globalAlpha = 1 - k * k; c.translate(n.x, n.y - k * 70 - (n.grande ? Math.sin(Math.min(1, n.t * 5) * Math.PI) * 26 : 0)); c.rotate(n.grande ? n.rot : 0); c.scale(pop, pop);
+    swTexto(c, n.txt, 0, 0, n.enorme ? 64 : n.grande ? 46 : 28, n.col, 'center', n.enorme ? 10 : 7); c.restore();
+  }
   c.globalAlpha = 1;
   SW_FX.avisos.forEach((a, i) => {
     const k = a.t / 1.5, esc = a.t < 0.15 ? a.t / 0.15 : 1; c.save(); c.globalAlpha = k > 0.75 ? (1 - k) * 4 : 1;
@@ -218,6 +227,8 @@ function swPintaPartida(c, t, dt) {
   const P = SW_P; SW_BOTONES = [];
   const sacude = SW_FX.temblor > 0 ? [rand(-1, 1) * SW_FX.temblor * 0.4, rand(-1, 1) * SW_FX.temblor * 0.4] : [0, 0];
   c.save(); c.translate(...sacude);
+  const z = 1 + SW_FX.zoom * 0.07, ez = SW_POS.enemigo[1];   // el zoom del golpe, hacia el enemigo
+  c.translate(270, ez); c.scale(z, z); c.translate(-270, -ez);
   swPintaFondo(c, swZona(P.piso), t);
   const prev = swPrevisionActual();
   swPintaEnemigo(c, t, prev);
@@ -248,7 +259,7 @@ function swPintaTituloNodo(c, t) {
 function swPintaMecha(c, t) {
   const P = SW_P, C = P.C; if (!C) return;
   if (P.carta && P.fase === 'carta' && !SW_G.sale) {
-    const k = clamp(SW_MECHA.t / SW_CFG.mecha, 0, 1), y = SW_V.cartaY + 374, w = 250;
+    const k = clamp(SW_MECHA.t / (SW_MECHA.max || SW_CFG.mecha), 0, 1), y = SW_V.cartaCY + 180 * SW_V.kc + 6, w = 230;
     swPanel(c, 270 - w / 2 - 6, y, w + 12, 20, '#2a1830', '#3a2440', '#1a0f1f');
     const urge = k < 0.3;
     c.fillStyle = urge ? (Math.sin(t * 24) > 0 ? '#ff5a4f' : '#ffd84a') : '#ffb13d';
@@ -257,15 +268,16 @@ function swPintaMecha(c, t) {
     const cx = 270 - w / 2 + w * k; c.fillStyle = '#fff6a0'; c.fillRect(Math.round(cx) - 3, y + 3 + (Math.sin(t * 40) > 0 ? 0 : 3), 6, 6);
   }
   // la racha: 4 llamitas que se encienden antes del frenesí
-  const fr = C.racha >= SW_CFG.frenesi, yr = SW_V.hud - 24;
+  // a la derecha de la carta, encima del marcador, sin pisar la mecha
+  const fr = C.racha >= SW_CFG.frenesi, yr = SW_V.hud - 22;
   if (!fr) {
     for (let i = 0; i < SW_CFG.frenesi; i++) {
-      const on = i < C.racha, x = 222 + i * 26;
+      const on = i < C.racha, x = 416 + i * 28;
       c.fillStyle = SW_TINTA; c.fillRect(x - 2, yr - 12, 22, 24);
       c.fillStyle = on ? (i === C.racha - 1 && Math.sin(t * 16) > 0 ? '#fff6a0' : '#ff8a2a') : '#3a2440'; c.fillRect(x, yr - 10, 18, 20);
       if (on) { c.fillStyle = '#ffd84a'; c.fillRect(x + 6, yr - 4, 6, 10); }
     }
-    if (C.racha >= 1) swTexto(c, tr('RACHA'), 190, yr, 18, '#fff6a0', 'right', 5);
+    if (C.racha >= 1) swTexto(c, tr('RACHA'), 470, yr - 26, 16, '#fff6a0', 'center', 5);
   }
 }
 /* ---------- el FRENESÍ: la pantalla arde ---------- */
@@ -300,7 +312,7 @@ function swPintaFrenesi(c, t) {
     c.globalAlpha = 1;
     // el letrero de siempre mientras dura
     if (C && racha >= SW_CFG.frenesi && F.estallido < 0.55) {
-      c.save(); c.translate(270, SW_V.hud - 26); const k = 1 + 0.06 * Math.sin(t * 14); c.scale(k, k);
+      c.save(); c.translate(270, SW_V.barraE + 66); const k = 1 + 0.06 * Math.sin(t * 14); c.scale(k, k);
       swTituloFuego(c, tr('¡FRENESÍ! x{n}', { n: racha }), 0, 0, 30); c.restore();
     }
   }
@@ -335,4 +347,61 @@ function swTituloFuego(c, txt, x, y, tam) {
   c.fillStyle = SW_TINTA; for (let dy = -b; dy <= b * 2; dy += b) for (const dx of [-b, 0, b]) c.fillText(txt, x + dx, y + dy);
   const g = c.createLinearGradient(0, y - tam / 2, 0, y + tam / 2); g.addColorStop(0, '#fffbd0'); g.addColorStop(0.35, '#ffd23a'); g.addColorStop(0.7, '#ff7a1a'); g.addColorStop(1, '#e8301a');
   c.fillStyle = g; c.fillText(txt, x, y);
+}
+
+/* ---------- los golpes: tajos, estrellas de impacto, zarpazos, escudo, K.O. y el contador ---------- */
+// una línea gorda de píxeles entre dos puntos (para los tajos y zarpazos)
+function swLineaPx(c, x0, y0, x1, y1, grueso, col) {
+  const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 6); c.fillStyle = col;
+  for (let i = 0; i <= n; i++) { const k = i / n, g = Math.max(3, grueso * Math.sin(k * Math.PI)); c.fillRect(Math.round((x0 + (x1 - x0) * k - g / 2) / 3) * 3, Math.round((y0 + (y1 - y0) * k - g / 2) / 3) * 3, g, g); }
+}
+function swPintaGolpes(c, t) {
+  const F = SW_FX;
+  for (const s of F.tajos) {
+    if (s.t < 0) continue;
+    const k = s.t / s.vida, avance = Math.min(1, 0.45 + k * 4), dx = Math.cos(s.ang), dy = Math.sin(s.ang), L = s.largo;
+    const ax = s.x - dx * L / 2, ay = s.y - dy * L / 2, bx = ax + dx * L * avance, by = ay + dy * L * avance;
+    const g = 44 * (1 - k * 0.8);
+    c.globalAlpha = 1 - k * 0.6;
+    swLineaPx(c, ax, ay, bx, by, g + 24, SW_TINTA); swLineaPx(c, ax, ay, bx, by, g + 14, s.col[2]); swLineaPx(c, ax, ay, bx, by, g + 6, s.col[1]); swLineaPx(c, ax, ay, bx, by, g * 0.5, s.col[0]);
+  }
+  for (const e of F.estrellas) {
+    const k = e.t / e.vida, r = e.r * (0.4 + k * 0.9); c.globalAlpha = 1 - k;
+    for (const [col, f] of [['#ff8a2a', 1], ['#fff6a0', 0.7], ['#ffffff', 0.42]]) {
+      c.fillStyle = col; c.beginPath();
+      for (let i = 0; i < e.puntas * 2; i++) { const a = (i / (e.puntas * 2)) * Math.PI * 2 + e.x, rr = (i % 2 ? r * 0.38 : r) * f; c.lineTo(Math.round((e.x + Math.cos(a) * rr) / 4) * 4, Math.round((e.y + Math.sin(a) * rr) / 4) * 4); }
+      c.closePath(); c.fill();
+    }
+  }
+  for (const z of F.zarpazos) {
+    if (z.t < 0) continue;
+    const k = z.t / z.vida, av = Math.min(1, 0.4 + k * 5), L = SW_V.H * 0.55;
+    c.globalAlpha = 1 - k * 0.7;
+    const x0 = z.x + 90, y0 = z.y - L * 0.3, x1 = x0 - 180 * av, y1 = y0 + L * av;
+    swLineaPx(c, x0, y0, x1, y1, 46 * (1 - k * 0.5), '#5a0606'); swLineaPx(c, x0, y0, x1, y1, 32 * (1 - k * 0.5), '#e8301a'); swLineaPx(c, x0, y0, x1, y1, 12, '#ffd0c0');
+  }
+  c.globalAlpha = 1;
+  // el escudo: un muro de hexágonos azules delante de la cámara
+  if (F.escudoFx > 0) {
+    c.globalAlpha = F.escudoFx * 0.6;
+    for (let y = SW_V.cartaY - 110; y < SW_V.cartaY + 90; y += 36) for (let x = 30 + ((y / 36) % 2) * 18; x < 520; x += 36) {
+      c.fillStyle = '#3f8cff'; c.fillRect(x - 15, y - 15, 30, 30); c.fillStyle = '#9fe8ff'; c.fillRect(x - 11, y - 11, 22, 22); c.fillStyle = 'rgba(255,255,255,.8)'; c.fillRect(x - 11, y - 11, 22, 5);
+    }
+    c.globalAlpha = 1;
+  }
+  // K.O.: el enemigo sale volando dando vueltas y un sello gigante
+  if (F.ko) {
+    const k = F.ko.t, s = F.ko.s, [w, h] = swTam(F.ko.id, s), [ex, ey] = SW_POS.enemigo;
+    c.save(); c.globalAlpha = Math.max(0, 1 - k * 0.9); c.translate(ex + k * 380, ey - k * 520 + k * k * 300); c.rotate(k * 9); const e = Math.max(0.2, 1 - k * 0.6); c.scale(e, e);
+    c.filter = k < 0.12 ? 'brightness(4) saturate(0)' : 'none'; swDibuja(c, F.ko.id, -w / 2, -h / 2, s); c.filter = 'none'; c.restore();
+    const sello = k < 0.12 ? 2.4 - k * 11 : 1 + Math.sin(k * 30) * 0.04 * Math.max(0, 1 - k);
+    c.save(); c.globalAlpha = k > 0.85 ? (1.1 - k) * 4 : 1; c.translate(270, ey - 10); c.rotate(-0.12); c.scale(sello, sello);
+    swTituloFuego(c, tr('¡K.O.!'), 0, 0, 110); c.restore();
+  }
+  // el contador de golpes seguidos
+  if (F.cuenta.n >= 2 && F.cuenta.t < 1.1) {
+    const pop = 1 + Math.max(0, 0.6 - F.cuenta.t * 4);
+    c.save(); c.globalAlpha = F.cuenta.t > 0.8 ? (1.1 - F.cuenta.t) * 3.3 : 1; c.translate(420, SW_POS.enemigo[1] - 120); c.rotate(0.12); c.scale(pop, pop);
+    swTituloFuego(c, tr('{n} GOLPES', { n: F.cuenta.n }), 0, 0, 40); c.restore();
+  }
 }

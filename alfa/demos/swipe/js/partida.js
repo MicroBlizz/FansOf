@@ -10,7 +10,7 @@ function swAvanzaCola(dt) {
 }
 // la mecha de la carta de combate que tienes delante (no se guarda: al volver a la partida empieza entera)
 const SW_MECHA = { t: 5 };
-function swNuevaMecha() { SW_MECHA.t = SW_P && SW_P.nodo === 'jefe' ? SW_CFG.mechaJefe : SW_CFG.mecha; SW_MECHA.ini = performance.now(); }
+function swNuevaMecha() { SW_MECHA.t = SW_MECHA.max = SW_P && SW_P.nodo === 'jefe' ? SW_CFG.mechaJefe : SW_CFG.mecha; SW_MECHA.ini = performance.now(); }
 const swCtx = () => ({ P: SW_P, pre: SW_P.carta && SW_P.carta.pre, sim: false, fx: swFx });
 
 function swNuevaSubida() {
@@ -123,6 +123,8 @@ function swMechaAgotada() {
 }
 function swAvanzaMecha(dt) {
   const P = SW_P; if (!P || !P.C || !P.carta || P.fase !== 'carta' || SW_G.sale) return;
+  if (SW_G.entra < 1) { SW_MECHA.ini = performance.now(); return; }   // aún está cayendo: no cuenta
+  if (SW_G.arrastra) dt *= 0.5;                                       // mientras la sujetas para leerla, la mecha va más despacio
   const antes = SW_MECHA.t; SW_MECHA.t -= dt;
   if (SW_MECHA.t < 1.5 && Math.ceil(antes * 2) !== Math.ceil(SW_MECHA.t * 2)) play('swTic');
   if (SW_MECHA.t <= 0) swMechaAgotada();
@@ -132,6 +134,7 @@ function swAvanzaMecha(dt) {
 function swGanaCombate() {
   const P = SW_P, E = SW_ENEMIGOS[P.C.en];
   if (P.C.racha >= SW_CFG.frenesi) { swAviso(tr('¡Oro de frenesí x{n}!', { n: SW_CFG.frenesiOro }), '#ffd84a'); SW_FX.frenesi = 0; SW_FX.estallido = Math.min(SW_FX.estallido, 0.15); }
+  swFx('ko', { id: P.C.en, s: swEscalaEnemigo(P.C.en) });
   play('swMuerte');
   P.combates++;
   if (swTieneR(P, 'r-auriculares')) { P.vida = Math.min(P.vidaMax, P.vida + 4); swFx('cura', { n: 4 }); }

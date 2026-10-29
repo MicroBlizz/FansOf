@@ -278,5 +278,6 @@ IDIOMA.add({
  "Frenesí perdido": "Frenzy lost",
  "¡Oro de frenesí x{n}!": "Frenzy gold x{n}!",
  "RACHA": "STREAK",
- "x{n} daño · x{m} oro": "x{n} damage · x{m} gold"
+ "x{n} daño · x{m} oro": "x{n} damage · x{m} gold",
+ "{n} GOLPES": "{n} HITS"
 });

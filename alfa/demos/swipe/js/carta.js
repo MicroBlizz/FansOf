@@ -17,7 +17,7 @@ function swPrevisionActual() {
 }
 
 /* ---------- el gesto ---------- */
-function swCartaDentro(lx, ly) { return Math.abs(lx - 270 - SW_G.x) < 150 && ly > SW_V.cartaY - 20 && ly < SW_V.cartaY + 380; }
+function swCartaDentro(lx, ly) { return Math.abs(lx - 270 - SW_G.x) < 135 * SW_V.kc + 24 && ly > SW_V.cartaY - 24 && ly < SW_V.cartaY + 360 * SW_V.kc + 20; }
 function swEmpiezaArrastre(lx, ly) {
   if (!SW_P || !SW_P.carta || SW_P.fase !== 'carta' || SW_G.sale) return false;
   if (!swCartaDentro(lx, ly)) return false;
@@ -58,7 +58,9 @@ function swPintaCarta(c, t, dt) {
   if (SW_G.sale) { const k = SW_G.sale; x = SW_G.dir * (SW_UMBRAL + k * 520); y = k * 60; rot = SW_G.dir * (0.18 + k * 0.6); alfa = 1 - k * 0.6; }
   else { const e = 1 - Math.pow(1 - SW_G.entra, 3); y += (1 - e) * -420; rot += (1 - e) * 0.3; alfa = Math.min(1, SW_G.entra * 2); }
   c.save(); c.globalAlpha = alfa;
-  c.translate(270 + x, SW_V.cartaCY + y); c.rotate(rot);
+  // al salir volando deja estelas (líneas de velocidad) detrás
+  if (SW_G.sale) { const k = SW_G.sale; for (let i = 0; i < 7; i++) { c.fillStyle = i % 2 ? 'rgba(255,255,255,.55)' : 'rgba(255,216,74,.6)'; const ly = SW_V.cartaCY - 120 + i * 40 + k * 40, lx = 270 + x - SW_G.dir * (150 + i * 9), largo = 140 + i * 22; c.fillRect(Math.round(SW_G.dir > 0 ? lx - largo : lx), Math.round(ly), largo, 6); } }
+  c.translate(270 + x, SW_V.cartaCY + y); c.rotate(rot); c.scale(SW_V.kc, SW_V.kc);
   swDibujaCartaEn(c, P, carta, t, Math.abs(SW_G.x) > 20 ? Math.sign(SW_G.x) : 0);
   c.restore();
 }

@@ -20,8 +20,9 @@ const SW_CFG = {
   eliteDesde: 6,
   curaBotin: 8,                                     // tras ganar un combate puedes curarte esto (a cambio de la mitad del oro)
   // el ritmo: cada carta de combate tiene una mecha; si se acaba, el enemigo ataca gratis. Deslizar rápido hace racha.
-  mecha: 4.5, mechaJefe: 3.5, rapido: 1.6, frenesi: 4, frenesiDano: 1.5, frenesiOro: 1.5,
-  esperaEnemigo: 0.28,
+  mecha: 8, mechaJefe: 6.5, rapido: 2.2,   // segundos de mecha; la mecha arranca cuando la carta ya ha caído y arrastrando va a la mitad
+  frenesi: 4, frenesiDano: 1.5, frenesiOro: 1.5,
+  esperaEnemigo: 0.42,
 };
 
 // Efectos (los usan las cartas, los eventos y la tienda). t = tipo:

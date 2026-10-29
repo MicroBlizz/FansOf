@@ -121,11 +121,19 @@ function swPintaEnemigo(c, t, prev) {
   swPanel(c, gx, gy - 30, 100, 56, '#f4e6c8', '#fff8e6', '#c8b08a');
   const ix = gx + 26;
   if (I.congelado) swDibujaC(c, 'a-hielo', gx + 50, gy - 2, 2);
+  else if (I.aturdido) { for (let i = 0; i < 3; i++) { const a = t * 4 + i * 2.1; c.fillStyle = '#ffd84a'; c.fillRect(Math.round(gx + 50 + Math.cos(a) * 26) - 5, Math.round(gy - 2 + Math.sin(a) * 9) - 5, 10, 10); } swTexto(c, tr('¡ZZZ!'), gx + 50, gy - 1, 20, '#3a2414', 'center', 0); }
+  else if (I.carga) {
+    // cargando: cuánto daño le llevas este turno contra lo que hace falta para cortarlo
+    const hecho = Math.min(I.carga, C.danoTurno + (prev && prev.enemigo > 0 ? prev.enemigo : 0)), parpadea = Math.sin(t * 12) > 0;
+    swDibujaC(c, 'a-caos', ix, gy - 2, 2);
+    swTexto(c, `${hecho}/${I.carga}`, ix + 44, gy - 1, 20, hecho >= I.carga ? '#4fc25a' : parpadea ? '#ff5a4f' : '#c2432e');
+    swTexto(c, tr('¡Córtalo!'), gx + 50, gy + 58, 15, '#ff8a2a', 'center', 4);
+  }
   else if (I.atq) { swDibujaC(c, 'i-espada', ix, gy - 2, 2); swTexto(c, I.k > 1 ? `${I.atq}x${I.k}` : String(I.atq), ix + 44, gy - 1, 21, '#ff5a4f'); }
   else if (I.def) { swDibujaC(c, 'i-escudo', ix, gy - 2, 2); swTexto(c, String(I.def), ix + 44, gy - 1, 21, '#9fd4ff'); }
   else if (I.cura) { swDibujaC(c, 'a-cura', ix, gy - 2, 2); swTexto(c, String(I.cura), ix + 44, gy - 1, 21, '#6ee36a'); }
   else if (I.fuerza) { swDibujaC(c, 'a-caos', ix, gy - 2, 2); swTexto(c, '+' + I.fuerza, ix + 44, gy - 1, 21, '#ffb13d'); }
-  if (I.txt && !I.congelado) swTexto(c, tr(I.txt), gx + 50, gy + 40, 14, '#fff6a0', 'center', 4);
+  if (I.txt && !I.congelado) swTexto(c, tr(I.txt), gx + 50, gy + 40, 14, I.cargado ? '#ff5a4f' : '#fff6a0', 'center', 4);
   else if (I.congelado) swTexto(c, tr('Congelado'), gx + 50, gy + 40, 14, '#9fe8ff', 'center', 4);
 }
 
@@ -243,6 +251,7 @@ function swPintaPartida(c, t, dt) {
   swPintaManos(c, t);
   c.restore();
   swPintaArriba(c, t);
+  swPintaProxima(c, t);
   if (P.carta) swPintaLados(c, t, swLados(P, P.carta), P.carta, SW_G.x / 120);
   if (P.carta || SW_G.sale) swPintaCarta(c, t, dt);
   if (!P.carta && !SW_G.sale && P.fase === 'enemigo') swTexto(c, tr('Turno del enemigo…'), 270, SW_V.cartaCY, 24, '#fff6a0');
@@ -251,6 +260,7 @@ function swPintaPartida(c, t, dt) {
   swPintaMarcador(c, t, prev);
   swPintaEstallido(c, t);
   if (prev && prev.combo) swTexto(c, tr('¡COMBO! {n}', { n: tr(prev.combo) }), 270, SW_V.cartaY - 24, 24 + Math.sin(t * 10), '#ffd84a', 'center', 6);
+  else if (prev && prev.corta) swTexto(c, tr('¡LE CORTAS EL GOLPE!'), 270, SW_V.cartaY - 24, 24 + Math.sin(t * 12), '#4fc25a', 'center', 6);
   swPintaEfectos(c, t);
 }
 // fuera de combate: el nombre de lo que hay en el piso, grande, donde estaría el enemigo
@@ -411,4 +421,20 @@ function swPintaGolpes(c, t) {
     c.save(); c.globalAlpha = F.cuenta.t > 0.8 ? (1.1 - F.cuenta.t) * 3.3 : 1; c.translate(420, SW_POS.enemigo[1] - 120); c.rotate(0.12); c.scale(pop, pop);
     swTituloFuego(c, tr('{n} GOLPES', { n: F.cuenta.n }), 0, 0, 40); c.restore();
   }
+}
+
+/* ---------- la siguiente carta (pequeña, a la derecha, para poder planear) ---------- */
+function swPintaProxima(c, t) {
+  const P = SW_P; if (!P.C || P.fase === 'fin') return;
+  const sig = swProximaCarta(P); if (!sig) return;
+  const D = SW_CARTAS[sig.id], arte = sig.giro ? [D.arte[1], D.arte[0]] : D.arte;
+  const w = 92, h = 104, x = 540 - w - 6, y = SW_V.barraE + 58;
+  c.save(); c.globalAlpha = 0.95;
+  swPanel(c, x, y, w, h, '#6b4424', '#8a5a30', '#3e2612', 3);
+  swPanel(c, x + 6, y + 6, w - 12, h - 12, '#f4e6c8', '#fff8e6', '#d8c49a', 3);
+  swTexto(c, tr('SIGUIENTE'), x + w / 2, y - 10, 14, '#fff6a0', 'center', 4);
+  swDibujaC(c, arte[0], x + 26, y + 38, 2); swDibujaC(c, arte[1], x + w - 26, y + 38, 2);
+  c.fillStyle = '#c8b08a'; c.fillRect(x + w / 2 - 1, y + 18, 2, 40);
+  swTextoCabe(c, swNombreCarta(sig.id, sig.mejor), x + w / 2, y + 80, 13, w - 16, '#3a2414', 'center', 0);
+  c.restore();
 }

@@ -69,6 +69,11 @@ function swFx(que, d = {}) {
     case 'enemigoCura': swNum('+' + d.n, ex, ey - 60, '#6ee36a'); play('swCura'); break;
     case 'ataqueEnemigo': swFxLuego((d.i || 0) * 0.16, swZarpazo); break;
     case 'ko': SW_FX.ko = { id: d.id, s: d.s, t: 0 }; SW_FX.paron = 0.18; SW_FX.temblor = 30; SW_FX.zoom = 1.4; swParticulas(SW_POS.enemigo[0], SW_POS.enemigo[1], 80, ['#ffffff', '#ffd84a', '#ff8a2a', '#aab4c4', '#33e0ff'], 720); swVibra([50, 30, 80]); break;
+    case 'guardia': swNum(tr('Guardia +{n}', { n: d.n }), SW_POS.escudo[0], SW_POS.escudo[1] - 40, '#9fd4ff'); break;
+    case 'cargando': swAviso(tr('¡Prepara un golpe gordo!'), '#ff8a2a'); break;
+    case 'cortado': swAviso(tr('¡CORTADO!'), '#4fc25a'); SW_FX.temblor = 24; SW_FX.paron = 0.14; SW_FX.zoom = 1.2; swParticulas(ex, ey, 40, ['#4fc25a', '#c8ff9a', '#ffffff'], 520); play('swCombo'); swVibra([30, 20, 60]); break;
+    case 'aturdido': swNum(tr('¡Aturdido!'), ex, ey - 110, '#ffd84a', true); break;
+    case 'devuelve': swNum(tr('Devuelves {n}', { n: d.n }), ex - 60, ey - 120, '#9fd4ff', true); break;
     case 'combo': swAviso(tr('¡COMBO! {n}', { n: tr(d.nombre) }), '#ffd84a'); play('swCombo'); break;
     case 'reliquia': swAviso(tr(SW_RELIQUIAS[d.id].nombre), '#ffd84a'); play('swReliquia'); break;
     case 'pata': swAviso(tr('¡La pata de la suerte te salva!'), '#6ee36a'); play('swReliquia'); break;

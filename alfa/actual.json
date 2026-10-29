@@ -1,8 +1,8 @@
 {
- "build": 635,
- "hash": "051ad98",
- "fecha": "2026-10-29T11:54:03Z",
- "mensaje": "Fans of Asalto 0.2.0: como el juego de referencia (cada compra añade un héroe, cuadrícula 4x8, precios por héroe, 7 clases con niveles, reliquias por clase, tira de niveles con flechas en la arena, altar y cofre del suelo, equipo, herrería, logros y tienda, arena de borde a borde y colores claros)",
+ "build": 636,
+ "hash": "eb561b6",
+ "fecha": "2026-10-29T12:17:26Z",
+ "mensaje": "Fans of Swipe: más estrategia en el combate (siguiente carta, lados que cambian, guardia, parada y golpes cargados)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

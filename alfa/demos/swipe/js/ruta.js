@@ -101,6 +101,7 @@ function swTextoEf(P, e, carta) {
   switch (e.t) {
     case 'dano': { let n = e.n + swFuerza(P) + (swTieneR(P, 'r-grapadora') ? 1 : 0); if (P.C && P.C.racha >= SW_CFG.frenesi) n = Math.round(n * SW_CFG.frenesiDano); return (e.k || 1) > 1 ? tr('{n} de daño x{k}', { n, k: e.k }) : tr('{n} de daño', { n }); }
     case 'danoEscudo': return tr('Daño igual a tu escudo');
+    case 'devuelve': return tr('Devuelves lo que bloquees');
     case 'escudo': return tr('+{n} de escudo', { n: e.n });
     case 'cura': return e.n >= 99 ? tr('Te curas del todo') : tr('Te curas {n}', { n: e.n });
     case 'caos': return e.n > 0 ? tr('+{n} de caos', { n: e.n }) : tr('Gasta {n} de caos', { n: -e.n });
@@ -131,7 +132,7 @@ function swLineas(P, carta, L) {
 /* ---------- el aspecto de cada carta ---------- */
 function swAspecto(P, carta) {
   switch (carta.tipo) {
-    case 'accion': { const D = SW_CARTAS[carta.id]; return { titulo: swNombreCarta(carta.id, carta.mejor), iconos: D.arte, rareza: D.rareza, texto: '' }; }
+    case 'accion': { const D = SW_CARTAS[carta.id]; return { titulo: swNombreCarta(carta.id, carta.mejor), iconos: carta.giro ? [D.arte[1], D.arte[0]] : D.arte, rareza: D.rareza, texto: '' }; }
     case 'cruce': return { titulo: tr('Dos caminos'), arte: 'ev-cruce', texto: tr('¿Por dónde subes?') };
     case 'evento': { const E = SW_EVENTOS.find(e => e.id === carta.id); return { titulo: tr(E.titulo), arte: E.arte, texto: tr(E.texto) }; }
     case 'tienda': {

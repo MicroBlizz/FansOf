@@ -10,7 +10,7 @@ const AJUSTES = {
 const SW_CFG = {
   vida: 50, caosMax: 3, caosInicio: 1, caosPorTurno: 1, oroInicio: 20,
   pisos: 15, tesoro: 8, descanso: 14,               // el 15 es el jefe
-  mazoInicio: ['garrote', 'garrote', 'garrote', 'mordisco', 'mordisco', 'salto'],
+  mazoInicio: ['garrote', 'garrote', 'escudo', 'escudo', 'mordisco', 'salto'],
   curaDescanso: 0.3,                                // dormir cura este trozo de la vida máxima
   subePiso: 0.04,                                   // los enemigos tienen un 4 % más de vida por cada piso
   mejora: 1.4,                                      // una carta mejorada multiplica sus números
@@ -23,6 +23,9 @@ const SW_CFG = {
   mecha: 8, mechaJefe: 6.5, rapido: 2.2,   // segundos de mecha; la mecha arranca cuando la carta ya ha caído y arrastrando va a la mitad
   frenesi: 4, frenesiDano: 1.5, frenesiOro: 1.5,
   esperaEnemigo: 0.42,
+  // la estrategia: el escudo que te sobra se guarda a medias para el turno siguiente (guardia) y cada carta sale con sus
+  // lados en un orden al azar, así que no siempre es «izquierda = atacar»; además ves la siguiente carta del mazo
+  guardia: 0.5, giro: 0.5,
 };
 
 // Efectos (los usan las cartas, los eventos y la tienda). t = tipo:
@@ -31,11 +34,14 @@ const SW_CFG = {
 // coste = caos que gasta el lado; pago = oro que cuesta (si no llegas, ese lado no se puede elegir).
 const SW_CARTAS = {
   garrote:  { nombre: 'Garrote', arte: ['a-golpe', 'a-escudo'], rareza: 0,
-    izq: { nombre: 'Garrotazo', ef: [{ t: 'dano', n: 6 }] },
-    der: { nombre: 'Escudo zanahoria', ef: [{ t: 'escudo', n: 5 }] } },
+    izq: { nombre: 'Garrotazo', ef: [{ t: 'dano', n: 7 }] },
+    der: { nombre: 'Golpe cubierto', ef: [{ t: 'dano', n: 3 }, { t: 'escudo', n: 4 }] } },
+  escudo:   { nombre: 'Escudo zanahoria', arte: ['a-escudo', 'a-escudo'], rareza: 0,
+    izq: { nombre: 'Cubrirse', ef: [{ t: 'escudo', n: 7 }] },
+    der: { nombre: 'Parada', ef: [{ t: 'escudo', n: 5 }, { t: 'devuelve' }] } },
   mordisco: { nombre: 'Zanahoria', arte: ['a-golpe', 'a-cura'], rareza: 0,
     izq: { nombre: 'Zanahoriazo', ef: [{ t: 'dano', n: 4 }, { t: 'caos', n: 1 }] },
-    der: { nombre: 'Merendar', ef: [{ t: 'cura', n: 3 }, { t: 'escudo', n: 2 }] } },
+    der: { nombre: 'Merendar', ef: [{ t: 'cura', n: 3 }, { t: 'escudo', n: 4 }] } },
   salto:    { nombre: 'Salto del caos', arte: ['a-salto', 'a-caos'], rareza: 0,
     izq: { nombre: 'Salto del caos', coste: 2, ef: [{ t: 'dano', n: 14 }] },
     der: { nombre: 'Coger carrerilla', ef: [{ t: 'caos', n: 1 }, { t: 'escudo', n: 3 }] } },
@@ -47,13 +53,13 @@ const SW_CARTAS = {
     der: { nombre: 'Muro de hielo', ef: [{ t: 'escudo', n: 9 }] } },
   furia:    { nombre: 'Rabia de fan', arte: ['a-golpe', 'a-caos'], rareza: 1,
     izq: { nombre: 'Doble garrotazo', ef: [{ t: 'dano', n: 4, k: 2 }] },
-    der: { nombre: 'Concentrarse', ef: [{ t: 'fuerza', n: 2 }] } },
+    der: { nombre: 'A lo loco', ef: [{ t: 'dano', n: 13 }, { t: 'herida', n: 3 }] } },
   muro:     { nombre: 'Placaje', arte: ['a-escudo', 'a-escudo'], rareza: 1,
     izq: { nombre: 'Placaje', ef: [{ t: 'danoEscudo' }] },
-    der: { nombre: 'Atrincherarse', ef: [{ t: 'escudo', n: 7 }] } },
+    der: { nombre: 'Atrincherarse', ef: [{ t: 'escudo', n: 9 }] } },
   robo:     { nombre: 'Mangar', arte: ['a-golpe', 'a-escudo'], rareza: 1,
     izq: { nombre: 'Mangar', ef: [{ t: 'dano', n: 3 }, { t: 'oro', n: 6 }] },
-    der: { nombre: 'Esquivar', ef: [{ t: 'escudo', n: 6 }] } },
+    der: { nombre: 'Esquivar', ef: [{ t: 'escudo', n: 6 }, { t: 'devuelve' }] } },
   rayo:     { nombre: 'Rayo del caos', arte: ['a-caos', 'a-caos'], rareza: 2,
     izq: { nombre: 'Rayo del caos', coste: 3, ef: [{ t: 'dano', n: 24 }] },
     der: { nombre: 'Cargar caos', ef: [{ t: 'caos', n: 2 }] } },
@@ -65,7 +71,7 @@ const SW_CARTAS = {
     der: { nombre: 'Voltereta', ef: [{ t: 'escudo', n: 4 }, { t: 'caos', n: 1 }] } },
   grito:    { nombre: 'Grito de fan', arte: ['a-caos', 'a-escudo'], rareza: 2,
     izq: { nombre: 'Abucheo', ef: [{ t: 'dano', n: 3 }, { t: 'debil', n: 2 }] },
-    der: { nombre: 'Venirse arriba', ef: [{ t: 'escudo', n: 4 }, { t: 'fuerza', n: 1 }] } },
+    der: { nombre: 'Venirse arriba', ef: [{ t: 'fuerza', n: 2 }] } },
   veneno:   { nombre: 'Café de máquina', arte: ['a-veneno', 'a-escudo'], rareza: 2,
     izq: { nombre: 'Café de máquina', coste: 1, ef: [{ t: 'veneno', n: 8 }] },
     der: { nombre: 'Taza escudo', ef: [{ t: 'escudo', n: 5 }, { t: 'veneno', n: 2 }] } },
@@ -78,11 +84,11 @@ const SW_ENEMIGOS = {
   starbot:    { nombre: 'StarBot', tipo: 'normal', vida: 20, oro: [12, 18], int: [{ atq: 3, k: 2 }, { fuerza: 1, def: 3, txt: 'Recargar' }, { atq: 4, k: 2 }] },
   soportebot: { nombre: 'SoporteBot', tipo: 'normal', vida: 23, oro: [13, 18], int: [{ def: 7 }, { atq: 6 }, { cura: 7, txt: 'Ticket resuelto' }] },
   cajabotin:  { nombre: 'CajaBotín', tipo: 'normal', vida: 26, oro: [20, 28], int: [{ atq: 7 }, { atq: 4, roba: 10, txt: 'Microtransacción' }, { def: 8 }] },
-  fallen:     { nombre: 'FallenHero', tipo: 'elite', vida: 38, oro: [34, 44], int: [{ atq: 10 }, { def: 10, fuerza: 1, txt: 'Viejas glorias' }, { atq: 6, k: 2 }] },
-  parchebot:  { nombre: 'Parche Día 1', tipo: 'elite', vida: 44, oro: [36, 46], int: [{ atq: 8 }, { cura: 6, def: 6, txt: 'Parche' }, { atq: 13 }] },
-  survivalbot:{ nombre: 'SurvivalBot', tipo: 'elite', vida: 42, oro: [36, 48], int: [{ atq: 5, caos: 1, txt: 'Congelación' }, { atq: 9 }, { atq: 12, txt: 'Carta de despido' }] },
+  fallen:     { nombre: 'FallenHero', tipo: 'elite', vida: 38, oro: [34, 44], int: [{ atq: 8 }, { carga: 10, txt: 'Desenvaina' }, { atq: 18, cargado: true, txt: 'Tajo legendario' }, { def: 8, fuerza: 1, txt: 'Viejas glorias' }, { atq: 5, k: 2 }] },
+  parchebot:  { nombre: 'Parche Día 1', tipo: 'elite', vida: 44, oro: [36, 46], int: [{ atq: 7 }, { cura: 6, def: 6, txt: 'Parche' }, { carga: 11, txt: 'Compilando' }, { atq: 20, cargado: true, txt: 'Parche gigante' }] },
+  survivalbot:{ nombre: 'SurvivalBot', tipo: 'elite', vida: 42, oro: [36, 48], int: [{ atq: 5, caos: 1, txt: 'Congelación' }, { atq: 8 }, { carga: 10, txt: 'Imprimiendo cartas' }, { atq: 6, k: 3, cargado: true, txt: 'Cartas de despido' }] },
   ceo:        { nombre: 'El CEO', tipo: 'jefe', vida: 90, oro: [0, 0],
-    int: [{ atq: 7 }, { def: 10, fuerza: 1, txt: 'Diapositiva' }, { atq: 3, k: 3, txt: 'Despido masivo' }, { atq: 9, roba: 15, txt: 'Subida de precios' }, { cura: 8, txt: 'Recompra de acciones' }] },
+    int: [{ atq: 7 }, { def: 10, fuerza: 1, txt: 'Diapositiva' }, { carga: 14, txt: 'Junta de accionistas' }, { atq: 24, cargado: true, txt: 'Despido del año' }, { atq: 9, roba: 15, txt: 'Subida de precios' }, { cura: 8, txt: 'Recompra de acciones' }] },
 };
 const SW_NORMALES_1 = ['becario', 'starbot', 'becario', 'soportebot'];     // pisos 1 a 6
 const SW_NORMALES_2 = ['starbot', 'soportebot', 'cajabotin', 'cajabotin'];  // pisos 7 en adelante

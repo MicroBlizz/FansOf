@@ -41,8 +41,17 @@ CINTAS.geometria = (() => {
       if (giro(nodo, tramo, otro) < GIRO_MAXIMO_INGLETE) return 0;
     }
     let corte = 0;
-    for (const otro of tramos) if (otro !== tramo) corte = Math.max(corte, otro.ancho / 2 + HOLGURA);
-    return corte;
+    for (const otro of tramos) if (otro !== tramo) corte = Math.max(corte, corteJuntoA(nodo, tramo, otro));
+    return Math.min(corte, tramo.largo * 0.45);
+  }
+  // lo que hay que cortar para que el borde del tramo no pise el del otro: en ángulo recto, medio ancho del otro; en ángulo agudo
+  // (un cruce en A, una Y) mucho más, hasta donde los bordes se separan
+  function corteJuntoA(nodo, tramo, otro) {
+    const [ax, az] = direccionDesde(nodo, tramo), [bx, bz] = direccionDesde(nodo, otro);
+    const coseno = clamp(ax * bx + az * bz, -1, 1), seno = Math.sqrt(1 - coseno * coseno);
+    const recto = otro.ancho / 2 + HOLGURA;
+    if (coseno <= 0 || seno < 0.05) return recto;
+    return (otro.ancho / 2 + tramo.ancho / 2 * coseno) / seno + HOLGURA;
   }
 
   const cortes = new Map();   // tramo → [corte en a, corte en b]

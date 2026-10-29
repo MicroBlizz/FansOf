@@ -37,7 +37,7 @@
   let ultimaEstacion = null;
   function coloca(e) {
     Object.assign(jugador, { x: e.x, z: e.z, ang: e.ang, v: 0, vl: 0, vy: 0, aire: false });
-    jugador.y = CIUDAD.altura(e.x, e.z);
+    jugador.y = CIUDAD.altura(e.x, e.z, e.y);   // con `y`, la carretera a esa altura (bajo tierra)
     if (fisico) COCHE_RAPIER.recoloca(fisico, jugador);   // de pie aunque estuviera volcado
     ultimaEstacion = e;
     HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'grande tiempo');

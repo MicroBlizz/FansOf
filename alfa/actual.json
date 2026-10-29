@@ -1,8 +1,8 @@
 {
- "build": 641,
- "hash": "2f019d6",
- "fecha": "2026-10-29T20:23:31Z",
- "mensaje": "Docs: guías de herramientas y servidor movidas a docs/ (referencias arregladas), ADR 001-006 revisados, chat con Claude descartado, comprobar.py falla con .md fuera de su sitio, Paddle en el C4",
+ "build": 642,
+ "hash": "5c442be",
+ "fecha": "2026-10-29T22:04:58Z",
+ "mensaje": "Cola: el coste de un recurso se estima con la tarifa de una API de imágenes (~1.056 tokens por imagen de 1 MB, 30 USD/M)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

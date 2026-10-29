@@ -8,7 +8,7 @@
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
   const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones', RECS = 'fansof.gestion.cola.recursos';
   const MUESTRAS = 20, MAX_NUEVAS = 60, CADA = 5 * 60e3, ENFRIA = 30e3;
-  const BYTES_POR_TOKEN = 3, PRECIO = 20, CAMBIO = 1;   // a ojo: tokens ≈ bytes/3; 20 USD por millón de tokens de salida (Claude Opus 5.5, oct. 2026); 1 € = 1 $
+  const BYTES_POR_TOKEN = 1000, PRECIO = 30, CAMBIO = 1;   // a ojo, con la tarifa de una API de imágenes: ~1.056 tokens de salida por una imagen de 1024×1024 (~1 MB comprimida) a ~30 USD el millón; 1 € = 1 $
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0;
   const pan = document.createElement('div'); pan.id = 'pan-cola'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
@@ -118,9 +118,9 @@
   function pieRecursos() {
     if (!snap.recursos.length) return '';
     const usd = t => t * PRECIO / 1e6, total = snap.recursos.reduce((a, r) => a + r.tokens, 0);
-    return `<div class="caja"><b>Recursos terminados · lo que habrían costado con Claude (aprox.)</b>`
+    return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
       + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">${r.bytes ? '~' + ktok(r.tokens) + ' tokens · ~' + eur(usd(r.tokens)) : '—'}</span></div>`).join('')
-      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(total)} tokens · ~${eur(usd(total))}. Cálculo: bytes del artefacto ÷ ${BYTES_POR_TOKEN} por ${PRECIO} $ el millón de tokens de salida (1 € = ${CAMBIO} $).</div></div>`;
+      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(total)} tokens · ~${eur(usd(total))}. Cálculo: bytes del artefacto ÷ ${BYTES_POR_TOKEN} (≈1.056 tokens por imagen de ~1 MB) por ${PRECIO} $ el millón de tokens de salida, tarifa de una API de imágenes (1 € = ${CAMBIO} $). Claude no genera imágenes: es una referencia, no un coste real.</div></div>`;
   }
 
   // ----- pantalla -----

@@ -79,8 +79,11 @@ function mgPrevision(B, x, y, tipo) {
 
 // Mueve los bichos. Los cuervos saltan a cualquier casilla libre; los zorros, a una libre de al lado.
 // Después, los zorros de un grupo sin ninguna salida se duermen (y los cuervos, si no queda ni una casilla libre).
+// camino (un Set de casillas y*8+x, opcional): los zorros solo andan por él; fuera del camino se pierden y, si no tienen camino
+// libre al lado, se duermen. Los cuervos vuelan: el camino no les importa.
 // Devuelve lo que se ha movido y los que se han dormido, para animarlo.
-function mgMueveBichos(B, quietos) {
+function mgMueveBichos(B, quietos, camino) {
+  const andable = (x, y) => mgDentro(x, y) && !B[y][x] && (!camino || camino.has(y * 8 + x));
   const movidos = [], dormidos = [];
   const bichos = []; for (let y = 0; y < B.length; y++) for (let x = 0; x < B.length; x++) if (B[y][x] && (B[y][x].t === 'zorro' || B[y][x].t === 'cuervo')) bichos.push([x, y]);
   if (!quietos) {
@@ -89,7 +92,7 @@ function mgMueveBichos(B, quietos) {
       const [nx, ny] = pick(v); B[ny][nx] = B[y][x]; B[y][x] = null; movidos.push({ de: [x, y], a: [nx, ny], salto: true });
     }
     for (const [x, y] of bichos.filter(([x, y]) => B[y][x] && B[y][x].t === 'zorro')) {
-      const libres = MG_DIR.map(([dx, dy]) => [x + dx, y + dy]).filter(([nx, ny]) => mgDentro(nx, ny) && !B[ny][nx]);
+      const libres = MG_DIR.map(([dx, dy]) => [x + dx, y + dy]).filter(([nx, ny]) => andable(nx, ny));
       if (!libres.length) continue;
       const [nx, ny] = pick(libres); B[ny][nx] = B[y][x]; B[y][x] = null; movidos.push({ de: [x, y], a: [nx, ny] });
     }
@@ -99,7 +102,7 @@ function mgMueveBichos(B, quietos) {
   for (let y = 0; y < B.length; y++) for (let x = 0; x < B.length; x++) {
     const c = B[y][x]; if (!c || c.t !== 'zorro' || visto.has(y * 8 + x)) continue;
     const g = mgGrupo(B, x, y, 'zorro'); g.forEach(([gx, gy]) => visto.add(gy * 8 + gx));
-    const salida = g.some(([gx, gy]) => MG_DIR.some(([dx, dy]) => mgDentro(gx + dx, gy + dy) && !B[gy + dy][gx + dx]));
+    const salida = g.some(([gx, gy]) => MG_DIR.some(([dx, dy]) => andable(gx + dx, gy + dy)));
     if (!salida) dormidos.push(...g);
   }
   if (!mgVacias(B).length) for (let y = 0; y < B.length; y++) for (let x = 0; x < B.length; x++) if (B[y][x] && B[y][x].t === 'cuervo') dormidos.push([x, y]);

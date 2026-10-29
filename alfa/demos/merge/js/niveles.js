@@ -17,7 +17,7 @@ const MG_NIVELES = [
     pesos: { brote: 50, zanahoria: 50 } },
   { id: 3, lado: 5, movs: 12, obj: [{ dormir: 2 }], intro: 'Cuidado con el zorro.',
     inicio: [[0, 0, 'zorro'], [1, 0, 'brote'], [3, 3, 'zanahoria']],
-    guion: [{ p: 'zanahoria', c: [0, 1], txt: 'El zorro anda por los huecos. Si lo encierras, se duerme. ¡Tápale la salida!' }],
+    guion: [{ p: 'zanahoria', c: [0, 1], txt: 'El zorro solo anda por el camino de tierra. Si le tapas el paso, se duerme. ¡Tápale la salida!' }],
     pesos: { brote: 50, zanahoria: 25, zorro: 25 } },
   { id: 4, lado: 5, movs: 12, obj: [{ crear: 'madriguera', n: 1 }], intro: 'La semilla mágica.',
     inicio: [[1, 1, 'casita'], [3, 1, 'casita'], [0, 3, 'huerto'], [4, 4, 'huerto']],

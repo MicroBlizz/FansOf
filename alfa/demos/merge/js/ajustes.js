@@ -42,6 +42,7 @@ const MG_CFG = {
   eventoCada: 14,       // cada cuántos turnos llega un evento
   eventoDura: 3,        // cuántos turnos dura
   lluviaCasillas: 4,    // casillas mojadas (x2) en la lluvia y la tormenta
+  camino: 1.5,          // multiplicador de puntos de lo que se crea sobre el camino de tierra
   reservaEspera: 2,     // turnos que hay que esperar tras usar la reserva (con la carta Mercader, 0)
 };
 

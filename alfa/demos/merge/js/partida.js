@@ -53,6 +53,7 @@ const mgMultRacha = () => 1 + 0.25 * Math.min(MG_P.racha || 0, 4);
 function mgMult(x, y) {
   let m = (mgTiene('cosecha') ? 1.25 : 1) * mgMultRacha();
   const E = MG_P.evento; if (E && E.casillas.has(y * 8 + x)) m *= 2;
+  if (MG_P.camino && MG_P.camino.has(y * 8 + x)) m *= MG_CFG.camino;   // lo que se construye junto al camino lo ve más gente: vale más
   return m;
 }
 function mgSuma(pts, x, y) {
@@ -163,7 +164,7 @@ function mgFinTurno() {
   const E = MG_P.evento;
   if (E && E.id === 'tormenta') mgRelampago();
   const quietos = (E && E.id === 'siesta') || (mgTiene('encantador') && MG_P.turno % 2 === 1);
-  const m = mgMueveBichos(MG_P.B, quietos);
+  const m = mgMueveBichos(MG_P.B, quietos, MG_P.camino);
   if (m.movidos.length) mgFxMueve(m.movidos);
   MG_P.dormidos += m.dormidos.length;
   if (m.dormidos.length) { setTimeout(() => play('mgDuerme'), 260); m.dormidos.forEach(([x, y]) => mgFxNace(x, y, 0.28)); mgJuntaDormidos(m.dormidos); }

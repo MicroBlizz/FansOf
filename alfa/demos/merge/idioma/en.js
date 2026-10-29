@@ -15,7 +15,6 @@ IDIOMA.add({
  "Cómo se juega": "How to play",
  "Planta la pieza en una casilla libre. <b>Tres iguales que se tocan</b> se juntan en una mejor, justo donde pusiste la última.": "Plant the piece on a free tile. <b>Three of a kind that touch</b> merge into a better one, right where you placed the last one.",
  "Brote, zanahoria, huerto, casita, madriguera, torre, palacio… ¡Llega al <b>palacio flotante</b>! Con cuatro o más sale dorada y vale el doble.": "Sprout, carrot, patch, hut, burrow, tower, palace… Reach the <b>floating palace</b>! Merge four or more and you get a golden one worth double.",
- "El <b>zorro</b> anda y el <b>cuervo</b> salta. Enciérralos y se duermen; tres dormidos hacen una cueva.": "The <b>fox</b> walks and the <b>crow</b> hops. Trap them and they fall asleep; three sleeping foxes make a cave.",
  "La <b>semilla mágica</b> se convierte en lo que más te conviene. El <b>topo</b> quita una pieza.": "The <b>magic seed</b> turns into whatever suits you best. The <b>mole</b> removes a piece.",
  "Guarda una pieza en la <b>reserva</b> para luego. Abre los <b>cofres</b> para hacer sitio. Si el tablero se llena, se acaba.": "Keep a piece in the <b>stash</b> for later. Open <b>chests</b> to make room. If the board fills up, it's over.",
  "¡A PLANTAR!": "LET'S PLANT!",
@@ -92,11 +91,9 @@ IDIOMA.add({
  "Tormenta": "Storm",
  "Casillas x2 y un relámpago por turno sobre una pieza pequeña.": "x2 tiles and a lightning bolt each turn on a small piece.",
  "{e}: {n} turnos": "{e}: {n} turns",
- "Anda por los caminos. Enciérralo y se dormirá.": "Walks along the paths. Trap it and it falls asleep.",
  "Salta a cualquier hueco. Solo se duerme si no queda sitio.": "Hops to any free spot. Only sleeps when there's no room left.",
  "Se convierte en lo que mejor te venga.": "Turns into whatever suits you best.",
  "Toca una pieza del tablero para quitarla.": "Tap a piece on the board to remove it.",
- "Junta tres que se toquen y crecerá.": "Match three that touch and it will grow.",
  "RACHA": "STREAK",
  "¡CADENA x{n}!": "CHAIN x{n}!",
  "Racha perdida": "Streak lost",
@@ -112,7 +109,6 @@ IDIOMA.add({
  "El tablero se ha llenado.": "The board is full.",
  "El topo quita la pieza que estorba.": "The mole removes the piece in your way.",
  "El topo quita una pieza. Toca la piedra para quitarla.": "The mole removes a piece. Tap the stone to remove it.",
- "El zorro anda por los huecos. Si lo encierras, se duerme. ¡Tápale la salida!": "The fox walks through the gaps. Trap it and it falls asleep. Block its way out!",
  "Elige una carta: te acompaña todo el nivel.": "Pick a card: it stays with you all level.",
  "En {n} turnos": "In {n} turns",
  "Haz una pieza: {p}": "Make one: {p}",
@@ -137,5 +133,9 @@ IDIOMA.add({
  "¡Modo libre desbloqueado!": "Free mode unlocked!",
  "¡Nivel superado!": "Level complete!",
  "SALIR": "QUIT",
- "¡Nuevo récord!": "New best!"
+ "¡Nuevo récord!": "New best!",
+ "El zorro solo anda por el camino de tierra. Si le tapas el paso, se duerme. ¡Tápale la salida!": "The fox only walks on the dirt path. Block its way and it falls asleep. Cut off its way out!",
+ "El <b>zorro</b> solo anda por el <b>camino de tierra</b> y el <b>cuervo</b> salta a cualquier hueco. Enciérralos y se duermen; tres dormidos hacen una cueva. Lo que crece sobre el camino da <b>+50 % de puntos</b>.": "The <b>fox</b> only walks on the <b>dirt path</b> and the <b>crow</b> hops to any gap. Trap them and they fall asleep; three sleeping foxes make a cave. Whatever grows on the path gives <b>+50% points</b>.",
+ "Solo anda por el camino de tierra. Tápale el paso y se dormirá.": "Only walks on the dirt path. Block its way and it falls asleep.",
+ "Junta tres que se toquen. Sobre el camino, +50 % de puntos.": "Match three that touch. On the path, +50% points."
 });

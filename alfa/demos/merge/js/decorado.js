@@ -25,9 +25,9 @@ function mgConejosNuevos() {
 function mgConejosAvanza(dt) {
   const P = MG_P; if (!P.B) return;
   for (const C of MG_CONEJOS) {
-    const libre = (x, y) => mgDentro(x, y) && !P.B[y][x];
+    const libre = (x, y) => mgDentro(x, y) && !P.B[y][x] && (!P.camino || P.camino.has(y * 8 + x));   // pasean por el camino
     if (!C.sitio || !libre(C.ax, C.ay)) {   // aparece en un camino cualquiera (si el suyo se ha ocupado)
-      const v = mgVacias(P.B); if (!v.length) { C.sitio = false; continue; }
+      const v = mgVacias(P.B).filter(([x, y]) => libre(x, y)); if (!v.length) { C.sitio = false; continue; }
       [C.ax, C.ay] = pick(v); C.x = C.ax; C.y = C.ay; C.k = 1; C.sitio = true; continue;
     }
     if (C.k < 1) { C.k = Math.min(1, C.k + dt * 1.6); continue; }

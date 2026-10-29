@@ -52,7 +52,7 @@ function mgAyuda(enPartida) {
   const t = mgModal(`<h2>${tr('Cómo se juega')}</h2>
     ${fila('zanahoria', tr('Planta la pieza en una casilla libre. <b>Tres iguales que se tocan</b> se juntan en una mejor, justo donde pusiste la última.'))}
     ${fila('palacio', tr('Brote, zanahoria, huerto, casita, madriguera, torre, palacio… ¡Llega al <b>palacio flotante</b>! Con cuatro o más sale dorada y vale el doble.'))}
-    ${fila('zorro', tr('El <b>zorro</b> anda y el <b>cuervo</b> salta. Enciérralos y se duermen; tres dormidos hacen una cueva.'))}
+    ${fila('zorro', tr('El <b>zorro</b> solo anda por el <b>camino de tierra</b> y el <b>cuervo</b> salta a cualquier hueco. Enciérralos y se duermen; tres dormidos hacen una cueva. Lo que crece sobre el camino da <b>+50 % de puntos</b>.'))}
     ${fila('semilla', tr('La <b>semilla mágica</b> se convierte en lo que más te conviene. El <b>topo</b> quita una pieza.'))}
     ${fila('cofre', tr('Guarda una pieza en la <b>reserva</b> para luego. Abre los <b>cofres</b> para hacer sitio. Si el tablero se llena, se acaba.'))}
     <button class="mg-btn" id="mg-ay-ok" type="button">${tr('¡A PLANTAR!')}</button>`, 'mg-ancha');

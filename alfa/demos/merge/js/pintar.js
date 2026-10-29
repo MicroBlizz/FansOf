@@ -113,7 +113,7 @@ function mgTirachinasIcono(c, x, y) {
 }
 
 /* ---------- el tablero: caminos de tierra, piezas, previsión ---------- */
-function mgPintaCaminos(c, t) {
+function mgPintaCaminos(c, t) {   // c no es const: el camino pintado se prepara una vez en otro lienzo con la misma forma
   const P = MG_P, cs = MG_V.cs, n = MG_CFG.lado, B = P.B, r = cs * 0.38, E = P.evento;
   const libre = (x, y) => mgDentro(x, y) && P.camino.has(y * 8 + x);   // el camino es fijo en cada partida: no cambia al poner piezas
   const forma = (pad) => {   // cada casilla libre es una mancha redonda, unida a las libres de al lado
@@ -126,10 +126,22 @@ function mgPintaCaminos(c, t) {
       if (libre(x, y + 1)) c.rect(cx - r * 0.7 - pad, cy, (r * 0.7 + pad) * 2, cs);
     }
   };
-  if (MG_IMG.TIERRA) {   // el camino: la forma de los senderos rellena con la tierra pintada por Yoshi
-    if (!MG_V.patronT || MG_V.patronTDe !== MG_IMG.TIERRA) { MG_V.patronT = c.createPattern(MG_IMG.TIERRA, 'repeat'); MG_V.patronTDe = MG_IMG.TIERRA; }
-    forma(3); c.fillStyle = 'rgba(70,60,20,.4)'; c.fill('nonzero');
-    forma(0); c.save(); c.clip('nonzero'); c.scale(0.35, 0.35); c.fillStyle = MG_V.patronT; c.fillRect(0, 0, 540 / 0.35, MG_V.H / 0.35); c.restore();
+  if (MG_IMG.TIERRA) {   // el camino: la tierra pintada por Yoshi, con el borde difuminado para que se funda con la hierba (sin escalón)
+    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, [...P.camino].join(','), MG_IMG.TIERRA.src].join('|');
+    if (MG_V.caminoClave !== clave) {
+      const W = Math.ceil(540 * k), H = Math.ceil(MG_V.H * k), tierra = document.createElement('canvas'), mascara = document.createElement('canvas');
+      tierra.width = mascara.width = W; tierra.height = mascara.height = H;
+      const tc = tierra.getContext('2d'), mc = mascara.getContext('2d');
+      tc.setTransform(k * 0.35, 0, 0, k * 0.35, 0, 0); tc.fillStyle = tc.createPattern(MG_IMG.TIERRA, 'repeat'); tc.fillRect(0, 0, 540 / 0.35, MG_V.H / 0.35);
+      mc.setTransform(k, 0, 0, k, 0, 0); mc.fillStyle = '#000';
+      const real = c; c = mc;
+      mc.filter = `blur(${Math.round(cs * 0.05 * k)}px)`; forma(cs * 0.02); mc.fill('nonzero');   // el borde, suave
+      mc.filter = 'none'; forma(-cs * 0.06); mc.fill('nonzero');                                     // el centro, lleno
+      c = real;
+      tc.setTransform(1, 0, 0, 1, 0, 0); tc.globalCompositeOperation = 'destination-in'; tc.drawImage(mascara, 0, 0);
+      MG_V.caminoLienzo = tierra; MG_V.caminoClave = clave;
+    }
+    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(MG_V.caminoLienzo, 0, 0); c.restore();
   } else {
   forma(3); c.fillStyle = 'rgba(70,60,20,.45)'; c.fill('nonzero');
   forma(0); c.fillStyle = '#c9b46e'; c.fill('nonzero');
@@ -248,13 +260,13 @@ function mgPintaAbajo(c, t) {
 }
 function mgDescripcion(tipo) {
   const T = mgTipoDe(tipo);
-  if (T === 'zorro') return 'Anda por los caminos. Enciérralo y se dormirá.';
+  if (T === 'zorro') return 'Solo anda por el camino de tierra. Tápale el paso y se dormirá.';
   if (T === 'cuervo') return 'Salta a cualquier hueco. Solo se duerme si no queda sitio.';
   if (T === 'semilla') return 'Se convierte en lo que mejor te venga.';
   if (T === 'topo') return 'Toca una pieza del tablero para quitarla.';
   if (MG_P.sel) return 'Suelta para plantar aquí. Arrastra para cambiar de casilla.';
   if (MG_P.turno < 4) return 'Toca una casilla para plantar. Mantén y arrastra para ver antes qué pasa.';
-  return 'Junta tres que se toquen y crecerá.';
+  return 'Junta tres que se toquen. Sobre el camino, +50 % de puntos.';
 }
 function mgPintaAvisos(c) {
   const a = MG_FX.avisos.find(x => MG_FX.t >= x.t0);

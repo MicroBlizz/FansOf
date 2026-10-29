@@ -35,7 +35,7 @@ const FISICA = (() => {
     const n = Math.max(1, Math.ceil(Math.hypot(p.vx, p.vy) * DT / 4)), sx = p.vx * DT / n, sy = p.vy * DT / n;
     for (let i = 0; i < n; i++) {
       p.x += sx; p.y += sy;
-      if (p.y < 0) p.alto = true;
+      if (p.y < 0 && !p.def.cae) p.alto = true;   // lo que ya cae del cielo (obuses, bombas) no cuenta como tiro alto
       if (p.x < 0 || p.x >= W) { p.fin = { tipo: 'borde' }; return true; }
       if (p.y >= H + 40) { p.fin = { tipo: 'vacio' }; return true; }
       const suelo = p.atraviesa <= 0 && TERRENO.solido(p.x, p.y);

@@ -1,48 +1,8 @@
-// Fans of Rouflage · LAS PANTALLAS DE LOS MENÚS (MI ESCENARIO, PvP, armario, tienda, gachapón, pase, misiones, diario y perfil): el mismo HTML que estaba en
-// index.html (que pasaba de 25 KB), puesto en su sitio (#pantalla-escenario y #pantallas-menus) en cuanto carga, antes que todo lo demás (NUCLEO.juego: antes).
+// Fans of Rouflage · LAS PANTALLAS DE LOS MENÚS (PvP, armario, tienda, gachapón, pase, misiones, diario y perfil): el mismo HTML que estaba en
+// index.html (que pasaba de 25 KB), puesto en su sitio (#pantallas-menus) en cuanto carga, antes que todo lo demás (NUCLEO.juego: antes).
 // Los textos con data-tr se traducen igual que los de index.html. Lo que cambie aquí cambia en la página: es HTML normal dentro de `…`.
 'use strict';
 (() => {
-  const esc = document.getElementById('pantalla-escenario');
-  if (esc) esc.outerHTML = `
-<!-- MI ESCENARIO (escenario*.js): tu mapa para pasear, decorar y pintar, con el armario dentro -->
-<div class="pantalla escenario" id="p-escenario" hidden>
-  <canvas id="esc-lienzo"></canvas>
-  <div class="esc-arriba" id="esc-arriba">
-    <button type="button" class="boton gris peq" id="b-esc-volver" data-tr>VOLVER</button>
-    <h2 class="ol" data-tr>MI ESCENARIO</h2>
-    <button type="button" class="boton peq esc-clase colado" id="b-esc-clase" hidden><canvas width="44" height="56"></canvas><b>COLADO</b></button>
-    <button type="button" class="boton peq esc-pasear" id="b-esc-pasear"><i data-icono="andar"></i><b data-tr>PASEAR</b></button>
-  </div>
-  <div class="esc-burbuja" id="esc-burbuja" hidden>
-    <b id="esc-sel-n"></b>
-    <div>
-      <button type="button" id="b-esc-mover" data-tr-title title="Mover: arrastra desde aquí" data-tr-aria aria-label="Mover"><i data-icono="andar"></i></button>
-      <button type="button" id="b-esc-voltear" data-tr-title title="Voltear" data-tr-aria aria-label="Voltear"><i data-icono="voltear"></i></button>
-      <button type="button" id="b-esc-color" data-tr-title title="Cambiar de color" data-tr-aria aria-label="Cambiar de color"><i data-icono="paleta"></i></button>
-      <button type="button" id="b-esc-quitar" class="malo" data-tr-title title="Quitar" data-tr-aria aria-label="Quitar"><i data-icono="quitar"></i></button>
-    </div>
-  </div>
-  <div class="esc-panel" id="esc-panel">
-    <div class="esc-pestanas" id="esc-pestanas" role="tablist"></div>
-    <div id="esc-decorar">
-      <div class="esc-cab"><span id="esc-cuenta"></span><span id="esc-pista"></span></div>
-      <div class="esc-tira" id="esc-tira"></div>
-    </div>
-    <div id="esc-pintar" hidden>
-      <div class="esc-herr" id="esc-herr"></div>
-      <div class="esc-colores" id="esc-colores"></div>
-    </div>
-    <div id="esc-pasear" hidden><div class="esc-paseo"><p data-tr>Arrastra el dedo para llevar tu galleta o toca el suelo para ir andando (o usa las flechas). Con dos dedos, zoom.</p><button type="button" class="boton azul" id="b-esc-armario"><i data-icono="armario"></i><b data-tr>ARMARIO</b></button></div></div>
-  </div>
-  <div class="esc-zoom" id="esc-zoom">
-    <button type="button" id="b-esc-mas" data-tr-title title="Acercar" data-tr-aria aria-label="Acercar"><i data-icono="mas"></i></button>
-    <button type="button" id="b-esc-menos" data-tr-title title="Alejar" data-tr-aria aria-label="Alejar"><i data-icono="menos"></i></button>
-    <button type="button" id="b-esc-yo" data-tr-title title="Ir a mi galleta" data-tr-aria aria-label="Ir a mi galleta"><i data-icono="centrar"></i></button>
-  </div>
-  <div id="esc-aviso" aria-live="polite"></div>
-</div>
-`;
   const sitio = document.getElementById('pantallas-menus');
   if (sitio) sitio.outerHTML = `
 <!-- PvP: el menú, la sala llenándose, la clasificación y cómo funciona -->

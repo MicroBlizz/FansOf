@@ -1,0 +1,68 @@
+/* pantalla de carga (intro, 25-10-2026). Damero turquesa y crema del icono a pantalla completa. Guion: «FANS OF» cae con rebote (0,5 s); «ROUFLAGE» estalla letra a letra
+   con manchas de pintura (1,5–2 s); abajo hay un colado escondido, pintado con la PINTURA RÁPIDA del juego sobre este mismo damero (se nota si te fijas); a los 2 s entra
+   el becario con la linterna, el haz lo pilla (3,3 s): «!», susto, huye corriendo y el becario sale detrás. Ciclo de 7 s. «TOCA PARA JUGAR» a los 3,5 s.
+   Los dibujos (img/intro-*.png) salen del propio juego con herramientas/intro_rouflage_sprites.js. La escena mide 150 x 300 unidades del juego (casilla de 32) y el damero
+   del fondo está alineado con ella. Solo transform y opacity: va fino en móvil. */
+#carga { overflow: hidden; padding: 0; --tinta: #1f1538; --u: min(1vw, 0.62vh);
+  --ew: min(100vw, 50vh); --eh: calc(var(--ew) * 2); --ex: calc(50vw - var(--ew) / 2); --ey: calc(50vh - var(--eh) / 2); --cas: calc(var(--ew) * 64 / 150);
+  background: #f3ebd6 conic-gradient(#6fd0c8 25%, #f3ebd6 0 50%, #6fd0c8 0 75%, #f3ebd6 0) var(--ex) var(--ey) / var(--cas) var(--cas); }
+#carga .cg-escena { position: absolute; left: var(--ex); top: var(--ey); width: var(--ew); height: var(--eh); pointer-events: none; }
+/* cada dibujo es una caja de 84 x 80 unidades con los pies en (42, 72); el colado tiene los pies en (100, 225) y el becario se para con los suyos en (38, 225) */
+#carga .cg-oculto, #carga .cg-susto, #carga .cg-cam, #carga .cg-caz { position: absolute; top: 51%; width: 56%; height: 26.667%; background: 0 0 / 100% 100% no-repeat; }
+#carga .cg-oculto, #carga .cg-susto, #carga .cg-cam { left: 38.667%; }
+#carga .cg-oculto { background-image: url(img/intro-colado.png); animation: cg-oculto 7s linear infinite; }
+#carga .cg-susto { background-image: url(img/intro-colado-susto.png); opacity: 0; animation: cg-susto 7s linear infinite; z-index: 2; }
+#carga .cg-cam { opacity: 0; animation: cg-huye 7s linear infinite; z-index: 2; }
+#carga .cg-caz { left: -70%; opacity: 0; animation: cg-caza 7s linear infinite; z-index: 3; }
+#carga .cg-cam::before, #carga .cg-caz::before, #carga .cg-caz::after { content: ''; position: absolute; inset: 0; background: 0 0 / 800% 100% no-repeat; }
+#carga .cg-cam::before { background-image: url(img/intro-colado-corre.png); animation: cg-pasos 0.45s steps(8) infinite; }
+#carga .cg-caz::before { background-image: url(img/intro-becario.png); animation: cg-pasos 0.6s steps(8) infinite, cg-anda 7s step-end infinite; }
+#carga .cg-caz::after { background: url(img/intro-becario-quieto.png) 0 0 / 100% 100% no-repeat; opacity: 0; animation: cg-para 7s step-end infinite; }
+/* el haz de la linterna: nace en la punta (90 % x 57 % de la caja del becario), se balancea buscando y se queda clavado en el colado */
+#carga .cg-haz { position: absolute; left: 90%; top: 57.5%; width: 190%; height: 160%; transform-origin: 0 50%; transform: translateY(-50%); z-index: -1;
+  background: radial-gradient(ellipse 100% 70% at 0 50%, rgba(255, 228, 120, 0.7), rgba(255, 236, 170, 0.35) 55%, rgba(255, 236, 170, 0) 100%);
+  clip-path: polygon(0 47%, 100% 0, 100% 100%, 0 53%); animation: cg-busca 7s ease-in-out infinite; }
+#carga .cg-excl { position: absolute; left: 62%; top: 44%; font: 400 calc(var(--ew) * 0.15) var(--font-display, 'Luckiest Guy', Impact, sans-serif); color: #ff4b5c; -webkit-text-stroke: 0.08em var(--tinta); paint-order: stroke fill; opacity: 0; animation: cg-excl 7s linear infinite; z-index: 4; }
+#carga .cg { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; width: 100%; padding-top: max(calc(var(--u) * 8), calc(var(--ey) + var(--eh) * 0.04)); z-index: 5; pointer-events: none; }
+#carga .cg-arriba { display: grid; justify-items: center; transform-origin: 50% 0; }
+#carga .cg-fans { position: relative; z-index: 2; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; font-size: calc(var(--u) * 14); letter-spacing: 0.08em; line-height: 1; color: #fff7e8; -webkit-text-stroke: 0.1em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.1em 0 var(--tinta)); transform: translateY(-130vh) rotate(-4deg); animation: cg-cae 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards; }
+#carga .cg-titulo { position: relative; isolation: isolate; display: grid; justify-items: center; font-family: var(--font-display, 'Luckiest Guy', Impact, sans-serif); font-weight: 400; line-height: 0.86; margin-top: calc(var(--u) * 2); }
+#carga .cg-fila { display: flex; font-size: calc(var(--u) * 31); letter-spacing: 0.01em; }
+#carga .cg-fila + .cg-fila { margin-top: calc(var(--u) * -2); }
+#carga .cg-titulo i { font-style: normal; color: transparent; -webkit-background-clip: text; background-clip: text; padding: 0.1em 0.03em 0.05em; transform: scale(0); animation: cg-pop 0.5s cubic-bezier(0.34, 1.9, 0.64, 1) forwards;
+  filter: drop-shadow(0.05em 0 0 var(--tinta)) drop-shadow(-0.05em 0 0 var(--tinta)) drop-shadow(0 0.05em 0 var(--tinta)) drop-shadow(0 -0.05em 0 var(--tinta)) drop-shadow(0 0.1em 0 var(--tinta)); }
+#carga .cg-titulo i:nth-child(odd) { --giro: rotate(-6deg) translateY(0.05em); }
+#carga .cg-titulo i:nth-child(even) { --giro: rotate(5deg) translateY(-0.05em); }
+#carga .cg-titulo .p1 { background-image: conic-gradient(from 45deg, #7a8fe0 25%, #4a5a9a 0 50%, #7a8fe0 0 75%, #4a5a9a 0); background-size: 0.3em 0.3em; }
+#carga .cg-titulo .p2 { background-image: repeating-linear-gradient(-50deg, #f3c53a 0 0.13em, #2e3560 0.13em 0.26em); }
+#carga .cg-titulo .p3 { background-image: repeating-linear-gradient(90deg, #f28c28 0 0.12em, #f6ebd5 0.12em 0.24em); }
+#carga .f1 i:nth-child(1) { animation-delay: 1.5s; } #carga .f1 i:nth-child(2) { animation-delay: 1.56s; } #carga .f1 i:nth-child(3) { animation-delay: 1.62s; }
+#carga .f2 i:nth-child(1) { animation-delay: 1.68s; } #carga .f2 i:nth-child(2) { animation-delay: 1.74s; } #carga .f2 i:nth-child(3) { animation-delay: 1.8s; } #carga .f2 i:nth-child(4) { animation-delay: 1.86s; } #carga .f2 i:nth-child(5) { animation-delay: 1.92s; }
+#carga .cg-mancha { position: absolute; width: 1em; height: 1em; font-size: calc(var(--u) * 22); border-radius: 46% 54% 48% 52% / 55% 45% 55% 45%; transform: scale(0); animation: cg-mancha 0.6s cubic-bezier(0.2, 1.4, 0.5, 1) forwards; z-index: -1; opacity: 0.95; }
+#carga .cg-mancha::before, #carga .cg-mancha::after { content: ''; position: absolute; width: 0.34em; height: 0.34em; border-radius: 50%; background: inherit; }
+#carga .cg-mancha::before { left: -0.14em; top: 0.4em; } #carga .cg-mancha::after { right: -0.1em; top: -0.12em; width: 0.26em; height: 0.26em; }
+#carga .cg-mancha.m1 { left: -8%; top: 2%; background: #f28c28; animation-delay: 1.45s; }
+#carga .cg-mancha.m2 { right: -10%; top: 14%; background: #6fd0c8; filter: brightness(0.88); font-size: calc(var(--u) * 28); animation-delay: 1.55s; }
+#carga .cg-mancha.m3 { left: 16%; bottom: -14%; background: #f3c53a; font-size: calc(var(--u) * 18); animation-delay: 1.65s; }
+#carga .cg-mancha.m4 { right: 12%; bottom: -10%; background: #ff6b8a; font-size: calc(var(--u) * 16); animation-delay: 1.72s; }
+#carga .cg-mancha.m5 { right: 26%; top: 34%; background: #7a8fe0; font-size: calc(var(--u) * 12); animation-delay: 1.8s; }
+#carga .cg-cargando { position: absolute; left: 0; right: 0; bottom: max(calc(var(--u) * 10), calc(100vh - var(--ey) - var(--eh) + var(--eh) * 0.06)); margin: 0; font: 800 calc(var(--u) * 6.5) 'Baloo 2', system-ui, sans-serif; letter-spacing: 0.22em; color: #fff7e8; -webkit-text-stroke: 0.07em var(--tinta); paint-order: stroke fill; filter: drop-shadow(0 0.08em 0 var(--tinta)); opacity: 0; animation: cg-fade 0.8s ease-out 3.5s forwards; z-index: 5; }
+#carga .cg-cargando.toca { color: #f28c28; animation: cg-fade 0.8s ease-out 3.5s forwards, cg-toca 0.9s ease-in-out 0.8s infinite alternate; }
+#carga.cg-sacude .cg { animation: cg-sacude 0.4s linear 1.35s; }
+@keyframes cg-cae { to { transform: translateY(0) rotate(-4deg); } }
+@keyframes cg-sacude { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-1.5vw, 1vh); } 40% { transform: translate(1.5vw, -0.8vh); } 60% { transform: translate(-1vw, 0.6vh); } 80% { transform: translate(0.8vw, -0.4vh); } }
+@keyframes cg-pop { 0% { transform: scale(0) var(--giro); } 100% { transform: scale(1) var(--giro); } }
+@keyframes cg-mancha { to { transform: scale(1) rotate(12deg); } }
+@keyframes cg-fade { to { opacity: 1; } }
+@keyframes cg-toca { from { opacity: 0.6; transform: scale(1); } to { opacity: 1; transform: scale(1.08); } }
+@keyframes cg-pasos { to { background-position-x: 114.2857%; } }      /* 8 fotogramas: cada paso avanza 1/7 (así cae justo en cada uno) */
+/* el ciclo de 7 s (1 % = 0,07 s): becario entra 2,0 s · se para 3,1 s · el haz lo pilla y «!» 3,3 s · el colado huye 3,5–4,4 s · el becario arranca 3,6 s y sale 4,8 s · el colado vuelve a esconderse 6,2–6,7 s */
+@keyframes cg-oculto { 0%, 47% { opacity: 1; } 47.1%, 88% { opacity: 0; } 96%, 100% { opacity: 1; } }
+@keyframes cg-susto { 0%, 47% { opacity: 0; transform: scale(1); } 47.1% { opacity: 1; transform: scale(1.3) translateY(-4%); } 48.6% { transform: scale(1); } 50% { opacity: 1; } 50.1%, 100% { opacity: 0; } }
+@keyframes cg-huye { 0%, 50% { left: 38.667%; opacity: 0; } 50.1% { opacity: 1; } 62.5% { left: 115%; opacity: 1; } 62.6%, 100% { left: 115%; opacity: 0; } }
+@keyframes cg-caza { 0%, 28.5% { left: -70%; opacity: 0; } 28.6% { opacity: 1; } 44% { left: -2.667%; } 51.5% { left: -2.667%; } 68.5% { left: 115%; opacity: 1; } 68.6%, 100% { left: 115%; opacity: 0; } }
+@keyframes cg-anda { 0% { opacity: 1; } 44% { opacity: 0; } 51.5% { opacity: 1; } }
+@keyframes cg-para { 0% { opacity: 0; } 44% { opacity: 1; } 51.5% { opacity: 0; } }
+@keyframes cg-busca { 0%, 28.5% { transform: translateY(-50%) rotate(-10deg); } 33% { transform: translateY(-50%) rotate(8deg); } 38% { transform: translateY(-50%) rotate(-9deg); } 43% { transform: translateY(-50%) rotate(5deg); } 46.5%, 100% { transform: translateY(-50%) rotate(0deg); } }
+@keyframes cg-excl { 0%, 46.5% { opacity: 0; transform: translateY(0.15em) scale(0.5); } 48% { opacity: 1; transform: translateY(0) scale(1.3); } 50% { transform: scale(1); } 55%, 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #carga * { animation-duration: 0.01s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } #carga .cg-cam, #carga .cg-caz, #carga .cg-excl, #carga .cg-susto { animation: none !important; opacity: 0; } #carga .cg-oculto { animation: none !important; opacity: 1; } }

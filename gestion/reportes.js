@@ -8,7 +8,6 @@
 'use strict';
 (() => {
   let D = null;
-  const otras = ['t-cuentas', 't-votos', 't-roles'], paneles = ['pan-cuentas', 'pan-votos', 'pan-roles'];
   const MOTIVO = { dibujo: 'Dibujo inapropiado', nombre: 'Nombre ofensivo', otro: 'Otra cosa', chat: 'Mensaje del chat de la sala' };
   // las frases rápidas de la sala (games/rouflage/js/chat-frases.js: CHAT_FRASES.s), por si lo reportado es una de ellas
   const FRASES_SALA = ['¡Hola!', '¡Listo!', '¡Suerte!', 'Un momento', 'Jajaja', '¿Empezamos?', '¡Buena partida!', 'Me voy'];
@@ -97,12 +96,7 @@
     try { D = await rpc('gestion_reportes', { p_token: leerToken(), p_estado: $('rf-estado').value, p_dias: 30 }); pinta(); }
     catch (e) { $('rf-aviso').textContent = /does not exist|PGRST202|404/.test(String(e.message)) ? 'Los reportes de Rouflage aún no están activados en el servidor (servidor/60-rouflage-votos.sql).' : textoError(e); }
   }
-  function mostrar(si) {
-    $('pan-reportes').hidden = !si; $('t-reportes').classList.toggle('activa', si);
-    if (si) { paneles.forEach(p => { $(p).hidden = true; }); otras.forEach(t => $(t).classList.remove('activa')); cargar(); }
-  }
-  $('t-reportes').onclick = () => mostrar(true);
-  otras.forEach(t => $(t).addEventListener('click', () => mostrar(false)));
+  GESTION_NAV.seccion({ id: 'reportes', pan: 'pan-reportes', juego: 'rouflage', etiqueta: 'Reportes', orden: 1, cargar });
   $('rf-estado').onchange = cargar; $('rf-recargar').onclick = cargar;
   $('rf-lista').onclick = async ev => {
     const b = ev.target.closest('button[data-a]'); if (!b) return;
@@ -119,5 +113,5 @@
     b.disabled = true;
     try { await rpc('gestion_desbanear', { p_token: leerToken(), p_usuario: b.dataset.u }); await cargar(); } catch (e) { $('rf-aviso').textContent = textoError(e); b.disabled = false; }
   };
-  $('salir').addEventListener('click', () => { D = null; mostrar(false); });
+  $('salir').addEventListener('click', () => { D = null; });
 })();

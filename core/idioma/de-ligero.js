@@ -165,6 +165,7 @@ IDIOMA.add({
   "CREA UNA CUENTA ANTES DE PAGAR": "ERSTELL EIN KONTO, BEVOR DU ZAHLST",
   "Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».": "Wir bitten dich dringend, vor dem Bezahlen ein Konto mit E-Mail oder Google zu erstellen. Du spielst gerade als Gast: Verlierst du die Installation des Spiels, verlierst du deinen ganzen Fortschritt, einschließlich der mit echtem Geld gekauften Artikel und Guthaben. Brich ab und melde dich über „Anmelden / Konto erstellen“ an.",
   "Soy consciente y me doy por avisado.": "Ich bin mir dessen bewusst und nehme die Warnung zur Kenntnis.",
+  "Quiero recibirlo ya y acepto que, al ser contenido digital que se entrega al momento, pierdo mi derecho a devolverlo.": "Ich möchte es sofort erhalten und akzeptiere, dass ich als sofort gelieferter digitaler Inhalt mein Widerrufsrecht verliere.",
   "COMPRAR IGUALMENTE": "TROTZDEM KAUFEN",
   "Compra de prueba (solo en desarrollo): no se cobra nada.": "Testkauf (nur in der Entwicklung): Es wird nichts berechnet.",
   "SOLO CON DINERO REAL": "NUR MIT ECHTEM GELD",
@@ -227,5 +228,10 @@ IDIOMA.add({
   "Necesitas conexión para comprar": "Zum Kaufen brauchst du eine Verbindung",
   "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "Der Kauf konnte nicht abgeschlossen werden. Falls Google abgebucht hat, bekommst du es in ein paar Minuten.",
   "No se vende en tu país": "In deinem Land nicht erhältlich",
-  "Ya lo tienes": "Hast du schon"
+  "Ya lo tienes": "Hast du schon",
+  "Pago seguro con Paddle. Lo comprado queda en tu cuenta.": "Sichere Zahlung mit Paddle. Was du kaufst, bleibt in deinem Konto.",
+  "Abriendo el pago…": "Zahlung wird geöffnet…",
+  "El pago todavía no está confirmado: lo recibirás en cuanto lo esté": "Die Zahlung ist noch nicht bestätigt: Du bekommst es, sobald sie es ist",
+  "No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.": "Der Kauf konnte nicht abgeschlossen werden. Wenn dir etwas berechnet wurde, bekommst du es in ein paar Minuten.",
+  "Las compras con euros solo están en la app de Android": "Käufe mit Euro gibt es nur in der Android-App"
 });

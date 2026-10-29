@@ -1,5 +1,6 @@
 // Fans of Rouflage · MI ESCENARIO (el pincel): pintar el suelo y las paredes de tu escenario. Herramientas: pincel, goma, cubo (rellena lo
-// del mismo color en ese suelo o esa pared, sin pasar a otro) y cuentagotas; cuatro grosores; deshacer y borrar todo. Colores: los de la
+// del mismo color en ese suelo o esa pared, sin pasar a otro) y cuentagotas; cuatro grosores; deshacer y borrar todo (con ventana de «¿seguro?»).
+// Las de Paint (píxel, espray, formas, estampar, espejo, rehacer) están en escenario-pincel2.js; seleccionar y el panel, en escenario-pincel3.js. Colores: los de la
 // paleta del juego y cualquier otro con el selector («color libre»), con los últimos usados a mano. La pintura es la rejilla de
 // escenario-pinta.js (celdas de SALA.PR unidades sobre todo el mapa, con el índice de su color): se pinta directamente en ella, así lo que ves
 // es lo que se guarda; el muro visto desde arriba no se pinta. Solo se rehacen las baldosas de debajo del pincel. Va después de escenario.js.
@@ -8,7 +9,8 @@ const PINCEL_ESC = { herr: 'pincel', radio: 1, color: '#ff4b5c', recientes: [], 
 const RADIOS_ESC = [5, 10, 20, 38];
 const COLORES_ESC = ['#fff6ea', '#cdb9ea', '#9aa3b5', '#5c606b', '#20102c', '#ff4b5c', '#ff6fb5', '#b45cff', '#3a2a5e', '#2e8bff', '#39d5e8', '#7ee04a',
   '#3c8f3d', '#ffcb3d', '#ff7a1a', '#d9a25b', '#8f6540', '#f1e6cc'];
-const ESC_HERR = [['pincel', 'Pincel', 'pincel'], ['goma', 'Goma', 'goma'], ['cubo', 'Rellenar', 'cubo'], ['gota', 'Cuentagotas', 'gota']];
+const ESC_HERR = [['pincel', 'Pincel', 'pincel'], ['pixel', 'Píxel', 'pixel'], ['espray', 'Espray', 'espray'], ['goma', 'Goma', 'goma'], ['cubo', 'Rellenar', 'cubo'],
+  ['linea', 'Línea', 'linea'], ['rect', 'Rectángulo', 'cuadro'], ['elipse', 'Círculo', 'circulo'], ['patron', 'Estampar', 'patron'], ['sel', 'Seleccionar', 'seleccion'], ['gota', 'Cuentagotas', 'gota']];
 
 // el índice de un color en la paleta de la pintura (si se llena, se quitan los que ya no se usan; si aún así no cabe, el más parecido)
 function escIndiceColor(hex) {
@@ -39,9 +41,18 @@ function escMascara() {
   sala._masc = m; sala._mascM = M.id; sala._mascR = p.r; return m;
 }
 function escTodoSucio() { const s = escenarioSala(); escTilesSucias(s, -1e4, -1e4, 1e5, 1e5); MIESC.sucio = true; }
-function escGuardaPaso() { const p = escenarioSala().pint; PINCEL_ESC.pasos.push(p.cel.slice()); if (PINCEL_ESC.pasos.length > 20) PINCEL_ESC.pasos.shift(); }
-function escDeshace() { const d = PINCEL_ESC.pasos.pop(), p = escenarioSala().pint; if (!d) { play('deny'); return; } p.cel.set(d); p.ver++; play('tick'); escGuarda(); escTodoSucio(); }
-function escBorraTodo() { const p = escenarioSala().pint; if (!p.cel.some(v => v)) return; escGuardaPaso(); p.cel.fill(0); p.ver++; play('pop'); escGuarda(); escTodoSucio(); escAviso(tr('Pintura borrada (puedes deshacerlo)')); }
+function escGuardaPaso() { const p = escenarioSala().pint; PINCEL_ESC.pasos.push(p.cel.slice()); if (PINCEL_ESC.pasos.length > 20) PINCEL_ESC.pasos.shift(); PINCEL2.rehacer.length = 0; }
+function escDeshace() {
+  const d = PINCEL_ESC.pasos.pop(), p = escenarioSala().pint; if (!d) { play('deny'); return; }
+  escSelOlvida(); PINCEL2.rehacer.push(p.cel.slice()); if (PINCEL2.rehacer.length > 20) PINCEL2.rehacer.shift();
+  p.cel.set(d); p.ver++; play('tick'); escGuarda(); escTodoSucio(); escPincelRefresca();
+}
+function escBorraTodo() {
+  const p = escenarioSala().pint; if (!p.cel.some(v => v)) { play('deny'); return; }
+  escSeguro(tr('¿BORRAR TODA LA PINTURA?'), tr('Se borra toda la pintura de este escenario. Los muebles se quedan.'), tr('BORRAR TODO'), () => {
+    escSelOlvida(); escGuardaPaso(); p.cel.fill(0); p.ver++; play('pop'); escGuarda(); escTodoSucio(); escAviso(tr('Pintura borrada (puedes deshacerlo)'));
+  });
+}
 // un toque redondo del pincel (o de la goma) en la rejilla, solo en suelo y paredes
 function escSello(q, v) {
   const p = escenarioSala().pint, R = RADIOS_ESC[PINCEL_ESC.radio], rc = R / p.r, ci = q.x / p.r, cj = q.y / p.r, masc = escMascara();
@@ -49,6 +60,7 @@ function escSello(q, v) {
     for (let i = Math.max(0, Math.floor(ci - rc)); i <= Math.min(p.w - 1, Math.ceil(ci + rc)); i++)
       if ((i + 0.5 - ci) ** 2 + (j + 0.5 - cj) ** 2 <= rc * rc && masc[j * p.w + i]) p.cel[j * p.w + i] = v;
   p.ver++; escTilesSucias(escenarioSala(), q.x - R - 8, q.y - R - 8, q.x + R + 8, q.y + R + 8);
+  if (PINCEL2.espejo && !q.espejo) escSello({ x: 2 * escEspejoX() - q.x, y: q.y, espejo: true }, v);      // el espejo (escenario-pincel2.js)
 }
 function escTrazo(a, b, v) {
   const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / Math.max(1, RADIOS_ESC[PINCEL_ESC.radio] * 0.4)));
@@ -56,6 +68,7 @@ function escTrazo(a, b, v) {
 }
 // el cubo: rellena lo que toca del mismo color, sin pasar de un suelo a otro distinto ni de la pared al suelo (ni al revés)
 function escRellena(q, v) {
+  if (PINCEL2.espejo && !q.espejo) escRellena({ x: 2 * escEspejoX() - q.x, y: q.y, espejo: true }, v);      // el espejo (escenario-pincel2.js)
   const p = escenarioSala().pint, [i0, j0] = escCelda(q); if (i0 < 0 || j0 < 0 || i0 >= p.w || j0 >= p.h) return;
   const masc = escMascara(), k0 = j0 * p.w + i0, zona = masc[k0], de = p.cel[k0];
   if (de === v || !zona) return;
@@ -81,6 +94,7 @@ function escCogeColor(q) {
 }
 const escDentro = q => escTipoEn(escMundoAct(), q.x, q.y) !== VACIO;
 function escPincelAbajo(q) {
+  if (escPincel2Abajo(q)) return;      // píxel, espray, formas, estampar y seleccionar (escenario-pincel2.js y 3)
   if (!escDentro(q)) return;
   const h = PINCEL_ESC.herr;
   if (h === 'gota') { const c = escCogeColor(q); if (c) { escPonColor(c); PINCEL_ESC.herr = 'pincel'; escPincelRefresca(); play('select'); } return; }
@@ -89,16 +103,20 @@ function escPincelAbajo(q) {
   PINCEL_ESC.pintando = true; PINCEL_ESC.ultimo = q; escSello(q, h === 'goma' ? 0 : escIndiceColor(PINCEL_ESC.color)); MIESC.sucio = true;
 }
 function escPincelMueve(q) {
+  if (escPincel2Mueve(q)) return;
   if (!PINCEL_ESC.pintando) return;
   escTrazo(PINCEL_ESC.ultimo, q, PINCEL_ESC.herr === 'goma' ? 0 : escIndiceColor(PINCEL_ESC.color)); PINCEL_ESC.ultimo = q;
 }
-function escPincelArriba() { if (!PINCEL_ESC.pintando) return; PINCEL_ESC.pintando = false; escGuarda(); }
+function escPincelArriba() { if (escPincel2Arriba()) return; if (!PINCEL_ESC.pintando) return; PINCEL_ESC.pintando = false; escGuarda(); }
 // el trazo que se empezaba con un dedo, fuera (al poner el segundo dedo para el zoom)
 function escPincelCancela() {
+  if (escPincel2Cancela()) return;
   if (!PINCEL_ESC.pintando) return; PINCEL_ESC.pintando = false;
   const d = PINCEL_ESC.pasos.pop(), p = escenarioSala().pint; if (d) { p.cel.set(d); p.ver++; escTodoSucio(); }
 }
 function escPintaCursor(c, q) {
+  escPintaEncima2(c, q);      // la rejilla, la forma que dibujas, el espejo y lo seleccionado (escenario-pincel2.js)
+  if (!q || ['pixel', 'sel', 'rect', 'elipse', 'linea'].includes(PINCEL_ESC.herr) || (PINCEL_ESC.herr === 'patron' && PINCEL2.patronCubo)) return;
   if (!escDentro(q) || PINCEL_ESC.herr === 'cubo' || PINCEL_ESC.herr === 'gota') return;
   const r = RADIOS_ESC[PINCEL_ESC.radio];
   c.lineWidth = 2.5; c.strokeStyle = OL; c.beginPath(); c.arc(q.x, q.y, r, 0, TAU); c.stroke();
@@ -109,26 +127,5 @@ function escPonColor(hex) {
   if (!COLORES_ESC.includes(hex)) { const r = PINCEL_ESC.recientes; const i = r.indexOf(hex); if (i >= 0) r.splice(i, 1); r.unshift(hex); r.length = Math.min(r.length, 6); }
   escPincelRefresca();
 }
-// el panel: herramientas, grosores, deshacer y borrar todo; luego los colores
-function escPincelRefresca() {
-  const fila = E('esc-herr'); fila.innerHTML = '';
-  const boton = (clase, titulo, dentro, activo, alTocar) => {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-h ' + clase + (activo ? ' activa' : ''); b.title = titulo; b.setAttribute('aria-label', titulo);
-    dentro(b); b.onclick = alTocar; fila.appendChild(b); return b;
-  };
-  for (const [id, n, ic] of ESC_HERR) boton('', tr(n), b => { b.innerHTML = '<i></i><small></small>'; ponIcono(b.firstChild, ic); b.lastChild.textContent = tr(n); }, PINCEL_ESC.herr === id, () => { PINCEL_ESC.herr = id; play('select'); escPincelRefresca(); });
-  RADIOS_ESC.forEach((r, i) => boton('grosor', tr('Grosor {n}', { n: i + 1 }), b => { const d = document.createElement('span'); d.style.width = d.style.height = (5 + i * 5) + 'px'; b.appendChild(d); }, PINCEL_ESC.radio === i, () => { PINCEL_ESC.radio = i; if (PINCEL_ESC.herr === 'cubo' || PINCEL_ESC.herr === 'gota') PINCEL_ESC.herr = 'pincel'; play('select'); escPincelRefresca(); }));
-  boton('', tr('Deshacer'), b => { b.innerHTML = '<i></i><small></small>'; ponIcono(b.firstChild, 'deshacer'); b.lastChild.textContent = tr('Deshacer'); }, false, escDeshace);
-  boton('malo', tr('Borrar todo'), b => { b.innerHTML = '<i></i><small></small>'; ponIcono(b.firstChild, 'escoba'); b.lastChild.textContent = tr('Borrar todo'); }, false, escBorraTodo);
-  const cols = E('esc-colores'); cols.innerHTML = '';
-  const libre = document.createElement('label'); libre.className = 'esc-libre'; libre.title = tr('Color libre: el que quieras');
-  libre.innerHTML = '<input type="color"><i></i><small></small>'; libre.querySelector('input').value = PINCEL_ESC.color; libre.querySelector('i').style.background = PINCEL_ESC.color; libre.querySelector('small').textContent = tr('Color libre');
-  libre.querySelector('input').addEventListener('input', e => { PINCEL_ESC.color = e.target.value.toLowerCase(); libre.querySelector('i').style.background = PINCEL_ESC.color; if (PINCEL_ESC.herr === 'goma' || PINCEL_ESC.herr === 'gota') PINCEL_ESC.herr = 'pincel'; });
-  libre.querySelector('input').addEventListener('change', e => escPonColor(e.target.value));
-  cols.appendChild(libre);
-  for (const h of [...PINCEL_ESC.recientes, ...COLORES_ESC]) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'esc-col' + (h === PINCEL_ESC.color && PINCEL_ESC.herr !== 'goma' ? ' activa' : ''); b.style.background = h; b.setAttribute('aria-label', h);
-    b.onclick = () => { play('tick'); escPonColor(h); }; cols.appendChild(b);
-  }
-}
+// el panel (herramientas, opciones y colores) está en escenario-pincel3.js
 function preparaPincelEsc() { /* el panel se rehace al entrar en PINTAR (escPincelRefresca) */ }

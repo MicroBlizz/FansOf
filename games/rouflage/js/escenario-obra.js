@@ -284,7 +284,7 @@ function obraRefresca() {
   for (const [id, n, ic] of OBRA_HERR) boton('', n, ic, OBRA.herr === id, () => { OBRA.herr = id; play('select'); obraRefresca(); });
   boton('', 'Deshacer', 'deshacer', false, obraDeshace);
   boton('bien', 'Comprobar', 'comprobar', false, obraComprueba);
-  boton('', 'Nuevo', 'sala', false, () => { play('select'); obraElige(); });      // en blanco o desde una plantilla
+  { const b = boton('', 'Mis escenarios', 'casa', false, () => { play('select'); escHuecosAbre(); }); b.lastChild.textContent = escHuecoTexto(); }      // MIS ESCENARIOS (escenario-huecos.js); empezar de nuevo, dentro
   boton('bien', 'Probar', 'jugar', false, () => escProbar('camaleon'));      // una partida contra bots aquí mismo
   if (lz) boton('', 'Ampliar', 'ampliar', false, obraAmplia);      // el siguiente tamaño: el mediano en el pase, los demás en la tienda (escenario-obra2.js)
   // las tarjetas de lo que pinta la herramienta

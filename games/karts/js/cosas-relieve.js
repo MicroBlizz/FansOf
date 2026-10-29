@@ -7,16 +7,16 @@
 function arcoDe(estilo, c1, c2, c3, mitad = 44) {
   const m = mitad, p = [], mats = { a: { c: c1, s: mezcla(c1, '#000000', 0.45), l: mezcla(c1, '#ffffff', 0.4) }, b: { c: c2, s: mezcla(c2, '#000000', 0.45), l: mezcla(c2, '#ffffff', 0.4) }, luz: { c: c3, plano: true } };
   if (estilo === 'portico') {
-    for (const s of [-1, 1]) p.push(CAJA([s * m, 0, 11], [2.6, 2.6, 11], 'a'), CAJA([s * m, 0, 0.8], [3.4, 3.4, 0.8], 'b', { parte: 2 }));
-    p.push(CAJA([0, 0, 23.5], [m + 4, 2.4, 2.4], 'b', { parte: 3 }));
+    for (const s of [-1, 1]) p.push(BLOQUE([s * m, 0, 11], [2.6, 2.6, 11], 'a'), BLOQUE([s * m, 0, 0.8], [3.4, 3.4, 0.8], 'b', { parte: 2 }));
+    p.push(BLOQUE([0, 0, 23.5], [m + 4, 2.4, 2.4], 'b', { parte: 3 }));
     for (let x = -m + 6; x <= m - 6; x += 8) p.push(PL([x, -2.45, 23.5], [2, 0.1, 1.1], 'luz'));
   } else if (estilo === 'arco') {
-    for (const s of [-1, 1]) p.push(CAJA([s * m, 0, 7], [2.4, 2.4, 7], 'a'));
+    for (const s of [-1, 1]) p.push(BLOQUE([s * m, 0, 7], [2.4, 2.4, 7], 'a'));
     for (let a = 0; a <= 180; a += 12) { const r = a * RAD; p.push(ESF([Math.cos(r) * m, 0, 14 + Math.sin(r) * m * 0.42], [3.2, 2.4, 2.6], a % 24 ? 'a' : 'b', { parte: 2 })); }
     for (let a = 6; a < 180; a += 24) { const r = a * RAD; p.push(PL([Math.cos(r) * m, -2.45, 14 + Math.sin(r) * m * 0.42], [0.9, 0.1, 0.9], 'luz')); }
   } else if (estilo === 'cartel') {
     for (const s of [-1, 1]) p.push(CONO([s * m, 0, 12], [1.2, 1, 12], 'a'));
-    p.push(CAJA([0, 0, 22], [m * 0.62, 1, 5.4], 'b', { parte: 2 }), CAJA([0, 0, 22], [m + 1.5, 0.7, 0.7], 'a', { parte: 3 }));
+    p.push(BLOQUE([0, 0, 22], [m * 0.62, 1, 5.4], 'b', { parte: 2 }), BLOQUE([0, 0, 22], [m + 1.5, 0.7, 0.7], 'a', { parte: 3 }));
     for (let x = -m * 0.5; x <= m * 0.5; x += m * 0.25) p.push(PL([x, -1.05, 23.6], [m * 0.08, 0.1, 1.2], 'luz'));
     p.push(PL([0, -1.05, 20], [m * 0.5, 0.1, 0.5], 'luz'));
   } else {      // cueva: roca amontonada

@@ -24,6 +24,7 @@ const VISITA = { activa: false, nombre: '', megusta: 0, mivoto: 0, vuelve: null,
 function escPublica() {
   const red = RFRED.red; if (!red.escPublicar || (!RFRED.esLocal() && !RFRED.conSesion())) return;
   let d; try { d = escenarioDatos(); } catch (_) { return; }
+  if (SAVE.escNoSemana) d.ns = 1;      // no quiere salir en el ESCENARIO DE LA SEMANA (OPCIONES; servidor/101-rouflage-semana-privada.sql)
   const txt = JSON.stringify(d), h = hashTexto(txt);
   let antes = ''; try { antes = localStorage.getItem('rouflage-esc-publicado') || ''; } catch (_) { /* nada */ }
   if (antes === h) return;
@@ -66,6 +67,7 @@ function visitaSale() {
 // cada fotograma (avanzaPartida): la habilidad y la granada se recargan solas, como en la sala con amigos
 function visitaAvanza(dt) {
   const yo = J.yo; if (!yo) return;
+  if (VISITA.ui) { const ab = VISITA.ui.querySelector('.vis-abajo'), oculto = VISITA.mio || TALLER.abierto; if (ab.hidden !== oculto) ab.hidden = oculto; }      // ME GUSTA no tapa el taller
   if (yo.hab) { if (yo.habUsos < 50) yo.habUsos = 99; if (yo.habEspera > SV_ESPERA) yo.habEspera = SV_ESPERA; }
   if ((!yo.hab || yo.hab === 'granada') && !(yo.granada > 0) && !(yo.invis > 0)) { SV.tGr += dt; if (SV.tGr > 1.5) { yo.granada = 1; SV.tGr = 0; } } else SV.tGr = 0;
 }
@@ -75,16 +77,19 @@ function visitaUI() {
   let d = VISITA.ui;
   if (!d) {
     d = VISITA.ui = document.createElement('div'); d.className = 'visita-ui'; d.id = 'visita-ui';
-    d.innerHTML = `<div class="sv-arriba"><button type="button" class="sv-atras" id="vis-atras">${SV_ICO.atras}</button><div class="sv-chip vis-de"><b id="vis-nombre"></b></div><span class="sv-hueco"></span></div>`
-      + `<div class="vis-abajo"><button type="button" class="ev-b ev-si" id="vis-si"><i data-ico="si"></i><span></span><b id="vis-n">0</b></button><button type="button" class="ev-b ev-rep" id="vis-rep"><i data-ico="rep"></i><span></span></button></div>`;
+    // arriba a la izquierda, el MENÚ (como la pausa de una partida: seguir, reportar y salir, con «¿seguro?»); abajo, solo ME GUSTA (27-10-2026, Daniel)
+    d.innerHTML = `<div class="sv-arriba"><button type="button" class="sv-atras" id="vis-atras"><i></i></button><div class="sv-chip vis-de"><b id="vis-nombre"></b></div><span class="sv-hueco"></span></div>`
+      + `<div class="vis-abajo"><button type="button" class="ev-b ev-si" id="vis-si"><i data-ico="si"></i><span></span><b id="vis-n">0</b></button></div>`
+      + `<div class="vis-menu" id="vis-menu" hidden><div class="caja"><h2 class="ol" id="vis-menu-t"></h2><p class="nota-sala" id="vis-menu-p"></p><div class="columna" id="vis-menu-b"></div></div></div>`;
     document.body.appendChild(d);
-    E('vis-atras').onclick = visitaSale;
+    ponIcono(E('vis-atras').firstChild, 'pausa');
+    E('vis-atras').onclick = () => { play('select'); visitaMenu(); };
     E('vis-si').onclick = visitaVota;
-    E('vis-rep').onclick = visitaReporta;
+    E('vis-menu').addEventListener('pointerdown', e => { if (e.target === E('vis-menu')) visitaMenuCierra(); });
   }
   E('vis-nombre').textContent = VISITA.mio ? tr('Tu escenario') : tr('El escenario de {n}', { n: VISITA.nombre });
-  E('vis-si').querySelector('span').textContent = tr('ME GUSTA'); E('vis-rep').querySelector('span').textContent = tr('REPORTAR');
-  E('vis-atras').setAttribute('aria-label', tr('Volver'));
+  E('vis-si').querySelector('span').textContent = tr('ME GUSTA');
+  E('vis-atras').setAttribute('aria-label', tr('Menú')); E('vis-menu').hidden = true;
   d.querySelector('.vis-abajo').hidden = VISITA.mio;      // a tu propio escenario no se le vota
   if (typeof salaVotosIconos === 'function') salaVotosIconos(d);
   visitaPinta(); d.hidden = false;
@@ -97,6 +102,26 @@ function visitaVota() {
   Promise.resolve(red.escVotar(nuevo)).then(r => { if (r && r.megusta != null) VISITA.megusta = r.megusta | 0; })
     .catch(() => { Object.assign(VISITA, antes); avisa(tr('No se ha podido votar. Prueba otra vez.'), 'malo'); })
     .finally(() => { VISITA.enviando = false; visitaPinta(); });
+}
+// el MENÚ de la visita (el botón de arriba a la izquierda y el botón de atrás del móvil): SEGUIR, REPORTAR (si no es tuyo) y SALIR, que pregunta antes
+const visitaMenuAbierto = () => !!(VISITA.ui && !E('vis-menu').hidden);
+function visitaMenuCierra() { if (VISITA.ui) E('vis-menu').hidden = true; }
+function visitaMenu(salir) {
+  if (!VISITA.ui) return;
+  if (TALLER.abierto) cierraTaller();
+  const b = E('vis-menu-b'); b.innerHTML = '';
+  const boton = (txt, clase, fn) => { const x = document.createElement('button'); x.type = 'button'; x.className = 'boton ' + clase; x.textContent = txt; x.onclick = () => { play('select'); fn(); }; b.appendChild(x); };
+  if (salir) {
+    E('vis-menu-t').textContent = tr('¿QUIERES SALIR?'); E('vis-menu-p').textContent = tr('Vuelves a donde estabas.'); E('vis-menu-p').hidden = false;
+    boton(tr('SALIR'), 'rojo', () => { visitaMenuCierra(); visitaSale(); });
+    boton(tr('CANCELAR'), 'gris', () => visitaMenu());
+  } else {
+    E('vis-menu-t').textContent = tr('MENÚ'); E('vis-menu-p').hidden = true;
+    boton(tr('SEGUIR'), '', visitaMenuCierra);
+    if (!VISITA.mio) boton(tr('REPORTAR'), 'gris', () => { visitaMenuCierra(); visitaReporta(); });
+    boton(tr('SALIR'), 'peq', () => visitaMenu(true));
+  }
+  E('vis-menu').hidden = false;
 }
 // REPORTAR: el cuadro de siempre (sala-votos.js), que vive en la sala; se trae aquí mientras dura la visita
 function visitaReporta() {

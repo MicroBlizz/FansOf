@@ -15,6 +15,7 @@ const RFP_AJ = { envioHz: 8, quietoHz: 1, avisosSala: 24, iaHz: 10, iaQuietoHz: 
 // ---------- buscar partida ----------
 // opc: nada (partida pública), { crear: true } (sala con amigos nueva) o { codigo } (entrar en la de un amigo). Las salas con amigos no gastan caos primordial
 function pvpBuscar(opc) {
+  REPORTE.suceso('pvp', { que: 'buscar', amigos: !!(opc && (opc.crear || opc.codigo)), bots: !!(opc && opc.soloBots) });
   const red = RFRED.red;
   RFP.error = ''; RFP.resultado = null; RFP.amigos = !!(opc && (opc.crear || opc.codigo)); RFP.soloBots = !!(opc && opc.soloBots);      // JUGAR CONTRA BOTS (b-pvp-bots): el menú, sin pasear por tu escenario
   if (opc && opc.crear) RFP.modoMandado = false;      // una sala nueva tuya: se le manda el modo (y el mapa) al abrirla
@@ -35,9 +36,10 @@ function pvpBuscar(opc) {
     }
   }, opc || talColaOpc());      // BUSCAR PARTIDA: con o sin talentos, lo que eligió (talentos-pantalla.js)
 }
-function pvpCancelar() { if (RFP.buscando) { RFP.buscando.cancelar(); RFP.buscando = null; } RFP.info = null; pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); }
+function pvpCancelar() { REPORTE.suceso('pvp', { que: 'cancelar' }); if (RFP.buscando) { RFP.buscando.cancelar(); RFP.buscando = null; } RFP.info = null; pvpMuestra(RFP.amigos ? 'p-amigos' : 'p-pvp'); }
 // el anfitrión de una sala con amigos la arranca (el sondeo de la sala recoge el cambio)
 function pvpEmpezar() {
+  REPORTE.suceso('pvp', { que: 'empieza' });
   const b = E('b-busca-empezar'); b.disabled = true;
   Promise.resolve(RFRED.red.empezar()).catch(e => { RFP.error = RFRED.errorTexto(e); pvpPintaBusca(); }).finally(() => { b.disabled = false; });
 }

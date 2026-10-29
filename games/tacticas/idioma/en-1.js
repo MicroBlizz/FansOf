@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.54
+  "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
+  "Microblizz ha puesto un árbitro invisible en el tablero y Phony ha movido una ficha mirando hacia otro lado.": "Microblizz put an invisible referee on the board and Phony moved a piece while looking the other way.",
   // 0.1.51
   "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
   "Microblizz ha puesto el tablero en silencio y Phony ha movido una ficha de puntillas.": "Microblizz has put the board in silence and Phony moved a piece on tiptoe.",

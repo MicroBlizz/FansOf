@@ -100,7 +100,7 @@ pistaPremium('centro', {
     adornosPor(P, l, ['maniqui', 'banco', 'papelera', 'expositor', 'planta', 'maniqui'], 0.4, 20.6, 0.5, 12, 22, 24);
     movilEn(P, l, 'carrito', 6.44, 22, 4.14, 0.0); movilEn(P, l, 'carrito', 13.45, 22, 4.6, 1.4); movilEn(P, l, 'carrito', 19.1, 22, 5.06, 2.8);
     for (const [u, lado, per, f] of [[5.25, -10, 3.2, 0], [12.01, 10, 3.4, 0.5], [15.46, 0, 3.6, 0.25], [20.35, -8, 3.3, 0.7]]) caidaEn(P, l, 'botin', u, lado, per, f, { radio: 8 });
-    cartelesPor(P, l, [[['REBAJAS', '−90 %'], 2.13, 24, '#e63946', '#ffffff'], [['SUELO', 'MOJADO'], 5.34, -24, '#ffcb3d', '#22212c'], [['SKIN DORADA', '49,99 €'], 8.15, 24, '#22212c', '#ffcb3d'], [['SOLO HOY'], 10.06, -24, '#c35cff', '#ffffff'], [['ESCALERA', 'DE PAGO'], 13.31, 24, '#22212c', '#5ef2d0'], [['SIN', 'DEVOLUCIONES'], 16, -24, '#e63946', '#ffffff'], [['CAJA 1 DE 40', 'ABIERTA'], 18.08, 24, '#2f4fae', '#ffffff'], [['PREMIUM'], 20.05, -24, '#ffcb3d', '#22212c']]);
+    cartelesPor(P, l, [[['REBAJAS', '−90 %'], 2.13, 24, '#e63946', '#ffffff'], [['SUELO', 'MOJADO'], 5.34, -24, '#ffcb3d', '#22212c'], [['SKIN DORADA', '49,99 €'], 8.15, 24, '#22212c', '#ffcb3d'], [['SOLO HOY'], 10.06, -24, '#c35cff', '#ffffff'], [['ESCALERA', 'DE PAGO'], 13.31, 24, '#22212c', '#5ef2d0'], [['SIN', 'DEVOLUCIONES'], 16, -24, '#e63946', '#ffffff'], [['BLOQUE 1 DE 40', 'ABIERTA'], 18.08, 24, '#2f4fae', '#ffffff'], [['PREMIUM'], 20.05, -24, '#ffcb3d', '#22212c']]);
     return l;
   },
 });

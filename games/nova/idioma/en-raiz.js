@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.25
+  "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
+  "Microblizz ha instalado una caja negra en la flota y Phony ha preguntado si también graba los chistes.": "Microblizz installed a black box in the fleet and Phony asked if it records the jokes too.",
   // 0.3.22
   "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
   "Microblizz ha silenciado el vacío del espacio, que ya lo estaba, y Phony ha tocado el botón por si no.": "Microblizz has silenced the vacuum of space, which already was, and Phony pressed the button just in case.",

@@ -246,7 +246,7 @@ function dibuja(t) {
   if (!TALLER.abierto) {
     ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
     for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; repintaDelante(c, e, cosas); }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
-    eventosPintaVelo(c, t); talentosPintaLuz(c, t);
+    eventosPintaVelo(c, t); talentosPintaLuz(c, t); ponMundo(c); pintaOtrosFantasmas(c, t);
   }
   ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c); talentosPinta(c, t); pintaChat(c, t); salaVivaNombres(c);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);

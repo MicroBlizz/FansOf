@@ -32,7 +32,7 @@ function escenarioActual() { const s = SAVE.escenario; return s && ESCENARIOS[s.
 function escenarioSala() {
   if (MIESC.sala) return MIESC.sala;
   const s = SAVE.escenario || {}, viejo = s.v !== 2 && ((s.m && s.m.length) || s.p);
-  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, lz: s.lz, g: s.g }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
+  const d = salaDeDatos({ v: s.v, e: escenarioActual(), m: s.m || [], p: s.p, pz: s.pz, lz: s.lz, g: s.g }) || { id: 'oficina', muebles: [], pint: null, ver: 0 };
   if (escBase(d.id) === 'lienzo') d.id = lzMio();      // el lienzo propio se edita como 'lienzo~mio' (escenario-obra.js)
   d.muebles = d.muebles.filter(m => escTiene('muebles', m.id));
   d.pint = !d.pint ? pinturaNueva() : d.pint.r === SALA.PR ? d.pint : pinturaRemuestra(d.pint, SALA.PR);
@@ -43,9 +43,11 @@ function escenarioSala() {
 const escMundoAct = () => escMundo(escenarioSala().id);
 function escGuarda() {
   const sala = escenarioSala(), yo = MIESC.yo;
-  let p = pinturaCodifica(sala.pint);
-  for (const r of [4, 8, 12]) if (p.length > 30000) p = pinturaCodifica(pinturaRemuestra(sala.pint, r));      // la partida no engorda: como mucho ~30 KB de pintura
-  SAVE.escenario = { v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]), p };
+  // la pintura, comprimida si así ocupa menos (escenario-comprime.js); la partida no engorda: como mucho ~30 KB de pintura
+  const pinta = r => { const t = pinturaCodifica(r ? pinturaRemuestra(sala.pint, r) : sala.pint), z = escComprime(t); return z && z.length < t.length ? { pz: z } : { p: t }; };
+  let p = pinta(0);
+  for (const r of [4, 8, 12]) if ((p.pz || p.p).length > 30000) p = pinta(r);
+  SAVE.escenario = Object.assign({ v: 2, id: escBase(sala.id), m: sala.muebles.map(m => [m.id, Math.round(m.x), Math.round(m.y), m.v || 0, m.f ? 1 : 0]) }, p);
   const lz = lzMioTexto(); if (lz) SAVE.escenario.lz = lz;
   if (sala.peg && sala.peg.length) SAVE.escenario.g = pegADatos(sala.peg);      // las pegatinas (escenario-pegatinas.js)      // la forma de tu lienzo se guarda aunque ahora uses otro escenario
   if (yo) SAVE.escenario.yo = [Math.round(yo.x), Math.round(yo.y)];
@@ -65,11 +67,11 @@ function abreEscenario(conMueble) {
     MIESC.yo = { x, y, dir: 1, anda: 0, paso: 0, mundo: M.id };
     Object.assign(MIESC.cam, { x, y: y - 30, sigue: true, z: 0 });
   }
-  pantalla('p-escenario'); escAjusta(); escModo(MIESC.modo, true); musica('rfTitulo');
+  pantalla('p-escenario'); escHuecoBoton(); escAjusta(); escModo(MIESC.modo, true); musica('rfTitulo');      // (MIS ESCENARIOS: escenario-huecos.js)
   if (conMueble) { const it = arItem('muebles', conMueble); if (it && arTiene('muebles', it)) { MIESC.tab = MUEBLES_SALA[it.id].g; escModo('decorar', true); escPonDondeMiras(it); } }
   cancelAnimationFrame(MIESC.raf); MIESC.ult = performance.now(); MIESC.raf = requestAnimationFrame(escBucle);
 }
-function cierraEscenario() { if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
+function cierraEscenario() { if (SEL_ESC.s) escSelSuelta(); if (MIESC.yo) escGuarda(); if (typeof escPublica === 'function') escPublica();      // tus amigos lo verán así (visita.js)
   MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; play('select'); irTitulo(); }
 const escenarioAbierto = () => MIESC.abierto;
 function escAbreArmario() { if (!MIESC.abierto) return; play('select'); escGuarda(); if (typeof escPublica === 'function') escPublica(); MIESC.abierto = false; cancelAnimationFrame(MIESC.raf); E('esc-burbuja').hidden = true; abreArmario(null, 'escenario'); }
@@ -118,7 +120,7 @@ function escDibuja() {
     escPintaHuella(c, m, escCabeEn(sala, m));
     c.globalAlpha = 0.7; c.drawImage(sp.cv, m.x - sp.ox, m.y - sp.oy, sp.w, sp.h); c.globalAlpha = 1;
   }
-  if (MIESC.modo === 'pintar' && pt && typeof escPintaCursor === 'function') escPintaCursor(c, pt);
+  if (MIESC.modo === 'pintar' && typeof escPintaCursor === 'function') escPintaCursor(c, pt);      // (sin dedo encima también: la rejilla, el espejo y lo seleccionado)
   if (typeof obraPintaEncima === 'function' && (MIESC.modo === 'obra' || OBRA.malas)) obraPintaEncima(c, pt);      // CONSTRUIR (escenario-obra.js)
   const fin = MIESC.camino && MIESC.camino[MIESC.camino.length - 1];
   if (fin) { c.strokeStyle = 'rgba(255,246,234,0.85)'; c.lineWidth = 2.5; c.beginPath(); c.ellipse(fin[0], fin[1], 11 + Math.sin(MIESC.t * 6), 5, 0, 0, TAU); c.stroke(); }

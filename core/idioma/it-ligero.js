@@ -165,6 +165,7 @@ IDIOMA.add({
   "CREA UNA CUENTA ANTES DE PAGAR": "CREA UN ACCOUNT PRIMA DI PAGARE",
   "Te pedimos encarecidamente que crees una cuenta con email o Google antes de pagar. Ahora juegas como invitado: si pierdes la instalación del juego, pierdes todo tu progreso, incluidos los artículos y créditos comprados con dinero real. Cancela y entra desde «Iniciar sesión / crear cuenta».": "Ti chiediamo caldamente di creare un account con email o Google prima di pagare. Ora giochi come ospite: se perdi l'installazione del gioco, perdi tutti i tuoi progressi, compresi gli articoli e i crediti comprati con soldi veri. Annulla ed entra da «Accedi / crea account».",
   "Soy consciente y me doy por avisado.": "Ne sono consapevole e mi ritengo avvisato.",
+  "Quiero recibirlo ya y acepto que, al ser contenido digital que se entrega al momento, pierdo mi derecho a devolverlo.": "Voglio riceverlo subito e accetto che, trattandosi di contenuto digitale consegnato immediatamente, perdo il diritto di recesso.",
   "COMPRAR IGUALMENTE": "COMPRA COMUNQUE",
   "Compra de prueba (solo en desarrollo): no se cobra nada.": "Acquisto di prova (solo in sviluppo): non si paga nulla.",
   "SOLO CON DINERO REAL": "SOLO CON SOLDI VERI",
@@ -227,5 +228,10 @@ IDIOMA.add({
   "Necesitas conexión para comprar": "Ti serve la connessione per comprare",
   "No se ha podido completar la compra. Si Google te ha cobrado, lo recibirás en unos minutos.": "Non è stato possibile completare l'acquisto. Se Google ti ha addebitato, lo riceverai tra qualche minuto.",
   "No se vende en tu país": "Non si vende nel tuo paese",
-  "Ya lo tienes": "Ce l'hai già"
+  "Ya lo tienes": "Ce l'hai già",
+  "Pago seguro con Paddle. Lo comprado queda en tu cuenta.": "Pagamento sicuro con Paddle. Ciò che compri resta nel tuo account.",
+  "Abriendo el pago…": "Apertura del pagamento…",
+  "El pago todavía no está confirmado: lo recibirás en cuanto lo esté": "Il pagamento non è ancora confermato: lo riceverai appena lo sarà",
+  "No se ha podido completar la compra. Si te han cobrado, lo recibirás en unos minutos.": "Non è stato possibile completare l'acquisto. Se ti è stato addebitato, lo riceverai tra pochi minuti.",
+  "Las compras con euros solo están en la app de Android": "Gli acquisti in euro sono solo nell'app Android"
 });

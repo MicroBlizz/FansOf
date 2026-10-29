@@ -103,7 +103,7 @@ IDIOMA.add({
   "Dura 1 segundo y luego no queda nada": "Lasts 1 second and then nothing is left",
   "Lo que dejas en el suelo cuando despides a alguien (de becario)": "What you leave on the floor when you fire someone (as an intern)",
   "Solo cambia el color del borde: el haz alumbra igual": "Only the edge colour changes: the beam lights the same",
-  "Solo en la sala de espera, al final de la ronda o de fantasma": "Only in the waiting room, at the end of the round or as a ghost",
+  "Solo en la sala de espera y al final de la ronda": "Only in the waiting room and at the end of the round",
   // ojos
   "Puntos": "Dots", "Grandes": "Big", "Dormido": "Sleepy", "Gafas redondas": "Round glasses", "Estrellas": "Stars", "Guiño": "Wink", "Bizco": "Cross-eyed",
   "Gafas de sol": "Sunglasses", "Monóculo": "Monocle", "Láser de jefe": "Boss laser", "Corazones": "Hearts", "Espiral (CrazyBunny)": "Spiral (CrazyBunny)",

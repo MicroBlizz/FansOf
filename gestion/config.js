@@ -16,15 +16,7 @@
     try { L = (await rpc('gestion_config', { p_token: leerToken() })).config || []; pinta(); }
     catch (e) { $('cf-aviso').textContent = sinFuncion(e) ? 'La configuración aún no está en el panel (servidor/70-config-y-flags-por-plataforma.sql).' : textoError(e); }
   }
-  const tabs = () => [...document.querySelectorAll('#tabs button')].map(b => b.id).filter(id => id !== 't-config');
-  function mostrar(si) {
-    $('pan-config').hidden = !si; $('t-config').classList.toggle('activa', si);
-    if (si) { document.querySelectorAll('#vista-panel > div[id^="pan-"]').forEach(p => { if (p.id !== 'pan-config') p.hidden = true; }); tabs().forEach(t => $(t).classList.remove('activa')); cargar(); }
-  }
-  $('t-config').onclick = () => mostrar(true);
-  tabs().forEach(t => $(t).addEventListener('click', () => { $('pan-config').hidden = true; $('t-config').classList.remove('activa'); }));
-  $('menu').addEventListener('click', () => { $('pan-config').hidden = true; $('t-config').classList.remove('activa'); });
-  $('salir').addEventListener('click', () => mostrar(false));
+  GESTION_NAV.seccion({ id: 'config', pan: 'pan-config', etiqueta: 'Config', orden: 6, cargar });
   $('cf-lista').onclick = async ev => {
     const b = ev.target.closest('button[data-i]'); if (!b) return;
     const i = +b.dataset.i, c = L[i]; $('cf-aviso').textContent = '';

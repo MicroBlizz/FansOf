@@ -141,10 +141,6 @@
 .tn-tarjeta .boton:disabled { background: linear-gradient(to bottom, #9be07a, #4fa83a); opacity: 1; color: var(--ink); text-shadow: 2px 0 0 var(--outline), -2px 0 0 var(--outline), 0 2px 0 var(--outline), 0 -2px 0 var(--outline), 1.5px 1.5px 0 var(--outline), -1.5px -1.5px 0 var(--outline), 1.5px -1.5px 0 var(--outline), -1.5px 1.5px 0 var(--outline), 0 3px 0 var(--outline); }
 
 /* el armario en la partida (armario-partida.js): el botón GESTO, y el marco y el título en la clasificación */
-.accion.gesto { position: absolute; right: calc(var(--der) + 12px); bottom: calc(var(--inf) + 262px); width: 76px; height: 76px; border-radius: 22px; background: linear-gradient(to bottom, #ffa8e2, #c24fb0); color: var(--ink); }      /* letras claras con su sombra, como los demás botones */
-.accion.gesto canvas { width: 40px; height: 40px; }
-.accion.gesto b { font-size: 11px; }
-.accion.gesto.cargando { opacity: 0.55; }
 #ranking li span.marco-ar { border-bottom: 3px solid; padding: 0 2px; }
 #fin-ranking li.marco-ar { border: 3px solid; }
 #fin-ranking .titulo-ar { display: block; font-family: var(--font-display); font-weight: 400; font-size: 11px; letter-spacing: 0.03em; }

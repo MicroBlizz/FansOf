@@ -37,8 +37,11 @@ const NUCLEO = (() => {
   }
   function elegirIdioma(i) { try { if (i) localStorage.setItem('fansof-idioma', i); else localStorage.removeItem('fansof-idioma'); } catch (e) { /* sin guardar */ } location.reload(); }
   // EL MODO DESARROLLO: en localhost (o con ?dev=1, que se recuerda en este navegador; ?dev=0 lo apaga) se carga core/js/sistema/desarrollo.js,
-  // un botón «DEV» con utilidades para quien trabaja en el juego. En la web publicada no se carga ni se ve. El comparador lo apaga a propósito.
+  // un botón «DEV» con utilidades para quien trabaja en el juego. El panel DEV sale también en la alfa; en la release no se carga ni se ve, ni con ?dev=1. El comparador lo apaga a propósito.
+  // Fuera de localhost y de la alfa (la release) NUNCA vale: ni ?dev=1 ni lo guardado en el navegador, con rol o sin él.
+  const lugarDev = alfa || ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
   const desarrollo = (() => {
+    if (!lugarDev) return false;
     try {
       const q = new URLSearchParams(location.search).get('dev');
       if (q === '1' || q === '0') localStorage.setItem('fansof-dev', q);
@@ -72,6 +75,7 @@ const NUCLEO = (() => {
     'js/sistema/monedas.js',       // las dos monedas de todo juego, ganada y comprada (nombres, iconos, ratio y el puente ganada → comprada; PLAN-MONEDAS.md)
     'js/sistema/cuenta.js',       // la partida también en la nube: cuenta de invitado, subir y bajar
     'js/sistema/pagos.js',         // compras con dinero real dentro de la app de Android (Google Play Billing); en la web no hace nada
+    'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web): lo entrega el mismo servidor
     'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',         // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/economia-sombra.js', // modo sombra: el servidor apunta lo que se gana y se gasta, para compararlo (PLAN-CUENTAS, fase 1)
@@ -95,6 +99,8 @@ const NUCLEO = (() => {
     'js/sistema/energia.js',       // la energía del PvP y la energía ilimitada (el servidor manda; apagada no se ve)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
+    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
@@ -111,6 +117,7 @@ const NUCLEO = (() => {
     'js/sistema/monedas.js',       // las dos monedas (el juego pone AJUSTES.monedas.leer/escribir)
     'js/sistema/cuenta.js',        // la partida en la nube
     'js/sistema/pagos.js',         // compras con dinero real en la app de Android (Google Play Billing): lo entrega el servidor (productos.entrega = el juego)
+    'js/sistema/pagos-web.js',     // compras con euros en la web, con Paddle (tras el flag pago-web)
     'js/sistema/beta.js',          // el rol «beta»: abre en la release los juegos que aún no lo están (ver proximamente.js)
     'js/sistema/alfa.js',          // solo en /alfa/: la franja «ALFA» y la puerta de probadores
     'js/sistema/idioma-banderas.js', // el selector de idioma
@@ -120,6 +127,8 @@ const NUCLEO = (() => {
     'js/sistema/energia.js',       // la energía del PvP (la pinta el juego donde quiera)
     'js/sistema/feedback.js',      // la pestaña de feedback (ideas, fallos y opiniones, con permiso de contacto por email)
     'js/sistema/rendimiento.js',   // contador de fps y envío anónimo de rendimiento (lo activa cada juego)
+    'js/sistema/caja-negra.js',     // la lista de los últimos sucesos (pantallas, toques, habilidades, errores) para los reportes; tras el flag «caja-negra»
+    'js/sistema/reporte-prueba.js', // botón «!» solo para cuentas admin (todos los juegos): reportar una situación con nota, datos del juego y captura (REPORTE.activar)
     'js/sistema/telemetria.js',    // el progreso anónimo de una partida, en lotes (lo configura cada juego; respeta DATOS.activo())
     'js/sistema/errores.js',       // apunta en el servidor los fallos de código y los errores del servidor, para encontrarlos después
     'js/sistema/promo-juegos.js',  // la miniatura de otro de nuestros juegos en los anuncios de prueba
@@ -146,7 +155,7 @@ const NUCLEO = (() => {
     codigo(CORE + 'js/sistema/analitica.js');   // estadísticas de visitas, solo si el jugador acepta
     if (idioma !== 'es') { (DICCIONARIOS[idioma] || []).forEach(f => codigo(CORE + f)); (dic[idioma] || []).forEach(codigo); }
     antes.forEach(codigo); (ligero ? LIGERO : COMUN).forEach(f => codigo(CORE + f)); despues.forEach(codigo);
-    if (desarrollo) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado
+    if (desarrollo || alfa) codigo(CORE + 'js/sistema/desarrollo.js');   // el último: ya está todo cargado. El panel DEV existe en la alfa y en localhost, nunca en la release
     if (idioma !== 'es') {   // la página espera, tapada, a que se traduzca lo que ya hay; después se traduce también lo que el juego escriba
       const velo = document.createElement('style'); velo.textContent = 'body { visibility: hidden !important; }'; document.head.appendChild(velo);
       const listo = () => { IDIOMA.pantalla(); velo.remove(); };

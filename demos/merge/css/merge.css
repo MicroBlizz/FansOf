@@ -1,0 +1,89 @@
+/* Fans of Merge · estilos: pradera (verde), zanahoria (naranja, el botón principal), cielo (azul) y crema, con el contorno de la serie.
+   La capa #mg-ui mide 540 de ancho y se escala igual que el lienzo; dentro van la portada y las ventanas. */
+:root { --mg-tinta: #20102c; --mg-crema: #fff8e6; --mg-naranja: #ff8a2a; --mg-verde: #5cc24a; --mg-azul: #3fa2f0; --mg-rojo: #ff5a4f; --mg-cafe: #5a3a20; color-scheme: light; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
+body { background: radial-gradient(120% 80% at 50% 0%, #c9f2a8 0%, #6cbf55 70%); background-color: #6cbf55; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#stage { position: relative; overflow: hidden; background: #8fd16f; }
+#cv { display: block; width: 100%; height: 100%; touch-action: none; }
+@media (min-width: 600px) { #stage { border-radius: 26px; box-shadow: 0 30px 80px rgba(32, 60, 20, 0.35), 0 0 0 4px var(--mg-crema), 0 0 0 7px var(--mg-tinta); } }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 800 20px/1 'Baloo 2', system-ui, sans-serif; }
+#mg-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; font-family: 'Baloo 2', system-ui, sans-serif; color: var(--mg-cafe); }
+#mg-ui button { pointer-events: auto; font-family: 'Luckiest Guy', 'Arial Black', sans-serif; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#mg-ui button:focus-visible { outline: 3px solid var(--mg-azul); outline-offset: 3px; }
+[hidden] { display: none !important; }
+.mg-btn, .mg-btn2 { display: inline-flex; align-items: center; justify-content: center; border: 4px solid var(--mg-tinta); border-radius: 22px; padding: 13px 30px 9px; font-size: 26px; line-height: 1; min-width: 240px;
+  text-shadow: 2px 0 0 var(--mg-tinta), -2px 0 0 var(--mg-tinta), 0 2px 0 var(--mg-tinta), 0 -2px 0 var(--mg-tinta), 1.5px 1.5px 0 var(--mg-tinta), -1.5px -1.5px 0 var(--mg-tinta);
+  box-shadow: 0 6px 0 var(--mg-tinta), inset 0 4px 0 rgba(255, 255, 255, 0.5); transition: transform 0.08s; background: linear-gradient(to bottom, #ffc07a, var(--mg-naranja)); }
+.mg-btn2 { font-size: 21px; padding: 10px 22px 7px; min-width: 200px; background: linear-gradient(to bottom, #9ee38a, var(--mg-verde)); }
+.mg-btn2.mg-azul { background: linear-gradient(to bottom, #9fd4ff, var(--mg-azul)); }
+.mg-btn2.mg-rojo { background: linear-gradient(to bottom, #ffa69e, var(--mg-rojo)); }
+.mg-btn2.mg-verde { background: linear-gradient(to bottom, #9ee38a, var(--mg-verde)); }
+.mg-btn:active, .mg-btn2:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--mg-tinta), inset 0 4px 0 rgba(255, 255, 255, 0.5); }
+.mg-enorme { font-size: 46px; padding: 18px 70px 12px; border-radius: 28px; animation: mg-late 1.6s ease-in-out infinite; }
+@keyframes mg-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.mg-fila { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.mg-fila .mg-btn2 { min-width: 0; }
+/* portada */
+#mg-titulo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 20px 8%; box-sizing: border-box; }
+.mg-lema { margin: 0 0 4px; font-weight: 800; font-size: 21px; background: rgba(255, 248, 230, 0.94); border: 3px solid var(--mg-tinta); border-radius: 999px; padding: 6px 18px 4px; }
+/* ventanas */
+.mg-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box; background: rgba(32, 40, 20, 0.5); pointer-events: auto; z-index: 30; }
+.mg-tarjeta { width: 100%; max-width: 420px; max-height: 94%; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+  background: linear-gradient(to bottom, #ffffff, var(--mg-crema)); border: 4px solid var(--mg-tinta); border-radius: 28px; padding: 22px 18px 20px; box-sizing: border-box; box-shadow: 0 10px 0 var(--mg-tinta); animation: mg-sale 0.28s cubic-bezier(.2, 1.4, .4, 1); }
+.mg-tarjeta.mg-ancha { max-width: 504px; }
+@keyframes mg-sale { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.mg-tarjeta h2 { font-family: 'Luckiest Guy', sans-serif; font-weight: 400; font-size: 40px; line-height: 1; margin: 0; color: var(--mg-naranja);
+  text-shadow: 3px 0 0 var(--mg-tinta), -3px 0 0 var(--mg-tinta), 0 3px 0 var(--mg-tinta), 0 -3px 0 var(--mg-tinta), 2px 2px 0 var(--mg-tinta), -2px -2px 0 var(--mg-tinta), 2px -2px 0 var(--mg-tinta), -2px 2px 0 var(--mg-tinta); }
+.mg-sub { margin: -4px 0 0; font-weight: 800; font-size: 19px; line-height: 1.25; }
+/* cartas */
+.mg-cartas { display: flex; gap: 10px; width: 100%; }
+.mg-carta { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: flex-start; min-height: 220px; padding: 14px 8px; border: 4px solid var(--mg-tinta); border-radius: 20px;
+  background: linear-gradient(to bottom, #fff, var(--mg-crema)); box-shadow: 0 6px 0 var(--mg-tinta), inset 0 0 0 5px var(--c); transition: transform 0.1s; }
+.mg-carta:active { transform: translateY(4px); }
+.mg-carta b { font-family: 'Luckiest Guy', sans-serif; font-weight: 400; font-size: 18px; line-height: 1.05; overflow-wrap: anywhere; color: var(--c); text-shadow: 1.5px 0 0 var(--mg-tinta), -1.5px 0 0 var(--mg-tinta), 0 1.5px 0 var(--mg-tinta), 0 -1.5px 0 var(--mg-tinta); }
+.mg-carta span { font-family: 'Baloo 2', sans-serif; font-weight: 800; font-size: 16px; line-height: 1.2; color: var(--mg-cafe); }
+/* ayuda */
+.mg-ay { display: flex; gap: 10px; align-items: center; text-align: left; width: 100%; }
+.mg-ay span { flex: none; width: 58px; height: 58px; }
+.mg-ay p { margin: 0; font-weight: 700; font-size: 17px; line-height: 1.25; }
+/* final */
+.mg-fin { display: flex; gap: 14px; align-items: center; background: #fff; border: 3px solid var(--mg-tinta); border-radius: 20px; padding: 10px 18px; }
+.mg-fin div { display: flex; flex-direction: column; align-items: flex-start; }
+.mg-fin b { font-family: 'Luckiest Guy', sans-serif; font-weight: 400; font-size: 44px; color: var(--mg-naranja); line-height: 1; }
+.mg-fin small { font-weight: 800; font-size: 16px; }
+/* colección */
+.mg-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+.mg-pz { background: #fff; border: 3px solid var(--mg-tinta); border-radius: 16px; padding: 4px 2px; display: flex; flex-direction: column; align-items: center; }
+.mg-pz small { font-weight: 800; font-size: 13px; line-height: 1.1; min-height: 28px; display: flex; align-items: center; }
+/* opciones (la lista común de core/css/menus.css) */
+#mg-opc-lista { width: 100%; text-align: left; }
+#mg-opc-lista .btn-ghost { pointer-events: auto; }
+
+/* Aventura: lista de niveles, ficha y final */
+.mg-niveles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; width: 100%; }
+.mg-nv { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 2px 6px; border: 4px solid var(--mg-tinta); border-radius: 18px; background: linear-gradient(to bottom, #ffd59e, var(--mg-naranja)); box-shadow: 0 5px 0 var(--mg-tinta); }
+.mg-nv b { font-family: 'Luckiest Guy', sans-serif; font-weight: 400; font-size: 28px; line-height: 1; color: #fff; text-shadow: 2px 0 0 var(--mg-tinta), -2px 0 0 var(--mg-tinta), 0 2px 0 var(--mg-tinta), 0 -2px 0 var(--mg-tinta); }
+.mg-nv.mg-cerrado { background: linear-gradient(to bottom, #b7d9a8, #7fae6a); opacity: 0.6; }
+.mg-nv.mg-toca { animation: mg-late 1.2s ease-in-out infinite; }
+.mg-estrellas { display: inline-flex; gap: 2px; }
+.mg-estrellas i { width: 14px; height: 14px; background: rgba(32, 16, 44, 0.3); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.mg-estrellas i.si { background: #ffd84a url('../img/estrella.png') center / 120% no-repeat; }
+.mg-tarjeta > .mg-estrellas i { width: 54px; height: 54px; }
+.mg-objs { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.mg-obj { display: flex; align-items: center; justify-content: center; gap: 10px; background: #fff; border: 3px solid var(--mg-tinta); border-radius: 16px; padding: 6px 12px; font-size: 20px; }
+.mg-obj span { width: 54px; height: 54px; }
+.mg-turnos { margin: 0; font-weight: 800; font-size: 20px; color: #c96a1e; }
+.mg-premio { margin: 0; font-family: 'Luckiest Guy', sans-serif; font-size: 24px; color: var(--mg-verde); text-shadow: 1.5px 0 0 var(--mg-tinta), -1.5px 0 0 var(--mg-tinta), 0 1.5px 0 var(--mg-tinta), 0 -1.5px 0 var(--mg-tinta); }
+#mg-libre.mg-cerrado { filter: saturate(0.4); opacity: 0.75; }
+
+/* Menús pintados por Yoshi: cada regla se activa sola cuando su dibujo ha cargado (js/sprites.js pone la clase en el body) */
+.mg-img-boton-naranja .mg-btn, .mg-img-boton-naranja .mg-nv:not(.mg-cerrado) { background: url('../img/boton-naranja.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-verde .mg-btn2:not(.mg-azul):not(.mg-rojo) { background: url('../img/boton-verde.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-azul .mg-btn2.mg-azul { background: url('../img/boton-azul.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-rojo .mg-btn2.mg-rojo { background: url('../img/boton-rojo.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-panel .mg-tarjeta { background: url('../img/panel.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; padding: 34px 30px 30px; }
+.mg-img-carta .mg-carta { background: url('../img/carta.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; padding-top: 30px; }
+.mg-img-nivel .mg-nv { background: url('../img/nivel.png') center / contain no-repeat !important; border-color: transparent; box-shadow: none; aspect-ratio: 1; justify-content: center; }
+.mg-img-candado .mg-nv.mg-cerrado b { visibility: hidden; }
+.mg-img-candado .mg-nv.mg-cerrado { position: relative; }
+.mg-img-candado .mg-nv.mg-cerrado::after { content: ''; position: absolute; inset: 22%; background: url('../img/candado.png') center / contain no-repeat; }

@@ -1,0 +1,132 @@
+// Fans Of Taxi · PRINCIPAL: arranca todo (espera a three.js, monta la ciudad, el HUD y los mandos), lleva el bucle con paso fijo (la lógica
+// va a 60 pasos por segundo pase lo que pase; la pantalla pinta lo que puede) y reparte los sucesos: propinas y combo, la radio de Lola,
+// arrancar y terminar eventos, la policía, el guardado del dinero. Es el único archivo que conoce a todos los demás.
+'use strict';
+(() => {
+  const DT = TAXI.paso;
+  let jugador, fisico = null, mundo, acumulado = 0, ultimo = 0, temblor = 0, lolaT = 0, salidaCerca = null, parado = 0, zonaT = 0, zonaVista = null;
+  const nombreZona = z => z && z.startsWith('Mirador de ') ? tr('Mirador de') + ' ' + tr(z.slice(11)) : tr(z);
+  const LOLA = {
+    bienvenida: ['Hola, soy Lola, desde la emisora. Microblizz quiere cambiar los taxis por robots. Tú eres el último con conductor.', 'Párate en una parada de taxi para empezar el turno. Los corredores aparcados son una carrera; la patrulla, una huida.'],
+    turno: ['Los pasajeros rojos van lejos y pagan bien. Los verdes, al lado. Tú verás.', 'Frena y gira: derrapar carga el nitro.', 'Pasa rozando a los coches: propina. Chócalos: adiós combo.'],
+    distrae: ['¿Sabías que la Torre Microblizz tiene 90 plantas y ningún ascensor que funcione?', 'Hoy el CEO ha despedido a alguien por respirar. Era yo. Otra vez.', 'Por el parque se llega antes. O no. Prueba.', 'Hay una rampa en el Centro. No digo dónde. Bueno, al norte.', 'Bajo las avenidas hay túneles. Se entra por la circunvalación. Cruzan la ciudad sin semáforos ni poli.', 'Desde los miradores de la montaña se ve cada ciudad. Y se cae uno si se despista.', 'El río baja de la montaña hasta la bahía. No es un atajo. Lo digo por experiencia.'],
+    zona: ['Bienvenido a {zona}.'],
+    poli: ['Patrulla de Microblizz detrás. Son becarios: pierden el norte en la primera curva.', 'Si te ven, te siguen. Escóndete en un parking y espera.', 'Empújalos contra un muro. Se les cae el servidor.'],
+    escapado: ['Limpio. Ya no te buscan.'], parado: ['Te han parado. Lo del evento se lo queda Microblizz, claro.'],
+  };
+  const frase = lista => HUD.radio(tr(lista[(Math.random() * lista.length) | 0]));
+
+  function iniciar() {
+    mundo = { altura: CIUDAD.altura, suelo: CIUDAD.suelo, cerca: CIUDAD.cerca, nodoCercano: CIUDAD.nodoCercano, nodos: CIUDAD.nodos, rampas: CIUDAD.rampas, ancho: CIUDAD.ancho, largo: CIUDAD.largo, semilla: TAXI.mundo.semilla };
+    const sale = CIUDAD.salida();
+    jugador = COCHE.nuevo(sale.x, sale.z, sale.ang, { masa: 1.1 }); jugador.y = CIUDAD.altura(jugador.x, jugador.z); zonaVista = CIUDAD.zona(sale.x, sale.z);
+    // la física de verdad (Rapier) si se ha cargado (ver index.html); si no, el coche arcade de siempre
+    if (FISICA_RAPIER.disponible()) fisico = COCHE_RAPIER.crear(FISICA_RAPIER.crear(), jugador);
+    EVENTOS.crear(mundo.semilla); EVENTOS.dinero = SAVE.dinero;
+    TRAFICO.crear(mundo, jugador); POLICIA.crear(mundo, jugador); PASAJEROS.crear(mundo.semilla);
+    ESCENA.iniciar(document.getElementById('lienzo'));
+    HUD.montar(); CONTROLES.montar();
+    if (CIUDAD.estaciones.length) montaEstaciones();
+    document.getElementById('b-accion').addEventListener('click', CONTROLES.pulsaAccion);
+    if (typeof RENDIMIENTO !== 'undefined') RENDIMIENTO.activar({ juego: 'taxi' });
+    if (typeof REPORTE !== 'undefined') REPORTE.activar({ datos: datosReporte, captura: ESCENA.captura });
+    if (CIUDAD.mapa === 'ciudad') { HUD.radio(tr(LOLA.bienvenida[0]), 7); setTimeout(() => HUD.radio(tr(LOLA.bienvenida[1]), 7), 7500); }
+    requestAnimationFrame(cuadro);
+  }
+  // --- circuito de pruebas: ir a una estación, y reaparecer en la última por la que se ha pasado
+  let ultimaEstacion = null;
+  function coloca(e) {
+    Object.assign(jugador, { x: e.x, z: e.z, ang: e.ang, v: 0, vl: 0, vy: 0, aire: false });
+    jugador.y = CIUDAD.altura(e.x, e.z);
+    if (fisico) COCHE_RAPIER.recoloca(fisico, jugador);   // de pie aunque estuviera volcado
+    ultimaEstacion = e;
+    HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'grande tiempo');
+  }
+  function montaEstaciones() {
+    ultimaEstacion = CIUDAD.estaciones[0];
+    ESTACIONES_MENU.montar({ estaciones: CIUDAD.estaciones, ir: coloca, reaparecer: () => coloca(ultimaEstacion) });
+  }
+  function apuntaEstacion() {   // al pasar cerca de una estación, esa es el punto de reaparición
+    for (const e of CIUDAD.estaciones) if (e !== ultimaEstacion && Math.hypot(e.x - jugador.x, e.z - jugador.z) < 12) { ultimaEstacion = e; HUD.aviso(tr('Estación') + ' ' + e.numero + ': ' + tr(e.nombre), 'tiempo'); }
+  }
+  const otrosCoches = () => TRAFICO.coches.map(c => c.coche).concat(POLICIA.patrullas.map(p => p.coche), EVENTOS.rivales.map(r => r.coche));
+
+  function pasoLogica() {
+    const e = CONTROLES.leer();
+    // arrancar un evento: parado en una salida y acción (o quedarse quieto un segundo)
+    salidaCerca = EVENTOS.activo ? null : EVENTOS.cerca(jugador);
+    if (salidaCerca && COCHE.rapidez(jugador) < 2) { parado += DT; if (e.accion || parado > 1) { const a = EVENTOS.arrancar(salidaCerca, jugador); if (a) { HUD.aviso(tr(a.nombre), 'grande'); play('select'); if (a.tipo === 'turno') frase(LOLA.turno); if (a.tipo === 'huida') frase(LOLA.poli); } parado = 0; } } else parado = 0;
+    HUD.accion(salidaCerca && !EVENTOS.activo ? tr('EMPEZAR') + ': ' + tr(salidaCerca.nombre) : '');
+    // el coche
+    for (const s of fisico ? COCHE_RAPIER.paso(fisico, jugador, e, DT, mundo) : COCHE.paso(jugador, e, DT, mundo)) {
+      if (s === 'choque') { EVENTOS.corta(); temblor = 0.6; play('slam'); HUD.aviso(tr('CHOQUE'), 'mal'); }
+      else if (s === 'salta') { play('jump'); }
+      else if (s === 'aterriza') { if (jugador.golpe === 0 && jugador.vueloT > 0.35) { HUD.aviso(tr('SPEEDRUN') + ' +' + Math.round(TAXI.propinas.salto * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('salto'); } jugador.vueloT = 0; }
+      else if (s === 'agua') { COCHE.rescata(jugador, mundo); EVENTOS.corta(); HUD.aviso(tr('CHAPUZÓN'), 'mal grande'); play('womp'); temblor = 0.5; }
+    }
+    jugador.vueloT = jugador.aire ? (jugador.vueloT || 0) + DT : 0;
+    // el letrero de la zona al entrar (ciudad, montaña, mirador)
+    zonaT += DT; if (zonaT > 0.5) { zonaT = 0; if (CIUDAD.estaciones.length) apuntaEstacion(); const z = CIUDAD.zona(jugador.x, jugador.z); if (z && z !== zonaVista) { zonaVista = z; HUD.aviso(nombreZona(z), 'grande tiempo'); HUD.radio(tr(LOLA.zona[0]).replace('{zona}', nombreZona(z)), 4); if (z.startsWith('Mirador')) play('summon'); } }
+    if (jugador.derrapando && jugador.derrapeT > TAXI.propinas.derrapeMin && !jugador.derrapePagado) { jugador.derrapePagado = true; HUD.aviso(tr('CLIP VIRAL') + ' +' + Math.round(TAXI.propinas.derrape * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('derrape'); }
+    if (!jugador.derrapando) jugador.derrapePagado = false;
+    // el tráfico
+    for (const s of TRAFICO.paso(DT, mundo, jugador, POLICIA.patrullas.map(p => p.coche).concat(EVENTOS.rivales.map(r => r.coche)))) {
+      if (s === 'roce') { jugador.nitro = Math.min(1, jugador.nitro + TAXI.coche.nitroCarga.roce); HUD.aviso(tr('CASI BANEADO') + ' +' + Math.round(TAXI.propinas.roce * EVENTOS.estado().combo), 'bien'); EVENTOS.propina('roce'); play('pop'); }
+      else if (s === 'choque-trafico') { EVENTOS.corta(); temblor = 0.4; play('hit'); }
+    }
+    // la policía
+    for (const s of POLICIA.paso(DT, mundo, jugador, TRAFICO.coches.map(c => c.coche).concat(EVENTOS.rivales.map(r => r.coche)))) {
+      if (s === 'visto') { HUD.aviso(tr('¡TE HAN VISTO!'), 'mal'); play('womp'); frase(LOLA.poli); }
+      else if (s === 'escapado') { HUD.aviso(tr('ESCAPADO'), 'bien'); play('heal'); frase(LOLA.escapado); }
+      else if (s === 'derribo') { jugador.nitro = Math.min(1, jugador.nitro + TAXI.coche.nitroCarga.derribo); SAVE.derribos++; HUD.aviso(tr('DERRIBO') + ' +' + Math.round(TAXI.propinas.derribo * EVENTOS.estado().combo), 'bien grande'); EVENTOS.propina('derribo'); play('boom'); temblor = 0.8; }
+      else if (s === 'choque-policia') { play('clank'); temblor = 0.3; }
+      else if (s === 'parado') { frase(LOLA.parado); if (EVENTOS.activo) fin(EVENTOS.termina('parado')); else HUD.aviso(tr('TE HAN PARADO'), 'mal grande'); }
+    }
+    // el evento en marcha
+    for (const s of EVENTOS.paso(DT, mundo, jugador, otrosCoches())) {
+      if (s.tipo === 'dinero') { if (s.etiqueta && !['roce', 'salto', 'derrape', 'derribo'].includes(s.etiqueta)) HUD.aviso(tr(s.etiqueta) + ' +' + fmt(s.cuanto), 'bien grande'); }
+      else if (s.tipo === 'sube') { HUD.radio(tr(s.pasajero.tipo.nombre) + ': ' + tr(s.pasajero.tipo.sube), 4); play('card'); }
+      else if (s.tipo === 'baja') { HUD.radio(tr(s.pasajero.tipo.nombre) + ': ' + tr(s.pasajero.tipo.baja), 4); HUD.aviso('+' + s.segundos + ' s', 'tiempo'); SAVE.viajes++; play('acorn'); }
+      else if (s.tipo === 'harto') { HUD.aviso(tr('SE HA BAJADO'), 'mal'); EVENTOS.corta(); play('deny'); }
+      else if (s.tipo === 'ya') { HUD.aviso(tr('¡YA!'), 'grande'); play('deploy'); }
+      else if (s.tipo === 'fin') fin(s);
+    }
+    // Lola distrae de vez en cuando
+    lolaT += DT; if (lolaT > 28) { lolaT = 0; if (Math.random() < 0.6) frase(LOLA.distrae); }
+    temblor = Math.max(0, temblor - DT * 2);
+  }
+  function fin(s) {
+    const ev = s.evento, clave = ev.tipo + (ev.nombre || '');
+    let texto;
+    if (s.como === 'parado') texto = tr('TE HAN PARADO') + '<small>' + tr('pierdes') + ' ' + fmt(s.perdido) + ' €</small>';
+    else if (ev.tipo === 'turno') texto = tr('FIN DEL TURNO') + '<small>' + ev.viajes + ' ' + tr('viajes') + ' · ' + fmt(s.ganado) + ' €' + (txRecord(clave, s.ganado) ? ' · ' + tr('RÉCORD') : '') + '</small>';
+    else if (ev.tipo === 'sprint') texto = tr('PUESTO') + ' ' + ev.puestoFinal + '<small>' + fmt(s.ganado) + ' €</small>';
+    else texto = tr('HUIDA') + ': ' + tr(s.como === 'escapado' ? 'ESCAPADO' : 'AGUANTADO') + '<small>' + fmt(s.ganado) + ' €</small>';
+    HUD.centro('<b class="ol">' + texto + '</b>'); setTimeout(() => HUD.centro(''), 3500);
+    SAVE.dinero = EVENTOS.dinero; txGuarda(); play(s.como === 'parado' ? 'despido' : 'summon');
+  }
+  // para los reportes de prueba (core/js/sistema/reporte-prueba.js): dónde está el jugador y cómo va, y una traza por segundo
+  let trazaT = 0, fpsReporte = 0;
+  // la caja negra: lo que cambia en la partida (evento, búsqueda de la policía, pasajero, física), una vez por cambio y no por segundo
+  const visto = {};
+  function apuntaCambios() {
+    const ahora = { evento: EVENTOS.activo ? EVENTOS.activo.tipo : 'ninguno', busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, zona: CIUDAD.zona(jugador.x, jugador.z) };
+    for (const k of Object.keys(ahora)) if (visto[k] !== ahora[k]) { visto[k] = ahora[k]; REPORTE.suceso('cambio', { que: k, a: ahora[k] }); }
+  }
+  const datosReporte = () => { const i = ESCENA.info(), tz = TROZOS.estado(); return { x: Math.round(jugador.x), y: Math.round(jugador.y * 10) / 10, z: Math.round(jugador.z), ang: Math.round(jugador.ang * 100) / 100, v: Math.round(jugador.v * 10) / 10, suelo: jugador.suelo, zona: CIUDAD.zona(jugador.x, jugador.z), fps: fpsReporte, dibujos: i.calls, tris: i.tris, res: i.res, trozos: tz.cargados, evento: EVENTOS.activo ? EVENTOS.activo.tipo : null, busqueda: POLICIA.estado().nivel, pasajero: !!PASAJEROS.dentro, fisica: fisico ? 'rapier' : 'arcade' }; };
+  function cuadro(t) {
+    requestAnimationFrame(cuadro);
+    const dt = Math.min(0.1, (t - ultimo) / 1000 || 0); ultimo = t; acumulado += dt;
+    fpsReporte = Math.round(fpsReporte * 0.95 + (dt > 0 ? 1 / dt : 0) * 0.05); trazaT += dt;
+    if (trazaT >= 1 && typeof REPORTE !== 'undefined') { trazaT = 0; apuntaCambios(); REPORTE.traza({ t: Math.round(t / 1000), x: Math.round(jugador.x), z: Math.round(jugador.z), y: Math.round(jugador.y), v: Math.round(jugador.v), fps: fpsReporte, suelo: jugador.suelo }); }
+    let pasos = 0; while (acumulado >= DT && pasos < 4) { pasoLogica(); acumulado -= DT; pasos++; }
+    if (pasos === 4) acumulado = 0;   // el navegador se ha atascado: no intentar recuperar el tiempo
+    const dentro = PASAJEROS.dentro, activo = EVENTOS.activo;
+    const camino = dentro ? dentro.camino : activo && activo.tipo === 'sprint' ? activo.ruta.slice(activo.siguiente - 1).map(id => CIUDAD.nodos[id]) : null;
+    const destino = dentro ? { x: dentro.destino.x, z: dentro.destino.z, y: dentro.destino.y, color: dentro.tramo.color } : activo && activo.tipo === 'sprint' ? { x: activo.meta.x, z: activo.meta.z, y: activo.meta.y, color: 0x7ee04a } : null;
+    const estado = { jugador, conductores: TRAFICO.coches.concat(POLICIA.patrullas, EVENTOS.rivales), caidas: POLICIA.caidas, pasajeros: PASAJEROS.esperando, camino, destino, temblor, eventos: EVENTOS.estado(), policia: POLICIA.estado(), pasajero: dentro, salidas: EVENTOS.salidas };
+    ESCENA.sincroniza(estado, dt); HUD.pinta(estado, dt, t);
+  }
+  const listo = () => (window.THREE ? iniciar() : window.addEventListener('three-listo', iniciar, { once: true }));
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', listo); else listo();
+})();

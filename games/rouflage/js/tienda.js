@@ -33,12 +33,13 @@ function cierraTienda() {
 }
 function tiendaCompra(texto, da) { MONEDAS.recomiendaCuenta(() => tiendaCompraHecha(texto, da)); }
 // lo que cuesta euros: en la app de Android, Google Play (core/js/sistema/pagos.js: el servidor entrega, servidor/91, y el estado vuelve por el gancho 'compra'
-// de servidor-economia.js); si no, como hasta ahora, la compra de prueba del servidor o de la partida local. `producto` = el id en Play Console y en `productos`
+// de servidor-economia.js); en la web con el flag pago-web, Paddle (pagos-web.js, el mismo servidor); si no, como hasta ahora, la compra de prueba del servidor o de la partida local. `producto` = el id en Play Console y en `productos`
+const pagoWeb = () => typeof PAGOS_WEB !== 'undefined' && PAGOS_WEB.disponible();   // en la web, Paddle (core/js/sistema/pagos-web.js), tras el flag pago-web
 function tiendaEuros(tipo, idx, texto, precio, producto, daLocal) {
-  if (typeof PAGOS !== 'undefined' && PAGOS.disponible()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
+  if ((typeof PAGOS !== 'undefined' && PAGOS.disponible()) || pagoWeb()) return MONEDAS.compraReal(texto, `<p><b>${texto}</b> · ${precio}</p>`, r => { if (r && r.real) { play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); } }, producto);
   return RFS.activo() ? tiendaServidor(tipo, idx, texto) : tiendaCompra(texto, daLocal);
 }
-function tiendaCompraHecha(texto, da) { da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
+function tiendaCompraHecha(texto, da) { REPORTE.suceso('compra', { donde: 'tienda' }); da(); guardaPartida(); play('crown'); avisa(tr('¡Comprado! {c}', { c: texto }), 'bueno'); tiendaPinta(); }
 
 // un montón de títulos de Acciones (1 a 5): cuanto más grande el paquete, más alto el montón; el de arriba, el icono de siempre
 function pintaMontonAcciones(c, w, n) {
@@ -104,7 +105,8 @@ function tiendaPinta() {
     p.premium ? { txt: tr('YA ES TUYO') } : { moneda: 'acciones', txt: String(ECO.premium), tengo: SAVE.acciones, hace: ECO.premium }, p.premium ? null : () => { pasePremium(); tiendaPinta(); }, 'oferta'));
   // paquetes de Acciones, por euros
   const ac = E('tienda-acciones'); ac.innerHTML = '';
-  for (const pk of TIENDA.acciones) ac.appendChild(tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.acciones.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
+  for (const pk of TIENDA.acciones.filter(pk => !pagoWeb() || pk.eur >= PAGOS_WEB.minimo())) ac.appendChild(   // en la web, sin los packs que se comería la comisión fija
+    tarjeta((c, w) => pintaMontonAcciones(c, w, TIENDA.acciones.indexOf(pk) + 1), tr('{n} Acciones', { n: pk.n.toLocaleString(LOCALE_RF) }),
     pk.extra ? tr('+{n} % de regalo', { n: pk.extra }) : '', { moneda: 'euro', txt: eurTexto(pk.eur) }, () => tiendaEuros('acciones', TIENDA.acciones.indexOf(pk), tr('{n} Acciones', { n: pk.n }), eurTexto(pk.eur), 'rouflage_acciones_' + pk.n, () => { SAVE.acciones += pk.n; }), pk.extra >= 30 ? 'destacado' : '', 'euro'));
   // Acciones a cambio de Gotas (las Gotas solo se ganan jugando)
   const go = E('tienda-gotas'); go.innerHTML = '';

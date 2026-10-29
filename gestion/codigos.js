@@ -86,15 +86,7 @@
     finally { b.disabled = false; }
   }
 
-  const tabs = () => [...document.querySelectorAll('#tabs button')].map(b => b.id).filter(id => id !== 't-codigos');
-  function mostrar(si) {
-    $('pan-codigos').hidden = !si; $('t-codigos').classList.toggle('activa', si);
-    if (si) { document.querySelectorAll('#vista-panel > div[id^="pan-"]').forEach(p => { if (p.id !== 'pan-codigos') p.hidden = true; }); tabs().forEach(t => $(t).classList.remove('activa')); cargar(); }
-  }
-  $('t-codigos').onclick = () => mostrar(true);
-  tabs().forEach(t => $(t).addEventListener('click', () => { $('pan-codigos').hidden = true; $('t-codigos').classList.remove('activa'); }));
-  $('menu').addEventListener('click', () => { $('pan-codigos').hidden = true; $('t-codigos').classList.remove('activa'); });
-  $('salir').addEventListener('click', () => mostrar(false));
+  GESTION_NAV.seccion({ id: 'codigos', pan: 'pan-codigos', juego: 'rouflage', etiqueta: 'Códigos', orden: 2, cargar });
   $('cd-form').onsubmit = guardar;
   $('cd-limpiar').onclick = vaciar;
   $('cd-anadir').onclick = anadePieza;

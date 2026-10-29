@@ -54,7 +54,7 @@ function atrasMovil() {
     return true;      // la pausa, el final y los avisos: se responden con sus botones, atrás no hace nada
   }
   if (typeof TALLER !== 'undefined' && TALLER.abierto && typeof cierraTaller === 'function') { cierraTaller(); return true; }
-  if (typeof VISITA !== 'undefined' && VISITA.activa) { visitaSale(); return true; }      // de visita en un escenario: se vuelve (visita.js)
+  if (typeof VISITA !== 'undefined' && VISITA.activa) { if (visitaMenuAbierto()) visitaMenuCierra(); else visitaMenu(); return true; }      // de visita: el botón de atrás abre (o cierra) el MENÚ, como la pausa (visita.js)
   if (typeof accionPausa === 'function' && J && (J.fase === 'prep' || J.fase === 'caza' || J.fase === 'cuenta')) { accionPausa(); return true; }
   return true;
 }

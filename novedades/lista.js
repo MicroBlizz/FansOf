@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-29',
+    fecha: '29 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF TAXI', tarjeta: 'g-taxi', enlace: 'games/taxi/', texto: 'Prototipo nuevo en 3D: lleva pasajeros contra el reloj, corre carreras y dale esquinazo a la policía. Próximamente.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-21b',
     fecha: '21 de octubre de 2026',
     nuevos: [

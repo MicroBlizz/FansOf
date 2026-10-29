@@ -7,6 +7,7 @@ const PARTIDA = (() => {
   let P = null;
   const aviso = (t, d) => P.sucesos.push(Object.assign({ t }, d));
   const vivos = () => P.moviles.filter(m => m.vivo);
+  const K = () => ({ P, estalla, aviso, vivos, masCerca });   // lo que necesitan las habilidades propias (habilidades.js)
 
   function nueva(cfg) {   // cfg: { modo: '1v1' | '2v2', mapa, slots: [{ ia, nivel, nombre }], semilla }
     const modo = BOOM.modos[cfg.modo], semilla = cfg.semilla || ((Math.random() * 2147483647) | 0), W = BOOM.mundo.ancho;
@@ -20,7 +21,7 @@ const PARTIDA = (() => {
     if (cfg.entrena) { moviles[1].diana = true; moviles[1].ia = true; moviles[1].nombre = (cfg.slots[1] && cfg.slots[1].nombre) || 'Diana'; }   // el rival no tira: es un blanco que cambia de sitio al acertarle
     const personas = moviles.filter(m => !m.ia).length;
     P = { cfg, semilla, moviles, az: mulberry32(semilla ^ 0x9e3779b1), viento: 0, fase: 'inicio', actual: null, t: 0, usado: 0, proys: [], plan: null, espera: 0,
-      sucesos: [], satelite: { carga: 0 }, minas: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2 && !cfg.entrena, bono: false, entrena: !!cfg.entrena, aciertos: 0, mueveDiana: false };
+      sucesos: [], satelite: { carga: 0 }, minas: [], pendientes: [], pausa: false, evento: null, enEvento: 0, ganador: null, turnos: 0, tiroUsado: false, hotSeat: personas >= 2 && !cfg.entrena, bono: false, entrena: !!cfg.entrena, aciertos: 0, mueveDiana: false };
     P.viento = Math.round((P.az() * 2 - 1) * BOOM.viento.max); P.proximoEvento = pideEvento();
     empiezaTurno(true);
     return P;
@@ -52,7 +53,8 @@ const PARTIDA = (() => {
     if (m.tiro === 2 && m.caos < BOOM.caos.max) m.tiro = 0;
     if (m.tiro === 1 && !t2Listo(m)) m.tiro = 0;
     aviso('turno', { m });
-    if (andanMinas(m)) return;
+    const minas = andanMinas(m), suyas = HABILIDADES.alEmpezar(K(), m);   // sus minas andan, y explotan sus gatitos o llega su raid
+    if (minas || suyas) { P.fase = 'minas'; return; }
     abre(m);
   }
   // entrenamiento: al acertar a la diana, en el turno siguiente se pone en otro punto del mapa (cerca o lejos) frente a quien tira
@@ -157,6 +159,7 @@ const PARTIDA = (() => {
       if (p.demora > 0) { p.demora -= DT; continue; }
       if (p.tipo === 'golpe') { p.hecho = true; golpea(p); continue; }
       if (p.tipo === 'rueda') { if (rueda1(p)) p.hecho = true; continue; }
+      if (p.tipo) { if (HABILIDADES.vuela(K(), p)) p.hecho = true; continue; }
       if (FISICA.paso(p, P.moviles)) impacto(p);
       else {
         const ef = p.def.efecto;
@@ -193,6 +196,7 @@ const PARTIDA = (() => {
     if (ef.tipo === 'combo' && p.veces < ef.veces - 1) { estalla(p.x, p.y, p.def, p); return sigue(p.vx * 0.8, p.vy * 0.8, 0.08); }
     if (ef.tipo === 'vuelve' && !p.veces) { estalla(p.x, p.y, p.def, p); return sigue(-p.vx * 0.55, -Math.abs(p.vy) * 0.45 - 260, 0.08); }
     p.hecho = true;
+    if (HABILIDADES.impacto(K(), p, ef, fin, dueno)) return;
     if (ef.tipo === 'tren' && fin.tipo === 'terreno') { P.proys.push(rueda(p.x, p.y, dueno, p.def, ef.alcance, ef.velocidad, 'tren')); aviso('tren', { x: p.x, y: p.y }); return; }
     if (ef.tipo === 'minas' && fin.tipo === 'terreno') { P.minas.push({ x: p.x, y: TERRENO.suelo(p.x, p.y - 30), dueno: p.dueno, def: p.def }); aviso('mina', { x: p.x, y: p.y }); return; }
     estalla(p.x, p.y, p.def, p);
@@ -249,7 +253,7 @@ const PARTIDA = (() => {
     }
     if (como === 'vacio' && m.bungee) {   // el bungee: vuelve a donde estaba al empezar el turno
       m.bungee = false; m.x = m.xSeguro; m.y = TERRENO.suelo(m.x, 0); m.cayendo = false; m.vy = 0; aviso('bungee', { m }); return;
-    } m.vivo = false; P.minas = P.minas.filter(n => n.dueno !== m.id); aviso('muerte', { m, como }); }
+    } m.vivo = false; P.minas = P.minas.filter(n => n.dueno !== m.id); P.pendientes = P.pendientes.filter(n => n.dueno !== m.id); aviso('muerte', { m, como }); }
 
   // los móviles sin suelo caen; devuelve true cuando ya está todo quieto
   function caidas() {

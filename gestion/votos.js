@@ -66,12 +66,7 @@
       await cargar();
     } catch (e) { $('v-aviso').textContent = textoError(e); b.disabled = false; }
   };
-  function pestana(votos) {
-    $('pan-cuentas').hidden = votos; $('pan-votos').hidden = !votos;
-    $('t-cuentas').classList.toggle('activa', !votos); $('t-votos').classList.toggle('activa', votos);
-    if (votos) cargar();
-  }
-  $('t-cuentas').onclick = () => pestana(false); $('t-votos').onclick = () => pestana(true);
+  GESTION_NAV.seccion({ id: 'votos', pan: 'pan-votos', etiqueta: 'Comentarios', orden: 2, cargar });
   $('v-juego').onchange = $('v-estado').onchange = pinta; $('v-recargar').onclick = cargar;
-  $('salir').addEventListener('click', () => { V = F = null; pestana(false); });
+  $('salir').addEventListener('click', () => { V = F = null; });
 })();

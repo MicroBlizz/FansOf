@@ -111,7 +111,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
 
   <section id="vista-panel" hidden>
     <nav class="menu" id="menu" aria-label="Paneles"></nav>
-    <div class="filtros" id="tabs"><button id="t-cuentas" type="button" class="activa">Cuentas</button><button id="t-votos" type="button">Comentarios</button><button id="t-roles" type="button">Roles</button><button id="t-reportes" type="button">Reportes de Rouflage</button><button id="t-rend" type="button">Rendimiento</button><button id="t-flags" type="button">Flags</button><button id="t-config" type="button">Config</button><button id="t-codigos" type="button">Códigos de Rouflage</button></div>
+    <div class="filtros" id="tabs"></div>
     <div id="pan-cuentas">
     <div class="caja cifras" id="cifras"></div>
     <div class="caja ayuda" id="ayuda"></div>
@@ -151,6 +151,12 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
       <div class="aviso" id="rf-aviso" role="alert"></div>
       <div class="lista" id="rf-lista"></div>
       <div class="lista" id="rf-baneados"></div>
+    </div>
+    <div id="pan-pruebas" hidden>
+      <div class="caja ayuda"><b>Reportes de prueba.</b> Lo que mandan los probadores con el botón <b>!</b> mientras juegan (en la alfa o con <b>?dev=1</b>): su nota, dónde estaban y cómo iba el juego, los últimos 60 s y una captura. Cada reporte tiene su conversación: quien lo arregla cuenta qué hizo y lo marca <b>Visto</b>; quien lo prueba lo confirma con <b>Hecho</b> o lo <b>reabre</b> con un comentario. Hecho y <b>Descartar</b> se borran solos a los 3 días.</div>
+      <div class="filtros"><label>Estado <select id="rp-estado"><option value="pendiente">pendientes</option><option value="visto">vistos</option><option value="hecho">hechos</option><option value="descartado">descartados</option><option value="">todos</option></select></label><button type="button" id="rp-recargar">Recargar</button></div>
+      <div class="aviso" id="rp-aviso" role="alert"></div>
+      <div class="lista" id="rp-lista"></div>
     </div>
     <div id="pan-flags" hidden>
       <div class="caja ayuda"><b>Flags.</b> Interruptores para probar funciones nuevas, uno por plataforma: <b>Alfa</b> (la copia de pruebas), <b>Web</b> (la release) y <b>Android</b>. Pulsa el botón de una plataforma para abrirla o cerrarla sin tocar las otras. Los juegos los leen al arrancar y cada 5 minutos. Crearlos y borrarlos es cosa de desarrollo, y al borrar uno desaparece de esta lista. Los valores que siempre se aplican (monedas…) no son flags: están en <b>Config</b>.</div>
@@ -194,6 +200,7 @@ canvas.rf-esc { display: block; width: 100%; max-width: 360px; height: auto; bor
     </div>
   </section>
 </main>
+<script src="nav.js"></script>
 <script>
 'use strict';
 const SERVIDOR = 'https://awivkedbmumwnkqlfixm.supabase.co';
@@ -294,14 +301,18 @@ async function volverDeGoogle() {
 
 volverDeGoogle().then(hecho => { if (!hecho) { if (leerToken()) abrir(); else vista(false); } });
 </script>
+<script>GESTION_NAV.seccion({ id: 'cuentas', pan: 'pan-cuentas', etiqueta: 'Cuentas', orden: 1 });</script>
 <script src="votos.js"></script>
 <script src="roles.js"></script>
 <script src="flags.js"></script>
 <script src="codigos.js"></script>
 <script src="config.js"></script>
+<script src="cola.js"></script>
 <script src="juegos.js"></script>
 <script src="decks.js"></script>
 <script src="../pie.js" defer></script>
 <script src="reportes.js"></script>
+<script src="reportes-prueba.js"></script>
+<script>GESTION_NAV.arranca();</script>
 </body>
 </html>

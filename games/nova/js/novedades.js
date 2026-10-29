@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.25', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha instalado una caja negra en la flota y Phony ha preguntado si también graba los chistes."] },
   { v: '0.3.24', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Microblizz ha mandado la garra al espacio a pescar estrellas. Phony sigue esperando a que vuelva."] },
   { v: '0.3.23', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha abierto una tienda en órbita y Phony sigue buscando el carrito en gravedad cero."] },
   { v: '0.3.22', real: ["<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones."], joke: ["Microblizz ha silenciado el vacío del espacio, que ya lo estaba, y Phony ha tocado el botón por si no."] },

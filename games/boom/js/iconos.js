@@ -42,6 +42,13 @@ const ICONOS = (() => {
     },
     tren(c, t) { flecha(c, 6, 36, 58, 36, '#ff7ad8'); bala(c, 'tren', 24, 40, 0, 0.55); boom(c, 56, G - 6, 6); },
     minas(c, t) { for (const x of [16, 38]) { bala(c, t.forma, x, G - 8, 0, 0.6); } flecha(c, 24, 26, 46, 26, '#ffe96b'); c.fillStyle = '#ff4b5c'; c.beginPath(); c.arc(16, G - 18, 2.5, 0, T); c.arc(38, G - 18, 2.5, 0, T); c.fill(); },
+    barrido(c, t) { curva(c, [2, 44, 10, 18, 18, 44]); c.fillStyle = 'rgba(124,240,255,.9)'; c.fillRect(30, 0, 7, 46); c.strokeStyle = OL; c.lineWidth = 2; c.strokeRect(30, -2, 7, 48); flecha(c, 38, 40, 60, 40, '#7cf0ff'); for (const x of [22, 34]) boom(c, x, G - 3, 4.5); },
+    pega(c, t) { curva(c, [4, 40, 22, 2, 40, 36]); bala(c, 'gatito', 42, 34, 0, 0.8); c.fillStyle = '#ff4b5c'; c.beginPath(); c.arc(50, 26, 3, 0, T); c.fill(); c.font = '800 13px system-ui'; c.fillStyle = '#ffe96b'; c.strokeStyle = OL; c.lineWidth = 3; c.strokeText('1', 52, 14); c.fillText('1', 52, 14); },
+    muro(c, t) { curva(c, [2, 40, 16, 0, 30, 32]); c.fillStyle = '#ffb347'; c.strokeStyle = OL; c.lineWidth = 2.5; c.beginPath(); c.ellipse(40, 40, 18, 12, 0, 0, T); c.fill(); c.stroke(); c.fillStyle = '#e8862a'; c.fillRect(32, 30, 4, 10); c.fillRect(42, 29, 4, 10); c.beginPath(); c.fillStyle = '#ffb347'; c.moveTo(48, 31); c.lineTo(52, 22); c.lineTo(55, 33); c.fill(); c.stroke(); },
+    raid(c, t) { c.fillStyle = 'rgba(170,110,255,.8)'; for (const [x, y, r] of [[22, 40, 7], [26, 30, 8], [21, 22, 6]]) { c.beginPath(); c.arc(x, y, r, 0, T); c.fill(); } c.fillStyle = '#7a3ad8'; c.strokeStyle = OL; c.lineWidth = 2; c.beginPath(); c.ellipse(40, 10, 14, 5, 0, 0, T); c.fill(); c.stroke(); for (const x of [32, 40, 48]) { c.fillStyle = '#3a3a44'; c.fillRect(x - 1.5, 18, 3, 6); boom(c, x, G - 3, 4); } },
+    cadena(c, t) { bala(c, 'runa', 12, 40, 0, 0.6); for (const [x0, x1] of [[20, 34], [34, 52]]) { c.strokeStyle = '#ffe96b'; c.lineWidth = 3; c.beginPath(); c.moveTo(x0, 22); c.lineTo((x0 + x1) / 2, 14); c.lineTo(x1, 22); c.stroke(); } for (const x of [20, 34, 52]) { c.strokeStyle = '#ffe96b'; c.lineWidth = 3; c.beginPath(); c.moveTo(x, 4); c.lineTo(x - 4, 22); c.lineTo(x + 2, 22); c.lineTo(x - 2, 42); c.stroke(); boom(c, x, G - 3, x === 20 ? 6 : 4.5); } },
+    empuje(c, t) { boom(c, 32, G - 6, 10); bala(c, 'martillo', 32, 20, 0, 0.6); flecha(c, 22, 38, 4, 30, '#fff3b0'); flecha(c, 42, 38, 60, 30, '#fff3b0'); },
+    artilleria(c, t) { bala(c, 'claqueta', 10, 40, 0, 0.5); for (let i = 0; i < 4; i++) { const x = 24 + i * 10; flecha(c, x - 14, 4 + i * 2, x, 36, '#ffcb3d'); boom(c, x, G - 3, 4.5); } },
   };
   function pinta(t, ss) {
     const cv = document.createElement('canvas'); cv.width = cv.height = S * 2; const c = cv.getContext('2d'); c.scale(2, 2);

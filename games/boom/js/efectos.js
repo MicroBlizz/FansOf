@@ -28,6 +28,13 @@ const EFECTOS = (() => {
       else if (s.t === 'racimo' || s.t === 'parte') play('pop');
       else if (s.t === 'tren') { play('horn'); texto(tr('¡Hype Train!'), s.x, s.y - 50, '#ff4bd8', 26, 1.6); }
       else if (s.t === 'mina') play('clank');
+      else if (s.t === 'pega') { play('pop'); texto(tr(s.m ? '¡Pegado!' : 'Se ha pegado al suelo'), s.x, s.y - 40, '#ff8fb8', 22, 1.4); }
+      else if (s.t === 'muro') { play('slam'); texto(tr('¡Muro de gato!'), s.x, s.y - 70, '#ffb347', 24, 1.6); }
+      else if (s.t === 'humo') { play('poof'); texto(tr('Raid en camino'), s.x, s.y - 60, '#e9a6ff', 22, 1.6); }
+      else if (s.t === 'raid') { play('horn'); texto(tr('¡Llega la raid!'), PINTAR.CAM.x + PINTAR.V.w / 2, PINTAR.CAM.y + 140, '#e9a6ff', 30, 1.8); }
+      else if (s.t === 'empuje') { play('slam'); if (s.n) texto(tr('¡Martillazo!'), s.x, s.y - 60, '#fff3b0', 26, 1.4); }
+      else if (s.t === 'accion') { play('go'); texto(tr('¡Acción!'), s.x, s.y - 70, '#ffcb3d', 32, 1.6); }
+      else if (s.t === 'barrido') play('plasma');
       else if (s.t === 'glitch') { play('blink'); boom(s.x0, s.y0, 16, '', '#7cf0ff'); boom(s.x, s.y, 16, '', '#d84a3a'); texto(tr('¡Glitch!'), s.x, s.y - 30, '#7cf0ff', 22, 1.2); }
       else if (s.t === 'minaRota') { boom(s.x, s.y - 6, 18, '', '#ffcb3d'); play('poof'); }
       else if (s.t === 'minas') { play('go'); texto(tr('¡Acción! Los extras se mueven'), s.m.x, s.m.y - 90, '#ffcb3d', 22, 1.8); }

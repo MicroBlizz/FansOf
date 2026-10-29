@@ -104,6 +104,15 @@
 .bm-g-txt li { background: rgba(0, 0, 0, .25); border-radius: 8px; padding: 4px 6px; display: flex; gap: 8px; align-items: center; text-align: left; }
 .bm-g-txt li.bm-g-ss { background: linear-gradient(90deg, rgba(176, 50, 224, .45), rgba(255, 203, 61, .18)); }
 .bm-g-txt .bm-ico { width: 48px; height: 48px; flex: none; }
+.bm-g-ver { position: relative; flex: none; display: block; cursor: zoom-in; border-radius: 10px; }
+.bm-g-ver:hover, .bm-g-ver:focus-visible { outline: 3px solid var(--gold, #ffcb3d); outline-offset: 1px; }
+.bm-g-ver i { position: absolute; right: -3px; bottom: -3px; width: 20px; height: 20px; border-radius: 50%; background: var(--gold, #ffcb3d); border: 2px solid var(--outline); }
+.bm-g-ver i::after { content: ''; position: absolute; left: 6px; top: 4px; border-left: 8px solid var(--outline); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.bm-g-video { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(10, 4, 20, .75); cursor: pointer; padding: 16px; }
+.bm-g-video div { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 100%; }
+.bm-g-video video { width: min(640px, 92vw); aspect-ratio: 16 / 9; border: 4px solid var(--outline); border-radius: 14px; background: #000; image-rendering: auto; }
+.bm-g-video b { font: 400 22px var(--font-display); color: #fff; text-shadow: 2px 2px 0 var(--outline); }
+.bm-g-video small { color: #cdb9ea; font: 600 13px var(--font-ui); }
 .bm-g-txt li em.bm-g-cd { color: #cdb9ea; font-size: .9em; }
 .bm-g-txt li b { display: block; color: var(--c2); }
 .bm-g-txt li span { display: block; }

@@ -1,8 +1,8 @@
 {
- "build": 636,
- "hash": "eb561b6",
- "fecha": "2026-10-29T12:17:26Z",
- "mensaje": "Fans of Swipe: más estrategia en el combate (siguiente carta, lados que cambian, guardia, parada y golpes cargados)",
+ "build": 637,
+ "hash": "a4de2b8",
+ "fecha": "2026-10-29T12:28:55Z",
+ "mensaje": "Gestión: pestaña Cola (cola de GitHub Actions con tiempos estimados por la media de cada workflow)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

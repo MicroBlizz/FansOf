@@ -43,6 +43,7 @@ function mgPintaConejos(c, t) {
   for (const C of MG_CONEJOS) {
     if (!C.sitio) continue;
     const e = C.k * C.k * (3 - 2 * C.k), x = mgCx(lerp(C.x, C.ax, e)) + cs * 0.18, y = mgCy(lerp(C.y, C.ay, e)) + cs * 0.12 - Math.abs(Math.sin(C.k * Math.PI * 2)) * 6;
+    if (MG_IMG.CONEJITO) { c.save(); c.translate(x, y); c.scale(C.mira, 1); mgImg(c, 'CONEJITO', -cs * 0.2, -cs * 0.3, cs * 0.4, cs * 0.4); c.restore(); continue; }
     c.save(); c.translate(x, y); c.scale(C.mira, 1); c.lineWidth = 2; c.strokeStyle = OL; c.fillStyle = C.col;
     c.beginPath(); c.ellipse(0, 6, 8, 3, 0, 0, MG_TAU); c.fillStyle = 'rgba(40,40,10,.25)'; c.fill(); c.fillStyle = C.col;
     c.beginPath(); c.ellipse(-2, 0, 8, 6, 0, 0, MG_TAU); c.fill(); c.stroke();        // cuerpo

@@ -19,6 +19,11 @@ function mgTexto(c, txt, x, y, tam, col = '#fff', alin = 'center', borde = OL, f
 }
 function mgPanel(c, x, y, w, h, r, fondo, borde = OL, grosor = 4) { c.beginPath(); rrPath(c, x, y, w, h, r); c.fillStyle = fondo; c.fill(); if (borde) { c.lineWidth = grosor; c.strokeStyle = borde; c.stroke(); } }
 function mgFondo(c) {
+  const S = MG_IMG.SUELO;
+  if (S) {   // la textura pintada del prado, repetida
+    if (!MG_V.patron || MG_V.patronDe !== S) { MG_V.patron = c.createPattern(S, 'repeat'); MG_V.patronDe = S; }
+    c.save(); c.scale(0.5, 0.5); c.fillStyle = MG_V.patron; c.fillRect(0, 0, 1080, MG_V.H * 2); c.restore(); return;
+  }
   const im = MG_IMG.FONDO;
   if (im) { const r = Math.max(540 / im.width, MG_V.H / im.height); c.drawImage(im, (540 - im.width * r) / 2, (MG_V.H - im.height * r) / 2, im.width * r, im.height * r); return; }
   const g = c.createLinearGradient(0, 0, 0, MG_V.H); g.addColorStop(0, '#5f9e3f'); g.addColorStop(1, '#3f7a2c');
@@ -59,17 +64,17 @@ function mgPintaMarcador(c, t) {
   mgBoton('pausa', 466, 12, 62, 62);
   // la pieza actual (también va con el dedo por el tablero)
   const fila = 116;
-  mgPanel(c, 12, fila, 100, 112, 20, 'rgba(255,248,230,.94)', OL, 3);
+  if (!mgImg(c, 'MARCO', 8, fila - 4, 108, 120)) mgPanel(c, 12, fila, 100, 112, 20, 'rgba(255,248,230,.94)', OL, 3);
   mgTexto(c, tr('AHORA'), 62, fila + 15, 14, '#c96a1e', 'center', null);
   mgDibujaPieza(c, P.actual, 62, fila + 66 + Math.sin(t * 3) * 2, 82, k);
   let x = 122;
   if (mgTiene('lince')) {
-    mgPanel(c, x, fila + 18, 70, 94, 16, 'rgba(255,248,230,.8)', OL, 3);
+    if (!mgImg(c, 'MARCO', x - 3, fila + 15, 76, 100)) mgPanel(c, x, fila + 18, 70, 94, 16, 'rgba(255,248,230,.8)', OL, 3);
     mgTexto(c, tr('LUEGO'), x + 35, fila + 32, 12, '#3fa89c', 'center', null);
     mgDibujaPieza(c, P.cola, x + 35, fila + 72, 58, k); x += 80;
   }
   P.reserva.forEach((r, i) => {
-    mgPanel(c, x, fila + 18, 76, 94, 16, r ? 'rgba(220,245,255,.96)' : 'rgba(220,245,255,.7)', OL, 3);
+    if (!mgImg(c, 'MARCO', x - 3, fila + 15, 82, 100)) mgPanel(c, x, fila + 18, 76, 94, 16, r ? 'rgba(220,245,255,.96)' : 'rgba(220,245,255,.7)', OL, 3);
     mgTexto(c, tr('RESERVA'), x + 38, fila + 32, 12, '#2e7fb8', 'center', null);
     if (r) mgDibujaPieza(c, r, x + 38, fila + 72, 60, k);
     if (P.reservaEspera > 0) { mgPanel(c, x, fila + 18, 76, 94, 16, 'rgba(20,30,10,.45)', null); mgTexto(c, String(P.reservaEspera), x + 38, fila + 70, 34, '#fff'); }
@@ -80,14 +85,15 @@ function mgPintaMarcador(c, t) {
   const bx = 486, by = fila + 52, R = 38, listo = P.cargas > 0;
   c.beginPath(); c.arc(bx, by, R, 0, MG_TAU); c.fillStyle = listo ? '#ffb02e' : 'rgba(255,248,230,.85)'; c.fill(); c.lineWidth = 4; c.strokeStyle = OL; c.stroke();
   c.beginPath(); c.arc(bx, by, R - 7, -Math.PI / 2, -Math.PI / 2 + MG_TAU * (P.carga / MG_CFG.cargaHabilidad)); c.strokeStyle = '#ff6a2b'; c.lineWidth = 6; c.lineCap = 'round'; c.stroke(); c.lineCap = 'butt';
-  mgRayoIcono(c, bx, by, listo ? 1 : 0.45, P.modo === 'rayo' ? Math.sin(t * 10) * 0.15 : 0);
+  if (MG_IMG.RAYO) { c.globalAlpha = listo ? 1 : 0.5; const g = P.modo === 'rayo' ? 1 + Math.sin(t * 10) * 0.08 : 1; mgImg(c, 'RAYO', bx - 30 * g, by - 30 * g, 60 * g, 60 * g); c.globalAlpha = 1; }
+  else mgRayoIcono(c, bx, by, listo ? 1 : 0.45, P.modo === 'rayo' ? Math.sin(t * 10) * 0.15 : 0);
   if (P.cargas) { c.beginPath(); c.arc(bx + 27, by - 27, 13, 0, MG_TAU); c.fillStyle = '#ff4f6d'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke(); mgTexto(c, String(P.cargas), bx + 27, by - 26, 16, '#fff', 'center', null); }
   mgTexto(c, tr('RAYO'), bx, by + R + 10, 13, '#fff', 'center', OL);
   mgBoton('rayo', bx - R, by - R, R * 2, R * 2 + 16);
   if (P.tirachinas > 0) {
     const tx = 382, ty = fila + 30;
     mgPanel(c, tx, ty, 58, 58, 16, P.modo === 'tirachinas' ? '#ffd84a' : '#ff8a3d', OL, 3);
-    mgTirachinasIcono(c, tx + 29, ty + 29);
+    if (!mgImg(c, 'TIRACHINAS', tx + 4, ty + 4, 50, 50)) mgTirachinasIcono(c, tx + 29, ty + 29);
     mgTexto(c, tr('TIRACHINAS'), tx + 29, ty + 70, 11, '#fff', 'center', OL);
     mgBoton('tirachinas', tx, ty, 58, 76);
   }
@@ -119,15 +125,19 @@ function mgPintaCaminos(c, t) {
       if (libre(x, y + 1)) c.rect(cx - r * 0.7 - pad, cy, (r * 0.7 + pad) * 2, cs);
     }
   };
+  if (MG_IMG.CAMINO) {   // el camino pintado: un trozo por casilla, un poco más grande para que se unan
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (libre(x, y)) mgImg(c, 'CAMINO', mgCx(x) - cs * 0.6, mgCy(y) - cs * 0.6, cs * 1.2, cs * 1.2);
+  } else {
   forma(3); c.fillStyle = 'rgba(70,60,20,.45)'; c.fill('nonzero');
   forma(0); c.fillStyle = '#c9b46e'; c.fill('nonzero');
   // piedrecitas del camino (fijas por casilla)
   c.fillStyle = 'rgba(120,100,50,.35)';
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (libre(x, y)) for (let i = 0; i < 3; i++) { const s = (x * 7 + y * 13 + i * 5) % 11; c.beginPath(); c.arc(mgCx(x) - r * 0.6 + s * 4.5, mgCy(y) - r * 0.5 + ((s * 3 + i * 17) % 22) * 2.4, 2 + (s % 2), 0, MG_TAU); c.fill(); }
+  }
   if (E && E.casillas.size) {   // las casillas mojadas: un charco azul con gotas y su x2
     for (const k of E.casillas) {
       const x = k % 8, y = (k / 8) | 0, cx = mgCx(x), cy = mgCy(y);
-      c.beginPath(); c.ellipse(cx, cy + cs * 0.2, cs * 0.44, cs * 0.22, 0, 0, MG_TAU); c.fillStyle = 'rgba(110,190,255,.55)'; c.fill();
+      if (!mgImg(c, 'CHARCO', cx - cs * 0.48, cy - cs * 0.2, cs * 0.96, cs * 0.6)) { c.beginPath(); c.ellipse(cx, cy + cs * 0.2, cs * 0.44, cs * 0.22, 0, 0, MG_TAU); c.fillStyle = 'rgba(110,190,255,.55)'; c.fill(); }
       c.fillStyle = 'rgba(220,240,255,.85)';
       for (let i = 0; i < 3; i++) { const gy = (t * 70 + i * 29) % (cs * 0.8); c.beginPath(); c.ellipse(cx - cs * 0.3 + i * cs * 0.3, cy - cs * 0.45 + gy, 2.2, 6, 0, 0, MG_TAU); c.fill(); }
       mgTexto(c, 'x2', cx + cs * 0.32, cy - cs * 0.34, 15, '#bfe6ff', 'center', OL);
@@ -201,6 +211,7 @@ function mgPintaTablero(c, t) {
   c.restore();
 }
 function mgFlecha(c, x, y) {
+  if (mgImg(c, 'FLECHA', x - 26, y - 30, 52, 52)) return;
   c.save(); c.translate(x, y); c.beginPath();
   c.moveTo(0, 16); c.lineTo(-18, -4); c.lineTo(-8, -4); c.lineTo(-8, -22); c.lineTo(8, -22); c.lineTo(8, -4); c.lineTo(18, -4); c.closePath();
   c.fillStyle = '#ffd23a'; c.fill(); c.lineWidth = 4; c.lineJoin = 'round'; c.strokeStyle = OL; c.stroke(); c.restore();

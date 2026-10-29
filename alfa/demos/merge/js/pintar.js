@@ -113,7 +113,7 @@ function mgTirachinasIcono(c, x, y) {
 }
 
 /* ---------- el tablero: caminos de tierra, piezas, previsión ---------- */
-function mgPintaCaminos(c, t) {   // c no es const: el camino pintado se prepara una vez en otro lienzo con la misma forma
+function mgPintaCaminos(c, t) {
   const P = MG_P, cs = MG_V.cs, n = MG_CFG.lado, B = P.B, r = cs * 0.38, E = P.evento;
   const libre = (x, y) => mgDentro(x, y) && P.camino.has(y * 8 + x);   // el camino es fijo en cada partida: no cambia al poner piezas
   const forma = (pad) => {   // cada casilla libre es una mancha redonda, unida a las libres de al lado
@@ -126,22 +126,16 @@ function mgPintaCaminos(c, t) {   // c no es const: el camino pintado se prepara
       if (libre(x, y + 1)) c.rect(cx - r * 0.7 - pad, cy, (r * 0.7 + pad) * 2, cs);
     }
   };
-  if (MG_IMG.TIERRA) {   // el camino: la tierra pintada por Yoshi, con el borde difuminado para que se funda con la hierba (sin escalón)
-    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, [...P.camino].join(','), MG_IMG.TIERRA.src].join('|');
-    if (MG_V.caminoClave !== clave) {
-      const W = Math.ceil(540 * k), H = Math.ceil(MG_V.H * k), tierra = document.createElement('canvas'), mascara = document.createElement('canvas');
-      tierra.width = mascara.width = W; tierra.height = mascara.height = H;
-      const tc = tierra.getContext('2d'), mc = mascara.getContext('2d');
-      tc.setTransform(k * 0.35, 0, 0, k * 0.35, 0, 0); tc.fillStyle = tc.createPattern(MG_IMG.TIERRA, 'repeat'); tc.fillRect(0, 0, 540 / 0.35, MG_V.H / 0.35);
-      mc.setTransform(k, 0, 0, k, 0, 0); mc.fillStyle = '#000';
-      const real = c; c = mc;
-      mc.filter = `blur(${Math.round(cs * 0.05 * k)}px)`; forma(cs * 0.02); mc.fill('nonzero');   // el borde, suave
-      mc.filter = 'none'; forma(-cs * 0.06); mc.fill('nonzero');                                     // el centro, lleno
-      c = real;
-      tc.setTransform(1, 0, 0, 1, 0, 0); tc.globalCompositeOperation = 'destination-in'; tc.drawImage(mascara, 0, 0);
-      MG_V.caminoLienzo = tierra; MG_V.caminoClave = clave;
+  const casillas = ['CASILLA1', 'CASILLA2', 'CASILLA3'].filter(k => MG_IMG[k]);
+  if (casillas.length || MG_IMG.TIERRA) {   // el camino: cada casilla es su propia losa de tierra pintada por Yoshi, separada de las demás
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      if (!libre(x, y)) continue;
+      const l = cs * 0.94, x0 = mgCx(x) - l / 2, y0 = mgCy(y) - l / 2;
+      if (casillas.length) { mgImg(c, casillas[(x * 7 + y * 3) % casillas.length], x0, y0, l, l); continue; }
+      c.save(); c.beginPath(); rrPath(c, x0 + 3, y0 + 3, l - 6, l - 6, l * 0.22); c.clip();   // mientras llegan las losas: un trozo de la tierra pintada
+      const im = MG_IMG.TIERRA, o = ((x * 37 + y * 53) % 5) * im.width * 0.1;
+      c.drawImage(im, o, o, im.width * 0.5, im.height * 0.5, x0, y0, l, l); c.restore();
     }
-    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(MG_V.caminoLienzo, 0, 0); c.restore();
   } else {
   forma(3); c.fillStyle = 'rgba(70,60,20,.45)'; c.fill('nonzero');
   forma(0); c.fillStyle = '#c9b46e'; c.fill('nonzero');

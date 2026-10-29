@@ -1,8 +1,8 @@
 /* Fans of Asalto · estilos: pixel art de 16 bits como la arena. Paneles lavanda con borde oscuro y esquinas cortadas (sin redondear),
    las letras de píxeles Jersey 10 y Tiny5 y los dibujos sin suavizar. La capa #as-ui mide 540x960 y se escala igual que el lienzo. */
-:root { --as-tinta: #20102c; --as-panel: #8f9be8; --as-panel2: #6c78d0; --as-claro: #c9d0ff; --as-fondo: #2b2d6b; --as-rojo: #e8433a; --as-verde: #5fb83a; --as-naranja: #f08a2a; --as-azul: #4f8ae8; --as-oro: #ffd23a; color-scheme: dark; }
+:root { --as-tinta: #2a3570; --as-panel: #a9bdf2; --as-panel2: #7f93e0; --as-claro: #dbe6ff; --as-fondo: #4c56a8; --as-rojo: #e8503c; --as-verde: #5bc44a; --as-naranja: #f08a2a; --as-azul: #4f8ae8; --as-oro: #ffd23a; --as-rosa: #ff6a8a; color-scheme: light; }
 html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
-body { background: #15163a; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+body { background: #343c80; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
 #stage { position: relative; overflow: hidden; background: var(--as-fondo); image-rendering: pixelated; }
 #cv { display: block; width: 100%; height: 100%; touch-action: none; image-rendering: pixelated; }
 @media (max-width: 599px) { body { background: var(--as-fondo); } }   /* en el móvil, lo que sobra arriba y abajo es del mismo color que el juego */
@@ -76,5 +76,34 @@ body { background: #15163a; display: flex; align-items: center; justify-content:
 .as-guia.sale { animation: as-guia 0.3s steps(3); }
 @keyframes as-guia { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 #as-guia-cara { flex: none; width: 64px; height: 64px; }
+/* el equipo, la herrería, los logros y la tienda de fuera */
+.as-equipo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.as-huecos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.as-obj { border: 0; padding: 6px 4px; background: var(--as-claro); color: var(--as-tinta) !important; box-shadow: inset 0 0 0 3px var(--as-tinta); display: grid; justify-items: center; gap: 2px; font-size: 13px; line-height: 1.1; min-height: 78px; font-family: inherit; }
+.as-obj.r1 { box-shadow: inset 0 0 0 3px #2a6fd0; background: #cfe3ff; } .as-obj.r2 { box-shadow: inset 0 0 0 3px #8a2ad0; background: #e8cfff; }
+.as-obj.vacio { background: rgba(255, 255, 255, 0.18); box-shadow: inset 0 0 0 3px rgba(42, 53, 112, 0.5); color: #fff !important; }
+.as-obj small { font-weight: 400; } .as-obj .as-stat { color: #1d6b2a; }
+.as-obj:active { transform: translateY(3px); }
+.as-objs { display: flex; gap: 6px; justify-content: center; }
+.as-objs .as-obj { width: 110px; }
+.as-stats { list-style: none; padding: 0; margin: 0; display: grid; gap: 3px; text-align: left; font-size: 15px; }
+.as-stats li { display: flex; justify-content: space-between; background: var(--as-panel2); padding: 4px 8px; box-shadow: inset 0 0 0 2px var(--as-tinta); }
+.as-mochila { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0; }
+.as-forja { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; margin: 8px 0; background: var(--as-panel2); padding: 8px; box-shadow: inset 0 0 0 3px var(--as-tinta); }
+.as-forja-txt { display: grid; gap: 6px; }
+.as-logros { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; text-align: left; font-size: 16px; }
+.as-logros li { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: var(--as-panel2); padding: 8px 10px; box-shadow: inset 0 0 0 3px var(--as-tinta); }
+.as-logros li.hecho { opacity: 0.55; } .as-logros li.puede { background: #3f9a3a; }
+.as-logros .as-btn2 { min-width: 0; padding: 6px 12px 8px; font-size: 16px; }
+.as-plumas { display: inline-flex; align-items: center; gap: 4px; color: #ffe9a0; }
+.as-ico-pluma { display: inline-block; width: 12px; height: 12px; background: #ffd23a; box-shadow: inset 0 0 0 2px var(--as-tinta); }
+.as-ofertas { display: grid; gap: 8px; margin: 10px 0; }
+.as-oferta { border: 0; padding: 12px; background: var(--as-claro); color: var(--as-tinta) !important; box-shadow: inset 0 0 0 3px var(--as-tinta); display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: 10px; text-align: left; font-size: 18px; font-family: inherit; }
+.as-oferta small { grid-column: 2; font-size: 14px; } .as-oferta b { grid-column: 2; } .as-oferta i { grid-row: 1 / 3; } .as-oferta .as-plumas { grid-column: 3; grid-row: 1 / 3; color: var(--as-tinta); font-size: 22px; }
+.as-oferta:disabled { opacity: 0.6; }
+.as-aviso { box-shadow: inset 0 0 0 3px var(--as-tinta), 0 0 0 4px var(--as-oro) !important; }
+.as-quien-h { display: grid; justify-items: center; font-size: 14px; } .as-quien-h.apagado { filter: grayscale(1) brightness(0.7); }
+.as-reliq em { font-style: normal; font-size: 12px; background: var(--as-tinta); color: #fff; padding: 1px 6px; }
+.as-pie-ad { display: block; margin-top: 6px; font-size: 13px; opacity: 0.85; }
 /* el aviso y la ventana comunes de core (ligero.js) */
 #toast { font-family: 'Jersey 10', monospace; font-size: 24px; }

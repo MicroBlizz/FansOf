@@ -1,6 +1,6 @@
 // Fans of Asalto · PANTALLAS: el menú principal (entrar en la mazmorra, equipo, herrería, logros, tienda y ajustes), las ventanas de
-// la partida (el cofre con su doble premio, elegir reliquia, perder un corazón, el final), el anuncio de PRUEBA (siempre voluntario)
-// y los consejos de la guía (MeerCat), que salen una sola vez cada uno.
+// la partida (la victoria con su cofre, elegir reliquia, el final de la partida o de la zona), el anuncio de PRUEBA (siempre
+// voluntario) y los consejos de la guía (MeerCat), que salen una sola vez cada uno. Lo de fuera de la partida está en pantallas-fuera.js.
 'use strict';
 const AS_PANT = { actual: 'titulo', pausa: false };
 function asH(s) { return String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]); }
@@ -17,36 +17,36 @@ function asModal(html, clase) {
   return t;
 }
 function asCierraModal() { $('#as-modal').hidden = true; }
+function asPlumasHtml(n) { return `<span class="as-plumas"><i class="as-ico-pluma"></i>${n}</span>`; }
 
 /* ---------- el menú principal ---------- */
 function asMenu() {
   AS_PANT.actual = 'titulo'; AS_PANT.pausa = false; AS_P = null; AS_B = null; asCierraModal();
   $('#as-titulo').hidden = false; asMusica('menu');
-  $('#as-mejor').textContent = SAVE.mejor ? tr('Mejor piso: {n}', { n: SAVE.mejor }) : tr('Baja a la mazmorra de Microblizz');
-  $('#as-gemas-menu').textContent = String(SAVE.gemas);
-  const g = $('#as-gema-ico').getContext('2d'); g.clearRect(0, 0, 22, 22); asIcono(g, 'gema', 11, 11, 20);
+  $('#as-mejor').textContent = SAVE.mejor ? tr('Mejor nivel: {n}', { n: SAVE.mejor }) : tr('Baja a la mazmorra de Microblizz');
+  $('#as-plumas-menu').textContent = String(SAVE.plumas);
+  const g = $('#as-pluma-ico').getContext('2d'); g.clearRect(0, 0, 22, 22); asIcono(g, 'pluma', 11, 11, 20);
+  const pend = asLogrosPendientes().length; $('#as-logros').classList.toggle('as-aviso', pend > 0);
 }
 function asEntrar() {
-  // elegir zona: de momento solo la primera está abierta
-  const filas = AS_ZONAS.map((z, i) => `<button class="as-zona${z.bloqueada ? ' cerrada' : ''}" data-z="${i}" type="button"><b>${asH(tr(z.nombre))}</b><small>${z.bloqueada ? tr('Próximamente') : tr('{n} pisos · jefe final: el CEO', { n: z.pisos.length })}</small></button>`).join('');
+  const filas = AS_ZONAS.map((z, i) => { const abierta = i === 0 || SAVE.zonas.includes(i - 1); return `<button class="as-zona${abierta ? '' : ' cerrada'}" data-z="${i}" type="button"><b>${asH(tr(z.nombre))}</b><small>${abierta ? tr('{n} niveles · jefe: {j}', { n: z.niveles, j: tr(AS_ENEMIGOS[z.jefe.tipo].nombre) }) + (SAVE.zonas.includes(i) ? ' · ' + tr('terminada') : '') : tr('Termina la zona anterior para abrirla')}</small></button>`; }).join('');
   const t = asModal(`<h2>${tr('LA MAZMORRA')}</h2><div class="as-zonas">${filas}</div><button class="as-btn2 as-gris" id="as-z-no" type="button">${tr('VOLVER')}</button>`);
   t.querySelectorAll('.as-zona').forEach(b => b.onclick = () => {
-    const z = AS_ZONAS[+b.dataset.z];
-    if (z.bloqueada) { play('asNoVale'); toast(tr('Esta zona llegará pronto')); return; }
-    play('select'); asCierraModal(); asEmpiezaPartida();
+    const i = +b.dataset.z;
+    if (b.classList.contains('cerrada')) { play('asNoVale'); toast(tr('Termina la zona anterior para abrirla')); return; }
+    play('select'); asCierraModal(); asEmpiezaPartida(i);
   });
   $('#as-z-no').onclick = () => { play('select'); asCierraModal(); };
 }
-function asEmpiezaPartida() {
+function asEmpiezaPartida(zona) {
   $('#as-titulo').hidden = true; AS_PANT.actual = 'partida';
-  asNuevaPartida(); asMusica('animales');
-  asConsejo('tienda');
+  asNuevaPartida(zona); asMusica('animales');
+  asConsejo('flechas0');
 }
-function asProximamente(que) { play('select'); toast(tr('{q}: próximamente', { q: que })); }
 
 /* ---------- el anuncio de prueba ---------- */
 function asAnuncio(alAcabar) {
-  const ov = $('#as-anuncio'); let t = 5;
+  const ov = $('#as-anuncio'); let t = NUCLEO.desarrollo ? 1 : 5;
   ov.hidden = false; play('select');
   const ok = $('#as-ad-ok'), barra = $('#as-ad-barra');
   const tic = () => {
@@ -58,72 +58,69 @@ function asAnuncio(alAcabar) {
   $('#as-ad-no').onclick = () => { clearTimeout(ov._t); ov.hidden = true; play('select'); toast(tr('Anuncio cerrado: sin premio')); };
 }
 
-/* ---------- el cofre: abrir normal o doble premio con anuncio ---------- */
-function asVentanaCofre(oro, jefe, alAcabar) {
-  const t = asModal(`<h2>${jefe ? tr('¡JEFE DERROTADO!') : AS_B ? tr('¡VICTORIA!') : tr('UN COFRE')}</h2><div class="as-cofre" id="as-cofre"></div>
-    <p class="as-premio" id="as-premio">${tr('Dentro hay {n} de oro', { n: oro })}${jefe ? '<br>' + tr('y {n} gemas', { n: AS_CFG.gemasJefe }) : ''}</p>
-    <div class="as-fila" id="as-cofre-btns"><button class="as-btn2 as-azul" id="as-abrir" type="button">${tr('ABRIR')}</button><button class="as-btn2 as-oro" id="as-doble" type="button">${tr('X2 CON ANUNCIO')}</button></div>`);
-  const caja = $('#as-cofre');
-  const cv = document.createElement('canvas'); cv.width = 180; cv.height = 150; cv.className = 'as-pix'; caja.appendChild(cv);
-  const c = cv.getContext('2d'); let abierto = false, t0 = performance.now();
+/* ---------- el cofre de la sala (lo pinta la arena; aquí se abre) ---------- */
+function asAbreCofre(mult) {
+  const C = AS_P.cofre; if (!C || C.abierto) return;
+  C.abierto = true; C.tAbre = 0; C.oroDado = C.oro * mult; C.plumasDadas = C.plumas * mult;
+  asGanaOro(C.oroDado); asGanaPlumas(C.plumasDadas); play('asCofre');
+}
+/* ---------- la victoria: el cofre con el oro (y en el jefe, plumas y objetos) ---------- */
+function asVentanaVictoria(oro, plumas, objetos, alAcabar) {
+  const jefe = plumas > 0;
+  asGanaOro(oro); if (plumas) asGanaPlumas(plumas);
+  const objs = objetos.map(o => `<div class="as-obj r${o.rareza}" title="${asH(tr(AS_EQUIPO.nombres[o.hueco]))}"><i data-ico="equipo-${o.hueco}"></i><small>+${o.valor} % ${asH(tr(AS_EQUIPO.stats[o.stat]))}</small></div>`).join('');
+  const t = asModal(`<h2>${jefe ? tr('¡JEFE DERROTADO!') : tr('¡VICTORIA!')}</h2><div class="as-cofre" id="as-cofre"></div>
+    <p class="as-premio"><b class="as-mas">+${oro}</b> ${tr('de oro')}${plumas ? ` · <b class="as-mas">+${plumas}</b> ${tr('plumas')}` : ''}</p>${objs ? `<p class="as-sub">${tr('Botín de equipo')}</p><div class="as-objs">${objs}</div>` : ''}
+    <button class="as-btn2" id="as-sigue" type="button">${tr('SEGUIR')}</button>`);
+  t.querySelectorAll('[data-ico]').forEach(i => i.appendChild(asLienzo(i.dataset.ico, 40, true)));
+  const caja = $('#as-cofre'), cv = document.createElement('canvas'); cv.width = 160; cv.height = 120; cv.className = 'as-pix'; caja.appendChild(cv);
+  const c = cv.getContext('2d'), t0 = performance.now();
   const pinta = () => {
     if (!cv.isConnected) return;
-    const d = AS_TIRAS.cofre, k = 5, s = (performance.now() - t0) / 1000;
-    c.clearRect(0, 0, 180, 150); c.imageSmoothingEnabled = false;
+    const d = AS_TIRAS.cofre, k = 4, s = (performance.now() - t0) / 1000;
+    c.clearRect(0, 0, 160, 120); c.imageSmoothingEnabled = false;
     if (d && AS_IMG.cofre) {
-      const fi = abierto ? Math.min(d.f.length - 1, Math.floor(s * 6)) : 0, sal = abierto ? 0 : Math.round(Math.abs(Math.sin(s * 5)) * -6);
-      if (abierto) { c.globalAlpha = 0.5; c.fillStyle = '#ffe27a'; c.fillRect(90 - 10 - s * 20 % 30, 0, 20 + s * 40 % 60, 150); c.globalAlpha = 1; }
-      c.drawImage(AS_IMG.cofre, fi * d.w, 0, d.w, d.h, 90 - d.w * k / 2, 140 - d.h * k + sal, d.w * k, d.h * k);
-      if (abierto && d.f.length < 2) for (let i = 0; i < 8; i++) { const a = s * 3 + i; asIcono(c, 'moneda', 90 + Math.cos(a) * 50, 60 - (s * 60 + i * 9) % 60, 18); }
+      const fi = Math.min(d.f.length - 1, Math.floor(s * 6));
+      c.globalAlpha = 0.4; c.fillStyle = '#ffe27a'; c.fillRect(80 - 10 - s * 20 % 30, 0, 20 + s * 40 % 60, 120); c.globalAlpha = 1;
+      c.drawImage(AS_IMG.cofre, fi * d.w, 0, d.w, d.h, 80 - d.w * k / 2, 112 - d.h * k, d.w * k, d.h * k);
+      for (let i = 0; i < 8; i++) { const a = s * 3 + i; asIcono(c, 'moneda', 80 + Math.cos(a) * 50, 50 - (s * 60 + i * 9) % 60, 14); }
     }
     requestAnimationFrame(pinta);
   };
-  pinta();
-  const abre = mult => {
-    abierto = true; t0 = performance.now(); play('asCofre');
-    AS_P.oro += oro * mult;
-    $('#as-premio').innerHTML = `<b class="as-mas">+${oro * mult}</b> ${tr('de oro')}${mult > 1 ? ' ' + tr('(¡doble!)') : ''}`;
-    $('#as-cofre-btns').innerHTML = `<button class="as-btn2" id="as-sigue" type="button">${tr('SEGUIR')}</button>`;
-    $('#as-sigue').onclick = () => { play('select'); asCierraModal(); alAcabar(); };
-  };
-  $('#as-abrir').onclick = () => abre(1);
-  $('#as-doble').onclick = () => asAnuncio(() => abre(2));
+  pinta(); play('asCofre');
+  if (objetos.length) { const fuera = asGuardaObjetos(objetos); if (fuera) toast(tr('Mochila llena: {n} objetos se han deshecho en plumas', { n: fuera })); }
+  $('#as-sigue').onclick = () => { play('select'); asCierraModal(); alAcabar(); };
 }
 
 /* ---------- reliquias: 1 de 3, refrescar, o todas con anuncio ---------- */
 function asVentanaReliquias(alAcabar) {
   const libres = Object.keys(AS_RELIQUIAS).filter(k => !AS_P.reliquias.includes(k));
-  if (!libres.length) { asVentanaCofre(8, false, alAcabar); return; }
+  if (!libres.length) { asGanaOro(8); asAviso(tr('+8 de oro'), true); alAcabar(); return; }
   const tres = shuffle(libres.slice()).slice(0, 3);
-  const t = asModal(`<h2>${tr('ELIGE UNA RELIQUIA')}</h2><p class="as-sub">${tr('Vale para todo el grupo hasta el final de la partida.')}</p><div class="as-reliqs" id="as-reliqs"></div>
-    <div class="as-fila"><button class="as-btn2 as-verde" id="as-r-ref" type="button">${tr('REFRESCAR')} · 2</button><button class="as-btn2 as-oro" id="as-r-todas" type="button">${tr('TODAS CON ANUNCIO')}</button></div>`);
+  const t = asModal(`<h2>${tr('EL ALTAR')}</h2><p class="as-sub">${tr('Elige una reliquia: vale hasta el final de la partida.')}</p><div class="as-reliqs" id="as-reliqs"></div>
+    <div class="as-fila"><button class="as-btn2 as-verde" id="as-r-ref" type="button">${tr('REFRESCAR')}</button><button class="as-btn2 as-rojo" id="as-r-todas" type="button">${tr('LAS QUIERO TODAS')}</button></div><small class="as-pie-ad">${tr('Las dos con anuncio de prueba.')}</small>`);
   const caja = $('#as-reliqs');
   for (const k of tres) {
     const r = AS_RELIQUIAS[k], b = document.createElement('button'); b.type = 'button'; b.className = 'as-reliq';
-    b.appendChild(asLienzo('reliquia-' + k, 64, true));
-    b.insertAdjacentHTML('beforeend', `<b>${asH(tr(r.nombre))}</b><small>${asH(tr(r.txt))}</small>`);
+    b.appendChild(asLienzo(r.icono || (r.clase ? 'clase-' + r.clase : 'reliquia-' + k), 56, true));
+    b.insertAdjacentHTML('beforeend', `<b>${asH(tr(r.nombre))}</b>${r.clase ? `<em>${asH(tr(AS_CLASES[r.clase].nombre))}</em>` : ''}<small>${asH(tr(r.txt))}</small>`);
     b.onclick = () => { play('asSube'); AS_P.reliquias.push(k); asCierraModal(); asAviso(tr(r.nombre), true); alAcabar(); };
     caja.appendChild(b);
   }
-  $('#as-r-ref').onclick = () => { if (AS_P.oro < 2) { play('asNoVale'); toast(tr('No tienes oro suficiente')); return; } AS_P.oro -= 2; play('asRefresca'); asVentanaReliquias(alAcabar); };
+  $('#as-r-ref').onclick = () => asAnuncio(() => { play('asRefresca'); asVentanaReliquias(alAcabar); });
   $('#as-r-todas').onclick = () => asAnuncio(() => { for (const k of tres) AS_P.reliquias.push(k); play('asSube'); asCierraModal(); asAviso(tr('¡Tres reliquias!'), true); alAcabar(); });
 }
 
-/* ---------- perder un corazón y el final ---------- */
-function asVentanaDerrota(alAcabar) {
-  asModal(`<h2>${tr('¡DERROTA!')}</h2><div class="as-fila as-corazones">${'<span class="as-cor"></span>'.repeat(AS_P.corazones)}<span class="as-cor roto"></span></div>
-    <p>${tr('Has perdido un corazón. Mejora el equipo y vuelve a intentarlo: te damos 2 de oro.')}</p><button class="as-btn2" id="as-otra" type="button">${tr('A LA TIENDA')}</button>`);
-  document.querySelectorAll('.as-cor').forEach(e => e.appendChild(asLienzo('corazon', 40, true)));
-  $('#as-otra').onclick = () => { play('select'); asCierraModal(); alAcabar(); };
-}
+/* ---------- el final: la zona terminada o la derrota ---------- */
 function asVentanaFin(gano) {
-  const P = AS_P;
-  asModal(`<h2>${gano ? tr('¡HAS ECHADO AL CEO!') : tr('FIN DE LA PARTIDA')}</h2>
-    ${gano ? `<div class="as-cofre" id="as-ceo"></div><p>${tr('El CEO de Microblizz sale corriendo con su maletín. Los Animales Locos recuperan la mazmorra… por ahora.')}</p>` : `<p>${tr('Tus héroes no pueden más. La próxima vez, prueba otra combinación de clases.')}</p>`}
-    <ul class="as-datos"><li>${tr('Piso alcanzado')}: <b>${P.piso + 1}</b></li><li>${tr('Combates ganados')}: <b>${P.combates}</b></li><li>${tr('Gemas ganadas')}: <b>${P.gemas}</b></li></ul>
+  const P = AS_P, Z = asZona(), logros = asLogrosPendientes();
+  const lis = `<ul class="as-datos"><li>${tr('Nivel alcanzado')}: <b>${P.nivel}</b> / ${Z.niveles}</li><li>${tr('Combates ganados')}: <b>${P.combates}</b></li><li>${tr('Plumas ganadas')}: <b>${P.plumas}</b></li></ul>`;
+  asModal(`<h2>${gano ? tr('¡ZONA TERMINADA!') : tr('FIN DE LA PARTIDA')}</h2>
+    ${gano ? `<div class="as-cofre" id="as-ceo"></div><p>${P.zona === AS_ZONAS.length - 1 ? tr('El CEO de Microblizz sale corriendo con su maletín. Los Animales Locos recuperan la mazmorra… por ahora.') : tr('{z} está limpia. Se abre la siguiente zona.', { z: tr(Z.nombre) })}</p>` : `<p>${tr('Tus héroes no pueden más. Las plumas y el equipo que has ganado se quedan contigo.')}</p>`}
+    ${lis}${logros.length ? `<p class="as-sub">${tr('Logros nuevos: {n}. Cóbralos en el menú.', { n: logros.length })}</p>` : ''}
     <div class="as-fila"><button class="as-btn2" id="as-fin-otra" type="button">${tr('OTRA VEZ')}</button><button class="as-btn2 as-gris" id="as-fin-menu" type="button">${tr('MENÚ')}</button></div>`);
-  if (gano) $('#as-ceo').appendChild(asLienzo('jefe-ceo', 140));
-  $('#as-fin-otra').onclick = () => { play('select'); asCierraModal(); asEmpiezaPartida(); };
+  if (gano) $('#as-ceo').appendChild(asLienzo(Z.jefe.tipo, 120));
+  $('#as-fin-otra').onclick = () => { play('select'); asCierraModal(); asEmpiezaPartida(P.zona); };
   $('#as-fin-menu').onclick = () => { play('select'); asMenu(); };
 }
 
@@ -154,13 +151,17 @@ function asAjustes() {
 
 /* ---------- la guía: MeerCat da los consejos ---------- */
 const AS_CONSEJOS = {
-  tienda: 'Toca un héroe de la tienda para comprarlo. Cuesta el oro que pone abajo.',
+  flechas0: 'Toca la flecha azul de la arena para entrar en la primera sala.',
+  tienda: 'Tienes 25 de oro. Toca un héroe de la tienda para comprarlo: cuesta lo que pone debajo.',
   mover: 'Arrastra a tus héroes por la cuadrícula: los de delante reciben los golpes. Si lo sueltas en la tienda, lo vendes.',
   clases: 'Mira arriba: con 2 héroes distintos de la misma clase se activa su habilidad. Toca el icono para ver qué hace.',
-  batalla: 'La batalla va sola. Si quieres que vaya más rápido, toca x1 arriba.',
-  mapa: 'Elige la siguiente sala del mapa: combates, cofres con oro o reliquias para todo el grupo. Al final del piso espera el jefe.',
-  tienda2: 'Comprar un héroe que ya tienes le sube de nivel. Mejora la tienda para que salgan héroes mejores y quepan más.',
-  jefe: 'El jefe del piso pega fuerte. Pon a los tanques delante y a los magos y tiradores detrás.',
+  repetir: 'Puedes comprar el mismo héroe muchas veces: cada compra es un muñeco más. Caben 32.',
+  batalla: 'La batalla va sola. Cada enemigo derrotado suelta 1 de oro. Si quieres que vaya más rápido, toca x1 arriba.',
+  flechas: 'Elige por dónde seguir con las flechas de la arena: abajo ves el mapa con lo que hay en cada sala.',
+  tienda2: 'Mejora la tienda para que salgan héroes mejores (cuesta 5, 10, 15, 20 y 30). Refrescar cuesta 2.',
+  cofre: 'Un cofre: ábrelo o dóblalo con un anuncio. Las plumas se quedan contigo para el equipo y la herrería.',
+  altar: 'Un altar: elige una reliquia. Muchas son de una clase: mira qué héroes llevas.',
+  jefe: 'El jefe pega fuerte. Pon a los tanques delante y a los magos y tiradores detrás.',
 };
 function asConsejo(id) {
   if (SAVE.consejos[id] || !AS_CONSEJOS[id]) return;
@@ -174,10 +175,10 @@ function asConsejo(id) {
 }
 function asInfoClase(k) {
   const cl = AS_CLASES[k], { cuenta, act } = asSinergias(AS_P.equipo);
-  const niveles = cl.umbral.map((u, i) => `<li class="${(act[k] || 0) > i ? 'on' : ''}"><b>${u}</b> · ${asH(tr(cl.txt[i]))}</li>`).join('');
+  const niveles = cl.umbral.map((u, i) => `<li class="${(act[k] || 0) > i ? 'on' : ''}"><b>(${u})</b> ${asH(tr(cl.txt, { v: cl.v[i] }))}</li>`).join('');
   const quien = Object.keys(AS_HEROES).filter(h => AS_HEROES[h].clases.includes(k));
-  const t = asModal(`<h2>${asH(tr(cl.nombre)).toUpperCase()}</h2><p class="as-sub">${tr('Tienes {n} distintos', { n: cuenta[k] || 0 })}</p><ul class="as-niveles">${niveles}</ul><div class="as-quien" id="as-quien"></div><button class="as-btn2" id="as-c-ok" type="button">${tr('VALE')}</button>`);
-  for (const h of quien) { const el = asLienzo(h, 56); if (!asEnEquipo(h)) el.classList.add('apagado'); $('#as-quien').appendChild(el); }
+  const t = asModal(`<h2>${asH(tr(cl.nombre)).toUpperCase()}</h2><p class="as-sub">${tr('{n} héroes distintos de esta clase. Más héroes distintos, más nivel.', { n: cuenta[k] || 0 })}</p><ul class="as-niveles">${niveles}</ul><div class="as-quien" id="as-quien"></div><button class="as-btn2" id="as-c-ok" type="button">${tr('VALE')}</button>`);
+  for (const h of quien) { const d = document.createElement('div'); d.className = 'as-quien-h' + (AS_P.equipo.some(x => x.tipo === h) ? '' : ' apagado'); d.appendChild(asLienzo(h, 56)); d.insertAdjacentHTML('beforeend', `<small>${AS_HEROES[h].precio}</small>`); $('#as-quien').appendChild(d); }
   AS_PANT.pausa = true;
   $('#as-c-ok').onclick = () => { play('select'); asCierraModal(); AS_PANT.pausa = false; };
 }

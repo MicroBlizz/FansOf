@@ -1,6 +1,7 @@
-// Fans of Asalto · PINTAR: la pantalla de juego en el lienzo de 540x960, todo en pixel art y sin suavizar. Arriba el marcador (piso,
-// oro, gemas, corazones) y las clases del equipo; en medio la arena con la cuadrícula de los héroes; abajo la tienda, la batalla o el
-// mapa de la mazmorra. Cada botón se apunta en AS_BOTONES al pintarlo, para saber qué se ha tocado.
+// Fans of Asalto · PINTAR: la pantalla de juego en el lienzo de 540x960 (pintado a la mitad y ampliado entero), todo en pixel art.
+// Arriba el marcador (nivel, oro, plumas) y las clases del equipo; en medio la arena (el 60 % de la pantalla) con la cuadrícula de los
+// héroes, los puntos rojos de los enemigos, las flechas para elegir sala, el altar o el cofre; abajo la tienda, la batalla, el mapa o
+// la escena del cofre. Cada botón se apunta en AS_BOTONES al pintarlo, para saber qué se ha tocado.
 'use strict';
 const AS_V = { H: 960, sc: 1, dpr: 1 };
 // Dos letras de píxeles hechas para tamaños pequeños: Tiny5 (10 píxeles) para lo pequeño y Jersey 10 (16 píxeles) para títulos y botones.
@@ -8,8 +9,8 @@ const AS_V = { H: 960, sc: 1, dpr: 1 };
 const AS_FUENTE = '"Jersey 10", "Courier New", monospace', AS_FUENTE_PEQ = 'Tiny5, "Courier New", monospace';
 function asFuenteDe(tam) { return tam <= 18 ? `10px ${AS_FUENTE_PEQ}` : tam <= 34 ? `16px ${AS_FUENTE}` : `32px ${AS_FUENTE}`; }
 let AS_BOTONES = [];
-const AS_COL = { tinta: '#20102c', panel: '#8f9be8', panel2: '#6c78d0', claro: '#c9d0ff', oscuro: '#3b3f8a', fondo: '#2b2d6b', rojo: '#e8433a', verde: '#5fb83a', naranja: '#f08a2a', oro: '#ffd23a' };
-const AS_TIER = { 1: '#b8c0d8', 2: '#5fb0ff', 3: '#c46bff' };
+// colores claros, como el juego de referencia: paneles azul celeste con borde azul oscuro, fondo azul, luchar rojo, mejorar rosa, refrescar verde
+const AS_COL = { tinta: '#2a3570', panel: '#a9bdf2', panel2: '#7f93e0', claro: '#dbe6ff', oscuro: '#55659e', fondo: '#4c56a8', rojo: '#e8503c', rosa: '#ff6a8a', verde: '#5bc44a', naranja: '#f08a2a', oro: '#ffd23a', gris: '#5a628f' };
 
 // TEXTO DE PÍXELES: cada texto se dibuja una vez a su tamaño real (en píxeles del lienzo pequeño), se le quitan los grises del
 // suavizado (o color o nada) y se le pone el contorno oscuro de 1 píxel; después se guarda y se pega tal cual. Así las letras son
@@ -96,144 +97,192 @@ function asBotonEn(x, y) { for (let i = AS_BOTONES.length - 1; i >= 0; i--) { co
 /* ---------- arriba: marcador y clases ---------- */
 function asPintaMarcador(c) {
   const P = AS_P;
-  c.fillStyle = AS_COL.fondo; c.fillRect(0, 0, 540, 108);
-  asPanel(c, 4, 4, 532, 46, AS_COL.panel);
-  asTexto(c, tr('PISO {n}', { n: (P.piso + 1) + '-' + (P.nodo ? P.nodo.c + 1 : 1) }), 14, 28, 20, '#fff', 'left');
-  asIcono(c, 'moneda', 164, 27, 22); asTexto(c, String(P.oro), 182, 28, 22, AS_COL.oro, 'left');
-  asIcono(c, 'gema', 244, 27, 22); asTexto(c, String(P.gemas), 262, 28, 22, '#9fd4ff', 'left');
-  for (let i = 0; i < AS_CFG.corazones; i++) { c.globalAlpha = i < P.corazones ? 1 : 0.25; asIcono(c, 'corazon', 318 + i * 26, 27, 20); }
-  c.globalAlpha = 1;
-  asBoton(c, 'pausa', 488, 8, 42, 38, AS_COL.panel2, '', 0, false, (x, y) => { c.fillStyle = '#fff'; c.fillRect(x + 14, y + 10, 5, 16); c.fillRect(x + 23, y + 10, 5, 16); });
-  if (P.estado === 'batalla') asBoton(c, 'vel', 432, 8, 52, 38, P.vel > 1 ? AS_COL.naranja : AS_COL.panel2, 'x' + P.vel, 20);
-  // las clases del equipo: icono, nivel y «tengo / hacen falta»
+  c.fillStyle = AS_COL.fondo; c.fillRect(0, 0, 540, AS_ARENA.y);
+  asPanel(c, 4, 4, 532, 42, AS_COL.panel);
+  asTexto(c, tr('NIVEL {n}', { n: P.nivel }), 14, 25, 18, '#fff', 'left');
+  asIcono(c, 'moneda', 150, 25, 20); asTexto(c, String(P.oro), 166, 25, 20, AS_COL.oro, 'left');
+  asIcono(c, 'pluma', 236, 25, 20); asTexto(c, String(P.plumas), 252, 25, 20, '#ffe9a0', 'left');
+  asBoton(c, 'pausa', 492, 6, 40, 38, AS_COL.panel2, '', 0, false, (x, y) => { c.fillStyle = '#fff'; c.fillRect(x + 12, y + 10, 6, 18); c.fillRect(x + 22, y + 10, 6, 18); });
+  if (P.estado === 'batalla') asBoton(c, 'vel', 436, 6, 52, 38, P.vel > 1 ? AS_COL.naranja : AS_COL.panel2, 'x' + P.vel, 18);
+  else asBoton(c, 'equipo', 436, 6, 52, 38, AS_COL.panel2, '', 0, false, (x, y) => asIcono(c, 'equipo-casco', x + 26, y + 19, 24));
+  // las clases del equipo: icono, «tengo / hacen falta» y nivel
   const { cuenta, act } = asSinergias(P.equipo);
   let x = 6;
   for (const k in AS_CLASES) {
     if (!cuenta[k]) continue;
-    const cl = AS_CLASES[k], on = !!act[k], meta = cl.umbral[Math.min(cl.umbral.length - 1, act[k] || 0)];
-    asPanel(c, x, 56, 46, 48, on ? cl.col : '#55597f');
-    asIcono(c, 'clase-' + k, x + 23, 74, 24);
-    asTexto(c, cuenta[k] + '/' + meta, x + 23, 96, 13, on ? '#fff' : '#c8cbe0');
-    AS_BOTONES.push({ id: 'clase-' + k, x, y: 56, w: 46, h: 48 });
-    x += 50;
+    const cl = AS_CLASES[k], on = !!act[k], nivel = act[k] || 0, meta = cl.umbral[Math.min(cl.umbral.length - 1, nivel)];
+    asPanel(c, x, 50, 44, 42, on ? cl.col : AS_COL.gris);
+    asIcono(c, 'clase-' + k, x + 22, 65, 22);
+    asTexto(c, cuenta[k] + '/' + meta, x + 22, 83, 14, on ? '#fff' : '#c8cbe0');
+    AS_BOTONES.push({ id: 'clase-' + k, x, y: 50, w: 44, h: 42 });
+    x += 48;
   }
-  if (x === 6) asTexto(c, tr('Compra héroes en la tienda'), 270, 80, 16, '#c9d0ff');
+  if (x === 6) asTexto(c, tr('Compra héroes en la tienda'), 270, 71, 16, '#dbe6ff');
 }
 
 /* ---------- en medio: la arena ---------- */
-function asPintaArena(c, t) {
-  const A = AS_ARENA, im = AS_IMG.arena;
+function asPintaSuelo(c, img, dy) {
+  const A = AS_ARENA, im = AS_IMG[img];
   c.imageSmoothingEnabled = false;
-  if (im) c.drawImage(im, 0, 46, 270, A.h / 2, 0, A.y, 540, A.h);
+  if (im) { const h = Math.round(im.height * 540 / im.width); c.drawImage(im, 0, A.y + (dy || 0), 540, h); if (h < A.h) c.drawImage(im, 0, A.y + h + (dy || 0), 540, h); }
   else { c.fillStyle = '#e2b268'; c.fillRect(0, A.y, 540, A.h); }
-  const P = AS_P, tienda = P.estado === 'tienda' || P.estado === 'mapa' || P.estado === 'sala';
-  if (tienda) {
-    // la cuadrícula de los héroes: crucecitas como en la arena de verdad
-    for (let col = 0; col < AS_COLS; col++) for (let f = 0; f < AS_FILAS; f++) {
-      const [x, y] = asCelda('heroe', col, f), libre = !P.equipo.some(h => h.celda[0] === col && h.celda[1] === f);
-      c.fillStyle = AS_DRAG.h && AS_DRAG.celda && AS_DRAG.celda[0] === col && AS_DRAG.celda[1] === f ? 'rgba(255,255,255,0.55)' : libre ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.12)';
-      c.fillRect(x - 26, y - 4, 52, 6); c.fillRect(x - 3, y - 46, 6, 52);
+}
+function asPintaFlecha(c, x, y, dir, t) {
+  const b = Math.round(Math.sin(t * 7) * 3) * 2, L = 36, k = AS_COL.tinta;
+  c.save(); c.translate(x, y); if (dir === 'arr') c.rotate(-Math.PI / 2); else if (dir === 'aba') c.rotate(Math.PI / 2);
+  c.translate(b, 0);
+  c.fillStyle = k; c.fillRect(-L / 2 - 2, -8, L - 10, 16); for (let i = 0; i < 9; i++) c.fillRect(L / 2 - 12 - 2 + i * 2, -18 + i * 2, 4, 36 - i * 4);
+  c.fillStyle = '#5fd0ff'; c.fillRect(-L / 2, -6, L - 12, 12); for (let i = 0; i < 7; i++) c.fillRect(L / 2 - 12 + i * 2, -14 + i * 2, 2, 28 - i * 4);
+  c.restore();
+}
+function asPintaArena(c, t) {
+  const A = AS_ARENA, P = AS_P, Z = asZona();
+  c.save(); c.beginPath(); c.rect(0, A.y, 540, A.h); c.clip();
+  const jefe = P.nodo && P.nodo.tipo === 'jefe' && P.estado !== 'camino';
+  // el pasillo: el suelo se desplaza y el grupo anda en fila
+  if (P.estado === 'camino') {
+    const k = P.camino.t / P.camino.dura, img = AS_IMG.pasillo ? 'pasillo' : Z.arena;
+    asPintaSuelo(c, img, -Math.round(((k * 900) % 300) / 2) * 2 - 300);
+    P.equipo.forEach((h, i) => { const y = A.y + 140 + i * 24 + Math.sin(k * Math.PI) * 0; const x = 270 - 12 + ((i % 3) - 1) * 26; asPintaMuneco(c, { tipo: h.tipo, anim: 'andar', tAnim: t + i * 0.2, lado: 'heroe', id: i }, x, y, t); });
+    c.restore(); return;
+  }
+  asPintaSuelo(c, jefe && AS_IMG['arena2-jefe'] ? 'arena2-jefe' : Z.arena);
+  const quieto = P.estado !== 'batalla';
+  if (quieto) {
+    if (P.estado === 'tienda' || AS_DRAG.h) {   // la cuadrícula: crucecitas, como en la arena de verdad
+      for (let col = 0; col < AS_COLS; col++) for (let f = 0; f < AS_FILAS; f++) {
+        const [x, y] = asCelda(col, f), sel = AS_DRAG.h && AS_DRAG.celda && AS_DRAG.celda[0] === col && AS_DRAG.celda[1] === f;
+        c.fillStyle = sel ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.45)';
+        c.fillRect(x - 8, y - 2, 16, 4); c.fillRect(x - 2, y - 8, 4, 16);
+        if (sel) { c.fillStyle = 'rgba(255,160,80,0.35)'; c.fillRect(x - 20, y - 50, 40, 60); }
+      }
     }
     const quietos = P.equipo.map(h => {
-      const arr = AS_DRAG.h === h && AS_DRAG.mov ? [AS_DRAG.x, AS_DRAG.y + 24] : asCelda('heroe', h.celda[0], h.celda[1]);
-      return { u: { tipo: h.tipo, anim: 'reposo', tAnim: t, lado: 'heroe', id: h.celda[0] * 7 + h.celda[1], destello: h.brillo > 0.6 ? 0.1 : 0 }, x: arr[0], y: arr[1], h };
+      const arr = AS_DRAG.h === h && AS_DRAG.mov ? [AS_DRAG.x, AS_DRAG.y + 14] : asCelda(h.celda[0], h.celda[1]);
+      return { u: { tipo: h.tipo, anim: 'reposo', tAnim: t, lado: 'heroe', id: h.celda[0] * 9 + h.celda[1], destello: h.brillo > 0.6 ? 0.1 : 0 }, x: arr[0], y: arr[1], h };
     });
-    const ene = (P.proxima || []).map((e, i) => { const [x, y] = asCelda('enemigo', e.celda[0], e.celda[1]); return { u: { tipo: e.tipo, anim: 'reposo', tAnim: t, lado: 'enemigo', id: i + 20, escala: e.escala, alfa: P.estado === 'tienda' ? 0.85 : 0 }, x, y }; });
-    for (const q of [...quietos, ...ene].sort((a, b) => a.y - b.y)) asPintaMuneco(c, q.u, q.x, q.y, t);
-    for (const q of quietos) {
-      const hh = asAltoMuneco(q.h.tipo);
-      if (q.h.nivel > 1) asTexto(c, tr('NV {n}', { n: q.h.nivel }), q.x, q.y - hh - 8, 13, '#ffe27a');
-      if (q.h.brillo > 0) { q.h.brillo = Math.max(0, q.h.brillo - 0.03); c.globalAlpha = q.h.brillo; c.fillStyle = '#fff'; for (let i = 0; i < 6; i++) { const a = t * 4 + i; c.fillRect(Math.round(q.x + Math.cos(a) * 26), Math.round(q.y - hh / 2 + Math.sin(a) * 26), 4, 4); } c.globalAlpha = 1; }
+    // los enemigos que vienen: puntos rojos (y el jefe, una calavera grande)
+    if (P.estado === 'tienda') for (const e of P.proxima || []) {
+      const [x, y] = e.pos;
+      if (e.jefe) { const r = 22 + Math.round(Math.sin(t * 5) * 2) * 2; asElipsePix(c, x, y - 10, r, r, 'rgba(255,60,60,0.5)', 4); asIcono(c, 'sala-jefe', x, y - 10, 30); }
+      else { asElipsePix(c, x, y - 4, 10, 10, 'rgba(255,60,60,0.35)'); asElipsePix(c, x, y - 4, 10, 10, 'rgba(255,60,60,0.9)', 2); }
     }
-    return;
+    for (const q of quietos.sort((a, b) => a.y - b.y)) asPintaMuneco(c, q.u, q.x, q.y, t);
+    for (const q of quietos) if (q.h.brillo > 0) { q.h.brillo = Math.max(0, q.h.brillo - 0.03); c.globalAlpha = q.h.brillo; c.fillStyle = '#fff'; for (let i = 0; i < 6; i++) { const a = t * 4 + i; c.fillRect(Math.round(q.x + Math.cos(a) * 18), Math.round(q.y - 12 + Math.sin(a) * 18), 4, 4); } c.globalAlpha = 1; }
+    // el cofre que sale del agujero, o el altar
+    if (P.estado === 'cofre' && P.cofre) {
+      const k = Math.min(1, P.cofre.t / 0.8), x = 400, y = A.y + A.h / 2;
+      asIcono(c, 'agujero', x, y - 4, 44);
+      if (k > 0.3 && asHay('cofre')) { const d = AS_TIRAS.cofre, fi = P.cofre.abierto ? d.f.length - 1 : 0, sube = Math.round((1 - Math.min(1, (k - 0.3) / 0.7)) * 30 / 2) * 2; c.imageSmoothingEnabled = false; c.drawImage(AS_IMG.cofre, fi * d.w, 0, d.w, d.h, x - d.w, y - d.h * 2 + sube, d.w * 2, d.h * 2); }
+    }
+    if (P.estado === 'altar' && P.altar) { const k = Math.min(1, P.altar.t / 0.6); const x = 400, y = A.y + A.h / 2; asIcono(c, 'altar', x, y - 10 + Math.round((1 - k) * 20 / 2) * 2, 48); }
+    // las flechas para elegir sala
+    for (const s of asSalidas()) {
+      const pos = s.flecha === 'arr' ? [270, A.y + 36] : s.flecha === 'aba' ? [270, A.y + A.h - 36] : [500, A.y + A.h / 2];
+      asPintaFlecha(c, pos[0], pos[1], s.flecha, t);
+      AS_BOTONES.push({ id: 'ir-' + s.flecha, x: pos[0] - 40, y: pos[1] - 40, w: 80, h: 80, nodo: s.nodo });
+    }
+    c.restore(); return;
   }
-  if (!AS_B) return;
+  if (!AS_B) { c.restore(); return; }
   const B = AS_B;
   for (const p of B.parts) if (p.onda) { c.globalAlpha = 1 - p.t / p.vida; const k = 0.5 + p.t / p.vida; asElipsePix(c, p.x, p.y, p.onda * k, p.onda * 0.45 * k, p.col, 4); c.globalAlpha = 1; }
   for (const u of [...B.u].sort((a, b) => a.y - b.y)) asPintaMuneco(c, u, u.x, u.y, t);
   // barras de vida (y de escudo)
   for (const u of B.u) {
     if (u.muerta) continue;
-    const hh = asAltoMuneco(u.tipo, u.escala), w = Math.round(34 * Math.min(1.6, u.escala)), x = Math.round(u.x - w / 2), y = Math.round(u.y - hh - 8);
+    const hh = asAlto(u), w = Math.round(24 * Math.min(1.6, u.escala) / 2) * 2, x = Math.round((u.x - w / 2) / 2) * 2, y = Math.round((u.y - hh - 8) / 2) * 2;
     c.fillStyle = AS_COL.tinta; c.fillRect(x - 2, y - 2, w + 4, 8);
     c.fillStyle = '#5a2030'; c.fillRect(x, y, w, 4);
-    c.fillStyle = u.lado === 'heroe' ? '#5fd84a' : '#ff5a4a'; c.fillRect(x, y, Math.max(0, Math.round(w * u.vida / u.max)), 4);
-    if (u.escudo > 0) { c.fillStyle = '#9fd4ff'; c.fillRect(x, y - 3, Math.min(w, Math.round(w * u.escudo / u.max)), 2); }
-    if (u.nivel > 1) asTexto(c, String(u.nivel), x - 8, y + 2, 11, '#ffe27a');
+    c.fillStyle = u.lado === 'heroe' ? '#5fd84a' : '#ff5a4a'; c.fillRect(x, y, Math.max(0, Math.round(w * u.vida / u.max / 2) * 2), 4);
+    if (u.escudo > 0) { c.fillStyle = '#9fd4ff'; c.fillRect(x, y - 4, Math.min(w, Math.round(w * u.escudo / u.max / 2) * 2), 2); }
   }
+  for (const r of B.rayos) { c.globalAlpha = 1 - r.t / 0.25; asLineaPix(c, r.x1, r.y1, r.x2, r.y2, 6, '#fff7b0'); asLineaPix(c, r.x1, r.y1, r.x2, r.y2, 2, '#ffd23a'); c.globalAlpha = 1; }
   for (const p of B.proy) {
-    if (p.tipo === 'flecha') { const a = Math.atan2(p.ob.y - 20 - p.y, p.ob.x - p.x), ca = Math.cos(a), sa = Math.sin(a); asLineaPix(c, p.x - ca * 10, p.y - sa * 10, p.x + ca * 8, p.y + sa * 8, 4, AS_COL.tinta); asLineaPix(c, p.x - ca * 10, p.y - sa * 10, p.x + ca * 6, p.y + sa * 6, 2, '#c88a4a'); c.fillStyle = '#e8e8f0'; c.fillRect(p.x + ca * 8 - 2, p.y + sa * 8 - 2, 4, 4); }
-    else if (p.tipo === 'bomba') { c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = '#3a3a48'; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#ffd23a'; c.fillRect(Math.round(p.x) + 2, Math.round(p.y) - 9, 3, 3); }
-    else { const col = p.de.tipo === 'heroe-suricata' ? '#fff2a0' : p.de.lado === 'enemigo' ? '#ff5050' : '#ffa030'; c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = col; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#fff'; c.fillRect(Math.round(p.x) - 2, Math.round(p.y) - 2, 3, 3); }
+    if (p.t < 0) continue;
+    if (p.tipo === 'flecha' || p.tipo === 'dardo') { const a = Math.atan2(p.ob.y - 14 - p.y, p.ob.x - p.x), ca = Math.cos(a), sa = Math.sin(a); asLineaPix(c, p.x - ca * 8, p.y - sa * 8, p.x + ca * 6, p.y + sa * 6, 4, AS_COL.tinta); asLineaPix(c, p.x - ca * 8, p.y - sa * 8, p.x + ca * 4, p.y + sa * 4, 2, p.tipo === 'dardo' ? '#b56bff' : '#c88a4a'); }
+    else if (p.tipo === 'bomba') { c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = '#3a3a48'; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#ffd23a'; c.fillRect(Math.round(p.x) + 2, Math.round(p.y) - 8, 2, 2); }
+    else { const col = p.tipo === 'sombra' ? '#b56bff' : p.de.lado === 'enemigo' ? '#ff5050' : '#ffa030'; c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = col; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#fff'; c.fillRect(Math.round(p.x) - 2, Math.round(p.y) - 2, 2, 2); }
   }
-  for (const p of B.parts) if (!p.onda) { c.globalAlpha = 1 - p.t / p.vida; c.fillStyle = p.col; c.fillRect(Math.round(p.x), Math.round(p.y), p.l, p.l); }
+  for (const p of B.parts) if (!p.onda) { c.globalAlpha = 1 - p.t / p.vida; if (p.moneda) asIcono(c, 'moneda', p.x, p.y, 12); else { c.fillStyle = p.col; c.fillRect(Math.round(p.x / 2) * 2, Math.round(p.y / 2) * 2, Math.max(2, Math.round(p.l / 2) * 2), Math.max(2, Math.round(p.l / 2) * 2)); } }
   c.globalAlpha = 1;
   for (const n of B.nums) { c.globalAlpha = n.t > 0.6 ? (0.9 - n.t) / 0.3 : 1; asTexto(c, n.txt, n.x, n.y - (n.t < 0.12 ? (0.12 - n.t) * 60 : 0), n.grande ? 22 : 16, n.col); }
   c.globalAlpha = 1;
-  if (B.t > 40 && !B.fin) asTexto(c, tr('¡MUERTE SÚBITA!'), 270, AS_ARENA.y + 86 + Math.round(Math.sin(t * 6) * 2) * 2, 22, '#ff6a5a');
-  if (B.t < 1.2) { c.globalAlpha = Math.min(1, (1.2 - B.t) * 3); asPanel(c, 150, AS_ARENA.y + 200, 240, 54, AS_COL.panel); asTexto(c, AS_P.nodo.tipo === 'jefe' ? tr('¡EL JEFE!') : tr('¡A LUCHAR!'), 270, AS_ARENA.y + 227, 26); c.globalAlpha = 1; }
+  // el oro que va cayendo
+  if (AS_P.oroBatalla) asTexto(c, '+' + AS_P.oroBatalla, 470, A.y + A.h - 40, 20, AS_COL.oro);
+  if (B.t > 40 && !B.fin) asTexto(c, tr('¡MUERTE SÚBITA!'), 270, A.y + 70 + Math.round(Math.sin(t * 6) * 2) * 2, 22, '#ff6a5a');
+  if (B.t < 1.2) { c.globalAlpha = Math.min(1, (1.2 - B.t) * 3); asPanel(c, 150, A.y + 230, 240, 50, AS_COL.panel); asTexto(c, AS_P.nodo.tipo === 'jefe' ? tr('¡EL JEFE!') : tr('¡A LUCHAR!'), 270, A.y + 255, 26); c.globalAlpha = 1; }
+  c.restore();
 }
 
-/* ---------- abajo: tienda, batalla o mapa ---------- */
+/* ---------- abajo: tienda, batalla, mapa o la escena del cofre ---------- */
+const AS_Y = 690;
 function asPintaTienda(c, t) {
-  const P = AS_P, Y = 604;
+  const P = AS_P, Y = AS_Y;
   c.fillStyle = AS_COL.fondo; c.fillRect(0, Y, 540, AS_V.H - Y);
-  asPanel(c, 8, Y + 6, 150, 40, AS_COL.panel2); asTexto(c, tr('TIENDA NV {n}', { n: P.nivelTienda }), 83, Y + 26, 16);
-  asPanel(c, 382, Y + 6, 150, 40, AS_COL.panel2); asTexto(c, tr('EQUIPO {a}/{b}', { a: P.equipo.length, b: asCapacidad() }), 457, Y + 26, 16);
-  asBoton(c, 'lucha', 172, Y, 196, 52, AS_COL.rojo, P.nodo.tipo === 'jefe' ? tr('¡AL JEFE!') : tr('¡LUCHA!'), 26);
+  asPanel(c, 6, Y + 4, 150, 40, AS_COL.panel2); asIcono(c, 'tienda', 28, Y + 24, 22); asTexto(c, tr('NV {n} TIENDA', { n: P.nivelTienda }), 92, Y + 25, 16);
+  asBoton(c, 'lucha', 170, Y - 4, 200, 50, AS_COL.rojo, P.nodo.tipo === 'jefe' ? tr('¡AL JEFE!') : tr('¡LUCHA!'), 26);
+  asPanel(c, 384, Y + 4, 150, 40, AS_COL.panel2); asIcono(c, 'moneda', 412, Y + 24, 20); asTexto(c, String(P.oro), 430, Y + 25, 20, AS_COL.oro, 'left');
   // las 5 cartas
   for (let i = 0; i < AS_TIENDA.huecos; i++) {
-    const x = 8 + i * 106, y = Y + 66, w = 100, h = 150, tipo = P.oferta[i];
-    if (!tipo) { asPanel(c, x, y, w, h, '#4a4f8a'); asTexto(c, tr('VENDIDO'), x + w / 2, y + h / 2, 14, '#8a8fc0'); continue; }
-    const d = AS_HEROES[tipo], ya = asEnEquipo(tipo), no = asPorQueNo(i);
-    asBoton(c, 'carta' + i, x, y, w, h, no === 'oro' || no === 'lleno' || no === 'max' ? '#6a6f9a' : AS_COL.claro);
-    c.fillStyle = AS_TIER[d.tier]; c.fillRect(x + 6, y + 6, w - 12, 4);
-    asRetrato(c, tipo, x + w / 2, y + 58, 84);
-    d.clases.forEach((k, j) => { asPanel(c, x + 6 + j * 26, y + 8, 26, 26, AS_CLASES[k].col); asIcono(c, 'clase-' + k, x + 19 + j * 26, y + 21, 18); });
-    asTexto(c, tr(d.nombre), x + w / 2, y + 106, 13, '#fff');
-    asIcono(c, 'moneda', x + 34, y + 130, 18); asTexto(c, String(d.tier), x + 52, y + 131, 20, AS_P.oro >= d.tier ? AS_COL.oro : '#ff8a7a', 'left');
-    if (ya) { asPanel(c, x + w - 44, y + 116, 40, 26, AS_COL.verde); asTexto(c, '+' + (ya.nivel + 1), x + w - 24, y + 129, 14); }
+    const x = 8 + i * 106, y = Y + 54, w = 100, h = 138, tipo = P.oferta[i];
+    if (!tipo) { asPanel(c, x, y, w, h, AS_COL.gris); asTexto(c, tr('VENDIDO'), x + w / 2, y + h / 2, 14, '#9aa2d0'); continue; }
+    const d = AS_HEROES[tipo], no = asPorQueNo(i);
+    asBoton(c, 'carta' + i, x, y, w, h, no ? '#8a93c0' : AS_COL.claro);
+    asRetrato(c, tipo, x + w / 2, y + 56, 76);
+    d.clases.forEach((k, j) => { asPanel(c, x + 4 + j * 24, y + 4, 24, 24, AS_CLASES[k].col); asIcono(c, 'clase-' + k, x + 16 + j * 24, y + 16, 16); });
+    asTexto(c, tr(d.corto), x + w / 2, y + 100, 14, AS_COL.tinta, 'center', true);
+    asIcono(c, 'moneda', x + 30, y + 122, 16); asTexto(c, String(d.precio), x + 44, y + 122, 20, P.oro >= d.precio ? AS_COL.tinta : '#c03030', 'left', true);
   }
-  const cm = asCosteMejora(), max = P.nivelTienda >= Object.keys(AS_TIENDA.prob).length;
-  asBoton(c, 'mejorar', 8, Y + 232, 256, 58, AS_COL.naranja, max ? tr('TIENDA AL MÁXIMO') : tr('MEJORAR'), 20, max || P.oro < cm, max ? null : (x, y) => { asIcono(c, 'moneda', x + 28, y + 29, 20); asTexto(c, String(cm), x + 48, y + 30, 20, AS_COL.oro, 'left'); });
-  asBoton(c, 'refrescar', 276, Y + 232, 256, 58, AS_COL.verde, tr('REFRESCAR'), 20, P.oro < AS_TIENDA.refrescar, (x, y) => { asIcono(c, 'moneda', x + 28, y + 29, 20); asTexto(c, String(AS_TIENDA.refrescar), x + 48, y + 30, 20, AS_COL.oro, 'left'); });
-  asTexto(c, AS_DRAG.h && AS_DRAG.mov ? tr('Suéltalo aquí para venderlo por {n} de oro', { n: asPrecioVenta(AS_DRAG.h) }) : tr('Arrastra a tus héroes para colocarlos'), 270, Y + 318, 15, AS_DRAG.h && AS_DRAG.mov ? '#ffcf5a' : '#9aa2e0');
-  if (AS_DRAG.h && AS_DRAG.mov) { c.globalAlpha = 0.25 + Math.sin(t * 8) * 0.1; c.fillStyle = AS_COL.rojo; c.fillRect(0, Y, 540, AS_V.H - Y); c.globalAlpha = 1; }
+  const cm = asCosteMejora(), max = P.nivelTienda >= AS_TIENDA.nivelMax;
+  asBoton(c, 'mejorar', 8, Y + 204, 256, 50, AS_COL.rosa, max ? tr('AL MÁXIMO') : tr('MEJORAR'), 20, max || P.oro < cm, max ? null : (x, y) => { asIcono(c, 'moneda', x + 26, y + 25, 20); asTexto(c, String(cm), x + 44, y + 25, 20, AS_COL.oro, 'left'); });
+  asBoton(c, 'refrescar', 276, Y + 204, 256, 50, AS_COL.verde, tr('REFRESCAR'), 20, P.oro < AS_TIENDA.refrescar, (x, y) => { asIcono(c, 'moneda', x + 26, y + 25, 20); asTexto(c, String(AS_TIENDA.refrescar), x + 44, y + 25, 20, AS_COL.oro, 'left'); });
+  if (AS_DRAG.h && AS_DRAG.mov) { c.globalAlpha = 0.3 + Math.sin(t * 8) * 0.1; c.fillStyle = AS_COL.rojo; c.fillRect(0, Y, 540, AS_V.H - Y); c.globalAlpha = 1; asTexto(c, tr('Suéltalo aquí para venderlo por {n} de oro', { n: asPrecioVenta(AS_DRAG.h) }), 270, Y + 130, 18, '#fff'); }
 }
 function asPintaPanelBatalla(c, t) {
-  const Y = 604;
+  const Y = AS_Y;
   c.fillStyle = AS_COL.fondo; c.fillRect(0, Y, 540, AS_V.H - Y);
-  asIcono(c, 'sala-combate', 270, Y + 120 + Math.sin(t * 6) * 4, 100);
-  asPanel(c, 170, Y + 200, 200, 44, AS_COL.panel2); asTexto(c, tr('LUCHANDO'), 270, Y + 222, 20);
+  asIcono(c, 'sala-combate', 270, Y + 100 + Math.round(Math.sin(t * 6) * 2) * 2, 90);
+  asPanel(c, 170, Y + 170, 200, 40, AS_COL.panel2); asTexto(c, tr('LUCHANDO'), 270, Y + 190, 18);
   const vivos = AS_B ? asVivos('enemigo').length : 0;
-  asTexto(c, tr('Quedan {n} enemigos', { n: vivos }), 270, Y + 280, 16, '#c9d0ff');
+  asTexto(c, tr('Quedan {n} enemigos', { n: vivos }), 270, Y + 236, 16, '#dbe6ff');
 }
-function asPosNodo(n) {
-  const C = AS_MAPA.columnas, x = 54 + n.c * (432 / (C - 1)), y = 790 + (n.i - (n.n - 1) / 2) * 92;
-  return [Math.round(x), Math.round(y)];
-}
+// el mapa: las columnas cerca de donde estás (3 a la izquierda, 4 a la derecha), pasillos grises
 function asPintaMapa(c, t) {
-  const P = AS_P, Y = 604;
+  const P = AS_P, Y = AS_Y, Z = asZona();
   c.fillStyle = AS_COL.fondo; c.fillRect(0, Y, 540, AS_V.H - Y);
-  asPanel(c, 6, Y + 8, 528, 340, '#7f8ee0');
-  asTexto(c, tr('{z} · PISO {n}', { z: tr(AS_ZONAS[P.zona].nombre), n: P.piso + 1 }), 270, Y + 34, 18);
-  // pasillos
-  for (const col of P.mapa) for (const n of col) for (const j of n.sig) {
-    const [x1, y1] = asPosNodo(n), [x2, y2] = asPosNodo(P.mapa[n.c + 1][j]);
-    asLineaPix(c, x1, y1, x2, y2, 12, AS_COL.tinta);
-    asLineaPix(c, x1, y1, x2, y2, 6, n === P.nodo && n.hecho ? '#ffe27a' : '#4a4f8a');
-  }
-  // salas
+  asPanel(c, 6, Y + 6, 528, 258, AS_COL.panel);
+  asTexto(c, tr('{z} · NIVEL {n} DE {m}', { z: tr(Z.nombre), n: P.nivel, m: Z.niveles }), 270, Y + 26, 16, AS_COL.tinta, 'center', true);
+  const c0 = clamp(P.nodo.c - 2, 0, Math.max(0, P.mapa.length - 7)), paso = 76;
+  const pos = n => [40 + (n.c - c0) * paso, Y + 150 + (n.i - (n.n - 1) / 2) * 60];
+  c.save(); c.beginPath(); c.rect(8, Y + 40, 524, 220); c.clip();
+  for (const col of P.mapa) for (const n of col) { if (n.c < c0 - 1 || n.c > c0 + 7) continue; for (const j of n.sig) { const [x1, y1] = pos(n), [x2, y2] = pos(P.mapa[n.c + 1][j]); asLineaPix(c, x1, y1, x2, y2, 12, '#7a85b8'); if (n === P.nodo && asSalidas().some(s => s.nodo === P.mapa[n.c + 1][j])) for (let k = 0; k < 3; k++) { const q = 0.3 + k * 0.2 + (t * 0.5 % 0.2); asTexto(c, '›', lerp(x1, x2, q), lerp(y1, y2, q), 16, '#fff'); } } }
   for (const col of P.mapa) for (const n of col) {
-    const [x, y] = asPosNodo(n), aqui = n === P.nodo, puede = asPuedeIr(n), L = n.tipo === 'jefe' ? 66 : 54;
-    const late = puede ? Math.sin(t * 6) * 3 : 0;
-    asPanel(c, x - L / 2 - late, y - L / 2 - late, L + late * 2, L + late * 2, aqui ? AS_COL.verde : puede ? '#ffcf5a' : n.hecho ? '#5a5f90' : '#3b3f6a');
-    if (n.tipo === 'cofre' && asHay('cofre')) asRetrato(c, 'cofre', x, y, L - 16);
-    else asIcono(c, 'sala-' + (n.tipo === 'cofre' ? 'reliquia' : n.tipo), x, y, L - 14);
-    if (aqui) { const b = Math.round(Math.sin(t * 5) * 3); asRetrato(c, 'heroe-bunny', x, y - L / 2 - 20 + b, 40); }
-    if (puede) AS_BOTONES.push({ id: 'nodo' + n.c + '-' + n.i, x: x - L / 2 - 6, y: y - L / 2 - 6, w: L + 12, h: L + 12, nodo: n });
+    if (n.c < c0 - 1 || n.c > c0 + 7) continue;
+    const [x, y] = pos(n), aqui = n === P.nodo, L = n.tipo === 'jefe' ? 52 : 44;
+    asPanel(c, x - L / 2, y - L / 2, L, L, aqui ? AS_COL.verde : n.hecho ? '#9aa3c8' : n.tipo === 'vacia' ? '#5a628f' : '#6a739f');
+    if (n.tipo === 'cofre' && asHay('cofre')) asRetrato(c, 'cofre', x, y, L - 14);
+    else if (n.tipo === 'combate') asIcono(c, 'sala-combate', x, y, L - 12);
+    else if (n.tipo === 'altar') asIcono(c, 'sala-reliquia', x, y, L - 12);
+    else if (n.tipo === 'jefe') asIcono(c, 'sala-jefe', x, y, L - 12);
+    if (aqui) { const b = Math.round(Math.sin(t * 5) * 2) * 2; asRetrato(c, P.equipo.length ? P.equipo[0].tipo : 'heroe-bunny', x, y - L / 2 - 14 + b, 30); }
   }
-  asTexto(c, tr('Elige por dónde seguir'), 270, Y + 326, 15, '#e8ecff');
+  c.restore();
+}
+// la escena del cofre: un bosque con el cofre, abrir o doble con anuncio
+function asPintaCofre(c, t) {
+  const P = AS_P, Y = AS_Y, C = P.cofre;
+  c.imageSmoothingEnabled = false;
+  if (AS_IMG['bosque-cofre']) { const im = AS_IMG['bosque-cofre'], h = Math.round(im.height * 540 / im.width); c.drawImage(im, 0, Y, 540, Math.max(h, 200)); c.fillStyle = AS_COL.fondo; c.fillRect(0, Y + Math.max(h, 200), 540, 300); }
+  else { c.fillStyle = '#2f4a3a'; c.fillRect(0, Y, 540, AS_V.H - Y); c.fillStyle = '#4a8a4a'; c.fillRect(0, Y + 150, 540, AS_V.H - Y - 150); }
+  if (asHay('cofre')) {
+    const d = AS_TIRAS.cofre, fi = C.abierto ? Math.min(d.f.length - 1, Math.floor(C.tAbre * 6)) : 0, k = 3;
+    if (C.abierto) { c.globalAlpha = 0.35 + Math.sin(t * 6) * 0.1; c.fillStyle = '#ffe27a'; c.fillRect(270 - 40, Y, 80, 170); c.globalAlpha = 1; }
+    c.drawImage(AS_IMG.cofre, fi * d.w, 0, d.w, d.h, 270 - d.w * k / 2, Y + 168 - d.h * k, d.w * k, d.h * k);
+    if (C.abierto) for (let i = 0; i < 10; i++) { const a = C.tAbre * 3 + i; asIcono(c, 'moneda', 270 + Math.cos(a) * (60 + i * 8), Y + 120 - (C.tAbre * 90 + i * 17) % 120, 14); }
+  }
+  if (C.abierto) { asIcono(c, 'pluma', 200, Y + 206, 22); asTexto(c, '+' + C.plumasDadas, 216, Y + 206, 22, '#ffe9a0', 'left'); asIcono(c, 'moneda', 300, Y + 206, 22); asTexto(c, '+' + C.oroDado, 316, Y + 206, 22, AS_COL.oro, 'left'); asBoton(c, 'cofre-sigue', 170, Y + 226, 200, 40, AS_COL.panel2, tr('SEGUIR'), 18); }
+  else if (C.t > 0.8) { asBoton(c, 'cofre-abrir', 40, Y + 212, 220, 48, AS_COL.rojo, tr('ABRIR'), 22); asBoton(c, 'cofre-doble', 280, Y + 212, 220, 48, AS_COL.verde, tr('DOBLE'), 22, false, (x, y) => asIcono(c, 'anuncio', x + 30, y + 24, 22)); }
 }
 function asPintaPartida(c, t) {
   AS_BOTONES = [];
@@ -242,18 +291,19 @@ function asPintaPartida(c, t) {
   const e = AS_P.estado;
   if (e === 'tienda') asPintaTienda(c, t);
   else if (e === 'batalla') asPintaPanelBatalla(c, t);
+  else if (e === 'cofre') asPintaCofre(c, t);
   else asPintaMapa(c, t);
   asPintaAvisos(c);
 }
-// los avisos cortos que suben en medio de la arena
+// los avisos cortos que suben en medio de la arena (grande = cartel que se queda más)
 const AS_AVISOS = [];
-function asAviso(txt, bien) { AS_AVISOS.push({ txt, bien, t: 0 }); if (AS_AVISOS.length > 3) AS_AVISOS.shift(); }
+function asAviso(txt, bien, grande) { AS_AVISOS.push({ txt, bien, grande, t: 0 }); if (AS_AVISOS.length > 3) AS_AVISOS.shift(); }
 function asPintaAvisos(c) {
   AS_AVISOS.forEach((a, i) => {
     a.t += 1 / 60;
-    const al = a.t < 1.8 ? 1 : Math.max(0, 1 - (a.t - 1.8) * 3), y = AS_ARENA.y + 70 + i * 40;
-    c.globalAlpha = al; const w = Math.min(520, asTextoImg(a.txt, 16, '#fff', true).w * 2 + 30);
-    asPanel(c, 270 - w / 2, y - 17, w, 34, a.bien ? '#4f9a3a' : '#9a3a4a'); asTexto(c, a.txt, 270, y, 16);
+    const al = a.t < 1.8 ? 1 : Math.max(0, 1 - (a.t - 1.8) * 3), y = AS_ARENA.y + 60 + i * 40;
+    c.globalAlpha = al; const w = Math.min(520, asTextoImg(a.txt, a.grande ? 26 : 16, '#fff', true).w * 2 + 30);
+    asPanel(c, 270 - w / 2, y - (a.grande ? 24 : 17), w, a.grande ? 48 : 34, a.grande ? AS_COL.rojo : a.bien ? '#4f9a3a' : '#9a3a4a'); asTexto(c, a.txt, 270, y, a.grande ? 26 : 16);
   });
   c.globalAlpha = 1;
   while (AS_AVISOS.length && AS_AVISOS[0].t > 2.2) AS_AVISOS.shift();

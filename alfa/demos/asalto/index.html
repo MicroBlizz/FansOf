@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#2b2d6b">
+<meta name="theme-color" content="#4c56a8">
 <title>Fans of Asalto</title>
-<meta name="description" content="Fans of Asalto: compra a los Animales Locos en la tienda, combina sus clases y baja por la mazmorra de Microblizz en batallas automáticas hasta echar al CEO.">
+<meta name="description" content="Fans of Asalto: compra a los Animales Locos en la tienda (tantas veces como quieras), combina sus 7 clases y baja nivel a nivel por la mazmorra de Microblizz en batallas automáticas hasta el jefe.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Tiny5&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.1.0-a634.1314d54"></script>
+<script src="../../core/js/nucleo.js?v=0.2.0-a635.051ad98"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/asalto.css')</script>
 </head>
 <body>
@@ -27,7 +27,7 @@
         <button class="as-btn2 as-azul" id="as-logros" type="button">LOGROS</button>
         <button class="as-btn2 as-azul" id="as-tienda" type="button">TIENDA</button>
       </div>
-      <div class="as-pie"><span class="as-gemas"><canvas id="as-gema-ico" width="22" height="22" class="as-pix"></canvas><b id="as-gemas-menu">0</b></span><button class="as-btn2 as-gris" id="as-ajustes" type="button">AJUSTES</button></div>
+      <div class="as-pie"><span class="as-gemas"><canvas id="as-pluma-ico" width="22" height="22" class="as-pix"></canvas><b id="as-plumas-menu">0</b></span><button class="as-btn2 as-gris" id="as-ajustes" type="button">AJUSTES</button></div>
     </section>
     <section id="as-modal" class="as-modal" hidden><div class="as-tarjeta" id="as-tarjeta"></div></section>
     <section id="as-anuncio" class="as-modal as-anuncio" hidden><div class="as-tarjeta"><span class="as-ad-cartel">ANUNCIO</span><p>Un mensaje de nuestros patrocinadores… que somos nosotros.</p><div class="as-ad-barra"><i id="as-ad-barra"></i></div><button class="as-btn2 as-oro" id="as-ad-ok" type="button" disabled>…</button><button class="as-enlace" id="as-ad-no" type="button">Cerrar sin premio</button><small>Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.</small></div></section>
@@ -43,7 +43,7 @@ NUCLEO.juego({
   despues: [
     '../../core/js/serie/canciones.js',
     'js/guardado.js', 'js/sprites-datos.js', 'js/sprites.js', 'js/iconos.js', 'js/sonidos.js', 'js/combate.js', 'js/partida.js',
-    'js/pintar.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
+    'js/pintar.js', 'js/pantallas.js', 'js/pantallas-fuera.js', 'js/novedades.js', 'js/principal.js'],
 });
 </script>
 </body>

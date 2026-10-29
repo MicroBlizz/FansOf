@@ -1,79 +1,94 @@
-// Fans of Asalto · PARTIDA: una bajada a la mazmorra. El oro, los corazones, la tienda (5 héroes a la venta, mejorarla, refrescarla),
-// el equipo en la cuadrícula (comprar uno que ya tienes le sube de nivel), el mapa de cada piso (salas unidas por pasillos: combate,
-// cofre, reliquia y el jefe al final) y qué pasa al ganar o perder cada combate.
+// Fans of Asalto · PARTIDA: una bajada a la mazmorra. La mazmorra es una tira de niveles (salas) con el jefe al final: en cada nivel
+// hay de 1 a 3 salas (combate, cofre, altar de reliquias o vacía) y el jugador elige con las flechas de la arena. El oro, la tienda
+// (5 héroes con su precio; cada compra añade OTRO muñeco a la cuadrícula, también si ya lo tienes), mejorar y refrescar la tienda,
+// mover y vender héroes, las reliquias, y qué pasa al ganar o perder (perder acaba la partida: no hay corazones).
 'use strict';
 let AS_P = null;
 
-function asNuevaPartida() {
-  AS_P = { oro: AS_CFG.oro, corazones: AS_CFG.corazones, nivelTienda: 1, oferta: [], equipo: [], reliquias: [], zona: 0, piso: 0,
-    mapa: null, nodo: null, combates: 0, combatesPiso: 0, estado: 'tienda', gemas: 0, vel: 1, cofreAbierto: false };
-  asNuevoPiso();
+function asNuevaPartida(zona) {
+  AS_P = { zona: zona || 0, oro: AS_CFG.oro, plumas: 0, nivelTienda: 1, oferta: [], equipo: [], reliquias: [], mapa: null, nodo: null,
+    nivel: 0, combates: 0, estado: 'elegir', vel: 1, oroBatalla: 0, camino: null, objetos: [], cofre: null, t: 0 };
+  asNuevaMazmorra();
+  AS_P.nodo.hecho = true;
   asLlenaOferta();
-  asPreparaCombate();
   SAVE.partidas++; asGuarda();
 }
-function asPisoDef() { return AS_ZONAS[AS_P.zona].pisos[AS_P.piso]; }
+function asZona() { return AS_ZONAS[AS_P.zona]; }
 
-/* ---------- el mapa del piso ---------- */
-function asNuevoPiso() {
-  const C = AS_MAPA.columnas, nodos = [];
+/* ---------- la mazmorra: columnas de salas unidas por pasillos ---------- */
+function asNuevaMazmorra() {
+  const Z = asZona(), C = Z.niveles + 1, cols = [];
   for (let c = 0; c < C; c++) {
-    const n = c === 0 || c === C - 1 ? 1 : 2 + (Math.random() < 0.5 ? 1 : 0);
+    const n = c === 0 || c === C - 1 ? 1 : 1 + (Math.random() < 0.75 ? 1 : 0) + (Math.random() < 0.4 ? 1 : 0);
     const col = [];
     for (let i = 0; i < n; i++) {
       let tipo = 'combate';
       if (c === C - 1) tipo = 'jefe';
-      else if (c > 0) { const r = Math.random(); tipo = r < AS_MAPA.tipos.combate ? 'combate' : r < AS_MAPA.tipos.combate + AS_MAPA.tipos.cofre ? 'cofre' : 'reliquia'; }
+      else if (c === 0) tipo = 'vacia';
+      else if (c > 1) { const r = Math.random(), S = AS_SALAS; tipo = r < S.combate ? 'combate' : r < S.combate + S.cofre ? 'cofre' : r < S.combate + S.cofre + S.altar ? 'altar' : 'vacia'; }
       col.push({ c, i, n, tipo, sig: [], hecho: false });
     }
-    if (c > 0 && c < C - 1 && !col.some(x => x.tipo === 'combate')) col[0].tipo = 'combate';   // siempre se puede pelear
-    nodos.push(col);
+    if (c > 0 && c < C - 1 && Math.random() < 0.7 && !col.some(x => x.tipo === 'combate')) col[0].tipo = 'combate';
+    cols.push(col);
   }
-  // pasillos: cada sala va a una o dos de la columna siguiente, y a todas se puede llegar
-  for (let c = 0; c < C - 1; c++) {
-    const a = nodos[c], b = nodos[c + 1];
-    a.forEach((n, i) => { const j = Math.round(i * (b.length - 1) / Math.max(1, a.length - 1)); n.sig.push(j); if (b.length > 1 && Math.random() < 0.5) n.sig.push(clamp(j + (Math.random() < 0.5 ? -1 : 1), 0, b.length - 1)); });
+  for (let c = 0; c < C - 1; c++) {   // pasillos: cada sala lleva a 1-3 de la columna siguiente y a todas se puede llegar
+    const a = cols[c], b = cols[c + 1];
+    a.forEach((n, i) => {
+      const j = Math.round(i * (b.length - 1) / Math.max(1, a.length - 1)); n.sig.push(j);
+      for (const d of [-1, 1]) if (b[j + d] && Math.random() < 0.55) n.sig.push(j + d);
+    });
     b.forEach((_, j) => { if (!a.some(n => n.sig.includes(j))) a[Math.min(a.length - 1, Math.round(j * (a.length - 1) / Math.max(1, b.length - 1)))].sig.push(j); });
-    a.forEach(n => { n.sig = [...new Set(n.sig)]; });
+    a.forEach(n => { n.sig = [...new Set(n.sig)].sort((x, y) => x - y); });
   }
-  AS_P.mapa = nodos; AS_P.nodo = nodos[0][0]; AS_P.combatesPiso = 0;
+  AS_P.mapa = cols; AS_P.nodo = cols[0][0];
 }
-function asPuedeIr(n) { const a = AS_P.nodo; return a && a.hecho && n.c === a.c + 1 && a.sig.includes(n.i); }
-function asIrA(n) {
-  if (!asPuedeIr(n)) { play('asNoVale'); return; }
-  AS_P.nodo = n; play('asPaso');
-  if (n.tipo === 'combate' || n.tipo === 'jefe') { AS_P.estado = 'tienda'; asLlenaOferta(true); asPreparaCombate(); asMusica(n.tipo === 'jefe' ? 'boss' : 'animales'); asConsejo(n.tipo === 'jefe' ? 'jefe' : 'tienda2'); }
-  else if (n.tipo === 'cofre') { AS_P.estado = 'sala'; asVentanaCofre(rand(AS_CFG.oroCofre[0], AS_CFG.oroCofre[1]) | 0, false, () => asSalaHecha()); }
-  else if (n.tipo === 'reliquia') { AS_P.estado = 'sala'; asVentanaReliquias(() => asSalaHecha()); }
+// las salas a las que se puede ir ahora, con su flecha: 1 → derecha; 2 → arriba y abajo; 3 → arriba, derecha y abajo
+function asSalidas() {
+  const P = AS_P, n = P.nodo;
+  if (!n || !n.hecho || P.estado !== 'elegir') return [];
+  const sig = n.sig.map(j => P.mapa[n.c + 1][j]);
+  const flechas = sig.length === 1 ? ['der'] : sig.length === 2 ? ['arr', 'aba'] : ['arr', 'der', 'aba'];
+  return sig.map((s, i) => ({ nodo: s, flecha: flechas[i] }));
 }
-function asSalaHecha() { AS_P.nodo.hecho = true; AS_P.estado = 'mapa'; asMusica('animales'); }
+function asIrA(nodo) {
+  const P = AS_P;
+  if (!asSalidas().some(s => s.nodo === nodo)) { play('asNoVale'); return; }
+  P.estado = 'camino'; P.camino = { a: nodo, t: 0, dura: 1.3 }; play('asPaso');
+}
+// el grupo ha llegado a la sala nueva
+function asLlega() {
+  const P = AS_P, n = P.camino.a;
+  P.nodo = n; P.nivel = n.c; P.camino = null;
+  if (n.tipo === 'combate' || n.tipo === 'jefe') {
+    P.estado = 'tienda'; asLlenaOferta(); asPreparaCombate();
+    asMusica(n.tipo === 'jefe' ? 'boss' : 'animales');
+    if (n.tipo === 'jefe') { asAviso(tr('¡LLEGA EL JEFE!'), false, true); asConsejo('jefe'); } else asConsejo('tienda2');
+  } else if (n.tipo === 'cofre') { P.estado = 'cofre'; P.cofre = { t: 0, abierto: false, oro: rand(AS_CFG.oroCofre[0], AS_CFG.oroCofre[1] + 1) | 0, plumas: rand(AS_CFG.plumasCofre[0], AS_CFG.plumasCofre[1] + 1) | 0 }; play('asPaso'); asConsejo('cofre'); }
+  else if (n.tipo === 'altar') { P.estado = 'altar'; P.altar = { t: 0 }; asConsejo('altar'); setTimeout(() => { if (AS_P === P && P.estado === 'altar') asVentanaReliquias(() => asSalaHecha()); }, 900); }
+  else asSalaHecha();
+}
+function asSalaHecha() { AS_P.nodo.hecho = true; AS_P.estado = 'elegir'; asMusica('animales'); asConsejo('flechas'); }
 
 /* ---------- la tienda ---------- */
-function asHeroesDisponibles(tier) { return Object.keys(AS_HEROES).filter(k => AS_HEROES[k].tier === tier && asHay(k)); }
-function asLlenaOferta(gratis) {
-  const pr = AS_TIENDA.prob[AS_P.nivelTienda] || AS_TIENDA.prob[1];
-  AS_P.oferta = [];
+function asLlenaOferta() {
+  const P = AS_P, n = P.nivelTienda, tipos = Object.keys(AS_HEROES).filter(asHay);
+  P.oferta = [];
   for (let i = 0; i < AS_TIENDA.huecos; i++) {
-    let r = Math.random(), tier = 1;
-    if (r > pr[0]) tier = r > pr[0] + pr[1] ? 3 : 2;
-    let lista = asHeroesDisponibles(tier);
-    if (!lista.length) lista = asHeroesDisponibles(1);
-    AS_P.oferta.push(lista.length ? pick(lista) : null);
+    const pesos = tipos.map(t => AS_TIENDA.peso(AS_HEROES[t].precio, n)), total = pesos.reduce((a, b) => a + b, 0);
+    let r = Math.random() * total, k = 0;
+    while (k < tipos.length - 1 && r >= pesos[k]) { r -= pesos[k]; k++; }
+    P.oferta.push(tipos[k] || null);
   }
 }
-function asCapacidad() { return Math.min(Object.keys(AS_HEROES).length, AS_TIENDA.equipo(AS_P.nivelTienda)); }
-function asEnEquipo(tipo) { return AS_P.equipo.find(h => h.tipo === tipo); }
 function asCeldaLibre() {
-  for (const col of [2, 1, 0]) for (const f of [1, 2, 0, 3]) if (!AS_P.equipo.some(h => h.celda[0] === col && h.celda[1] === f)) return [col, f];
+  for (let col = AS_COLS - 1; col >= 0; col--) for (const f of [3, 4, 2, 5, 1, 6, 0, 7]) if (!AS_P.equipo.some(h => h.celda[0] === col && h.celda[1] === f)) return [col, f];
   return null;
 }
 // ¿se puede comprar? devuelve el motivo si no
 function asPorQueNo(i) {
   const tipo = AS_P.oferta[i]; if (!tipo) return 'vacio';
-  const h = asEnEquipo(tipo), coste = AS_HEROES[tipo].tier;
-  if (AS_P.oro < coste) return 'oro';
-  if (h) return h.nivel >= AS_TIENDA.nivelMax ? 'max' : null;
-  if (AS_P.equipo.length >= asCapacidad()) return 'lleno';
+  if (AS_P.oro < AS_HEROES[tipo].precio) return 'oro';
+  if (!asCeldaLibre()) return 'lleno';
   return null;
 }
 function asCompra(i) {
@@ -81,18 +96,16 @@ function asCompra(i) {
   if (no) {
     play('asNoVale');
     if (no === 'oro') asAviso(tr('No tienes oro suficiente'));
-    else if (no === 'lleno') asAviso(tr('Equipo lleno: mejora la tienda para que quepan más'));
-    else if (no === 'max') asAviso(tr('Ese héroe ya está al máximo'));
+    else if (no === 'lleno') asAviso(tr('La cuadrícula está llena'));
     return false;
   }
-  AS_P.oro -= AS_HEROES[tipo].tier;
-  const h = asEnEquipo(tipo);
-  if (h) { h.nivel++; h.brillo = 1; play('asSube'); asAviso(tr('{n} sube a nivel {v}', { n: tr(AS_HEROES[tipo].nombre), v: h.nivel }), true); }
-  else { AS_P.equipo.push({ tipo, nivel: 1, celda: asCeldaLibre(), brillo: 1 }); play('asCompra'); asConsejo(AS_P.equipo.length === 1 ? 'mover' : 'clases'); }
-  AS_P.oferta[i] = null;
+  AS_P.oro -= AS_HEROES[tipo].precio;
+  AS_P.equipo.push({ tipo, celda: asCeldaLibre(), brillo: 1 });
+  AS_P.oferta[i] = null; play('asCompra');
+  asConsejo(AS_P.equipo.length === 1 ? 'mover' : AS_P.equipo.length === 2 ? 'clases' : 'repetir');
   return true;
 }
-function asPrecioVenta(h) { return Math.max(1, Math.ceil(AS_HEROES[h.tipo].tier * h.nivel / 2)); }
+function asPrecioVenta(h) { return Math.max(1, Math.ceil(AS_HEROES[h.tipo].precio / 2)); }
 function asVende(h) {
   if (AS_P.equipo.length <= 1) { play('asNoVale'); asAviso(tr('Te quedarías sin equipo')); return; }
   AS_P.oro += asPrecioVenta(h); AS_P.equipo = AS_P.equipo.filter(x => x !== h); play('asCompra');
@@ -102,12 +115,12 @@ function asMueve(h, celda) {
   if (otro) otro.celda = h.celda;
   h.celda = celda; play('asPaso');
 }
-function asCosteMejora() { return AS_TIENDA.mejorar[AS_P.nivelTienda] || 0; }
+function asCosteMejora() { return AS_TIENDA.mejorar[AS_P.nivelTienda - 1] || 0; }
 function asMejoraTienda() {
-  if (AS_P.nivelTienda >= Object.keys(AS_TIENDA.prob).length) { play('asNoVale'); asAviso(tr('La tienda ya está al máximo')); return; }
+  if (AS_P.nivelTienda >= AS_TIENDA.nivelMax) { play('asNoVale'); asAviso(tr('La tienda ya está al máximo')); return; }
   const c = asCosteMejora();
   if (AS_P.oro < c) { play('asNoVale'); asAviso(tr('No tienes oro suficiente')); return; }
-  AS_P.oro -= c; AS_P.nivelTienda++; play('asSube'); asAviso(tr('Tienda a nivel {n}: salen héroes mejores y cabe uno más', { n: AS_P.nivelTienda }), true);
+  AS_P.oro -= c; AS_P.nivelTienda++; play('asSube'); asAviso(tr('¡Tienda mejorada! Nivel {n}: salen héroes mejores', { n: AS_P.nivelTienda }), true);
 }
 function asRefresca() {
   if (AS_P.oro < AS_TIENDA.refrescar) { play('asNoVale'); asAviso(tr('No tienes oro suficiente')); return; }
@@ -115,48 +128,70 @@ function asRefresca() {
 }
 
 /* ---------- los combates ---------- */
+// dónde van a salir los enemigos: puntos rojos repartidos por la mitad derecha, que no se pisen
+function asPuntosEnemigos(n) {
+  const pts = [], A = AS_ARENA;
+  for (let i = 0; i < n * 20 && pts.length < n; i++) {
+    const p = [rand(300, 500), rand(A.y + 70, A.y + A.h - 30)];
+    if (!pts.some(q => Math.hypot(q[0] - p[0], q[1] - p[1]) < 46)) pts.push(p);
+  }
+  return pts;
+}
 function asOleada() {
-  const p = asPisoDef(), n = AS_P.nodo, lista = p.enemigos.filter(asHay), sale = [];
-  const libres = []; for (let c = 0; c < AS_COLS; c++) for (let f = 0; f < AS_FILAS; f++) libres.push([c, f]);
-  shuffle(libres);
-  if (n.tipo === 'jefe' && asHay(p.jefe.tipo)) {
-    sale.push({ tipo: p.jefe.tipo, fuerza: p.jefe.fuerza * p.fuerza, escala: p.jefe.escala, celda: [1, 1.5], jefe: true });
-    for (const c of [[2, 0], [2, 3]]) if (lista.length) sale.push({ tipo: pick(lista), fuerza: p.fuerza, celda: c });
+  const P = AS_P, Z = asZona(), n = P.nodo, lista = Z.enemigos.filter(asHay), sale = [];
+  if (n.tipo === 'jefe' && asHay(Z.jefe.tipo)) {
+    const pts = asPuntosEnemigos(3);
+    sale.push({ tipo: Z.jefe.tipo, fuerza: Z.jefe.fuerza * Z.fuerza(P.nivel), escala: Z.jefe.escala, pos: [400, AS_ARENA.y + AS_ARENA.h / 2], jefe: true });
+    for (const p of pts.slice(0, 2)) if (lista.length) sale.push({ tipo: pick(lista), fuerza: Z.fuerza(P.nivel), pos: p });
     return sale;
   }
-  const k = AS_P.combatesPiso, cuantos = Math.min(9, Math.floor(p.n[0] + k * p.n[1] + AS_P.piso * 0.5));
-  for (let i = 0; i < cuantos && lista.length; i++) sale.push({ tipo: pick(lista), fuerza: p.fuerza * (1 + 0.22 * k), celda: libres[i] });
+  const pts = asPuntosEnemigos(Z.cuantos(P.nivel));
+  for (const p of pts) if (lista.length) sale.push({ tipo: pick(lista), fuerza: Z.fuerza(P.nivel), pos: p });
   return sale;
 }
-function asPreparaCombate() { AS_P.proxima = asOleada(); }   // los enemigos se ven antes de luchar, para colocar al equipo
+function asPreparaCombate() { AS_P.proxima = asOleada(); }   // los puntos rojos (o el jefe) se ven antes de luchar
 function asLucha() {
-  if (!AS_P.equipo.length) { play('asNoVale'); asAviso(tr('Compra al menos un héroe')); return; }
-  AS_P.estado = 'batalla';
-  asEmpiezaBatalla(AS_P.proxima || asOleada()); AS_P.proxima = null;
+  const P = AS_P;
+  if (!P.equipo.length) { play('asNoVale'); asAviso(tr('Compra al menos un héroe')); return; }
+  P.estado = 'batalla'; P.oroBatalla = 0;
+  asEmpiezaBatalla(P.proxima || asOleada());
   asConsejo('batalla');
+  // los logros de «lucha con N»
+  const { cuenta } = asSinergias(P.equipo);
+  SAVE.stats.maxEquipo = Math.max(SAVE.stats.maxEquipo || 0, P.equipo.length);
+  for (const k in cuenta) SAVE.stats.maxClase[k] = Math.max(SAVE.stats.maxClase[k] || 0, cuenta[k]);
 }
 // la batalla ha acabado (lo llama el bucle cuando AS_B.fin lleva un rato puesto)
 function asTrasBatalla() {
   const P = AS_P, fin = AS_B.fin, jefe = P.nodo.tipo === 'jefe';
   if (fin === 'victoria') {
-    P.combates++; P.combatesPiso++;
-    const oro = AS_CFG.oroVictoria(P.combates) + (asTiene('hucha') ? 3 : 0);
+    P.combates++;
+    const oro = (jefe ? AS_CFG.oroJefe : AS_CFG.oroVictoria(P.nivel)) + (asTiene('hucha') ? 3 : 0) + P.oroBatalla;
     asSintonia('win');
-    asVentanaCofre(oro, jefe, () => {
+    const objetos = jefe ? asPremioJefe() : [];
+    asVentanaVictoria(oro, jefe ? AS_CFG.plumasJefe : 0, objetos, () => {
       AS_B = null; P.nodo.hecho = true;
-      if (jefe) {
-        P.gemas += AS_CFG.gemasJefe; SAVE.gemas += AS_CFG.gemasJefe;
-        SAVE.mejor = Math.max(SAVE.mejor, P.piso + 1); asGuarda();
-        if (P.piso + 1 >= AS_ZONAS[P.zona].pisos.length) { SAVE.victorias++; asGuarda(); asVentanaFin(true); return; }
-        P.piso++; asNuevoPiso(); P.nodo.hecho = true;
-        asAviso(tr('¡Piso {n}!', { n: P.piso + 1 }), true);
-      }
-      P.estado = 'mapa'; asMusica('animales'); asConsejo('mapa');
+      if (jefe) { asApuntaStat('jefes', 1); asTerminaZona(); return; }
+      P.estado = 'elegir'; asMusica('animales'); asConsejo('flechas');
     });
   } else {
-    P.corazones--;
     asSintonia('lose');
-    if (P.corazones <= 0) { AS_B = null; SAVE.mejor = Math.max(SAVE.mejor, P.piso); asGuarda(); asVentanaFin(false); return; }
-    asVentanaDerrota(() => { AS_B = null; P.oro += 2; P.estado = 'tienda'; asLlenaOferta(); asPreparaCombate(); asMusica(jefe ? 'boss' : 'animales'); });
+    SAVE.mejor = Math.max(SAVE.mejor, P.nivel); asGuarda();
+    asVentanaFin(false);
   }
 }
+function asPremioJefe() {
+  const Z = asZona();
+  return Z.rareza.map(r => asObjetoNuevo(Math.min(2, r + (Math.random() < 0.25 ? 1 : 0))));
+}
+// la zona entera está hecha: se abre la siguiente, se guardan los objetos y salen los logros
+function asTerminaZona() {
+  const P = AS_P;
+  if (!SAVE.zonas.includes(P.zona)) SAVE.zonas.push(P.zona);
+  if (!SAVE.stats.zonas.includes(P.zona)) SAVE.stats.zonas.push(P.zona);
+  SAVE.mejor = Math.max(SAVE.mejor, P.nivel); asGuarda();
+  asVentanaFin(true);
+}
+// lo que da el oro y las plumas durante la partida (y a las estadísticas de los logros)
+function asGanaOro(n) { AS_P.oro += n; asApuntaStat('oroTotal', n); }
+function asGanaPlumas(n) { AS_P.plumas += n; SAVE.plumas += n; asGuarda(); }

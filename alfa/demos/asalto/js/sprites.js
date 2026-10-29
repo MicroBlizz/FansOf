@@ -3,11 +3,11 @@
 // moviendo su dibujo por código (botar, estirarse, embestir, parpadear). Nunca se voltea un dibujo: los héroes miran a la derecha
 // y los enemigos a la izquierda, así el arma no cambia de mano. Todo se pinta al doble (AS_PX) y sin suavizar.
 'use strict';
-const AS_PX = 2;
+const AS_PX = 1;   // los muñecos a su tamaño (unos 14 píxeles de alto en el lienzo pequeño), como en el juego de referencia
 const AS_IMG = {};
 const AS_BLANCO = {};   // la misma tira en blanco, para el destello al recibir un golpe
 function asCargaImagenes(listo) {
-  const nombres = Object.keys(AS_TIRAS).concat(['arena', 'portada']);
+  const nombres = Object.keys(AS_TIRAS).concat(['portada', 'arena2', 'arena2-arboles', 'arena2-jefe', 'pasillo', 'bosque-cofre'].filter(n => (typeof AS_FONDOS === 'undefined') || AS_FONDOS.includes(n)));
   let faltan = nombres.length;
   const uno = () => { if (--faltan === 0) listo(); };
   for (const n of nombres) {
@@ -43,7 +43,7 @@ function asCuadro(tipo, anim, tiempo, dura) {
 // Pinta un muñeco con los pies en (x, y). u: { tipo, anim, tAnim, dura, destello, escala, alfa, lado }.
 function asPintaMuneco(c, u, x, y, t) {
   if (!asHay(u.tipo)) return;
-  const d = AS_TIRAS[u.tipo], esc = Math.max(2, Math.round(AS_PX * (u.escala || 1) / 2) * 2), w = d.w * esc, h = d.h * esc;   // múltiplo de 2: píxeles enteros
+  const d = AS_TIRAS[u.tipo], esc = Math.max(1, Math.round(AS_PX * (u.escala || 1))), w = d.w * esc, h = d.h * esc;   // múltiplo de 2: píxeles enteros
   const f = asCuadro(u.tipo, u.anim, u.tAnim || 0, u.dura);
   const hacia = u.lado === 'heroe' ? 1 : -1;
   // movimiento por código cuando falta el fotograma propio (y un poco siempre, para que no se vea rígido)
@@ -63,7 +63,7 @@ function asPintaMuneco(c, u, x, y, t) {
   c.globalAlpha = u.alfa === undefined ? 1 : u.alfa;
   c.translate(Math.round((x + dx) / 2) * 2, Math.round((y + dy) / 2) * 2);   // en un píxel entero del lienzo pequeño
   // sombra
-  asElipsePix(c, 0, 0, Math.round(w * 0.32 / 2) * 2, Math.max(2, Math.round(2 * (u.escala || 1)) * 2), 'rgba(60,30,10,0.28)');
+  asElipsePix(c, 0, 0, Math.round(w * 0.36 / 2) * 2, Math.max(2, Math.round(1.5 * (u.escala || 1)) * 2), 'rgba(60,30,10,0.28)');
   c.rotate(giro); c.scale(sx, sy);
   c.imageSmoothingEnabled = false;
   c.drawImage(AS_IMG[u.tipo], f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), Math.round(-h), w, h);

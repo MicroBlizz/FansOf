@@ -18,6 +18,24 @@ const AS_PIX = {
   'sala-jefe': ['.ky.yy.yk.', '.kyyyyyyk.', '..kkkkkk..', '.kwwwwwwk.', 'kwkkwwkkwk', 'kwkkwwkkwk', 'kwwwkkwwwk', '.kwwwwwwk.', '..kwkwkk..', '...kkkk...'],
 };
 AS_PIX['clase-sanador'][7] = '.kpppppppk';
+Object.assign(AS_PIX, {
+  'clase-brujo': ['..kkkkkk..', '.kvvvvvvk.', 'kvvvvvvvvk', 'kvkkvvkkvk', 'kvkekvkekk', 'kvvvvvvvvk', '.kvvkkvvk.', '..kkvvkk..', '...kkkk...', '..........'],
+  pluma: ['........k.', '.......ky.', '......kyk.', '.....kyyk.', '....kyyok.', '...kyyok..', '..kyyok...', '.kyyok....', 'kook......', 'kk........'],
+  anuncio: ['kkkkkkkkkk', 'kwwwwwwwwk', 'kwkwwwwwwk', 'kwkkwwwwwk', 'kwkkkwwwwk', 'kwkkwwwwwk', 'kwkwwwwwwk', 'kwwwwwwwwk', 'kkkkkkkkkk', '..........'],
+  tienda: ['.kkkkkkkk.', 'krwrwrwrwk', 'kwrwrwrwrk', 'kkkkkkkkkk', '.kssssss..', '.kskksskk.', '.ksmmssmk.', '.ksmmssmk.', '.kkkkkkkk.', '..........'],
+  altar: ['....kk....', '...kvvk...', '..kvwvvk..', '...kvvk...', '..kssssk..', '.kssssssk.', '..kggggk..', '..kggggk..', '.kssssssk.', 'kkkkkkkkkk'],
+  agujero: ['..kkkkkk..', '.knnnnnnk.', 'knnnnnnnnk', 'knnkkkknnk', 'knnnnnnnnk', 'knnnnnnnnk', '.knnnnnnk.', '..kkkkkk..', '..........', '..........'],
+  'equipo-casco': ['...kkkk...', '..kssssk..', '.kssssssk.', '.kssssssk.', 'kssssssssk', 'ksskkkkssk', 'kssk..kssk', 'kssssssssk', '.kkkkkkkk.', '..........'],
+  'equipo-arma': ['......kk..', '.....kyk..', '....kywk..', '...kywk...', '..kywk....', 'kkkywk....', 'kmkwk.....', 'kmmkk.....', 'kmk.k.....', 'kk........'],
+  'equipo-armadura': ['kk......kk', 'ksk....ksk', 'kssk..kssk', 'kssssssssk', 'ksskssksss', 'kssssssssk', '.kssssssk.', '.kssssssk.', '..kkkkkk..', '..........'],
+  'equipo-guantes': ['.kk....kk.', 'kmmk..kmmk', 'kmmmkkmmmk', 'kmmmmkmmmk', 'kmmmkkmmmk', '.kmmk.kmmk', '.kmmk.kmmk', '.kmmk.kmmk', '.kkk..kkk.', '..........'],
+  'equipo-pantalon': ['.kkkkkkkk.', 'kbbbbbbbbk', 'kbbbbbbbbk', 'kbbbkkbbbk', 'kbbbk.kbbk', 'kbbbk.kbbk', 'kbbbk.kbbk', 'kbbbk.kbbk', 'kkkkk.kkkk', '..........'],
+  'equipo-botas': ['.kk....kk.', 'kllk..kllk', 'kllk..kllk', 'kllk..kllk', 'kllk..kllk', 'klllkklllk', 'kllllkllll', 'klllllllll', 'kkkkkkkkkk', '..........'],
+  reliquia: ['....kk....', '...kvvk...', '..kvwvvk..', '.kvwvvvvk.', 'kvvvvvvvvk', '.kvvvvvvk.', '..kvvvvk..', '...kvvk...', '....kk....', '..........'],
+  equipo: ['..kkkkkk..', '.kssssssk.', 'kssssssssk', 'kssssssssk', 'kssssssssk', '.kssssssk.', '..kkkkkk..', '..........', '..........', '..........'],
+  yunque: ['..........', '.kkkkkkkk.', 'kssssssssk', '.kssssssk.', '...kssk...', '...kssk...', '..kssssk..', '.kssssssk.', 'kkkkkkkkkk', '..........'],
+  trofeo: ['kkkkkkkkkk', 'kyyyyyyyyk', 'kkyyyyyykk', '.kyyyyyyk.', '..kyyyyk..', '...kyyk...', '....kk....', '...kyyk...', '..kyyyyk..', '.kkkkkkkk.'],
+});
 // las reliquias: un dibujo sencillo de su color (la letra X es el color de cada una)
 const AS_PIX_X = {};
 for (const k in AS_RELIQUIAS) { AS_PIX['reliquia-' + k] = ['...kkkk...', '..kXXXXk..', '.kXwXXXXk.', 'kXwXXXXXXk', 'kXXXXXXXXk', 'kXXXXXXXXk', 'kXXXXXXXXk', '.kXXXXXXk.', '..kXXXXk..', '...kkkk...']; AS_PIX_X['reliquia-' + k] = AS_RELIQUIAS[k].col; }
@@ -36,7 +54,7 @@ function asIcono(c, n, cx, cy, L) {
   const im = AS_ICO_IMG[n];
   const par = typeof AS_BCTX !== 'undefined' && c === AS_BCTX;   // en el lienzo del juego, múltiplos de 2 para caer en píxeles enteros
   if (im) { let k = Math.max(1, Math.floor(L / Math.max(im.width, im.height))); if (par) k = Math.max(2, Math.floor(k / 2) * 2); c.drawImage(im, Math.round(cx - im.width * k / 2), Math.round(cy - im.height * k / 2), im.width * k, im.height * k); return; }
-  const filas = AS_PIX[n]; if (!filas) return;
+  const filas = AS_PIX[n] || AS_PIX[n.split('-')[0]]; if (!filas) return;   // sin dibujo propio: el genérico de su familia (reliquia, equipo…)
   let k = Math.max(1, Math.floor(L / 10)); if (par) k = Math.max(2, Math.floor(k / 2) * 2);
   const x0 = Math.round(cx - 5 * k), y0 = Math.round(cy - 5 * k);
   filas.forEach((f, y) => {

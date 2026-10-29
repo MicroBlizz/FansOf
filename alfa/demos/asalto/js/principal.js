@@ -32,24 +32,36 @@ function asPulsa(b) {
   const id = b.id, P = AS_P;
   if (id === 'pausa') { play('select'); asAbrePausa(); return; }
   if (id === 'vel') { P.vel = P.vel === 1 ? 2 : 1; play('select'); return; }
+  if (id === 'equipo') { play('select'); AS_PANT.pausa = true; asInfoEquipo(); return; }
   if (id.startsWith('clase-')) { play('select'); asInfoClase(id.slice(6)); return; }
+  if (id.startsWith('ir-') && b.nodo) { asIrA(b.nodo); return; }
   if (P.estado === 'tienda') {
     if (id === 'lucha') { play('select'); asLucha(); }
     else if (id.startsWith('carta')) asCompra(+id.slice(5));
     else if (id === 'mejorar') asMejoraTienda();
     else if (id === 'refrescar') asRefresca();
-  } else if (P.estado === 'mapa' && b.nodo) asIrA(b.nodo);
+  } else if (P.estado === 'cofre') {
+    if (id === 'cofre-abrir') asAbreCofre(1);
+    else if (id === 'cofre-doble') asAnuncio(() => asAbreCofre(2));
+    else if (id === 'cofre-sigue') { play('select'); asSalaHecha(); }
+  }
+}
+// en la partida, el equipo solo se mira (las estadísticas que da)
+function asInfoEquipo() {
+  const s = asStatsEquipo(), lis = Object.keys(AS_EQUIPO.stats).filter(k => s[k]).map(k => `<li><span>${asH(tr(AS_EQUIPO.stats[k]))}</span><b>+${s[k]} %</b></li>`).join('');
+  asModal(`<h2>${tr('TU EQUIPO')}</h2><p class="as-sub">${tr('Lo que llevas puesto vale para todos los héroes.')}</p>${lis ? `<ul class="as-stats">${lis}</ul>` : `<p>${tr('No llevas nada puesto: los objetos se ponen en el menú.')}</p>`}<button class="as-btn2" id="as-c-ok" type="button">${tr('VALE')}</button>`);
+  $('#as-c-ok').onclick = () => { play('select'); asCierraModal(); AS_PANT.pausa = false; };
 }
 // ¿hay un héroe del equipo en ese punto? (solo en la tienda se pueden mover)
 function asHeroeEn(x, y) {
   if (!AS_P || AS_P.estado !== 'tienda') return null;
-  let mejor = null, dm = 34;
-  for (const h of AS_P.equipo) { const [cx, cy] = asCelda('heroe', h.celda[0], h.celda[1]), d = Math.hypot(x - cx, y - (cy - 24)); if (d < dm) { dm = d; mejor = h; } }
+  let mejor = null, dm = 22;
+  for (const h of AS_P.equipo) { const [cx, cy] = asCelda(h.celda[0], h.celda[1]), d = Math.hypot(x - cx, y - (cy - 14)); if (d < dm) { dm = d; mejor = h; } }
   return mejor;
 }
 function asCeldaCerca(x, y) {
-  let mejor = null, dm = 56;
-  for (let c = 0; c < AS_COLS; c++) for (let f = 0; f < AS_FILAS; f++) { const [cx, cy] = asCelda('heroe', c, f), d = Math.hypot(x - cx, y - (cy - 24)); if (d < dm) { dm = d; mejor = [c, f]; } }
+  let mejor = null, dm = 40;
+  for (let c = 0; c < AS_COLS; c++) for (let f = 0; f < AS_FILAS; f++) { const [cx, cy] = asCelda(c, f), d = Math.hypot(x - cx, y - (cy - 14)); if (d < dm) { dm = d; mejor = [c, f]; } }
   return mejor;
 }
 AS_CV.addEventListener('pointerdown', e => {
@@ -64,15 +76,15 @@ AS_CV.addEventListener('pointermove', e => {
   if (!AS_DRAG.h) return;
   const [x, y] = asLogico(e);
   if (!AS_DRAG.mov && Math.hypot(x - AS_DRAG.x0, y - AS_DRAG.y0) > 8) AS_DRAG.mov = true;
-  AS_DRAG.x = x; AS_DRAG.y = y; AS_DRAG.celda = y < 604 ? asCeldaCerca(x, y) : null;
+  AS_DRAG.x = x; AS_DRAG.y = y; AS_DRAG.celda = y < AS_Y ? asCeldaCerca(x, y) : null;
 });
 AS_CV.addEventListener('pointerup', e => {
   const [x, y] = asLogico(e);
   if (AS_TOQUE.boton) { const b = asBotonEn(x, y), id = AS_TOQUE.boton; AS_TOQUE.boton = null; if (b && b.id === id && asJugando()) asPulsa(b); return; }
   const D = AS_DRAG; if (!D.h) return;
   const h = D.h; D.h = null;
-  if (!D.mov) { const d = AS_HEROES[h.tipo]; asAviso(tr('{n} · nivel {v} · {c}', { n: tr(d.nombre), v: h.nivel, c: d.clases.map(k => tr(AS_CLASES[k].nombre)).join(' + ') }), true); return; }
-  if (y >= 604) asVende(h);
+  if (!D.mov) { const d = AS_HEROES[h.tipo]; asAviso(tr('{n} · {c}', { n: tr(d.nombre), c: d.clases.map(k => tr(AS_CLASES[k].nombre)).join(' + ') }), true); return; }
+  if (y >= AS_Y) asVende(h);
   else if (D.celda) asMueve(h, D.celda);
 });
 AS_CV.addEventListener('pointercancel', () => { AS_DRAG.h = null; AS_TOQUE.boton = null; });
@@ -87,7 +99,7 @@ function asPintaPortada(c, t) {
   if (AS_IMG.portada) { const im = AS_IMG.portada, h = im.height * 2; c.drawImage(im, 0, 0, im.width, im.height, 0, Math.min(0, 960 - h), 540, h); }
   // el desfile de los Animales Locos por abajo
   const lista = Object.keys(AS_HEROES).filter(asHay);
-  lista.forEach((k, i) => { const x = ((t * 40 + i * 70) % 640) - 50; asPintaMuneco(c, { tipo: k, anim: 'andar', tAnim: t + i * 0.3, lado: 'heroe', id: i }, x, 920, t); });
+  lista.forEach((k, i) => { const x = ((t * 40 + i * 60) % 620) - 40; asPintaMuneco(c, { tipo: k, anim: 'andar', tAnim: t + i * 0.3, lado: 'heroe', id: i, escala: 1.6 }, x, 930, t); });
 }
 
 /* ---------- el bucle ---------- */
@@ -110,11 +122,14 @@ function asFotograma(ahora) {
   c.setTransform(0.5, 0, 0, 0.5, 0, 0);
   c.imageSmoothingEnabled = false;
   if (AS_PANT.actual === 'partida' && AS_P) {
-    if (AS_P.estado === 'batalla' && AS_B && !AS_PANT.pausa) {
-      const pasos = AS_P.vel;
+    const P = AS_P;
+    if (P.estado === 'batalla' && AS_B && !AS_PANT.pausa) {
+      const pasos = P.vel;
       for (let i = 0; i < pasos; i++) asAvanzaBatalla(dt);
       if (AS_B.fin && AS_B.tFin > 1.3 && !AS_TRAS) { AS_TRAS = true; asTrasBatalla(); }
-    }
+    } else if (P.estado === 'camino' && P.camino) { P.camino.t += dt; if (P.camino.t >= P.camino.dura) asLlega(); }
+    else if (P.estado === 'cofre' && P.cofre) { P.cofre.t += dt; if (P.cofre.abierto) P.cofre.tAbre += dt; }
+    else if (P.estado === 'altar' && P.altar) P.altar.t += dt;
     if (AS_P && AS_P.estado !== 'batalla') AS_TRAS = false;
     if (AS_P) asPintaPartida(c, t);
   } else asPintaPortada(c, t);
@@ -126,10 +141,10 @@ function asArranque() {
   asAjusta();
   window.addEventListener('resize', asAjusta);
   $('#as-jugar').onclick = () => { play('select'); asEntrar(); };
-  $('#as-equipo').onclick = () => asProximamente(tr('Equipo'));
-  $('#as-herreria').onclick = () => asProximamente(tr('Herrería'));
-  $('#as-logros').onclick = () => asProximamente(tr('Logros'));
-  $('#as-tienda').onclick = () => asProximamente(tr('Tienda'));
+  $('#as-equipo').onclick = () => { play('select'); asPantallaEquipo(); };
+  $('#as-herreria').onclick = () => { play('select'); asPantallaHerreria(); };
+  $('#as-logros').onclick = () => { play('select'); asPantallaLogros(); };
+  $('#as-tienda').onclick = () => { play('select'); asPantallaTienda(); };
   $('#as-ajustes').onclick = () => { play('select'); asAjustes(); };
   asCargaIconos();
   // las letras de píxeles: el texto se guarda ya dibujado (AS_TXT), así que hay que esperar a que lleguen; si llegan tarde, se borra lo guardado

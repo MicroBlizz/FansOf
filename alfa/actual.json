@@ -1,8 +1,8 @@
 {
- "build": 610,
- "hash": "faa6d0d",
- "fecha": "2026-10-29T00:10:36Z",
- "mensaje": "Fans of Merge: semilla, topo, piedra, roca, CrazyBunny y prado de Yoshi; tarjeta en la biblioteca con 2 capturas; tablones, botón, chispas, relámpago, estrellas y logo pintados en cuanto lleguen",
+ "build": 611,
+ "hash": "cb71a46",
+ "fecha": "2026-10-29T00:14:54Z",
+ "mensaje": "Fans of Merge: los menús (botones, ventanas, cartas y niveles) pasan a los dibujos de Yoshi en cuanto llegan",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

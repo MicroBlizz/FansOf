@@ -19,6 +19,10 @@ for (const k in SPRITES) {
   im.onload = () => { MG_IMG[k] = im; };
   im.src = SPRITES[k] + '?v=' + VERSION;
 }
+// los dibujos de los menús en HTML: cuando uno carga, el body recibe la clase mg-img-<nombre> y merge.css lo usa en vez del dibujo de código
+for (const k of ['boton-naranja', 'boton-verde', 'boton-azul', 'boton-rojo', 'panel', 'carta', 'nivel', 'candado']) {
+  const im = new Image(); im.onload = () => document.body.classList.add('mg-img-' + k); im.src = 'img/' + k + '.png?v=' + VERSION;
+}
 const MG_CACHE = new Map();   // «tipo:tamaño» -> lienzo ya reducido
 function mgSpriteListo(tipo, lado) {
   const im = MG_IMG[tipo]; if (!im) return null;

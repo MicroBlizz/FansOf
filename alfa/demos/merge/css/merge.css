@@ -75,3 +75,15 @@ body { background: radial-gradient(120% 80% at 50% 0%, #c9f2a8 0%, #6cbf55 70%);
 .mg-turnos { margin: 0; font-weight: 800; font-size: 20px; color: #c96a1e; }
 .mg-premio { margin: 0; font-family: 'Luckiest Guy', sans-serif; font-size: 24px; color: var(--mg-verde); text-shadow: 1.5px 0 0 var(--mg-tinta), -1.5px 0 0 var(--mg-tinta), 0 1.5px 0 var(--mg-tinta), 0 -1.5px 0 var(--mg-tinta); }
 #mg-libre.mg-cerrado { filter: saturate(0.4); opacity: 0.75; }
+
+/* Menús pintados por Yoshi: cada regla se activa sola cuando su dibujo ha cargado (js/sprites.js pone la clase en el body) */
+.mg-img-boton-naranja .mg-btn, .mg-img-boton-naranja .mg-nv:not(.mg-cerrado) { background: url('../img/boton-naranja.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-verde .mg-btn2:not(.mg-azul):not(.mg-rojo) { background: url('../img/boton-verde.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-azul .mg-btn2.mg-azul { background: url('../img/boton-azul.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-boton-rojo .mg-btn2.mg-rojo { background: url('../img/boton-rojo.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; }
+.mg-img-panel .mg-tarjeta { background: url('../img/panel.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; padding: 34px 30px 30px; }
+.mg-img-carta .mg-carta { background: url('../img/carta.png') center / 100% 100% no-repeat; border-color: transparent; box-shadow: none; padding-top: 30px; }
+.mg-img-nivel .mg-nv { background: url('../img/nivel.png') center / contain no-repeat !important; border-color: transparent; box-shadow: none; aspect-ratio: 1; justify-content: center; }
+.mg-img-candado .mg-nv.mg-cerrado b { visibility: hidden; }
+.mg-img-candado .mg-nv.mg-cerrado { position: relative; }
+.mg-img-candado .mg-nv.mg-cerrado::after { content: ''; position: absolute; inset: 22%; background: url('../img/candado.png') center / contain no-repeat; }

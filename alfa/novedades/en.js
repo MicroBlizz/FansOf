@@ -49,6 +49,5 @@ IDIOMA.add({
   "Tácticas por casillas en pixel art de consola portátil, con tutorial de Lola.": "Grid tactics in handheld-console pixel art, with a tutorial by Lola.",
   "El boceto en 3D: una misión corta contra SurvivalBot, con comentarista.": "The 3D sketch: a short mission against SurvivalBot, with a commentator.",
   "Demo más larga: 13 salas, Zoe y personajes estilo PS1.": "Longer demo: 13 rooms, Zoe and PS1-style characters.",
-  "Demo nueva: el matamarcianos espacial de la serie. Captura naves de Microblizz y conviértelas en tu escolta, tu escudo o tu super rayo.": "New demo: the series' space shoot 'em up. Capture Microblizz ships and turn them into your escort, your shield or your super ray.",
-  "Prototipo nuevo: la aldea vikinga de los Animales Locos. Planta, cocina y forja, y asalta la sede de Microblizz en combates por turnos.": "New prototype: the Crazy Animals' viking village. Plant, cook and forge, then raid Microblizz HQ in turn-based battles."
+  "Demo nueva: el matamarcianos espacial de la serie. Captura naves de Microblizz y conviértelas en tu escolta, tu escudo o tu super rayo.": "New demo: the series' space shoot 'em up. Capture Microblizz ships and turn them into your escort, your shield or your super ray."
 });

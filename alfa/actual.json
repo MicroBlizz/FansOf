@@ -1,8 +1,8 @@
 {
- "build": 620,
- "hash": "b6fcd15",
- "fecha": "2026-10-29T07:42:32Z",
- "mensaje": "Fans of Swipe: los dibujos y sonidos de Yoshi, y su tarjeta en la Biblioteca (solo alfa)",
+ "build": 621,
+ "hash": "90acb83",
+ "fecha": "2026-10-29T08:02:33Z",
+ "mensaje": "Fans of Vikings solo en la alfa: tarjeta con data-alfa, fuera de la release y sin boletín",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

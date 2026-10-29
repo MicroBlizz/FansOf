@@ -10,14 +10,6 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
-    id: '2026-10-29a',
-    fecha: '29 de octubre de 2026',
-    nuevos: [
-      { nombre: 'FANS OF VIKINGS', tarjeta: 'g-vikings', enlace: 'demos/vikings/', texto: 'Prototipo nuevo: la aldea vikinga de los Animales Locos. Planta, cocina y forja, y asalta la sede de Microblizz en combates por turnos.' },
-    ],
-    otros: [],
-  },
-  {
     id: '2026-10-21b',
     fecha: '21 de octubre de 2026',
     nuevos: [

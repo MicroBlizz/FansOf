@@ -126,8 +126,10 @@ function mgPintaCaminos(c, t) {
       if (libre(x, y + 1)) c.rect(cx - r * 0.7 - pad, cy, (r * 0.7 + pad) * 2, cs);
     }
   };
-  if (MG_IMG.CAMINO) {   // el camino pintado: un trozo por casilla, un poco más grande para que se unan
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (libre(x, y)) mgImg(c, 'CAMINO', mgCx(x) - cs * 0.6, mgCy(y) - cs * 0.6, cs * 1.2, cs * 1.2);
+  if (MG_IMG.TIERRA) {   // el camino: la forma de los senderos rellena con la tierra pintada por Yoshi
+    if (!MG_V.patronT || MG_V.patronTDe !== MG_IMG.TIERRA) { MG_V.patronT = c.createPattern(MG_IMG.TIERRA, 'repeat'); MG_V.patronTDe = MG_IMG.TIERRA; }
+    forma(3); c.fillStyle = 'rgba(70,60,20,.4)'; c.fill('nonzero');
+    forma(0); c.save(); c.clip('nonzero'); c.scale(0.35, 0.35); c.fillStyle = MG_V.patronT; c.fillRect(0, 0, 540 / 0.35, MG_V.H / 0.35); c.restore();
   } else {
   forma(3); c.fillStyle = 'rgba(70,60,20,.45)'; c.fill('nonzero');
   forma(0); c.fillStyle = '#c9b46e'; c.fill('nonzero');

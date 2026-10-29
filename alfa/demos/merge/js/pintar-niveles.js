@@ -15,7 +15,7 @@ function mgPintaObjNivel(c) {
   mgTexto(c, tr('Nivel {n}', { n: N.id }), 270, 70, 13, '#fff6c8', 'center', 'rgba(0,0,0,.5)', MG_FB);
   N.obj.forEach((o, i) => {
     const [a, b] = mgObjValor(o), hecho = a >= b, x = x0 + i * (w + 6);
-    mgPanel(c, x, 80, w, 32, 14, hecho ? 'rgba(60,140,40,.9)' : MG_PILDORA, null);
+    if (!mgImg(c, 'TABLON', x - 4, 76, w + 8, 40) || hecho) mgPanel(c, x, 80, w, 32, 14, hecho ? 'rgba(60,140,40,.9)' : MG_PILDORA, null);
     const txt = o.puntos ? fmt(a) + ' / ' + fmt(b) : a + ' / ' + b;
     if (o.crear) mgDibujaPieza(c, o.crear, x + 18, 95, 30, mgK());
     mgTexto(c, (o.crear ? '' : mgObjTexto(o) + ': ') + txt, x + (o.crear ? 38 : 10), 97, 14, '#fff', 'left', null, MG_FB);

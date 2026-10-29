@@ -77,7 +77,10 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
     for (let x = -W / 2; x < W / 2; x += 12) swLlama(c, x, -Hh / 2 - p + 6, 26 + 18 * Math.abs(Math.sin(x * 0.11 + t * 3)), t, x);
     c.globalAlpha /= SW_FX.calor;
   }
-  if (SW_IMG.carta) swDibujaC(c, 'carta', 0, 0, 3);
+  // cada tipo de carta tiene su marco (combate, evento, tienda…); si aún no ha llegado su dibujo, el marco común
+  const marco = 'carta-' + (SW_MARCO[carta.tipo] || 'combate');
+  if (SW_IMG[marco]) swDibujaC(c, marco, 0, 0, 3);
+  else if (SW_IMG.carta) swDibujaC(c, 'carta', 0, 0, 3);
   else { swPanel(c, -W / 2, -Hh / 2, W, Hh, '#6b4424', '#8a5a30', '#3e2612', 6); swPanel(c, -W / 2 + 18, -Hh / 2 + 18, W - 36, Hh - 36, '#f4e6c8', '#fff8e6', '#d8c49a', 3); }
   // la cinta del título, del color de la rareza
   const col = A.rareza != null ? SW_RAREZAS[A.rareza].col : '#c2432e';

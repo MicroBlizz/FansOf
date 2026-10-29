@@ -1,8 +1,8 @@
 {
- "build": 629,
- "hash": "6c4c032",
- "fecha": "2026-10-29T08:56:43Z",
- "mensaje": "Fans of Swipe: fuera la pica negra que la IA pintó en el marco de la carta (reporte de prueba 17)",
+ "build": 630,
+ "hash": "ec94236",
+ "fecha": "2026-10-29T09:09:18Z",
+ "mensaje": "Fans of Swipe: se quita el parche de la carta y cada tipo de carta tendrá su marco",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

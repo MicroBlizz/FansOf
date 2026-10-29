@@ -3,8 +3,11 @@
 // Si un dibujo aún no está, se pinta un hueco discreto en su sitio y el juego sigue siendo jugable.
 'use strict';
 const SW_IMG = {};
+// qué marco lleva cada tipo de carta (img/carta-<marco>.png)
+const SW_MARCO = { accion: 'combate', evento: 'evento', tienda: 'tienda', descanso: 'descanso', reliquia: 'reliquia', inicio: 'reliquia', premio: 'nueva', botin: 'botin', cruce: 'camino', piso: 'camino' };
+const SW_MARCOS_TODOS = [...new Set(Object.values(SW_MARCO))].map(m => 'carta-' + m);
 const SW_LISTA_IMG = [
-  'manos', 'carta', 'fondo-vestibulo', 'fondo-oficinas', 'fondo-servidores', 'fondo-azotea',
+  'manos', 'carta', ...Object.values(SW_MARCOS_TODOS), 'fondo-vestibulo', 'fondo-oficinas', 'fondo-servidores', 'fondo-azotea',
   ...Object.keys(SW_ENEMIGOS),
   ...SW_EVENTOS.map(e => e.arte), 'ev-descanso', 'ev-tienda', 'ev-tesoro', 'ev-cruce',
   ...Object.values(SW_NODOS).map(n => n.icono),

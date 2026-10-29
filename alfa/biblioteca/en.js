@@ -123,6 +123,7 @@ IDIOMA.add({
   "JRPG": "JRPG",
   "Runner": "Runner",
   "Mazmorras": "Dungeons",
+  "Autobatalla": "Auto battler",
   "Extracción": "Extraction",
   "3D": "3D",
   "Talentos": "Talents",

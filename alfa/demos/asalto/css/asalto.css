@@ -1,0 +1,79 @@
+/* Fans of Asalto · estilos: pixel art de 16 bits como la arena. Paneles lavanda con borde oscuro y esquinas cortadas (sin redondear),
+   la letra Pixelify Sans y los dibujos sin suavizar. La capa #as-ui mide 540x960 y se escala igual que el lienzo. */
+:root { --as-tinta: #20102c; --as-panel: #8f9be8; --as-panel2: #6c78d0; --as-claro: #c9d0ff; --as-fondo: #2b2d6b; --as-rojo: #e8433a; --as-verde: #5fb83a; --as-naranja: #f08a2a; --as-azul: #4f8ae8; --as-oro: #ffd23a; color-scheme: dark; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
+body { background: #15163a; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#stage { position: relative; overflow: hidden; background: var(--as-fondo); image-rendering: pixelated; }
+#cv { display: block; width: 100%; height: 100%; touch-action: none; image-rendering: pixelated; }
+@media (min-width: 600px) { #stage { box-shadow: 0 0 0 4px var(--as-claro), 0 0 0 8px var(--as-tinta), 0 30px 80px rgba(0, 0, 0, 0.5); } }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 700 22px/1 'Pixelify Sans', monospace; }
+.as-pix { image-rendering: pixelated; image-rendering: crisp-edges; }
+#as-ui { font-variant-ligatures: none; font-feature-settings: 'liga' 0, 'clig' 0;  position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; font-family: 'Pixelify Sans', 'Courier New', monospace; color: #fff; }
+#as-ui button { pointer-events: auto; font-family: inherit; font-weight: 700; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#as-ui button:focus-visible { outline: 3px solid var(--as-oro); outline-offset: 3px; }
+[hidden] { display: none !important; }
+/* el contorno de pixel art del texto y los paneles con esquinas cortadas */
+.as-btn, .as-btn2, .as-tarjeta, .as-lema, .as-zona, .as-reliq, .as-guia {
+  clip-path: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px); }
+.as-btn, .as-btn2 { border: 0; padding: 12px 24px 14px; font-size: 24px; line-height: 1; min-width: 200px; background: var(--as-rojo);
+  box-shadow: inset 0 0 0 3px var(--as-tinta), inset 0 6px 0 rgba(255, 255, 255, 0.3), inset 0 -8px 0 rgba(0, 0, 0, 0.25);
+  text-shadow: 2px 0 0 var(--as-tinta), -2px 0 0 var(--as-tinta), 0 2px 0 var(--as-tinta), 0 -2px 0 var(--as-tinta), 2px 2px 0 var(--as-tinta), -2px -2px 0 var(--as-tinta), 2px -2px 0 var(--as-tinta), -2px 2px 0 var(--as-tinta); }
+.as-btn2 { font-size: 19px; padding: 10px 18px 12px; min-width: 150px; background: var(--as-verde); }
+.as-azul { background: var(--as-azul) !important; } .as-oro { background: #e8a81a !important; } .as-verde { background: var(--as-verde) !important; }
+.as-rojo { background: var(--as-rojo) !important; } .as-gris { background: #6a6f9a !important; }
+.as-btn:active, .as-btn2:active { transform: translateY(3px); }
+.as-btn:disabled, .as-btn2:disabled { filter: grayscale(0.7) brightness(0.8); }
+.as-enorme { font-size: 28px; padding: 18px 26px 20px; animation: as-late 1.4s steps(4) infinite; }
+@keyframes as-late { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.as-fila { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.as-fila .as-btn2 { min-width: 0; }
+/* el menú principal */
+#as-titulo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 12px; padding: 70px 20px 0; box-sizing: border-box; }
+.as-logo { margin: 0 0 8px; font-size: 76px; line-height: 0.9; letter-spacing: 2px; text-align: center; color: var(--as-oro);
+  text-shadow: 4px 0 0 var(--as-tinta), -4px 0 0 var(--as-tinta), 0 4px 0 var(--as-tinta), 0 -4px 0 var(--as-tinta), 4px 4px 0 var(--as-tinta), -4px -4px 0 var(--as-tinta), 4px -4px 0 var(--as-tinta), -4px 4px 0 var(--as-tinta), 0 10px 0 var(--as-tinta); }
+.as-logo small { display: block; font-size: 30px; color: #fff; letter-spacing: 6px; }
+.as-lema { margin: 0 0 8px; font-weight: 700; font-size: 17px; background: var(--as-panel); box-shadow: inset 0 0 0 3px var(--as-tinta); padding: 8px 16px 10px; }
+.as-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+.as-pie { position: absolute; bottom: 120px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; gap: 16px; }
+.as-gemas { display: inline-flex; align-items: center; gap: 6px; font-size: 22px; background: var(--as-fondo); padding: 8px 14px; box-shadow: inset 0 0 0 3px var(--as-tinta); }
+/* las ventanas */
+.as-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px; box-sizing: border-box; background: rgba(10, 10, 40, 0.6); pointer-events: auto; z-index: 30; }
+.as-tarjeta { width: 100%; max-width: 480px; max-height: 900px; overflow: auto; background: var(--as-panel); box-shadow: inset 0 0 0 4px var(--as-tinta), inset 0 8px 0 rgba(255, 255, 255, 0.25), inset 0 -10px 0 rgba(0, 0, 0, 0.2); padding: 20px 20px 24px; box-sizing: border-box; text-align: center; font-size: 18px; color: #fff; }
+.as-tarjeta h2 { margin: 0 0 10px; font-size: 30px; color: var(--as-oro); text-shadow: 3px 0 0 var(--as-tinta), -3px 0 0 var(--as-tinta), 0 3px 0 var(--as-tinta), 0 -3px 0 var(--as-tinta), 3px 3px 0 var(--as-tinta), -3px -3px 0 var(--as-tinta); }
+.as-tarjeta p { margin: 8px 0; text-shadow: 2px 2px 0 var(--as-tinta); }
+.as-sub { font-size: 15px; opacity: 0.9; }
+.as-ancha { max-width: 500px; }
+.as-ancha .opt-list { text-align: left; margin-top: 14px; }
+.as-cofre { display: flex; justify-content: center; margin: 6px 0; }
+.as-premio { font-size: 20px; }
+.as-mas { color: var(--as-oro); font-size: 30px; }
+.as-zonas { display: grid; gap: 10px; margin: 10px 0 14px; }
+.as-zona { border: 0; padding: 14px; background: var(--as-panel2); box-shadow: inset 0 0 0 3px var(--as-tinta); text-align: left; display: grid; gap: 4px; font-size: 20px; }
+.as-zona small { font-size: 14px; opacity: 0.9; font-weight: 500; }
+.as-zona.cerrada { background: #4a4f7a; opacity: 0.75; }
+.as-reliqs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 10px 0; }
+.as-reliq { border: 0; padding: 10px 6px 12px; background: var(--as-claro); color: var(--as-tinta) !important; box-shadow: inset 0 0 0 3px var(--as-tinta); display: grid; justify-items: center; gap: 6px; font-size: 15px; }
+.as-reliq small { font-size: 13px; font-weight: 500; line-height: 1.2; }
+.as-reliq:active { transform: translateY(3px); }
+.as-datos { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 4px; }
+.as-niveles { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; text-align: left; }
+.as-niveles li { background: var(--as-panel2); padding: 8px 12px; box-shadow: inset 0 0 0 3px var(--as-tinta); opacity: 0.6; }
+.as-niveles li.on { opacity: 1; background: var(--as-verde); }
+.as-quien { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+.as-quien .apagado { filter: grayscale(1) brightness(0.7); }
+.as-corazones { gap: 4px; } .as-cor.roto { filter: grayscale(1) brightness(0.6); }
+/* el anuncio de prueba */
+.as-anuncio { z-index: 40; }
+.as-ad-cartel { display: inline-block; background: var(--as-oro); color: var(--as-tinta); padding: 4px 10px; font-weight: 700; }
+.as-ad-barra { height: 14px; background: var(--as-tinta); margin: 14px 0; padding: 3px; }
+.as-ad-barra i { display: block; height: 100%; width: 0; background: var(--as-oro); transition: width 0.9s steps(6); }
+.as-enlace { display: block; margin: 10px auto 6px; background: none; border: 0; text-decoration: underline; font-size: 15px; }
+.as-anuncio small { display: block; font-size: 12px; opacity: 0.8; }
+/* la guía (MeerCat) */
+.as-guia { position: absolute; left: 10px; right: 10px; top: 470px; display: flex; gap: 10px; align-items: center; text-align: left; border: 0; padding: 10px 14px; background: #fff8e6; color: var(--as-tinta) !important;
+  box-shadow: inset 0 0 0 3px var(--as-tinta); font-size: 16px; font-weight: 500 !important; z-index: 20; }
+.as-guia.sale { animation: as-guia 0.3s steps(3); }
+@keyframes as-guia { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+#as-guia-cara { flex: none; width: 64px; height: 64px; }
+/* el aviso y la ventana comunes de core (ligero.js) */
+#toast { font-family: 'Pixelify Sans', monospace; }

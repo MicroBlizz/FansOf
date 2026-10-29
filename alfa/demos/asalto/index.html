@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2b2d6b">
+<title>Fans of Asalto</title>
+<meta name="description" content="Fans of Asalto: compra a los Animales Locos en la tienda, combina sus clases y baja por la mazmorra de Microblizz en batallas automáticas hasta echar al CEO.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0-a618.af0b582"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/asalto.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="540" height="960" aria-label="Fans of Asalto"></canvas>
+  <div id="as-ui">
+    <section id="as-titulo">
+      <h1 class="as-logo"><small>FANS OF</small>ASALTO</h1>
+      <p class="as-lema" id="as-mejor">Baja a la mazmorra de Microblizz</p>
+      <button class="as-btn as-enorme" id="as-jugar" type="button">ENTRAR EN LA MAZMORRA</button>
+      <div class="as-menu">
+        <button class="as-btn2 as-azul" id="as-equipo" type="button">EQUIPO</button>
+        <button class="as-btn2 as-azul" id="as-herreria" type="button">HERRERÍA</button>
+        <button class="as-btn2 as-azul" id="as-logros" type="button">LOGROS</button>
+        <button class="as-btn2 as-azul" id="as-tienda" type="button">TIENDA</button>
+      </div>
+      <div class="as-pie"><span class="as-gemas"><canvas id="as-gema-ico" width="22" height="22" class="as-pix"></canvas><b id="as-gemas-menu">0</b></span><button class="as-btn2 as-gris" id="as-ajustes" type="button">AJUSTES</button></div>
+    </section>
+    <section id="as-modal" class="as-modal" hidden><div class="as-tarjeta" id="as-tarjeta"></div></section>
+    <section id="as-anuncio" class="as-modal as-anuncio" hidden><div class="as-tarjeta"><span class="as-ad-cartel">ANUNCIO</span><p>Un mensaje de nuestros patrocinadores… que somos nosotros.</p><div class="as-ad-barra"><i id="as-ad-barra"></i></div><button class="as-btn2 as-oro" id="as-ad-ok" type="button" disabled>…</button><button class="as-enlace" id="as-ad-no" type="button">Cerrar sin premio</button><small>Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.</small></div></section>
+    <button id="as-guia" class="as-guia" type="button" hidden><span id="as-guia-cara"></span><span id="as-guia-txt"></span></button>
+  </div>
+</div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Asalto lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/sprites-datos.js', 'js/sprites.js', 'js/iconos.js', 'js/sonidos.js', 'js/combate.js', 'js/partida.js',
+    'js/pintar.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

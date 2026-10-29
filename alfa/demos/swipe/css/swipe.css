@@ -60,5 +60,8 @@ body { background: #120a1c; display: flex; align-items: center; justify-content:
 .sw-pz small { font-size: 16px; line-height: 1.15; font-weight: 500; }
 .sw-oculta canvas { filter: brightness(0) opacity(.35); }
 /* opciones (la lista común de core/css/menus.css) */
-#sw-opc-lista { width: 100%; text-align: left; }
+#sw-opc-lista { width: 100%; text-align: left; color: #fff6d8; font-size: 22px; }
+#sw-opc-lista b, #sw-opc-lista strong, #sw-opc-lista h3, #sw-opc-lista h4 { color: #ffd23a; font-size: 26px; }
+#sw-opc-lista small, #sw-opc-lista p, #sw-opc-lista span { color: #e9dcc0; }
+#sw-opc-lista > :not(:first-child), #sw-opc-lista > :not(:first-child) * { color: #6b4424; }   /* la versión, sobre el pergamino */
 #sw-opc-lista .btn-ghost { pointer-events: auto; }

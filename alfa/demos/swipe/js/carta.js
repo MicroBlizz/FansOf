@@ -100,7 +100,7 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
       // el nombre de cada acción bajo su dibujo: en una o dos líneas, sin pisar al de al lado
       for (const [S, x] of [[L, lx], [R, rx]]) {
         const ls = swParte(c, tr(S.nombre) + (S.mas ? '+' : ''), 104, 15).slice(0, 2);
-        ls.forEach((l, i) => swTexto(c, l, x, yy + 100 + i * 19 - (ls.length - 1) * 6, 15, '#3a2414', 'center', 0));
+        ls.forEach((l, i) => swTextoCabe(c, l, x, yy + 100 + i * 23 - (ls.length - 1) * 8, 15, 104, '#3a2414', 'center', 0));
       }
     }
     y = yy + 122;
@@ -115,7 +115,7 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
   }
   if (A.texto) {
     const lineas = swParte(c, A.texto, 220, 16);
-    const tam = lineas.length > 4 ? 14 : 16;
-    swParte(c, A.texto, 220, tam).slice(0, 6).forEach((l, i) => swTexto(c, l, 0, y + 6 + i * (tam + 4), tam, '#3a2414', 'center', 0, 600));
+    const tam = lineas.length > 4 ? 14 : 16, sitio = Hh / 2 - 24 - y, paso = Math.round(tam * 1.5) + 2;
+    swParte(c, A.texto, 226, tam).slice(0, Math.max(1, Math.floor(sitio / paso))).forEach((l, i) => swTexto(c, l, 0, y + 8 + i * paso, tam, '#3a2414', 'center', 0, 600));
   }
 }

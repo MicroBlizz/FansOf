@@ -8,15 +8,21 @@ const SW_TINTA = '#1a0f1f';
 let SW_BOTONES = [];
 
 /* ---------- letra ---------- */
-function swLetra(c, tam) { c.font = `${Math.round(tam * 1.32)}px ${SW_LETRA}`; }   // Jersey 10 es estrecha: se agranda para que se lea igual
+function swLetra(c, tam) { c.font = `${Math.round(tam * 1.5)}px ${SW_LETRA}`; }   // Jersey 10 es estrecha: se agranda para que se lea igual
 function swTexto(c, txt, x, y, tam, col = '#fff', alinea = 'center', borde = 5, peso = 700) {
   swLetra(c, tam, peso); c.textAlign = alinea; c.textBaseline = 'middle';
+  x = Math.round(x); y = Math.round(y);
   if (borde) {
-    // contorno de píxel: la letra repetida en oscuro alrededor (no se come los huecos de los números como un trazo)
-    const b = Math.max(1, Math.round(borde / 2)); c.fillStyle = SW_TINTA;
-    for (const [dx, dy] of [[-b, 0], [b, 0], [0, -b], [0, b], [-b, -b], [b, -b], [-b, b], [b, b], [0, b + 1]]) c.fillText(txt, x + dx, y + dy);
+    // contorno limpio: un trazo oscuro de esquinas rectas y una sombra dura debajo (nada de copias difuminadas)
+    c.lineJoin = 'miter'; c.miterLimit = 2.5; c.lineWidth = Math.max(3, borde * 0.95); c.strokeStyle = SW_TINTA;
+    c.strokeText(txt, x, y + Math.max(2, Math.round(borde * 0.45))); c.strokeText(txt, x, y);
   }
   c.fillStyle = col; c.fillText(txt, x, y);
+}
+// como swTexto, pero si no cabe en «max» se hace más pequeño (hasta un 60 %)
+function swTextoCabe(c, txt, x, y, tam, max, col, alinea = 'center', borde = 5, peso = 700) {
+  let t = tam; swLetra(c, t); while (t > tam * 0.6 && c.measureText(txt).width > max) { t -= 0.5; swLetra(c, t); }
+  swTexto(c, txt, x, y, t, col, alinea, borde, peso);
 }
 // el título dorado de la serie (degradado de amarillo a naranja, contorno grueso y sombra)
 function swTitulo(c, txt, x, y, tam) {
@@ -164,11 +170,12 @@ function swPintaLados(c, t, lados, carta, inclina) {
     const icono = L.icono && SW_IMG[L.icono] ? L.icono : null;
     if (icono) swDibujaC(c, icono, 0, 66, 4);
     const col = L.bloqueado ? '#ff8a80' : hacia ? '#ffd84a' : '#ffffff';
-    const nom = swParte(c, (tr(L.nombre) + (L.mas ? '+' : '')).toUpperCase(), 100, 19);
-    nom.slice(0, 2).forEach((l, j) => swTexto(c, l, 0, 112 + j * 22, 19, col));
-    let yy = 112 + Math.min(2, nom.length) * 22 + 4;
+    const ANCHO = 122;   // lo que cabe a cada lado de la carta
+    const nom = swParte(c, (tr(L.nombre) + (L.mas ? '+' : '')).toUpperCase(), ANCHO, 19);
+    nom.slice(0, 2).forEach((l, j) => swTextoCabe(c, l, 0, 114 + j * 28, 19, ANCHO, col));
+    let yy = 114 + Math.min(2, nom.length) * 28 + 2;
     const lineas = L.bloqueado ? [L.porque] : swLineas(SW_P, carta, L);
-    for (const ln of lineas) for (const l of swParte(c, ln, 104, 15)) { swTexto(c, l, 0, yy, 15, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4, 600); yy += 18; }
+    for (const ln of lineas) for (const l of swParte(c, ln, ANCHO, 15)) { swTextoCabe(c, l, 0, yy, 15, ANCHO, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4); yy += 23; }
     c.restore();
     SW_BOTONES.push({ id: izq ? 'lado:L' : 'lado:R', x: cx - 66, y: y0 - 30, w: 132, h: 260 });
   }

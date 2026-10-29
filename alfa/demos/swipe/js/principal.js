@@ -11,7 +11,7 @@ function swAjusta() {
   if (h > bh - pad * 2) { h = bh - pad * 2; w = (h * 540) / LH; }
   w = Math.max(200, Math.floor(w)); h = Math.floor((w * LH) / 540);
   SW_ESCENARIO.style.width = w + 'px'; SW_ESCENARIO.style.height = h + 'px';
-  SW_V.H = LH; SW_V.sc = w / 540; SW_V.dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  SW_V.H = LH; SW_V.sc = w / 540; SW_V.dpr = Math.min(window.devicePixelRatio || 1, 3);
   SW_CV.width = Math.round(w * SW_V.dpr); SW_CV.height = Math.round(h * SW_V.dpr);
   SW_UI.style.height = LH + 'px'; SW_UI.style.transform = `scale(${w / 540})`;
   swMide();

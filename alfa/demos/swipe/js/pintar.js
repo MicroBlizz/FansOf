@@ -177,7 +177,7 @@ function swPintaLados(c, t, lados, carta, inclina) {
     swDibujaC(c, 'i-flecha', izq ? -2 : 2, 0, 3, izq);
     const icono = L.icono && SW_IMG[L.icono] ? L.icono : null;
     if (icono) swDibujaC(c, icono, 0, 66, 4);
-    const col = L.bloqueado ? '#ff8a80' : hacia ? '#ffd84a' : '#ffffff';
+    const col = L.bloqueado ? '#ff8a80' : hacia ? '#ffd84a' : swEsAtaque(L) ? '#ff7a6e' : '#ffffff';   // los ataques, en rojo
     const ANCHO = 122;   // lo que cabe a cada lado de la carta
     const nom = swParte(c, (tr(L.nombre) + (L.mas ? '+' : '')).toUpperCase(), ANCHO, 19);
     nom.slice(0, 2).forEach((l, j) => swTextoCabe(c, l, 0, 114 + j * 28, 19, ANCHO, col));

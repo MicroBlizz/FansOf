@@ -1,8 +1,8 @@
 {
- "build": 639,
- "hash": "d9848fe",
- "fecha": "2026-10-29T14:09:27Z",
- "mensaje": "Taxi: piezas de la ciudad nueva en el circuito de pruebas",
+ "build": 640,
+ "hash": "2eabdcb",
+ "fecha": "2026-10-29T14:22:43Z",
+ "mensaje": "Fans of Swipe: lados de las cartas fijos por diseño y el ataque marcado en rojo",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

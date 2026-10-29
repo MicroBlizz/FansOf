@@ -113,6 +113,9 @@ function swLadoAccion(P, carta, lado) {
     bloqueado: sinCaos, porque: sinCaos ? tr('Te falta caos') : '' };
 }
 
+// ¿este lado ataca? (para pintarlo en rojo y que se vea de un vistazo hacia dónde va el golpe)
+const swEsAtaque = L => !!(L && L.ef && L.ef.some(e => e.t === 'dano' || e.t === 'danoEscudo' || e.t === 'veneno'));
+
 /* ---------- los combos de deslizar ---------- */
 const SW_COMBOS = [
   { r: 'r-hielo', fin: ['LLL'], nombre: 'Congelación', ef: [{ t: 'congela' }] },

@@ -23,9 +23,10 @@ const SW_CFG = {
   mecha: 8, mechaJefe: 6.5, rapido: 2.2,   // segundos de mecha; la mecha arranca cuando la carta ya ha caído y arrastrando va a la mitad
   frenesi: 4, frenesiDano: 1.5, frenesiOro: 1.5,
   esperaEnemigo: 0.42,
-  // la estrategia: el escudo que te sobra se guarda a medias para el turno siguiente (guardia) y cada carta sale con sus
-  // lados en un orden al azar, así que no siempre es «izquierda = atacar»; además ves la siguiente carta del mazo
-  guardia: 0.5, giro: 0.5,
+  // la estrategia: el escudo que te sobra se guarda a medias para el turno siguiente (guardia) y ves la siguiente carta.
+  // Los lados de cada carta van FIJOS por diseño (unas atacan a la izquierda y otras a la derecha): quien se sabe las cartas
+  // juega más rápido. giro = probabilidad de darles la vuelta al azar (0 = nunca; así lo pidió Arkioner).
+  guardia: 0.5, giro: 0,
 };
 
 // Efectos (los usan las cartas, los eventos y la tienda). t = tipo:
@@ -42,16 +43,16 @@ const SW_CARTAS = {
   mordisco: { nombre: 'Zanahoria', arte: ['a-golpe', 'a-cura'], rareza: 0,
     izq: { nombre: 'Zanahoriazo', ef: [{ t: 'dano', n: 4 }, { t: 'caos', n: 1 }] },
     der: { nombre: 'Merendar', ef: [{ t: 'cura', n: 3 }, { t: 'escudo', n: 4 }] } },
-  salto:    { nombre: 'Salto del caos', arte: ['a-salto', 'a-caos'], rareza: 0,
-    izq: { nombre: 'Salto del caos', coste: 2, ef: [{ t: 'dano', n: 14 }] },
-    der: { nombre: 'Coger carrerilla', ef: [{ t: 'caos', n: 1 }, { t: 'escudo', n: 3 }] } },
+  salto:    { nombre: 'Salto del caos', arte: ['a-caos', 'a-salto'], rareza: 0,
+    izq: { nombre: 'Coger carrerilla', ef: [{ t: 'caos', n: 1 }, { t: 'escudo', n: 3 }] },
+    der: { nombre: 'Salto del caos', coste: 2, ef: [{ t: 'dano', n: 14 }] } },
   antorcha: { nombre: 'Antorcha verde', arte: ['a-fuego', 'a-cura'], rareza: 1,
     izq: { nombre: 'Fuego verde', ef: [{ t: 'dano', n: 3 }, { t: 'veneno', n: 4 }] },
     der: { nombre: 'Calentarse', ef: [{ t: 'cura', n: 3 }, { t: 'escudo', n: 3 }] } },
-  hielo:    { nombre: 'Carámbano', arte: ['a-hielo', 'a-escudo'], rareza: 2,
-    izq: { nombre: 'Carámbano', coste: 1, ef: [{ t: 'dano', n: 5 }, { t: 'congela' }] },
-    der: { nombre: 'Muro de hielo', ef: [{ t: 'escudo', n: 9 }] } },
-  furia:    { nombre: 'Rabia de fan', arte: ['a-golpe', 'a-caos'], rareza: 1,
+  hielo:    { nombre: 'Carámbano', arte: ['a-escudo', 'a-hielo'], rareza: 2,
+    izq: { nombre: 'Muro de hielo', ef: [{ t: 'escudo', n: 9 }] },
+    der: { nombre: 'Carámbano', coste: 1, ef: [{ t: 'dano', n: 5 }, { t: 'congela' }] } },
+  furia:    { nombre: 'Rabia de fan', arte: ['a-golpe', 'a-salto'], rareza: 1,
     izq: { nombre: 'Doble garrotazo', ef: [{ t: 'dano', n: 4, k: 2 }] },
     der: { nombre: 'A lo loco', ef: [{ t: 'dano', n: 13 }, { t: 'herida', n: 3 }] } },
   muro:     { nombre: 'Placaje', arte: ['a-escudo', 'a-escudo'], rareza: 1,
@@ -63,18 +64,18 @@ const SW_CARTAS = {
   rayo:     { nombre: 'Rayo del caos', arte: ['a-caos', 'a-caos'], rareza: 2,
     izq: { nombre: 'Rayo del caos', coste: 3, ef: [{ t: 'dano', n: 24 }] },
     der: { nombre: 'Cargar caos', ef: [{ t: 'caos', n: 2 }] } },
-  cafe:     { nombre: 'Café robado', arte: ['a-caos', 'a-cura'], rareza: 1,
-    izq: { nombre: 'Chute de café', ef: [{ t: 'caos', n: 1 }, { t: 'dano', n: 3 }] },
-    der: { nombre: 'Siesta', ef: [{ t: 'cura', n: 6 }, { t: 'caos', n: -1 }] } },
-  patada:   { nombre: 'Patada de conejo', arte: ['a-salto', 'a-escudo'], rareza: 1,
-    izq: { nombre: 'Doble patada', ef: [{ t: 'dano', n: 5, k: 2 }] },
-    der: { nombre: 'Voltereta', ef: [{ t: 'escudo', n: 4 }, { t: 'caos', n: 1 }] } },
-  grito:    { nombre: 'Grito de fan', arte: ['a-caos', 'a-escudo'], rareza: 2,
-    izq: { nombre: 'Abucheo', ef: [{ t: 'dano', n: 3 }, { t: 'debil', n: 2 }] },
-    der: { nombre: 'Venirse arriba', ef: [{ t: 'fuerza', n: 2 }] } },
-  veneno:   { nombre: 'Café de máquina', arte: ['a-veneno', 'a-escudo'], rareza: 2,
-    izq: { nombre: 'Café de máquina', coste: 1, ef: [{ t: 'veneno', n: 8 }] },
-    der: { nombre: 'Taza escudo', ef: [{ t: 'escudo', n: 5 }, { t: 'veneno', n: 2 }] } },
+  cafe:     { nombre: 'Café robado', arte: ['a-cura', 'a-caos'], rareza: 1,
+    izq: { nombre: 'Siesta', ef: [{ t: 'cura', n: 6 }, { t: 'caos', n: -1 }] },
+    der: { nombre: 'Chute de café', ef: [{ t: 'caos', n: 1 }, { t: 'dano', n: 3 }] } },
+  patada:   { nombre: 'Patada de conejo', arte: ['a-escudo', 'a-salto'], rareza: 1,
+    izq: { nombre: 'Voltereta', ef: [{ t: 'escudo', n: 4 }, { t: 'caos', n: 1 }] },
+    der: { nombre: 'Doble patada', ef: [{ t: 'dano', n: 5, k: 2 }] } },
+  grito:    { nombre: 'Grito de fan', arte: ['a-caos', 'a-golpe'], rareza: 2,
+    izq: { nombre: 'Venirse arriba', ef: [{ t: 'fuerza', n: 2 }] },
+    der: { nombre: 'Abucheo', ef: [{ t: 'dano', n: 3 }, { t: 'debil', n: 2 }] } },
+  veneno:   { nombre: 'Café de máquina', arte: ['a-escudo', 'a-veneno'], rareza: 2,
+    izq: { nombre: 'Taza escudo', ef: [{ t: 'escudo', n: 5 }, { t: 'veneno', n: 2 }] },
+    der: { nombre: 'Café de máquina', coste: 1, ef: [{ t: 'veneno', n: 8 }] } },
 };
 const SW_RAREZAS = [{ nombre: 'Básica', col: '#9aa3ad' }, { nombre: 'Poco común', col: '#4fc25a' }, { nombre: 'Rara', col: '#3f8cff' }];
 

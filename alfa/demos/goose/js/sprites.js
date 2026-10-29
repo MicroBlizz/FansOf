@@ -20,8 +20,9 @@ const CICLOS = {
   gorda: ['e-gorda-1', 'gorda', 'e-gorda-2', 'gorda'],
   jefe: ['jefe', 'e-jefe-1'],
 };
+const NUEVOS_PNG = ['rana', 'cuervo', 'antorcha', 'armadura', 'zombi', 'mj-rana', 'mj-cuervo', 'mj-alcalde', 'mj-caballero', 'parca', 'parca-hoz', 'parca-guadana', 'hoz', 'fuego'];
 const ENEMIGOS_PNG = ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-alb-1', 'e-alb-2', 'e-gorda-1', 'e-gorda-2', 'e-jefe-1', 'e-jefe-2'];
-const PNGS = [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
+const PNGS = [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
   return Promise.all(PNGS.map(n => new Promise(ok => {
@@ -109,6 +110,9 @@ function preparaSprites() {
   });
   hazSprite('pollo', 12, 10, (x, w, h) => { x.beginPath(); x.ellipse(w * 0.45, h * 0.55, w * 0.34, h * 0.36, 0, 0, 7); trazo(x, '#c9702a'); x.beginPath(); x.moveTo(w * 0.72, h * 0.45); x.lineTo(w * 0.95, h * 0.2); x.lineWidth = 2; x.strokeStyle = '#f1e6c8'; x.stroke(); });
   hazSprite('iman', 10, 8, (x, w, h) => { x.lineWidth = 2.4; x.strokeStyle = '#e0303a'; x.beginPath(); x.arc(w / 2, h * 0.55, w * 0.34, Math.PI, 0); x.stroke(); });
+  for (const n of NUEVOS_PNG.concat(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : [])) if (IMG[n] && !SPR[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
+  hazSprite('fuego', 8, 8, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.36, 0, 7); trazo(x, '#ff7a2a', 1); x.fillStyle = '#ffd34d'; x.fillRect(w * 0.38, h * 0.3, w * 0.24, h * 0.3); });
+  hazSprite('hoz', 10, 10, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.4, 0.6, 4.2); x.lineWidth = 2.2; x.strokeStyle = '#120808'; x.stroke(); x.lineWidth = 1.2; x.strokeStyle = '#efe4c4'; x.stroke(); });
   for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);

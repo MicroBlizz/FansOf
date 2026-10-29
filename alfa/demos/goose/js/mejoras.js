@@ -56,12 +56,12 @@ function cartaPasiva(id) {
 }
 function evolucionesListas() {
   const out = [];
-  for (const id in JUEGO.armas) { const a = JUEGO.armas[id], E = ARMAS[id].evo; if (!a.evo && a.nivel >= MAX_NIVEL && JUEGO.pasivas[E.pasiva]) out.push({ clase: 'evo', id, nivel: 0, nombre: E.nombre, desc: E.desc, icono: ARMAS[id].icono, color: '#ffd34d', nueva: true }); }
+  for (const id in JUEGO.armas) { if (!ARMAS[id]) continue; const a = JUEGO.armas[id], E = ARMAS[id].evo; if (!a.evo && a.nivel >= MAX_NIVEL && JUEGO.pasivas[E.pasiva]) out.push({ clase: 'evo', id, nivel: 0, nombre: E.nombre, desc: E.desc, icono: ARMAS[id].icono, color: '#ffd34d', nueva: true }); }
   return out;
 }
 function cartasPosibles() {
   const J = JUEGO, out = [];
-  const nArmas = Object.keys(J.armas).length, nPas = Object.keys(J.pasivas).length;
+  const nArmas = Object.keys(J.armas).filter(k => ARMAS[k]).length, nPas = Object.keys(J.pasivas).length;
   for (const id in ARMAS) { const a = J.armas[id]; if (a ? a.nivel < MAX_NIVEL : nArmas < MAX_ARMAS) out.push(cartaArma(id)); }
   for (const id in PASIVAS) { const n = J.pasivas[id] || 0; if (n ? n < MAX_NIVEL : nPas < MAX_PASIVAS) out.push(cartaPasiva(id)); }
   return out;

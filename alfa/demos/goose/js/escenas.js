@@ -4,12 +4,15 @@
 // las tiradas de la suerte (26 y 53), la Cárcel (52: entre barrotes), la Muerte (58) y el Jardín (63).
 'use strict';
 
-const ESC = { pozoMata: 28, carcelMata: 20, puenteAncho: 44 };
+const ESC = { pozoMata: 28, carcelMata: 20, puenteAncho: 64 };
 
 // --- el tramo ---
 function empiezaTramo(n) {
   const J = JUEGO;
-  J.destino = Math.min(CFG.jardin, J.casilla + n); J.fase = 'tramo'; J.escena = null; J.quieto = 0; J.tramoT = 0;
+  let destino = Math.min(CFG.jardin, J.casilla + n);
+  // las puertas de las tierras y la Muerte no se saltan: el tramo se corta ahí (el minijefe te espera)
+  for (let t = J.casilla + 1; t < destino; t++) if ((casillaEs.puerta(t) && !J.puertas.has(t)) || (casillaEs.muerte(t) && !J.parcaHecha)) { destino = t; break; }
+  J.destino = destino; J.fase = 'tramo'; J.escena = null; J.quieto = 0; J.tramoT = 0;
   J.invul = Math.max(J.invul, 0.5); anillo(J.yo.x, J.yo.y, 40, '#f6e7b8', 0.4, 3); SONIDO.empieza();
 }
 const velTramo = () => JUEGO.st.vel * 1.6 * multiVel();
@@ -32,13 +35,14 @@ function llegada(t) {
   const nombre = nombreCasilla(t);
   if (t === CFG.jardin) { aviso(tr('EL JARDÍN DE LA OCA'), '#7dff6b', 2.2); return; }
   if (CFG.ocaSalta[t]) { saltoOca(ESPECIALES.find(e => e.tipo === 'oca' && e.t === t)); return; }
-  if (CFG.puente[t]) { empiezaPuente(t, CFG.puente[t]); return; }
-  if (t === CFG.pozo) { empiezaEncierro('pozo'); return; }
-  if (t === CFG.carcel) { empiezaEncierro('carcel'); return; }
-  if (t === CFG.posada) { empiezaPosada(); return; }
-  if (CFG.dadoDado.includes(t)) { aviso(tr('DE DADO A DADO'), '#ffe9a8', 1.2); J.suerteT = 0.9; return; }
-  if (t === CFG.muerte) { casillaMuerte(); return; }
-  if (t === CFG.laberinto) { J.dado.maldito = true; aviso(tr('EL LABERINTO'), '#c9a0ff', 1.6); aviso2(tr('Te pierdes: el próximo dado sale maldito')); return; }
+  if (casillaEs.puerta(t) && !J.puertas.has(t)) { J.puertas.add(t); empiezaMinijefe(t); return; }
+  if (casillaEs.puente(t)) { empiezaPuente(t, J.casillas.puenteA); return; }
+  if (casillaEs.pozo(t)) { empiezaEncierro('pozo'); return; }
+  if (casillaEs.carcel(t)) { empiezaEncierro('carcel'); return; }
+  if (casillaEs.posada(t)) { if (maldita('sinposada')) { aviso(tr('POSADA CERRADA'), '#c9a0ff', 1.6); aviso2(tr('La maldición de esta noche')); return; } empiezaPosada(); return; }
+  if (casillaEs.dado(t)) { aviso(tr('DE DADO A DADO'), '#ffe9a8', 1.2); J.suerteT = 0.9; return; }
+  if (casillaEs.muerte(t)) { if (J.parcaHecha) { aviso(tr('LA MUERTE'), '#ff2d2d', 1.2); aviso2(tr('Ya no está. Sigue')); return; } empiezaParca(); return; }
+  if (casillaEs.laberinto(t)) { J.dado.maldito = true; aviso(tr('EL LABERINTO'), '#c9a0ff', 1.6); aviso2(tr('Te pierdes: el próximo dado sale maldito')); return; }
   aviso(nombre ? tr(nombre) : tr('CASILLA {n}', { n: t }), '#f6e7b8', 1.1);
   if (t % 10 === 0) SONIDO.casilla();
 }
@@ -52,7 +56,7 @@ function avanzaParado(dt) {
   const m = Math.hypot(mx, my), posada = J.escena && J.escena.tipo === 'posada';
   yo.moviendo = m > 0.12 && !posada;
   if (yo.moviendo) {
-    const v = J.st.vel * multiVel() * Math.min(1, m);
+    const v = J.st.vel * multiVel() * velTierra() * Math.min(1, m);
     yo.x += mx / Math.max(1, m) * v * dt; yo.y += my / Math.max(1, m) * v * dt;
     yo.miraX = mx / m; yo.miraY = my / m; yo.anda += dt * 10;
   }
@@ -178,7 +182,7 @@ function pintaEscenas() {
     G.fillStyle = 'rgba(0,0,0,.35)'; G.fillRect(E.cx - E.r - 4, E.cy - E.r - 4, E.r * 2 + 8, E.r * 2 + 8);
     G.strokeStyle = '#6e6e78'; G.lineWidth = 3; G.strokeRect(E.cx - E.r - 2, E.cy - E.r - 2, E.r * 2 + 4, E.r * 2 + 4);
   } else if (E.tipo === 'posada') {
-    const t = CFG.posada, top = -t * TH;
+    const t = J.casillas.posada, top = -t * TH;
     G.globalAlpha = 0.2 + Math.sin(J.t * 4) * 0.06; G.fillStyle = '#ffb86b'; G.fillRect(centroX(t) - anchoDe(t) / 2, top, anchoDe(t), TH); G.globalAlpha = 1;
     if (SPR['s-posada']) pinta('s-posada', centroX(t), top + 30, false, false, 1);
     if (SPR['s-cama']) pinta('s-cama', centroX(t) - 44, top + TH - 28, false, false, 1);

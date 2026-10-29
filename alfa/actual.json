@@ -1,8 +1,8 @@
 {
- "build": 613,
- "hash": "6cbe50d",
- "fecha": "2026-10-29T00:15:31Z",
- "mensaje": "Vikings: primeros 9 sprites pixel art (4 fans y 5 edificios) y conversor de Yoshi a pixel art",
+ "build": 614,
+ "hash": "92f7fd3",
+ "fecha": "2026-10-29T00:17:30Z",
+ "mensaje": "Goose 0.3.0: cada tierra se juega distinto (reglas y enemigos propios), minijefes de puerta, la Muerte es la Oca Parca (hoces, cosecha, trato y guadaña), casillas barajadas, maldición de partida, casillas más grandes y ritmo más largo",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

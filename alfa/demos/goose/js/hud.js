@@ -53,7 +53,8 @@ function pintaHud() {
   barra(25, 24, W - 64, 6, listo ? 1 : ki, listo ? (((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d') : '#d9a520');
   texto2(listo ? tr('¡DADO BENDITO!') : tr('PLUMAS PARA EL DADO BENDITO'), 25 + (W - 64) / 2, 27.3, 5, listo ? '#3a1d00' : '#fff1c2', 'center', FUENTE, 800, listo ? 0 : 0.3);
   // casilla o jefe
-  if (J.jefe) {
+  if (J.minijefe && J.minijefe.hp > 0) { /* lo pinta pintaMinijefeHud */ }
+  else if (J.jefe) {
     texto2(tr('LA OCA MADRE'), W / 2, 42, 11, '#ff4d6b', 'center', FUENTE_G, 400, 0.25);
     barra(24, 49, W - 48, 6, J.jefe.hp / J.jefe.hpMax, '#ff2d4d');
   } else {
@@ -71,6 +72,8 @@ function pintaHud() {
   }
   pintaDado();
   pintaEscenasHud();
+  pintaMinijefeHud();
+  pintaTrato();
   pintaMapa();
   if (J.modo === 'juego') pintaAvisos();
 }
@@ -83,8 +86,9 @@ function pintaMapa() {
   const caida = Math.max(0, Math.min(N, -J.yD / TH));
   G.fillStyle = '#ff5a2a'; G.fillRect(x - 1.5, yDe(caida + 1), 3, y0 - yDe(caida + 1) + 1);
   for (const t in CFG.ocaSalta) { G.fillStyle = '#ffd34d'; G.fillRect(x - 2, yDe(+t) - 1, 4, 2); }
-  G.fillStyle = '#7dff6b'; G.fillRect(x - 2, yDe(CFG.pozo) - 1, 4, 2);
-  G.fillStyle = '#ffb86b'; G.fillRect(x - 2, yDe(CFG.posada) - 1, 4, 2);
+  G.fillStyle = '#7dff6b'; G.fillRect(x - 2, yDe(J.casillas.pozo) - 1, 4, 2);
+  G.fillStyle = '#ffb86b'; G.fillRect(x - 2, yDe(J.casillas.posada) - 1, 4, 2);
+  G.fillStyle = '#ff9b4d'; for (const t of J.casillas.puertas) G.fillRect(x - 2, yDe(t) - 1, 4, 2);
   G.fillStyle = '#ff2d2d'; G.fillRect(x - 2, yDe(CFG.muerte) - 1, 4, 2);
   G.fillStyle = '#3c7030'; G.fillRect(x - 2.5, y1 - 3, 5, 4);
   pintaRivalesMapa(yDe);

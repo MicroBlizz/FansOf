@@ -16,7 +16,7 @@ const CARAS = {
 function nuevoDado() { return { rodando: 0, cara: 0, efecto: 0, quedan: 0, mostrar: 0, bendito: false, maldito: false, soloPares: false, soloImpares: false, extra: 0 }; }
 
 // ¿se puede tirar ahora?
-const puedeTirar = () => { const J = JUEGO; return J.modo === 'juego' && J.fase === 'parado' && J.dado.rodando <= 0 && J.salto <= 0 && J.caida <= 0 && J.muerto <= 0 && !J.jefe && !J.victoria && J.casilla < CFG.jardin; };
+const puedeTirar = () => { const J = JUEGO; return J.modo === 'juego' && J.fase === 'parado' && !J.minijefe && !J.trato && J.dado.rodando <= 0 && J.salto <= 0 && J.caida <= 0 && J.muerto <= 0 && !J.jefe && !J.victoria && J.casilla < CFG.jardin; };
 
 function tirarDado(opciones) {
   const J = JUEGO, D = J.dado; if (!puedeTirar()) return false;
@@ -45,6 +45,9 @@ function avanzaDado(dt) {
   let c = 1 + ((Math.random() * 6) | 0);
   if (D.soloPares) c = 2 * (1 + ((Math.random() * 3) | 0));
   if (D.soloImpares) c = 1 + 2 * ((Math.random() * 3) | 0);
+  if (maldita('sinseis') && c === 6) c = 4;
+  // al principio el dado da pasos cortos (1-3 en el Bosque, 1-4 en el Pantano): la partida dura más y se aprende con calma
+  const tope = J.casilla < 11 ? 3 : J.casilla < 21 ? 4 : 6; if (c > tope) c = tope;
   D.cara = c; D.efecto = c; D.quedan = 99; D.mostrar = 1.6;   // el efecto dura todo el tramo (lo cierra la llegada, +3 s)
   const F = CARAS[c];
   aviso(tr(F.nombre), F.color, 1.6); aviso2(tr('{n} casillas', { n: c + D.extra }));

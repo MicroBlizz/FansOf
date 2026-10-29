@@ -21,6 +21,7 @@ function avanzaArmas(dt) {
   if (A.plumas) armaPlumas(A.plumas, dt);
   if (A.huevo && A.huevo.t <= 0) armaHuevo(A.huevo);
   if (A.dados && A.dados.t <= 0) armaDados(A.dados);
+  if (A.guadana) armaGuadana(A.guadana, dt);
   avanzaProyectiles(dt);
   avanzaCharcos(dt);
   for (let i = LATIGAZOS.length - 1; i >= 0; i--) { LATIGAZOS[i].t += dt; if (LATIGAZOS[i].t >= LATIGAZOS[i].dur) LATIGAZOS.splice(i, 1); }
@@ -120,7 +121,7 @@ function explotaHuevo(p) {
   estallido(p.x, p.y, 6, '#fff7c2', 50, 0.3, 2, 2);
   anillo(p.x, p.y, p.r, '#d9ff6b', 0.3, 3);
   if (p.tipo === 'huevo') {
-    const c = CHARCOS.saca(); if (c) { c.x = p.x; c.y = p.y; c.r = p.r * 0.85; c.vida = (p.evo ? 4 : NIV.huevo.charco[Math.min(5, p.nivel) - 1]) * (JUEGO.st.charco || 1); c.dps = (p.evo ? 16 : NIV.huevo.dps[Math.min(5, p.nivel) - 1]) * JUEGO.st.dano; c.tic = 0; }
+    const c = CHARCOS.saca(); if (c) { c.malo = false; c.x = p.x; c.y = p.y; c.r = p.r * 0.85; c.vida = (p.evo ? 4 : NIV.huevo.charco[Math.min(5, p.nivel) - 1]) * (JUEGO.st.charco || 1); c.dps = (p.evo ? 16 : NIV.huevo.dps[Math.min(5, p.nivel) - 1]) * JUEGO.st.dano; c.tic = 0; }
     if (p.evo) for (let i = 0; i < 4; i++) { const an = i * 1.57 + Math.random() * 0.6; lanzaHuevo(p.x, p.y, p.x + Math.cos(an) * 40, p.y + Math.sin(an) * 40, p.dano * 0.45, 16 * multiArea(), p.nivel, false, true); }
     tiembla(1.2); SONIDO.explota();
   } else SONIDO.explotita();
@@ -198,7 +199,7 @@ function pintaArmas() {
   const c = CHARCOS.lista;
   for (let i = 0; i < CHARCOS.n; i++) {
     const o = c[i], a = Math.min(1, o.vida / 0.6);
-    G.globalAlpha = 0.45 * a; G.fillStyle = '#6fbf2a'; G.beginPath(); G.ellipse(o.x, o.y, o.r, o.r * 0.7, 0, 0, 6.283); G.fill();
+    G.globalAlpha = 0.45 * a; G.fillStyle = o.malo ? '#9a3fbf' : '#6fbf2a'; G.beginPath(); G.ellipse(o.x, o.y, o.r, o.r * 0.7, 0, 0, 6.283); G.fill();
     G.globalAlpha = 0.6 * a; G.fillStyle = '#c8f25a'; const b = (J.t * 3 + i) % 1; G.beginPath(); G.arc(o.x + Math.sin(i * 7) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, 1.5 + b * 2, 0, 6.283); G.fill();
   }
   G.globalAlpha = 1;

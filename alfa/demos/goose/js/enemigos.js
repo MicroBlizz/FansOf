@@ -8,9 +8,9 @@ const escalaVida = () => 1 + CFG.escala.porCasilla * JUEGO.casilla + CFG.escala.
 
 function creaEnemigo(tipo, x, y) {
   const e = ENE.saca(); if (!e) return null;
-  const D = CFG.enemigos[tipo], f = tipo === 'jefe' ? 1 + JUEGO.t * 0.0012 : escalaVida();
+  const D = CFG.enemigos[tipo] || CFG.enemigos.oca, f = tipo === 'jefe' ? 1 + JUEGO.t * 0.0012 : escalaVida();
   e.tipo = tipo; e.x = x; e.y = y; e.vx = 0; e.vy = 0; e.kx = 0; e.ky = 0; e.hpMax = e.hp = D.vida * f; e.r = D.r; e.vel = D.vel * (0.9 + Math.random() * 0.2);
-  e.dano = D.dano * (1 + JUEGO.casilla * 0.015); e.xp = D.xp; e.flash = 0; e.cd = D.disparo ? D.disparo * Math.random() + 1 : 0; e.cdPl = 0; e.t = Math.random() * 6; e.fase = 0; e.f2 = 0; e.id = SIG_ID++; e.pozo = false; e.caida = 0; e.sx = 0; e.sy = 0; e.cx = 0; e.cy = 0; e.furia = false;
+  e.dano = D.dano * (1 + JUEGO.casilla * 0.015); e.xp = D.xp; e.flash = 0; e.mira = 1; e.estado = ''; e.animT = 0; e.regateado = false; e.cd = D.disparo ? D.disparo * Math.random() + 1 : 0; e.cdPl = 0; e.t = Math.random() * 6; e.fase = 0; e.f2 = 0; e.id = SIG_ID++; e.pozo = false; e.caida = 0; e.sx = 0; e.sy = 0; e.cx = 0; e.cy = 0; e.furia = false;
   return e;
 }
 
@@ -24,7 +24,7 @@ function puntoBorde() {
 
 function avanzaOleadas(dt) {
   const J = JUEGO, O = CFG.oleada;
-  if (J.jefe || J.fin || (J.carrera && J.carrera.llegada !== null)) return;
+  if (J.jefe || J.fin || J.minijefe || (J.carrera && J.carrera.llegada !== null)) return;
   const esc = J.escena;
   if (esc && esc.tipo !== 'puente') return;   // el Pozo y la Cárcel traen sus ocas; la Posada, ninguna
   // parado: cuanto más tardas en tirar, más ocas (la presión de la Oca). En el tramo, la horda te sale al paso
@@ -38,12 +38,12 @@ function avanzaOleadas(dt) {
     J.tOla = 0.2;
     const falta = Math.min(6, Math.floor(quiero - ENE.n));
     const pAlb = J.casilla >= 6 ? Math.min(0.28, 0.06 + J.casilla * 0.007) : 0;
-    for (let i = 0; i < falta; i++) { const [x, y] = puntoBorde(); creaEnemigo(Math.random() < pAlb ? 'albatros' : 'oca', x, y); }
+    for (let i = 0; i < falta; i++) { const [x, y] = puntoBorde(); const e = creaEnemigo(enemigoDeTierra(), x, y); if (e) e.vel *= velOcas(); }
   }
   // oca gorda (élite)
   J.tGorda -= dt;
   if (J.tGorda <= 0 && J.t > 35) {
-    J.tGorda = O.gordaCada; const n = 1 + Math.floor(J.t / 170);
+    J.tGorda = O.gordaCada; const n = (1 + Math.floor(J.t / 170)) * (enTierra('aldea') ? 2 : 1);
     for (let i = 0; i < n; i++) { const [x, y] = puntoBorde(); const e = creaEnemigo('gorda', x, y); if (e) e.xp = 10; }
     aviso(tr('¡OCA GORDA!'), '#ff9b4d');
   }
@@ -81,11 +81,13 @@ function avanzaEnemigos(dt) {
       if ((e.vx > 0 && e.x > CFG.W + 150) || (e.vx < 0 && e.x < -150)) e.hp = 0;
     } else if (e.tipo === 'jefe') { avanzaJefe(e, dt, dx / d, dy / d, d); }
     else {
-      if (e.tipo === 'albatros') {
+      const propio = e.tipo === 'parca' ? mueveParca(e, dt, dx / d, dy / d, d) : e.tipo.startsWith('mj-') ? mueveMinijefe(e, dt, dx / d, dy / d, d) : muevePropio(e, dt, dx / d, dy / d, d);
+      if (propio) { qx = propio[0]; qy = propio[1]; }
+      else if (e.tipo === 'albatros') {
         const D = CFG.enemigos.albatros, lejos = d > D.distancia;
         qx = lejos ? dx / d : -dx / d * 0.6 - dy / d * 0.8; qy = lejos ? dy / d : -dy / d * 0.6 + dx / d * 0.8;
         e.cd -= dt;
-        if (e.cd <= 0 && d < 150) { e.cd = D.disparo * (0.8 + Math.random() * 0.4); disparaBala(e.x, e.y, dx / d * 70, dy / d * 70, D.bala * (1 + J.casilla * 0.015), 'bala'); }
+        if (e.cd <= 0 && d < 150) { e.cd = D.disparo * (0.8 + Math.random() * 0.4); const abanico = enTierra('castillo') ? 3 : 1; for (let q = 0; q < abanico; q++) { const an = Math.atan2(dy, dx) + (q - (abanico - 1) / 2) * 0.3; disparaBala(e.x, e.y, Math.cos(an) * 70, Math.sin(an) * 70, D.bala * (1 + J.casilla * 0.015), 'bala'); } }
       } else { qx = dx / d; qy = dy / d; }
       // separación entre vecinos (la mitad de las ocas cada fotograma)
       if ((i & 1) === par) {
@@ -98,7 +100,7 @@ function avanzaEnemigos(dt) {
       e.x += (e.vx + e.kx + (e.sx || 0)) * dt; e.y += (e.vy + e.ky + (e.sy || 0)) * dt;
       const fr = Math.max(0, 1 - dt * 7); e.kx *= fr; e.ky *= fr;
       // muy lejos: vuelve a entrar por delante (como en los survivors)
-      if (d > PAN.H * 1.25 && e.tipo !== 'gorda') { const [x, y] = puntoBorde(); e.x = x; e.y = y; }
+      if (d > PAN.H * 1.25 && e.tipo !== 'gorda' && !e.tipo.startsWith('mj-') && e.tipo !== 'parca') { const [x, y] = puntoBorde(); e.x = x; e.y = y; }
     }
     // toca al jugador
     const rr = e.r * 0.8 + CFG.jugador.radio;
@@ -109,12 +111,12 @@ function avanzaEnemigos(dt) {
 
 function disparaBala(x, y, vx, vy, dano, spr, r = 3) {
   const b = BALAS.saca(); if (!b) return;
-  b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.dano = dano; b.vida = 4; b.spr = spr; b.r = r;
+  b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.dano = dano; b.vida = 4; b.spr = spr; b.r = r; b.rebota = 0;
 }
 function avanzaBalas(dt) {
   const J = JUEGO, yo = J.yo, l = BALAS.lista;
   for (let i = BALAS.n - 1; i >= 0; i--) {
-    const b = l[i]; b.x += b.vx * dt; b.y += b.vy * dt; b.vida -= dt;
+    const b = l[i]; b.x += b.vx * dt; b.y += b.vy * dt; b.vida -= dt; if (b.rebota) rebotaHoz(b);
     if (b.vida <= 0) { BALAS.quita(i); continue; }
     const rr = b.r + CFG.jugador.radio * 0.8;
     if (J.invul <= 0 && J.salto <= 0 && (b.x - yo.x) ** 2 + (b.y - yo.y) ** 2 < rr * rr) { heridaJugador(b.dano, b.x, b.y); BALAS.quita(i); }
@@ -126,9 +128,10 @@ function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
   if (e.hp <= 0) return;
   const crit = critSeguro || Math.random() < JUEGO.st.crit;
   if (crit) d *= 2.2;
+  d *= escudoArmadura(e, nx, ny); if (d < 1) { texto(e.x, e.y - e.r, tr('¡BLOQUEADO!'), '#c9d3ff', 5, 0.5); return; }
   e.hp -= d; e.flash = 0.09;
   if (e.tipo === 'jefe' && esCoop()) JUEGO.carrera.danoJefe += d;   // la vida de la Oca Madre es de todos
-  const kb = e.tipo === 'jefe' ? empuje * 0.05 : e.tipo === 'gorda' ? empuje * 0.35 : empuje;
+  const kb = e.tipo === 'jefe' || e.tipo === 'parca' || e.tipo.startsWith('mj-') ? empuje * 0.05 : e.tipo === 'gorda' ? empuje * 0.35 : empuje;
   e.kx += nx * kb; e.ky += ny * kb;
   JUEGO.danoTotal += d;
   if (!silencioso || crit) texto(e.x, e.y - e.r, crit ? Math.round(d) + '!' : String(Math.round(d)), crit ? '#ffd34d' : '#ffffff', crit ? 9 : 6, crit ? 0.8 : 0.55);
@@ -142,8 +145,11 @@ function mata(e) {
   bajaEncierro(e);
   estallido(e.x, e.y, e.tipo === 'gorda' ? 22 : 7, e.tipo === 'albatros' ? '#b9c4b0' : '#ece6d6', 70, 0.7, 2.4, 1, 30);
   estallido(e.x, e.y, 3, '#c21b1b', 50, 0.4, 1.8, 0, 60);
-  const xp = e.xp * (e.pozo ? 2 : 1);
+  const xp = e.xp * (e.pozo || JUEGO.minijefe ? 2 : 1);
   if (e.tipo === 'jefe') { jefeMuere(e); return; }
+  if (e.tipo === 'parca') { muereParca(e); return; }
+  if (e.tipo.startsWith('mj-')) muereMinijefe(e);
+  muerePropio(e);
   if (e.tipo === 'gorda') {
     suelta('cofre', e.x, e.y, 1); if (Math.random() < 0.35) suelta('iman', e.x + 10, e.y, 1);
     tiembla(4); congela(0.06); anillo(e.x, e.y, 40, '#ffb04d', 0.4, 4); SONIDO.muereGorda(); vibra(40);
@@ -160,7 +166,7 @@ function suelta(tipo, x, y, valor) {
     if (tipo !== 'xp') { p = PLUMAS.lista.find(o => o.tipo === 'xp'); if (!p) return; }
     else { const o = PLUMAS.lista[(Math.random() * PLUMAS.n) | 0]; if (o.tipo === 'xp') o.valor += valor; return; }
   }
-  p.tipo = tipo; p.x = x + (Math.random() - 0.5) * 6; p.y = y + (Math.random() - 0.5) * 6; p.valor = valor; p.atraida = false; p.t = 0;
+  p.tipo = tipo; p.resu = false; p.x = x + (Math.random() - 0.5) * 6; p.y = y + (Math.random() - 0.5) * 6; p.valor = valor; p.atraida = false; p.t = 0;
   const a = Math.random() * 6.283; p.vx = Math.cos(a) * 30; p.vy = Math.sin(a) * 30;
 }
 

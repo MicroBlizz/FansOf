@@ -130,7 +130,7 @@ function pintaPausa() {
   // lo que llevas
   let x = 22, y = 92;
   texto2(tr('Tu equipo'), W / 2, 82, 7, '#c9b98a');
-  for (const id in J.armas) { const a = J.armas[id]; caja(x - 10, y - 10, 20, 20, 5, a.evo ? '#4a2a08' : '#2a1610', a.evo ? '#ffd34d' : ARMAS[id].color, 1.2); icono(ARMAS[id].icono, x, y, 9); texto2(a.evo ? 'EVO' : String(a.nivel), x + 8, y + 8, 6, '#ffd34d'); x += 26; }
+  for (const id in J.armas) { if (!ARMAS[id]) continue; const a = J.armas[id]; caja(x - 10, y - 10, 20, 20, 5, a.evo ? '#4a2a08' : '#2a1610', a.evo ? '#ffd34d' : ARMAS[id].color, 1.2); icono(ARMAS[id].icono, x, y, 9); texto2(a.evo ? 'EVO' : String(a.nivel), x + 8, y + 8, 6, '#ffd34d'); x += 26; }
   x = 22; y += 26;
   for (const id in J.pasivas) { caja(x - 10, y - 10, 20, 20, 5, '#2a1610', '#7fd1ff', 1.2); icono(PASIVAS[id].icono, x, y, 9); texto2(String(J.pasivas[id]), x + 8, y + 8, 6, '#6bd4ff'); x += 26; }
   const yb = 160;

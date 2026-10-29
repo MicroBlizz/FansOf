@@ -26,10 +26,11 @@ function preparaEspeciales() {
   ESPECIALES.length = 0;
   const lado = t => (t % 2 ? 1 : -1) * anchoDe(t) * 0.22;
   for (const t in CFG.ocaSalta) ESPECIALES.push({ t: +t, tipo: 'oca', x: centroX(+t), y: yCentro(+t) - 22, r: 12, usado: false, a: CFG.ocaSalta[t] });
-  for (const t in CFG.puente) ESPECIALES.push({ t: +t, tipo: 'puente', x: centroX(+t), y: yCentro(+t) - 22, r: 12, usado: false, a: CFG.puente[t] });
-  ESPECIALES.push({ t: CFG.pozo, tipo: 'pozo', x: centroX(CFG.pozo), y: yCentro(CFG.pozo) - 22, r: 13, usado: false });
-  for (const t of CFG.dadoDado) ESPECIALES.push({ t, tipo: 'dadodado', x: centroX(t), y: yCentro(t) - 22, r: 11, usado: false });
-  ESPECIALES.push({ t: CFG.posada, tipo: 'posada', x: centroX(CFG.posada), y: yCentro(CFG.posada), r: 0, usado: false });
+  const C = JUEGO.casillas;
+  ESPECIALES.push({ t: C.puenteDe, tipo: 'puente', x: centroX(C.puenteDe), y: yCentro(C.puenteDe) - 22, r: 12, usado: false, a: C.puenteA });
+  ESPECIALES.push({ t: C.pozo, tipo: 'pozo', x: centroX(C.pozo), y: yCentro(C.pozo) - 22, r: 13, usado: false });
+  for (const t of [C.dado1, C.dado2]) ESPECIALES.push({ t, tipo: 'dadodado', x: centroX(t), y: yCentro(t) - 22, r: 11, usado: false });
+  ESPECIALES.push({ t: C.posada, tipo: 'posada', x: centroX(C.posada), y: yCentro(C.posada), r: 0, usado: false });
   const m = CFG.muerte, wM = anchoDe(m) * 0.6;
   ESPECIALES.push({ t: m, tipo: 'muerte', x: centroX(m), y: yCentro(m), w: anchoDe(m) - 12, h: TH - 12, usado: false, cd: 0 });
 }
@@ -70,12 +71,12 @@ function casillaMuerte() {
 function avanzaDerrumbe(dt) {
   const J = JUEGO, D = CFG.derrumbe, yo = J.yo;
   if (yo.y < J.mejorY - 2) { J.mejorY = yo.y; J.sinAvanzar = 0; } else J.sinAvanzar += dt;
-  let v = D.base + D.crece * J.t;
+  let v = (D.base + D.crece * J.t) * (maldita('derrumbe') ? 1.5 : 1);
   const E = J.escena;
   J.impaciente = J.fase === 'parado' && J.quieto > D.sinAvanzar && !J.jefe && !E;
   if (J.impaciente) v *= D.impaciencia;
   if (E && E.tipo === 'puente') v = velTramo() * 0.72;                 // las tablas se caen justo detrás de ti
-  if ((E && E.tipo !== 'puente') || J.salto > 0 || J.dado.rodando > 0) v = 0;   // en el Pozo, la Cárcel y la Posada el tablero espera
+  if ((E && E.tipo !== 'puente') || J.salto > 0 || J.dado.rodando > 0 || J.minijefe) v = 0;   // en el Pozo, la Cárcel y la Posada el tablero espera
   const antes = J.yD;
   if (esCoop() && !anfitrionCoop()) derrumbeRemoto(dt);      // la línea es la del anfitrión
   else {
@@ -146,10 +147,12 @@ function pintaNumero(t, x, y, top, bottom) {
 }
 function nombreCasilla(t) {
   if (CFG.ocaSalta[t] || CFG.ocasAdorno.includes(t)) return tr('OCA');
-  if (CFG.puente[t] || t === 12) return tr('PUENTE');
+  const C = JUEGO.casillas || {};
+  if (t === C.puenteDe || t === C.puenteA) return tr('PUENTE');
+  if (C.puertas && C.puertas.includes(t)) return tr('PUERTA');
   if (t === CFG.jardin) return tr('JARDÍN DE LA OCA');
-  if (t === CFG.pozo) return tr('EL POZO'); if (t === CFG.posada) return tr('LA POSADA'); if (t === CFG.laberinto) return tr('EL LABERINTO');
-  if (t === CFG.carcel) return tr('LA CÁRCEL'); if (t === CFG.muerte) return tr('LA MUERTE'); if (CFG.dadoDado.includes(t)) return tr('DADO'); if (t === 1) return tr('SALIDA');
+  if (t === C.pozo) return tr('EL POZO'); if (t === C.posada) return tr('LA POSADA'); if (t === C.laberinto) return tr('EL LABERINTO');
+  if (t === C.carcel) return tr('LA CÁRCEL'); if (t === CFG.muerte) return tr('LA MUERTE'); if (t === C.dado1 || t === C.dado2) return tr('DADO'); if (t === 1) return tr('SALIDA');
   return '';
 }
 

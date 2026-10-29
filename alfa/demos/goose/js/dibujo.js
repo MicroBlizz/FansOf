@@ -42,6 +42,7 @@ function pintaMundo() {
   G.setTransform(k, 0, 0, k, tx * k, (ty - J.camY) * k);
   pintaTablero();
   pintaEscenas();
+  pintaFuegos();
   pintaArmasSuelo();
   // las plumas y cosas del suelo
   const pl = PLUMAS.lista;
@@ -59,13 +60,15 @@ function pintaMundo() {
   for (let i = 0; i < ENE.n; i++) {
     const e = l[i]; if (e.hp <= 0) continue;
     const bob = e.caida > 0 ? -e.caida * 110 : e.tipo === 'albatros' || e.tipo === 'bandada' ? Math.sin(e.t * 9) * 2 - 3 : Math.abs(Math.sin(e.t * 10)) * -1.5;
-    const spr = fotogramaEnemigo(e);
-    const esc = e.tipo === 'bandada' ? 0.8 : e.tipo === 'jefe' ? 1 + Math.sin(e.t * 3) * 0.03 : 1;
+    const spr = e.tipo === 'parca' ? fotogramaParca(e) : fotogramaEnemigo(e);
+    const esc = e.tipo === 'bandada' ? 0.8 : e.tipo === 'jefe' ? 1 + Math.sin(e.t * 3) * 0.03 : e.tipo.startsWith('mj-') && !SPR[e.tipo] ? 1.5 : e.tipo === 'parca' && !SPR.parca ? 1.2 : 1;
     // un poco de estirar y encoger al andar (squash & stretch) y el golpe que los aplasta
     const sx = esc * (1 + (e.flash > 0 ? 0.18 : Math.sin(e.t * 12) * 0.03)), sy = esc * (1 - (e.flash > 0 ? 0.14 : Math.sin(e.t * 12) * 0.03));
-    if (sx !== sy) { G.save(); G.translate(e.x, e.y + bob); G.scale(sx / esc, sy / esc); pinta(spr, 0, 0, e.vx < 0, e.flash > 0, esc); G.restore(); }
+    const tinte = !SPR[e.tipo] && TINTES[e.tipo];
+    if (sx !== sy || tinte) { G.save(); G.translate(e.x, e.y + bob); G.scale(sx / esc, sy / esc); pinta(spr, 0, 0, e.vx < 0, e.flash > 0, esc); if (tinte) { G.globalCompositeOperation = 'source-atop'; const S = SPR[spr]; G.globalAlpha = 0.45; G.fillStyle = tinte; G.fillRect(-S.w * esc / 2, -S.h * esc / 2, S.w * esc, S.h * esc); G.globalAlpha = 1; G.globalCompositeOperation = 'source-over'; } G.restore(); }
     else pinta(spr, e.x, e.y + bob, e.vx < 0, e.flash > 0, esc);
-    if (e.tipo === 'gorda') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
+    if (e.tipo === 'gorda' || e.tipo === 'armadura') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
+    if (e.tipo === 'parca') pintaParcaExtra(e);
   }
   // los rivales de la Carrera y el jugador
   pintaRivales();
@@ -87,6 +90,7 @@ function pintaJugador() {
   let esc = 1, alfa = 1, dy = 0;
   if (J.caida > 0) { const k = J.caida / 0.55; esc = 0.2 + k * 0.8; alfa = k; dy = (1 - k) * 12; }
   if (J.salto > 0) { const k = Math.min(1, J.saltoT / 0.85); esc = 1 + Math.sin(k * Math.PI) * 0.7; dy = -Math.sin(k * Math.PI) * 26; }
+  if (J.saltoParca > 0) { const k = 1 - J.saltoParca / 0.55; dy -= Math.sin(k * Math.PI) * 22; }
   pinta('luz', yo.x, yo.y, false, false, 1.2 + Math.sin(J.t * 7) * 0.04);
   if (J.caida <= 0) pinta('sombra', yo.x, yo.y + 8, false, false, 1.1 * (J.salto > 0 ? 0.6 : 1));
   if (J.invul > 0 && J.salto <= 0 && ((J.t * 18) | 0) % 2) alfa *= 0.35;
@@ -115,6 +119,7 @@ function barraVida(x, y, w, k, color) {
 // lo que va encima de todo: la viñeta, el destello, la vida baja y la flecha del derrumbe
 function pintaEncima() {
   const J = JUEGO, W = PAN.W, H = PAN.H;
+  pintaOscuridad();
   G.drawImage(VINETA, 0, 0, W, H);
   if (J.vida > 0 && J.vida < J.st.vidaMax * 0.3) { G.globalAlpha = 0.18 + Math.sin(J.t * 8) * 0.1; G.fillStyle = '#ff0000'; G.fillRect(0, 0, W, 4); G.fillRect(0, H - 4, W, 4); G.fillRect(0, 0, 4, H); G.fillRect(W - 4, 0, 4, H); G.globalAlpha = 1; }
   // el abismo por debajo: si se acerca, una franja roja abajo
@@ -128,7 +133,10 @@ function pintaEncima() {
 }
 
 // el fotograma de cada enemigo: su ciclo al ritmo de su velocidad (cada oca desfasada para que no anden todas a la vez)
+const TINTES = { rana: '#5fbf3a', cuervo: '#202030', antorcha: '#ff7a2a', armadura: '#8a9098', zombi: '#6b8a5a', 'mj-rana': '#3fbf4a', 'mj-cuervo': '#1a1420', 'mj-alcalde': '#c0402f', 'mj-caballero': '#3a3a44', parca: '#2a1040' };
+const PROVISIONAL = { rana: 'oca', cuervo: 'albatros', antorcha: 'oca', armadura: 'gorda', zombi: 'oca', 'mj-rana': 'gorda', 'mj-cuervo': 'albatros', 'mj-alcalde': 'gorda', 'mj-caballero': 'gorda', parca: 'jefe' };
 function fotogramaEnemigo(e) {
+  if (!SPR[e.tipo] && PROVISIONAL[e.tipo]) return PROVISIONAL[e.tipo];
   const tipo = e.tipo === 'bandada' ? 'oca' : e.tipo;
   if (tipo === 'jefe' && (e.fase === 1 || e.fase === 2) && SPR['e-jefe-2']) return 'e-jefe-2';
   const c = CICLOS[tipo]; if (!c) return tipo;

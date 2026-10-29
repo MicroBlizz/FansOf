@@ -9,11 +9,11 @@ const AJUSTES = {
 const CFG = {
   W: 200,                        // ancho del mundo (el alto depende de la pantalla)
   // tablero: 63 casillas en fila hacia arriba, cada una una losa de madera algo desplazada (el camino serpentea sobre el vacío)
-  casillas: 63, altoCasilla: 120, anchoCamino: 132, vaiven: 30,
+  casillas: 63, altoCasilla: 180, anchoCamino: 150, vaiven: 22,
   // el derrumbe: la línea de abajo que se come el tablero. Velocidad base + lo que crece con el tiempo; si no avanzas, corre más
-  derrumbe: { base: 6, crece: 0.012, impaciencia: 2.6, sinAvanzar: 7, maxDetras: 0.78, ultima: 60 },
+  derrumbe: { base: 4.5, crece: 0.009, impaciencia: 2.6, sinAvanzar: 8, maxDetras: 0.78, ultima: 60 },
   // el jugador
-  jugador: { vida: 100, velocidad: 64, radio: 6, invulnerable: 0.8, iman: 32, caida: 0.25 },
+  jugador: { vida: 100, velocidad: 64, radio: 6, invulnerable: 0.8, iman: 32, caida: 0.15 },
   maxEnemigos: 220, maxBalas: 160, maxPlumas: 140, maxParticulas: 320, maxTextos: 40,
   // enemigos: vida, velocidad, radio, daño al tocar, experiencia
   enemigos: {
@@ -21,7 +21,12 @@ const CFG = {
     albatros: { vida: 13,  vel: 24, r: 8,  dano: 5,  xp: 2, distancia: 72, disparo: 2.6, bala: 5 },
     gorda:    { vida: 150, vel: 19, r: 12, dano: 12, xp: 10 },
     bandada:  { vida: 6,   vel: 95, r: 6,  dano: 7,  xp: 1 },
-    jefe:     { vida: 6000, vel: 26, r: 21, dano: 22, xp: 0 },
+    jefe:     { vida: 4200, vel: 26, r: 21, dano: 22, xp: 0 },
+    rana:     { vida: 12,  vel: 0,  r: 8,  dano: 4,  xp: 2 },
+    cuervo:   { vida: 10,  vel: 60, r: 7,  dano: 3,  xp: 2 },
+    antorcha: { vida: 16,  vel: 28, r: 8,  dano: 6,  xp: 2 },
+    armadura: { vida: 40,  vel: 20, r: 9,  dano: 9,  xp: 4 },
+    zombi:    { vida: 20,  vel: 20, r: 7,  dano: 6,  xp: 1 },
   },
   oleada: { base: 6, porCasilla: 3.1, porSegundo: 0.22, gordaCada: 55, bandadaCada: 38 },
   escala: { porCasilla: 0.085, porSegundo: 0.0022 },   // cuánto más vida tienen los enemigos con la casilla y el tiempo

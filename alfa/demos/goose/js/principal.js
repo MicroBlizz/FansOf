@@ -31,7 +31,7 @@ function bajaDedo(e) {
   if (J.modo === 'juego') {
     // dos toques seguidos: tirar el dado
     const ahora = performance.now();
-    if (ahora - E.ultimoToque < 300 && Math.hypot(x - E.ux, y - E.uy) < 40 && tirarDado()) { E.ultimoToque = 0; return; }
+    if (ahora - E.ultimoToque < 300 && Math.hypot(x - E.ux, y - E.uy) < 40 && (saltaParca() || tirarDado())) { E.ultimoToque = 0; return; }
     E.ultimoToque = ahora; E.ux = x; E.uy = y;
     if (!E.bBoton && E.id === null) { E.id = e.pointerId; E.palanca = true; E.px = x; E.py = y; E.mx = 0; E.my = 0; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* da igual */ } }
   }
@@ -62,7 +62,7 @@ cv.addEventListener('pointercancel', e => { if (e.pointerId === ENTRADA.id) { EN
 // --- el teclado (para probar en el ordenador) ---
 addEventListener('keydown', e => {
   ENTRADA.teclas[e.code] = true; audioInit();
-  if (e.code === 'Space') { e.preventDefault(); if (JUEGO.modo === 'juego') tirarDado(); else if (JUEGO.modo === 'cofre') cierraCofre(); }
+  if (e.code === 'Space') { e.preventDefault(); if (JUEGO.modo === 'juego') { if (!saltaParca()) tirarDado(); } else if (JUEGO.modo === 'cofre') cierraCofre(); }
   if (e.code === 'KeyP' || e.code === 'Escape') { if (JUEGO.modo === 'juego') pausa(); else if (JUEGO.modo === 'pausa') JUEGO.modo = 'juego'; }
   if (JUEGO.modo === 'cartas' && /^Digit[1-4]$/.test(e.code)) eligeCarta(+e.code.slice(5) - 1);
 });

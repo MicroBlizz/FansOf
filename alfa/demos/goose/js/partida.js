@@ -13,18 +13,20 @@ function nuevaPartida() {
     modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, dado: nuevoDado(), avisos: [], aviso2: null,
     nivel: 1, xp: 0, xpNecesita: xpPara(1), pendientes: 0, cartas: null, tiradas: 1 + nivelMejora('retiro'),
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
-    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0,
+    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
     impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
   });
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
   J.pers = personaje(); J.yo.dir = 1;
+  J.maldicion = eligeMaldicion(); barajaCasillas();
   calculaStats(); J.vida = J.st.vidaMax;
   aplicaCarta(cartaArma(J.pers.arma));
   preparaEspeciales();
   SAVE.partidas++; guarda();
-  aviso(tr('¡LLEGA A LA CASILLA 63!'), '#ffd34d', 2.2); aviso2(tr('El tablero se derrumba detrás de ti'));
+  if (J.maldicion.id === 'ninguna') { aviso(tr('¡LLEGA A LA CASILLA 63!'), '#ffd34d', 2.2); aviso2(tr('El tablero se derrumba detrás de ti')); }
+  else { aviso(tr('MALDICIÓN: {n}', { n: tr(J.maldicion.nombre) }), '#c9a0ff', 2.6); aviso2(tr(J.maldicion.desc)); }
   SONIDO.empieza();
   if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.activar({ mostrar: !!(window.NUCLEO && NUCLEO.desarrollo) }); } catch (e) { /* sin contador */ }
 }
@@ -61,6 +63,8 @@ function avanzaPartida(dt) {
   avanzaJugador(dt);
   avanzaSalto(dt);
   avanzaDerrumbe(dt);
+  avanzaTierras(dt); charcosMalos(dt);
+  if (J.saltoParca > 0) J.saltoParca -= dt;
   vigilaBioma();
   avanzaDado(dt);
   avanzaOleadas(dt);
@@ -99,7 +103,8 @@ function avanzaJugador(dt) {
     if (J.caida <= 0) {
       if (J.caidaAbismo) { matarJugador(); return; }
       J.vida -= J.st.vidaMax * CFG.jugador.caida; J.invul = 1.5;
-      const E = J.escena; yo.x = E && E.tipo === 'puente' ? xPuente(yo.y) : E && E.cx !== undefined ? E.cx : centroX(J.casilla); yo.y = Math.min(yo.y, J.yD - 30);
+      const E = J.escena; if (E && E.tipo === 'puente') yo.y -= 20;   // en el Puente, un empujón hacia delante (el derrumbe viene justo detrás)
+      yo.x = E && E.tipo === 'puente' ? xPuente(yo.y) : E && E.cx !== undefined ? E.cx : centroX(J.casilla); yo.y = Math.min(yo.y, J.yD - 30);
       anillo(yo.x, yo.y, 30, '#fff', 0.4, 3); SONIDO.vuelve();
       if (J.vida <= 0) matarJugador();
     }
@@ -161,12 +166,13 @@ let cadenaT = 0, cadena = 0;
 function recoge(p) {
   const J = JUEGO;
   if (p.tipo === 'xp') {
-    J.xp += p.valor; J.impulso = Math.min(plumasDado(), J.impulso + p.valor);
+    const val = p.valor * (maldita('avaro') ? 2 : 1); J.xp += val; J.impulso = Math.min(plumasDado(), J.impulso + val);
     const ahora = J.t; cadena = ahora - cadenaT < 0.35 ? Math.min(cadena + 1, 24) : 0; cadenaT = ahora;
     SONIDO.pluma(cadena);
     while (J.xp >= J.xpNecesita) { J.xp -= J.xpNecesita; J.nivel++; J.xpNecesita = xpPara(J.nivel); J.pendientes++; }
     if (J.impulso >= plumasDado() && !J.avisoImpulso) { J.avisoImpulso = true; J.dado.bendito = true; texto(J.yo.x, J.yo.y - 20, tr('¡DADO BENDITO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
-  } else if (p.tipo === 'moneda') { J.monedasPartida++; SONIDO.moneda(); texto(p.x, p.y - 6, '+1', '#ffcf33', 6, 0.5); }
+  } else if (p.tipo === 'robada') { /* el cuervo se la llevó */ }
+  else if (p.tipo === 'moneda') { J.monedasPartida += maldita('avaro') && Math.random() < 0.5 ? 0 : 1; SONIDO.moneda(); texto(p.x, p.y - 6, '+1', '#ffcf33', 6, 0.5); }
   else if (p.tipo === 'pollo') { J.vida = Math.min(J.st.vidaMax, J.vida + 40); texto(p.x, p.y - 6, '+40', '#7dff6b', 8, 0.8); SONIDO.cura(); }
   else if (p.tipo === 'iman') { for (let i = 0; i < PLUMAS.n; i++) if (PLUMAS.lista[i].tipo === 'xp') PLUMAS.lista[i].atraida = true; aviso(tr('¡IMÁN!'), '#6bf2ff', 1); SONIDO.iman(); }
   else if (p.tipo === 'cofre') abreCofre();

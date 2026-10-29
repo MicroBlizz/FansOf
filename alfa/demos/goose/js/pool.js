@@ -14,11 +14,11 @@ function reserva(max, nuevo) {
   return R;
 }
 
-const ENE = reserva(CFG.maxEnemigos + 4, () => ({ tipo: 'oca', x: 0, y: 0, vx: 0, vy: 0, kx: 0, ky: 0, hp: 1, hpMax: 1, r: 7, vel: 30, dano: 8, xp: 1, flash: 0, cd: 0, cdPl: 0, cdLat: 0, t: 0, fase: 0, f2: 0, id: 0, pozo: false, caida: 0, sx: 0, sy: 0, cx: 0, cy: 0, furia: false }));
-const BALAS = reserva(CFG.maxBalas, () => ({ x: 0, y: 0, vx: 0, vy: 0, r: 3, dano: 5, vida: 0, spr: 'bala' }));
+const ENE = reserva(CFG.maxEnemigos + 4, () => ({ tipo: 'oca', x: 0, y: 0, vx: 0, vy: 0, kx: 0, ky: 0, hp: 1, hpMax: 1, r: 7, vel: 30, dano: 8, xp: 1, flash: 0, cd: 0, cdPl: 0, cdLat: 0, t: 0, fase: 0, f2: 0, id: 0, pozo: false, caida: 0, sx: 0, sy: 0, cx: 0, cy: 0, furia: false, mira: 1, estado: '', animT: 0, siegaX: 0, siegaDir: 1, regateado: false }));
+const BALAS = reserva(CFG.maxBalas, () => ({ x: 0, y: 0, vx: 0, vy: 0, r: 3, dano: 5, vida: 0, spr: 'bala', rebota: 0 }));
 const PROY = reserva(90, () => ({ tipo: 'huevo', x: 0, y: 0, vx: 0, vy: 0, x0: 0, y0: 0, x1: 0, y1: 0, t: 0, dur: 0, dano: 0, r: 0, rebotes: 0, ultimo: -1, nivel: 1, evo: false, gira: 0 }));
-const CHARCOS = reserva(30, () => ({ x: 0, y: 0, r: 0, vida: 0, dps: 0, tic: 0 }));
-const PLUMAS = reserva(CFG.maxPlumas, () => ({ tipo: 'xp', x: 0, y: 0, vx: 0, vy: 0, valor: 1, atraida: false, t: 0 }));
+const CHARCOS = reserva(40, () => ({ x: 0, y: 0, r: 0, vida: 0, dps: 0, tic: 0, malo: false }));
+const PLUMAS = reserva(CFG.maxPlumas, () => ({ tipo: 'xp', x: 0, y: 0, vx: 0, vy: 0, valor: 1, atraida: false, t: 0, resu: false }));
 const PART = reserva(CFG.maxParticulas, () => ({ x: 0, y: 0, vx: 0, vy: 0, vida: 0, max: 0, tam: 1, color: '#fff', g: 0, tipo: 0, rot: 0, vr: 0 }));
 const TXT = reserva(CFG.maxTextos, () => ({ x: 0, y: 0, vy: 0, vida: 0, max: 0, txt: '', color: '#fff', tam: 7 }));
 

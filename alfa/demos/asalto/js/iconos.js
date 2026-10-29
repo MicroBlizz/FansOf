@@ -34,9 +34,11 @@ function asCargaIconos() {
 function asIcono(c, n, cx, cy, L) {
   c.imageSmoothingEnabled = false;
   const im = AS_ICO_IMG[n];
-  if (im) { const k = Math.max(1, Math.floor(L / Math.max(im.width, im.height))); c.drawImage(im, Math.round(cx - im.width * k / 2), Math.round(cy - im.height * k / 2), im.width * k, im.height * k); return; }
+  const par = typeof AS_BCTX !== 'undefined' && c === AS_BCTX;   // en el lienzo del juego, múltiplos de 2 para caer en píxeles enteros
+  if (im) { let k = Math.max(1, Math.floor(L / Math.max(im.width, im.height))); if (par) k = Math.max(2, Math.floor(k / 2) * 2); c.drawImage(im, Math.round(cx - im.width * k / 2), Math.round(cy - im.height * k / 2), im.width * k, im.height * k); return; }
   const filas = AS_PIX[n]; if (!filas) return;
-  const k = Math.max(1, Math.floor(L / 10)), x0 = Math.round(cx - 5 * k), y0 = Math.round(cy - 5 * k);
+  let k = Math.max(1, Math.floor(L / 10)); if (par) k = Math.max(2, Math.floor(k / 2) * 2);
+  const x0 = Math.round(cx - 5 * k), y0 = Math.round(cy - 5 * k);
   filas.forEach((f, y) => {
     for (let x = 0; x < f.length; x++) {
       const ch = f[x]; if (ch === '.') continue;

@@ -7,14 +7,22 @@ const AS_TOQUE = { boton: null };
 const AS_DRAG = { h: null, mov: false, x: 0, y: 0, x0: 0, y0: 0, celda: null };
 
 function asAjusta() {
-  const bw = document.body.clientWidth, bh = document.body.clientHeight, pad = bw < 600 ? 0 : 20;
-  let w = bw - pad * 2, h = (w * 960) / 540;
-  if (h > bh - pad * 2) { h = bh - pad * 2; w = (h * 540) / 960; }
-  w = Math.max(200, Math.floor(w)); h = Math.floor((w * 960) / 540);
-  AS_ESCENARIO.style.width = w + 'px'; AS_ESCENARIO.style.height = h + 'px';
-  AS_V.sc = w / 540; AS_V.dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-  AS_CV.width = Math.round(w * AS_V.dpr); AS_CV.height = Math.round(h * AS_V.dpr);
-  AS_UI.style.transform = `scale(${w / 540})`;
+  // El juego se pinta en 270x480 y se amplía un número ENTERO de veces en píxeles reales de la pantalla: así cada píxel del dibujo
+  // ocupa exactamente 2x2, 3x3 o 4x4 píxeles del móvil y nada sale borroso. Si la pantalla es muy pequeña, se amplía lo que quepa.
+  const dpr = window.devicePixelRatio || 1, bw = document.body.clientWidth, bh = document.body.clientHeight, pad = bw < 600 ? 0 : 20;
+  const maxW = (bw - pad * 2) * dpr, maxH = (bh - pad * 2) * dpr;
+  const k = Math.floor(Math.min(maxW / 270, maxH / 480));
+  let devW, devH;
+  if (k >= 2) { devW = 270 * k; devH = 480 * k; }
+  else { const s = Math.min(maxW / 270, maxH / 480); devW = Math.max(270, Math.floor(270 * s)); devH = Math.round(devW * 480 / 270); }
+  const w = devW / dpr, h = devH / dpr;
+  const st = AS_ESCENARIO.style;
+  st.width = w + 'px'; st.height = h + 'px';
+  st.position = 'absolute';   // en un píxel entero de la pantalla, para que el navegador no lo vuelva a muestrear
+  st.left = Math.round((bw - w) / 2 * dpr) / dpr + 'px'; st.top = Math.round((bh - h) / 2 * dpr) / dpr + 'px';
+  AS_V.sc = w / 540; AS_V.dpr = dpr;
+  AS_CV.width = devW; AS_CV.height = devH;
+  AS_UI.style.zoom = w / 540;   // zoom (no transform): el navegador vuelve a dibujar las letras a su tamaño y no las emborrona
 }
 function asLogico(e) { const r = AS_CV.getBoundingClientRect(); return [(e.clientX - r.left) / AS_V.sc, (e.clientY - r.top) / AS_V.sc]; }
 function asJugando() { return AS_PANT.actual === 'partida' && AS_P && !AS_PANT.pausa && $('#as-modal').hidden; }
@@ -87,6 +95,12 @@ function asPintaPortada(c, t) {
 // efectos salen con los mismos píxeles gordos que los dibujos de Yoshi. Nada se ve liso ni vectorial.
 const AS_BUF = document.createElement('canvas'); AS_BUF.width = 270; AS_BUF.height = 480;
 const AS_BCTX = AS_BUF.getContext('2d');
+// En el lienzo pequeño (que se pinta con medidas de 540x960 y escala 0.5) cada rectángulo se encaja en su píxel: si cayera en medio
+// píxel, el navegador lo suavizaría y saldría un borde borroso.
+(() => {
+  const fr = AS_BCTX.fillRect.bind(AS_BCTX), par = v => Math.round(v / 2) * 2;
+  AS_BCTX.fillRect = (x, y, w, h) => { const x0 = par(x), y0 = par(y), x1 = par(x + w), y1 = par(y + h); if (x1 > x0 && y1 > y0) fr(x0, y0, x1 - x0, y1 - y0); };
+})();
 let AS_ULT = 0, AS_TRAS = false;
 function asFotograma(ahora) {
   requestAnimationFrame(asFotograma);
@@ -118,10 +132,14 @@ function asArranque() {
   $('#as-tienda').onclick = () => asProximamente(tr('Tienda'));
   $('#as-ajustes').onclick = () => { play('select'); asAjustes(); };
   asCargaIconos();
-  asCargaImagenes(() => {
+  // las letras de píxeles: el texto se guarda ya dibujado (AS_TXT), así que hay que esperar a que lleguen; si llegan tarde, se borra lo guardado
+  if (document.fonts) document.fonts.addEventListener('loadingdone', () => AS_TXT.clear());
+  const letras = document.fonts ? Promise.race([Promise.all(['16px "Jersey 10"', '32px "Jersey 10"', '10px Tiny5'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();
+  asCargaImagenes(() => letras.then(() => {
+    AS_TXT.clear();
     asMenu();
     const carga = $('#carga'); if (carga) carga.remove();
     requestAnimationFrame(asFotograma);
-  });
+  }));
 }
 asArranque();

@@ -3,26 +3,85 @@
 // mapa de la mazmorra. Cada botón se apunta en AS_BOTONES al pintarlo, para saber qué se ha tocado.
 'use strict';
 const AS_V = { H: 960, sc: 1, dpr: 1 };
-const AS_FUENTE = '"Pixelify Sans", "Courier New", monospace';
+// Dos letras de píxeles hechas para tamaños pequeños: Tiny5 (10 píxeles) para lo pequeño y Jersey 10 (16 píxeles) para títulos y botones.
+// Siempre a su tamaño natural, así cada trazo cae en un píxel entero.
+const AS_FUENTE = '"Jersey 10", "Courier New", monospace', AS_FUENTE_PEQ = 'Tiny5, "Courier New", monospace';
+function asFuenteDe(tam) { return tam <= 18 ? `10px ${AS_FUENTE_PEQ}` : tam <= 34 ? `16px ${AS_FUENTE}` : `32px ${AS_FUENTE}`; }
 let AS_BOTONES = [];
 const AS_COL = { tinta: '#20102c', panel: '#8f9be8', panel2: '#6c78d0', claro: '#c9d0ff', oscuro: '#3b3f8a', fondo: '#2b2d6b', rojo: '#e8433a', verde: '#5fb83a', naranja: '#f08a2a', oro: '#ffd23a' };
 const AS_TIER = { 1: '#b8c0d8', 2: '#5fb0ff', 3: '#c46bff' };
 
-// texto con el contorno de pixel art (cuatro copias oscuras alrededor)
+// TEXTO DE PÍXELES: cada texto se dibuja una vez a su tamaño real (en píxeles del lienzo pequeño), se le quitan los grises del
+// suavizado (o color o nada) y se le pone el contorno oscuro de 1 píxel; después se guarda y se pega tal cual. Así las letras son
+// tan nítidas como los dibujos.
+const AS_TXT = new Map(), AS_RGB = new Map();
+function asRGB(col) {
+  let v = AS_RGB.get(col); if (v) return v;
+  const g = document.createElement('canvas').getContext('2d'); g.canvas.width = g.canvas.height = 1; g.fillStyle = col; g.fillRect(0, 0, 1, 1);
+  v = g.getImageData(0, 0, 1, 1).data; AS_RGB.set(col, v); return v;
+}
+function asTextoImg(txt, tam, col, borde) {
+  const clave = txt + '|' + tam + '|' + col + '|' + borde;
+  let e = AS_TXT.get(clave); if (e) return e;
+  if (AS_TXT.size > 700) AS_TXT.clear();
+  const fuente = asFuenteDe(tam), px = parseInt(fuente, 10), b = borde ? (px >= 30 ? 2 : 1) : 0, pad = b + 1;
+  const cv = document.createElement('canvas'), g = cv.getContext('2d');
+  g.font = fuente; g.textRendering = 'optimizeSpeed';
+  const w = Math.ceil(g.measureText(txt).width) + pad * 2, h = Math.ceil(px * 1.3) + pad * 2;
+  cv.width = Math.max(1, w); cv.height = h;
+  g.font = fuente; g.textRendering = 'optimizeSpeed'; g.textBaseline = 'middle'; g.fillStyle = '#000';
+  g.fillText(txt, pad, Math.round(h / 2));
+  const d = g.getImageData(0, 0, cv.width, h), a = d.data, W = cv.width, m = new Uint8Array(W * h);
+  for (let i = 0; i < W * h; i++) m[i] = a[i * 4 + 3] >= 100 ? 1 : 0;
+  const c1 = asRGB(col), c2 = asRGB(AS_COL.tinta);
+  for (let y = 0; y < h; y++) for (let x = 0; x < W; x++) {
+    const i = y * W + x, o = i * 4;
+    let rgb = null;
+    if (m[i]) rgb = c1;
+    else if (b) {
+      for (let dy = -b; dy <= b && !rgb; dy++) for (let dx = -b; dx <= b; dx++) {
+        const xx = x + dx, yy = y + dy;
+        if (xx >= 0 && yy >= 0 && xx < W && yy < h && m[yy * W + xx]) { rgb = c2; break; }
+      }
+    }
+    if (rgb) { a[o] = rgb[0]; a[o + 1] = rgb[1]; a[o + 2] = rgb[2]; a[o + 3] = 255; } else a[o + 3] = 0;
+  }
+  g.putImageData(d, 0, 0);
+  e = { cv, w: W, h, pad }; AS_TXT.set(clave, e); return e;
+}
 function asTexto(c, txt, x, y, tam, col, al, sinBorde) {
-  tam = Math.max(16, Math.round(tam / 2) * 2);   // en el lienzo pequeño, menos de 8 píxeles no se lee; y en pares para que no se emborrone
-  c.font = `700 ${tam}px ${AS_FUENTE}`; c.textAlign = al || 'center'; c.textBaseline = 'middle';
-  c.textRendering = 'optimizeSpeed';   // sin ligaduras: esta fuente pinta mal «fi» y «fl»
-  if (!sinBorde) { c.fillStyle = AS_COL.tinta; const o = Math.max(2, Math.round(tam / 10)); for (const [dx, dy] of [[o, 0], [-o, 0], [0, o], [0, -o], [o, o], [-o, -o], [o, -o], [-o, o]]) c.fillText(txt, x + dx, y + dy); }
-  c.fillStyle = col || '#fff'; c.fillText(txt, x, y);
+  const e = asTextoImg(String(txt), tam, col || '#fff', !sinBorde), W = e.w * 2, H = e.h * 2;
+  al = al || 'center';
+  let x0 = al === 'center' ? x - W / 2 : al === 'right' ? x - W + e.pad * 2 : x - e.pad * 2;
+  const y0 = y - H / 2;
+  c.imageSmoothingEnabled = false;
+  c.drawImage(e.cv, Math.round(x0 / 2) * 2, Math.round(y0 / 2) * 2, W, H);
+}
+// Una línea gruesa hecha de cuadrados de píxeles (los pasillos del mapa y las flechas): sin bordes suavizados.
+function asLineaPix(c, x1, y1, x2, y2, grosor, col) {
+  c.fillStyle = col;
+  const n = Math.max(1, Math.ceil(Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)) / 2));
+  for (let i = 0; i <= n; i++) { const x = x1 + (x2 - x1) * i / n, y = y1 + (y2 - y1) * i / n; c.fillRect(x - grosor / 2, y - grosor / 2, grosor, grosor); }
+}
+// Una elipse de píxeles, rellena o solo el borde (grosor), por filas.
+function asElipsePix(c, cx, cy, rx, ry, col, grosor) {
+  if (rx < 2 || ry < 2) return;
+  c.fillStyle = col;
+  for (let dy = -ry; dy <= ry; dy += 2) {
+    const hw = rx * Math.sqrt(Math.max(0, 1 - (dy / ry) * (dy / ry)));
+    if (!grosor) { c.fillRect(cx - hw, cy + dy, hw * 2, 2); continue; }
+    const ri = Math.max(0, ry - grosor), xi = rx - grosor, hi = Math.abs(dy) < ri ? xi * Math.sqrt(Math.max(0, 1 - (dy / ri) * (dy / ri))) : 0;
+    c.fillRect(cx - hw, cy + dy, hw - hi, 2); c.fillRect(cx + hi, cy + dy, hw - hi, 2);
+  }
 }
 // un panel de pixel art: borde oscuro de 3, luz arriba y sombra abajo
 function asPanel(c, x, y, w, h, col, luz) {
-  x = Math.round(x); y = Math.round(y);
-  c.fillStyle = AS_COL.tinta; c.fillRect(x, y + 3, w, h - 6); c.fillRect(x + 3, y, w - 6, h);
-  c.fillStyle = col || AS_COL.panel; c.fillRect(x + 3, y + 3, w - 6, h - 6);
-  c.fillStyle = luz || 'rgba(255,255,255,0.35)'; c.fillRect(x + 3, y + 3, w - 6, 3);
-  c.fillStyle = 'rgba(0,0,0,0.22)'; c.fillRect(x + 3, y + h - 6, w - 6, 3);
+  const p = v => Math.round(v / 2) * 2;   // todo en píxeles enteros del lienzo pequeño (2 unidades = 1 píxel)
+  x = p(x); y = p(y); w = p(w); h = p(h);
+  c.fillStyle = AS_COL.tinta; c.fillRect(x, y + 2, w, h - 4); c.fillRect(x + 2, y, w - 4, h);
+  c.fillStyle = col || AS_COL.panel; c.fillRect(x + 2, y + 2, w - 4, h - 4);
+  c.fillStyle = luz || 'rgba(255,255,255,0.35)'; c.fillRect(x + 2, y + 2, w - 4, 2);
+  c.fillStyle = 'rgba(0,0,0,0.22)'; c.fillRect(x + 2, y + h - 4, w - 4, 2);
 }
 function asBoton(c, id, x, y, w, h, col, txt, tam, apagado, extra) {
   const pulsado = AS_TOQUE.boton === id;
@@ -90,7 +149,7 @@ function asPintaArena(c, t) {
   }
   if (!AS_B) return;
   const B = AS_B;
-  for (const p of B.parts) if (p.onda) { c.globalAlpha = 1 - p.t / p.vida; c.strokeStyle = p.col; c.lineWidth = 4; c.beginPath(); c.ellipse(p.x, p.y, p.onda * (0.5 + p.t / p.vida), p.onda * 0.45 * (0.5 + p.t / p.vida), 0, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1; }
+  for (const p of B.parts) if (p.onda) { c.globalAlpha = 1 - p.t / p.vida; const k = 0.5 + p.t / p.vida; asElipsePix(c, p.x, p.y, p.onda * k, p.onda * 0.45 * k, p.col, 4); c.globalAlpha = 1; }
   for (const u of [...B.u].sort((a, b) => a.y - b.y)) asPintaMuneco(c, u, u.x, u.y, t);
   // barras de vida (y de escudo)
   for (const u of B.u) {
@@ -103,7 +162,7 @@ function asPintaArena(c, t) {
     if (u.nivel > 1) asTexto(c, String(u.nivel), x - 8, y + 2, 11, '#ffe27a');
   }
   for (const p of B.proy) {
-    if (p.tipo === 'flecha') { const a = Math.atan2(p.ob.y - 20 - p.y, p.ob.x - p.x); c.save(); c.translate(Math.round(p.x), Math.round(p.y)); c.rotate(a); c.fillStyle = AS_COL.tinta; c.fillRect(-11, -2, 20, 4); c.fillStyle = '#c88a4a'; c.fillRect(-10, -1, 16, 2); c.fillStyle = '#e8e8f0'; c.fillRect(6, -2, 4, 4); c.restore(); }
+    if (p.tipo === 'flecha') { const a = Math.atan2(p.ob.y - 20 - p.y, p.ob.x - p.x), ca = Math.cos(a), sa = Math.sin(a); asLineaPix(c, p.x - ca * 10, p.y - sa * 10, p.x + ca * 8, p.y + sa * 8, 4, AS_COL.tinta); asLineaPix(c, p.x - ca * 10, p.y - sa * 10, p.x + ca * 6, p.y + sa * 6, 2, '#c88a4a'); c.fillStyle = '#e8e8f0'; c.fillRect(p.x + ca * 8 - 2, p.y + sa * 8 - 2, 4, 4); }
     else if (p.tipo === 'bomba') { c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = '#3a3a48'; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#ffd23a'; c.fillRect(Math.round(p.x) + 2, Math.round(p.y) - 9, 3, 3); }
     else { const col = p.de.tipo === 'heroe-suricata' ? '#fff2a0' : p.de.lado === 'enemigo' ? '#ff5050' : '#ffa030'; c.fillStyle = AS_COL.tinta; c.fillRect(Math.round(p.x) - 6, Math.round(p.y) - 6, 12, 12); c.fillStyle = col; c.fillRect(Math.round(p.x) - 4, Math.round(p.y) - 4, 8, 8); c.fillStyle = '#fff'; c.fillRect(Math.round(p.x) - 2, Math.round(p.y) - 2, 3, 3); }
   }
@@ -161,8 +220,8 @@ function asPintaMapa(c, t) {
   // pasillos
   for (const col of P.mapa) for (const n of col) for (const j of n.sig) {
     const [x1, y1] = asPosNodo(n), [x2, y2] = asPosNodo(P.mapa[n.c + 1][j]);
-    c.strokeStyle = AS_COL.tinta; c.lineWidth = 12; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
-    c.strokeStyle = n === P.nodo && n.hecho ? '#ffe27a' : '#4a4f8a'; c.lineWidth = 6; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
+    asLineaPix(c, x1, y1, x2, y2, 12, AS_COL.tinta);
+    asLineaPix(c, x1, y1, x2, y2, 6, n === P.nodo && n.hecho ? '#ffe27a' : '#4a4f8a');
   }
   // salas
   for (const col of P.mapa) for (const n of col) {
@@ -193,7 +252,7 @@ function asPintaAvisos(c) {
   AS_AVISOS.forEach((a, i) => {
     a.t += 1 / 60;
     const al = a.t < 1.8 ? 1 : Math.max(0, 1 - (a.t - 1.8) * 3), y = AS_ARENA.y + 70 + i * 40;
-    c.globalAlpha = al; c.font = `700 16px ${AS_FUENTE}`; const w = Math.min(520, c.measureText(a.txt).width + 34);
+    c.globalAlpha = al; const w = Math.min(520, asTextoImg(a.txt, 16, '#fff', true).w * 2 + 30);
     asPanel(c, 270 - w / 2, y - 17, w, 34, a.bien ? '#4f9a3a' : '#9a3a4a'); asTexto(c, a.txt, 270, y, 16);
   });
   c.globalAlpha = 1;

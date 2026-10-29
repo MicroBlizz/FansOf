@@ -43,7 +43,7 @@ function asCuadro(tipo, anim, tiempo, dura) {
 // Pinta un muñeco con los pies en (x, y). u: { tipo, anim, tAnim, dura, destello, escala, alfa, lado }.
 function asPintaMuneco(c, u, x, y, t) {
   if (!asHay(u.tipo)) return;
-  const d = AS_TIRAS[u.tipo], esc = AS_PX * (u.escala || 1), w = d.w * esc, h = d.h * esc;
+  const d = AS_TIRAS[u.tipo], esc = Math.max(2, Math.round(AS_PX * (u.escala || 1) / 2) * 2), w = d.w * esc, h = d.h * esc;   // múltiplo de 2: píxeles enteros
   const f = asCuadro(u.tipo, u.anim, u.tAnim || 0, u.dura);
   const hacia = u.lado === 'heroe' ? 1 : -1;
   // movimiento por código cuando falta el fotograma propio (y un poco siempre, para que no se vea rígido)
@@ -61,9 +61,9 @@ function asPintaMuneco(c, u, x, y, t) {
   else if (u.anim === 'muerte') { if (!f.propio) { const p = Math.min(1, (u.tAnim || 0) / 0.5); giro = -p * 1.4 * hacia; dy = p * 4; } }
   c.save();
   c.globalAlpha = u.alfa === undefined ? 1 : u.alfa;
-  c.translate(Math.round(x + dx), Math.round(y + dy));
+  c.translate(Math.round((x + dx) / 2) * 2, Math.round((y + dy) / 2) * 2);   // en un píxel entero del lienzo pequeño
   // sombra
-  c.fillStyle = 'rgba(60,30,10,0.28)'; c.beginPath(); c.ellipse(0, 0, w * 0.32, 4 * (u.escala || 1), 0, 0, Math.PI * 2); c.fill();
+  asElipsePix(c, 0, 0, Math.round(w * 0.32 / 2) * 2, Math.max(2, Math.round(2 * (u.escala || 1)) * 2), 'rgba(60,30,10,0.28)');
   c.rotate(giro); c.scale(sx, sy);
   c.imageSmoothingEnabled = false;
   c.drawImage(AS_IMG[u.tipo], f.i * d.w, 0, d.w, d.h, Math.round(-w / 2), Math.round(-h), w, h);
@@ -75,7 +75,9 @@ function asAltoMuneco(tipo, escala) { return asHay(tipo) ? AS_TIRAS[tipo].h * AS
 // Un retrato quieto (tienda, ventanas): el primer fotograma cabido en una caja de lado L
 function asRetrato(c, tipo, cx, cy, L) {
   if (!asHay(tipo)) return;
-  const d = AS_TIRAS[tipo], k = Math.max(1, Math.floor(Math.min(L / d.w, L / d.h)));
+  const d = AS_TIRAS[tipo];
+  let k = Math.max(1, Math.floor(Math.min(L / d.w, L / d.h)));
+  if (typeof AS_BCTX !== 'undefined' && c === AS_BCTX) k = Math.max(2, Math.floor(k / 2) * 2);   // en el lienzo del juego, píxeles enteros
   c.imageSmoothingEnabled = false;
   c.drawImage(AS_IMG[tipo], 0, 0, d.w, d.h, Math.round(cx - d.w * k / 2), Math.round(cy - d.h * k / 2), d.w * k, d.h * k);
 }

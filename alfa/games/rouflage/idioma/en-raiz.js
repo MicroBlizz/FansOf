@@ -2,6 +2,7 @@
 'use strict';
 IDIOMA.add({
   // 0.2.62
+  "<b>ARRANQUE EN EL MÓVIL</b>: la música de la intro ya no da error al programar sus golpes (se veía en algunos móviles) y los navegadores viejos dibujan bien los rectángulos redondeados.": "<b>STARTING ON MOBILE</b>: the intro music no longer errors when scheduling its hits (seen on some phones) and old browsers draw rounded rectangles correctly.",
   "<b>MIS ESCENARIOS, EN SU SITIO</b>: ya no hay botón arriba (en el móvil echaba PASEAR fuera de la pantalla). Tus 3 escenarios se abren desde la primera tarjeta de la pestaña ESCENARIO y desde CONSTRUIR, donde estaba NUEVO; empezar de nuevo está dentro.": "<b>MY SCENES, IN ITS PLACE</b>: there's no top button any more (on phones it pushed WALK off the screen). Your 3 scenes open from the first card of the SCENE tab and from BUILD, where NEW used to be; starting over is inside.",
   "Microblizz puso la casita arriba del todo y empujó a PASEAR fuera del móvil. Phony lleva una hora buscándolo.": "Microblizz put the little house at the very top and pushed WALK off the phone. Phony has been looking for it for an hour.",
   // 0.2.61

@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "Prototipo nuevo en 3D: lleva pasajeros contra el reloj, corre carreras y dale esquinazo a la policía. Próximamente.": "New 3D prototype: carry passengers against the clock, race through the streets and shake off the police. Coming soon.",
+  "FANS OF TAXI": "FANS OF TAXI",
+  "29 de octubre de 2026": "29 October 2026",
   "Demo nueva: la serpiente de siempre con Frenesí. Roza tu cola para cargarlo y córtatela por monedas; los «?» son locuras.": "New demo: the classic snake with Frenzy. Graze your tail to charge it and cut it off for coins; the “?” are crazy stuff.",
   "FANS OF AUTO": "FANS OF AUTO",
   "Demo nueva: el barrio visto desde arriba como en la primera PlayStation. Roba coches, huye de los Moderadores y haz los recados de las tres bandas.": "New demo: the district seen from above like on the first PlayStation. Steal cars, run from the Moderators and do the errands of the three gangs.",

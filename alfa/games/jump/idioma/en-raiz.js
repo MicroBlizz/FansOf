@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.15
+  "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
+  "Microblizz ha puesto un buzón junto al río y Phony ha mandado un mensaje en una botella.": "Microblizz put a mailbox by the river and Phony sent a message in a bottle.",
   // 0.3.12
   "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
   "Microblizz ha apagado los efectos y Phony ha saltado al río sin chapoteo.": "Microblizz switched off the effects and Phony jumped into the river without a splash.",

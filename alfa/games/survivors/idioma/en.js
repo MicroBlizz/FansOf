@@ -1,6 +1,9 @@
 // Fans of Survivors · Inglés: los textos de este juego (los de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.70
+  "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
+  "Microblizz ha puesto un teléfono rojo en el refugio y Phony ha llamado solo para ver si cogían.": "Microblizz put a red phone in the shelter and Phony called just to see if anyone picked up.",
   // 0.1.67
   "<b>SONIDO ARREGLADO</b>: con el volumen de los efectos a cero ya no se rompe el toque de los botones.": "<b>SOUND FIXED</b>: with the effects volume at zero, button taps no longer break.",
   "Microblizz ha silenciado el refugio y Phony ha jurado que no se oía nada sospechoso.": "Microblizz has silenced the shelter and Phony swore nothing suspicious could be heard.",

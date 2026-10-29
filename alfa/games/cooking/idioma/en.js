@@ -1,6 +1,9 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.1
+  "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
+  "Microblizz ha pedido un informe de la cocina y Phony ha entregado uno con salsa.": "Microblizz asked for a kitchen report and Phony handed in one with sauce on it.",
   "<b>PRIMER PROTOTIPO</b>: la cafetería de Microblizz, en solitario o a dobles en el mismo teclado. Campaña «De becario a CEO»: seis cocinas, diecisiete niveles, dieciséis recetas, sartén, olla, horno, cintas, fuegos y los apagones de IAhorro.": "<b>FIRST PROTOTYPE</b>: Microblizz's cafeteria, solo or as a duo on the same keyboard. Campaign \"From intern to CEO\": six kitchens, seventeen levels, sixteen recipes, pan, pot, oven, conveyor belts, fires and IAhorro's blackouts.",
   "Microblizz ha puesto la cafetería a cargo de los becarios. Phony cobra por el agua del fregadero.": "Microblizz put the interns in charge of the cafeteria. Phony charges for the sink water.",
   "Dos cocineros, un teclado y los becarios con hambre.": "Two cooks, one keyboard and hungry interns.",

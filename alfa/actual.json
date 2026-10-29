@@ -1,8 +1,8 @@
 {
- "build": 619,
- "hash": "248888e",
- "fecha": "2026-10-29T07:41:12Z",
- "mensaje": "Fans of Vikings: prototipo nuevo de aldea vikinga con combate por turnos (tipo Pixel Tribe)",
+ "build": 620,
+ "hash": "b6fcd15",
+ "fecha": "2026-10-29T07:42:32Z",
+ "mensaje": "Fans of Swipe: los dibujos y sonidos de Yoshi, y su tarjeta en la Biblioteca (solo alfa)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

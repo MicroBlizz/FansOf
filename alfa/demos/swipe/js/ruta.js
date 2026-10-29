@@ -151,6 +151,6 @@ function swAspecto(P, carta) {
 }
 // «izquierda: … / derecha: …» de una carta de acción, para cuando te la ofrecen
 function swResumenCarta(P, id) {
-  const D = SW_CARTAS[id], f = L => (L.coste ? tr('({n} caos) ', { n: L.coste }) : '') + L.ef.map(e => swTextoEf(P, e, {})).join(', ');
+  const D = SW_CARTAS[id], f = L => (L.coste ? tr('({n} caos)', { n: L.coste }) + ' ' : '') + L.ef.map(e => swTextoEf(P, e, {})).join(', ');
   return tr('Izquierda: {a}', { a: f(D.izq) }) + '\n' + tr('Derecha: {b}', { b: f(D.der) });
 }

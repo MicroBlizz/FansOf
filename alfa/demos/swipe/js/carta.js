@@ -95,8 +95,11 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
       const [L, R] = swLados(P, carta);
       if (L.coste) { swDibujaC(c, 'i-caos', lx - 46, yy - 44, 2); swTexto(c, String(L.coste), lx - 30, yy - 36, 18, '#ffb13d', 'center', 4); }
       if (R.coste) { swDibujaC(c, 'i-caos', rx + 46, yy - 44, 2); swTexto(c, String(R.coste), rx + 62, yy - 36, 18, '#ffb13d', 'center', 4); }
-      swTexto(c, tr(L.nombre), lx, yy + 104, 15, '#3a2414', 'center', 0);
-      swTexto(c, tr(R.nombre), rx, yy + 104, 15, '#3a2414', 'center', 0);
+      // el nombre de cada acción bajo su dibujo: en una o dos líneas, sin pisar al de al lado
+      for (const [S, x] of [[L, lx], [R, rx]]) {
+        const ls = swParte(c, tr(S.nombre) + (S.mas ? '+' : ''), 104, 15).slice(0, 2);
+        ls.forEach((l, i) => swTexto(c, l, x, yy + 100 + i * 19 - (ls.length - 1) * 6, 15, '#3a2414', 'center', 0));
+      }
     }
     y = yy + 122;
   } else if (A.reliquia) {

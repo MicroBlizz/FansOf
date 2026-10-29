@@ -92,7 +92,7 @@ function swLadoAccion(P, carta, lado) {
   const D = SW_CARTAS[carta.id], L = D[lado === 'L' ? 'izq' : 'der'];
   const coste = L.coste || 0, ef = swEfMejor(L.ef, carta.mejor);
   const sinCaos = P.C && P.C.caos < coste;
-  return { nombre: L.nombre + (carta.mejor ? '+' : ''), coste, ef: coste ? [{ t: 'caos', n: -coste }, ...ef] : ef, icono: D.arte[lado === 'L' ? 0 : 1],
+  return { nombre: L.nombre, mas: !!carta.mejor, coste, ef: coste ? [{ t: 'caos', n: -coste }, ...ef] : ef, icono: D.arte[lado === 'L' ? 0 : 1],
     bloqueado: sinCaos, porque: sinCaos ? tr('Te falta caos') : '' };
 }
 

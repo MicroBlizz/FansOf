@@ -154,18 +154,18 @@ function swPintaArriba(c, t) {
 function swPintaLados(c, t, lados, carta, inclina) {
   const y0 = SW_V.cartaY + 70;
   for (const [i, L] of lados.entries()) {
-    const izq = i === 0, cx = izq ? 68 : 472, hacia = izq ? inclina < -0.15 : inclina > 0.15, aleja = izq ? inclina > 0.15 : inclina < -0.15;
+    const izq = i === 0, cx = izq ? 74 : 466, hacia = izq ? inclina < -0.15 : inclina > 0.15, aleja = izq ? inclina > 0.15 : inclina < -0.15;
     const k = hacia ? 1 + Math.min(0.15, Math.abs(inclina) * 0.2) : 1;
     c.save(); c.translate(cx, y0); c.scale(k, k); c.globalAlpha = aleja ? 0.45 : 1;
     swDibujaC(c, 'i-flecha', izq ? -2 : 2, 0, 3, izq);
     const icono = L.icono && SW_IMG[L.icono] ? L.icono : null;
     if (icono) swDibujaC(c, icono, 0, 66, 4);
     const col = L.bloqueado ? '#ff8a80' : hacia ? '#ffd84a' : '#ffffff';
-    const nom = swParte(c, tr(L.nombre).toUpperCase(), 116, 19);
+    const nom = swParte(c, (tr(L.nombre) + (L.mas ? '+' : '')).toUpperCase(), 100, 19);
     nom.slice(0, 2).forEach((l, j) => swTexto(c, l, 0, 112 + j * 22, 19, col));
     let yy = 112 + Math.min(2, nom.length) * 22 + 4;
     const lineas = L.bloqueado ? [L.porque] : swLineas(SW_P, carta, L);
-    for (const ln of lineas) for (const l of swParte(c, ln, 120, 15)) { swTexto(c, l, 0, yy, 15, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4, 600); yy += 18; }
+    for (const ln of lineas) for (const l of swParte(c, ln, 104, 15)) { swTexto(c, l, 0, yy, 15, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4, 600); yy += 18; }
     c.restore();
     SW_BOTONES.push({ id: izq ? 'lado:L' : 'lado:R', x: cx - 66, y: y0 - 30, w: 132, h: 260 });
   }

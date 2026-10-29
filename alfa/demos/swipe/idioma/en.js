@@ -106,7 +106,7 @@ IDIOMA.add({
  "Elige tu reliquia": "Pick your relic",
  "Antes de subir, coge una. Te acompaña toda la subida.": "Before climbing, take one. It stays with you the whole climb.",
  "Piso {n}": "Floor {n}",
- "({n} caos) ": "({n} chaos) ",
+ "({n} caos)": "({n} chaos)",
  "Izquierda: {a}": "Left: {a}",
  "Derecha: {b}": "Right: {b}",
  "Garrote": "Club",

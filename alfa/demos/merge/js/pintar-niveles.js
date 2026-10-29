@@ -4,7 +4,7 @@
 function mgPintaTurnos(c, t) {
   const P = MG_P, pocos = P.movs <= 3, s = pocos ? 1 + Math.abs(Math.sin(t * 6)) * 0.08 : 1;
   c.save(); c.translate(64, 40); c.scale(s, s);
-  c.beginPath(); c.arc(0, 0, 34, 0, MG_TAU); c.fillStyle = pocos ? '#ff5a4f' : '#ff9a3c'; c.fill(); c.lineWidth = 4; c.strokeStyle = OL; c.stroke();
+  if (!mgImg(c, 'ESTRELLA', -42, -42, 84, 84)) { c.beginPath(); c.arc(0, 0, 34, 0, MG_TAU); c.fillStyle = pocos ? '#ff5a4f' : '#ff9a3c'; c.fill(); c.lineWidth = 4; c.strokeStyle = OL; c.stroke(); }
   mgTexto(c, String(Math.max(0, P.movs)), 0, 3, 30, '#fff', 'center', OL);
   c.restore();
   mgTexto(c, tr('TURNOS'), 64, 86, 12, '#fff', 'center', OL);

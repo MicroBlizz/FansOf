@@ -57,7 +57,7 @@ function mgPintaConejos(c, t) {
 /* ---------- la portada: el logo, piezas que caen y CrazyBunny saltando ---------- */
 const MG_LLUVIA = Array.from({ length: 10 }, (_, i) => ({ t: MG_CADENA[i % 8], x: (i * 97) % 540, y: (i * 173) % 960, v: 30 + (i * 37) % 40, r: i * 1.7 }));
 function mgPintaPortada(c, t, dt) {
-  mgFondo(c);
+  mgFondo(c, true);
   c.fillStyle = 'rgba(255,248,230,.12)'; c.fillRect(0, 0, 540, MG_V.H);
   for (const L of MG_LLUVIA) {
     L.y += L.v * dt; L.r += dt; if (L.y > MG_V.H + 60) { L.y = -60; L.x = Math.random() * 540; }
@@ -65,7 +65,7 @@ function mgPintaPortada(c, t, dt) {
   }
   const y0 = MG_V.H * 0.2 + Math.sin(t * 1.6) * 4;
   c.save(); c.translate(270, y0); c.rotate(-0.04);
-  mgTexto(c, 'FANS OF', 0, -50, 44, '#ffffff'); mgTexto(c, 'MERGE', 0, 22, 108, '#ff8a2a');
+  if (!mgImg(c, 'LOGO', -250, -125, 500, 250)) { mgTexto(c, 'FANS OF', 0, -50, 44, '#ffffff'); mgTexto(c, 'MERGE', 0, 22, 108, '#ff8a2a'); }
   c.restore();
   const by = MG_V.H * 0.52, salto = Math.abs(Math.sin(t * 2.4)) * 14;
   c.beginPath(); c.ellipse(270, by + 110, 84 - salto, 16, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();

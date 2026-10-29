@@ -18,9 +18,9 @@ function mgTexto(c, txt, x, y, tam, col = '#fff', alin = 'center', borde = OL, f
   c.fillStyle = col; c.fillText(txt, x, y);
 }
 function mgPanel(c, x, y, w, h, r, fondo, borde = OL, grosor = 4) { c.beginPath(); rrPath(c, x, y, w, h, r); c.fillStyle = fondo; c.fill(); if (borde) { c.lineWidth = grosor; c.strokeStyle = borde; c.stroke(); } }
-function mgFondo(c) {
+function mgFondo(c, portada) {   // la portada usa la ilustración del prado; la partida, la textura lisa (no compite con las piezas)
   const S = MG_IMG.SUELO;
-  if (S) {   // la textura pintada del prado, repetida
+  if (S && !(portada && MG_IMG.FONDO)) {   // la textura pintada del prado, repetida
     if (!MG_V.patron || MG_V.patronDe !== S) { MG_V.patron = c.createPattern(S, 'repeat'); MG_V.patronDe = S; }
     c.save(); c.scale(0.5, 0.5); c.fillStyle = MG_V.patron; c.fillRect(0, 0, 1080, MG_V.H * 2); c.restore(); return;
   }
@@ -39,7 +39,7 @@ const MG_PILDORA = 'rgba(28,40,18,.72)';
 function mgPintaMarcador(c, t) {
   const P = MG_P, k = mgK();
   // puntos y objetivo
-  mgPanel(c, 130, 10, 280, 52, 18, MG_PILDORA, null);
+  if (!mgImg(c, 'TABLON', 124, 4, 292, 64)) mgPanel(c, 130, 10, 280, 52, 18, MG_PILDORA, null);
   mgTexto(c, fmt(P.pts), 270, 37, 36, '#fff6c8', 'center', null);
   if (P.nivel) mgPintaTurnos(c, t);
   if (P.racha >= 2) {   // la racha: una llama con su multiplicador, que late
@@ -52,15 +52,16 @@ function mgPintaMarcador(c, t) {
   if (P.nivel) mgPintaObjNivel(c, t);
   else {
   const O = mgObjetivo(), ok = O.de ? clamp((P.pts - O.desde) / (O.de - O.desde), 0, 1) : 1;
-  mgPanel(c, 120, 68, 300, 34, 14, MG_PILDORA, null);
+  if (!mgImg(c, 'TABLON', 114, 64, 312, 42)) mgPanel(c, 120, 68, 300, 34, 14, MG_PILDORA, null);
   mgTexto(c, O.de ? tr('Consigue {n} puntos', { n: fmt(O.de) }) : tr('¡Todos los objetivos!'), 232, 86, 15, '#fff', 'center', null, MG_FB);
   mgPanel(c, 350, 76, 60, 18, 9, 'rgba(255,255,255,.18)', null); if (ok > 0.25) mgPanel(c, 350, 76, 60 * ok, 18, 9, '#9be35a', null);
   mgTexto(c, Math.floor(ok * 100) + '%', 380, 86, 12, '#fff', 'center', 'rgba(0,0,0,.5)', MG_FB);
   }
   // pausa (rueda dentada)
+  if (mgImg(c, 'BOTON', 462, 8, 70, 70)) { /* el botón pintado ya lleva su símbolo de pausa */ } else {
   mgPanel(c, 466, 12, 62, 62, 18, '#ff9a3c', OL, 4);
   c.save(); c.translate(497, 43); c.fillStyle = '#fff'; c.strokeStyle = OL; c.lineWidth = 3;
-  [-9, 9].forEach(d => { c.beginPath(); rrPath(c, d - 5, -14, 10, 28, 3); c.fill(); c.stroke(); }); c.restore();
+  [-9, 9].forEach(d => { c.beginPath(); rrPath(c, d - 5, -14, 10, 28, 3); c.fill(); c.stroke(); }); c.restore(); }
   mgBoton('pausa', 466, 12, 62, 62);
   // la pieza actual (también va con el dedo por el tablero)
   const fila = 116;
@@ -193,18 +194,24 @@ function mgPintaTablero(c, t) {
     const e = clamp((MG_FX.t - f.t0) / f.dur, 0, 1) ** 2;
     mgDibujaPieza(c, f.tipo, lerp(mgCx(f.fx), mgCx(f.tx), e), lerp(mgCy(f.fy), mgCy(f.ty), e), cs * (1 - e * 0.4), k, f.s);
   }
-  for (const p of MG_FX.parts) { c.globalAlpha = clamp(1 - (MG_FX.t - p.t0) / p.vida, 0, 1); c.beginPath(); c.arc(mgCx(p.x), mgCy(p.y), p.r * cs, 0, MG_TAU); c.fillStyle = p.col; c.fill(); }
+  for (const p of MG_FX.parts) {   // chispas y hojas pintadas (o puntos de color mientras no llegan)
+    c.globalAlpha = clamp(1 - (MG_FX.t - p.t0) / p.vida, 0, 1);
+    const k = p.r > 0.08 ? 'HOJA' : 'CHISPA', l = p.r * cs * 3.2;
+    if (!mgImg(c, k, mgCx(p.x) - l / 2, mgCy(p.y) - l / 2, l, l)) { c.beginPath(); c.arc(mgCx(p.x), mgCy(p.y), p.r * cs, 0, MG_TAU); c.fillStyle = p.col; c.fill(); }
+  }
   c.globalAlpha = 1;
   for (const o of MG_FX.ondas) {   // el anillo de luz de cada fusión
     const e = (MG_FX.t - o.t0) / 0.5; if (e < 0) continue;
-    c.globalAlpha = 1 - e; c.beginPath(); c.arc(mgCx(o.x), mgCy(o.y), cs * (0.3 + e * (0.7 + o.grande * 0.25)), 0, MG_TAU); c.strokeStyle = o.col; c.lineWidth = 8 * (1 - e) + 2; c.stroke();
+    c.globalAlpha = 1 - e; const l = cs * (0.6 + e * (1.4 + o.grande * 0.5));
+    if (!mgImg(c, 'CHISPA', mgCx(o.x) - l / 2, mgCy(o.y) - l / 2, l, l)) { c.beginPath(); c.arc(mgCx(o.x), mgCy(o.y), l / 2, 0, MG_TAU); c.strokeStyle = o.col; c.lineWidth = 8 * (1 - e) + 2; c.stroke(); }
   }
   c.globalAlpha = 1;
   const RL = MG_FX.relampago;
   if (RL && MG_FX.t - RL.t0 < 0.35) {   // el relámpago de la tormenta
     const cx = mgCx(RL.x), cy = mgCy(RL.y); c.globalAlpha = 1 - (MG_FX.t - RL.t0) / 0.35;
+    if (mgImg(c, 'RELAMPAGO', cx - 50, cy - 270, 100, 280)) { c.globalAlpha = 1; } else {
     c.beginPath(); c.moveTo(cx + 20, cy - 260); c.lineTo(cx - 10, cy - 150); c.lineTo(cx + 14, cy - 140); c.lineTo(cx - 16, cy - 30); c.lineTo(cx + 6, cy - 34); c.lineTo(cx, cy);
-    c.strokeStyle = '#fff6a0'; c.lineWidth = 7; c.stroke(); c.strokeStyle = '#ffffff'; c.lineWidth = 3; c.stroke(); c.globalAlpha = 1;
+    c.strokeStyle = '#fff6a0'; c.lineWidth = 7; c.stroke(); c.strokeStyle = '#ffffff'; c.lineWidth = 3; c.stroke(); c.globalAlpha = 1; }
   }
   for (const x of MG_FX.textos) { const e = MG_FX.t - x.t0; if (e < 0) continue; c.globalAlpha = clamp(1.4 - e * 1.3, 0, 1); mgTexto(c, x.txt, mgCx(x.x), mgCy(x.y) - 20 - e * 50, 22, '#fff6c8'); }
   c.globalAlpha = 1;
@@ -220,7 +227,7 @@ function mgFlecha(c, x, y) {
 /* ---------- abajo: la pieza actual, qué hace y en qué se convierte ---------- */
 function mgPintaAbajo(c, t) {
   const P = MG_P, y0 = MG_V.by + MG_V.cs * MG_CFG.lado + 14, k = mgK(), tipo = P.actual;
-  mgPanel(c, 12, y0, 516, 66, 18, MG_PILDORA, null);
+  if (!mgImg(c, 'TABLON', 6, y0 - 6, 528, 78)) mgPanel(c, 12, y0, 516, 66, 18, MG_PILDORA, null);
   let linea;
   if (P.modo === 'rayo') linea = tr('Toca la pieza que quieras quitar con el rayo.');
   else if (P.modo === 'tirachinas') linea = tr('Toca la pieza que quieras quitar con el tirachinas.');

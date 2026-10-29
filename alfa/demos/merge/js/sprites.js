@@ -11,6 +11,7 @@ const SPRITES = {
   // el escenario y la interfaz, también pintados por Yoshi: suelo (textura que se repite), camino, conejito, iconos, charco y marco
   SUELO: 'img/suelo.jpg', CAMINO: 'img/camino.png', CONEJITO: 'img/conejito.png', RAYO: 'img/rayo.png', TIRACHINAS: 'img/tirachinas.png',
   FLECHA: 'img/flecha.png', CHARCO: 'img/charco.png', MARCO: 'img/marco.png',
+  CHISPA: 'img/chispa.png', HOJA: 'img/hoja.png', RELAMPAGO: 'img/relampago.png', ESTRELLA: 'img/estrella.png', TABLON: 'img/tablon.png', BOTON: 'img/boton.png', LOGO: 'img/logo.png',
 };
 const MG_IMG = {};
 for (const k in SPRITES) {
@@ -34,6 +35,7 @@ function mgSpriteListo(tipo, lado) {
 // Dibuja la imagen `k` (si ya ha cargado) en el rectángulo dado; devuelve false si no está, para que se use el dibujo de relleno
 function mgImg(c, k, x, y, w, h) {
   const im = MG_IMG[k]; if (!im) return false;
+  if (Math.abs(w / h - im.width / im.height) > 0.2) { c.drawImage(im, x, y, w, h); return true; }   // apaisados (tablón, logo): tal cual
   const lado = Math.max(16, Math.round(Math.max(w, h) * mgK())), sp = mgSpriteListo(k, lado);
   c.drawImage(sp || im, x, y, w, h); return true;
 }

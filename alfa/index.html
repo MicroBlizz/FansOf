@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=ac8a249">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=ac8a249">
-<link rel="stylesheet" href="novedades/ventana.css?v=ac8a249">
-<link rel="stylesheet" href="biblioteca/votos.css?v=ac8a249">
+<link rel="stylesheet" href="core/css/base.css?v=faa6d0d">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=faa6d0d">
+<link rel="stylesheet" href="novedades/ventana.css?v=faa6d0d">
+<link rel="stylesheet" href="biblioteca/votos.css?v=faa6d0d">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=ac8a249" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=faa6d0d" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -204,6 +204,12 @@
           <div class="row"><a class="play ol" href="demos/goose/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
+        <section class="game" id="g-merge" style="--wc: #4f9a32" data-tipo="Demo" data-etiquetas="Puzle · Juntar tres · Por turnos" data-capturas="merge-1.jpg merge-2.jpg">
+          <h2 class="ol">FANS OF MERGE</h2>
+          <p>Planta brotes en la pradera de CrazyBunny y junta tres iguales para hacerlos crecer: zanahoria, huerto, casita, madriguera, torre, palacio… hasta el palacio flotante. Los zorros te ocupan el huerto y los cuervos saltan donde menos te lo esperas: enciérralos y se duermen. Supera los 15 niveles de la Aventura, elige cartas de habilidad, carga el Rayo zanahoria y, cuando la domines, a por el récord en el Modo libre.</p>
+          <div class="row"><a class="play ol" href="demos/merge/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
         <section class="game" id="g-snakes" style="--wc: #1f8a4c" data-tipo="Demo" data-etiquetas="Arcade · Serpiente · Frenesí" data-capturas="snakes-1.jpg snakes-2.jpg snakes-3.jpg">
           <h2 class="ol">FANS OF SNAKES</h2>
           <p>La serpiente del móvil de botones, reventada por Microblizz. Come manzanas y crece, como siempre; pero aquí el enemigo eres tú: pasa rozando tu propia cola para cargar la barra de Frenesí y, cuando explote, diez segundos de neón con manzanas doradas que valen x10 y la Demolición: córtate la cola a tu paso y cada trozo es una moneda. Los «?» del tablero son locuras: de pronto todo es blanco y negro de píxeles gordos, o la izquierda es la derecha. Juega al Infinito, supera los Mundos, compite en el Reto diario o reta a un rival en el VS.</p>
@@ -309,8 +315,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a609.ac8a249"></script>
-<script src="core/js/novedades.js?v=ac8a249"></script>
+<script src="core/js/nucleo.js?v=0-a610.faa6d0d"></script>
+<script src="core/js/novedades.js?v=faa6d0d"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -319,8 +325,8 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=ac8a249"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script src="core/js/sistema/cuenta.js?v=faa6d0d"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -345,14 +351,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=ac8a249"></script>
-<script src="novedades/ventana.js?v=ac8a249"></script>
-<script src="biblioteca/tienda.js?v=ac8a249"></script>
-<script src="core/js/sistema/beta.js?v=ac8a249"></script>
-<script src="biblioteca/cuenta-web.js?v=ac8a249"></script>
-<script src="biblioteca/votos.js?v=ac8a249"></script>
-<script src="biblioteca/alfa.js?v=ac8a249"></script>
-<script src="core/js/sistema/analitica.js?v=ac8a249"></script>
-<script src="pie.js?v=ac8a249" defer></script>
+<script src="core/js/proximamente.js?v=faa6d0d"></script>
+<script src="novedades/ventana.js?v=faa6d0d"></script>
+<script src="biblioteca/tienda.js?v=faa6d0d"></script>
+<script src="core/js/sistema/beta.js?v=faa6d0d"></script>
+<script src="biblioteca/cuenta-web.js?v=faa6d0d"></script>
+<script src="biblioteca/votos.js?v=faa6d0d"></script>
+<script src="biblioteca/alfa.js?v=faa6d0d"></script>
+<script src="core/js/sistema/analitica.js?v=faa6d0d"></script>
+<script src="pie.js?v=faa6d0d" defer></script>
 </body>
 </html>

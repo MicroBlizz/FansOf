@@ -67,7 +67,7 @@ body { background: radial-gradient(120% 80% at 50% 0%, #c9f2a8 0%, #6cbf55 70%);
 .mg-nv.mg-toca { animation: mg-late 1.2s ease-in-out infinite; }
 .mg-estrellas { display: inline-flex; gap: 2px; }
 .mg-estrellas i { width: 14px; height: 14px; background: rgba(32, 16, 44, 0.3); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
-.mg-estrellas i.si { background: #ffd84a; }
+.mg-estrellas i.si { background: #ffd84a url('../img/estrella.png') center / 120% no-repeat; }
 .mg-tarjeta > .mg-estrellas i { width: 54px; height: 54px; }
 .mg-objs { display: flex; flex-direction: column; gap: 8px; width: 100%; }
 .mg-obj { display: flex; align-items: center; justify-content: center; gap: 10px; background: #fff; border: 3px solid var(--mg-tinta); border-radius: 16px; padding: 6px 12px; font-size: 20px; }

@@ -274,5 +274,9 @@ IDIOMA.add({
  "Descartar": "Discard",
  "Al mazo": "To the deck",
  "Recoger": "Collect",
- "Seguir": "Continue"
+ "Seguir": "Continue",
+ "Frenesí perdido": "Frenzy lost",
+ "¡Oro de frenesí x{n}!": "Frenzy gold x{n}!",
+ "RACHA": "STREAK",
+ "x{n} daño · x{m} oro": "x{n} damage · x{m} gold"
 });

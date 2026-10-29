@@ -82,8 +82,8 @@ function swElige(lado) {
   if (carta.tipo === 'accion') {
     // la racha: si has deslizado rápido, sube; si has tardado, vuelve a cero
     const tardas = (performance.now() - (SW_MECHA.ini || 0)) / 1000;
-    if (tardas <= SW_CFG.rapido) { P.C.racha++; if (P.C.racha === SW_CFG.frenesi) { swAviso(tr('¡FRENESÍ!'), '#ff8a2a'); play('swCombo'); } }
-    else P.C.racha = 0;
+    if (tardas <= SW_CFG.rapido) { P.C.racha++; if (P.C.racha === SW_CFG.frenesi) swFrenesiEntra(); else if (P.C.racha > SW_CFG.frenesi) play('swAvivar'); }
+    else { if (P.C.racha >= SW_CFG.frenesi) swFrenesiSale(); P.C.racha = 0; }
     const res = swJuegaAccion(P, carta, lado, swCtx());
     P.carta = null;
     if (res.muere) { P.fase = 'espera'; swEspera(0.45, swGanaCombate); return true; }
@@ -117,7 +117,7 @@ function swTurnoDelEnemigo() {
 function swMechaAgotada() {
   const P = SW_P; if (!P || !P.C || !P.carta || P.fase !== 'carta') return;
   swAviso(tr('¡Demasiado lento!'), '#ff5a4f'); play('swNoVale');
-  P.C.racha = 0; P.C.hist = '';
+  if (P.C.racha >= SW_CFG.frenesi) swFrenesiSale(); P.C.racha = 0; P.C.hist = '';
   SW_G.dir = 0; P.carta = null;
   swTurnoDelEnemigo();
 }
@@ -131,6 +131,7 @@ function swAvanzaMecha(dt) {
 /* ---------- ganar un combate, caer, llegar arriba ---------- */
 function swGanaCombate() {
   const P = SW_P, E = SW_ENEMIGOS[P.C.en];
+  if (P.C.racha >= SW_CFG.frenesi) { swAviso(tr('¡Oro de frenesí x{n}!', { n: SW_CFG.frenesiOro }), '#ffd84a'); SW_FX.frenesi = 0; SW_FX.estallido = Math.min(SW_FX.estallido, 0.15); }
   play('swMuerte');
   P.combates++;
   if (swTieneR(P, 'r-auriculares')) { P.vida = Math.min(P.vidaMax, P.vida + 4); swFx('cura', { n: 4 }); }

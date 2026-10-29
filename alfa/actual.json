@@ -1,8 +1,8 @@
 {
- "build": 611,
- "hash": "cb71a46",
- "fecha": "2026-10-29T00:14:54Z",
- "mensaje": "Fans of Merge: los menús (botones, ventanas, cartas y niveles) pasan a los dibujos de Yoshi en cuanto llegan",
+ "build": 613,
+ "hash": "6cbe50d",
+ "fecha": "2026-10-29T00:15:31Z",
+ "mensaje": "Vikings: primeros 9 sprites pixel art (4 fans y 5 edificios) y conversor de Yoshi a pixel art",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.0",

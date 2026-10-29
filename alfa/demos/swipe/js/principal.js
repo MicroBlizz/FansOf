@@ -81,7 +81,8 @@ function swFotograma(ahora) {
   c.setTransform(SW_V.sc * SW_V.dpr, 0, 0, SW_V.sc * SW_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
   if (SW_PANT.actual === 'partida' && SW_P) {
-    if (!SW_PANT.pausa) { swFxAvanza(dt); swAvanzaCola(dt); swAvanzaMecha(dt); }
+    if (!SW_PANT.pausa) { swFxAvanza(dt); const lento = SW_FX.paron > 0 ? dt * 0.08 : dt; swAvanzaCola(lento); swAvanzaMecha(lento); }
+    if (!SW_P.C || SW_P.C.racha < SW_CFG.frenesi) SW_FX.frenesi = 0;
     swPintaPartida(c, t, SW_PANT.pausa ? 0 : dt);
   } else { swFxAvanza(dt); swPintaPortada(c, t); }
 }

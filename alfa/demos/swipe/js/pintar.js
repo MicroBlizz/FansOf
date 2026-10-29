@@ -57,9 +57,9 @@ function swMide() {
   const H = SW_V.H, extra = H - 960;
   SW_V.cartaY = 486 + extra * 0.55;              // arriba de la carta
   SW_V.cartaCY = SW_V.cartaY + 180;
-  SW_V.pieE = 456 + extra * 0.3;                 // dónde apoya los pies el enemigo
+  SW_V.pieE = SW_V.cartaY + 70;                  // dónde apoya los pies el enemigo (la carta le tapa las piernas, como en primera persona)
   SW_V.hud = H - 96;
-  SW_POS.enemigo = [270, SW_V.pieE - 140];
+  SW_POS.enemigo = [270, SW_V.pieE - 200];
   SW_POS.vida = [96, SW_V.hud + 30]; SW_POS.escudo = [250, SW_V.hud + 30]; SW_POS.caos = [370, SW_V.hud + 30]; SW_POS.oro = [470, 28];
 }
 
@@ -85,7 +85,7 @@ function swPintaManos(c, t) {
   c.save(); c.translate(mitad * s + der * -40, base - resp - der * 120); c.translate(mitad * s / 2, h * s); c.rotate(-der * 0.5); c.translate(-mitad * s / 2, -h * s);
   c.drawImage(im, mitad, 0, w - mitad, h, 0, 0, (w - mitad) * s, h * s); c.restore();
 }
-function swEscalaEnemigo(id) { const [w, h] = swTam(id); return clamp(Math.floor(270 / Math.max(w, h)), 3, 5); }
+function swEscalaEnemigo(id) { const [w, h] = swTam(id); return clamp(Math.floor((SW_ENEMIGOS[id].tipo === 'jefe' ? 440 : 400) / Math.max(w, h)), 4, 7); }
 function swPintaEnemigo(c, t, prev) {
   const P = SW_P, C = P && P.C; if (!C) return;
   const id = C.en, s = swEscalaEnemigo(id), [w, h] = swTam(id, s), cx = 270, base = SW_V.pieE;
@@ -101,7 +101,7 @@ function swPintaEnemigo(c, t, prev) {
   if (C.veneno > 0) for (let i = 0; i < 3; i++) { c.fillStyle = '#9cff57'; c.fillRect(Math.round(cx - w / 3 + ((t * 40 + i * 50) % (w * 0.66))), Math.round(base - h * 0.3 - ((t * 60 + i * 37) % 80)), 6, 6); }
   // nombre, vida y lo que va a hacer (la intención va en un globo a la izquierda de la barra)
   const top = base - h - 14 + bob, E = SW_ENEMIGOS[id];
-  const yb = Math.max(150, top - 24), bx = 214;
+  const yb = Math.max(160, top - 10), bx = 214;
   swTexto(c, tr(E.nombre), bx + 105, yb - 22, 24, E.tipo === 'normal' ? '#ffffff' : E.tipo === 'elite' ? '#ffb13d' : '#ff5a4f');
   const fantasma = prev && prev.enemigo > 0 ? prev.enemigo : 0;
   swBarra(c, bx, yb - 6, 210, 26, C.vida, C.vidaMax, '#e8413a', fantasma, t);
@@ -144,7 +144,7 @@ function swPintaArriba(c, t) {
   // las reliquias
   const rel = P.reliquias;
   rel.forEach((r, i) => {
-    const col = Math.floor(i / 8), x = col % 2 ? 486 : 6, yy = 110 + (i % 8) * 50 + (col > 1 ? 25 : 0);
+    const col = Math.floor(i / 7), x = col % 2 ? 484 : 4, yy = 108 + (i % 7) * 54 + (col > 1 ? 27 : 0);
     swDibuja(c, r, x, yy, 2);
     SW_BOTONES.push({ id: 'rel:' + r, x, y: yy, w: 48, h: 48 });
   });
@@ -159,13 +159,13 @@ function swPintaLados(c, t, lados, carta, inclina) {
     c.save(); c.translate(cx, y0); c.scale(k, k); c.globalAlpha = aleja ? 0.45 : 1;
     swDibujaC(c, 'i-flecha', izq ? -2 : 2, 0, 3, izq);
     const icono = L.icono && SW_IMG[L.icono] ? L.icono : null;
-    if (icono) swDibujaC(c, icono, 0, 62, icono.startsWith('r-') || icono.startsWith('n-') ? 3 : 3);
+    if (icono) swDibujaC(c, icono, 0, 66, 4);
     const col = L.bloqueado ? '#ff8a80' : hacia ? '#ffd84a' : '#ffffff';
-    const nom = swParte(c, tr(L.nombre).toUpperCase(), 128, 19);
+    const nom = swParte(c, tr(L.nombre).toUpperCase(), 116, 19);
     nom.slice(0, 2).forEach((l, j) => swTexto(c, l, 0, 112 + j * 22, 19, col));
     let yy = 112 + Math.min(2, nom.length) * 22 + 4;
     const lineas = L.bloqueado ? [L.porque] : swLineas(SW_P, carta, L);
-    for (const ln of lineas) for (const l of swParte(c, ln, 128, 15)) { swTexto(c, l, 0, yy, 15, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4, 600); yy += 18; }
+    for (const ln of lineas) for (const l of swParte(c, ln, 120, 15)) { swTexto(c, l, 0, yy, 15, L.bloqueado ? '#ff8a80' : '#fff6d8', 'center', 4, 600); yy += 18; }
     c.restore();
     SW_BOTONES.push({ id: izq ? 'lado:L' : 'lado:R', x: cx - 66, y: y0 - 30, w: 132, h: 260 });
   }
@@ -229,7 +229,9 @@ function swPintaPartida(c, t, dt) {
   if (P.carta || SW_G.sale) swPintaCarta(c, t, dt);
   if (!P.carta && !SW_G.sale && P.fase === 'enemigo') swTexto(c, tr('Turno del enemigo…'), 270, SW_V.cartaCY, 24, '#fff6a0');
   swPintaMecha(c, t);
+  swPintaFrenesi(c, t);
   swPintaMarcador(c, t, prev);
+  swPintaEstallido(c, t);
   if (prev && prev.combo) swTexto(c, tr('¡COMBO! {n}', { n: tr(prev.combo) }), 270, SW_V.cartaY - 24, 24 + Math.sin(t * 10), '#ffd84a', 'center', 6);
   swPintaEfectos(c, t);
 }
@@ -254,15 +256,83 @@ function swPintaMecha(c, t) {
     // la chispa de la mecha
     const cx = 270 - w / 2 + w * k; c.fillStyle = '#fff6a0'; c.fillRect(Math.round(cx) - 3, y + 3 + (Math.sin(t * 40) > 0 ? 0 : 3), 6, 6);
   }
-  const fr = C.racha >= SW_CFG.frenesi;
-  if (C.racha >= 2) swTexto(c, fr ? tr('¡FRENESÍ! x{n}', { n: C.racha }) : tr('RACHA x{n}', { n: C.racha }), 270, SW_V.hud - 22, fr ? 26 + Math.sin(t * 14) * 2 : 20, fr ? '#ff8a2a' : '#fff6a0', 'center', 6);
-  if (fr) {
-    // bordes de fuego pixelado
-    for (let i = 0; i < 18; i++) {
-      const x = (i * 31 + t * 90) % 560 - 10, a = 0.5 + 0.5 * Math.sin(t * 9 + i);
-      c.fillStyle = i % 2 ? `rgba(255,138,42,${a})` : `rgba(255,216,74,${a})`;
-      c.fillRect(Math.round(x / 6) * 6, SW_V.H - 104 - Math.round(a * 4) * 6, 12, 12 + Math.round(a * 3) * 6);
-      c.fillRect(Math.round(x / 6) * 6, Math.round(a * 3) * 6, 12, 12);
+  // la racha: 4 llamitas que se encienden antes del frenesí
+  const fr = C.racha >= SW_CFG.frenesi, yr = SW_V.hud - 24;
+  if (!fr) {
+    for (let i = 0; i < SW_CFG.frenesi; i++) {
+      const on = i < C.racha, x = 222 + i * 26;
+      c.fillStyle = SW_TINTA; c.fillRect(x - 2, yr - 12, 22, 24);
+      c.fillStyle = on ? (i === C.racha - 1 && Math.sin(t * 16) > 0 ? '#fff6a0' : '#ff8a2a') : '#3a2440'; c.fillRect(x, yr - 10, 18, 20);
+      if (on) { c.fillStyle = '#ffd84a'; c.fillRect(x + 6, yr - 4, 6, 10); }
+    }
+    if (C.racha >= 1) swTexto(c, tr('RACHA'), 190, yr, 18, '#fff6a0', 'right', 5);
+  }
+}
+/* ---------- el FRENESÍ: la pantalla arde ---------- */
+function swLlama(c, x, base, alto, t, sem) {
+  // una lengua de fuego pixelada (columnas de 6 px: rojo abajo, naranja, amarillo y punta blanca)
+  const capas = [['#b3200f', 1], ['#ff5a1f', 0.8], ['#ffb13d', 0.55], ['#fff2a0', 0.28]];
+  for (const [col, f] of capas) {
+    const h = Math.round((alto * f * (0.75 + 0.25 * Math.sin(t * 11 + sem))) / 6) * 6;
+    c.fillStyle = col; c.fillRect(x, base - h, 12, h);
+  }
+}
+function swPintaFrenesi(c, t) {
+  const F = SW_FX, H = SW_V.H, P = SW_P, C = P && P.C;
+  const ardor = F.calor, racha = C ? C.racha : 0;
+  if (ardor > 0) {
+    // calor: el borde de la pantalla se pone naranja y late
+    const g = c.createRadialGradient(270, H * 0.45, H * 0.25, 270, H * 0.45, H * 0.75);
+    g.addColorStop(0, 'rgba(255,90,20,0)'); g.addColorStop(1, `rgba(255,70,10,${(0.38 + 0.12 * Math.sin(t * 8)) * ardor})`);
+    c.fillStyle = g; c.fillRect(0, 0, 540, H);
+    // llamas por abajo (detrás del marcador) y por los lados; crecen con la racha
+    const extra = Math.min(1.8, 1 + (racha - SW_CFG.frenesi) * 0.15), alto = 70 * ardor * extra;
+    for (let x = -6; x < 546; x += 12) swLlama(c, x, SW_V.hud + 6, alto * (0.6 + 0.4 * Math.abs(Math.sin(x * 0.07))), t, x * 0.3);
+    c.save(); c.translate(0, 0);
+    for (let y = 120; y < SW_V.hud; y += 12) {
+      const a = alto * 0.55 * (0.5 + 0.5 * Math.abs(Math.sin(y * 0.05 + t * 2)));
+      c.save(); c.translate(0, y); c.rotate(Math.PI / 2); swLlama(c, 0, 0, a, t, y); c.restore();
+      c.save(); c.translate(540, y + 12); c.rotate(-Math.PI / 2); swLlama(c, 0, 0, a, t, y + 9); c.restore();
+    }
+    c.restore();
+    // las brasas que suben
+    for (const b of F.brasas) { c.globalAlpha = 1 - b.t / b.vida; c.fillStyle = b.col; c.fillRect(Math.round(b.x / 3) * 3, Math.round(b.y / 3) * 3, b.lado, b.lado); }
+    c.globalAlpha = 1;
+    // el letrero de siempre mientras dura
+    if (C && racha >= SW_CFG.frenesi && F.estallido < 0.55) {
+      c.save(); c.translate(270, SW_V.hud - 26); const k = 1 + 0.06 * Math.sin(t * 14); c.scale(k, k);
+      swTituloFuego(c, tr('¡FRENESÍ! x{n}', { n: racha }), 0, 0, 30); c.restore();
     }
   }
+}
+// la entrada en FRENESÍ (encima de todo): onda de choque, destello y el letrero gigante
+function swPintaEstallido(c, t) {
+  const F = SW_FX, H = SW_V.H;
+  if (F.humo > 0) { for (let i = 0; i < 14; i++) { c.globalAlpha = F.humo * 0.5; c.fillStyle = i % 2 ? '#5a4a66' : '#3a2e44'; const s = 18 + (1 - F.humo) * 40; c.fillRect(i * 40 + Math.sin(i) * 10, SW_V.hud - 30 - (1 - F.humo) * 80 - (i % 3) * 14, s, s); } c.globalAlpha = 1; }
+  // la onda de choque al entrar: un anillo de píxeles que se abre
+  if (F.onda > 0) {
+    const r = F.onda * 620, n = 64; c.globalAlpha = 1 - F.onda;
+    for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; c.fillStyle = i % 2 ? '#fff6a0' : '#ff8a2a'; c.fillRect(Math.round(270 + Math.cos(a) * r) - 9, Math.round(SW_V.cartaCY + Math.sin(a) * r) - 9, 18, 18); }
+    c.globalAlpha = 1;
+  }
+  // el estallido: destello blanco y el letrero gigante que cae y rebota
+  if (F.estallido > 0) {
+    const e = F.estallido, tt = 1 - e;   // tt va de 0 a 1
+    if (tt < 0.15) { c.fillStyle = `rgba(255,240,200,${(1 - tt / 0.15) * 0.85})`; c.fillRect(0, 0, 540, H); }
+    const caida = tt < 0.18 ? 3.2 - (tt / 0.18) * 2.2 : 1 + Math.sin((tt - 0.18) * 30) * 0.08 * Math.max(0, 1 - (tt - 0.18) * 3);
+    c.save(); c.globalAlpha = tt > 0.8 ? (1 - tt) * 5 : 1;
+    c.translate(270, SW_POS.enemigo[1] - 20); c.rotate(-0.08 + Math.sin(tt * 20) * 0.02 * e); c.scale(caida, caida);
+    swTituloFuego(c, tr('¡FRENESÍ!'), 0, 0, 76);
+    swTexto(c, tr('x{n} daño · x{m} oro', { n: SW_CFG.frenesiDano, m: SW_CFG.frenesiOro }), 0, 62, 24, '#fff6a0', 'center', 6);
+    c.restore();
+  }
+}
+// letras de fuego: degradado de amarillo a rojo, contorno grueso y sombra roja
+function swTituloFuego(c, txt, x, y, tam) {
+  swLetra(c, tam); c.textAlign = 'center'; c.textBaseline = 'middle';
+  const b = Math.max(2, Math.round(tam * 0.08));
+  c.fillStyle = '#7a1408'; for (const [dx, dy] of [[0, b * 3], [b, b * 3], [-b, b * 3]]) c.fillText(txt, x + dx, y + dy);
+  c.fillStyle = SW_TINTA; for (let dy = -b; dy <= b * 2; dy += b) for (const dx of [-b, 0, b]) c.fillText(txt, x + dx, y + dy);
+  const g = c.createLinearGradient(0, y - tam / 2, 0, y + tam / 2); g.addColorStop(0, '#fffbd0'); g.addColorStop(0.35, '#ffd23a'); g.addColorStop(0.7, '#ff7a1a'); g.addColorStop(1, '#e8301a');
+  c.fillStyle = g; c.fillText(txt, x, y);
 }

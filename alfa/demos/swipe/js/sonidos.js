@@ -31,6 +31,9 @@ Object.assign(SFX, {
   swNoVale: () => tone(220, 160, 0.14, 'square', 0.05),
   swCombo: () => [784, 988, 1318, 1568].forEach((f, i) => tone(f, f, 0.1, 'square', 0.05, i * 0.05)),
   swHielo: () => { tone(1800, 2400, 0.2, 'sine', 0.05); noise(0.3, 0.06, 8000, 'highpass'); },
+  swFrenesi: () => { noise(0.5, 0.2, 900); tone(110, 55, 0.5, 'sawtooth', 0.12); [523, 659, 784, 1046, 1318, 1568].forEach((f, i) => tone(f, f * 1.02, 0.12, 'square', 0.06, 0.08 + i * 0.045)); noise(0.6, 0.08, 6000, 'highpass', 0.1); },
+  swAvivar: () => { tone(700, 1400, 0.08, 'square', 0.04); noise(0.1, 0.06, 2500, 'bandpass'); },
+  swApaga: () => { noise(0.5, 0.08, 1500); tone(400, 150, 0.4, 'triangle', 0.05); },
   swTic: () => tone(1400, 1400, 0.03, 'square', 0.04),
   swPiso: () => { tone(392, 392, 0.1, 'triangle', 0.07); tone(523, 523, 0.16, 'triangle', 0.07, 0.1); },
 });
@@ -45,5 +48,5 @@ function swMusicaBucle() {
   swCargaSonidos();
   if (M.trk && M.trk.once) return;
   if (M.name !== SW_MUS.quiere) musicSet(SW_MUS.quiere);
-  M.tmT = 1;
+  M.tmT = SW_FX.frenesi ? 1.3 : 1;   // con el frenesí la música va más deprisa
 }

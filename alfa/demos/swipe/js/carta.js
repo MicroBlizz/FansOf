@@ -67,6 +67,14 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
   const A = swAspecto(P, carta), W = 270, Hh = 360;
   // sombra
   c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(-W / 2 + 10, -Hh / 2 + 14, W, Hh);
+  if (SW_FX.calor > 0 && P.C && carta.tipo === 'accion') {
+    const p = 6 + Math.round((2 + 2 * Math.sin(t * 12)) / 2) * 6;
+    c.globalAlpha *= SW_FX.calor;
+    c.fillStyle = '#ff5a1f'; c.fillRect(-W / 2 - p, -Hh / 2 - p, W + 2 * p, Hh + 2 * p);
+    c.fillStyle = '#ffd84a'; c.fillRect(-W / 2 - p / 2, -Hh / 2 - p / 2, W + p, Hh + p);
+    for (let x = -W / 2; x < W / 2; x += 12) swLlama(c, x, -Hh / 2 - p + 6, 26 + 18 * Math.abs(Math.sin(x * 0.11 + t * 3)), t, x);
+    c.globalAlpha /= SW_FX.calor;
+  }
   if (SW_IMG.carta) swDibujaC(c, 'carta', 0, 0, 3);
   else { swPanel(c, -W / 2, -Hh / 2, W, Hh, '#6b4424', '#8a5a30', '#3e2612', 6); swPanel(c, -W / 2 + 18, -Hh / 2 + 18, W - 36, Hh - 36, '#f4e6c8', '#fff8e6', '#d8c49a', 3); }
   // la cinta del título, del color de la rareza
@@ -79,10 +87,10 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
   if (A.iconos) {
     // las dos acciones: izquierda y derecha, con su flecha
     const [a, b] = A.iconos;
-    const lx = -56, rx = 56, yy = y + 64;
-    c.save(); c.globalAlpha = inclina > 0 ? 0.4 : 1; swDibujaC(c, a, lx, yy, 4); swDibujaC(c, 'i-flecha', lx, yy + 66, 2, true); c.restore();
-    c.save(); c.globalAlpha = inclina < 0 ? 0.4 : 1; swDibujaC(c, b, rx, yy, 4); swDibujaC(c, 'i-flecha', rx, yy + 66, 2); c.restore();
-    c.fillStyle = '#c8b08a'; c.fillRect(-2, yy - 50, 4, 120);
+    const lx = -58, rx = 58, yy = y + 68;
+    c.save(); c.globalAlpha = inclina > 0 ? 0.4 : 1; swDibujaC(c, a, lx, yy, 5); swDibujaC(c, 'i-flecha', lx, yy + 70, 2, true); c.restore();
+    c.save(); c.globalAlpha = inclina < 0 ? 0.4 : 1; swDibujaC(c, b, rx, yy, 5); swDibujaC(c, 'i-flecha', rx, yy + 70, 2); c.restore();
+    c.fillStyle = '#c8b08a'; c.fillRect(-2, yy - 54, 4, 128);
     if (carta.tipo === 'accion') {
       const [L, R] = swLados(P, carta);
       if (L.coste) { swDibujaC(c, 'i-caos', lx - 46, yy - 44, 2); swTexto(c, String(L.coste), lx - 30, yy - 36, 18, '#ffb13d', 'center', 4); }
@@ -92,8 +100,8 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
     }
     y = yy + 122;
   } else if (A.reliquia) {
-    swDibujaC(c, A.reliquia, 0, y + 72 + Math.round(Math.sin(t * 3) * 2) * 2, 5);
-    y += 150;
+    swDibujaC(c, A.reliquia, 0, y + 78 + Math.round(Math.sin(t * 3) * 2) * 2, 6);
+    y += 160;
   } else if (A.arte) {
     const [w, h] = swTam(A.arte, 3);
     swPanel(c, -w / 2 - 6, y - 4, w + 12, h + 12, SW_TINTA, SW_TINTA, SW_TINTA, 3);

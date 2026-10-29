@@ -161,8 +161,11 @@ const ESCENA = (() => {
     const cx = j.x - f.x * atras, cz = j.z - f.z * atras;
     const objetivo = _v().set(cx, j.y + K.alto + (K.atras - atras) * 0.5, cz);
     if (tubo) objetivo.y = Math.min(objetivo.y, j.y + TECHO_CAMARA);
+    const yAntes = camara.position.y;
     camara.position.lerp(objetivo, Math.min(1, (K.suave + Math.abs(j.v) * 0.25) * dt));   // a más velocidad, menos retraso: el coche no se aleja
+    camara.position.y = lerp(yAntes, objetivo.y, Math.min(1, K.suaveAlto * dt));   // la altura, más suave: los botes de la suspensión no mueven la vista
     if (tubo && !cabeCamara(camara.position.x, camara.position.z, j, tubo)) camara.position.copy(objetivo);   // el retraso no la saca del túnel
+    if (tubo) camara.position.y = Math.min(camara.position.y, j.y + TECHO_CAMARA);
     const suelo = CIUDAD.altura(camara.position.x, camara.position.z, j.y) + 1.6; if (camara.position.y < suelo) camara.position.y = suelo;   // ni bajo el suelo (cuestas)
     camara.lookAt(j.x + f.x * K.mira, 1 + j.y, j.z + f.z * K.mira);
     camara.fov = lerp(camara.fov, lerp(K.fov[0], K.fov[1], vel) + (j.usandoNitro ? 6 : 0), Math.min(1, 4 * dt)); camara.updateProjectionMatrix();

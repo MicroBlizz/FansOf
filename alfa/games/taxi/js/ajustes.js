@@ -51,7 +51,7 @@ const TAXI = {
     suspension: 0.32,         // largo de la suspensión en reposo
     recorrido: 0.25,          // lo que puede comprimirse
     dureza: 50,               // dureza del muelle (sube = más seca)
-    amortigua: [2.8, 3.6],    // amortiguación al comprimir y al estirarse
+    amortigua: [4.5, 5.5],    // amortiguación al comprimir y al estirarse
     agarre: 2.6,              // agarre de las ruedas (cuánto aguantan de lado antes de deslizar)
     agarreDerrape: 1.1,       // el agarre de las traseras con el derrape
     agarreLado: 1.0,          // rigidez del agarre lateral
@@ -59,7 +59,11 @@ const TAXI = {
     giroCae: 16,              // a esta velocidad el giro ya es la mitad
     frenoFuerza: 70,          // fuerza de freno por rueda (unidades de Rapier)
     frenoDerrape: 0,          // derrapando, las ruedas frenan solo esto (el freno sirve para cruzar el coche)
-    derrapeConserva: 0.9,     // derrapando, parte de la velocidad perdida en cada paso que se devuelve
+    derrapeSigue: 0.6,        // segundos que dura seguro un derrape empezado (luego sigue mientras vaya cruzado y con el volante al mismo lado)
+    derrapeConserva: 0.9,
+    derrapePierde: 0.12,      // derrapando con gas, parte de la velocidad que se pierde por segundo (poca: el derrape largo es para ir rápido)
+    derrapeRumbo: 0.8,        // derrapando, radianes por segundo que la marcha se acerca a donde apunta el morro (menos = más cruzado)
+    derrapeAngulo: 0.6,       // lo más cruzado que va el coche (radianes entre el morro y la marcha)     // derrapando, parte de la velocidad perdida en cada paso que se devuelve
     apoyo: 0.6,               // carga aerodinámica: empuja hacia el suelo según la velocidad (kg por (m/s)²)
     giroTope: 2.2,            // radianes por segundo que puede girar el coche sobre sí mismo (sin esto, los trompos)
     giroDerrape: 1.9,         // derrapando, a cuánto gira el coche sobre sí mismo con el volante a tope
@@ -150,6 +154,6 @@ const TAXI = {
     huida: { dura: 60, nivel: 2, premio: 350 },                                 // sobrevive a la persecución
     radio: 6,                 // metros de la salida de un evento para arrancarlo
   },
-  camara: { atras: 11, alto: 5, mira: 7, suave: 4, fov: [62, 78] },   // detrás del coche, altura, cuánto mira por delante, suavizado, campo de visión de parado a tope
+  camara: { atras: 11, alto: 5, mira: 7, suave: 4, suaveAlto: 5, fov: [62, 78] },   // detrás del coche, altura, cuánto mira por delante, suavizado, campo de visión de parado a tope
   teclas: { izq: ['ArrowLeft', 'KeyA'], der: ['ArrowRight', 'KeyD'], gas: ['ArrowUp', 'KeyW'], freno: ['ArrowDown', 'KeyS', 'Space'], nitro: ['ShiftLeft', 'ShiftRight', 'KeyX'], accion: ['Enter', 'KeyE'] },
 };

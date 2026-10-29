@@ -93,13 +93,16 @@ const COCHE_RAPIER = (() => {
     // dirección: mucho parado, menos cuanto más rápido (a giroCae ya es la mitad); el derrape gira más
     const quiereDerrape = e.freno > 0 && Math.abs(e.giro) > 0.3 && avance > K.derrapeMin;
     if (quiereDerrape && !c.derrapando) v.sucesos.push('derrape-empieza');
-    c.derrapando = quiereDerrape || (c.derrapando && Math.abs(c.vl) > 4 && avance > K.derrapeMin * 0.7);
+    // una vez cruzado, el derrape sigue mientras se mantenga el volante hacia el mismo lado (sin freno): así se encadenan curvas
+    const sigueDerrape = c.derrapando && Math.abs(e.giro) > 0.3 && Math.sign(e.giro) === c.ladoDerrape && ((c.derrapeT || 0) < F.derrapeSigue || Math.abs(c.vl) > 1) && avance > K.derrapeMin * 0.7;
+    if (quiereDerrape && !c.derrapando) c.ladoDerrape = Math.sign(e.giro);
+    c.derrapando = quiereDerrape || sigueDerrape;
     const angulo = e.giro * F.giroMax / (1 + Math.max(0, avance) / F.giroCae) * (c.derrapando ? K.derrapeGiro : 1);
     c.giroRuedas = lerp(c.giroRuedas || 0, angulo, Math.min(1, 12 * dt));
     for (let i = DELANTE; i < DELANTE + 2; i++) control.setWheelSteering(i, c.giroRuedas);
     // agarre: el del suelo; derrapando, las traseras patinan (el freno apenas frena: sirve para cruzar el coche, no para pararlo)
     const agarre = F.agarre * (S[2] === undefined ? 1 : S[2]);
-    for (let i = 0; i < 4; i++) control.setWheelFrictionSlip(i, i >= DETRAS && quiereDerrape ? F.agarreDerrape * (S[2] === undefined ? 1 : S[2]) : agarre);
+    for (let i = 0; i < 4; i++) control.setWheelFrictionSlip(i, i >= DETRAS && c.derrapando ? F.agarreDerrape * (S[2] === undefined ? 1 : S[2]) : agarre);
     if (c.derrapando) { for (let i = 0; i < 4; i++) control.setWheelBrake(i, i < DETRAS ? freno * F.frenoDerrape : 0); c.nitro = Math.min(1, c.nitro + K.nitroCarga.derrape * dt); c.derrapeT = (c.derrapeT || 0) + dt; } else c.derrapeT = 0;
     // el rozamiento del aire y del suelo (TAXI.coche.rozamiento y el freno de cada suelo), y por encima de la velocidad máxima frena
     const vel = cuerpo.linvel(), roza = (K.rozamiento + S[1]) * dt + (avance > vmax ? (avance - vmax) / Math.max(avance, 1) * 2 * dt : 0);
@@ -117,6 +120,7 @@ const COCHE_RAPIER = (() => {
       // y al soltar se endereza)
       let gy = clamp(w.y - adelante.y * quita, -F.giroTope, F.giroTope);
       if (c.derrapando) gy = lerp(gy, e.giro * F.giroDerrape, Math.min(1, F.derrapeMando * dt));
+      v.giroQuerido = c.derrapando ? e.giro * F.giroDerrape : null;
       cuerpo.setAngvel(punto(w.x - adelante.x * quita, gy, w.z - adelante.z * quita), true);
     } else {
       // par que lleva «arriba» hacia el cielo: arriba × (0, 1, 0)
@@ -127,12 +131,23 @@ const COCHE_RAPIER = (() => {
 
   // derrapar es para ir rápido de lado, no para frenar: las ruedas de lado se comen mucha velocidad y se devuelve casi toda
   // (la dirección la pone la física; solo cambia cuánto corre)
-  function conservaDerrape(v, antes) {
+  // `minima`: con gas, la rapidez que se garantiza (la de antes del paso menos derrapePierde): las traseras patinan y casi no empujan
+  function conservaDerrape(v, antes, dt, minima) {
     const vel = v.cuerpo.linvel(), ahora = Math.hypot(vel.x, vel.z), previa = Math.hypot(antes.x, antes.z);
-    if (ahora < 1 || ahora >= previa) return;
-    const k = (ahora + (previa - ahora) * F.derrapeConserva) / ahora;
-    v.cuerpo.setLinvel(punto(vel.x * k, vel.y, vel.z * k), true);
+    if (ahora < 1) return;
+    const rapidez = Math.max(minima, ahora >= previa ? ahora : ahora + (previa - ahora) * F.derrapeConserva);
+    // la marcha sigue al morro con retraso (el coche va cruzado), pero nunca más cruzada que derrapeAngulo: así el derrape se
+    // aguanta mientras se lleve el volante, en vez de acabar en un trompo o enderezarse solo
+    const q = v.cuerpo.rotation(), adelante = rota(q, punto(0, 0, 1)), morro = Math.atan2(adelante.x, adelante.z);
+    let rumbo = Math.atan2(antes.x, antes.z), dif = angulo(morro - rumbo);   // desde la marcha de antes del paso: las ruedas la enderezarían de golpe
+    rumbo += Math.sign(dif) * Math.min(Math.abs(dif), F.derrapeRumbo * dt);
+    dif = angulo(morro - rumbo);
+    if (Math.abs(dif) > F.derrapeAngulo) rumbo = morro - Math.sign(dif) * F.derrapeAngulo;
+    v.cuerpo.setLinvel(punto(Math.sin(rumbo) * rapidez, vel.y, Math.cos(rumbo) * rapidez), true);
+    // y el morro gira lo que pide el volante (sin el empujón de las ruedas, que lo pasaba de vueltas)
+    if (v.giroQuerido !== null) { const w = v.cuerpo.angvel(); v.cuerpo.setAngvel(punto(w.x, v.giroQuerido, w.z), true); }
   }
+  const angulo = a => Math.atan2(Math.sin(a), Math.cos(a));   // entre -π y π
 
   // --- después de la física: el coche de siempre a partir del cuerpo de Rapier
   function escribe(v, c) {
@@ -157,6 +172,7 @@ const COCHE_RAPIER = (() => {
     siHaCambiado(v, c);
     FISICA_RAPIER.actualizar(c.x, c.z);
     const S = K.suelos[c.suelo] || K.suelos.asfalto;
+    const inicio = v.cuerpo.linvel();
     mandos(v, c, e, dt, S);
     // las rampas de salto dan el mismo impulso que en el coche arcade (la cuña sola apenas levanta)
     if (!c.aire && c.v > 8 && mundo.rampas) for (const rp of mundo.rampas) if (rp !== v.rampa && COCHE.enRampa(c, rp)) {
@@ -167,7 +183,7 @@ const COCHE_RAPIER = (() => {
     const antes = Math.hypot(c.v, c.vl), velAntes = v.cuerpo.linvel();
     v.control.updateVehicle(dt);
     FISICA_RAPIER.paso();
-    if (c.derrapando && !c.aire) conservaDerrape(v, velAntes);
+    if (c.derrapando && !c.aire) conservaDerrape(v, velAntes, dt, e.gas ? Math.hypot(inicio.x, inicio.z) * (1 - F.derrapePierde * dt) : 0);
     escribe(v, c);
     // en el aire si ninguna rueda toca (con un poco de margen: un bache no es un salto)
     const aire = c.ruedasEnSuelo === 0;

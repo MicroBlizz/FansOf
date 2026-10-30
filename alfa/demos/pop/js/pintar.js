@@ -21,7 +21,7 @@ function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, 
 /* ---------- fondo ---------- */
 function ppPintaFondo(c, k, t) {
   const im = PP_IMG[k];
-  if (im) { c.imageSmoothingEnabled = false; c.drawImage(im, 0, 0, 540, PP_V.H); }
+  if (im) { c.imageSmoothingEnabled = false; c.drawImage(im, 0, 0, 540, PP_V.H); c.fillStyle = 'rgba(8,4,24,0.42)'; c.fillRect(0, 0, 540, PP_V.H); }
   else {
     const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#2a1a1a' : '#1a1040'); gr.addColorStop(1, k === 'fondo-jefe' ? '#0d0808' : '#0b0620');
     c.fillStyle = gr; c.fillRect(0, 0, 540, PP_V.H);
@@ -106,6 +106,7 @@ function ppCorazon(c, x, y, s, lleno) {
 }
 function ppPintaMarcador(c, t) {
   const P = PP_P;
+  c.fillStyle = 'rgba(8,4,24,0.55)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   // corazones
   const dano = PP_FX.dano;
   for (let i = 0; i < P.vidaMax; i++) { const s = 34 + (i === P.vida && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < P.vida); }
@@ -120,6 +121,7 @@ function ppPintaMarcador(c, t) {
   }
   // el equipo, abajo
   const g = P.T ? ppGeom(P.T.n) : ppGeom(3), y0 = g.y + g.lado + 60;
+  c.fillStyle = 'rgba(8,4,24,0.55)'; c.beginPath(); c.roundRect(20, y0 - 22, 500, 170, 24); c.fill();
   ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, '#cfc8ff');
   for (let k = 0; k < PP_CFG.equipo; k++) {
     const x = 270 + (k - 1.5) * 110, id = P.equipo[k];

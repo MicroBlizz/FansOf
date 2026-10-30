@@ -1,8 +1,8 @@
 {
- "build": 670,
- "hash": "0db96d7",
- "fecha": "2026-10-30T11:16:33Z",
- "mensaje": "Fans of Pop: prototipo del roguelike de pop-it (demos/pop)",
+ "build": 671,
+ "hash": "8f5a6c2",
+ "fecha": "2026-10-30T11:19:23Z",
+ "mensaje": "Fans of Pop: arte y sonido de Yoshi (slimes, fondos, iconos, efectos) y ajustes de lectura",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -23,7 +23,7 @@ function ppDibuja(c, k, x, y, s = 4) {
 // centrado en (cx, cy), ajustado a que quepa en `lado` píxeles (escala entera si es posible)
 function ppDibujaEn(c, k, cx, cy, lado) {
   const im = PP_IMG[k]; if (!im) return null;
-  let s = Math.floor(lado / Math.max(im.width, im.height)); if (s < 1) s = lado / Math.max(im.width, im.height);
+  let s = lado / Math.max(im.width, im.height); if (s >= 2) s = Math.floor(s);   // entero si cabe x2 o más; si no, el tamaño que toque
   return ppDibuja(c, k, cx - im.width * s / 2, cy - im.height * s / 2, s);
 }
 // un sprite en un lienzo pequeño (para las ventanas en HTML)

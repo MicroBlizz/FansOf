@@ -157,7 +157,8 @@ function ppPintaMarcador(c, t) {
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
   // toques de la sala
-  if (P.T) {
+  if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
+  else if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
     ppTexto(c, tr('Toques'), 496, 36, 22, '#ffe6f4', 'right');
     ppTexto(c, `${T.toques} / ${T.limite}`, 496, 66, 40, col, 'right');
@@ -220,6 +221,7 @@ function ppPintaSala(c, t) {
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
   ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, !!(T.d && T.d.dif));
   ppPintaTablero(c, T, t);
+  if (T.nim) ppPintaFilaNim(c, T, t);
   ppPintaMarcador(c, t);
   ppPintaEfectos(c, t);
   c.restore();

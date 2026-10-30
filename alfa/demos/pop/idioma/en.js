@@ -146,7 +146,6 @@ IDIOMA.add({
  "¡Mundo superado!": "World cleared!",
  "¡Nivel difícil!": "Hard level!",
  "¡Nivel jefe!": "Boss level!",
- "¡Nivel jefe! El CEO ha preparado su pop-it más gordo y te deja muy pocos toques de sobra.": "Boss level! The CEO has set up his chunkiest pop-it and leaves you very few spare taps.",
  "¡Plop! Has superado todos los mundos que hay de momento. ¡Pronto llegan más!": "Plop! You've cleared every world there is for now. More are coming soon!",
  "¡Plop! Lo que revientas se queda reventado. Para pasar el nivel, revienta todas.": "Plop! What you pop stays popped. To clear the level, pop them all.",
  "¡Pocos toques de sobra!": "Few spare taps!",
@@ -185,4 +184,15 @@ IDIOMA.add({
   "¡Bienvenida al Reino de las nubes!": "Welcome to the Cloud Kingdom!",
   "Aquí está todo mezclado: nata, cerezas, hielo y conchas. ¡Piensa cada toque!": "Everything is mixed up here: cream, cherries, ice and shells. Think about every tap!",
   "Más adelante: las de cereza necesitan tres golpes, las de hielo solo revientan si las tocas a ellas y las conchas, al tocarlas, solo revientan ellas.": "Later on: cherry bubbles need three hits, frozen ones only pop if you tap them directly, and tapping a shell only pops that shell.",
+  // niveles duelo
+  "¡Nivel jefe! Ahora te reta el CEO en persona, y casi nunca se equivoca.": "Boss level! The CEO himself challenges you, and he almost never makes a mistake.",
+  "¡Un nivel duelo! Aquí no hay toques: juegas por turnos contra un rival.": "A duel level! No tap limit here: you take turns against a rival.",
+  "En tu turno revienta las burbujas que quieras, pero todas de la MISMA fila, y pulsa ¡LISTO!. ¡Pierde quien revienta la última!": "On your turn, pop as many bubbles as you like, but all from the SAME row, then press READY!. Whoever pops the last one loses!",
+  "Truco: piensa qué le dejas al rival. Si ganas sin un solo error, 3 estrellas.": "Tip: think about what you leave your rival. Win without a single mistake for 3 stars.",
+  "Hmm… eso le viene bien": "Hmm… that helps them",
+  "¡{n} te ha ganado!": "{n} beat you!",
+  "Te ha tocado reventar la última burbuja. Pierdes un corazón; te quedan {n}.": "You had to pop the last bubble. You lose a heart; {n} left.",
+  "¡Gana {n}!": "{n} wins!",
+  "Piensa {n}…": "{n} is thinking…",
+  "Una sola fila por turno · ¡pierde quien revienta la última!": "One row per turn · whoever pops the last one loses!",
 });

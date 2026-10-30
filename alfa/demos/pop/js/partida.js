@@ -40,6 +40,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   PP_P.tipo = d.jefe ? 'jefe' : 'sala';
   const T = PP_P.T = ppNuevoTablero(d, ppFx());
   T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif ? ' · ' + tr('Difícil') : '');
+  if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
   const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
   if (manita) { T.mano = true; T.pista = [...T.sol][0]; }
   ppIrA('sala');
@@ -49,7 +50,8 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
   if (!dif && d.mundo > 0 && d.l === 1) ppTutorial('w' + (d.mundo + 1) + 'n1');
   if (dif) ppTutorial('modoDificil');
-  if (d.dificil) ppTutorial('dificil');
+  if (d.nim) ppTutorial('nimNivel');
+  else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
   if (PP_P.equipo.length) ppTutorial('amigo');
   if (SAVE.monedas > 0) ppTutorial('monedas');
@@ -57,6 +59,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
 // un toque del jugador en la burbuja i del nivel abierto
 function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
+  if (T.nim) { ppNimToque(i); return; }
   const r = ppToca(T, i); if (!r) return;
   ppMarcaDentro(true);   // desde el primer toque, salir a medias cuesta un corazón
   ppLolaToque();

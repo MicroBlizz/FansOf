@@ -68,7 +68,7 @@ function ppArranque() {
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevoDuelo(); };
   $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
-  $pp('#pp-listo').onclick = () => { play('select'); ppDueloListo(); };
+  $pp('#pp-listo').onclick = () => { play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
   $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };

@@ -1,8 +1,8 @@
 {
- "build": 708,
- "hash": "699b3e5",
- "fecha": "2026-10-30T22:20:30Z",
- "mensaje": "Fans of Pop 0.3.0: nota de novedades para la release (mundos 3 a 6, modo Memoria, logo)",
+ "build": 709,
+ "hash": "adef608",
+ "fecha": "2026-10-30T22:29:47Z",
+ "mensaje": "Fans of Pop: los niveles difíciles y los jefes pasan a ser duelos Nim contra el rival del mundo",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

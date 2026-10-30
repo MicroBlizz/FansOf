@@ -9,7 +9,7 @@ function ppIrA(p) {
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();
-  if (p !== 'duelo') $pp('#pp-listo').hidden = true;
+  if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   $pp('#pp-pausa').hidden = p === 'titulo';
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
@@ -178,7 +178,10 @@ const PP_TUTO = {
   amigo: [{ t: '¡Ya tienes un amigo! Mira abajo: cada uno te ayuda a su manera.' }, { t: 'Cuando su barrita se llena, ¡te echa una mano solo!' }],
   combo: [{ t: '¡COMBO! Si cada toque revienta 3 burbujas o más, el combo crece.' }],
   dificil: [{ t: 'Este nivel es difícil: los toques van muy justos. ¡Piensa antes de tocar!' }],
-  jefe: [{ t: '¡Nivel jefe! El CEO ha preparado su pop-it más gordo y te deja muy pocos toques de sobra.' }],
+  jefe: [{ t: '¡Nivel jefe! Ahora te reta el CEO en persona, y casi nunca se equivoca.' }],
+  nimNivel: [{ t: '¡Un nivel duelo! Aquí no hay toques: juegas por turnos contra un rival.' },
+             { t: 'En tu turno revienta las burbujas que quieras, pero todas de la MISMA fila, y pulsa ¡LISTO!. ¡Pierde quien revienta la última!' },
+             { t: 'Truco: piensa qué le dejas al rival. Si ganas sin un solo error, 3 estrellas.' }],
   monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
             { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
   modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],

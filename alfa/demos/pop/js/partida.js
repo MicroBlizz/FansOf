@@ -78,8 +78,9 @@ function ppToque(i) {
     if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO GORDO!'), 270, 275, '#ff8a2a'); }
     else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
   }
-  // sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos)
-  if (T.toques >= T.limite && T.gratis === 0) { T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) { T.hecho = true; ppSinToques(); } }, 800); }
+  // sin toques: ya no se puede tocar, pero se espera a los amigos que estén saltando (pueden acabarlo ellos); luego se ofrece
+  // seguir (anuncio o perlas, js/tienda.js) o rendirse y perder el corazón
+  if (T.toques >= T.limite && T.gratis === 0) { T.parado = true; setTimeout(() => { if (PP_P && PP_P.T === T && !T.hecho) ppOfreceSeguir(T); }, 800); }
 }
 // lo que pasa después de cualquier toque (del jugador o de un amigo): castigos, cargar a los que saltan y acabar el nivel
 function ppTrasToque(T, i, r) {

@@ -19,9 +19,11 @@ function ppAjusta() {
 function ppLogico(e) { const r = PP_CV.getBoundingClientRect(); return [(e.clientX - r.left) / PP_V.sc, (e.clientY - r.top) / PP_V.sc]; }
 PP_CV.addEventListener('pointerdown', e => {
   e.preventDefault();
-  if (!$pp('#pp-modal').hidden || !PP_P) return;
+  if (!$pp('#pp-modal').hidden) return;
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
+  if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
+  if (!PP_P) return;
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
@@ -45,6 +47,7 @@ function ppFotograma(ahora) {
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaSala(c, t); }
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
+  else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaDuelo(c, t); }
   else ppPintaPortada(c, t, dt);
 }
 function ppEmpieza(seguir) {
@@ -60,6 +63,8 @@ function ppArranque() {
   window.addEventListener('resize', ppAjusta);
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
+  $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevoDuelo(); };
+  $pp('#pp-listo').onclick = () => { play('select'); ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
   $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };

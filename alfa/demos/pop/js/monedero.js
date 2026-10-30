@@ -43,7 +43,7 @@ function ppPremioNivel(clave, estrellas, jefe, x = 1) {
   else if (nuevo) SAVE.mejor[clave] = estrellas;
   const total = Object.values(SAVE.mejor).reduce((a, b) => a + b, 0);
   while (Math.floor(total / PP_CFG.cofreCada) > SAVE.cofres) { SAVE.cofres++; p.cofre += PP_CFG.cofre[0] + Math.floor(Math.random() * (PP_CFG.cofre[1] - PP_CFG.cofre[0] + 1)); }
-  if (nuevo && jefe) p.cofre += PP_CFG.cofreJefe * x;
+  if (nuevo && jefe) { p.cofre += PP_CFG.cofreJefe * x; p.perlas = PP_CFG.perlas.jefe; SAVE.perlas = (SAVE.perlas || 0) + p.perlas; }
   SAVE.monedas += p.monedas + p.cofre; ppGuarda();
   return p;
 }

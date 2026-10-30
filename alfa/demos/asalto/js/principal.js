@@ -7,21 +7,26 @@ const AS_TOQUE = { boton: null };
 const AS_DRAG = { h: null, mov: false, x: 0, y: 0, x0: 0, y0: 0, celda: null };
 
 function asAjusta() {
-  // El juego se pinta en 270x480 y se amplía un número ENTERO de veces en píxeles reales de la pantalla: así cada píxel del dibujo
-  // ocupa exactamente 2x2, 3x3 o 4x4 píxeles del móvil y nada sale borroso. Si la pantalla es muy pequeña, se amplía lo que quepa.
+  // El juego se pinta en un lienzo pequeño de 270 de ancho y se amplía un número ENTERO de veces en píxeles reales de la pantalla:
+  // así cada píxel del dibujo ocupa exactamente 3x3, 4x4… y nada sale borroso. El ALTO se adapta al móvil (de 440 a 640 píxeles):
+  // la pantalla se llena entera y lo que sobra se lo queda la arena.
   const dpr = window.devicePixelRatio || 1, bw = document.body.clientWidth, bh = document.body.clientHeight, pad = bw < 600 ? 0 : 20;
   const maxW = (bw - pad * 2) * dpr, maxH = (bh - pad * 2) * dpr;
-  const k = Math.floor(Math.min(maxW / 270, maxH / 480));
-  let devW, devH;
-  if (k >= 2) { devW = 270 * k; devH = 480 * k; }
-  else { const s = Math.min(maxW / 270, maxH / 480); devW = Math.max(270, Math.floor(270 * s)); devH = Math.round(devW * 480 / 270); }
+  const k = Math.floor(Math.min(maxW / 270, maxH / 440));
+  let devW, devH, alto;
+  if (k >= 2) { alto = clamp(Math.floor(maxH / k), 440, 640); devW = 270 * k; devH = alto * k; }
+  else { alto = 480; const s = Math.min(maxW / 270, maxH / 480); devW = Math.max(270, Math.floor(270 * s)); devH = Math.round(devW * 480 / 270); }
   const w = devW / dpr, h = devH / dpr;
   const st = AS_ESCENARIO.style;
   st.width = w + 'px'; st.height = h + 'px';
   st.position = 'absolute';   // en un píxel entero de la pantalla, para que el navegador no lo vuelva a muestrear
   st.left = Math.round((bw - w) / 2 * dpr) / dpr + 'px'; st.top = Math.round((bh - h) / 2 * dpr) / dpr + 'px';
-  AS_V.sc = w / 540; AS_V.dpr = dpr;
+  AS_V.sc = w / 540; AS_V.dpr = dpr; AS_V.H = alto * 2;
   AS_CV.width = devW; AS_CV.height = devH;
+  AS_BUF.width = 270; AS_BUF.height = alto;
+  // el panel de abajo mide siempre lo mismo (270); la arena se estira con el resto
+  AS_Y = AS_V.H - 270; AS_ARENA.h = AS_Y - AS_ARENA.y;
+  AS_UI.style.height = AS_V.H + 'px';
   AS_UI.style.zoom = w / 540;   // zoom (no transform): el navegador vuelve a dibujar las letras a su tamaño y no las emborrona
 }
 function asLogico(e) { const r = AS_CV.getBoundingClientRect(); return [(e.clientX - r.left) / AS_V.sc, (e.clientY - r.top) / AS_V.sc]; }
@@ -94,18 +99,18 @@ document.addEventListener('keydown', e => {
 
 /* ---------- la portada (detrás del menú) ---------- */
 function asPintaPortada(c, t) {
-  c.fillStyle = '#2b2d6b'; c.fillRect(0, 0, 540, 960);
+  c.fillStyle = '#2b2d6b'; c.fillRect(0, 0, 540, AS_V.H);
   c.imageSmoothingEnabled = false;
-  if (AS_IMG.portada) { const im = AS_IMG.portada, h = im.height * 2; c.drawImage(im, 0, 0, im.width, im.height, 0, Math.min(0, 960 - h), 540, h); }
+  if (AS_IMG.portada) { const im = AS_IMG.portada, h = im.height * 2; c.drawImage(im, 0, 0, im.width, im.height, 0, Math.min(0, AS_V.H - h), 540, h); }
   // el desfile de los Animales Locos por abajo
   const lista = Object.keys(AS_HEROES).filter(asHay);
-  lista.forEach((k, i) => { const x = ((t * 40 + i * 60) % 620) - 40; asPintaMuneco(c, { tipo: k, anim: 'andar', tAnim: t + i * 0.3, lado: 'heroe', id: i, escala: 1.6 }, x, 930, t); });
+  lista.forEach((k, i) => { const x = ((t * 40 + i * 60) % 620) - 40; asPintaMuneco(c, { tipo: k, anim: 'andar', tAnim: t + i * 0.3, lado: 'heroe', id: i, escala: 1.6 }, x, AS_V.H - 30, t); });
 }
 
 /* ---------- el bucle ---------- */
 // Todo se pinta en un lienzo pequeño (270x480, la mitad) y se amplía sin suavizar: así el texto, las sombras, los giros y los
 // efectos salen con los mismos píxeles gordos que los dibujos de Yoshi. Nada se ve liso ni vectorial.
-const AS_BUF = document.createElement('canvas'); AS_BUF.width = 270; AS_BUF.height = 480;
+const AS_BUF = document.createElement('canvas'); AS_BUF.width = 270; AS_BUF.height = 480;   // el alto lo pone asAjusta
 const AS_BCTX = AS_BUF.getContext('2d');
 // En el lienzo pequeño (que se pinta con medidas de 540x960 y escala 0.5) cada rectángulo se encaja en su píxel: si cayera en medio
 // píxel, el navegador lo suavizaría y saldría un borde borroso.
@@ -149,7 +154,7 @@ function asArranque() {
   asCargaIconos();
   // las letras de píxeles: el texto se guarda ya dibujado (AS_TXT), así que hay que esperar a que lleguen; si llegan tarde, se borra lo guardado
   if (document.fonts) document.fonts.addEventListener('loadingdone', () => AS_TXT.clear());
-  const letras = document.fonts ? Promise.race([Promise.all(['16px "Jersey 10"', '32px "Jersey 10"', '10px Tiny5'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();
+  const letras = document.fonts ? Promise.race([Promise.all(['16px "Jersey 10"', '32px "Jersey 10"'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))]) : Promise.resolve();
   asCargaImagenes(() => letras.then(() => {
     AS_TXT.clear();
     asMenu();

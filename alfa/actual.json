@@ -1,8 +1,8 @@
 {
- "build": 688,
- "hash": "25d404d",
- "fecha": "2026-10-30T17:49:13Z",
- "mensaje": "Merge: portada sin dibujos provisionales y más fluida",
+ "build": 689,
+ "hash": "1324326",
+ "fecha": "2026-10-30T17:53:17Z",
+ "mensaje": "Fans of Asalto: llena toda la pantalla del móvil, muñecos y fondos de Yoshi a su tamaño real y toda la letra grande (se quita la de 10, que no se leía)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

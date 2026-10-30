@@ -11,7 +11,7 @@
 // En partes de casilla: I = el margen de hierba que deja la tierra dentro de su casilla (como en Triple Town); S = cuánto más estrecho que la losa
 // es el pasillo que la une con la vecina, por cada lado; A = lo ancho que se pinta el borde B; R = el radio más grande de una curva;
 // T = cuántas casillas cubre cada copia de la textura del relleno.
-const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.38, O: 0.06, F: 0.14, C: 0.34, I: 0.16, S: 0.15, A: 0.22, R: 0.24, T: 1.5 };
+const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.38, O: 0.06, F: 0.14, C: 0.34, I: 0.16, S: 0.15, A: 0.22, R: 0.24, T: 2.6 };
 // recorta una zona (x, y, w, h) de una imagen y la desvanece por los lados que se le digan: f = [izquierda, derecha, arriba, abajo], en px de la imagen
 function mgLosaTrozo(im, x, y, w, h, f) {
   const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w)); cv.height = Math.max(1, Math.round(h));

@@ -1,6 +1,10 @@
 // Fans Of · Inglés de la ficha de Fans of Swipe en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>ACTO 2, La Era Digital</b>: gana al CEO y la subida sigue hasta el piso 30, contra <b>Phony</b> y su Presidente.": "<b>ACT 2, The Digital Era</b>: beat the CEO and the climb goes on to floor 30, against <b>Phony</b> and its President.",
+  "Enemigos nuevos con <b>suscripciones</b>, <b>licencias caducadas</b>, <b>peajes</b> y facturas que caen del cielo; élites corruptas y 6 eventos nuevos.": "New enemies with <b>subscriptions</b>, <b>expired licenses</b>, <b>tolls</b> and bills falling from the sky; corrupted elites and 6 new events.",
+  "Libera a <b>ProGamer</b> y a <b>LaDirectora</b> y sus facciones se unen a ti con su reliquia. Y si te quedan pocas fuerzas: empieza directamente en el Acto 2 desde la portada.": "Free <b>ProGamer</b> and <b>TheDirector</b> and their factions join you with their relic. And if you're short on time: start straight in Act 2 from the title screen.",
+  "Phony ha intentado cobrar el Acto 2 como DLC. Microblizz ha denunciado a Phony por copiar su idea.": "Phony tried to sell Act 2 as a DLC. Microblizz sued Phony for stealing its idea.",
   "<b>Más estrategia</b>: ves la <b>siguiente carta</b>, cada carta tiene sus lados fijos y el lado que <b>ataca</b> va en rojo, para que aprendas a jugar rápido.": "<b>More strategy</b>: you see the <b>next card</b>, every card has fixed sides and the <b>attack</b> side is shown in red, so you can learn to play fast.",
   "Nuevo en combate: <b>guardia</b> (guardas parte del escudo), <b>parada</b> (devuelves el golpe) y enemigos que <b>cargan un golpe fuerte</b> que puedes cortar.": "New in combat: <b>guard</b> (you keep part of your shield), <b>parry</b> (you hit back) and enemies that <b>charge a big hit</b> you can interrupt.",
   "<b>Cada tipo de carta tiene su marco</b> (combate, evento, tienda, descanso, reliquia...), el texto de las cartas sale siempre entero y hay dibujos nuevos.": "<b>Every card type has its own frame</b> (combat, event, shop, rest, relic...), card text always shows in full and there is new art.",

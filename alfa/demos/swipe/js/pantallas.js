@@ -41,13 +41,14 @@ function swAyuda(enPartida) {
   const t = swModal(`<h2>${tr('Cómo se juega')}</h2>
     ${fila('i-flecha', tr('<b>Desliza la carta</b> a la izquierda o a la derecha. Cada lado hace una cosa distinta: míralo antes de soltar.'))}
     ${fila('i-espada', tr('El enemigo enseña lo que va a hacer. <b>Ataca</b> o <b>cúbrete</b> con escudo a tiempo.'))}
-    ${fila('i-escudo', tr('Los lados <b>cambian</b>: no siempre se ataca a la izquierda. El escudo que te sobra se guarda a medias (<b>guardia</b>) y la <b>Parada</b> devuelve lo que bloqueas.'))}
+    ${fila('i-escudo', tr('Cada carta tiene sus lados <b>fijos</b> y el que ataca va en <b>rojo</b>: apréndetelas y jugarás más rápido. El escudo que te sobra se guarda a medias (<b>guardia</b>) y la <b>Parada</b> devuelve lo que bloqueas.'))}
     ${fila('i-flecha', tr('A la derecha ves la <b>siguiente carta</b>: planea dos jugadas.'))}
     ${fila('n-elite', tr('Las élites y el CEO <b>cargan</b> golpes enormes. Hazles el daño que marcan mientras cargan y se lo <b>cortas</b>.'))}
     ${fila('i-caos', tr('Los ataques fuertes gastan <b>caos</b>. Ganas 1 cada turno.'))}
     ${fila('a-caos', tr('<b>¡Rápido!</b> Cada carta tiene su mecha. Si deslizas deprisa haces <b>racha</b>; con 4 seguidas entras en <b>FRENESÍ</b>: más daño y más oro.'))}
     ${fila('r-hielo', tr('Las <b>reliquias</b> premian tus gestos: tres a la izquierda, alternar lados… ¡Busca los combos!'))}
     ${fila('n-jefe', tr('Elige camino en cada piso y llega al piso 15: allí te espera <b>el CEO</b>.'))}
+    ${fila('n-jefe2', tr('Gana al CEO y se abre el <b>Acto 2</b>: 15 pisos más contra <b>Phony</b>, con suscripciones, peajes y facciones que liberar.'))}
     <button class="sw-btn" id="sw-ay-ok" type="button">${tr('¡A SUBIR!')}</button>`, 'sw-ancha');
   t.querySelectorAll('[data-mini]').forEach(s => s.append(swMiniatura(s.dataset.mini, s.dataset.mini.startsWith('i-') ? 3 : 2)));
   $('#sw-ay-ok').onclick = () => { play('select'); swCierraModal(); SW_PANT.pausa = false; if (!enPartida) swIrA('titulo'); else swNuevaMecha(); };

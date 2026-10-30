@@ -83,6 +83,8 @@ IDIOMA.add({
  "Phony ha anunciado que la libertad es un DLC. Nadie lo ha comprado.": "Phony announced that freedom is a DLC. Nobody bought it.",
  "¡ACTO 2 DESBLOQUEADO! Desde ahora, tras el CEO la subida sigue hasta el piso 30, contra Phony.": "ACT 2 UNLOCKED! From now on, after the CEO the climb goes on to floor 30, against Phony.",
  "EMPEZAR EN EL ACTO 2": "START IN ACT 2",
+ "Cada carta tiene sus lados <b>fijos</b> y el que ataca va en <b>rojo</b>: apréndetelas y jugarás más rápido. El escudo que te sobra se guarda a medias (<b>guardia</b>) y la <b>Parada</b> devuelve lo que bloqueas.": "Every card has <b>fixed</b> sides and the attacking side is shown in <b>red</b>: learn them and you'll play faster. Half of your leftover shield carries over (<b>guard</b>) and <b>Parry</b> hits back with what you block.",
+ "Gana al CEO y se abre el <b>Acto 2</b>: 15 pisos más contra <b>Phony</b>, con suscripciones, peajes y facciones que liberar.": "Beat the CEO to unlock <b>Act 2</b>: 15 more floors against <b>Phony</b>, with subscriptions, tolls and factions to free.",
  // revivir y atajo
  "¡Lola te readmite!": "Lola rehires you!",
  "Has caído en el piso {n}. Lola conoce a alguien en Recursos Humanos: mira un anuncio y sigues con media vida. Solo una vez por subida.": "You fell on floor {n}. Lola knows someone in HR: watch an ad and carry on with half your health. Only once per climb.",

@@ -1,4 +1,4 @@
-// Fans of Goose · El marcador: todo arriba (vida, experiencia, plumas para el dado bendito, casilla, monedas, combo y el dado), el mapa de las 63
+// Fans of Goose · El marcador: todo arriba (vida, experiencia, casilla, monedas y combo; el dado y su aro de plumas, abajo a la izquierda), el mapa de las 63
 // casillas en el borde derecho, los avisos grandes del centro y el jefe. La parte de abajo queda libre para jugar.
 'use strict';
 
@@ -21,22 +21,37 @@ function letra(t, tam, color, fuente, peso, borde) {
   t = String(t); const k = PAN.k, px = Math.round(Math.max(TAM_MIN, tam) * k), f = fuenteDe(tam, fuente), pw = 400;   // Jersey y Pirata solo tienen un peso
   const clave = t + '|' + px + '|' + color + '|' + f + '|' + pw + '|' + (borde ? 1 : 0);
   let L = LETRAS.get(clave); if (L) return L;
-  if (LETRAS.size > 900) LETRAS.clear();
+  if (LETRAS.size > 900) { let n = 0; for (const c of LETRAS.keys()) { LETRAS.delete(c); if (++n >= 200) break; } }   // fuera las más viejas, no todas de golpe
   const o = borde ? Math.max(1, Math.round(px / 18)) : 0, m = 2 + o;
   if (!MIDE) MIDE = document.createElement('canvas').getContext('2d');
   MIDE.font = `${pw} ${px}px ${f}`;
   const tw = Math.ceil(MIDE.measureText(t).width), w = tw + m * 2, h = Math.ceil(px * 1.45) + m * 2;
-  const a = lienzo(w, h), xa = a.getContext('2d');
+  const a = lienzo(w, h), xa = a.getContext('2d', { willReadFrequently: true });   // se lee aquí mismo: en memoria, sin esperar a la tarjeta gráfica
   xa.font = `${pw} ${px}px ${f}`; xa.textBaseline = 'middle'; xa.fillStyle = '#fff'; xa.fillText(t, m, h / 2);
   const d = xa.getImageData(0, 0, w, h); for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0; xa.putImageData(d, 0, 0);
   const tinta = col => { const c = lienzo(w, h), x = c.getContext('2d'); x.drawImage(a, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, w, h); return c; };
   const out = lienzo(w, h), xo = out.getContext('2d');
-  if (o) { const osc = tinta('#120808'); for (let dy = -o; dy <= o; dy++) for (let dx = -o; dx <= o; dx++) if (dx || dy) xo.drawImage(osc, dx, dy); }
-  xo.drawImage(tinta(color), 0, 0);
+  let contorno = null; const relleno = tinta(color);
+  if (o) { const osc = tinta('#120808'); contorno = lienzo(w, h); const xc = contorno.getContext('2d'); for (let dy = -o; dy <= o; dy++) for (let dx = -o; dx <= o; dx++) if (dx || dy) xc.drawImage(osc, dx, dy); xo.drawImage(contorno, 0, 0); }
+  xo.drawImage(relleno, 0, 0);
   L = { c: out, w: w / k, h: h / k, tw: tw / k, m: m / k }; LETRAS.set(clave, L);
+  if (t.length === 1) { L.o = contorno; L.f = relleno; }   // las cifras sueltas guardan sus dos capas para montar números
   return L;
 }
+// RENDIMIENTO: los números que cambian sin parar (daño, vida, tiempo, monedas) se montan con cifras sueltas ya hechas: antes cada número
+// nuevo («37», «38»…) se fabricaba entero y en el móvil eso daba tirones. Primero todos los contornos y luego el color, para que no se pisen.
+const NUMERO = /^[0-9 :\/x+\-.!]{2,8}$/;
+function numero2(t, x, y, tam, color, alinea, fuente, peso, borde) {
+  let tw = 0; const P = [];
+  for (const ch of t) { const L = letra(ch, tam, color, fuente, peso, borde); P.push(L); tw += L.tw; }
+  let cx = alinea === 'left' ? x : alinea === 'right' ? x - tw : x - tw / 2;
+  for (let pasada = 0; pasada < 2; pasada++) {
+    let xx = cx;
+    for (const L of P) { const c = pasada ? L.f : L.o; if (c) G.drawImage(c, xx - L.m, y - L.h / 2, L.w, L.h); xx += L.tw; }
+  }
+}
 function texto2(t, x, y, tam, color, alinea = 'center', fuente = FUENTE, peso = 800, borde = 0.3) {
+  t = String(t); if (NUMERO.test(t)) { numero2(t, x, y, tam, color, alinea, fuente, peso, borde); return; }
   const L = letra(t, tam, color, fuente, peso, borde);
   const x0 = alinea === 'left' ? x - L.m : alinea === 'right' ? x - L.tw - L.m : x - L.tw / 2 - L.m;
   G.drawImage(L.c, x0, y - L.h / 2, L.w, L.h);
@@ -60,7 +75,7 @@ function boton(x, y, w, h, txt, color, accion, tam = 10, sub) {
 function pintaHud() {
   const J = JUEGO, W = PAN.W;
   // franja de arriba
-  G.globalAlpha = 0.55; G.fillStyle = '#0a0608'; G.fillRect(0, 0, W, 34); G.globalAlpha = 1;
+  G.globalAlpha = 0.55; G.fillStyle = '#0a0608'; G.fillRect(0, 0, W, 26); G.globalAlpha = 1;
   // pausa
   caja(4, 4, 17, 17, 5, '#e8742a'); G.fillStyle = '#fff8e8'; G.fillRect(9.5, 8.5, 2.2, 8); G.fillRect(13.5, 8.5, 2.2, 8);
   BOTONES.push({ x: 0, y: 0, w: 26, h: 26, accion: () => pausa() });
@@ -75,10 +90,6 @@ function pintaHud() {
   // experiencia
   barra(25, 16, W - 64, 5, J.xp / J.xpNecesita, '#6bd4ff');
   texto2(tr('NV {n}', { n: J.nivel }), W - 36, 18.6, 6, '#6bd4ff', 'left');
-  // impulso
-  const ki = J.impulso / plumasDado(), listo = J.dado.bendito;
-  barra(25, 24, W - 64, 6, listo ? 1 : ki, listo ? (((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d') : '#d9a520');
-  texto2(listo ? tr('¡DADO BENDITO!') : tr('PLUMAS PARA EL DADO BENDITO'), 25 + (W - 64) / 2, 27.3, 5, listo ? '#3a1d00' : '#fff1c2', 'center', FUENTE, 800, listo ? 0 : 0.3);
   // casilla o jefe
   if (J.minijefe && J.minijefe.hp > 0) { /* lo pinta pintaMinijefeHud */ }
   else if (J.jefe) {

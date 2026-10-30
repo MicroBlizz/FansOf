@@ -45,7 +45,11 @@ const PP_CFG = {
   // ver un anuncio (siempre porque tú quieres, nunca en mitad del juego sin pedirlo)
   anuncio: { toques: 3, vidasDia: 3 },   // +3 toques una vez por intento al quedarte sin toques · +1 corazón, hasta 3 veces al día
   // el DUELO contra el CEO (js/duelo.js): pop-it de verdad por turnos, pierde quien revienta la última
-  duelo: { premio: 15, premiosDia: 5, fallo: [0.45, 0.08], paso: 0.06 },   // monedas por victoria (con premio las 5 primeras del día) · cuánto se equivoca el CEO (del 45 % baja hasta el 8 % según ganas)
+  duelo: { premio: 15, premiosDia: 5, fallo: [0.45, 0.08], paso: 0.06 },
+  // MEMORIA (js/memoria.js, fase 4): el «Simón dice» del pop-it. Tablero de 3x3; cada burbuja de la melodía dura `paso` segundos en
+  // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
+  // mejor ronda de hoy), hasta `tope` al día. Sin corazones.
+  memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },   // monedas por victoria (con premio las 5 primeras del día) · cuánto se equivoca el CEO (del 45 % baja hasta el 8 % según ganas)
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 

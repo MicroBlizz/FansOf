@@ -47,7 +47,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (T.pista !== null && !manita) ppFxHabilidad('lola');
   // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y el primer jefe
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
-  if (d.mundo === 1 && d.l === 1) ppTutorial('w2n1');
+  if (!dif && d.mundo > 0 && d.l === 1) ppTutorial('w' + (d.mundo + 1) + 'n1');
   if (dif) ppTutorial('modoDificil');
   if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
@@ -128,7 +128,6 @@ function ppSalaHecha() {
   else if (g === PP_P.nivel) { PP_P.nivel++; nuevo = true; }
   ppGuardaCamino();
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(true); return; }
-  if (nuevo && d.jefe && PP_P.nivel >= PP_TOTAL_NIVELES) { ppTermina(true); return; }   // el último jefe: de momento, el final
   if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false); return; }
   if (presos.length) { play('ppRescate'); ppVentanaRescate(presos); } else ppVentanaSalaHecha();
 }

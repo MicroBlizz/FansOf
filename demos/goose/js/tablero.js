@@ -149,26 +149,42 @@ function pintaTablero() {
 
 // una isla: el suelo de su tierra (patrón de Yoshi anclado al mundo, sin costuras) en franjas de 2 con sus bordes, un canto de roca
 // por fuera (el grosor) y, si el derrumbe la está comiendo, su panza colgando (img/isla-<tierra>.png)
-const PATRONES = {};
-function patronDe(id) {
-  if (PATRONES[id] !== undefined) return PATRONES[id];
-  const im = IMG['t-' + id] || (SUELOS[id] && SUELOS[id][0]); if (!im) return null;
-  const p = G.createPattern(im, 'repeat'); if (p && p.setTransform) p.setTransform(new DOMMatrix().scale(1 / ARTE));
-  return (PATRONES[id] = p);
-}
-function pintaIsla(t, top, bottom, tb, cortada) {
-  const B = biomaDe(t), pat = patronDe(B.id), paso = 2;
+// RENDIMIENTO: cada isla se dibuja UNA vez (en tiras de 2, como siempre) en un lienzo aparte y luego se pega entera; antes se rehacía
+// tira a tira en cada fotograma (miles de órdenes de dibujo) y era lo que más frenaba el móvil. Si el derrumbe la corta, se pega solo
+// el trozo que queda. Lo que cambia con el tiempo (la junta de tierra, la panza que cuelga) se pinta encima en cada fotograma.
+const ISLAS = new Map();
+function vaciaIslas() { ISLAS.clear(); }
+function islaLienzo(t, top, B) {
+  const clave = t + '|' + B.id + '|' + PAN.k;
+  let I = ISLAS.get(clave); if (I) return I;
+  if (ISLAS.size >= 10) ISLAS.delete(ISLAS.keys().next().value);   // las de abajo ya no vuelven: fuera la más vieja
+  const k = PAN.k, paso = 2, bottom = top + TH;
+  let x0 = Infinity, x1 = -Infinity;
+  for (let y = top; y < bottom; y += paso) { const [l, r] = bordes(y + Math.min(paso, bottom - y) / 2); x0 = Math.min(x0, l); x1 = Math.max(x1, r); }
+  x0 = Math.floor(x0) - 6; x1 = Math.ceil(x1) + 6;
+  const c = lienzo((x1 - x0) * k, (TH + 6) * k), x = c.getContext('2d');
+  pixelaContexto(x); x.setTransform(k, 0, 0, k, -x0 * k, -top * k);   // en coordenadas del mundo: el patrón del suelo queda anclado igual que antes
+  const pat = (() => { const im = IMG['t-' + B.id] || (SUELOS[B.id] && SUELOS[B.id][0]); if (!im) return null; const q = x.createPattern(im, 'repeat'); if (q && q.setTransform) q.setTransform(new DOMMatrix().scale(1 / ARTE)); return q; })();
   for (let y = top; y < bottom; y += paso) {
     const h = Math.min(paso, bottom - y), [l, r] = bordes(y + h / 2);
-    G.fillStyle = '#0c0604'; G.fillRect(l - 5 + tb, y + 4, 5, h); G.fillRect(r + tb, y + 4, 5, h);   // el canto de roca (grosor) asomando por fuera
-    G.fillStyle = B.veta; G.fillRect(l - 4 + tb, y + 3, 4, h - 0.5); G.fillRect(r + tb, y + 3, 4, h - 0.5);
-    G.fillStyle = pat || B.suelo[0]; G.fillRect(l + tb, y, r - l, h);
-    if (t === 1) { G.globalAlpha = 0.16; G.fillStyle = '#ffd34d'; G.fillRect(l + tb, y, r - l, h); G.globalAlpha = 1; }   // la salida
-    G.fillStyle = B.niebla; G.globalAlpha = 0.28; G.fillRect(l + 1 + tb, y, 1.5, h); G.fillRect(r - 2.5 + tb, y, 1.5, h); G.globalAlpha = 1;   // el borde de hierba o piedra
-    G.fillStyle = '#120805'; G.fillRect(l - 1 + tb, y, 1, h); G.fillRect(r + tb, y, 1, h);   // el contorno
+    x.fillStyle = '#0c0604'; x.fillRect(l - 5, y + 4, 5, h); x.fillRect(r, y + 4, 5, h);   // el canto de roca (grosor) asomando por fuera
+    x.fillStyle = B.veta; x.fillRect(l - 4, y + 3, 4, h - 0.5); x.fillRect(r, y + 3, 4, h - 0.5);
+    x.fillStyle = pat || B.suelo[0]; x.fillRect(l, y, r - l, h);
+    if (t === 1) { x.globalAlpha = 0.16; x.fillStyle = '#ffd34d'; x.fillRect(l, y, r - l, h); x.globalAlpha = 1; }   // la salida
+    x.fillStyle = B.niebla; x.globalAlpha = 0.28; x.fillRect(l + 1, y, 1.5, h); x.fillRect(r - 2.5, y, 1.5, h); x.globalAlpha = 1;   // el borde de hierba o piedra
+    x.fillStyle = '#120805'; x.fillRect(l - 1, y, 1, h); x.fillRect(r, y, 1, h);   // el contorno
   }
   // la junta con la siguiente isla
-  G.fillStyle = '#120805'; G.globalAlpha = 0.45; const [l0, r0] = bordes(top + 0.5); G.fillRect(l0 + tb, top, r0 - l0, 1); G.globalAlpha = 1;
+  x.fillStyle = '#120805'; x.globalAlpha = 0.45; const [l0, r0] = bordes(top + 0.5); x.fillRect(l0, top, r0 - l0, 1); x.globalAlpha = 1;
+  I = { c, x0, k }; ISLAS.set(clave, I);
+  return I;
+}
+function pintaIsla(t, top, bottom, tb, cortada) {
+  const B = biomaDe(t), I = islaLienzo(t, top, B), k = I.k;
+  // el trozo que queda (más el canto, que asoma 4 por debajo); a píxeles enteros para que no se emborrone
+  const alto = Math.min(I.c.height, Math.max(0, Math.round((bottom - top + (cortada ? 4 : 6)) * k)));
+  const dx = Math.round((I.x0 + tb) * k) / k;
+  if (alto > 0) G.drawImage(I.c, 0, 0, I.c.width, alto, dx, top, I.c.width / k, alto / k);
   if (BIOMAS.some(b => b.desde === t) && t > 1) { const [l, r] = bordes(bottom - 2); G.fillStyle = B.niebla; G.globalAlpha = 0.5; G.fillRect(l + tb, bottom - 3, r - l, 3); G.globalAlpha = 1; }
   // la panza de la isla colgando bajo el derrumbe
   if (cortada) { const [l, r] = bordes(bottom - 1), S = SPR['isla-' + B.id]; if (S) G.drawImage(S.n, l - 4 + tb, bottom - 2, r - l + 8, Math.min(40, S.h * (r - l + 8) / S.w)); }

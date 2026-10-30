@@ -263,7 +263,6 @@ IDIOMA.add({
   "QUEDAN": "LEFT",
   "comprado": "bought",
   "Tira el dado para irte (saldrá impar)": "Roll the die to leave (it will be odd)",
-  "PLUMAS PARA EL DADO BENDITO": "FEATHERS FOR THE BLESSED DIE",
   "¡Y TIRO PORQUE ME TOCA!": "AND I ROLL AGAIN!",
   "Como en el Juego de la Oca: tira el dado (dos toques o su botón) y avanzas esas casillas a toda prisa; tus armas atacan solas. En cada casilla te defiendes y recoges plumas, pero cuanto más tardes en tirar, más ocas y más cerca el derrumbe. Pares, bendición; impares, maldición. Cuidado con el Puente, el Pozo, la Cárcel y la Muerte; descansa en la Posada. Llega a la casilla 63 y vence a la Oca Madre.": "Like the Game of the Goose: roll the die (double tap or its button) and rush forward that many squares; your weapons attack on their own. On each square you defend yourself and pick up feathers, but the longer you wait to roll, the more geese and the closer the crumbling. Even, blessing; odd, curse. Beware the Bridge, the Well, the Jail and Death; rest at the Inn. Reach square 63 and defeat the Mother Goose.",
   "Te cura del todo": "Heals you fully",

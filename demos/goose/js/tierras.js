@@ -129,9 +129,11 @@ let OSCURO = null;
 function pintaOscuridad() {
   const J = JUEGO;
   if (!(enTierra('catacumbas') || maldita('niebla')) || J.modo !== 'juego') return;
-  const W = PAN.W, H = PAN.H, k = PAN.k;
-  if (!OSCURO || OSCURO.width !== W * k) { OSCURO = lienzo(W * k, H * k); }
-  const o = OSCURO.getContext('2d'); o.setTransform(k, 0, 0, k, 0, 0); o.clearRect(0, 0, W, H);
+  // RENDIMIENTO: la oscuridad se rehace en cada fotograma, así que va a 2 píxeles por unidad (no 4): cuatro veces menos trabajo y se
+  // nota igual (sus anillos ya son escalones gruesos)
+  const W = PAN.W, H = PAN.H, k = Math.min(2, PAN.k);
+  if (!OSCURO || OSCURO.width !== W * k || OSCURO.height !== H * k) { OSCURO = lienzo(W * k, H * k); }
+  const o = OSCURO.getContext('2d'); o.imageSmoothingEnabled = false; o.setTransform(k, 0, 0, k, 0, 0); o.clearRect(0, 0, W, H);
   o.fillStyle = 'rgba(2,1,6,.93)'; o.fillRect(0, 0, W, H);
   o.globalCompositeOperation = 'destination-out';
   const x = J.yo.x, y = J.yo.y - J.camY, r = (maldita('niebla') && !enTierra('catacumbas') ? 60 : 52) + Math.sin(J.t * 7) * 2;

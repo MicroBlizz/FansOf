@@ -14,9 +14,10 @@ function ppVerAnuncio(sitio, premio, siNo) {
   ANUNCIOS.ver(sitio).then(r => { if (r && r.visto) premio(); else if (siNo) siNo(); }).catch(() => { if (siNo) siNo(); });
 }
 const ppPerlasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-perla', px, '#ffd1ec')}${n}</span>`;
-// un botón que se paga con perlas (si no llegan, abre la tienda en vez de pagar)
-function ppBotonPerlas(texto, precio, clase, f) {
-  const b = ppBoton('', clase, () => { if ((SAVE.perlas || 0) >= precio) { SAVE.perlas -= precio; ppGuarda(); f(); } else ppTienda(); });
+// un botón que se paga con perlas (si no llegan, abre la tienda en vez de pagar). `vuelta`: la ventana de la que vienes, que la
+// tienda vuelve a abrir al pulsar VOLVER (con las perlas ya compradas). Sin ella, un nivel parado sin toques se quedaba bloqueado.
+function ppBotonPerlas(texto, precio, clase, f, vuelta = null) {
+  const b = ppBoton('', clase, () => { if ((SAVE.perlas || 0) >= precio) { SAVE.perlas -= precio; ppGuarda(); f(); } else ppTienda(vuelta); });
   b.innerHTML = `${texto} · ${ppPerlasHtml(precio, 28)}`;
   return b;
 }
@@ -27,19 +28,21 @@ function ppOfreceSeguir(T) {
   const precio = PP_CFG.perlas.seguir[Math.min(T.seguido || 0, PP_CFG.perlas.seguir.length - 1)];
   const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('¡Te quedan {n} burbujas! ¿Sigues?', { n: quedan })}</p><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 26)}</p>`);
   const sigue = n => { ppCierra(); T.limite += n; T.parado = false; T.seguido = (T.seguido || 0) + 1; ppFlota(tr('+{n} toques', { n }), 270, 240, '#3a8ee6'); play('ppPremio'); };
-  t.appendChild(ppBotonPerlas(tr('+{n} TOQUES', { n: PP_CFG.perlas.toquesSeguir }), precio, 'pp-btn', () => sigue(PP_CFG.perlas.toquesSeguir)));
+  t.appendChild(ppBotonPerlas(tr('+{n} TOQUES', { n: PP_CFG.perlas.toquesSeguir }), precio, 'pp-btn', () => sigue(PP_CFG.perlas.toquesSeguir), () => ppOfreceSeguir(T)));
   if (ppHayAnuncios() && !T.anuncio) t.appendChild(ppBoton(tr('VER ANUNCIO: +{n} TOQUES', { n: PP_CFG.anuncio.toques }), 'pp-btn2 pp-verde', () => { T.anuncio = true; ppVerAnuncio('pop-toques', () => sigue(PP_CFG.anuncio.toques), () => ppOfreceSeguir(T)); }));
   t.appendChild(ppBoton(tr('Rendirse'), 'pp-btn2 pp-azul', () => { ppCierra(); T.hecho = true; ppSinToques(); }));
 }
 /* ---------- sin corazones ---------- */
-function ppBotonesSinCorazones(t, alLlenar) {
+function ppBotonesSinCorazones(t, alLlenar, vuelta = null) {
   t.appendChild(ppBotonPrecio(tr('LLENAR'), PP_CFG.precioVidas, 'pp-btn', () => { if (ppLlenaVidas()) alLlenar(); }));
-  t.appendChild(ppBotonPerlas(tr('LLENAR'), PP_CFG.perlas.vidas, 'pp-btn2 pp-rosa', () => { SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); alLlenar(); }));
+  t.appendChild(ppBotonPerlas(tr('LLENAR'), PP_CFG.perlas.vidas, 'pp-btn2 pp-rosa', () => { SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); alLlenar(); }, vuelta));
   if (ppHayAnuncios() && ppAnunciosHoy() < PP_CFG.anuncio.vidasDia)
     t.appendChild(ppBoton(tr('VER ANUNCIO: +1 CORAZÓN ({n} hoy)', { n: PP_CFG.anuncio.vidasDia - ppAnunciosHoy() }), 'pp-btn2 pp-verde', () => ppVerAnuncio('pop-vida', () => { SAVE.anunciosHoy++; ppSumaVida(1); alLlenar(); })));
 }
 /* ---------- la tienda de perlas ---------- */
-function ppTienda() {
+let PP_TIENDA_VUELTA = null;   // la ventana a la que vuelve VOLVER (o null: solo se cierra)
+function ppTienda(vuelta) {
+  if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;
   const t = ppAbre(`<h2>${tr('Perlas')}</h2>${ppIcono('i-perlas', 110, '#ffd1ec')}<p class="pp-sub">${tr('Las perlas sirven para seguir cuando te quedas sin toques, llenar los corazones y hacer sitio en el equipo.')}</p>
     <p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
   const rejilla = document.createElement('div'); rejilla.className = 'pp-packs'; t.appendChild(rejilla);
@@ -49,7 +52,7 @@ function ppTienda() {
     b.onclick = () => { play('select'); ppCompraPack(p); };
     rejilla.appendChild(b);
   }
-  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { ppCierra(); }));
+  t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
 }
 function ppCompraPack(p) {
   if (typeof MONEDAS === 'undefined') return;

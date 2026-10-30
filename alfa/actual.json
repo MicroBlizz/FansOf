@@ -1,8 +1,8 @@
 {
- "build": 690,
- "hash": "4f48af1",
- "fecha": "2026-10-30T18:09:01Z",
- "mensaje": "Merge: camino con pasillos estrechos, contorno suave y detallitos",
+ "build": 691,
+ "hash": "a5581dd",
+ "fecha": "2026-10-30T18:11:32Z",
+ "mensaje": "Merge: las flores y matitas del borde también como detallitos dentro del camino",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -19,7 +19,7 @@ function ajusta() {
   PAN.W = W; PAN.H = H; PAN.k = PIXELES;
   cv.width = Math.round(W * PAN.k); cv.height = Math.round(H * PAN.k);
   cv.style.width = Math.round(W * css) + 'px'; cv.style.height = Math.round(H * css) + 'px';
-  preparaSprites(); preparaFondo(); preparaJardin(); preparaSuelos(); preparaAdornosCasillas(); preparaRejilla(H);
+  vaciaIslas(); preparaSprites(); preparaFondo(); preparaJardin(); preparaSuelos(); preparaAdornosCasillas(); preparaRejilla(H);
 }
 
 // --- el dedo ---

@@ -80,12 +80,36 @@ function pintaDado() {
     const F = CARAS[D.efecto];
     arcoPixel(x, y, 12, -1.57, -1.57 + 6.283 * Math.min(1, D.quedan / 3), 2, F.color);
   }
-  // el botón del dado
-  if (puedeTirar()) {
-    const pulso = 1 + Math.sin(J.t * 6) * 0.06, bx = W / 2, by = 76;
-    G.globalAlpha = 0.35 + Math.sin(J.t * 6) * 0.15; disco(bx, by, Math.round(18 * pulso), Math.round(18 * pulso), D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#f6e7b8'); G.globalAlpha = 1;
-    if (SPR['s-dado']) pinta('s-dado', bx, by + Math.sin(J.t * 5) * 1.5, false, false, 1); else pintaGirado('dadogrande' + (1 + ((J.t * 0.8) | 0) % 6), bx, by, Math.sin(J.t * 2) * 0.15, 0.75 * pulso);
-    texto2(D.bendito ? tr('¡DADO BENDITO!') : D.maldito ? tr('DADO MALDITO') : tr('TIRA EL DADO'), bx, by + 22, 7, D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#fff4dc');
-    BOTONES.push({ x: bx - 28, y: by - 22, w: 56, h: 52, accion: () => tirarDado() });
+  // el botón del dado: abajo a la izquierda, enfrente del de la habilidad (donde llega el pulgar). Su aro dorado es el Impulso:
+  // las plumas doradas lo llenan y, lleno, el dado se vuelve de oro (el próximo sale bendito)
+  if (J.modo !== 'juego') return;
+  const bx = 26, by = PAN.H - 60, puede = puedeTirar(), ki = D.bendito ? 1 : Math.min(1, J.impulso / plumasDado());
+  const pulso = puede ? 1 + Math.sin(J.t * 6) * 0.05 : 1, col = D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#f6e7b8';
+  disco(bx, by, 17, 17, '#120808'); disco(bx, by, 15.5, 15.5, D.bendito ? '#8a5a10' : puede ? '#3a2a1a' : '#24170f');
+  if (puede) { G.globalAlpha = 0.3 + Math.sin(J.t * 6) * 0.15; disco(bx, by, Math.round(15 * pulso), Math.round(15 * pulso), col); G.globalAlpha = 1; }
+  // el aro de plumas (gris de fondo, dorado lo que llevas)
+  arcoPixel(bx, by, 19.5, 0, 6.283, 2, '#2a1a10');
+  if (ki > 0) arcoPixel(bx, by, 19.5, -1.57, -1.57 + 6.283 * ki, 2, D.bendito && ((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d');
+  G.globalAlpha = puede ? 1 : 0.45;
+  if (D.bendito) pintaDadoOro(bx, by + (puede ? Math.sin(J.t * 5) : 0), 0.62 * pulso);
+  else if (SPR['s-dado']) pinta('s-dado', bx, by + (puede ? Math.sin(J.t * 5) : 0), false, false, 0.7 * pulso);
+  else pintaGirado('dadogrande' + (1 + ((J.t * 0.8) | 0) % 6), bx, by, puede ? Math.sin(J.t * 2) * 0.15 : 0, 0.55 * pulso);
+  G.globalAlpha = 1;
+  if (D.bendito) texto2(tr('¡DADO BENDITO!'), bx + 2, by - 28, 7, '#ffd34d', 'left');
+  else if (D.maldito) texto2(tr('DADO MALDITO'), bx + 2, by - 28, 7, '#c9a0ff', 'left');
+  else if (puede) texto2(tr('TIRA EL DADO'), bx - 14, by - 28, 7, '#fff4dc', 'left');
+  if (puede) BOTONES.push({ x: bx - 24, y: by - 24, w: 48, h: 48, accion: () => tirarDado() });
+}
+
+// el dado de oro: el mismo dibujo teñido de dorado (se hace una vez y se guarda)
+let DADO_ORO = null;
+function pintaDadoOro(x, y, esc) {
+  const S = SPR['s-dado'] || SPR.dadogrande6; if (!S) return;
+  if (!DADO_ORO || DADO_ORO.de !== S.n) {
+    const c = lienzo(S.n.width, S.n.height), o = c.getContext('2d');
+    o.drawImage(S.n, 0, 0); o.globalCompositeOperation = 'source-atop'; o.globalAlpha = 0.55; o.fillStyle = '#ffc21a'; o.fillRect(0, 0, c.width, c.height);
+    DADO_ORO = { c, de: S.n, w: S.w, h: S.h };
   }
+  const w = DADO_ORO.w * esc, h = DADO_ORO.h * esc;
+  G.drawImage(DADO_ORO.c, x - w / 2, y - h / 2, w, h);
 }

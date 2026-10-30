@@ -30,7 +30,7 @@ const TROZOS = (() => {
     lejos = new T.Mesh(geo, recorta(new T.MeshLambertMaterial({ vertexColors: true }))); lejos.position.set(A / 2, 0, L / 2); escena.add(lejos);
     // los edificios de todo el mundo, un poco más pequeños y más bajos que los de verdad (quedan dentro cuando llega el detalle)
     const cajas = [];
-    for (const m of CIUDAD.celdas) for (const e of m.edificios) { const y = basePlanta(e) - 1, alto = CIUDAD.alturaSuelo(e.x, e.z) + e.h - 1 - y; cajas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w - 0.8, alto, e.d - 0.8])); }
+    for (const e of [...CIUDAD.celdas.flatMap(m => m.edificios), ...CIUDAD.edificios]) { const y = basePlanta(e) - 1, alto = CIUDAD.alturaSuelo(e.x, e.z) + e.h - 1 - y; cajas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w - 0.8, alto, e.d - 0.8])); }
     for (const p of CIUDAD.puentes) cajas.push(U.caja(0x4a4060, [p.x, p.y - 0.8, p.z], [p.ancho, 1, p.largo - 1], [0, p.ang, 0]));
     lejosMalla(cajas);
     // el campo: pinos y rocas, más pequeños que los de verdad
@@ -108,7 +108,7 @@ const TROZOS = (() => {
     const n = CIUDAD.nodos;
     const traza = (e, ancho, color, cap) => { const a = n[e.a], b = n[e.b]; g.strokeStyle = color; g.lineWidth = ancho; g.lineCap = cap; g.beginPath(); g.moveTo(a.x, a.z); g.lineTo(b.x, b.z); g.stroke(); };
     for (const e of t.aristas) if (e.margen > 0) traza(e, e.ancho + e.margen * 2, COLOR.tierra, 'round');
-    for (const e of t.aristas) { if (e.tipo === 'tunel') continue; if (e.tipo === 'mirador') { const b = n[e.b]; g.fillStyle = '#9a93a8'; g.beginPath(); g.arc(b.x, b.z, e.ancho / 2, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#20102c'; g.lineWidth = 0.6; g.stroke(); continue; } traza(e, e.ancho, e.tipo === 'rampa' ? COLOR.tunel : COLOR.asfalto, e.margen > 0 ? 'round' : 'square'); }
+    for (const e of t.aristas) { if (e.tipo === 'tunel' || e.tipo === 'viaducto') continue; if (e.tipo === 'mirador') { const b = n[e.b]; g.fillStyle = '#9a93a8'; g.beginPath(); g.arc(b.x, b.z, e.ancho / 2, 0, Math.PI * 2); g.fill(); g.strokeStyle = '#20102c'; g.lineWidth = 0.6; g.stroke(); continue; } traza(e, e.ancho, e.tipo === 'rampa' ? COLOR.tunel : COLOR.asfalto, e.margen > 0 ? 'round' : 'square'); }
     // escondites
     g.strokeStyle = '#4fc3d9'; g.lineWidth = 0.6; for (const e of t.escondites) { g.beginPath(); g.arc(e.x, e.z, e.radio, 0, Math.PI * 2); g.stroke(); }
     const tex = new T.CanvasTexture(c); tex.colorSpace = T.SRGBColorSpace; tex.anisotropy = 4; tex.flipY = false; return tex;
@@ -132,6 +132,7 @@ const TROZOS = (() => {
       for (const e of m.edificios) { const y = basePlanta(e) - 1, alto = al(e.x, e.z) + e.h - y; piezas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w, alto, e.d])); }
       for (const a of m.arboles) arbol(piezas, a.x, al(a.x, a.z), a.z, a.radio, a.alto, false);
     }
+    for (const e of t.edificios) { const y = basePlanta(e) - 1, alto = al(e.x, e.z) + e.h - y; piezas.push(U.caja(e.color, [e.x, y + alto / 2, e.z], [e.w, alto, e.d])); }
     for (const o of t.campo) { const y = al(o.x, o.z); if (o.tipo === 'roca') piezas.push({ geo: new T.DodecahedronGeometry(o.radio, 0), color: 0x6e6478, p: [o.x, y + o.alto * 0.3, o.z], r: [0, o.x, 0] }); else arbol(piezas, o.x, y, o.z, o.radio, o.alto, true); }
     for (const p of t.puentes) {
       piezas.push(U.caja(0x4a4060, [p.x, p.y - 0.6, p.z], [p.ancho + 1, 1.2, p.largo], [0, p.ang, 0]));

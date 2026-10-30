@@ -12,7 +12,7 @@ const POLICIA = (() => {
   }
   // una patrulla nueva en un cruce a cierta distancia del jugador (persiguiendo, cerca y fuera de su vista)
   function nueva(cerca, rMin = 90, rMax = 200) {
-    const l = CIUDAD.nodosEn(cerca.x, cerca.z, rMin, rMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.vecinos.length);
+    const l = CIUDAD.nodosEn(cerca.x, cerca.z, rMin, rMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.tipo !== 'viaducto' && n.vecinos.length);
     const n = l.length ? l[(azar() * l.length) | 0] : CIUDAD.nodoCercano(cerca.x, cerca.z);
     const b = n.vecinos[(azar() * n.vecinos.length) | 0];
     const p = CONDUCTOR.nuevo(n.id, b, 13, { tipo: 'policia', persigue: false, vida: K.vida, empujada: 0, replan: 0, sirena: 0 });

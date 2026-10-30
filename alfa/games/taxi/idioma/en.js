@@ -113,5 +113,9 @@ IDIOMA.add({
   "Plaza cuadrada": "Square plaza",
   "Calle en ladera": "Hillside street",
   "Calle en ladera desde el este": "Hillside street from the east",
+  "Rampa a la azotea": "Ramp to the rooftop",
+  "Azotea del centro comercial": "Mall rooftop",
+  "Bajada al aparcamiento subterráneo": "Down to the underground car park",
+  "Aparcamiento subterráneo": "Underground car park",
   "Pruebas": "the Test Track",
 });

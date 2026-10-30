@@ -89,7 +89,7 @@ const TRAFICO = (() => {
   const COLORES = [0xff7a1a, 0x4fc3d9, 0xff9fd0, 0xfff6ea, 0x8a6fe0, 0x7ee04a, 0xffcb3d];
   // un cruce al azar cerca de un sitio (entre cercaMin y cercaMax), que no sea túnel
   function cruceCerca(sitio) {
-    const l = CIUDAD.nodosEn(sitio.x, sitio.z, T.cercaMin, T.cercaMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.vecinos.length);
+    const l = CIUDAD.nodosEn(sitio.x, sitio.z, T.cercaMin, T.cercaMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.tipo !== 'viaducto' && n.vecinos.length);
     return l.length ? l[(azar() * l.length) | 0] : CIUDAD.nodoCercano(sitio.x, sitio.z);
   }
   function nuevo(sitio) {

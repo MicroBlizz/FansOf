@@ -7,6 +7,8 @@
 //   · Una HORQUILLA (dos tramos que vuelven casi hacia atrás) también tiene plano: cerca del nudo las dos rectas se solapan, y si
 //     cada una llevara su pendiente quedaría un escalón entre ellas. Sobre el plano, el mismo sitio tiene la misma altura.
 //   · Un MIRADOR (fin de carretera con explanada redonda) es horizontal en toda la explanada, y la cuesta llega hasta su borde.
+//   · Un nudo con `llano` (metros) es horizontal en ese tramo a cada lado: así la rampa de un centro comercial llega a la azotea sin
+//     doblarla (la media de pendientes de un nudo de paso la levantaría).
 //   · En los demás nudos de paso (dos tramos, una curva) la pendiente sigue continua: la media de la que trae y la que lleva.
 //   · Entre un extremo y otro, la altura pasa del uno al otro con una curva suave (sin quiebros en las juntas).
 // Los túneles y las trincheras tienen cruces horizontales: sus paredes y techos son horizontales.
@@ -37,12 +39,12 @@ const PERFIL = (() => {
     }
     const esHorquilla = n => tramosDe.get(n.id).length === 2 && aperturaDe(n) < ANGULO_HORQUILLA;
     const esMirador = n => n.tipo === 'mirador';
-    const tienePlano = n => esCruce(n) || esHorquilla(n) || esMirador(n);
+    const tienePlano = n => esCruce(n) || esHorquilla(n) || esMirador(n) || n.llano > 0;
 
     // la inclinación (gx, gz) del plano de un cruce: la que mejor explica la pendiente con la que sale cada calle
     function planoDe(n) {
       const tramos = tramosDe.get(n.id);
-      if (tramos.some(esSubterraneo) || esMirador(n)) return [0, 0];
+      if (tramos.some(esSubterraneo) || esMirador(n) || n.llano > 0) return [0, 0];
       let xx = 0, xz = 0, zz = 0, bx = 0, bz = 0;
       for (const e of tramos) {
         const o = otro(e, n), dx = (o.x - n.x) / e.largo, dz = (o.z - n.z) / e.largo, p = pendienteHacia(e, n);
@@ -67,6 +69,7 @@ const PERFIL = (() => {
 
     // cuántos metros de cada tramo van sobre el plano de su cruce
     function llanoEn(n, e) {
+      if (n.llano > 0) return n.llano;
       if (esMirador(n)) return e.ancho / 2 + LLANO_ANTES / 2;   // la explanada (CINTAS.cruce.explanada) tiene de radio medio ancho
       if (esHorquilla(n)) return e.ancho / (2 * Math.sin(aperturaDe(n) / 2)) + LLANO_ANTES;   // hasta donde las dos rectas dejan de solaparse
       if (!esCruce(n)) return 0;

@@ -5,10 +5,10 @@
 // El terreno: llano, con una colina suave (las cuestas), una alta (el túnel, las horquillas y el mirador) y una ladera al este (la
 // calle que la rodea sin inclinarse de lado), y mar alrededor. Las carreteras se describen con puntos con nombre; la altura de cada
 // nudo es la del terreno salvo en el túnel y su trinchera. Al este, las piezas de la ciudad nueva (docs/taxi/CIUDAD-NUEVA.md):
-// rotondas, plazas, el cruce en A y la calle en ladera; cada una con su estación.
+// rotondas, plazas, el cruce en A, la calle en ladera y los dos centros comerciales; cada una con su estación.
 'use strict';
 FUENTES.pruebas = (() => {
-  const ANCHO = 2176, LARGO = 1024, BASE = 3, PROFUNDO = -8, TRAMOS_TRINCHERA = 6;
+  const ANCHO = 2176, LARGO = 1280, BASE = 3, PROFUNDO = -8, TRAMOS_TRINCHERA = 6;
   const ANCHOS = { calle: 12, anillo: 16, montaña: 11, rampa: 12, tunel: 12 };
 
   // --- el terreno
@@ -47,6 +47,10 @@ FUENTES.pruebas = (() => {
     { nombre: 'Plaza cuadrada', x: 1700, z: 630, hacia: [1700, 715] },
     { nombre: 'Calle en ladera', x: 1750, z: 286, hacia: [1805, 255] },
     { nombre: 'Calle en ladera desde el este', x: 2050, z: 286, hacia: [1995, 255] },
+    { nombre: 'Rampa a la azotea', x: 1370, z: 1000, hacia: [1370, 1060] },
+    { nombre: 'Azotea del centro comercial', x: 1478, z: 1060, y: BASE + 8, hacia: [1530, 1060] },
+    { nombre: 'Bajada al aparcamiento subterráneo', x: 1850, z: 975, hacia: [1850, 1000] },
+    { nombre: 'Aparcamiento subterráneo', x: 1830, z: 1135, y: PROFUNDO, hacia: [1830, 1110] },
   ];
   estaciones.forEach((e, i) => { e.numero = i + 1; });
 
@@ -113,7 +117,8 @@ FUENTES.pruebas = (() => {
     for (let z = 600; z <= LARGO + 40; z += 40) rio.push({ x: 530 + 12 * Math.sin(z / 70), z, ancho: 24, y: BASE - 5 });
 
     piezasDelEste(nudo, une, cadena, nombrados.S4c);
-    return { ciudades: [], rio, enlaces: [], monte: { subidas: [zig], vuelta: [], miradores } };
+    const edificios = centrosComerciales({ nudo, une, cadena, trinchera }, nombrados);
+    return { ciudades: [], rio, enlaces: [], monte: { subidas: [zig], vuelta: [], miradores }, edificios };
   }
 
   // --- las piezas de la ciudad nueva, al este. Rotondas y plazas redondas son un anillo de tramos rectos (girando poco en cada nudo,
@@ -178,6 +183,18 @@ FUENTES.pruebas = (() => {
     const pie = (a, nombre) => nudo(nombre, LADERA.x + Math.cos(a) * 200, LADERA.z + Math.sin(a) * 200);
     cadena([pequeña.e, pie((150 * Math.PI) / 180, 'LO'), arco[0]], 'calle');
     cadena([arco[arco.length - 1], pie((30 * Math.PI) / 180, 'LE'), nudo('LE1', 2060, 450), PE], 'calle');
+  }
+
+  // los centros comerciales, al sur de las plazas, en una calle que va de la plaza cuadrada a la vuelta del este: uno con azotea (la
+  // rampa sale de esa calle por el oeste) y otro con sótano (la trinchera baja hacia el sur desde la calle)
+  function centrosComerciales(h, nombrados) {
+    const V0 = h.nudo('V0', 1370, 960), V1 = h.nudo('V1', 1655, 960), V2 = h.nudo('V2', 1850, 960), V3 = h.nudo('V3', 2010, 960);
+    h.cadena([V0, V1, V2, V3], 'calle');
+    h.une(nombrados.QSO, V1, 'calle'); h.une(nombrados.PE1, V3, 'calle');
+    const arriba = CENTROS.conAzotea(h, 'CA', { x: 1500, z: 1060, ancho: 60, fondo: 40, base: BASE });
+    h.une(V0, arriba.pie, 'calle');
+    const abajo = CENTROS.conSotano(h, 'CS', { x: 1850, z: 1130, ancho: 60, fondo: 50, base: BASE, profundo: PROFUNDO, arriba: V2 });
+    return [arriba.edificio, abajo.edificio];
   }
 
   // árboles y rocas: en las isletas de las rotondas y en los parques de las plazas (una roca grande hace de monumento)

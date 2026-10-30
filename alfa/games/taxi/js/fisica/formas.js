@@ -25,7 +25,7 @@ const FORMAS = (() => {
 
   function cajas(t) {
     const lista = [];
-    for (const m of t.celdas) for (const e of m.edificios) {
+    for (const e of [...t.celdas.flatMap(m => m.edificios), ...t.edificios]) {
       const y0 = basePlanta(e) - 1, y1 = CIUDAD.alturaSuelo(e.x, e.z) + e.h;
       lista.push(caja(e.x, (y0 + y1) / 2, e.z, e.w / 2, (y1 - y0) / 2, e.d / 2));
     }

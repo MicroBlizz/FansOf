@@ -1,8 +1,8 @@
 {
- "build": 649,
- "hash": "c47a08d",
- "fecha": "2026-10-30T04:17:53Z",
- "mensaje": "Anuncios: Rumble, Jump, Tácticas y Snakes usan la capa común de core (de verdad o el nuestro de reserva)",
+ "build": 650,
+ "hash": "f5d1d9a",
+ "fecha": "2026-10-30T04:51:03Z",
+ "mensaje": "Taxi: centros comerciales en el circuito de pruebas",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

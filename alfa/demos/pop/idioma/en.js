@@ -92,4 +92,7 @@ IDIOMA.add({
  "Pausa": "Pause",
  "Salir del nivel": "Leave level",
  "Menú principal": "Main menu",
+ "PIXEL ART: SÍ": "PIXEL ART: ON",
+ "PIXEL ART: NO": "PIXEL ART: OFF",
+ "PIXEL ART": "PIXEL ART",
 });

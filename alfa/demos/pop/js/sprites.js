@@ -3,14 +3,24 @@
 // los slimes se pintan como gelatinas de su color con ojos, así el prototipo se puede probar sin esperar a Yoshi.
 'use strict';
 const PP_IMG = {};
+// ESTILO (Daniel, 30-10-2026): opción «PIXEL ART: SÍ/NO» en la portada y la pausa (SAVE.pixel). Sin pixel art (lo normal) los
+// dibujos salen de img-liso/ en grande y se pintan suaves; con pixel art, de img/ (reducidos a píxeles gordos) y sin suavizar.
+let PP_LISO = !SAVE.pixel;
+function ppCambiaEstilo() {
+  SAVE.pixel = !SAVE.pixel; ppGuarda(); PP_LISO = !SAVE.pixel;
+  for (const k of Object.keys(PP_IMG)) delete PP_IMG[k];   // mientras llegan los otros dibujos se ve el repuesto un instante
+  ppCargaImagenes();
+}
+const ppTextoEstilo = () => (SAVE.pixel ? tr('PIXEL ART: SÍ') : tr('PIXEL ART: NO'));
 const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
 const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mano', 'i-estrella',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo'])];
 function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {
     const im = new Image();
-    im.onload = () => { PP_IMG[k] = /^b-.*-abajo$/.test(k) ? ppHundida(im) : im; };
-    im.src = 'img/' + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
+    const liso = PP_LISO;
+    im.onload = () => { if (liso !== PP_LISO) return; PP_IMG[k] = /^b-.*-abajo$/.test(k) ? ppHundida(im) : im; };
+    im.src = (PP_LISO ? 'img-liso/' : 'img/') + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
   }
 }
 // la burbuja reventada tiene que verse HUNDIDA de un vistazo (si no, un niño no distingue cuáles faltan): se oscurece entera
@@ -30,20 +40,20 @@ const ppTieneImg = k => !!PP_IMG[k];
 function ppDibuja(c, k, x, y, s = 4) {
   const im = PP_IMG[k]; if (!im) return null;
   const w = im.width * s, h = im.height * s;
-  c.imageSmoothingEnabled = false;
+  c.imageSmoothingEnabled = PP_LISO; if (PP_LISO) c.imageSmoothingQuality = 'high';
   c.drawImage(im, Math.round(x), Math.round(y), w, h);
   return [w, h];
 }
 // centrado en (cx, cy), ajustado a que quepa en `lado` píxeles (escala entera si es posible)
 function ppDibujaEn(c, k, cx, cy, lado, exacto = false) {
   const im = PP_IMG[k]; if (!im) return null;
-  let s = lado / Math.max(im.width, im.height); if (s >= 2 && !exacto) s = Math.floor(s);   // entero si cabe x2 o más; si no, el tamaño que toque
+  let s = lado / Math.max(im.width, im.height); if (s >= 2 && !exacto && !PP_LISO) s = Math.floor(s);   // entero si cabe x2 o más; si no, el tamaño que toque
   return ppDibuja(c, k, cx - im.width * s / 2, cy - im.height * s / 2, s);
 }
 // un sprite en un lienzo pequeño (para las ventanas en HTML)
 function ppMiniatura(k, lado = 72) {
   const cv = document.createElement('canvas');
-  cv.width = lado; cv.height = lado; cv.style.width = lado + 'px'; cv.style.height = lado + 'px'; cv.style.imageRendering = 'pixelated';
+  cv.width = lado; cv.height = lado; cv.style.width = lado + 'px'; cv.style.height = lado + 'px'; cv.style.imageRendering = PP_LISO ? 'auto' : 'pixelated';
   const c = cv.getContext('2d');
   if (!ppDibujaEn(c, k, lado / 2, lado / 2, lado) && k.startsWith('sl-')) ppSlimeRepuesto(c, k.slice(3), lado / 2, lado / 2, lado * 0.42, 0, 1);
   return cv;

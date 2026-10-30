@@ -61,6 +61,7 @@ function ppArranque() {
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
+  $pp('#pp-estilo').onclick = () => { play('select'); ppCambiaEstilo(); ppIrA('titulo'); };
   $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
   ppIrA('titulo');
   const carga = $pp('#carga'); if (carga) carga.remove();

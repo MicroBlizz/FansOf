@@ -25,7 +25,7 @@ function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, 
 /* ---------- fondo ---------- */
 function ppPintaFondo(c, k, t) {
   const im = PP_IMG[k];
-  if (im) { c.imageSmoothingEnabled = false; c.drawImage(im, 0, 0, 540, PP_V.H); }
+  if (im) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(im, 0, 0, 540, PP_V.H); }
   else {
     const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#ffe3a8' : '#ffd1ec'); gr.addColorStop(1, k === 'fondo-jefe' ? '#ffb8d0' : '#c8f0ff');
     c.fillStyle = gr; c.fillRect(0, 0, 540, PP_V.H);
@@ -116,7 +116,7 @@ function ppPintaTablero(c, T, t) {
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
-  if (PP_IMG.tablero) { c.imageSmoothingEnabled = false; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
+  if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
     c.beginPath(); c.roundRect(g.x - 14, g.y - 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = T.tipo === 'jefe' ? '#ffe2b0' : '#e8d8ff'; c.fill(); c.lineWidth = 5; c.strokeStyle = '#7a4a8a'; c.stroke();
@@ -137,7 +137,7 @@ function ppEstrella(c, x, y, s, llena) {
 }
 /* ---------- marcador ---------- */
 function ppCorazon(c, x, y, s, lleno) {
-  if (ppDibujaEn(c, 'i-vida', x, y, s)) { if (!lleno) { c.save(); c.globalAlpha = 0.6; c.fillStyle = '#1a1030'; c.fillRect(x - s / 2, y - s / 2, s, s); c.restore(); } return; }
+  if (PP_IMG['i-vida']) { c.save(); if (!lleno) c.globalAlpha = 0.28; ppDibujaEn(c, 'i-vida', x, y, s, true); c.restore(); return; }
   c.save(); c.translate(x, y + s * 0.1); c.beginPath(); c.moveTo(0, s * 0.4); c.bezierCurveTo(-s * 0.7, -s * 0.1, -s * 0.3, -s * 0.6, 0, -s * 0.25); c.bezierCurveTo(s * 0.3, -s * 0.6, s * 0.7, -s * 0.1, 0, s * 0.4);
   c.fillStyle = lleno ? '#ff4a6a' : '#3a2a44'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke(); c.restore();
 }
@@ -223,8 +223,8 @@ function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 -
 const PP_MANO_PUNTA = 16.5 / 22;
 function ppMano(c, x, y, t) {
   const b = Math.abs(Math.sin(t * 5)) * 16, im = PP_IMG['i-mano'];
-  c.save(); c.imageSmoothingEnabled = false;
-  if (im) { const s = 3, w = im.width * s, h = im.height * s; c.drawImage(im, Math.round(x - w * PP_MANO_PUNTA), Math.round(y - h - b + 3), w, h); }
+  c.save(); c.imageSmoothingEnabled = PP_LISO;
+  if (im) { const s = PP_LISO ? 66 / im.width : 3, w = im.width * s, h = im.height * s; c.drawImage(im, Math.round(x - w * PP_MANO_PUNTA), Math.round(y - h - b + 3), w, h); }
   else { c.translate(x, y - b); c.beginPath(); c.moveTo(0, 0); c.lineTo(16, -28); c.lineTo(-16, -28); c.closePath(); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a3a7a'; c.stroke(); }
   c.restore();
 }

@@ -1,8 +1,8 @@
 {
- "build": 676,
- "hash": "11fa122",
- "fecha": "2026-10-30T12:24:53Z",
- "mensaje": "Fans of Pop: botón de pausa y manita del tutorial de Yoshi que señala con el índice",
+ "build": 677,
+ "hash": "2233ddb",
+ "fecha": "2026-10-30T12:44:31Z",
+ "mensaje": "Fans of Pop: opción PIXEL ART sí/no (por defecto, dibujos lisos) y corazones vacíos sin el cuadrado oscuro",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

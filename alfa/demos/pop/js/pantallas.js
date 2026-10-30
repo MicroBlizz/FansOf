@@ -17,6 +17,7 @@ function ppIrA(p) {
     $pp('#pp-jugar').textContent = hay ? tr('EMPEZAR DE NUEVO') : tr('JUGAR');
     $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
     $pp('#pp-sonido').textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ');
+    $pp('#pp-estilo').textContent = ppTextoEstilo();
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -26,7 +27,7 @@ const ppAlCamino = () => { ppCierra(); ppIrA('mapa'); };
 // las estrellas del nivel en HTML (dibujo de Yoshi si está; si no, una estrella recortada con CSS)
 function ppEstrellasHtml(n, total = 3) {
   let h = '<div class="pp-estrellas">';
-  for (let k = 0; k < total; k++) h += `<span class="pp-est${k < n ? ' pp-on' : ''}" style="animation-delay:${0.15 + k * 0.18}s">${PP_IMG['i-estrella'] ? '<img src="img/i-estrella.png" alt="">' : ''}</span>`;
+  for (let k = 0; k < total; k++) h += `<span class="pp-est${k < n ? ' pp-on' : ''}" style="animation-delay:${0.15 + k * 0.18}s">${PP_IMG['i-estrella'] ? `<img src="${PP_LISO ? 'img-liso' : 'img'}/i-estrella.png" alt=""${PP_LISO ? ' style="image-rendering:auto"' : ''}>` : ''}</span>`;
   return h + '</div>';
 }
 // la tarjeta de un amigo (dibujo + nombre + lo que hace)
@@ -103,6 +104,8 @@ function ppPausa() {
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) PP_P.T.hecho = true; ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
   col.appendChild(son);
+  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
+  col.appendChild(est);
 }
 function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
 /* ---------- el tutorial de Lola ----------

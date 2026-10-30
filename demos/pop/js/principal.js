@@ -26,11 +26,12 @@ PP_CV.addEventListener('pointerdown', e => {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
   } else if (PP_PANT.actual === 'mapa') {
-    for (const nd of PP_NODOS_MAPA) if (Math.hypot(lx - nd.x, ly - nd.y) <= nd.r) { play('ppNodo'); ppEntra(nd.i); break; }
+    for (const nd of PP_NODOS_MAPA) if (Math.hypot(lx - nd.x, ly - nd.y) <= nd.r) { play('ppNodo'); ppEntra(); break; }
   }
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !$pp('#pp-modal').hidden) { /* las ventanas se cierran con sus botones */ }
+  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo') return;
+  if (PP_PANT.pausa) ppQuitaPausa(); else ppPausa();   // Esc abre y cierra la pausa (las demás ventanas se cierran con sus botones)
 });
 /* ---------- el bucle ---------- */
 let PP_ULT = 0;
@@ -38,25 +39,32 @@ function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
   const dt = Math.min(0.05, (ahora - PP_ULT) / 1000 || 0.016); PP_ULT = ahora;
   const t = ahora / 1000, c = PP_CTX;
+  ppMusicaBucle();
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
-  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { ppFxAvanza(dt); ppPintaSala(c, t); }
+  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaSala(c, t); }
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else ppPintaPortada(c, t, dt);
 }
-function ppEmpieza() {
+function ppEmpieza(seguir) {
   ppCargaSonidos(); play('select');
-  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = [];
-  ppNuevaRuta(); ppIrA('mapa');
-  if (!SAVE.ayuda) ppAyuda();
+  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_MAPA.cam = null;
+  if (!(seguir && ppSigueCamino())) ppNuevaRuta();
+  ppIrA('mapa');
 }
 function ppArranque() {
   ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
-  $pp('#pp-jugar').onclick = ppEmpieza;
+  $pp('#pp-jugar').onclick = () => ppEmpieza(false);
+  $pp('#pp-seguir').onclick = () => ppEmpieza(true);
+  $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
+  $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
+  $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };
+  $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
-  $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); ppIrA('titulo'); play('select'); };
+  $pp('#pp-estilo').onclick = () => { play('select'); ppCambiaEstilo(); ppIrA('titulo'); };
+  $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
   ppIrA('titulo');
   const carga = $pp('#carga'); if (carga) carga.remove();
   requestAnimationFrame(ppFotograma);

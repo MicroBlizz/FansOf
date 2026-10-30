@@ -8,6 +8,8 @@ const MG_HUD = { botones: [] };
 const MG_TAU = Math.PI * 2;
 function mgMide() { MG_V.cs = Math.min(104, Math.floor(516 / MG_CFG.lado)); MG_V.bx = (540 - MG_V.cs * MG_CFG.lado) / 2; MG_V.by = 246 + Math.round((MG_V.H - 960) * 0.45); }   // el tablero, debajo del marcador; si la pantalla es más alta, el hueco se reparte
 const mgCx = x => MG_V.bx + (x + 0.5) * MG_V.cs, mgCy = y => MG_V.by + (y + 0.5) * MG_V.cs;
+// lo que mide una pieza en el tablero (en partes de casilla) y cuánto sube: así su base de hierba cabe dentro de la tierra del camino, sin tocar su borde
+const MG_PZ = { t: 0.74, sube: 0.05 }, mgPy = y => mgCy(y) - MG_PZ.sube * MG_V.cs;
 function mgCasillaEn(lx, ly) { const x = Math.floor((lx - MG_V.bx) / MG_V.cs), y = Math.floor((ly - MG_V.by) / MG_V.cs); return mgDentro(x, y) ? [x, y] : null; }
 const mgK = () => MG_V.sc * MG_V.dpr;
 
@@ -141,20 +143,20 @@ function mgPintaTablero(c, t) {
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {   // fila a fila: las de abajo tapan a las de arriba
     const p = P.B[y][x]; if (!p) continue;
     const A = mgAnimDe(p); if (A && A.oculta) continue;
-    let cx = mgCx(x), cy = mgCy(y), sc = 1;
-    if (A && A.mueve) { cx = lerp(mgCx(A.fx), cx, A.e); cy = lerp(mgCy(A.fy), cy, A.e) + A.dy * cs; }
+    let cx = mgCx(x), cy = mgPy(y), sc = 1;
+    if (A && A.mueve) { cx = lerp(mgCx(A.fx), cx, A.e); cy = lerp(mgPy(A.fy), cy, A.e) + A.dy * cs; }
     else if (A) { cy += A.dy * cs; sc = A.sc; }
     if (rebota.has(y * 8 + x)) cy -= Math.abs(Math.sin(t * 9)) * 9;
-    c.beginPath(); c.ellipse(cx, mgCy(y) + cs * 0.34, cs * 0.32 * sc, cs * 0.09, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();
+    c.beginPath(); c.ellipse(cx, mgPy(y) + cs * MG_PZ.t * 0.42, cs * MG_PZ.t * 0.31 * sc, cs * 0.07, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();
     if (P.modo) { c.beginPath(); c.arc(cx, cy, cs * 0.46, 0, MG_TAU); c.strokeStyle = `rgba(255,${P.modo === 'rayo' ? 120 : 200},40,${0.5 + Math.sin(t * 8) * 0.4})`; c.lineWidth = 4; c.stroke(); }
     if (!A) sc *= 1 + Math.sin(t * 2.2 + p.id * 1.7) * 0.025;   // respiran un poco: el tablero está vivo
-    if (p.t === 'zorro' || p.t === 'cuervo') mgPintaBicho(c, p, A, cx, cy, cs * 1.04, t);
-    else mgDibujaPieza(c, p.t, cx, cy, cs * 1.04 * sc, k, p.s);
-    if (p.t === 'cofre') mgEtiqueta(c, tr('¡Ábreme!'), cx, cy - cs * 0.5 + Math.sin(t * 5) * 2, 11);
+    if (p.t === 'zorro' || p.t === 'cuervo') mgPintaBicho(c, p, A, cx, cy, cs * MG_PZ.t, t);
+    else mgDibujaPieza(c, p.t, cx, cy, cs * MG_PZ.t * sc, k, p.s);
+    if (p.t === 'cofre') mgEtiqueta(c, tr('¡Ábreme!'), cx, cy - cs * MG_PZ.t * 0.6 + Math.sin(t * 5) * 2, 11);
   }
   if (P.sel && prev) {   // la pieza, en la casilla, a punto de soltarla
     const [x, y] = P.sel, sube = Math.sin(t * 5) * 3;
-    mgDibujaPieza(c, prev.real, mgCx(x), mgCy(y) - 6 + sube, cs * 0.98, k);
+    mgDibujaPieza(c, prev.real, mgCx(x), mgPy(y) - 6 + sube, cs * MG_PZ.t * 0.95, k);
     if (prev.final !== prev.real) { const w = 120; mgPanel(c, mgCx(x) - w / 2, mgCy(y) - cs * 0.82, w, 24, 12, '#fff8e6', OL, 3); mgTexto(c, '→ ' + tr(MG_PIEZAS[prev.final].nombre), mgCx(x), mgCy(y) - cs * 0.82 + 12, 12, '#c96a1e', 'center', null, MG_FB); }
   }
   const G = mgPaso();
@@ -163,9 +165,9 @@ function mgPintaTablero(c, t) {
     const q = mgPista(); if (q) mgFlecha(c, mgCx(q[0]), mgCy(q[1]) - cs * 0.55 - Math.abs(Math.sin(t * 4)) * 10);
   }
   for (const f of MG_FX.fantasmas) {   // las que vuelan a juntarse
-    if (MG_FX.t < f.t0) { mgDibujaPieza(c, f.tipo, mgCx(f.fx), mgCy(f.fy), cs, k, f.s); continue; }
+    if (MG_FX.t < f.t0) { mgDibujaPieza(c, f.tipo, mgCx(f.fx), mgPy(f.fy), cs * MG_PZ.t, k, f.s); continue; }
     const e = clamp((MG_FX.t - f.t0) / f.dur, 0, 1) ** 2;
-    mgDibujaPieza(c, f.tipo, lerp(mgCx(f.fx), mgCx(f.tx), e), lerp(mgCy(f.fy), mgCy(f.ty), e), cs * (1 - e * 0.4), k, f.s);
+    mgDibujaPieza(c, f.tipo, lerp(mgCx(f.fx), mgCx(f.tx), e), lerp(mgPy(f.fy), mgPy(f.ty), e), cs * MG_PZ.t * (1 - e * 0.4), k, f.s);
   }
   for (const p of MG_FX.parts) {   // chispas y hojas pintadas (o puntos de color mientras no llegan)
     c.globalAlpha = clamp(1 - (MG_FX.t - p.t0) / p.vida, 0, 1);

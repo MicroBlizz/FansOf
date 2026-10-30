@@ -1,34 +1,49 @@
-// Fans of Pop · PINTAR: todo lo que va en el lienzo (540 de ancho, PP_V.H de alto). El tablero de silicona con sus burbujas
-// (dibujadas a mano para poder aplastarlas), los slimes dentro, el marcador de arriba (corazones, toques y equipo),
+// Fans of Pop · PINTAR: todo lo que va en el lienzo (540 de ancho, PP_V.H de alto). La bandeja de silicona y sus burbujas
+// (dibujos de Yoshi: img/tablero.png y img/b-<color>-arriba|abajo.png, que aquí se aplastan y estiran), los slimes dentro, el marcador de arriba (corazones, toques y equipo),
 // el mapa de la ruta y la portada. Los dibujos de Yoshi se usan si están (sprites.js); si no, el repuesto pintado.
 'use strict';
 const PP_V = { H: 960, sc: 1, dpr: 1 };
-const PP_FUENTE = "'Jersey 10', monospace";
+const PP_FUENTE = "'Fredoka', 'Arial Rounded MT Bold', sans-serif";   // redondita y gordita (kawaii); Google Fonts
+const PP_LETRA = 0.74;   // Fredoka es más ancha que la letra pixelada de antes: todos los tamaños se multiplican por esto
 /* ---------- geometría del tablero ---------- */
 function ppGeom(n) { const lado = 440, x = 50, y = Math.round(PP_V.H / 2 - lado / 2 - 40); return { n, x, y, lado, celda: lado / n }; }
 function ppCentro(g, i) { const x = i % g.n, y = (i - x) / g.n; return [g.x + (x + 0.5) * g.celda, g.y + (y + 0.5) * g.celda]; }
 function ppCeldaEn(g, lx, ly) { if (lx < g.x || ly < g.y || lx >= g.x + g.lado || ly >= g.y + g.lado) return -1; return Math.floor((ly - g.y) / g.celda) * g.n + Math.floor((lx - g.x) / g.celda); }
 // los colores del juguete: una fila de cada color
 const PP_FILAS = [[345, 85, 70], [25, 95, 62], [52, 95, 60], [130, 65, 55], [195, 85, 58], [270, 70, 68]];
+const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'];   // el mismo orden, para los dibujos de Yoshi
+const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba ? '-arriba' : '-abajo');
 function ppColorBurbuja(i, n, luz = 0) { const [h, s, l] = PP_FILAS[Math.floor(i / n) % PP_FILAS.length]; return `hsl(${h} ${s}% ${Math.min(96, l + luz)}%)`; }
 /* ---------- texto ---------- */
-function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#1a1030') {
-  c.font = `${tam}px ${PP_FUENTE}`; c.textAlign = alinea; c.textBaseline = 'middle';
-  c.lineJoin = 'round'; c.lineWidth = Math.max(3, tam / 8); c.strokeStyle = borde; c.strokeText(s, x, y);
+function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#7a3a7a') {
+  tam = Math.round(tam * PP_LETRA);
+  c.font = `700 ${tam}px ${PP_FUENTE}`; c.textAlign = alinea; c.textBaseline = 'middle';
+  c.lineJoin = 'round'; c.lineWidth = Math.max(4, tam / 5); c.strokeStyle = borde; c.strokeText(s, x, y);
   c.fillStyle = col; c.fillText(s, x, y);
 }
-function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, '#1a1030', 'center', '#1a1030'); ppTexto(c, s, x, y, tam, '#ffd64a'); c.restore(); }
+function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, '#c84a9a', 'center', '#c84a9a'); ppTexto(c, s, x, y, tam, '#ffd64a', 'center', '#7a4a8a'); c.restore(); }
 /* ---------- fondo ---------- */
 function ppPintaFondo(c, k, t) {
   const im = PP_IMG[k];
-  if (im) { c.imageSmoothingEnabled = false; c.drawImage(im, 0, 0, 540, PP_V.H); c.fillStyle = 'rgba(8,4,24,0.42)'; c.fillRect(0, 0, 540, PP_V.H); }
+  if (im) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(im, 0, 0, 540, PP_V.H); }
   else {
-    const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#2a1a1a' : '#1a1040'); gr.addColorStop(1, k === 'fondo-jefe' ? '#0d0808' : '#0b0620');
+    const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#ffe3a8' : '#ffd1ec'); gr.addColorStop(1, k === 'fondo-jefe' ? '#ffb8d0' : '#c8f0ff');
     c.fillStyle = gr; c.fillRect(0, 0, 540, PP_V.H);
   }
-  // burbujitas flotando siempre, encima del fondo
-  c.save(); c.globalAlpha = 0.18;
-  for (let k2 = 0; k2 < 14; k2++) { const y = (PP_V.H + 40 - ((t * (18 + k2 * 4) + k2 * 173) % (PP_V.H + 80))), x = (k2 * 97 + Math.sin(t + k2) * 20) % 540; c.beginPath(); c.arc(x, y, 6 + (k2 % 4) * 4, 0, Math.PI * 2); c.strokeStyle = '#fff'; c.lineWidth = 2; c.stroke(); }
+  // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
+  // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
+  const hay = PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
+  for (let k2 = 0; k2 < 12; k2++) {
+    const vel = 14 + (k2 * 7) % 17, alto = PP_V.H + 160, y = alto - 80 - ((t * vel + k2 * 211) % alto);
+    const x = ((k2 * 131) % 500) + 20 + Math.sin(t * 0.6 + k2 * 1.7) * 26;
+    if (hay.length) {
+      const sp = hay[k2 % hay.length], tam = 64 + (k2 % 3) * 22;
+      c.save(); c.globalAlpha = 0.85; c.translate(x, y); c.rotate(Math.sin(t * 0.9 + k2) * 0.18);
+      ppDibujaEn(c, sp, 0, 0, tam, true); c.restore();
+    } else { c.save(); c.globalAlpha = 0.5; c.beginPath(); c.arc(x, y, 8 + (k2 % 4) * 5, 0, Math.PI * 2); c.strokeStyle = '#fff'; c.lineWidth = 3; c.stroke(); c.restore(); }
+  }
+  c.save(); c.globalAlpha = 0.55;
+  for (let k2 = 0; k2 < 10; k2++) { const y = (PP_V.H + 40 - ((t * (24 + k2 * 5) + k2 * 173) % (PP_V.H + 80))), x = (k2 * 97 + Math.sin(t + k2) * 20) % 540; c.beginPath(); c.arc(x, y, 5 + (k2 % 4) * 3, 0, Math.PI * 2); c.strokeStyle = '#fff'; c.lineWidth = 2; c.stroke(); }
   c.restore();
 }
 /* ---------- una burbuja ---------- */
@@ -40,11 +55,22 @@ function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t) {
     // la cúpula: sombra, cuerpo con luz arriba a la izquierda, brillo
     const rr = r * (0.85 + 0.15 * h);
     c.save(); c.scale(sx, sy);
+    if (ppTieneImg(ppSpriteBurbuja(i, n, true))) {
+      ppDibujaEn(c, ppSpriteBurbuja(i, n, true), 0, -4 * h, rr * 2.3, true);
+      if (slime) ppSlimeRepuestoOImagen(c, slime, 0, -4 * h + rr * 0.05, rr * 0.6, t, 1);
+      c.restore();
+    } else {
     c.beginPath(); c.ellipse(4 * h, 6 * h, rr, rr * 0.95, 0, 0, Math.PI * 2); c.fillStyle = 'rgba(0,0,0,0.35)'; c.fill();
     const gr = c.createRadialGradient(-rr * 0.35, -rr * 0.4, rr * 0.1, 0, 0, rr); gr.addColorStop(0, claro); gr.addColorStop(0.75, col); gr.addColorStop(1, oscuro);
     c.beginPath(); c.arc(0, -4 * h, rr, 0, Math.PI * 2); c.fillStyle = gr; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke();
     if (slime) ppSlimeRepuestoOImagen(c, slime, 0, -4 * h + rr * 0.12, rr * 0.62, t, 1);
     c.beginPath(); c.ellipse(-rr * 0.38, -4 * h - rr * 0.45, rr * 0.22, rr * 0.13, -0.6, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.75)'; c.fill();
+    c.restore();
+    }
+  } else if (ppTieneImg(ppSpriteBurbuja(i, n, false))) {
+    c.save(); c.scale(sx, 1);
+    ppDibujaEn(c, ppSpriteBurbuja(i, n, false), 0, 0, r * 2.05, true);
+    if (slime) ppSlimeRepuestoOImagen(c, slime, 0, r * 0.2, r * 0.5, t, 0.6, 0.55);
     c.restore();
   } else {
     // el cráter: hundida, con la luz al revés
@@ -89,50 +115,90 @@ function ppPintaTablero(c, T, t) {
   const g = ppGeom(T.n), r = g.celda * 0.4;
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
-  // la base: silicona redondeada con borde grueso y una segunda capa por debajo
-  c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#1a1030'; c.fill();
-  c.beginPath(); c.roundRect(g.x - 14, g.y - 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = T.tipo === 'jefe' ? '#3a2434' : '#2e2a5a'; c.fill(); c.lineWidth = 5; c.strokeStyle = '#1a1030'; c.stroke();
+  // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
+  if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
+  else {
+    c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
+    c.beginPath(); c.roundRect(g.x - 14, g.y - 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = T.tipo === 'jefe' ? '#ffe2b0' : '#e8d8ff'; c.fill(); c.lineWidth = 5; c.strokeStyle = '#7a4a8a'; c.stroke();
+  }
   for (let i = 0; i < T.up.length; i++) {
     const [cx, cy] = ppCentro(g, i);
     ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t);
   }
+  if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
   c.restore();
+}
+/* ---------- estrellas ---------- */
+function ppEstrella(c, x, y, s, llena) {
+  if (PP_IMG['i-estrella']) { c.save(); if (!llena) c.globalAlpha = 0.3; ppDibujaEn(c, 'i-estrella', x, y, s, true); c.restore(); return; }
+  c.save(); c.translate(x, y); c.beginPath();
+  for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? s * 0.22 : s * 0.5; c.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+  c.closePath(); c.fillStyle = llena ? '#ffd64a' : 'rgba(255,255,255,0.6)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#7a4a8a'; c.stroke(); c.restore();
 }
 /* ---------- marcador ---------- */
 function ppCorazon(c, x, y, s, lleno) {
-  if (ppDibujaEn(c, 'i-vida', x, y, s)) { if (!lleno) { c.save(); c.globalAlpha = 0.6; c.fillStyle = '#1a1030'; c.fillRect(x - s / 2, y - s / 2, s, s); c.restore(); } return; }
+  if (PP_IMG['i-vida']) { c.save(); if (!lleno) c.globalAlpha = 0.28; ppDibujaEn(c, 'i-vida', x, y, PP_LISO ? s * 1.3 : s, true); c.restore(); return; }   // el liso trae aire alrededor
   c.save(); c.translate(x, y + s * 0.1); c.beginPath(); c.moveTo(0, s * 0.4); c.bezierCurveTo(-s * 0.7, -s * 0.1, -s * 0.3, -s * 0.6, 0, -s * 0.25); c.bezierCurveTo(s * 0.3, -s * 0.6, s * 0.7, -s * 0.1, 0, s * 0.4);
   c.fillStyle = lleno ? '#ff4a6a' : '#3a2a44'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke(); c.restore();
 }
 function ppPintaMarcador(c, t) {
   const P = PP_P;
-  c.fillStyle = 'rgba(8,4,24,0.55)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
+  c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   // corazones
   const dano = PP_FX.dano;
   for (let i = 0; i < P.vidaMax; i++) { const s = 34 + (i === P.vida && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < P.vida); }
   // toques de la sala
   if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
-    ppTexto(c, tr('Toques'), 496, 36, 22, '#cfc8ff', 'right');
+    ppTexto(c, tr('Toques'), 496, 36, 22, '#ffe6f4', 'right');
     ppTexto(c, `${T.toques} / ${T.limite}`, 496, 66, 40, col, 'right');
-    ppTexto(c, tr(PP_CFG.salas[T.tipo].titulo), 270, 118, 30, '#ffd64a');
+    const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 104, 28, k < est);
+    ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', '#7a4a8a');
     if (quedan < 0) ppTexto(c, tr('Cada toque de más te quita un corazón'), 270, 150, 20, '#ff9a9a');
     else if (T.tipo === 'jefe') ppTexto(c, tr('Las burbujas con ! son trampa: no las toques tú'), 270, 150, 20, '#ff9a9a');
   }
-  // el equipo, abajo
-  const g = P.T ? ppGeom(P.T.n) : ppGeom(3), y0 = g.y + g.lado + 60;
-  c.fillStyle = 'rgba(8,4,24,0.55)'; c.beginPath(); c.roundRect(20, y0 - 22, 500, 170, 24); c.fill();
-  ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, '#cfc8ff');
+  // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
+  const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
+  c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.roundRect(20, y0 - 22, 500, 178, 24); c.fill();
+  ppTexto(c, tr('Tu equipo'), 270, y0 - 2, 24, '#ffe6f4');
   for (let k = 0; k < PP_CFG.equipo; k++) {
-    const x = 270 + (k - 1.5) * 110, id = P.equipo[k];
-    c.beginPath(); c.roundRect(x - 44, y0 + 18, 88, 88, 18); c.fillStyle = id ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ffd64a' : 'rgba(255,255,255,0.2)'; c.stroke();
-    if (id) { ppSlimeRepuestoOImagen(c, id, x, y0 + 62, 30, t, 1); ppTexto(c, tr(PP_SLIMES[id].pasiva), x, y0 + 124, 20, '#fff'); }
+    const [x, y] = ppHuecoEquipo(k, n), id = P.equipo[k], br = id ? PP_FX.brilla[id] || 0 : 0;
+    c.save(); c.translate(x, y); c.scale(1 + br * 0.25, 1 + br * 0.25);
+    c.beginPath(); c.roundRect(-44, -44, 88, 88, 18); c.fillStyle = br ? `rgba(255,214,74,${0.3 + br * 0.5})` : id ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.35)'; c.stroke();
+    if (id && !PP_FX.vuelos.some(v => v.id === id)) ppSlimeRepuestoOImagen(c, id, 0, -4 - br * 14, 30, t, 1);
+    c.restore();
+    if (!id) continue;
+    const nom = tr(PP_SLIMES[id].pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
+    ppTexto(c, nom, x, y + 62, w > 100 ? Math.floor(19 * 100 / w) : 19, '#fff');   // los nombres largos encogen para no pisar al vecino
+    const fx = PP_SLIMES[id].fx, T = P.T;
+    const parte = fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
+    if (parte !== null) {
+      c.fillStyle = '#1a1030'; c.beginPath(); c.roundRect(x - 36, y + 32, 72, 10, 5); c.fill();
+      c.fillStyle = fx.salta ? '#ff6ec7' : '#5be7ff'; c.beginPath(); c.roundRect(x - 36, y + 32, Math.max(10, 72 * parte), 10, 5); c.fill();
+    }
   }
 }
+// el centro del hueco k del equipo (para pintarlo y para que el slime salga volando desde ahí)
+function ppHuecoEquipo(k, n) { const g = ppGeom(n), y0 = g.y + g.lado + 60; return [270 + (k - 1.5) * 110, y0 + 62]; }
 /* ---------- partículas, saltos y textos flotantes ---------- */
 function ppPintaEfectos(c, t) {
   for (const p of PP_FX.parts) { c.beginPath(); c.arc(p.x, p.y, p.r * (1 - p.t / p.vida), 0, Math.PI * 2); c.fillStyle = p.col; c.fill(); }
   for (const s of PP_FX.saltos) { const k = Math.min(1, s.t / 0.8), y = s.y - Math.sin(k * Math.PI) * 160 - k * 40; ppSlimeRepuestoOImagen(c, s.id, s.x, y, 34 + k * 16, t, 1); }
+  for (const o of PP_FX.ondas) { const k = o.t / 0.45; c.beginPath(); c.arc(o.x, o.y, o.r * k, 0, Math.PI * 2); c.lineWidth = 10 * (1 - k); c.strokeStyle = `rgba(255,255,255,${1 - k})`; c.stroke(); }
+  // el slime volando del equipo al tablero: en arco, girando y estirado en el aire
+  for (const v of PP_FX.vuelos) {
+    const k = Math.min(1, v.t / v.dur), x = v.x0 + (v.x1 - v.x0) * k, y = v.y0 + (v.y1 - v.y0) * k - Math.sin(k * Math.PI) * 220;
+    c.save(); c.translate(x, y); c.rotate(k * Math.PI * 2); ppSlimeRepuestoOImagen(c, v.id, 0, 0, 34 + Math.sin(k * Math.PI) * 14, t, 1); c.restore();
+    for (let e = 1; e <= 4; e++) { const kk = Math.max(0, k - e * 0.05), xx = v.x0 + (v.x1 - v.x0) * kk, yy = v.y0 + (v.y1 - v.y0) * kk - Math.sin(kk * Math.PI) * 220; c.beginPath(); c.arc(xx, yy, 8 - e * 1.5, 0, Math.PI * 2); c.fillStyle = `rgba(255,255,255,${0.5 - e * 0.1})`; c.fill(); }
+  }
+  // el letrero de COMBO: aparece de golpe, crece con el número y se va
+  if (PP_FX.combo) {
+    const { n, t: ct } = PP_FX.combo, e = ct < 0.12 ? ct / 0.12 * 1.3 : 1.3 - Math.min(0.3, (ct - 0.12) * 1.5), a = ct > 0.8 ? 1 - (ct - 0.8) / 0.3 : 1;
+    const g = PP_P && PP_P.T ? ppGeom(PP_P.T.n) : ppGeom(3);
+    c.save(); c.globalAlpha = Math.max(0, a); c.translate(270, g.y - 22); c.scale(e, e); c.rotate(Math.sin(ct * 20) * 0.04);
+    ppTexto(c, 'COMBO x' + n, 0, 0, 36 + Math.min(5, n) * 4, ['#5be7ff', '#9dff6e', '#ffd64a', '#ff8a2a', '#ff6ec7'][Math.min(4, n - 2)]);
+    c.restore();
+  }
   for (const x of PP_FX.textos) { c.save(); c.globalAlpha = 1 - x.t; ppTexto(c, x.s, x.x, x.y - x.t * 50, 34, x.col); c.restore(); }
 }
 /* ---------- la sala entera ---------- */
@@ -140,53 +206,77 @@ function ppPintaSala(c, t) {
   const P = PP_P, T = P.T;
   c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
-  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : 'fondo-cueva', t);
+  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : 'fondo-jardin', t);
   ppPintaTablero(c, T, t);
   ppPintaMarcador(c, t);
   ppPintaEfectos(c, t);
   c.restore();
   if (PP_FX.dano > 0) { c.fillStyle = `rgba(255,40,60,${PP_FX.dano * 0.35})`; c.fillRect(0, 0, 540, PP_V.H); }
 }
-/* ---------- el mapa de la ruta ---------- */
-const PP_NODO = { sala: { icono: 'n-sala', col: '#ff6ec7', letra: 'S' }, sala2: { icono: 'n-sala', col: '#ff8a2a', letra: 'G' }, elite: { icono: 'n-elite', col: '#ff4a4a', letra: 'E' }, descanso: { icono: 'n-descanso', col: '#7bff7b', letra: 'Z' }, jefe: { icono: 'n-jefe', col: '#ffd64a', letra: 'J' } };
-function ppNodoPos(f, i, total) { const y = PP_V.H - 230 - f * ((PP_V.H - 430) / (PP_CFG.ruta.length - 1)); return [270 + (i - (total - 1) / 2) * 150, y]; }
+/* ---------- el camino (como los juegos de niveles: una carretera que serpentea con un nivel en cada burbuja) ---------- */
+const PP_MAPA = { cam: null };
+const PP_PASO = 128;   // distancia entre niveles
+function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 - (i - PP_MAPA.cam) * PP_PASO]; }
+// la manita que señala: dibujo de Yoshi (img/i-mano.png, Daniel eligió la semilla 11): manita kawaii con el ÍNDICE hacia
+// abajo, el pulgar al lado y el puño rosa. La punta del índice está en la columna 16 de 22 de la fila de abajo: se coloca
+// para que caiga justo en el centro del objetivo y pulsa arriba y abajo. Si aún no está, una flechita.
+const PP_MANO_PUNTA = 16.5 / 22;
+function ppMano(c, x, y, t) {
+  const b = Math.abs(Math.sin(t * 5)) * 16, im = PP_IMG['i-mano'];
+  c.save(); c.imageSmoothingEnabled = PP_LISO;
+  if (im) { const s = PP_LISO ? 66 / im.width : 3, w = im.width * s, h = im.height * s; c.drawImage(im, Math.round(x - w * PP_MANO_PUNTA), Math.round(y - h - b + 3), w, h); }
+  else { c.translate(x, y - b); c.beginPath(); c.moveTo(0, 0); c.lineTo(16, -28); c.lineTo(-16, -28); c.closePath(); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a3a7a'; c.stroke(); }
+  c.restore();
+}
 let PP_NODOS_MAPA = [];
 function ppPintaMapa(c, t) {
-  ppPintaFondo(c, 'fondo-cueva', t);
-  ppTitulo(c, tr('LA RUTA'), 270, 70, 54);
-  ppTexto(c, tr('Elige la siguiente sala'), 270, 120, 26, '#cfc8ff');
+  const P = PP_P, N = PP_NIVELES.length;
+  if (PP_MAPA.cam === null) PP_MAPA.cam = Math.max(0, P.nivel - 1);
+  PP_MAPA.cam += (P.nivel - PP_MAPA.cam) * 0.06;   // la cámara sube sola hasta el nivel que toca
+  ppPintaFondo(c, 'fondo-jardin', t);
+  // la carretera: borde rosa, centro blanco y puntitos de colores
+  c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
+  const tramo = (ancho, color, dash) => { c.beginPath(); c.setLineDash(dash || []); for (let i = 0; i < N; i++) { const [x, y] = ppNivelPos(i); if (i) c.lineTo(x, y); else c.moveTo(x, y); } c.lineWidth = ancho; c.strokeStyle = color; c.stroke(); };
+  tramo(46, '#ff9ccf'); tramo(34, '#fffaf2'); tramo(8, '#ffd1ec', [2, 22]);
+  c.restore();
   PP_NODOS_MAPA = [];
-  const R = PP_CFG.ruta, sig = PP_P.fila + 1;
-  // caminos
-  c.lineWidth = 6; c.strokeStyle = 'rgba(255,255,255,0.25)'; c.setLineDash([10, 10]);
-  for (let f = 0; f < R.length - 1; f++) for (let i = 0; i < R[f].length; i++) for (let j = 0; j < R[f + 1].length; j++) { const [x1, y1] = ppNodoPos(f, i, R[f].length), [x2, y2] = ppNodoPos(f + 1, j, R[f + 1].length); c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); }
-  c.setLineDash([]);
-  for (let f = 0; f < R.length; f++) for (let i = 0; i < R[f].length; i++) {
-    const tipo = R[f][i], d = PP_NODO[tipo], [x, y] = ppNodoPos(f, i, R[f].length);
-    const hecho = f < sig && !(f === PP_P.fila && i !== PP_P.nodo), aqui = f === PP_P.fila && i === PP_P.nodo, abierto = f === sig;
-    const p = abierto ? 0.5 + 0.5 * Math.sin(t * 5) : 0, r = (tipo === 'jefe' ? 44 : 34) + p * 5;
-    c.save(); if (f < sig && !aqui) c.globalAlpha = 0.45;
-    c.beginPath(); c.arc(x, y + 6, r, 0, Math.PI * 2); c.fillStyle = '#1a1030'; c.fill();
-    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = abierto || aqui ? d.col : '#3a3060'; c.fill(); c.lineWidth = 4; c.strokeStyle = abierto ? '#fff' : '#1a1030'; c.stroke();
-    if (!ppDibujaEn(c, d.icono, x, y, r * 1.3)) ppTexto(c, d.letra, x, y + 2, r, '#fff');
+  for (let i = N - 1; i >= 0; i--) {
+    const [x, y] = ppNivelPos(i); if (y < -90 || y > PP_V.H + 90) continue;
+    const d = PP_NIVELES[i], hecho = i < P.nivel, aqui = i === P.nivel, jefe = d.tipo === 'jefe';
+    const late = aqui ? 1 + Math.sin(t * 5) * 0.06 : 1, r = (jefe ? 60 : 46) * late;
+    c.save(); if (i > P.nivel) c.globalAlpha = 0.6;
+    if (aqui) { c.beginPath(); c.arc(x, y, r + 14 + Math.sin(t * 5) * 4, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fill(); }
+    const col = jefe ? 'amarillo' : PP_COLORES[i % PP_COLORES.length], sp = 'b-' + col + (hecho ? '-abajo' : '-arriba');
+    if (!ppDibujaEn(c, sp, x, y, r * 2.3, true)) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = ppColorBurbuja(i % 6, 1); c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a4a8a'; c.stroke(); }
+    if (jefe) ppSlimeRepuestoOImagen(c, 'ceo', x, y - 4, 30, t, 1);
+    else if (d.tipo === 'descanso') ppCorazon(c, x, y, 44, true);
+    else ppTexto(c, String(i + 1), x, y + 2, 46, '#fff', 'center', '#7a4a8a');
     c.restore();
-    if (aqui) ppTexto(c, tr('Estás aquí'), x, y + r + 22, 20, '#ffd64a');
-    if (abierto) PP_NODOS_MAPA.push({ x, y, r: r + 14, i });
+    // debajo: las estrellas ganadas, o lo que hay en el nivel
+    if (hecho && d.tipo !== 'descanso') for (let k = 0; k < 3; k++) ppEstrella(c, x - 30 + k * 30, y + r + 10, 26, k < (P.est[i] || 0));
+    else if (!hecho && d.slimes) ppTexto(c, tr('¡Amigo!'), x, y + r + 12, 22, '#ff6ec7', 'center', '#fff');
+    else if (!hecho && jefe) ppTexto(c, tr('¡JEFE!'), x, y + r + 12, 26, '#ff8a2a', 'center', '#fff');
+    else if (!hecho && d.tipo === 'descanso') ppTexto(c, tr('Descanso'), x, y + r + 12, 22, '#3a8ee6', 'center', '#fff');
+    if (aqui) { ppMano(c, x, y, t); PP_NODOS_MAPA.push({ x, y, r: r + 26 }); }
   }
-  // los corazones y el equipo también se ven en el mapa
-  for (let i = 0; i < PP_P.vidaMax; i++) ppCorazon(c, 44 + i * 40, PP_V.H - 100, 34, i < PP_P.vida);
-  PP_P.equipo.forEach((id, k) => ppSlimeRepuestoOImagen(c, id, 500 - k * 56, PP_V.H - 100, 22, t, 1));
+  // arriba: el título y las estrellas; abajo: corazones y amigos
+  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
+  ppTitulo(c, tr('EL CAMINO'), 250, 66, 50);
+  ppEstrella(c, 432, 66, 46, true); ppTexto(c, String(P.estrellas), 462, 68, 36, '#fff', 'left', '#7a4a8a');
+  c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, PP_V.H - 140, 500, 84, 24); c.fill();
+  for (let i = 0; i < P.vidaMax; i++) ppCorazon(c, 52 + i * 38, PP_V.H - 98, 32, i < P.vida);
+  P.equipo.forEach((id, k) => ppSlimeRepuestoOImagen(c, id, 488 - k * 54, PP_V.H - 100, 22, t, 1));
 }
 /* ---------- la portada: un pop-it de muestra que se revienta solo ---------- */
 const PP_PORTADA = { T: null, prox: 0 };
 function ppPintaPortada(c, t, dt) {
-  ppPintaFondo(c, 'fondo-cueva', t);
-  if (!PP_PORTADA.T) { PP_PORTADA.T = ppNuevoTablero('sala', { equipo: [] }); PP_PORTADA.T.tipo = 'sala'; ppFxEntraSala(PP_PORTADA.T); }
+  ppPintaFondo(c, 'fondo-jardin', t);
+  if (!PP_PORTADA.T) { PP_PORTADA.T = ppNuevoTablero({ tipo: 'sala', lado: 3, lio: [3, 4] }, { equipo: [] }); ppFxEntraSala(PP_PORTADA.T); }
   PP_PORTADA.prox -= dt;
   if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; PP_PORTADA.prox = rand(0.5, 1.1); }
   ppFxAvanza(dt);
   c.save(); c.translate(270, PP_V.H * 0.46); c.scale(0.62, 0.62); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
   ppTitulo(c, 'FANS OF', 270, 110, 60);
   ppTitulo(c, 'POP', 270, 190, 110);
-  ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 26, '#fff6d8');
+  ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');
 }

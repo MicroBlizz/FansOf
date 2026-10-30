@@ -142,6 +142,8 @@ IDIOMA.add({
   "Terror": "Horror",
   "Cámaras fijas": "Fixed cameras",
   "Puzle": "Puzzle",
+  "Pop-it": "Pop-it",
+  "Kawaii": "Kawaii",
   "Saltos": "Jumping",
   "Tres en raya": "Match-3",
   // COMUNIDAD (sección con las redes al final de la portada, index.html)

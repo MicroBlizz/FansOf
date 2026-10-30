@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-10-30',
+    fecha: '30 de octubre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF POP', tarjeta: 'g-pop', enlace: 'demos/pop/', texto: 'Demo nueva y muy kawaii: revienta las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-29',
     fecha: '29 de octubre de 2026',
     nuevos: [

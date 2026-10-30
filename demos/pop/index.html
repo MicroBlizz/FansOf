@@ -8,7 +8,7 @@
 <meta name="description" content="Fans of Pop: revienta burbujas de un pop-it para liberar a los slimes atrapados y llévalos contigo hasta el jefe. Un roguelike de puzles corto, táctil y relajado.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
 <script src="../../core/js/nucleo.js?v=0.1.0"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css')</script>
@@ -19,12 +19,16 @@
   <div id="pp-ui">
     <section id="pp-titulo">
       <p class="pp-lema" id="pp-record"></p>
+      <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
       <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
       <div class="pp-fila">
         <button class="pp-btn2 pp-verde" id="pp-ayuda" type="button">CÓMO SE JUEGA</button>
-        <button class="pp-btn2 pp-azul" id="pp-sonido" type="button">SONIDO</button>
+        <button class="pp-btn2 pp-rosa" id="pp-sonido" type="button">SONIDO</button>
+        <button class="pp-btn2 pp-azul" id="pp-estilo" type="button">PIXEL ART</button>
       </div>
     </section>
+    <button id="pp-pausa" class="pp-redondo" type="button" aria-label="Pausa" hidden><span></span><span></span></button>
+    <section id="pp-lola" hidden><div id="pp-lola-cara"></div><div class="pp-bocadillo"><b>Lola</b><p id="pp-lola-texto"></p><button class="pp-btn2" id="pp-lola-vale" type="button">¡VALE!</button><div id="pp-lola-elige" hidden><button class="pp-btn2 pp-rosa" id="pp-lola-liso" type="button">LISITOS</button><button class="pp-btn2 pp-azul" id="pp-lola-pixel" type="button">PIXEL ART</button></div></div></section>
     <section id="pp-modal" class="pp-modal" hidden><div class="pp-tarjeta" id="pp-tarjeta"></div></section>
   </div>
 </div>
@@ -34,7 +38,7 @@ NUCLEO.juego({
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js'],
   idioma: { en: ['idioma/en.js'] },
-  despues: ['js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/tablero.js', 'js/partida.js', 'js/efectos.js', 'js/pintar.js', 'js/pantallas.js', 'js/principal.js'],
+  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/tablero.js', 'js/partida.js', 'js/efectos.js', 'js/pintar.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
 });
 </script>
 </body>

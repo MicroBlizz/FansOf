@@ -1,8 +1,8 @@
 {
- "build": 665,
- "hash": "3db6922",
- "fecha": "2026-10-30T10:42:31Z",
- "mensaje": "Mapas al día (archivos nuevos del camino de Merge)",
+ "build": 666,
+ "hash": "5b7b6e4",
+ "fecha": "2026-10-30T10:53:28Z",
+ "mensaje": "Merge: camino con las esquinas redondas, como Triple Town",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

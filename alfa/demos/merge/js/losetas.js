@@ -1,49 +1,59 @@
 // Fans of Merge · el CAMINO de tierra: LOSETAS pintadas a mano como en Animal Crossing (no una forma recortada por código), su camino de repuesto y su dibujo en la partida.
-// De una losa grande (un cuadrado de tierra sobre hierba, img/losa.png) salen el centro (tierra lisa), 4 lados y 4 esquinas, con la hierba,
-// las flores y las piedrecitas pintadas comiéndose el borde.
+// De una losa grande (un cuadrado de tierra con las esquinas redondas sobre hierba, img/losa.png) salen el centro (tierra lisa), 4 lados y
+// 4 esquinas redondas, con la hierba, las flores y las piedrecitas pintadas comiéndose el borde. De una isla (hierba redonda dentro de
+// tierra, img/isla.png) salen los 4 rincones, donde dos caminos se juntan en ángulo.
 // La tierra es algo más pequeña que la casilla (como en Triple Town) y solo se une con la vecina cuando las dos son camino; por cada lado
 // que da a la hierba lleva su borde pintado y, en cada esquina de fuera, su esquina. Los bordes se repiten en espejo para no cortarse.
 'use strict';
-// B = qué parte de la losa es borde (hierba + ondas; merge_losas.py deja la tierra a 1/6); O = cuánta tierra de más lleva cada lado para fundirse con el centro;
-// I = el margen de hierba que deja la tierra dentro de su casilla (como en Triple Town); A = lo ancho que sale el borde pintado (las dos, en partes de casilla)
-const MG_LOSA = { de: '', piezas: null, B: 0.2, O: 0.06, I: 0.13, A: 0.24 };
-// recorta una zona de una imagen y la desvanece: por fuera (fx, fy: -1, 0 o 1 = el lado de la hierba, que se funde con el suelo)
-// y, si fi > 0, por dentro (la parte de tierra que se mete en la casilla, para que se funda con el centro sin dejar raya)
-function mgLosaTrozo(im, x, y, w, h, fx, fy, fi) {
+// Medidas, en partes del lado de la imagen (merge_losas.py deja el cuadrado de tierra, o el de hierba en la isla, en los 2/3 del centro):
+// B = el borde de la losa (hierba, ondas y un poco de tierra); E = hasta dónde llega la esquina redonda contando desde el borde de la imagen;
+// O = cuánta tierra de más lleva cada pieza por dentro, que se funde con el centro; F = cuánta hierba se desvanece por fuera, para fundirse con el suelo;
+// IF = hasta dónde sale la esquina de la isla hacia la tierra; IR = hasta dónde entra en su hierba (su esquina redonda); C = desde dónde se toma el centro liso.
+// En partes de casilla: I = el margen de hierba que deja la tierra dentro de su casilla (como en Triple Town); A = lo ancho que se pinta el borde B.
+const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.27, O: 0.06, F: 0.1, IF: 0.08, IR: 0.26, C: 0.27, I: 0.13, A: 0.24 };
+// recorta una zona (x, y, w, h) de una imagen y la desvanece por los lados que se le digan: f = [izquierda, derecha, arriba, abajo], en px de la imagen
+function mgLosaTrozo(im, x, y, w, h, f) {
   const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w)); cv.height = Math.max(1, Math.round(h));
   const c = cv.getContext('2d'); c.drawImage(im, x, y, w, h, 0, 0, cv.width, cv.height);
   c.globalCompositeOperation = 'destination-in';
-  // a lo largo del eje: 0 = el borde de fuera, 1 = el de dentro
-  const tira = (L, dir, horiz) => {
-    const g = horiz ? c.createLinearGradient(dir < 0 ? 0 : L, 0, dir < 0 ? L : 0, 0) : c.createLinearGradient(0, dir < 0 ? 0 : L, 0, dir < 0 ? L : 0);
-    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.4, 'rgba(0,0,0,1)');
-    if (fi) { g.addColorStop(Math.max(0.41, 1 - fi), 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)'); } else g.addColorStop(1, 'rgba(0,0,0,1)');
+  const tira = (L, horiz, f0, f1) => {
+    if (!f0 && !f1) return;
+    const g = horiz ? c.createLinearGradient(0, 0, L, 0) : c.createLinearGradient(0, 0, 0, L);
+    g.addColorStop(0, f0 ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,1)'); g.addColorStop(Math.min(0.49, f0 / L), 'rgba(0,0,0,1)');
+    g.addColorStop(Math.max(0.51, 1 - f1 / L), 'rgba(0,0,0,1)'); g.addColorStop(1, f1 ? 'rgba(0,0,0,0)' : 'rgba(0,0,0,1)');
     c.fillStyle = g; c.fillRect(0, 0, cv.width, cv.height);
   };
-  if (fx) tira(cv.width, fx, true);
-  if (fy) tira(cv.height, fy, false);
+  tira(cv.width, true, f[0], f[1]); tira(cv.height, false, f[2], f[3]);
   return cv;
 }
 function mgLosetasPrepara() {
-  const A = MG_IMG.LOSA;
-  if (!A) return false;
-  if (MG_LOSA.de === A.src) return true;
-  const w = A.width, b = w * MG_LOSA.B, m = w - 2 * b, o = w * MG_LOSA.O, fi = o / (b + o);
-  const P = { c: mgLosaTrozo(A, b, b, m, m, 0, 0, 0) };
-  // los lados llevan su hierba por fuera y un poco de tierra de más por dentro, que se funde con el centro
-  P.n = mgLosaTrozo(A, b, 0, m, b + o, 0, -1, fi); P.s = mgLosaTrozo(A, b, w - b - o, m, b + o, 0, 1, fi);
-  P.o = mgLosaTrozo(A, 0, b, b + o, m, -1, 0, fi); P.e = mgLosaTrozo(A, w - b - o, b, b + o, m, 1, 0, fi);
-  P.no = mgLosaTrozo(A, 0, 0, b, b, 0, 0, 0); P.ne = mgLosaTrozo(A, w - b, 0, b, b, 0, 0, 0); P.so = mgLosaTrozo(A, 0, w - b, b, b, 0, 0, 0); P.se = mgLosaTrozo(A, w - b, w - b, b, b, 0, 0, 0);
-  MG_LOSA.piezas = P; MG_LOSA.de = A.src; MG_LOSA.m = m / w; MG_LOSA.o = o / w;
+  const A = MG_IMG.LOSA, I = MG_IMG.ISLA;
+  if (!A || !I) return false;
+  const clave = A.src + '|' + I.src; if (MG_LOSA.de === clave) return true;
+  const L = MG_LOSA, w = A.width, b = w * L.B, m = w - 2 * b, o = w * L.O, f = w * L.F, e = w * L.E + o, lado = w - 2 * (e - o);   // lado = lo que queda de lado entre esquinas
+  const cc = w * L.C, P = { c: mgLosaTrozo(A, cc, cc, w - 2 * cc, w - 2 * cc, [0, 0, 0, 0]) };   // el centro: tierra lisa, sin las manchas de cerca del borde (al voltearse formarían una flor en cada cruce)
+  // los lados (sin sus esquinas): hierba por fuera, que se desvanece, y un poco de tierra por dentro, que se funde con el centro
+  P.n = mgLosaTrozo(A, e - o, 0, lado, b + o, [0, 0, f, o]); P.s = mgLosaTrozo(A, e - o, w - b - o, lado, b + o, [0, 0, o, f]);
+  P.o = mgLosaTrozo(A, 0, e - o, b + o, lado, [f, o, 0, 0]); P.e = mgLosaTrozo(A, w - b - o, e - o, b + o, lado, [o, f, 0, 0]);
+  // las esquinas redondas, con su trozo de tierra, que tapan el pico cuadrado de la tierra de debajo
+  P.no = mgLosaTrozo(A, 0, 0, e, e, [f, o, f, o]); P.ne = mgLosaTrozo(A, w - e, 0, e, e, [o, f, f, o]);
+  P.so = mgLosaTrozo(A, 0, w - e, e, e, [f, o, o, f]); P.se = mgLosaTrozo(A, w - e, w - e, e, e, [o, f, o, f]);
+  // la isla: su hierba redonda, dentro de la tierra, da los rincones donde dos caminos se juntan en ángulo
+  const wi = I.width, t = wi / 6, fi = wi * L.IF, ri = wi * L.IR, fo = wi * L.F, oi = wi * L.O;
+  P.ino = mgLosaTrozo(I, t - fi, t - fi, fi + ri, fi + ri, [oi, fo, oi, fo]); P.ine = mgLosaTrozo(I, wi - t - ri, t - fi, fi + ri, fi + ri, [fo, oi, oi, fo]);
+  P.iso = mgLosaTrozo(I, t - fi, wi - t - ri, fi + ri, fi + ri, [oi, fo, fo, oi]); P.ise = mgLosaTrozo(I, wi - t - ri, wi - t - ri, fi + ri, fi + ri, [fo, oi, fo, oi]);
+  MG_LOSA.piezas = P; MG_LOSA.de = clave; MG_LOSA.px = 1 / w;   // px: una unidad de imagen, en partes del lado
   return true;
 }
 // Pinta el camino con las losetas en el lienzo c (ya con la escala puesta). libre(x, y) dice si una casilla es del camino.
 // Como en Triple Town, la tierra no llena la casilla: deja un margen de hierba (MG_LOSA.I) y solo llega al borde por donde sigue el camino.
 // Para eso cada casilla se parte en 3x3 trocitos (margen, centro, margen): el del centro siempre es tierra, el de un lado si esa vecina
-// es camino, y el de una esquina si las tres casillas de ese lado lo son. Los bordes pintados se ponen donde un trocito de tierra toca hierba.
+// es camino, y el de una esquina si las tres casillas de ese lado lo son. Los bordes pintados se ponen donde un trocito de tierra toca hierba,
+// las esquinas redondas de la losa donde la hierba lo rodea por dos lados y las de la isla en los rincones.
 function mgLosetasPinta(c, libre) {
-  const P = MG_LOSA.piezas, cs = MG_V.cs, n = MG_CFG.lado, ins = cs * MG_LOSA.I;
-  const sb = cs * MG_LOSA.A, so = sb * MG_LOSA.O / MG_LOSA.B;   // cuánto sobresale el borde pintado y cuánto se mete en la tierra
+  const L = MG_LOSA, P = L.piezas, cs = MG_V.cs, n = MG_CFG.lado, ins = cs * L.I;
+  const esc = cs * L.A / L.B;   // px de pantalla por cada parte de imagen: el borde B se pinta de ancho A
+  const sb = esc * L.B, so = esc * L.O, se = esc * L.E + so, sif = esc * L.IF, sir = esc * L.IR;
   const X = x => MG_V.bx + x * cs, Y = y => MG_V.by + y * cs, off = [0, ins, cs - ins, cs];
   const camino = (x, y) => x >= 0 && y >= 0 && x < n && y < n && libre(x, y);
   // ¿es tierra el trocito (i, j) de la casilla (x, y)? en coordenadas globales de trocito: gx = 3x + i
@@ -86,10 +96,14 @@ function mgLosetasPinta(c, libre) {
     if (!T(gx - 1, gy)) tramo(P.o, false, y0, y1, x0 - sb, sb + so, MG_V.by);
     if (!T(gx + 1, gy)) tramo(P.e, false, y0, y1, x1 - so, sb + so, MG_V.by);
   }
-  // las esquinas de fuera (hierba por los dos lados del trocito); las de dentro las cierran los dos bordes que llegan al rincón
   for (const [gx, gy] of trozos) for (const [sx, sy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
-    if (T(gx + sx, gy) || T(gx, gy + sy)) continue;
-    pon(P[(sy < 0 ? 'n' : 's') + (sx < 0 ? 'o' : 'e')], sx < 0 ? tx0(gx) - sb : tx1(gx), sy < 0 ? ty0(gy) - sb : ty1(gy), sb, sb, 1, 1);
+    const a = T(gx + sx, gy), v = T(gx, gy + sy);
+    if (!a && !v) {   // esquina de fuera: la redonda de la losa, encima del pico de la tierra
+      pon(P[(sy < 0 ? 'n' : 's') + (sx < 0 ? 'o' : 'e')], sx < 0 ? tx0(gx) - sb : tx1(gx) + sb - se, sy < 0 ? ty0(gy) - sb : ty1(gy) + sb - se, se, se, 1, 1);
+    } else if (a && v && !T(gx + sx, gy + sy)) {   // rincón: solo lo pinta el trocito que ve la hierba en diagonal, así sale una vez
+      const cx = sx > 0 ? tx1(gx) : tx0(gx), cy = sy > 0 ? ty1(gy) : ty0(gy);   // el punto del rincón
+      pon(P['i' + (sy > 0 ? 'n' : 's') + (sx > 0 ? 'o' : 'e')], sx > 0 ? cx - sif : cx - sir, sy > 0 ? cy - sif : cy - sir, sif + sir, sif + sir, 1, 1);
+    }
   }
 }
 // el camino entero, dibujado una vez en su propio lienzo (a la escala real k de la pantalla)

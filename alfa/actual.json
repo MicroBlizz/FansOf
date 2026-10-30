@@ -1,8 +1,8 @@
 {
- "build": 645,
- "hash": "9a46bde",
- "fecha": "2026-10-30T00:57:34Z",
- "mensaje": "Core: capa común de anuncios (ANUNCIOS) con AdMob, H5 Games Ads y anuncio de reserva, tras el flag anuncios; Caos primordial la usa",
+ "build": 646,
+ "hash": "6859d3f",
+ "fecha": "2026-10-30T04:01:53Z",
+ "mensaje": "Fase 2 de runners: cada workflow usa su etiqueta yoshi-* y se retira runner-actions",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

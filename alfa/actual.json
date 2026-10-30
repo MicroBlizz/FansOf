@@ -1,8 +1,8 @@
 {
- "build": 647,
- "hash": "8359ea6",
- "fecha": "2026-10-30T04:06:17Z",
- "mensaje": "Runners de la tienda de Play: ficha, productos y avisos comparten runner-tienda (yoshi-tienda)",
+ "build": 648,
+ "hash": "f801a8f",
+ "fecha": "2026-10-30T04:06:56Z",
+ "mensaje": "Restaura los saltos de línea (LF) de ~930 archivos que 8359ea64 convirtió a CRLF por error",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

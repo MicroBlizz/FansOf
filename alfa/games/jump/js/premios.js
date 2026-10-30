@@ -4,7 +4,7 @@
 //   acaba). La cuenta atrás se para mientras ves el anuncio. En la partida siguiente vuelve a costar 15. No hay vidas.
 // · El anuncio con premio, nunca obligatorio: duplica las zanahorias de esa partida. Con el regalo de Lola (regalo.js) y probar una
 //   piel (anuncios.js), hasta 5 anuncios al día entre todos. Por ahora es un anuncio de prueba y solo sale en la alfa y en
-//   desarrollo; en la app, aquí irá el de AdMob (verAnuncio).
+//   desarrollo; el anuncio lo pone la capa común ANUNCIOS de core (verAnuncio).
 'use strict';
 
 const CASI_SEG = 4;
@@ -87,7 +87,7 @@ function pintaCasi() {
 // apunta un anuncio visto (los 5 del día son para todo); tipo: regalo, partida, seguir o prueba (lo mira el servidor)
 function cuentaAnuncio(tipo = 'seguir') { JS.pide('anuncio', { t: tipo }); const sigueHoy = GUARDA.anuncios && !yaPaso(GUARDA.anuncios.dia); GUARDA.anuncios = { dia: sigueHoy ? GUARDA.anuncios.dia : hoy(), n: (sigueHoy ? GUARDA.anuncios.n : 0) + 1 }; salvaGuarda(); }
 // con «Sin anuncios» comprado, el premio llega al momento (mismo tope del día)
-function verAnuncio(alAcabar) { if (GUARDA.compras && GUARDA.compras.sinanuncios) { SONIDO.boton(); return alAcabar(); } Object.assign(ANUNCIO, { activo: true, t: 0, alAcabar }); SONIDO.boton(); }
+function verAnuncio(alAcabar) { if (GUARDA.compras && GUARDA.compras.sinanuncios) { SONIDO.boton(); return alAcabar(); } ANUNCIO.activo = true; SONIDO.boton(); ANUNCIOS.ver('jump').then(r => { ANUNCIO.activo = false; if (r.visto) alAcabar(); }); }   // mientras sale el anuncio (capa común de core), la partida espera
 function duplicaZanas() {
   const J = JUEGO;
   if (J.duplicado || !anunciosQuedan() || !hayAnuncios() || J.modo !== 'fin') return;
@@ -97,24 +97,4 @@ function duplicaZanas() {
     confeti(PAN.W / 2, CAM.y + PAN.H * 0.5, 24); SONIDO.compra();
   });
 }
-function avanzaAnuncio(dt) { if (ANUNCIO.activo) ANUNCIO.t += dt; }
-function pintaAnuncio() {
-  if (!ANUNCIO.activo) return;
-  const W = PAN.W, H = PAN.H, SEG = 5, listo = ANUNCIO.t >= SEG;
-  G.fillStyle = 'rgba(40,25,60,0.8)'; G.fillRect(0, 0, W, H);
-  boton(0, 0, W, H, () => {});
-  const w = W - 40, h = 150, x = 20, y = H / 2 - h / 2;
-  caja(x, y, w, h, 6, PASTEL.papel, OLC, 1);
-  caja(x + 8, y - 6, 50, 12, 3, PASTEL.oro, OLC, 0.8); letras(tr('ANUNCIO'), x + 33, y + 0.5, 7, PASTEL.texto);
-  spriteConejo('quieto' + Math.floor(ANUNCIO.t * 7) % 8, W / 2, y + 62, 4.4);
-  envuelve(tr('Un mensaje de nuestros patrocinadores… que somos nosotros.'), w - 20, 7.6).forEach((l, i) => letras(l, W / 2, y + 76 + i * 9, 7.6, PASTEL.texto, { peso: 700 }));
-  const k = Math.min(1, ANUNCIO.t / SEG);
-  caja(x + 14, y + 96, w - 28, 5, 2.5, PASTEL.raya, null); caja(x + 14, y + 96, (w - 28) * k, 5, 2.5, PASTEL.melocoton, null);
-  const bw = 120, bx = W / 2 - bw / 2, by = y + 108, txt = listo ? tr('RECOGER PREMIO') : tr('El premio llega en {t}…', { t: Math.ceil(SEG - ANUNCIO.t) });
-  caja(bx, by, bw, 18, 5, listo ? PASTEL.menta : PASTEL.raya, OLC, 0.9);
-  letras(txt, W / 2, by + 9.5, 8, listo ? '#ffffff' : PASTEL.flojo, listo ? { borde: PASTEL.mentaO, bw: 2 } : {});
-  if (listo) boton(bx - 4, by - 4, bw + 8, 26, () => { ANUNCIO.activo = false; ANUNCIO.alAcabar(); });
-  letras(tr('Cerrar sin premio'), W / 2, by + 28, 6.8, PASTEL.suave, { peso: 700 });
-  boton(W / 2 - 34, by + 22, 68, 13, () => { ANUNCIO.activo = false; SONIDO.boton(); });
-  envuelve(tr('Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.'), w - 20, 5.6).forEach((l, i) => letras(l, W / 2, y + h + 10 + i * 7, 5.6, '#ffffff', { peso: 700 }));
-}
+function avanzaAnuncio(dt) { /* el anuncio lo dibuja la capa común de core */ }

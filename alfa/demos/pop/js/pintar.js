@@ -249,7 +249,17 @@ function ppPintaPortada(c, t, dt) {
   if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; T.toques = 0; PP_PORTADA.prox = rand(0.6, 1.2); }
   ppFxAvanza(dt);
   c.save(); c.translate(270, PP_V.H * 0.46); c.scale(PP_PORTADA_ESC, PP_PORTADA_ESC); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
-  ppTitulo(c, 'FANS OF', 270, 110, 60);
-  ppTitulo(c, 'POP', 270, 190, 110);
-  ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');
+  // «POP» es el logo de Yoshi con letras de pop-it (Daniel eligió la semilla 9, 30-10-2026); si aún no ha cargado, en letra
+  const logo = PP_IMG['logo-pop'];
+  if (logo) {
+    const w = 330, h = w * logo.height / logo.width, bota = Math.sin(t * 2.2) * 4;
+    ppTitulo(c, 'FANS OF', 270, 84, 56);
+    c.save(); c.imageSmoothingEnabled = PP_LISO; c.translate(270, 208 + bota); c.rotate(Math.sin(t * 1.3) * 0.025);
+    c.drawImage(logo, -w / 2, -h / 2, w, h); c.restore();
+    ppTexto(c, tr('Revienta, rescata, repite'), 270, 322, 28, '#fff', 'center', '#e0468f');
+  } else {
+    ppTitulo(c, 'FANS OF', 270, 110, 60);
+    ppTitulo(c, 'POP', 270, 190, 110);
+    ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');
+  }
 }

@@ -4,7 +4,7 @@
 'use strict';
 const PP_IMG = {};
 const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
-const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mov', 'i-estrella',
+const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mano', 'i-estrella',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo'])];
 function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {

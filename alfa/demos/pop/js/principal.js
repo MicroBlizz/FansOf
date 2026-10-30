@@ -30,7 +30,8 @@ PP_CV.addEventListener('pointerdown', e => {
   }
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !$pp('#pp-modal').hidden) { /* las ventanas se cierran con sus botones */ }
+  if (e.key !== 'Escape' || PP_PANT.actual === 'titulo') return;
+  if (PP_PANT.pausa) ppQuitaPausa(); else ppPausa();   // Esc abre y cierra la pausa (las demás ventanas se cierran con sus botones)
 });
 /* ---------- el bucle ---------- */
 let PP_ULT = 0;
@@ -41,7 +42,7 @@ function ppFotograma(ahora) {
   ppMusicaBucle();
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
-  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { ppFxAvanza(dt); ppPintaSala(c, t); }
+  if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaSala(c, t); }
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else ppPintaPortada(c, t, dt);
 }
@@ -58,6 +59,7 @@ function ppArranque() {
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
+  $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
   $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
   ppIrA('titulo');

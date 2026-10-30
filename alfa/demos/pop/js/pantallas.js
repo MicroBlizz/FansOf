@@ -2,13 +2,14 @@
 // descanso, sin corazones, final, cómo se juega) y el TUTORIAL DE LOLA: su bocadillo abajo, que explica los primeros niveles
 // paso a paso (Daniel, 30-10-2026: «no tengo ni idea de jugar»). El lienzo pinta detrás; todo esto va en la capa #pp-ui.
 'use strict';
-const PP_PANT = { actual: 'titulo' };
+const PP_PANT = { actual: 'titulo', pausa: false };
 const $pp = s => document.querySelector(s);
 function ppIrA(p) {
   PP_PANT.actual = p;
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
   if (p !== 'sala') ppLolaCierra();
+  $pp('#pp-pausa').hidden = p === 'titulo';
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
     $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Revienta burbujas, rescata amigos');
@@ -88,6 +89,22 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Truco: si en una fila queda una burbuja sin reventar, toca la que está justo debajo.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
+/* ---------- la pausa ----------
+   En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal
+   (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
+function ppPausa() {
+  if (!$pp('#pp-modal').hidden) return;
+  const enNivel = PP_PANT.actual === 'sala';
+  PP_PANT.pausa = true;
+  const t = ppAbre(`<h2>${tr('Pausa')}</h2>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('SEGUIR'), 'pp-btn', ppQuitaPausa));
+  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); if (PP_P.T) PP_P.T.hecho = true; PP_P.T = null; ppAlCamino(); }));
+  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) PP_P.T.hecho = true; ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
+  const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
+  col.appendChild(son);
+}
+function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
 /* ---------- el tutorial de Lola ----------
    Cada tutorial es una lista de frases. Las que llevan `toque` se cierran solas cuando tocas una burbuja (para que lo hagas
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */

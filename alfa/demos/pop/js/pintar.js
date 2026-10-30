@@ -217,42 +217,15 @@ function ppPintaSala(c, t) {
 const PP_MAPA = { cam: null };
 const PP_PASO = 128;   // distancia entre niveles
 function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 - (i - PP_MAPA.cam) * PP_PASO]; }
-// la manita que señala, dibujada aquí píxel a píxel (Daniel: la de Yoshi parecía el dedo corazón, que en algunos países
-// es un insulto): la manita clásica del cursor, con el ÍNDICE estirado a un lado, el pulgar al otro, los demás dedos doblados
-// y un puño azul cielo (rosa se perdía encima de las burbujas rosas). Está dibujada señalando hacia arriba y se voltea para que señale hacia abajo, con la punta del índice
-// justo en el centro del objetivo. O = contorno, W = guante, P = puño rosa.
-const PP_MANO_PX = [
-  '...OO..........',
-  '..OWWO.........',
-  '..OWWO.........',
-  '..OWWO.........',
-  '..OWWOOO.......',
-  '..OWWOWWOOO....',
-  'OOOWWOWWOWWOO..',
-  'OWWOWWOWWOWWWO.',
-  'OWWWWWWWWWWWWO.',
-  '.OWWWWWWWWWWWO.',
-  '..OWWWWWWWWWWO.',
-  '..OWWWWWWWWWO..',
-  '...OWWWWWWWWO..',
-  '...OPPPPPPPPO..',
-  '...OPPPPPPPPO..',
-  '...OOOOOOOOOO..',
-];
-const PP_MANO_PUNTA = 3.5;   // columna de la punta del índice
-let PP_MANO_CV = null;
-function ppManoLienzo() {
-  if (PP_MANO_CV) return PP_MANO_CV;
-  const h = PP_MANO_PX.length, w = PP_MANO_PX[0].length, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
-  const c = cv.getContext('2d'), col = { O: '#7a3a7a', W: '#ffffff', P: '#7ad0ff' };
-  // volteada: la fila de arriba (la punta) queda abajo
-  PP_MANO_PX.forEach((fila, y) => [...fila].forEach((ch, x) => { if (col[ch]) { c.fillStyle = col[ch]; c.fillRect(x, h - 1 - y, 1, 1); } }));
-  return (PP_MANO_CV = cv);
-}
+// la manita que señala: dibujo de Yoshi (img/i-mano.png, Daniel eligió la semilla 11): manita kawaii con el ÍNDICE hacia
+// abajo, el pulgar al lado y el puño rosa. La punta del índice está en la columna 16 de 22 de la fila de abajo: se coloca
+// para que caiga justo en el centro del objetivo y pulsa arriba y abajo. Si aún no está, una flechita.
+const PP_MANO_PUNTA = 16.5 / 22;
 function ppMano(c, x, y, t) {
-  const cv = ppManoLienzo(), s = 5, w = cv.width * s, h = cv.height * s, b = Math.abs(Math.sin(t * 5)) * 16;
+  const b = Math.abs(Math.sin(t * 5)) * 16, im = PP_IMG['i-mano'];
   c.save(); c.imageSmoothingEnabled = false;
-  c.drawImage(cv, Math.round(x - (PP_MANO_PUNTA + 0.5) * s), Math.round(y - h - b + 4), w, h);
+  if (im) { const s = 3, w = im.width * s, h = im.height * s; c.drawImage(im, Math.round(x - w * PP_MANO_PUNTA), Math.round(y - h - b + 3), w, h); }
+  else { c.translate(x, y - b); c.beginPath(); c.moveTo(0, 0); c.lineTo(16, -28); c.lineTo(-16, -28); c.closePath(); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a3a7a'; c.stroke(); }
   c.restore();
 }
 let PP_NODOS_MAPA = [];
@@ -288,7 +261,7 @@ function ppPintaMapa(c, t) {
   }
   // arriba: el título y las estrellas; abajo: corazones y amigos
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
-  ppTitulo(c, tr('EL CAMINO'), 200, 66, 50);
+  ppTitulo(c, tr('EL CAMINO'), 250, 66, 50);
   ppEstrella(c, 432, 66, 46, true); ppTexto(c, String(P.estrellas), 462, 68, 36, '#fff', 'left', '#7a4a8a');
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, PP_V.H - 140, 500, 84, 24); c.fill();
   for (let i = 0; i < P.vidaMax; i++) ppCorazon(c, 52 + i * 38, PP_V.H - 98, 32, i < P.vida);

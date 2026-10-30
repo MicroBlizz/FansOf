@@ -89,4 +89,7 @@ IDIOMA.add({
  "¿Quién se queda descansando para que venga {n}?": "Who stays behind to rest so {n} can come?",
  "¡VALE!": "OK!",
  "SEGUIR": "CONTINUE",
+ "Pausa": "Pause",
+ "Salir del nivel": "Leave level",
+ "Menú principal": "Main menu",
 });

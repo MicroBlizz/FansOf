@@ -72,7 +72,7 @@ function ppTrasToque(T, i, r) {
     PP_P.vida = Math.max(0, PP_P.vida - r.castigo); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano();
     if (PP_P.vida <= 0) { T.hecho = true; setTimeout(() => ppSinCorazones(), 500); return; }
   }
-  if (r.hecho) { PP_P.salas++; setTimeout(() => ppSalaHecha(), 520); return; }
+  if (r.hecho) { PP_P.salas++; setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
   PP_P.equipo.forEach((id, k) => {
     const fx = PP_SLIMES[id].fx; if (!fx.salta) return;
@@ -89,7 +89,7 @@ function ppSaltaSlime(id, k, golpes) {
     const dur = 0.5 + g * 0.18;
     ppFxVuelo(id, k, i, T.n, dur);
     setTimeout(() => {
-      if (PP_P.T !== T || T.hecho) return;
+      if (!PP_P || PP_P.T !== T || T.hecho) return;
       let j = i; if (!T.sol.has(j)) { const s = [...T.sol]; if (!s.length) return; j = s[0]; }   // si ya no hace falta esa, otra de la solución
       const r = ppToca(T, j, true); if (!r) return;
       ppFxToque(T, j, r); ppFxImpacto(T, j, id === 'ceo');

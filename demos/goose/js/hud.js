@@ -3,26 +3,26 @@
 'use strict';
 
 const BOTONES = [];   // los botones de la pantalla actual: { x, y, w, h, accion } (se rehacen en cada fotograma)
-const FUENTE_G = '"Pirata One", "Pixelify Sans", serif';
-const FUENTE = '"Pixelify Sans", system-ui, sans-serif';
+const FUENTE_G = '"Pirata One", "Jersey 15", serif';
+const FUENTE = '"Jersey 15", system-ui, sans-serif';   // letra de píxel que se lee pequeña (la Pixelify Sans salía a bultos)
 
 // LETRAS DE PÍXEL NÍTIDAS: cada texto se escribe una vez a su tamaño exacto en píxeles de verdad, se le quita el suavizado (cada
 // píxel, lleno o vacío) y se le pone un contorno de un píxel; luego se pega como un sprite. Así no sale borroso al ampliar el canvas.
 // Nada por debajo de TAM_MIN (se lee en el móvil) y la gótica solo en títulos grandes.
-const TAM_MIN = 7, LETRAS = new Map();
+const TAM_MIN = 8, LETRAS = new Map();
 let MIDE = null;
 const fuenteDe = (tam, fuente) => (fuente === FUENTE_G && tam < 12 ? FUENTE : fuente);
 function anchoTexto(t, tam, fuente = FUENTE, peso = 800) {
   if (!MIDE) MIDE = document.createElement('canvas').getContext('2d');
-  const px = Math.round(Math.max(TAM_MIN, tam) * PAN.k); MIDE.font = `${Math.min(700, peso)} ${px}px ${fuenteDe(tam, fuente)}`;
+  const px = Math.round(Math.max(TAM_MIN, tam) * PAN.k); MIDE.font = `400 ${px}px ${fuenteDe(tam, fuente)}`;
   return MIDE.measureText(String(t)).width / PAN.k;
 }
 function letra(t, tam, color, fuente, peso, borde) {
-  t = String(t); const k = PAN.k, px = Math.round(Math.max(TAM_MIN, tam) * k), f = fuenteDe(tam, fuente), pw = Math.min(700, peso);
+  t = String(t); const k = PAN.k, px = Math.round(Math.max(TAM_MIN, tam) * k), f = fuenteDe(tam, fuente), pw = 400;   // Jersey y Pirata solo tienen un peso
   const clave = t + '|' + px + '|' + color + '|' + f + '|' + pw + '|' + (borde ? 1 : 0);
   let L = LETRAS.get(clave); if (L) return L;
   if (LETRAS.size > 900) LETRAS.clear();
-  const o = borde ? Math.max(1, Math.round(px / 16)) : 0, m = 2 + o;
+  const o = borde ? Math.max(1, Math.round(px / 18)) : 0, m = 2 + o;
   if (!MIDE) MIDE = document.createElement('canvas').getContext('2d');
   MIDE.font = `${pw} ${px}px ${f}`;
   const tw = Math.ceil(MIDE.measureText(t).width), w = tw + m * 2, h = Math.ceil(px * 1.45) + m * 2;

@@ -30,8 +30,9 @@ function preparaSuelos() {
       x.fillStyle = B.veta; x.fillRect(0, 0, w, h);
       const tex = IMG['t-' + B.id];
       if (tex) {   // el suelo pintado por Yoshi, repetido (1 píxel del dibujo = 1 píxel de la pantalla pequeña)
-        x.setTransform(1, 0, 0, 1, 0, 0);
-        for (let ty = 0; ty < c.height; ty += tex.height) for (let tx = 0; tx < c.width; tx += tex.width) x.drawImage(tex, tx + (v ? tex.width / 2 : 0) - tex.width, ty, tex.width, tex.height), x.drawImage(tex, tx + (v ? tex.width / 2 : 0), ty, tex.width, tex.height);
+        x.setTransform(k / ARTE, 0, 0, k / ARTE, 0, 0); x.imageSmoothingEnabled = false;   // 1 píxel del dibujo = ARTE unidades… ampliado a entero en el canvas
+        const cw = c.width / (k / ARTE), chh = c.height / (k / ARTE);
+        for (let ty = 0; ty < chh; ty += tex.height) for (let tx = 0; tx < cw; tx += tex.width) x.drawImage(tex, tx + (v ? tex.width / 2 : 0) - tex.width, ty, tex.width, tex.height), x.drawImage(tex, tx + (v ? tex.width / 2 : 0), ty, tex.width, tex.height);
         x.scale(k, k);
       } else if (bi === 0 || bi === 3) {   // tablones
         const n = 6, tw = w / n;

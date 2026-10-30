@@ -4,7 +4,7 @@
 // toques = tirar el dado), el ratón y el teclado (flechas o WASD, espacio = dado, P o Esc = pausa).
 'use strict';
 
-const PIXELES = 2;   // píxeles de verdad por unidad del mundo (el tamaño del pixel art)
+const PIXELES = +(new URLSearchParams(location.search).get('px')) || 4;   // píxeles de verdad por unidad del mundo: 4 para que las letras se lean (el pixel art se amplía a número entero igual)
 const PAN = { W: 200, H: 400, k: PIXELES };
 const ENTRADA = { mx: 0, my: 0, palanca: false, px: 0, py: 0, id: null, botonDown: false, bx: 0, by: 0, ultimoToque: 0, ux: 0, uy: 0, teclas: {} };
 const cv = document.getElementById('juego');
@@ -118,7 +118,7 @@ async function arranca() {
   await cargaImagenes();
   ajusta();
   addEventListener('resize', () => { clearTimeout(arranca.t); arranca.t = setTimeout(ajusta, 150); });
-  try { await Promise.race([Promise.all([document.fonts.load('700 20px "Pixelify Sans"'), document.fonts.load('400 20px "Pirata One"')]), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
+  try { await Promise.race([Promise.all([document.fonts.load('400 20px "Jersey 15"'), document.fonts.load('400 20px "Pirata One"')]), new Promise(r => setTimeout(r, 1500))]); } catch (e) { /* sin letra propia */ }
   ajusta();   // otra vez, ya con las letras cargadas
   document.getElementById('carga').hidden = true;
   miraEnlaceSala();

@@ -49,7 +49,7 @@ function mgPintaMarcador(c, t) {
     c.fillStyle = m >= 2 ? '#ff4f2e' : '#ff8a2a'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OL; c.stroke();
     mgTexto(c, 'x' + fmtV(m), 0, 6, 17, '#fff', 'center', OL); c.restore();
   }
-  if (P.nivel) mgPintaObjNivel(c, t);
+  if (P.nivel) { mgPintaObjNivel(c, t); mgEtiqueta(c, tr('Nivel {n}', { n: P.nivel.id }), 270, 66, 11); }
   else {
   const O = mgObjetivo(), ok = O.de ? clamp((P.pts - O.desde) / (O.de - O.desde), 0, 1) : 1;
   if (!mgImg(c, 'TABLON', 114, 64, 312, 42)) mgPanel(c, 120, 68, 300, 34, 14, MG_PILDORA, null);
@@ -66,20 +66,19 @@ function mgPintaMarcador(c, t) {
   // la pieza actual (también va con el dedo por el tablero)
   const fila = 116;
   if (!mgImg(c, 'MARCO', 8, fila - 4, 108, 120)) mgPanel(c, 12, fila, 100, 112, 20, 'rgba(255,248,230,.94)', OL, 3);
-  mgTexto(c, tr('AHORA'), 62, fila + 15, 14, '#c96a1e', 'center', null);
+  mgEtiqueta(c, tr('AHORA'), 62, fila - 2, 14);
   mgDibujaPieza(c, P.actual, 62, fila + 66 + Math.sin(t * 3) * 2, 82, k);
   let x = 122;
   if (mgTiene('lince')) {
     if (!mgImg(c, 'MARCO', x - 3, fila + 15, 76, 100)) mgPanel(c, x, fila + 18, 70, 94, 16, 'rgba(255,248,230,.8)', OL, 3);
-    mgTexto(c, tr('LUEGO'), x + 35, fila + 32, 12, '#3fa89c', 'center', null);
+    mgEtiqueta(c, tr('LUEGO'), x + 35, fila + 15, 12);
     mgDibujaPieza(c, P.cola, x + 35, fila + 72, 58, k); x += 80;
   }
   P.reserva.forEach((r, i) => {
     if (!mgImg(c, 'MARCO', x - 3, fila + 15, 82, 100)) mgPanel(c, x, fila + 18, 76, 94, 16, r ? 'rgba(220,245,255,.96)' : 'rgba(220,245,255,.7)', OL, 3);
-    mgTexto(c, tr('RESERVA'), x + 38, fila + 32, 12, '#2e7fb8', 'center', null);
+    mgEtiqueta(c, tr('RESERVA'), x + 38, fila + 15, 12);
     if (r) mgDibujaPieza(c, r, x + 38, fila + 72, 60, k);
-    if (P.reservaEspera > 0) { mgPanel(c, x, fila + 18, 76, 94, 16, 'rgba(20,30,10,.45)', null); mgTexto(c, String(P.reservaEspera), x + 38, fila + 70, 34, '#fff'); }
-    else { c.setLineDash([5, 5]); c.beginPath(); c.arc(x + 38, fila + 70, 20, 0, MG_TAU); c.strokeStyle = 'rgba(46,127,184,.55)'; c.lineWidth = 3; c.stroke(); c.setLineDash([]); }
+    if (P.reservaEspera > 0) { mgPanel(c, x + 6, fila + 26, 70, 82, 12, 'rgba(20,30,10,.45)', null); mgTexto(c, String(P.reservaEspera), x + 38, fila + 70, 34, '#fff'); }
     mgBoton('reserva' + i, x, fila + 18, 76, 94); x += 86;
   });
   // el Rayo zanahoria: se llena con las fusiones
@@ -89,15 +88,21 @@ function mgPintaMarcador(c, t) {
   if (MG_IMG.RAYO) { c.globalAlpha = listo ? 1 : 0.5; const g = P.modo === 'rayo' ? 1 + Math.sin(t * 10) * 0.08 : 1; mgImg(c, 'RAYO', bx - 30 * g, by - 30 * g, 60 * g, 60 * g); c.globalAlpha = 1; }
   else mgRayoIcono(c, bx, by, listo ? 1 : 0.45, P.modo === 'rayo' ? Math.sin(t * 10) * 0.15 : 0);
   if (P.cargas) { c.beginPath(); c.arc(bx + 27, by - 27, 13, 0, MG_TAU); c.fillStyle = '#ff4f6d'; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke(); mgTexto(c, String(P.cargas), bx + 27, by - 26, 16, '#fff', 'center', null); }
-  mgTexto(c, tr('RAYO'), bx, by + R + 10, 13, '#fff', 'center', OL);
+  mgEtiqueta(c, tr('RAYO'), bx, by + R + 8, 12);
   mgBoton('rayo', bx - R, by - R, R * 2, R * 2 + 16);
   if (P.tirachinas > 0) {
     const tx = 382, ty = fila + 30;
     mgPanel(c, tx, ty, 58, 58, 16, P.modo === 'tirachinas' ? '#ffd84a' : '#ff8a3d', OL, 3);
     if (!mgImg(c, 'TIRACHINAS', tx + 4, ty + 4, 50, 50)) mgTirachinasIcono(c, tx + 29, ty + 29);
-    mgTexto(c, tr('TIRACHINAS'), tx + 29, ty + 70, 11, '#fff', 'center', OL);
+    mgEtiqueta(c, tr('TIRACHINAS'), tx + 29, ty + 66, 10);
     mgBoton('tirachinas', tx, ty, 58, 76);
   }
+}
+// el rótulo de un marco: una tablilla de madera pintada centrada sobre el borde de arriba, con la letra blanca bordeada
+function mgEtiqueta(c, txt, cx, cy, tam) {
+  c.font = `${tam}px ${FONT_D}`; const w = c.measureText(txt).width + 22, h = tam + 12;
+  if (!mgImg(c, 'TABLON', cx - w / 2, cy - h / 2, w, h)) mgPanel(c, cx - w / 2, cy - h / 2, w, h, 8, '#9a6a3c', OL, 2);
+  mgTexto(c, txt, cx, cy + 1, tam, '#fff', 'center', OL);
 }
 function mgRayoIcono(c, x, y, alfa, giro) {
   c.save(); c.translate(x, y); c.rotate(-0.5 + giro); c.globalAlpha = alfa; c.lineJoin = 'round'; c.lineWidth = 3.5; c.strokeStyle = OL;
@@ -113,66 +118,6 @@ function mgTirachinasIcono(c, x, y) {
 }
 
 /* ---------- el tablero: caminos de tierra, piezas, previsión ---------- */
-// El dibujo del camino, hecho una vez por partida: cada casilla es un cuadrado de tierra pintada que solo redondea las esquinas
-// que dan a la hierba; donde se toca con otra casilla del camino, sigue recto y se une. Debajo, un borde algo más oscuro.
-function mgCaminoLienzo(libre, k) {
-  const cs = MG_V.cs, n = MG_CFG.lado, W = Math.ceil(540 * k), H = Math.ceil(MG_V.H * k), r = cs * 0.24;
-  const forma = (c, pad) => {
-    c.beginPath();
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      if (!libre(x, y)) continue;
-      const L = libre(x - 1, y), R = libre(x + 1, y), U = libre(x, y - 1), D = libre(x, y + 1), une = 1;   // hacia otra casilla del camino se pasa un poco: sin costura
-      const x0 = MG_V.bx + x * cs - (L ? une : pad), y0 = MG_V.by + y * cs - (U ? une : pad), x1 = MG_V.bx + (x + 1) * cs + (R ? une : pad), y1 = MG_V.by + (y + 1) * cs + (D ? une : pad);
-      const ri = (a, b) => (a || b ? 0 : r + pad);   // la esquina solo se redondea si no sigue el camino por ninguno de sus dos lados
-      const tl = ri(L, U), tr = ri(R, U), br = ri(R, D), bl = ri(L, D);
-      c.moveTo(x0 + tl, y0); c.lineTo(x1 - tr, y0); c.arcTo(x1, y0, x1, y0 + tr, tr); c.lineTo(x1, y1 - br); c.arcTo(x1, y1, x1 - br, y1, br);
-      c.lineTo(x0 + bl, y1); c.arcTo(x0, y1, x0, y1 - bl, bl); c.lineTo(x0, y0 + tl); c.arcTo(x0, y0, x0 + tl, y0, tl); c.closePath();
-    }
-  };
-  const lienzo = document.createElement('canvas'); lienzo.width = W; lienzo.height = H;
-  const c = lienzo.getContext('2d'); c.setTransform(k, 0, 0, k, 0, 0);
-  forma(c, cs * 0.03); c.fillStyle = 'rgba(92,62,30,.55)'; c.fill('nonzero');   // el borde
-  const tierra = document.createElement('canvas'); tierra.width = W; tierra.height = H;
-  const t = tierra.getContext('2d'); t.setTransform(k, 0, 0, k, 0, 0);
-  forma(t, -cs * 0.015); t.fill('nonzero'); t.globalCompositeOperation = 'source-in';
-  t.fillStyle = t.createPattern(MG_IMG.TIERRA, 'repeat'); t.fillRect(0, 0, 540, MG_V.H);
-  c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(tierra, 0, 0);
-  return lienzo;
-}
-function mgPintaCaminos(c, t) {
-  const P = MG_P, cs = MG_V.cs, n = MG_CFG.lado, B = P.B, r = cs * 0.38, E = P.evento;
-  const libre = (x, y) => mgDentro(x, y) && P.camino.has(y * 8 + x);   // el camino es fijo en cada partida: no cambia al poner piezas
-  const forma = (pad) => {   // cada casilla libre es una mancha redonda, unida a las libres de al lado
-    c.beginPath();
-    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
-      if (!libre(x, y)) continue;
-      const cx = mgCx(x), cy = mgCy(y);
-      rrPath(c, cx - r - pad, cy - r - pad, (r + pad) * 2, (r + pad) * 2, r * 0.55 + pad);
-      if (libre(x + 1, y)) c.rect(cx, cy - r * 0.7 - pad, cs, (r * 0.7 + pad) * 2);
-      if (libre(x, y + 1)) c.rect(cx - r * 0.7 - pad, cy, (r * 0.7 + pad) * 2, cs);
-    }
-  };
-  if (MG_IMG.TIERRA) {   // el camino, como en los juegos de este tipo: una casilla de tierra por hueco, y las que se tocan se unen
-    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, cs, [...P.camino].join(','), MG_IMG.TIERRA.src].join('|');
-    if (MG_V.caminoClave !== clave) { MG_V.caminoLienzo = mgCaminoLienzo(libre, k); MG_V.caminoClave = clave; }
-    c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(MG_V.caminoLienzo, 0, 0); c.restore();
-  } else {
-  forma(3); c.fillStyle = 'rgba(70,60,20,.45)'; c.fill('nonzero');
-  forma(0); c.fillStyle = '#c9b46e'; c.fill('nonzero');
-  // piedrecitas del camino (fijas por casilla)
-  c.fillStyle = 'rgba(120,100,50,.35)';
-  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (libre(x, y)) for (let i = 0; i < 3; i++) { const s = (x * 7 + y * 13 + i * 5) % 11; c.beginPath(); c.arc(mgCx(x) - r * 0.6 + s * 4.5, mgCy(y) - r * 0.5 + ((s * 3 + i * 17) % 22) * 2.4, 2 + (s % 2), 0, MG_TAU); c.fill(); }
-  }
-  if (E && E.casillas.size) {   // las casillas mojadas: un charco azul con gotas y su x2
-    for (const k of E.casillas) {
-      const x = k % 8, y = (k / 8) | 0, cx = mgCx(x), cy = mgCy(y);
-      if (!mgImg(c, 'CHARCO', cx - cs * 0.48, cy - cs * 0.2, cs * 0.96, cs * 0.6)) { c.beginPath(); c.ellipse(cx, cy + cs * 0.2, cs * 0.44, cs * 0.22, 0, 0, MG_TAU); c.fillStyle = 'rgba(110,190,255,.55)'; c.fill(); }
-      c.fillStyle = 'rgba(220,240,255,.85)';
-      for (let i = 0; i < 3; i++) { const gy = (t * 70 + i * 29) % (cs * 0.8); c.beginPath(); c.ellipse(cx - cs * 0.3 + i * cs * 0.3, cy - cs * 0.45 + gy, 2.2, 6, 0, 0, MG_TAU); c.fill(); }
-      mgTexto(c, 'x2', cx + cs * 0.32, cy - cs * 0.34, 15, '#bfe6ff', 'center', OL);
-    }
-  }
-}
 // la mejor casilla para una pista (solo en los primeros turnos): la que más junta
 function mgPista() {
   const P = MG_P; let mejor = null, v = 0;
@@ -205,7 +150,7 @@ function mgPintaTablero(c, t) {
     if (!A) sc *= 1 + Math.sin(t * 2.2 + p.id * 1.7) * 0.025;   // respiran un poco: el tablero está vivo
     if (p.t === 'zorro' || p.t === 'cuervo') mgPintaBicho(c, p, A, cx, cy, cs * 1.04, t);
     else mgDibujaPieza(c, p.t, cx, cy, cs * 1.04 * sc, k, p.s);
-    if (p.t === 'cofre') mgTexto(c, tr('¡Ábreme!'), cx, cy - cs * 0.46 + Math.sin(t * 5) * 2, 12, '#fff', 'center', OL);
+    if (p.t === 'cofre') mgEtiqueta(c, tr('¡Ábreme!'), cx, cy - cs * 0.5 + Math.sin(t * 5) * 2, 11);
   }
   if (P.sel && prev) {   // la pieza, en la casilla, a punto de soltarla
     const [x, y] = P.sel, sube = Math.sin(t * 5) * 3;
@@ -270,7 +215,7 @@ function mgPintaAbajo(c, t) {
   }
   const E = P.evento;
   if (E && !P.modo) mgTexto(c, tr('{e}: {n} turnos', { e: tr(E.nombre), n: E.quedan }), 514, y0 + 20, 14, '#9fd4ff', 'right', null, MG_FB);
-  if (P.cartas.length) { const C = MG_CARTAS.find(x => x.id === P.cartas[0]); mgTexto(c, tr('Carta: {n}', { n: tr(C.nombre) }), 270, y0 + 92, 15, '#fff', 'center', OL); }
+  if (P.cartas.length) { const C = MG_CARTAS.find(x => x.id === P.cartas[0]); mgEtiqueta(c, tr('Carta: {n}', { n: tr(C.nombre) }), 270, y0 + 90, 14); }
 }
 function mgDescripcion(tipo) {
   const T = mgTipoDe(tipo);

@@ -115,14 +115,26 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
     swDibujaC(c, A.reliquia, 0, y + 78 + Math.round(Math.sin(t * 3) * 2) * 2, 6);
     y += 160;
   } else if (A.arte) {
-    const [w, h] = swTam(A.arte, 3);
+    // si con el dibujo grande no cabe el texto entero, el dibujo se pinta un poco más pequeño
+    let k = 3; if (A.texto && !swTextoEntra(c, A.texto, Hh / 2 - 24 - (y + swTam(A.arte, 3)[1] + 20)).cabe) k = 2;
+    const [w, h] = swTam(A.arte, k);
     swPanel(c, -w / 2 - 6, y - 4, w + 12, h + 12, SW_TINTA, SW_TINTA, SW_TINTA, 3);
-    swDibuja(c, A.arte, -w / 2, y + 2, 3);
+    swDibuja(c, A.arte, -w / 2, y + 2, k);
     y += h + 20;
   }
   if (A.texto) {
-    const lineas = swParte(c, A.texto, 220, 16);
-    const tam = lineas.length > 4 ? 14 : 16, sitio = Hh / 2 - 24 - y, paso = Math.round(tam * 1.5) + 2;
-    swParte(c, A.texto, 226, tam).slice(0, Math.max(1, Math.floor(sitio / paso))).forEach((l, i) => swTexto(c, l, 0, y + 8 + i * paso, tam, '#3a2414', 'center', 0, 600));
+    const T = swTextoEntra(c, A.texto, Hh / 2 - 24 - y);
+    T.lineas.slice(0, T.caben).forEach((l, i) => swTexto(c, l, 0, y + 8 + i * T.paso, T.tam, '#3a2414', 'center', 0, 600));
   }
+}
+// el texto de la carta, entero: prueba de la letra más grande a la más pequeña hasta que quepa en el sitio que queda
+// (si ni con la más pequeña cabe todo, .cabe es false y se pinta lo que entre)
+function swTextoEntra(c, txt, sitio) {
+  let r = null;
+  for (const [tam, paso] of [[16, 24], [15, 23], [14, 22], [13, 20], [13, 17]]) {   // la última, con las líneas más juntas
+    const lineas = swParte(c, txt, 226, tam), caben = Math.max(1, Math.floor((sitio + paso - tam) / paso));
+    r = { tam, paso, lineas, caben: Math.min(caben, lineas.length), cabe: caben >= lineas.length };
+    if (r.cabe) return r;
+  }
+  return r;
 }

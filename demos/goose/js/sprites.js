@@ -22,11 +22,12 @@ const CICLOS = {
 };
 const NUEVOS_PNG = ['rana', 'cuervo', 'antorcha', 'armadura', 'zombi', 'mj-rana', 'mj-cuervo', 'mj-alcalde', 'mj-caballero', 'parca', 'parca-hoz', 'parca-guadana', 'hoz', 'fuego'];
 const ENEMIGOS_PNG = ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-alb-1', 'e-alb-2', 'e-gorda-1', 'e-gorda-2', 'e-jefe-1', 'e-jefe-2'];
-const PNGS = [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
+// es una función: PARCA_PNG llega después (js/parca.js) y aquí aún no existe
+const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
-  return Promise.all(PNGS.map(n => new Promise(ok => {
-    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=1';
+  return Promise.all(PNGS().map(n => new Promise(ok => {
+    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=2';
   })));
 }
 

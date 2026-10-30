@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1a1030">
+<title>Fans of Pop</title>
+<meta name="description" content="Fans of Pop: revienta burbujas de un pop-it para liberar a los slimes atrapados y llévalos contigo hasta el jefe. Un roguelike de puzles corto, táctil y relajado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="540" height="960" aria-label="Fans of Pop"></canvas>
+  <div id="pp-ui">
+    <section id="pp-titulo">
+      <p class="pp-lema" id="pp-record"></p>
+      <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
+      <div class="pp-fila">
+        <button class="pp-btn2 pp-verde" id="pp-ayuda" type="button">CÓMO SE JUEGA</button>
+        <button class="pp-btn2 pp-azul" id="pp-sonido" type="button">SONIDO</button>
+      </div>
+    </section>
+    <section id="pp-modal" class="pp-modal" hidden><div class="pp-tarjeta" id="pp-tarjeta"></div></section>
+  </div>
+</div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: ['js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/tablero.js', 'js/partida.js', 'js/efectos.js', 'js/pintar.js', 'js/pantallas.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

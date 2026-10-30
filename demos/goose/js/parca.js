@@ -8,15 +8,15 @@
 const PARCA = { vida: 1500, r: 24, hoces: 1.4, siega: 1.1, zombis: 4 };
 // los fotogramas por estado: [nombres...] y su ritmo
 const PARCA_ANIM = {
-  aparece: ['parca-ap1', 'parca-ap2', 'parca-ap3', 'parca-ap4', 'parca-ap5'],
-  flota: ['parca-fl1', 'parca-fl2', 'parca-fl3', 'parca-fl4'],
+  aparece: ['parca-ap2', 'parca-ap3', 'parca-ap4', 'parca-ap5'],
+  flota: ['parca-fl1', 'parca-fl3', 'parca-fl4', 'parca-fl3'],
   lanza: ['parca-lz1', 'parca-lz2', 'parca-lz3'],
   alza: ['parca-al1', 'parca-al2', 'parca-al3'],
   siega: ['parca-sg1', 'parca-sg2', 'parca-sg3', 'parca-sg4'],
   llama: ['parca-ll1', 'parca-ll2'],
   herida: ['parca-he1'],
   regateo: ['parca-rg1', 'parca-rg2'],
-  muere: ['parca-mu1', 'parca-mu2', 'parca-mu3', 'parca-mu4'],
+  muere: ['parca-mu1'],
 };
 const PARCA_PNG = [...new Set(Object.values(PARCA_ANIM).flat())].concat(['parca', 'parca-hoz', 'parca-guadana', 'zombi']);
 

@@ -38,7 +38,8 @@ function preparaEspeciales() {
 // de oca a oca y tiro porque me toca: vuela hasta la siguiente oca y lo que haya en medio, frito
 function saltoOca(e) {
   const J = JUEGO;
-  J.salto = 0.85; J.fase = 'escena'; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(e.a), y: yCentro(e.a) }; J.saltoT = 0;
+  const a = topePuerta(e.t, e.a);   // si hay una puerta o la Muerte en medio, el salto se queda ahí
+  J.salto = 0.85; J.fase = 'escena'; J.saltoDe = { x: J.yo.x, y: J.yo.y }; J.saltoA = { x: centroX(a), y: yCentro(a) }; J.saltoT = 0;
   if (e.tipo === 'puente') { aviso(tr('¡DE PUENTE A PUENTE!'), '#9fe0ff', 1.6); aviso2(tr('y tiro porque me lleva la corriente')); }
   else { aviso(tr('¡DE OCA A OCA!'), '#ffd34d', 1.6); aviso2(tr('y tiro porque me toca')); }
   destella('#ffd34d', 0.6); tiembla(5); SONIDO.oca(); vibra(60);
@@ -55,6 +56,8 @@ function avanzaSalto(dt) {
   for (let i = 0; i < 3; i++) particula(px + (Math.random() - 0.5) * 22, py + (Math.random() - 0.5) * 10, (Math.random() - 0.5) * 40, 20, 0.6, 3, i ? '#ffd34d' : '#fff6c2', 0, 2);
   J.salto -= dt;
   if (J.salto <= 0) { J.invul = 1; anillo(J.yo.x, J.yo.y, 70, '#ffd34d', 0.5, 5); tiembla(4); SONIDO.aterriza(); J.casilla = casillaDe(J.yo.y); J.mejorCasilla = Math.max(J.mejorCasilla, J.casilla); J.fase = 'parado'; J.quieto = 0; J.mejorY = Math.min(J.mejorY, J.yo.y); aviso(tr('¡Y TIRO PORQUE ME TOCA!'), '#ffd34d', 1.4); }
+  if (J.salto <= 0 && casillaEs.puerta(J.casilla) && !J.puertas.has(J.casilla)) { J.puertas.add(J.casilla); empiezaMinijefe(J.casilla); }   // de oca a oca hasta una puerta: el minijefe también te espera
+  else if (J.salto <= 0 && casillaEs.muerte(J.casilla) && !J.parcaHecha && !J.minijefe) empiezaParca();
 }
 
 function casillaMuerte() {
@@ -71,7 +74,7 @@ function casillaMuerte() {
 function avanzaDerrumbe(dt) {
   const J = JUEGO, D = CFG.derrumbe, yo = J.yo;
   if (yo.y < J.mejorY - 2) { J.mejorY = yo.y; J.sinAvanzar = 0; } else J.sinAvanzar += dt;
-  let v = (D.base + D.crece * J.t) * (maldita('derrumbe') ? 1.5 : 1);
+  let v = (D.base + D.crece * J.t) * (maldita('derrumbe') ? 1.5 : 1) * J.mod.derrumbe;
   const E = J.escena;
   J.impaciente = J.fase === 'parado' && J.quieto > D.sinAvanzar && !J.jefe && !E;
   if (J.impaciente) v *= D.impaciencia;
@@ -123,7 +126,7 @@ function pintaTablero() {
     G.fillStyle = '#1e0f07'; G.fillRect(x0 + tb, top + 3, w, bottom - top + (cortada ? 0 : 5));
     if (t >= CFG.jardin) G.drawImage(JARDIN, x0, top, w, alto);
     else {
-      const img = SUELOS.length ? SUELOS[indiceBioma(t)][t % 2] : LOSAS[t % 3];
+      const S = SUELOS[biomaDe(t).id], img = S ? S[t % 2] : LOSAS[t % 3];
       G.drawImage(img, 0, 0, img.width, img.height * (bottom - top) / alto, x0 + tb, top, w, bottom - top);
       // el cambio de tierra: una franja de su color en la primera casilla
       if (BIOMAS.some(b => b.desde === t) && t > 1) { G.fillStyle = biomaDe(t).niebla; G.globalAlpha = 0.5; G.fillRect(x0 + tb, bottom - 3, w, 3); G.globalAlpha = 1; }

@@ -5,7 +5,7 @@
 'use strict';
 const AS_ARENA = { x: 0, y: 94, w: 540, h: 596 };
 // el centro (los pies) de cada casilla de la cuadrícula de los héroes
-function asCelda(col, fila) { return [60 + col * 44, AS_ARENA.y + 104 + fila * 62]; }   // debajo de la orilla de la arena
+function asCelda(col, fila) { return [44 + col * 66, AS_ARENA.y + 100 + Math.round(fila * (AS_ARENA.h - 150) / 7 / 2) * 2]; }   // 4 columnas x 8 filas repartidas por el alto de la arena
 let AS_B = null;   // la batalla en curso
 let AS_ID = 0;
 
@@ -177,7 +177,7 @@ function asAvanzaUnidad(u, dt) {
 function asSepara(dt) {
   const v = AS_B.u.filter(u => !u.muerta);
   for (let i = 0; i < v.length; i++) for (let j = i + 1; j < v.length; j++) {
-    const a = v[i], b = v[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = 14 * Math.max(a.escala, b.escala);
+    const a = v[i], b = v[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = 22 * Math.max(a.escala, b.escala);
     if (d < min) { const p = (min - d) / 2 * Math.min(1, dt * 12); a.x -= dx / d * p; a.y -= dy / d * p; b.x += dx / d * p; b.y += dy / d * p; }
   }
   for (const u of v) { u.x = clamp(u.x, 20, AS_ARENA.w - 20); u.y = clamp(u.y, AS_ARENA.y + 90, AS_ARENA.y + AS_ARENA.h - 6); }

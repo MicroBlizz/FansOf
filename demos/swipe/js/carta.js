@@ -88,7 +88,7 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
   const tt = swParte(c, A.titulo.toUpperCase(), 206, 20);
   swTexto(c, tt[0] || '', 0, -Hh / 2 + 43, tt[0] && tt[0].length > 16 ? 17 : 20);
   if (A.etiqueta) swTexto(c, A.etiqueta, 0, -Hh / 2 + 76, 14, '#c2432e', 'center', 0);
-  let y = -Hh / 2 + 78;
+  let y = -Hh / 2 + 78 + (A.etiqueta && !A.iconos ? 14 : 0);   // con etiqueta, el dibujo baja un poco para no taparla
   if (A.iconos) {
     // las dos acciones: izquierda y derecha, con su flecha
     const [a, b] = A.iconos;
@@ -116,23 +116,24 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
     y += 160;
   } else if (A.arte) {
     // si con el dibujo grande no cabe el texto entero, el dibujo se pinta un poco más pequeño
-    let k = 3; if (A.texto && !swTextoEntra(c, A.texto, Hh / 2 - 24 - (y + swTam(A.arte, 3)[1] + 20)).cabe) k = 2;
+    let k = 3; if (A.texto && !swTextoEntra(c, A.texto, Hh / 2 - 32 - (y + swTam(A.arte, 3)[1] + 20)).cabe) k = 2;
     const [w, h] = swTam(A.arte, k);
     swPanel(c, -w / 2 - 6, y - 4, w + 12, h + 12, SW_TINTA, SW_TINTA, SW_TINTA, 3);
     swDibuja(c, A.arte, -w / 2, y + 2, k);
     y += h + 20;
   }
   if (A.texto) {
-    const T = swTextoEntra(c, A.texto, Hh / 2 - 24 - y);
+    // las cartas de acción (dos dibujos) aprovechan hasta el borde; las demás dejan más margen por sus marcos gruesos
+    const T = A.iconos ? swTextoEntra(c, A.texto, Hh / 2 - 24 - y, 220) : swTextoEntra(c, A.texto, Hh / 2 - 32 - y);
     T.lineas.slice(0, T.caben).forEach((l, i) => swTexto(c, l, 0, y + 8 + i * T.paso, T.tam, '#3a2414', 'center', 0, 600));
   }
 }
 // el texto de la carta, entero: prueba de la letra más grande a la más pequeña hasta que quepa en el sitio que queda
 // (si ni con la más pequeña cabe todo, .cabe es false y se pinta lo que entre)
-function swTextoEntra(c, txt, sitio) {
+function swTextoEntra(c, txt, sitio, ancho = 212) {
   let r = null;
   for (const [tam, paso] of [[16, 24], [15, 23], [14, 22], [13, 20], [13, 17]]) {   // la última, con las líneas más juntas
-    const lineas = swParte(c, txt, 226, tam), caben = Math.max(1, Math.floor((sitio + paso - tam) / paso));
+    const lineas = swParte(c, txt, ancho, tam), caben = Math.max(1, Math.floor((sitio + paso - tam) / paso));
     r = { tam, paso, lineas, caben: Math.min(caben, lineas.length), cabe: caben >= lineas.length };
     if (r.cabe) return r;
   }

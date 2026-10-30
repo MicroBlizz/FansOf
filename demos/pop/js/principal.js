@@ -25,10 +25,11 @@ PP_CV.addEventListener('pointerdown', e => {
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
-  } else if (PP_PANT.actual === 'mapa') {
-    for (const nd of PP_NODOS_MAPA) if (Math.hypot(lx - nd.x, ly - nd.y) <= nd.r) { play('ppNodo'); ppEntra(); break; }
-  }
+  } else if (PP_PANT.actual === 'mapa') ppMapaAbajo(lx, ly);
 });
+// el mapa se arrastra para ver los niveles pasados; se elige al soltar sin haber arrastrado
+PP_CV.addEventListener('pointermove', e => { if (PP_PANT.actual === 'mapa') { const [lx, ly] = ppLogico(e); ppMapaMueve(lx, ly); } });
+window.addEventListener('pointerup', () => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppMapaArriba(); else PP_MAPA.toque = null; });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape' || PP_PANT.actual === 'titulo') return;
   if (PP_PANT.pausa) ppQuitaPausa(); else ppPausa();   // Esc abre y cierra la pausa (las demás ventanas se cierran con sus botones)
@@ -48,11 +49,12 @@ function ppFotograma(ahora) {
 }
 function ppEmpieza(seguir) {
   ppCargaSonidos(); play('select');
-  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_MAPA.cam = null;
+  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_MAPA.m = null;
   if (!(seguir && ppSigueCamino())) ppNuevaRuta();
   ppIrA('mapa');
 }
 function ppArranque() {
+  ppRevisaDentro();   // si se cerró el juego a media partida (después de tocar), se pierde ese corazón
   ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);

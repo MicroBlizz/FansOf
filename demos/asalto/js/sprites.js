@@ -1,9 +1,9 @@
 // Fans of Asalto · SPRITES: carga las tiras de img/ (pixel art de Yoshi, reducido con herramientas/comfyui/asalto/sprites.py) y pinta
 // a cada muñeco en su animación: reposo, andar, ataque, golpe y muerte. Si a un personaje aún le falta algún fotograma, se suple
 // moviendo su dibujo por código (botar, estirarse, embestir, parpadear). Nunca se voltea un dibujo: los héroes miran a la derecha
-// y los enemigos a la izquierda, así el arma no cambia de mano. Todo se pinta al doble (AS_PX) y sin suavizar.
+// y los enemigos a la izquierda, así el arma no cambia de mano. Todo se pinta a su tamaño real (AS_PX) y sin suavizar.
 'use strict';
-const AS_PX = 1;   // los muñecos a su tamaño (unos 14 píxeles de alto en el lienzo pequeño), como en el juego de referencia
+const AS_PX = 2;   // los muñecos a su tamaño real: cada píxel suyo es un píxel del lienzo pequeño (antes iban a la mitad y perdían píxeles)
 const AS_IMG = {};
 const AS_BLANCO = {};   // la misma tira en blanco, para el destello al recibir un golpe
 function asCargaImagenes(listo) {
@@ -43,7 +43,7 @@ function asCuadro(tipo, anim, tiempo, dura) {
 // Pinta un muñeco con los pies en (x, y). u: { tipo, anim, tAnim, dura, destello, escala, alfa, lado }.
 function asPintaMuneco(c, u, x, y, t) {
   if (!asHay(u.tipo)) return;
-  const d = AS_TIRAS[u.tipo], esc = Math.max(1, Math.round(AS_PX * (u.escala || 1))), w = d.w * esc, h = d.h * esc;   // múltiplo de 2: píxeles enteros
+  const d = AS_TIRAS[u.tipo], esc = AS_PX * Math.max(1, Math.round(u.escala || 1)), w = d.w * esc, h = d.h * esc;   // siempre un número entero de píxeles del lienzo pequeño
   const f = asCuadro(u.tipo, u.anim, u.tAnim || 0, u.dura);
   const hacia = u.lado === 'heroe' ? 1 : -1;
   // movimiento por código cuando falta el fotograma propio (y un poco siempre, para que no se vea rígido)
@@ -71,7 +71,7 @@ function asPintaMuneco(c, u, x, y, t) {
   c.restore();
 }
 // El alto en pantalla de un muñeco (para la barra de vida y los números)
-function asAltoMuneco(tipo, escala) { return asHay(tipo) ? AS_TIRAS[tipo].h * AS_PX * (escala || 1) : 50; }
+function asAltoMuneco(tipo, escala) { return asHay(tipo) ? AS_TIRAS[tipo].h * AS_PX * Math.max(1, Math.round(escala || 1)) : 50; }
 // Un retrato quieto (tienda, ventanas): el primer fotograma cabido en una caja de lado L
 function asRetrato(c, tipo, cx, cy, L) {
   if (!asHay(tipo)) return;

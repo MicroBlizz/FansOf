@@ -58,16 +58,45 @@ function mgPintaConejos(c, t) {
 const MG_LLUVIA = Array.from({ length: 10 }, (_, i) => ({ t: MG_CADENA[i % 8], x: (i * 97) % 540, y: (i * 173) % 960, v: 30 + (i * 37) % 40, r: i * 1.7 }));
 function mgPintaPortada(c, t, dt) {
   mgFondo(c, true);
-  c.fillStyle = 'rgba(255,248,230,.12)'; c.fillRect(0, 0, 540, MG_V.H);
+  if (!MG_PORTADA.lista) return;   // hasta que lleguen sus dibujos, solo el prado: nada provisional
+  const a = Math.min(1, (performance.now() - MG_PORTADA.desde) / 350);   // y entra con un fundido
+  c.save(); if (a < 1) c.globalAlpha = a;
   for (const L of MG_LLUVIA) {
     L.y += L.v * dt; L.r += dt; if (L.y > MG_V.H + 60) { L.y = -60; L.x = Math.random() * 540; }
-    c.save(); c.globalAlpha = 0.85; c.translate(L.x, L.y); c.rotate(Math.sin(L.r) * 0.25); mgDibujaPieza(c, L.t, 0, 0, 74, mgK()); c.restore();
+    if (!MG_IMG[L.t]) continue;
+    const g = mgCaeGirada(L.t, Math.sin(L.r) * 0.25), k = mgK();
+    if (g) c.drawImage(g, L.x - g.width / 2 / k, L.y - g.height / 2 / k, g.width / k, g.height / k);
   }
-  const y0 = MG_V.H * 0.2 + Math.sin(t * 1.6) * 4;
-  c.save(); c.translate(270, y0); c.rotate(-0.04);
-  if (!mgImg(c, 'LOGO', -250, -125, 500, 250)) { mgTexto(c, 'FANS OF', 0, -50, 44, '#ffffff'); mgTexto(c, 'MERGE', 0, 22, 108, '#ff8a2a'); }
-  c.restore();
+  const y0 = MG_V.H * 0.2 + Math.sin(t * 1.6) * 4, logo = mgLogoListo();
+  if (logo) c.drawImage(logo, 270 - logo.width / 2 / mgK(), y0 - logo.height / 2 / mgK(), logo.width / mgK(), logo.height / mgK());
+  else { mgTexto(c, 'FANS OF', 270, y0 - 50, 44, '#ffffff'); mgTexto(c, 'MERGE', 270, y0 + 22, 108, '#ff8a2a'); }
   const by = MG_V.H * 0.52, salto = Math.abs(Math.sin(t * 2.4)) * 14;
   c.beginPath(); c.ellipse(270, by + 110, 84 - salto, 16, 0, 0, MG_TAU); c.fillStyle = 'rgba(20,40,10,.3)'; c.fill();
-  mgDibujaPieza(c, MG_IMG.BUNNY ? 'BUNNY' : 'madriguera', 270, by - salto, 260, mgK());
+  if (MG_IMG.BUNNY) mgDibujaPieza(c, 'BUNNY', 270, by - salto, 260, mgK());
+  c.restore();
+}
+// una pieza de las que caen en la portada, ya girada (9 giros por pieza, preparados una vez) y un poco transparente:
+// girarlas en cada fotograma era lo otro que frenaba la portada
+function mgCaeGirada(tipo, ang) {
+  const k = mgK(), i = Math.round((ang / 0.25 + 1) * 4), clave = tipo + ':' + i + ':' + k;
+  if (!MG_V.caen || MG_V.caenK !== k) { MG_V.caen = new Map(); MG_V.caenK = k; }
+  let cv = MG_V.caen.get(clave);
+  if (!cv) {
+    const lado = Math.round(74 * k), W = Math.ceil(lado * 1.3), sp = mgSpriteListo(tipo, lado); if (!sp) return null;
+    cv = document.createElement('canvas'); cv.width = cv.height = W;
+    const c = cv.getContext('2d'); c.globalAlpha = 0.85; c.translate(W / 2, W / 2); c.rotate((i / 4 - 1) * 0.25); c.drawImage(sp, -lado / 2, -lado / 2);
+    MG_V.caen.set(clave, cv);
+  }
+  return cv;
+}
+// el logo, encogido y girado una sola vez al tamaño real de la pantalla (hacerlo en cada fotograma era lo que frenaba la portada)
+function mgLogoListo() {
+  const im = MG_IMG.LOGO, k = mgK(); if (!im) return null;
+  if (MG_V.logoK !== k) {
+    const w = 500, h = 250, ang = -0.04, W = Math.ceil((w * Math.cos(-ang) + h * Math.sin(-ang)) * k) + 4, H = Math.ceil((h * Math.cos(-ang) + w * Math.sin(-ang)) * k) + 4;
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const c = cv.getContext('2d'); c.imageSmoothingQuality = 'high'; c.translate(W / 2, H / 2); c.rotate(ang); c.drawImage(im, -w * k / 2, -h * k / 2, w * k, h * k);
+    MG_V.logo = cv; MG_V.logoK = k;
+  }
+  return MG_V.logo;
 }

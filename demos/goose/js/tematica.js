@@ -16,11 +16,13 @@ const biomaDe = t => { let b = BIOMAS[0]; for (const x of BIOMAS) if (t >= x.des
 const indiceBioma = t => BIOMAS.indexOf(biomaDe(t));
 
 // --- suelos: dos variantes por tierra ---
-const SUELOS = [];   // SUELOS[bioma][variante]
+const SUELOS = {};   // SUELOS[id de la tierra][variante] (todas las tierras, también las que no salen esta partida)
 function preparaSuelos() {
-  SUELOS.length = 0;
+  for (const k in SUELOS) delete SUELOS[k];
   const w = CFG.anchoCamino + 24, h = CFG.altoCasilla, k = PAN.k;
-  BIOMAS.forEach((B, bi) => {
+  const todas = typeof BIOMAS_FIJOS !== 'undefined' ? [...Object.values(BIOMAS_FIJOS), ...Object.values(BIOMAS_EXTRA)] : BIOMAS;
+  todas.forEach((B, bi) => {
+    bi = ['bosque', 'pantano', 'cementerio', 'aldea', 'catacumbas', 'castillo'].indexOf(B.id);   // el dibujo de recambio de cada tierra (las nuevas: losas)
     const lista = [];
     for (let v = 0; v < 2; v++) {
       const c = lienzo(w * k, h * k), x = c.getContext('2d'); x.scale(k, k);
@@ -55,7 +57,7 @@ function preparaSuelos() {
       x.strokeStyle = '#120805'; x.lineWidth = 2; x.strokeRect(1, 1, w - 2, h - 2);
       lista.push(c);
     }
-    SUELOS.push(lista);
+    SUELOS[B.id] = lista;
   });
   preparaAdornos();
 }
@@ -88,6 +90,7 @@ function preparaAdornos() {
     estatua: [12, 18, (x, w, h) => { x.beginPath(); x.rect(1, h * 0.75, w - 2, h * 0.25); t(x, '#6e6e78'); x.beginPath(); x.ellipse(w / 2, h * 0.58, w * 0.32, h * 0.18, 0, 0, 7); t(x, '#8a8a94'); x.beginPath(); x.moveTo(w * 0.6, h * 0.5); x.quadraticCurveTo(w * 0.75, h * 0.2, w * 0.6, h * 0.08); x.lineWidth = 3; x.strokeStyle = '#8a8a94'; x.stroke(); x.fillStyle = '#e8a42a'; x.fillRect(w * 0.6, h * 0.06, w * 0.25, 1.6); }],
   };
   for (const n in A) hazSprite('ad-' + n, A[n][0], A[n][1], A[n][2]);
+  for (const n of ADORNOS_PNG) if (!A[n] && IMG['a-' + n]) hazSprite('ad-' + n, 1, 1, () => {});   // los de las tierras nuevas: solo pixel art de Yoshi
 }
 
 // los adornos de cada casilla (siempre los mismos): 2 o 3, pegados a los bordes para no estorbar

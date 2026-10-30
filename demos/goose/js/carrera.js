@@ -64,6 +64,7 @@ function empiezaCarrera(s) {
   AMIGOS.empezada = true;
   const lista = s.jugadores.slice().sort((a, b) => a.orden - b.orden);
   const yo = lista.find(j => j.yo) || lista[0];
+  JUEGO.semillaSala = (s.datos && s.datos.t0) || 1;   // todos con las mismas tierras y casillas, en la Noche 1
   nuevaPartida();
   const J = JUEGO;
   J.avisos = [];

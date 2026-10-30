@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.1.1"></script>
+<script src="../../core/js/nucleo.js?v=0.2.0"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/swipe.css')</script>
 </head>
 <body>
@@ -21,6 +21,7 @@
       <p class="sw-lema" id="sw-record"></p>
       <button class="sw-btn sw-enorme" id="sw-seguir" type="button" hidden>SEGUIR SUBIDA</button>
       <button class="sw-btn sw-enorme" id="sw-jugar" type="button">JUGAR</button>
+      <button class="sw-btn2 sw-rojo" id="sw-atajo" type="button" hidden>EMPEZAR EN EL ACTO 2</button>
       <div class="sw-fila">
         <button class="sw-btn2 sw-verde" id="sw-ayuda" type="button">CÓMO SE JUEGA</button>
         <button class="sw-btn2 sw-azul" id="sw-col" type="button">RELIQUIAS</button>
@@ -34,12 +35,12 @@
 <script>
 NUCLEO.juego({
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Swipe lleva su propia partida y sus pantallas
-  antes: ['js/ajustes.js'],
-  idioma: { en: ['idioma/en.js'] },
+  antes: ['js/ajustes.js', 'js/acto2.js'],
+  idioma: { en: ['idioma/en.js', 'idioma/en-acto2.js'] },
   despues: [
     '../../core/js/serie/canciones.js',
     'js/guardado.js', 'js/sprites.js', 'js/efectos.js', 'js/sonidos.js', 'js/combate.js', 'js/ruta.js', 'js/partida.js',
-    'js/pintar.js', 'js/carta.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
+    'js/pintar.js', 'js/carta.js', 'js/pantallas.js', 'js/monetiza.js', 'js/novedades.js', 'js/principal.js'],
 });
 </script>
 </body>

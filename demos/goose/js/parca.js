@@ -25,7 +25,7 @@ function empiezaParca() {
   for (let i = ENE.n - 1; i >= 0; i--) ENE.lista[i].hp = 0;
   BALAS.vacia();
   const e = creaEnemigo('oca', centroX(t), yCentro(t) - 36); if (!e) return;
-  e.tipo = 'parca'; e.hpMax = e.hp = PARCA.vida * (1 + J.nivel * 0.05); e.r = PARCA.r; e.vel = 18; e.dano = 20; e.xp = 0;
+  e.tipo = 'parca'; e.hpMax = e.hp = PARCA.vida * (1 + J.nivel * 0.05) * J.mod.jefes; e.r = PARCA.r; e.vel = 18; e.dano = 20; e.xp = 0;
   e.estado = 'aparece'; e.f2 = 2.2; e.cd = 0; e.fase = 0; e.siegaX = 0; e.siegaDir = 1; e.animT = 0;
   J.minijefe = e; J.fase = 'parado'; J.escena = { tipo: 'parca', cx: centroX(t), cy: yCentro(t), r: 999, nombre: 'LA OCA PARCA' };
   J.farolApagado = 0.5;

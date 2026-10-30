@@ -1,6 +1,7 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "<b>Corazones, monedas y cofres</b>: si fallas pierdes un corazón y vuelve uno cada 30 minutos. Las monedas llenan los corazones o compran un <b>hueco más</b> en el equipo. Y al ganar a un jefe, su mundo se abre en <b>difícil</b>, de noche.": "<b>Hearts, coins and chests</b>: fail and you lose a heart; one comes back every 30 minutes. Coins refill your hearts or buy an <b>extra slot</b> on your team. And beating a boss unlocks its world on <b>hard</b>, at night.",
   "<b>MUNDOS</b>: el Jardín y la Pastelería, 20 niveles cada uno con un <b>jefe</b> al final. Los niveles van de fácil a difícil y uno de cada cinco es un reto.": "<b>WORLDS</b>: the Garden and the Bakery, 20 levels each with a <b>boss</b> at the end. Levels go from easy to hard and one in five is a challenge.",
   "<b>Pop-it de verdad</b>: lo que revientas se queda reventado. Revienta todas antes de que se acaben los toques; las <b>burbujas con nata</b> necesitan dos golpes.": "<b>A real pop-it</b>: what you pop stays popped. Pop them all before you run out of taps; <b>cream-topped bubbles</b> need two hits.",
   "El CEO ha cambiado las reglas del pop-it: ahora lo reventado se queda reventado. Dice que es «para ahorrar en burbujas».": "The CEO changed the pop-it rules: now popped bubbles stay popped. He says it's «to save on bubbles».",

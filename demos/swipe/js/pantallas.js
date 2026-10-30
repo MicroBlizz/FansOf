@@ -14,6 +14,8 @@ function swPortadaBotones() {
   $('#sw-seguir').hidden = !hay;
   $('#sw-jugar').textContent = hay ? tr('NUEVA SUBIDA') : tr('JUGAR');
   $('#sw-jugar').classList.toggle('sw-enorme', !hay);
+  $('#sw-atajo').hidden = !SAVE.acto2;   // el Acto 2 abierto: se puede empezar directamente en él (js/monetiza.js)
+  $('#sw-atajo').textContent = tr('EMPEZAR EN EL ACTO 2');
   $('#sw-record').textContent = SAVE.record ? tr('Récord: piso {n}', { n: SAVE.record }) + (SAVE.victorias ? ' · ' + tr('Victorias: {n}', { n: SAVE.victorias }) : '') : tr('Sube la Torre de Microblizz deslizando cartas.');
 }
 function swModal(html, clase = '') {
@@ -24,9 +26,9 @@ function swModal(html, clase = '') {
 function swCierraModal() { $('#sw-modal').hidden = true; }
 
 /* ---------- empezar ---------- */
-function swEmpieza(seguir) {
+function swEmpieza(seguir, atajo = false) {
   play('go'); swFxLimpia(); SW_COLA.length = 0;
-  if (seguir && SAVE.run) swSigueSubida(); else swNuevaSubida();
+  if (seguir && SAVE.run) swSigueSubida(); else swNuevaSubida(atajo);
   SW_PANT.actual = 'partida'; SW_PANT.pausa = false;
   $('#sw-titulo').hidden = true; swCierraModal();
   swMusicaPiso();
@@ -39,13 +41,14 @@ function swAyuda(enPartida) {
   const t = swModal(`<h2>${tr('Cómo se juega')}</h2>
     ${fila('i-flecha', tr('<b>Desliza la carta</b> a la izquierda o a la derecha. Cada lado hace una cosa distinta: míralo antes de soltar.'))}
     ${fila('i-espada', tr('El enemigo enseña lo que va a hacer. <b>Ataca</b> o <b>cúbrete</b> con escudo a tiempo.'))}
-    ${fila('i-escudo', tr('Los lados <b>cambian</b>: no siempre se ataca a la izquierda. El escudo que te sobra se guarda a medias (<b>guardia</b>) y la <b>Parada</b> devuelve lo que bloqueas.'))}
+    ${fila('i-escudo', tr('Cada carta tiene sus lados <b>fijos</b> y el que ataca va en <b>rojo</b>: apréndetelas y jugarás más rápido. El escudo que te sobra se guarda a medias (<b>guardia</b>) y la <b>Parada</b> devuelve lo que bloqueas.'))}
     ${fila('i-flecha', tr('A la derecha ves la <b>siguiente carta</b>: planea dos jugadas.'))}
     ${fila('n-elite', tr('Las élites y el CEO <b>cargan</b> golpes enormes. Hazles el daño que marcan mientras cargan y se lo <b>cortas</b>.'))}
     ${fila('i-caos', tr('Los ataques fuertes gastan <b>caos</b>. Ganas 1 cada turno.'))}
     ${fila('a-caos', tr('<b>¡Rápido!</b> Cada carta tiene su mecha. Si deslizas deprisa haces <b>racha</b>; con 4 seguidas entras en <b>FRENESÍ</b>: más daño y más oro.'))}
     ${fila('r-hielo', tr('Las <b>reliquias</b> premian tus gestos: tres a la izquierda, alternar lados… ¡Busca los combos!'))}
     ${fila('n-jefe', tr('Elige camino en cada piso y llega al piso 15: allí te espera <b>el CEO</b>.'))}
+    ${fila('n-jefe2', tr('Gana al CEO y se abre el <b>Acto 2</b>: 15 pisos más contra <b>Phony</b>, con suscripciones, peajes y facciones que liberar.'))}
     <button class="sw-btn" id="sw-ay-ok" type="button">${tr('¡A SUBIR!')}</button>`, 'sw-ancha');
   t.querySelectorAll('[data-mini]').forEach(s => s.append(swMiniatura(s.dataset.mini, s.dataset.mini.startsWith('i-') ? 3 : 2)));
   $('#sw-ay-ok').onclick = () => { play('select'); swCierraModal(); SW_PANT.pausa = false; if (!enPartida) swIrA('titulo'); else swNuevaMecha(); };
@@ -85,13 +88,16 @@ function swInfoReliquia(id) {
 }
 /* ---------- el final ---------- */
 const SW_FRASES_CAE = ['Recursos Humanos ha archivado tu caso. En la trituradora.', 'El CEO ni se ha enterado. Estaba en una reunión.', 'Microblizz te ofrece unas prácticas no remuneradas como consuelo.', 'CrazyBunny dice que la próxima vez sube por las escaleras.'];
+const SW_FRASES_GANA_2 = ['El Presidente de Phony ha cancelado su propia suscripción. Le han cobrado la permanencia.', 'Los juegos vuelven a tener disco. Y manual. Y mapa de papel.', 'Phony ha anunciado que la libertad es un DLC. Nadie lo ha comprado.'];
 const SW_FRASES_GANA = ['El CEO ha dimitido con una indemnización de nueve cifras. Pero ha dimitido.', 'La Torre de Microblizz ahora es un huerto de zanahorias.', 'Los becarios por fin cobran. En zanahorias, pero cobran.'];
 function swPantallaFin(gana) {
   SW_PANT.pausa = true;
   const P = SW_P;
-  const t = swModal(`<h2>${gana ? tr('¡Has llegado arriba!') : tr('Has caído')}</h2>
-    <p class="sw-sub">${tr(pick(gana ? SW_FRASES_GANA : SW_FRASES_CAE))}</p>
-    <div class="sw-fin"><div><small>${tr('PISO')}</small><b>${gana ? SW_CFG.pisos : P.piso}</b></div><div><small>${tr('ORO')}</small><b>${fmt(P.oro)}</b></div><div><small>${tr('RELIQUIAS')}</small><b>${P.reliquias.length}</b></div></div>
+  const final = gana && P.acto === 2;   // ganar al Presidente de Phony
+  const t = swModal(`<h2>${final ? tr('¡Phony ha caído!') : gana ? tr('¡Has llegado arriba!') : tr('Has caído')}</h2>
+    <p class="sw-sub">${tr(pick(final ? SW_FRASES_GANA_2 : gana ? SW_FRASES_GANA : SW_FRASES_CAE))}</p>
+    ${P.abreActo2 ? `<p class="sw-nuevo">${tr('¡ACTO 2 DESBLOQUEADO! Desde ahora, tras el CEO la subida sigue hasta el piso 30, contra Phony.')}</p>` : ''}
+    <div class="sw-fin"><div><small>${tr('PISO')}</small><b>${P.piso}</b></div><div><small>${tr('ORO')}</small><b>${fmt(P.oro)}</b></div><div><small>${tr('RELIQUIAS')}</small><b>${P.reliquias.length}</b></div></div>
     <p class="sw-sub">${tr('Récord: piso {n}', { n: SAVE.record })}</p>
     <div class="sw-rel">${P.reliquias.map(r => `<span data-mini="${r}"></span>`).join('')}</div>
     <button class="sw-btn sw-enorme" id="sw-otra" type="button">${tr('OTRA SUBIDA')}</button>

@@ -42,9 +42,9 @@ function avanzaDado(dt) {
   if ((J.cuadro % 4) === 0) SONIDO.dadoTic();
   if (D.rodando > 0) return;
   // ha caído: la cara
-  let c = 1 + ((Math.random() * 6) | 0);
-  if (D.soloPares) c = 2 * (1 + ((Math.random() * 3) | 0));
-  if (D.soloImpares) c = 1 + 2 * ((Math.random() * 3) | 0);
+  let c = 1 + ((azarDado() * 6) | 0);   // azarDado: en el Tablero del día, los mismos dados para todos (js/desafios.js)
+  if (D.soloPares) c = 2 * (1 + ((azarDado() * 3) | 0));
+  if (D.soloImpares) c = 1 + 2 * ((azarDado() * 3) | 0);
   if (maldita('sinseis') && c === 6) c = 4;
   // al principio el dado da pasos cortos (1-3 en el Bosque, 1-4 en el Pantano): la partida dura más y se aprende con calma
   const tope = J.casilla < 11 ? 3 : J.casilla < 21 ? 4 : 6; if (c > tope) c = tope;
@@ -60,7 +60,7 @@ function avanzaDado(dt) {
 function cierraEfectoDado() { const D = JUEGO.dado; if (D.efecto) D.quedan = Math.min(D.quedan, 3); }
 
 const invertido = () => JUEGO.dado.efecto === 5 && JUEGO.dado.quedan > 0;
-const multiVel = () => (JUEGO.dado.efecto === 2 ? 1.45 : JUEGO.dado.efecto === 3 ? 0.7 : 1);
+const multiVel = () => (JUEGO.dado.efecto === 2 ? 1.45 : JUEGO.dado.efecto === 3 ? 0.7 : 1) * frenadoNieve();
 
 // el dado en pantalla: grande en el centro mientras rueda; el botón TIRA EL DADO cuando estás parado; el efecto en marcha en su esquina
 function pintaDado() {

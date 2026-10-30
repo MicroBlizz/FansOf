@@ -27,7 +27,7 @@ const MALDICIONES = [
   { id: 'niebla', nombre: 'Niebla eterna', desc: 'Todo el tablero a oscuras, como en las Catacumbas.', peso: 1 },
 ];
 function eligeMaldicion() {
-  const total = MALDICIONES.reduce((s, m) => s + m.peso, 0); let r = Math.random() * total;
+  const total = MALDICIONES.reduce((s, m) => s + m.peso, 0); let r = azar() * total;
   for (const m of MALDICIONES) { r -= m.peso; if (r <= 0) return m; }
   return MALDICIONES[0];
 }
@@ -39,12 +39,13 @@ function barajaCasillas() {
   const libre = new Set(); for (let t = 2; t < CFG.jardin - 1; t++) libre.add(t);
   for (const t in CFG.ocaSalta) { libre.delete(+t); libre.delete(CFG.ocaSalta[t]); }
   for (const t of CFG.ocasAdorno) libre.delete(t);
-  const toma = (a, b) => { const c = []; for (let t = a; t <= b; t++) if (libre.has(t)) c.push(t); const t = pick(c); libre.delete(t); return t; };
+  const toma = (a, b) => { const c = []; for (let t = a; t <= b; t++) if (libre.has(t)) c.push(t); const t = c[(azar() * c.length) | 0]; libre.delete(t); return t; };
   C.puenteDe = toma(4, 8); C.puenteA = C.puenteDe + 6; libre.delete(C.puenteA);
   C.pozo = toma(14, 20); C.dado1 = toma(24, 29); C.posada = toma(30, 35); C.laberinto = toma(40, 46); C.carcel = toma(47, 53); C.dado2 = toma(48, 55);
   C.muerte = 58;
   // las puertas de las tierras: la primera casilla de cada una (del Pantano en adelante) trae un minijefe
   C.puertas = BIOMAS.slice(1).map(b => b.desde);
+  JUEGO.extra = {};   // las casillas de los caminos (js/caminos.js), que se ponen al elegir en cada cruce
 }
 // las consultas que usa el resto del juego (antes miraban CFG a secas)
 const casillaEs = {
@@ -85,6 +86,7 @@ function enemigoDeTierra() {
 // el movimiento y el ataque de los enemigos propios de cada tierra. Devuelve [qx, qy] (hacia dónde quiere ir) o null si no es suyo
 function muevePropio(e, dt, ux, uy, d) {
   const J = JUEGO, yo = J.yo;
+  const nuevo = mueveTierras2(e, dt, ux, uy, d); if (nuevo) return nuevo;   // las de las tierras nuevas (js/tierras2.js)
   if (e.tipo === 'rana') {   // salta a ratos
     e.cd -= dt; if (e.cd <= 0) { e.cd = 1.1 + Math.random() * 0.6; e.kx += ux * 120; e.ky += uy * 120; e.f2 = 0.35; }
     e.f2 -= dt; return [0, 0];
@@ -113,6 +115,7 @@ function escudoArmadura(e, nx, ny) {
 }
 // al morir: la rana explota en charco tóxico
 function muerePropio(e) {
+  muereTierras2(e);
   if (e.tipo === 'rana') { let malos = 0; for (let i = 0; i < CHARCOS.n; i++) if (CHARCOS.lista[i].malo) malos++; const c = malos < 4 ? CHARCOS.saca() : null; if (c) { c.x = e.x; c.y = e.y; c.r = 12; c.vida = 2.2; c.dps = 0; c.tic = 0; c.malo = true; } estallido(e.x, e.y, 10, '#8fd36b', 70, 0.5, 2.5, 0); }
 }
 // los charcos de las ranas te hacen daño a ti (los tuyos, a las ocas)

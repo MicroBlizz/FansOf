@@ -22,6 +22,7 @@ function avanzaArmas(dt) {
   if (A.huevo && A.huevo.t <= 0) armaHuevo(A.huevo);
   if (A.dados && A.dados.t <= 0) armaDados(A.dados);
   if (A.guadana) armaGuadana(A.guadana, dt);
+  armasNuevas(A, dt);   // la campana y el tirachinas (js/armas2.js)
   avanzaProyectiles(dt);
   avanzaCharcos(dt);
   for (let i = LATIGAZOS.length - 1; i >= 0; i--) { LATIGAZOS[i].t += dt; if (LATIGAZOS[i].t >= LATIGAZOS[i].dur) LATIGAZOS.splice(i, 1); }
@@ -203,6 +204,7 @@ function pintaArmas() {
     G.globalAlpha = 0.6 * a; G.fillStyle = '#c8f25a'; const b = (J.t * 3 + i) % 1; G.beginPath(); G.arc(o.x + Math.sin(i * 7) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, 1.5 + b * 2, 0, 6.283); G.fill();
   }
   G.globalAlpha = 1;
+  pintaArmasNuevas();   // las ondas de la campana y las piedras (js/armas2.js)
   // latigazos
   for (const l of LATIGAZOS) pintaLatigazo(l);
   G.globalAlpha = 1;

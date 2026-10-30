@@ -8,9 +8,16 @@ const AJUSTES = {
 };
 
 const PP_CFG = {
-  vida: 5,                   // corazones; se pierde uno al quedarte sin toques con burbujas sin reventar
-  equipo: 4,                 // amigos (slimes) activos como mucho
-  vidaSeguir: 3,             // con cuántos corazones sigues si te quedas sin ninguno (hasta que lleguen las vidas que se recargan, fase 2)
+  vida: 5,                   // corazones; se pierde uno al quedarte sin toques con burbujas sin reventar (o al salir a medias)
+  recarga: 30 * 60 * 1000,   // cada cuánto vuelve un corazón (ms), también con el juego cerrado
+  precioVidas: 150,          // monedas por llenar los corazones de golpe
+  equipo: 4,                 // huecos del equipo de serie
+  huecosMax: 6,              // con los comprados (Daniel, 30-10-2026: comprar huecos con monedas, hasta 6, cada uno más caro)
+  precioHueco: [400, 800],   // el 5.º y el 6.º hueco
+  monedas: { nivel: 10, jefe: 30, estrella: 5 },   // la primera vez que pasas un nivel (o un jefe) y por cada estrella que mejora tu récord
+  cofreCada: 15,             // un cofre cada 15 estrellas de récord…
+  cofre: [40, 80],           // …con entre 40 y 80 monedas
+  cofreJefe: 100,            // y uno grande, de 100, al ganar a un jefe por primera vez
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 

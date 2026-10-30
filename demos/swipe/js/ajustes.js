@@ -27,6 +27,8 @@ const SW_CFG = {
   // Los lados de cada carta van FIJOS por diseño (unas atacan a la izquierda y otras a la derecha): quien se sabe las cartas
   // juega más rápido. giro = probabilidad de darles la vuelta al azar (0 = nunca; así lo pidió Arkioner).
   guardia: 0.5, giro: 0,
+  // el atajo al Acto 2 (js/monetiza.js): lo que se lleva de más quien empieza en el piso 16, y su precio en gemas tras el gratis del día
+  atajo: { oro: 80, vida: 10, cartas: 3, gemas: 5 },
 };
 
 // Efectos (los usan las cartas, los eventos y la tienda). t = tipo:
@@ -163,5 +165,4 @@ const SW_NODOS = {
   tienda: { nombre: 'Tienda', icono: 'n-tienda' }, descanso: { nombre: 'Descanso', icono: 'n-descanso' }, tesoro: { nombre: 'Tesoro', icono: 'n-tesoro' },
   jefe: { nombre: 'El CEO', icono: 'n-jefe' },
 };
-// zona (fondo) de cada piso
-function swZona(piso) { return piso >= 15 ? 'fondo-azotea' : piso >= 11 ? 'fondo-servidores' : piso >= 6 ? 'fondo-oficinas' : 'fondo-vestibulo'; }
+// la zona (fondo) de cada piso: swZona, en js/acto2.js (cubre los dos actos)

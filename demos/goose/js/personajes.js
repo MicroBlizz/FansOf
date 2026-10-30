@@ -1,4 +1,5 @@
-// Fans of Goose · Los cuatro personajes (el mismo viajero con la capa de otro color, cada uno con su arma de salida y su poder) y
+// Fans of Goose · Los personajes (el mismo viajero con la capa de otro color, cada uno con su arma de salida y su poder: cuatro de
+// salida y dos que se ganan con desafíos) y el selector (antes de cada partida, con la Noche) y
 // cómo se dibuja el héroe EN CAPAS: el cuerpo (con la capa) tiene su dibujo mirando a cada lado (el de la izquierda lleva el puño
 // en la misma mano que el de la derecha: img/c-*-izq.png); el farolillo es otro dibujo aparte que NUNCA se voltea y va colgado
 // de ese puño (MANOS). Así el farol no cambia de mano al girarse.
@@ -9,8 +10,10 @@ const PERSONAJES = [
   { id: 'verde', capa: 'verde', color: '#3fbf4a', nombre: 'La Druida', arma: 'huevo', poder: 'Savia: recupera vida poco a poco y sus charcos duran la mitad más.' },
   { id: 'azul', capa: 'azul', color: '#3f8ee8', nombre: 'El Plumista', arma: 'plumas', poder: 'Pies de pluma: un 15 % más rápido.' },
   { id: 'amarillo', capa: 'amarillo', color: '#ffc93d', nombre: 'La Tahúr', arma: 'dados', poder: 'Suerte de tahúr: +10 % de crítico y el dado bendito llega antes.' },
+  { id: 'negro', capa: 'negro', color: '#8a7a9a', nombre: 'El Sepulturero', arma: 'campana', poder: 'Pala vieja: las ocas le dan un 25 % más de plumas.' },
+  { id: 'blanco', capa: 'blanco', color: '#efe4c4', nombre: 'La Peregrina', arma: 'tirachinas', poder: 'Fe de peregrina: +1 «Volver a tirar» y un 20 % más de monedas.' },
 ];
-const personaje = () => PERSONAJES.find(p => p.id === SAVE.personaje) || PERSONAJES[0];
+const personaje = () => { const p = PERSONAJES.find(x => x.id === SAVE.personaje); return p && personajeAbierto(p.id) ? p : PERSONAJES[0]; };
 
 // lo que suma cada uno a las cifras de la partida (lo llama calculaStats)
 function poderPersonaje(st) {
@@ -20,6 +23,8 @@ function poderPersonaje(st) {
   else if (p.id === 'verde') { st.regen += 0.6; st.charco = 1.5; }
   else if (p.id === 'azul') st.vel *= 1.15;
   else if (p.id === 'amarillo') { st.crit += 0.1; st.barra = 0.6; }
+  else if (p.id === 'negro') st.plumas = 1.25;
+  else if (p.id === 'blanco') st.monedas *= 1.2;
 }
 const plumasDado = () => CFG.impulso.lleno * ((JUEGO.st && JUEGO.st.barra) || 1);
 
@@ -52,30 +57,40 @@ function pintaHeroeQuieto(x, y, capa, esc, dir = 1) {
   else pinta('heroe', x, y, false, false, esc);
 }
 
-// --- el selector de personaje (antes de cada partida) ---
+// --- el selector de personaje (antes de cada partida): seis tarjetas, la ficha del elegido y la Noche ---
 let ELIGE_T = 0;
 function abreSelector(despues) { JUEGO.modo = 'elige'; JUEGO.trasElegir = despues || null; ELIGE_T = 0; }
 function pintaSelector(dt) {
   const W = PAN.W, H = PAN.H; ELIGE_T += dt;
   G.drawImage(FONDO, 0, 0, W, H); oscurece(0.35);
-  texto2(tr('ELIGE PERSONAJE'), W / 2, 28, 16, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
-  const sel = personaje(), cw = (W - 30) / 2, ch = 112;
+  texto2(tr('ELIGE PERSONAJE'), W / 2, 22, 14, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
+  const sel = personaje(), cw = (W - 28) / 3, ch = 62;
   PERSONAJES.forEach((p, i) => {
-    const x = 10 + (i % 2) * (cw + 10), y = 46 + Math.floor(i / 2) * (ch + 8), elegido = p.id === sel.id;
-    const k = Math.max(0, Math.min(1, ELIGE_T * 5 - i * 0.4)), e = 1 - (1 - k) ** 3;
+    const x = 8 + (i % 3) * (cw + 6), y = 34 + Math.floor(i / 3) * (ch + 6), elegido = p.id === sel.id, abierto = personajeAbierto(p.id);
+    const k = Math.max(0, Math.min(1, ELIGE_T * 5 - i * 0.3)), e = 1 - (1 - k) ** 3, yy = y + (1 - e) * 16;
     G.globalAlpha = e;
-    if (elegido) { G.globalAlpha = e * (0.4 + Math.sin(ELIGE_T * 5) * 0.2); caja(x - 3, y - 3, cw + 6, ch + 6, 10, p.color, null); G.globalAlpha = e; }
-    caja(x, y + (1 - e) * 20, cw, ch, 8, elegido ? '#3a2214' : '#2a1610', p.color, elegido ? 2.4 : 1.4);
-    const yy = y + (1 - e) * 20;
-    G.globalAlpha = e * 0.3; G.fillStyle = p.color; G.beginPath(); G.ellipse(x + cw / 2, yy + 52, 22, 6, 0, 0, 6.283); G.fill(); G.globalAlpha = e;
-    pintaHeroeQuieto(x + cw / 2, yy + 32 + (elegido ? Math.sin(ELIGE_T * 6) * 1.5 : 0), p.capa, 1);
-    texto2(tr(p.nombre), x + cw / 2, yy + 62, 8, p.color, 'center');
-    icono(ARMAS[p.arma].icono, x + 14, yy + 76, 8);
-    texto2(tr(ARMAS[p.arma].nombre), x + 24, yy + 76.5, 5.5, '#fff4dc', 'left');
-    parrafo(tr(p.poder), x + 6, yy + 89, cw - 12, 5.5, '#c9b98a');
+    if (elegido) { G.globalAlpha = e * (0.4 + Math.sin(ELIGE_T * 5) * 0.2); caja(x - 2, yy - 2, cw + 4, ch + 4, 9, p.color, null); G.globalAlpha = e; }
+    caja(x, yy, cw, ch, 7, elegido ? '#3a2214' : '#2a1610', abierto ? p.color : '#4a3020', elegido ? 2.2 : 1.2);
+    G.globalAlpha = e * 0.3; G.fillStyle = p.color; G.beginPath(); G.ellipse(x + cw / 2, yy + 40, 16, 4, 0, 0, 6.283); G.fill(); G.globalAlpha = e * (abierto ? 1 : 0.35);
+    pintaHeroeQuieto(x + cw / 2, yy + 24 + (elegido ? Math.sin(ELIGE_T * 6) * 1.2 : 0), p.capa, 1);
+    G.globalAlpha = e;
+    if (!abierto) { G.fillStyle = '#120808'; G.fillRect(x + cw / 2 - 5, yy + 20, 10, 8); G.fillStyle = '#c9b98a'; G.fillRect(x + cw / 2 - 4, yy + 21, 8, 6); G.strokeStyle = '#c9b98a'; G.lineWidth = 1.4; G.beginPath(); G.arc(x + cw / 2, yy + 20, 3, Math.PI, 0); G.stroke(); }
+    texto2(tr(p.nombre), x + cw / 2, yy + 53, 5.5, abierto ? p.color : '#6e4426', 'center');
     G.globalAlpha = 1;
-    BOTONES.push({ x, y, w: cw, h: ch, accion: () => { SAVE.personaje = p.id; guarda(); SONIDO.elige(false); } });
+    BOTONES.push({ x, y, w: cw, h: ch, accion: () => { if (!abierto) { const d = desafioDe('personaje', p.id); toast(tr('Para jugar con él: {t}', { t: tr(d.txt) })); SONIDO.dadoMalo(); return; } SAVE.personaje = p.id; guarda(); SONIDO.elige(false); } });
   });
-  boton(30, H - 78, W - 60, 32, tr('¡A JUGAR!'), '#e8742a', () => { SONIDO.boton(); const f = JUEGO.trasElegir; JUEGO.trasElegir = null; if (f) f(); else nuevaPartida(); }, 14);
-  boton(30, H - 40, W - 60, 24, tr('VOLVER'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'portada'; }, 9);
+  // la ficha del elegido: su arma y su poder
+  const fy = 34 + 2 * (ch + 6) + 2;
+  caja(8, fy, W - 16, 42, 7, '#24120c', sel.color, 1.4);
+  icono(ARMAS[sel.arma].icono, 20, fy + 12, 8);
+  texto2(tr(sel.nombre) + ' · ' + tr(ARMAS[sel.arma].nombre), 30, fy + 12.5, 6.5, sel.color, 'left');
+  parrafo(tr(sel.poder), 14, fy + 24, W - 28, 5.5, '#c9b98a');
+  // la noche (solo en partida normal: con amigos se juega la Noche 1)
+  let yb = fy + 48;
+  if (!JUEGO.trasElegir) {
+    const n = pintaSelectorNoche(8, yb, W - 16);
+    if (n > 1) parrafo(reglaNoche(n), 12, yb + 32, W - 24, 5.5, '#ff8a6b');
+  }
+  boton(30, H - 62, W - 60, 28, tr('¡A JUGAR!'), '#e8742a', () => { SONIDO.boton(); const f = JUEGO.trasElegir; JUEGO.trasElegir = null; if (f) f(); else nuevaPartida(); }, 13);
+  boton(30, H - 30, W - 60, 22, tr('VOLVER'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'portada'; }, 9);
 }

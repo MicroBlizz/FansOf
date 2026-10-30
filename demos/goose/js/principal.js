@@ -93,14 +93,17 @@ function fotograma(ahora) {
   else if (J.modo === 'amigos') { pintaAmigos(); }
   else if (J.modo === 'elige') { pintaSelector(dt); }
   else if (J.modo === 'sala') { pintaSala(); }
+  else if (J.modo === 'desafios') { pintaDesafios(); }
+  else if (J.modo === 'diario') { pintaDiario(); }
   else {
     if (J.modo === 'juego') avanzaPartida(dt);
-    else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
+    else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
     pintaVacio(); pintaMundo(); pintaEncima();
     if (J.modo !== 'fin') pintaHud();
     if (J.modo === 'juego') pintaPalanca();
     else if (J.modo === 'cartas') pintaCartas(dt);
     else if (J.modo === 'cofre') pintaCofre(dt);
+    else if (J.modo === 'eleccion') pintaEleccion(dt);
     else if (J.modo === 'pausa') pintaPausa();
     else if (J.modo === 'opciones') pintaOpciones();
     else if (J.modo === 'fin') pintaFin(dt);

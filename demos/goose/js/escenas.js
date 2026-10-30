@@ -36,6 +36,7 @@ function llegada(t) {
   if (t === CFG.jardin) { aviso(tr('EL JARDÍN DE LA OCA'), '#7dff6b', 2.2); return; }
   if (CFG.ocaSalta[t]) { saltoOca(ESPECIALES.find(e => e.tipo === 'oca' && e.t === t)); return; }
   if (casillaEs.puerta(t) && !J.puertas.has(t)) { J.puertas.add(t); empiezaMinijefe(t); return; }
+  if (llegadaCamino(t)) return;   // Fuente, Mercader, Altar o Tesoro (js/caminos.js)
   if (casillaEs.puente(t)) { empiezaPuente(t, J.casillas.puenteA); return; }
   if (casillaEs.pozo(t)) { empiezaEncierro('pozo'); return; }
   if (casillaEs.carcel(t)) { empiezaEncierro('carcel'); return; }
@@ -53,13 +54,12 @@ function avanzaParado(dt) {
   J.quieto += dt;
   if (J.suerteT > 0) { J.suerteT -= dt; if (J.suerteT <= 0 && puedeTirar()) tiradaSuerte(); }
   let mx = ENTRADA.mx, my = ENTRADA.my; if (invertido()) { mx = -mx; my = -my; }
-  const m = Math.hypot(mx, my), posada = J.escena && J.escena.tipo === 'posada';
+  const m = Math.hypot(mx, my), posada = J.escena && (J.escena.tipo === 'posada' || J.escena.tipo === 'mercader');
   yo.moviendo = m > 0.12 && !posada;
-  if (yo.moviendo) {
-    const v = J.st.vel * multiVel() * velTierra() * Math.min(1, m);
-    yo.x += mx / Math.max(1, m) * v * dt; yo.y += my / Math.max(1, m) * v * dt;
-    yo.miraX = mx / m; yo.miraY = my / m; yo.anda += dt * 10;
-  }
+  const v = yo.moviendo ? J.st.vel * multiVel() * velTierra() * Math.min(1, m) : 0;
+  const [vx, vy] = hielo(yo.moviendo ? mx / Math.max(1, m) * v : 0, yo.moviendo ? my / Math.max(1, m) * v : 0, dt);   // en el Lago Helado, resbalas (js/tierras2.js)
+  yo.x += vx * dt; yo.y += vy * dt;
+  if (yo.moviendo) { yo.miraX = mx / m; yo.miraY = my / m; yo.anda += dt * 10; }
   // encerrado: el Pozo es un círculo, la Cárcel un cuadrado
   const E = J.escena;
   if (E && (E.tipo === 'pozo' || E.tipo === 'carcel')) {
@@ -75,8 +75,10 @@ function avanzaParado(dt) {
 }
 
 // --- el Puente: de puente a puente y tiro porque me lleva la corriente ---
+// la primera puerta sin vencer (o la Muerte) entre de y a: ni el Puente ni las ocas la saltan
+function topePuerta(de, a) { const J = JUEGO; for (let t = de + 1; t <= a; t++) if ((casillaEs.puerta(t) && !J.puertas.has(t)) || (casillaEs.muerte(t) && !J.parcaHecha)) return t; return a; }
 function empiezaPuente(de, a) {
-  const J = JUEGO;
+  const J = JUEGO; a = topePuerta(de, a);
   J.fase = 'escena'; J.escena = { tipo: 'puente', de, a, x0: centroX(de), x1: centroX(a), y0: yCentro(de), y1: yCentro(a), tAlb: 0.6 };
   J.destino = a; J.yo.x = centroX(de);
   aviso(tr('¡DE PUENTE A PUENTE!'), '#9fe0ff', 1.8); aviso2(tr('y tiro porque me lleva la corriente'));
@@ -138,14 +140,14 @@ function empiezaPosada() {
   const J = JUEGO;
   J.fase = 'parado'; J.escena = { tipo: 'posada', compradas: {} };
   for (let i = ENE.n - 1; i >= 0; i--) ENE.lista[i].hp = 0; BALAS.vacia();
-  J.vida = Math.min(J.st.vidaMax, J.vida + J.st.vidaMax * 0.4);
+  J.vida = Math.min(J.st.vidaMax, J.vida + J.st.vidaMax * 0.4 * J.mod.cura);
   aviso(tr('LA POSADA'), '#ffb86b', 1.8); aviso2(tr('Descansa y compra. Al salir, el dado sale maldito'));
   anillo(J.yo.x, J.yo.y, 90, '#ffb86b', 0.8, 5); SONIDO.posada();
 }
 function compraPosada(o) {
   const J = JUEGO, E = J.escena; if (!E || E.compradas[o.id]) return;
   if (J.monedasPartida < o.coste) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
-  J.monedasPartida -= o.coste; E.compradas[o.id] = true; SONIDO.moneda();
+  J.monedasPartida -= o.coste; E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
   if (o.id === 'asada') { J.vida = J.st.vidaMax; texto(J.yo.x, J.yo.y - 16, tr('¡A tope!'), '#7dff6b', 9, 1); SONIDO.cura(); }
   else if (o.id === 'carta') { J.pendientes++; }
   else if (o.id === 'bendito') { J.dado.bendito = true; J.dado.maldito = false; }
@@ -157,6 +159,7 @@ function salePosada() { const J = JUEGO; if (J.escena && J.escena.tipo === 'posa
 // --- dibujo de las escenas (en el mundo) ---
 function pintaEscenas() {
   const J = JUEGO, E = J.escena;
+  pintaCaminos(); pintaPeligros();   // las casillas de los caminos y las sombras de las rocas (js/caminos.js, js/tierras2.js)
   if (J.fase === 'parado' && !E) {   // la casilla en la que estás, resaltada
     const t = J.casilla, w = anchoDe(t), x0 = centroX(t) - w / 2, top = t >= CFG.jardin ? yTecho() : -t * TH, h = t >= CFG.jardin ? TH * 3 : TH;
     G.globalAlpha = 0.25 + Math.sin(J.t * 4) * 0.1; G.strokeStyle = '#ffd34d'; G.lineWidth = 2; G.strokeRect(x0 + 2, top + 2, w - 4, Math.min(h, J.yD - top) - 4); G.globalAlpha = 1;
@@ -199,6 +202,7 @@ function pintaEscenasEncima() {
 // lo de la escena en el marcador: lo que queda por tumbar, o la tienda de la Posada
 function pintaEscenasHud() {
   const J = JUEGO, E = J.escena, W = PAN.W, H = PAN.H; if (!E) return;
+  if (pintaCaminosHud()) return;
   if (E.tipo === 'pozo' || E.tipo === 'carcel') {
     texto2(tr('QUEDAN'), W / 2, 66, 7, '#c9b98a');
     texto2(String(E.restan), W / 2, 80, 20, E.tipo === 'pozo' ? '#7dff6b' : '#c9d3ff', 'center', FUENTE_G, 400, 0.2);

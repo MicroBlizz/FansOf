@@ -4,10 +4,10 @@
 // la escena del cofre. Cada botón se apunta en AS_BOTONES al pintarlo, para saber qué se ha tocado.
 'use strict';
 const AS_V = { H: 960, sc: 1, dpr: 1 };
-// Dos letras de píxeles hechas para tamaños pequeños: Tiny5 (10 píxeles) para lo pequeño y Jersey 10 (16 píxeles) para títulos y botones.
+// La letra de píxeles Jersey 10, siempre a su tamaño natural (16, o 32 en lo grande): así cada trazo cae en un píxel entero y se lee en el móvil.
 // Siempre a su tamaño natural, así cada trazo cae en un píxel entero.
-const AS_FUENTE = '"Jersey 10", "Courier New", monospace', AS_FUENTE_PEQ = 'Tiny5, "Courier New", monospace';
-function asFuenteDe(tam) { return tam <= 18 ? `10px ${AS_FUENTE_PEQ}` : tam <= 34 ? `16px ${AS_FUENTE}` : `32px ${AS_FUENTE}`; }
+const AS_FUENTE = '"Jersey 10", "Courier New", monospace';
+function asFuenteDe(tam) { return tam <= 34 ? `16px ${AS_FUENTE}` : `32px ${AS_FUENTE}`; }   // la de 10 no se leía en el móvil: todo va como mínimo a 16
 let AS_BOTONES = [];
 // colores claros, como el juego de referencia: paneles azul celeste con borde azul oscuro, fondo azul, luchar rojo, mejorar rosa, refrescar verde
 const AS_COL = { tinta: '#2a3570', panel: '#a9bdf2', panel2: '#7f93e0', claro: '#dbe6ff', oscuro: '#55659e', fondo: '#4c56a8', rojo: '#e8503c', rosa: '#ff6a8a', verde: '#5bc44a', naranja: '#f08a2a', oro: '#ffd23a', gris: '#5a628f' };
@@ -122,10 +122,20 @@ function asPintaMarcador(c) {
 
 /* ---------- en medio: la arena ---------- */
 function asPintaSuelo(c, img, dy) {
+  // el dibujo de Yoshi va a su tamaño (cada píxel suyo = 2 unidades = 1 píxel del lienzo pequeño): la parte de arriba (la orilla) arriba,
+  // la de abajo abajo y, si la arena es más alta que el dibujo, el centro se repite en medio
   const A = AS_ARENA, im = AS_IMG[img];
   c.imageSmoothingEnabled = false;
-  if (im) { const h = Math.round(im.height * 540 / im.width); c.drawImage(im, 0, A.y + (dy || 0), 540, h); if (h < A.h) c.drawImage(im, 0, A.y + h + (dy || 0), 540, h); }
-  else { c.fillStyle = '#e2b268'; c.fillRect(0, A.y, 540, A.h); }
+  if (!im) { c.fillStyle = '#e2b268'; c.fillRect(0, A.y, 540, A.h); return; }
+  const H = im.height, y0 = A.y + (dy || 0);
+  if (img === 'pasillo') { for (let y = y0; y < A.y + A.h; y += H * 2) c.drawImage(im, 0, y, 540, H * 2); return; }   // se repite entero
+  if (H * 2 >= A.h) { c.drawImage(im, 0, y0, 540, H * 2); return; }
+  const arr = Math.floor(H * 0.55), aba = Math.floor(H * 0.3), med = H - arr - aba;
+  c.drawImage(im, 0, 0, im.width, arr, 0, y0, 540, arr * 2);
+  let y = y0 + arr * 2;
+  const fin = A.y + A.h - aba * 2;
+  while (y < fin) { const t = Math.min(med, (fin - y) / 2); c.drawImage(im, 0, arr, im.width, t, 0, y, 540, t * 2); y += t * 2; }
+  c.drawImage(im, 0, H - aba, im.width, aba, 0, fin, 540, aba * 2);
 }
 function asPintaFlecha(c, x, y, dir, t) {
   const b = Math.round(Math.sin(t * 7) * 3) * 2, L = 36, k = AS_COL.tinta;
@@ -216,7 +226,7 @@ function asPintaArena(c, t) {
 }
 
 /* ---------- abajo: tienda, batalla, mapa o la escena del cofre ---------- */
-const AS_Y = 690;
+let AS_Y = 690;   // dónde empieza el panel de abajo (lo pone asAjusta: siempre 270 antes del final)
 function asPintaTienda(c, t) {
   const P = AS_P, Y = AS_Y;
   c.fillStyle = AS_COL.fondo; c.fillRect(0, Y, 540, AS_V.H - Y);

@@ -121,7 +121,7 @@ function ppPintaTablero(c, T, t) {
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
-  if (T.mask && T.mask.some(v => !v)) ppBandeja(c, T, g);   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
+  if ((T.mask && T.mask.some(v => !v)) || ppBandejaActual().filas) ppBandeja(c, T, g);   // con forma o con una bandeja bonita   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
   else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();

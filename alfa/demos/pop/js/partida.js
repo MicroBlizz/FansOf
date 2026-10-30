@@ -41,10 +41,19 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   const T = PP_P.T = ppNuevoTablero(d, ppFx());
   T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif ? ' · ' + tr('Difícil') : '');
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
+  else {
+    // la racha de victorias y Nubecita dan toques de margen al empezar (js/pase.js, PP_SLIMES)
+    const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? PP_SLIMES.nubecita.fx.extra : 0);
+    if (extra && !d.tutorial) { T.limite += extra; T.extra = extra; }
+  }
+  PP_AYUDA.modo = null;
   const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
   if (manita) { T.mano = true; T.pista = [...T.sol][0]; }
   ppIrA('sala');
   ppFxEntraSala(T);
+  ppBarraAyudas();
+  if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
+  ppAntesDeEmpezar(T);   // tras fallar este nivel, se ofrece +3 toques (js/potenciadores.js)
   if (T.pista !== null && !manita) ppFxHabilidad('lola');
   // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y el primer jefe
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
@@ -60,6 +69,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
 function ppToque(i) {
   const T = PP_P.T; if (!T || T.hecho || T.parado) return;
   if (T.nim) { ppNimToque(i); return; }
+  if (PP_AYUDA.modo) { ppAplicaAyuda(i); return; }   // martillo o bomba
   const r = ppToca(T, i); if (!r) return;
   ppMarcaDentro(true);   // desde el primer toque, salir a medias cuesta un corazón
   ppLolaToque();
@@ -102,7 +112,10 @@ function ppTrasToque(T, i, r) {
 }
 // un amigo salta desde su hueco del equipo y revienta gratis burbujas de la solución
 function ppSaltaSlime(id, k, golpes) {
-  const T = PP_P.T, objetivos = [...T.sol].sort(() => Math.random() - 0.5).slice(0, golpes);
+  const T = PP_P.T, pref = PP_SLIMES[id].fx.prefiere;
+  // Copito y Medusita van antes a las de hielo o a las conchas que sigan arriba; los demás, a burbujas de la solución
+  const suyas = pref && T.esp ? [...T.up.keys()].filter(i => T.up[i] && T.esp[i] === pref) : [];
+  const objetivos = (suyas.length ? suyas : [...T.sol]).sort(() => Math.random() - 0.5).slice(0, golpes);
   if (!objetivos.length) return;
   ppFxHabilidad(id); play('ppSalto');
   objetivos.forEach((i, g) => {
@@ -110,7 +123,7 @@ function ppSaltaSlime(id, k, golpes) {
     ppFxVuelo(id, k, i, T.n, dur);
     setTimeout(() => {
       if (!PP_P || PP_P.T !== T || T.hecho) return;
-      let j = i; if (!T.sol.has(j)) { const s = [...T.sol]; if (!s.length) return; j = s[0]; }   // si ya no hace falta esa, otra de la solución
+      let j = i; if (!T.up[j] || (!suyas.includes(j) && !T.sol.has(j))) { const s = [...T.sol]; if (!s.length) return; j = s[0]; }   // si ya no hace falta esa, otra de la solución
       const r = ppToca(T, j, true); if (!r) return;
       ppFxToque(T, j, r); ppFxImpacto(T, j, id === 'ceo');
       if (T.mano) { const s = [...T.sol]; T.pista = s.length ? s[0] : null; }
@@ -124,12 +137,14 @@ function ppSalaHecha() {
   const est = d.dif ? PP_P.estD : PP_P.est, antes = est[g] || 0;
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
   T.premio = ppPremioNivel((d.dif ? 'd' : '') + g, T.estrellas, d.jefe, d.dif ? 2 : 1);
+  ppBorraFallos(d); ppBarraAyudas();
   const presos = Object.values(T.slimes);
   // el camino solo avanza si era el siguiente nivel (repitiendo uno ya pasado, no)
   let nuevo = false;
   if (d.dif) { if (d.l - 1 === (PP_P.dif[d.mundo] || 0)) { PP_P.dif[d.mundo] = d.l; nuevo = true; } }
   else if (g === PP_P.nivel) { PP_P.nivel++; nuevo = true; }
   ppGuardaCamino();
+  if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
   if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(true); return; }
   if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false); return; }
   if (presos.length) { play('ppRescate'); ppVentanaRescate(presos); } else ppVentanaSalaHecha();
@@ -144,7 +159,7 @@ function ppRecluta(id, fuera) {
 }
 // sin toques y quedan burbujas: se pierde un corazón (vuelven solos, uno cada 30 minutos) y se repite el nivel
 function ppSinToques() {
-  ppMarcaDentro(false); ppPierdeVida(); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
+  ppMarcaDentro(false); ppPierdeVida(); ppApuntaFallo(PP_P.T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
   if (SAVE.vidas <= 0) { setTimeout(() => ppSinCorazones(), 400); return; }
   ppVentanaSinToques();
 }

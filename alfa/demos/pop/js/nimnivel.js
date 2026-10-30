@@ -16,8 +16,9 @@ function ppNimGana(filas) {
 }
 function ppNimEmpieza(T) {
   const d = T.d;
-  T.nim = { rival: d.nim.rival, fallo: d.nim.fallo, turno: 'yo', fila: null, esta: [], errores: 0, fin: null };
+  T.nim = { rival: d.nim.rival, fallo: d.nim.fallo, turno: 'yo', fila: null, esta: [], errores: 0, fin: null, fotos: [], pistaNim: null };
   if (!ppNimGana(ppFilasDuelo(T))) { T.nim.turno = 'rival'; setTimeout(() => ppNimRival(T), 1300); }
+  else ppNimFoto(T);   // la foto de cada turno tuyo, para DESHACER (js/potenciadores.js)
   ppNimBoton();
 }
 function ppNimToque(i) {
@@ -36,7 +37,7 @@ function ppNimListo() {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N || N.fin || N.turno !== 'yo' || !N.esta.length) return;
   // un error: empezabas ganando y le dejas al rival una posición en la que gana él
   if (N.antes && ppNimGana(ppFilasDuelo(T))) { N.errores++; if (N.errores === 1) ppFlota(tr('Hmm… eso le viene bien'), 270, 240, '#ff8a2a'); }
-  N.turno = 'rival'; N.fila = null; N.esta = []; ppNimBoton();
+  N.turno = 'rival'; N.fila = null; N.esta = []; N.pistaNim = null; ppNimBoton(); ppBarraAyudas();
   setTimeout(() => ppNimRival(T), 700);
 }
 function ppNimRival(T) {
@@ -51,22 +52,29 @@ function ppNimRival(T) {
     T.up[i] = 0; T.pops++;
     ppFxToque(T, i, { pops: [i], grietas: [], subes: [], hecho: false });
     if (ppFilasDuelo(T).every(v => v === 0)) { ppNimFin(T, true); return; }   // el rival ha reventado la última: ganas
-    if (k === cuantas - 1) setTimeout(() => { if (PP_P && PP_P.T === T && !N.fin) { N.turno = 'yo'; N.fila = null; ppNimBoton(); } }, 500);
+    if (k === cuantas - 1) setTimeout(() => { if (PP_P && PP_P.T === T && !N.fin) { N.turno = 'yo'; N.fila = null; ppNimFoto(T); ppNimBoton(); ppBarraAyudas(); } }, 500);
   }, 380 * (k + 1)));
 }
-function ppNimFin(T, gano) {
-  const N = T.nim; N.fin = gano ? 'gana' : 'pierde'; ppNimBoton();
-  ppMarcaDentro(false);
-  if (gano) { T.hecho = true; T.toques = 0; PP_P.salas++; setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 900); return; }
-  T.hecho = true;
-  ppPierdeVida(); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
+function ppNimFin(T, gano, soloVentana = false) {
+  const N = T.nim;
+  if (!soloVentana) {
+    N.fin = gano ? 'gana' : 'pierde'; N.pistaNim = null; ppNimBoton(); ppBarraAyudas();
+    ppMarcaDentro(false);
+    if (gano) { T.hecho = true; T.toques = 0; PP_P.salas++; setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 900); return; }
+    T.hecho = true;
+    ppPierdeVida(); ppApuntaFallo(T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
+  }
   setTimeout(() => {
-    if (!PP_P || PP_P.T !== T) return;
-    if (SAVE.vidas <= 0) { ppSinCorazones(); return; }
-    const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n: tr(PP_SLIMES[N.rival].nombre) })}</h2><p class="pp-sub">${tr('Te ha tocado reventar la última burbuja. Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas })}</p>`);
-    t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
+    if (!PP_P || PP_P.T !== T || N.fin !== 'pierde') return;
+    const t = ppAbre(`<h2>${tr('¡{n} te ha ganado!', { n: tr(PP_SLIMES[N.rival].nombre) })}</h2><p class="pp-sub">${tr('Te ha tocado reventar la última burbuja. Pierdes un corazón; te quedan {n}.', { n: ppVidas() })}</p>`);
+    // como el +5 movimientos de Candy Crush: deshacer tu última jugada y recuperar el corazón
+    const n = ppTengo('deshacer'), b = ppBoton('', 'pp-btn', () => ppNimDeshacer(true));
+    b.innerHTML = `${tr('DESHACER Y SEGUIR')} · ${n ? tr('tienes {n}', { n }) : ppPerlasHtml(PP_CFG.ayudas.deshacer.perlas, 26)}`;
+    t.appendChild(b);
+    ppBotonOferta(t);
+    t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn2 pp-verde', ppOtraVez));
     t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
-  }, 900);
+  }, soloVentana ? 0 : 900);
 }
 // el botón ¡LISTO!: solo en tu turno y con algo reventado
 function ppNimBoton() { const T = PP_P && PP_P.T, N = T && T.nim, b = $pp('#pp-listo'); if (b) b.hidden = !(N && !N.fin && N.turno === 'yo' && N.esta.length && PP_PANT.actual === 'sala'); }
@@ -84,8 +92,15 @@ function ppMarcadorNim(c, T, t) {
 }
 // la fila en la que se está jugando, marcada
 function ppPintaFilaNim(c, T, t) {
-  const N = T.nim; if (N.fila === null || N.fin) return;
-  const g = ppGeom(T.n);
+  const N = T.nim, g = ppGeom(T.n);
+  // la pista de Lola: aros que laten en las burbujas que hay que reventar
+  if (N.pistaNim) for (const i of N.pistaNim) {
+    if (!T.up[i]) continue;
+    const [x, y] = ppCentro(g, i);
+    c.save(); c.lineWidth = 6; c.strokeStyle = '#3a8ee6'; c.globalAlpha = 0.55 + Math.sin(t * 7) * 0.35;
+    c.beginPath(); c.arc(x, y, g.celda * (0.46 + Math.sin(t * 7) * 0.03), 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  if (N.fila === null || N.fin) return;
   c.save(); c.lineWidth = 6; c.strokeStyle = N.turno === 'yo' ? '#ffd64a' : '#8a8aa8'; c.globalAlpha = 0.6 + Math.sin(t * 6) * 0.3;
   c.beginPath(); c.roundRect(g.x - 6, g.y + N.fila * g.celda + 2, g.lado + 12, g.celda - 4, g.celda / 2); c.stroke(); c.restore();
 }

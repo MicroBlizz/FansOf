@@ -79,5 +79,6 @@ function ppArranque() {
   ppIrA('titulo');
   const carga = $pp('#carga'); if (carga) carga.remove();
   requestAnimationFrame(ppFotograma);
+  setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas
 }
 ppArranque();

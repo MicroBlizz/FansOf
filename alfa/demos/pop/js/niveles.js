@@ -16,10 +16,10 @@
 const PP_MUNDOS = [
   { nombre: 'Jardín', fondo: 'fondo-jardin', niveles: 20, amigos: [3, 9, 15], lado: [3, 5], esp: {} },
   { nombre: 'Pastelería', fondo: 'fondo-pasteleria', niveles: 20, amigos: [4, 12], lado: [4, 6], esp: { doble: [0.15, 0.4] } },
-  { nombre: 'Heladería', fondo: 'fondo-heladeria', niveles: 20, amigos: [], lado: [5, 6], esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
-  { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
-  { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
-  { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
+  { nombre: 'Heladería', fondo: 'fondo-heladeria', niveles: 20, amigos: [7], lado: [5, 6], esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
+  { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
+  { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
+  { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
 ];
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)

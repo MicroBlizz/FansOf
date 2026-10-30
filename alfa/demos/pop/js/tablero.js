@@ -13,7 +13,9 @@ function ppNuevoTablero(d, fx) {
   if (d.amigos) {
     const libres = PP_SLIME_IDS.filter(id => !fx.equipo.includes(id));
     const sitios = [...T.up.keys()].filter(i => T.up[i]);
-    if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = libres[d.g % libres.length];
+    // en los mundos 3 a 6 sale SU amigo nuevo (si aún no lo tienes); en los primeros, uno de los que te faltan
+    const suyo = [null, null, 'copito', 'medusa', 'algodon', 'nubecita'][d.mundo];
+    if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = suyo && libres.includes(suyo) ? suyo : libres[d.g % libres.length];
   }
   if (fx.pista) ppPista(T);
   return T;

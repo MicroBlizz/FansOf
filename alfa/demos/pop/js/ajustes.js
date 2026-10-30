@@ -45,11 +45,35 @@ const PP_CFG = {
   // ver un anuncio (siempre porque tú quieres, nunca en mitad del juego sin pedirlo)
   anuncio: { toques: 3, vidasDia: 3 },   // +3 toques una vez por intento al quedarte sin toques · +1 corazón, hasta 3 veces al día
   // el DUELO contra el CEO (js/duelo.js): pop-it de verdad por turnos, pierde quien revienta la última
-  duelo: { premio: 15, premiosDia: 5, fallo: [0.45, 0.08], paso: 0.06 },
+  duelo: { premio: 15, premiosDia: 5, fallo: [0.45, 0.08], paso: 0.06 },   // monedas por victoria (con premio las 5 primeras del día) · cuánto se equivoca el CEO (del 45 % baja hasta el 8 % según ganas)
+  // «COPIARNOS DE CANDY CRUSH» (Daniel, 30-10-2026: «hay que sacar el máximo beneficio monetario»). Todo a precio FIJO: nada
+  // de pagar por azar (ADR 004). Ver js/potenciadores.js, js/ofertas.js y js/pase.js; la tienda con pestañas en js/tienda.js.
+  // AYUDAS (potenciadores): se ganan jugando (regalo diario, pase, cofres de oferta) o se compran con perlas. `nim`: solo en duelos.
+  ayudas: {
+    martillo: { perlas: 6, nombre: 'Martillo', texto: 'Revienta del todo la burbuja que toques, sin gastar toque.' },
+    bomba:    { perlas: 9, nombre: 'Bomba', texto: 'Da un golpe a todas las burbujas de un cuadrado de 3x3, sin gastar toque.' },
+    toques3:  { perlas: 6, nombre: '+3 toques', texto: 'Tres toques más en este nivel.' },
+    deshacer: { perlas: 5, nombre: 'Deshacer', texto: 'En un duelo, vuelve atrás tu última jugada (y la del rival).', nim: true },
+    pista:    { perlas: 4, nombre: 'Pista de Lola', texto: 'En un duelo, Lola te marca la jugada ganadora.', nim: true },
+  },
+  ayudasTres: 0.8,           // el lote de 3 de la misma ayuda, al 80 %
+  // CORAZONES INFINITOS por tiempo (con perlas; también vienen en las ofertas y el pase)
+  infinitas: [{ min: 30, perlas: 10 }, { min: 60, perlas: 18 }, { min: 120, perlas: 30 }],
+  // OFERTAS con euros (PROVISIONALES, como los packs: los productos aún no existen en Play ni en el servidor)
+  ofertas: {
+    bienvenida: { id: 'pop_pack_bienvenida', precio: '0,99 €', antes: '4,99 €', perlas: 30, ayudas: { martillo: 3, bomba: 3 }, infinitas: 60, desdeNivel: 5 },
+    atasco: { id: 'pop_pack_atasco', precio: '1,99 €', antes: '5,99 €', perlas: 25, ayudas: { martillo: 2, bomba: 2, toques3: 2, deshacer: 2 }, fallos: 3, dura: 30 },
+  },
+  // la HUCHA de perlas: cada nivel nuevo superado mete perlas; desde `minimo` se puede romper pagando y te las quedas todas
+  hucha: { porNivel: 2, porJefe: 6, minimo: 40, max: 150, id: 'pop_hucha', precio: '2,99 €' },
+  // el PASE de temporada (un mes): puntos al ganar niveles (1, y 1 más con 3 estrellas); cada `puntos` puntos, un escalón con su
+  // premio gratis y su premio premium (el premium se compra una vez por temporada)
+  pase: { id: 'pop_pase', precio: '4,99 €', escalones: 30, puntos: 3 },
+  racha: { max: 3 },         // RACHA: cada nivel nuevo seguido sin perder un corazón da +1 toque al empezar los siguientes (hasta 3)
   // MEMORIA (js/memoria.js, fase 4): el «Simón dice» del pop-it. Tablero de 3x3; cada burbuja de la melodía dura `paso` segundos en
   // la ronda 1 y `acelera` menos cada ronda, hasta `pasoMin`. Premio del día: `porRonda` monedas por ronda (solo lo que mejora tu
   // mejor ronda de hoy), hasta `tope` al día. Sin corazones.
-  memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },   // monedas por victoria (con premio las 5 primeras del día) · cuánto se equivoca el CEO (del 45 % baja hasta el 8 % según ganas)
+  memoria: { lado: 3, paso: 0.62, acelera: 0.025, pasoMin: 0.34, porRonda: 3, tope: 60 },
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 
@@ -69,5 +93,14 @@ const PP_SLIMES = {
              pasiva: 'Premio gordo', texto: 'Un toque que revienta 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.', fx: { premio: 1 } },
   ceo:     { nombre: 'El CEO', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata',
              pasiva: 'Recorte de plantilla', texto: 'Cada 15 burbujas reventadas explota y revienta gratis dos de la solución.', fx: { salta: 15, golpes: 2 } },
+  // los amigos de los mundos 3 a 6 (30-10-2026, para que los huecos 5.º y 6.º sirvan); `prefiere`: salta antes a las de ese tipo
+  copito:  { nombre: 'Copito', color: '#bfe9ff', color2: '#6fb8e8', pinta: '',
+             pasiva: 'Deshielo', texto: 'Cada 10 burbujas reventadas salta a una burbuja de hielo (o de la solución) y la revienta.', fx: { salta: 10, golpes: 1, prefiere: 1 } },
+  medusa:  { nombre: 'Medusita', color: '#ffc4e6', color2: '#e07ab5', pinta: '',
+             pasiva: 'Cosquillas', texto: 'Cada 12 burbujas reventadas salta a una concha (o a una de la solución) y la revienta.', fx: { salta: 12, golpes: 1, prefiere: 2 } },
+  algodon: { nombre: 'Algodón', color: '#ffd6f0', color2: '#9fdcff', pinta: '',
+             pasiva: 'Lluvia de azúcar', texto: 'Cada 18 burbujas reventadas llueve azúcar y revienta gratis tres de la solución.', fx: { salta: 18, golpes: 3 } },
+  nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
+             pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque de margen.', fx: { extra: 1 } },
 };
 const PP_SLIME_IDS = Object.keys(PP_SLIMES);

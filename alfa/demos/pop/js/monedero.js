@@ -7,6 +7,7 @@
 // pone al día los corazones según el tiempo que ha pasado (también con el juego cerrado) y dice cuántos hay
 function ppVidas() {
   const ahora = Date.now(), max = PP_CFG.vida, cada = PP_CFG.recarga;
+  if (ppInfinitas()) return max;   // corazones infinitos (js/ofertas.js): siempre llenos mientras duran
   if (SAVE.vidas >= max) { SAVE.vidaT = ahora; return SAVE.vidas; }
   if (!SAVE.vidaT || SAVE.vidaT > ahora) SAVE.vidaT = ahora;   // reloj cambiado hacia atrás: se cuenta desde ahora
   const n = Math.floor((ahora - SAVE.vidaT) / cada);
@@ -15,8 +16,13 @@ function ppVidas() {
 }
 // milisegundos hasta el siguiente corazón (0 si están todos)
 function ppFaltaVida() { return ppVidas() >= PP_CFG.vida ? 0 : Math.max(0, SAVE.vidaT + PP_CFG.recarga - Date.now()); }
-const ppReloj = ms => { const s = Math.ceil(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+const ppReloj = ms => { const s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60; return h ? `${h}:${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}` : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+// corazones infinitos: hasta cuándo (SAVE.infinitas, ms); se compran con perlas o vienen en ofertas y en el pase
+const ppInfinitas = () => (SAVE.infinitas || 0) > Date.now();
+function ppDaInfinitas(min) { SAVE.infinitas = Math.max(Date.now(), SAVE.infinitas || 0) + min * 60000; ppGuarda(); }
 function ppPierdeVida() {
+  SAVE.racha = 0;   // perder un corazón corta la racha (js/pase.js)
+  if (ppInfinitas()) { ppGuarda(); return; }
   const lleno = ppVidas() >= PP_CFG.vida;
   SAVE.vidas = Math.max(0, SAVE.vidas - 1);
   if (lleno) SAVE.vidaT = Date.now();   // el reloj de la recarga empieza al perder el primero

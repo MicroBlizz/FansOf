@@ -39,18 +39,50 @@ function ppBotonesSinCorazones(t, alLlenar, vuelta = null) {
   if (ppHayAnuncios() && ppAnunciosHoy() < PP_CFG.anuncio.vidasDia)
     t.appendChild(ppBoton(tr('VER ANUNCIO: +1 CORAZÓN ({n} hoy)', { n: PP_CFG.anuncio.vidasDia - ppAnunciosHoy() }), 'pp-btn2 pp-verde', () => ppVerAnuncio('pop-vida', () => { SAVE.anunciosHoy++; ppSumaVida(1); alLlenar(); })));
 }
-/* ---------- la tienda de perlas ---------- */
-let PP_TIENDA_VUELTA = null;   // la ventana a la que vuelve VOLVER (o null: solo se cierra)
-function ppTienda(vuelta) {
-  if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;
-  const t = ppAbre(`<h2>${tr('Perlas')}</h2>${ppIcono('i-perlas', 110, '#ffd1ec')}<p class="pp-sub">${tr('Las perlas sirven para seguir cuando te quedas sin toques, llenar los corazones y hacer sitio en el equipo.')}</p>
-    <p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
-  const rejilla = document.createElement('div'); rejilla.className = 'pp-packs'; t.appendChild(rejilla);
-  for (const p of PP_CFG.packs) {
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack';
-    b.innerHTML = `${p.extra ? `<i>${p.extra}</i>` : ''}${ppPerlasHtml(p.perlas, 34)}<b>${p.precio}</b>`;
-    b.onclick = () => { play('select'); ppCompraPack(p); };
-    rejilla.appendChild(b);
+/* ---------- la tienda (con pestañas, como Candy Crush) ---------- */
+// OFERTAS (pack de bienvenida, la de atasco, la hucha y el pase) · PERLAS (los paquetes con euros) · AYUDAS (con perlas, sueltas o
+// de 3 en 3 más baratas) · BANDEJAS (las bonitas, con monedas). `vuelta`: la ventana a la que vuelve VOLVER (null: solo se cierra).
+let PP_TIENDA_VUELTA = null, PP_TIENDA_PESTANA = 'ofertas';
+function ppTienda(vuelta, pestana) {
+  if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;   // sin decir nada (al cambiar de pestaña) se mantiene
+  if (pestana) PP_TIENDA_PESTANA = pestana;
+  const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);
+  const tabs = document.createElement('div'); tabs.className = 'pp-tabs';
+  for (const [k, txt] of [['ofertas', tr('Ofertas')], ['perlas', tr('Perlas')], ['ayudas', tr('Ayudas')], ['bandejas', tr('Bandejas')]]) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-tab' + (PP_TIENDA_PESTANA === k ? ' pp-on' : ''); b.textContent = txt;
+    b.onclick = () => { play('select'); ppTienda(undefined, k); }; tabs.appendChild(b);
+  }
+  t.appendChild(tabs);
+  const caja = document.createElement('div'); caja.className = 'pp-packs'; t.appendChild(caja);
+  const tarjeta = (html, f, clase = '') => { const b = document.createElement('button'); b.type = 'button'; b.className = 'pp-pack ' + clase; b.innerHTML = html; b.onclick = () => { play('select'); f(); }; caja.appendChild(b); return b; };
+  const P = PP_TIENDA_PESTANA;
+  if (P === 'ofertas') {
+    if (ppBienvenidaVisible()) tarjeta(`<i>-80 %</i>${ppIcono('i-perlas', 60, '#ffd1ec')}<span>${tr('Pack de bienvenida')}</span><b>${PP_CFG.ofertas.bienvenida.precio}</b>`, ppVentanaBienvenidaPack, 'pp-ancho');
+    if (ppAtascoActivo()) tarjeta(`<i>${ppReloj(SAVE.atasco - Date.now())}</i>${ppIcono('i-martillo', 60, '#ffd1ec')}<span>${tr('Oferta para desatascarte')}</span><b>${PP_CFG.ofertas.atasco.precio}</b>`, ppVentanaAtasco, 'pp-ancho');
+    tarjeta(`${ppIcono('i-pase', 56, '#ffd64a')}<span>${tr('Pase de Pop')}</span><b>${ppPaseAlDia().premium ? tr('¡Tuyo!') : PP_CFG.pase.precio}</b>`, ppVentanaPase);
+    tarjeta(`${ppIcono('i-hucha', 56, '#ffd1ec')}<span>${tr('Hucha')}: ${SAVE.hucha || 0}</span><b>${PP_CFG.hucha.precio}</b>`, ppVentanaHucha);
+    for (const o of PP_CFG.infinitas) tarjeta(`${ppIcono('i-infinito', 50, '#ff4a6a')}<span>${o.min >= 60 ? tr('{n} h', { n: o.min / 60 }) : tr('{n} min', { n: o.min })}</span>${ppPerlasHtml(o.perlas, 26)}`, () => {
+      if ((SAVE.perlas || 0) < o.perlas) { ppTienda(undefined, 'perlas'); return; }
+      SAVE.perlas -= o.perlas; ppDaInfinitas(o.min); play('ppPremio'); ppTienda(); ppPintaLateral();
+    });
+  } else if (P === 'perlas') {
+    for (const p of PP_CFG.packs) tarjeta(`${p.extra ? `<i>${p.extra}</i>` : ''}${ppPerlasHtml(p.perlas, 34)}<b>${p.precio}</b>`, () => ppCompraPack(p));
+  } else if (P === 'ayudas') {
+    for (const k in PP_CFG.ayudas) {
+      const A = PP_CFG.ayudas[k], tres = Math.round(A.perlas * 3 * PP_CFG.ayudasTres);
+      const compra = (n, precio) => { if ((SAVE.perlas || 0) < precio) { ppTienda(undefined, 'perlas'); return; } SAVE.perlas -= precio; ppDaAyuda(k, n); play('ppPremio'); ppTienda(); ppBarraAyudas(); };
+      tarjeta(`${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} · ${tr('tienes {n}', { n: ppTengo(k) })}</span><small>${tr(A.texto)}</small>${ppPerlasHtml(A.perlas, 24)}`, () => compra(1, A.perlas));
+      tarjeta(`<i>-20 %</i>${ppIcono('i-' + k, 50, '#ffd1ec')}<span>${tr(A.nombre)} x3</span>${ppPerlasHtml(tres, 24)}`, () => compra(3, tres));
+    }
+  } else {
+    for (const B of PP_BANDEJAS) {
+      const tiene = ppTieneBandeja(B.id), puesta = ppBandejaActual().id === B.id;
+      if (B.precio === null && !tiene) { tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><small>${tr('Solo con el pase')}</small>`, ppVentanaPase); continue; }
+      tarjeta(`${ppBandejaMuestra(B.id, 56)}<span>${tr(B.nombre)}</span><b>${puesta ? tr('Puesta') : tiene ? tr('Ponerla') : ''}</b>${!tiene ? ppMonedasHtml(B.precio, 24) : ''}`, () => {
+        if (!tiene) { if (!ppCobra(B.precio)) { ppFlota(tr('Te faltan monedas'), 270, 300, '#ff6ec7'); return; } SAVE.bandejas = Object.assign(SAVE.bandejas || {}, { [B.id]: true }); play('ppPremio'); }
+        SAVE.bandeja = B.id; ppGuarda(); ppTienda();
+      }, puesta ? 'pp-puesta' : '');
+    }
   }
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
 }

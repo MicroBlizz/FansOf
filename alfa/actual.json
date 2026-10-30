@@ -1,8 +1,8 @@
 {
- "build": 659,
- "hash": "e5f4e06",
- "fecha": "2026-10-30T09:54:44Z",
- "mensaje": "Fans of Merge: borde del camino ondulado como en Triple Town; rótulos en tablillas de madera centradas y objetivos que caben",
+ "build": 660,
+ "hash": "ed8919b",
+ "fecha": "2026-10-30T10:05:14Z",
+ "mensaje": "Fans of Swipe: el texto de las cartas sale siempre entero (encoge el dibujo y luego la letra si no cabe)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

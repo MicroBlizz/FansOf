@@ -14,7 +14,7 @@ const PP_FILAS = [[345, 85, 70], [25, 95, 62], [52, 95, 60], [130, 65, 55], [195
 const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'];   // el mismo orden, para los dibujos de Yoshi
 const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba === 2 ? '-doble' : arriba ? '-arriba' : '-abajo');
 // la doble (mundo 2) usa su dibujo con nata; si aún no está, la normal
-const ppSpriteArriba = (i, n, up) => (up === 2 && ppTieneImg(ppSpriteBurbuja(i, n, 2)) ? ppSpriteBurbuja(i, n, 2) : ppSpriteBurbuja(i, n, true));
+const ppSpriteArriba = (i, n, up) => (up >= 2 && ppTieneImg(ppSpriteBurbuja(i, n, 2)) ? ppSpriteBurbuja(i, n, 2) : ppSpriteBurbuja(i, n, true));
 function ppColorBurbuja(i, n, luz = 0) { const [h, s, l] = PP_FILAS[Math.floor(i / n) % PP_FILAS.length]; return `hsl(${h} ${s}% ${Math.min(96, l + luz)}%)`; }
 /* ---------- texto ---------- */
 function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#7a3a7a') {
@@ -61,7 +61,7 @@ function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t) {
     c.save(); c.scale(sx, sy);
     if (ppTieneImg(ppSpriteArriba(i, n, up))) {
       ppDibujaEn(c, ppSpriteArriba(i, n, up), 0, -4 * h, rr * 2.3, true);
-      if (up === 2 && !ppTieneImg(ppSpriteBurbuja(i, n, 2))) { c.beginPath(); c.arc(0, -4 * h, rr * 1.02, 0, Math.PI * 2); c.lineWidth = 6; c.strokeStyle = '#fff'; c.stroke(); }   // repuesto de la doble: un aro blanco
+      if (up >= 2 && !ppTieneImg(ppSpriteBurbuja(i, n, 2))) { c.beginPath(); c.arc(0, -4 * h, rr * 1.02, 0, Math.PI * 2); c.lineWidth = 6; c.strokeStyle = '#fff'; c.stroke(); }   // repuesto de la doble: un aro blanco
       if (slime) ppSlimeRepuestoOImagen(c, slime, 0, -4 * h + rr * 0.05, rr * 0.6, t, 1);
       c.restore();
     } else {
@@ -121,7 +121,8 @@ function ppPintaTablero(c, T, t) {
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
-  if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
+  if (T.mask && T.mask.some(v => !v)) ppBandeja(c, T, g);   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
+  else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
     c.beginPath(); c.roundRect(g.x - 14, g.y - 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = T.tipo === 'jefe' ? '#ffe2b0' : '#e8d8ff'; c.fill(); c.lineWidth = 5; c.strokeStyle = '#7a4a8a'; c.stroke();
@@ -130,6 +131,7 @@ function ppPintaTablero(c, T, t) {
     const [cx, cy] = ppCentro(g, i);
     if (T.mask && !T.mask[i]) continue;   // los huecos de la forma (corazón, flor…) no llevan burbuja
     ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t);
+    if (T.up[i] && (T.up[i] === 3 || (T.esp && T.esp[i]))) ppEspecial(c, cx, cy, r, i, T, t);
   }
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
   c.restore();

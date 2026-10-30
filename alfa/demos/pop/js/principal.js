@@ -1,4 +1,4 @@
-// Fans of Pop · PRINCIPAL: el lienzo y su tamaño, los toques (una burbuja en la sala, un nodo en el mapa), el teclado,
+// Fans of Pop · PRINCIPAL: el lienzo y su tamaño, los toques (una burbuja en la sala, el duelo o Memoria, un nodo en el mapa), el teclado,
 // el bucle de cada fotograma y el arranque.
 'use strict';
 const PP_CV = document.getElementById('cv'), PP_CTX = PP_CV.getContext('2d');
@@ -24,6 +24,7 @@ PP_CV.addEventListener('pointerdown', e => {
   const [lx, ly] = ppLogico(e);
   if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
+  if (PP_PANT.actual === 'memoria' && PP_MEM) { ppMemToque(ppCeldaEn(ppGeom(PP_MEM.T.n), lx, ly)); return; }
   if (!PP_P) return;
   if (PP_PANT.actual === 'sala' && PP_P.T) {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
@@ -49,6 +50,7 @@ function ppFotograma(ahora) {
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaSala(c, t); }
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else if (PP_PANT.actual === 'duelo' && PP_DUELO) { if (!PP_PANT.pausa) ppFxAvanza(dt); ppPintaDuelo(c, t); }
+  else if (PP_PANT.actual === 'memoria' && PP_MEM) { if (!PP_PANT.pausa) { ppFxAvanza(dt); if (!PP_LOLA.actual) ppMemAvanza(dt); } ppPintaMemoria(c, t); }   // la melodía espera a que Lola acabe de explicar
   else ppPintaPortada(c, t, dt);
 }
 function ppEmpieza(seguir) {
@@ -65,6 +67,7 @@ function ppArranque() {
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevoDuelo(); };
+  $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
   $pp('#pp-listo').onclick = () => { play('select'); ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };

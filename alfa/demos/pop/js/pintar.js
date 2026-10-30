@@ -12,7 +12,9 @@ function ppCeldaEn(g, lx, ly) { if (lx < g.x || ly < g.y || lx >= g.x + g.lado |
 // los colores del juguete: una fila de cada color
 const PP_FILAS = [[345, 85, 70], [25, 95, 62], [52, 95, 60], [130, 65, 55], [195, 85, 58], [270, 70, 68]];
 const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'];   // el mismo orden, para los dibujos de Yoshi
-const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba ? '-arriba' : '-abajo');
+const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba === 2 ? '-doble' : arriba ? '-arriba' : '-abajo');
+// la doble (mundo 2) usa su dibujo con nata; si aún no está, la normal
+const ppSpriteArriba = (i, n, up) => (up === 2 && ppTieneImg(ppSpriteBurbuja(i, n, 2)) ? ppSpriteBurbuja(i, n, 2) : ppSpriteBurbuja(i, n, true));
 function ppColorBurbuja(i, n, luz = 0) { const [h, s, l] = PP_FILAS[Math.floor(i / n) % PP_FILAS.length]; return `hsl(${h} ${s}% ${Math.min(96, l + luz)}%)`; }
 /* ---------- texto ---------- */
 function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#7a3a7a') {
@@ -55,8 +57,9 @@ function ppBurbuja(c, cx, cy, r, i, n, up, slime, pista, trampa, t) {
     // la cúpula: sombra, cuerpo con luz arriba a la izquierda, brillo
     const rr = r * (0.85 + 0.15 * h);
     c.save(); c.scale(sx, sy);
-    if (ppTieneImg(ppSpriteBurbuja(i, n, true))) {
-      ppDibujaEn(c, ppSpriteBurbuja(i, n, true), 0, -4 * h, rr * 2.3, true);
+    if (ppTieneImg(ppSpriteArriba(i, n, up))) {
+      ppDibujaEn(c, ppSpriteArriba(i, n, up), 0, -4 * h, rr * 2.3, true);
+      if (up === 2 && !ppTieneImg(ppSpriteBurbuja(i, n, 2))) { c.beginPath(); c.arc(0, -4 * h, rr * 1.02, 0, Math.PI * 2); c.lineWidth = 6; c.strokeStyle = '#fff'; c.stroke(); }   // repuesto de la doble: un aro blanco
       if (slime) ppSlimeRepuestoOImagen(c, slime, 0, -4 * h + rr * 0.05, rr * 0.6, t, 1);
       c.restore();
     } else {
@@ -123,6 +126,7 @@ function ppPintaTablero(c, T, t) {
   }
   for (let i = 0; i < T.up.length; i++) {
     const [cx, cy] = ppCentro(g, i);
+    if (T.mask && !T.mask[i]) continue;   // los huecos de la forma (corazón, flor…) no llevan burbuja
     ppBurbuja(c, cx, cy, r, i, T.n, T.up[i], T.slimes[i] || null, T.pista === i, T.trampas.has(i), t);
   }
   if (T.mano && T.pista !== null) { const [mx, my] = ppCentro(g, T.pista); ppMano(c, mx, my, t); }
@@ -154,8 +158,8 @@ function ppPintaMarcador(c, t) {
     ppTexto(c, `${T.toques} / ${T.limite}`, 496, 66, 40, col, 'right');
     const est = ppEstrellas(T); for (let k = 0; k < 3; k++) ppEstrella(c, 432 + k * 30, 104, 28, k < est);
     ppTexto(c, T.titulo || '', 270, 118, 34, '#ffd64a', 'center', '#7a4a8a');
-    if (quedan < 0) ppTexto(c, tr('Cada toque de más te quita un corazón'), 270, 150, 20, '#ff9a9a');
-    else if (T.tipo === 'jefe') ppTexto(c, tr('Las burbujas con ! son trampa: no las toques tú'), 270, 150, 20, '#ff9a9a');
+    if (T.d && T.d.jefe) ppTexto(c, tr('¡Pocos toques de sobra!'), 270, 150, 22, '#ff8a2a', 'center', '#fff');
+    else if (T.d && T.d.dificil) ppTexto(c, tr('¡Nivel difícil!'), 270, 150, 22, '#ff6ec7', 'center', '#fff');
   }
   // el equipo, abajo: cada hueco con su slime, su pasiva y una barra de lo que le falta para actuar
   const n = P.T ? P.T.n : 3, g = ppGeom(n), y0 = g.y + g.lado + 60;
@@ -206,7 +210,7 @@ function ppPintaSala(c, t) {
   const P = PP_P, T = P.T;
   c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
-  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : 'fondo-jardin', t);
+  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t);
   ppPintaTablero(c, T, t);
   ppPintaMarcador(c, t);
   ppPintaEfectos(c, t);
@@ -230,10 +234,12 @@ function ppMano(c, x, y, t) {
 }
 let PP_NODOS_MAPA = [];
 function ppPintaMapa(c, t) {
-  const P = PP_P, N = PP_NIVELES.length;
-  if (PP_MAPA.cam === null) PP_MAPA.cam = Math.max(0, P.nivel - 1);
-  PP_MAPA.cam += (P.nivel - PP_MAPA.cam) * 0.06;   // la cámara sube sola hasta el nivel que toca
-  ppPintaFondo(c, 'fondo-jardin', t);
+  const P = PP_P, [m] = ppMundoDe(Math.min(P.nivel, PP_TOTAL_NIVELES - 1)), M = PP_MUNDOS[m];
+  let inicio = 0; for (let k = 0; k < m; k++) inicio += PP_MUNDOS[k].niveles;
+  const N = M.niveles, aquiL = P.nivel - inicio;   // el camino enseña solo el mundo en el que estás
+  if (PP_MAPA.cam === null) PP_MAPA.cam = Math.max(0, aquiL - 1);
+  PP_MAPA.cam += (Math.min(aquiL, N - 1) - PP_MAPA.cam) * 0.06;   // la cámara sube sola hasta el nivel que toca
+  ppPintaFondo(c, M.fondo, t);
   // la carretera: borde rosa, centro blanco y puntitos de colores
   c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
   const tramo = (ancho, color, dash) => { c.beginPath(); c.setLineDash(dash || []); for (let i = 0; i < N; i++) { const [x, y] = ppNivelPos(i); if (i) c.lineTo(x, y); else c.moveTo(x, y); } c.lineWidth = ancho; c.strokeStyle = color; c.stroke(); };
@@ -242,26 +248,26 @@ function ppPintaMapa(c, t) {
   PP_NODOS_MAPA = [];
   for (let i = N - 1; i >= 0; i--) {
     const [x, y] = ppNivelPos(i); if (y < -90 || y > PP_V.H + 90) continue;
-    const d = PP_NIVELES[i], hecho = i < P.nivel, aqui = i === P.nivel, jefe = d.tipo === 'jefe';
+    const g = inicio + i, hecho = g < P.nivel, aqui = g === P.nivel, jefe = ppEsJefe(g), dificil = ppEsDificil(g);
     const late = aqui ? 1 + Math.sin(t * 5) * 0.06 : 1, r = (jefe ? 60 : 46) * late;
-    c.save(); if (i > P.nivel) c.globalAlpha = 0.6;
+    c.save(); if (g > P.nivel) c.globalAlpha = 0.6;
     if (aqui) { c.beginPath(); c.arc(x, y, r + 14 + Math.sin(t * 5) * 4, 0, Math.PI * 2); c.fillStyle = 'rgba(255,255,255,0.7)'; c.fill(); }
     const col = jefe ? 'amarillo' : PP_COLORES[i % PP_COLORES.length], sp = 'b-' + col + (hecho ? '-abajo' : '-arriba');
     if (!ppDibujaEn(c, sp, x, y, r * 2.3, true)) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fillStyle = ppColorBurbuja(i % 6, 1); c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a4a8a'; c.stroke(); }
     if (jefe) ppSlimeRepuestoOImagen(c, 'ceo', x, y - 4, 30, t, 1);
-    else if (d.tipo === 'descanso') ppCorazon(c, x, y, 44, true);
-    else ppTexto(c, String(i + 1), x, y + 2, 46, '#fff', 'center', '#7a4a8a');
+    else ppTexto(c, String(g + 1), x, y + 2, 46, '#fff', 'center', dificil ? '#c43a84' : '#7a4a8a');
     c.restore();
     // debajo: las estrellas ganadas, o lo que hay en el nivel
-    if (hecho && d.tipo !== 'descanso') for (let k = 0; k < 3; k++) ppEstrella(c, x - 30 + k * 30, y + r + 10, 26, k < (P.est[i] || 0));
-    else if (!hecho && d.slimes) ppTexto(c, tr('¡Amigo!'), x, y + r + 12, 22, '#ff6ec7', 'center', '#fff');
-    else if (!hecho && jefe) ppTexto(c, tr('¡JEFE!'), x, y + r + 12, 26, '#ff8a2a', 'center', '#fff');
-    else if (!hecho && d.tipo === 'descanso') ppTexto(c, tr('Descanso'), x, y + r + 12, 22, '#3a8ee6', 'center', '#fff');
+    if (hecho) for (let k = 0; k < 3; k++) ppEstrella(c, x - 30 + k * 30, y + r + 10, 26, k < (P.est[g] || 0));
+    else if (jefe) ppTexto(c, tr('¡JEFE!'), x, y + r + 12, 26, '#ff8a2a', 'center', '#fff');
+    else if (M.amigos.includes(i + 1)) ppTexto(c, tr('¡Amigo!'), x, y + r + 12, 22, '#ff6ec7', 'center', '#fff');
+    else if (dificil) ppTexto(c, tr('Difícil'), x, y + r + 12, 22, '#c43a84', 'center', '#fff');
     if (aqui) { ppMano(c, x, y, t); PP_NODOS_MAPA.push({ x, y, r: r + 26 }); }
   }
-  // arriba: el título y las estrellas; abajo: corazones y amigos
+  // arriba: el mundo y las estrellas; abajo: corazones y amigos
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
-  ppTitulo(c, tr('EL CAMINO'), 250, 66, 50);
+  ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 250, 52, 40);
+  ppTexto(c, tr(M.nombre), 250, 92, 28, '#fff', 'center', '#c43a84');
   ppEstrella(c, 432, 66, 46, true); ppTexto(c, String(P.estrellas), 462, 68, 36, '#fff', 'left', '#7a4a8a');
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, PP_V.H - 140, 500, 84, 24); c.fill();
   for (let i = 0; i < P.vidaMax; i++) ppCorazon(c, 52 + i * 38, PP_V.H - 98, 32, i < P.vida);
@@ -271,9 +277,9 @@ function ppPintaMapa(c, t) {
 const PP_PORTADA = { T: null, prox: 0 };
 function ppPintaPortada(c, t, dt) {
   ppPintaFondo(c, 'fondo-jardin', t);
-  if (!PP_PORTADA.T) { PP_PORTADA.T = ppNuevoTablero({ tipo: 'sala', lado: 3, lio: [3, 4] }, { equipo: [] }); ppFxEntraSala(PP_PORTADA.T); }
+  if (!PP_PORTADA.T || ppResuelto(PP_PORTADA.T)) { PP_PORTADA.T = ppNuevoTablero(ppNivel(1), { equipo: [] }); ppFxEntraSala(PP_PORTADA.T); }   // se vuelve a llenar al vaciarse
   PP_PORTADA.prox -= dt;
-  if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; PP_PORTADA.prox = rand(0.5, 1.1); }
+  if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; T.toques = 0; PP_PORTADA.prox = rand(0.6, 1.2); }
   ppFxAvanza(dt);
   c.save(); c.translate(270, PP_V.H * 0.46); c.scale(0.62, 0.62); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
   ppTitulo(c, 'FANS OF', 270, 110, 60);

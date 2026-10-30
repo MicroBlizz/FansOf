@@ -1,6 +1,7 @@
 // Fans Of · Inglés de la ventana NOVEDADES de la raíz (novedades/lista.js y sus botones).
 'use strict';
 IDIOMA.add({
+  "Demo nueva y muy kawaii: revienta las burbujas de un pop-it gigante y rescata a los amigos atrapados. Próximamente.": "A brand-new, super kawaii demo: pop the bubbles of a giant pop-it and rescue the trapped friends. Coming soon.",
   "Prototipo nuevo en 3D: lleva pasajeros contra el reloj, corre carreras y dale esquinazo a la policía. Próximamente.": "New 3D prototype: carry passengers against the clock, race through the streets and shake off the police. Coming soon.",
   "FANS OF TAXI": "FANS OF TAXI",
   "29 de octubre de 2026": "29 October 2026",

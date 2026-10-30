@@ -1,8 +1,8 @@
 {
- "build": 660,
- "hash": "ed8919b",
- "fecha": "2026-10-30T10:05:14Z",
- "mensaje": "Fans of Swipe: el texto de las cartas sale siempre entero (encoge el dibujo y luego la letra si no cabe)",
+ "build": 661,
+ "hash": "3952a5c",
+ "fecha": "2026-10-30T10:10:47Z",
+ "mensaje": "Fans of Merge: el camino con contorno marrón y adornos pintados (piedrecitas, flores); charco de lluvia pintado",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

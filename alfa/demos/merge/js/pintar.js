@@ -151,15 +151,20 @@ function mgCaminoLienzo(libre, k) {
   // La forma: los cuadrados de las casillas, difuminados y vueltos a cortar por la mitad: así se redondea todo por igual.
   const [masc, m] = capa(); m.filter = bl(cs * 0.2); forma(m, cs * 0.02); m.fillStyle = '#000'; m.fill('nonzero');
   const d = m.getImageData(0, 0, W, H), a = d.data;
+  const [borde, bo] = capa(); const db = bo.createImageData(W, H), ab = db.data;   // el contorno: la misma forma un poco más ancha, en marrón
   // el corte no es a la misma altura en todas partes: un ruido suave lo mueve, y el borde sale ondulado e irregular, como tierra pisada
   const ruido = mgRuido(MG_P.semillaCamino || 1), esc = 1 / (cs * k);
   for (let i = 3, p = 0; i < a.length; i += 4, p++) {
-    if (a[i] === 0 || a[i] === 255) continue;
+    ab[i - 3] = 107; ab[i - 2] = 69; ab[i - 1] = 35;
+    if (a[i] === 0) continue;
+    if (a[i] === 255) { ab[i] = 255; continue; }
     const px = (p % W) * esc, py = ((p / W) | 0) * esc;
     const corte = 0.45 + (ruido(px * 1.8, py * 1.8) - 0.5) * 0.55 + (ruido(px * 6, py * 6) - 0.5) * 0.22;
-    const v = (a[i] / 255 - corte) / 0.07; a[i] = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * v * (3 - 2 * v) * 255);
+    const al = a[i] / 255, ve = (al - corte + 0.075) / 0.05;
+    ab[i] = ve <= 0 ? 0 : ve >= 1 ? 255 : Math.round(ve * ve * (3 - 2 * ve) * 255);
+    const v = (al - corte) / 0.05; a[i] = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * v * (3 - 2 * v) * 255);
   }
-  m.putImageData(d, 0, 0);
+  m.putImageData(d, 0, 0); bo.putImageData(db, 0, 0);
   const [lienzo, c] = capa(); c.setTransform(1, 0, 0, 1, 0, 0);
   c.filter = bl(cs * 0.05); c.globalAlpha = 0.18; c.drawImage(masc, 0, 0); c.globalAlpha = 1; c.filter = 'none';   // la hierba se oscurece un poco junto al camino
   const [tierra, t] = capa();
@@ -171,7 +176,27 @@ function mgCaminoLienzo(libre, k) {
   so.globalCompositeOperation = 'destination-out'; so.filter = bl(cs * 0.08); so.drawImage(masc, cs * 0.03 * k, cs * 0.045 * k);
   t.drawImage(sombra, 0, 0);
   t.globalCompositeOperation = 'destination-in'; t.drawImage(masc, 0, 0);
+  c.globalAlpha = 0.85; c.drawImage(borde, 0, 0); c.globalAlpha = 1;   // contorno marrón, como el de los dibujos
   c.drawImage(tierra, 0, 0);
+  // los adornos pintados por Yoshi a lo largo del borde (matitas, piedrecitas, florecillas): siempre en los mismos sitios en la partida
+  const adornos = ['ADORNO1', 'ADORNO2', 'ADORNO3', 'ADORNO4', 'ADORNO5', 'ADORNO6'].filter(q => MG_IMG[q]);
+  if (adornos.length) {
+    c.setTransform(k, 0, 0, k, 0, 0);
+    const azar = mgRuido((MG_P.semillaCamino || 1) + 7);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      if (!libre(x, y)) continue;
+      [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(([dx, dy], lado) => {
+        if (libre(x + dx, y + dy)) return;   // solo donde el camino da a la hierba
+        const z = azar(x * 3.7 + lado * 1.3, y * 2.9 + lado), cuantos = z < 0.35 ? 0 : z < 0.8 ? 1 : 2;
+        for (let i = 0; i < cuantos; i++) {
+          const u = azar(x * 5.1 + i * 2.3 + lado, y * 4.3 + i), q = adornos[Math.floor(azar(x * 7 + i, y * 9 + lado) * adornos.length * 0.999)];
+          const along = (u - 0.5) * cs * 0.7, l = cs * (0.2 + azar(x + i * 3, y * 2 + lado) * 0.1);
+          const cx = mgCx(x) + (dx ? dx * cs * 0.44 : along), cy = mgCy(y) + (dy ? dy * cs * 0.44 : along);
+          mgImg(c, q, cx - l / 2, cy - l / 2, l, l);
+        }
+      });
+    }
+  }
   return lienzo;
 }
 function mgPintaCaminos(c, t) {
@@ -188,7 +213,7 @@ function mgPintaCaminos(c, t) {
     }
   };
   if (MG_IMG.TIERRA) {   // el camino, como en los juegos de este tipo: una casilla de tierra por hueco, y las que se tocan se unen
-    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, cs, [...P.camino].join(','), MG_IMG.TIERRA.src].join('|');
+    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, cs, [...P.camino].join(','), MG_IMG.TIERRA.src, ['ADORNO1', 'ADORNO2', 'ADORNO3', 'ADORNO4', 'ADORNO5', 'ADORNO6'].filter(q => MG_IMG[q]).length].join('|');   // se rehace cuando llega un adorno
     if (MG_V.caminoClave !== clave) { MG_V.caminoLienzo = mgCaminoLienzo(libre, k); MG_V.caminoClave = clave; }
     c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(MG_V.caminoLienzo, 0, 0); c.restore();
   } else {

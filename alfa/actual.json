@@ -1,8 +1,8 @@
 {
- "build": 686,
- "hash": "9d2dd65",
- "fecha": "2026-10-30T17:30:20Z",
- "mensaje": "Goose 0.4.0: Escalera de Noches, tierras al azar (Feria, Lago Helado y Mina nuevas), caminos que se bifurcan, desafíos con desbloqueos y Tablero del día",
+ "build": 687,
+ "hash": "d9b7fab",
+ "fecha": "2026-10-30T17:31:03Z",
+ "mensaje": "Mapas al día (Swipe)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

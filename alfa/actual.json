@@ -1,8 +1,8 @@
 {
- "build": 689,
- "hash": "1324326",
- "fecha": "2026-10-30T17:53:17Z",
- "mensaje": "Fans of Asalto: llena toda la pantalla del móvil, muñecos y fondos de Yoshi a su tamaño real y toda la letra grande (se quita la de 10, que no se leía)",
+ "build": 690,
+ "hash": "4f48af1",
+ "fecha": "2026-10-30T18:09:01Z",
+ "mensaje": "Merge: camino con pasillos estrechos, contorno suave y detallitos",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

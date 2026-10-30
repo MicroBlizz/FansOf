@@ -14,6 +14,10 @@ const SPRITES = {
   ADORNO1: 'img/adorno-hierba.png', ADORNO2: 'img/adorno-amarilla.png', ADORNO3: 'img/adorno-flor.png', ADORNO4: 'img/adorno-piedras.png', ADORNO5: 'img/adorno-hierba.png', ADORNO6: 'img/adorno-flor.png',
   CHISPA: 'img/chispa.png', HOJA: 'img/hoja.png', RELAMPAGO: 'img/relampago.png', ESTRELLA: 'img/estrella.png', TABLON: 'img/tablon.png', BOTON: 'img/boton.png', LOGO: 'img/logo.png',
 };
+// los detallitos del interior del camino (piedrecitas, hojas, huellas…): cada casilla lleva unos pocos al azar (ver mgDetalles en js/losetas.js)
+// [nombre, tamaño en partes de casilla, si se puede girar del todo]
+const MG_DETALLES = [['guijarros', 0.24, 1], ['piedra', 0.17, 1], ['trebol', 0.15, 1], ['zanahoria', 0.16, 1]];
+for (const [d] of MG_DETALLES) SPRITES['DET_' + d] = 'img/detalle-' + d + '.png';
 const MG_IMG = {};
 // Se cargan por turnos: primero lo que sale en la portada (el prado, el logo, el conejito, las piezas que caen y los botones), luego lo demás.
 // Así la portada está lista antes y no se ve nada provisional. MG_PORTADA.lista se pone a true cuando ha llegado lo suyo (o a los 6 s, por si falla algo).

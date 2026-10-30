@@ -1,8 +1,8 @@
 {
- "build": 653,
- "hash": "3d3b890",
- "fecha": "2026-10-30T05:16:43Z",
- "mensaje": "Renombre humo → smoke en toda la herramienta (workflow, runner, marca, scripts, carpeta pruebas/smoke, docs)",
+ "build": 654,
+ "hash": "5094dea",
+ "fecha": "2026-10-30T05:18:40Z",
+ "mensaje": "Renombre smoke → smoke-test (el nombre pedido): workflow, runner, marca, carpeta, scripts y docs",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

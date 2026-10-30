@@ -1,8 +1,8 @@
 {
- "build": 685,
- "hash": "6df6560",
- "fecha": "2026-10-30T17:20:23Z",
- "mensaje": "Fans of Asalto: arte nuevo de Yoshi (arenas, pasillo, bosque del cofre, altar, agujero, iconos de brujo, equipo, pluma, yunque y trofeo) y animaciones de becario, caja botín y mapache; la cuadrícula baja de la orilla",
+ "build": 686,
+ "hash": "9d2dd65",
+ "fecha": "2026-10-30T17:30:20Z",
+ "mensaje": "Goose 0.4.0: Escalera de Noches, tierras al azar (Feria, Lago Helado y Mina nuevas), caminos que se bifurcan, desafíos con desbloqueos y Tablero del día",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

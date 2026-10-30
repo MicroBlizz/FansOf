@@ -8,11 +8,11 @@ const SPR = {};         // nombre -> { n, f, b, w, h } (normal, flip, blanco; w 
 const IMG = {};           // los PNG cargados
 // los objetos y adornos que tienen su PNG de Yoshi (si falta alguno, sale su dibujo de código, también pixelado)
 const PNG_DE = { xp1: 'i-pluma', xp2: 'i-pluma-azul', xp3: 'i-pluma-roja', moneda: 'i-moneda', cuchilla: 'i-cuchilla', tornado: 'i-cuchilla-fuego', huevo: 'i-huevo', huevojefe: 'i-huevo-rojo', cofre: 'i-cofre', pollo: 'i-asada', iman: 'i-iman' };
-const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo', dado6: 'i-dado', fuerza: 'i-espada', prisa: 'i-bota', area: 'i-circulo', suerte: 'i-trebol', iman: 'i-iman', vida: 'i-corazon', plumon: 'i-pluma-azul', cadencia: 'i-reloj', moneda: 'i-moneda', pollo: 'i-asada', bolsa: 'i-bolsa' };
-const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'charca', 'rana', 'lapida', 'cruz', 'vela', 'huesos', 'calavera', 'antorcha', 'cadena', 'barril', 'farol', 'carro', 'pozo', 'armadura', 'estandarte', 'estatua'];
-const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado'];
-const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo'];
-const HEROE_PNG = ['c-farol', ...['c-cuerpo', 'c-paso', 'c-golpe'].flatMap(n => [n, n + '-verde', n + '-azul', n + '-amarillo']).flatMap(n => [n, n + '-izq'])];   // el héroe en capas (js/personajes.js)
+const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo', dado6: 'i-dado', fuerza: 'i-espada', prisa: 'i-bota', area: 'i-circulo', suerte: 'i-trebol', iman: 'i-iman', vida: 'i-corazon', plumon: 'i-pluma-azul', cadencia: 'i-reloj', moneda: 'i-moneda', pollo: 'i-asada', bolsa: 'i-bolsa', luna: 'i-luna', campana: 'i-campana', tirachinas: 'i-tirachinas' };
+const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'charca', 'rana', 'lapida', 'cruz', 'vela', 'huesos', 'calavera', 'antorcha', 'cadena', 'barril', 'farol', 'carro', 'pozo', 'armadura', 'estandarte', 'estatua', 'carpa', 'globo', 'caballito', 'diana', 'pino', 'muneco', 'carambano', 'rocanieve', 'vagoneta', 'viga', 'cristal', 'pico'];
+const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado', 's-cruce', 's-fuente', 's-mercader', 's-altar', 's-tesoro'];
+const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo', 't-feria', 't-helada', 't-mina'];
+const HEROE_PNG = ['c-farol', ...['c-cuerpo', 'c-paso', 'c-golpe'].flatMap(n => [n, n + '-verde', n + '-azul', n + '-amarillo', n + '-negro', n + '-blanco']).flatMap(n => [n, n + '-izq'])];   // el héroe en capas (js/personajes.js)
 // los fotogramas de los enemigos (Yoshi): cada ciclo es la lista de sprites que se van turnando
 const CICLOS = {
   oca: ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-oca-2'],
@@ -20,14 +20,14 @@ const CICLOS = {
   gorda: ['e-gorda-1', 'gorda', 'e-gorda-2', 'gorda'],
   jefe: ['jefe', 'e-jefe-1'],
 };
-const NUEVOS_PNG = ['rana', 'cuervo', 'antorcha', 'armadura', 'zombi', 'mj-rana', 'mj-cuervo', 'mj-alcalde', 'mj-caballero', 'parca', 'parca-hoz', 'parca-guadana', 'hoz', 'fuego'];
+const NUEVOS_PNG = ['rana', 'cuervo', 'antorcha', 'armadura', 'zombi', 'mj-rana', 'mj-cuervo', 'mj-alcalde', 'mj-caballero', 'parca', 'parca-hoz', 'parca-guadana', 'hoz', 'fuego', 'payaso', 'nevada', 'minera', 'mj-domador', 'mj-yeti', 'mj-capataz'];
 const ENEMIGOS_PNG = ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-alb-1', 'e-alb-2', 'e-gorda-1', 'e-gorda-2', 'e-jefe-1', 'e-jefe-2'];
 // es una función: PARCA_PNG llega después (js/parca.js) y aquí aún no existe
 const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
   return Promise.all(PNGS().map(n => new Promise(ok => {
-    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=3';
+    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=4';
   })));
 }
 
@@ -113,6 +113,7 @@ function preparaSprites() {
   hazSprite('iman', 10, 8, (x, w, h) => { x.lineWidth = 2.4; x.strokeStyle = '#e0303a'; x.beginPath(); x.arc(w / 2, h * 0.55, w * 0.34, Math.PI, 0); x.stroke(); });
   for (const n of NUEVOS_PNG.concat(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : [])) if (IMG[n] && !SPR[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   hazSprite('fuego', 8, 8, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.36, 0, 7); trazo(x, '#ff7a2a', 1); x.fillStyle = '#ffd34d'; x.fillRect(w * 0.38, h * 0.3, w * 0.24, h * 0.3); });
+  hazSprite('nieve', 8, 8, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.38, 0, 7); trazo(x, '#eef6ff', 1); x.fillStyle = '#bfd8ef'; x.fillRect(w * 0.5, h * 0.5, w * 0.2, h * 0.2); });
   hazSprite('hoz', 10, 10, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.4, 0.6, 4.2); x.lineWidth = 2.2; x.strokeStyle = '#120808'; x.stroke(); x.lineWidth = 1.2; x.strokeStyle = '#efe4c4'; x.stroke(); });
   for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);

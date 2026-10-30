@@ -11,6 +11,7 @@ function creaEnemigo(tipo, x, y) {
   const D = CFG.enemigos[tipo] || CFG.enemigos.oca, f = tipo === 'jefe' ? 1 + JUEGO.t * 0.0012 : escalaVida();
   e.tipo = tipo; e.x = x; e.y = y; e.vx = 0; e.vy = 0; e.kx = 0; e.ky = 0; e.hpMax = e.hp = D.vida * f; e.r = D.r; e.vel = D.vel * (0.9 + Math.random() * 0.2);
   e.dano = D.dano * (1 + JUEGO.casilla * 0.015); e.xp = D.xp; e.flash = 0; e.mira = 1; e.estado = ''; e.animT = 0; e.regateado = false; e.cd = D.disparo ? D.disparo * Math.random() + 1 : 0; e.cdPl = 0; e.t = Math.random() * 6; e.fase = 0; e.f2 = 0; e.id = SIG_ID++; e.pozo = false; e.caida = 0; e.sx = 0; e.sy = 0; e.cx = 0; e.cy = 0; e.furia = false;
+  ajustaEnemigo(e);   // la noche y el camino (js/caminos.js)
   return e;
 }
 
@@ -28,7 +29,7 @@ function avanzaOleadas(dt) {
   const esc = J.escena;
   if (esc && esc.tipo !== 'puente') return;   // el Pozo y la Cárcel traen sus ocas; la Posada, ninguna
   // parado: cuanto más tardas en tirar, más ocas (la presión de la Oca). En el tramo, la horda te sale al paso
-  let quiero = O.base + O.porCasilla * J.casilla * 0.55 + O.porSegundo * J.t * 0.5;
+  let quiero = (O.base + O.porCasilla * J.casilla * 0.55 + O.porSegundo * J.t * 0.5) * J.mod.oleada;
   if (J.fase === 'parado') quiero += J.quieto * 1.0;
   else quiero *= 1.25;
   quiero = Math.min(CFG.maxEnemigos - 14, quiero);
@@ -43,14 +44,14 @@ function avanzaOleadas(dt) {
   // oca gorda (élite)
   J.tGorda -= dt;
   if (J.tGorda <= 0 && J.t > 35) {
-    J.tGorda = O.gordaCada; const n = (1 + Math.floor(J.t / 170)) * (enTierra('aldea') ? 2 : 1);
+    J.tGorda = O.gordaCada / J.mod.elites; const n = (1 + Math.floor(J.t / 170)) * (enTierra('aldea') ? 2 : 1);
     for (let i = 0; i < n; i++) { const [x, y] = puntoBorde(); const e = creaEnemigo('gorda', x, y); if (e) e.xp = 10; }
     aviso(tr('¡OCA GORDA!'), '#ff9b4d');
   }
   // bandada en V
   J.tBandada -= dt;
   if (J.tBandada <= 0 && J.casilla >= 5) {
-    J.tBandada = O.bandadaCada * (0.8 + Math.random() * 0.4);
+    J.tBandada = O.bandadaCada * (0.8 + Math.random() * 0.4) / J.mod.elites;
     lanzaBandada(false);
   }
 }
@@ -104,14 +105,15 @@ function avanzaEnemigos(dt) {
     }
     // toca al jugador
     const rr = e.r * 0.8 + CFG.jugador.radio;
-    if (e.hp > 0 && J.invul <= 0 && J.salto <= 0 && (e.x - yo.x) ** 2 + (e.y - yo.y) ** 2 < rr * rr) heridaJugador(e.dano, e.x, e.y);
+    if (e.hp > 0 && !e.oculta && J.invul <= 0 && J.salto <= 0 && (e.x - yo.x) ** 2 + (e.y - yo.y) ** 2 < rr * rr) heridaJugador(e.dano, e.x, e.y);
   }
   avanzaBalas(dt);
 }
 
 function disparaBala(x, y, vx, vy, dano, spr, r = 3) {
-  const b = BALAS.saca(); if (!b) return;
-  b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.dano = dano; b.vida = 4; b.spr = spr; b.r = r; b.rebota = 0;
+  const b = BALAS.saca(); if (!b) return null;
+  b.x = x; b.y = y; b.vx = vx; b.vy = vy; b.dano = dano; b.vida = 4; b.spr = spr; b.r = r; b.rebota = 0; b.frena = 0;
+  return b;
 }
 function avanzaBalas(dt) {
   const J = JUEGO, yo = J.yo, l = BALAS.lista;
@@ -119,13 +121,13 @@ function avanzaBalas(dt) {
     const b = l[i]; b.x += b.vx * dt; b.y += b.vy * dt; b.vida -= dt; if (b.rebota) rebotaHoz(b);
     if (b.vida <= 0) { BALAS.quita(i); continue; }
     const rr = b.r + CFG.jugador.radio * 0.8;
-    if (J.invul <= 0 && J.salto <= 0 && (b.x - yo.x) ** 2 + (b.y - yo.y) ** 2 < rr * rr) { heridaJugador(b.dano, b.x, b.y); BALAS.quita(i); }
+    if (J.invul <= 0 && J.salto <= 0 && (b.x - yo.x) ** 2 + (b.y - yo.y) ** 2 < rr * rr) { heridaJugador(b.dano, b.x, b.y); if (b.frena) J.frenado = b.frena; BALAS.quita(i); }
   }
 }
 
 // --- daño y bajas ---
 function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
-  if (e.hp <= 0) return;
+  if (e.hp <= 0 || e.oculta) return;
   const crit = critSeguro || Math.random() < JUEGO.st.crit;
   if (crit) d *= 2.2;
   d *= escudoArmadura(e, nx, ny); if (d < 1) { texto(e.x, e.y - e.r, tr('¡BLOQUEADO!'), '#c9d3ff', 5, 0.5); return; }
@@ -154,7 +156,7 @@ function mata(e) {
     suelta('cofre', e.x, e.y, 1); if (Math.random() < 0.35) suelta('iman', e.x + 10, e.y, 1);
     tiembla(4); congela(0.06); anillo(e.x, e.y, 40, '#ffb04d', 0.4, 4); SONIDO.muereGorda(); vibra(40);
   } else SONIDO.muere();
-  if (xp > 0) suelta('xp', e.x, e.y, xp);
+  if (xp > 0) suelta('xp', e.x, e.y, xp * (JUEGO.st.plumas || 1));
   if (Math.random() < CFG.monedaProb) suelta('moneda', e.x + 4, e.y, 1);
   if (Math.random() < 0.004) suelta('pollo', e.x - 4, e.y, 1);
   hitosCombo();

@@ -39,14 +39,17 @@ function pintaPortada(dt) {
   texto2('GOOSE', W / 2, y + 6, 42, '#ffd34d', 'center', FUENTE_G, 400, 0.14);
   texto2(tr('El Juego de la Oca... maldito'), W / 2, y + 30, 8, '#f1e6c8', 'center', FUENTE, 700, 0.35);
   // récords
-  const yb = H - 140;
+  const yb = H - 170;
   if (SAVE.partidas) {
     texto2(SAVE.victorias ? tr('Has escapado {n} veces', { n: SAVE.victorias }) : tr('Tu mejor casilla: {n} de 63', { n: SAVE.mejorCasilla }), W / 2, yb - 20, 7, '#ffd34d', 'center', FUENTE, 800);
   }
   boton(30, yb - 8, W - 60, 32, tr('JUGAR'), '#e8742a', () => { SONIDO.boton(); abreSelector(); }, 15);
-  boton(30, yb + 30, W - 60, 26, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 10, tr('Carrera o cooperativo, de 2 a 4'));
-  boton(30, yb + 62, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
-  boton(W - 76, yb + 62, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
+  const mitad = (W - 66) / 2, D = diarioHoy();
+  boton(30, yb + 30, mitad, 26, tr('TABLERO DEL DÍA'), '#c0402f', () => { SONIDO.boton(); JUEGO.modo = 'diario'; }, 7.5, D.intentos ? tr('Hoy: {p}', { p: D.mejor }) : tr('¡Nuevo!'));
+  boton(36 + mitad, yb + 30, mitad, 26, tr('DESAFÍOS'), '#d98a1a', () => { SONIDO.boton(); DESAFIOS_SCROLL = 0; JUEGO.modo = 'desafios'; }, 8, tr('{a} de {b}', { a: DESAFIOS.filter(d => hecho(d.id)).length, b: DESAFIOS.length }));
+  boton(30, yb + 62, W - 60, 24, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 9, tr('Carrera o cooperativo, de 2 a 4'));
+  boton(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
+  boton(W - 76, yb + 92, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
   texto2(tr('Microblizz no se hace responsable de las ocas'), W / 2, H - 12, 5.5, 'rgba(241,230,200,.55)', 'center', FUENTE, 700, 0);
 }
 
@@ -166,20 +169,33 @@ function pintaFin(dt) {
     [tr('Nivel'), String(J.nivel)],
     [tr('Mejor combo'), 'x' + J.mejorCombo],
   ];
+  const logros = lineasFin(F), paso = logros.length ? 13 : 17, y0 = logros.length ? 92 : 100;
   filas.forEach(([a, b], i) => {
-    const y = 100 + i * 17, ki = Math.max(0, Math.min(1, F.t * 4 - 1 - i * 0.4)); if (!ki) return;
+    const y = y0 + i * paso, ki = Math.max(0, Math.min(1, F.t * 4 - 1 - i * 0.4)); if (!ki) return;
     G.globalAlpha = ki; texto2(a, 30, y, 8, '#c9b98a', 'left', FUENTE, 700); texto2(b, W - 30, y, 9, '#fff4dc', 'right'); G.globalAlpha = 1;
   });
-  finBotones(F, W, H, 100 + filas.length * 17 + 8);
+  finBotones(F, W, H, y0 + filas.length * paso + 6, logros);
 }
-function finBotones(F, W, H, ym) {
+// lo nuevo de esta partida: la noche que se abre, los desafíos cumplidos y el Tablero del día
+function lineasFin(F) {
+  const l = [];
+  if (F.diario) l.push([F.diario.record ? tr('Tablero del día: {p} puntos ¡tu mejor de hoy!', { p: F.diario.pts }) : tr('Tablero del día: {p} puntos', { p: F.diario.pts }), '#ffd34d']);
+  if (F.noche) l.push([tr('¡NOCHE {n} ABIERTA!', { n: F.noche }), '#ff8a6b']);
+  for (const d of F.desafios || []) l.push([tr('Desafío: {t}', { t: tr(d.txt) }) + ' · ' + textoPremio(d), '#7dff6b']);
+  return l;
+}
+function finBotones(F, W, H, ym, logros = []) {
   if (F.t > 2.4) {
     caja(30, ym, W - 60, 28, 8, '#2a1610', '#ffcf33', 1.5);
     pinta('moneda', W / 2 - 26, ym + 14, false, false, 1.6); texto2('+' + F.monedas, W / 2 - 14, ym + 14.5, 13, '#ffcf33', 'left');
-    if (F.record) texto2(tr('¡NUEVO RÉCORD!'), W / 2, ym + 40, 9, '#7dff6b');
+    let y = ym + 38;
+    if (F.record) { texto2(tr('¡NUEVO RÉCORD!'), W / 2, y, 8, '#7dff6b'); y += 11; }
+    const caben = Math.max(0, Math.floor((H - 118 - y) / 10));
+    logros.slice(0, caben).forEach(([t, c], i) => { if (F.t > 2.6 + i * 0.25) texto2(t, W / 2, y + i * 10, 5.5, c, 'center', FUENTE, 800, 0.3); });
+    if (logros.length > caben && caben) texto2(tr('…y {n} más en Desafíos', { n: logros.length - caben }), W / 2, y + caben * 10, 5, '#c9b98a');
   }
   if (F.t > 2.8) {
-    boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else nuevaPartida(); }, 13);
+    boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else if (F.diario) empiezaDiario(); else nuevaPartida(); }, 13);
     boton(30, H - 70, W - 60, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
     boton(30, H - 40, W - 60, 22, tr('MENÚ'), '#2f74c0', () => { SONIDO.boton(); JUEGO.carrera = null; JUEGO.modo = 'portada'; }, 9);
   }

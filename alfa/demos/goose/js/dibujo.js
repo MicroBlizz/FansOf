@@ -56,9 +56,9 @@ function pintaMundo() {
   }
   // sombras y ocas
   const l = ENE.lista;
-  for (let i = 0; i < ENE.n; i++) { const e = l[i]; if (e.hp > 0) pinta('sombra', e.x, e.y + e.r * 0.9, false, false, e.r / 6); }
+  for (let i = 0; i < ENE.n; i++) { const e = l[i]; if (e.hp > 0 && !e.oculta) pinta('sombra', e.x, e.y + e.r * 0.9, false, false, e.r / 6); }
   for (let i = 0; i < ENE.n; i++) {
-    const e = l[i]; if (e.hp <= 0) continue;
+    const e = l[i]; if (e.hp <= 0 || e.oculta) continue;   // la oca minera bajo tierra no se ve (solo su polvo)
     const bob = e.caida > 0 ? -e.caida * 110 : e.tipo === 'albatros' || e.tipo === 'bandada' ? Math.sin(e.t * 9) * 2 - 3 : Math.abs(Math.sin(e.t * 10)) * -1.5;
     const spr = e.tipo === 'parca' ? fotogramaParca(e) : fotogramaEnemigo(e);
     const esc = e.tipo === 'bandada' ? 0.8 : e.tipo === 'jefe' ? 1 + Math.sin(e.t * 3) * 0.03 : e.tipo.startsWith('mj-') && !SPR[e.tipo] ? 1.5 : e.tipo === 'parca' && !SPR.parca ? 1.2 : 1;
@@ -133,8 +133,8 @@ function pintaEncima() {
 }
 
 // el fotograma de cada enemigo: su ciclo al ritmo de su velocidad (cada oca desfasada para que no anden todas a la vez)
-const TINTES = { rana: '#5fbf3a', cuervo: '#202030', antorcha: '#ff7a2a', armadura: '#8a9098', zombi: '#6b8a5a', 'mj-rana': '#3fbf4a', 'mj-cuervo': '#1a1420', 'mj-alcalde': '#c0402f', 'mj-caballero': '#3a3a44', parca: '#2a1040' };
-const PROVISIONAL = { rana: 'oca', cuervo: 'albatros', antorcha: 'oca', armadura: 'gorda', zombi: 'oca', 'mj-rana': 'gorda', 'mj-cuervo': 'albatros', 'mj-alcalde': 'gorda', 'mj-caballero': 'gorda', parca: 'jefe' };
+const TINTES = { payaso: '#ff6b9b', nevada: '#dff2ff', minera: '#d9a020', 'mj-domador': '#c0302f', 'mj-yeti': '#eef6ff', 'mj-capataz': '#d9a020', rana: '#5fbf3a', cuervo: '#202030', antorcha: '#ff7a2a', armadura: '#8a9098', zombi: '#6b8a5a', 'mj-rana': '#3fbf4a', 'mj-cuervo': '#1a1420', 'mj-alcalde': '#c0402f', 'mj-caballero': '#3a3a44', parca: '#2a1040' };
+const PROVISIONAL = { payaso: 'oca', nevada: 'oca', minera: 'oca', 'mj-domador': 'gorda', 'mj-yeti': 'gorda', 'mj-capataz': 'gorda', rana: 'oca', cuervo: 'albatros', antorcha: 'oca', armadura: 'gorda', zombi: 'oca', 'mj-rana': 'gorda', 'mj-cuervo': 'albatros', 'mj-alcalde': 'gorda', 'mj-caballero': 'gorda', parca: 'jefe' };
 function fotogramaEnemigo(e) {
   if (!SPR[e.tipo] && PROVISIONAL[e.tipo]) return PROVISIONAL[e.tipo];
   const tipo = e.tipo === 'bandada' ? 'oca' : e.tipo;

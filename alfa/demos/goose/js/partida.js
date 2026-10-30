@@ -17,12 +17,19 @@ function nuevaPartida() {
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
     impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
+    noche: 1, mod: null, ruta: {}, extra: {}, mjHechos: 0, compro: false, frenado: 0, tRoca: 2, rnd: null, rndDado: null, diario: false, eleccion: null,
   });
+  // la noche, el azar y el modo (js/noches.js, js/desafios.js): Tablero del día, con amigos (misma semilla para todos) o normal
+  if (J.diarioPedido) { J.diarioPedido = false; J.diario = true; preparaDiario(); }
+  else if (J.semillaSala) { J.rnd = semillaAzar(J.semillaSala); J.semillaSala = 0; }
+  else J.noche = Math.max(1, Math.min(SAVE.noche || 1, SAVE.nocheMax || 1));
+  J.mod = modNoche(); PELIGROS.length = 0; vaciaArmasNuevas();
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
-  J.pers = personaje(); J.yo.dir = 1;
-  J.maldicion = eligeMaldicion(); barajaCasillas();
+  J.pers = J.diario ? personajeDelDia() : personaje(); J.yo.dir = 1;
+  sorteaTierras(); J.maldicion = eligeMaldicion(); barajaCasillas();
   calculaStats(); J.vida = J.st.vidaMax;
   aplicaCarta(cartaArma(J.pers.arma));
+  if (J.pers.id === 'blanco') J.tiradas++;
   preparaEspeciales();
   SAVE.partidas++; guarda();
   if (J.maldicion.id === 'ninguna') { aviso(tr('¡LLEGA A LA CASILLA 63!'), '#ffd34d', 2.2); aviso2(tr('El tablero se derrumba detrás de ti')); }
@@ -39,6 +46,7 @@ function aviso2(txt) { JUEGO.aviso2 = txt; }
 // --- el bucle de la partida ---
 function avanzaPartida(dt) {
   const J = JUEGO;
+  if (J.eleccion) { J.modo = 'eleccion'; return; }   // una elección pendiente (js/caminos.js)
   J.cuadro++;
   if (FX.pausa > 0) { FX.pausa -= dt; avanzaEfectos(dt * 0.2); return; }
   if (FX.lento > 0) { FX.lento -= dt; dt *= 0.35; }
@@ -63,7 +71,7 @@ function avanzaPartida(dt) {
   avanzaJugador(dt);
   avanzaSalto(dt);
   avanzaDerrumbe(dt);
-  avanzaTierras(dt); charcosMalos(dt);
+  avanzaTierras(dt); avanzaTierras2(dt); avanzaCaminos(); charcosMalos(dt);
   if (J.saltoParca > 0) J.saltoParca -= dt;
   vigilaBioma();
   avanzaDado(dt);
@@ -173,7 +181,7 @@ function recoge(p) {
     if (J.impulso >= plumasDado() && !J.avisoImpulso) { J.avisoImpulso = true; J.dado.bendito = true; texto(J.yo.x, J.yo.y - 20, tr('¡DADO BENDITO!'), '#ffd34d', 8, 1.2); SONIDO.impulsoListo(); }
   } else if (p.tipo === 'robada') { /* el cuervo se la llevó */ }
   else if (p.tipo === 'moneda') { J.monedasPartida += maldita('avaro') && Math.random() < 0.5 ? 0 : 1; SONIDO.moneda(); texto(p.x, p.y - 6, '+1', '#ffcf33', 6, 0.5); }
-  else if (p.tipo === 'pollo') { J.vida = Math.min(J.st.vidaMax, J.vida + 40); texto(p.x, p.y - 6, '+40', '#7dff6b', 8, 0.8); SONIDO.cura(); }
+  else if (p.tipo === 'pollo') { J.vida = Math.min(J.st.vidaMax, J.vida + 40 * J.mod.cura); texto(p.x, p.y - 6, '+' + Math.round(40 * J.mod.cura), '#7dff6b', 8, 0.8); SONIDO.cura(); }
   else if (p.tipo === 'iman') { for (let i = 0; i < PLUMAS.n; i++) if (PLUMAS.lista[i].tipo === 'xp') PLUMAS.lista[i].atraida = true; aviso(tr('¡IMÁN!'), '#6bf2ff', 1); SONIDO.iman(); }
   else if (p.tipo === 'cofre') abreCofre();
 }
@@ -229,12 +237,14 @@ function terminaPartida(gana) {
   const J = JUEGO;
   J.mejorCombo = Math.max(J.mejorCombo, J.combo);
   const base = J.monedasPartida + J.mejorCasilla + Math.floor(J.bajas / 20) + (gana ? 100 : 0);
-  const monedas = Math.round(base * J.st.monedas);
+  const diario = J.diario ? terminaDiario(gana) : null;
+  const monedas = Math.round(base * J.st.monedas * J.mod.monedas * (diario && diario.primera ? 2 : 1));
   const record = J.mejorCasilla > SAVE.mejorCasilla;
+  const noche = gana && !J.diario ? ganaNoche() : 0, desafios = repasaDesafios(gana);
   SAVE.monedas += monedas; SAVE.mejorCasilla = Math.max(SAVE.mejorCasilla, gana ? CFG.jardin : J.mejorCasilla); SAVE.mejorBajas = Math.max(SAVE.mejorBajas, J.bajas);
   if (gana) SAVE.victorias++;
   guarda();
-  J.fin = { gana, monedas, record, t: 0 };
+  J.fin = { gana, monedas, record, t: 0, noche, desafios, diario };
   J.modo = 'fin';
   if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.parar(); } catch (e) { /* sin contador */ }
 }

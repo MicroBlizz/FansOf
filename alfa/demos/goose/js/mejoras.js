@@ -43,6 +43,7 @@ function calculaStats() {
     monedas: 1 + m('codicia') * 0.15,
   };
   poderPersonaje(J.st);
+  if (J.mod) { J.st.vidaMax *= J.mod.tuVida; J.st.regen *= J.mod.cura; }   // la Noche 10 y la de Sin piedad (js/noches.js)
 }
 
 // --- las cartas ---
@@ -62,7 +63,7 @@ function evolucionesListas() {
 function cartasPosibles() {
   const J = JUEGO, out = [];
   const nArmas = Object.keys(J.armas).filter(k => ARMAS[k]).length, nPas = Object.keys(J.pasivas).length;
-  for (const id in ARMAS) { const a = J.armas[id]; if (a ? a.nivel < MAX_NIVEL : nArmas < MAX_ARMAS) out.push(cartaArma(id)); }
+  for (const id in ARMAS) { const a = J.armas[id]; if (!a && !armaAbierta(id)) continue; if (a ? a.nivel < MAX_NIVEL : nArmas < MAX_ARMAS) out.push(cartaArma(id)); }
   for (const id in PASIVAS) { const n = J.pasivas[id] || 0; if (n ? n < MAX_NIVEL : nPas < MAX_PASIVAS) out.push(cartaPasiva(id)); }
   return out;
 }

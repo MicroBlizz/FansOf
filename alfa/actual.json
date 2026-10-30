@@ -1,8 +1,8 @@
 {
- "build": 666,
- "hash": "5b7b6e4",
- "fecha": "2026-10-30T10:53:28Z",
- "mensaje": "Merge: camino con las esquinas redondas, como Triple Town",
+ "build": 667,
+ "hash": "249dda4",
+ "fecha": "2026-10-30T11:05:08Z",
+ "mensaje": "Merge: camino más estrecho y sin la raya del perímetro",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

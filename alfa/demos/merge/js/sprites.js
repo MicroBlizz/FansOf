@@ -9,7 +9,7 @@ const SPRITES = {
   zorro: 'img/zorro.png', cuervo: 'img/cuervo.png', semilla: 'img/semilla.png', topo: 'img/topo.png',
   FONDO: 'img/fondo.jpg', BUNNY: 'img/bunny.png',
   // el escenario y la interfaz, también pintados por Yoshi: suelo (textura que se repite), camino, conejito, iconos, charco y marco
-  SUELO: 'img/suelo.jpg', TIERRA: 'img/tierra.jpg', LOSA: 'img/losa.png', ISLA: 'img/isla.png', CONEJITO: 'img/conejito.png', RAYO: 'img/rayo.png', TIRACHINAS: 'img/tirachinas.png',
+  SUELO: 'img/suelo.jpg', TIERRA: 'img/tierra.jpg', LOSA: 'img/losa.png', CONEJITO: 'img/conejito.png', RAYO: 'img/rayo.png', TIRACHINAS: 'img/tirachinas.png',
   FLECHA: 'img/flecha.png', CHARCO: 'img/charco.png', MARCO: 'img/marco.png',
   ADORNO1: 'img/adorno-hierba.png', ADORNO2: 'img/adorno-amarilla.png', ADORNO3: 'img/adorno-flor.png', ADORNO4: 'img/adorno-piedras.png', ADORNO5: 'img/adorno-hierba.png', ADORNO6: 'img/adorno-flor.png',
   CHISPA: 'img/chispa.png', HOJA: 'img/hoja.png', RELAMPAGO: 'img/relampago.png', ESTRELLA: 'img/estrella.png', TABLON: 'img/tablon.png', BOTON: 'img/boton.png', LOGO: 'img/logo.png',

@@ -1,8 +1,8 @@
 {
- "build": 668,
- "hash": "a27922b",
- "fecha": "2026-10-30T11:07:55Z",
- "mensaje": "Merge: loseta nueva de Yoshi con las esquinas más redondas y el trazo fino",
+ "build": 669,
+ "hash": "6c3363c",
+ "fecha": "2026-10-30T11:13:27Z",
+ "mensaje": "Merge: rincones del camino con el mismo borde de la losa, doblado",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

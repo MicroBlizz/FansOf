@@ -143,14 +143,15 @@ function swPintaArriba(c, t) {
   swPanel(c, 10, 8, 52, 44, '#3a73c4', '#5a95e6', '#244e8c');
   c.fillStyle = '#fff'; c.fillRect(27, 20, 6, 20); c.fillRect(39, 20, 6, 20);
   SW_BOTONES.push({ id: 'pausa', x: 6, y: 4, w: 60, h: 52 });
-  swTexto(c, tr('PISO {n}/{t}', { n: P.piso, t: SW_CFG.pisos }), 270, 30, 26);
+  const A = swActoDePiso(P.piso);   // el mapa enseña los 15 pisos del acto en el que estás
+  swTexto(c, tr('PISO {n}/{t}', { n: P.piso, t: P.mapa.length > 15 || SAVE.acto2 ? 30 : 15 }), 270, 30, 26);
   swDibujaC(c, 'i-oro', 448, 30, 2); swTexto(c, fmt(P.oro), 470, 31, 24, '#ffd84a', 'left');
   // el mapa de la torre
-  const x0 = 270 - (SW_CFG.pisos * 32) / 2, y = 66;
-  for (let i = 0; i < SW_CFG.pisos; i++) {
-    const x = x0 + i * 32, piso = i + 1, op = P.mapa[i], hecho = P.camino[i];
-    const actual = piso === P.piso;
-    let icono = hecho ? SW_NODOS[hecho].icono : op.length === 1 ? SW_NODOS[op[0]].icono : null;
+  const x0 = 270 - (15 * 32) / 2, y = 66;
+  for (let k = 0; k < 15; k++) {
+    const i = A.desde - 1 + k, x = x0 + k * 32, piso = i + 1, op = P.mapa[i] || ['combate'], hecho = P.camino[i];
+    const actual = piso === P.piso, jefe = (hecho || op[0]) === 'jefe' && op.length === 1;
+    let icono = jefe ? A.iconoJefe : hecho ? SW_NODOS[hecho].icono : op.length === 1 ? SW_NODOS[op[0]].icono : null;
     if (actual) swPanel(c, x, y - 4 + Math.round(Math.sin(t * 5)) * 2, 30, 34, '#ffd23a', '#fff6a0', '#c88a10');
     else swPanel(c, x, y, 30, 30, piso < P.piso ? '#3a2a40' : '#2a1a34', '#4a3a50', '#1a0f1f');
     c.save(); if (piso < P.piso) c.globalAlpha = 0.55;

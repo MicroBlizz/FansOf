@@ -8,17 +8,21 @@ const swMejor = (n, mejor) => (mejor ? Math.round(n * SW_CFG.mejora) : n);
 /* ---------- el combate ---------- */
 function swNuevoCombate(P, enemigo) {
   const E = SW_ENEMIGOS[enemigo];
-  const vida = E.tipo === 'jefe' ? E.vida : Math.round(E.vida * (1 + SW_CFG.subePiso * Math.max(0, P.piso - 1)));   // el jefe no crece con el piso
+  // la vida crece con el piso dentro de su acto (el Acto 2 ya trae enemigos más duros de base); el jefe no crece
+  const vida = E.tipo === 'jefe' ? E.vida : Math.round(E.vida * (1 + SW_CFG.subePiso * Math.max(0, P.piso - swActoDePiso(P.piso).desde)));
   const robo = shuffle(P.mazo.map((c, i) => i));
   P.C = { en: enemigo, vida, vidaMax: vida, escudo: 0, veneno: swTieneR(P, 'r-calcetin') ? 3 : 0, congelado: swTieneR(P, 'r-reloj') ? 1 : 0, debil: 0, fuerzaE: 0,
-    int: 0, turno: 1, hist: '', escudoJ: 0, caos: Math.min(SW_CFG.caosMax, SW_CFG.caosInicio + (swTieneR(P, 'r-pila') ? 1 : 0)), fuerza: 0, robo, descarte: [], racha: 0,
-    danoTurno: 0, cortado: false, devuelve: false, sigGiro: Math.random() < SW_CFG.giro };
+    int: 0, turno: 1, hist: '', escudoJ: 0, caos: Math.min(SW_CFG.caosMax, SW_CFG.caosInicio + (swTieneR(P, 'r-pila') ? 1 : 0)), fuerza: 0, robo, descarte: [], racha: swTieneR(P, 'r-progamer') ? 2 : 0,
+    danoTurno: 0, cortado: false, devuelve: false, sigGiro: Math.random() < SW_CFG.giro,
+    suscripcion: 0, peaje: 0, peajeN: 0, caduca: null, secuela: swTieneR(P, 'r-directora') };
 }
 // la siguiente carta de acción del mazo (se baraja el descarte cuando se acaba)
 // Cada carta sale con sus lados en un orden al azar (giro), decidido ya cuando asoma como «siguiente».
 function swRoba(P) {
   const C = P.C;
   if (!C.robo.length) { C.robo = shuffle(C.descarte); C.descarte = []; }
+  // la carta con la licencia caducada no sale (se aparta al descarte) mientras haya otra que robar
+  if (C.caduca && C.caduca.t > 0 && C.robo[C.robo.length - 1] === C.caduca.i && C.robo.length > 1) C.descarte.push(C.robo.pop());
   const i = C.robo.pop();
   C.descarte.push(i);
   // que siempre haya una siguiente a la vista: si se acaba el mazo, se baraja ya el descarte (sin la que acaba de salir)
@@ -100,7 +104,7 @@ function swGanaReliquia(P, id, ctx) {
   if (!ctx.sim) { SAVE.vistas[id] = 1; ctx.fx && ctx.fx('reliquia', { id }); }
 }
 // reliquias que nadie tiene aún (para sortear)
-function swReliquiaLibre(P) { const libres = Object.keys(SW_RELIQUIAS).filter(k => !P.reliquias.includes(k)); return libres.length ? pick(libres) : null; }
+function swReliquiaLibre(P) { const libres = Object.keys(SW_RELIQUIAS).filter(k => !P.reliquias.includes(k) && !SW_RELIQUIAS[k].faccion); return libres.length ? pick(libres) : null; }   // las de facción solo se ganan liberándola
 
 /* ---------- los lados de una carta de acción ---------- */
 function swEfMejor(ef, mejor) { return ef.map(e => (e.n != null && e.t !== 'caos' ? { ...e, n: swMejor(e.n, mejor) } : e)); }
@@ -129,7 +133,12 @@ function swComboQueSale(P, hist) { return SW_COMBOS.find(cb => swTieneR(P, cb.r)
 // devuelve { muere: enemigo derrotado, combo }
 function swJuegaAccion(P, carta, lado, ctx) {
   const C = P.C, S = swLadoAccion(P, carta, lado);
+  // el peaje del Presidente: cada carta cuesta oro; lo que no puedas pagar, te hiere
+  // (el peaje no te remata: te deja al menos con 1 de vida)
+  if (C.peaje > 0) { const paga = Math.min(P.oro, C.peajeN); P.oro -= paga; if (paga < C.peajeN) swHiereJugador(P, Math.min(C.peajeN - paga, P.vida - 1), ctx, true); if (paga) ctx.fx && ctx.fx('peaje', { n: paga }); }
   swAplica(S.ef, ctx);
+  // la Claqueta (Cultura Pop): la primera carta del combate se juega dos veces (sin volver a gastar caos)
+  if (C.secuela) { C.secuela = false; swAplica(S.ef.filter(e => e.t !== 'caos'), ctx); ctx.fx && ctx.fx('secuela'); }
   C.hist = (C.hist + lado).slice(-3);
   const combo = swComboQueSale(P, C.hist);
   if (combo) { swAplica(combo.ef, ctx); C.hist = ''; if (!ctx.sim) ctx.fx && ctx.fx('combo', { nombre: combo.nombre }); }
@@ -149,9 +158,16 @@ function swTurnoEnemigo(P, ctx) {
     if (I.fuerza) C.fuerzaE += I.fuerza;
     if (I.caos) C.caos = Math.max(0, C.caos - I.caos);
     if (I.roba) { const r = Math.min(P.oro, I.roba); P.oro -= r; if (r) ctx.fx && ctx.fx('robaOro', { n: r }); }
-    if (I.atq) for (let i = 0; i < I.k; i++) { if (P.vida <= 0) break; swHiereJugador(P, I.atq, ctx); ctx.fx && ctx.fx('ataqueEnemigo', { i }); }
+    if (I.suscribe) { C.suscripcion += I.suscribe; ctx.fx && ctx.fx('suscribe', { n: C.suscripcion }); }
+    if (I.peaje) { C.peaje = 3; C.peajeN = I.peaje; ctx.fx && ctx.fx('peajePuesto', { n: I.peaje }); }
+    if (I.licencia && P.mazo.length > 2) { const i = Math.floor(Math.random() * P.mazo.length); C.caduca = { i, t: I.licencia + 1 }; ctx.fx && ctx.fx('licencia', { id: P.mazo[i].id }); }
+    if (I.atq) for (let i = 0; i < I.k; i++) { if (P.vida <= 0) break; swHiereJugador(P, I.atq, ctx, !!I.directo); ctx.fx && ctx.fx('ataqueEnemigo', { i }); }
     C.int++;
   }
+  // la suscripción: cada turno te cobra; si no llega el oro, lo que falta te hiere
+  if (C.suscripcion > 0 && C.vida > 0 && P.vida > 0) { const paga = Math.min(P.oro, C.suscripcion); P.oro -= paga; if (paga) ctx.fx && ctx.fx('robaOro', { n: paga }); if (paga < C.suscripcion) swHiereJugador(P, C.suscripcion - paga, ctx, true); }
+  if (C.peaje > 0) C.peaje--;
+  if (C.caduca && C.caduca.t > 0) C.caduca.t--;
   if (C.veneno > 0 && C.vida > 0) { C.vida = Math.max(0, C.vida - C.veneno); ctx.fx && ctx.fx('tickVeneno', { n: C.veneno }); C.veneno--; }
   if (C.debil > 0) C.debil--;
   // empieza tu turno: el escudo se gasta y llega el caos

@@ -94,6 +94,7 @@ function swArranque() {
   $('#sw-seguir').onclick = () => swEmpieza(true);
   $('#sw-ayuda').onclick = () => { play('select'); swAyuda(false); };
   $('#sw-col').onclick = () => { play('select'); swColeccion(); };
+  $('#sw-atajo').onclick = () => { play('select'); swAtajo(); };
   $('#sw-opc').onclick = () => { play('select'); swAbreOpciones(false); };
   swIrA('titulo');
   const carga = $('#carga'); if (carga) carga.remove();

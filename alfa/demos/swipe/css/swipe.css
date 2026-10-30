@@ -37,6 +37,7 @@ body { background: #120a1c; display: flex; align-items: center; justify-content:
 .sw-tarjeta h2 { font-weight: 700; font-size: 50px; line-height: 1; margin: 6px 0 0; color: #ffd23a;
   text-shadow: 3px 0 0 var(--sw-tinta), -3px 0 0 var(--sw-tinta), 0 3px 0 var(--sw-tinta), 0 -3px 0 var(--sw-tinta), 3px 3px 0 var(--sw-tinta), -3px -3px 0 var(--sw-tinta), 3px -3px 0 var(--sw-tinta), -3px 3px 0 var(--sw-tinta), 0 6px 0 var(--sw-tinta); }
 .sw-sub { margin: 0; font-weight: 600; font-size: 24px; line-height: 1.25; }
+.sw-nuevo { margin: 0; font-size: 24px; line-height: 1.2; color: #ffd84a; text-shadow: 2px 2px 0 #1a0f1f; }
 .sw-tarjeta b { font-weight: 700; }
 /* ayuda */
 .sw-ay { display: flex; gap: 12px; align-items: center; text-align: left; width: 100%; }

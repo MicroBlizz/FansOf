@@ -4,19 +4,21 @@
 'use strict';
 /* ---------- el mapa ---------- */
 function swPesoNodo(piso, prohibido) {
-  const pesos = Object.entries(SW_CFG.nodos).filter(([k]) => k !== prohibido && (k !== 'elite' || piso >= SW_CFG.eliteDesde));
+  const enActo = piso - swActoDePiso(piso).desde + 1;   // las élites salen a partir del piso 6 de cada acto
+  const pesos = Object.entries(SW_CFG.nodos).filter(([k]) => k !== prohibido && (k !== 'elite' || enActo >= SW_CFG.eliteDesde));
   let t = Math.random() * pesos.reduce((s, [, w]) => s + w, 0);
   for (const [k, w] of pesos) { t -= w; if (t <= 0) return k; }
   return 'combate';
 }
-function swNuevoMapa() {
-  const mapa = [];
-  for (let p = 1; p <= SW_CFG.pisos; p++) {
-    if (p === 1) mapa.push(['combate']);
-    else if (p === SW_CFG.tesoro) mapa.push(['tesoro']);
-    else if (p === SW_CFG.descanso) mapa.push(['descanso']);
-    else if (p === SW_CFG.pisos) mapa.push(['jefe']);
-    else { const a = swPesoNodo(p); let b = swPesoNodo(p, a); if (p === SW_CFG.descanso - 1 && a === 'descanso') b = 'combate'; mapa.push([a, b]); }
+// los pisos de un acto (P.mapa[piso - 1]; el Acto 2 se añade detrás del 1 al pasar)
+function swNuevoMapa(n = 1) {
+  const A = SW_ACTOS[n - 1], mapa = [];
+  for (let p = A.desde; p <= A.hasta; p++) {
+    if (p === A.desde) mapa.push(['combate']);
+    else if (p === A.tesoro) mapa.push(['tesoro']);
+    else if (p === A.descanso) mapa.push(['descanso']);
+    else if (p === A.hasta) mapa.push(['jefe']);
+    else { const a = swPesoNodo(p); let b = swPesoNodo(p, a); if (p === A.descanso - 1 && a === 'descanso') b = 'combate'; mapa.push([a, b]); }
   }
   return mapa;
 }
@@ -24,8 +26,8 @@ function swNuevoMapa() {
 /* ---------- crear cartas ---------- */
 function swCartaCruce(P) { const op = P.mapa[P.piso - 1]; return { tipo: 'cruce', a: op[0], b: op[1] }; }
 function swCartaEvento(P) {
-  const libres = SW_EVENTOS.filter(e => !P.eventosVistos.includes(e.id));
-  const E = pick(libres.length ? libres : SW_EVENTOS);
+  const delActo = SW_EVENTOS.filter(e => (e.acto || 1) === swActo(P).n), libres = delActo.filter(e => !P.eventosVistos.includes(e.id));
+  const E = pick(libres.length ? libres : delActo);
   P.eventosVistos.push(E.id);
   return { tipo: 'evento', id: E.id, pre: swSorteo(P, [...E.izq.ef, ...E.der.ef]) };
 }
@@ -82,6 +84,7 @@ function swLados(P, carta) {
       return [lado('Dormir', [{ t: 'cura', n: cura }], 'n-descanso'), lado('Entrenar', [{ t: 'mejora' }], 'a-golpe', ok ? {} : { bloqueado: true, porque: tr('Ya está todo mejorado') })];
     }
     case 'reliquia': return [lado('Venderla', [{ t: 'oro', n: 40 }], 'i-oro'), lado('Quedártela', [{ t: 'reliquia' }], carta.pre.reliquia)];
+    case 'liberada': return [lado('¡Bienvenidos!', [{ t: 'reliquia' }], carta.pre.reliquia), lado('¡Bienvenidos!', [{ t: 'reliquia' }], carta.pre.reliquia)];
     case 'premio': return [lado('Descartar', [], 'i-flecha'), lado('Al mazo', [{ t: 'carta' }], SW_CARTAS[carta.pre.carta].arte[0])];
     case 'botin': return [lado('Todo el oro', [{ t: 'oro', n: carta.oro }], 'i-oro'), lado('Vendarte', [{ t: 'cura', n: SW_CFG.curaBotin }, { t: 'oro', n: Math.round(carta.oro / 2) }], 'a-cura')];
     case 'piso': return [lado('Seguir', [], 'i-flecha'), lado('Seguir', [], 'i-flecha')];
@@ -146,7 +149,8 @@ function swAspecto(P, carta) {
     case 'premio': return { titulo: swNombreCarta(carta.pre.carta), iconos: SW_CARTAS[carta.pre.carta].arte, rareza: SW_CARTAS[carta.pre.carta].rareza, texto: swResumenCarta(P, carta.pre.carta), etiqueta: tr('CARTA NUEVA') };
     case 'botin': return { titulo: tr('¡Victoria!'), arte: 'ev-tesoro', texto: tr('{n} de oro entre los restos. ¿Te lo llevas todo o te paras a vendarte?', { n: carta.oro }) };
     case 'inicio': return { titulo: tr('Elige tu reliquia'), arte: 'ev-tesoro', texto: tr('Antes de subir, coge una. Te acompaña toda la subida.') };
-    case 'piso': return { titulo: tr('Piso {n}', { n: P.piso }), arte: carta.arte || null, texto: carta.texto || '' };
+    case 'piso': return { titulo: carta.titulo ? tr(carta.titulo) : tr('Piso {n}', { n: P.piso }), etiqueta: carta.etiqueta ? tr(carta.etiqueta) : '', arte: carta.arte || null, texto: carta.texto ? tr(carta.texto) : '' };
+    case 'liberada': { const R = SW_RELIQUIAS[carta.pre.reliquia]; return { titulo: tr(R.faccion), etiqueta: tr('¡SE UNE A TI!'), reliquia: carta.pre.reliquia, texto: tr(R.nombre) + ': ' + tr(R.texto) }; }
   }
   return { titulo: '' };
 }

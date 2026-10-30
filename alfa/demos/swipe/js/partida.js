@@ -13,10 +13,12 @@ const SW_MECHA = { t: 5 };
 function swNuevaMecha() { SW_MECHA.t = SW_MECHA.max = SW_P && SW_P.nodo === 'jefe' ? SW_CFG.mechaJefe : SW_CFG.mecha; SW_MECHA.ini = performance.now(); }
 const swCtx = () => ({ P: SW_P, pre: SW_P.carta && SW_P.carta.pre, sim: false, fx: swFx });
 
-function swNuevaSubida() {
+// atajo = true: se empieza directamente en el Acto 2 (piso 16) con el mazo inicial y algo de ayuda (ver js/tienda-swipe.js)
+function swNuevaSubida(atajo = false) {
   SW_P = { vida: SW_CFG.vida, vidaMax: SW_CFG.vida, oro: SW_CFG.oroInicio, fuerzaBase: 0, mazo: SW_CFG.mazoInicio.map(id => ({ id, mejor: false })),
-    reliquias: [], piso: 1, mapa: swNuevoMapa(), camino: [], eventosVistos: [], elitesVistas: [], pataUsada: false,
+    reliquias: [], piso: 1, acto: 1, mapa: swNuevoMapa(1), camino: [], eventosVistos: [], elitesVistas: [], pataUsada: false, revivido: false,
     C: null, carta: null, cola: [], fase: 'carta', nodo: null, combates: 0 };
+  if (atajo) swPreparaAtajo(SW_P);
   SAVE.partidas++;
   // al empezar eliges una de dos reliquias deslizando (como el primer cofre de la torre)
   const a = swReliquiaLibre(SW_P); let b = swReliquiaLibre(SW_P); for (let i = 0; i < 8 && b === a; i++) b = swReliquiaLibre(SW_P);
@@ -42,9 +44,10 @@ function swEntraNodo(tipo) {
   switch (tipo) {
     case 'combate': case 'elite': case 'jefe': {
       let en;
-      if (tipo === 'jefe') en = 'ceo';
-      else if (tipo === 'elite') { const libres = SW_ELITES.filter(e => !P.elitesVistas.includes(e)); en = pick(libres.length ? libres : SW_ELITES); P.elitesVistas.push(en); }
-      else en = pick(P.piso <= 6 ? SW_NORMALES_1 : SW_NORMALES_2);
+      const A = swActo(P);
+      if (tipo === 'jefe') en = A.jefe;
+      else if (tipo === 'elite') { const todas = A.elites(), libres = todas.filter(e => !P.elitesVistas.includes(e)); en = pick(libres.length ? libres : todas); P.elitesVistas.push(en); }
+      else en = pick(A.normales(P.piso));
       swNuevoCombate(P, en);
       P.carta = swRoba(P); swNuevaMecha();
       swAviso(tr(SW_ENEMIGOS[en].nombre), tipo === 'normal' ? '#ffffff' : '#ff8a2a');
@@ -63,7 +66,7 @@ function swSiguiente() {
   const P = SW_P;
   if (P.cola.length) { P.carta = P.cola.shift(); return; }
   P.piso++;
-  if (P.piso > SW_CFG.pisos) { swVictoria(); return; }
+  if (P.piso > P.mapa.length) { swVictoria(); return; }
   swEntraPiso();
 }
 
@@ -95,7 +98,7 @@ function swElige(lado) {
   P.carta = null;
   if (P.vida <= 0) { P.fase = 'espera'; swEspera(0.6, swCae); return true; }
   if (L.flujo && L.flujo.ir) swEntraNodo(L.flujo.ir);
-  else if (carta.tipo === 'evento' || carta.tipo === 'descanso' || carta.tipo === 'tienda' || carta.tipo === 'botin' || carta.tipo === 'premio' || carta.tipo === 'reliquia' || carta.tipo === 'piso') swSiguiente();
+  else if (carta.tipo === 'evento' || carta.tipo === 'descanso' || carta.tipo === 'tienda' || carta.tipo === 'botin' || carta.tipo === 'premio' || carta.tipo === 'reliquia' || carta.tipo === 'liberada' || carta.tipo === 'piso') swSiguiente();
   swGuardaSubida();
   return true;
 }
@@ -138,28 +141,49 @@ function swGanaCombate() {
   play('swMuerte');
   P.combates++;
   if (swTieneR(P, 'r-auriculares')) { P.vida = Math.min(P.vidaMax, P.vida + 4); swFx('cura', { n: 4 }); }
-  if (E.tipo === 'jefe') { P.C = null; swEspera(0.8, swVictoria); P.fase = 'espera'; return; }
+  if (E.tipo === 'jefe') {
+    P.C = null; P.fase = 'espera';
+    // tras el CEO, si el Acto 2 ya está abierto, la subida sigue; si no, es la victoria (y lo abre)
+    swEspera(0.8, P.acto === 1 && SAVE.acto2 ? swPasaActo : swVictoria);
+    return;
+  }
   const oro = swOroCombate(P);
   P.C = null;
   const premio = swCartaPremio(P);
   P.cola = [{ tipo: 'premio', pre: { carta: premio } }];
   if (E.tipo === 'elite') { const r = swReliquiaLibre(P); if (r) P.cola.push({ tipo: 'reliquia', pre: { reliquia: r } }); }
+  // un líder corrupto vencido: su facción se libera y se une a ti con su reliquia
+  if (E.libera && !P.reliquias.includes(E.libera)) { P.cola.push({ tipo: 'liberada', pre: { reliquia: E.libera, en: P.C ? P.C.en : null, quien: E.nombre } }); }
   P.carta = { tipo: 'botin', oro };
   P.fase = 'carta';
   swGuardaSubida();
 }
 function swCae() {
   const P = SW_P;
+  if (swPuedeRevivir(P)) { P.fase = 'espera'; swOfreceRevivir(P); return; }   // una vez por subida, en el Acto 2: Lola te readmite (anuncio)
   P.fase = 'fin'; P.carta = null;
   SAVE.record = Math.max(SAVE.record, P.piso);
   SAVE.run = null; swGuarda();
   swSintonia('lose');
   swPantallaFin(false);
 }
+// del CEO al Acto 2: te curas del todo, se añaden los 15 pisos de Phony y una carta lo cuenta
+function swPasaActo() {
+  const P = SW_P;
+  P.acto = 2; P.mapa = P.mapa.concat(swNuevoMapa(2)); P.vida = P.vidaMax;
+  SAVE.record = Math.max(SAVE.record, P.piso);
+  P.fase = 'carta'; P.nodo = 'piso';
+  P.carta = { tipo: 'piso', arte: 'n-jefe2', titulo: 'La Era Digital', etiqueta: 'ACTO 2', texto: 'El CEO ha caído, pero Phony te esperaba detrás de su despacho. Lola te venda: vida a tope.' };
+  swAviso(tr('ACTO 2'), '#ffd84a'); play('swReliquia');
+  swGuardaSubida();
+}
 function swVictoria() {
   const P = SW_P;
   P.fase = 'fin'; P.carta = null;
-  SAVE.record = Math.max(SAVE.record, SW_CFG.pisos); SAVE.victorias++;
+  const abre = P.acto === 1 && !SAVE.acto2;   // ganar al CEO por primera vez abre el Acto 2
+  if (abre) SAVE.acto2 = true;
+  P.abreActo2 = abre;
+  SAVE.record = Math.max(SAVE.record, P.mapa.length); SAVE.victorias++;
   SAVE.run = null; swGuarda();
   swSintonia('win');
   swPantallaFin(true);

@@ -80,6 +80,12 @@ function swFx(que, d = {}) {
     case 'carta': swAviso(tr('Carta nueva al mazo'), '#ffffff'); play('swCofre'); break;
     case 'mejora': swAviso(tr('Carta mejorada'), '#6ee36a'); play('swReliquia'); break;
     case 'quita': swAviso(tr('Carta triturada'), '#ffffff'); play('swGolpe'); break;
+    // Acto 2 (Phony)
+    case 'suscribe': swAviso(tr('¡Suscripción! Te cobra {n} de oro cada turno', { n: d.n }), '#ffd84a'); play('swMoneda'); break;
+    case 'peajePuesto': swAviso(tr('¡Peaje! Cada carta cuesta {n} de oro', { n: d.n }), '#ffd84a'); play('swNoVale'); break;
+    case 'peaje': if (d.n) swNum('-' + d.n, SW_POS.oro[0], SW_POS.oro[1] + 30, '#ff5a4f'); break;
+    case 'licencia': swAviso(tr('Licencia caducada: {n}', { n: tr(SW_CARTAS[d.id].nombre) }), '#ff8a2a'); play('swNoVale'); break;
+    case 'secuela': swAviso(tr('¡SECUELA!'), '#ff6bd6'); play('swCombo'); break;
   }
 }
 // el FRENESÍ: al entrar, estallido (destello, onda de choque, parón, sacudida y el letrero gigante); mientras dura, la pantalla arde

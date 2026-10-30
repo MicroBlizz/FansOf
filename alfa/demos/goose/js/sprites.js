@@ -27,7 +27,7 @@ const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVO
 
 function cargaImagenes() {
   return Promise.all(PNGS().map(n => new Promise(ok => {
-    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=2';
+    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=3';
   })));
 }
 

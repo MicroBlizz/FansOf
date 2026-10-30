@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Goose en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "La Oca Parca completa: ahora aparece desde una nube de humo, flota con más vaivén y, al vencerla, se resquebraja y se desploma en un montón de huesos.": "The Reaper Goose is complete: she now rises from a cloud of smoke, floats with more sway and, once beaten, cracks apart and collapses into a pile of bones.",
+  "Microblizz ha intentado vender los huesos de la Oca Parca como «pack de coleccionista». Phony se ha quedado la calavera y dice que le habla por las noches.": "Microblizz tried to sell the Reaper Goose's bones as a «collector's pack». Phony kept the skull and says it talks to him at night.",
   "<b>LA OCA PARCA COBRA VIDA</b>: 23 poses nuevas dibujadas por Yoshi: aparece entre humo, flota, lanza sus hoces, alza los brazos para la cosecha, siega, invoca llamas verdes, se queja al recibir y regatea su trato. La Rana Reina, la oca zombi, la hoz y la guadaña también estrenan dibujo.": "<b>THE REAPER GOOSE COMES ALIVE</b>: 23 new poses drawn by Yoshi: she rises from the smoke, floats, throws her sickles, raises her arms for the harvest, reaps, summons green flames, winces when hit and haggles over her deal. The Frog Queen, the zombie goose, the sickle and the scythe get new art too.",
   "Microblizz ha contado los fotogramas de la Oca Parca y quiere venderlos sueltos como cromos. Phony ya ha perdido tres sobres buscando la pose de regatear.": "Microblizz has counted the Reaper Goose's frames and wants to sell them one by one as trading cards. Phony has already lost three packs looking for the haggling pose.",
   "FANS OF GOOSE": "FANS OF GOOSE",

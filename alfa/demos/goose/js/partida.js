@@ -10,7 +10,7 @@ function nuevaPartida() {
   for (const R of [ENE, BALAS, PROY, CHARCOS, PLUMAS, PART, TXT]) R.vacia();
   LATIGAZOS.length = 0; FX.anillos.length = 0;
   Object.assign(J, {
-    modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, dado: nuevoDado(), avisos: [], aviso2: null,
+    modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, restosParca: null, dado: nuevoDado(), avisos: [], aviso2: null,
     nivel: 1, xp: 0, xpNecesita: xpPara(1), pendientes: 0, cartas: null, tiradas: 1 + nivelMejora('retiro'),
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
     invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,

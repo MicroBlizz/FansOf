@@ -137,7 +137,7 @@ function ppEstrella(c, x, y, s, llena) {
 }
 /* ---------- marcador ---------- */
 function ppCorazon(c, x, y, s, lleno) {
-  if (PP_IMG['i-vida']) { c.save(); if (!lleno) c.globalAlpha = 0.28; ppDibujaEn(c, 'i-vida', x, y, s, true); c.restore(); return; }
+  if (PP_IMG['i-vida']) { c.save(); if (!lleno) c.globalAlpha = 0.28; ppDibujaEn(c, 'i-vida', x, y, PP_LISO ? s * 1.3 : s, true); c.restore(); return; }   // el liso trae aire alrededor
   c.save(); c.translate(x, y + s * 0.1); c.beginPath(); c.moveTo(0, s * 0.4); c.bezierCurveTo(-s * 0.7, -s * 0.1, -s * 0.3, -s * 0.6, 0, -s * 0.25); c.bezierCurveTo(s * 0.3, -s * 0.6, s * 0.7, -s * 0.1, 0, s * 0.4);
   c.fillStyle = lleno ? '#ff4a6a' : '#3a2a44'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke(); c.restore();
 }

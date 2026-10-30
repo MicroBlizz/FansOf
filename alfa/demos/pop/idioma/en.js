@@ -95,4 +95,6 @@ IDIOMA.add({
  "PIXEL ART: SÍ": "PIXEL ART: ON",
  "PIXEL ART: NO": "PIXEL ART: OFF",
  "PIXEL ART": "PIXEL ART",
+ "Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.": "Before we start: how do you like the drawings? You can change it anytime in the pause menu.",
+ "LISITOS": "SMOOTH",
 });

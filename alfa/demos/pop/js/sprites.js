@@ -19,7 +19,7 @@ function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {
     const im = new Image();
     const liso = PP_LISO;
-    im.onload = () => { if (liso !== PP_LISO) return; PP_IMG[k] = /^b-.*-abajo$/.test(k) ? ppHundida(im) : im; };
+    im.onload = () => { if (liso !== PP_LISO) return; PP_IMG[k] = /^b-.*-abajo$/.test(k) && !liso ? ppHundida(im) : im; };   // las lisas ya vienen hundidas (preparar_liso.py)
     im.src = (PP_LISO ? 'img-liso/' : 'img/') + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
   }
 }

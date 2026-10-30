@@ -59,6 +59,8 @@ function ppArranque() {
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
+  $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
+  $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
   $pp('#pp-estilo').onclick = () => { play('select'); ppCambiaEstilo(); ppIrA('titulo'); };

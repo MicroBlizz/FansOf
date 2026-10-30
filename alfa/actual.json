@@ -1,8 +1,8 @@
 {
- "build": 677,
- "hash": "2233ddb",
- "fecha": "2026-10-30T12:44:31Z",
- "mensaje": "Fans of Pop: opción PIXEL ART sí/no (por defecto, dibujos lisos) y corazones vacíos sin el cuadrado oscuro",
+ "build": 678,
+ "hash": "49d2f31",
+ "fecha": "2026-10-30T12:54:18Z",
+ "mensaje": "Fans of Pop: Lola pregunta al empezar si quieres pixel art, y las burbujas lisas reventadas se ven hundidas",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

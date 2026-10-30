@@ -112,7 +112,9 @@ function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
    Cada tutorial es una lista de frases. Las que llevan `toque` se cierran solas cuando tocas una burbuja (para que lo hagas
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */
 const PP_TUTO = {
-  n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' }, { t: 'Toca la burbuja que señala la manita.', toque: true }],
+  n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
+       { t: 'Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.', elige: 'estilo' },
+       { t: 'Toca la burbuja que señala la manita.', toque: true }],
   n2: [{ t: 'Al tocar una burbuja se revientan ella y sus vecinas: arriba, abajo, izquierda y derecha.' },
        { t: '¡Ojo! Si una vecina ya estaba reventada, vuelve a subir.' },
        { t: 'Hay un amigo atrapado en una burbuja. ¡Revienta TODAS para rescatarlo! Sigue a la manita.', toque: true }],
@@ -137,9 +139,17 @@ function ppLolaSiguiente() {
   if (!f) { caja.hidden = true; return; }
   const cara = $pp('#pp-lola-cara'); cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92));
   $pp('#pp-lola-texto').textContent = tr(f.t);
-  $pp('#pp-lola-vale').hidden = !!f.toque;
+  $pp('#pp-lola-vale').hidden = !!(f.toque || f.elige);
+  $pp('#pp-lola-elige').hidden = f.elige !== 'estilo';   // Lola pregunta: lisitos o pixel art (Daniel, 30-10-2026)
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
+}
+// la respuesta a la pregunta de Lola sobre el estilo de los dibujos: se cambia al momento y sigue el tutorial
+function ppLolaEligeEstilo(pixel) {
+  if (!!SAVE.pixel !== pixel) ppCambiaEstilo();
+  ppLolaSiguiente();
+  // su cara se vuelve a pintar cuando llegan los dibujos del estilo nuevo
+  setTimeout(() => { const cara = $pp('#pp-lola-cara'); if (cara && PP_LOLA.actual) { cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92)); } }, 700);
 }
 // la frase que espera a que toques una burbuja
 function ppLolaToque() { if (PP_LOLA.actual && PP_LOLA.actual.toque) ppLolaSiguiente(); }

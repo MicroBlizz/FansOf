@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.16
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha colgado un cartel apagado junto al río y Phony ha saltado a leerlo igualmente.": "Microblizz hung an unlit sign by the river and Phony jumped over to read it anyway.",
   // 0.3.15
   "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
   "Microblizz ha puesto un buzón junto al río y Phony ha mandado un mensaje en una botella.": "Microblizz put a mailbox by the river and Phony sent a message in a bottle.",

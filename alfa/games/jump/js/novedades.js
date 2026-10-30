@@ -2,6 +2,7 @@
 // lo lee para su tarjeta de la Biblioteca; el juego no lo carga.
 'use strict';
 const NEWS = [
+  { v: '0.3.16', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha colgado un cartel apagado junto al río y Phony ha saltado a leerlo igualmente."] },
   { v: '0.3.15', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha puesto un buzón junto al río y Phony ha mandado un mensaje en una botella."] },
   { v: '0.3.14', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Microblizz ha probado la garra con CrazyBunny. CrazyBunny ha saltado antes."] },
   { v: '0.3.13', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha puesto una caja junto al río y Phony ha saltado por encima sin pagar."] },

@@ -70,5 +70,11 @@
     "fr-FR": "Correction : Mes décors quitte le haut de l'écran (sur mobile il poussait PROMENADE dehors) et s'ouvre depuis la première carte de l'onglet DÉCOR et depuis CONSTRUIRE.\n\nMicroblizz a mis la petite maison tout en haut et a poussé PROMENADE hors du téléphone. Phony la cherche depuis une heure.",
     "de-DE": "Korrektur: Meine Szenen ist nicht mehr oben (auf dem Handy schob es SPAZIEREN aus dem Bildschirm) und öffnet sich über die erste Karte im Tab SZENE und über BAUEN.\n\nMicroblizz hat das Häuschen ganz nach oben gesetzt und SPAZIEREN aus dem Handy geschoben. Phony sucht es seit einer Stunde.",
     "it-IT": "Correzione: I miei scenari non sta più in alto (sul telefono spingeva PASSEGGIA fuori dallo schermo) e si apre dalla prima carta della scheda SCENARIO e da COSTRUISCI.\n\nMicroblizz ha messo la casetta in cima e ha spinto PASSEGGIA fuori dal telefono. Phony la cerca da un'ora."
+  },
+  "0.2.63": {
+    "pt-BR": "MELHORIAS POR DENTRO: os anúncios têm uma camada comum mais organizada (continuam desligados até serem abertos) e os testes internos continuam melhorando.",
+    "fr-FR": "AMÉLIORATIONS INTERNES : les publicités ont une couche commune mieux rangée (toujours désactivées tant qu'elles ne sont pas ouvertes) et les tests internes continuent de s'améliorer.",
+    "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Werbung hat jetzt eine aufgeräumtere gemeinsame Schicht (bleibt ausgeschaltet, bis sie geöffnet wird) und die internen Tests werden weiter besser.",
+    "it-IT": "MIGLIORIE INTERNE: la pubblicità ha uno strato comune più ordinato (resta spenta finché non viene aperta) e i test interni continuano a migliorare."
   }
 }

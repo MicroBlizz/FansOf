@@ -1,6 +1,9 @@
 // Fans of Boom · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.4.1
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha colocado un cartel de patrocinador en el cráter y Phony ha preguntado si cobra por impacto.": "Microblizz has put a sponsor sign in the crater and Phony asked if it pays per hit.",
   "<b>PRIMER PROTOTIPO</b>: artillería por turnos con viento, terreno que se rompe y seis móviles con su Tiro Especial. Se juega pasándose el aparato (1 contra 1 o dobles) o contra la IA.": "<b>FIRST PROTOTYPE</b>: turn-based artillery with wind, destructible terrain and six vehicles with their Special Shot, map events and items. Play by passing the device around (1 vs 1 or doubles) or against the AI.",
   "Microblizz ha medido el viento con el dedo mojado. Phony ha pedido que el viento tribute.": "Microblizz measured the wind with a wet finger. Phony asked for the wind to pay taxes.",
   "Apunta bien. El viento ya hará el resto.": "Aim well. The wind will do the rest.",

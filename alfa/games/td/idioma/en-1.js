@@ -1,6 +1,9 @@
 // Fans of TD · Inglés (1/3): cómo se juega, modo VS, mundos de Phony y torres de cada facción.
 'use strict';
 IDIOMA.add({
+  // 0.13.87
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha apagado los anuncios de las torres y Phony ha seguido repartiendo folletos.": "Microblizz switched off the towers' ads and Phony kept handing out flyers.",
   // 0.13.86
   "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
   "Microblizz ha puesto una caja negra en las torres y Phony ha dicho que él ya era caja negra.": "Microblizz put a black box in the towers and Phony said he already was a black box.",

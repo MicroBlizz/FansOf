@@ -96,7 +96,8 @@ function avanzaEnemigos(dt) {
         for (let k = 0; k < n && c < 6; k++) { const o = l[CERCA[k]]; if (o === e) continue; const ox = e.x - o.x, oy = e.y - o.y, dd = ox * ox + oy * oy, rr = (e.r + o.r) * 0.9; if (dd < rr * rr && dd > 0.01) { const di = Math.sqrt(dd); sx += ox / di * (rr - di); sy += oy / di * (rr - di); c++; } }
         e.sx = sx * 7; e.sy = sy * 7;
       }
-      const vel = e.vel;
+      if (e.raiz > 0) e.raiz -= dt;
+      const vel = e.raiz > 0 ? 0 : e.vel;   // atrapada (cepo, raíces, gaita del Diablo)
       e.vx += (qx * vel - e.vx) * Math.min(1, dt * 4); e.vy += (qy * vel - e.vy) * Math.min(1, dt * 4);
       e.x += (e.vx + e.kx + (e.sx || 0)) * dt; e.y += (e.vy + e.ky + (e.sy || 0)) * dt;
       const fr = Math.max(0, 1 - dt * 7); e.kx *= fr; e.ky *= fr;
@@ -105,7 +106,7 @@ function avanzaEnemigos(dt) {
     }
     // toca al jugador
     const rr = e.r * 0.8 + CFG.jugador.radio;
-    if (e.hp > 0 && !e.oculta && J.invul <= 0 && J.salto <= 0 && (e.x - yo.x) ** 2 + (e.y - yo.y) ** 2 < rr * rr) heridaJugador(e.dano, e.x, e.y);
+    if (e.hp > 0 && !e.oculta && J.invul <= 0 && J.salto <= 0 && (e.x - yo.x) ** 2 + (e.y - yo.y) ** 2 < rr * rr) { heridaJugador(e.dano, e.x, e.y); if (J.st.espinas) danar(e, J.st.espinas * J.st.dano, (e.x - yo.x) / d, (e.y - yo.y) / d, 120, true); }
   }
   avanzaBalas(dt);
 }
@@ -144,6 +145,7 @@ function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
 function mata(e) {
   const J = JUEGO;
   J.bajas++; J.combo++; J.comboT = 2.2;
+  if (J.st.vampiro && J.bajas % J.st.vampiro === 0) J.vida = Math.min(J.st.vidaMax, J.vida + J.mod.cura);   // Pico vampiro: 1 de vida cada tantas bajas
   bajaEncierro(e);
   estallido(e.x, e.y, e.tipo === 'gorda' ? 22 : 7, e.tipo === 'albatros' ? '#b9c4b0' : '#ece6d6', 70, 0.7, 2.4, 1, 30);
   estallido(e.x, e.y, 3, '#c21b1b', 50, 0.4, 1.8, 0, 60);

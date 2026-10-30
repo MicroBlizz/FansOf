@@ -20,6 +20,7 @@ function avanzaTramo(dt) {
   const J = JUEGO, yo = J.yo; J.tramoT += dt;
   let mx = ENTRADA.mx; if (invertido()) mx = -mx;
   yo.x += mx * J.st.vel * 1.1 * dt;
+  yo.x += (cxY(yo.y - 20) - yo.x) * Math.min(1, dt * (mx ? 1.2 : 3));   // el camino te lleva: en las curvas y las juntas estrechas no te caes sin querer
   yo.y -= velTramo() * dt; yo.moviendo = true; yo.anda += dt * 14; yo.miraX = 0; yo.miraY = -1;
   if ((J.cuadro & 1) === 0) particula(yo.x + (Math.random() - 0.5) * 8, yo.y + 8, (Math.random() - 0.5) * 20, 30, 0.4, 2, '#c9b98a', 0, 0);
   if (yo.y <= yCentro(J.destino)) llegada(J.destino);
@@ -146,8 +147,8 @@ function empiezaPosada() {
 }
 function compraPosada(o) {
   const J = JUEGO, E = J.escena; if (!E || E.compradas[o.id]) return;
-  if (J.monedasPartida < o.coste) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
-  J.monedasPartida -= o.coste; E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
+  if (J.monedasPartida < precio(o)) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
+  J.monedasPartida -= precio(o); E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
   if (o.id === 'asada') { J.vida = J.st.vidaMax; texto(J.yo.x, J.yo.y - 16, tr('¡A tope!'), '#7dff6b', 9, 1); SONIDO.cura(); }
   else if (o.id === 'carta') { J.pendientes++; }
   else if (o.id === 'bendito') { J.dado.bendito = true; J.dado.maldito = false; }
@@ -162,7 +163,9 @@ function pintaEscenas() {
   pintaCaminos(); pintaPeligros();   // las casillas de los caminos y las sombras de las rocas (js/caminos.js, js/tierras2.js)
   if (J.fase === 'parado' && !E) {   // la casilla en la que estás, resaltada
     const t = J.casilla, w = anchoDe(t), x0 = centroX(t) - w / 2, top = t >= CFG.jardin ? yTecho() : -t * TH, h = t >= CFG.jardin ? TH * 3 : TH;
-    G.globalAlpha = 0.25 + Math.sin(J.t * 4) * 0.1; G.strokeStyle = '#ffd34d'; G.lineWidth = 2; G.strokeRect(x0 + 2, top + 2, w - 4, Math.min(h, J.yD - top) - 4); G.globalAlpha = 1;
+    G.globalAlpha = 0.3 + Math.sin(J.t * 4) * 0.12; G.fillStyle = '#ffd34d'; const fin = Math.min(top + h, J.yD) - 2;   // el borde de la isla en la que estás, en píxeles
+    for (let yy = top + 2; yy < fin; yy += 2) { const [l, r] = bordes(yy + 1); G.fillRect(l + 2, yy, 1.5, 2); G.fillRect(r - 3.5, yy, 1.5, 2); }
+    G.globalAlpha = 1;
   }
   if (!E) return;
   if (E.tipo === 'puente') {
@@ -174,13 +177,12 @@ function pintaEscenas() {
       if (SPR['s-tabla']) pinta('s-tabla', x, y, (Math.round(y / paso) & 1) === 1, false, (w + 4) / SPR['s-tabla'].w);   // la tabla ocupa todo el ancho por el que se puede pisar
       else { G.fillStyle = (Math.round(y / paso) & 1) ? '#8a5a30' : '#a06a3a'; G.fillRect(x - w / 2, y - paso / 2 + 0.6, w, paso - 1.2); G.fillStyle = '#120808'; G.fillRect(x - w / 2, y - paso / 2, w, 0.8); }
     }
-    G.strokeStyle = '#d9c08a'; G.lineWidth = 1.5; G.beginPath(); G.moveTo(E.x0 - ESC.puenteAncho / 2 - 2, E.y0 + TH / 2); G.lineTo(E.x1 - ESC.puenteAncho / 2 - 2, E.y1 - TH / 2); G.moveTo(E.x0 + ESC.puenteAncho / 2 + 2, E.y0 + TH / 2); G.lineTo(E.x1 + ESC.puenteAncho / 2 + 2, E.y1 - TH / 2); G.stroke();
+    for (const lado of [-1, 1]) { const a = ESC.puenteAncho / 2 + 2; lineaPixel(E.x0 + lado * a, E.y0 + TH / 2, E.x1 + lado * a, E.y1 - TH / 2, 2, '#120808'); lineaPixel(E.x0 + lado * a, E.y0 + TH / 2, E.x1 + lado * a, E.y1 - TH / 2, 1, '#d9c08a'); }   // las cuerdas, en píxeles
   } else if (E.tipo === 'pozo') {
-    G.fillStyle = '#05060a'; G.beginPath(); G.arc(E.cx, E.cy, E.r + 6, 0, 6.283); G.fill();
+    disco(E.cx, E.cy, E.r + 6, E.r + 6, '#05060a');
     if (SPR['s-pozo']) pinta('s-pozo', E.cx, E.cy + 4, false, false, 1);
-    else { G.strokeStyle = '#5c6b72'; G.lineWidth = 8; G.beginPath(); G.arc(E.cx, E.cy, E.r + 3, 0, 6.283); G.stroke(); G.strokeStyle = '#8a9098'; G.lineWidth = 2; G.stroke(); }
-    if (!SPR['s-pozo']) { G.fillStyle = '#1a2a22'; G.beginPath(); G.arc(E.cx, E.cy, E.r - 2, 0, 6.283); G.fill(); }
-    G.globalAlpha = 0.4 + Math.sin(J.t * 5) * 0.2; G.strokeStyle = '#7dff6b'; G.lineWidth = 1.5; G.beginPath(); G.arc(E.cx, E.cy, E.r - 2, 0, 6.283); G.stroke(); G.globalAlpha = 1;
+    else { aro(E.cx, E.cy, E.r + 6, 5, '#5c6b72'); disco(E.cx, E.cy, E.r - 2, E.r - 2, '#1a2a22'); }
+    G.globalAlpha = 0.4 + Math.sin(J.t * 5) * 0.2; aro(E.cx, E.cy, E.r - 2, 1.5, '#7dff6b'); G.globalAlpha = 1;
   } else if (E.tipo === 'carcel') {
     G.fillStyle = 'rgba(0,0,0,.35)'; G.fillRect(E.cx - E.r - 4, E.cy - E.r - 4, E.r * 2 + 8, E.r * 2 + 8);
     G.strokeStyle = '#6e6e78'; G.lineWidth = 3; G.strokeRect(E.cx - E.r - 2, E.cy - E.r - 2, E.r * 2 + 4, E.r * 2 + 4);
@@ -207,17 +209,6 @@ function pintaEscenasHud() {
     texto2(tr('QUEDAN'), W / 2, 66, 7, '#c9b98a');
     texto2(String(E.restan), W / 2, 80, 20, E.tipo === 'pozo' ? '#7dff6b' : '#c9d3ff', 'center', FUENTE_G, 400, 0.2);
   } else if (E.tipo === 'posada') {
-    const y0 = H - 118;
-    caja(8, y0, W - 16, 110, 8, 'rgba(26,14,8,.92)', '#ffb86b', 1.5);
-    texto2(tr('LA POSADA'), W / 2, y0 + 10, 9, '#ffb86b', 'center', FUENTE_G, 400, 0.25);
-    POSADA.forEach((o, i) => {
-      const x = 14 + (i % 2) * ((W - 28) / 2 + 4), y = y0 + 20 + Math.floor(i / 2) * 36, w = (W - 32) / 2, hecha = E.compradas[o.id], puede = J.monedasPartida >= o.coste;
-      caja(x, y, w, 32, 6, hecha ? '#160b08' : '#2a1610', hecha ? '#3a2016' : puede ? '#ffd34d' : '#6e4426', 1.2);
-      icono(o.icono, x + 12, y + 16, 9);
-      texto2(tr(o.nombre), x + 24, y + 9, 6.5, hecha ? '#6e4426' : '#fff4dc', 'left');
-      texto2(hecha ? tr('comprado') : tr(o.desc), x + 24, y + 19, 5, hecha ? '#6e4426' : '#c9b98a', 'left', FUENTE, 700, 0);
-      if (!hecha) { pinta('moneda', x + w - 22, y + 26, false, false, 0.7); texto2(String(o.coste), x + w - 16, y + 26.5, 6, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x, y, w, h: 32, accion: () => compraPosada(o) }); }
-    });
-    texto2(tr('Tira el dado para irte (saldrá impar)'), W / 2, y0 + 101, 6, '#c9a0ff', 'center', FUENTE, 700, 0);
+    pintaTiendita(tr('LA POSADA'), '#ffb86b', POSADA, E.compradas, compraPosada, tr('Tira el dado para irte (saldrá impar)'));
   }
 }

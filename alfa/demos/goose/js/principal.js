@@ -9,6 +9,7 @@ const PAN = { W: 200, H: 400, k: PIXELES };
 const ENTRADA = { mx: 0, my: 0, palanca: false, px: 0, py: 0, id: null, botonDown: false, bx: 0, by: 0, ultimoToque: 0, ux: 0, uy: 0, teclas: {} };
 const cv = document.getElementById('juego');
 G = cv.getContext('2d', { alpha: false });
+pixelaContexto(G);   // rectángulos siempre en píxeles enteros (js/pixel.js)
 G.imageSmoothingEnabled = false;
 
 function ajusta() {
@@ -63,6 +64,7 @@ cv.addEventListener('pointercancel', e => { if (e.pointerId === ENTRADA.id) { EN
 addEventListener('keydown', e => {
   ENTRADA.teclas[e.code] = true; audioInit();
   if (e.code === 'Space') { e.preventDefault(); if (JUEGO.modo === 'juego') { if (!saltaParca()) tirarDado(); } else if (JUEGO.modo === 'cofre') cierraCofre(); }
+  if (e.code === 'KeyE' && JUEGO.modo === 'juego') usaHabilidad();
   if (e.code === 'KeyP' || e.code === 'Escape') { if (JUEGO.modo === 'juego') pausa(); else if (JUEGO.modo === 'pausa') JUEGO.modo = 'juego'; }
   if (JUEGO.modo === 'cartas' && /^Digit[1-4]$/.test(e.code)) eligeCarta(+e.code.slice(5) - 1);
 });
@@ -100,7 +102,7 @@ function fotograma(ahora) {
     else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
     pintaVacio(); pintaMundo(); pintaEncima();
     if (J.modo !== 'fin') pintaHud();
-    if (J.modo === 'juego') pintaPalanca();
+    if (J.modo === 'juego') { pintaPalanca(); pintaHabilidad(); }
     else if (J.modo === 'cartas') pintaCartas(dt);
     else if (J.modo === 'cofre') pintaCofre(dt);
     else if (J.modo === 'eleccion') pintaEleccion(dt);

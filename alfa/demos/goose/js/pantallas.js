@@ -28,7 +28,7 @@ function pintaPortada(dt) {
   const W = PAN.W, H = PAN.H, P = PORTADA; P.t += dt;
   if (IMG.portada) { const im = IMG.portada, s = Math.max(W / im.width, H / im.height); G.drawImage(im, (W - im.width * s) / 2, (H - im.height * s) / 2 - Math.sin(P.t * 0.3) * 4, im.width * s, im.height * s); }
   else { G.drawImage(FONDO, 0, 0, W, H); }
-  const g = G.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(7,4,10,.15)'); g.addColorStop(0.45, 'rgba(7,4,10,.35)'); g.addColorStop(1, 'rgba(7,4,10,.92)'); G.fillStyle = g; G.fillRect(0, 0, W, H);
+  for (let b = 0; b < 10; b++) { const t = b / 9; G.fillStyle = `rgba(7,4,10,${(t < 0.5 ? 0.15 + t * 0.4 : 0.35 + (t - 0.5) * 1.14).toFixed(2)})`; G.fillRect(0, Math.floor(b * H / 10), W, Math.ceil(H / 10) + 1); }   // degradado en bandas
   // plumas doradas que caen
   if (P.plumas.length < 18) P.plumas.push({ x: Math.random() * W, y: -10, v: 10 + Math.random() * 14, r: Math.random() * 6, s: 0.8 + Math.random() * 0.8 });
   for (const p of P.plumas) { p.y += p.v * dt; p.r += dt * 1.5; pintaGirado('xp1', p.x + Math.sin(p.r) * 6, p.y, Math.sin(p.r) * 0.8, p.s); }
@@ -83,10 +83,10 @@ function pintaCartas(dt) {
   if (J.tiradas > 0 && J.cartaElegida < 0) boton(W / 2 - 60, yb, 120, 24, tr('VOLVER A TIRAR'), '#c0402f', () => vuelveATirar(), 8.5, tr('quedan {n}', { n: J.tiradas }));
 }
 function parrafo(t, x, y, ancho, tam, color) {
-  G.font = `700 ${tam}px ${FUENTE}`; G.textAlign = 'left'; G.textBaseline = 'middle'; G.fillStyle = color;
-  const pal = t.split(' '); let linea = '', yy = y;
-  for (const p of pal) { const prueba = linea ? linea + ' ' + p : p; if (G.measureText(prueba).width > ancho && linea) { G.fillText(linea, x, yy); linea = p; yy += tam * 1.2; } else linea = prueba; }
-  if (linea) G.fillText(linea, x, yy);
+  const pal = t.split(' '), alto = Math.max(TAM_MIN, tam) * 1.15; let linea = '', yy = y;
+  for (const p of pal) { const prueba = linea ? linea + ' ' + p : p; if (anchoTexto(prueba, tam, FUENTE, 700) > ancho && linea) { texto2(linea, x, yy, tam, color, 'left', FUENTE, 700, 0.3); linea = p; yy += alto; } else linea = prueba; }
+  if (linea) texto2(linea, x, yy, tam, color, 'left', FUENTE, 700, 0.3);
+  return yy + alto;   // dónde acaba
 }
 
 // --- cofre ---
@@ -102,9 +102,8 @@ function pintaCofre(dt) {
   } else {
     if (!C.abierto) { C.abierto = true; destella('#ffd34d', 0.7); SONIDO.premio(0); }
     // rayos de luz
-    G.save(); G.translate(cx, cy); G.rotate(C.t * 0.6);
-    for (let i = 0; i < 12; i++) { G.rotate(0.5236); G.globalAlpha = 0.12; G.fillStyle = '#ffd34d'; G.beginPath(); G.moveTo(0, 0); G.lineTo(-10, -160); G.lineTo(10, -160); G.closePath(); G.fill(); }
-    G.restore(); G.globalAlpha = 1;
+    G.globalAlpha = 0.14; for (let i = 0; i < 12; i++) { const a = C.t * 0.6 + i * 0.5236; for (let q = 0; q < 4; q++) lineaPixel(cx, cy, cx + Math.cos(a + (q - 1.5) * 0.02) * 160, cy + Math.sin(a + (q - 1.5) * 0.02) * 160, 1 + q * 0.5, '#ffd34d'); }   // los rayos, en píxeles
+    G.globalAlpha = 1;
     pinta('cofre', cx, cy, false, false, 3.6);
     texto2(C.n === 5 ? tr('¡CINCO MEJORAS!') : C.n === 3 ? tr('¡TRES MEJORAS!') : tr('¡UNA MEJORA!'), W / 2, 60, C.n === 5 ? 18 : 15, C.n === 5 ? '#ff6b4d' : '#ffd34d', 'center', FUENTE_G, 400, 0.2);
     const vistos = Math.min(C.premios.length, Math.floor((C.t - abre) / 0.28) + 1);
@@ -181,7 +180,7 @@ function lineasFin(F) {
   const l = [];
   if (F.diario) l.push([F.diario.record ? tr('Tablero del día: {p} puntos ¡tu mejor de hoy!', { p: F.diario.pts }) : tr('Tablero del día: {p} puntos', { p: F.diario.pts }), '#ffd34d']);
   if (F.noche) l.push([tr('¡NOCHE {n} ABIERTA!', { n: F.noche }), '#ff8a6b']);
-  for (const d of F.desafios || []) l.push([tr('Desafío: {t}', { t: tr(d.txt) }) + ' · ' + textoPremio(d), '#7dff6b']);
+  for (const d of F.desafios || []) { l.push([tr('Desafío: {t}', { t: tr(d.txt) }), '#7dff6b']); l.push([textoPremio(d), '#ffd34d']); }
   return l;
 }
 function finBotones(F, W, H, ym, logros = []) {
@@ -190,9 +189,9 @@ function finBotones(F, W, H, ym, logros = []) {
     pinta('moneda', W / 2 - 26, ym + 14, false, false, 1.6); texto2('+' + F.monedas, W / 2 - 14, ym + 14.5, 13, '#ffcf33', 'left');
     let y = ym + 38;
     if (F.record) { texto2(tr('¡NUEVO RÉCORD!'), W / 2, y, 8, '#7dff6b'); y += 11; }
-    const caben = Math.max(0, Math.floor((H - 118 - y) / 10));
-    logros.slice(0, caben).forEach(([t, c], i) => { if (F.t > 2.6 + i * 0.25) texto2(t, W / 2, y + i * 10, 5.5, c, 'center', FUENTE, 800, 0.3); });
-    if (logros.length > caben && caben) texto2(tr('…y {n} más en Desafíos', { n: logros.length - caben }), W / 2, y + caben * 10, 5, '#c9b98a');
+    const caben = Math.max(0, Math.floor((H - 122 - y) / 9));
+    logros.slice(0, caben).forEach(([t, c], i) => { if (F.t > 2.6 + i * 0.2) texto2(t, W / 2, y + i * 9, 7, c, 'center', FUENTE, 800, 0.3); });
+    if (logros.length > caben && caben) texto2(tr('…y {n} más en Desafíos', { n: logros.length - caben }), W / 2, y + caben * 9, 7, '#c9b98a');
   }
   if (F.t > 2.8) {
     boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else if (F.diario) empiezaDiario(); else nuevaPartida(); }, 13);

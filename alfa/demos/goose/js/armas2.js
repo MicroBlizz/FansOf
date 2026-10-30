@@ -52,7 +52,7 @@ function ocaMasCercana(rango) {
   return mejor;
 }
 function armaTirachinas(a) {
-  const yo = JUEGO.yo, obj = ocaMasCercana(150), n = a.evo ? 3 : nv('tirachinas', 'n');
+  const yo = JUEGO.yo, obj = ocaMasCercana(150), n = (a.evo ? 3 : nv('tirachinas', 'n')) + JUEGO.st.extra;
   const base = obj ? Math.atan2(obj.y - yo.y, obj.x - yo.x) : Math.atan2(yo.miraY, yo.miraX);
   for (let i = 0; i < n; i++) {
     if (PIEDRAS.length >= 40) break;
@@ -82,8 +82,9 @@ function avanzaPiedras(dt) {
 function pintaArmasNuevas() {
   for (const o of ONDAS) {
     const k = o.t / o.dur;
-    G.globalAlpha = (1 - k) * 0.8; G.strokeStyle = o.evo ? '#ffd34d' : '#d9a85a'; G.lineWidth = 3 * (1 - k) + 1;
-    G.beginPath(); G.arc(o.x, o.y, o.r * (0.3 + k * 0.7), 0, 6.283); G.stroke();
+    G.globalAlpha = (1 - k) * 0.9; const rr = o.r * (0.3 + k * 0.7);
+    if (SPR['fx-onda']) pinta('fx-onda', o.x, o.y, false, false, (rr * 2) / SPR['fx-onda'].w);   // la onda de Yoshi
+    else aro(o.x, o.y, Math.round(rr), Math.max(1, Math.round((3 * (1 - k) + 1) * 2) / 2), o.evo ? '#ffd34d' : '#d9a85a');
   }
   G.globalAlpha = 1;
   for (const p of PIEDRAS) { G.fillStyle = '#120808'; G.fillRect(p.x - 2, p.y - 2, 4, 4); G.fillStyle = p.evo ? '#ffd34d' : '#a09080'; G.fillRect(p.x - 1.5, p.y - 1.5, 3, 3); }

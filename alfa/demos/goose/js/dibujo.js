@@ -6,13 +6,14 @@ let FONDO = null, VINETA = null;
 function preparaFondo() {
   const W = PAN.W, H = PAN.H, k = PAN.k;
   FONDO = lienzo(W * k, H * k); let x = FONDO.getContext('2d'); x.scale(k, k);
-  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#120a16'); g.addColorStop(0.55, '#0b0d14'); g.addColorStop(1, '#050608'); x.fillStyle = g; x.fillRect(0, 0, W, H);
-  const r = azarSemilla(5); for (let i = 0; i < 70; i++) { x.globalAlpha = 0.2 + r() * 0.5; x.fillStyle = r() < 0.2 ? '#c9a0a0' : '#8f93a8'; x.fillRect(r() * W, r() * H, 1, 1); }
+  bandasVerticales(x, 0, W, H, ['#120a16', '#110b17', '#0f0b16', '#0d0c15', '#0b0d14', '#090b11', '#07080d', '#050608']);   // degradado en bandas (pixel)
+  const r = azarSemilla(5); for (let i = 0; i < 70; i++) { x.globalAlpha = 0.2 + r() * 0.5; x.fillStyle = r() < 0.2 ? '#c9a0a0' : '#8f93a8'; x.fillRect(Math.round(r() * W), Math.round(r() * H), 1, 1); }
   x.globalAlpha = 1;
   VINETA = lienzo(W * k, H * k); x = VINETA.getContext('2d'); x.scale(k, k);
-  const v = x.createRadialGradient(W / 2, H * 0.58, H * 0.22, W / 2, H * 0.55, H * 0.75); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,.72)'); x.fillStyle = v; x.fillRect(0, 0, W, H);
-  hazSprite('sombra', 12, 5, (c, w, h) => { c.fillStyle = 'rgba(0,0,0,.42)'; c.beginPath(); c.ellipse(w / 2, h / 2, w / 2, h / 2, 0, 0, 6.283); c.fill(); });
-  hazSprite('luz', 80, 80, (c, w, h) => { const l = c.createRadialGradient(w / 2, h / 2, 2, w / 2, h / 2, w / 2); l.addColorStop(0, 'rgba(255,200,90,.28)'); l.addColorStop(1, 'rgba(255,200,90,0)'); c.fillStyle = l; c.fillRect(0, 0, w, h); });
+  x.setTransform(1, 0, 0, 1, 0, 0);   // la viñeta, en anillos de píxeles
+  for (let j = 0; j < H * k; j += 2) for (let i = 0; i < W * k; i += 2) { const d = Math.hypot((i / k - W / 2) / (W * 0.62), (j / k - H * 0.56) / (H * 0.55)); const a = Math.floor(Math.max(0, Math.min(1, (d - 0.45) / 0.6)) * 5) / 5 * 0.72; if (a) { x.fillStyle = `rgba(0,0,0,${a})`; x.fillRect(i, j, 2, 2); } }
+  hazSprite('sombra', 12, 5, (c, w, h) => { c.globalAlpha = 0.42; c.drawImage(discoLienzo(6, 2.5, '#000', 0), 0, 0, w, h); }, true);   // en píxeles (js/pixel.js)
+  hazSprite('luz', 80, 80, (c, w, h) => { c.drawImage(brilloLienzo(40, '#ffc85a', 0.3), 0, 0, w, h); }, true);
 }
 
 function pintaVacio() {
@@ -31,7 +32,7 @@ function pintaVacio() {
   // niebla que sube desde el fondo
   for (let i = 0; i < 6; i++) {
     const y = ((i * 131 - J.camY * 0.6 - J.t * 6) % (H + 80) + H + 80) % (H + 80) - 40;
-    G.globalAlpha = 0.06; G.fillStyle = biomaDe(J.casilla || 1).niebla; G.beginPath(); G.ellipse((i * 71 + J.t * 3) % (W + 60) - 30, y, 60, 14, 0, 0, 6.283); G.fill();
+    G.globalAlpha = 0.06; disco((i * 71 + J.t * 3) % (W + 60) - 30, y, 60, 14, biomaDe(J.casilla || 1).niebla);
   }
   G.globalAlpha = 1;
 }
@@ -39,7 +40,7 @@ function pintaVacio() {
 function pintaMundo() {
   const J = JUEGO, yo = J.yo, k = PAN.k;
   const tx = (Math.random() - 0.5) * FX.temblor, ty = (Math.random() - 0.5) * FX.temblor;
-  G.setTransform(k, 0, 0, k, tx * k, (ty - J.camY) * k);
+  G.setTransform(k, 0, 0, k, Math.round(tx * k), Math.round((ty - J.camY) * k));   // la cámara, a píxeles enteros: nada se emborrona
   pintaTablero();
   pintaEscenas();
   pintaFuegos();
@@ -108,7 +109,7 @@ function pintaJugador() {
     if (fp) { G.globalAlpha = 0.5 + Math.sin(J.t * 9) * 0.1; pinta('luz', fp[0], fp[1], false, false, 0.5); G.globalAlpha = 1; }
   } else pinta('heroe', x, y, false, J.golpeT > 0.18, esc, alfa);
   // aura del Pozo y de la Posada
-  if (invertido()) { G.strokeStyle = '#c9a0ff'; G.globalAlpha = 0.7; G.lineWidth = 1.5; G.setLineDash([2, 2]); G.beginPath(); G.arc(yo.x, yo.y, 13, J.t * 4, J.t * 4 + 6.283); G.stroke(); G.setLineDash([]); G.globalAlpha = 1; }
+  if (invertido()) { G.globalAlpha = 0.7; for (let q = 0; q < 8; q++) arcoPixel(yo.x, yo.y, 13, J.t * 4 + q * 0.785, J.t * 4 + q * 0.785 + 0.4, 1.5, '#c9a0ff'); G.globalAlpha = 1; }
 }
 
 function barraVida(x, y, w, k, color) {
@@ -126,8 +127,8 @@ function pintaEncima() {
   const dist = J.yD - J.yo.y;
   if (dist < PAN.H * 0.42 && !J.jefe) {
     const k = 1 - dist / (PAN.H * 0.42), y = J.yD - J.camY;
-    G.globalAlpha = 0.25 + k * 0.45; const g = G.createLinearGradient(0, Math.min(H, y) - 30, 0, H); g.addColorStop(0, 'rgba(255,60,20,0)'); g.addColorStop(1, 'rgba(255,40,10,.8)'); G.fillStyle = g; G.fillRect(0, Math.min(H, y) - 30, W, H); G.globalAlpha = 1;
-    if (J.impaciente && ((J.t * 3) | 0) % 2) { G.font = '800 9px "Pixelify Sans", system-ui'; G.textAlign = 'center'; G.lineWidth = 3; G.strokeStyle = '#120808'; G.strokeText(tr('¡AVANZA!'), W / 2, H - 22); G.fillStyle = '#ff7a4d'; G.fillText(tr('¡AVANZA!'), W / 2, H - 22); }
+    const y0 = Math.min(H, y) - 30; for (let b = 0; b < 6; b++) { G.globalAlpha = (0.25 + k * 0.45) * (b + 1) / 6 * 0.8; G.fillStyle = '#ff3c14'; G.fillRect(0, y0 + b * 5, W, b < 5 ? 5 : H); } G.globalAlpha = 1;
+    if (J.impaciente && ((J.t * 3) | 0) % 2) texto2(tr('¡AVANZA!'), W / 2, H - 22, 10, '#ff7a4d');
   }
   if (FX.destello > 0) { G.globalAlpha = Math.min(0.6, FX.destello); G.fillStyle = FX.colorDestello; G.fillRect(0, 0, W, H); G.globalAlpha = 1; }
 }

@@ -23,6 +23,7 @@ function avanzaArmas(dt) {
   if (A.dados && A.dados.t <= 0) armaDados(A.dados);
   if (A.guadana) armaGuadana(A.guadana, dt);
   armasNuevas(A, dt);   // la campana y el tirachinas (js/armas2.js)
+  armasMas(A, dt);      // herradura, gaita, rayo y cepos (js/armas3.js)
   avanzaProyectiles(dt);
   avanzaCharcos(dt);
   for (let i = LATIGAZOS.length - 1; i >= 0; i--) { LATIGAZOS[i].t += dt; if (LATIGAZOS[i].t >= LATIGAZOS[i].dur) LATIGAZOS.splice(i, 1); }
@@ -102,7 +103,7 @@ function lanzaHuevo(x0, y0, x1, y1, dano, r, nivel, evo, mini) {
   p.tipo = mini ? 'minihuevo' : 'huevo'; p.x0 = p.x = x0; p.y0 = p.y = y0; p.x1 = x1; p.y1 = y1; p.t = 0; p.dur = mini ? 0.35 : 0.55; p.dano = dano; p.r = r; p.nivel = nivel; p.evo = evo; p.gira = Math.random() * 6;
 }
 function armaHuevo(a) {
-  const yo = JUEGO.yo, n = a.evo ? 3 : nv('huevo', 'n');
+  const yo = JUEGO.yo, n = (a.evo ? 3 : nv('huevo', 'n')) + JUEGO.st.extra;
   for (let i = 0; i < n; i++) {
     const e = objetivoAlAzar(130);
     const tx = e ? e.x + e.vx * 0.4 : yo.x + yo.miraX * 60 + (Math.random() - 0.5) * 50, ty = e ? e.y + e.vy * 0.4 : yo.y + yo.miraY * 60 + (Math.random() - 0.5) * 50;
@@ -150,7 +151,7 @@ function tiraDadoArma(x, y, e, a) {
   p.dano = (a.evo ? 30 : nv('dados', 'dano')) * JUEGO.st.dano * multiDado(); p.r = 5 * multiArea(); p.rebotes = a.evo ? 7 : nv('dados', 'rebotes'); p.ultimo = -1; p.nivel = a.nivel; p.evo = a.evo; p.gira = Math.random() * 6;
 }
 function armaDados(a) {
-  const yo = JUEGO.yo, n = a.evo ? 3 : nv('dados', 'n');
+  const yo = JUEGO.yo, n = (a.evo ? 3 : nv('dados', 'n')) + JUEGO.st.extra;
   let tiros = 0;
   for (let i = 0; i < n; i++) { const e = i === 0 ? masCercano(yo.x, yo.y, 150, -1) : objetivoAlAzar(150); if (e) { tiraDadoArma(yo.x, yo.y, e, a); tiros++; } }
   a.t = (tiros ? (a.evo ? 0.8 : nv('dados', 'cd')) : 0.3) * JUEGO.st.cd;
@@ -200,11 +201,14 @@ function pintaArmas() {
   const c = CHARCOS.lista;
   for (let i = 0; i < CHARCOS.n; i++) {
     const o = c[i], a = Math.min(1, o.vida / 0.6);
-    G.globalAlpha = 0.45 * a; G.fillStyle = o.malo ? '#9a3fbf' : '#6fbf2a'; G.beginPath(); G.ellipse(o.x, o.y, o.r, o.r * 0.7, 0, 0, 6.283); G.fill();
-    G.globalAlpha = 0.6 * a; G.fillStyle = '#c8f25a'; const b = (J.t * 3 + i) % 1; G.beginPath(); G.arc(o.x + Math.sin(i * 7) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, 1.5 + b * 2, 0, 6.283); G.fill();
+    const spr = o.malo ? 'fx-charco-malo' : 'fx-charco';
+    if (SPR[spr]) { G.globalAlpha = 0.85 * a; pinta(spr, o.x, o.y, i % 2 === 1, false, (o.r * 2.2) / SPR[spr].w); }   // el charco de Yoshi
+    else { G.globalAlpha = 0.45 * a; disco(o.x, o.y, Math.round(o.r), Math.round(o.r * 0.7), o.malo ? '#9a3fbf' : '#6fbf2a'); }
+    G.globalAlpha = 0.7 * a; const b = (J.t * 3 + i) % 1; disco(o.x + Math.sin(i * 7 + J.t) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, Math.round(1 + b * 2), Math.round(1 + b * 2), o.malo ? '#e0a0ff' : '#c8f25a');   // la burbuja
   }
   G.globalAlpha = 1;
   pintaArmasNuevas();   // las ondas de la campana y las piedras (js/armas2.js)
+  pintaArmasMas();      // cepos, herraduras, notas y rayos (js/armas3.js)
   // latigazos
   for (const l of LATIGAZOS) pintaLatigazo(l);
   G.globalAlpha = 1;
@@ -220,34 +224,32 @@ function pintaArmas() {
     const o = p[i];
     if (o.tipo === 'huevo' || o.tipo === 'minihuevo') {
       const k = Math.min(1, o.t / o.dur), alto = Math.sin(k * Math.PI) * (o.tipo === 'huevo' ? 34 : 18);
-      G.fillStyle = 'rgba(0,0,0,.35)'; G.beginPath(); G.ellipse(o.x, o.y, 3, 1.6, 0, 0, 6.283); G.fill();
+      G.globalAlpha = 0.35; disco(o.x, o.y, 3, 1.5, '#000'); G.globalAlpha = 1;
       pintaGirado('huevo', o.x, o.y - alto, o.gira, o.tipo === 'huevo' ? 1 : 0.7);
     } else if (o.tipo === 'dado') pintaGirado('dado' + (1 + ((o.gira * 0.5) | 0) % 6), o.x, o.y, o.gira, o.evo ? 1.2 : 0.9);
     else { G.fillStyle = '#ffe9a8'; G.fillRect(o.x - 1.2, o.y - 1.2, 2.4, 2.4); }
   }
 }
 
-// el latigazo: la tira de junco barre el arco de delante hacia atrás; gruesa en el mango, afilada en la punta, con el chasquido al final
+// el latigazo: el tajo de Yoshi (img/fx-latigo.png) girado hacia donde barre; si falta, la tira en píxeles
 function pintaLatigazo(l) {
-  const k = l.t / l.dur, barrido = Math.min(1, k * 1.8), col = l.evo ? '#ff5a3d' : '#c98a3d', luz = l.evo ? '#ffd0a8' : '#f6e7b8';
+  const k = l.t / l.dur, barrido = Math.min(1, k * 1.8), col = l.evo ? '#ff5a3d' : '#c98a3d';
   const r = l.r * (0.7 + k * 0.3), ang0 = l.abre > 3 ? barrido * 6.283 - 3.2 : l.ang - l.abre, ang1 = l.abre > 3 ? ang0 + 2.4 : ang0 + l.abre * 2 * barrido;
-  // la estela (lo que ya barrió)
-  G.globalAlpha = (1 - k) * 0.35; G.fillStyle = col; G.beginPath(); G.moveTo(l.x, l.y); G.arc(l.x, l.y, r, ang0, ang1); G.closePath(); G.fill();
-  // la tira: varios segmentos del mango a la punta, cada vez más finos
-  G.globalAlpha = 1 - k * k; G.lineCap = 'round';
-  const n = 7;
-  for (let i = 0; i < n; i++) {
-    const a = ang1 - (i / n) * 0.9 * (l.abre > 3 ? 1 : 0.6), rr0 = r * (i / n), rr1 = r * ((i + 1) / n);
-    const ang = a - Math.sin(i * 0.9 + k * 6) * 0.08;
-    G.strokeStyle = i < 2 ? '#5a3418' : col; G.lineWidth = 4.5 - i * 0.55;
-    G.beginPath(); G.moveTo(l.x + Math.cos(ang) * rr0, l.y + Math.sin(ang) * rr0); G.lineTo(l.x + Math.cos(ang1) * rr1, l.y + Math.sin(ang1) * rr1); G.stroke();
+  G.globalAlpha = 1 - k * k;
+  const S = SPR['fx-latigo'];
+  if (S) {   // el tajo, en medio del arco barrido, del tamaño del alcance
+    const am = (ang0 + ang1) / 2, esc = (r * 1.15) / S.w;
+    pintaGirado('fx-latigo', l.x + Math.cos(am) * r * 0.55, l.y + Math.sin(am) * r * 0.55, am + 1.57, esc);
+    if (l.evo) { G.globalAlpha *= 0.5; pintaGirado('fx-latigo', l.x + Math.cos(am + 3.14) * r * 0.55, l.y + Math.sin(am + 3.14) * r * 0.55, am + 4.71, esc); }
+  } else {
+    G.globalAlpha = (1 - k) * 0.5; arcoPixel(l.x, l.y, r * 0.8, ang0, ang1, r * 0.3, col);
+    G.globalAlpha = 1 - k * k; arcoPixel(l.x, l.y, r, ang0, ang1, 2.5, '#5a3418'); arcoPixel(l.x, l.y, r, ang0, ang1, 1.5, col);
   }
-  // el chasquido en la punta
-  if (l.chispa && k > 0.25 && k < 0.7) {
+  if (l.chispa && k > 0.25 && k < 0.7) {   // el chasquido en la punta: una estrella de píxeles
     const px = l.x + Math.cos(ang1) * r, py = l.y + Math.sin(ang1) * r, s = (0.7 - k) / 0.45;
-    G.globalAlpha = s; G.fillStyle = luz;
-    for (let i = 0; i < 4; i++) { const a = i * 1.571 + k * 10; G.beginPath(); G.moveTo(px, py); G.lineTo(px + Math.cos(a) * 7 * s, py + Math.sin(a) * 7 * s); G.lineTo(px + Math.cos(a + 0.5) * 2.5, py + Math.sin(a + 0.5) * 2.5); G.closePath(); G.fill(); }
-    G.fillStyle = '#fff'; G.beginPath(); G.arc(px, py, 2.2 * s, 0, 6.283); G.fill();
+    G.globalAlpha = s; G.fillStyle = '#fff6c2'; const L = Math.round(5 * s);
+    for (let q = -L; q <= L; q++) { puntoPixel(px + q, py, 1); puntoPixel(px, py + q, 1); }
+    G.fillStyle = '#fff'; puntoPixel(px, py, 2.5);
   }
   G.globalAlpha = 1;
 }

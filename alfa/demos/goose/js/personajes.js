@@ -71,10 +71,10 @@ function pintaSelector(dt) {
     G.globalAlpha = e;
     if (elegido) { G.globalAlpha = e * (0.4 + Math.sin(ELIGE_T * 5) * 0.2); caja(x - 2, yy - 2, cw + 4, ch + 4, 9, p.color, null); G.globalAlpha = e; }
     caja(x, yy, cw, ch, 7, elegido ? '#3a2214' : '#2a1610', abierto ? p.color : '#4a3020', elegido ? 2.2 : 1.2);
-    G.globalAlpha = e * 0.3; G.fillStyle = p.color; G.beginPath(); G.ellipse(x + cw / 2, yy + 40, 16, 4, 0, 0, 6.283); G.fill(); G.globalAlpha = e * (abierto ? 1 : 0.35);
+    G.globalAlpha = e * 0.3; disco(x + cw / 2, yy + 40, 16, 4, p.color); G.globalAlpha = e * (abierto ? 1 : 0.35);
     pintaHeroeQuieto(x + cw / 2, yy + 24 + (elegido ? Math.sin(ELIGE_T * 6) * 1.2 : 0), p.capa, 1);
     G.globalAlpha = e;
-    if (!abierto) { G.fillStyle = '#120808'; G.fillRect(x + cw / 2 - 5, yy + 20, 10, 8); G.fillStyle = '#c9b98a'; G.fillRect(x + cw / 2 - 4, yy + 21, 8, 6); G.strokeStyle = '#c9b98a'; G.lineWidth = 1.4; G.beginPath(); G.arc(x + cw / 2, yy + 20, 3, Math.PI, 0); G.stroke(); }
+    if (!abierto) { G.fillStyle = '#120808'; G.fillRect(x + cw / 2 - 5, yy + 20, 10, 8); G.fillStyle = '#c9b98a'; G.fillRect(x + cw / 2 - 4, yy + 21, 8, 6); arcoPixel(x + cw / 2, yy + 20, 3, Math.PI, 6.283, 1.4, '#c9b98a'); }
     texto2(tr(p.nombre), x + cw / 2, yy + 53, 5.5, abierto ? p.color : '#6e4426', 'center');
     G.globalAlpha = 1;
     BOTONES.push({ x, y, w: cw, h: ch, accion: () => { if (!abierto) { const d = desafioDe('personaje', p.id); toast(tr('Para jugar con él: {t}', { t: tr(d.txt) })); SONIDO.dadoMalo(); return; } SAVE.personaje = p.id; guarda(); SONIDO.elige(false); } });

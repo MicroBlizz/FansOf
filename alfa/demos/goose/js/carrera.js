@@ -134,7 +134,7 @@ function pintaRivales() {
   pintaTumbas();
   for (const r of C.rivales.values()) {
     if (r.muerto || r.llega !== null) continue;
-    G.globalAlpha = 0.35; G.fillStyle = r.color; G.beginPath(); G.ellipse(r.x, r.y + 8, 9, 3.5, 0, 0, 6.283); G.fill();
+    G.globalAlpha = 0.35; disco(r.x, r.y + 8, 9, 3.5, r.color);
     G.globalAlpha = 0.6; pintaHeroeQuieto(r.x, r.y, r.capa || '', 1); G.globalAlpha = 1;
     G.globalAlpha = 1; etiqueta(r.nombre, r.x, r.y - 15, r.color);
   }

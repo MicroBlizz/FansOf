@@ -24,7 +24,7 @@ const MERCADER = [
 
 // --- cada oca al nacer: la noche y el camino ---
 function ajustaEnemigo(e) {
-  e.oculta = false;
+  e.oculta = false; e.raiz = 0;
   nocheEnemigo(e);
   const J = JUEGO; if (!J.ruta || e.tipo === 'jefe' || e.tipo === 'parca') return;
   if (J.ruta[tierraActual()] === 'peligro' && !e.tipo.startsWith('mj-')) { e.hpMax = e.hp = e.hp * 1.3; e.xp *= 1.5; }
@@ -85,8 +85,8 @@ function ofreceAltar(precio) {
 }
 function compraMercader(o) {
   const J = JUEGO, E = J.escena; if (!E || E.compradas[o.id]) return;
-  if (J.monedasPartida < o.coste) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
-  J.monedasPartida -= o.coste; E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
+  if (J.monedasPartida < precio(o)) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
+  J.monedasPartida -= precio(o); E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
   if (o.id === 'carta') J.pendientes++;
   else if (o.id === 'asada') { J.vida = Math.min(J.st.vidaMax, J.vida + J.st.vidaMax * 0.5 * J.mod.cura); SONIDO.cura(); }
   else if (o.id === 'tirada') J.tiradas++;
@@ -111,7 +111,7 @@ function pintaCaminos() {
   for (const k in J.extra) {
     const t = +k, X = J.extra[k], y = yCentro(t) - 24; if (y > J.camY + PAN.H + 40 || y < J.camY - 60 || y > J.yD) continue;
     const C = CASILLA_CAMINO[X.tipo], x = centroX(t);
-    G.globalAlpha = X.usada ? 0.35 : 0.3 + Math.sin(J.t * 4 + t) * 0.12; G.fillStyle = C.color; G.beginPath(); G.ellipse(x, y + 14, 26, 8, 0, 0, 6.283); G.fill();
+    G.globalAlpha = X.usada ? 0.35 : 0.3 + Math.sin(J.t * 4 + t) * 0.12; disco(x, y + 14, 26, 8, C.color);
     G.globalAlpha = X.usada ? 0.45 : 1;
     if (SPR[C.icono]) pinta(C.icono, x, y + Math.sin(J.t * 2 + t) * 1.2);
     else { G.fillStyle = '#120808'; G.fillRect(x - 10, y - 10, 20, 20); G.fillStyle = C.color; G.fillRect(x - 8, y - 8, 16, 16); }
@@ -123,19 +123,24 @@ function pintaCaminosHud() {
   const J = JUEGO, E = J.escena, W = PAN.W, H = PAN.H; if (!E) return false;
   if (E.tipo === 'tesoro') { texto2(tr('GUARDIANAS'), W / 2, 66, 7, '#c9b98a'); texto2(String(Math.max(0, E.restan)), W / 2, 80, 20, '#ffcf33', 'center', FUENTE_G, 400, 0.2); return true; }
   if (E.tipo !== 'mercader') return false;
-  const y0 = H - 118;
-  caja(8, y0, W - 16, 110, 8, 'rgba(26,14,8,.92)', '#ffd34d', 1.5);
-  texto2(tr('EL MERCADER'), W / 2, y0 + 10, 9, '#ffd34d', 'center', FUENTE_G, 400, 0.25);
-  MERCADER.forEach((o, i) => {
-    const x = 14 + (i % 2) * ((W - 28) / 2 + 4), y = y0 + 20 + Math.floor(i / 2) * 36, w = (W - 32) / 2, hecha = E.compradas[o.id], puede = J.monedasPartida >= o.coste;
-    caja(x, y, w, 32, 6, hecha ? '#160b08' : '#2a1610', hecha ? '#3a2016' : puede ? '#ffd34d' : '#6e4426', 1.2);
-    icono(o.icono, x + 12, y + 16, 9);
-    texto2(tr(o.nombre), x + 24, y + 9, 6.5, hecha ? '#6e4426' : '#fff4dc', 'left');
-    texto2(hecha ? tr('comprado') : tr(o.desc), x + 24, y + 19, 5, hecha ? '#6e4426' : '#c9b98a', 'left', FUENTE, 700, 0);
-    if (!hecha) { pinta('moneda', x + w - 22, y + 26, false, false, 0.7); texto2(String(o.coste), x + w - 16, y + 26.5, 6, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x, y, w, h: 32, accion: () => compraMercader(o) }); }
-  });
-  texto2(tr('Tira el dado para irte'), W / 2, y0 + 101, 6, '#ffd34d', 'center', FUENTE, 700, 0);
+  pintaTiendita(tr('EL MERCADER'), '#ffd34d', MERCADER, E.compradas, compraMercader, tr('Tira el dado para irte'));
   return true;
+}
+
+// la tienda de la Posada y del Mercader: una fila por cosa (icono, nombre, qué hace y precio), con letra que se lee
+function pintaTiendita(titulo, color, lista, compradas, compra, pie) {
+  const J = JUEGO, W = PAN.W, H = PAN.H, fila = 25, y0 = H - 22 - lista.length * (fila + 3) - 18;
+  panelMadera(4, y0 - 4, W - 8, H - y0);   // el tablón de Yoshi
+  texto2(titulo, W / 2, y0 + 10, 10, color, 'center', FUENTE_G, 400, 0.25);
+  lista.forEach((o, i) => {
+    const y = y0 + 20 + i * (fila + 3), hecha = compradas[o.id], cuesta = precio(o), puede = J.monedasPartida >= cuesta;
+    caja(10, y, W - 20, fila, 6, hecha ? '#160b08' : '#2a1610', hecha ? '#3a2016' : puede ? '#ffd34d' : '#6e4426', 1.2);
+    icono(o.icono, 22, y + fila / 2, 10);
+    texto2(tr(o.nombre), 34, y + 7.5, 7.5, hecha ? '#6e4426' : '#fff4dc', 'left');
+    texto2(hecha ? tr('comprado') : tr(o.desc), 34, y + 17.5, 7, hecha ? '#6e4426' : '#c9b98a', 'left', FUENTE, 700, 0.3);
+    if (!hecha) { pinta('moneda', W - 38, y + fila / 2, false, false, 0.9); texto2(String(cuesta), W - 31, y + fila / 2 + 0.5, 8, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }
+  });
+  texto2(pie, W / 2, H - 14, 7, color, 'center', FUENTE, 700, 0.3);
 }
 
 // --- ELECCION: dos (o más) tarjetas grandes; la partida espera ---
@@ -150,8 +155,8 @@ function pintaEleccion(dt) {
   E.opciones.forEach((o, i) => {
     const y = 76 + i * (alto + 10), k = Math.max(0, Math.min(1, E.t * 4 - i * 0.5)), x = 16 + (1 - k) * (i % 2 ? 60 : -60), w = W - 32, puede = o.puede !== false;
     G.globalAlpha = k * (puede ? 1 : 0.5);
-    caja(x, y, w, alto, 8, '#24120c', o.color, 2.2);
-    texto2(o.titulo, x + w / 2, y + 14, 10, o.color, 'center', FUENTE_G, 400, 0.25);
+    panelMadera(x, y, w, alto); caja(x + 5, y + 5, w - 10, alto - 10, 4, null, o.color, 1.6);
+    caja(x + 12, y + 7, w - 24, 16, 4, '#160b08', null); texto2(o.titulo, x + w / 2, y + 15, 10, o.color, 'center', FUENTE_G, 400, 0.25);
     o.iconos.forEach((ic, j) => { const ix = x + w / 2 + (j - (o.iconos.length - 1) / 2) * 44, iy = y + alto / 2 + 2; if (SPR[ic]) pinta(ic, ix, iy, false, false, Math.min(1, 34 / Math.max(SPR[ic].w, SPR[ic].h))); });
     parrafo(o.texto, x + 10, y + alto - 18, w - 20, 6, '#f1e6c8');
     G.globalAlpha = 1;

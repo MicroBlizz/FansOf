@@ -114,7 +114,7 @@ function mgTirachinasIcono(c, x, y) {
 
 /* ---------- el tablero: caminos de tierra, piezas, previsión ---------- */
 // El dibujo del camino, hecho una vez por partida: cada casilla es un cuadrado de tierra pintada que solo redondea las esquinas
-// que dan a la hierba; donde se toca con otra casilla del camino, sigue recto y se une. Debajo, un borde algo más oscuro.
+// que dan a la hierba; donde se toca con otra casilla del camino, sigue recto y se une. Hundido, con el borde difuso y una sombra por dentro.
 function mgCaminoLienzo(libre, k) {
   const cs = MG_V.cs, n = MG_CFG.lado, W = Math.ceil(540 * k), H = Math.ceil(MG_V.H * k), r = cs * 0.24;
   const forma = (c, pad) => {
@@ -129,14 +129,27 @@ function mgCaminoLienzo(libre, k) {
       c.lineTo(x0 + bl, y1); c.arcTo(x0, y1, x0, y1 - bl, bl); c.lineTo(x0, y0 + tl); c.arcTo(x0, y0, x0 + tl, y0, tl); c.closePath();
     }
   };
-  const lienzo = document.createElement('canvas'); lienzo.width = W; lienzo.height = H;
-  const c = lienzo.getContext('2d'); c.setTransform(k, 0, 0, k, 0, 0);
-  forma(c, cs * 0.03); c.fillStyle = 'rgba(92,62,30,.55)'; c.fill('nonzero');   // el borde
-  const tierra = document.createElement('canvas'); tierra.width = W; tierra.height = H;
-  const t = tierra.getContext('2d'); t.setTransform(k, 0, 0, k, 0, 0);
-  forma(t, -cs * 0.015); t.fill('nonzero'); t.globalCompositeOperation = 'source-in';
+  const capa = () => { const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const x = cv.getContext('2d'); x.setTransform(k, 0, 0, k, 0, 0); return [cv, x]; };
+  const bl = px => `blur(${Math.max(1, Math.round(px * k))}px)`;
+  // como en los juegos de este tipo: el camino es orgánico (todas las esquinas redondas, también las de dentro), un poco hundido,
+  // con el borde difuso y una sombra suave por dentro, para que se funda con la hierba.
+  // La forma: los cuadrados de las casillas, difuminados y vueltos a cortar por la mitad: así se redondea todo por igual.
+  const [masc, m] = capa(); m.filter = bl(cs * 0.11); forma(m, -cs * 0.01); m.fillStyle = '#000'; m.fill('nonzero');
+  const d = m.getImageData(0, 0, W, H), a = d.data;
+  for (let i = 3; i < a.length; i += 4) { const v = (a[i] / 255 - 0.42) / 0.16; a[i] = v <= 0 ? 0 : v >= 1 ? 255 : Math.round(v * v * (3 - 2 * v) * 255); }
+  m.putImageData(d, 0, 0);
+  const [lienzo, c] = capa(); c.setTransform(1, 0, 0, 1, 0, 0);
+  c.filter = bl(cs * 0.05); c.globalAlpha = 0.18; c.drawImage(masc, 0, 0); c.globalAlpha = 1; c.filter = 'none';   // la hierba se oscurece un poco junto al camino
+  const [tierra, t] = capa();
   t.fillStyle = t.createPattern(MG_IMG.TIERRA, 'repeat'); t.fillRect(0, 0, 540, MG_V.H);
-  c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(tierra, 0, 0);
+  t.fillStyle = 'rgba(150,125,70,.10)'; t.fillRect(0, 0, 540, MG_V.H);   // tierra pisada, cálida
+  t.setTransform(1, 0, 0, 1, 0, 0);
+  const [sombra, so] = capa(); so.setTransform(1, 0, 0, 1, 0, 0);   // la sombra de dentro: más fuerte arriba y a la izquierda, como un hueco
+  so.fillStyle = 'rgba(80,58,25,.40)'; so.fillRect(0, 0, W, H);
+  so.globalCompositeOperation = 'destination-out'; so.filter = bl(cs * 0.08); so.drawImage(masc, cs * 0.03 * k, cs * 0.045 * k);
+  t.drawImage(sombra, 0, 0);
+  t.globalCompositeOperation = 'destination-in'; t.drawImage(masc, 0, 0);
+  c.drawImage(tierra, 0, 0);
   return lienzo;
 }
 function mgPintaCaminos(c, t) {

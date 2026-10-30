@@ -1,8 +1,8 @@
 {
- "build": 709,
- "hash": "adef608",
- "fecha": "2026-10-30T22:29:47Z",
- "mensaje": "Fans of Pop: los niveles difíciles y los jefes pasan a ser duelos Nim contra el rival del mundo",
+ "build": 710,
+ "hash": "669537b",
+ "fecha": "2026-10-30T22:47:39Z",
+ "mensaje": "Cola de Actions: lee el tipo del título «Generar [tipo]: …» (plugin 0.6.0 y pestaña Cola); encolar.py marca 3d los pedidos de Blender",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

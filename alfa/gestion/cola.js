@@ -21,6 +21,19 @@
     if (tiene('mp3', 'wav', 'ogg', 'flac')) return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
     return 'imagen';
   }
+  function leerTitulo(t) {   // «Generar [imagen]: Logo» (o el antiguo «Generar: Logo») -> tipo y título
+    const m = /^Generar(?:\s*\[([^\]]*)\])?:\s*/.exec(t);
+    if (!m) return { titulo: t, tipo: null };
+    const tipo = (m[1] || '').trim().toLowerCase();
+    return { titulo: t.slice(m[0].length), tipo: tipo && tipo !== 'recurso' ? tipo : null };
+  }
+  function tipoDeTitulo(tipo, bytes) {   // el tipo que puso encolar.py en el título; el audio se parte por tamaño
+    if (tipo === 'imagen') return 'imagen';
+    if (tipo === 'video') return 'video';
+    if (tipo === '3d') return 'modelo3d';
+    if (tipo === 'audio') return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
+    return null;
+  }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0;
   const pan = document.createElement('div'); pan.id = 'pan-cola'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
@@ -43,7 +56,7 @@
     if (!r.ok) throw new Error(ruta.split('?')[0] + ' → ' + r.status);
     return r.json();
   }
-  // El `name` de un run es su run-name («Generar: Logo»), no el del workflow: el workflow se identifica por su archivo.
+  // El `name` de un run es su run-name («Generar [imagen]: Logo»), no el del workflow: el workflow se identifica por su archivo.
   const etiquetaWf = r => { const f = String(r.path || '').split('/').pop().replace(/\.ya?ml$/, '').replace(/-/g, ' '); return f ? f[0].toUpperCase() + f.slice(1) : String(r.name); };
   const esGenerar = r => String(r.path || '').endsWith('generar-recurso.yml');
   const carrilDe = L => L.includes('self-hosted') ? (L.find(l => l !== 'self-hosted') || 'self-hosted') : 'github';
@@ -64,13 +77,14 @@
     Object.keys(cache).forEach(k => { if (!vivos.has(k)) delete cache[k]; }); guardar(DURS, cache);
     const medias = {};
     for (const runs of Object.values(porWf)) { const d = runs.map(r => cache[r.id]).filter(x => x > 0); if (d.length) medias[etiquetaWf(runs[0])] = { seg: Math.round(d.reduce((a, b) => a + b, 0) / d.length), n: d.length }; }
-    // Recursos terminados: el tamaño del artefacto se guarda porque GitHub lo borra al día; el tipo sale de la extensión de lo que el pedido dejó en la rama `recursos` (un commit «Pedido <id>: salida y modelos»).
+    // Recursos terminados: el tamaño del artefacto se guarda porque GitHub lo borra al día; el tipo sale del título («Generar [imagen]: Logo»); si no lo dice (pedidos antiguos), de la extensión de lo que el pedido dejó en la rama `recursos` (un commit «Pedido <id>: salida y modelos»).
     const gs = leer(RECS, {});
     await enLotes(hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && gs[r.id] === undefined).slice(0, 10), 5, async r => {
       const a = (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts;
-      gs[r.id] = { titulo: String(r.display_title || 'recurso').replace(/^Generar:\s*/, ''), bytes: a.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), fin: ms(r.updated_at) };
+      const lt = leerTitulo(String(r.display_title || 'recurso'));
+      gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes: a.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), fin: ms(r.updated_at) };
     });
-    const sinTipo = Object.entries(gs).filter(([, v]) => v.exts === undefined).slice(0, 10);
+    const sinTipo = Object.entries(gs).filter(([, v]) => v.exts === undefined && !tipoDeTitulo(leerTitulo(v.titulo).tipo || v.tt, v.bytes)).slice(0, 10);
     if (precision() && sinTipo.length) {
       try {
         const sha = {};
@@ -82,13 +96,13 @@
       } catch (e) { /* sin permiso de Contents o sin la rama: se queda sin tipo y usa el precio de imagen */ }
     }
     guardar(RECS, gs);
-    const recursos = Object.entries(gs).map(([id, v]) => { const t = precision() ? tipoDe(v.exts, v.bytes) : null; return { id, ...v, tipo: t ? ETIQUETA[t] : precision() ? '?' : 'imagen', usd: USD[t || 'imagen'] }; }).sort((a, b) => b.fin - a.fin);
+    const recursos = Object.entries(gs).map(([id, v]) => { const p = leerTitulo(v.titulo), t = tipoDeTitulo(p.tipo || v.tt, v.bytes) || (precision() ? tipoDe(v.exts, v.bytes) : null); return { id, ...v, titulo: p.titulo, tipo: t ? ETIQUETA[t] : precision() ? '?' : 'imagen', usd: USD[t || 'imagen'] }; }).sort((a, b) => b.fin - a.fin);
     // Cola: en curso y en cola, con sus jobs para saber el runner.
     const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
     const trabajos = []; let extra = 0;
     await enLotes(activos.slice(0, 40), 5, async r => {
       const jobs = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs, flujo = etiquetaWf(r), arr = jobs.map(j => ms(j.started_at)).filter(x => !isNaN(x));
-      trabajos.push({ id: r.id, nombre: esGenerar(r) ? String(r.display_title || flujo).replace(/^Generar:\s*/, '') : flujo, flujo, enCurso: r.status === 'in_progress',
+      trabajos.push({ id: r.id, nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
         carril: carrilDe(jobs.flatMap(j => j.labels || [])), media: medias[flujo] ? medias[flujo].seg : null, arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
     });
     extra = Math.max(0, activos.length - 40);
@@ -146,7 +160,7 @@
     const sem = usd => lim ? ' · ~' + (tok(usd) / lim * 100 < 10 ? (tok(usd) / lim * 100).toFixed(1) : Math.round(tok(usd) / lim * 100)) + '% semanal' : '';
     return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
       + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${ktok(tok(r.usd))} tokens · ~${eur(r.usd)}${sem(r.usd)}</span></div>`).join('')
-      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). ${precision() ? 'No distingue texto de edición de imagen ni los tres vídeos.' : 'Sin la precisión media todo cuenta como imagen.'} Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
+      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. ${precision() ? 'Los pedidos antiguos, sin tipo en el título, se tipan por la extensión.' : 'Los pedidos antiguos, sin tipo en el título, cuentan como imagen (la precisión media los tipa por la extensión).'} No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
   }
 
   // ----- pantalla -----

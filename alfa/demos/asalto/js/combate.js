@@ -5,7 +5,7 @@
 'use strict';
 const AS_ARENA = { x: 0, y: 94, w: 540, h: 596 };
 // el centro (los pies) de cada casilla de la cuadrícula de los héroes
-function asCelda(col, fila) { return [60 + col * 44, AS_ARENA.y + 72 + fila * 66]; }
+function asCelda(col, fila) { return [60 + col * 44, AS_ARENA.y + 104 + fila * 62]; }   // debajo de la orilla de la arena
 let AS_B = null;   // la batalla en curso
 let AS_ID = 0;
 
@@ -180,7 +180,7 @@ function asSepara(dt) {
     const a = v[i], b = v[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 0.01, min = 14 * Math.max(a.escala, b.escala);
     if (d < min) { const p = (min - d) / 2 * Math.min(1, dt * 12); a.x -= dx / d * p; a.y -= dy / d * p; b.x += dx / d * p; b.y += dy / d * p; }
   }
-  for (const u of v) { u.x = clamp(u.x, 20, AS_ARENA.w - 20); u.y = clamp(u.y, AS_ARENA.y + 50, AS_ARENA.y + AS_ARENA.h - 6); }
+  for (const u of v) { u.x = clamp(u.x, 20, AS_ARENA.w - 20); u.y = clamp(u.y, AS_ARENA.y + 90, AS_ARENA.y + AS_ARENA.h - 6); }
 }
 function asAvanzaProyectiles(dt) {
   for (const p of AS_B.proy) {

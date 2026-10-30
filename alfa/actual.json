@@ -1,8 +1,8 @@
 {
- "build": 652,
- "hash": "f3d9816",
- "fecha": "2026-10-30T05:09:53Z",
- "mensaje": "Privacidad y condiciones: sección de anuncios (Google AdMob y AdSense, nunca personalizados, voluntarios)",
+ "build": 653,
+ "hash": "3d3b890",
+ "fecha": "2026-10-30T05:16:43Z",
+ "mensaje": "Renombre humo → smoke en toda la herramienta (workflow, runner, marca, scripts, carpeta pruebas/smoke, docs)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

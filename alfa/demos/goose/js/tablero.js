@@ -153,7 +153,7 @@ const PATRONES = {};
 function patronDe(id) {
   if (PATRONES[id] !== undefined) return PATRONES[id];
   const im = IMG['t-' + id] || (SUELOS[id] && SUELOS[id][0]); if (!im) return null;
-  const p = G.createPattern(im, 'repeat'); if (p && p.setTransform) p.setTransform(new DOMMatrix().scale(1 / PAN.k));
+  const p = G.createPattern(im, 'repeat'); if (p && p.setTransform) p.setTransform(new DOMMatrix().scale(1 / ARTE));
   return (PATRONES[id] = p);
 }
 function pintaIsla(t, top, bottom, tb, cortada) {

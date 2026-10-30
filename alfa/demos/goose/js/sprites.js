@@ -5,6 +5,7 @@
 
 let G = null;             // el pincel del canvas del juego (lo pone js/principal.js)
 const SPR = {};         // nombre -> { n, f, b, w, h } (normal, flip, blanco; w y h en unidades del mundo)
+const ARTE = 2;         // píxeles del dibujo por unidad del mundo: el pixel art de Yoshi se hizo a 2 (el canvas puede ir a más, PAN.k, y se amplía a número entero)
 const IMG = {};           // los PNG cargados
 // los objetos y adornos que tienen su PNG de Yoshi (si falta alguno, sale su dibujo de código, también pixelado)
 const PNG_DE = { xp1: 'i-pluma', xp2: 'i-pluma-azul', xp3: 'i-pluma-roja', moneda: 'i-moneda', cuchilla: 'i-cuchilla', tornado: 'i-cuchilla-fuego', huevo: 'i-huevo', huevojefe: 'i-huevo-rojo', cofre: 'i-cofre', pollo: 'i-asada', iman: 'i-iman' };
@@ -29,7 +30,7 @@ const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVO
 
 function cargaImagenes() {
   return Promise.all(PNGS().map(n => new Promise(ok => {
-    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=5';
+    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=7';
   })));
 }
 
@@ -38,7 +39,7 @@ const lienzo = (w, h) => { const c = document.createElement('canvas'); c.width =
 // prepara un sprite: dibuja(ctx, w, h) en unidades del mundo; k = píxeles reales por unidad
 function hazSprite(nombre, w, h, dibuja, pixel) {
   const png = PNG_DE[nombre] || (nombre.startsWith('ad-') ? 'a-' + nombre.slice(3) : null);
-  if (png && IMG[png]) { dibuja = dePng(png); w = IMG[png].width / PAN.k; h = IMG[png].height / PAN.k; pixel = true; }
+  if (png && IMG[png]) { dibuja = dePng(png); w = IMG[png].width / ARTE; h = IMG[png].height / ARTE; pixel = true; }
   const k = PAN.k, c = lienzo(w * k, h * k), x = c.getContext('2d');
   x.imageSmoothingEnabled = !pixel; x.scale(k, k); dibuja(x, w, h);
   if (!pixel) { const d = x.getImageData(0, 0, c.width, c.height); for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0; x.putImageData(d, 0, 0); }   // los de código, sin suavizado: píxeles llenos o vacíos
@@ -97,7 +98,7 @@ function caraDado(x, w, h, n, fondo = '#f1e6c8', punto = '#8a1010') {
 function preparaSprites() {
   for (const k in SPR) delete SPR[k];
   // con PNG, cada píxel del dibujo es un píxel de la pantalla pequeña (1:1): nada se deforma
-  const pj = (n, w, h) => (IMG[n] ? hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true) : hazSprite(n, w, h, RECAMBIO[n], false));
+  const pj = (n, w, h) => (IMG[n] ? hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true) : hazSprite(n, w, h, RECAMBIO[n], false));
   pj('heroe', 20, 20); pj('oca', 20, 20); pj('albatros', 26, 26); pj('gorda', 36, 36); pj('jefe', 72, 72); pj('oca-dorada', 30, 30);
   hazSprite('xp1', 6, 9, (x, w, h) => pluma(x, w, h, '#ffd34d', '#a45f00'));
   hazSprite('xp2', 8, 11, (x, w, h) => pluma(x, w, h, '#6bf2ff', '#086e8a'));
@@ -114,15 +115,15 @@ function preparaSprites() {
   });
   hazSprite('pollo', 12, 10, (x, w, h) => { x.beginPath(); x.ellipse(w * 0.45, h * 0.55, w * 0.34, h * 0.36, 0, 0, 7); trazo(x, '#c9702a'); x.beginPath(); x.moveTo(w * 0.72, h * 0.45); x.lineTo(w * 0.95, h * 0.2); x.lineWidth = 2; x.strokeStyle = '#f1e6c8'; x.stroke(); });
   hazSprite('iman', 10, 8, (x, w, h) => { x.lineWidth = 2.4; x.strokeStyle = '#e0303a'; x.beginPath(); x.arc(w / 2, h * 0.55, w * 0.34, Math.PI, 0); x.stroke(); });
-  for (const n of NUEVOS_PNG.concat(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : [])) if (IMG[n] && !SPR[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
+  for (const n of NUEVOS_PNG.concat(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : [])) if (IMG[n] && !SPR[n]) hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true);
   hazSprite('fuego', 8, 8, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.36, 0, 7); trazo(x, '#ff7a2a', 1); x.fillStyle = '#ffd34d'; x.fillRect(w * 0.38, h * 0.3, w * 0.24, h * 0.3); });
   hazSprite('nieve', 8, 8, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.38, 0, 7); trazo(x, '#eef6ff', 1); x.fillStyle = '#bfd8ef'; x.fillRect(w * 0.5, h * 0.5, w * 0.2, h * 0.2); });
   hazSprite('hoz', 10, 10, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.4, 0.6, 4.2); x.lineWidth = 2.2; x.strokeStyle = '#120808'; x.stroke(); x.lineWidth = 1.2; x.strokeStyle = '#efe4c4'; x.stroke(); });
-  for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
-  for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
-  for (const n of ISLAS_PNG.concat(FX_PNG)) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
-  for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
-  for (const id in ICONO_PNG) if (IMG[ICONO_PNG[id]]) hazSprite('ic-' + id, IMG[ICONO_PNG[id]].width / PAN.k, IMG[ICONO_PNG[id]].height / PAN.k, dePng(ICONO_PNG[id]), true);
+  for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true);
+  for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true);
+  for (const n of ISLAS_PNG.concat(FX_PNG)) if (IMG[n]) hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true);
+  for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / ARTE, IMG[n].height / ARTE, dePng(n), true);
+  for (const id in ICONO_PNG) if (IMG[ICONO_PNG[id]]) hazSprite('ic-' + id, IMG[ICONO_PNG[id]].width / ARTE, IMG[ICONO_PNG[id]].height / ARTE, dePng(ICONO_PNG[id]), true);
   const dadosYoshi = [1, 2, 3, 4, 5, 6].every(n => IMG['dado-' + n] && IMG['dadito-' + n]);   // las caras del dado de Yoshi (solo si están las seis)
   for (let n = 1; n <= 6; n++) if (dadosYoshi) { hazSprite('dado' + n, 12, 12, dePng('dadito-' + n), true); hazSprite('dadogrande' + n, 34, 34, dePng('dado-' + n), true); }
   if (!dadosYoshi) for (let n = 1; n <= 6; n++) hazSprite('dado' + n, 12, 12, (x, w, h) => caraDado(x, w, h, n));

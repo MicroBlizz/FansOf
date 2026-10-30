@@ -85,10 +85,12 @@ function pixelaContexto(ctx) {
 // si falta el dibujo, una caja de píxeles
 function panelMadera(x, y, w, h, relleno = '#2a1610', borde = '#6e4426') {
   const im = IMG['ui-panel']; if (!im) { caja(x, y, w, h, 7, relleno, borde, 1.5); return; }
-  const k = PAN.k, c = 12, cu = c / k, X = snap(x), Y = snap(y), Wd = snap(w), Hd = snap(h), iw = im.width, ih = im.height;
+  const c = 12, cu = c / ARTE, X = snap(x), Y = snap(y), Wd = snap(w), Hd = snap(h), iw = im.width, ih = im.height;
   const pieza = (sx, sy, sw, sh, dx, dy, dw, dh) => { if (dw > 0 && dh > 0) G.drawImage(im, sx, sy, sw, sh, dx, dy, dw, dh); };
   pieza(0, 0, c, c, X, Y, cu, cu); pieza(iw - c, 0, c, c, X + Wd - cu, Y, cu, cu); pieza(0, ih - c, c, c, X, Y + Hd - cu, cu, cu); pieza(iw - c, ih - c, c, c, X + Wd - cu, Y + Hd - cu, cu, cu);
   pieza(c, 0, iw - c * 2, c, X + cu, Y, Wd - cu * 2, cu); pieza(c, ih - c, iw - c * 2, c, X + cu, Y + Hd - cu, Wd - cu * 2, cu);
   pieza(0, c, c, ih - c * 2, X, Y + cu, cu, Hd - cu * 2); pieza(iw - c, c, c, ih - c * 2, X + Wd - cu, Y + cu, cu, Hd - cu * 2);
-  pieza(c, c, iw - c * 2, ih - c * 2, X + cu, Y + cu, Wd - cu * 2, Hd - cu * 2);
+  // el centro, repetido en lugar de estirado (las vetas no se alargan)
+  const mw = (iw - c * 2) / ARTE, mh = (ih - c * 2) / ARTE;
+  for (let yy = Y + cu; yy < Y + Hd - cu; yy += mh) for (let xx = X + cu; xx < X + Wd - cu; xx += mw) { const dw = Math.min(mw, X + Wd - cu - xx), dh = Math.min(mh, Y + Hd - cu - yy); pieza(c, c, dw * ARTE, dh * ARTE, xx, yy, dw, dh); }
 }

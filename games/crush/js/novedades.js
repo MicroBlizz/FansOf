@@ -1,6 +1,7 @@
 // Fans of Crush · Novedades: el registro de versiones (desplegar.py busca aquí la entrada de cada versión; la web la enseña en ACTUALIZACIONES).
 'use strict';
 const NEWS = [
+  { v: '0.1.39', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha ordenado el cajón de los anuncios y Phony ha encontrado un caramelo caducado."] },
   { v: '0.1.38', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha puesto un buzón de quejas y Phony ha depositado un caramelo."] },
   { v: '0.1.37', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Microblizz ha metido una garra en la oficina y Phony ya ha intentado pescar caramelos con ella."] },
   { v: '0.1.36', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se preparan para las compras dentro de la app de Android."], joke: ["Microblizz ha montado una caja registradora y Phony ha intentado pagar con caramelos."] },

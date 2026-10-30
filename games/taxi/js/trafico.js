@@ -1,5 +1,6 @@
 // Fans Of Taxi · TRÁFICO: los coches de la ciudad y el «conductor» que siguen también los rivales y la policía: va de cruce en cruce por
-// su carril, frena si tiene algo delante y elige el siguiente cruce al azar o siguiendo una ruta. Aquí se cuentan también los «casi»
+// su carril, frena si tiene algo delante y elige el siguiente cruce al azar o siguiendo una ruta. En doble sentido va siempre por la
+// derecha; en un solo sentido (las rotondas) lleva carril propio, cualquiera de los dos, y se cambia al otro para adelantar. Aquí se cuentan también los «casi»
 // (pasar rozando un coche sin tocarlo, que da propina) y los golpes con el tráfico. Sin DOM ni three.
 'use strict';
 const CONDUCTOR = (() => {
@@ -7,7 +8,8 @@ const CONDUCTOR = (() => {
   function nuevo(nodoDesde, nodoHasta, vel, extra = {}) {
     const a = CIUDAD.nodos[nodoDesde], b = CIUDAD.nodos[nodoHasta], of = CIUDAD.carril(a, b);
     const coche = COCHE.nuevo(a.x + of.ox, a.z + of.oz, Math.atan2(b.x - a.x, b.z - a.z), { radio: 1.5, masa: 1 });
-    const c = { coche, desde: nodoDesde, hasta: nodoHasta, vel, ruta: null, ruta_i: 0, parado: 0, atasco: 0, lado: 1, ...extra };
+    const c = { coche, desde: nodoDesde, hasta: nodoHasta, vel, ruta: null, ruta_i: 0, parado: 0, atasco: 0, lado: 1, cambio: 0, ...extra };
+    c.ladoPropio = c.lado;
     c.objetivo = punto(nodoDesde, nodoHasta, c.lado); c.prox = elige(c, nodoDesde, nodoHasta, Math.random); return c;
   }
   const punto = (desde, hasta, lado = 1) => { const a = CIUDAD.nodos[desde], b = CIUDAD.nodos[hasta], of = CIUDAD.carril(a, b, lado); return { x: b.x + of.ox, z: b.z + of.oz }; };
@@ -15,14 +17,28 @@ const CONDUCTOR = (() => {
   // después (`prox`) para frenar antes de las curvas
   function elige(c, desde, hasta, azar) {
     if (c.ruta) { const k = c.ruta.indexOf(hasta); return k >= 0 && k < c.ruta.length - 1 ? c.ruta[k + 1] : null; }
-    const op = CIUDAD.nodos[hasta].vecinos.filter(v => v !== desde); return op.length ? op[(azar() * op.length) | 0] : desde;
+    const op = CIUDAD.nodos[hasta].vecinos.filter(v => v !== desde && CIUDAD.sePuede(hasta, v)); return op.length ? op[(azar() * op.length) | 0] : desde;
   }
   function siguiente(c, azar) {
     let prox;
     if (c.ruta && c.ruta_i < c.ruta.length - 1) prox = c.ruta[++c.ruta_i];
     else if (c.ruta) prox = c.prox !== undefined && c.prox !== null ? c.prox : c.hasta;
     else prox = c.prox !== undefined && c.prox !== null ? c.prox : elige(c, c.desde, c.hasta, azar);
-    c.desde = c.hasta; c.hasta = prox; c.objetivo = punto(c.desde, c.hasta, c.lado); c.prox = elige(c, c.desde, c.hasta, azar);
+    c.desde = c.hasta; c.hasta = prox; c.lado = ladoEn(c, azar); c.objetivo = punto(c.desde, c.hasta, c.lado); c.prox = elige(c, c.desde, c.hasta, azar);
+  }
+  // el carril al entrar en un tramo: en doble sentido, el suyo (la derecha; los rivales llevan su propio desplazamiento); en un solo
+  // sentido, el tráfico elige uno de los dos
+  const esUnico = (desde, hasta) => { const e = CIUDAD.aristaDe.get(desde + ',' + hasta); return !!e && !!e.unico; };
+  const ladoEn = (c, azar) => (c.tipo === 'trafico' && esUnico(c.desde, c.hasta) ? (azar() < 0.5 ? 1 : -1) : c.ladoPropio);
+  // el punto al que mira por su carril: unos metros por delante sobre la línea del carril (no derecho al final del tramo: viniendo de
+  // un giro, ir en línea recta al final lo llevaría medio tramo por el carril contrario)
+  function enCarril(c) {
+    const a = CIUDAD.nodos[c.desde], b = CIUDAD.nodos[c.hasta], k = c.coche, L = Math.hypot(b.x - a.x, b.z - a.z);
+    if (L < 1) return c.objetivo;
+    const of = CIUDAD.carril(a, b, c.lado), ux = (b.x - a.x) / L, uz = (b.z - a.z) / L;
+    const s = (k.x - a.x - of.ox) * ux + (k.z - a.z - of.oz) * uz + Math.max(8, Math.abs(k.v) * 0.9);
+    if (s >= L) return c.objetivo;
+    return { x: a.x + of.ox + ux * Math.max(0, s), z: a.z + of.oz + uz * Math.max(0, s) };
   }
   // tras perderse (marcha atrás), volver a la ruta por el cruce más cercano
   function resincroniza(c, k) {
@@ -36,7 +52,7 @@ const CONDUCTOR = (() => {
   // En las curvas cerradas (horquillas, esquinas) no: ahí atajar lo llevaría contra el muro de dentro.
   const MIRA_ANTES = 9, GIRO_SUAVE = 0.6;
   function apunta(c, d) {
-    if (d >= MIRA_ANTES || c.prox === undefined || c.prox === null || c.prox === c.desde) return c.objetivo;
+    if (d >= MIRA_ANTES || c.prox === undefined || c.prox === null || c.prox === c.desde) return enCarril(c);
     const a = CIUDAD.nodos[c.desde], h = CIUDAD.nodos[c.hasta], p = CIUDAD.nodos[c.prox];
     if (Math.hypot(p.x - h.x, p.z - h.z) > MIRA_ANTES * 2 || Math.abs(giro(a, h, p)) > GIRO_SUAVE) return c.objetivo;
     const luego = punto(c.hasta, c.prox, c.lado), t = 1 - d / MIRA_ANTES;
@@ -76,8 +92,21 @@ const CONDUCTOR = (() => {
       const ox = o.x - k.x, oz = o.z - k.z, delante = ox * f.x + oz * f.z, lado = Math.abs(ox * f.z - oz * f.x);
       if (delante > 0 && delante < TAXI.trafico.frenaA && lado < 3.2) vObj = Math.min(vObj, Math.max(0, (delante - 5) / TAXI.trafico.frenaA) * c.vel);
     } else if (c.atasco > 4.5) c.atasco = 0;
+    if (vObj < c.vel * 0.8) adelanta(c, k, f, obstaculos, dt); else c.cambio = Math.max(0, c.cambio - dt);
     const gas = k.v < vObj ? 1 : 0, freno = k.v > vObj + 2 ? 1 : 0;
     COCHE.paso(k, { giro, gas, freno }, dt, mundo, limites);
+  }
+  // en un solo sentido, si algo lo frena y el otro carril está libre, se cambia (y no vuelve a cambiar en un rato)
+  function adelanta(c, k, f, obstaculos, dt) {
+    c.cambio = Math.max(0, c.cambio - dt);
+    if (c.cambio > 0 || c.tipo !== 'trafico' || !esUnico(c.desde, c.hasta)) return;
+    const of = CIUDAD.carril(CIUDAD.nodos[c.desde], CIUDAD.nodos[c.hasta], 1), sep = Math.hypot(of.ox, of.oz), destino = -2 * c.lado * sep;
+    for (const o of obstaculos) {
+      if (o === k) continue;
+      const ox = o.x - k.x, oz = o.z - k.z, delante = ox * f.x + oz * f.z, lado = -ox * f.z + oz * f.x;
+      if (delante > -8 && delante < TAXI.trafico.frenaA && Math.abs(lado - destino) < 2.5) return;
+    }
+    c.lado = -c.lado; c.objetivo = punto(c.desde, c.hasta, c.lado); c.cambio = 3;
   }
   return { nuevo, paso, siguiente, punto, resincroniza };
 })();
@@ -89,11 +118,11 @@ const TRAFICO = (() => {
   const COLORES = [0xff7a1a, 0x4fc3d9, 0xff9fd0, 0xfff6ea, 0x8a6fe0, 0x7ee04a, 0xffcb3d];
   // un cruce al azar cerca de un sitio (entre cercaMin y cercaMax), que no sea túnel
   function cruceCerca(sitio) {
-    const l = CIUDAD.nodosEn(sitio.x, sitio.z, T.cercaMin, T.cercaMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.vecinos.length);
+    const l = CIUDAD.nodosEn(sitio.x, sitio.z, T.cercaMin, T.cercaMax).filter(n => n.tipo !== 'tunel' && n.tipo !== 'rampa' && n.tipo !== 'viaducto' && n.vecinos.length);
     return l.length ? l[(azar() * l.length) | 0] : CIUDAD.nodoCercano(sitio.x, sitio.z);
   }
   function nuevo(sitio) {
-    const n = cruceCerca(sitio), b = n.vecinos[(azar() * n.vecinos.length) | 0];
+    const n = cruceCerca(sitio), salidas = n.vecinos.filter(v => CIUDAD.sePuede(n.id, v)), b = salidas.length ? salidas[(azar() * salidas.length) | 0] : n.vecinos[0];
     const c = CONDUCTOR.nuevo(n.id, b, lerp(T.vel[0], T.vel[1], azar()), { color: COLORES[(azar() * COLORES.length) | 0], rozado: 0, tipo: 'trafico' });
     c.coche.y = n.y; return c;
   }

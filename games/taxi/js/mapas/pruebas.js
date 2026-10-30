@@ -2,32 +2,57 @@
 // de carretera, todos conectados, para probarlos sin recorrer la ciudad. Cada ESTACIÓN tiene su número, un punto de reaparición y
 // un botón en el menú para ir a ella (pruebas-menu.js).
 //
-// El terreno: llano, con una colina suave (las cuestas) y una alta (el túnel, las horquillas y el mirador), y mar alrededor.
-// Las carreteras se describen con puntos con nombre; la altura de cada nudo es la del terreno salvo en el túnel y su trinchera.
+// El terreno: llano, con una colina suave (las cuestas), una alta (el túnel, las horquillas y el mirador) y una ladera al este (la
+// calle que la rodea sin inclinarse de lado), y mar alrededor. Las carreteras se describen con puntos con nombre; la altura de cada
+// nudo es la del terreno salvo en el túnel y su trinchera. Al este, las piezas de la ciudad nueva (docs/taxi/CIUDAD-NUEVA.md):
+// rotondas, plazas, el cruce en A, la calle en ladera y los dos centros comerciales; cada una con su estación.
 'use strict';
 FUENTES.pruebas = (() => {
-  const ANCHO = 1536, LARGO = 1024, BASE = 3, PROFUNDO = -8, TRAMOS_TRINCHERA = 6;
+  const ANCHO = 2176, LARGO = 1280, BASE = 3, PROFUNDO = -8, TRAMOS_TRINCHERA = 6;
   const ANCHOS = { calle: 12, anillo: 16, montaña: 11, rampa: 12, tunel: 12 };
 
   // --- el terreno
   const COLINA_SUAVE = { x: 330, z: 330, radio: 300, alto: 24 };
   const COLINA_ALTA = { x: 1100, z: 330, radio: 200, alto: 42 };
+  const LADERA = { x: 1900, z: 200, radio: 150, alto: 60 };   // a 110 m del centro, unos 25° de pendiente
   const campana = u => (u >= 1 ? 0 : (1 + Math.cos(Math.PI * u)) / 2);
   const colina = (c, x, z) => c.alto * campana(Math.hypot(x - c.x, z - c.z) / c.radio);
-  const natural = (x, z) => BASE + colina(COLINA_SUAVE, x, z) + colina(COLINA_ALTA, x, z);
+  const natural = (x, z) => BASE + colina(COLINA_SUAVE, x, z) + colina(COLINA_ALTA, x, z) + colina(LADERA, x, z);
   const tierra = (x, z) => clamp((Math.min(x, z, ANCHO - x, LARGO - z) - 20) / 40, 0, 1);
   const terreno = { natural, tierra, ciudadEn: () => null, ciudades: [] };
 
   // --- las estaciones: número, nombre, dónde se reaparece y hacia dónde se mira
+  // (las pruebas largas tienen una a cada lado; `y` solo hace falta bajo tierra, para elegir el túnel y no el suelo de encima)
   const estaciones = [
-    { numero: 1, nombre: 'Cruce plano', x: 200, z: 795, hacia: [200, 860] },
-    { numero: 2, nombre: 'Bajada que se bifurca', x: 330, z: 400, hacia: [330, 520] },
-    { numero: 3, nombre: 'Salida en mitad de una rampa', x: 390, z: 330, hacia: [480, 330] },
-    { numero: 4, nombre: 'Curva con salida', x: 690, z: 860, hacia: [760, 860] },
-    { numero: 5, nombre: 'Horquillas y mirador', x: 1040, z: 720, hacia: [1170, 520] },
-    { numero: 6, nombre: 'Túnel con cruce', x: 825, z: 330, hacia: [880, 330] },
-    { numero: 7, nombre: 'Rampa de salto y puente', x: 230, z: 860, hacia: [420, 860] },
+    { nombre: 'Cruce plano', x: 200, z: 795, hacia: [200, 860] },
+    { nombre: 'Bajada que se bifurca', x: 330, z: 400, hacia: [330, 520] },
+    { nombre: 'Bifurcación desde abajo', x: 420, z: 760, hacia: [420, 650] },
+    { nombre: 'Salida en mitad de una rampa', x: 390, z: 330, hacia: [480, 330] },
+    { nombre: 'Rampa desde abajo', x: 620, z: 330, hacia: [480, 330] },
+    { nombre: 'Curva con salida', x: 690, z: 860, hacia: [760, 860] },
+    { nombre: 'Curva desde el norte', x: 775, z: 580, hacia: [760, 660] },
+    { nombre: 'Horquillas y mirador', x: 1040, z: 720, hacia: [1170, 520] },
+    { nombre: 'Mirador hacia abajo', x: 1112, z: 361, hacia: [1050, 375] },
+    { nombre: 'Túnel con cruce', x: 825, z: 330, hacia: [880, 330] },
+    { nombre: 'Túnel desde el este', x: 1340, z: 376, hacia: [1330, 330] },
+    { nombre: 'Túnel desde el norte', x: 1040, z: 71, hacia: [1100, 50] },
+    { nombre: 'Cruce bajo tierra', x: 1100, z: 280, y: PROFUNDO, hacia: [1100, 330] },
+    { nombre: 'Rampa de salto y puente', x: 230, z: 860, hacia: [420, 860] },
+    { nombre: 'Puente y salto desde el este', x: 620, z: 860, hacia: [420, 860] },
+    { nombre: 'Rotonda grande', x: 1610, z: 560, hacia: [1660, 560] },
+    { nombre: 'Rotonda pequeña', x: 1684, z: 438, hacia: [1660, 316] },
+    { nombre: 'Cruce en A', x: 1630, z: 300, hacia: [1580, 300] },
+    { nombre: 'Cruce en A desde arriba', x: 1612, z: 170, hacia: [1500, 100] },
+    { nombre: 'Plaza redonda', x: 1770, z: 560, hacia: [1855, 560] },
+    { nombre: 'Plaza cuadrada', x: 1700, z: 630, hacia: [1700, 715] },
+    { nombre: 'Calle en ladera', x: 1750, z: 286, hacia: [1805, 255] },
+    { nombre: 'Calle en ladera desde el este', x: 2050, z: 286, hacia: [1995, 255] },
+    { nombre: 'Rampa a la azotea', x: 1370, z: 1000, hacia: [1370, 1060] },
+    { nombre: 'Azotea del centro comercial', x: 1478, z: 1060, y: BASE + 8, hacia: [1530, 1060] },
+    { nombre: 'Bajada al aparcamiento subterráneo', x: 1850, z: 975, hacia: [1850, 1000] },
+    { nombre: 'Aparcamiento subterráneo', x: 1830, z: 1135, y: PROFUNDO, hacia: [1830, 1110] },
   ];
+  estaciones.forEach((e, i) => { e.numero = i + 1; });
 
   function construir(g) {
     const nombrados = {};
@@ -91,7 +116,99 @@ FUENTES.pruebas = (() => {
     const rio = [];
     for (let z = 600; z <= LARGO + 40; z += 40) rio.push({ x: 530 + 12 * Math.sin(z / 70), z, ancho: 24, y: BASE - 5 });
 
-    return { ciudades: [], rio, enlaces: [], monte: { subidas: [zig], vuelta: [], miradores } };
+    piezasDelEste(nudo, une, cadena, nombrados.S4c);
+    const edificios = centrosComerciales({ nudo, une, cadena, trinchera }, nombrados);
+    return { ciudades: [], rio, enlaces: [], monte: { subidas: [zig], vuelta: [], miradores }, edificios };
+  }
+
+  // --- las piezas de la ciudad nueva, al este. Rotondas y plazas redondas son un anillo de tramos rectos (girando poco en cada nudo,
+  // así van en inglete); cada calle que llega se une a un nudo del anillo, que pasa a ser un cruce. Las rotondas son de un solo
+  // sentido (`unico`), el contrario a las agujas del reloj visto desde arriba con el norte arriba (se circula por la derecha)
+  const RONDA = {
+    grande: { x: 1700, z: 560, radio: 40, lados: 12, ancho: 14, unico: true },
+    pequeña: { x: 1660, z: 300, radio: 16, lados: 8, ancho: 9, unico: true },
+    plaza: { x: 1900, z: 560, radio: 45, lados: 12, ancho: 12, unico: false },
+  };
+  const PLAZA_CUADRADA = { x: 1700, z: 760, lado: 90 };
+  const RADIO_LADERA = 110;   // la calle que rodea la ladera va a esta distancia de su centro: siempre a la misma altura
+
+  // el anillo; devuelve sus nudos por rumbo: e (este), s (sur, +z), o (oeste), n (norte)
+  function anillo(prefijo, r, nudo, une) {
+    const lista = [];
+    for (let k = 0; k < r.lados; k++) { const a = (k / r.lados) * Math.PI * 2; lista.push(nudo(prefijo + k, r.x + Math.cos(a) * r.radio, r.z + Math.sin(a) * r.radio)); }
+    // de cada nudo al anterior en ángulo: con +z al sur, es ir de este a norte a oeste a sur
+    lista.forEach((n, k) => une(lista[(k + 1) % lista.length], n, 'calle', { ancho: r.ancho, unico: r.unico }));
+    const cuarto = r.lados / 4;
+    return { e: lista[0], s: lista[cuarto], o: lista[2 * cuarto], n: lista[3 * cuarto] };
+  }
+
+  function piezasDelEste(nudo, une, cadena, S4c) {
+    const grande = anillo('RG', RONDA.grande, nudo, une), pequeña = anillo('RP', RONDA.pequeña, nudo, une), plaza = anillo('PR', RONDA.plaza, nudo, une);
+
+    // la recta que llega del circuito, y la rotonda grande con sus cuatro salidas
+    const G0 = nudo('G0', 1600, 560);
+    une(S4c, G0, 'calle'); une(G0, grande.o, 'calle');
+    une(grande.n, pequeña.s, 'calle');
+    une(grande.e, plaza.o, 'calle');
+
+    // la plaza cuadrada: cuatro esquinas (giran 90°, así que son cruces) y el lado norte partido en dos para la calle que llega en T
+    const { x, z, lado } = PLAZA_CUADRADA, m = lado / 2;
+    const NO = nudo('QNO', x - m, z - m), NE = nudo('QNE', x + m, z - m), SE = nudo('QSE', x + m, z + m), SO = nudo('QSO', x - m, z + m);
+    const QN = nudo('QN', x, z - m), QE = nudo('QE', x + m, z);
+    cadena([NO, QN, NE, QE, SE, SO, NO], 'calle');
+    une(grande.s, QN, 'calle');
+    cadena([G0, nudo('G1', 1570, 680), SO], 'calle');
+
+    // de la plaza redonda: al sur, una diagonal hasta la plaza cuadrada; al este, una calle que vuelve por el sur hasta su esquina
+    cadena([plaza.s, nudo('PS', 1900, 700), QE], 'calle');
+    const PE = nudo('PE', 2010, 560);
+    une(plaza.e, PE, 'calle');
+    cadena([PE, nudo('PE1', 2010, 800), nudo('PE2', 1880, 880), SE], 'calle');
+
+    // el cruce en A: dos calles que se juntan en ángulo agudo (unos 28°) en la salida oeste de la rotonda pequeña, con un travesaño
+    // entre ellas y sus pies unidos por arriba, hasta la salida norte de la rotonda
+    const vertice = nudo('AV', 1580, 300), pie1 = nudo('AP1', 1420, 150), pie2 = nudo('AP2', 1500, 100);
+    const medio = (p, q, nombre) => nudo(nombre, (p.x + q.x) / 2, (p.z + q.z) / 2);
+    const A1 = medio(vertice, pie1, 'AM1'), A2 = medio(vertice, pie2, 'AM2');
+    une(pequeña.o, vertice, 'calle');
+    cadena([vertice, A1, pie1], 'calle'); cadena([vertice, A2, pie2], 'calle'); une(A1, A2, 'calle');
+    cadena([pie1, pie2, nudo('N7', 1660, 200), pequeña.n], 'calle');
+
+    // la calle en ladera: un arco a RADIO_LADERA del centro de la colina por su cara sur (de 150° a 30°), sin cuesta ni inclinación de
+    // lado; sus dos extremos bajan en línea recta, ladera abajo (la única cuesta, a lo largo, ~11 %)
+    const arco = [];
+    for (let k = 0; k <= 8; k++) {
+      const a = ((150 - k * 15) * Math.PI) / 180;
+      arco.push(nudo('LA' + k, LADERA.x + Math.cos(a) * RADIO_LADERA, LADERA.z + Math.sin(a) * RADIO_LADERA));
+    }
+    cadena(arco, 'calle');
+    const pie = (a, nombre) => nudo(nombre, LADERA.x + Math.cos(a) * 200, LADERA.z + Math.sin(a) * 200);
+    cadena([pequeña.e, pie((150 * Math.PI) / 180, 'LO'), arco[0]], 'calle');
+    cadena([arco[arco.length - 1], pie((30 * Math.PI) / 180, 'LE'), nudo('LE1', 2060, 450), PE], 'calle');
+  }
+
+  // los centros comerciales, al sur de las plazas, en una calle que va de la plaza cuadrada a la vuelta del este: uno con azotea (la
+  // rampa sale de esa calle por el oeste) y otro con sótano (la trinchera baja hacia el sur desde la calle)
+  function centrosComerciales(h, nombrados) {
+    const V0 = h.nudo('V0', 1370, 960), V1 = h.nudo('V1', 1655, 960), V2 = h.nudo('V2', 1850, 960), V3 = h.nudo('V3', 2010, 960);
+    h.cadena([V0, V1, V2, V3], 'calle');
+    h.une(nombrados.QSO, V1, 'calle'); h.une(nombrados.PE1, V3, 'calle');
+    const arriba = CENTROS.conAzotea(h, 'CA', { x: 1500, z: 1060, ancho: 60, fondo: 40, base: BASE });
+    h.une(V0, arriba.pie, 'calle');
+    const abajo = CENTROS.conSotano(h, 'CS', { x: 1850, z: 1130, ancho: 60, fondo: 50, base: BASE, profundo: PROFUNDO, arriba: V2 });
+    return [arriba.edificio, abajo.edificio];
+  }
+
+  // árboles y rocas: en las isletas de las rotondas y en los parques de las plazas (una roca grande hace de monumento)
+  function campo() {
+    const lista = [], pino = (x, z) => lista.push({ tipo: 'pino', x, z, radio: 2, alto: 8 }), roca = (x, z, radio, alto) => lista.push({ tipo: 'roca', x, z, radio, alto });
+    const corona = (c, r, n, fase = 0) => { for (let k = 0; k < n; k++) { const a = fase + (k / n) * Math.PI * 2; pino(c.x + Math.cos(a) * r, c.z + Math.sin(a) * r); } };
+    roca(RONDA.grande.x, RONDA.grande.z, 4, 6); corona(RONDA.grande, 18, 6, 0.3);
+    pino(RONDA.pequeña.x, RONDA.pequeña.z);
+    roca(RONDA.plaza.x, RONDA.plaza.z, 3, 5); corona(RONDA.plaza, 22, 8, 0.2);
+    for (const dx of [-22, 22]) for (const dz of [-22, 22]) pino(PLAZA_CUADRADA.x + dx, PLAZA_CUADRADA.z + dz);
+    roca(PLAZA_CUADRADA.x, PLAZA_CUADRADA.z, 3, 4);
+    return lista;
   }
 
   // se empieza en la estación 1
@@ -99,5 +216,5 @@ FUENTES.pruebas = (() => {
   const anguloDe = e => Math.atan2(e.hacia[0] - e.x, e.hacia[1] - e.z);
   for (const e of estaciones) e.ang = anguloDe(e);
 
-  return { nombre: 'pruebas', ancho: ANCHO, largo: LARGO, terreno, estaciones, construir, campo: () => [], salida };
+  return { nombre: 'pruebas', ancho: ANCHO, largo: LARGO, terreno, estaciones, construir, campo, salida };
 })();

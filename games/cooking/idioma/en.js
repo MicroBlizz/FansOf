@@ -1,6 +1,9 @@
 // Fans of Cooking · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.2.2
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha puesto un anuncio en la nevera y Phony ha jurado que solo anunciaba queso.": "Microblizz put an ad on the fridge and Phony swore it only advertised cheese.",
   // 0.2.1
   "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
   "Microblizz ha pedido un informe de la cocina y Phony ha entregado uno con salsa.": "Microblizz asked for a kitchen report and Phony handed in one with sauce on it.",

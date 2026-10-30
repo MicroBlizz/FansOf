@@ -62,7 +62,7 @@ function hoy() { return todayStr(); }
 /* =========================================================
    MONETIZACIÓN · los dos puntos que se conectan al publicar
    pagar(): Google Play Billing / App Store (por ejemplo, con Capacitor y RevenueCat)
-   verAnuncio(): anuncios con premio de AdMob
+   verAnuncio(): anuncios con premio, de la capa común ANUNCIOS de core
    En el prototipo los dos simulan, para probar el circuito entero sin cobrar nada.
    ========================================================= */
 function pagar(prod, alPagar) {
@@ -78,9 +78,7 @@ function pagar(prod, alPagar) {
 function verAnuncio(motivo, alAcabar) {
   evento('anuncio', { motivo });
   if (SAVE.sinAnuncios) { alAcabar(); return; }
-  const a = $('#anuncio'), n = $('#anuncio-cuenta'), pr = $('#anuncio-promo'); let s = 5; pr.innerHTML = PROMO.html(); PROMO.enlaza(pr); n.textContent = s; a.hidden = false;
-  const was = M.bus ? M.bus.gain.value : 0; if (M.bus) M.bus.gain.value = 0;
-  const iv = setInterval(() => { s--; n.textContent = s; if (s <= 0) { clearInterval(iv); a.hidden = true; if (M.bus) M.bus.gain.value = was || volMusica(); alAcabar(); } }, 1000);
+  ANUNCIOS.ver(motivo).then(r => { if (r.visto) alAcabar(); });   // el anuncio lo pone la capa común de core
 }
 
 /* =========================================================

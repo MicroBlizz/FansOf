@@ -4,6 +4,8 @@
 //   · Rampa (trinchera): a cada lado un muro en U (cara de dentro, remate y cara de fuera) que asoma un poco sobre el terreno, y
 //     por fuera una franja de suelo que tapa el borde del terreno (que se recorta sobre la trinchera).
 //   · Túnel: paredes y techo, a la altura de la carcasa (encaja con la sala de los cruces).
+//   · Viaducto (rampa elevada, azotea): un pretil a cada lado y, salvo sobre un edificio, una falda que baja hasta el terreno. Donde
+//     el viaducto se acaba, o sigue por un tramo más estrecho, un pretil de través cierra lo que queda al aire.
 'use strict';
 CINTAS.tramo = (() => {
   const { colores: C, medidas: M } = CINTAS.estilo;
@@ -44,6 +46,27 @@ CINTAS.tramo = (() => {
     lista.cuadrilatero(G.aLado(a, -d, techoA), G.aLado(b, -d, techoB), G.aLado(b, d, techoB), G.aLado(a, d, techoA), C.tunel);
   }
 
+  // los dos lados de un viaducto: el pretil y su falda hasta el terreno (si va sobre un edificio, la fachada ya hace de falda)
+  function ladosViaducto(tramo, a, b, mitad, lista) {
+    const d = mitad + G.HOLGURA / 2, arriba = M.pretilViaducto;
+    for (const lado of [-1, 1]) {
+      const pa = lado * d, abajoA = tramo.azotea ? a.y - 0.5 : natural(a, pa) - 1, abajoB = tramo.azotea ? b.y - 0.5 : natural(b, pa) - 1;
+      lista.cuadrilatero(G.aLado(a, pa, abajoA), G.aLado(b, pa, abajoB), G.aLado(b, pa, b.y + arriba), G.aLado(a, pa, a.y + arriba), C.muro);
+    }
+  }
+  // el pretil de través en un extremo del viaducto: entero si es un final, a los lados si sigue un tramo más estrecho
+  function remates(tramo, secciones, lista) {
+    const mitad = tramo.ancho / 2 + G.HOLGURA / 2;
+    for (const [seccion, nodo] of [[secciones[0], CIUDAD.nodos[tramo.a]], [secciones[secciones.length - 1], CIUDAD.nodos[tramo.b]]]) {
+      if (G.corteDe(tramo, nodo) > 0) continue;   // en un cruce lo cierra el cruce
+      const otros = G.tramosDe(nodo).filter(o => o !== tramo), hueco = otros.length ? Math.max(...otros.map(o => o.ancho / 2 + G.HOLGURA / 2)) : 0;
+      if (hueco >= mitad) continue;
+      const pared = (d0, d1) => lista.cuadrilatero(G.aLado(seccion, d0, seccion.y - 0.5), G.aLado(seccion, d1, seccion.y - 0.5), G.aLado(seccion, d1, seccion.y + M.pretilViaducto), G.aLado(seccion, d0, seccion.y + M.pretilViaducto), C.muro);
+      if (hueco === 0) pared(-mitad, mitad);
+      else { pared(-mitad, -hueco); pared(hueco, mitad); }
+    }
+  }
+
   function rayas(tramo, secciones, lista) {
     if (tramo.tipo === 'mirador') return;
     const a = CIUDAD.nodos[tramo.a];
@@ -68,7 +91,9 @@ CINTAS.tramo = (() => {
       calzada(tramo, a, b, mitad, listas.calzada, enSuperficie);
       if (tramo.tipo === 'rampa') murosTrinchera(a, b, mitad, listas.muros);
       if (tramo.tipo === 'tunel') carcasaTunel(a, b, mitad, listas.tunel);
+      if (tramo.tipo === 'viaducto') ladosViaducto(tramo, a, b, mitad, listas.muros);
     }
+    if (tramo.tipo === 'viaducto') remates(tramo, secciones, listas.muros);
     rayas(tramo, secciones, listas.calzada);
   }
 

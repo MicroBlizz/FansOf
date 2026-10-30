@@ -19,7 +19,8 @@ CINTAS.estilo = {
     bajoTunel: 1.5,         // las paredes del túnel empiezan por debajo de la calzada
     grosorMuro: 0.8,
     alturaPretil: 1,        // el muro de la trinchera sobresale del terreno
-    franjaFuera: 4,         // suelo que tapa el borde recortado del terreno junto a la trinchera
+    franjaFuera: 4,
+    pretilViaducto: 1.1,    // lo que sube el pretil de una rampa elevada o de una azotea sobre la calzada         // suelo que tapa el borde recortado del terreno junto a la trinchera
     anchoRayaAmarilla: 0.24, largoRaya: 3, cadaRaya: 6,
     anchoRayaBlanca: 0.3,
   },

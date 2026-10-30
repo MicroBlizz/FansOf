@@ -290,7 +290,6 @@ function pintaTodo() {
   if (J.modo === 'final') pintaFinalVerdadero();
   pintaCasi();
   pintaPanel();
-  pintaAnuncio();
 }
 
 /* ---------- el dedo ---------- */

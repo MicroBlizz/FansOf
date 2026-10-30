@@ -1,6 +1,9 @@
 // Fans of Rumble · Inglés (1/8): cómo se juega, la pantalla principal, el jefe y el chat de despedidas.
 'use strict';
 IDIOMA.add({
+  // 0.9.158
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha ordenado los carteles de la arena y Phony ha vendido palomitas con descuento.": "Microblizz tidied the arena signs and Phony sold popcorn at a discount.",
   // 0.9.157
   "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
   "Microblizz ha abierto un libro de reclamaciones en la arena y Phony ha cobrado por rellenarlo.": "Microblizz opened a complaints book in the arena and Phony charged for filling it in.",

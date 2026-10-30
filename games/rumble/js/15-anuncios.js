@@ -2,7 +2,7 @@
 'use strict';
 /* ---------- v0.9.16: anuncios con premio ----------
    El jugador decide si ve un anuncio y, a cambio, recibe algo. Nunca hay anuncios obligatorios ni en mitad de la partida.
-   En esta versión el anuncio es de prueba (5 s, de Microblizz). En la app de Google Play se cambiará por uno de verdad (AdMob).
+   El anuncio lo pone la capa común ANUNCIOS de core (core/js/sistema/anuncios.js): de verdad (AdMob, H5 Games Ads) o el nuestro de reserva (5 s, de Microblizz).
    Con «Sin anuncios» (tienda) los premios llegan al momento, sin ver nada, pero con el mismo tope diario. */
 const ADS = {
   dayMax: 30,     // anuncios al día en total (entre todos los sitios). v0.9.23: de 12 a 30
@@ -24,18 +24,6 @@ const ADS = {
     swapw: { max: 6, name: 'Cambiar una misión semanal', semana: true },   // v0.9.71: cupo por semana (se pueden gastar todos el último día)
   },
 };
-const AD_JOKES = [
-  ['PayStation 6 Digital Ultra', 'Ahora sin lector, sin botones y sin consola. Solo la factura.'],
-  ['Microblizz Premium Plus Gold', 'Paga más y te dejamos jugar a lo que ya compraste.'],
-  ['Curso: despedir con una sonrisa', 'Impartido por el CEO de Microblizz. Plazas limitadas (las demás las hemos recortado).'],
-  ['Café del Becario', 'El café que se toma solo… porque ya no queda nadie en la oficina.'],
-  ['Caja de botín misteriosa', '¿Qué habrá dentro? Spoiler: nada. Pero el cofre brilla mucho.'],
-  ['Seguro anti-cierre de juegos', 'Te protege de todo. No cubre cierres de juegos.'],
-  ['Microblizz Bank', 'Te prestamos para el pase de batalla. Intereses del 300 %. ¡Sin preguntas!'],
-  ['Phony Cloud Infinito', 'Guarda tus juegos en la nube. Te los borramos cuando nos apetezca.'],
-  ['Remaster 70 €', 'El mismo juego de siempre, con un filtro nuevo y el precio de estreno.'],
-  ['Silla Gamer Ejecutiva', 'Ergonómica, con ruedas y con un contrato de permanencia de 24 meses.'],
-];
 const TV_SVG = '<svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="4" width="16" height="11" rx="2.5" fill="#7df3ff" style="stroke: var(--outline)" stroke-width="1.6"/><path d="M8.3 7.3v5.4l4.6-2.7z" fill="#20102c"/><path d="M7 18h6" stroke="#20102c" stroke-width="1.8" stroke-linecap="round"/></svg>';
 function adsState() {
   const A = SAVE.ads || (SAVE.ads = { day: '', n: 0, by: {}, noAds: false }), d = todayStr();
@@ -52,35 +40,12 @@ function adBtn(slot, label, extra) {
 }
 
 // ver un anuncio y, al acabar, dar el premio
-let adRun = null;
 function watchAd(slot, onReward) {
   const sem = !!ADS.slots[slot].semana;
   if (!adLeft(slot)) { toast(sem ? 'Esta semana ya no quedan más cambios. ¡El lunes más!' : adsState().n >= ADS.dayMax ? `Ya has visto los ${ADS.dayMax} anuncios de hoy. ¡Mañana más!` : 'Por hoy ya no quedan más aquí. ¡Mañana más!'); play('deny'); return; }
   const done = () => { const A = adsState(); if (sem) A.byW[slot] = (A.byW[slot] || 0) + 1; else { A.n++; A.by[slot] = (A.by[slot] || 0) + 1; } stat('ads', 1); onReward(); saveGame(); updateWallets(); };
   if (adsFree()) { play('crown'); done(); return; }
-  adOverlay(); const ov = $('#ad-screen'), J = pick(AD_JOKES);
-  $('#ad-prod').textContent = J[0]; $('#ad-line').textContent = J[1];
-  const pr = $('#ad-promo'); pr.innerHTML = PROMO.html(); PROMO.enlaza(pr);   // la miniatura de otro de nuestros juegos
-  ov.hidden = false; play('select');
-  let t = ADS.secs; const tick = () => {
-    const b = $('#ad-get');
-    if (t > 0) { b.disabled = true; b.textContent = `El premio llega en ${t}…`; $('#ad-bar').style.setProperty('--p', ((ADS.secs - t) / ADS.secs * 100) + '%'); t--; adRun = setTimeout(tick, 1000); return; }
-    $('#ad-bar').style.setProperty('--p', '100%'); b.disabled = false; b.textContent = 'RECOGER PREMIO'; play('levelup');
-  };
-  clearTimeout(adRun); tick();
-  $('#ad-get').onclick = () => { if (t > 0) return; ov.hidden = true; play('crown'); done(); };
-  $('#ad-skip').onclick = () => { clearTimeout(adRun); ov.hidden = true; play('select'); toast('Anuncio cerrado: sin premio'); };
-}
-function adOverlay() {
-  if ($('#ad-screen')) return;
-  $('#ui').insertAdjacentHTML('beforeend', `<section id="ad-screen" class="ad-screen" hidden role="dialog" aria-label="Anuncio">
-    <div class="ad-card"><div class="ad-top"><span class="ad-flag">ANUNCIO</span><span>Un mensaje de nuestros patrocinadores… que somos nosotros.</span></div>
-      <div class="ad-body"><div class="ad-logo ol">MICROBLIZZ</div><b class="ad-prod ol" id="ad-prod"></b><p class="ad-line" id="ad-line"></p></div>
-      <div id="ad-promo"></div>
-      <div class="ad-bar" id="ad-bar"><i></i></div>
-      <button class="btn-big ol" id="ad-get" disabled>…</button>
-      <button class="btn-link" id="ad-skip">Cerrar sin premio</button>
-      <p class="ad-note">Anuncio de prueba. En la app de Google Play aquí saldrá un anuncio de verdad.</p></div></section>`);
+  ANUNCIOS.ver(slot).then(r => { if (r.visto) done(); });   // el anuncio lo pone la capa común de core (de verdad o el nuestro de reserva)
 }
 // ---- sitios donde se ofrece
 function adIdleUI() {   // HORAS EXTRA: turbo y ganancias de 4 h al momento (v0.9.18: el x2 va en la ventana de RECOGER)

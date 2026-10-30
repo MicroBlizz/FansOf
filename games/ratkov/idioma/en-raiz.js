@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.2.29
+  "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
+  "Microblizz ha ordenado la cartelera del almacén y las ratas han cobrado en queso.": "Microblizz tidied the warehouse billboard and the rats got paid in cheese.",
   // 0.2.28
   "<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: test bug reports reach the team better (the “!” button is for administrators only) and the shared systems keep improving.",
   "Microblizz ha puesto un buzón en la pared del almacén y las ratas ya mandan reportes con migas adjuntas.": "Microblizz put a mailbox on the warehouse wall and the rats already send reports with crumbs attached.",

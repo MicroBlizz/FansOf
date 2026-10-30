@@ -93,6 +93,10 @@ function swDibujaCartaEn(c, P, carta, t, inclina) {
     // las dos acciones: izquierda y derecha, con su flecha
     const [a, b] = A.iconos;
     const lx = -58, rx = 58, yy = y + 68;
+    if (carta.tipo === 'accion') {   // el lado que ataca lleva un fondo rojo
+      const [LL, RR] = swLados(P, carta);
+      for (const [S, x] of [[LL, lx], [RR, rx]]) if (swEsAtaque(S)) { c.fillStyle = 'rgba(232,65,58,.22)'; c.fillRect(x - 54, yy - 54, 108, 128); c.fillStyle = '#e8413a'; c.fillRect(x - 54, yy - 54, 108, 5); }
+    }
     c.save(); c.globalAlpha = inclina > 0 ? 0.4 : 1; swDibujaC(c, a, lx, yy, 5); swDibujaC(c, 'i-flecha', lx, yy + 70, 2, true); c.restore();
     c.save(); c.globalAlpha = inclina < 0 ? 0.4 : 1; swDibujaC(c, b, rx, yy, 5); swDibujaC(c, 'i-flecha', rx, yy + 70, 2); c.restore();
     c.fillStyle = '#c8b08a'; c.fillRect(-2, yy - 54, 4, 128);

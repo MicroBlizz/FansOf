@@ -122,11 +122,12 @@ FUENTES.pruebas = (() => {
   }
 
   // --- las piezas de la ciudad nueva, al este. Rotondas y plazas redondas son un anillo de tramos rectos (girando poco en cada nudo,
-  // así van en inglete); cada calle que llega se une a un nudo del anillo, que pasa a ser un cruce
+  // así van en inglete); cada calle que llega se une a un nudo del anillo, que pasa a ser un cruce. Las rotondas son de un solo
+  // sentido (`unico`), el contrario a las agujas del reloj visto desde arriba con el norte arriba (se circula por la derecha)
   const RONDA = {
-    grande: { x: 1700, z: 560, radio: 40, lados: 12, ancho: 14 },
-    pequeña: { x: 1660, z: 300, radio: 16, lados: 8, ancho: 9 },
-    plaza: { x: 1900, z: 560, radio: 45, lados: 12, ancho: 12 },
+    grande: { x: 1700, z: 560, radio: 40, lados: 12, ancho: 14, unico: true },
+    pequeña: { x: 1660, z: 300, radio: 16, lados: 8, ancho: 9, unico: true },
+    plaza: { x: 1900, z: 560, radio: 45, lados: 12, ancho: 12, unico: false },
   };
   const PLAZA_CUADRADA = { x: 1700, z: 760, lado: 90 };
   const RADIO_LADERA = 110;   // la calle que rodea la ladera va a esta distancia de su centro: siempre a la misma altura
@@ -135,7 +136,8 @@ FUENTES.pruebas = (() => {
   function anillo(prefijo, r, nudo, une) {
     const lista = [];
     for (let k = 0; k < r.lados; k++) { const a = (k / r.lados) * Math.PI * 2; lista.push(nudo(prefijo + k, r.x + Math.cos(a) * r.radio, r.z + Math.sin(a) * r.radio)); }
-    lista.forEach((n, k) => une(n, lista[(k + 1) % lista.length], 'calle', { ancho: r.ancho }));
+    // de cada nudo al anterior en ángulo: con +z al sur, es ir de este a norte a oeste a sur
+    lista.forEach((n, k) => une(lista[(k + 1) % lista.length], n, 'calle', { ancho: r.ancho, unico: r.unico }));
     const cuarto = r.lados / 4;
     return { e: lista[0], s: lista[cuarto], o: lista[2 * cuarto], n: lista[3 * cuarto] };
   }

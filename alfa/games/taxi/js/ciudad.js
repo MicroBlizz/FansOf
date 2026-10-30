@@ -227,13 +227,15 @@ const CIUDAD = (() => {
     return nodos[0];
   }
   // camino más corto (Dijkstra con una cola sencilla: el grafo es pequeño)
+  // ¿se puede ir de un nudo a su vecino? Los tramos de un solo sentido (`unico`) solo se recorren de a a b
+  const sePuede = (desde, hasta) => { const e = aristaDe.get(desde + ',' + hasta); return !!e && (!e.unico || e.a === desde); };
   function camino(desde, hasta) {
     if (desde === hasta) return [desde];
     const dist = new Map([[desde, 0]]), prev = new Map(), abierta = [desde], cerrada = new Set();
     while (abierta.length) {
       let k = 0; for (let i = 1; i < abierta.length; i++) if (dist.get(abierta[i]) < dist.get(abierta[k])) k = i;
       const n = abierta.splice(k, 1)[0]; if (n === hasta) break; cerrada.add(n);
-      for (const v of nodos[n].vecinos) { if (cerrada.has(v)) continue; const d = dist.get(n) + aristaDe.get(n + ',' + v).largo; if (!dist.has(v) || d < dist.get(v)) { dist.set(v, d); prev.set(v, n); if (!abierta.includes(v)) abierta.push(v); } }
+      for (const v of nodos[n].vecinos) { if (cerrada.has(v) || !sePuede(n, v)) continue; const d = dist.get(n) + aristaDe.get(n + ',' + v).largo; if (!dist.has(v) || d < dist.get(v)) { dist.set(v, d); prev.set(v, n); if (!abierta.includes(v)) abierta.push(v); } }
     }
     if (!prev.has(hasta)) return [desde];
     const c = [hasta]; let k = hasta; while ((k = prev.get(k)) !== undefined) c.unshift(k); return c;
@@ -279,6 +281,6 @@ const CIUDAD = (() => {
   const trozoEn = (x, z) => trozos[clamp(Math.floor(x / TR), 0, NTX - 1) * NTZ + clamp(Math.floor(z / TR), 0, NTZ - 1)];
   const salida = () => FUENTE.salida(mundo);
   const mundo = { mapa: FUENTE.nombre, estaciones: FUENTE.estaciones || [], salida, tierra: TE.tierra, ancho: ANCHO, largo: LARGO, ciudades, celdas, edificios, nodos, aristas, aristaDe, rio, enlaces, monte, miradores, puentes, paredes, quitamiedos, campo, rampas, escondites, trozos, trozoEn, NTX, NTZ,
-    altura, alturaArista, alturaTramo: perfil.alturaEn, alturaCruce: perfil.enPlano, alturaSuelo, natural, suelo, fondo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
+    altura, alturaArista, alturaTramo: perfil.alturaEn, alturaCruce: perfil.enPlano, alturaSuelo, natural, suelo, fondo, enTrinchera, manzanaEn, carreteraEn, distCarretera, enRio, cerca, libre, nodosEn, nodoCercano, camino, sePuede, carril, puntoAcera, zona, BARRIOS: MANZANAS.BARRIOS, cauce: (x, z) => CARRETERAS.cauce(rio, x, z) };
   return mundo;
 })();

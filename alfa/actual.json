@@ -1,8 +1,8 @@
 {
- "build": 650,
- "hash": "f5d1d9a",
- "fecha": "2026-10-30T04:51:03Z",
- "mensaje": "Taxi: centros comerciales en el circuito de pruebas",
+ "build": 651,
+ "hash": "9b636a6",
+ "fecha": "2026-10-30T04:55:51Z",
+ "mensaje": "Taxi: el tráfico va por su carril y las rotondas son de un solo sentido",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

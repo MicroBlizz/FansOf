@@ -21,17 +21,23 @@ function mgTexto(c, txt, x, y, tam, col = '#fff', alin = 'center', borde = OL, f
 }
 function mgPanel(c, x, y, w, h, r, fondo, borde = OL, grosor = 4) { c.beginPath(); rrPath(c, x, y, w, h, r); c.fillStyle = fondo; c.fill(); if (borde) { c.lineWidth = grosor; c.strokeStyle = borde; c.stroke(); } }
 function mgFondo(c, portada) {   // la portada usa la ilustración del prado; la partida, la textura lisa (no compite con las piezas)
-  const S = MG_IMG.SUELO;
-  if (S && !(portada && MG_IMG.FONDO)) {   // la textura pintada del prado, repetida
-    if (!MG_V.patron || MG_V.patronDe !== S) { MG_V.patron = c.createPattern(S, 'repeat'); MG_V.patronDe = S; }
-    c.save(); c.scale(0.5, 0.5); c.fillStyle = MG_V.patron; c.fillRect(0, 0, 1080, MG_V.H * 2); c.restore(); return;
+  // se pinta una vez al tamaño real de la pantalla y luego solo se copia (escalarlo en cada fotograma frenaba la portada)
+  const k = mgK(), modo = portada && MG_IMG.FONDO ? 'F' : MG_IMG.SUELO ? 'S' : '-', clave = [k, MG_V.H, modo].join('|');
+  if (modo === '-') return mgFondoLiso(c);
+  if (!MG_V.fondos) MG_V.fondos = {};
+  let cv = MG_V.fondos[clave];
+  if (!cv) {
+    cv = document.createElement('canvas'); cv.width = Math.ceil(540 * k); cv.height = Math.ceil(MG_V.H * k);
+    const g = cv.getContext('2d'); g.imageSmoothingQuality = 'high'; g.scale(k, k);
+    if (modo === 'S') { g.scale(0.5, 0.5); g.fillStyle = g.createPattern(MG_IMG.SUELO, 'repeat'); g.fillRect(0, 0, 1080, MG_V.H * 2); }
+    else { const im = MG_IMG.FONDO, r = Math.max(540 / im.width, MG_V.H / im.height); g.drawImage(im, (540 - im.width * r) / 2, (MG_V.H - im.height * r) / 2, im.width * r, im.height * r); g.fillStyle = 'rgba(255,248,230,.12)'; g.fillRect(0, 0, 540, MG_V.H); }   // con el velo claro de la portada ya puesto
+    MG_V.fondos[clave] = cv;
   }
-  const im = MG_IMG.FONDO;
-  if (im) { const r = Math.max(540 / im.width, MG_V.H / im.height); c.drawImage(im, (540 - im.width * r) / 2, (MG_V.H - im.height * r) / 2, im.width * r, im.height * r); return; }
+  c.drawImage(cv, 0, 0, 540, MG_V.H);
+}
+function mgFondoLiso(c) {   // mientras no ha llegado ninguna textura
   const g = c.createLinearGradient(0, 0, 0, MG_V.H); g.addColorStop(0, '#5f9e3f'); g.addColorStop(1, '#3f7a2c');
   c.fillStyle = g; c.fillRect(0, 0, 540, MG_V.H);
-  c.fillStyle = 'rgba(200,255,150,.10)';   // briznas sueltas
-  for (let i = 0; i < 90; i++) { const x = (i * 137) % 540, y = (i * 251) % MG_V.H; c.fillRect(x, y, 2, 6); c.fillRect(x + 4, y + 2, 2, 5); }
 }
 function mgBoton(id, x, y, w, h) { MG_HUD.botones.push({ id, x, y, w, h }); }
 function mgBotonEn(lx, ly) { return MG_HUD.botones.find(b => lx >= b.x && lx <= b.x + b.w && ly >= b.y && ly <= b.y + b.h); }

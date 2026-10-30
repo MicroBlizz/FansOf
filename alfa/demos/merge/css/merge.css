@@ -8,6 +8,9 @@ body { background: radial-gradient(120% 80% at 50% 0%, #c9f2a8 0%, #6cbf55 70%);
 @media (min-width: 600px) { #stage { border-radius: 26px; box-shadow: 0 30px 80px rgba(32, 60, 20, 0.35), 0 0 0 4px var(--mg-crema), 0 0 0 7px var(--mg-tinta); } }
 #carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 800 20px/1 'Baloo 2', system-ui, sans-serif; }
 #mg-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; font-family: 'Baloo 2', system-ui, sans-serif; color: var(--mg-cafe); }
+/* hasta que llegan los dibujos de la portada, el menú no se ve (ver MG_PORTADA en js/sprites.js) */
+body:not(.mg-listo) #mg-ui { opacity: 0; }
+#mg-ui { transition: opacity 0.35s; }
 #mg-ui button { pointer-events: auto; font-family: 'Luckiest Guy', 'Arial Black', sans-serif; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 #mg-ui button:focus-visible { outline: 3px solid var(--mg-azul); outline-offset: 3px; }
 [hidden] { display: none !important; }

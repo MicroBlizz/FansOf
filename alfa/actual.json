@@ -1,8 +1,8 @@
 {
- "build": 687,
- "hash": "d9b7fab",
- "fecha": "2026-10-30T17:31:03Z",
- "mensaje": "Mapas al día (Swipe)",
+ "build": 688,
+ "hash": "25d404d",
+ "fecha": "2026-10-30T17:49:13Z",
+ "mensaje": "Merge: portada sin dibujos provisionales y más fluida",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

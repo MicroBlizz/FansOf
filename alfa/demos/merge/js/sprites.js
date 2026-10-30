@@ -1,6 +1,6 @@
 // Fans of Merge · SPRITES: dónde está la imagen de cada pieza (pintadas en Yoshi con ComfyUI) y cómo se dibuja.
 // Si una imagen falta o aún no ha cargado, se dibuja un sustituto con código (forma y color de la pieza, contorno grueso),
-// así el juego se puede jugar siempre. Cada imagen se reduce una vez al tamaño de la casilla y se guarda ya hecha.
+// así el juego se puede jugar siempre (la portada no: espera a sus dibujos, ver MG_PORTADA). Cada imagen se reduce una vez al tamaño de la casilla y se guarda ya hecha.
 'use strict';
 const SPRITES = {
   brote: 'img/brote.png', zanahoria: 'img/zanahoria.png', huerto: 'img/huerto.png', casita: 'img/casita.png',
@@ -15,15 +15,22 @@ const SPRITES = {
   CHISPA: 'img/chispa.png', HOJA: 'img/hoja.png', RELAMPAGO: 'img/relampago.png', ESTRELLA: 'img/estrella.png', TABLON: 'img/tablon.png', BOTON: 'img/boton.png', LOGO: 'img/logo.png',
 };
 const MG_IMG = {};
-for (const k in SPRITES) {
-  const im = new Image(); im.decoding = 'async';
-  im.onload = () => { MG_IMG[k] = im; };
-  im.src = SPRITES[k] + '?v=' + VERSION;
+// Se cargan por turnos: primero lo que sale en la portada (el prado, el logo, el conejito, las piezas que caen y los botones), luego lo demás.
+// Así la portada está lista antes y no se ve nada provisional. MG_PORTADA.lista se pone a true cuando ha llegado lo suyo (o a los 6 s, por si falla algo).
+const MG_PORTADA = { lista: false, desde: 0, claves: ['FONDO', 'LOGO', 'BUNNY', 'brote', 'zanahoria', 'huerto', 'casita', 'madriguera', 'torre', 'palacio', 'flotante'], menus: ['boton-naranja', 'boton-verde', 'boton-azul', 'boton-rojo'] };
+function mgCargaImg(src, listo) {
+  return new Promise(fin => { const im = new Image(); im.decoding = 'async'; im.onload = () => { listo(im); fin(); }; im.onerror = fin; im.src = src + '?v=' + VERSION; });
 }
 // los dibujos de los menús en HTML: cuando uno carga, el body recibe la clase mg-img-<nombre> y merge.css lo usa en vez del dibujo de código
-for (const k of ['boton-naranja', 'boton-verde', 'boton-azul', 'boton-rojo', 'panel', 'carta', 'nivel', 'candado']) {
-  const im = new Image(); im.onload = () => document.body.classList.add('mg-img-' + k); im.src = 'img/' + k + '.png?v=' + VERSION;
-}
+const mgCargaMenu = k => mgCargaImg('img/' + k + '.png', () => document.body.classList.add('mg-img-' + k));
+const mgCargaSprite = k => mgCargaImg(SPRITES[k], im => { MG_IMG[k] = im; });
+const mgPortadaLista = () => { if (!MG_PORTADA.lista) { MG_PORTADA.lista = true; MG_PORTADA.desde = performance.now(); document.body.classList.add('mg-listo'); } };
+setTimeout(mgPortadaLista, 6000);
+Promise.all([...MG_PORTADA.claves.map(mgCargaSprite), ...MG_PORTADA.menus.map(mgCargaMenu)]).then(() => {
+  mgPortadaLista();
+  for (const k in SPRITES) if (!MG_PORTADA.claves.includes(k)) mgCargaSprite(k);
+  for (const k of ['panel', 'carta', 'nivel', 'candado']) mgCargaMenu(k);
+});
 const MG_CACHE = new Map();   // «tipo:tamaño» -> lienzo ya reducido
 function mgSpriteListo(tipo, lado) {
   const im = MG_IMG[tipo]; if (!im) return null;

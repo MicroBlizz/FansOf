@@ -27,7 +27,7 @@ function mgEmpieza(carta, nivelId) {
   }
   MG_P.cola = mgSorteo(MG_P.cartas, MG_P.pesos);
   mgSiguiente();
-  MG_P.camino = mgCaminoNuevo();
+  MG_P.camino = mgCaminoNuevo(); MG_P.semillaCamino = 1 + ((Math.random() * 1e6) | 0);   // la semilla del borde ondulado
   mgConejosNuevos();
   SAVE.partidas = (SAVE.partidas || 0) + 1; mgGuarda();
   mgMusica('animales');

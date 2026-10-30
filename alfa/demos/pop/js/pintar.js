@@ -3,7 +3,8 @@
 // el mapa de la ruta y la portada. Los dibujos de Yoshi se usan si están (sprites.js); si no, el repuesto pintado.
 'use strict';
 const PP_V = { H: 960, sc: 1, dpr: 1 };
-const PP_FUENTE = "'Jersey 10', monospace";
+const PP_FUENTE = "'Fredoka', 'Arial Rounded MT Bold', sans-serif";   // redondita y gordita (kawaii); Google Fonts
+const PP_LETRA = 0.74;   // Fredoka es más ancha que la letra pixelada de antes: todos los tamaños se multiplican por esto
 /* ---------- geometría del tablero ---------- */
 function ppGeom(n) { const lado = 440, x = 50, y = Math.round(PP_V.H / 2 - lado / 2 - 40); return { n, x, y, lado, celda: lado / n }; }
 function ppCentro(g, i) { const x = i % g.n, y = (i - x) / g.n; return [g.x + (x + 0.5) * g.celda, g.y + (y + 0.5) * g.celda]; }
@@ -14,9 +15,10 @@ const PP_COLORES = ['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila']; 
 const ppSpriteBurbuja = (i, n, arriba) => 'b-' + PP_COLORES[Math.floor(i / n) % PP_COLORES.length] + (arriba ? '-arriba' : '-abajo');
 function ppColorBurbuja(i, n, luz = 0) { const [h, s, l] = PP_FILAS[Math.floor(i / n) % PP_FILAS.length]; return `hsl(${h} ${s}% ${Math.min(96, l + luz)}%)`; }
 /* ---------- texto ---------- */
-function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#1a1030') {
-  c.font = `${tam}px ${PP_FUENTE}`; c.textAlign = alinea; c.textBaseline = 'middle';
-  c.lineJoin = 'round'; c.lineWidth = Math.max(3, tam / 8); c.strokeStyle = borde; c.strokeText(s, x, y);
+function ppTexto(c, s, x, y, tam, col = '#fff', alinea = 'center', borde = '#7a3a7a') {
+  tam = Math.round(tam * PP_LETRA);
+  c.font = `700 ${tam}px ${PP_FUENTE}`; c.textAlign = alinea; c.textBaseline = 'middle';
+  c.lineJoin = 'round'; c.lineWidth = Math.max(4, tam / 5); c.strokeStyle = borde; c.strokeText(s, x, y);
   c.fillStyle = col; c.fillText(s, x, y);
 }
 function ppTitulo(c, s, x, y, tam) { c.save(); ppTexto(c, s, x + 4, y + 6, tam, '#c84a9a', 'center', '#c84a9a'); ppTexto(c, s, x, y, tam, '#ffd64a', 'center', '#7a4a8a'); c.restore(); }
@@ -166,7 +168,7 @@ function ppPintaMarcador(c, t) {
     if (id && !PP_FX.vuelos.some(v => v.id === id)) ppSlimeRepuestoOImagen(c, id, 0, -4 - br * 14, 30, t, 1);
     c.restore();
     if (!id) continue;
-    const nom = tr(PP_SLIMES[id].pasiva); c.font = `19px ${PP_FUENTE}`; const w = c.measureText(nom).width;
+    const nom = tr(PP_SLIMES[id].pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
     ppTexto(c, nom, x, y + 62, w > 100 ? Math.floor(19 * 100 / w) : 19, '#fff');   // los nombres largos encogen para no pisar al vecino
     const fx = PP_SLIMES[id].fx, T = P.T;
     const parte = fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
@@ -215,11 +217,42 @@ function ppPintaSala(c, t) {
 const PP_MAPA = { cam: null };
 const PP_PASO = 128;   // distancia entre niveles
 function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 - (i - PP_MAPA.cam) * PP_PASO]; }
-// la manita que señala (dibujo de Yoshi, o una flecha si aún no está)
+// la manita que señala, dibujada aquí píxel a píxel (Daniel: la de Yoshi parecía el dedo corazón, que en algunos países
+// es un insulto): la manita clásica del cursor, con el ÍNDICE estirado a un lado, el pulgar al otro, los demás dedos doblados
+// y un puño azul cielo (rosa se perdía encima de las burbujas rosas). Está dibujada señalando hacia arriba y se voltea para que señale hacia abajo, con la punta del índice
+// justo en el centro del objetivo. O = contorno, W = guante, P = puño rosa.
+const PP_MANO_PX = [
+  '...OO..........',
+  '..OWWO.........',
+  '..OWWO.........',
+  '..OWWO.........',
+  '..OWWOOO.......',
+  '..OWWOWWOOO....',
+  'OOOWWOWWOWWOO..',
+  'OWWOWWOWWOWWWO.',
+  'OWWWWWWWWWWWWO.',
+  '.OWWWWWWWWWWWO.',
+  '..OWWWWWWWWWWO.',
+  '..OWWWWWWWWWO..',
+  '...OWWWWWWWWO..',
+  '...OPPPPPPPPO..',
+  '...OPPPPPPPPO..',
+  '...OOOOOOOOOO..',
+];
+const PP_MANO_PUNTA = 3.5;   // columna de la punta del índice
+let PP_MANO_CV = null;
+function ppManoLienzo() {
+  if (PP_MANO_CV) return PP_MANO_CV;
+  const h = PP_MANO_PX.length, w = PP_MANO_PX[0].length, cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const c = cv.getContext('2d'), col = { O: '#7a3a7a', W: '#ffffff', P: '#7ad0ff' };
+  // volteada: la fila de arriba (la punta) queda abajo
+  PP_MANO_PX.forEach((fila, y) => [...fila].forEach((ch, x) => { if (col[ch]) { c.fillStyle = col[ch]; c.fillRect(x, h - 1 - y, 1, 1); } }));
+  return (PP_MANO_CV = cv);
+}
 function ppMano(c, x, y, t) {
-  const b = Math.abs(Math.sin(t * 5)) * 14;
-  c.save(); c.translate(x + 18, y + 26 + b);
-  if (!ppDibujaEn(c, 'i-mov', 0, 0, 64, true)) { c.beginPath(); c.moveTo(0, -24); c.lineTo(16, 4); c.lineTo(-16, 4); c.closePath(); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 4; c.strokeStyle = '#7a4a8a'; c.stroke(); }
+  const cv = ppManoLienzo(), s = 5, w = cv.width * s, h = cv.height * s, b = Math.abs(Math.sin(t * 5)) * 16;
+  c.save(); c.imageSmoothingEnabled = false;
+  c.drawImage(cv, Math.round(x - (PP_MANO_PUNTA + 0.5) * s), Math.round(y - h - b + 4), w, h);
   c.restore();
 }
 let PP_NODOS_MAPA = [];

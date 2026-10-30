@@ -30,6 +30,26 @@ function ppEstrellasHtml(n, total = 3) {
   for (let k = 0; k < total; k++) h += `<span class="pp-est${k < n ? ' pp-on' : ''}" style="animation-delay:${0.15 + k * 0.18}s">${PP_IMG['i-estrella'] ? `<img src="${PP_LISO ? 'img-liso' : 'img'}/i-estrella.png" alt=""${PP_LISO ? ' style="image-rendering:auto"' : ''}>` : ''}</span>`;
   return h + '</div>';
 }
+// un icono de Yoshi en HTML (moneda, cofre…); si aún no está, una bolita de color
+function ppIcono(k, px, col = '#ffd64a') {
+  return PP_IMG[k] ? `<img class="pp-ico" src="${PP_LISO ? 'img-liso' : 'img'}/${k}.png" alt="" style="width:${px}px;height:${px}px${PP_LISO ? ';image-rendering:auto' : ''}">`
+    : `<span class="pp-ico" style="width:${px}px;height:${px}px;background:${col}"></span>`;
+}
+const ppMonedasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-moneda', px)}${n}</span>`;
+// lo ganado en el nivel: monedas y, si toca, un cofre
+function ppPremioHtml(p) {
+  if (!p || !(p.monedas || p.cofre)) return '';
+  let h = p.monedas ? `<p class="pp-premio">+${ppMonedasHtml(p.monedas)}</p>` : '';
+  if (p.cofre) h += `<div class="pp-cofre">${ppIcono('i-cofre', 92, '#ff9ccf')}<p class="pp-sub"><b>${tr('¡Cofre!')}</b> +${ppMonedasHtml(p.cofre)}</p></div>`;
+  return h;
+}
+// un botón con precio en monedas: si no llegan, apagado y con lo que falta
+function ppBotonPrecio(texto, precio, clase, f) {
+  const b = ppBoton('', clase, () => { if (SAVE.monedas >= precio) f(); });
+  b.innerHTML = `${texto} · ${ppMonedasHtml(precio, 28)}`;
+  if (SAVE.monedas < precio) { b.disabled = true; b.title = tr('Te faltan {n} monedas', { n: precio - SAVE.monedas }); }
+  return b;
+}
 // la tarjeta de un amigo (dibujo + nombre + lo que hace)
 function ppFichaSlime(id, nuevo = false) {
   const d = PP_SLIMES[id], el = document.createElement('div'); el.className = 'pp-slime' + (nuevo ? ' pp-nuevo' : '');
@@ -39,7 +59,7 @@ function ppFichaSlime(id, nuevo = false) {
 }
 /* ---------- rescate: elige qué amigo se une ---------- */
 function ppVentanaRescate(presos) {
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}<p class="pp-sub">${presos.length > 1 ? tr('Has rescatado a estos amigos. Elige quién viene contigo:') : tr('¡Has rescatado a un amigo! ¿Viene contigo?')}</p>`, true);
+  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${presos.length > 1 ? tr('Has rescatado a estos amigos. Elige quién viene contigo:') : tr('¡Has rescatado a un amigo! ¿Viene contigo?')}</p>`, true);
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const id of presos) { const f = ppFichaSlime(id, true); f.onclick = () => { play('select'); ppEligeRescate(id); }; fila.appendChild(f); }
   t.appendChild(fila);
@@ -48,12 +68,17 @@ function ppVentanaRescate(presos) {
   t.appendChild(ppBoton(tr('Seguir sin nadie'), 'pp-btn2 pp-azul', ppAlCamino));
 }
 function ppEligeRescate(id) {
-  if (PP_P.equipo.length < PP_CFG.equipo) { ppRecluta(id); ppVentanaBienvenida(id); return; }
-  // el equipo está lleno: hay que dejar a uno
+  if (PP_P.equipo.length < ppHuecos()) { ppRecluta(id); ppVentanaBienvenida(id); return; }
+  // el equipo está lleno: hay que dejar a uno… o comprar un hueco más con monedas (Daniel, 30-10-2026)
+  const precio = ppPrecioHueco();
   const t = ppAbre(`<h2>${tr('Equipo lleno')}</h2><p class="pp-sub">${tr('¿Quién se queda descansando para que venga {n}?', { n: tr(PP_SLIMES[id].nombre) })}</p>`, true);
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const k of PP_P.equipo) { const f = ppFichaSlime(k); f.onclick = () => { play('select'); ppRecluta(id, k); ppVentanaBienvenida(id); }; fila.appendChild(f); }
   t.appendChild(fila);
+  if (precio !== null) {
+    t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('O hazle sitio: un hueco más en el equipo, para siempre.')} ${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
+    t.appendChild(ppBotonPrecio(tr('HUECO MÁS'), precio, 'pp-btn', () => { if (ppCompraHueco()) { play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); } }));
+  }
   t.appendChild(ppBoton(tr('Mejor no'), 'pp-btn2 pp-azul', ppAlCamino));
 }
 function ppVentanaBienvenida(id) {
@@ -63,25 +88,36 @@ function ppVentanaBienvenida(id) {
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', ppAlCamino));
 }
 function ppVentanaSalaHecha() {
-  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}`);
+  const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}`);
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
+  if (PP_P.T.estrellas < 3) t.appendChild(ppBoton(tr('A por 3 estrellas'), 'pp-btn2 pp-azul', ppOtraVez));
 }
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
 function ppVentanaSinToques() {
-  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: PP_P.vida })}</p>`);
-  t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', () => { ppCierra(); ppEntra(); }));
+  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas })}</p>`);
+  t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }
 // el jefe de un mundo superado: se abre el siguiente
-function ppVentanaMundoNuevo() {
-  const [m] = ppMundoDe(PP_P.nivel), M = PP_MUNDOS[m];
-  const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}<p class="pp-sub">${tr('Se abre el mundo {n}: {nombre}.', { n: m + 1, nombre: tr(M.nombre) })}</p>`);
-  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { PP_MAPA.cam = null; ppAlCamino(); }));
+// y se abre su modo difícil. `dif`: era el jefe del modo difícil (no se abre nada nuevo)
+function ppVentanaMundoNuevo(dif) {
+  const d = PP_P.T.d, M0 = PP_MUNDOS[d.mundo], sig = d.mundo + 1;
+  let txt;
+  if (dif) txt = tr('¡Has ganado el mundo {n} en difícil! Eres una máquina de hacer plop.', { n: d.mundo + 1 });
+  else {
+    txt = tr('Se abre el modo difícil de {nombre}: el mismo mundo, de noche y con muchos menos toques.', { nombre: tr(M0.nombre) });
+    if (sig < PP_MUNDOS.length) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
+  }
+  const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${txt}</p>`);
+  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), false); ppAlCamino(); }));
 }
+// sin corazones: el reloj del siguiente, o llenarlos con monedas (en la app llegará también ver un anuncio, fase 6)
 function ppVentanaSinCorazones() {
-  const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><p class="pp-sub">${tr('No pasa nada: sigues en el nivel {n} con {c} corazones.', { n: PP_P.nivel + 1, c: PP_CFG.vidaSeguir })}</p>`);
-  t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', () => { ppCierra(); ppSigueConCorazones(); }));
-  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { PP_P.vida = Math.min(PP_P.vidaMax, PP_CFG.vidaSeguir); ppGuardaCamino(); ppAlCamino(); }));
+  const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub" id="pp-reloj"></p><p class="pp-sub">${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
+  const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
+  const tic = setInterval(reloj, 1000); reloj();
+  t.appendChild(ppBotonPrecio(tr('LLENAR'), PP_CFG.precioVidas, 'pp-btn', () => { if (ppLlenaVidas()) { play('ppPremio'); ppFxCura(PP_CFG.vida); clearInterval(tic); ppAlCamino(); } }));
+  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {
   const P = PP_P;
@@ -95,7 +131,8 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Toca una burbuja: revientan ella y sus vecinas de arriba, abajo y los lados. Lo reventado se queda reventado.')}</p>
     <p class="pp-sub">${tr('Revienta TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
-    <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>`, true);
+    <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
+    <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
 /* ---------- la pausa ----------
@@ -108,8 +145,10 @@ function ppPausa() {
   const t = ppAbre(`<h2>${tr('Pausa')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('SEGUIR'), 'pp-btn', ppQuitaPausa));
-  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); if (PP_P.T) PP_P.T.hecho = true; PP_P.T = null; ppAlCamino(); }));
-  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) PP_P.T.hecho = true; ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
+  // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
+  if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
+  if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
+  col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
   col.appendChild(son);
   const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
@@ -131,6 +170,9 @@ const PP_TUTO = {
   combo: [{ t: '¡COMBO! Si cada toque revienta 3 burbujas o más, el combo crece.' }],
   dificil: [{ t: 'Este nivel es difícil: los toques van muy justos. ¡Piensa antes de tocar!' }],
   jefe: [{ t: '¡Nivel jefe! El CEO ha preparado su pop-it más gordo y te deja muy pocos toques de sobra.' }],
+  monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
+            { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
+  modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],
   w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
 };
 const PP_LOLA = { cola: [], actual: null };

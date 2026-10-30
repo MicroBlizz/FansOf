@@ -1,8 +1,8 @@
 {
- "build": 692,
- "hash": "bbc72b0",
- "fecha": "2026-10-30T18:13:02Z",
- "mensaje": "Fans of Swipe: Acto 2 «La Era Digital» contra Phony (pisos 16-30, enemigos, élites, Presidente, suscripción, licencias, peaje, facturas, 6 eventos), facciones liberadas, revivir con anuncio y atajo al Acto 2; pedidos de arte a Yoshi; ADR 014",
+ "build": 693,
+ "hash": "f9dd954",
+ "fecha": "2026-10-30T18:14:45Z",
+ "mensaje": "Fans of Pop 0.2.0 (fase 2): corazones que se recargan, monedas, cofres, huecos del equipo con monedas y modo difícil de noche",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -1,8 +1,8 @@
 {
- "build": 663,
- "hash": "9cc8ccf",
- "fecha": "2026-10-30T10:19:44Z",
- "mensaje": "Goose 0.3.1: las 23 poses de la Oca Parca de Yoshi, Rana Reina, oca zombi, hoz y guadaña nuevas",
+ "build": 664,
+ "hash": "b3a770d",
+ "fecha": "2026-10-30T10:41:49Z",
+ "mensaje": "Merge: camino de losetas pintadas por Yoshi, más estrecho como en Triple Town",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

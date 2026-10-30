@@ -87,6 +87,7 @@ function ppTienda(vuelta, pestana) {
   t.appendChild(ppBoton(tr('VOLVER'), 'pp-btn2 pp-azul', () => { const v = PP_TIENDA_VUELTA; PP_TIENDA_VUELTA = null; ppCierra(); if (v) v(); }));
 }
 function ppCompraPack(p) {
+  if (ppCompraDePrueba()) { SAVE.perlas = (SAVE.perlas || 0) + p.perlas; ppGuarda(); play('ppPremio'); ppTienda(); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(tr('{n} perlas', { n: p.perlas }), `<p>${tr('{n} perlas por {p}.', { n: p.perlas, p: p.precio })}</p>`, r => {
     if (r && r.real) { ppTienda(); return; }   // la de verdad la entrega el servidor (el saldo ya llega con la partida)

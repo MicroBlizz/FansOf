@@ -1,8 +1,8 @@
 {
- "build": 713,
- "hash": "a0d21b9",
- "fecha": "2026-10-30T23:16:16Z",
- "mensaje": "Fans of Pop 0.4.0: nota de novedades para la release (duelos en el camino y contra gente, ranking, ayudas y tienda, opciones)",
+ "build": 714,
+ "hash": "2bcdc94",
+ "fecha": "2026-10-30T23:47:50Z",
+ "mensaje": "Fans of Pop: dinero de prueba en el panel DEV y compras con euros de prueba (solo alfa y localhost)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

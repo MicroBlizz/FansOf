@@ -337,4 +337,5 @@ IDIOMA.add({
   "¡Te reto a un duelo de pop-it en Fans of Pop! Código: {c}": "I challenge you to a pop-it duel in Fans of Pop! Code: {c}",
   "Opciones": "Options",
   "OPCIONES": "OPTIONS",
+  "Compra de prueba": "Test purchase",
 });

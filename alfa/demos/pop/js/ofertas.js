@@ -29,6 +29,7 @@ function ppPremioCandyHtml(p, px = 30) {
 }
 /* ---------- compras con euros ---------- */
 function ppCompraEuros(titulo, html, producto, alComprar) {
+  if (ppCompraDePrueba()) { alComprar(); play('ppPremio'); ppFlota(tr('Compra de prueba'), 270, 300, '#4fc964'); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
   MONEDAS.compraReal(titulo, html, r => { if (r && r.real) { ppGuarda(); return; } alComprar(); play('ppPremio'); }, producto);   // la de verdad la entrega el servidor
 }

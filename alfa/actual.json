@@ -1,8 +1,8 @@
 {
- "build": 712,
- "hash": "08178f0",
- "fecha": "2026-10-30T23:12:01Z",
- "mensaje": "Fans of Pop: duelos contra gente, ranking mundial, opciones y portada que cambia",
+ "build": 713,
+ "hash": "a0d21b9",
+ "fecha": "2026-10-30T23:16:16Z",
+ "mensaje": "Fans of Pop 0.4.0: nota de novedades para la release (duelos en el camino y contra gente, ranking, ayudas y tienda, opciones)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

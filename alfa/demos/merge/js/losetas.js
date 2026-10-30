@@ -9,8 +9,9 @@
 // O = cuánta tierra de más lleva cada pieza por dentro, que se funde con el centro; F = cuánta hierba se desvanece por fuera, para fundirse con el suelo;
 // C = desde dónde se toma el centro liso.
 // En partes de casilla: I = el margen de hierba que deja la tierra dentro de su casilla (como en Triple Town); S = cuánto más estrecho que la losa
-// es el pasillo que la une con la vecina, por cada lado; A = lo ancho que se pinta el borde B; R = el radio más grande de una curva.
-const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.38, O: 0.06, F: 0.14, C: 0.34, I: 0.16, S: 0.15, A: 0.22, R: 0.24 };
+// es el pasillo que la une con la vecina, por cada lado; A = lo ancho que se pinta el borde B; R = el radio más grande de una curva;
+// T = cuántas casillas cubre cada copia de la textura del relleno.
+const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.38, O: 0.06, F: 0.14, C: 0.34, I: 0.16, S: 0.15, A: 0.22, R: 0.24, T: 3.2 };
 // recorta una zona (x, y, w, h) de una imagen y la desvanece por los lados que se le digan: f = [izquierda, derecha, arriba, abajo], en px de la imagen
 function mgLosaTrozo(im, x, y, w, h, f) {
   const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w)); cv.height = Math.max(1, Math.round(h));
@@ -58,9 +59,18 @@ function mgBordeCurvo(c, cx, cy, r, t1, t2, fuera, sb, so) {
     c.restore();
   }
 }
-// El patrón de tierra: el centro de la losa y sus tres reflejos, en un cuadro de 2x2 que se repite sin juntas
+// El relleno del camino. Si ha llegado la textura de Yoshi (img/adoquin.jpg, sin costuras), esa: grande (cada copia cubre MG_LOSA.T casillas),
+// empezando en un sitio al azar y girada al azar en cada partida, para que no se note que se repite. Si no, la tierra lisa del centro de
+// la losa y sus tres reflejos, en un cuadro de 2x2 que se repite sin juntas.
 function mgTierraPatron(c, cs) {
-  const P = MG_LOSA.piezas, k = mgK(), lado = Math.round(cs * k), clave = lado + '|' + MG_LOSA.de;
+  const P = MG_LOSA.piezas, k = mgK(), tex = MG_IMG.ADOQUIN;
+  if (tex) {
+    const sem = MG_P.semillaCamino || 1, lado = cs * MG_LOSA.T, giro = (sem % 4) * Math.PI / 2, dx = (sem % 997) / 997 * lado, dy = (sem % 991) / 991 * lado;
+    const pat = c.createPattern(tex, 'repeat'), e = lado / tex.width;
+    pat.setTransform(new DOMMatrix().translate(MG_V.bx + dx, MG_V.by + dy).rotate(giro * 180 / Math.PI).scale(e, e));
+    return pat;
+  }
+  const lado = Math.round(cs * k), clave = lado + '|' + MG_LOSA.de;
   if (MG_LOSA.patronDe !== clave) {
     const cv = document.createElement('canvas'); cv.width = cv.height = lado * 2; const g = cv.getContext('2d');
     for (const [vx, vy] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) { g.save(); g.translate(lado * (vx < 0 ? 2 : 0), lado * (vy < 0 ? 2 : 0)); g.scale(vx, vy); g.drawImage(P.c, 0, 0, lado, lado); g.restore(); }
@@ -69,6 +79,19 @@ function mgTierraPatron(c, cs) {
   const pat = c.createPattern(MG_LOSA.patron, 'repeat');
   pat.setTransform(new DOMMatrix([1 / k, 0, 0, 1 / k, MG_V.bx, MG_V.by]));
   return pat;
+}
+// Manchas suaves de luz y sombra encima del relleno, distintas en cada partida: rompen aún más la repetición
+function mgTierraManchas(c, cs) {
+  // un ruido suave en una imagen diminuta (8 puntos por casilla) que se estira con suavizado: manchas difusas, sin bordes
+  const sem = MG_P.semillaCamino || 1, ruido = mgRuido(sem + 31), n = MG_CFG.lado, q = 8, W = n * q;
+  const cv = document.createElement('canvas'); cv.width = cv.height = W; const g = cv.getContext('2d'), im = g.createImageData(W, W);
+  for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) {
+    const v = ruido(x / 11, y / 11) - 0.5, i = (y * W + x) * 4;
+    if (v > 0) { im.data[i] = 255; im.data[i + 1] = 238; im.data[i + 2] = 195; im.data[i + 3] = Math.min(60, v * 150); }
+    else { im.data[i] = 95; im.data[i + 1] = 62; im.data[i + 2] = 30; im.data[i + 3] = Math.min(50, -v * 130); }
+  }
+  g.putImageData(im, 0, 0);
+  c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high'; c.drawImage(cv, MG_V.bx, MG_V.by, n * cs, n * cs); c.restore();
 }
 // Pinta el camino con las losetas en el lienzo c (ya con la escala puesta). libre(x, y) dice si una casilla es del camino.
 // Como en Triple Town, la tierra no llena la casilla: deja un margen de hierba (MG_LOSA.I) y solo llega al borde por donde sigue el camino,
@@ -133,7 +156,7 @@ function mgLosetasPinta(c, libre) {
     }
   };
   forma(); c.fillStyle = mgTierraPatron(c, cs); c.fill('nonzero');
-  c.save(); forma(); c.clip('nonzero'); mgDetalles(c, celdas, trozos, g => PX(g), g => PX(g + 1), g => PY(g), g => PY(g + 1), cs); c.restore();
+  c.save(); forma(); c.clip('nonzero'); mgTierraManchas(c, cs); mgDetalles(c, celdas, trozos, g => PX(g), g => PX(g + 1), g => PY(g), g => PY(g + 1), cs); c.restore();
   // 4) los bordes rectos (cada tramo, sin lo que se lleva la curva de cada punta)
   const tira = (pz, horiz, a0, a1, q0, grosor, base) => {   // la tira pintada se repite en espejo desde la esquina del tablero: sin cortes
     const largo = horiz ? pz.width : pz.height, r = (horiz ? pz.height : pz.width) / grosor;

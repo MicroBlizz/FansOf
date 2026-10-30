@@ -97,7 +97,7 @@ function mgPintaCaminos(c, t) {
   };
   if (MG_IMG.TIERRA) {   // el camino, como en los juegos de este tipo: una casilla de tierra por hueco, y las que se tocan se unen
     const losas = mgLosetasPrepara();   // con las losetas pintadas por Yoshi (js/losetas.js); si aún no están, la forma recortada de abajo
-    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, cs, [...P.camino].join(','), MG_IMG.TIERRA.src, losas, ['ADORNO1', 'ADORNO2', 'ADORNO3', 'ADORNO4', 'ADORNO5', 'ADORNO6'].filter(q => MG_IMG[q]).length, MG_DETALLES.filter(([d]) => MG_IMG['DET_' + d]).length, P.semillaCamino].join('|');   // se rehace cuando llega un dibujo
+    const k = mgK(), clave = [k, MG_V.H, MG_CFG.lado, cs, [...P.camino].join(','), MG_IMG.TIERRA.src, losas, ['ADORNO1', 'ADORNO2', 'ADORNO3', 'ADORNO4', 'ADORNO5', 'ADORNO6'].filter(q => MG_IMG[q]).length, MG_DETALLES.filter(([d]) => MG_IMG['DET_' + d]).length, P.semillaCamino, !!MG_IMG.ADOQUIN].join('|');   // se rehace cuando llega un dibujo
     if (MG_V.caminoClave !== clave) { MG_V.caminoLienzo = losas ? mgLosetasLienzo(libre, k) : mgCaminoLienzo(libre, k); MG_V.caminoClave = clave; }
     c.save(); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(MG_V.caminoLienzo, 0, 0); c.restore();
   } else {

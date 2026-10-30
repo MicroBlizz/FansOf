@@ -1,8 +1,8 @@
 {
- "build": 646,
- "hash": "6859d3f",
- "fecha": "2026-10-30T04:01:53Z",
- "mensaje": "Fase 2 de runners: cada workflow usa su etiqueta yoshi-* y se retira runner-actions",
+ "build": 647,
+ "hash": "8359ea6",
+ "fecha": "2026-10-30T04:06:17Z",
+ "mensaje": "Runners de la tienda de Play: ficha, productos y avisos comparten runner-tienda (yoshi-tienda)",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

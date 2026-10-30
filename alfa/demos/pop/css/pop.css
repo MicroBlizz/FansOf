@@ -1,0 +1,51 @@
+/* Fans of Pop · estilos: cueva de gelatina. Tinta oscura, ventanas de gelatina clara, títulos dorados, botón principal naranja,
+   contorno grueso y letra pixelada. La capa #pp-ui mide 540 de ancho y se escala igual que el lienzo. */
+:root { --pp-tinta: #1a1030; --pp-crema: #fff3fa; --pp-naranja: #ff8a2a; --pp-verde: #4fc25a; --pp-azul: #3a8ee6; --pp-rosa: #ff6ec7; --pp-cafe: #2a1a3a; color-scheme: dark; }
+html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
+body { background: #0b0620; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#stage { position: relative; overflow: hidden; background: #0b0620; }
+#cv { display: block; width: 100%; height: 100%; touch-action: none; }
+@media (min-width: 600px) { #stage { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 6px var(--pp-tinta), 0 0 0 12px var(--pp-rosa), 0 0 0 16px var(--pp-tinta); } }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 700 22px/1 'Jersey 10', monospace; }
+#pp-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; font-family: 'Jersey 10', monospace; color: var(--pp-cafe); }
+#pp-ui button { pointer-events: auto; font-family: 'Jersey 10', monospace; font-weight: 400; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#pp-ui button:focus-visible { outline: 4px solid #ffd84a; outline-offset: 3px; }
+[hidden] { display: none !important; }
+/* botones de píxel: esquinas cortadas, contorno grueso y sombra dura */
+.pp-btn, .pp-btn2 { display: inline-flex; align-items: center; justify-content: center; border: 0; padding: 14px 30px 12px; font-size: 37px; line-height: 1; min-width: 260px; letter-spacing: 2px;
+  clip-path: polygon(6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px), 0 6px, 6px 6px);
+  text-shadow: 3px 0 0 var(--pp-tinta), -3px 0 0 var(--pp-tinta), 0 3px 0 var(--pp-tinta), 0 -3px 0 var(--pp-tinta), 3px 3px 0 var(--pp-tinta), -3px -3px 0 var(--pp-tinta), 3px -3px 0 var(--pp-tinta), -3px 3px 0 var(--pp-tinta);
+  background: var(--pp-naranja); box-shadow: inset 0 0 0 4px var(--pp-tinta), inset 0 8px 0 0 #ffc07a, inset 0 -10px 0 0 #c85a10; transition: transform 0.06s; }
+.pp-btn2 { font-size: 28px; padding: 11px 20px 9px; min-width: 200px; background: var(--pp-verde); box-shadow: inset 0 0 0 4px var(--pp-tinta), inset 0 7px 0 0 #9ee38a, inset 0 -8px 0 0 #2e8a3a; }
+.pp-btn2.pp-azul { background: var(--pp-azul); box-shadow: inset 0 0 0 4px var(--pp-tinta), inset 0 7px 0 0 #8ac4ff, inset 0 -8px 0 0 #1f5aa0; }
+.pp-btn:active, .pp-btn2:active { transform: translateY(4px); }
+.pp-enorme { font-size: 58px; padding: 20px 60px 16px; animation: pp-late 1.1s steps(4) infinite; }
+@keyframes pp-late { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.pp-fila { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.pp-fila .pp-btn2 { min-width: 0; }
+/* portada */
+#pp-titulo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 20px 7%; box-sizing: border-box; }
+.pp-lema { margin: 0 0 4px; font-weight: 700; font-size: 26px; color: #fff6d8; background: rgba(26, 16, 48, 0.82); box-shadow: 0 0 0 4px var(--pp-tinta); padding: 8px 18px 6px; text-align: center; }
+/* ventanas de gelatina */
+.pp-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box; background: rgba(10, 5, 20, 0.62); pointer-events: auto; z-index: 30; }
+.pp-tarjeta { width: 100%; max-width: 430px; max-height: 94%; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+  background: var(--pp-crema); padding: 24px 20px 22px; box-sizing: border-box; border-radius: 28px; box-shadow: inset 0 0 0 5px var(--pp-tinta), inset 0 0 0 11px var(--pp-rosa), inset 0 0 0 14px var(--pp-tinta), 0 10px 0 rgba(0,0,0,.4);
+  animation: pp-sale 0.22s steps(5); }
+.pp-tarjeta.pp-ancha { max-width: 504px; }
+@keyframes pp-sale { from { transform: scale(0.6); } to { transform: scale(1); } }
+.pp-tarjeta h2 { font-weight: 700; font-size: 50px; line-height: 1; margin: 6px 0 0; color: #ffd23a;
+  text-shadow: 3px 0 0 var(--pp-tinta), -3px 0 0 var(--pp-tinta), 0 3px 0 var(--pp-tinta), 0 -3px 0 var(--pp-tinta), 3px 3px 0 var(--pp-tinta), -3px -3px 0 var(--pp-tinta), 3px -3px 0 var(--pp-tinta), -3px 3px 0 var(--pp-tinta), 0 6px 0 var(--pp-tinta); }
+.pp-sub { margin: 0; font-weight: 600; font-size: 24px; line-height: 1.25; }
+.pp-tarjeta b { font-weight: 700; }
+/* fichas de slime */
+.pp-fila-slimes { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+.pp-slime { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 140px; padding: 10px 6px 12px; box-sizing: border-box; border-radius: 18px; background: rgba(26, 16, 48, 0.08); box-shadow: inset 0 0 0 3px var(--pp-tinta); pointer-events: auto; cursor: pointer; transition: transform 0.08s; }
+.pp-slime:active { transform: scale(0.95); }
+.pp-slime.pp-nuevo { background: #fff; box-shadow: inset 0 0 0 3px var(--pp-tinta), 0 0 0 4px #ffd23a; }
+.pp-slime b { font-size: 26px; line-height: 1; }
+.pp-slime i { font-style: normal; font-size: 20px; color: #c0420f; }
+.pp-slime span { font-size: 17px; line-height: 1.15; }
+.pp-mini .pp-slime { width: 100px; padding: 6px 4px 8px; }
+.pp-mini .pp-slime span { display: none; }
+.pp-mini .pp-slime b { font-size: 20px; }
+.pp-mini .pp-slime canvas { width: 56px !important; height: 56px !important; }

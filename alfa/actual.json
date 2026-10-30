@@ -1,8 +1,8 @@
 {
- "build": 669,
- "hash": "6c3363c",
- "fecha": "2026-10-30T11:13:27Z",
- "mensaje": "Merge: rincones del camino con el mismo borde de la losa, doblado",
+ "build": 670,
+ "hash": "0db96d7",
+ "fecha": "2026-10-30T11:16:33Z",
+ "mensaje": "Fans of Pop: prototipo del roguelike de pop-it (demos/pop)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

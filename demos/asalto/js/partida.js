@@ -132,7 +132,7 @@ function asRefresca() {
 function asPuntosEnemigos(n) {
   const pts = [], A = AS_ARENA;
   for (let i = 0; i < n * 20 && pts.length < n; i++) {
-    const p = [rand(300, 500), rand(A.y + 70, A.y + A.h - 30)];
+    const p = [rand(300, 500), rand(A.y + 110, A.y + A.h - 30)];
     if (!pts.some(q => Math.hypot(q[0] - p[0], q[1] - p[1]) < 46)) pts.push(p);
   }
   return pts;

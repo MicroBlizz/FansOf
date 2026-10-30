@@ -66,9 +66,17 @@ function ppVentanaSalaHecha() {
   const t = ppAbre(`<h2>${tr('¡Nivel superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}`);
   t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
 }
-function ppVentanaDescanso(cura) {
-  const t = ppAbre(`<h2>${tr('¡A descansar!')}</h2><p class="pp-sub">${tr('Tus amigos se echan una siesta entre las flores. Recuperas {n} corazones.', { n: cura })}</p>`);
-  t.appendChild(ppBoton(tr('¡SIGUIENTE!'), 'pp-btn', ppAlCamino));
+// sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
+function ppVentanaSinToques() {
+  const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: PP_P.vida })}</p>`);
+  t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', () => { ppCierra(); ppEntra(); }));
+  t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
+}
+// el jefe de un mundo superado: se abre el siguiente
+function ppVentanaMundoNuevo() {
+  const [m] = ppMundoDe(PP_P.nivel), M = PP_MUNDOS[m];
+  const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}<p class="pp-sub">${tr('Se abre el mundo {n}: {nombre}.', { n: m + 1, nombre: tr(M.nombre) })}</p>`);
+  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { PP_MAPA.cam = null; ppAlCamino(); }));
 }
 function ppVentanaSinCorazones() {
   const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><p class="pp-sub">${tr('No pasa nada: sigues en el nivel {n} con {c} corazones.', { n: PP_P.nivel + 1, c: PP_CFG.vidaSeguir })}</p>`);
@@ -77,17 +85,17 @@ function ppVentanaSinCorazones() {
 }
 function ppVentanaFin() {
   const P = PP_P;
-  const t = ppAbre(`<h2>${tr('¡VICTORIA!')}</h2><p class="pp-sub">${tr('¡Plop! El CEO ha quedado reventado y todos los amigos son libres.')}</p><p class="pp-sub"><b>${tr('Estrellas: {n}', { n: P.estrellas })}</b>${P.estrellas >= (SAVE.estrellas || 0) && P.estrellas ? ' · ' + tr('¡Nuevo récord!') : ' · ' + tr('Récord: {n}', { n: SAVE.estrellas || 0 })}</p>`, true);
+  const t = ppAbre(`<h2>${tr('¡VICTORIA!')}</h2><p class="pp-sub">${tr('¡Plop! Has superado todos los mundos que hay de momento. ¡Pronto llegan más!')}</p><p class="pp-sub"><b>${tr('Estrellas: {n}', { n: P.estrellas })}</b>${P.estrellas >= (SAVE.estrellas || 0) && P.estrellas ? ' · ' + tr('¡Nuevo récord!') : ' · ' + tr('Récord: {n}', { n: SAVE.estrellas || 0 })}</p>`, true);
   if (P.rescatados.length) { t.insertAdjacentHTML('beforeend', `<p class="pp-sub"><b>${tr('Rescatados')}</b></p>`); const fila = document.createElement('div'); fila.className = 'pp-fila-slimes pp-mini'; for (const id of P.rescatados) fila.appendChild(ppFichaSlime(id)); t.appendChild(fila); }
   t.appendChild(ppBoton(tr('JUGAR OTRA VEZ'), 'pp-btn', () => { ppCierra(); ppNuevaRuta(); ppIrA('mapa'); }));
   t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); PP_P = null; ppIrA('titulo'); }));
 }
 function ppAyuda() {
   const t = ppAbre(`<h2>${tr('Cómo se juega')}</h2>
-    <p class="pp-sub">${tr('Toca una burbuja: se revientan ella y sus vecinas (arriba, abajo, izquierda y derecha). Si una ya estaba reventada, vuelve a subir.')}</p>
-    <p class="pp-sub">${tr('Revienta TODAS para pasar el nivel. Con pocos toques ganas 3 estrellas.')}</p>
-    <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
-    <p class="pp-sub">${tr('Truco: si en una fila queda una burbuja sin reventar, toca la que está justo debajo.')}</p>`, true);
+    <p class="pp-sub">${tr('Toca una burbuja: revientan ella y sus vecinas de arriba, abajo y los lados. Lo reventado se queda reventado.')}</p>
+    <p class="pp-sub">${tr('Revienta TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
+    <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
+    <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
 /* ---------- la pausa ----------
@@ -112,19 +120,18 @@ function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
    Cada tutorial es una lista de frases. Las que llevan `toque` se cierran solas cuando tocas una burbuja (para que lo hagas
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */
 const PP_TUTO = {
-  n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
-       { t: 'Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.', elige: 'estilo' },
-       { t: 'Toca la burbuja que señala la manita.', toque: true }],
-  n2: [{ t: 'Al tocar una burbuja se revientan ella y sus vecinas: arriba, abajo, izquierda y derecha.' },
-       { t: '¡Ojo! Si una vecina ya estaba reventada, vuelve a subir.' },
-       { t: 'Hay un amigo atrapado en una burbuja. ¡Revienta TODAS para rescatarlo! Sigue a la manita.', toque: true }],
-  n3: [{ t: 'Ahora sin manita. Arriba ves tus toques: si lo resuelves con pocos, ¡ganas 3 estrellas!' },
-       { t: 'Si te pasas de toques pierdes un corazón. ¡Tranqui, no pasa nada!' }],
+  w1n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
+         { t: 'Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.', elige: 'estilo' },
+         { t: 'Toca la burbuja que señala la manita: revientan ella y sus vecinas de arriba, abajo y los lados.', toque: true }],
+  w1n2: [{ t: '¡Plop! Lo que revientas se queda reventado. Para pasar el nivel, revienta todas.' },
+         { t: 'Cuantos menos toques uses, más estrellas. Sigue a la manita.', toque: true }],
+  w1n3: [{ t: 'Ahora te toca a ti. Arriba ves los toques que te quedan.' },
+         { t: 'Si se acaban antes de reventarlas todas, pierdes un corazón. Truco: toca donde revientes más de golpe.' }],
   amigo: [{ t: '¡Ya tienes un amigo! Mira abajo: cada uno te ayuda a su manera.' }, { t: 'Cuando su barrita se llena, ¡te echa una mano solo!' }],
-  n5: [{ t: '¡Un tablero más grande! Te cuento un truco.' },
-       { t: 'Mira la fila de arriba. Si queda una burbuja sin reventar, toca la que está justo debajo. ¡Y así fila a fila!' }],
-  combo: [{ t: '¡COMBO! Si cada toque revienta más burbujas de las que suben, el combo crece.' }],
-  jefe: [{ t: '¡El CEO ha llenado su pop-it de trampas!' }, { t: 'Las burbujas con ! no las toques tú: revientan solas cuando tocas sus vecinas.' }],
+  combo: [{ t: '¡COMBO! Si cada toque revienta 3 burbujas o más, el combo crece.' }],
+  dificil: [{ t: 'Este nivel es difícil: los toques van muy justos. ¡Piensa antes de tocar!' }],
+  jefe: [{ t: '¡Nivel jefe! El CEO ha preparado su pop-it más gordo y te deja muy pocos toques de sobra.' }],
+  w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
 };
 const PP_LOLA = { cola: [], actual: null };
 function ppTutorial(k) {

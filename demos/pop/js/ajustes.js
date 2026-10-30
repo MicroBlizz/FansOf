@@ -8,32 +8,11 @@ const AJUSTES = {
 };
 
 const PP_CFG = {
-  vida: 5,                   // corazones al empezar
+  vida: 5,                   // corazones; se pierde uno al quedarte sin toques con burbujas sin reventar
   equipo: 4,                 // amigos (slimes) activos como mucho
-  holgura: 2,                // toques de más que puedes dar en un nivel sin perder corazón
-  curaDescanso: 2,           // corazones que da un nivel de descanso
-  vidaSeguir: 3,             // con cuántos corazones sigues si te quedas sin ninguno (es para niños: nunca se pierde todo)
+  vidaSeguir: 3,             // con cuántos corazones sigues si te quedas sin ninguno (hasta que lleguen las vidas que se recargan, fase 2)
 };
-// EL CAMINO: lineal, como los juegos de niveles (Daniel, 30-10-2026: más largo, fácil de entender y sin calaveras).
-//   lado: tamaño del tablero · lio: toques del desorden (número o [mín, máx]) · fijo: los toques del desorden ya decididos (tutorial)
-//   slimes: amigos atrapados · tuto: qué explica Lola al entrar (ver PP_TUTO en pantallas.js) · trampas / holgura: solo el jefe
-const PP_NIVELES = [
-  { tipo: 'sala', lado: 3, fijo: [4], tuto: 'n1' },
-  { tipo: 'sala', lado: 3, fijo: [0, 8], slimes: 1, tuto: 'n2' },
-  { tipo: 'sala', lado: 3, lio: 3, tuto: 'n3' },
-  { tipo: 'sala', lado: 3, lio: [3, 4], slimes: 1 },
-  { tipo: 'sala', lado: 4, lio: [3, 4], tuto: 'n5' },
-  { tipo: 'descanso' },
-  { tipo: 'sala', lado: 4, lio: [4, 5], slimes: 1 },
-  { tipo: 'sala', lado: 4, lio: [5, 6] },
-  { tipo: 'sala', lado: 4, lio: [5, 6], slimes: 1 },
-  { tipo: 'sala', lado: 4, lio: [6, 7] },
-  { tipo: 'descanso' },
-  { tipo: 'sala', lado: 5, lio: [5, 6], slimes: 1 },
-  { tipo: 'sala', lado: 5, lio: [6, 8] },
-  { tipo: 'sala', lado: 5, lio: [7, 8] },
-  { tipo: 'jefe', lado: 5, lio: [8, 10], trampas: 3, holgura: 1, tuto: 'jefe' },
-];
+// Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 
 // Los slimes rescatables y su pasiva. Todas HACEN algo en el tablero (no solo protegen): saltar a reventar burbujas,
 // premios por combos o por toques gordos. COMBO = toques seguidos que revientan más burbujas de las que suben.

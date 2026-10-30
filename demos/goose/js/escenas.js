@@ -192,6 +192,7 @@ function pintaEscenas() {
 }
 // los barrotes van por encima de todo (el jugador está dentro)
 function pintaEscenasEncima() {
+  if (typeof pintaRestosParca === 'function') pintaRestosParca();
   const J = JUEGO, E = J.escena; if (!E || E.tipo !== 'carcel') return;
   for (let x = E.cx - E.r; x <= E.cx + E.r; x += 9) { G.fillStyle = '#120808'; G.fillRect(x - 1.6, E.cy - E.r - 4, 3.2, E.r * 2 + 8); G.fillStyle = '#8a8a94'; G.fillRect(x - 1, E.cy - E.r - 4, 2, E.r * 2 + 8); }
 }

@@ -12,6 +12,14 @@ function ppFxToque(T, i, r) {
   const n = T.n;
   for (const j of r.pops) { PP_FX.celdas[j] = { t: 0, dir: 'pop', demora: j === i ? 0 : 0.05 }; }
   for (const j of r.subes) { PP_FX.celdas[j] = { t: 0, dir: 'sube', demora: j === i ? 0 : 0.05 }; }
+  // las dobles que pierden la nata: rebotan (como al subir) y sueltan nata y virutas
+  const gg = ppGeom(n);
+  for (const j of r.grietas || []) {
+    PP_FX.celdas[j] = { t: 0, dir: 'sube', demora: j === i ? 0 : 0.05 };
+    const [cx, cy] = ppCentro(gg, j);
+    for (let k = 0; k < 9; k++) { const a = rand(0, Math.PI * 2), v = rand(80, 220); PP_FX.parts.push({ x: cx, y: cy - 10, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 160, r: rand(3, 6), t: 0, vida: rand(0.4, 0.7), col: ['#ffffff', '#fff3d6', '#ff6ec7', '#5be7ff', '#ffd64a'][k % 5] }); }
+    setTimeout(() => play('ppUnpop', j), 30);
+  }
   // sonidos: el pop de la tocada primero, las vecinas un pelín después
   r.pops.forEach((j, k) => setTimeout(() => play('ppPop', j), j === i ? 0 : 45 + k * 20));
   r.subes.forEach((j, k) => setTimeout(() => play('ppUnpop', j), 60 + k * 20));

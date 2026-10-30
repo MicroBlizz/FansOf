@@ -8,15 +8,15 @@
 const PARCA = { vida: 1500, r: 24, hoces: 1.4, siega: 1.1, zombis: 4 };
 // los fotogramas por estado: [nombres...] y su ritmo
 const PARCA_ANIM = {
-  aparece: ['parca-ap2', 'parca-ap3', 'parca-ap4', 'parca-ap5'],
-  flota: ['parca-fl1', 'parca-fl3', 'parca-fl4', 'parca-fl3'],
+  aparece: ['parca-ap1', 'parca-ap2', 'parca-ap3', 'parca-ap4', 'parca-ap5'],
+  flota: ['parca-fl1', 'parca-fl2', 'parca-fl3', 'parca-fl4'],
   lanza: ['parca-lz1', 'parca-lz2', 'parca-lz3'],
   alza: ['parca-al1', 'parca-al2', 'parca-al3'],
   siega: ['parca-sg1', 'parca-sg2', 'parca-sg3', 'parca-sg4'],
   llama: ['parca-ll1', 'parca-ll2'],
   herida: ['parca-he1'],
   regateo: ['parca-rg1', 'parca-rg2'],
-  muere: ['parca-mu1'],
+  muere: ['parca-mu1', 'parca-mu2', 'parca-mu3'],
 };
 const PARCA_PNG = [...new Set(Object.values(PARCA_ANIM).flat())].concat(['parca', 'parca-hoz', 'parca-guadana', 'zombi']);
 
@@ -106,6 +106,7 @@ function rechazaTrato() {
 function muereParca(e) {
   const J = JUEGO;
   J.trato = null; J.minijefe = null; J.escena = null; J.quieto = 0; J.parcaHecha = true;
+  J.restosParca = { x: e.x, y: e.y, t0: J.t };   // se deshace en huesos (PARCA_ANIM.muere) y se queda en el suelo
   for (let i = 0; i < 6; i++) estallido(e.x + (Math.random() - 0.5) * 40, e.y + (Math.random() - 0.5) * 40, 16, i % 2 ? '#c9a0ff' : '#ece6d6', 140, 1.2, 2.8, 1, 10);
   for (let i = 0; i < 25; i++) suelta('moneda', e.x + (Math.random() - 0.5) * 60, e.y + (Math.random() - 0.5) * 40, 1);
   // la guadaña: un arma única de esta partida
@@ -126,6 +127,13 @@ function fotogramaParca(e) {
   if (e.flash > 0 && SPR['parca-he1'] && e.estado === 'flota') return 'parca-he1';
   const n = A[Math.floor(e.animT * rit) % A.length];
   return SPR[n] ? n : SPR.parca ? 'parca' : 'jefe';
+}
+// la Parca vencida: se resquebraja, cae en un montón de huesos y el montón se desvanece
+function pintaRestosParca() {
+  const J = JUEGO, R = J.restosParca; if (!R) return;
+  const k = J.t - R.t0, A = PARCA_ANIM.muere, n = A[Math.min(A.length - 1, Math.floor(k * 3))];
+  if (k > 6) { J.restosParca = null; return; }
+  if (SPR[n]) pinta(n, R.x, R.y, false, false, 1, k > 5 ? 6 - k : 1);
 }
 function pintaParcaExtra(e) {
   const J = JUEGO;

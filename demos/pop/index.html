@@ -21,6 +21,7 @@
       <p class="pp-lema" id="pp-record"></p>
       <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
       <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
+      <button class="pp-btn2 pp-rosa" id="pp-duelo" type="button">DUELO CONTRA EL CEO</button>
       <div class="pp-fila">
         <button class="pp-btn2 pp-verde" id="pp-ayuda" type="button">CÓMO SE JUEGA</button>
         <button class="pp-btn2 pp-rosa" id="pp-sonido" type="button">SONIDO</button>
@@ -28,6 +29,7 @@
       </div>
     </section>
     <button id="pp-pausa" class="pp-redondo" type="button" aria-label="Pausa" hidden><span></span><span></span></button>
+    <button id="pp-listo" class="pp-btn" type="button" hidden>¡LISTO!</button>
     <section id="pp-lola" hidden><div id="pp-lola-cara"></div><div class="pp-bocadillo"><b>Lola</b><p id="pp-lola-texto"></p><button class="pp-btn2" id="pp-lola-vale" type="button">¡VALE!</button><div id="pp-lola-elige" hidden><button class="pp-btn2 pp-rosa" id="pp-lola-liso" type="button">LISITOS</button><button class="pp-btn2 pp-azul" id="pp-lola-pixel" type="button">PIXEL ART</button></div></div></section>
     <section id="pp-modal" class="pp-modal" hidden><div class="pp-tarjeta" id="pp-tarjeta"></div></section>
   </div>
@@ -38,7 +40,7 @@ NUCLEO.juego({
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js'],
   idioma: { en: ['idioma/en.js'] },
-  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/partida.js', 'js/efectos.js', 'js/pintar.js', 'js/mapa.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
+  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/tienda.js', 'js/partida.js', 'js/efectos.js', 'js/pintar.js', 'js/mapa.js', 'js/duelo.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
 });
 </script>
 </body>

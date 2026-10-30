@@ -23,13 +23,17 @@ function nuevaPartida() {
   if (J.diarioPedido) { J.diarioPedido = false; J.diario = true; preparaDiario(); }
   else if (J.semillaSala) { J.rnd = semillaAzar(J.semillaSala); J.semillaSala = 0; }
   else J.noche = Math.max(1, Math.min(SAVE.noche || 1, SAVE.nocheMax || 1));
-  J.mod = modNoche(); PELIGROS.length = 0; vaciaArmasNuevas();
+  J.mod = modNoche(); PELIGROS.length = 0; vaciaArmasNuevas(); vaciaArmasMas();
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
   J.pers = J.diario ? personajeDelDia() : personaje(); J.yo.dir = 1;
   sorteaTierras(); J.maldicion = eligeMaldicion(); barajaCasillas();
   calculaStats(); J.vida = J.st.vidaMax;
   aplicaCarta(cartaArma(J.pers.arma));
   if (J.pers.id === 'blanco') J.tiradas++;
+  // la tienda: Pluma de fénix, Arsenal y Dado de la suerte
+  J.fenix = nivelMejora('fenix'); J.habT = 0; J.torbellino = 0; J.bendicion = 0; J.rafaga = null; J.escudoListo = 0;
+  if (nivelMejora('arsenal')) { const otras = Object.keys(ARMAS).filter(id => id !== J.pers.arma && armaAbierta(id)); aplicaCarta(cartaArma(otras[(Math.random() * otras.length) | 0])); }
+  if (nivelMejora('suerte')) J.dado.bendito = true;
   preparaEspeciales();
   SAVE.partidas++; guarda();
   if (J.maldicion.id === 'ninguna') { aviso(tr('¡LLEGA A LA CASILLA 63!'), '#ffd34d', 2.2); aviso2(tr('El tablero se derrumba detrás de ti')); }
@@ -69,6 +73,7 @@ function avanzaPartida(dt) {
   }
 
   avanzaJugador(dt);
+  avanzaHabilidad(dt);   // la habilidad del personaje (js/habilidades.js)
   avanzaSalto(dt);
   avanzaDerrumbe(dt);
   avanzaTierras(dt); avanzaTierras2(dt); avanzaCaminos(); charcosMalos(dt);
@@ -141,6 +146,7 @@ function estallidoPozo() {   // al salir del Pozo, una onda que barre todo lo ce
 function heridaJugador(dano, ox, oy) {
   const J = JUEGO, yo = J.yo;
   if (J.escena && J.escena.tipo === 'posada') return;
+  if (escudoPara()) return;   // Escudo de plumas (js/armas3.js)
   J.vida -= dano; J.invul = CFG.jugador.invulnerable; J.golpeT = 0.25;
   const d = Math.hypot(yo.x - ox, yo.y - oy) || 1; yo.x += (yo.x - ox) / d * 6; yo.y += (yo.y - oy) / d * 6;   // las hordas te empujan
   texto(yo.x, yo.y - 12, '-' + Math.round(dano), '#ff4d4d', 8, 0.6);
@@ -149,6 +155,7 @@ function heridaJugador(dano, ox, oy) {
 }
 function matarJugador() {
   const J = JUEGO; if (J.muerto > 0 || J.fin) return;
+  if (J.fenix > 0) { J.fenix--; J.vida = J.st.vidaMax * 0.5; J.invul = 2.5; J.caida = 0; J.caidaAbismo = false; J.fase = 'parado'; J.escena = null; J.yo.x = centroX(J.casilla); J.yo.y = yCentro(J.casilla); J.yD = Math.max(J.yD, J.yo.y + 90); aviso(tr('¡PLUMA DE FÉNIX!'), '#ff9b4d', 1.6); anillo(J.yo.x, J.yo.y, 90, '#ff9b4d', 0.8, 5); destella('#ff9b4d', 0.6); SONIDO.evolucion(); return; }   // la de la tienda: una vida más
   J.vida = 0; J.muerto = 1.4;
   estallido(J.yo.x, J.yo.y, 30, '#8a1e22', 120, 1, 3, 1, 40);
   tiembla(7); destella('#ff0000', 0.6); SONIDO.muereYo(); vibra(300);
@@ -218,7 +225,7 @@ function vuelveATirar() {
 
 // --- cofres: el dado decide si traen 1, 3 o 5 mejoras ---
 function abreCofre() {
-  const J = JUEGO, r = Math.random(), n = r < 0.07 ? 5 : r < 0.32 ? 3 : 1;
+  const J = JUEGO, r = Math.random() - (J.st.llave || 0), n = r < 0.07 ? 5 : r < 0.32 ? 3 : 1;   // la Llave del cofre los mejora
   const premios = [];
   for (let i = 0; i < n; i++) {
     const evo = evolucionesListas(), todas = evo.length ? evo : cartasPosibles().filter(c => !c.nueva);

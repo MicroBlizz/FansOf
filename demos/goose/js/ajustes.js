@@ -47,5 +47,9 @@ const CFG = {
     { id: 'iman',    max: 5, base: 20 },
     { id: 'codicia', max: 5, base: 35 },
     { id: 'retiro',  max: 3, base: 60 },
+    { id: 'fenix',   max: 1, base: 220 },
+    { id: 'arsenal', max: 1, base: 160 },
+    { id: 'suerte',  max: 1, base: 90 },
+    { id: 'regateo', max: 3, base: 45 },
   ],
 };

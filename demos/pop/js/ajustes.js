@@ -5,6 +5,14 @@
 const AJUSTES = {
   id: 'pop',                 // para core: la partida en la nube lleva este nombre
   guardado: 'fansof-pop',    // la clave de la partida en este navegador
+  // Las dos monedas de la serie (core/js/sistema/monedas.js, ADR 004): Monedas = la ganada (solo jugando, nunca se vende) y
+  // PERLAS = la comprada (con euros, como los lingotes de oro de Candy Crush; solo compra cosas a precio fijo, nunca azar). Sin puente.
+  monedas: {
+    ganada: { id: 'monedas', nombre: 'Monedas', nombre_en: 'Coins', icono: () => '' }, comprada: { id: 'perlas', nombre: 'Perlas', nombre_en: 'Pearls', icono: () => '' },
+    ratio: 12, cambio: 0,
+    leer: cual => (cual === 'comprada' ? SAVE.perlas : SAVE.monedas) || 0,
+    escribir: (cual, n) => { SAVE[cual === 'comprada' ? 'perlas' : 'monedas'] = n; ppGuarda(); },
+  },
 };
 
 const PP_CFG = {
@@ -18,6 +26,26 @@ const PP_CFG = {
   cofreCada: 15,             // un cofre cada 15 estrellas de récord…
   cofre: [40, 80],           // …con entre 40 y 80 monedas
   cofreJefe: 100,            // y uno grande, de 100, al ganar a un jefe por primera vez
+  // fase 3 (30-10-2026, «como Candy Crush»): las PERLAS, la moneda de pago (js/tienda.js). Precios fijos, sin azar.
+  perlas: {
+    seguir: [9, 15, 20],     // +5 toques al quedarte sin toques: cada vez más caro en el mismo intento
+    toquesSeguir: 5,
+    vidas: 12,               // llenar los corazones
+    hueco: [40, 80],         // el 5.º y el 6.º hueco del equipo (también se pueden pagar con monedas)
+    jefe: 3,                 // perlas de regalo al ganar a un jefe por primera vez (la comprada «cae poco a poco jugando»)
+  },
+  // los paquetes de perlas con euros (PROVISIONALES: los productos aún no existen en Play ni en el servidor; hasta entonces, la
+  // ventana de core dice que llegarán con la app). `id` = el producto en Play Console y en servidor/90 cuando se den de alta.
+  packs: [
+    { id: 'pop_perlas_10', perlas: 10, precio: '0,99 €' },
+    { id: 'pop_perlas_50', perlas: 50, precio: '4,49 €', extra: '+10 %' },
+    { id: 'pop_perlas_120', perlas: 120, precio: '9,99 €', extra: '+20 %' },
+    { id: 'pop_perlas_300', perlas: 300, precio: '21,99 €', extra: '+35 %' },
+  ],
+  // ver un anuncio (siempre porque tú quieres, nunca en mitad del juego sin pedirlo)
+  anuncio: { toques: 3, vidasDia: 3 },   // +3 toques una vez por intento al quedarte sin toques · +1 corazón, hasta 3 veces al día
+  // el DUELO contra el CEO (js/duelo.js): pop-it de verdad por turnos, pierde quien revienta la última
+  duelo: { premio: 15, premiosDia: 5, fallo: [0.45, 0.08], paso: 0.06 },   // monedas por victoria (con premio las 5 primeras del día) · cuánto se equivoca el CEO (del 45 % baja hasta el 8 % según ganas)
 };
 // Los mundos, sus niveles y la curva de dificultad están en js/niveles.js (se generan solos).
 

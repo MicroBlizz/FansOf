@@ -68,7 +68,7 @@ function pintaDado() {
   if (D.rodando > 0) {
     const k = 1 - D.rodando, y = 120 + Math.abs(Math.sin(k * 9)) * (1 - k) * -40, x = W / 2 + Math.sin(k * 5) * 30 * (1 - k);
     const cara = 1 + ((J.t * 18) | 0) % 6;
-    G.globalAlpha = 0.5; G.fillStyle = '#000'; G.beginPath(); G.ellipse(x, 142, 14 * (0.6 + k * 0.4), 4, 0, 0, 6.283); G.fill(); G.globalAlpha = 1;
+    G.globalAlpha = 0.5; disco(x, 142, Math.round(14 * (0.6 + k * 0.4)), 4, '#000'); G.globalAlpha = 1;
     pintaGirado('dadogrande' + cara, x, y, k * 14 * (1 - k * 0.7), 1);
     return;
   }
@@ -78,12 +78,12 @@ function pintaDado() {
   if (D.efecto && D.quedan > 0) {
     pinta('dado' + D.efecto, x, y, false, false, 1.3);
     const F = CARAS[D.efecto];
-    G.strokeStyle = F.color; G.lineWidth = 2; G.beginPath(); G.arc(x, y, 12, -1.57, -1.57 + 6.283 * Math.min(1, D.quedan / 3)); G.stroke();
+    arcoPixel(x, y, 12, -1.57, -1.57 + 6.283 * Math.min(1, D.quedan / 3), 2, F.color);
   }
   // el botón del dado
   if (puedeTirar()) {
     const pulso = 1 + Math.sin(J.t * 6) * 0.06, bx = W / 2, by = 76;
-    G.globalAlpha = 0.35 + Math.sin(J.t * 6) * 0.15; G.fillStyle = D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#f6e7b8'; G.beginPath(); G.arc(bx, by, 18 * pulso, 0, 6.283); G.fill(); G.globalAlpha = 1;
+    G.globalAlpha = 0.35 + Math.sin(J.t * 6) * 0.15; disco(bx, by, Math.round(18 * pulso), Math.round(18 * pulso), D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#f6e7b8'); G.globalAlpha = 1;
     if (SPR['s-dado']) pinta('s-dado', bx, by + Math.sin(J.t * 5) * 1.5, false, false, 1); else pintaGirado('dadogrande' + (1 + ((J.t * 0.8) | 0) % 6), bx, by, Math.sin(J.t * 2) * 0.15, 0.75 * pulso);
     texto2(D.bendito ? tr('¡DADO BENDITO!') : D.maldito ? tr('DADO MALDITO') : tr('TIRA EL DADO'), bx, by + 22, 7, D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#fff4dc');
     BOTONES.push({ x: bx - 28, y: by - 22, w: 56, h: 52, accion: () => tirarDado() });

@@ -135,10 +135,11 @@ function pintaOscuridad() {
   o.fillStyle = 'rgba(2,1,6,.93)'; o.fillRect(0, 0, W, H);
   o.globalCompositeOperation = 'destination-out';
   const x = J.yo.x, y = J.yo.y - J.camY, r = (maldita('niebla') && !enTierra('catacumbas') ? 60 : 52) + Math.sin(J.t * 7) * 2;
-  const g = o.createRadialGradient(x, y, r * 0.3, x, y, r); g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)'); o.fillStyle = g; o.fillRect(x - r, y - r, r * 2, r * 2);
-  // las antorchas y velas del tablero también alumbran un poco
+  // la luz del farol, en anillos de píxeles (cada anillo quita un poco más de oscuridad)
+  const anillos = r2 => { for (let q = 0; q < 5; q++) discoEn(o, x, y, r2 * (1 - q * 0.14), 0.45); };
+  anillos(r);
   const L = ADORNOS[J.casilla] || [];
-  for (const a of L) if (a.vela) { const gg = o.createRadialGradient(a.x, a.y - J.camY, 2, a.x, a.y - J.camY, 16); gg.addColorStop(0, 'rgba(0,0,0,.8)'); gg.addColorStop(1, 'rgba(0,0,0,0)'); o.fillStyle = gg; o.fillRect(a.x - 16, a.y - J.camY - 16, 32, 32); }
+  for (const a of L) if (a.vela) for (let q = 0; q < 3; q++) discoEn(o, a.x, a.y - J.camY, 16 * (1 - q * 0.25), 0.35);
   o.globalCompositeOperation = 'source-over';
   G.drawImage(OSCURO, 0, 0, W, H);
 }

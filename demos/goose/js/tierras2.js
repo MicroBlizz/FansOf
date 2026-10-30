@@ -44,8 +44,8 @@ function mueveTierras2(e, dt, ux, uy, d) {
   const J = JUEGO, yo = J.yo;
   if (e.tipo === 'payaso') {   // rebota en línea recta por la casilla, rapidísimo
     if (!e.fase) { const a = Math.atan2(uy, ux) + (Math.random() - 0.5) * 0.8; e.f2 = Math.cos(a); e.cx = Math.sin(a); e.fase = 1; }
-    const cx = centroX(casillaDe(e.y)), w = anchoDe(casillaDe(e.y)) / 2 - 6;
-    if ((e.x < cx - w && e.f2 < 0) || (e.x > cx + w && e.f2 > 0)) e.f2 = -e.f2;
+    const [bl, br] = bordes(e.y);
+    if ((e.x < bl + 6 && e.f2 < 0) || (e.x > br - 6 && e.f2 > 0)) e.f2 = -e.f2;
     if (Math.abs(e.y - yo.y) > 90) { e.cx = Math.sign(yo.y - e.y) * Math.abs(e.cx || 0.6); }
     return [e.f2 * 1.5, (e.cx || 0.6) * 1.5];
   }
@@ -105,8 +105,8 @@ function pintaPeligros() {
   const J = JUEGO;
   for (const P of PELIGROS) {
     const k = 1 - P.t / P.max;
-    G.globalAlpha = 0.25 + k * 0.4; G.fillStyle = '#000'; G.beginPath(); G.ellipse(P.x, P.y, P.r * (0.4 + k * 0.6), P.r * 0.6 * (0.4 + k * 0.6), 0, 0, 6.283); G.fill();
-    G.globalAlpha = 0.5 + Math.sin(J.t * 20) * 0.3; G.strokeStyle = '#ff4d4d'; G.lineWidth = 1; G.beginPath(); G.ellipse(P.x, P.y, P.r, P.r * 0.6, 0, 0, 6.283); G.stroke(); G.globalAlpha = 1;
+    G.globalAlpha = 0.25 + k * 0.4; disco(P.x, P.y, Math.round(P.r * (0.4 + k * 0.6)), Math.round(P.r * 0.6 * (0.4 + k * 0.6)), '#000');
+    G.globalAlpha = 0.5 + Math.sin(J.t * 20) * 0.3; G.drawImage(discoLienzo(P.r, P.r * 0.6, '#ff4d4d', 1), snap(P.x) - P.r - 0.5 / PAN.k, snap(P.y) - P.r * 0.6 - 0.5 / PAN.k, (Math.round(P.r * PAN.k) * 2 + 1) / PAN.k, (Math.round(P.r * 0.6 * PAN.k) * 2 + 1) / PAN.k); G.globalAlpha = 1;
     if (P.tipo === 'roca') { const alto = (1 - k) * 90; G.fillStyle = '#5a4a3e'; G.fillRect(P.x - 4, P.y - 6 - alto, 8, 7); G.fillStyle = '#120808'; G.fillRect(P.x - 4, P.y - 6 - alto, 8, 1); }
     else { G.fillStyle = '#c0302f'; G.fillRect(P.x - 1.5, P.y - 6, 3, 7); G.fillStyle = Math.sin(J.t * 30) > 0 ? '#ffd34d' : '#ff7a2a'; G.fillRect(P.x - 1, P.y - 8, 2, 2); }
   }

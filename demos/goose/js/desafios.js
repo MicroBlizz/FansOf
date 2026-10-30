@@ -96,7 +96,7 @@ function pintaDesafios() {
   const hechos = DESAFIOS.filter(d => hecho(d.id)).length;
   texto2(tr('DESAFÍOS'), W / 2, 26, 15, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
   texto2(tr('{a} de {b} cumplidos', { a: hechos, b: DESAFIOS.length }), W / 2, 40, 7, '#f1e6c8');
-  const alto = 29, y0 = 50, caben = Math.floor((H - y0 - 50) / (alto + 3));
+  const alto = 29, y0 = 50, caben = Math.floor((H - y0 - 80) / (alto + 3));
   DESAFIOS_SCROLL = Math.max(0, Math.min(DESAFIOS.length - caben, DESAFIOS_SCROLL));
   DESAFIOS.slice(DESAFIOS_SCROLL, DESAFIOS_SCROLL + caben).forEach((d, i) => {
     const y = y0 + i * (alto + 3), ok = hecho(d.id), c = d.premio === 'monedas' ? '#ffcf33' : d.premio === 'tierra' ? '#7dff6b' : d.premio === 'arma' ? '#ff9b4d' : '#6bf2ff';

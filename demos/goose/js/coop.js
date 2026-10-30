@@ -91,8 +91,8 @@ function pintaTumbas() {
     if (!r.muerto || !r.tumba || r.abismo) continue;
     const t = r.tumba;
     pinta('ad-lapida', t.x, t.y, false, false, 1);
-    G.globalAlpha = 0.5 + Math.sin(J.t * 6) * 0.2; G.strokeStyle = r.color; G.lineWidth = 1.5; G.beginPath(); G.arc(t.x, t.y, 16, 0, 6.283); G.stroke(); G.globalAlpha = 1;
-    if (r.revT > 0) { G.strokeStyle = '#7dff6b'; G.lineWidth = 3; G.beginPath(); G.arc(t.x, t.y, 13, -1.57, -1.57 + 6.283 * Math.min(1, r.revT / 1.5)); G.stroke(); }
+    G.globalAlpha = 0.5 + Math.sin(J.t * 6) * 0.2; aro(t.x, t.y, 16, 1.5, r.color); G.globalAlpha = 1;
+    if (r.revT > 0) arcoPixel(t.x, t.y, 13, -1.57, -1.57 + 6.283 * Math.min(1, r.revT / 1.5), 3, '#7dff6b');
     etiqueta(tr('¡REVÍVEME!'), t.x, t.y - 14, r.color);
   }
 }

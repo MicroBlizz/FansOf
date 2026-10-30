@@ -6,18 +6,45 @@ const BOTONES = [];   // los botones de la pantalla actual: { x, y, w, h, accion
 const FUENTE_G = '"Pirata One", "Pixelify Sans", serif';
 const FUENTE = '"Pixelify Sans", system-ui, sans-serif';
 
+// LETRAS DE PÍXEL NÍTIDAS: cada texto se escribe una vez a su tamaño exacto en píxeles de verdad, se le quita el suavizado (cada
+// píxel, lleno o vacío) y se le pone un contorno de un píxel; luego se pega como un sprite. Así no sale borroso al ampliar el canvas.
+// Nada por debajo de TAM_MIN (se lee en el móvil) y la gótica solo en títulos grandes.
+const TAM_MIN = 7, LETRAS = new Map();
+let MIDE = null;
+const fuenteDe = (tam, fuente) => (fuente === FUENTE_G && tam < 12 ? FUENTE : fuente);
+function anchoTexto(t, tam, fuente = FUENTE, peso = 800) {
+  if (!MIDE) MIDE = document.createElement('canvas').getContext('2d');
+  const px = Math.round(Math.max(TAM_MIN, tam) * PAN.k); MIDE.font = `${Math.min(700, peso)} ${px}px ${fuenteDe(tam, fuente)}`;
+  return MIDE.measureText(String(t)).width / PAN.k;
+}
+function letra(t, tam, color, fuente, peso, borde) {
+  t = String(t); const k = PAN.k, px = Math.round(Math.max(TAM_MIN, tam) * k), f = fuenteDe(tam, fuente), pw = Math.min(700, peso);
+  const clave = t + '|' + px + '|' + color + '|' + f + '|' + pw + '|' + (borde ? 1 : 0);
+  let L = LETRAS.get(clave); if (L) return L;
+  if (LETRAS.size > 900) LETRAS.clear();
+  const o = borde ? Math.max(1, Math.round(px / 16)) : 0, m = 2 + o;
+  if (!MIDE) MIDE = document.createElement('canvas').getContext('2d');
+  MIDE.font = `${pw} ${px}px ${f}`;
+  const tw = Math.ceil(MIDE.measureText(t).width), w = tw + m * 2, h = Math.ceil(px * 1.45) + m * 2;
+  const a = lienzo(w, h), xa = a.getContext('2d');
+  xa.font = `${pw} ${px}px ${f}`; xa.textBaseline = 'middle'; xa.fillStyle = '#fff'; xa.fillText(t, m, h / 2);
+  const d = xa.getImageData(0, 0, w, h); for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0; xa.putImageData(d, 0, 0);
+  const tinta = col => { const c = lienzo(w, h), x = c.getContext('2d'); x.drawImage(a, 0, 0); x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, w, h); return c; };
+  const out = lienzo(w, h), xo = out.getContext('2d');
+  if (o) { const osc = tinta('#120808'); for (let dy = -o; dy <= o; dy++) for (let dx = -o; dx <= o; dx++) if (dx || dy) xo.drawImage(osc, dx, dy); }
+  xo.drawImage(tinta(color), 0, 0);
+  L = { c: out, w: w / k, h: h / k, tw: tw / k, m: m / k }; LETRAS.set(clave, L);
+  return L;
+}
 function texto2(t, x, y, tam, color, alinea = 'center', fuente = FUENTE, peso = 800, borde = 0.3) {
-  G.font = `${peso} ${tam}px ${fuente}`; G.textAlign = alinea; G.textBaseline = 'middle'; G.lineJoin = 'round';
-  if (borde) { G.lineWidth = tam * borde; G.strokeStyle = '#120808'; G.strokeText(t, x, y); }
-  G.fillStyle = color; G.fillText(t, x, y);
+  const L = letra(t, tam, color, fuente, peso, borde);
+  const x0 = alinea === 'left' ? x - L.m : alinea === 'right' ? x - L.tw - L.m : x - L.tw / 2 - L.m;
+  G.drawImage(L.c, x0, y - L.h / 2, L.w, L.h);
 }
-function caja(x, y, w, h, r, relleno, borde = '#120808', grosor = 1.5) {
-  G.beginPath(); G.roundRect(x, y, w, h, r); G.fillStyle = relleno; G.fill();
-  if (borde) { G.lineWidth = grosor; G.strokeStyle = borde; G.stroke(); }
-}
+function caja(x, y, w, h, r, relleno, borde = '#120808', grosor = 1.5) { cajaPixel(x, y, w, h, r, relleno, borde, grosor); }   // en píxeles (js/pixel.js)
 function barra(x, y, w, h, k, color, fondo = '#2a1414') {
-  caja(x, y, w, h, h / 2, fondo, '#120808', 1.2);
-  if (k > 0) { G.beginPath(); G.roundRect(x + 1, y + 1, Math.max(h - 2, (w - 2) * Math.min(1, k)), h - 2, (h - 2) / 2); G.fillStyle = color; G.fill(); }
+  caja(x, y, w, h, Math.min(2, h / 2), fondo, '#120808', 1.2);
+  if (k > 0) { caja(x + 1, y + 1, Math.max(1, (w - 2) * Math.min(1, k)), h - 2, 1, color, null); G.globalAlpha *= 0.35; caja(x + 1, y + 1, Math.max(1, (w - 2) * Math.min(1, k)), Math.max(0.5, (h - 2) * 0.35), 0, '#ffffff', null); G.globalAlpha /= 0.35; }
 }
 function boton(x, y, w, h, txt, color, accion, tam = 10, sub) {
   const pulsado = ENTRADA.botonDown && ENTRADA.bx > x && ENTRADA.bx < x + w && ENTRADA.by > y && ENTRADA.by < y + h;
@@ -25,8 +52,8 @@ function boton(x, y, w, h, txt, color, accion, tam = 10, sub) {
   caja(x, y + 2.5, w, h, 6, '#120808', null);
   caja(x, y + dy, w, h, 6, color, '#120808', 1.8);
   G.globalAlpha = 0.25; caja(x + 3, y + dy + 2, w - 6, h * 0.35, 4, '#ffffff', null); G.globalAlpha = 1;
-  texto2(txt, x + w / 2, y + dy + h / 2 + (sub ? -3 : 0.5), tam, '#fff8e8', 'center', FUENTE, 800, 0.32);
-  if (sub) texto2(sub, x + w / 2, y + dy + h / 2 + 6, 6.5, '#fff1c2', 'center', FUENTE, 700, 0.3);
+  texto2(txt, x + w / 2, y + dy + h / 2 + (sub ? -3.5 : 0.5), tam, '#fff8e8', 'center', FUENTE, 800, 0.32);
+  if (sub) texto2(sub, x + w / 2, y + dy + h / 2 + 6.5, 7, '#fff1c2', 'center', FUENTE, 700, 0.3);
   BOTONES.push({ x, y, w, h, accion });
 }
 
@@ -93,7 +120,7 @@ function pintaMapa() {
   G.fillStyle = '#3c7030'; G.fillRect(x - 2.5, y1 - 3, 5, 4);
   pintaRivalesMapa(yDe);
   const yy = yDe(Math.min(N, -J.yo.y / TH + 1));
-  G.fillStyle = '#fff'; G.beginPath(); G.arc(x, yy, 2.6, 0, 6.283); G.fill(); G.strokeStyle = '#8a1e22'; G.lineWidth = 1; G.stroke();
+  disco(x, yy, 3.2, 3.2, '#8a1e22'); disco(x, yy, 2.4, 2.4, '#fff');
 }
 
 function pintaAvisos() {
@@ -110,8 +137,8 @@ function pintaAvisos() {
 // el joystick flotante (aparece donde apoyas el dedo)
 function pintaPalanca() {
   const E = ENTRADA; if (!E.palanca) return;
-  G.globalAlpha = 0.28; G.fillStyle = '#f6e7b8'; G.beginPath(); G.arc(E.px, E.py, 22, 0, 6.283); G.fill();
-  G.globalAlpha = 0.6; G.strokeStyle = '#f6e7b8'; G.lineWidth = 1.5; G.stroke();
-  G.globalAlpha = 0.8; G.fillStyle = '#e8742a'; G.beginPath(); G.arc(E.px + E.mx * 22, E.py + E.my * 22, 9, 0, 6.283); G.fill();
+  G.globalAlpha = 0.28; disco(E.px, E.py, 22, 22, '#f6e7b8');
+  G.globalAlpha = 0.6; aro(E.px, E.py, 22, 1.5, '#f6e7b8');
+  G.globalAlpha = 0.9; disco(E.px + E.mx * 22, E.py + E.my * 22, 10, 10, '#120808'); disco(E.px + E.mx * 22, E.py + E.my * 22, 9, 9, '#e8742a');
   G.globalAlpha = 1;
 }

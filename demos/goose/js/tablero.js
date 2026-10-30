@@ -7,8 +7,24 @@ const TH = CFG.altoCasilla;
 const yCentro = t => -(t - 0.5) * TH;            // centro de la casilla t (el mundo sube hacia y negativa)
 const yTecho = () => -(CFG.jardin - 1 + 3) * TH; // el borde de arriba del jardín
 function casillaDe(y) { const t = Math.floor(-y / TH) + 1; return t > CFG.jardin ? CFG.jardin : t; }
-function centroX(t) { if (t <= 1 || t >= CFG.jardin - 2) return CFG.W / 2; const a = Math.min(1, (CFG.jardin - 2 - t) / 3); return CFG.W / 2 + a * (CFG.vaiven * Math.sin(t * 0.83) + 9 * Math.sin(t * 2.1)); }
+// EL CAMINO DE ISLAS: el centro serpentea suave con la altura (cxY) y cada casilla es una isla con el borde irregular que se estrecha
+// donde toca con la siguiente (bordes). Lo que se ve es lo que se pisa: hayCamino usa los mismos bordes.
+const tDe = y => -y / TH + 0.5;   // la casilla «continua» (el centro de la casilla t da t)
+function cxY(y) {
+  const tf = tDe(y); if (tf >= CFG.jardin - 2) return CFG.W / 2;
+  const a = Math.max(0, Math.min(1, (CFG.jardin - 2 - tf) / 3, (tf - 0.6) / 1.4));
+  return CFG.W / 2 + a * (CFG.vaiven * Math.sin(tf * 0.55) + 7 * Math.sin(tf * 1.7));
+}
+function centroX(t) { return cxY(yCentro(t)); }
 function anchoDe(t) { return t >= CFG.jardin ? CFG.W - 8 : t >= CFG.jardin - 2 ? CFG.anchoCamino + 24 : CFG.anchoCamino; }
+// los bordes izquierdo y derecho de la isla a esa altura: más ancha en el medio, estrecha en las juntas, y con mordiscos
+function bordes(y) {
+  const t = casillaDe(y), cx = cxY(y), m = anchoDe(t) / 2;
+  if (t >= CFG.jardin - 2) return [cx - m, cx + m];
+  const f = Math.max(0, Math.min(1, -y / TH - (t - 1))), forma = 0.64 + 0.36 * Math.pow(Math.sin(Math.PI * f), 0.55);
+  const yy = Math.round(y / 4) * 4;   // los mordiscos van de 4 en 4: escalones de píxel
+  return [cx - m * forma - 4 * Math.sin(yy * 0.23 + t * 1.7) - 2.5 * Math.sin(yy * 0.61 + t), cx + m * forma + 4 * Math.sin(yy * 0.19 + t * 2.3) + 2.5 * Math.sin(yy * 0.53 - t)];
+}
 const enCasilla = (y, t) => casillaDe(y) === t;
 
 // ¿se puede pisar el punto (x, y)?
@@ -16,8 +32,8 @@ function hayCamino(x, y) {
   if (y > 0 || y < yTecho() || y > JUEGO.yD) return false;
   const E = JUEGO.escena;
   if (E && E.tipo === 'puente' && y < E.y0 + TH / 2 && y > E.y1 - TH / 2) return Math.abs(x - xPuente(y)) <= ESC.puenteAncho / 2;
-  const t = casillaDe(y);
-  return Math.abs(x - centroX(t)) <= anchoDe(t) / 2;
+  const [l, r] = bordes(y);
+  return x >= l && x <= r;
 }
 
 // --- casillas especiales ---
@@ -122,31 +138,49 @@ function pintaTablero() {
     const w = anchoDe(t), x0 = centroX(t) - w / 2;
     // tiembla un poco la que está a punto de caer
     const tb = cortada || bottom > J.yD - 18 ? Math.sin(J.t * 50 + t) * 0.8 : 0;
-    // canto de la losa (da grosor)
-    G.fillStyle = '#1e0f07'; G.fillRect(x0 + tb, top + 3, w, bottom - top + (cortada ? 0 : 5));
     if (t >= CFG.jardin) G.drawImage(JARDIN, x0, top, w, alto);
-    else {
-      const S = SUELOS[biomaDe(t).id], img = S ? S[t % 2] : LOSAS[t % 3];
-      G.drawImage(img, 0, 0, img.width, img.height * (bottom - top) / alto, x0 + tb, top, w, bottom - top);
-      // el cambio de tierra: una franja de su color en la primera casilla
-      if (BIOMAS.some(b => b.desde === t) && t > 1) { G.fillStyle = biomaDe(t).niebla; G.globalAlpha = 0.5; G.fillRect(x0 + tb, bottom - 3, w, 3); G.globalAlpha = 1; }
-      if (t === 1) { G.fillStyle = 'rgba(255,211,77,.16)'; G.fillRect(x0, top, w, bottom - top); }
-    }
-    if (cortada) { G.fillStyle = '#ff7a2a'; G.fillRect(x0 + tb, bottom - 1.5, w, 1.5); G.fillStyle = 'rgba(255,90,30,.25)'; G.fillRect(x0 + tb, bottom - 6, w, 4.5); }
+    else pintaIsla(t, top, bottom, tb, cortada);
+    if (cortada) { const [l, r] = bordes(bottom - 1); G.fillStyle = '#ff7a2a'; G.fillRect(l + tb, bottom - 1.5, r - l, 1.5); G.fillStyle = 'rgba(255,90,30,.25)'; G.fillRect(l + tb, bottom - 6, r - l, 4.5); }
     pintaNumero(t, centroX(t), t >= CFG.jardin ? top + 26 : top + alto / 2, top, bottom);
     pintaAdornos(t);
   }
   pintaEspeciales(arriba, abajo);
 }
 
+// una isla: el suelo de su tierra (patrón de Yoshi anclado al mundo, sin costuras) en franjas de 2 con sus bordes, un canto de roca
+// por fuera (el grosor) y, si el derrumbe la está comiendo, su panza colgando (img/isla-<tierra>.png)
+const PATRONES = {};
+function patronDe(id) {
+  if (PATRONES[id] !== undefined) return PATRONES[id];
+  const im = IMG['t-' + id] || (SUELOS[id] && SUELOS[id][0]); if (!im) return null;
+  const p = G.createPattern(im, 'repeat'); if (p && p.setTransform) p.setTransform(new DOMMatrix().scale(1 / PAN.k));
+  return (PATRONES[id] = p);
+}
+function pintaIsla(t, top, bottom, tb, cortada) {
+  const B = biomaDe(t), pat = patronDe(B.id), paso = 2;
+  for (let y = top; y < bottom; y += paso) {
+    const h = Math.min(paso, bottom - y), [l, r] = bordes(y + h / 2);
+    G.fillStyle = '#0c0604'; G.fillRect(l - 5 + tb, y + 4, 5, h); G.fillRect(r + tb, y + 4, 5, h);   // el canto de roca (grosor) asomando por fuera
+    G.fillStyle = B.veta; G.fillRect(l - 4 + tb, y + 3, 4, h - 0.5); G.fillRect(r + tb, y + 3, 4, h - 0.5);
+    G.fillStyle = pat || B.suelo[0]; G.fillRect(l + tb, y, r - l, h);
+    if (t === 1) { G.globalAlpha = 0.16; G.fillStyle = '#ffd34d'; G.fillRect(l + tb, y, r - l, h); G.globalAlpha = 1; }   // la salida
+    G.fillStyle = B.niebla; G.globalAlpha = 0.28; G.fillRect(l + 1 + tb, y, 1.5, h); G.fillRect(r - 2.5 + tb, y, 1.5, h); G.globalAlpha = 1;   // el borde de hierba o piedra
+    G.fillStyle = '#120805'; G.fillRect(l - 1 + tb, y, 1, h); G.fillRect(r + tb, y, 1, h);   // el contorno
+  }
+  // la junta con la siguiente isla
+  G.fillStyle = '#120805'; G.globalAlpha = 0.45; const [l0, r0] = bordes(top + 0.5); G.fillRect(l0 + tb, top, r0 - l0, 1); G.globalAlpha = 1;
+  if (BIOMAS.some(b => b.desde === t) && t > 1) { const [l, r] = bordes(bottom - 2); G.fillStyle = B.niebla; G.globalAlpha = 0.5; G.fillRect(l + tb, bottom - 3, r - l, 3); G.globalAlpha = 1; }
+  // la panza de la isla colgando bajo el derrumbe
+  if (cortada) { const [l, r] = bordes(bottom - 1), S = SPR['isla-' + B.id]; if (S) G.drawImage(S.n, l - 4 + tb, bottom - 2, r - l + 8, Math.min(40, S.h * (r - l + 8) / S.w)); }
+}
+
 function pintaNumero(t, x, y, top, bottom) {
   if (y > bottom - 6 || y < top) return;
-  G.globalAlpha = 0.28; G.fillStyle = '#1a0a04';
-  G.font = `400 ${t >= CFG.jardin ? 22 : 34}px "Pirata One", "Pixelify Sans", serif`;
-  G.fillText(t >= CFG.jardin ? tr('JARDÍN DE LA OCA') : String(t), x, y + 1);
+  G.globalAlpha = 0.28;
+  texto2(t >= CFG.jardin ? tr('JARDÍN DE LA OCA') : String(t), x, y + 1, t >= CFG.jardin ? 22 : 34, '#1a0a04', 'center', FUENTE_G, 400, 0);
   G.globalAlpha = 1;
   const nombre = nombreCasilla(t);
-  if (nombre) { G.font = '800 7px "Pixelify Sans", system-ui'; G.fillStyle = 'rgba(255,240,200,.75)'; G.fillText(nombre, x, y + 20); }
+  if (nombre) { G.globalAlpha = 0.8; texto2(nombre, x, y + 21, 7, '#fff0c8', 'center', FUENTE, 800, 0.3); G.globalAlpha = 1; }
 }
 function nombreCasilla(t) {
   if (CFG.ocaSalta[t] || CFG.ocasAdorno.includes(t)) return tr('OCA');
@@ -167,34 +201,34 @@ function pintaEspeciales(arriba, abajo) {
     if (e.y < arriba - 30 || e.y > abajo + 30 || e.y > J.yD) continue;
     if (e.tipo === 'oca') {
       const b = Math.sin(J.t * 4) * 2;
-      G.globalAlpha = 0.4 + Math.sin(J.t * 6) * 0.15; G.fillStyle = '#ffd34d'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
-      G.strokeStyle = '#ffd34d'; G.lineWidth = 1.5; G.beginPath(); G.arc(e.x, e.y, e.r, 0, 6.283); G.stroke();
+      G.globalAlpha = 0.4 + Math.sin(J.t * 6) * 0.15; disco(e.x, e.y, e.r + 3, e.r + 3, '#ffd34d'); G.globalAlpha = 1;
+      aro(e.x, e.y, e.r, 1.5, '#ffd34d');
       pinta('oca-dorada', e.x, e.y - 4 + b, false, false, 0.9, 1);
       etiqueta(tr('OCA'), e.x, e.y + e.r + 6, '#ffd34d');
     } else if (e.tipo === 'puente') {
       // un puentecillo de cuerda que brilla
-      G.globalAlpha = 0.35 + Math.sin(JUEGO.t * 6) * 0.15; G.fillStyle = '#9fe0ff'; G.beginPath(); G.arc(e.x, e.y, e.r + 3, 0, 6.283); G.fill(); G.globalAlpha = 1;
+      G.globalAlpha = 0.35 + Math.sin(JUEGO.t * 6) * 0.15; disco(e.x, e.y, e.r + 3, e.r + 3, '#9fe0ff'); G.globalAlpha = 1;
       G.fillStyle = '#120808'; G.fillRect(e.x - 11, e.y - 5, 22, 10);
       for (let i = 0; i < 5; i++) { G.fillStyle = i % 2 ? '#8a5a30' : '#a06a3a'; G.fillRect(e.x - 10 + i * 4.2, e.y - 4, 3.4, 8); }
       G.fillStyle = '#d9c08a'; G.fillRect(e.x - 11, e.y - 6, 22, 1.2); G.fillRect(e.x - 11, e.y + 4.8, 22, 1.2);
       etiqueta(tr('PUENTE'), e.x, e.y + e.r + 6, '#9fe0ff');
     } else if (e.tipo === 'pozo') {
-      if (!J.escena) { G.fillStyle = '#05060a'; G.beginPath(); G.ellipse(e.x, e.y, 14, 10, 0, 0, 6.283); G.fill(); G.strokeStyle = '#5c6b72'; G.lineWidth = 3; G.stroke(); }
+      if (!J.escena) { disco(e.x, e.y, 15, 11, '#5c6b72'); disco(e.x, e.y, 12.5, 8.5, '#05060a'); }
     } else if (e.tipo === 'dadodado') {
       pintaGirado('dado' + (1 + ((J.t * 6) | 0) % 6), e.x, e.y + Math.sin(J.t * 3) * 2, Math.sin(J.t * 2) * 0.4, 1.6); etiqueta(tr('SUERTE'), e.x, e.y + e.r + 5, '#ffe9a8');
     } else if (e.tipo === 'posada') {
       dibujaFarol(e.x - anchoDe(e.t) * 0.36, e.y - 18); dibujaFarol(e.x + anchoDe(e.t) * 0.36, e.y - 18);
     } else if (e.tipo === 'muerte') {
       G.globalAlpha = 0.55 + Math.sin(J.t * 3) * 0.15; G.fillStyle = '#3a0006'; G.fillRect(e.x - e.w / 2, e.y - e.h / 2, e.w, e.h); G.globalAlpha = 1;
-      G.strokeStyle = '#ff2d2d'; G.lineWidth = 1.2; G.setLineDash([3, 3]); G.strokeRect(e.x - e.w / 2, e.y - e.h / 2, e.w, e.h); G.setLineDash([]);
+      G.fillStyle = '#ff2d2d'; for (let q = 0; q < e.w; q += 6) { G.fillRect(e.x - e.w / 2 + q, e.y - e.h / 2, 3, 1); G.fillRect(e.x - e.w / 2 + q, e.y + e.h / 2 - 1, 3, 1); } for (let q = 0; q < e.h; q += 6) { G.fillRect(e.x - e.w / 2, e.y - e.h / 2 + q, 1, 3); G.fillRect(e.x + e.w / 2 - 1, e.y - e.h / 2 + q, 1, 3); }
       dibujaCalavera(e.x, e.y);
     }
   }
 }
-function etiqueta(txt, x, y, color) { G.font = '800 6px "Pixelify Sans", system-ui'; G.lineWidth = 2; G.strokeStyle = '#120808'; G.strokeText(txt, x, y); G.fillStyle = color; G.fillText(txt, x, y); }
-function dibujaFarol(x, y) { const J = JUEGO; G.globalAlpha = 0.25 + Math.sin(J.t * 7 + x) * 0.08; G.fillStyle = '#ffb86b'; G.beginPath(); G.arc(x, y, 14, 0, 6.283); G.fill(); G.globalAlpha = 1; G.fillStyle = '#1a0c05'; G.fillRect(x - 3, y - 4, 6, 8); G.fillStyle = '#ffd34d'; G.fillRect(x - 2, y - 2.5, 4, 5); }
+function etiqueta(txt, x, y, color) { texto2(txt, x, y, 7, color); }
+function dibujaFarol(x, y) { const J = JUEGO; G.globalAlpha = 0.6 + Math.sin(J.t * 7 + x) * 0.15; brillo(x, y, 14, '#ffb86b', 0.6); G.globalAlpha = 1; G.fillStyle = '#1a0c05'; G.fillRect(x - 3, y - 4, 6, 8); G.fillStyle = '#ffd34d'; G.fillRect(x - 2, y - 2.5, 4, 5); }
 function dibujaCalavera(x, y) {
-  G.fillStyle = '#f1e6c8'; G.strokeStyle = '#120808'; G.lineWidth = 1.2;
-  G.beginPath(); G.arc(x, y - 2, 9, 0, 6.283); G.fill(); G.stroke(); G.fillRect(x - 5, y + 4, 10, 5); G.strokeRect(x - 5, y + 4, 10, 5);
-  G.fillStyle = '#120808'; G.beginPath(); G.arc(x - 3.5, y - 2, 2.4, 0, 6.283); G.arc(x + 3.5, y - 2, 2.4, 0, 6.283); G.fill();
+  if (SPR['ad-calavera']) { pinta('ad-calavera', x, y, false, false, 1.4); return; }
+  disco(x, y - 2, 10, 10, '#120808'); disco(x, y - 2, 9, 9, '#f1e6c8'); G.fillStyle = '#120808'; G.fillRect(x - 6, y + 3, 12, 7); G.fillStyle = '#f1e6c8'; G.fillRect(x - 5, y + 4, 10, 5);
+  disco(x - 3.5, y - 2, 2.4, 2.4, '#120808'); disco(x + 3.5, y - 2, 2.4, 2.4, '#120808');
 }

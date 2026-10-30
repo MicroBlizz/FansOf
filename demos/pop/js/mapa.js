@@ -36,6 +36,12 @@ function ppMoneda(c, x, y, s) {
   if (ppDibujaEn(c, 'i-moneda', x, y, PP_LISO ? s * 1.25 : s, true)) return;
   c.beginPath(); c.arc(x, y, s * 0.42, 0, Math.PI * 2); c.fillStyle = '#ffd64a'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#c98a12'; c.stroke();
 }
+// una perla (la moneda de pago); si aún no está el dibujo, una bolita rosa nacarada
+function ppPerla(c, x, y, s) {
+  if (ppDibujaEn(c, 'i-perla', x, y, PP_LISO ? s * 1.25 : s, true)) return;
+  c.beginPath(); c.arc(x, y, s * 0.4, 0, Math.PI * 2); c.fillStyle = '#ffd1ec'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#c43a84'; c.stroke();
+  c.beginPath(); c.arc(x - s * 0.12, y - s * 0.12, s * 0.1, 0, Math.PI * 2); c.fillStyle = '#fff'; c.fill();
+}
 // un botón redondo de caramelo con una flecha (dibujada, sin emojis)
 function ppFlecha(c, x, y, dir) {
   c.save(); c.translate(x, y);
@@ -97,8 +103,13 @@ function ppPintaMapa(c, t) {
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) ppCorazon(c, 50 + i * 38, yb + 32, 32, i < vidas);
   if (vidas < PP_CFG.vida) ppTexto(c, tr('+1 en {t}', { t: ppReloj(ppFaltaVida()) }), 34, yb + 64, 22, '#fff', 'left', '#c43a84');
-  ppEstrella(c, 332, yb + 32, 36, true); ppTexto(c, String(P.estrellas), 352, yb + 34, 30, '#fff', 'left', '#7a4a8a');
-  ppMoneda(c, 422, yb + 32, 36); ppTexto(c, String(SAVE.monedas), 442, yb + 34, 30, '#fff', 'left', '#c98a12');
+  ppEstrella(c, 262, yb + 32, 34, true); ppTexto(c, String(P.estrellas), 280, yb + 34, 28, '#fff', 'left', '#7a4a8a');
+  ppMoneda(c, 340, yb + 32, 34); ppTexto(c, String(SAVE.monedas), 358, yb + 34, 28, '#fff', 'left', '#c98a12');
+  // las perlas, con un «+» que abre la tienda
+  ppPerla(c, 432, yb + 32, 34); ppTexto(c, String(SAVE.perlas || 0), 450, yb + 34, 28, '#fff', 'left', '#c43a84');
+  c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
+  c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
+  PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: ppTienda });
   const nh = ppHuecos();
   for (let k = 0; k < nh; k++) {
     const x = 270 + (k - (nh - 1) / 2) * 62, y = yb + 100, id = P.equipo[k];

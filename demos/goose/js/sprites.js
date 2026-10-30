@@ -8,8 +8,10 @@ const SPR = {};         // nombre -> { n, f, b, w, h } (normal, flip, blanco; w 
 const IMG = {};           // los PNG cargados
 // los objetos y adornos que tienen su PNG de Yoshi (si falta alguno, sale su dibujo de código, también pixelado)
 const PNG_DE = { xp1: 'i-pluma', xp2: 'i-pluma-azul', xp3: 'i-pluma-roja', moneda: 'i-moneda', cuchilla: 'i-cuchilla', tornado: 'i-cuchilla-fuego', huevo: 'i-huevo', huevojefe: 'i-huevo-rojo', cofre: 'i-cofre', pollo: 'i-asada', iman: 'i-iman' };
-const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo', dado6: 'i-dado', fuerza: 'i-espada', prisa: 'i-bota', area: 'i-circulo', suerte: 'i-trebol', iman: 'i-iman', vida: 'i-corazon', plumon: 'i-pluma-azul', cadencia: 'i-reloj', moneda: 'i-moneda', pollo: 'i-asada', bolsa: 'i-bolsa', luna: 'i-luna', campana: 'i-campana', tirachinas: 'i-tirachinas' };
+const ICONO_PNG = { latigo: 'i-latigo', cuchilla: 'i-cuchilla', huevo: 'i-huevo', dado6: 'i-dado', fuerza: 'i-espada', prisa: 'i-bota', area: 'i-circulo', suerte: 'i-trebol', iman: 'i-iman', vida: 'i-corazon', plumon: 'i-pluma-azul', cadencia: 'i-reloj', moneda: 'i-moneda', pollo: 'i-asada', bolsa: 'i-bolsa', luna: 'i-luna', campana: 'i-campana', tirachinas: 'i-tirachinas', herradura: 'i-herradura', gaita: 'i-gaita', rayo: 'i-rayo', cepo: 'i-cepo', nota: 'i-nota', espinas: 'i-espinas', colmillo: 'i-colmillo', ojo: 'i-ojo', llave: 'i-llave', escudo: 'i-escudo', flechas: 'i-flechas', fenix: 'i-fenix', arsenal: 'i-arsenal', regateo: 'i-regateo', torbellino: 'h-torbellino', raices: 'h-raices', rafaga: 'h-rafaga', doble: 'h-doble', difuntos: 'h-difuntos', bendicion: 'h-bendicion' };
 const ADORNOS_PNG = ['arbol', 'seta', 'tocon', 'cuervo', 'calabaza', 'junco', 'charca', 'rana', 'lapida', 'cruz', 'vela', 'huesos', 'calavera', 'antorcha', 'cadena', 'barril', 'farol', 'carro', 'pozo', 'armadura', 'estandarte', 'estatua', 'carpa', 'globo', 'caballito', 'diana', 'pino', 'muneco', 'carambano', 'rocanieve', 'vagoneta', 'viga', 'cristal', 'pico'];
+const ISLAS_PNG = ['bosque', 'pantano', 'cementerio', 'aldea', 'catacumbas', 'castillo', 'feria', 'helada', 'mina'].map(n => 'isla-' + n);   // la panza de las islas (js/tablero.js)
+const FX_PNG = ['ui-panel', 'fx-charco', 'fx-charco-malo', 'fx-latigo', 'fx-onda', 'fx-estallido', 'fx-humo', 'fx-plumas', 'ui-panel', 'ui-carta', 's-cuerda', 'dado-1', 'dado-2', 'dado-3', 'dado-4', 'dado-5', 'dado-6', 'dadito-1', 'dadito-2', 'dadito-3', 'dadito-4', 'dadito-5', 'dadito-6'];
 const ESCENAS_PNG = ['s-tabla', 's-pozo', 's-posada', 's-posadera', 's-cama', 's-dado', 's-cruce', 's-fuente', 's-mercader', 's-altar', 's-tesoro'];
 const TEXTURAS_PNG = ['t-bosque', 't-pantano', 't-cementerio', 't-aldea', 't-catacumbas', 't-castillo', 't-feria', 't-helada', 't-mina'];
 const HEROE_PNG = ['c-farol', ...['c-cuerpo', 'c-paso', 'c-golpe'].flatMap(n => [n, n + '-verde', n + '-azul', n + '-amarillo', n + '-negro', n + '-blanco']).flatMap(n => [n, n + '-izq'])];   // el héroe en capas (js/personajes.js)
@@ -23,11 +25,11 @@ const CICLOS = {
 const NUEVOS_PNG = ['rana', 'cuervo', 'antorcha', 'armadura', 'zombi', 'mj-rana', 'mj-cuervo', 'mj-alcalde', 'mj-caballero', 'parca', 'parca-hoz', 'parca-guadana', 'hoz', 'fuego', 'payaso', 'nevada', 'minera', 'mj-domador', 'mj-yeti', 'mj-capataz'];
 const ENEMIGOS_PNG = ['e-oca-1', 'e-oca-2', 'e-oca-3', 'e-alb-1', 'e-alb-2', 'e-gorda-1', 'e-gorda-2', 'e-jefe-1', 'e-jefe-2'];
 // es una función: PARCA_PNG llega después (js/parca.js) y aquí aún no existe
-const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
+const PNGS = () => [...new Set(['heroe', ...HEROE_PNG, ...ENEMIGOS_PNG, ...NUEVOS_PNG, ...(typeof PARCA_PNG !== 'undefined' ? PARCA_PNG : []), 'oca', 'albatros', 'gorda', 'jefe', 'oca-dorada', 'portada', ...ESCENAS_PNG, ...ISLAS_PNG, ...FX_PNG, ...TEXTURAS_PNG, ...Object.values(PNG_DE), ...Object.values(ICONO_PNG), ...ADORNOS_PNG.map(n => 'a-' + n)])];
 
 function cargaImagenes() {
   return Promise.all(PNGS().map(n => new Promise(ok => {
-    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=4';
+    const im = new Image(); im.onload = () => { IMG[n] = im; ok(); }; im.onerror = () => ok(); im.src = 'img/' + n + (n === 'portada' ? '.jpg' : '.png') + '?v=5';
   })));
 }
 
@@ -39,6 +41,7 @@ function hazSprite(nombre, w, h, dibuja, pixel) {
   if (png && IMG[png]) { dibuja = dePng(png); w = IMG[png].width / PAN.k; h = IMG[png].height / PAN.k; pixel = true; }
   const k = PAN.k, c = lienzo(w * k, h * k), x = c.getContext('2d');
   x.imageSmoothingEnabled = !pixel; x.scale(k, k); dibuja(x, w, h);
+  if (!pixel) { const d = x.getImageData(0, 0, c.width, c.height); for (let i = 3; i < d.data.length; i += 4) d.data[i] = d.data[i] > 110 ? 255 : 0; x.putImageData(d, 0, 0); }   // los de código, sin suavizado: píxeles llenos o vacíos
   const f = lienzo(c.width, c.height), xf = f.getContext('2d'); xf.translate(c.width, 0); xf.scale(-1, 1); xf.drawImage(c, 0, 0);
   const b = lienzo(c.width, c.height), xb = b.getContext('2d'); xb.drawImage(c, 0, 0); xb.globalCompositeOperation = 'source-in'; xb.fillStyle = '#fff'; xb.fillRect(0, 0, b.width, b.height);
   SPR[nombre] = { n: c, f, b, w, h };
@@ -117,10 +120,13 @@ function preparaSprites() {
   hazSprite('hoz', 10, 10, (x, w, h) => { x.beginPath(); x.arc(w / 2, h / 2, w * 0.4, 0.6, 4.2); x.lineWidth = 2.2; x.strokeStyle = '#120808'; x.stroke(); x.lineWidth = 1.2; x.strokeStyle = '#efe4c4'; x.stroke(); });
   for (const n of ENEMIGOS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of HEROE_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
+  for (const n of ISLAS_PNG.concat(FX_PNG)) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const n of ESCENAS_PNG) if (IMG[n]) hazSprite(n, IMG[n].width / PAN.k, IMG[n].height / PAN.k, dePng(n), true);
   for (const id in ICONO_PNG) if (IMG[ICONO_PNG[id]]) hazSprite('ic-' + id, IMG[ICONO_PNG[id]].width / PAN.k, IMG[ICONO_PNG[id]].height / PAN.k, dePng(ICONO_PNG[id]), true);
-  for (let n = 1; n <= 6; n++) hazSprite('dado' + n, 12, 12, (x, w, h) => caraDado(x, w, h, n));
-  for (let n = 1; n <= 6; n++) hazSprite('dadogrande' + n, 34, 34, (x, w, h) => caraDado(x, w, h, n, n % 2 ? '#3a1416' : '#f6e7b8', n % 2 ? '#ff4d4d' : '#8a1010'));
+  const dadosYoshi = [1, 2, 3, 4, 5, 6].every(n => IMG['dado-' + n] && IMG['dadito-' + n]);   // las caras del dado de Yoshi (solo si están las seis)
+  for (let n = 1; n <= 6; n++) if (dadosYoshi) { hazSprite('dado' + n, 12, 12, dePng('dadito-' + n), true); hazSprite('dadogrande' + n, 34, 34, dePng('dado-' + n), true); }
+  if (!dadosYoshi) for (let n = 1; n <= 6; n++) hazSprite('dado' + n, 12, 12, (x, w, h) => caraDado(x, w, h, n));
+  if (!dadosYoshi) for (let n = 1; n <= 6; n++) hazSprite('dadogrande' + n, 34, 34, (x, w, h) => caraDado(x, w, h, n, n % 2 ? '#3a1416' : '#f6e7b8', n % 2 ? '#ff4d4d' : '#8a1010'));
   preparaLosas();
 }
 

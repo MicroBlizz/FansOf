@@ -8,7 +8,8 @@ function ppIrA(p) {
   PP_PANT.actual = p;
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
-  if (p !== 'sala') ppLolaCierra();
+  if (p !== 'sala' && p !== 'duelo') ppLolaCierra();
+  if (p !== 'duelo') $pp('#pp-listo').hidden = true;
   $pp('#pp-pausa').hidden = p === 'titulo';
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
@@ -18,6 +19,7 @@ function ppIrA(p) {
     $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
     $pp('#pp-sonido').textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ');
     $pp('#pp-estilo').textContent = ppTextoEstilo();
+    $pp('#pp-duelo').textContent = tr('DUELO CONTRA EL CEO');
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -40,7 +42,7 @@ const ppMonedasHtml = (n, px = 30) => `<span class="pp-precio">${ppIcono('i-mone
 function ppPremioHtml(p) {
   if (!p || !(p.monedas || p.cofre)) return '';
   let h = p.monedas ? `<p class="pp-premio">+${ppMonedasHtml(p.monedas)}</p>` : '';
-  if (p.cofre) h += `<div class="pp-cofre">${ppIcono('i-cofre', 92, '#ff9ccf')}<p class="pp-sub"><b>${tr('¡Cofre!')}</b> +${ppMonedasHtml(p.cofre)}</p></div>`;
+  if (p.cofre) h += `<div class="pp-cofre">${ppIcono('i-cofre', 92, '#ff9ccf')}<p class="pp-sub"><b>${tr('¡Cofre!')}</b> +${ppMonedasHtml(p.cofre)}${p.perlas ? ' +' + ppPerlasHtml(p.perlas) : ''}</p></div>`;
   return h;
 }
 // un botón con precio en monedas: si no llegan, apagado y con lo que falta
@@ -78,6 +80,7 @@ function ppEligeRescate(id) {
   if (precio !== null) {
     t.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('O hazle sitio: un hueco más en el equipo, para siempre.')} ${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
     t.appendChild(ppBotonPrecio(tr('HUECO MÁS'), precio, 'pp-btn', () => { if (ppCompraHueco()) { play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); } }));
+    t.appendChild(ppBotonPerlas(tr('HUECO MÁS'), PP_CFG.perlas.hueco[SAVE.huecos || 0], 'pp-btn2 pp-rosa', () => { SAVE.huecos = (SAVE.huecos || 0) + 1; ppGuarda(); play('ppPremio'); ppRecluta(id); ppVentanaBienvenida(id); }));
   }
   t.appendChild(ppBoton(tr('Mejor no'), 'pp-btn2 pp-azul', ppAlCamino));
 }
@@ -111,12 +114,12 @@ function ppVentanaMundoNuevo(dif) {
   const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${txt}</p>`);
   t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), false); ppAlCamino(); }));
 }
-// sin corazones: el reloj del siguiente, o llenarlos con monedas (en la app llegará también ver un anuncio, fase 6)
+// sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)
 function ppVentanaSinCorazones() {
   const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub" id="pp-reloj"></p><p class="pp-sub">${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
   const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
   const tic = setInterval(reloj, 1000); reloj();
-  t.appendChild(ppBotonPrecio(tr('LLENAR'), PP_CFG.precioVidas, 'pp-btn', () => { if (ppLlenaVidas()) { play('ppPremio'); ppFxCura(PP_CFG.vida); clearInterval(tic); ppAlCamino(); } }));
+  ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); });
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {
@@ -145,6 +148,8 @@ function ppPausa() {
   const t = ppAbre(`<h2>${tr('Pausa')}</h2>`);
   const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
   col.appendChild(ppBoton(tr('SEGUIR'), 'pp-btn', ppQuitaPausa));
+  if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalDuelo(); }));
+  if (!enNivel) col.appendChild(ppBoton(tr('Perlas'), 'pp-btn2 pp-rosa', () => { PP_PANT.pausa = false; ppTienda(); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
   if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
@@ -173,6 +178,8 @@ const PP_TUTO = {
   monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
             { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
   modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],
+  duelo: [{ t: '¡Duelo contra el CEO! Por turnos, revienta las burbujas que quieras, pero todas de la MISMA fila.' },
+          { t: 'Cuando acabes tu turno, pulsa ¡LISTO!. Ojo: ¡pierde quien revienta la última burbuja!' }],
   w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
 };
 const PP_LOLA = { cola: [], actual: null };

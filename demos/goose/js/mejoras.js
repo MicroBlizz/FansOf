@@ -43,6 +43,7 @@ function calculaStats() {
     monedas: 1 + m('codicia') * 0.15,
   };
   poderPersonaje(J.st);
+  statsNuevas(J.st);   // las pasivas nuevas (js/armas3.js)
   if (J.mod) { J.st.vidaMax *= J.mod.tuVida; J.st.regen *= J.mod.cura; }   // la Noche 10 y la de Sin piedad (js/noches.js)
 }
 
@@ -72,7 +73,7 @@ function reparteCartas() {
   const evo = evolucionesListas(), resto = shuffle(cartasPosibles());
   // las armas que ya llevas salen algo más a menudo que las nuevas (así suben de nivel y llegan a evolucionar)
   resto.sort((a, b) => (b.nueva ? 0 : 1) * 0.6 + Math.random() - ((a.nueva ? 0 : 1) * 0.6 + Math.random()));
-  const n = Math.random() < JUEGO.st.crit * 0.6 ? 4 : 3;
+  const n = Math.random() < JUEGO.st.crit * 0.6 + (JUEGO.st.cartas4 || 0) ? 4 : 3;
   const cartas = evo.concat(resto).slice(0, n);
   while (cartas.length < 3) cartas.push(cartas.length % 2 ? { clase: 'monedas', id: 'monedas', nombre: 'Bolsa de monedas', desc: '+25 monedas.', icono: 'moneda', color: '#ffcf33' } : { clase: 'pollo', id: 'pollo', nombre: 'Oca asada', desc: 'Te cura 50 de vida.', icono: 'pollo', color: '#ff9b6b' });
   return cartas;

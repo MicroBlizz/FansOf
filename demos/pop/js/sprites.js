@@ -13,7 +13,7 @@ function ppCambiaEstilo() {
 }
 const ppTextoEstilo = () => (SAVE.pixel ? tr('PIXEL ART: SÍ') : tr('PIXEL ART: NO'));
 const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
-const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-jefe', 'tablero', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre',
+const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-jefe', 'tablero', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo', 'b-' + k + '-doble'])];
 function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {

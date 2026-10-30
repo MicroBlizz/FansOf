@@ -60,7 +60,7 @@ function ppNimFin(T, gano, soloVentana = false) {
   if (!soloVentana) {
     N.fin = gano ? 'gana' : 'pierde'; N.pistaNim = null; ppNimBoton(); ppBarraAyudas();
     ppMarcaDentro(false);
-    if (gano) { T.hecho = true; T.toques = 0; PP_P.salas++; setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 900); return; }
+    if (gano) { SAVE.dueloNivel = (SAVE.dueloNivel || 0) + 1; ppGuarda(); T.hecho = true; T.toques = 0; PP_P.salas++; setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 900); return; }
     T.hecho = true;
     ppPierdeVida(); ppApuntaFallo(T.d); play('ppDano'); ppVibra([30, 40, 30]); ppFxDano(); ppGuardaCamino();
   }

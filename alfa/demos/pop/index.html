@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.3.0-a711.03e92a8"></script>
+<script src="../../core/js/nucleo.js?v=0.3.0-a712.08178f0"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css')</script>
 </head>
 <body>
@@ -22,13 +22,12 @@
       <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
       <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
       <div class="pp-fila">
-        <button class="pp-btn2 pp-rosa" id="pp-duelo" type="button">DUELO CONTRA EL CEO</button>
+        <button class="pp-btn2 pp-rosa" id="pp-duelo" type="button">DUELOS</button>
         <button class="pp-btn2 pp-azul" id="pp-memoria" type="button">MEMORIA</button>
       </div>
       <div class="pp-fila">
-        <button class="pp-btn2 pp-verde" id="pp-ayuda" type="button">CÓMO SE JUEGA</button>
-        <button class="pp-btn2 pp-rosa" id="pp-sonido" type="button">SONIDO</button>
-        <button class="pp-btn2 pp-azul" id="pp-estilo" type="button">PIXEL ART</button>
+        <button class="pp-btn2 pp-verde" id="pp-ranking" type="button">RANKING</button>
+        <button class="pp-btn2 pp-azul" id="pp-opciones" type="button">OPCIONES</button>
       </div>
     </section>
     <button id="pp-pausa" class="pp-redondo" type="button" aria-label="Pausa" hidden><span></span><span></span></button>
@@ -45,7 +44,7 @@ NUCLEO.juego({
   ligero: true,   // solo la cuenta, el idioma y el sonido de core: Fans of Pop lleva su propia partida y sus pantallas
   antes: ['js/ajustes.js'],
   idioma: { en: ['idioma/en.js'] },
-  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/tienda.js', 'js/potenciadores.js', 'js/ofertas.js', 'js/pase.js', 'js/partida.js', 'js/nimnivel.js', 'js/efectos.js', 'js/pintar.js', 'js/bandeja.js', 'js/mapa.js', 'js/duelo.js', 'js/memoria.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
+  despues: ['../../core/js/serie/canciones.js', 'js/guardado.js', 'js/sprites.js', 'js/sonidos.js', 'js/niveles.js', 'js/tablero.js', 'js/monedero.js', 'js/tienda.js', 'js/potenciadores.js', 'js/ofertas.js', 'js/pase.js', 'js/partida.js', 'js/nimnivel.js', 'js/efectos.js', 'js/pintar.js', 'js/bandeja.js', 'js/mapa.js', '../../core/js/sistema/salas.js', 'js/duelo.js', 'js/pvp.js', 'js/ranking.js', 'js/memoria.js', 'js/pantallas.js', 'js/novedades.js', 'js/principal.js'],
 });
 </script>
 </body>

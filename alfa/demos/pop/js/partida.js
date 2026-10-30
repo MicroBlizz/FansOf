@@ -137,7 +137,7 @@ function ppSalaHecha() {
   const est = d.dif ? PP_P.estD : PP_P.est, antes = est[g] || 0;
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
   T.premio = ppPremioNivel((d.dif ? 'd' : '') + g, T.estrellas, d.jefe, d.dif ? 2 : 1);
-  ppBorraFallos(d); ppBarraAyudas();
+  ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
   const presos = Object.values(T.slimes);
   // el camino solo avanza si era el siguiente nivel (repitiendo uno ya pasado, no)
   let nuevo = false;

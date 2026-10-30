@@ -227,7 +227,8 @@ function ppNivelNim(g, dif) {
   const mask = jefe ? f[0] : f[Math.floor(az() * f.length)];
   const n = lado, N = n * n, mk = new Uint8Array(N), need = new Array(N).fill(0);
   mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') { mk[y * n + x] = 1; need[y * n + x] = 1; } }));
-  let fallo = jefe ? Math.max(0.03, 0.3 - 0.06 * m) : Math.max(0.05, 0.45 - 0.08 * m);
+  // Daniel (31-10-2026: «son muy difíciles»): al principio el rival falla casi siempre y endurece mundo a mundo hasta el CEO
+  let fallo = jefe ? Math.max(0.05, 0.6 - 0.11 * m) : Math.max(0.1, 0.8 - 0.13 * m);
   if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
     nim: { rival: jefe ? 'ceo' : PP_RIVALES[m], fallo } };

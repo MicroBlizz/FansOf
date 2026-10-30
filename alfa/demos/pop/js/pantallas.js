@@ -19,10 +19,10 @@ function ppIrA(p) {
     $pp('#pp-seguir').hidden = !hay;
     $pp('#pp-jugar').textContent = hay ? tr('EMPEZAR DE NUEVO') : tr('JUGAR');
     $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
-    $pp('#pp-sonido').textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ');
-    $pp('#pp-estilo').textContent = ppTextoEstilo();
-    $pp('#pp-duelo').textContent = tr('DUELO CONTRA EL CEO');
+    $pp('#pp-duelo').textContent = tr('DUELOS');
     $pp('#pp-memoria').textContent = tr('MEMORIA');
+    $pp('#pp-ranking').textContent = tr('RANKING');
+    $pp('#pp-opciones').textContent = tr('OPCIONES');
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -145,6 +145,19 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
+}
+/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
+function ppOpciones() {
+  const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-verde', ppAyuda));
+  const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
+  col.appendChild(son);
+  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
+  col.appendChild(vib);
+  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
+  col.appendChild(est);
+  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
 }
 /* ---------- la pausa ----------
    En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal

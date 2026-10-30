@@ -8,20 +8,32 @@ const AJUSTES = {
 };
 
 const PP_CFG = {
-  vida: 5,                   // corazones al empezar la ruta
-  equipo: 4,                 // slimes activos como mucho
-  holgura: 2,                // toques de más que puedes dar en una sala sin perder corazón
-  // cada tipo de sala: lado del tablero, cuántos toques se desordena (eso es la solución garantizada) y cuántos slimes atrapados hay
-  salas: {
-    sala:     { lado: 3, lio: [3, 4], slimes: 1, titulo: 'Sala de burbujas' },
-    sala2:    { lado: 4, lio: [4, 6], slimes: 1, titulo: 'Sala grande' },
-    elite:    { lado: 4, lio: [6, 8], slimes: 2, titulo: 'Sala de élite', holgura: 1 },
-    jefe:     { lado: 5, lio: [8, 10], slimes: 0, titulo: 'El despacho del CEO', holgura: 1, trampas: 3 },
-    descanso: { titulo: 'Descanso', cura: 2 },
-  },
-  // la ruta: cada fila es una lista de salas entre las que eliges (una sola = no hay elección)
-  ruta: [['sala'], ['sala', 'sala2'], ['sala2', 'elite'], ['descanso'], ['sala2', 'elite'], ['jefe']],
+  vida: 5,                   // corazones al empezar
+  equipo: 4,                 // amigos (slimes) activos como mucho
+  holgura: 2,                // toques de más que puedes dar en un nivel sin perder corazón
+  curaDescanso: 2,           // corazones que da un nivel de descanso
+  vidaSeguir: 3,             // con cuántos corazones sigues si te quedas sin ninguno (es para niños: nunca se pierde todo)
 };
+// EL CAMINO: lineal, como los juegos de niveles (Daniel, 30-10-2026: más largo, fácil de entender y sin calaveras).
+//   lado: tamaño del tablero · lio: toques del desorden (número o [mín, máx]) · fijo: los toques del desorden ya decididos (tutorial)
+//   slimes: amigos atrapados · tuto: qué explica Lola al entrar (ver PP_TUTO en pantallas.js) · trampas / holgura: solo el jefe
+const PP_NIVELES = [
+  { tipo: 'sala', lado: 3, fijo: [4], tuto: 'n1' },
+  { tipo: 'sala', lado: 3, fijo: [0, 8], slimes: 1, tuto: 'n2' },
+  { tipo: 'sala', lado: 3, lio: 3, tuto: 'n3' },
+  { tipo: 'sala', lado: 3, lio: [3, 4], slimes: 1 },
+  { tipo: 'sala', lado: 4, lio: [3, 4], tuto: 'n5' },
+  { tipo: 'descanso' },
+  { tipo: 'sala', lado: 4, lio: [4, 5], slimes: 1 },
+  { tipo: 'sala', lado: 4, lio: [5, 6] },
+  { tipo: 'sala', lado: 4, lio: [5, 6], slimes: 1 },
+  { tipo: 'sala', lado: 4, lio: [6, 7] },
+  { tipo: 'descanso' },
+  { tipo: 'sala', lado: 5, lio: [5, 6], slimes: 1 },
+  { tipo: 'sala', lado: 5, lio: [6, 8] },
+  { tipo: 'sala', lado: 5, lio: [7, 8] },
+  { tipo: 'jefe', lado: 5, lio: [8, 10], trampas: 3, holgura: 1, tuto: 'jefe' },
+];
 
 // Los slimes rescatables y su pasiva. Todas HACEN algo en el tablero (no solo protegen): saltar a reventar burbujas,
 // premios por combos o por toques gordos. COMBO = toques seguidos que revientan más burbujas de las que suben.

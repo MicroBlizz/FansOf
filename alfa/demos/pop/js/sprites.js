@@ -3,14 +3,27 @@
 // los slimes se pintan como gelatinas de su color con ojos, así el prototipo se puede probar sin esperar a Yoshi.
 'use strict';
 const PP_IMG = {};
-const PP_LISTA_IMG = [...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mov', 'i-estrella',
+const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
+const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mov', 'i-estrella',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo'])];
 function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {
     const im = new Image();
-    im.onload = () => { PP_IMG[k] = im; };
+    im.onload = () => { PP_IMG[k] = /^b-.*-abajo$/.test(k) ? ppHundida(im) : im; };
     im.src = 'img/' + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
   }
+}
+// la burbuja reventada tiene que verse HUNDIDA de un vistazo (si no, un niño no distingue cuáles faltan): se oscurece entera
+// y lleva una sombra por dentro arriba a la izquierda y luz abajo a la derecha, como un hueco en la silicona
+function ppHundida(im) {
+  const cv = document.createElement('canvas'); cv.width = im.width; cv.height = im.height;
+  const c = cv.getContext('2d'), w = im.width, h = im.height; c.imageSmoothingEnabled = false;
+  c.drawImage(im, 0, 0);
+  c.globalCompositeOperation = 'source-atop';
+  c.fillStyle = 'rgba(90, 30, 90, 0.28)'; c.fillRect(0, 0, w, h);
+  const g = c.createLinearGradient(0, 0, w, h); g.addColorStop(0, 'rgba(60, 10, 60, 0.55)'); g.addColorStop(0.55, 'rgba(60, 10, 60, 0)'); g.addColorStop(1, 'rgba(255, 255, 255, 0.35)');
+  c.fillStyle = g; c.beginPath(); c.arc(w / 2, h / 2, w * 0.36, 0, Math.PI * 2); c.fill();
+  return cv;
 }
 const ppTieneImg = k => !!PP_IMG[k];
 // dibuja un sprite con su esquina (x, y) a escala entera s. Devuelve [ancho, alto] dibujados, o null si no está.

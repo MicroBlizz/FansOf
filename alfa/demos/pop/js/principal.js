@@ -26,7 +26,7 @@ PP_CV.addEventListener('pointerdown', e => {
     const i = ppCeldaEn(ppGeom(PP_P.T.n), lx, ly);
     if (i >= 0) ppToque(i);
   } else if (PP_PANT.actual === 'mapa') {
-    for (const nd of PP_NODOS_MAPA) if (Math.hypot(lx - nd.x, ly - nd.y) <= nd.r) { play('ppNodo'); ppEntra(nd.i); break; }
+    for (const nd of PP_NODOS_MAPA) if (Math.hypot(lx - nd.x, ly - nd.y) <= nd.r) { play('ppNodo'); ppEntra(); break; }
   }
 });
 document.addEventListener('keydown', e => {
@@ -45,17 +45,19 @@ function ppFotograma(ahora) {
   else if (PP_PANT.actual === 'mapa' && PP_P) ppPintaMapa(c, t);
   else ppPintaPortada(c, t, dt);
 }
-function ppEmpieza() {
+function ppEmpieza(seguir) {
   ppCargaSonidos(); play('select');
-  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = [];
-  ppNuevaRuta(); ppIrA('mapa');
-  if (!SAVE.ayuda) ppAyuda();
+  PP_PORTADA.T = null; PP_FX.celdas = {}; PP_FX.parts = []; PP_FX.saltos = []; PP_FX.textos = []; PP_MAPA.cam = null;
+  if (!(seguir && ppSigueCamino())) ppNuevaRuta();
+  ppIrA('mapa');
 }
 function ppArranque() {
   ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
-  $pp('#pp-jugar').onclick = ppEmpieza;
+  $pp('#pp-jugar').onclick = () => ppEmpieza(false);
+  $pp('#pp-seguir').onclick = () => ppEmpieza(true);
+  $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
   $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
   ppIrA('titulo');

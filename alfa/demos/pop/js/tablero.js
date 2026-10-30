@@ -3,30 +3,33 @@
 // están reventadas. El tablero se desordena desde la solución con `lio` toques distintos: así siempre se puede resolver
 // con esos mismos toques (la «solución» que usa la pista de Lola y el límite de toques).
 'use strict';
-function ppNuevoTablero(tipo, fx) {
-  const d = PP_CFG.salas[tipo], n = d.lado, total = n * n;
-  const lio = Math.round(rand(d.lio[0], d.lio[1]));
-  const T = { tipo, n, up: new Uint8Array(total), sol: new Set(), slimes: {}, trampas: new Set(), toques: 0, pops: 0, pista: null, combo: 0, gratis: 0, hecho: false };
-  // desordena: lio toques distintos al azar (dos veces la misma se anularían)
+// crea el tablero de un nivel (`d`, una entrada de PP_NIVELES). `fx.equipo`: los amigos que ya tienes (no salen atrapados).
+function ppNuevoTablero(d, fx) {
+  const n = d.lado, total = n * n;
+  const T = { tipo: d.tipo, n, up: new Uint8Array(total), sol: new Set(), slimes: {}, trampas: new Set(), toques: 0, pops: 0, pista: null, combo: 0, gratis: 0, mano: false, hecho: false };
   const celdas = [...Array(total).keys()];
-  for (let i = 0; i < lio; i++) {
-    const j = i + Math.floor(Math.random() * (celdas.length - i));
-    [celdas[i], celdas[j]] = [celdas[j], celdas[i]];
-    ppVoltea(T, celdas[i]);
-    T.sol.add(celdas[i]);
+  if (d.fijo) { for (const i of d.fijo) { ppVoltea(T, i); T.sol.add(i); } }
+  else {
+    // desordena: lio toques distintos al azar (dos veces la misma se anularían)
+    const lio = Array.isArray(d.lio) ? Math.round(rand(d.lio[0], d.lio[1])) : d.lio;
+    for (let i = 0; i < lio; i++) {
+      const j = i + Math.floor(Math.random() * (celdas.length - i));
+      [celdas[i], celdas[j]] = [celdas[j], celdas[i]];
+      ppVoltea(T, celdas[i]);
+      T.sol.add(celdas[i]);
+    }
+    if (ppResuelto(T)) { ppVoltea(T, celdas[0]); T.sol.delete(celdas[0]); }
   }
-  if (ppResuelto(T)) { ppVoltea(T, celdas[0]); T.sol.delete(celdas[0]); }
-  T.minimo = lio;   // con estos toques (o menos) son 3 estrellas
-  T.limite = lio + (d.holgura !== undefined ? d.holgura : PP_CFG.holgura);
-  // los slimes atrapados viven en burbujas que están arriba (se ven dentro)
-  const arriba = celdas.filter(i => T.up[i]);
+  T.minimo = T.sol.size;   // con estos toques (o menos) son 3 estrellas
+  T.limite = T.minimo + (d.holgura !== undefined ? d.holgura : PP_CFG.holgura);
+  // los amigos atrapados viven en burbujas que están arriba (se ven dentro)
+  const arriba = celdas.filter(i => T.up[i]).sort(() => Math.random() - 0.5);
   const libres = PP_SLIME_IDS.filter(id => !fx.equipo.includes(id));
-  for (let k = 0; k < d.slimes && arriba.length && libres.length; k++) {
-    const i = arriba.splice(Math.floor(Math.random() * arriba.length), 1)[0];
-    T.slimes[i] = libres.splice(Math.floor(Math.random() * libres.length), 1)[0];
+  for (let k = 0; k < (d.slimes || 0) && arriba.length && libres.length; k++) {
+    T.slimes[arriba.pop()] = libres.splice(Math.floor(Math.random() * libres.length), 1)[0];
   }
   // las trampas del jefe: tocarlas directamente cuesta un corazón (voltearlas de rebote, no)
-  for (let k = 0; k < (d.trampas || 0) && arriba.length; k++) T.trampas.add(arriba.splice(Math.floor(Math.random() * arriba.length), 1)[0]);
+  for (let k = 0; k < (d.trampas || 0) && arriba.length; k++) T.trampas.add(arriba.pop());
   if (fx.pista) ppPista(T);
   return T;
 }

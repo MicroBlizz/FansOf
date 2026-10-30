@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap">
 <!-- ?v= es la versión de la demo: súbela al publicar -->
-<script src="../../core/js/nucleo.js?v=0.1.0-a673.777828d"></script>
+<script src="../../core/js/nucleo.js?v=0.1.0-a674.d1e042c"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css', 'css/pop.css')</script>
 </head>
 <body>
@@ -19,12 +19,14 @@
   <div id="pp-ui">
     <section id="pp-titulo">
       <p class="pp-lema" id="pp-record"></p>
+      <button class="pp-btn pp-enorme" id="pp-seguir" type="button" hidden>SEGUIR</button>
       <button class="pp-btn pp-enorme" id="pp-jugar" type="button">JUGAR</button>
       <div class="pp-fila">
         <button class="pp-btn2 pp-verde" id="pp-ayuda" type="button">CÓMO SE JUEGA</button>
         <button class="pp-btn2 pp-azul" id="pp-sonido" type="button">SONIDO</button>
       </div>
     </section>
+    <section id="pp-lola" hidden><div id="pp-lola-cara"></div><div class="pp-bocadillo"><b>Lola</b><p id="pp-lola-texto"></p><button class="pp-btn2" id="pp-lola-vale" type="button">¡VALE!</button></div></section>
     <section id="pp-modal" class="pp-modal" hidden><div class="pp-tarjeta" id="pp-tarjeta"></div></section>
   </div>
 </div>

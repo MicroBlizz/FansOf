@@ -2,5 +2,6 @@
 // y en la ventana NOVEDADES. Al publicar un cambio que se note, añade arriba una entrada con su versión (y su inglés en idioma/en-raiz.js).
 'use strict';
 const NEWS = [
+  { v: '0.1.1', real: ["<b>Más estrategia</b>: ves la <b>siguiente carta</b>, cada carta tiene sus lados fijos y el lado que <b>ataca</b> va en rojo, para que aprendas a jugar rápido.", "Nuevo en combate: <b>guardia</b> (guardas parte del escudo), <b>parada</b> (devuelves el golpe) y enemigos que <b>cargan un golpe fuerte</b> que puedes cortar.", "<b>Cada tipo de carta tiene su marco</b> (combate, evento, tienda, descanso, reliquia...), el texto de las cartas sale siempre entero y hay dibujos nuevos."], joke: ["Phony ha intentado copiar la idea de las cartas con marco de colores. Le ha salido una carta de cumpleaños."] },
   { v: '0.1.0', real: ["<b>FANS OF SWIPE</b>, demo nueva: sube los 15 pisos de la Torre de Microblizz con CrazyBunny <b>deslizando cartas</b> a la izquierda o a la derecha.", "Combates frenéticos con <b>mecha</b> y <b>racha</b> (¡FRENESÍ!), enemigos que enseñan lo que van a hacer, <b>reliquias con combos</b> de gestos, eventos, tienda, descanso y <b>el CEO</b> arriba del todo."], joke: ["Microblizz ha despedido al becario que inventó deslizar a la izquierda. Lo despidieron deslizándolo a la izquierda."] },
 ];

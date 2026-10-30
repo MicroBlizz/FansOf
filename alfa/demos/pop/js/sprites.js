@@ -3,7 +3,8 @@
 // los slimes se pintan como gelatinas de su color con ojos, así el prototipo se puede probar sin esperar a Yoshi.
 'use strict';
 const PP_IMG = {};
-const PP_LISTA_IMG = [...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-cueva', 'fondo-jefe', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mov'];
+const PP_LISTA_IMG = [...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-jefe', 'tablero', 'n-sala', 'n-elite', 'n-descanso', 'n-jefe', 'i-vida', 'i-mov', 'i-estrella',
+  ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo'])];
 function ppCargaImagenes() {
   for (const k of PP_LISTA_IMG) {
     const im = new Image();
@@ -11,7 +12,7 @@ function ppCargaImagenes() {
     im.src = 'img/' + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
   }
 }
-const ppTiene = k => !!PP_IMG[k];
+const ppTieneImg = k => !!PP_IMG[k];
 // dibuja un sprite con su esquina (x, y) a escala entera s. Devuelve [ancho, alto] dibujados, o null si no está.
 function ppDibuja(c, k, x, y, s = 4) {
   const im = PP_IMG[k]; if (!im) return null;
@@ -21,9 +22,9 @@ function ppDibuja(c, k, x, y, s = 4) {
   return [w, h];
 }
 // centrado en (cx, cy), ajustado a que quepa en `lado` píxeles (escala entera si es posible)
-function ppDibujaEn(c, k, cx, cy, lado) {
+function ppDibujaEn(c, k, cx, cy, lado, exacto = false) {
   const im = PP_IMG[k]; if (!im) return null;
-  let s = lado / Math.max(im.width, im.height); if (s >= 2) s = Math.floor(s);   // entero si cabe x2 o más; si no, el tamaño que toque
+  let s = lado / Math.max(im.width, im.height); if (s >= 2 && !exacto) s = Math.floor(s);   // entero si cabe x2 o más; si no, el tamaño que toque
   return ppDibuja(c, k, cx - im.width * s / 2, cy - im.height * s / 2, s);
 }
 // un sprite en un lienzo pequeño (para las ventanas en HTML)

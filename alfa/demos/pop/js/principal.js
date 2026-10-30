@@ -38,6 +38,7 @@ function ppFotograma(ahora) {
   requestAnimationFrame(ppFotograma);
   const dt = Math.min(0.05, (ahora - PP_ULT) / 1000 || 0.016); PP_ULT = ahora;
   const t = ahora / 1000, c = PP_CTX;
+  ppMusicaBucle();
   c.setTransform(PP_V.sc * PP_V.dpr, 0, 0, PP_V.sc * PP_V.dpr, 0, 0);
   c.imageSmoothingEnabled = false;
   if (PP_PANT.actual === 'sala' && PP_P && PP_P.T) { ppFxAvanza(dt); ppPintaSala(c, t); }
@@ -56,7 +57,7 @@ function ppArranque() {
   window.addEventListener('resize', ppAjusta);
   $pp('#pp-jugar').onclick = ppEmpieza;
   $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
-  $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); ppIrA('titulo'); play('select'); };
+  $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
   ppIrA('titulo');
   const carga = $pp('#carga'); if (carga) carga.remove();
   requestAnimationFrame(ppFotograma);

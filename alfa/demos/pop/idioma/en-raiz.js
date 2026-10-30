@@ -1,0 +1,5 @@
+// Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz.
+'use strict';
+IDIOMA.add({
+  "¡Pop, pop, pop! Los slimes de Fans Of se han quedado atrapados dentro de las burbujas de un pop-it gigante. Toca una burbuja y se dan la vuelta ella y sus cuatro vecinas: revienta todas para liberarlos. Cada slime rescatado se une a tu equipo y ayuda a su manera: CrazyBunny salta a reventar burbujas, Lola te chiva la solución y la Caja de botín reparte premios gordos. Haz combos, gana las tres estrellas en cada sala y llega al despacho del CEO, que esconde burbujas trampa.": "Pop, pop, pop! The Fans Of slimes are stuck inside the bubbles of a giant pop-it. Tap a bubble and it flips along with its four neighbours: pop them all to set the slimes free. Every rescued slime joins your team and helps in its own way: CrazyBunny jumps in to pop bubbles, Lola snitches the solution and the Loot Box hands out jackpots. Chain combos, earn three stars in every room and reach the CEO's office, which hides trap bubbles."
+});

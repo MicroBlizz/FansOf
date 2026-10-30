@@ -2,11 +2,11 @@
    contorno grueso y letra pixelada. La capa #pp-ui mide 540 de ancho y se escala igual que el lienzo. */
 :root { --pp-tinta: #1a1030; --pp-crema: #fff3fa; --pp-naranja: #ff8a2a; --pp-verde: #4fc25a; --pp-azul: #3a8ee6; --pp-rosa: #ff6ec7; --pp-cafe: #2a1a3a; color-scheme: dark; }
 html, body { height: 100%; margin: 0; overflow: hidden; overscroll-behavior: none; }
-body { background: #0b0620; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
-#stage { position: relative; overflow: hidden; background: #0b0620; }
+body { background: #ffd1ec; display: flex; align-items: center; justify-content: center; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#stage { position: relative; overflow: hidden; background: #ffd1ec; }
 #cv { display: block; width: 100%; height: 100%; touch-action: none; }
 @media (min-width: 600px) { #stage { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), 0 0 0 6px var(--pp-tinta), 0 0 0 12px var(--pp-rosa), 0 0 0 16px var(--pp-tinta); } }
-#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #fff; font: 700 22px/1 'Jersey 10', monospace; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #7a4a8a; font: 700 22px/1 'Jersey 10', monospace; }
 #pp-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; font-family: 'Jersey 10', monospace; color: var(--pp-cafe); }
 #pp-ui button { pointer-events: auto; font-family: 'Jersey 10', monospace; font-weight: 400; color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 #pp-ui button:focus-visible { outline: 4px solid #ffd84a; outline-offset: 3px; }
@@ -25,9 +25,9 @@ body { background: #0b0620; display: flex; align-items: center; justify-content:
 .pp-fila .pp-btn2 { min-width: 0; }
 /* portada */
 #pp-titulo { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 20px 7%; box-sizing: border-box; }
-.pp-lema { margin: 0 0 4px; font-weight: 700; font-size: 26px; color: #fff6d8; background: rgba(26, 16, 48, 0.82); box-shadow: 0 0 0 4px var(--pp-tinta); padding: 8px 18px 6px; text-align: center; }
+.pp-lema { margin: 0 0 4px; font-weight: 700; font-size: 26px; color: #7a2a6a; background: rgba(255, 255, 255, 0.85); box-shadow: 0 0 0 4px var(--pp-tinta); padding: 8px 18px 6px; text-align: center; }
 /* ventanas de gelatina */
-.pp-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box; background: rgba(10, 5, 20, 0.62); pointer-events: auto; z-index: 30; }
+.pp-modal { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 18px; box-sizing: border-box; background: rgba(255, 180, 220, 0.45); pointer-events: auto; z-index: 30; }
 .pp-tarjeta { width: 100%; max-width: 430px; max-height: 94%; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
   background: var(--pp-crema); padding: 24px 20px 22px; box-sizing: border-box; border-radius: 28px; box-shadow: inset 0 0 0 5px var(--pp-tinta), inset 0 0 0 11px var(--pp-rosa), inset 0 0 0 14px var(--pp-tinta), 0 10px 0 rgba(0,0,0,.4);
   animation: pp-sale 0.22s steps(5); }
@@ -49,3 +49,10 @@ body { background: #0b0620; display: flex; align-items: center; justify-content:
 .pp-mini .pp-slime span { display: none; }
 .pp-mini .pp-slime b { font-size: 20px; }
 .pp-mini .pp-slime canvas { width: 56px !important; height: 56px !important; }
+/* estrellas de la sala: entran de una en una con un saltito */
+.pp-estrellas { display: flex; gap: 10px; justify-content: center; }
+.pp-est { width: 64px; height: 64px; display: grid; place-items: center; opacity: 0.25; filter: grayscale(1); }
+.pp-est img { width: 64px; height: 64px; image-rendering: pixelated; }
+.pp-est:empty { background: #ffd64a; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.pp-est.pp-on { opacity: 1; filter: none; animation: pp-est 0.35s cubic-bezier(.3, 1.8, .5, 1) both; }
+@keyframes pp-est { from { transform: scale(0) rotate(-40deg); } to { transform: scale(1) rotate(0); } }

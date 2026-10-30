@@ -22,6 +22,7 @@ PP_CV.addEventListener('pointerdown', e => {
   if (!$pp('#pp-modal').hidden) return;
   ppCargaSonidos();
   const [lx, ly] = ppLogico(e);
+  if (PP_PANT.actual === 'titulo') { ppPortadaToque(lx, ly); return; }
   if (PP_PANT.actual === 'duelo' && PP_DUELO) { ppDueloToque(ppCeldaEn(ppGeom(PP_DUELO.T.n), lx, ly)); return; }
   if (!PP_P) return;
   if (PP_PANT.actual === 'sala' && PP_P.T) {

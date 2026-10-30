@@ -224,14 +224,31 @@ function ppPintaSala(c, t) {
   if (PP_FX.dano > 0) { c.fillStyle = `rgba(255,40,60,${PP_FX.dano * 0.35})`; c.fillRect(0, 0, 540, PP_V.H); }
 }
 /* ---------- la portada: un pop-it de muestra que se revienta solo ---------- */
+// Daniel (30-10-2026): además de reventarse solo, se puede tocar. Tu dedo hace pop (o vuelve a subir una reventada, como un
+// pop-it de verdad) y, mientras juegas con él, el automático descansa un poco.
 const PP_PORTADA = { T: null, prox: 0 };
+const PP_PORTADA_ESC = 0.62;
+// del punto tocado (coordenadas del lienzo) a la burbuja del pop-it de la portada; -1 si no hay
+function ppPortadaCelda(lx, ly) {
+  const T = PP_PORTADA.T; if (!T) return -1;
+  const bx = (lx - 270) / PP_PORTADA_ESC + 270, by = (ly - PP_V.H * 0.46) / PP_PORTADA_ESC + ppGeom(3).y + 220;
+  const i = ppCeldaEn(ppGeom(T.n), bx, by);
+  return i >= 0 && T.mask[i] ? i : -1;
+}
+function ppPortadaToque(lx, ly) {
+  const T = PP_PORTADA.T, i = ppPortadaCelda(lx, ly); if (i < 0) return;
+  const arriba = T.up[i] > 0;
+  T.up[i] = arriba ? 0 : 1;
+  ppFxToque(T, i, { pops: arriba ? [i] : [], subes: arriba ? [] : [i], grietas: [], hecho: false });
+  PP_PORTADA.prox = 3.5;   // el automático espera mientras juegas
+}
 function ppPintaPortada(c, t, dt) {
   ppPintaFondo(c, 'fondo-jardin', t);
   if (!PP_PORTADA.T || ppResuelto(PP_PORTADA.T)) { PP_PORTADA.T = ppNuevoTablero(ppNivel(1), { equipo: [] }); ppFxEntraSala(PP_PORTADA.T); }   // se vuelve a llenar al vaciarse
   PP_PORTADA.prox -= dt;
   if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; T.toques = 0; PP_PORTADA.prox = rand(0.6, 1.2); }
   ppFxAvanza(dt);
-  c.save(); c.translate(270, PP_V.H * 0.46); c.scale(0.62, 0.62); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
+  c.save(); c.translate(270, PP_V.H * 0.46); c.scale(PP_PORTADA_ESC, PP_PORTADA_ESC); c.translate(-270, -(ppGeom(3).y + 220)); ppPintaTablero(c, PP_PORTADA.T, t); ppPintaEfectos(c, t); c.restore();
   ppTitulo(c, 'FANS OF', 270, 110, 60);
   ppTitulo(c, 'POP', 270, 190, 110);
   ppTexto(c, tr('Revienta, rescata, repite'), 270, 258, 28, '#fff', 'center', '#e0468f');

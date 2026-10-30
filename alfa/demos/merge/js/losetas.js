@@ -10,7 +10,7 @@
 // O = cuánta tierra de más lleva cada pieza por dentro, que se funde con el centro; F = cuánta hierba se desvanece por fuera, para fundirse con el suelo;
 // IF = hasta dónde sale la esquina de la isla hacia la tierra; IR = hasta dónde entra en su hierba (su esquina redonda); C = desde dónde se toma el centro liso.
 // En partes de casilla: I = el margen de hierba que deja la tierra dentro de su casilla (como en Triple Town); A = lo ancho que se pinta el borde B.
-const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.27, O: 0.06, F: 0.14, IF: 0.08, IR: 0.26, C: 0.27, I: 0.2, A: 0.22 };
+const MG_LOSA = { de: '', piezas: null, B: 0.2, E: 0.38, O: 0.06, F: 0.14, IF: 0.08, IR: 0.26, C: 0.34, I: 0.2, A: 0.22 };
 // recorta una zona (x, y, w, h) de una imagen y la desvanece por los lados que se le digan: f = [izquierda, derecha, arriba, abajo], en px de la imagen
 function mgLosaTrozo(im, x, y, w, h, f) {
   const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w)); cv.height = Math.max(1, Math.round(h));

@@ -1,8 +1,8 @@
 {
- "build": 644,
- "hash": "c7d390b",
- "fecha": "2026-10-29T22:17:41Z",
- "mensaje": "Cola: tokens frente al límite semanal, tipo por defecto imagen y casilla de precisión media",
+ "build": 645,
+ "hash": "9a46bde",
+ "fecha": "2026-10-30T00:57:34Z",
+ "mensaje": "Core: capa común de anuncios (ANUNCIOS) con AdMob, H5 Games Ads y anuncio de reserva, tras el flag anuncios; Caos primordial la usa",
  "juegos": {
   "boom": "0.4.0",
   "cooking": "0.2.1",

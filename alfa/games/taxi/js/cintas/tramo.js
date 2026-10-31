@@ -12,9 +12,29 @@ CINTAS.tramo = (() => {
   const G = CINTAS.geometria;
   const natural = (seccion, d) => CIUDAD.natural(seccion.x + seccion.lateral[0] * d, seccion.z + seccion.lateral[1] * d);
 
+  // La calzada entre dos secciones es un cuadrilátero de lado a lado. Si es plano basta con dos triángulos; pero donde la calzada se
+  // tuerce (pasa del plano inclinado de un cruce o una horquilla a su propia cuesta) dos triángulos grandes dejarían un pliegue en la
+  // diagonal, y con una calle ancha eso son escalones de palmo: ahí se parte en casillas de CASILLA metros que siguen la altura real.
+  const ALABEO_MAX = 0.02;   // metros que puede separarse un triángulo de la calzada de verdad
+  const CASILLA = 2;
+  const entre = (a, b, t) => ({ x: lerp(a.x, b.x, t), z: lerp(a.z, b.z, t), lateral: [lerp(a.lateral[0], b.lateral[0], t), lerp(a.lateral[1], b.lateral[1], t)] });
+  function alabeo(tramo, a, b, mitad) {
+    const y = (s, d) => G.sobreCalzada(tramo, s, d, 0)[1];
+    const [aa, ab, ba, bb] = [y(a, -mitad), y(a, mitad), y(b, -mitad), y(b, mitad)];
+    const centro = y(entre(a, b, 0.5), 0);
+    return Math.max(Math.abs(aa + bb - ab - ba) / 2, Math.abs(centro - (aa + ab + ba + bb) / 4));
+  }
   function calzada(tramo, a, b, mitad, lista, conBordillo) {
     const punto = (s, d, encima) => G.sobreCalzada(tramo, s, d, encima);
-    lista.cuadrilatero(punto(a, -mitad, M.sobreSuelo), punto(b, -mitad, M.sobreSuelo), punto(b, mitad, M.sobreSuelo), punto(a, mitad, M.sobreSuelo), C.asfalto);
+    const plano = alabeo(tramo, a, b, mitad) <= ALABEO_MAX;
+    const largo = Math.hypot(b.x - a.x, b.z - a.z), filas = plano ? 1 : Math.ceil(largo / CASILLA), tiras = plano ? 1 : Math.ceil(2 * mitad / CASILLA);
+    for (let i = 0; i < filas; i++) {
+      const s0 = filas === 1 ? a : entre(a, b, i / filas), s1 = filas === 1 ? b : entre(a, b, (i + 1) / filas);
+      for (let k = 0; k < tiras; k++) {
+        const d0 = lerp(-mitad, mitad, k / tiras), d1 = lerp(-mitad, mitad, (k + 1) / tiras);
+        lista.cuadrilatero(punto(s0, d0, M.sobreSuelo), punto(s1, d0, M.sobreSuelo), punto(s1, d1, M.sobreSuelo), punto(s0, d1, M.sobreSuelo), C.asfalto);
+      }
+    }
     if (!conBordillo) return;
     for (const lado of [-1, 1]) {
       const d = lado * mitad;
@@ -55,10 +75,10 @@ CINTAS.tramo = (() => {
     }
   }
   // el pretil de través en un extremo del viaducto: entero si es un final, a los lados si sigue un tramo más estrecho
-  function remates(tramo, secciones, lista) {
+  function remates(tramo, secciones, lista, dentro) {
     const mitad = tramo.ancho / 2 + G.HOLGURA / 2;
     for (const [seccion, nodo] of [[secciones[0], CIUDAD.nodos[tramo.a]], [secciones[secciones.length - 1], CIUDAD.nodos[tramo.b]]]) {
-      if (G.corteDe(tramo, nodo) > 0) continue;   // en un cruce lo cierra el cruce
+      if (G.corteDe(tramo, nodo) > 0 || !dentro(seccion.x, seccion.z)) continue;   // en un cruce lo cierra el cruce
       const otros = G.tramosDe(nodo).filter(o => o !== tramo), hueco = otros.length ? Math.max(...otros.map(o => o.ancho / 2 + G.HOLGURA / 2)) : 0;
       if (hueco >= mitad) continue;
       const pared = (d0, d1) => lista.cuadrilatero(G.aLado(seccion, d0, seccion.y - 0.5), G.aLado(seccion, d1, seccion.y - 0.5), G.aLado(seccion, d1, seccion.y + M.pretilViaducto), G.aLado(seccion, d0, seccion.y + M.pretilViaducto), C.muro);
@@ -67,7 +87,7 @@ CINTAS.tramo = (() => {
     }
   }
 
-  function rayas(tramo, secciones, lista) {
+  function rayas(tramo, secciones, lista, dentro) {
     if (tramo.tipo === 'mirador') return;
     const a = CIUDAD.nodos[tramo.a];
     const { ux, uz } = secciones[0], desde = secciones[0].s, hasta = secciones[secciones.length - 1].s;
@@ -75,26 +95,29 @@ CINTAS.tramo = (() => {
       const x = a.x + ux * s - uz * d, z = a.z + uz * s + ux * d;
       return [x, CIUDAD.alturaTramo(tramo, x, z) + M.rayaSobreSuelo, z];
     };
-    const banda = (s0, s1, ancho, color) => lista.cuadrilatero(punto(s0, -ancho / 2), punto(s1, -ancho / 2), punto(s1, ancho / 2), punto(s0, ancho / 2), color);
-    if (tramo.tipo === 'avenida') { banda(desde, hasta, M.anchoRayaBlanca, C.rayaBlanca); return; }
+    const banda = (s0, s1, ancho, color) => dentro(a.x + ux * (s0 + s1) / 2, a.z + uz * (s0 + s1) / 2) && lista.cuadrilatero(punto(s0, -ancho / 2), punto(s1, -ancho / 2), punto(s1, ancho / 2), punto(s0, ancho / 2), color);
+    if (tramo.tipo === 'avenida') { for (let i = 0; i + 1 < secciones.length; i++) banda(secciones[i].s, secciones[i + 1].s, M.anchoRayaBlanca, C.rayaBlanca); return; }
     if (tramo.ancho < 11) return;
     for (let s = desde + M.largoRaya / 2; s + M.largoRaya < hasta; s += M.cadaRaya) banda(s, s + M.largoRaya, M.anchoRayaAmarilla, C.rayaAmarilla);
   }
 
-  // construye el tramo en las listas { calzada, muros, tunel }
-  function construir(tramo, listas) {
+  // construye el tramo en las listas { calzada, muros, tunel }. Solo lo que cae dentro(x, z) (por defecto, todo): un tramo largo
+  // cruza varios trozos y cada trozo pone el pedazo que le cae encima. Si lo pusiera entero el trozo de su primer nudo, lejos de
+  // ese nudo la física (que solo monta los trozos cercanos al coche) se quedaría sin calzada y el coche pisaría el terreno.
+  function construir(tramo, listas, dentro = () => true) {
     const secciones = G.secciones(tramo);
     if (secciones.length < 2) return;
     const mitad = tramo.ancho / 2, enSuperficie = !G.esSubterraneo(tramo);
     for (let i = 0; i < secciones.length - 1; i++) {
       const a = secciones[i], b = secciones[i + 1];
+      if (!dentro((a.x + b.x) / 2, (a.z + b.z) / 2)) continue;
       calzada(tramo, a, b, mitad, listas.calzada, enSuperficie);
       if (tramo.tipo === 'rampa') murosTrinchera(a, b, mitad, listas.muros);
       if (tramo.tipo === 'tunel') carcasaTunel(a, b, mitad, listas.tunel);
       if (tramo.tipo === 'viaducto') ladosViaducto(tramo, a, b, mitad, listas.muros);
     }
-    if (tramo.tipo === 'viaducto') remates(tramo, secciones, listas.muros);
-    rayas(tramo, secciones, listas.calzada);
+    if (tramo.tipo === 'viaducto') remates(tramo, secciones, listas.muros, dentro);
+    rayas(tramo, secciones, listas.calzada, dentro);
   }
 
   return { construir };

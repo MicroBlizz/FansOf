@@ -6,10 +6,15 @@
 //     calle va sobre ese plano (también de lado a lado), así todas se encuentran en la boca a la misma altura.
 //   · Una HORQUILLA (dos tramos que vuelven casi hacia atrás) también tiene plano: cerca del nudo las dos rectas se solapan, y si
 //     cada una llevara su pendiente quedaría un escalón entre ellas. Sobre el plano, el mismo sitio tiene la misma altura.
+//   · Una ESQUINA (dos tramos con un giro cerrado) también: ahí las cintas cortan los tramos y ponen un polígono de cruce, que va
+//     sobre el plano; si los tramos siguieran con su pendiente hasta el nudo, al llegar al polígono habría un escalón.
 //   · Un MIRADOR (fin de carretera con explanada redonda) es horizontal en toda la explanada, y la cuesta llega hasta su borde.
 //   · Un nudo con `llano` (metros) es horizontal en ese tramo a cada lado: así la rampa de un centro comercial llega a la azotea sin
 //     doblarla (la media de pendientes de un nudo de paso la levantaría).
 //   · En los demás nudos de paso (dos tramos, una curva) la pendiente sigue continua: la media de la que trae y la que lleva.
+//   · En esos nudos de paso las cintas cortan los dos tramos en INGLETE, por la bisectriz. La distancia al nudo se mide hasta esa
+//     línea (no en perpendicular al eje): sobre ella vale 0 en los dos tramos, así que de lado a lado los dos dan la altura del nudo
+//     y no queda escalón en la cara de dentro de la curva (en una cuesta, medio metro).
 //   · Entre un extremo y otro, la altura pasa del uno al otro con una curva suave (sin quiebros en las juntas).
 // Los túneles y las trincheras tienen cruces horizontales: sus paredes y techos son horizontales.
 'use strict';
@@ -18,6 +23,7 @@ const PERFIL = (() => {
   const CUESTA_MINIMA = 0.4;        // la transición ocupa al menos esta parte del tramo
   const PENDIENTE_MAXIMA_CRUCE = 0.12;
   const ANGULO_HORQUILLA = 1.2;     // radianes: si los dos tramos salen del nudo más juntos que esto, es una horquilla
+  const GIRO_ESQUINA = 1.2;         // radianes: con más giro, las cintas cortan los tramos y ponen un cruce (CINTAS.geometria)
   // en una horquilla las dos rectas van una al lado de la otra, una subiendo y otra bajando: el plano que las une se inclina de lado
   // pendiente / sin(apertura / 2), más que un cruce (con un 9 % de cuesta y 45 grados de apertura, un 23 %)
   const PENDIENTE_MAXIMA_HORQUILLA = 0.3;
@@ -38,8 +44,9 @@ const PERFIL = (() => {
       return d > Math.PI ? 2 * Math.PI - d : d;
     }
     const esHorquilla = n => tramosDe.get(n.id).length === 2 && aperturaDe(n) < ANGULO_HORQUILLA;
+    const esEsquina = n => tramosDe.get(n.id).length === 2 && aperturaDe(n) <= Math.PI - GIRO_ESQUINA;
     const esMirador = n => n.tipo === 'mirador';
-    const tienePlano = n => esCruce(n) || esHorquilla(n) || esMirador(n) || n.llano > 0;
+    const tienePlano = n => esCruce(n) || esEsquina(n) || esMirador(n) || n.llano > 0;
 
     // la inclinación (gx, gz) del plano de un cruce: la que mejor explica la pendiente con la que sale cada calle
     function planoDe(n) {
@@ -72,10 +79,25 @@ const PERFIL = (() => {
       if (n.llano > 0) return n.llano;
       if (esMirador(n)) return e.ancho / 2 + LLANO_ANTES / 2;   // la explanada (CINTAS.cruce.explanada) tiene de radio medio ancho
       if (esHorquilla(n)) return e.ancho / (2 * Math.sin(aperturaDe(n) / 2)) + LLANO_ANTES;   // hasta donde las dos rectas dejan de solaparse
-      if (!esCruce(n)) return 0;
+      if (!esCruce(n) && !esEsquina(n)) return 0;
       let mitad = 0;
       for (const o of tramosDe.get(n.id)) if (o !== e) mitad = Math.max(mitad, o.ancho / 2);
       return mitad + LLANO_ANTES;
+    }
+
+    // el inglete de un tramo en un nudo de paso sin plano: { ux, uz } (el eje, saliendo del nudo) y { mx, mz } (la bisectriz)
+    function ingleteEn(n, e) {
+      const tramos = tramosDe.get(n.id);
+      if (n.plano || tramos.length !== 2) return null;
+      const f = tramos[0] === e ? tramos[1] : tramos[0], o = otro(e, n), q = otro(f, n);
+      const ux = (o.x - n.x) / e.largo, uz = (o.z - n.z) / e.largo, vx = (q.x - n.x) / f.largo, vz = (q.z - n.z) / f.largo;
+      const dx = ux - vx, dz = uz - vz, d = Math.hypot(dx, dz) || 1;
+      return { ux, uz, mx: -dz / d, mz: dx / d };
+    }
+    // metros desde el nudo hasta (x, z) a lo largo del eje del tramo, contados desde la bisectriz
+    function desdeInglete(n, g, x, z) {
+      const px = x - n.x, pz = z - n.z, base = g.ux * g.mz - g.uz * g.mx;
+      return Math.abs(base) < 0.2 ? px * g.ux + pz * g.uz : (px * g.mz - pz * g.mx) / base;
     }
 
     for (const n of nodos) n.plano = tienePlano(n) ? planoDe(n) : null;
@@ -83,7 +105,7 @@ const PERFIL = (() => {
       let la = llanoEn(nodos[e.a], e), lb = llanoEn(nodos[e.b], e);
       const sobra = la + lb - e.largo * (1 - CUESTA_MINIMA);
       if (sobra > 0) { const k = (la + lb - sobra) / (la + lb); la *= k; lb *= k; }
-      e.perfil = { llanoA: la, llanoB: lb, pendienteA: pendienteDePaso(nodos[e.a], e), pendienteB: pendienteDePaso(nodos[e.b], e) };
+      e.perfil = { llanoA: la, llanoB: lb, pendienteA: pendienteDePaso(nodos[e.a], e), pendienteB: pendienteDePaso(nodos[e.b], e), ingleteA: ingleteEn(nodos[e.a], e), ingleteB: ingleteEn(nodos[e.b], e) };
     }
 
     // la altura del plano de un cruce en (x, z) (horizontal si el nudo no es un cruce)
@@ -99,7 +121,10 @@ const PERFIL = (() => {
     // la altura de la calzada del tramo e en el punto (x, z) (puede estar a un lado del eje o en la boca del cruce)
     function alturaEn(e, x, z) {
       const a = nodos[e.a], b = nodos[e.b], L = e.largo, p = e.perfil;
-      const s = clamp(((x - a.x) * (b.x - a.x) + (z - a.z) * (b.z - a.z)) / L, 0, L);
+      const s0 = ((x - a.x) * (b.x - a.x) + (z - a.z) * (b.z - a.z)) / L;
+      // cerca de cada extremo con inglete, la distancia se mide desde su bisectriz; entre medias se pasa de una a otra
+      const sA = p.ingleteA ? desdeInglete(a, p.ingleteA, x, z) : s0, sB = p.ingleteB ? L - desdeInglete(b, p.ingleteB, x, z) : s0;
+      const s = clamp(lerp(sA, sB, clamp(s0 / L, 0, 1)), 0, L);
       const ya = desdeExtremo(a, p.pendienteA, x, z, s), yb = desdeExtremo(b, p.pendienteB, x, z, L - s);
       const u = clamp((s - p.llanoA) / Math.max(0.01, L - p.llanoA - p.llanoB), 0, 1);
       return lerp(ya, yb, suave(u));
@@ -113,5 +138,5 @@ const PERFIL = (() => {
     return { alturaEn, alturaCentro, enPlano };
   }
 
-  return { crear };
+  return { crear, GIRO_ESQUINA };
 })();

@@ -1,8 +1,8 @@
 {
- "build": 741,
- "hash": "fc05279",
- "fecha": "2026-10-31T11:15:36Z",
- "mensaje": "Rumble v2: vista de espaldas al subir por el camino (bases elegidas y motor; las hojas llegan con los vídeos)",
+ "build": 742,
+ "hash": "ecae87a",
+ "fecha": "2026-10-31T11:51:17Z",
+ "mensaje": "Cola de Actions: guarda lo que ya no cambia para refrescar rápido",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

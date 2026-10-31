@@ -80,7 +80,7 @@ function pintaLuzFarol(x, y, esc) {
 }
 
 // --- la pestaña ASPECTO de la tienda: capas o farolillos, de 2 en 2, con el héroe de muestra ---
-let ASPECTO_SEC = 'capas';
+let ASPECTO_SEC = 'capas', ASPECTO_PAG = 0;   // la sección y su página (si no caben todas, se pasa con < y >)
 function pintaHeroeMuestra(x, y, capa, luz, esc) {
   const A = aspecto(), c0 = A.capa, l0 = A.luz; A.capa = capa; A.luz = luz;
   if (capasListas()) { pintaLuzFarol(x + 6 * esc, y + 4 * esc, 0.35 * esc); pintaHeroeCapas(x, y, 'c-cuerpo', 1, '', esc, 1, false, Math.sin(performance.now() / 500) * 0.08, true); }
@@ -88,12 +88,18 @@ function pintaHeroeMuestra(x, y, capa, luz, esc) {
 }
 function pintaAspecto() {
   const W = PAN.W, A = aspecto(), capas = ASPECTO_SEC === 'capas';
-  const sec = (x, id, txt) => boton(x, 86, (W - 22) / 2, 18, txt, ASPECTO_SEC === id ? '#3f9a3a' : '#5a3418', () => { SONIDO.boton(); ASPECTO_SEC = id; }, 7);
+  const sec = (x, id, txt) => boton(x, 86, (W - 22) / 2, 18, txt, ASPECTO_SEC === id ? '#3f9a3a' : '#5a3418', () => { SONIDO.boton(); ASPECTO_SEC = id; ASPECTO_PAG = 0; }, 7);
   sec(8, 'capas', tr('CAPAS')); sec(14 + (W - 22) / 2, 'luces', tr('FAROLILLOS'));
   const lista = [{ id: '', nombre: capas ? 'Capa de tu personaje' : 'Llama de siempre', coste: 0 }, ...(capas ? CFG.aspecto.capas : CFG.aspecto.luces)];
   const tuyos = capas ? A.capas : A.luces, puesto = capas ? A.capa : A.luz;
-  const cw = (W - 22) / 2, ch = 56;
-  lista.forEach((o, i) => {
+  const H = PAN.H, cw = (W - 22) / 2, ch = 56, filas = Math.max(1, Math.floor((H - 110 - 78) / (ch + 5))), porPag = filas * 2, pags = Math.ceil(lista.length / porPag);
+  ASPECTO_PAG = Math.max(0, Math.min(pags - 1, ASPECTO_PAG));
+  if (pags > 1) {   // por páginas, como las MEJORAS: nada se mete debajo de VOLVER
+    boton(8, H - 70, (W - 22) / 2, 22, '<', ASPECTO_PAG > 0 ? '#e8742a' : '#7a3a22', () => { ASPECTO_PAG = Math.max(0, ASPECTO_PAG - 1); }, 10);
+    boton(14 + (W - 22) / 2, H - 70, (W - 22) / 2, 22, '>', ASPECTO_PAG < pags - 1 ? '#e8742a' : '#7a3a22', () => { ASPECTO_PAG = Math.min(pags - 1, ASPECTO_PAG + 1); }, 10);
+    texto2(tr('Página {a} de {b}', { a: ASPECTO_PAG + 1, b: pags }), W / 2, H - 76, 7, '#c9b98a');
+  }
+  lista.slice(ASPECTO_PAG * porPag, ASPECTO_PAG * porPag + porPag).forEach((o, i) => {
     const x = 8 + (i % 2) * (cw + 6), y = 110 + Math.floor(i / 2) * (ch + 5), mio = !o.id || tuyos[o.id], esta = (puesto || '') === o.id;
     caja(x, y, cw, ch, 7, '#2a1610', esta ? '#ffd34d' : '#6e4426', 1.4);
     pintaHeroeMuestra(x + 16, y + 27, capas ? o.id : A.capa, capas ? A.luz : o.id, 0.95);

@@ -102,7 +102,7 @@ function botonDoblar(F, W, y) {
 // --- la Posada: dos regalos con anuncio, una vez por visita ---
 const POSADA_ANUNCIO = [
   { id: 'regalo', nombre: 'Regalo del posadero', desc: 'Una mejora gratis', icono: 'pack', anuncio: true },
-  { id: 'repuesto', nombre: 'Dado de repuesto', desc: '+1 «¿Otra vez?» del dado en esta partida', icono: 'redado', anuncio: true },
+  { id: 'repuesto', nombre: 'Dado de repuesto', desc: '+1 «¿Otra vez?» del dado', icono: 'redado', anuncio: true },
 ];
 const listaPosada = () => (hayAnuncios() ? [...POSADA, ...POSADA_ANUNCIO] : POSADA);
 function regaloPosada(o) {

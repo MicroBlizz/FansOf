@@ -31,7 +31,7 @@ IDIOMA.add({
   "Regalo del posadero": "Innkeeper's gift",
   "Una mejora gratis": "A free upgrade",
   "Dado de repuesto": "Spare die",
-  "+1 «¿Otra vez?» del dado en esta partida": "+1 die «Again?» this run",
+  "+1 «¿Otra vez?» del dado": "+1 die «Again?»",
   "Camino de la Oca: +{p} puntos, casilla {e} y {n} premios": "Goose Road: +{p} points, square {e} and {n} rewards",
   "Camino de la Oca: +{p} puntos": "Goose Road: +{p} points",
   "Temporada {n} · quedan {d} días": "Season {n} · {d} days left",
@@ -51,4 +51,5 @@ IDIOMA.add({
   "Te faltan huevos de oro": "Not enough golden eggs",
   "¡Pase Real abierto!": "Royal Pass unlocked!",
   "¡Comprado! Gracias": "Bought! Thank you",
+  "CÓMO SE JUEGA": "HOW TO PLAY",
 });

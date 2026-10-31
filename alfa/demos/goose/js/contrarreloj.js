@@ -58,20 +58,20 @@ function pintaContrarreloj() {
   const W = PAN.W, H = PAN.H, S = crSave();
   G.drawImage(FONDO, 0, 0, W, H); oscurece(0.45);
   texto2(tr('CONTRARRELOJ'), W / 2, 28, 18, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
-  parrafo(tr('Llega a la casilla 63 y vence a la Oca Madre lo antes posible. Noche 1, sin Maldición ni Horda: todos igual.'), 16, 44, W - 32, 7, '#e8dcc0');
+  const d = Math.max(0, parrafo(tr('Llega a la casilla 63 y vence a la Oca Madre lo antes posible. Noche 1, sin Maldición ni Horda: todos igual.'), 16, 44, W - 32, 7, '#e8dcc0') - 62);   // si el texto ocupa más, lo de debajo baja
   // tus medallas
   const M = S.mejor ? medallaDe(S.mejor) : null;
-  caja(12, 64, W - 24, 34, 7, '#2a1610', M ? M.color : '#6e4426', 1.4);
-  texto2(tr('Tu mejor tiempo'), 22, 74, 7, '#c9b98a', 'left');
-  texto2(S.mejor ? reloj(S.mejor) : '--:--', 22, 88, 12, '#fff4dc', 'left', FUENTE_G, 400, 0.25);
+  caja(12, 64 + d, W - 24, 34, 7, '#2a1610', M ? M.color : '#6e4426', 1.4);
+  texto2(tr('Tu mejor tiempo'), 22, 74 + d, 7, '#c9b98a', 'left');
+  texto2(S.mejor ? reloj(S.mejor) : '--:--', 22, 88 + d, 12, '#fff4dc', 'left', FUENTE_G, 400, 0.25);
   CR.medallas.forEach((m, i) => {
     const x = W - 86 + i * 26, ok = S.mejor && S.mejor <= m.max;
-    G.globalAlpha = ok ? 1 : 0.35; icono('medalla-' + m.id, x, 78, 9); G.globalAlpha = 1;
-    texto2(reloj(m.max), x, 92, 5, ok ? m.color : '#8a7a6a');
+    G.globalAlpha = ok ? 1 : 0.35; icono('medalla-' + m.id, x, 78 + d, 9); G.globalAlpha = 1;
+    texto2(reloj(m.max), x, 92 + d, 5, ok ? m.color : '#8a7a6a');
   });
   // el ranking mundial
-  texto2(tr('Ranking mundial'), W / 2, 110, 9, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
-  const y0 = 120, filas = Math.max(3, Math.floor((H - 100 - y0) / 13));
+  texto2(tr('Ranking mundial'), W / 2, 110 + d, 9, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
+  const y0 = 120 + d, filas = Math.max(3, Math.floor((H - 100 - y0) / 13));
   if (!hayRanking()) texto2(tr('El ranking necesita conexión.'), W / 2, y0 + 14, 7, '#c9b98a');
   else if (!CR.datos) { if (!CR.cargando && !CR.error) cargaRanking(); texto2(CR.error ? tr('No se ha podido cargar. Prueba otra vez en un rato.') : tr('Cargando…'), W / 2, y0 + 14, 7, '#c9b98a'); }
   else if (!CR.datos.lista.length) texto2(tr('Todavía no hay nadie: ¡sé el primero!'), W / 2, y0 + 14, 7, '#c9b98a');

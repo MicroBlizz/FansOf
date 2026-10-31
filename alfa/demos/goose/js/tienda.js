@@ -90,8 +90,9 @@ function pintaOpciones() {
   const dy = nivelMejora('auto') ? 34 : 0;
   if (dy) fila(166, tr('Elección automática'), SAVE.autoElegir !== 0, () => { SAVE.autoElegir = SAVE.autoElegir === 0 ? 1 : 0; });   // js/maldicion.js
   boton(20, 172 + dy, W - 40, 26, tr('CUENTA'), '#2f74c0', () => { SONIDO.boton(); if (window.filaCuenta) abreCuenta(); else toast(tr('La cuenta llegará pronto')); }, 9, tr('Guarda tu progreso en la nube'));
-  texto2(tr('Cómo se juega'), W / 2, 214 + dy, 8, '#ffd34d');
-  parrafo(tr('Como en el Juego de la Oca: tira el dado (dos toques o su botón) y se abren las barreras hasta esa casilla; ve tú andando a tu ritmo, tus armas atacan solas. Cada barrera se cierra a tu espalda y, cuanto más tardes en tirar, más ocas te rodean. Pares, bendición; impares, maldición. Cuidado con el Puente, el Pozo, la Cárcel y la Muerte; descansa en la Posada. Llega a la casilla 63 y vence a la Oca Madre.'), 22, 228 + dy, W - 44, 7, '#e8dcc0');
+  const ayuda = tr('Como en el Juego de la Oca: tira el dado (dos toques o su botón) y se abren las barreras hasta esa casilla; ve tú andando a tu ritmo, tus armas atacan solas. Cada barrera se cierra a tu espalda y, cuanto más tardes en tirar, más ocas te rodean. Pares, bendición; impares, maldición. Cuidado con el Puente, el Pozo, la Cárcel y la Muerte; descansa en la Posada. Llega a la casilla 63 y vence a la Oca Madre.');
+  if (228 + dy + lineasParrafo(ayuda, W - 44, 7) * Math.max(TAM_MIN, 7) * 1.15 < H - 46) { texto2(tr('Cómo se juega'), W / 2, 214 + dy, 8, '#ffd34d'); parrafo(ayuda, 22, 228 + dy, W - 44, 7, '#e8dcc0'); }
+  else boton(20, 208 + dy, W - 40, 22, tr('CÓMO SE JUEGA'), '#d98a1a', () => { SONIDO.boton(); confirmBox(tr('Cómo se juega'), '<p>' + ayuda + '</p>', null); }, 9);   // en móviles bajos no cabe: en su ventana
   boton(30, H - 40, W - 60, 26, tr('VOLVER'), '#e8742a', () => { SONIDO.boton(); J.modo = J.opcionesDe || 'portada'; }, 10);
 }
 // la cuenta de core se abre en su ventana (la fila de Opciones comunes, dentro de un cuadro)

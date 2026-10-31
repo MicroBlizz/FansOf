@@ -103,7 +103,6 @@ function avanzaDerrumbe(dt) {
     J.yD = Math.min(J.yD, (esCoop() ? yReferenciaCoop() : yo.y) + PAN.H * D.maxDetras);         // nunca muy lejos por detrás (del más atrasado, en el cooperativo)
   }
   J.yD = Math.max(J.yD, -(D.ultima - 1) * TH);               // el jardín y sus casillas de antes no se caen
-  if (!esCoop() && !(E && E.tipo === 'puente')) J.yD = Math.max(J.yD, -(casillaAtras() - 1) * TH);   // se para en la barrera cerrada de detrás (js/barreras.js)
   // astillas que caen al vacío por donde pasa la línea
   if (antes - J.yD > 0.01 || (J.cuadro & 3) === 0) {
     const t = casillaDe(J.yD - 1), cx = centroX(t), w = anchoDe(t);

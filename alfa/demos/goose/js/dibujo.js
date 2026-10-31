@@ -71,6 +71,7 @@ function pintaMundo() {
     if (e.tipo === 'gorda' || e.tipo === 'armadura') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
     if (e.tipo === 'parca') pintaParcaExtra(e);
   }
+  pintaEscudosJefes();   // el escudo dorado de los jefes (js/jefes2.js)
   // los rivales de la Carrera y el jugador
   pintaRivales();
   pintaJugador();

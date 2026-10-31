@@ -82,7 +82,7 @@ const frenadoNieve = () => (JUEGO.frenado > 0 ? 0.55 : 1);
 
 // --- los peligros del suelo: rocas que caen (Mina) y dinamita (la Capataz). Primero una sombra que crece; luego, el golpe ---
 const PELIGROS = [];
-function peligro(x, y, r, t, dano, tipo) { if (PELIGROS.length < 30) PELIGROS.push({ x, y, r, t, max: t, dano, tipo }); }
+function peligro(x, y, r, t, dano, tipo) { if (PELIGROS.length < 48) PELIGROS.push({ x, y, r, t, max: t, dano, tipo }); }
 function avanzaTierras2(dt) {
   const J = JUEGO, yo = J.yo;
   if (J.frenado > 0) J.frenado -= dt;
@@ -94,11 +94,11 @@ function avanzaTierras2(dt) {
   for (let i = PELIGROS.length - 1; i >= 0; i--) {
     const P = PELIGROS[i]; P.t -= dt; if (P.t > 0) continue;
     PELIGROS.splice(i, 1);
-    estallido(P.x, P.y, P.tipo === 'roca' ? 10 : 18, P.tipo === 'roca' ? '#8a7a6a' : '#ff9b4d', 90, 0.5, 2.6, 1, 40); tiembla(P.tipo === 'roca' ? 2 : 4);
+    estallido(P.x, P.y, P.tipo === 'roca' ? 10 : P.tipo === 'zona' ? 12 : 18, P.tipo === 'roca' ? '#8a7a6a' : P.tipo === 'zona' ? '#ff4d4d' : '#ff9b4d', 90, 0.5, 2.6, 1, 40); tiembla(P.tipo === 'roca' ? 2 : P.tipo === 'zona' ? 2 : 4);
     if (P.tipo !== 'roca') SONIDO.explota();
     if (J.invul <= 0 && J.salto <= 0 && Math.hypot(yo.x - P.x, yo.y - P.y) < P.r + 4) heridaJugador(P.dano, P.x, P.y);
     const n = enemigosCerca(P.x, P.y, P.r + 10);
-    for (let k = 0; k < n; k++) { const e = ENE.lista[CERCA[k]]; if (e.hp > 0 && !e.tipo.startsWith('mj-') && Math.hypot(e.x - P.x, e.y - P.y) < P.r + e.r) danar(e, 40, 0, -1, 80, true); }
+    for (let k = 0; k < n; k++) { const e = ENE.lista[CERCA[k]]; if (e.hp > 0 && !esJefeGrande(e) && Math.hypot(e.x - P.x, e.y - P.y) < P.r + e.r) danar(e, 40, 0, -1, 80, true); }
   }
 }
 function pintaPeligros() {
@@ -108,7 +108,7 @@ function pintaPeligros() {
     G.globalAlpha = 0.25 + k * 0.4; disco(P.x, P.y, Math.round(P.r * (0.4 + k * 0.6)), Math.round(P.r * 0.6 * (0.4 + k * 0.6)), '#000');
     G.globalAlpha = 0.5 + Math.sin(J.t * 20) * 0.3; G.drawImage(discoLienzo(P.r, P.r * 0.6, '#ff4d4d', 1), snap(P.x) - P.r - 0.5 / PAN.k, snap(P.y) - P.r * 0.6 - 0.5 / PAN.k, (Math.round(P.r * PAN.k) * 2 + 1) / PAN.k, (Math.round(P.r * 0.6 * PAN.k) * 2 + 1) / PAN.k); G.globalAlpha = 1;
     if (P.tipo === 'roca') { const alto = (1 - k) * 90; G.fillStyle = '#5a4a3e'; G.fillRect(P.x - 4, P.y - 6 - alto, 8, 7); G.fillStyle = '#120808'; G.fillRect(P.x - 4, P.y - 6 - alto, 8, 1); }
-    else { G.fillStyle = '#c0302f'; G.fillRect(P.x - 1.5, P.y - 6, 3, 7); G.fillStyle = Math.sin(J.t * 30) > 0 ? '#ffd34d' : '#ff7a2a'; G.fillRect(P.x - 1, P.y - 8, 2, 2); }
+    else if (P.tipo !== 'zona') { G.fillStyle = '#c0302f'; G.fillRect(P.x - 1.5, P.y - 6, 3, 7); G.fillStyle = Math.sin(J.t * 30) > 0 ? '#ffd34d' : '#ff7a2a'; G.fillRect(P.x - 1, P.y - 8, 2, 2); }
   }
 }
 

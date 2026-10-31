@@ -60,7 +60,7 @@ function avanzaDado(dt) {
 function cierraEfectoDado() { const D = JUEGO.dado; if (D.efecto) D.quedan = Math.min(D.quedan, 3); }
 
 const invertido = () => JUEGO.dado.efecto === 5 && JUEGO.dado.quedan > 0;
-const multiVel = () => (JUEGO.dado.efecto === 2 ? 1.45 : JUEGO.dado.efecto === 3 ? 0.7 : 1) * frenadoNieve();
+const multiVel = () => (JUEGO.dado.efecto === 2 ? 1.45 : JUEGO.dado.efecto === 3 ? 0.7 : 1) * frenadoNieve() * (poderRueda('prisa') ? 1.3 : 1);   // y la Rueda de la fortuna (js/armas4.js)
 
 // el dado en pantalla: grande en el centro mientras rueda; el botón TIRA EL DADO cuando estás parado; el efecto en marcha en su esquina
 function pintaDado() {

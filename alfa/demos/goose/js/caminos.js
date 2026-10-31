@@ -86,7 +86,7 @@ function ofreceAltar(precio) {
 function compraMercader(o) {
   const J = JUEGO, E = J.escena; if (!E || E.compradas[o.id]) return;
   if (J.monedasPartida < precio(o)) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
-  J.monedasPartida -= precio(o); E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
+  J.gastado = (J.gastado || 0) + precio(o); J.monedasPartida -= precio(o); E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
   if (o.id === 'carta') J.pendientes++;
   else if (o.id === 'asada') { J.vida = Math.min(J.st.vidaMax, J.vida + J.st.vidaMax * 0.5 * J.mod.cura); SONIDO.cura(); }
   else if (o.id === 'tirada') J.tiradas++;

@@ -24,6 +24,10 @@ const TIENDA_TXT = {
   destierro: { nombre: 'Destierro', desc: 'Quita para siempre una carta que no quieres (por partida)', icono: 'destierro' },
   saltar:  { nombre: 'Saltar', desc: 'Sáltate una subida de nivel y gana 15 monedas (por partida)', icono: 'saltar' },
   auto:    { nombre: 'Elección automática', desc: 'Al subir de nivel se elige sola la mejor carta, sin parar', icono: 'auto' },
+  // las tres nuevas (31-10-2026, js/armas4.js)
+  paciencia: { nombre: 'Paciencia', desc: 'Espera con el dado listo: plumas doradas y monedas', icono: 'paciencia' },
+  seguro: { nombre: 'Seguro de vida', desc: 'Al perder, recuperas un 20 % de lo gastado', icono: 'seguro' },
+  talisman: { nombre: 'Talismán de la Noche', desc: 'En cada partida anula una regla de la noche al azar', icono: 'talisman' },
 };
 // lo que cuesta algo de la Posada o del Mercader (con el Regateo)
 const precio = o => Math.max(1, Math.round(o.coste * (1 - 0.15 * nivelMejora('regateo'))));

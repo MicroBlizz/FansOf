@@ -35,7 +35,8 @@ Object.assign(PASIVAS, {
 // lo que valen (lo llama calculaStats)
 function statsNuevas(st) {
   const p = id => JUEGO.pasivas[id] || 0;
-  st.espinas = p('espinas') * 8; st.vampiro = p('colmillo') ? 16 - p('colmillo') * 2 : 0;   // 1 de vida cada tantas bajas st.cartas4 = p('ojo') * 0.15; st.llave = p('llave') * 0.08;
+  st.espinas = p('espinas') * 8; st.vampiro = p('colmillo') ? 16 - p('colmillo') * 2 : 0;   // 1 de vida cada tantas bajas
+  st.cartas4 = p('ojo') * 0.15; st.llave = p('llave') * 0.08;   // estaban dentro del comentario hasta la 0.9.0: Ojo y Llave no hacían nada
   st.escudo = p('escudo') ? 15 - p('escudo') * 2 : 0; st.extra = Math.floor((p('flechas') + 1) / 2);
 }
 // el escudo de plumas: ¿para este golpe? (lo llama heridaJugador)
@@ -52,6 +53,7 @@ function armasMas(A, dt) {
   if (A.rayo && A.rayo.t <= 0) armaRayo(A.rayo);
   if (A.cepo && A.cepo.t <= 0) armaCepo(A.cepo);
   avanzaHerraduras(dt); avanzaCepos(dt);
+  armasCuatro(A, dt);   // ficha, tintero, rueda, reloj de arena y la Paciencia (js/armas4.js)
   for (let i = RAYOS.length - 1; i >= 0; i--) { RAYOS[i].t -= dt; if (RAYOS[i].t <= 0) RAYOS.splice(i, 1); }
   for (let i = NOTAS.length - 1; i >= 0; i--) { const n = NOTAS[i]; n.t -= dt; n.x += n.vx * dt; n.y += n.vy * dt; if (n.t <= 0) NOTAS.splice(i, 1); }
 }
@@ -136,6 +138,7 @@ function avanzaCepos(dt) {
 
 // --- dibujo (todo de píxeles: los iconos de Yoshi y líneas de píxel para el rayo) ---
 function pintaArmasMas() {
+  pintaArmasCuatro();   // manchas de tinta y fichas (js/armas4.js)
   for (const c of CEPOS) { G.globalAlpha = c.t < 1.5 ? 0.4 + Math.sin(JUEGO.t * 20) * 0.3 : 1; if (SPR['ic-cepo']) pinta('ic-cepo', c.x, c.y, false, c.cierra > 0, c.cierra > 0 ? 0.8 : 0.7); else { G.fillStyle = '#a09080'; puntoPixel(c.x, c.y, 6); } }
   G.globalAlpha = 1;
   for (const h of HERRADURAS) { if (SPR['ic-herradura']) pintaGirado('ic-herradura', h.x, h.y, h.gira, 0.7); else { G.fillStyle = h.evo ? '#ffd34d' : '#c9d3ff'; puntoPixel(h.x, h.y, 5); } }

@@ -11,7 +11,7 @@ const NIV = {
 const LATIGAZOS = [];   // los trazos que se ven un momento: { x, y, ang, abre, r, t, dur, evo }
 
 const nv = (arma, campo) => NIV[arma][campo][Math.min(MAX_NIVEL, JUEGO.armas[arma].nivel) - 1];
-const multiDado = () => (JUEGO.dado.efecto === 6 ? 2 : 1);
+const multiDado = () => (JUEGO.dado.efecto === 6 ? 2 : 1) * (poderRueda('fuerza') ? 1.5 : 1);   // y la Rueda de la fortuna (js/armas4.js)
 const multiArea = () => JUEGO.st.area * (JUEGO.dado.efecto === 4 ? 1.4 : 1);
 
 function avanzaArmas(dt) {

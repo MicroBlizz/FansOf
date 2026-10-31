@@ -25,7 +25,10 @@ function nuevaPartida() {
   if (J.diarioPedido) { J.diarioPedido = false; J.diario = true; preparaDiario(); }
   else if (J.semillaSala) { J.rnd = semillaAzar(J.semillaSala); J.semillaSala = 0; }
   else J.noche = J.contrarreloj ? 1 : Math.max(1, Math.min(SAVE.noche || 1, SAVE.nocheMax || 1));
-  J.mod = aplicaRiesgo(modNoche()); empiezaCargas();   // la Maldición, la Horda, Desterrar y Saltar de la tienda (js/maldicion.js) PELIGROS.length = 0; vaciaArmasNuevas(); vaciaArmasMas();
+  J.mod = aplicaRiesgo(modNoche()); empiezaCargas(); vaciaArmasCuatro();   // vaciaArmasCuatro: js/armas4.js
+  if (J.mod.talisman) setTimeout(() => aviso2(tr('Talismán de la Noche: esta partida sin «{r}»', { r: tr(REGLA_NOMBRE[J.mod.talisman]) })), 900);
+  // empiezaCargas: la Maldición, la Horda, Desterrar y Saltar de la tienda (js/maldicion.js)
+  PELIGROS.length = 0; vaciaArmasNuevas(); vaciaArmasMas();   // lo de la partida anterior fuera (estaba dentro del comentario hasta la 0.9.0)
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
   J.pers = J.diario ? personajeDelDia() : personaje(); J.yo.dir = 1;
   sorteaTierras(); J.maldicion = eligeMaldicion(); barajaCasillas();
@@ -258,9 +261,10 @@ function terminaPartida(gana) {
   const J = JUEGO;
   J.mejorCombo = Math.max(J.mejorCombo, J.combo);
   const cr = J.contrarreloj ? finContrarreloj(gana) : null;   // la medalla suma sus monedas antes de contarlas
-  const base = J.monedasPartida + J.mejorCasilla + Math.floor(J.bajas / 20) + (gana ? 100 : 0);
+  const base = J.monedasPartida + J.mejorCasilla + Math.floor(J.bajas / 20) + (gana ? 100 : 0) + seguroDeVida(gana);   // el Seguro de vida (js/armas4.js)
   const diario = J.diario ? terminaDiario(gana) : null;
-  const monedas = Math.round(base * J.st.monedas * J.mod.monedas * (diario && diario.primera ? 2 : 1));
+  // los extras (Codicia y personaje en J.st.monedas; noche, Maldición y Horda en J.mod.monedas) se SUMAN: antes se multiplicaban y llegaban a x19
+  const monedas = Math.round(base * (J.st.monedas + J.mod.monedas - 1) * (diario && diario.primera ? 2 : 1));
   const record = J.mejorCasilla > SAVE.mejorCasilla;
   const noche = gana && !J.diario ? ganaNoche() : 0, desafios = repasaDesafios(gana);
   const pase = paseFinPartida(gana);   // los puntos del Camino de la Oca (js/pase.js)

@@ -2,13 +2,15 @@
 // Lo guardado (localStorage, «fansof.gestion.cola.*»): los runs terminados por id con su intento (un run relanzado vuelve a la cola con el mismo id y otro intento: lo activo
 // manda y se sobreescribe al acabar), el historial antiguo que falta por bajar, el runner de cada workflow, las duraciones, los recursos y la última foto para enseñarla al abrir.
 // Cada refresco: la cola (en curso y en cola), los terminados desde el más nuevo hasta topar con lo ya guardado, los que estaban activos y ya no (uno a uno), un trozo del
-// historial antiguo y los jobs solo de lo que está en curso. «Releer todo» lo vuelve a leer entero y sobreescribe por id sin borrar lo demás. Guía: docs/guia/herramientas/cola-actions.md.
+// historial antiguo y los jobs solo de lo que está en curso. «Releer todo» lo vuelve a leer entero y sobreescribe por id sin borrar lo demás.
+// HISTORIAL COMPARTIDO (servidor/106-gestion-cola.sql, ADR 021): con sesión de /gestion, cada refresco baja de Supabase lo que han subido los demás (desde la
+// última vez) y sube lo que ha cambiado aquí; así Pepins y Arkioner ven lo mismo y lo que GitHub borra a los 90 días se queda. Guía: docs/guia/herramientas/cola-actions.md.
 'use strict';
 const COLA_DATOS = (() => {
   const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const P = 'fansof.gestion.cola.';
   // las claves que «Borrar lo guardado» quita (el token y el límite semanal son ajustes y se quedan)
-  const K = { runs: P + 'runs', hist: P + 'historial', activos: P + 'activos', carriles: P + 'carriles', durs: P + 'duraciones-2', recs: P + 'recursos', plan: P + 'plan', foto: P + 'foto' };
+  const K = { runs: P + 'runs', hist: P + 'historial', activos: P + 'activos', carriles: P + 'carriles', durs: P + 'duraciones-2', recs: P + 'recursos', plan: P + 'plan', foto: P + 'foto', sync: P + 'sync' };
   const LOTE = 10;          // llamadas a la vez
   const PAGINA = 50;        // terminados por página al buscar los nuevos
   const MAX_PAGINAS = 5;    // páginas de nuevos por refresco (si hay más, siguen en el próximo)
@@ -22,15 +24,49 @@ const COLA_DATOS = (() => {
   async function enLotes(lista, n, f) { for (let i = 0; i < lista.length; i += n) await Promise.all(lista.slice(i, i + n).map(f)); }
   // de cada run se guarda solo lo que se usa
   const CAMPOS = ['id', 'run_attempt', 'path', 'workflow_id', 'name', 'display_title', 'conclusion', 'created_at', 'run_started_at', 'updated_at'];
-  const corto = r => Object.fromEntries(CAMPOS.map(k => [k, r[k]]));
+  // quién lo lanzó: actor (quien creó el run) y triggering_actor (quien lanzó este intento; cambia al relanzar). De GitHub viene el usuario entero: se guarda su login
+  const QUIEN = ['actor', 'triggering_actor'], login = x => typeof x === 'string' ? x : x && x.login || null;
+  const corto = r => Object.fromEntries([...CAMPOS.map(k => [k, r[k]]), ...QUIEN.map(k => [k, login(r[k])])]);
 
-  /** Lee GitHub y devuelve la foto de la cola. `gh(ruta)` llama a la API; `prever(parte, n)` va fijando el plan de la barra de avance; `todo`: releer todo. */
-  async function actualizar({ gh, prever, leer, guardar, todo }) {
+  const SOLAPE = 5 * 60e3;   // al bajar del servidor «desde la última vez», 5 min de margen por lo que otro guardaba a la vez
+  const TROZO = 1000;        // runs por llamada al subir
+
+  /**
+   * Lee GitHub y devuelve la foto de la cola. `gh(ruta)` llama a la API; `prever(parte, n)` va fijando el plan de la barra de avance; `todo`: releer todo.
+   * `servidor`: { leer(desde), guardar(runs, carriles) } para el historial compartido, o null (sin sesión de /gestion: solo este navegador).
+   */
+  async function actualizar({ gh, prever, leer, guardar, todo, servidor }) {
     const ahora = Date.now();
-    const runs = leer(K.runs, {}), hist = leer(K.hist, {}), carriles = leer(K.carriles, {});
-    // guarda un run terminado (sobreescribe por id); true si ya estaba igual (mismo intento y misma hora de fin)
+    const runs = leer(K.runs, {}), hist = leer(K.hist, {}), carriles = leer(K.carriles, {}), cache = leer(K.durs, {}), gs = leer(K.recs, {}), sync = leer(K.sync, {});
+    const cambiados = new Set(), carrilesNuevos = {}, avisos = [];
     let leidoMin = Infinity;   // el más viejo leído en este refresco (al releer, el historial sigue desde ahí)
-    const meter = r => { const v = runs[r.id]; runs[r.id] = corto(r); leidoMin = Math.min(leidoMin, ms(r.created_at) || Infinity); return !!v && v.run_attempt === r.run_attempt && v.updated_at === r.updated_at; };
+    // guarda un run terminado (sobreescribe por id); true si ya estaba igual (mismo intento y misma hora de fin)
+    const meter = r => {
+      const v = runs[r.id], igual = !!v && v.run_attempt === r.run_attempt && v.updated_at === r.updated_at;
+      runs[r.id] = corto(r); leidoMin = Math.min(leidoMin, ms(r.created_at) || Infinity);
+      if (!igual) cambiados.add(String(r.id));
+      return igual;
+    };
+    const nota = (r, bytes) => { const lt = leerTitulo(String(r.display_title || 'recurso')); gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes, fin: ms(r.updated_at) }; };
+    const aprende = (path, c) => { if (path && c && carriles[path] !== c) { carriles[path] = c; carrilesNuevos[path] = c; } };
+
+    // 0. Historial compartido: lo que han subido los demás desde la última vez (un intento más nuevo o una hora de fin posterior manda; duración y tamaño, si aquí faltan).
+    const habia = Object.keys(runs).length;
+    if (servidor) {
+      try {
+        prever('servidor', 2);
+        const d = await servidor.leer(sync.desde ? new Date(Date.parse(sync.desde) - SOLAPE).toISOString() : null);
+        (d.runs || []).forEach(({ run: r, dur, bytes }) => {
+          const v = runs[r.id], nuevo = !v || r.run_attempt > v.run_attempt || (r.run_attempt === v.run_attempt && ms(r.updated_at) > ms(v.updated_at));
+          if (nuevo) { runs[r.id] = corto(r); if (v) { delete cache[r.id]; delete gs[r.id]; } }
+          if (dur != null && cache[r.id] === undefined) cache[r.id] = dur;
+          if (bytes != null && gs[r.id] === undefined && esGenerar(r) && r.conclusion === 'success') nota(r, bytes);
+        });
+        Object.entries(d.carriles || {}).forEach(([k, v]) => { carriles[k] = v; });
+        if (!sync.desde && !habia) sync.subido = true;   // empezar de cero bajándolo todo: no hay nada propio que subir
+        sync.desde = d.ahora;
+      } catch (e) { avisos.push('No pude leer el historial compartido (' + e.message + '); sigo con lo de este navegador.'); }
+    }
 
     // 1. La cola: lo activo manda sobre lo guardado.
     const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
@@ -67,13 +103,13 @@ const COLA_DATOS = (() => {
     // 4. Medias: últimos MUESTRAS correctos de cada workflow; «Generar recurso», cadencia por tipo (cola-medida.js). Al releer se recalculan todas.
     const porWf = {};
     for (const r of hechos) if (r.conclusion === 'success' && !esGenerar(r)) { const a = porWf[r.workflow_id] || (porWf[r.workflow_id] = []); if (a.length < MUESTRAS) a.push(r); }
-    const cache = leer(K.durs, {}), mira = todo ? {} : cache;
+    const mira = todo ? {} : cache;
     const faltan = [...Object.values(porWf).flat().filter(r => mira[r.id] === undefined), ...cadencias(hechos, mira).piden], nuevas = faltan.slice(0, todo ? MAX_RELEER : MAX_NUEVAS);
     prever('jobs', nuevas.length);
     await enLotes(nuevas, LOTE, async r => {
       const j = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs, L = j.flatMap(x => x.labels || []);
-      cache[r.id] = (esGenerar(r) ? duracionPaso(j) : duracionRun(j)) || 0;
-      if (L.length) carriles[r.path] = carrilDe(L);
+      cache[r.id] = (esGenerar(r) ? duracionPaso(j) : duracionRun(j)) || 0; cambiados.add(String(r.id));
+      if (L.length) aprende(r.path, carrilDe(L));
     });
     const muestras = cadencias(hechos, cache).muestras;
     const usados = new Set([...Object.values(porWf).flat(), ...hechos.filter(esGenerar)].map(r => String(r.id)));
@@ -85,10 +121,9 @@ const COLA_DATOS = (() => {
     if (generar && todas.length) medias[etiquetaWf(generar)] = mediaCadencia(todas);   // de reserva, para un tipo sin muestras
 
     // 5. Recursos terminados: tamaño del artefacto (solo si tiene menos de un día; si no, ya no está) y tipo del título (sin tipo: imagen).
-    const gs = leer(K.recs, {});
     const sinVer = hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && (gs[r.id] === undefined || (todo && ahora - ms(r.updated_at) < DIA)));
     const conArtefacto = sinVer.filter(r => ahora - ms(r.updated_at) < DIA).slice(0, todo ? Infinity : 10);
-    const nota = (r, bytes) => { const lt = leerTitulo(String(r.display_title || 'recurso')); gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes, fin: ms(r.updated_at) }; };
+    sinVer.forEach(r => cambiados.add(String(r.id)));
     sinVer.filter(r => ahora - ms(r.updated_at) >= DIA).forEach(r => nota(r, 0));
     prever('artefactos', conArtefacto.length);
     await enLotes(conArtefacto, LOTE, async r => nota(r, (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0)));
@@ -101,9 +136,20 @@ const COLA_DATOS = (() => {
     await enLotes(piden, LOTE, async r => {
       const j = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs, L = j.flatMap(x => x.labels || []);
       jobs[r.id] = j;
-      if (L.length) carriles[r.path] = carrilDe(L);
+      if (L.length) aprende(r.path, carrilDe(L));
     });
     guardar(K.carriles, carriles);
+    // Historial compartido: se sube lo que ha cambiado aquí (todo, la primera vez o al releer), en trozos.
+    if (servidor) {
+      // lo cambiado ahora más lo que no se pudo subir la vez anterior (sync.pendientes)
+      const ids = (todo || !sync.subido) ? Object.keys(runs) : [...new Set([...cambiados, ...(sync.pendientes || [])])].filter(id => runs[id]);
+      const lote = ids.map(id => ({ run: runs[id], dur: cache[id] ?? null, bytes: gs[id] ? gs[id].bytes : null }));
+      try {
+        if (lote.length || Object.keys(carrilesNuevos).length) for (let i = 0; i < Math.max(1, lote.length); i += TROZO) await servidor.guardar(lote.slice(i, i + TROZO), i ? null : carrilesNuevos);
+        sync.subido = true; sync.pendientes = [];
+      } catch (e) { sync.pendientes = ids; avisos.push('No pude subir al historial compartido (' + e.message + '); se reintenta en el próximo refresco.'); }
+    }
+    guardar(K.sync, sync);
     const trabajos = [];
     let extra = 0;
     activos.forEach(r => {
@@ -123,12 +169,13 @@ const COLA_DATOS = (() => {
     let online = null, aviso = '';
     try { online = new Set((await gh('/actions/runners?per_page=50')).runners.filter(r => r.status === 'online').flatMap(r => r.labels.map(l => l.name))); }
     catch (e) { aviso = 'No puedo ver los runners (el token necesita Administration: lectura). Los doy por encendidos.'; }
+    aviso = [aviso, ...avisos].filter(Boolean).join(' ');
     const ids = [...new Set(trabajos.map(t => t.carril))];
     if (online) online.forEach(l => { if (l.startsWith('yoshi') && !ids.includes(l)) ids.push(l); });
     const carrilesSnap = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : online ? online.has(id) : null }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
     const snap = { trabajos, extra, carriles: carrilesSnap, medias, recursos, actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso,
-      guardados: hechos.length, historialCompleto: !!hist.completo };
+      guardados: hechos.length, historialCompleto: !!hist.completo, compartido: !!servidor && !avisos.length };
     guardar(K.foto, snap);
     return snap;
   }

@@ -1,8 +1,8 @@
 {
- "build": 745,
- "hash": "4e28bf8",
- "fecha": "2026-10-31T13:24:54Z",
- "mensaje": "Goose 0.10.0: las mejoras de combate son de cada personaje y se reinicia el guardado de la alfa",
+ "build": 746,
+ "hash": "60c00d5",
+ "fecha": "2026-10-31T14:08:53Z",
+ "mensaje": "Cola de Actions: guarda quién lanzó cada run (actor y triggering_actor)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

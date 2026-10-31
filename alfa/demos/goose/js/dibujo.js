@@ -74,6 +74,7 @@ function pintaMundo() {
   // los rivales de la Carrera y el jugador
   pintaRivales();
   pintaJugador();
+  pintaFlechaCamino();   // hacia la casilla de destino (js/barreras.js)
   pintaArmas();
   // balas enemigas
   const bl = BALAS.lista;

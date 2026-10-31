@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha de Fans of Goose en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "Arreglado: tras tirar el dado, ahora pone «Ve a la casilla X», una flecha te señala el camino y avanzas más rápido; al llegar, el dado se vuelve a encender.": "Fixed: after rolling the die it now says «Go to square X», an arrow points the way and you move forward faster; when you arrive, the die lights up again.",
+  "Arreglado: si apoyas el dedo encima del dado y lo arrastras, caminas en vez de quedarte quieto. El dado solo se tira con un toque corto.": "Fixed: if you put your finger on the die and drag, you walk instead of standing still. The die only rolls with a short tap.",
+  "Phony quería cobrar por la flecha. Microblizz ha dicho que, de momento, la flecha es gratis.": "Phony wanted to charge for the arrow. Microblizz said that, for now, the arrow is free.",
   "Los charcos de los Huevos podridos se quedan en el suelo, debajo del héroe y de las ocas, y son más transparentes: ya no te pierdes de vista.": "The Rotten eggs puddles now stay on the ground, under the hero and the geese, and are more see-through: you won't lose sight of yourself anymore.",
   "Phony quería vender el charco como piscina con vistas. Microblizz lo ha bajado al suelo, que es donde van los charcos.": "Phony wanted to sell the puddle as a pool with a view. Microblizz moved it down to the floor, where puddles belong.",
   "<b>SE LEE MEJOR</b>: la letra más pequeña del juego es un poco más grande.": "<b>EASIER TO READ</b>: the game's smallest text is a bit bigger.",

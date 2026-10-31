@@ -5,7 +5,7 @@
 'use strict';
 
 const BARRERAS_PNG = ['bosque', 'pantano', 'cementerio', 'aldea', 'catacumbas', 'castillo', 'feria', 'helada', 'mina'].map(n => 'barrera-' + n);
-const BARRERA = { alto: 30, abre: 2.8, velCamino: 1.3 };   // alto en unidades; abre = lo rápido que se hunde o sube; el camino se anda un 30 % más rápido
+const BARRERA = { alto: 30, abre: 2.8, velCamino: 1.3, avance: 1.65 };   // alto en unidades; abre = lo rápido que se hunde o sube; el camino se anda un 30 % más rápido y hacia delante otro 65 % (unos 1,3 s por casilla)
 const ABIERTA = new Map();   // casilla t -> cuánto está abierta la barrera de su borde de arriba (0 cerrada, 1 abierta)
 
 // ¿debe estar abierta la barrera del borde de arriba de la casilla t?
@@ -26,7 +26,7 @@ function avanzaCamino(dt) {
   const m = Math.hypot(mx, my);
   yo.moviendo = m > 0.12;
   const v = yo.moviendo ? J.st.vel * BARRERA.velCamino * multiVel() * velTierra() * Math.min(1, m) : 0;
-  const [vx, vy] = hielo(yo.moviendo ? mx / Math.max(1, m) * v : 0, yo.moviendo ? my / Math.max(1, m) * v : 0, dt);
+  const [vx, vy] = hielo(yo.moviendo ? mx / Math.max(1, m) * v : 0, yo.moviendo ? my / Math.max(1, m) * v * (my < 0 ? BARRERA.avance : 1) : 0, dt);   // hacia delante, más rápido
   yo.x += vx * dt; yo.y += vy * dt;
   if (yo.moviendo) { yo.miraX = mx / m; yo.miraY = my / m; yo.anda += dt * 10; }
   // al cruzar una barrera, se cierra detrás
@@ -84,4 +84,16 @@ function pintaBarreraCodigo(x, y, w, h, B) {
     G.fillStyle = B.niebla; G.globalAlpha = 0.25; G.fillRect(px + 1, y + Math.min(h, pico), 1.5, Math.max(0, h - pico - 1)); G.globalAlpha = 1;
   }
   G.fillStyle = '#3d2414'; if (h > 10) { G.fillRect(x, y + h * 0.3, w, 2.5); G.fillRect(x, y + h * 0.7, w, 2.5); }
+}
+
+// mientras caminas: una flecha sobre el héroe que señala la casilla de destino (en el mundo; lo llama pintaMundo)
+function pintaFlechaCamino() {
+  const J = JUEGO; if (J.fase !== 'camino' || J.modo !== 'juego') return;
+  const yo = J.yo, tx = centroX(J.destino), ty = yCentro(J.destino), a = Math.atan2(ty - yo.y, tx - yo.x), r = 22 + Math.sin(J.t * 8) * 2;
+  const x = yo.x + Math.cos(a) * r, y = yo.y - 4 + Math.sin(a) * r;
+  G.save(); G.translate(snap(x), snap(y)); G.rotate(a + Math.PI / 2);
+  G.fillStyle = '#120808'; for (let i = 0; i < 6; i++) G.fillRect(-i - 1, i - 1, i * 2 + 2, 1.5);   // contorno
+  G.fillStyle = '#ffd34d'; for (let i = 0; i < 5; i++) G.fillRect(-i, i, i * 2, 1);
+  G.fillRect(-1.5, 5, 3, 4);
+  G.restore();
 }

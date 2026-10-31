@@ -91,7 +91,7 @@ function pintaDado() {
   // el aro de plumas (gris de fondo, dorado lo que llevas)
   arcoPixel(bx, by, 19.5, 0, 6.283, 2, '#2a1a10');
   if (ki > 0) arcoPixel(bx, by, 19.5, -1.57, -1.57 + 6.283 * ki, 2, D.bendito && ((J.t * 6) | 0) % 2 ? '#fff2a8' : '#ffd34d');
-  G.globalAlpha = puede ? 1 : 0.45;
+  G.globalAlpha = puede ? 1 : J.fase === 'camino' ? 0.18 : 0.45;   // caminando, el dado casi se apaga y se lee la casilla de destino
   if (D.bendito) pintaDadoOro(bx, by + (puede ? Math.sin(J.t * 5) : 0), 0.62 * pulso);
   else if (SPR['s-dado']) pinta('s-dado', bx, by + (puede ? Math.sin(J.t * 5) : 0), false, false, 0.7 * pulso);
   else pintaGirado('dadogrande' + (1 + ((J.t * 0.8) | 0) % 6), bx, by, puede ? Math.sin(J.t * 2) * 0.15 : 0, 0.55 * pulso);
@@ -99,6 +99,7 @@ function pintaDado() {
   if (D.bendito) texto2(tr('¡DADO BENDITO!'), bx + 2, by - 28, 7, '#ffd34d', 'left');
   else if (D.maldito) texto2(tr('DADO MALDITO'), bx + 2, by - 28, 7, '#c9a0ff', 'left');
   else if (puede) texto2(tr('TIRA EL DADO'), bx - 14, by - 28, 7, '#fff4dc', 'left');
+  else if (J.fase === 'camino') { texto2(tr('Ve a la casilla {n}', { n: J.destino }), bx - 14, by - 28, 7, '#ffd34d', 'left'); texto2(String(J.destino), bx, by + 1, 13, '#ffd34d', 'center', FUENTE_G, 400, 0.3); }   // el dado se enciende al llegar
   if (puede) BOTONES.push({ x: bx - 24, y: by - 24, w: 48, h: 48, accion: () => tirarDado() });
 }
 

@@ -34,12 +34,15 @@ function bajaDedo(e) {
     const ahora = performance.now();
     if (ahora - E.ultimoToque < 300 && Math.hypot(x - E.ux, y - E.uy) < 40 && (saltaParca() || tirarDado())) { E.ultimoToque = 0; return; }
     E.ultimoToque = ahora; E.ux = x; E.uy = y;
-    if (!E.bBoton && E.id === null) { E.id = e.pointerId; E.palanca = true; E.px = x; E.py = y; E.mx = 0; E.my = 0; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* da igual */ } }
+    // la palanca sale aunque el dedo empiece encima de un botón (el dado está donde se apoya el pulgar): el botón solo cuenta si es un
+    // toque corto; si arrastras, se anula (mueveDedo)
+    if (E.id === null) { E.id = e.pointerId; E.palanca = true; E.px = x; E.py = y; E.mx = 0; E.my = 0; try { cv.setPointerCapture(e.pointerId); } catch (_) { /* da igual */ } }
   }
 }
 function mueveDedo(e) {
   const E = ENTRADA; if (e.pointerId !== E.id || !E.palanca) return;
   const [x, y] = punto(e); let dx = x - E.px, dy = y - E.py; const d = Math.hypot(dx, dy), R = 22;
+  if (E.bBoton && Math.hypot(x - E.bx, y - E.by) > 7) E.bBoton = null;   // arrastrar no es pulsar
   if (d > R) { E.px += dx / d * (d - R); E.py += dy / d * (d - R); dx = x - E.px; dy = y - E.py; }   // la palanca te sigue si te pasas
   E.mx = dx / R; E.my = dy / R;
 }

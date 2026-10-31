@@ -168,7 +168,8 @@
     const fila = (x, sub) => `<div class="cl-fila${sub ? ' cl-sub' : ''}"><b>${esc(x.nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n ? x.n + ' en cola' + (sub || !x.tipos || !x.tipos.length ? ' × media ' + (x.media === null ? '—' : fmt(x.media)) : '') + ` · <b>${fmt(x.seg)}</b>` : 'nada en cola'}${x.hechos ? `<br>hechos ${x.hechos} · ${coste(x.usd)}` : ''}</span></div>`;
     return `<div class="caja"><div class="cl-gran">${fin ? 'La cola activa termina en ~' + fmt(fin) : 'Nada en marcha'}</div><div class="meta">${fin ? 'sobre las ' + hora(ahora + fin * 1000) + ' · sin contar espera' : 'los runners están apagados o la cola está vacía'}</div>`
       + (ret.length ? `<p class="aviso">${ret.length} trabajos retenidos (${fmt(segRet)} de ejecución). La estimación empieza a contar cuando el runner arranque.</p>` : '')
-      + grupos.map(g => fila(g) + g.tipos.map(x => fila(x, true)).join('')).join('') + '</div>';
+      + grupos.map(g => fila(g) + g.tipos.map(x => fila(x, true)).join('')).join('')
+      + (snap.recursos.length && !limite() ? `<div class="meta">% semanal de lo hecho: esta pestaña no puede leer tu límite de Claude; pon el «Límite semanal de referencia (tokens)» de arriba y saldrá en cada fila.</div>` : '') + '</div>';
   }
   const tok = usd => Math.round(usd * 1e6 / PRECIO_CLAUDE);
   const sem = usd => { const lim = limite(), p = lim ? tok(usd) / lim * 100 : 0; return lim ? ' · ~' + (p < 10 ? p.toFixed(1) : Math.round(p)) + '% semanal' : ''; };

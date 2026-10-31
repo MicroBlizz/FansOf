@@ -145,15 +145,28 @@
         <div class="cl-strip${off ? ' off' : ''}">${bloques}</div><div class="meta">${off ? 'al encender → +' + fmt(tot) : 'ahora → termina ' + hora(ahora + tot * 1000)}</div></section>`;
     }).join('');
   }
+  // Resumen por workflow; «Generar recurso» con su acumulado y, debajo, el de cada tipo (imagen, vídeo…), que es como se mide (flujo «Generar recurso · video»).
+  const NOMBRE_TIPO = { imagen: 'imagen', video: 'vídeo', audio: 'audio', '3d': '3D' };
+  function agrupar(F) {
+    const gs = {};
+    F.forEach(f => {
+      const [wf, tipo] = f.t.flujo.split(' · '), g = gs[wf] || (gs[wf] = { nombre: wf, n: 0, seg: 0, media: f.t.media, off: false, tipos: {} });
+      g.n++; g.seg += f.resta || 0; g.off = g.off || f.apagado;
+      if (!f.t.gen) return;
+      const k = tipo || 'sin tipo', x = g.tipos[k] || (g.tipos[k] = { nombre: NOMBRE_TIPO[k] || k, n: 0, seg: 0, media: f.t.media, off: false });
+      x.n++; x.seg += f.resta || 0; x.off = x.off || f.apagado;
+    });
+    return Object.values(gs).map(g => { const t = Object.values(g.tipos).sort((a, b) => b.seg - a.seg); return { ...g, tipos: t.some(x => x.nombre !== 'sin tipo') ? t : [] }; }).sort((a, b) => b.seg - a.seg);
+  }
   function vistaC(F, ahora) {
     const vivos = snap.carriles.filter(c => c.encendido !== false && !c.alojado);
     const fin = Math.max(0, ...vivos.map(c => F.filter(f => f.t.carril === c.id).reduce((a, f) => a + (f.resta || 0), 0)));
-    const ret = F.filter(f => f.apagado), segRet = ret.reduce((a, f) => a + (f.resta || 0), 0), por = {};
-    F.forEach(f => { const x = por[f.t.flujo] || (por[f.t.flujo] = { n: 0, seg: 0, media: f.t.media, off: false }); x.n++; x.seg += f.resta || 0; x.off = x.off || f.apagado; });
-    const max = Math.max(1, ...Object.values(por).map(x => x.seg));
+    const ret = F.filter(f => f.apagado), segRet = ret.reduce((a, f) => a + (f.resta || 0), 0);
+    const grupos = agrupar(F), max = Math.max(1, ...grupos.map(g => g.seg));
+    const fila = (x, nombre, sub) => `<div class="cl-fila${sub ? ' cl-sub' : ''}"><b>${esc(nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n} × ${x.media === null ? 'media —' : 'media ' + fmt(x.media)} · <b>${fmt(x.seg)}</b></span></div>`;
     return `<div class="caja"><div class="cl-gran">${fin ? 'La cola activa termina en ~' + fmt(fin) : 'Nada en marcha'}</div><div class="meta">${fin ? 'sobre las ' + hora(ahora + fin * 1000) + ' · sin contar espera' : 'los runners están apagados o la cola está vacía'}</div>`
       + (ret.length ? `<p class="aviso">${ret.length} trabajos retenidos (${fmt(segRet)} de ejecución). La estimación empieza a contar cuando el runner arranque.</p>` : '')
-      + Object.entries(por).map(([n, x]) => `<div class="cl-fila"><b>${esc(n)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n} × media ${x.media === null ? '—' : fmt(x.media)}</span></div>`).join('') + '</div>';
+      + grupos.map(g => g.tipos.length ? `<div class="cl-fila"><b>${esc(g.nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * g.seg / max)}%;${g.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${g.n} trabajos · <b>${fmt(g.seg)}</b></span></div>` + g.tipos.map(x => fila(x, x.nombre, true)).join('') : fila(g, g.nombre)).join('') + '</div>';
   }
   function pieRecursos() {
     if (!snap.recursos.length) return '';
@@ -168,7 +181,7 @@
   const estilo = document.createElement('style');
   estilo.textContent = `.cl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.cl-bar button.on{background:var(--acento);color:var(--acento-texto);border-color:var(--acento);font-weight:600}
     .cl-op{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--suave)}.cl-gran{font-size:26px;font-weight:700;margin-bottom:4px}.cl-fila{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr auto;gap:10px;align-items:center;padding:4px 0}.cl-rec{grid-template-columns:1fr auto auto}
-    .cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
+    .cl-sub>b{padding-left:1.2em;font-weight:500}.cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
     .cl-lane{display:grid;gap:4px;margin-bottom:12px}.cl-strip{display:flex;min-height:48px;border:2px solid var(--texto);border-radius:8px;overflow:hidden}.cl-strip.off{background:repeating-linear-gradient(45deg,var(--bg) 0 8px,var(--panel) 8px 16px)}
     .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
     .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}

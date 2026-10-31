@@ -1,8 +1,8 @@
 {
- "build": 728,
- "hash": "490d65e",
- "fecha": "2026-10-31T05:16:32Z",
- "mensaje": "Cola de Actions: barra de avance encima de «Refrescar»",
+ "build": 729,
+ "hash": "ea6c4ef",
+ "fecha": "2026-10-31T05:22:06Z",
+ "mensaje": "Cola de Actions: el resumen da el acumulado de Generar recurso por tipo",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

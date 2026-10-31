@@ -1,8 +1,8 @@
 {
- "build": 742,
- "hash": "ecae87a",
- "fecha": "2026-10-31T11:51:17Z",
- "mensaje": "Cola de Actions: guarda lo que ya no cambia para refrescar rápido",
+ "build": 743,
+ "hash": "93c1783",
+ "fecha": "2026-10-31T12:46:30Z",
+ "mensaje": "Rumble v2: CrazyBunny y MadSquirrel de espaldas al subir por el camino",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

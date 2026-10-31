@@ -42,7 +42,11 @@ const NOVA_ARMAS = {
   "plasma": { "nombre": "Plasma", "cargas": ["energia", "termica"], "calor": 6, "efecto": "La energía sobre un enemigo con calor le suma 6 de calor por impacto" },
   "pulsoExpansivo": { "nombre": "Pulso expansivo", "cargas": ["em", "explosiva"], "duracion": 3, "sistemas": 25, "efecto": "La explosión sobre un Interferido interfiere a los vecinos sin escudo" },
   "interferencia": { "nombre": "Interferencia", "cargas": ["em"], "sistemas": 25, "danoEnemigo": 0.7, "defensa": 0.15, "efecto": "Cada golpe de EM suma 25 de sistemas; a 100 llega el Apagón" },
-  "laser": { "nombre": "Láser", "cargas": ["termica", "em"], "acumula": 1.5, "efecto": "El láser acumula calor y sistemas ×1,5" }
+  "laser": { "nombre": "Láser", "cargas": ["termica", "em"], "acumula": 1.5, "efecto": "El láser acumula calor y sistemas ×1,5" },
+  "cazador": { "nombre": "Cazador", "portador": "lanzador", "mult": 1.2, "efecto": "El lanzador hace +20 % de daño a lo que se aleja de tu nave" },
+  "perforaescudos": { "nombre": "Perforaescudos", "portador": "railgun", "cargas": ["cinetica"], "pasa": 0.5, "efecto": "La railgun cinética mete la mitad del daño en el casco aunque haya escudo" },
+  "metrallaIncendiaria": { "nombre": "Metralla incendiaria", "portador": "flak", "cargas": ["termica"], "radio": 40, "calor": 7, "efecto": "Cada perdigón térmico del flak calienta también a los enemigos de al lado" },
+  "dronParasito": { "nombre": "Dron parásito", "portador": "drones", "cargas": ["em"], "duracion": 1, "efecto": "Un dron EM pegado a su presa la mantiene Interferida" }
  },
  "modificadores": {
   "cadena": { "nombre": "Cadena", "efecto": "Salta a otro enemigo", "mult": 1.3, "origen": "élites" },

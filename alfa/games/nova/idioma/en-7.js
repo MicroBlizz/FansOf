@@ -1,6 +1,13 @@
 // Fans of Nova · Inglés: retos (misiones diarias, semanales y logros).
 'use strict';
 IDIOMA.add({
+  "<b>CADA ARMA, SU TALENTO</b>: los misiles del lanzador castigan a quien huye, la railgun cinética atraviesa escudos, el flak térmico calienta a los de al lado y los drones EM mantienen interferida a su presa. Lo explica la ayuda.": "<b>EACH WEAPON, ITS TALENT</b>: launcher missiles punish anyone fleeing, the kinetic railgun pierces shields, thermal flak heats the enemies next to it and EM drones keep their prey jammed. The help explains it.",
+  "Microblizz ha dado formación de talentos a las armas y Phony ha pedido el certificado.": "Microblizz gave the weapons talent training and Phony asked for the certificate.",
+  "CADA ARMA, SU TALENTO": "EACH WEAPON, ITS TALENT",
+  "Lanzador: sus misiles hacen un 20 % más a lo que se aleja de tu nave.": "Launcher: its missiles deal 20% more to anything moving away from your ship.",
+  "Railgun cinética: la mitad del daño atraviesa el escudo y llega al casco.": "Kinetic railgun: half the damage goes through the shield and reaches the hull.",
+  "Flak térmico: cada perdigón calienta también a los enemigos de al lado.": "Thermal flak: each pellet also heats the enemies next to it.",
+  "Drones EM: mientras un dron está pegado a su presa, la mantiene interferida.": "EM drones: while a drone is stuck to its prey, it keeps it jammed.",
   "<b>RETOS</b>: misiones diarias, semanales y logros (ganar misiones, liberar sectores, subir de rango, destruir naves) que pagan aleación. Están en el botón RETOS de la portada.": "<b>CHALLENGES</b>: daily and weekly missions and achievements (win missions, free sectors, rank up, destroy ships) that pay alloy. Find them in the CHALLENGES button on the title screen.",
   "Microblizz ha puesto objetivos trimestrales a la rebelión y Phony ya ha pedido el bonus.": "Microblizz set quarterly targets for the rebellion and Phony already asked for the bonus.",
   "RETOS": "CHALLENGES",

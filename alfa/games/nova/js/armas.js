@@ -148,6 +148,7 @@ function nvDrones(S, w, p, dt) {
     const dx = gx - d.x, dy = gy - d.y, dist = Math.hypot(dx, dy) || 1, paso = Math.min(dist, (obj ? vel : vel * 1.6) * dt);
     d.x += dx / dist * paso; d.y += dy / dist * paso;
     if (w.carga === 'cinetica') nvChocaMisil(S, d, 14);   // los drones cinéticos derriban misiles
+    if (w.carga === 'em' && obj && !(obj.esc > 0 && !(obj.est.escudoCaido > 0)) && Math.hypot(obj.x - d.x, obj.y - d.y) < obj.r + 16) obj.est.interferido = Math.max(obj.est.interferido || 0, NOVA_ARMAS.combos.dronParasito.duracion);   // Dron parásito
     if (v.repara) {   // el dron reparador cura cada pocos segundos mientras la nave está herida
       if (herido && d.cd <= 0) { d.cd = 4; n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.015); S.nums.push({ x: d.x, y: d.y - 12, t: 0.7, txt: '+', color: '#6fe08a', g: 0 }); }
       return;
@@ -220,6 +221,7 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   if ((carga === 'cinetica' || carga === 'explosiva') && e.calor > 0) d *= 1 + Math.min(K.ablandado.max, K.ablandado.porCalor * e.calor);   // Ablandado: el calor reblandece el casco
   if (est.interferido > 0 && carga !== 'em') d *= 1 + K.interferencia.defensa;   // Interferido: defensa baja
   if (e.resiste === carga) d *= 0.5;
+  if (w.portador === 'lanzador' && nvSeAleja(S, e)) d *= K.cazador.mult;   // Cazador: el misil castiga al que huye
   if (est.marcado > 0 && carga !== 'explosiva') { crit = true; est.marcado = 0; }   // el siguiente impacto de otro tipo es crítico
   if (!sinReaccion) for (const r of A.reacciones) {
     if (!(est[r.a] > 0) && !(r.a === 'marcado' && est.marcado > 0)) continue;
@@ -232,8 +234,10 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   // el escudo del enemigo absorbe; la energía lo tumba
   // (la energía lo daña ×2, la cinética ×0,6; lo que sobra pasa al casco, que a su vez lo escala por multCasco: la EM no daña)
   if (escudoArriba) {
+    const pasa = w.portador === 'railgun' && carga === 'cinetica' ? d * K.perforaescudos.pasa : 0;   // Perforaescudos: parte va directa al casco
+    d -= pasa;
     const mE = c.multEscudo, abs = Math.min(e.esc, d * mE);
-    e.esc -= abs; d = Math.max(0, d - abs / mE);
+    e.esc -= abs; d = Math.max(0, d - abs / mE) + pasa;
     if (carga === 'energia' || e.esc <= 0) { est.escudoCaido = A.estados.escudoCaido.duracion; e.esc = 0; }
   }
   d *= c.multCasco;
@@ -252,6 +256,7 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
     if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; S.nums.push({ x: e.x, y: e.y - 20, t: 1, txt: tr('Apagón'), color: c.color, g: 1 }); }
     else if (nuevo) S.nums.push({ x: e.x, y: e.y - 20, t: 0.8, txt: tr('Interferido'), color: c.color, g: 0 });
   } else est[c.estado] = dur;
+  if (w.portador === 'flak' && carga === 'termica' && !sinEstado) nvMetrallaIncendiaria(S, e);
   if (carga === 'energia' && e.calor > 0 && e.calor < 99 && !sinEstado) e.calor = Math.min(99, e.calor + K.plasma.calor);   // Plasma: la energía atiza el calor
   e.hp -= d;
   e.flash = 0.08;
@@ -266,4 +271,11 @@ function nvReaccion(S, e, r, w, d) {
   if (r.id === 'fundido') e.dot = { t: 3, dps: d * 3 };
   if (r.id === 'detonacion') nvExplosion(S, e.x, e.y, 90, d * 1.2, w, e);
   if (r.id === 'dobleMarca') e.est.brecha = NOVA_ARMAS.estados.brecha.duracion;
+}
+// Especialidades de portador (NOVA_ARMAS.combos): si el enemigo se aleja de tu nave (Cazador del lanzador)
+function nvSeAleja(S, e) { const n = S.nave; return ((e.x - n.x) * (e.vx || 0) + (e.y - n.y) * (e.vy || 0)) > 0; }
+// Metralla incendiaria: el perdigón térmico del flak calienta también a los vecinos (sin pasar de 99: la sobrecarga la dispara un golpe)
+function nvMetrallaIncendiaria(S, e) {
+  const K = NOVA_ARMAS.combos.metrallaIncendiaria, r = K.radio * nvFactor(S.nave.rango);
+  for (const o of S.enem) if (o !== e && !o.muerto && Math.hypot(o.x - e.x, o.y - e.y) < r + o.r) o.calor = Math.min(99, (o.calor || 0) + K.calor);
 }

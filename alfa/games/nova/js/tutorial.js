@@ -88,7 +88,12 @@ const NV_TUTO = {
     'EM y térmica: un enemigo interferido se calienta un 50 % más deprisa y, si le das al casco, no regenera escudo durante 8 s.',
     'Energía y EM: el escudo tumbado tarda el doble en volver.',
     'Energía y térmica: la energía atiza el calor de un enemigo caliente.',
-    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] }]
+    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] },
+  { titulo: 'CADA ARMA, SU TALENTO', ic: ['arma', 'lanzador'], lineas: [
+    'Lanzador: sus misiles hacen un 20 % más a lo que se aleja de tu nave.',
+    'Railgun cinética: la mitad del daño atraviesa el escudo y llega al casco.',
+    'Flak térmico: cada perdigón calienta también a los enemigos de al lado.',
+    'Drones EM: mientras un dron está pegado a su presa, la mantiene interferida.'] }]
 };
 const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal', 'armasFaccion'];
 

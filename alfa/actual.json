@@ -1,8 +1,8 @@
 {
- "build": 751,
- "hash": "d3cbd00",
- "fecha": "2026-10-31T18:34:19Z",
- "mensaje": "Retos comunes en core (retos-ligero.js) y Nova 0.3.28 los estrena: diarias, semanales y logros en aleación",
+ "build": 752,
+ "hash": "297ab7a",
+ "fecha": "2026-10-31T18:38:28Z",
+ "mensaje": "Nova 0.3.29: cada portador con su talento (Cazador, Perforaescudos, Metralla incendiaria, Dron parásito)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.28",
+  "nova": "0.3.29",
   "pets": "0.1.5",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

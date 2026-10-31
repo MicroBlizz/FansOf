@@ -1,6 +1,7 @@
 // Fans of Rumble v2 · Personajes animados fotograma a fotograma (hojas de img/anim/, datos en js/anim-v2.js).
 // Cinco animaciones (quieto, andar, atacar, golpe, morir) y los dos lados pintados aparte: nunca se voltea el dibujo,
-// así el arma no cambia de mano al girar (Daniel). Se carga después de arte-v2.js y antes de 21-arranque.js.
+// así el arma no cambia de mano al girar (Daniel). Si sube por el camino se le ve de espaldas («esp»), cuando la hoja la tiene.
+// Se carga después de arte-v2.js y antes de 21-arranque.js.
 // El personaje que aún no tiene hoja se sigue viendo como antes (imagen pintada o dibujo original).
 'use strict';
 const V2A = (() => {
@@ -12,19 +13,19 @@ const V2A = (() => {
   const fila = (D, lado, a) => { const i = D.filas.indexOf(lado + '-' + a); return i >= 0 ? i : D.filas.indexOf(lado + '-quieto'); };
   const escala = (key, D) => (BOX[key][3] + 3) / D.alto;   // unidades del juego por píxel: el quieto mide lo que el dibujo de siempre
 
-  // un fotograma listo para drawUnit, que da la vuelta al dibujo cuando u.face = -1: el del lado izquierdo se guarda ya
-  // volteado, así al voltearlo drawUnit queda bien (el izquierdo pintado, no el derecho en espejo)
-  function fotograma(key, D, lado, a, col) {
-    const id = key + '|' + lado + '|' + a + '|' + col;
+  // un fotograma listo para drawUnit, que da la vuelta al dibujo cuando u.face = -1: si va a darle la vuelta, se guarda ya
+  // volteado (espejo), así queda bien (el izquierdo pintado y la espalda tal cual, nunca el derecho en espejo)
+  function fotograma(key, D, lado, a, col, espejo) {
+    const id = key + '|' + lado + '|' + a + '|' + col + '|' + espejo;
     if (cache[id]) return cache[id];
     const im = HOJA[key], [cw, ch] = D.celda, f = Math.max(0, fila(D, lado, a)), sc = escala(key, D);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
     const x = c.getContext('2d');
-    if (lado === 'izq') { x.translate(cw, 0); x.scale(-1, 1); }
+    if (espejo) { x.translate(cw, 0); x.scale(-1, 1); }
     x.drawImage(im, col * cw, f * ch, cw, ch, 0, 0, cw, ch);
     const masc = color => { const m = document.createElement('canvas'); m.width = cw; m.height = ch; const mx = m.getContext('2d'); mx.drawImage(c, 0, 0); mx.globalCompositeOperation = 'source-in'; mx.fillStyle = color; mx.fillRect(0, 0, cw, ch); return m; };
     const [px, py] = D.pies[lado] || D.pies.der;
-    const r = { c, w: masc('#fff'), g: masc('#9aa3a0'), wd: cw * sc, ht: ch * sc, ax: (lado === 'izq' ? cw - px : px) * sc, ay: py * sc, corrupto: null };
+    const r = { c, w: masc('#fff'), g: masc('#9aa3a0'), wd: cw * sc, ht: ch * sc, ax: (espejo ? cw - px : px) * sc, ay: py * sc, corrupto: null };
     r.corrupt = () => { if (!r.corrupto) { const t = document.createElement('canvas'); t.width = cw; t.height = ch; const tx = t.getContext('2d'); tx.drawImage(c, 0, 0); tx.globalCompositeOperation = 'source-atop'; tx.fillStyle = 'rgba(110,0,60,.34)'; tx.fillRect(0, 0, cw, ch); r.corrupto = t; } return r.corrupto; };
     return (cache[id] = r);
   }
@@ -45,13 +46,24 @@ const V2A = (() => {
     return [a, Math.floor((G.t - v.t0) * FPS[a] + (u.id || 0)) % D.n];
   }
 
+  // de lado o de espaldas: de espaldas mientras sube (va hacia arriba más que hacia los lados) y la hoja tiene esa animación;
+  // al atacar o recibir un golpe sigue con la vista que llevaba
+  function vista(u, D, a) {
+    const v = u.v2, dx = u.x - (v.x ?? u.x), dy = u.y - (v.y ?? u.y);
+    v.x = u.x; v.y = u.y;
+    if (u.moving && (dx || dy)) v.sube = dy < 0 && -dy > Math.abs(dx) * 0.7;
+    else if (!u.moving && !u.target) v.sube = false;   // parado y sin pelea: de lado; peleando sigue como llegó
+    const lado = u.face < 0 ? 'izq' : 'der';
+    return v.sube && D.filas.includes('esp-' + a) ? 'esp' : lado;
+  }
+
   // drawUnit del original con el fotograma que toca puesto en su sprite (y se deja como estaba al acabar)
   const drawUnitOriginal = drawUnit;
   drawUnit = function (u) {
     const D = V2_ANIM[u.type];
     if (!D || !HOJA[u.type]) return drawUnitOriginal(u);
     const s = SPR[u.type], antes = { c: s.c, w: s.w, g: s.g, wd: s.wd, ht: s.ht, ax: s.ax, ay: s.ay };
-    const [a, col] = estado(u, D), f = fotograma(u.type, D, u.face < 0 ? 'izq' : 'der', a, col);
+    const [a, col] = estado(u, D), lado = vista(u, D, a), f = fotograma(u.type, D, lado, a, col, u.face < 0);
     const corrAntes = CORRUPT[u.type];
     Object.assign(s, { c: f.c, w: f.w, g: f.g, wd: f.wd, ht: f.ht, ax: f.ax, ay: f.ay });
     if (u.corrupt) CORRUPT[u.type] = f.corrupt();

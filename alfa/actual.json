@@ -1,8 +1,8 @@
 {
- "build": 740,
- "hash": "1c294b5",
- "fecha": "2026-10-31T10:41:00Z",
- "mensaje": "Rumble v2: CrazyBunny y MadSquirrel animados (5 animaciones x 8 fotogramas, los dos lados)",
+ "build": 741,
+ "hash": "fc05279",
+ "fecha": "2026-10-31T11:15:36Z",
+ "mensaje": "Rumble v2: vista de espaldas al subir por el camino (bases elegidas y motor; las hojas llegan con los vídeos)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

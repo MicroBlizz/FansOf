@@ -110,14 +110,15 @@ function ppVentanaSinToques() {
 function ppVentanaMundoNuevo(dif) {
   const d = PP_P.T.d, M0 = PP_MUNDOS[d.mundo], sig = d.mundo + 1;
   let txt;
-  if (dif) txt = tr('¡Has ganado el mundo {n} en difícil! Eres una máquina de hacer plop.', { n: d.mundo + 1 });
+  if (dif === 2) txt = tr('¡Has ganado el mundo {n} en PESADILLA! Ni el CEO se lo cree.', { n: d.mundo + 1 });
+  else if (dif) txt = tr('¡Has ganado el mundo {n} en difícil! Se abre su PESADILLA: fondo rojo y las burbujas hundidas vuelven a subir.', { n: d.mundo + 1 });
   else {
     txt = tr('Se abre el modo difícil de {nombre}: el mismo mundo, de noche y con muchos menos toques.', { nombre: tr(M0.nombre) });
     if (sig < PP_MUNDOS.length) txt = tr('Se abre el mundo {n}: {nombre}.', { n: sig + 1, nombre: tr(PP_MUNDOS[sig].nombre) }) + ' ' + txt;
     else txt += ' ' + tr('¡Pronto llegan más mundos!');   // el último jefe ya no acaba el camino (Daniel, 30-10-2026): sigues en el mapa con todo
   }
   const t = ppAbre(`<h2>${tr('¡Mundo superado!')}</h2>${ppEstrellasHtml(PP_P.T.estrellas)}${ppPremioHtml(PP_P.T.premio)}<p class="pp-sub">${txt}</p>`);
-  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), false); ppAlCamino(); }));
+  t.appendChild(ppBoton(tr('¡VAMOS!'), 'pp-btn', () => { if (!dif) ppMapaVer(ppMundoActual(), 0); else if (dif === 1) ppMapaVer(d.mundo, 2); ppAlCamino(); }));   // tras el difícil, directo a su pesadilla
 }
 // sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)
 function ppVentanaSinCorazones() {
@@ -143,7 +144,7 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
     <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo revientan si las tocas a ellas y las conchas, al tocarlas, solo revientan ellas.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
-    <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil.')}</p>`, true);
+    <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
 /* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
@@ -202,6 +203,8 @@ const PP_TUTO = {
              { t: 'Truco: piensa qué le dejas al rival. Si ganas sin un solo error, 3 estrellas.' }],
   monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
             { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
+  modoPesadilla: [{ t: '¡Pesadilla! Aquí cada toque le da la vuelta a la burbuja y a sus vecinas: las levantadas se hunden… ¡y las hundidas vuelven a subir!' },
+                  { t: 'Hay que dejarlas todas hundidas. Piensa antes de tocar: un toque de más lo deshace todo.' }],
   modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],
   duelo: [{ t: '¡Duelo contra el CEO! Por turnos, revienta las burbujas que quieras, pero todas de la MISMA fila.' },
           { t: 'Cuando acabes tu turno, pulsa ¡LISTO!. Ojo: ¡pierde quien revienta la última burbuja!' }],

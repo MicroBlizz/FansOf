@@ -47,7 +47,6 @@ IDIOMA.add({
   "¡Ya tienes corazones!": "You have hearts again!",
   "El siguiente corazón llega en {t}": "Next heart in {t}",
   "LLENAR": "REFILL",
-  "Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil.": "If you fail you lose a heart; one comes back every 30 minutes. Beating a boss unlocks its world on hard.",
   "Si sales ahora pierdes un corazón.": "If you leave now you lose a heart.",
   "¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!": "Coins! You earn them the first time you beat a level and with every new star. Every 15 stars, a chest!",
   "Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.": "Use them to refill your hearts and to make room for more friends on your team.",
@@ -338,4 +337,13 @@ IDIOMA.add({
   "Opciones": "Options",
   "OPCIONES": "OPTIONS",
   "Compra de prueba": "Test purchase",
+  // modo pesadilla
+  "Pesadilla": "Nightmare",
+  "FÁCIL": "EASY",
+  "PESADILLA": "NIGHTMARE",
+  "¡Has ganado el mundo {n} en PESADILLA! Ni el CEO se lo cree.": "You beat world {n} on NIGHTMARE! Not even the CEO can believe it.",
+  "¡Has ganado el mundo {n} en difícil! Se abre su PESADILLA: fondo rojo y las burbujas hundidas vuelven a subir.": "You beat world {n} on hard! Its NIGHTMARE mode opens: red background, and popped bubbles pop back up.",
+  "¡Pesadilla! Aquí cada toque le da la vuelta a la burbuja y a sus vecinas: las levantadas se hunden… ¡y las hundidas vuelven a subir!": "Nightmare! Here every tap flips the bubble and its neighbours: raised ones sink… and sunken ones pop back up!",
+  "Hay que dejarlas todas hundidas. Piensa antes de tocar: un toque de más lo deshace todo.": "You have to leave them all sunk. Think before you tap: one extra tap undoes everything.",
+  "Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.": "If you fail you lose a heart; one comes back every 30 minutes. Beating a boss opens its world on hard, and beating hard opens its nightmare.",
 });

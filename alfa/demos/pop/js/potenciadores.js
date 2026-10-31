@@ -54,6 +54,15 @@ function ppAplicaAyuda(i) {
   if (k === 'martillo' && !T.up[i]) return;
   if (!ppGastaAyuda(k)) { PP_AYUDA.modo = null; ppBarraAyudas(); return; }
   PP_AYUDA.modo = null;
+  // en PESADILLA hundir una sola burbuja podría dejar el tablero sin solución: el martillo es un toque gratis donde lo pongas y la
+  // bomba hace gratis dos toques de la solución (como el salto de un amigo)
+  if (T.lo) {
+    const objetivos = k === 'martillo' ? [i] : [...T.sol].slice(0, 2);
+    if (k === 'bomba') ppFxImpacto(T, i, true);
+    play(k === 'bomba' ? 'ppSalto' : 'ppPremio'); ppMarcaDentro(true);
+    for (const j of objetivos) { const r = ppToca(T, j, true); if (!r) break; ppFxToque(T, j, r); ppTrasToque(T, j, r); if (T.hecho) break; }
+    ppBarraAyudas(); return;
+  }
   const pops = [], grietas = [];
   if (k === 'martillo') { T.up[i] = 0; pops.push(i); }
   else {
@@ -67,7 +76,7 @@ function ppAplicaAyuda(i) {
   }
   T.pops += pops.length; ppMarcaDentro(true);
   T.hecho = ppResuelto(T);
-  T.sol = new Set(T.hecho ? [] : ppOptimo(T.n, T.mask, Array.from(T.up), 80000, T.esp));
+  T.sol = new Set(T.hecho ? [] : T.lo ? (ppResuelveLO(T.n, T.mask, T.up) || []) : ppOptimo(T.n, T.mask, Array.from(T.up), 80000, T.esp));
   const r = { pops, grietas, subes: [], hecho: T.hecho, golpes: pops.length + grietas.length };
   ppFxToque(T, i, r); play(k === 'bomba' ? 'ppSalto' : 'ppPremio');
   ppTrasToque(T, i, r);
@@ -122,7 +131,7 @@ function ppAntesDeEmpezar(T) {
   t.appendChild(b);
   t.appendChild(ppBoton(tr('Jugar sin ayuda'), 'pp-btn2 pp-azul', ppCierra));
 }
-const ppClaveNivel = d => (d.dif ? 'd' : '') + d.g;
+const ppClaveNivel = d => ppPrefijo(d.dif) + d.g;
 // cuenta los fallos de un nivel (para la ayuda de antes de empezar y la oferta de atasco); ganar los borra
 function ppApuntaFallo(d) { SAVE.fallos = SAVE.fallos || {}; const k = ppClaveNivel(d); SAVE.fallos[k] = (SAVE.fallos[k] || 0) + 1; ppGuarda(); ppMiraAtasco(SAVE.fallos[k]); }
 function ppBorraFallos(d) { if (SAVE.fallos && SAVE.fallos[ppClaveNivel(d)]) { delete SAVE.fallos[ppClaveNivel(d)]; ppGuarda(); } }

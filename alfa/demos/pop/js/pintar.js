@@ -33,7 +33,7 @@ function ppPintaFondo(c, k, t, noche = false) {
     const gr = c.createLinearGradient(0, 0, 0, PP_V.H); gr.addColorStop(0, k === 'fondo-jefe' ? '#ffe3a8' : '#ffd1ec'); gr.addColorStop(1, k === 'fondo-jefe' ? '#ffb8d0' : '#c8f0ff');
     c.fillStyle = gr; c.fillRect(0, 0, 540, PP_V.H);
   }
-  if (noche) ppNoche(c, t);
+  if (noche === 2) ppRojo(c, t); else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
   // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
   // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
   const hay = PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
@@ -219,7 +219,7 @@ function ppPintaSala(c, t) {
   const P = PP_P, T = P.T;
   c.save();
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
-  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, !!(T.d && T.d.dif));
+  ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, T.d ? T.d.dif || 0 : 0);
   ppPintaTablero(c, T, t);
   if (T.nim) ppPintaFilaNim(c, T, t);
   ppPintaMarcador(c, t);

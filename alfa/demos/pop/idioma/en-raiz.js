@@ -1,6 +1,7 @@
 // Fans Of · Inglés de la ficha de Fans of Pop en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "Modo <b>PESADILLA</b> en cada mundo, con el fondo rojo: cada toque le da la vuelta a las burbujas y las hundidas vuelven a subir.": "<b>NIGHTMARE</b> mode in every world, with a red background: every tap flips the bubbles and sunken ones pop back up.",
   "<b>DUELOS EN EL CAMINO</b>: los niveles difíciles y los jefes son ahora duelos por turnos contra el rival de cada mundo. ¡Pierde quien revienta la última burbuja!": "<b>DUELS ON THE PATH</b>: hard levels and bosses are now turn-based duels against each world's rival. Whoever pops the last bubble loses!",
   "<b>DUELOS CONTRA GENTE</b>: busca un rival al azar o reta a un amigo con un código. Y un <b>RANKING MUNDIAL</b> de estrellas, modo difícil, Memoria y duelos.": "<b>DUELS AGAINST PEOPLE</b>: find a random rival or challenge a friend with a code. Plus a <b>WORLD RANKING</b> for stars, hard mode, Memory and duels.",
   "<b>AYUDAS Y TIENDA</b>: martillo, bomba, +3 toques, deshacer y la pista de Lola; regalo diario, Pase de Pop, hucha de perlas, racha de victorias, cuatro amigos nuevos y bandejas de colores.": "<b>BOOSTERS AND SHOP</b>: hammer, bomb, +3 taps, undo and Lola's hint; daily gift, Pop Pass, pearl piggy bank, win streak, four new friends and colourful trays.",

@@ -8,7 +8,7 @@ const ppHayRanking = () => typeof CUENTA !== 'undefined' && CUENTA.activa;
 // tus marcas de ahora: las estrellas salen de tu récord por nivel (SAVE.mejor: 'd' delante = difícil)
 function ppMisMarcas() {
   let est = 0, dif = 0;
-  for (const k in SAVE.mejor || {}) { if (k[0] === 'd') dif += SAVE.mejor[k]; else est += SAVE.mejor[k]; }
+  for (const k in SAVE.mejor || {}) { if (k[0] === 'd' || k[0] === 'p') dif += SAVE.mejor[k]; else est += SAVE.mejor[k]; }   // pesadilla cuenta en «Difícil»
   const duelos = (SAVE.duelo ? SAVE.duelo.gan : 0) + (SAVE.pvp ? SAVE.pvp.gan : 0) + (SAVE.dueloNivel || 0);
   return { memoria: (SAVE.memoria && SAVE.memoria.record) || 0, estrellas: est, dificil: dif, duelos };
 }

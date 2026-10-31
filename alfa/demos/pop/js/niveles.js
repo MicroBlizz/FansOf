@@ -221,7 +221,7 @@ function ppConstruye(g, intento, dif = false) {
 const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo'];
 const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
 function ppNivelNim(g, dif) {
-  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 : 0)), jefe = ppEsJefe(g);
+  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 * dif : 0)), jefe = ppEsJefe(g);
   const lado = Math.min(6, Math.max(4, M.lado[1] - (jefe ? 0 : 1) + (dif ? 1 : 0)));   // el difícil, un poco más pequeño que el jefe
   const f = (PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado]);
   const mask = jefe ? f[0] : f[Math.floor(az() * f.length)];
@@ -229,14 +229,56 @@ function ppNivelNim(g, dif) {
   mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') { mk[y * n + x] = 1; need[y * n + x] = 1; } }));
   // Daniel (31-10-2026: «son muy difíciles»): al principio el rival falla casi siempre y endurece mundo a mundo hasta el CEO
   let fallo = jefe ? Math.max(0.05, 0.6 - 0.11 * m) : Math.max(0.1, 0.8 - 0.13 * m);
-  if (dif) fallo = Math.max(0.02, fallo * 0.5);
+  if (dif === 2) fallo = 0.02;   // pesadilla: el rival casi nunca se equivoca
+  else if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
     nim: { rival: jefe ? 'ceo' : PP_RIVALES[m], fallo } };
 }
+// MODO PESADILLA (Daniel, 31-10-2026: «muy difícil, con fondo rojo, con el modo de juego del primer boceto»): se abre al ganar el
+// difícil de un mundo. Es el «Lights Out» del primer prototipo: tocar una burbuja le da la vuelta a ella y a sus cuatro vecinas (las
+// levantadas se hunden y LAS HUNDIDAS VUELVEN A SUBIR); hay que dejarlas todas hundidas. Sin burbujas especiales. El tablero se
+// desordena desde el resuelto con `k` toques distintos, así que siempre tiene solución con esos k (las 3 estrellas) y el límite deja
+// uno de margen (dos en el primero de cada cinco). Los difíciles y el jefe siguen siendo duelos, con el rival casi perfecto.
+// `dif`: 0 fácil, 1 difícil, 2 pesadilla. La clave del nivel lleva delante 'd' (difícil) o 'p' (pesadilla).
+const ppPrefijo = dif => (dif === 2 ? 'p' : dif ? 'd' : '');
+function ppNivelPesadilla(g) {
+  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(31000 * (m + 1) + l * 101 + 7), jefe = ppEsJefe(g);
+  const lado = Math.min(6, Math.max(4, M.lado[1] - (l <= 7 ? 1 : 0)));
+  const f = PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado];
+  const mask = f[Math.floor(az() * f.length)];
+  const n = lado, N = n * n, mk = new Uint8Array(N), up = new Array(N).fill(0);
+  mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') mk[y * n + x] = 1; }));
+  const celdas = [...Array(N).keys()].filter(i => mk[i]).sort(() => az() - 0.5);
+  const k = Math.min(Math.floor(celdas.length / 2), 3 + Math.floor(l / 3) + m);   // cuántos toques hacen falta: crece con el nivel y el mundo
+  const opt = celdas.slice(0, k);
+  for (const t of opt) for (const j of ppCruz(n, mk, t)) up[j] ^= 1;
+  if (!up.some(v => v)) { const t = celdas[k]; opt.push(t); for (const j of ppCruz(n, mk, t)) up[j] ^= 1; }
+  const limite = opt.length + (l % 5 === 1 ? 2 : 1);
+  return { g, dif: 2, mundo: m, l, lado: n, mask: mk, need: up, esp: null, opt, limite, pasa: 1, amigos: 0, jefe, dificil: ppEsDificil(g), tutorial: false, lo: true };
+}
+// la solución de un tablero «Lights Out» desde cualquier estado (para la pista y los amigos tras un martillo o una bomba): eliminación
+// de Gauss con XOR sobre las burbujas de la forma. null si ese estado ya no tiene solución.
+function ppResuelveLO(n, mask, up) {
+  const vars = [...Array(n * n).keys()].filter(i => mask[i]), idx = new Map(vars.map((v, k) => [v, k])), V = vars.length;
+  const filas = vars.map(i => { const r = new Uint8Array(V + 1); for (const t of ppCruz(n, mask, i)) r[idx.get(t)] = 1; r[V] = up[i] ? 1 : 0; return r; });
+  let fila = 0; const piv = [];
+  for (let c = 0; c < V && fila < V; c++) {
+    let p = fila; while (p < V && !filas[p][c]) p++;
+    if (p === V) continue;
+    [filas[fila], filas[p]] = [filas[p], filas[fila]];
+    for (let r = 0; r < V; r++) if (r !== fila && filas[r][c]) for (let k = c; k <= V; k++) filas[r][k] ^= filas[fila][k];
+    piv.push(c); fila++;
+  }
+  for (let r = fila; r < V; r++) if (filas[r][V]) return null;
+  const sol = [];
+  piv.forEach((c, r) => { if (filas[r][V]) sol.push(vars[c]); });
+  return sol;
+}
 function ppNivel(g, dif = false) {
-  const clave = (dif ? 'd' : '') + g;
+  const clave = ppPrefijo(dif) + g;
   if (PP_CACHE_NIVEL[clave]) return PP_CACHE_NIVEL[clave];
   if (ppEsNim(g)) return (PP_CACHE_NIVEL[clave] = ppNivelNim(g, dif));
+  if (dif === 2) return (PP_CACHE_NIVEL[clave] = ppNivelPesadilla(g));
   const obj = ppObjetivo(g, dif), intentos = obj >= 1 ? 1 : 6;
   let mejor = null;
   for (let k = 0; k < intentos; k++) { const d = ppConstruye(g, k, dif); if (!mejor || Math.abs(d.pasa - obj) < Math.abs(mejor.pasa - obj)) mejor = d; }

@@ -37,8 +37,8 @@ const COLA_MEDIDA = (() => {
     const ok = jobs.filter(j => j.conclusion === 'success' && j.started_at && j.completed_at); if (!ok.length) return null;
     return Math.max(1, Math.round((Math.max(...ok.map(j => ms(j.completed_at))) - Math.min(...ok.map(j => ms(j.started_at)))) / 1000));
   }
-  // «Generar recurso» se mide por tipo de pedido: «Generar recurso · video»; sin tipo en el título, el workflow a secas (que es también la media de todos los tipos, de reserva).
-  const flujoDe = r => { const f = etiquetaWf(r); if (!esGenerar(r)) return f; const t = leerTitulo(String(r.display_title || '')).tipo; return t ? f + ' · ' + t : f; };
+  // «Generar recurso» se mide por tipo de pedido: «Generar recurso · video»; sin tipo en el título (pedidos antiguos o a mano) cuenta como imagen. El workflow a secas es la media de todos los tipos, de reserva.
+  const flujoDe = r => { const f = etiquetaWf(r); return esGenerar(r) ? f + ' · ' + (leerTitulo(String(r.display_title || '')).tipo || 'imagen') : f; };
   function duracionPaso(jobs) {   // el paso «Generar con ComfyUI» del primer job (lo que ocupó la GPU si no esperaba a nadie); sin él, la duración del run
     const p = ((jobs[0] || {}).steps || []).find(s => s.name === 'Generar con ComfyUI' && s.conclusion === 'success' && s.started_at && s.completed_at);
     return p ? Math.max(1, Math.round((ms(p.completed_at) - ms(p.started_at)) / 1000)) : duracionRun(jobs);

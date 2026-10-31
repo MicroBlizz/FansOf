@@ -1,8 +1,8 @@
 {
- "build": 729,
- "hash": "ea6c4ef",
- "fecha": "2026-10-31T05:22:06Z",
- "mensaje": "Cola de Actions: el resumen da el acumulado de Generar recurso por tipo",
+ "build": 730,
+ "hash": "41c6180",
+ "fecha": "2026-10-31T05:24:49Z",
+ "mensaje": "Cola de Actions: el resumen suma también lo hecho y su coste por tipo",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

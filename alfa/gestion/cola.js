@@ -147,31 +147,35 @@
   }
   // Resumen por workflow; «Generar recurso» con su acumulado y, debajo, el de cada tipo (imagen, vídeo…), que es como se mide (flujo «Generar recurso · video»).
   const NOMBRE_TIPO = { imagen: 'imagen', video: 'vídeo', audio: 'audio', '3d': '3D' };
-  function agrupar(F) {
-    const gs = {};
-    F.forEach(f => {
-      const [wf, tipo] = f.t.flujo.split(' · '), g = gs[wf] || (gs[wf] = { nombre: wf, n: 0, seg: 0, media: f.t.media, off: false, tipos: {} });
-      g.n++; g.seg += f.resta || 0; g.off = g.off || f.apagado;
-      if (!f.t.gen) return;
-      const k = tipo || 'sin tipo', x = g.tipos[k] || (g.tipos[k] = { nombre: NOMBRE_TIPO[k] || k, n: 0, seg: 0, media: f.t.media, off: false });
-      x.n++; x.seg += f.resta || 0; x.off = x.off || f.apagado;
-    });
-    return Object.values(gs).map(g => { const t = Object.values(g.tipos).sort((a, b) => b.seg - a.seg); return { ...g, tipos: t.some(x => x.nombre !== 'sin tipo') ? t : [] }; }).sort((a, b) => b.seg - a.seg);
+  // Con lo que queda en la cola (n, seg) va lo ya terminado de cada tipo (hechos y su coste de referencia, usd). Canción y efecto son «audio»; lo que no tiene tipo, imagen.
+  const TIPO_DE_ETIQUETA = { imagen: 'imagen', 'vídeo': 'video', 'canción': 'audio', 'efecto de sonido': 'audio', 'modelo 3D': '3d' };
+  function agrupar(F, recursos) {
+    const gs = {}, nuevo = (nombre, media) => ({ nombre, n: 0, seg: 0, media, off: false, hechos: 0, usd: 0 });
+    const grupo = (wf, media) => gs[wf] || (gs[wf] = { ...nuevo(wf, media), tipos: {} });
+    const tipo = (g, k, media) => g.tipos[k] || (g.tipos[k] = nuevo(NOMBRE_TIPO[k] || k, media));
+    const suma = (x, f) => { x.n++; x.seg += f.resta || 0; x.off = x.off || f.apagado; };
+    F.forEach(f => { const [wf, t] = f.t.flujo.split(' · '), g = grupo(wf, f.t.media); suma(g, f); if (t) suma(tipo(g, t, f.t.media), f); });
+    recursos.forEach(r => { const g = grupo('Generar recurso', null), x = tipo(g, TIPO_DE_ETIQUETA[r.tipo] || 'imagen', null); g.hechos++; x.hechos++; g.usd += r.usd; x.usd += r.usd; });
+    const orden = (a, b) => b.seg - a.seg || b.usd - a.usd;
+    return Object.values(gs).map(g => ({ ...g, tipos: Object.values(g.tipos).sort(orden) })).sort(orden);
   }
   function vistaC(F, ahora) {
     const vivos = snap.carriles.filter(c => c.encendido !== false && !c.alojado);
     const fin = Math.max(0, ...vivos.map(c => F.filter(f => f.t.carril === c.id).reduce((a, f) => a + (f.resta || 0), 0)));
     const ret = F.filter(f => f.apagado), segRet = ret.reduce((a, f) => a + (f.resta || 0), 0);
-    const grupos = agrupar(F), max = Math.max(1, ...grupos.map(g => g.seg));
-    const fila = (x, nombre, sub) => `<div class="cl-fila${sub ? ' cl-sub' : ''}"><b>${esc(nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n} × ${x.media === null ? 'media —' : 'media ' + fmt(x.media)} · <b>${fmt(x.seg)}</b></span></div>`;
+    const grupos = agrupar(F, snap.recursos), max = Math.max(1, ...grupos.map(g => g.seg));
+    // en cola: cuántos, su media (en los tipos) y el tiempo acumulado; hechos: cuántos terminados y su coste acumulado
+    const fila = (x, sub) => `<div class="cl-fila${sub ? ' cl-sub' : ''}"><b>${esc(x.nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n ? x.n + ' en cola' + (sub || !x.tipos || !x.tipos.length ? ' × media ' + (x.media === null ? '—' : fmt(x.media)) : '') + ` · <b>${fmt(x.seg)}</b>` : 'nada en cola'}${x.hechos ? `<br>hechos ${x.hechos} · ${coste(x.usd)}` : ''}</span></div>`;
     return `<div class="caja"><div class="cl-gran">${fin ? 'La cola activa termina en ~' + fmt(fin) : 'Nada en marcha'}</div><div class="meta">${fin ? 'sobre las ' + hora(ahora + fin * 1000) + ' · sin contar espera' : 'los runners están apagados o la cola está vacía'}</div>`
       + (ret.length ? `<p class="aviso">${ret.length} trabajos retenidos (${fmt(segRet)} de ejecución). La estimación empieza a contar cuando el runner arranque.</p>` : '')
-      + grupos.map(g => g.tipos.length ? `<div class="cl-fila"><b>${esc(g.nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * g.seg / max)}%;${g.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${g.n} trabajos · <b>${fmt(g.seg)}</b></span></div>` + g.tipos.map(x => fila(x, x.nombre, true)).join('') : fila(g, g.nombre)).join('') + '</div>';
+      + grupos.map(g => fila(g) + g.tipos.map(x => fila(x, true)).join('')).join('') + '</div>';
   }
+  const tok = usd => Math.round(usd * 1e6 / PRECIO_CLAUDE);
+  const sem = usd => { const lim = limite(), p = lim ? tok(usd) / lim * 100 : 0; return lim ? ' · ~' + (p < 10 ? p.toFixed(1) : Math.round(p)) + '% semanal' : ''; };
+  const coste = usd => '~' + eur(usd) + ' · ~' + ktok(tok(usd)) + ' tokens' + sem(usd);   // coste de referencia de lo hecho, como en el pie
   function pieRecursos() {
     if (!snap.recursos.length) return '';
-    const lim = limite(), tok = usd => Math.round(usd * 1e6 / PRECIO_CLAUDE), total = snap.recursos.reduce((a, r) => a + r.usd, 0);
-    const sem = usd => lim ? ' · ~' + (tok(usd) / lim * 100 < 10 ? (tok(usd) / lim * 100).toFixed(1) : Math.round(tok(usd) / lim * 100)) + '% semanal' : '';
+    const total = snap.recursos.reduce((a, r) => a + r.usd, 0);
     return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
       + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${ktok(tok(r.usd))} tokens · ~${eur(r.usd)}${sem(r.usd)}</span></div>`).join('')
       + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. ${precision() ? 'Los pedidos antiguos, sin tipo en el título, se tipan por la extensión.' : 'Los pedidos antiguos, sin tipo en el título, cuentan como imagen (la precisión media los tipa por la extensión).'} No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;

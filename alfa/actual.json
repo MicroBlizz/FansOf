@@ -1,8 +1,8 @@
 {
- "build": 731,
- "hash": "e81a0ac",
- "fecha": "2026-10-31T05:26:09Z",
- "mensaje": "Cola de Actions: el resumen dice por qué falta el % semanal de lo hecho",
+ "build": 732,
+ "hash": "71c5e5a",
+ "fecha": "2026-10-31T05:29:30Z",
+ "mensaje": "Cola de Actions: el resumen pasa a una tabla limpia (en cola y hecho por tipo)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

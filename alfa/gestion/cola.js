@@ -163,17 +163,20 @@
     const vivos = snap.carriles.filter(c => c.encendido !== false && !c.alojado);
     const fin = Math.max(0, ...vivos.map(c => F.filter(f => f.t.carril === c.id).reduce((a, f) => a + (f.resta || 0), 0)));
     const ret = F.filter(f => f.apagado), segRet = ret.reduce((a, f) => a + (f.resta || 0), 0);
-    const grupos = agrupar(F, snap.recursos), max = Math.max(1, ...grupos.map(g => g.seg));
-    // en cola: cuántos, su media (en los tipos) y el tiempo acumulado; hechos: cuántos terminados y su coste acumulado
-    const fila = (x, sub) => `<div class="cl-fila${sub ? ' cl-sub' : ''}"><b>${esc(x.nombre)}</b><div class="cl-barra"><i style="width:${Math.round(100 * x.seg / max)}%;${x.off ? 'background:var(--clara)' : ''}"></i></div><span class="meta">${x.n ? x.n + ' en cola' + (sub || !x.tipos || !x.tipos.length ? ' × media ' + (x.media === null ? '—' : fmt(x.media)) : '') + ` · <b>${fmt(x.seg)}</b>` : 'nada en cola'}${x.hechos ? `<br>hechos ${x.hechos} · ${coste(x.usd)}` : ''}</span></div>`;
+    // Una tabla: en cola (cuántos, lo que falta y lo que tarda cada uno) y hecho (cuántos y su coste de referencia). «Generar recurso» va en negrita con sus tipos debajo.
+    const grupos = agrupar(F, snap.recursos), lim = limite(), conSem = lim > 0 && snap.recursos.length > 0, hayHechos = snap.recursos.length > 0;
+    const pct = usd => { const p = tok(usd) / lim * 100; return (p < 10 ? p.toFixed(1).replace('.', ',') : Math.round(p)) + ' %'; };
+    const fila = (x, cls, media) => `<tr class="${cls}"><td>${esc(x.nombre)}</td><td>${x.n || ''}</td><td>${x.n ? fmt(x.seg) : ''}</td><td class="cl-suave">${media && x.n && x.media !== null ? fmt(x.media) : ''}</td>`
+      + (hayHechos ? `<td>${x.hechos || ''}</td><td>${x.hechos ? eur(x.usd) : ''}</td>${conSem ? `<td>${x.hechos ? pct(x.usd) : ''}</td>` : ''}` : '') + '</tr>';
+    const tabla = `<table class="tabla cl-res"><thead><tr><th></th><th>En cola</th><th>Falta</th><th>Cada uno</th>${hayHechos ? `<th>Hechos</th><th>Coste</th>${conSem ? '<th>Semanal</th>' : ''}` : ''}</tr></thead><tbody>`
+      + grupos.map(g => g.tipos.length ? fila(g, 'cl-tot', false) + g.tipos.map(x => fila(x, 'cl-sub', true)).join('') : fila(g, '', true)).join('') + '</tbody></table>';
     return `<div class="caja"><div class="cl-gran">${fin ? 'La cola activa termina en ~' + fmt(fin) : 'Nada en marcha'}</div><div class="meta">${fin ? 'sobre las ' + hora(ahora + fin * 1000) + ' · sin contar espera' : 'los runners están apagados o la cola está vacía'}</div>`
       + (ret.length ? `<p class="aviso">${ret.length} trabajos retenidos (${fmt(segRet)} de ejecución). La estimación empieza a contar cuando el runner arranque.</p>` : '')
-      + grupos.map(g => fila(g) + g.tipos.map(x => fila(x, true)).join('')).join('')
-      + (snap.recursos.length && !limite() ? `<div class="meta">% semanal de lo hecho: esta pestaña no puede leer tu límite de Claude; pon el «Límite semanal de referencia (tokens)» de arriba y saldrá en cada fila.</div>` : '') + '</div>';
+      + tabla
+      + (hayHechos ? `<div class="meta">Coste: lo que habría costado con una API de pago (aprox.).${conSem ? '' : ' Para ver el % semanal, pon arriba el «Límite semanal de referencia (tokens)»: esta pestaña no puede leer tu límite de Claude.'}</div>` : '') + '</div>';
   }
   const tok = usd => Math.round(usd * 1e6 / PRECIO_CLAUDE);
   const sem = usd => { const lim = limite(), p = lim ? tok(usd) / lim * 100 : 0; return lim ? ' · ~' + (p < 10 ? p.toFixed(1) : Math.round(p)) + '% semanal' : ''; };
-  const coste = usd => '~' + eur(usd) + ' · ~' + ktok(tok(usd)) + ' tokens' + sem(usd);   // coste de referencia de lo hecho, como en el pie
   function pieRecursos() {
     if (!snap.recursos.length) return '';
     const total = snap.recursos.reduce((a, r) => a + r.usd, 0);
@@ -186,7 +189,7 @@
   const estilo = document.createElement('style');
   estilo.textContent = `.cl-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.cl-bar button.on{background:var(--acento);color:var(--acento-texto);border-color:var(--acento);font-weight:600}
     .cl-op{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--suave)}.cl-gran{font-size:26px;font-weight:700;margin-bottom:4px}.cl-fila{display:grid;grid-template-columns:minmax(120px,1.2fr) 3fr auto;gap:10px;align-items:center;padding:4px 0}.cl-rec{grid-template-columns:1fr auto auto}
-    .cl-sub>b{padding-left:1.2em;font-weight:500}.cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
+    .cl-res{margin:12px 0 6px}.cl-res td,.cl-res th{padding:6px 10px}.cl-res .cl-tot td{font-weight:700}.cl-res .cl-sub td:first-child{padding-left:1.6em}.cl-res .cl-suave{color:var(--suave)}.cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
     .cl-lane{display:grid;gap:4px;margin-bottom:12px}.cl-strip{display:flex;min-height:48px;border:2px solid var(--texto);border-radius:8px;overflow:hidden}.cl-strip.off{background:repeating-linear-gradient(45deg,var(--bg) 0 8px,var(--panel) 8px 16px)}
     .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
     .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}

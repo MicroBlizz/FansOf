@@ -6,12 +6,12 @@
 // Usa lo de gestion/index.html: esc() y $(); GESTION_NAV (nav.js) y COLA_MEDIDA (cola-medida.js: tipos, precios y cómo se mide cada workflow).
 'use strict';
 (() => {
-  const { MUESTRAS, USD, ETIQUETA, tipoDe, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
+  const { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
-  const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones-2', RECS = 'fansof.gestion.cola.recursos', PREC = 'fansof.gestion.cola.precision', LIM = 'fansof.gestion.cola.limite';
+  const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones-2', RECS = 'fansof.gestion.cola.recursos', LIM = 'fansof.gestion.cola.limite';
   const MAX_NUEVAS = 60, CADA = 5 * 60e3, ENFRIA = 30e3;
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
-  try { localStorage.removeItem('fansof.gestion.cola.duraciones'); } catch (e) { /* las de antes de la cadencia (-2) */ }
+  try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0;
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = 'fansof.gestion.cola.plan';
@@ -21,7 +21,6 @@
 
   const leer = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
   const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: se recalcula */ } };
-  const precision = () => leer(PREC, false) === true;   // precisión media: comprobar los archivos de cada recurso (más lento); apagada, todo cuenta como imagen
   const limite = () => Math.max(0, Number(leer(LIM, 0)) || 0);   // límite semanal de referencia en tokens (opcional; la web no puede leer el de Claude)
   const token = () => { try { return localStorage.getItem(CLAVE) || ''; } catch (e) { return ''; } };
   const fmt = s => { s = Math.round(s); if (s < 60) return s + ' s'; const m = Math.floor(s / 60); if (m < 60) return m + ' min' + (s % 60 && m < 20 ? ' ' + (s % 60) + ' s' : ''); return Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; };
@@ -54,7 +53,7 @@
 
   async function actualizar() {
     const ahora = Date.now(), antes = leer(PLAN, {});
-    avance = { hechas: 0, desde: ahora, plan: { fijas: 4, jobs: antes.jobs || 0, artefactos: antes.artefactos || 0, commits: antes.commits || 0, activos: antes.activos || 0 } };
+    avance = { hechas: 0, desde: ahora, plan: { fijas: 4, jobs: antes.jobs || 0, artefactos: antes.artefactos || 0, activos: antes.activos || 0 } };
     const hechos = (await gh('/actions/runs?status=completed&per_page=100')).workflow_runs;
     const porWf = {};
     for (const r of hechos) if (r.conclusion === 'success' && !esGenerar(r)) { const a = porWf[r.workflow_id] || (porWf[r.workflow_id] = []); if (a.length < MUESTRAS) a.push(r); }
@@ -78,20 +77,8 @@
       const lt = leerTitulo(String(r.display_title || 'recurso'));
       gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes: a.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), fin: ms(r.updated_at) };
     });
-    const sinTipo = Object.entries(gs).filter(([, v]) => v.exts === undefined && !tipoDeTitulo(leerTitulo(v.titulo).tipo || v.tt, v.bytes)).slice(0, 10);
-    prever('commits', precision() && sinTipo.length ? 1 + sinTipo.length : 0);
-    if (precision() && sinTipo.length) {
-      try {
-        const sha = {};
-        for (const c of await gh('/commits?sha=recursos&per_page=100')) { const m = /^Pedido (\d+):/.exec(c.commit.message); if (m) sha[m[1]] = c.sha; }
-        await enLotes(sinTipo, 5, async ([id, v]) => {
-          if (!sha[id]) return;
-          v.exts = ((await gh('/commits/' + sha[id])).files || []).filter(x => String(x.filename).startsWith('salida/')).map(x => String(x.filename).split('.').pop().toLowerCase());
-        });
-      } catch (e) { /* sin permiso de Contents o sin la rama: se queda sin tipo y usa el precio de imagen */ }
-    }
     guardar(RECS, gs);
-    const recursos = Object.entries(gs).map(([id, v]) => { const p = leerTitulo(v.titulo), t = tipoDeTitulo(p.tipo || v.tt, v.bytes) || (precision() ? tipoDe(v.exts, v.bytes) : null); return { id, ...v, titulo: p.titulo, tipo: t ? ETIQUETA[t] : precision() ? '?' : 'imagen', usd: USD[t || 'imagen'] }; }).sort((a, b) => b.fin - a.fin);
+    const recursos = Object.entries(gs).map(([id, v]) => { const p = leerTitulo(v.titulo), t = tipoDeTitulo(p.tipo || v.tt, v.bytes) || 'imagen'; return { id, ...v, titulo: p.titulo, tipo: ETIQUETA[t], usd: USD[t] }; }).sort((a, b) => b.fin - a.fin);
     // Cola: en curso y en cola, con sus jobs para saber el runner.
     const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
     const trabajos = []; let extra = 0;
@@ -182,7 +169,7 @@
     const total = snap.recursos.reduce((a, r) => a + r.usd, 0);
     return `<div class="caja"><b>Recursos terminados · lo que habría costado generarlos con una API de pago (aprox.)</b>`
       + snap.recursos.slice(0, 5).map(r => `<div class="cl-fila cl-rec"><span>${esc(r.titulo)}</span><span class="meta">${esc(r.tipo)} · ${r.bytes ? tam(r.bytes) : 'caducado'}</span><span class="meta">~${ktok(tok(r.usd))} tokens · ~${eur(r.usd)}${sem(r.usd)}</span></div>`).join('')
-      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. ${precision() ? 'Los pedidos antiguos, sin tipo en el título, se tipan por la extensión.' : 'Los pedidos antiguos, sin tipo en el título, cuentan como imagen (la precisión media los tipa por la extensión).'} No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
+      + `<div class="meta">Total de ${snap.recursos.length} recursos: ~${ktok(tok(total))} tokens · ~${eur(total)}${sem(total)}. Los tokens son los de salida de Claude que costarían lo mismo (${PRECIO_CLAUDE} $ el millón). Precios de referencia por tipo (arriba en cola.js, tabla de Gemini del 29-10-2026, sin verificar). El tipo sale del título de cada pedido. Los pedidos antiguos, sin tipo en el título, cuentan como imagen. No distingue texto de edición de imagen ni los tres vídeos. Claude no genera estos recursos: es una referencia, no un coste real.</div></div>`;
   }
 
   // ----- pantalla -----
@@ -200,14 +187,14 @@
     const t = token(), ahora = Date.now();
     const cab = `<div class="caja ayuda"><b>Cola de Actions.</b> Lo que espera y corre en GitHub Actions de FansOf-dev, con el tiempo que le queda según la media de cada workflow (sin contar la espera; Generar recurso, por tipo y con la cadencia de la GPU de Yoshi). Si un runner está apagado, su cola no corre. Se refresca solo cada 5 minutos mientras está abierta.</div>`;
     const clave = t ? '' : `<form class="caja" id="cl-clave"><label>Token de GitHub (solo lectura)<input type="password" id="cl-tok" autocomplete="off" placeholder="github_pat_…"></label>
-      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b> y <b>Administration</b> (para saber si yoshi está encendido); si activas la precisión media, también <b>Contents</b> (para saber de qué tipo es cada recurso). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
+      <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b> y <b>Administration</b> (para saber si yoshi está encendido). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
       <div class="accion"><button type="submit" class="fuerte">Guardar token</button></div></form>`;
     let cuerpo = '';
     if (t && snap) {
       const F = calcular(ahora);
       cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
         + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span><button type="button" class="enlace" id="cl-olvida">Olvidar token</button></div>`
-        + `<div class="cl-bar"><label class="cl-op"><input type="checkbox" id="cl-prec"${precision() ? ' checked' : ''}> Precisión media: comprobar los archivos de cada recurso (más lento; pide el permiso Contents)</label><label class="cl-op">Límite semanal de referencia (tokens, opcional) <input type="number" id="cl-lim" min="0" step="1000" value="${limite() || ''}" style="width:9em"></label></div>`
+        + `<div class="cl-bar"><label class="cl-op">Límite semanal de referencia (tokens, opcional) <input type="number" id="cl-lim" min="0" step="1000" value="${limite() || ''}" style="width:9em"></label></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '') + '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Actualizado hace ${fmt((ahora - snap.actualizado) / 1000)}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}</div>`;
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}</div>`;
@@ -234,8 +221,7 @@
     }
   };
   pan.onchange = ev => {
-    if (ev.target.id === 'cl-prec') { guardar(PREC, ev.target.checked); cargar(true); }
-    else if (ev.target.id === 'cl-lim') { guardar(LIM, Number(ev.target.value) || 0); pinta(); }
+    if (ev.target.id === 'cl-lim') { guardar(LIM, Number(ev.target.value) || 0); pinta(); }
   };
   pan.onsubmit = ev => {
     ev.preventDefault(); const v = $('cl-tok').value.trim(); if (!v) return;

@@ -9,14 +9,6 @@ const COLA_MEDIDA = (() => {
   const USD = { imagen: 0.04, cancion: 0.08, efecto: 0.002 * 4, video: 0.03 * 5, modelo3d: 0.2 };
   const ETIQUETA = { imagen: 'imagen', cancion: 'canción', efecto: 'efecto de sonido', video: 'vídeo', modelo3d: 'modelo 3D' };
   const EFECTO_MAX_BYTES = 400 * 1024;   // un MP3 V0 de ~4 s pesa ~120 KB y una canción de 30 s ~900 KB
-  function tipoDe(exts, bytes) {   // por las extensiones de la salida; la extensión solo da cuatro familias (no separa texto/edición de imagen ni los tres vídeos)
-    if (!exts || !exts.length) return null;
-    const tiene = (...e) => exts.some(x => e.includes(x));
-    if (tiene('mp4', 'webm', 'mov', 'mkv')) return 'video';
-    if (tiene('glb', 'gltf', 'obj', 'fbx', 'blend')) return 'modelo3d';
-    if (tiene('mp3', 'wav', 'ogg', 'flac')) return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
-    return 'imagen';
-  }
   function leerTitulo(t) {   // «Generar [imagen]: Logo» (o el antiguo «Generar: Logo») -> tipo y título
     const m = /^Generar(?:\s*\[([^\]]*)\])?:\s*/.exec(t);
     if (!m) return { titulo: t, tipo: null };
@@ -63,5 +55,5 @@ const COLA_MEDIDA = (() => {
     const o = [...d].sort((a, b) => a - b), med = o[Math.floor(o.length / 2)], ok = d.filter(x => x <= Math.max(3 * med, med + 600));
     return { seg: Math.round(ok.reduce((a, b) => a + b, 0) / ok.length), n: ok.length };
   }
-  return { MUESTRAS, USD, ETIQUETA, tipoDe, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia };
+  return { MUESTRAS, USD, ETIQUETA, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia };
 })();

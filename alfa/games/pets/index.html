@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#150b21">
+<title>Fans Of Pets</title>
+<meta name="description" content="Fans Of Pets: cuida a una criatura de la serie con su horario de vida. Prototipo en desarrollo.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../../core/img/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
+<!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
+<script src="../../core/js/nucleo.js?v=0.1.4-a735.7522891"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', 'css/pets.css')</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="540" height="960" aria-label="Fans Of Pets"></canvas>
+  <div id="pt-ui">
+    <header id="pt-cabeza"><b class="ol">FANS OF PETS</b><span id="pt-reloj"></span></header>
+    <div id="pt-dev" hidden></div>
+    <div id="pt-elige" hidden></div>
+    <div id="pt-bocadillo" hidden><b id="pt-quien"></b><p id="pt-dice"></p></div>
+    <section id="pt-caja"></section>
+  </div>
+</div>
+<div id="carga">…</div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Pets lleva su propia partida y sus pantallas (prototipo tras el modo dev)
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en-pets.js'] },
+  despues: [
+    // la serie: las cartas (nombres y rareza de las criaturas) y el color de cada facción
+    '../../core/js/serie/config.js', '../../core/js/serie/iconos.js',
+    '../../core/js/serie/facciones/animales.js', '../../core/js/serie/facciones/nomuertos.js', '../../core/js/serie/facciones/streamers.js', '../../core/js/serie/facciones/heroes.js',
+    '../../core/js/serie/facciones/ciber.js', '../../core/js/serie/facciones/memes.js', '../../core/js/serie/facciones/gamer.js', '../../core/js/serie/facciones/olvidados.js',
+    '../../core/js/serie/facciones/pop.js',
+    // el juego
+    'js/criaturas.js', 'js/guardado.js', 'js/tiempo.js', 'js/textos.js', 'js/pintar.js', 'js/arte.js', 'js/pantallas.js', 'js/cuidados.js', 'js/dev.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

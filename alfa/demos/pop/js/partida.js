@@ -41,13 +41,14 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   const base = ppNivel(g, dif), primera = !dif && g === PP_P.nivel;
   const d = primera || !base.amigos ? base : Object.assign({}, base, { amigos: 0 });   // repitiendo, ya no hay amigos atrapados
   PP_P.tipo = d.jefe ? 'jefe' : 'sala';
-  const T = PP_P.T = ppNuevoTablero(d, ppFx());
+  // en PESADILLA los amigos descansan (Daniel, 31-10-2026: «con los ayudantes es muy fácil»): ni pista de Lola, ni saltos, ni toques extra
+  const T = PP_P.T = ppNuevoTablero(d, d.lo ? { pista: 0, equipo: PP_P.equipo } : ppFx());
   T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
   else {
     // la racha de victorias y Nubecita dan toques de margen al empezar (js/pase.js, PP_SLIMES)
     const extra = (SAVE.racha || 0) + (ppEnEquipo('nubecita') ? PP_SLIMES.nubecita.fx.extra : 0);
-    if (extra && !d.tutorial) { T.limite += extra; T.extra = extra; }
+    if (extra && !d.tutorial && !d.lo) { T.limite += extra; T.extra = extra; }
   }
   PP_AYUDA.modo = null;
   const manita = !dif && d.mundo === 0 && d.l <= 2;   // en los dos primeros niveles la manita señala qué tocar
@@ -55,6 +56,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   ppIrA('sala');
   ppFxEntraSala(T);
   ppBarraAyudas();
+  if (d.lo && PP_P.equipo.length) ppFlota(tr('En Pesadilla tus amigos descansan'), 270, 240, '#ff8a8a');
   if (T.extra) ppFlota(tr('+{n} toques de racha y amigos', { n: T.extra }), 270, 240, '#ff8a2a');
   ppAntesDeEmpezar(T);   // tras fallar este nivel, se ofrece +3 toques (js/potenciadores.js)
   if (T.pista !== null && !manita) ppFxHabilidad('lola');
@@ -84,12 +86,12 @@ function ppToque(i) {
   ppTrasToque(T, i, r);
   if (T.hecho) return;
   // los combos
-  if (T.combo > 0 && bueno) {
+  if (T.combo > 0 && bueno && !T.lo) {
     if (ppEnEquipo('becario') && T.combo % PP_SLIMES.becario.fx.combo === 0) { T.gratis += PP_SLIMES.becario.fx.gratis; ppFxHabilidad('becario'); ppFlota(tr('Siguiente toque gratis'), 270, 275, '#3a8ee6'); play('ppPista'); }
     if (ppEnEquipo('lola') && T.combo % PP_SLIMES.lola.fx.combo === 0 && T.pista === null) { ppPista(T); if (T.pista !== null) { PP_FX.pista = 0.6; ppFxHabilidad('lola'); play('ppPista'); } }
   }
   // el premio gordo de la Caja de botín (antes de mirar si te has quedado sin toques: un +1 te puede salvar)
-  if (ppEnEquipo('cofre') && r.pops.length >= 4) {
+  if (ppEnEquipo('cofre') && r.pops.length >= 4 && !T.lo) {
     ppFxHabilidad('cofre'); play('ppPremio');
     if (r.pops.length >= 5 && ppVidas() < PP_CFG.vida) { ppSumaVida(1); ppFxCura(1); ppFlota(tr('¡PREMIO GORDO!'), 270, 275, '#ff8a2a'); }
     else { T.limite++; ppFlota(tr('+1 toque'), 270, 275, '#ff8a2a'); }
@@ -107,6 +109,7 @@ function ppTrasToque(T, i, r) {
   }
   if (r.hecho) { PP_P.salas++; ppMarcaDentro(false); setTimeout(() => { if (PP_P && PP_P.T === T) ppSalaHecha(); }, 520); return; }
   // los que saltan se cargan con cada burbuja reventada (también las que revientan otros amigos: hay reacciones en cadena)
+  if (T.lo) return;   // en pesadilla los amigos no saltan
   PP_P.equipo.forEach((id, k) => {
     const fx = PP_SLIMES[id].fx; if (!fx.salta) return;
     PP_P.carga[id] = (PP_P.carga[id] || 0) + r.pops.length;

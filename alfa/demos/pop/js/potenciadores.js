@@ -29,7 +29,8 @@ function ppBarraAyudas() {
   for (const k of lista) {
     const n = ppTengo(k), bt = document.createElement('button');
     bt.type = 'button'; bt.className = 'pp-ayuda' + (PP_AYUDA.modo === k ? ' pp-activa' : '');
-    bt.innerHTML = `${ppIcono('i-' + k, 52, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, 18)}</b>`;
+    const gratis = k === 'pista' && T.nim && ppPistaGratis(T.nim);   // la de Lola
+    bt.innerHTML = `${ppIcono('i-' + k, 52, '#ffd1ec')}${k === 'toques3' ? '<em>+3</em>' : ''}<b>${gratis ? tr('GRATIS') : n ? n : ppPerlasHtml(PP_CFG.ayudas[k].perlas, 18)}</b>`;
     bt.setAttribute('aria-label', tr(PP_CFG.ayudas[k].nombre));
     bt.onclick = () => { play('select'); ppPulsaAyuda(k); };
     b.appendChild(bt);
@@ -108,12 +109,27 @@ function ppNimGanadora(filas) {
   }
   return null;
 }
+// Lola en el equipo da UNA lupa gratis en cada duelo (Daniel, 31-10-2026: «los duelos se me hacen muy difíciles»)
+const ppPistaGratis = N => ppEnEquipo('lola') && !N.pistaGratis;
+function ppPagaPista(N) { if (ppPistaGratis(N)) { N.pistaGratis = true; return true; } return ppGastaAyuda('pista'); }
 function ppNimPista() {
   const T = PP_P && PP_P.T, N = T && T.nim; if (!N || N.turno !== 'yo' || N.fin) return;
-  if (N.esta.length) { ppFlota(tr('Pídela al empezar tu turno'), 270, 240, '#ff6ec7'); return; }
+  // a mitad de turno (ya has reventado en una fila): cuántas MÁS de esa fila, o pulsar ¡LISTO! ya, o que con esa fila ya no se gana
+  if (N.esta.length) {
+    const f = ppFilasDuelo(T), y = N.fila;
+    if (f.some(v => v) && !ppNimGana(f)) { if (!ppPagaPista(N)) return; N.pistaNim = []; ppFxHabilidad('lola'); play('ppPista'); ppFlota(tr('Lola: «¡Así está perfecto! Pulsa ¡LISTO!»'), 270, 240, '#3a8ee6'); ppBarraAyudas(); return; }
+    let k = 0;
+    for (let c = 1; c <= f[y]; c++) { const g = f.slice(); g[y] -= c; if (g.some(v => v) && !ppNimGana(g)) { k = c; break; } }
+    if (!k) { ppFlota(tr('Lola: «Con esta fila ya no se puede ganar. Prueba Deshacer.»'), 270, 240, '#ff8a2a'); return; }
+    if (!ppPagaPista(N)) return;
+    const sitios = []; for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
+    N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');
+    ppFlota(k === 1 ? tr('Lola: «Revienta 1 más de esta fila»') : tr('Lola: «Revienta {n} más de esta fila»', { n: k }), 270, 240, '#3a8ee6');
+    ppBarraAyudas(); return;
+  }
   const j = ppNimGanadora(ppFilasDuelo(T));
   if (!j) { ppFlota(tr('Lola: «Ahora no hay jugada segura… ¡a ver si se equivoca!»'), 270, 240, '#ff8a2a'); return; }
-  if (!ppGastaAyuda('pista')) return;
+  if (!ppPagaPista(N)) return;
   const [y, k] = j, sitios = [];
   for (let x = 0; x < T.n && sitios.length < k; x++) { const i = y * T.n + x; if (T.mask[i] && T.up[i]) sitios.push(i); }
   N.pistaNim = sitios; ppFxHabilidad('lola'); play('ppPista');

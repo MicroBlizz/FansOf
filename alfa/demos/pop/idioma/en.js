@@ -61,7 +61,6 @@ IDIOMA.add({
  "Horas extra": "Overtime",
  "Con un COMBO x3, tu siguiente toque no cuenta.": "On a COMBO x3, your next tap is free.",
  "Chivatazo": "Snitch",
- "Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución.": "When you enter a room and on every COMBO x2, it marks one bubble of the solution.",
  "Premio gordo": "Jackpot",
  "Un toque que revienta 4 burbujas da +1 toque de margen; uno de 5, +1 corazón.": "A tap that pops 4 bubbles gives +1 spare tap; one that pops 5, +1 heart.",
  "Recorte de plantilla": "Layoffs",
@@ -255,7 +254,6 @@ IDIOMA.add({
   "Pista de Lola": "Lola's hint",
   "Ponerla": "Use it",
   "Puesta": "In use",
-  "Pídela al empezar tu turno": "Ask for it at the start of your turn",
   "ROMPER LA HUCHA · {p}": "BREAK THE PIGGY BANK · {p}",
   "Regalo": "Gift",
   "Regalo diario": "Daily gift",
@@ -373,4 +371,12 @@ IDIOMA.add({
   "Cada 20 burbujas reventadas caen estrellas y revientan gratis cuatro de la solución.": "Every 20 popped bubbles, stars fall and pop four from the solution for free.",
   "El CEO espacial": "The Space CEO",
   "Y aún más allá: los cohetes revientan su fila, las burbujeantes un cuadrado de 3x3 y los pétalos su columna.": "And further on: rockets pop their row, fizzy bubbles a 3x3 square and petals their column.",
+  // pesadilla sin amigos y lupa a mitad de turno
+  "En Pesadilla tus amigos descansan": "In Nightmare your friends take a rest",
+  "Lola: «¡Así está perfecto! Pulsa ¡LISTO!»": "Lola: \"That's perfect! Press READY!\"",
+  "Lola: «Con esta fila ya no se puede ganar. Prueba Deshacer.»": "Lola: \"You can't win with this row anymore. Try Undo.\"",
+  "Lola: «Revienta 1 más de esta fila»": "Lola: \"Pop 1 more from this row\"",
+  "Lola: «Revienta {n} más de esta fila»": "Lola: \"Pop {n} more from this row\"",
+  "GRATIS": "FREE",
+  "Al entrar en una sala y con cada COMBO x2 te marca una burbuja de la solución. En cada duelo, una lupa gratis.": "When you enter a room and with every COMBO x2, marks a bubble from the solution. One free hint in every duel.",
 });

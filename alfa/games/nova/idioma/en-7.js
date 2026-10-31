@@ -1,6 +1,12 @@
 // Fans of Nova · Inglés: retos (misiones diarias, semanales y logros).
 'use strict';
 IDIOMA.add({
+  "<b>ELEGIR PARTIDA CON DATOS</b>: si juegas en dos aparatos y las campañas no coinciden, la ventana para elegir enseña la aleación, los sectores liberados, las misiones y las mejoras de cada una.": "<b>CHOOSE YOUR SAVE WITH DATA</b>: if you play on two devices and the campaigns don't match, the window to choose shows the alloy, freed sectors, missions and upgrades of each one.",
+  "Microblizz ha puesto dos flotas frente a frente para que elijas y Phony quiere quedarse con las dos.": "Microblizz lined up two fleets for you to choose from and Phony wants to keep both.",
+  "Sectores liberados": "Sectors freed",
+  "Misiones jugadas": "Missions played",
+  "Misiones ganadas": "Missions won",
+  "Mejoras de la nave capital": "Capital ship upgrades",
   "<b>CADA ARMA, SU TALENTO</b>: los misiles del lanzador castigan a quien huye, la railgun cinética atraviesa escudos, el flak térmico calienta a los de al lado y los drones EM mantienen interferida a su presa. Lo explica la ayuda.": "<b>EACH WEAPON, ITS TALENT</b>: launcher missiles punish anyone fleeing, the kinetic railgun pierces shields, thermal flak heats the enemies next to it and EM drones keep their prey jammed. The help explains it.",
   "Microblizz ha dado formación de talentos a las armas y Phony ha pedido el certificado.": "Microblizz gave the weapons talent training and Phony asked for the certificate.",
   "CADA ARMA, SU TALENTO": "EACH WEAPON, ITS TALENT",

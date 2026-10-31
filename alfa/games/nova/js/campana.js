@@ -70,6 +70,12 @@ function nvCampCarga() {
   Object.assign(SAVE, c && c.v === 2 ? c : nvCampNueva(viejo));   // de la v1 se conservan la aleación y las mejoras de la nave capital
 }
 nvCampCarga();
+// Lo que enseña la ventana de «¿qué partida quieres?» de la nube (core/js/sistema/cuenta.js) al comparar dos campañas
+function resumenPartida(s) {
+  const n = v => (typeof v === 'number' && isFinite(v) ? v : 0), suma = o => Object.keys(o || {}).reduce((a, k) => a + n(o[k]), 0);
+  return [['Aleación', n(s.aleacion)], ['Sectores liberados', (s.libres || []).length], ['Misiones jugadas', n(s.misiones)],
+    ['Misiones ganadas', n(s.victorias)], ['Mejoras de la nave capital', suma(s.mejoras)]];
+}
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
   NVP.camp = SAVE;

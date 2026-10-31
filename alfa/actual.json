@@ -1,8 +1,8 @@
 {
- "build": 752,
- "hash": "297ab7a",
- "fecha": "2026-10-31T18:38:28Z",
- "mensaje": "Nova 0.3.29: cada portador con su talento (Cazador, Perforaescudos, Metralla incendiaria, Dron parásito)",
+ "build": 753,
+ "hash": "455ca0d",
+ "fecha": "2026-10-31T20:10:21Z",
+ "mensaje": "Nube: cada juego puede dar su resumenPartida() para la ventana de conflicto; Nova 0.3.30 la estrena",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.29",
+  "nova": "0.3.30",
   "pets": "0.1.5",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

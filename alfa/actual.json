@@ -1,8 +1,8 @@
 {
- "build": 722,
- "hash": "6093605",
- "fecha": "2026-10-31T01:12:25Z",
- "mensaje": "Fans of Pop 0.5.0: nota de novedades para la release (mundos 7 a 10 y modo Pesadilla)",
+ "build": 723,
+ "hash": "bec3f60",
+ "fecha": "2026-10-31T01:19:34Z",
+ "mensaje": "Fans of Goose: panel DEV con monedas y huevos infinitos, desbloquear todo y compras de prueba",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

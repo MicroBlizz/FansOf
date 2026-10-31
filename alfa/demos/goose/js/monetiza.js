@@ -141,6 +141,7 @@ function pintaTesoro() {
 function compraEuros(p) {
   SONIDO.boton();
   if (p.una && SAVE.compras && SAVE.compras[p.id]) return;
+  if (compraDePrueba()) { entregaCompra(p.id); return; }   // panel DEV: sin cobrar (js/dev.js)
   if (typeof MONEDAS === 'undefined' || !MONEDAS.compraReal) return;
   const titulo = p.tipo === 'huevos' ? tr('{n} huevos de oro', { n: p.huevos }) : p.tipo === 'bienvenida' ? tr('Pack de bienvenida') : tr('Sin anuncios');
   const html = `<p>${p.tipo === 'huevos' ? tr('{n} huevos de oro por {p}.', { n: p.huevos, p: p.precio }) : p.tipo === 'bienvenida' ? tr('{n} huevos de oro y la Capa real por {p}. Solo se puede comprar una vez.', { n: p.huevos, p: p.precio }) : tr('Los premios de los anuncios te llegan al momento, sin verlos, por {p}.', { p: p.precio })}</p>`;

@@ -10,12 +10,16 @@ CFG.aspecto = {
     { id: 'morada',  nombre: 'Capa de la Parca',  tono: 275, sat: 0.8, luz: 1.0,  coste: 200 },
     { id: 'noche',   nombre: 'Capa de medianoche', tono: 225, sat: 0.7, luz: 0.7, coste: 200 },
     { id: 'dorada',  nombre: 'Capa dorada',       tono: 44,  sat: 1.3, luz: 1.75, coste: 400 },
+    { id: 'camino',  nombre: 'Capa del Camino',   tono: 160, sat: 1.1, luz: 1.2,  pase: true },   // solo del Pase (js/pase.js)
+    { id: 'real',    nombre: 'Capa real',         tono: 52,  sat: 1.5, luz: 1.4,  pack: true },   // solo del Pack de bienvenida (js/monetiza.js)
   ],
   luces: [
     { id: 'azul',    nombre: 'Llama fría',      tono: 195, coste: 120 },
     { id: 'verde',   nombre: 'Fuego fatuo',     tono: 120, coste: 120 },
     { id: 'rosa',    nombre: 'Llama de feria',  tono: 320, coste: 120 },
     { id: 'morada',  nombre: 'Llama de difunto', tono: 270, coste: 180 },
+    { id: 'camino',  nombre: 'Llama del Camino', tono: 160, pase: true },
+    { id: 'sol',     nombre: 'Llama de sol',     tono: 48,  huevos: 150 },   // se paga con huevos de oro
   ],
 };
 // lo comprado y lo puesto: SAVE.aspecto = { capas: { fuego: 1 }, luces: {}, capa: 'fuego', luz: '' }
@@ -97,12 +101,18 @@ function pintaAspecto() {
     const bx = x + 30, bw = cw - 34, by = y + ch - 20;
     if (esta) texto2(tr('PUESTA'), bx + bw / 2, by + 8, 8, '#ffd34d');
     else if (mio) boton(bx, by, bw, 16, tr('PONER'), '#2f74c0', () => { SONIDO.elige(false); if (capas) A.capa = o.id; else A.luz = o.id; guarda(); }, 7);
+    else if (o.pase) texto2(tr('EN EL PASE'), bx + bw / 2, by + 8, 6.5, '#ffd34d');
+    else if (o.pack) texto2(tr('EN EL TESORO'), bx + bw / 2, by + 8, 6.5, '#ffd34d');
+    else if (o.huevos) { boton(bx, by, bw, 16, '', huevos() >= o.huevos ? '#d99a1a' : '#7a3a22', () => compraAspecto(capas, o), 7); pintaHuevos(bx + bw / 2, by + 8, o.huevos, 7, 'center'); }   // con huevos de oro (js/monetiza.js)
     else boton(bx, by, bw, 16, String(o.coste), SAVE.monedas >= o.coste ? '#3f9a3a' : '#7a3a22', () => compraAspecto(capas, o), 7);
   });
 }
 function compraAspecto(capas, o) {
   const A = aspecto();
-  if (SAVE.monedas < o.coste) { toast(tr('Te faltan monedas: juega otra partida')); SONIDO.dadoMalo(); return; }
-  SAVE.monedas -= o.coste; (capas ? A.capas : A.luces)[o.id] = 1; if (capas) A.capa = o.id; else A.luz = o.id;
+  if (o.pase || o.pack) return;
+  if (o.huevos) { if (!gastaHuevos(o.huevos)) return; }
+  else if (SAVE.monedas < o.coste) { toast(tr('Te faltan monedas: juega otra partida')); SONIDO.dadoMalo(); return; }
+  else SAVE.monedas -= o.coste;
+  (capas ? A.capas : A.luces)[o.id] = 1; if (capas) A.capa = o.id; else A.luz = o.id;
   guarda(); SONIDO.elige(false); destella('#ffd34d', 0.25);
 }

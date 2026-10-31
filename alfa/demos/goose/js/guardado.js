@@ -17,6 +17,8 @@ const SAVE = {
   aspecto: null,
   activo: {},        // el nivel puesto de la Maldición y la Horda (js/maldicion.js)
   autoElegir: 1,     // la Elección automática encendida (si se ha comprado)   // capas y farolillos comprados y puestos (js/aspecto.js)
+  huevos: 0, sinAnuncios: 0, compras: null,   // los huevos de oro, «Sin anuncios» y lo comprado con euros (js/monetiza.js)
+  pase: null,      // el Camino de la Oca de esta temporada (js/pase.js)
   menuMus: 'nomuertos',   // la canción a la que vuelve el motor tras un jingle
 };
 

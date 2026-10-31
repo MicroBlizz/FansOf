@@ -34,10 +34,12 @@ function pintaTienda() {
   const W = PAN.W, H = PAN.H;
   G.drawImage(FONDO, 0, 0, W, H); oscurece(0.4);
   texto2(tr('MEJORAS'), W / 2, 30, 20, '#ffd34d', 'center', FUENTE_G, 400, 0.2);
-  pinta('moneda', W / 2 - 18, 50, false, false, 1.3); texto2(String(SAVE.monedas), W / 2 - 9, 50.5, 10, '#ffcf33', 'left');
+  pinta('moneda', W / 2 - 40, 50, false, false, 1.3); texto2(String(SAVE.monedas), W / 2 - 31, 50.5, 10, '#ffcf33', 'left');
   // las dos pestañas
-  const pest = (x, id, txt) => boton(x, 60, (W - 22) / 2, 20, txt, TIENDA_TAB === id ? '#e8742a' : '#5a3418', () => { SONIDO.boton(); TIENDA_TAB = id; TIENDA_PAG = 0; }, 8);
-  pest(8, 'mejoras', tr('MEJORAS')); pest(14 + (W - 22) / 2, 'aspecto', tr('ASPECTO'));
+  pintaHuevos(W / 2 + 26, 50.5, huevos(), 10);   // los huevos de oro (js/monetiza.js)
+  const pw = (W - 28) / 3, pest = (i, id, txt, oro) => boton(8 + i * (pw + 6), 60, pw, 20, txt, TIENDA_TAB === id ? '#e8742a' : oro ? '#b8801a' : '#5a3418', () => { SONIDO.boton(); TIENDA_TAB = id; TIENDA_PAG = 0; }, 8);
+  pest(0, 'mejoras', tr('MEJORAS')); pest(1, 'aspecto', tr('ASPECTO')); pest(2, 'tesoro', tr('TESORO'), true);
+  if (TIENDA_TAB === 'tesoro') { pintaTesoro(); botonVolverTienda(); return; }   // lo que se paga con euros (js/monetiza.js)
   if (TIENDA_TAB === 'aspecto') { pintaAspecto(); botonVolverTienda(); return; }
   // de 5 en 5 por páginas (las filas no se pisan en ningún móvil)
   const alto = 40, gap = 5, caben = Math.max(3, Math.min(CFG.tienda.length, Math.floor((H - 88 - 74) / (alto + gap)))), pags = Math.ceil(CFG.tienda.length / caben);

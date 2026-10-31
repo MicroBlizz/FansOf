@@ -98,9 +98,10 @@ function fotograma(ahora) {
   else if (J.modo === 'desafios') { pintaDesafios(); }
   else if (J.modo === 'diario') { pintaDiario(); }
   else if (J.modo === 'contrarreloj') { pintaContrarreloj(); }   // js/contrarreloj.js
+  else if (J.modo === 'pase') { pintaPase(); }
   else {
-    if (J.modo === 'juego') avanzaPartida(dt);
-    else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
+    if (J.modo === 'juego' && !ANUNCIO_G.activo) avanzaPartida(dt);   // mientras sale un anuncio, la partida espera
+    else if (J.modo === 'fin' || J.modo === 'revivir' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
     pintaVacio(); pintaMundo(); pintaEncima();
     if (J.modo !== 'fin') pintaHud();
     if (J.modo === 'juego') { pintaPalanca(); pintaHabilidad(); }
@@ -110,6 +111,7 @@ function fotograma(ahora) {
     else if (J.modo === 'pausa') pintaPausa();
     else if (J.modo === 'opciones') pintaOpciones();
     else if (J.modo === 'fin') pintaFin(dt);
+    else if (J.modo === 'revivir') pintaRevivir(dt);
   }
   vigilaMusica();
 }

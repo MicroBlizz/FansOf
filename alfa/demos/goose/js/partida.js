@@ -34,6 +34,7 @@ function nuevaPartida() {
   if (J.pers.id === 'blanco') J.tiradas++;
   // la tienda: Pluma de fénix, Arsenal y Dado de la suerte
   J.redado = nivelMejora('redado');   // la Segunda tirada de la tienda (js/dado.js)
+  J.revividas = 0; J.revAnuncio = false; J.revivir = null;   // el revivir con anuncio o huevos (js/monetiza.js)
   J.fenix = nivelMejora('fenix'); J.habT = 0; J.torbellino = 0; J.bendicion = 0; J.rafaga = null; J.escudoListo = 0;
   if (nivelMejora('arsenal')) { const otras = Object.keys(ARMAS).filter(id => id !== J.pers.arma && armaAbierta(id)); aplicaCarta(cartaArma(otras[(Math.random() * otras.length) | 0])); }
   if (nivelMejora('suerte')) J.dado.bendito = true;
@@ -69,7 +70,7 @@ function avanzaPartida(dt) {
     if (J.muerto <= 0) {
       if (esCoop()) { if (!J.carrera.caido) caidoCoop(); J.muerto = 0.001; }
       else if (J.carrera) { if (!J.carrera.caido) { J.carrera.caido = true; mandaCarrera({ t: 'm', c: J.mejorCasilla }); aviso(tr('Has caído: mira cómo acaba la carrera'), '#ff4d4d', 2.5); } J.muerto = 0.001; }
-      else terminaPartida(false);
+      else if (!ofreceRevivir()) terminaPartida(false);   // revivir con anuncio o huevos de oro (js/monetiza.js)
     }
     if (J.carrera) avanzaCarrera(dt);
     return;
@@ -158,9 +159,16 @@ function heridaJugador(dano, ox, oy) {
   destella('#ff0000', 0.22); tiembla(2.5); SONIDO.herido(); vibra(25);
   if (J.vida <= 0) matarJugador();
 }
+// vuelves a tu casilla con media vida (la Pluma de fénix y el revivir de js/monetiza.js)
+function vuelveACasilla(txt, color) {
+  const J = JUEGO;
+  J.vida = J.st.vidaMax * 0.5; J.invul = 2.5; J.caida = 0; J.caidaAbismo = false; J.fase = 'parado'; J.escena = null;
+  J.yo.x = centroX(J.casilla); J.yo.y = yCentro(J.casilla); J.yD = Math.max(J.yD, J.yo.y + 90);
+  aviso(txt, color, 1.6); anillo(J.yo.x, J.yo.y, 90, color, 0.8, 5); destella(color, 0.6); SONIDO.evolucion();
+}
 function matarJugador() {
   const J = JUEGO; if (J.muerto > 0 || J.fin) return;
-  if (J.fenix > 0) { J.fenix--; J.vida = J.st.vidaMax * 0.5; J.invul = 2.5; J.caida = 0; J.caidaAbismo = false; J.fase = 'parado'; J.escena = null; J.yo.x = centroX(J.casilla); J.yo.y = yCentro(J.casilla); J.yD = Math.max(J.yD, J.yo.y + 90); aviso(tr('¡PLUMA DE FÉNIX!'), '#ff9b4d', 1.6); anillo(J.yo.x, J.yo.y, 90, '#ff9b4d', 0.8, 5); destella('#ff9b4d', 0.6); SONIDO.evolucion(); return; }   // la de la tienda: una vida más
+  if (J.fenix > 0) { J.fenix--; vuelveACasilla(tr('¡PLUMA DE FÉNIX!'), '#ff9b4d'); return; }   // la de la tienda: una vida más
   J.vida = 0; J.muerto = 1.4;
   estallido(J.yo.x, J.yo.y, 30, '#8a1e22', 120, 1, 3, 1, 40);
   tiembla(7); destella('#ff0000', 0.6); SONIDO.muereYo(); vibra(300);
@@ -255,10 +263,11 @@ function terminaPartida(gana) {
   const monedas = Math.round(base * J.st.monedas * J.mod.monedas * (diario && diario.primera ? 2 : 1));
   const record = J.mejorCasilla > SAVE.mejorCasilla;
   const noche = gana && !J.diario ? ganaNoche() : 0, desafios = repasaDesafios(gana);
+  const pase = paseFinPartida(gana);   // los puntos del Camino de la Oca (js/pase.js)
   SAVE.monedas += monedas; SAVE.mejorCasilla = Math.max(SAVE.mejorCasilla, gana ? CFG.jardin : J.mejorCasilla); SAVE.mejorBajas = Math.max(SAVE.mejorBajas, J.bajas);
   if (gana) SAVE.victorias++;
   guarda();
-  J.fin = { gana, monedas, record, t: 0, noche, desafios, diario, cr };
+  J.fin = { gana, monedas, record, t: 0, noche, desafios, diario, cr, pase };
   J.modo = 'fin';
   if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.parar(); } catch (e) { /* sin contador */ }
 }

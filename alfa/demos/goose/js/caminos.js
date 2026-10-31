@@ -133,12 +133,13 @@ function pintaTiendita(titulo, color, lista, compradas, compra, pie) {
   panelMadera(4, y0 - 4, W - 8, H - y0);   // el tablón de Yoshi
   texto2(titulo, W / 2, y0 + 10, 10, color, 'center', FUENTE_G, 400, 0.25);
   lista.forEach((o, i) => {
-    const y = y0 + 20 + i * (fila + 3), hecha = compradas[o.id], cuesta = precio(o), puede = J.monedasPartida >= cuesta;
-    caja(10, y, W - 20, fila, 6, hecha ? '#160b08' : '#2a1610', hecha ? '#3a2016' : puede ? '#ffd34d' : '#6e4426', 1.2);
+    const y = y0 + 20 + i * (fila + 3), hecha = compradas[o.id], cuesta = o.anuncio ? 0 : precio(o), puede = o.anuncio || J.monedasPartida >= cuesta;
+    caja(10, y, W - 20, fila, 6, hecha ? '#160b08' : o.anuncio ? '#1f3a14' : '#2a1610', hecha ? '#3a2016' : o.anuncio ? '#7dff6b' : puede ? '#ffd34d' : '#6e4426', 1.2);
     icono(o.icono, 22, y + fila / 2, 10);
     texto2(tr(o.nombre), 34, y + 7.5, 7.5, hecha ? '#6e4426' : '#fff4dc', 'left');
-    texto2(hecha ? tr('comprado') : tr(o.desc), 34, y + 17.5, 7, hecha ? '#6e4426' : '#c9b98a', 'left', FUENTE, 700, 0.3);
-    if (!hecha) { pinta('moneda', W - 38, y + fila / 2, false, false, 0.9); texto2(String(cuesta), W - 31, y + fila / 2 + 0.5, 8, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }
+    texto2(hecha ? tr(o.anuncio ? 'recogido' : 'comprado') : tr(o.desc), 34, y + 17.5, 7, hecha ? '#6e4426' : '#c9b98a', 'left', FUENTE, 700, 0.3);
+    if (!hecha && o.anuncio) { icono('anuncio', W - 40, y + fila / 2, 9); texto2(tr('VER'), W - 31, y + fila / 2 + 0.5, 8, '#7dff6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }   // con anuncio (js/monetiza.js)
+    else if (!hecha) { pinta('moneda', W - 38, y + fila / 2, false, false, 0.9); texto2(String(cuesta), W - 31, y + fila / 2 + 0.5, 8, puede ? '#ffcf33' : '#ff8a6b', 'left'); BOTONES.push({ x: 10, y, w: W - 20, h: fila, accion: () => compra(o) }); }
   });
   texto2(pie, W / 2, H - 14, 7, color, 'center', FUENTE, 700, 0.3);
 }

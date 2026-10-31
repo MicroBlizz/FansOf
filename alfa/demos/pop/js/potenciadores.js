@@ -25,6 +25,7 @@ function ppBarraAyudas() {
   const ver = PP_PANT.actual === 'sala' && T && !T.hecho && !(T.d && T.d.tutorial && T.d.mundo === 0);
   b.hidden = !ver; if (!ver) return;
   const lista = T.nim ? ['deshacer', 'pista'] : ['martillo', 'bomba', 'toques3'];
+  ppTutorial(T.nim ? 'ayudasDuelo' : 'ayudas');
   b.innerHTML = '';
   for (const k of lista) {
     const n = ppTengo(k), bt = document.createElement('button');

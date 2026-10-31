@@ -85,9 +85,9 @@ function ppMarcadorNim(c, T, t) {
   ppSlimeRepuestoOImagen(c, N.rival, 470, 62 - br * 12, 30, t, 1);
   ppTexto(c, tr(PP_SLIMES[N.rival].nombre), 470, 106, 18, '#fff', 'center', '#3a3a6a');
   for (let k = 0; k < 3; k++) ppEstrella(c, 300 + k * 30, 52, 26, k < ppEstrellas(T));
-  ppTexto(c, T.titulo || '', 270, 98, 30, '#ffd64a', 'center', '#7a4a8a');
+  ppTexto(c, T.titulo || '', 270, 110, 26, '#ffd64a', 'center', '#7a4a8a');   // más abajo: encima va el monedero
   const txt = N.fin ? (N.fin === 'gana' ? tr('¡Ganas!') : tr('¡Gana {n}!', { n: tr(PP_SLIMES[N.rival].nombre) })) : N.turno === 'yo' ? tr('Tu turno') : tr('Piensa {n}…', { n: tr(PP_SLIMES[N.rival].nombre) });
-  ppTexto(c, txt, 270, 134, 26, N.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#c43a84');
+  ppTexto(c, txt, 270, 138, 24, N.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#c43a84');
   ppTexto(c, tr('Una sola fila por turno · ¡pierde quien revienta la última!'), 270, 164, 18, '#7a4a8a', 'center', '#fff');
 }
 // la fila en la que se está jugando, marcada

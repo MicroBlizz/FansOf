@@ -64,7 +64,8 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
   if (!dif && d.mundo > 0 && d.l === 1) ppTutorial('w' + (d.mundo + 1) + 'n1');
   if (dif === 2) ppTutorial('modoPesadilla'); else if (dif) ppTutorial('modoDificil');
-  if (d.nim) ppTutorial('nimNivel');
+  if (dif === 2 && PP_P.equipo.length) ppTutorial('despedidos');
+  if (d.nim) ppTutorial('nimNivel'); if (d.nim) ppTutorial('trucoNim');
   else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
   if (PP_P.equipo.length) ppTutorial('amigo');

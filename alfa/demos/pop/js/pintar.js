@@ -149,6 +149,14 @@ function ppCorazon(c, x, y, s, lleno) {
   c.save(); c.translate(x, y + s * 0.1); c.beginPath(); c.moveTo(0, s * 0.4); c.bezierCurveTo(-s * 0.7, -s * 0.1, -s * 0.3, -s * 0.6, 0, -s * 0.25); c.bezierCurveTo(s * 0.3, -s * 0.6, s * 0.7, -s * 0.1, 0, s * 0.4);
   c.fillStyle = lleno ? '#ff4a6a' : '#3a2a44'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#1a1030'; c.stroke(); c.restore();
 }
+// monedas y perlas, siempre a la vista mientras juegas (Daniel, 31-10-2026). Empieza en x; devuelve dónde acaba
+function ppPintaMonedero(c, x, y) {
+  c.font = `700 ${Math.round(22 * PP_LETRA)}px ${PP_FUENTE}`;
+  const m = String(SAVE.monedas || 0), p = String(SAVE.perlas || 0);
+  ppMoneda(c, x + 12, y, 26); ppTexto(c, m, x + 28, y + 1, 22, '#fff', 'left', '#c98a12');
+  const x2 = x + 28 + c.measureText(m).width + 18;
+  ppPerla(c, x2 + 12, y, 26); ppTexto(c, p, x2 + 28, y + 1, 22, '#fff', 'left', '#c43a84');
+}
 function ppPintaMarcador(c, t) {
   const P = PP_P;
   c.fillStyle = 'rgba(255,255,255,0.55)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
@@ -156,6 +164,7 @@ function ppPintaMarcador(c, t) {
   const dano = PP_FX.dano;
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
+  ppPintaMonedero(c, 96, 86);   // bajo los corazones, al lado de la pausa
   // toques de la sala
   if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
   else if (P.T) {
@@ -176,18 +185,32 @@ function ppPintaMarcador(c, t) {
     const [x, y] = ppHuecoEquipo(k, n), id = P.equipo[k], br = id ? PP_FX.brilla[id] || 0 : 0;
     c.save(); c.translate(x, y); c.scale(esc * (1 + br * 0.25), esc * (1 + br * 0.25));
     c.beginPath(); c.roundRect(-44, -44, 88, 88, 18); c.fillStyle = br ? `rgba(255,214,74,${0.3 + br * 0.5})` : id ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.35)'; c.fill(); c.lineWidth = 3; c.strokeStyle = id ? '#ff6ec7' : 'rgba(122,74,138,0.35)'; c.stroke();
+    const fuera = id && P.T && P.T.lo;   // en pesadilla los amigos no ayudan: en gris y con el sello de DESPEDIDO encima
+    if (fuera) { c.globalAlpha = 0.5; c.filter = 'grayscale(1)'; }
     if (id && !PP_FX.vuelos.some(v => v.id === id)) ppSlimeRepuestoOImagen(c, id, 0, -4 - br * 14, 30, t, 1);
+    c.globalAlpha = 1; c.filter = 'none';
+    if (fuera) ppSelloDespedido(c, 0, 0, 92);
     c.restore();
     if (!id) continue;
     const nom = tr(PP_SLIMES[id].pasiva); c.font = `700 ${Math.round(19 * PP_LETRA)}px ${PP_FUENTE}`; const w = c.measureText(nom).width;
     const cabe = 100 * esc; ppTexto(c, nom, x, y + 62, w > cabe ? Math.floor(19 * cabe / w) : 19, '#fff');   // los nombres largos encogen para no pisar al vecino
     const fx = PP_SLIMES[id].fx, T = P.T;
-    const parte = fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
+    const parte = P.T && P.T.lo ? null : fx.salta ? (P.carga[id] || 0) / fx.salta : fx.combo && T ? (T.combo % fx.combo) / fx.combo : null;
     if (parte !== null) {
       c.fillStyle = '#1a1030'; c.beginPath(); c.roundRect(x - 36, y + 32, 72, 10, 5); c.fill();
       c.fillStyle = fx.salta ? '#ff6ec7' : '#5be7ff'; c.beginPath(); c.roundRect(x - 36, y + 32, Math.max(10, 72 * parte), 10, 5); c.fill();
     }
   }
+}
+// el sello de DESPEDIDO (el tampón rojo de Fans of Rouflage): torcido, con su marco doble, sobre el hueco del amigo
+function ppSelloDespedido(c, x, y, ancho) {
+  c.save(); c.translate(x, y); c.rotate(-0.22); c.scale(ancho / 100, ancho / 100);
+  c.beginPath(); c.roundRect(-48, -18, 96, 36, 6); c.fillStyle = 'rgba(255,240,244,0.88)'; c.fill(); c.lineWidth = 3.6; c.strokeStyle = '#1a1030'; c.stroke();
+  c.lineWidth = 2.6; c.strokeStyle = '#ff4b5c'; c.strokeRect(-43, -13, 86, 26);
+  const txt = tr('DESPEDIDO'); c.font = `700 16px ${PP_FUENTE}`; const w = c.measureText(txt).width;
+  if (w > 78) c.scale(78 / w, 78 / w);
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#ff4b5c'; c.fillText(txt, 0, 1);
+  c.restore();
 }
 // el centro del hueco k del equipo (para pintarlo y para que el slime salga volando desde ahí)
 // con huecos comprados (5 o 6) se juntan y encogen un poco para caber

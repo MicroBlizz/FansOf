@@ -9,7 +9,7 @@
 'use strict';
 /* ---------- tras ganar un nivel nuevo ---------- */
 function ppPremiosCandy(d, estrellas) {
-  SAVE.racha = Math.min(PP_CFG.racha.max, (SAVE.racha || 0) + 1);
+  SAVE.racha = Math.min(PP_CFG.racha.max, (SAVE.racha || 0) + 1); ppTutorial('racha');
   ppMeteHucha(d.jefe);
   const P = ppPaseAlDia(); P.puntos += 1 + (estrellas === 3 ? 1 : 0);
   ppGuarda();
@@ -37,6 +37,7 @@ function ppPaseHayPremio() {
   return false;
 }
 function ppVentanaPase() {
+  ppTutorial('pase');
   const P = ppPaseAlDia(), e = ppEscalon(), C = PP_CFG.pase, falta = C.puntos - (P.puntos % C.puntos);
   const finMes = new Date(); finMes.setMonth(finMes.getMonth() + 1, 1); finMes.setHours(0, 0, 0, 0);
   const t = ppAbre(`<h2>${tr('Pase de Pop')}</h2>
@@ -76,6 +77,7 @@ const PP_REGALOS = [{ monedas: 30 }, { ayudas: { martillo: 1 } }, { monedas: 50 
   { perlas: 5, ayudas: { martillo: 1, bomba: 1 }, infinitas: 30 }];
 const ppDiaSemana = () => (new Date().getDay() + 6) % 7;
 function ppVentanaRegalo() {
+  ppTutorial('regalo');
   const hoy = ppDiaSemana(), cogido = SAVE.regaloDia === ppHoy();
   const dias = [tr('Lun'), tr('Mar'), tr('Mié'), tr('Jue'), tr('Vie'), tr('Sáb'), tr('Dom')];
   const t = ppAbre(`<h2>${tr('Regalo diario')}</h2><p class="pp-sub">${cogido ? tr('Ya has abierto el de hoy. ¡Vuelve mañana!') : tr('¡Uno cada día! El del domingo es el más gordo.')}</p>`, true);

@@ -84,6 +84,7 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-bocadillo .pp-btn2 { align-self: flex-end; min-width: 0; font-size: 20px; padding: 9px 22px 10px; --c1: #ffb057; --c2: #ff7a1a; --borde: #c2510a; }
 /* con una ventana abierta (pausa, nivel superado…) Lola espera escondida y vuelve al cerrarla */
 #pp-ui:has(#pp-modal:not([hidden])) #pp-lola { visibility: hidden; }
+#pp-ui:has(#pp-modal:not([hidden])) #pp-lola.pp-encima { visibility: visible; }   /* las que explican esa ventana (tienda, pase…) */
 /* la pregunta de Lola: dos botones, lisitos o pixel art */
 #pp-lola-elige { display: flex; gap: 10px; justify-content: flex-end; }
 #pp-lola-elige[hidden] { display: none; }

@@ -104,6 +104,7 @@ function ppPintaMemoria(c, t) {
   // arriba: la ronda, el récord y qué toca hacer
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   ppTitulo(c, tr('MEMORIA'), 270, 58, 44);
+  ppPintaMonedero(c, 380, 40);
   ppTexto(c, tr('Ronda {n}', { n: M.sec.length }), 140, 120, 28, '#fff', 'center', '#c43a84');
   ppTexto(c, tr('Récord: {n}', { n: SAVE.memoria.record }), 400, 120, 28, '#fff', 'center', '#3a6ab8');
   // el halo de cada burbuja que suena (y la buena que parpadea al fallar)

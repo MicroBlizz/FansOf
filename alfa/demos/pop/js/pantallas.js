@@ -77,6 +77,7 @@ function ppEligeRescate(id) {
   // el equipo está lleno: hay que dejar a uno… o comprar un hueco más con monedas (Daniel, 30-10-2026)
   const precio = ppPrecioHueco();
   const t = ppAbre(`<h2>${tr('Equipo lleno')}</h2><p class="pp-sub">${tr('¿Quién se queda descansando para que venga {n}?', { n: tr(PP_SLIMES[id].nombre) })}</p>`, true);
+  ppTutorial('equipoLleno');
   const fila = document.createElement('div'); fila.className = 'pp-fila-slimes';
   for (const k of PP_P.equipo) { const f = ppFichaSlime(k); f.onclick = () => { play('select'); ppRecluta(id, k); ppVentanaBienvenida(id); }; fila.appendChild(f); }
   t.appendChild(fila);
@@ -123,6 +124,7 @@ function ppVentanaMundoNuevo(dif) {
 // sin corazones: el reloj del siguiente, o llenarlos con monedas o perlas, o un anuncio (js/tienda.js)
 function ppVentanaSinCorazones() {
   const t = ppAbre(`<h2>${tr('¡Uy! Sin corazones')}</h2><div class="pp-cofre">${ppIcono('i-vida', 84, '#ff4a6a')}</div><p class="pp-sub" id="pp-reloj"></p><p class="pp-sub">${tr('Tienes:')} ${ppMonedasHtml(SAVE.monedas, 26)}</p>`);
+  ppTutorial('sinCorazones');
   const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
   const tic = setInterval(reloj, 1000); reloj();
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
@@ -219,6 +221,29 @@ const PP_TUTO = {
   w8n1: [{ t: '¡Bienvenida al Fondo del mar!' }, { t: 'Las burbujeantes revientan todo el cuadrado de alrededor, también en diagonal.' }],
   w9n1: [{ t: '¡Bienvenida al Jardín de cerezos!' }, { t: 'Las burbujas con pétalo revientan su columna entera, de arriba abajo.' }],
   w10n1: [{ t: '¡Bienvenida al Espacio!' }, { t: 'Aquí está todo: cohetes, burbujeantes, pétalos, hielo… y al final te espera el CEO espacial.' }],
+  // tutoriales del 31-10-2026 (Daniel: «tutoriales de todo»). Los `encima` salen aunque haya una ventana abierta (tienda, pase…)
+  ayudas: [{ t: '¡Mira abajo: son las ayudas! El MARTILLO revienta del todo la burbuja que toques, sin gastar toque.' },
+           { t: 'La BOMBA da un golpe a un cuadrado de 3 x 3, tampoco gasta toque. Y +3 TOQUES te da tres toques más en el nivel.' },
+           { t: 'Se ganan jugando (regalo diario, pase…) y, si no te quedan, se compran con perlas.' }],
+  ayudasDuelo: [{ t: 'En los duelos las ayudas son otras: DESHACER vuelve atrás tu última jugada (y la del rival).' },
+                { t: 'La LUPA te marca la jugada ganadora, también a mitad de turno. Si me llevas en el equipo, ¡te regalo una en cada duelo!' }],
+  trucoNim: [{ t: '¡Te cuento mi truco secreto! Parte cada fila en grupos de 4, 2 y 1: una fila de 7 es 4+2+1; una de 5 es 4+1.' },
+             { t: 'Al acabar tu turno, cada grupo tiene que quedar por parejas: dos de 4, dos de 2, dos de 1. Si el rival rompe una pareja, tú la vuelves a igualar.' },
+             { t: 'El final: si tras tu jugada solo van a quedar filas de una burbuja, déjale un número impar de ellas. ¡Así la última le toca a él!' }],
+  despedidos: [{ t: 'Ojo: en pesadilla tus amigos están DESPEDIDOS. Aquí no te ayudan: todo depende de ti.' }],
+  tienda: [{ t: '¡La tienda! Las PERLAS son las joyas del juego: con ellas compras ayudas, corazones infinitos y bandejas bonitas.', encima: true },
+           { t: 'Las MONEDAS las ganas jugando. Perlas te dan los jefes la primera vez, el regalo diario y el pase… o se compran aquí.', encima: true },
+           { t: 'En OFERTAS hay packs con descuento y CORAZONES INFINITOS: durante un rato no pierdes ninguno.', encima: true }],
+  sinCorazones: [{ t: 'Sin corazones no se puede jugar. Vuelve uno cada 30 minutos, aunque cierres el juego.', encima: true },
+                 { t: 'Si no quieres esperar, aquí puedes llenarlos o ponerte corazones infinitos un rato.', encima: true }],
+  regalo: [{ t: '¡El regalo diario! Cada día hay uno distinto y el del domingo es el más gordo. ¡Vuelve mañana a por el siguiente!', encima: true }],
+  pase: [{ t: '¡El Pase de Pop! Al pasar niveles nuevos ganas puntos y subes escalones. Cada escalón tiene su premio.', encima: true },
+         { t: 'Los premios premium son para quien compra el pase. Se renueva cada mes, ¡aprovéchalo!', encima: true }],
+  hucha: [{ t: '¡La hucha! Cada nivel nuevo que pasas mete perlas dentro. Cuando tenga bastantes, puedes romperla y quedártelas todas.', encima: true }],
+  racha: [{ t: '¡RACHA! Cada nivel nuevo que pasas sin perder un corazón te da +1 toque al empezar los siguientes, hasta +3.', encima: true },
+          { t: 'Si pierdes un corazón, la racha vuelve a cero. ¡Cuídala!', encima: true }],
+  equipoLleno: [{ t: '¡Tu equipo está lleno! Elige quién se queda descansando para que entre el nuevo…', encima: true },
+                { t: '…o hazle sitio comprando un hueco más. Los huecos son para siempre.', encima: true }],
   w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
 };
 const PP_LOLA = { cola: [], actual: null };
@@ -236,6 +261,7 @@ function ppLolaSiguiente() {
   $pp('#pp-lola-texto').textContent = tr(f.t);
   $pp('#pp-lola-vale').hidden = !!(f.toque || f.elige);
   $pp('#pp-lola-elige').hidden = f.elige !== 'estilo';   // Lola pregunta: lisitos o pixel art (Daniel, 30-10-2026)
+  caja.classList.toggle('pp-encima', !!f.encima);   // las de las ventanas salen por encima de ellas
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
 }

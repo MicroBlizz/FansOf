@@ -1,8 +1,8 @@
 {
- "build": 746,
- "hash": "60c00d5",
- "fecha": "2026-10-31T14:08:53Z",
- "mensaje": "Cola de Actions: guarda quién lanzó cada run (actor y triggering_actor)",
+ "build": 747,
+ "hash": "b600014",
+ "fecha": "2026-10-31T14:17:02Z",
+ "mensaje": "Cola de Actions (web): vista Configuración con las instrucciones del mod y los ajustes",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

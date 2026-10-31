@@ -14,7 +14,7 @@
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
-  let claves = null, claveNueva = '', clavesAbiertas = false, revocando = null;   // claves del mod (sección de abajo)
+  let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
   let avance = null;
@@ -143,6 +143,7 @@
     .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
     .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}
     .cl-refr{display:inline-flex;flex-direction:column;gap:3px;align-items:stretch;min-width:7em}.cl-prog-txt{font:11px var(--mono);color:var(--suave);text-align:center;white-space:nowrap}
+    ${COLA_CONFIG.css}
     .cl-prog{display:block;height:6px;border:1px solid var(--texto);border-radius:4px;overflow:hidden;background:var(--bg)}.cl-prog b{display:block;height:100%;width:0;background:var(--acento);transition:width .3s}`;
   document.head.appendChild(estilo);
   function pinta() {
@@ -154,30 +155,17 @@
     let cuerpo = '';
     if (t && snap) {
       const F = calcular(ahora);
-      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
-        + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span><button type="button" id="cl-todo" title="Vuelve a leer GitHub entero y sobreescribe lo guardado por id, sin borrar lo demás">Releer todo</button>`
-        + `<button type="button" class="enlace" id="cl-borra">Borrar lo guardado</button><button type="button" class="enlace" id="cl-olvida">Olvidar token</button></div>`
-        + (confirmaBorrar ? `<p class="aviso">¿Borrar todo lo guardado de la cola en este navegador (runs, medias, recursos y la última foto)? El token y el límite se quedan. Después se vuelve a leer desde cero. <button type="button" class="fuerte" id="cl-borra-si">Sí, borrar</button> <button type="button" id="cl-borra-no">No</button></p>` : '')
-        + `<div class="cl-bar"><label class="cl-op">Límite semanal de referencia (tokens, opcional) <input type="number" id="cl-lim" min="0" step="1000" value="${limite() || ''}" style="width:9em"></label></div>`
-        + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '') + '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
+      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
+        + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
+        + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
+        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
-        + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`
-        + seccionClaves();
+        + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
     } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}</div>`;
     pan.innerHTML = cab + clave + `<div class="aviso" id="cl-aviso" role="alert"></div>` + cuerpo;
     pintaAvance();
   }
-  // Claves para el mod de Claude: el mod no tiene sesión de /gestion (caduca a las 8 h), así que usa una clave larga que se crea aquí, se pega en su configuración y se revoca aquí.
-  function seccionClaves() {
-    const filas = (claves || []).map(c => `<tr><td>${esc(c.nombre)}</td><td>${esc(c.creador)}</td><td>${c.ultimo_uso ? fecha(Date.parse(c.ultimo_uso)) : 'nunca'}</td>`
-      + `<td>${c.revocada ? 'revocada' : `<button type="button" class="enlace" data-revoca="${c.id}">${revocando === c.id ? 'Sí, revocar' : 'Revocar'}</button>`}</td></tr>`).join('');
-    return `<details class="caja" id="cl-claves"${clavesAbiertas ? ' open' : ''}><summary><b>Claves para el mod de Claude</b> <span class="meta">(para que el mod cola-actions comparta este historial)</span></summary>`
-      + `<p class="meta">Crea una por persona y pégala en la configuración del mod («Clave de la cola»). Solo sirve para leer y guardar la cola; se puede revocar cuando quieras.</p>`
-      + (claveNueva ? `<p class="aviso">Copia la clave ahora: no se vuelve a enseñar.<br><code>${esc(claveNueva)}</code></p>` : '')
-      + `<form class="cl-bar" id="cl-clave-nueva"><input id="cl-clave-nombre" maxlength="60" placeholder="Nombre (p. ej. mod de Pepins)"><button type="submit">Crear clave</button></form>`
-      + (claves === null ? '<p class="meta">Cargando…</p>' : claves.length ? `<table class="tabla"><thead><tr><th>Nombre</th><th>Creada por</th><th>Último uso</th><th></th></tr></thead><tbody>${filas}</tbody></table>` : '<p class="meta">Aún no hay claves.</p>')
-      + '</details>';
-  }
+  // Claves para el mod de Claude (vista Configuración, cola-config.js): el mod no tiene sesión de /gestion (caduca a las 8 h), así que usa una clave larga que se crea aquí.
   async function cargarClaves() {
     try { claves = await rpc('gestion_cola_claves', { p_token: leerToken() }); } catch (e) { claves = []; $('cl-aviso').textContent = 'No pude leer las claves: ' + e.message; }
     pinta();
@@ -193,7 +181,8 @@
   }
   pan.onclick = ev => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.v) { vista = b.dataset.v; pinta(); }
+    if (b.dataset.v) { vista = b.dataset.v; pinta(); if (vista === 'cfg' && claves === null) cargarClaves(); }
+    else if (b.dataset.copia) { navigator.clipboard.writeText(b.dataset.copia).then(() => { b.textContent = 'Copiado'; }, () => { $('cl-aviso').textContent = 'No pude copiar: selecciónalo y cópialo a mano.'; }); }
     else if (b.id === 'cl-olvida') { try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ } snap = null; pinta(); }
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
@@ -212,7 +201,6 @@
   pan.onchange = ev => {
     if (ev.target.id === 'cl-lim') { guardar(LIM, Number(ev.target.value) || 0); pinta(); }
   };
-  pan.addEventListener('toggle', ev => { if (ev.target.id !== 'cl-claves') return; clavesAbiertas = ev.target.open; if (clavesAbiertas && claves === null) cargarClaves(); }, true);
   pan.onsubmit = ev => {
     ev.preventDefault();
     if (ev.target.id === 'cl-clave-nueva') {

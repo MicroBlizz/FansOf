@@ -1,8 +1,8 @@
 {
- "build": 727,
- "hash": "753560d",
- "fecha": "2026-10-31T02:32:25Z",
- "mensaje": "Rumble v2: personajes animados fotograma a fotograma (motor y script de fotogramas)",
+ "build": 728,
+ "hash": "490d65e",
+ "fecha": "2026-10-31T05:16:32Z",
+ "mensaje": "Cola de Actions: barra de avance encima de «Refrescar»",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

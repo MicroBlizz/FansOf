@@ -1,40 +1,21 @@
 // Fans Of · /gestion: la pestaña COLA. La cola de GitHub Actions de FansOf-dev con el tiempo estimado de cada trabajo, en tres vistas (lista, carriles por runner y resumen).
-// La estimación usa la duración media de ejecución de cada workflow (los últimos 20 runs correctos, de que el job arranca en el runner a que acaba: sin la espera), así que si un runner está apagado
+// La estimación usa la duración media de ejecución de cada workflow (los últimos 20 runs correctos, de que el job arranca en el runner a que acaba: sin la espera); «Generar recurso», la cadencia de
+// la GPU de Yoshi por tipo de pedido (imagen, video, audio, 3d; ver cadencias()). Si un runner está apagado
 // su cola no corre: se enseña como «+X al encender». Debajo, lo que habría costado generar con una API de pago los recursos de Generar recurso ya terminados, por tipo (imagen, canción, efecto, vídeo, 3D) y en euros.
 // No usa el servidor: lee la API de GitHub desde el navegador con un token fino de solo lectura que cada admin pega una vez (queda en el localStorage de ese navegador). Gemelo del mod de Claude herramientas/cola-actions/ (docs/guia/herramientas/cola-actions.md).
-// Usa lo de gestion/index.html: esc() y $(); y GESTION_NAV (nav.js).
+// Usa lo de gestion/index.html: esc() y $(); GESTION_NAV (nav.js) y COLA_MEDIDA (cola-medida.js: tipos, precios y cómo se mide cada workflow).
 'use strict';
 (() => {
+  const { MUESTRAS, USD, ETIQUETA, tipoDe, leerTitulo, tipoDeTitulo, etiquetaWf, esGenerar, flujoDe, duracionRun, duracionPaso, cadencias, mediaCadencia } = COLA_MEDIDA;
   const REPO = 'MicroBlizz/FansOf-dev', API = 'https://api.github.com/repos/' + REPO;
-  const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones', RECS = 'fansof.gestion.cola.recursos', PREC = 'fansof.gestion.cola.precision', LIM = 'fansof.gestion.cola.limite';
-  const MUESTRAS = 20, MAX_NUEVAS = 60, CADA = 5 * 60e3, ENFRIA = 30e3;
+  const CLAVE = 'fansof.gestion.githubToken', DURS = 'fansof.gestion.cola.duraciones-2', RECS = 'fansof.gestion.cola.recursos', PREC = 'fansof.gestion.cola.precision', LIM = 'fansof.gestion.cola.limite';
+  const MAX_NUEVAS = 60, CADA = 5 * 60e3, ENFRIA = 30e3;
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
-  // Lo que costaría generar cada tipo con una API de pago (USD por recurso): tabla de referencia que dio Gemini el 29-10-2026, sin verificar (se corrige aquí). Gemelo de herramientas/cola-actions/hooks/precios.ts.
-  const USD = { imagen: 0.04, cancion: 0.08, efecto: 0.002 * 4, video: 0.03 * 5, modelo3d: 0.2 };
-  const ETIQUETA = { imagen: 'imagen', cancion: 'canción', efecto: 'efecto de sonido', video: 'vídeo', modelo3d: 'modelo 3D' };
-  const EFECTO_MAX_BYTES = 400 * 1024;   // un MP3 V0 de ~4 s pesa ~120 KB y una canción de 30 s ~900 KB
-  function tipoDe(exts, bytes) {   // por las extensiones de la salida; la extensión solo da cuatro familias (no separa texto/edición de imagen ni los tres vídeos)
-    if (!exts || !exts.length) return null;
-    const tiene = (...e) => exts.some(x => e.includes(x));
-    if (tiene('mp4', 'webm', 'mov', 'mkv')) return 'video';
-    if (tiene('glb', 'gltf', 'obj', 'fbx', 'blend')) return 'modelo3d';
-    if (tiene('mp3', 'wav', 'ogg', 'flac')) return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
-    return 'imagen';
-  }
-  function leerTitulo(t) {   // «Generar [imagen]: Logo» (o el antiguo «Generar: Logo») -> tipo y título
-    const m = /^Generar(?:\s*\[([^\]]*)\])?:\s*/.exec(t);
-    if (!m) return { titulo: t, tipo: null };
-    const tipo = (m[1] || '').trim().toLowerCase();
-    return { titulo: t.slice(m[0].length), tipo: tipo && tipo !== 'recurso' ? tipo : null };
-  }
-  function tipoDeTitulo(tipo, bytes) {   // el tipo que puso encolar.py en el título; el audio se parte por tamaño
-    if (tipo === 'imagen') return 'imagen';
-    if (tipo === 'video') return 'video';
-    if (tipo === '3d') return 'modelo3d';
-    if (tipo === 'audio') return bytes > 0 && bytes < EFECTO_MAX_BYTES ? 'efecto' : 'cancion';
-    return null;
-  }
+  try { localStorage.removeItem('fansof.gestion.cola.duraciones'); } catch (e) { /* las de antes de la cadencia (-2) */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0;
+  // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
+  const PLAN = 'fansof.gestion.cola.plan';
+  let avance = null;
   const pan = document.createElement('div'); pan.id = 'pan-cola'; pan.hidden = true;
   $('pan-config').parentNode.appendChild(pan);
 
@@ -51,40 +32,54 @@
   const ms = s => s ? Date.parse(s) : NaN;
 
   // ----- datos -----
+  function pintaAvance() {
+    const el = $('cl-prog'); if (!el || !avance) return;
+    const prev = Math.max(Object.values(avance.plan).reduce((a, b) => a + b, 0), avance.hechas + 1);
+    const falta = avance.hechas ? (Date.now() - avance.desde) / 1000 / avance.hechas * (prev - avance.hechas) : null;
+    el.querySelector('b').style.width = Math.min(100, Math.round(100 * avance.hechas / prev)) + '%';
+    $('cl-prog-txt').textContent = avance.hechas + '/' + prev + (falta === null ? '' : ' · faltan ~' + fmt(Math.max(1, falta)));
+  }
+  const prever = (parte, n) => { if (avance) { avance.plan[parte] = n; pintaAvance(); } };
+  const barraAvance = () => cargando ? `<span class="cl-prog-txt" id="cl-prog-txt">leyendo…</span><i class="cl-prog" id="cl-prog"><b></b></i>` : '';
   async function gh(ruta) {
+    try { return await pedir(ruta); } finally { if (avance) { avance.hechas++; pintaAvance(); } }
+  }
+  async function pedir(ruta) {
     const r = await fetch(API + ruta, { headers: { Authorization: 'Bearer ' + token(), Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } });
     if (!r.ok) throw new Error(ruta.split('?')[0] + ' → ' + r.status);
     return r.json();
   }
-  // El `name` de un run es su run-name («Generar [imagen]: Logo»), no el del workflow: el workflow se identifica por su archivo.
-  const etiquetaWf = r => { const f = String(r.path || '').split('/').pop().replace(/\.ya?ml$/, '').replace(/-/g, ' '); return f ? f[0].toUpperCase() + f.slice(1) : String(r.name); };
-  const esGenerar = r => String(r.path || '').endsWith('generar-recurso.yml');
   const carrilDe = L => L.includes('self-hosted') ? (L.find(l => l !== 'self-hosted') || 'self-hosted') : 'github';
-  function duracionRun(jobs) {
-    const ok = jobs.filter(j => j.conclusion === 'success' && j.started_at && j.completed_at); if (!ok.length) return null;
-    return Math.max(1, Math.round((Math.max(...ok.map(j => ms(j.completed_at))) - Math.min(...ok.map(j => ms(j.started_at)))) / 1000));
-  }
   async function enLotes(lista, n, f) { for (let i = 0; i < lista.length; i += n) await Promise.all(lista.slice(i, i + n).map(f)); }
 
   async function actualizar() {
-    const ahora = Date.now();
+    const ahora = Date.now(), antes = leer(PLAN, {});
+    avance = { hechas: 0, desde: ahora, plan: { fijas: 4, jobs: antes.jobs || 0, artefactos: antes.artefactos || 0, commits: antes.commits || 0, activos: antes.activos || 0 } };
     const hechos = (await gh('/actions/runs?status=completed&per_page=100')).workflow_runs;
     const porWf = {};
-    for (const r of hechos) if (r.conclusion === 'success') { const a = porWf[r.workflow_id] || (porWf[r.workflow_id] = []); if (a.length < MUESTRAS) a.push(r); }
-    const cache = leer(DURS, {}), faltan = Object.values(porWf).flat().filter(r => cache[r.id] === undefined), nuevas = faltan.slice(0, MAX_NUEVAS);
-    await enLotes(nuevas, 5, async r => { cache[r.id] = duracionRun((await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs) || 0; });
-    const vivos = new Set(Object.values(porWf).flat().map(r => String(r.id)));
+    for (const r of hechos) if (r.conclusion === 'success' && !esGenerar(r)) { const a = porWf[r.workflow_id] || (porWf[r.workflow_id] = []); if (a.length < MUESTRAS) a.push(r); }
+    const cache = leer(DURS, {}), faltan = [...Object.values(porWf).flat().filter(r => cache[r.id] === undefined), ...cadencias(hechos, cache).piden], nuevas = faltan.slice(0, MAX_NUEVAS);
+    prever('jobs', nuevas.length);
+    await enLotes(nuevas, 5, async r => { const j = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs; cache[r.id] = (esGenerar(r) ? duracionPaso(j) : duracionRun(j)) || 0; });
+    const muestras = cadencias(hechos, cache).muestras;
+    const vivos = new Set([...Object.values(porWf).flat(), ...hechos.filter(esGenerar)].map(r => String(r.id)));
     Object.keys(cache).forEach(k => { if (!vivos.has(k)) delete cache[k]; }); guardar(DURS, cache);
     const medias = {};
-    for (const runs of Object.values(porWf)) { const d = runs.map(r => cache[r.id]).filter(x => x > 0); if (d.length) medias[etiquetaWf(runs[0])] = { seg: Math.round(d.reduce((a, b) => a + b, 0) / d.length), n: d.length }; }
+    const media = d => ({ seg: Math.round(d.reduce((a, b) => a + b, 0) / d.length), n: d.length });
+    for (const runs of Object.values(porWf)) { const d = runs.map(r => cache[r.id]).filter(x => x > 0); if (d.length) medias[etiquetaWf(runs[0])] = media(d); }
+    Object.entries(muestras).forEach(([f, d]) => { if (d.length) medias[f] = mediaCadencia(d); });
+    const todas = Object.values(muestras).flat(), generar = hechos.find(esGenerar);
+    if (generar && todas.length) medias[etiquetaWf(generar)] = mediaCadencia(todas);   // de reserva, para un tipo sin muestras
     // Recursos terminados: el tamaño del artefacto se guarda porque GitHub lo borra al día; el tipo sale del título («Generar [imagen]: Logo»); si no lo dice (pedidos antiguos), de la extensión de lo que el pedido dejó en la rama `recursos` (un commit «Pedido <id>: salida y modelos»).
-    const gs = leer(RECS, {});
-    await enLotes(hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && gs[r.id] === undefined).slice(0, 10), 5, async r => {
+    const gs = leer(RECS, {}), sinVer = hechos.filter(r => esGenerar(r) && r.conclusion === 'success' && gs[r.id] === undefined).slice(0, 10);
+    prever('artefactos', sinVer.length);
+    await enLotes(sinVer, 5, async r => {
       const a = (await gh('/actions/runs/' + r.id + '/artifacts')).artifacts;
       const lt = leerTitulo(String(r.display_title || 'recurso'));
       gs[r.id] = { titulo: lt.titulo, tt: lt.tipo, bytes: a.filter(x => !x.expired).reduce((t, x) => t + x.size_in_bytes, 0), fin: ms(r.updated_at) };
     });
     const sinTipo = Object.entries(gs).filter(([, v]) => v.exts === undefined && !tipoDeTitulo(leerTitulo(v.titulo).tipo || v.tt, v.bytes)).slice(0, 10);
+    prever('commits', precision() && sinTipo.length ? 1 + sinTipo.length : 0);
     if (precision() && sinTipo.length) {
       try {
         const sha = {};
@@ -100,12 +95,17 @@
     // Cola: en curso y en cola, con sus jobs para saber el runner.
     const activos = [...(await gh('/actions/runs?status=in_progress&per_page=30')).workflow_runs, ...(await gh('/actions/runs?status=queued&per_page=100')).workflow_runs];
     const trabajos = []; let extra = 0;
+    prever('activos', Math.min(40, activos.length));
     await enLotes(activos.slice(0, 40), 5, async r => {
-      const jobs = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs, flujo = etiquetaWf(r), arr = jobs.map(j => ms(j.started_at)).filter(x => !isNaN(x));
+      const jobs = (await gh('/actions/runs/' + r.id + '/jobs?per_page=50')).jobs, flujo = flujoDe(r), arr = jobs.map(j => ms(j.started_at)).filter(x => !isNaN(x));
       trabajos.push({ id: r.id, nombre: esGenerar(r) ? leerTitulo(String(r.display_title || flujo)).titulo : flujo, flujo, enCurso: r.status === 'in_progress',
-        carril: carrilDe(jobs.flatMap(j => j.labels || [])), media: medias[flujo] ? medias[flujo].seg : null, arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
+        carril: carrilDe(jobs.flatMap(j => j.labels || [])), media: (medias[flujo] || medias[etiquetaWf(r)] || { seg: null }).seg, gen: esGenerar(r), arranque: arr.length ? Math.min(...arr) : null, ref: r.head_branch + ' · ' + String(r.head_sha).slice(0, 7) });
     });
     extra = Math.max(0, activos.length - 40);
+    // La GPU hace un «Generar recurso» detrás de otro: solo el primero en curso está en ella, desde que acabó el último (o desde que arrancó, si es después); los demás en curso esperan su media entera.
+    const finGen = Math.max(0, ...hechos.filter(esGenerar).map(r => ms(r.updated_at)));
+    trabajos.filter(t => t.gen && t.enCurso).sort((a, b) => (a.arranque || Infinity) - (b.arranque || Infinity))
+      .forEach((t, i) => { t.arranque = i === 0 && t.arranque ? Math.max(finGen, t.arranque) : null; });
     trabajos.sort((a, b) => a.enCurso === b.enCurso ? a.id - b.id : a.enCurso ? -1 : 1);
     let online = null, aviso = '';
     try { online = new Set((await gh('/actions/runners?per_page=50')).runners.filter(r => r.status === 'online').flatMap(r => r.labels.map(l => l.name))); }
@@ -114,6 +114,7 @@
     if (online) online.forEach(l => { if (l.startsWith('yoshi') && !ids.includes(l)) ids.push(l); });
     const carriles = ids.map(id => ({ id, etiqueta: id === 'github' ? 'GitHub (ubuntu)' : id, alojado: id === 'github', encendido: id === 'github' ? true : online ? online.has(id) : null }))
       .sort((a, b) => Number(a.alojado) - Number(b.alojado) || a.id.localeCompare(b.id));
+    guardar(PLAN, avance.plan);
     return { trabajos, extra, carriles, medias, recursos, actualizado: ahora, pendientes: faltan.length - nuevas.length, aviso };
   }
 
@@ -170,11 +171,13 @@
     .cl-barra{height:12px;border:1px solid var(--linea);border-radius:6px;overflow:hidden;background:var(--bg)}.cl-barra i{display:block;height:100%;background:var(--debil)}
     .cl-lane{display:grid;gap:4px;margin-bottom:12px}.cl-strip{display:flex;min-height:48px;border:2px solid var(--texto);border-radius:8px;overflow:hidden}.cl-strip.off{background:repeating-linear-gradient(45deg,var(--bg) 0 8px,var(--panel) 8px 16px)}
     .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
-    .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}`;
+    .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}
+    .cl-refr{display:inline-flex;flex-direction:column;gap:3px;align-items:stretch;min-width:7em}.cl-prog-txt{font:11px var(--mono);color:var(--suave);text-align:center;white-space:nowrap}
+    .cl-prog{display:block;height:6px;border:1px solid var(--texto);border-radius:4px;overflow:hidden;background:var(--bg)}.cl-prog b{display:block;height:100%;width:0;background:var(--acento);transition:width .3s}`;
   document.head.appendChild(estilo);
   function pinta() {
     const t = token(), ahora = Date.now();
-    const cab = `<div class="caja ayuda"><b>Cola de Actions.</b> Lo que espera y corre en GitHub Actions de FansOf-dev, con el tiempo que le queda según la media de cada workflow (sin contar la espera). Si un runner está apagado, su cola no corre. Se refresca solo cada 5 minutos mientras está abierta.</div>`;
+    const cab = `<div class="caja ayuda"><b>Cola de Actions.</b> Lo que espera y corre en GitHub Actions de FansOf-dev, con el tiempo que le queda según la media de cada workflow (sin contar la espera; Generar recurso, por tipo y con la cadencia de la GPU de Yoshi). Si un runner está apagado, su cola no corre. Se refresca solo cada 5 minutos mientras está abierta.</div>`;
     const clave = t ? '' : `<form class="caja" id="cl-clave"><label>Token de GitHub (solo lectura)<input type="password" id="cl-tok" autocomplete="off" placeholder="github_pat_…"></label>
       <div class="meta">Se crea en GitHub › Settings › Developer settings › Fine-grained tokens: solo el repo ${REPO}, permisos de solo lectura en <b>Actions</b> y <b>Administration</b> (para saber si yoshi está encendido); si activas la precisión media, también <b>Contents</b> (para saber de qué tipo es cada recurso). Queda en este navegador y no sale de aquí hacia ningún sitio salvo api.github.com.</div>
       <div class="accion"><button type="submit" class="fuerte">Guardar token</button></div></form>`;
@@ -182,20 +185,22 @@
     if (t && snap) {
       const F = calcular(ahora);
       cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
-        + `<button type="button" id="cl-ref">Refrescar</button><button type="button" class="enlace" id="cl-olvida">Olvidar token</button></div>`
+        + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span><button type="button" class="enlace" id="cl-olvida">Olvidar token</button></div>`
         + `<div class="cl-bar"><label class="cl-op"><input type="checkbox" id="cl-prec"${precision() ? ' checked' : ''}> Precisión media: comprobar los archivos de cada recurso (más lento; pide el permiso Contents)</label><label class="cl-op">Límite semanal de referencia (tokens, opcional) <input type="number" id="cl-lim" min="0" step="1000" value="${limite() || ''}" style="width:9em"></label></div>`
         + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '') + '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Actualizado hace ${fmt((ahora - snap.actualizado) / 1000)}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}</div>`;
-    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b></div>`;
+    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}</div>`;
     pan.innerHTML = cab + clave + `<div class="aviso" id="cl-aviso" role="alert"></div>` + cuerpo;
+    pintaAvance();
   }
   async function cargar(fuerza) {
     if (!token() || cargando) { pinta(); return; }
     if (!fuerza && snap && Date.now() - ultimo < CADA) { pinta(); return; }
     cargando = true; pinta();
-    try { snap = await actualizar(); ultimo = Date.now(); pinta(); }
-    catch (e) { pinta(); $('cl-aviso').textContent = /→ (401|403|404)/.test(e.message) ? 'GitHub no acepta el token (' + e.message + '). Revisa que no haya caducado y que sea de este repo.' : 'No pude leer GitHub: ' + e.message; }
-    cargando = false;
+    let fallo = null;
+    try { snap = await actualizar(); ultimo = Date.now(); } catch (e) { fallo = e; }
+    cargando = false; avance = null; pinta();
+    if (fallo) $('cl-aviso').textContent = /→ (401|403|404)/.test(fallo.message) ? 'GitHub no acepta el token (' + fallo.message + '). Revisa que no haya caducado y que sea de este repo.' : 'No pude leer GitHub: ' + fallo.message;
   }
   pan.onclick = ev => {
     const b = ev.target.closest('button'); if (!b) return;

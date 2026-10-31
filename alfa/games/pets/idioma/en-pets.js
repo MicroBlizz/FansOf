@@ -137,4 +137,5 @@ IDIOMA.add({
   "DIENTES": "TEETH",
   "CARA": "FACE",
   "BAÑO": "TOILET",
+  "CRIATURA": "CREATURE",
 });

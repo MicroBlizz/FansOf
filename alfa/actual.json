@@ -1,8 +1,8 @@
 {
- "build": 747,
- "hash": "b600014",
- "fecha": "2026-10-31T14:17:02Z",
- "mensaje": "Cola de Actions (web): vista Configuración con las instrucciones del mod y los ajustes",
+ "build": 748,
+ "hash": "40a6cdb",
+ "fecha": "2026-10-31T15:32:40Z",
+ "mensaje": "Pets: el arte kawaii en el prototipo (bebés sentados de los 8 Animales Locos, CrazyBunny dormido en su camita y Lola)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -13,7 +13,7 @@
   "jump": "0.3.16",
   "karts": "0.7.15",
   "nova": "0.3.26",
-  "pets": "0.1.4",
+  "pets": "0.1.5",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",
   "rumble": "0.9.158",

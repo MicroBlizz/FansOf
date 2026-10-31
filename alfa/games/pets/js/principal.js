@@ -33,9 +33,9 @@ function ptFotograma(ms) {
   ptPintaOficina(ctx, PT_V.W, PT_V.H, dia);
   PT_UI.wob = Math.max(0, PT_UI.wob - 0.02);
   if (!NUCLEO.desarrollo) ptPintaHuevo(ctx, 270, 380, 90, '#ff9a3c', t, { bufanda: true });
-  else if (SAVE.fase === 'entrevista' || (PT_UI.volverA === '' && SAVE.fase === 'horario')) ptPintaLola(ctx, 150, 420, 1, t);
+  else if (SAVE.fase === 'entrevista' || (PT_UI.volverA === '' && SAVE.fase === 'horario')) { if (!ptPintaLolaArte(ctx, 200, 420, 0.75, t)) ptPintaLola(ctx, 150, 420, 1, t); }
   else if (SAVE.fase === 'huevos') {
-    ptPintaLola(ctx, 90, 220, 0.6, t);
+    if (!ptPintaLolaArte(ctx, 100, 190, 0.55, t)) ptPintaLola(ctx, 90, 220, 0.6, t);
     SAVE.huevos.forEach((id, i) => {
       const c = ptCriatura(id), sel = PT_UI.elegido === i;
       if (sel) { ctx.fillStyle = 'rgba(255,203,61,0.35)'; ctx.beginPath(); ctx.arc(PT_HUEVO_X[i], PT_HUEVO_Y, 82, 0, 7); ctx.fill(); }

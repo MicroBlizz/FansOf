@@ -1,25 +1,31 @@
 // Fans Of Pets · ARTE: los dibujos kawaii de las criaturas que ya existen (salen de Yoshi y se guardan en img/criaturas/) y cómo se pintan.
 // Una criatura sin dibujo sigue saliendo como el blob provisional de pintar.js. La ducha se pinta tras una mampara pixelada (docs/pets/diseno.md).
 'use strict';
-// criatura → etapa → pose → archivo. Las poses: base, comer, beber, bano, dientes, cara y ducha
+// criatura → etapa → pose → archivo. Las poses: base, comer, beber, bano, dientes, cara, ducha y dormir (en su camita).
+// Una pose que falta se pinta con la base. Los bebés van sentados, como un peluche (docs/pets/evoluciones.md)
 const PT_ARTE = {
-  'animales:bunny': { bebe: ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha'] },
+  'animales:bunny': { bebe: ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha', 'dormir'] },
+  'animales:squirrel': { bebe: ['base'] },
+  'animales:beaver': { bebe: ['base'] },
+  'animales:fox': { bebe: ['base'] },
+  'animales:meercat': { bebe: ['base'] },
+  'animales:junkcoon': { bebe: ['base'] },
+  'animales:mechavaca': { bebe: ['base'] },   // de bebé es una vaca con un robot de juguete: el robot de verdad llega en el adulto
+  'animales:huron': { bebe: ['base'] },
 };
 // el cuidado que se está viendo → la pose que lo dibuja
 const PT_POSE = { comer: 'comer', beber: 'beber', banar: 'ducha', dientes: 'dientes', cara: 'cara', bano: 'bano' };
-const PT_IMG = {};   // 'animales:bunny/bebe/comer' → Image (se carga la primera vez que hace falta)
+const PT_IMG = {};   // 'img/criaturas/animales-bunny-bebe-comer.webp' → Image (se carga la primera vez que hace falta)
 
+function ptCarga(ruta) {
+  if (!PT_IMG[ruta]) { const img = new Image(); img.src = ruta; PT_IMG[ruta] = img; }
+  const img = PT_IMG[ruta];
+  return img.complete && img.naturalWidth ? img : null;
+}
 function ptImagen(id, etapa, pose) {
   const poses = PT_ARTE[id] && PT_ARTE[id][etapa];
   if (!poses || !poses.includes(pose)) return null;
-  const clave = id + '/' + etapa + '/' + pose;
-  if (!PT_IMG[clave]) {
-    const img = new Image();
-    img.src = `img/criaturas/${id.replace(':', '-')}-${etapa}-${pose}.webp`;
-    PT_IMG[clave] = img;
-  }
-  const img = PT_IMG[clave];
-  return img.complete && img.naturalWidth ? img : null;
+  return ptCarga(`img/criaturas/${id.replace(':', '-')}-${etapa}-${pose}.webp`);
 }
 const ptTieneArte = (id, etapa) => !!(PT_ARTE[id] && PT_ARTE[id][etapa]);
 
@@ -53,8 +59,10 @@ function ptPintaMampara(ctx, img, x, y0, lado) {   // y0: el borde de arriba del
 // el bebé con su dibujo: respira, bota al cuidarlo y cambia de pose mientras dura el cuidado. e: { dormida, triste, anim, at }
 function ptPintaBebeArte(ctx, id, x, y, r, t, e) {
   const dura = PETS.poseSegundos, a = e.anim && t - e.at < dura ? e.anim : '', p = a ? (t - e.at) / dura : 0;
-  const pose = (a && PT_POSE[a]) || 'base', img = ptImagen(id, 'bebe', pose) || ptImagen(id, 'bebe', 'base');
+  let pose = e.dormida ? 'dormir' : (a && PT_POSE[a]) || 'base', img = ptImagen(id, 'bebe', pose);
+  if (!img) { pose = 'base'; img = ptImagen(id, 'bebe', 'base'); }   // sin esa pose (o aún cargando): la base
   if (!img) return false;   // aún cargando: que pinte el blob
+  const cama = pose === 'dormir';   // dormida en su camita: el dibujo ya trae su zeta
   const lado = r * PETS.arte.lienzo, resp = e.dormida ? Math.sin(t * 1.6) * 0.025 : Math.sin(t * 3) * 0.02;
   const salto = a && !e.dormida ? Math.abs(Math.sin(p * Math.PI * 4)) * 14 * (1 - p) : 0, suelo = y + r * 1.0;
   ctx.save();
@@ -62,11 +70,21 @@ function ptPintaBebeArte(ctx, id, x, y, r, t, e) {
   if (pose === 'ducha') ptPintaMampara(ctx, img, x, suelo - salto - lado * PETS.arte.pies, lado);
   else {
     ctx.translate(x, suelo - salto); ctx.scale(1 + resp, 1 - resp);
-    if (e.dormida) ctx.filter = 'brightness(0.75)';
+    if (e.dormida) ctx.filter = cama ? 'brightness(0.85)' : 'brightness(0.75)';
     ctx.drawImage(img, -lado / 2, -lado * PETS.arte.pies, lado, lado);
     ctx.filter = 'none';
   }
   ctx.restore();
-  ptPintaEfecto(ctx, x, y - salto, r, t, { dormida: e.dormida, triste: e.triste }, '', p);   // las zetas y la lágrima de pintar.js
+  ptPintaEfecto(ctx, x, y - salto, r, t, { dormida: e.dormida && !cama, triste: e.triste }, '', p);   // las zetas y la lágrima de pintar.js
+  return true;
+}
+
+// Lola con su dibujo (la de la entrevista, con la carpeta). x, y: el centro de su cara, como ptPintaLola de pintar.js; s: la escala
+const PT_LOLA_DIBUJO = { cara: [357, 209], escala: 0.8 };   // dónde está la cara en el lienzo de 640 y cuánto se amplía
+function ptPintaLolaArte(ctx, x, y, s, t) {
+  const img = ptCarga('img/lola/entrevista.webp');
+  if (!img) return false;
+  const k = s * PT_LOLA_DIBUJO.escala, b = Math.sin(t * 2) * 3;
+  ctx.drawImage(img, x - PT_LOLA_DIBUJO.cara[0] * k, y + b - PT_LOLA_DIBUJO.cara[1] * k, 640 * k, 640 * k);
   return true;
 }

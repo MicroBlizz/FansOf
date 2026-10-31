@@ -83,7 +83,7 @@ function pintaMundo() {
   pintaTextos();
   G.setTransform(k, 0, 0, k, 0, 0);
 }
-function pintaArmasSuelo() { /* los charcos se pintan con las armas; aquí irían marcas del suelo en el futuro */ }
+function pintaArmasSuelo() { pintaCharcos(); }   // lo que va pegado al suelo, debajo de todo (js/armas.js)
 
 function pintaJugador() {
   const J = JUEGO, yo = J.yo;

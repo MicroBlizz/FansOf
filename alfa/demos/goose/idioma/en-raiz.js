@@ -1,6 +1,8 @@
 // Fans Of · Inglés de la ficha de Fans of Goose en la biblioteca de la página de la raíz y de sus notas de versión.
 'use strict';
 IDIOMA.add({
+  "Los charcos de los Huevos podridos se quedan en el suelo, debajo del héroe y de las ocas, y son más transparentes: ya no te pierdes de vista.": "The Rotten eggs puddles now stay on the ground, under the hero and the geese, and are more see-through: you won't lose sight of yourself anymore.",
+  "Phony quería vender el charco como piscina con vistas. Microblizz lo ha bajado al suelo, que es donde van los charcos.": "Phony wanted to sell the puddle as a pool with a view. Microblizz moved it down to the floor, where puddles belong.",
   "<b>SE LEE MEJOR</b>: la letra más pequeña del juego es un poco más grande.": "<b>EASIER TO READ</b>: the game's smallest text is a bit bigger.",
   "En ASPECTO las capas y farolillos van por páginas y ya no se meten debajo de VOLVER; en móviles bajos, «Cómo se juega» se abre con su botón y el texto del Contrarreloj ya no pisa tu mejor tiempo.": "In LOOKS, cloaks and lanterns now come in pages and no longer slip under BACK; on short phones, «How to play» opens with its own button and the Time Trial text no longer covers your best time.",
   "Phony quería la letra aún más pequeña para meter más letra pequeña. Microblizz se ha puesto las gafas y ha dicho que no.": "Phony wanted even smaller text to fit in more fine print. Microblizz put on his glasses and said no.",

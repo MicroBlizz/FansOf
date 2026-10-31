@@ -195,18 +195,20 @@ function avanzaProyectiles(dt) {
 }
 
 // --- dibujo de las armas ---
-function pintaArmas() {
-  const J = JUEGO, yo = J.yo;
-  // charcos
-  const c = CHARCOS.lista;
+// los charcos, en el suelo: debajo del héroe y de las ocas y medio transparentes (31-10-2026, Daniel: «el charco verde lo tapa todo»)
+function pintaCharcos() {
+  const J = JUEGO, c = CHARCOS.lista;
   for (let i = 0; i < CHARCOS.n; i++) {
     const o = c[i], a = Math.min(1, o.vida / 0.6);
     const spr = o.malo ? 'fx-charco-malo' : 'fx-charco';
-    if (SPR[spr]) { G.globalAlpha = 0.85 * a; pinta(spr, o.x, o.y, i % 2 === 1, false, (o.r * 2.2) / SPR[spr].w); }   // el charco de Yoshi
+    if (SPR[spr]) { G.globalAlpha = 0.55 * a; pinta(spr, o.x, o.y, i % 2 === 1, false, (o.r * 2.2) / SPR[spr].w); }   // el charco de Yoshi
     else { G.globalAlpha = 0.45 * a; disco(o.x, o.y, Math.round(o.r), Math.round(o.r * 0.7), o.malo ? '#9a3fbf' : '#6fbf2a'); }
-    G.globalAlpha = 0.7 * a; const b = (J.t * 3 + i) % 1; disco(o.x + Math.sin(i * 7 + J.t) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, Math.round(1 + b * 2), Math.round(1 + b * 2), o.malo ? '#e0a0ff' : '#c8f25a');   // la burbuja
+    G.globalAlpha = 0.5 * a; const b = (J.t * 3 + i) % 1; disco(o.x + Math.sin(i * 7 + J.t) * o.r * 0.4, o.y + Math.cos(i * 5) * o.r * 0.3, Math.round(1 + b * 2), Math.round(1 + b * 2), o.malo ? '#e0a0ff' : '#c8f25a');   // la burbuja
   }
   G.globalAlpha = 1;
+}
+function pintaArmas() {
+  const J = JUEGO, yo = J.yo;
   pintaArmasNuevas();   // las ondas de la campana y las piedras (js/armas2.js)
   pintaArmasMas();      // cepos, herraduras, notas y rayos (js/armas3.js)
   // latigazos

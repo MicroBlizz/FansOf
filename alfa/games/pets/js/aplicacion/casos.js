@@ -1,5 +1,5 @@
 // Fans Of Pets · aplicación · CASOS DE USO: una función por cosa que hace el jugador o el reloj (responder la entrevista, elegir huevo, poner
-// el horario, cuidar, dormir, simular lo que ha pasado) y las de DEV. No tienen reglas: cargan la partida, le piden al dominio que haga la
+// el horario, cuidar, jugar, dormir, la contraoferta, ascender, despedir, otro huevo, simular lo que ha pasado) y las de DEV. No tienen reglas: cargan la partida, le piden al dominio que haga la
 // acción, la guardan y devuelven el resultado para que la pantalla lo cuente. Los puertos que necesitan (se los da principal.js):
 //   almacen: { cargaPartida() → json | null, guardaPartida(json) }     reloj: { ahora() → ms, minutoDelDia(ms) → 0..1439, adelanta(horas) }
 'use strict';
@@ -30,16 +30,23 @@ PT.creaCasos = ({ reglas, catalogo, almacen, reloj }) => {
     eligeHuevo: i => conGuardado(partida.eligeHuevo(i)),
     ponHorario: datos => conGuardado(partida.ponHorario(datos, reloj.ahora(), minutoDelDia)),
 
-    // simula desde la última vez: { nacio, durmio, desperto, crecido } (crecido: la primera vez que está lista para crecer)
+    // simula desde la última vez: lo de PT.Partida ({ nacio, durmio, desperto, crecio, carta, convencida, seMarcha }) más
+    // { crecido } la primera vez que está lista para crecer o ascender
     simula() {
-      const pasa = partida.simulaHasta(reloj.ahora(), minutoDelDia);
-      if (partida.bebe && partida.bebe.avisaCrecido()) pasa.crecido = true;
-      if (partida.bebe) guarda();
+      const pasa = partida.simulaHasta(reloj.ahora(), minutoDelDia), m = partida.mascota;
+      if (m && partida.fase === 'mascota' && m.avisaCrecido()) pasa.crecido = true;
+      if (m) guarda();
       return pasa;
     },
 
     cuida: tipo => conGuardado(partida.cuida(tipo)),
+    juega: id => conGuardado(partida.juega(id)),
     dormirODespertar: () => conGuardado(partida.dormirODespertar(reloj.ahora(), minutoDelDia)),
+    contraoferta: () => conGuardado(partida.contraoferta()),
+    asciende: () => conGuardado(partida.asciende()),
+    despide: () => conGuardado(partida.despide()),
+    // tras el ascenso o el final: 3 huevos nuevos, con un azar de verdad como semilla
+    otroHuevo: azar => conGuardado(partida.otroHuevo(PT.huevos.hash('otro|' + azar))),
 
     // DEV
     reinicia() { partida = PT.Partida.nueva(reglas, catalogo); guarda(); },

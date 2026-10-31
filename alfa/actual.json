@@ -1,8 +1,8 @@
 {
- "build": 755,
- "hash": "805d414",
- "fecha": "2026-10-31T22:36:22Z",
- "mensaje": "Pets: el prototipo entero en capas (dominio, casos de uso, adaptadores) con 73 tests, como beta de las normas de calidad",
+ "build": 756,
+ "hash": "0e5cee8",
+ "fecha": "2026-10-31T23:02:44Z",
+ "mensaje": "Pets: las cuatro etapas, la carrera, el ascenso a jefa, la dimisión y el álbum, con el arte de Animales Locos y 107 tests",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -13,7 +13,7 @@
   "jump": "0.3.16",
   "karts": "0.7.15",
   "nova": "0.3.30",
-  "pets": "0.1.7",
+  "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",
   "rumble": "0.9.158",

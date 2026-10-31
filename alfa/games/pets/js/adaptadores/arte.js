@@ -1,21 +1,15 @@
 // Fans Of Pets · adaptador · ARTE: los dibujos kawaii de las criaturas que ya existen (salen de Yoshi y se guardan en img/criaturas/) y cómo se
-// pintan. Una criatura sin dibujo sigue saliendo como el blob provisional de pintar.js. La ducha se pinta tras una mampara pixelada
+// pintan, en cada etapa (de bebé con sus poses; de niña, adolescente y adulta con su base; de jefa, una por rama). Una criatura sin
+// dibujo sigue saliendo como el blob provisional de pintar.js. La ducha se pinta tras una mampara pixelada
 // (docs/pets/diseno.md). Solo lee el estado que le pasan.
 'use strict';
 PT.arte = (() => {
   // criatura → etapa → poses con dibujo. Las poses: base, comer, beber, bano, dientes, cara, ducha y dormir (en su camita).
   // Una pose que falta se pinta con la base. Los bebés van sentados, como un peluche (docs/pets/evoluciones.md)
   const POSES_BEBE = ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha', 'dormir'];
-  const ARTE = {
-    'animales:bunny': { bebe: POSES_BEBE },
-    'animales:squirrel': { bebe: POSES_BEBE },
-    'animales:beaver': { bebe: POSES_BEBE },
-    'animales:fox': { bebe: POSES_BEBE },
-    'animales:meercat': { bebe: POSES_BEBE },
-    'animales:junkcoon': { bebe: POSES_BEBE },
-    'animales:mechavaca': { bebe: POSES_BEBE },   // de bebé es una vaca con un robot de juguete: el robot de verdad llega en el adulto
-    'animales:huron': { bebe: POSES_BEBE },
-  };
+  const RAMAS = ['operaciones', 'creativo', 'personas', 'gamberro', 'siesta'];
+  const ANIMALES = ['bunny', 'squirrel', 'beaver', 'fox', 'meercat', 'junkcoon', 'mechavaca', 'huron'];   // MechaVaca: de bebé es una vaca con un robot de juguete; el robot de verdad llega en el adulto
+  const ARTE = Object.fromEntries(ANIMALES.map(k => ['animales:' + k, { bebe: POSES_BEBE, nino: ['base'], adolescente: ['base'], adulto: ['base'], jefe: RAMAS }]));
   // dónde está el patito en la ducha de cada criatura (x, y, ancho y alto en fracción del dibujo); si falta, el de PETS.mampara.delante
   const PATITO = {
     'animales:squirrel': [0.665, 0.76, 0.17, 0.15], 'animales:beaver': [0.662, 0.662, 0.17, 0.203], 'animales:fox': [0.676, 0.727, 0.13, 0.145],
@@ -75,19 +69,19 @@ PT.arte = (() => {
     ctx.restore();
   }
 
-  // qué pose toca y su imagen (o la base si falta); null si aún no hay nada cargado
-  function poseDe(id, e, a) {
-    const pose = e.dormida ? 'dormir' : (a && POSE[a]) || 'base';
-    const img = imagen(id, 'bebe', pose);
+  // qué pose toca en esa etapa y su imagen (o la base si falta); null si aún no hay nada cargado. Un jefe: su rama es la pose
+  function poseDe(id, etapa, e, a) {
+    const pose = etapa === 'jefe' ? e.rama : e.dormida ? 'dormir' : (a && POSE[a]) || 'base';
+    const img = imagen(id, etapa, pose);
     if (img) return { pose, img };
-    const base = imagen(id, 'bebe', 'base');
+    const base = imagen(id, etapa, 'base');
     return base ? { pose: 'base', img: base } : null;
   }
-  // el bebé con su dibujo: respira, bota al cuidarlo y cambia de pose mientras dura el cuidado. e: { dormida, triste, anim, at }
-  // Devuelve false si el dibujo aún se está cargando (que pinte el blob)
-  function bebe(ctx, id, x, y, r, t, e) {
+  // la criatura con su dibujo, en su etapa (o 'jefe' con e.rama): respira, bota al cuidarla y cambia de pose mientras dura el cuidado.
+  // e: { dormida, triste, anim, at, rama }. Devuelve false si el dibujo aún se está cargando (que pinte el blob)
+  function criatura(ctx, id, etapa, x, y, r, t, e) {
     const dura = PETS.poseSegundos, a = e.anim && t - e.at < dura ? e.anim : '', p = a ? (t - e.at) / dura : 0;
-    const d = poseDe(id, e, a);
+    const d = poseDe(id, etapa, e, a);
     if (!d) return false;
     const cama = d.pose === 'dormir';   // dormida en su camita: el dibujo ya trae su zeta
     const lado = r * PETS.arte.lienzo, resp = e.dormida ? Math.sin(t * 1.6) * 0.025 : Math.sin(t * 3) * 0.02;
@@ -115,5 +109,5 @@ PT.arte = (() => {
     return true;
   }
 
-  return { tiene, ids, bebe, lola };
+  return { tiene, ids, criatura, lola };
 })();

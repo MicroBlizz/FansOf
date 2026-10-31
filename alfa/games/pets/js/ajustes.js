@@ -1,6 +1,6 @@
 // Fans Of Pets · AJUSTES: el nombre del juego para core y TODAS las cifras del prototipo (huevo, bebé, necesidades, sueño, horario de vida,
 // modos de ritmo, tope de ausencia y efecto de cada cuidado). Se carga antes de lo común. Calibrar Pets es tocar solo este archivo.
-// Prototipo tras el modo dev (NUCLEO.desarrollo): llega hasta el bebé. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
+// Prototipo tras el modo dev (NUCLEO.desarrollo): de la entrevista al ascenso a jefe. Diseño: docs/pets/PLAN.md y docs/pets/diseno.md.
 'use strict';
 const AJUSTES = {
   // sin `id` a propósito: así la cuenta de core queda apagada y la partida del prototipo vive solo en este navegador.
@@ -15,11 +15,13 @@ const PETS = {
   mataSanadores: { animales: 'huron', nomuertos: 'sombra', streamers: 'hater', heroes: 'arpia', ciber: 'dron', memes: 'clickbait', gamer: 'campero', olvidados: 'espia', pop: 'paparazzi' },
   huevos: 3,                    // los huevos misteriosos que salen tras la entrevista (de facciones distintas, para que se distingan por el color)
   huevoHoras: 2,                // lo que tarda en eclosionar, en todos los modos
-  // los modos de ritmo: cuánto dura el bebé (horas que tiene que pasar bien cuidado) y cuánto más deprisa bajan las necesidades
+  // las etapas de la criatura, en orden; después del adulto viene el ascenso a jefe
+  etapas: ['bebe', 'nino', 'adolescente', 'adulto'],
+  // los modos de ritmo: cuántas horas bien cuidada dura cada etapa (el calendario de docs/pets/diseno.md) y cuánto más deprisa bajan las necesidades
   ritmos: {
-    rapido: { bebeHoras: 6, gasto: 1.5 },
-    medio: { bebeHoras: 24, gasto: 1 },
-    largo: { bebeHoras: 48, gasto: 0.8 },
+    rapido: { horas: { bebe: 6, nino: 12, adolescente: 18, adulto: 36 }, gasto: 1.5 },
+    medio: { horas: { bebe: 24, nino: 36, adolescente: 36, adulto: 72 }, gasto: 1 },
+    largo: { horas: { bebe: 48, nino: 72, adolescente: 72, adulto: 144 }, gasto: 0.8 },
   },
   ritmoPorDefecto: 'medio',
   // horario de vida, en minutos desde las 0:00; el jugador lo cambia (de media en media hora)
@@ -39,10 +41,45 @@ const PETS = {
   crecerMinimo: 15,
   triste: 25,                   // por debajo, pone cara triste
   llena: 95,                    // por encima, no quiere más de eso
-  // lo que hace cada cuidado
-  cuidados: { comer: { hambre: 35 }, beber: { sed: 40 }, banar: { limpieza: 70 } },
-  // qué necesidades se ven en cada etapa (el diseño estrena la diversión en el niño)
-  visibles: { bebe: ['hambre', 'sed', 'sueno', 'limpieza'] },
+  // lo que hace cada cuidado (la primera clave es la necesidad que mira para decir «no quiere más»)
+  cuidados: {
+    comer: { hambre: 35 }, beber: { sed: 40 }, banar: { limpieza: 70 },
+    dientes: { limpieza: 15 }, cara: { limpieza: 15 }, bano: { limpieza: 10 },   // el aseo, desde el niño
+    chuche: { diversion: 15, hambre: 10 },                                         // las chucherías, desde el niño
+    jugar: { diversion: 40 },                                                      // un minijuego
+  },
+  // qué necesidades se ven en cada etapa (el diseño estrena la diversión en el niño) y qué cuidados hay en cada una
+  visibles: {
+    bebe: ['hambre', 'sed', 'sueno', 'limpieza'],
+    nino: ['hambre', 'sed', 'sueno', 'limpieza', 'diversion'],
+    adolescente: ['hambre', 'sed', 'sueno', 'limpieza', 'diversion'],
+    adulto: ['hambre', 'sed', 'sueno', 'limpieza', 'diversion'],
+  },
+  desbloquea: {
+    bebe: ['comer', 'beber', 'banar', 'jugar'],
+    nino: ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano', 'chuche', 'jugar'],
+    adolescente: ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano', 'chuche', 'jugar'],
+    adulto: ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano', 'chuche', 'jugar'],
+  },
+  // los minijuegos de cada etapa (docs/pets/minijuegos.md): se abren tal cual (sus demos) y de momento cuentan como jugados al abrirlos
+  minijuegos: {
+    bebe: [{ id: 'pop', nombre: 'Fans of Pop', ruta: '../../demos/pop/' }],
+    nino: [{ id: 'merge', nombre: 'Fans of Merge', ruta: '../../demos/merge/' }, { id: 'swipe', nombre: 'Fans of Swipe', ruta: '../../demos/swipe/' }],
+    adolescente: [{ id: 'snakes', nombre: 'Fans of Snakes', ruta: '../../demos/snakes/' }],
+    adulto: [{ id: 'jump', nombre: 'Fans of Jump', ruta: '../jump/' }, { id: 'crush', nombre: 'Fans of Crush', ruta: '../crush/' }, { id: 'goose', nombre: 'Fans of Goose', ruta: '../../demos/goose/' }, { id: 'boom', nombre: 'Fans of Boom', ruta: '../boom/' }],
+  },
+  jugadasDia: 6,                // minijuegos que cuentan al día
+  // las chucherías: cuántas al día sin empacho; con empacho (horas) no quiere comida de verdad y duerme peor
+  chuches: { topeDia: 3, empachoHoras: 3, suenoEmpacho: 0.5 },
+  // el día de la criatura se cierra al acostarse. Un día es bueno si ha estado descuidada (una necesidad visible por debajo de crecerMinimo)
+  // menos de esta parte de sus minutos despierta; está «al mínimo» si alguna visible está a 0
+  dia: { buenoHasta: 0.2, alMinimoDesde: 0.8 },
+  // el ascenso: al acabar el adulto con al menos esta parte de días buenos; la rama según el estilo (docs/pets/evoluciones.md)
+  ascenso: { diasBuenos: 0.7, gamberroHasta: 0.85, siestasDesde: 0.7 },
+  // la dimisión (docs/pets/diseno.md): días seguidos al mínimo hasta la carta, días de preaviso y contraofertas por etapa
+  dimision: { diasSeguidos: 3, preavisoDias: 2, contraofertas: 2, repone: 40 },
+  // el tamaño en pantalla de cada etapa (radio del dibujo) y del jefe
+  tamano: { bebe: 115, nino: 125, adolescente: 135, adulto: 145, jefe: 150 },
   // el dibujo kawaii (arte.js): cuántos segundos se ve la pose de un cuidado y de qué tamaño son los píxeles de la mampara de la ducha
   poseSegundos: 2.4,
   // la mampara, en fracciones del dibujo de la ducha (de debajo de la alcachofa a los pies, sin tapar el patito) y el tamaño de sus píxeles

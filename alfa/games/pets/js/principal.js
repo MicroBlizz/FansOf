@@ -39,10 +39,12 @@ PT.lienzo = (() => {
     const c = p.criatura, falta = (p.eclosionaEn - PT.casos.ahora()) / (PETS.huevoHoras * 60 * PT_MINUTO);
     PT.pintor.huevo(ctx, 270, 430, 110, PT.criaturas.color(c.fac), t, { wob: PT.ui.wob + (falta < 0.1 ? 0.25 : 0), bufanda: PT.ui.bufanda, grieta: falta < 0.25 ? 1 - falta * 4 : 0 });
   }
-  function escenaBebe(ctx, p, t) {
-    const c = p.criatura, b = p.bebe;
-    const e = { dormida: b.dormida, triste: b.triste, anim: PT.ui.anim, at: PT.ui.at };
-    if (!PT.arte.tiene(c.id, 'bebe') || !PT.arte.bebe(ctx, c.id, 270, 440, 115, t, e)) PT.pintor.bebe(ctx, 270, 440, 115, PT.criaturas.color(c.fac), t, e);
+  // la mascota en su etapa; en el ascenso, su jefa; en el final, triste
+  function escenaMascota(ctx, p, t) {
+    const c = p.criatura, m = p.mascota, jefa = p.fase === 'ascenso', etapa = jefa ? 'jefe' : m.etapa;
+    const r = PETS.tamano[etapa], ui = PT.ui;
+    const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama };
+    if (!PT.arte.tiene(c.id, etapa) || !PT.arte.criatura(ctx, c.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(c.fac), t, e);
   }
   function escena(ctx, p, t) {
     const ui = PT.ui;
@@ -50,12 +52,12 @@ PT.lienzo = (() => {
     else if (p.fase === 'entrevista' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
     else if (p.fase === 'huevos') escenaHuevos(ctx, p, t);
     else if (p.fase === 'huevo' || ui.volverA === 'huevo') escenaHuevo(ctx, p, t);
-    else if (p.fase === 'bebe') escenaBebe(ctx, p, t);
+    else if (p.mascota) escenaMascota(ctx, p, t);
   }
   function fotograma(ms) {
     const t = ms / 1000, ctx = CTX, k = V.sc * V.dpr, p = PT.casos.partida;
     ctx.setTransform(k, 0, 0, k, 0, 0);
-    const conHorario = p.fase === 'bebe' || p.fase === 'huevo';
+    const conHorario = p.fase === 'mascota' || p.fase === 'huevo';
     PT.pintor.oficina(ctx, V.W, V.H, conHorario ? PT.casos.esDia(PT.casos.ahora()) : true);
     PT.ui.wob = Math.max(0, PT.ui.wob - 0.02);
     escena(ctx, p, t);

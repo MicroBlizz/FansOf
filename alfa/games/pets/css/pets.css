@@ -10,7 +10,7 @@
 #pt-cabeza b { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; color: var(--gold); }
 #pt-reloj { font-weight: 800; font-size: 20px; color: var(--ink); }
 
-#pt-dev { position: absolute; left: 10px; top: 72px; display: flex; gap: 6px; align-items: center; padding: 6px 8px; border-radius: 12px; background: rgba(255, 203, 61, 0.92);
+#pt-dev { position: absolute; left: 10px; right: 10px; top: 72px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-radius: 12px; background: rgba(255, 203, 61, 0.92);
   border: 3px solid var(--outline); color: var(--outline); font-size: 14px; }
 #pt-dev button { font-weight: 800; font-size: 14px; padding: 4px 8px; border-radius: 8px; border: 2px solid var(--outline); background: #fff6ea; color: var(--outline); cursor: pointer; }
 

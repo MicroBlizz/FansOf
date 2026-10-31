@@ -18,12 +18,21 @@ PT.botones = (() => {
     clic('pt-horario-listo', guardaHorario);
     clic('pt-tocar', () => { ui.wob = 1.2; dice(PT.frase('tocar')); });
     clic('pt-abrigar', () => { ui.bufanda = true; dice(PT.frase('abrigar')); });
-    clic('pt-comer', () => cuida('comer'));
-    clic('pt-beber', () => cuida('beber'));
-    clic('pt-banar', () => cuida('banar'));
+    for (const t of ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano', 'chuche']) clic('pt-' + t, () => cuida(t));
     clic('pt-dormir', dormir);
-    clic('pt-horario', () => { ui.volverA = PT.casos.partida.fase; pinta(); });
+    clic('pt-horario', () => { ui.volverA = PT.casos.partida.fase; ui.menu = ''; pinta(); });
     clic('pt-sonido', () => { PT.sonido.alterna(); PT.pantallas.refresca(); });
+    enganchaCasa();
+  }
+  // los menús de la casa, el ascenso, la carta y otro huevo
+  function enganchaCasa() {
+    for (const m of ['aseo', 'jugar', 'mas', 'album', 'despedir']) clic('pt-' + m, () => { ui.menu = m; pinta(); });
+    clic('pt-volver', () => { ui.menu = ui.menu === 'album' || ui.menu === 'despedir' ? 'mas' : ''; pinta(); });
+    document.querySelectorAll('.pt-minijuego').forEach(b => { b.onclick = () => { sonido(); juega(b.dataset.juego); }; });
+    clic('pt-contraoferta', contraoferta);
+    clic('pt-ascender', asciende);
+    clic('pt-despedir-si', () => { if (PT.casos.despide().ok) { ui.menu = ''; pinta(); } });
+    clic('pt-otro-huevo', () => { PT.casos.otroHuevo(azarDeVerdad()); ui.elegido = -1; ui.menu = ''; pinta(); });
   }
 
   // la entrevista: cada respuesta se apunta solo en memoria; la del ritmo sí cambia la partida
@@ -75,12 +84,14 @@ PT.botones = (() => {
     ui.anim = tipo;
     ui.at = performance.now() / 1000;
   }
-  const SONIDO_CUIDADO = { comer: 'pop', beber: 'blip', banar: 'heal' };
+  const SONIDO_CUIDADO = { comer: 'pop', beber: 'blip', banar: 'heal', dientes: 'heal', cara: 'heal', bano: 'blip', chuche: 'pop' };
+  const FRASE_ERROR = { durmiendo: 'durmiendo', empacho: 'empacho', 'muchas-chuches': 'muchasChuches', 'muchas-jugadas': 'muchasJugadas' };
   function cuida(tipo) {
     const r = PT.casos.cuida(tipo);
     if (!r.ok) {
-      dice(r.error === 'llena' ? tr(PT.FRASES.llena[tipo]) : PT.frase('durmiendo'));
+      dice(r.error === 'llena' ? tr(PT.FRASES.llena[tipo] || PT.FRASES.llena.comer) : PT.frase(FRASE_ERROR[r.error] || 'durmiendo'));
       sonido('deny');
+      if (r.error === 'muchas-chuches') PT.pantallas.refresca();
       return;
     }
     anima(tipo);
@@ -97,6 +108,40 @@ PT.botones = (() => {
     if (son) sonido(son);
     dice(PT.frase(frase));
     PT.pantallas.refresca();
+  }
+
+  // un minijuego: se abre en otra pestaña y, de momento, cuenta como jugado al abrirlo (prototipo)
+  function juega(id) {
+    const r = PT.casos.juega(id);
+    if (!r.ok) {
+      dice(PT.frase(FRASE_ERROR[r.error] || 'durmiendo'));
+      sonido('deny');
+      return;
+    }
+    const m = PT.casos.partida.mascota.minijuegos.find(x => x.id === id);
+    if (m) window.open(m.ruta, '_blank', 'noopener');
+    anima('jugar');
+    sonido('levelup');
+    dice(PT.frase('jugar'));
+    PT.pantallas.refresca();
+  }
+  function contraoferta() {
+    const r = PT.casos.contraoferta();
+    if (!r.ok) {
+      dice(tr(PT.FRASES.sinContraofertas));
+      sonido('deny');
+      return;
+    }
+    sonido('heal');
+    pinta();
+    dice(tr(PT.FRASES.contraoferta));
+  }
+  function asciende() {
+    const r = PT.casos.asciende();
+    if (!r.ok) return;
+    ui.menu = '';
+    sonido('levelup');
+    pinta();
   }
 
   return { engancha, eligeHuevo, anima };

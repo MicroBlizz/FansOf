@@ -32,9 +32,35 @@ PT.FRASES = {
   tocar: ['El huevo se mueve un poco. Parece que contesta correos ahí dentro.', 'Toc, toc. Dentro alguien dice «estoy en una llamada».', 'Está calentito. Buena señal.'],
   abrigar: ['Le pones una bufanda al huevo. Se le ve más profesional.', 'Bien abrigado, como en la oficina con el aire acondicionado a tope.'],
   nace: '¡Ha nacido {nombre}! Primer día en la empresa.',
-  crecido: '{nombre} ya no es un bebé. El niño llegará en el próximo prototipo: de momento, sigue cuidándola.',
+  crecido: '{nombre} ha terminado su etapa de adulta. Si la has cuidado bien, puede ascender.',
   triste: 'Tiene la cara de un lunes por la mañana. Necesita que la cuides.',
+  // el aseo y las chucherías (desde la niña)
+  dientes: ['Dientes como la sonrisa del becario en su primer día.', 'Se lava los dientes como quien llega tarde a una reunión: rápido y con espuma.'],
+  cara: ['Cara lavada y lista para la videollamada.', 'Un poco de agua y ya parece que ha dormido ocho horas.'],
+  bano: ['Ha ido al baño con el periódico. Nadie pregunta.', 'Pausa reglamentaria. Con lectura.'],
+  chuche: ['Una chuche del cajón de la oficina. Se le ilumina la cara.', 'Azúcar de media tarde: el combustible de cualquier reunión.'],
+  empacho: ['No quiere comida de verdad: le duele la barriga de tanta chuche.', 'Está empachada. Hoy cena ligero, dice.'],
+  muchasChuches: ['Demasiadas chuches por hoy. Ahora le duele la barriga.', 'La máquina de chucherías ha dicho basta. Y su barriga también.'],
+  // los minijuegos
+  jugar: ['Un rato de juego y vuelve con las pilas cargadas.', 'Ha jugado como quien se escapa a la máquina de café: feliz y sin remordimientos.'],
+  muchasJugadas: ['Por hoy ya ha jugado bastante. Mañana más.', 'Hasta el becario descansa. Mañana sigue jugando.'],
+  // crecer, ascender y las cartas
+  crecio: { nino: '{nombre} ya es una niña. Ahora también quiere divertirse y le toca el aseo.', adolescente: '{nombre} ya es adolescente. Mochila, carpeta y cara de examen.', adulto: '{nombre} ya es adulta. Con buen cuidado podrá ascender a jefa.' },
+  listaAscender: '{nombre} está lista para ascender. Pulsa ASCENDER cuando quieras.',
+  noAscender: 'Ha terminado la etapa, pero el cuidado no ha sido bastante bueno. Sigue cuidándola unos días más.',
+  carta: 'Ha dejado una carta de dimisión sobre la mesa. Tienes dos días para convencerla cuidándola… o una contraoferta.',
+  convencida: 'Ha roto la carta de dimisión. Se queda. Por ahora.',
+  contraoferta: 'Acepta la contraoferta. Una taza con su nombre y un poco de dignidad.',
+  sinContraofertas: 'Ya no acepta más ofertas en esta etapa. Solo cuidarla la convence.',
+  seMarcha: 'Se ha ido. Ha dejado la carta, la taza y un post-it que dice «suerte».',
+  despedida: 'Despedida. Se va con su caja de cartón y la planta que nadie regaba.',
+  ascenso: '¡Ascenso! {nombre} ya es {cargo}. La partida pasa al álbum.',
+  // los cargos de cada rama de jefe
+  cargo: { operaciones: 'Jefa de Operaciones', creativo: 'Jefa Creativa', personas: 'Jefa de Personas', gamberro: 'Vicepresidenta de Reuniones Que Podían Ser Un Correo', siesta: 'Jefa de la Siesta' },
 };
+// las etapas y los resultados del álbum, en texto
+PT.ETAPA = { bebe: 'bebé', nino: 'niña', adolescente: 'adolescente', adulto: 'adulta', jefe: 'jefa' };
+PT.RESULTADO = { ascenso: 'ascendió', dimision: 'dimitió', despedida: 'despedida' };
 PT.frase = clave => {   // una frase de esa clave, al azar (es texto de pantalla: aquí sí vale Math.random)
   const l = PT.FRASES[clave];
   return tr(Array.isArray(l) ? l[Math.floor(Math.random() * l.length)] : l);

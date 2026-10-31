@@ -1,0 +1,27 @@
+// Fans of Pop · Inglés: los tutoriales de Lola del 31-10-2026 (ayudas, truco de los duelos, tienda, pase…) y el sello de DESPEDIDO.
+'use strict';
+IDIOMA.add({
+  "DESPEDIDO": "FIRED",
+  "¡Mira abajo: son las ayudas! El MARTILLO revienta del todo la burbuja que toques, sin gastar toque.": "Look down: these are boosters! The HAMMER fully pops the bubble you tap, without using a tap.",
+  "La BOMBA da un golpe a un cuadrado de 3 x 3, tampoco gasta toque. Y +3 TOQUES te da tres toques más en el nivel.": "The BOMB hits a 3 x 3 square, also without using a tap. And +3 TAPS gives you three more taps in the level.",
+  "Se ganan jugando (regalo diario, pase…) y, si no te quedan, se compran con perlas.": "You win them by playing (daily gift, pass…) and, if you run out, you can buy them with pearls.",
+  "En los duelos las ayudas son otras: DESHACER vuelve atrás tu última jugada (y la del rival).": "Duels have different boosters: UNDO takes back your last move (and your rival's).",
+  "La LUPA te marca la jugada ganadora, también a mitad de turno. Si me llevas en el equipo, ¡te regalo una en cada duelo!": "The MAGNIFIER shows you the winning move, even mid-turn. If I'm on your team, I'll give you one free in every duel!",
+  "¡Te cuento mi truco secreto! Parte cada fila en grupos de 4, 2 y 1: una fila de 7 es 4+2+1; una de 5 es 4+1.": "Here's my secret trick! Split each row into groups of 4, 2 and 1: a row of 7 is 4+2+1; a row of 5 is 4+1.",
+  "Al acabar tu turno, cada grupo tiene que quedar por parejas: dos de 4, dos de 2, dos de 1. Si el rival rompe una pareja, tú la vuelves a igualar.": "When you end your turn, every group must come in pairs: two 4s, two 2s, two 1s. If your rival breaks a pair, you even it up again.",
+  "El final: si tras tu jugada solo van a quedar filas de una burbuja, déjale un número impar de ellas. ¡Así la última le toca a él!": "The ending: if after your move only one-bubble rows will be left, leave an odd number of them. That way the last one is theirs!",
+  "Ojo: en pesadilla tus amigos están DESPEDIDOS. Aquí no te ayudan: todo depende de ti.": "Careful: in nightmare your friends are FIRED. They don't help here: it's all up to you.",
+  "¡La tienda! Las PERLAS son las joyas del juego: con ellas compras ayudas, corazones infinitos y bandejas bonitas.": "The shop! PEARLS are the game's jewels: use them to buy boosters, unlimited hearts and pretty trays.",
+  "Las MONEDAS las ganas jugando. Perlas te dan los jefes la primera vez, el regalo diario y el pase… o se compran aquí.": "You earn COINS by playing. Pearls come from bosses the first time, the daily gift and the pass… or you can buy them here.",
+  "En OFERTAS hay packs con descuento y CORAZONES INFINITOS: durante un rato no pierdes ninguno.": "OFFERS has discounted packs and UNLIMITED HEARTS: for a while you don't lose any.",
+  "Sin corazones no se puede jugar. Vuelve uno cada 30 minutos, aunque cierres el juego.": "You can't play without hearts. One comes back every 30 minutes, even with the game closed.",
+  "Si no quieres esperar, aquí puedes llenarlos o ponerte corazones infinitos un rato.": "If you don't want to wait, you can refill them here or get unlimited hearts for a while.",
+  "¡El regalo diario! Cada día hay uno distinto y el del domingo es el más gordo. ¡Vuelve mañana a por el siguiente!": "The daily gift! There's a different one every day and Sunday's is the biggest. Come back tomorrow for the next one!",
+  "¡El Pase de Pop! Al pasar niveles nuevos ganas puntos y subes escalones. Cada escalón tiene su premio.": "The Pop Pass! Beating new levels earns points and moves you up steps. Every step has its prize.",
+  "Los premios premium son para quien compra el pase. Se renueva cada mes, ¡aprovéchalo!": "Premium prizes are for those who buy the pass. It renews every month, make the most of it!",
+  "¡La hucha! Cada nivel nuevo que pasas mete perlas dentro. Cuando tenga bastantes, puedes romperla y quedártelas todas.": "The piggy bank! Every new level you beat puts pearls inside. Once it has enough, you can break it and keep them all.",
+  "¡RACHA! Cada nivel nuevo que pasas sin perder un corazón te da +1 toque al empezar los siguientes, hasta +3.": "STREAK! Every new level you beat without losing a heart gives you +1 tap at the start of the next ones, up to +3.",
+  "Si pierdes un corazón, la racha vuelve a cero. ¡Cuídala!": "If you lose a heart, the streak goes back to zero. Look after it!",
+  "¡Tu equipo está lleno! Elige quién se queda descansando para que entre el nuevo…": "Your team is full! Choose who takes a rest so the new one can join…",
+  "…o hazle sitio comprando un hueco más. Los huecos son para siempre.": "…or make room by buying one more slot. Slots are forever.",
+});

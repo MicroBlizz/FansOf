@@ -31,6 +31,14 @@ const CFG = {
   oleada: { base: 6, porCasilla: 3.1, porSegundo: 0.22, gordaCada: 55, bandadaCada: 38 },
   escala: { porCasilla: 0.085, porSegundo: 0.0022 },   // cuánto más vida tienen los enemigos con la casilla y el tiempo
   monedaProb: 0.025,
+  // los jefes que obligan a esquivar (js/jefes2.js): al bajar de cada tramo de vida, escudo y gran ataque; y zonas rojas cada poco
+  jefes: {
+    tramos: [0.66, 0.33], tramosMadre: [0.75, 0.5, 0.25],   // fracciones de vida donde salta el escudo
+    escudo: 3.2,                       // segundos intocable mientras lanza el gran ataque
+    zonaPrimera: 1.8, zonaCada: 3.4,   // la primera zona y cada cuánto marca otra donde estás (en furia, un 30 % antes)
+    zonaAviso: 1.1, zonaR: 16,         // segundos de aviso del círculo rojo y su radio
+    zonaDano: 16, granDano: 22,        // daño de una zona suelta y de las del gran ataque (más con la noche)
+  },
   // las plumas doradas llenan la barra; llena, el próximo dado sale bendito (solo pares y una casilla más)
   impulso: { lleno: 40 },
   // casillas especiales (la numeración del Juego de la Oca de siempre)
@@ -62,5 +70,8 @@ const CFG = {
     { id: 'destierro', max: 3, base: 150 }, // cargas por partida para quitar una carta para siempre
     { id: 'saltar',  max: 3, base: 100 },   // cargas por partida para saltarte una subida (+15 monedas)
     { id: 'auto',    max: 1, base: 2500 },  // la Elección automática: carísima
+    { id: 'paciencia', max: 5, base: 45 },  // con el dado listo y quieto, cada 6 s: plumas doradas y monedas (js/armas4.js)
+    { id: 'seguro',  max: 3, base: 70 },    // al perder, devuelve un 20 % por nivel de lo gastado en la Posada y el Mercader
+    { id: 'talisman', max: 1, base: 400 },  // anula una regla de la noche al azar en cada partida
   ],
 };

@@ -24,7 +24,7 @@ function poderPersonaje(st) {
   else if (p.id === 'azul') st.vel *= 1.15;
   else if (p.id === 'amarillo') { st.crit += 0.1; st.barra = 0.6; }
   else if (p.id === 'negro') st.plumas = 1.25;
-  else if (p.id === 'blanco') st.monedas *= 1.2;
+  else if (p.id === 'blanco') st.monedas += 0.2;   // se suma, como todos los extras de monedas
 }
 const plumasDado = () => CFG.impulso.lleno * ((JUEGO.st && JUEGO.st.barra) || 1);
 

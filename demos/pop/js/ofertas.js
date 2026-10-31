@@ -87,6 +87,7 @@ function ppBotonInfinitas(t, alComprar) {
 /* ---------- la hucha ---------- */
 function ppMeteHucha(jefe) { const H = PP_CFG.hucha; SAVE.hucha = Math.min(H.max, (SAVE.hucha || 0) + (jefe ? H.porJefe : H.porNivel)); ppGuarda(); }
 function ppVentanaHucha() {
+  ppTutorial('hucha');
   const H = PP_CFG.hucha, n = SAVE.hucha || 0, puede = n >= H.minimo;
   const t = ppAbre(`<h2>${tr('Hucha de perlas')}</h2><div class="pp-cofre">${ppIcono('i-hucha', 110, '#ffd1ec')}</div>
     <p class="pp-premio">${ppPerlasHtml(n, 36)} <small>/ ${H.max}</small></p>

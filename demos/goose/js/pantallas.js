@@ -85,6 +85,12 @@ function pintaCartas(dt) {
   const yb = y0 + n * (alto + gap) + 4;
   botonesCartas(yb);   // volver a tirar, desterrar y saltar (js/maldicion.js)
 }
+// cuántas líneas ocupa un párrafo (para saber si cabe antes de pintarlo)
+function lineasParrafo(t, ancho, tam) {
+  let n = 1, linea = '';
+  for (const p of t.split(' ')) { const prueba = linea ? linea + ' ' + p : p; if (anchoTexto(prueba, tam, FUENTE, 700) > ancho && linea) { n++; linea = p; } else linea = prueba; }
+  return n;
+}
 function parrafo(t, x, y, ancho, tam, color) {
   const pal = t.split(' '), alto = Math.max(TAM_MIN, tam) * 1.15; let linea = '', yy = y;
   for (const p of pal) { const prueba = linea ? linea + ' ' + p : p; if (anchoTexto(prueba, tam, FUENTE, 700) > ancho && linea) { texto2(linea, x, yy, tam, color, 'left', FUENTE, 700, 0.3); linea = p; yy += alto; } else linea = prueba; }

@@ -16,7 +16,7 @@ function ppNuevoDuelo() {
   const T = ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: true }, { equipo: [] });
   PP_DUELO = { T, turno: Math.random() < 0.5 ? 'yo' : 'ceo', fila: null, esta: [], fin: null };
   ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton();
-  ppTutorial('duelo');
+  ppTutorial('duelo'); ppTutorial('trucoNim');
   if (PP_DUELO.turno === 'ceo') setTimeout(ppTurnoCeo, 1100);
 }
 // cuántas burbujas levantadas quedan en cada fila
@@ -115,6 +115,7 @@ function ppPintaDuelo(c, t) {
   ppTexto(c, tr('Tú'), 140, 146, 26, '#fff', 'center', '#c43a84');
   ppTexto(c, rival, 420, 146, 22, '#fff', 'center', '#3a3a6a');
   ppTitulo(c, tr('DUELO'), 270, 58, 44);
+  ppPintaMonedero(c, 360, 36);
   const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
   ppTexto(c, txt, 270, 118, 32, D.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#7a4a8a');
   ppPintaTablero(c, T, t);

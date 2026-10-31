@@ -132,4 +132,5 @@ IDIOMA.add({
   "Sin medalla esta vez": "No medal this time",
   "De 2 a 4": "2 to 4 players",
   "Récord {t}": "Best {t}",
+  "Ve a la casilla {n}": "Go to square {n}",
 });

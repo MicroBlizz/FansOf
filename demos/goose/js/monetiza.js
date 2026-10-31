@@ -102,7 +102,7 @@ function botonDoblar(F, W, y) {
 // --- la Posada: dos regalos con anuncio, una vez por visita ---
 const POSADA_ANUNCIO = [
   { id: 'regalo', nombre: 'Regalo del posadero', desc: 'Una mejora gratis', icono: 'pack', anuncio: true },
-  { id: 'repuesto', nombre: 'Dado de repuesto', desc: '+1 «¿Otra vez?» del dado en esta partida', icono: 'redado', anuncio: true },
+  { id: 'repuesto', nombre: 'Dado de repuesto', desc: '+1 «¿Otra vez?» del dado', icono: 'redado', anuncio: true },
 ];
 const listaPosada = () => (hayAnuncios() ? [...POSADA, ...POSADA_ANUNCIO] : POSADA);
 function regaloPosada(o) {
@@ -141,6 +141,7 @@ function pintaTesoro() {
 function compraEuros(p) {
   SONIDO.boton();
   if (p.una && SAVE.compras && SAVE.compras[p.id]) return;
+  if (compraDePrueba()) { entregaCompra(p.id); return; }   // panel DEV: sin cobrar (js/dev.js)
   if (typeof MONEDAS === 'undefined' || !MONEDAS.compraReal) return;
   const titulo = p.tipo === 'huevos' ? tr('{n} huevos de oro', { n: p.huevos }) : p.tipo === 'bienvenida' ? tr('Pack de bienvenida') : tr('Sin anuncios');
   const html = `<p>${p.tipo === 'huevos' ? tr('{n} huevos de oro por {p}.', { n: p.huevos, p: p.precio }) : p.tipo === 'bienvenida' ? tr('{n} huevos de oro y la Capa real por {p}. Solo se puede comprar una vez.', { n: p.huevos, p: p.precio }) : tr('Los premios de los anuncios te llegan al momento, sin verlos, por {p}.', { p: p.precio })}</p>`;

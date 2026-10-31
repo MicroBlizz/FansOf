@@ -9,7 +9,8 @@ const FUENTE = '"Jersey 15", system-ui, sans-serif';   // letra de píxel que se
 // LETRAS DE PÍXEL NÍTIDAS: cada texto se escribe una vez a su tamaño exacto en píxeles de verdad, se le quita el suavizado (cada
 // píxel, lleno o vacío) y se le pone un contorno de un píxel; luego se pega como un sprite. Así no sale borroso al ampliar el canvas.
 // Nada por debajo de TAM_MIN (se lee en el móvil) y la gótica solo en títulos grandes.
-const TAM_MIN = 8, LETRAS = new Map();
+const TAM_MIN = 9,   // subió de 8 a 9 (31-10-2026, Daniel: «la letra sigo sin leerla bien a veces»)
+      LETRAS = new Map();
 let MIDE = null;
 const fuenteDe = (tam, fuente) => (fuente === FUENTE_G && tam < 12 ? FUENTE : fuente);
 function anchoTexto(t, tam, fuente = FUENTE, peso = 800) {

@@ -44,6 +44,7 @@ function ppBotonesSinCorazones(t, alLlenar, vuelta = null) {
 // de 3 en 3 más baratas) · BANDEJAS (las bonitas, con monedas). `vuelta`: la ventana a la que vuelve VOLVER (null: solo se cierra).
 let PP_TIENDA_VUELTA = null, PP_TIENDA_PESTANA = 'ofertas';
 function ppTienda(vuelta, pestana) {
+  ppTutorial('tienda');
   if (vuelta !== undefined) PP_TIENDA_VUELTA = vuelta;   // sin decir nada (al cambiar de pestaña) se mantiene
   if (pestana) PP_TIENDA_PESTANA = pestana;
   const t = ppAbre(`<h2>${tr('Tienda')}</h2><p class="pp-sub">${tr('Tienes:')} ${ppPerlasHtml(SAVE.perlas || 0, 28)} · ${ppMonedasHtml(SAVE.monedas, 28)}</p>`, true);

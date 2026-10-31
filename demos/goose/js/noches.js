@@ -24,7 +24,7 @@ const nocheDe = () => JUEGO.noche || 1;
 // todo lo que cambia la noche, acumulado: lo consultan las ocas, las oleadas, el derrumbe, los jefes, la cura y las monedas
 function modNoche() {
   const n = nocheDe();
-  return {
+  return talismanNoche({
     vida: n >= 2 ? 1.3 : 1,
     oleada: n >= 3 ? 1.25 : 1,
     derrumbe: n >= 4 ? 1.25 : 1,
@@ -36,7 +36,7 @@ function modNoche() {
     madre: n >= 10 ? 1.6 : 1,
     tuVida: n >= 10 ? 0.75 : 1,
     monedas: 1 + (n - 1) * 0.2,
-  };
+  });   // el Talismán de la Noche de la tienda anula una regla al azar (js/armas4.js)
 }
 // se aplica a cada oca al nacer (lo llama creaEnemigo)
 function nocheEnemigo(e) {

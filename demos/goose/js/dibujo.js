@@ -71,9 +71,11 @@ function pintaMundo() {
     if (e.tipo === 'gorda' || e.tipo === 'armadura') barraVida(e.x, e.y - e.r - 4, 22, e.hp / e.hpMax, '#ff9b4d');
     if (e.tipo === 'parca') pintaParcaExtra(e);
   }
+  pintaEscudosJefes();   // el escudo dorado de los jefes (js/jefes2.js)
   // los rivales de la Carrera y el jugador
   pintaRivales();
   pintaJugador();
+  pintaFlechaCamino();   // hacia la casilla de destino (js/barreras.js)
   pintaArmas();
   // balas enemigas
   const bl = BALAS.lista;
@@ -83,7 +85,7 @@ function pintaMundo() {
   pintaTextos();
   G.setTransform(k, 0, 0, k, 0, 0);
 }
-function pintaArmasSuelo() { /* los charcos se pintan con las armas; aquí irían marcas del suelo en el futuro */ }
+function pintaArmasSuelo() { pintaCharcos(); }   // lo que va pegado al suelo, debajo de todo (js/armas.js)
 
 function pintaJugador() {
   const J = JUEGO, yo = J.yo;

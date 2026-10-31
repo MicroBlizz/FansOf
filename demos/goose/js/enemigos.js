@@ -97,7 +97,8 @@ function avanzaEnemigos(dt) {
         e.sx = sx * 7; e.sy = sy * 7;
       }
       if (e.raiz > 0) e.raiz -= dt;
-      const vel = e.raiz > 0 ? 0 : e.vel;   // atrapada (cepo, raíces, gaita del Diablo)
+      if (e.lento > 0) e.lento -= dt;
+      const vel = e.raiz > 0 ? 0 : e.vel * (e.lento > 0 ? 0.5 : 1);   // y la tinta (js/armas4.js) la frena   // atrapada (cepo, raíces, gaita del Diablo)
       e.vx += (qx * vel - e.vx) * Math.min(1, dt * 4); e.vy += (qy * vel - e.vy) * Math.min(1, dt * 4);
       e.x += (e.vx + e.kx + (e.sx || 0)) * dt; e.y += (e.vy + e.ky + (e.sy || 0)) * dt;
       const fr = Math.max(0, 1 - dt * 7); e.kx *= fr; e.ky *= fr;
@@ -132,6 +133,7 @@ function danar(e, d, nx, ny, empuje, silencioso, critSeguro) {
   const crit = critSeguro || Math.random() < JUEGO.st.crit;
   if (crit) d *= 2.2;
   d *= escudoArmadura(e, nx, ny); if (d < 1) { texto(e.x, e.y - e.r, tr('¡BLOQUEADO!'), '#c9d3ff', 5, 0.5); return; }
+  if (frenaJefe(e, d)) return;   // el escudo de los jefes y sus tramos de vida (js/jefes2.js)
   e.hp -= d; e.flash = 0.09;
   if (e.tipo === 'jefe' && esCoop()) JUEGO.carrera.danoJefe += d;   // la vida de la Oca Madre es de todos
   const kb = e.tipo === 'jefe' || e.tipo === 'parca' || e.tipo.startsWith('mj-') ? empuje * 0.05 : e.tipo === 'gorda' ? empuje * 0.35 : empuje;
@@ -186,6 +188,7 @@ function apareceJefe() {
 function avanzaJefe(e, dt, ux, uy, d) {
   const J = JUEGO, furia = e.hp < e.hpMax * 0.5;
   e.f2 -= dt;
+  avanzaJefe2(e, dt, furia);   // escudo, zonas rojas y gran ataque (js/jefes2.js)
   if (e.fase === 0) {   // persigue despacio y llama a sus crías
     e.vx = ux * e.vel; e.vy = uy * e.vel;
     if (e.f2 <= 0) { e.fase = 1; e.f2 = 0.9; e.cd = 0; }

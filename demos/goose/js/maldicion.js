@@ -23,7 +23,7 @@ function aplicaRiesgo(M) {
   const m = nivelActivo('maldicion'), h = nivelActivo('horda'), R = RIESGO.maldicion, O = RIESGO.horda;
   M.vida *= 1 + m * R.vida; M.dano *= 1 + m * R.dano; M.vel *= 1 + m * R.vel;
   M.oleada *= 1 + h * O.oleada; M.elites *= 1 + h * O.elites;
-  M.monedas *= 1 + m * R.monedas + h * O.monedas;
+  M.monedas += m * R.monedas + h * O.monedas;   // se SUMA a la noche: los extras de monedas nunca se multiplican entre sí (31-10-2026, Daniel)
   M.xpRiesgo = 1 + m * R.xp + h * O.xp;
   return M;
 }

@@ -39,6 +39,7 @@ function mueveParca(e, dt, ux, uy, d) {
   const mitad = e.hp < e.hpMax * 0.5, casi = e.hp < e.hpMax * 0.12;
   if (e.estado === 'aparece') { if (e.f2 <= 0) { e.estado = 'flota'; e.f2 = 1.5; } return [0, 0]; }
   if (e.estado === 'regateo') return [0, 0];
+  avanzaJefe2(e, dt, mitad);   // escudo, zonas rojas y gran ataque (js/jefes2.js)
   if (casi && !e.regateado) { e.regateado = true; e.estado = 'regateo'; e.animT = 0; J.trato = { t: 0 }; aviso(tr('¿UN TRATO?'), '#c9a0ff', 2.5); aviso2(tr('Acepta y vuelves a la 55 con media vida. Rechaza y acábala')); SONIDO.posada(); return [0, 0]; }
   // fase 2: la cosecha
   if (mitad && e.fase === 0) { e.fase = 1; e.estado = 'alza'; e.f2 = 0.9; e.animT = 0; aviso(tr('¡LA COSECHA!'), '#ff2d2d', 1.6); aviso2(tr('Salta la guadaña con dos toques')); SONIDO.jefeCarga(); }

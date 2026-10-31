@@ -99,7 +99,7 @@ function ppPvpEmpieza(s) {
   PP_DUELO = { T, turno: s.datos.empieza === yo.orden ? 'yo' : 'rival', fila: null, esta: [], fin: null,
     pvp: { nombre: (rival && rival.nombre) || tr('Tu rival'), canal: null } };
   PP_DUELO.pvp.canal = PP_PVP.red.canal(m => ppPvpMensaje(m), () => {});
-  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton(); ppTutorial('duelo');
+  ppIrA('duelo'); ppFxEntraSala(T); ppDueloBoton(); ppTutorial('duelo'); ppTutorial('trucoNim');
   play('ppRescate');
   ppFlota(PP_DUELO.turno === 'yo' ? tr('¡Empiezas tú!') : tr('Empieza {n}', { n: PP_DUELO.pvp.nombre }), 270, 240, '#ffd64a');
 }

@@ -27,6 +27,7 @@ function empiezaMinijefe(t) {
 function mueveMinijefe(e, dt, ux, uy, d) {
   const J = JUEGO, yo = J.yo; e.f2 -= dt; e.cd -= dt;
   const furia = e.hp < e.hpMax * 0.4;
+  avanzaJefe2(e, dt, furia);   // escudo, zonas rojas y gran ataque (js/jefes2.js)
   const nuevo = mueveMinijefe2(e, dt, ux, uy, d, furia); if (nuevo) return nuevo;   // los de las tierras nuevas (js/tierras2.js)
   if (e.tipo === 'mj-rana') {   // salta en arco y, al caer, charco; de vez en cuando escupe ranas
     if (e.f2 <= 0) { e.f2 = furia ? 2 : 2.8; e.kx += ux * 150; e.ky += uy * 150; e.fase = 1; }

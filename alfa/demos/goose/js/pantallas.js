@@ -43,13 +43,13 @@ function pintaPortada(dt) {
   if (SAVE.partidas) {
     texto2(SAVE.victorias ? tr('Has escapado {n} veces', { n: SAVE.victorias }) : tr('Tu mejor casilla: {n} de 63', { n: SAVE.mejorCasilla }), W / 2, yb - 20, 7, '#ffd34d', 'center', FUENTE, 800);
   }
-  boton(30, yb - 8, W - 60, 32, tr('JUGAR'), '#e8742a', () => { SONIDO.boton(); abreSelector(); }, 15);
+  botonLosa(30, yb - 8, W - 60, 32, tr('JUGAR'), '#e8742a', () => { SONIDO.boton(); abreSelector(); }, 15, null, 1);   // casillas de madera del tablero (js/hud.js)
   const mitad = (W - 66) / 2, D = diarioHoy();
-  boton(30, yb + 30, mitad, 26, tr('TABLERO DEL DÍA'), '#c0402f', () => { SONIDO.boton(); JUEGO.modo = 'diario'; }, 7.5, D.intentos ? tr('Hoy: {p}', { p: D.mejor }) : tr('¡Nuevo!'));
-  boton(36 + mitad, yb + 30, mitad, 26, tr('DESAFÍOS'), '#d98a1a', () => { SONIDO.boton(); DESAFIOS_SCROLL = 0; JUEGO.modo = 'desafios'; }, 8, tr('{a} de {b}', { a: DESAFIOS.filter(d => hecho(d.id)).length, b: DESAFIOS.length }));
-  boton(30, yb + 62, W - 60, 24, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 9, tr('Carrera o cooperativo, de 2 a 4'));
-  boton(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
-  boton(W - 76, yb + 92, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
+  botonLosa(30, yb + 30, mitad, 26, tr('TABLERO DEL DÍA'), '#c0402f', () => { SONIDO.boton(); JUEGO.modo = 'diario'; }, 7.5, D.intentos ? tr('Hoy: {p}', { p: D.mejor }) : tr('¡Nuevo!'), 26);
+  botonLosa(36 + mitad, yb + 30, mitad, 26, tr('DESAFÍOS'), '#d98a1a', () => { SONIDO.boton(); DESAFIOS_SCROLL = 0; JUEGO.modo = 'desafios'; }, 8, tr('{a} de {b}', { a: DESAFIOS.filter(d => hecho(d.id)).length, b: DESAFIOS.length }), 42);
+  botonLosa(30, yb + 62, W - 60, 24, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 9, tr('Carrera o cooperativo, de 2 a 4'), 6);
+  botonLosa(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }), 31);
+  botonLosa(W - 76, yb + 92, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
   texto2(tr('Microblizz no se hace responsable de las ocas'), W / 2, H - 12, 5.5, 'rgba(241,230,200,.55)', 'center', FUENTE, 700, 0);
 }
 

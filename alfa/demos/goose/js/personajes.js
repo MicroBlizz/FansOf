@@ -34,19 +34,19 @@ const MANOS = { 'c-cuerpo': [17.8, 1.9], 'c-paso': [18.2, 3.5], 'c-golpe': [19.5
 const capasListas = () => !!(SPR['c-cuerpo'] && SPR['c-farol']);
 
 // dibuja al héroe: pose = 'c-cuerpo' | 'c-paso' | 'c-golpe'; dir = 1 (derecha) o -1 (izquierda); balanceo del farolillo en radianes
-function pintaHeroeCapas(x, y, pose, dir, capa, esc, alfa, blanco, balanceo) {
+function pintaHeroeCapas(x, y, pose, dir, capa, esc, alfa, blanco, balanceo, conAspecto) {   // conAspecto: con la capa y el farol comprados (js/aspecto.js)
   const lado = dir < 0 ? '-izq' : '', nombre = (capa ? pose + '-' + capa : pose) + lado, body = SPR[nombre] || SPR[pose + lado] || SPR[pose];
   if (!body) return;
-  const k = PAN.k, m = MANOS[pose + lado] || MANOS[pose] || MANOS['c-cuerpo'];
+  const m = MANOS[pose + lado] || MANOS[pose] || MANOS['c-cuerpo'];
   // 1. el cuerpo: su dibujo de cada lado (nunca se voltea por código)
   if (alfa !== 1) G.globalAlpha = alfa;
   const w = body.w * esc, h = body.h * esc;
-  G.drawImage(blanco ? body.b : body.n, x - w / 2, y - h / 2, w, h);
+  G.drawImage(conAspecto ? cuerpoConAspecto(pose, lado, body, blanco) : blanco ? body.b : body.n, x - w / 2, y - h / 2, w, h);
   // 2. el farolillo: colgado del puño de ese dibujo, que está siempre en la misma mano
-  const f = SPR['c-farol'], hx = x + (m[0] / k) * esc, hy = y + (m[1] / k) * esc;
+  const f = SPR['c-farol'], hx = x + (m[0] / ARTE) * esc, hy = y + (m[1] / ARTE) * esc;   // MANOS va en píxeles del dibujo (ARTE por unidad), no del canvas
   G.save(); G.translate(hx, hy); G.rotate(balanceo || 0);
   const fw = f.w * esc, fh = f.h * esc;
-  G.drawImage(blanco ? f.b : f.n, -fw / 2, -1, fw, fh);
+  G.drawImage(conAspecto ? farolConAspecto(f, blanco) : blanco ? f.b : f.n, -fw / 2, -1, fw, fh);
   G.restore();
   if (alfa !== 1) G.globalAlpha = 1;
   return [hx, hy + fh / 2];

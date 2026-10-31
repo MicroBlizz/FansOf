@@ -8,12 +8,13 @@ const enPartida = () => ['juego', 'cartas', 'cofre', 'pausa'].includes(JUEGO.mod
 function nuevaPartida() {
   const J = JUEGO;
   for (const R of [ENE, BALAS, PROY, CHARCOS, PLUMAS, PART, TXT]) R.vacia();
+  vaciaBarreras();
   LATIGAZOS.length = 0; FX.anillos.length = 0;
   Object.assign(J, {
     modo: 'juego', t: 0, cuadro: 0, armas: {}, pasivas: {}, restosParca: null, dado: nuevoDado(), avisos: [], aviso2: null,
     nivel: 1, xp: 0, xpNecesita: xpPara(1), pendientes: 0, cartas: null, tiradas: 1 + nivelMejora('retiro'),
     casilla: 1, mejorCasilla: 1, mejorY: -40, sinAvanzar: 0, impaciente: false, yD: 40,
-    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,
+    invul: 0, salto: 0, saltoT: 0, caida: 0, caidaAbismo: false, fase: 'parado', escena: null, destino: 1, paso: 1, quieto: 0, tramoT: 0, suerteT: 0, golpeT: 0, latigoT: 0, minijefe: null, trato: null, parcaHecha: false, saltoParca: 0, fuegos: [], puertas: new Set(), maldicion: null, casillas: null,
     bajas: 0, combo: 0, comboT: 0, mejorCombo: 0, hito: 0, danoTotal: 0, monedasPartida: 0,
     impulso: 0, bioma: undefined, tOla: 0, tGorda: 50, tBandada: 30, jefe: null, victoria: false, tVictoria: 0, muerto: 0, fin: null, cofre: null, carrera: null,
     camY: -40 - PAN.H * 0.62,
@@ -31,6 +32,7 @@ function nuevaPartida() {
   aplicaCarta(cartaArma(J.pers.arma));
   if (J.pers.id === 'blanco') J.tiradas++;
   // la tienda: Pluma de fénix, Arsenal y Dado de la suerte
+  J.redado = nivelMejora('redado');   // la Segunda tirada de la tienda (js/dado.js)
   J.fenix = nivelMejora('fenix'); J.habT = 0; J.torbellino = 0; J.bendicion = 0; J.rafaga = null; J.escudoListo = 0;
   if (nivelMejora('arsenal')) { const otras = Object.keys(ARMAS).filter(id => id !== J.pers.arma && armaAbierta(id)); aplicaCarta(cartaArma(otras[(Math.random() * otras.length) | 0])); }
   if (nivelMejora('suerte')) J.dado.bendito = true;
@@ -76,6 +78,7 @@ function avanzaPartida(dt) {
   avanzaHabilidad(dt);   // la habilidad del personaje (js/habilidades.js)
   avanzaSalto(dt);
   avanzaDerrumbe(dt);
+  avanzaBarreras(dt);   // se abren y se cierran (js/barreras.js)
   avanzaTierras(dt); avanzaTierras2(dt); avanzaCaminos(); charcosMalos(dt);
   if (J.saltoParca > 0) J.saltoParca -= dt;
   vigilaBioma();
@@ -125,7 +128,7 @@ function avanzaJugador(dt) {
   }
   if (J.salto > 0) return;
   // el ritmo de la Oca: parado en la casilla, en el tramo o en una escena (js/escenas.js)
-  if (J.fase === 'tramo') avanzaTramo(dt);
+  if (J.fase === 'camino') avanzaCamino(dt);
   else if (J.fase === 'escena' && J.escena && J.escena.tipo === 'puente') avanzaPuente(dt);
   else avanzaParado(dt);
   yo.x = clamp(yo.x, 4, CFG.W - 4);
@@ -147,6 +150,7 @@ function heridaJugador(dano, ox, oy) {
   const J = JUEGO, yo = J.yo;
   if (J.escena && J.escena.tipo === 'posada') return;
   if (escudoPara()) return;   // Escudo de plumas (js/armas3.js)
+  dano *= 1 - (J.st.armadura || 0);   // la Coraza de la tienda
   J.vida -= dano; J.invul = CFG.jugador.invulnerable; J.golpeT = 0.25;
   const d = Math.hypot(yo.x - ox, yo.y - oy) || 1; yo.x += (yo.x - ox) / d * 6; yo.y += (yo.y - oy) / d * 6;   // las hordas te empujan
   texto(yo.x, yo.y - 12, '-' + Math.round(dano), '#ff4d4d', 8, 0.6);
@@ -233,7 +237,7 @@ function abreCofre() {
     const c = pos.length ? pick(pos) : { clase: 'monedas', id: 'monedas', nombre: 'Bolsa de monedas', desc: '+25 monedas.', icono: 'moneda', color: '#ffcf33' };
     aplicaCarta(c); premios.push(c);
   }
-  const monedas = 10 + Math.floor(Math.random() * 15) + (n - 1) * 10; J.monedasPartida += monedas;
+  const monedas = Math.round((10 + Math.floor(Math.random() * 15) + (n - 1) * 10) * (1 + nivelMejora('botin') * 0.2)); J.monedasPartida += monedas;   // el Botín pirata
   J.cofre = { n, premios, monedas, t: 0 }; J.modo = 'cofre';
   SONIDO.cofre();
 }

@@ -1,36 +1,26 @@
-// Fans of Goose · El ritmo del Juego de la Oca: PARADO en una casilla (te defiendes, recoges plumas y decides cuándo tirar), el TRAMO
-// (sales disparado las casillas que diga el dado) y la LLEGADA, que resuelve la casilla: de oca a oca, el Puente (6→12, un puente de
+// Fans of Goose · El ritmo del Juego de la Oca: PARADO en una casilla (te defiendes, recoges plumas y decides cuándo tirar), el CAMINO
+// (se abren las barreras hasta donde diga el dado y vas tú andando, js/barreras.js) y la LLEGADA, que resuelve la casilla: de oca a oca, el Puente (6→12, un puente de
 // cuerda que se cae), el Pozo (19: encerrado, caen ocas del cielo), la Posada (31: tienda y descanso, con dado maldito al salir),
 // las tiradas de la suerte (26 y 53), la Cárcel (52: entre barrotes), la Muerte (58) y el Jardín (63).
 'use strict';
 
 const ESC = { pozoMata: 28, carcelMata: 20, puenteAncho: 64 };
 
-// --- el tramo ---
+// --- el tramo: hasta dónde llega la tirada ---
 function empiezaTramo(n) {
   const J = JUEGO;
   let destino = Math.min(CFG.jardin, J.casilla + n);
   // las puertas de las tierras y la Muerte no se saltan: el tramo se corta ahí (el minijefe te espera)
   for (let t = J.casilla + 1; t < destino; t++) if ((casillaEs.puerta(t) && !J.puertas.has(t)) || (casillaEs.muerte(t) && !J.parcaHecha)) { destino = t; break; }
-  J.destino = destino; J.fase = 'tramo'; J.escena = null; J.quieto = 0; J.tramoT = 0;
-  J.invul = Math.max(J.invul, 0.5); anillo(J.yo.x, J.yo.y, 40, '#f6e7b8', 0.4, 3); SONIDO.empieza();
+  empiezaCamino(destino);   // se abren las barreras y vas andando tú (js/barreras.js)
 }
-const velTramo = () => JUEGO.st.vel * 1.6 * multiVel();
-function avanzaTramo(dt) {
-  const J = JUEGO, yo = J.yo; J.tramoT += dt;
-  let mx = ENTRADA.mx; if (invertido()) mx = -mx;
-  yo.x += mx * J.st.vel * 1.1 * dt;
-  yo.x += (cxY(yo.y - 20) - yo.x) * Math.min(1, dt * (mx ? 1.2 : 3));   // el camino te lleva: en las curvas y las juntas estrechas no te caes sin querer
-  yo.y -= velTramo() * dt; yo.moviendo = true; yo.anda += dt * 14; yo.miraX = 0; yo.miraY = -1;
-  if ((J.cuadro & 1) === 0) particula(yo.x + (Math.random() - 0.5) * 8, yo.y + 8, (Math.random() - 0.5) * 20, 30, 0.4, 2, '#c9b98a', 0, 0);
-  if (yo.y <= yCentro(J.destino)) llegada(J.destino);
-}
+const velTramo = () => JUEGO.st.vel * 1.6 * multiVel();   // el ritmo del Puente (las tablas se caen detrás)
 
 // --- la llegada: para en la casilla y la resuelve ---
 function llegada(t) {
   const J = JUEGO, yo = J.yo;
   J.casilla = t; J.mejorCasilla = Math.max(J.mejorCasilla, t); J.fase = 'parado'; J.escena = null; J.quieto = 0; J.mejorY = Math.min(J.mejorY, yCentro(t)); J.sinAvanzar = 0;
-  yo.y = yCentro(t); yo.moviendo = false;
+  yo.y = clamp(yo.y, -t * TH + 6, -(t - 1) * TH - 6); yo.moviendo = false;   // ya estás dentro: te quedas donde pisas
   cierraEfectoDado();
   tiembla(2.5); anillo(yo.x, yo.y, 36, '#f6e7b8', 0.35, 3); SONIDO.aterriza(); vibra(15);
   const nombre = nombreCasilla(t);

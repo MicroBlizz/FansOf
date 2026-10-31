@@ -72,6 +72,28 @@ function boton(x, y, w, h, txt, color, accion, tam = 10, sub) {
   BOTONES.push({ x, y, w, h, accion });
 }
 
+// un botón con forma de casilla de madera del tablero (img/ui-losa.png de Yoshi, en nueve trozos para que las esquinas de hierro no se
+// deformen), pintado del color de su opción y con el número de casilla pintado al fondo, como en el Juego de la Oca. Sin el dibujo, boton()
+function botonLosa(x, y, w, h, txt, color, accion, tam = 10, sub, numero) {
+  const im = IMG['ui-losa']; if (!im) { boton(x, y, w, h, txt, color, accion, tam, sub); return; }
+  const pulsado = ENTRADA.botonDown && ENTRADA.bx > x && ENTRADA.bx < x + w && ENTRADA.by > y && ENTRADA.by < y + h, dy = pulsado ? 1.5 : 0;
+  caja(x + 1, y + 3, w, h, 4, '#0a0505', null);   // la sombra de la losa
+  const Y = y + dy, c = 12, cu = c / ARTE, iw = im.width, ih = im.height;
+  const X0 = snap(x), Y0 = snap(Y), Wd = snap(w), Hd = snap(h);
+  const pieza = (sx, sy, sw, sh, dx, dy2, dw, dh) => { if (dw > 0 && dh > 0) G.drawImage(im, sx, sy, sw, sh, dx, dy2, dw, dh); };
+  pieza(0, 0, c, c, X0, Y0, cu, cu); pieza(iw - c, 0, c, c, X0 + Wd - cu, Y0, cu, cu); pieza(0, ih - c, c, c, X0, Y0 + Hd - cu, cu, cu); pieza(iw - c, ih - c, c, c, X0 + Wd - cu, Y0 + Hd - cu, cu, cu);
+  pieza(c, 0, iw - c * 2, c, X0 + cu, Y0, Wd - cu * 2, cu); pieza(c, ih - c, iw - c * 2, c, X0 + cu, Y0 + Hd - cu, Wd - cu * 2, cu);
+  pieza(0, c, c, ih - c * 2, X0, Y0 + cu, cu, Hd - cu * 2); pieza(iw - c, c, c, ih - c * 2, X0 + Wd - cu, Y0 + cu, cu, Hd - cu * 2);
+  const mw = (iw - c * 2) / ARTE, mh = (ih - c * 2) / ARTE;
+  for (let yy = Y0 + cu; yy < Y0 + Hd - cu; yy += mh) for (let xx = X0 + cu; xx < X0 + Wd - cu; xx += mw) { const dw = Math.min(mw, X0 + Wd - cu - xx), dh = Math.min(mh, Y0 + Hd - cu - yy); pieza(c, c, dw * ARTE, dh * ARTE, xx, yy, dw, dh); }
+  // la pintura del color de la opción, gastada: deja ver la madera del borde
+  G.globalAlpha = 0.78; caja(x + 4, Y + 4, w - 8, h - 8, 2, color, null); G.globalAlpha = 0.18; caja(x + 4, Y + 4, w - 8, (h - 8) * 0.4, 2, '#ffffff', null); G.globalAlpha = 1;
+  if (numero && w >= 120) { G.globalAlpha = 0.22; texto2(String(numero), x + w - 8, Y + h / 2 + 1, Math.min(22, h * 0.8), '#1a0a04', 'right', FUENTE_G, 400, 0); G.globalAlpha = 1; }
+  texto2(txt, x + w / 2, Y + h / 2 + (sub ? -3.5 : 0.5), tam, '#fff8e8', 'center', FUENTE, 800, 0.32);
+  if (sub) texto2(sub, x + w / 2, Y + h / 2 + 6.5, 7, '#fff1c2', 'center', FUENTE, 700, 0.3);
+  BOTONES.push({ x, y, w, h, accion });
+}
+
 function pintaHud() {
   const J = JUEGO, W = PAN.W;
   // franja de arriba
@@ -90,6 +112,8 @@ function pintaHud() {
   // experiencia
   barra(25, 16, W - 64, 5, J.xp / J.xpNecesita, '#6bd4ff');
   texto2(tr('NV {n}', { n: J.nivel }), W - 36, 18.6, 6, '#6bd4ff', 'left');
+  // el equipo bajo la vida: cada arma con su nivel (marco de oro si ha evolucionado) y debajo las mejoras pasivas, de 4 en 4
+  const filas = pintaEquipo();
   // casilla o jefe
   if (J.minijefe && J.minijefe.hp > 0) { /* lo pinta pintaMinijefeHud */ }
   else if (J.jefe) {
@@ -103,10 +127,10 @@ function pintaHud() {
   if (J.carrera && J.carrera.cuenta > 0) texto2(String(Math.ceil(J.carrera.cuenta)), W / 2, PAN.H * 0.42, 44 * (1 + (J.carrera.cuenta % 1) * 0.4), '#ffd34d', 'center', FUENTE_G, 400, 0.15);
   // combo
   if (J.combo >= 5) {
-    const k = J.comboT / 2.2, pop = 1 + Math.max(0, (J.comboT - 2) * 2);
-    texto2('x' + J.combo, 8, 44, 11 * pop, J.combo >= 100 ? '#ff4d6b' : J.combo >= 50 ? '#ffb04d' : '#ffd34d', 'left', FUENTE_G, 400, 0.25);
-    texto2(tr('COMBO'), 9, 53, 5.5, '#c9b98a', 'left', FUENTE, 700);
-    G.fillStyle = '#ffd34d'; G.fillRect(8, 57, 28 * k, 1.5);
+    const k = J.comboT / 2.2, pop = 1 + Math.max(0, (J.comboT - 2) * 2), cy = 38 + filas * 15;   // bajo el equipo
+    texto2('x' + J.combo, 8, cy, 11 * pop, J.combo >= 100 ? '#ff4d6b' : J.combo >= 50 ? '#ffb04d' : '#ffd34d', 'left', FUENTE_G, 400, 0.25);
+    texto2(tr('COMBO'), 9, cy + 9, 5.5, '#c9b98a', 'left', FUENTE, 700);
+    G.fillStyle = '#ffd34d'; G.fillRect(8, cy + 13, 28 * k, 1.5);
   }
   pintaDado();
   pintaEscenasHud();
@@ -114,6 +138,25 @@ function pintaHud() {
   pintaTrato();
   pintaMapa();
   if (J.modo === 'juego') pintaAvisos();
+}
+
+// el equipo: casillas de 13 bajo las barras, a la izquierda (la casilla y el jefe van en el centro). Devuelve cuántas filas ocupa
+function pintaEquipo() {
+  const J = JUEGO, cosas = [];
+  for (const id in J.armas) if (ARMAS[id]) cosas.push([ARMAS[id].icono, J.armas[id].nivel, J.armas[id].evo, ARMAS[id].color]);
+  const nArmas = cosas.length;
+  for (const id in J.pasivas) if (PASIVAS[id]) cosas.push([PASIVAS[id].icono, J.pasivas[id], false, '#7fd1ff']);
+  let fila = 0, col = 0;
+  cosas.forEach((c, i) => {
+    if (i === nArmas && col) { fila++; col = 0; }   // las pasivas empiezan fila nueva
+    if (col === 4) { fila++; col = 0; }
+    const x = 32 + col * 15, y = 33 + fila * 15;
+    caja(x - 6.5, y - 6.5, 13, 13, 3, c[2] ? '#4a2a08' : '#1c100b', c[2] ? '#ffd34d' : c[3], 1);
+    icono(c[0], x, y, 6.2);
+    texto2(String(c[1]), x + 6, y + 5, 5, i < nArmas ? '#ffd34d' : '#9fe0ff', 'center', FUENTE, 800, 0.4);
+    col++;
+  });
+  return cosas.length ? fila + 1 : 0;
 }
 
 // el mapa: la columna de las 63 casillas, con las especiales, tú y el derrumbe

@@ -73,7 +73,7 @@ function muereTierras2(e) { if (e.tipo === 'payaso') { suelta('moneda', e.x, e.y
 // --- el hielo: la velocidad que quieres llega poco a poco (y la que llevas tarda en irse) ---
 function hielo(vx, vy, dt) {
   const yo = JUEGO.yo;
-  if (!enTierra('helada') || JUEGO.fase !== 'parado' || JUEGO.escena) { yo.ivx = vx; yo.ivy = vy; return [vx, vy]; }
+  if (!enTierra('helada') || (JUEGO.fase !== 'parado' && JUEGO.fase !== 'camino') || JUEGO.escena) { yo.ivx = vx; yo.ivy = vy; return [vx, vy]; }
   const k = Math.min(1, dt * 2.2);
   yo.ivx = (yo.ivx || 0) + (vx - (yo.ivx || 0)) * k; yo.ivy = (yo.ivy || 0) + (vy - (yo.ivy || 0)) * k;
   return [yo.ivx, yo.ivy];

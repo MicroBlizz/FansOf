@@ -92,7 +92,7 @@ function pintaJugador() {
   if (J.caida > 0) { const k = J.caida / 0.55; esc = 0.2 + k * 0.8; alfa = k; dy = (1 - k) * 12; }
   if (J.salto > 0) { const k = Math.min(1, J.saltoT / 0.85); esc = 1 + Math.sin(k * Math.PI) * 0.7; dy = -Math.sin(k * Math.PI) * 26; }
   if (J.saltoParca > 0) { const k = 1 - J.saltoParca / 0.55; dy -= Math.sin(k * Math.PI) * 22; }
-  pinta('luz', yo.x, yo.y, false, false, 1.2 + Math.sin(J.t * 7) * 0.04);
+  pintaLuzFarol(yo.x, yo.y, 1.2 + Math.sin(J.t * 7) * 0.04);   // del color de la llama comprada (js/aspecto.js)
   if (J.caida <= 0) pinta('sombra', yo.x, yo.y + 8, false, false, 1.1 * (J.salto > 0 ? 0.6 : 1));
   if (J.invul > 0 && J.salto <= 0 && ((J.t * 18) | 0) % 2) alfa *= 0.35;
   const paso = yo.moviendo ? Math.abs(Math.sin(yo.anda)) * -1.6 : 0;
@@ -105,8 +105,8 @@ function pintaJugador() {
     const pose = J.golpeT > 0 && SPR['c-golpe'] ? 'c-golpe' : yo.moviendo && Math.sin(yo.anda) > 0 ? 'c-paso' : 'c-cuerpo';
     // el farolillo se balancea al andar y se va un poco hacia atrás al correr
     const balanceo = (yo.moviendo ? Math.sin(yo.anda * 0.5) * 0.35 - dir * 0.12 : Math.sin(J.t * 2) * 0.06) + (J.golpeT > 0 ? -dir * 0.5 : 0);
-    const fp = pintaHeroeCapas(x, y, pose, dir, (J.pers || personaje()).capa, esc, alfa, J.golpeT > 0.18, balanceo);
-    if (fp) { G.globalAlpha = 0.5 + Math.sin(J.t * 9) * 0.1; pinta('luz', fp[0], fp[1], false, false, 0.5); G.globalAlpha = 1; }
+    const fp = pintaHeroeCapas(x, y, pose, dir, (J.pers || personaje()).capa, esc, alfa, J.golpeT > 0.18, balanceo, true);
+    if (fp) { G.globalAlpha = 0.5 + Math.sin(J.t * 9) * 0.1; pintaLuzFarol(fp[0], fp[1], 0.5); G.globalAlpha = 1; }
   } else pinta('heroe', x, y, false, J.golpeT > 0.18, esc, alfa);
   // aura del Pozo y de la Posada
   if (invertido()) { G.globalAlpha = 0.7; for (let q = 0; q < 8; q++) arcoPixel(yo.x, yo.y, 13, J.t * 4 + q * 0.785, J.t * 4 + q * 0.785 + 0.4, 1.5, '#c9a0ff'); G.globalAlpha = 1; }

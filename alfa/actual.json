@@ -1,8 +1,8 @@
 {
- "build": 750,
- "hash": "584f3fa",
- "fecha": "2026-10-31T16:20:31Z",
- "mensaje": "Nova 0.3.27: la campaña se guarda con la cuenta en la nube",
+ "build": 751,
+ "hash": "d3cbd00",
+ "fecha": "2026-10-31T18:34:19Z",
+ "mensaje": "Retos comunes en core (retos-ligero.js) y Nova 0.3.28 los estrena: diarias, semanales y logros en aleación",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.27",
+  "nova": "0.3.28",
   "pets": "0.1.5",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

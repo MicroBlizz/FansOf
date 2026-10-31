@@ -86,3 +86,7 @@
 .nv-ok { font-size: 26px; padding: 12px 36px 8px; }
 .nv-peligro { background: #ff4b5c !important; }
 .nv-ver { margin: 0; font-size: 12px; opacity: .7; }
+.nv-ret-tabs{display:flex;gap:6px;justify-content:center;margin:6px 0}.nv-ret-tabs .btn-ghost{font-size:13px;padding:6px 8px}.nv-ret-act{outline:3px solid #ffcb3d}
+.nv-ret-lista{overflow-y:auto;width:100%;max-height:52vh}.nv-ret{display:flex;gap:10px;align-items:center;padding:8px 4px;border-bottom:2px solid rgba(255,255,255,.12);font-weight:700;font-size:14px;text-align:left}
+.nv-ret-hecho{opacity:.5}.nv-ret-txt{flex:1}.nv-ret-barra{position:relative;height:16px;margin-top:4px;border:2px solid #1a0f2e;border-radius:8px;background:#241545;overflow:hidden}
+.nv-ret-rell{height:100%;background:#4ade80}.nv-ret-num{position:absolute;inset:0;text-align:center;font-size:11px;line-height:12px;color:#fff}.nv-ret-cobra{min-width:56px;font-size:16px}

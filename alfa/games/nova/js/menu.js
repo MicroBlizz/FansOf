@@ -63,17 +63,21 @@ function nvOpciones() {
 function nvPintaMenu() {
   const camp = nvCamp();
   document.getElementById('nv-b-capital').hidden = !camp.faccion;   // la nave capital llega al elegir facción
+  const retos = document.getElementById('nv-b-retos'), n = NV_RETOS.listosTodos();
+  retos.hidden = !camp.faccion; retos.textContent = tr('RETOS') + (n ? ' (' + n + ')' : '');
 }
 function nvMontaMenu() {
   const $id = id => document.getElementById(id);
   $id('nv-estado').innerHTML = tr('<b>La rebelión</b> contra <i>Microblizz</i>');
   $id('nv-jugar').textContent = tr('CAMPAÑA');
   $id('nv-b-capital').textContent = tr('NAVE CAPITAL');
+  $id('nv-b-retos').textContent = tr('RETOS');
   $id('nv-b-novedades').textContent = tr('NOVEDADES');
   $id('nv-b-opciones').textContent = tr('OPCIONES');
   $id('nv-b-ayuda').textContent = tr('Cómo se juega');
   $id('nv-jugar').onclick = nvJugarCampana;
   $id('nv-b-capital').onclick = () => { nvJugarCampana(); nvNaveCapital(); };
+  $id('nv-b-retos').onclick = () => nvRetos();
   $id('nv-b-novedades').onclick = nvNovedades;
   $id('nv-b-opciones').onclick = nvOpciones;
   $id('nv-b-ayuda').onclick = () => { if (!NVP.tuto) nvTutoTodo(); };

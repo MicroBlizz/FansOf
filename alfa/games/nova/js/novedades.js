@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.28', real: ["<b>RETOS</b>: misiones diarias, semanales y logros (ganar misiones, liberar sectores, subir de rango, destruir naves) que pagan aleación. Están en el botón RETOS de la portada."], joke: ["Microblizz ha puesto objetivos trimestrales a la rebelión y Phony ya ha pedido el bonus."] },
   { v: '0.3.27', real: ["<b>TU CAMPAÑA EN LA NUBE</b>: la galaxia liberada, la aleación y las mejoras de la nave capital se guardan ahora con tu cuenta, igual que en los demás juegos, y las ves en otro aparato. Lo que ya tenías en este navegador se conserva."], joke: ["Microblizz ha subido tu flota a la nube y Phony ha preguntado si llueven asteroides."] },
   { v: '0.3.26', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha dejado los anuncios dormidos en la bodega y Phony ha preguntado si hay anuncios en el espacio."] },
   { v: '0.3.25', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha instalado una caja negra en la flota y Phony ha preguntado si también graba los chistes."] },

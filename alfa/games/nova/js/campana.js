@@ -124,7 +124,11 @@ function nvCierraMision(S) {
   S.cerrada = true;
   const c = nvCamp(), a = nvAleacionMision(S);
   c.aleacion += a; c.misiones++;
-  if (S.estado === 'victoria') { c.victorias++; if (S.sector && !c.libres.includes(S.sector)) c.libres.push(S.sector); }
+  NV_RETOS.evento('mision'); NV_RETOS.evento('muertos', S.stats.muertos); NV_RETOS.maximo('rango', S.nave.rango);
+  if (S.estado === 'victoria') {
+    c.victorias++; NV_RETOS.evento('victoria');
+    if (S.sector && !c.libres.includes(S.sector)) { c.libres.push(S.sector); NV_RETOS.evento('sector'); }
+  }
   S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();
   S.aleacionGanada = a;

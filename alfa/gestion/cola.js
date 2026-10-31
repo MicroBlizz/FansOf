@@ -21,7 +21,8 @@
 
   const leer = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch (e) { return def; } };
   const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: se recalcula */ } };
-  const limite = () => Math.max(0, Number(leer(LIM, 0)) || 0);   // límite semanal de referencia en tokens (opcional; la web no puede leer el de Claude)
+  const LIM_DEFECTO = 1250000;   // límite semanal de referencia por defecto, en tokens (la web no puede leer el de Claude); vaciar el campo lo quita
+  const limite = () => Math.max(0, Number(leer(LIM, LIM_DEFECTO)) || 0);
   const token = () => { try { return localStorage.getItem(CLAVE) || ''; } catch (e) { return ''; } };
   const fmt = s => { s = Math.round(s); if (s < 60) return s + ' s'; const m = Math.floor(s / 60); if (m < 60) return m + ' min' + (s % 60 && m < 20 ? ' ' + (s % 60) + ' s' : ''); return Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; };
   const hora = ms => { const d = new Date(ms); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };

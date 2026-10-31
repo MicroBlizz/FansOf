@@ -1,8 +1,8 @@
 {
- "build": 733,
- "hash": "023ccb2",
- "fecha": "2026-10-31T05:33:41Z",
- "mensaje": "Cola de Actions: fuera la opción «Precisión media»",
+ "build": 734,
+ "hash": "a2e34a2",
+ "fecha": "2026-10-31T05:40:00Z",
+ "mensaje": "Cola de Actions (web): límite semanal de referencia por defecto 1 250 000 tokens",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

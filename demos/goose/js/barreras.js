@@ -1,7 +1,7 @@
 // Fans of Goose · LAS BARRERAS: entre casilla y casilla hay una barrera con el aire de su tierra (img/barrera-<tierra>.png, de Yoshi).
 // Al tirar el dado se abren las barreras hasta la casilla que toque y vas tú andando, a tu ritmo, matando lo que quieras (el CAMINO).
-// Cada barrera que cruzas se cierra a tu espalda: no se vuelve atrás. El derrumbe se come las casillas que dejas atrás, pero se para
-// en la barrera cerrada de detrás de ti (js/tablero.js, avanzaDerrumbe). Al pisar la casilla de destino se resuelve como siempre (llegada).
+// Cada barrera que cruzas se cierra a tu espalda: no se vuelve atrás. El derrumbe sigue como siempre (js/tablero.js, avanzaDerrumbe):
+// se come las casillas y, si te alcanza, caes al abismo; así que no te duermas antes de tirar. Al pisar la casilla de destino se resuelve como siempre (llegada).
 'use strict';
 
 const BARRERAS_PNG = ['bosque', 'pantano', 'cementerio', 'aldea', 'catacumbas', 'castillo', 'feria', 'helada', 'mina'].map(n => 'barrera-' + n);
@@ -10,8 +10,6 @@ const ABIERTA = new Map();   // casilla t -> cuánto está abierta la barrera de
 
 // ¿debe estar abierta la barrera del borde de arriba de la casilla t?
 const barreraAbierta = t => JUEGO.fase === 'camino' && t >= JUEGO.paso && t < JUEGO.destino;
-// el borde de atrás que no se puede cruzar (la barrera cerrada de detrás): en el camino, la de la casilla que pisas; si no, la tuya
-const casillaAtras = () => (JUEGO.fase === 'camino' ? JUEGO.paso : JUEGO.casilla);
 
 // --- al tirar el dado: se abren las barreras hasta el destino ---
 function empiezaCamino(destino) {

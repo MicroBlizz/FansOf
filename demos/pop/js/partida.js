@@ -6,7 +6,7 @@
 'use strict';
 let PP_P = null;
 function ppNuevaRuta() {
-  PP_P = { v: 2, equipo: [], carga: {}, estrellas: 0, est: [], nivel: 0, dif: {}, estD: {}, salas: 0, T: null, tipo: null, rescatados: [], fin: null };
+  PP_P = { v: 2, equipo: [], carga: {}, estrellas: 0, est: [], nivel: 0, dif: {}, estD: {}, pes: {}, estP: {}, salas: 0, T: null, tipo: null, rescatados: [], fin: null };
   SAVE.partidas++; ppGuardaCamino();
 }
 // el camino se guarda entero (sin el tablero abierto) cada vez que cambia: al volver, se sigue en el mismo nivel
@@ -17,11 +17,14 @@ function ppGuardaCamino() {
   ppGuarda();
 }
 // los caminos de antes de los mundos (sin v: 2) no valen: se empieza de nuevo
-function ppSigueCamino() { if (!SAVE.run || SAVE.run.v !== 2) return false; PP_P = Object.assign({ T: null, dif: {}, estD: {} }, JSON.parse(JSON.stringify(SAVE.run))); return true; }
+function ppSigueCamino() { if (!SAVE.run || SAVE.run.v !== 2) return false; PP_P = Object.assign({ T: null, dif: {}, estD: {}, pes: {}, estP: {} }, JSON.parse(JSON.stringify(SAVE.run))); return true; }
 // --- el modo difícil: un mundo se abre en difícil al ganar a su jefe; PP_P.dif[m] = niveles difíciles pasados de ese mundo ---
 const ppDifAbierto = m => PP_P.nivel >= ppInicioMundo(m) + PP_MUNDOS[m].niveles;
 // en qué nivel (dentro del mundo, desde 0) va el camino de ese mundo y modo; PP_MUNDOS[m].niveles = todo pasado
-const ppVaPor = (m, dif) => (dif ? PP_P.dif[m] || 0 : clamp(PP_P.nivel - ppInicioMundo(m), 0, PP_MUNDOS[m].niveles));
+const ppVaPor = (m, dif) => (dif === 2 ? (PP_P.pes || {})[m] || 0 : dif ? PP_P.dif[m] || 0 : clamp(PP_P.nivel - ppInicioMundo(m), 0, PP_MUNDOS[m].niveles));
+// la PESADILLA de un mundo se abre al ganar su difícil entero (js/niveles.js, ppNivelPesadilla)
+const ppPesAbierta = m => (PP_P.dif[m] || 0) >= PP_MUNDOS[m].niveles;
+const ppEstDe = dif => (dif === 2 ? (PP_P.estP = PP_P.estP || {}) : dif ? PP_P.estD : PP_P.est);   // el récord de estrellas de ese modo
 // el mundo en el que está el camino ahora
 const ppMundoActual = () => ppMundoDe(Math.min(PP_P.nivel, PP_TOTAL_NIVELES - 1))[0];
 // lo del equipo que cuenta al crear el tablero
@@ -39,7 +42,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   const d = primera || !base.amigos ? base : Object.assign({}, base, { amigos: 0 });   // repitiendo, ya no hay amigos atrapados
   PP_P.tipo = d.jefe ? 'jefe' : 'sala';
   const T = PP_P.T = ppNuevoTablero(d, ppFx());
-  T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif ? ' · ' + tr('Difícil') : '');
+  T.titulo = (d.jefe ? tr('¡Nivel jefe!') : tr('Nivel {n}', { n: g + 1 })) + (dif === 2 ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : '');
   if (d.nim) ppNimEmpieza(T);   // nivel difícil o jefe: duelo por turnos contra el rival del mundo (js/nimnivel.js)
   else {
     // la racha de victorias y Nubecita dan toques de margen al empezar (js/pase.js, PP_SLIMES)
@@ -58,7 +61,7 @@ function ppEntra(g = PP_P.nivel, dif = false) {
   // lo que explica Lola: el principio de cada mundo, los primeros niveles, el primer difícil y el primer jefe
   if (!dif && d.mundo === 0 && d.l <= 3) ppTutorial('w1n' + d.l);
   if (!dif && d.mundo > 0 && d.l === 1) ppTutorial('w' + (d.mundo + 1) + 'n1');
-  if (dif) ppTutorial('modoDificil');
+  if (dif === 2) ppTutorial('modoPesadilla'); else if (dif) ppTutorial('modoDificil');
   if (d.nim) ppTutorial('nimNivel');
   else if (d.dificil) ppTutorial('dificil');
   if (d.jefe) ppTutorial('jefe');
@@ -134,18 +137,19 @@ function ppSaltaSlime(id, k, golpes) {
 function ppSalaHecha() {
   const T = PP_P.T, d = T.d, g = d.g; play('ppSala');
   T.estrellas = ppEstrellas(T);
-  const est = d.dif ? PP_P.estD : PP_P.est, antes = est[g] || 0;
+  const est = ppEstDe(d.dif), antes = est[g] || 0;
   est[g] = Math.max(antes, T.estrellas); PP_P.estrellas += Math.max(0, T.estrellas - antes);
-  T.premio = ppPremioNivel((d.dif ? 'd' : '') + g, T.estrellas, d.jefe, d.dif ? 2 : 1);
+  T.premio = ppPremioNivel(ppPrefijo(d.dif) + g, T.estrellas, d.jefe, d.dif === 2 ? 3 : d.dif ? 2 : 1);   // difícil, el doble; pesadilla, el triple
   ppBorraFallos(d); ppBarraAyudas(); setTimeout(ppSubeMarcas, 1500);   // estrellas al ranking mundial (js/ranking.js)
   const presos = Object.values(T.slimes);
   // el camino solo avanza si era el siguiente nivel (repitiendo uno ya pasado, no)
   let nuevo = false;
-  if (d.dif) { if (d.l - 1 === (PP_P.dif[d.mundo] || 0)) { PP_P.dif[d.mundo] = d.l; nuevo = true; } }
+  if (d.dif === 2) { PP_P.pes = PP_P.pes || {}; if (d.l - 1 === (PP_P.pes[d.mundo] || 0)) { PP_P.pes[d.mundo] = d.l; nuevo = true; } }
+  else if (d.dif) { if (d.l - 1 === (PP_P.dif[d.mundo] || 0)) { PP_P.dif[d.mundo] = d.l; nuevo = true; } }
   else if (g === PP_P.nivel) { PP_P.nivel++; nuevo = true; }
   ppGuardaCamino();
   if (nuevo) ppPremiosCandy(d, T.estrellas);   // racha, hucha y puntos del pase (js/pase.js y js/ofertas.js)
-  if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(true); return; }
+  if (nuevo && d.jefe && d.dif) { play('ppVictoria'); ppVentanaMundoNuevo(d.dif); return; }
   if (nuevo && d.jefe) { play('ppVictoria'); ppVentanaMundoNuevo(false); return; }
   if (presos.length) { play('ppRescate'); ppVentanaRescate(presos); } else ppVentanaSalaHecha();
 }

@@ -7,7 +7,7 @@ const PP_MAPA = { cam: null, obj: 0, m: null, dif: false, toque: null };
 const PP_PASO = 128;   // distancia entre niveles
 let PP_NODOS_MAPA = [], PP_BOTONES_MAPA = [];
 function ppNivelPos(i) { return [270 + Math.sin(i * 1.15) * 140, PP_V.H * 0.64 - (i - PP_MAPA.cam) * PP_PASO]; }
-function ppMapaVer(m, dif) { PP_MAPA.m = m; PP_MAPA.dif = !!dif; PP_MAPA.cam = null; }
+function ppMapaVer(m, dif) { PP_MAPA.m = m; PP_MAPA.dif = dif === 2 ? 2 : dif ? 1 : 0; PP_MAPA.cam = null; }   // 0 fácil, 1 difícil, 2 pesadilla
 // la manita que señala: dibujo de Yoshi (img/i-mano.png, Daniel eligió la semilla 11): manita kawaii con el ÍNDICE hacia
 // abajo, el pulgar al lado y el puño rosa. La punta del índice está en la columna 16 de 22 de la fila de abajo: se coloca
 // para que caiga justo en el centro del objetivo y pulsa arriba y abajo. Si aún no está, una flechita.
@@ -28,6 +28,18 @@ function ppNoche(c, t) {
     const x = (k * 157) % 530 + 5, y = (k * 241) % (PP_V.H * 0.8), a = 0.35 + 0.65 * Math.abs(Math.sin(t * 1.6 + k * 2.3)), s = 3 + (k % 3) * 2;
     c.globalAlpha = a; c.fillStyle = k % 4 ? '#fff6c8' : '#ffd1ec';
     c.beginPath(); c.moveTo(x, y - s * 2); c.quadraticCurveTo(x, y, x + s * 2, y); c.quadraticCurveTo(x, y, x, y + s * 2); c.quadraticCurveTo(x, y, x - s * 2, y); c.quadraticCurveTo(x, y, x, y - s * 2); c.fill();
+  }
+  c.restore();
+}
+// el fondo ROJO de la pesadilla: el mismo dibujo teñido de rojo oscuro, con chispas que suben como brasas
+function ppRojo(c, t) {
+  c.save();
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = '#e04050'; c.fillRect(0, 0, 540, PP_V.H);
+  c.globalCompositeOperation = 'source-over'; c.fillStyle = 'rgba(70,0,12,0.38)'; c.fillRect(0, 0, 540, PP_V.H);
+  for (let k = 0; k < 26; k++) {
+    const x = (k * 157) % 530 + 5 + Math.sin(t * 1.3 + k) * 8, y = PP_V.H - ((t * (20 + (k % 5) * 9) + k * 97) % (PP_V.H + 40)), s = 2 + (k % 3);
+    c.globalAlpha = 0.45 + 0.5 * Math.abs(Math.sin(t * 2 + k)); c.fillStyle = k % 3 ? '#ffb070' : '#ff5a5a';
+    c.beginPath(); c.arc(x, y, s, 0, Math.PI * 2); c.fill();
   }
   c.restore();
 }
@@ -52,16 +64,17 @@ function ppFlecha(c, x, y, dir) {
 function ppPintaMapa(c, t) {
   const P = PP_P, actual = ppMundoActual();
   if (PP_MAPA.m === null || PP_MAPA.m > actual) ppMapaVer(actual, false);
-  if (PP_MAPA.dif && !ppDifAbierto(PP_MAPA.m)) PP_MAPA.dif = false;
+  if (PP_MAPA.dif && !ppDifAbierto(PP_MAPA.m)) PP_MAPA.dif = 0;
+  if (PP_MAPA.dif === 2 && !ppPesAbierta(PP_MAPA.m)) PP_MAPA.dif = 1;
   const m = PP_MAPA.m, dif = PP_MAPA.dif, M = PP_MUNDOS[m], inicio = ppInicioMundo(m), N = M.niveles, va = ppVaPor(m, dif);
-  const est = dif ? P.estD : P.est;
+  const est = ppEstDe(dif), pes = dif === 2;
   if (PP_MAPA.cam === null) { PP_MAPA.cam = Math.max(0, Math.min(va, N - 1) - 1); PP_MAPA.obj = Math.min(va, N - 1); }
   PP_MAPA.cam += (PP_MAPA.obj - PP_MAPA.cam) * (PP_MAPA.toque ? 0.5 : 0.08);   // la cámara sube sola hasta el nivel que toca
-  ppPintaFondo(c, M.fondo, t, dif);
+  ppPintaFondo(c, M.fondo, t, dif);   // difícil, de noche; pesadilla, en rojo (ppPintaFondo)
   // la carretera: borde rosa, centro blanco y puntitos de colores
   c.save(); c.lineCap = 'round'; c.lineJoin = 'round';
   const tramo = (ancho, color, dash) => { c.beginPath(); c.setLineDash(dash || []); for (let i = 0; i < N; i++) { const [x, y] = ppNivelPos(i); if (i) c.lineTo(x, y); else c.moveTo(x, y); } c.lineWidth = ancho; c.strokeStyle = color; c.stroke(); };
-  tramo(46, dif ? '#8a8ff0' : '#ff9ccf'); tramo(34, '#fffaf2'); tramo(8, dif ? '#c8ccff' : '#ffd1ec', [2, 22]);
+  tramo(46, pes ? '#c8323c' : dif ? '#8a8ff0' : '#ff9ccf'); tramo(34, pes ? '#ffe6e0' : '#fffaf2'); tramo(8, pes ? '#ff8a8a' : dif ? '#c8ccff' : '#ffd1ec', [2, 22]);
   c.restore();
   PP_NODOS_MAPA = []; PP_BOTONES_MAPA = [];
   for (let i = N - 1; i >= 0; i--) {
@@ -86,16 +99,20 @@ function ppPintaMapa(c, t) {
   // arriba: el mundo, con flechas a los otros mundos abiertos, y el interruptor normal / difícil
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 96, 24); c.fill();
   ppTitulo(c, tr('Mundo {n}', { n: m + 1 }), 270, 52, 40);
-  ppTexto(c, tr(M.nombre) + (dif ? ' · ' + tr('Difícil') : ''), 270, 92, 28, '#fff', 'center', dif ? '#3a3a9a' : '#c43a84');
+  ppTexto(c, tr(M.nombre) + (pes ? ' · ' + tr('Pesadilla') : dif ? ' · ' + tr('Difícil') : ''), 270, 92, 28, '#fff', 'center', pes ? '#8a1020' : dif ? '#3a3a9a' : '#c43a84');
   if (m > 0) { ppFlecha(c, 58, 66, -1); PP_BOTONES_MAPA.push({ x: 58, y: 66, r: 40, f: () => ppMapaVer(m - 1, false) }); }
   if (m < actual) { ppFlecha(c, 482, 66, 1); PP_BOTONES_MAPA.push({ x: 482, y: 66, r: 40, f: () => ppMapaVer(m + 1, false) }); }
+  // el selector FÁCIL · DIFÍCIL · PESADILLA (Daniel, 31-10-2026): cada modo sale cuando se abre; el que está cerrado, con candado gris
   if (ppDifAbierto(m)) {
-    const y = 148;
-    c.fillStyle = 'rgba(255,255,255,0.75)'; c.beginPath(); c.roundRect(110, y - 26, 320, 52, 26); c.fill();
-    c.fillStyle = dif ? '#4a54c8' : '#ff6eb5'; c.beginPath(); c.roundRect(dif ? 270 : 114, y - 22, 156, 44, 22); c.fill();
-    ppTexto(c, tr('NORMAL'), 192, y + 1, 26, dif ? '#c43a84' : '#fff', 'center', dif ? '#fff' : '#c43a84');
-    ppTexto(c, tr('DIFÍCIL'), 348, y + 1, 26, dif ? '#fff' : '#4a54c8', 'center', dif ? '#2a2a7a' : '#fff');
-    PP_BOTONES_MAPA.push({ x: 192, y, r: 60, f: () => { if (dif) ppMapaVer(m, false); } }, { x: 348, y, r: 60, f: () => { if (!dif) ppMapaVer(m, true); } });
+    const y = 148, modos = [[tr('FÁCIL'), '#ff6eb5', '#c43a84'], [tr('DIFÍCIL'), '#4a54c8', '#2a2a7a'], [tr('PESADILLA'), '#c8323c', '#6a0a14']];
+    const w = 150, x0 = 270 - (w * 3 + 8) / 2;
+    c.fillStyle = 'rgba(255,255,255,0.78)'; c.beginPath(); c.roundRect(x0 - 4, y - 26, w * 3 + 16, 52, 26); c.fill();
+    modos.forEach(([txt, col, borde], k) => {
+      const x = x0 + k * (w + 4) + w / 2, abierto = k < 2 || ppPesAbierta(m), on = dif === k;
+      if (on) { c.fillStyle = col; c.beginPath(); c.roundRect(x - w / 2, y - 22, w, 44, 22); c.fill(); }
+      ppTexto(c, txt, x, y + 1, 22, on ? '#fff' : abierto ? col : '#b8a8c0', 'center', on ? borde : '#fff');
+      if (abierto) PP_BOTONES_MAPA.push({ x, y, r: 56, f: () => { if (dif !== k) ppMapaVer(m, k); } });
+    });
   }
   // abajo: corazones (con el reloj del siguiente), estrellas, monedas y el equipo
   const yb = PP_V.H - 176;

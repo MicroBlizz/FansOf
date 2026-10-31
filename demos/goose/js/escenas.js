@@ -137,6 +137,7 @@ function empiezaPosada() {
 }
 function compraPosada(o) {
   const J = JUEGO, E = J.escena; if (!E || E.compradas[o.id]) return;
+  if (o.anuncio) { regaloPosada(o); return; }   // los regalos con anuncio (js/monetiza.js)
   if (J.monedasPartida < precio(o)) { toast(tr('Te faltan monedas')); SONIDO.dadoMalo(); return; }
   J.monedasPartida -= precio(o); E.compradas[o.id] = true; J.compro = true; SONIDO.moneda();
   if (o.id === 'asada') { J.vida = J.st.vidaMax; texto(J.yo.x, J.yo.y - 16, tr('¡A tope!'), '#7dff6b', 9, 1); SONIDO.cura(); }
@@ -199,6 +200,6 @@ function pintaEscenasHud() {
     texto2(tr('QUEDAN'), W / 2, 66, 7, '#c9b98a');
     texto2(String(E.restan), W / 2, 80, 20, E.tipo === 'pozo' ? '#7dff6b' : '#c9d3ff', 'center', FUENTE_G, 400, 0.2);
   } else if (E.tipo === 'posada') {
-    pintaTiendita(tr('LA POSADA'), '#ffb86b', POSADA, E.compradas, compraPosada, tr('Tira el dado para irte (saldrá impar)'));
+    pintaTiendita(tr('LA POSADA'), '#ffb86b', listaPosada(), E.compradas, compraPosada, tr('Tira el dado para irte (saldrá impar)'));   // con los regalos de anuncio (js/monetiza.js)
   }
 }

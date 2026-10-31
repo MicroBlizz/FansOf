@@ -7,14 +7,14 @@
 // el tablero de un nivel `d` (de ppNivel). `fx.equipo`: los amigos que ya tienes (no salen atrapados).
 function ppNuevoTablero(d, fx) {
   const n = d.lado;
-  const T = { d, tipo: d.jefe ? 'jefe' : 'sala', n, mask: d.mask, esp: d.esp || null, nim: null, up: Uint8Array.from(d.need), sol: new Set(d.opt), slimes: {}, trampas: new Set(),
+  const T = { d, tipo: d.jefe ? 'jefe' : 'sala', n, mask: d.mask, esp: d.esp || null, nim: null, lo: !!d.lo, up: Uint8Array.from(d.need), sol: new Set(d.opt), slimes: {}, trampas: new Set(),
     toques: 0, pops: 0, pista: null, combo: 0, gratis: 0, mano: false, hecho: false, minimo: d.opt.length, limite: d.limite };
   // el amigo atrapado vive en una burbuja levantada (se ve dentro); siempre el mismo sitio para el mismo nivel
   if (d.amigos) {
     const libres = PP_SLIME_IDS.filter(id => !fx.equipo.includes(id));
     const sitios = [...T.up.keys()].filter(i => T.up[i]);
     // en los mundos 3 a 6 sale SU amigo nuevo (si aún no lo tienes); en los primeros, uno de los que te faltan
-    const suyo = [null, null, 'copito', 'medusa', 'algodon', 'nubecita'][d.mundo];
+    const suyo = [null, null, 'copito', 'medusa', 'algodon', 'nubecita', 'hada', 'sirena', 'maneki', 'astro'][d.mundo];
     if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = suyo && libres.includes(suyo) ? suyo : libres[d.g % libres.length];
   }
   if (fx.pista) ppPista(T);
@@ -31,6 +31,7 @@ function ppPista(T) { const s = [...T.sol]; T.pista = s.length ? s[Math.floor(Ma
 // pops (las que han reventado), grietas (las dobles que pasan a normales), si está resuelto y si se han acabado los toques.
 function ppToca(T, i, slime = false) {
   if (T.hecho || !T.mask[i]) return null;
+  if (T.lo) return ppTocaLO(T, i, slime);   // modo pesadilla
   const pops = [], grietas = [];
   for (const j of ppVecinas(T, i)) if (T.up[j] > 0) { T.up[j]--; (T.up[j] ? grietas : pops).push(j); }
   let libre = slime;
@@ -44,4 +45,20 @@ function ppToca(T, i, slime = false) {
   if (T.pista !== null && !T.sol.has(T.pista)) T.pista = null;
   const sinToques = !T.hecho && T.toques >= T.limite && T.gratis === 0;
   return { pops, grietas, subes: [], castigo: 0, hecho: T.hecho, libre, slime, golpes, sinToques };
+}
+// MODO PESADILLA («Lights Out», el primer boceto): tocar le da la vuelta a la burbuja y a sus vecinas; las hundidas vuelven a subir.
+// La solución que queda se lleva al día como en el prototipo: tocar una de la solución la quita; tocar otra, la añade.
+function ppTocaLO(T, i, slime) {
+  const pops = [], subes = [];
+  for (const j of ppCruz(T.n, T.mask, i)) { T.up[j] ^= 1; (T.up[j] ? subes : pops).push(j); }
+  let libre = slime;
+  if (!slime) { if (T.gratis > 0) { T.gratis--; libre = true; } else T.toques++; }
+  T.pops += pops.length;
+  if (!slime) T.combo = pops.length > subes.length && pops.length >= 3 ? T.combo + 1 : 0;
+  if (T.sol.has(i)) T.sol.delete(i); else T.sol.add(i);
+  T.hecho = ppResuelto(T);
+  if (T.hecho) T.sol = new Set();
+  if (T.pista !== null && !T.sol.has(T.pista)) T.pista = null;
+  const sinToques = !T.hecho && T.toques >= T.limite && T.gratis === 0;
+  return { pops, grietas: [], subes, castigo: 0, hecho: T.hecho, libre, slime, golpes: pops.length, sinToques };
 }

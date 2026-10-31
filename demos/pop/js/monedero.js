@@ -50,6 +50,7 @@ function ppPremioNivel(clave, estrellas, jefe, x = 1) {
   const total = Object.values(SAVE.mejor).reduce((a, b) => a + b, 0);
   while (Math.floor(total / PP_CFG.cofreCada) > SAVE.cofres) { SAVE.cofres++; p.cofre += PP_CFG.cofre[0] + Math.floor(Math.random() * (PP_CFG.cofre[1] - PP_CFG.cofre[0] + 1)); }
   if (nuevo && jefe) { p.cofre += PP_CFG.cofreJefe * x; p.perlas = PP_CFG.perlas.jefe; SAVE.perlas = (SAVE.perlas || 0) + p.perlas; }
+  if (p.monedas && typeof ppEnEquipo === 'function' && ppEnEquipo('maneki')) p.monedas = Math.round(p.monedas * (1 + PP_SLIMES.maneki.fx.monedas));   // el Gatito de la suerte
   SAVE.monedas += p.monedas + p.cofre; ppGuarda();
   return p;
 }

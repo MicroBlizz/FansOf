@@ -47,7 +47,10 @@ function pintaPortada(dt) {
   const mitad = (W - 66) / 2, D = diarioHoy();
   botonLosa(30, yb + 30, mitad, 26, tr('TABLERO DEL DÍA'), '#c0402f', () => { SONIDO.boton(); JUEGO.modo = 'diario'; }, 7.5, D.intentos ? tr('Hoy: {p}', { p: D.mejor }) : tr('¡Nuevo!'), 26);
   botonLosa(36 + mitad, yb + 30, mitad, 26, tr('DESAFÍOS'), '#d98a1a', () => { SONIDO.boton(); DESAFIOS_SCROLL = 0; JUEGO.modo = 'desafios'; }, 8, tr('{a} de {b}', { a: DESAFIOS.filter(d => hecho(d.id)).length, b: DESAFIOS.length }), 42);
-  botonLosa(30, yb + 62, W - 60, 24, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 9, tr('Carrera o cooperativo, de 2 a 4'), 6);
+  botonLosa(30, yb + 62, mitad, 24, tr('CON AMIGOS'), '#1f9a8a', () => { SONIDO.boton(); abreAmigos(); }, 8, tr('De 2 a 4'));
+  botonLosa(36 + mitad, yb + 62, mitad, 24, tr('CONTRARRELOJ'), '#8a3a1a', () => { SONIDO.boton(); CR.datos = null; JUEGO.modo = 'contrarreloj'; }, 8, crSave().mejor ? tr('Récord {t}', { t: reloj(crSave().mejor) }) : tr('¡Nuevo!'));   // js/contrarreloj.js
+  botonLosa(W - 46, 10, 38, 34, '', '#d99a1a', () => { SONIDO.boton(); abrePase(); }, 7);   // el Camino de la Oca, arriba a la derecha (js/pase.js)
+  icono('pase', W - 27, 23, 12); texto2(String(escalonPase()) + '/63', W - 27, 37, 6, '#3a1c06', 'center', FUENTE, 800, 0);
   botonLosa(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }), 31);
   botonLosa(W - 76, yb + 92, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
   texto2(tr('Microblizz no se hace responsable de las ocas'), W / 2, H - 12, 5.5, 'rgba(241,230,200,.55)', 'center', FUENTE, 700, 0);
@@ -77,10 +80,10 @@ function pintaCartas(dt) {
     if (etq) texto2(etq, x + W - 30, y + 12, 6.5, c.clase === 'evo' ? '#ffd34d' : c.nueva ? '#7dff6b' : '#6bd4ff', 'right');
     parrafo(tr(c.desc), tx, y + 26, W - 24 - alto - 10, 7, '#e8dcc0');
     G.globalAlpha = 1;
-    if (J.cartaElegida < 0 && ki >= 1) BOTONES.push({ x, y, w: W - 24, h: alto, accion: () => eligeCarta(i) });
+    if (J.cartaElegida < 0 && ki >= 1) BOTONES.push({ x, y, w: W - 24, h: alto, accion: () => (J.desterrando ? destierra(i) : eligeCarta(i)) });
   });
   const yb = y0 + n * (alto + gap) + 4;
-  if (J.tiradas > 0 && J.cartaElegida < 0) boton(W / 2 - 60, yb, 120, 24, tr('VOLVER A TIRAR'), '#c0402f', () => vuelveATirar(), 8.5, tr('quedan {n}', { n: J.tiradas }));
+  botonesCartas(yb);   // volver a tirar, desterrar y saltar (js/maldicion.js)
 }
 function parrafo(t, x, y, ancho, tam, color) {
   const pal = t.split(' '), alto = Math.max(TAM_MIN, tam) * 1.15; let linea = '', yy = y;
@@ -179,6 +182,8 @@ function pintaFin(dt) {
 function lineasFin(F) {
   const l = [];
   if (F.diario) l.push([F.diario.record ? tr('Tablero del día: {p} puntos ¡tu mejor de hoy!', { p: F.diario.pts }) : tr('Tablero del día: {p} puntos', { p: F.diario.pts }), '#ffd34d']);
+  if (F.cr && F.cr.gana) { l.push([tr('Contrarreloj: {t}', { t: reloj(F.cr.seg) }) + (F.cr.record ? ' · ' + tr('¡tu mejor tiempo!') : ''), '#ffd34d']); l.push([F.cr.medalla ? tr('Medalla de {m}: +{n} monedas', { m: tr(F.cr.medalla.nombre), n: F.cr.medalla.monedas }) : tr('Sin medalla esta vez'), F.cr.medalla ? F.cr.medalla.color : '#c9b98a']); }
+  if (F.pase) l.push([textoPaseFin(F.pase), '#ffe27a']);   // el Camino de la Oca (js/pase.js)
   if (F.noche) l.push([tr('¡NOCHE {n} ABIERTA!', { n: F.noche }), '#ff8a6b']);
   for (const d of F.desafios || []) { l.push([tr('Desafío: {t}', { t: tr(d.txt) }), '#7dff6b']); l.push([textoPremio(d), '#ffd34d']); }
   return l;
@@ -189,10 +194,11 @@ function finBotones(F, W, H, ym, logros = []) {
     pinta('moneda', W / 2 - 26, ym + 14, false, false, 1.6); texto2('+' + F.monedas, W / 2 - 14, ym + 14.5, 13, '#ffcf33', 'left');
     let y = ym + 38;
     if (F.record) { texto2(tr('¡NUEVO RÉCORD!'), W / 2, y, 8, '#7dff6b'); y += 11; }
-    const caben = Math.max(0, Math.floor((H - 122 - y) / 9));
+    const conDoblar = hayAnuncios() && !F.doblado && F.monedas > 0, caben = Math.max(0, Math.floor((H - (conDoblar ? 156 : 122) - y) / 9));   // hueco para «doblar» (js/monetiza.js)
     logros.slice(0, caben).forEach(([t, c], i) => { if (F.t > 2.6 + i * 0.2) texto2(t, W / 2, y + i * 9, 7, c, 'center', FUENTE, 800, 0.3); });
     if (logros.length > caben && caben) texto2(tr('…y {n} más en Desafíos', { n: logros.length - caben }), W / 2, y + caben * 9, 7, '#c9b98a');
   }
+  botonDoblar(F, W, H - 148);   // doblar el botín viendo un anuncio (js/monetiza.js)
   if (F.t > 2.8) {
     boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else if (F.diario) empiezaDiario(); else nuevaPartida(); }, 13);
     boton(30, H - 70, W - 60, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));

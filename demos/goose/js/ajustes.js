@@ -57,5 +57,10 @@ const CFG = {
     { id: 'sabio',   max: 5, base: 35 },    // +6 % de experiencia por nivel
     { id: 'botin',   max: 5, base: 30 },    // +20 % de monedas en los cofres por nivel
     { id: 'redado',  max: 1, base: 140 },   // una vez por partida, volver a tirar el dado nada más tirarlo
+    { id: 'maldicion', max: 5, base: 60 },  // como en Vampire Survivors: ocas más duras a cambio de monedas y experiencia (se puede bajar)
+    { id: 'horda',   max: 5, base: 60 },    // más ocas y más seguido, a cambio de monedas y experiencia (se puede bajar)
+    { id: 'destierro', max: 3, base: 150 }, // cargas por partida para quitar una carta para siempre
+    { id: 'saltar',  max: 3, base: 100 },   // cargas por partida para saltarte una subida (+15 monedas)
+    { id: 'auto',    max: 1, base: 2500 },  // la Elección automática: carísima
   ],
 };

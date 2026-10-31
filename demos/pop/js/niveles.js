@@ -20,13 +20,28 @@ const PP_MUNDOS = [
   { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
   { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
   { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
+  // mundos 7 a 10 (31-10-2026): cada uno con su burbuja nueva de efecto grande (cohete = su fila, burbujeante = un 3x3, pétalo = su
+  // columna) y algo de las de antes; el Espacio, todo mezclado y con el CEO espacial de jefe
+  { nombre: 'Bosque de hadas', fondo: 'fondo-bosque', niveles: 20, amigos: [7], lado: [5, 6], esp: { cohete: [0.06, 0.12], doble: [0.15, 0.25], hielo: [0.08, 0.14] }, nueva: 'cohete' },
+  { nombre: 'Fondo del mar', fondo: 'fondo-mar', niveles: 20, amigos: [7], lado: [5, 6], esp: { burbujas: [0.06, 0.12], triple: [0.08, 0.15], concha: [0.1, 0.16] }, nueva: 'burbujas' },
+  { nombre: 'Jardín de cerezos', fondo: 'fondo-sakura', niveles: 20, amigos: [7], lado: [6, 6], esp: { petalo: [0.06, 0.12], cohete: [0.04, 0.08], doble: [0.15, 0.22], hielo: [0.1, 0.16] }, nueva: 'petalo' },
+  { nombre: 'Espacio', fondo: 'fondo-espacio', niveles: 20, amigos: [7], lado: [6, 6], esp: { cohete: [0.04, 0.07], burbujas: [0.04, 0.07], petalo: [0.04, 0.07], triple: [0.12, 0.2], hielo: [0.12, 0.18], concha: [0.1, 0.15] } },
 ];
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
-const PP_ESP = { hielo: 1, concha: 2 };
+// 3 cohete (su fila entera), 4 burbujeante (un cuadrado de 3x3) y 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las
+// revienta un toque suyo, también con estos.
+const PP_ESP = { hielo: 1, concha: 2, cohete: 3, burbujas: 4, petalo: 5 };
 function ppEfecto(n, mask, esp, t) {
   if (esp && esp[t] === 2) return [t];
-  const v = ppCruz(n, mask, t);
+  let v;
+  if (esp && esp[t] >= 3) {
+    const x0 = t % n, y0 = (t - x0) / n, e = esp[t]; v = [];
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const dentro = e === 3 ? y === y0 : e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
+      if (dentro && mask[y * n + x]) v.push(y * n + x);
+    }
+  } else v = ppCruz(n, mask, t);
   return esp ? v.filter(j => j === t || esp[j] !== 1) : v;
 }
 const PP_TOTAL_NIVELES = PP_MUNDOS.reduce((a, m) => a + m.niveles, 0);
@@ -84,7 +99,26 @@ const PP_FORMAS_MUNDO = [
   { 6: [['.##...', '#####.', '######', '######', '######', '.####.'],   // nube
         ['.####.', '######', '##..##', '##..##', '##..##', '##..##'],   // arcoíris
         ['..##..', '..##..', '######', '.####.', '.####.', '##..##'],   // estrella
-        ['.###..', '##....', '##....', '##....', '###...', '.####.']] }, // luna
+        ['.###..', '##....', '##....', '##....', '###...', '.####.']] }, // luna,
+  { 5: [['.###.', '#####', '#####', '..#..', '.###.']],         // seta pequeña
+    6: [['.####.', '######', '######', '..##..', '..##..', '.####.'],   // seta
+        ['..##..', '.####.', '######', '######', '.####.', '..##..'],   // hoja
+        ['#.##.#', '######', '.####.', '..##..', '.####.', '.#..#.'],   // hada
+        ['..##..', '.####.', '######', '######', '..##..', '..##..']] }, // árbol
+  { 5: [['#...#', '##.##', '#####', '.###.', '..#..']],         // cola de sirena
+    6: [['.####.', '######', '######', '######', '#.##.#', '#.##.#'],   // pulpo
+        ['..####', '.#####', '######', '######', '.#####', '..####'],   // ballena
+        ['..##..', '######', '..##..', '..##..', '#.##.#', '######'],   // ancla
+        ['.####.', '######', '######', '.####.', '.#..#.', '.#..#.']] }, // medusa
+  { 5: [['.#.#.', '#####', '.###.', '#####', '.#.#.']],         // flor de cerezo pequeña
+    6: [['.#..#.', '######', '.####.', '######', '######', '.#..#.'],   // flor de cerezo
+        ['..##..', '######', '######', '######', '######', '..##..'],   // farolillo
+        ['######', '######', '.####.', '.####.', '..##..', '..##..'],   // abanico
+        ['#....#', '##..##', '######', '######', '######', '.####.']] }, // gatito de la suerte
+  { 6: [['..##..', '.####.', '######', '######', '.####.', '..##..'],   // planeta
+        ['..##..', '.####.', '.####.', '.####.', '######', '#.##.#'],   // cohete
+        ['.###..', '####..', '###...', '###...', '####..', '.####.'],   // luna
+        ['#.....', '##..##', '.#####', '..####', '..####', '...##.']] }, // estrella fugaz
 ];
 // --- semilla: cada nivel sale siempre igual ---
 function ppAzar(semilla) { let s = semilla >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -218,10 +252,10 @@ function ppConstruye(g, intento, dif = false) {
 // cada cinco) y los jefes son un DUELO NIM contra el rival del mundo, en la forma de tablero del nivel: por turnos, cada uno
 // revienta las que quiera de UNA fila y pierde quien revienta la última (js/nimnivel.js). El rival juega perfecto salvo cuando
 // se despista (`fallo`), cada vez menos de un mundo a otro; el jefe es el CEO. Las burbujas son todas normales.
-const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo'];
+const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo', 'bunny', 'lola', 'cofre', 'ceo'];
 const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
 function ppNivelNim(g, dif) {
-  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 : 0)), jefe = ppEsJefe(g);
+  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 * dif : 0)), jefe = ppEsJefe(g);
   const lado = Math.min(6, Math.max(4, M.lado[1] - (jefe ? 0 : 1) + (dif ? 1 : 0)));   // el difícil, un poco más pequeño que el jefe
   const f = (PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado]);
   const mask = jefe ? f[0] : f[Math.floor(az() * f.length)];
@@ -229,14 +263,56 @@ function ppNivelNim(g, dif) {
   mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') { mk[y * n + x] = 1; need[y * n + x] = 1; } }));
   // Daniel (31-10-2026: «son muy difíciles»): al principio el rival falla casi siempre y endurece mundo a mundo hasta el CEO
   let fallo = jefe ? Math.max(0.05, 0.6 - 0.11 * m) : Math.max(0.1, 0.8 - 0.13 * m);
-  if (dif) fallo = Math.max(0.02, fallo * 0.5);
+  if (dif === 2) fallo = 0.02;   // pesadilla: el rival casi nunca se equivoca
+  else if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
-    nim: { rival: jefe ? 'ceo' : PP_RIVALES[m], fallo } };
+    nim: { rival: jefe ? (m === PP_MUNDOS.length - 1 ? 'ceoespacial' : 'ceo') : PP_RIVALES[m], fallo } };   // el jefe del último mundo: el CEO espacial
+}
+// MODO PESADILLA (Daniel, 31-10-2026: «muy difícil, con fondo rojo, con el modo de juego del primer boceto»): se abre al ganar el
+// difícil de un mundo. Es el «Lights Out» del primer prototipo: tocar una burbuja le da la vuelta a ella y a sus cuatro vecinas (las
+// levantadas se hunden y LAS HUNDIDAS VUELVEN A SUBIR); hay que dejarlas todas hundidas. Sin burbujas especiales. El tablero se
+// desordena desde el resuelto con `k` toques distintos, así que siempre tiene solución con esos k (las 3 estrellas) y el límite deja
+// uno de margen (dos en el primero de cada cinco). Los difíciles y el jefe siguen siendo duelos, con el rival casi perfecto.
+// `dif`: 0 fácil, 1 difícil, 2 pesadilla. La clave del nivel lleva delante 'd' (difícil) o 'p' (pesadilla).
+const ppPrefijo = dif => (dif === 2 ? 'p' : dif ? 'd' : '');
+function ppNivelPesadilla(g) {
+  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(31000 * (m + 1) + l * 101 + 7), jefe = ppEsJefe(g);
+  const lado = Math.min(6, Math.max(4, M.lado[1] - (l <= 7 ? 1 : 0)));
+  const f = PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado];
+  const mask = f[Math.floor(az() * f.length)];
+  const n = lado, N = n * n, mk = new Uint8Array(N), up = new Array(N).fill(0);
+  mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') mk[y * n + x] = 1; }));
+  const celdas = [...Array(N).keys()].filter(i => mk[i]).sort(() => az() - 0.5);
+  const k = Math.min(Math.floor(celdas.length / 2), 3 + Math.floor(l / 3) + m);   // cuántos toques hacen falta: crece con el nivel y el mundo
+  const opt = celdas.slice(0, k);
+  for (const t of opt) for (const j of ppCruz(n, mk, t)) up[j] ^= 1;
+  if (!up.some(v => v)) { const t = celdas[k]; opt.push(t); for (const j of ppCruz(n, mk, t)) up[j] ^= 1; }
+  const limite = opt.length + (l % 5 === 1 ? 2 : 1);
+  return { g, dif: 2, mundo: m, l, lado: n, mask: mk, need: up, esp: null, opt, limite, pasa: 1, amigos: 0, jefe, dificil: ppEsDificil(g), tutorial: false, lo: true };
+}
+// la solución de un tablero «Lights Out» desde cualquier estado (para la pista y los amigos tras un martillo o una bomba): eliminación
+// de Gauss con XOR sobre las burbujas de la forma. null si ese estado ya no tiene solución.
+function ppResuelveLO(n, mask, up) {
+  const vars = [...Array(n * n).keys()].filter(i => mask[i]), idx = new Map(vars.map((v, k) => [v, k])), V = vars.length;
+  const filas = vars.map(i => { const r = new Uint8Array(V + 1); for (const t of ppCruz(n, mask, i)) r[idx.get(t)] = 1; r[V] = up[i] ? 1 : 0; return r; });
+  let fila = 0; const piv = [];
+  for (let c = 0; c < V && fila < V; c++) {
+    let p = fila; while (p < V && !filas[p][c]) p++;
+    if (p === V) continue;
+    [filas[fila], filas[p]] = [filas[p], filas[fila]];
+    for (let r = 0; r < V; r++) if (r !== fila && filas[r][c]) for (let k = c; k <= V; k++) filas[r][k] ^= filas[fila][k];
+    piv.push(c); fila++;
+  }
+  for (let r = fila; r < V; r++) if (filas[r][V]) return null;
+  const sol = [];
+  piv.forEach((c, r) => { if (filas[r][V]) sol.push(vars[c]); });
+  return sol;
 }
 function ppNivel(g, dif = false) {
-  const clave = (dif ? 'd' : '') + g;
+  const clave = ppPrefijo(dif) + g;
   if (PP_CACHE_NIVEL[clave]) return PP_CACHE_NIVEL[clave];
   if (ppEsNim(g)) return (PP_CACHE_NIVEL[clave] = ppNivelNim(g, dif));
+  if (dif === 2) return (PP_CACHE_NIVEL[clave] = ppNivelPesadilla(g));
   const obj = ppObjetivo(g, dif), intentos = obj >= 1 ? 1 : 6;
   let mejor = null;
   for (let k = 0; k < intentos; k++) { const d = ppConstruye(g, k, dif); if (!mejor || Math.abs(d.pasa - obj) < Math.abs(mejor.pasa - obj)) mejor = d; }

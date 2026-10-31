@@ -124,6 +124,7 @@ function pintaHud() {
     texto2(J.casilla + ' / ' + CFG.jardin, W / 2, 48, 12, '#f6e7b8', 'center', FUENTE_G, 400, 0.25);
     if (J.carrera) texto2(tr('{n}º', { n: J.carrera.llegada !== null ? J.carrera.puesto : puestoActual() }), W / 2 + 34, 46, 10, J.carrera.color, 'left', FUENTE_G, 400, 0.25);
   }
+  pintaRelojCR();   // js/contrarreloj.js
   if (J.carrera && J.carrera.cuenta > 0) texto2(String(Math.ceil(J.carrera.cuenta)), W / 2, PAN.H * 0.42, 44 * (1 + (J.carrera.cuenta % 1) * 0.4), '#ffd34d', 'center', FUENTE_G, 400, 0.15);
   // combo
   if (J.combo >= 5) {

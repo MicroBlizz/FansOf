@@ -14,7 +14,9 @@ const SAVE = {
   noche: 1, nocheMax: 1,   // la Escalera de Noches (js/noches.js): la elegida y la más alta abierta
   desafios: {}, ganadoCon: [], peligros: 0,   // los desafíos cumplidos y con qué personajes has ganado (js/desafios.js)
   diario: null,   // el Tablero del día: { dia, mejor, casilla, intentos }
-  aspecto: null,   // capas y farolillos comprados y puestos (js/aspecto.js)
+  aspecto: null,
+  activo: {},        // el nivel puesto de la Maldición y la Horda (js/maldicion.js)
+  autoElegir: 1,     // la Elección automática encendida (si se ha comprado)   // capas y farolillos comprados y puestos (js/aspecto.js)
   menuMus: 'nomuertos',   // la canción a la que vuelve el motor tras un jingle
 };
 

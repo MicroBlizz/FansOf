@@ -97,6 +97,7 @@ function fotograma(ahora) {
   else if (J.modo === 'sala') { pintaSala(); }
   else if (J.modo === 'desafios') { pintaDesafios(); }
   else if (J.modo === 'diario') { pintaDiario(); }
+  else if (J.modo === 'contrarreloj') { pintaContrarreloj(); }   // js/contrarreloj.js
   else {
     if (J.modo === 'juego') avanzaPartida(dt);
     else if (J.modo === 'fin' || J.modo === 'cofre' || J.modo === 'cartas' || J.modo === 'eleccion') avanzaEfectos(dt * (J.modo === 'fin' ? 1 : 0.15));
@@ -122,6 +123,7 @@ async function arranca() {
   ajusta();   // otra vez, ya con las letras cargadas
   document.getElementById('carga').hidden = true;
   miraEnlaceSala();
+  setTimeout(subeTiempo, 5000);   // el tiempo del Contrarreloj que no se pudo subir (js/contrarreloj.js)
   requestAnimationFrame(fotograma);
 }
 arranca();

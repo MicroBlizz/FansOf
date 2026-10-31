@@ -21,10 +21,11 @@ function nuevaPartida() {
     noche: 1, mod: null, ruta: {}, extra: {}, mjHechos: 0, compro: false, frenado: 0, tRoca: 2, rnd: null, rndDado: null, diario: false, eleccion: null,
   });
   // la noche, el azar y el modo (js/noches.js, js/desafios.js): Tablero del día, con amigos (misma semilla para todos) o normal
+  J.contrarreloj = !!J.crPedido; J.crPedido = false;   // el Contrarreloj (js/contrarreloj.js): Noche 1 y sin Maldición ni Horda
   if (J.diarioPedido) { J.diarioPedido = false; J.diario = true; preparaDiario(); }
   else if (J.semillaSala) { J.rnd = semillaAzar(J.semillaSala); J.semillaSala = 0; }
-  else J.noche = Math.max(1, Math.min(SAVE.noche || 1, SAVE.nocheMax || 1));
-  J.mod = modNoche(); PELIGROS.length = 0; vaciaArmasNuevas(); vaciaArmasMas();
+  else J.noche = J.contrarreloj ? 1 : Math.max(1, Math.min(SAVE.noche || 1, SAVE.nocheMax || 1));
+  J.mod = aplicaRiesgo(modNoche()); empiezaCargas();   // la Maldición, la Horda, Desterrar y Saltar de la tienda (js/maldicion.js) PELIGROS.length = 0; vaciaArmasNuevas(); vaciaArmasMas();
   J.yo.x = CFG.W / 2; J.yo.y = -40; J.yo.miraX = 0; J.yo.miraY = -1;
   J.pers = J.diario ? personajeDelDia() : personaje(); J.yo.dir = 1;
   sorteaTierras(); J.maldicion = eligeMaldicion(); barajaCasillas();
@@ -213,6 +214,7 @@ function hitosCombo() {
 // --- subir de nivel ---
 function abreCartas() {
   const J = JUEGO;
+  if (autoActiva()) { eligeSola(); return; }   // la Elección automática (js/maldicion.js)
   J.pendientes--; J.modo = 'cartas'; J.cartas = reparteCartas(); J.cartasT = 0; J.cartaElegida = -1;
   anillo(J.yo.x, J.yo.y, 80, '#ffd34d', 0.5, 4); SONIDO.nivel();
 }
@@ -247,6 +249,7 @@ function cierraCofre() { const J = JUEGO; if (!J.cofre || J.cofre.t < 1.4) retur
 function terminaPartida(gana) {
   const J = JUEGO;
   J.mejorCombo = Math.max(J.mejorCombo, J.combo);
+  const cr = J.contrarreloj ? finContrarreloj(gana) : null;   // la medalla suma sus monedas antes de contarlas
   const base = J.monedasPartida + J.mejorCasilla + Math.floor(J.bajas / 20) + (gana ? 100 : 0);
   const diario = J.diario ? terminaDiario(gana) : null;
   const monedas = Math.round(base * J.st.monedas * J.mod.monedas * (diario && diario.primera ? 2 : 1));
@@ -255,7 +258,7 @@ function terminaPartida(gana) {
   SAVE.monedas += monedas; SAVE.mejorCasilla = Math.max(SAVE.mejorCasilla, gana ? CFG.jardin : J.mejorCasilla); SAVE.mejorBajas = Math.max(SAVE.mejorBajas, J.bajas);
   if (gana) SAVE.victorias++;
   guarda();
-  J.fin = { gana, monedas, record, t: 0, noche, desafios, diario };
+  J.fin = { gana, monedas, record, t: 0, noche, desafios, diario, cr };
   J.modo = 'fin';
   if (typeof RENDIMIENTO !== 'undefined') try { RENDIMIENTO.parar(); } catch (e) { /* sin contador */ }
 }

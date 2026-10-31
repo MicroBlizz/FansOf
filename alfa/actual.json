@@ -1,8 +1,8 @@
 {
- "build": 753,
- "hash": "455ca0d",
- "fecha": "2026-10-31T20:10:21Z",
- "mensaje": "Nube: cada juego puede dar su resumenPartida() para la ventana de conflicto; Nova 0.3.30 la estrena",
+ "build": 754,
+ "hash": "6a32f2e",
+ "fecha": "2026-10-31T21:17:01Z",
+ "mensaje": "Pets: poses de cuidado de los bebés de los 8 Animales Locos (comer, beber, baño, dientes, cara, ducha y dormir)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -13,7 +13,7 @@
   "jump": "0.3.16",
   "karts": "0.7.15",
   "nova": "0.3.30",
-  "pets": "0.1.5",
+  "pets": "0.1.6",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",
   "rumble": "0.9.158",

@@ -3,15 +3,22 @@
 'use strict';
 // criatura → etapa → pose → archivo. Las poses: base, comer, beber, bano, dientes, cara, ducha y dormir (en su camita).
 // Una pose que falta se pinta con la base. Los bebés van sentados, como un peluche (docs/pets/evoluciones.md)
+const PT_POSES_BEBE = ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha', 'dormir'];
 const PT_ARTE = {
-  'animales:bunny': { bebe: ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha', 'dormir'] },
-  'animales:squirrel': { bebe: ['base'] },
-  'animales:beaver': { bebe: ['base'] },
-  'animales:fox': { bebe: ['base'] },
-  'animales:meercat': { bebe: ['base'] },
-  'animales:junkcoon': { bebe: ['base'] },
-  'animales:mechavaca': { bebe: ['base'] },   // de bebé es una vaca con un robot de juguete: el robot de verdad llega en el adulto
-  'animales:huron': { bebe: ['base'] },
+  'animales:bunny': { bebe: PT_POSES_BEBE },
+  'animales:squirrel': { bebe: PT_POSES_BEBE },
+  'animales:beaver': { bebe: PT_POSES_BEBE },
+  'animales:fox': { bebe: PT_POSES_BEBE },
+  'animales:meercat': { bebe: PT_POSES_BEBE },
+  'animales:junkcoon': { bebe: PT_POSES_BEBE },
+  'animales:mechavaca': { bebe: PT_POSES_BEBE },   // de bebé es una vaca con un robot de juguete: el robot de verdad llega en el adulto
+  'animales:huron': { bebe: PT_POSES_BEBE },
+};
+// dónde está el patito en la ducha de cada criatura (x, y, ancho y alto en fracción del dibujo); si falta, el de PETS.mampara.delante
+const PT_PATITO = {
+  'animales:squirrel': [0.665, 0.76, 0.17, 0.15], 'animales:beaver': [0.662, 0.662, 0.17, 0.203], 'animales:fox': [0.676, 0.727, 0.13, 0.145],
+  'animales:meercat': [0.707, 0.662, 0.155, 0.208], 'animales:junkcoon': [0.685, 0.662, 0.17, 0.212], 'animales:mechavaca': [0.715, 0.7, 0.137, 0.164],
+  'animales:huron': [0.67, 0.662, 0.176, 0.22],
 };
 // el cuidado que se está viendo → la pose que lo dibuja
 const PT_POSE = { comer: 'comer', beber: 'beber', banar: 'ducha', dientes: 'dientes', cara: 'cara', bano: 'bano' };
@@ -32,7 +39,7 @@ const ptTieneArte = (id, etapa) => !!(PT_ARTE[id] && PT_ARTE[id][etapa]);
 // la mampara: se ve la pose entera (la ducha por encima) y un cristal centrado en la criatura la tapa de la ducha a los pies; el patito va delante.
 // Lo que queda detrás del cristal se pinta reducido a pocos píxeles y ampliado sin suavizar: sutil, pero no se ve nada.
 const PT_MAMPARA = document.createElement('canvas');
-function ptPintaMampara(ctx, img, x, y0, lado) {   // y0: el borde de arriba del dibujo
+function ptPintaMampara(ctx, img, x, y0, lado, id) {   // y0: el borde de arriba del dibujo
   const M = PETS.mampara, iw = img.naturalWidth, ih = img.naturalHeight;
   const dx = x - lado / 2 + M.x * lado, dy = y0 + M.y * lado, dw = M.w * lado, dh = M.h * lado;
   ctx.save();
@@ -51,7 +58,7 @@ function ptPintaMampara(ctx, img, x, y0, lado) {   // y0: el borde de arriba del
   for (const f of [0.25, 0.4]) { ctx.beginPath(); ctx.moveTo(dx + dw * f, dy + dh * 0.12); ctx.lineTo(dx + dw * (f - 0.15), dy + dh * 0.4); ctx.stroke(); }
   ctx.restore();
   ptTrazo(ctx, 5); ctx.beginPath(); ctx.roundRect(dx, dy, dw, dh, 14); ctx.stroke();   // el marco
-  const D = M.delante;   // el patito, nítido y por delante del cristal
+  const P = PT_PATITO[id], D = P ? { x: P[0], y: P[1], w: P[2], h: P[3] } : M.delante;   // el patito, nítido y por delante del cristal
   ctx.drawImage(img, D.x * iw, D.y * ih, D.w * iw, D.h * ih, x - lado / 2 + D.x * lado, y0 + D.y * lado, D.w * lado, D.h * lado);
   ctx.restore();
 }
@@ -67,7 +74,7 @@ function ptPintaBebeArte(ctx, id, x, y, r, t, e) {
   const salto = a && !e.dormida ? Math.abs(Math.sin(p * Math.PI * 4)) * 14 * (1 - p) : 0, suelo = y + r * 1.0;
   ctx.save();
   ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x, suelo, r * 0.85, r * 0.16, 0, 0, 7); ctx.fill();
-  if (pose === 'ducha') ptPintaMampara(ctx, img, x, suelo - salto - lado * PETS.arte.pies, lado);
+  if (pose === 'ducha') ptPintaMampara(ctx, img, x, suelo - salto - lado * PETS.arte.pies, lado, id);
   else {
     ctx.translate(x, suelo - salto); ctx.scale(1 + resp, 1 - resp);
     if (e.dormida) ctx.filter = cama ? 'brightness(0.85)' : 'brightness(0.75)';

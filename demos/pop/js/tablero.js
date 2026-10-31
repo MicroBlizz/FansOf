@@ -7,13 +7,15 @@
 // el tablero de un nivel `d` (de ppNivel). `fx.equipo`: los amigos que ya tienes (no salen atrapados).
 function ppNuevoTablero(d, fx) {
   const n = d.lado;
-  const T = { d, tipo: d.jefe ? 'jefe' : 'sala', n, mask: d.mask, esp: d.esp || null, up: Uint8Array.from(d.need), sol: new Set(d.opt), slimes: {}, trampas: new Set(),
+  const T = { d, tipo: d.jefe ? 'jefe' : 'sala', n, mask: d.mask, esp: d.esp || null, nim: null, up: Uint8Array.from(d.need), sol: new Set(d.opt), slimes: {}, trampas: new Set(),
     toques: 0, pops: 0, pista: null, combo: 0, gratis: 0, mano: false, hecho: false, minimo: d.opt.length, limite: d.limite };
   // el amigo atrapado vive en una burbuja levantada (se ve dentro); siempre el mismo sitio para el mismo nivel
   if (d.amigos) {
     const libres = PP_SLIME_IDS.filter(id => !fx.equipo.includes(id));
     const sitios = [...T.up.keys()].filter(i => T.up[i]);
-    if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = libres[d.g % libres.length];
+    // en los mundos 3 a 6 sale SU amigo nuevo (si aún no lo tienes); en los primeros, uno de los que te faltan
+    const suyo = [null, null, 'copito', 'medusa', 'algodon', 'nubecita'][d.mundo];
+    if (libres.length && sitios.length) T.slimes[sitios[(d.g * 7) % sitios.length]] = suyo && libres.includes(suyo) ? suyo : libres[d.g % libres.length];
   }
   if (fx.pista) ppPista(T);
   return T;
@@ -22,7 +24,8 @@ function ppNuevoTablero(d, fx) {
 const ppVecinas = (T, i) => ppEfecto(T.n, T.mask, T.esp, i);
 function ppResuelto(T) { for (let i = 0; i < T.up.length; i++) if (T.up[i]) return false; return true; }
 // las estrellas: 3 con el mínimo posible de toques, 2 a medio camino entre el mínimo y el límite, 1 si lo pasas justo
-function ppEstrellas(T) { return T.toques <= T.minimo ? 3 : T.toques <= T.minimo + Math.ceil((T.limite - T.minimo) / 2) ? 2 : 1; }
+// en un nivel duelo (js/nimnivel.js): 3 sin ningún error, 2 con uno, 1 con más
+function ppEstrellas(T) { if (T.nim) return 3 - Math.min(2, T.nim.errores); return T.toques <= T.minimo ? 3 : T.toques <= T.minimo + Math.ceil((T.limite - T.minimo) / 2) ? 2 : 1; }
 function ppPista(T) { const s = [...T.sol]; T.pista = s.length ? s[Math.floor(Math.random() * s.length)] : null; }
 // un toque. `slime` = lo da un amigo (no cuenta ni rompe el combo). Devuelve qué ha pasado para partida.js:
 // pops (las que han reventado), grietas (las dobles que pasan a normales), si está resuelto y si se han acabado los toques.

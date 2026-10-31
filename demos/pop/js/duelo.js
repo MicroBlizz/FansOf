@@ -33,11 +33,12 @@ function ppDueloToque(i) {
   const fila = Math.floor(i / D.T.n);
   if (D.fila !== null && fila !== D.fila) { ppFlota(tr('¡Solo en la misma fila!'), 270, 240, '#ff6ec7'); play('ppDano'); return; }
   D.fila = fila; D.esta.push(i); ppLolaToque();
-  if (ppDueloRevienta(i)) { ppDueloFin('pierde'); return; }
+  if (ppDueloRevienta(i)) { if (D.pvp) ppPvpManda(D.esta.slice()); ppDueloFin('pierde'); return; }   // contra gente, el rival tiene que verla
   ppDueloBoton();
 }
 function ppDueloListo() {
   const D = PP_DUELO; if (!D || D.fin || D.turno !== 'yo' || !D.esta.length) return;
+  if (D.pvp) { ppPvpManda(D.esta.slice()); D.turno = 'rival'; D.fila = null; D.esta = []; ppDueloBoton(); return; }   // contra gente (js/pvp.js)
   D.turno = 'ceo'; D.fila = null; D.esta = []; ppDueloBoton();
   setTimeout(ppTurnoCeo, 700);
 }
@@ -66,13 +67,27 @@ function ppTurnoCeo() {
   }, 380 * (k + 1)));
 }
 function ppDueloFin(res) {
-  const D = PP_DUELO; D.fin = res; ppDueloBoton();
+  const D = PP_DUELO; if (D.fin) return; D.fin = res; ppDueloBoton();
   const S = SAVE.duelo, [mucho, poco] = PP_CFG.duelo.fallo;
   if (S.dia !== ppHoy()) { S.dia = ppHoy(); S.hoy = 0; }
   let monedas = 0;
+  if (D.pvp) {   // contra gente: sus propias victorias; las monedas, de la misma bolsa del día que contra el CEO
+    SAVE.pvp = SAVE.pvp || { gan: 0, per: 0 };
+    if (res === 'gana') { SAVE.pvp.gan++; if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } } else SAVE.pvp.per++;
+    ppGuarda(); ppSubeMarcas(); play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
+    setTimeout(() => {
+      const n = ppEsc(D.pvp.nombre);
+      const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado a {n}!', { n }) : tr('{n} te ha ganado', { n })}</h2>
+        ${monedas ? `<p class="pp-premio">+${ppMonedasHtml(monedas)}</p>` : ''}
+        <p class="pp-sub">${tr('Contra gente: {g} victorias · {p} derrotas', { g: SAVE.pvp.gan, p: SAVE.pvp.per })}</p>`);
+      t.appendChild(ppBoton(tr('OTRO RIVAL'), 'pp-btn', () => { ppSalDuelo(); ppPvpBuscar(); }));
+      t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalDuelo(); }));
+    }, 900);
+    return;
+  }
   if (res === 'gana') { S.gan++; S.fallo = Math.max(poco, S.fallo - PP_CFG.duelo.paso); if (S.hoy < PP_CFG.duelo.premiosDia) { S.hoy++; monedas = PP_CFG.duelo.premio; SAVE.monedas += monedas; } }
   else { S.per++; S.fallo = Math.min(mucho, S.fallo + PP_CFG.duelo.paso / 2); }
-  ppGuarda();
+  ppGuarda(); ppSubeMarcas();
   play(res === 'gana' ? 'ppVictoria' : 'ppDerrota');
   setTimeout(() => {
     const t = ppAbre(`<h2>${res === 'gana' ? tr('¡Has ganado al CEO!') : tr('El CEO gana esta vez')}</h2>
@@ -83,7 +98,7 @@ function ppDueloFin(res) {
     t.appendChild(ppBoton(tr('Portada'), 'pp-btn2 pp-azul', () => { ppCierra(); ppSalDuelo(); }));
   }, 900);
 }
-function ppSalDuelo() { PP_DUELO = null; ppDueloBoton(); ppIrA('titulo'); }
+function ppSalDuelo() { if (PP_DUELO && PP_DUELO.pvp) ppPvpLimpia(); PP_DUELO = null; ppDueloBoton(); ppIrA('titulo'); }
 // el botón ¡LISTO! (HTML, debajo del tablero): solo en tu turno y con algo reventado
 function ppDueloBoton() { const b = $pp('#pp-listo'); if (b) b.hidden = !(PP_DUELO && !PP_DUELO.fin && PP_DUELO.turno === 'yo' && PP_DUELO.esta.length); }
 /* ---------- dibujo ---------- */
@@ -94,12 +109,13 @@ function ppPintaDuelo(c, t) {
   // arriba: tú contra el CEO, y de quién es el turno
   c.fillStyle = 'rgba(255,255,255,0.6)'; c.beginPath(); c.roundRect(20, 18, 500, 150, 24); c.fill();
   const br = PP_FX.brilla.ceo || 0;
-  ppSlimeRepuestoOImagen(c, 'ceo', 420, 88 - br * 12, 46, t, 1);
+  const rival = D.pvp ? D.pvp.nombre.slice(0, 14) : tr('El CEO');   // contra gente, su apodo y un amigo de gelatina
+  ppSlimeRepuestoOImagen(c, D.pvp ? 'nubecita' : 'ceo', 420, 88 - br * 12, 46, t, 1);
   ppSlimeRepuestoOImagen(c, 'lola', 140, 88, 40, t, 1);
   ppTexto(c, tr('Tú'), 140, 146, 26, '#fff', 'center', '#c43a84');
-  ppTexto(c, tr('El CEO'), 420, 146, 26, '#fff', 'center', '#3a3a6a');
+  ppTexto(c, rival, 420, 146, 22, '#fff', 'center', '#3a3a6a');
   ppTitulo(c, tr('DUELO'), 270, 58, 44);
-  const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : tr('Piensa el CEO…');
+  const txt = D.fin ? (D.fin === 'gana' ? tr('¡Ganas!') : D.pvp ? tr('¡Gana {n}!', { n: rival }) : tr('¡Gana el CEO!')) : D.turno === 'yo' ? tr('Tu turno') : D.pvp ? tr('Piensa {n}…', { n: rival }) : tr('Piensa el CEO…');
   ppTexto(c, txt, 270, 118, 32, D.turno === 'yo' ? '#ffd64a' : '#fff', 'center', '#7a4a8a');
   ppPintaTablero(c, T, t);
   // la fila en la que estás jugando, marcada

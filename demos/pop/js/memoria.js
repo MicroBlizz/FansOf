@@ -83,7 +83,7 @@ function ppMemFin(mala) {
   const monedas = Math.max(0, cobra(rondas) - cobra(S.hoy));
   if (rondas > S.hoy) S.hoy = rondas;
   SAVE.monedas += monedas;
-  ppGuarda();
+  ppGuarda(); ppSubeMarcas();
   setTimeout(() => {
     if (PP_MEM !== M) return;
     if (nuevo && rondas > 0) play('ppVictoria');

@@ -1,5 +1,5 @@
 // Fans of Goose · EL DADO ES TUYO: como en el Juego de la Oca, avanzas tirando el dado (dos toques, el botón del dado o espacio).
-// Sale un número y sales disparado esas casillas hacia arriba (el TRAMO, js/escenas.js), parando en la que toque. Pares, bendición
+// Sale un número y se abren las barreras hasta esa casilla: vas tú andando (el CAMINO, js/barreras.js) y paras en la que toque. Pares, bendición
 // mientras dura el tramo (2 Prisa, 4 Gigante, 6 Doble daño); impares, maldición (1 Horda doble, 3 Patas de plomo, 5 Controles al revés).
 // Con la barra de plumas llena el dado sale BENDITO (solo pares y una casilla más). Al salir de la Posada el dado sale MALDITO (impar).
 'use strict';
@@ -83,6 +83,7 @@ function pintaDado() {
   // el botón del dado: abajo a la izquierda, enfrente del de la habilidad (donde llega el pulgar). Su aro dorado es el Impulso:
   // las plumas doradas lo llenan y, lleno, el dado se vuelve de oro (el próximo sale bendito)
   if (J.modo !== 'juego') return;
+  if (puedeRetirar()) { pintaRetirar(); return; }
   const bx = 26, by = PAN.H - 60, puede = puedeTirar(), ki = D.bendito ? 1 : Math.min(1, J.impulso / plumasDado());
   const pulso = puede ? 1 + Math.sin(J.t * 6) * 0.05 : 1, col = D.bendito ? '#ffd34d' : D.maldito ? '#c9a0ff' : '#f6e7b8';
   disco(bx, by, 17, 17, '#120808'); disco(bx, by, 15.5, 15.5, D.bendito ? '#8a5a10' : puede ? '#3a2a1a' : '#24170f');
@@ -112,4 +113,20 @@ function pintaDadoOro(x, y, esc) {
   }
   const w = DADO_ORO.w * esc, h = DADO_ORO.h * esc;
   G.drawImage(DADO_ORO.c, x - w / 2, y - h / 2, w, h);
+}
+
+// la Segunda tirada (tienda): nada más tirar, mientras no hayas cruzado ninguna barrera, puedes volver a tirar una vez por partida
+const puedeRetirar = () => { const J = JUEGO; return (J.redado || 0) > 0 && J.fase === 'camino' && J.paso === J.casilla && J.tramoT < 5 && J.dado.rodando <= 0; };
+function retira() {
+  const J = JUEGO, D = J.dado; if (!puedeRetirar()) return;
+  J.redado--; J.fase = 'parado'; J.destino = J.casilla; D.efecto = 0; D.quedan = 0; D.mostrar = 0;
+  aviso(tr('¡OTRA VEZ!'), '#ffd34d', 1); tirarDado();
+}
+function pintaRetirar() {
+  const J = JUEGO, bx = 26, by = PAN.H - 60, k = 1 - J.tramoT / 5;
+  disco(bx, by, 17, 17, '#120808'); disco(bx, by, 15.5, 15.5, '#7a3a10');
+  arcoPixel(bx, by, 19.5, -1.57, -1.57 + 6.283 * k, 2, '#ffd34d');
+  if (SPR['ic-redado']) icono('redado', bx, by, 13); else pintaGirado('dadogrande' + (1 + ((J.t * 6) | 0) % 6), bx, by, Math.sin(J.t * 8) * 0.3, 0.5);
+  texto2(tr('¿OTRA VEZ?'), bx - 14, by - 28, 7, '#ffd34d', 'left');
+  BOTONES.push({ x: bx - 24, y: by - 24, w: 48, h: 48, accion: () => retira() });
 }

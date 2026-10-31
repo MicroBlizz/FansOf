@@ -43,6 +43,9 @@ function calculaStats() {
     monedas: 1 + m('codicia') * 0.15,
   };
   poderPersonaje(J.st);
+  // las mejoras nuevas de la tienda
+  J.st.armadura = m('coraza') * 0.05; J.st.regen += m('regen') * 0.12; J.st.crit += m('critico') * 0.03;
+  J.st.plumas = (J.st.plumas || 1) * (1 + m('sabio') * 0.06);
   statsNuevas(J.st);   // las pasivas nuevas (js/armas3.js)
   if (J.mod) { J.st.vidaMax *= J.mod.tuVida; J.st.regen *= J.mod.cura; }   // la Noche 10 y la de Sin piedad (js/noches.js)
 }

@@ -73,7 +73,7 @@ function avanzaTierras(dt) {
     if (J.invul <= 0 && Math.hypot(yo.x - f.x, yo.y - f.y) < 9) heridaJugador(6, f.x, f.y + 10);
   }
 }
-const velTierra = () => (enTierra('pantano') && JUEGO.fase === 'parado' ? 0.82 : 1);   // el barro
+const velTierra = () => (enTierra('pantano') && (JUEGO.fase === 'parado' || JUEGO.fase === 'camino') ? 0.82 : 1);   // el barro
 const velOcas = () => (maldita('prisa') ? 1.3 : 1);
 
 // qué enemigo sale en esta tierra (lo llama avanzaOleadas)

@@ -109,3 +109,56 @@ img.pp-ico { border-radius: 0; }
 #pp-listo { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 30; min-width: 240px; }
 #pp-listo[hidden] { display: none; }
 .pp-pack .pp-precio { color: #c43a84; font-size: 30px; font-weight: 700; }
+/* «copiarnos de Candy Crush»: la barra de ayudas del nivel, los botones del lado del camino, la tienda con pestañas y el pase */
+#pp-ayudas { position: absolute; left: 50%; bottom: 0.5%; transform: translateX(-50%); display: flex; gap: 14px; z-index: 25; }
+#pp-ayudas[hidden], #pp-lateral[hidden] { display: none; }
+.pp-ayuda { position: relative; width: 70px; height: 70px; border-radius: 50%; border: 4px solid #ff9ccf; background: radial-gradient(circle at 35% 30%, #fff, #ffe6f4); box-shadow: 0 5px 0 #e07ab5; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+.pp-ayuda .pp-ico { width: 52px; height: 52px; }
+.pp-ayuda em { position: absolute; top: 6px; left: 8px; font-style: normal; font-weight: 700; font-size: 20px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
+.pp-ayuda b { position: absolute; right: -8px; bottom: -6px; min-width: 26px; padding: 2px 7px; border-radius: 999px; background: #4fc964; color: #fff; font-size: 18px; box-shadow: inset 0 -3px 0 #26924a; display: flex; align-items: center; gap: 2px; }
+.pp-ayuda b .pp-precio { color: #fff; font-size: 16px; }
+.pp-ayuda.pp-activa { transform: scale(1.12); box-shadow: 0 0 0 6px #ffd64a, 0 5px 0 #e07ab5; }
+.pp-ayuda:active { transform: translateY(4px); box-shadow: 0 1px 0 #e07ab5; }
+#pp-lateral { position: absolute; right: 8px; top: 21%; display: flex; flex-direction: column; gap: 10px; z-index: 20; }
+.pp-lado { position: relative; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 0; border: 0; background: none; padding: 0; cursor: pointer; font: inherit; }
+.pp-lado .pp-ico { width: 58px; height: 58px; filter: drop-shadow(0 3px 0 rgba(196, 58, 132, 0.35)); }
+.pp-lado b { margin-top: -6px; font-size: 16px; color: #fff; -webkit-text-stroke: 4px #c43a84; paint-order: stroke; }
+.pp-lado.pp-aviso::after { content: ''; position: absolute; top: 2px; right: 6px; width: 16px; height: 16px; border-radius: 50%; background: #ff3a5a; box-shadow: 0 0 0 3px #fff; animation: pp-late 1.2s ease-in-out infinite; }
+.pp-tabs { display: flex; gap: 6px; width: 100%; }
+#pp-ui .pp-tab { flex: 1; font: inherit; font-size: 19px; font-weight: 700; padding: 8px 4px; border-radius: 14px 14px 6px 6px; border: 3px solid #ff9ccf; background: #fff; color: #c43a84; cursor: pointer; }
+#pp-ui .pp-tab.pp-on { background: linear-gradient(180deg, #ffb057, #ff7a1a); border-color: #c2510a; color: #fff; }
+.pp-pack span { font-size: 19px; font-weight: 700; color: #7a3a7a; }
+.pp-pack small { font-size: 14px; color: #a05a9a; line-height: 1.2; }
+.pp-pack.pp-ancho { grid-column: 1 / -1; background: linear-gradient(180deg, #fff6c8, #ffd6ec); border-color: #ff8a2a; box-shadow: 0 5px 0 #c2510a; }
+.pp-pack.pp-puesta { border-color: #4fc964; box-shadow: 0 5px 0 #26924a; }
+.pp-muestra { display: inline-block; border-radius: 12px; border: 3px solid #7a4a8a; vertical-align: middle; }
+.pp-premios { display: inline-flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; font-weight: 700; color: #7a3a7a; }
+.pp-oferta { color: #ff3a6a; font-size: 34px; }
+.pp-btn2.pp-oferta-btn { --c1: #ffe36e; --c2: #ffb000; --borde: #c27a00; }
+.pp-pase { width: 100%; max-height: 46vh; overflow: auto; display: flex; flex-direction: column; gap: 6px; }
+.pp-pase-fila { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 6px; align-items: stretch; opacity: 0.6; }
+.pp-pase-fila.pp-hecho { opacity: 1; }
+.pp-pase-fila i { font-style: normal; font-weight: 700; color: #fff; background: #ff9ccf; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+#pp-ui .pp-pase-premio { position: relative; font: inherit; font-size: 16px; color: #7a3a7a; padding: 6px; border-radius: 14px; border: 3px solid #9fdcff; background: #fff; cursor: default; }
+.pp-pase-premio.pp-premium { border-color: #ffd64a; background: #fff8dc; }
+.pp-pase-premio.pp-listo { cursor: pointer; box-shadow: 0 0 0 4px #4fc964; animation: pp-late 1.4s ease-in-out infinite; }
+.pp-pase-premio.pp-cogido { opacity: 0.4; }
+.pp-pase-premio s { position: absolute; inset: 0; border-radius: 12px; background: rgba(122, 74, 138, 0.35); }
+.pp-semana { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
+.pp-dia { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 14px; border: 3px solid #ffd1ec; background: #fff; font-size: 15px; }
+.pp-dia.pp-hoy { border-color: #ff8a2a; box-shadow: 0 0 0 3px #ffd64a; }
+.pp-dia.pp-gordo { grid-column: span 2; background: #fff8dc; }
+/* duelos contra gente y ranking mundial */
+.pp-codigo { margin: 0; font-size: 56px; font-weight: 700; letter-spacing: 10px; color: #ff6eb5; -webkit-text-stroke: 6px #fff; paint-order: stroke; }
+#pp-ui .pp-entrada { width: 220px; font: 700 44px 'Fredoka', sans-serif; text-align: center; letter-spacing: 8px; text-transform: uppercase; color: #c43a84; border: 4px solid #ff9ccf; border-radius: 18px; padding: 6px; background: #fff; pointer-events: auto; }
+.pp-gira { animation: pp-gira 1.6s linear infinite; }
+@keyframes pp-gira { to { transform: rotate(360deg); } }
+.pp-ranking { width: 100%; max-height: 50vh; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
+.pp-rfila { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 14px; background: #fff; color: #7a3a7a; font-size: 19px; }
+.pp-rfila:nth-child(even) { background: #fff3fa; }
+.pp-rfila.pp-yo { background: #ffe36e; box-shadow: 0 0 0 3px #ff8a2a; }
+.pp-rfila i { font-style: normal; font-weight: 700; color: #fff; background: #c9a0d8; border-radius: 999px; text-align: center; padding: 2px 0; }
+.pp-rfila i.pp-p1 { background: #ffb000; } .pp-rfila i.pp-p2 { background: #a8b4c8; } .pp-rfila i.pp-p3 { background: #e08a4a; }
+.pp-rfila span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; font-weight: 700; }
+.pp-rfila b { color: #c43a84; }
+.pp-rpuntos { text-align: center; color: #a05a9a; }

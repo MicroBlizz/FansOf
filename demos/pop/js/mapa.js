@@ -109,7 +109,7 @@ function ppPintaMapa(c, t) {
   ppPerla(c, 432, yb + 32, 34); ppTexto(c, String(SAVE.perlas || 0), 450, yb + 34, 28, '#fff', 'left', '#c43a84');
   c.beginPath(); c.arc(500, yb + 20, 13, 0, Math.PI * 2); c.fillStyle = '#4fc964'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#26924a'; c.stroke();
   c.fillStyle = '#fff'; c.fillRect(494, yb + 18, 12, 4); c.fillRect(498, yb + 14, 4, 12);
-  PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: ppTienda });
+  PP_BOTONES_MAPA.push({ x: 450, y: yb + 30, r: 52, f: () => ppTienda(null, 'perlas') });
   const nh = ppHuecos();
   for (let k = 0; k < nh; k++) {
     const x = 270 + (k - (nh - 1) / 2) * 62, y = yb + 100, id = P.equipo[k];

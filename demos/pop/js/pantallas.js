@@ -9,18 +9,20 @@ function ppIrA(p) {
   if (p === 'titulo') ppMusica('menu'); else ppMusicaRuta();
   $pp('#pp-titulo').hidden = p !== 'titulo';
   if (p !== 'sala' && p !== 'duelo' && p !== 'memoria') ppLolaCierra();
-  if (p !== 'duelo') $pp('#pp-listo').hidden = true;
+  if (p !== 'duelo' && p !== 'sala') $pp('#pp-listo').hidden = true;
   $pp('#pp-pausa').hidden = p === 'titulo';
+  ppBarraAyudas(); ppPintaLateral();   // la barra de ayudas en los niveles y los botones del lado en el camino
+  if (p === 'mapa') setTimeout(ppAlLlegarAlCamino, 400);   // regalo diario y pack de bienvenida
   if (p === 'titulo') {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
     $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Revienta burbujas, rescata amigos');
     $pp('#pp-seguir').hidden = !hay;
     $pp('#pp-jugar').textContent = hay ? tr('EMPEZAR DE NUEVO') : tr('JUGAR');
     $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
-    $pp('#pp-sonido').textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ');
-    $pp('#pp-estilo').textContent = ppTextoEstilo();
-    $pp('#pp-duelo').textContent = tr('DUELO CONTRA EL CEO');
+    $pp('#pp-duelo').textContent = tr('DUELOS');
     $pp('#pp-memoria').textContent = tr('MEMORIA');
+    $pp('#pp-ranking').textContent = tr('RANKING');
+    $pp('#pp-opciones').textContent = tr('OPCIONES');
   }
 }
 function ppAbre(html, ancha = false) { const m = $pp('#pp-modal'), t = $pp('#pp-tarjeta'); t.className = 'pp-tarjeta' + (ancha ? ' pp-ancha' : ''); t.innerHTML = html; m.hidden = false; return t; }
@@ -99,6 +101,7 @@ function ppVentanaSalaHecha() {
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
 function ppVentanaSinToques() {
   const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas })}</p>`);
+  ppBotonOferta(t);   // la oferta de atasco, si está activa (js/ofertas.js)
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }
@@ -122,6 +125,8 @@ function ppVentanaSinCorazones() {
   const reloj = () => { const el = $pp('#pp-reloj'); if (!el) { clearInterval(tic); return; } el.textContent = ppVidas() > 0 ? tr('¡Ya tienes corazones!') : tr('El siguiente corazón llega en {t}', { t: ppReloj(ppFaltaVida()) }); };
   const tic = setInterval(reloj, 1000); reloj();
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
+  ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
+  ppBotonOferta(t);
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {
@@ -141,6 +146,19 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
+/* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */
+function ppOpciones() {
+  const t = ppAbre(`<h2>${tr('Opciones')}</h2>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('CÓMO SE JUEGA'), 'pp-btn2 pp-verde', ppAyuda));
+  const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
+  col.appendChild(son);
+  const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
+  col.appendChild(vib);
+  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
+  col.appendChild(est);
+  col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
+}
 /* ---------- la pausa ----------
    En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal
    (el camino queda guardado y la portada ofrece SEGUIR). En el camino: seguir o menú principal. Y el sonido. */
@@ -153,7 +171,7 @@ function ppPausa() {
   col.appendChild(ppBoton(tr('SEGUIR'), 'pp-btn', ppQuitaPausa));
   if (PP_PANT.actual === 'memoria') col.appendChild(ppBoton(tr('Salir de Memoria'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalMemoria(); }));
   if (PP_PANT.actual === 'duelo') col.appendChild(ppBoton(tr('Salir del duelo'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalDuelo(); }));
-  if (!enNivel) col.appendChild(ppBoton(tr('Perlas'), 'pp-btn2 pp-rosa', () => { PP_PANT.pausa = false; ppTienda(null); }));
+  if (!enNivel) col.appendChild(ppBoton(tr('Tienda'), 'pp-btn2 pp-rosa', () => { PP_PANT.pausa = false; ppTienda(null, 'ofertas'); }));
   // salir a medias, si ya has tocado, cuesta un corazón (como en Candy Crush): se avisa en el texto
   if (enNivel && SAVE.dentro) col.insertAdjacentHTML('beforeend', `<p class="pp-sub">${tr('Si sales ahora pierdes un corazón.')}</p>`);
   if (enNivel) col.appendChild(ppBoton(tr('Salir del nivel'), 'pp-btn2 pp-verde', () => { ppQuitaPausa(); ppSalNivel(); PP_P.T = null; ppAlCamino(); }));
@@ -178,7 +196,10 @@ const PP_TUTO = {
   amigo: [{ t: '¡Ya tienes un amigo! Mira abajo: cada uno te ayuda a su manera.' }, { t: 'Cuando su barrita se llena, ¡te echa una mano solo!' }],
   combo: [{ t: '¡COMBO! Si cada toque revienta 3 burbujas o más, el combo crece.' }],
   dificil: [{ t: 'Este nivel es difícil: los toques van muy justos. ¡Piensa antes de tocar!' }],
-  jefe: [{ t: '¡Nivel jefe! El CEO ha preparado su pop-it más gordo y te deja muy pocos toques de sobra.' }],
+  jefe: [{ t: '¡Nivel jefe! Ahora te reta el CEO en persona, y casi nunca se equivoca.' }],
+  nimNivel: [{ t: '¡Un nivel duelo! Aquí no hay toques: juegas por turnos contra un rival.' },
+             { t: 'En tu turno revienta las burbujas que quieras, pero todas de la MISMA fila, y pulsa ¡LISTO!. ¡Pierde quien revienta la última!' },
+             { t: 'Truco: piensa qué le dejas al rival. Si ganas sin un solo error, 3 estrellas.' }],
   monedas: [{ t: '¡Monedas! Las ganas la primera vez que pasas un nivel y con cada estrella nueva. Con 15 estrellas, ¡un cofre!' },
             { t: 'Sirven para llenar los corazones y para hacer sitio a más amigos en el equipo.' }],
   modoDificil: [{ t: 'Modo difícil: el mismo mundo, de noche y con muchos menos toques. ¡Pero da el doble de monedas!' }],

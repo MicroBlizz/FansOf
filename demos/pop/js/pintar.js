@@ -121,7 +121,7 @@ function ppPintaTablero(c, T, t) {
   const ent = PP_FX.entrada, esc = 1 - Math.pow(ent, 2) * 0.6;
   c.save(); c.translate(270, g.y + g.lado / 2); c.scale(esc, esc); c.translate(-270, -(g.y + g.lado / 2));
   // la base: la bandeja de silicona de Yoshi (estirada al tamaño del tablero) o, si aún no está, una pastel con borde grueso
-  if (T.mask && T.mask.some(v => !v)) ppBandeja(c, T, g);   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
+  if ((T.mask && T.mask.some(v => !v)) || ppBandejaActual().filas) ppBandeja(c, T, g);   // con forma o con una bandeja bonita   // con forma (concha, corazón…): la silicona sigue el borde (js/bandeja.js)
   else if (PP_IMG.tablero) { c.imageSmoothingEnabled = PP_LISO; c.drawImage(PP_IMG.tablero, g.x - 34, g.y - 34, g.lado + 68, g.lado + 68); }
   else {
     c.beginPath(); c.roundRect(g.x - 14, g.y - 10 + 14, g.lado + 28, g.lado + 28, 36); c.fillStyle = '#c58ab8'; c.fill();
@@ -157,7 +157,8 @@ function ppPintaMarcador(c, t) {
   const vidas = ppVidas();
   for (let i = 0; i < PP_CFG.vida; i++) { const s = 34 + (i === vidas && dano > 0 ? dano * 10 : 0); ppCorazon(c, 44 + i * 40, 52, s, i < vidas); }
   // toques de la sala
-  if (P.T) {
+  if (P.T && P.T.nim) ppMarcadorNim(c, P.T, t);   // nivel duelo: el rival y de quién es el turno (js/nimnivel.js)
+  else if (P.T) {
     const T = P.T, quedan = T.limite - T.toques, col = quedan < 0 ? '#ff5a5a' : quedan <= 1 ? '#ffd64a' : '#fff';
     ppTexto(c, tr('Toques'), 496, 36, 22, '#ffe6f4', 'right');
     ppTexto(c, `${T.toques} / ${T.limite}`, 496, 66, 40, col, 'right');
@@ -220,6 +221,7 @@ function ppPintaSala(c, t) {
   if (PP_FX.temblor > 0) c.translate(rand(-1, 1) * PP_FX.temblor * 7, rand(-1, 1) * PP_FX.temblor * 7);
   ppPintaFondo(c, P.tipo === 'jefe' ? 'fondo-jefe' : T.d ? PP_MUNDOS[T.d.mundo].fondo : 'fondo-jardin', t, !!(T.d && T.d.dif));
   ppPintaTablero(c, T, t);
+  if (T.nim) ppPintaFilaNim(c, T, t);
   ppPintaMarcador(c, t);
   ppPintaEfectos(c, t);
   c.restore();
@@ -229,7 +231,18 @@ function ppPintaSala(c, t) {
 // Daniel (30-10-2026): además de reventarse solo, se puede tocar. Tu dedo hace pop (o vuelve a subir una reventada, como un
 // pop-it de verdad) y, mientras juegas con él, el automático descansa un poco.
 const PP_PORTADA = { T: null, prox: 0 };
-const PP_PORTADA_ESC = 0.62;
+const PP_PORTADA_ESC = 0.62, PP_PORTADA_CAMBIA = 14;
+// un pop-it de muestra con una forma al azar de las de los mundos (y alguna de las generales), sin repetir la anterior
+function ppTableroPortada() {
+  const todas = [];
+  for (const F of PP_FORMAS_MUNDO) for (const n of [5, 6]) for (const f of F[n] || []) todas.push(f);
+  for (const f of PP_FORMAS[5]) todas.push(f);
+  let f; do f = todas[Math.floor(Math.random() * todas.length)]; while (todas.length > 1 && f === PP_PORTADA.forma);
+  PP_PORTADA.forma = f;
+  const n = f.length, mask = new Uint8Array(n * n), need = new Array(n * n).fill(0);
+  f.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') { mask[y * n + x] = 1; need[y * n + x] = 1; } }));
+  return ppNuevoTablero({ g: 0, lado: n, mask, need, opt: [], limite: 99, amigos: 0, jefe: false }, { equipo: [] });
+}
 // del punto tocado (coordenadas del lienzo) a la burbuja del pop-it de la portada; -1 si no hay
 function ppPortadaCelda(lx, ly) {
   const T = PP_PORTADA.T; if (!T) return -1;
@@ -246,7 +259,10 @@ function ppPortadaToque(lx, ly) {
 }
 function ppPintaPortada(c, t, dt) {
   ppPintaFondo(c, 'fondo-jardin', t);
-  if (!PP_PORTADA.T || ppResuelto(PP_PORTADA.T)) { PP_PORTADA.T = ppNuevoTablero(ppNivel(1), { equipo: [] }); ppFxEntraSala(PP_PORTADA.T); }   // se vuelve a llenar al vaciarse
+  // Daniel (31-10-2026): «que el pop-it del menú no sea siempre el mismo»: cada vez sale una forma al azar (concha, cucurucho, flor…)
+  // y cambia al vaciarse o cada PP_PORTADA_CAMBIA segundos
+  PP_PORTADA.vida = (PP_PORTADA.vida || 0) + dt;
+  if (!PP_PORTADA.T || ppResuelto(PP_PORTADA.T) || PP_PORTADA.vida > PP_PORTADA_CAMBIA) { PP_PORTADA.T = ppTableroPortada(); PP_PORTADA.vida = 0; ppFxEntraSala(PP_PORTADA.T); }
   PP_PORTADA.prox -= dt;
   if (PP_PORTADA.prox <= 0) { const T = PP_PORTADA.T, i = Math.floor(Math.random() * T.up.length); const r = ppToca(T, i); if (r) ppFxToque(T, i, r); T.hecho = false; T.toques = 0; PP_PORTADA.prox = rand(0.6, 1.2); }
   ppFxAvanza(dt);

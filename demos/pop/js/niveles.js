@@ -16,10 +16,10 @@
 const PP_MUNDOS = [
   { nombre: 'Jardín', fondo: 'fondo-jardin', niveles: 20, amigos: [3, 9, 15], lado: [3, 5], esp: {} },
   { nombre: 'Pastelería', fondo: 'fondo-pasteleria', niveles: 20, amigos: [4, 12], lado: [4, 6], esp: { doble: [0.15, 0.4] } },
-  { nombre: 'Heladería', fondo: 'fondo-heladeria', niveles: 20, amigos: [], lado: [5, 6], esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
-  { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
-  { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
-  { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
+  { nombre: 'Heladería', fondo: 'fondo-heladeria', niveles: 20, amigos: [7], lado: [5, 6], esp: { hielo: [0.12, 0.3], doble: [0.1, 0.15] }, nueva: 'hielo' },
+  { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
+  { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
+  { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
 ];
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
@@ -214,9 +214,29 @@ function ppConstruye(g, intento, dif = false) {
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: espArg, opt, limite, pasa, amigos: !dif && M.amigos.includes(l) ? 1 : 0,
     jefe: ppEsJefe(g), dificil: ppEsDificil(g), tutorial: !dif && ((m === 0 && l <= 2) || (m > 0 && l === 1)) };
 }
+// NIVELES DUELO (Daniel, 30-10-2026: «es demasiado fácil incluso en difícil», y eligió la mezcla): los niveles difíciles (uno de
+// cada cinco) y los jefes son un DUELO NIM contra el rival del mundo, en la forma de tablero del nivel: por turnos, cada uno
+// revienta las que quiera de UNA fila y pierde quien revienta la última (js/nimnivel.js). El rival juega perfecto salvo cuando
+// se despista (`fallo`), cada vez menos de un mundo a otro; el jefe es el CEO. Las burbujas son todas normales.
+const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo'];
+const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
+function ppNivelNim(g, dif) {
+  const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 : 0)), jefe = ppEsJefe(g);
+  const lado = Math.min(6, Math.max(4, M.lado[1] - (jefe ? 0 : 1) + (dif ? 1 : 0)));   // el difícil, un poco más pequeño que el jefe
+  const f = (PP_FORMAS_MUNDO[m][lado] || PP_FORMAS[lado]);
+  const mask = jefe ? f[0] : f[Math.floor(az() * f.length)];
+  const n = lado, N = n * n, mk = new Uint8Array(N), need = new Array(N).fill(0);
+  mask.forEach((fila, y) => [...fila].forEach((ch, x) => { if (ch === '#') { mk[y * n + x] = 1; need[y * n + x] = 1; } }));
+  // Daniel (31-10-2026: «son muy difíciles»): al principio el rival falla casi siempre y endurece mundo a mundo hasta el CEO
+  let fallo = jefe ? Math.max(0.05, 0.6 - 0.11 * m) : Math.max(0.1, 0.8 - 0.13 * m);
+  if (dif) fallo = Math.max(0.02, fallo * 0.5);
+  return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
+    nim: { rival: jefe ? 'ceo' : PP_RIVALES[m], fallo } };
+}
 function ppNivel(g, dif = false) {
   const clave = (dif ? 'd' : '') + g;
   if (PP_CACHE_NIVEL[clave]) return PP_CACHE_NIVEL[clave];
+  if (ppEsNim(g)) return (PP_CACHE_NIVEL[clave] = ppNivelNim(g, dif));
   const obj = ppObjetivo(g, dif), intentos = obj >= 1 ? 1 : 6;
   let mejor = null;
   for (let k = 0; k < intentos; k++) { const d = ppConstruye(g, k, dif); if (!mejor || Math.abs(d.pasa - obj) < Math.abs(mejor.pasa - obj)) mejor = d; }

@@ -13,15 +13,22 @@ function ppCambiaEstilo() {
 }
 const ppTextoEstilo = () => (SAVE.pixel ? tr('PIXEL ART: SÍ') : tr('PIXEL ART: NO'));
 const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
-const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-heladeria', 'fondo-playa', 'fondo-feria', 'fondo-nubes', 'fondo-jefe', 'tablero', 'i-copo', 'i-concha', 'i-cereza', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas', 'logo-pop',
+const PP_LISTA_IMG = [...PP_FLOTANTES, ...PP_SLIME_IDS.map(k => 'sl-' + k), 'fondo-jardin', 'fondo-pasteleria', 'fondo-heladeria', 'fondo-playa', 'fondo-feria', 'fondo-nubes', 'fondo-jefe', 'tablero', 'i-copo', 'i-concha', 'i-cereza', 'i-martillo', 'i-bomba', 'i-toques3', 'i-deshacer', 'i-pista', 'i-hucha', 'i-infinito', 'i-pase', 'i-racha', 'i-regalo', 'i-vida', 'i-mano', 'i-estrella', 'i-moneda', 'i-cofre', 'i-perla', 'i-perlas', 'logo-pop',
   ...['rosa', 'melocoton', 'amarillo', 'menta', 'cielo', 'lila'].flatMap(k => ['b-' + k + '-arriba', 'b-' + k + '-abajo', 'b-' + k + '-doble'])];
+// devuelve una promesa que se cumple cuando han llegado todos (o han fallado): la portada no se enseña hasta entonces, para que no se
+// vean un momento los dibujos de repuesto del primer boceto (Daniel, 31-10-2026)
 function ppCargaImagenes() {
+  let faltan = PP_LISTA_IMG.length, listo;
+  const promesa = new Promise(ok => { listo = ok; });
+  const una = () => { if (--faltan <= 0) listo(); };
   for (const k of PP_LISTA_IMG) {
     const im = new Image();
     const liso = PP_LISO;
-    im.onload = () => { if (liso !== PP_LISO) return; PP_IMG[k] = /^b-.*-abajo$/.test(k) && !liso ? ppHundida(im) : im; };   // las lisas ya vienen hundidas (preparar_liso.py)
+    im.onload = () => { if (liso === PP_LISO) PP_IMG[k] = /^b-.*-abajo$/.test(k) && !liso ? ppHundida(im) : im; una(); };   // las lisas ya vienen hundidas (preparar_liso.py)
+    im.onerror = una;
     im.src = (PP_LISO ? 'img-liso/' : 'img/') + k + '.png?v=' + (typeof VERSION !== 'undefined' ? VERSION : '0');
   }
+  return promesa;
 }
 // la burbuja reventada tiene que verse HUNDIDA de un vistazo (si no, un niño no distingue cuáles faltan): se oscurece entera
 // y lleva una sombra por dentro arriba a la izquierda y luz abajo a la derecha, como un hueco en la silicona

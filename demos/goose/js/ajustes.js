@@ -41,15 +41,21 @@ const CFG = {
   muerteAtras: 3,
   // tienda de mejoras permanentes: coste de cada nivel = base * (nivel + 1) ^ 1.45
   tienda: [
-    { id: 'vida',    max: 5, base: 25 },
-    { id: 'fuerza',  max: 5, base: 30 },
-    { id: 'prisa',   max: 5, base: 25 },
-    { id: 'iman',    max: 5, base: 20 },
-    { id: 'codicia', max: 5, base: 35 },
+    { id: 'vida',    max: 10, base: 25 },   // las cinco de siempre llegan a 10 (cada nivel, más caro)
+    { id: 'fuerza',  max: 10, base: 30 },
+    { id: 'prisa',   max: 10, base: 25 },
+    { id: 'iman',    max: 10, base: 20 },
+    { id: 'codicia', max: 10, base: 35 },
     { id: 'retiro',  max: 3, base: 60 },
     { id: 'fenix',   max: 1, base: 220 },
     { id: 'arsenal', max: 1, base: 160 },
     { id: 'suerte',  max: 1, base: 90 },
     { id: 'regateo', max: 3, base: 45 },
+    { id: 'coraza',  max: 5, base: 40 },    // -5 % de daño recibido por nivel
+    { id: 'regen',   max: 5, base: 45 },    // +0,12 de vida por segundo por nivel
+    { id: 'critico', max: 5, base: 40 },    // +3 % de golpe crítico por nivel
+    { id: 'sabio',   max: 5, base: 35 },    // +6 % de experiencia por nivel
+    { id: 'botin',   max: 5, base: 30 },    // +20 % de monedas en los cofres por nivel
+    { id: 'redado',  max: 1, base: 140 },   // una vez por partida, volver a tirar el dado nada más tirarlo
   ],
 };

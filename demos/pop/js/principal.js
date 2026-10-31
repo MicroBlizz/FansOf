@@ -61,23 +61,28 @@ function ppEmpieza(seguir) {
 }
 function ppArranque() {
   ppRevisaDentro();   // si se cerró el juego a media partida (después de tocar), se pierde ese corazón
-  ppCargaImagenes();
+  const imagenes = ppCargaImagenes();
   ppAjusta();
   window.addEventListener('resize', ppAjusta);
   $pp('#pp-jugar').onclick = () => ppEmpieza(false);
   $pp('#pp-seguir').onclick = () => ppEmpieza(true);
-  $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevoDuelo(); };
+  $pp('#pp-duelo').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppVentanaDuelos(); };   // CEO, amigo o al azar (js/pvp.js)
   $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
-  $pp('#pp-listo').onclick = () => { play('select'); ppDueloListo(); };
+  $pp('#pp-listo').onclick = () => { play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
   $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
   $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
-  $pp('#pp-ayuda').onclick = () => { play('select'); ppAyuda(); };
-  $pp('#pp-estilo').onclick = () => { play('select'); ppCambiaEstilo(); ppIrA('titulo'); };
-  $pp('#pp-sonido').onclick = () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); ppIrA('titulo'); play('select'); };
+  $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
+  $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaRanking(); };   // js/ranking.js
+  setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial
+  if (typeof SALAS !== 'undefined' && SALAS.codigoUrl()) setTimeout(() => ppPvpEntraCodigo(SALAS.codigoUrl()), 1500);   // un enlace de reto de un amigo
   ppIrA('titulo');
-  const carga = $pp('#carga'); if (carga) carga.remove();
+  // la portada sale cuando han llegado los dibujos (como mucho 6 s): así no asoman los de repuesto del primer boceto
+  PP_ESCENARIO.style.visibility = 'hidden';
+  const muestra = () => { PP_ESCENARIO.style.visibility = ''; const carga = $pp('#carga'); if (carga) carga.remove(); };
+  Promise.race([imagenes, new Promise(ok => setTimeout(ok, 6000))]).then(muestra);
   requestAnimationFrame(ppFotograma);
+  setInterval(() => { if (PP_PANT.actual === 'mapa' && $pp('#pp-modal').hidden) ppPintaLateral(); }, 1000);   // los relojes de las ofertas
 }
 ppArranque();

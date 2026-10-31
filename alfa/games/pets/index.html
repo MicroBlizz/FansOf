@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
-<script src="../../core/js/nucleo.js?v=0.1.6-a754.6a32f2e"></script>
+<script src="../../core/js/nucleo.js?v=0.1.7-a755.805d414"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', 'css/pets.css')</script>
 </head>
 <body>
@@ -39,7 +39,13 @@ NUCLEO.juego({
     '../../core/js/serie/facciones/ciber.js', '../../core/js/serie/facciones/memes.js', '../../core/js/serie/facciones/gamer.js', '../../core/js/serie/facciones/olvidados.js',
     '../../core/js/serie/facciones/pop.js',
     // el juego
-    'js/criaturas.js', 'js/guardado.js', 'js/tiempo.js', 'js/textos.js', 'js/pintar.js', 'js/arte.js', 'js/pantallas.js', 'js/cuidados.js', 'js/dev.js', 'js/principal.js'],
+    // el juego, por capas (docs/calidad/ARQUITECTURA.md): el objeto PT, los datos, el dominio, los casos de uso, los adaptadores y la composición
+    'js/pt.js', 'js/criaturas.js', 'js/textos.js',
+    'js/dominio/necesidades.js', 'js/dominio/horario.js', 'js/dominio/huevos.js', 'js/dominio/bebe.js', 'js/dominio/partida.js',
+    'js/aplicacion/casos.js',
+    'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/pintar.js', 'js/adaptadores/arte.js',
+    'js/adaptadores/pantallas.js', 'js/adaptadores/botones.js', 'js/adaptadores/dev.js',
+    'js/principal.js'],
 });
 </script>
 </body>

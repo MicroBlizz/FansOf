@@ -1,7 +1,7 @@
-// Fans Of Pets · TEXTOS: las preguntas de la entrevista de trabajo de Lola (docs/pets/diseno.md, «La entrevista de trabajo» y la pregunta
+// Fans Of Pets · TEXTOS (datos): las preguntas de la entrevista de trabajo de Lola (docs/pets/diseno.md, «La entrevista de trabajo» y la pregunta
 // del ritmo en «Calendario y desbloqueos») y las frases con humor de oficina de cada cuidado. Todo en español; el inglés, en idioma/en-pets.js.
 'use strict';
-const PT_ENTREVISTA = [
+PT.ENTREVISTA = [
   { p: 'Llega un correo de Microblizz con el asunto URGENTE. ¿Qué haces?', r: ['Lo archivo sin leer', 'Respondo «visto»', 'Lo imprimo y hago un avión', 'Respondo con un GIF'] },
   { p: '¿Qué hay en tu taza de la oficina?', r: ['Café del becario', 'Caos primordial', 'Agua o lo que sea, aquí no se juzga', 'Nada: la taza es decorativa'] },
   { p: 'Phony te cobra por cruzar un puente. ¿Qué haces?', r: ['Lo cruzo a nado', 'Pago con monedas de chocolate', 'Construyo mi propio puente', 'Me quedo a vivir en este lado'] },
@@ -13,14 +13,14 @@ const PT_ENTREVISTA = [
   { p: '¿Cómo te gusta trabajar?', ritmo: true, nota: 'Esta sí cuenta: decide lo que dura cada etapa. Si quieres coleccionarlas todas, el rápido; si quieres disfrutar de cada una, el medio o el largo.',
     r: ['A tope, todo para ayer', 'A mi ritmo', 'Sin prisa, que lo bueno se hace esperar'], valores: ['rapido', 'medio', 'largo'] },
 ];
-const PT_LOLA = {
+PT.LOLA = {
   hola: 'Buenos días. Soy Lola: llevo la tienda desde que Microblizz me despidió. Esto es una entrevista de trabajo. Conteste con sinceridad, o como quiera.',
   fin: 'Gracias. Ya le llamaremos.',
   huevos: 'Ah, sí, casi se me olvida. Le toca cuidar de uno de estos huevos. Son de la empresa: no pregunte de dónde salen.',
   horario: 'Última formalidad: su horario. ¿A qué hora se levanta y a qué hora se acuesta? Le recomiendo poner como hora de despertar la hora a la que usted quiere levantarse.',
 };
 // las frases de cada cuidado: una al azar cada vez
-const PT_FRASES = {
+PT.FRASES = {
   comer: ['Ñam. Mejor que el catering de la última reunión.', 'Comida de verdad: nada de galletas de la sala de juntas.', 'Se lo ha comido todo y ha dejado el plato como un informe: impecable.', 'Desayuno de trabajo, sin trabajo. El mejor.'],
   beber: ['Glu, glu. Hidratación nivel máquina de café.', 'Ha bebido como quien sale de una reunión de tres horas.', 'Bebe con la pajita, como en la cena de empresa.', 'Agua o lo que sea: aquí no se juzga.'],
   banar: ['Limpia como una mesa el lunes a primera hora.', 'Ha salido del baño oliendo a ambientador de recepción.', 'Ni una mancha. Ni en el expediente.', 'Burbujas por todas partes. Recursos Humanos no lo aprobaría.'],
@@ -35,4 +35,7 @@ const PT_FRASES = {
   crecido: '{nombre} ya no es un bebé. El niño llegará en el próximo prototipo: de momento, sigue cuidándola.',
   triste: 'Tiene la cara de un lunes por la mañana. Necesita que la cuides.',
 };
-const ptFrase = clave => { const l = PT_FRASES[clave]; return tr(Array.isArray(l) ? l[Math.floor(Math.random() * l.length)] : l); };
+PT.frase = clave => {   // una frase de esa clave, al azar (es texto de pantalla: aquí sí vale Math.random)
+  const l = PT.FRASES[clave];
+  return tr(Array.isArray(l) ? l[Math.floor(Math.random() * l.length)] : l);
+};

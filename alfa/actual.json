@@ -1,8 +1,8 @@
 {
- "build": 754,
- "hash": "6a32f2e",
- "fecha": "2026-10-31T21:17:01Z",
- "mensaje": "Pets: poses de cuidado de los bebés de los 8 Animales Locos (comer, beber, baño, dientes, cara, ducha y dormir)",
+ "build": 755,
+ "hash": "805d414",
+ "fecha": "2026-10-31T22:36:22Z",
+ "mensaje": "Pets: el prototipo entero en capas (dominio, casos de uso, adaptadores) con 73 tests, como beta de las normas de calidad",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -13,7 +13,7 @@
   "jump": "0.3.16",
   "karts": "0.7.15",
   "nova": "0.3.30",
-  "pets": "0.1.6",
+  "pets": "0.1.7",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",
   "rumble": "0.9.158",

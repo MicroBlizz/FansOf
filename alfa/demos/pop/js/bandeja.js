@@ -75,6 +75,9 @@ function ppEspecial(c, cx, cy, r, i, T, t) {
     for (let k = 0; k < 3; k++) { const a = t * 1.5 + k * 2.1; c.fillStyle = '#fff'; c.beginPath(); c.arc(cx + Math.cos(a) * r * 0.62, y + Math.sin(a) * r * 0.62, 3, 0, Math.PI * 2); c.fill(); }
     ppIconoEsp(c, 'i-copo', cx, y, r * 1.05, '#bfe9ff');
   } else if (e === 2) ppIconoEsp(c, 'i-concha', cx, y + r * 0.05, r * 1.25, '#ffc9a8');
+  else if (e === 3) ppIconoEsp(c, 'i-cohete', cx, y, r * 1.15, '#ff9ccf');     // cohete: su fila
+  else if (e === 4) ppIconoEsp(c, 'i-burbujas', cx, y, r * 1.15, '#bfe9ff');   // burbujeante: un 3x3
+  else if (e === 5) ppIconoEsp(c, 'i-petalo', cx, y, r * 1.15, '#ffc4e6');     // pétalo: su columna
   if (T.up[i] === 3) ppIconoEsp(c, 'i-cereza', cx, y - r * 0.55, r * 0.75, '#ff4a6a');
   c.restore();
 }

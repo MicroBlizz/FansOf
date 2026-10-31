@@ -143,6 +143,7 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Revienta TODAS antes de que se acaben los toques. Con pocos toques ganas 3 estrellas.')}</p>
     <p class="pp-sub">${tr('Las burbujas con nata son dobles: necesitan dos golpes.')}</p>
     <p class="pp-sub">${tr('Más adelante: las de cereza necesitan tres golpes, las de hielo solo revientan si las tocas a ellas y las conchas, al tocarlas, solo revientan ellas.')}</p>
+    <p class="pp-sub">${tr('Y aún más allá: los cohetes revientan su fila, las burbujeantes un cuadrado de 3x3 y los pétalos su columna.')}</p>
     <p class="pp-sub">${tr('Dentro de algunas burbujas hay amigos atrapados: rescátalos y te ayudarán.')}</p>
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
@@ -214,6 +215,10 @@ const PP_TUTO = {
   w4n1: [{ t: '¡Bienvenida a la Playa!' }, { t: 'Si tocas una burbuja con concha, solo revienta ella, no sus vecinas. Pero las vecinas sí la revientan a ella.' }],
   w5n1: [{ t: '¡Bienvenida a la Feria!' }, { t: 'Las burbujas con nata y cereza son triples: necesitan tres golpes.' }],
   w6n1: [{ t: '¡Bienvenida al Reino de las nubes!' }, { t: 'Aquí está todo mezclado: nata, cerezas, hielo y conchas. ¡Piensa cada toque!' }],
+  w7n1: [{ t: '¡Bienvenida al Bosque de hadas!' }, { t: 'Las burbujas con cohete revientan su fila entera cuando las tocas. ¡Úsalas bien!' }],
+  w8n1: [{ t: '¡Bienvenida al Fondo del mar!' }, { t: 'Las burbujeantes revientan todo el cuadrado de alrededor, también en diagonal.' }],
+  w9n1: [{ t: '¡Bienvenida al Jardín de cerezos!' }, { t: 'Las burbujas con pétalo revientan su columna entera, de arriba abajo.' }],
+  w10n1: [{ t: '¡Bienvenida al Espacio!' }, { t: 'Aquí está todo: cohetes, burbujeantes, pétalos, hielo… y al final te espera el CEO espacial.' }],
   w2n1: [{ t: '¡Bienvenida a la Pastelería!' }, { t: 'Las burbujas con nata son dobles: el primer golpe les quita la nata y el segundo las revienta.' }],
 };
 const PP_LOLA = { cola: [], actual: null };

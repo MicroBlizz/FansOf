@@ -102,5 +102,17 @@ const PP_SLIMES = {
              pasiva: 'Lluvia de azúcar', texto: 'Cada 18 burbujas reventadas llueve azúcar y revienta gratis tres de la solución.', fx: { salta: 18, golpes: 3 } },
   nubecita: { nombre: 'Nubecita', color: '#f4f0ff', color2: '#c9b8f0', pinta: '',
              pasiva: 'Cielo despejado', texto: 'Al empezar cada nivel, +1 toque de margen.', fx: { extra: 1 } },
+  // mundos 7 a 10 (31-10-2026)
+  hada:    { nombre: 'Hadita', color: '#b8f0d0', color2: '#4fc98a', pinta: '',
+             pasiva: 'Polvo de hada', texto: 'Cada 14 burbujas reventadas vuela a un cohete (o a una de la solución) y lo hace estallar.', fx: { salta: 14, golpes: 1, prefiere: 3 } },
+  sirena:  { nombre: 'Sirenita', color: '#9fe8f0', color2: '#3ab0c8', pinta: '',
+             pasiva: 'Ola', texto: 'Cada 12 burbujas reventadas salta a una burbujeante (o a una de la solución) y la revienta.', fx: { salta: 12, golpes: 1, prefiere: 4 } },
+  maneki:  { nombre: 'Gatito de la suerte', color: '#fff8f0', color2: '#e0c8b0', pinta: '',
+             pasiva: 'Fortuna', texto: 'Al ganar un nivel nuevo, la mitad de monedas más.', fx: { monedas: 0.5 } },
+  astro:   { nombre: 'Astronauta', color: '#e0d0ff', color2: '#9a80d8', pinta: '',
+             pasiva: 'Lluvia de estrellas', texto: 'Cada 20 burbujas reventadas caen estrellas y revientan gratis cuatro de la solución.', fx: { salta: 20, golpes: 4 } },
+  // el jefe del último mundo (no se rescata)
+  ceoespacial: { nombre: 'El CEO espacial', color: '#8a8aa8', color2: '#4a4a66', pinta: 'corbata', rival: true,
+             pasiva: '', texto: '', fx: {} },
 };
-const PP_SLIME_IDS = Object.keys(PP_SLIMES);
+const PP_SLIME_IDS = Object.keys(PP_SLIMES).filter(k => !PP_SLIMES[k].rival);   // los que se rescatan (el CEO espacial solo es jefe)

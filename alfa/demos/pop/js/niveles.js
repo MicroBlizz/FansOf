@@ -20,13 +20,28 @@ const PP_MUNDOS = [
   { nombre: 'Playa', fondo: 'fondo-playa', niveles: 20, amigos: [7], lado: [5, 6], esp: { concha: [0.12, 0.3], hielo: [0.05, 0.12], doble: [0.1, 0.15] }, nueva: 'concha' },
   { nombre: 'Feria', fondo: 'fondo-feria', niveles: 20, amigos: [7], lado: [5, 6], esp: { triple: [0.08, 0.2], doble: [0.15, 0.2], hielo: [0.05, 0.1], concha: [0.05, 0.1] }, nueva: 'triple' },
   { nombre: 'Reino de las nubes', fondo: 'fondo-nubes', niveles: 20, amigos: [7], lado: [6, 6], esp: { triple: [0.12, 0.2], doble: [0.15, 0.2], hielo: [0.1, 0.15], concha: [0.1, 0.15] } },
+  // mundos 7 a 10 (31-10-2026): cada uno con su burbuja nueva de efecto grande (cohete = su fila, burbujeante = un 3x3, pétalo = su
+  // columna) y algo de las de antes; el Espacio, todo mezclado y con el CEO espacial de jefe
+  { nombre: 'Bosque de hadas', fondo: 'fondo-bosque', niveles: 20, amigos: [7], lado: [5, 6], esp: { cohete: [0.06, 0.12], doble: [0.15, 0.25], hielo: [0.08, 0.14] }, nueva: 'cohete' },
+  { nombre: 'Fondo del mar', fondo: 'fondo-mar', niveles: 20, amigos: [7], lado: [5, 6], esp: { burbujas: [0.06, 0.12], triple: [0.08, 0.15], concha: [0.1, 0.16] }, nueva: 'burbujas' },
+  { nombre: 'Jardín de cerezos', fondo: 'fondo-sakura', niveles: 20, amigos: [7], lado: [6, 6], esp: { petalo: [0.06, 0.12], cohete: [0.04, 0.08], doble: [0.15, 0.22], hielo: [0.1, 0.16] }, nueva: 'petalo' },
+  { nombre: 'Espacio', fondo: 'fondo-espacio', niveles: 20, amigos: [7], lado: [6, 6], esp: { cohete: [0.04, 0.07], burbujas: [0.04, 0.07], petalo: [0.04, 0.07], triple: [0.12, 0.2], hielo: [0.12, 0.18], concha: [0.1, 0.15] } },
 ];
 // qué revienta un toque en t: ella y sus 4 vecinas, salvo las de HIELO (solo se revientan tocándolas a ellas) y salvo que t sea
 // una CONCHA (al tocarla solo se revienta ella). `esp`: 0 normal, 1 hielo, 2 concha (sin `esp`, el pop-it puro de siempre)
-const PP_ESP = { hielo: 1, concha: 2 };
+// 3 cohete (su fila entera), 4 burbujeante (un cuadrado de 3x3) y 5 pétalo (su columna entera), mundos 7 a 10. Las de hielo solo las
+// revienta un toque suyo, también con estos.
+const PP_ESP = { hielo: 1, concha: 2, cohete: 3, burbujas: 4, petalo: 5 };
 function ppEfecto(n, mask, esp, t) {
   if (esp && esp[t] === 2) return [t];
-  const v = ppCruz(n, mask, t);
+  let v;
+  if (esp && esp[t] >= 3) {
+    const x0 = t % n, y0 = (t - x0) / n, e = esp[t]; v = [];
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const dentro = e === 3 ? y === y0 : e === 5 ? x === x0 : Math.abs(x - x0) <= 1 && Math.abs(y - y0) <= 1;
+      if (dentro && mask[y * n + x]) v.push(y * n + x);
+    }
+  } else v = ppCruz(n, mask, t);
   return esp ? v.filter(j => j === t || esp[j] !== 1) : v;
 }
 const PP_TOTAL_NIVELES = PP_MUNDOS.reduce((a, m) => a + m.niveles, 0);
@@ -84,7 +99,26 @@ const PP_FORMAS_MUNDO = [
   { 6: [['.##...', '#####.', '######', '######', '######', '.####.'],   // nube
         ['.####.', '######', '##..##', '##..##', '##..##', '##..##'],   // arcoíris
         ['..##..', '..##..', '######', '.####.', '.####.', '##..##'],   // estrella
-        ['.###..', '##....', '##....', '##....', '###...', '.####.']] }, // luna
+        ['.###..', '##....', '##....', '##....', '###...', '.####.']] }, // luna,
+  { 5: [['.###.', '#####', '#####', '..#..', '.###.']],         // seta pequeña
+    6: [['.####.', '######', '######', '..##..', '..##..', '.####.'],   // seta
+        ['..##..', '.####.', '######', '######', '.####.', '..##..'],   // hoja
+        ['#.##.#', '######', '.####.', '..##..', '.####.', '.#..#.'],   // hada
+        ['..##..', '.####.', '######', '######', '..##..', '..##..']] }, // árbol
+  { 5: [['#...#', '##.##', '#####', '.###.', '..#..']],         // cola de sirena
+    6: [['.####.', '######', '######', '######', '#.##.#', '#.##.#'],   // pulpo
+        ['..####', '.#####', '######', '######', '.#####', '..####'],   // ballena
+        ['..##..', '######', '..##..', '..##..', '#.##.#', '######'],   // ancla
+        ['.####.', '######', '######', '.####.', '.#..#.', '.#..#.']] }, // medusa
+  { 5: [['.#.#.', '#####', '.###.', '#####', '.#.#.']],         // flor de cerezo pequeña
+    6: [['.#..#.', '######', '.####.', '######', '######', '.#..#.'],   // flor de cerezo
+        ['..##..', '######', '######', '######', '######', '..##..'],   // farolillo
+        ['######', '######', '.####.', '.####.', '..##..', '..##..'],   // abanico
+        ['#....#', '##..##', '######', '######', '######', '.####.']] }, // gatito de la suerte
+  { 6: [['..##..', '.####.', '######', '######', '.####.', '..##..'],   // planeta
+        ['..##..', '.####.', '.####.', '.####.', '######', '#.##.#'],   // cohete
+        ['.###..', '####..', '###...', '###...', '####..', '.####.'],   // luna
+        ['#.....', '##..##', '.#####', '..####', '..####', '...##.']] }, // estrella fugaz
 ];
 // --- semilla: cada nivel sale siempre igual ---
 function ppAzar(semilla) { let s = semilla >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -218,7 +252,7 @@ function ppConstruye(g, intento, dif = false) {
 // cada cinco) y los jefes son un DUELO NIM contra el rival del mundo, en la forma de tablero del nivel: por turnos, cada uno
 // revienta las que quiera de UNA fila y pierde quien revienta la última (js/nimnivel.js). El rival juega perfecto salvo cuando
 // se despista (`fallo`), cada vez menos de un mundo a otro; el jefe es el CEO. Las burbujas son todas normales.
-const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo'];
+const PP_RIVALES = ['bunny', 'becario', 'lola', 'cofre', 'becario', 'ceo', 'bunny', 'lola', 'cofre', 'ceo'];
 const ppEsNim = g => ppEsDificil(g) || ppEsJefe(g);
 function ppNivelNim(g, dif) {
   const [m, l] = ppMundoDe(g), M = PP_MUNDOS[m], az = ppAzar(7000 * (m + 1) + l * 53 + (dif ? 900001 * dif : 0)), jefe = ppEsJefe(g);
@@ -232,7 +266,7 @@ function ppNivelNim(g, dif) {
   if (dif === 2) fallo = 0.02;   // pesadilla: el rival casi nunca se equivoca
   else if (dif) fallo = Math.max(0.02, fallo * 0.5);
   return { g, dif, mundo: m, l, lado: n, mask: mk, need, esp: null, opt: [], limite: 99, pasa: 1, amigos: 0, jefe, dificil: !jefe, tutorial: false,
-    nim: { rival: jefe ? 'ceo' : PP_RIVALES[m], fallo } };
+    nim: { rival: jefe ? (m === PP_MUNDOS.length - 1 ? 'ceoespacial' : 'ceo') : PP_RIVALES[m], fallo } };   // el jefe del último mundo: el CEO espacial
 }
 // MODO PESADILLA (Daniel, 31-10-2026: «muy difícil, con fondo rojo, con el modo de juego del primer boceto»): se abre al ganar el
 // difícil de un mundo. Es el «Lights Out» del primer prototipo: tocar una burbuja le da la vuelta a ella y a sus cuatro vecinas (las

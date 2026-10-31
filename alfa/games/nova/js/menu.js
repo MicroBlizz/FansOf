@@ -49,6 +49,8 @@ function nvOpciones() {
   const borra = nvEl('btn-ghost ol nv-peligro', tr('BORRAR'), 'button');
   borra.onclick = () => confirmBox(tr('¿EMPEZAR DE CERO?'), tr('Se borra tu campaña: la galaxia liberada, la aleación y las mejoras de la nave capital. No se puede deshacer.'), tr('BORRAR'), () => {
     try { localStorage.removeItem(NV_CAMP_CLAVE); localStorage.removeItem('nova-campana-1'); } catch (e) { /* nada que borrar */ }
+    for (const k in SAVE) delete SAVE[k];
+    Object.assign(SAVE, nvCampNueva(null)); nvCampGuarda();
     NVP.camp = null; NVP.gal = null; nvCierraVentana(); nvPintaMenu(); toast(tr('Campaña nueva.'), true);
   });
   fila(tr('Empezar de cero'), tr('Borra tu campaña de Nova.'), borra);

@@ -2,6 +2,9 @@
 // Va aquí y no en core/idioma para no tocar core.
 'use strict';
 IDIOMA.add({
+  // 0.3.27
+  "<b>TU CAMPAÑA EN LA NUBE</b>: la galaxia liberada, la aleación y las mejoras de la nave capital se guardan ahora con tu cuenta, igual que en los demás juegos, y las ves en otro aparato. Lo que ya tenías en este navegador se conserva.": "<b>YOUR CAMPAIGN IN THE CLOUD</b>: the liberated galaxy, your alloy and the capital ship upgrades are now saved with your account, like in the other games, and you can see them on another device. What you already had in this browser is kept.",
+  "Microblizz ha subido tu flota a la nube y Phony ha preguntado si llueven asteroides.": "Microblizz uploaded your fleet to the cloud and Phony asked if it rains asteroids.",
   // 0.3.26
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha dejado los anuncios dormidos en la bodega y Phony ha preguntado si hay anuncios en el espacio.": "Microblizz left the ads asleep in the cargo bay and Phony asked if there are ads in space.",

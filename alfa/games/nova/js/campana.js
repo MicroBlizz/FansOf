@@ -1,5 +1,5 @@
 // Fans of Nova · Campaña: la galaxia de sectores y la nave capital que guarda lo ganado entre misiones (aleación, núcleo, sectores liberados).
-// Prototipo: se guarda en este navegador (localStorage). Diseño completo en docs/nova/mapa-y-facciones.md y docs/nova/economia.md.
+// Se guarda en este navegador (SAVE_KEY) y con la cuenta en la nube (core/js/sistema/cuenta.js lee SAVE y se avisa con CUENTA.cambio()). Diseño completo en docs/nova/mapa-y-facciones.md y docs/nova/economia.md.
 'use strict';
 const NV_CAMP_CLAVE = 'nova-campana-2';
 const NV_GAL_R = 7;   // rejilla hexagonal de radio 5, recortada en forma de decágono: 10 cuñas = 9 facciones + tu enclave rebelde
@@ -61,19 +61,26 @@ function nvGalaxia(semilla, faccion) {
 }
 
 function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0, fac: prev && prev.fac ? prev.fac : {} }; }   // fac: armas de facción desbloqueadas, para siempre
+// SAVE es la campaña misma (core la sube a la nube): un objeto fijo que se rellena al cargar, nunca se reemplaza.
+const SAVE = {};
+function nvCampCarga() {
+  let c = null, viejo = null;
+  try { c = JSON.parse(localStorage.getItem(SAVE_KEY) || localStorage.getItem(NV_CAMP_CLAVE) || 'null'); viejo = JSON.parse(localStorage.getItem('nova-campana-1') || 'null'); } catch (e) { c = null; }   // NV_CAMP_CLAVE: la clave de antes de la nube
+  for (const k in SAVE) delete SAVE[k];
+  Object.assign(SAVE, c && c.v === 2 ? c : nvCampNueva(viejo));   // de la v1 se conservan la aleación y las mejoras de la nave capital
+}
+nvCampCarga();
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
-  let c = null, viejo = null;
-  try { c = JSON.parse(localStorage.getItem(NV_CAMP_CLAVE) || 'null'); viejo = JSON.parse(localStorage.getItem('nova-campana-1') || 'null'); } catch (e) { c = null; }
-  NVP.camp = c && c.v === 2 ? c : nvCampNueva(viejo);   // de la v1 se conservan la aleación y las mejoras de la nave capital
-  if (NVP.camp.faccion) nvCampGalaxia();
-  return NVP.camp;
+  NVP.camp = SAVE;
+  if (SAVE.faccion) nvCampGalaxia();
+  return SAVE;
 }
 function nvCampGalaxia() { NVP.gal = nvGalaxia(NVP.camp.semilla, NVP.camp.faccion); if (!NVP.camp.libres.length) NVP.camp.libres = [NVP.gal._base]; }
 function nvCampFaccion(f) { const c = nvCamp(); c.faccion = f; nvCampGalaxia(); nvCampGuarda(); }
 // De quién es un sector ahora: lo liberado pasa a ser de tu facción.
 function nvDuenoActual(k) { const s = NVP.gal[k]; return nvCamp().libres.includes(k) ? NVP.camp.faccion : s.dueno; }
-function nvCampGuarda() { try { localStorage.setItem(NV_CAMP_CLAVE, JSON.stringify(NVP.camp)); } catch (e) { /* sin almacenamiento: la campaña dura lo que la pestaña */ } }
+function nvCampGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: la campaña dura lo que la pestaña */ } CUENTA.cambio(); }
 // Un sector se puede atacar si es vecino de uno liberado (o es tu base).
 function nvSectorAbierto(k) {
   const c = nvCamp(), s = NVP.gal && NVP.gal[k]; if (!s || k[0] === '_') return false;

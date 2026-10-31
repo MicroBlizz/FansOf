@@ -11,7 +11,7 @@ setInterval(() => { if (esPruebas() && SAVE.devInfinito && (SAVE.monedas < DEV_T
 
 // todo abierto: mejoras al máximo (la Maldición y la Horda compradas pero apagadas), noches, desafíos, aspecto y el Pase Real completo
 function devDesbloqueaTodo() {
-  for (const m of CFG.tienda) SAVE.mejoras[m.id] = m.max;
+  for (const m of CFG.tienda) if (m.propia) { for (const p of PERSONAJES) mejorasDe(p.id)[m.id] = m.max; } else SAVE.mejoras[m.id] = m.max;
   SAVE.activo = Object.assign({}, SAVE.activo, { maldicion: 0, horda: 0 });
   if (!SAVE.desafios) SAVE.desafios = {};
   for (const d of DESAFIOS) SAVE.desafios[d.id] = 1;

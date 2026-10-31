@@ -1,8 +1,8 @@
 {
- "build": 744,
- "hash": "dadc924",
- "fecha": "2026-10-31T13:07:16Z",
- "mensaje": "Fans of Goose 0.9.0: icono del Reloj de arena (Yoshi, marco repintado en hielo para no confundirlo con Prisa de pico)",
+ "build": 745,
+ "hash": "4e28bf8",
+ "fecha": "2026-10-31T13:24:54Z",
+ "mensaje": "Goose 0.10.0: las mejoras de combate son de cada personaje y se reinicia el guardado de la alfa",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

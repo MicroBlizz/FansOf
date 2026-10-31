@@ -48,20 +48,21 @@ const CFG = {
   pozo: 19, posada: 31, dadoDado: [26, 53], laberinto: 42, carcel: 52, muerte: 58, jardin: 63,
   muerteAtras: 3,
   // tienda de mejoras permanentes: coste de cada nivel = base * (nivel + 1) ^ 1.45
+  // propia: true = la mejora es de CADA PERSONAJE (se compra para el que esté elegido); sin ella, vale para todos (31-10-2026, Daniel)
   tienda: [
-    { id: 'vida',    max: 10, base: 25 },   // las cinco de siempre llegan a 10 (cada nivel, más caro)
-    { id: 'fuerza',  max: 10, base: 30 },
-    { id: 'prisa',   max: 10, base: 25 },
-    { id: 'iman',    max: 10, base: 20 },
+    { id: 'vida',    max: 10, base: 25, propia: true },   // las cinco de siempre llegan a 10 (cada nivel, más caro)
+    { id: 'fuerza',  max: 10, base: 30, propia: true },
+    { id: 'prisa',   max: 10, base: 25, propia: true },
+    { id: 'iman',    max: 10, base: 20, propia: true },
     { id: 'codicia', max: 10, base: 35 },
     { id: 'retiro',  max: 3, base: 60 },
-    { id: 'fenix',   max: 1, base: 220 },
-    { id: 'arsenal', max: 1, base: 160 },
-    { id: 'suerte',  max: 1, base: 90 },
+    { id: 'fenix',   max: 1, base: 220, propia: true },
+    { id: 'arsenal', max: 1, base: 160, propia: true },
+    { id: 'suerte',  max: 1, base: 90, propia: true },
     { id: 'regateo', max: 3, base: 45 },
-    { id: 'coraza',  max: 5, base: 40 },    // -5 % de daño recibido por nivel
-    { id: 'regen',   max: 5, base: 45 },    // +0,12 de vida por segundo por nivel
-    { id: 'critico', max: 5, base: 40 },    // +3 % de golpe crítico por nivel
+    { id: 'coraza',  max: 5, base: 40, propia: true },    // -5 % de daño recibido por nivel
+    { id: 'regen',   max: 5, base: 45, propia: true },    // +0,12 de vida por segundo por nivel
+    { id: 'critico', max: 5, base: 40, propia: true },    // +3 % de golpe crítico por nivel
     { id: 'sabio',   max: 5, base: 35 },    // +6 % de experiencia por nivel
     { id: 'botin',   max: 5, base: 30 },    // +20 % de monedas en los cofres por nivel
     { id: 'redado',  max: 1, base: 140 },   // una vez por partida, volver a tirar el dado nada más tirarlo

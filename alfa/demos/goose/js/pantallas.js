@@ -51,7 +51,7 @@ function pintaPortada(dt) {
   botonLosa(36 + mitad, yb + 62, mitad, 24, tr('CONTRARRELOJ'), '#8a3a1a', () => { SONIDO.boton(); CR.datos = null; JUEGO.modo = 'contrarreloj'; }, 8, crSave().mejor ? tr('Récord {t}', { t: reloj(crSave().mejor) }) : tr('¡Nuevo!'));   // js/contrarreloj.js
   botonLosa(W - 46, 10, 38, 34, '', '#d99a1a', () => { SONIDO.boton(); abrePase(); }, 7);   // el Camino de la Oca, arriba a la derecha (js/pase.js)
   icono('pase', W - 27, 23, 12); texto2(String(escalonPase()) + '/63', W - 27, 37, 6, '#3a1c06', 'center', FUENTE, 800, 0);
-  botonLosa(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }), 31);
+  botonLosa(30, yb + 92, W - 110, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; TIENDA_PERS = null; }, 9, tr('{n} monedas', { n: SAVE.monedas }), 31);
   botonLosa(W - 76, yb + 92, 46, 24, tr('OPCIONES'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = 'opciones'; JUEGO.opcionesDe = 'portada'; }, 6.5);
   texto2(tr('Microblizz no se hace responsable de las ocas'), W / 2, H - 12, 5.5, 'rgba(241,230,200,.55)', 'center', FUENTE, 700, 0);
 }
@@ -207,7 +207,7 @@ function finBotones(F, W, H, ym, logros = []) {
   botonDoblar(F, W, H - 148);   // doblar el botín viendo un anuncio (js/monetiza.js)
   if (F.t > 2.8) {
     boton(30, H - 110, W - 60, 32, JUEGO.carrera ? tr('CON AMIGOS') : tr('OTRA VEZ'), '#e8742a', () => { SONIDO.boton(); if (JUEGO.carrera) { JUEGO.carrera = null; abreAmigos(); } else if (F.diario) empiezaDiario(); else nuevaPartida(); }, 13);
-    boton(30, H - 70, W - 60, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
+    boton(30, H - 70, W - 60, 24, tr('MEJORAS'), '#3f9a3a', () => { SONIDO.boton(); JUEGO.modo = 'tienda'; TIENDA_PERS = null; }, 9, tr('{n} monedas', { n: SAVE.monedas }));
     boton(30, H - 40, W - 60, 22, tr('MENÚ'), '#2f74c0', () => { SONIDO.boton(); JUEGO.carrera = null; JUEGO.modo = 'portada'; }, 9);
   }
 }

@@ -1,8 +1,8 @@
 {
- "build": 720,
- "hash": "0293d84",
- "fecha": "2026-10-31T00:54:08Z",
- "mensaje": "Fans of Goose 0.8.0: anuncios con premio, huevos de oro, pestaña TESORO y el Camino de la Oca",
+ "build": 721,
+ "hash": "09a321b",
+ "fecha": "2026-10-31T01:04:19Z",
+ "mensaje": "Fans of Goose: versión 0.8.0 para la release",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

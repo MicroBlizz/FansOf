@@ -229,16 +229,22 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   if (escudoArriba) d = G.absorbeEscudo(e, d, w, c, A);   // el escudo del enemigo absorbe; la energía lo tumba
   d *= c.multCasco;
   G.frenaEscudo(e, d, K, sinEstado);
-  if (!sinEstado) {   // la onda de una sobrecarga solo hace daño en área: no calienta a los vecinos
-    const estado = G.aplicaEstado(e, w, c, A, sinReaccion);
-    if (estado.explosion) nvExplosion(S, e.x, e.y, estado.explosion.radio, estado.explosion.dano, w, e, true);
-    nvAvisa(S, estado.avisos);
-  }
-  if (w.portador === 'flak' && carga === 'termica' && !sinEstado) nvMetrallaIncendiaria(S, e);
+  if (!sinEstado) nvGolpeEstado(S, e, w, c, sinReaccion);   // la onda de una sobrecarga solo hace daño en área: no calienta a los vecinos
   G.plasma(e, w, K, sinEstado);
+  nvGolpeCasco(S, e, d, crit, c.color, x, y);
+}
+// El estado que deja la carga, con su explosión de sobrecarga, sus avisos y la Metralla incendiaria del flak térmico
+function nvGolpeEstado(S, e, w, c, sinReaccion) {
+  const estado = NV.Golpe.aplicaEstado(e, w, c, NOVA_ARMAS, sinReaccion);
+  if (estado.explosion) nvExplosion(S, e.x, e.y, estado.explosion.radio, estado.explosion.dano, w, e, true);
+  nvAvisa(S, estado.avisos);
+  if (w.portador === 'flak' && w.carga === 'termica') nvMetrallaIncendiaria(S, e);
+}
+// El daño entra en el casco: número en pantalla, robo de vida, estadísticas y, si toca, la muerte
+function nvGolpeCasco(S, e, d, crit, color, x, y) {
   e.hp -= d;
   e.flash = 0.08;
-  if (d > 0) S.nums.push({ x: x + (Math.random() - 0.5) * 14, y: y - 8, t: 0.7, txt: String(Math.round(d)), color: crit ? '#ffd93d' : c.color, g: crit ? 1 : 0 });
+  if (d > 0) S.nums.push({ x: x + (Math.random() - 0.5) * 14, y: y - 8, t: 0.7, txt: String(Math.round(d)), color: crit ? '#ffd93d' : color, g: crit ? 1 : 0 });
   if (S.mejoras.robo) S.nave.hp = Math.min(S.nave.hpMax, S.nave.hp + d * S.mejoras.robo);
   S.stats.dano += d; if (d > S.stats.mayor) S.stats.mayor = d;
   if (e.hp <= 0 && !e.muerto) nvMuere(S, e);

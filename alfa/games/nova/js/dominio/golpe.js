@@ -43,20 +43,29 @@ NV.Golpe = (() => {
     return d;
   }
 
+  // Térmica: acumula calor (el doble con Haz enfocado, más con el láser, menos si está Interferido); a 100 explota y vuelve a 0
+  function calienta(e, w, A, fuera) {
+    const K = A.combos;
+    e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1) * (w.portador === 'laser' ? K.laser.acumula : 1) * (e.est.interferido > 0 ? K.sobrecargaLenta.calor : 1);
+    if (e.calor < 100) return;
+    e.calor = 0; fuera.explosion = { radio: 70, dano: 50 * A.tamanos[w.tam] };
+    fuera.avisos.push(aviso(e, '¡Sobrecarga!', '#ff4b4b', 1, 20, 1));
+  }
+  // EM: interfiere (el doble sobre una Brecha, salvo en área), alarga el Escudo caído (Cortacircuitos) y acumula sistemas hasta el Apagón
+  function interfiere(e, w, c, A, sinReaccion, fuera) {
+    const K = A.combos, est = e.est, nuevo = !(est.interferido > 0);
+    est.interferido = A.estados[c.estado].duracion * ((est.brecha > 0 && !sinReaccion) ? 2 : 1);
+    if (est.escudoCaido > 0) est.escudoCaido = Math.max(est.escudoCaido, K.cortacircuitos.escudoCaido);
+    e.sis = (e.sis || 0) + K.interferencia.sistemas * (w.portador === 'laser' ? K.laser.acumula : 1);
+    if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; fuera.avisos.push(aviso(e, 'Apagón', c.color, 1, 20, 1)); }
+    else if (nuevo) fuera.avisos.push(aviso(e, 'Interferido', c.color, 0, 20, 0.8));
+  }
   // El estado que deja cada carga. Devuelve { avisos, explosion }: `explosion` pide a quien llama una explosión de sobrecarga.
   function aplicaEstado(e, w, c, A, sinReaccion) {
-    const K = A.combos, est = e.est, dur = A.estados[c.estado].duracion, fuera = { avisos: [], explosion: null };
-    if (c.estado === 'sobrecalentado') {
-      e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1) * (w.portador === 'laser' ? K.laser.acumula : 1) * (est.interferido > 0 ? K.sobrecargaLenta.calor : 1);
-      if (e.calor >= 100) { e.calor = 0; fuera.explosion = { radio: 70, dano: 50 * A.tamanos[w.tam] }; fuera.avisos.push(aviso(e, '¡Sobrecarga!', '#ff4b4b', 1, 20, 1)); }
-    } else if (c.estado === 'interferido') {
-      const nuevo = !(est.interferido > 0);
-      est.interferido = dur * ((est.brecha > 0 && !sinReaccion) ? 2 : 1);
-      if (est.escudoCaido > 0) est.escudoCaido = Math.max(est.escudoCaido, K.cortacircuitos.escudoCaido);   // Cortacircuitos
-      e.sis = (e.sis || 0) + K.interferencia.sistemas * (w.portador === 'laser' ? K.laser.acumula : 1);
-      if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; fuera.avisos.push(aviso(e, 'Apagón', c.color, 1, 20, 1)); }
-      else if (nuevo) fuera.avisos.push(aviso(e, 'Interferido', c.color, 0, 20, 0.8));
-    } else est[c.estado] = dur;
+    const fuera = { avisos: [], explosion: null };
+    if (c.estado === 'sobrecalentado') calienta(e, w, A, fuera);
+    else if (c.estado === 'interferido') interfiere(e, w, c, A, sinReaccion, fuera);
+    else e.est[c.estado] = A.estados[c.estado].duracion;
     return fuera;
   }
 

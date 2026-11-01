@@ -32,18 +32,11 @@ function nvFrenteEstado(semana, dias, aportes) {
 }
 
 // ---------- lo tuyo: patrón, aportes y colección (en SAVE.frente, viaja a la nube con la campaña) ----------
-function nvFrente() {
-  const c = nvCamp();
-  if (!c.frente) c.frente = { semana: null, aportes: [], previa: null, patron: null, cosmeticos: [] };
-  const f = c.frente, hoy = FRENTE.claveSemana(new Date());
-  if (f.semana !== hoy) {   // empieza una semana: la anterior queda para el parte de guerra
-    if (f.semana && f.aportes.length) f.previa = { semana: f.semana, aportes: f.aportes, cobrada: false };
-    f.semana = hoy; f.aportes = [];
-  }
-  return f;
-}
-function nvPatron() { return nvFrente().patron || nvCamp().faccion; }
-function nvFrenteHoy() { return nvFrenteEstado(nvFrente().semana, FRENTE.diasCerrados(new Date()), nvFrente().aportes); }
+// Las reglas están en dominio/frente.js (NV.Frente); aquí se les da la campaña, el reloj (NV_RELOJ) y los datos, y se guarda.
+const NV_RELOJ = { ahora: () => new Date() };   // el único sitio de la galaxia de la comunidad que mira la hora (los tests lo cambian)
+function nvFrente() { return NV.Frente.deSemana(nvCamp(), FRENTE.claveSemana(NV_RELOJ.ahora())); }
+function nvPatron() { nvFrente(); return NV.Frente.patron(nvCamp()); }
+function nvFrenteHoy() { return nvFrenteEstado(nvFrente().semana, FRENTE.diasCerrados(NV_RELOJ.ahora()), nvFrente().aportes); }
 
 // El sector del mapa común que equivale al de tu campaña: uno del mismo dueño y del mismo anillo, mejor si toca a tu patrón.
 function nvFrenteCasilla(S, est, patron) {
@@ -63,36 +56,24 @@ function nvFrenteAporta(S, libero) {
   if (!nvFrenteActivo() || !NVP.camp || !NVP.camp.faccion) return null;
   const f = nvFrente(), patron = nvPatron(), est = nvFrenteHoy(), casilla = nvFrenteCasilla(S, est, patron);
   if (!casilla) return null;
-  const P = NV_FRENTE.puntos, puntos = P.mision + (S.estado === 'victoria' ? P.victoria : 0) + (libero ? P.libera : 0);
-  f.aportes.push({ dia: FRENTE.diasCerrados(new Date()), casilla, faccion: patron, puntos });
+  const puntos = NV.Frente.puntosMision(NV_FRENTE.puntos, S.estado === 'victoria', libero);
+  f.aportes.push({ dia: FRENTE.diasCerrados(NV_RELOJ.ahora()), casilla, faccion: patron, puntos });
   return { casilla, puntos, patron };
 }
-function nvFrenteMisPuntos(aportes) { return aportes.reduce((a, x) => a + x.puntos, 0); }
+const nvFrenteMisPuntos = aportes => NV.Frente.misPuntos(aportes);
 
 // ---------- el cierre de la semana: parte de guerra y premios ----------
 function nvFrenteParte() {
   const f = nvFrente();
   if (!f.previa || f.previa.cobrada) return null;
-  const est = nvFrenteEstado(f.previa.semana, 7, f.previa.aportes), ganadora = est.ranking[0].faccion;
-  const mios = nvFrenteMisPuntos(f.previa.aportes), conGanadora = f.previa.aportes.some(a => a.faccion === ganadora);
-  const R = NV_FRENTE.premio, aleacion = Math.round(Math.min(R.tope, mios * R.porPunto) * (conGanadora ? R.ganadora : 1));
-  const cosmetico = conGanadora ? NV_FRENTE.cosmeticos.map(t => ganadora + '-' + t).find(id => !f.cosmeticos.includes(id)) || null : null;
-  return { est, ganadora, mios, aleacion, cosmetico };
+  return NV.Frente.parte(f, nvFrenteEstado(f.previa.semana, 7, f.previa.aportes), NV_FRENTE.premio, NV_FRENTE.cosmeticos);
 }
-function nvFrenteCobra(parte) {
-  const f = nvFrente();
-  nvCamp().aleacion += parte.aleacion;
-  if (parte.cosmetico) f.cosmeticos.push(parte.cosmetico);
-  f.previa.cobrada = true; nvCampGuarda();
-}
+function nvFrenteCobra(parte) { NV.Frente.cobra(nvCamp(), nvFrente(), parte); nvCampGuarda(); }
 
 // ---------- cambiar de patrón: barato a quien va perdiendo, carísimo a quien va ganando ----------
-function nvFrentePrecio(fac, est) {
-  const i = est.ranking.findIndex(x => x.faccion === fac), n = est.ranking.length - 1, C = NV_FRENTE.cambio;
-  return Math.round(C.min + (C.max - C.min) * (n - i) / n);
-}
+function nvFrentePrecio(fac, est) { return NV.Frente.precio(fac, est.ranking, NV_FRENTE.cambio); }
 function nvFrenteCambia(fac, est) {
-  const c = nvCamp(), precio = nvFrentePrecio(fac, est);
-  if (fac === nvPatron() || c.aleacion < precio) return false;
-  c.aleacion -= precio; nvFrente().patron = fac; nvCampGuarda(); return true;
+  const ok = NV.Frente.cambia(nvCamp(), nvFrente(), fac, nvFrentePrecio(fac, est));
+  if (ok) nvCampGuarda();
+  return ok;
 }

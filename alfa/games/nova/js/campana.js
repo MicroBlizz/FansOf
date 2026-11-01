@@ -60,7 +60,7 @@ function nvGalaxia(semilla, faccion) {
   return out;
 }
 
-function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0, fac: prev && prev.fac ? prev.fac : {} }; }   // fac: armas de facción desbloqueadas, para siempre
+function nvCampNueva(prev) { return NV.Campana.nueva(prev, Math.random); }   // fac: armas de facción desbloqueadas, para siempre (dominio/campana.js)
 // SAVE es la campaña misma (core la sube a la nube): un objeto fijo que se rellena al cargar, nunca se reemplaza.
 const SAVE = {};
 function nvCampCarga() {
@@ -71,11 +71,7 @@ function nvCampCarga() {
 }
 nvCampCarga();
 // Lo que enseña la ventana de «¿qué partida quieres?» de la nube (core/js/sistema/cuenta.js) al comparar dos campañas
-function resumenPartida(s) {
-  const n = v => (typeof v === 'number' && isFinite(v) ? v : 0), suma = o => Object.keys(o || {}).reduce((a, k) => a + n(o[k]), 0);
-  return [['Aleación', n(s.aleacion)], ['Sectores liberados', (s.libres || []).length], ['Misiones jugadas', n(s.misiones)],
-    ['Misiones ganadas', n(s.victorias)], ['Mejoras de la nave capital', suma(s.mejoras)]];
-}
+function resumenPartida(s) { return NV.Campana.resumen(s); }
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
   NVP.camp = SAVE;
@@ -119,23 +115,17 @@ function nvAplicaCampana(S) {
   if (S.tipoSector === 'pecio') S.chatExtra = 0.25;
   if (nvNivelCapital('astillero')) { const sl = nvRanuras(1, S)[1], C = NV_CASCOS[S.casco]; if (sl && !n.armas.some(w => w.slot === sl.id)) n.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1])); }
 }
-// Lo que paga una misión: por rango alcanzado y enemigos, más por peligro; perder paga la mitad.
-function nvAleacionMision(S) {
-  const base = 5 * S.nave.rango + 0.5 * S.stats.muertos, p = 1 + 0.3 * ((S.peligro || 1) - 1);
-  return Math.round(base * p * (S.estado === 'victoria' ? 1 : 0.5));
-}
+// Lo que paga una misión y cómo se cierra: reglas en dominio/campana.js (NV.Campana); aquí se avisa a retos, galaxia y nube.
+function nvAleacionMision(S) { return NV.Campana.aleacionMision(S.nave.rango, S.stats.muertos, S.peligro, S.estado === 'victoria'); }
 // Cierra la misión una sola vez: suma aleación y, si ganaste, libera el sector.
 function nvCierraMision(S) {
   if (S.cerrada || !NVP.camp) return 0;
   S.cerrada = true;
-  const c = nvCamp(), a = nvAleacionMision(S);
-  c.aleacion += a; c.misiones++;
+  const c = nvCamp(), gano = S.estado === 'victoria';
+  const { aleacion: a, libero } = NV.Campana.cierraMision(c, { rango: S.nave.rango, muertos: S.stats.muertos, peligro: S.peligro, gano, sector: S.sector });
   NV_RETOS.evento('mision'); NV_RETOS.evento('muertos', S.stats.muertos); NV_RETOS.maximo('rango', S.nave.rango);
-  let libero = false;
-  if (S.estado === 'victoria') {
-    c.victorias++; NV_RETOS.evento('victoria');
-    if (S.sector && !c.libres.includes(S.sector)) { c.libres.push(S.sector); NV_RETOS.evento('sector'); libero = true; }
-  }
+  if (gano) NV_RETOS.evento('victoria');
+  if (libero) NV_RETOS.evento('sector');
   S.frente = nvFrenteAporta(S, libero);   // frente-nova.js: tu misión suma a tu patrón en la galaxia de la comunidad
   S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();

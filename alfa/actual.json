@@ -1,8 +1,8 @@
 {
- "build": 765,
- "hash": "65b9529",
- "fecha": "2026-11-01T14:29:40Z",
- "mensaje": "Rouflage: dominio RF.Silbidos (el silbido obligatorio y el de los bots) con el azar inyectado y sus tests (paso 2)",
+ "build": 766,
+ "hash": "da45df0",
+ "fecha": "2026-11-01T14:41:14Z",
+ "mensaje": "Rouflage: piensaCazador (complejidad 80) partido en una funcion por estado y la sospecha pasa al dominio RF.Sospecha (paso 2, bots)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

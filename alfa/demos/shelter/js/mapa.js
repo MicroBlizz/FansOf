@@ -4,32 +4,33 @@
 'use strict';
 
 const CAS = 24;   // tamaño de una casilla en píxeles
-// # pared · . hierba · ~ agua · _ tierra del refugio · T árbol · R roca · I mena de hierro · B bloque · S interruptor · D puerta
+// # cara de acantilado (sólida; la hierba de arriba es una meseta) · n e w bordes de meseta (norte, este, oeste; sólidos) · s escalera (se sube por ella)
+// . hierba · ~ agua · _ tierra del refugio · T árbol · R roca · I mena de hierro · B bloque · S interruptor · D puerta
 // M mesa de trabajo · H hoguera · C cofre · P donde empieza CrazyBunny
 const MAPA_TXT = [
   '####################################',
-  '#..TT....T...........T....TT...TT..#',
-  '#.T.......R......T......T.........T#',
-  '#...T..T.......~~~.........R..I....#',
-  '#..R.........~~~~~~.......T........#',
-  '#.....T.....~~~~~~~~..T..........T.#',
-  '#T........T..~~~~~~.......####D#####',
-  '#.......R......~~~.......#....I...R#',
-  '#..T..........____.......#.R...I..##',
-  '#.....I.....__________...#.........#',
+  '#..T..T..R..e.........T....TT...TT.#',
+  '#.T....T....e......T......T.......T#',
+  '#...T..I....e..~~~.........R..I....#',
+  '#..R...T....e~~~~~~.......T........#',
+  '#.T.T.......e~~~~~~~~.T..........T.#',
+  '#..S.....B..e.~~~~~~......####D#####',
+  '######ss####...~~~.......#....I...R#',
+  '######ss####..____.......#.R...I..##',
+  '#...........__________...#.........#',
   '#..T.......___M____H__...#...C.....#',
-  '#.........____________...#.........#',
+  '#.T.......____________...#.........#',
   '#.....R...____P_______...#.I...R...#',
   '#..T.......__________....#.........#',
   '#............______......###########',
-  '#.T....R..........T...T...B........#',
-  '#....T..................T....T..T..#',
-  '#...........T......R...............#',
-  '#..T...I...........T.....S...R.....#',
-  '#.......T....T...........T.........#',
-  '#..R.........R......I.........T....#',
-  '#T.....T............T...........T..#',
-  '#.....R..........T.........R.......#',
+  '#.T....R..........T...T............#',
+  '#....T..................wnnnssnnnnn#',
+  '#...........T......R....w.I....R...#',
+  '#..T...I...........T....w....I.....#',
+  '#.......T....T..........w.R.....I..#',
+  '#..R.........R......I...w....R.....#',
+  '#T.....T............T...w..I.....R.#',
+  '#.....R..........T......w......I...#',
   '####################################',
 ];
 
@@ -75,7 +76,7 @@ const casilla = (i, j) => (j < 0 || j >= MAPA.h || i < 0 || i >= MAPA.w) ? '#' :
 function pasable(i, j) {
   const c = casilla(i, j);
   if (c === 'D') return MAPA.puertaAbierta;
-  if (c !== '.' && c !== '_' && c !== 'S' && c !== 't') return false;   // t = tocón
+  if (c !== '.' && c !== '_' && c !== 'S' && c !== 't' && c !== 's') return false;   // t = tocón · s = escalera
   for (const o of MAPA.construido) if (o.tipo === 'torreta' && o.i === i && o.j === j) return false;   // las torretas estorban; las trampas no
   return true;
 }
@@ -110,6 +111,7 @@ function golpea(i, j) {
 // empuja el bloque de (i, j) hacia (di, dj). Devuelve true si se ha movido
 function empuja(i, j, di, dj) {
   if (casilla(i, j) !== 'B') return false;
+  if (MAPA.bajoBloque === 'S') return false;   // ya está sobre el interruptor: se queda ahí, como en Zelda
   const i2 = i + di, j2 = j + dj, c = casilla(i2, j2);
   if (c !== '.' && c !== '_' && c !== 'S' && c !== 't') return false;
   if (MAPA.construido.some(o => o.i === i2 && o.j === j2)) return false;

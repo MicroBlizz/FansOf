@@ -20,7 +20,6 @@ function ajusta() {
 const escalaObjetivo = () => (NOCHE.fase === 'noche' && K_BASE >= 3 ? K_BASE - 1 : K_BASE);
 function aplicaEscala() {
   PAN.W = Math.floor(PW / K_ESCALA); PAN.H = Math.floor(PH / K_ESCALA);
-  ENTRADA.botonAccion = { x: PAN.W - 20, y: PAN.H - 24, r: 13 };
 }
 function avanzaZoom(dt) {
   const obj = escalaObjetivo();

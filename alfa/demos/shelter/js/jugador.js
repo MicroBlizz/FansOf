@@ -12,7 +12,7 @@ function jugadorNuevo() {
     vida: 5, vidaMax: 5, inmune: 0, golpe: 0,       // golpe: la animación de dar con la zanahoria
     inv: { madera: 0, piedra: 0, hierro: 0, cristal: 0 },
     arma: { nivel: 1, fuego: 0, orbes: 0, zanahorias: 1, giro: 1, dano: 0, iman: 0, cadencia: 1 },
-    nivel: 1, xp: 0, bajas: 0, esquiva: 0, esquivaCd: 0, vel: 1, dorm: 0,
+    nivel: 1, xp: 0, bajas: 0, esquiva: 0, esquivaCd: 0, vel: 1, dorm: 0, autoCd: 0, empujando: 0,
   });
 }
 const xpParaSubir = () => 6 + J.nivel * 4;
@@ -31,14 +31,22 @@ function avanzaJugador(dt) {
   }
   const mov = Math.hypot(d.x, d.y) > 0.05 && J.golpe <= 0.15;
   J.andando = mov;
+  if (J.autoCd > 0) J.autoCd -= dt;
   if (mov) {
     if (Math.abs(d.x) > Math.abs(d.y)) J.mira = { x: Math.sign(d.x), y: 0 }; else J.mira = { x: 0, y: Math.sign(d.y) };
-    const v = VEL_BASE * J.vel * dt;
+    const v = VEL_BASE * J.vel * dt, x0 = J.x, y0 = J.y;
     const [nx, ny] = mueveChocando(J.x - J_ANCHO / 2, J.y - J_ALTO, J_ANCHO, J_ALTO, d.x * v, d.y * v);
     J.x = nx + J_ANCHO / 2; J.y = ny + J_ALTO;
     J.paso += dt * 7;
-  }
-  if (ENTRADA.accionPulsa) accionJugador();
+    // sin botones: al empujar contra algo que se puede talar, picar, empujar, abrir o usar, CrazyBunny actúa solo
+    const parado = Math.abs(J.x - x0) + Math.abs(J.y - y0) < v * 0.4;
+    if (parado && NOCHE.fase === 'dia' && J.autoCd <= 0) {
+      const c = casillaMirada().c;
+      if (RECURSO[c] || c === 'B' || c === 'M' || c === 'H' || (c === 'C' && !MAPA.cofreAbierto)) { J.empujando += dt; if (J.empujando > 0.12) { accionJugador(); J.autoCd = c === 'B' ? 0.35 : RECURSO[c] ? 0.42 : 1.2; J.empujando = 0; } }
+      else J.empujando = 0;
+    } else J.empujando = 0;
+  } else J.empujando = 0;
+  if (ENTRADA.accionPulsa || (ENTRADA.toquePulsa && NOCHE.fase === 'noche')) accionJugador();
 }
 
 // la casilla a la que mira CrazyBunny (la de delante de sus pies)

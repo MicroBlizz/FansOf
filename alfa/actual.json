@@ -1,8 +1,8 @@
 {
- "build": 769,
- "hash": "70ec1b3",
- "fecha": "2026-11-01T17:25:39Z",
- "mensaje": "Shelter: mapa de js regenerado",
+ "build": 770,
+ "hash": "05703a0",
+ "fecha": "2026-11-01T17:35:41Z",
+ "mensaje": "Shelter: mesetas con acantilados, bordes y escaleras (perspectiva 2.5D), y juego sin botones: actúa al chocar, toque corto = esquive",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

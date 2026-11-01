@@ -1,13 +1,13 @@
-// Fans of Shelter · ENTRADA: el dedo (palanca virtual a la izquierda, botón de acción a la derecha) y el teclado (WASD o flechas, y
-// espacio / E para la acción). Resume todo en ENTRADA.dir (−1 a 1 en cada eje) y ENTRADA.accionPulsa (solo el fotograma en que se aprieta).
+// Fans of Shelter · ENTRADA: sin botones. El dedo: posarlo y arrastrar es la palanca (anda hacia donde arrastras); un toque corto sin arrastrar
+// es ENTRADA.toquePulsa (de noche, el esquive). Las acciones de día salen solas al chocar con las cosas (js/jugador.js). Teclado: WASD o
+// flechas, y espacio / E para la acción. Resume todo en ENTRADA.dir (−1 a 1 en cada eje) y ENTRADA.accionPulsa (solo el fotograma en que se aprieta).
 // Cuando hay una ventana abierta (portada, crafteo, mejoras, fin), los toques van a la cola ENTRADA.toques para que la pantalla los lea.
 'use strict';
 
 const ENTRADA = {
-  dir: { x: 0, y: 0 }, accion: 0, accionPulsa: 0, escPulsa: 0,
+  dir: { x: 0, y: 0 }, accion: 0, accionPulsa: 0, toquePulsa: 0, escPulsa: 0,
   teclas: {}, toques: [],
-  palanca: { activa: false, id: -1, x0: 0, y0: 0, x: 0, y: 0 },   // dónde se posó el dedo y dónde está ahora
-  botonAccion: { x: 0, y: 0, r: 14 },                              // lo coloca la pantalla (abajo a la derecha)
+  palanca: { activa: false, id: -1, x0: 0, y0: 0, x: 0, y: 0, t: 0, movido: false },   // dónde se posó el dedo, dónde está ahora, cuándo se posó
   ventana: () => false,                                            // ¿hay una ventana abierta? (lo pone pantalla.js)
 };
 const TECLAS = { KeyW: 'arriba', ArrowUp: 'arriba', KeyS: 'abajo', ArrowDown: 'abajo', KeyA: 'izq', ArrowLeft: 'izq', KeyD: 'der', ArrowRight: 'der', Space: 'accion', KeyE: 'accion', Enter: 'accion', KeyK: 'accion' };
@@ -34,20 +34,18 @@ function resumeEntrada() {
   ENTRADA.dir.x = x; ENTRADA.dir.y = y;
   ENTRADA.accion = t.accion ? 1 : 0;
 }
-function finEntrada() { ENTRADA.accionPulsa = 0; ENTRADA.escPulsa = 0; }
+function finEntrada() { ENTRADA.accionPulsa = 0; ENTRADA.toquePulsa = 0; ENTRADA.escPulsa = 0; }
 
 function dedoBaja(id, x, y, W, H) {
   if (ENTRADA.ventana()) { ENTRADA.toques.push({ x, y }); return; }
-  const b = ENTRADA.botonAccion;
-  if (Math.hypot(x - b.x, y - b.y) <= b.r + 6 || (x > W * 0.62 && y > H * 0.55)) { ENTRADA.accionPulsa = 1; ENTRADA.teclas.accion = 1; ENTRADA.accionId = id; return; }
+  ENTRADA.tactil = true;
   const p = ENTRADA.palanca;
-  if (!p.activa) { p.activa = true; p.id = id; p.x0 = p.x = x; p.y0 = p.y = y; }
+  if (!p.activa) { p.activa = true; p.id = id; p.x0 = p.x = x; p.y0 = p.y = y; p.t = performance.now(); p.movido = false; }
 }
-function dedoMueve(id, x, y) { const p = ENTRADA.palanca; if (p.activa && p.id === id) { p.x = x; p.y = y; } }
+function dedoMueve(id, x, y) { const p = ENTRADA.palanca; if (p.activa && p.id === id) { p.x = x; p.y = y; if (Math.hypot(x - p.x0, y - p.y0) > 6) p.movido = true; } }
 function dedoSube(id) {
   const p = ENTRADA.palanca;
-  if (p.activa && p.id === id) p.activa = false;
-  if (ENTRADA.accionId === id) { ENTRADA.teclas.accion = 0; ENTRADA.accionId = -1; }
+  if (p.activa && p.id === id) { p.activa = false; if (!p.movido && performance.now() - p.t < 260) ENTRADA.toquePulsa = 1; }   // toque corto sin arrastrar
 }
 function sueltaTodo() { ENTRADA.teclas = {}; ENTRADA.palanca.activa = false; }
 
@@ -61,19 +59,13 @@ function entradaArranca(cv, aPixel) {
   cv.addEventListener('pointercancel', e => dedoSube(e.pointerId));
   cv.addEventListener('contextmenu', e => e.preventDefault());
 }
-// pinta la palanca y el botón de acción (solo cuando se juega con el dedo)
+// pinta la palanca bajo el dedo (un anillo tenue, sin botones)
 function pintaMandos(ctx, W, H) {
-  const p = ENTRADA.palanca, b = ENTRADA.botonAccion;
-  if (p.activa) {
-    ctx.globalAlpha = 0.5; anillo(ctx, p.x0, p.y0, 18, PALETA.W); ctx.globalAlpha = 0.8;
+  const p = ENTRADA.palanca;
+  if (p.activa && p.movido) {
+    ctx.globalAlpha = 0.35; anillo(ctx, p.x0, p.y0, 18, PALETA.W); ctx.globalAlpha = 0.6;
     const dx = p.x - p.x0, dy = p.y - p.y0, d = Math.hypot(dx, dy), f = Math.min(1, d / 18);
-    circulo(ctx, p.x0 + (d ? dx / d * 18 * f : 0), p.y0 + (d ? dy / d * 18 * f : 0), 6, PALETA.W); ctx.globalAlpha = 1;
-  }
-  if (ENTRADA.tactil) {
-    ctx.globalAlpha = ENTRADA.teclas.accion ? 0.9 : 0.55;
-    circulo(ctx, b.x, b.y, b.r, PALETA.K); circulo(ctx, b.x, b.y, b.r - 2, PALETA.O); circulo(ctx, b.x - 1, b.y - 1, b.r - 5, PALETA.L);
-    ctx.globalAlpha = 1;
-    letra(ctx, 'A', b.x, b.y + 4, PALETA.K, 'center', 8, false);
+    circulo(ctx, p.x0 + (d ? dx / d * 18 * f : 0), p.y0 + (d ? dy / d * 18 * f : 0), 5, PALETA.W); ctx.globalAlpha = 1;
   }
 }
 function circulo(ctx, cx, cy, r, color) {

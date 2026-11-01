@@ -93,6 +93,23 @@ function losaPared(v, ar, ab) {
   });
 }
 
+// el borde de una meseta: una franja de roca (la cara que se ve) con su línea de tinta y un filo de luz en la hierba de arriba
+function pintaBorde(ctx, c, x, y) {
+  const roca = IMG.suelo_roca;
+  const cara = (rx, ry, rw, rh) => { if (roca) ctx.drawImage(roca, 0, 0, rw, rh, rx, ry, rw, rh); else { ctx.fillStyle = PC.b; ctx.fillRect(rx, ry, rw, rh); } };
+  ctx.fillStyle = PC.K;
+  if (c === 'e') { cara(x + CAS - 6, y, 6, CAS); ctx.fillRect(x + CAS - 7, y, 1, CAS); ctx.fillStyle = PC.H; ctx.fillRect(x + CAS - 9, y, 2, CAS); ctx.fillStyle = PC.u; ctx.fillRect(x + CAS - 2, y, 2, CAS); }
+  else if (c === 'w') { cara(x, y, 6, CAS); ctx.fillRect(x + 6, y, 1, CAS); ctx.fillStyle = PC.H; ctx.fillRect(x + 7, y, 2, CAS); ctx.fillStyle = PC.u; ctx.fillRect(x, y, 2, CAS); }
+  else { ctx.fillRect(x, y, CAS, 1); ctx.fillStyle = PC.G2; ctx.fillRect(x, y + 1, CAS, 2); ctx.fillStyle = PC.H; ctx.fillRect(x, y + 3, CAS, 2); }
+}
+// la escalera de piedra que sube a la meseta: peldaños con sus sombras, entre dos muretes
+function pintaEscalera(ctx, x, y, sigueArriba) {
+  ctx.fillStyle = PC.S; ctx.fillRect(x + 2, y, CAS - 4, CAS);
+  for (let k = 0; k < CAS; k += 6) { ctx.fillStyle = PC.t; ctx.fillRect(x + 2, y + k, CAS - 4, 1); ctx.fillStyle = PC.s; ctx.fillRect(x + 2, y + k + 4, CAS - 4, 2); }
+  ctx.fillStyle = PC.K; ctx.fillRect(x, y, 2, CAS); ctx.fillRect(x + CAS - 2, y, 2, CAS);
+  if (!sigueArriba) { ctx.fillStyle = PC.K; ctx.fillRect(x, y, CAS, 1); }
+}
+
 /* ---------- PINTAR: el suelo y lo que hay encima, solo lo que cabe en la cámara ---------- */
 function pintaSuelo(ctx, cam, t) {
   const i0 = Math.max(0, Math.floor(cam.x / CAS)), j0 = Math.max(0, Math.floor(cam.y / CAS));
@@ -108,6 +125,11 @@ function pintaSuelo(ctx, cam, t) {
     else if (esTierra(i, j)) losaC = losaTierra(v, +!esTierra(i, j - 1), +!esTierra(i + 1, j), +!esTierra(i, j + 1), +!esTierra(i - 1, j));
     else losaC = losaHierba(v);
     ctx.drawImage(losaC, x, y);
+    if (c === 'n' || c === 'e' || c === 'w') pintaBorde(ctx, c, x, y);
+    else if (c === 's') pintaEscalera(ctx, x, y, casilla(i, j - 1) === 's' || casilla(i, j - 1) === '#' || casilla(i, j - 1) === 'n');
+    // la sombra que echa un borde de meseta sobre el suelo bajo de al lado
+    if (casilla(i - 1, j) === 'e' && c !== 'e') { ctx.fillStyle = 'rgba(20,12,40,0.3)'; ctx.fillRect(x, y, 5, CAS); ctx.fillStyle = 'rgba(20,12,40,0.15)'; ctx.fillRect(x + 5, y, 3, CAS); }
+    if (casilla(i + 1, j) === 'w' && c !== 'w') { ctx.fillStyle = 'rgba(20,12,40,0.3)'; ctx.fillRect(x + CAS - 5, y, 5, CAS); ctx.fillStyle = 'rgba(20,12,40,0.15)'; ctx.fillRect(x + CAS - 8, y, 3, CAS); }
     // la sombra que echa un acantilado sobre lo que tiene debajo
     if (c !== '#' && casilla(i, j - 1) === '#') { ctx.fillStyle = 'rgba(20,12,40,0.35)'; ctx.fillRect(x, y, CAS, 5); ctx.fillStyle = 'rgba(20,12,40,0.18)'; ctx.fillRect(x, y + 5, CAS, 3); }
     if (c === 'S') pintaSpr(ctx, MAPA.puertaAbierta ? 'interruptor_1' : 'interruptor_0', x + CAS / 2, y + CAS / 2, { ancla: 'centro' });

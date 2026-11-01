@@ -26,14 +26,16 @@ function bajaAlSotano() {
   const tipos = Object.keys(BICHOS), extra = Math.min(3, Math.floor((JORNADA.dia - 1) / 2));
   MAPA.salas.forEach((s, i) => {
     if (i === 0) return;
-    const sitios = s.nacen.slice().sort(() => rng() - 0.5), cuantos = Math.min(sitios.length, 2 + Math.floor(i / 2) + extra);
+    const cuantos = 2 + Math.floor(i / 2) + extra, entrada = { x: 20, y: (s.def.salidas.izq[0] + s.def.salidas.izq[1]) / 2 };
     for (let k = 0; k < cuantos; k++) {
-      // los primeros días, más gelatinas y tomates; el cebollón aparece desde la segunda sala
+      // el primer día, solo tomates y gelatinas en la primera sala con bichos; el cebollón llega después
       const tipo = i < 2 && JORNADA.dia === 1 ? (k % 2 ? 'tomate' : 'gelatina') : tipos[Math.floor(rng() * tipos.length)];
-      enemigoNuevo(tipo, sitios[k].x, sitios[k].y);
+      const p = puntoSuelo(s.def, rng, entrada);
+      const def = BICHOS[tipo];
+      s.enemigos.push({ tipo, def, x: p.x, y: p.y, vida: def.vida, muerto: false, despierto: false, t: rng() * 6, aturdido: 0, herido: 0, mecha: -1, embiste: null, salto: null, espera: 0.4 + rng(), vx: 0, vy: 0 });
     }
   });
-  JORNADA.fase = 'caza'; JORNADA.t = 0; cierraVentanas();
+  JORNADA.fase = 'caza'; JORNADA.t = 0; JORNADA.salioDelMontacargas = false; cierraVentanas();
   CAM.x = J.x - PAN.W / 2; CAM.y = J.y - PAN.H / 2;
   aviso(tr('Caza antes de que abra la cantina'), 2.2);
 }
@@ -43,7 +45,8 @@ function avanzaJornada(dt) {
     const r = JORNADA.reloj();
     if (r <= 0) { aviso(tr('¡Abre la cantina! El montacargas te sube'), 2); subeMontacargas(); return; }
     if (r <= 10.5 && r + dt > 10.5) { aviso(tr('¡10 segundos!'), 1.5, PALETA.R); SONIDO.aviso(); }
-    if (JORNADA.enMontacargas && ENTRADA.ataquePulsa) subeMontacargas();
+    if (!JORNADA.enMontacargas) JORNADA.salioDelMontacargas = true;   // hay que apartarse una vez: si no, el toque de «Bajar» te subiría de vuelta
+    if (JORNADA.enMontacargas && JORNADA.salioDelMontacargas && ENTRADA.ataquePulsa) subeMontacargas();
   } else if (JORNADA.fase === 'subiendo') {
     JORNADA.subeT += dt;
     if (JORNADA.subeT >= 1.2) empiezaServicio();

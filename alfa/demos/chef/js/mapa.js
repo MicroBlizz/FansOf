@@ -1,80 +1,50 @@
-// Fans of Chef · MAPA: el sótano de la jornada son salas hechas a mano (PLANTILLAS) que se colocan en otro orden cada día, unidas por
-// puertas. La primera sala tiene el montacargas (entrada y salida) y la última, un cofre. Casillas: 1 suelo, 2 muro, 3 caja, 5 columna y
-// 6 barril (bloquean), 4 reja, 7 huesos, 8 charco y 9 escombros (decorado, se pisa). Pintarlo está en escenario.js; los bichos, en enemigos.js.
+// Fans of Chef · MAPA: el sótano de la jornada es una fila de salas (escenas de salas.js, elegidas en otro orden cada día) unidas por los
+// bordes: salir por la derecha es entrar en la siguiente por la izquierda. La primera sala tiene el montacargas (entrada y salida) y la
+// última, el cofre. Cada sala guarda sus bichos y su botín; al cambiar de sala se cambian las listas (ENEMIGOS y BOTIN) por las suyas.
 'use strict';
 
-const SALA_W = 13, SALA_H = 9;   // casillas de una sala (sin contar los muros compartidos)
-const MAPA = { w: 0, h: 0, t: [], salas: [], montacargas: null, cofre: null, antorchas: [], verjas: [] };
-const LETRA_CAS = { '.': 1, 'e': 1, '#': 3, 'r': 4, 'c': 5, 'b': 6, 'h': 7, 'p': 8, 'x': 9 };
+const MAPA = { salas: [], i: 0, sala: null, montacargas: null, cofre: null, antorchas: [] };
 
-// cada plantilla: 9 filas de 13 letras. '.' suelo, 'e' sitio donde nace un bicho, y las letras de LETRA_CAS (# caja, c columna, b barril, r reja, h huesos, p charco, x escombros)
-const PLANTILLAS = [
-  ['.............', '.h.........x.', '....e...e....', '.............', '......r......', '.............', '....e...e....', '.p...........', '.............'],
-  ['.............', '.bb.......bb.', '.b....e....b.', '.............', '...e..h..e...', '.............', '.b....e....b.', '.bb.......bb.', '.............'],
-  ['.............', '.....e.......', '....###.p....', '.............', '.e....r....e.', '.............', '....x.###....', '.......e.....', '.............'],
-  ['.............', '.e.........e.', '.............', '...c.....c...', '...h..e..p...', '...c.....c...', '.............', '.e.........e.', '.............'],
-  ['.............', '......c......', '..e...#...e..', '......c......', '.....x.......', '......c......', '..e...#...e..', '......c......', '.............'],
-  ['.............', '.r.........r.', '....e...e....', '.h...........', '.....bbb.....', '...........x.', '....e...e....', '.r....p....r.', '.............'],
-];
-
-const casilla = (cx, cy) => (cx < 0 || cy < 0 || cx >= MAPA.w || cy >= MAPA.h) ? 2 : MAPA.t[cy * MAPA.w + cx];
-const bloquea = (cx, cy) => { const c = casilla(cx, cy); return c === 2 || c === 3 || c === 5 || c === 6 || c === 0; };
-// ¿la caja (px, py, w, h) choca con algo que bloquea?
-function chocaCaja(px, py, w, h) {
-  const x0 = Math.floor(px / CAS), y0 = Math.floor(py / CAS), x1 = Math.floor((px + w - 1) / CAS), y1 = Math.floor((py + h - 1) / CAS);
-  for (let cy = y0; cy <= y1; cy++) for (let cx = x0; cx <= x1; cx++) if (bloquea(cx, cy)) return true;
-  return false;
-}
-
-// construye el sótano de la jornada: `n` salas en un camino que avanza hacia la derecha con desvíos arriba y abajo
+// construye el sótano: `n` salas (con las escenas que haya, repetidas si hacen falta) y dónde aparece el cocinero
 function construyeMapa(n, rng) {
-  const celdas = [{ x: 0, y: 1 }];
-  const ocupada = (x, y) => celdas.some(c => c.x === x && c.y === y);
-  while (celdas.length < n) {
-    const u = celdas[celdas.length - 1];
-    const opciones = [{ x: u.x + 1, y: u.y }, { x: u.x + 1, y: u.y }, { x: u.x, y: u.y - 1 }, { x: u.x, y: u.y + 1 }].filter(c => c.y >= 0 && c.y <= 2 && !ocupada(c.x, c.y));
-    if (!opciones.length) { celdas.push({ x: u.x + 1, y: u.y }); continue; }
-    celdas.push(opciones[Math.floor(rng() * opciones.length)]);
+  const orden = [...SALAS.keys()].sort(() => rng() - 0.5);
+  MAPA.salas = [];
+  for (let i = 0; i < n; i++) {
+    const def = SALAS[i === 0 ? 0 : orden[i % orden.length]];
+    MAPA.salas.push({ i, def, enemigos: [], botin: [], visitada: i === 0, cofreAbierto: false });
   }
-  const maxX = Math.max(...celdas.map(c => c.x)), maxY = Math.max(...celdas.map(c => c.y));
-  MAPA.w = (maxX + 1) * (SALA_W + 1) + 1; MAPA.h = (maxY + 1) * (SALA_H + 1) + 1;
-  MAPA.t = new Array(MAPA.w * MAPA.h).fill(0);
-  MAPA.salas = []; MAPA.antorchas = []; MAPA.verjas = [];
-  const pon = (cx, cy, v) => { MAPA.t[cy * MAPA.w + cx] = v; };
-  const orden = [...PLANTILLAS.keys()].sort(() => rng() - 0.5);
-  celdas.forEach((c, i) => {
-    const ox = c.x * (SALA_W + 1) + 1, oy = c.y * (SALA_H + 1) + 1;
-    const plantilla = i === 0 ? PLANTILLAS[0] : PLANTILLAS[orden[i % orden.length]];
-    const sala = { i, ox, oy, nacen: [], visitada: i === 0 };
-    for (let cy = -1; cy <= SALA_H; cy++) for (let cx = -1; cx <= SALA_W; cx++) {
-      const X = ox + cx, Y = oy + cy;
-      if (cx < 0 || cy < 0 || cx >= SALA_W || cy >= SALA_H) { if (casilla(X, Y) === 0) pon(X, Y, 2); continue; }
-      const l = plantilla[cy][cx];
-      let v = LETRA_CAS[l] || 1;
-      if (v === 1 && l === '.' && cy > 0 && cy < SALA_H - 1 && cx > 0 && cx < SALA_W - 1 && rng() < 0.05) v = [7, 8, 9, 9][Math.floor(rng() * 4)];   // algo de suciedad suelta
-      pon(X, Y, v);
-      if (l === 'e' && i > 0) sala.nacen.push({ x: (X + 0.5) * CAS, y: (Y + 0.8) * CAS });
-    }
-    MAPA.salas.push(sala);
-    // antorchas en el muro de arriba y, en algunas salas, una verja (celda) en ese muro
-    MAPA.antorchas.push({ x: (ox + 3) * CAS, y: oy * CAS - 2 }, { x: (ox + SALA_W - 3) * CAS, y: oy * CAS - 2 });
-    if (i > 0 && rng() < 0.6) MAPA.verjas.push({ x: (ox + 2 + Math.floor(rng() * (SALA_W - 4)) + 0.5) * CAS, y: oy * CAS });
-  });
-  // las puertas: tres casillas de hueco en el muro que comparten dos salas seguidas del camino
-  for (let i = 1; i < celdas.length; i++) {
-    const a = celdas[i - 1], b = celdas[i];
-    const ax = a.x * (SALA_W + 1) + 1, ay = a.y * (SALA_H + 1) + 1;
-    if (b.x > a.x) for (let k = -1; k <= 1; k++) pon(ax + SALA_W, ay + Math.floor(SALA_H / 2) + k, 1);
-    else if (b.y > a.y) for (let k = -1; k <= 1; k++) pon(ax + Math.floor(SALA_W / 2) + k, ay + SALA_H, 1);
-    else for (let k = -1; k <= 1; k++) pon(ax + Math.floor(SALA_W / 2) + k, ay - 1, 1);
-  }
-  const s0 = MAPA.salas[0], sn = MAPA.salas[MAPA.salas.length - 1];
-  MAPA.montacargas = { x: (s0.ox + SALA_W / 2) * CAS, y: s0.oy * CAS + 2 };
-  MAPA.cofre = { x: (sn.ox + SALA_W / 2) * CAS, y: (sn.oy + SALA_H / 2 + 0.9) * CAS, abierto: false };
-  return { x: MAPA.montacargas.x, y: MAPA.montacargas.y + 44 };   // donde aparece el cocinero
+  MAPA.i = -1;
+  entraSala(0);
+  const a = MAPA.salas[0].def.arco;
+  return { x: a[0], y: a[1] + 36 };
 }
-// la sala en la que cae un punto (o null si está en un muro)
-function salaEn(x, y) {
-  const cx = Math.floor(x / CAS), cy = Math.floor(y / CAS);
-  return MAPA.salas.find(s => cx >= s.ox && cx < s.ox + SALA_W && cy >= s.oy && cy < s.oy + SALA_H) || null;
+// cambiar de sala: se guardan las listas de la que se deja y se cargan las de la nueva
+function entraSala(i) {
+  if (MAPA.i >= 0) { const v = MAPA.salas[MAPA.i]; v.enemigos = ENEMIGOS.slice(); v.botin = BOTIN.slice(); if (MAPA.cofre) v.cofreAbierto = MAPA.cofre.abierto; }
+  MAPA.i = i; const s = MAPA.salas[i]; MAPA.sala = s.def;
+  ENEMIGOS.length = 0; ENEMIGOS.push(...s.enemigos); BOTIN.length = 0; BOTIN.push(...s.botin);
+  const d = s.def;
+  MAPA.antorchas = d.antorchas.map(([x, y]) => ({ x, y }));
+  MAPA.montacargas = i === 0 ? { x: d.arco[0], y: d.arco[1] } : null;
+  MAPA.cofre = i === MAPA.salas.length - 1 ? { x: d.cofre[0], y: d.cofre[1], abierto: s.cofreAbierto } : null;
+  FX.part.length = 0; FX.nums.length = 0;
+}
+const salaActual = () => MAPA.salas[MAPA.i];
+const pisable = (x, y) => pisableEn(MAPA.sala, x, y);
+// ¿la caja de los pies (px, py, w, h) se sale del suelo? Se miran sus cuatro esquinas y el centro
+function chocaCaja(px, py, w, h) {
+  return !(pisable(px, py) && pisable(px + w, py) && pisable(px, py + h) && pisable(px + w, py + h) && pisable(px + w / 2, py + h / 2));
+}
+// el cocinero toca un borde con salida: pasa a la sala de al lado (si la hay)
+function compruebaSalidas() {
+  const d = MAPA.sala, s = d.salidas, i = MAPA.i;
+  if (J.x >= d.w - 22 && s.der && J.y >= s.der[0] && J.y <= s.der[1] && i < MAPA.salas.length - 1) {
+    entraSala(i + 1); const e = MAPA.sala.salidas.izq; J.x = 30; J.y = clamp(J.y, e[0] + 6, e[1] - 6); llegaASala();
+  } else if (J.x <= 12 && s.izq && J.y >= s.izq[0] && J.y <= s.izq[1] && i > 0) {
+    entraSala(i - 1); const e = MAPA.sala.salidas.der; J.x = MAPA.sala.w - 30; J.y = clamp(J.y, e[0] + 6, e[1] - 6); llegaASala();
+  }
+}
+function llegaASala() {
+  const s = salaActual(); CAM.x = J.x - PAN.W / 2; CAM.y = J.y - PAN.H / 2; SONIDO.puerta();
+  if (!s.visitada) { s.visitada = true; for (const e of ENEMIGOS) e.despierto = true; if (ENEMIGOS.length) aviso(tr('¡Comida viva!'), 1.2, PALETA.O); }
 }

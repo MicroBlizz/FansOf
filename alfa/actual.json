@@ -1,8 +1,8 @@
 {
- "build": 782,
- "hash": "5e2523c",
- "fecha": "2026-11-01T18:47:28Z",
- "mensaje": "Shelter: la zanahoria con sus hojas (nueva de Yoshi sobre magenta)",
+ "build": 783,
+ "hash": "74de837",
+ "fecha": "2026-11-01T18:57:48Z",
+ "mensaje": "Chef: las salas del sótano son escenas enteras de Yoshi (la gris que eligió Daniel), con el suelo pisable por polígono y paso entre salas por los bordes",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

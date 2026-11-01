@@ -21,6 +21,7 @@ const SONIDO = {
   herido: () => { tone(300, 80, 0.2, 'sawtooth', v(0.1)); noise(0.1, v(0.08), 500); },
   coge: () => tone(1200, 1700, 0.05, 'triangle', v(0.04)),
   cofre: () => [660, 880, 1100, 1320].forEach((f, i) => tone(f, f * 1.01, 0.1, 'triangle', v(0.07), i * 0.07)),
+  puerta: () => { tone(140, 110, 0.15, 'square', v(0.04)); noise(0.1, v(0.04), 800); },
   montacargas: () => { tone(90, 140, 0.9, 'sawtooth', v(0.06)); noise(0.9, v(0.03), 300); },
   campana: () => { tone(1568, 1568, 0.25, 'triangle', v(0.07)); tone(2093, 2093, 0.3, 'triangle', v(0.05), 0.12); },
   cocina: () => noise(0.5, v(0.05), 1800, 'bandpass'),

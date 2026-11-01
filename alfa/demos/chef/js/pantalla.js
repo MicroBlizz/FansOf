@@ -7,7 +7,9 @@ const PAN = { W: 0, H: 0, t: 0 };
 
 function enfoca() {
   CAM.w = PAN.W; CAM.h = PAN.H;
-  const tx = clamp(J.x - PAN.W / 2, 0, Math.max(0, MAPA.w * CAS - PAN.W)), ty = clamp(J.y - 14 - PAN.H / 2, 0, Math.max(0, MAPA.h * CAS - PAN.H));
+  const d = MAPA.sala;
+  // la sala se centra si cabe; si no, la cámara sigue al cocinero sin salirse de la escena
+  const tx = d.w <= PAN.W ? (d.w - PAN.W) / 2 : clamp(J.x - PAN.W / 2, 0, d.w - PAN.W), ty = d.h <= PAN.H ? (d.h - PAN.H) / 2 : clamp(J.y - 14 - PAN.H / 2, 0, d.h - PAN.H);
   CAM.x += (tx - CAM.x) * 0.15; CAM.y += (ty - CAM.y) * 0.15;
   if (Math.abs(tx - CAM.x) < 0.3) CAM.x = tx; if (Math.abs(ty - CAM.y) < 0.3) CAM.y = ty;
 }
@@ -18,7 +20,7 @@ function pintaTodo(ctx) {
   if (f === 'caza' || f === 'subiendo') {
     enfoca();
     const cam = { x: Math.round(CAM.x + (FX.temblor ? rand(-2, 2) * FX.temblor : 0)), y: Math.round(CAM.y + (FX.temblor ? rand(-2, 2) * FX.temblor : 0)), w: W, h: H };
-    pintaSuelo(ctx, cam);
+    pintaSala(ctx, cam);
     pintaBotin(ctx, cam);
     const lista = cosasConAltura(cam);
     if (vivo()) lista.push({ y: J.y + 1, pinta: c => pintaJugador(c, cam) });
@@ -36,15 +38,6 @@ function pintaTodo(ctx) {
   pintaVentana(ctx, W, H);
   pintaAvisos(ctx, W, H);
 }
-// la luz de las antorchas: oscuridad suave con halos cálidos (y uno alrededor del cocinero)
-function pintaLuz(ctx, cam, W, H) {
-  ctx.fillStyle = 'rgba(8,4,12,0.28)'; ctx.fillRect(0, 0, W, H);
-  ctx.globalCompositeOperation = 'lighter';
-  for (const a of MAPA.antorchas) { const x = a.x - cam.x, y = a.y - cam.y; if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue; halo(ctx, x, y - 6, 30 + Math.round(Math.sin(PAN.t * 9 + a.x)) * 2, 0.32); }
-  halo(ctx, J.x - cam.x, J.y - cam.y - 14, 40, 0.18);
-  ctx.globalCompositeOperation = 'source-over';
-}
-function halo(ctx, x, y, r, fuerza) { for (let k = 0; k < 4; k++) circulo(ctx, x, y, Math.round(r * (1 - k * 0.22)), 'rgba(150,90,20,' + (fuerza * 0.45).toFixed(2) + ')'); }
 
 function pintaMarcador(ctx, W, H) {
   // arriba a la izquierda: la fase y los objetivos de la jornada
@@ -73,14 +66,9 @@ function pintaMarcador(ctx, W, H) {
 /* ---------- PORTADA ---------- */
 function pintaPortada(ctx, W, H) {
   const t = PAN.t;
-  // la cantina a oscuras: suelo de piedra, el montacargas al fondo y el cocinero delante
-  ctx.fillStyle = patronSuelo(ctx); ctx.fillRect(0, 0, W, H);
-  pintaMuroFondo(ctx, W); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(0, CAS * 2, W, 6);
-  pintaSpr(ctx, 'verja', W / 2 - 70, CAS * 2 - 1); pintaSpr(ctx, 'montacargas', W / 2 + 50, CAS * 2 + 40, { listo: false });
-  pintaSpr(ctx, 'antorcha', W / 2 - 20, CAS * 2 - 6, { t }); pintaSpr(ctx, 'antorcha', W / 2 + 100, CAS * 2 - 6, { t });
-  pintaSpr(ctx, 'columna', 14, H * 0.5); pintaSpr(ctx, 'barril', W - 16, H * 0.5); pintaSpr(ctx, 'huesos', W * 0.3, H * 0.8); pintaSpr(ctx, 'charco', W * 0.75, H * 0.75, { t });
-  ctx.fillStyle = 'rgba(8,4,12,0.35)'; ctx.fillRect(0, 0, W, H);
-  ctx.globalCompositeOperation = 'lighter'; halo(ctx, W / 2 - 20, CAS * 2 - 12, 36, 0.5); halo(ctx, W / 2 + 100, CAS * 2 - 12, 36, 0.5); ctx.globalCompositeOperation = 'source-over';
+  // la sala de referencia de fondo, a oscuras, y el cocinero delante
+  pintaFondoSala(ctx, W, H, Math.round(H * 0.08));
+  ctx.fillStyle = 'rgba(8,4,12,0.45)'; ctx.fillRect(0, 0, W, H);
   const cx = W / 2, cy = H * 0.62;
   ctx.save(); ctx.translate(cx, cy); ctx.scale(2, 2); ctx.translate(-cx, -cy);
   ctx.globalAlpha = 0.3; circulo(ctx, cx, cy, 8, PALETA.K); ctx.globalAlpha = 1;
@@ -103,15 +91,13 @@ function pintaBotonSonido(ctx, W, H) {
 }
 // el fondo de la cantina (mañana, servicio y cierre): la barra de madera, el fogón y el cocinero detrás
 function pintaFondoCantina(ctx, W, H, t) {
-  caja(ctx, 0, 0, W, H, '#2a1a0c');
-  pintaMuroFondo(ctx, W);
-  caja(ctx, 0, CAS * 2, W, H * 0.42 - CAS * 2, '#3b2614'); ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(0, CAS * 2, W, 6); caja(ctx, 0, H * 0.42, W, 3, PALETA.K); caja(ctx, 0, H * 0.42 + 3, W, 10, PALETA.B); caja(ctx, 0, H * 0.42 + 4, W, 1, PALETA.T);
-  ctx.fillStyle = patronSuelo(ctx); ctx.fillRect(0, H * 0.42 + 13, W, H);
+  pintaFondoSala(ctx, W, H, Math.round(H * 0.42) - 150);
+  caja(ctx, 0, H * 0.42, W, 3, PALETA.K); caja(ctx, 0, H * 0.42 + 3, W, 10, PALETA.B); caja(ctx, 0, H * 0.42 + 4, W, 1, PALETA.T);   // la barra
   // el fogón: una olla con vapor
   const fx = W * 0.2, fy = H * 0.42 + 2; cajaMarco(ctx, fx - 10, fy - 12, 20, 12, PALETA.N); caja(ctx, fx - 8, fy - 13, 16, 2, PALETA.n);
   for (let k = 0; k < 3; k++) { const p = (t * 0.7 + k * 0.33) % 1; ctx.globalAlpha = 0.5 * (1 - p); circulo(ctx, fx - 4 + k * 4 + Math.sin(t * 2 + k) * 2, fy - 16 - p * 16, 2, PALETA.w); }
   ctx.globalAlpha = 1;
-  pintaSpr(ctx, 'antorcha', W * 0.1, CAS * 2 - 6, { t }); pintaSpr(ctx, 'antorcha', W * 0.9, CAS * 2 - 6, { t }); pintaSpr(ctx, 'barril', W * 0.9, H * 0.42 + 2); pintaSpr(ctx, 'barril', W * 0.9 - 16, H * 0.42 + 4);
+  pintaSpr(ctx, 'barril', W * 0.9, H * 0.42 + 2); pintaSpr(ctx, 'barril', W * 0.9 - 16, H * 0.42 + 4);
   pintaSpr(ctx, 'chef_abajo', W * 0.5, H * 0.42 + 4 - Math.abs(Math.sin(t * 3)));
   ctx.fillStyle = 'rgba(8,4,12,0.25)'; ctx.fillRect(0, 0, W, H);
 }

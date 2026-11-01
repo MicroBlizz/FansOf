@@ -27,11 +27,11 @@ function avanzaJugador(dt) {
     J.paso += dt * (J.bloqueando ? 4 : 9);
   }
   if (ENTRADA.ataquePulsa && !J.bloqueando && J.cuchilloT <= 0) cuchillada();
-  recoge();
+  recoge(); compruebaSalidas();
   const m = MAPA.montacargas;
-  if (Math.abs(J.x - m.x) < 22 && J.y < m.y + 40 && J.y > m.y) JORNADA.enMontacargas = true; else JORNADA.enMontacargas = false;
+  JORNADA.enMontacargas = !!m && Math.abs(J.x - m.x) < 26 && J.y < m.y + 44 && J.y >= m.y - 2;
   const co = MAPA.cofre;
-  if (!co.abierto && Math.abs(J.x - co.x) < 22 && Math.abs(J.y - co.y) < 18) abreCofre();
+  if (co && !co.abierto && Math.abs(J.x - co.x) < 24 && Math.abs(J.y - co.y) < 20) abreCofre();
 }
 // mueve una caja (los pies de `e`) por el mapa, eje a eje, para deslizarse por los muros
 function mueve(e, dx, dy, w, h) {

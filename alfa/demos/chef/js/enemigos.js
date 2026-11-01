@@ -1,6 +1,6 @@
 // Fans of Chef · ENEMIGOS: la comida viva del sótano y el botín que suelta. Tres bichos: el TOMATE se acerca y, a tu lado, enciende la
 // mecha y explota (si lo cortas antes, suelta el doble); el CEBOLLÓN es lento pero, cuando te tiene alineado, embiste; la GELATINA
-// salta hacia ti a brincos. Los bichos de una sala despiertan al entrar en ella. hiereEnemigo lo llama el cuchillo del jugador.
+// salta hacia ti a brincos. Los bichos de una sala despiertan al entrar en ella (mapa.js). hiereEnemigo lo llama el cuchillo del jugador.
 'use strict';
 
 const ENEMIGOS = [];
@@ -13,14 +13,6 @@ function enemigoNuevo(tipo, x, y) {
 function sueltaBotin(x, y, que) {
   const a = rand(0, 6.283), v = rand(20, 50);
   BOTIN.push({ x, y, que, t: 0, vx: Math.cos(a) * v, vy: Math.sin(a) * v, z: 0, vz: rand(50, 90) });
-}
-// la sala que pisa el cocinero despierta a sus bichos
-function despiertaSala() {
-  const s = salaEn(J.x, J.y - 4);
-  if (!s || s.visitada) return;
-  s.visitada = true;
-  for (const e of ENEMIGOS) if (!e.muerto && salaEn(e.x, e.y - 4) === s) e.despierto = true;
-  if (s.nacen.length) aviso(tr('¡Comida viva!'), 1.2, PALETA.O);
 }
 function hiereEnemigo(e, n, dx, dy) {
   e.vida -= n; e.herido = 0.15; e.aturdido = Math.max(e.aturdido, 0.25); e.despierto = true;
@@ -48,7 +40,6 @@ function tocaJugador(e) {
 }
 
 function avanzaEnemigos(dt) {
-  despiertaSala();
   for (const e of ENEMIGOS) {
     if (e.muerto) continue;
     e.t += dt; e.herido = Math.max(0, e.herido - dt);
@@ -89,7 +80,7 @@ function avanzaEnemigos(dt) {
   // el botín cae, bota y se queda en el suelo
   for (const b of BOTIN) {
     b.t += dt;
-    if (b.t < 0.6) { b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt; b.vz -= 300 * dt; if (b.z < 0) { b.z = 0; b.vz *= -0.4; b.vx *= 0.5; b.vy *= 0.5; } if (chocaCaja(b.x - 2, b.y - 2, 4, 4)) { b.vx = -b.vx; b.vy = -b.vy; } }
+    if (b.t < 0.6) { b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt; b.vz -= 300 * dt; if (b.z < 0) { b.z = 0; b.vz *= -0.4; b.vx *= 0.5; b.vy *= 0.5; } if (!pisable(b.x, b.y)) { b.x -= b.vx * dt * 2; b.y -= b.vy * dt * 2; b.vx = -b.vx; b.vy = -b.vy; } }
     else b.z = Math.abs(Math.sin(b.t * 4)) * 2;
   }
   for (let i = ENEMIGOS.length - 1; i >= 0; i--) if (ENEMIGOS[i].muerto) ENEMIGOS.splice(i, 1);

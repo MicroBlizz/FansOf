@@ -1,8 +1,8 @@
 {
- "build": 802,
- "hash": "bb86af1",
- "fecha": "2026-11-01T23:47:24Z",
- "mensaje": "Nova: «Doble marca» ya salta (su dato decía b: 'marcado'); cambia el balance de las explosivas",
+ "build": 803,
+ "hash": "afc9cd4",
+ "fecha": "2026-11-01T23:53:03Z",
+ "mensaje": "Rouflage: guardia del comparador para Mi escenario (zoom, pasear, decorar) y escCamaraAvanza (34) partido en piezas con ella",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

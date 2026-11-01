@@ -34,24 +34,34 @@ function escCamLimita() {
   c.x = hw * 2 >= M.W + m * 2 ? M.W / 2 : limita(c.x, hw - m, M.W - hw + m);
   c.y = hh * 2 >= M.H + m * 2 ? M.H / 2 : limita(c.y, hh - m, M.H - hh + m);
 }
+// al pasear, la cámara sigue a tu galleta
+function escCamSigue(c, yo, dt) {
+  if (MIESC.modo === 'pasear' && c.sigue && yo) { const k = Math.min(1, dt * 6); c.x += (yo.x - c.x) * k; c.y += (yo.y - 30 - c.y) * k; }
+}
+// las flechas (o WASD) mueven la vista cuando no se pasea
+function escCamTeclas(c, dt) {
+  if (MIESC.modo === 'pasear') return;
+  const K = MIESC.teclas, v = 620 * dt / c.z;
+  if (K.has('ArrowLeft') || K.has('a')) c.x -= v; if (K.has('ArrowRight') || K.has('d')) c.x += v; if (K.has('ArrowUp') || K.has('w')) c.y -= v; if (K.has('ArrowDown') || K.has('s')) c.y += v;
+}
+// un mueble cerca del borde: la vista va hacia allí
+function escCamBorde(c, dt) {
+  const lleva = MIESC.drag || (MIESC.arrastra && MIESC.arrastra.ya), p = MIESC.ptCli, a = MIESC.area;
+  if (!(lleva && p && p.x >= a.x0 && p.x <= a.x1 && p.y >= a.y0 && p.y <= a.y1)) return;
+  const B = 46, v = 520 * dt / c.z;
+  const vx = p.x < a.x0 + B ? -1 : p.x > a.x1 - B ? 1 : 0, vy = p.y < a.y0 + B ? -1 : !MIESC.arrastra && p.y > a.y1 - B ? 1 : 0;
+  if (vx || vy) {
+    c.x += vx * v; c.y += vy * v; c.sigue = false; escCamLimita();
+    const q = escAMundo({ clientX: p.x, clientY: p.y - (MIESC.arrastra && MIESC.arrastra.toque ? 36 : 0) });
+    if (MIESC.drag) escArrastra(q); else MIESC.puntero = q;
+  }
+}
 function escCamaraAvanza(dt) {
   const c = MIESC.cam, x = c.x, y = c.y, z = c.z, yo = MIESC.yo;
   if (!c.z) c.z = escZoomBase();
-  if (MIESC.modo === 'pasear' && c.sigue && yo) { const k = Math.min(1, dt * 6); c.x += (yo.x - c.x) * k; c.y += (yo.y - 30 - c.y) * k; }
-  if (MIESC.modo !== 'pasear') {      // las flechas mueven la vista
-    const K = MIESC.teclas, v = 620 * dt / c.z;
-    if (K.has('ArrowLeft') || K.has('a')) c.x -= v; if (K.has('ArrowRight') || K.has('d')) c.x += v; if (K.has('ArrowUp') || K.has('w')) c.y -= v; if (K.has('ArrowDown') || K.has('s')) c.y += v;
-  }
-  const lleva = MIESC.drag || (MIESC.arrastra && MIESC.arrastra.ya), p = MIESC.ptCli, a = MIESC.area;
-  if (lleva && p && p.x >= a.x0 && p.x <= a.x1 && p.y >= a.y0 && p.y <= a.y1) {      // un mueble cerca del borde: la vista va hacia allí
-    const B = 46, v = 520 * dt / c.z;
-    const vx = p.x < a.x0 + B ? -1 : p.x > a.x1 - B ? 1 : 0, vy = p.y < a.y0 + B ? -1 : !MIESC.arrastra && p.y > a.y1 - B ? 1 : 0;
-    if (vx || vy) {
-      c.x += vx * v; c.y += vy * v; c.sigue = false; escCamLimita();
-      const q = escAMundo({ clientX: p.x, clientY: p.y - (MIESC.arrastra && MIESC.arrastra.toque ? 36 : 0) });
-      if (MIESC.drag) escArrastra(q); else MIESC.puntero = q;
-    }
-  }
+  escCamSigue(c, yo, dt);
+  escCamTeclas(c, dt);
+  escCamBorde(c, dt);
   escCamLimita();
   return c.x !== x || c.y !== y || c.z !== z;
 }

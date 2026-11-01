@@ -179,6 +179,7 @@ function cosasConAltura(cam, t) {
       pintaSpr(ctx, s, x + CAS / 2 + tiembla, y + CAS - pie, { ancla: 'pies' });
     } });
   }
+  if (MAPA.refugio) lista.push({ y: (MAPA.refugio.j + 1) * CAS, pinta: ctx => pintaRefugio(ctx, cam) });
   for (const o of MAPA.construido) if (o.tipo === 'torreta') lista.push({ y: (o.j + 1) * CAS, pinta: ctx => pintaSpr(ctx, 'torreta', (o.i + 0.5) * CAS - cam.x, (o.j + 1) * CAS - 2 - cam.y, { ancla: 'pies' }) });
   return lista;
 }

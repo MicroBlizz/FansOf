@@ -38,7 +38,7 @@ function def(nombre, filas) { SPR_DEF[nombre] = filas; }
 const IMG = {};
 const IMG_LISTA = ['bunny_abajo', 'bunny_abajo_1', 'bunny_arriba', 'bunny_lado', 'bunny_lado_1', 'zanahoria', 'zanahoria_fuego', 'orbe', 'cristal', 'goblin', 'esqueleto', 'murci', 'jefe',
   'mesa', 'hoguera', 'cofre', 'cofre_abierto', 'bloque', 'interruptor', 'interruptor_on', 'puerta', 'trampa', 'torreta', 'arbol', 'tocon', 'roca', 'mena',
-  'ico_madera', 'ico_piedra', 'ico_hierro', 'ico_corazon', 'suelo_hierba', 'suelo_tierra', 'suelo_agua', 'suelo_roca', 'escena'];
+  'ico_madera', 'ico_piedra', 'ico_hierro', 'ico_corazon', 'suelo_hierba', 'suelo_tierra', 'suelo_agua', 'suelo_roca', 'escena', 'refugio_2', 'refugio_3', 'refugio_4', 'refugio_5'];
 const IMG_ALIAS = { bunny_abajo_0: 'bunny_abajo', bunny_arriba_0: 'bunny_arriba', bunny_arriba_1: 'bunny_arriba', bunny_lado_0: 'bunny_lado', goblin_0: 'goblin', goblin_1: 'goblin', esqueleto_0: 'esqueleto', esqueleto_1: 'esqueleto',
   murci_0: 'murci', murci_1: 'murci', jefe_0: 'jefe', jefe_1: 'jefe', hoguera_0: 'hoguera', hoguera_1: 'hoguera', cofre_0: 'cofre', cofre_1: 'cofre_abierto',
   interruptor_0: 'interruptor', interruptor_1: 'interruptor_on', fuego_bola: 'orbe' };

@@ -1,8 +1,8 @@
 {
- "build": 780,
- "hash": "cfdfd88",
- "fecha": "2026-11-01T18:46:01Z",
- "mensaje": "Chef: el sótano con el arte de Yoshi (texturas recortadas de las escenas, tomate, cofre, columna, barril, huesos, charco, verja, antorcha)",
+ "build": 781,
+ "hash": "83a6cd1",
+ "fecha": "2026-11-01T18:46:43Z",
+ "mensaje": "Shelter: el refugio como finalidad (5 niveles que se construyen en la mesa con los recursos y se quedan entre partidas, con corazones, planos, despensa, zanahoria y daño permanentes)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

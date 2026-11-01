@@ -152,6 +152,7 @@ function pintaPortada(ctx, W, H) {
   if (Math.floor(t * 2) % 2) letra(ctx, tr('Toca para empezar'), cx, H * 0.84, PALETA.W, 'center');
   letraCabe(ctx, tr('De día: pica y craftea · De noche: aguanta'), cx, H * 0.91, W - 8, PALETA.w, 'center');
   if (SAVE.record) letra(ctx, tr('Récord: {n} noches', { n: SAVE.record }), cx, H * 0.97, PALETA.Q, 'center');
+  if (nivelRefugio() > 1) letraCabe(ctx, tr('Refugio: {n}', { n: tr(REFUGIO[nivelRefugio()].nombre) }), cx, H * 0.78, W - 8, PALETA.Y, 'center');
   pintaBotonSonido(ctx, W, H);
 }
 function pintaBotonSonido(ctx, W, H) {
@@ -164,11 +165,12 @@ function pintaFin(ctx, W, H) {
   ctx.fillStyle = 'rgba(20,10,30,' + (a * 0.75).toFixed(2) + ')'; ctx.fillRect(0, 0, W, H);
   if (a < 1) return;
   const cx = W / 2, y0 = H * 0.28;
-  marcoMadera(ctx, cx - 70, y0 - 14, 140, 88);
+  marcoMadera(ctx, cx - 70, y0 - 14, 140, 98);
   letra(ctx, tr('TE HAN PILLADO'), cx, y0, PALETA.R, 'center');
   letra(ctx, tr('Noches: {n}', { n: NOCHE.noche }), cx, y0 + 18, PALETA.W, 'center');
   letra(ctx, tr('Bajas: {n}', { n: J.bajas }), cx, y0 + 30, PALETA.W, 'center');
   letra(ctx, tr('Nivel: {n}', { n: J.nivel }), cx, y0 + 42, PALETA.W, 'center');
   letra(ctx, tr('Récord: {n} noches', { n: SAVE.record }), cx, y0 + 54, PALETA.Q, 'center');
-  if (NOCHE.tFin > 1.5 && Math.floor(PAN.t * 2) % 2) letra(ctx, tr('Toca para volver'), cx, y0 + 68, PALETA.Y, 'center');
+  letraCabe(ctx, tr('El refugio se queda: {n}', { n: tr(REFUGIO[nivelRefugio()].nombre) }), cx, y0 + 64, 136, PALETA.Y, 'center');
+  if (NOCHE.tFin > 1.5 && Math.floor(PAN.t * 2) % 2) letra(ctx, tr('Toca para volver'), cx, y0 + 78, PALETA.W, 'center');
 }

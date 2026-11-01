@@ -28,18 +28,18 @@ function pintaVentana(ctx, W, H) {
   const t = VENTANA.tipo; if (!t) return;
   ctx.fillStyle = 'rgba(10,5,20,0.5)'; ctx.fillRect(0, 0, W, H);
   if (t === 'crafteo') {
-    const n = RECETAS.length, c = cajaVentana(W, H, 20 + n * FILA_CRAFT + 32);
+    const RS = recetasAbiertas(), n = RS.length, c = cajaVentana(W, H, 20 + n * FILA_CRAFT + 32);
     marcoMadera(ctx, c.x, c.y, c.w, c.h);
     letra(ctx, tr('MESA DE TRABAJO'), c.x + c.w / 2, c.y + 11, PALETA.Y, 'center');
-    RECETAS.forEach((r, k) => {
+    RS.forEach((r, k) => {
       const y = c.y + 18 + k * FILA_CRAFT, sel = k === VENTANA.sel, tope = r.nivel() >= r.max(), puede = tieneRecursos(r.cuesta) && !tope;
       if (sel) caja(ctx, c.x + 3, y, c.w - 6, FILA_CRAFT - 1, PALETA.b);
       const costes = Object.keys(r.cuesta), anchoCoste = costes.length * 21;
-      letraCabe(ctx, tr(r.nombre), c.x + 5, y + 10, c.w - anchoCoste - 10, tope ? PALETA.s : puede ? PALETA.W : PALETA.t);
+      letraCabe(ctx, r.nombreTr ? r.nombreTr() : tr(r.nombre), c.x + 5, y + 10, c.w - anchoCoste - 10, tope ? PALETA.s : puede ? (r.id === 'refugio' ? PALETA.Y : PALETA.W) : PALETA.t);
       let x = c.x + c.w - 4 - anchoCoste;
       for (const k2 of costes) { pintaSpr(ctx, 'ico_' + k2, x, y + 2); letra(ctx, String(r.cuesta[k2]), x + 11, y + 10, (J.inv[k2] || 0) >= r.cuesta[k2] ? PALETA.W : PALETA.R, 'left', 8, false); x += 21; }
     });
-    const r = RECETAS[VENTANA.sel], y = c.y + c.h - 18;
+    const r = RS[Math.min(VENTANA.sel, RS.length - 1)], y = c.y + c.h - 18;
     const extra = r.max() < 99 ? ' ' + r.nivel() + '/' + r.max() : '';
     letraCabe(ctx, tr(r.que) + extra, c.x + c.w / 2, y, c.w - 8, PALETA.f, 'center');
     cajaMarco(ctx, c.x + c.w / 2 - 30, c.y + c.h - 13, 60, 11, PALETA.N); letra(ctx, tr('CERRAR'), c.x + c.w / 2, c.y + c.h - 5, PALETA.W, 'center', 8, false);
@@ -68,7 +68,7 @@ function pintaVentana(ctx, W, H) {
 // qué fila de la ventana hay en (x, y), o −1
 function filaEn(x, y) {
   const c = VENTANA.caja; if (!c || x < c.x || x > c.x + c.w) return -1;
-  if (VENTANA.tipo === 'crafteo') { if (y > c.y + c.h - 14) return 'cerrar'; const k = Math.floor((y - c.y - 18) / FILA_CRAFT); return k >= 0 && k < RECETAS.length ? k : -1; }
+  if (VENTANA.tipo === 'crafteo') { if (y > c.y + c.h - 14) return 'cerrar'; const k = Math.floor((y - c.y - 18) / FILA_CRAFT); return k >= 0 && k < recetasAbiertas().length ? k : -1; }
   if (VENTANA.tipo === 'mejoras') { const k = Math.floor((y - c.y - 18) / FILA_MEJORA); return k >= 0 && k < VENTANA.mejoras.length ? k : -1; }
   if (VENTANA.tipo === 'dormir') { if (y < c.y + 26) return -1; return x < c.x + c.w / 2 ? 0 : 1; }
   return -1;
@@ -92,7 +92,7 @@ function procesaToques(W, H) {
     }
     if (NOCHE.fase === 'fin') { if (NOCHE.tFin > 1.5 && (q.x !== undefined || q.tecla === 'accion')) { NOCHE.fase = 'portada'; cierraVentanas(); } continue; }
     if (!VENTANA.tipo) continue;
-    const n = VENTANA.tipo === 'crafteo' ? RECETAS.length : VENTANA.tipo === 'mejoras' ? VENTANA.mejoras.length : 2;
+    const n = VENTANA.tipo === 'crafteo' ? recetasAbiertas().length : VENTANA.tipo === 'mejoras' ? VENTANA.mejoras.length : 2;
     if (q.tecla) {
       if (q.tecla === 'arriba' || (q.tecla === 'izq' && VENTANA.tipo === 'dormir')) { VENTANA.sel = (VENTANA.sel + n - 1) % n; SONIDO.boton(); }
       else if (q.tecla === 'abajo' || (q.tecla === 'der' && VENTANA.tipo === 'dormir')) { VENTANA.sel = (VENTANA.sel + 1) % n; SONIDO.boton(); }

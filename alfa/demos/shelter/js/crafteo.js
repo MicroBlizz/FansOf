@@ -6,6 +6,12 @@
 const RECURSOS = ['madera', 'piedra', 'hierro', 'cristal'];
 const NOMBRE_RECURSO = { madera: 'Madera', piedra: 'Piedra', hierro: 'Hierro', cristal: 'Cristal' };
 
+// las recetas que enseña la mesa ahora: la del refugio primero, y solo las que tienen plano (js/refugio.js)
+function recetasAbiertas() {
+  const sig = refugioSiguiente();
+  const r = sig ? [{ id: 'refugio', nombre: 'Refugio: ' + sig.nombre, nombreTr: () => tr('Refugio: {n}', { n: tr(sig.nombre) }), que: sig.que, cuesta: sig.cuesta, max: () => 1, nivel: () => 0, hace: () => construyeRefugio() }] : [];
+  return r.concat(RECETAS.filter(x => planoAbierto(x.id)));
+}
 const RECETAS = [
   { id: 'reforzar', nombre: 'Zanahoria reforzada', que: 'Más daño y más grande', cuesta: { madera: 2, piedra: 2 }, max: () => 5, nivel: () => J.arma.nivel,
     hace: () => { J.arma.nivel++; } },
@@ -46,7 +52,8 @@ function construye(tipo) {
 }
 // intenta craftear la receta n. Devuelve true si se ha hecho
 function craftea(n) {
-  const r = RECETAS[n];
+  const r = recetasAbiertas()[n];
+  if (r.id === 'refugio') return construyeRefugio();
   if (r.nivel() >= r.max()) { toast(tr('Ya está al máximo')); return false; }
   if (!tieneRecursos(r.cuesta)) { toast(tr('Te faltan recursos')); SONIDO.no(); return false; }
   const copia = Object.assign({}, J.inv);

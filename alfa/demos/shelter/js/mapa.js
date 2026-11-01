@@ -64,11 +64,13 @@ function mapaNuevo() {
   const base = construyeMapa();
   MAPA.h = base.length; MAPA.w = base[0].length;
   MAPA.t = base.map(f => f.split(''));
+  MAPA.refugio = null;
   MAPA.golpes = {}; MAPA.puertaAbierta = false; MAPA.cofreAbierto = false; MAPA.construido = []; MAPA.bajoBloque = '.'; MAPA.tiembla = null;
   for (let j = 0; j < MAPA.h; j++) for (let i = 0; i < MAPA.w; i++) {
     const c = MAPA.t[j][i];
     if (c === 'P') { MAPA.inicio = { x: (i + 0.5) * CAS, y: (j + 0.9) * CAS }; MAPA.t[j][i] = '_'; }
     if (c === 'M') MAPA.mesa = { i, j };
+    if (c === 'X') { MAPA.refugio = { i, j }; MAPA.t[j][i] = '#'; }   // X: el edificio del refugio (sólido; se pinta encima de la tienda de la escena)
     if (c === 'H') MAPA.hoguera = { i, j };
   }
 }

@@ -7,7 +7,7 @@ const DIA_SEG = 80, NOCHE_SEG = 100;
 const NOCHE = { fase: 'portada', t: 0, noche: 0, tSpawn: 0, jefe: false, jefeVencido: false, tFin: 0, oscuro: 0 };
 
 function nuevaPartida() {
-  mapaNuevo(); jugadorNuevo();
+  mapaNuevo(); jugadorNuevo(); aplicaRefugio();
   ENEMIGOS.length = 0; CRISTALES.length = 0; PROY.length = 0; FX.part.length = 0; FX.nums.length = 0;
   Object.assign(NOCHE, { fase: 'dia', t: DIA_SEG, noche: 0, tSpawn: 0, jefe: false, jefeVencido: false, oscuro: 0 });
   SAVE.partidas++; guarda();

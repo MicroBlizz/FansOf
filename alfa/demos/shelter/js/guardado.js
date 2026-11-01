@@ -4,6 +4,7 @@
 const SAVE = {
   record: 0,       // más noches aguantadas en una partida
   bajasRecord: 0,  // más enemigos derrotados en una partida
+  refugio: 1,      // el nivel de la madriguera (js/refugio.js): se queda entre partidas
   partidas: 0,
   musica: 1,       // 0 o 1
   efectos: 1,      // 0 o 1

@@ -39,12 +39,15 @@ function nvEstallido(S, x, y, r, color, n) {
 function nvTrozos(S, e, k) {
   if (!S.trozos) S.trozos = [];
   if (S.trozos.length > 60) return;
-  const im = typeof NVE !== 'undefined' ? NVE.img[e.tipo] : null, ok = im && im.complete && im.naturalWidth, t = e.r * 2.6, a0 = e.rumbo || e.ang || 0;
-  for (let i = 0; i < k; i++) {
-    const a = a0 + (i / k) * 6.283 + Math.random() * 0.6, v = (40 + Math.random() * 120) * Math.max(1, e.r / 30), cx = i % 2, cy = (i >> 1) % 2;
-    S.trozos.push({ x: e.x, y: e.y, vx: Math.cos(a) * v + (e.vx || 0) * 0.3, vy: Math.sin(a) * v + (e.vy || 0) * 0.3, ang: a0, va: (Math.random() - 0.5) * 6, t: 0.9 + Math.random() * 0.5, T: 1.4,
-      img: ok ? im : null, sx: cx * im?.naturalWidth / 2 || 0, sy: cy * im?.naturalHeight / 2 || 0, sw: ok ? im.naturalWidth / 2 : 0, sh: ok ? im.naturalHeight / 2 : 0, tam: t / 2, color: e.d.color });
-  }
+  const im = typeof NVE !== 'undefined' ? NVE.img[e.tipo] : null, ok = im && im.complete && im.naturalWidth, a0 = e.rumbo || e.ang || 0;
+  for (let i = 0; i < k; i++) S.trozos.push(nvTrozo(e, i, k, a0, ok ? im : null));
+}
+// Un trozo: sale disparado en su dirección (repartidas en círculo, con algo de azar) con un cuarto del sprite, si lo hay
+function nvTrozo(e, i, k, a0, im) {
+  const a = a0 + (i / k) * 6.283 + Math.random() * 0.6, v = (40 + Math.random() * 120) * Math.max(1, e.r / 30), cx = i % 2, cy = (i >> 1) % 2;
+  const iw = im ? im.naturalWidth : 0, ih = im ? im.naturalHeight : 0;
+  return { x: e.x, y: e.y, vx: Math.cos(a) * v + (e.vx || 0) * 0.3, vy: Math.sin(a) * v + (e.vy || 0) * 0.3, ang: a0, va: (Math.random() - 0.5) * 6, t: 0.9 + Math.random() * 0.5, T: 1.4,
+    img: im, sx: cx * iw / 2 || 0, sy: cy * ih / 2 || 0, sw: iw / 2, sh: ih / 2, tam: e.r * 2.6 / 2, color: e.d.color };
 }
 function nvTrozosNave(S) {   // tu nave: sus cuatro cuartos
   const n = S.nave, im = typeof nvNaveImagen === 'function' ? nvNaveImagen(S.casco, nvClase(n.rango)) : null, L = im ? im.width : 0, t = L * n.escala;

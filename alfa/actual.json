@@ -1,8 +1,8 @@
 {
- "build": 798,
- "hash": "6978705",
- "fecha": "2026-11-01T23:15:46Z",
- "mensaje": "Nova: rasgos de facción en tablas, mundo, navegación (NV.Navega), bot y galaxia partidos; ninguna regla pasa de 15",
+ "build": 799,
+ "hash": "6346423",
+ "fecha": "2026-11-01T23:30:08Z",
+ "mensaje": "Nova: dibujo y pantallas partidos (dibujo-enemigo.js, estacion-ui.js); ninguna función de Nova pasa de 15",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

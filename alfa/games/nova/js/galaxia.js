@@ -77,20 +77,27 @@ function nvPintaGalaxia(cv) {
   const g = nvGalGeo(cv), dpr = Math.min(2, window.devicePixelRatio || 1), c = cv.getContext('2d'), camp = nvCamp();
   cv.style.height = g.H + 'px'; cv.width = Math.round(g.W * dpr); cv.height = Math.round(g.H * dpr);
   c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, g.W, g.H);
-  for (const k of nvSectores()) {
-    const s = NVP.gal[k], [x, y] = nvHexPix(g, s), libre = camp.libres.includes(k), abierto = nvSectorAbierto(k);
-    c.beginPath();
-    for (let i = 0; i < 6; i++) { const a = Math.PI / 6 + i * Math.PI / 3, r = g.s * 0.95; c[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * r, y + Math.sin(a) * r); }
-    c.closePath();
-    c.globalAlpha = libre ? 1 : abierto ? 0.8 : 0.55; c.fillStyle = nvColorDueno(nvDuenoActual(k)); c.fill(); c.globalAlpha = 1;
-    if (!libre && !abierto) { c.fillStyle = 'rgba(6,10,30,.25)'; c.fill(); }   // niebla: se ve de quién es, pero más apagado
-    c.lineWidth = k === NV_GAL.sel ? 4 : libre ? 2.5 : 1.5; c.strokeStyle = k === NV_GAL.sel ? '#fff' : '#1a0f2e'; c.stroke();
-    c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#fff'; c.strokeStyle = '#1a0f2e'; c.lineWidth = 3;
-    if (s.base) { c.font = `800 ${Math.round(g.s * 0.5)}px 'Baloo 2', sans-serif`; c.strokeText(tr('BASE'), x, y); c.fillText(tr('BASE'), x, y); }
-    else if (s.dueno === 'microblizz' && !libre) { c.font = `800 ${Math.round(g.s * 0.62)}px 'Baloo 2', sans-serif`; c.strokeText('M', x, y); c.fillText('M', x, y); }
-    if (abierto && !libre) for (let i = 0; i < s.peligro; i++) {   // peligro: puntos bajo el centro, solo donde puedes atacar
-      c.beginPath(); c.arc(x + (i - (s.peligro - 1) / 2) * g.s * 0.24, y + g.s * 0.45, g.s * 0.09, 0, 6.283); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#1a0f2e'; c.stroke();
-    }
+  for (const k of nvSectores()) nvPintaSector(c, g, k, camp.libres.includes(k), nvSectorAbierto(k));
+}
+// La palabra BASE o la M de Microblizz en el centro del hexágono
+function nvRotuloSector(c, g, s, x, y, libre) {
+  c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#fff'; c.strokeStyle = '#1a0f2e'; c.lineWidth = 3;
+  if (s.base) { c.font = `800 ${Math.round(g.s * 0.5)}px 'Baloo 2', sans-serif`; c.strokeText(tr('BASE'), x, y); c.fillText(tr('BASE'), x, y); }
+  else if (s.dueno === 'microblizz' && !libre) { c.font = `800 ${Math.round(g.s * 0.62)}px 'Baloo 2', sans-serif`; c.strokeText('M', x, y); c.fillText('M', x, y); }
+}
+// Un hexágono del mapa: color de su dueño (apagado si aún no puedes atacarlo), la base o la M de Microblizz, y su peligro en puntos
+function nvPintaSector(c, g, k, libre, abierto) {
+  const s = NVP.gal[k], [x, y] = nvHexPix(g, s);
+  c.beginPath();
+  for (let i = 0; i < 6; i++) { const a = Math.PI / 6 + i * Math.PI / 3, r = g.s * 0.95; c[i ? 'lineTo' : 'moveTo'](x + Math.cos(a) * r, y + Math.sin(a) * r); }
+  c.closePath();
+  c.globalAlpha = libre ? 1 : abierto ? 0.8 : 0.55; c.fillStyle = nvColorDueno(nvDuenoActual(k)); c.fill(); c.globalAlpha = 1;
+  if (!libre && !abierto) { c.fillStyle = 'rgba(6,10,30,.25)'; c.fill(); }   // niebla: se ve de quién es, pero más apagado
+  c.lineWidth = k === NV_GAL.sel ? 4 : libre ? 2.5 : 1.5; c.strokeStyle = k === NV_GAL.sel ? '#fff' : '#1a0f2e'; c.stroke();
+  nvRotuloSector(c, g, s, x, y, libre);
+  if (!abierto || libre) return;
+  for (let i = 0; i < s.peligro; i++) {   // peligro: puntos bajo el centro, solo donde puedes atacar
+    c.beginPath(); c.arc(x + (i - (s.peligro - 1) / 2) * g.s * 0.24, y + g.s * 0.45, g.s * 0.09, 0, 6.283); c.fillStyle = '#fff'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = '#1a0f2e'; c.stroke();
   }
 }
 function nvNombreDueno(d) { return d === 'rebelde' ? tr('Territorio rebelde sin reclamar') : d === 'microblizz' ? tr('Núcleo de Microblizz') : tr('Territorio de') + ' ' + tr(NOVA_CASCOS.facciones[d].nombre); }

@@ -68,40 +68,52 @@ function cvRect() { return document.getElementById('nv-canvas').getBoundingClien
 function nvEl(cls, txt, tag) { const e = document.createElement(tag || 'div'); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; }
 function nvPanelesDOM(S) {
   const cont = document.getElementById('nv-paneles');
-  if (S.estado === 'cartas' && S.cartas !== NVI.cartasVistas) {
-    NVI.cartasVistas = S.cartas; cont.textContent = '';
-    const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE UNA CARTA')));
-    S.cartas.forEach((c, i) => {
-      const celda = nvEl('nv-celda'), col = NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c';
-      const b = nvEl('nv-carta' + (c.rareza && c.rareza !== 'comun' ? ' nv-rar-' + c.rareza : ''), '', 'button'); b.style.setProperty('--col', col);
-      const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA', basura: 'MEME' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
-      if (c.rareza && (c.tipo === 'arma' || c.tipo === 'defensa')) { const r = nvEl('nv-rareza', ' · ' + tr(NOVA_RAREZAS[c.rareza].nombre).toUpperCase(), 'span'); r.style.color = NOVA_RAREZAS[c.rareza].color; tipo.appendChild(r); }
-      b.appendChild(tipo);
-      b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));
-      if (c.ic) nvConIcono(b, c.ic[0], c.ic[1], col, 52);
-      b.onclick = () => { nvElegirCarta(S, i); cont.textContent = ''; NVI.cartasVistas = null; };
-      const rr = nvEl('nv-boton nv-chico', tr('Repetir esta carta') + ' (' + S.rr[i] + ')', 'button'); rr.disabled = !(S.rr[i] > 0);
-      rr.onclick = () => { nvRerollCarta(S, i); };
-      celda.appendChild(b); celda.appendChild(rr); p.appendChild(celda);
-    });
-    nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
-  } else if (S.estado !== 'cartas' && NVI.cartasVistas) { NVI.cartasVistas = null; cont.textContent = ''; }
+  if (S.estado === 'cartas' && S.cartas !== NVI.cartasVistas) nvPanelCartas(S, cont);
+  else if (S.estado !== 'cartas' && NVI.cartasVistas) { NVI.cartasVistas = null; cont.textContent = ''; }
   if (S.estado === 'estacion' && S.estVista !== S.est) { S.estVista = S.est; S.estSel = null; nvRenderEstacion(S); }
-  if ((S.estado === 'victoria' || S.estado === 'derrota') && NVI.finVisto !== S) {
-    NVI.finVisto = S; cont.textContent = '';
-    const p = nvEl('nv-panel'), ok = S.estado === 'victoria';
-    p.appendChild(nvEl('nv-titulo', ok ? tr('¡SECTOR LIMPIO!') : tr('NAVE DESTRUIDA')));
-    const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación ganada'), nvCierraMision(S) || S.aleacionGanada || 0]];
-    for (const [a, b] of l) { const f = nvEl('nv-fila'); f.appendChild(nvEl('', a)); f.appendChild(nvEl('', String(b))); p.appendChild(f); }
-    if (S.frente) p.appendChild(nvEl('nv-cdet', tr('Galaxia de la comunidad') + ': +' + S.frente.puntos + ' ' + tr('para') + ' ' + tr(NOVA_CASCOS.facciones[S.frente.patron].nombre)));
-    const re = Object.keys(S.stats.reacciones);
-    if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
-    if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
-    if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Desbloqueado!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
-    const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
-    const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
-    p.appendChild(b); p.appendChild(s); cont.appendChild(p);
-  }
+  if ((S.estado === 'victoria' || S.estado === 'derrota') && NVI.finVisto !== S) nvPanelFin(S, cont);
+}
+// Elige una carta: cada una con su botón de repetir
+function nvPanelCartas(S, cont) {
+  NVI.cartasVistas = S.cartas; cont.textContent = '';
+  const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ELIGE UNA CARTA')));
+  S.cartas.forEach((c, i) => {
+    const celda = nvEl('nv-celda'), b = nvBotonCarta(c);
+    b.onclick = () => { nvElegirCarta(S, i); cont.textContent = ''; NVI.cartasVistas = null; };
+    const rr = nvEl('nv-boton nv-chico', tr('Repetir esta carta') + ' (' + S.rr[i] + ')', 'button'); rr.disabled = !(S.rr[i] > 0);
+    rr.onclick = () => { nvRerollCarta(S, i); };
+    celda.appendChild(b); celda.appendChild(rr); p.appendChild(celda);
+  });
+  nvInfo(p, S.cartas.some(c => c.tipo === 'fusion') ? ['cartas', 'armas', 'fusion'] : ['cartas', 'armas']); cont.appendChild(p);
+}
+function nvBotonCarta(c) {
+  const col = NOVA_ARMAS.cargas[c.carga] ? NOVA_ARMAS.cargas[c.carga].color : '#ff9a3c';
+  const b = nvEl('nv-carta' + (c.rareza && c.rareza !== 'comun' ? ' nv-rar-' + c.rareza : ''), '', 'button'); b.style.setProperty('--col', col);
+  const tipo = nvEl('nv-ctipo', tr({ arma: 'ARMA', mejora: 'MEJORA', fusion: 'FUSIÓN', defensa: 'DEFENSA', sistema: 'SISTEMA', basura: 'MEME' }[c.tipo]) + (c.tendencia ? ' · ' + tr('ENCAJA') : ''));
+  if (c.rareza && (c.tipo === 'arma' || c.tipo === 'defensa')) { const r = nvEl('nv-rareza', ' · ' + tr(NOVA_RAREZAS[c.rareza].nombre).toUpperCase(), 'span'); r.style.color = NOVA_RAREZAS[c.rareza].color; tipo.appendChild(r); }
+  b.appendChild(tipo);
+  b.appendChild(nvEl('nv-cnom', c.titulo)); b.appendChild(nvEl('nv-cdet', c.detalle));
+  if (c.ic) nvConIcono(b, c.ic[0], c.ic[1], col, 52);
+  return b;
+}
+// El final de la misión: resumen, lo que ganaste y volver
+function nvPanelFin(S, cont) {
+  NVI.finVisto = S; cont.textContent = '';
+  const p = nvEl('nv-panel'), ok = S.estado === 'victoria';
+  p.appendChild(nvEl('nv-titulo', ok ? tr('¡SECTOR LIMPIO!') : tr('NAVE DESTRUIDA')));
+  const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación ganada'), nvCierraMision(S) || S.aleacionGanada || 0]];
+  for (const [a, b] of l) { const f = nvEl('nv-fila'); f.appendChild(nvEl('', a)); f.appendChild(nvEl('', String(b))); p.appendChild(f); }
+  nvLineasFin(S, p, ok);
+  const b = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); b.onclick = () => { cont.textContent = ''; NVI.finVisto = null; nvParar(); nvGalaxiaMenu(); };
+  const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); };
+  p.appendChild(b); p.appendChild(s); cont.appendChild(p);
+}
+function nvLineasFin(S, p, ok) {
+  if (S.frente) p.appendChild(nvEl('nv-cdet', tr('Galaxia de la comunidad') + ': +' + S.frente.puntos + ' ' + tr('para') + ' ' + tr(NOVA_CASCOS.facciones[S.frente.patron].nombre)));
+  const re = Object.keys(S.stats.reacciones);
+  if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
+  if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
+  if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Desbloqueado!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
 }
 function nvSalir() {
   nvParar(); NVI.cartasVistas = null; NVI.finVisto = null;
@@ -194,56 +206,4 @@ function nvTile(w, sel) {   // una arma como ficha: icono, nombre y el tamaño g
   nvConIcono(b, 'arma', w.portador, NOVA_ARMAS.cargas[w.carga].color, 48);
   b.appendChild(nvEl('nv-tam', w.tam));
   return b;
-}
-function nvRenderEstacion(S) {
-  const cont = document.getElementById('nv-paneles'), vieja = cont.querySelector('.nv-panel'), scroll = vieja ? vieja.scrollTop : 0; cont.textContent = '';   // repintar no mueve el scroll
-  const n = S.nave, p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('ESTACIÓN')));
-  p.appendChild(nvEl('nv-cdet', tr('Chatarra para gastar') + ': ' + Math.floor(S.cartera)));
-  const rep = nvEl('nv-boton', tr('Reparar casco') + ' (40)', 'button'); rep.disabled = S.cartera < 40 || n.hp >= n.hpMax;
-  rep.onclick = () => { S.cartera -= 40; n.hp = n.hpMax; nvRenderEstacion(S); }; p.appendChild(rep);
-  const armas = n.armas.filter(w => w.portador !== 'defensa');
-  const aviso = nvEl('nv-cdet nv-aviso'), repinta = () => nvRenderEstacion(S);   // la nave con sus anclajes: tocar uno y otro cambia las armas de sitio
-  p.appendChild(nvLienzoNave(S, repinta, aviso)); p.appendChild(nvEl('nv-cdet nv-anclaje', nvTextoAnclaje(S))); p.appendChild(nvLeyendaAnclajes(S)); p.appendChild(aviso);
-  if (S.estTienda) nvRenderTienda(S, p);
-  else if (S.estTaller) {   // taller: unir 2 armas iguales en una mayor, o dividir una en 2 menores
-    const T = S.estTaller; T.sel = T.sel.filter(w => armas.includes(w));
-    const libres = nvRanuras(n.rango, S).filter(r => r.cara !== 'popa' && !n.armas.some(w => w.slot === r.id)).length;
-    p.appendChild(nvEl('nv-titulo', tr('TALLER DE TAMAÑOS')));
-    const rc = nvEl('nv-receta'); for (const t of ['S + S → M', 'M + M → L', 'L → M + M', 'M → S + S']) rc.appendChild(nvEl('', t)); p.appendChild(rc);
-    p.appendChild(nvEl('nv-cdet', tr('Ranuras libres') + ': ' + libres + ' · ' + tr('Más tamaño = mucho más daño, alcance y bala')));
-    for (const w of armas) { const t = nvTile(w, T.sel.includes(w)); t.onclick = () => { T.sel = T.sel.includes(w) ? T.sel.filter(x => x !== w) : T.sel.concat(w).slice(-2); nvRenderEstacion(S); }; p.appendChild(t); }
-    const [a, b2] = T.sel;
-    let pista = 'Toca 2 armas del mismo tamaño para unirlas, o 1 para dividirla';
-    if (T.sel.length === 1) pista = a.tam === 'S' ? 'Toca otra pequeña para unirlas en una mediana' : 'Toca otra del mismo tamaño para unirlas, o divide esta';
-    if (T.sel.length === 2) pista = nvPuedeUnir(a, b2) ? 'Se unen en una ' + (a.tam === 'S' ? 'mediana' : 'grande') : 'Tienen que ser del mismo tamaño y no grandes';
-    p.appendChild(nvEl('nv-cdet', tr(pista)));
-    const u = nvEl('nv-boton', tr(a && a.tam === 'M' ? 'Unir en una grande' : 'Unir en una mediana'), 'button'); u.disabled = !(T.sel.length === 2 && nvPuedeUnir(a, b2)); u.prepend(nvIcono('taller', 'unir', '#ffd93d', 26));
-    u.onclick = () => { nvUneArmas(S, a, b2); T.sel = []; nvRenderEstacion(S); }; p.appendChild(u);
-    const ok = T.sel.length === 1 && NV_ANT_TAM[a.tam] && nvRanuraLibre(S, a.portador);
-    const d = nvEl('nv-boton', tr(a && a.tam === 'L' ? 'Dividir en 2 medianas' : 'Dividir en 2 pequeñas') + (T.sel.length === 1 && NV_ANT_TAM[a.tam] && !ok ? ' · ' + tr('sin ranura libre') : ''), 'button'); d.disabled = !ok; d.prepend(nvIcono('taller', 'dividir', '#ffd93d', 26));
-    d.onclick = () => { nvDivideArma(S, a); T.sel = []; nvRenderEstacion(S); }; p.appendChild(d);
-    const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estTaller = null; nvRenderEstacion(S); }; p.appendChild(at);
-  } else if (!S.estSel) {
-    const ti = nvEl('nv-boton', tr('Tienda de módulos') + ' · ' + tr('comprar, mejorar y reciclar'), 'button'); ti.onclick = () => { S.estTienda = { tab: 'comprar', aviso: '' }; nvRenderEstacion(S); }; p.appendChild(ti);
-    const ta = nvEl('nv-boton', tr('Taller de tamaños') + ' · ' + tr('unir y dividir armas'), 'button'); ta.onclick = () => { S.estTaller = { sel: [] }; nvRenderEstacion(S); }; p.appendChild(ta);
-    p.appendChild(nvEl('nv-cdet', tr('Cambiar un arma')));
-    for (const w of armas) { const t = nvTile(w, false); t.onclick = () => { S.estSel = { w, ofertas: nvOfertasEstacion(S, w.slot) }; nvRenderEstacion(S); }; p.appendChild(t); }
-  } else {
-    p.appendChild(nvEl('nv-cdet', tr('Sustituir') + ': ' + nvNombreArma(S.estSel.w)));
-    for (const o of S.estSel.ofertas) {
-      const b = nvEl('nv-carta', '', 'button'); b.style.setProperty('--col', NOVA_ARMAS.cargas[o.carga].color); b.disabled = S.cartera < o.precio;
-      const V = o.variante ? NV_VAR_ID[o.variante] : null;
-      b.appendChild(nvEl('nv-ctipo', tr(NOVA_RAREZAS[o.rareza].nombre).toUpperCase())); b.lastChild.style.color = NOVA_RAREZAS[o.rareza].color;
-      b.appendChild(nvEl('nv-cnom', tr(V ? V.nombre : NOVA_ARMAS.portadores[o.portador].nombre) + ' · ' + tr(NOVA_ARMAS.cargas[o.carga].nombre)));
-      b.appendChild(nvEl('nv-cdet', tr(V ? V.efecto : NOVA_ARMAS.portadores[o.portador].fuerte) + ' · ' + o.precio));
-      nvConIcono(b, 'arma', o.variante || o.portador, NOVA_ARMAS.cargas[o.carga].color, 48);
-      b.onclick = () => { nvCompraArma(S, o, S.estSel.w); S.estSel = null; nvRenderEstacion(S); };
-      p.appendChild(b);
-    }
-    const at = nvEl('nv-boton', tr('Atrás'), 'button'); at.onclick = () => { S.estSel = null; nvRenderEstacion(S); }; p.appendChild(at);
-  }
-  const sa = nvEl('nv-boton', tr('Salir'), 'button');
-  sa.onclick = () => { cont.textContent = ''; S.estTaller = null; S.estTienda = null; S.estSlot = null; S.est.cd = 25; S.est = null; S.estVista = null; S.estado = 'juego'; };
-  p.appendChild(sa); nvInfo(p, S.estTienda ? 'tienda' : S.estTaller ? 'taller' : 'estacion'); cont.appendChild(p);
-  p.scrollTop = scroll; requestAnimationFrame(() => { p.scrollTop = scroll; });
 }

@@ -1,8 +1,8 @@
 {
- "build": 773,
- "hash": "3ac73f4",
- "fecha": "2026-11-01T18:13:50Z",
- "mensaje": "Nova: nvGolpe partido en NV.Golpe (dominio/golpe.js) sin sonido ni azar; tests de cada regla",
+ "build": 774,
+ "hash": "906ebd5",
+ "fecha": "2026-11-01T18:17:56Z",
+ "mensaje": "Shelter 0.1.0: todo el arte de Yoshi (CrazyBunny en 3 direcciones con pasos, enemigos, jefe, decorado y suelos) y tarjeta en la librería con capturas, novedades y boletín",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

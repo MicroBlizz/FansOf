@@ -114,6 +114,8 @@ IDIOMA.add({
   "Campaña": "Campaign",
   "Acción": "Action",
   "Hordas": "Hordes",
+  "Aventura": "Adventure",
+  "Crafteo": "Crafting",
   "Espacial": "Space",
   "Roguelike": "Roguelike",
   "Oficina": "Office",

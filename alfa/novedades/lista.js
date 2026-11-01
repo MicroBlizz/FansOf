@@ -10,6 +10,14 @@
 'use strict';
 const NOVEDADES_WEB = [
   {
+    id: '2026-11-01',
+    fecha: '1 de noviembre de 2026',
+    nuevos: [
+      { nombre: 'FANS OF SHELTER', tarjeta: 'g-shelter', enlace: 'demos/shelter/', texto: 'Prototipo nuevo: de día explora, pica y craftea con CrazyBunny; de noche aguanta la horda con la zanahoria gigante girando sola. Sin botones.' },
+    ],
+    otros: [],
+  },
+  {
     id: '2026-10-30',
     fecha: '30 de octubre de 2026',
     nuevos: [

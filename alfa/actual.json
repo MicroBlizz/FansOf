@@ -1,8 +1,8 @@
 {
- "build": 799,
- "hash": "6346423",
- "fecha": "2026-11-01T23:30:08Z",
- "mensaje": "Nova: dibujo y pantallas partidos (dibujo-enemigo.js, estacion-ui.js); ninguna función de Nova pasa de 15",
+ "build": 800,
+ "hash": "6d9cc28",
+ "fecha": "2026-11-01T23:38:31Z",
+ "mensaje": "Rouflage: lzDecodifica (35, formato de los escenarios guardados) partido en piezas con 12 tests de formato antes; sin cambios en lo guardado",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

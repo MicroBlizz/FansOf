@@ -207,57 +207,35 @@ function nvExplosion(S, x, y, radio, dano, w, salvo, sinEstado) {
 }
 
 // ---------- el golpe: escudo, estados, reacciones ----------
+// Las reglas (qué multiplica, qué absorbe el escudo, qué estado deja cada carga) están en dominio/golpe.js (NV.Golpe); aquí se junta todo,
+// se llama a las explosiones y a las reacciones y se dibuja (chispas, números, sonido).
 // mult: multiplicador extra (haz enfocado); sinReaccion: los golpes de área no encadenan reacciones.
+function nvChispas(S, x, y, color) {
+  const z = nvZ(S);
+  for (let i = 0; i < 4; i++) { const a = Math.random() * 6.283, v = (60 + Math.random() * 140) * z; S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.35, color, s: 3 * z }); }   // chispas de impacto
+  S.fx.push({ t: 0.12, x, y, r: 7 * z, color: '#ffffff', tipo: 'flash' });
+}
+function nvAvisa(S, avisos) { for (const a of avisos) S.nums.push({ ...a, txt: tr(a.txt) }); }
 function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   nvSnd('nvImpacto', S, x, y, 0.8);
-  const A = NOVA_ARMAS, carga = w.carga, c = A.cargas[carga], est = e.est;
-  let d = dano * (mult || 1), crit = false, reac = null;
-  const z = nvZ(S);
-  for (let i = 0; i < 4; i++) { const a = Math.random() * 6.283, v = (60 + Math.random() * 140) * z; S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.35, color: c.color, s: 3 * z }); }   // chispas de impacto
-  S.fx.push({ t: 0.12, x, y, r: 7 * z, color: '#ffffff', tipo: 'flash' });
-  const K = A.combos, escudoArriba = e.esc > 0 && !(est.escudoCaido > 0);
-  if (carga === 'em' && (escudoArriba || e.d.pasivo)) { S.nums.push({ x, y: y - 14, t: 0.6, txt: tr('Repelida'), color: c.color, g: 0 }); return; }   // el escudo repele la EM: antes hay que tumbarlo
-  if (carga === 'cinetica' && est.brecha > 0) d *= 1.5;
-  if ((carga === 'cinetica' || carga === 'explosiva') && e.calor > 0) d *= 1 + Math.min(K.ablandado.max, K.ablandado.porCalor * e.calor);   // Ablandado: el calor reblandece el casco
-  if (est.interferido > 0 && carga !== 'em') d *= 1 + K.interferencia.defensa;   // Interferido: defensa baja
-  if (e.resiste === carga) d *= 0.5;
-  if (w.portador === 'lanzador' && nvSeAleja(S, e)) d *= K.cazador.mult;   // Cazador: el misil castiga al que huye
-  if (est.marcado > 0 && carga !== 'explosiva') { crit = true; est.marcado = 0; }   // el siguiente impacto de otro tipo es crítico
-  if (!sinReaccion) for (const r of A.reacciones) {
-    if (!(est[r.a] > 0) && !(r.a === 'marcado' && est.marcado > 0)) continue;
-    const ok = r.b === 'cualquiera' || r.b === carga || (r.id === 'impactoLimpio' && carga === 'cinetica') || (r.id === 'fundido' && carga === 'termica');
-    if (!ok || (r.a === 'marcado' && carga !== 'explosiva')) continue;
-    reac = r; break;
-  }
+  const A = NOVA_ARMAS, G = NV.Golpe, carga = w.carga, c = A.cargas[carga], K = A.combos, est = e.est;
+  nvChispas(S, x, y, c.color);
+  const escudoArriba = G.escudoEnPie(e);
+  if (G.repele(e, carga)) { S.nums.push({ x, y: y - 14, t: 0.6, txt: tr('Repelida'), color: c.color, g: 0 }); return; }   // el escudo repele la EM: antes hay que tumbarlo
+  let d = G.multiplicaDano(dano * (mult || 1), e, w, K, nvSeAleja(S, e)), crit = G.consumeMarca(est, carga);
+  const reac = sinReaccion ? null : G.eligeReaccion(est, carga, A.reacciones);
   if (reac) nvReaccion(S, e, reac, w, d), d *= reac.id === 'fundido' ? 1 : reac.mult, crit = crit || reac.id === 'impactoLimpio';
   if (crit) d *= 2;
-  // el escudo del enemigo absorbe; la energía lo tumba
-  // (la energía lo daña ×2, la cinética ×0,6; lo que sobra pasa al casco, que a su vez lo escala por multCasco: la EM no daña)
-  if (escudoArriba) {
-    const pasa = w.portador === 'railgun' && carga === 'cinetica' ? d * K.perforaescudos.pasa : 0;   // Perforaescudos: parte va directa al casco
-    d -= pasa;
-    const mE = c.multEscudo, abs = Math.min(e.esc, d * mE);
-    e.esc -= abs; d = Math.max(0, d - abs / mE) + pasa;
-    if (carga === 'energia' || e.esc <= 0) { est.escudoCaido = A.estados.escudoCaido.duracion; e.esc = 0; }
-  }
+  if (escudoArriba) d = G.absorbeEscudo(e, d, w, c, A);   // el escudo del enemigo absorbe; la energía lo tumba
   d *= c.multCasco;
-  if (d > 0 && est.interferido > 0 && e.d.esc && !sinEstado) e.sinEsc = K.sobrecargaLenta.sinEscudo;   // golpeado en el casco mientras interferido: el escudo no vuelve en un rato
-  // estado que deja la carga
-  const dur = A.estados[c.estado].duracion;
-  if (sinEstado) { /* la onda de una sobrecarga solo hace daño en área: no calienta a los vecinos */ }
-  else if (c.estado === 'sobrecalentado') {
-    e.calor += 14 * (w.fusion && w.fusion.id === 'hazEnfocado' ? 2 : 1) * (w.portador === 'laser' ? K.laser.acumula : 1) * (est.interferido > 0 ? K.sobrecargaLenta.calor : 1);
-    if (e.calor >= 100) { e.calor = 0; nvExplosion(S, e.x, e.y, 70, 50 * A.tamanos[w.tam], w, e, true); S.nums.push({ x: e.x, y: e.y - 20, t: 1, txt: tr('¡Sobrecarga!'), color: '#ff4b4b', g: 1 }); }
-  } else if (c.estado === 'interferido') {
-    const nuevo = !(est.interferido > 0);
-    est.interferido = dur * ((est.brecha > 0 && !sinReaccion) ? 2 : 1);
-    if (est.escudoCaido > 0) est.escudoCaido = Math.max(est.escudoCaido, K.cortacircuitos.escudoCaido);   // Cortacircuitos: el escudo tumbado tarda el doble en volver
-    e.sis = (e.sis || 0) + K.interferencia.sistemas * (w.portador === 'laser' ? K.laser.acumula : 1);
-    if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; S.nums.push({ x: e.x, y: e.y - 20, t: 1, txt: tr('Apagón'), color: c.color, g: 1 }); }
-    else if (nuevo) S.nums.push({ x: e.x, y: e.y - 20, t: 0.8, txt: tr('Interferido'), color: c.color, g: 0 });
-  } else est[c.estado] = dur;
+  G.frenaEscudo(e, d, K, sinEstado);
+  if (!sinEstado) {   // la onda de una sobrecarga solo hace daño en área: no calienta a los vecinos
+    const estado = G.aplicaEstado(e, w, c, A, sinReaccion);
+    if (estado.explosion) nvExplosion(S, e.x, e.y, estado.explosion.radio, estado.explosion.dano, w, e, true);
+    nvAvisa(S, estado.avisos);
+  }
   if (w.portador === 'flak' && carga === 'termica' && !sinEstado) nvMetrallaIncendiaria(S, e);
-  if (carga === 'energia' && e.calor > 0 && e.calor < 99 && !sinEstado) e.calor = Math.min(99, e.calor + K.plasma.calor);   // Plasma: la energía atiza el calor
+  G.plasma(e, w, K, sinEstado);
   e.hp -= d;
   e.flash = 0.08;
   if (d > 0) S.nums.push({ x: x + (Math.random() - 0.5) * 14, y: y - 8, t: 0.7, txt: String(Math.round(d)), color: crit ? '#ffd93d' : c.color, g: crit ? 1 : 0 });

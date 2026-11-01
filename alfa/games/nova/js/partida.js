@@ -71,24 +71,23 @@ function nvNuevaPartida(casco, cap, ofi) {
 function nvPaso(S, dt) {
   const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
   if (S.estado !== 'juego' && !fin) return;
-  if (!fin) S.t += dt;
-  const n = S.nave;
-  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
+  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
   nvEnemigos(S, dt);
   if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
   nvProyectilesEnemigos(S, dt);
   if (!fin) nvRestos(S, dt);
   nvPasoTrozos(S, dt);
-  if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
+  NV.Nave.recupera(S.nave, S.mejoras, dt);
   nvEnvuelve(S);
-  if (n.golpeado > 0) n.golpeado -= dt;
-  if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
+  nvPasoEfectos(S, dt);
+  if (fin) { nvPasoFinal(S, dt); return; }
+  S.cam.x += (S.nave.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (S.nave.y - S.cam.y) * Math.min(1, dt * 6);   // cámara suave
+}
+// Chispas, números y destellos: se mueven y se apagan; y el aviso de arriba caduca
+function nvPasoEfectos(S, dt) {
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
-  // cámara suave
-  if (fin) { nvPasoFinal(S, dt); return; }
-  S.cam.x += (n.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (n.y - S.cam.y) * Math.min(1, dt * 6);
 }
 function nvMueve(S, dt) {
   const n = S.nave, e = NVP.entrada;

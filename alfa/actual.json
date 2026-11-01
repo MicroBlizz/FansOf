@@ -1,8 +1,8 @@
 {
- "build": 795,
- "hash": "99f2905",
- "fecha": "2026-11-01T23:11:20Z",
- "mensaje": "Nova: armas y balas en capas (NV.Arma, Pulso expansivo en NV.Golpe); nvArmas, nvDispara, nvProyectiles y nvExplosion partidos",
+ "build": 796,
+ "hash": "e33c7eb",
+ "fecha": "2026-11-01T23:12:49Z",
+ "mensaje": "Nova: oleadas y nave en capas (NV.Oleadas, NV.Nave); nvSpawn, nvMuere y nvPaso partidos",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

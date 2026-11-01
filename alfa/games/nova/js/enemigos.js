@@ -45,18 +45,9 @@ function nvEnemigo(S, tipo, x, y, rango) {
 }
 function nvSpawn(S, dt) {
   if (S.jefe || S.jefeSalto) return;
-  const n = S.nave;
-  let carga = 0;   // con la zona llena (los grandes cuentan doble) no salen más: así se combinan tamaños sin taponar
-  for (const e of S.enem) if (!e.muerto && !e.d.pasivo && !e.d.nido && Math.hypot(e.x - n.x, e.y - n.y) < 1200) carga += e.rango > n.rango + 1 ? 2 : 1;
-  for (const o of NV_OLEADAS) {
-    if (carga >= 12) break;
-    if (S.t < o.desde) continue;
-    o.tiempo = (S.o_t[o.tipo + o.desde] = (S.o_t[o.tipo + o.desde] || 0) + dt);
-    if (o.tiempo < o.cada) continue;
-    S.o_t[o.tipo + o.desde] = 0;
-    for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
-  }
-  if (S.capMuertos >= 3 || S.t >= NV_TIEMPO_JEFE) {
+  const n = S.nave, carga = NV.Oleadas.carga(S.enem, n);
+  for (const o of NV.Oleadas.tocan(NV_OLEADAS, S.o_t, S.t, dt, carga)) for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
+  if (NV.Oleadas.llegaJefe(S.capMuertos, S.t, NV_TIEMPO_JEFE)) {
     S.jefeSalto = true;
     nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); });
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
@@ -153,17 +144,22 @@ function nvCapitanSube(e) {
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);
-  if (e.d.jefe || e.d.capitan || e.d.nido) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
+  const grande = e.d.jefe || e.d.capitan || e.d.nido;
+  if (grande) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
   if (e.d.capitan) S.capMuertos++;
   // un enemigo con calor acumulado revienta y quema en área en proporción a ese calor (la onda no calienta a los vecinos)
   if (e.calor >= 10 && !e.d.pasivo) { const k = e.calor; e.calor = 0; nvExplosion(S, e.x, e.y, 40 + k * 0.5, k * 1.2, { carga: 'termica', tam: 0 }, e, true); }
-  nvChatarra(S, e.x, e.y, e.d.pasivo || e.d.nido || e.d.jefe || e.d.capitan ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
-  S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
-  const z = nvZ(S);
-  S.fx.push({ t: 0.25, x: e.x, y: e.y, r: e.r * 1.1, color: '#ffe9a8', tipo: 'flash' });
-  for (let i = 0; i < 10 + Math.min(14, e.rango); i++) { const a = Math.random() * 6.283, v = (80 + Math.random() * 260) * Math.max(z, e.r / 24); S.parts.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.5 + Math.random() * 0.4, color: i % 3 ? e.d.color : '#ffd93d', s: Math.max(3 * z, e.r * 0.12) }); }
+  nvChatarra(S, e.x, e.y, e.d.pasivo || grande ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
+  nvMuereEstalla(S, e);
   if (!e.d.pasivo && nvVisible(S, e.x, e.y, e.r)) nvTrozos(S, e, e.d.capitan || e.d.nido ? 6 : 4);   // revienta en pedazos
   if (e.d.jefe) nvAcaba(S, 'victoria', e.x, e.y, e.r);
+}
+// La onda, el destello y las chispas al morir (solo dibujo)
+function nvMuereEstalla(S, e) {
+  const z = nvZ(S);
+  S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
+  S.fx.push({ t: 0.25, x: e.x, y: e.y, r: e.r * 1.1, color: '#ffe9a8', tipo: 'flash' });
+  for (let i = 0; i < 10 + Math.min(14, e.rango); i++) { const a = Math.random() * 6.283, v = (80 + Math.random() * 260) * Math.max(z, e.r / 24); S.parts.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.5 + Math.random() * 0.4, color: i % 3 ? e.d.color : '#ffd93d', s: Math.max(3 * z, e.r * 0.12) }); }
 }
 // La chatarra queda flotando hasta que la nave se acerca (imán).
 function nvChatarra(S, x, y, valor) {

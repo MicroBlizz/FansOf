@@ -212,6 +212,35 @@ function clasificacion() {
   })).sort((a, b) => b.puntos - a.puntos || (a.jugador ? -1 : 1));
 }
 const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+// el resultado de un colado: título, frase, filas, puntos y estrellas (y si ganó él o solo su bando)
+function resultadoColado(victoria, motivo, yo, k) {
+  let titulo, sub, filas, puntos, estrellas, bando = false;
+  const vivos = J.camaleones.filter(e => !e.jugador && !e.fuera).length, total = J.camaleones.length - 1;
+  puntos = marcadorDe(yo);
+  estrellas = victoria ? 1 + (puntos >= 700 ? 1 : 0) + (puntos >= 880 ? 1 : 0) : 0;
+  titulo = victoria ? (motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('¡TE HAS LIBRADO!')) : tr('¡DESPEDIDO!');
+  sub = victoria ? (motivo === 'cartas' ? tr('Los becarios se han quedado sin cartas de despido.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura antes de tiempo.') : tr('Se acaba el turno de noche y nadie te ha visto.')) : tr('Y eso que ni siquiera trabajabas aquí.');
+  if (victoria && yo.fuera) {      // gana el bando, pero a ti te han despedido: sin estrellas, y fuera del PvP no cuenta como victoria tuya
+    titulo = tr('¡DESPEDIDO, PERO GANÁIS!'); sub = tr('Tus compañeros han aguantado hasta el final.'); estrellas = 0;
+    if (!J.pvp) { victoria = false; bando = true; }      // premio de derrota (sin el extra de ganar), sin misiones ni logros de victoria, y el servidor recibe que no ganaste
+  } else if (J.pvp) {      // en el PvP gana o pierde todo el bando
+    if (!victoria && motivo === 'mitad') { titulo = tr('¡HAN DESPEDIDO A MÁS DE LA MITAD!'); sub = tr('Microblizz da la noche por buena: con la mitad ya le cuadra el informe.'); }
+    else if (!victoria) { titulo = tr('¡OS HAN DESPEDIDO A TODOS!'); sub = tr('Microblizz deja la estación limpia de colados.'); }
+  }
+  filas = [[tr('Camuflaje'), yo.camo + ' %'], [tr('Has aguantado'), mmss(k.aguante)], [tr('Delante de sus narices'), Math.round(k.narices) + ' s'], [tr('Silbidos por gusto'), String(k.silbidos)], [tr('Compañeros en pie'), vivos + ' / ' + total]];
+  return { victoria, bando, titulo, sub, filas, puntos, estrellas };
+}
+// el resultado de un becario
+function resultadoBecario(victoria, motivo, yo, k, quedan) {
+  let titulo, sub, filas, puntos, estrellas;
+  const total = J.camaleones.length, hechos = total - quedan.length;
+  puntos = marcadorDe(yo);
+  estrellas = victoria ? 1 + (k.fallos <= 2 ? 1 : 0) + (k.fallos === 0 || J.reloj >= 45 ? 1 : 0) : 0;
+  titulo = victoria ? (motivo === 'mitad' ? tr('¡MÁS DE LA MITAD!') : tr('¡TODOS DESPEDIDOS!')) : motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('SE TE HAN ESCAPADO');
+  sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura delante de tus narices.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
+  filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
+  return { victoria, bando: false, titulo, sub, filas, puntos, estrellas };
+}
 // `fin` solo en el PvP: lo que cuenta el anfitrión (los puntos y las cifras de cada uno), que es lo que vale
 function termina(victoria, motivo, fin) {
   if (J.fase === 'fin') return;
@@ -222,29 +251,8 @@ function termina(victoria, motivo, fin) {
   const yo = J.yo, k = J.cuenta, quedan = escondidos();
   if (J.modo === 'camaleon' && yo && !yo.fuera) fotoHaz(yo);      // si sigues escondido, la foto de cómo acabaste (antes de que se vea a todos)
   for (const e of quedan) { descongela(e); if (e !== yo) fxTexto(e.x, e.y - 74, e.nombre, '#fff6ea', 12); }   // al acabar, todos los escondidos se dejan ver
-  let titulo, sub, filas, puntos, estrellas, bando = false;      // bando: tu bando gana aunque tú no (solo fuera del PvP)
-  if (J.modo === 'camaleon') {
-    const vivos = J.camaleones.filter(e => !e.jugador && !e.fuera).length, total = J.camaleones.length - 1;
-    puntos = marcadorDe(yo);
-    estrellas = victoria ? 1 + (puntos >= 700 ? 1 : 0) + (puntos >= 880 ? 1 : 0) : 0;
-    titulo = victoria ? (motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('¡TE HAS LIBRADO!')) : tr('¡DESPEDIDO!');
-    sub = victoria ? (motivo === 'cartas' ? tr('Los becarios se han quedado sin cartas de despido.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura antes de tiempo.') : tr('Se acaba el turno de noche y nadie te ha visto.')) : tr('Y eso que ni siquiera trabajabas aquí.');
-    if (victoria && yo.fuera) {      // gana el bando, pero a ti te han despedido: sin estrellas, y fuera del PvP no cuenta como victoria tuya
-      titulo = tr('¡DESPEDIDO, PERO GANÁIS!'); sub = tr('Tus compañeros han aguantado hasta el final.'); estrellas = 0;
-      if (!J.pvp) { victoria = false; bando = true; }      // premio de derrota (sin el extra de ganar), sin misiones ni logros de victoria, y el servidor recibe que no ganaste
-    } else if (J.pvp) {      // en el PvP gana o pierde todo el bando
-      if (!victoria && motivo === 'mitad') { titulo = tr('¡HAN DESPEDIDO A MÁS DE LA MITAD!'); sub = tr('Microblizz da la noche por buena: con la mitad ya le cuadra el informe.'); }
-      else if (!victoria) { titulo = tr('¡OS HAN DESPEDIDO A TODOS!'); sub = tr('Microblizz deja la estación limpia de colados.'); }
-    }
-    filas = [[tr('Camuflaje'), yo.camo + ' %'], [tr('Has aguantado'), mmss(k.aguante)], [tr('Delante de sus narices'), Math.round(k.narices) + ' s'], [tr('Silbidos por gusto'), String(k.silbidos)], [tr('Compañeros en pie'), vivos + ' / ' + total]];
-  } else {
-    const total = J.camaleones.length, hechos = total - quedan.length;
-    puntos = marcadorDe(yo);
-    estrellas = victoria ? 1 + (k.fallos <= 2 ? 1 : 0) + (k.fallos === 0 || J.reloj >= 45 ? 1 : 0) : 0;
-    titulo = victoria ? (motivo === 'mitad' ? tr('¡MÁS DE LA MITAD!') : tr('¡TODOS DESPEDIDOS!')) : motivo === 'cartas' ? tr('¡SIN CARTAS!') : motivo === 'bote' ? tr('¡CUBO LLENO!') : tr('SE TE HAN ESCAPADO');
-    sub = victoria ? tr('Microblizz te felicita. El sueldo no te lo sube, claro.') : motivo === 'cartas' ? tr('Demasiados despidos improcedentes. Recursos Humanos quiere verte.') : motivo === 'bote' ? tr('Los colados han llenado el cubo de pintura delante de tus narices.') : tr('Se acabó tu turno y aún quedaban {n} colados.').replace('{n}', quedan.length);
-    filas = [[tr('Despedidos'), (J.pvp ? k.aciertos : hechos) + ' / ' + total], [tr('Despidos improcedentes'), String(k.fallos)], [tr('Cartas que te quedan'), String(Math.max(0, yo.balas))], [tr('Tiempo de sobra'), victoria ? mmss(J.reloj) : '0:00']];
-  }
+  const r = J.modo === 'camaleon' ? resultadoColado(victoria, motivo, yo, k) : resultadoBecario(victoria, motivo, yo, k, quedan);
+  victoria = r.victoria; const { bando, titulo, filas, puntos, estrellas } = r; let sub = r.sub;
   const enTutorial = tutoFaltan().length > 0;      // la victoria que acaba el tutorial aún no abre mapa
   if (!J.pvp) { const consejo = tutoFin(victoria); if (consejo) sub += ' ' + consejo; }      // sin conexión: se apunta la victoria y se aconseja probar los dos bandos antes del PvP
   galeriaPrepara();      // la galería de disfraces, si está puesta (galeria.js)

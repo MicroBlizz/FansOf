@@ -1,8 +1,8 @@
 {
- "build": 786,
- "hash": "7d46145",
- "fecha": "2026-11-01T19:27:30Z",
- "mensaje": "Rouflage: avanzaPartida (complejidad 54) partida por fases; tests, comparador y smoke-test iguales (paso 2)",
+ "build": 787,
+ "hash": "e941caa",
+ "fecha": "2026-11-01T19:58:15Z",
+ "mensaje": "Rouflage: termina (47) saca el texto del resultado a dos funciones y el listener de teclas (48) pasa a tablas; tests, smoke-test y comparador iguales (paso 2)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

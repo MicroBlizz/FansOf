@@ -13,12 +13,38 @@ function jugadorNuevo() {
     inv: { madera: 0, piedra: 0, hierro: 0, cristal: 0 },
     arma: { nivel: 1, fuego: 0, orbes: 0, zanahorias: 1, giro: 1, dano: 0, iman: 0, cadencia: 1 },
     nivel: 1, xp: 0, bajas: 0, esquiva: 0, esquivaCd: 0, vel: 1, dorm: 0, autoCd: 0, empujando: 0,
+    destino: null,   // { x, y, i, j, accion } a donde va solo tras un toque (accion: la casilla tocada tiene algo que hacer)
   });
 }
 const xpParaSubir = () => 6 + J.nivel * 4;
 
+// un toque de día: si la casilla tocada tiene algo que hacer (árbol, roca, bloque, mesa, cofre, hoguera), va hasta ella y actúa; si es suelo, anda hasta ahí
+function tocaSuelo(px, py) {
+  const wx = CAM.x + px, wy = CAM.y + py, i = Math.floor(wx / CAS), j = Math.floor(wy / CAS), c = casilla(i, j);
+  const accion = !!(RECURSO[c] || c === 'B' || c === 'M' || c === 'H' || (c === 'C' && !MAPA.cofreAbierto));
+  if (!accion && !pasable(i, j)) return;
+  J.destino = { x: accion ? (i + 0.5) * CAS : wx, y: accion ? (j + 0.5) * CAS + 6 : wy, i, j, accion, c };
+  chispas(wx, wy, PALETA.W, 4, 20);
+}
+// hacia dónde ir solo (como si fuera la palanca): llega al punto, o se para al chocar con la casilla tocada
+function dirDestino() {
+  const o = J.destino; if (!o) return null;
+  const dx = o.x - J.x, dy = o.y - (J.y - 4), d = Math.hypot(dx, dy);
+  if (!o.accion && d < 3) { J.destino = null; return null; }
+  if (o.accion) {
+    const c = casilla(o.i, o.j);
+    if (c !== o.c && !(o.c === 'B' && c === 'B')) { J.destino = null; return null; }   // ya cayó / se abrió: listo
+    // pegado a la casilla: empuja hacia ella por el eje más largo (así la mira y choca)
+    if (Math.abs(dx) < CAS * 0.9 && Math.abs(dy) < CAS * 0.9) return Math.abs(dx) > Math.abs(dy) ? { x: Math.sign(dx), y: 0 } : { x: 0, y: Math.sign(dy) };
+  }
+  return { x: dx / d, y: dy / d };
+}
+
 function avanzaJugador(dt) {
-  const d = ENTRADA.dir;
+  let d = ENTRADA.dir;
+  if (NOCHE.fase === 'dia' && ENTRADA.toquePulsa && ENTRADA.toque) tocaSuelo(ENTRADA.toque.x, ENTRADA.toque.y);
+  if (Math.hypot(d.x, d.y) > 0.05) J.destino = null;   // la palanca manda
+  else { const a = dirDestino(); if (a) d = a; }
   if (J.inmune > 0) J.inmune -= dt;
   if (J.golpe > 0) J.golpe -= dt;
   if (J.esquivaCd > 0) J.esquivaCd -= dt;
@@ -42,7 +68,7 @@ function avanzaJugador(dt) {
     const parado = Math.abs(J.x - x0) + Math.abs(J.y - y0) < v * 0.4;
     if (parado && NOCHE.fase === 'dia' && J.autoCd <= 0) {
       const c = casillaMirada().c;
-      if (RECURSO[c] || c === 'B' || c === 'M' || c === 'H' || (c === 'C' && !MAPA.cofreAbierto)) { J.empujando += dt; if (J.empujando > 0.12) { accionJugador(); J.autoCd = c === 'B' ? 0.35 : RECURSO[c] ? 0.42 : 1.2; J.empujando = 0; } }
+      if (RECURSO[c] || c === 'B' || c === 'M' || c === 'H' || (c === 'C' && !MAPA.cofreAbierto)) { J.empujando += dt; if (J.empujando > 0.12) { accionJugador(); J.autoCd = c === 'B' ? 0.35 : RECURSO[c] ? 0.42 : 1.2; J.empujando = 0; if (!RECURSO[c]) J.destino = null; } }
       else J.empujando = 0;
     } else J.empujando = 0;
   } else J.empujando = 0;

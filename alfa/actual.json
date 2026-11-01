@@ -1,8 +1,8 @@
 {
- "build": 774,
- "hash": "906ebd5",
- "fecha": "2026-11-01T18:17:56Z",
- "mensaje": "Shelter 0.1.0: todo el arte de Yoshi (CrazyBunny en 3 direcciones con pasos, enemigos, jefe, decorado y suelos) y tarjeta en la librería con capturas, novedades y boletín",
+ "build": 775,
+ "hash": "8e5d251",
+ "fecha": "2026-11-01T18:26:14Z",
+ "mensaje": "Shelter: tocar el suelo para ir y tocar un árbol, roca, bloque, mesa, cofre u hoguera para que CrazyBunny vaya y actúe solo",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

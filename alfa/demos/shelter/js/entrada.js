@@ -1,5 +1,5 @@
 // Fans of Shelter · ENTRADA: sin botones. El dedo: posarlo y arrastrar es la palanca (anda hacia donde arrastras); un toque corto sin arrastrar
-// es ENTRADA.toquePulsa (de noche, el esquive). Las acciones de día salen solas al chocar con las cosas (js/jugador.js). Teclado: WASD o
+// es ENTRADA.toquePulsa con ENTRADA.toque = dónde (de día, CrazyBunny va a ese sitio y actúa sobre lo que haya; de noche, el esquive). Las acciones de día salen solas al chocar con las cosas (js/jugador.js). Teclado: WASD o
 // flechas, y espacio / E para la acción. Resume todo en ENTRADA.dir (−1 a 1 en cada eje) y ENTRADA.accionPulsa (solo el fotograma en que se aprieta).
 // Cuando hay una ventana abierta (portada, crafteo, mejoras, fin), los toques van a la cola ENTRADA.toques para que la pantalla los lea.
 'use strict';
@@ -45,7 +45,7 @@ function dedoBaja(id, x, y, W, H) {
 function dedoMueve(id, x, y) { const p = ENTRADA.palanca; if (p.activa && p.id === id) { p.x = x; p.y = y; if (Math.hypot(x - p.x0, y - p.y0) > 6) p.movido = true; } }
 function dedoSube(id) {
   const p = ENTRADA.palanca;
-  if (p.activa && p.id === id) { p.activa = false; if (!p.movido && performance.now() - p.t < 260) ENTRADA.toquePulsa = 1; }   // toque corto sin arrastrar
+  if (p.activa && p.id === id) { p.activa = false; if (!p.movido && performance.now() - p.t < 300) { ENTRADA.toquePulsa = 1; ENTRADA.toque = { x: p.x0, y: p.y0 }; } }   // toque corto sin arrastrar: dónde
 }
 function sueltaTodo() { ENTRADA.teclas = {}; ENTRADA.palanca.activa = false; }
 

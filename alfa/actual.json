@@ -1,8 +1,8 @@
 {
- "build": 794,
- "hash": "b625a79",
- "fecha": "2026-11-01T23:09:08Z",
- "mensaje": "Nova: drones y jefe en capas (NV.Dron, NV.Jefe); el dron y nvJefe partidos",
+ "build": 795,
+ "hash": "99f2905",
+ "fecha": "2026-11-01T23:11:20Z",
+ "mensaje": "Nova: armas y balas en capas (NV.Arma, Pulso expansivo en NV.Golpe); nvArmas, nvDispara, nvProyectiles y nvExplosion partidos",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

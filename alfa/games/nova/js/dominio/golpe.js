@@ -86,5 +86,12 @@ NV.Golpe = (() => {
     if (w.carga === 'energia' && e.calor > 0 && e.calor < 99 && !sinEstado) e.calor = Math.min(99, e.calor + K.plasma.calor);
   }
 
-  return { consumeMarca, frenaEscudo, plasma, repele, multiplicaDano, eligeReaccion, absorbeEscudo, aplicaEstado, escudoEnPie };
+  // Pulso expansivo: la explosión de una explosiva sobre un Interferido interfiere a los vecinos (los vivos y sin escudo en pie)
+  function pulsoExpansivo(e, K) {
+    if (e.muerto || escudoEnPie(e)) return;
+    e.est.interferido = Math.max(e.est.interferido || 0, K.pulsoExpansivo.duracion);
+    e.sis = Math.min(99, (e.sis || 0) + K.pulsoExpansivo.sistemas);
+  }
+
+  return { pulsoExpansivo, consumeMarca, frenaEscudo, plasma, repele, multiplicaDano, eligeReaccion, absorbeEscudo, aplicaEstado, escudoEnPie };
 })();

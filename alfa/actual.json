@@ -1,8 +1,8 @@
 {
- "build": 784,
- "hash": "85be8f9",
- "fecha": "2026-11-01T19:07:45Z",
- "mensaje": "Chef: seis salas más del sótano pintadas por Yoshi y el diseño de la cantina al estilo Overcooked (CANTINA.md)",
+ "build": 785,
+ "hash": "02b96aa",
+ "fecha": "2026-11-01T19:11:21Z",
+ "mensaje": "Rouflage: refrescaHud, dibuja, pintaMarcas y avanza del Roaster (las 4 peores, 67-70) partidos en piezas; comparador igual y smoke-test verde (paso 2, dibujo y HUD)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

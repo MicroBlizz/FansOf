@@ -132,6 +132,14 @@ EVENTOS.turbo = {
     est.top = Math.max(est.top, J.reloj);
     const a = this.ahora(est), m = est.m, antes = est.fase;
     est.act = a; est.fase = a ? a.fase + a.p.r : '';
+    this.suenaCambio(est, a, m, antes);
+    this.salto(est, a, m, antes);
+    this.chorros(est, a, m, dt);
+    this.siguenEmpujes(est, dt);
+    this.avanzaPartes(est, dt);
+  },
+  // el aviso y el soplido: su sonido y su texto, una vez al cambiar de fase
+  suenaCambio(est, a, m, antes) {
     if (a && est.fase !== antes) {
       if (a.fase === 'aviso') {
         suenaEn('turboAviso', m.x, m.y - 40);
@@ -142,11 +150,17 @@ EVENTOS.turbo = {
         if (volumenEn(m.x, m.y) > 0.05) fxTexto(ch.x + ch.dx * 62 + ch.dy * 64, ch.y + ch.dy * 50 - 36, tr('¡FIUUU!'), '#bff3ff', 20);
       }
     }
+  },
+  // el salto del coche: en el aire, el aviso y el aterrizaje
+  salto(est, a, m, antes) {
     // los chorros: empujan a quien pillan (solo a lo que lleva este navegador) y echan aire, vaho y papelitos
     if (m) m.vuela = !!(a && a.fase === 'sopla' && a.p.tipo === 'salto' && altoRoaster(a.t) > 0.5);      // en el aire: dibujo.js no pinta el de la plaza
     if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && est.fase !== antes) { fxTexto(m.x, m.y - 110, tr('¡AL AIRE!'), '#ffcb3d', 22); if (J.yo && lejos(J.yo.x, J.yo.y, m.x, m.y) < 650) misionEvento('coche'); }      // logro secreto (misiones.js)
     if (a && a.fase === 'sopla' && a.p.tipo === 'salto' && a.t > ROASTER.salto - 0.12 && !est.aterriza) { est.aterriza = true; suenaEn('turboSopla', m.x, m.y - 40); if (J.yo && lejos(J.yo.x, J.yo.y, m.x, m.y) < 360) CAM.tiembla = Math.max(CAM.tiembla, 0.25); for (let k = 0; k < 14; k++) { const ang = k / 14 * TAU; est.parts.push({ k: 'vaho', x: m.x + Math.cos(ang) * 30, y: m.y - 38 + Math.sin(ang) * 40, vx: Math.cos(ang) * 120, vy: Math.sin(ang) * 90, t: 0, dur: 0.7, r: 6 }); } }
     if (!(a && a.p.tipo === 'salto')) est.aterriza = false;
+  },
+  // los chorros: empujan a quien pillan y echan aire, vaho y papelitos
+  chorros(est, a, m, dt) {
     if (a && a.fase === 'sopla' && chorroSalto(a.p, a.t)) {
       const chs = chorrosRoaster(m, a.p.tipo), q = [1, 0.6, 0.3][graficosAdornos()] || 0.3;
       for (const ch of chs) {
@@ -171,6 +185,8 @@ EVENTOS.turbo = {
     } else if (a && a.fase === 'aviso' && Math.random() < dt * 14) {      // el aviso: un poco de vaho que se escapa por donde va a soplar
       for (const ch of chorrosRoaster(m, a.p.tipo)) est.parts.push({ k: 'vaho', x: ch.x + rand(-6, 6), y: ch.y - 8 + rand(-6, 6), vx: ch.dx * rand(30, 70), vy: ch.dy * rand(30, 70) - 10, t: 0, dur: rand(0.5, 0.8), r: rand(3, 5) });
     }
+  },
+  siguenEmpujes(est, dt) {
     // los empujones siguen un ratito después de salir del chorro (frenando), con los choques de siempre
     for (const [e, v] of est.empujes) {
       v.t += dt; const f = Math.exp(-ROASTER.freno * v.t), dx = v.vx * f * dt, dy = v.vy * f * dt;
@@ -178,6 +194,8 @@ EVENTOS.turbo = {
       if (!mueve(e, dx, dy) && v.t > 0.15) est.empujes.delete(e);      // contra una pared o un mueble: se para ahí
       else if (e.clase && Math.abs(dx) > 0.3) e.mira = dx > 0 ? -1 : 1;      // mira hacia el coche mientras sale volando de espaldas
     }
+  },
+  avanzaPartes(est, dt) {
     for (let i = est.parts.length - 1; i >= 0; i--) {
       const p = est.parts[i]; p.t += dt;
       if (p.t >= p.dur) { est.parts.splice(i, 1); continue; }

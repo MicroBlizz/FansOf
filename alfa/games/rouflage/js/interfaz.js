@@ -93,12 +93,8 @@ function ponTexto(clave, el, txt) { if (HUD[clave] !== txt) { HUD[clave] = txt; 
 function colorCamo(n) { return n < 50 ? '#ff4b5c' : n < 70 ? '#ffcb3d' : '#7ee04a'; }
 // lo que le espera a un camaleón con ese camuflaje, en una frase
 function veredicto(n) { return n < 50 ? tr('Se te ve mucho: mejor píntate un poco más') : n < 65 ? tr('Regular: de lejos cuelas, de cerca no') : n < 80 ? tr('Bien pintado. De cerca aún te la juegas') : tr('¡Casi no se te ve!'); }
-function refrescaHud(todo) {
-  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden && !(typeof VISITA !== 'undefined' && VISITA.activa));      // la sala viva, solo con su pantalla delante
-  if (todo) for (const k in HUD) delete HUD[k];
-  if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
-  if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
-  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
+// arriba: el papel, la fase, el silbato caliente, el reloj y los botones del fantasma
+function hudCabecera(cam, caza, paseo) {
   if (HUD.rol !== J.modo) { HUD.rol = J.modo; const c = E('chip-rol'); c.dataset.rol = J.modo; c.querySelector('b').textContent = cam ? tr('CAMALEÓN') : tr('CAZADOR'); ponIcono(c.querySelector('i'), cam ? 'pincel' : 'diana'); }
   ponTexto('fase', E('fase-txt'), paseo ? tr('Habitación') : J.fase === 'prep' ? (cam ? tr('Píntate') : tr('Calentamiento')) : J.fase === 'cuenta' ? tr('Preparados') : caza ? (cam ? tr('Aguanta') : tr('Encuéntralos')) : '');
   // el silbato caliente va en su propia etiqueta, en la fila de abajo (encima del reloj pisaba el resto en el móvil)
@@ -108,21 +104,35 @@ function refrescaHud(todo) {
   const prisa = (J.fase === 'prep' || caza) && J.reloj <= 10; if (HUD.prisa !== prisa) { HUD.prisa = prisa; E('reloj').classList.toggle('prisa', prisa); }
   refrescaPoder(); refrescaChivato(); refrescaHab();      // los botones del fantasma (fantasma-poder.js, modos-fantasma.js)
   refrescaRanking();
-  // lo de cada papel
+}
+// lo de cada papel: qué botones y marcadores se ven
+function hudBotones(yo, cam, caza, paseo) {
   const ver = { 'e-camo': cam && !paseo, 'e-silbo': cam && caza, 'e-balas': !cam && !paseo && J.fase !== 'sala', 'e-quedan': !cam && !paseo && J.fase !== 'sala', 'acciones': cam && (J.fase === 'prep' || caza || J.fase === 'sala') && !TALLER.abierto && !yo.fuera,
     'b-silbar': caza && !espectando(), 'b-zoom': !cam && !paseo && !yo.fuera && !TALLER.abierto, 'b-retiro': espectando(), 'b-granada': cam && (caza || J.fase === 'sala') && yo.granada > 0 && !yo.fuera, 'b-listo': J.fase === 'prep' && yo.congelado && !yo.listo, 'estado': !TALLER.abierto, 'avisos': !TALLER.abierto };
   for (const id in ver) if (HUD['v-' + id] !== ver[id]) { HUD['v-' + id] = ver[id]; E(id).hidden = !ver[id]; }
-  if (cam) {
-    const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;
-    if (HUD.camo !== n) { HUD.camo = n; E('e-camo-n').textContent = n < 0 ? '—' : n + ' %'; E('e-camo-b').style.width = Math.max(0, n) + '%'; E('e-camo-b').style.background = colorCamo(n); }
-    if (HUD.hielo !== yo.congelado) { HUD.hielo = yo.congelado; E('b-congelar-t').textContent = yo.congelado ? tr('MOVERSE') : tr('CONGELAR'); E('b-congelar').classList.toggle('puesto', yo.congelado); ponIcono(E('b-congelar').querySelector('i'), yo.congelado ? 'andar' : 'hielo'); }
-    if (caza) { ponTexto('silbo', E('e-silbo-n'), yo.silbido > 1e6 ? '—' : String(Math.max(0, Math.ceil(yo.silbido)))); const pronto = yo.silbido <= 5; if (HUD.pronto !== pronto) { HUD.pronto = pronto; E('e-silbo').classList.toggle('pronto', pronto); } }      // (— con SIN SILBIDO)
-    E('peligro').style.opacity = caza ? (J.peligro * J.peligro * (0.75 + 0.25 * Math.sin(J.t * 9))).toFixed(3) : 0;
-  } else {
-    if (HUD.balas !== yo.balas) { HUD.balas = yo.balas; E('e-balas-n').innerHTML = Array.from({ length: REGLAS.balas }, (_, i) => `<i${i < yo.balas ? '' : ' class="gastada"'}></i>`).join(''); }
-    ponTexto('quedan', E('e-quedan-n'), String(escondidos().length));
-    E('peligro').style.opacity = yo.ciego > 0 ? 0.16 : 0;
-  }
+}
+function hudCamaleon(yo, caza) {
+  const medido = yo.congelado || TALLER.abierto, n = medido ? yo.camo : -1;
+  if (HUD.camo !== n) { HUD.camo = n; E('e-camo-n').textContent = n < 0 ? '—' : n + ' %'; E('e-camo-b').style.width = Math.max(0, n) + '%'; E('e-camo-b').style.background = colorCamo(n); }
+  if (HUD.hielo !== yo.congelado) { HUD.hielo = yo.congelado; E('b-congelar-t').textContent = yo.congelado ? tr('MOVERSE') : tr('CONGELAR'); E('b-congelar').classList.toggle('puesto', yo.congelado); ponIcono(E('b-congelar').querySelector('i'), yo.congelado ? 'andar' : 'hielo'); }
+  if (caza) { ponTexto('silbo', E('e-silbo-n'), yo.silbido > 1e6 ? '—' : String(Math.max(0, Math.ceil(yo.silbido)))); const pronto = yo.silbido <= 5; if (HUD.pronto !== pronto) { HUD.pronto = pronto; E('e-silbo').classList.toggle('pronto', pronto); } }      // (— con SIN SILBIDO)
+  E('peligro').style.opacity = caza ? (J.peligro * J.peligro * (0.75 + 0.25 * Math.sin(J.t * 9))).toFixed(3) : 0;
+}
+function hudCazador(yo) {
+  if (HUD.balas !== yo.balas) { HUD.balas = yo.balas; E('e-balas-n').innerHTML = Array.from({ length: REGLAS.balas }, (_, i) => `<i${i < yo.balas ? '' : ' class="gastada"'}></i>`).join(''); }
+  ponTexto('quedan', E('e-quedan-n'), String(escondidos().length));
+  E('peligro').style.opacity = yo.ciego > 0 ? 0.16 : 0;
+}
+
+function refrescaHud(todo) {
+  const yo = J.yo, enPartida = J.fase !== 'titulo' && !!yo && !J.finMostrado && !(J.fase === 'sala' && E('p-busca').hidden && !(typeof VISITA !== 'undefined' && VISITA.activa));      // la sala viva, solo con su pantalla delante
+  if (todo) for (const k in HUD) delete HUD[k];
+  if (HUD.visible !== enPartida) { HUD.visible = enPartida; E('hud').hidden = !enPartida; }
+  if (!enPartida) { E('peligro').style.opacity = 0; E('ranking').hidden = true; RANKING.txt = ''; return; }
+  const cam = yo.clase === 'camaleon', caza = J.fase === 'caza', paseo = J.fase === 'paseo';
+  hudCabecera(cam, caza, paseo);
+  hudBotones(yo, cam, caza, paseo);
+  if (cam) hudCamaleon(yo, caza); else hudCazador(yo);
   const p = caza || J.fase === 'prep' ? pistaDeAhora() : '';
   if (HUD.pista !== p) { HUD.pista = p; E('pista').hidden = !p; E('pista').textContent = p; }
 }

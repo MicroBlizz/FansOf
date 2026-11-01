@@ -118,7 +118,8 @@ function chivatazo() {
   }
 }
 
-function avanzaPartida(dt) {
+// el mundo: el reloj, las ayudas, los entes y la oscuridad (igual en todas las fases)
+function avanzaMundo(dt) {
   J.t += dt; J.tFase += dt;
   for (const k of J.camaleones) k.enVista = false;
   senueloPaso(dt);
@@ -135,39 +136,53 @@ function avanzaPartida(dt) {
   miraLosOjos();
   PUERTA.abierta = limita(PUERTA.abierta + (PUERTA.cerrada ? -dt : dt) * 1.5, 0, 1);
   J.oscuro += ((J.fase === 'caza' || (J.fase === 'fin' && J.tFase < 1.2)) && !extraOn('dia') ? 1 - J.oscuro : -J.oscuro) * Math.min(1, dt * 2.2);      // Jugar de día: las luces no se apagan
-  const yo = J.yo, manda = !J.pvp || rfpSoyAnfitrion();   // en el PvP, las fases las cambia el anfitrión (y avisa a los demás)
-
-  if (J.fase === 'prep') {
-    J.reloj -= dt;
-    practicaAvanza(dt);
-    if (manda && (J.reloj <= 0 || (J.pvp && rfpTodosListos()))) cambiaFase('cuenta');
-  } else if (J.fase === 'cuenta') {
-    J.reloj -= dt;
-    const d = Math.ceil(J.reloj - 0.4);
-    if (d !== J.digito && d >= 1 && d <= 3) { J.digito = d; cartel(String(d), J.modo === 'camaleon' ? tr('Los becarios salen de Recursos Humanos') : tr('Los colados ya están escondidos'), true); play('cuenta', d); }
-    if (manda && J.reloj <= 0) cambiaFase('caza');
-  } else if (J.fase === 'caza') {
-    J.reloj -= dt;
-    avanzaSilbidos(dt);
-    if (J.reloj <= REGLAS.rectaFinal && !J.recta) { J.recta = true; M.tmT = 1; musica(temaDe('recta')); cartel(tr('¡RECTA FINAL!'), J.modo === 'camaleon' ? tr('Los becarios reciben un chivatazo') : tr('Los colados silban más a menudo'), true); play('recta'); J.pings = 0; }
-    if (J.recta) { J.pings -= dt; if (J.pings <= 0) { J.pings = J.modo === 'cazador' ? 6 : 10; chivatazo(); } }
-    if (yo.clase === 'camaleon') {
-      // el peligro: la mayor sospecha que algún becario tiene de ti, y lo cerca que anda el más próximo
-      let p = 0; for (const h of J.cazadores) if (!h.fuera && h.balas > 0) p = Math.max(p, 0.45 * limita(1 - lejos(h.x, h.y, yo.x, yo.y) / 230, 0, 1), h.bot ? Math.max(h.bot.sosp.get(yo) || 0, h.bot.objetivo === yo ? 0.7 : 0) : 0);
-      const antes = J.peligro; J.peligro += (limita(p, 0, 1) - J.peligro) * Math.min(1, dt * 6);
-      if (J.peligro >= 0.8 && antes < 0.8 && !yo.fuera) play('visto');      // un becario casi te tiene: el susto
-    }
-    // ¿se acaba? (en el PvP lo decide el anfitrión: rfpComprueba, y los demás lo reciben)
-    if (J.pvp) { if (manda) rfpComprueba(); else rfpSinAnfitrion(); }
-    else if (modoEs('ida')) { if (idaAcaba()) termina(true, 'ida'); }
-    else {
-      const fin = RF.Fin.caza({ modo: J.modo, yoFuera: yo.fuera, escondidos: escondidos().length, cazadoresVivos: cazadoresVivos().length, boteLleno: boteLleno(), reloj: J.reloj });
-      if (fin) termina(fin.victoria, fin.motivo);
-    }
-  } else if (J.fase === 'fin') {
-    J.peligro *= 0.9; galeriaAvanza(dt);
-    if (J.tFase > 2.6 && !J.finMostrado) { J.finMostrado = true; muestraFin(); }
+}
+function avanzaPrep(dt, manda) {
+  J.reloj -= dt;
+  practicaAvanza(dt);
+  if (manda && (J.reloj <= 0 || (J.pvp && rfpTodosListos()))) cambiaFase('cuenta');
+}
+function avanzaCuenta(dt, manda) {
+  J.reloj -= dt;
+  const d = Math.ceil(J.reloj - 0.4);
+  if (d !== J.digito && d >= 1 && d <= 3) { J.digito = d; cartel(String(d), J.modo === 'camaleon' ? tr('Los becarios salen de Recursos Humanos') : tr('Los colados ya están escondidos'), true); play('cuenta', d); }
+  if (manda && J.reloj <= 0) cambiaFase('caza');
+}
+// el peligro: la mayor sospecha que algún becario tiene de ti, y lo cerca que anda el más próximo
+function avanzaPeligro(dt, yo) {
+  // el peligro: la mayor sospecha que algún becario tiene de ti, y lo cerca que anda el más próximo
+  let p = 0; for (const h of J.cazadores) if (!h.fuera && h.balas > 0) p = Math.max(p, 0.45 * limita(1 - lejos(h.x, h.y, yo.x, yo.y) / 230, 0, 1), h.bot ? Math.max(h.bot.sosp.get(yo) || 0, h.bot.objetivo === yo ? 0.7 : 0) : 0);
+  const antes = J.peligro; J.peligro += (limita(p, 0, 1) - J.peligro) * Math.min(1, dt * 6);
+  if (J.peligro >= 0.8 && antes < 0.8 && !yo.fuera) play('visto');      // un becario casi te tiene: el susto
+}
+// ¿se acaba? (en el PvP lo decide el anfitrión: rfpComprueba, y los demás lo reciben)
+function avanzaCierre(yo, manda) {
+  if (J.pvp) { if (manda) rfpComprueba(); else rfpSinAnfitrion(); }
+  else if (modoEs('ida')) { if (idaAcaba()) termina(true, 'ida'); }
+  else {
+    const fin = RF.Fin.caza({ modo: J.modo, yoFuera: yo.fuera, escondidos: escondidos().length, cazadoresVivos: cazadoresVivos().length, boteLleno: boteLleno(), reloj: J.reloj });
+    if (fin) termina(fin.victoria, fin.motivo);
   }
+}
+function avanzaCaza(dt, yo, manda) {
+  J.reloj -= dt;
+  avanzaSilbidos(dt);
+  if (J.reloj <= REGLAS.rectaFinal && !J.recta) { J.recta = true; M.tmT = 1; musica(temaDe('recta')); cartel(tr('¡RECTA FINAL!'), J.modo === 'camaleon' ? tr('Los becarios reciben un chivatazo') : tr('Los colados silban más a menudo'), true); play('recta'); J.pings = 0; }
+  if (J.recta) { J.pings -= dt; if (J.pings <= 0) { J.pings = J.modo === 'cazador' ? 6 : 10; chivatazo(); } }
+  if (yo.clase === 'camaleon') avanzaPeligro(dt, yo);
+  avanzaCierre(yo, manda);
+}
+function avanzaFin(dt) {
+  J.peligro *= 0.9; galeriaAvanza(dt);
+  if (J.tFase > 2.6 && !J.finMostrado) { J.finMostrado = true; muestraFin(); }
+}
+function avanzaPartida(dt) {
+  avanzaMundo(dt);
+  const yo = J.yo, manda = !J.pvp || rfpSoyAnfitrion();   // en el PvP, las fases las cambia el anfitrión (y avisa a los demás)
+  if (J.fase === 'prep') avanzaPrep(dt, manda);
+  else if (J.fase === 'cuenta') avanzaCuenta(dt, manda);
+  else if (J.fase === 'caza') avanzaCaza(dt, yo, manda);
+  else if (J.fase === 'fin') avanzaFin(dt);
 }
 // los ojos de cada alubia miran al cazador más cercano; si lo tienen encima, cara de susto
 function miraLosOjos() {

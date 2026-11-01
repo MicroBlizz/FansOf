@@ -1,8 +1,8 @@
 {
- "build": 785,
- "hash": "02b96aa",
- "fecha": "2026-11-01T19:11:21Z",
- "mensaje": "Rouflage: refrescaHud, dibuja, pintaMarcas y avanza del Roaster (las 4 peores, 67-70) partidos en piezas; comparador igual y smoke-test verde (paso 2, dibujo y HUD)",
+ "build": 786,
+ "hash": "7d46145",
+ "fecha": "2026-11-01T19:27:30Z",
+ "mensaje": "Rouflage: avanzaPartida (complejidad 54) partida por fases; tests, comparador y smoke-test iguales (paso 2)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

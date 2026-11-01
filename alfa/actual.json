@@ -1,8 +1,8 @@
 {
- "build": 793,
- "hash": "b240b41",
- "fecha": "2026-11-01T23:07:00Z",
- "mensaje": "Nova: enemigos y cartas en capas (NV.Enemigo, NV.Cartas); nvEnemigos y nvCandidatas partidos",
+ "build": 794,
+ "hash": "b625a79",
+ "fecha": "2026-11-01T23:09:08Z",
+ "mensaje": "Nova: drones y jefe en capas (NV.Dron, NV.Jefe); el dron y nvJefe partidos",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

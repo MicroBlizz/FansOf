@@ -118,50 +118,61 @@ function nvDispara(S, w, p, obj) {
 }
 // Los drones salen del hueco del arma, trabajan (cazan o reparan) y gastan batería: en órbita duran NV_DRON_ORBITA s, trabajando NV_DRON_TRABAJO s;
 // sin batería se guardan en el hueco y tardan NV_DRON_RECARGA s en volver a salir.
-const NV_DRON_ORBITA = 30, NV_DRON_TRABAJO = 8, NV_DRON_RECARGA = 3;
+// Drones: cada uno caza, vuelve a orbitar o se guarda a recargar. La batería y la recarga son reglas de dominio/dron.js (NV.Dron).
 function nvDrones(S, w, p, dt) {
-  const n = S.nave, v = nvVar(w), cant = p.proyectiles + (w.fusion ? 1 : 0) + v.n, R = 85 * n.escala, kf = nvFactor(n.rango), alc = p.alcance * kf * NV_RANGO_TAM[w.tam], vel = 340 * Math.pow(kf, 0.9);
+  const n = S.nave, v = nvVar(w), cant = p.proyectiles + (w.fusion ? 1 : 0) + v.n, kf = nvFactor(n.rango);
   w.fase += dt * 2.6;
   if (!w.drones) w.drones = [];
   while (w.drones.length < cant) w.drones.push({ x: w.x, y: w.y, cd: 0, bat: 1, dock: false });
   w.drones.length = cant;
-  const dano = nvDanoArma(w), cad = 1 / (p.cadencia * v.cad), elegidos = new Set(), herido = n.hp < n.hpMax;
-  w.drones.forEach((d, i) => {
-    d.cd -= dt;
-    if (d.dock) {   // guardado en el hueco, recargando
-      d.x = w.x; d.y = w.y; d.bat += dt / NV_DRON_RECARGA;
-      if (d.bat >= 1) { d.bat = 1; d.dock = false; }
-      return;
-    }
-    let obj = null, mejor = Infinity;
-    if (!v.repara) for (const e of S.enem) {   // cada dron caza al enemigo visible más cercano dentro del alcance (repartidos si hay varios)
-      if (e.muerto || e.d.pasivo === 2 || !nvEnPantalla(S, e.x, e.y, -e.r * 0.5)) continue;
-      if (Math.hypot(e.x - n.x, e.y - n.y) > alc + e.r) continue;
-      const dd = Math.hypot(e.x - d.x, e.y - d.y) + (e.d.pasivo ? 1e5 : 0) + (elegidos.has(e) ? 300 : 0);
-      if (dd < mejor) { mejor = dd; obj = e; }
-    }
-    if (obj) elegidos.add(obj);
-    const trabaja = v.repara ? herido : !!obj;
-    d.bat -= dt / (trabaja ? NV_DRON_TRABAJO : NV_DRON_ORBITA);
-    if (d.bat <= 0) { d.bat = 0; d.dock = true; return; }
-    const a = w.fase + i * 6.283 / cant, gx = obj ? obj.x : n.x + Math.cos(a) * R, gy = obj ? obj.y : n.y + Math.sin(a) * R;
-    const dx = gx - d.x, dy = gy - d.y, dist = Math.hypot(dx, dy) || 1, paso = Math.min(dist, (obj ? vel : vel * 1.6) * dt);
-    d.x += dx / dist * paso; d.y += dy / dist * paso;
-    if (w.carga === 'cinetica') nvChocaMisil(S, d, 14);   // los drones cinéticos derriban misiles
-    if (w.carga === 'em' && obj && !(obj.esc > 0 && !(obj.est.escudoCaido > 0)) && Math.hypot(obj.x - d.x, obj.y - d.y) < obj.r + 16) obj.est.interferido = Math.max(obj.est.interferido || 0, NOVA_ARMAS.combos.dronParasito.duracion);   // Dron parásito
-    if (v.repara) {   // el dron reparador cura cada pocos segundos mientras la nave está herida
-      if (herido && d.cd <= 0) { d.cd = 4; n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.015); S.nums.push({ x: d.x, y: d.y - 12, t: 0.7, txt: '+', color: '#6fe08a', g: 0 }); }
-      return;
-    }
-    if (d.cd > 0) return;
-    for (const e of S.enem) if (!e.muerto && Math.hypot(e.x - d.x, e.y - d.y) < e.r + 14) {
-      d.cd = cad;
-      nvGolpe(S, e, dano, w, d.x, d.y, 1);
-      nvRasgoImpacto(S, w, dano, e, d.x, d.y);
-      if (w.fusion && w.fusion.id === 'dronesKamikaze') nvExplosion(S, d.x, d.y, 45, dano * 0.8, w, e);
-      return;   // un golpe por dron y turno
-    }
-  });
+  const ctx = { v, cant, R: 85 * n.escala, alc: p.alcance * kf * NV_RANGO_TAM[w.tam], vel: 340 * Math.pow(kf, 0.9), dano: nvDanoArma(w), cad: 1 / (p.cadencia * v.cad), elegidos: new Set(), herido: n.hp < n.hpMax };
+  w.drones.forEach((d, i) => nvDronPaso(S, w, d, i, dt, ctx));
+}
+function nvDronPaso(S, w, d, i, dt, ctx) {
+  d.cd -= dt;
+  if (d.dock) { d.x = w.x; d.y = w.y; NV.Dron.recarga(d, dt); return; }   // guardado en el hueco, recargando
+  const obj = ctx.v.repara ? null : nvDronObjetivo(S, d, ctx);
+  if (obj) ctx.elegidos.add(obj);
+  if (!NV.Dron.gasta(d, dt, ctx.v.repara ? ctx.herido : !!obj)) return;   // sin batería: a recargar
+  nvDronVuela(S, w, d, i, dt, obj, ctx);
+  if (ctx.v.repara) return nvDronRepara(S, d, ctx.herido);
+  if (d.cd <= 0) nvDronGolpea(S, w, d, ctx);
+}
+// Cada dron caza al enemigo visible más cercano dentro del alcance (repartidos si hay varios; las rocas, lo último)
+function nvDronObjetivo(S, d, ctx) {
+  const n = S.nave;
+  let obj = null, mejor = Infinity;
+  for (const e of S.enem) {
+    if (e.muerto || e.d.pasivo === 2 || !nvEnPantalla(S, e.x, e.y, -e.r * 0.5)) continue;
+    if (Math.hypot(e.x - n.x, e.y - n.y) > ctx.alc + e.r) continue;
+    const dd = Math.hypot(e.x - d.x, e.y - d.y) + (e.d.pasivo ? 1e5 : 0) + (ctx.elegidos.has(e) ? 300 : 0);
+    if (dd < mejor) { mejor = dd; obj = e; }
+  }
+  return obj;
+}
+// Vuela hacia su presa o a su sitio en la órbita; los cinéticos derriban misiles y los EM interfieren al tocar (Dron parásito)
+function nvDronVuela(S, w, d, i, dt, obj, ctx) {
+  const n = S.nave, a = w.fase + i * 6.283 / ctx.cant, gx = obj ? obj.x : n.x + Math.cos(a) * ctx.R, gy = obj ? obj.y : n.y + Math.sin(a) * ctx.R;
+  const dx = gx - d.x, dy = gy - d.y, dist = Math.hypot(dx, dy) || 1, paso = Math.min(dist, (obj ? ctx.vel : ctx.vel * 1.6) * dt);
+  d.x += dx / dist * paso; d.y += dy / dist * paso;
+  if (w.carga === 'cinetica') nvChocaMisil(S, d, 14);
+  if (w.carga === 'em' && obj && !NV.Golpe.escudoEnPie(obj) && Math.hypot(obj.x - d.x, obj.y - d.y) < obj.r + 16) obj.est.interferido = Math.max(obj.est.interferido || 0, NOVA_ARMAS.combos.dronParasito.duracion);
+}
+// El dron reparador cura cada pocos segundos mientras la nave está herida
+function nvDronRepara(S, d, herido) {
+  if (!herido || d.cd > 0) return;
+  const n = S.nave;
+  d.cd = 4; n.hp = Math.min(n.hpMax, n.hp + n.hpMax * 0.015);
+  S.nums.push({ x: d.x, y: d.y - 12, t: 0.7, txt: '+', color: '#6fe08a', g: 0 });
+}
+// Un golpe por dron y turno, al primero que toque
+function nvDronGolpea(S, w, d, ctx) {
+  const e = S.enem.find(e => !e.muerto && Math.hypot(e.x - d.x, e.y - d.y) < e.r + 14);
+  if (!e) return;
+  d.cd = ctx.cad;
+  nvGolpe(S, e, ctx.dano, w, d.x, d.y, 1);
+  nvRasgoImpacto(S, w, ctx.dano, e, d.x, d.y);
+  if (w.fusion && w.fusion.id === 'dronesKamikaze') nvExplosion(S, d.x, d.y, 45, ctx.dano * 0.8, w, e);
 }
 
 // ---------- proyectiles ----------

@@ -94,36 +94,40 @@ function logroSuma(c, n) {
   const ahora = logroValor({ c });
   for (const x of LOGROS) if (x.c === c && antes < x.n && ahora >= x.n) avisa(x.secreto ? tr('¡Logro secreto descubierto: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }) : tr('¡Logro conseguido: {t}! (+{n} Gotas)', { t: tr(x.t), n: x.g }), 'bueno');
 }
+// cada tipo de suceso: lo que cuenta. Devuelve false si no hay nada que guardar (no era tuyo, o no cuenta)
+const MISION_EVENTOS = {
+  despide(a, b, yo) {      // a: el despedido, b: quien despide
+    if (a && a === yo && (+a.camo || 0) >= 100) logroSuma('sMalaSuerte', 1);
+    if (!b || !b.jugador) return false;
+    misionSuma('despide1', 1); misionSuma('despide3', 1); semanaSuma('wdespide', 1); logroSuma('despidos', 1);
+    if (J.fase === 'caza' && J.reloj <= 30) misionSuma('ultimos30', 1);
+  },
+  silba(a, b) { if (!a || !a.jugador || b) return false; misionSuma('silbar3', 1); logroSuma('silbidos', 1); },      // b: forzado (no cuenta)
+  granada(a) { if (!a || !a.jugador) return false; misionSuma('granada', 1); logroSuma('granadas', 1); },
+  poder(a, b, yo) {
+    misionSuma('poder', 1); semanaSuma('wpoder', 1); logroSuma('poderes', 1);
+    if (J.fase === 'caza' && J.reloj <= 10 && yo) yo.venganza = true;      // «Fantasma pesado»: se mira al acabar si ganó tu bando
+  },
+  comparte() { misionSuma('compartir', 1); logroSuma('compartidas', 1); },
+  congela(a) {      // a: quien se congela (solo tú)
+    if (!a || !a.jugador) return false;
+    const p = a.postura || 'firmes', s = misionEstado();
+    if (!s.posturas.includes(p)) { s.posturas.push(p); misionPon('posturas2', s.posturas.length); }
+    logroSuma('posturas', p);
+  },
+  habilidad(a) { if (!a || !a.jugador) return false; misionSuma('talento', 1); },
+  pegatina() { semanaSuma('wpegatinas', 1); logroSuma('pegatinas', 1); },
+  diario() { misionPon('diario', 1); },
+  ayuda() { logroSuma('sAyuda', 1); },
+  coche() { logroSuma('sCoche', 1); },
+  caza(a, b, yo) { if (yo) { yo.semovio = !yo.congelado; yo.venganza = false; } return false; },      // empieza la caza: desde aquí cuenta «Estatua de sal»
+  fin(a, b, yo) { misionFin(a || {}, yo); },
+};
 function misionEvento(tipo, a, b) {
   if (J.fase === 'sala') return;      // en la sala viva con amigos (sala-viva.js) no cuenta nada: ahí la habilidad y la granada no se gastan
   try {
-    const yo = J.yo;
-    if (tipo === 'despide') {      // a: el despedido, b: quien despide
-      if (a && a === yo && (+a.camo || 0) >= 100) logroSuma('sMalaSuerte', 1);
-      if (!b || !b.jugador) return;
-      misionSuma('despide1', 1); misionSuma('despide3', 1); semanaSuma('wdespide', 1); logroSuma('despidos', 1);
-      if (J.fase === 'caza' && J.reloj <= 30) misionSuma('ultimos30', 1);
-    } else if (tipo === 'silba') { if (!a || !a.jugador || b) return; misionSuma('silbar3', 1); logroSuma('silbidos', 1); }      // b: forzado (no cuenta)
-    else if (tipo === 'granada') { if (!a || !a.jugador) return; misionSuma('granada', 1); logroSuma('granadas', 1); }
-    else if (tipo === 'poder') {
-      misionSuma('poder', 1); semanaSuma('wpoder', 1); logroSuma('poderes', 1);
-      if (J.fase === 'caza' && J.reloj <= 10 && yo) yo.venganza = true;      // «Fantasma pesado»: se mira al acabar si ganó tu bando
-    }
-    else if (tipo === 'comparte') { misionSuma('compartir', 1); logroSuma('compartidas', 1); }
-    else if (tipo === 'congela') {      // a: quien se congela (solo tú)
-      if (!a || !a.jugador) return;
-      const p = a.postura || 'firmes', s = misionEstado();
-      if (!s.posturas.includes(p)) { s.posturas.push(p); misionPon('posturas2', s.posturas.length); }
-      logroSuma('posturas', p);
-    }
-    else if (tipo === 'habilidad') { if (!a || !a.jugador) return; misionSuma('talento', 1); }
-    else if (tipo === 'pegatina') { semanaSuma('wpegatinas', 1); logroSuma('pegatinas', 1); }
-    else if (tipo === 'diario') misionPon('diario', 1);
-    else if (tipo === 'ayuda') logroSuma('sAyuda', 1);
-    else if (tipo === 'coche') logroSuma('sCoche', 1);
-    else if (tipo === 'caza') { if (yo) { yo.semovio = !yo.congelado; yo.venganza = false; } return; }      // empieza la caza: desde aquí cuenta «Estatua de sal»
-    else if (tipo === 'fin') misionFin(a || {}, yo);
-    else return;
+    if (!Object.hasOwn(MISION_EVENTOS, tipo)) return;
+    if (MISION_EVENTOS[tipo](a, b, J.yo) === false) return;
     guardaPartida(); misionBoton();
   } catch (e) { console.warn('[misiones]', e); }      // las misiones nunca rompen una partida
 }

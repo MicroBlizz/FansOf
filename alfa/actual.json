@@ -1,8 +1,8 @@
 {
- "build": 788,
- "hash": "81bccee",
- "fecha": "2026-11-01T20:12:38Z",
- "mensaje": "Rouflage: habEfecto (complejidad 45) pasa a una tabla de habilidades y 12 tests de caracterizacion (+10 de misionEvento para el siguiente paso)",
+ "build": 789,
+ "hash": "e2fbbc1",
+ "fecha": "2026-11-01T20:20:20Z",
+ "mensaje": "Rouflage: misionEvento (complejidad 40) pasa a una tabla de sucesos; 10 tests antes, comparador y smoke-test iguales",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

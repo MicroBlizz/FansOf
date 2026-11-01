@@ -1,8 +1,8 @@
 {
- "build": 762,
- "hash": "954fb57",
- "fecha": "2026-11-01T10:03:01Z",
- "mensaje": "Galaxia de la comunidad (fase 1, tras el flag nova-galaxia-comun): sistema común de frente en core y Nova 0.3.32 lo alimenta con la campaña",
+ "build": 763,
+ "hash": "e415e11",
+ "fecha": "2026-11-01T14:11:08Z",
+ "mensaje": "Rouflage: primer dominio puro (RF.Puntos) con las cifras en AJUSTES.puntos; marcadorDe solo lo reune (paso 2 del refactor)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

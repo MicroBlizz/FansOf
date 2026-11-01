@@ -187,11 +187,11 @@ function miraLosOjos() {
 //   colado: camuflaje × 3 + segundos delante de sus narices × 12 + silbidos por gusto × 25 + segundos aguantados × 2 + 300 si no le pillan
 //   becario: despidos × 150 − despidos improcedentes × 30 + (si no queda nadie) segundos de sobra × 4 y cartas que le quedan × 40
 function marcadorDe(e) {
-  if (J.pvp && e.puntosRed != null) return e.puntosRed + (e.galeria || 0) + (e.bonus || 0);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
-  const k = e.pts;
-  if (e.clase === 'camaleon') return Math.round(e.camo * 3 + k.narices * (extraOn('halcon') ? HALCON.peso : HALCON.pesoNormal) + k.silbidos * 25 + k.aguante * 2 + (e.fuera ? 0 : 300)) + (e.galeria || 0) + (e.bonus || 0);
-  const colado = e.cuerpo ? marcadorDe(e.cuerpo) : e.contagiado ? e.camo * 3 + k.narices * 12 + k.silbidos * 25 + k.aguante * 2 : 0;      // Contagio: lo ganado de colado se queda
-  return Math.max(0, Math.round(colado + k.aciertos * 150 - k.fallos * 30 + (escondidos().length ? 0 : Math.max(0, J.reloj) * 4 + Math.max(0, e.balas) * 40))) + (e.bonus || 0);
+  if (J.pvp && e.puntosRed != null) return RF.Puntos.deRed(e);      // PvP: los puntos los cuenta el anfitrión (y la galería suma aparte)
+  const peso = extraOn('halcon') ? HALCON.peso : HALCON.pesoNormal;
+  if (e.clase === 'camaleon') return RF.Puntos.colado(e, peso);
+  const colado = e.cuerpo ? marcadorDe(e.cuerpo) : e.contagiado ? RF.Puntos.coladoContagiado(e, 12) : 0;      // Contagio: lo ganado de colado se queda
+  return RF.Puntos.becario(e, colado, escondidos().length, J.reloj);
 }
 function clasificacion() {
   return J.entes.filter(e => !e.dueno).map(e => ({

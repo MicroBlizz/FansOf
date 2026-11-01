@@ -16,6 +16,8 @@ function arPruebasVisibles() {
 }
 const AJUSTES = { id: 'rouflage', guardado: ALFA_RF ? 'rouflage-partida-alfa' : 'rouflage-partida', nube: ALFA_RF ? 'rouflage-alfa' : 'rouflage' };
 if (ALFA_RF) try { if (localStorage.getItem(AJUSTES.guardado) === null && localStorage.getItem('rouflage-partida') !== null) localStorage.setItem(AJUSTES.guardado, localStorage.getItem('rouflage-partida')); } catch (_) { /* sin guardar */ }
+// Los puntos de cada uno al acabar la partida (js/dominio/puntos.js; la fórmula completa está en el comentario de marcadorDe, partida.js)
+AJUSTES.puntos = { camo: 3, silbido: 25, aguante: 2, sinPillar: 300, despido: 150, fallo: 30, segundoSobra: 4, carta: 40 };
 // Las dos monedas de la serie (PLAN-MONEDAS.md, core/js/sistema/monedas.js) con los nombres de aquí: Gotas = la ganada (solo jugando), Acciones = la comprada
 // (con euros o cambiando Gotas, 5 por Acción, nunca al revés). La tienda y el armario son propios (tienda.js, armario-precios.js): esto solo da nombres, ratio y saldos a core.
 AJUSTES.monedas = {

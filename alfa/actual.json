@@ -1,8 +1,8 @@
 {
- "build": 764,
- "hash": "2585e11",
- "fecha": "2026-11-01T14:20:36Z",
- "mensaje": "Rouflage: dominio RF.Fin (cuando se acaba la caza) y RF.Aguante (el aguante del colado) con sus tests (paso 2)",
+ "build": 765,
+ "hash": "65b9529",
+ "fecha": "2026-11-01T14:29:40Z",
+ "mensaje": "Rouflage: dominio RF.Silbidos (el silbido obligatorio y el de los bots) con el azar inyectado y sus tests (paso 2)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

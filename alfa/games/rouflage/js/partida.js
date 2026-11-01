@@ -99,11 +99,12 @@ function avanzaSilbidos(dt) {
     e.pts.aguante += dt;
     if (e.congelado && e.enVista) e.pts.narices += dt * modoNarices(e);   // delante de sus narices: en la luz de un becario sin que te vea
     if (e.remoto) continue;      // PvP: el silbido de cada uno lo cuenta su dueño (o el anfitrión, si es de la máquina) y avisa a los demás
-    e.silbido -= dt;
-    if ((e.jugador || e.mio) && e.silbido <= 5 && !e.avisado) { e.avisado = true; avisa(tr('Silbido obligatorio en 5 segundos'), 'aviso'); play('tick'); }
-    if (e.silbido <= 0) silba(e, true);
-    else if (e.bot && e.congelado && e.bot.mana >= 0.5 && e.silbido > 1 && e.silbido < 9 && Math.random() < dt * 0.5
-      && J.cazadores.every(h => h.fuera || lejos(h.x, h.y, e.x, e.y) > 380)) silba(e, false);
+    const sinBecarios = () => J.cazadores.every(h => h.fuera || lejos(h.x, h.y, e.x, e.y) > 380);
+    const r = RF.Silbidos.paso({ silbido: e.silbido, avisado: e.avisado, esMio: !!(e.jugador || e.mio), congelado: e.congelado, bot: e.bot }, dt, Math.random, sinBecarios);
+    e.silbido = r.silbido; e.avisado = r.avisado;
+    if (r.avisa) { avisa(tr('Silbido obligatorio en 5 segundos'), 'aviso'); play('tick'); }
+    if (r.forzado) silba(e, true);
+    else if (r.gusto) silba(e, false);
   }
 }
 // en la recta final los cazadores reciben pistas: un chivatazo a los bots, o una onda en pantalla si el cazador eres tú

@@ -15,7 +15,8 @@ const PALETA = {
 
 const IMG = {};
 const IMG_LISTA = ['chef_abajo', 'chef_arriba', 'chef_lado', 'tomate', 'cebollon', 'gelatina', 'ing_tomate', 'ing_cebolla', 'ing_gelatina',
-  'ico_cuchillo', 'ico_sarten', 'ico_corazon', 'cofre', 'antorcha', 'reja', 'suelo_piedra', 'suelo_muro'];
+  'ico_cuchillo', 'ico_sarten', 'ico_corazon', 'cofre', 'antorcha', 'reja', 'suelo_piedra', 'suelo_var', 'muro_cara', 'muro_tapa',
+  'columna', 'barril', 'huesos', 'charco', 'escombros', 'verja'];
 function cargaImagenes() {
   return Promise.all(IMG_LISTA.map(n => new Promise(res => {
     const im = new Image();
@@ -66,6 +67,24 @@ const DIBUJO = {
     caja(ctx, x - 7, sy + 2, 14, 10, PALETA.W); caja(ctx, x - 5, sy + 12, 10, 8, '#f3c9a0'); caja(ctx, x - 5, sy + 12, 10, 2, PALETA.b);
     caja(ctx, x - 6, sy + 20, 12, 3, PALETA.R); caja(ctx, x - 7, sy + 23, 14, 10, PALETA.W); caja(ctx, x - 6, sy + 33, 5, 6, PALETA.N); caja(ctx, x + 1, sy + 33, 5, 6, PALETA.N);
     caja(ctx, x - 13, sy + 8, 3, 12, PALETA.t); caja(ctx, x + 9, sy + 14, 7, 7, PALETA.N);
+  },
+  columna(ctx, x, y) {   // 20 × 52: base, fuste y capitel de piedra
+    caja(ctx, x - 10, y - 8, 20, 8, PALETA.K); caja(ctx, x - 9, y - 7, 18, 6, PALETA.S); caja(ctx, x - 9, y - 7, 18, 1, PALETA.t);
+    caja(ctx, x - 7, y - 46, 14, 38, PALETA.K); caja(ctx, x - 6, y - 45, 12, 37, PALETA.S); caja(ctx, x - 6, y - 45, 3, 37, PALETA.t); caja(ctx, x + 3, y - 45, 3, 37, PALETA.s);
+    caja(ctx, x - 10, y - 52, 20, 7, PALETA.K); caja(ctx, x - 9, y - 51, 18, 5, PALETA.S); caja(ctx, x - 9, y - 51, 18, 1, PALETA.t);
+    for (let i = 0; i < 3; i++) caja(ctx, x - 4 + i * 4, y - 30 + i * 5, 1, 3, PALETA.s);
+  },
+  barril(ctx, x, y) {   // 18 × 22
+    caja(ctx, x - 9, y - 21, 18, 21, PALETA.K); caja(ctx, x - 8, y - 20, 16, 19, PALETA.B); caja(ctx, x - 8, y - 20, 4, 19, PALETA.T); caja(ctx, x + 4, y - 20, 4, 19, PALETA.b);
+    caja(ctx, x - 8, y - 17, 16, 2, PALETA.n); caja(ctx, x - 8, y - 6, 16, 2, PALETA.n); caja(ctx, x - 7, y - 21, 14, 1, PALETA.K);
+  },
+  huesos(ctx, x, y) { caja(ctx, x - 8, y - 6, 10, 2, PALETA.w); caja(ctx, x - 9, y - 7, 2, 4, PALETA.w); caja(ctx, x, y - 7, 2, 4, PALETA.w); circulo(ctx, x + 5, y - 6, 4, PALETA.K); circulo(ctx, x + 5, y - 6, 3, PALETA.w); caja(ctx, x + 4, y - 7, 1, 2, PALETA.K); caja(ctx, x + 6, y - 7, 1, 2, PALETA.K); caja(ctx, x - 3, y - 3, 6, 1, PALETA.x || '#c3bbd6'); },
+  charco(ctx, x, y, o) { ctx.globalAlpha = 0.55; circulo(ctx, x, y - 6, 9, '#0d1a26'); circulo(ctx, x + 2, y - 5, 6, '#163048'); ctx.globalAlpha = 0.5 + Math.sin((o.t || 0) * 2 + x) * 0.15; caja(ctx, x - 3, y - 8, 4, 1, '#ffb866'); ctx.globalAlpha = 1; },
+  escombros(ctx, x, y) { caja(ctx, x - 7, y - 4, 14, 3, PALETA.s); caja(ctx, x - 5, y - 6, 5, 3, PALETA.S); caja(ctx, x + 1, y - 7, 4, 4, PALETA.S); caja(ctx, x + 2, y - 7, 2, 1, PALETA.t); caja(ctx, x - 3, y - 6, 2, 1, PALETA.t); caja(ctx, x - 8, y - 2, 3, 1, PALETA.s); },
+  verja(ctx, x, y) {   // 22 × 28: el arco de una celda con barrotes, en la cara del muro
+    caja(ctx, x - 11, y - 28, 22, 28, PALETA.K); caja(ctx, x - 10, y - 27, 20, 26, '#120d0a');
+    for (let i = -8; i <= 8; i += 4) caja(ctx, x + i, y - 26, 2, 25, PALETA.n); caja(ctx, x - 10, y - 18, 20, 2, PALETA.n); caja(ctx, x - 10, y - 8, 20, 2, PALETA.n);
+    caja(ctx, x - 11, y - 28, 22, 1, PALETA.t);
   },
   cofre(ctx, x, y) { cajaMarco(ctx, x - 10, y - 16, 20, 16, PALETA.B); caja(ctx, x - 10, y - 10, 20, 1, PALETA.K); caja(ctx, x - 2, y - 11, 4, 4, PALETA.Y); caja(ctx, x - 8, y - 15, 16, 2, PALETA.T); },
   reja(ctx, x, y) { caja(ctx, x - 10, y - 10, 20, 20, PALETA.N); for (let i = 0; i < 4; i++) caja(ctx, x - 8, y - 8 + i * 5, 16, 2, PALETA.K); },

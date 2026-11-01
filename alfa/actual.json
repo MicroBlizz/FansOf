@@ -1,8 +1,8 @@
 {
- "build": 778,
- "hash": "5459973",
- "fecha": "2026-11-01T18:41:51Z",
- "mensaje": "Shelter: el mapa es el escenario entero pintado por Yoshi (claro del refugio, lago, bosque, acantilado con escalera y cueva), con por dónde se anda sacado del color y los objetos colocados encima",
+ "build": 779,
+ "hash": "57a1612",
+ "fecha": "2026-11-01T18:42:35Z",
+ "mensaje": "Chef: el sótano con volumen (muros con cara y tapa, losas variadas, sombras, columnas, barriles, huesos, charcos, verjas)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

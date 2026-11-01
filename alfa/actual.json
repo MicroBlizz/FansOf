@@ -1,8 +1,8 @@
 {
- "build": 787,
- "hash": "e941caa",
- "fecha": "2026-11-01T19:58:15Z",
- "mensaje": "Rouflage: termina (47) saca el texto del resultado a dos funciones y el listener de teclas (48) pasa a tablas; tests, smoke-test y comparador iguales (paso 2)",
+ "build": 788,
+ "hash": "81bccee",
+ "fecha": "2026-11-01T20:12:38Z",
+ "mensaje": "Rouflage: habEfecto (complejidad 45) pasa a una tabla de habilidades y 12 tests de caracterizacion (+10 de misionEvento para el siguiente paso)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -1,8 +1,8 @@
 {
- "build": 792,
- "hash": "6ec721f",
- "fecha": "2026-11-01T22:56:08Z",
- "mensaje": "Nova: campaña y galaxia de la comunidad en el dominio (NV.Campana, NV.Frente), reloj en NV_RELOJ; nvGolpe por debajo de 15",
+ "build": 793,
+ "hash": "b240b41",
+ "fecha": "2026-11-01T23:07:00Z",
+ "mensaje": "Nova: enemigos y cartas en capas (NV.Enemigo, NV.Cartas); nvEnemigos y nvCandidatas partidos",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

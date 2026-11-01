@@ -1,8 +1,8 @@
 {
- "build": 766,
- "hash": "da45df0",
- "fecha": "2026-11-01T14:41:14Z",
- "mensaje": "Rouflage: piensaCazador (complejidad 80) partido en una funcion por estado y la sospecha pasa al dominio RF.Sospecha (paso 2, bots)",
+ "build": 767,
+ "hash": "bbbcca2",
+ "fecha": "2026-11-01T14:50:31Z",
+ "mensaje": "Rouflage: rfpRecibe (complejidad 68) pasa a una tabla de receptores por tipo de mensaje (paso 3, PvP)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

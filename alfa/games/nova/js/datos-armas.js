@@ -32,7 +32,7 @@ const NOVA_ARMAS = {
   { "id": "impactoLimpio", "nombre": "Impacto limpio", "a": "escudoCaido", "b": "cinetica", "cargaA": "energia", "cargaB": "cinetica", "mult": 2.0, "efecto": "Crítico garantizado (crítico = ×2)" },
   { "id": "detonacion", "nombre": "Detonación", "a": "sobrecalentado", "b": "explosiva", "cargaA": "termica", "cargaB": "explosiva", "mult": 1.8, "efecto": "La explosión del enemigo se propaga a los vecinos" },
   { "id": "aQuemarropa", "nombre": "A quemarropa", "a": "interferido", "b": "cualquiera", "cargaA": "em", "cargaB": "cinetica", "mult": 2.0, "efecto": "+100 % mientras esté Interferido" },
-  { "id": "dobleMarca", "nombre": "Doble marca", "a": "marcado", "b": "marcado", "cargaA": "explosiva", "cargaB": "explosiva", "mult": 2.2, "efecto": "El crítico también aplica Brecha" },
+  { "id": "dobleMarca", "nombre": "Doble marca", "a": "marcado", "b": "explosiva", "cargaA": "explosiva", "cargaB": "explosiva", "mult": 2.2, "efecto": "El crítico también aplica Brecha" },
   { "id": "cortocircuito", "nombre": "Cortocircuito", "a": "brecha", "b": "em", "cargaA": "cinetica", "cargaB": "em", "mult": 1.0, "duracionX": 2, "efecto": "Interferido dura el doble (alarga A quemarropa)" }
  ],
  "combos": {

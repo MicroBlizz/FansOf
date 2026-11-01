@@ -1,8 +1,8 @@
 {
- "build": 801,
- "hash": "f652b0e",
- "fecha": "2026-11-01T23:44:06Z",
- "mensaje": "Pets: CrazyBunny entera en el juego (37 sobre las plantillas) con la cara viva",
+ "build": 802,
+ "hash": "bb86af1",
+ "fecha": "2026-11-01T23:47:24Z",
+ "mensaje": "Nova: «Doble marca» ya salta (su dato decía b: 'marcado'); cambia el balance de las explosivas",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

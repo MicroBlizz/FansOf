@@ -9,6 +9,16 @@ const AJUSTES = {
   nombre: 'Fans Of Pets',
   guardado: 'for-pets-v1',      // la clave de la partida en este navegador
   sinFeedback: true,            // la pestaña de feedback de core necesita cuenta: en el prototipo no sale
+  // las dos monedas de la serie (core/js/sistema/monedas.js, docs/core/MONEDAS.md) con los nombres de Pets: Tickets restaurante = la ganada
+  // (logros, la nómina del día), Bonus = la comprada (euros, o cambiando Tickets; nunca al revés). Los saldos viven en la cartera del
+  // dominio (PT.Cartera) y core los lee y escribe por los casos de uso. El ratio se calibra con lo que da un día (docs/pets/diseno.md)
+  monedas: {
+    ganada: { id: 'tickets', nombre: 'Tickets restaurante', nombre_en: 'Meal tickets', icono: () => '' },
+    comprada: { id: 'bonus', nombre: 'Bonus', nombre_en: 'Bonus', icono: () => '' },
+    ratio: 25, cambio: 25,
+    leer: cual => (typeof PT !== 'undefined' && PT.casos ? PT.casos.cartera.saldo(cual) : 0),
+    escribir: (cual, n) => { if (typeof PT !== 'undefined' && PT.casos) PT.casos.fijaSaldo(cual, n); },
+  },
 };
 const PETS = {
   // los mata-sanadores de cada facción (docs/pets/evoluciones.md, tabla «Criaturas por facción»): la clave de su carta en core/js/serie/facciones/
@@ -79,6 +89,10 @@ const PETS = {
   ascenso: { diasBuenos: 0.7, gamberroHasta: 0.85, siestasDesde: 0.7, ramas: ['operaciones', 'creativo', 'personas', 'gamberro', 'siesta'] },
   // la dimisión (docs/pets/diseno.md): días seguidos al mínimo hasta la carta, días de preaviso y contraofertas por etapa
   dimision: { diasSeguidos: 3, preavisoDias: 2, contraofertas: 2, repone: 40 },
+  // la nómina del día (docs/pets/diseno.md, «La nómina del día»), en Tickets restaurante: de un día al mínimo a uno perfecto. Se calibra en la alfa
+  nomina: { minimo: 10, maximo: 50 },
+  // los premios de los logros por tipo (docs/pets/logros.md, «Premios»), en Tickets; los grandes dan además algo de Bonus
+  premios: { empezar: 50, cuidado: 100, rama: 100, modo: 200, criatura: 150, faccion: 500, especial: 300, grande: 1000, bonusGrande: 5 },
   // el tamaño en pantalla de cada etapa (radio del dibujo) y del jefe
   tamano: { bebe: 115, nino: 125, adolescente: 135, adulto: 145, jefe: 150 },
   // el dibujo kawaii (arte.js): cuántos segundos se ve la pose de un cuidado y de qué tamaño son los píxeles de la mampara de la ducha

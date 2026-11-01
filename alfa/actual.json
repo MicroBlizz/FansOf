@@ -1,8 +1,8 @@
 {
- "build": 759,
- "hash": "b39e25a",
- "fecha": "2026-11-01T09:54:44Z",
- "mensaje": "Nova 0.3.31: la alfa guarda su campaña aparte (clave y partida de la nube propias)",
+ "build": 760,
+ "hash": "d310282",
+ "fecha": "2026-11-01T09:56:42Z",
+ "mensaje": "Pets: monedas (Tickets restaurante y Bonus) y logros con los sistemas de core desde las capas (ADR 026)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

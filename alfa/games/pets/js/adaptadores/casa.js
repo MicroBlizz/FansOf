@@ -1,5 +1,5 @@
-// Fans Of Pets · adaptador · CASA: el HTML de la mascota (las barras, los cuidados por etapa y sus menús: aseo, jugar, más, álbum, despedir),
-// la pantalla del ascenso y la del final (la carta). Lo que hace cada botón está en botones.js; lo que se refresca con el reloj, en pantallas.js.
+// Fans Of Pets · adaptador · CASA: el HTML de la mascota (las barras, los cuidados por etapa y sus menús: aseo, jugar, más, álbum, logros, despedir),
+// la pantalla del ascenso y la del final (la carta), las dos con los logros a mano. Lo que hace cada botón está en botones.js; lo que se refresca con el reloj, en pantallas.js.
 'use strict';
 PT.casa = (() => {
   const ui = PT.ui, esc = PT.esc;
@@ -9,10 +9,11 @@ PT.casa = (() => {
     return `<h2 class="pt-titulo">${esc(PT.criaturas.nombre(c))} <small>${tr(PT.ETAPA[etapa])} · ${esc(PT.criaturas.faccion(c.fac))}</small></h2>`;
   };
 
-  // la casa, según el menú abierto (ui.menu: '', 'aseo', 'jugar', 'mas', 'album', 'despedir')
+  // la casa, según el menú abierto (ui.menu: '', 'aseo', 'jugar', 'mas', 'album', 'logros', 'despedir')
   function caja(p) {
     const m = p.mascota;
     if (ui.menu === 'album') return cajaAlbum(p);
+    if (ui.menu === 'logros') return cajaLogros();
     if (ui.menu === 'despedir') return cajaDespedir(p);
     const barras = m.visibles.map(k => `<div class="pt-nec"><span>${tr(PT.NOMBRE_NEC[k])}</span><div class="pt-barra"><i id="pt-b-${k}"></i></div></div>`).join('');
     return titulo(p, m.etapa) + `<p class="pt-nota" id="pt-estado"></p><div class="pt-necs">${barras}</div>` + avisos(m) + menu(m) +
@@ -32,7 +33,7 @@ PT.casa = (() => {
     const aseo = m.cuidados.includes('dientes') ? boton('pt-aseo', tr('ASEO')) : boton('pt-banar', tr('BAÑAR'));
     const chuche = m.cuidados.includes('chuche') ? boton('pt-chuche', tr('CHUCHE')) : '';
     return `<div class="pt-fila">${boton('pt-comer', tr('COMER'))}${boton('pt-beber', tr('BEBER'))}${boton('pt-dormir', tr('DORMIR'))}${aseo}</div>` +
-      `<div class="pt-fila">${boton('pt-jugar', tr('JUGAR'))}${chuche}${boton('pt-mas', tr('MÁS'), 'pt-chico')}</div>`;
+      `<div class="pt-fila">${boton('pt-jugar', tr('JUGAR'))}${chuche}${boton('pt-mas', tr('MÁS') + pendientes(), 'pt-chico')}</div>`;
   }
   function cajaAseo(m) {
     const b = ['banar', 'dientes', 'cara', 'bano'].filter(t => m.cuidados.includes(t));
@@ -45,8 +46,34 @@ PT.casa = (() => {
       `<div class="pt-respuestas">${j}</div><div class="pt-fila">${boton('pt-volver', tr('VOLVER'), 'pt-chico')}</div>`;
   }
   function cajaMas() {
-    return `<div class="pt-fila">${boton('pt-horario', tr('HORARIO'), 'pt-chico')}${boton('pt-album', tr('ÁLBUM'), 'pt-chico')}${boton('pt-sonido', '', 'pt-chico')}</div>` +
+    return `<div class="pt-fila">${boton('pt-horario', tr('HORARIO'), 'pt-chico')}${boton('pt-album', tr('ÁLBUM'), 'pt-chico')}${boton('pt-logros', tr('LOGROS') + pendientes(), 'pt-chico')}${boton('pt-sonido', '', 'pt-chico')}</div>` +
       `<div class="pt-fila">${boton('pt-despedir', tr('DESPEDIR'), 'pt-chico')}${boton('pt-volver', tr('VOLVER'), 'pt-chico')}</div>`;
+  }
+  // cuántos logros esperan cobro, para el botón
+  const pendientes = () => { const n = PT.retos ? PT.retos.listos() : 0; return n ? ` (${n})` : ''; };
+
+  // los logros: cada uno con su chapa, su requisito (los secretos, tapados hasta conseguirlos), su premio y COBRAR cuando toca
+  function cajaLogros() {
+    const lista = PT.retos.lista(), hechos = lista.filter(l => l.cobrada).length;
+    const filas = PT.LOGROS.map(d => filaLogro(d, lista.find(l => l.id === d.id))).join('');
+    return `<h2 class="pt-titulo">${tr('Logros')} <small>${tr('{n} de {total}', { n: hechos, total: lista.length })}</small></h2><div class="pt-logros">${filas}</div>` +
+      `<div class="pt-fila">${boton('pt-volver', tr('VOLVER'), 'pt-chico')}</div>`;
+  }
+  function filaLogro(d, l) {
+    const datos = { nombre: d.nombre ? tr(d.nombre) : '', faccion: d.faccion ? PT.criaturas.faccion(d.faccion) : '' };
+    const tapado = d.secreto && !l.listo && !l.cobrada;
+    const nombre = tapado ? '???????' : tr(d.txt, datos), req = tapado ? tr('Hay que descubrir qué hacer.') : tr(d.req, datos);
+    const progreso = d.goal > 1 && !tapado ? ` (${l.prog}/${d.goal})` : '';
+    const color = d.faccion ? PT.criaturas.color(d.faccion) : d.nombre ? PT.criaturas.color(d.id.replace('fan-', '').split(':')[0]) : '';
+    const accion = l.cobrada ? `<span class="pt-nota">${tr('Conseguido')}</span>` : l.listo ? `<button type="button" class="pt-btn pt-cobrar" data-id="${d.id}">${tr('COBRAR')}</button>` : '';
+    return `<div class="pt-logro${l.cobrada ? ' hecho' : ''}"><i class="pt-chapa ${d.tipo}"${color ? ` style="--fac:${color}"` : ''}></i>` +
+      `<p><b>${esc(nombre)}</b>${esc(progreso)}<br>${esc(req)} · ${esc(premio(d.r))}</p>${accion}</div>`;
+  }
+  // el premio en texto: «100 Tickets restaurante» o «1000 Tickets restaurante y 5 Bonus»
+  function premio(r) {
+    const p = typeof r === 'number' ? { ganada: r } : r;
+    const partes = PT.MONEDAS.filter(cual => p[cual] > 0).map(cual => `${p[cual]} ${MONEDAS.nombre(cual)}`);
+    return partes.join(' ' + tr('y') + ' ');
   }
   function cajaDespedir(p) {
     return titulo(p, p.mascota.etapa) + `<h2 class="pt-titulo">${tr('¿Despedirla?')}</h2><p class="pt-nota">${tr('Se va con su carta al álbum y empiezas con otro huevo.')}</p>` +
@@ -66,14 +93,16 @@ PT.casa = (() => {
   // el ascenso: la carta y otro huevo
   function cajaAscenso(p) {
     const nombre = PT.criaturas.nombre(p.criatura), cargo = tr(PT.FRASES.cargo[p.mascota.rama]);
+    if (ui.menu === 'logros') return cajaLogros();
     return `<h2 class="pt-titulo">${tr('¡Ascenso!')}</h2><p class="pt-nota">${esc(tr(PT.FRASES.ascenso, { nombre, cargo }))}</p>` +
-      boton('pt-otro-huevo', tr('OTRO HUEVO'), 'pt-grande');
+      boton('pt-otro-huevo', tr('OTRO HUEVO'), 'pt-grande') + `<div class="pt-fila">${boton('pt-logros', tr('LOGROS') + pendientes(), 'pt-chico')}</div>`;
   }
   // el final: la carta de dimisión o de despido y otro huevo
   function cajaFinal(p) {
     const dimision = p.final.motivo === 'dimision';
+    if (ui.menu === 'logros') return cajaLogros();
     return `<h2 class="pt-titulo">${dimision ? tr('Carta de dimisión') : tr('Carta de despido')}</h2><p class="pt-nota">${esc(tr(dimision ? PT.FRASES.seMarcha : PT.FRASES.despedida))}</p>` +
-      boton('pt-otro-huevo', tr('OTRO HUEVO'), 'pt-grande');
+      boton('pt-otro-huevo', tr('OTRO HUEVO'), 'pt-grande') + `<div class="pt-fila">${boton('pt-logros', tr('LOGROS') + pendientes(), 'pt-chico')}</div>`;
   }
 
   return { caja, cajaAscenso, cajaFinal };

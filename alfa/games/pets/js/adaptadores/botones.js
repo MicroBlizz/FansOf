@@ -26,8 +26,9 @@ PT.botones = (() => {
   }
   // los menús de la casa, el ascenso, la carta y otro huevo
   function enganchaCasa() {
-    for (const m of ['aseo', 'jugar', 'mas', 'album', 'despedir']) clic('pt-' + m, () => { ui.menu = m; pinta(); });
-    clic('pt-volver', () => { ui.menu = ui.menu === 'album' || ui.menu === 'despedir' ? 'mas' : ''; pinta(); });
+    for (const m of ['aseo', 'jugar', 'mas', 'album', 'logros', 'despedir']) clic('pt-' + m, () => { ui.menu = m; pinta(); });
+    clic('pt-volver', () => { ui.menu = ['album', 'logros', 'despedir'].includes(ui.menu) && PT.casos.partida.fase === 'mascota' ? 'mas' : ''; pinta(); });
+    document.querySelectorAll('.pt-cobrar').forEach(b => { b.onclick = () => { sonido(); cobra(b.dataset.id); }; });
     document.querySelectorAll('.pt-minijuego').forEach(b => { b.onclick = () => { sonido(); juega(b.dataset.juego); }; });
     clic('pt-contraoferta', contraoferta);
     clic('pt-ascender', asciende);
@@ -133,6 +134,17 @@ PT.botones = (() => {
     sonido('levelup');
     dice(PT.frase('jugar'));
     PT.pantallas.refresca();
+  }
+  // cobrar un logro: el premio entra en la cartera (por el adaptador de retos y los casos de uso)
+  function cobra(id) {
+    const d = PT.LOGROS.find(l => l.id === id);
+    if (!d || !PT.retos.cobrar(id)) return;
+    sonido('levelup');
+    const datos = { nombre: d.nombre ? tr(d.nombre) : '', faccion: d.faccion ? PT.criaturas.faccion(d.faccion) : '' };
+    const p = typeof d.r === 'number' ? { ganada: d.r } : d.r;
+    const premio = PT.MONEDAS.filter(c => p[c] > 0).map(c => `${p[c]} ${MONEDAS.nombre(c)}`).join(' ' + tr('y') + ' ');
+    pinta();
+    dice(tr(PT.FRASES.logroCobrado, { logro: tr(d.txt, datos), premio }));
   }
   function contraoferta() {
     const r = PT.casos.contraoferta();

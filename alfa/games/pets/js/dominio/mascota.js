@@ -112,7 +112,7 @@ PT.Mascota = class Mascota {
 
   // ─── el paso del tiempo ───
   // simula minuto a minuto desde la última vez hasta ahora (con el tope de ausencia). Devuelve lo que merece contarse:
-  // { durmio } o { desperto }, { crecio: etapa } si ha pasado de etapa, y lo de la carrera ({ carta }, { convencida }, { seMarcha })
+  // { durmio } o { desperto }, { crecio: etapa } si ha pasado de etapa, { nomina } al cerrar el día, y lo de la carrera ({ carta }, { convencida }, { seMarcha })
   simulaHasta(ahora, horario, minutoDelDia) {
     const tope = this.#r.tiempo.topeHoras * 60 * PT_MINUTO;
     if (ahora - this.#ultimo > tope) this.#ultimo = ahora - tope;   // lo que pase del tope no cuenta
@@ -165,14 +165,17 @@ PT.Mascota = class Mascota {
     this.#despiertaHasta = 0;
   }
 
-  // el día se cierra al acostarse: bueno si ha estado descuidada poco rato; al mínimo si alguna necesidad ha estado a 0 casi todo el día
+  // el día se cierra al acostarse: bueno si ha estado descuidada poco rato; al mínimo si alguna necesidad ha estado a 0 casi todo el día.
+  // Y la nómina del día ({ nomina }, en Tickets): de PETS.nomina.minimo a .maximo según la parte del día bien cuidada; nunca negativa
   #cierraElDia() {
     const h = this.#hoy, D = this.#r.dia, despierta = Math.max(1, h.despierta);
     if (h.siesta) this.#carrera.apuntaSiesta();
     const pasa = this.#carrera.cierraDia({ bueno: h.mal / despierta <= D.buenoHasta, alMinimo: h.alMinimo / despierta >= D.alMinimoDesde });
+    if (h.despierta > 0) pasa.nomina = this.#nomina(1 - h.mal / despierta);
     this.#hoy = { despierta: 0, mal: 0, alMinimo: 0, chuches: 0, jugadas: 0, siesta: false };
     return pasa;
   }
+  #nomina(parteBuena) { const N = this.#r.nomina; return Math.round(N.minimo + (N.maximo - N.minimo) * parteBuena); }
 
   // pasa a la etapa siguiente: empieza a contar de cero (crecimiento, aviso, día y carrera)
   #creceDeEtapa() {

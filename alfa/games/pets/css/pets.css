@@ -9,6 +9,18 @@
   background: rgba(20, 10, 34, 0.75); border-bottom: 4px solid var(--outline); }
 #pt-cabeza b { font-family: var(--font-display); font-size: 26px; letter-spacing: 1px; color: var(--gold); }
 #pt-reloj { font-weight: 800; font-size: 20px; color: var(--ink); }
+#pt-saldos { font-weight: 800; font-size: 16px; color: var(--ink-dim); margin-left: auto; margin-right: 14px; }
+/* los logros: una chapa de empleado por logro, con el borde de su tipo (docs/pets/logros.md, «Las insignias») */
+.pt-logros { max-height: 330px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px; }
+.pt-logro { display: flex; align-items: center; gap: 10px; }
+.pt-logro.hecho { opacity: 0.6; }
+.pt-chapa { flex: none; width: 36px; height: 44px; border-radius: 8px; border: 4px solid #888; background: var(--panel); position: relative; }
+.pt-chapa::before { content: ''; position: absolute; left: 50%; top: -3px; width: 12px; height: 7px; margin-left: -6px; border-radius: 4px; background: var(--outline); }
+.pt-chapa.modo { border-color: #3b8bd9; } .pt-chapa.especial { border-color: #c9a227; } .pt-chapa.grande { border-color: #e2b400; box-shadow: 0 0 0 2px #fff4b0 inset; }
+.pt-chapa.rama, .pt-chapa.cuidado { border-color: #7a7a7a; } .pt-chapa.criatura, .pt-chapa.faccion { border-color: var(--fac, #ff9a3c); }
+.pt-logro p { margin: 0; flex: 1; font-size: 15px; line-height: 1.2; color: var(--ink-dim); }
+.pt-logro p b { color: var(--ink); font-size: 17px; }
+.pt-logro .pt-btn { font-size: 14px; padding: 6px 10px; flex: none; }
 
 #pt-dev { position: absolute; left: 10px; right: 10px; top: 72px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-radius: 12px; background: rgba(255, 203, 61, 0.92);
   border: 3px solid var(--outline); color: var(--outline); font-size: 14px; }

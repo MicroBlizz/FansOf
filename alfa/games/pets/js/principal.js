@@ -5,7 +5,8 @@
 PT.almacen = PT.creaAlmacenLocal(SAVE_KEY, localStorage);
 PT.reloj = PT.creaReloj(PT.almacen);
 PT.sonido = PT.creaSonido(PT.almacen);
-PT.casos = PT.creaCasos({ reglas: PETS, catalogo: PT.criaturas, almacen: PT.almacen, reloj: PT.reloj });
+PT.retos = PT.creaRetos(PT.almacen, PT.reloj, premio => PT.casos.ingresa(premio));   // paga por los casos de uso (que se crean justo después)
+PT.casos = PT.creaCasos({ reglas: PETS, catalogo: PT.criaturas, almacen: PT.almacen, reloj: PT.reloj, retos: PT.retos });
 
 PT.lienzo = (() => {
   const CV = document.getElementById('cv'), CTX = CV.getContext('2d'), UIC = document.getElementById('pt-ui');

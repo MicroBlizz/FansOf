@@ -12,14 +12,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
 <!-- ?v= es la versión del prototipo: súbela al cambiarlo -->
-<script src="../../core/js/nucleo.js?v=0.2.0-a759.b39e25a"></script>
+<script src="../../core/js/nucleo.js?v=0.2.0-a760.d310282"></script>
 <script>NUCLEO.estilos('../../core/css/base.css', 'css/pets.css')</script>
 </head>
 <body>
 <div id="stage">
   <canvas id="cv" width="540" height="960" aria-label="Fans Of Pets"></canvas>
   <div id="pt-ui">
-    <header id="pt-cabeza"><b class="ol">FANS OF PETS</b><span id="pt-reloj"></span></header>
+    <header id="pt-cabeza"><b class="ol">FANS OF PETS</b><span id="pt-saldos"></span><span id="pt-reloj"></span></header>
     <div id="pt-dev" hidden></div>
     <div id="pt-elige" hidden></div>
     <div id="pt-bocadillo" hidden><b id="pt-quien"></b><p id="pt-dice"></p></div>
@@ -40,10 +40,11 @@ NUCLEO.juego({
     '../../core/js/serie/facciones/pop.js',
     // el juego
     // el juego, por capas (docs/calidad/ARQUITECTURA.md): el objeto PT, los datos, el dominio, los casos de uso, los adaptadores y la composición
-    'js/pt.js', 'js/criaturas.js', 'js/textos.js',
-    'js/dominio/necesidades.js', 'js/dominio/horario.js', 'js/dominio/huevos.js', 'js/dominio/carrera.js', 'js/dominio/mascota.js', 'js/dominio/partida.js',
-    'js/aplicacion/casos.js',
-    'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/pintar.js', 'js/adaptadores/arte.js',
+    '../../core/js/sistema/retos-ligero.js',   // el sistema común de logros (RETOSL): los datos son de Pets (js/retos.js)
+    'js/pt.js', 'js/criaturas.js', 'js/textos.js', 'js/retos.js',
+    'js/dominio/necesidades.js', 'js/dominio/horario.js', 'js/dominio/huevos.js', 'js/dominio/carrera.js', 'js/dominio/mascota.js', 'js/dominio/partida.js', 'js/dominio/cartera.js',
+    'js/aplicacion/avisos.js', 'js/aplicacion/casos.js',
+    'js/adaptadores/almacen-local.js', 'js/adaptadores/reloj.js', 'js/adaptadores/sonido.js', 'js/adaptadores/retos.js', 'js/adaptadores/pintar.js', 'js/adaptadores/arte.js',
     'js/adaptadores/pantallas.js', 'js/adaptadores/casa.js', 'js/adaptadores/botones.js', 'js/adaptadores/dev.js',
     'js/principal.js'],
 });

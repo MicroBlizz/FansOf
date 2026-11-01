@@ -56,6 +56,9 @@ PT.FRASES = {
   seMarcha: 'Se ha ido. Ha dejado la carta, la taza y un post-it que dice «suerte».',
   despedida: 'Despedida. Se va con su caja de cartón y la planta que nadie regaba.',
   ascenso: '¡Ascenso! {nombre} ya es {cargo}. La partida pasa al álbum.',
+  // la nómina del día (al acostarse) y los logros
+  nomina: 'Evaluación de desempeño del día: {n} Tickets restaurante. Firmado, {nombre}.',
+  logroCobrado: 'Chapa nueva en la taquilla: {logro}. Premio: {premio}.',
   // los cargos de cada rama de jefe
   cargo: { operaciones: 'Jefa de Operaciones', creativo: 'Jefa Creativa', personas: 'Jefa de Personas', gamberro: 'Vicepresidenta de Reuniones Que Podían Ser Un Correo', siesta: 'Jefa de la Siesta' },
 };

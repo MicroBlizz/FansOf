@@ -6,6 +6,7 @@
 PT.ui = { paso: 'hola', respuestas: [], elegido: -1, anim: '', at: -9, wob: 0, bufanda: false, bocadillo: '', volverA: '', triste: false, menu: '' };
 PT.$ = s => document.querySelector(s);
 PT.esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+PT.MONEDA_CORTA = { ganada: 'Tickets', comprada: 'Bonus' };   // en la cabecera cabe poco: los nombres enteros los da MONEDAS.nombre
 PT.NOMBRE_NEC = { hambre: 'Hambre', sed: 'Sed', sueno: 'Sueño', limpieza: 'Limpieza', diversion: 'Diversión' };
 PT.HUEVO_X = [110, 270, 430];
 PT.HUEVO_Y = 430;
@@ -94,6 +95,7 @@ PT.pantallas = (() => {
   function refresca() {
     const p = PT.casos.partida, ahora = PT.casos.ahora(), dia = PT.casos.esDia(ahora);
     $('#pt-reloj').textContent = PT.hora(PT.casos.minutoDelDia(ahora)) + ' · ' + (dia ? tr('de día') : tr('de noche'));
+    $('#pt-saldos').textContent = NUCLEO.desarrollo ? PT.MONEDAS.map(cual => `${PT.casos.cartera.saldo(cual)} ${tr(PT.MONEDA_CORTA[cual])}`).join(' · ') : '';
     const ec = $('#pt-eclosion');
     if (ec) ec.textContent = tr('Eclosiona en {t}', { t: PT.duracion((p.eclosionaEn - ahora) / PT_MINUTO) });
     if (p.fase !== 'mascota' || ui.volverA) return;
@@ -162,6 +164,7 @@ PT.pantallas = (() => {
     if (pasa.crecido) return tr(m.puedeAscender ? PT.FRASES.listaAscender : PT.FRASES.noAscender, { nombre });
     if (pasa.carta) return tr(PT.FRASES.carta);
     if (pasa.convencida) return tr(PT.FRASES.convencida);
+    if (pasa.nomina) return tr(PT.FRASES.nomina, { n: pasa.nomina, nombre });
     if (pasa.durmio) return PT.frase('dormir');
     if (triste && !ui.triste) return PT.frase('triste');
     if (pasa.desperto) return PT.frase('despertar');

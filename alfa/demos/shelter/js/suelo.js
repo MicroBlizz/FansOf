@@ -14,7 +14,7 @@ function losa(clave, fn) {
   return c;
 }
 const pxs = (g, x, y, color) => { g.fillStyle = color; g.fillRect(x, y, 1, 1); };
-// si hay textura de Yoshi (img/suelo_*.png, 48 × 48 = 2 × 2 casillas), pinta el cuarto v (0..3) y devuelve true
+// si hay textura de Yoshi (img/suelo_*.png, 96 × 96 = 4 × 4 casillas), pinta la casilla v (0..15) de ella y devuelve true
 function baseTextura(g, nombre, v) {
   const im = IMG[nombre]; if (!im) return false;
   const n = Math.floor(im.width / CAS) || 1, i = v % n, j = Math.floor(v / n) % n;
@@ -118,7 +118,7 @@ function pintaSuelo(ctx, cam, t) {
   const esTierra = (i, j) => { const c = casilla(i, j); return c === '_' || c === 'M' || c === 'H' || (MAPA_BASE[j] && MAPA_BASE[j][i] === '_'); };
   const esAgua = (i, j) => casilla(i, j) === '~';
   for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-    const c = MAPA.t[j][i], x = i * CAS - cam.x, y = j * CAS - cam.y, v = Math.floor(hash2(i, j, 7) * 8);
+    const c = MAPA.t[j][i], x = i * CAS - cam.x, y = j * CAS - cam.y, v = Math.floor(hash2(i, j, 7) * 16);
     let losaC;
     if (c === '~') losaC = losaAgua(fase, +!esAgua(i, j - 1), +!esAgua(i + 1, j), +!esAgua(i, j + 1), +!esAgua(i - 1, j));
     else if (c === '#') losaC = losaPared(v, +(casilla(i, j - 1) === '#'), +(casilla(i, j + 1) === '#'));

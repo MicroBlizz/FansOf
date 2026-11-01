@@ -1,8 +1,8 @@
 {
- "build": 775,
- "hash": "8e5d251",
- "fecha": "2026-11-01T18:26:14Z",
- "mensaje": "Shelter: tocar el suelo para ir y tocar un árbol, roca, bloque, mesa, cofre u hoguera para que CrazyBunny vaya y actúe solo",
+ "build": 776,
+ "hash": "21b3428",
+ "fecha": "2026-11-01T18:33:33Z",
+ "mensaje": "Shelter: pixel art limpio y de píxel gordo (reducción promediada + paleta corta, sin ruido), goblin sin halo, interruptor pisado derivado y suelos de 4 × 4 casillas",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -1,8 +1,8 @@
 {
- "build": 789,
- "hash": "e2fbbc1",
- "fecha": "2026-11-01T20:20:20Z",
- "mensaje": "Rouflage: misionEvento (complejidad 40) pasa a una tabla de sucesos; 10 tests antes, comparador y smoke-test iguales",
+ "build": 790,
+ "hash": "cf08976",
+ "fecha": "2026-11-01T20:33:53Z",
+ "mensaje": "Rouflage: cambiaFase (38) y avanzaMascota (36) partidos en piezas; tests, comparador y smoke-test iguales",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

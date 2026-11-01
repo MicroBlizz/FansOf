@@ -59,34 +59,39 @@ function empiezaPartida(modo) {
   refrescaHud(true);
 }
 
+// lo que pasa al entrar en cada fase
+function entraPrep() {
+  J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica(temaDe('taller'));
+  if (J.modo === 'cazador') { cartel(J.pvp ? tr('¡ERES CAZADOR!') : tr('¡CALENTAMIENTO!'), tr('Dispara a los camaleones de prácticas de la sala y gana cartas de despido')); practicaEmpieza(); }
+  else cartel(tr('¡PÍNTATE!'), tr('Busca un sitio, cópiale los colores y congélate'));
+}
+function entraCuenta() {
+  for (const h of J.cazadores) if (h.bot) h.balas = Math.min(REGLAS.balas, REGLAS.balasIni + Math.floor(rand(1, REGLAS.balasExtra + 1)));   // los becarios bot también hacen las prácticas (en el PvP manda lo que sincroniza el anfitrión)
+  J.reloj = modoEs('retrato') ? RETRATO.cuenta : REGLAS.cuenta; J.digito = 0;
+  if (modoEs('retrato')) { retratoPinta(true); if (J.modo === 'cazador') cartel(tr('SE BUSCAN'), tr('Memoriza sus fichas: ahí abajo tienes su pintura y su postura'), true); }   // el taller no se cierra: quien está pintando sigue (solo se le avisa)
+  for (const e of J.camaleones) if (e.bot && e.bot.estado !== 'quieto') escondeYa(e);
+  // si se te acaba el tiempo sin congelarte, te quedas congelado donde estés (luego puedes moverte, bajo tu cuenta y riesgo)
+  if (J.modo === 'camaleon' && J.yo && !J.yo.congelado) { congela(J.yo); play('congela'); }
+}
+function entraCaza() {
+  J.reloj = J.pvp ? REGLAS.cazaPvp : J.modo === 'camaleon' ? REGLAS.caza : REGLAS.cazaCazador;
+  J.coladosIni = J.camaleones.length;      // para «más de la mitad» (cazaHecha, modos.js)
+  if (J.modo === 'camaleon') fotoHaz(J.yo);      // la foto de tu escondite, para compartirla al acabar (foto.js)
+  for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
+  PUERTA.cerrada = false;
+  for (const h of J.cazadores) if (h.bot) ronda(h);
+  modoEmpiezaCaza(); botePrepara(); talentosCaza(); misionEvento('caza');      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
+  musica(temaDe('caza')); play('comienzaCaza');
+  if (!modoEs('ida')) cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
+  if (J.pvp && !modoEs('ida') && ajusteSala(MODO.a, 'g') === 1 && J.coladosIni > 1) pista(tr('Los becarios ganan si despiden a más de la mitad: {n} de {t}', { n: Math.floor(J.coladosIni / 2) + 1, t: J.coladosIni }));
+}
+const ENTRA_FASE = { prep: entraPrep, cuenta: entraCuenta, caza: entraCaza };
 function cambiaFase(f) {
   J.fase = f; J.tFase = 0;
   if (f !== 'prep') practicaCierra();
   if (f === 'prep') talentosReparte();      // las habilidades de cada uno (talentos-partida.js)
   tutoFase(f);
-  if (f === 'prep') {
-    J.reloj = J.modo === 'cazador' && !J.pvp ? REGLAS.prepCazador : REGLAS.prep; musica(temaDe('taller'));
-    if (J.modo === 'cazador') { cartel(J.pvp ? tr('¡ERES CAZADOR!') : tr('¡CALENTAMIENTO!'), tr('Dispara a los camaleones de prácticas de la sala y gana cartas de despido')); practicaEmpieza(); }
-    else cartel(tr('¡PÍNTATE!'), tr('Busca un sitio, cópiale los colores y congélate'));
-  } else if (f === 'cuenta') {
-    for (const h of J.cazadores) if (h.bot) h.balas = Math.min(REGLAS.balas, REGLAS.balasIni + Math.floor(rand(1, REGLAS.balasExtra + 1)));   // los becarios bot también hacen las prácticas (en el PvP manda lo que sincroniza el anfitrión)
-    J.reloj = modoEs('retrato') ? RETRATO.cuenta : REGLAS.cuenta; J.digito = 0;
-    if (modoEs('retrato')) { retratoPinta(true); if (J.modo === 'cazador') cartel(tr('SE BUSCAN'), tr('Memoriza sus fichas: ahí abajo tienes su pintura y su postura'), true); }   // el taller no se cierra: quien está pintando sigue (solo se le avisa)
-    for (const e of J.camaleones) if (e.bot && e.bot.estado !== 'quieto') escondeYa(e);
-    // si se te acaba el tiempo sin congelarte, te quedas congelado donde estés (luego puedes moverte, bajo tu cuenta y riesgo)
-    if (J.modo === 'camaleon' && J.yo && !J.yo.congelado) { congela(J.yo); play('congela'); }
-  } else if (f === 'caza') {
-    J.reloj = J.pvp ? REGLAS.cazaPvp : J.modo === 'camaleon' ? REGLAS.caza : REGLAS.cazaCazador;
-    J.coladosIni = J.camaleones.length;      // para «más de la mitad» (cazaHecha, modos.js)
-    if (J.modo === 'camaleon') fotoHaz(J.yo);      // la foto de tu escondite, para compartirla al acabar (foto.js)
-    for (const e of J.camaleones) { e.silbido = REGLAS.primerSilbido + (e.jugador ? 0 : rand(0.05, 1.3)); e.avisado = false; }
-    PUERTA.cerrada = false;
-    for (const h of J.cazadores) if (h.bot) ronda(h);
-    modoEmpiezaCaza(); botePrepara(); talentosCaza(); misionEvento('caza');      // los papeles secretos, el silbato (modos-extra.js) y el cubo (modos-bote.js)
-    musica(temaDe('caza')); play('comienzaCaza');
-    if (!modoEs('ida')) cartel(J.modo === 'camaleon' ? tr('¡QUE VIENEN!') : tr('¡A BUSCAR!'), modoNormal() ? (J.modo === 'camaleon' ? (TALLER.abierto ? tr('Los cazadores están sueltos: puedes seguir pintando') : tr('Microblizz apaga las luces para ahorrar')) : tr('Hay {n} colados. Toca donde creas que hay uno.').replace('{n}', escondidos().length)) : tr('Modo {m}', { m: modoTexto() }));
-    if (J.pvp && !modoEs('ida') && ajusteSala(MODO.a, 'g') === 1 && J.coladosIni > 1) pista(tr('Los becarios ganan si despiden a más de la mitad: {n} de {t}', { n: Math.floor(J.coladosIni / 2) + 1, t: J.coladosIni }));
-  }
+  if (Object.hasOwn(ENTRA_FASE, f)) ENTRA_FASE[f]();
   refrescaHud(true);
   if (J.pvp) rfpFase(f);      // PvP: el anfitrión se lo cuenta a los demás
 }

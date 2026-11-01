@@ -131,55 +131,61 @@ function misionEvento(tipo, a, b) {
 function misionDescongela(e) { if (e && e.jugador && J.fase === 'caza') e.semovio = true; }
 // el modo de la partida (para Contagio, Ida y vuelta y Retrato robot)
 const modoDePartida = () => (typeof modoEs === 'function' ? ['contagio', 'ida', 'retrato'].find(m => modoEs(m)) || 'normal' : 'normal');
-// al acabar una partida (a: J.resultado)
+// al acabar una partida (a: J.resultado): lo que cuenta para las misiones y los logros, por partes
 function misionFin(r, yo) {
   if (!yo) return;
-  const gana = !!r.victoria, colado = yo.clase === 'camaleon' || J.modo === 'camaleon', k = J.cuenta || {}, s = misionEstado(), modo = modoDePartida();
-  const publica = J.pvp && !(typeof RFP !== 'undefined' && RFP.info && RFP.info.privada);
-  const conAmigos = J.pvp && typeof RFP !== 'undefined' && RFP.info && RFP.info.privada && RFP.slots.filter(x => x.humano).length >= 2;
+  const gana = !!r.victoria, colado = yo.clase === 'camaleon' || J.modo === 'camaleon', modo = modoDePartida(), mapa = MAPA_ACT && MAPA_ACT.id;
+  misionFinBase(gana, colado);
+  if (J.pvp) misionFinLinea(r, gana, modo); else if (gana) semanaApunta('modos', 'wmodos', 'normal');
+  if (J.pvp && typeof RFP !== 'undefined' && RFP.info && RFP.info.privada && RFP.slots.filter(x => x.humano).length >= 2) semanaSuma('wamigos', 1);
+  if (mapa) misionFinMapa(mapa);
+  { const h = new Date().getHours(); if (h < 5) logroSuma('sNoche', 1); }
+  if (colado) misionFinColado(r, yo, gana, modo, mapa); else misionFinBecario(gana);
+  if (yo.venganza && (gana || r.bando)) logroSuma('sVenganza', 1);
+  yo.venganza = false;
+}
+function misionFinBase(gana, colado) {      // jugar, ganar y el papel que hiciste
+  const s = misionEstado();
   misionSuma('jugar3', 1); semanaSuma('wjugar', 1); logroSuma('partidas', 1);
   misionSuma(colado ? 'colado2' : 'becario2', 1);
   s.roles[colado ? 'colado' : 'becario'] = 1; misionPon('papeles', Object.keys(s.roles).length);
   if (gana) { misionSuma('ganar2', 1); semanaSuma('wganar', 1); logroSuma('victorias', 1); logroSuma(colado ? 'ganaColado' : 'ganaBecario', 1); }
-  if (J.pvp) {
-    misionSuma('linea', 1); semanaSuma('wlinea', 1); logroSuma('linea', 1);
-    if (gana) misionSuma('linea2', 1);
-    if (modo !== 'normal') misionSuma(modo, 1);
-    if (gana) { semanaApunta('modos', 'wmodos', modo); if (modo !== 'normal') logroSuma({ contagio: 'ganaContagio', ida: 'ganaIda', retrato: 'ganaRetrato' }[modo], 1); }
-    const rk = r.ranking || []; if (rk.length > 1 && rk[0] && rk[0].jugador) { misionSuma('primero', 1); logroSuma('primeros', 1); }
-  } else if (gana) semanaApunta('modos', 'wmodos', 'normal');
-  if (conAmigos) semanaSuma('wamigos', 1);
-  const mapa = MAPA_ACT && MAPA_ACT.id;
-  if (mapa) {
-    logroSuma('mapas', mapa); semanaApunta('mapas', 'wmapas', mapa);
-    if (!s.mapas.includes(mapa)) { s.mapas.push(mapa); misionPon('mapas3', s.mapas.length); }
-    if (mapa === 'backrooms') misionSuma('backrooms', 1);
-  }
-  { const h = new Date().getHours(); if (h < 5) logroSuma('sNoche', 1); }
-  const l = logroEstado();
-  if (colado) {
-    const camo = +yo.camo || 0;
-    if (!yo.fuera) {
-      misionSuma('intacto', 1); semanaSuma('wintacto', 1); logroSuma('intactas', 1);
-      l.c.seguidas++; misionPon('seguidas2', l.c.seguidas);
-      if (yo.semovio === false) logroSuma('sEstatua', 1);      // (solo si llegó a empezar la caza)
-      if (k.silbidos >= 10) logroSuma('sSilbato', 1);
-      if (gana && !yo.pintado) logroSuma('sSinPintar', 1);
-      if (gana && (J.cazadores || []).some(h => !h.fuera && Math.hypot(h.x - yo.x, h.y - yo.y) < 120)) logroSuma('sTopo', 1);
-      if (modo === 'contagio' && J.camaleones.filter(e => e !== yo && !e.fuera && e.clase === 'camaleon').length === 0 && J.camaleones.length > 1) logroSuma('sUltimo', 1);
-    } else l.c.seguidas = 0;
-    if (camo > 80) { misionSuma('camo80', 1); semanaSuma('wcamo', 1); }
-    if (camo >= 95) misionSuma('camo95', 1);
-    if (camo >= 90) { logroSuma('camo90', 1); if (mapa) logroSuma('mapas90', mapa); }
-    if (camo >= 100) logroSuma('camo100', 1);
-    if (k.narices > 0) misionSuma('narices', Math.floor(k.narices));
-  } else {
-    if (gana && !k.fallos) misionSuma('limpio', 1);
-    if ((k.fallos || 0) >= 3) logroSuma('sImprocedente', 1);
-    if (!(k.aciertos > 0)) logroSuma('sVago', 1);
-  }
-  if (yo.venganza && (gana || r.bando)) logroSuma('sVenganza', 1);
-  yo.venganza = false;
+}
+function misionFinLinea(r, gana, modo) {      // en línea: la línea, el modo y quedar el primero
+  misionSuma('linea', 1); semanaSuma('wlinea', 1); logroSuma('linea', 1);
+  if (gana) misionSuma('linea2', 1);
+  if (modo !== 'normal') misionSuma(modo, 1);
+  if (gana) { semanaApunta('modos', 'wmodos', modo); if (modo !== 'normal') logroSuma({ contagio: 'ganaContagio', ida: 'ganaIda', retrato: 'ganaRetrato' }[modo], 1); }
+  const rk = r.ranking || []; if (rk.length > 1 && rk[0] && rk[0].jugador) { misionSuma('primero', 1); logroSuma('primeros', 1); }
+}
+function misionFinMapa(mapa) {
+  const s = misionEstado();
+  logroSuma('mapas', mapa); semanaApunta('mapas', 'wmapas', mapa);
+  if (!s.mapas.includes(mapa)) { s.mapas.push(mapa); misionPon('mapas3', s.mapas.length); }
+  if (mapa === 'backrooms') misionSuma('backrooms', 1);
+}
+function misionFinColado(r, yo, gana, modo, mapa) {
+  const l = logroEstado(), k = J.cuenta || {}, camo = +yo.camo || 0;
+  if (!yo.fuera) {
+    misionSuma('intacto', 1); semanaSuma('wintacto', 1); logroSuma('intactas', 1);
+    l.c.seguidas++; misionPon('seguidas2', l.c.seguidas);
+    if (yo.semovio === false) logroSuma('sEstatua', 1);      // (solo si llegó a empezar la caza)
+    if (k.silbidos >= 10) logroSuma('sSilbato', 1);
+    if (gana && !yo.pintado) logroSuma('sSinPintar', 1);
+    if (gana && (J.cazadores || []).some(h => !h.fuera && Math.hypot(h.x - yo.x, h.y - yo.y) < 120)) logroSuma('sTopo', 1);
+    if (modo === 'contagio' && J.camaleones.filter(e => e !== yo && !e.fuera && e.clase === 'camaleon').length === 0 && J.camaleones.length > 1) logroSuma('sUltimo', 1);
+  } else l.c.seguidas = 0;
+  if (camo > 80) { misionSuma('camo80', 1); semanaSuma('wcamo', 1); }
+  if (camo >= 95) misionSuma('camo95', 1);
+  if (camo >= 90) { logroSuma('camo90', 1); if (mapa) logroSuma('mapas90', mapa); }
+  if (camo >= 100) logroSuma('camo100', 1);
+  if (k.narices > 0) misionSuma('narices', Math.floor(k.narices));
+}
+function misionFinBecario(gana) {
+  const k = J.cuenta || {};
+  if (gana && !k.fallos) misionSuma('limpio', 1);
+  if ((k.fallos || 0) >= 3) logroSuma('sImprocedente', 1);
+  if (!(k.aciertos > 0)) logroSuma('sVago', 1);
 }
 // «Al taller»: 5 minutos seguidos en Mi escenario (se mira cada 5 s; al salir vuelve a cero)
 setInterval(() => {

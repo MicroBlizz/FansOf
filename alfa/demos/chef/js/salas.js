@@ -13,7 +13,15 @@ const SALAS = [
     arco: [330, 142],                                       // el arco del fondo: ahí va el montacargas en la primera sala
     cofre: [585, 218] },
 ];
-// mientras no haya más escenas, las jornadas repiten la misma sala (cada una con otros bichos); al llegar sala_2..6 se añaden aquí.
+// las variantes que pintó Yoshi a partir de la primera (mismas paredes, otro mobiliario): comparten el polígono del suelo
+const SUELO_BASE = SALAS[0].suelo;
+[ ['sala_2', [], [585, 218]],                                   // la misma sala sin cofres
+  ['sala_3', [], [585, 218]],                                   // charcos y escombros
+  ['sala_4', [[500, 105, 655, 200]], [585, 218]],               // los cofres del rincón
+  ['sala_5', [[440, 105, 655, 215]], [560, 232]],               // barriles y cajas en el rincón
+  ['sala_6', [[80, 170, 120, 220], [320, 250, 360, 300]], [585, 218]],   // columnas rotas y huesos
+  ['sala_7', [], [585, 218]],                                   // las celdas del fondo
+].forEach(([img, bloqueos, cofre]) => SALAS.push({ img, w: 688, h: 376, suelo: SUELO_BASE, bloqueos, salidas: { izq: [238, 376], der: [256, 376] }, antorchas: [[80, 128], [235, 72], [555, 88]], arco: [330, 142], cofre }));
 
 // ¿se puede pisar el punto (x, y) de la sala `s`? Dentro del polígono del suelo y fuera de los bloqueos.
 function pisableEn(s, x, y) {

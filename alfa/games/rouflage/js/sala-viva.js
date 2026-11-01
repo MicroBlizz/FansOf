@@ -97,25 +97,37 @@ function salaVivaInfinito() {
 }
 
 // cada fotograma (desde rfpPaso): mando dónde estoy, pido la ropa que falte y recargo la habilidad
-function salaVivaAvanza(dt) {
-  if (!RFP.buscando || !salaVivaVale(RFP.info)) { if (!RFP.info || RFP.info.estado === 'espera') salaVivaSale(); return; }      // te has ido de la sala (o se ha cerrado)
-  const yo = J.yo; if (!yo) return;
+// lo tuyo, a los demás: dónde estás y cómo (con más calma si estás quieto)
+function salaVivaEnvia(yo, dt) {
   RFP.tEnvio -= dt;
   if (RFP.tEnvio <= 0) {
     const quieto = yo.congelado || (!yo.moviendo && Math.abs(yo.vx) < 1 && Math.abs(yo.vy) < 1);
     RFP.tEnvio = quieto ? 1 / RFP_AJ.quietoHz : 1 / RFP_AJ.envioHz;
     rfpManda({ t: 'e', x: r1(yo.x), y: r1(yo.y), m: yo.moviendo ? 1 : 0, c: yo.congelado ? 1 : 0, mi: yo.mira, di: Math.round(yo.dir * 100) / 100, ci: 0, f: 0, iv: Math.ceil(yo.invis || 0), k: yo.clase === 'cazador' ? 1 : 0 });      // k: soy becario (para quien acaba de llegar)
   }
-  rfpPideRopa(dt);
+}
+// en la sala viva nada se gasta: ni las cartas, ni la habilidad, y la granada vuelve sola
+function salaVivaReglas(yo, dt) {
   if (yo.clase === 'cazador') yo.balas = REGLAS.balas;      // las cartas de despido tampoco se gastan
   if (SV.vuelve > 0 && (SV.vuelve -= dt) <= 0) salaVivaVuelve();
   if (yo.hab) { if (yo.habUsos < 50) yo.habUsos = 99; if (yo.habEspera > SV_ESPERA) yo.habEspera = SV_ESPERA; }
   if ((!yo.hab || yo.hab === 'granada') && !(yo.granada > 0) && !(yo.invis > 0)) { SV.tGr += dt; if (SV.tGr > 1.5) { yo.granada = 1; SV.tGr = 0; } } else SV.tGr = 0;
+}
+// lo de encima: el chat, el taller y el aviso de mensajes nuevos
+function salaVivaPantalla() {
   // el chat: si se ha recogido con su propia barra, el botón de abajo vuelve a mandar
   const p = E('p-busca'); if (p.classList.contains('charla') && CHATS.plegado) p.classList.remove('charla');
   if (p.classList.contains('taller') !== !!TALLER.abierto) p.classList.toggle('taller', !!TALLER.abierto);
   if (!p.classList.contains('charla') && typeof chatConsejoCierra === 'function' && CHAT_CONSEJO.el && CHAT_CONSEJO.el.closest('.chat-sala')) chatConsejoCierra();      // el consejo del chat señalaba su barra, que aquí está recogida
   if (SV.ui) { const n = CHATS.nuevos || 0, b = SV.ui.chatN; if (b.textContent !== (n ? String(n) : '')) { b.textContent = n ? String(n) : ''; b.hidden = !n; } }
+}
+function salaVivaAvanza(dt) {
+  if (!RFP.buscando || !salaVivaVale(RFP.info)) { if (!RFP.info || RFP.info.estado === 'espera') salaVivaSale(); return; }      // te has ido de la sala (o se ha cerrado)
+  const yo = J.yo; if (!yo) return;
+  salaVivaEnvia(yo, dt);
+  rfpPideRopa(dt);
+  salaVivaReglas(yo, dt);
+  salaVivaPantalla();
 }
 // salir de la sala (CANCELAR, o la sala se cierra): al mapa del título
 function salaVivaSale() {

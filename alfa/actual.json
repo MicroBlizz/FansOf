@@ -1,8 +1,8 @@
 {
- "build": 790,
- "hash": "cf08976",
- "fecha": "2026-11-01T20:33:53Z",
- "mensaje": "Rouflage: cambiaFase (38) y avanzaMascota (36) partidos en piezas; tests, comparador y smoke-test iguales",
+ "build": 791,
+ "hash": "9e425da",
+ "fecha": "2026-11-01T22:53:44Z",
+ "mensaje": "Rouflage: rfpEstadoIA y salaVivaAvanza (38) partidos en piezas (paso 3, PvP, tras la prueba de Arkioner con dos aparatos); cifras de Rouflage en docs/calidad/SEGUIMIENTO.md",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

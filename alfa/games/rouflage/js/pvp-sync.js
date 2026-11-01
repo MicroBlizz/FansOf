@@ -122,22 +122,32 @@ function rfpEstado(sl, m) {
     else if (!m.c && e.congelado) { descongela(e); RFP.listos.delete(sl.s); }
   }
 }
+// el estado de un personaje de la máquina: k = [plaza, x, y, mueve, mira, dir, congelado, marca, alerta, ciego, invisible]
+function rfpEstadoK(k) {
+  const e = RFP.slots[k[0]] && RFP.slots[k[0]].ente; if (!e || !e.remoto || e.humano || e.fuera) return;
+  const r = e.red || (e.red = {});
+  rfpFijaRed(r, k[1], k[2]); r.m = !!k[3]; r.mi = k[4]; r.di = k[5];
+  e.invis = k[10] || 0;      // la granada de la máquina: invisible también en los demás navegadores
+  if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
+  else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
+}
+// los despedidos que avisa el anfitrión
+function rfpAparta(fu) {
+  for (const s of fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
+}
+// las cartas de cada becario
+function rfpCartas(ba) {
+  for (const [s, b] of ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = (e === J.yo && (J.fase === 'prep' || J.fase === 'cuenta')) ? Math.max(e.balas, b) : b; }      // (tus cartas de las prácticas no se pisan con un aviso viejo del anfitrión)
+}
 // el estado de la máquina que manda el anfitrión, más el reloj, quién está fuera y las cartas de cada becario
 function rfpEstadoIA(m) {
   if (m.f && m.f !== J.fase) rfpSigueFase(m.f, m.r);
   if (typeof m.r === 'number' && J.fase !== 'fin') J.reloj = Math.abs(J.reloj - m.r) > 0.4 ? m.r : J.reloj + (m.r - J.reloj) * 0.3;
-  for (const k of m.ks || []) {
-    const e = RFP.slots[k[0]] && RFP.slots[k[0]].ente; if (!e || !e.remoto || e.humano || e.fuera) continue;
-    const r = e.red || (e.red = {});
-    rfpFijaRed(r, k[1], k[2]); r.m = !!k[3]; r.mi = k[4]; r.di = k[5];
-    e.invis = k[10] || 0;      // la granada de la máquina: invisible también en los demás navegadores
-    if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
-    else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
-  }
+  for (const k of m.ks || []) rfpEstadoK(k);
   if (m.cg) contagiaSlots(m.cg);      // Contagio: por si a alguien se le perdió el disparo
   silbatoRecibido(m.sb); boteRecibido(m.bt);
-  for (const s of m.fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
-  for (const [s, b] of m.ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = (e === J.yo && (J.fase === 'prep' || J.fase === 'cuenta')) ? Math.max(e.balas, b) : b; }      // (tus cartas de las prácticas no se pisan con un aviso viejo del anfitrión)
+  rfpAparta(m.fu);
+  rfpCartas(m.ba);
 }
 // el anfitrión cambia de fase: los demás lo siguen (siempre hacia delante)
 function rfpSigueFase(f, reloj) {

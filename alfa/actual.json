@@ -1,8 +1,8 @@
 {
- "build": 763,
- "hash": "e415e11",
- "fecha": "2026-11-01T14:11:08Z",
- "mensaje": "Rouflage: primer dominio puro (RF.Puntos) con las cifras en AJUSTES.puntos; marcadorDe solo lo reune (paso 2 del refactor)",
+ "build": 764,
+ "hash": "2585e11",
+ "fecha": "2026-11-01T14:20:36Z",
+ "mensaje": "Rouflage: dominio RF.Fin (cuando se acaba la caza) y RF.Aguante (el aguante del colado) con sus tests (paso 2)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

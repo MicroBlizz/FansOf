@@ -159,15 +159,10 @@ function avanzaPartida(dt) {
     // ¿se acaba? (en el PvP lo decide el anfitrión: rfpComprueba, y los demás lo reciben)
     if (J.pvp) { if (manda) rfpComprueba(); else rfpSinAnfitrion(); }
     else if (modoEs('ida')) { if (idaAcaba()) termina(true, 'ida'); }
-    else if (J.modo === 'camaleon') {
-      if (yo.fuera && !escondidos().length) termina(false, 'despedido');      // despedido, pero sigue de espectador mientras algún compañero aguante
-      else if (J.reloj <= 0) termina(true, 'tiempo');
-      else if (!cazadoresVivos().length) termina(true, 'cartas');
-      else if (boteLleno()) termina(true, 'bote');
-    } else if (!escondidos().length) termina(true, 'todos');
-    else if (!cazadoresVivos().length) termina(false, 'cartas');
-    else if (boteLleno()) termina(false, 'bote');      // sin cartas sigues de espectador mientras otro cazador aguante
-    else if (J.reloj <= 0) termina(false, 'tiempo');
+    else {
+      const fin = RF.Fin.caza({ modo: J.modo, yoFuera: yo.fuera, escondidos: escondidos().length, cazadoresVivos: cazadoresVivos().length, boteLleno: boteLleno(), reloj: J.reloj });
+      if (fin) termina(fin.victoria, fin.motivo);
+    }
   } else if (J.fase === 'fin') {
     J.peligro *= 0.9; galeriaAvanza(dt);
     if (J.tFase > 2.6 && !J.finMostrado) { J.finMostrado = true; muestraFin(); }

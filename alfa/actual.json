@@ -1,8 +1,8 @@
 {
- "build": 758,
- "hash": "01d1e4a",
- "fecha": "2026-11-01T09:42:12Z",
- "mensaje": "Pets: lo que pidió la revisión de calidad (validar todo al cargar, ritmo con fase, DEV fuera del dominio, smoke-test propio)",
+ "build": 759,
+ "hash": "b39e25a",
+ "fecha": "2026-11-01T09:54:44Z",
+ "mensaje": "Nova 0.3.31: la alfa guarda su campaña aparte (clave y partida de la nube propias)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.30",
+  "nova": "0.3.31",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.31', real: ["<b>MEJORAS POR DENTRO</b>: la versión de pruebas guarda su propia campaña, así que probar cosas nuevas no toca tu partida."], joke: ["Microblizz ha montado una galaxia de pruebas y Phony ya ha perdido allí tres naves."] },
   { v: '0.3.30', real: ["<b>ELEGIR PARTIDA CON DATOS</b>: si juegas en dos aparatos y las campañas no coinciden, la ventana para elegir enseña la aleación, los sectores liberados, las misiones y las mejoras de cada una."], joke: ["Microblizz ha puesto dos flotas frente a frente para que elijas y Phony quiere quedarse con las dos."] },
   { v: '0.3.29', real: ["<b>CADA ARMA, SU TALENTO</b>: los misiles del lanzador castigan a quien huye, la railgun cinética atraviesa escudos, el flak térmico calienta a los de al lado y los drones EM mantienen interferida a su presa. Lo explica la ayuda."], joke: ["Microblizz ha dado formación de talentos a las armas y Phony ha pedido el certificado."] },
   { v: '0.3.28', real: ["<b>RETOS</b>: misiones diarias, semanales y logros (ganar misiones, liberar sectores, subir de rango, destruir naves) que pagan aleación. Están en el botón RETOS de la portada."], joke: ["Microblizz ha puesto objetivos trimestrales a la rebelión y Phony ya ha pedido el bonus."] },

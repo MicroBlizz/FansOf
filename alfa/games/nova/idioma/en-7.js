@@ -1,6 +1,8 @@
 // Fans of Nova · Inglés: retos (misiones diarias, semanales y logros).
 'use strict';
 IDIOMA.add({
+  "<b>MEJORAS POR DENTRO</b>: la versión de pruebas guarda su propia campaña, así que probar cosas nuevas no toca tu partida.": "<b>BEHIND-THE-SCENES IMPROVEMENTS</b>: the test version keeps its own campaign, so trying new things doesn't touch your save.",
+  "Microblizz ha montado una galaxia de pruebas y Phony ya ha perdido allí tres naves.": "Microblizz set up a test galaxy and Phony has already lost three ships there.",
   "<b>ELEGIR PARTIDA CON DATOS</b>: si juegas en dos aparatos y las campañas no coinciden, la ventana para elegir enseña la aleación, los sectores liberados, las misiones y las mejoras de cada una.": "<b>CHOOSE YOUR SAVE WITH DATA</b>: if you play on two devices and the campaigns don't match, the window to choose shows the alloy, freed sectors, missions and upgrades of each one.",
   "Microblizz ha puesto dos flotas frente a frente para que elijas y Phony quiere quedarse con las dos.": "Microblizz lined up two fleets for you to choose from and Phony wants to keep both.",
   "Sectores liberados": "Sectors freed",

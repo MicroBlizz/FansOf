@@ -127,8 +127,11 @@ function pintaAvisos(ctx, W, H) {
 function pintaPortada(ctx, W, H) {
   const t = PAN.t;
   // un claro del bosque de noche, con el refugio
-  for (let j = 0; j < Math.ceil(H / CAS) + 1; j++) for (let i = 0; i < Math.ceil(W / CAS) + 1; i++) ctx.drawImage(losaHierba(Math.floor(hash2(i, j, 3) * 8)), i * CAS, j * CAS);
-  for (let i = -1; i < Math.ceil(W / CAS) + 1; i++) { if (hash2(i, 99, 5) < 0.7) pintaSpr(ctx, 'arbol', i * CAS + 4, H - 44 + Math.round(hash2(i, 7, 2) * 8)); if (hash2(i, 98, 5) < 0.6) pintaSpr(ctx, 'arbol', i * CAS - 8, 30 + Math.round(hash2(i, 8, 2) * 10)); }
+  if (hayEscena()) { const im = IMG.escena; ctx.drawImage(im, Math.max(0, Math.round(im.width * 0.3 - W / 2)), Math.max(0, Math.round(im.height * 0.62 - H / 2)), W, H, 0, 0, W, H); }
+  else {
+    for (let j = 0; j < Math.ceil(H / CAS) + 1; j++) for (let i = 0; i < Math.ceil(W / CAS) + 1; i++) ctx.drawImage(losaHierba(Math.floor(hash2(i, j, 3) * 8)), i * CAS, j * CAS);
+    for (let i = -1; i < Math.ceil(W / CAS) + 1; i++) { if (hash2(i, 99, 5) < 0.7) pintaSpr(ctx, 'arbol', i * CAS + 4, H - 44 + Math.round(hash2(i, 7, 2) * 8)); if (hash2(i, 98, 5) < 0.6) pintaSpr(ctx, 'arbol', i * CAS - 8, 30 + Math.round(hash2(i, 8, 2) * 10)); }
+  }
   pintaSpr(ctx, 'hoguera_' + (Math.floor(t * 6) % 2), W * 0.72, H * 0.6);
   ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgb(110,120,215)'; ctx.fillRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'lighter'; halo(ctx, W * 0.72 + 12, H * 0.6 + 10, 40 + Math.round(Math.sin(t * 9)) * 2, 0.5, true); ctx.globalCompositeOperation = 'source-over';

@@ -110,8 +110,26 @@ function pintaEscalera(ctx, x, y, sigueArriba) {
   if (!sigueArriba) { ctx.fillStyle = PC.K; ctx.fillRect(x, y, CAS, 1); }
 }
 
+// el escenario pintado: se copia el trozo que ve la cámara y encima lo que cambia (interruptor, tocones, puerta, trampas)
+function pintaEscena(ctx, cam) {
+  const im = IMG.escena, W = im.width, H = im.height;
+  const sx = clamp(cam.x, 0, W), sy = clamp(cam.y, 0, H), sw = Math.min(cam.w, W - sx), sh = Math.min(cam.h, H - sy);
+  ctx.fillStyle = '#1d3d1a'; ctx.fillRect(0, 0, cam.w, cam.h);
+  if (sw > 0 && sh > 0) ctx.drawImage(im, sx, sy, sw, sh, sx - cam.x, sy - cam.y, sw, sh);
+  const i0 = Math.max(0, Math.floor(cam.x / CAS)), j0 = Math.max(0, Math.floor(cam.y / CAS));
+  const i1 = Math.min(MAPA.w - 1, Math.floor((cam.x + cam.w) / CAS)), j1 = Math.min(MAPA.h - 1, Math.floor((cam.y + cam.h) / CAS));
+  for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+    const c = MAPA.t[j][i], x = i * CAS - cam.x, y = j * CAS - cam.y;
+    if (c === 'S') pintaSpr(ctx, MAPA.puertaAbierta ? 'interruptor_1' : 'interruptor_0', x + CAS / 2, y + CAS / 2, { ancla: 'centro' });
+    else if (c === 't') pintaSpr(ctx, 'tocon', x + CAS / 2, y + CAS - 2, { ancla: 'pies' });
+    else if (c === 'D' && !MAPA.puertaAbierta) pintaSpr(ctx, 'puerta', x + CAS / 2, y + CAS, { ancla: 'pies' });
+  }
+  for (const o of MAPA.construido) if (o.tipo === 'trampa') pintaSpr(ctx, 'trampa', (o.i + 0.5) * CAS - cam.x, (o.j + 1) * CAS - 2 - cam.y, { ancla: 'pies' });
+}
+
 /* ---------- PINTAR: el suelo y lo que hay encima, solo lo que cabe en la cámara ---------- */
 function pintaSuelo(ctx, cam, t) {
+  if (hayEscena()) { pintaEscena(ctx, cam); return; }
   const i0 = Math.max(0, Math.floor(cam.x / CAS)), j0 = Math.max(0, Math.floor(cam.y / CAS));
   const i1 = Math.min(MAPA.w - 1, Math.floor((cam.x + cam.w) / CAS)), j1 = Math.min(MAPA.h - 1, Math.floor((cam.y + cam.h) / CAS));
   const fase = Math.floor(t * 3) % 4;

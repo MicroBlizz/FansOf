@@ -1,8 +1,8 @@
 {
- "build": 777,
- "hash": "af718d6",
- "fecha": "2026-11-01T18:36:08Z",
- "mensaje": "Fans of Chef 0.1.0: prototipo jugable (mañana, caza con salas que cambian, montacargas, servicio y cierre) con los primeros sprites de Yoshi",
+ "build": 778,
+ "hash": "5459973",
+ "fecha": "2026-11-01T18:41:51Z",
+ "mensaje": "Shelter: el mapa es el escenario entero pintado por Yoshi (claro del refugio, lago, bosque, acantilado con escalera y cueva), con por dónde se anda sacado del color y los objetos colocados encima",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

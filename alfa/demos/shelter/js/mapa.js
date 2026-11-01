@@ -40,8 +40,10 @@ const MAPA = { w: 0, h: 0, t: [], golpes: {}, puertaAbierta: false, cofreAbierto
 // alrededor del mapa dibujado a mano hay un anillo de bosque espeso (ARO casillas), siempre igual, para que haya terreno hacia todos los lados
 const ARO = 9;
 let MAPA_BASE = null;   // el mapa entero (el de arriba más el aro), listo
+const hayEscena = () => typeof ESCENA !== 'undefined' && !!IMG.escena;   // el escenario pintado por Yoshi (js/escena.js + img/escena.png)
 function construyeMapa() {
   if (MAPA_BASE) return MAPA_BASE;
+  if (hayEscena()) { MAPA_BASE = ESCENA.slice(); return MAPA_BASE; }
   const w0 = MAPA_TXT[0].length, h0 = MAPA_TXT.length, w = w0 + ARO * 2 - 2, h = h0 + ARO * 2 - 2, filas = [];
   for (let j = 0; j < h; j++) {
     let f = '';
@@ -125,7 +127,7 @@ function rebrota(prob) {
     const c = MAPA.t[j][i], k = i + ',' + j;
     if (Math.random() > prob) continue;
     if (c === 't') MAPA.t[j][i] = 'T';
-    else if (c === '.' && MAPA_BASE[j][i] === 'R') MAPA.t[j][i] = 'R';
+    else if (c === '.' && MAPA_BASE[j][i] === 'R' && Math.random() < 0.5) MAPA.t[j][i] = 'R';
     else if (c === '.' && MAPA_BASE[j][i] === 'I') MAPA.t[j][i] = 'I';
     delete MAPA.golpes[k];
   }

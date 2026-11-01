@@ -7,7 +7,7 @@ PT.arte = (() => {
   // criatura → etapa → poses con dibujo. Las poses: base, comer, beber, bano, dientes, cara, ducha y dormir (en su camita).
   // Una pose que falta se pinta con la base. Los bebés van sentados, como un peluche (docs/pets/evoluciones.md)
   const POSES_BEBE = ['base', 'comer', 'beber', 'bano', 'dientes', 'cara', 'ducha', 'dormir'];
-  const RAMAS = ['operaciones', 'creativo', 'personas', 'gamberro', 'siesta'];
+  const RAMAS = PETS.ascenso.ramas;
   const ANIMALES = ['bunny', 'squirrel', 'beaver', 'fox', 'meercat', 'junkcoon', 'mechavaca', 'huron'];   // MechaVaca: de bebé es una vaca con un robot de juguete; el robot de verdad llega en el adulto
   const ARTE = Object.fromEntries(ANIMALES.map(k => ['animales:' + k, { bebe: POSES_BEBE, nino: ['base'], adolescente: ['base'], adulto: ['base'], jefe: RAMAS }]));
   // dónde está el patito en la ducha de cada criatura (x, y, ancho y alto en fracción del dibujo); si falta, el de PETS.mampara.delante

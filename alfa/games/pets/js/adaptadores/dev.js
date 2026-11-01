@@ -36,10 +36,11 @@ PT.dev = (() => {
     while (!m.carrera.puedeAscender) m.carrera.cierraDia({ bueno: true, alMinimo: false });   // solo DEV: toca la carrera por dentro
     creceYa();
   }
-  // cambia a la siguiente criatura que ya tiene dibujo, para verlas todas sin repetir la entrevista
+  // cambia a la siguiente criatura que ya tiene dibujo, para verlas todas sin repetir la entrevista: retoca la partida guardada y la vuelve
+  // a cargar (el dominio no tiene por qué saber de este atajo)
   function otraCriatura() {
     const ids = PT.arte.ids(), c = PT.casos.partida.criatura, i = c ? ids.indexOf(c.id) : -1;
-    PT.casos.cambiaCriatura(ids[(i + 1) % ids.length]);
+    PT.casos.cargaDe({ ...PT.casos.partida.aJson(), criatura: ids[(i + 1) % ids.length] });
     PT.pantallas.pinta();
   }
   const BOTONES = [['+1 h', () => adelanta(1)], ['+6 h', () => adelanta(6)], [tr('+1 día'), () => adelanta(24)], [tr('ECLOSIONAR YA'), eclosionaYa],

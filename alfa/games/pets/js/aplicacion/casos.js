@@ -1,5 +1,5 @@
 // Fans Of Pets · aplicación · CASOS DE USO: una función por cosa que hace el jugador o el reloj (responder la entrevista, elegir huevo, poner
-// el horario, cuidar, jugar, dormir, la contraoferta, ascender, despedir, otro huevo, simular lo que ha pasado) y las de DEV. No tienen reglas: cargan la partida, le piden al dominio que haga la
+// el horario, cuidar, jugar, dormir, la contraoferta, ascender, despedir, otro huevo, simular lo que ha pasado, cargar otra partida) y las de DEV. No tienen reglas: cargan la partida, le piden al dominio que haga la
 // acción, la guardan y devuelven el resultado para que la pantalla lo cuente. Los puertos que necesitan (se los da principal.js):
 //   almacen: { cargaPartida() → json | null, guardaPartida(json) }     reloj: { ahora() → ms, minutoDelDia(ms) → 0..1439, adelanta(horas) }
 'use strict';
@@ -32,10 +32,12 @@ PT.creaCasos = ({ reglas, catalogo, almacen, reloj }) => {
 
     // simula desde la última vez: lo de PT.Partida ({ nacio, durmio, desperto, crecio, carta, convencida, seMarcha }) más
     // { crecido } la primera vez que está lista para crecer o ascender
+    // Se guarda solo si ha pasado algo (la mascota ha vivido algún minuto o ha nacido): el reloj llama cada pocos segundos
     simula() {
+      const antes = partida.mascota ? partida.mascota.ultimo : 0;
       const pasa = partida.simulaHasta(reloj.ahora(), minutoDelDia), m = partida.mascota;
       if (m && partida.fase === 'mascota' && m.avisaCrecido()) pasa.crecido = true;
-      if (m) guarda();
+      if (m && (m.ultimo !== antes || Object.keys(pasa).length)) guarda();
       return pasa;
     },
 
@@ -49,9 +51,15 @@ PT.creaCasos = ({ reglas, catalogo, almacen, reloj }) => {
     otroHuevo: () => conGuardado(partida.otroHuevo()),
     huevosNuevos: azar => conGuardado(partida.huevosNuevos(PT.huevos.hash('otro|' + azar))),
 
+    // cargar una partida guardada en vez de la actual (la que llegue del servidor, o la que DEV retoca). Resultado: el de PT.Partida.desdeJson
+    cargaDe(json) {
+      const r = PT.Partida.desdeJson(reglas, catalogo, json);
+      if (r.ok) { partida = r.valor; guarda(); }
+      return r;
+    },
+
     // DEV
     reinicia() { partida = PT.Partida.nueva(reglas, catalogo); guarda(); },
     adelanta(horas) { reloj.adelanta(horas); return this.simula(); },
-    cambiaCriatura: id => conGuardado(partida.cambiaCriatura(id)),
   };
 };

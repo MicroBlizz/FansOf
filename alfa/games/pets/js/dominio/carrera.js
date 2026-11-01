@@ -7,14 +7,28 @@ PT.Carrera = class Carrera {
   #r; #dias = { buenos: 0, total: 0 }; #estilo = { aguante: 0, juego: 0, carino: 0 }; #siestas = 0;
   #diasMal = 0; #dimision = null; #contraofertas = 0;
 
+  // solo desde nueva() o desdeJson(): el estado ya viene comprobado
   constructor(reglas, j = {}) {
     this.#r = reglas;
-    if (j.dias) this.#dias = { buenos: j.dias.buenos || 0, total: j.dias.total || 0 };
-    if (j.estilo) this.#estilo = { aguante: j.estilo.aguante || 0, juego: j.estilo.juego || 0, carino: j.estilo.carino || 0 };
+    if (j.dias) this.#dias = { buenos: j.dias.buenos, total: j.dias.total };
+    if (j.estilo) this.#estilo = { aguante: j.estilo.aguante, juego: j.estilo.juego, carino: j.estilo.carino };
     this.#siestas = j.siestas || 0;
     this.#diasMal = j.diasMal || 0;
     this.#dimision = j.dimision ? { dia: j.dimision.dia } : null;
     this.#contraofertas = j.contraofertas || 0;
+  }
+
+  // Resultado: la carrera tal como se guardó (lo que falte, de cero), o 'carrera-invalida' si no cuadra (cuentas negativas o rotas,
+  // más días buenos que días, una carta de un día que no ha pasado, más contraofertas de las que hay por etapa)
+  static desdeJson(reglas, j) {
+    if (!j || typeof j !== 'object') return PT.error('carrera-invalida');
+    const cuenta = n => n === undefined || (Number.isInteger(n) && n >= 0);
+    const dias = { buenos: 0, total: 0, ...(j.dias || {}) }, estilo = { aguante: 0, juego: 0, carino: 0, ...(j.estilo || {}) };
+    const cuentas = [dias.buenos, dias.total, estilo.aguante, estilo.juego, estilo.carino, j.siestas, j.diasMal, j.contraofertas];
+    if (!cuentas.every(cuenta)) return PT.error('carrera-invalida');
+    if (dias.buenos > dias.total || (j.siestas || 0) > dias.total || (j.contraofertas || 0) > reglas.dimision.contraofertas) return PT.error('carrera-invalida');
+    if (j.dimision && !(Number.isInteger(j.dimision.dia) && j.dimision.dia >= 1 && j.dimision.dia <= dias.total)) return PT.error('carrera-invalida');
+    return PT.ok(new Carrera(reglas, { ...j, dias, estilo }));
   }
 
   aJson() {

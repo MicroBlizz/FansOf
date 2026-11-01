@@ -82,8 +82,10 @@ PT.Partida = class Partida {
   esDia(t, minutoDelDia) { return this.#horario.esDia(minutoDelDia(t)); }
 
   // ─── lo que hace el jugador, en orden de fase ───
-  // en la entrevista, la pregunta del ritmo. Resultado: ok o 'ritmo-desconocido'
+  // la pregunta del ritmo: en la entrevista o al pedir otro huevo (fase 'ritmo'); con la criatura en marcha no se cambia.
+  // Resultado: ok, o 'fase-equivocada' / 'ritmo-desconocido'
   eligeRitmo(nombre) {
+    if (this.#fase !== 'entrevista' && this.#fase !== 'ritmo') return PT.error('fase-equivocada', { fase: this.#fase });
     if (!this.#r.ritmos[nombre]) return PT.error('ritmo-desconocido', { ritmo: nombre });
     this.#ritmo = nombre;
     return PT.ok(nombre);
@@ -195,12 +197,5 @@ PT.Partida = class Partida {
     if (this.#fase !== 'ritmo') return PT.error('fase-equivocada', { fase: this.#fase });
     this.#sacaHuevos(semilla);
     return PT.ok(this.huevos);
-  }
-
-  // solo DEV: cambia la criatura sin repetir la entrevista. Resultado: la criatura, o 'criatura-desconocida'
-  cambiaCriatura(id) {
-    if (!this.#buscaCriatura(id)) return PT.error('criatura-desconocida', { criatura: id });
-    this.#criatura = id;
-    return PT.ok(this.criatura);
   }
 };

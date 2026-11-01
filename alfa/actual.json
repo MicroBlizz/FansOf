@@ -1,8 +1,8 @@
 {
- "build": 757,
- "hash": "52b4d47",
- "fecha": "2026-11-01T09:16:10Z",
- "mensaje": "Pets: la noche no deja en rojo (dormida gasta la mitad y nada baja de 20) y otro huevo pregunta solo el ritmo",
+ "build": 758,
+ "hash": "01d1e4a",
+ "fecha": "2026-11-01T09:42:12Z",
+ "mensaje": "Pets: lo que pidió la revisión de calidad (validar todo al cargar, ritmo con fase, DEV fuera del dominio, smoke-test propio)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -29,7 +29,7 @@ PT.Mascota = class Mascota {
     this.#siesta = !!estado.siesta;
     if (estado.hoy) this.#hoy = { ...this.#hoy, ...estado.hoy };
     this.#empachoHasta = estado.empachoHasta || 0;
-    this.#carrera = new PT.Carrera(reglas, estado.carrera || {});
+    this.#carrera = estado.carrera || PT.Carrera.nueva(reglas);
     this.#rama = estado.rama || '';
   }
 
@@ -39,14 +39,33 @@ PT.Mascota = class Mascota {
     return new Mascota(reglas, ritmo, { nec, nacio: t, ultimo: t });
   }
 
-  // Resultado: la mascota tal como se guardó, o 'mascota-invalida' si la partida guardada no vale
+  // Resultado: la mascota tal como se guardó (lo que falte, como al nacer), o 'mascota-invalida' / 'necesidad-invalida' / 'carrera-invalida'
+  // si la partida guardada no vale: se comprueba todo, no solo lo que se toca al operar
   static desdeJson(reglas, ritmo, j) {
+    if (!j || typeof j !== 'object') return PT.error('mascota-invalida');
     const nec = PT.Necesidades.crear(j.nec);
     if (!nec.ok) return nec;
-    if (!Number.isFinite(j.nacio) || !Number.isFinite(j.ultimo)) return PT.error('mascota-invalida');
-    if (!['', 'noche', 'siesta'].includes(j.motivo || '')) return PT.error('mascota-invalida');
-    if (j.etapa && !reglas.etapas.includes(j.etapa)) return PT.error('mascota-invalida', { etapa: j.etapa });
-    return PT.ok(new Mascota(reglas, ritmo, { ...j, nec: nec.valor }));
+    const carrera = PT.Carrera.desdeJson(reglas, j.carrera || {});
+    if (!carrera.ok) return carrera;
+    const campo = Mascota.#campoMalo(reglas, j);
+    if (campo) return PT.error('mascota-invalida', { campo });
+    return PT.ok(new Mascota(reglas, ritmo, { ...j, nec: nec.valor, carrera: carrera.valor }));
+  }
+  // el primer campo que no cuadra, o '' si todos valen (las horas: ms; las cuentas del día: minutos; la etapa, el motivo y la rama: de la lista)
+  static #campoMalo(reglas, j) {
+    const hora = n => n === undefined || (Number.isFinite(n) && n >= 0), cuenta = n => n === undefined || (Number.isInteger(n) && n >= 0);
+    if (!Number.isFinite(j.nacio) || !Number.isFinite(j.ultimo) || j.ultimo < j.nacio) return 'ultimo';
+    if (![hora(j.despiertaHasta), hora(j.empachoHasta), cuenta(j.crecido)].every(Boolean)) return 'horas';
+    if (!['', 'noche', 'siesta'].includes(j.motivo || '')) return 'motivo';
+    if (j.etapa && !reglas.etapas.includes(j.etapa)) return 'etapa';
+    if (j.rama && !reglas.ascenso.ramas.includes(j.rama)) return 'rama';
+    return Mascota.#diaEnCursoVale(j.hoy) ? '' : 'hoy';
+  }
+  // el día en curso guardado: cuentas de minutos enteras y no negativas, y la siesta sí o no
+  static #diaEnCursoVale(h = {}) {
+    if (!h || typeof h !== 'object') return false;
+    const cuenta = n => n === undefined || (Number.isInteger(n) && n >= 0);
+    return ['despierta', 'mal', 'alMinimo', 'chuches', 'jugadas'].every(k => cuenta(h[k])) && (h.siesta === undefined || typeof h.siesta === 'boolean');
   }
 
   aJson() {

@@ -76,7 +76,7 @@ const PETS = {
   // menos de esta parte de sus minutos despierta; está «al mínimo» si alguna visible está a 0
   dia: { buenoHasta: 0.2, alMinimoDesde: 0.8 },
   // el ascenso: al acabar el adulto con al menos esta parte de días buenos; la rama según el estilo (docs/pets/evoluciones.md)
-  ascenso: { diasBuenos: 0.7, gamberroHasta: 0.85, siestasDesde: 0.7 },
+  ascenso: { diasBuenos: 0.7, gamberroHasta: 0.85, siestasDesde: 0.7, ramas: ['operaciones', 'creativo', 'personas', 'gamberro', 'siesta'] },
   // la dimisión (docs/pets/diseno.md): días seguidos al mínimo hasta la carta, días de preaviso y contraofertas por etapa
   dimision: { diasSeguidos: 3, preavisoDias: 2, contraofertas: 2, repone: 40 },
   // el tamaño en pantalla de cada etapa (radio del dibujo) y del jefe

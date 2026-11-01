@@ -44,12 +44,14 @@ PT.lienzo = (() => {
   function escenaMascota(ctx, p, t) {
     const c = p.criatura, m = p.mascota, jefa = p.fase === 'ascenso', etapa = jefa ? 'jefe' : m.etapa;
     const r = PETS.tamano[etapa], ui = PT.ui;
-    const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama };
+    const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama,
+      sonolienta: !jefa && m.necesidades.de('sueno') < PETS.animacion.bostezaConSueno };
     if (!PT.arte.tiene(c.id, etapa) || !PT.arte.criatura(ctx, c.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(c.fac), t, e);
   }
   function escena(ctx, p, t) {
     const ui = PT.ui;
     if (!NUCLEO.desarrollo) PT.pintor.huevo(ctx, 270, 380, 90, '#ff9a3c', t, { bufanda: true });
+    else if (ui.escena) PT.dev.escena(ctx, t);   // la escena de animaciones del panel DEV
     else if (p.fase === 'entrevista' || p.fase === 'ritmo' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
     else if (p.fase === 'huevos') escenaHuevos(ctx, p, t);
     else if (p.fase === 'huevo' || ui.volverA === 'huevo') escenaHuevo(ctx, p, t);

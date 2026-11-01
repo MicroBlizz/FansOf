@@ -1,0 +1,52 @@
+// Fans Of Pets · ANCLAS: dónde está la cara en cada plantilla lisa (docs/pets/arte.md), medido una vez sobre el monigote y válido para
+// toda criatura dibujada encima (el editor conserva la pose). Son datos, en fracciones del dibujo: los dos ojos (centro x, y y radios
+// rx, ry) y la boca (x, y). Con ellos arte.js pinta la cara viva (párpados, bostezo, masticar) y coloca los recortes de cara.
+// Una plantilla que no está aquí (los ojos cerrados de dientes y cara, dormir) no tiene cara viva. La pose base de niña y adulta es la
+// de su personalidad (una por rama); la adolescente y las jefas van sobre el monigote liso de adulta.
+'use strict';
+PT.anclas = (() => {
+  const T = {
+    'bebe-base': [[0.344, 0.5, 0.076, 0.078], [0.669, 0.497, 0.076, 0.076], [0.506, 0.664]],
+    'bebe-comer': [[0.37, 0.42, 0.062, 0.062], [0.65, 0.42, 0.062, 0.062], [0.5, 0.53]],
+    'bebe-beber': [[0.357, 0.426, 0.07, 0.069], [0.652, 0.421, 0.069, 0.069], [0.504, 0.571]],
+    'bebe-bano': [[0.376, 0.402, 0.051, 0.059], [0.594, 0.408, 0.057, 0.059], [0.485, 0.531]],
+    'bebe-ducha': [[0.396, 0.531, 0.049, 0.052], [0.616, 0.533, 0.051, 0.053], [0.506, 0.645]],
+    'nino-liso': [[0.367, 0.457, 0.065, 0.066], [0.686, 0.457, 0.066, 0.066], [0.526, 0.596]],
+    'nino-base-concentrado': [[0.378, 0.388, 0.057, 0.06], [0.626, 0.383, 0.061, 0.062], [0.502, 0.517]],
+    'nino-base-loco': [[0.37, 0.42, 0.055, 0.055], [0.62, 0.42, 0.055, 0.055], [0.49, 0.53]],
+    'nino-base-carinoso': [[0.38, 0.434, 0.055, 0.059], [0.625, 0.401, 0.057, 0.057], [0.502, 0.557]],
+    'nino-base-gamberro': [[0.384, 0.376, 0.059, 0.059], [0.616, 0.37, 0.061, 0.06], [0.5, 0.501]],
+    'nino-base-dormilon': [[0.379, 0.427, 0.061, 0.055], [0.616, 0.4, 0.066, 0.04], [0.498, 0.542]],
+    'nino-comer': [[0.365, 0.387, 0.052, 0.056], [0.642, 0.391, 0.056, 0.057], [0.504, 0.511]],
+    'nino-beber': [[0.37, 0.393, 0.052, 0.055], [0.635, 0.393, 0.055, 0.055], [0.502, 0.508]],
+    'nino-bano': [[0.378, 0.353, 0.039, 0.048], [0.569, 0.361, 0.048, 0.051], [0.474, 0.467]],
+    'nino-ducha': [[0.384, 0.491, 0.048, 0.048], [0.624, 0.493, 0.048, 0.048], [0.504, 0.595]],
+    'adulto-liso': [[0.372, 0.424, 0.062, 0.062], [0.637, 0.415, 0.059, 0.061], [0.504, 0.556]],
+    'adulto-base-concentrado': [[0.379, 0.417, 0.059, 0.062], [0.624, 0.402, 0.059, 0.061], [0.502, 0.548]],
+    'adulto-base-loco': [[0.37, 0.38, 0.055, 0.055], [0.62, 0.38, 0.055, 0.055], [0.49, 0.49]],
+    'adulto-base-carinoso': [[0.379, 0.422, 0.056, 0.06], [0.612, 0.382, 0.057, 0.059], [0.496, 0.548]],
+    'adulto-base-gamberro': [[0.382, 0.415, 0.059, 0.059], [0.624, 0.393, 0.059, 0.057], [0.503, 0.538]],
+    'adulto-base-dormilon': [[0.378, 0.424, 0.06, 0.055], [0.591, 0.387, 0.07, 0.043], [0.484, 0.539]],
+    'adulto-comer': [[0.374, 0.417, 0.061, 0.062], [0.637, 0.414, 0.059, 0.06], [0.506, 0.548]],
+    'adulto-beber': [[0.372, 0.415, 0.06, 0.061], [0.633, 0.409, 0.057, 0.06], [0.502, 0.544]],
+    'adulto-bano': [[0.382, 0.354, 0.043, 0.049], [0.566, 0.358, 0.048, 0.051], [0.474, 0.465]],
+    'adulto-ducha': [[0.372, 0.424, 0.062, 0.062], [0.635, 0.417, 0.057, 0.06], [0.504, 0.556]],
+  };
+  // qué plantilla lleva esa etapa y pose (la base de niña y adulta, por personalidad; sin personalidad, nada: no está sobre molde)
+  function plantilla(etapa, pose, personalidad) {
+    if (!personalidad) return '';
+    if (etapa === 'jefe') return 'adulto-liso';
+    if (etapa === 'adolescente') return pose === 'base' ? 'adulto-liso' : 'adulto-' + pose;
+    if (pose === 'base' && etapa !== 'bebe') return `${etapa}-base-${personalidad}`;
+    return `${etapa}-${pose}`;
+  }
+  // las anclas de esa pose: { ojos: [[x, y, rx, ry], [...]], boca: [x, y], cara: [x, y, w, h] (el recuadro de los recortes) }; null si no hay
+  function de(etapa, pose, personalidad) {
+    const t = T[plantilla(etapa, pose, personalidad)];
+    if (!t) return null;
+    const [i, d, boca] = t, ry = Math.max(i[3], d[3]);
+    const x0 = i[0] - i[2] * 2, x1 = d[0] + d[2] * 2, y0 = Math.min(i[1], d[1]) - ry * 1.6, y1 = boca[1] + ry * 2;
+    return { ojos: [i, d], boca, cara: [x0, y0, x1 - x0, y1 - y0] };
+  }
+  return { de, plantilla, plantillas: () => Object.keys(T) };
+})();

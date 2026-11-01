@@ -1,8 +1,8 @@
 {
- "build": 796,
- "hash": "e33c7eb",
- "fecha": "2026-11-01T23:12:49Z",
- "mensaje": "Nova: oleadas y nave en capas (NV.Oleadas, NV.Nave); nvSpawn, nvMuere y nvPaso partidos",
+ "build": 797,
+ "hash": "a5bf300",
+ "fecha": "2026-11-01T23:15:03Z",
+ "mensaje": "Pets: cara viva (parpadeo, bostezo, masticar) sobre las anclas de las plantillas y escena de animaciones en el panel DEV",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

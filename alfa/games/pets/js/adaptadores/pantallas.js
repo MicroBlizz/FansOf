@@ -36,6 +36,7 @@ PT.pantallas = (() => {
   }
   function cajaDeFase(p) {
     if (p.fase === 'entrevista') return cajaEntrevista();
+    if (p.fase === 'ritmo') return cajaRitmo();
     if (p.fase === 'huevos') return cajaHuevos();
     if (p.fase === 'horario' || ui.volverA) return cajaHorario(p);
     if (p.fase === 'huevo') return cajaHuevo();
@@ -58,6 +59,13 @@ PT.pantallas = (() => {
     const nota = q.nota ? `<p class="pt-nota pt-aviso">${tr(q.nota)}</p>` : '';
     const respuestas = q.r.map((r, i) => `<button type="button" class="pt-btn pt-respuesta" data-r="${i}">${PT.esc(tr(r))}</button>`).join('');
     return `<p class="pt-nota">${tr('Pregunta {n} de {total}', { n: paso + 1, total: PT.ENTREVISTA.length })}</p>${nota}<div class="pt-respuestas">${respuestas}</div>`;
+  }
+  // tras otro huevo: solo la pregunta del ritmo de la entrevista
+  function cajaRitmo() {
+    const q = PT.ENTREVISTA.find(x => x.ritmo);
+    dice(tr(PT.LOLA.ritmo), 'Lola');
+    const respuestas = q.r.map((r, i) => `<button type="button" class="pt-btn pt-ritmo" data-r="${i}">${PT.esc(tr(r))}</button>`).join('');
+    return `<h2 class="pt-titulo">${tr('Otro huevo')}</h2><p class="pt-nota pt-aviso">${tr(q.nota)}</p><div class="pt-respuestas">${respuestas}</div>`;
   }
   function cajaHuevos() {
     dice(tr(PT.LOLA.huevos), 'Lola');

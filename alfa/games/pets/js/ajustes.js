@@ -32,7 +32,8 @@ const PETS = {
   nacer: { hambre: 70, sed: 70, sueno: 80, limpieza: 90, diversion: 80 },
   // cuánto baja cada una por hora, despierta y dormida (dormida, el sueño se recupera: número positivo). La diversión no baja en el bebé: se estrena en el niño
   gastoDespierta: { hambre: 6, sed: 7, sueno: 5, limpieza: 4, diversion: 0 },
-  gastoDormida: { hambre: 1.5, sed: 2, sueno: -14, limpieza: 1, diversion: 0 },
+  gastoDormida: { hambre: 0.75, sed: 1, sueno: -14, limpieza: 0.5, diversion: 0 },
+  sueloDormida: 20,             // dormida, ninguna necesidad baja de aquí: la noche no la deja en rojo (Arkioner, 1-11-2026)
   // si se acuesta con hambre, sed o sucia (por debajo de esto), duerme mal: recupera menos sueño y se levanta con más hambre
   nocheMala: { umbral: 35, sueno: 0.5, hambre: 2 },
   siestaHasta: 95,              // de día, si la mandas a dormir, se despierta sola al llegar a este sueño

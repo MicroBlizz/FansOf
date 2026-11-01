@@ -112,6 +112,7 @@ PT.Mascota = class Mascota {
   #vive(t, dia, eraDia, pasa) {
     this.#sueno(t, dia, eraDia, pasa);
     this.#nec = this.#nec.gasta(this.#gastoPorMinuto());
+    if (this.#dormida) this.#nec = this.#nec.alMenos(this.visibles, this.#r.sueloDormida);   // la noche no la deja en rojo
     this.#apuntaElMinuto();
     if (this.crece && !this.listaParaCrecer) this.#crecido++;
     if (this.listaParaCrecer && !this.esAdulta) pasa.crecio = this.#creceDeEtapa();

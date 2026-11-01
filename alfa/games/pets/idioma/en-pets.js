@@ -101,6 +101,8 @@ IDIOMA.add({
   "Triste: necesita cuidados": "Sad: needs looking after",
   "Despierta y con ganas de trabajar (poco)": "Awake and keen to work (a little)",
   "Lista para crecer": "Ready to grow up",
+  "Otro huevo": "Another egg",
+  "Otra vez por aquí. Me ahorro la entrevista; solo una pregunta: ¿cómo quiere trabajar esta vez?": "Back again. I'll skip the interview; just one question: how do you want to work this time?",
   "Lista para ascender": "Ready for a promotion",
   "No crece: está descuidada": "Not growing: it's being neglected",
   "Crece en {t}": "Grows up in {t}",

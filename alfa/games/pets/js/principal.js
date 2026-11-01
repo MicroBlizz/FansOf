@@ -49,7 +49,7 @@ PT.lienzo = (() => {
   function escena(ctx, p, t) {
     const ui = PT.ui;
     if (!NUCLEO.desarrollo) PT.pintor.huevo(ctx, 270, 380, 90, '#ff9a3c', t, { bufanda: true });
-    else if (p.fase === 'entrevista' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
+    else if (p.fase === 'entrevista' || p.fase === 'ritmo' || (ui.volverA === '' && p.fase === 'horario')) escenaLola(ctx, t, true);
     else if (p.fase === 'huevos') escenaHuevos(ctx, p, t);
     else if (p.fase === 'huevo' || ui.volverA === 'huevo') escenaHuevo(ctx, p, t);
     else if (p.mascota) escenaMascota(ctx, p, t);

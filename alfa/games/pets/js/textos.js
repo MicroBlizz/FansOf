@@ -17,6 +17,7 @@ PT.LOLA = {
   hola: 'Buenos días. Soy Lola: llevo la tienda desde que Microblizz me despidió. Esto es una entrevista de trabajo. Conteste con sinceridad, o como quiera.',
   fin: 'Gracias. Ya le llamaremos.',
   huevos: 'Ah, sí, casi se me olvida. Le toca cuidar de uno de estos huevos. Son de la empresa: no pregunte de dónde salen.',
+  ritmo: 'Otra vez por aquí. Me ahorro la entrevista; solo una pregunta: ¿cómo quiere trabajar esta vez?',
   horario: 'Última formalidad: su horario. ¿A qué hora se levanta y a qué hora se acuesta? Le recomiendo poner como hora de despertar la hora a la que usted quiere levantarse.',
 };
 // las frases de cada cuidado: una al azar cada vez

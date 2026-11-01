@@ -32,7 +32,8 @@ PT.botones = (() => {
     clic('pt-contraoferta', contraoferta);
     clic('pt-ascender', asciende);
     clic('pt-despedir-si', () => { if (PT.casos.despide().ok) { ui.menu = ''; pinta(); } });
-    clic('pt-otro-huevo', () => { PT.casos.otroHuevo(azarDeVerdad()); ui.elegido = -1; ui.menu = ''; pinta(); });
+    clic('pt-otro-huevo', () => { PT.casos.otroHuevo(); ui.menu = ''; pinta(); });
+    document.querySelectorAll('.pt-ritmo').forEach(b => { b.onclick = () => { sonido(); eligeRitmoYHuevos(+b.dataset.r); }; });
   }
 
   // la entrevista: cada respuesta se apunta solo en memoria; la del ritmo sí cambia la partida
@@ -41,6 +42,14 @@ PT.botones = (() => {
     ui.respuestas.push(i);
     if (q.ritmo) PT.casos.eligeRitmo(q.valores[i]);
     ui.paso = ui.paso + 1 < PT.ENTREVISTA.length ? ui.paso + 1 : 'fin';
+    pinta();
+  }
+  // tras otro huevo: el ritmo elegido y los huevos nuevos
+  function eligeRitmoYHuevos(i) {
+    const q = PT.ENTREVISTA.find(x => x.ritmo);
+    if (!PT.casos.eligeRitmo(q.valores[i]).ok) return;
+    PT.casos.huevosNuevos(azarDeVerdad());
+    ui.elegido = -1;
     pinta();
   }
   function azarDeVerdad() {

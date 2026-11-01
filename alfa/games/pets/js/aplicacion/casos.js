@@ -46,7 +46,8 @@ PT.creaCasos = ({ reglas, catalogo, almacen, reloj }) => {
     asciende: () => conGuardado(partida.asciende()),
     despide: () => conGuardado(partida.despide()),
     // tras el ascenso o el final: 3 huevos nuevos, con un azar de verdad como semilla
-    otroHuevo: azar => conGuardado(partida.otroHuevo(PT.huevos.hash('otro|' + azar))),
+    otroHuevo: () => conGuardado(partida.otroHuevo()),
+    huevosNuevos: azar => conGuardado(partida.huevosNuevos(PT.huevos.hash('otro|' + azar))),
 
     // DEV
     reinicia() { partida = PT.Partida.nueva(reglas, catalogo); guarda(); },

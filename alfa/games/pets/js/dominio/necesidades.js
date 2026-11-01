@@ -37,6 +37,13 @@ PT.Necesidades = class Necesidades {
     return out;
   }
 
+  // otras Necesidades con las claves dadas subidas hasta minimo si estaban por debajo (lo que ya estaba por encima no cambia)
+  alMenos(claves, minimo) {
+    let out = this;
+    for (const k of claves) if (this.#v[k] < minimo) out = out.con(k, minimo - this.#v[k]);
+    return out;
+  }
+
   // ¿todas las claves dadas están en minimo o más?
   todasAlMenos(claves, minimo) { return claves.every(k => this.#v[k] >= minimo); }
 

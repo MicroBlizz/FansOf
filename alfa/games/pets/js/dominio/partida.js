@@ -5,7 +5,7 @@
 // una partida anterior carga igual (la fase «bebe» de antes es la mascota en su etapa bebé). Las cifras vienen de PETS; el catálogo (PT.criaturas) se le pasa.
 'use strict';
 PT.Partida = class Partida {
-  static FASES = ['entrevista', 'huevos', 'horario', 'huevo', 'mascota', 'ascenso', 'final'];
+  static FASES = ['entrevista', 'huevos', 'horario', 'huevo', 'mascota', 'ascenso', 'final', 'ritmo'];   // ritmo: tras otro huevo, Lola pregunta solo el ritmo
   #r; #catalogo;   // las reglas (PETS) y el catálogo de criaturas { lista: [{ id, fac, … }], facciones: [...] }
   #fase = 'entrevista'; #ritmo; #semilla = 0; #huevos = []; #criatura = ''; #horario; #huevoDesde = 0; #mascota = null;
   #album = []; #final = null;   // final: { motivo: 'dimision' | 'despedida' } mientras se enseña la carta
@@ -113,7 +113,7 @@ PT.Partida = class Partida {
   // pone o cambia el horario de vida a la hora `ahora`. Si ya hay mascota, lo vivido hasta ahora cuenta con el horario de antes.
   // La primera vez (fase horario) empieza a incubar el huevo. Resultado: el Horario, o el error de PT.Horario o 'fase-equivocada'
   ponHorario(datos, ahora, minutoDelDia) {
-    if (this.#fase === 'entrevista' || this.#fase === 'huevos') return PT.error('fase-equivocada', { fase: this.#fase });
+    if (this.#fase === 'entrevista' || this.#fase === 'huevos' || this.#fase === 'ritmo') return PT.error('fase-equivocada', { fase: this.#fase });
     const h = PT.Horario.crear(datos, this.#r.horario);
     if (!h.ok) return h;
     if (this.#mascota) this.#mascota.simulaHasta(ahora, this.#horario, minutoDelDia);
@@ -179,13 +179,20 @@ PT.Partida = class Partida {
     });
   }
 
-  // tras el ascenso o el final: otro huevo. Sin entrevista: salen 3 huevos nuevos con la semilla dada. Resultado: los huevos, o 'fase-equivocada'
-  otroHuevo(semilla) {
+  // tras el ascenso o el final: otro huevo. Sin repetir la entrevista: Lola pregunta solo el ritmo (fase 'ritmo') y después salen los huevos
+  // (huevosNuevos). Resultado: ok, o 'fase-equivocada'
+  otroHuevo() {
     if (this.#fase !== 'ascenso' && this.#fase !== 'final') return PT.error('fase-equivocada', { fase: this.#fase });
     this.#mascota = null;
     this.#final = null;
     this.#criatura = '';
     this.#huevoDesde = 0;
+    this.#fase = 'ritmo';
+    return PT.ok('ritmo');
+  }
+  // con el ritmo ya elegido, los 3 huevos nuevos con la semilla dada. Resultado: los huevos, o 'fase-equivocada'
+  huevosNuevos(semilla) {
+    if (this.#fase !== 'ritmo') return PT.error('fase-equivocada', { fase: this.#fase });
     this.#sacaHuevos(semilla);
     return PT.ok(this.huevos);
   }

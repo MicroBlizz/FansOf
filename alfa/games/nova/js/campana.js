@@ -34,12 +34,7 @@ function nvHexXY(h) { return [Math.sqrt(3) * (h.q + h.r / 2), 1.5 * h.r]; }   //
 // Las 9 facciones se barajan; tu enclave rebelde ocupa la cuña opuesta a la de tu facción oficial, y tu base, su punta exterior.
 function nvGalaxia(semilla, faccion) {
   const rnd = nvAzar(semilla), tipos = ['planeta', 'cinturon', 'nebulosa', 'estacion', 'pecio'], out = {};
-  const orden = NV_FACCIONES.slice().sort(() => rnd() - 0.5), cunas = new Array(10), suya = orden.indexOf(faccion);
-  // 10 cuñas: las 9 en su orden barajado y el enclave insertado enfrente de la tuya
-  const sinYo = orden.filter(f => f !== faccion); let k = 0;
-  const iOf = suya < 0 ? 0 : suya, iReb = (iOf + 5) % 10;
-  for (let i = 0; i < 10; i++) cunas[i] = i === iOf ? faccion : i === iReb ? 'rebelde' : sinYo[k++];
-  const D = 8.4, ap = D * Math.cos(Math.PI / 10);   // radio y apotema del decágono
+  const cunas = nvGalaxiaCunas(rnd, faccion), ap = 8.4 * Math.cos(Math.PI / 10);   // radio 8,4: la apotema del decágono
   for (let q = -NV_GAL_R; q <= NV_GAL_R; q++) for (let r = -NV_GAL_R; r <= NV_GAL_R; r++) {
     const h = { q, r }; if (nvHexDist(h, { q: 0, r: 0 }) > NV_GAL_R) continue;
     const [x, y] = nvHexXY(h), dist = Math.hypot(x, y), ang = (Math.atan2(y, x) + Math.PI * 2.5) % (Math.PI * 2);   // 0 = arriba
@@ -48,16 +43,31 @@ function nvGalaxia(semilla, faccion) {
     const anillo = nvHexDist(h, { q: 0, r: 0 }), dueno = anillo <= 2 ? 'microblizz' : cunas[Math.floor(ang / (Math.PI / 5)) % 10];   // Microblizz: el núcleo y dos anillos alrededor
     out[nvHexClave(h)] = { q, r, x, y, dist, dueno, tipo: anillo === 0 ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)] };
   }
-  // la base: la celda más exterior del enclave, en el eje de su cuña
+  const base = nvGalaxiaBase(out, cunas.indexOf('rebelde'));
+  out[base].base = true; out[base].tipo = 'estacion';
+  nvGalaxiaPeligro(out, base);
+  out._base = base;
+  return out;
+}
+// 10 cuñas: las 9 facciones en su orden barajado y el enclave rebelde insertado enfrente de la tuya
+function nvGalaxiaCunas(rnd, faccion) {
+  const orden = NV_FACCIONES.slice().sort(() => rnd() - 0.5), cunas = new Array(10), suya = orden.indexOf(faccion);
+  const sinYo = orden.filter(f => f !== faccion), iOf = suya < 0 ? 0 : suya, iReb = (iOf + 5) % 10;
+  let k = 0;
+  for (let i = 0; i < 10; i++) cunas[i] = i === iOf ? faccion : i === iReb ? 'rebelde' : sinYo[k++];
+  return cunas;
+}
+// La base: la celda más exterior del enclave rebelde, en el eje de su cuña
+function nvGalaxiaBase(out, iReb) {
   const ejeReb = (iReb + 0.5) * Math.PI / 5;
   let base = null, mejor = -1e9;
   for (const kk in out) { const s = out[kk]; if (s.dueno !== 'rebelde') continue; const ang = (Math.atan2(s.y, s.x) + Math.PI * 2.5) % (Math.PI * 2), v = s.dist - 3 * Math.abs(ang - ejeReb); if (v > mejor) { mejor = v; base = kk; } }
-  out[base].base = true; out[base].tipo = 'estacion';
-  // peligro 1–5: por distancia a la base; el núcleo, siempre 5
+  return base;
+}
+// Peligro 1–5: por distancia a la base; lo de Microblizz, siempre 5
+function nvGalaxiaPeligro(out, base) {
   let maxd = 1; for (const kk in out) maxd = Math.max(maxd, nvHexDist(out[kk], out[base]));
   for (const kk in out) { const s = out[kk]; s.peligro = s.dueno === 'microblizz' ? 5 : Math.max(1, Math.min(5, Math.ceil(5 * nvHexDist(s, out[base]) / maxd))); }
-  out._base = base;
-  return out;
 }
 
 function nvCampNueva(prev) { return NV.Campana.nueva(prev, Math.random); }   // fac: armas de facción desbloqueadas, para siempre (dominio/campana.js)

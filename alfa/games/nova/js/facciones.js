@@ -83,19 +83,21 @@ function nvRasgoPre(S, w) {
   const cs = nvCargasDe(w.portador); w.carga = cs[Math.floor(Math.random() * cs.length)];
 }
 // Multiplicador de daño del disparo (obj = el enemigo al que apunta).
+// Cuánto multiplica cada rasgo de arma de facción el daño de un disparo (1 = nada). Algunos tiran el azar o cuentan disparos.
+const NV_RASGO_MULT = {
+  rabia: (S, w, obj, r) => { let k = 0; for (const e of S.enem) if (!e.muerto && !e.d.pasivo && Math.hypot(e.x - w.x, e.y - w.y) < r.radio) k++; return 1 + Math.min(r.tope, r.paso * k); },
+  critico: (S, w, obj, r) => (Math.random() < r.prob ? r.mult : 1),
+  rng: (S, w, obj, r) => (Math.random() < r.prob ? r.mult : 1),
+  azar: (S, w, obj, r) => r.min + Math.random() * (r.max - r.min),
+  precision: (S, w, obj, r) => { w.cnt = (w.cnt || 0) + 1; return w.cnt % r.cada === 0 ? r.mult : 1; },
+  lejano: (S, w, obj, r) => { const alc = NOVA_ARMAS.portadores[w.portador].alcance * nvFactor(S.nave.rango) * NV_RANGO_TAM[w.tam] * nvVar(w).alc; return 1 + r.mult * Math.min(1, Math.hypot(obj.x - w.x, obj.y - w.y) / alc); },
+  nostalgia: (S, w, obj, r) => 1 + r.porRango * S.nave.rango,
+  jefe: (S, w, obj, r) => (obj.d.jefe ? r.mult : 1),
+  secuela: (S, w, obj, r) => (w.sec ? r.mult : 1),
+};
 function nvRasgoMult(S, w, obj) {
-  const rs = nvVar(w).rasgos; if (!rs.length) return 1;
   let m = 1;
-  for (const r of rs) {
-    if (r.tipo === 'rabia') { let k = 0; for (const e of S.enem) if (!e.muerto && !e.d.pasivo && Math.hypot(e.x - w.x, e.y - w.y) < r.radio) k++; m *= 1 + Math.min(r.tope, r.paso * k); }
-    else if (r.tipo === 'critico' || r.tipo === 'rng') { if (Math.random() < r.prob) m *= r.mult; }
-    else if (r.tipo === 'azar') m *= r.min + Math.random() * (r.max - r.min);
-    else if (r.tipo === 'precision') { w.cnt = (w.cnt || 0) + 1; if (w.cnt % r.cada === 0) m *= r.mult; }
-    else if (r.tipo === 'lejano') { const alc = NOVA_ARMAS.portadores[w.portador].alcance * nvFactor(S.nave.rango) * NV_RANGO_TAM[w.tam] * nvVar(w).alc; m *= 1 + r.mult * Math.min(1, Math.hypot(obj.x - w.x, obj.y - w.y) / alc); }
-    else if (r.tipo === 'nostalgia') m *= 1 + r.porRango * S.nave.rango;
-    else if (r.tipo === 'jefe') { if (obj.d.jefe) m *= r.mult; }
-    else if (r.tipo === 'secuela') { if (w.sec) m *= r.mult; }
-  }
+  for (const r of nvVar(w).rasgos) { const f = NV_RASGO_MULT[r.tipo]; if (f) m *= f(S, w, obj, r); }
   return m;
 }
 // Cadencia: el Cañón de Hype acelera con cada baja seguida y se enfría si te hieren.
@@ -110,22 +112,26 @@ function nvRasgoCad(S, w) {
   return 1 + r.paso * w.hy;
 }
 // Tras cada impacto: robo de vida, salto a otros enemigos, hackeo de escudo y explosión grande.
+// Lo que hace cada rasgo de arma de facción al impactar
+const NV_RASGO_IMPACTO = {
+  robo: (S, w, dano, e, x, y, r) => { const n = S.nave; n.hp = Math.min(n.hpMax, n.hp + dano * r.parte); },
+  hackeo: (S, w, dano, e, x, y, r) => { if (e.esc > 0 && !e.hack) { e.hack = true; e.esc *= 1 - r.parte; } },
+  area: (S, w, dano, e, x, y, r) => nvExplosion(S, x, y, r.radio, dano * r.mult, w, e, true),
+  cadena: (S, w, dano, e, x, y, r) => nvRasgoCadena(S, w, dano, e, r),
+};
 function nvRasgoImpacto(S, w, dano, e, x, y) {
-  const rs = nvVar(w).rasgos; if (!rs.length) return;
-  for (const r of rs) {
-    if (r.tipo === 'robo') { const n = S.nave; n.hp = Math.min(n.hpMax, n.hp + dano * r.parte); }
-    else if (r.tipo === 'hackeo') { if (e.esc > 0 && !e.hack) { e.hack = true; e.esc *= 1 - r.parte; } }
-    else if (r.tipo === 'area') nvExplosion(S, x, y, r.radio, dano * r.mult, w, e, true);
-    else if (r.tipo === 'cadena') {
-      const ya = [e];
-      for (let i = 0; i < r.saltos; i++) {
-        let t = null, mejor = r.radio * r.radio;
-        for (const o of S.enem) { if (o.muerto || o.d.pasivo || ya.includes(o) || !nvEnPantalla(S, o.x, o.y, 0)) continue; const d2 = (o.x - ya[ya.length - 1].x) ** 2 + (o.y - ya[ya.length - 1].y) ** 2; if (d2 < mejor) { mejor = d2; t = o; } }
-        if (!t) break;
-        ya.push(t); nvGolpe(S, t, dano * r.mult, w, t.x, t.y, 1, true);
-        S.fx.push({ t: 0.2, x: t.x, y: t.y, r: 14 * nvZ(S), color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'flash' });
-      }
-    }
+  for (const r of nvVar(w).rasgos) { const f = NV_RASGO_IMPACTO[r.tipo]; if (f) f(S, w, dano, e, x, y, r); }
+}
+// Cadena: el golpe salta al enemigo visible más cercano al último, hasta `saltos` veces
+function nvRasgoCadena(S, w, dano, e, r) {
+  const ya = [e];
+  for (let i = 0; i < r.saltos; i++) {
+    const ult = ya[ya.length - 1];
+    let t = null, mejor = r.radio * r.radio;
+    for (const o of S.enem) { if (o.muerto || o.d.pasivo || ya.includes(o) || !nvEnPantalla(S, o.x, o.y, 0)) continue; const d2 = (o.x - ult.x) ** 2 + (o.y - ult.y) ** 2; if (d2 < mejor) { mejor = d2; t = o; } }
+    if (!t) break;
+    ya.push(t); nvGolpe(S, t, dano * r.mult, w, t.x, t.y, 1, true);
+    S.fx.push({ t: 0.2, x: t.x, y: t.y, r: 14 * nvZ(S), color: NOVA_ARMAS.cargas[w.carga].color, tipo: 'flash' });
   }
 }
 // Después de disparar: la Secuela repite el disparo un momento más tarde.

@@ -109,24 +109,30 @@ function nvMueve(S, dt) {
 }
 // Bot de pruebas: va a la estación si tiene chatarra, si no a lo comestible más cercano (rocas, pecios, nidos, capitanes) y huye si le queda poca vida.
 function nvBotMeta(S) {
-  const n = S.nave;
-  let mejor = null, md = 1e12;
-  const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
-  let huir = null;
-  for (const e of S.enem) {
-    if (e.muerto) continue;
-    if (!e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
-    else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
-    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
-  }
-  for (const r of S.restos) mira(r.x, r.y, 0.5);
-  if (huir) { const hx = n.x - huir.x, hy = n.y - huir.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
-  for (const p of S.pecios) mira(p.x, p.y, 0.7);
-  if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
-  if (S.jefe && !S.jefe.muerto) mejor = [S.jefe.x, S.jefe.y];
+  const n = S.nave, peligro = nvBotUltimoPeligro(S);   // si hay varios, huye del último de la lista, como siempre
+  if (peligro) { const hx = n.x - peligro.x, hy = n.y - peligro.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
+  const mejor = S.jefe && !S.jefe.muerto ? [S.jefe.x, S.jefe.y] : nvBotObjetivo(S);
   if (!mejor) return [Math.cos(S.t * 0.6), Math.sin(S.t * 0.7)];
   const dx = mejor[0] - n.x, dy = mejor[1] - n.y, d = Math.hypot(dx, dy) || 1, k = n.hp < n.hpMax * 0.25 ? -1 : 1;
   return [dx / d * k, dy / d * k];
+}
+// Un enemigo que saca 3 rangos al bot y está cerca: hay que huir (los jefes no, a esos se les planta cara)
+function nvBotPeligro(n, e) { return !e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r; }
+function nvBotUltimoPeligro(S) { let p = null; for (const e of S.enem) if (!e.muerto && nvBotPeligro(S.nave, e)) p = e; return p; }
+// Lo más apetecible (distancia × peso): rocas, naves armadas de su tamaño, chatarra, pecios y, con dinero, estaciones
+function nvBotObjetivo(S) {
+  const n = S.nave;
+  let mejor = null, md = 1e12;
+  const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
+  for (const e of S.enem) {
+    if (e.muerto || nvBotPeligro(n, e)) continue;
+    if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
+    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
+  }
+  for (const r of S.restos) mira(r.x, r.y, 0.5);
+  for (const p of S.pecios) mira(p.x, p.y, 0.7);
+  if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
+  return mejor;
 }
 function nvRestos(S, dt) {
   const n = S.nave, im = 70 + 45 * (S.mejoras.iman || 0) + 6 * n.rango;

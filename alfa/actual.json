@@ -1,8 +1,8 @@
 {
- "build": 797,
- "hash": "a5bf300",
- "fecha": "2026-11-01T23:15:03Z",
- "mensaje": "Pets: cara viva (parpadeo, bostezo, masticar) sobre las anclas de las plantillas y escena de animaciones en el panel DEV",
+ "build": 798,
+ "hash": "6978705",
+ "fecha": "2026-11-01T23:15:46Z",
+ "mensaje": "Nova: rasgos de facción en tablas, mundo, navegación (NV.Navega), bot y galaxia partidos; ninguna regla pasa de 15",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

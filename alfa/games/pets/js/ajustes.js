@@ -99,7 +99,7 @@ const PETS = {
   poseSegundos: 2.4,
   // la mampara, en fracciones del dibujo de la ducha (de debajo de la alcachofa a los pies, sin tapar el patito) y el tamaño de sus píxeles
   // delante: el trozo del dibujo que va por delante del cristal, sin pixelar (el patito)
-  mampara: { x: 0.17, y: 0.2, w: 0.62, h: 0.73, pixel: 7, delante: { x: 0.69, y: 0.74, w: 0.19, h: 0.18 } },
+  mampara: { x: 0.17, y: 0.2, w: 0.62, h: 0.73, pixel: 7, delante: { x: 0.69, y: 0.74, w: 0.19, h: 0.18 } },   // sobre las plantillas, el cristal sale de las anclas (arte.js)
   // los dibujos van todos con el mismo encuadre (640 px, la criatura del mismo tamaño en cada pose): cuánto mide el lienzo respecto al radio
   // del bebé y a qué altura del lienzo están los pies, para apoyarlo en el suelo
   arte: { lienzo: 3.54, pies: 0.875 },

@@ -10,18 +10,20 @@ PT.arte = (() => {
   const RAMAS = PETS.ascenso.ramas;
   const ANIMALES = ['bunny', 'squirrel', 'beaver', 'fox', 'meercat', 'junkcoon', 'mechavaca', 'huron'];   // MechaVaca: de bebé es una vaca con un robot de juguete; el robot de verdad llega en el adulto
   const ARTE = Object.fromEntries(ANIMALES.map(k => ['animales:' + k, { bebe: POSES_BEBE, nino: ['base'], adolescente: ['base'], adulto: ['base'], jefe: RAMAS }]));
+  ARTE['animales:bunny'] = { bebe: POSES_BEBE, nino: POSES_BEBE, adolescente: POSES_BEBE, adulto: POSES_BEBE, jefe: RAMAS };   // CrazyBunny: las 37 sobre las plantillas
   // dónde está el patito en la ducha de cada criatura (x, y, ancho y alto en fracción del dibujo); si falta, el de PETS.mampara.delante
   const PATITO = {
     'animales:squirrel': [0.665, 0.76, 0.17, 0.15], 'animales:beaver': [0.662, 0.662, 0.17, 0.203], 'animales:fox': [0.676, 0.727, 0.13, 0.145],
     'animales:meercat': [0.707, 0.662, 0.155, 0.208], 'animales:junkcoon': [0.685, 0.662, 0.17, 0.212], 'animales:mechavaca': [0.715, 0.7, 0.137, 0.164],
     'animales:huron': [0.67, 0.662, 0.176, 0.22],
+    'animales:bunny': null,   // las duchas sobre las plantillas no llevan patito
   };
   // el cuidado que se está viendo → la pose que lo dibuja
   const POSE = { comer: 'comer', beber: 'beber', banar: 'ducha', dientes: 'dientes', cara: 'cara', bano: 'bano' };
   // las criaturas dibujadas sobre las plantillas lisas (docs/pets/arte.md): solo en esas valen las anclas de la cara (anclas.js) y, por tanto,
   // la cara viva (parpadeo, bostezo, masticar). Las de antes de las plantillas se quedan con su dibujo quieto. Y la pose base de cada una
   // (su personalidad, una por rama de ascenso)
-  const SOBRE_MOLDE = {};   // 'animales:bunny' → 'loco' (CrazyBunny entra en cuanto lleguen sus 37 dibujos)
+  const SOBRE_MOLDE = { 'animales:bunny': 'loco' };
   // recortes de cara que ya existen: id → etapa → pose → caras (img/criaturas/<id>-<etapa>-<pose>-<cara>.webp); si falta, la cara se pinta a mano
   const CARAS = {};
   const ANIMADORES = {};   // id → su animador (cuándo parpadea…)
@@ -86,25 +88,32 @@ PT.arte = (() => {
 
   // la mampara: se ve la pose entera (la ducha por encima) y un cristal centrado en la criatura la tapa de la ducha a los pies; el patito va delante.
   // Lo que queda detrás del cristal se pinta reducido a pocos píxeles y ampliado sin suavizar: sutil, pero no se ve nada.
-  function mampara(ctx, img, x, y0, lado, id) {   // y0: el borde de arriba del dibujo
-    const M = PETS.mampara, iw = img.naturalWidth, ih = img.naturalHeight;
-    const dx = x - lado / 2 + M.x * lado, dy = y0 + M.y * lado, dw = M.w * lado, dh = M.h * lado;
+  // Sobre las plantillas el cristal sale de las anclas: de debajo de la boca a los pies, algo más ancho que los ojos
+  function cristalDe(id, etapa) {
+    const A = SOBRE_MOLDE[id] && PT.anclas.de(etapa, 'ducha', SOBRE_MOLDE[id]);
+    if (!A) return PETS.mampara;
+    const [i, d] = A.ojos, x = i[0] - i[2] * 3.4, y = A.boca[1] + i[3] * 1.4;
+    return { x, y, w: d[0] + d[2] * 3.4 - x, h: PETS.arte.pies + 0.02 - y };
+  }
+  function mampara(ctx, img, x, y0, lado, id, etapa) {   // y0: el borde de arriba del dibujo
+    const M = PETS.mampara, C = cristalDe(id, etapa), iw = img.naturalWidth, ih = img.naturalHeight;
+    const dx = x - lado / 2 + C.x * lado, dy = y0 + C.y * lado, dw = C.w * lado, dh = C.h * lado;
     ctx.save();
     ctx.save(); ctx.beginPath(); ctx.rect(x - lado / 2, y0, lado, lado); ctx.roundRect(dx, dy, dw, dh, 14); ctx.clip('evenodd');   // todo menos el cristal
     ctx.drawImage(img, x - lado / 2, y0, lado, lado);
     ctx.restore();
-    cristal(ctx, img, dx, dy, dw, dh);
+    cristal(ctx, img, dx, dy, dw, dh, C);
     PT.pintor.trazo(ctx, 5); ctx.beginPath(); ctx.roundRect(dx, dy, dw, dh, 14); ctx.stroke();   // el marco
-    const P = PATITO[id], D = P ? { x: P[0], y: P[1], w: P[2], h: P[3] } : M.delante;   // el patito, nítido y por delante del cristal
-    ctx.drawImage(img, D.x * iw, D.y * ih, D.w * iw, D.h * ih, x - lado / 2 + D.x * lado, y0 + D.y * lado, D.w * lado, D.h * lado);
+    const P = PATITO[id], D = P ? { x: P[0], y: P[1], w: P[2], h: P[3] } : M.delante;   // el patito, nítido y por delante del cristal (null: sin patito)
+    if (P !== null) ctx.drawImage(img, D.x * iw, D.y * ih, D.w * iw, D.h * ih, x - lado / 2 + D.x * lado, y0 + D.y * lado, D.w * lado, D.h * lado);
     ctx.restore();
   }
-  function cristal(ctx, img, dx, dy, dw, dh) {
+  function cristal(ctx, img, dx, dy, dw, dh, C) {
     const M = PETS.mampara, iw = img.naturalWidth, ih = img.naturalHeight;
     const nx = Math.max(4, Math.round(dw / M.pixel)), ny = Math.max(4, Math.round(dh / M.pixel));
     MAMPARA.width = nx; MAMPARA.height = ny;
     const m = MAMPARA.getContext('2d'); m.clearRect(0, 0, nx, ny);
-    m.drawImage(img, M.x * iw, M.y * ih, M.w * iw, M.h * ih, 0, 0, nx, ny);
+    m.drawImage(img, C.x * iw, C.y * ih, C.w * iw, C.h * ih, 0, 0, nx, ny);
     ctx.beginPath(); ctx.roundRect(dx, dy, dw, dh, 14);
     ctx.save(); ctx.clip();   // lo de detrás del cristal solo se ve pixelado
     ctx.imageSmoothingEnabled = false; ctx.drawImage(MAMPARA, dx, dy, dw, dh); ctx.imageSmoothingEnabled = true;
@@ -133,7 +142,7 @@ PT.arte = (() => {
     const salto = a && !e.dormida ? Math.abs(Math.sin(p * Math.PI * 4)) * 14 * (1 - p) : 0, suelo = y + r * 1.0;
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x, suelo, r * 0.85, r * 0.16, 0, 0, 7); ctx.fill();
-    if (d.pose === 'ducha') mampara(ctx, d.img, x, suelo - salto - lado * PETS.arte.pies, lado, id);
+    if (d.pose === 'ducha') mampara(ctx, d.img, x, suelo - salto - lado * PETS.arte.pies, lado, id, etapa);
     else {
       ctx.translate(x, suelo - salto); ctx.scale(1 + resp, 1 - resp);
       if (e.dormida) ctx.filter = cama ? 'brightness(0.85)' : 'brightness(0.75)';

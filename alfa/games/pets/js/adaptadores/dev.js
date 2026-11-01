@@ -1,5 +1,6 @@
-// Fans Of Pets · adaptador · DEV: utilidades para probar el prototipo sin esperar horas. Solo en modo desarrollo (NUCLEO.desarrollo): una barra
-// en el juego y, en el panel DEV de core (UTILIDADES_JUEGO), lo mismo. Adelantar el tiempo suma al desfase del reloj del juego y simula lo que pasa.
+// Fans Of Pets · adaptador · DEV: utilidades para probar el prototipo sin esperar horas. Solo en modo desarrollo (NUCLEO.desarrollo) y solo en el
+// panel DEV de core (UTILIDADES_JUEGO, sección «Fans Of Pets»): nada propio encima del juego (Arkioner, 1-11-2026). Adelantar el tiempo suma al
+// desfase del reloj del juego y simula lo que pasa.
 'use strict';
 PT.dev = (() => {
   const ui = PT.ui;
@@ -46,29 +47,19 @@ PT.dev = (() => {
   const BOTONES = [['+1 h', () => adelanta(1)], ['+6 h', () => adelanta(6)], [tr('+1 día'), () => adelanta(24)], [tr('ECLOSIONAR YA'), eclosionaYa],
     [tr('CRECER YA'), creceYa], [tr('ASCENDER YA'), asciendeYa], [tr('REINICIAR'), reinicia], [tr('CRIATURA'), otraCriatura]];
 
-  function botonesEn(contenedor) {
+  // la sección de Pets en el panel DEV de core
+  function panel(c) {
+    const fila = document.createElement('div');
+    fila.className = 'fila';
     for (const [t, fn] of BOTONES) {
       const b = document.createElement('button');
       b.type = 'button';
       b.textContent = t;
       b.onclick = fn;
-      contenedor.append(b);
+      fila.append(b);
     }
-  }
-  function barra() {
-    const el = PT.$('#pt-dev');
-    el.hidden = !NUCLEO.desarrollo;
-    if (!NUCLEO.desarrollo) return;
-    el.innerHTML = '<b>DEV</b>';
-    botonesEn(el);
-  }
-  // la sección de Pets en el panel DEV de core
-  function panel(c) {
-    const fila = document.createElement('div');
-    fila.className = 'fila';
-    botonesEn(fila);
     c.append(fila);
   }
-  return { barra, panel };
+  return { panel };
 })();
 const UTILIDADES_JUEGO = NUCLEO.desarrollo ? [{ titulo: 'Fans Of Pets', pinta: c => PT.dev.panel(c) }] : [];

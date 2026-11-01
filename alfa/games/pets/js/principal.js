@@ -74,7 +74,6 @@ PT.arranca = () => {
   const elige = PT.$('#pt-elige');
   elige.innerHTML = PT.HUEVO_X.map((x, i) => `<button type="button" style="left:${x - 70}px;top:${PT.HUEVO_Y - 80}px" aria-label="${tr('Huevo {n}', { n: i + 1 })}" aria-pressed="false"></button>`).join('');
   elige.querySelectorAll('button').forEach((b, i) => { b.onclick = () => PT.botones.eligeHuevo(i); });
-  PT.dev.barra();
   if (NUCLEO.desarrollo) PT.pantallas.trasSimular(PT.casos.simula());
   PT.pantallas.pinta();
   const tic = () => {

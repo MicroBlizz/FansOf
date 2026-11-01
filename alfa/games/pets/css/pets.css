@@ -2,7 +2,7 @@
    Colores y letras de core (core/css/base.css): contorno grueso y tinta oscura. */
 #stage { background: var(--tray); }
 #pt-ui { position: absolute; left: 0; top: 0; width: 540px; height: 960px; transform-origin: 0 0; pointer-events: none; color: var(--ink); }
-#pt-ui button, #pt-ui select, #pt-caja, #pt-dev { pointer-events: auto; }
+#pt-ui button, #pt-ui select, #pt-caja { pointer-events: auto; }
 #carga { position: fixed; inset: 0; display: grid; place-items: center; font: 800 28px var(--font-ui); color: var(--ink-dim); }
 
 #pt-cabeza { position: absolute; left: 0; right: 0; top: 0; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
@@ -22,9 +22,6 @@
 .pt-logro p b { color: var(--ink); font-size: 17px; }
 .pt-logro .pt-btn { font-size: 14px; padding: 6px 10px; flex: none; }
 
-#pt-dev { position: absolute; left: 10px; right: 10px; top: 72px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-radius: 12px; background: rgba(255, 203, 61, 0.92);
-  border: 3px solid var(--outline); color: var(--outline); font-size: 14px; }
-#pt-dev button { font-weight: 800; font-size: 14px; padding: 4px 8px; border-radius: 8px; border: 2px solid var(--outline); background: #fff6ea; color: var(--outline); cursor: pointer; }
 
 #pt-elige button { position: absolute; width: 140px; height: 160px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
 #pt-elige button:focus-visible { outline: 4px solid var(--gold); }

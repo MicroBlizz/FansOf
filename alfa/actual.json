@@ -1,8 +1,8 @@
 {
- "build": 767,
- "hash": "bbbcca2",
- "fecha": "2026-11-01T14:50:31Z",
- "mensaje": "Rouflage: rfpRecibe (complejidad 68) pasa a una tabla de receptores por tipo de mensaje (paso 3, PvP)",
+ "build": 768,
+ "hash": "f03888f",
+ "fecha": "2026-11-01T17:23:06Z",
+ "mensaje": "Shelter: cámara que se aleja de noche, silueta tras los árboles, reloj del día y luz de la zanahoria de fuego, los orbes y las torretas",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

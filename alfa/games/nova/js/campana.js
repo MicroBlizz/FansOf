@@ -131,10 +131,12 @@ function nvCierraMision(S) {
   const c = nvCamp(), a = nvAleacionMision(S);
   c.aleacion += a; c.misiones++;
   NV_RETOS.evento('mision'); NV_RETOS.evento('muertos', S.stats.muertos); NV_RETOS.maximo('rango', S.nave.rango);
+  let libero = false;
   if (S.estado === 'victoria') {
     c.victorias++; NV_RETOS.evento('victoria');
-    if (S.sector && !c.libres.includes(S.sector)) { c.libres.push(S.sector); NV_RETOS.evento('sector'); }
+    if (S.sector && !c.libres.includes(S.sector)) { c.libres.push(S.sector); NV_RETOS.evento('sector'); libero = true; }
   }
+  S.frente = nvFrenteAporta(S, libero);   // frente-nova.js: tu misión suma a tu patrón en la galaxia de la comunidad
   S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();
   S.aleacionGanada = a;

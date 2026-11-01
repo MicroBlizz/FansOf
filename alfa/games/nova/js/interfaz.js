@@ -93,6 +93,7 @@ function nvPanelesDOM(S) {
     p.appendChild(nvEl('nv-titulo', ok ? tr('¡SECTOR LIMPIO!') : tr('NAVE DESTRUIDA')));
     const l = [[tr('Tiempo'), Math.floor(S.t / 60) + ':' + String(Math.floor(S.t % 60)).padStart(2, '0')], [tr('Rango'), S.nave.rango], [tr('Enemigos destruidos'), S.stats.muertos], [tr('Restos devorados'), S.stats.tragados], [tr('Daño total'), Math.round(S.stats.dano)], [tr('Mayor golpe'), Math.round(S.stats.mayor)], [tr('Aleación ganada'), nvCierraMision(S) || S.aleacionGanada || 0]];
     for (const [a, b] of l) { const f = nvEl('nv-fila'); f.appendChild(nvEl('', a)); f.appendChild(nvEl('', String(b))); p.appendChild(f); }
+    if (S.frente) p.appendChild(nvEl('nv-cdet', tr('Galaxia de la comunidad') + ': +' + S.frente.puntos + ' ' + tr('para') + ' ' + tr(NOVA_CASCOS.facciones[S.frente.patron].nombre)));
     const re = Object.keys(S.stats.reacciones);
     if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
     if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));

@@ -26,6 +26,7 @@ function nvGalaxiaMenu() {
   lanzar.onclick = () => { if (NV_GAL.sel && nvSectorAbierto(NV_GAL.sel)) { NVP.sector = NV_GAL.sel; nvMenu(); } };
   p.appendChild(lanzar);
   const cap = nvEl('nv-boton', tr('Nave capital'), 'button'); cap.onclick = nvNaveCapital; p.appendChild(cap);
+  if (nvFrenteActivo()) { const fr = nvEl('nv-boton', tr('Galaxia de la comunidad'), 'button'); fr.onclick = nvFrenteMenu; p.appendChild(fr); }
   const ay = nvEl('nv-boton', tr('Cómo se juega'), 'button'); ay.onclick = () => { if (!NVP.tuto) nvTutoTodo(); }; ay.prepend(nvIcono('ui', 'info', '#2f8cff', 26)); p.appendChild(ay);
   p.appendChild(nvControlSonido());
   const s = nvEl('nv-boton', tr('Salir'), 'button'); s.onclick = () => { cont.textContent = ''; nvSalir(); }; p.appendChild(s);
@@ -39,6 +40,7 @@ function nvGalaxiaMenu() {
     NV_GAL.sel = k; pinta();
   };
   requestAnimationFrame(pinta);   // con el panel ya en pantalla, para medir el ancho
+  if (nvFrenteActivo() && nvFrenteParte()) nvFrenteVentanaParte();   // empieza semana: el parte de guerra de la anterior
 }
 // Al empezar la campaña: tu facción decide los colores que vas pintando y dónde está tu enclave rebelde.
 function nvEligeFaccion() {

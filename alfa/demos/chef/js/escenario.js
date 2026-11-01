@@ -13,7 +13,7 @@ function losa(ctx, nombre, k) {
   const clave = nombre + k; if (LOSAS[clave]) return LOSAS[clave];
   const c = document.createElement('canvas'); c.width = c.height = CAS; const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
   const im = IMG[nombre];
-  if (im) { const n = Math.max(1, Math.floor(im.width / CAS)), sx = (k % n) * CAS, sy = (Math.floor(k / n) % n) * CAS; g.drawImage(im, sx, sy, CAS, CAS, 0, 0, CAS, CAS); }
+  if (im) { const n = Math.max(1, Math.floor(im.width / CAS)), m = Math.max(1, Math.floor(im.height / CAS)), sx = (k % n) * CAS, sy = (Math.floor(k / n) % m) * CAS; g.drawImage(im, sx, sy, CAS, CAS, 0, 0, CAS, CAS); }
   else {   // por código: losas de piedra marrón con junta oscura y algún desconchón
     const r = mulberry32(k + 11);
     g.fillStyle = PALETA.U; g.fillRect(0, 0, CAS, CAS);
@@ -25,14 +25,20 @@ function losa(ctx, nombre, k) {
   }
   LOSAS[clave] = c; return c;
 }
+// con imagen, la textura se extiende seguida por el mapa (la escena de Yoshi, continua) y de vez en cuando entra un parche de la otra;
+// sin imagen, cada casilla elige una losa al azar
 function pintaLosa(ctx, cx, cy, x, y) {
-  const h = hash2(cx, cy), nombre = IMG.suelo_var && h < 0.3 ? 'suelo_var' : 'suelo_piedra';
-  ctx.drawImage(losa(ctx, nombre, Math.floor(hash2(cx, cy, 1) * 16)), x, y);
+  const im = IMG.suelo_piedra;
+  if (!im) { ctx.drawImage(losa(ctx, 'suelo_piedra', Math.floor(hash2(cx, cy, 1) * 40)), x, y); return; }
+  const n = Math.max(1, Math.floor(im.width / CAS)), m = Math.max(1, Math.floor(im.height / CAS));
+  const parche = IMG.suelo_var && hash2(Math.floor(cx / 3), Math.floor(cy / 3), 9) < 0.25;   // parches de 3 × 3 de la otra escena
+  ctx.drawImage(losa(ctx, parche ? 'suelo_var' : 'suelo_piedra', (cx % n) + (cy % m) * n), x, y);
 }
 // el patrón de suelo para los fondos (portada y cantina)
 let SUELO_PAT = null;
 function patronSuelo(ctx) {
   if (SUELO_PAT) return SUELO_PAT;
+  if (IMG.suelo_piedra) { SUELO_PAT = ctx.createPattern(IMG.suelo_piedra, 'repeat'); return SUELO_PAT; }
   const c = document.createElement('canvas'); c.width = c.height = CAS * 4; const g = c.getContext('2d'); g.imageSmoothingEnabled = false;
   for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) g.drawImage(losa(g, 'suelo_piedra', i + j * 4), i * CAS, j * CAS);
   SUELO_PAT = ctx.createPattern(c, 'repeat'); return SUELO_PAT;

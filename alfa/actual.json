@@ -1,8 +1,8 @@
 {
- "build": 779,
- "hash": "57a1612",
- "fecha": "2026-11-01T18:42:35Z",
- "mensaje": "Chef: el sótano con volumen (muros con cara y tapa, losas variadas, sombras, columnas, barriles, huesos, charcos, verjas)",
+ "build": 780,
+ "hash": "cfdfd88",
+ "fecha": "2026-11-01T18:46:01Z",
+ "mensaje": "Chef: el sótano con el arte de Yoshi (texturas recortadas de las escenas, tomate, cofre, columna, barril, huesos, charco, verja, antorcha)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

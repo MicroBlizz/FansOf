@@ -40,8 +40,8 @@ function pintaTodo(ctx) {
 function pintaLuz(ctx, cam, W, H) {
   ctx.fillStyle = 'rgba(8,4,12,0.28)'; ctx.fillRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'lighter';
-  for (const a of MAPA.antorchas) { const x = a.x - cam.x, y = a.y - cam.y; if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue; halo(ctx, x, y - 6, 34 + Math.round(Math.sin(PAN.t * 9 + a.x)) * 2, 0.5); }
-  halo(ctx, J.x - cam.x, J.y - cam.y - 14, 44, 0.28);
+  for (const a of MAPA.antorchas) { const x = a.x - cam.x, y = a.y - cam.y; if (x < -60 || y < -60 || x > W + 60 || y > H + 60) continue; halo(ctx, x, y - 6, 30 + Math.round(Math.sin(PAN.t * 9 + a.x)) * 2, 0.32); }
+  halo(ctx, J.x - cam.x, J.y - cam.y - 14, 40, 0.18);
   ctx.globalCompositeOperation = 'source-over';
 }
 function halo(ctx, x, y, r, fuerza) { for (let k = 0; k < 4; k++) circulo(ctx, x, y, Math.round(r * (1 - k * 0.22)), 'rgba(150,90,20,' + (fuerza * 0.45).toFixed(2) + ')'); }

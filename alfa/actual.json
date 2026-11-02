@@ -1,8 +1,8 @@
 {
- "build": 834,
- "hash": "67272df",
- "fecha": "2026-11-02T12:45:57Z",
- "mensaje": "Fans of Soccer: ideas de Nintendo World Cup puestas al día (fases 1, 2 y 3)",
+ "build": 835,
+ "hash": "7bb23a6",
+ "fecha": "2026-11-02T12:48:58Z",
+ "mensaje": "Cola de Actions (gestión): «Olvidar token» también sin datos, para poder cambiar un token malo",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

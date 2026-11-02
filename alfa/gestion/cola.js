@@ -161,7 +161,7 @@
         + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
         + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
-    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}</div>`;
+    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
     pan.innerHTML = cab + clave + `<div class="aviso" id="cl-aviso" role="alert"></div>` + cuerpo;
     pintaAvance();
   }

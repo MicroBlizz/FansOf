@@ -98,18 +98,23 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function tumbar(e, o, j, mareo, dano, clase) {
     const b = e.balon, llevaba = b.dueno === o.id;
     o.mareo = Math.max(o.mareo, mareo);
-    if (llevaba) Object.assign(b, { dueno: -1, vx: j.vx * 0.5, vy: j.vy * 0.5, vz: 4, libre: 0.15, tiro: null, paseDe: -1 });
+    // el balón robado sale suelto hacia un lado (no a los pies del que barre) y nadie lo coge en un momento
+    const lado = o.id % 2 ? 1 : -1, v = Math.hypot(j.vx, j.vy) || 1;
+    if (llevaba) Object.assign(b, { dueno: -1, vx: j.vx * 0.15 - j.vy / v * 7 * lado, vy: j.vy * 0.15 + j.vx / v * 7 * lado, vz: 4, libre: 0.4, tiro: null, paseDe: -1, ultimo: j.id });
     _.danar(e, o, dano, j.id);
     e.eventos.push({ tipo: 'derribo', quien: o.id, por: j.id, robo: llevaba, clase });
   }
 
-  // Barrida: tumba a quien alcance. Empujón: tumba salvo que el otro tenga mucha más vida; en ese caso aguanta y nadie cae.
+  // Barrida: solo tumba al que lleva el balón. Empujón: tumba salvo que el otro tenga mucha más vida; en ese caso aguanta y nadie cae.
   _.golpes = function (e, j) {
-    const aj = e.aj, barre = j.barrida > 0, empuja = j.empujon > 0;
+    const aj = e.aj, empuja = j.empujon > 0;
+    if (j.barrida > 0 && S.equipoConBalon(e) === j.eq) { j.barrida = 0; j.vx *= 0.3; j.vy *= 0.3; }   // su equipo ya tiene el balón: se corta
+    const barre = j.barrida > 0;
     if (!barre && !empuja) return;
     for (const o of e.jugadores) {
       if (o.eq === j.eq || o.puesto === 'portero' || o.mareo > 0 || dist(o, j) > (barre ? aj.barrida.alcance : aj.empujon.alcance)) continue;
-      if (barre) { tumbar(e, o, j, e.balon.dueno === o.id ? aj.barrida.mareo : aj.barrida.mareoSinBalon, aj.barrida.dano, 'barrida'); _.sumar(e, j.eq, aj.energia.barrida); continue; }
+      if (barre && e.balon.dueno !== o.id) continue;   // la barrida solo tumba al que lleva el balón
+      if (barre) { tumbar(e, o, j, aj.barrida.mareo, aj.barrida.dano, 'barrida'); _.sumar(e, j.eq, aj.energia.barrida); continue; }
       j.empujon = 0;
       // empujón: tumba si no tienes mucha menos vida que el otro (margen a favor del que empuja); si no, rebota sin tirar a nadie
       if (j.vida + aj.empujon.margen >= o.vida) { tumbar(e, o, j, aj.empujon.mareo, aj.empujon.dano, 'empujon'); _.sumar(e, j.eq, aj.energia.empujon); }

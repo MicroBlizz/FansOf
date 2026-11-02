@@ -280,24 +280,34 @@ function talBotonCrea(id, dentro) {
   botonAccion(b, accionHabilidad); dentro.appendChild(b); return b;
 }
 // lo pinta refrescaHud: de colado va en la fila de botones, en el hueco de la granada; de becario, abajo a la derecha. Con su carga y sus usos
+function habBotonVisible(yo, h) {
+  return !!h && !h.pasiva && h.id !== 'granada' && (J.fase === 'caza' || J.fase === 'sala') && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
+}
+// qué fracción del botón (0 a 1) queda por recargar: nada mientras la habilidad está en marcha
+function habCarga(yo, h, activo) { return activo ? 0 : yo.habEspera > 0 && yo.habUsos > 0 ? yo.habEspera / (h.espera || 1) : 0; }
+// lo que dice el botón: los segundos que le quedan a la que está en marcha, nada en la sala viva (no se gasta) o los usos que quedan
+function habTextoUsos(yo, activo) {
+  const seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato));
+  return activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + yo.habUsos;
+}
+// el icono y el nombre del botón, que solo se repintan al cambiar de habilidad (o con `todo`)
+function habBotonPinta(b, h) {
+  TALP.boton = h.id; b.dataset.hab = h.id; b.querySelector('b').textContent = tr(TAL_CORTO[h.id] || h.n);
+  const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 88, 88); pintaHabIcono(c, 88, h.id);
+  b.setAttribute('aria-label', tr(h.n));
+}
 function refrescaHab(todo) {
   const yo = J.yo, b1 = E('b-hab'), b2 = E('b-hab-b'); if (!b1) return;
-  const h = yo && habDef(yo.hab), ver = !!h && !h.pasiva && h.id !== 'granada' && (J.fase === 'caza' || J.fase === 'sala') && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
+  const h = yo && habDef(yo.hab), ver = !!yo && habBotonVisible(yo, h);
   const b = yo && yo.clase === 'cazador' ? b2 : b1, otro = b === b1 ? b2 : b1;
   if (!otro.hidden) otro.hidden = true;
   if (b.hidden === ver) b.hidden = !ver;
   if (!ver) { TALP.boton = ''; return; }
-  const clave = h.id + (todo ? Math.random() : '');
-  if (TALP.boton !== h.id || todo) {
-    TALP.boton = h.id; b.dataset.hab = h.id; b.querySelector('b').textContent = tr(TAL_CORTO[h.id] || h.n);
-    const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 88, 88); pintaHabIcono(c, 88, h.id);
-    b.setAttribute('aria-label', tr(h.n)); void clave;
-  }
-  const usos = yo.habUsos, activo = habActiva(yo) || TALP.drones.some(d => d.dueno === yo && d.fase !== 'fin');
-  const carga = activo ? 0 : yo.habEspera > 0 && usos > 0 ? yo.habEspera / (h.espera || 1) : 0;
+  if (TALP.boton !== h.id || todo) habBotonPinta(b, h);
+  const activo = habActiva(yo) || TALP.drones.some(d => d.dueno === yo && d.fase !== 'fin'), carga = habCarga(yo, h, activo);
   b.style.setProperty('--carga', (carga * 360).toFixed(0) + 'deg');
-  b.classList.toggle('gastada', usos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
-  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + usos;      // en la sala viva no se gasta: sin contador
+  b.classList.toggle('gastada', yo.habUsos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
+  const u = b.querySelector('.hab-usos'), txt = habTextoUsos(yo, activo);
   if (u.textContent !== txt) u.textContent = txt;
 }
 const TAL_CORTO = { contador: 'CONTAR', dron: 'DRON', silbato: 'SILBATO', uv: 'UV', cafe: 'CAFÉ', senuelo: 'SEÑUELO', gato: 'GATO', cambiazo: 'CAMBIAZO' };

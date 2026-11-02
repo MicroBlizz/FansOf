@@ -41,6 +41,29 @@ function silbatoPon(e, primero) {
   if (e.jugador) { avisa(primero ? tr('Te toca el silbato caliente: pásaselo a otro colado tocándole') : tr('¡Te han pasado el silbato caliente!'), 'malo'); refrescaHud(true); }
   else if (antes && antes.jugador) avisa(tr('Le has pasado el silbato a {a}', { a: e.nombre }), 'bueno');
 }
+// un escondido al azar para que lo lleve (null si no queda ninguno)
+function silbatoAlAzar() { const v = escondidos(); return v.length ? v[Math.floor(Math.random() * v.length)] : null; }
+// el pase: el que lo lleva, en marcha, roza a otro colado
+function silbatoRoce(q) {
+  if (q.congelado || SILBATO.tPase > 0) return false;
+  for (const e of J.camaleones) if (e !== q && !e.fuera && lejos(e.x, e.y, q.x, q.y) < SILBATO.roce) { silbatoPon(e, false); return true; }
+  return false;
+}
+// un bot con el silbato se pone nervioso y va a buscar a otro colado para endosárselo
+function silbatoNervios(q) {
+  if (!(q.bot && SILBATO.t < 26 && q.bot.estado === 'quieto' && q.bot.mana > 0.3)) return;
+  let cerca = null, md = 1e9; for (const e of J.camaleones) if (e !== q && !e.fuera) { const d = lejos(e.x, e.y, q.x, q.y); if (d < md) { md = d; cerca = e; } }
+  if (!cerca) return;
+  descongela(q); q.sitio = [cerca.x, cerca.y]; q.prisa = 1.06;
+  if (ponRumbo(q, cerca.x, cerca.y)) { q.bot.estado = 'huir'; fxTexto(q.x, q.y - 70, tr('¡Ay!'), '#fff6ea'); } else congela(q);
+}
+// ¡BUM!: despide a quien lo lleva y, si queda más de uno escondido, lo pone en otro
+function silbatoExplota(q) {
+  fxSalpica(q.x, q.y - 26, '#ff4b5c', 24); play('sello');
+  avisa(tr('¡El silbato ha explotado en manos de {a}!', { a: q.jugador ? tr('ti') : q.nombre }), q.jugador ? 'malo' : 'aviso');
+  despide(q, null); q.silbato = false; SILBATO.quien = null; SILBATO.t = SILBATO.plazo;
+  const v = escondidos(); if (v.length > 1) silbatoPon(v[Math.floor(Math.random() * v.length)], true);
+}
 function silbatoAvanza(dt) {
   if (!extraOn('silbato') || J.fase !== 'caza') return;
   for (const e of J.camaleones) if (e.pasmo > 0) { e.pasmo -= dt; if (!e.congelado && !e.fuera) congela(e); }
@@ -50,20 +73,10 @@ function silbatoAvanza(dt) {
   SILBATO.t -= dt;
   if (Math.floor(SILBATO.t) !== Math.floor(SILBATO.t + dt)) refrescaHud();
   if (!manda) return;
-  if (q.fuera) { const v = escondidos(); if (v.length) silbatoPon(v[Math.floor(Math.random() * v.length)], true); SILBATO.t = SILBATO.plazo; return; }
-  // el pase: el que lo lleva, en marcha, roza a otro colado
-  if (!q.congelado && SILBATO.tPase <= 0) for (const e of J.camaleones) if (e !== q && !e.fuera && lejos(e.x, e.y, q.x, q.y) < SILBATO.roce) { silbatoPon(e, false); return; }
-  // un bot con el silbato se pone nervioso y va a buscar a otro colado para endosárselo
-  if (q.bot && SILBATO.t < 26 && q.bot.estado === 'quieto' && q.bot.mana > 0.3) {
-    let cerca = null, md = 1e9; for (const e of J.camaleones) if (e !== q && !e.fuera) { const d = lejos(e.x, e.y, q.x, q.y); if (d < md) { md = d; cerca = e; } }
-    if (cerca) { descongela(q); q.sitio = [cerca.x, cerca.y]; q.prisa = 1.06; if (ponRumbo(q, cerca.x, cerca.y)) { q.bot.estado = 'huir'; fxTexto(q.x, q.y - 70, tr('¡Ay!'), '#fff6ea'); } else congela(q); }
-  }
-  if (SILBATO.t <= 0) {      // ¡BUM!
-    fxSalpica(q.x, q.y - 26, '#ff4b5c', 24); play('sello');
-    avisa(tr('¡El silbato ha explotado en manos de {a}!', { a: q.jugador ? tr('ti') : q.nombre }), q.jugador ? 'malo' : 'aviso');
-    despide(q, null); q.silbato = false; SILBATO.quien = null; SILBATO.t = SILBATO.plazo;
-    const v = escondidos(); if (v.length > 1) silbatoPon(v[Math.floor(Math.random() * v.length)], true);
-  }
+  if (q.fuera) { const nuevo = silbatoAlAzar(); if (nuevo) silbatoPon(nuevo, true); SILBATO.t = SILBATO.plazo; return; }
+  if (silbatoRoce(q)) return;
+  silbatoNervios(q);
+  if (SILBATO.t <= 0) silbatoExplota(q);
 }
 // PvP: el anfitrión dice quién lleva el silbato (en su «a»): los demás se lo ponen
 const silbatoSlot = () => extraOn('silbato') && SILBATO.quien ? SILBATO.quien.slot : undefined;

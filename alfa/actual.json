@@ -1,8 +1,8 @@
 {
- "build": 815,
- "hash": "29d87cf",
- "fecha": "2026-11-02T01:21:56Z",
- "mensaje": "Rouflage: pistaDeAhora (33) partida en pistaEspectador, pistaCamaleon y pistaPracticas con 9 tests de caracterización antes",
+ "build": 816,
+ "hash": "1c8cb81",
+ "fecha": "2026-11-02T01:30:07Z",
+ "mensaje": "Rouflage: silbatoAvanza (33) y talBotPiensa (31) partidos con 19 tests de caracterización antes; cifras en MIGRACION y SEGUIMIENTO",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -220,17 +220,20 @@ function talSenueloBot(e) {
 }
 
 /* ---------- los bots ---------- */
+// cuándo un becario bot usa cada habilidad (b: su cerebro; az(p): con suerte, p veces por segundo)
+const TAL_BOT_CAZADOR = {
+  contador: (e, b) => b.estado === 'ronda' && b.sala && e.habSala !== b.sala && salaDe(e.x, e.y) === b.sala && (e.habSala = b.sala, true),
+  dron: (e, b, az) => J.tFase > 18 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.07),
+  silbato: (e, b, az) => J.tFase > 22 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.06),
+  uv: (e, b, az) => (b.estado === 'sospecha' && b.objetivo && !b.objetivo.senuelo && az(1.2)) || (b.estado === 'mira' && J.tFase > 15 && az(0.12)),
+  cafe: (e, b, az) => b.estado === 'investiga' && az(2),
+};
 function talBotPiensa(e, dt) {
-  if (habPuede(e)) return;
-  const b = e.bot, id = e.hab, az = p => Math.random() < dt * p;
-  if (e.clase === 'cazador') {
-    if (b.estado === 'espera' || b.estado === 'fuera') return;
-    if (id === 'contador' && b.estado === 'ronda' && b.sala && e.habSala !== b.sala && salaDe(e.x, e.y) === b.sala) { e.habSala = b.sala; habUsa(e); }
-    else if (id === 'dron' && J.tFase > 18 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.07)) habUsa(e);
-    else if (id === 'silbato' && J.tFase > 22 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.06)) habUsa(e);
-    else if (id === 'uv' && ((b.estado === 'sospecha' && b.objetivo && !b.objetivo.senuelo && az(1.2)) || (b.estado === 'mira' && J.tFase > 15 && az(0.12)))) habUsa(e);
-    else if (id === 'cafe' && b.estado === 'investiga' && az(2)) habUsa(e);
-  }
+  if (habPuede(e) || e.clase !== 'cazador') return;
+  const b = e.bot;
+  if (b.estado === 'espera' || b.estado === 'fuera') return;
+  const cuando = Object.hasOwn(TAL_BOT_CAZADOR, e.hab) ? TAL_BOT_CAZADOR[e.hab] : null;
+  if (cuando && cuando(e, b, p => Math.random() < dt * p)) habUsa(e);
 }
 // un colado bot con el señuelo pintado llena de garabatos su alrededor (con su tinta y su alcance, como lo haría una persona en el taller)
 function talBotGarabatos(e) {

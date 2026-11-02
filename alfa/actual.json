@@ -1,8 +1,8 @@
 {
- "build": 845,
- "hash": "b8604f2",
- "fecha": "2026-11-02T17:20:20Z",
- "mensaje": "Pets: monigote por piezas dibujado por código (ADR 032, fase 1 niño)",
+ "build": 846,
+ "hash": "1f35109",
+ "fecha": "2026-11-02T17:26:13Z",
+ "mensaje": "Pets: el monigote come y se ducha (objetos con agarre, posturas con giros, piezas que siguen a su unión)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

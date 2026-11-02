@@ -36,7 +36,8 @@ function ppPintaFondo(c, k, t, noche = false) {
   if (noche === 2) ppRojo(c, t); else if (noche) ppNoche(c, t);   // difícil: de noche · pesadilla: en rojo
   // lo que flota por el fondo: unicornios, arcoíris, capibaras, animalitos y chuches (Yoshi) subiendo despacio y balanceándose,
   // y burbujitas entre medias. Cada uno con su velocidad, tamaño y vaivén; todo sale de t, sin estado.
-  const hay = PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
+  const suyas = (PP_FLOTA_MUNDO[k] || []).filter(k2 => PP_IMG[k2]);   // las del mundo (js/sprites.js); si aún no hay, la mezcla
+  const hay = suyas.length >= 3 ? suyas : PP_FLOTANTES.filter(k2 => PP_IMG[k2]);
   for (let k2 = 0; k2 < 12; k2++) {
     const vel = 14 + (k2 * 7) % 17, alto = PP_V.H + 160, y = alto - 80 - ((t * vel + k2 * 211) % alto);
     const x = ((k2 * 131) % 500) + 20 + Math.sin(t * 0.6 + k2 * 1.7) * 26;

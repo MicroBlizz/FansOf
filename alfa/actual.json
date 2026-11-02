@@ -1,8 +1,8 @@
 {
- "build": 849,
- "hash": "6f195b2",
- "fecha": "2026-11-02T18:06:40Z",
- "mensaje": "Versiones y notas del despliegue: boom 0.4.2, cooking 0.2.3, crush 0.1.40, decks 0.2.22, jump 0.3.17, karts 0.7.16, ratkov 0.2.30, rouflage 0.2.64, rumble 0.9.159, survivors 0.1.72, tacticas 0.1.56, taxi 0.2.2, td 0.13.88",
+ "build": 850,
+ "hash": "f8efaae",
+ "fecha": "2026-11-02T18:08:39Z",
+ "mensaje": "Pets 0.2.0: entrada de novedades para la release",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

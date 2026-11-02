@@ -1,8 +1,8 @@
 {
- "build": 841,
- "hash": "68e7969",
- "fecha": "2026-11-02T16:24:57Z",
- "mensaje": "Nova: nivel propio de las naves de la flota, pagado con aleación (NV.Flota.subeNivel)",
+ "build": 842,
+ "hash": "be3f78b",
+ "fecha": "2026-11-02T16:33:00Z",
+ "mensaje": "Nova 0.3.38: flota que mina mientras no juegas, con informe al volver; hora del servidor en core",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.37",
+  "nova": "0.3.38",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

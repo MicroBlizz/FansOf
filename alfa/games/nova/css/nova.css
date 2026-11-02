@@ -101,3 +101,7 @@
 .nv-cosm-cas{display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:8px;background:rgba(10,14,40,.6);border:2px solid transparent}
 .nv-cosm-cas.sel{border-color:#ffd93d}
 .nv-cosm-cas canvas{width:100%!important;height:auto!important;max-width:30px}
+/* la flota (flota-ui.js) */
+.nv-flota{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;cursor:default}
+.nv-flota>canvas{grid-row:span 3}
+.nv-flota-bot{display:flex;gap:6px;flex-wrap:wrap}.nv-flota-bot .btn-ghost{font-size:13px;padding:5px 9px}

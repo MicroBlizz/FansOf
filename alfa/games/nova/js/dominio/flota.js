@@ -45,10 +45,11 @@ NV.Flota = (() => {
   }
 
   // Poner una nave a trabajar (o quitarla con trabajo = null) en un sector de tipo `tipo`. Lo que llevaba se recoge antes:
-  // devuelve lo recogido, o null si no se puede (trabajo bloqueado o ya trabajan todas las que caben).
+  // devuelve lo recogido, o null si no se puede (nave sin reclutar, trabajo bloqueado o ya trabajan todas las que caben).
   function asigna(fl, id, trabajo, sector, tipo, ahora, F) {
     if (trabajo && (!F.trabajos[trabajo] || F.trabajos[trabajo].bloqueado)) return null;
-    const n = fl.naves[id] || (fl.naves[id] = { nivel: 1 });
+    const n = fl.naves[id];
+    if (!n) return null;   // primero hay que reclutarla
     if (trabajo && !n.trabajo && trabajando(fl).length >= maxNaves(fl, F)) return null;
     const antes = n.trabajo ? recogeNave(fl, n, ahora, F) : {};
     Object.assign(n, { trabajo: trabajo || null, sector: trabajo ? sector : null, tipo: trabajo ? tipo : null, desde: ahora });
@@ -72,13 +73,23 @@ NV.Flota = (() => {
   // Lo que llevaba producido se recoge antes, para que el nivel nuevo no cuente hacia atrás: devuelve lo recogido, o null si no se pudo.
   function costeNivel(n, F) { const k = (n && n.nivel) || 1; return k < F.nivel.max ? F.nivel.base + F.nivel.paso * k : null; }
   function subeNivel(c, fl, id, ahora, F) {
-    const n = fl.naves[id] || (fl.naves[id] = { nivel: 1 }), p = costeNivel(n, F);
-    if (p === null || c.aleacion < p) return null;
+    const n = fl.naves[id], p = costeNivel(n, F);
+    if (!n || p === null || c.aleacion < p) return null;
     const antes = n.trabajo ? recogeNave(fl, n, ahora, F) : {};
     if (n.trabajo) n.desde = ahora;
     c.aleacion -= p; n.nivel = (n.nivel || 1) + 1;
     return antes;
   }
 
-  return { nueva, nivel, costeNivel, subeNivel, topeHoras, maxNaves, trabajando, ritmo, horas, pendiente, recoge, asigna, coste, mejora };
+  // Reclutar una nave nueva para la flota: la primera es gratis. Devuelve true si la recluta (y cobra).
+  function costeRecluta(fl, F) { const n = Object.keys(fl.naves).length; return n ? F.recluta.base + F.recluta.paso * (n - 1) : 0; }
+  function recluta(c, fl, id, F) {
+    const p = costeRecluta(fl, F);
+    if (fl.naves[id] || c.aleacion < p) return false;
+    c.aleacion -= p; fl.naves[id] = { nivel: 1, trabajo: null };
+    return true;
+  }
+  const tiene = (fl, id) => !!fl.naves[id];
+
+  return { nueva, nivel, costeNivel, subeNivel, costeRecluta, recluta, tiene, topeHoras, maxNaves, trabajando, ritmo, horas, pendiente, recoge, asigna, coste, mejora };
 })();

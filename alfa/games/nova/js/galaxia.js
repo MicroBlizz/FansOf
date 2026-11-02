@@ -18,7 +18,7 @@ function nvGalaxiaMenu() {
   const lz = document.getElementById('nv-canvas'); lz.getContext('2d').clearRect(0, 0, lz.width, lz.height);   // sin restos de la última partida detrás
   if (!camp.faccion) { nvEligeFaccion(); return; }
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
-  const p = nvEl('nv-panel'); p.appendChild(nvEl('nv-titulo', tr('GALAXIA')));
+  const p = nvEl('nv-panel nv-galaxia'); p.appendChild(nvEl('nv-titulo', tr('GALAXIA')));
   nvCabecera(p);
   const cv = document.createElement('canvas'); cv.className = 'nv-gal'; p.appendChild(cv);
   const info = nvEl('nv-carta nv-galinfo'); p.appendChild(info);
@@ -26,6 +26,7 @@ function nvGalaxiaMenu() {
   lanzar.onclick = () => { if (NV_GAL.sel && nvSectorAbierto(NV_GAL.sel)) { NVP.sector = NV_GAL.sel; nvMenu(); } };
   p.appendChild(lanzar);
   const cap = nvEl('nv-boton', tr('Nave capital'), 'button'); cap.onclick = nvNaveCapital; p.appendChild(cap);
+  const fl = nvEl('nv-boton', tr('Flota'), 'button'); fl.onclick = nvFlotaMenu; p.appendChild(fl);   // flota-ui.js
   if (nvFrenteActivo() || nvTieneCosmeticos()) { const as = nvEl('nv-boton', tr('Aspecto de la nave'), 'button'); as.onclick = nvAspectoVentana; p.appendChild(as); }   // cosmeticos-ui.js
   if (nvFrenteActivo()) { const fr = nvEl('nv-boton', tr('Galaxia de la comunidad'), 'button'); fr.onclick = nvFrenteMenu; p.appendChild(fr); }
   const ay = nvEl('nv-boton', tr('Cómo se juega'), 'button'); ay.onclick = () => { if (!NVP.tuto) nvTutoTodo(); }; ay.prepend(nvIcono('ui', 'info', '#2f8cff', 26)); p.appendChild(ay);
@@ -41,7 +42,7 @@ function nvGalaxiaMenu() {
     NV_GAL.sel = k; pinta();
   };
   requestAnimationFrame(pinta);   // con el panel ya en pantalla, para medir el ancho
-  if (nvFrenteActivo()) nvFrenteAlAbrir();   // frente-ui.js: empieza semana: el parte de guerra de la anterior
+  nvAlAbrirCampana(() => { if (nvFrenteActivo()) nvFrenteAlAbrir(); });   // flota-ui.js: el informe de la flota y, después, el parte de guerra
 }
 // Al empezar la campaña: tu facción decide los colores que vas pintando y dónde está tu enclave rebelde.
 function nvEligeFaccion() {

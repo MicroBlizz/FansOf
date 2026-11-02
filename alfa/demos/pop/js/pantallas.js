@@ -160,8 +160,6 @@ function ppOpciones() {
   col.appendChild(son);
   const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
   col.appendChild(vib);
-  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
-  col.appendChild(est);
   if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-rosa', ppConfirmaDeNuevo));
   col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
 }
@@ -191,8 +189,6 @@ function ppPausa() {
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
   col.appendChild(son);
-  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
-  col.appendChild(est);
 }
 function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
 /* ---------- el tutorial de Lola ----------
@@ -200,7 +196,6 @@ function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */
 const PP_TUTO = {
   w1n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
-         { t: 'Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.', elige: 'estilo' },
          { t: 'Toca la burbuja que señala la manita: revientan ella y sus vecinas de arriba, abajo y los lados.', toque: true }],
   w1n2: [{ t: '¡Plop! Lo que revientas se queda reventado. Para pasar el nivel, revienta todas.' },
          { t: 'Cuantos menos toques uses, más estrellas. Sigue a la manita.', toque: true }],
@@ -268,18 +263,10 @@ function ppLolaSiguiente() {
   if (!f) { caja.hidden = true; return; }
   const cara = $pp('#pp-lola-cara'); cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92));
   $pp('#pp-lola-texto').textContent = tr(f.t);
-  $pp('#pp-lola-vale').hidden = !!(f.toque || f.elige);
-  $pp('#pp-lola-elige').hidden = f.elige !== 'estilo';   // Lola pregunta: lisitos o pixel art (Daniel, 30-10-2026)
+  $pp('#pp-lola-vale').hidden = !!f.toque;
   caja.classList.toggle('pp-encima', !!f.encima);   // las de las ventanas salen por encima de ellas
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
-}
-// la respuesta a la pregunta de Lola sobre el estilo de los dibujos: se cambia al momento y sigue el tutorial
-function ppLolaEligeEstilo(pixel) {
-  if (!!SAVE.pixel !== pixel) ppCambiaEstilo();
-  ppLolaSiguiente();
-  // su cara se vuelve a pintar cuando llegan los dibujos del estilo nuevo
-  setTimeout(() => { const cara = $pp('#pp-lola-cara'); if (cara && PP_LOLA.actual) { cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92)); } }, 700);
 }
 // la frase que espera a que toques una burbuja
 function ppLolaToque() { if (PP_LOLA.actual && PP_LOLA.actual.toque) ppLolaSiguiente(); }

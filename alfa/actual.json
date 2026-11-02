@@ -1,8 +1,8 @@
 {
- "build": 826,
- "hash": "8f21af5",
- "fecha": "2026-11-02T10:25:06Z",
- "mensaje": "Fans of Pop: icono de +3 toques de Yoshi (sustituye al provisional)",
+ "build": 827,
+ "hash": "5267723",
+ "fecha": "2026-11-02T10:42:29Z",
+ "mensaje": "Fans of Pop: fuera el pixel art (solo dibujos lisos; sin opción ni pregunta de Lola, y sin la carpeta img/)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

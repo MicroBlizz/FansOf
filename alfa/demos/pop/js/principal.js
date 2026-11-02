@@ -70,8 +70,6 @@ function ppArranque() {
   $pp('#pp-memoria').onclick = () => { ppCargaSonidos(); play('select'); PP_P = null; ppNuevaMemoria(); };
   $pp('#pp-listo').onclick = () => { play('select'); if (PP_PANT.actual === 'sala') ppNimListo(); else ppDueloListo(); };
   $pp('#pp-lola-vale').onclick = () => { play('select'); ppLolaSiguiente(); };
-  $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
-  $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
   $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };

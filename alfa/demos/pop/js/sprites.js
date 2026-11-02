@@ -1,17 +1,11 @@
-// Fans of Pop · SPRITES: carga el pixel art de Yoshi (img/*.png, reducido a píxeles gordos con herramientas/comfyui/pop/preparar.py)
+// Fans of Pop · SPRITES: carga los dibujos lisos de Yoshi (img-liso/*.png, preparados con herramientas/comfyui/pop/preparar_liso.py)
 // y lo dibuja a escala entera y sin suavizar. Si un dibujo aún no está, el juego pinta su versión de repuesto (ver pintar.js):
 // los slimes se pintan como gelatinas de su color con ojos, así el prototipo se puede probar sin esperar a Yoshi.
 'use strict';
 const PP_IMG = {};
-// ESTILO (Daniel, 30-10-2026): opción «PIXEL ART: SÍ/NO» en la portada y la pausa (SAVE.pixel). Sin pixel art (lo normal) los
-// dibujos salen de img-liso/ en grande y se pintan suaves; con pixel art, de img/ (reducidos a píxeles gordos) y sin suavizar.
-let PP_LISO = !SAVE.pixel;
-function ppCambiaEstilo() {
-  SAVE.pixel = !SAVE.pixel; ppGuarda(); PP_LISO = !SAVE.pixel;
-  for (const k of Object.keys(PP_IMG)) delete PP_IMG[k];   // mientras llegan los otros dibujos se ve el repuesto un instante
-  ppCargaImagenes();
-}
-const ppTextoEstilo = () => (SAVE.pixel ? tr('PIXEL ART: SÍ') : tr('PIXEL ART: NO'));
+// ESTILO: todo liso (Daniel, 02-11-2026: el pixel art, sacado del liso reducido, «parecía un filtro borroso»). Ya no hay opción
+// PIXEL ART ni carpeta img/: los dibujos salen de img-liso/ en grande y se pintan suaves. PP_LISO se queda siempre a true.
+const PP_LISO = true;
 const PP_FLOTANTES = ['unicornio', 'arcoiris', 'capibara', 'gatito', 'conejito', 'osito', 'pato', 'piruleta', 'caramelo', 'cupcake', 'donut', 'nube', 'corazon', 'helado'].map(k => 'f-' + k);
 // las de cada mundo (Daniel, 02-11-2026: «cada mundo tiene que tener las suyas»), por su fondo; mientras Yoshi no las pinta
 // salen solo las que ya hay, y si no hay ninguna, la mezcla de siempre (la portada, el mapa y los duelos también la usan)

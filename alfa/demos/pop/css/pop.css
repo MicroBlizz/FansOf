@@ -87,12 +87,6 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 /* con una ventana abierta (pausa, nivel superado…) Lola espera escondida y vuelve al cerrarla */
 #pp-ui:has(#pp-modal:not([hidden])) #pp-lola { visibility: hidden; }
 #pp-ui:has(#pp-modal:not([hidden])) #pp-lola.pp-encima { visibility: visible; }   /* las que explican esa ventana (tienda, pase…) */
-/* la pregunta de Lola: dos botones, lisitos o pixel art */
-#pp-lola-elige { display: flex; gap: 10px; justify-content: flex-end; }
-#pp-lola-elige[hidden] { display: none; }
-#pp-lola-elige .pp-btn2 { min-width: 0; font-size: 19px; padding: 9px 18px 10px; }
-#pp-lola-elige .pp-btn2.pp-rosa { --c1: #ffb3d9; --c2: #ff6eb5; --borde: #c43a84; }
-#pp-lola-elige .pp-btn2.pp-azul { --c1: #9fdcff; --c2: #4aa8f0; --borde: #1f6fb8; }
 /* fase 2: monedas, cofres y botones con precio */
 .pp-ico { display: inline-block; vertical-align: middle; border-radius: 50%; object-fit: contain; }
 img.pp-ico { border-radius: 0; }

@@ -55,7 +55,8 @@ function procesaToques() {
     if (JORNADA.fase === 'portada') {
       if (q.x !== undefined && dentroDe(q, PAN.btnMus)) { SAVE.musica = SAVE.musica ? 0 : 1; guarda(); applyVolume(); SONIDO.boton(); continue; }
       if (q.x !== undefined && dentroDe(q, PAN.btnFx)) { SAVE.efectos = SAVE.efectos ? 0 : 1; guarda(); SONIDO.boton(); continue; }
-      if (q.x !== undefined || q.tecla === 'accion') { ENTRADA.tactil = q.x !== undefined; empiezaJornada(); }
+      if (q.x !== undefined && dentroDe(q, PAN.btnCtrl)) { SAVE.control = modoControl() === 'tocar' ? 'palanca' : 'tocar'; guarda(); SONIDO.boton(); continue; }
+      if (q.x !== undefined || q.tecla === 'accion') { ENTRADA.tactil = q.x !== undefined && esMovil(); empiezaJornada(); }
       continue;
     }
     const t = VENTANA.tipo; if (!t) continue;

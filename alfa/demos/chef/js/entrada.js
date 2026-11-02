@@ -1,19 +1,26 @@
-// Fans of Chef · ENTRADA: en el móvil, arrastrar el dedo por la izquierda es la palanca (anda hacia donde arrastras) y en la esquina
-// derecha hay dos botones pintados: CUCHILLO (toque) y SARTÉN (mantener). En el PC: WASD o flechas, J o espacio para el cuchillo y
-// K o shift para la sartén. Resume todo en ENTRADA.dir, ENTRADA.ataquePulsa (solo el fotograma en que se aprieta) y ENTRADA.bloqueo.
-// Cuando hay una ventana abierta (portada, cantina, cierre), los toques van a la cola ENTRADA.toques para que la pantalla los lea.
+// Fans of Chef · ENTRADA: dos formas de jugar, que se cambian en la portada (SAVE.control) y valen para el sótano y la cantina.
+//  · 'tocar' (por defecto en el móvil): tocas donde quieres ir y el cocinero va solo; tocar un bicho es ir a por él (ataca solo al tenerlo a
+//    mano), tocar el montacargas es subir y, en la cantina, tocar una estación es ir y usarla. Un botón SARTÉN (mantener) para bloquear.
+//  · 'palanca' (por defecto en el PC): WASD / flechas o la palanca fija visible abajo a la izquierda, y dos botones grandes abajo a la derecha:
+//    ATACAR (o COGER en la cantina; J, espacio) y BLOQUEAR (o CORTAR; K, shift). El ataque apunta solo al bicho más cercano.
+// El teclado funciona siempre. Resume todo en ENTRADA.dir, ENTRADA.ataquePulsa (un fotograma), ENTRADA.bloqueo y ENTRADA.destino.
+// Con una ventana abierta (portada, mañana, cierre) los toques van a ENTRADA.toques para la pantalla.
 'use strict';
 
 const ENTRADA = {
   dir: { x: 0, y: 0 }, ataquePulsa: 0, bloqueo: 0, escPulsa: 0,
   teclas: {}, toques: [], tactil: false,
   palanca: { activa: false, id: -1, x0: 0, y0: 0, x: 0, y: 0 },
-  dedoSarten: -1,                                                  // el dedo que mantiene la sartén
+  dedoBoton: {},                                                   // id del dedo → 'ataque' | 'bloqueo'
+  destino: null,                                                   // modo tocar: { x, y } del mundo (o null)
+  toqueMundo: null,                                                // modo tocar: el último toque en el mundo, para que el juego decida qué es
   ventana: () => false,                                            // ¿hay una ventana abierta? (lo pone pantalla-2.js)
-  botones: { cuchillo: null, sarten: null },                       // las cajas de los dos botones (las pone pintaMandos)
+  botones: { ataque: null, bloqueo: null },                        // las cajas de los botones en pantalla (las pone pintaMandos)
 };
 const TECLAS = { KeyW: 'arriba', ArrowUp: 'arriba', KeyS: 'abajo', ArrowDown: 'abajo', KeyA: 'izq', ArrowLeft: 'izq', KeyD: 'der', ArrowRight: 'der',
   KeyJ: 'ataque', Space: 'ataque', Enter: 'ataque', KeyK: 'bloqueo', ShiftLeft: 'bloqueo', ShiftRight: 'bloqueo' };
+const esMovil = () => (window.matchMedia && matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window;
+const modoControl = () => SAVE.control || (esMovil() ? 'tocar' : 'palanca');
 
 function entradaTecla(ev, abajo) {
   if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
@@ -21,6 +28,7 @@ function entradaTecla(ev, abajo) {
   const k = TECLAS[ev.code]; if (!k) return;
   if (abajo && !ev.repeat && k === 'ataque') { ENTRADA.ataquePulsa = 1; if (ENTRADA.ventana()) ENTRADA.toques.push({ tecla: 'accion' }); }
   if (abajo && !ev.repeat && ENTRADA.ventana() && k !== 'ataque') ENTRADA.toques.push({ tecla: k });
+  if (abajo && (k === 'arriba' || k === 'abajo' || k === 'izq' || k === 'der')) ENTRADA.destino = null;   // el teclado manda sobre el toque
   ENTRADA.teclas[k] = abajo ? 1 : 0;
   ev.preventDefault();
 }
@@ -30,56 +38,69 @@ function resumeEntrada() {
   let x = (t.der ? 1 : 0) - (t.izq ? 1 : 0), y = (t.abajo ? 1 : 0) - (t.arriba ? 1 : 0);
   if (p.activa) {
     const dx = p.x - p.x0, dy = p.y - p.y0, d = Math.hypot(dx, dy);
-    if (d > 4) { const f = Math.min(1, d / 18); x = dx / d * f; y = dy / d * f; }
+    if (d > 3) { const f = Math.min(1, d / 22); x = dx / d * f; y = dy / d * f; }
   }
   const d = Math.hypot(x, y); if (d > 1) { x /= d; y /= d; }
   ENTRADA.dir.x = x; ENTRADA.dir.y = y;
-  ENTRADA.bloqueo = t.bloqueo || ENTRADA.dedoSarten >= 0 ? 1 : 0;
+  ENTRADA.bloqueo = t.bloqueo || Object.values(ENTRADA.dedoBoton).includes('bloqueo') ? 1 : 0;
 }
-function finEntrada() { ENTRADA.ataquePulsa = 0; ENTRADA.escPulsa = 0; }
+function finEntrada() { ENTRADA.ataquePulsa = 0; ENTRADA.escPulsa = 0; ENTRADA.toqueMundo = null; }
 
 const dentroDe = (q, b) => b && q.x >= b.x && q.x <= b.x + b.w && q.y >= b.y && q.y <= b.y + b.h;
-function dedoBaja(id, x, y) {
+function dedoBaja(id, x, y, W, H) {
   if (ENTRADA.ventana()) { ENTRADA.toques.push({ x, y }); return; }
-  ENTRADA.tactil = true;
+  ENTRADA.tactil = esMovil();
   const B = ENTRADA.botones;
-  if (dentroDe({ x, y }, B.cuchillo)) { ENTRADA.ataquePulsa = 1; return; }
-  if (dentroDe({ x, y }, B.sarten)) { ENTRADA.dedoSarten = id; return; }
+  if (dentroDe({ x, y }, B.ataque)) { ENTRADA.ataquePulsa = 1; ENTRADA.dedoBoton[id] = 'ataque'; return; }
+  if (dentroDe({ x, y }, B.bloqueo)) { ENTRADA.dedoBoton[id] = 'bloqueo'; return; }
+  if (modoControl() === 'tocar') { ENTRADA.toqueMundo = { x: x + CAM.x, y: y + CAM.y }; return; }
+  // palanca fija: se agarra en la mitad izquierda (si se toca fuera de la base, la base salta bajo el dedo)
   const p = ENTRADA.palanca;
-  if (!p.activa) { p.activa = true; p.id = id; p.x0 = p.x = x; p.y0 = p.y = y; }
+  if (!p.activa && x < W * 0.55) { const b = basePalanca(W, H); p.activa = true; p.id = id; const lejos = Math.hypot(x - b.x, y - b.y) > 34; p.x0 = lejos ? x : b.x; p.y0 = lejos ? y : b.y; p.x = x; p.y = y; }
 }
 function dedoMueve(id, x, y) { const p = ENTRADA.palanca; if (p.activa && p.id === id) { p.x = x; p.y = y; } }
-function dedoSube(id) {
-  const p = ENTRADA.palanca;
-  if (p.activa && p.id === id) p.activa = false;
-  if (ENTRADA.dedoSarten === id) ENTRADA.dedoSarten = -1;
-}
-function sueltaTodo() { ENTRADA.teclas = {}; ENTRADA.palanca.activa = false; ENTRADA.dedoSarten = -1; }
+function dedoSube(id) { const p = ENTRADA.palanca; if (p.activa && p.id === id) p.activa = false; delete ENTRADA.dedoBoton[id]; }
+function sueltaTodo() { ENTRADA.teclas = {}; ENTRADA.palanca.activa = false; ENTRADA.dedoBoton = {}; ENTRADA.destino = null; }
 
 function entradaArranca(cv, aPixel) {
   window.addEventListener('keydown', e => entradaTecla(e, true));
   window.addEventListener('keyup', e => entradaTecla(e, false));
   window.addEventListener('blur', sueltaTodo);
-  cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); const [x, y] = aPixel(e); dedoBaja(e.pointerId, x, y); e.preventDefault(); });
+  cv.addEventListener('pointerdown', e => { audioInit(); cv.setPointerCapture(e.pointerId); const [x, y, W, H] = aPixel(e); dedoBaja(e.pointerId, x, y, W, H); e.preventDefault(); });
   cv.addEventListener('pointermove', e => { const [x, y] = aPixel(e); dedoMueve(e.pointerId, x, y); });
   cv.addEventListener('pointerup', e => dedoSube(e.pointerId));
   cv.addEventListener('pointercancel', e => dedoSube(e.pointerId));
   cv.addEventListener('contextmenu', e => e.preventDefault());
 }
-// la palanca bajo el dedo y, en el móvil, los dos botones de la esquina (cuchillo y sartén)
-function pintaMandos(ctx, W, H) {
-  const p = ENTRADA.palanca;
-  if (p.activa) {
-    ctx.globalAlpha = 0.35; anillo(ctx, p.x0, p.y0, 18, PALETA.W); ctx.globalAlpha = 0.6;
-    const dx = p.x - p.x0, dy = p.y - p.y0, d = Math.hypot(dx, dy), f = Math.min(1, d / 18);
-    circulo(ctx, p.x0 + (d ? dx / d * 18 * f : 0), p.y0 + (d ? dy / d * 18 * f : 0), 5, PALETA.W); ctx.globalAlpha = 1;
-  }
-  if (!ENTRADA.tactil) { ENTRADA.botones.cuchillo = ENTRADA.botones.sarten = null; return; }
-  const r = 17, cx1 = W - 24, cx2 = W - 64, cy = H - 26;
-  ENTRADA.botones.cuchillo = { x: cx1 - r - 4, y: cy - r - 4, w: r * 2 + 8, h: r * 2 + 8 };
-  ENTRADA.botones.sarten = { x: cx2 - r - 4, y: cy - r - 4, w: r * 2 + 8, h: r * 2 + 8 };
-  ctx.globalAlpha = 0.75;
-  circulo(ctx, cx1, cy, r + 1, PALETA.K); circulo(ctx, cx1, cy, r, J.cuchilloT > 0 ? PALETA.s : PALETA.B); pintaSpr(ctx, 'ico_cuchillo', cx1, cy + 8);
-  circulo(ctx, cx2, cy, r + 1, PALETA.K); circulo(ctx, cx2, cy, r, ENTRADA.bloqueo ? PALETA.Y : PALETA.B); pintaSpr(ctx, 'ico_sarten', cx2, cy + 8);
+
+// --- los mandos en pantalla ---
+const basePalanca = (W, H) => ({ x: 46, y: H - 64 });
+function botonRedondo(ctx, cx, cy, r, color, icono, txt, pulsado) {
+  ctx.globalAlpha = 0.85;
+  circulo(ctx, cx, cy + 2, r + 1, PALETA.K); circulo(ctx, cx, cy, r + 1, PALETA.K); circulo(ctx, cx, cy, r, pulsado ? PALETA.Y : color); circulo(ctx, cx - r * 0.3, cy - r * 0.35, Math.round(r * 0.25), 'rgba(255,255,255,0.25)');
   ctx.globalAlpha = 1;
+  if (icono) pintaSpr(ctx, icono, cx, cy + 8);
+  letraCabe(ctx, txt, cx, cy + r + 10, r * 2 + 16, PALETA.W, 'center', 7);
+}
+function pintaMandos(ctx, W, H) {
+  const B = ENTRADA.botones, cantina = JORNADA.fase === 'servicio', modo = modoControl();
+  B.ataque = B.bloqueo = null;
+  if (!ENTRADA.tactil) return;   // en el PC, con teclado, no hacen falta
+  const pulsadoA = Object.values(ENTRADA.dedoBoton).includes('ataque'), pulsadoB = ENTRADA.bloqueo;
+  if (modo === 'palanca') {
+    const b = basePalanca(W, H), p = ENTRADA.palanca, ox = p.activa ? p.x0 : b.x, oy = p.activa ? p.y0 : b.y;
+    ctx.globalAlpha = 0.35; circulo(ctx, ox, oy, 26, PALETA.K); ctx.globalAlpha = 0.55; anillo(ctx, ox, oy, 26, PALETA.W); ctx.globalAlpha = 1;
+    const dx = p.activa ? p.x - p.x0 : 0, dy = p.activa ? p.y - p.y0 : 0, d = Math.hypot(dx, dy), f = Math.min(1, d / 22);
+    const kx = ox + (d ? dx / d * 22 * f : 0), ky = oy + (d ? dy / d * 22 * f : 0);
+    circulo(ctx, kx, ky, 12, PALETA.K); circulo(ctx, kx, ky, 11, PALETA.w); circulo(ctx, kx - 3, ky - 3, 3, PALETA.W);
+    const r = 20;
+    B.ataque = { x: W - 28 - r - 8, y: H - 56 - r - 8, w: r * 2 + 16, h: r * 2 + 16 };
+    B.bloqueo = { x: W - 80 - r - 8, y: H - 34 - r - 8, w: r * 2 + 16, h: r * 2 + 16 };
+    botonRedondo(ctx, W - 28, H - 56, r, PALETA.R, cantina ? null : 'ico_cuchillo', cantina ? tr('COGER') : tr('ATACAR'), pulsadoA);
+    botonRedondo(ctx, W - 80, H - 34, r - 2, PALETA.B, cantina ? 'ico_cuchillo' : 'ico_sarten', cantina ? tr('CORTAR') : tr('BLOQUEAR'), pulsadoB);
+  } else {
+    // modo tocar: solo el botón de la sartén (en el sótano); el destino se marca en el suelo
+    if (!cantina) { const r = 18; B.bloqueo = { x: W - 30 - r - 8, y: H - 52 - r - 8, w: r * 2 + 16, h: r * 2 + 16 }; botonRedondo(ctx, W - 30, H - 52, r, PALETA.B, 'ico_sarten', tr('SARTÉN'), pulsadoB); }
+    if (ENTRADA.destino) { const x = ENTRADA.destino.x - CAM.x, y = ENTRADA.destino.y - CAM.y, a = 0.5 + Math.sin(PAN.t * 10) * 0.3; ctx.globalAlpha = a; anillo(ctx, x, y, 6, PALETA.Y); anillo(ctx, x, y, 3, PALETA.Y); ctx.globalAlpha = 1; }
+  }
 }

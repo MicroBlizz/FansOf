@@ -22,9 +22,10 @@ function fotograma(ahora) {
   resumeEntrada();
   procesaToques();
   const f = JORNADA.fase;
-  if (f === 'caza') { avanzaJugador(dt); avanzaEnemigos(dt); avanzaJornada(dt); avanzaEfectos(dt); }
+  if (PAN.pausa > 0) { PAN.pausa -= dt; avanzaEfectos(dt * 0.2); }   // el parón de un golpe (hitstop)
+  else if (f === 'caza') { avanzaJugador(dt); avanzaEnemigos(dt); avanzaJornada(dt); avanzaEfectos(dt); avanzaGuia(dt); }
   else if (f === 'subiendo') { avanzaJornada(dt); avanzaEfectos(dt); }
-  else if (f === 'servicio') { avanzaServicio(dt); avanzaEfectos(dt); }
+  else if (f === 'servicio') { avanzaServicio(dt); avanzaEfectos(dt); avanzaGuia(dt); }
   else FX.avisos.length = 0;
   vigilaMusica();
   G.setTransform(K_ESCALA, 0, 0, K_ESCALA, 0, 0);

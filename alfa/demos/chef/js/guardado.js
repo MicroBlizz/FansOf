@@ -6,6 +6,8 @@ const SAVE = {
   dia: 1,          // la jornada que toca
   recordDia: 0,    // la jornada más lejana a la que se ha llegado
   platos: 0,       // platos servidos en total
+  control: '',     // 'tocar' o 'palanca' ('' = según el aparato: tocar en el móvil, palanca/WASD en el PC)
+  tutorial: 0,     // 1 cuando ya se ha hecho el tutorial del sótano
   musica: 1,       // 0 o 1
   efectos: 1,      // 0 o 1
 };

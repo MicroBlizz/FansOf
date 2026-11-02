@@ -24,7 +24,7 @@ function muereEnemigo(e, veces) {
   e.muerto = true; SONIDO.muere(); chispas(e.x, e.y - e.def.alto / 2, INGREDIENTES[e.def.suelta].luz, 12, 70);
   const [a, b] = e.def.cuantos;
   for (let v = 0; v < veces; v++) { const n = a + Math.floor(Math.random() * (b - a + 1)); for (let i = 0; i < n; i++) sueltaBotin(e.x, e.y, e.def.suelta); }
-  JORNADA.bajas++;
+  JORNADA.bajas++; if (GUIA.evento) GUIA.evento('baja');
 }
 function explota(e) {
   e.muerto = true; SONIDO.explota(); tiembla(1); chispas(e.x, e.y - 10, PALETA.O, 18, 110); chispas(e.x, e.y - 10, PALETA.R, 10, 70);
@@ -86,17 +86,32 @@ function avanzaEnemigos(dt) {
   for (let i = ENEMIGOS.length - 1; i >= 0; i--) if (ENEMIGOS[i].muerto) ENEMIGOS.splice(i, 1);
 }
 
+// el fotograma de cada bicho según lo que hace (los de Yoshi si están: tomate_1 andando, tomate_2 a punto de estallar, cebollon_1/2 andar y
+// embestir, gelatina_1/2 agacharse y saltar), con estiramiento: se aplasta antes de saltar, se estira en el aire, tiembla con la mecha
+function fotogramaBicho(e) {
+  const t = e.tipo, quieto = !e.despierto || e.aturdido > 0;
+  let n = t, sx = 1, sy = 1;
+  if (t === 'tomate') { if (e.mecha >= 0) { n = 'tomate_2'; const k = 1 + (1 - e.mecha / e.def.mecha) * 0.25; sx = k; sy = k; } else if (!quieto) n = Math.floor(e.t * 6) % 2 ? 'tomate_1' : 'tomate'; }
+  else if (t === 'cebollon') { if (e.embiste) n = 'cebollon_2'; else if (!quieto) n = Math.floor(e.t * 4) % 2 ? 'cebollon_1' : 'cebollon'; }
+  else if (t === 'gelatina') { if (e.salto) { n = 'gelatina_2'; sx = 0.9; sy = 1.12; } else if (e.espera < 0.25 && e.despierto) { n = 'gelatina_1'; sx = 1.15; sy = 0.85; } else { const b = Math.sin(e.t * 5) * 0.05; sx = 1 + b; sy = 1 - b; } }
+  if (!IMG[n]) n = t;
+  if (quieto && e.despierto) { sx *= 1; sy *= 1; }
+  return { n, sx, sy };
+}
 function pintaEnemigo(ctx, cam, e) {
-  const x = e.x - cam.x, y = e.y - cam.y, z = e.salto ? e.salto.z : 0;
-  ctx.globalAlpha = 0.3; circulo(ctx, x, y, Math.round(e.def.ancho * 0.35), PALETA.K); ctx.globalAlpha = 1;
-  if (e.herido > 0 && Math.floor(e.herido * 30) % 2) { ctx.globalAlpha = 0.6; }
-  pintaSpr(ctx, e.tipo, x, y - z, { t: e.t, mecha: e.mecha >= 0, espejo: J.x < e.x });
-  ctx.globalAlpha = 1;
-  if (e.mecha >= 0 && Math.floor(e.mecha * 10) % 2) { ctx.globalAlpha = 0.35; circulo(ctx, x, y - 8, e.def.radio, PALETA.O); ctx.globalAlpha = 1; }
-  if (e.aturdido > 0.3) letra(ctx, '*', x, y - e.def.alto - 4, PALETA.Y, 'center', 8);
-  if (!e.despierto) return;
+  const x = Math.round(e.x - cam.x), y = Math.round(e.y - cam.y), z = e.salto ? e.salto.z : 0;
+  const sr = e.def.ancho * 0.42 * (1 - z / 40);
+  ctx.globalAlpha = 0.35; ctx.fillStyle = PALETA.K; ctx.beginPath(); ctx.ellipse(x, y - 1, sr, sr * 0.32, 0, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
+  const f = fotogramaBicho(e), temblor = e.mecha >= 0 ? (Math.random() - 0.5) * 3 : 0;
+  ctx.save(); ctx.translate(x + temblor, y - z); ctx.scale(f.sx, f.sy);
+  if (e.herido > 0) ctx.filter = 'brightness(3) saturate(0)';   // destello blanco al recibir el golpe
+  pintaSpr(ctx, f.n, 0, 0, { t: e.t, mecha: e.mecha >= 0, espejo: J.x < e.x });
+  ctx.filter = 'none'; ctx.restore();
+  if (e.mecha >= 0 && Math.floor(e.mecha * 10) % 2) { ctx.globalAlpha = 0.25; circulo(ctx, x, y - 8, e.def.radio, PALETA.O); ctx.globalAlpha = 1; }
+  if (e.aturdido > 0.3) for (let k = 0; k < 3; k++) { const a = PAN.t * 6 + k * 2.1; letra(ctx, '*', x + Math.cos(a) * 10, y - e.def.alto - 4 + Math.sin(a) * 3, PALETA.Y, 'center', 7); }
+  if (!e.despierto) { if (Math.floor(PAN.t * 1.5 + e.t) % 2) letra(ctx, 'z', x + 10, y - e.def.alto - 2, PALETA.w, 'center', 7); return; }
   // la barra de vida solo si está tocado
-  if (e.vida < e.def.vida) { caja(ctx, x - 10, y - e.def.alto - 5, 20, 3, PALETA.K); caja(ctx, x - 9, y - e.def.alto - 4, Math.round(18 * e.vida / e.def.vida), 1, PALETA.R); }
+  if (e.vida < e.def.vida) { caja(ctx, x - 12, y - e.def.alto - 6, 24, 4, PALETA.K); caja(ctx, x - 11, y - e.def.alto - 5, Math.round(22 * e.vida / e.def.vida), 2, PALETA.R); }
 }
 function pintaBotin(ctx, cam) {
   for (const b of BOTIN) { ctx.globalAlpha = 0.25; circulo(ctx, b.x - cam.x, b.y - cam.y, 3, PALETA.K); ctx.globalAlpha = 1; pintaSpr(ctx, 'ing_' + b.que, b.x - cam.x, b.y - cam.y - b.z); }

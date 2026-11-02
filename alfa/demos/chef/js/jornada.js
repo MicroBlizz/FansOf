@@ -25,17 +25,18 @@ function bajaAlSotano() {
   jugadorNuevo(inicio.x, inicio.y);
   const tipos = Object.keys(BICHOS), extra = Math.min(3, Math.floor((JORNADA.dia - 1) / 2));
   MAPA.salas.forEach((s, i) => {
-    if (i === 0) return;
-    const cuantos = 2 + Math.floor(i / 2) + extra, entrada = { x: 20, y: (s.def.salidas.izq[0] + s.def.salidas.izq[1]) / 2 };
+    // la primera sala también tiene algo que cazar (dos bichos lentos lejos del montacargas), para que se vea a qué se ha venido
+    const cuantos = i === 0 ? 2 : 2 + Math.floor(i / 2) + extra, entrada = { x: 20, y: (s.def.salidas.izq[0] + s.def.salidas.izq[1]) / 2 };
     for (let k = 0; k < cuantos; k++) {
       // el primer día, solo tomates y gelatinas en la primera sala con bichos; el cebollón llega después
       const tipo = i < 2 && JORNADA.dia === 1 ? (k % 2 ? 'tomate' : 'gelatina') : tipos[Math.floor(rng() * tipos.length)];
-      const p = puntoSuelo(s.def, rng, entrada);
+      const p = puntoSuelo(s.def, rng, i === 0 ? { x: s.def.arco[0], y: s.def.arco[1] + 30 } : entrada, i === 0 ? 170 : 120);
       const def = BICHOS[tipo];
       s.enemigos.push({ tipo, def, x: p.x, y: p.y, vida: def.vida, muerto: false, despierto: false, t: rng() * 6, aturdido: 0, herido: 0, mecha: -1, embiste: null, salto: null, espera: 0.4 + rng(), vx: 0, vy: 0 });
     }
   });
-  JORNADA.fase = 'caza'; JORNADA.t = 0; JORNADA.salioDelMontacargas = false; cierraVentanas();
+  ENEMIGOS.length = 0; ENEMIGOS.push(...MAPA.salas[0].enemigos);   // los de la primera sala ya están a la vista
+  JORNADA.fase = 'caza'; JORNADA.t = 0; JORNADA.salioDelMontacargas = false; JORNADA.pideSubir = false; cierraVentanas(); GUIA.empiezaCaza();
   CAM.x = J.x - PAN.W / 2; CAM.y = J.y - PAN.H / 2;
   aviso(tr('Caza antes de que abra la cantina'), 2.2);
 }
@@ -43,16 +44,18 @@ function avanzaJornada(dt) {
   if (JORNADA.fase === 'caza') {
     JORNADA.t += dt;
     const r = JORNADA.reloj();
+    if (MAPA.i === 0 && !salaActual().despierta && JORNADA.t > 1.5) { salaActual().despierta = true; for (const e of ENEMIGOS) e.despierto = true; }
     if (r <= 0) { aviso(tr('¡Abre la cantina! El montacargas te sube'), 2); subeMontacargas(); return; }
     if (r <= 10.5 && r + dt > 10.5) { aviso(tr('¡10 segundos!'), 1.5, PALETA.R); SONIDO.aviso(); }
     if (!JORNADA.enMontacargas) JORNADA.salioDelMontacargas = true;   // hay que apartarse una vez: si no, el toque de «Bajar» te subiría de vuelta
-    if (JORNADA.enMontacargas && JORNADA.salioDelMontacargas && ENTRADA.ataquePulsa) subeMontacargas();
+    if (JORNADA.enMontacargas && JORNADA.salioDelMontacargas && (ENTRADA.ataquePulsa || JORNADA.pideSubir)) subeMontacargas();
+    JORNADA.pideSubir = false;
   } else if (JORNADA.fase === 'subiendo') {
     JORNADA.subeT += dt;
     if (JORNADA.subeT >= 1.2) empiezaServicio();
   }
 }
-function subeMontacargas() { if (JORNADA.fase !== 'caza') return; JORNADA.fase = 'subiendo'; JORNADA.subeT = 0; SONIDO.montacargas(); sueltaTodo(); }
+function subeMontacargas() { if (JORNADA.fase !== 'caza') return; GUIA.evento('sube'); JORNADA.fase = 'subiendo'; JORNADA.subeT = 0; SONIDO.montacargas(); sueltaTodo(); }
 // caer en el sótano: el montacargas te sube igual, pero se pierde la mitad de lo cazado
 JORNADA.derrota = function () {
   if (JORNADA.fase !== 'caza') return;

@@ -46,10 +46,11 @@ function pintaCantina(ctx, W, H) {
   lista.sort((a, b) => a.y - b.y); for (const o of lista) o.pinta(ctx);
   pintaEstaciones(ctx, cam);
   pintaParticulas(ctx, cam); pintaNumeros(ctx, cam);
+  pintaGuia(ctx, cam, W, H);
   // el rótulo de la acción
   const a = accionDe(CANTINA.cerca);
-  if (a) { marcoMadera(ctx, W / 2 - 64, H - 36, 128, 13); letraCabe(ctx, (ENTRADA.tactil ? 'A: ' : 'J: ') + a.txt, W / 2, H - 26, 120, a.no ? PALETA.r : PALETA.Y, 'center', 7); }
-  else if (CANTINA.cerca && CANTINA.cerca.tipo === 'tabla' && CANTINA.cerca.item && !CANTINA.cerca.item.cortado && !J.mano) { marcoMadera(ctx, W / 2 - 64, H - 36, 128, 13); letraCabe(ctx, (ENTRADA.tactil ? tr('Mantén B: cortar') : tr('Mantén K: cortar')), W / 2, H - 26, 120, PALETA.Y, 'center', 7); }
+  if (a) { marcoMadera(ctx, W / 2 - 64, H - 36, 128, 13); letraCabe(ctx, (modoControl() === 'tocar' ? '' : ENTRADA.tactil ? 'A: ' : 'J: ') + a.txt, W / 2, H - 26, 120, a.no ? PALETA.r : PALETA.Y, 'center', 7); }
+  else if (CANTINA.cerca && CANTINA.cerca.tipo === 'tabla' && CANTINA.cerca.item && !CANTINA.cerca.item.cortado && !J.mano) { marcoMadera(ctx, W / 2 - 64, H - 36, 128, 13); letraCabe(ctx, (modoControl() === 'tocar' ? tr('Toca la tabla para cortar') : ENTRADA.tactil ? tr('Mantén CORTAR') : tr('Mantén K: cortar')), W / 2, H - 26, 120, PALETA.Y, 'center', 7); }
   pintaMarcadorCantina(ctx, W, H);
   pintaMandos(ctx, W, H);
 }

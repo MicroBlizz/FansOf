@@ -1,8 +1,8 @@
 {
- "build": 820,
- "hash": "194a070",
- "fecha": "2026-11-02T09:33:58Z",
- "mensaje": "Pets: la escena de animaciones con tres desplegables en una fila, para ver la criatura entera",
+ "build": 821,
+ "hash": "fc53d46",
+ "fecha": "2026-11-02T09:51:13Z",
+ "mensaje": "Fans of Chef 0.3.0: animaciones de Yoshi (cocinero en 4 direcciones, ataque, bloqueo; bichos), dos modos de control (tocar para ir / palanca y botones), ataque que apunta solo, tutorial, flecha guía y bichos desde la primera sala",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -45,6 +45,6 @@ function compruebaSalidas() {
   }
 }
 function llegaASala() {
-  const s = salaActual(); CAM.x = J.x - PAN.W / 2; CAM.y = J.y - PAN.H / 2; SONIDO.puerta();
+  const s = salaActual(); CAM.x = J.x - PAN.W / 2; CAM.y = J.y - PAN.H / 2; SONIDO.puerta(); ENTRADA.destino = null; J.presa = null; GUIA.evento('sala');
   if (!s.visitada) { s.visitada = true; for (const e of ENEMIGOS) e.despierto = true; if (ENEMIGOS.length) aviso(tr('¡Comida viva!'), 1.2, PALETA.O); }
 }

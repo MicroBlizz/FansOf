@@ -4,10 +4,10 @@
 // barra de paciencia; servir en orden sube el combo de la propina. Los puntos del servicio son el oro del día. Pintar: pantalla-cantina.js.
 'use strict';
 
-const CANTINA = { t: 0, comandas: [], proxima: 0, puntos: 0, combo: 1, servidos: 0, caducadas: 0, estaciones: [], cerca: null, cortando: 0, aviso: null, fin: 0, enJuego: 0 };
+const CANTINA = { objetivo: null, t: 0, comandas: [], proxima: 0, puntos: 0, combo: 1, servidos: 0, caducadas: 0, estaciones: [], cerca: null, cortando: 0, aviso: null, fin: 0, enJuego: 0 };
 
 function empiezaServicio() {
-  JORNADA.fase = 'servicio'; Object.assign(CANTINA, { t: 0, comandas: [], proxima: CIFRAS.comandaCada, puntos: 0, combo: 1, servidos: 0, caducadas: 0, cerca: null, cortando: 0, aviso: null, fin: 0, enJuego: 0 });
+  JORNADA.fase = 'servicio'; Object.assign(CANTINA, { objetivo: null, t: 0, comandas: [], proxima: CIFRAS.comandaCada, puntos: 0, combo: 1, servidos: 0, caducadas: 0, cerca: null, cortando: 0, aviso: null, fin: 0, enJuego: 0 });
   // la escena: la cantina pasa a ser «la sala» (el cocinero, la cámara y la luz van igual que en el sótano)
   ENEMIGOS.length = 0; BOTIN.length = 0; MAPA.sala = CANTINA_ESCENA; MAPA.antorchas = []; MAPA.montacargas = null; MAPA.cofre = null;
   CANTINA.estaciones = CANTINA_ESCENA.estaciones.map(e => Object.assign({ item: null, contenido: [], estado: 'vacia', tt: 0, receta: null }, e));
@@ -36,6 +36,17 @@ function nuevaComanda() {
   CANTINA.comandas.push({ receta, t: dur, dur, quien: pick(CLIENTES), n: ++CANTINA.enJuego });
   SONIDO.campana(); return true;
 }
+
+// el punto del suelo más cercano a una estación (adonde va el cocinero en modo tocar) y la distancia de los pies a ella
+function puntoJunto(e) {
+  const cx = (e.r[0] + e.r[2]) / 2, cy = (e.r[1] + e.r[3]) / 2; let mejor = null, md = 1e9;
+  for (let y = e.r[1] - 40; y <= e.r[3] + 40; y += 2) for (let x = e.r[0] - 40; x <= e.r[2] + 40; x += 2) {
+    if (!pisable(x, y) || !pisable(x - 8, y) || !pisable(x + 8, y) || !pisable(x, y - 10)) continue;
+    const d = Math.hypot(x - cx, y - cy); if (d < md) { md = d; mejor = [x, y]; }
+  }
+  return mejor;
+}
+const distEstacion = e => { const px = J.x, py = J.y - 6; return Math.hypot(Math.max(e.r[0] - px, 0, px - e.r[2]), Math.max(e.r[1] - py, 0, py - e.r[3])); };
 
 // --- la estación que tiene delante: la más cercana al punto al que mira, si está a mano ---
 function estacionCerca() {
@@ -104,14 +115,29 @@ function sirve(c) {
 function avanzaServicio(dt) {
   CANTINA.t += dt;
   if (CANTINA.aviso) { CANTINA.aviso.t -= dt; if (CANTINA.aviso.t <= 0) CANTINA.aviso = null; }
+  // modo tocar: tocar una estación es ir hasta ella y usarla al llegar; tocar el suelo, ir allí
+  if (ENTRADA.toqueMundo) {
+    const q = ENTRADA.toqueMundo, est = CANTINA.estaciones.find(e => q.x >= e.r[0] - 6 && q.x <= e.r[2] + 6 && q.y >= e.r[1] - 10 && q.y <= e.r[3] + 6);
+    if (est) { const p = puntoJunto(est); CANTINA.objetivo = est; ENTRADA.destino = p ? { x: p[0], y: p[1] } : null; if (!p) CANTINA.objetivo = null; }
+    else { CANTINA.objetivo = null; ENTRADA.destino = { x: q.x, y: q.y }; }
+    J.atasco = 0;
+  }
   avanzaJugador(dt);
-  CANTINA.cerca = estacionCerca();
-  // botón A: la acción de la estación; botón B mantenido en la tabla: cortar
-  if (ENTRADA.ataquePulsa) { const a = accionDe(CANTINA.cerca); if (a && a.hace) a.hace(); else if (a && a.no) { avisoCantina(a.txt, PALETA.R); SONIDO.no(); } }
+  let accion = !!ENTRADA.ataquePulsa, usa = null;
+  const obj = CANTINA.objetivo;
+  if (obj && !ENTRADA.destino && distEstacion(obj) < 30) {
+    mira((obj.r[0] + obj.r[2]) / 2 - J.x, (obj.r[1] + obj.r[3]) / 2 - (J.y - 6));
+    usa = obj;
+    if (!(obj.tipo === 'tabla' && obj.item && !obj.item.cortado && !J.mano)) { accion = true; CANTINA.objetivo = null; }   // en la tabla se queda cortando
+  } else if (obj && !ENTRADA.destino) CANTINA.objetivo = null;
+  CANTINA.cerca = usa || estacionCerca();
+  // botón A: la acción de la estación; botón B mantenido en la tabla (o tocarla, en modo tocar): cortar
+  if (accion) { const a = accionDe(CANTINA.cerca); if (a && a.hace) a.hace(); else if (a && a.no) { avisoCantina(a.txt, PALETA.R); SONIDO.no(); } }
   const e = CANTINA.cerca;
-  if (ENTRADA.bloqueo && e && e.tipo === 'tabla' && e.item && !e.item.cortado && !J.mano) {
+  const corta = ENTRADA.bloqueo || (usa && usa.tipo === 'tabla');
+  if (corta && e && e.tipo === 'tabla' && e.item && !e.item.cortado && !J.mano) {
     e.item.progreso += dt / CIFRAS.cortarSeg; CANTINA.cortando = 0.1;
-    if (e.item.progreso >= 1) { e.item.cortado = true; e.item.progreso = 1; SONIDO.cuchillo(); chispas(e.r[0] + 20, e.r[1], INGREDIENTES[e.item.que].luz, 6, 40); }
+    if (e.item.progreso >= 1) { e.item.cortado = true; e.item.progreso = 1; SONIDO.cuchillo(); if (CANTINA.objetivo === e) CANTINA.objetivo = null; chispas(e.r[0] + 20, e.r[1], INGREDIENTES[e.item.que].luz, 6, 40); }
     else if (Math.floor(e.item.progreso * 8) !== Math.floor((e.item.progreso - dt / CIFRAS.cortarSeg) * 8)) SONIDO.golpeEnemigo();
   } else CANTINA.cortando = Math.max(0, CANTINA.cortando - dt);
   // los fuegos trabajan solos

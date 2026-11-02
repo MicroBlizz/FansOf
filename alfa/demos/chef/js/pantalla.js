@@ -29,6 +29,7 @@ function pintaTodo(ctx) {
     for (const o of lista) o.pinta(ctx);
     pintaParticulas(ctx, cam); pintaNumeros(ctx, cam);
     pintaLuz(ctx, cam, W, H);
+    pintaGuia(ctx, cam, W, H);
     pintaMarcador(ctx, W, H);
     pintaMandos(ctx, W, H);
     if (f === 'subiendo') { const a = clamp(JORNADA.subeT < 0 ? (JORNADA.subeT + 1.2) / 1.2 : JORNADA.subeT / 1.2, 0, 1); ctx.fillStyle = 'rgba(0,0,0,' + a.toFixed(2) + ')'; ctx.fillRect(0, 0, W, H); if (JORNADA.subeT >= 0) letra(ctx, tr('Subiendo a la cantina...'), W / 2, H / 2, PALETA.Y, 'center'); }
@@ -62,7 +63,7 @@ function pintaMarcador(ctx, W, H) {
   marcoMadera(ctx, 2, H - 40, 6 + tipos.length * 26, 18);   // (abajo del todo está el botón DEV)
   tipos.forEach((k, i) => { pintaSpr(ctx, 'ico_' + k, 10 + i * 26, H - 25, { que: k }); letra(ctx, 'x' + (JORNADA.despensa[k] || 0), 16 + i * 26, H - 27, PALETA.W, 'left', 7, false); });
   // el montacargas: qué pasa al pulsar
-  if (JORNADA.enMontacargas && JORNADA.fase === 'caza') { const txt = JORNADA.objetivosHechos() ? tr('Subir a la cantina') : tr('Subir (faltan cosas)'); marcoMadera(ctx, W / 2 - 60, H - 36, 120, 13); letraCabe(ctx, (ENTRADA.tactil ? tr('CUCHILLO: ') : tr('J: ')) + txt, W / 2, H - 26, 112, PALETA.Y, 'center', 7); }
+  if (JORNADA.enMontacargas && JORNADA.fase === 'caza') { const txt = JORNADA.objetivosHechos() ? tr('Subir a la cantina') : tr('Subir (faltan cosas)'); marcoMadera(ctx, W / 2 - 60, H - 36, 120, 13); letraCabe(ctx, (modoControl() === 'tocar' ? tr('Toca el montacargas: ') : ENTRADA.tactil ? tr('ATACAR: ') : tr('J: ')) + txt, W / 2, H - 26, 112, PALETA.Y, 'center', 7); }
 }
 
 /* ---------- PORTADA ---------- */
@@ -74,7 +75,7 @@ function pintaPortada(ctx, W, H) {
   const cx = W / 2, cy = H * 0.62;
   ctx.save(); ctx.translate(cx, cy); ctx.scale(2, 2); ctx.translate(-cx, -cy);
   ctx.globalAlpha = 0.3; circulo(ctx, cx, cy, 8, PALETA.K); ctx.globalAlpha = 1;
-  pintaSpr(ctx, 'chef_abajo', cx, cy - Math.abs(Math.sin(t * 3)) * 1.5);
+  pintaSpr(ctx, IMG.chef_abajo_0 ? 'chef_abajo_0' : 'chef_abajo', cx, cy - Math.abs(Math.sin(t * 3)) * 1.5);
   ctx.restore();
   for (let k = 0; k < 2; k++) { const a = t * 0.9 + k * 3.1, x = cx + Math.cos(a) * (W * 0.38), y = cy + 6 + Math.sin(a * 1.7) * 14; pintaSpr(ctx, k ? 'gelatina' : 'cebollon', x, y, { t, espejo: Math.cos(a) < 0 }); }
   marcoMadera(ctx, cx - 60, H * 0.08, 120, 40);
@@ -89,7 +90,10 @@ function pintaBotonSonido(ctx, W, H) {
   PAN.btnMus = { x: 4, y: 4, w: 30, h: 12 }; PAN.btnFx = { x: 38, y: 4, w: 30, h: 12 };
   cajaMarco(ctx, 4, 4, 30, 12, SAVE.musica ? PALETA.g : PALETA.N); letra(ctx, tr('MUS'), 19, 13, PALETA.W, 'center', 8, false);
   cajaMarco(ctx, 38, 4, 30, 12, SAVE.efectos ? PALETA.g : PALETA.N); letra(ctx, tr('FX'), 53, 13, PALETA.W, 'center', 8, false);
-  void H;
+  // CONTROLES: tocar para ir (por defecto en el móvil) o palanca y botones (por defecto en el PC, con WASD)
+  const txt = tr('CONTROLES') + ': ' + (modoControl() === 'tocar' ? tr('TOCAR PARA IR') : tr('PALANCA Y BOTONES'));
+  const w = Math.min(W - 8, 190); PAN.btnCtrl = { x: (W - w) / 2, y: H * 0.74, w, h: 16 };
+  cajaMarco(ctx, PAN.btnCtrl.x, PAN.btnCtrl.y, w, 16, PALETA.b, PALETA.Y); letraCabe(ctx, txt, W / 2, PAN.btnCtrl.y + 11, w - 8, PALETA.Y, 'center', 7);
 }
 // el fondo de la cantina (mañana, servicio y cierre): la barra de madera, el fogón y el cocinero detrás
 function pintaFondoCantina(ctx, W, H, t) {
@@ -100,6 +104,6 @@ function pintaFondoCantina(ctx, W, H, t) {
   for (let k = 0; k < 3; k++) { const p = (t * 0.7 + k * 0.33) % 1; ctx.globalAlpha = 0.5 * (1 - p); circulo(ctx, fx - 4 + k * 4 + Math.sin(t * 2 + k) * 2, fy - 16 - p * 16, 2, PALETA.w); }
   ctx.globalAlpha = 1;
   pintaSpr(ctx, 'barril', W * 0.9, H * 0.42 + 2); pintaSpr(ctx, 'barril', W * 0.9 - 16, H * 0.42 + 4);
-  pintaSpr(ctx, 'chef_abajo', W * 0.5, H * 0.42 + 4 - Math.abs(Math.sin(t * 3)));
+  pintaSpr(ctx, IMG.chef_abajo_0 ? 'chef_abajo_0' : 'chef_abajo', W * 0.5, H * 0.42 + 4 - Math.abs(Math.sin(t * 3)));
   ctx.fillStyle = 'rgba(8,4,12,0.25)'; ctx.fillRect(0, 0, W, H);
 }

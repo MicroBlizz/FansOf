@@ -124,12 +124,13 @@ PT.monigote = (() => {
   }
   const r1 = n => Math.round(n * 10) / 10;
   // el SVG completo: el montaje de una postura (con giros) o, con `sueltas`, la hoja despiezada (cada pieza en reposo, sin giros, y
-  // separada del resto). L: lado en píxeles (la hoja es más ancha, ANCHO_HOJA·L, para que quepan los objetos). PT.ok(texto) o el error
-  function svg(e, postura, giros = {}, L = 1024, sueltas = false) {
+  // separada del resto). L: lado en píxeles (la hoja es más ancha, ANCHO_HOJA·L, para que quepan los objetos). sin: piezas que no se
+  // pintan (los apéndices o la ranura que una criatura no tiene: el hurón no lleva orejas largas ni corona). PT.ok(texto) o el error
+  function svg(e, postura, giros = {}, L = 1024, sueltas = false, sin = []) {
     const m = montar(e, postura, sueltas ? SIN_GIROS(e, postura) : giros);
     if (!m.ok) return m;
-    const E = EDADES[e], ancho = sueltas ? ANCHO_HOJA * L : L;
-    const cuerpo = sueltas ? hojaSvg(E, m.valor, L) : m.valor.map(s => piezaSvg(E, s, L)).join('');
+    const E = EDADES[e], ancho = Math.round(sueltas ? ANCHO_HOJA * L : L), vistas = m.valor.filter(s => !sin.includes(s.pieza));
+    const cuerpo = sueltas ? hojaSvg(E, vistas, L) : vistas.map(s => piezaSvg(E, s, L)).join('');
     return PT.ok(`<svg xmlns="http://www.w3.org/2000/svg" width="${ancho}" height="${L}" viewBox="0 0 ${ancho} ${L}"><rect width="${ancho}" height="${L}" fill="#fff"/>${cuerpo}</svg>`);
   }
   const SIN_GIROS = (e, postura) => Object.fromEntries((EDADES[e]?.posturas[postura]?.capas || []).map(p => [p, 0]));

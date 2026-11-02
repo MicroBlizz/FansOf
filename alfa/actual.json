@@ -1,8 +1,8 @@
 {
- "build": 842,
- "hash": "be3f78b",
- "fecha": "2026-11-02T16:33:00Z",
- "mensaje": "Nova 0.3.38: flota que mina mientras no juegas, con informe al volver; hora del servidor en core",
+ "build": 843,
+ "hash": "34caab1",
+ "fecha": "2026-11-02T16:46:15Z",
+ "mensaje": "Core: cola sin conexión (COLA) y Nova la usa para los aportes de la galaxia",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

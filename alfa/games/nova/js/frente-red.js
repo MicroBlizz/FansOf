@@ -2,7 +2,7 @@
 // totales de todos. El servidor solo suma; el mapa lo sigue calculando FRENTE.simula aquí, con los puntos de todos y el peso por pilotos.
 // Sin cuenta, sin red o con el flag cerrado, todo sigue como en la fase 1 (simulado en el aparato). Diseño: docs/nova/galaxia-comunidad.md.
 'use strict';
-const NV_FRENTE_RED = { semanas: {}, enviando: false };
+const NV_FRENTE_RED = { semanas: {} };
 const nvFrenteEnRed = () => nvFrenteActivo() && typeof CUENTA !== 'undefined' && !!CUENTA.activa;
 
 // Lo que dice el servidor al rechazar un aporte: 'red' y 'rapido' se reintentan más tarde; 'patron' se arregla avisando del patrón;
@@ -14,37 +14,26 @@ function nvFrenteError(e) {
   return ['aporte_imposible', 'faccion_no_vale', 'casilla_no_vale', 'tope_del_dia', 'cerrado', 'sin_sesion'].find(k => m.includes(k)) || 'red';
 }
 
-// ---------- mandar: cada misión va a una cola guardada en la campaña y se manda en cuanto se puede ----------
-function nvFrenteEncola(a) {
-  if (!nvFrenteEnRed()) return;
-  const f = nvFrente();
-  (f.cola = f.cola || []).push({ casilla: a.casilla, faccion: a.faccion, puntos: a.puntos });
-  nvCampGuarda();
-  return nvFrenteEnvia();
-}
-async function nvFrenteEnvia() {
-  if (NV_FRENTE_RED.enviando || !nvFrenteEnRed()) return;
-  const f = nvFrente();
-  NV_FRENTE_RED.enviando = true;
-  try {
-    while (f.cola && f.cola.length) {
-      const r = await nvFrenteManda(f.cola[0]);
-      if (r === 'red' || r === 'rapido') break;   // se reintenta en la próxima misión o al abrir la galaxia
-      f.cola.shift(); nvCampGuarda();
-    }
-  } finally { NV_FRENTE_RED.enviando = false; }
-}
+// ---------- mandar: cada misión va a la cola sin conexión de core (core/js/sistema/cola.js), guardada en la campaña ----------
 const nvFrenteRpcAporta = a => CUENTA.rpc('nova_frente_aporta', { p_casilla: a.casilla, p_faccion: a.faccion, p_puntos: a.puntos });
-async function nvFrenteManda(a) {
-  try { await nvFrenteRpcAporta(a); return 'ok'; } catch (e) {
-    const k = nvFrenteError(e);
-    if (k !== 'patron') return k;
-  }
-  try { await CUENTA.rpc('nova_frente_patron', { p_faccion: a.faccion }); await nvFrenteRpcAporta(a); return 'ok'; }   // cambiaste de patrón sin red
-  catch (e) { return nvFrenteError(e) === 'red' ? 'red' : 'perdido'; }
+let NV_FRENTE_COLA = null;
+function nvFrenteCola() {
+  return NV_FRENTE_COLA || (NV_FRENTE_COLA = COLA.crea({
+    lista: () => { const f = nvFrente(); return f.cola || (f.cola = []); },
+    guarda: nvCampGuarda,
+    envia: nvFrenteRpcAporta,
+    definitivo: e => !['red', 'rapido'].includes(nvFrenteError(e)),   // sin red o demasiado rápido: se reintenta en la próxima misión o al abrir
+    arregla: async (a, e) => {   // cambiaste de patrón sin red: se avisa del patrón y se vuelve a mandar
+      if (nvFrenteError(e) !== 'patron') return false;
+      await CUENTA.rpc('nova_frente_patron', { p_faccion: a.faccion });
+      return true;
+    },
+  }));
 }
+function nvFrenteEncola(a) { if (nvFrenteEnRed()) return nvFrenteCola().pon({ casilla: a.casilla, faccion: a.faccion, puntos: a.puntos }); }
+function nvFrenteEnvia() { if (nvFrenteEnRed()) return nvFrenteCola().envia(); }
 // Al cambiar de patrón en la campaña, también en el servidor (si falla, lo arregla el próximo aporte)
-function nvFrentePatronRed(fac) { if (nvFrenteEnRed()) CUENTA.rpc('nova_frente_patron', { p_faccion: fac }).catch(() => { /* lo arregla nvFrenteManda */ }); }
+function nvFrentePatronRed(fac) { if (nvFrenteEnRed()) CUENTA.rpc('nova_frente_patron', { p_faccion: fac }).catch(() => { /* lo arregla la cola (arregla) en el próximo aporte */ }); }
 
 // ---------- bajar: los totales de todos de una semana (los días ya cerrados) y los pilotos de cada facción ----------
 async function nvFrenteBaja(semana) {

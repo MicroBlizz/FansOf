@@ -1,8 +1,8 @@
 {
- "build": 844,
- "hash": "f2d5e4e",
- "fecha": "2026-11-02T16:51:31Z",
- "mensaje": "Rouflage: el premio diario se da al momento y el cobro va por la cola sin conexión de core (ya no bloquea sin red)",
+ "build": 845,
+ "hash": "b8604f2",
+ "fecha": "2026-11-02T17:20:20Z",
+ "mensaje": "Pets: monigote por piezas dibujado por código (ADR 032, fase 1 niño)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

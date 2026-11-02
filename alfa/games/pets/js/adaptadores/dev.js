@@ -47,7 +47,7 @@ PT.dev = (() => {
   const BOTONES = [['+1 h', () => adelanta(1)], ['+6 h', () => adelanta(6)], [tr('+1 día'), () => adelanta(24)], [tr('ECLOSIONAR YA'), eclosionaYa],
     [tr('CRECER YA'), creceYa], [tr('ASCENDER YA'), asciendeYa], [tr('REINICIAR'), reinicia], [tr('CRIATURA'), otraCriatura], [tr('ESCENA DE ANIMACIONES'), abreEscena]];
 
-  // LA ESCENA DE ANIMACIONES: una criatura sola en la oficina con tres botoneras (criatura, etapa y animación) para ver cada dibujo y cada
+  // LA ESCENA DE ANIMACIONES: una criatura sola en la oficina con tres desplegables (criatura, etapa y animación) para ver cada dibujo y cada
   // cara viva sin esperar a que toque en la partida (Arkioner, 1-11-2026). No toca la partida: solo PT.ui.escena, y SALIR la quita.
   // Las jefas van por rama. Las animaciones de cuidado se repiten en bucle; las de cara (parpadeo, bostezo, masticar) se fuerzan
   const ETAPAS = [['bebe', 'bebé'], ['nino', 'niña'], ['adolescente', 'adolescente'], ['adulto', 'adulta'],
@@ -65,18 +65,20 @@ PT.dev = (() => {
     ui.escena = null;
     PT.pantallas.pinta();
   }
-  const botonera = (clase, lista, actual) => `<div class="pt-fila pt-escena">${lista.map(([k, t]) =>
-    `<button type="button" class="pt-btn pt-mini${k === actual ? ' activo' : ''}" data-${clase}="${k}">${PT.esc(t)}</button>`).join('')}</div>`;
-  // el HTML de la caja: tres botoneras y SALIR
+  // cada lista es un desplegable (criatura, etapa, animación), los tres en una fila junto a SALIR: así la caja queda baja y se ve la
+  // criatura entera (Arkioner, 2-11-2026: las botoneras tapaban el dibujo)
+  const desplegable = (clase, lista, actual) => `<select class="pt-escena-sel" data-${clase}>${lista.map(([k, t]) =>
+    `<option value="${k}"${k === actual ? ' selected' : ''}>${PT.esc(t)}</option>`).join('')}</select>`;
+  // el HTML de la caja: tres desplegables y SALIR
   function cajaEscena() {
     const s = ui.escena, criaturas = PT.arte.ids().map(id => [id, PT.criaturas.nombre(PT.criaturas.busca(id)) + (PT.arte.sobreMolde(id) ? '' : ' *')]);
-    return `<p class="pt-estado">${PT.esc(tr('Escena de animaciones'))} · ${PT.esc(tr('* dibujo de antes de las plantillas: sin cara viva'))}</p>` +
-      botonera('criatura', criaturas, s.id) + botonera('etapa', ETAPAS.map(([k, t]) => [k, tr(t)]), s.etapa) +
-      botonera('anim', ANIMACIONES.map(([k, t]) => [k, tr(t)]), s.anim) + `<div class="pt-fila"><button type="button" class="pt-btn" id="pt-escena-salir">${PT.esc(tr('SALIR'))}</button></div>`;
+    return `<div class="pt-fila pt-escena">` + desplegable('criatura', criaturas, s.id) + desplegable('etapa', ETAPAS.map(([k, t]) => [k, tr(t)]), s.etapa) +
+      desplegable('anim', ANIMACIONES.map(([k, t]) => [k, tr(t)]), s.anim) + `<button type="button" class="pt-btn pt-mini" id="pt-escena-salir">${PT.esc(tr('SALIR'))}</button></div>` +
+      `<p class="pt-estado pt-escena-nota">${PT.esc(tr('Escena de animaciones'))} · ${PT.esc(tr('* dibujo de antes de las plantillas: sin cara viva'))}</p>`;
   }
   function enganchaEscena() {
     for (const clave of ['criatura', 'etapa', 'anim']) {
-      document.querySelectorAll(`[data-${clave}]`).forEach(b => { b.onclick = () => { ui.escena[clave === 'criatura' ? 'id' : clave] = b.dataset[clave]; PT.pantallas.pinta(); }; });
+      document.querySelectorAll(`[data-${clave}]`).forEach(b => { b.onchange = () => { ui.escena[clave === 'criatura' ? 'id' : clave] = b.value; PT.pantallas.pinta(); }; });
     }
     document.getElementById('pt-escena-salir').onclick = cierraEscena;
   }

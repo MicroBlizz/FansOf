@@ -27,7 +27,7 @@ PT.monigote = (() => {
           anclas: { cuello: [0.52, 0.66], 'ojo-izq': [0.367, 0.457], 'ojo-der': [0.686, 0.457], boca: [0.526, 0.596],
             'oreja-izq': [0.4, 0.19], 'oreja-der': [0.65, 0.19], corona: [0.525, 0.165] } },
         tronco: { forma: { tipo: 'elipse', cx: 0.52, cy: 0.78, rx: 0.235, ry: 0.13 }, pivote: 'centro',
-          anclas: { centro: [0.52, 0.78], cuello: [0.52, 0.66], 'hombro-izq': [0.31, 0.71], 'hombro-der': [0.73, 0.71], 'cadera-izq': [0.43, 0.86], 'cadera-der': [0.61, 0.86], cola: [0.74, 0.82] } },
+          anclas: { centro: [0.52, 0.78], cuello: [0.52, 0.66], 'hombro-izq': [0.31, 0.71], 'hombro-der': [0.73, 0.71], 'cadera-izq': [0.43, 0.86], 'cadera-der': [0.61, 0.86], cola: [0.7, 0.86] } },
         'brazo-izq': { forma: { tipo: 'capsula', a: [0.31, 0.71], b: [0.265, 0.81], r: 0.042 }, pivote: 'hombro', anclas: { hombro: [0.31, 0.71], mano: [0.26, 0.83] } },
         'brazo-der': { forma: { tipo: 'capsula', a: [0.73, 0.71], b: [0.775, 0.81], r: 0.042 }, pivote: 'hombro', anclas: { hombro: [0.73, 0.71], mano: [0.78, 0.83] } },
         'pierna-izq': { forma: { tipo: 'capsula', a: [0.43, 0.86], b: [0.42, 0.915], r: 0.055 }, pivote: 'cadera', anclas: { cadera: [0.43, 0.86], pie: [0.42, 0.965] } },
@@ -36,7 +36,7 @@ PT.monigote = (() => {
         'oreja-izq': { forma: { tipo: 'capsula', a: [0.4, 0.19], b: [0.36, 0.05], r: 0.045 }, pivote: 'base', anclas: { base: [0.4, 0.19] } },
         'oreja-der': { forma: { tipo: 'capsula', a: [0.65, 0.19], b: [0.69, 0.05], r: 0.045 }, pivote: 'base', anclas: { base: [0.65, 0.19] } },
         corona: { forma: { tipo: 'elipse', cx: 0.525, cy: 0.135, rx: 0.07, ry: 0.04 }, pivote: 'base', anclas: { base: [0.525, 0.165] } },
-        cola: { forma: { tipo: 'elipse', cx: 0.775, cy: 0.82, rx: 0.05, ry: 0.05 }, pivote: 'base', anclas: { base: [0.74, 0.82] } },
+        cola: { forma: { tipo: 'capsula', a: [0.7, 0.86], b: [0.8, 0.9], r: 0.045 }, pivote: 'base', anclas: { base: [0.7, 0.86] } },
         // objetos: dibujados con el agarre en la mano en reposo (bol y esponja en la izquierda y derecha; la cuchara sube desde la mano)
         bol: { forma: { tipo: 'elipse', cx: 0.38, cy: 0.83, rx: 0.12, ry: 0.065 }, pivote: 'agarre', anclas: { agarre: [0.26, 0.83] } },
         cuchara: { forma: { tipo: 'capsula', a: [0.78, 0.83], b: [0.78, 0.72], r: 0.016 }, pivote: 'agarre', anclas: { agarre: [0.78, 0.83], punta: [0.78, 0.705] } },

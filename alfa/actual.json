@@ -1,8 +1,8 @@
 {
- "build": 850,
- "hash": "f8efaae",
- "fecha": "2026-11-02T18:08:39Z",
- "mensaje": "Pets 0.2.0: entrada de novedades para la release",
+ "build": 851,
+ "hash": "99a6c6f",
+ "fecha": "2026-11-02T18:33:36Z",
+ "mensaje": "Pets: la cola del monigote sale abajo a la derecha, lejos del brazo (cápsula desde la base)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

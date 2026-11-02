@@ -1,8 +1,8 @@
 {
- "build": 843,
- "hash": "34caab1",
- "fecha": "2026-11-02T16:46:15Z",
- "mensaje": "Core: cola sin conexión (COLA) y Nova la usa para los aportes de la galaxia",
+ "build": 844,
+ "hash": "f2d5e4e",
+ "fecha": "2026-11-02T16:51:31Z",
+ "mensaje": "Rouflage: el premio diario se da al momento y el cobro va por la cola sin conexión de core (ya no bloquea sin red)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

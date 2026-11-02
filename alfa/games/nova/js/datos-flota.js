@@ -5,6 +5,7 @@
 const NOVA_FLOTA = {
  "topeHoras": 12,
  "naves": [3, 6, 9],
+ "nivel": { "max": 10, "base": 30, "paso": 20 },
  "trabajos": {
   "minar":     { "produce": "aleacion", "ritmo": 4, "sectores": { "cinturon": 1.5, "pecio": 0.8 } },
   "patrullar": { "produce": null, "bloqueado": true },

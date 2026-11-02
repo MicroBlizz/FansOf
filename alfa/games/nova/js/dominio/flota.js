@@ -68,5 +68,17 @@ NV.Flota = (() => {
     return true;
   }
 
-  return { nueva, nivel, topeHoras, maxNaves, trabajando, ritmo, horas, pendiente, recoge, asigna, coste, mejora };
+  // Subir de nivel una nave (+10 % de lo que produce) con la aleación de la campaña: lo que cuesta (null si ya está al máximo) y comprarlo.
+  // Lo que llevaba producido se recoge antes, para que el nivel nuevo no cuente hacia atrás: devuelve lo recogido, o null si no se pudo.
+  function costeNivel(n, F) { const k = (n && n.nivel) || 1; return k < F.nivel.max ? F.nivel.base + F.nivel.paso * k : null; }
+  function subeNivel(c, fl, id, ahora, F) {
+    const n = fl.naves[id] || (fl.naves[id] = { nivel: 1 }), p = costeNivel(n, F);
+    if (p === null || c.aleacion < p) return null;
+    const antes = n.trabajo ? recogeNave(fl, n, ahora, F) : {};
+    if (n.trabajo) n.desde = ahora;
+    c.aleacion -= p; n.nivel = (n.nivel || 1) + 1;
+    return antes;
+  }
+
+  return { nueva, nivel, costeNivel, subeNivel, topeHoras, maxNaves, trabajando, ritmo, horas, pendiente, recoge, asigna, coste, mejora };
 })();

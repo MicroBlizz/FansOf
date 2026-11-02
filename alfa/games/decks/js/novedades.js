@@ -1,6 +1,7 @@
 // Fans Of Decks · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.2.22', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha puesto las cartas en fila y Phony ha pedido turno para barajar."] },
   { v: '0.2.21', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha guardado los anuncios bajo llave y Phony ha pedido una carta de patrocinio."] },
   { v: '0.2.20', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha creado un botón de reportes y Phony ha jurado que solo es para administradores de mazos."] },
   { v: '0.2.19', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Phony ha intentado coger una carta con la garra. Ha cogido la grapadora."] },

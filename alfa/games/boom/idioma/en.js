@@ -1,6 +1,9 @@
 // Fans of Boom · Inglés: los textos de este juego (los comunes de la serie están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.4.2
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
+  "Microblizz ha puesto el cráter en cola de espera y Phony ya está haciendo sitio.": "Microblizz has put the crater on a waiting list and Phony is already making room.",
   // 0.4.1
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha colocado un cartel de patrocinador en el cráter y Phony ha preguntado si cobra por impacto.": "Microblizz has put a sponsor sign in the crater and Phony asked if it pays per hit.",

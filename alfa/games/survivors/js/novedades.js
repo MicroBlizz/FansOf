@@ -2,6 +2,7 @@
 // La versión que se publica se escribe en index.html (…/core/js/nucleo.js?v=…); aquí, `v` dice a qué versión corresponde cada informe.
 'use strict';
 const NEWS = [
+  { v: '0.1.72', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor."], joke: ["Microblizz ha repartido la sopa por turnos y Phony ha repetido."] },
   { v: '0.1.71', real: ["<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando."], joke: ["Microblizz ha silenciado la megafonía del refugio y Phony ha seguido anunciando sopa."] },
   { v: '0.1.70', real: ["<b>MEJORAS POR DENTRO</b>: los reportes de fallos de las pruebas llegan mejor al equipo (el botón «!» es solo para administradores) y los sistemas comunes siguen mejorando."], joke: ["Microblizz ha puesto un teléfono rojo en el refugio y Phony ha llamado solo para ver si cogían."] },
   { v: '0.1.69', real: ["<b>MEJORAS POR DENTRO</b>: los sistemas comunes de la serie se ordenan para que la máquina de gancho del gachapón sirva a más juegos."], joke: ["Microblizz ha guardado la garra en el almacén común. Phony la sigue buscando con una linterna."] },

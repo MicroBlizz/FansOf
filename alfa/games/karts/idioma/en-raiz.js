@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Karts en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.7.16
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
+  "Microblizz ha ordenado la salida y Phony ha adelantado a la cola entera.": "Microblizz tidied the starting grid and Phony overtook the whole queue.",
   // 0.7.15
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha dejado los anuncios en el garaje y Phony los ha puesto en el alerón por si acaso.": "Microblizz left the ads in the garage and Phony put them on the spoiler just in case.",

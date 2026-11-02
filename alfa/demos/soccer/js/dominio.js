@@ -58,6 +58,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const b = e.balon, saca = e.jugadores.find((j) => j.eq === eq && j.puesto === 'delantero' && !j.ko) || e.jugadores.find((j) => j.eq === eq && j.puesto === 'portero');
     Object.assign(b, { x: aj.largo / 2, y: aj.ancho / 2, z: 0, vx: 0, vy: 0, vz: 0, tiro: null, dueno: saca.id, libre: 0, paseDe: -1 });
     saca.x = b.x - sentido(eq) * 1.2; saca.y = b.y;
+    e.calma = 1.5;   // tras el saque, unos instantes sin barridas ni empujones de la máquina
   };
 
   S.equipoConBalon = (e) => (e.balon.dueno < 0 ? -1 : e.jugadores[e.balon.dueno].eq);
@@ -105,6 +106,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       if (j.barrida > 0) j.barrida = Math.max(0, j.barrida - dt);
       if (j.empujon > 0) j.empujon = Math.max(0, j.empujon - dt);
     }
+    e.calma = Math.max(0, (e.calma || 0) - dt);
     for (const eq of [0, 1]) e.energia[eq] = Math.min(e.aj.energia.max, e.energia[eq] + e.aj.energia.porSegundo * dt);
   }
 

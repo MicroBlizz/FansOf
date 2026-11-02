@@ -59,6 +59,22 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     texto(g, j.cargado ? tr('¡SÚPER!') : tr('CARRERILLA'), 552, 108, 9, '#fff', 'right');
   };
 
+  // Minimapa: con la cámara cerca, enseña dónde está cada uno (puntos de color, el tuyo con anillo amarillo, el balón en blanco).
+  UI.minimapa = function (g, e, controlado) {
+    const aj = e.aj, w = 200, h = 104, x0 = 540, y0 = 606, k = w / aj.largo, alto = aj.ancho * k, yo = y0 + (h - alto) / 2;
+    g.fillStyle = 'rgba(10,12,30,.6)'; g.fillRect(x0 - 6, y0 - 6, w + 12, h + 12);
+    g.fillStyle = 'rgba(70,170,80,.55)'; g.fillRect(x0, yo, w, alto);
+    g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = 1.5; g.strokeRect(x0, yo, w, alto);
+    g.beginPath(); g.moveTo(x0 + w / 2, yo); g.lineTo(x0 + w / 2, yo + alto); g.stroke();
+    for (const j of e.jugadores) {
+      g.globalAlpha = j.mareo > 0 ? 0.4 : 1; g.fillStyle = aj.equipos[j.eq].color;
+      g.beginPath(); g.arc(x0 + j.x * k, yo + j.y * k, 4, 0, 7); g.fill();
+      if (j.id === controlado) { g.strokeStyle = '#ffe14a'; g.lineWidth = 2; g.beginPath(); g.arc(x0 + j.x * k, yo + j.y * k, 7, 0, 7); g.stroke(); }
+    }
+    g.globalAlpha = 1; g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 1.5;
+    g.beginPath(); g.arc(x0 + S.util.lim(e.balon.x, 0, aj.largo) * k, yo + S.util.lim(e.balon.y, 0, aj.ancho) * k, 3.5, 0, 7); g.fill(); g.stroke();
+  };
+
   function boton(g, b, etiqueta, color, brillo) {
     g.save();
     if (brillo) { g.shadowColor = color; g.shadowBlur = 30; }

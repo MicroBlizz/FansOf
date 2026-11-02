@@ -81,7 +81,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // Apagón: todo a oscuras salvo un foco sobre el balón y las luces de los servidores.
   function apagon(g, e, t) {
-    const q = S.vista.P(e.balon.x, e.balon.y, 0), parpadeo = Math.random() < 0.04 ? 0.35 : 0.8;
+    const q = S.vista.aPantalla(S.vista.P(e.balon.x, e.balon.y, 0)), parpadeo = Math.random() < 0.04 ? 0.35 : 0.8;
     const gr = g.createRadialGradient(q.x, q.y - 20, 40, q.x, q.y - 20, 300);
     gr.addColorStop(0, 'rgba(0,0,15,0)'); gr.addColorStop(1, 'rgba(0,0,15,' + parpadeo + ')');
     g.fillStyle = gr; g.fillRect(0, 0, W, H);

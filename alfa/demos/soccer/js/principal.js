@@ -188,7 +188,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (FX.enCorte()) return;
     if (est.paron > 0) { est.paron -= dt; return; }
     if (est.repetirEn > 0) { est.repetirEn -= dt; if (est.repetirEn <= 0) { FX.empezarRepeticion(); est.modo = 'repeticion'; return; } }
-    est.zoomT = Math.max(0, est.zoomT - dt); V.zoomObj = est.zoomT > 0 ? 1.25 : 1;
+    est.zoomT = Math.max(0, est.zoomT - dt); V.zoomObj = est.zoomT > 0 ? 1.12 : 1;
     let k = 1;
     if (est.zoomT > 0.5) k = 0.3;   // cámara lenta al salir el súper tiro
     est.acum += dt * k;
@@ -200,6 +200,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     V.dibujar(G, e, dt, est.t, est.controlado, { flecha: ctx === 'conBalon' ? direccion() : null });
     UI.marcador(G, e);
     UI.carrerilla(G, e, j);
+    UI.minimapa(G, e, est.controlado);
     UI.carteles(G, dt);
     UI.mandos(G, joy, ctx, S.puedeSuper(e, j));
     S.tutorial.dibujar(G, est.t);
@@ -209,9 +210,10 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function pintarRepeticion(dt) {
     const foto = FX.fotoRepeticion(est.e, dt);
     if (!foto) { est.modo = 'juego'; est.e.pausa = Math.min(est.e.pausa, 0.4); V.zoomObj = 1; return pintarJuego(dt); }
-    V.zoomObj = 1.15;
+    V.zoomObj = 1.05;
     V.dibujar(G, foto, dt, est.t, -1);
     UI.marcador(G, est.e);
+    UI.minimapa(G, foto, -1);
     UI.repeticion(G, est.t);
   }
 

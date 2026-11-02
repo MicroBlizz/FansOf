@@ -29,16 +29,17 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (aTiro && (quiereSuper || lejos < 9 || rnd() < 0.05 + nivel(e, j.eq) * 0.05)) accion = 'tiro';
     else if (rivalCerca && rnd() < (est.pasan ? 0.16 : 0.05)) accion = 'pase';
     // regate: si hay alguien delante, se abre un poco hacia el lado libre
-    const o = hacia(j, meta), esquiva = rivalCerca ? (j.y < aj.ancho / 2 ? 0.6 : -0.6) : 0;
+    const o = hacia(j, meta), esquiva = rivalCerca ? (j.y < aj.ancho / 2 ? 0.3 : -0.3) : 0;
     return { mx: o.mx, my: o.my + esquiva, accion, velocidad: ritmo(e, j.eq) };
   }
 
   // Ir a por el balón: si el que lo lleva está a tiro, barrida; si le sacas vida y el equipo es bueno, empujón.
   function perseguir(e, j, rnd) {
     const b = e.balon, portador = b.dueno >= 0 ? e.jugadores[b.dueno] : null;
-    const aTiro = portador && portador.eq !== j.eq && portador.puesto !== 'portero' && dist(j, portador) < 3.2 && j.espera <= 0;
-    if (aTiro && rnd() < 0.15 + nivel(e, j.eq) * 0.25) {
-      const accion = j.vida > portador.vida && rnd() < nivel(e, j.eq) ? 'empujon' : 'barrida';
+    const aTiro = portador && portador.eq !== j.eq && portador.puesto !== 'portero' && dist(j, portador) < e.aj.ia.alcanceBarrida && j.espera <= 0;
+    const [i0, i1] = e.aj.ia.intentos, porPaso = (i0 + (i1 - i0) * nivel(e, j.eq)) / 60;   // la máquina no reacciona al instante
+    if (aTiro && !(e.calma > 0) && rnd() < porPaso) {
+      const accion = j.vida + e.aj.empujon.margen >= portador.vida && rnd() < nivel(e, j.eq) * 0.5 ? 'empujon' : 'barrida';
       return { mx: portador.x - j.x, my: portador.y - j.y, accion };
     }
     const o = hacia(j, { x: b.x + b.vx * 0.25, y: b.y + b.vy * 0.25 }, 0.2);

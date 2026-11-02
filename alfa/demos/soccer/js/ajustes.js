@@ -10,8 +10,8 @@ SOCCER.AJ = Object.freeze({
   porteria: { alto: 4, medio: 6 },  // medio: media boca de la portería
   parte: 90, partes: 2, oro: 30,    // segundos por parte, número de partes y gol de oro si hay empate
   vel: { jugador: 9, portero: 12, conBalon: 8, barrida: 22, empujon: 14, tiro: 40, pase: 27, superTiro: 58 },
-  barrida: { dura: 0.38, alcance: 2.6, mareo: 2.4, mareoSinBalon: 1.4, espera: 0.9, dano: 6 },
-  empujon: { dura: 0.2, alcance: 2.2, mareo: 1.0, espera: 0.6, dano: 10 },
+  barrida: { dura: 0.38, alcance: 3.1, mareo: 2.4, mareoSinBalon: 1.4, espera: 0.55, dano: 6 },
+  empujon: { dura: 0.2, alcance: 2.6, mareo: 1.0, espera: 0.45, dano: 10, margen: 8 },   // margen: vida de ventaja que se le da al que empuja
   ko: 20,                           // segundos fuera al quedarse sin vida
   golpeSuper: 6,                    // vida que quita un súper tiro al que se cruza
   coger: 2.0,                       // distancia para hacerse con el balón
@@ -19,7 +19,7 @@ SOCCER.AJ = Object.freeze({
   gravedad: 30, roce: 0.985,
   energia: { porSegundo: 0.5, barrida: 4, empujon: 3, pase: 2, max: 100 },
   supersPorParte: 2,
-  ia: { distTiro: 22, presion: 4.5 },
+  ia: { distTiro: 22, presion: 4.5, alcanceBarrida: 2.6, intentos: [1.2, 3] },   // intentos de barrida por segundo de la máquina (nivel 0 y 1)
   // los cinco equipos: pasos = metros de carrerilla con el balón sin que te toquen para cargar el súper tiro;
   // parada = probabilidad de que su portero pare un súper tiro; nivel = lo bien que juega la máquina con él (0 a 1)
   equipos: [

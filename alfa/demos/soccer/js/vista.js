@@ -5,7 +5,8 @@
 var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
   const W = 1280, H = 720, ESC = 14;
-  const V = S.vista = { cam: 50, off: 0, zoom: 1, zoomObj: 1, estela: [], temblor: 0, img: {}, W, H, vidaVista: {}, globos: {}, ahora: 0 };
+  const ZOOM = 1.7, CENTRO = [640, 430];   // cámara cercana, como el clásico: lo que se sigue queda en CENTRO
+  const V = S.vista = { cam: 50, off: 0, zoom: 1, zoomObj: 1, foco: { x: 50, y: 30 }, tf: { fx: 640, fy: 430, z: 1 }, estela: [], temblor: 0, img: {}, W, H, vidaVista: {}, globos: {}, ahora: 0 };
 
   V.cargar = function (nombres) {
     for (const n of nombres) {
@@ -36,7 +37,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   function cielo(g, aj) {
     const f = V.img[aj.campo.fondo];
-    if (f) { const ox = -(V.cam - 50) * 3 - (f.width - W) / 2; g.drawImage(f, ox, 255 - f.height); }
+    if (f) { const ox = -(V.cam - 50) * 3 - (f.width - W) / 2; for (const k of [-1, 0, 1]) g.drawImage(f, ox + k * f.width, 255 - f.height); }   // repetido a los lados: con la cámara cerca se ve más allá
     else { const gr = g.createLinearGradient(0, 0, 0, 260); gr.addColorStop(0, '#3a2a6e'); gr.addColorStop(1, '#ff9a5a'); g.fillStyle = gr; g.fillRect(0, 0, W, 260); }
   }
 
@@ -201,15 +202,27 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.restore();
   };
 
+  // La cámara sigue al balón en las dos direcciones; en los súper tiros va con retraso y se queda atrás, como en el clásico.
+  function seguir(e, dt) {
+    const b = e.balon, rapido = b.tiro && b.tiro.tipo !== 'normal', k = Math.min(1, dt * (rapido ? 1.3 : 5));
+    V.foco.x += (S.util.lim(b.x, 12, e.aj.largo - 12) - V.foco.x) * k;
+    V.foco.y += (S.util.lim(b.y, 4, e.aj.ancho - 4) - V.foco.y) * k;
+    V.cam = V.foco.x;
+  }
+  // De coordenadas de la escena (ya proyectadas con P) a la pantalla, con la cámara cercana aplicada.
+  V.aPantalla = (q) => ({ x: CENTRO[0] + (q.x - V.tf.fx) * V.tf.z, y: CENTRO[1] + (q.y - V.tf.fy) * V.tf.z });
+
   // Escena entera; `foto` (opcional) sustituye posiciones para la repetición del gol.
   V.dibujar = function (g, e, dt, t, controlado, extra) {
     V.ahora = t;
-    V.cam += (S.util.lim(e.balon.x, 40, 60) - V.cam) * Math.min(1, dt * 4);
+    seguir(e, dt);
     V.off = (60 - e.aj.ancho) / 2;
     V.zoom += (V.zoomObj - V.zoom) * Math.min(1, dt * 8);
     V.temblor = Math.max(0, V.temblor - dt * 30);
+    const f = P(V.foco.x, V.foco.y, 0), z = (extra && extra.lejos ? 1 : ZOOM) * V.zoom;
+    V.tf = { fx: f.x, fy: f.y, z };
     g.save();
-    if (V.zoom > 1.01) { const f = P(e.balon.x, e.balon.y, e.balon.z); g.translate(f.x, f.y); g.scale(V.zoom, V.zoom); g.translate(-f.x, -f.y); }
+    g.translate(CENTRO[0], CENTRO[1]); g.scale(z, z); g.translate(-f.x, -f.y);
     g.translate((Math.random() - 0.5) * V.temblor, (Math.random() - 0.5) * V.temblor);
     cielo(g, e.aj); cesped(g, e);
     if (extra && extra.flecha) V.flechaPase(g, e, controlado, extra.flecha[0], extra.flecha[1]);

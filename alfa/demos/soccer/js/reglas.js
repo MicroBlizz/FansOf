@@ -103,7 +103,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     e.eventos.push({ tipo: 'derribo', quien: o.id, por: j.id, robo: llevaba, clase });
   }
 
-  // Barrida: tumba a quien alcance. Empujón: solo tumba si te queda más vida que al otro; con la misma, caen los dos; con menos, caes tú.
+  // Barrida: tumba a quien alcance. Empujón: tumba salvo que el otro tenga mucha más vida; en ese caso aguanta y nadie cae.
   _.golpes = function (e, j) {
     const aj = e.aj, barre = j.barrida > 0, empuja = j.empujon > 0;
     if (!barre && !empuja) return;
@@ -111,8 +111,9 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       if (o.eq === j.eq || o.puesto === 'portero' || o.mareo > 0 || dist(o, j) > (barre ? aj.barrida.alcance : aj.empujon.alcance)) continue;
       if (barre) { tumbar(e, o, j, e.balon.dueno === o.id ? aj.barrida.mareo : aj.barrida.mareoSinBalon, aj.barrida.dano, 'barrida'); _.sumar(e, j.eq, aj.energia.barrida); continue; }
       j.empujon = 0;
-      if (j.vida >= o.vida) { tumbar(e, o, j, aj.empujon.mareo, aj.empujon.dano, 'empujon'); _.sumar(e, j.eq, aj.energia.empujon); }
-      if (j.vida <= o.vida) tumbar(e, j, o, aj.empujon.mareo, j.vida === o.vida ? aj.empujon.dano : 2, 'rebote');
+      // empujón: tumba si no tienes mucha menos vida que el otro (margen a favor del que empuja); si no, rebota sin tirar a nadie
+      if (j.vida + aj.empujon.margen >= o.vida) { tumbar(e, o, j, aj.empujon.mareo, aj.empujon.dano, 'empujon'); _.sumar(e, j.eq, aj.energia.empujon); }
+      else e.eventos.push({ tipo: 'aguanta', quien: o.id, por: j.id });
       return;
     }
   };

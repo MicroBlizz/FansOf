@@ -53,7 +53,9 @@ PT.dev = (() => {
   const ETAPAS = [['bebe', 'bebé'], ['nino', 'niña'], ['adolescente', 'adolescente'], ['adulto', 'adulta'],
     ...PETS.ascenso.ramas.map(r => ['jefe:' + r, 'jefa: ' + r])];
   const ANIMACIONES = [['base', 'Quieta'], ['parpadeo', 'Parpadeo'], ['bostezo', 'Bostezo'], ['masca', 'Masticar'], ['cachorrito', 'Cachorrito'], ['sonolienta', 'Con sueño'],
-    ['comer', 'COMER'], ['beber', 'BEBER'], ['banar', 'DUCHA'], ['dientes', 'DIENTES'], ['cara', 'CARA'], ['bano', 'BAÑO'], ['dormir', 'DORMIR'], ['triste', 'Triste']];
+    ['comer', 'COMER'], ['beber', 'BEBER'], ['banar', 'DUCHA'], ['dientes', 'DIENTES'], ['cara', 'CARA'], ['bano', 'BAÑO'], ['dormir', 'DORMIR'], ['triste', 'Triste'],
+    // la criatura POR PIEZAS (figuras.js), solo las ya despiezadas (de niña: CrazyBunny y el hurón); en las demás sale su dibujo de siempre
+    ['fig:quieto', 'PIEZAS: quieta'], ['fig:mirar', 'PIEZAS: mirar'], ['fig:saludo', 'PIEZAS: saludo'], ['fig:orejas', 'PIEZAS: orejas'], ['fig:baile', 'PIEZAS: baile']];
   const CUIDADOS = ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano'];
   function abreEscena() {
     ui.escena = { id: PT.arte.ids()[0], etapa: 'bebe', anim: 'base' };
@@ -88,6 +90,7 @@ PT.dev = (() => {
     const e = { rama, dormida: s.anim === 'dormir', triste: s.anim === 'triste', sonolienta: s.anim === 'sonolienta', anim: '', at: 0,
       cara: ['parpadeo', 'bostezo', 'masca', 'cachorrito'].includes(s.anim) ? s.anim : '' };
     if (CUIDADOS.includes(s.anim)) { e.anim = s.anim; e.at = t - (t % dura); }   // en bucle: cada vez que acaba, otra
+    if (s.anim.startsWith('fig:') && PT.figuras.pinta(ctx, s.id, etapa, 270, 440 + r, r * PETS.arte.lienzo, t, s.anim.slice(4), e)) return;
     if (!PT.arte.tiene(s.id, etapa) || !PT.arte.criatura(ctx, s.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(PT.criaturas.busca(s.id).fac), t, e);
   }
 

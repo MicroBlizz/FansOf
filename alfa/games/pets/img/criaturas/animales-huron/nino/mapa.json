@@ -1,0 +1,125 @@
+{
+ "criatura": "animales-huron",
+ "edad": "nino",
+ "capas": [
+  "cola",
+  "pierna-izq",
+  "pierna-der",
+  "tronco",
+  "brazo-izq",
+  "brazo-der",
+  "cabeza"
+ ],
+ "piezas": {
+  "cola": {
+   "archivo": "cola.webp",
+   "caja": [
+    0.6484,
+    0.8018,
+    0.1973,
+    0.1436
+   ],
+   "pivote": [
+    0.7431,
+    0.8575
+   ],
+   "madre": "tronco"
+  },
+  "pierna-izq": {
+   "archivo": "pierna-izq.webp",
+   "caja": [
+    0.3086,
+    0.8281,
+    0.1748,
+    0.0947
+   ],
+   "pivote": [
+    0.3762,
+    0.8802
+   ],
+   "madre": "tronco"
+  },
+  "pierna-der": {
+   "archivo": "pierna-der.webp",
+   "caja": [
+    0.5117,
+    0.8281,
+    0.2275,
+    0.0938
+   ],
+   "pivote": [
+    0.6329,
+    0.8807
+   ],
+   "madre": "tronco"
+  },
+  "tronco": {
+   "archivo": "tronco.webp",
+   "caja": [
+    0.2598,
+    0.5879,
+    0.5127,
+    0.2998
+   ],
+   "pivote": [
+    0.5167,
+    0.7765
+   ],
+   "madre": null
+  },
+  "brazo-izq": {
+   "archivo": "brazo-izq.webp",
+   "caja": [
+    0.2344,
+    0.5791,
+    0.2139,
+    0.208
+   ],
+   "pivote": [
+    0.3865,
+    0.6594
+   ],
+   "madre": "tronco"
+  },
+  "brazo-der": {
+   "archivo": "brazo-der.webp",
+   "caja": [
+    0.5986,
+    0.5869,
+    0.1689,
+    0.1973
+   ],
+   "pivote": [
+    0.6356,
+    0.6704
+   ],
+   "madre": "tronco"
+  },
+  "cabeza": {
+   "archivo": "cabeza.webp",
+   "caja": [
+    0.1768,
+    0.1416,
+    0.7158,
+    0.5195
+   ],
+   "pivote": [
+    0.5161,
+    0.6456
+   ],
+   "madre": "tronco"
+  }
+ },
+ "medidas": {
+  "cuello": 0.6582,
+  "cadera": 0.877
+ },
+ "cara": {
+  "pieza": "cabeza",
+  "marco": [
+   0.4991,
+   0.4253,
+   0.2524
+  ]
+ }
+}

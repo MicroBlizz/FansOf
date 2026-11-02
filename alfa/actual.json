@@ -1,8 +1,8 @@
 {
- "build": 854,
- "hash": "1523063",
- "fecha": "2026-11-02T22:42:25Z",
- "mensaje": "Nova 0.3.39: la misión se prepara con tu facción y los menús tienen estilo de cabina",
+ "build": 855,
+ "hash": "962294e",
+ "fecha": "2026-11-02T22:47:46Z",
+ "mensaje": "Pets: CrazyBunny y el hurón por piezas en la escena DEV (figura, gestos y cara viva encima)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

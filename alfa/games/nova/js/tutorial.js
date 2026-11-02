@@ -69,6 +69,9 @@ const NV_TUTO = {
     'El capitán da una ventaja para toda la misión y casi siempre una pega.',
     'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.',
     'En la campaña, el capitán es el líder o una unidad de la facción que elegiste al empezar. Las unidades dan el bonus de su especialidad.'] }],
+  habilidad: [{ titulo: 'HABILIDAD ACTIVA', ic: ['sis', 'vel'], lineas: [
+    'Desde el rango 2 tienes el botón redondo de abajo a la derecha (en el ordenador, la barra espaciadora).',
+    'Cada facción tiene la suya. Úsala para salir de un apuro o rematar a un jefe: tarda en recargarse.'] }],
   oficial: [{ titulo: 'EL OFICIAL', ic: ['fac', 'fuego'], lineas: [
     'El oficial suma un bonus pequeño para toda la misión.',
     'Elige el que encaje con tu forma de jugar: más daño, más casco, más cartas...'] }],

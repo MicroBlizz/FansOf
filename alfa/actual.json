@@ -1,8 +1,8 @@
 {
- "build": 807,
- "hash": "8c011c8",
- "fecha": "2026-11-02T00:25:51Z",
- "mensaje": "Pets: bases de CrazyBunny sobre la pose loco solo de cara",
+ "build": 808,
+ "hash": "927395f",
+ "fecha": "2026-11-02T00:27:48Z",
+ "mensaje": "Nova 0.3.34: habilidad activa, una por facción (NV.Habilidad)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.33",
+  "nova": "0.3.34",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

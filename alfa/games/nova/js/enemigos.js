@@ -74,7 +74,7 @@ function nvEnemigos(S, dt) {
 }
 function nvEnemigoActua(S, e, dt) {
   const n = S.nave, dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
-  e.vis = nvEnPantalla(S, e.x, e.y);   // fuera de la pantalla no dispara
+  e.vis = nvEnPantalla(S, e.x, e.y) && !nvHabOculto(S);   // fuera de la pantalla (o con Fuera del radar) no dispara
   if (e.d.nido) return nvNidoEscupe(S, e, dt, ux, uy, dist);   // el nido no se mueve y escupe si te acercas
   if (e.d.pasivo) return;   // las rocas solo estorban: se rompen a tiros
   if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) return nvEnemigoLejos(e, dt);   // lejos: dormido o a lo suyo
@@ -168,13 +168,14 @@ function nvChatarra(S, x, y, valor) {
   for (let i = 0; i < k; i++) S.restos.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 30, v: valor / k, t: 0, ang: Math.random() * 6.28 });
 }
 function nvDanoNave(S, d) {
+  if (nvHabProtege(S)) return;   // habilidad.js: Escudo de plasma y Estampida
   const n = S.nave, rd = d * (1 - (S.mejoras.blindaje || 0)) * (1 + 0.15 * ((S.peligro || 1) - 1));
   let r = rd;
   if (n.esc && n.esc.hp > 0) { const a = Math.min(n.esc.hp, r); n.esc.hp -= a; r -= a; n.esc.sin = 3; }
   if (NVP.inmortal) r = 0;   // ?inmortal=1: escenario de pruebas de rendimiento, no te matan (los enemigos siguen disparando y el daño se cuenta)
   if (r > 0) nvSnd('nvGolpeNave', S);
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;
-  if (S.cap === 'twitchking') S.kills = [];   // el hype se pierde al recibir daño
+  if (S.cap === 'twitchking' && !nvHabActua(S, 'directo')) S.kills = [];   // el hype se pierde al recibir daño (no en Directo)
   if (n.hp <= 0 && S.cap === 'necrolord' && !S.revivido) { S.revivido = true; n.hp = n.hpMax * 0.5; S.aviso = { t: 2.5, txt: tr('¡Renaces!') }; return; }
   if (n.hp <= 0 && S.estado === 'juego') nvAcaba(S, 'derrota');
 }

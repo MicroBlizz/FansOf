@@ -18,19 +18,23 @@ NV.Combos = (() => {
     return out;
   }
 
-  // Los combos que actúan en este golpe, mirados ANTES de aplicarlo (las reacciones y el Apagón los avisa quien los resuelve).
-  // `seAleja` y `escudoArriba` los calcula quien llama; `sinEstado`: golpe que no deja estado (onda de una sobrecarga).
+  // Cuándo actúa cada combo en un golpe, mirado ANTES de aplicarlo (las reacciones y el Apagón los avisa quien los resuelve).
+  // g: { carga, portador, est, calor, seAleja, escudoArriba }. Los de `conEstado` no actúan en un golpe que no deja estado.
+  const fisica = c => c === 'cinetica' || c === 'explosiva';
+  const CUANDO = [
+    ['ablandado', g => fisica(g.carga) && g.calor > 0],
+    ['cazador', g => g.portador === 'lanzador' && g.seAleja],
+    ['perforaescudos', g => g.portador === 'railgun' && g.carga === 'cinetica' && g.escudoArriba],
+    ['sobrecargaLenta', g => g.carga === 'termica' && g.est.interferido > 0, true],
+    ['cortacircuitos', g => g.carga === 'em' && g.est.escudoCaido > 0, true],
+    ['plasma', g => g.carga === 'energia' && g.calor > 0 && g.calor < 99, true],
+    ['metrallaIncendiaria', g => g.portador === 'flak' && g.carga === 'termica', true],
+  ];
+  // Los combos que actúan en este golpe. `seAleja` y `escudoArriba` los calcula quien llama; `sinEstado`: golpe que no deja estado
+  // (onda de una sobrecarga).
   function delGolpe(e, w, seAleja, escudoArriba, sinEstado) {
-    const carga = w.carga, est = e.est, calor = e.calor || 0, out = [];
-    if ((carga === 'cinetica' || carga === 'explosiva') && calor > 0) out.push('ablandado');
-    if (w.portador === 'lanzador' && seAleja) out.push('cazador');
-    if (w.portador === 'railgun' && carga === 'cinetica' && escudoArriba) out.push('perforaescudos');
-    if (sinEstado) return out;
-    if (carga === 'termica' && est.interferido > 0) out.push('sobrecargaLenta');
-    if (carga === 'em' && est.escudoCaido > 0) out.push('cortacircuitos');
-    if (carga === 'energia' && calor > 0 && calor < 99) out.push('plasma');
-    if (w.portador === 'flak' && carga === 'termica') out.push('metrallaIncendiaria');
-    return out;
+    const g = { carga: w.carga, portador: w.portador, est: e.est, calor: e.calor || 0, seAleja, escudoArriba };
+    return CUANDO.filter(([, si, conEstado]) => !(conEstado && sinEstado) && si(g)).map(([id]) => id);
   }
 
   // ¿Es la primera vez? `vistos` es lo que la campaña ya conoce ({ id: veces }) y `nuevos`, lo descubierto en esta misión

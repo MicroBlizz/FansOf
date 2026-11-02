@@ -64,6 +64,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   S.cap = cap; S.ofi = ofi; S.kills = [];
   nvAplicaTripulacion(S);
   nvAplicaCampana(S);
+  nvHabInicio(S);   // habilidad.js: la habilidad activa de tu facción
   return S;
 }
 
@@ -71,11 +72,12 @@ function nvNuevaPartida(casco, cap, ofi) {
 function nvPaso(S, dt) {
   const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
   if (S.estado !== 'juego' && !fin) return;
-  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
-  nvEnemigos(S, dt);
+  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); nvHabPaso(S, dt); }
+  const dtE = dt * nvHabLento(S);   // Bullet time: los enemigos y sus balas, a cámara lenta
+  nvEnemigos(S, dtE);
   if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
-  nvProyectilesEnemigos(S, dt);
+  nvProyectilesEnemigos(S, dtE);
   if (!fin) nvRestos(S, dt);
   nvPasoTrozos(S, dt);
   NV.Nave.recupera(S.nave, S.mejoras, dt);
@@ -99,7 +101,7 @@ function nvMueve(S, dt) {
   if (NVP.teclas.ArrowDown || NVP.teclas.s) iy += 1;
   if (NVP.auto) { const g = nvBotMeta(S); ix = g[0]; iy = g[1]; }   // bot de pruebas
   const m = Math.hypot(ix, iy); if (m > 1) { ix /= m; iy /= m; }
-  const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1);
+  const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1) * nvHabVel(S);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
   // la proa mira hacia donde te mueves (parado, se queda como estaba); las armas son las que apuntan a los enemigos

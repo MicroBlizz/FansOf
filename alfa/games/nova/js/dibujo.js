@@ -254,6 +254,7 @@ function nvDibuja(S) {
   nvFondo(c, S, W, H, vs);
   c.save(); c.translate(W / 2, H / 2); c.scale(vs, vs); c.translate(-S.cam.x, -S.cam.y);
   nvDibujaMundo(c, S);
+  nvHabPintaMundo(c, S);   // habilidad.js: el aura y los espíritus
   c.restore();
   nvHud(c, S, W, H, vs);
 }

@@ -1,7 +1,11 @@
-// Fans of Pop · Inglés: los tutoriales de Lola del 31-10-2026 (ayudas, truco de los duelos, tienda, pase…) y el sello de DESPEDIDO.
+// Fans of Pop · Inglés: los tutoriales de Lola del 31-10-2026 (ayudas, truco de los duelos, tienda, pase…) el sello de DESPEDIDO y empezar de nuevo.
 'use strict';
 IDIOMA.add({
   "DESPEDIDO": "FIRED",
+  "¿Empezar de nuevo?": "Start over?",
+  "SÍ, DE NUEVO": "YES, START OVER",
+  "NO, VOLVER": "NO, GO BACK",
+  "Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.": "You go back to level 1 and lose your path and team. Your coins, pearls and boosters stay.",
   "¡Mira abajo: son las ayudas! El MARTILLO revienta del todo la burbuja que toques, sin gastar toque.": "Look down: these are boosters! The HAMMER fully pops the bubble you tap, without using a tap.",
   "La BOMBA da un golpe a un cuadrado de 3 x 3, tampoco gasta toque. Y +3 TOQUES te da tres toques más en el nivel.": "The BOMB hits a 3 x 3 square, also without using a tap. And +3 TAPS gives you three more taps in the level.",
   "Se ganan jugando (regalo diario, pase…) y, si no te quedan, se compran con perlas.": "You win them by playing (daily gift, pass…) and, if you run out, you can buy them with pearls.",

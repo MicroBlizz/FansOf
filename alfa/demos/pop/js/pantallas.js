@@ -17,8 +17,9 @@ function ppIrA(p) {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
     $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Revienta burbujas, rescata amigos');
     $pp('#pp-seguir').hidden = !hay;
-    $pp('#pp-jugar').textContent = hay ? tr('EMPEZAR DE NUEVO') : tr('JUGAR');
-    $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
+    $pp('#pp-jugar').hidden = hay;   // con partida empezada solo sale SEGUIR; EMPEZAR DE NUEVO está en Opciones (Daniel, 02-11-2026)
+    $pp('#pp-jugar').textContent = tr('JUGAR');
+    $pp('#pp-tienda').innerHTML = `<img class="pp-ico" src="${PP_LISO ? 'img-liso' : 'img'}/i-perlas.png" alt="" style="width:34px;height:34px${PP_LISO ? ';image-rendering:auto' : ''}">${tr('TIENDA')}`;   // la imagen directa: en la portada aún no han cargado los dibujos
     $pp('#pp-duelo').textContent = tr('DUELOS');
     $pp('#pp-memoria').textContent = tr('MEMORIA');
     $pp('#pp-ranking').textContent = tr('RANKING');
@@ -161,7 +162,15 @@ function ppOpciones() {
   col.appendChild(vib);
   const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
   col.appendChild(est);
+  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-rosa', ppConfirmaDeNuevo));
   col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
+}
+// empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
+function ppConfirmaDeNuevo() {
+  const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.')}</p>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('SÍ, DE NUEVO'), 'pp-btn2 pp-rosa', () => { ppCierra(); ppEmpieza(false); }));
+  col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));
 }
 /* ---------- la pausa ----------
    En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal

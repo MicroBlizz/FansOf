@@ -73,6 +73,7 @@ function ppArranque() {
   $pp('#pp-lola-liso').onclick = () => { play('select'); ppLolaEligeEstilo(false); };
   $pp('#pp-lola-pixel').onclick = () => { play('select'); ppLolaEligeEstilo(true); };
   $pp('#pp-pausa').onclick = () => { play('select'); ppPausa(); };
+  $pp('#pp-tienda').onclick = () => { ppCargaSonidos(); play('select'); ppTienda(null, 'ofertas'); };
   $pp('#pp-opciones').onclick = () => { ppCargaSonidos(); play('select'); ppOpciones(); };
   $pp('#pp-ranking').onclick = () => { ppCargaSonidos(); play('select'); ppVentanaRanking(); };   // js/ranking.js
   setTimeout(ppSubeMarcas, 3000);   // lo que aún no esté en el ranking mundial

@@ -6,24 +6,37 @@
 // Todo en fracciones de un lienzo cuadrado (0..1); las formas se dan en el sitio que ocupan montadas en reposo (de pie, brazos caídos).
 // Una pieza se une a otra por un ancla: si la otra ha girado, la pieza la sigue (su ancla va donde haya ido la de la otra). Los OBJETOS
 // (bol, cuchara, esponja) son piezas más, con el ancla `agarre` pegada a la mano de un brazo; su giro lo dice la postura, no el brazo.
+// Los APÉNDICES de cada especie (orejas, cola) y la RANURA de accesorio (corona) van RÍGIDOS: además de seguir a su pieza, giran con
+// ella (la oreja se inclina con la cabeza). La cola va siempre en la primera capa: detrás de todo, asomando lo que deje el tronco.
 'use strict';
 PT.monigote = (() => {
   const TRAZO = 0.014, TINTA = '#2b1a12', PIEL = '#ffffff';
   // forma: elipse { cx, cy, rx, ry } o cápsula { a: [x, y], b: [x, y], r } (dos centros y el radio). Las anclas, en fracciones del lienzo.
+  // unión: [ancla propia, otra pieza, ancla de la otra] y, si es 'rigida', la pieza gira además lo que gire la otra
   const CUERPO = { cabeza: ['cuello', 'tronco', 'cuello'], 'brazo-izq': ['hombro', 'tronco', 'hombro-izq'], 'brazo-der': ['hombro', 'tronco', 'hombro-der'],
-    'pierna-izq': ['cadera', 'tronco', 'cadera-izq'], 'pierna-der': ['cadera', 'tronco', 'cadera-der'] };
+    'pierna-izq': ['cadera', 'tronco', 'cadera-izq'], 'pierna-der': ['cadera', 'tronco', 'cadera-der'],
+    'oreja-izq': ['base', 'cabeza', 'oreja-izq', 'rigida'], 'oreja-der': ['base', 'cabeza', 'oreja-der', 'rigida'],
+    corona: ['base', 'cabeza', 'corona', 'rigida'], cola: ['base', 'tronco', 'cola', 'rigida'] };
+  // capas comunes: la cola detrás de todo; las orejas tras la cabeza y la corona delante
+  const DETRAS = ['cola', 'pierna-izq', 'pierna-der', 'tronco'], CABEZA = ['oreja-izq', 'oreja-der', 'cabeza', 'corona'];
   const EDADES = {
     nino: {
       piezas: {
         // la cabeza lleva el marco de la cara (los ojos y la boca del molde liso de niño, anclas.js) para las piezas de caras.js
         cabeza: { forma: { tipo: 'elipse', cx: 0.525, cy: 0.42, rx: 0.36, ry: 0.265 }, pivote: 'cuello',
-          anclas: { cuello: [0.52, 0.66], 'ojo-izq': [0.367, 0.457], 'ojo-der': [0.686, 0.457], boca: [0.526, 0.596] } },
+          anclas: { cuello: [0.52, 0.66], 'ojo-izq': [0.367, 0.457], 'ojo-der': [0.686, 0.457], boca: [0.526, 0.596],
+            'oreja-izq': [0.4, 0.19], 'oreja-der': [0.65, 0.19], corona: [0.525, 0.165] } },
         tronco: { forma: { tipo: 'elipse', cx: 0.52, cy: 0.78, rx: 0.235, ry: 0.13 }, pivote: 'centro',
-          anclas: { centro: [0.52, 0.78], cuello: [0.52, 0.66], 'hombro-izq': [0.31, 0.71], 'hombro-der': [0.73, 0.71], 'cadera-izq': [0.43, 0.86], 'cadera-der': [0.61, 0.86] } },
+          anclas: { centro: [0.52, 0.78], cuello: [0.52, 0.66], 'hombro-izq': [0.31, 0.71], 'hombro-der': [0.73, 0.71], 'cadera-izq': [0.43, 0.86], 'cadera-der': [0.61, 0.86], cola: [0.74, 0.82] } },
         'brazo-izq': { forma: { tipo: 'capsula', a: [0.31, 0.71], b: [0.265, 0.81], r: 0.042 }, pivote: 'hombro', anclas: { hombro: [0.31, 0.71], mano: [0.26, 0.83] } },
         'brazo-der': { forma: { tipo: 'capsula', a: [0.73, 0.71], b: [0.775, 0.81], r: 0.042 }, pivote: 'hombro', anclas: { hombro: [0.73, 0.71], mano: [0.78, 0.83] } },
         'pierna-izq': { forma: { tipo: 'capsula', a: [0.43, 0.86], b: [0.42, 0.915], r: 0.055 }, pivote: 'cadera', anclas: { cadera: [0.43, 0.86], pie: [0.42, 0.965] } },
         'pierna-der': { forma: { tipo: 'capsula', a: [0.61, 0.86], b: [0.62, 0.915], r: 0.055 }, pivote: 'cadera', anclas: { cadera: [0.61, 0.86], pie: [0.62, 0.965] } },
+        // apéndices y ranura: la forma es solo el sitio (cada criatura dibuja su oreja, su cola o su accesorio desde la base)
+        'oreja-izq': { forma: { tipo: 'capsula', a: [0.4, 0.19], b: [0.36, 0.05], r: 0.045 }, pivote: 'base', anclas: { base: [0.4, 0.19] } },
+        'oreja-der': { forma: { tipo: 'capsula', a: [0.65, 0.19], b: [0.69, 0.05], r: 0.045 }, pivote: 'base', anclas: { base: [0.65, 0.19] } },
+        corona: { forma: { tipo: 'elipse', cx: 0.525, cy: 0.135, rx: 0.07, ry: 0.04 }, pivote: 'base', anclas: { base: [0.525, 0.165] } },
+        cola: { forma: { tipo: 'elipse', cx: 0.775, cy: 0.82, rx: 0.05, ry: 0.05 }, pivote: 'base', anclas: { base: [0.74, 0.82] } },
         // objetos: dibujados con el agarre en la mano en reposo (bol y esponja en la izquierda y derecha; la cuchara sube desde la mano)
         bol: { forma: { tipo: 'elipse', cx: 0.38, cy: 0.83, rx: 0.12, ry: 0.065 }, pivote: 'agarre', anclas: { agarre: [0.26, 0.83] } },
         cuchara: { forma: { tipo: 'capsula', a: [0.78, 0.83], b: [0.78, 0.72], r: 0.016 }, pivote: 'agarre', anclas: { agarre: [0.78, 0.83], punta: [0.78, 0.705] } },
@@ -32,13 +45,13 @@ PT.monigote = (() => {
       // de atrás adelante, qué ancla de cada pieza se pega a qué ancla de qué pieza (el tronco es la raíz) y los giros propios de la
       // postura (grados alrededor del ancla de unión; lo que se pida a montar() manda sobre ellos)
       posturas: {
-        'de-pie': { capas: ['pierna-izq', 'pierna-der', 'tronco', 'brazo-izq', 'brazo-der', 'cabeza'], uniones: CUERPO, giros: {} },
+        'de-pie': { capas: [...DETRAS, 'brazo-izq', 'brazo-der', ...CABEZA], uniones: CUERPO, giros: {} },
         // comer: la izquierda sujeta el bol delante de la barbilla y la derecha sube la cuchara a la boca (los brazos, delante de la cabeza)
-        comer: { capas: ['pierna-izq', 'pierna-der', 'tronco', 'cabeza', 'brazo-izq', 'bol', 'brazo-der', 'cuchara'],
+        comer: { capas: [...DETRAS, ...CABEZA, 'brazo-izq', 'bol', 'brazo-der', 'cuchara'],
           uniones: { ...CUERPO, bol: ['agarre', 'brazo-izq', 'mano'], cuchara: ['agarre', 'brazo-der', 'mano'] },
           giros: { 'brazo-izq': -150, 'brazo-der': 150, cuchara: 40 } },
         // ducha: los dos brazos abiertos hacia los lados, la esponja en la derecha (la alcachofa y la mampara las pone el juego)
-        ducha: { capas: ['pierna-izq', 'pierna-der', 'tronco', 'cabeza', 'brazo-izq', 'brazo-der', 'esponja'],
+        ducha: { capas: [...DETRAS, ...CABEZA, 'brazo-izq', 'brazo-der', 'esponja'],
           uniones: { ...CUERPO, esponja: ['agarre', 'brazo-der', 'mano'] }, giros: { 'brazo-izq': 95, 'brazo-der': -95 } },
       },
     },
@@ -70,11 +83,12 @@ PT.monigote = (() => {
     let sitio;
     if (!u) sitio = { pieza: nombre, origen: pieza.anclas[pieza.pivote].slice(), pivote: pieza.anclas[pieza.pivote].slice(), giro };
     else {
-      const [propia, otra, ajena] = u, origen = pieza.anclas[propia];
+      const [propia, otra, ajena, modo] = u, origen = pieza.anclas[propia];
       if (!origen || !E.piezas[otra] || !E.piezas[otra].anclas[ajena]) return PT.error('ancla-desconocida', { pieza: nombre, union: u });
       const padre = sitioDe(E, P, otra, giros, montadas, [...visitando, nombre]);
       if (!padre.ok) return padre;
-      sitio = { pieza: nombre, origen: origen.slice(), pivote: anclaMontada(E, padre.valor, ajena), giro };
+      const total = modo === 'rigida' ? giro + padre.valor.giro : giro;
+      sitio = { pieza: nombre, origen: origen.slice(), pivote: anclaMontada(E, padre.valor, ajena), giro: total };
     }
     montadas[nombre] = sitio;
     return PT.ok(sitio);
@@ -123,7 +137,7 @@ PT.monigote = (() => {
   // derecha, cada pieza desplazada desde su sitio de reposo para que no se toquen (así Yoshi las ve separadas y a su tamaño real)
   const ANCHO_HOJA = 1.4;
   const DESPLAZA = { cabeza: [0, -0.12], tronco: [0, 0], 'brazo-izq': [-0.14, 0], 'brazo-der': [0.14, 0], 'pierna-izq': [-0.16, 0.04], 'pierna-der': [0.16, 0.04],
-    bol: [0.8, -0.5], cuchara: [0.42, -0.12], esponja: [0.42, 0.1] };
+    bol: [0.8, -0.5], cuchara: [0.42, -0.12], esponja: [0.42, 0.1], 'oreja-izq': [0.58, 0], 'oreja-der': [0.45, 0], corona: [0.75, 0.05], cola: [0.25, -0.3] };
   function hojaSvg(E, sitio, L) {
     return sitio.map(s => {
       const [dx, dy] = DESPLAZA[s.pieza] || [0, 0];

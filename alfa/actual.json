@@ -1,8 +1,8 @@
 {
- "build": 846,
- "hash": "1f35109",
- "fecha": "2026-11-02T17:26:13Z",
- "mensaje": "Pets: el monigote come y se ducha (objetos con agarre, posturas con giros, piezas que siguen a su unión)",
+ "build": 847,
+ "hash": "e6ea26b",
+ "fecha": "2026-11-02T17:33:16Z",
+ "mensaje": "Pets: orejas, cola y corona como piezas del monigote (apéndices rígidos y ranura de accesorio)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

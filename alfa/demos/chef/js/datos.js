@@ -16,12 +16,12 @@ const BICHOS = {
   gelatina: { nombre: 'Gelatina de slime', vida: 3, vel: 0, dano: 1, suelta: 'gelatina', cuantos: [1, 1], ancho: 40, alto: 44, salto: 85 },
 };
 
-// las recetas de la cantina: qué lleva cada plato y cuánto oro deja
+// las recetas de la cantina: qué lleva cada plato (ingredientes cortados), en qué fuego se hace (olla o sartén) y los puntos base
 const RECETAS = {
-  sopa:    { nombre: 'Sopa de gelatina', lleva: { gelatina: 1, cebolla: 1 }, oro: 6 },
-  relleno: { nombre: 'Tomate relleno de becario', lleva: { tomate: 2 }, oro: 5 },
-  aros:    { nombre: 'Aros de cebollón', lleva: { cebolla: 2 }, oro: 4 },
-  gazpacho: { nombre: 'Gazpacho que grita', lleva: { tomate: 1, gelatina: 1 }, oro: 7 },
+  sopa:     { nombre: 'Sopa de gelatina', lleva: { gelatina: 1, cebolla: 1 }, fuego: 'olla', puntos: 20, color: '#7be04a' },
+  relleno:  { nombre: 'Tomate relleno de becario', lleva: { tomate: 2 }, fuego: 'sarten', puntos: 20, color: '#e8342a' },
+  aros:     { nombre: 'Aros de cebollón', lleva: { cebolla: 2 }, fuego: 'sarten', puntos: 20, color: '#d9962e' },
+  gazpacho: { nombre: 'Gazpacho que grita', lleva: { tomate: 1, gelatina: 1 }, fuego: 'olla', puntos: 25, color: '#ff6a4a' },
 };
 
 // quién come en la cantina y qué pide: la lista de cada jornada (de la 4 en adelante se repite la última con más clientes)

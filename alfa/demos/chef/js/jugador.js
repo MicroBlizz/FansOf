@@ -7,7 +7,7 @@ const J = {};   // el jugador (se rellena en jugadorNuevo)
 const J_ANCHO = 16, J_ALTO = 10;   // la caja de los pies, para chocar
 
 function jugadorNuevo(x, y) {
-  Object.assign(J, { x, y, dir: 'abajo', mx: 0, my: 1, vida: CIFRAS.vida, invul: 0, cuchilloT: 0, golpe: null, paso: 0, andando: false, bloqueando: false, herido: 0 });
+  Object.assign(J, { x, y, dir: 'abajo', mx: 0, my: 1, vida: CIFRAS.vida, invul: 0, cuchilloT: 0, golpe: null, paso: 0, andando: false, bloqueando: false, herido: 0, mano: null });
 }
 const vivo = () => J.vida > 0;
 
@@ -15,7 +15,8 @@ function avanzaJugador(dt) {
   if (!vivo()) return;
   J.invul = Math.max(0, J.invul - dt); J.cuchilloT = Math.max(0, J.cuchilloT - dt); J.herido = Math.max(0, J.herido - dt);
   if (J.golpe) { J.golpe.t -= dt; if (J.golpe.t <= 0) J.golpe = null; }
-  J.bloqueando = !!ENTRADA.bloqueo && !J.golpe;
+  const enCantina = JORNADA.fase === 'servicio';   // en la cantina los botones son coger/soltar y cortar (cantina.js): aquí solo se anda
+  J.bloqueando = !enCantina && !!ENTRADA.bloqueo && !J.golpe;
   const d = ENTRADA.dir, vel = J.bloqueando ? CIFRAS.velocidadBloqueo : CIFRAS.velocidad;
   J.andando = Math.abs(d.x) + Math.abs(d.y) > 0.05;
   if (J.andando) {
@@ -26,6 +27,7 @@ function avanzaJugador(dt) {
     mueve(J, d.x * vel * dt, d.y * vel * dt, J_ANCHO, J_ALTO);
     J.paso += dt * (J.bloqueando ? 4 : 9);
   }
+  if (enCantina) return;
   if (ENTRADA.ataquePulsa && !J.bloqueando && J.cuchilloT <= 0) cuchillada();
   recoge(); compruebaSalidas();
   const m = MAPA.montacargas;
@@ -86,6 +88,7 @@ function pintaJugador(ctx, cam) {
   ctx.globalAlpha = 0.3; circulo(ctx, x, y, 10, PALETA.K); ctx.globalAlpha = 1;
   const nombre = J.dir === 'arriba' ? (IMG.chef_arriba ? 'chef_arriba' : 'chef_abajo') : J.dir === 'abajo' ? 'chef_abajo' : (IMG.chef_lado ? 'chef_lado' : 'chef_abajo');
   pintaSpr(ctx, nombre, x, y - bote, { espejo: J.dir === 'izq' && !!IMG.chef_lado });
+  if (J.mano) pintaItem(ctx, J.mano, x, y - 62 - bote, true);
   if (J.herido > 0) { ctx.globalAlpha = 0.5; caja(ctx, x - 14, y - 58, 28, 58, PALETA.R); ctx.globalAlpha = 1; }
   // la sartén levantada: un arco de luz delante; la cuchillada: un tajo blanco
   if (J.bloqueando) { ctx.globalAlpha = 0.7; const bx = x + J.mx * 20, by = y - 20 + J.my * 16; circulo(ctx, bx, by, 9, PALETA.K); circulo(ctx, bx, by, 8, PALETA.N); circulo(ctx, bx, by, 4, PALETA.n); ctx.globalAlpha = 1; }

@@ -16,7 +16,7 @@ const PALETA = {
 const IMG = {};
 const IMG_LISTA = ['chef_abajo', 'chef_arriba', 'chef_lado', 'tomate', 'cebollon', 'gelatina', 'ing_tomate', 'ing_cebolla', 'ing_gelatina',
   'ico_cuchillo', 'ico_sarten', 'ico_corazon', 'cofre', 'antorcha', 'columna', 'barril', 'huesos', 'charco', 'escombros', 'verja',
-  'sala_1', 'sala_2', 'sala_3', 'sala_4', 'sala_5', 'sala_6', 'sala_7'];
+  'sala_1', 'sala_2', 'sala_3', 'sala_4', 'sala_5', 'sala_6', 'sala_7', 'cantina'];
 function cargaImagenes() {
   return Promise.all(IMG_LISTA.map(n => new Promise(res => {
     const im = new Image();

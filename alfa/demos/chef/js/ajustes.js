@@ -8,9 +8,17 @@ const AJUSTES = {
 const CAS = 24;               // una casilla del sótano, en píxeles del juego
 const CIFRAS = {
   cazaSeg: 150,               // lo que dura la caza: «abre la cantina en 2:30»
-  servicioSeg: 60,            // lo que dura el servicio en la cantina
-  pacienciaSeg: 28,           // lo que aguanta un cliente antes de irse
-  cocinarSeg: 1.6,            // lo que tarda un plato en hacerse
+  servicioSeg: 180,           // lo que dura el servicio en la cantina (estilo Overcooked, ver docs/demos/chef/CANTINA.md)
+  cortarSeg: 2.5,             // manteniendo el botón en la tabla
+  cocinarSeg: 9,              // la olla o la sartén, una vez completa la receta
+  quemarSeg: 9,               // desde que está hecha hasta que se quema (con avisos)
+  comandaSeg: [60, 90],       // lo que dura una comanda: sencilla, compleja
+  comandaCada: 20,            // segundos entre comandas nuevas
+  comandasMax: 3,             // a la vez en pantalla
+  comandasInicio: 2,
+  propinaMax: 8,              // propina por servir con la barra llena
+  comboMax: 4,                // multiplicador de la propina por servir en orden
+  caducaPuntos: 10,           // lo que se pierde por comanda caducada
   vida: 3,                    // corazones del cocinero
   velocidad: 92,              // píxeles por segundo andando
   velocidadBloqueo: 36,       // andando con la sartén levantada

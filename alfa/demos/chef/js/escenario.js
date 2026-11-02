@@ -34,7 +34,7 @@ function pintaLuz(ctx, cam, W, H) {
 function halo(ctx, x, y, r, fuerza) { for (let k = 0; k < 4; k++) circulo(ctx, x, y, Math.round(r * (1 - k * 0.22)), 'rgba(150,90,20,' + (fuerza * 0.45).toFixed(2) + ')'); }
 // un trozo de la primera sala como fondo (portada y cantina): la pared del fondo con sus antorchas
 function pintaFondoSala(ctx, W, H, dy = 0) {
-  const im = IMG.sala_1;
+  const im = IMG.cantina || IMG.sala_1;
   if (!im) { caja(ctx, 0, 0, W, H, '#3b3430'); return; }
   const x0 = Math.max(0, Math.round((im.width - W) / 2));
   for (let y = 0; y < H; y += im.height) ctx.drawImage(im, x0, 0, Math.min(W, im.width), im.height, 0, y + dy, Math.min(W, im.width), im.height);

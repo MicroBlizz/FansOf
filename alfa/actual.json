@@ -1,8 +1,8 @@
 {
- "build": 808,
- "hash": "927395f",
- "fecha": "2026-11-02T00:27:48Z",
- "mensaje": "Nova 0.3.34: habilidad activa, una por facción (NV.Habilidad)",
+ "build": 809,
+ "hash": "dd9f345",
+ "fecha": "2026-11-02T00:29:29Z",
+ "mensaje": "Rouflage: guardia del comparador para el tutorial y bocadilloAvanza (35) partido en piezas con ella",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

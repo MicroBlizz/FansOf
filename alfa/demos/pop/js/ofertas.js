@@ -28,10 +28,11 @@ function ppPremioCandyHtml(p, px = 30) {
   return `<span class="pp-premios">${h.join(' ')}</span>`;
 }
 /* ---------- compras con euros ---------- */
-function ppCompraEuros(titulo, html, producto, alComprar) {
+// `alVolver` (opcional): lo que se abre cuando acaba la compra de verdad, que entrega el servidor (p. ej. la ventana de perder)
+function ppCompraEuros(titulo, html, producto, alComprar, alVolver) {
   if (ppCompraDePrueba()) { alComprar(); play('ppPremio'); ppFlota(tr('Compra de prueba'), 270, 300, '#4fc964'); return; }   // panel DEV (js/dev.js): sin cobrar
   if (typeof MONEDAS === 'undefined') return;
-  MONEDAS.compraReal(titulo, html, r => { if (r && r.real) { ppGuarda(); return; } alComprar(); play('ppPremio'); }, producto);   // la de verdad la entrega el servidor
+  MONEDAS.compraReal(titulo, html, r => { if (r && r.real) { ppGuarda(); if (alVolver) alVolver(); return; } alComprar(); play('ppPremio'); }, producto);   // la de verdad la entrega el servidor
 }
 /* ---------- pack de bienvenida ---------- */
 const ppBienvenidaVisible = () => !SAVE.compras || !SAVE.compras.bienvenida;
@@ -55,21 +56,24 @@ function ppMiraAtasco(fallos) {
   if (fallos < PP_CFG.ofertas.atasco.fallos || ppAtascoActivo() || SAVE.atascoDia === ppHoy()) return;
   SAVE.atasco = Date.now() + PP_CFG.ofertas.atasco.dura * 60000; SAVE.atascoDia = ppHoy(); ppGuarda();   // una vez al día como mucho
 }
-function ppVentanaAtasco() {
+// `vuelta`: la ventana de la que se viene (perder un nivel o un duelo, sin corazones). Al comprar o decir «Ahora no» se vuelve a
+// ella; antes se cerraba todo y el nivel acabado se quedaba sin botones, congelado (Daniel, 02-11-2026). Sin vuelta, se cierra.
+function ppVentanaAtasco(vuelta) {
+  const sigue = typeof vuelta === 'function' ? vuelta : ppCierra;
   const o = PP_CFG.ofertas.atasco, premio = { perlas: o.perlas, ayudas: o.ayudas };
   const t = ppAbre(`<h2>${tr('¡Oferta para desatascarte!')}</h2><p class="pp-sub" id="pp-reloj-oferta"></p>${ppPremioCandyHtml(premio, 40)}
     <p class="pp-sub"><s>${o.antes}</s> <b class="pp-oferta">${o.precio}</b></p>`, true);
   const reloj = () => { const el = $pp('#pp-reloj-oferta'); if (!el) { clearInterval(tic); return; } el.textContent = tr('Se acaba en {t}', { t: ppReloj(Math.max(0, SAVE.atasco - Date.now())) }); };
   const tic = setInterval(reloj, 1000); reloj();
   t.appendChild(ppBoton(tr('¡LO QUIERO!'), 'pp-btn', () => ppCompraEuros(tr('Oferta para desatascarte'), ppPremioCandyHtml(premio, 30), o.id, () => {
-    ppDaPremio(premio); SAVE.atasco = 0; ppGuarda(); ppCierra(); ppBarraAyudas(); ppPintaLateral();
-  })));
-  t.appendChild(ppBoton(tr('Ahora no'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppCierra(); }));
+    ppDaPremio(premio); SAVE.atasco = 0; ppGuarda(); ppCierra(); ppBarraAyudas(); ppPintaLateral(); sigue();
+  }), sigue));
+  t.appendChild(ppBoton(tr('Ahora no'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppCierra(); sigue(); }));
 }
 // el botón de la oferta en las ventanas de fallar (si está activa)
-function ppBotonOferta(t) {
+function ppBotonOferta(t, vuelta) {
   if (!ppAtascoActivo()) return;
-  const b = ppBoton('', 'pp-btn2 pp-oferta-btn', ppVentanaAtasco);
+  const b = ppBoton('', 'pp-btn2 pp-oferta-btn', () => ppVentanaAtasco(vuelta));
   b.innerHTML = `${tr('¡OFERTA!')} ${ppIcono('i-martillo', 26, '#ffd1ec')}${ppIcono('i-bomba', 26, '#bfe9ff')} · ${ppReloj(SAVE.atasco - Date.now())}`;
   t.appendChild(b);
 }

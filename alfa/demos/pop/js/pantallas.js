@@ -103,7 +103,7 @@ function ppVentanaSalaHecha() {
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
 function ppVentanaSinToques() {
   const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas })}</p>`);
-  ppBotonOferta(t);   // la oferta de atasco, si está activa (js/ofertas.js)
+  ppBotonOferta(t, ppVentanaSinToques);   // la oferta de atasco, si está activa (js/ofertas.js); al acabar, vuelve aquí
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }
@@ -130,7 +130,7 @@ function ppVentanaSinCorazones() {
   const tic = setInterval(reloj, 1000); reloj();
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
   ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
-  ppBotonOferta(t);
+  ppBotonOferta(t, ppVentanaSinCorazones);
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {

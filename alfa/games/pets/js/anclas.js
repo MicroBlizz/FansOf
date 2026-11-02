@@ -1,8 +1,9 @@
 // Fans Of Pets · ANCLAS: dónde está la cara en cada plantilla lisa (docs/pets/arte.md), medido una vez sobre el monigote y válido para
 // toda criatura dibujada encima (el editor conserva la pose). Son datos, en fracciones del dibujo: los dos ojos (centro x, y y radios
 // rx, ry) y la boca (x, y). Con ellos arte.js coloca las piezas de la cara viva (caras.js: ojos y boca) por el marco de la cara.
-// Una plantilla que no está aquí (los ojos cerrados de dientes y cara, dormir) no tiene cara viva. La pose base de niña, adolescente y
-// adulta es la de su personalidad (una por rama, sobre el molde de adulta las dos últimas); las jefas van sobre el monigote liso de adulta.
+// Toda pose tiene cara viva (regla de Arkioner, 2-11-2026: «todo siempre con despieces»): en dientes, cara y dormir los ojos del molde
+// van cerrados o apretados y se miden sobre el trazo. La pose base de niña, adolescente y adulta es la de su personalidad (una por rama,
+// sobre el molde de adulta las dos últimas); las jefas van sobre el monigote liso de adulta.
 // ENCUADRE dice cómo recortar.py (modo molde) encajó cada plantilla en el lienzo de 640 (escala y desplazamiento, en fracciones):
 // las anclas se miden sobre el dibujo de Yoshi y de() las devuelve ya en el lienzo.
 'use strict';
@@ -10,10 +11,13 @@ PT.anclas = (() => {
   const ENCUADRE = {
     'bebe-base': [0.8279, 0.0852, 0.0778], 'bebe-comer': [0.8279, 0.0852, 0.0778], 'bebe-beber': [0.8279, 0.0852, 0.0778],
     'bebe-bano': [0.84, 0.0755, 0.0776], 'bebe-ducha': [0.7296, 0.1359, 0.1746],
+    'bebe-dientes': [0.8279, 0.0852, 0.0778], 'bebe-cara': [0.7422, 0.1285, 0.1604], 'bebe-dormir': [0.7765, 0.1095, 0.1463],
     'nino-liso': [0.8589, 0.0479, 0.0681], 'nino-base-loco': [0.8579, 0.0472, 0.0691], 'nino-comer': [0.8589, 0.0479, 0.0681], 'nino-beber': [0.8589, 0.0479, 0.0681],
     'nino-bano': [0.8309, 0.0732, 0.0855], 'nino-ducha': [0.7602, 0.1258, 0.1616],
+    'nino-dientes': [0.8589, 0.0466, 0.0681], 'nino-cara': [0.7644, 0.1182, 0.1576], 'nino-dormir': [0.821, 0.0863, 0.1318],
     'adulto-liso': [0.859, 0.068, 0.0689], 'adulto-base-loco': [0.8601, 0.0678, 0.0687], 'adulto-comer': [0.859, 0.0684, 0.0689],
     'adulto-beber': [0.859, 0.0684, 0.0689], 'adulto-bano': [0.831, 0.0727, 0.0862], 'adulto-ducha': [0.7329, 0.1278, 0.1872],
+    'adulto-dientes': [0.859, 0.0684, 0.0689], 'adulto-cara': [0.7402, 0.1281, 0.1803], 'adulto-dormir': [0.8039, 0.0965, 0.1528],
   };
   const T = {
     'bebe-base': [[0.344, 0.5, 0.076, 0.078], [0.669, 0.497, 0.076, 0.076], [0.506, 0.664]],
@@ -21,6 +25,9 @@ PT.anclas = (() => {
     'bebe-beber': [[0.357, 0.426, 0.07, 0.069], [0.652, 0.421, 0.069, 0.069], [0.504, 0.571]],
     'bebe-bano': [[0.376, 0.402, 0.051, 0.059], [0.594, 0.408, 0.057, 0.059], [0.485, 0.531]],
     'bebe-ducha': [[0.396, 0.531, 0.049, 0.052], [0.616, 0.533, 0.051, 0.053], [0.506, 0.645]],
+    'bebe-dientes': [[0.384, 0.42, 0.059, 0.059], [0.64, 0.42, 0.059, 0.059], [0.512, 0.543]],
+    'bebe-cara': [[0.383, 0.423, 0.055, 0.055], [0.623, 0.422, 0.055, 0.055], [0.503, 0.538]],
+    'bebe-dormir': [[0.403, 0.451, 0.046, 0.046], [0.602, 0.451, 0.046, 0.046], [0.502, 0.546]],
     'nino-liso': [[0.367, 0.457, 0.065, 0.066], [0.686, 0.457, 0.066, 0.066], [0.526, 0.596]],
     'nino-base-concentrado': [[0.378, 0.388, 0.057, 0.06], [0.626, 0.383, 0.061, 0.062], [0.502, 0.517]],
     'nino-base-loco': [[0.383, 0.402, 0.047, 0.048], [0.641, 0.402, 0.047, 0.048], [0.512, 0.504]],
@@ -31,6 +38,9 @@ PT.anclas = (() => {
     'nino-beber': [[0.37, 0.393, 0.052, 0.055], [0.635, 0.393, 0.055, 0.055], [0.502, 0.508]],
     'nino-bano': [[0.378, 0.353, 0.039, 0.048], [0.569, 0.361, 0.048, 0.051], [0.474, 0.467]],
     'nino-ducha': [[0.384, 0.491, 0.048, 0.048], [0.624, 0.493, 0.048, 0.048], [0.504, 0.595]],
+    'nino-dientes': [[0.382, 0.4, 0.057, 0.057], [0.63, 0.4, 0.057, 0.057], [0.506, 0.519]],
+    'nino-cara': [[0.393, 0.321, 0.049, 0.049], [0.605, 0.32, 0.049, 0.049], [0.499, 0.423]],
+    'nino-dormir': [[0.396, 0.447, 0.048, 0.048], [0.604, 0.447, 0.048, 0.048], [0.5, 0.547]],
     'adulto-liso': [[0.372, 0.424, 0.062, 0.062], [0.637, 0.415, 0.059, 0.061], [0.504, 0.556]],
     'adulto-base-concentrado': [[0.379, 0.417, 0.059, 0.062], [0.624, 0.402, 0.059, 0.061], [0.502, 0.548]],
     'adulto-base-loco': [[0.385, 0.4, 0.047, 0.053], [0.615, 0.397, 0.049, 0.053], [0.5, 0.512]],
@@ -41,6 +51,9 @@ PT.anclas = (() => {
     'adulto-beber': [[0.372, 0.415, 0.06, 0.061], [0.633, 0.409, 0.057, 0.06], [0.502, 0.544]],
     'adulto-bano': [[0.382, 0.354, 0.043, 0.049], [0.566, 0.358, 0.048, 0.051], [0.474, 0.465]],
     'adulto-ducha': [[0.372, 0.424, 0.062, 0.062], [0.635, 0.417, 0.057, 0.06], [0.504, 0.556]],
+    'adulto-dientes': [[0.378, 0.41, 0.055, 0.055], [0.617, 0.41, 0.055, 0.055], [0.498, 0.525]],
+    'adulto-cara': [[0.397, 0.37, 0.047, 0.047], [0.604, 0.371, 0.047, 0.047], [0.5, 0.47]],
+    'adulto-dormir': [[0.396, 0.444, 0.048, 0.048], [0.605, 0.443, 0.048, 0.048], [0.5, 0.545]],
   };
   // qué plantilla lleva esa etapa y pose (la base de niña y adulta, por personalidad; sin personalidad, nada: no está sobre molde).
   // Una personalidad que solo cambia la cara ('kawaii': la del molde, cuando la criatura no tiene pose propia) va sobre el molde liso

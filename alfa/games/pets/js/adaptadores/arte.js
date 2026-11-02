@@ -28,10 +28,11 @@ PT.arte = (() => {
   const SOBRE_MOLDE = { 'animales:bunny': 'loco', 'animales:squirrel': 'kawaii', 'animales:fox': 'kawaii' };
   // las zonas de la cara que en esa pose van tapadas por el dibujo (gafas de sol, antifaz…): ahí no se pone pieza. id → pose → zonas
   const TAPADAS = {
-    'animales:bunny': { gamberro: ['ojos'], siesta: ['ojos'] },
-    'animales:squirrel': { gamberro: ['ojos', 'boca'], siesta: ['ojos'] },   // la gamberra trae su sonrisilla dibujada
-    'animales:fox': { gamberro: ['ojos'], siesta: ['ojos'] },
+    'animales:bunny': { gamberro: ['ojos'], siesta: ['ojos'], dientes: ['boca'] },   // el cepillo y la espuma tapan la boca
+    'animales:squirrel': { gamberro: ['ojos', 'boca'], siesta: ['ojos'], dientes: ['boca'] },   // la gamberra trae su sonrisilla dibujada
+    'animales:fox': { gamberro: ['ojos'], siesta: ['ojos'], dientes: ['boca'] },
   };
+  const OJOS_CERRADOS = ['cara'];   // poses en las que aprieta los ojos (lavándose la cara) y no parpadea
   const ANIMADORES = {};   // id → su animador (cuándo parpadea…)
   const COMPUESTA = document.createElement('canvas');   // el dibujo con su cara puesta, para pintarlo (o pixelarlo) de una pieza
   const IMG = {};   // 'img/criaturas/animales-bunny-bebe-comer.webp' → Image (se carga la primera vez que hace falta)
@@ -57,12 +58,12 @@ PT.arte = (() => {
   const animador = id => ANIMADORES[id] || (ANIMADORES[id] = PT.creaAnimador(PETS.animacion));
 
   // el dibujo con la cara puesta: sobre la imagen con la cara vacía, la boca y encima los ojos que tocan (caras.eleccion), cada pieza en su
-  // sitio por el marco de la cara de la plantilla. Si la criatura no está sobre molde o la pose no tiene anclas (ojos cerrados o tapados),
-  // la imagen tal cual. Devuelve lo que hay que pintar (la imagen o el lienzo compuesto, de 640)
+  // sitio por el marco de la cara de la plantilla. Si la criatura no está sobre molde o la pose no tiene anclas, la imagen tal cual.
+  // Devuelve lo que hay que pintar (la imagen o el lienzo compuesto, de 640)
   function conCara(id, etapa, pose, cara, e, img) {
     const A = SOBRE_MOLDE[id] && PT.anclas.de(etapa, pose, SOBRE_MOLDE[id]);
     if (!A) return img;
-    const L = 640, [mx, my, d] = PT.anclas.marco(A), que = PT.caras.eleccion(cara, e);
+    const L = 640, [mx, my, d] = PT.anclas.marco(A), que = PT.caras.eleccion(cara, { ...e, dormida: e.dormida || OJOS_CERRADOS.includes(pose) });
     COMPUESTA.width = COMPUESTA.height = L;
     const g = COMPUESTA.getContext('2d');
     g.drawImage(img, 0, 0, L, L);

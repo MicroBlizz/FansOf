@@ -35,18 +35,19 @@ PT.caras = (() => {
   const moldeDe = etapa => (etapa === 'bebe' || etapa === 'nino' ? etapa : 'adulto');
   const etapaDe = etapa => (etapa === 'jefe' ? 'adulto' : etapa);
   // la pieza de esa zona con ese nombre para esa criatura y etapa: { ruta, c } o null si no existe
+  // La boca 'dormida' es la base del molde (la sonrisita tranquila) aunque la criatura tenga boca propia: dormida no se ríe
   function pieza(id, etapa, zona, nombre) {
-    const ep = etapaDe(etapa), propia = PROPIAS[id] && PROPIAS[id][ep] && PROPIAS[id][ep][zona] && PROPIAS[id][ep][zona][nombre];
+    const ep = etapaDe(etapa), propia = nombre !== 'dormida' && PROPIAS[id] && PROPIAS[id][ep] && PROPIAS[id][ep][zona] && PROPIAS[id][ep][zona][nombre];
     if (propia) return { ruta: `img/caras/${id.replace(':', '-')}-${ep}-${zona}-${nombre}.webp`, c: propia };
-    const m = moldeDe(etapa), del = MOLDE[m][zona][nombre];
-    return del ? { ruta: `img/caras/${m}-${zona}-${nombre}.webp`, c: del } : null;
+    const m = moldeDe(etapa), n = nombre === 'dormida' ? 'base' : nombre, del = MOLDE[m][zona][n];
+    return del ? { ruta: `img/caras/${m}-${zona}-${n}.webp`, c: del } : null;
   }
   // qué ojos y qué boca lleva la cara: cara, la del animador ('' | parpadeo | bostezo | masca | cachorrito | triste); e: { dormida, triste }
   function eleccion(cara, e) {
     const cerrados = cara === 'parpadeo' || cara === 'bostezo' || !!e.dormida, triste = cara === 'triste' || !!e.triste;
     return {
       ojos: cerrados ? 'cerrados' : cara === 'cachorrito' ? 'cachorrito' : triste ? 'triste' : 'base',
-      boca: cara === 'bostezo' ? 'bostezo' : cara === 'masca' ? 'masca' : triste ? 'triste' : 'base',
+      boca: cara === 'bostezo' ? 'bostezo' : cara === 'masca' ? 'masca' : triste ? 'triste' : e.dormida ? 'dormida' : 'base',
     };
   }
   return { pieza, eleccion, moldeDe, etapaDe };

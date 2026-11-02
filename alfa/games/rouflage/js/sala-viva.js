@@ -58,6 +58,22 @@ function salaVivaMapa(datos, inicial) {
   if (inicial) return;
   for (const e of J.entes) { const [x, y] = sitioLibreCerca(e.x, e.y); e.x = x; e.y = y; }
 }
+// una persona de la lista en su plaza; devuelve true si es un remoto que acaba de llegar
+function salaVivaEntra(j) {
+  const s = j.orden | 0; if (s < 0 || s > 40) return false;
+  while (RFP.slots.length <= s) RFP.slots.push({ s: RFP.slots.length, humano: false, vacio: true });      // huecos: plazas de gente que ya se fue
+  const nombre = j.nombre || ('Fan#' + (s + 1)), viejo = RFP.slots[s];
+  if (viejo && viejo.humano && viejo.nombre === nombre && viejo.yo === !!j.yo) return false;
+  if (viejo && viejo.humano) salaVivaQuita(viejo);      // en esa plaza hay ahora otra persona (en la red de pruebas los números se reparten de nuevo)
+  const tipo = NOMBRES[j.animal] ? j.animal : 'bunny', sl = { s, humano: true, clase: 'camaleon', tipo, nombre, mana: 0, yo: !!j.yo, ropaFiada: 'ropa' in j, ropaSrv: j.ropa };
+  RFP.slots[s] = sl; delete RFP.ido[s];
+  if (sl.yo && J.yo) { sl.ente = J.yo; J.yo.slot = s; RFP.yo = s; return false; }      // yo sigo siendo yo, aunque cambie de plaza
+  const [x, y] = sitioLibreCerca(...SALIDA_CAMALEONES[s % SALIDA_CAMALEONES.length]);      // cada plaza en su sitio del corro
+  const e = nuevoEnte('camaleon', tipo, sl.nombre, x, y); e.slot = s; e.humano = true; sl.ente = e;
+  if (sl.yo) { e.jugador = true; J.yo = e; RFP.yo = s; J.cuenta = e.pts; vistePartida(e, ropaPartida()); return false; }
+  e.remoto = true; RFP.rx[s] = RELOJ; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; }
+  return true;
+}
 // quién hay: los nuevos entran (cada uno en su plaza, la de su número de sala) y los que se van desaparecen
 function salaVivaGente(i) {
   const jug = (i.jugadores || []).slice().sort((a, b) => a.orden - b.orden), txt = jug.map(j => j.orden + ':' + j.nombre).join('|');
@@ -67,20 +83,7 @@ function salaVivaGente(i) {
   for (const sl of RFP.slots) if (sl && sl.humano && !vivos.has(sl.s)) salaVivaQuita(sl);
   if (J.yo && !jug.some(j => j.yo)) return;      // (no debería pasar: la lista siempre me trae a mí)
   let nuevo = false;
-  for (const j of jug) {
-    const s = j.orden | 0; if (s < 0 || s > 40) continue;
-    while (RFP.slots.length <= s) RFP.slots.push({ s: RFP.slots.length, humano: false, vacio: true });      // huecos: plazas de gente que ya se fue
-    const nombre = j.nombre || ('Fan#' + (s + 1)), viejo = RFP.slots[s];
-    if (viejo && viejo.humano && viejo.nombre === nombre && viejo.yo === !!j.yo) continue;
-    if (viejo && viejo.humano) salaVivaQuita(viejo);      // en esa plaza hay ahora otra persona (en la red de pruebas los números se reparten de nuevo)
-    const tipo = NOMBRES[j.animal] ? j.animal : 'bunny', sl = { s, humano: true, clase: 'camaleon', tipo, nombre, mana: 0, yo: !!j.yo, ropaFiada: 'ropa' in j, ropaSrv: j.ropa };
-    RFP.slots[s] = sl; delete RFP.ido[s];
-    if (sl.yo && J.yo) { sl.ente = J.yo; J.yo.slot = s; RFP.yo = s; continue; }      // yo sigo siendo yo, aunque cambie de plaza
-    const [x, y] = sitioLibreCerca(...SALIDA_CAMALEONES[s % SALIDA_CAMALEONES.length]);      // cada plaza en su sitio del corro
-    const e = nuevoEnte('camaleon', tipo, sl.nombre, x, y); e.slot = s; e.humano = true; sl.ente = e;
-    if (sl.yo) { e.jugador = true; J.yo = e; RFP.yo = s; J.cuenta = e.pts; vistePartida(e, ropaPartida()); }
-    else { e.remoto = true; RFP.rx[s] = RELOJ; nuevo = true; if (sl.ropaFiada) { vistePartida(e, sl.ropaSrv || {}); sl.ropaOk = true; } }
-  }
+  for (const j of jug) if (salaVivaEntra(j)) nuevo = true;
   // al que llega le cuento lo mío: la ropa y la habilidad, y mi piel si estoy congelado
   if (nuevo && J.yo && J.fase === 'sala') { PIDE_ROPA.n = 0; rfpMandaRopa(true); if (J.yo.congelado) rfpMandaPiel(J.yo); }
 }

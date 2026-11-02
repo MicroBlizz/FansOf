@@ -51,10 +51,8 @@ ECO.accionesHueco = { premium: 10, premiumNv1: 50 };      // los huecos premium 
 // lo que da el pase si ya tienes la pieza (no debería pasar: lo del pase no se vende ni sale en el gachapón mientras dura, pero por si acaso):
 // las mismas Gotas que una repetida del gachapón de su rareza. SAVE.pase.dadas = las piezas del pase ya resueltas (dadas o pagadas)
 const paseRepetida = it => (GACHA.repetida && GACHA.repetida[it.r]) || 0;
-function paseReparte() {
-  if (RFS.activo()) return [];      // con servidor lo reparte él (servidor.js)
-  const p = ecoEstado(), a = armarioEstado(), nv = paseNivel(), nuevo = [];
-  if (!Array.isArray(p.dadas)) p.dadas = paseCosas().map(c => c.cat + ':' + c.it.id).filter(k => a.tengo.includes(k));      // las de antes de apuntarlas: ya estaban dadas
+// las piezas del pase que ya tocan (hasta el nivel; las premium solo con el premium) y, si ya la tenías, sus Gotas
+function paseRepartePiezas(p, a, nv, nuevo) {
   for (const { cat, it, nv: n, premium } of paseCosas()) {
     if (n > nv || (premium && !p.premium)) continue;
     const k = cat + ':' + it.id; if (p.dadas.includes(k)) continue;
@@ -62,11 +60,20 @@ function paseReparte() {
     if (!a.tengo.includes(k)) { a.tengo.push(k); nuevo.push(tr(it.n)); }
     else if (paseRepetida(it)) { SAVE.gotas += paseRepetida(it); nuevo.push(tr('{n} Gotas', { n: paseRepetida(it) }) + ' (' + tr(it.n) + ')'); }
   }
+}
+// los huecos del pase sin pieza: Acciones y Gotas por nivel, gratis y premium, cada uno una sola vez
+function paseReparteHuecos(p, nv, nuevo) {
   for (const n in ECO.purpGratis) if (+n <= nv && !p.purp.includes(+n)) { p.purp.push(+n); SAVE.acciones += ECO.purpGratis[n]; nuevo.push(tr('{n} Acciones', { n: ECO.purpGratis[n] })); }
   p.purpG = p.purpG || []; for (const n in ECO.gotasGratis) if (+n <= nv && !p.purpG.includes(+n)) { p.purpG.push(+n); SAVE.gotas += ECO.gotasGratis[n]; nuevo.push(tr('{n} Gotas', { n: ECO.gotasGratis[n] })); }
   if (p.premium) { p.purpGP = p.purpGP || []; for (const n in ECO.accionesPremium) if (+n <= nv && !p.purpGP.includes(+n)) { p.purpGP.push(+n); SAVE.acciones += ECO.accionesPremium[n]; nuevo.push(tr('{n} Acciones (premium)', { n: ECO.accionesPremium[n] })); }
     for (const n in ECO.gotasPremium) if (+n <= nv && !p.purpGP.includes(+n)) { p.purpGP.push(+n); SAVE.gotas += ECO.gotasPremium[n]; nuevo.push(tr('{n} Gotas', { n: ECO.gotasPremium[n] })); } }
   if (p.premium) { p.purpP = p.purpP || []; for (const n in ECO.purpPremium) if (+n <= nv && !p.purpP.includes(+n)) { p.purpP.push(+n); SAVE.acciones += ECO.purpPremium[n]; nuevo.push(tr('{n} Acciones (premium)', { n: ECO.purpPremium[n] })); } }
+}
+function paseReparte() {
+  if (RFS.activo()) return [];      // con servidor lo reparte él (servidor.js)
+  const p = ecoEstado(), a = armarioEstado(), nv = paseNivel(), nuevo = [];
+  if (!Array.isArray(p.dadas)) p.dadas = paseCosas().map(c => c.cat + ':' + c.it.id).filter(k => a.tengo.includes(k));      // las de antes de apuntarlas: ya estaban dadas
+  paseRepartePiezas(p, a, nv, nuevo); paseReparteHuecos(p, nv, nuevo);
   return nuevo;
 }
 

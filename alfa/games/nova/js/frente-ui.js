@@ -39,6 +39,8 @@ function nvFrenteMenu() {
   const cv = document.createElement('canvas'); cv.className = 'nv-gal'; p.appendChild(cv);
   nvFrenteFilaRanking(p, est);
   p.appendChild(nvEl('nv-cdet', tr('Tus puntos esta semana') + ': ' + nvFrenteMisPuntos(f.aportes) + ' · ' + tr('Cada misión de campaña suma a tu patrón.')));
+  nvColeccionFila(p);   // cosmeticos-ui.js
+  if (nvTieneCosmeticos()) { const as = nvEl('nv-boton', tr('Aspecto de la nave'), 'button'); as.onclick = nvAspectoVentana; p.appendChild(as); }
   const cambia = nvEl('nv-boton', tr('Cambiar de patrón'), 'button'); cambia.onclick = () => nvFrenteVentanaPatron(est); p.appendChild(cambia);
   const vuelve = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); vuelve.onclick = nvGalaxiaMenu; p.appendChild(vuelve);
   p.appendChild(nvEl('nv-cdet', tr('Prueba: de momento el resto de pilotos los simula la IA en tu aparato.')));
@@ -70,7 +72,9 @@ function nvFrenteVentanaParte() {
   const cv = document.createElement('canvas'); cv.className = 'nv-gal nv-gal-parte'; c.appendChild(cv);
   parte.est.ranking.slice(0, 3).forEach((x, i) => c.appendChild(nvEl('nv-cdet', (i + 1) + '. ' + tr(NOVA_CASCOS.facciones[x.faccion].nombre) + ' · ' + x.casillas + ' ' + tr('sectores'))));
   c.appendChild(nvEl('nv-cdet', tr('Tus puntos') + ': ' + parte.mios + ' · ' + tr('Aleación') + ': +' + parte.aleacion));
-  if (parte.cosmetico) c.appendChild(nvEl('nv-cdet', tr('Cosmético de la facción ganadora') + ': ' + tr(NV_FRENTE_NOMBRE[parte.cosmetico.split('-')[1]])));
+  if (parte.cosmetico) c.appendChild(nvEl('nv-cdet', tr('Cosmético de la facción ganadora') + ': ' + tr(NV_FRENTE_NOMBRE[NV.Cosmeticos.parte(parte.cosmetico).pieza]) + ' · ' + tr(NOVA_CASCOS.facciones[parte.ganadora].nombre)));
+  if (parte.extra) c.appendChild(nvEl('nv-cdet', tr('Ya tenías sus tres cosméticos') + ': +' + parte.extra + ' ' + tr('Aleación')));
+  nvParteVista(c, parte);   // cosmeticos-ui.js: la pieza nueva puesta en tu nave
   const ok = nvEl('btn-big ol nv-ok', tr('RECOGER'), 'button');
   ok.onclick = () => { nvFrenteCobra(parte); play('crown'); nvCierraVentana(); nvGalaxiaMenu(); };
   c.appendChild(ok);

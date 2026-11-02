@@ -66,6 +66,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   nvAplicaCampana(S);
   nvHabInicio(S);   // habilidad.js: la habilidad activa de tu facción
   nvGuionInicio(S);   // guion.js: la primera misión guiada
+  nvAspectoInicio(S);   // cosmeticos-dibujo.js: los cosméticos que llevas puestos
   return S;
 }
 

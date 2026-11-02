@@ -6,7 +6,8 @@
 const NV_FRENTE = {
   puntos: { mision: 10, victoria: 20, libera: 10 },     // lo que suma una misión a tu patrón
   defensaNucleo: 60,                                    // Microblizz defiende mejor su núcleo
-  premio: { porPunto: 0.5, tope: 200, ganadora: 2 },    // aleación al cerrar la semana: la mitad de tus puntos, con tope; ×2 si tu patrón ganó
+  premio: { porPunto: 0.5, tope: 200, ganadora: 2, repetida: 50 },   // aleación al cerrar la semana: la mitad de tus puntos, con tope; ×2 si tu patrón
+                                                      // ganó; +50 si ganó y ya tenías sus tres cosméticos
   cambio: { max: 400, min: 10 },                        // aleación por cambiar de patrón: muy caro a la 1.ª facción, casi gratis a la última
   cosmeticos: ['pintura', 'estela', 'emblema'],         // la colección de cada facción: se gana uno por semana ganada, en este orden
 };

@@ -26,6 +26,7 @@ function nvGalaxiaMenu() {
   lanzar.onclick = () => { if (NV_GAL.sel && nvSectorAbierto(NV_GAL.sel)) { NVP.sector = NV_GAL.sel; nvMenu(); } };
   p.appendChild(lanzar);
   const cap = nvEl('nv-boton', tr('Nave capital'), 'button'); cap.onclick = nvNaveCapital; p.appendChild(cap);
+  if (nvFrenteActivo() || nvTieneCosmeticos()) { const as = nvEl('nv-boton', tr('Aspecto de la nave'), 'button'); as.onclick = nvAspectoVentana; p.appendChild(as); }   // cosmeticos-ui.js
   if (nvFrenteActivo()) { const fr = nvEl('nv-boton', tr('Galaxia de la comunidad'), 'button'); fr.onclick = nvFrenteMenu; p.appendChild(fr); }
   const ay = nvEl('nv-boton', tr('Cómo se juega'), 'button'); ay.onclick = () => { if (!NVP.tuto) nvTutoTodo(); }; ay.prepend(nvIcono('ui', 'info', '#2f8cff', 26)); p.appendChild(ay);
   p.appendChild(nvControlSonido());

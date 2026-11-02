@@ -25,11 +25,12 @@ NV.Frente = (() => {
     const ganadora = est.ranking[0].faccion, mios = misPuntos(f.previa.aportes), conGanadora = f.previa.aportes.some(a => a.faccion === ganadora);
     const aleacion = Math.round(Math.min(R.tope, mios * R.porPunto) * (conGanadora ? R.ganadora : 1));
     const cosmetico = conGanadora ? cosmeticos.map(t => ganadora + '-' + t).find(id => !f.cosmeticos.includes(id)) || null : null;
-    return { est, ganadora, mios, aleacion, cosmetico };
+    const extra = conGanadora && !cosmetico ? R.repetida || 0 : 0;   // ya tenías los tres de la ganadora: un extra de aleación y nada más
+    return { est, ganadora, mios, aleacion, cosmetico, extra };
   }
   function cobra(c, f, p) {
-    c.aleacion += p.aleacion;
-    if (p.cosmetico) f.cosmeticos.push(p.cosmetico);
+    c.aleacion += p.aleacion + (p.extra || 0);
+    if (p.cosmetico) { f.cosmeticos.push(p.cosmetico); NV.Cosmeticos.estrena(f, p.cosmetico); }
     f.previa.cobrada = true;
   }
 

@@ -108,12 +108,14 @@ function nvDibujaNave(c, S) {
   const n = S.nave, e = n.escala, H = nvHull(S.casco, n.rango), [tm, tam] = nvMotorRango(S.casco, n.rango), r = NOVA_PIEZAS.radioTobera[tam], k = nvClase(n.rango);
   const so = nvSombraNave(S.casco, k);   // sombra proyectada: da altura sobre el fondo
   if (so) { c.save(); c.translate(n.x + 14 * e, n.y + 20 * e); c.rotate(n.ang); c.scale(e, e); c.globalAlpha = 0.28; c.drawImage(so, -NV_SOMBRA_L / 2, -NV_SOMBRA_L / 2); c.restore(); }
+  nvDibujaEstela(c, S, H, r);   // cosmeticos-dibujo.js: la estela de la galaxia de la comunidad, si la llevas
   c.save(); c.translate(n.x, n.y); c.rotate(n.ang); c.scale(e, e);
   const xs = { simple: [0], doble: [-(r + 1.5), r + 1.5], triple: [-(2 * r + 3), 0, 2 * r + 3] }[tm];
   for (const x of xs) nvLlama(c, H.motor.x + x, H.motor.y + r * 1.9, r, S.t, n.rango);
-  nvCuerpo(c, S.casco, k, 'alas');
+  nvPintaCapa(c, S, k, 'alas');   // cosmeticos-dibujo.js: con la pintura que lleves, si llevas
   nvPieza(c, 'motor-' + tm + '-' + tam, H.motor.x, H.motor.y);
-  nvCuerpo(c, S.casco, k, 'casco');
+  nvPintaCapa(c, S, k, 'casco');
+  nvPintaEmblema(c, S, H, k);
   for (const sl of nvRanuras(n.rango, S)) nvDibujaRanura(c, n, sl);
   if (n.golpeado > 0) { c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.5; nvCuerpo(c, S.casco, k, 'casco'); }
   c.restore();

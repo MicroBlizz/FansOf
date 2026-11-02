@@ -1,8 +1,8 @@
 {
- "build": 810,
- "hash": "d01379b",
- "fecha": "2026-11-02T00:33:41Z",
- "mensaje": "Nova 0.3.35: primera misión guiada (NV.Guion) con «Ya sé jugar»",
+ "build": 811,
+ "hash": "ab19917",
+ "fecha": "2026-11-02T00:50:15Z",
+ "mensaje": "Nova 0.3.36: cosméticos de la galaxia (NV.Cosmeticos) en la nave",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.35",
+  "nova": "0.3.36",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

@@ -45,7 +45,8 @@ PT.lienzo = (() => {
     const c = p.criatura, m = p.mascota, jefa = p.fase === 'ascenso', etapa = jefa ? 'jefe' : m.etapa;
     const r = PETS.tamano[etapa], ui = PT.ui;
     const e = { dormida: !jefa && m.dormida, triste: !jefa && (m.triste || p.fase === 'final'), anim: ui.anim, at: ui.at, rama: m.rama,
-      sonolienta: !jefa && m.necesidades.de('sueno') < PETS.animacion.bostezaConSueno };
+      sonolienta: !jefa && m.necesidades.de('sueno') < PETS.animacion.bostezaConSueno,
+      pidiendo: !jefa && !m.dormida && ['hambre', 'diversion'].some(k => m.necesidades.de(k) < PETS.animacion.pideDesde) };
     if (!PT.arte.tiene(c.id, etapa) || !PT.arte.criatura(ctx, c.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(c.fac), t, e);
   }
   function escena(ctx, p, t) {

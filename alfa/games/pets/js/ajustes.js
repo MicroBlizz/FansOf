@@ -103,7 +103,8 @@ const PETS = {
   // los dibujos van todos con el mismo encuadre (640 px, la criatura del mismo tamaño en cada pose): cuánto mide el lienzo respecto al radio
   // del bebé y a qué altura del lienzo están los pies, para apoyarlo en el suelo
   arte: { lienzo: 3.54, pies: 0.875 },
-  // la cara viva (animacion.js): cada cuánto parpadea y cuánto dura (segundos, un rango al azar), cada cuánto bosteza cuando tiene sueño
+  // la cara viva (animacion.js): cada cuánto parpadea y cuánto dura (segundos, un rango al azar), cada cuánto bosteza cuando tiene sueño,
+  // y por debajo de qué hambre o diversión pide con ojos de cachorrito
   // y cuánto dura, a qué ritmo mastica al comer y con cuánto sueño (0-100) empieza a bostezar
-  animacion: { parpadeoCada: [2.5, 5.5], parpadeoDura: 0.13, bostezoCada: [6, 12], bostezoDura: 1.3, mascaCada: 0.22, bostezaConSueno: 35 },
+  animacion: { parpadeoCada: [2.5, 5.5], parpadeoDura: 0.13, bostezoCada: [6, 12], bostezoDura: 1.3, mascaCada: 0.22, bostezaConSueno: 35, pideDesde: 30 },
 };

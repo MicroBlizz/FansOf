@@ -1,18 +1,19 @@
 // Fans Of Pets · adaptador · ANIMACIÓN: qué cara pone la criatura en cada instante por encima de su dibujo (parpadea de vez en cuando,
-// bosteza si tiene sueño y mastica mientras come). Puro: solo tiempo y estado; no sabe de imágenes ni de lienzo (eso es de arte.js).
-// Las caras: '' (la del dibujo), 'parpadeo', 'bostezo' y 'masca'. Las cifras en PETS.animacion.
+// bosteza si tiene sueño, mastica mientras come, pone ojos de cachorrito cuando pide algo y cara triste cuando lo está). Puro: solo
+// tiempo y estado; no sabe de imágenes ni de lienzo (eso es de arte.js, que compone las piezas de caras.js).
+// Las caras: '' (la base), 'parpadeo', 'bostezo', 'masca', 'cachorrito' y 'triste'. Las cifras en PETS.animacion.
 'use strict';
 PT.creaAnimador = (reglas, azar = Math.random) => {
   let parpadeoEn = -1, bostezoEn = -1;
   const entre = ([a, b]) => a + azar() * (b - a);
 
-  // la cara en el segundo t. e: { cara (forzada: la escena de pruebas), dormida, comiendo, sonolienta }
+  // la cara en el segundo t. e: { cara (forzada: la escena de pruebas), dormida, comiendo, sonolienta, pidiendo, triste }
   function cara(t, e) {
     if (e.cara) return e.cara;
-    if (e.dormida) return '';                                           // el dibujo de dormir ya lleva los ojos cerrados
+    if (e.dormida) return '';                                           // dormida: los ojos cerrados los pone arte.js
     if (e.comiendo) return Math.floor(t / reglas.mascaCada) % 2 ? 'masca' : '';
     if (parpadeoEn < 0) { parpadeoEn = t + entre(reglas.parpadeoCada); bostezoEn = t + entre(reglas.bostezoCada); }
-    return bostezo(t, e) || parpadeo(t);
+    return bostezo(t, e) || parpadeo(t) || (e.pidiendo ? 'cachorrito' : e.triste ? 'triste' : '');
   }
   function bostezo(t, e) {
     if (!e.sonolienta || t < bostezoEn) return '';

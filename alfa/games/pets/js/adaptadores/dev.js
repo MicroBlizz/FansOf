@@ -52,7 +52,7 @@ PT.dev = (() => {
   // Las jefas van por rama. Las animaciones de cuidado se repiten en bucle; las de cara (parpadeo, bostezo, masticar) se fuerzan
   const ETAPAS = [['bebe', 'bebé'], ['nino', 'niña'], ['adolescente', 'adolescente'], ['adulto', 'adulta'],
     ...PETS.ascenso.ramas.map(r => ['jefe:' + r, 'jefa: ' + r])];
-  const ANIMACIONES = [['base', 'Quieta'], ['parpadeo', 'Parpadeo'], ['bostezo', 'Bostezo'], ['masca', 'Masticar'], ['sonolienta', 'Con sueño'],
+  const ANIMACIONES = [['base', 'Quieta'], ['parpadeo', 'Parpadeo'], ['bostezo', 'Bostezo'], ['masca', 'Masticar'], ['cachorrito', 'Cachorrito'], ['sonolienta', 'Con sueño'],
     ['comer', 'COMER'], ['beber', 'BEBER'], ['banar', 'DUCHA'], ['dientes', 'DIENTES'], ['cara', 'CARA'], ['bano', 'BAÑO'], ['dormir', 'DORMIR'], ['triste', 'Triste']];
   const CUIDADOS = ['comer', 'beber', 'banar', 'dientes', 'cara', 'bano'];
   function abreEscena() {
@@ -84,7 +84,7 @@ PT.dev = (() => {
   function escena(ctx, t) {
     const s = ui.escena, [etapa, rama] = s.etapa.split(':'), r = PETS.tamano[etapa], dura = PETS.poseSegundos + 0.8;
     const e = { rama, dormida: s.anim === 'dormir', triste: s.anim === 'triste', sonolienta: s.anim === 'sonolienta', anim: '', at: 0,
-      cara: ['parpadeo', 'bostezo', 'masca'].includes(s.anim) ? s.anim : '' };
+      cara: ['parpadeo', 'bostezo', 'masca', 'cachorrito'].includes(s.anim) ? s.anim : '' };
     if (CUIDADOS.includes(s.anim)) { e.anim = s.anim; e.at = t - (t % dura); }   // en bucle: cada vez que acaba, otra
     if (!PT.arte.tiene(s.id, etapa) || !PT.arte.criatura(ctx, s.id, etapa, 270, 440, r, t, e)) PT.pintor.bebe(ctx, 270, 440, r, PT.criaturas.color(PT.criaturas.busca(s.id).fac), t, e);
   }

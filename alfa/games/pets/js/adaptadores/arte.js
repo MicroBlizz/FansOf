@@ -1,7 +1,8 @@
 // Fans Of Pets · adaptador · ARTE: los dibujos kawaii de las criaturas que ya existen (salen de Yoshi y se guardan en img/criaturas/) y cómo se
 // pintan, en cada etapa (de bebé con sus poses; de niña, adolescente y adulta con su base; de jefa, una por rama). Una criatura sin
-// dibujo sigue saliendo como el blob provisional de pintar.js. La ducha se pinta tras una mampara pixelada
-// (docs/pets/diseno.md). Solo lee el estado que le pasan.
+// dibujo sigue saliendo como el blob provisional de pintar.js. Las criaturas sobre las plantillas (SOBRE_MOLDE) van con la cara vacía y
+// se les compone la cara con las piezas de caras.js (boca y ojos) colocadas por las anclas de su plantilla. La ducha se pinta tras una
+// mampara pixelada (docs/pets/diseno.md). Solo lee el estado que le pasan.
 'use strict';
 PT.arte = (() => {
   // criatura → etapa → poses con dibujo. Las poses: base, comer, beber, bano, dientes, cara, ducha y dormir (en su camita).
@@ -20,14 +21,14 @@ PT.arte = (() => {
   };
   // el cuidado que se está viendo → la pose que lo dibuja
   const POSE = { comer: 'comer', beber: 'beber', banar: 'ducha', dientes: 'dientes', cara: 'cara', bano: 'bano' };
-  // las criaturas dibujadas sobre las plantillas lisas (docs/pets/arte.md): solo en esas valen las anclas de la cara (anclas.js) y, por tanto,
-  // la cara viva (parpadeo, bostezo, masticar). Las de antes de las plantillas se quedan con su dibujo quieto. Y la pose base de cada una
-  // (su personalidad, una por rama de ascenso)
+  // las criaturas dibujadas sobre las plantillas lisas (docs/pets/arte.md): van con la cara vacía y la cara se compone con las piezas de
+  // caras.js sobre las anclas de la plantilla (anclas.js). Las de antes de las plantillas se quedan con su dibujo quieto. Y la pose base
+  // de cada una (su personalidad, una por rama de ascenso)
   const SOBRE_MOLDE = { 'animales:bunny': 'loco' };
-  // recortes de cara que ya existen: id → etapa → pose → caras (img/criaturas/<id>-<etapa>-<pose>-<cara>.webp); si falta, la cara se pinta a mano
-  const CARAS = {};
+  // las zonas de la cara que en esa pose van tapadas por el dibujo (gafas de sol, antifaz…): ahí no se pone pieza. id → pose → zonas
+  const TAPADAS = { 'animales:bunny': { gamberro: ['ojos'], siesta: ['ojos'] } };
   const ANIMADORES = {};   // id → su animador (cuándo parpadea…)
-  const COLOR = {};        // ruta del dibujo → color del pelo junto al ojo, para taparlo al parpadear
+  const COMPUESTA = document.createElement('canvas');   // el dibujo con su cara puesta, para pintarlo (o pixelarlo) de una pieza
   const IMG = {};   // 'img/criaturas/animales-bunny-bebe-comer.webp' → Image (se carga la primera vez que hace falta)
   const LOLA = { cara: [357, 209], escala: 0.8 };   // dónde está la cara de Lola en el lienzo de 640 y cuánto se amplía
   const MAMPARA = document.createElement('canvas');
@@ -50,42 +51,24 @@ PT.arte = (() => {
   const ids = () => Object.keys(ARTE);
   const animador = id => ANIMADORES[id] || (ANIMADORES[id] = PT.creaAnimador(PETS.animacion));
 
-  // el color del dibujo en ese punto (fracciones), para pintar el párpado del color del pelo; se mide una vez por dibujo
-  function colorEn(img, fx, fy) {
-    const clave = img.src + fx + ',' + fy;
-    if (COLOR[clave]) return COLOR[clave];
-    const c = document.createElement('canvas'); c.width = c.height = 1;
-    const g = c.getContext('2d');
-    g.drawImage(img, Math.round(fx * img.naturalWidth), Math.round(fy * img.naturalHeight), 1, 1, 0, 0, 1, 1);
-    const [r, gg, b] = g.getImageData(0, 0, 1, 1).data;
-    return (COLOR[clave] = `rgb(${r},${gg},${b})`);
-  }
-  // la cara viva por encima del dibujo, en las coordenadas del dibujo (x0, y0 su esquina; lado su tamaño): el recorte si existe,
-  // y si no, el párpado, el bostezo o el masticar pintados a mano sobre las anclas de la plantilla
-  function capaCara(ctx, id, etapa, pose, cara, img, x0, y0, lado) {
-    const A = PT.anclas.de(etapa, pose, SOBRE_MOLDE[id]);
-    if (!cara || !A) return;
-    const caras = CARAS[id] && CARAS[id][etapa] && CARAS[id][etapa][pose];
-    const recorte = caras && caras.includes(cara) && carga(`img/criaturas/${id.replace(':', '-')}-${etapa}-${pose}-${cara}.webp`);
-    if (recorte) { ctx.drawImage(recorte, x0 + A.cara[0] * lado, y0 + A.cara[1] * lado, A.cara[2] * lado, A.cara[3] * lado); return; }
-    if (cara === 'parpadeo') parpadoAMano(ctx, A, img, x0, y0, lado);
-    else bocaAMano(ctx, cara, A, x0, y0, lado);
-  }
-  function parpadoAMano(ctx, A, img, x0, y0, lado) {
-    for (const [cx, cy, rx, ry] of A.ojos) {
-      ctx.fillStyle = colorEn(img, cx - rx * 1.25, cy);   // el pelo junto al ojo
-      ctx.beginPath(); ctx.ellipse(x0 + cx * lado, y0 + cy * lado, rx * lado * 1.15, ry * lado * 1.15, 0, 0, 7); ctx.fill();
-      PT.pintor.trazo(ctx, Math.max(2, lado * 0.012));   // el párpado cerrado: una curva
-      ctx.beginPath(); ctx.ellipse(x0 + cx * lado, y0 + (cy + ry * 0.15) * lado, rx * lado * 0.9, ry * lado * 0.55, 0, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke();
+  // el dibujo con la cara puesta: sobre la imagen con la cara vacía, la boca y encima los ojos que tocan (caras.eleccion), cada pieza en su
+  // sitio por el marco de la cara de la plantilla. Si la criatura no está sobre molde o la pose no tiene anclas (ojos cerrados o tapados),
+  // la imagen tal cual. Devuelve lo que hay que pintar (la imagen o el lienzo compuesto, de 640)
+  function conCara(id, etapa, pose, cara, e, img) {
+    const A = SOBRE_MOLDE[id] && PT.anclas.de(etapa, pose, SOBRE_MOLDE[id]);
+    if (!A) return img;
+    const L = 640, [mx, my, d] = PT.anclas.marco(A), que = PT.caras.eleccion(cara, e);
+    COMPUESTA.width = COMPUESTA.height = L;
+    const g = COMPUESTA.getContext('2d');
+    g.drawImage(img, 0, 0, L, L);
+    for (const zona of ['boca', 'ojos']) {
+      if (TAPADAS[id] && TAPADAS[id][pose] && TAPADAS[id][pose].includes(zona)) continue;
+      const p = PT.caras.pieza(id, etapa, zona, que[zona]) || PT.caras.pieza(id, etapa, zona, 'base');
+      const pieza = p && carga(p.ruta);
+      if (pieza) g.drawImage(pieza, (mx + p.c[0] * d) * L, (my + p.c[1] * d) * L, p.c[2] * d * L, p.c[3] * d * L);
     }
+    return COMPUESTA;
   }
-  function bocaAMano(ctx, cara, A, x0, y0, lado) {
-    const [bx, by] = A.boca, r = A.ojos[0][2] * lado, abierta = cara === 'bostezo' ? 1 : 0.55;
-    ctx.fillStyle = '#7a1f3d'; PT.pintor.trazo(ctx, Math.max(2, lado * 0.012));
-    ctx.beginPath(); ctx.ellipse(x0 + bx * lado, y0 + by * lado, r * 0.75 * abierta, r * 0.95 * abierta, 0, 0, 7); ctx.fill(); ctx.stroke();
-    if (cara === 'bostezo') { ctx.fillStyle = '#ff8fa3'; ctx.beginPath(); ctx.ellipse(x0 + bx * lado, y0 + (by + r * 0.5 / lado) * lado, r * 0.4, r * 0.3, 0, 0, 7); ctx.fill(); }
-  }
-
   // la mampara: se ve la pose entera (la ducha por encima) y un cristal centrado en la criatura la tapa de la ducha a los pies; el patito va delante.
   // Lo que queda detrás del cristal se pinta reducido a pocos píxeles y ampliado sin suavizar: sutil, pero no se ve nada.
   // Sobre las plantillas el cristal sale de las anclas: de debajo de la boca a los pies, algo más ancho que los ojos
@@ -96,7 +79,7 @@ PT.arte = (() => {
     return { x, y, w: d[0] + d[2] * 3.4 - x, h: PETS.arte.pies + 0.02 - y };
   }
   function mampara(ctx, img, x, y0, lado, id, etapa) {   // y0: el borde de arriba del dibujo
-    const M = PETS.mampara, C = cristalDe(id, etapa), iw = img.naturalWidth, ih = img.naturalHeight;
+    const M = PETS.mampara, C = cristalDe(id, etapa), iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
     const dx = x - lado / 2 + C.x * lado, dy = y0 + C.y * lado, dw = C.w * lado, dh = C.h * lado;
     ctx.save();
     ctx.save(); ctx.beginPath(); ctx.rect(x - lado / 2, y0, lado, lado); ctx.roundRect(dx, dy, dw, dh, 14); ctx.clip('evenodd');   // todo menos el cristal
@@ -109,7 +92,7 @@ PT.arte = (() => {
     ctx.restore();
   }
   function cristal(ctx, img, dx, dy, dw, dh, C) {
-    const M = PETS.mampara, iw = img.naturalWidth, ih = img.naturalHeight;
+    const M = PETS.mampara, iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
     const nx = Math.max(4, Math.round(dw / M.pixel)), ny = Math.max(4, Math.round(dh / M.pixel));
     MAMPARA.width = nx; MAMPARA.height = ny;
     const m = MAMPARA.getContext('2d'); m.clearRect(0, 0, nx, ny);
@@ -132,7 +115,7 @@ PT.arte = (() => {
     return base ? { pose: 'base', img: base } : null;
   }
   // la criatura con su dibujo, en su etapa (o 'jefe' con e.rama): respira, bota al cuidarla y cambia de pose mientras dura el cuidado.
-  // e: { dormida, triste, anim, at, rama, sonolienta, cara (forzada) }. Devuelve false si el dibujo aún se está cargando (que pinte el blob)
+  // e: { dormida, triste, anim, at, rama, sonolienta, pidiendo, cara (forzada) }. Devuelve false si el dibujo aún se está cargando (que pinte el blob)
   function criatura(ctx, id, etapa, x, y, r, t, e) {
     const dura = PETS.poseSegundos, a = e.anim && t - e.at < dura ? e.anim : '', p = a ? (t - e.at) / dura : 0;
     const d = poseDe(id, etapa, e, a);
@@ -142,14 +125,14 @@ PT.arte = (() => {
     const salto = a && !e.dormida ? Math.abs(Math.sin(p * Math.PI * 4)) * 14 * (1 - p) : 0, suelo = y + r * 1.0;
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(x, suelo, r * 0.85, r * 0.16, 0, 0, 7); ctx.fill();
-    if (d.pose === 'ducha') mampara(ctx, d.img, x, suelo - salto - lado * PETS.arte.pies, lado, id, etapa);
+    const cara = animador(id).cara(t, { cara: e.cara, dormida: e.dormida, comiendo: a === 'comer' || a === 'beber', sonolienta: e.sonolienta, pidiendo: e.pidiendo, triste: e.triste });
+    const img = conCara(id, etapa, d.pose, cara, e, d.img);
+    if (d.pose === 'ducha') mampara(ctx, img, x, suelo - salto - lado * PETS.arte.pies, lado, id, etapa);
     else {
       ctx.translate(x, suelo - salto); ctx.scale(1 + resp, 1 - resp);
       if (e.dormida) ctx.filter = cama ? 'brightness(0.85)' : 'brightness(0.75)';
-      ctx.drawImage(d.img, -lado / 2, -lado * PETS.arte.pies, lado, lado);
+      ctx.drawImage(img, -lado / 2, -lado * PETS.arte.pies, lado, lado);
       ctx.filter = 'none';
-      const cara = animador(id).cara(t, { cara: e.cara, dormida: e.dormida, comiendo: a === 'comer' || a === 'beber', sonolienta: e.sonolienta });
-      capaCara(ctx, id, etapa, d.pose, cara, d.img, -lado / 2, -lado * PETS.arte.pies, lado);
     }
     ctx.restore();
     PT.pintor.efecto(ctx, x, y - salto, r, t, { dormida: e.dormida && !cama, triste: e.triste }, '', p);   // las zetas y la lágrima de pintar.js

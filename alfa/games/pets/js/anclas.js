@@ -1,6 +1,6 @@
 // Fans Of Pets · ANCLAS: dónde está la cara en cada plantilla lisa (docs/pets/arte.md), medido una vez sobre el monigote y válido para
 // toda criatura dibujada encima (el editor conserva la pose). Son datos, en fracciones del dibujo: los dos ojos (centro x, y y radios
-// rx, ry) y la boca (x, y). Con ellos arte.js pinta la cara viva (párpados, bostezo, masticar) y coloca los recortes de cara.
+// rx, ry) y la boca (x, y). Con ellos arte.js coloca las piezas de la cara viva (caras.js: ojos y boca) por el marco de la cara.
 // Una plantilla que no está aquí (los ojos cerrados de dientes y cara, dormir) no tiene cara viva. La pose base de niña, adolescente y
 // adulta es la de su personalidad (una por rama, sobre el molde de adulta las dos últimas); las jefas van sobre el monigote liso de adulta.
 // ENCUADRE dice cómo recortar.py (modo molde) encajó cada plantilla en el lienzo de 640 (escala y desplazamiento, en fracciones):
@@ -10,7 +10,7 @@ PT.anclas = (() => {
   const ENCUADRE = {
     'bebe-base': [0.8279, 0.0852, 0.0778], 'bebe-comer': [0.8279, 0.0852, 0.0778], 'bebe-beber': [0.8279, 0.0852, 0.0778],
     'bebe-bano': [0.84, 0.0755, 0.0776], 'bebe-ducha': [0.7296, 0.1359, 0.1746],
-    'nino-base-loco': [0.8579, 0.0472, 0.0691], 'nino-comer': [0.8589, 0.0479, 0.0681], 'nino-beber': [0.8589, 0.0479, 0.0681],
+    'nino-liso': [0.8589, 0.0479, 0.0681], 'nino-base-loco': [0.8579, 0.0472, 0.0691], 'nino-comer': [0.8589, 0.0479, 0.0681], 'nino-beber': [0.8589, 0.0479, 0.0681],
     'nino-bano': [0.8309, 0.0732, 0.0855], 'nino-ducha': [0.7602, 0.1258, 0.1616],
     'adulto-liso': [0.859, 0.068, 0.0689], 'adulto-base-loco': [0.8601, 0.0678, 0.0687], 'adulto-comer': [0.859, 0.0684, 0.0689],
     'adulto-beber': [0.859, 0.0684, 0.0689], 'adulto-bano': [0.831, 0.0727, 0.0862], 'adulto-ducha': [0.7329, 0.1278, 0.1872],
@@ -51,8 +51,10 @@ PT.anclas = (() => {
   }
   // las anclas de esa pose, en fracciones del lienzo del juego: { ojos: [[x, y, rx, ry], [...]], boca: [x, y], cara: [x, y, w, h]
   // (el recuadro de los recortes) }; null si no hay. Sin encuadre apuntado, las devuelve en fracciones del dibujo de Yoshi
-  function de(etapa, pose, personalidad) {
-    const clave = plantilla(etapa, pose, personalidad), t = T[clave];
+  function de(etapa, pose, personalidad) { return dePlantilla(plantilla(etapa, pose, personalidad)); }
+  // las anclas de una plantilla por su clave (lo mismo, para las herramientas que trabajan plantilla a plantilla)
+  function dePlantilla(clave) {
+    const t = T[clave];
     if (!t) return null;
     const [s, ox, oy] = ENCUADRE[clave] || [1, 0, 0], px = x => x * s + ox, py = y => y * s + oy;
     const [i, d] = t.slice(0, 2).map(([x, y, rx, ry]) => [px(x), py(y), rx * s, ry * s]), boca = [px(t[2][0]), py(t[2][1])];
@@ -60,5 +62,8 @@ PT.anclas = (() => {
     const x0 = i[0] - i[2] * 2, x1 = d[0] + d[2] * 2, y0 = Math.min(i[1], d[1]) - ry * 1.6, y1 = boca[1] + ry * 2;
     return { ojos: [i, d], boca, cara: [x0, y0, x1 - x0, y1 - y0] };
   }
-  return { de, plantilla, plantillas: () => Object.keys(T) };
+  // el marco de la cara: el punto medio entre los ojos y la distancia entre ellos (fracciones del lienzo). Las piezas de la cara (caras.js)
+  // se fichan en unidades de este marco, así la misma pieza vale en cualquier plantilla, en la que se coloca por el marco de esa
+  const marco = A => { const [i, d] = A.ojos; return [(i[0] + d[0]) / 2, (i[1] + d[1]) / 2, Math.hypot(d[0] - i[0], d[1] - i[1])]; };
+  return { de, dePlantilla, marco, plantilla, plantillas: () => Object.keys(T) };
 })();

@@ -286,6 +286,7 @@ IDIOMA.add({
   "Masticar": "Chew",
   "Con sueño": "Sleepy",
   "Triste": "Sad",
+  "Cachorrito": "Puppy eyes",
   "SALIR": "EXIT",
   "ASCENDER YA": "PROMOTE NOW",
 });

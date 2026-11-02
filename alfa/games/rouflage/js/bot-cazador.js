@@ -183,20 +183,29 @@ function estadoInvestiga(e, dt, algo, top) {
   if (algo) { sospecha(e, top); return; }
   if (sigueCamino(e, dt)) { e.prisa = 1; b.puntos = puntosDe(salaDe(e.x, e.y), 1); b.camino = null; mira(e, 2.8, 1.9); } else giraHacia(e, Math.atan2(e.vy, e.vx), dt);
 }
+// se acerca al último sitio donde lo ha visto, sin quitarle la luz de encima; devuelve lo que sabe (d: distancia hasta ahí; s: lo sospechoso que es)
+function sospechaAcerca(e, dt, b, k, loVe) {
+  const [vx, vy] = b.visto, s = k.senuelo ? b.t / 1.5 : b.sosp.get(k) || 0, d = lejos(e.x, e.y, vx, vy), corre = !k.senuelo && k.hielo < 0.85;
+  e.marca = '?'; e.alerta = 0.5;
+  giraHacia(e, Math.atan2(vy - 8 - (e.y - 6), vx - e.x), dt, 9);
+  if (d > (corre ? 44 : 70)) { b.tRuta -= dt; if (b.tRuta <= 0) { ponRumbo(e, vx, vy); b.tRuta = 0.45; } sigueCamino(e, dt); } else { e.vx = e.vy = 0; b.tCerca += dt; }
+  return { d, s };
+}
+// falsa alarma: lo ha mirado bien de cerca un rato y no lo distingue; lo deja estar una temporada
+function sospechaFalsaAlarma(e, b, k) {
+  if (!k.senuelo) { b.ignora.set(k, 14); b.sosp.set(k, 0.2); b.ojo.delete(k); if (k.jugador && k.congelado) fxTexto(k.x, k.y - 72, tr('¡Uf!'), '#7ee04a'); }
+  ronda(e);
+}
 // algo le ha llamado la atención: se acerca sin quitarle la luz de encima
 function estadoSospecha(e, dt) {
   const b = e.bot, k = b.objetivo;
   if (!k || k.fuera) { ronda(e); return; }
   // va hacia el último sitio donde lo ha visto: si el otro dobla una esquina, no sabe por dónde ha tirado
   const loVe = k.senuelo || veCazador(e, k.x, k.y - 8) > 0; if (loVe) b.visto = [k.x, k.y];
-  const [vx, vy] = b.visto, s = k.senuelo ? b.t / 1.5 : b.sosp.get(k) || 0, d = lejos(e.x, e.y, vx, vy), corre = !k.senuelo && k.hielo < 0.85;
-  e.marca = '?'; e.alerta = 0.5;
-  giraHacia(e, Math.atan2(vy - 8 - (e.y - 6), vx - e.x), dt, 9);
-  if (d > (corre ? 44 : 70)) { b.tRuta -= dt; if (b.tRuta <= 0) { ponRumbo(e, vx, vy); b.tRuta = 0.45; } sigueCamino(e, dt); } else { e.vx = e.vy = 0; b.tCerca += dt; }
+  const { d, s } = sospechaAcerca(e, dt, b, k, loVe);
   if (loVe && s >= 1 && e.enfria <= 0 && d < REGLAS.alcance) { b.estado = 'apunta'; b.t = 0; b.punto = null; e.marca = '!'; e.alerta = 1; e.vx = e.vy = 0; if (k.jugador) play('hype'); return; }
   if (!loVe && d <= 46) { b.sosp.set(k, 0.3); mira(e, 2.2, 1.9); return; }   // ha llegado y ya no está: mira alrededor y sigue la ronda
-  // falsa alarma: lo ha mirado bien de cerca un rato y no lo distingue; lo deja estar una temporada
-  if ((b.tCerca > (k.senuelo ? 9 : 2.8) || b.t > 11) && s < 1) { if (!k.senuelo) { b.ignora.set(k, 14); b.sosp.set(k, 0.2); b.ojo.delete(k); if (k.jugador && k.congelado) fxTexto(k.x, k.y - 72, tr('¡Uf!'), '#7ee04a'); } ronda(e); }
+  if ((b.tCerca > (k.senuelo ? 9 : 2.8) || b.t > 11) && s < 1) sospechaFalsaAlarma(e, b, k);
 }
 // medio segundo de aviso (el «!»): quien sale corriendo a tiempo puede librarse
 function estadoApunta(e, dt) {

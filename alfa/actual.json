@@ -1,8 +1,8 @@
 {
- "build": 857,
- "hash": "b720012",
- "fecha": "2026-11-02T23:55:04Z",
- "mensaje": "Nova 0.3.40: lanzador y drones según la pirámide de propiedades",
+ "build": 858,
+ "hash": "216481c",
+ "fecha": "2026-11-02T23:58:43Z",
+ "mensaje": "Rouflage: estadoSospecha (25) partido en sospechaAcerca y sospechaFalsaAlarma; tests del bot cazador en verde",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

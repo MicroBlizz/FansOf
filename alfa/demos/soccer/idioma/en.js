@@ -74,6 +74,10 @@ IDIOMA.add({
  "SUBE": "GOES UP",
  "SE QUEDA": "STAYS",
  "cambiar": "change",
+ "ALINEACIÓN": "FORMATION",
+ "DEFENSIVA": "DEFENSIVE",
+ "EQUILIBRADA": "BALANCED",
+ "OFENSIVA": "ATTACKING",
  "¡A JUGAR!": "PLAY!",
  // tutorial
  "Arrastra en la mitad izquierda para moverte": "Drag on the left half to move",
@@ -81,4 +85,5 @@ IDIOMA.add({
  "Corre con el balón sin que te toquen: la carrerilla carga el súper tiro": "Run with the ball without being touched: the run-up charges your super shot",
  "Botón rojo: ¡tira! Con el aura brillando es un súper tiro": "Red button: shoot! With the aura glowing it's a super shot",
  "Sin balón: azul empuja y rojo hace una barrida": "Without the ball: blue shoves and red tackles",
+ "Si el balón lo lleva un compañero, sale su cara: azul = ¡pásamela!, rojo = ¡tira!": "If a teammate has the ball, his face appears: blue = pass it!, red = shoot!",
 });

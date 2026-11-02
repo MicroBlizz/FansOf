@@ -3,7 +3,7 @@
 'use strict';
 var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
-  const { dist, lim, metaX } = S.util, _ = S._;
+  const { dist, lim, metaX, enArea } = S.util, _ = S._;
   // cuánto le cuesta al portero cada súper tiro (multiplica su probabilidad de pararlo)
   const DIFICIL = { zanahoria: 0.9, carga: 0.85, fantasma: 0.75, teletransporte: 0.7, factura: 0.5 };
 
@@ -41,6 +41,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // ---------- porteros ----------
   function atrapar(e, b, j, clase) {
+    if (dist(j, b) > 1.8) j.estira = 0.45;
     Object.assign(b, { dueno: j.id, vx: 0, vy: 0, vz: 0, z: 0, tiro: null, paseDe: -1 });
     j.espera = 0.9;
     e.eventos.push({ tipo: 'parada', quien: j.id, clase });
@@ -49,6 +50,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   // Despeje: el balón sale lejos del área y el portero se rehace enseguida (sin rechace fácil para rematar).
   function despejar(e, b, j) {
     const fuera = j.eq === 0 ? 1 : -1;
+    j.estira = 0.45;
     Object.assign(b, { vx: fuera * 20, vy: (b.y < j.y ? -1 : 1) * 12, vz: 9, tiro: null, libre: 0.35, ultimo: j.id, paseDe: -1 });
     j.espera = 0.25;
     e.eventos.push({ tipo: 'parada', quien: j.id, despeje: true });
@@ -57,14 +59,14 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   // Súper tiro: lo para con su probabilidad; si falla, sale volando hacia dentro de la portería y el balón sigue.
   function contraSuper(e, b, j, rnd) {
     if (rnd() < e.aj.equipos[j.eq].parada * (DIFICIL[b.tiro.tipo] || 1)) return atrapar(e, b, j, 'super');
-    j.mareo = 2.5; j.vuelo = 0.7; j.vx = b.vx * 0.3; j.vy = 0;
+    j.estira = 0; j.mareo = 2.5; j.vuelo = 0.7; j.vx = b.vx * 0.3; j.vy = 0;
     e.eventos.push({ tipo: 'portero-ko', quien: j.id, clase: b.tiro.tipo });
     return false;
   }
 
   function porteroPara(e, b, rnd) {
     for (const j of e.jugadores) {
-      if (j.puesto !== 'portero' || j.mareo > 0 || j.vio === b.ultimoTiro) continue;
+      if (j.puesto !== 'portero' || j.mareo > 0 || j.vio === b.ultimoTiro || !enArea(e.aj, j)) continue;   // con las manos, solo en su área
       if ((b.tiro && b.tiro.eq === j.eq) || (!b.tiro && b.ultimo >= 0 && e.jugadores[b.ultimo].eq === j.eq)) continue;
       const d = dist(j, b);
       if (d > 3.6 || b.z > 3.8) continue;

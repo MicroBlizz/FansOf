@@ -51,7 +51,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // ---------- repetición del gol ----------
   const copiaJ = (j) => ({ id: j.id, eq: j.eq, sprite: j.sprite, puesto: j.puesto, x: j.x, y: j.y, mira: j.mira, mareo: j.mareo, ko: j.ko, corre: j.corre,
-    barrida: j.barrida, empujon: j.empujon, vuelo: j.vuelo || 0, cargado: j.cargado, vida: j.vida, vidaMax: j.vidaMax });
+    barrida: j.barrida, empujon: j.empujon, vuelo: j.vuelo || 0, estira: j.estira || 0, cargado: j.cargado, vida: j.vida, vidaMax: j.vidaMax });
   F.grabar = function (e) {
     const b = e.balon;
     F.fotos.push({ jugadores: e.jugadores.map(copiaJ), balon: { x: b.x, y: b.y, z: b.z, tiro: b.tiro ? { tipo: b.tiro.tipo, cargo: b.tiro.cargo } : null } });

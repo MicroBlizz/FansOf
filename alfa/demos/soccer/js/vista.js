@@ -60,8 +60,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const r = Math.min(9, aj.ancho / 4), circ = [];
     for (let a = 0; a <= 32; a++) circ.push([aj.largo / 2 + Math.cos(a / 16 * Math.PI) * r, m + Math.sin(a / 16 * Math.PI) * r]);
     linea(g, circ);
-    const ag = Math.min(16, m - 2);
-    for (const x0 of [0, aj.largo]) { const d = x0 ? -1 : 1; linea(g, [[x0, m - ag], [x0 + d * 16, m - ag], [x0 + d * 16, m + ag], [x0, m + ag]]); linea(g, [[x0, m - 9], [x0 + d * 6, m - 9], [x0 + d * 6, m + 9], [x0, m + 9]]); }
+    const A = aj.area, ag = Math.min(A.medio, m - 2);
+    for (const x0 of [0, aj.largo]) { const d = x0 ? -1 : 1; linea(g, [[x0, m - ag], [x0 + d * A.largo, m - ag], [x0 + d * A.largo, m + ag], [x0, m + ag]]); linea(g, [[x0, m - 11], [x0 + d * 6, m - 11], [x0 + d * 6, m + 11], [x0, m + 11]]); }
   }
 
   function porteria(g, aj, x0, parte) {
@@ -113,7 +113,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function pose(g, j, q) {
     const salto = j.vuelo > 0 ? Math.sin((0.7 - j.vuelo) / 0.7 * Math.PI) * 40 * q.s : 0;
     g.translate(q.x, q.y - salto - Math.abs(Math.sin(j.corre * 0.9)) * 6 * q.s);
-    if (j.vuelo > 0) g.rotate(j.mira * (0.7 - j.vuelo) * 9);
+    if (j.estira > 0) { /* el dibujo ya va tumbado */ }
+    else if (j.vuelo > 0) g.rotate(j.mira * (0.7 - j.vuelo) * 9);
     else if (j.mareo > 0) g.rotate(j.mira * 1.45);
     else if (j.barrida > 0) g.rotate(j.mira * 1.1);
     else if (j.empujon > 0) g.rotate(j.mira * 0.35);
@@ -121,8 +122,15 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.scale(j.mira, 1);
   }
 
+  // El portero tiene dos dibujos más: con el balón en las manos y estirándose (si aún no están, usa el normal).
+  function imagen(e, j) {
+    if (j.puesto === 'portero' && j.estira > 0 && V.img[j.sprite + '-estira']) return V.img[j.sprite + '-estira'];
+    if (j.puesto === 'portero' && e.balon.dueno === j.id && V.img[j.sprite + '-coge']) return V.img[j.sprite + '-coge'];
+    return V.img[j.sprite];
+  }
+
   function jugador(g, e, j, t, controlado) {
-    const q = P(j.x, j.y, 0), color = e.aj.equipos[j.eq].color, im = V.img[j.sprite];
+    const q = P(j.x, j.y, 0), color = e.aj.equipos[j.eq].color, im = imagen(e, j);
     const h = (im ? im.height * 0.62 : 100) * q.s;
     g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(q.x, q.y, 22 * q.s, 7 * q.s, 0, 0, 7); g.fill();
     g.strokeStyle = controlado ? '#ffe14a' : color; g.lineWidth = controlado ? 4 : 3;
@@ -172,7 +180,9 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   }
 
   function balon(g, e, t) {
-    const b = e.balon, q = P(b.x, b.y, b.z), q0 = P(b.x, b.y, 0), r = 0.55 * ESC * q.s, tr = b.tiro;
+    const b = e.balon;
+    if (b.dueno >= 0 && e.jugadores[b.dueno].puesto === 'portero' && V.img[e.jugadores[b.dueno].sprite + '-coge']) return;   // lo tiene en las manos
+    const q = P(b.x, b.y, b.z), q0 = P(b.x, b.y, 0), r = 0.55 * ESC * q.s, tr = b.tiro;
     g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(q0.x, q0.y, r * 1.1, r * 0.4, 0, 0, 7); g.fill();
     estela(g, q, tr ? COLOR_TIRO[tr.tipo] || COLOR_TIRO.normal : null);
     if (tr && tr.tipo === 'factura') for (const k of [-1, 1]) { const f = P(b.x, b.y + k * (1.6 + Math.sin(t * 18) * 0.8), b.z); pelota(g, f.x, f.y, r, 0.75); }

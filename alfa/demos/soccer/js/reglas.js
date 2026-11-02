@@ -3,7 +3,7 @@
 'use strict';
 var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
-  const { dist, lim, metaX, sentido } = S.util, _ = S._;
+  const { dist, lim, metaX, sentido, enArea } = S.util, _ = S._;
 
   function soltar(e, j, vx, vy, vz, tiro) {
     const b = e.balon;
@@ -88,7 +88,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // ---------- vida, golpes y KO ----------
   _.danar = function (e, o, n, por) {
-    if (o.puesto === 'portero' || o.ko > 0) return;
+    if ((o.puesto === 'portero' && enArea(e.aj, o)) || o.ko > 0) return;
     o.vida = Math.max(0, o.vida - n); o.carrera = 0; o.cargado = false;
     if (o.vida > 0) return;
     o.ko = e.aj.ko; o.mareo = o.ko;
@@ -112,7 +112,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const barre = j.barrida > 0;
     if (!barre && !empuja) return;
     for (const o of e.jugadores) {
-      if (o.eq === j.eq || o.puesto === 'portero' || o.mareo > 0 || dist(o, j) > (barre ? aj.barrida.alcance : aj.empujon.alcance)) continue;
+      if (o.eq === j.eq || (o.puesto === 'portero' && enArea(aj, o)) || o.mareo > 0 || dist(o, j) > (barre ? aj.barrida.alcance : aj.empujon.alcance)) continue;
       if (barre && e.balon.dueno !== o.id) continue;   // la barrida solo tumba al que lleva el balón
       if (barre) { tumbar(e, o, j, aj.barrida.mareo, aj.barrida.dano, 'barrida'); _.sumar(e, j.eq, aj.energia.barrida); continue; }
       j.empujon = 0;

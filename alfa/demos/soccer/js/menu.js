@@ -22,7 +22,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     rival: (i) => ({ x: 20 + i * 250, y: 358, w: 238, h: 44 }),
     campo: (i) => ({ x: 20 + i * 418, y: 418, w: 406, h: 80 }),
     escalon: (i) => ({ x: 20 + i * 313, y: 358, w: 301, h: 140 }),
-    estrategia: (i) => ({ x: 20 + i * 418, y: 520, w: 406, h: 64 }),
+    estrategia: (i) => ({ x: 20 + i * 313, y: 520, w: 301, h: 64 }),   // la 0 es la alineación; 1 a 3, la estrategia
     jugar: { x: 480, y: 610, w: 320, h: 76 },
   };
   const ESTRATEGIA = [['pasan', 'COMPAÑEROS', 'PASAN', 'REGATEAN'], ['presionan', 'DEFENSA', 'PRESIONAN', 'MARCAN'], ['porteroSube', 'PORTERO', 'SUBE', 'SE QUEDA']];
@@ -77,9 +77,15 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     g.strokeStyle = '#5fe05f'; g.lineWidth = 5; g.stroke();
   }
 
+  const ALINEACION = { defensiva: 'DEFENSIVA', equilibrada: 'EQUILIBRADA', ofensiva: 'OFENSIVA' };
   function estrategia(g, sel) {
+    const a = Z.estrategia(0);
+    caja(g, a, '#4a2b55', true);
+    texto(g, tr('ALINEACIÓN'), a.x + 16, a.y + 26, 9, '#aab', 'left');
+    texto(g, tr(ALINEACION[sel.alineacion] || 'EQUILIBRADA'), a.x + 16, a.y + 52, 13, '#fff', 'left');
+    texto(g, tr('cambiar'), a.x + a.w - 16, a.y + 44, 8, '#ffe14a', 'right');
     ESTRATEGIA.forEach(([clave, que, si, no], i) => {
-      const c = Z.estrategia(i), v = sel.estrategia[clave];
+      const c = Z.estrategia(i + 1), v = sel.estrategia[clave];
       caja(g, c, '#2b3555', true);
       texto(g, tr(que), c.x + 16, c.y + 26, 9, '#aab', 'left');
       texto(g, tr(v ? si : no), c.x + 16, c.y + 52, 13, '#fff', 'left');
@@ -100,7 +106,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     texto(g, tr('¡A JUGAR!'), j.x + j.w / 2, j.y + 48, 20, '#fff');
   };
 
-  // Qué se ha tocado: { modo } | { equipo } | { rival } | { campo } | { estrategia: clave } | { jugar: true } | null
+  // Qué se ha tocado: { modo } | { equipo } | { rival } | { campo } | { alineacion: true } | { estrategia: clave } | { jugar: true } | null
   UI.tocarMenu = function (p, aj, sel) {
     const ids = aj.equipos.map((q) => q.id), campos = Object.keys(aj.campos);
     for (let i = 0; i < 2; i++) if (dentro(p, Z.modo(i))) return { modo: i ? 'amistoso' : 'copa' };
@@ -109,7 +115,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       for (let i = 0; i < ids.length; i++) if (dentro(p, Z.rival(i)) && ids[i] !== sel.equipo) return { rival: ids[i] };
       for (let i = 0; i < campos.length; i++) if (dentro(p, Z.campo(i))) return { campo: campos[i] };
     }
-    for (let i = 0; i < ESTRATEGIA.length; i++) if (dentro(p, Z.estrategia(i))) return { estrategia: ESTRATEGIA[i][0] };
+    if (dentro(p, Z.estrategia(0))) return { alineacion: true };
+    for (let i = 0; i < ESTRATEGIA.length; i++) if (dentro(p, Z.estrategia(i + 1))) return { estrategia: ESTRATEGIA[i][0] };
     if (dentro(p, Z.jugar)) return { jugar: true };
     return null;
   };

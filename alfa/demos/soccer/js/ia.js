@@ -51,7 +51,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const aj = e.aj, b = e.balon, tiene = S.equipoConBalon(e);
     const adelante = tiene === j.eq ? 0.18 : tiene < 0 ? 0.06 : -0.08;   // más arriba si atacamos
     const s = sitio(aj, j.eq, j.puesto, adelante);
-    s.x = lim(s.x + (b.x - aj.largo / 2) * 0.45, 4, aj.largo - 4);
+    s.x = lim(s.x + (b.x - aj.largo / 2) * 0.45, aj.largo * 0.1, aj.largo * 0.9);   // nadie de campo se pega al portero
     s.y = lim(s.y + (b.y - aj.ancho / 2) * 0.3, 3, aj.ancho - 3);
     return hacia(j, s, 1);
   }

@@ -89,10 +89,19 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   const ETIQUETAS = {
     conBalon: ['PASE', 'TIRO'], companero: ['¡PÁSAMELA!', '¡TIRA!'], sinBalon: ['EMPUJÓN', 'BARRIDA'], aire: ['EMPUJÓN', 'CHILENA'],
   };
-  UI.mandos = function (g, joy, contexto, superListo) {
+  // Cara del compañero que lleva el balón encima de los botones: así se ve que las órdenes van para él.
+  function cara(g, b, im) {
+    const x = b.x, y = b.y - b.r - 22;
+    g.save(); g.fillStyle = '#fff'; g.strokeStyle = '#111'; g.lineWidth = 3;
+    g.beginPath(); g.arc(x, y, 22, 0, 7); g.fill(); g.stroke(); g.clip();
+    g.drawImage(im, x - im.width * 0.3, y - 16, im.width * 0.6, im.height * 0.6); g.restore();
+  }
+
+  UI.mandos = function (g, joy, contexto, superListo, caraCompanero) {
     const [a, b] = ETIQUETAS[contexto] || ETIQUETAS.sinBalon, superYa = contexto === 'conBalon' && superListo;
     boton(g, UI.botones.pase, tr(a), '#3a6cff', false);
     boton(g, UI.botones.tiro, superYa ? tr('SÚPER') : tr(b), superYa ? '#ff7a1a' : '#e0383b', superYa || contexto === 'aire');
+    if (caraCompanero) { cara(g, UI.botones.pase, caraCompanero); cara(g, UI.botones.tiro, caraCompanero); }
     if (!joy.activo) return;
     g.globalAlpha = 0.5; g.fillStyle = '#111'; g.beginPath(); g.arc(joy.ox, joy.oy, 70, 0, 7); g.fill();
     g.fillStyle = '#fff'; g.beginPath(); g.arc(joy.ox + joy.dx * 70, joy.oy + joy.dy * 70, 30, 0, 7); g.fill(); g.globalAlpha = 1;

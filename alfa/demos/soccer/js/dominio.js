@@ -11,14 +11,16 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   const _ = S._ = {};                                             // lo que comparten dominio, reglas y balón
 
   function sitio(aj, eq, puesto, adelante) {
-    const p = aj.puestos[puesto], f = p[0] + (puesto === 'portero' ? 0 : adelante);
+    const p = aj.alineacion[eq][puesto], f = p[0] + (puesto === 'portero' ? 0 : adelante);
     return { x: eq === 0 ? aj.largo * f : aj.largo * (1 - f), y: aj.ancho * p[1] };
   }
-  S.util = { dist, lim, metaX, sentido, sitio };
+  // Área del portero de un equipo: dentro usa las manos y no se le puede derribar.
+  const enArea = (aj, j) => Math.abs(j.x - (j.eq === 0 ? 0 : aj.largo)) < aj.area.largo && Math.abs(j.y - aj.ancho / 2) < aj.area.medio;
+  S.util = { dist, lim, metaX, sentido, sitio, enArea };
 
   function nuevoJugador(aj, eq, i, def) {
     const s = sitio(aj, eq, def[2], 0), vida = aj.equipos[eq].vida;
-    return { id: eq * 4 + i, eq, sprite: def[0], nombre: def[1], puesto: def[2], x: s.x, y: s.y, vx: 0, vy: 0,
+    return { id: eq * aj.equipos[0].jugadores.length + i, eq, sprite: def[0], nombre: def[1], puesto: def[2], x: s.x, y: s.y, vx: 0, vy: 0,
       mira: sentido(eq), mareo: 0, ko: 0, barrida: 0, empujon: 0, espera: 0, corre: 0, vida, vidaMax: vida, carrera: 0, cargado: false };
   }
 
@@ -26,11 +28,12 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   S.ajustesDePartido = function (base, opc) {
     const idCampo = (opc && opc.campo) || 'atico', c = base.campos[idCampo];
     if (!c) throw new Error('Soccer: campo desconocido ' + idCampo);
-    const ids = (opc && opc.equipos) || ['animales', 'microblizz'];
+    const ids = (opc && opc.equipos) || ['animales', 'microblizz'], alin = (opc && opc.alineaciones) || ['equilibrada', 'equilibrada'];
+    if (alin.some((a) => !base.alineaciones[a])) throw new Error('Soccer: alineación desconocida ' + alin.join(','));
     const equipos = ids.map((id) => base.equipos.find((q) => q.id === id));
     if (equipos.some((q) => !q) || ids[0] === ids[1]) throw new Error('Soccer: equipos no válidos ' + ids.join(','));
     const m = c.ancho / 2;
-    return Object.freeze(Object.assign({}, base, { ancho: c.ancho, equipos: Object.freeze(equipos),
+    return Object.freeze(Object.assign({}, base, { ancho: c.ancho, equipos: Object.freeze(equipos), alineacion: Object.freeze(alin.map((a) => base.alineaciones[a])), alineaciones: alin,
       campo: Object.freeze(Object.assign({ id: idCampo }, c)),
       porteria: Object.freeze(Object.assign({}, base.porteria, { y1: m - base.porteria.medio, y2: m + base.porteria.medio })) }));
   };
@@ -93,7 +96,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (c.proximo > 0) return;
     c.proximo = aj.clima.cada * (0.7 + rnd() * 0.6);
     c.tipo = aj.campo.clima; c.t = aj.clima.dura; c.fuerza = rnd() < 0.5 ? -1 : 1;
-    if (c.tipo === 'aceite') c.charco = [15 + rnd() * 70, 6 + rnd() * (aj.ancho - 12), 4.5];
+    if (c.tipo === 'aceite') c.charco = [aj.largo * (0.15 + rnd() * 0.7), 6 + rnd() * (aj.ancho - 12), 5.5];
     e.eventos.push({ tipo: 'clima', clima: c.tipo });
   }
   _.charcos = (e) => (e.clima.tipo === 'aceite' && e.clima.charco ? e.aj.campo.charcos.concat([e.clima.charco]) : e.aj.campo.charcos);
@@ -105,6 +108,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       j.mareo = j.ko > 0 ? j.ko : Math.max(0, j.mareo - dt); j.espera = Math.max(0, j.espera - dt);
       if (j.barrida > 0) j.barrida = Math.max(0, j.barrida - dt);
       if (j.empujon > 0) j.empujon = Math.max(0, j.empujon - dt);
+      if (j.estira > 0) j.estira = Math.max(0, j.estira - dt);
     }
     e.calma = Math.max(0, (e.calma || 0) - dt);
     for (const eq of [0, 1]) e.energia[eq] = Math.min(e.aj.energia.max, e.energia[eq] + e.aj.energia.porSegundo * dt);

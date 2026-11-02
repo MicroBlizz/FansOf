@@ -6,7 +6,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), V = S.vista, UI = S.ui, FX = S.efectos, PASO = 1 / 60;
   const est = { modo: 'titulo', e: null, controlado: 3, t: 0, acum: 0, ultimo: 0, boton: null, lento: 0, paron: 0, zoomT: 0, copaRes: null,
-    sel: { modo: 'copa', equipo: 'animales', rival: 'microblizz', campo: 'atico', estrategia: { pasan: true, presionan: true, porteroSube: false } },
+    sel: { modo: 'copa', equipo: 'animales', rival: 'microblizz', campo: 'atico', alineacion: 'equilibrada', estrategia: { pasan: true, presionan: true, porteroSube: false } },
     progreso: {}, tutorialHecho: false };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
 
@@ -24,7 +24,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function leer() {
     try {
       const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}'), ids = S.AJ.equipos.map((q) => q.id), s = d.eleccion;
-      if (s && ids.includes(s.equipo) && ids.includes(s.rival) && S.AJ.campos[s.campo]) est.sel = Object.assign(est.sel, s, { estrategia: Object.assign(est.sel.estrategia, s.estrategia) });
+      if (s && ids.includes(s.equipo) && ids.includes(s.rival) && S.AJ.campos[s.campo] && S.AJ.alineaciones[s.alineacion || 'equilibrada']) est.sel = Object.assign(est.sel, s, { estrategia: Object.assign(est.sel.estrategia, s.estrategia) });
       if (d.copa) est.progreso = d.copa;
       est.tutorialHecho = !!d.tutorial;
     } catch (err) { console.warn('Soccer: no se lee lo guardado', err); }
@@ -47,7 +47,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   const golpe = (paron, temblor, ms) => { est.paron = Math.max(est.paron, paron); V.temblor = Math.max(V.temblor, temblor); vibrar(ms); };
 
   // ---------- eventos del dominio -> efectos ----------
-  const mio = (ev) => ev.quien !== undefined && ev.quien < 4;
+  const mio = (ev, e) => ev.quien !== undefined && e.jugadores[ev.quien].eq === 0;
   const EFECTOS = {
     tiro: () => { sonar(160, 0.15, 'triangle', 0.5); V.temblor = 6; },
     super: (ev, e) => { FX.cortar(e.aj.equipos[ev.eq]); sonar(120, 0.8, 'sawtooth', 6); vibrar(60); },
@@ -59,7 +59,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     atropello: (ev, e) => { const j = e.jugadores[ev.quien]; V.vidaVista[j.id] = est.t; FX.estallido(j.x, j.y, 1, '#fff', 12); golpe(0.05, 8, 20); },
     ko: (ev, e) => { const j = e.jugadores[ev.quien]; UI.avisar(tr('¡KO!'), '#ff5a5a', 0.9); FX.estallido(j.x, j.y, 2, '#ff5a5a', 30); golpe(0.14, 20, 80); sonar(55, 0.5, 'sawtooth', 0.4); },
     vuelve: () => sonar(880, 0.08, 'triangle'),
-    cargado: (ev, e) => { if (mio(ev)) { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ffe14a', 18); sonar(990, 0.15, 'square', 1.5); vibrar(20); } },
+    cargado: (ev, e) => { if (mio(ev, e)) { const j = e.jugadores[ev.quien]; FX.estallido(j.x, j.y, 2, '#ffe14a', 18); sonar(990, 0.15, 'square', 1.5); vibrar(20); } },
     cargando: () => sonar(300, 0.5, 'square', 1.2),
     salto: (ev) => { FX.estallido(ev.x, ev.y, 1, '#18d2e6', 8); sonar(1200, 0.04, 'square'); },
     parada: (ev) => { sonar(330, 0.12, 'triangle', 1.5); if (ev.clase === 'super') UI.avisar(tr('¡PARADÓN!'), '#5fe05f', 1); },
@@ -122,6 +122,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const s = est.sel;
     if (t.jugar) { empezar(); return; }
     if (t.estrategia) s.estrategia[t.estrategia] = !s.estrategia[t.estrategia];
+    else if (t.alineacion) { const a = Object.keys(S.AJ.alineaciones); s.alineacion = a[(a.indexOf(s.alineacion) + 1) % a.length]; }
     else Object.assign(s, t);
     if (s.rival === s.equipo) s.rival = S.AJ.equipos.find((q) => q.id !== s.equipo).id;
     sonar(t.equipo ? 440 : 600, 0.06); guardar();
@@ -163,9 +164,11 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const s = est.sel, enCopa = s.modo === 'copa', lista = S.copa.rivales(s.equipo);
     if (enCopa && progreso() >= lista.length) est.progreso[s.equipo] = 0;   // campeón: la Copa vuelve a empezar
     const r = enCopa ? lista[progreso()] : { equipo: s.rival, campo: s.campo };
-    est.e = S.nuevoPartido(S.AJ, { campo: r.campo, equipos: [s.equipo, r.equipo], estrategia: s.estrategia });
+    const nivelRival = S.AJ.equipos.find((q) => q.id === r.equipo).nivel;
+    est.e = S.nuevoPartido(S.AJ, { campo: r.campo, equipos: [s.equipo, r.equipo], estrategia: s.estrategia,
+      alineaciones: [s.alineacion, nivelRival > 0.6 ? 'ofensiva' : nivelRival < 0.4 ? 'defensiva' : 'equilibrada'] });
     est.e.estrategia[1].presionan = S.AJ.equipos.find((q) => q.id === r.equipo).nivel > 0.5;
-    Object.assign(est, { modo: 'juego', controlado: 3, copaRes: null, repetirEn: 0 });
+    Object.assign(est, { modo: 'juego', controlado: est.e.jugadores.find((j) => j.eq === 0 && j.puesto === 'delantero').id, copaRes: null, repetirEn: 0 });
     V.cam = 50; UI.cartel = null; FX.fotos = []; FX.repe = null; FX.corte = null;
     if (!est.tutorialHecho) S.tutorial.empezar();
     guardar(); sonar(660, 0.1);
@@ -179,7 +182,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     S.paso(e, dt, ord, Math.random);
     FX.grabar(e);
     for (const ev of e.eventos) if (EFECTOS[ev.tipo]) EFECTOS[ev.tipo](ev, e);
-    if (S.tutorial.mirar(e.eventos, dt, Math.hypot(...direccion()) > 0.3)) { est.tutorialHecho = true; guardar(); }
+    if (S.tutorial.mirar(e.eventos, dt, Math.hypot(...direccion()) > 0.3, e)) { est.tutorialHecho = true; guardar(); }
     if (e.eventos.some((ev) => ev.tipo === 'super')) { est.zoomT = 0.8; }
   }
 
@@ -202,7 +205,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     UI.carrerilla(G, e, j);
     UI.minimapa(G, e, est.controlado);
     UI.carteles(G, dt);
-    UI.mandos(G, joy, ctx, S.puedeSuper(e, j));
+    const lleva = e.balon.dueno >= 0 ? e.jugadores[e.balon.dueno] : null;
+    UI.mandos(G, joy, ctx, S.puedeSuper(e, j), ctx === 'companero' && lleva ? V.img[lleva.sprite] : null);
     S.tutorial.dibujar(G, est.t);
     FX.dibujarCorte(G, dt);
   }
@@ -239,7 +243,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   function imagenes() {
     const n = ['fondo', 'fondo-parking', 'fondo-servidores', 'r-bunny', 'r-ceo', 'r-necro', 'r-marine', 'r-presidente'];
-    for (const q of S.AJ.equipos) { n.push('d-' + q.id); for (const d of q.jugadores) if (!n.includes(d[0])) n.push(d[0]); }
+    for (const q of S.AJ.equipos) { n.push('d-' + q.id); for (const d of q.jugadores) if (!n.includes(d[0])) n.push(d[0]); n.push(q.jugadores[0][0] + '-coge', q.jugadores[0][0] + '-estira'); }
     return n;
   }
 

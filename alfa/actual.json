@@ -1,8 +1,8 @@
 {
- "build": 856,
- "hash": "3c6f402",
- "fecha": "2026-11-02T23:41:31Z",
- "mensaje": "Rouflage: guardia del comparador para andar por Mi escenario y escAnda (30) partido en piezas con ella",
+ "build": 857,
+ "hash": "b720012",
+ "fecha": "2026-11-02T23:55:04Z",
+ "mensaje": "Nova 0.3.40: lanzador y drones según la pirámide de propiedades",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.17",
   "karts": "0.7.16",
-  "nova": "0.3.39",
+  "nova": "0.3.40",
   "pets": "0.2.0",
   "ratkov": "0.2.30",
   "rouflage": "0.2.64",

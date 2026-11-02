@@ -19,9 +19,9 @@ const PP_CFG = {
   vida: 5,                   // corazones; se pierde uno al quedarte sin toques con burbujas sin reventar (o al salir a medias)
   recarga: 30 * 60 * 1000,   // cada cuánto vuelve un corazón (ms), también con el juego cerrado
   precioVidas: 150,          // monedas por llenar los corazones de golpe
-  equipo: 4,                 // huecos del equipo de serie
+  equipo: 3,                 // huecos del equipo de serie (Daniel, 02-11-2026: con 4 era muy fácil; antes 4)
   huecosMax: 6,              // con los comprados (Daniel, 30-10-2026: comprar huecos con monedas, hasta 6, cada uno más caro)
-  precioHueco: [400, 800],   // el 5.º y el 6.º hueco
+  precioHueco: [200, 400, 800],   // el 4.º, el 5.º y el 6.º hueco
   monedas: { nivel: 10, jefe: 30, estrella: 5 },   // la primera vez que pasas un nivel (o un jefe) y por cada estrella que mejora tu récord
   cofreCada: 15,             // un cofre cada 15 estrellas de récord…
   cofre: [40, 80],           // …con entre 40 y 80 monedas
@@ -31,7 +31,7 @@ const PP_CFG = {
     seguir: [9, 15, 20],     // +5 toques al quedarte sin toques: cada vez más caro en el mismo intento
     toquesSeguir: 5,
     vidas: 12,               // llenar los corazones
-    hueco: [40, 80],         // el 5.º y el 6.º hueco del equipo (también se pueden pagar con monedas)
+    hueco: [20, 40, 80],     // el 4.º, el 5.º y el 6.º hueco del equipo (también se pueden pagar con monedas)
     jefe: 3,                 // perlas de regalo al ganar a un jefe por primera vez (la comprada «cae poco a poco jugando»)
   },
   // los paquetes de perlas con euros (PROVISIONALES: los productos aún no existen en Play ni en el servidor; hasta entonces, la

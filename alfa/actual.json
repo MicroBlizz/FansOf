@@ -1,8 +1,8 @@
 {
- "build": 821,
- "hash": "fc53d46",
- "fecha": "2026-11-02T09:51:13Z",
- "mensaje": "Fans of Chef 0.3.0: animaciones de Yoshi (cocinero en 4 direcciones, ataque, bloqueo; bichos), dos modos de control (tocar para ir / palanca y botones), ataque que apunta solo, tutorial, flecha guía y bichos desde la primera sala",
+ "build": 822,
+ "hash": "d143671",
+ "fecha": "2026-11-02T10:11:21Z",
+ "mensaje": "Nova 0.3.37: galaxia de la comunidad con los puntos de todos (fase 2, solo alfa)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.36",
+  "nova": "0.3.37",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

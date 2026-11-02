@@ -25,10 +25,11 @@ function nvFrenteMapa(semana) {
   }
   return (NV_FRENTE_CACHE[semana] = { gal, mapa });
 }
-// Cómo va una semana: hoy cuentan los días ya cerrados; una semana pasada, los 7.
+// Cómo va una semana: hoy cuentan los días ya cerrados; una semana pasada, los 7. Con el servidor, los días y los puntos los dice él.
 function nvFrenteEstado(semana, dias, aportes) {
-  const { gal, mapa } = nvFrenteMapa(semana);
-  const res = FRENTE.simula({ mapa, facciones: NV_FACCIONES, semilla: 'nova-' + semana, dias, aportes });
+  const { gal, mapa } = nvFrenteMapa(semana), red = nvFrenteDeRed(semana);   // frente-red.js: con los puntos de todos, si se han bajado
+  const res = red ? FRENTE.simula({ mapa, facciones: NV_FACCIONES, semilla: 'nova-' + semana, dias: red.dias, aportes: red.aportes, pesos: red.pesos })
+    : FRENTE.simula({ mapa, facciones: NV_FACCIONES, semilla: 'nova-' + semana, dias, aportes });
   return Object.assign({ semana, dias, gal }, res);
 }
 
@@ -59,6 +60,7 @@ function nvFrenteAporta(S, libero) {
   if (!casilla) return null;
   const puntos = NV.Frente.puntosMision(NV_FRENTE.puntos, S.estado === 'victoria', libero);
   f.aportes.push({ dia: FRENTE.diasCerrados(NV_RELOJ.ahora()), casilla, faccion: patron, puntos });
+  nvFrenteEncola({ casilla, faccion: patron, puntos });   // frente-red.js: y al servidor, si hay cuenta
   return { casilla, puntos, patron };
 }
 const nvFrenteMisPuntos = aportes => NV.Frente.misPuntos(aportes);
@@ -75,6 +77,6 @@ function nvFrenteCobra(parte) { NV.Frente.cobra(nvCamp(), nvFrente(), parte); nv
 function nvFrentePrecio(fac, est) { return NV.Frente.precio(fac, est.ranking, NV_FRENTE.cambio); }
 function nvFrenteCambia(fac, est) {
   const ok = NV.Frente.cambia(nvCamp(), nvFrente(), fac, nvFrentePrecio(fac, est));
-  if (ok) nvCampGuarda();
+  if (ok) { nvCampGuarda(); nvFrentePatronRed(fac); }
   return ok;
 }

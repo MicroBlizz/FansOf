@@ -68,7 +68,8 @@ const FRENTE = (() => {
 
   // ---------- la semana entera ----------
   // cfg: { mapa: { id: { dueno, vecinos: [ids], defensa?, cerrada? } }, facciones: [ids], semilla, dias (0–7),
-  //        aportes: [{ dia, casilla, faccion, puntos }], relleno (puntos de IA por facción y día), tandas, defensa, decae }
+  //        aportes: [{ dia, casilla, faccion, puntos }], relleno (puntos de IA por facción y día), tandas, defensa, decae,
+//        pesos? ({ faccion: multiplicador } de los aportes, ver pesosPilotos) }
   // Devuelve { duenos, puntos, cambios, ranking: [{ faccion, casillas, puntos }] }.
   function simula(entrada) {
     const cfg = Object.assign({ relleno: 60, tandas: 4, defensa: 20, decae: 0.3, aportes: [] }, entrada);
@@ -77,8 +78,9 @@ const FRENTE = (() => {
     for (let dia = 0; dia < cfg.dias; dia++) {
       rellenoIA(cfg.mapa, duenos, puntos, cfg, azar(semillaDe(cfg.semilla + ':' + dia)));
       for (const a of cfg.aportes) if (a.dia === dia && cfg.mapa[a.casilla] && !cfg.mapa[a.casilla].cerrada) {
-        suma(puntos, a.casilla, a.faccion, a.puntos);
-        acumulados[a.faccion] = (acumulados[a.faccion] || 0) + a.puntos;
+        const n = a.puntos * (cfg.pesos && cfg.pesos[a.faccion] || 1);
+        suma(puntos, a.casilla, a.faccion, n);
+        acumulados[a.faccion] = (acumulados[a.faccion] || 0) + n;
       }
       resuelve(cfg.mapa, duenos, puntos, dia, cambios, cfg);
       decae(puntos, cfg);
@@ -92,6 +94,16 @@ const FRENTE = (() => {
       .sort((a, b) => b.casillas - a.casillas || b.puntos - a.puntos || (a.faccion < b.faccion ? -1 : 1));
   }
 
-  return { simula, frontera, claveSemana, diasCerrados, semanaAnterior, semillaDe };
+  // Peso por pilotos (decidido el 01-11-2026): cada punto de una facción vale la raíz de (media de pilotos por facción ÷ sus pilotos),
+  // entre min y max. Una facción pequeña y activa puede ganar a la más popular. Las facciones sin pilotos no aportan: no llevan peso.
+  function pesosPilotos(pilotos, facciones, min = 0.5, max = 2) {
+    const con = facciones.filter(f => pilotos[f] > 0), pesos = {};
+    if (!con.length) return pesos;
+    const media = con.reduce((a, f) => a + pilotos[f], 0) / facciones.length;
+    for (const f of con) pesos[f] = Math.min(max, Math.max(min, Math.sqrt(media / pilotos[f])));
+    return pesos;
+  }
+
+  return { simula, pesosPilotos, frontera, claveSemana, diasCerrados, semanaAnterior, semillaDe };
 })();
 if (typeof module !== 'undefined') module.exports = FRENTE;

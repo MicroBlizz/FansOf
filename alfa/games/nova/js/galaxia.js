@@ -41,7 +41,7 @@ function nvGalaxiaMenu() {
     NV_GAL.sel = k; pinta();
   };
   requestAnimationFrame(pinta);   // con el panel ya en pantalla, para medir el ancho
-  if (nvFrenteActivo() && nvFrenteParte()) nvFrenteVentanaParte();   // empieza semana: el parte de guerra de la anterior
+  if (nvFrenteActivo()) nvFrenteAlAbrir();   // frente-ui.js: empieza semana: el parte de guerra de la anterior
 }
 // Al empezar la campaña: tu facción decide los colores que vas pintando y dónde está tu enclave rebelde.
 function nvEligeFaccion() {

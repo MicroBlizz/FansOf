@@ -28,9 +28,11 @@ function nvFrenteFilaRanking(caja, est) {
 }
 
 // ---------- la pantalla principal ----------
-function nvFrenteMenu() {
+// Se pinta en seguida con lo que haya y, si llegan los puntos de todos del servidor, se vuelve a pintar (una vez)
+function nvFrenteMenu(yaBajado) {
+  if (!yaBajado && nvFrenteEnRed()) { nvFrenteEnvia(); nvFrenteBaja(nvFrente().semana).then(d => { if (d && document.querySelector('.nv-frente')) nvFrenteMenu(true); }); }
   const cont = document.getElementById('nv-paneles'); cont.textContent = '';
-  const est = nvFrenteHoy(), f = nvFrente(), p = nvEl('nv-panel');
+  const est = nvFrenteHoy(), f = nvFrente(), p = nvEl('nv-panel nv-frente');
   p.appendChild(nvEl('nv-titulo', tr('GALAXIA DE LA COMUNIDAD')));
   nvCabecera(p);
   const hoy = (new Date().getDay() + 6) % 7, quedan = 6 - hoy;
@@ -43,7 +45,7 @@ function nvFrenteMenu() {
   if (nvTieneCosmeticos()) { const as = nvEl('nv-boton', tr('Aspecto de la nave'), 'button'); as.onclick = nvAspectoVentana; p.appendChild(as); }
   const cambia = nvEl('nv-boton', tr('Cambiar de patrón'), 'button'); cambia.onclick = () => nvFrenteVentanaPatron(est); p.appendChild(cambia);
   const vuelve = nvEl('nv-boton', tr('Volver a la galaxia'), 'button'); vuelve.onclick = nvGalaxiaMenu; p.appendChild(vuelve);
-  p.appendChild(nvEl('nv-cdet', tr('Prueba: de momento el resto de pilotos los simula la IA en tu aparato.')));
+  p.appendChild(nvEl('nv-cdet', nvFrenteDeRed(f.semana) ? tr('Con los puntos de todos los pilotos.') : tr('Sin conexión: el resto de pilotos los simula la IA en tu aparato.')));
   cont.appendChild(p);
   requestAnimationFrame(() => nvFrentePinta(cv, est));
 }
@@ -65,6 +67,12 @@ function nvFrenteVentanaPatron(est) {
 }
 
 // ---------- el parte de guerra (sale solo al empezar la semana) ----------
+// Con cuenta, antes baja los puntos de todos de la semana pasada, para que el parte diga lo mismo a todos
+function nvFrenteAlAbrir() {
+  const f = nvFrente(), sale = () => { if (nvFrenteParte()) nvFrenteVentanaParte(); };
+  nvFrenteEnvia();
+  if (f.previa && !f.previa.cobrada && nvFrenteEnRed()) nvFrenteBaja(f.previa.semana).then(sale); else sale();
+}
 function nvFrenteVentanaParte() {
   const parte = nvFrenteParte(); if (!parte) return;
   const c = nvVentana(tr('PARTE DE GUERRA'));

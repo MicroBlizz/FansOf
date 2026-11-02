@@ -15,7 +15,6 @@ IDIOMA.add({
   "Cada misión de campaña suma a tu patrón.": "Every campaign mission adds to your patron.",
   "Cambiar de patrón": "Change patron",
   "Volver a la galaxia": "Back to the galaxy",
-  "Prueba: de momento el resto de pilotos los simula la IA en tu aparato.": "Test: for now the other pilots are simulated by the AI on your device.",
   "CAMBIAR DE PATRÓN": "CHANGE PATRON",
   "Una facción que va perdiendo necesita pilotos y te acepta casi gratis; la que va ganando te cobra muy caro.": "A losing faction needs pilots and takes you almost for free; the winning one charges you dearly.",
   "TU PATRÓN": "YOUR PATRON",

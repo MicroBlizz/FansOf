@@ -6,7 +6,7 @@ NV.Campana = (() => {
   // Una campaña vacía; de la versión 1 (`prev`) se conservan la aleación, las mejoras y las cuentas. `azar` da un número en [0, 1).
   function nueva(prev, azar) {
     const p = prev || {};
-    return { v: 2, faccion: null, semilla: 1 + Math.floor(azar() * 1e9), aleacion: p.aleacion || 0, mejoras: p.mejoras || {}, libres: [], misiones: p.misiones || 0, victorias: p.victorias || 0, fac: p.fac || {} };
+    return { v: 2, faccion: null, semilla: 1 + Math.floor(azar() * 1e9), aleacion: p.aleacion || 0, mejoras: p.mejoras || {}, libres: [], misiones: p.misiones || 0, victorias: p.victorias || 0, fac: p.fac || {}, combos: p.combos || {} };
   }
 
   // Lo que paga una misión: 5 por rango y medio por enemigo, +30 % por cada nivel de peligro por encima de 1; perder paga la mitad

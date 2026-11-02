@@ -160,7 +160,10 @@ function nvDronVuela(S, w, d, i, dt, obj, ctx) {
   const dx = gx - d.x, dy = gy - d.y, dist = Math.hypot(dx, dy) || 1, paso = Math.min(dist, (obj ? ctx.vel : ctx.vel * 1.6) * dt);
   d.x += dx / dist * paso; d.y += dy / dist * paso;
   if (w.carga === 'cinetica') nvChocaMisil(S, d, 14);
-  if (w.carga === 'em' && obj && !NV.Golpe.escudoEnPie(obj) && Math.hypot(obj.x - d.x, obj.y - d.y) < obj.r + 16) obj.est.interferido = Math.max(obj.est.interferido || 0, NOVA_ARMAS.combos.dronParasito.duracion);
+  if (w.carga === 'em' && obj && !NV.Golpe.escudoEnPie(obj) && Math.hypot(obj.x - d.x, obj.y - d.y) < obj.r + 16) {
+    obj.est.interferido = Math.max(obj.est.interferido || 0, NOVA_ARMAS.combos.dronParasito.duracion);
+    if (d.presa !== obj) { d.presa = obj; nvDescubre(S, 'dronParasito'); }   // se cuenta una vez por presa, no en cada fotograma
+  }
 }
 // El dron reparador cura cada pocos segundos mientras la nave está herida
 function nvDronRepara(S, d, herido) {
@@ -216,7 +219,7 @@ function nvExplosion(S, x, y, radio, dano, w, salvo, sinEstado) {
     for (const e of S.enem) {
       if (e === salvo || e.muerto || Math.hypot(e.x - x, e.y - y) >= radio + e.r) continue;
       nvGolpe(S, e, dano, w, e.x, e.y, 0.5, true, sinEstado);
-      if (pulso) NV.Golpe.pulsoExpansivo(e, NOVA_ARMAS.combos);
+      if (pulso) { NV.Golpe.pulsoExpansivo(e, NOVA_ARMAS.combos); if (!e.muerto) nvDescubre(S, 'pulsoExpansivo'); }
     }
   }
   finally { S.expProf--; }
@@ -238,7 +241,9 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
   nvChispas(S, x, y, c.color);
   const escudoArriba = G.escudoEnPie(e);
   if (G.repele(e, carga)) { S.nums.push({ x, y: y - 14, t: 0.6, txt: tr('Repelida'), color: c.color, g: 0 }); return; }   // el escudo repele la EM: antes hay que tumbarlo
-  let d = G.multiplicaDano(dano * (mult || 1), e, w, K, nvSeAleja(S, e)), crit = G.consumeMarca(est, carga);
+  const seAleja = nvSeAleja(S, e);
+  nvDescubreVarios(S, NV.Combos.delGolpe(e, w, seAleja, escudoArriba, sinEstado));   // combos-ui.js: la franja la primera vez
+  let d = G.multiplicaDano(dano * (mult || 1), e, w, K, seAleja), crit = G.consumeMarca(est, carga);
   const reac = sinReaccion ? null : G.eligeReaccion(est, carga, A.reacciones);
   if (reac) nvReaccion(S, e, reac, w, d), d *= reac.id === 'fundido' ? 1 : reac.mult, crit = crit || reac.id === 'impactoLimpio';
   if (crit) d *= 2;
@@ -252,6 +257,7 @@ function nvGolpe(S, e, dano, w, x, y, mult, sinReaccion, sinEstado) {
 // El estado que deja la carga, con su explosión de sobrecarga, sus avisos y la Metralla incendiaria del flak térmico
 function nvGolpeEstado(S, e, w, c, sinReaccion) {
   const estado = NV.Golpe.aplicaEstado(e, w, c, NOVA_ARMAS, sinReaccion);
+  if (estado.apagon) nvDescubre(S, 'apagon');
   if (estado.explosion) nvExplosion(S, e.x, e.y, estado.explosion.radio, estado.explosion.dano, w, e, true);
   nvAvisa(S, estado.avisos);
   if (w.portador === 'flak' && w.carga === 'termica') nvMetrallaIncendiaria(S, e);
@@ -267,6 +273,7 @@ function nvGolpeCasco(S, e, d, crit, color, x, y) {
 }
 function nvReaccion(S, e, r, w, d) {
   S.stats.reacciones[r.id] = (S.stats.reacciones[r.id] || 0) + 1;
+  nvDescubre(S, r.id);
   S.nums.push({ x: e.x, y: e.y - 34, t: 1.1, txt: tr(r.nombre), color: '#ffffff', g: 1 });
   if (r.id === 'fundido') e.dot = { t: 3, dps: d * 3 };
   if (r.id === 'detonacion') nvExplosion(S, e.x, e.y, 90, d * 1.2, w, e);

@@ -27,6 +27,8 @@ const RETOS_NOVA = {
     { id: 'l-r50', txt: 'Llega al rango 50', goal: 50, ev: 'rango', r: 400 },
     { id: 'l-k500', txt: 'Destruye 500 naves enemigas', goal: 500, ev: 'muertos', r: 40 },
     { id: 'l-k5000', txt: 'Destruye 5.000 naves enemigas', goal: 5000, ev: 'muertos', r: 200 },
+    { id: 'l-c8', txt: 'Descubre 8 combos', goal: 8, ev: 'combos', r: 60 },          // los combos los cuenta combos-ui.js (NV.Combos)
+    { id: 'l-c16', txt: 'Descubre todos los combos', goal: 16, ev: 'combos', r: 200 },
   ],
 };
 // Las firmas que pide el sistema común: dónde se guarda y en qué se paga (aleación, de la campaña).

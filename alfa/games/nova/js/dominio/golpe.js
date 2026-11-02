@@ -57,12 +57,13 @@ NV.Golpe = (() => {
     est.interferido = A.estados[c.estado].duracion * ((est.brecha > 0 && !sinReaccion) ? 2 : 1);
     if (est.escudoCaido > 0) est.escudoCaido = Math.max(est.escudoCaido, K.cortacircuitos.escudoCaido);
     e.sis = (e.sis || 0) + K.interferencia.sistemas * (w.portador === 'laser' ? K.laser.acumula : 1);
-    if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; fuera.avisos.push(aviso(e, 'Apagón', c.color, 1, 20, 1)); }
+    if (e.sis >= 100) { e.sis = 0; est.apagon = (e.d.jefe || e.d.capitan ? 0.5 : 1) * A.estados.apagon.duracion; fuera.avisos.push(aviso(e, 'Apagón', c.color, 1, 20, 1)); fuera.apagon = true; }
     else if (nuevo) fuera.avisos.push(aviso(e, 'Interferido', c.color, 0, 20, 0.8));
   }
-  // El estado que deja cada carga. Devuelve { avisos, explosion }: `explosion` pide a quien llama una explosión de sobrecarga.
+  // El estado que deja cada carga. Devuelve { avisos, explosion, apagon }: `explosion` pide a quien llama una explosión de sobrecarga;
+  // `apagon`, si este golpe ha llegado al Apagón (para el aviso de combo descubierto).
   function aplicaEstado(e, w, c, A, sinReaccion) {
-    const fuera = { avisos: [], explosion: null };
+    const fuera = { avisos: [], explosion: null, apagon: false };
     if (c.estado === 'sobrecalentado') calienta(e, w, A, fuera);
     else if (c.estado === 'interferido') interfiere(e, w, c, A, sinReaccion, fuera);
     else e.est[c.estado] = A.estados[c.estado].duracion;

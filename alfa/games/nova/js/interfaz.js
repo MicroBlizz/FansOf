@@ -42,6 +42,7 @@ function nvHud(c, S, W, H, vs) {
   c.strokeText(txt, m, m + 46 * u); c.fillText(txt, m, m + 46 * u);
   c.textAlign = 'right'; c.strokeText(tt, W - m, m + 46 * u); c.fillText(tt, W - m, m + 46 * u);
   if (S.jefe && !S.jefe.muerto) { c.textAlign = 'center'; const j = S.jefe; nvBarra(c, W * 0.2, m + 56 * u, W * 0.6, 8 * u, j.hp / j.hpMax, '#ff4b9a'); c.strokeText(tr(j.d.nombre), W / 2, m + 80 * u); c.fillText(tr(j.d.nombre), W / 2, m + 80 * u); }
+  nvPintaDescubre(c, S, W, H, u);   // combos-ui.js
   if (S.aviso) { c.textAlign = 'center'; c.font = '800 ' + 26 * u + 'px Luckiest Guy, Baloo 2, sans-serif'; c.strokeText(S.aviso.txt, W / 2, H * 0.3); c.fillText(S.aviso.txt, W / 2, H * 0.3); }
   nvMinimapa(c, S, W, H, u);
   // armas montadas, abajo
@@ -112,6 +113,7 @@ function nvLineasFin(S, p, ok) {
   if (S.frente) p.appendChild(nvEl('nv-cdet', tr('Galaxia de la comunidad') + ': +' + S.frente.puntos + ' ' + tr('para') + ' ' + tr(NOVA_CASCOS.facciones[S.frente.patron].nombre)));
   const re = Object.keys(S.stats.reacciones);
   if (re.length) p.appendChild(nvEl('nv-cdet', tr('Reacciones') + ': ' + re.map(k => tr(NOVA_ARMAS.reacciones.find(r => r.id === k).nombre) + ' ×' + S.stats.reacciones[k]).join(', ')));
+  nvCombosLineaFin(S, p);
   if (ok && S.sector && !NVP.gal[S.sector].base) p.appendChild(nvEl('nv-cdet', tr('Sector liberado: se abren sus vecinos en la galaxia')));
   if (ok && S.desbloqueos && S.desbloqueos.length) p.appendChild(nvEl('nv-cdet', tr('¡Desbloqueado!') + ' ' + S.desbloqueos.map(x => tr(x)).join(', ')));
 }

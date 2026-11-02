@@ -1,8 +1,8 @@
 {
- "build": 805,
- "hash": "9d8fc76",
- "fecha": "2026-11-02T00:07:24Z",
- "mensaje": "Pets: CrazyBunny adulta dormida con dos orejas (v4)",
+ "build": 806,
+ "hash": "6844b12",
+ "fecha": "2026-11-02T00:14:43Z",
+ "mensaje": "Nova 0.3.33: avisos de combos y página «Combos» del Arsenal (NV.Combos, dos logros nuevos)",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",
@@ -12,7 +12,7 @@
   "island": "0.3.5",
   "jump": "0.3.16",
   "karts": "0.7.15",
-  "nova": "0.3.32",
+  "nova": "0.3.33",
   "pets": "0.2.0",
   "ratkov": "0.2.29",
   "rouflage": "0.2.63",

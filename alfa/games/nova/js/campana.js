@@ -137,6 +137,7 @@ function nvCierraMision(S) {
   if (gano) NV_RETOS.evento('victoria');
   if (libero) NV_RETOS.evento('sector');
   S.frente = nvFrenteAporta(S, libero);   // frente-nova.js: tu misión suma a tu patrón en la galaxia de la comunidad
+  nvCombosCierra(S, c);   // combos-ui.js: lo descubierto en la misión pasa a la campaña
   S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();
   S.aleacionGanada = a;

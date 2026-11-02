@@ -51,7 +51,7 @@ function nvNuevaPartida(casco, cap, ofi) {
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
     enem: [], saltos: [], proy: [], eproy: [], rayosE: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
-    stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
+    stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, combos: {}, cartas: [], rangoT: [] }, nuevos: [], colaDescubre: [], descubre: null
   };
   S.nave.rAncho = alas ? alas.ancho / 2 : 200;   // semienvergadura en unidades de nave: el hitbox sale del dibujo
   S.nave.r = 0.42 * S.nave.rAncho * S.nave.escala;
@@ -88,6 +88,7 @@ function nvPaso(S, dt) {
 function nvPasoEfectos(S, dt) {
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
+  nvDescubrePaso(S, dt);   // combos-ui.js: la franja de combo nuevo
 }
 function nvMueve(S, dt) {
   const n = S.nave, e = NVP.entrada;

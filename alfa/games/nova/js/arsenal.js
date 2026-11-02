@@ -70,6 +70,9 @@ function nvArsenal() {
       p.appendChild(b);
     }
   }
+  const nc = NV.Combos.cuenta(nvCamp(), NOVA_ARMAS);   // combos-ui.js: la página de combos descubiertos
+  const cb = nvEl('nv-boton', tr('Combos') + ' · ' + tr('{n} de {t} descubiertos', { n: nc.hechos, t: nc.total }), 'button');
+  cb.onclick = nvArsenalCombos; p.appendChild(cb);
   const v = nvEl('nv-boton', tr('Volver a la nave capital'), 'button'); v.onclick = nvNaveCapital; p.appendChild(v);
   nvInfo(p, ['arsenal', 'armasFaccion']);
   cont.appendChild(p);

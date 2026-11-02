@@ -43,8 +43,8 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     texto(g, etiqueta, b.x, b.y + 5, etiqueta.length > 6 ? 9 : 12, '#fff');
   }
 
-  UI.mandos = function (g, e, joy, controlado) {
-    const conBalon = e.balon.dueno === controlado, lleno = S.lleno(e, 0);
+  UI.mandos = function (g, e, joy, controlado, eq) {
+    const conBalon = e.balon.dueno === controlado, lleno = S.lleno(e, eq);
     boton(g, UI.botones.pase, conBalon ? tr('PASE') : tr('BARRIDA'), '#3a6cff', false);
     boton(g, UI.botones.tiro, conBalon && lleno ? tr('SÚPER') : tr('TIRO'), conBalon && lleno ? '#ff7a1a' : '#e0383b', conBalon && lleno);
     if (!joy.activo) return;
@@ -73,12 +73,66 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     texto(g, tr('Teclado: flechas · X pase/barrida · C tiro'), 640, 590, 10, '#ccc');
   };
 
-  UI.final = function (g, e, t) {
+  UI.final = function (g, e, t, eq) {
     g.fillStyle = 'rgba(10,12,30,.75)'; g.fillRect(0, 0, 1280, 720);
-    const gana = e.marcador[0] > e.marcador[1] ? tr('¡HAS GANADO!') : e.marcador[0] < e.marcador[1] ? tr('GANA MICROBLIZZ') : tr('EMPATE');
+    const mio = e.marcador[eq], suyo = e.marcador[1 - eq], rival = tr(e.aj.equipos[1 - eq].nombre).toUpperCase();
+    const gana = mio > suyo ? tr('¡HAS GANADO!') : mio < suyo ? tr('GANA {e}', { e: rival }) : tr('EMPATE');
     texto(g, gana, 640, 260, 36, '#ffe14a');
     texto(g, e.marcador[0] + ' - ' + e.marcador[1], 640, 340, 30, '#fff');
     if (Math.floor(t * 2) % 2) texto(g, tr('Toca para la revancha'), 640, 460, 16, '#fff');
+  };
+
+  // ---------- elegir equipo y campo ----------
+  const CARTA_EQ = (i) => ({ x: 330 + i * 620 - 270, y: 150, w: 540, h: 200 });
+  const CARTA_CAMPO = (i) => ({ x: 70 + i * 390, y: 420, w: 360, h: 130 });
+  const JUGAR = { x: 640, y: 640, r: 0, w: 320, h: 70 };
+  const dentroCaja = (p, c) => p.x > c.x && p.x < c.x + c.w && p.y > c.y && p.y < c.y + c.h;
+
+  function caja(g, c, color, elegida) {
+    g.fillStyle = elegida ? color : 'rgba(20,24,44,.85)'; g.strokeStyle = elegida ? '#ffe14a' : '#111'; g.lineWidth = elegida ? 6 : 4;
+    g.beginPath(); g.roundRect(c.x, c.y, c.w, c.h, 16); g.fill(); g.stroke();
+  }
+
+  function cartaEquipo(g, eq, i, elegida, img) {
+    const c = CARTA_EQ(i);
+    caja(g, c, eq.color, elegida);
+    const ims = eq.jugadores.slice().reverse().map((d) => img[d[0]]).filter(Boolean);
+    const ancho = ims.reduce((s, im) => s + im.width, 0), k = Math.min(0.85, (c.w - 40) / Math.max(1, ancho));
+    let x = c.x + (c.w - ancho * k) / 2;
+    for (const im of ims) { g.drawImage(im, x, c.y + c.h - 10 - im.height * k, im.width * k, im.height * k); x += im.width * k; }
+    texto(g, tr(eq.nombre).toUpperCase(), c.x + c.w / 2, c.y + 34, 16, '#fff');
+  }
+
+  function cartaCampo(g, campo, i, elegida) {
+    const c = CARTA_CAMPO(i);
+    caja(g, c, campo.franjas[1], elegida);
+    texto(g, tr(campo.nombre).toUpperCase(), c.x + c.w / 2, c.y + 46, 12, '#fff');
+    g.font = "16px sans-serif"; g.fillStyle = '#e8e8e8'; g.textAlign = 'center';
+    const palabras = tr(campo.truco).split(' '), lineas = [''];
+    for (const w of palabras) { if ((lineas[lineas.length - 1] + ' ' + w).length > 34) lineas.push(w); else lineas[lineas.length - 1] += (lineas[lineas.length - 1] ? ' ' : '') + w; }
+    lineas.forEach((l, k) => g.fillText(l, c.x + c.w / 2, c.y + 80 + k * 22));
+  }
+
+  UI.menu = function (g, aj, sel, img, t) {
+    g.fillStyle = 'rgba(10,12,30,.82)'; g.fillRect(0, 0, 1280, 720);
+    texto(g, tr('Elige tu equipo'), 640, 120, 18, '#ffe14a');
+    aj.equipos.forEach((eq, i) => cartaEquipo(g, eq, i, sel.equipo === i, img));
+    texto(g, tr('Elige el campo'), 640, 400, 18, '#ffe14a');
+    Object.keys(aj.campos).forEach((id, i) => cartaCampo(g, aj.campos[id], i, sel.campo === id));
+    const pulso = 1 + Math.sin(t * 5) * 0.03;
+    g.save(); g.translate(JUGAR.x, JUGAR.y); g.scale(pulso, pulso);
+    caja(g, { x: -JUGAR.w / 2, y: -JUGAR.h / 2, w: JUGAR.w, h: JUGAR.h }, '#e0383b', true);
+    g.restore();
+    texto(g, tr('¡A JUGAR!'), JUGAR.x, JUGAR.y + 9, 20, '#fff');
+  };
+
+  // Qué se ha tocado en el menú: { equipo: n } | { campo: id } | { jugar: true } | null
+  UI.tocarMenu = function (p, aj) {
+    for (let i = 0; i < aj.equipos.length; i++) if (dentroCaja(p, CARTA_EQ(i))) return { equipo: i };
+    const ids = Object.keys(aj.campos);
+    for (let i = 0; i < ids.length; i++) if (dentroCaja(p, CARTA_CAMPO(i))) return { campo: ids[i] };
+    if (dentroCaja(p, { x: JUGAR.x - JUGAR.w / 2, y: JUGAR.y - JUGAR.h / 2, w: JUGAR.w, h: JUGAR.h })) return { jugar: true };
+    return null;
   };
 
   UI.girar = function (g) {

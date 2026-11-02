@@ -19,7 +19,17 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       mira: sentido(eq), mareo: 0, barrida: 0, espera: 0, corre: 0 };
   }
 
-  S.nuevoPartido = function (aj) {
+  // Las medidas de un campo sobre los ajustes comunes (portería centrada en su ancho).
+  S.ajustesDeCampo = function (base, idCampo) {
+    const c = base.campos[idCampo];
+    if (!c) throw new Error('Soccer: campo desconocido ' + idCampo);
+    const mitad = c.ancho / 2;
+    return Object.freeze(Object.assign({}, base, { ancho: c.ancho, rebote: c.rebote, campo: Object.freeze(Object.assign({ id: idCampo }, c)),
+      porteria: Object.freeze(Object.assign({}, base.porteria, { y1: mitad - 6, y2: mitad + 6 })) }));
+  };
+
+  S.nuevoPartido = function (base, idCampo) {
+    const aj = S.ajustesDeCampo(base, idCampo || 'atico');
     const jugadores = [];
     aj.equipos.forEach((eq, n) => eq.jugadores.forEach((d, i) => jugadores.push(nuevoJugador(aj, n, i, d))));
     const e = { aj, t: aj.duracion, marcador: [0, 0], jugadores, energia: [0, 0], eventos: [], fin: false, pausa: 0,
@@ -82,7 +92,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function barrer(e, j, mx, my) {
     const aj = e.aj, m = Math.hypot(mx, my) || 1;
     const dx = Math.hypot(mx, my) > 0.1 ? mx / m : j.mira, dy = Math.hypot(mx, my) > 0.1 ? my / m : 0;
-    j.vx = dx * aj.vel.barrida; j.vy = dy * aj.vel.barrida; j.barrida = aj.barrida.dura; j.espera = aj.barrida.espera;
+    j.vx = dx * aj.vel.barrida; j.vy = dy * aj.vel.barrida; j.barrida = aj.barrida.dura * aj.campo.barridaLarga; j.espera = aj.barrida.espera;
     e.eventos.push({ tipo: 'barrida', quien: j.id });
   }
 
@@ -95,10 +105,18 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   };
 
   // ---------- movimiento ----------
+  const enCharco = (aj, j) => aj.campo.charcos.some((c) => Math.hypot(j.x - c[0], j.y - c[1]) < c[2]);
+  // En un charco de aceite apenas se puede girar: se sigue patinando con la velocidad que se traía.
+  function resbalar(e, j, orden) {
+    const v = e.aj.vel.jugador, mx = orden ? orden.mx : 0, my = orden ? orden.my : 0;
+    j.vx = j.vx * 0.94 + mx * v * 0.06; j.vy = j.vy * 0.94 + my * v * 0.06;
+  }
+
   function mover(e, j, orden, dt) {
     const aj = e.aj;
     if (j.mareo > 0) { j.vx = j.vy = 0; return; }
-    if (j.barrida > 0) { j.vx *= 0.93; j.vy *= 0.93; }
+    if (j.barrida > 0) { j.vx *= aj.campo.deslizar; j.vy *= aj.campo.deslizar; }
+    else if (enCharco(aj, j)) resbalar(e, j, orden);
     else {
       const mx = orden ? orden.mx : 0, my = orden ? orden.my : 0, m = Math.hypot(mx, my);
       const v = e.balon.dueno === j.id ? aj.vel.conBalon : j.puesto === 'portero' ? aj.vel.portero : aj.vel.jugador, k = m > 1 ? 1 / m : 1;
@@ -175,7 +193,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   }
 
   function paredes(e, b) {
-    const aj = e.aj, choque = (v) => { e.eventos.push({ tipo: 'rebote' }); return -v * aj.rebote; };
+    const aj = e.aj, choque = (v) => { e.eventos.push({ tipo: 'rebote' }); return lim(-v * aj.rebote, -aj.vel.superTiro, aj.vel.superTiro); };
     if (b.x < 0 || b.x > aj.largo) { b.x = lim(b.x, 0, aj.largo); b.vx = choque(b.vx); if (b.tiro) b.tiro = null; }
     if (b.y < 0 || b.y > aj.ancho) { b.y = lim(b.y, 0, aj.ancho); b.vy = choque(b.vy); }
   }
@@ -187,6 +205,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (b.tiro && b.tiro.tipo === 'zanahoria') b.vy += Math.sin(b.tiro.t * 30) * 90 * dt;   // zigzag del súper de los Animales
     b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt;
     b.vz -= aj.gravedad * dt;
+    if (b.z > 0.5) b.vy += aj.campo.viento * Math.sin(e.t * 0.4) * dt;   // viento del Ático
     if (b.z <= 0) { b.z = 0; b.vz = Math.abs(b.vz) > 3 ? -b.vz * 0.45 : 0; b.vx *= aj.roce; b.vy *= aj.roce; }
     if (b.tiro && Math.hypot(b.vx, b.vy) < 12) b.tiro = null;
     if (gol(e, b)) return;

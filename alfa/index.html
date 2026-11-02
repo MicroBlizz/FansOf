@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=a6b4a3f">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=a6b4a3f">
-<link rel="stylesheet" href="novedades/ventana.css?v=a6b4a3f">
-<link rel="stylesheet" href="biblioteca/votos.css?v=a6b4a3f">
+<link rel="stylesheet" href="core/css/base.css?v=ab6ed2c">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=ab6ed2c">
+<link rel="stylesheet" href="novedades/ventana.css?v=ab6ed2c">
+<link rel="stylesheet" href="biblioteca/votos.css?v=ab6ed2c">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=a6b4a3f" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=ab6ed2c" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -196,6 +196,12 @@
           <h2 class="ol">FANS OF SHELTER</h2>
           <p>El prototipo (prueba). «Ecos del refugio»: de día CrazyBunny explora en pixel art tipo Zelda, resuelve el puzle del bloque, tala y pica recursos y craftea en la mesa su zanahoria gigante, trampas y torretas; de noche la horda de goblins, esqueletos y murciélagos invade el refugio y las zanahorias giran solas, como en Vampire Survivors: esquiva, sube de nivel y aguanta hasta el Murciélago Gigante. Sin botones: todo con el dedo.</p>
           <div class="row"><a class="play ol" href="demos/shelter/">JUGAR</a><span class="ver ol" data-ver></span></div>
+          <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
+        </section>
+        <section class="game" id="g-soccer" style="--wc: #2d9a46" data-tipo="Prototipo" data-etiquetas="Deportes · Arcade · Acción" data-capturas="soccer-1.jpg soccer-2.jpg" data-horizontal>
+          <h2 class="ol">FANS OF SOCCER</h2>
+          <p>El prototipo (prueba). Fútbol arcade tipo Nintendo World Cup en falso 3D, sin faltas ni árbitro: los Animales Locos de CrazyBunny contra Microblizz, 4 contra 4. Barridas que dejan mareado al rival, súper tiros con la barra CRUNCH (el Zanahoriazo y la Chilena del CEO) y tres campos con truco: el Ático con viento, el Parking VIP con charcos de aceite y la Sala de Servidores con rebotes.</p>
+          <div class="row"><a class="play ol" href="demos/soccer/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
         <section class="game" id="g-auto" style="--wc: #b8501a" data-tipo="Demo" data-etiquetas="Acción · Conducción · Pixel art" data-capturas="auto-1.jpg auto-2.jpg" data-horizontal>
@@ -345,8 +351,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a830.a6b4a3f"></script>
-<script src="core/js/novedades.js?v=a6b4a3f"></script>
+<script src="core/js/nucleo.js?v=0-a831.ab6ed2c"></script>
+<script src="core/js/novedades.js?v=ab6ed2c"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -355,8 +361,8 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=a6b4a3f"></script>
-<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
+<script src="core/js/sistema/cuenta.js?v=ab6ed2c"></script>
+<script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
 // El texto lo monta el mismo código que usan los juegos (core/js/novedades.js).
@@ -381,14 +387,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=a6b4a3f"></script>
-<script src="novedades/ventana.js?v=a6b4a3f"></script>
-<script src="biblioteca/tienda.js?v=a6b4a3f"></script>
-<script src="core/js/sistema/beta.js?v=a6b4a3f"></script>
-<script src="biblioteca/cuenta-web.js?v=a6b4a3f"></script>
-<script src="biblioteca/votos.js?v=a6b4a3f"></script>
-<script src="biblioteca/alfa.js?v=a6b4a3f"></script>
-<script src="core/js/sistema/analitica.js?v=a6b4a3f"></script>
-<script src="pie.js?v=a6b4a3f" defer></script>
+<script src="core/js/proximamente.js?v=ab6ed2c"></script>
+<script src="novedades/ventana.js?v=ab6ed2c"></script>
+<script src="biblioteca/tienda.js?v=ab6ed2c"></script>
+<script src="core/js/sistema/beta.js?v=ab6ed2c"></script>
+<script src="biblioteca/cuenta-web.js?v=ab6ed2c"></script>
+<script src="biblioteca/votos.js?v=ab6ed2c"></script>
+<script src="biblioteca/alfa.js?v=ab6ed2c"></script>
+<script src="core/js/sistema/analitica.js?v=ab6ed2c"></script>
+<script src="pie.js?v=ab6ed2c" defer></script>
 </body>
 </html>

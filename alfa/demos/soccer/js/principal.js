@@ -4,7 +4,7 @@
 var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 (function (S) {
   const CV = document.getElementById('juego'), G = CV.getContext('2d'), V = S.vista, UI = S.ui, PASO = 1 / 60;
-  const est = { modo: 'titulo', e: null, controlado: 3, lento: 0, t: 0, acum: 0, ultimo: 0, accion: null };
+  const est = { modo: 'titulo', e: null, controlado: 3, sel: { equipo: 0, campo: 'atico' }, lento: 0, t: 0, acum: 0, ultimo: 0, accion: null };
   const joy = { activo: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 }, teclas = {};
 
   function ajusta() {
@@ -50,12 +50,30 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   function abajo(ev) {
     ev.preventDefault();
-    if (est.modo !== 'juego') { empezar(); return; }
-    const p = aLogico(ev), B = UI.botones;
+    const p = aLogico(ev);
+    if (est.modo !== 'juego') { tocarFuera(p); return; }
+    const B = UI.botones;
     if (dentro(p, B.tiro)) { est.accion = 'tiro'; B.tiro.pulsado = ev.pointerId; return; }
     if (dentro(p, B.pase)) { est.accion = 'pase'; B.pase.pulsado = ev.pointerId; return; }
     if (p.x < V.W * 0.55 && !joy.activo) Object.assign(joy, { activo: true, id: ev.pointerId, ox: p.x, oy: p.y, dx: 0, dy: 0 });
   }
+  function tocarFuera(p) {
+    if (est.modo !== 'menu') { est.modo = 'menu'; sonar(520, 0.06); return; }
+    const t = UI.tocarMenu(p, S.AJ);
+    if (!t) return;
+    if (t.jugar) { empezar(); return; }
+    Object.assign(est.sel, t); sonar(t.equipo !== undefined ? 440 : 600, 0.06); guardarEleccion();
+  }
+
+  // La última elección se recuerda en este navegador (solo comodidad: si falla, se empieza con la de siempre).
+  function guardarEleccion() { try { localStorage.setItem(SAVE_KEY, JSON.stringify({ eleccion: est.sel })); } catch (err) { console.warn('Soccer: no se guarda la elección', err); } }
+  function leerEleccion() {
+    try {
+      const d = JSON.parse(localStorage.getItem(SAVE_KEY) || '{}').eleccion;
+      if (d && S.AJ.campos[d.campo] && S.AJ.equipos[d.equipo]) est.sel = { equipo: d.equipo, campo: d.campo };
+    } catch (err) { console.warn('Soccer: no se lee la elección', err); }
+  }
+
   function mueve(ev) {
     if (!joy.activo || ev.pointerId !== joy.id) return;
     const p = aLogico(ev), dx = (p.x - joy.ox) / 70, dy = (p.y - joy.oy) / 70, m = Math.hypot(dx, dy);
@@ -68,10 +86,19 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function tecla(ev, baja) {
     teclas[ev.key.toLowerCase()] = baja;
     if (!baja) return;
-    if (est.modo !== 'juego' && (ev.key === ' ' || ev.key === 'Enter')) { empezar(); return; }
+    if (est.modo !== 'juego') { teclaMenu(ev.key); return; }
     const k = ev.key.toLowerCase();
     if (k === 'x' || k === 'j') est.accion = 'pase';
     if (k === 'c' || k === 'k' || k === ' ') est.accion = 'tiro';
+  }
+
+  function teclaMenu(k) {
+    if (est.modo !== 'menu') { if (k === ' ' || k === 'Enter') est.modo = 'menu'; return; }
+    const ids = Object.keys(S.AJ.campos), i = ids.indexOf(est.sel.campo);
+    if (k === 'ArrowUp' || k === 'ArrowDown') est.sel.equipo = 1 - est.sel.equipo;
+    if (k === 'ArrowLeft') est.sel.campo = ids[(i + ids.length - 1) % ids.length];
+    if (k === 'ArrowRight') est.sel.campo = ids[(i + 1) % ids.length];
+    if (k === ' ' || k === 'Enter') empezar(); else guardarEleccion();
   }
 
   function ordenPersona() {
@@ -85,11 +112,11 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   }
 
   // ---------- bucle ----------
-  function empezar() { est.e = S.nuevoPartido(S.AJ); est.modo = 'juego'; est.controlado = 3; V.cam = 50; UI.cartel = null; sonar(660, 0.1); }
+  function empezar() { est.e = S.nuevoPartido(S.AJ, est.sel.campo); est.modo = 'juego'; est.controlado = est.sel.equipo * 4 + 3; V.cam = 50; UI.cartel = null; sonar(660, 0.1); }
 
   function simular(dt) {
     const e = est.e;
-    est.controlado = S.elegirControlado(e, 0, est.controlado);
+    est.controlado = S.elegirControlado(e, est.sel.equipo, est.controlado);
     const ord = S.ordenesIA(e, est.controlado, Math.random);
     ord[est.controlado] = ordenPersona();
     S.paso(e, dt, ord, Math.random);
@@ -102,7 +129,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const k = CV.width / V.W;
     G.setTransform(k, 0, 0, k, 0, 0);
     if (innerHeight > innerWidth * 1.1) { UI.girar(G); requestAnimationFrame(fotograma); return; }
-    if (!est.e) est.e = S.nuevoPartido(S.AJ);
+    if (!est.e || (est.modo === 'menu' && est.e.aj.campo.id !== est.sel.campo)) est.e = S.nuevoPartido(S.AJ, est.sel.campo);   // de fondo, el campo elegido
     let dtJuego = dt;
     if (est.lento > 0) { est.lento -= dt; dtJuego = dt * 0.25; }
     if (est.modo === 'juego') { est.acum += dtJuego; while (est.acum >= PASO) { simular(PASO); est.acum -= PASO; } }
@@ -110,15 +137,17 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (est.lento > 0) { G.fillStyle = 'rgba(255,255,255,.08)'; G.fillRect(0, 0, V.W, V.H); }
     UI.marcador(G, est.e);
     UI.carteles(G, dt);
-    if (est.modo === 'juego') UI.mandos(G, est.e, joy, est.controlado);
+    if (est.modo === 'juego') UI.mandos(G, est.e, joy, est.controlado, est.sel.equipo);
     else if (est.modo === 'titulo') UI.titulo(G, est.t);
-    else UI.final(G, est.e, est.t);
+    else if (est.modo === 'menu') UI.menu(G, S.AJ, est.sel, V.img, est.t);
+    else UI.final(G, est.e, est.t, est.sel.equipo);
     requestAnimationFrame(fotograma);
   }
 
   async function arranca() {
     ajusta();
-    V.cargar(['bunny', 'zorro', 'ardilla', 'vaca', 'ceo', 'becario', 'survival', 'fondo']);
+    leerEleccion();
+    V.cargar(['bunny', 'zorro', 'ardilla', 'vaca', 'ceo', 'becario', 'survival', 'fondo', 'fondo-parking', 'fondo-servidores']);
     try { await Promise.race([document.fonts.load("12px 'Press Start 2P'"), new Promise((r) => setTimeout(r, 2000))]); } catch (err) { console.warn('Soccer: sin letra propia', err); }
     document.getElementById('carga').hidden = true;
     CV.addEventListener('pointerdown', abajo); CV.addEventListener('pointermove', mueve);

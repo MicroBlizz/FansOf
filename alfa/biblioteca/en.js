@@ -113,6 +113,8 @@ IDIOMA.add({
   "Defensa de torres": "Tower defense",
   "Campaña": "Campaign",
   "Acción": "Action",
+  "Arcade": "Arcade",
+  "Deportes": "Sports",
   "Hordas": "Hordes",
   "Aventura": "Adventure",
   "Crafteo": "Crafting",

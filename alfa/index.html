@@ -10,10 +10,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Luckiest+Guy&display=swap">
-<link rel="stylesheet" href="core/css/base.css?v=4627459">
-<link rel="stylesheet" href="biblioteca/tienda.css?v=4627459">
-<link rel="stylesheet" href="novedades/ventana.css?v=4627459">
-<link rel="stylesheet" href="biblioteca/votos.css?v=4627459">
+<link rel="stylesheet" href="core/css/base.css?v=67272df">
+<link rel="stylesheet" href="biblioteca/tienda.css?v=67272df">
+<link rel="stylesheet" href="novedades/ventana.css?v=67272df">
+<link rel="stylesheet" href="biblioteca/votos.css?v=67272df">
 <style>
   /* la entrada de la web: una tarjeta por juego, con los colores y las letras de core */
   body { overflow: auto; touch-action: auto; align-items: flex-start; background-repeat: no-repeat; background-attachment: fixed; }
@@ -61,7 +61,7 @@
 </style>
 </head>
 <body>
-<script src="menu.js?v=4627459" data-base="" data-core="1" data-pagina=""></script>
+<script src="menu.js?v=67272df" data-base="" data-core="1" data-pagina=""></script>
 <div class="nov-fondo" id="novedades" hidden>
   <div class="nov-caja" role="dialog" aria-modal="true" aria-labelledby="nov-titulo">
     <div class="nov-cabeza"><h2 class="ol" id="nov-titulo">NOVEDADES</h2><p id="nov-sub"></p></div>
@@ -200,7 +200,7 @@
         </section>
         <section class="game" id="g-soccer" style="--wc: #2d9a46" data-tipo="Prototipo" data-etiquetas="Deportes · Arcade · Acción" data-capturas="soccer-1.jpg soccer-2.jpg" data-horizontal>
           <h2 class="ol">FANS OF SOCCER</h2>
-          <p>El prototipo (prueba). Fútbol arcade tipo Nintendo World Cup en falso 3D, sin faltas ni árbitro: los Animales Locos de CrazyBunny contra Microblizz, 4 contra 4. Barridas que dejan mareado al rival, súper tiros con la barra CRUNCH (el Zanahoriazo y la Chilena del CEO) y tres campos con truco: el Ático con viento, el Parking VIP con charcos de aceite y la Sala de Servidores con rebotes.</p>
+          <p>El prototipo (prueba). Fútbol arcade en falso 3D, sin faltas ni árbitro, con las ideas del clásico de NES puestas al día: cinco equipos de la serie, 4 contra 4, barridas, empujones y KO, órdenes a tus compañeros y súper tiros con retrato a pantalla completa (por barra o por carrerilla). Juega la Copa Microblizz o un amistoso en tres campos con truco: el Ático con viento, el Parking VIP con charcos de aceite y la Sala de Servidores con apagones.</p>
           <div class="row"><a class="play ol" href="demos/soccer/">JUGAR</a><span class="ver ol" data-ver></span></div>
           <details><summary>Novedades</summary><div data-news>Cargando…</div></details>
         </section>
@@ -351,8 +351,8 @@
   </section>
   <p class="note" id="pie-fansof">Fans Of™ · © 2026 Arkioner y Pepins · MicroBlizz · Todos los derechos reservados</p>
 </main>
-<script src="core/js/nucleo.js?v=0-a833.4627459"></script>
-<script src="core/js/novedades.js?v=4627459"></script>
+<script src="core/js/nucleo.js?v=0-a834.67272df"></script>
+<script src="core/js/novedades.js?v=67272df"></script>
 <script>
 // La cuenta de la web es la misma de los juegos (core/js/sistema/cuenta.js, mismo navegador = misma sesión). Aquí no hay partida que subir.
 const AJUSTES = { id: 'web', guardado: 'fansof-web' }, SAVE_KEY = AJUSTES.guardado, SAVE = {};
@@ -361,7 +361,7 @@ const HOOKS = {};
 function hook(name, fn) { (HOOKS[name] = HOOKS[name] || []).push(fn); }
 function fire(name, ...a) { let out = ''; for (const fn of HOOKS[name] || []) { const r = fn(...a); if (typeof r === 'string') out += r; } return out; }
 </script>
-<script src="core/js/sistema/cuenta.js?v=4627459"></script>
+<script src="core/js/sistema/cuenta.js?v=67272df"></script>
 <script>NUCLEO.idiomaSolo({ en: ['core/idioma/en-raiz.js', 'novedades/en.js', 'biblioteca/en.js','games/rumble/idioma/en-7.js', 'games/td/idioma/en-2.js', 'games/survivors/idioma/en.js', 'games/crush/idioma/en-raiz.js', 'games/jump/idioma/en-raiz.js', 'games/taxi/idioma/en-raiz.js', 'games/dark/idioma/en-raiz.js', 'games/nova/idioma/en-raiz.js', 'demos/beams/idioma/en-raiz.js', 'demos/snakes/idioma/en-raiz.js', 'demos/merge/idioma/en-raiz.js', 'demos/swipe/idioma/en-raiz.js', 'demos/pop/idioma/en-raiz.js', 'demos/vikings/idioma/en-raiz.js', 'demos/goose/idioma/en-raiz.js', 'demos/asalto/idioma/en-raiz.js', 'demos/auto/idioma/en-raiz.js', 'demos/shelter/idioma/en-raiz.js', 'demos/soccer/idioma/en-raiz.js', 'games/island/idioma/en-raiz.js', 'demos/rumble-3d/idioma/en-raiz.js', 'demos/roguelite/idioma/en-raiz.js', 'demos/tactics-advance/idioma/en-raiz.js', 'games/rouflage/idioma/en-raiz.js', 'demos/dungeons/idioma/en-raiz.js', 'games/karts/idioma/en-raiz.js', 'demos/recruit/idioma/en-raiz.js', 'demos/terminal-shock/idioma/en-raiz.js', 'games/ratkov/idioma/en-raiz.js'] })</script>
 <script>
 // La versión y las novedades salen de los archivos de cada juego, así que esta página nunca se queda atrás.
@@ -387,14 +387,14 @@ const fail = id => () => {
 };
 
 </script>
-<script src="core/js/proximamente.js?v=4627459"></script>
-<script src="novedades/ventana.js?v=4627459"></script>
-<script src="biblioteca/tienda.js?v=4627459"></script>
-<script src="core/js/sistema/beta.js?v=4627459"></script>
-<script src="biblioteca/cuenta-web.js?v=4627459"></script>
-<script src="biblioteca/votos.js?v=4627459"></script>
-<script src="biblioteca/alfa.js?v=4627459"></script>
-<script src="core/js/sistema/analitica.js?v=4627459"></script>
-<script src="pie.js?v=4627459" defer></script>
+<script src="core/js/proximamente.js?v=67272df"></script>
+<script src="novedades/ventana.js?v=67272df"></script>
+<script src="biblioteca/tienda.js?v=67272df"></script>
+<script src="core/js/sistema/beta.js?v=67272df"></script>
+<script src="biblioteca/cuenta-web.js?v=67272df"></script>
+<script src="biblioteca/votos.js?v=67272df"></script>
+<script src="biblioteca/alfa.js?v=67272df"></script>
+<script src="core/js/sistema/analitica.js?v=67272df"></script>
+<script src="pie.js?v=67272df" defer></script>
 </body>
 </html>

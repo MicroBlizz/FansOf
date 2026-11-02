@@ -1,8 +1,8 @@
 {
- "build": 806,
- "hash": "6844b12",
- "fecha": "2026-11-02T00:14:43Z",
- "mensaje": "Nova 0.3.33: avisos de combos y página «Combos» del Arsenal (NV.Combos, dos logros nuevos)",
+ "build": 807,
+ "hash": "8c011c8",
+ "fecha": "2026-11-02T00:25:51Z",
+ "mensaje": "Pets: bases de CrazyBunny sobre la pose loco solo de cara",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

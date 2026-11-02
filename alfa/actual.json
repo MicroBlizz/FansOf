@@ -1,8 +1,8 @@
 {
- "build": 832,
- "hash": "dd2ac9a",
- "fecha": "2026-11-02T11:40:22Z",
- "mensaje": "Pets: dientes, cara y dormir con despiece (todo siempre con despieces)",
+ "build": 833,
+ "hash": "4627459",
+ "fecha": "2026-11-02T11:41:11Z",
+ "mensaje": "MAPA regenerado tras el rebase",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

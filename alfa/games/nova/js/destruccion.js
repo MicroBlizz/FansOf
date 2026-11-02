@@ -5,6 +5,7 @@ const NV_FIN_T = 2.4;   // segundos entre el golpe final y la pantalla de puntua
 // Empieza el final: la partida sigue corriendo (enemigos, balas, efectos) pero tú ya no mandas; luego pasa a `estado`.
 function nvAcaba(S, estado, x, y, r) {
   if (S.estado !== 'juego') return;
+  if (estado === 'victoria') nvGuion(S, 'victoria');
   S.estado = 'final'; S.fin = { t: NV_FIN_T, estado, x, y, r, boom: 0, grande: false };
   if (estado === 'derrota') S.nave.destruida = true;
   S.aviso = null;

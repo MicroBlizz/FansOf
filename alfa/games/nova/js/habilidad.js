@@ -27,6 +27,7 @@ function nvHabUsa(S) {
   if (efecto && efecto.empieza) efecto.empieza(S, def);
   S.aviso = { t: 1.6, txt: tr(def.nombre) + '!' };
   nvSnd('nvHabilidad', S);
+  nvGuion(S, 'habilidad');
   if (typeof nvTuto === 'function') nvTuto('habilidad');
   return true;
 }

@@ -7,6 +7,7 @@ const NV_DESCUBRE_T = 2.6, NV_DESCUBRE_HUECO = 0.4;   // la franja dura 2,6 s y 
 function nvDescubre(S, id) {
   const veces = S.stats.combos || (S.stats.combos = {});
   veces[id] = (veces[id] || 0) + 1;
+  nvGuion(S, 'combo');
   const vistos = NVP.camp ? NVP.camp.combos : null, nuevos = S.nuevos || (S.nuevos = []);
   if (!NVP.camp || !NV.Combos.esNuevo(vistos, nuevos, id)) return;
   nuevos.push(id);

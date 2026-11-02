@@ -11,7 +11,7 @@ function nvAjustaLienzo() {
 }
 function nvEntrada() {
   const cv = document.getElementById('nv-canvas'), e = NVP.entrada;
-  cv.addEventListener('pointerdown', ev => { if (nvHabToque(ev)) return; NVP.joy = { x: ev.clientX, y: ev.clientY, id: ev.pointerId }; cv.setPointerCapture(ev.pointerId); });
+  cv.addEventListener('pointerdown', ev => { if (nvGuionToque(ev) || nvHabToque(ev)) return; NVP.joy = { x: ev.clientX, y: ev.clientY, id: ev.pointerId }; cv.setPointerCapture(ev.pointerId); });
   cv.addEventListener('pointermove', ev => {
     const j = NVP.joy; if (!j || j.id !== ev.pointerId) return;
     const dx = ev.clientX - j.x, dy = ev.clientY - j.y, m = Math.hypot(dx, dy), k = Math.min(1, m / 60);
@@ -44,6 +44,7 @@ function nvHud(c, S, W, H, vs) {
   if (S.jefe && !S.jefe.muerto) { c.textAlign = 'center'; const j = S.jefe; nvBarra(c, W * 0.2, m + 56 * u, W * 0.6, 8 * u, j.hp / j.hpMax, '#ff4b9a'); c.strokeText(tr(j.d.nombre), W / 2, m + 80 * u); c.fillText(tr(j.d.nombre), W / 2, m + 80 * u); }
   nvPintaDescubre(c, S, W, H, u);   // combos-ui.js
   nvHabPintaBoton(c, S, W, H, u);   // habilidad.js
+  nvGuionPinta(c, S, W, H, u);   // guion.js: la frase de la misión guiada
   if (S.aviso) { c.textAlign = 'center'; c.font = '800 ' + 26 * u + 'px Luckiest Guy, Baloo 2, sans-serif'; c.strokeText(S.aviso.txt, W / 2, H * 0.3); c.fillText(S.aviso.txt, W / 2, H * 0.3); }
   nvMinimapa(c, S, W, H, u);
   // armas montadas, abajo

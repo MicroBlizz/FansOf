@@ -65,6 +65,7 @@ function nvNuevaPartida(casco, cap, ofi) {
   nvAplicaTripulacion(S);
   nvAplicaCampana(S);
   nvHabInicio(S);   // habilidad.js: la habilidad activa de tu facción
+  nvGuionInicio(S);   // guion.js: la primera misión guiada
   return S;
 }
 
@@ -72,7 +73,7 @@ function nvNuevaPartida(casco, cap, ofi) {
 function nvPaso(S, dt) {
   const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
   if (S.estado !== 'juego' && !fin) return;
-  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); nvHabPaso(S, dt); }
+  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); nvHabPaso(S, dt); nvGuionPaso(S, dt); }
   const dtE = dt * nvHabLento(S);   // Bullet time: los enemigos y sus balas, a cámara lenta
   nvEnemigos(S, dtE);
   if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
@@ -143,7 +144,7 @@ function nvRestos(S, dt) {
     const r = S.restos[i], d = Math.hypot(n.x - r.x, n.y - r.y);
     r.t += dt;
     if (d < im || r.t > 6) { const v = Math.min(1, dt * (d < im ? 7 : 0)); r.x += (n.x - r.x) * v; r.y += (n.y - r.y) * v; }
-    if (d < n.r + 10) { S.restos.splice(i, 1); S.stats.tragados++; nvSumaChatarra(S, r.v); }
+    if (d < n.r + 10) { S.restos.splice(i, 1); S.stats.tragados++; nvGuion(S, 'chatarra'); nvSumaChatarra(S, r.v); }
     else if (r.t > 25) S.restos.splice(i, 1);
   }
 }

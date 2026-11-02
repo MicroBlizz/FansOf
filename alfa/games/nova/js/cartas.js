@@ -98,13 +98,14 @@ function nvCartaRol(rol, pool) {
 const NV_ROLES = ['of', 'de', 'ut', 'azar'];
 function nvTresCartas(S) {
   let pool = nvCandidatas(S);
+  const todas = pool;
   const elegidas = [];
   for (const rol of NV_ROLES) {
     const c = nvCartaRol(rol, pool);
     if (!c) continue;
     c.rol = rol; elegidas.push(c); pool = pool.filter(x => x !== c && x.titulo !== c.titulo);
   }
-  return elegidas;
+  return S.guion ? nvGuionCartas(S, elegidas, todas) : elegidas;   // guion.js: la fusión sale segura en su paso
 }
 function nvAbrirCartas(S) {
   S.estado = 'cartas';
@@ -118,6 +119,7 @@ function nvElegirCarta(S, i) {
   const c = S.cartas && S.cartas[i];
   if (!c) return;
   c.aplicar(); nvSnd('nvElige', S);
+  nvGuion(S, 'carta'); if (c.tipo === 'fusion') nvGuion(S, 'fusion');   // guion.js
   S.stats.cartas.push(c.titulo);
   nvAjustaTamanos(S);
   S.cartas = null; S.estado = 'juego';

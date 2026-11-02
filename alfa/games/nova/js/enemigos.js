@@ -47,9 +47,9 @@ function nvSpawn(S, dt) {
   if (S.jefe || S.jefeSalto) return;
   const n = S.nave, carga = NV.Oleadas.carga(S.enem, n);
   for (const o of NV.Oleadas.tocan(NV_OLEADAS, S.o_t, S.t, dt, carga)) for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
-  if (NV.Oleadas.llegaJefe(S.capMuertos, S.t, NV_TIEMPO_JEFE)) {
+  if (NV.Oleadas.llegaJefe(S.capMuertos, S.t, nvTiempoJefe(S))) {   // guion.js: en la misión guiada llega antes
     S.jefeSalto = true;
-    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); });
+    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); nvGuionJefe(S, j); });
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
   }
 }
@@ -144,6 +144,7 @@ function nvCapitanSube(e) {
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);
+  nvGuion(S, 'baja');   // guion.js
   const grande = e.d.jefe || e.d.capitan || e.d.nido;
   if (grande) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
   if (e.d.capitan) S.capMuertos++;
@@ -174,6 +175,7 @@ function nvDanoNave(S, d) {
   if (n.esc && n.esc.hp > 0) { const a = Math.min(n.esc.hp, r); n.esc.hp -= a; r -= a; n.esc.sin = 3; }
   if (NVP.inmortal) r = 0;   // ?inmortal=1: escenario de pruebas de rendimiento, no te matan (los enemigos siguen disparando y el daño se cuenta)
   if (r > 0) nvSnd('nvGolpeNave', S);
+  r = nvGuionAguanta(S, r);   // guion.js: en la misión guiada no te destruyen
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;
   if (S.cap === 'twitchking' && !nvHabActua(S, 'directo')) S.kills = [];   // el hype se pierde al recibir daño (no en Directo)
   if (n.hp <= 0 && S.cap === 'necrolord' && !S.revivido) { S.revivido = true; n.hp = n.hpMax * 0.5; S.aviso = { t: 2.5, txt: tr('¡Renaces!') }; return; }

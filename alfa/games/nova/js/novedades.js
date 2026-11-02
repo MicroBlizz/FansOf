@@ -1,6 +1,7 @@
 // Fans of Nova · Novedades: registro de versiones (publicar.py busca aquí la entrada de cada versión).
 'use strict';
 const NEWS = [
+  { v: '0.3.35', real: ["<b>PRIMERA MISIÓN GUIADA</b>: al empezar una campaña, la primera misión te enseña a jugar mientras juegas, paso a paso y sin pausas: moverte, comer restos, elegir cartas, la habilidad activa, las fusiones y los combos. Si ya sabes, toca «Ya sé jugar»."], joke: ["Microblizz quería un tutorial de 40 páginas y Phony lo ha dejado en ocho frases."] },
   { v: '0.3.34', real: ["<b>HABILIDAD ACTIVA</b>: desde el rango 2 tienes un botón abajo a la derecha (en el ordenador, la barra espaciadora) con la habilidad de tu facción: Estampida, Legión, Directo, Gesta, Escudo de plasma, Tirada, Bullet time, Fuera del radar o Concierto. Tarda en recargarse: guárdala para un apuro o para el jefe."], joke: ["Microblizz ha pedido una habilidad activa para su nave y le han dado un botón que pone «reunión»."] },
   { v: '0.3.33', real: ["<b>COMBOS QUE SE APRENDEN JUGANDO</b>: la primera vez que haces un combo sale arriba su nombre y lo que hace. En el Arsenal, la página «Combos» enseña los que has descubierto y, de los que faltan, qué cargas juntar. Hay dos logros nuevos."], joke: ["Microblizz ha apuntado todos los combos en una libreta y Phony ya la ha perdido."] },
   { v: '0.3.32', real: ["<b>MEJORAS POR DENTRO</b>: preparamos una sorpresa para la comunidad en la galaxia. Aún no se ve."], joke: ["Microblizz ha visto movimientos raros en el mapa y Phony dice que son estrellas fugaces."] },

@@ -105,7 +105,7 @@ function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id]
 // Enseña el aviso `id` si no se ha visto (nunca con el bot de pruebas). Mientras está abierto, la partida no avanza.
 function nvTuto(...ids) {   // varios ids: se enseñan seguidos los que falten
   const v = nvTutoVisto(), faltan = ids.filter(id => NV_TUTO[id] && !v[id]);
-  if (NVP.auto || NVP.tuto || !faltan.length) return;
+  if ((NVP.S && NVP.S.guion) || NVP.auto || NVP.tuto || !faltan.length) return;
   const pags = []; for (const id of faltan) pags.push(...NV_TUTO[id]);
   nvTutoMuestra(pags, () => nvTutoMarca(faltan));
 }

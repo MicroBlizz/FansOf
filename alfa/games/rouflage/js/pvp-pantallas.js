@@ -101,34 +101,46 @@ function pvpVota(k) {
     if (r && r.sala && RFP.info && RFP.info.sala === r.sala && r.estado === 'espera') { RFP.info.votos = r.votos; RFP.info.faltan = r.faltan; pvpPintaBusca(); }
   }).catch(e => { RFP.votoError = RFRED.errorTexto(e); pvpPintaBusca(); setTimeout(() => { RFP.votoError = ''; if (!E('p-busca').hidden) pvpPintaBusca(); }, 3000); });
 }
+// recién abierta la sala: el anfitrión manda el modo de la última vez, con o sin talentos según el selector del PvP (talentos-pantalla.js)
+function pvpModoInicial() {
+  RFP.modoMandado = true; MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a.t = talEstado().pvp ? 1 : 0;
+  if (RFP.soloBots && MODO_ELEGIDO.mapa === MAPA_ESC.id) MODO_ELEGIDO.mapa = '';
+  if (!RFP.soloBots && !MODO_ELEGIDO.mapa && typeof MAPA_ESC !== 'undefined' && MAPAS[MAPA_ESC.id]) MODO_ELEGIDO.mapa = MAPA_ESC.id;      // sin mapa elegido (antes, AL AZAR): MI ESCENARIO
+  MODO_ELEGIDO.mapa = mapaSalaAnf(MODO_ELEGIDO.mapa); pvpMandaModo();
+}
+// el botón de cada luz y de cada regla de la sala, y las casillas de los extras (solo el anfitrión los toca)
+function pvpExtrasCrea(ex, soyAnf, otros) {
+  ex.dataset.anf = String(soyAnf);
+  // la luz: tres botones, siempre uno marcado (día, normal o apagón); debajo, los extras que se encienden aparte
+  ex.innerHTML = `<div class="luz-sala"><small>${esc(tr('LUZ'))}</small><div class="luz-botones">${LUCES_SALA.map(l => `<button type="button" class="luz-b" data-luz="${l.k}" ${soyAnf ? '' : 'disabled'}>${esc(tr(l.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto" id="luz-texto"></p></div>`
+    // las reglas de la sala (modos.js: AJUSTES_SALA), con los mismos botones que la luz
+    + Object.keys(AJUSTES_SALA).map(k => `<div class="luz-sala"><small>${esc(tr(AJUSTES_SALA[k].nombre))}</small><div class="luz-botones">${AJUSTES_SALA[k].opciones.map(o => `<button type="button" class="luz-b" data-aj="${k}" data-v="${o.v}" ${soyAnf ? '' : 'disabled'}>${esc(tr(o.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto">${esc(tr(AJUSTES_SALA[k].texto))}</p></div>`).join('')
+    + otros.map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
+  if (!soyAnf) return;
+  for (const b of ex.querySelectorAll('.luz-b[data-aj]')) b.onclick = () => { play('select'); MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a[b.dataset.aj] = +b.dataset.v; if (b.dataset.aj === 't') { talEstado().pvp = b.dataset.v === '1'; guardaPartida(); talPintaCola(); } pvpMandaModo(); };      // TALENTOS es el mismo selector que el de fuera
+  for (const b of ex.querySelectorAll('.luz-b[data-luz]')) b.onclick = () => { play('select'); for (const l of LUCES_SALA) if (l.k) delete MODO_ELEGIDO.x[l.k]; if (b.dataset.luz) MODO_ELEGIDO.x[b.dataset.luz] = 1; pvpMandaModo(); };
+  for (const k of otros) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
+}
+// marca lo que está puesto en el modo d
+function pvpExtrasMarca(ex, d, otros) {
+  const luz = luzDe(d);
+  for (const b of ex.querySelectorAll('.luz-b[data-aj]')) { const si = ajusteSala(d.a, b.dataset.aj) === +b.dataset.v; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
+  for (const b of ex.querySelectorAll('.luz-b[data-luz]')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
+  E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
+  for (const k of otros) { const on = !!(d.x && d.x[k]); E('x-' + k).checked = on; E('x-' + k).closest('label').classList.toggle('on', on); }
+}
 // el modo de la sala con amigos (modos.js): el anfitrión lo cambia con las flechas y los interruptores y el servidor se lo enseña a los demás
 function pvpPintaModo(ver, soyAnf) {
   const caja = E('busca-modo'); caja.hidden = !ver; if (!ver) return;
-  if (soyAnf && !RFP.modoMandado) { RFP.modoMandado = true; MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a.t = talEstado().pvp ? 1 : 0; if (RFP.soloBots && MODO_ELEGIDO.mapa === MAPA_ESC.id) MODO_ELEGIDO.mapa = ''; if (!RFP.soloBots && !MODO_ELEGIDO.mapa && typeof MAPA_ESC !== 'undefined' && MAPAS[MAPA_ESC.id]) MODO_ELEGIDO.mapa = MAPA_ESC.id; MODO_ELEGIDO.mapa = mapaSalaAnf(MODO_ELEGIDO.mapa); pvpMandaModo(); }      // sin mapa elegido (antes, AL AZAR): MI ESCENARIO      // recién abierta la sala: el modo de la última vez, con o sin talentos según el selector del PvP (talentos-pantalla.js)
+  if (soyAnf && !RFP.modoMandado) pvpModoInicial();
   const vp = RFP.info && !RFP.info.privada ? salaPublicaModo(RFP.info) : null, azar = !!vp && !MODOS[vp.d.m];      // BUSCAR PARTIDA: solo lo que de verdad se jugará (pvp-mapas.js)
   const d = soyAnf ? MODO_ELEGIDO : vp ? vp.d : (RFP.info && RFP.info.modo) || { m: 'normal', x: {} }, m = MODOS[d.m] ? d.m : 'normal';
   caja.classList.toggle('mira', !soyAnf);
   E('busca-modo-n').textContent = azar ? tr('AL AZAR') : tr(MODOS[m].nombre); E('busca-modo-t').textContent = [azar ? '' : tr(MODOS[m].texto), vp && !vp.sabe ? tr('Las reglas de la sala se sortean al empezar la partida.') : ''].filter(Boolean).join(' ');
   pvpPintaMapas(d, soyAnf);
   const ex = E('busca-extras'), otros = Object.keys(EXTRAS).filter(k => !EXTRAS[k].luz);
-  if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) {
-    ex.dataset.anf = String(soyAnf);
-    // la luz: tres botones, siempre uno marcado (día, normal o apagón); debajo, los extras que se encienden aparte
-    ex.innerHTML = `<div class="luz-sala"><small>${esc(tr('LUZ'))}</small><div class="luz-botones">${LUCES_SALA.map(l => `<button type="button" class="luz-b" data-luz="${l.k}" ${soyAnf ? '' : 'disabled'}>${esc(tr(l.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto" id="luz-texto"></p></div>`
-      // las reglas de la sala (modos.js: AJUSTES_SALA), con los mismos botones que la luz
-      + Object.keys(AJUSTES_SALA).map(k => `<div class="luz-sala"><small>${esc(tr(AJUSTES_SALA[k].nombre))}</small><div class="luz-botones">${AJUSTES_SALA[k].opciones.map(o => `<button type="button" class="luz-b" data-aj="${k}" data-v="${o.v}" ${soyAnf ? '' : 'disabled'}>${esc(tr(o.nombre))}</button>`).join('')}</div><p class="nota-sala modo-texto">${esc(tr(AJUSTES_SALA[k].texto))}</p></div>`).join('')
-      + otros.map(k => `<label><input type="checkbox" id="x-${k}" ${soyAnf ? '' : 'disabled'}><span>${esc(tr(EXTRAS[k].nombre))}<small>${esc(tr(EXTRAS[k].texto))}</small></span></label>`).join('');
-    if (soyAnf) {
-      for (const b of ex.querySelectorAll('.luz-b[data-aj]')) b.onclick = () => { play('select'); MODO_ELEGIDO.a = MODO_ELEGIDO.a || {}; MODO_ELEGIDO.a[b.dataset.aj] = +b.dataset.v; if (b.dataset.aj === 't') { talEstado().pvp = b.dataset.v === '1'; guardaPartida(); talPintaCola(); } pvpMandaModo(); };      // TALENTOS es el mismo selector que el de fuera
-      for (const b of ex.querySelectorAll('.luz-b[data-luz]')) b.onclick = () => { play('select'); for (const l of LUCES_SALA) if (l.k) delete MODO_ELEGIDO.x[l.k]; if (b.dataset.luz) MODO_ELEGIDO.x[b.dataset.luz] = 1; pvpMandaModo(); };
-      for (const k of otros) E('x-' + k).onchange = ev => { play('select'); if (ev.target.checked) MODO_ELEGIDO.x[k] = 1; else delete MODO_ELEGIDO.x[k]; pvpMandaModo(); };
-    }
-  }
-  const luz = luzDe(d);
-  for (const b of ex.querySelectorAll('.luz-b[data-aj]')) { const si = ajusteSala(d.a, b.dataset.aj) === +b.dataset.v; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
-  for (const b of ex.querySelectorAll('.luz-b[data-luz]')) { const si = b.dataset.luz === luz; b.classList.toggle('puesto', si); b.setAttribute('aria-pressed', String(si)); }
-  E('luz-texto').textContent = tr(LUCES_SALA.find(l => l.k === luz).texto);
-  for (const k of otros) { const on = !!(d.x && d.x[k]); E('x-' + k).checked = on; E('x-' + k).closest('label').classList.toggle('on', on); }
+  if (ex.dataset.anf !== String(soyAnf) || !ex.children.length) pvpExtrasCrea(ex, soyAnf, otros);
+  pvpExtrasMarca(ex, d, otros);
   salaPublicaFiltra(ex, vp);
 }
 function pvpMandaModo() {

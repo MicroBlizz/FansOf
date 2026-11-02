@@ -1,8 +1,8 @@
 {
- "build": 811,
- "hash": "ab19917",
- "fecha": "2026-11-02T00:50:15Z",
- "mensaje": "Nova 0.3.36: cosméticos de la galaxia (NV.Cosmeticos) en la nave",
+ "build": 812,
+ "hash": "3153ee5",
+ "fecha": "2026-11-02T00:58:18Z",
+ "mensaje": "Rouflage: guardia del comparador para el selector de modo de la sala y pvpPintaModo (34) partido en piezas con ella",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

@@ -9,7 +9,7 @@
 CINTAS.geometria = (() => {
   const nodos = CIUDAD.nodos;
   const HOLGURA = 0.5;            // de la calzada al borde del cruce (y a las paredes)
-  const GIRO_MAXIMO_INGLETE = 1.2;  // radianes: con más giro se corta y hace falta cruce
+  const GIRO_MAXIMO_INGLETE = PERFIL.GIRO_ESQUINA;  // radianes: con más giro se corta y hace falta cruce (el perfil le da plano)
   const SEPARACION = 6;           // metros como mucho entre secciones
 
   // --- vecindad en el grafo

@@ -1,0 +1,27 @@
+// Fans of Nova · Inglés: la habilidad activa de cada facción.
+'use strict';
+IDIOMA.add({
+  "Estampida": "Stampede",
+  "Embestida: los golpes no te dañan y dañas a lo que tocas": "Charge: hits don't hurt you and you damage whatever you touch",
+  "Legión": "Legion",
+  "Tres espíritus de los caídos luchan a tu lado": "Three spirits of the fallen fight at your side",
+  "Directo": "Live",
+  "Atrae a los enemigos cercanos y tu hype no se pierde": "Pulls nearby enemies in and your hype is not lost",
+  "Gesta": "Feat",
+  "Subes un rango durante unos segundos": "You go up one rank for a few seconds",
+  "Escudo de plasma": "Plasma shield",
+  "Escudo total y, al acabar, un pulso que apaga lo cercano": "Full shield and, when it ends, a pulse that shuts down anything nearby",
+  "Tirada": "Roll",
+  "Una de cuatro habilidades al azar, todas útiles": "One of four abilities at random, all of them useful",
+  "Bullet time": "Bullet time",
+  "Todo va a cámara lenta menos tus armas": "Everything goes in slow motion except your weapons",
+  "Fuera del radar": "Off the radar",
+  "Nadie te apunta durante unos segundos": "Nobody targets you for a few seconds",
+  "Concierto": "Concert",
+  "Una onda que empuja y aturde a todo lo que te rodea": "A wave that pushes back and stuns everything around you",
+  "HABILIDAD ACTIVA": "ACTIVE ABILITY",
+  "Desde el rango 2 tienes el botón redondo de abajo a la derecha (en el ordenador, la barra espaciadora).": "From rank 2 you get the round button at the bottom right (on a computer, the space bar).",
+  "Cada facción tiene la suya. Úsala para salir de un apuro o rematar a un jefe: tarda en recargarse.": "Each faction has its own. Use it to get out of trouble or finish off a boss: it takes a while to recharge.",
+  "<b>HABILIDAD ACTIVA</b>: desde el rango 2 tienes un botón abajo a la derecha (en el ordenador, la barra espaciadora) con la habilidad de tu facción: Estampida, Legión, Directo, Gesta, Escudo de plasma, Tirada, Bullet time, Fuera del radar o Concierto. Tarda en recargarse: guárdala para un apuro o para el jefe.": "<b>ACTIVE ABILITY</b>: from rank 2 you get a button at the bottom right (on a computer, the space bar) with your faction's ability: Stampede, Legion, Live, Feat, Plasma shield, Roll, Bullet time, Off the radar or Concert. It takes a while to recharge: save it for a tight spot or for the boss.",
+  "Microblizz ha pedido una habilidad activa para su nave y le han dado un botón que pone «reunión».": "Microblizz asked for an active ability for its ship and got a button that says «meeting».",
+});

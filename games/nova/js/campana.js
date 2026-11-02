@@ -1,5 +1,5 @@
 // Fans of Nova · Campaña: la galaxia de sectores y la nave capital que guarda lo ganado entre misiones (aleación, núcleo, sectores liberados).
-// Prototipo: se guarda en este navegador (localStorage). Diseño completo en docs/nova/mapa-y-facciones.md y docs/nova/economia.md.
+// Se guarda en este navegador (SAVE_KEY) y con la cuenta en la nube (core/js/sistema/cuenta.js lee SAVE y se avisa con CUENTA.cambio()). Diseño completo en docs/nova/mapa-y-facciones.md y docs/nova/economia.md.
 'use strict';
 const NV_CAMP_CLAVE = 'nova-campana-2';
 const NV_GAL_R = 7;   // rejilla hexagonal de radio 5, recortada en forma de decágono: 10 cuñas = 9 facciones + tu enclave rebelde
@@ -34,12 +34,7 @@ function nvHexXY(h) { return [Math.sqrt(3) * (h.q + h.r / 2), 1.5 * h.r]; }   //
 // Las 9 facciones se barajan; tu enclave rebelde ocupa la cuña opuesta a la de tu facción oficial, y tu base, su punta exterior.
 function nvGalaxia(semilla, faccion) {
   const rnd = nvAzar(semilla), tipos = ['planeta', 'cinturon', 'nebulosa', 'estacion', 'pecio'], out = {};
-  const orden = NV_FACCIONES.slice().sort(() => rnd() - 0.5), cunas = new Array(10), suya = orden.indexOf(faccion);
-  // 10 cuñas: las 9 en su orden barajado y el enclave insertado enfrente de la tuya
-  const sinYo = orden.filter(f => f !== faccion); let k = 0;
-  const iOf = suya < 0 ? 0 : suya, iReb = (iOf + 5) % 10;
-  for (let i = 0; i < 10; i++) cunas[i] = i === iOf ? faccion : i === iReb ? 'rebelde' : sinYo[k++];
-  const D = 8.4, ap = D * Math.cos(Math.PI / 10);   // radio y apotema del decágono
+  const cunas = nvGalaxiaCunas(rnd, faccion), ap = 8.4 * Math.cos(Math.PI / 10);   // radio 8,4: la apotema del decágono
   for (let q = -NV_GAL_R; q <= NV_GAL_R; q++) for (let r = -NV_GAL_R; r <= NV_GAL_R; r++) {
     const h = { q, r }; if (nvHexDist(h, { q: 0, r: 0 }) > NV_GAL_R) continue;
     const [x, y] = nvHexXY(h), dist = Math.hypot(x, y), ang = (Math.atan2(y, x) + Math.PI * 2.5) % (Math.PI * 2);   // 0 = arriba
@@ -48,32 +43,56 @@ function nvGalaxia(semilla, faccion) {
     const anillo = nvHexDist(h, { q: 0, r: 0 }), dueno = anillo <= 2 ? 'microblizz' : cunas[Math.floor(ang / (Math.PI / 5)) % 10];   // Microblizz: el núcleo y dos anillos alrededor
     out[nvHexClave(h)] = { q, r, x, y, dist, dueno, tipo: anillo === 0 ? 'nucleo' : tipos[Math.floor(rnd() * tipos.length)] };
   }
-  // la base: la celda más exterior del enclave, en el eje de su cuña
-  const ejeReb = (iReb + 0.5) * Math.PI / 5;
-  let base = null, mejor = -1e9;
-  for (const kk in out) { const s = out[kk]; if (s.dueno !== 'rebelde') continue; const ang = (Math.atan2(s.y, s.x) + Math.PI * 2.5) % (Math.PI * 2), v = s.dist - 3 * Math.abs(ang - ejeReb); if (v > mejor) { mejor = v; base = kk; } }
+  const base = nvGalaxiaBase(out, cunas.indexOf('rebelde'));
   out[base].base = true; out[base].tipo = 'estacion';
-  // peligro 1–5: por distancia a la base; el núcleo, siempre 5
-  let maxd = 1; for (const kk in out) maxd = Math.max(maxd, nvHexDist(out[kk], out[base]));
-  for (const kk in out) { const s = out[kk]; s.peligro = s.dueno === 'microblizz' ? 5 : Math.max(1, Math.min(5, Math.ceil(5 * nvHexDist(s, out[base]) / maxd))); }
+  nvGalaxiaPeligro(out, base);
   out._base = base;
   return out;
 }
+// 10 cuñas: las 9 facciones en su orden barajado y el enclave rebelde insertado enfrente de la tuya
+function nvGalaxiaCunas(rnd, faccion) {
+  const orden = NV_FACCIONES.slice().sort(() => rnd() - 0.5), cunas = new Array(10), suya = orden.indexOf(faccion);
+  const sinYo = orden.filter(f => f !== faccion), iOf = suya < 0 ? 0 : suya, iReb = (iOf + 5) % 10;
+  let k = 0;
+  for (let i = 0; i < 10; i++) cunas[i] = i === iOf ? faccion : i === iReb ? 'rebelde' : sinYo[k++];
+  return cunas;
+}
+// La base: la celda más exterior del enclave rebelde, en el eje de su cuña
+function nvGalaxiaBase(out, iReb) {
+  const ejeReb = (iReb + 0.5) * Math.PI / 5;
+  let base = null, mejor = -1e9;
+  for (const kk in out) { const s = out[kk]; if (s.dueno !== 'rebelde') continue; const ang = (Math.atan2(s.y, s.x) + Math.PI * 2.5) % (Math.PI * 2), v = s.dist - 3 * Math.abs(ang - ejeReb); if (v > mejor) { mejor = v; base = kk; } }
+  return base;
+}
+// Peligro 1–5: por distancia a la base; lo de Microblizz, siempre 5
+function nvGalaxiaPeligro(out, base) {
+  let maxd = 1; for (const kk in out) maxd = Math.max(maxd, nvHexDist(out[kk], out[base]));
+  for (const kk in out) { const s = out[kk]; s.peligro = s.dueno === 'microblizz' ? 5 : Math.max(1, Math.min(5, Math.ceil(5 * nvHexDist(s, out[base]) / maxd))); }
+}
 
-function nvCampNueva(prev) { return { v: 2, faccion: null, semilla: 1 + Math.floor(Math.random() * 1e9), aleacion: prev ? prev.aleacion || 0 : 0, mejoras: prev ? prev.mejoras || {} : {}, libres: [], misiones: prev ? prev.misiones || 0 : 0, victorias: prev ? prev.victorias || 0 : 0, fac: prev && prev.fac ? prev.fac : {} }; }   // fac: armas de facción desbloqueadas, para siempre
+function nvCampNueva(prev) { return NV.Campana.nueva(prev, Math.random); }   // fac: armas de facción desbloqueadas, para siempre (dominio/campana.js)
+// SAVE es la campaña misma (core la sube a la nube): un objeto fijo que se rellena al cargar, nunca se reemplaza.
+const SAVE = {};
+function nvCampCarga() {
+  let c = null, viejo = null;
+  try { c = JSON.parse(localStorage.getItem(SAVE_KEY) || localStorage.getItem(NV_CAMP_CLAVE) || 'null'); viejo = JSON.parse(localStorage.getItem('nova-campana-1') || 'null'); } catch (e) { c = null; }   // NV_CAMP_CLAVE: la clave de antes de la nube
+  for (const k in SAVE) delete SAVE[k];
+  Object.assign(SAVE, c && c.v === 2 ? c : nvCampNueva(viejo));   // de la v1 se conservan la aleación y las mejoras de la nave capital
+}
+nvCampCarga();
+// Lo que enseña la ventana de «¿qué partida quieres?» de la nube (core/js/sistema/cuenta.js) al comparar dos campañas
+function resumenPartida(s) { return NV.Campana.resumen(s); }
 function nvCamp() {
   if (NVP.camp) return NVP.camp;
-  let c = null, viejo = null;
-  try { c = JSON.parse(localStorage.getItem(NV_CAMP_CLAVE) || 'null'); viejo = JSON.parse(localStorage.getItem('nova-campana-1') || 'null'); } catch (e) { c = null; }
-  NVP.camp = c && c.v === 2 ? c : nvCampNueva(viejo);   // de la v1 se conservan la aleación y las mejoras de la nave capital
-  if (NVP.camp.faccion) nvCampGalaxia();
-  return NVP.camp;
+  NVP.camp = SAVE;
+  if (SAVE.faccion) nvCampGalaxia();
+  return SAVE;
 }
 function nvCampGalaxia() { NVP.gal = nvGalaxia(NVP.camp.semilla, NVP.camp.faccion); if (!NVP.camp.libres.length) NVP.camp.libres = [NVP.gal._base]; }
 function nvCampFaccion(f) { const c = nvCamp(); c.faccion = f; nvCampGalaxia(); nvCampGuarda(); }
 // De quién es un sector ahora: lo liberado pasa a ser de tu facción.
 function nvDuenoActual(k) { const s = NVP.gal[k]; return nvCamp().libres.includes(k) ? NVP.camp.faccion : s.dueno; }
-function nvCampGuarda() { try { localStorage.setItem(NV_CAMP_CLAVE, JSON.stringify(NVP.camp)); } catch (e) { /* sin almacenamiento: la campaña dura lo que la pestaña */ } }
+function nvCampGuarda() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { /* sin almacenamiento: la campaña dura lo que la pestaña */ } CUENTA.cambio(); }
 // Un sector se puede atacar si es vecino de uno liberado (o es tu base).
 function nvSectorAbierto(k) {
   const c = nvCamp(), s = NVP.gal && NVP.gal[k]; if (!s || k[0] === '_') return false;
@@ -106,18 +125,19 @@ function nvAplicaCampana(S) {
   if (S.tipoSector === 'pecio') S.chatExtra = 0.25;
   if (nvNivelCapital('astillero')) { const sl = nvRanuras(1, S)[1], C = NV_CASCOS[S.casco]; if (sl && !n.armas.some(w => w.slot === sl.id)) n.armas.push(nvArmaNueva(sl, C.arma[0], C.arma[1])); }
 }
-// Lo que paga una misión: por rango alcanzado y enemigos, más por peligro; perder paga la mitad.
-function nvAleacionMision(S) {
-  const base = 5 * S.nave.rango + 0.5 * S.stats.muertos, p = 1 + 0.3 * ((S.peligro || 1) - 1);
-  return Math.round(base * p * (S.estado === 'victoria' ? 1 : 0.5));
-}
+// Lo que paga una misión y cómo se cierra: reglas en dominio/campana.js (NV.Campana); aquí se avisa a retos, galaxia y nube.
+function nvAleacionMision(S) { return NV.Campana.aleacionMision(S.nave.rango, S.stats.muertos, S.peligro, S.estado === 'victoria'); }
 // Cierra la misión una sola vez: suma aleación y, si ganaste, libera el sector.
 function nvCierraMision(S) {
   if (S.cerrada || !NVP.camp) return 0;
   S.cerrada = true;
-  const c = nvCamp(), a = nvAleacionMision(S);
-  c.aleacion += a; c.misiones++;
-  if (S.estado === 'victoria') { c.victorias++; if (S.sector && !c.libres.includes(S.sector)) c.libres.push(S.sector); }
+  const c = nvCamp(), gano = S.estado === 'victoria';
+  const { aleacion: a, libero } = NV.Campana.cierraMision(c, { rango: S.nave.rango, muertos: S.stats.muertos, peligro: S.peligro, gano, sector: S.sector });
+  NV_RETOS.evento('mision'); NV_RETOS.evento('muertos', S.stats.muertos); NV_RETOS.maximo('rango', S.nave.rango);
+  if (gano) NV_RETOS.evento('victoria');
+  if (libero) NV_RETOS.evento('sector');
+  S.frente = nvFrenteAporta(S, libero);   // frente-nova.js: tu misión suma a tu patrón en la galaxia de la comunidad
+  nvCombosCierra(S, c);   // combos-ui.js: lo descubierto en la misión pasa a la campaña
   S.desbloqueos = nvFacCierra(S, c);   // facciones.js: rango máximo, campaña pasada y armas nuevas
   nvCampGuarda();
   S.aleacionGanada = a;

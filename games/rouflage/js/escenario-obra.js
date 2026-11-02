@@ -39,17 +39,36 @@ function lzCodifica(lz) {
   let r = '', i = 0; while (i < lz.g.length) { const ch = lz.g[i]; let n = 1; while (i + n < lz.g.length && lz.g[i + n] === ch) n++; r += (n > 1 ? n : '') + ch; i += n; }
   return lz.t + '|' + L + '|' + r + (lz.b != null || lz.c != null ? '|' + (lz.b != null ? lz.b : '') : '') + (lz.c != null ? '|' + lz.c : '');      // las marcas de BECARIOS y COLADOS (casillas), si hay
 }
+// las letras del texto («a:suelo.pared,b:…»): solo las de suelos y papeles que existen
+function lzLetras(Ls) {
+  const L = {};
+  for (const par of Ls ? Ls.split(',') : []) { const [k, v] = par.split(':'), [s, p] = (v || '').split('.'); if (k && k.length === 1 && SUELOS[s] && PAPELES[p]) L[k] = [s, p]; }
+  return L;
+}
+// la rejilla en tiradas («86#12a…»): un carácter por casilla
+function lzTiradas(r) {
+  const g = []; for (const m of r.matchAll(/(\d*)([^\d])/g)) { const n = Math.min(LIENZO.W * LIENZO.H, +m[1] || 1); for (let k = 0; k < n; k++) g.push(m[2]); }
+  return g;
+}
+// una letra sin definir, o fuera del rectángulo del tamaño, es pared
+function lzLimpia(lz) {
+  const { g, L } = lz;
+  for (let k = 0; k < g.length; k++) { const ch = g[k]; if (ch !== '#' && ch !== '+' && !L[ch]) g[k] = '#'; if (g[k] !== '#' && !lzDentro(lz, k % LIENZO.W, (k / LIENZO.W) | 0)) g[k] = '#'; }
+}
+// una marca de BECARIOS o COLADOS (casilla): solo si cae en suelo
+function lzMarca(txt, g) {
+  const n = +txt; return txt !== undefined && txt !== '' && Number.isInteger(n) && n >= 0 && n < g.length && g[n] !== '#' && g[n] !== '+' ? n : undefined;
+}
 function lzDecodifica(txt) {
   if (typeof txt !== 'string') return null;
   const [t, Ls, r, bs, cs] = txt.split('|'); if (r === undefined) return null;
-  const L = {};
-  for (const par of Ls ? Ls.split(',') : []) { const [k, v] = par.split(':'), [s, p] = (v || '').split('.'); if (k && k.length === 1 && SUELOS[s] && PAPELES[p]) L[k] = [s, p]; }
-  const g = []; for (const m of r.matchAll(/(\d*)([^\d])/g)) { const n = Math.min(LIENZO.W * LIENZO.H, +m[1] || 1); for (let k = 0; k < n; k++) g.push(m[2]); }
+  const L = lzLetras(Ls), g = lzTiradas(r);
   if (g.length !== LIENZO.W * LIENZO.H) return null;
   const lz = { t: Math.max(0, Math.min(LIENZO.TAM.length - 1, +t || 0)), g, L };
-  for (let k = 0; k < g.length; k++) { const ch = g[k]; if (ch !== '#' && ch !== '+' && !L[ch]) g[k] = '#'; if (g[k] !== '#' && !lzDentro(lz, k % LIENZO.W, (k / LIENZO.W) | 0)) g[k] = '#'; }      // nada fuera de su tamaño
-  const b = +bs; if (bs !== undefined && bs !== '' && Number.isInteger(b) && b >= 0 && b < g.length && g[b] !== '#' && g[b] !== '+') lz.b = b;
-  const c = +cs; if (cs !== undefined && cs !== '' && Number.isInteger(c) && c >= 0 && c < g.length && g[c] !== '#' && g[c] !== '+') lz.c = c;
+  lzLimpia(lz);
+  const b = lzMarca(bs, g), c = lzMarca(cs, g);
+  if (b !== undefined) lz.b = b;
+  if (c !== undefined) lz.c = c;
   return lz;
 }
 // el mundo de un lienzo: su plano en letras para escConstruye (escenario-mundo.js); el armario, en la primera casilla de suelo; apareces en la del medio

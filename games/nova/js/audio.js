@@ -31,6 +31,8 @@ Object.assign(SFX, {
   nvRango: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.14, 'triangle', 0.08, i * 0.07)),
   nvEvolucion: () => { [392, 523, 659, 784, 1046, 1318].forEach((f, i) => tone(f, f, 0.2, 'triangle', 0.09, i * 0.09)); noise(0.6, 0.12, 3000, 'highpass', 0.2); },
   nvCartas: () => { noise(0.2, 0.06, 5000, 'highpass'); tone(660, 1320, 0.2, 'sine', 0.06); tone(990, 1760, 0.2, 'sine', 0.05, 0.1); },
+  nvDescubre: () => { [659, 880, 1175].forEach((f, i) => tone(f, f * 1.5, 0.16, 'triangle', 0.07, i * 0.08)); noise(0.3, 0.06, 4000, 'highpass', 0.2); },
+  nvHabilidad: () => { tone(330, 990, 0.25, 'sawtooth', 0.06); noise(0.3, 0.1, 1800, 'bandpass', 0.05); tone(990, 1320, 0.15, 'triangle', 0.07, 0.2); },
   nvElige: () => { tone(880, 1320, 0.1, 'triangle', 0.08); tone(1320, 1760, 0.12, 'triangle', 0.07, 0.07); },
   nvEstacion: () => { tone(300, 180, 0.35, 'sine', 0.12); noise(0.3, 0.1, 600); tone(660, 660, 0.12, 'triangle', 0.06, 0.3); tone(880, 880, 0.2, 'triangle', 0.06, 0.4); },
 });

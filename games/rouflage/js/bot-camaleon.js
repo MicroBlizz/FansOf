@@ -23,48 +23,56 @@ function huye(e) {
   if (ponRumbo(e, p[0], p[1])) { b.estado = 'huir'; fxTexto(e.x, e.y - 70, tr('¡Ay!'), '#fff6ea'); play('pop'); } else congela(e);
 }
 
+// un estado por función; piensaCamaleon solo reparte
+function camaleonVa(e, dt) {         // camino de su escondite
+  const b = e.bot;
+  if (!b.camino && !ponRumbo(e, e.sitio[0], e.sitio[1])) { escondeYa(e); return; }
+  if (sigueCamino(e, dt)) { e.x = e.sitio[0]; e.y = e.sitio[1]; b.estado = 'pintar'; b.t = 0; b.tPinta = rand(1.8, 4); }
+}
+function camaleonPinta(e, dt) {      // un rato salpicando pintura y luego, de golpe, pintado y congelado
+  const b = e.bot;
+  e.vx = e.vy = 0;
+  if (!idaOculto(e) && Math.random() < dt * 10) fxGota(e.x + rand(-16, 16), e.y - rand(6, 46), cuentagotas(e.x + rand(-20, 20), e.y - rand(0, 50)));
+  if (b.t > b.tPinta) { pintaBotDados(e); e.pintado = true; congela(e); b.estado = 'quieto'; }
+}
+// contra un cazador de carne y hueso (tú, o en el PvP cualquier persona): si le tienen un rato en la luz y cerca, se le nota
+function camaleonNervios(e, dt) {
+  const b = e.bot, hs = J.cazadores.filter(h => !h.fuera && (h.jugador || h.humano));
+  if (!hs.length) return;
+  const cerca = hs.some(h => { const d = J.fase === 'caza' ? veCazador(h, e.x, e.y - 8) : 0; return d && d < 100; });
+  if (!cerca) { b.nervios = Math.max(0, b.nervios - dt * 0.25); return; }
+  b.nervios += dt * (0.2 + (1 - b.mana) * 0.42);
+  if (b.nervios > 0.5 && botGranada(e, dt)) b.nervios = 0;
+  if (b.nervios > 0.4 && Math.random() < dt * 2.4) { e.tiembla = 0.24; fxSudor(e); }
+  if (b.nervios >= 1 && b.huidas < 1 && b.mana < 0.7) huye(e);
+}
+// contra los becarios bot: si uno está a punto de pillarle, a veces sale corriendo
+function camaleonSospecha(e, dt) {
+  const b = e.bot;
+  let s = 0; for (const c of J.cazadores) if (c.bot && !c.fuera) s = Math.max(s, c.bot.sosp.get(e) || 0);
+  if (s > 0.6 && botGranada(e, dt)) b.nervios = 0;
+  else if (s > 0.72 && b.huidas < 1 && Math.random() < dt * 1.6 * (1 - b.mana)) huye(e);
+}
+function camaleonQuieto(e, dt) {
+  if (invisible(e)) e.bot.nervios = 0;      // invisible no suda ni tiembla: los becarios no le ven
+  else camaleonNervios(e, dt);
+  if (!invisible(e) && J.cazadores.some(c => c.bot)) camaleonSospecha(e, dt);
+}
+function camaleonHuye(e, dt) {
+  const b = e.bot;
+  if (sigueCamino(e, dt)) { e.prisa = 1; b.estado = 'pintar'; b.t = 0; b.tPinta = rand(1.4, 3); e.pintado = false; }      // al pararse en el sitio nuevo, se vuelve a pintar
+}
+function camaleonPasea(e, dt) {      // en la pantalla de título: paseos sin prisa por la plaza del mapa (la cafetería, el vestíbulo…)
+  const b = e.bot;
+  if (b.espera > 0) { b.espera -= dt; e.vx = e.vy = 0; return; }
+  if (!b.camino) { const p = sitioLibre({ sala: plazaTitulo(), intentos: 30 }); if (p) ponRumbo(e, p[0], p[1]); return; }
+  e.prisa = 0.55; if (sigueCamino(e, dt)) { b.camino = null; b.espera = rand(0.6, 2.6); }
+}
+const CAMALEON_ESTADOS = { ir: camaleonVa, pintar: camaleonPinta, quieto: camaleonQuieto, huir: camaleonHuye, pasea: camaleonPasea };
 function piensaCamaleon(e, dt) {
   const b = e.bot; b.t += dt; if (e.fuera) return;
-  switch (b.estado) {
-    case 'ir':          // camino de su escondite
-      if (!b.camino && !ponRumbo(e, e.sitio[0], e.sitio[1])) { escondeYa(e); break; }
-      if (sigueCamino(e, dt)) { e.x = e.sitio[0]; e.y = e.sitio[1]; b.estado = 'pintar'; b.t = 0; b.tPinta = rand(1.8, 4); }
-      break;
-    case 'pintar':      // un rato salpicando pintura y luego, de golpe, pintado y congelado
-      e.vx = e.vy = 0;
-      if (!idaOculto(e) && Math.random() < dt * 10) fxGota(e.x + rand(-16, 16), e.y - rand(6, 46), cuentagotas(e.x + rand(-20, 20), e.y - rand(0, 50)));
-      if (b.t > b.tPinta) { pintaBotDados(e); e.pintado = true; congela(e); b.estado = 'quieto'; }
-      break;
-    case 'quieto': {
-      // contra un cazador de carne y hueso (tú, o en el PvP cualquier persona): si le tienen un rato en la luz y cerca, se le nota
-      const hs = J.cazadores.filter(h => !h.fuera && (h.jugador || h.humano));
-      if (invisible(e)) b.nervios = 0;      // invisible no suda ni tiembla: los becarios no le ven
-      else if (hs.length) {
-        let cerca = false;
-        for (const h of hs) { const d = J.fase === 'caza' ? veCazador(h, e.x, e.y - 8) : 0; if (d && d < 100) cerca = true; }
-        if (cerca) {
-          b.nervios += dt * (0.2 + (1 - b.mana) * 0.42);
-          if (b.nervios > 0.5 && botGranada(e, dt)) b.nervios = 0;
-          if (b.nervios > 0.4 && Math.random() < dt * 2.4) { e.tiembla = 0.24; fxSudor(e); }
-          if (b.nervios >= 1 && b.huidas < 1 && b.mana < 0.7) huye(e);
-        } else b.nervios = Math.max(0, b.nervios - dt * 0.25);
-      }
-      if (!invisible(e) && J.cazadores.some(c => c.bot)) {   // contra los becarios bot: si uno está a punto de pillarle, a veces sale corriendo
-        let s = 0; for (const c of J.cazadores) if (c.bot && !c.fuera) s = Math.max(s, c.bot.sosp.get(e) || 0);
-        if (s > 0.6 && botGranada(e, dt)) b.nervios = 0;
-        else if (s > 0.72 && b.huidas < 1 && Math.random() < dt * 1.6 * (1 - b.mana)) huye(e);
-      }
-      break;
-    }
-    case 'huir':
-      if (sigueCamino(e, dt)) { e.prisa = 1; b.estado = 'pintar'; b.t = 0; b.tPinta = rand(1.4, 3); e.pintado = false; }      // al pararse en el sitio nuevo, se vuelve a pintar
-      break;
-    case 'pasea':       // en la pantalla de título: paseos sin prisa por la plaza del mapa (la cafetería, el vestíbulo…)
-      if (b.espera > 0) { b.espera -= dt; e.vx = e.vy = 0; break; }
-      if (!b.camino) { const p = sitioLibre({ sala: plazaTitulo(), intentos: 30 }); if (p) ponRumbo(e, p[0], p[1]); break; }
-      e.prisa = 0.55; if (sigueCamino(e, dt)) { b.camino = null; b.espera = rand(0.6, 2.6); }
-      break;
-  }
+  const estado = CAMALEON_ESTADOS[b.estado];
+  if (estado) estado(e, dt);
 }
 
 // la granada cegadora de la máquina: cuando cree que le van a pillar (nervioso, o un becario sospecha ya de él) la lanza, en vez de sudar y temblar; una por partida

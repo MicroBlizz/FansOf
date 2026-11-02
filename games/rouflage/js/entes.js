@@ -104,9 +104,9 @@ function descongela(e) { e.congelado = false; misionDescongela(e); }      // (mo
 function aguanta(e, dt, corre) {
   if (extraOn('aguante')) { e.aguante = 1; e.cansado = false; return; }      // el extra de la sala: sin cansancio
   if (e.invis > 0 || J.fase !== 'caza') corre = false;      // sin coste con la granada puesta ni antes de soltar a los cazadores (preparar y cuenta atrás)
-  e.aguante = limita(e.aguante + (corre ? -dt / REGLAS.aguante : dt / REGLAS.descanso), 0, 1);
-  if (!e.cansado && e.aguante <= 0) { e.cansado = true; if (e.jugador) play('deny'); }
-  else if (e.cansado && e.aguante >= 0.5) e.cansado = false;
+  const nuevo = RF.Aguante.paso(e, dt, corre, REGLAS);
+  e.aguante = nuevo.aguante; e.cansado = nuevo.cansado;
+  if (nuevo.seAgota && e.jugador) play('deny');
   if (e.cansado && corre && e.invis <= 0 && Math.random() < dt * 2) fxSudor(e);
 }
 // lo que «canta» un camaleón ahora mismo, de 0 (no se distingue) a 1 (se le ve entero): sin congelar se le ve el contorno

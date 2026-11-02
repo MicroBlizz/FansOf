@@ -14,7 +14,9 @@ function diarioEstado() {
   return SAVE.diario;
 }
 const diaHoy = () => (RFS.activo() ? gachaMadrid().fecha : fechaHoy());      // con servidor, el día es el de Madrid
-const diarioPuede = () => diarioEstado().ultimo !== diaHoy();
+// con servidor, el cobro se da y se enseña al momento y se manda por la cola sin conexión de core (cola.js); mientras esté sin mandar, hoy cuenta como recogido
+const diarioPendiente = () => (SAVE.rfDiarioCola || []).some(c => c.dia === diaHoy());
+const diarioPuede = () => diarioEstado().ultimo !== diaHoy() && !diarioPendiente();
 
 /* ---------- LA RACHA (bocetos 2 y 3, 23-10-2026): días seguidos recogiendo. La misma cuenta que el servidor (rf_diario, servidor/81-rouflage-racha.sql) ---------- */
 const RACHA = { porDia: 10, tope: 10, rescate: 50, hitos: [[7, 'titulos', 'puntual'], [14, 'titulos', 'fichaje'], [30, 'titulos', 'empleado']] };
@@ -61,10 +63,24 @@ function diarioDa(premio) {
   }
   return dicho.join(' + ');
 }
+// el cobro que espera en la cola: { k (la clave única, para que un reintento no pague dos veces), dia }. El servidor (rf_diario) cuenta uno por día y cuenta
+let DIARIO_COLA = null;
+function diarioCola() {
+  return DIARIO_COLA || (DIARIO_COLA = COLA.crea({
+    lista: () => SAVE.rfDiarioCola || (SAVE.rfDiarioCola = []),
+    guarda: guardaPartida,
+    envia: async c => { const est = await CUENTA.rpc('rf_diario', { p_clave: c.k }); RFS.aplica(est); },
+    // lo que el servidor rechaza no se arregla reintentando: se descarta y se pide el estado de verdad (si hoy ya estaba cobrado, así se ve)
+    definitivo: e => {
+      const m = String((e && e.message) || e), est = e && e.estado, firme = /todavia_no|repetida|clave_no_valida|sin_cuenta|Could not find|PGRST202/.test(m) || (est >= 400 && est < 500 && ![401, 403, 408, 429].includes(est));
+      if (firme) setTimeout(() => RFS.refresca().then(() => { diarioBoton(); if (!E('p-diario').hidden) diarioPinta(); }), 0);
+      return firme;
+    },
+  }));
+}
 function diarioRecoge() {
-  if (RFS.activo()) return diarioRecogeServidor();
   if (!diarioPuede()) return;
-  const s = diarioEstado(), hoy = fechaHoy(), mes = hoy.slice(0, 7);
+  const enRed = RFS.activo(), s = diarioEstado(), hoy = enRed ? diaHoy() : fechaHoy(), mes = hoy.slice(0, 7);
   // la racha, como en el servidor
   const rh = rachaHoy(), extras = [];
   if (rh.escudo) s.escudo = semanaDe(hoy);
@@ -83,7 +99,7 @@ function diarioRecoge() {
     const esp = diarioCosas(t => t === 'Diario · 20 días del mes').find(({ cat, it }) => !arTieneId(cat, it));
     extra = esp ? diarioDa({ cosas: [esp] }) : diarioDa({ gotas: DIARIO.porHito });
   }
-  misionEvento('diario'); guardaPartida(); play('select'); play('go');
+  misionEvento('diario'); guardaPartida(); if (enRed) diarioCola().pon({ k: 'diario-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), dia: hoy }).then(() => { diarioBoton(); if (!E('p-diario').hidden) diarioPinta(); }); play('select'); play('go');
   avisa(tr('Premio del día: {p}', { p: texto + (extra ? ' + ' + extra : '') }), 'bueno');
   diarioPinta(); diarioBoton();
   if (rh.perdida) setTimeout(() => abreRescate(rh.perdida), 900); else if (rh.r >= 2) avisosOfrece();

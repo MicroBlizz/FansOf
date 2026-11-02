@@ -57,38 +57,52 @@ function bocadilloAcaba(saltado) {
   BOC.lista = null; if (BOC.caja) { BOC.caja.hidden = true; BOC.foco.hidden = true; }
   if (saltado) play('select');
 }
+// esconde el bocadillo y el foco
+function bocadilloEsconde() { BOC.caja.hidden = BOC.foco.hidden = true; }
+// ¿no toca enseñar nada ahora? (partida en línea, fuera de partida, sin jugador o eliminado)
+function bocadilloFueraDeJuego() {
+  if (!(J.pvp || J.fase === 'titulo' || J.fase === 'fin' || J.fase === 'paseo' || !J.yo || J.yo.fuera)) return false;
+  if (J.fase === 'fin' || J.fase === 'titulo') BOC.lista = null;
+  bocadilloEsconde(); return true;
+}
+// texto del paso: el aviso, el contador de pasos y, si se cierra tocándolo, el VALE
+function bocadilloTexto(p) {
+  return tr(p.t) + `<small><span>${tr('{n} de {t}', { n: BOC.i + 1, t: BOC.lista.length })}</span>` + (p.seg ? `<i>${tr('VALE')}</i>` : '') + `<u class="salta">${tr('Saltar tutorial')}</u></small>`;
+}
+// dónde: encima del botón (o debajo, si no cabe); sin botón, en el centro
+function bocadilloColoca(el) {
+  const vw = innerWidth, vh = innerHeight, r = BOC.caja.getBoundingClientRect();
+  if (!el) {
+    BOC.foco.hidden = true; BOC.caja.classList.remove('abajo'); BOC.caja.classList.add('centro');
+    BOC.caja.style.left = (vw - r.width) / 2 + 'px'; BOC.caja.style.top = vh * 0.24 + 'px';
+    return;
+  }
+  const b = el.getBoundingClientRect();
+  Object.assign(BOC.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); BOC.foco.hidden = false;
+  const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
+  BOC.caja.style.left = x + 'px'; BOC.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
+  BOC.caja.classList.toggle('abajo', !arriba); BOC.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
+  BOC.caja.classList.remove('centro');
+}
 // cada fotograma (desde principal.js): coloca el bocadillo, mira si el paso está hecho y pasa al siguiente
 function bocadilloAvanza(dt) {
   if (!BOC.lista || !BOC.caja) return;
-  if (J.pvp || J.fase === 'titulo' || J.fase === 'fin' || J.fase === 'paseo' || !J.yo || J.yo.fuera) { if (J.fase === 'fin' || J.fase === 'titulo') { BOC.lista = null; } BOC.caja.hidden = BOC.foco.hidden = true; return; }
+  if (bocadilloFueraDeJuego()) return;
   const p = BOC.lista[BOC.i];
   const fase = J.fase === 'cuenta' ? 'prep' : J.fase;
   const tapado = J.pausa || document.querySelector('.pantalla:not([hidden])');
-  if (!p || p.fase !== fase || tapado) { BOC.caja.hidden = BOC.foco.hidden = true; if (p && p.fase === 'prep' && fase === 'caza') bocadilloSigue(); return; }
+  if (!p || p.fase !== fase || tapado) { bocadilloEsconde(); if (p && p.fase === 'prep' && fase === 'caza') bocadilloSigue(); return; }
   const el = p.a ? document.querySelector(p.a) : null, seVe = !p.a || (el && el.offsetParent);
-  if (!BOC.empezado) { if (!seVe) { BOC.caja.hidden = BOC.foco.hidden = true; return; } BOC.empezado = true; if (p.empieza) p.empieza(BOC.estado); }      // empieza cuando se ve su botón
+  if (!BOC.empezado) { if (!seVe) { bocadilloEsconde(); return; } BOC.empezado = true; if (p.empieza) p.empieza(BOC.estado); }      // empieza cuando se ve su botón
   // ¿ya está hecho? (se mira antes que si se ve el botón: al tocar PINTAR, por ejemplo, el botón se esconde)
   if (p.hecho && p.hecho(BOC.estado)) { play('select'); bocadilloSigue(); return; }
   BOC.t += dt;
   if (p.seg && BOC.t > p.seg) { bocadilloSigue(); return; }
-  if (!seVe) { BOC.caja.hidden = BOC.foco.hidden = true; return; }
-  // el texto, el paso y, si se cierra tocándolo, el aviso
-  const txt = tr(p.t) + `<small><span>${tr('{n} de {t}', { n: BOC.i + 1, t: BOC.lista.length })}</span>` + (p.seg ? `<i>${tr('VALE')}</i>` : '') + `<u class="salta">${tr('Saltar tutorial')}</u></small>`;
+  if (!seVe) { bocadilloEsconde(); return; }
+  const txt = bocadilloTexto(p);
   if (BOC.txt !== txt) { BOC.txt = txt; BOC.caja.innerHTML = txt; }
   BOC.caja.hidden = false;
-  // dónde: encima del botón (o debajo, si no cabe); sin botón, en el centro
-  const vw = innerWidth, vh = innerHeight, r = BOC.caja.getBoundingClientRect();
-  if (el) {
-    const b = el.getBoundingClientRect();
-    Object.assign(BOC.foco.style, { left: (b.x - 6) + 'px', top: (b.y - 6) + 'px', width: (b.width + 12) + 'px', height: (b.height + 12) + 'px' }); BOC.foco.hidden = false;
-    const x = limita(b.x + b.width / 2 - r.width / 2, 10, vw - r.width - 10), arriba = b.y - r.height - 26 > 8;
-    BOC.caja.style.left = x + 'px'; BOC.caja.style.top = limita(arriba ? b.y - r.height - 26 : b.y + b.height + 26, 8, vh - r.height - 8) + 'px';      // nunca fuera de la pantalla
-    BOC.caja.classList.toggle('abajo', !arriba); BOC.caja.style.setProperty('--flecha', limita(b.x + b.width / 2 - x, 22, r.width - 22) + 'px');
-  } else {
-    BOC.foco.hidden = true; BOC.caja.classList.remove('abajo'); BOC.caja.classList.add('centro');
-    BOC.caja.style.left = (vw - r.width) / 2 + 'px'; BOC.caja.style.top = vh * 0.24 + 'px';
-  }
-  if (el) BOC.caja.classList.remove('centro');
+  bocadilloColoca(el);
 }
 // OPCIONES › Repetir tutorial
 function bocadilloRepite() { SAVE.tuto = {}; guardaPartida(); avisa(tr('El tutorial saldrá otra vez en tu próxima partida contra bots'), 'bueno'); play('select'); }

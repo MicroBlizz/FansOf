@@ -1,6 +1,9 @@
 // Fans Of Decks · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma). Una clave por línea (así lo lee herramientas/idioma_claves.py).
 'use strict';
 IDIOMA.add({
+  // 0.2.22
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
+  "Microblizz ha puesto las cartas en fila y Phony ha pedido turno para barajar.": "Microblizz lined the cards up and Phony asked for a turn to shuffle.",
   // 0.2.21
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha guardado los anuncios bajo llave y Phony ha pedido una carta de patrocinio.": "Microblizz locked the ads away and Phony asked for a sponsorship card.",

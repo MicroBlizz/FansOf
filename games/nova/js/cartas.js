@@ -31,43 +31,53 @@ function nvPesoTendencia(S, portador, carga) {
   for (const w of S.nave.armas) { if (w.portador === portador) k *= 1.5; if (w.carga === carga) k *= 1.5; }
   return nvAura(S, 'remake') ? 1 + (Math.min(4, k) - 1) * 0.5 : Math.min(4, k);   // Remake (La Directora): el pool se inclina menos
 }
+// Todas las cartas que pueden salir ahora, con su peso. El orden importa (el sorteo recorre la lista): armas y defensas por ranura libre,
+// mejoras de arma, mejoras de sistema y fusiones. Las reglas de las fusiones están en dominio/cartas.js (NV.Cartas).
 function nvCandidatas(S) {
   const n = S.nave, out = [], libres = nvRanuras(n.rango, S).filter(r => !n.armas.some(w => w.slot === r.id));
   for (const sl of libres) {
-    if (sl.cara !== 'popa') for (const portador of NV_TIPOS_LIBRES) {   // el pool lleva todas las armas: las desbloqueadas y no retiradas en el Arsenal
-      const vars = nvVariantesPool(portador), suma = vars.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
-      for (const carga of nvCargasDe(portador)) {
-        const tend = nvPesoTendencia(S, portador, carga);
-        for (const v of vars) {
-          const R = NOVA_RAREZAS[v.rareza], V = v.variante ? NV_VAR_ID[v.variante] : null;
-          if (V && V.carga && V.carga !== carga) continue;   // las armas de facción tienen su carga propia
-          out.push({ tipo: 'arma', cat: 'of', ic: ['arma', v.variante || portador], rareza: v.rareza, peso: tend * nvAfinidad(S, portador) * (n.armas.length ? 0.35 : 1) * (R.peso * nvPesoPool(v.id) / suma) / NV_TIPOS_LIBRES.length / 2, carga, tendencia: tend > 1.4,
-            titulo: (V ? tr(V.nombre) : tr(NOVA_ARMAS.portadores[portador].nombre)) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
-            detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + nvTamNuevo(n.rango) + '). ' + tr(V ? V.efecto : NOVA_ARMAS.portadores[portador].fuerte),
-            aplicar: () => { const w = nvArmaNueva(sl, portador, carga, null, nvTamNuevo(n.rango)); if (V) w.variante = V.id; n.armas.push(w); } });
-        }
-      }
-    }
-    if (sl.tipos.includes('defensa')) {
-      if (!n.esc && nvEnPool('def:escudo')) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'escudo'], peso: 1.2 * nvPesoPool('def:escudo'), rareza: 'rara', carga: 'energia', titulo: tr('Escudo'), detalle: tr('Absorbe 200 de daño y se regenera si pasas 3 s sin que te peguen'), aplicar: () => { n.esc = { hp: 200, cap: 200, reg: 15, sin: 0 }; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'energia', nivel: 0, cd: 0 }); } });
-      if (!S.mejoras.blindaje && nvEnPool('def:blindaje')) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'blindaje'], peso: 1 * nvPesoPool('def:blindaje'), rareza: 'rara', carga: 'cinetica', titulo: tr('Blindaje'), detalle: tr('Recibes un 25 % menos de daño'), aplicar: () => { S.mejoras.blindaje = 0.25; n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga: 'cinetica', nivel: 0, cd: 0 }); } });
-    }
+    if (sl.cara !== 'popa') for (const portador of NV_TIPOS_LIBRES) nvCandidatasArma(S, sl, portador, out);   // el pool lleva todas las armas: las desbloqueadas y no retiradas en el Arsenal
+    if (sl.tipos.includes('defensa')) nvCandidatasDefensa(S, sl, out);
   }
   const act = n.armas.filter(w => w.portador !== 'defensa');
-  for (const w of act) if (w.nivel < NOVA_ARMAS.mejora.maxNiveles) out.push({ tipo: 'mejora', cat: 'of', ic: ['arma', w.portador], peso: 0.9, carga: w.carga, titulo: tr('Mejora') + ': ' + nvNombreArma(w), detalle: tr('+25 % de daño') + ' (' + (w.nivel + 1) + '/' + NOVA_ARMAS.mejora.maxNiveles + ')', aplicar: () => { w.nivel++; } });
-  const llenas = !out.some(o => o.tipo === 'arma');   // con todas las ranuras llenas, las mejoras pequeñas pasan a ser lo normal
-  for (const m of NV_MEJORAS_SISTEMA) if (nvEnPool('sis:' + m.id) && (S.sist[m.id] || 0) < m.max && !(m.id === 'robo' && !act.length)) out.push({ tipo: 'sistema', cat: m.cat, ic: ['sis', m.id], peso: (llenas ? 1.6 : 0.5) * nvPesoPool('sis:' + m.id), carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
-  // fusiones: portador de una + carga de la otra (mixta), o dos del mismo portador (doble)
-  for (const a of act) for (const b of act) {
-    if (a === b || a.fusion || b.fusion) continue;
-    for (const f of NOVA_ARMAS.fusiones) {
-      const ok = f.tipo === 'doble' ? (a.portador === f.portador && b.portador === f.portador && a.carga === f.carga) : (a.portador === f.portador && b.carga === f.carga && a.carga !== b.carga);
-      if (!ok) continue;
-      out.push({ tipo: 'fusion', cat: 'of', ic: ['sis', 'fusion'], peso: 3 * (nvAura(S, 'remake') ? 2 : 1), carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
-        aplicar: () => { n.armas.splice(n.armas.indexOf(b), 1); a.fusion = f; a.portador = f.portador; a.carga = f.carga; a.nivel = Math.max(a.nivel, b.nivel); if (b.tam === 'L' || (b.tam === 'M' && a.tam === 'S')) a.tam = b.tam; } });
+  for (const w of act) if (w.nivel < NOVA_ARMAS.mejora.maxNiveles) out.push(nvCartaMejora(w));
+  nvCandidatasSistema(S, act, !out.some(o => o.tipo === 'arma'), out);
+  for (const [a, b, f] of NV.Cartas.fusiones(act, NOVA_ARMAS.fusiones)) out.push(nvCartaFusion(S, a, b, f));
+  return out;
+}
+// Un arma nueva de ese portador en la ranura `sl`: una carta por carga y variante del pool
+function nvCandidatasArma(S, sl, portador, out) {
+  const n = S.nave, vars = nvVariantesPool(portador), suma = vars.reduce((t, v) => t + NOVA_RAREZAS[v.rareza].peso, 0);
+  for (const carga of nvCargasDe(portador)) {
+    const tend = nvPesoTendencia(S, portador, carga);
+    for (const v of vars) {
+      const R = NOVA_RAREZAS[v.rareza], V = v.variante ? NV_VAR_ID[v.variante] : null;
+      if (V && V.carga && V.carga !== carga) continue;   // las armas de facción tienen su carga propia
+      out.push({ tipo: 'arma', cat: 'of', ic: ['arma', v.variante || portador], rareza: v.rareza, peso: tend * nvAfinidad(S, portador) * (n.armas.length ? 0.35 : 1) * (R.peso * nvPesoPool(v.id) / suma) / NV_TIPOS_LIBRES.length / 2, carga, tendencia: tend > 1.4,
+        titulo: (V ? tr(V.nombre) : tr(NOVA_ARMAS.portadores[portador].nombre)) + ' · ' + tr(NOVA_ARMAS.cargas[carga].nombre),
+        detalle: tr('Nueva en la ranura') + ' ' + tr(sl.cara) + ' (' + nvTamNuevo(n.rango) + '). ' + tr(V ? V.efecto : NOVA_ARMAS.portadores[portador].fuerte),
+        aplicar: () => { const w = nvArmaNueva(sl, portador, carga, null, nvTamNuevo(n.rango)); if (V) w.variante = V.id; n.armas.push(w); } });
     }
   }
-  return out;
+}
+function nvCandidatasDefensa(S, sl, out) {
+  const n = S.nave, ocupa = carga => n.armas.push({ slot: sl.id, cara: sl.cara, tam: sl.tam, portador: 'defensa', carga, nivel: 0, cd: 0 });
+  if (!n.esc && nvEnPool('def:escudo')) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'escudo'], peso: 1.2 * nvPesoPool('def:escudo'), rareza: 'rara', carga: 'energia', titulo: tr('Escudo'), detalle: tr('Absorbe 200 de daño y se regenera si pasas 3 s sin que te peguen'), aplicar: () => { n.esc = { hp: 200, cap: 200, reg: 15, sin: 0 }; ocupa('energia'); } });
+  if (!S.mejoras.blindaje && nvEnPool('def:blindaje')) out.push({ tipo: 'defensa', cat: 'de', ic: ['sis', 'blindaje'], peso: 1 * nvPesoPool('def:blindaje'), rareza: 'rara', carga: 'cinetica', titulo: tr('Blindaje'), detalle: tr('Recibes un 25 % menos de daño'), aplicar: () => { S.mejoras.blindaje = 0.25; ocupa('cinetica'); } });
+}
+function nvCartaMejora(w) {
+  return { tipo: 'mejora', cat: 'of', ic: ['arma', w.portador], peso: 0.9, carga: w.carga, titulo: tr('Mejora') + ': ' + nvNombreArma(w), detalle: tr('+25 % de daño') + ' (' + (w.nivel + 1) + '/' + NOVA_ARMAS.mejora.maxNiveles + ')', aplicar: () => { w.nivel++; } };
+}
+// Mejoras pequeñas de sistema; con todas las ranuras llenas (`llenas`) pasan a ser lo normal
+function nvCandidatasSistema(S, act, llenas, out) {
+  for (const m of NV_MEJORAS_SISTEMA) {
+    if (!nvEnPool('sis:' + m.id) || (S.sist[m.id] || 0) >= m.max || (m.id === 'robo' && !act.length)) continue;
+    out.push({ tipo: 'sistema', cat: m.cat, ic: ['sis', m.id], peso: (llenas ? 1.6 : 0.5) * nvPesoPool('sis:' + m.id), carga: 'cinetica', titulo: tr(m.titulo), detalle: tr(m.detalle), aplicar: () => { m.aplicar(S); S.sist[m.id] = (S.sist[m.id] || 0) + 1; } });
+  }
+}
+function nvCartaFusion(S, a, b, f) {
+  return { tipo: 'fusion', cat: 'of', ic: ['sis', 'fusion'], peso: 3 * (nvAura(S, 'remake') ? 2 : 1), carga: f.carga, tendencia: true, titulo: tr('Fusión') + ': ' + tr(f.nombre), detalle: tr(f.efecto) + '. ' + tr('Ocupa una ranura y rinde lo de dos'),
+    aplicar: () => NV.Cartas.fusiona(S.nave.armas, a, b, f) };
 }
 // Cuatro cartas: una ofensiva, una defensiva, una de utilidad y una al azar.
 function nvElige(pool) {
@@ -88,13 +98,14 @@ function nvCartaRol(rol, pool) {
 const NV_ROLES = ['of', 'de', 'ut', 'azar'];
 function nvTresCartas(S) {
   let pool = nvCandidatas(S);
+  const todas = pool;
   const elegidas = [];
   for (const rol of NV_ROLES) {
     const c = nvCartaRol(rol, pool);
     if (!c) continue;
     c.rol = rol; elegidas.push(c); pool = pool.filter(x => x !== c && x.titulo !== c.titulo);
   }
-  return elegidas;
+  return S.guion ? nvGuionCartas(S, elegidas, todas) : elegidas;   // guion.js: la fusión sale segura en su paso
 }
 function nvAbrirCartas(S) {
   S.estado = 'cartas';
@@ -108,6 +119,7 @@ function nvElegirCarta(S, i) {
   const c = S.cartas && S.cartas[i];
   if (!c) return;
   c.aplicar(); nvSnd('nvElige', S);
+  nvGuion(S, 'carta'); if (c.tipo === 'fusion') nvGuion(S, 'fusion');   // guion.js
   S.stats.cartas.push(c.titulo);
   nvAjustaTamanos(S);
   S.cartas = null; S.estado = 'juego';

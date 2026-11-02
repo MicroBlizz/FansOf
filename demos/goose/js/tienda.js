@@ -1,5 +1,7 @@
 // Fans of Goose · La tienda de mejoras permanentes (se pagan con las monedas de las partidas y duran para siempre) y las Opciones
 // (música, efectos, vibración y la cuenta de core). Las cifras de la tienda están en CFG.tienda (js/ajustes.js).
+// Las mejoras de combate (propia: true) son de cada personaje: arriba de la lista se elige a quién se le compran (TIENDA_PERS) y
+// sus filas llevan el color de su capa; las demás («Para todos») valen para cualquiera (31-10-2026, Daniel).
 'use strict';
 
 const TIENDA_TXT = {
@@ -31,8 +33,9 @@ const TIENDA_TXT = {
 };
 // lo que cuesta algo de la Posada o del Mercader (con el Regateo)
 const precio = o => Math.max(1, Math.round(o.coste * (1 - 0.15 * nivelMejora('regateo'))));
-let TIENDA_PAG = 0, TIENDA_TAB = 'mejoras';   // la pestaña: 'mejoras' o 'aspecto' (js/aspecto.js)
-const costeMejora = m => Math.round(m.base * 1.5 * Math.pow(nivelMejora(m.id) + 1, 1.7));   // cada nivel cuesta bastante más (31-10-2026, Daniel)
+let TIENDA_PAG = 0, TIENDA_TAB = 'mejoras', TIENDA_PERS = null;   // la pestaña: 'mejoras' o 'aspecto' (js/aspecto.js); el personaje al que se compra
+const tiendaPers = () => { if (!TIENDA_PERS || !personajeAbierto(TIENDA_PERS)) TIENDA_PERS = personaje().id; return TIENDA_PERS; };
+const costeMejora = m => Math.round(m.base * 1.5 * Math.pow(nivelMejora(m.id, tiendaPers()) + 1, 1.7));   // cada nivel cuesta bastante más (31-10-2026, Daniel)
 
 function pintaTienda() {
   const W = PAN.W, H = PAN.H;
@@ -45,12 +48,21 @@ function pintaTienda() {
   pest(0, 'mejoras', tr('MEJORAS')); pest(1, 'aspecto', tr('ASPECTO')); pest(2, 'tesoro', tr('TESORO'), true);
   if (TIENDA_TAB === 'tesoro') { pintaTesoro(); botonVolverTienda(); return; }   // lo que se paga con euros (js/monetiza.js)
   if (TIENDA_TAB === 'aspecto') { pintaAspecto(); botonVolverTienda(); return; }
-  // de 5 en 5 por páginas (las filas no se pisan en ningún móvil)
-  const alto = 40, gap = 5, caben = Math.max(3, Math.min(CFG.tienda.length, Math.floor((H - 88 - 74) / (alto + gap)))), pags = Math.ceil(CFG.tienda.length / caben);
+  // arriba, a quién se le compran las propias: < Nombre > (solo los personajes abiertos)
+  const pid = tiendaPers(), P = PERSONAJES.find(x => x.id === pid), abiertos = PERSONAJES.filter(x => personajeAbierto(x.id));
+  const cambiaPers = d => { SONIDO.boton(); const i = abiertos.findIndex(x => x.id === pid); TIENDA_PERS = abiertos[(i + d + abiertos.length) % abiertos.length].id; };
+  caja(8, 84, W - 16, 26, 6, '#24120c', P.color, 1.4);
+  boton(11, 88, 18, 18, '<', '#e8742a', () => cambiaPers(-1), 9); boton(W - 29, 88, 18, 18, '>', '#e8742a', () => cambiaPers(1), 9);
+  pintaHeroeQuieto(44, 96, P.capa, 0.8);
+  texto2(tr(P.nombre), W / 2 + 6, 93, 7.5, P.color); texto2(tr('Mejoras propias: {a}/{b}', { a: propiasDe(pid), b: propiasMax() }), W / 2 + 6, 102.5, 5.5, '#c9b98a');
+  // de 5 en 5 por páginas (las filas no se pisan en ningún móvil): primero las propias, luego las de todos
+  const lista = CFG.tienda.filter(m => m.propia).concat(CFG.tienda.filter(m => !m.propia));
+  const alto = 40, gap = 5, caben = Math.max(3, Math.min(lista.length, Math.floor((H - 114 - 74) / (alto + gap)))), pags = Math.ceil(lista.length / caben);
   TIENDA_PAG = Math.min(TIENDA_PAG, pags - 1);
-  CFG.tienda.slice(TIENDA_PAG * caben, TIENDA_PAG * caben + caben).forEach((m, i) => {
-    const T = TIENDA_TXT[m.id], n = nivelMejora(m.id), y = 86 + i * (alto + gap), max = n >= m.max, coste = costeMejora(m), puede = !max && SAVE.monedas >= coste;
-    caja(8, y, W - 16, alto, 7, '#2a1610', max ? '#ffd34d' : '#6e4426', 1.4);
+  lista.slice(TIENDA_PAG * caben, TIENDA_PAG * caben + caben).forEach((m, i) => {
+    const T = TIENDA_TXT[m.id], n = nivelMejora(m.id, pid), y = 114 + i * (alto + gap), max = n >= m.max, coste = costeMejora(m), puede = !max && SAVE.monedas >= coste;
+    caja(8, y, W - 16, alto, 7, '#2a1610', max ? '#ffd34d' : m.propia ? P.color : '#6e4426', 1.4);
+    if (!m.propia) texto2(tr('Para todos'), W - 16, y + 5, 4.5, '#8a7a5a', 'right');
     icono(T.icono, 24, y + alto / 2 - 2, 13);
     texto2(tr(T.nombre), 40, y + 9, 8, '#fff4dc', 'left');
     parrafo(tr(T.desc), 40, y + 19, W - 112, 7, '#c9b98a');
@@ -71,11 +83,14 @@ function botonVolverTienda() {
   const W = PAN.W, H = PAN.H;
   boton(30, H - 40, W - 60, 26, tr('VOLVER'), '#2f74c0', () => { SONIDO.boton(); JUEGO.modo = JUEGO.fin ? 'fin' : 'portada'; if (JUEGO.fin) JUEGO.fin.t = 9; }, 10);
 }
+// cuántos niveles propios lleva un personaje y cuántos hay en total (para la ficha del selector y la tienda)
+const propiasMax = () => CFG.tienda.filter(m => m.propia).reduce((a, m) => a + m.max, 0);
+const propiasDe = pid => CFG.tienda.filter(m => m.propia).reduce((a, m) => a + nivelMejora(m.id, pid), 0);
 function compraMejora(m) {
-  const coste = costeMejora(m);
-  if (nivelMejora(m.id) >= m.max) return;
+  const pid = tiendaPers(), coste = costeMejora(m);
+  if (nivelMejora(m.id, pid) >= m.max) return;
   if (SAVE.monedas < coste) { toast(tr('Te faltan monedas: juega otra partida')); SONIDO.dadoMalo(); return; }
-  SAVE.monedas -= coste; SAVE.mejoras[m.id] = nivelMejora(m.id) + 1; guarda();
+  SAVE.monedas -= coste; ponMejora(m.id, nivelMejora(m.id, pid) + 1, pid); guarda();
   SONIDO.elige(false); destella('#ffd34d', 0.25);
 }
 

@@ -85,6 +85,7 @@ function pintaSelector(dt) {
   icono(ARMAS[sel.arma].icono, 20, fy + 12, 8);
   texto2(tr(sel.nombre) + ' · ' + tr(ARMAS[sel.arma].nombre), 30, fy + 12.5, 6.5, sel.color, 'left');
   parrafo(tr(sel.poder), 14, fy + 24, W - 28, 5.5, '#c9b98a');
+  texto2(tr('Mejoras propias: {a}/{b}', { a: propiasDe(sel.id), b: propiasMax() }), W - 14, fy + 12.5, 5.5, '#ffd34d', 'right');   // las suyas de la tienda (js/tienda.js)
   // la noche (solo en partida normal: con amigos se juega la Noche 1)
   let yb = fy + 48;
   if (!JUEGO.trasElegir) {

@@ -69,6 +69,37 @@ function rfpEnvia(dt) {
 }
 
 // ---------- lo que llega ----------
+// qué hace cada tipo de mensaje (m.t) al llegar; sl es la plaza de quien lo manda. Lo que manda solo el anfitrión se comprueba dentro
+const RFP_RECEPTORES = {
+  e: (sl, m) => rfpEstado(sl, m),
+  p: (sl, m) => rfpPiel(m),
+  s: (sl, m) => { const e = RFP.slots[m.s] && RFP.slots[m.s].ente; if (e && e !== J.yo && (m.de === m.s || m.de === RFP.host)) silba(e, !!m.fz); },
+  l: (sl, m) => { RFP.listos.add(m.de); },
+  rd: (sl, m) => rfpSeVa(m.de),
+  sz: (sl, m) => senueloRecibe(m.l),
+  gr: (sl, m) => { if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } },
+  gs: (sl, m) => rfpGestoRecibido(sl, m),
+  rp: (sl, m) => { if (m.r && sl.ente && !sl.ropaFiada) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); },
+  hv: (sl, m) => { if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); },
+  sn: (sl, m) => { if (m.de !== RFP.yo) rfpAplicaEstado(m); },
+  tq: (sl, m) => { if (RFP.soyHost) rfpTiroPedido(sl, m); },
+  cg: (sl, m) => { if (RFP.soyHost) rfpCartasExtra(sl, m); },
+  fp: (sl, m) => rfpPoderRecibido(m),
+  hb: (sl, m) => talRecibe(sl, m),      // las habilidades (talentos-partida.js)
+  tl: (sl, m) => talRecibe(sl, m),
+  fg: (sl, m) => fantasmaRecibido(sl, m),
+  bz: (sl, m) => balizaRecibida(m, sl),
+  ch: (sl, m) => chatRecibido(sl, m),      // una frase rápida del chat (chat-partida.js)
+  cf: (sl, m) => { if (typeof chatFinRecibido === 'function') chatFinRecibido(sl, m); },      // el chat del final de la ronda (chat-fin.js)
+  vt: (sl, m) => rfpVotoRecibido(m),
+  cv: (sl, m) => rfpChivatoRecibido(m, sl),
+  rv: (sl, m) => { if (m.de === RFP.host) rfpResucitaRecibido(m); },
+  // lo que manda el anfitrión a los demás: la máquina, la fase, los disparos y el final
+  a: (sl, m) => { if (m.de === RFP.host && !RFP.soyHost) rfpEstadoIA(m); },
+  fa: (sl, m) => { if (m.de === RFP.host && !RFP.soyHost) rfpSigueFase(m.f, m.r); },
+  t: (sl, m) => { if (m.de === RFP.host && !RFP.soyHost) rfpAplicaTiro(m); },
+  fn: (sl, m) => { if (m.de === RFP.host && !RFP.soyHost) rfpFinRecibido(m); },
+};
 function rfpRecibe(m) {
   if (!RFP.activo || !m || typeof m.de !== 'number') return;
   const sl = RFP.slots[m.de]; if (!sl || !sl.humano || m.de === RFP.yo) return;
@@ -77,34 +108,7 @@ function rfpRecibe(m) {
   if (RFP.ido[m.de]) return;
   if (sl.ausente && m.t !== 'hv') rfpVuelve(sl);      // si hablaba, no se había ido
   rfpActualizaAnfitrion();      // si el que escribe es de menor plaza que el anfitrión que tengo, ya es el anfitrión
-  switch (m.t) {
-    case 'e': rfpEstado(sl, m); break;
-    case 'p': rfpPiel(m); break;
-    case 's': { const e = RFP.slots[m.s] && RFP.slots[m.s].ente; if (e && e !== J.yo && (m.de === m.s || m.de === RFP.host)) silba(e, !!m.fz); break; }
-    case 'l': RFP.listos.add(m.de); break;
-    case 'rd': rfpSeVa(m.de); break;
-    case 'sz': senueloRecibe(m.l); break;
-    case 'gr': if (sl.ente && !sl.ente.fuera) { sl.ente.granada = 0; sl.ente.invis = Math.max(sl.ente.invis, GRANADA.dura); granadaEstalla(m.x, m.y, null, sl.ente.ropa && sl.ente.ropa.humo); } break;
-    case 'gs': rfpGestoRecibido(sl, m); break;
-    case 'rp': if (m.r && sl.ente && !sl.ropaFiada) { vistePartida(sl.ente, m.r); sl.ropaOk = true; } if (m.q) rfpMandaRopa(false); break;
-    case 'hv': if (RFP.soyHost && !RFP.vuelta) rfpMandaEstado(m.de); break;
-    case 'sn': if (m.de !== RFP.yo) rfpAplicaEstado(m); break;
-    case 'tq': if (RFP.soyHost) rfpTiroPedido(sl, m); break;
-    case 'cg': if (RFP.soyHost) rfpCartasExtra(sl, m); break;
-    case 'fp': rfpPoderRecibido(m); break;
-    case 'hb': case 'tl': talRecibe(sl, m); break;      // las habilidades (talentos-partida.js)
-    case 'fg': fantasmaRecibido(sl, m); break;
-    case 'bz': balizaRecibida(m, sl); break;
-    case 'ch': chatRecibido(sl, m); break;      // una frase rápida del chat (chat-partida.js)
-    case 'cf': if (typeof chatFinRecibido === 'function') chatFinRecibido(sl, m); break;      // el chat del final de la ronda (chat-fin.js)
-    case 'vt': rfpVotoRecibido(m); break;
-    case 'cv': rfpChivatoRecibido(m, sl); break;
-    case 'rv': if (m.de === RFP.host) rfpResucitaRecibido(m); break;
-    case 'a': if (m.de === RFP.host && !RFP.soyHost) rfpEstadoIA(m); break;
-    case 'fa': if (m.de === RFP.host && !RFP.soyHost) rfpSigueFase(m.f, m.r); break;
-    case 't': if (m.de === RFP.host && !RFP.soyHost) rfpAplicaTiro(m); break;
-    case 'fn': if (m.de === RFP.host && !RFP.soyHost) rfpFinRecibido(m); break;
-  }
+  if (Object.hasOwn(RFP_RECEPTORES, m.t)) RFP_RECEPTORES[m.t](sl, m);
 }
 // el estado de otro jugador: dónde está, si se mueve, si está congelado, hacia dónde mira y apunta
 function rfpEstado(sl, m) {
@@ -118,22 +122,32 @@ function rfpEstado(sl, m) {
     else if (!m.c && e.congelado) { descongela(e); RFP.listos.delete(sl.s); }
   }
 }
+// el estado de un personaje de la máquina: k = [plaza, x, y, mueve, mira, dir, congelado, marca, alerta, ciego, invisible]
+function rfpEstadoK(k) {
+  const e = RFP.slots[k[0]] && RFP.slots[k[0]].ente; if (!e || !e.remoto || e.humano || e.fuera) return;
+  const r = e.red || (e.red = {});
+  rfpFijaRed(r, k[1], k[2]); r.m = !!k[3]; r.mi = k[4]; r.di = k[5];
+  e.invis = k[10] || 0;      // la granada de la máquina: invisible también en los demás navegadores
+  if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
+  else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
+}
+// los despedidos que avisa el anfitrión
+function rfpAparta(fu) {
+  for (const s of fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
+}
+// las cartas de cada becario
+function rfpCartas(ba) {
+  for (const [s, b] of ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = (e === J.yo && (J.fase === 'prep' || J.fase === 'cuenta')) ? Math.max(e.balas, b) : b; }      // (tus cartas de las prácticas no se pisan con un aviso viejo del anfitrión)
+}
 // el estado de la máquina que manda el anfitrión, más el reloj, quién está fuera y las cartas de cada becario
 function rfpEstadoIA(m) {
   if (m.f && m.f !== J.fase) rfpSigueFase(m.f, m.r);
   if (typeof m.r === 'number' && J.fase !== 'fin') J.reloj = Math.abs(J.reloj - m.r) > 0.4 ? m.r : J.reloj + (m.r - J.reloj) * 0.3;
-  for (const k of m.ks || []) {
-    const e = RFP.slots[k[0]] && RFP.slots[k[0]].ente; if (!e || !e.remoto || e.humano || e.fuera) continue;
-    const r = e.red || (e.red = {});
-    rfpFijaRed(r, k[1], k[2]); r.m = !!k[3]; r.mi = k[4]; r.di = k[5];
-    e.invis = k[10] || 0;      // la granada de la máquina: invisible también en los demás navegadores
-    if (e.clase === 'camaleon') { if (k[6] && !e.congelado) { e.congelado = true; e.x = k[1]; e.y = k[2]; } else if (!k[6] && e.congelado) descongela(e); }
-    else { e.marca = MARCAS[k[7]] || ''; e.alerta = k[8] ? 1 : 0; e.ciego = k[9] ? 0.5 : 0; }
-  }
+  for (const k of m.ks || []) rfpEstadoK(k);
   if (m.cg) contagiaSlots(m.cg);      // Contagio: por si a alguien se le perdió el disparo
   silbatoRecibido(m.sb); boteRecibido(m.bt);
-  for (const s of m.fu || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && !e.fuera && !(e.contagio > 0)) rfpApartar(e); }
-  for (const [s, b] of m.ba || []) { const e = RFP.slots[s] && RFP.slots[s].ente; if (e && e.clase === 'cazador') e.balas = (e === J.yo && (J.fase === 'prep' || J.fase === 'cuenta')) ? Math.max(e.balas, b) : b; }      // (tus cartas de las prácticas no se pisan con un aviso viejo del anfitrión)
+  rfpAparta(m.fu);
+  rfpCartas(m.ba);
 }
 // el anfitrión cambia de fase: los demás lo siguen (siempre hacia delante)
 function rfpSigueFase(f, reloj) {

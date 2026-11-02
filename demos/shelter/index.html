@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b1020">
+<title>Fans of Shelter</title>
+<meta name="description" content="Fans of Shelter: de día exploras, picas y crafteas con CrazyBunny; de noche la horda invade el refugio y tu zanahoria gigante gira sola. Aguanta todas las noches que puedas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<!-- ?v= es la versión de la demo: súbela al publicar -->
+<script src="../../core/js/nucleo.js?v=0.1.0"></script>
+<script>NUCLEO.estilos('../../core/css/base.css', '../../core/css/menus.css')</script>
+<style>
+/* Fans of Shelter: un solo canvas en píxel art. Cada píxel del juego son k píxeles de pantalla (entero), sin suavizar. */
+html, body { height: 100%; margin: 0; background: #0b1020; overflow: hidden; overscroll-behavior: none; }
+body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
+#caja { position: fixed; inset: 0; padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); box-sizing: border-box; display: flex; align-items: center; justify-content: center; }
+#juego { display: block; touch-action: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+#carga { position: fixed; inset: 0; display: grid; place-items: center; color: #ffb347; font: 12px/1 'Press Start 2P', monospace; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="caja"><canvas id="juego" aria-label="Fans of Shelter"></canvas></div>
+<div id="carga">…</div>
+<div id="toast"></div>
+<script>
+NUCLEO.juego({
+  ligero: true,   // solo la cuenta, el idioma y el sonido de core: Shelter lleva su propia partida y sus pantallas
+  antes: ['js/ajustes.js'],
+  idioma: { en: ['idioma/en.js'] },
+  despues: [
+    '../../core/js/serie/canciones.js',
+    'js/guardado.js', 'js/pixel.js', 'js/sprites.js', 'js/sprites-2.js', 'js/mapa.js', 'js/escena.js', 'js/suelo.js', 'js/efectos.js', 'js/entrada.js',
+    'js/crafteo.js', 'js/refugio.js', 'js/armas.js', 'js/enemigos.js', 'js/jugador.js', 'js/noche.js', 'js/sonido.js',
+    'js/pantalla.js', 'js/pantalla-2.js', 'js/principal.js'],
+});
+</script>
+</body>
+</html>

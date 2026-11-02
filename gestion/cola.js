@@ -4,6 +4,7 @@
 // su cola no corre: se enseña como «+X al encender». Debajo, lo que habría costado generar con una API de pago los recursos de Generar recurso ya terminados, por tipo (imagen, canción, efecto, vídeo, 3D) y en euros.
 // No usa el servidor: lee la API de GitHub desde el navegador con un token fino de solo lectura que cada admin pega una vez (queda en el localStorage de ese navegador). Gemelo del mod de Claude herramientas/cola-actions/ (docs/guia/herramientas/cola-actions.md).
 // Al abrir enseña la última foto guardada (con su fecha) y refresca por detrás; «Releer todo» vuelve a leer GitHub entero y «Borrar lo guardado» empieza de cero.
+// Con la sesión de /gestion comparte el historial por Supabase (gestion_cola_*, servidor/106-gestion-cola.sql) y, abajo, crea y revoca las claves del mod de Claude.
 // Usa lo de gestion/index.html: esc() y $(); GESTION_NAV (nav.js) y COLA_DATOS (cola-datos.js: qué se lee de GitHub y qué se guarda en el navegador).
 'use strict';
 (() => {
@@ -13,6 +14,7 @@
   const CAMBIO = 1, PRECIO_CLAUDE = 20;   // 1 € = 1 $; 20 USD por millón de tokens de salida de Claude Opus 5.5 (oct. 2026), para pasar el coste de cada recurso a tokens
   try { ['fansof.gestion.cola.duraciones', 'fansof.gestion.cola.precision'].forEach(k => localStorage.removeItem(k)); } catch (e) { /* lo de antes de la cadencia (-2) y la casilla de precisión, ya quitada */ }
   let snap = null, vista = 'a', hasta = 0, cargando = false, ultimo = 0, confirmaBorrar = false;
+  let claves = null, claveNueva = '', revocando = null;   // claves del mod (vista Configuración)
   // Avance del refresco, para la barra de encima de «Refrescar»: llamadas a GitHub hechas frente a las previstas (el plan; cada parte se fija al saberse y hasta entonces vale la del refresco anterior).
   const PLAN = COLA_DATOS.K.plan;
   let avance = null;
@@ -51,10 +53,16 @@
     if (!r.ok) throw new Error(ruta.split('?')[0] + ' → ' + r.status);
     return r.json();
   }
+  // El historial compartido va con la sesión de /gestion (leerToken y rpc de index.html); cada llamada cuenta en la barra de avance.
+  function servidor() {
+    const t = leerToken(); if (!t) return null;
+    const contar = async p => { try { return await p; } finally { if (avance) { avance.hechas++; pintaAvance(); } } };
+    return { leer: d => contar(rpc('gestion_cola_leer', { p_token: t, p_desde: d })), guardar: (r, c) => contar(rpc('gestion_cola_guardar', { p_token: t, p_runs: r, p_carriles: c })) };
+  }
   async function actualizar(todo) {
     const antes = leer(PLAN, {});
-    avance = { hechas: 0, desde: Date.now(), plan: { fijas: 4, paginas: antes.paginas || 1, sueltos: antes.sueltos || 0, historial: antes.historial || 0, jobs: antes.jobs || 0, artefactos: antes.artefactos || 0, activos: antes.activos || 0 } };
-    const r = await COLA_DATOS.actualizar({ gh, prever, leer, guardar, todo });
+    avance = { hechas: 0, desde: Date.now(), plan: { fijas: 4, servidor: antes.servidor || 0, paginas: antes.paginas || 1, sueltos: antes.sueltos || 0, historial: antes.historial || 0, jobs: antes.jobs || 0, artefactos: antes.artefactos || 0, activos: antes.activos || 0 } };
+    const r = await COLA_DATOS.actualizar({ gh, prever, leer, guardar, todo, servidor: servidor() });
     guardar(PLAN, avance.plan);
     return r;
   }
@@ -135,6 +143,7 @@
     .cl-b{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:2px solid var(--texto);font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:var(--panel);min-width:0}.cl-b:last-child{border-right:0}
     .cl-b.run{background:var(--ok-fondo);color:var(--ok)}.cl-b small{font:11px var(--mono);font-weight:400;color:var(--suave)}.estado.esp{background:var(--debil-fondo);color:var(--debil)}
     .cl-refr{display:inline-flex;flex-direction:column;gap:3px;align-items:stretch;min-width:7em}.cl-prog-txt{font:11px var(--mono);color:var(--suave);text-align:center;white-space:nowrap}
+    ${COLA_CONFIG.css}
     .cl-prog{display:block;height:6px;border:1px solid var(--texto);border-radius:4px;overflow:hidden;background:var(--bg)}.cl-prog b{display:block;height:100%;width:0;background:var(--acento);transition:width .3s}`;
   document.head.appendChild(estilo);
   function pinta() {
@@ -146,17 +155,20 @@
     let cuerpo = '';
     if (t && snap) {
       const F = calcular(ahora);
-      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
-        + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span><button type="button" id="cl-todo" title="Vuelve a leer GitHub entero y sobreescribe lo guardado por id, sin borrar lo demás">Releer todo</button>`
-        + `<button type="button" class="enlace" id="cl-borra">Borrar lo guardado</button><button type="button" class="enlace" id="cl-olvida">Olvidar token</button></div>`
-        + (confirmaBorrar ? `<p class="aviso">¿Borrar todo lo guardado de la cola en este navegador (runs, medias, recursos y la última foto)? El token y el límite se quedan. Después se vuelve a leer desde cero. <button type="button" class="fuerte" id="cl-borra-si">Sí, borrar</button> <button type="button" id="cl-borra-no">No</button></p>` : '')
-        + `<div class="cl-bar"><label class="cl-op">Límite semanal de referencia (tokens, opcional) <input type="number" id="cl-lim" min="0" step="1000" value="${limite() || ''}" style="width:9em"></label></div>`
-        + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '') + '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
+      cuerpo = `<div class="cl-bar">` + [['a', 'A · Lista'], ['b', 'B · Carriles'], ['c', 'C · Resumen'], ['cfg', 'Configuración']].map(([v, n]) => `<button type="button" data-v="${v}" class="${vista === v ? 'on' : ''}">${n}</button>`).join('')
+        + `<span class="cl-refr">${barraAvance()}<button type="button" id="cl-ref">Refrescar</button></span></div>`
+        + (snap.aviso ? `<p class="aviso">${esc(snap.aviso)}</p>` : '')
+        + (vista === 'cfg' ? COLA_CONFIG.html({ limite: limite(), snap, claves, claveNueva, revocando, confirmaBorrar, fecha }) : '<div class="lista">' + (vista === 'a' ? vistaA(F, ahora) : vista === 'b' ? vistaB(F, ahora) : vistaC(F, ahora)) + '</div>' + pieRecursos()
         + `<div class="meta">Datos de <b>${fecha(snap.actualizado)}</b> (hace ${fmt(Math.max(0, (ahora - snap.actualizado) / 1000))})${cargando ? ' · leyendo GitHub…' : ''}${snap.pendientes > 0 ? ' · calculando medias (' + snap.pendientes + ' pendientes)' : ''}`
-        + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}</div>`;
-    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}</div>`;
+        + `${snap.guardados ? ' · ' + snap.guardados + ' runs terminados guardados' + (snap.historialCompleto ? '' : ' (bajando el historial)') : ''}${snap.compartido ? ' · historial compartido' : ''}</div>`);
+    } else if (t) cuerpo = `<div class="vacio"><b>${cargando ? 'Leyendo la cola…' : 'Sin datos todavía'}</b>${cargando ? `<span class="cl-refr">${barraAvance()}</span>` : ''}<div class="cl-bar"><button type="button" id="cl-olvida">Olvidar token</button></div></div>`;
     pan.innerHTML = cab + clave + `<div class="aviso" id="cl-aviso" role="alert"></div>` + cuerpo;
     pintaAvance();
+  }
+  // Claves para el mod de Claude (vista Configuración, cola-config.js): el mod no tiene sesión de /gestion (caduca a las 8 h), así que usa una clave larga que se crea aquí.
+  async function cargarClaves() {
+    try { claves = await rpc('gestion_cola_claves', { p_token: leerToken() }); } catch (e) { claves = []; $('cl-aviso').textContent = 'No pude leer las claves: ' + e.message; }
+    pinta();
   }
   async function cargar(fuerza, todo) {
     if (!token() || cargando) { pinta(); return; }
@@ -169,12 +181,19 @@
   }
   pan.onclick = ev => {
     const b = ev.target.closest('button'); if (!b) return;
-    if (b.dataset.v) { vista = b.dataset.v; pinta(); }
+    if (b.dataset.v) { vista = b.dataset.v; pinta(); if (vista === 'cfg' && claves === null) cargarClaves(); }
+    else if (b.dataset.copia) { navigator.clipboard.writeText(b.dataset.copia).then(() => { b.textContent = 'Copiado'; }, () => { $('cl-aviso').textContent = 'No pude copiar: selecciónalo y cópialo a mano.'; }); }
     else if (b.id === 'cl-olvida') { try { localStorage.removeItem(CLAVE); } catch (e) { /* nada */ } snap = null; pinta(); }
     else if (b.id === 'cl-ref' || b.id === 'cl-todo') {
       const falta = Math.ceil((hasta - Date.now()) / 1000);
       if (falta > 0) { $('cl-aviso').textContent = 'Espera ' + falta + ' s para volver a refrescar.'; return; }
       hasta = Date.now() + ENFRIA; cargar(true, b.id === 'cl-todo');
+    }
+    else if (b.dataset.revoca) {
+      const id = Number(b.dataset.revoca);
+      if (revocando !== id) { revocando = id; pinta(); return; }
+      revocando = null;
+      rpc('gestion_cola_clave_revocar', { p_token: leerToken(), p_id: id }).then(cargarClaves, e => { $('cl-aviso').textContent = 'No pude revocar la clave: ' + e.message; });
     }
     else if (b.id === 'cl-borra' || b.id === 'cl-borra-no') { confirmaBorrar = b.id === 'cl-borra'; pinta(); }
     else if (b.id === 'cl-borra-si') { confirmaBorrar = false; if (cargando) return; COLA_DATOS.borrar(); snap = null; ultimo = 0; cargar(true); }
@@ -183,7 +202,13 @@
     if (ev.target.id === 'cl-lim') { guardar(LIM, Number(ev.target.value) || 0); pinta(); }
   };
   pan.onsubmit = ev => {
-    ev.preventDefault(); const v = $('cl-tok').value.trim(); if (!v) return;
+    ev.preventDefault();
+    if (ev.target.id === 'cl-clave-nueva') {
+      const n = $('cl-clave-nombre').value.trim(); if (!n) return;
+      rpc('gestion_cola_clave_crear', { p_token: leerToken(), p_nombre: n }).then(k => { claveNueva = k; cargarClaves(); }, e => { $('cl-aviso').textContent = 'No pude crear la clave: ' + e.message; });
+      return;
+    }
+    const v = $('cl-tok').value.trim(); if (!v) return;
     try { localStorage.setItem(CLAVE, v); } catch (e) { $('cl-aviso').textContent = 'Este navegador no deja guardar el token.'; return; }
     cargar(true);
   };

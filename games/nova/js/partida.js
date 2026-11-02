@@ -51,7 +51,7 @@ function nvNuevaPartida(casco, cap, ofi) {
     nave: { x: 0, y: 0, vx: 0, vy: 0, ang: 0, rango: 1, hp: C.hp, hpMax: C.hp, vel: C.vel, escala: NV_ESCALA_NAVE, armas: [], esc: null, golpeado: 0, r: 0 },
     enem: [], saltos: [], proy: [], eproy: [], rayosE: [], restos: [], parts: [], nums: [], fx: [], o_t: {}, mejoras: {}, sist: {},
     chat: 0, cam: { x: 0, y: 0 },
-    stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, cartas: [], rangoT: [] }
+    stats: { dano: 0, mayor: 0, muertos: 0, tragados: 0, recibido: 0, reacciones: {}, combos: {}, cartas: [], rangoT: [] }, nuevos: [], colaDescubre: [], descubre: null
   };
   S.nave.rAncho = alas ? alas.ancho / 2 : 200;   // semienvergadura en unidades de nave: el hitbox sale del dibujo
   S.nave.r = 0.42 * S.nave.rAncho * S.nave.escala;
@@ -64,6 +64,9 @@ function nvNuevaPartida(casco, cap, ofi) {
   S.cap = cap; S.ofi = ofi; S.kills = [];
   nvAplicaTripulacion(S);
   nvAplicaCampana(S);
+  nvHabInicio(S);   // habilidad.js: la habilidad activa de tu facción
+  nvGuionInicio(S);   // guion.js: la primera misión guiada
+  nvAspectoInicio(S);   // cosmeticos-dibujo.js: los cosméticos que llevas puestos
   return S;
 }
 
@@ -71,24 +74,25 @@ function nvNuevaPartida(casco, cap, ofi) {
 function nvPaso(S, dt) {
   const fin = S.estado === 'final';   // los segundos del final: el mundo sigue, tú ya no
   if (S.estado !== 'juego' && !fin) return;
-  if (!fin) S.t += dt;
-  const n = S.nave;
-  if (!fin) { nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); }
-  nvEnemigos(S, dt);
+  if (!fin) { S.t += dt; nvMueve(S, dt); nvSpawn(S, dt); nvSaltos(S, dt); nvMundo(S, dt); nvTripulacionPaso(S); nvLiderPaso(S, dt); nvHabPaso(S, dt); nvGuionPaso(S, dt); }
+  const dtE = dt * nvHabLento(S);   // Bullet time: los enemigos y sus balas, a cámara lenta
+  nvEnemigos(S, dtE);
   if (!fin) { nvSumaChatarra(S, 0); nvArmas(S, dt); }
   nvProyectiles(S, dt);
-  nvProyectilesEnemigos(S, dt);
+  nvProyectilesEnemigos(S, dtE);
   if (!fin) nvRestos(S, dt);
   nvPasoTrozos(S, dt);
-  if (n.esc) { if (n.esc.sin > 0) n.esc.sin -= dt; else n.esc.hp = Math.min(n.esc.cap, n.esc.hp + n.esc.reg * dt); }
+  NV.Nave.recupera(S.nave, S.mejoras, dt);
   nvEnvuelve(S);
-  if (n.golpeado > 0) n.golpeado -= dt;
-  if (S.mejoras.regen) n.hp = Math.min(n.hpMax, n.hp + S.mejoras.regen * dt);
+  nvPasoEfectos(S, dt);
+  if (fin) { nvPasoFinal(S, dt); return; }
+  S.cam.x += (S.nave.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (S.nave.y - S.cam.y) * Math.min(1, dt * 6);   // cámara suave
+}
+// Chispas, números y destellos: se mueven y se apagan; y el aviso de arriba caduca
+function nvPasoEfectos(S, dt) {
   for (const l of [S.parts, S.nums, S.fx]) for (let i = l.length - 1; i >= 0; i--) { const o = l[i]; o.t -= dt; if (o.vx) { o.x += o.vx * dt; o.y += o.vy * dt; } else if (o.txt) o.y -= 30 * nvZ(S) * dt; if (o.t <= 0) l.splice(i, 1); }
   if (S.aviso && (S.aviso.t -= dt) <= 0) S.aviso = null;
-  // cámara suave
-  if (fin) { nvPasoFinal(S, dt); return; }
-  S.cam.x += (n.x - S.cam.x) * Math.min(1, dt * 6); S.cam.y += (n.y - S.cam.y) * Math.min(1, dt * 6);
+  nvDescubrePaso(S, dt);   // combos-ui.js: la franja de combo nuevo
 }
 function nvMueve(S, dt) {
   const n = S.nave, e = NVP.entrada;
@@ -99,7 +103,7 @@ function nvMueve(S, dt) {
   if (NVP.teclas.ArrowDown || NVP.teclas.s) iy += 1;
   if (NVP.auto) { const g = nvBotMeta(S); ix = g[0]; iy = g[1]; }   // bot de pruebas
   const m = Math.hypot(ix, iy); if (m > 1) { ix /= m; iy /= m; }
-  const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1);
+  const vmax = (n.vel + 2.5 * Math.min(30, n.rango - 1)) * (S.mejoras.vel || 1) * nvHabVel(S);
   n.vx += (ix * vmax - n.vx) * Math.min(1, dt * 5); n.vy += (iy * vmax - n.vy) * Math.min(1, dt * 5);
   n.x += n.vx * dt; n.y += n.vy * dt;
   // la proa mira hacia donde te mueves (parado, se queda como estaba); las armas son las que apuntan a los enemigos
@@ -110,24 +114,30 @@ function nvMueve(S, dt) {
 }
 // Bot de pruebas: va a la estación si tiene chatarra, si no a lo comestible más cercano (rocas, pecios, nidos, capitanes) y huye si le queda poca vida.
 function nvBotMeta(S) {
-  const n = S.nave;
-  let mejor = null, md = 1e12;
-  const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
-  let huir = null;
-  for (const e of S.enem) {
-    if (e.muerto) continue;
-    if (!e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r) huir = e;
-    else if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
-    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
-  }
-  for (const r of S.restos) mira(r.x, r.y, 0.5);
-  if (huir) { const hx = n.x - huir.x, hy = n.y - huir.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
-  for (const p of S.pecios) mira(p.x, p.y, 0.7);
-  if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
-  if (S.jefe && !S.jefe.muerto) mejor = [S.jefe.x, S.jefe.y];
+  const n = S.nave, peligro = nvBotUltimoPeligro(S);   // si hay varios, huye del último de la lista, como siempre
+  if (peligro) { const hx = n.x - peligro.x, hy = n.y - peligro.y, hd = Math.hypot(hx, hy) || 1; return [hx / hd, hy / hd]; }
+  const mejor = S.jefe && !S.jefe.muerto ? [S.jefe.x, S.jefe.y] : nvBotObjetivo(S);
   if (!mejor) return [Math.cos(S.t * 0.6), Math.sin(S.t * 0.7)];
   const dx = mejor[0] - n.x, dy = mejor[1] - n.y, d = Math.hypot(dx, dy) || 1, k = n.hp < n.hpMax * 0.25 ? -1 : 1;
   return [dx / d * k, dy / d * k];
+}
+// Un enemigo que saca 3 rangos al bot y está cerca: hay que huir (los jefes no, a esos se les planta cara)
+function nvBotPeligro(n, e) { return !e.d.pasivo && e.rango >= n.rango + 3 && !e.d.jefe && Math.hypot(e.x - n.x, e.y - n.y) < 450 + e.r; }
+function nvBotUltimoPeligro(S) { let p = null; for (const e of S.enem) if (!e.muerto && nvBotPeligro(S.nave, e)) p = e; return p; }
+// Lo más apetecible (distancia × peso): rocas, naves armadas de su tamaño, chatarra, pecios y, con dinero, estaciones
+function nvBotObjetivo(S) {
+  const n = S.nave;
+  let mejor = null, md = 1e12;
+  const mira = (x, y, peso) => { const d = (Math.hypot(x - n.x, y - n.y) + 1) * peso; if (d < md) { md = d; mejor = [x, y]; } };
+  for (const e of S.enem) {
+    if (e.muerto || nvBotPeligro(n, e)) continue;
+    if (e.d.pasivo === 1) mira(e.x, e.y, 1.3);
+    else if (!e.d.pasivo && !e.d.nido && e.armas && e.rango <= n.rango + 1) mira(e.x, e.y, 1.1);   // da caza a las naves que mantienen la distancia
+  }
+  for (const r of S.restos) mira(r.x, r.y, 0.5);
+  for (const p of S.pecios) mira(p.x, p.y, 0.7);
+  if (S.cartera >= 90) for (const st of S.estaciones) mira(st.x, st.y, 1);
+  return mejor;
 }
 function nvRestos(S, dt) {
   const n = S.nave, im = 70 + 45 * (S.mejoras.iman || 0) + 6 * n.rango;
@@ -135,7 +145,7 @@ function nvRestos(S, dt) {
     const r = S.restos[i], d = Math.hypot(n.x - r.x, n.y - r.y);
     r.t += dt;
     if (d < im || r.t > 6) { const v = Math.min(1, dt * (d < im ? 7 : 0)); r.x += (n.x - r.x) * v; r.y += (n.y - r.y) * v; }
-    if (d < n.r + 10) { S.restos.splice(i, 1); S.stats.tragados++; nvSumaChatarra(S, r.v); }
+    if (d < n.r + 10) { S.restos.splice(i, 1); S.stats.tragados++; nvGuion(S, 'chatarra'); nvSumaChatarra(S, r.v); }
     else if (r.t > 25) S.restos.splice(i, 1);
   }
 }

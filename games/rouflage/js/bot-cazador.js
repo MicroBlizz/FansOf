@@ -21,7 +21,7 @@ function veCazador(e, x, y) {
   return seVen(ox, oy, x, y) ? Math.max(d, 0.01) : 0;
 }
 // lo que tiene que «cantar» un camaleón (de 0 a 1) para que un becario lo distinga a esa distancia; si va atento (tras un silbido), algo menos
-const minimoVista = (d, atento) => entre(REGLAS.vistaCerca, REGLAS.vistaLejos, Math.min(1, d / REGLAS.luzLargo)) * (atento > 1 ? 0.85 : 1);
+const minimoVista = (d, atento) => RF.Sospecha.minimoVista(d, atento, REGLAS.vistaCerca, REGLAS.vistaLejos, REGLAS.luzLargo);
 // cada vez que un becario se fija en alguien lo hace con mejor o peor ojo (de 0,55 a 1,45 veces el mínimo): así el mismo camuflaje
 // unas veces cuela y otras no, y no hay una cifra mágica a partir de la cual seas invisible
 const ojoPara = (b, k) => { let o = b.ojo.get(k); if (!o) { o = rand(0.55, 1.45); b.ojo.set(k, o); } return o; };
@@ -113,81 +113,98 @@ function disparaBot(e) {
   }
 }
 
+// cada becario piensa una vez por fotograma: según su estado hace lo que toca (cada estado, en su función)
 function piensaCazador(e, dt) {
   const b = e.bot; b.t += dt;
   if (b.estado === 'espera' || e.fuera) return;
-  if (e.balas <= 0 && b.estado !== 'fuera') {   // sin cartas de despido: se vuelve a Recursos Humanos
-    b.estado = 'fuera'; e.marca = ''; e.alerta = 0; e.prisa = 0.8;
-    const s = SALIDA_CAZADORES[J.cazadores.indexOf(e) % SALIDA_CAZADORES.length]; ponRumbo(e, s[0], s[1]);
-    avisa(tr('{a} se ha quedado sin cartas de despido').replace('{a}', e.nombre), 'bueno');
-  }
+  if (e.balas <= 0 && b.estado !== 'fuera') seQuedaSinCartas(e);
   if (b.estado === 'fuera') { if (!sigueCamino(e, dt)) giraHacia(e, Math.atan2(e.vy, e.vx), dt); return; }
-
-  // lo que ve: la sospecha de cada camaleón que tiene en la luz sube hacia su «nivel» (lo que canta entre el mínimo para verlo desde ahí)
-  let top = null, topS = 0;
+  const { top, topS } = miraAlrededor(e, dt);
+  const algo = top && topS >= 0.5;
+  switch (b.estado) {
+    case 'ronda': return estadoRonda(e, dt, algo, top);
+    case 'mira': return estadoMira(e, algo, top);
+    case 'investiga': return estadoInvestiga(e, dt, algo, top);
+    case 'sospecha': return estadoSospecha(e, dt);
+    case 'apunta': return estadoApunta(e, dt);
+    case 'confuso': return estadoConfuso(e);
+  }
+}
+// sin cartas de despido: se vuelve a Recursos Humanos
+function seQuedaSinCartas(e) {
+  const b = e.bot;
+  b.estado = 'fuera'; e.marca = ''; e.alerta = 0; e.prisa = 0.8;
+  const s = SALIDA_CAZADORES[J.cazadores.indexOf(e) % SALIDA_CAZADORES.length]; ponRumbo(e, s[0], s[1]);
+  avisa(tr('{a} se ha quedado sin cartas de despido').replace('{a}', e.nombre), 'bueno');
+}
+// lo que ve: la sospecha de cada camaleón que tiene en la luz sube hacia su «nivel» (lo que canta entre el mínimo para verlo desde ahí).
+// Devuelve el camaleón más sospechoso y cuánto
+function miraAlrededor(e, dt) {
+  const b = e.bot; let top = null, topS = 0;
   for (const k of J.camaleones) {
     if (k === e.cuerpo) continue;      // Ida y vuelta: su propio cuerpo no lo busca
-    if (k.invis > 0) { b.sosp.delete(k); continue; }
-    if (k.fuera) { b.sosp.delete(k); continue; }
-    const ign = b.ignora.get(k) || 0; if (ign > 0) { b.ignora.set(k, ign - dt); if (k.hielo >= 0.85) continue; b.ignora.set(k, 0); }   // si se mueve, deja de ignorarlo
-    const d = veCazador(e, k.x, k.y - 8); let s = b.sosp.get(k) || 0;
-    if (d) {
-      k.enVista = true;
-      let nivel = loQueCanta(k) / (minimoVista(d, b.atento) * (k.hielo < 0.85 ? 1 : ojoPara(b, k))) * (e.uv > 0 && k.hielo >= 0.85 ? TALENTOS.uvVista : 1);      // la linterna ultravioleta (talentos) ve mejor la pintura
-      if (k.hielo >= 0.85 && d < 45) nivel = Math.max(nivel, 0.35 + 0.8 * (1 - d / 45));   // pegado a él, hasta el mejor camuflaje se nota (el contorno, la sombra)
-      if (k.hielo >= 0.85 && k.camo >= 100 && d < 110) nivel = Math.max(nivel, 0.5 + 0.8 * (1 - d / 110));   // al 100 % le brilla el contorno, como al cazador de carne y hueso (dibujo.js): se acerca a mirar y, de cerca, lo ve
-      if (nivel > s) s = Math.min(1.3, s + (nivel - s) * (k.hielo < 0.85 && !(k.gato > 0) ? 3 : 1.4) * dt + 0.02 * dt);
-      else s = Math.max(nivel, s - 0.2 * dt);
-      if (d < 14 && e.moviendo && !b.pisados.has(k)) { b.pisados.add(k); s = Math.max(s, 0.55); }   // se ha tropezado con él: se para a mirar
-    } else s = Math.max(0, s - 0.14 * dt);
+    if (k.invis > 0 || k.fuera) { b.sosp.delete(k); continue; }
+    const ign = b.ignora.get(k) || 0; if (ign > 0) { b.ignora.set(k, ign - dt); if (k.hielo >= RF.Sospecha.CONTORNO) continue; b.ignora.set(k, 0); }   // si se mueve, deja de ignorarlo
+    const s = sospechaHacia(e, k, dt);
     b.sosp.set(k, s);
     if (s > topS) { topS = s; top = k; }
   }
-  const algo = top && topS >= 0.5;
-
-  switch (b.estado) {
-    case 'ronda':
-      if (algo) { sospecha(e, top); break; }
-      if (senueloCerca(e, dt)) break;
-      if (!b.puntos.length) nuevaSala(e);
-      if (!b.camino) { const p = b.puntos[0]; if (!p || !ponRumbo(e, p[0], p[1])) { b.puntos.shift(); break; } }
-      if (sigueCamino(e, dt)) { b.puntos.shift(); b.camino = null; mira(e, 1.5, 1.25); } else giraHacia(e, Math.atan2(e.vy, e.vx), dt);
-      break;
-    case 'mira':        // parado, barriendo con la linterna a un lado y a otro
-      if (algo) { sospecha(e, top); break; }
-      e.dir = b.base + Math.sin(b.t * 2.4) * b.ancho;
-      if (b.t > b.dura) { b.estado = 'ronda'; b.t = 0; b.atento = 1; e.marca = ''; e.alerta = 0; }
-      break;
-    case 'investiga':   // va a donde ha oído el silbido y, al llegar, mira bien alrededor
-      e.prisa = 1.12;
-      if (algo) { sospecha(e, top); break; }
-      if (sigueCamino(e, dt)) { e.prisa = 1; b.puntos = puntosDe(salaDe(e.x, e.y), 1); b.camino = null; mira(e, 2.8, 1.9); } else giraHacia(e, Math.atan2(e.vy, e.vx), dt);
-      break;
-    case 'sospecha': {  // algo le ha llamado la atención: se acerca sin quitarle la luz de encima
-      const k = b.objetivo;
-      if (!k || k.fuera) { ronda(e); break; }
-      // va hacia el último sitio donde lo ha visto: si el otro dobla una esquina, no sabe por dónde ha tirado
-      const loVe = k.senuelo || veCazador(e, k.x, k.y - 8) > 0; if (loVe) b.visto = [k.x, k.y];
-      const [vx, vy] = b.visto, s = k.senuelo ? b.t / 1.5 : b.sosp.get(k) || 0, d = lejos(e.x, e.y, vx, vy), corre = !k.senuelo && k.hielo < 0.85;
-      e.marca = '?'; e.alerta = 0.5;
-      giraHacia(e, Math.atan2(vy - 8 - (e.y - 6), vx - e.x), dt, 9);
-      if (d > (corre ? 44 : 70)) { b.tRuta -= dt; if (b.tRuta <= 0) { ponRumbo(e, vx, vy); b.tRuta = 0.45; } sigueCamino(e, dt); } else { e.vx = e.vy = 0; b.tCerca += dt; }
-      if (loVe && s >= 1 && e.enfria <= 0 && d < REGLAS.alcance) { b.estado = 'apunta'; b.t = 0; b.punto = null; e.marca = '!'; e.alerta = 1; e.vx = e.vy = 0; if (k.jugador) play('hype'); break; }
-      if (!loVe && d <= 46) { b.sosp.set(k, 0.3); mira(e, 2.2, 1.9); break; }   // ha llegado y ya no está: mira alrededor y sigue la ronda
-      // falsa alarma: lo ha mirado bien de cerca un rato y no lo distingue; lo deja estar una temporada
-      if ((b.tCerca > (k.senuelo ? 9 : 2.8) || b.t > 11) && s < 1) { if (!k.senuelo) { b.ignora.set(k, 14); b.sosp.set(k, 0.2); b.ojo.delete(k); if (k.jugador && k.congelado) fxTexto(k.x, k.y - 72, tr('¡Uf!'), '#7ee04a'); } ronda(e); }
-      break;
-    }
-    case 'apunta': {    // medio segundo de aviso (el «!»): quien sale corriendo a tiempo puede librarse
-      const k = b.objetivo; e.vx = e.vy = 0;
-      if (!k || k.fuera) { ronda(e); break; }
-      giraHacia(e, Math.atan2(k.y - 8 - (e.y - 6), k.x - e.x), dt, 10);
-      if (b.t < 0.55 || !b.punto) b.punto = [k.x, k.y - (k.senuelo ? 14 : 24)];
-      if (b.t >= 0.75) disparaBot(e);
-      break;
-    }
-    case 'confuso':     // tras disparar: un momento parado antes de seguir la ronda
-      e.vx = e.vy = 0; if (b.t > 1.7) ronda(e);
-      break;
-  }
+  return { top, topS };
 }
+// la sospecha nueva del becario hacia el camaleón k (la que tenía, subida o bajada según lo vea o no)
+function sospechaHacia(e, k, dt) {
+  const b = e.bot, d = veCazador(e, k.x, k.y - 8); let s = b.sosp.get(k) || 0;
+  if (!d) return RF.Sospecha.pierde(s, dt);
+  k.enVista = true;
+  const nivel = RF.Sospecha.nivel({ d, canta: loQueCanta(k), minimo: minimoVista(d, b.atento), ojo: k.hielo >= RF.Sospecha.CONTORNO ? ojoPara(b, k) : 1, hielo: k.hielo, camo: k.camo, uv: e.uv > 0 ? TALENTOS.uvVista : 1 });      // la linterna ultravioleta (talentos) ve mejor la pintura
+  s = RF.Sospecha.avanza(s, nivel, k.hielo < RF.Sospecha.CONTORNO && !(k.gato > 0), dt);
+  if (d < 14 && e.moviendo && !b.pisados.has(k)) { b.pisados.add(k); s = RF.Sospecha.tropieza(s); }   // se ha tropezado con él: se para a mirar
+  return s;
+}
+function estadoRonda(e, dt, algo, top) {
+  const b = e.bot;
+  if (algo) { sospecha(e, top); return; }
+  if (senueloCerca(e, dt)) return;
+  if (!b.puntos.length) nuevaSala(e);
+  if (!b.camino) { const p = b.puntos[0]; if (!p || !ponRumbo(e, p[0], p[1])) { b.puntos.shift(); return; } }
+  if (sigueCamino(e, dt)) { b.puntos.shift(); b.camino = null; mira(e, 1.5, 1.25); } else giraHacia(e, Math.atan2(e.vy, e.vx), dt);
+}
+// parado, barriendo con la linterna a un lado y a otro
+function estadoMira(e, algo, top) {
+  const b = e.bot;
+  if (algo) { sospecha(e, top); return; }
+  e.dir = b.base + Math.sin(b.t * 2.4) * b.ancho;
+  if (b.t > b.dura) { b.estado = 'ronda'; b.t = 0; b.atento = 1; e.marca = ''; e.alerta = 0; }
+}
+// va a donde ha oído el silbido y, al llegar, mira bien alrededor
+function estadoInvestiga(e, dt, algo, top) {
+  const b = e.bot;
+  e.prisa = 1.12;
+  if (algo) { sospecha(e, top); return; }
+  if (sigueCamino(e, dt)) { e.prisa = 1; b.puntos = puntosDe(salaDe(e.x, e.y), 1); b.camino = null; mira(e, 2.8, 1.9); } else giraHacia(e, Math.atan2(e.vy, e.vx), dt);
+}
+// algo le ha llamado la atención: se acerca sin quitarle la luz de encima
+function estadoSospecha(e, dt) {
+  const b = e.bot, k = b.objetivo;
+  if (!k || k.fuera) { ronda(e); return; }
+  // va hacia el último sitio donde lo ha visto: si el otro dobla una esquina, no sabe por dónde ha tirado
+  const loVe = k.senuelo || veCazador(e, k.x, k.y - 8) > 0; if (loVe) b.visto = [k.x, k.y];
+  const [vx, vy] = b.visto, s = k.senuelo ? b.t / 1.5 : b.sosp.get(k) || 0, d = lejos(e.x, e.y, vx, vy), corre = !k.senuelo && k.hielo < 0.85;
+  e.marca = '?'; e.alerta = 0.5;
+  giraHacia(e, Math.atan2(vy - 8 - (e.y - 6), vx - e.x), dt, 9);
+  if (d > (corre ? 44 : 70)) { b.tRuta -= dt; if (b.tRuta <= 0) { ponRumbo(e, vx, vy); b.tRuta = 0.45; } sigueCamino(e, dt); } else { e.vx = e.vy = 0; b.tCerca += dt; }
+  if (loVe && s >= 1 && e.enfria <= 0 && d < REGLAS.alcance) { b.estado = 'apunta'; b.t = 0; b.punto = null; e.marca = '!'; e.alerta = 1; e.vx = e.vy = 0; if (k.jugador) play('hype'); return; }
+  if (!loVe && d <= 46) { b.sosp.set(k, 0.3); mira(e, 2.2, 1.9); return; }   // ha llegado y ya no está: mira alrededor y sigue la ronda
+  // falsa alarma: lo ha mirado bien de cerca un rato y no lo distingue; lo deja estar una temporada
+  if ((b.tCerca > (k.senuelo ? 9 : 2.8) || b.t > 11) && s < 1) { if (!k.senuelo) { b.ignora.set(k, 14); b.sosp.set(k, 0.2); b.ojo.delete(k); if (k.jugador && k.congelado) fxTexto(k.x, k.y - 72, tr('¡Uf!'), '#7ee04a'); } ronda(e); }
+}
+// medio segundo de aviso (el «!»): quien sale corriendo a tiempo puede librarse
+function estadoApunta(e, dt) {
+  const b = e.bot, k = b.objetivo; e.vx = e.vy = 0;
+  if (!k || k.fuera) { ronda(e); return; }
+  giraHacia(e, Math.atan2(k.y - 8 - (e.y - 6), k.x - e.x), dt, 10);
+  if (b.t < 0.55 || !b.punto) b.punto = [k.x, k.y - (k.senuelo ? 14 : 24)];
+  if (b.t >= 0.75) disparaBot(e);
+}
+// tras disparar: un momento parado antes de seguir la ronda
+function estadoConfuso(e) { e.vx = e.vy = 0; if (e.bot.t > 1.7) ronda(e); }

@@ -34,6 +34,17 @@ const NV_ICONOS = {
     tacticas: c => { nvIcRect(c, 14, 6, 6, 52, '#d8dcf5'); nvIcPoli(c, [[20, 8], [56, 18], [20, 32]], '#b46bff'); },
     navegacion: c => { nvIcCirculo(c, 32, 32, 26, '#2a2f5e'); nvIcPoli(c, [[32, 8], [40, 32], [32, 56], [24, 32]], '#ffd93d'); nvIcPoli(c, [[32, 8], [40, 32], [24, 32]], '#ff5b5b'); }
   },
+  faccion: {   // emblemas de facción (los cosméticos de la galaxia de la comunidad): `col` es el color de la facción
+    animales: (c, col) => { nvIcElipse(c, 32, 42, 15, 13, col); for (const [x, y] of [[14, 24], [25, 13], [39, 13], [50, 24]]) nvIcElipse(c, x, y, 6, 8, col); },
+    nomuertos: (c, col) => { c.beginPath(); c.arc(32, 28, 22, Math.PI * 0.85, Math.PI * 0.15); c.lineTo(44, 58); c.lineTo(20, 58); c.closePath(); nvIcRelleno(c, '#eef3ea'); nvIcCirculo(c, 23, 30, 6, col); nvIcCirculo(c, 41, 30, 6, col); nvIcPoli(c, [[32, 38], [36, 46], [28, 46]], NV_TINTA); },
+    streamers: (c, col) => { nvIcPoli(c, [[6, 10], [58, 10], [58, 44], [30, 44], [16, 56], [18, 44], [6, 44]], col); nvIcPoli(c, [[26, 18], [42, 27], [26, 36]], '#fff'); },
+    heroes: (c, col) => { nvIcPoli(c, [[32, 4], [56, 12], [52, 40], [32, 60], [12, 40], [8, 12]], '#2f5bd3'); nvIcPoli(c, nvIcEstrella(32, 31, 16, 7, 5), col); },
+    ciber: (c, col) => { c.lineWidth = 4; c.strokeStyle = NV_TINTA; c.beginPath(); for (let k = 0; k < 4; k++) { const v = 18 + 9 * k; c.moveTo(v, 4); c.lineTo(v, 60); c.moveTo(4, v); c.lineTo(60, v); } c.stroke(); nvIcRect(c, 12, 12, 40, 40, '#2a2f5e'); nvIcRect(c, 22, 22, 20, 20, col); },
+    memes: (c, col) => { nvIcPoli(c, [[12, 26], [14, 4], [28, 18], [36, 18], [50, 4], [52, 26]], col); nvIcElipse(c, 32, 36, 24, 20, col); nvIcElipse(c, 32, 44, 12, 9, '#fff5d6'); nvIcCirculo(c, 23, 31, 3, NV_TINTA); nvIcCirculo(c, 41, 31, 3, NV_TINTA); },
+    gamer: (c, col) => { c.beginPath(); c.moveTo(14, 18); c.lineTo(50, 18); c.quadraticCurveTo(64, 20, 60, 46); c.quadraticCurveTo(56, 56, 46, 44); c.lineTo(18, 44); c.quadraticCurveTo(8, 56, 4, 46); c.quadraticCurveTo(0, 20, 14, 18); nvIcRelleno(c, '#2a2f5e'); nvIcRect(c, 13, 28, 14, 5, col); nvIcRect(c, 17.5, 23.5, 5, 14, col); nvIcCirculo(c, 44, 27, 4, '#ff3b3b'); nvIcCirculo(c, 50, 35, 4, '#3b82ff'); },
+    olvidados: (c, col) => { nvIcPoli(c, nvIcEstrella(32, 32, 28, 21, 8, 0), col); nvIcCirculo(c, 32, 32, 10, '#2a2f5e'); },
+    pop: (c, col) => { nvIcCirculo(c, 32, 20, 15, col); nvIcRect(c, 27, 34, 10, 22, '#c8ccdd'); nvIcPoli(c, nvIcEstrella(32, 20, 8, 3.5, 4), '#fff'); }
+  },
   cap: {   // retratos provisionales: insignia con silueta y un rasgo propio
     progamer: (c, col) => { nvIcRetrato(c, col); c.lineWidth = 5; c.strokeStyle = NV_TINTA; c.beginPath(); c.arc(32, 22, 17, Math.PI, 0); c.stroke(); nvIcRect(c, 10, 22, 8, 12, '#6fc4ff'); nvIcRect(c, 46, 22, 8, 12, '#6fc4ff'); },
     bunny: (c, col) => { nvIcRetrato(c, col); nvIcElipse(c, 24, 6, 5, 14, '#fff'); nvIcElipse(c, 40, 6, 5, 14, '#fff'); },

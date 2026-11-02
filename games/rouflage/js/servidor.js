@@ -72,7 +72,7 @@ const RFS = (() => {
     const cache = leeCache();
     try {
       let est = await Promise.race([CUENTA.rpc('rf_estado', {}), new Promise((_, no) => setTimeout(() => no(new Error('tarda')), 6000))]);
-      activo = true; aplica(est); guardaPartida(); relojes(); vaciaCola();      // guardado al momento: la web publicada lee esta misma partida
+      activo = true; aplica(est); guardaPartida(); relojes(); vaciaCola(); if (SAVE.rfDiarioCola && SAVE.rfDiarioCola.length && typeof diarioCola === 'function') diarioCola().envia();      // guardado al momento: la web publicada lee esta misma partida
     } catch (e) {
       if (sinFuncion(e)) return;                                                       // el servidor aún no lo tiene: sigue la partida local
       if (cache) { try { activo = true; aplica(cache); } catch (_) { activo = false; } }      // sin conexión: lo último que se supo (y si la copia está rota, la partida local)

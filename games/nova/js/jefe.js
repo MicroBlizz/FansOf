@@ -41,33 +41,35 @@ function nvJefeElige(S, e, dist, f2) {
 // Devuelve nada: el jefe se mueve solo (su velocidad tiene inercia). `apagado`: el apagón lo deja a la deriva.
 function nvJefe(S, e, dt, ux, uy, dist, apagado) {
   if (!e.pil) nvJefeNuevo(e);
-  const p = e.pil, n = S.nave, f2 = e.hp < e.hpMax / 2, ideal = nvMediaPantalla(S)[0] * NV_JEFE.distIdeal;
+  const p = e.pil, f2 = e.hp < e.hpMax / 2;
   // refuerzos: solo una vez, al caer a la mitad
   if (f2 && !p.mitad) { p.mitad = true; for (let i = 0; i < 2; i++) nvEnemigo(S, 'rastrero', e.x + (i ? 70 : -70), e.y + 40); }
-  if (!apagado) {
-    // lo que ve llega con retraso de reacción
-    if ((p.tReac -= dt) <= 0 || !p.ve) { p.tReac = NV_JEFE.reaccion + Math.random() * 0.15; p.ve = { x: n.x, y: n.y }; }
-    if ((p.tLado -= dt) <= 0) { p.lado = -p.lado; p.tLado = 1.8 + Math.random() * 2.7; }
-    const dx = p.ve.x - e.x, dy = p.ve.y - e.y, d = Math.hypot(dx, dy) || 1, ax = dx / d, ay = dy / d;
-    const rad = d > ideal * 1.15 ? 1 : d < ideal * 0.75 ? -1 : 0;
-    let k = p.tele ? 0.2 : p.quieto > 0 ? 0.5 : 1;   // apuntando el cañón casi se para: es su punto débil
-    const vx = (ax * rad + -ay * p.lado * (rad ? 0.6 : 1)) * NV_JEFE.vel * (f2 ? 1.25 : 1) * k, vy = (ay * rad + ax * p.lado * (rad ? 0.6 : 1)) * NV_JEFE.vel * (f2 ? 1.25 : 1) * k;
-    p.bvx += (vx - p.bvx) * Math.min(1, dt * 1.6); p.bvy += (vy - p.bvy) * Math.min(1, dt * 1.6);
-    if (p.quieto > 0) p.quieto -= dt;
-    // ataques
-    if (!p.tele && !p.cola.length && (p.tAtaque -= dt) <= 0 && e.vis) nvJefeElige(S, e, dist, f2);
-    if (p.tele) {
-      const t = p.tele; t.t += dt;
-      if (t.t < t.T - 0.4) {   // sigue al jugador con giro limitado, y en los últimos 0,4 s fija el tiro
-        let da = Math.atan2(n.y - e.y, n.x - e.x) - t.a; da = Math.atan2(Math.sin(da), Math.cos(da));
-        t.a += Math.max(-NV_JEFE.giroCanon * dt, Math.min(NV_JEFE.giroCanon * dt, da));
-      }
-      if (t.t >= t.T) { nvSnd('nvDisparoE', S, e.x, e.y, 1); nvBalaE(S, e.x, e.y, Math.cos(t.a) * NV_JEFE.balaCanon, Math.sin(t.a) * NV_JEFE.balaCanon, 34, 10, 1.8, 'energia'); p.tele = null; p.quieto = 1; }
-    }
-    for (let i = p.cola.length - 1; i >= 0; i--) if ((p.cola[i].t -= dt) <= 0) { const o = p.cola.splice(i, 1)[0]; if (e.vis) o.f(); }
-    if (p.aviso && (p.aviso.t -= dt) <= 0) p.aviso = null;
-  } else { p.bvx *= 1 - Math.min(1, dt * 0.8); p.bvy *= 1 - Math.min(1, dt * 0.8); p.tele = null; }
+  if (apagado) { p.bvx *= 1 - Math.min(1, dt * 0.8); p.bvy *= 1 - Math.min(1, dt * 0.8); p.tele = null; }
+  else nvJefePilota(S, e, p, dt, dist, f2);
   e.x += p.bvx * dt; e.y += p.bvy * dt;
+}
+// Lo que hace el jefe despierto: ve con retraso, se mueve hacia su distancia ideal girando a un lado, ataca y apunta el cañón
+function nvJefePilota(S, e, p, dt, dist, f2) {
+  const n = S.nave;
+  if ((p.tReac -= dt) <= 0 || !p.ve) { p.tReac = NV_JEFE.reaccion + Math.random() * 0.15; p.ve = { x: n.x, y: n.y }; }   // lo que ve llega con retraso de reacción
+  if ((p.tLado -= dt) <= 0) { p.lado = -p.lado; p.tLado = 1.8 + Math.random() * 2.7; }
+  const [vx, vy] = NV.Jefe.velocidad(p, e, nvMediaPantalla(S)[0] * NV_JEFE.distIdeal, f2, NV_JEFE);
+  p.bvx += (vx - p.bvx) * Math.min(1, dt * 1.6); p.bvy += (vy - p.bvy) * Math.min(1, dt * 1.6);
+  if (p.quieto > 0) p.quieto -= dt;
+  if (!p.tele && !p.cola.length && (p.tAtaque -= dt) <= 0 && e.vis) nvJefeElige(S, e, dist, f2);   // ataques
+  if (p.tele) nvJefeCanon(S, e, p, dt);
+  for (let i = p.cola.length - 1; i >= 0; i--) if ((p.cola[i].t -= dt) <= 0) { const o = p.cola.splice(i, 1)[0]; if (e.vis) o.f(); }
+  if (p.aviso && (p.aviso.t -= dt) <= 0) p.aviso = null;
+}
+// El cañón: sigue al jugador con giro limitado y en los últimos 0,4 s fija el tiro; al acabar dispara y el jefe se queda quieto 1 s
+function nvJefeCanon(S, e, p, dt) {
+  const t = p.tele, n = S.nave;
+  t.t += dt;
+  if (t.t < t.T - 0.4) t.a = NV.Jefe.giraCanon(t.a, Math.atan2(n.y - e.y, n.x - e.x), NV_JEFE.giroCanon * dt);
+  if (t.t < t.T) return;
+  nvSnd('nvDisparoE', S, e.x, e.y, 1);
+  nvBalaE(S, e.x, e.y, Math.cos(t.a) * NV_JEFE.balaCanon, Math.sin(t.a) * NV_JEFE.balaCanon, 34, 10, 1.8, 'energia');
+  p.tele = null; p.quieto = 1;
 }
 // La línea de apuntado del cañón y el hueco del anillo, para que se pueda leer.
 function nvDibujaJefe(c, S) {

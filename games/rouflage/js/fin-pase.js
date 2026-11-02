@@ -162,54 +162,45 @@ function finPaseDibuja(dt) {
   tuboPinta(E('fp-tubo'), F, dt);
 }
 // EL TUBO (también lo usan los talentos: talentos-pantalla.js y talentos-fin.js). F: { t, frac, fase, nivel, lleno, cols, burbujas, parts, flash, vacia, R, th }
-function tuboPinta(cv, F, dt) {
-  const d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
-  if (!w || !h) return;
-  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
-  F.w = w; F.h = h; F.d = d;
-  const c = cv.getContext('2d'), L = finMedidas(F), { cy, th, x0, x1 } = L, y0 = cy - th / 2, y1 = cy + th / 2, t = F.t, COL = F.cols || FINP_COL;
-  c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h); c.lineJoin = 'round';
-  const lleno = F.lleno, frac = F.frac;
-  // la sombra y el fondo del cristal
-  finCapsula(c, x0, y0 + 4, x1, y1 + 4); c.fillStyle = OL; c.fill();
-  finCapsula(c, x0, y0, x1, y1); const fondo = c.createLinearGradient(0, y0, 0, y1); fondo.addColorStop(0, '#2a2248'); fondo.addColorStop(1, '#120c24'); c.fillStyle = fondo; c.fill();
-  // la pintura: franjas de colores inclinadas que se mueven y ondulan, recortadas por el frente con su onda
-  const ix0 = x0 + 3, ix1 = x1 - 3, iy0 = y0 + 3, iy1 = y1 - 3, xf = ix0 + (ix1 - ix0) * frac;
-  if (frac > 0.003) {
-    c.save(); finCapsula(c, ix0, iy0, ix1, iy1); c.clip();
-    c.beginPath(); c.moveTo(ix0 - 2, iy0 - 2);
-    const onda = F.fase === 'llena' ? 3.2 : 2;
-    for (let y = iy0 - 2; y <= iy1 + 2; y += 2) c.lineTo(Math.min(ix1 + 4, xf + Math.sin(y * 0.38 + t * 7) * onda * Math.min(1, frac * 8)), y);
-    c.lineTo(ix0 - 2, iy1 + 2); c.closePath(); c.save(); c.clip();
-    const sw = th * 0.38, paso = sw * COL.length, mueve = (t * 26) % paso;
-    for (let k = -2; ix0 - th + k * sw - mueve < xf + th; k++) {
-      const bx = ix0 + k * sw + mueve - th;
-      c.beginPath();
-      for (let y = iy0 - 2; y <= iy1 + 2; y += 3) c.lineTo(bx + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k) * 2.2, y);
-      for (let y = iy1 + 2; y >= iy0 - 2; y -= 3) c.lineTo(bx + sw + 0.6 + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k + 0.6) * 2.2, y);
-      c.closePath(); c.fillStyle = COL[((k % COL.length) + COL.length) % COL.length]; c.fill();
-    }
-    // volumen: luz arriba y sombra abajo, como un líquido dentro de un tubo
-    const vol = c.createLinearGradient(0, iy0, 0, iy1); vol.addColorStop(0, 'rgba(255,255,255,0.42)'); vol.addColorStop(0.35, 'rgba(255,255,255,0.05)'); vol.addColorStop(0.7, 'rgba(32,16,44,0.05)'); vol.addColorStop(1, 'rgba(32,16,44,0.45)');
-    c.fillStyle = vol; c.fillRect(ix0, iy0, xf - ix0 + 6, iy1 - iy0);
-    // burbujas que suben (más mientras se llena)
-    if (Math.random() < (F.fase === 'llena' ? 0.28 : 0.08) && xf - ix0 > 12) F.burbujas.push({ x: ix0 + 6 + Math.random() * (xf - ix0 - 10), y: iy1 + 2, r: 1.2 + Math.random() * 2.4, v: 10 + Math.random() * 16, f: Math.random() * 6 });
-    c.lineWidth = 1.2;
-    for (const b of F.burbujas) {
-      b.y -= b.v * dt; b.f += dt * 5; const bx = b.x + Math.sin(b.f) * 1.2;
-      c.beginPath(); c.arc(bx, b.y, b.r, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.22)'; c.fill(); c.strokeStyle = 'rgba(255,255,255,0.75)'; c.stroke();
-      c.beginPath(); c.arc(bx - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.3, 0, TAU); c.fillStyle = '#fff'; c.fill();
-    }
-    F.burbujas = F.burbujas.filter(b => b.y > iy0 - 3 && b.x < xf);
-    c.restore();
-    // el frente: una línea clara con la misma onda
-    if (frac < 0.995) {
-      c.beginPath(); for (let y = iy0; y <= iy1; y += 2) c.lineTo(xf + Math.sin(y * 0.38 + t * 7) * onda * Math.min(1, frac * 8), y);
-      c.lineWidth = 2.2; c.strokeStyle = 'rgba(255,255,255,0.7)'; c.stroke();
-    }
-    c.restore();
+// la pintura: franjas de colores inclinadas que se mueven y ondulan, recortadas por el frente con su onda, con burbujas y volumen
+function tuboPintura(c, F, dt, G) {
+  const { ix0, ix1, iy0, iy1, xf, th, frac, t, COL } = G;
+  c.save(); finCapsula(c, ix0, iy0, ix1, iy1); c.clip();
+  c.beginPath(); c.moveTo(ix0 - 2, iy0 - 2);
+  const onda = F.fase === 'llena' ? 3.2 : 2;
+  for (let y = iy0 - 2; y <= iy1 + 2; y += 2) c.lineTo(Math.min(ix1 + 4, xf + Math.sin(y * 0.38 + t * 7) * onda * Math.min(1, frac * 8)), y);
+  c.lineTo(ix0 - 2, iy1 + 2); c.closePath(); c.save(); c.clip();
+  const sw = th * 0.38, paso = sw * COL.length, mueve = (t * 26) % paso;
+  for (let k = -2; ix0 - th + k * sw - mueve < xf + th; k++) {
+    const bx = ix0 + k * sw + mueve - th;
+    c.beginPath();
+    for (let y = iy0 - 2; y <= iy1 + 2; y += 3) c.lineTo(bx + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k) * 2.2, y);
+    for (let y = iy1 + 2; y >= iy0 - 2; y -= 3) c.lineTo(bx + sw + 0.6 + (iy1 - y) * 0.6 + Math.sin(y * 0.3 + t * 3 + k + 0.6) * 2.2, y);
+    c.closePath(); c.fillStyle = COL[((k % COL.length) + COL.length) % COL.length]; c.fill();
   }
-  // el cristal por encima: rayitas de medida, el brillo de arriba, el reflejo de abajo y un destello que pasa de vez en cuando
+  // volumen: luz arriba y sombra abajo, como un líquido dentro de un tubo
+  const vol = c.createLinearGradient(0, iy0, 0, iy1); vol.addColorStop(0, 'rgba(255,255,255,0.42)'); vol.addColorStop(0.35, 'rgba(255,255,255,0.05)'); vol.addColorStop(0.7, 'rgba(32,16,44,0.05)'); vol.addColorStop(1, 'rgba(32,16,44,0.45)');
+  c.fillStyle = vol; c.fillRect(ix0, iy0, xf - ix0 + 6, iy1 - iy0);
+  // burbujas que suben (más mientras se llena)
+  if (Math.random() < (F.fase === 'llena' ? 0.28 : 0.08) && xf - ix0 > 12) F.burbujas.push({ x: ix0 + 6 + Math.random() * (xf - ix0 - 10), y: iy1 + 2, r: 1.2 + Math.random() * 2.4, v: 10 + Math.random() * 16, f: Math.random() * 6 });
+  c.lineWidth = 1.2;
+  for (const b of F.burbujas) {
+    b.y -= b.v * dt; b.f += dt * 5; const bx = b.x + Math.sin(b.f) * 1.2;
+    c.beginPath(); c.arc(bx, b.y, b.r, 0, TAU); c.fillStyle = 'rgba(255,255,255,0.22)'; c.fill(); c.strokeStyle = 'rgba(255,255,255,0.75)'; c.stroke();
+    c.beginPath(); c.arc(bx - b.r * 0.35, b.y - b.r * 0.35, b.r * 0.3, 0, TAU); c.fillStyle = '#fff'; c.fill();
+  }
+  F.burbujas = F.burbujas.filter(b => b.y > iy0 - 3 && b.x < xf);
+  c.restore();
+  // el frente: una línea clara con la misma onda
+  if (frac < 0.995) {
+    c.beginPath(); for (let y = iy0; y <= iy1; y += 2) c.lineTo(xf + Math.sin(y * 0.38 + t * 7) * onda * Math.min(1, frac * 8), y);
+    c.lineWidth = 2.2; c.strokeStyle = 'rgba(255,255,255,0.7)'; c.stroke();
+  }
+  c.restore();
+}
+// el cristal por encima: rayitas de medida, el brillo de arriba, el reflejo de abajo y un destello que pasa de vez en cuando
+function tuboCristal(c, F, G) {
+  const { x0, y0, x1, y1, th, t } = G;
   c.save(); finCapsula(c, x0, y0, x1, y1); c.clip();
   c.strokeStyle = 'rgba(255,255,255,0.28)'; c.lineWidth = 1.5;
   for (let i = 1; i < 10; i++) { const x = x0 + (x1 - x0) * i / 10; c.beginPath(); c.moveTo(x, y1 - 3); c.lineTo(x, y1 - (i === 5 ? 10 : 7)); c.stroke(); }
@@ -222,17 +213,18 @@ function tuboPinta(cv, F, dt) {
   if (F.flash > 0) { c.globalAlpha = F.flash; c.fillStyle = '#fff6ea'; c.fillRect(x0, y0, x1 - x0, th); c.globalAlpha = 1; }
   c.restore();
   finCapsula(c, x0, y0, x1, y1); c.lineWidth = 4; c.strokeStyle = OL; c.stroke();
-  // las tapas: dos anillas de metal en los extremos del tubo
+}
+// las tapas: dos anillas de metal en los extremos del tubo
+function tuboTapas(c, G) {
+  const { x0, y0, x1, y1, th } = G;
   for (const x of [x0 + 5, x1 - 5]) {
     const g = c.createLinearGradient(0, y0 - 5, 0, y1 + 5); g.addColorStop(0, '#d9ccff'); g.addColorStop(0.45, '#8f7fc4'); g.addColorStop(1, '#3b2d63');
     c.beginPath(); rrPathRF(c, x - 6, y0 - 5, 12, th + 10, 5); c.fillStyle = g; c.fill(); c.lineWidth = 3; c.strokeStyle = OL; c.stroke();
     c.beginPath(); c.moveTo(x - 2.5, y0 - 1); c.lineTo(x - 2.5, y1 - 2); c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,0.55)'; c.lineCap = 'round'; c.stroke();
   }
-  // las insignias: el nivel en el que estás y el siguiente (se pone de oro al llegar)
-  const sube = F.fase === 'fiesta' || F.fase === 'vacia', pulso = sube ? 0.6 + 0.4 * Math.sin(t * 14) : 0;
-  finInsignia(c, L.bx1, cy, L.R, F.nivel, true, 0);
-  if (!lleno) finInsignia(c, L.bx2, cy, L.R * (sube ? 1.08 : 1), F.nivel + 1, sube, pulso);
-  // las chispas
+}
+// las chispas
+function tuboChispas(c, F, dt) {
   for (const p of F.parts) {
     p.vida -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt; p.vx *= 0.98; p.rot += p.vr * dt;
     c.globalAlpha = Math.max(0, Math.min(1, p.vida / p.max * 1.8)); c.save(); c.translate(p.x, p.y); c.rotate(p.rot); c.fillStyle = p.col;
@@ -241,7 +233,28 @@ function tuboPinta(cv, F, dt) {
     c.restore();
   }
   c.globalAlpha = 1; F.parts = F.parts.filter(p => p.vida > 0);
-  F.flash = Math.max(0, F.flash - dt * 2.4);
+  F.flash = Math.max(0, F.flash - dt * 2.4);}
+function tuboPinta(cv, F, dt) {
+  const d = Math.min(2, window.devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+  if (!w || !h) return;
+  if (cv.width !== Math.round(w * d) || cv.height !== Math.round(h * d)) { cv.width = Math.round(w * d); cv.height = Math.round(h * d); }
+  F.w = w; F.h = h; F.d = d;
+  const c = cv.getContext('2d'), L = finMedidas(F), { cy, th, x0, x1 } = L, y0 = cy - th / 2, y1 = cy + th / 2, t = F.t, COL = F.cols || FINP_COL;
+  c.setTransform(d, 0, 0, d, 0, 0); c.clearRect(0, 0, w, h); c.lineJoin = 'round';
+  const lleno = F.lleno, frac = F.frac;
+  // la sombra y el fondo del cristal
+  finCapsula(c, x0, y0 + 4, x1, y1 + 4); c.fillStyle = OL; c.fill();
+  finCapsula(c, x0, y0, x1, y1); const fondo = c.createLinearGradient(0, y0, 0, y1); fondo.addColorStop(0, '#2a2248'); fondo.addColorStop(1, '#120c24'); c.fillStyle = fondo; c.fill();
+  const ix0 = x0 + 3, ix1 = x1 - 3, iy0 = y0 + 3, iy1 = y1 - 3, xf = ix0 + (ix1 - ix0) * frac;
+  const G = { x0, y0, x1, y1, ix0, ix1, iy0, iy1, xf, th, frac, t, COL };
+  if (frac > 0.003) tuboPintura(c, F, dt, G);
+  tuboCristal(c, F, G);
+  tuboTapas(c, G);
+  // las insignias: el nivel en el que estás y el siguiente (se pone de oro al llegar)
+  const sube = F.fase === 'fiesta' || F.fase === 'vacia', pulso = sube ? 0.6 + 0.4 * Math.sin(t * 14) : 0;
+  finInsignia(c, L.bx1, cy, L.R, F.nivel, true, 0);
+  if (!lleno) finInsignia(c, L.bx2, cy, L.R * (sube ? 1.08 : 1), F.nivel + 1, sube, pulso);
+  tuboChispas(c, F, dt);
 }
 
 /* ---------- la pestaña PASE (#p-pase, pasePinta de economia.js): el mismo tubo, que se llena desde 0 hasta tu experiencia al abrirla ---------- */

@@ -69,6 +69,9 @@ const NV_TUTO = {
     'El capitán da una ventaja para toda la misión y casi siempre una pega.',
     'Pro Gamer no tiene ni lo uno ni lo otro: la nave tal cual.',
     'En la campaña, el capitán es el líder o una unidad de la facción que elegiste al empezar. Las unidades dan el bonus de su especialidad.'] }],
+  habilidad: [{ titulo: 'HABILIDAD ACTIVA', ic: ['sis', 'vel'], lineas: [
+    'Desde el rango 2 tienes el botón redondo de abajo a la derecha (en el ordenador, la barra espaciadora).',
+    'Cada facción tiene la suya. Úsala para salir de un apuro o rematar a un jefe: tarda en recargarse.'] }],
   oficial: [{ titulo: 'EL OFICIAL', ic: ['fac', 'fuego'], lineas: [
     'El oficial suma un bonus pequeño para toda la misión.',
     'Elige el que encaje con tu forma de jugar: más daño, más casco, más cartas...'] }],
@@ -88,7 +91,12 @@ const NV_TUTO = {
     'EM y térmica: un enemigo interferido se calienta un 50 % más deprisa y, si le das al casco, no regenera escudo durante 8 s.',
     'Energía y EM: el escudo tumbado tarda el doble en volver.',
     'Energía y térmica: la energía atiza el calor de un enemigo caliente.',
-    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] }]
+    'EM y explosiva: la explosión sobre un interferido interfiere a los vecinos.'] },
+  { titulo: 'CADA ARMA, SU TALENTO', ic: ['arma', 'lanzador'], lineas: [
+    'Lanzador: sus misiles hacen un 20 % más a lo que se aleja de tu nave.',
+    'Railgun cinética: la mitad del daño atraviesa el escudo y llega al casco.',
+    'Flak térmico: cada perdigón calienta también a los enemigos de al lado.',
+    'Drones EM: mientras un dron está pegado a su presa, la mantiene interferida.'] }]
 };
 const NV_TUTO_ORDEN = ['galaxia', 'faccion', 'nave', 'capitan', 'oficial', 'mision', 'armas', 'cartas', 'fusion', 'estacion', 'tienda', 'taller', 'capital', 'arsenal', 'armasFaccion'];
 
@@ -97,7 +105,7 @@ function nvTutoMarca(ids) { const v = nvTutoVisto(); for (const id of ids) v[id]
 // Enseña el aviso `id` si no se ha visto (nunca con el bot de pruebas). Mientras está abierto, la partida no avanza.
 function nvTuto(...ids) {   // varios ids: se enseñan seguidos los que falten
   const v = nvTutoVisto(), faltan = ids.filter(id => NV_TUTO[id] && !v[id]);
-  if (NVP.auto || NVP.tuto || !faltan.length) return;
+  if ((NVP.S && NVP.S.guion) || NVP.auto || NVP.tuto || !faltan.length) return;
   const pags = []; for (const id of faltan) pags.push(...NV_TUTO[id]);
   nvTutoMuestra(pags, () => nvTutoMarca(faltan));
 }

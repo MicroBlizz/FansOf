@@ -2,6 +2,9 @@
 // y la entrada más nueva de js/novedades.js.
 'use strict';
 IDIOMA.add({
+  // 0.3.17
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
+  "Microblizz ha hecho cola para el trampolín y Phony ha saltado la fila.": "Microblizz queued up for the trampoline and Phony jumped the line.",
   // 0.3.16
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha colgado un cartel apagado junto al río y Phony ha saltado a leerlo igualmente.": "Microblizz hung an unlit sign by the river and Phony jumped over to read it anyway.",

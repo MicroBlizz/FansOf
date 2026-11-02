@@ -76,5 +76,11 @@
     "fr-FR": "AMÉLIORATIONS INTERNES : les publicités ont une couche commune mieux rangée (toujours désactivées tant qu'elles ne sont pas ouvertes) et les tests internes continuent de s'améliorer.",
     "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Werbung hat jetzt eine aufgeräumtere gemeinsame Schicht (bleibt ausgeschaltet, bis sie geöffnet wird) und die internen Tests werden weiter besser.",
     "it-IT": "MIGLIORIE INTERNE: la pubblicità ha uno strato comune più ordinato (resta spenta finché non viene aperta) e i test interni continuano a migliorare."
+  },
+  "0.2.64": {
+    "pt-BR": "MELHORIAS POR DENTRO: os sistemas comuns guardam o que está pendente quando não há rede e enviam ao voltar. PRÊMIO DIÁRIO SEM BLOQUEIO: receber o prêmio diário não fica mais esperando sem rede.",
+    "fr-FR": "AMÉLIORATIONS INTERNES : les systèmes communs gardent ce qui est en attente sans réseau et l'envoient au retour. CADEAU QUOTIDIEN SANS BLOCAGE : récupérer le cadeau quotidien n'attend plus quand il n'y a pas de réseau.",
+    "de-DE": "VERBESSERUNGEN IM HINTERGRUND: Die gemeinsamen Systeme speichern Ausstehendes ohne Netz und senden es bei Rückkehr. TÄGLICHE BELOHNUNG OHNE BLOCKADE: Das Abholen der täglichen Belohnung wartet ohne Netz nicht mehr.",
+    "it-IT": "MIGLIORIE INTERNE: i sistemi comuni conservano ciò che è in sospeso senza rete e lo inviano al ritorno. PREMIO GIORNALIERO SENZA BLOCCO: ritirare il premio giornaliero non resta più in attesa senza rete."
   }
 }

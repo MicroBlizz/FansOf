@@ -63,39 +63,43 @@ cv.addEventListener('pointercancel', sueltaPuntero);
 cv.addEventListener('pointerleave', ev => { if (ev.pointerType === 'mouse') { ENTRADA.raton = null; if (TALLER.abierto && !TALLER.trazo) TALLER.puntero = null; } });
 cv.addEventListener('contextmenu', ev => ev.preventDefault());
 
-window.addEventListener('keydown', ev => {
+// las teclas del taller de pintura (el escenario de dibujo) y las del juego: una tabla cada una
+const cierraYSelecciona = () => { cierraTaller(); play('select'); };
+const radioDe = ev => tallerRadio(+ev.code.slice(-1) - 1);
+const TECLAS_TALLER = {
+  KeyF: cierraYSelecciona, Enter: cierraYSelecciona, Escape: cierraYSelecciona,
+  KeyI: () => tallerHerramienta('gota'), KeyR: () => tallerRellena(), KeyQ: () => tallerRapida(), KeyZ: () => tallerDeshace(), KeyC: () => tallerCalco(),
+  Digit1: radioDe, Digit2: radioDe, Digit3: radioDe, Digit4: radioDe,
+  KeyX: () => tallerCabezal(TALLER.cabezal === 'redondo' ? 'cuadrado' : 'redondo'),
+  KeyL: () => tallerFigura('linea'), KeyB: () => tallerFigura('cuadro'), KeyO: () => tallerFigura('circulo'),
+  Space: () => { cierraTaller(); accionCongelar(); },
+};
+const noEsBoton = ev => !ev.target.closest('button, a');
+const TECLAS_JUEGO = {
+  KeyF: () => accionPintar(),
+  Space: ev => { if (noEsBoton(ev)) accionCongelar(); },
+  KeyQ: () => accionSilbar(), Digit1: () => accionSilbar(),
+  KeyE: () => accionHabilidad(), Digit2: () => accionHabilidad(),      // la habilidad elegida (talentos-partida.js; la granada si es esa)
+  Enter: ev => { if (noEsBoton(ev)) accionListo(); },
+  Escape: () => accionPausa(), KeyP: () => accionPausa(),
+};
+// el fantasma (el despedido que mira): su poder y su chivatazo (modos-fantasma.js); true si la tecla era suya
+function teclaFantasma(ev) {
+  if (!espectando() || !noEsBoton(ev)) return false;
+  if (ev.code === 'Space' || ev.code === 'KeyQ') { accionPoder(); return true; }      // el poder del fantasma
+  if (ev.code === 'KeyC') { accionChivato(); return true; }      // el chivatazo del fantasma
+  return false;
+}
+function teclaAbajo(ev) {
   if (ev.repeat || ev.ctrlKey && ev.code !== 'KeyZ' || ev.metaKey && ev.code !== 'KeyZ' || ev.altKey) return;
   ENTRADA.teclas.add(ev.code);
-  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(ev.code) && !ev.target.closest('button, a')) ev.preventDefault();
-  if (TALLER.abierto) {
-    switch (ev.code) {
-      case 'KeyF': case 'Enter': case 'Escape': cierraTaller(); play('select'); break;
-      case 'KeyI': tallerHerramienta('gota'); break;
-      case 'KeyR': tallerRellena(); break;
-      case 'KeyQ': tallerRapida(); break;
-      case 'KeyZ': tallerDeshace(); break;
-      case 'KeyC': tallerCalco(); break;
-      case 'Digit1': case 'Digit2': case 'Digit3': case 'Digit4': tallerRadio(+ev.code.slice(-1) - 1); break;
-      case 'KeyX': tallerCabezal(TALLER.cabezal === 'redondo' ? 'cuadrado' : 'redondo'); break;
-      case 'KeyL': tallerFigura('linea'); break;
-      case 'KeyB': tallerFigura('cuadro'); break;
-      case 'KeyO': tallerFigura('circulo'); break;
-      case 'Space': cierraTaller(); accionCongelar(); break;
-    }
-    return;
-  }
-  if (espectando() && (ev.code === 'Space' || ev.code === 'KeyQ') && !ev.target.closest('button, a')) { accionPoder(); return; }      // el poder del fantasma
-  if (espectando() && ev.code === 'KeyC' && !ev.target.closest('button, a')) { accionChivato(); return; }      // el chivatazo del fantasma (modos-fantasma.js)
+  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(ev.code) && noEsBoton(ev)) ev.preventDefault();
+  if (TALLER.abierto) { const t = TECLAS_TALLER[ev.code]; if (t) t(ev); return; }
+  if (teclaFantasma(ev)) return;
   if (ev.code === 'KeyG' && gestoPuede()) { accionGesto(); return; }      // un gesto del armario (armario-partida.js)
-  switch (ev.code) {
-    case 'KeyF': accionPintar(); break;
-    case 'Space': if (!ev.target.closest('button, a')) accionCongelar(); break;
-    case 'KeyQ': case 'Digit1': accionSilbar(); break;
-    case 'KeyE': case 'Digit2': accionHabilidad(); break;      // la habilidad elegida (talentos-partida.js; la granada si es esa)
-    case 'Enter': if (!ev.target.closest('button, a')) accionListo(); break;
-    case 'Escape': case 'KeyP': accionPausa(); break;
-  }
-});
+  const t = TECLAS_JUEGO[ev.code]; if (t) t(ev);
+}
+window.addEventListener('keydown', teclaAbajo);
 window.addEventListener('keyup', ev => ENTRADA.teclas.delete(ev.code));
 window.addEventListener('blur', () => { ENTRADA.teclas.clear(); ENTRADA.palanca = null; ENTRADA.toques.clear(); });
 

@@ -3,7 +3,7 @@
 // El camino a medias se guarda en `run` (ppGuardaCamino en partida.js) y los tutoriales de Lola ya vistos en `tuto`.
 'use strict';
 const PP_NUEVA = () => ({ v: 1, record: 0, victorias: 0, partidas: 0, vistos: {}, estrellas: 0, muted: false, ayuda: false, tuto: {}, run: null, pixel: false,
-  vidas: 5, vidaT: 0, monedas: 0, huecos: 0, mejor: {}, cofres: 0, dentro: false,
+  vidas: 5, vidaT: 0, monedas: 0, huecos: 0, huecosV: 2, mejor: {}, cofres: 0, dentro: false,
   perlas: 0, anuncioDia: '', anunciosHoy: 0,                                                    // fase 3: la moneda de pago y los anuncios del día (js/tienda.js)
   duelo: { gan: 0, per: 0, fallo: 0.45, dia: '', hoy: 0 },                                    // el duelo contra el CEO (js/duelo.js)
   memoria: { record: 0, partidas: 0, dia: '', hoy: 0 },
@@ -13,6 +13,8 @@ const SAVE = (() => {
   let s = null; try { s = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { s = null; }
   const n = PP_NUEVA();
   if (!s || typeof s !== 'object') return n;
+  // 02-11-2026: el equipo pasa de 4 huecos de serie a 3. Quien ya jugaba antes se queda con el 4.º gratis (Daniel): un hueco comprado más
+  if (s.huecosV === undefined) { s.huecos = (s.huecos || 0) + 1; s.huecosV = 2; }
   for (const k in n) if (s[k] === undefined) s[k] = n[k];
   return s;
 })();

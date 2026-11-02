@@ -61,55 +61,68 @@ function habUsa(e) {
   return true;
 }
 // lo que hace cada una (aquí y en los demás navegadores). d: los datos del mensaje; remoto: viene de otro navegador
+const habOtro = d => (J.pvp && RFP.slots && d.o >= 0 && RFP.slots[d.o] ? RFP.slots[d.o].ente : J.entes[d.oi]);
+const habMio = x => x && !x.remoto && (!J.pvp || x.jugador || (x.bot && RFP.soyHost));      // lo mueve este navegador
+function habContador(e, d, remoto) {
+  const z = salaDe(e.x, e.y), n = J.camaleones.filter(k => !k.fuera && k !== e.cuerpo && (z ? salaDe(k.x, k.y) === z : lejos(k.x, k.y, e.x, e.y) < 300)).length;
+  talFx({ k: 'contador', e, n: e.jugador ? n : -1, dur: 2.4 }); suenaEn('contador', e.x, e.y, e.jugador ? 1 : 0.7);
+  if (e.jugador) avisa(n === 0 ? tr('Aquí no hay ningún colado') : n === 1 ? tr('Aquí hay 1 colado') : tr('Aquí hay {n} colados', { n }), n ? 'bueno' : 'aviso');
+  if (e.bot && !remoto) talBotContador(e, n);
+  return n;
+}
+function habDron(e, d, remoto) {
+  const k = habOtro(d); if (!k) return;
+  TALP.drones.push({ dueno: e, obj: k, x0: e.x, y0: e.y - 30, x: e.x, y: e.y - 30, alto: 0, fase: 'vuela', t: 0, zumbido: 0 });
+  if (e.jugador) avisa(tr('Dron en camino…'), 'aviso');
+  if (k.jugador) avisa(tr('¡Un dron viene a por ti! Tira la granada o aguanta quieto'), 'malo');
+  play('dronSale');
+}
+function habSilbato(e, d, remoto) {
+  talFx({ k: 'silbato', e, dur: 1.4 }); suenaEn('pito', e.x, e.y, 1.2); agachaMusica(1);
+  TALP.pend.push({ t: 0.55, f: () => { for (const k of J.camaleones) if (!k.fuera && habMio(k)) { k.tSilbo = 0; silba(k, true); } } });
+  if (!e.jugador) avisa(tr('{a} ha pitado: ¡todos los colados silban!', { a: e.nombre }), J.yo && J.yo.clase === 'camaleon' ? 'malo' : 'aviso');
+  else avisa(tr('¡Priiiii! Todos los colados silban'), 'bueno');
+}
+function habUv(e, d, remoto) {
+  e.uv = habDef('uv').dura; suenaEn('uv', e.x, e.y); if (e.jugador) avisa(tr('Linterna ultravioleta: la pintura de los colados brilla'), 'bueno');
+}
+function habCafe(e, d, remoto) {
+  e.cafe = habDef('cafe').dura; suenaEn('cafe', e.x, e.y); talFx({ k: 'cafe', e, dur: 1.1 }); if (e.jugador) avisa(tr('¡Café doble! Corres más durante {n} s', { n: e.cafe }), 'bueno');
+}
+function habGato(e, d, remoto) {
+  e.gato = habDef('gato').dura; if (e.jugador) { play('gato'); avisa(tr('Pasos de gato: los becarios bot no notan que andas ({n} s)', { n: e.gato }), 'bueno'); }
+}
+function habSenuelo(e, d, remoto) {
+  talSenueloPon(e, d.id, d.x, d.y);
+}
+function habCambiazo(e, d, remoto) {
+  const k = habOtro(d); if (!k || k.fuera) return;
+  const pon = (x, nx, ny) => {
+    if (x.jugador && TALLER.abierto) cierraTaller();
+    x.x = nx; x.y = ny; x.vx = x.vy = 0; if (x.red) { x.red.x = nx; x.red.y = ny; }
+    if (habMio(x)) { if (x.bot) { x.sitio = [nx, ny]; if (x.bot.estado === 'quieto' || x.congelado) { congela(x); x.hielo = 1; } } if (x.congelado || x.bot) mideCamuflaje(x); if (J.pvp && x.bot) rfpMandaPiel(x); }
+  };
+  talFx({ k: 'poof', x: d.x1, y: d.y1, dur: 0.8 }); talFx({ k: 'poof', x: d.x2, y: d.y2, dur: 0.8 }); talFx({ k: 'cambiazo', x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, dur: 0.9 });
+  // también os cambiáis la pintura (y la postura, que va con ella): cada uno se queda con la que casaba con su sitio nuevo (BALANCE: sin esto, los dos salían descamuflados)
+  for (const c of ['piel', 'pctx', 'postura']) { const v = e[c]; e[c] = k[c]; k[c] = v; }
+  const cv = e.camo; e.camo = k.camo; k.camo = cv;
+  pon(e, d.x2, d.y2); pon(k, d.x1, d.y1);
+  for (const h of J.cazadores) { const b = h.bot; if (!b || h.remoto || !b.sosp) continue; b.sosp.delete(e); b.sosp.delete(k); b.ojo.delete(e); b.ojo.delete(k); if (b.objetivo === e || b.objetivo === k) ronda(h); }      // los becarios de la máquina pierden la pista
+  suenaEn('cambiazo', d.x1, d.y1); suenaEn('cambiazo', d.x2, d.y2, 0.6);
+  if (e.jugador) { avisa(tr('¡Cambiazo! Ahora estás donde estaba {b}', { b: k.nombre }), 'bueno'); avanzaCamara(0, true); if (J.pvp) rfpMandaPiel(e); }
+  if (k.jugador) { avisa(tr('¡{a} te ha hecho el cambiazo! Ahora estás en su sitio y con su pintura', { a: e.nombre }), 'malo'); avanzaCamara(0, true); if (J.pvp) rfpMandaPiel(k); }
+}
+function habDronx(e, d, remoto) {
+  for (const dr of TALP.drones) if (dr.obj === habOtro(d) && (dr.fase === 'vuela' || dr.fase === 'barre')) talDronPierde(dr);
+}
+function habSenx(e, d, remoto) {
+  talSenueloRompe(d.id, e, true);
+}
+const HAB_EFECTOS = { contador: habContador, dron: habDron, silbato: habSilbato, uv: habUv, cafe: habCafe, gato: habGato, senuelo: habSenuelo, cambiazo: habCambiazo, dronx: habDronx, senx: habSenx };
+// lo que hace cada habilidad al usarse (y lo que hace en los demás navegadores cuando les llega por el PvP)
 function habEfecto(e, id, d, remoto) {
-  const otro = i => (J.pvp && RFP.slots && d.o >= 0 && RFP.slots[d.o] ? RFP.slots[d.o].ente : J.entes[d.oi]);
-  const mio = x => x && !x.remoto && (!J.pvp || x.jugador || (x.bot && RFP.soyHost));      // lo mueve este navegador
-  switch (id) {
-    case 'contador': {
-      const z = salaDe(e.x, e.y), n = J.camaleones.filter(k => !k.fuera && k !== e.cuerpo && (z ? salaDe(k.x, k.y) === z : lejos(k.x, k.y, e.x, e.y) < 300)).length;
-      talFx({ k: 'contador', e, n: e.jugador ? n : -1, dur: 2.4 }); suenaEn('contador', e.x, e.y, e.jugador ? 1 : 0.7);
-      if (e.jugador) avisa(n === 0 ? tr('Aquí no hay ningún colado') : n === 1 ? tr('Aquí hay 1 colado') : tr('Aquí hay {n} colados', { n }), n ? 'bueno' : 'aviso');
-      if (e.bot && !remoto) talBotContador(e, n);
-      return n;
-    }
-    case 'dron': {
-      const k = otro(); if (!k) return;
-      TALP.drones.push({ dueno: e, obj: k, x0: e.x, y0: e.y - 30, x: e.x, y: e.y - 30, alto: 0, fase: 'vuela', t: 0, zumbido: 0 });
-      if (e.jugador) avisa(tr('Dron en camino…'), 'aviso');
-      if (k.jugador) avisa(tr('¡Un dron viene a por ti! Tira la granada o aguanta quieto'), 'malo');
-      play('dronSale'); break;
-    }
-    case 'silbato':
-      talFx({ k: 'silbato', e, dur: 1.4 }); suenaEn('pito', e.x, e.y, 1.2); agachaMusica(1);
-      TALP.pend.push({ t: 0.55, f: () => { for (const k of J.camaleones) if (!k.fuera && mio(k)) { k.tSilbo = 0; silba(k, true); } } });
-      if (!e.jugador) avisa(tr('{a} ha pitado: ¡todos los colados silban!', { a: e.nombre }), J.yo && J.yo.clase === 'camaleon' ? 'malo' : 'aviso');
-      else avisa(tr('¡Priiiii! Todos los colados silban'), 'bueno');
-      break;
-    case 'uv': e.uv = habDef('uv').dura; suenaEn('uv', e.x, e.y); if (e.jugador) avisa(tr('Linterna ultravioleta: la pintura de los colados brilla'), 'bueno'); break;
-    case 'cafe': e.cafe = habDef('cafe').dura; suenaEn('cafe', e.x, e.y); talFx({ k: 'cafe', e, dur: 1.1 }); if (e.jugador) avisa(tr('¡Café doble! Corres más durante {n} s', { n: e.cafe }), 'bueno'); break;
-    case 'gato': e.gato = habDef('gato').dura; if (e.jugador) { play('gato'); avisa(tr('Pasos de gato: los becarios bot no notan que andas ({n} s)', { n: e.gato }), 'bueno'); } break;
-    case 'senuelo': talSenueloPon(e, d.id, d.x, d.y); break;
-    case 'cambiazo': {
-      const k = otro(); if (!k || k.fuera) return;
-      const pon = (x, nx, ny) => {
-        if (x.jugador && TALLER.abierto) cierraTaller();
-        x.x = nx; x.y = ny; x.vx = x.vy = 0; if (x.red) { x.red.x = nx; x.red.y = ny; }
-        if (mio(x)) { if (x.bot) { x.sitio = [nx, ny]; if (x.bot.estado === 'quieto' || x.congelado) { congela(x); x.hielo = 1; } } if (x.congelado || x.bot) mideCamuflaje(x); if (J.pvp && x.bot) rfpMandaPiel(x); }
-      };
-      talFx({ k: 'poof', x: d.x1, y: d.y1, dur: 0.8 }); talFx({ k: 'poof', x: d.x2, y: d.y2, dur: 0.8 }); talFx({ k: 'cambiazo', x1: d.x1, y1: d.y1, x2: d.x2, y2: d.y2, dur: 0.9 });
-      // también os cambiáis la pintura (y la postura, que va con ella): cada uno se queda con la que casaba con su sitio nuevo (BALANCE: sin esto, los dos salían descamuflados)
-      for (const c of ['piel', 'pctx', 'postura']) { const v = e[c]; e[c] = k[c]; k[c] = v; }
-      const cv = e.camo; e.camo = k.camo; k.camo = cv;
-      pon(e, d.x2, d.y2); pon(k, d.x1, d.y1);
-      for (const h of J.cazadores) { const b = h.bot; if (!b || h.remoto || !b.sosp) continue; b.sosp.delete(e); b.sosp.delete(k); b.ojo.delete(e); b.ojo.delete(k); if (b.objetivo === e || b.objetivo === k) ronda(h); }      // los becarios de la máquina pierden la pista
-      suenaEn('cambiazo', d.x1, d.y1); suenaEn('cambiazo', d.x2, d.y2, 0.6);
-      if (e.jugador) { avisa(tr('¡Cambiazo! Ahora estás donde estaba {b}', { b: k.nombre }), 'bueno'); avanzaCamara(0, true); if (J.pvp) rfpMandaPiel(e); }
-      if (k.jugador) { avisa(tr('¡{a} te ha hecho el cambiazo! Ahora estás en su sitio y con su pintura', { a: e.nombre }), 'malo'); avanzaCamara(0, true); if (J.pvp) rfpMandaPiel(k); }
-      break;
-    }
-    case 'dronx': for (const dr of TALP.drones) if (dr.obj === otro() && (dr.fase === 'vuela' || dr.fase === 'barre')) talDronPierde(dr); break;
-    case 'senx': talSenueloRompe(d.id, e, true); break;
-  }
+  const efecto = HAB_EFECTOS[id];
+  if (efecto && Object.hasOwn(HAB_EFECTOS, id)) return efecto(e, d, remoto);
 }
 const talFx = f => { f.t = 0; TALP.fx.push(f); };
 
@@ -207,17 +220,20 @@ function talSenueloBot(e) {
 }
 
 /* ---------- los bots ---------- */
+// cuándo un becario bot usa cada habilidad (b: su cerebro; az(p): con suerte, p veces por segundo)
+const TAL_BOT_CAZADOR = {
+  contador: (e, b) => b.estado === 'ronda' && b.sala && e.habSala !== b.sala && salaDe(e.x, e.y) === b.sala && (e.habSala = b.sala, true),
+  dron: (e, b, az) => J.tFase > 18 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.07),
+  silbato: (e, b, az) => J.tFase > 22 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.06),
+  uv: (e, b, az) => (b.estado === 'sospecha' && b.objetivo && !b.objetivo.senuelo && az(1.2)) || (b.estado === 'mira' && J.tFase > 15 && az(0.12)),
+  cafe: (e, b, az) => b.estado === 'investiga' && az(2),
+};
 function talBotPiensa(e, dt) {
-  if (habPuede(e)) return;
-  const b = e.bot, id = e.hab, az = p => Math.random() < dt * p;
-  if (e.clase === 'cazador') {
-    if (b.estado === 'espera' || b.estado === 'fuera') return;
-    if (id === 'contador' && b.estado === 'ronda' && b.sala && e.habSala !== b.sala && salaDe(e.x, e.y) === b.sala) { e.habSala = b.sala; habUsa(e); }
-    else if (id === 'dron' && J.tFase > 18 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.07)) habUsa(e);
-    else if (id === 'silbato' && J.tFase > 22 && (b.estado === 'ronda' || b.estado === 'mira') && az(0.06)) habUsa(e);
-    else if (id === 'uv' && ((b.estado === 'sospecha' && b.objetivo && !b.objetivo.senuelo && az(1.2)) || (b.estado === 'mira' && J.tFase > 15 && az(0.12)))) habUsa(e);
-    else if (id === 'cafe' && b.estado === 'investiga' && az(2)) habUsa(e);
-  }
+  if (habPuede(e) || e.clase !== 'cazador') return;
+  const b = e.bot;
+  if (b.estado === 'espera' || b.estado === 'fuera') return;
+  const cuando = Object.hasOwn(TAL_BOT_CAZADOR, e.hab) ? TAL_BOT_CAZADOR[e.hab] : null;
+  if (cuando && cuando(e, b, p => Math.random() < dt * p)) habUsa(e);
 }
 // un colado bot con el señuelo pintado llena de garabatos su alrededor (con su tinta y su alcance, como lo haría una persona en el taller)
 function talBotGarabatos(e) {
@@ -264,24 +280,34 @@ function talBotonCrea(id, dentro) {
   botonAccion(b, accionHabilidad); dentro.appendChild(b); return b;
 }
 // lo pinta refrescaHud: de colado va en la fila de botones, en el hueco de la granada; de becario, abajo a la derecha. Con su carga y sus usos
+function habBotonVisible(yo, h) {
+  return !!h && !h.pasiva && h.id !== 'granada' && (J.fase === 'caza' || J.fase === 'sala') && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
+}
+// qué fracción del botón (0 a 1) queda por recargar: nada mientras la habilidad está en marcha
+function habCarga(yo, h, activo) { return activo ? 0 : yo.habEspera > 0 && yo.habUsos > 0 ? yo.habEspera / (h.espera || 1) : 0; }
+// lo que dice el botón: los segundos que le quedan a la que está en marcha, nada en la sala viva (no se gasta) o los usos que quedan
+function habTextoUsos(yo, activo) {
+  const seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato));
+  return activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + yo.habUsos;
+}
+// el icono y el nombre del botón, que solo se repintan al cambiar de habilidad (o con `todo`)
+function habBotonPinta(b, h) {
+  TALP.boton = h.id; b.dataset.hab = h.id; b.querySelector('b').textContent = tr(TAL_CORTO[h.id] || h.n);
+  const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 88, 88); pintaHabIcono(c, 88, h.id);
+  b.setAttribute('aria-label', tr(h.n));
+}
 function refrescaHab(todo) {
   const yo = J.yo, b1 = E('b-hab'), b2 = E('b-hab-b'); if (!b1) return;
-  const h = yo && habDef(yo.hab), ver = !!h && !h.pasiva && h.id !== 'granada' && (J.fase === 'caza' || J.fase === 'sala') && !yo.fuera && !TALLER.abierto && !(yo.clase === 'cazador' && (yo.balas <= 0 || espectando()));
+  const h = yo && habDef(yo.hab), ver = !!yo && habBotonVisible(yo, h);
   const b = yo && yo.clase === 'cazador' ? b2 : b1, otro = b === b1 ? b2 : b1;
   if (!otro.hidden) otro.hidden = true;
   if (b.hidden === ver) b.hidden = !ver;
   if (!ver) { TALP.boton = ''; return; }
-  const clave = h.id + (todo ? Math.random() : '');
-  if (TALP.boton !== h.id || todo) {
-    TALP.boton = h.id; b.dataset.hab = h.id; b.querySelector('b').textContent = tr(TAL_CORTO[h.id] || h.n);
-    const c = b.querySelector('canvas').getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 88, 88); pintaHabIcono(c, 88, h.id);
-    b.setAttribute('aria-label', tr(h.n)); void clave;
-  }
-  const usos = yo.habUsos, activo = habActiva(yo) || TALP.drones.some(d => d.dueno === yo && d.fase !== 'fin');
-  const carga = activo ? 0 : yo.habEspera > 0 && usos > 0 ? yo.habEspera / (h.espera || 1) : 0;
+  if (TALP.boton !== h.id || todo) habBotonPinta(b, h);
+  const activo = habActiva(yo) || TALP.drones.some(d => d.dueno === yo && d.fase !== 'fin'), carga = habCarga(yo, h, activo);
   b.style.setProperty('--carga', (carga * 360).toFixed(0) + 'deg');
-  b.classList.toggle('gastada', usos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
-  const u = b.querySelector('.hab-usos'), seg = Math.ceil(Math.max(yo.uv, yo.cafe, yo.gato)), txt = activo ? (seg > 0 ? seg + ' s' : '•••') : J.fase === 'sala' ? '' : '×' + usos;      // en la sala viva no se gasta: sin contador
+  b.classList.toggle('gastada', yo.habUsos <= 0 && !activo); b.classList.toggle('activa', activo); b.classList.toggle('cargando', carga > 0);
+  const u = b.querySelector('.hab-usos'), txt = habTextoUsos(yo, activo);
   if (u.textContent !== txt) u.textContent = txt;
 }
 const TAL_CORTO = { contador: 'CONTAR', dron: 'DRON', silbato: 'SILBATO', uv: 'UV', cafe: 'CAFÉ', senuelo: 'SEÑUELO', gato: 'GATO', cambiazo: 'CAMBIAZO' };

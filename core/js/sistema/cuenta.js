@@ -91,8 +91,10 @@ const CUENTA = (() => {
   const iguales = (a, b) => huella(sinHora(a)) === huella(sinHora(b));
   const suma = (o, f) => Object.keys(o || {}).reduce((a, k) => a + (f ? f(o[k]) : +o[k]) || a, 0);
   const num = v => (typeof v === 'number' && isFinite(v) ? v : 0), cuenta = o => Object.keys(o || {}).length;
-  // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale
-  const resumen = s => [
+  // lo que se enseña de cada partida: [qué, valor]; el que valga 0 en las dos no sale. Un juego con otra partida (los ligeros)
+  // define resumenPartida(s) con sus propias filas [[texto en español, número], …]; si no, valen las de los juegos completos.
+  const resumen = s => (typeof resumenPartida === 'function' ? resumenPartida(s || {}) : resumenComun(s));
+  const resumenComun = s => [
     ['Oro', num(s.gold)], ['Gemas', num(s.gems)],
     ['Nivel de las cartas (suma)', suma(s.units, u => num(u && u.lvl))], ['XP de las cartas', suma(s.units, u => num(u && u.xp))],
     ['Cartas conseguidas', cuenta(s.cards)], ['Estrellas de las cartas', suma(s.cards, c => num(c && c.st))],

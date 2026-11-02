@@ -26,6 +26,8 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 .pp-btn2.pp-verde { --c1: #9cf0a0; --c2: #4fc964; --borde: #26924a; }
 .pp-btn2.pp-azul { --c1: #9fdcff; --c2: #4aa8f0; --borde: #1f6fb8; }
 .pp-btn2.pp-rosa { --c1: #ffb3d9; --c2: #ff6eb5; --borde: #c43a84; }
+.pp-btn2.pp-oro { --c1: #ffe36e; --c2: #ffb000; --borde: #c27a00; min-width: 260px; }   /* la TIENDA de la portada: dorada, para que destaque */
+.pp-btn2 .pp-ico { margin-right: 8px; }
 .pp-btn:active, .pp-btn2:active { transform: translateY(5px) scale(0.97); box-shadow: inset 0 0 0 4px var(--borde), inset 0 -5px 0 0 rgba(0, 0, 0, 0.12), 0 2px 0 0 var(--borde), 0 4px 8px rgba(160, 60, 120, 0.2); }
 .pp-enorme { font-size: 46px; padding: 20px 64px 22px; animation: pp-late 1.4s ease-in-out infinite; }
 @keyframes pp-late { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.05) rotate(-1.5deg); } 50% { transform: scale(1.02); } 75% { transform: scale(1.05) rotate(1.5deg); } }
@@ -85,12 +87,6 @@ body { background: #ffd1ec; display: flex; align-items: center; justify-content:
 /* con una ventana abierta (pausa, nivel superado…) Lola espera escondida y vuelve al cerrarla */
 #pp-ui:has(#pp-modal:not([hidden])) #pp-lola { visibility: hidden; }
 #pp-ui:has(#pp-modal:not([hidden])) #pp-lola.pp-encima { visibility: visible; }   /* las que explican esa ventana (tienda, pase…) */
-/* la pregunta de Lola: dos botones, lisitos o pixel art */
-#pp-lola-elige { display: flex; gap: 10px; justify-content: flex-end; }
-#pp-lola-elige[hidden] { display: none; }
-#pp-lola-elige .pp-btn2 { min-width: 0; font-size: 19px; padding: 9px 18px 10px; }
-#pp-lola-elige .pp-btn2.pp-rosa { --c1: #ffb3d9; --c2: #ff6eb5; --borde: #c43a84; }
-#pp-lola-elige .pp-btn2.pp-azul { --c1: #9fdcff; --c2: #4aa8f0; --borde: #1f6fb8; }
 /* fase 2: monedas, cofres y botones con precio */
 .pp-ico { display: inline-block; vertical-align: middle; border-radius: 50%; object-fit: contain; }
 img.pp-ico { border-radius: 0; }

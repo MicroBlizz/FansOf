@@ -58,19 +58,24 @@ function nvRepuebla(S, dt) {
 }
 // Cada fotograma: los nidos sueltan enemigos si estás cerca, los pecios se recogen y las estaciones se abren al tocarlas.
 function nvMundo(S, dt) {
-  const n = S.nave;
   nvRepuebla(S, dt);
-  for (const e of S.enem) {
-    if (!e.d.nido || e.muerto) continue;
-    const d = Math.hypot(n.x - e.x, n.y - e.y);
-    if (d > 1100) continue;
-    e.cdNido -= dt;
-    if (e.cdNido <= 0) {
-      e.cdNido = 3.4;
-      const vivos = S.enem.filter(o => !o.muerto && o.nido === e).length;
-      if (vivos < 8) for (let i = 0; i < 2; i++) { const a = Math.random() * 6.283, o = nvEnemigo(S, Math.random() < 0.25 ? 'fusilero' : 'rastrero', e.x + Math.cos(a) * (e.r + 10), e.y + Math.sin(a) * (e.r + 10), e.rango); o.nido = e; }
-    }
-  }
+  for (const e of S.enem) if (e.d.nido && !e.muerto) nvNidoCria(S, e, dt);
+  nvPecios(S);
+  nvEstaciones(S, dt);
+}
+// Un nido cerca de ti suelta dos crías cada 3,4 s mientras tenga menos de 8 vivas
+function nvNidoCria(S, e, dt) {
+  const n = S.nave;
+  if (Math.hypot(n.x - e.x, n.y - e.y) > 1100) return;
+  e.cdNido -= dt;
+  if (e.cdNido > 0) return;
+  e.cdNido = 3.4;
+  if (S.enem.filter(o => !o.muerto && o.nido === e).length >= 8) return;
+  for (let i = 0; i < 2; i++) { const a = Math.random() * 6.283, o = nvEnemigo(S, Math.random() < 0.25 ? 'fusilero' : 'rastrero', e.x + Math.cos(a) * (e.r + 10), e.y + Math.sin(a) * (e.r + 10), e.rango); o.nido = e; }
+}
+// Tocar un pecio: chatarra, un 10 % de casco y, si es raro, cartas
+function nvPecios(S) {
+  const n = S.nave;
   for (let i = S.pecios.length - 1; i >= 0; i--) {
     const p = S.pecios[i];
     if (Math.hypot(n.x - p.x, n.y - p.y) > p.r + n.r) continue;
@@ -79,6 +84,10 @@ function nvMundo(S, dt) {
     S.nums.push({ x: p.x, y: p.y - 20, t: 1.2, txt: tr(p.rara ? '¡Pecio raro!' : 'Pecio'), color: '#6fe3ff', g: 1 });
     if (p.rara) nvAbrirCartas(S);
   }
+}
+// Entrar en una estación (si no acabas de salir de ella)
+function nvEstaciones(S, dt) {
+  const n = S.nave;
   for (const st of S.estaciones) {
     if (st.cd > 0) { st.cd -= dt; continue; }
     if (S.estado === 'juego' && Math.hypot(n.x - st.x, n.y - st.y) < st.r + n.r * 0.6) { S.estado = 'estacion'; S.est = st; S.estVista = null; nvSnd('nvEstacion', S); }

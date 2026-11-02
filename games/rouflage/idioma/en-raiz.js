@@ -1,6 +1,9 @@
 // Fans Of · Inglés de la ficha del prototipo Fans of Rouflage en la biblioteca de la página de la raíz (va aquí y no en core/idioma para no tocar core).
 'use strict';
 IDIOMA.add({
+  // 0.2.64
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor. <b>PREMIO DIARIO SIN BLOQUEO</b>: recoger el premio diario ya no se queda esperando si no hay red; se da al momento y el cobro se manda al volver.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server. <b>DAILY PRIZE WITHOUT BLOCKING</b>: collecting the daily prize no longer waits when there is no network; it is given at once and the claim is sent when it comes back.",
+  "Microblizz ha mandado el premio por la cola y Phony se ha camuflado en ella.": "Microblizz sent the prize through the queue and Phony camouflaged himself in it.",
   // 0.2.63
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha guardado los anuncios tras una cortina y Phony se ha camuflado entre ellos.": "Microblizz put the ads behind a curtain and Phony camouflaged himself among them.",

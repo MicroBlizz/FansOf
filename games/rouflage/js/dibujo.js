@@ -81,29 +81,29 @@ function pintaSigno(c, x, y, s, color, t) {
   rotulo(c, s, x, y - 10 - bote, 17, color);
 }
 // las marcas que van por encima de la oscuridad: signos de los becarios, sus cartas, nombres, tu flecha
-function pintaMarcas(c, t) {
-  const yo = J.yo;
-  for (const e of J.entes) {
-    if (e.fuera && e.tFuera > 2.6 || idaOculto(e)) continue;
-    if (e.clase === 'cazador') {
-      if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') {   // las cartas de despido que le quedan a cada becario
-        for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
-          const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
-          c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
-          if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
-        }
+// el nombre, las cartas y las marcas de cada personaje
+function pintaMarcaEnte(c, t, e, yo) {
+  if (e.fuera && e.tFuera > 2.6 || idaOculto(e)) return;
+  if (e.clase === 'cazador') {
+    if (J.fase !== 'prep' && !e.jugador && J.fase !== 'titulo') {   // las cartas de despido que le quedan a cada becario
+      for (let k = 0; k < REGLAS.balas; k++) {   // la misma cartita de despido que en el panel del cazador: sobre oscuro con su raya roja, gris si ya se gastó
+        const bx = e.x - 20 + k * 8, by = e.y - 78, viva = k < e.balas;
+        c.fillStyle = OL; c.fillRect(bx, by, 7, 10); c.fillStyle = viva ? '#fff6ea' : '#5a5f7a'; c.fillRect(bx + 1, by + 1, 5, 8);
+        if (viva) { c.fillStyle = '#ff4b5c'; c.fillRect(bx + 1, by + 4, 5, 2); }
       }
-      if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
-      if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
-    } else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) {
-      c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
-      if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
-        c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
-      }
-      c.globalAlpha = 1;
     }
+    if (J.fase !== 'titulo') rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 92, 10, e.jugador ? '#ffcb3d' : '#9fd0ff', OL, LETRA_UI);   // el cazador siempre enseña su nombre, a todos
+    if (e.marca) pintaSigno(c, e.x, e.y - 106, e.marca, e.marca === '!' ? '#ff4b5c' : '#e8731a', t);
+  } else if (!e.fuera && e.hielo < 0.4 && J.fase !== 'titulo' && !(e === yo && TALLER.abierto) && !invisible(e)) {
+    c.globalAlpha = 1 - e.hielo / 0.4; rotulo(c, e.jugador ? tr('TÚ') : e.nombre, e.x, e.y - 76, 10, e.jugador ? '#ffcb3d' : '#fff6ea', OL, LETRA_UI);
+    if (e.jugador && e.aguante < 0.999) {      // tu aguante: una barrita bajo los pies, amarilla; roja mientras estás agotado
+      c.fillStyle = OL; c.fillRect(e.x - 16, e.y + 5, 32, 6); c.fillStyle = e.cansado ? '#ff4b5c' : '#ffcb3d'; c.fillRect(e.x - 15, e.y + 6, 30 * e.aguante, 4);
+    }
+    c.globalAlpha = 1;
   }
-  pintaFantasma(c, t); pintaSustos(c, t);
+}
+// «TOCA AQUÍ» hasta el primer disparo del cazador
+function pintaTocaAqui(c, t, yo) {
   // hasta su primer disparo, delante del cazador late un aro con «TOCA AQUÍ»: aquí no hay botón de matar (como en otros juegos), se toca donde está el colado
   if (yo && yo.clase === 'cazador' && !yo.fuera && yo.balas > 0 && (J.fase === 'caza' || (J.fase === 'prep' && PRACTICA.activa)) && !(SAVE.tuto && SAVE.tuto.disparo)) {
     // en las prácticas, encima del camaleón de prácticas más cercano (se ve claro: «toco aquí y lo despido»); en la caza, delante de la linterna
@@ -115,7 +115,9 @@ function pintaMarcas(c, t) {
     c.globalAlpha = 1; c.beginPath(); c.arc(px, py, 6, 0, TAU); c.fillStyle = '#ffcb3d'; c.fill(); c.restore();
     rotulo(c, ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('TOCA AQUÍ') : tr('HAZ CLIC AQUÍ'), px, py - 42, 13, '#ffcb3d', OL, LETRA_UI);
   }
-  pintaGestos(c);      // los bocadillos de los gestos del armario (armario-partida.js)
+}
+// la ayuda del cazador: el contorno del camaleón que se pasa de listo
+function pintaContorno(c, t, yo) {
   if (yo && yo.clase === 'cazador' && J.fase === 'caza') {
     // la ayuda del cazador: SOLO al camaleón que se pasa de listo (100 % de camuflaje, imposible de ver) y está cerca y en la luz le brilla el contorno; al 99 % ya no. Para el resto están los señuelos
     for (const k of J.camaleones) {
@@ -126,6 +128,9 @@ function pintaMarcas(c, t) {
     }
     c.globalAlpha = 1; c.setLineDash([]);
   }
+}
+// congelado no te ves ni tú: una flecha y el borde de puntos
+function pintaTuSitio(c, t, yo) {
   if (yo && !yo.fuera && yo.clase === 'camaleon' && yo.hielo > 0.3 && !TALLER.abierto) {
     // congelado no te ves ni tú: una flecha y el borde de puntos te dicen dónde estás (solo los ves tú)
     const a = Math.min(1, (yo.hielo - 0.3) / 0.5), by = yo.y - 62 - Math.abs(Math.sin(t * 3.2)) * 5;
@@ -133,12 +138,25 @@ function pintaMarcas(c, t) {
     c.globalAlpha = a * 0.55; c.save(); c.translate(yo.x, yo.y); c.beginPath(); trazaAlubia(c, null, yo.postura); c.lineWidth = 1.2; c.setLineDash([3, 4]); c.lineDashOffset = -t * 5; c.strokeStyle = '#fff6ea'; c.stroke(); c.setLineDash([]); c.restore();
     c.globalAlpha = 1;
   }
+}
+// la mira del ratón del cazador
+function pintaMira(c, yo) {
   if (yo && yo.clase === 'cazador' && J.fase === 'caza' && ENTRADA.raton && !ENTRADA.tactil) {
     // la mira del ratón: verde si llegas, roja si no
     const [x, y] = aMundo(ENTRADA.raton[0], ENTRADA.raton[1]), llega = lejos(yo.x, yo.y - 6, x, y) <= REGLAS.alcance && yo.enfria <= 0;
     c.strokeStyle = OL; c.lineWidth = 4; c.beginPath(); c.arc(x, y, 9, 0, TAU); c.stroke();
     c.strokeStyle = llega ? '#7ee04a' : '#ff4b5c'; c.lineWidth = 2; c.beginPath(); c.arc(x, y, 9, 0, TAU); c.moveTo(x - 14, y); c.lineTo(x - 5, y); c.moveTo(x + 5, y); c.lineTo(x + 14, y); c.moveTo(x, y - 14); c.lineTo(x, y - 5); c.moveTo(x, y + 5); c.lineTo(x, y + 14); c.stroke();
   }
+}
+function pintaMarcas(c, t) {
+  const yo = J.yo;
+  for (const e of J.entes) pintaMarcaEnte(c, t, e, yo);
+  pintaFantasma(c, t); pintaSustos(c, t);
+  pintaTocaAqui(c, t, yo);
+  pintaGestos(c);      // los bocadillos de los gestos del armario (armario-partida.js)
+  pintaContorno(c, t, yo);
+  pintaTuSitio(c, t, yo);
+  pintaMira(c, yo);
 }
 
 // una flecha en el borde de la pantalla que señala algo que queda fuera (un silbido, un becario que se acerca)
@@ -198,10 +216,8 @@ function repintaDelante(c, e, cosas) {
   if (hay) c.restore();
 }
 
-function dibuja(t) {
-  const c = ctx; calculaVista();
-  c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
-  const x0 = -CAM.ox / CAM.esc, y0 = -CAM.oy / CAM.esc, vw = cv.width / CAM.esc, vh = cv.height / CAM.esc, capas = TALLER.abierto && TALLER.capas;
+// el suelo: el mapa entero, o las capas de atrás del taller
+function dibujaFondo(c, capas, x0, y0, vw, vh) {
   if (capas) c.drawImage(TALLER.detras, 0, 0);
   else {
     c.fillStyle = COLOR_MURO; c.fillRect(0, 0, cv.width, cv.height);
@@ -209,9 +225,9 @@ function dibuja(t) {
     ponMundo(c);
     if (sw > 0 && sh > 0) c.drawImage(MAPA.fondo, sx * ESC_FONDO, sy * ESC_FONDO, sw * ESC_FONDO, sh * ESC_FONDO, sx, sy, sw, sh);
   }
-  ponMundo(c);
-  pintaFxSuelo(c); pintaSenuelos(c); eventosPintaSuelo(c, t); botePinta(c, t);
-  // muebles, puerta y personajes, de atrás adelante
+}
+// todo lo que se pinta entre el suelo y la oscuridad, sin ordenar
+function dibujaJunta(c, capas, x0, y0, vw, vh) {
   const cosas = [];
   if (!capas) for (const m of MAPA.porY) if (m.dib.x0 < x0 + vw && m.dib.x0 + m.dib.w > x0 && m.dib.y0 < y0 + vh && m.dib.y0 + m.dib.h > y0) cosas.push(m);
   for (const e of J.entes) if (!(e.fuera && e.tFuera > 3) && !idaOculto(e) && e.x > x0 - 60 && e.x < x0 + vw + 60 && e.y > y0 - 20 && e.y < y0 + vh + 90) cosas.push(e);
@@ -221,6 +237,10 @@ function dibuja(t) {
   if (PUERTA.abierta < 1) cosas.push(COSA_PUERTA);
   if (BARRERAS.length && PUERTA.abierta < 1 && J.fase !== 'sala') for (const b of BARRERAS) cosas.push({ y: b.y + b.h, puerta: true, barrera: b });      // Mi escenario (barreras.js)
   for (const z of FPZ.lista) if (z.k === 'portazo') cosas.push({ y: z.p.y + z.p.h, puerta: true, portazo: z });      // el portazo de un fantasma (fantasma-efectos.js)
+  return cosas;
+}
+// el orden de pintado: de atrás adelante, con los congelados como «parte del suelo»
+function dibujaOrden(cosas) {
   // un camaleón congelado es «parte del suelo»: quien pase por detrás de él se pinta ENCIMA, no debajo. Si no, su pintura
   // de suelo quedaría sobre el becario y dejaría ver su silueta recortada (y sería facilísimo encontrarlo).
   for (const k of cosas) k.ordenY = k.y;
@@ -232,7 +252,9 @@ function dibuja(t) {
     }
   }
   cosas.sort((a, b) => a.ordenY - b.ordenY);
-  fpPintaSuelo(c, t);      // los charcos de los fantasmas, en el suelo (fantasma-efectos.js)
+  cosas.sort((a, b) => a.ordenY - b.ordenY);
+}
+function dibujaCosas(c, t, cosas) {
   for (const k of cosas) {
     if (k.T) { if (!k.vuela) c.drawImage(k.dibujo.cv, k.dib.x0, k.dib.y0, k.dib.w, k.dib.h); }      // vuela: el coche del jefe en pleno salto (dibujo-roaster.js lo pinta en el aire)
     else if (k.puerta) { if (k.portazo) pintaPortazo(c, t, k.portazo); else if (k.barrera) pintaBarrera(c, t, k.barrera); else pintaPuerta(c, t); }
@@ -241,13 +263,31 @@ function dibuja(t) {
     else if (k.invis > 0) { if (k !== J.yo) continue; pintaAlubia(c, k, t, k.invis < 2 && Math.sin(t * 18) > 0 ? 0.65 : 0.3); c.globalAlpha = 1; }      // granada: nadie lo ve (ni becarios ni otros colados); solo él, como un fantasma
     else { pintaAlubia(c, k, t); c.globalAlpha = 1; }
   }
-  if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
-  fpPintaNubes(c, t);      // el vaho de los fantasmas, encima de los personajes y debajo de la oscuridad
+}
+// la luz y los velos de la caza
+function dibujaLuz(c, t, cosas) {
   if (!TALLER.abierto) {
     ponMundo(c); eventosPintaEncima(c, t); pintaLuces(c); ponMundo(c);
     for (const e of J.cazadores) if (conLuz(e)) { pintaAlubia(c, e, t); c.globalAlpha = 1; repintaDelante(c, e, cosas); }      // el haz nace DETRÁS del becario: se repinta encima del velo y del borde del cono
     eventosPintaVelo(c, t); talentosPintaLuz(c, t); ponMundo(c); pintaOtrosFantasmas(c, t);
   }
+}
+
+function dibuja(t) {
+  const c = ctx; calculaVista();
+  c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+  const x0 = -CAM.ox / CAM.esc, y0 = -CAM.oy / CAM.esc, vw = cv.width / CAM.esc, vh = cv.height / CAM.esc, capas = TALLER.abierto && TALLER.capas;
+  dibujaFondo(c, capas, x0, y0, vw, vh);
+  ponMundo(c);
+  pintaFxSuelo(c); pintaSenuelos(c); eventosPintaSuelo(c, t); botePinta(c, t);
+  // muebles, puerta y personajes, de atrás adelante
+  const cosas = dibujaJunta(c, capas, x0, y0, vw, vh);
+  dibujaOrden(cosas);
+  fpPintaSuelo(c, t);      // los charcos de los fantasmas, en el suelo (fantasma-efectos.js)
+  dibujaCosas(c, t, cosas);
+  if (capas) { c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(TALLER.delante, 0, 0); ponMundo(c); }
+  fpPintaNubes(c, t);      // el vaho de los fantasmas, encima de los personajes y debajo de la oscuridad
+  dibujaLuz(c, t, cosas);
   ponMundo(c); pintaFx(c); pintaMarcas(c, t); pintaBalizas(c, t); idaPinta(c); talentosPinta(c, t); pintaChat(c, t); salaVivaNombres(c);
   if (J.pvp && J.yo && J.yo.clase === 'cazador' && (J.fase === 'prep' || J.fase === 'cuenta') && !capas) tapaFueraDeSala(c, x0, y0, vw, vh);
   c.setTransform(DPR, 0, 0, DPR, 0, 0); pintaEncima(c, t);

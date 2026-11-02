@@ -45,20 +45,11 @@ function nvEnemigo(S, tipo, x, y, rango) {
 }
 function nvSpawn(S, dt) {
   if (S.jefe || S.jefeSalto) return;
-  const n = S.nave;
-  let carga = 0;   // con la zona llena (los grandes cuentan doble) no salen más: así se combinan tamaños sin taponar
-  for (const e of S.enem) if (!e.muerto && !e.d.pasivo && !e.d.nido && Math.hypot(e.x - n.x, e.y - n.y) < 1200) carga += e.rango > n.rango + 1 ? 2 : 1;
-  for (const o of NV_OLEADAS) {
-    if (carga >= 12) break;
-    if (S.t < o.desde) continue;
-    o.tiempo = (S.o_t[o.tipo + o.desde] = (S.o_t[o.tipo + o.desde] || 0) + dt);
-    if (o.tiempo < o.cada) continue;
-    S.o_t[o.tipo + o.desde] = 0;
-    for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
-  }
-  if (S.capMuertos >= 3 || S.t >= NV_TIEMPO_JEFE) {
+  const n = S.nave, carga = NV.Oleadas.carga(S.enem, n);
+  for (const o of NV.Oleadas.tocan(NV_OLEADAS, S.o_t, S.t, dt, carga)) for (let i = 0; i < o.lote; i++) nvSaltoEntra(S, o.tipo, nvRangoRelativo(n.rango), 0.8 + Math.random() * 0.2);
+  if (NV.Oleadas.llegaJefe(S.capMuertos, S.t, nvTiempoJefe(S))) {   // guion.js: en la misión guiada llega antes
     S.jefeSalto = true;
-    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); });
+    nvSaltoEntra(S, 'jefe', 1, 0.75, j => { S.jefe = j; S.jefeSalto = false; nvJefeNuevo(j); nvGuionJefe(S, j); });
     S.aviso = { t: 3, txt: tr('¡Llega el Rey de los huesos!') };
   }
 }
@@ -70,37 +61,48 @@ function nvRangoRelativo(r) {
 }
 
 // ---------- IA ----------
+// Cada enemigo, cada paso: el tiempo (dominio/enemigo.js, NV.Enemigo) y luego su comportamiento según lo que sea.
 function nvEnemigos(S, dt) {
-  const n = S.nave;
   for (let i = S.enem.length - 1; i >= 0; i--) {
     const e = S.enem[i];
     if (e.muerto) { S.enem.splice(i, 1); continue; }
-    for (const k in e.est) if ((e.est[k] -= dt) <= 0) delete e.est[k];
-    if (e.flash > 0) e.flash -= dt;
-    if (e.dot) { e.hp -= e.dot.dps * dt; S.stats.dano += e.dot.dps * dt; if ((e.dot.t -= dt) <= 0) e.dot = null; if (e.hp <= 0) { nvMuere(S, e); continue; } }
-    if (e.sinEsc > 0) e.sinEsc -= dt;
-    if (e.sis > 0 && !(e.est.interferido > 0)) e.sis = Math.max(0, e.sis - 20 * dt);   // los sistemas se reponen cuando cesa la interferencia
-    if (e.d.esc && e.esc < e.escMax && !(e.est.escudoCaido > 0) && !(e.est.interferido > 0) && !(e.sinEsc > 0)) e.esc = Math.min(e.escMax, e.esc + dt * 6);
-    const dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
-    e.vis = nvEnPantalla(S, e.x, e.y);   // fuera de la pantalla no dispara
-    if (e.d.nido) { if (dist < 520 && e.vis) { e.golpe -= dt; if (e.golpe <= 0) { e.golpe = 2.2; nvBalaE(S, e.x, e.y, ux * 210, uy * 210, 9, 7, 3, 'termica'); } } continue; }   // el nido no se mueve y escupe si te acercas
-    if (e.d.pasivo) continue;   // las rocas solo estorban: se rompen a tiros
-    if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) { if (e.errante) { e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt; } continue; }   // lejos: dormido o a lo suyo
-    const apagado = e.est.apagon > 0, lento = apagado ? 0.3 : 1;
-    let vx = 0, vy = 0;
-    if (e.armas) {   // la nave orbita a su alcance y cada arma dispara desde su anclaje
-      nvNavegaE(S, e, dt, Math.atan2(uy, ux), dist, lento);
-      if (!apagado) for (const w of e.armas) {
-        if ((w.cd -= dt) > 0 || dist > nvAlcE(S, w) + e.r || !e.vis) continue;
-        nvDisparaE(S, e, w);
-      }
-    } else if (e.d.capitan) { const q = nvCapitan(S, e, dt, ux, uy, dist, apagado); vx = q[0]; vy = q[1]; }
-    else if (e.d.jefe) nvJefe(S, e, dt, ux, uy, dist, apagado);   // pilota solo (jefe.js)
-    else { vx = ux; vy = uy; }
-    if (e.armas) continue;   // las armadas ya se han movido solas (navegacion-enemiga.js)
-    const l = Math.hypot(vx, vy) || 1, v = e.d.vel * lento * (e.d.jefe && e.hp < e.hpMax / 2 ? 1.4 : 1);
-    e.x += vx / l * v * dt; e.y += vy / l * v * dt;
-    // sin daño por choque: solo hacen daño con sus armas
+    const t = NV.Enemigo.pasaTiempo(e, dt);
+    S.stats.dano += t.quemado;
+    if (t.muere) { nvMuere(S, e); continue; }
+    nvEnemigoActua(S, e, dt);
+  }
+}
+function nvEnemigoActua(S, e, dt) {
+  const n = S.nave, dx = n.x - e.x, dy = n.y - e.y, dist = Math.hypot(dx, dy) || 1, ux = dx / dist, uy = dy / dist;
+  e.vis = nvEnPantalla(S, e.x, e.y) && !nvHabOculto(S);   // fuera de la pantalla (o con Fuera del radar) no dispara
+  if (e.d.nido) return nvNidoEscupe(S, e, dt, ux, uy, dist);   // el nido no se mueve y escupe si te acercas
+  if (e.d.pasivo) return;   // las rocas solo estorban: se rompen a tiros
+  if (dist > (e.errante ? 900 : 2600) && !e.d.jefe && !e.d.capitan) return nvEnemigoLejos(e, dt);   // lejos: dormido o a lo suyo
+  const apagado = e.est.apagon > 0;
+  if (e.armas) return nvEnemigoArmado(S, e, dt, ux, uy, dist, apagado);   // las armadas se mueven solas (navegacion-enemiga.js)
+  let vx = ux, vy = uy;
+  if (e.d.capitan) [vx, vy] = nvCapitan(S, e, dt, ux, uy, dist, apagado);
+  else if (e.d.jefe) { nvJefe(S, e, dt, ux, uy, dist, apagado); vx = 0; vy = 0; }   // pilota solo (jefe.js)
+  const l = Math.hypot(vx, vy) || 1, v = NV.Enemigo.velocidad(e, apagado);
+  e.x += vx / l * v * dt; e.y += vy / l * v * dt;
+  // sin daño por choque: solo hacen daño con sus armas
+}
+function nvNidoEscupe(S, e, dt, ux, uy, dist) {
+  if (dist >= 520 || !e.vis) return;
+  e.golpe -= dt;
+  if (e.golpe <= 0) { e.golpe = 2.2; nvBalaE(S, e.x, e.y, ux * 210, uy * 210, 9, 7, 3, 'termica'); }
+}
+function nvEnemigoLejos(e, dt) {
+  if (!e.errante) return;
+  e.fase += dt * 0.2; e.x += Math.cos(e.fase) * 25 * dt; e.y += Math.sin(e.fase) * 25 * dt;
+}
+// La nave armada orbita a su alcance y cada arma dispara desde su anclaje
+function nvEnemigoArmado(S, e, dt, ux, uy, dist, apagado) {
+  nvNavegaE(S, e, dt, Math.atan2(uy, ux), dist, apagado ? 0.3 : 1);
+  if (apagado) return;
+  for (const w of e.armas) {
+    if ((w.cd -= dt) > 0 || dist > nvAlcE(S, w) + e.r || !e.vis) continue;
+    nvDisparaE(S, e, w);
   }
 }
 // Salto hiperespacial: la nave entra a toda velocidad desde fuera de la pantalla y frena a una fracción `f` del borde,
@@ -142,17 +144,23 @@ function nvCapitanSube(e) {
 }
 function nvMuere(S, e) {
   e.muerto = true; S.stats.muertos++; S.kills.push(S.t);
-  if (e.d.jefe || e.d.capitan || e.d.nido) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
+  nvGuion(S, 'baja');   // guion.js
+  const grande = e.d.jefe || e.d.capitan || e.d.nido;
+  if (grande) nvSnd('nvBoomGrande', S, e.x, e.y); else nvSnd('nvBoom', S, e.x, e.y, Math.min(1.3, 0.7 + e.r / 80));
   if (e.d.capitan) S.capMuertos++;
   // un enemigo con calor acumulado revienta y quema en área en proporción a ese calor (la onda no calienta a los vecinos)
   if (e.calor >= 10 && !e.d.pasivo) { const k = e.calor; e.calor = 0; nvExplosion(S, e.x, e.y, 40 + k * 0.5, k * 1.2, { carga: 'termica', tam: 0 }, e, true); }
-  nvChatarra(S, e.x, e.y, e.d.pasivo || e.d.nido || e.d.jefe || e.d.capitan ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
-  S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
-  const z = nvZ(S);
-  S.fx.push({ t: 0.25, x: e.x, y: e.y, r: e.r * 1.1, color: '#ffe9a8', tipo: 'flash' });
-  for (let i = 0; i < 10 + Math.min(14, e.rango); i++) { const a = Math.random() * 6.283, v = (80 + Math.random() * 260) * Math.max(z, e.r / 24); S.parts.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.5 + Math.random() * 0.4, color: i % 3 ? e.d.color : '#ffd93d', s: Math.max(3 * z, e.r * 0.12) }); }
+  nvChatarra(S, e.x, e.y, e.d.pasivo || grande ? e.d.chat : nvValorKill(e.d.chat, e.rango, S.nave.rango));
+  nvMuereEstalla(S, e);
   if (!e.d.pasivo && nvVisible(S, e.x, e.y, e.r)) nvTrozos(S, e, e.d.capitan || e.d.nido ? 6 : 4);   // revienta en pedazos
   if (e.d.jefe) nvAcaba(S, 'victoria', e.x, e.y, e.r);
+}
+// La onda, el destello y las chispas al morir (solo dibujo)
+function nvMuereEstalla(S, e) {
+  const z = nvZ(S);
+  S.fx.push({ t: 0.4, x: e.x, y: e.y, r: e.r * 1.6, color: e.d.color, tipo: 'onda' });
+  S.fx.push({ t: 0.25, x: e.x, y: e.y, r: e.r * 1.1, color: '#ffe9a8', tipo: 'flash' });
+  for (let i = 0; i < 10 + Math.min(14, e.rango); i++) { const a = Math.random() * 6.283, v = (80 + Math.random() * 260) * Math.max(z, e.r / 24); S.parts.push({ x: e.x, y: e.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, t: 0.5 + Math.random() * 0.4, color: i % 3 ? e.d.color : '#ffd93d', s: Math.max(3 * z, e.r * 0.12) }); }
 }
 // La chatarra queda flotando hasta que la nave se acerca (imán).
 function nvChatarra(S, x, y, valor) {
@@ -161,13 +169,15 @@ function nvChatarra(S, x, y, valor) {
   for (let i = 0; i < k; i++) S.restos.push({ x: x + (Math.random() - 0.5) * 30, y: y + (Math.random() - 0.5) * 30, v: valor / k, t: 0, ang: Math.random() * 6.28 });
 }
 function nvDanoNave(S, d) {
+  if (nvHabProtege(S)) return;   // habilidad.js: Escudo de plasma y Estampida
   const n = S.nave, rd = d * (1 - (S.mejoras.blindaje || 0)) * (1 + 0.15 * ((S.peligro || 1) - 1));
   let r = rd;
   if (n.esc && n.esc.hp > 0) { const a = Math.min(n.esc.hp, r); n.esc.hp -= a; r -= a; n.esc.sin = 3; }
   if (NVP.inmortal) r = 0;   // ?inmortal=1: escenario de pruebas de rendimiento, no te matan (los enemigos siguen disparando y el daño se cuenta)
   if (r > 0) nvSnd('nvGolpeNave', S);
+  r = nvGuionAguanta(S, r);   // guion.js: en la misión guiada no te destruyen
   n.hp -= r; n.golpeado = 0.15; S.stats.recibido += rd;
-  if (S.cap === 'twitchking') S.kills = [];   // el hype se pierde al recibir daño
+  if (S.cap === 'twitchking' && !nvHabActua(S, 'directo')) S.kills = [];   // el hype se pierde al recibir daño (no en Directo)
   if (n.hp <= 0 && S.cap === 'necrolord' && !S.revivido) { S.revivido = true; n.hp = n.hpMax * 0.5; S.aviso = { t: 2.5, txt: tr('¡Renaces!') }; return; }
   if (n.hp <= 0 && S.estado === 'juego') nvAcaba(S, 'derrota');
 }

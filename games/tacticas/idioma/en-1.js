@@ -1,6 +1,9 @@
 // Fans of Rumble: Tácticas · Inglés: los textos de este juego (los de la serie y los comunes están en core/idioma).
 'use strict';
 IDIOMA.add({
+  // 0.1.56
+  "<b>MEJORAS POR DENTRO</b>: los sistemas comunes guardan lo pendiente cuando no hay red y lo mandan al volver, y la hora ya sale del servidor.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: the shared systems keep pending things when there is no network and send them when it comes back, and the time now comes from the server.",
+  "Microblizz ha puesto las fichas en cola y Phony ha movido la de atrás.": "Microblizz queued the pieces and Phony moved the one at the back.",
   // 0.1.55
   "<b>MEJORAS POR DENTRO</b>: los anuncios tienen una capa común más ordenada (siguen apagados mientras no se abran) y las pruebas internas siguen mejorando.": "<b>IMPROVEMENTS UNDER THE HOOD</b>: ads now have a tidier shared layer (still switched off until they are opened) and internal testing keeps improving.",
   "Microblizz ha puesto los anuncios en el banquillo y Phony ha movido una ficha publicitaria.": "Microblizz benched the ads and Phony moved an advertising piece.",

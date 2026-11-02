@@ -96,4 +96,6 @@ IDIOMA.add({
   "Élites": "Elites",
   "Prisa eterna": "Eternal hurry",
   "La Noche de la Oca": "The Night of the Goose",
+  "Para todos": "For everyone",
+  "Mejoras propias: {a}/{b}": "Own upgrades: {a}/{b}",
 });

@@ -17,8 +17,9 @@ function ppIrA(p) {
     const hay = !!(SAVE.run && SAVE.run.nivel > 0);
     $pp('#pp-record').textContent = hay ? tr('Vas por el nivel {n}', { n: SAVE.run.nivel + 1 }) : SAVE.estrellas ? tr('Récord: {n} estrellas', { n: SAVE.estrellas }) : tr('Revienta burbujas, rescata amigos');
     $pp('#pp-seguir').hidden = !hay;
-    $pp('#pp-jugar').textContent = hay ? tr('EMPEZAR DE NUEVO') : tr('JUGAR');
-    $pp('#pp-jugar').className = hay ? 'pp-btn2 pp-azul' : 'pp-btn pp-enorme';
+    $pp('#pp-jugar').hidden = hay;   // con partida empezada solo sale SEGUIR; EMPEZAR DE NUEVO está en Opciones (Daniel, 02-11-2026)
+    $pp('#pp-jugar').textContent = tr('JUGAR');
+    $pp('#pp-tienda').innerHTML = `<img class="pp-ico" src="${PP_LISO ? 'img-liso' : 'img'}/i-perlas.png" alt="" style="width:34px;height:34px${PP_LISO ? ';image-rendering:auto' : ''}">${tr('TIENDA')}`;   // la imagen directa: en la portada aún no han cargado los dibujos
     $pp('#pp-duelo').textContent = tr('DUELOS');
     $pp('#pp-memoria').textContent = tr('MEMORIA');
     $pp('#pp-ranking').textContent = tr('RANKING');
@@ -102,7 +103,7 @@ function ppVentanaSalaHecha() {
 // sin toques: se ha perdido un corazón (partida.js) y se repite el nivel o se vuelve al camino
 function ppVentanaSinToques() {
   const t = ppAbre(`<h2>${tr('¡Sin toques!')}</h2><p class="pp-sub">${tr('Se te han acabado los toques. Pierdes un corazón; te quedan {n}.', { n: SAVE.vidas })}</p>`);
-  ppBotonOferta(t);   // la oferta de atasco, si está activa (js/ofertas.js)
+  ppBotonOferta(t, ppVentanaSinToques);   // la oferta de atasco, si está activa (js/ofertas.js); al acabar, vuelve aquí
   t.appendChild(ppBoton(tr('¡OTRA VEZ!'), 'pp-btn', ppOtraVez));
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', ppAlCamino));
 }
@@ -129,7 +130,7 @@ function ppVentanaSinCorazones() {
   const tic = setInterval(reloj, 1000); reloj();
   ppBotonesSinCorazones(t, () => { play('ppPremio'); clearInterval(tic); ppAlCamino(); }, () => { clearInterval(tic); ppVentanaSinCorazones(); });
   ppBotonInfinitas(t, () => { clearInterval(tic); ppAlCamino(); });   // corazones infinitos por tiempo (js/ofertas.js)
-  ppBotonOferta(t);
+  ppBotonOferta(t, ppVentanaSinCorazones);
   t.appendChild(ppBoton(tr('Al camino'), 'pp-btn2 pp-azul', () => { clearInterval(tic); ppAlCamino(); }));
 }
 function ppVentanaFin() {
@@ -159,9 +160,15 @@ function ppOpciones() {
   col.appendChild(son);
   const vib = ppBoton(SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.sinVibrar = !SAVE.sinVibrar; ppGuarda(); vib.textContent = SAVE.sinVibrar ? tr('VIBRACIÓN: NO') : tr('VIBRACIÓN: SÍ'); });
   col.appendChild(vib);
-  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
-  col.appendChild(est);
+  if (SAVE.run && SAVE.run.nivel > 0) col.appendChild(ppBoton(tr('EMPEZAR DE NUEVO'), 'pp-btn2 pp-rosa', ppConfirmaDeNuevo));
   col.appendChild(ppBoton(tr('VOLVER'), 'pp-btn', ppCierra));
+}
+// empezar de nuevo borra el camino: se pregunta antes (las monedas, perlas, ayudas y récords no se pierden)
+function ppConfirmaDeNuevo() {
+  const t = ppAbre(`<h2>${tr('¿Empezar de nuevo?')}</h2><p class="pp-sub">${tr('Vuelves al nivel 1 y pierdes el camino y el equipo. Tus monedas, perlas y ayudas se quedan.')}</p>`);
+  const col = document.createElement('div'); col.className = 'pp-columna'; t.appendChild(col);
+  col.appendChild(ppBoton(tr('SÍ, DE NUEVO'), 'pp-btn2 pp-rosa', () => { ppCierra(); ppEmpieza(false); }));
+  col.appendChild(ppBoton(tr('NO, VOLVER'), 'pp-btn', ppOpciones));
 }
 /* ---------- la pausa ----------
    En un nivel: seguir, salir del nivel (vuelves al camino sin perder nada: el nivel se repite entero) o ir al menú principal
@@ -182,8 +189,6 @@ function ppPausa() {
   col.appendChild(ppBoton(tr('Menú principal'), 'pp-btn2 pp-azul', () => { ppQuitaPausa(); if (PP_P && PP_P.T) ppSalNivel(); ppGuardaCamino(); PP_P = null; ppIrA('titulo'); }));
   const son = ppBoton(SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'), 'pp-btn2 pp-rosa', () => { SAVE.muted = !SAVE.muted; ppGuarda(); applyVolume(); son.textContent = SAVE.muted ? tr('SONIDO: NO') : tr('SONIDO: SÍ'); });
   col.appendChild(son);
-  const est = ppBoton(ppTextoEstilo(), 'pp-btn2 pp-azul', () => { ppCambiaEstilo(); est.textContent = ppTextoEstilo(); });
-  col.appendChild(est);
 }
 function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
 /* ---------- el tutorial de Lola ----------
@@ -191,7 +196,6 @@ function ppQuitaPausa() { PP_PANT.pausa = false; ppCierra(); }
    mientras Lola te lo dice); las demás llevan un botón. Cada tutorial sale una sola vez (SAVE.tuto). */
 const PP_TUTO = {
   w1n1: [{ t: '¡Hola! Soy Lola. ¡Vamos a reventar burbujas juntos!' },
-         { t: 'Antes de empezar: ¿cómo te gustan los dibujos? Puedes cambiarlo cuando quieras en la pausa.', elige: 'estilo' },
          { t: 'Toca la burbuja que señala la manita: revientan ella y sus vecinas de arriba, abajo y los lados.', toque: true }],
   w1n2: [{ t: '¡Plop! Lo que revientas se queda reventado. Para pasar el nivel, revienta todas.' },
          { t: 'Cuantos menos toques uses, más estrellas. Sigue a la manita.', toque: true }],
@@ -259,18 +263,10 @@ function ppLolaSiguiente() {
   if (!f) { caja.hidden = true; return; }
   const cara = $pp('#pp-lola-cara'); cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92));
   $pp('#pp-lola-texto').textContent = tr(f.t);
-  $pp('#pp-lola-vale').hidden = !!(f.toque || f.elige);
-  $pp('#pp-lola-elige').hidden = f.elige !== 'estilo';   // Lola pregunta: lisitos o pixel art (Daniel, 30-10-2026)
+  $pp('#pp-lola-vale').hidden = !!f.toque;
   caja.classList.toggle('pp-encima', !!f.encima);   // las de las ventanas salen por encima de ellas
   caja.hidden = false; caja.classList.remove('pp-entra'); void caja.offsetWidth; caja.classList.add('pp-entra');
   play('ppPista');
-}
-// la respuesta a la pregunta de Lola sobre el estilo de los dibujos: se cambia al momento y sigue el tutorial
-function ppLolaEligeEstilo(pixel) {
-  if (!!SAVE.pixel !== pixel) ppCambiaEstilo();
-  ppLolaSiguiente();
-  // su cara se vuelve a pintar cuando llegan los dibujos del estilo nuevo
-  setTimeout(() => { const cara = $pp('#pp-lola-cara'); if (cara && PP_LOLA.actual) { cara.innerHTML = ''; cara.appendChild(ppMiniatura('sl-lola', 92)); } }, 700);
 }
 // la frase que espera a que toques una burbuja
 function ppLolaToque() { if (PP_LOLA.actual && PP_LOLA.actual.toque) ppLolaSiguiente(); }

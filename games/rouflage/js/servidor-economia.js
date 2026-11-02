@@ -16,17 +16,7 @@ function economiaPartidaServidor(r) {
   r.filas.push([tr('Pase de temporada'), tr('nivel {n}', { n: nivel }) + ' (+' + xp + ' XP)']);
   RFS.partida(r.victoria, linea);
 }
-// el premio diario: lo da el servidor (la fecha es la de Madrid)
-async function diarioRecogeServidor() {
-  if (!diarioPuede()) return;
-  try {
-    const est = await RFS.llama('rf_diario');
-    const pr = est.premio || [], perdida = (pr.find(h => h.perdida) || {}).perdida;      // la racha (servidor/81-rouflage-racha.sql): sus apuntes no son premio
-    const texto = pr.filter(h => h.gotas || h.pieza).map(h => h.deRacha && h.gotas ? tr('{n} Gotas de racha', { n: h.gotas }) : h.gotas && !h.repetida && !h.pieza ? tr('{n} Gotas', { n: h.gotas }) : h.pieza ? nombrePieza(h.pieza) : tr('{n} Gotas', { n: h.gotas }) + ' (' + nombrePieza(h.repetida) + ')').join(' + ');
-    misionEvento('diario'); play('select'); play('go'); avisa(tr('Premio del día: {p}', { p: texto }), 'bueno'); diarioPinta(); diarioBoton();
-    if (perdida) setTimeout(() => abreRescate(perdida), 900); else if ((diarioEstado().racha || 0) >= 2) avisosOfrece();
-  } catch (e) { RFS.error(e); }
-}
+// (el premio diario ya no se espera al servidor: se da al momento y el cobro va por la cola sin conexión; diario.js)
 // comprar una pieza en el armario con la moneda elegida: rf_comprar_con (servidor/65-*.sql) cobra el precio de los datos del juego, no el del cliente.
 // Devuelve una promesa con true si se ha comprado (la ventana de confirmar se cierra entonces)
 async function arCompraServidor(cat, it, moneda) {

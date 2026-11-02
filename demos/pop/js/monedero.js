@@ -32,7 +32,7 @@ function ppSumaVida(n) { ppVidas(); SAVE.vidas = Math.min(PP_CFG.vida, SAVE.vida
 // --- monedas ---
 function ppCobra(precio) { if (SAVE.monedas < precio) return false; SAVE.monedas -= precio; ppGuarda(); return true; }
 function ppLlenaVidas() { if (ppVidas() >= PP_CFG.vida || !ppCobra(PP_CFG.precioVidas)) return false; SAVE.vidas = PP_CFG.vida; SAVE.vidaT = Date.now(); ppGuarda(); return true; }
-// --- huecos del equipo: 4 de serie y hasta 2 más comprados (nunca más que amigos haya), cada uno más caro ---
+// --- huecos del equipo: 3 de serie y hasta 3 más comprados (nunca más que amigos haya), cada uno más caro ---
 const ppHuecos = () => PP_CFG.equipo + (SAVE.huecos || 0);
 const ppHuecosMax = () => Math.min(PP_CFG.huecosMax, PP_SLIME_IDS.length);
 const ppPrecioHueco = () => (ppHuecos() < ppHuecosMax() ? PP_CFG.precioHueco[SAVE.huecos || 0] : null);

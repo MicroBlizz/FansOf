@@ -42,12 +42,14 @@ PT.anclas = (() => {
     'adulto-bano': [[0.382, 0.354, 0.043, 0.049], [0.566, 0.358, 0.048, 0.051], [0.474, 0.465]],
     'adulto-ducha': [[0.372, 0.424, 0.062, 0.062], [0.635, 0.417, 0.057, 0.06], [0.504, 0.556]],
   };
-  // qué plantilla lleva esa etapa y pose (la base de niña y adulta, por personalidad; sin personalidad, nada: no está sobre molde)
+  // qué plantilla lleva esa etapa y pose (la base de niña y adulta, por personalidad; sin personalidad, nada: no está sobre molde).
+  // Una personalidad que solo cambia la cara ('kawaii': la del molde, cuando la criatura no tiene pose propia) va sobre el molde liso
   function plantilla(etapa, pose, personalidad) {
     if (!personalidad) return '';
     if (etapa === 'jefe') return 'adulto-liso';
     const e = etapa === 'adolescente' ? 'adulto' : etapa;
-    return pose === 'base' && e !== 'bebe' ? `${e}-base-${personalidad}` : `${e}-${pose}`;
+    if (pose !== 'base' || e === 'bebe') return `${e}-${pose}`;
+    return T[`${e}-base-${personalidad}`] ? `${e}-base-${personalidad}` : `${e}-liso`;
   }
   // las anclas de esa pose, en fracciones del lienzo del juego: { ojos: [[x, y, rx, ry], [...]], boca: [x, y], cara: [x, y, w, h]
   // (el recuadro de los recortes) }; null si no hay. Sin encuadre apuntado, las devuelve en fracciones del dibujo de Yoshi

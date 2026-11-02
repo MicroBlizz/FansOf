@@ -11,22 +11,27 @@ PT.arte = (() => {
   const RAMAS = PETS.ascenso.ramas;
   const ANIMALES = ['bunny', 'squirrel', 'beaver', 'fox', 'meercat', 'junkcoon', 'mechavaca', 'huron'];   // MechaVaca: de bebé es una vaca con un robot de juguete; el robot de verdad llega en el adulto
   const ARTE = Object.fromEntries(ANIMALES.map(k => ['animales:' + k, { bebe: POSES_BEBE, nino: ['base'], adolescente: ['base'], adulto: ['base'], jefe: RAMAS }]));
-  ARTE['animales:bunny'] = { bebe: POSES_BEBE, nino: POSES_BEBE, adolescente: POSES_BEBE, adulto: POSES_BEBE, jefe: RAMAS };   // CrazyBunny: las 37 sobre las plantillas
+  const TODAS = { bebe: POSES_BEBE, nino: POSES_BEBE, adolescente: POSES_BEBE, adulto: POSES_BEBE, jefe: RAMAS };   // las 37 sobre las plantillas
+  ARTE['animales:bunny'] = TODAS; ARTE['animales:squirrel'] = TODAS; ARTE['animales:fox'] = TODAS;   // CrazyBunny, MadSquirrel y SlyFox
   // dónde está el patito en la ducha de cada criatura (x, y, ancho y alto en fracción del dibujo); si falta, el de PETS.mampara.delante
   const PATITO = {
-    'animales:squirrel': [0.665, 0.76, 0.17, 0.15], 'animales:beaver': [0.662, 0.662, 0.17, 0.203], 'animales:fox': [0.676, 0.727, 0.13, 0.145],
+    'animales:beaver': [0.662, 0.662, 0.17, 0.203],
     'animales:meercat': [0.707, 0.662, 0.155, 0.208], 'animales:junkcoon': [0.685, 0.662, 0.17, 0.212], 'animales:mechavaca': [0.715, 0.7, 0.137, 0.164],
     'animales:huron': [0.67, 0.662, 0.176, 0.22],
-    'animales:bunny': null,   // las duchas sobre las plantillas no llevan patito
+    'animales:bunny': null, 'animales:squirrel': null, 'animales:fox': null,   // las duchas sobre las plantillas no llevan patito
   };
   // el cuidado que se está viendo → la pose que lo dibuja
   const POSE = { comer: 'comer', beber: 'beber', banar: 'ducha', dientes: 'dientes', cara: 'cara', bano: 'bano' };
   // las criaturas dibujadas sobre las plantillas lisas (docs/pets/arte.md): van con la cara vacía y la cara se compone con las piezas de
   // caras.js sobre las anclas de la plantilla (anclas.js). Las de antes de las plantillas se quedan con su dibujo quieto. Y la pose base
-  // de cada una (su personalidad, una por rama de ascenso)
-  const SOBRE_MOLDE = { 'animales:bunny': 'loco' };
+  // de cada una (su personalidad, una por rama de ascenso; 'kawaii': sin pose propia, la base va sobre el molde liso y solo cambia la cara)
+  const SOBRE_MOLDE = { 'animales:bunny': 'loco', 'animales:squirrel': 'kawaii', 'animales:fox': 'kawaii' };
   // las zonas de la cara que en esa pose van tapadas por el dibujo (gafas de sol, antifaz…): ahí no se pone pieza. id → pose → zonas
-  const TAPADAS = { 'animales:bunny': { gamberro: ['ojos'], siesta: ['ojos'] } };
+  const TAPADAS = {
+    'animales:bunny': { gamberro: ['ojos'], siesta: ['ojos'] },
+    'animales:squirrel': { gamberro: ['ojos', 'boca'], siesta: ['ojos'] },   // la gamberra trae su sonrisilla dibujada
+    'animales:fox': { gamberro: ['ojos'], siesta: ['ojos'] },
+  };
   const ANIMADORES = {};   // id → su animador (cuándo parpadea…)
   const COMPUESTA = document.createElement('canvas');   // el dibujo con su cara puesta, para pintarlo (o pixelarlo) de una pieza
   const IMG = {};   // 'img/criaturas/animales-bunny-bebe-comer.webp' → Image (se carga la primera vez que hace falta)

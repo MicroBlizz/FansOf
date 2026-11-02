@@ -1,8 +1,8 @@
 {
- "build": 817,
- "hash": "42e90a3",
- "fecha": "2026-11-02T01:36:53Z",
- "mensaje": "Rouflage: refrescaHab (32) partido en habBotonVisible, habCarga, habTextoUsos y habBotonPinta con 5 tests; cifras en MIGRACION y SEGUIMIENTO",
+ "build": 818,
+ "hash": "8ed8544",
+ "fecha": "2026-11-02T02:00:24Z",
+ "mensaje": "Pets: MadSquirrel y SlyFox enteras sobre las plantillas con la cara viva por despiece",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

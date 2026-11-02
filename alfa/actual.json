@@ -1,8 +1,8 @@
 {
- "build": 814,
- "hash": "de03e58",
- "fecha": "2026-11-02T01:11:57Z",
- "mensaje": "Rouflage: guardia del comparador para el tubo de cristal y tuboPinta (33) partido en piezas con ella",
+ "build": 815,
+ "hash": "29d87cf",
+ "fecha": "2026-11-02T01:21:56Z",
+ "mensaje": "Rouflage: pistaDeAhora (33) partida en pistaEspectador, pistaCamaleon y pistaPracticas con 9 tests de caracterización antes",
  "juegos": {
   "boom": "0.4.1",
   "cooking": "0.2.2",

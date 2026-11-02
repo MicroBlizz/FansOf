@@ -44,33 +44,39 @@ function cartel(titulo, sub = '', numero = false) {
 const PISTA = { texto: '', hasta: 0, vista: '' };
 const tiempoLectura = texto => 1.2 + String(texto).length / 14;      // segundos para leer un texto con calma (unas 14 letras por segundo)
 function pista(texto, segundos = 2.5) { PISTA.texto = texto; PISTA.hasta = J.t + Math.max(segundos, tiempoLectura(texto)); }
+// la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
+function pistaEspectador(yo) {
+  if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
+  if (J.t - yo.tPistaFant > 15) return '';
+  const p = poderDe(); return p ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.');      // la pista del poder que llevas (cambia al usarlo)
+}
+// el camaleón: pintarse y congelarse en la preparación; en la caza, qué hacer según lo cerca que está el becario
+function pistaCamaleon(yo) {
+  if (J.fase === 'prep') return !yo.pintado ? tr('Ve a donde quieras esconderte y toca PINTAR') : !yo.congelado ? tr('Toca CONGELAR para quedarte quieto y desaparecer') : tr('Congelado. Toca ¡LISTO! o retócate con PINTAR');
+  if (J.fase !== 'caza') return '';
+  const mira = J.cazadores.find(h => h.bot && !h.fuera && h.bot.objetivo === yo && (h.bot.estado === 'sospecha' || h.bot.estado === 'apunta'));
+  if (mira && mira.bot.estado === 'apunta') return yo.granada > 0 ? tr('¡Te ha visto! Corre o lanza la granada de humo') : tr('¡Te ha visto! Arrastra para salir corriendo');
+  if (!yo.congelado) return tr('¡Se te ve! Corre a otro sitio y toca CONGELAR');
+  if (mira) return tr('Un becario sospecha de ti: quieto… o corre');
+  return J.tFase < 7 ? tr('Quieto. Si un becario pone «!», sal corriendo') : '';
+}
+// las prácticas: la explicación se queda hasta el primer acierto (así se aprende a disparar) y luego cuánto falta
+function pistaPracticas() {
+  if (!PRACTICA.activa) return tr('Espera en Recursos Humanos: los colados se están pintando');
+  if (!PRACTICA.aciertos) return ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas') : tr('Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas');
+  if (PRACTICA.extra >= REGLAS.balasExtra) return tr('¡Cartas al máximo! Sigue practicando hasta la caza');
+  return tr('Cada {n} despidos, una carta extra ({c} de {m} ganadas)', { n: PRACTICA_POR_CARTA, c: PRACTICA.extra, m: REGLAS.balasExtra });
+}
 function pistaDeAhora() {
   if (bocadilloActivo()) return '';      // con un bocadillo del tutorial en pantalla, la franja de pistas se calla
   if (J.t < PISTA.hasta) return PISTA.texto;
   const yo = J.yo; if (!yo || TALLER.abierto) return '';
-  if (espectando()) {      // la explicación del fantasma sale los primeros segundos y luego se va (antes se quedaba para siempre tapando su botón)
-    if (yo.tPistaFant === undefined) yo.tPistaFant = J.t;
-    if (J.t - yo.tPistaFant > 15) return '';
-    const p = poderDe(); return p ? tr(p.pista) : tr('Espectador: pasea por el mapa (WASD o arrastra el dedo). Para irte, ME RETIRO.'); }      // la pista del poder que llevas (cambia al usarlo)
+  if (espectando()) return pistaEspectador(yo);
   if (yo.fuera) return '';
   if (yo.invis > 0) return tr('Invisible: los becarios no te ven ({n} s)', { n: Math.ceil(yo.invis) });
-  if (yo.clase === 'camaleon') {
-    if (J.fase === 'prep') return !yo.pintado ? tr('Ve a donde quieras esconderte y toca PINTAR') : !yo.congelado ? tr('Toca CONGELAR para quedarte quieto y desaparecer') : tr('Congelado. Toca ¡LISTO! o retócate con PINTAR');
-    if (J.fase === 'caza') {
-      const mira = J.cazadores.find(h => h.bot && !h.fuera && h.bot.objetivo === yo && (h.bot.estado === 'sospecha' || h.bot.estado === 'apunta'));
-      if (mira && mira.bot.estado === 'apunta') return yo.granada > 0 ? tr('¡Te ha visto! Corre o lanza la granada de humo') : tr('¡Te ha visto! Arrastra para salir corriendo');
-      if (!yo.congelado) return tr('¡Se te ve! Corre a otro sitio y toca CONGELAR');
-      if (mira) return tr('Un becario sospecha de ti: quieto… o corre');
-      return J.tFase < 7 ? tr('Quieto. Si un becario pone «!», sal corriendo') : '';
-    }
-  } else if (J.fase === 'prep') {
-    // las prácticas: la explicación se queda hasta el primer acierto (así se aprende a disparar) y luego cuánto falta
-    if (!PRACTICA.activa) return tr('Espera en Recursos Humanos: los colados se están pintando');
-    if (!PRACTICA.aciertos) return ENTRADA.tactil || matchMedia('(pointer: coarse)').matches ? tr('Prácticas: arrastra para andar y TOCA a un camaleón escondido para dispararle. Fallar no gasta cartas') : tr('Prácticas: WASD para andar y HAZ CLIC en un camaleón escondido para dispararle. Fallar no gasta cartas');
-    if (PRACTICA.extra >= REGLAS.balasExtra) return tr('¡Cartas al máximo! Sigue practicando hasta la caza');
-    return tr('Cada {n} despidos, una carta extra ({c} de {m} ganadas)', { n: PRACTICA_POR_CARTA, c: PRACTICA.extra, m: REGLAS.balasExtra });
-  }
-  else if (J.fase === 'caza' && (J.tFase < 9 || !(SAVE.tuto && SAVE.tuto.disparo))) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
+  if (yo.clase === 'camaleon') return pistaCamaleon(yo);
+  if (J.fase === 'prep') return pistaPracticas();
+  if (J.fase === 'caza' && (J.tFase < 9 || !(SAVE.tuto && SAVE.tuto.disparo))) return ENTRADA.tactil ? tr('Arrastra para andar. Toca donde creas que hay un colado') : tr('WASD para andar. Haz clic donde creas que hay un colado');
   return '';
 }
 

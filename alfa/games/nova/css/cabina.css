@@ -1,0 +1,88 @@
+/* Fans of Nova · Estilo «cabina de nave» de los menús (decisión de Arkioner del 02-11-2026): esquinas cortadas, borde neón del color
+   de cada carta, rejilla tenue y una línea de escáner. Va después de nova.css y solo cambia el aspecto: la letra y el contorno grueso
+   de Fans Of se quedan. Ficha: docs/guia/juegos/nova/README.md. */
+:root { --nv-neon: #4ff0ff; --nv-linea: #1a0f2e; --nv-corte: 14px; }
+
+/* ---------- el fondo de cada menú: rejilla y viñeta; la línea de escáner baja despacio ---------- */
+.nv-panel {
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(2, 4, 14, .7) 100%),
+    repeating-linear-gradient(0deg, rgba(79, 240, 255, .05) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(90deg, rgba(79, 240, 255, .05) 0 1px, transparent 1px 32px),
+    rgba(6, 10, 30, .86);
+}
+#nv-paneles:has(> .nv-panel)::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 90px; pointer-events: none; z-index: 1;
+  background: linear-gradient(transparent, rgba(79, 240, 255, .07) 80%, rgba(79, 240, 255, .18) 100%);
+  animation: nv-escaner 6s linear infinite;
+}
+@keyframes nv-escaner { from { transform: translateY(-90px); } to { transform: translateY(calc(100vh + 90px)); } }
+@media (prefers-reduced-motion: reduce) { #nv-paneles:has(> .nv-panel)::after { display: none; } }
+
+/* ---------- títulos: brillo neón y una raya de pantalla debajo ---------- */
+.nv-titulo {
+  text-shadow: 0 3px 0 var(--nv-linea), 0 0 14px rgba(79, 240, 255, .55);
+  padding-bottom: 8px;
+  background: linear-gradient(90deg, transparent, var(--nv-neon), transparent) center bottom / 70% 2px no-repeat;
+}
+
+/* ---------- cartas: forma con dos esquinas cortadas. El contorno oscuro es el fondo de la carta; el relleno, su ::before ---------- */
+.nv-carta {
+  position: relative; isolation: isolate; border: 0; border-radius: 0; padding-left: 22px;
+  background: var(--nv-linea);
+  clip-path: polygon(var(--nv-corte) 0, 100% 0, 100% calc(100% - var(--nv-corte)), calc(100% - var(--nv-corte)) 100%, 0 100%, 0 var(--nv-corte));
+}
+.nv-carta::before {
+  content: ''; position: absolute; inset: 3px; z-index: -1;
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  background:
+    linear-gradient(90deg, var(--col) 0 7px, transparent 7px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, .035) 0 1px, transparent 1px 3px),
+    linear-gradient(135deg, #26306a, #151b43);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--col) 55%, transparent), inset 0 0 14px color-mix(in srgb, var(--col) 30%, transparent);
+}
+/* la esquina cortada de abajo lleva una marca del color de la carta */
+.nv-carta::after {
+  content: ''; position: absolute; right: 3px; bottom: 3px; width: 16px; height: 16px; z-index: -1; pointer-events: none;
+  background: linear-gradient(315deg, transparent 9px, var(--col) 9px 12px, transparent 12px);
+}
+/* el recorte se come las sombras de fuera: rareza y selección brillan por dentro */
+.nv-rar-rara, .nv-rar-epica, .nv-rar-legendaria, .nv-sel { box-shadow: none; outline: 0; }
+.nv-rar-rara::before { box-shadow: inset 0 0 0 2px #4aa8ff, inset 0 0 18px rgba(74, 168, 255, .6); }
+.nv-rar-epica::before { box-shadow: inset 0 0 0 2px #b46bff, inset 0 0 20px rgba(180, 107, 255, .7); }
+.nv-rar-legendaria::before { box-shadow: inset 0 0 0 2px #ffb52e, inset 0 0 22px rgba(255, 181, 46, .8); }
+.nv-carta.nv-sel::before { box-shadow: inset 0 0 0 3px #ffd93d, inset 0 0 16px rgba(255, 217, 61, .6); }
+
+/* ---------- botones: placa con las puntas cortadas, el mismo truco del contorno ---------- */
+.nv-boton {
+  position: relative; isolation: isolate; border: 0; border-radius: 0; padding: 12px 30px;
+  background: var(--nv-linea);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+}
+.nv-boton::before {
+  content: ''; position: absolute; inset: 3px 4px; z-index: -1;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
+  background: linear-gradient(rgba(255, 255, 255, .35) 0 2px, transparent 2px), linear-gradient(#ffd93d, #f29a2e);
+}
+.nv-boton:active { transform: translateY(2px); }
+.nv-boton.nv-chico { padding: 6px 18px; }
+.nv-tabs .nv-boton, .nv-boton.nv-sel { outline: 0; }
+.nv-boton.nv-sel::before { background: linear-gradient(var(--nv-neon), #2bb8d6); }
+
+/* ---------- pestañas y ventanas de ayuda ---------- */
+.nv-tabs { border-radius: 0; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+.nv-tabs button.nv-sel { background: linear-gradient(var(--nv-neon), #2bb8d6); color: #04202a; }
+.nv-tutocaja {
+  border-radius: 6px;
+  background:
+    linear-gradient(var(--nv-neon), var(--nv-neon)) top 6px left 6px / 18px 3px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) top 6px left 6px / 3px 18px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) top 6px right 6px / 18px 3px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) top 6px right 6px / 3px 18px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) bottom 6px left 6px / 18px 3px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) bottom 6px left 6px / 3px 18px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) bottom 6px right 6px / 18px 3px no-repeat,
+    linear-gradient(var(--nv-neon), var(--nv-neon)) bottom 6px right 6px / 3px 18px no-repeat,
+    repeating-linear-gradient(0deg, rgba(79, 240, 255, .05) 0 1px, transparent 1px 4px),
+    #1c2358;
+}

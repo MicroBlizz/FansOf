@@ -105,3 +105,4 @@
 .nv-flota{display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;cursor:default}
 .nv-flota>canvas{grid-row:span 3}
 .nv-flota-bot{display:flex;gap:6px;flex-wrap:wrap}.nv-flota-bot .btn-ghost{font-size:13px;padding:5px 9px}
+.nv-fija { cursor: default; }

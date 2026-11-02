@@ -74,7 +74,7 @@ IDIOMA.add({
   "Apoyo, auras, combos": "Support, auras, combos",
   "Ranuras híbridas": "Hybrid slots",
   "Unidad": "Unit",
-  "En la campaña, el capitán es el líder o una unidad de la facción que elegiste al empezar. Las unidades dan el bonus de su especialidad.": "In the campaign, the captain is the leader or a unit of the faction you picked at the start. Units give the bonus of their specialty.",
+  "En la campaña, el comandante es el líder de la facción que elegiste al empezar.": "In the campaign, your commander is the leader of the faction you picked at the start.",
   "CyberMarine": "CyberMarine",
   "MemeLord": "MemeLord",
   "Vikingo": "Viking",

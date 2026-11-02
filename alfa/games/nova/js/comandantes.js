@@ -20,3 +20,14 @@ function nvCapNombre(id) {
   const K = NOVA_TRIPULACION.capitanes.find(c => c.id === id);
   return K ? K.nombre : (typeof CFG !== 'undefined' && CFG.cards[id] ? CFG.cards[id].name : id);
 }
+
+// ---------- preparar la misión en campaña (decisión de Arkioner del 02-11-2026) ----------
+// Con facción elegida, la nave y el comandante ya vienen puestos: la nave de la facción y su líder. Solo se elige el oficial de primera
+// entre las unidades de la facción, y cada una da el bonus de la faceta de su rol. Sin facción (o sin datos de la serie), null.
+const nvCascoFaccion = f => (NOVA_FACCIONES[f] && NOVA_FACCIONES[f].nave && NOVA_FACCIONES[f].nave.casco) || f;
+function nvPreparacion() {
+  const f = nvFaccionCampana();
+  if (!f || typeof FACTIONS === 'undefined' || !FACTIONS[f] || !NOVA_PIEZAS.cascos[nvCascoFaccion(f)]) return null;
+  const oficiales = FACTIONS[f].units.map(u => ({ id: u, faceta: nvCapFaceta(u) })).filter(o => o.faceta);
+  return { faccion: f, casco: nvCascoFaccion(f), cap: FACTIONS[f].leader, oficiales };
+}

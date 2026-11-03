@@ -1,8 +1,8 @@
 {
- "build": 882,
- "hash": "ad8d929",
- "fecha": "2026-11-03T19:37:39Z",
- "mensaje": "Pets f16 paso 3: el dibujo original horneado de frente en la textura del muñeco, sin su raya",
+ "build": 883,
+ "hash": "81c9830",
+ "fecha": "2026-11-03T19:40:40Z",
+ "mensaje": "presencia: anotado en APLICADAS que falta la limpieza (delete) por pegar en el editor SQL",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

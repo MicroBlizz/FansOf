@@ -5,6 +5,7 @@
 GESTION_METRICAS.pestana({
   juego: 'rouflage',
   funcion: 'gestion_metricas_rouflage',
+  presencia: true,
   pinta(D) {
     const M = GESTION_METRICAS, V = D.ventanas, A = D.activos;
     const sinResolver = v => Math.max(0, v.empezadas - v.terminadas - v.abandonadas);

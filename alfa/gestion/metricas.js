@@ -20,16 +20,48 @@ const GESTION_METRICAS = (() => {
     return `<div style="display:flex;gap:3px;align-items:flex-end">${filas.map(col).join('')}</div>`
       + `<div class="meta" style="margin-top:6px">${series.map(k => `<span style="display:inline-block;width:10px;height:10px;background:${k.color};margin-right:4px"></span>${esc(k.nombre)}`).join('&nbsp;&nbsp;&nbsp;')} · máximo del día: ${fmt(max)}</div>`;
   }
+  // ---------- presencia (servidor/111, core/js/sistema/presencia.js): conectados, jugadores por día y retención ----------
+  const suma = (L, f) => L.filter(f).reduce((t, x) => t + (+x.n || 0), 0);
+  const ENTORNOS = [['Producción', false], ['Alfa', true]];
+  // Conectados ahora y jugadores de hoy y de los últimos 14 días de UN juego ('*' = toda la web)
+  function presenciaDe(P, juego) {
+    const hoy = String(P.generado).slice(0, 10);   // el día del servidor (UTC), como las filas
+    const dias = [...new Set(P.por_dia.filter(x => x.juego === juego).map(x => x.dia))];
+    const filas = dias.map(dia => ({ dia, prod: suma(P.por_dia, x => x.dia === dia && x.juego === juego && !x.alfa), alfa: suma(P.por_dia, x => x.dia === dia && x.juego === juego && x.alfa) }));
+    return caja('Conectados y jugadores por día',
+      cifras([[suma(P.ahora, x => x.juego === juego && !x.alfa), 'conectados ahora (producción)'], [suma(P.ahora, x => x.juego === juego && x.alfa), 'conectados ahora (alfa)'],
+        [suma(P.por_dia, x => x.dia === hoy && x.juego === juego && !x.alfa), 'jugaron hoy (producción)'], [suma(P.por_dia, x => x.dia === hoy && x.juego === juego && x.alfa), 'jugaron hoy (alfa)']])
+      + (filas.length ? '<div style="margin-top:10px">' + barras(filas, [{ clave: 'prod', nombre: 'Producción', color: 'var(--acento)' }, { clave: 'alfa', nombre: 'Alfa', color: 'var(--suave)' }]) + '</div>' : ''),
+      'Conectado: ha dado señales hace menos de 2 minutos, con la pestaña a la vista. Solo cuenta a quien tiene encendido «Datos de partida anónimos».');
+  }
+  const diasEntre = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
+  // Retención por cohorte: de los que jugaron el día en que se registraron, cuántos vuelven al día siguiente y a los 7 días
+  function retencion(P) {
+    const hoy = new Date().toISOString().slice(0, 10), ya = (c, n) => diasEntre(c, hoy) > n;   // el día N solo cuenta cuando ya ha acabado
+    const filas = P.retencion.filter(x => x.d0 > 0).map(x => [fecha(x.cohorte).split(',')[0], x.alfa ? 'Alfa' : 'Producción', x.alfa ? '—' : fmt(x.tam), fmt(x.d0), ya(x.cohorte, 1) ? pct(x.d1 || 0, x.d0) : '—', ya(x.cohorte, 7) ? pct(x.d7 || 0, x.d0) : '—']);
+    return caja('Retención por cohorte', filas.length ? tabla(['Cuentas creadas el', 'Entorno', 'Registradas ese día (todas)', 'Jugaron ese día', 'Volvieron al día siguiente', 'Volvieron a los 7 días'], filas) : vacio('Aún no hay cohortes', 'Aparecerán cuando el flag «presencia» lleve un día abierto.'),
+      'Solo desde ' + esc(P.desde || 'que se abra el flag «presencia»') + '. No se guarda quién vuelve: el servidor solo suma. Porcentaje sobre los que jugaron el día de su registro.');
+  }
+  // Pide la presencia; si el SQL aún no está aplicado o el flag está cerrado, deja un aviso en vez de romper el resto
+  async function cargaPresencia() {
+    try { return { P: await rpc('gestion_presencia', { p_token: leerToken() }) }; }
+    catch (e) { return { aviso: SIN_SQL.test(String(e.message)) ? 'La presencia aún no está aplicada en el servidor (servidor/111-presencia.sql).' : textoError(e) }; }
+  }
+  const avisoPresencia = t => `<div class="caja aviso">${esc(t)}</div>`;
   // Pestaña «Métricas» de un juego: pide la función del servidor y deja que el juego pinte sus datos. cont.innerHTML es del juego; los errores salen aquí.
-  function pestana({ juego, funcion, pinta, orden }) {
+  // Con presencia: true añade el bloque de conectados y jugadores por día de ese juego (la presencia es común a todos).
+  function pestana({ juego, funcion, pinta, orden, presencia }) {
     const cargar = async () => {
       const cont = $('pan-metricas-juego'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>';
-      try { cont.innerHTML = pinta(await rpc(funcion, { p_token: leerToken() })); }
+      try {
+        const [D, pr] = await Promise.all([rpc(funcion, { p_token: leerToken() }), presencia ? cargaPresencia() : null]);
+        cont.innerHTML = pinta(D) + (pr ? (pr.P ? presenciaDe(pr.P, juego) : avisoPresencia(pr.aviso)) : '');
+      }
       catch (e) { cont.innerHTML = `<div class="caja aviso">${SIN_SQL.test(String(e.message)) ? `Las métricas aún no están aplicadas en el servidor (servidor/109-gestion-metricas.sql, función ${esc(funcion)}).` : esc(textoError(e))}</div>`; }
     };
     GESTION_NAV.seccion({ id: 'metricas', pan: 'pan-metricas-juego', juego, etiqueta: 'Métricas', orden: orden == null ? 3 : orden, cargar });
   }
-  return { cifras, caja, tabla, vacio, pct, barras, pestana, SIN_SQL };
+  return { cifras, caja, tabla, vacio, pct, barras, pestana, presenciaDe, retencion, cargaPresencia, avisoPresencia, SIN_SQL };
 })();
 
 // ---------- Global: lo común a todos los juegos ----------
@@ -57,9 +89,9 @@ const GESTION_METRICAS = (() => {
   async function cargar() {
     const cont = $('pan-metricas'); cont.innerHTML = '<div class="caja ayuda">Cargando…</div>';
     try {
-      const D = await rpc('gestion_metricas', { p_token: leerToken() });
+      const [D, pr] = await Promise.all([rpc('gestion_metricas', { p_token: leerToken() }), M.cargaPresencia()]);
       cont.innerHTML = '<div class="caja ayuda"><b>Métricas.</b> Números agregados de toda la web, sin ninguna persona identificada. Cada juego tiene su pestaña «Métricas» con las suyas.</div>'
-        + pintaUsuarios(D.usuarios) + pintaNuevos(D.usuarios.nuevos) + pintaCompras(D.compras) + pintaErrores(D.errores)
+        + pintaUsuarios(D.usuarios) + pintaNuevos(D.usuarios.nuevos) + (pr.P ? M.presenciaDe(pr.P, '*') + M.retencion(pr.P) : M.avisoPresencia(pr.aviso)) + pintaCompras(D.compras) + pintaErrores(D.errores)
         + `<div class="meta">Generado ${fecha(D.generado)}. <button type="button" id="met-recargar">Recargar</button></div>`;
       $('met-recargar').onclick = cargar;
     } catch (e) { cont.innerHTML = `<div class="caja aviso">${M.SIN_SQL.test(String(e.message)) ? 'Las métricas aún no están aplicadas en el servidor (servidor/109-gestion-metricas.sql).' : esc(textoError(e))}</div>`; }

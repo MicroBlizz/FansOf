@@ -148,6 +148,28 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     if (Math.floor(t * 2) % 2) texto(g, tr('Toca para seguir'), 640, 480, 16, '#fff');
   };
 
+  // El altavoz: junto al marcador durante el partido y arriba a la derecha en las demás pantallas.
+  const ALTAVOZ = { partido: { x: 925, y: 42, r: 24 }, fuera: { x: 1236, y: 44, r: 24 } };
+  UI.zonaAltavoz = (conMarcador) => (conMarcador ? ALTAVOZ.partido : ALTAVOZ.fuera);
+
+  // Dibujo de altavoz con el contorno grueso de la serie: tantas ondas como volumen (3 alto, 2 medio, 1 bajo) y una X roja en silencio.
+  UI.altavoz = function (g, nivel, c) {
+    const { x, y } = c, ondas = 3 - nivel;
+    g.save(); g.lineJoin = 'round'; g.lineCap = 'round';
+    g.fillStyle = 'rgba(10,12,30,.7)'; g.beginPath(); g.arc(x, y, c.r + 4, 0, 7); g.fill();
+    g.beginPath(); g.moveTo(x - 15, y - 6); g.lineTo(x - 7, y - 6); g.lineTo(x + 2, y - 14); g.lineTo(x + 2, y + 14); g.lineTo(x - 7, y + 6); g.lineTo(x - 15, y + 6); g.closePath();
+    g.lineWidth = 6; g.strokeStyle = '#111'; g.stroke(); g.fillStyle = '#ffe14a'; g.fill();
+    for (let i = 0; i < ondas; i++) {
+      g.beginPath(); g.arc(x + 2, y, 7 + i * 6, -0.8, 0.8);
+      g.lineWidth = 6; g.strokeStyle = '#111'; g.stroke(); g.lineWidth = 3; g.strokeStyle = '#ffe14a'; g.stroke();
+    }
+    if (ondas <= 0) {
+      g.beginPath(); g.moveTo(x + 7, y - 7); g.lineTo(x + 19, y + 7); g.moveTo(x + 19, y - 7); g.lineTo(x + 7, y + 7);
+      g.lineWidth = 7; g.strokeStyle = '#111'; g.stroke(); g.lineWidth = 4; g.strokeStyle = '#ff5a5a'; g.stroke();
+    }
+    g.restore();
+  };
+
   UI.girar = function (g) {
     g.fillStyle = '#0b1020'; g.fillRect(0, 0, 1280, 720);
     texto(g, tr('Gira el móvil para jugar'), 640, 360, 22, '#fff');

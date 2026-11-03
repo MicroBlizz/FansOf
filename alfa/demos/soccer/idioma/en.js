@@ -56,7 +56,7 @@ IDIOMA.add({
  "Fútbol sin faltas ni árbitro": "Football with no fouls and no referee",
  "Animales Locos, Microblizz, No-Muertos, Ciberpunks y Phony": "Crazy Animals, Microblizz, Undead, Cyberpunks and Phony",
  "Toca para jugar": "Tap to play",
- "Teclado: flechas · X pase/empujón · C tiro/barrida": "Keyboard: arrows · X pass/shove · C shoot/tackle",
+ "Teclado: flechas · X pase/empujón · C tiro/barrida · M volumen": "Keyboard: arrows · X pass/shove · C shoot/tackle · M volume",
  "COPA": "CUP",
  "AMISTOSO": "FRIENDLY",
  "Tu equipo": "Your team",

@@ -1,8 +1,8 @@
 {
- "build": 898,
- "hash": "b017e79",
- "fecha": "2026-11-03T23:06:08Z",
- "mensaje": "Galería de Pets: la revisión 6 de la f16 (bigotitos del hurón, b14057d)",
+ "build": 899,
+ "hash": "3a52b4c",
+ "fecha": "2026-11-03T23:34:41Z",
+ "mensaje": "Soccer A1: el sonido va por el altavoz de la serie, con volumen de cuatro niveles (altavoz dibujado y tecla M)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

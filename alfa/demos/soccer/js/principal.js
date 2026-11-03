@@ -18,7 +18,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
 
   // ---------- guardado (solo comodidad: si falla, se empieza con lo de siempre) ----------
   function guardar() {
-    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ eleccion: est.sel, copa: est.progreso, tutorial: est.tutorialHecho })); }
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify({ eleccion: est.sel, copa: est.progreso, tutorial: est.tutorialHecho, volumen: S.sonido.nivel })); }
     catch (err) { console.warn('Soccer: no se guarda', err); }
   }
   function leer() {
@@ -27,22 +27,13 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       if (s && ids.includes(s.equipo) && ids.includes(s.rival) && S.AJ.campos[s.campo] && S.AJ.alineaciones[s.alineacion || 'equilibrada']) est.sel = Object.assign(est.sel, s, { estrategia: Object.assign(est.sel.estrategia, s.estrategia) });
       if (d.copa) est.progreso = d.copa;
       est.tutorialHecho = !!d.tutorial;
+      S.sonido.poner(d.volumen);
     } catch (err) { console.warn('Soccer: no se lee lo guardado', err); }
   }
   const progreso = () => est.progreso[est.sel.equipo] || 0;
 
-  // ---------- sonido (sintetizado, sin archivos) ----------
-  let AC = null;
-  function sonar(f, dura, tipo, sube) {
-    try {
-      AC = AC || new (window.AudioContext || window.webkitAudioContext)();
-      const o = AC.createOscillator(), v = AC.createGain(), t = AC.currentTime;
-      o.type = tipo || 'square'; o.frequency.setValueAtTime(f, t);
-      if (sube) o.frequency.exponentialRampToValueAtTime(f * sube, t + dura);
-      v.gain.setValueAtTime(0.12, t); v.gain.exponentialRampToValueAtTime(0.001, t + dura);
-      o.connect(v).connect(AC.destination); o.start(t); o.stop(t + dura);
-    } catch (err) { console.warn('Soccer: sin sonido', err); }
-  }
+  // ---------- sonido (el altavoz de la serie: ver sonido.js) ----------
+  const sonar = S.sonido.nota;
   function vibrar(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (err) { console.warn('Soccer: sin vibración', err); } }
   const golpe = (paron, temblor, ms) => { est.paron = Math.max(est.paron, paron); V.temblor = Math.max(V.temblor, temblor); vibrar(ms); };
 
@@ -72,7 +63,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     gol: (ev, e) => {
       golpe(0.1, 26, 120); FX.estallido(e.balon.x, e.balon.y, 2, e.aj.equipos[ev.eq].color, 60); FX.estallido(e.balon.x, e.balon.y, 3, '#fff', 30);
       UI.avisar(tr('¡GOL!'), e.aj.equipos[ev.eq].color, 1.2); est.repetirEn = 1.2;
-      [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => sonar(f, 0.18, 'square'), i * 110));
+      [523, 659, 784, 1046].forEach((f, i) => sonar(f, 0.18, 'square', 0, i * 0.11));
     },
     fin: (ev, e) => { est.modo = 'final'; est.repetirEn = 0; sonar(392, 0.6, 'triangle', 0.5); terminarCopa(e); },
   };
@@ -90,9 +81,14 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
   function aLogico(ev) { const r = CV.getBoundingClientRect(); return { x: (ev.clientX - r.left) * V.W / r.width, y: (ev.clientY - r.top) * V.H / r.height }; }
   const dentro = (p, b) => Math.hypot(p.x - b.x, p.y - b.y) < b.r + 18;
 
+  // El altavoz: cada toque (o la tecla M) baja un nivel el volumen y del silencio vuelve al alto.
+  const conMarcador = () => est.modo === 'juego' || est.modo === 'repeticion' || est.modo === 'final';
+  function cambiarVolumen() { S.sonido.siguiente(); sonar(660, 0.08, 'triangle'); guardar(); }
+
   function abajo(ev) {
     ev.preventDefault();
     const p = aLogico(ev);
+    if (dentro(p, UI.zonaAltavoz(conMarcador()))) { cambiarVolumen(); return; }
     if (est.modo !== 'juego') { tocarFuera(p); return; }
     const B = UI.botones;
     if (dentro(p, B.tiro)) { est.boton = 'rojo'; B.tiro.pulsado = ev.pointerId; return; }
@@ -132,6 +128,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     const k = ev.key.toLowerCase();
     teclas[k] = baja;
     if (!baja) return;
+    if (k === 'm') { cambiarVolumen(); return; }
     if (est.modo !== 'juego') { if (k === ' ' || k === 'enter') { if (est.modo === 'menu') empezar(); else tocarFuera({ x: -1, y: -1 }); } return; }
     if (k === 'x' || k === 'j') est.boton = 'azul';
     if (k === 'c' || k === 'k' || k === ' ') est.boton = 'rojo';
@@ -238,6 +235,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
       else if (est.modo === 'menu') UI.menu(G, S.AJ, est.sel, V.img, est.t, progreso());
       else { UI.marcador(G, est.e); UI.final(G, est.e, est.t, est.copaRes); }
     }
+    UI.altavoz(G, S.sonido.nivel, UI.zonaAltavoz(conMarcador()));
     requestAnimationFrame(fotograma);
   }
 

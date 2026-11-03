@@ -12,7 +12,7 @@ var SOCCER = globalThis.SOCCER || (globalThis.SOCCER = {});
     texto(g, tr('Fútbol sin faltas ni árbitro'), 640, 300, 16, '#fff');
     texto(g, tr('Animales Locos, Microblizz, No-Muertos, Ciberpunks y Phony'), 640, 345, 11, '#ff8a2a');
     if (Math.floor(t * 2) % 2) texto(g, tr('Toca para jugar'), 640, 450, 16, '#fff');
-    texto(g, tr('Teclado: flechas · X pase/empujón · C tiro/barrida'), 640, 590, 10, '#ccc');
+    texto(g, tr('Teclado: flechas · X pase/empujón · C tiro/barrida · M volumen'), 640, 590, 10, '#ccc');
   };
 
   // ---------- zonas de la pantalla de antes del partido ----------

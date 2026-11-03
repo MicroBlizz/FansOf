@@ -151,11 +151,11 @@ function ppAyuda() {
     <p class="pp-sub">${tr('Si fallas pierdes un corazón; vuelve uno cada 30 minutos. Al ganar a un jefe se abre su mundo en difícil, y al ganar el difícil, su pesadilla.')}</p>`, true);
   t.appendChild(ppBoton(tr('¡ENTENDIDO!'), 'pp-btn', () => { ppCierra(); SAVE.ayuda = true; ppGuarda(); }));
 }
-// las dos barras de volumen de core (OPCIONES.volumen): efectos y música por separado, en Opciones y en la pausa
+// las dos barras de volumen de core (OPCIONES.sonido): efectos y música por separado, en Opciones y en la pausa
 function ppFilasSonido() {
   const l = document.createElement('div'); l.className = 'opt-list';
-  const barra = (titulo, campo) => OPCIONES.volumen(titulo, () => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); });
-  l.append(barra(tr('Efectos'), 'vol'), barra(tr('Música'), 'mus'));
+  const par = campo => [() => SAVE[campo], v => { SAVE[campo] = v; ppGuarda(); applyVolume(); }];
+  l.append(OPCIONES.sonido({ efectos: par('vol'), musica: par('mus') }));
   return l;
 }
 /* ---------- opciones (Daniel, 31-10-2026: un botón OPCIONES en la portada con todo lo que se configura) ---------- */

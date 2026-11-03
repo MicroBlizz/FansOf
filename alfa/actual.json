@@ -1,8 +1,8 @@
 {
- "build": 872,
- "hash": "49d002a",
- "fecha": "2026-11-03T18:10:14Z",
- "mensaje": "Pets f15: cada pieza del despiece inflada en 3D con su textura, en el visor 3D",
+ "build": 873,
+ "hash": "591c282",
+ "fecha": "2026-11-03T18:14:58Z",
+ "mensaje": "Core: OPCIONES.sonido (Efectos y Música) y Pop la usa (ADR 037 aceptado)",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",

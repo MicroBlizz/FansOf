@@ -76,8 +76,6 @@ IDIOMA.add({
  "Toques": "Taps",
  "Tu equipo": "Your team",
  "Revienta, rescata, repite": "Pop, rescue, repeat",
- "Efectos": "Sound effects",
- "Música": "Music",
  "Seguir sin nadie": "Continue alone",
  "Toca una ficha para elegir.": "Tap a card to choose.",
  "Equipo lleno": "Team is full",

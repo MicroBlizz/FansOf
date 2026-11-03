@@ -1,8 +1,8 @@
 {
- "build": 879,
- "hash": "8040977",
- "fecha": "2026-11-03T19:24:22Z",
- "mensaje": "Tácticas: estilo de las filas de volumen de core con sus colores",
+ "build": 880,
+ "hash": "fbb1754",
+ "fecha": "2026-11-03T19:30:27Z",
+ "mensaje": "Pets f16 paso 2: el muñeco se ajusta a la silueta del dibujo, zona por zona",
  "juegos": {
   "boom": "0.4.2",
   "cooking": "0.2.3",
